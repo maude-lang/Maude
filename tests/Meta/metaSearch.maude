@@ -1,0 +1,161 @@
+set show timing off .
+set show advisories off .
+
+mod SEARCH-TEST is
+  sort Nat .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 5] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 3] .
+  ops a b c d e 0 1 : -> Nat .
+  vars W X Y Z : Nat .
+  eq 0 * X = 0 .
+  eq 1 * X = X .
+  eq 0 + X = X .
+  rl X * (Y + Z) => X * Y + X * Z .
+  rl X * Y + X * Z => X * (Y + Z) .
+endm
+
+select META-LEVEL .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    '_*_['Y:Nat, 'Z:Nat] := 'X:Nat,
+    '*,
+    100,
+    0) .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    '_*_['Y:Nat, 'Z:Nat] := 'X:Nat,
+    '*,
+    100,
+    1) .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    '_*_['Y:Nat, 'Z:Nat] := 'X:Nat,
+    '*,
+    100,
+    2) .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    '_*_['Y:Nat, 'Z:Nat] := 'X:Nat /\ 'Y:Nat = 'a.Nat,
+    '*,
+    100,
+    0) .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    '_*_['Y:Nat, 'Z:Nat] := 'X:Nat /\ 'Y:Nat = 'a.Nat,
+    '*,
+    100,
+    1) .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    nil,
+    '*,
+    100,
+    0) .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    nil,
+    '*,
+    100,
+    1) .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    nil,
+    '*,
+    100,
+    2) .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    nil,
+    '!,
+    100,
+    0) .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    nil,
+    '+,
+    100,
+    0) .
+
+red metaSearch(['SEARCH-TEST],
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    'X:Nat,
+    nil,
+    '+,
+    100,
+    1) .
+
+red metaSearch(['SEARCH-TEST],
+   '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat]],
+   '_*_['X:Nat, 'Y:Nat],
+   nil,
+   '*,
+   100,
+   0) .
+
+red metaSearch(['SEARCH-TEST],
+   '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat]],
+   '_*_['X:Nat, 'Y:Nat],
+   nil,
+   '*,
+   100,
+   1) .
+
+red metaSearch(['SEARCH-TEST],
+   '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat]],
+   '_*_['X:Nat, 'Y:Nat],
+   nil,
+   '*,
+   0,
+   0) .
+
+red metaSearch(['SEARCH-TEST],
+   '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat], '_*_['a.Nat,'d.Nat]],
+   '_*_['X:Nat, 'Y:Nat],
+   nil,
+   '*,
+   100,
+   0) .
+
+red metaSearch(['SEARCH-TEST],
+   '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat], '_*_['a.Nat,'d.Nat]],
+   '_*_['X:Nat, 'Y:Nat],
+   nil,
+   '*,
+   100,
+   1) .
+
+red metaSearch(['SEARCH-TEST],
+   '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat], '_*_['a.Nat,'d.Nat]],
+   '_*_['X:Nat, 'Y:Nat],
+   nil,
+   '*,
+   1,
+   0) .
+
+red metaSearch(['SEARCH-TEST],
+   '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat], '_*_['a.Nat,'d.Nat]],
+   '_*_['X:Nat, 'Y:Nat],
+   nil,
+   '*,
+   1,
+   1) .

@@ -1,0 +1,225 @@
+Maude> ==========================================
+reduce in INT : - -1 .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in INT : - 0 .
+rewrites: 1
+result Zero: 0
+==========================================
+reduce in INT : 5 + -2 .
+rewrites: 1
+result NzNat: 3
+==========================================
+reduce in INT : 10 + -1 .
+rewrites: 1
+result NzNat: 9
+==========================================
+reduce in INT : 10 + -11 .
+rewrites: 1
+result NzInt: -1
+==========================================
+reduce in INT : 5 * -2 .
+rewrites: 1
+result NzInt: -10
+==========================================
+reduce in INT : 10 - 11 .
+rewrites: 1
+result NzInt: -1
+==========================================
+reduce in INT : 1 * -2 .
+rewrites: 1
+result NzInt: -2
+==========================================
+reduce in INT : 1 * -1 .
+rewrites: 1
+result NzInt: -1
+==========================================
+reduce in INT : 10 quo -4 .
+rewrites: 1
+result NzInt: -2
+==========================================
+reduce in INT : -10 rem 4 .
+rewrites: 1
+result NzInt: -2
+==========================================
+reduce in INT : -10 ^ 4 .
+rewrites: 1
+result NzNat: 10000
+==========================================
+reduce in INT : -2 ^ 7 .
+rewrites: 1
+result NzInt: -128
+==========================================
+reduce in INT : 2 ^ 7 .
+rewrites: 1
+result NzNat: 128
+==========================================
+reduce in INT : abs(-140) .
+rewrites: 1
+result NzNat: 140
+==========================================
+reduce in INT : abs(140) .
+rewrites: 1
+result NzNat: 140
+==========================================
+reduce in INT : gcd(gcd(X:Nat, -120), gcd(Y:Nat, -140)) .
+rewrites: 1
+result NzNat: gcd(X:Nat, Y:Nat, 20)
+==========================================
+reduce in INT : gcd(124, 768, -346) .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in INT : gcd(8, -10) .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in INT : lcm(lcm(X:Nat, -120), lcm(Y:Nat, -140)) .
+rewrites: 1
+result Nat: lcm(X:Nat, Y:Nat, 840)
+==========================================
+reduce in INT : lcm(124, 768, -346) .
+rewrites: 1
+result NzNat: 4118784
+==========================================
+reduce in INT : lcm(-8, -10) .
+rewrites: 1
+result NzNat: 40
+==========================================
+reduce in INT : 1 xor -2 .
+rewrites: 1
+result NzInt: -1
+==========================================
+reduce in INT : 1 xor -1 .
+rewrites: 1
+result NzInt: -2
+==========================================
+reduce in INT : 1 xor -1 .
+rewrites: 1
+result NzInt: -2
+==========================================
+reduce in INT : 1 & -2 .
+rewrites: 1
+result Zero: 0
+==========================================
+reduce in INT : 1 & -1 .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in INT : 1 & -1 .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in INT : 1 | -2 .
+rewrites: 1
+result NzInt: -1
+==========================================
+reduce in INT : 1 | -1 .
+rewrites: 1
+result NzInt: -1
+==========================================
+reduce in INT : 1 | -2 .
+rewrites: 1
+result NzInt: -1
+==========================================
+reduce in INT : -1 << 3 .
+rewrites: 1
+result NzInt: -8
+==========================================
+reduce in INT : -128 >> 3 .
+rewrites: 1
+result NzInt: -16
+==========================================
+reduce in INT : 1 < -2 .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in INT : -1 < 1 .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in INT : 1 <= -2 .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in INT : -1 <= 1 .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in INT : -1 > 2 .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in INT : 1 > -1 .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in INT : 1 >= -2 .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in INT : -1 >= 1 .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in INT : -3 divides 10 .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in INT : 3 divides -9 .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in INT : 1 .
+rewrites: 0
+result NzNat: 1
+==========================================
+reduce in INT : -1 .
+rewrites: 0
+result NzInt: -1
+==========================================
+reduce in INT : 2 + -1 .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in INT : -8888888888888888888888888888888888888888888888888888888 .
+rewrites: 0
+result NzInt: -8888888888888888888888888888888888888888888888888888888
+==========================================
+reduce in INT : -42 .
+rewrites: 0
+result NzInt: -42
+==========================================
+reduce in INT : - 0 .
+rewrites: 1
+result Zero: 0
+==========================================
+reduce in INT : s_^2(0) ^ s_^200000000000000000000(0) .
+rewrites: 0
+result NzNat: s_^2(0) ^ s_^200000000000000000000(0)
+==========================================
+reduce in INT : s 0 ^ s_^200000000000000000000(0) .
+rewrites: 1
+result NzNat: s 0
+==========================================
+reduce in INT : - s 0 ^ s_^200000000000000000000(0) .
+rewrites: 1
+result NzNat: s 0
+==========================================
+reduce in INT : - s 0 ^ s_^200000000000000000001(0) .
+rewrites: 1
+result NzInt: - s 0
+==========================================
+reduce in INT : 0 ^ s_^200000000000000000001(0) .
+rewrites: 1
+result Zero: 0
+==========================================
+reduce in INT : s 0 << s_^200000000000000000001(0) .
+rewrites: 0
+result Nat: s 0 << s_^200000000000000000001(0)
+==========================================
+reduce in INT : 0 << s_^200000000000000000001(0) .
+rewrites: 1
+result Zero: 0
+Maude> Bye.

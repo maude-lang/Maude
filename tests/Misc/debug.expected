@@ -1,0 +1,35 @@
+Maude> ==========================================
+reduce in BAR : a .
+==========================================
+reduce in BAR : a .
+rewrites: 2
+result Bar: c
+rewrites: 2
+result Bar: c
+==========================================
+reduce in META-LEVEL : metaReduce(['BAR], 'a.Bar) .
+*********** equation
+eq [Q:Qid] = mod Q:Qid is
+  protecting Q:Qid .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+endm .
+Q:Qid --> 'BAR
+['BAR]
+--->
+mod 'BAR is
+  protecting 'BAR .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+endm
+rewrites: 4
+result ResultPair: {'c.Bar,'Bar}
+Maude> Bye.

@@ -1,0 +1,104 @@
+Maude> ==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'a.Foo) .
+rewrites: 1
+result ResultPair: {'a.Foo,'Foo}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  (op 'b : nil -> 'Foo [none] .
+  op 'f : 'Foo -> 'Foo [strat(0)] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  eq 'a.Foo = 'b.Foo [none] .
+endfm, 'f['a.Foo]) .
+rewrites: 1
+result ResultPair: {'f['a.Foo],'Foo}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  (op 'b : nil -> 'Foo [none] .
+  op 'f : 'Foo -> 'Foo [strat(1 0)] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  eq 'a.Foo = 'b.Foo [none] .
+endfm, 'f['a.Foo]) .
+rewrites: 2
+result ResultPair: {'f['b.Foo],'Foo}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  protecting 'STRING .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '"a".String) .
+rewrites: 1
+result ResultPair: {'"a".Char,'Char}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  protecting 'STRING .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '"this is a string".String) .
+rewrites: 1
+result ResultPair: {'"this is a string".String,'String}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  protecting 'STRING .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '"this is\na string".String) .
+rewrites: 1
+result ResultPair: {'"this is\na string".String,'String}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  protecting 'STRING .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '"\n".String) .
+rewrites: 1
+result ResultPair: {'"\n".Char,'Char}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'pi.Float) .
+rewrites: 2
+result ResultPair: {'3.1415926535897931.FiniteFloat,'FiniteFloat}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  protecting 'INT .
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, '_+_['s_['0.Int],'s_^12['0.Int]]) .
+rewrites: 2
+result ResultPair: {'s_^13['0.Zero],'NzNat}
+Maude> Bye.

@@ -1,0 +1,68 @@
+set show timing off .
+set show advisories off .
+
+select INT .
+
+red - - s 0 .
+red - 0 .
+red - s_^2(0) + s_^5(0) .
+red s_^10(0) + - s_(0) .
+red s_^10(0) + - s_^11(0) .
+red - s_^2(0) * s_^5(0) .
+red s_^10(0) - s_^11(0) .
+red s 0 * - s s 0 .
+red s 0 * - s 0 .
+red s_^10(0) quo - s_^4(0) .
+red - s_^10(0) rem s_^4(0) .
+red - s_^10(0) ^ s_^4(0) .
+red - s_^2(0) ^ s_^7(0) .
+red s_^2(0) ^ s_^7(0) .
+red abs(- s_^140(0)) .
+red abs(s_^140(0)) .
+red gcd(gcd(- s_^120(0), X:Nat), gcd(- s_^140(0), Y:Nat)) .
+red gcd(s_^124(0), - s_^346(0), s_^768(0)) .
+red gcd(- s_^10(0), s_^8(0)) .
+red lcm(lcm(- s_^120(0), X:Nat), lcm(- s_^140(0), Y:Nat)) .
+red lcm(s_^124(0), - s_^346(0), s_^768(0)) .
+red lcm(- s_^10(0), - s_^8(0)) .
+red s 0 xor - s s 0 .
+red s 0 xor - s 0 .
+red - s 0 xor s 0 .
+red s 0 & - s s 0 .
+red s 0 & - s 0 .
+red - s 0 & s 0 .
+red s 0 | - s s 0 .
+red s 0 | - s 0 .
+red - s s 0 | s 0 .
+red - s 0 << s s s 0 .
+red - s_^128(0) >> s s s 0 .
+red s 0 < - s s 0 .
+red - s 0 < s 0 .
+red s 0 <= - s s 0 .
+red - s 0 <= s 0 .
+red - s 0 > s s 0 .
+red s 0 > - s 0 .
+red s 0 >= - s s 0 .
+red - s 0 >= s 0 .
+red - s_^3(0) divides s_^10(0) .
+red s_^3(0) divides - s_^9(0) .
+
+red 1 .
+red -1 .
+red 2 + -1 .
+
+red -8888888888888888888888888888888888888888888888888888888 .
+
+red -42 .
+
+set print number off .
+
+red - 0 .
+
+red 2 ^ 200000000000000000000 .
+red 1 ^ 200000000000000000000 .
+red -1 ^ 200000000000000000000 .
+red -1 ^ 200000000000000000001 .
+red 0 ^ 200000000000000000001 .
+red 1 << 200000000000000000001 .
+red 0 << 200000000000000000001 .

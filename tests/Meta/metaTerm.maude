@@ -1,0 +1,25 @@
+set show timing off .
+set show advisories off .
+
+select QID .
+
+red 'a:s .
+
+select META-TERM .
+
+red 'a:s .
+
+red ''a:b .
+
+red getName('a.s) .
+red getType('a.s) .
+red getName('a:s) .
+red getType('a:s) .
+
+red '`[s`] .
+red '`[s`,t`] .
+
+red getName('a.`[s`,t`]) .
+red getType('a.`[s`,t`]) .
+red getName('a:`[s`,t`]) .
+red getType('a:`[s`,t`]) .

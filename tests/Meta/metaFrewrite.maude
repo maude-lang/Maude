@@ -1,0 +1,39 @@
+set show timing off .
+set show advisories off .
+
+fmod TEST is
+  pr META-LEVEL .
+  op m : -> Module .
+  eq m =
+(mod 'FAIR is
+  protecting 'INT .
+  sorts 'Foo .
+  none
+  op 'i : 'Int -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [none] .
+  none
+  none
+  rl 'i['M:NzInt] => 'i['_-_['M:NzInt, 's_['0.Nat]]] [none] .
+  rl 'f['X:Foo, 'i['0.Nat]] => 'X:Foo [none] .
+endm) .
+  op t : -> Term .
+  eq t = 'f['f['i['s_^2['0.Nat]], 'i['s_['0.Nat]]],
+            'f['i['s_^3['0.Nat]], 'i['s_^2['0.Nat]]]] .
+endfm
+
+red metaFrewrite(m, t, 1, 1) .
+red metaFrewrite(m, t, 2, 1) .
+red metaFrewrite(m, t, 3, 1) .
+red metaFrewrite(m, t, 4, 1) .
+red metaFrewrite(m, t, 5, 1) .
+red metaFrewrite(m, t, 6, 1) .
+red metaFrewrite(m, t, 7, 1) .
+red metaFrewrite(m, t, 8, 1) .
+red metaFrewrite(m, t, 9, 1) .
+red metaFrewrite(m, t, 10, 1) .
+red metaFrewrite(m, t, 11, 1) .
+red metaFrewrite(m, t, unbounded, 1) .
+
+*** shouldn't work
+red metaFrewrite(m, t, 0, 1) .
+red metaFrewrite(m, t, 1, 0) .

@@ -1,0 +1,88 @@
+Prerequisites
+=============
+
+Maude requires following the tools:
+
+GNU gcc		http://gcc.gnu.org/
+GNU bison	http://www.gnu.org/software/bison/
+GNU flex	http://www.gnu.org/software/flex/
+
+It is recommended that you use the latest versions of bison and flex
+since Maude is known to tickle bugs in certain older versions. You
+should use gcc 3.1 or later as there are code generation issues with
+the 3.0.* series. Doug Lea's malloc (dlmalloc) is now included in the
+Maude source tree (src/3rdParty/).
+
+Maude requires the following packages:
+
+GNU gmp		http://www.swox.com/gmp/
+Tecla		http://www.astro.caltech.edu/~mcs/tecla/
+BuDDY		http://www.it-c.dk/research/buddy/
+
+
+Configuring the 3rd party packages
+==================================
+Because of C++ ABI incompatibilities, GNU gmp and BuDDy must be
+compiled with the same compiler you will use for Maude.
+
+GNU gmp	must be configured with --enable-cxx to generate the C++
+bindings. The option --disable-shared is recommended to avoid linking
+issues on various platforms.
+
+It is recommended that Tecla be configured with CFLAGS set to
+"-O2 -D_POSIX_C_SOURCE=1". This has the effect of using the thread
+unsafe library calls which avoids binary compatibility issues on
+various platforms. It is recommended that Tecla is built and installed
+with the command:
+
+ make TARGETS=normal TARGET_LIBS=static install
+
+to avoid linking issues on various platforms.
+
+BuDDy is configured by editing the config file in the top
+directory. If you are using gcc you should uncomment the line
+# BUDDYUINT64 = -DBUDDYUINT64="long long"
+
+
+Building Maude
+==============
+If everything is installed in standard places you can configure and
+build Maude with the commands:
+
+./configure
+make
+
+A very basic test suite can be run using the command:
+
+make check
+
+If you installed any of the 3rd party packages in non-standard places
+you can indicate where the header files are by setting CPPFLAGS and
+where the library files by setting LDFLAGS. If you have multiple
+versions of any these libraries in your environment you can select
+particular versions explicitly by setting:
+
+GMP_LIBS	(defaults to -lgmpxx -lgmp)
+TECLA_LIBS	(defaults to -ltecla -lcurses)
+BUDDY_LIB	(defaults to -lbuddy)
+
+A more realistic configure to make, check and install a static binary
+using a separate build tree might look something like:
+
+mkdir Build
+cd Build
+
+../configure \
+CPPFLAGS="-I/home/me/include" \
+LDFLAGS="-static -L/home/me/lib" \
+GMP_LIBS="/home/me/lib/libgmpxx.a /home/me/lib/libgmp.a"
+
+make
+make check
+make install
+
+The maude binary is installed in $(bindir) and the .maude files are
+installed in $(datadir). In order for the maude binary to find the
+.maude files you should set the environment variable MAUDE_LIB to
+point to $(datadir). Alternatively you could move the .maude files to
+$(bindir).

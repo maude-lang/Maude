@@ -1,0 +1,247 @@
+Maude> ==========================================
+reduce in STRING : ascii("A") .
+rewrites: 1
+result NzNat: 65
+==========================================
+reduce in STRING : ascii("AB") .
+rewrites: 0
+result [FindResult]: ascii("AB")
+==========================================
+reduce in STRING : length("AAA") .
+rewrites: 1
+result NzNat: 3
+==========================================
+reduce in STRING : length("") .
+rewrites: 1
+result Zero: 0
+==========================================
+reduce in STRING : length("abcdefghijklmnopqrstuvwxyz") .
+rewrites: 1
+result NzNat: 26
+==========================================
+reduce in STRING : substr("abcdefghijklmnopqrstuvwxyz", 10, 5) .
+rewrites: 1
+result String: "klmno"
+==========================================
+reduce in STRING : substr("abcdefghijklmnopqrstuvwxyz", 1000000000000000000, 5)
+    .
+rewrites: 1
+result String: ""
+==========================================
+reduce in STRING : substr("abcdefghijklmnopqrstuvwxyz", 10, 500000000000000000)
+    .
+rewrites: 1
+result String: "klmnopqrstuvwxyz"
+==========================================
+reduce in STRING : substr("abcdefghijklmnopqrstuvwxyz", 0, 5) .
+rewrites: 1
+result String: "abcde"
+==========================================
+reduce in STRING : substr("abcdefghijklmnopqrstuvwxyz", 10, 0) .
+rewrites: 1
+result String: ""
+==========================================
+reduce in STRING : find("abcdefghijabcdefghij", "cde", 0) .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in STRING : find("abcdefghijabcdefghij", "cde", 1) .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in STRING : find("abcdefghijabcdefghij", "cde", 2) .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in STRING : find("abcdefghijabcdefghij", "cde", 3) .
+rewrites: 1
+result NzNat: 12
+==========================================
+reduce in STRING : find("abcdefghijabcdefghij", "cde", 30000000000000000000000)
+    .
+rewrites: 1
+result FindResult: notFound
+==========================================
+reduce in STRING : rfind("abcdefghijabcdefghij", "cde", 0) .
+rewrites: 1
+result FindResult: notFound
+==========================================
+reduce in STRING : rfind("abcdefghijabcdefghij", "cde", 1) .
+rewrites: 1
+result FindResult: notFound
+==========================================
+reduce in STRING : rfind("abcdefghijabcdefghij", "cde", 2) .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in STRING : rfind("abcdefghijabcdefghij", "cde", 12) .
+rewrites: 1
+result NzNat: 12
+==========================================
+reduce in STRING : rfind("abcdefghijabcdefghij", "cde", 13) .
+rewrites: 1
+result NzNat: 12
+==========================================
+reduce in STRING : rfind("abcdefghijabcdefghij", "cde",
+    30000000000000000000000) .
+rewrites: 1
+result NzNat: 12
+==========================================
+reduce in STRING : char(65) .
+rewrites: 1
+result Char: "A"
+==========================================
+reduce in STRING : char(2000) .
+rewrites: 0
+result [String]: char(2000)
+==========================================
+reduce in STRING : char(20000000000000000000000) .
+rewrites: 0
+result [String]: char(20000000000000000000000)
+==========================================
+reduce in STRING : char(0) .
+rewrites: 1
+result Char: "\000"
+==========================================
+reduce in STRING : char(255) .
+rewrites: 1
+result Char: "\377"
+==========================================
+reduce in STRING : "test" .
+rewrites: 0
+result String: "test"
+==========================================
+reduce in STRING : "test" + "2" .
+rewrites: 1
+result String: "test2"
+==========================================
+reduce in STRING : substr("cat", 1, 1) .
+rewrites: 1
+result Char: "a"
+==========================================
+reduce in STRING : substr("\n\r\f", 1, 1) .
+rewrites: 1
+result Char: "\r"
+==========================================
+reduce in STRING : "\a" .
+rewrites: 0
+result Char: "\a"
+==========================================
+reduce in STRING : substr("a\"\"b", 0, 0) .
+rewrites: 1
+result String: ""
+==========================================
+reduce in STRING : substr("a\"\"b", 0, 2) .
+rewrites: 1
+result String: "a\""
+==========================================
+reduce in STRING : substr("a\"\"b", 0, 100) .
+rewrites: 1
+result String: "a\"\"b"
+==========================================
+reduce in STRING : substr("a\"\"b", 3, 1) .
+rewrites: 1
+result Char: "b"
+==========================================
+reduce in STRING : substr("a\"\"b", 4, 1) .
+rewrites: 1
+result String: ""
+==========================================
+reduce in STRING : "abracadabra" < "aardvark" .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING : "AAA" < "aardvark" .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING : length("aardvark") .
+rewrites: 1
+result NzNat: 8
+==========================================
+reduce in STRING : "abc" == "a" + "b" + "c" .
+rewrites: 3
+result Bool: true
+==========================================
+reduce in STRING : find("catcat", "tc", 0) .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in STRING : find("catcat", "jr", 0) .
+rewrites: 1
+result FindResult: notFound
+==========================================
+reduce in STRING : rfind("catcat", "t", 10) .
+rewrites: 1
+result NzNat: 5
+==========================================
+reduce in STRING : rfind("catcat", "t", 4) .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in STRING : "\000" .
+rewrites: 0
+result Char: "\000"
+==========================================
+reduce in STRING : "\377" .
+rewrites: 0
+result Char: "\377"
+==========================================
+reduce in STRING : "\00399" .
+rewrites: 0
+result String: "\00399"
+==========================================
+reduce in STRING : "?" .
+rewrites: 0
+result Char: "?"
+==========================================
+reduce in STRING : " " .
+rewrites: 0
+result Char: " "
+==========================================
+reduce in STRING : "A" .
+rewrites: 0
+result Char: "A"
+Warning: <standard input>, line 80: ambiguous term, two parses are:
+("this is not a string").Foo
+-versus-
+("this is not a string").String
+
+Arbitrarily taking the first as correct.
+==========================================
+reduce in FOO : ("this is not a string").Foo .
+rewrites: 0
+result Foo: ("this is not a string").Foo
+==========================================
+reduce in FOO : ("this is not a string").Foo .
+rewrites: 0
+result Foo: ("this is not a string").Foo
+==========================================
+reduce in FOO : ("this is not a string").String .
+rewrites: 0
+result String: ("this is not a string").String
+==========================================
+reduce in FOO : "this is a string" .
+rewrites: 0
+result String: "this is a string"
+==========================================
+reduce in STRING : "this is a really long string; this is a really long string; this is a really long string; this is a really long string; this is a really long string." .
+rewrites: 0
+result String: "this is a really long string; this is a really long string; this is a really long string; this is a really long string; this is a really long string."
+==========================================
+reduce in STRING : char(65) .
+rewrites: 1
+result Char: "A"
+==========================================
+reduce in STRING : ascii(" ") .
+rewrites: 1
+result NzNat: 32
+==========================================
+reduce in STRING : ascii("aa") .
+rewrites: 0
+result [FindResult]: ascii("aa")
+==========================================
+reduce in STRING : char(1000) .
+rewrites: 0
+result [String]: char(1000)
+Maude> Bye.

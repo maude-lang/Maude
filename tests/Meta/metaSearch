@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Mixfix
+export MAUDE_LIB
+
+../../src/Mixfix/maude \
+  < $srcdir/metaSearch.maude -no-banner \
+  > metaSearch.out 2>&1
+
+diff $srcdir/metaSearch.expected metaSearch.out > /dev/null 2>&1

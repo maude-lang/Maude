@@ -1,0 +1,1830 @@
+2003-08-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.hh (class AU_Symbol): added decl for
+	rewriteAtTopNoOwise()
+
+	* AU_Symbol.cc (rewriteAtTopNoOwise): added
+	(complexStrategy): rewritten using rewriteAtTopNoOwise()
+	(memoStrategy): rewritten using rewriteAtTopNoOwise()
+
+===================================Maude82===========================================
+
+2003-05-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Layer.cc (solveVariables): use
+	MemoryCell::okToCollectGarbage()
+	
+===================================Maude80b===========================================
+
+2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Matcher.cc (determineRigidBlocks): use clear()
+
+	* AU_DequeDagNode.cc (overwriteWithClone): use
+	copySetRewritingFlags() 
+	(makeClone): use copySetRewritingFlags()
+
+	* AU_DagNode.cc (overwriteWithClone): use copySetRewritingFlags()
+	(makeClone): use copySetRewritingFlags()
+
+2003-04-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsCompiler.cc (addFixedLengthBlock): fixed (invisible) bug
+	where we had the earlyMatchFailOnInstanceOf() the wrong way around
+	(addFixedLengthBlock): rewrote shift calculation inner loop to
+	make it more understandable
+	(addFixedLengthBlock): rewrote shift calculation inner loop to fix
+	bug where the metalevel binds a variable that invalidates the
+	subsumption and we end up with too big of a shift
+
+	* AU_Layer.cc (bindVariables): use safeCast() on result of
+	makeFragment()
+
+	* AU_Matcher.cc (match): use safeCast()
+
+2003-04-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_GreedyMatcher.cc (greedyMatchVariableBlock): fix bug in the
+	case where a variable has to take the identity by setting it to
+	[pos, pos-1] rather than [pos+1, pos]; this is important since
+	last variable in bloack can have its lastSubject set to pos-1 in
+	the code that assigns spare subterms
+
+	* AU_Symbol.cc (calculateNrSubjectsMatched): fixed bug where we
+	weren't handling the case that d points to a AU_DequeDagNode; use
+	safeCast()
+
+	* AU_GreedyMatcher.cc (greedyBindVariables): added Assert() to
+	catch -ve number of subjects assigned to a variable
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): deleted decl for
+	calculateNrSubjectsMatched()
+
+	* AU_DequeMatcher.cc (dequeMatch): fixed bug wherewe weren't
+	checking that there was enough arguments before handling a
+	variable bound to an alien
+	(dequeMatch): changed way of keeping track of bounds
+
+2003-04-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.cc (stackArguments): handle deque case properly rather
+	than converting to AU_DagNode
+	(normalizeAndComputeTrueSort): only do arg sort computations and
+	normalizeAtTop() if the subject is fresh
+	(computeBaseSort): rewritten using FOR_EACH_CONST()
+
+	* AU_DequeDagNode.cc (stackArguments): fixed bug where we weren't
+	initializing j
+
+	* AU_Term.cc (deepSelfDestruct): use FOR_EACH_CONST()
+	(normalize): use FOR_EACH_CONST()
+	(findEagerVariables): use FOR_EACH_CONST()
+	(markEagerArguments): use FOR_EACH_CONST()
+	(analyseCollapses2): use FOR_EACH_CONST() (2 places)
+	(dump): use FOR_EACH_CONST()
+	(findAvailableTerms): use FOR_EACH_CONST()
+	(compileRhs2): use FOR_EACH_CONST() (2 places)
+
+	* AU_ExtensionInfo.cc (copy): use safeCast()
+
+	* AU_DagNode.cc (partialReplace): use safeCast()
+	(partialConstruct): use safeCast()
+	(matchVariableWithExtension): use safeCast()
+
+	* AU_Term.cc (normalize): use safeCast() (2 places)
+
+2003-04-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.cc (complexStrategy): simplified using rewriteAtTop()
+	(complexStrategy): simplified using rewriteAtTop()
+
+	* AU_Symbol.hh (class AU_Symbol): updated decl for
+	complexStrategy()
+
+	* AU_Symbol.cc (makeDagNode): use STL copy()
+	(eqRewrite): need to check for equationFree() even in assignment
+	case because reduce flag may not have be set because sort was not
+	known because of an mb.
+	(ruleRewrite): check for ruleFree()
+	(AU_Symbol): set useDequeFlag only if we have standardStrategy()
+	(eqRewrite): safeCast() to AU_DagNode* in the complexStrategy()
+	case
+
+	* AU_DagNode.cc (overwriteWithClone): use STL copy()
+	(makeClone): use STL copy()
+	(copyEagerUptoReduced2): use STL copy()
+
+2003-04-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.hh (symbol): use safeCast()
+
+	* AU_DagNode.hh (class AU_DagNode): added decl for disappear()
+
+	* AU_Normalize.cc (normalizeAtTop): rewritten
+	(disappear): added
+
+	* AU_BaseDagNode.cc: deleted
+
+	* AU_DagNode.hh (class AU_DagNode): class AU_BaseDagNode no longer
+	a friend
+
+	* AU_BaseDagNode.cc (makeExtensionInfo): deleted
+	(getSize): deleted
+
+	* AU_BaseDagNode.hh (class AU_BaseDagNode): deleted decls for
+	makeExtensionInfo() and getSize()
+
+	* AU_DequeDagNode.cc (matchVariableWithExtension): deleted
+	(makeExtensionInfo): added
+
+	* AU_DequeDagNode.hh (class AU_DequeDagNode): added decl for
+	makeExtensionInfo(); deleted decl for matchVariableWithExtension()
+
+	* AU_Matcher.cc (matchRigidPart): use FOR_EACH_CONST
+
+	* AU_DagNode.cc (overwriteWithClone): fixed bug where we weren't
+	incrementing j
+	(makeClone): fix symmetric bug
+
+2003-04-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DequeDagNode.cc (getHashValue): implemented properly
+
+	* AU_Normalize.cc (normalizeAtTop): use AU_Deque ctor
+
+	* AU_Symbol.hh (class AU_Symbol): added decl for rewriteAtTop()
+
+	* AU_Symbol.cc (rewriteAtTop): added
+	(eqRewrite): use rewriteAtTop(); assume deque form never needs to
+	be rewritten
+
+	* AU_Normalize.cc (normalizeAtTop): use useDeque()
+
+	* AU_DagNode.cc (getHashValue): use FOR_EACH_CONST()
+	(compareArguments): use FOR_EACH_CONST()
+	(clearCopyPointers2): use FOR_EACH_CONST()
+	(overwriteWithClone): use FOR_EACH_CONST()
+	(makeClone): use FOR_EACH_CONST()
+
+	* AU_DagNode.hh (setProducedByAssignment): use
+	setNormalizationStatus()
+	(producedByAssignment): deleted
+	(nrArgs): deleted
+	(getArgument): deleted
+	(AU_BaseDagNode): use setNormalizationStatus()
+
+	* AU_Symbol.hh (class AU_Symbol): added decl for
+	compileEquations()
+
+	* AU_Symbol.cc (AU_Symbol): init useDequeFlag
+	(compileEquations): added
+
+	* AU_Symbol.hh (class AU_Symbol): added data member useDequeFlag
+	(useDeque): added
+
+	* AU_DagNode.cc (markArguments): rewritten to avoid recursing on
+	the first arg that shares our symbol
+
+2003-04-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DequeMatcher.cc (dequeMatch): fixed bug where we weren't
+	assigning to returnedSubproblem in the success case
+
+2003-04-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagOperations.cc (eliminateBackward): first arg no longer
+	const
+	(eliminateForward): first arg no longer const
+
+	* AU_DagNode.hh (class AU_DagNode): updated decls for
+	eliminateForward() and eliminateBackward()
+
+	* AU_DequeMatcher.cc: created
+
+	* AU_Normalize.cc (normalizeAtTop): use safeCast() (2 places)
+
+	* AU_DagOperations.cc (eliminateForward): use getAU_DagNode()
+	rather than static_cast - fixes a bug
+	(eliminateBackward): ditto
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added decl for
+	dequeMatch()
+
+	* AU_Matcher.cc (match): handle deque form via dequeMatch()
+
+	* AU_Normalize.cc (normalizeAtTop): only convert to deque form if
+	symbol is equationFree()
+
+	* AU_Symbol.hh (class AU_Symbol): added decl for complexStrategy()
+
+	* AU_Symbol.cc (complexStrategy): added
+	(memoStrategy): use isFresh()
+	(memoStrategy): check for DEQUED
+	(eqRewrite): rewritten to handle deque case
+
+	* AU_BaseDagNode.hh (isFresh): added
+
+2003-04-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DequeDagNode.cc (dequeToArgVec): fixed buf where we weren't
+	preserving sort index and reduced flag
+
+	* AU_Normalize.cc (normalizeAtTop): fixed bug where we were
+	setting e to argArray.begin()
+
+2003-04-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.cc (computeBaseSort): fixed bug where we were falling
+	into AU_DagNode* case
+
+	* AU_Normalize.cc (normalizeAtTop): temporary hack to force
+	everything into deque form for testing
+
+	* AU_DequeDagNode.hh (AU_DequeDagNode): initialize deque with copy
+	ctor rather than assignment
+
+2003-04-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Normalize.cc: created
+
+	* AU_DequeDagNode.hh (AU_DequeDagNode): take AU_Deque arg
+
+	* AU_DequeDagNode.cc (makeClone): use new ctor
+
+	* AU_DagNode.hh (class AU_DagNode): added DEQUED to enum
+	NormalizationResult
+
+2003-04-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.cc (ruleRewrite): use getAU_DagNode()
+	(eqRewrite): use getAU_DagNode()
+	(memoStrategy): use getAU_DagNode()
+	(computeBaseSort): handle AU_DequeDagNode; use safeCast()
+	(normalizeAndComputeTrueSort): use getAU_DagNode()
+	(stackArguments): use getAU_DagNode()
+
+	* AU_Matcher.cc (match): use getAU_DagNode()
+
+	* AU_DagNode.cc (copyEagerUptoReduced2): use safeCast()
+
+	* AU_Term.cc (compareArguments): code cleaning
+
+	* AU_DequeDagNode.cc (compareArguments): code cleaning
+
+	* AU_BaseDagNode.cc (makeExtensionInfo): use getAU_DagNode()
+	(getSize): handle ACU_TreeDagNode
+
+	* AU_DagNode.hh: added decl for getAU_DagNode()
+
+	* AU_DagNode.cc (getAU_DagNode): added
+
+2003-04-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DequeDagNode.cc (arguments): use
+	AU_DequeDagArgumentIterator()
+
+	* AU_Theory.hh: added class AU_DequeDagArgumentIterator
+
+	* AU_DequeDagArgumentIterator.cc: created
+
+	* AU_DequeDagArgumentIterator.hh: created
+
+	* AU_DequeDagNode.hh (getDeque): added
+
+	* AU_Term.cc (compareArguments): (Term* version) use iterators;
+	use new ordering
+	(compareArguments): (DagNode* version) use iterators; use new
+	ordering; handle AU_DequeDagNodes
+
+	* AU_DagNode.cc (compareArguments): check for deque; use new
+	ordering
+
+	* AU_Theory.hh: added class AU_BaseDagNode and class
+	AU_DequeDagNode
+
+	* AU_DagNode.hh (class AU_DagNode): made AU_DequeDagNode a friend
+
+	* AU_DequeDagNode.hh: created
+
+	* AU_DequeDagNode.cc: created
+
+2003-04-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.hh (symbol): deleted
+	(producedByAssignment): sue new theory byte semantics
+	(setProducedByAssignment): use new theory byte semantics
+	(class AU_DagNode): derive from AU_BaseDagNode
+	(AU_BaseDagNode): call AU_BaseDagNode(); use new theory byte
+	semantics
+
+	* AU_BaseDagNode.hh (_AU_BaseDagNode_hh_): created
+
+	* AU_DagNode.hh (class AU_DagNode): delete decl for ~AU_DagNode()
+
+	* AU_DagNode.cc (~AU_DagNode): deleted
+	
+===================================Maude80===========================================
+
+2003-03-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.cc (computeBaseSort): fixed bug: we can't rely on
+	producedByAssignment() to know that we're not in the error sort in
+	the uniform sort case, since now we can have variables and
+	assignments at the kind level; instead we check for the uniform
+	sorts component being errorFree()
+
+2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Layer.cc (buildPartition): updated DebugAdvisoryCheck()
+	(bindVariables): updated Assert()s
+
+	* AU_Term.cc: removed #pragma
+	(Term): updated Assert()
+	(normalize): updated Assert()
+	(insertAbstractionVariables): DebugAdvisoryCheck() ->
+	DebugAdvisory()
+	
+	* AU_Term.hh: removed #pragma
+
+	* AU_Symbol.cc: removed #pragma
+	(eqRewrite): updated Assert()
+	(computeBaseSort): updated Assert()s
+	(normalizeAndComputeTrueSort): updated Assert()
+
+	* AU_Symbol.hh: removed #pragma
+
+	* AU_Subproblem.cc: removed #pragma
+	(AU_Subproblem): updated Assert()
+
+	* AU_Subproblem.hh: removed #pragma
+
+	* AU_RhsAutomaton.cc: removed #pragma
+
+	* AU_RhsAutomaton.hh: removed #pragma
+
+	* AU_Matcher.cc (match): updated Assert()s, DebugAdvisoryCheck()s
+	(matchRigidPart): updated Assert()s
+	(forcedLoneVariableCase): updated Assert()s
+	(determineRigidBlocks): updated Assert()s, DebugAdvisoryCheck()
+
+	* AU_LhsCompiler.cc (compileLhs2): updated Assert()s
+
+	* AU_LhsAutomaton.cc: removed #pragma
+
+	* AU_LhsAutomaton.hh: removed #pragma
+
+	* AU_Layer.cc: removed #pragma
+	(link): updated Assert()
+	(solvePatterns2): updated Assert()
+	(buildPartition): updated Assert()
+
+	* AU_Layer.hh: removed #pragma
+
+	* AU_GreedyMatcher.cc (greedyMatch): updated Assert()
+	(greedyMatchRigidBlock): updated Assert()s
+	(greedyMatchRigidBlock2): updated Assert()
+	(greedyMatchFixedLengthBlock): updated Assert()s
+	(greedyMatchBlocks): updated Assert()
+	(greedyMatchVariableBlock): updated Asserts(),
+	DebugAdvisoryCheck()
+
+	* AU_FullMatcher.cc (fullMatchRigidBlock): updated Assert()s
+	(fullMatchRigidBlock2): updated Assert()
+	(fullMatchFixedLengthBlock): updated Assert()s
+	(buildLeftmostPath): updated Assert()
+
+	* AU_ExtensionInfo.cc: removed #pragma
+	(buildMatchedPortion): updated Assert()
+
+	* AU_ExtensionInfo.hh: removed #pragma
+
+	* AU_DagOperations.cc (eliminateForward): updated Assert()
+	(eliminateBackward): updated Assert()
+	(makeFragment): updated Assert()
+
+	* AU_DagNode.cc: removed #pragma
+	(compareArguments): updated Assert()
+	(markArguments): updated Assert()
+	(normalizeAtTop): updated Assert()s
+
+	* AU_DagNode.hh: removed #pragma
+
+	* AU_DagArgumentIterator.cc: removed #pragma
+	(argument): updated Assert()
+	(next): updated Assert()
+
+	* AU_DagArgumentIterator.hh: removed #pragma
+
+	* AU_CollapseMatcher.cc (uniqueCollapseMatch): updated Assert()
+	(bindUnboundVariablesToIdentity): updated Assert()
+	(multiwayCollapseMatch): updated Assert()s
+	(collapseMatch): updated Assert()
+
+	* AU_ArgumentIterator.cc: removed #pragma
+	(argument): updated Assert()
+	(next): updated Assert()
+
+	* AU_ArgumentIterator.hh: removed #pragma
+	
+===================================Maude79===========================================
+
+2003-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.cc (analyseCollapses): becomes analyseCollapses2()
+
+	* AU_Term.hh (class AU_Term): analyseCollapses() ->
+	analyseCollapses2() 
+
+2002-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Matcher.cc (forcedLoneVariableCase): replaced
+	rawBasePointer() calls with iterators
+
+2002-11-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.cc (compareArguments): use const_iterators in place
+	of CONST_ARG_VEC_HACK()s
+	(markArguments): use const_iterators in place of
+	CONST_ARG_VEC_HACK()s
+
+2002-10-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.hh (class AU_Symbol): postInterSymbolPass() ->
+	postOpDeclarationPass()
+
+	* AU_Symbol.cc (postInterSymbolPass): becomes
+	postOpDeclarationPass() since sort tables arem't computed at
+	postInterSymbolPass time
+
+2002-10-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.hh (class AU_DagNode): updated decl for complex
+	version of copyWithReplacement() 
+
+	* AU_DagNode.cc (copyWithReplacement): complex version: deal with
+	case where only some args are stacked
+
+	* AU_Symbol.cc (stackArguments): don't stack any args in frozen
+	case; otherwise only stack arguments that are not unstackable
+
+2002-10-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.hh (class AU_DagNode): updated decl for
+	stackArguments()
+
+	* AU_DagNode.cc (stackArguments): handle respectFrozen arg
+	
+===================================Maude76==================================================
+
+2002-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.cc (compileRhs2): added code to flag last use of each
+	source
+
+2002-07-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsCompiler.cc (addFixedLengthBlock): updated call to
+	subsumes(); this does not fix the potential bug
+
+2002-07-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsCompiler.cc (addFixedLengthBlock): added comment about a
+	possible bug
+	
+===================================Maude74==================================================
+
+2002-03-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): fixed return type
+	for greedyMatchFixedLengthBlock() decl
+
+	* AU_GreedyMatcher.cc (greedyMatchFixedLengthBlock): fixed a
+	really nasty bug where we are declared as returning bool but
+	occasionally need to return UNDECIDED (= -1). When this happens we
+	end up returning true, without binding variables/returning
+	subproblems; return type becomes int
+	
+===================================Maude71a==================================================
+
+2002-03-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.cc: deleted explicit template instantiation
+
+	* AU_Subproblem.cc: deleted explicit template instantiation
+
+	* AU_LhsAutomaton.cc: deleted explicit template instantiations
+
+	* AU_Layer.cc: deleted explicit template instantiations
+	
+===================================Maude71==================================================
+
+2002-01-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton):  added friend decl
+	for SubtermType << function
+	
+===================================Maude70==================================================
+
+2001-12-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.hh (class AU_Term): make class AU_ArgumentIterator a
+	friend
+	
+===================================Maude69==================================================
+
+2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.cc (copyWithReplacement): added
+	(Vector<RedexPosition> version)
+
+	* AU_DagNode.hh (class AU_DagNode): added decl for
+	Vector<RedexPosition> version of copyWithReplacement()
+
+===================================Engine66==================================================
+	
+2001-03-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.hh (class AU_Symbol): added decl for stackArguments()
+
+	* AU_Symbol.cc (stackArguments): added
+	
+===================================Engine65==================================================
+
+2001-01-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.hh (class AU_DagNode): updated markArguments() decl
+	and made it private
+
+	* AU_DagNode.cc (markArguments): rewritten with new semantics
+	
+===================================Engine64==================================================
+
+2000-08-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.cc (matchVariableWithExtension): don't pass
+	inErrorSort to AU_Subproblem()
+
+	* AU_Subproblem.cc (AU_Subproblem): don't handle inErrorSort
+	arg
+	(solveVariables): don't check inErrorSort
+
+	* AU_Subproblem.hh (class AU_Subproblem): ctor no longer takes
+	inErrorSort arg; deleted inErrorSort data member
+
+	* AU_LhsCompiler.cc (compileLhs2): don't pass inErrorSort arg to
+	AU_LhsAutomaton(); don't use it to determine greediness either
+
+	* AU_FullMatcher.cc (buildLeftmostPath): don't pass inErrorSort
+	arg to AU_Subproblem()
+
+	* AU_LhsAutomaton.cc (AU_LhsAutomaton): don't handle inErrorSort
+	arg
+	(dump): don't dump inErrorSort
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): ctor decl no longer
+	takes inErrorSort arg
+	(class AU_LhsAutomaton): deleted inErrorSort data member
+
+2000-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.cc (eqRewrite): greatly simplified now that we
+	no longer treat last strategy zero specially when term is in the
+	error sort
+	(memoStrategy): ditto
+
+2000-07-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.cc (computeBaseSort): don't handle union sorts
+	
+===================================Engine61==================================================
+
+2000-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_RhsAutomaton.cc (remapIndices): added
+
+	* AU_RhsAutomaton.hh (class AU_RhsAutomaton): added decl for
+	remapIndices()
+
+2000-07-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsCompiler.cc (compileLhs2): use getNrProtectedVariables()
+	instead of nrVariables()
+
+	* AU_Term.cc (compileRhs2): use makeConstructionIndex() instead of
+	allocateIndex()
+	(insertAbstractionVariables): use makeProtectedVariable() instead
+	of makeAbstractionVariable()
+
+2000-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.cc (findAvailableTerms): don't insert ground terms into
+	availableTerms since we can't do left->right sharing on them
+
+	* AU_RhsAutomaton.cc (construct): don't call buildAliens()
+	(replace): don't call buildAliens()
+	(dump): don't call RhsAutomaton::dump()
+
+	* AU_Term.hh (class AU_Term): delete decl for compileRhs()
+
+	* AU_Term.cc (compileRhs): deleted
+	
+===================================Engine60==================================================
+
+2000-07-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_RhsAutomaton.hh (class AU_RhsAutomaton): removed extraneous
+	decl for dump()
+
+2000-07-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.cc (findAvailableTerms): added
+	(compileRhs2): added
+
+	* AU_Term.hh (class AU_Term): added decls for findAvailableTerms()
+	and compileRhs2()
+	
+===================================Engine59==================================================
+
+2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsCompiler.cc (compileLhs): becomes compileLhs2()
+
+	* AU_Term.hh (class AU_Term): compileLhs() -> compileLhs2()
+
+2000-06-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsCompiler.cc (compileLhs): index() -> getIndex()
+	(findConstraintPropagationSequence): index() -> getIndex()
+	(unitVariable): lookupSort() -> getSort()
+	(compileLhs): lookupSort() -> getSort()
+
+	* AU_LhsAutomaton.cc (addRigidVariable): index() -> getIndex()
+	(addRigidVariable): lookupSort() -> getSort()
+	(addFlexVariable): lookupSort() -> getSort()
+	(addFlexVariable): index() -> getIndex()
+
+	* AU_Term.cc (compileRhs): modifiedIndex() -> getModifiedIndex()
+	
+===================================Engine58==================================================
+
+2000-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.cc (dump): ifdef'd
+
+	* AU_Term.hh (class AU_Term): use NO_COPYING() macro; ifdef'd
+	dump() decl
+
+	* AU_RhsAutomaton.cc (dump): ifdef'd
+
+	* AU_RhsAutomaton.hh (class AU_RhsAutomaton): use NO_COPYING()
+	macro; ifdef'd dump() decl
+
+	* AU_LhsAutomaton.cc (dump): ifdef'd
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): use NO_COPYING()
+	macro; ifdef'd dump() decl
+
+	* AU_Symbol.cc (eqRewrite): AdvisoryCheck() -> IssueAdvisory()
+	(memoStrategy): AdvisoryCheck() -> IssueAdvisory()
+
+2000-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Layer.cc (solveVariables): call DagNode::okToCollectGarbage()
+	after every failed call to bindVariables() to prevent build up of
+	failed solutions
+	
+===================================Engine56==================================================
+
+1999-11-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.hh (class AU_Symbol): added decl for memoStrategy()
+
+	* AU_Symbol.cc (eqRewrite): call memoStrategy()
+	(memoStrategy): added
+
+1999-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.cc (AU_Symbol): use new AssociativeSymbol
+	conventions
+	
+===================================Engine53==================================================
+
+1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsCompiler.cc (compileLhs): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>() (*3)
+	(addFixedLengthBlock): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+	(findConstraintPropagationSequence): VariableTerm::dynamicCast()
+	-> dynamic_cast<VariableTerm*>() (*2)
+
+	* AU_Term.cc (compileRhs): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+	(insertAbstractionVariables): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+	
+	* AU_Symbol.cc (AU_Symbol): aded memoFlag arg
+
+	* AU_Symbol.hh (class AU_Symbol): added memoFlag arg to ctor decl
+
+1999-10-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.hh (class AU_DagNode): added decl for getHashValue()
+
+	* AU_DagNode.cc (getHashValue): added
+	
+===================================Engine52==================================================
+
+1999-08-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsAutomaton.cc (updateWholeBounds): plus() -> uplus()
+	(updateFlexBounds): plus() -> uplus()
+
+	* AU_Layer.cc (addTopVariable): plus() -> uplus()
+	
+===================================Engine51==================================================
+
+1999-06-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.cc (compareArguments): SPEED_HACK replaced by
+	CONST_ARG_VEC_HACKs
+	(markArguments): added CONST_ARG_VEC_HACK; turned for() loop into
+	do while since we always have at least 2 arguments
+
+1999-05-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.cc (overwriteWithClone): copy theory byte
+	(makeClone): copy theory byte
+
+1999-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.hh (class AU_Symbol): computeTrueSort() ->
+	normalizeAndComputeTrueSort()
+
+	* AU_Symbol.cc (computeTrueSort): become
+	normalizeAndComputeTrueSort
+	(normalizeAndComputeTrueSort): use fastComputeTrueSort()
+	
+===================================Engine49==================================================
+
+1999-04-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.cc (normalize): handle all identity case - fixing long
+	standing bug
+	
+===================================Engine48==================================================
+===================================Maude 1.0.2 released=======================================
+===================================Maude 1.0.1 released=======================================
+
+1999-03-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Matcher.cc (forcedLoneVariableCase): fixed nasty bug in
+	FAST_LONE_VARIABLE case where we were using wrong index var for
+	destination 
+
+	* AU_LhsCompiler.cc (compileLhs): added code to generate fast lone
+	variable case
+
+	* AU_LhsAutomaton.cc (operator<<): added FAST_LONE_VARIABLE case
+
+	* AU_Matcher.cc (forcedLoneVariableCase): added FAST_LONE_VARIABLE
+	case
+	(match): add FAST_LONE_VARIABLE to DebugAdvisoryCheck() and Assert()
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added
+	FAST_LONE_VARIABLE to MatchStrategy
+
+	* AU_LhsAutomaton.cc (addRigidVariable): don't init structure field
+	(addFlexVariable): don't init structure field
+	(addFlexAbstractionVariable): don't init structure field
+	(dump): don't print structure field (2 places)
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): deleted structure
+	field from struct TopVariablesince in's not used - we decide at
+	compile time whether we can use greedy algorithm based on sort
+	structures. make index field a short so we can share space with
+	flags and avoid hole with attendent purify warnings.
+
+1999-02-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.cc (normalizeAtTop): fixed bug in identity test (2
+	places)
+
+1999-02-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.cc (normalizeAtTop): need to be able to collect
+	garbage in identity + expansion case
+	(normalizeAtTop): added Assert to check buffer size in expansion +
+	identities case
+
+	* AU_Symbol.cc (eqRewrite): use new normalizeAtTop() semantics and
+	return value (4 places)
+	(computeTrueSort): use new normalizeAtTop() semantics and
+	return value
+
+	* AU_DagNode.hh (class AU_DagNode): added enum NormalizationResult
+	(class AU_DagNode): updated decl for normalizeAtTop(); deleted
+	decl for eliminateIdentity()
+
+	* AU_DagNode.cc (normalizeAtTop): now do identity elimination
+	(eliminateIdentity): deleted
+	
+===================================VectorExperiment==========================================
+
+Fri Nov  6 16:18:30 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Term.cc (deepCopy): -> deepCopy2()
+
+	* AU_Term.hh (class AU_Term): deepCopy() -> deepCopy2()
+	
+===================================Engine43==================================================
+
+Thu Oct  8 14:00:28 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_DagOperations.cc (eliminateForward): removed const_cast and added const
+
+	* AU_Term.cc (compareArguments): (Term* version) added const_cast
+	(compareArguments): (DagNode* version) added const_cast
+	(compareArguments): removed const_cast and added const
+
+	* AU_DagNode.cc (matchVariableWithExtension): static_cast -> const_cast
+
+	* AU_DagOperations.cc (eliminateForward): inserted const_cast
+	(eliminateBackward): inserted const_cast
+	
+===================================Engine41==================================================
+
+Wed Sep 23 09:50:26 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Symbol.cc (computeBaseSort): implemented lastIndex heuristic
+	for uniSort case
+
+Fri Sep 18 14:21:32 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Symbol.cc (computeBaseSort): rewritten using setSortIndex(),
+	lookupSortIndex(), traverse() and DagNode::leq()
+
+	* AU_DagNode.cc (overwriteWithClone): use setSortIndex()
+	(makeClone): use setSortIndex()
+
+	* AU_Matcher.cc (matchRigidPart): use DagNode::leq()
+	(checkLeftEnd): use DagNode::leq()
+	(checkRightEnd): use DagNode::leq()
+	(forcedLoneVariableCase): use DagNode::leq()
+
+	* AU_GreedyMatcher.cc (greedyMatchFixedLengthBlock): use
+	DagNode::leq()
+	(greedyMatchVariableBlock): use DagNode::leq() (4 places)
+
+	* AU_FullMatcher.cc (fullMatchFixedLengthBlock): use
+	DagNode::leq()
+
+Fri Sep 11 18:11:19 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Matcher.cc (forcedLoneVariableCase): use new checkSort()
+	convention
+
+	* AU_Layer.cc (bindVariables): use new checkSort() convention
+
+	* AU_Symbol.cc (computeBaseSort): use <=(DagNode*,Sort&)
+
+	* AU_Matcher.cc (matchRigidPart): use <=(DagNode*,Sort&)
+	(checkLeftEnd): use <=(DagNode*,Sort&)
+	(checkRightEnd): use <=(DagNode*,Sort&)
+	(forcedLoneVariableCase): use <=(DagNode*,Sort&)
+
+	* AU_GreedyMatcher.cc (greedyMatchFixedLengthBlock): use
+	<=(DagNode*,Sort&)
+	(greedyMatchVariableBlock): use <=(DagNode*,Sort&) (4 places)
+
+	* AU_FullMatcher.cc (fullMatchFixedLengthBlock): use
+	<=(DagNode*,Sort&)
+	
+===================================Engine40==================================================
+
+Mon Jul 20 19:51:03 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Term.cc (AU_Term): new ctor added
+
+	* AU_Term.hh (class AU_Term): added decls for deepCopy() and new
+	ctor
+	
+===================================Engine39==================================================
+
+Wed Jun 10 14:31:27 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Term.cc (normalize): don't use earlyGetIdentity()
+
+	* AU_Symbol.hh (class AU_Symbol): changed compileOpDeclarations()
+	decl to postInterSymbolPass()
+
+	* AU_Symbol.cc (compileOpDeclarations): changed to postInterSymbolPass()
+
+	* AU_Term.hh (class AU_Term): updated normalize() decl
+
+	* AU_Term.cc: IntSet -> NatSet
+	(normalize): compute and set changed flag
+
+	* AU_LhsCompiler.cc: IntSet -> NatSet
+
+	* AU_Term.hh: IntSet -> NatSet
+	
+===================================Engine38==================================================
+
+Wed Jun  3 16:34:14 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Term.cc (normalize): use earlyGetIdentity()
+
+Fri Feb 20 17:31:47 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_DagNode.cc (stackArguments): only stack arguments that are
+	not flagged as unstackable
+	
+===================================Engine36==================================================
+
+Mon Feb 16 16:21:14 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_LhsAutomaton.cc (AU_LhsAutomaton): fixed bug where we were
+	deleting rigid part 2nd time instead of flex part
+
+Thu Feb 12 11:53:39 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_FullMatcher.cc (determineRigidBlocks): moved to AU_Matcher.cc
+	as this is now called only in match()
+
+	* AU_LhsAutomaton.cc (~AU_LhsAutomaton): added
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added decl for
+	~AU_LhsAutomaton()
+
+	* AU_Term.cc (normalize): compare() == 0 changed to equal()
+
+	* AU_Symbol.cc (calculateNrSubjectsMatched): compare() == 0
+	changed to equal() (3 places)
+
+	* AU_Matcher.cc (matchRigidPart): compare() !=
+	0 changed to !equal()
+	(checkLeftEnd): compare() == 0 changed to equal()
+	(checkRightEnd): compare() == 0 changed to equal()
+
+	* AU_GreedyMatcher.cc (greedyMatchFixedLengthBlock): compare() !=
+	0 changed to !equal() (2 places)
+
+	* AU_FullMatcher.cc (fullMatchFixedLengthBlock): compare() != 0
+	changed to !equal() (2 places)
+
+	* AU_DagOperations.cc (eliminateForward): compare() == 0 changed
+	to equal() (4 places)
+	(eliminateForward): compare() != 0 changed to !equal()
+
+	* AU_DagNode.cc (eliminateIdentity): compare() == 0 changed to
+	equal()
+
+	* AU_CollapseMatcher.cc (uniqueCollapseMatch): compare() != 0
+	changed to !equal() (2 places)
+	(multiwayCollapseMatch): compare() != 0
+	changed to !equal() (2 places)
+	(multiwayCollapseMatch): compare() == 0 changed to equal() (2
+	places)
+
+Wed Feb 11 16:58:12 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_GreedyMatcher.cc (greedyMatchFixedLengthBlock): need to call
+	delete sp if we get a subproblem in the NON_GROUND_ALIEN
+	case. This was a serious memory leak bug.
+
+	* AU_FullMatcher.cc (buildLeftmostPath): use delete rather than
+	calling deepSelfDestruct()
+
+	* AU_Layer.cc (AU_Layer): use delete rather than calling
+	deepSelfDestruct()
+
+	* AU_Subproblem.hh (class AU_Subproblem): deleted decl for
+	deepSelfDestruct()
+
+	* AU_Subproblem.cc (deepSelfDestruct): deleted
+
+Tue Feb 10 15:24:31 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_GreedyMatcher.cc (greedyMatch): don't call determineRigidBlocks()
+
+	* AU_FullMatcher.cc (fullMatch): don't call determineRigidBlocks()
+
+	* AU_Matcher.cc (match): call determineRigidBlocks()
+	
+=============================Engine35========================================================
+
+Fri Feb  6 11:40:28 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_LhsCompiler.cc (compileLhs): avoid using greedy strategy if
+	with are matching at top and we can collapse since greedy matcher
+	does not ensure that enough has been matched if matching with
+	extension. This is implicitly ensured if we cannot collapse.
+
+	* AU_GreedyMatcher.cc (greedyMatchFixedLengthBlock): use scratch,
+	not local for matching
+	(greedyMatchRigidBlock): copy scratch back into local after success
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): updated greedy
+	matcher function decls
+
+	* AU_GreedyMatcher.cc (greedyMatchBlocks): if we have no rigid
+	blocks, last and only variable can have both left and right extension
+	(greedyMatchVariableBlock): major rewrite to handle subtleties
+	introduced by extension
+
+Thu Feb  5 15:10:01 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_GreedyMatcher.cc: created
+
+Wed Feb  4 17:59:13 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Layer.hh (class AU_Layer): added data member lastSubjectSubterm
+	(class AU_Layer): deleted decl for computeAssignment()
+	(class AU_Layer): updated decl for solvePartition()
+
+	* AU_Layer.cc (bindVariables): no need to compute
+	lastSubjectSubterm anymore
+	(bindVariables): reorganization of loop; call to computeAssignment
+	eliminated
+	(computeAssignment): deleted
+	(buildPartition): no need to compute lastSubjectSubterm anymore
+	(solvePartition): removed lastSubjectSubterm arg 
+	(solvePartition): reorganized extraId calculations; now check that
+	what a variable is already given by partition is strictly below
+	its upperBound  brefore considering it as a candidate for getting
+	an extra identity
+	(solveVariables): don't pass lastSubjectSubterm to
+	solvePartition(); don't compute lastSubjectSubterm
+	(link): simplified inner loop
+	(initialize): initialize lastSubjectSubterm
+	(AU_Layer): don't bother initializing oneSidedId and leftId as
+	these will be initialized in initialize()
+
+Tue Feb  3 18:42:21 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Layer.hh (class AU_Layer): deleted decl for flagOneSidedId()
+	(class AU_Layer): added decl for initialize()
+
+	* AU_Layer.cc (flagOneSidedId): deleted
+
+	* AU_Subproblem.hh (class AU_Subproblem): deleted data member subject
+
+	* AU_Subproblem.cc (solveVariables): don't pass subject to
+	AU_Layer::solveVariables()
+	(AU_Subproblem): call AU_Layer::initialize()
+	(complete): don't call AU_Layer::flagOneSidedId()
+	(AU_Subproblem): don't initialize subject
+
+	* AU_Layer.cc (bindVariables): don't pass subject to
+	computeAssignment()
+	(solveVariables): don't pass subject to bindVariables() or
+	buildPartition()
+
+	* AU_Layer.hh (class AU_Layer): update decls for solveVariables(),
+	buildPartition(), bindVariables() and computeAssignment()
+
+	* AU_Layer.cc (solveVariables): removed subject arg
+	(buildPartition): removed subject arg
+	(bindVariables): removed subject arg
+	(computeAssignment): removed subject arg
+
+	* AU_Layer.hh (class AU_Layer): added data member subject;
+	reorganized data members
+
+	* AU_Layer.cc (initialize): added
+
+Mon Feb  2 11:39:27 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Subproblem.cc (AU_Subproblem): don't initialize firstSubterm
+	and lastSubterm
+
+	* AU_Subproblem.hh (class AU_Subproblem): deleted data members
+	firstSubterm and lastSubterm as they are never used one they have
+	been copied into appropriate layers
+
+Fri Jan 30 11:36:21 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Layer.hh (firstSubtermMatched): deleted
+	(lastSubtermMatched): deleted
+	(class AU_Layer): deleted decls for firstSubtermMatched() and
+	lastSubtermMatched()
+
+	* AU_Subproblem.hh (class AU_Subproblem): deleted decl for
+	fillOutExtensionInfo()
+
+	* AU_Subproblem.cc (fillOutExtensionInfo): deleted
+
+	* AU_DagNode.hh (class AU_DagNode): deleted decls for
+	eliminateSubject() and checkArguments()
+
+	* AU_DagNode.cc (checkArguments): deleted
+	(eliminateSubject): deleted
+
+	* AU_Layer.cc (bindVariables): deal with leftExtend/rightExtend
+	correctly when nrVariables == 0
+	(bindVariables): in right extend case it need not be that
+	firstSubterm == 0 
+
+	* AU_Subproblem.cc (solveVariables): use bigEnough() and
+	buildMatchedPortion() rather than callingfillOutExtensionInfo()
+
+	* AU_ExtensionInfo.hh (bigEnough): added
+	(class AU_ExtensionInfo): added decl for bigEnough()
+	(setLastMatched): call setMatchedWhole();
+
+	* AU_Layer.cc (bindVariables): set left, right and extraIdentity
+	extensionInfo
+
+	* AU_Subproblem.cc (AU_Subproblem): pass extensionInfo to
+	initializeFirst() and initializeLast()
+
+	* AU_Layer.hh (class AU_Layer): updated initializeFirst() and
+	initializeLast() decls
+
+	* AU_Layer.cc (initializeFirst): set extensionInfo if needed
+	(initializeFirst): set extensionInfo if needed
+
+	* AU_Layer.hh (class AU_Layer): added data member extensionInfo
+
+	* AU_DagOperations.cc (makeFragment): fixed initialization bug;
+	greatly simplified
+
+	* AU_ExtensionInfo.cc (buildMatchedPortion): greatly simplified
+	and bug removed by using DagNode::makeFragment()
+
+	* AU_Layer.cc (computeAssignment): use DagNode::makeFragment()
+
+	* AU_DagNode.hh (class AU_DagNode): added decl for makeFragment()
+
+	* AU_DagOperations.cc (makeFragment): added
+
+Thu Jan 29 10:17:25 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_FullMatcher.cc (determineRigidBlocks): rewritten to fix
+	horrible bug where we were incrementing r.nrSubjectsToLeave before
+	finishing current block so we were in effect incrementing
+	nrSubjectsToLeave for wrong block
+
+	* AU_Layer.cc (computeAssignment): fixed bug that aflicted left id
+	case
+
+	* AU_Layer.hh (class AU_Layer): flagOneSidedId() decl updated
+
+	* AU_Layer.cc (flagOneSidedId): name clash problem; leftId arg
+	changed to leftIdFlag
+
+	* AU_Subproblem.cc (complete): nrLayers, not nrPatternLayers for
+	loop inserting oneSidedId info
+
+	* AU_FullMatcher.cc (addVariableBlocks): awkward variables get a
+	lower bound of 0 rather than 1
+
+	* AU_Layer.cc (bindVariables): rewritten using DagNode::eliminateForward()
+	(computeAssignment): handle extra id case
+	(bindVariables): deal with the case where variable can take one
+	sided identity because it is at the wrong extreme end
+	(solvePartition): fixed i++ instead of i-- bug
+
+	* AU_Layer.hh (class AU_Layer): updated solvePartition() decl
+
+	* AU_Layer.cc (solvePartition): take lastSubjectSubterm arg; use
+	this to help determine if a variable can take an extra identity in
+	the one sided identity case.
+
+Wed Jan 28 11:32:50 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Layer.cc (buildPartition): rewritten to take account of nasty
+	bindings; no longer return 0 under any circumstances
+	(solveVariables): don't bother checking for 0 partition
+	(buildPartition): added DebugAdvisoryCheck for nast binding
+
+	* AU_Layer.hh (class AU_Layer): added decl for solvePartition()
+	(class AU_Layer): added decl for flagOneSidedId()
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): deleted decl for
+	calculateNrSubjectsMatched()
+
+	* AU_FullMatcher.cc (determineRigidBlocks): use
+	AU_Symbol::calculateNrSubjectsMatched()
+	(calculateNrSubjectsMatched): deleted
+
+	* AU_Symbol.hh (class AU_Symbol): added decl for calculateNrSubjectsMatched()
+
+	* AU_Symbol.cc (calculateNrSubjectsMatched): added
+
+	* AU_Subproblem.cc (complete): call link() rather than complete
+	(complete): call flagOneSidedId()
+
+	* AU_Layer.cc (complete): renamed to link()
+	(flagOneSidedId): added
+	(AU_Layer): clear oneSidedId and leftId
+
+	* AU_Layer.hh (class AU_Layer): added data members oneSidedId and leftId;
+	(class AU_Layer): complete renamed to link()
+
+	* AU_Layer.cc (solvePartition): added
+	(solvePartition): added to handle extra identities
+	(solveVariables): use solvePartition()
+
+	* AU_Layer.hh (class AU_Layer): added extraId field to TopVariable
+
+	* AU_ExtensionInfo.cc (buildMatchedPortion): simplified using
+	oneSidedId()
+
+Tue Jan 27 11:01:55 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_FullMatcher.cc (addVariableBlocks): use NOT_FIXED
+	(determineRigidBlocks): use NOT_FIXED
+	(fullMatchRigidBlock2): use NOT_FIXED
+	(buildLeftmostPath): removed comment on nextSubject update since
+	nasty binding will now never occur rigid block
+
+	* AU_LhsAutomaton.cc (complete): use NOT_FIXED
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added Special value
+	NOT_FIXED = -1
+
+	* AU_FullMatcher.cc (addVariableBlocks): missing continue in nasty
+	case added
+	(determineRigidBlocks): Assert() that if we have a nasty binding
+	we must have extension.
+	(determineRigidBlocks): rewritten; make sure that in nasty case we
+	incresse r.nrSubjectsToLeave rather than r.nrSubjectsForUs
+	(calculateNrSubjectsMatched): return max # of subject we could
+	match in the nasty case instead of min
+	(addVariableBlocks): adjusted as f.variable.nastyBinding now holds
+	max rather than min
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): updated
+	calculateNrSubjectsMatched() decl
+
+	* AU_FullMatcher.cc (determineRigidBlocks): handle variables with
+	nasty binding by treating them as if they are unbound.
+	(determineRigidBlocks): added DebugAdvisoryCheck()s for nasty
+	bindings
+	(calculateNrSubjectsMatched): pass back nasty flag;
+	DebugAdvisoryCheck()s removed
+	(addVariableBlocks): handle variables with nasty bindings
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added nastyBinding
+	field to struct TopVariable
+
+	* AU_FullMatcher.cc (calculateNrSubjectsMatched): added
+	DebugAdvisoryCheck()s for nasty bindings; now decrement nrArgs in
+	this case
+
+Mon Jan 26 18:07:45 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_FullMatcher.cc (determineRigidBlocks): assert that if last
+	rigid block is terminated by end of (unused) flex part rather than
+	by an unbound variable then we must have extension
+
+Fri Jan 23 18:20:51 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_FullMatcher.cc (buildLeftmostPath): added Assert to check
+	that there are unbound variable(s) before first rigid block and
+	after last rigid block if there is no extension.
+	(buildLeftmostPath): removed code for special case where flex part
+	consists of a single rigid block (and no extension) since this
+	case can no longer occur
+	(buildLeftmostPath): removed code for adjusting min and max shifts
+	where ther was no extension and no unbound variables before first
+	rigid block or after last rigid block since these cases can no
+	longer occur
+	(addRemainingPaths): removed code for case where these are no
+	unbound variables to the left of 1st rigid block (and no extension)
+	since this case can no longer occur
+	(fullMatchRigidBlock2): use eliminateForward() in place of
+	eliminateSubject(); rather aribitrarily pass limit = rightPos to
+	avoid triggering eliminateForward() precondition Assert() - may be
+	we should be smarter?
+
+Thu Jan 22 11:03:55 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_FullMatcher.cc (calculateNrSubjectsMatched): added
+	(determineRigidBlocks): rewritten using calculateNrSubjectsMatched()
+
+Wed Jan 21 11:05:37 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Matcher.cc (match): added DebugAdvisoryCheck()s for match time
+	match strategy changes
+	(matchRigidPart): fixed compare() == 0 bug (should have been !=)
+
+	* AU_FullMatcher.cc (addVariableBlocks): use flexLeftPos and
+	flexRightPos to determine to section of flex part to be examined
+	for variables
+	(determineRigidBlocks): use flexLeftPos and
+	flexRightPos to determine to section of flex part to be examined
+	for rigid blocks and end of last rigid block if we don't end in a
+	non-rigid variable
+	(buildLeftmostPath): use flexRightPos rather than last
+
+Tue Jan 20 11:24:48 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added enum Special
+	with single constant STALLED
+
+	* AU_Matcher.cc (checkLeftEnd): added
+	(checkRightEnd): added
+	(checkForRigidEnds): complete rewritten yet again, this time using
+	checkLeftEnd() and checkRightEnd() to eliminate a rats nest of gotos
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added data members
+	flexLeftPos and flexRightPos
+
+	* AU_Matcher.cc (match): added code to check nrArgs against whole
+	bounds
+	(match): Only call matchRigidPart in no extension case; tidied no
+	extension case
+	(matchRigidPart): removed code that checked nrArgs against whole
+	bounds
+	(checkForRigidEnds): heavily rewritten with stalled flags and new
+	exit conditions for loop
+
+Mon Jan 19 10:58:34 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Matcher.cc (matchRigidPart): tidied up; nrSubtermsRemaining deleted
+	(match): now call checkForRigidEnds() in lone variable case just
+	in case lone variable is bound.
+	(matchRigidPart): more tidying
+	(forcedLoneVariableCase): assert that lone variable is unbound;
+	lone variable bound case code deleted as this case will now be
+	caught by checkForRigidEnds() and transformed into ground out case.
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added decl for
+	checkForRigidEnds(); deleted decl for matchRigidSubterm()
+
+	* AU_Matcher.cc (match): rewritten; we now try to force ends of
+	flex part if there is no extension
+	(forcedLoneVariableCase): use flexPart[flexLeftPos] rather than
+	flexPart[0]; no longer assert that flex part has length 1
+	(matchRigidPart): restored old version as there is not going to be
+	enough overlap with checkForRigidInFlex() to make it worth pulling
+	common parts into another function
+	(checkForRigidInFlex): added
+	(match): completely rewritten to use checkForRigidEnds()
+	(checkForRigidInFlex): renamed to checkForRigidEnds()
+	(matchRigidSubterm): deleted
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added decl for
+	matchRigidSubterm(); deleted decl for boundsChecks()
+
+	* AU_Matcher.cc (matchRigidSubterm): added
+	(matchRigidPart): rewrittem using matchRigidSubterm
+
+Fri Jan 16 16:23:14 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Term.cc (insertAbstractionVariables): changed
+	AdvisoryCheck() to DebugAdvisoryCheck()
+
+	* AU_Subproblem.cc (fillOutExtensionInfo): call setExtraIdentity(false)
+	as a temporary hack
+
+	* AU_LhsCompiler.cc (compileLhs): use oneSidedId()
+	(analyseConstraintPropagation): use oneSidedId()
+
+	* AU_DagNode.cc (matchVariableWithExtension): use oneSidedId()
+
+	* AU_Symbol.cc (AU_Symbol): initialize oneSidedIdFlag
+
+	* AU_Symbol.hh (oneSidedId): added
+	(class AU_Symbol): added data member oneSidedIdFlag and decl for oneSidedId()
+
+	* AU_DagNode.cc (partialReplace): removed Assert that we don't
+	replace a single arg
+	(partialConstruct): removed Assert that we don't replace a single arg
+	(matchVariableWithExtension): allow variable to match just one
+	thing if we have a one sided identity
+
+	* AU_ExtensionInfo.cc (makeClone): copy extraIdentityFlag
+	(copy): copy extraIdentityFlag
+	(buildMatchedPortion): handle extra identity case
+
+	* AU_ExtensionInfo.hh (setExtraIdentity): added
+	(class AU_ExtensionInfo): added data member extraIdentityFlag and
+	decl for setExtraIdentity()
+
+Tue Jan 13 10:57:17 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_LhsCompiler.cc (compileLhs): don't employ greedy or lone
+	variable strategies if we have a one sided identity
+	(analyseConstraintPropagation): don't propagate constraints on a
+	lone variable if we have a one sided identity
+
+	* AU_DagOperations.cc (eliminateForward): fixed bugs where we were
+	not testing compare result against 0
+	(eliminateBackward): fixed symmtric bugs
+
+	* AU_Matcher.cc (matchRigidPart): rewrote bound variable case
+	using eliminateForward() and eliminateBackward()
+
+Mon Jan 12 17:44:19 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_DagNode.hh (class AU_DagNode): added decls for
+	eliminateForward() and eliminateBackward()
+	
+	* AU_DagOperations.cc (eliminateForward): added; the idea is that
+	this function will match a target (typically avariable binding)
+ 	against our dag node from a given position taking into to account
+	the following possibilities:
+	(a) the target might be our identity
+	(b) the target might have our top symbol
+	(c) the target might have our top symbol and have our identity
+	underneath it (in first or last position). This pathogical case
+	arises if we have a one sided identity.
+	(eliminateBackward): added; symmetric to eliminateForward() for
+	use in matchinging the rigid part.
+
+Fri Jan  9 11:13:19 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_LhsAutomaton.cc (dump): use bool() to make takeIdentity and
+	awkward flags print correctly
+
+	* AU_Layer.cc (buildPartition): handle case where variable is
+	bound to identity (may be by previous subproblem).
+
+Thu Jan  8 11:03:26 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Subproblem.cc (fillOutExtensionInfo): rewritten; only check
+	matched portion if pattern ws in the error sort.
+
+	* AU_Layer.cc (bindVariables): don't return out of loop with
+	anything other than false otherwise we may return a solution with
+	unbound variables
+
+Wed Jan  7 15:25:37 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_FullMatcher.cc (fullMatchRigidBlock2): implemented
+	(fullMatchFixedLengthBlock): implemented
+	(fullMatch): need to call AU_Subproblem::complete() after
+	subproblem has all the nodes added to do downTarget calculations
+
+	* AU_DagNode.cc (eliminateSubject): handle the possibility that
+	the target may be our identity
+
+	* AU_FullMatcher.cc (addRemainingPaths): implemented
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added data member
+	nrSubjectsForRightVars
+
+	* AU_FullMatcher.cc (determineRigidBlocks): treat awkward
+	variables bound to identity as if they were bound to an alien
+	(buildLeftmostPath): implemented
+	(determineRigidBlocks): calculate nrSubjectsForRightVars
+
+Fri Jan  2 14:30:02 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_LhsCompiler.cc (compileLhs): chnaged code to reflect new
+	conventions for addFlexVariable() and addRigidVariable() regarding
+	awkward variables
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): updated
+	addFlexAbstractionVariable() decl
+
+	* AU_LhsAutomaton.cc (addRigidVariable): set awkward = false
+	(addFlexVariable): set awkward flag correctly
+	(dump): print awkward flag
+	(addFlexAbstractionVariable): take awkward arg and set awkward flag
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added awkward flag
+	to struct TopVariable
+
+	* AU_CollapseMatcher.cc (uniqueCollapseMatch): deal with rigid
+	part since it is NOT the case that the rigid part need be empty
+	for collapse to occur.
+	(multiwayCollapseMatch): deal with rigid part; in particular the
+	case where we have a matching variable in the rigid part.
+	nrTopVariables replaced by nrFlexVariables throughout file.
+	(bindUnboundVariablesToIdentity): assert that variables in flex
+	part can take identity.
+	(multiwayCollapseMatch): changed many comments to reflect that
+	repeated variables are not a problem and that they are handled
+	correctly implicity though in some cases inefficiently. Removed
+	some commented out code related to repeated variables
+
+Wed Dec 24 14:26:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added decls for
+	uniqueCollapseMatch() and multiwayCollapseMatch()
+
+	* AU_CollapseMatcher.cc: created
+
+	* AU_FullMatcher.cc (determineRigidBlocks): take identity into
+	account when calculating number of subjects used up by variable and
+	rigid blocks.
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): struct RigidBlock
+	now has nrSubjectsForUs rather than nrExtraSubjects since bound
+	variable may be bound to our identity
+
+	* AU_FullMatcher.cc (fullMatch): need to add our AU_Subproblem to
+	subproblems before we let addVariableBlocks() add variable
+	abstraction subproblems
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): updated decl for addVariableBlocks()
+
+	* AU_FullMatcher.cc: created
+
+	* AU_LhsAutomaton.cc (dump): dump uniqueCollapseAutomaton if it exists
+
+	* AU_LhsCompiler.cc (compileLhs): make uniqueCollapseAutomaton if
+	needed
+
+	* AU_LhsAutomaton.cc (AU_LhsAutomaton): added
+	uniqueCollapseAutomaton arg
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added data member
+	uniqueCollapseAutomaton
+	(class AU_LhsAutomaton): added uniqueCollapseAutomaton arg to ctor
+	decl
+
+Tue Dec 23 10:58:30 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_LhsAutomaton.cc (addFlexAbstractionVariable): removed
+	shiftFactor arg
+	(dump): don't try to print name of an abstraction variable
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): removed shiftFactor
+	arg from addFlexAbstractionVariable() decl
+
+	* AU_LhsCompiler.cc (compileLhs): when we add a flex variable in
+	the general case we have to pass idPossible = true if matchAtTop
+	because of extension.
+	(compileLhs): don't pass shiftFactor to
+	addFlexAbstractionVariable() since this will always be UNDEFINED
+	(2 places).
+	(addFixedLengthBlock): always pass idPossible = false to
+	addFlexVariable() variable in fixed part can never take identity.
+
+	* AU_Term.hh (class AU_Term): updated unitVariable() decl
+
+	* AU_LhsCompiler.cc (compileLhs): handle flex lengths of 0 and 1 specially.
+	(compileLhs): use greedySafe()
+	(compileLhs): added Asserts
+	(findConstraintPropagationSequence): code cleaning
+	(compileLhs): code cleaning
+	(unitVariable): removed matchAtTop argument and simplified; made local_inline
+	(findConstraintPropagationSequence): don't pass matchAtTop
+	argument to unitVariable()
+	(compileLhs): rewritten; now explicity look for awkward variables;
+
+Mon Dec 22 14:40:40 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_LhsCompiler.cc (compileLhs): handle identity/variable
+	abstraction in flex part.
+
+	* AU_Term.hh (class AU_Term): added decl for unitVariable()
+
+	* AU_LhsCompiler.cc (unitVariable): added
+	(findConstraintPropagationSequence): simplified using unitVariable()
+
+Fri Dec 19 10:18:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Term.hh (idPossible): made const
+	(class AU_Term): updated decl for idPossible()
+
+	* AU_LhsCompiler.cc (compileLhs): simplfied using idPossible() (2 places)
+	(addFixedLengthBlock): simplfied using idPossible()
+	(findConstraintPropagationSequence): rewritten do deal with
+	abstracted aliens and variables that can take identity
+
+	* AU_Term.cc (normalize): use idPossible()
+	(analyseCollapses): use idPossible()
+	(analyseCollapses): simplified
+
+	* AU_Term.hh (idPossible): added
+	(class AU_Term): added decl for idPossible()
+
+	* AU_LhsCompiler.cc (compileLhs): pass idPossible args to
+	addRigidVariable() and addFlexVariable()
+	(addFixedLengthBlock): pass idPossible args to addFlexVariable()
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): updated decls for
+	addRigidVariable() and addFlexVariable()
+
+	* AU_LhsAutomaton.cc (addRigidVariable): added idPossible arg so
+	that we can rule out left end variable taking id if left id
+	missing and similarly with right
+	(addFlexVariable): added idPossible arg 
+
+Thu Dec 18 11:32:31 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_LhsCompiler.cc (compileLhs): pass collapsePossible flag to
+	AU_LhsAutomaton
+	(compileLhs): inErrorSort implies not greedy
+
+	* AU_LhsAutomaton.cc (dump): updated
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added decl for
+	addFlexAbstractionVariable()
+
+	* AU_LhsAutomaton.cc (AU_LhsAutomaton): take collapsePossible arg
+	(addRigidVariable): deal with variables that may take identity;
+	clear abstracted pointer.
+	(addFlexVariable): deal with variables that may take identity;
+	clear abstracted pointer.
+	(addFlexAbstractionVariable): added
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): added
+	collapsePossible arg to ctor
+
+	* AU_LhsCompiler.cc: created
+	(analyseConstraintPropagation): handle the case where flex part
+	conatins a lone abstracted term
+
+	* AU_Term.cc (normalize): handle collapse case
+
+Sun Dec 14 15:28:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Layer.cc (bindVariables): handle the case where a variable is
+	already bound to our identity.
+
+	* AU_Subproblem.cc (solvePatterns): use AU_Layer::reset()
+
+	* AU_Layer.hh (reset): added
+	(class AU_Layer): added reset() decl
+	(class AU_Layer): class AU_Subproblem is no longer a friend
+
+	* AU_Subproblem.cc (AU_Subproblem): use initializeFirst()
+	and initializeLast()
+
+	* AU_Layer.hh (class AU_Layer): added decls for initializeFirst()
+	and initializeLast()
+
+	* AU_Layer.cc (initializeFirst): added
+	(initializeLast): added
+
+	* AU_Subproblem.cc (fillOutExtensionInfo): use
+	firstSubtermMatched() and lastSubtermMatched();
+
+	* AU_Layer.hh (lastSubtermMatched): added
+	(firstSubtermMatched): added
+	(class AU_Subproblem): added decls
+
+Sat Dec 13 17:03:07 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_DagNode.cc (matchVariableWithExtension): pass Sort* rather
+	than SortCode to addTopVariable();
+	(matchVariableWithExtension): call complete();
+
+	* AU_Subproblem.hh (class AU_Subproblem): added decl for
+	fillOutExtensionInfo()
+
+	* AU_Subproblem.cc (fillOutExtensionInfo): added
+	(solveVariables): simplify using fillOutExtensionInfo()
+
+Fri Dec 12 16:49:13 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Subproblem.cc (solveVariables): check to see if matched
+	portion in error sort
+	(solveVariables): check to see if matched portion is too small
+	(less than two terms). This is possible because pattern could be
+	variable or parts of big pattern could match take identity.
+	
+	* AU_Subproblem.hh (class AU_Subproblem): added decl for complete()
+
+	* AU_Subproblem.cc (complete): added
+	(addNode): deleted
+
+	* AU_Subproblem.hh (addNode): added
+
+	* AU_Layer.cc (solvePatterns2): use Assert(d >= totalLowerBound)
+	rather than Assert(d >= prevVariables.length()) since some
+	variables may be able to take identity and may not need any subterm
+	(addTopVariable): update totalLowerBound
+	(AU_Layer): initialize totalLowerBound
+
+	* AU_Layer.hh (class AU_Layer): added decls for addTopVariable(),
+	addNode(), complete()
+	(class AU_Layer): added data member totalLowerBound
+
+	* AU_Layer.cc (addNode): added
+	(complete): added
+
+	* AU_Subproblem.hh (class AU_Subproblem): deleted
+	~AU_Subproblem() decl
+
+	* AU_Subproblem.cc (~AU_Subproblem): deleted
+	(addTopVariable): deleted
+
+	* AU_Subproblem.hh (addTopVariable): added
+	(class AU_Subproblem): updated addTopVariable() decl
+
+	* AU_Layer.cc (addTopVariable): added
+
+Thu Dec 11 18:08:35 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_DagNode.hh (class AU_DagNode): AU_Layer replaces
+	AU_Subproblem as a friend
+	(class AU_DagNode): checkArguments() 1st arg made const
+
+	* AU_Layer.cc: heavily rewritten to handle identity case
+
+Wed Dec 10 11:12:56 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Layer.cc: created
+
+	* AU_Layer.hh (class AU_Layer): created
+
+	* AU_Subproblem.hh (class AU_Subproblem): redesigned using AU_Layer
+
+	* AU_Subproblem.cc: created
+
+	* AU_DagNode.hh (class AU_DagNode): target arg of checkArguments()
+	should be a reference
+
+	* AU_DagNode.cc (checkArguments): added
+
+Tue Dec  9 16:07:04 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_DagNode.hh (class AU_DagNode): added checkArguments() decl
+
+	* AU_Matcher.cc (forcedLoneVariableCase): heavily rewritten
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): deleted
+	boundsChecks() decl
+	(class AU_LhsAutomaton): added collapseMatch() decl
+
+	* AU_Matcher.cc: created
+	(boundsChecks): deleted
+	(match): heavily rewritten
+	(matchRigidPart): heavily rewritten; removed several bugs
+	inherited from A_Theory version
+
+Mon Dec  8 10:59:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Term.cc (dump): added
+	(analyseCollapses): added
+	(normalize): make sure we contract argArray after deleting
+	identity elements
+	(insertAbstractionVariables): added
+
+	* AU_Term.hh (class AU_Term): added decls for analyseCollapses()
+	insertAbstractionVariables(), and dump()
+
+	* AU_Term.cc: created
+	(normalize): fixed serious bug that was hand over from A_Term: we
+	use wrong argArray length for computing hash value.
+
+	* AU_ArgumentIterator.hh (class AU_ArgumentIterator): use AU_Term::tuple
+	(AU_ArgumentIterator): use AU_Term::tuple
+
+	* AU_ArgumentIterator.cc (argument): use AU_Term::tuple
+
+	* AU_Term.hh (class AU_Term): added struct Tuple, argArray becomes
+	Vector<Tuple>
+
+Sun Dec  7 15:02:26 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_DagNode.cc (overwriteWithClone): don't put symbol() in local
+	Symbol* variable
+	(makeClone): don't put symbol() in local Symbol* variable
+
+	* AU_DagNode.hh (class AU_DagNode): ctor takes AU_Symbol* rather
+	than Symbol*
+
+	* AU_RhsAutomaton.cc: created
+
+	* AU_RhsAutomaton.hh (class AU_RhsAutomaton): created
+
+	* AU_ArgumentIterator.cc: created
+
+	* AU_Subproblem.hh (class AU_Subproblem): created
+
+	* AU_ArgumentIterator.hh (class AU_ArgumentIterator): created
+
+Fri Dec  5 10:46:19 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AU_Term.hh (class AU_Term): created
+
+	* AU_ExtensionInfo.cc: created
+
+	* AU_ExtensionInfo.hh (class AU_ExtensionInfo): created
+
+	* AU_DagArgumentIterator.cc: created
+
+	* AU_DagNode.hh (symbol): added
+
+	* AU_DagArgumentIterator.hh (class AU_DagArgumentIterator): created
+
+	* AU_Theory.hh: created
+
+	* AU_DagNode.cc: created
+
+	* AU_Symbol.cc (eqRewrite): rewritten along the lines of ACU_Symbol::eqRewrite()
+	(computeBaseSort): use producedByAssignment() optimization in
+	uniform sort case
+
+	* AU_DagNode.hh (class AU_DagNode): created
+
+	* AU_Symbol.cc (computeBaseSort): use local static sortIndexBuffer
+	in place of utilityBuffer
+	deleted utilityBuffer
+
+	* AU_Symbol.hh (class AU_Symbol): deleted utilityBuffer decl
+
+	* AU_Symbol.cc: created
+
+	* AU_Symbol.hh (class AU_Symbol): created
+

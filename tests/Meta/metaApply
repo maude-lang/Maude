@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Mixfix
+export MAUDE_LIB
+
+../../src/Mixfix/maude \
+  < $srcdir/metaApply.maude -no-banner \
+  > metaApply.out 2>&1
+
+diff $srcdir/metaApply.expected metaApply.out > /dev/null 2>&1

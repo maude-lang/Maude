@@ -1,0 +1,158 @@
+set show timing off .
+set show advisories off .
+
+red in META-LEVEL : metaParse(
+fmod 'FOO is
+  including 'QID .
+  sorts 'Token ; 'Foo .
+  none
+  op 'token : 'Qid -> 'Token [special(id-hook('Bubble, '1 '1)
+                                      op-hook('qidSymbol, '<Qids>, nil, 'Qid))] .
+  op '`[_`] : 'Token -> 'Foo [none] .
+  none
+  none
+endfm, '`[ 'unseen '`] , anyType) .
+
+red in META-LEVEL : metaParse(
+fmod 'FOO is
+  including 'QID-LIST .
+  sorts 'Token ; 'Foo .
+  none
+  op 'token : 'Qid -> 'Token [special(id-hook('Bubble, '0 '1)
+                                      op-hook('qidSymbol, '<Qids>, nil, 'Qid)
+				      op-hook('nilQidListSymbol, 'nil, nil, 'QidList)
+				      id-hook('Exclude, 'assoc 'com 'memo))] .
+  op '`[_`] : 'Token -> 'Foo [none] .
+  none
+  none
+endfm, '`[ '`] , anyType) .
+
+red in META-LEVEL : metaParse(
+fmod 'FOO is
+  including 'QID-LIST .
+  sorts 'Token ; 'Foo .
+  none
+  op 'tokens : 'Qid -> 'Token [special(id-hook('Bubble, '0 '10)
+                                       op-hook('qidSymbol, '<Qids>, nil, 'Qid)
+				       op-hook('nilQidListSymbol, 'nil, nil, 'QidList)
+				       op-hook('qidListSymbol, '__, 'QidList 'QidList, 'QidList)
+				       id-hook('Exclude, 'assoc 'com 'memo))] .
+  op '`[_`] : 'Token -> 'Foo [none] .
+  none
+  none
+endfm, '`[ 'a 'b 'c '`] , anyType) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo  [none] .
+  none
+  none
+endfm, '_::`Foo['a.Foo]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  nil
+  sorts 'Foo ; 'Bool .
+  none
+  op 'true : nil -> 'Bool [special(id-hook('SystemTrue, nil))] .
+  op 'false : nil -> 'Bool [special(id-hook('SystemFalse, nil))] .
+  op 'a : nil -> 'Foo  [none] .
+  none
+  none
+endfm, '_::`Foo['a.Foo]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'id : nil -> 'Foo [none] .
+  op '+ : 'Foo 'Foo -> 'Foo [id('id.Foo)] .
+  op 'a : nil -> 'Foo  [none] .
+  none
+  none
+endfm, '+['a.Foo, 'id.Foo]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'id : nil -> 'Foo [none] .
+  op '+ : 'Foo 'Foo -> 'Foo [left-id('id.Foo)] .
+  op 'a : nil -> 'Foo  [none] .
+  none
+  none
+endfm, '+['a.Foo, 'id.Foo]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op '+ : 'Foo 'Foo -> 'Foo [right-id('id.Foo)] .
+  op 'id : nil -> 'Foo [none] .
+  op 'a : nil -> 'Foo  [none] .
+  none
+  none
+endfm, '+['a.Foo, 'id.Foo]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  nil
+  sorts 'Foo ; 'Bool .
+  none
+  op 'itef : 'Bool 'Universal 'Universal -> 'Universal
+	[special(id-hook('BranchSymbol, nil)
+                 term-hook('trueTerm, 'true.Bool)
+                 term-hook('falseTerm, 'false.Bool))] .
+
+  op 'true : nil -> 'Bool [none] .
+  op 'false : nil -> 'Bool [none] .
+
+  op 'a : nil -> 'Foo  [none] .
+  op 'b : nil -> 'Foo  [none] .
+  none
+  none
+endfm, 'itef['true.Bool, 'a.Foo, 'b.Foo]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  nil
+  sorts 'Foo ; 'Bool .
+  none
+  op 'itef : 'Bool 'Universal 'Universal -> 'Universal
+	[special(id-hook('BranchSymbol, nil)
+                 term-hook('trueTerm, 'true.Bool)
+                 term-hook('falseTerm, 'false.Bool))] .
+
+  op 'true : nil -> 'Bool [none] .
+  op 'false : nil -> 'Bool [none] .
+
+  op 'a : nil -> 'Foo  [none] .
+  op 'b : nil -> 'Foo  [none] .
+  none
+  none
+endfm, 'itef['false.Bool, 'a.Foo, 'b.Foo]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  nil
+  sorts 'Foo ; 'Bit .
+  none
+  op '= : 'Universal 'Universal -> 'Bit
+	[special(id-hook('EqualitySymbol, nil)
+                 term-hook('equalTerm, '1.Bit)
+                 term-hook('notEqualTerm, '0.Bit))] .
+
+  op '1 : nil -> 'Bit [none] .
+  op '0 : nil -> 'Bit [none] .
+
+  op 'a : nil -> 'Foo  [none] .
+  op 'b : nil -> 'Foo  [none] .
+  none
+  none
+endfm, '=['a.Foo, 'b.Foo]) .

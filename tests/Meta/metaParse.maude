@@ -1,0 +1,74 @@
+set show timing off .
+set show advisories off .
+
+select META-LEVEL .
+
+red metaParse(
+fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '1.0 '+ '1.0, anyType) .
+
+red in META-LEVEL : metaParse(
+fmod 'FOO is
+  including 'RAT .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '3 , anyType) .
+
+red in META-LEVEL : metaParse(
+fmod 'FOO is
+  including 'RAT .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '-3 , anyType) .
+
+red in META-LEVEL : metaParse(
+fmod 'FOO is
+  including 'RAT .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '-2/3 , anyType) .
+
+red in META-LEVEL : metaParse(
+fmod 'FOO is
+  including 'RAT .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, 's_^2 '`( '0 '`) , anyType) .
+
+red in META-LEVEL : metaParse(
+fmod 'FOO is
+  including 'RAT .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '-256789/387654 , anyType) .
+
+red in META-LEVEL : metaParse(
+fmod 'FOO is
+  including 'BOOL .
+  sorts 'Foo .
+  none
+  op 's : 'Bool -> 'Bool [iter] .
+  none
+  none
+endfm, 's^1234 '`( 'true '`), anyType) .

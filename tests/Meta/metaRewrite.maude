@@ -1,0 +1,105 @@
+set show timing off .
+set show advisories off .
+
+red in META-LEVEL :
+metaRewrite(
+mod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  none
+  none
+  rl 'a.Foo => 'b.Foo [none] .
+  rl 'b.Foo => 'a.Foo [none] .
+endm, 'a.Foo, 1) .
+
+red in META-LEVEL :
+metaRewrite(
+mod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  none
+  none
+  rl 'a.Foo => 'b.Foo [none] .
+  rl 'b.Foo => 'a.Foo [none] .
+endm, 'a.Foo, 2) .
+
+red in META-LEVEL :
+metaRewrite(
+mod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  none
+  none
+  rl 'a.Foo => 'b.Foo [none] .
+  rl 'b.Foo => 'a.Foo [none] .
+endm, 'a.Foo, 3) .
+
+red in META-LEVEL :
+metaRewrite(
+mod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  none
+  none
+  rl 'a.Foo => 'b.Foo [none] .
+  rl 'b.Foo => 'c.Foo [none] .
+endm, 'a.Foo, unbounded) .
+
+red in META-LEVEL :
+metaRewrite(
+mod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  none
+  none
+  rl 'a.Foo => 'b.Foo [none] .
+  rl 'b.Foo => 'c.Foo [none] .
+endm, 'a.Foo, 1000000000000000000000000000000000000000000000000000) .
+
+red in META-LEVEL :
+metaRewrite(
+mod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  none
+  none
+  rl 'a.Foo => 'b.Foo [none] .
+  rl 'b.Foo => 'c.Foo [none] .
+endm, 'a.Foo, JUNK:Nat) .
+
+red in META-LEVEL :
+metaRewrite(
+mod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  none
+  none
+  rl 'a.Foo => 'b.Foo [none] .
+  rl 'b.Foo => 'c.Foo [none] .
+endm, 'a.Foo, 0) .
+

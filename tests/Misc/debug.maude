@@ -1,0 +1,52 @@
+set show timing off .
+set show advisories off .
+
+fmod FOO is
+  sort Foo .
+endfm
+
+fmod BAR is
+  inc FOO .
+  sort Bar .
+  ops a b c : -> Bar .
+  eq a = b .
+  eq b = c .
+endfm
+
+debug red a .
+
+fmod FOO is
+  sort Foo2 .
+endfm
+
+debug red in BAR : a .
+
+fmod FOO is
+  sort Foo2 .
+endfm
+
+resume .
+resume .
+
+fmod FOO is
+  sort Foo .
+endfm
+
+fmod BAR is
+  inc FOO .
+  sort Bar .
+  ops a b c : -> Bar .
+  eq a = b .
+  eq b = c .
+endfm
+
+debug red in META-LEVEL :
+metaReduce(['BAR], 'a.Bar) .
+
+step .
+
+fmod FOO is
+  sort Foo .
+endfm
+
+resume .

@@ -1,0 +1,50 @@
+noinst_LIBRARIES = libhigher.a
+
+libhigher_a_CPPFLAGS = \
+	-I$(top_srcdir)/src/Utility \
+	-I$(top_srcdir)/src/Interface \
+	-I$(top_srcdir)/src/Core \
+	-I$(top_srcdir)/src/Variable \
+	-I$(top_srcdir)/src/FullCompiler \
+	-I$(top_srcdir)/src/Temporal \
+	-I$(top_srcdir)/src/FreeTheory \
+	-I$(top_srcdir)/src/NA_Theory \
+	-I$(top_srcdir)/src/BuiltIn \
+	-I$(top_srcdir)/src/Mixfix
+
+libhigher_a_SOURCES = \
+	rewriteSearchState.cc \
+	matchSearchState.cc \
+	positionState.cc \
+	pattern.cc \
+	searchState.cc \
+	rewriteSequenceSearch.cc \
+	modelCheckerSymbol.cc \
+	stateTransitionGraph3.cc \
+	rewriteConditionFragment.cc \
+	assignmentConditionFragment.cc \
+	sortTestConditionFragment.cc \
+	equalityConditionFragment.cc \
+	assignmentConditionState.cc \
+	rewriteConditionState.cc \
+	temporalSymbol.cc \
+	satSolverSymbol.cc
+
+noinst_HEADERS = \
+	assignmentConditionFragment.hh \
+	assignmentConditionState.hh \
+	equalityConditionFragment.hh \
+	higher.hh \
+	matchSearchState.hh \
+	modelCheckerSymbol.hh \
+	pattern.hh \
+	positionState.hh \
+	rewriteConditionFragment.hh \
+	rewriteConditionState.hh \
+	rewriteSearchState.hh \
+	rewriteSequenceSearch.hh \
+	satSolverSymbol.hh \
+	searchState.hh \
+	sortTestConditionFragment.hh \
+	stateTransitionGraph3.hh \
+	temporalSymbol.hh

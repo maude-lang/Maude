@@ -1,0 +1,620 @@
+Maude> ==========================================
+reduce in RAT : 1/4 + 2/3 .
+rewrites: 5
+result NzRat: 11/12
+==========================================
+reduce in RAT : 2/3 + -1/4 .
+rewrites: 5
+result NzRat: 5/12
+==========================================
+reduce in RAT : trunc(13/12) .
+rewrites: 2
+result NzNat: 1
+==========================================
+reduce in RAT : trunc(-13/12) .
+rewrites: 2
+result NzInt: -1
+==========================================
+reduce in RAT : frac(13/12) .
+rewrites: 2
+result NzRat: 1/12
+==========================================
+reduce in RAT : frac(-13/12) .
+rewrites: 2
+result NzRat: -1/12
+==========================================
+reduce in RAT : floor(13/12) .
+rewrites: 2
+result NzNat: 1
+==========================================
+reduce in RAT : floor(-13/12) .
+rewrites: 5
+result NzInt: -2
+==========================================
+reduce in RAT : ceiling(13/12) .
+rewrites: 4
+result NzNat: 2
+==========================================
+reduce in RAT : ceiling(-13/12) .
+rewrites: 3
+result NzInt: -1
+==========================================
+reduce in RAT : 1/3 + 2/3 .
+rewrites: 6
+result NzNat: 1
+==========================================
+reduce in RAT : 1/4 divides 1/2 .
+rewrites: 7
+result Bool: true
+==========================================
+reduce in RAT : 1/4 divides 1/12 .
+rewrites: 5
+result Bool: false
+==========================================
+reduce in RAT : 2/3 divides 3/2 .
+rewrites: 6
+result Bool: false
+==========================================
+reduce in RAT : 2/3 divides 4/3 .
+rewrites: 5
+result Bool: true
+==========================================
+reduce in RAT : 2/3 divides 5 .
+rewrites: 3
+result Bool: false
+==========================================
+reduce in RAT : 5 quo 2/3 .
+rewrites: 3
+result NzNat: 7
+==========================================
+reduce in RAT : -5 quo 2/3 .
+rewrites: 3
+result NzInt: -7
+==========================================
+reduce in RAT : -5 quo -2/3 .
+rewrites: 3
+result NzNat: 7
+==========================================
+reduce in RAT : 5 quo -2/3 .
+rewrites: 3
+result NzInt: -7
+==========================================
+reduce in RAT : 1 quo 3/100 .
+rewrites: 3
+result NzNat: 33
+==========================================
+reduce in RAT : 5 rem 2/3 .
+rewrites: 3
+result NzRat: 1/3
+==========================================
+reduce in RAT : -5 rem 2/3 .
+rewrites: 3
+result NzRat: -1/3
+==========================================
+reduce in RAT : -5 rem -2/3 .
+rewrites: 3
+result NzRat: -1/3
+==========================================
+reduce in RAT : 5 rem -2/3 .
+rewrites: 3
+result NzRat: 1/3
+==========================================
+reduce in RAT : 3 rem 2 .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in RAT : -3 rem 2 .
+rewrites: 1
+result NzInt: -1
+==========================================
+reduce in RAT : 3 rem -2 .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in RAT : -3 rem -2 .
+rewrites: 1
+result NzInt: -1
+==========================================
+reduce in RAT : 1 rem 3/100 .
+rewrites: 3
+result NzRat: 1/100
+==========================================
+reduce in RAT : 1 rem 7/100 .
+rewrites: 4
+result NzRat: 1/50
+==========================================
+reduce in RAT : 1 rem 13/100 .
+rewrites: 3
+result NzRat: 9/100
+==========================================
+reduce in RAT : gcd(1/2, 1/3) .
+rewrites: 8
+result NzRat: 1/6
+==========================================
+reduce in RAT : gcd(0, 1/2) .
+rewrites: 3
+result NzRat: 1/2
+==========================================
+reduce in RAT : gcd(1/2, 5/6, 9/13) .
+rewrites: 17
+result NzRat: 1/78
+==========================================
+reduce in RAT : lcm(1/2, 1/3) .
+rewrites: 8
+result NzNat: 1
+==========================================
+reduce in RAT : lcm(1/2, 2/3) .
+rewrites: 8
+result NzNat: 2
+==========================================
+reduce in RAT : lcm(1/2, 1/6) .
+rewrites: 8
+result NzRat: 1/2
+==========================================
+reduce in RAT : lcm(0, 1/2) .
+rewrites: 4
+result Zero: 0
+==========================================
+reduce in RAT-BENCH : f(100) .
+rewrites: 818
+result NzRat: 117699997793868264083012417974975201679417/69720375229712477164533808935312303556800
+==========================================
+reduce in RAT-BENCH : g(100) .
+rewrites: 748
+result NzRat: 1/101
+fmod FOO is
+  sorts Bool Zero NzNat Nat NzInt Int NzRat Rat .
+  subsorts Zero NzNat NzNat < Nat .
+  subsort NzNat < NzInt .
+  subsorts NzInt Nat NzInt < Int .
+  subsort NzInt < NzRat .
+  subsorts NzRat Int < Rat .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op 0 : -> Zero [ctor] .
+  op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 gather (e E) special (
+    id-hook NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 33 gather (e E) special (
+    id-hook NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _+_ : Int Int -> Int [assoc comm prec 33 gather (e E) special (
+    id-hook NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _+_ : Rat Rat -> Rat [assoc comm prec 33 gather (e E) special (
+    id-hook NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op sd : Nat Nat -> Nat [comm special (
+    id-hook NumberOpSymbol (sd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm prec 31 gather (e E) special (
+    id-hook NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 31 gather (e E) special (
+    id-hook NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : NzInt NzInt -> NzInt [assoc comm prec 31 gather (e E) special (
+    id-hook NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : Int Int -> Int [assoc comm prec 31 gather (e E) special (
+    id-hook NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : NzRat NzRat -> NzRat [assoc comm prec 31 gather (e E) special (
+    id-hook NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : Rat Rat -> Rat [assoc comm prec 31 gather (e E) special (
+    id-hook NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _quo_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _quo_ : Int NzInt -> Int [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _quo_ : Rat NzRat -> Int [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _rem_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _rem_ : Int NzInt -> Int [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _rem_ : Rat NzRat -> Rat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : Nat Nat -> Nat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : NzNat Nat -> NzNat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : Int Nat -> Int [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : NzInt Nat -> NzInt [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : Rat Nat -> Rat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : NzRat Nat -> NzRat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op modExp : [Rat] [Rat] [Rat] -> [Rat] [special (
+    id-hook NumberOpSymbol (modExp)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : NzNat Nat -> NzNat [assoc comm special (
+    id-hook NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : Nat Nat -> Nat [assoc comm special (
+    id-hook NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : NzInt Int -> NzNat [assoc comm special (
+    id-hook NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : Int Int -> Nat [assoc comm special (
+    id-hook NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : NzRat Rat -> NzRat [assoc comm special (
+    id-hook NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : Rat Rat -> Rat [assoc comm special (
+    id-hook NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : Nat Nat -> Nat [assoc comm special (
+    id-hook NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : NzInt NzInt -> NzNat [assoc comm special (
+    id-hook NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : Int Int -> Nat [assoc comm special (
+    id-hook NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : NzRat NzRat -> NzRat [assoc comm special (
+    id-hook NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : Rat Rat -> Rat [assoc comm special (
+    id-hook NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _xor_ : Nat Nat -> Nat [assoc comm prec 55 gather (e E) special (
+    id-hook NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _xor_ : Int Int -> Int [assoc comm prec 55 gather (e E) special (
+    id-hook NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _&_ : Nat Nat -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _&_ : Int Int -> Int [assoc comm prec 53 gather (e E) special (
+    id-hook NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : NzNat Nat -> NzNat [assoc comm prec 57 gather (e E) special (
+    id-hook NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : Nat Nat -> Nat [assoc comm prec 57 gather (e E) special (
+    id-hook NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : NzInt Int -> NzInt [assoc comm prec 57 gather (e E) special (
+    id-hook NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : Int Int -> Int [assoc comm prec 57 gather (e E) special (
+    id-hook NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _>>_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _>>_ : Int Nat -> Int [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _<<_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _<<_ : Int Nat -> Int [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _<_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<_ : Rat Rat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Rat Rat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Rat Rat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Rat Rat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzNat Nat -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzInt Int -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzRat Rat -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op -_ : NzNat -> NzInt [ctor prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op -_ : NzInt -> NzInt [prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op -_ : Int -> Int [prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op -_ : NzRat -> NzRat [prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op -_ : Rat -> Rat [prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _-_ : Int Int -> Int [prec 33 gather (E e) special (
+    id-hook NumberOpSymbol (-)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _-_ : Rat Rat -> Rat [prec 33 gather (E e) special (
+    id-hook NumberOpSymbol (-)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op abs : NzInt -> NzNat [special (
+    id-hook NumberOpSymbol (abs)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op abs : Int -> Nat [special (
+    id-hook NumberOpSymbol (abs)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op abs : NzRat -> NzRat [special (
+    id-hook NumberOpSymbol (abs)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op abs : Rat -> Rat [special (
+    id-hook NumberOpSymbol (abs)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op ~_ : Int -> Int [prec 15 gather (E) special (
+    id-hook NumberOpSymbol (~)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _/_ : NzInt NzNat -> NzRat [ctor prec 31 gather (E e) special (
+    id-hook DivisionSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _/_ : NzRat NzRat -> NzRat [prec 31 gather (E e) special (
+    id-hook DivisionSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _/_ : Rat NzRat -> Rat [prec 31 gather (E e) special (
+    id-hook DivisionSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op trunc : Rat -> Int .
+  op frac : Rat -> Rat .
+  op floor : Rat -> Int .
+  op ceiling : Rat -> Int .
+  op a : -> Rat .
+  op b : -> Rat .
+  op c : -> Rat .
+  op d : -> Rat .
+  op e : -> Rat .
+  eq a = 42 .
+  eq b = -42 .
+  eq c = -42/1 .
+  eq d = -42/29 .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq 0 / Q:NzRat = 0 .
+  eq I:NzInt / - N:NzNat = - I:NzInt / N:NzNat .
+  eq I:NzInt / N:NzNat / (J:NzInt / M:NzNat) = (I:NzInt * M:NzNat) / (J:NzInt *
+    N:NzNat) .
+  eq I:NzInt / N:NzNat / J:NzInt = I:NzInt / (J:NzInt * N:NzNat) .
+  eq I:NzInt / (J:NzInt / M:NzNat) = (I:NzInt * M:NzNat) / J:NzInt .
+  eq - (I:NzInt / N:NzNat) = - I:NzInt / N:NzNat .
+  eq I:NzInt / N:NzNat + J:NzInt / M:NzNat = (I:NzInt * M:NzNat + J:NzInt *
+    N:NzNat) / (N:NzNat * M:NzNat) .
+  eq K:Int + I:NzInt / N:NzNat = (I:NzInt + N:NzNat * K:Int) / N:NzNat .
+  eq I:NzInt / N:NzNat - J:NzInt / M:NzNat = (I:NzInt * M:NzNat - J:NzInt *
+    N:NzNat) / (N:NzNat * M:NzNat) .
+  eq I:NzInt / N:NzNat - K:Int = (I:NzInt - N:NzNat * K:Int) / N:NzNat .
+  eq K:Int - J:NzInt / M:NzNat = (M:NzNat * K:Int - J:NzInt) / M:NzNat .
+  eq 0 * Q:NzRat = 0 .
+  eq (I:NzInt / N:NzNat) * (J:NzInt / M:NzNat) = (I:NzInt * J:NzInt) / (N:NzNat
+    * M:NzNat) .
+  eq K:Int * (I:NzInt / N:NzNat) = (I:NzInt * K:Int) / N:NzNat .
+  eq I:NzInt / N:NzNat quo Q:NzRat = I:NzInt quo (Q:NzRat * N:NzNat) .
+  eq K:Int quo (J:NzInt / M:NzNat) = (M:NzNat * K:Int) quo J:NzInt .
+  eq I:NzInt / N:NzNat rem (J:NzInt / M:NzNat) = (I:NzInt * M:NzNat) rem (
+    J:NzInt * N:NzNat) / (N:NzNat * M:NzNat) .
+  eq K:Int rem (J:NzInt / M:NzNat) = (M:NzNat * K:Int) rem J:NzInt / M:NzNat .
+  eq I:NzInt / N:NzNat rem J:NzInt = I:NzInt rem (J:NzInt * N:NzNat) / N:NzNat
+    .
+  eq (I:NzInt / N:NzNat) ^ Z:Nat = I:NzInt ^ Z:Nat / N:NzNat ^ Z:Nat .
+  eq abs(I:NzInt / N:NzNat) = abs(I:NzInt) / N:NzNat .
+  eq gcd(R:Rat, I:NzInt / N:NzNat) = gcd(I:NzInt, N:NzNat * R:Rat) / N:NzNat .
+  eq lcm(R:Rat, I:NzInt / N:NzNat) = lcm(I:NzInt, N:NzNat * R:Rat) / N:NzNat .
+  eq I:NzInt / N:NzNat < J:NzInt / M:NzNat = I:NzInt * M:NzNat < J:NzInt *
+    N:NzNat .
+  eq I:NzInt / N:NzNat < K:Int = I:NzInt < N:NzNat * K:Int .
+  eq K:Int < J:NzInt / M:NzNat = M:NzNat * K:Int < J:NzInt .
+  eq I:NzInt / N:NzNat <= J:NzInt / M:NzNat = I:NzInt * M:NzNat <= J:NzInt *
+    N:NzNat .
+  eq I:NzInt / N:NzNat <= K:Int = I:NzInt <= N:NzNat * K:Int .
+  eq K:Int <= J:NzInt / M:NzNat = M:NzNat * K:Int <= J:NzInt .
+  eq I:NzInt / N:NzNat > J:NzInt / M:NzNat = I:NzInt * M:NzNat > J:NzInt *
+    N:NzNat .
+  eq I:NzInt / N:NzNat > K:Int = I:NzInt > N:NzNat * K:Int .
+  eq K:Int > J:NzInt / M:NzNat = M:NzNat * K:Int > J:NzInt .
+  eq I:NzInt / N:NzNat >= J:NzInt / M:NzNat = I:NzInt * M:NzNat >= J:NzInt *
+    N:NzNat .
+  eq I:NzInt / N:NzNat >= K:Int = I:NzInt >= N:NzNat * K:Int .
+  eq K:Int >= J:NzInt / M:NzNat = M:NzNat * K:Int >= J:NzInt .
+  eq I:NzInt / N:NzNat divides K:Int = I:NzInt divides N:NzNat * K:Int .
+  eq Q:NzRat divides J:NzInt / M:NzNat = Q:NzRat * M:NzNat divides J:NzInt .
+  eq trunc(K:Int) = K:Int .
+  eq trunc(I:NzInt / N:NzNat) = I:NzInt quo N:NzNat .
+  eq frac(K:Int) = 0 .
+  eq frac(I:NzInt / N:NzNat) = I:NzInt rem N:NzNat / N:NzNat .
+  eq floor(K:Int) = K:Int .
+  eq ceiling(K:Int) = K:Int .
+  eq floor(N:NzNat / M:NzNat) = N:NzNat quo M:NzNat .
+  eq ceiling(N:NzNat / M:NzNat) = ((N:NzNat + M:NzNat) - 1) quo M:NzNat .
+  eq floor(- N:NzNat / M:NzNat) = - ceiling(N:NzNat / M:NzNat) .
+  eq ceiling(- N:NzNat / M:NzNat) = - floor(N:NzNat / M:NzNat) .
+endfm
+Maude> Bye.

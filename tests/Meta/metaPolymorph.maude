@@ -1,0 +1,163 @@
+set show timing off .
+set show advisories off .
+
+*** EqualitySymbol
+
+red in META-LEVEL :
+metaReduce(
+(fmod 'FOO is
+  including 'STRING .
+  sorts 'Value .
+  none
+  op 'tt : nil -> 'Value [none] .
+  op 'ff : nil -> 'Value [none] .
+  op 'eq : 'Universal 'Universal -> 'Value
+    [poly (1 2)
+     special(id-hook('EqualitySymbol, nil)
+             term-hook('equalTerm, 'tt.Value)
+             term-hook('notEqualTerm, 'ff.Value))] .
+  none
+  none
+endfm)
+, 'eq['"a".String, '"a".String]) .
+
+red in META-LEVEL :
+metaReduce(
+(fmod 'FOO is
+  including 'STRING .
+  sorts 'Value .
+  none
+  op 'tt : nil -> 'Value [none] .
+  op 'ff : nil -> 'Value [none] .
+  op 'eq : 'Universal 'Universal -> 'Value
+    [poly (1 2)
+     special(id-hook('EqualitySymbol, nil)
+             term-hook('equalTerm, 'tt.Value)
+             term-hook('notEqualTerm, 'ff.Value))] .
+  none
+  none
+endfm)
+, 'eq['"a".String, '"b".String]) .
+
+red in META-LEVEL :
+metaReduce(
+(fmod 'FOO is
+  including 'STRING .
+  sorts 'Value .
+  none
+  op 'tt : nil -> 'Value [none] .
+  op 'ff : nil -> 'Value [none] .
+  op '? : 'Value 'Universal 'Universal -> 'Universal
+    [poly (2 3 0)
+     special(id-hook('BranchSymbol, nil)
+             term-hook('1, 'tt.Value)
+             term-hook('2, 'ff.Value))] .
+  none
+  none
+endfm)
+, '?['tt.Value, '"a".String, '"b".String]) .
+
+red in META-LEVEL :
+metaReduce(
+(fmod 'FOO is
+  including 'STRING .
+  sorts 'Value .
+  none
+  op 'tt : nil -> 'Value [none] .
+  op 'ff : nil -> 'Value [none] .
+  op '? : 'Value 'Universal 'Universal -> 'Universal
+    [poly (2 3 0)
+     special(id-hook('BranchSymbol, nil)
+             term-hook('1, 'tt.Value)
+             term-hook('2, 'ff.Value))] .
+  none
+  none
+endfm)
+, '?['ff.Value, '"a".String, '"b".String]) .
+
+red in META-LEVEL :
+metaReduce(
+(fmod 'FOO is
+  including 'STRING .
+  including 'META-LEVEL .
+  sorts none .
+  none
+  op '^ : 'Universal -> 'Term
+    [poly (1)
+     special(id-hook('MetaLevelOpSymbol, 'metaUpTerm)
+             op-hook('shareWith, 'metaReduce, 'Module 'Term, 'ResultPair))] .
+  none
+  none
+endfm)
+, '^['"a".String]) .
+
+red in META-LEVEL :
+metaReduce(
+(fmod 'FOO is
+  including 'STRING .
+  including 'META-LEVEL .
+  sorts none .
+  none
+  op '! : 'Term 'Universal -> 'Universal
+    [poly (2 0)
+     special(id-hook('MetaLevelOpSymbol, 'metaDownTerm)
+             op-hook('shareWith, 'metaReduce, 'Module 'Term, 'ResultPair))] .
+  none
+  none
+endfm)
+, '![''"a".String.Constant, '"b".String]) .
+
+
+red in META-LEVEL :
+metaReduce(
+(fmod 'POLY-ID3 is
+  including 'BOOL .
+  sorts 'Foo .
+none   
+  op '1 : nil -> 'Foo [none] .
+  op 'f : 'Universal 'Foo -> 'Universal [poly (1 0) right-id('1.Foo)] .
+  none
+  none
+endfm)
+, 'f['true.Bool, '1.Foo]) .
+
+
+red in META-LEVEL :
+metaReduce(
+(fmod 'POLY-ID3 is
+  including 'BOOL .
+  sorts 'Foo .
+  none   
+  op '1 : nil -> 'Foo [none] .
+  op 'f : 'Universal 'Foo -> 'Universal [poly (1 0) right-id('1.Foo)] .
+  op 'g : 'Univeral -> 'Universal [poly (1 0)] .
+  none
+  eq 'g['f['true.Bool, 'X:Foo]] = 'false.Bool [none] .
+endfm)
+, 'g['true.Bool]) .
+
+
+red in META-LEVEL :
+metaReduce(
+(fmod 'POLY-ID3 is
+  including 'BOOL .
+  sorts 'Foo .
+  none   
+  op '1 : nil -> 'Universal [poly (0)] .
+  none
+  none
+endfm)
+, '1.Bool) .
+
+
+red in META-LEVEL :
+metaReduce(
+(fmod 'POLY-ID3 is
+  including 'BOOL .
+  sorts 'Foo .
+  none   
+  op '1 : nil -> 'Universal [poly (0)] .
+  none
+  none
+endfm)
+, '1.Foo) .

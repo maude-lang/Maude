@@ -1,0 +1,26 @@
+set show timing off .
+set show advisories off .
+
+mod FOO is
+  sort Foo .
+  ops a b : -> Foo .
+
+  rl a => b .
+endm
+
+red in META-LEVEL :
+metaRewrite(['FOO], 'a.Foo, 10) .
+
+mod SELF-REFLECTION is
+  pr META-LEVEL .
+  sort Foo .
+
+  ops a b : -> Foo .
+  rl a => b .
+
+  op r : Term -> Term .
+  rl r(T:Term) => getTerm(metaRewrite(['SELF-REFLECTION], T:Term, 100)) .
+endm
+
+red in META-LEVEL :
+metaRewrite(['SELF-REFLECTION], 'r[''a.Foo.Constant], 10) .

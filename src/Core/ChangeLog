@@ -1,0 +1,4768 @@
+2003-08-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equationTable.hh (class EquationTable): added decl for
+	applyReplaceNoOwise()
+
+	* equationTable.cc (applyReplaceNoOwise): added
+	
+===================================Maude82==================================
+
+2003-07-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* badFlag.hh (class BadFlag): BAD -> BAD_FLAG for the benefit of
+	losing systems that #define BAD
+
+2003-06-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.cc (operator-): fixed spelling of inconsistency
+
+	* ctorDiagram.cc (containsConstructor): fixed spelling of
+	consistency
+	
+===================================Maude81==================================
+	
+2003-05-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): added decl for
+	kindLevelDeclarationsOnly()
+
+	* sortTable.cc (kindLevelDeclarationsOnly): added
+
+2003-05-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh (nrFragileBindings): made const
+
+2003-05-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortConstraintTable.cc (constrainToSmallerSort2): use
+	MemoryCell::okToCollectGarbage() (2 places)
+
+	* run.cc (ruleRewrite): use MemoryCell::okToCollectGarbage()
+	(ascend): use MemoryCell::okToCollectGarbage()
+	(doRewriting): use MemoryCell::okToCollectGarbage()
+
+	* preEquation.cc (checkCondition): use
+	MemoryCell::okToCollectGarbage()
+	
+===================================Maude80b===========================================
+
+2003-05-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ruleTable.cc (applyRules): use isNonexec()
+
+	* sortConstraint.cc (check): use isNonexec()
+
+	* rule.cc (check): use isNonexec()
+
+	* equation.cc (check): use isNonexec()
+
+	* module.cc (indexSortConstraints): use isNonexec()
+	(indexEquation): use isNonexec()
+	(insertLateSymbol): use isNonexec()
+
+	* preEquation.hh (class PreEquation): added NONEXEC to enum Flags
+	(isNonexec): added
+	(setNonexec): added
+
+	* equation.hh (class Equation): changed OWISE value
+
+2003-05-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rootContainer.hh (class RootContainer): added decl for dump()
+
+	* rootContainer.cc (dump): added
+
+2003-05-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ruleTable.hh (class RuleTable): make resetRules() virtual
+
+2003-05-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (copyProblemBindings): deleted
+	
+===================================Maude80a===========================================
+
+2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoryCell.hh (copySetFlags): added
+
+2003-04-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): made traverse() public
+	
+===================================Maude80===========================================
+
+2003-03-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.cc (operator-): optimized using const_iterators
+
+	* substitution.hh (copy): code cleaning
+
+	* localBinding.hh (addBinding): moved here; use ref; made inline
+
+	* localBinding.cc (retract): use FOR_EACH_CONST()
+	(assert): use iterators
+
+2003-03-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rhsBuilder.hh (construct): use iterators
+	(safeConstruct): use iterators
+	(replace): use iterators
+
+2003-03-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.cc (Substitution): deleted
+
+	* substitution.hh (copy): use iter comparison rather than
+	decrementing size
+	(class Substitution): deleted decl for copy ctor; use NO_COPYING()
+
+	* equationTable.cc (applyReplace): use FOR_EACH_CONST
+
+2003-02-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.cc (cleanStack): updated DebugAdvisoryCheck()
+
+	* rewritingContext.hh (RewritingContext): updated Assert()
+
+	* subproblemAccumulator.hh: removed #pragma
+
+	* termSet.cc: removed #pragma
+
+	* termSet.hh: removed #pragma
+
+	* sortConstraintTable.cc: removed #pragma
+
+	* sortConstraintTable.hh: removed #pragma
+
+	* rawRootContainer.cc: removed #pragma
+
+	* rootContainer.hh: removed #pragma
+
+	* rhsBuilder.cc: removed #pragma
+
+	* rhsBuilder.hh: removed #pragma
+
+	* rewritingContext.cc: removed #pragma
+	(markReachableNodes): updated Assert()
+	(rebuildUptoRoot): updated Assert()
+
+	* rewritingContext.hh: removed #pragma
+
+	* redexPosition.hh: removed #pragma
+
+	* variableInfo.cc: removed #pragma
+	(variable2Index): updated Assert()s
+
+	* variableInfo.hh: removed #pragma
+
+	* variableAbstractionSubproblem.cc: removed #pragma
+	(solve): updated Assert()
+
+	* variableAbstractionSubproblem.hh: removed #pragma
+
+	* trivialRhsAutomaton.cc: removed #pragma
+
+	* trivialRhsAutomaton.hh: removed #pragma
+
+	* termBag.cc: removed #pragma
+	(insertBuiltTerm): updated Assert()s
+
+	* termBag.hh: removed #pragma
+
+	* symbolMap.hh: removed #pragma
+
+	* substitution.cc: removed #pragma
+	(operator-): updated Assert()
+
+	* substitution.hh: removed #pragma
+	(clear): updated Assert()s
+	(value): updated Assert()s
+	(bind): updated Assert()s
+	(copy): updated Assert()
+
+	* subproblemSequence.cc: removed #pragma
+
+	* subproblemSequence.hh: removed #pragma
+
+	* subproblemDisjunction.cc: removed #pragma
+	(addOption): updated Assert()
+
+	* subproblemDisjunction.hh: removed #pragma
+
+	* strategy.cc: removed #pragma
+
+	* strategy.hh: removed #pragma
+
+	* sortTable.cc: removed #pragma
+	(compileOpDeclarations): updated Assert()s; simplified fancy
+	Assert() now that we no longer allow actions in Assert()s
+
+	* sortTable.hh: removed #pragma
+	(addOpDeclaration): updated Assert()
+
+	* sortConstraint.cc: removed #pragma
+	(SortConstraint): updated Assert()
+	(preprocess): updated Assert()
+
+	* sortConstraint.hh: removed #pragma
+
+	* sortCheckSubproblem.cc: removed #pragma
+
+	* sortCheckSubproblem.hh: removed #pragma
+
+	* sort.cc: removed #pragma
+
+	* sort.hh: removed #pragma
+	(leq): updated Assert()
+
+	* simpleRootContainer.hh: removed #pragma
+
+	* run.cc (fairTraversal): updated Assert()
+
+	* ruleTable.cc: removed #pragma
+	(applyRules): updated Assert()
+
+	* ruleTable.hh: removed #pragma
+
+	* rule.cc: removed #pragma
+	(Rule): updated Assert()
+	(preprocess): updated Assert()
+
+	* rule.hh: removed #pragma
+
+	* rootContainer.cc: removed #pragma
+
+	* rawRootContainer.hh: removed #pragma
+
+	* preEquation.cc: removed #pragma
+	(PreEquation): updated Assert()
+	(checkCondition): updated Assert()s (both versions)
+
+	* preEquation.hh: 
+
+	* opDeclaration.hh: removed #pragma
+
+	* namedEntity.hh: removed #pragma
+
+	* moduleItem.hh: removed #pragma
+
+	* module.cc: removed #pragma
+	(insertSortConstraint): updated Assert()
+	(insertEquation): updated Assert()
+	(insertRule): updated Assert()
+	(closeSortSet): updated Assert()
+	(closeSignature): updated Assert()
+	(closeFixUps): updated Assert()
+	(closeTheory): updated Assert()
+	(insertLateSymbol): updated Assert()
+
+	* module.hh: removed #pragma
+
+	* memoryCell.cc: removed #pragma
+	(slowNew): updated Assert()s
+
+	* memoryCell.hh: removed #pragma
+	(allocateStorage): updated Assert()
+	(allocateMemoryCell): updated Assert()s
+
+	* memoTable.cc: removed #pragma
+
+	* memoTable.hh: removed #pragma
+
+	* localBinding.cc: removed #pragma
+	(markReachableNodes): updated Assert()
+
+	* localBinding.hh: removed #pragma
+
+	* lineNumber.hh: removed #pragma
+
+	* label.hh: removed #pragma
+
+	* extensionMatchSubproblem.cc: removed #pragma
+
+	* extensionMatchSubproblem.hh: removed #pragma
+
+	* equationTable.cc: removed #pragma
+
+	* equationTable.hh: removed #pragma
+
+	* equation.cc: removed #pragma
+	(Equation): updated Assert()
+	(preprocess): updated Assert()
+
+	* equation.hh: removed #pragma
+
+	* equalitySubproblem.cc: removed #pragma
+
+	* equalitySubproblem.hh: removed #pragma
+
+	* disjunctiveSubproblemAccumulator.cc: removed #pragma
+	(extract): updated Assert()
+
+	* disjunctiveSubproblemAccumulator.hh: removed #pragma
+
+	* dagRoot.cc: removed #pragma
+
+	* dagRoot.hh: removed #pragma
+
+	* dagNodeSet.cc: removed #pragma
+
+	* dagNodeSet.hh: removed #pragma
+
+	* dagArgumentIterator.hh: removed #pragma
+
+	* core.cc: deleted
+
+	* copyRhsAutomaton.cc: removed #pragma
+
+	* copyRhsAutomaton.hh: removed #pragma
+
+	* connectedComponent.cc: removed #pragma
+	(leq): updated Assert()s
+	(findMaximalSorts): updated Assert()
+	(getLeqSorts): updated Assert()
+
+	* connectedComponent.hh: removed #pragma
+
+	* conditionState.hh: removed #pragma
+
+	* conditionFragment.hh: removed #pragma
+
+	* checkedArgVecIterator.hh (checkValid): updated Assert()s
+	(checkDereferenceable): updated Assert()s
+	(operator--): updated Assert()
+	(operator+=): updated Assert()
+	(operator-=): updated Assert()
+	(operator[]): updated Assert()
+	(operator<): updated Assert()
+	(operator-): updated Assert()
+
+	* checkedArgVecConstIterator.hh (checkValid): updated Assert()s
+	(checkDereferenceable): updated Assert()s
+	(operator--): updated Assert()
+	(operator+=): updated Assert()
+	(operator-=): updated Assert()
+	(operator[]): updated Assert()
+	(operator<): updated Assert()
+	(operator-): updated Assert()
+
+	* cachedDag.cc: removed #pragma
+
+	* cachedDag.hh: removed #pragma
+
+	* bindingLhsAutomaton.cc: removed #pragma
+
+	* bindingLhsAutomaton.hh: removed #pragma
+
+	* badFlag.hh: removed #pragma
+
+	* argumentIterator.hh: removed #pragma
+
+	* argVec.hh: removed #pragma
+	(operator[]): updated Assert() (both versions)
+	(contractTo): updated Assert()
+
+===================================Maude79===========================================
+
+2003-02-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equationTable.cc (applyReplace): DagNode::okToCollectGarbage()
+	-> MemoryCell::okToCollectGarbage()
+	
+===================================Maude78===========================================
+
+2003-01-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagArgumentIterator.hh (DagArgumentIterator): added DagNode* version
+
+2002-12-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* argVec.hh (expandWithoutPreservationBy): added
+	(expandWithoutPreservationBy): becomes resizeWithoutPreservation
+
+2002-11-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoryCell.cc (slowNew): now return MemoryCell*
+
+	* memoryCell.hh: redesigned to remove the flaw that we were
+	depending on the property that if Bar is derived from Foo, the Foo
+	subobject starts at the beginning of Bar. This is not guaranteed by
+	the ANSI C++ standard at does not hold for g++ 3.2 which puts
+	Bars virtual function table pointer at the beginning of Bar.
+	(allocateStorage): use MachineWord
+
+2002-11-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.hh (class PreEquation): added decl for cleanStack()
+
+	* preEquation.cc (cleanStack): created
+	(checkCondition): call cleanStack() before returning to to an
+	abort
+	
+2002-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* checkedArgVecConstIterator.hh (operator->): made const
+	(operator*): made const
+	(class const_iterator): updated decls for operator*() and
+	operator->() 
+
+	* checkedArgVecIterator.hh (class iterator): make const_iterator a
+	friend
+	(class iterator): declare operator*() and operator->() to be const
+	(operator*): made const
+	(operator->): made const
+
+	* checkedArgVecConstIterator.hh (const_iterator): added conversion
+	ctor from iterator
+
+	* argVec.hh: added support for checked iterators
+
+	* checkedArgVecConstIterator.hh: created
+
+	* checkedArgVecIterator.hh: created
+
+	* argVec.hh (rawBasePointer): deleted both versions
+
+2002-11-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* argVec.hh (CONST_ARG_VEC_HACK): deleted
+	(ARG_VEC_HACK): deleted
+
+2002-11-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* argVec.hh: major rewrite to make it look more STL like and
+	support iterators
+	
+===================================Maude77==================================================
+
+2002-11-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (indexSortConstraints): use new style AdvisoryCheck()
+	(indexEquation): use new style AdvisoryCheck()
+	(indexRules): use new style AdvisoryCheck()
+
+	* sortConstraint.cc (check): use new style IssueWarning()
+
+	* equation.cc (check): use new style IssueWarning()
+
+	* sortTable.cc (findMinSortIndex): use new style WarningCheck()
+
+	* ctorDiagram.cc (containsConstructor): use new style
+	WarningCheck()
+
+	* connectedComponent.cc (ConnectedComponent): use new style
+	IssueWarning()s
+
+2002-11-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (insertLateSymbol): fixed bug where we weren't calling
+	postInterSymbolPass() if status == FIX_UPS_CLOSED
+
+	* equationTable.cc (applyReplace): DagNode::okToCollectGarbage()
+	-> MemoryCell::okToCollectGarbage() (2 places)
+
+2002-11-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (insertLateSymbol): handle owise flag for equations
+	indexed under late symbol
+
+	* module.hh (class Module): added decl for indexEquation()
+
+	* module.cc (indexEquation): added
+	(indexEquations): handle owise; use indexEquation()
+
+	* equation.hh (isOwise): added
+
+	* equation.cc (Equation): handle owise arg
+
+	* equation.hh (class Equation): added enum Flags; updated decl for
+	Equation()
+
+	* sortConstraint.cc (compile): use isCompiled() and setCompiled()
+	(SortConstraint): don't clear compiled
+
+	* sortConstraint.hh (class SortConstraint): deleted data member
+	compiled
+
+	* rule.cc (compile): use isCompiled() and setCompiled()
+	(Rule): don't clear compiled
+
+	* rule.hh (class Rule): deleted data member compiled
+
+	* equation.cc (Equation): don't clear compiled
+	(compile): use isCompiled() and setCompiled()
+
+	* equation.hh (class Equation): deleted data member compiled
+
+	* preEquation.hh (isCompiled): added
+	(setCompiled): added
+	(class PreEquation): added enum Flags
+
+	* badFlag.hh: derived from FlagSet
+
+2002-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* argVec.hh: moved here
+
+	* memoryCellNew.hh: moved here
+
+	* memoryManager.cc: moved here
+
+	* memoryCell.cc: moved here
+
+	* memoryCell.hh: moved here
+
+	* core.hh: added class MemoryCell
+
+2002-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* cachedDag.hh (CachedDag): removed superflous (and under g++ 3.2
+	illegal) default arg
+
+2002-10-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (insertLateSymbol): quick hack to solve late symbols
+	problem
+	(closeSignature): no longer do sort computations here; this has
+	the down side that detailed sort info is no longer available for
+	the closeFixUps pass
+	(closeTheory): added call to postOpDeclarationsPass() on each
+	symbol
+
+2002-10-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc: gross hack to see if we can delay sort table
+	computations - but we have a nasty problem with late symbols
+
+2002-10-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* run.cc (doRewriting): handle case where current node is flagged
+	and unrewritable but not flagged as unstackable and
+	argsUnstackable is true
+
+2002-10-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): updated decl for
+	descend()
+
+	* run.cc (descend): no longer returns a value
+	(fairTraversal): removed goto and inner loop
+	(doRewriting): always set unrewritabl flag when we fail to
+	rewrite, in case the current node has been stacked multiple times
+	along different paths
+
+	* strategy.hh (class Strategy): updated decl for setFrozen(); made
+	virtual so that theories like ACU can modify frozen set
+	(isFrozen): deleted
+
+	* strategy.cc (setFrozen): just copy arg into frozen field
+
+2002-10-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): added decl for
+	dumpStack()
+
+	* rewritingContext.cc (dumpStack): added
+
+2002-10-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* run.cc (descend): rewritten assuming new
+	Symbol::stackArguments() semantics
+	(ascend): rewritten assuming new Symbol::stackArguments() and
+	DagNode::copyWithReplacement() semantics
+
+	* rewritingContext.hh (class RewritingContext): added decl for
+	remakeStaleDagNode()
+
+	* rewritingContext.cc (remakeStaleDagNode): added
+	(rebuildUptoRoot): rewritten using remakeStaleDagNode(); we now
+	assume new semantics for copyWithReplacement(), in that only some
+	arguments may be stacked.
+
+2002-10-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* run.cc (ruleRewrite): pass respectFrozen flag to
+	stackArguments()
+
+	* strategy.hh (getFrozen): added
+
+2002-10-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* strategy.cc (Strategy): don't set frozen = false
+
+	* strategy.hh (class Strategy): updatede decls for setFrozen() and
+	isFrozen()
+
+	* strategy.cc (setFrozen): moved here and rewritten
+
+	* strategy.hh (class Strategy): frozen becomes a NatSet rather
+	than a Bool
+	(isFrozen): take argNr
+	
+===================================Maude76==================================================
+
+2002-09-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (compileOpDeclarations): only call
+	buildCtorDiagram() in IS_COMPLEX case
+
+	* sortTable.hh (addOpDeclaration): update ctorStatus
+
+	* sortTable.cc (SortTable): clear ctorStatus
+
+	* sortTable.hh (class SortTable): added enum CtorStatus
+	(getCtorStatus): added
+
+2002-08-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): updated decl for
+	containsConstructor()
+
+	* ctorDiagram.cc (containsConstructor): removed constness
+
+	* sortTable.hh (class SortTable): added decls for
+	partlyMoreGeneral() and ctorSubsumes(); deleted decl for
+	partiallySubsumesWrtCtor()
+
+	* ctorDiagram.cc (partlyMoreGeneral): replaces
+	partialSubsumptionWrtCtor()
+	(ctorSubsumes): added
+	(minimizeWrtCtor): rewritten using partlyMoreGeneral() and
+	ctorSubsumes()
+	(buildCtorDiagram): call minimizeWrtCtor() after checkin last arg
+	(containsConstructor): rewritten to check for ctor inconsistancy
+
+2002-08-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (dumpSortDiagram): added HACK to avoid crash when
+	dumping BranchSymbols
+
+2002-08-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): made ctorTraverse() protected
+	(class SortTable): added data member ctorStatus
+
+2002-08-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (buildSortDiagram): deleted old code that has been
+	duplicating the task of filling out the sort daigram for years!
+
+	* sortTable.hh (class SortTable): added decls for
+	containsConstructor(), partiallySubsumesWrtCtor(),
+	minimizeWrtCtor()
+
+	* sortTable.cc (compileOpDeclarations): call buildCtorDiagram()
+
+	* ctorDiagram.cc: created
+
+	* sortTable.hh (class SortTable): added data member ctorDiagram
+	(class SortTable): added decl for buildCtorDiagram()
+	(ctorTraverse): added
+
+2002-08-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (compileOpDeclarations): use new opDeclarations
+	(partiallySubsumes): use new opDeclarations
+	(buildSortDiagram): use new opDeclarations
+	(findMinSortIndex): use new opDeclarations
+
+	* sortTable.hh (class SortTable): updated decls for
+	addOpDeclaration() and getOpDeclarations(); data member
+	opDeclarations now has sort Vector<OpDeclaration>
+	(addOpDeclaration): rewritten
+	(getOpDeclarations): updated return value
+	(rangeComponent): rewritten
+	(domainComponent): rewritten
+
+2002-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* core.cc: provide implementation for class OpDeclaration
+
+	* core.hh: added class OpDeclaration
+
+	* opDeclaration.hh (class OpDeclaration): created
+	
+===================================Maude75==================================================
+
+2002-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableInfo.cc (computeIndexRemapping): rewritten to use graph
+	coloring to minimize number of slots needed in substitutions
+
+	* variableInfo.hh (class VariableInfo): added lastUseTime member
+	to struct ConstructionIndex
+	(useIndex): update lastUseTime
+
+2002-08-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* termSet.cc (hash): replaced Assert(false,...) with CantHappen()
+
+	* dagNodeSet.cc (hash): replaced Assert(false,...) with
+	CantHappen()
+
+	* substitution.hh (notify): added DebugAdvisory() for when
+	allocateSize is increased
+	
+===================================Maude74==================================================
+
+2002-06-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoTable.cc (memoRewrite): call context.incrementEqCount() -
+	this fixes a bug where memo rewrites were not being counted
+
+2002-06-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortConstraint.hh (class SortConstraint): ctor takes label arg
+
+	* sortConstraint.cc (SortConstraint): handle label arg
+
+	* equation.cc (Equation): handle label arg
+
+	* equation.hh (class Equation): ctor takes label arg
+
+	* rule.hh (class Rule): delete data member label
+	(getLabel): deleted
+
+	* rule.cc (Rule): pass label to PreEquation()
+
+	* preEquation.cc (PreEquation): handle label arg
+
+	* preEquation.hh (class PreEquation): ctor takes label arg; added
+	data member label
+	(getLabel): added
+
+2002-05-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (canProduceErrorSort): slicker version using NatSet
+	rather than IntSet
+
+2002-04-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableInfo.hh (index2Variable): no longer return const Term* -
+	the constness causes problems printing since the printing function
+	in general needs to iterate over arguments
+
+2002-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rule.cc (check): simplified normalize() call
+
+	* preEquation.cc (check): simplified normalize() call
+
+	* equation.cc (check): simplified normalize() call
+
+2002-04-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.cc (solveCondition): return false in the abort case
+	for cleanliness (checkCondition() actually ignores the reurn value
+	in the abort case)
+
+2002-04-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.cc (solveCondition): don't pass VariableInfo& to
+	traceEndFragment()
+
+	* rewritingContext.cc (traceEndFragment): updated stub
+
+	* rewritingContext.hh (class RewritingContext): don't pass
+	VariableInfo& in traceEndFragment() since this is already included
+	in PreEquation*
+
+2002-03-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (traceBeginFragment): updated args
+	(traceEndFragment): updated args
+
+	* rewritingContext.hh (class RewritingContext): updated decls for
+	traceBeginFragment() and traceEndFragment()
+
+	* preEquation.cc (solveCondition): pass const PreEquation* and an
+	index rather than ConditionFragment* to traceBeginFragment() and
+	traceEndFragment()
+
+2002-03-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (insertSortConstraint): call setModuleInfo()
+	(insertEquation): call setModuleInfo()
+	(insertRule): call setModuleInfo()
+
+	* preEquation.hh (class PreEquation): derive from class ModuleItem
+	
+===================================Maude71a==================================================
+
+2002-03-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.cc (checkCondition): we used to return true in the
+	abort case to avoid backtracking and speed up stack unwinding. But
+	this leads to a bug in that we may return true while failing to
+	bind some conditional variables that the condition was expected to
+	bind. So now we return false in the abort case (2 places).
+
+2002-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sort.hh (class Sort): added KIND to SpecialSorts
+
+2002-03-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* subproblemDisjunction.cc: deleted explicit template
+	instantiation
+
+	* sortTable.cc: deleted explicit template instantiation
+
+	* localBinding.cc: deleted explicit template instantiation
+
+	* core.cc: deleted explicit template instantiations
+	
+===================================Maude71==================================================
+
+2002-03-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equationTable.cc (applyReplace): use iterators
+
+	* substitution.hh (clear): replaced VECTOR_HACK() with
+	vector<>::iterators
+	(copy): rewritten with iterators to eliminate SPEED_HACKS
+
+2002-02-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* core.cc: provide implementation for class State
+
+	* conditionState.cc: deleted
+
+	* conditionState.hh: gutted; becomes abtract non-interface for
+	state information used in solving condition fragments
+
+	* core.cc: provide implementation for class ConditionFragment
+
+	* conditionFragment.cc: deleted
+
+	* conditionFragment.hh (class ConditionFragment): gutted; becomes
+	an abstract interface for condition fragments
+
+2002-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* strategy.cc: added def for standard
+
+	* strategy.hh (class Strategy): added protected static data member
+	standard
+	
+===================================Maude70==================================================
+
+2001-12-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* run.cc (reduce): made non-inline since with gc++ 3.0 it's not
+	possible to have a function inline in one file and yet have an
+	outlined copy for calls from other files: "An inline function must
+	be defined in every translation unit that references it." - g++
+	problem report 3833 response
+	
+===================================Maude69==================================================
+
+2001-10-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNodeSet.hh (class DagNodeSet): added decl for index2DagNode()
+
+	* dagNodeSet.cc (index2DagNode): added
+	
+===================================Maude68==================================================
+
+2001-05-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* oneStep.cc: deleted
+
+	* oneStep.hh: deleted
+
+2001-04-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.cc (compileBuild): fixed nasty bug where we were not
+	passing atTop = true to findAvailableTerms(); among other things
+	this causes evaluated subterms undert top symbol to be treated as
+	eager rather than lazy as they should be. It also allows whole lhs
+	to be reused in rhs via l->r sharing - something that is
+	unsupportable by free theory discrimination nets since there is
+	never a pointer to this in the matching stack and special casing
+	the variables to handle a pseudo variable that take the whole
+	subject would slow everything down
+
+2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (rebuildUptoRoot): use new
+	Vector<RedexPosition> version of copyWithReplacement()
+
+	* run.cc (ascend): use new Vector<RedexPosition> version of
+	copyWithReplacement()
+	
+===================================Engine66==================================================
+
+2001-03-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): deleted decls for
+	eager(), eagerRewrite() and fair()
+
+	* rewritingContext.cc (eagerRewrite): deleted
+	(eager): deleted
+	(fair): deleted
+
+	* run.cc (ruleRewrite): check for abort
+	(doRewriting): check for abort and pretend we hit rewrite limit if
+	so
+
+	* ruleTable.cc (applyRules): return subject in abort case to that
+	caller will see abort flag when it goes to do the post rewrite
+	trace
+
+2001-03-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rule.cc (Rule): fixed bug: need to initialize extLhsAutomaton
+	(Rule): delete extLhsAutomaton
+
+	* rule.hh (class Rule): deleted decl for apply()
+
+	* rule.cc (apply): deleted; this function is obsoleted by higher
+	level functions and in any case doesn't handle conditions with
+	matching fragments correctly
+
+	* rewriteSearchState.cc (RewriteSearchState): pass respectFrozen
+	flag = true to SearchState()
+	(findNextRewrite): use getExtLhsAutomaton() instead of
+	getLhsAutomaton() now that the latter can return a greedy
+	automaton that may not find all solutions
+
+	* searchState.cc (SearchState): take respectFrozen flag
+
+	* searchState.hh (class SearchState): updated decl for SearchState()
+
+	* positionState.hh (class PositionState): added data member
+	respectFrozen; updated decl for PositionState()
+
+	* positionState.cc (PositionState): take respectFrozen flag
+	(exploreNextPosition): support respectFrozen
+
+2001-03-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.hh (class Module): added decl for resetRules()
+
+	* module.cc (resetRules): added
+
+	* ruleTable.hh (resetRules): added
+
+	* rule.cc (compile): add lhs variables to condition variables
+	_after_ compiling so that future calls to etNonExtLhsAutomaton()
+	or getExtLhsAutomaton() will compile lhs to to generate all
+	matchers
+
+	* run.cc (doRewriting): use new staleMarker convention
+	(ascend): make args vector static
+	(fairRewrite): don't set staleMarker
+
+	* rewritingContext.cc (rebuildUptoRoot): use new staleMarker
+	convention
+
+	* rewritingContext.hh (class RewritingContext): added enum
+	Special; deleted data member rootStale
+	(RewritingContext): use new staleMarker convention
+	(root): use new staleMarker convention
+
+	* rewritingContext.cc (rebuildUptoRoot): rewritten using
+	staleMarker
+
+	* run.cc (ascend): use staleMarker rather than setStale() and
+	clearStale()
+	(doRewriting): use staleMarker rather than setStale()
+	(fairRewrite): initialize staleMarker
+
+	* rewritingContext.hh (class RewritingContext): added data member
+	staleMarker
+
+2001-03-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rule.cc (getExtLhsAutomaton): added
+
+	* rule.hh (class Rule): added data member extLhsAutomaton; added
+	decl for getExtLhsAutomaton()
+
+	* strategy.hh (class Strategy): made stdStrategy and unevalArgs
+	Bool so that they can share word with frozen flag
+
+	* run.cc (descend): test isFrozen()
+	(ruleRewrite): test isFrozen()
+	(ruleRewrite): fix bug where we weren't incrementing nextToExplore
+	in the frozen case
+
+	* strategy.cc (Strategy): added
+
+	* strategy.hh (setFrozen): added
+	(isFrozen): added
+
+	* rewritingContext.hh (class RewritingContext): use NONE (-1) as
+	default limit on rewrites for ruleRewrite(), fairRewrite() and
+	fairContinue() since UNBOUNDED is actually quite small for a
+	64-bit int (on 32-bit machines)
+
+	* run.cc (fairTraversal): rewritten by manually drawing out and
+	rearranging the control flow graph to save 2 gotos; arg is now
+	newTraversal flag
+	(fairRewrite): use new fairTraversal() convention
+	(fairContinue): use new fairTraversal() convention
+
+	* rewritingContext.hh (class RewritingContext): added decl for
+	ascend()
+
+	* run.cc (fairTraversal): turn parent test into an Assert when
+	checking for a sibling since if we have manipulated redexStack
+	correctly the only thing that might exist in
+	redexStack[currentIndex + 1] is a sibling
+	(assend): added
+	(fairTraversal): use ascend()
+
+2001-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): updated decl for
+	ruleRewrite()
+
+	* run.cc (ruleRewrite): take Int64 limit
+
+	* rewritingContext.hh (class RewritingContext): updated decl for
+	fairTraversal()
+
+	* run.cc (fairRewrite): pass restart arg to fairTraversal()
+	(fairContinue): pass restart arg to fairTraversal()
+	(doRewriting): no longer clear progress if we hit rewriteLimit
+	(fairTraversal): return bool value to say whetherwe stop traversal
+	because we hit rewriteLimit or because we had visited all nodes
+	(fairContinue): rewritten
+	(fairRewrite): use new fairTraversal() convention
+
+	* rewritingContext.hh (class RewritingContext): updated
+	fairTraversal() decl
+
+	* run.cc (fairTraversal): added restart arg
+
+2001-03-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): added decl for
+	fairContinue()
+
+	* run.cc (fairRewrite): rewritten
+	(doRewriting): clear progress flag if we hit our rewrite limit
+	(fairContinue): added
+
+	* rewritingContext.hh (class RewritingContext): updated decl for
+	fairRewrite()
+
+2001-03-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* run.cc (ruleRewrite): fixed bug where we were failing in
+	increment nextToExplore (introduced during clean up)
+
+	* rewritingContext.hh (class RewritingContext): added decls for
+	descend() and doRewriting(); updated decl for fairTraversal()
+
+	* run.cc (doRewriting): added
+	(descend): added
+	(fairTraversal): rewritten
+	(fairRewrite): rewritten
+
+	* rewritingContext.hh (class RewritingContext): added data members
+	progress, rewriteLimit, gasPerNode, currentGas, lazyMarker
+
+	* run.cc (reduce): made inline, moved here
+	(ruleRewrite): moved here
+	(fairRewrite): cleaned, moved here
+	(fairTraversal): moved here
+
+2001-03-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (ruleRewrite): code cleaning; use objects
+	redexStack rather than local "stack"
+
+2001-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (fairTraversal): call okToCollectGarbage()
+	(2 places)
+
+	* sortConstraintTable.cc (constrainToSmallerSort2): call
+	incrementMbCount()
+
+	* oneStep.cc (findNextRewrite): incrementCount() ->
+	incrementRlCount()
+
+	* ruleTable.cc (applyRules): incrementCount() ->
+	incrementRlCount()
+
+	* rule.cc (apply): incrementCount() -> incrementRlCount()
+
+	* equationTable.cc (applyReplace): incrementCount() ->
+	incrementEqCount() (2 places)
+
+	* rewritingContext.hh (incrementCount): deleted
+	(incrementMbCount): added
+	(incrementEqCount): added
+	(incrementRlCount): added
+	(addInCount): rewritten
+	(count): deleted
+	(getMbCount): added
+	(getMbCount): added
+	(getEqCount): added
+	(getRlCount): added
+	(class RewritingContext): deleted data member rewriteCount; added
+	data members mbCount, eqCount, rlCount; updated function decls
+	(RewritingContext): rewritten
+	(clearCount): rewritten
+
+2001-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (fairTraversal): added
+	(fairRewrite): use fairTraversal()
+	(fairTraversal): support unstackable flag; there is a bug in the
+	unstackable flag use in fair() that we avoid in this non-recursive
+	version 
+
+2001-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (fairRewrite): pass eager flag to fair()
+
+	* rewritingContext.hh (class RewritingContext): updated fair()
+	decl
+
+	* rewritingContext.cc (fair): take and pass eager flag; only do
+	reduce if eager flag is true; argsUnstackable calculation optimized
+
+2001-03-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (fair): support Unstackable flag
+
+	* rewritingContext.hh (class RewritingContext): added decls for
+	fair( and fairRewrite()
+
+	* rewritingContext.cc (fair): added
+	(fairRewrite): added
+
+2001-03-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (eager): check isReduced() before trying
+	eqRewrite(); call reduce() after a successful eqRewrite() or
+	ruleRewrite()
+
+2001-03-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (eager): use Symbol::stackArguments
+
+	* redexPosition.hh (isLazy): beomes isEager()
+	(class RedexPosition): lazy -> eager throughout; it's less
+	confusing since we also have semi-eager which is treated as lazy
+	so now we have eager and non-eager
+
+2001-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* redexPosition.hh (RedexPosition): added LAZY to enum Flags;
+	added decls for isLazy() and for ctor with lazy flag
+	(isLazy): added
+
+	* rewritingContext.cc (rebuildUptoRoot): only rebuild none stale
+	entries in redex stack
+	(eager): use clearStale(), setStale() and isStale() to avoid
+	building replacements for node where nothing underneath them
+	changed by rlRewrite() (changes due to eqRewrite() are make in
+	place and so don'r require rebuilding
+
+2001-03-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (eager): use isUnrewritable() and
+	setUnrewritable()
+
+	* redexPosition.hh (setStale): added
+	(clearStale): added
+	(isStale): added
+	(class RedexPosition): added enum Flags and data member flags
+
+2001-03-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (eager): unstack stacked nodes in all cases
+	(eager): need to set rootStale = true whenever we replaceNode()
+
+	* rewritingContext.hh (class RewritingContext): added data member
+	rootStale
+	(root): check for rootStale and call rebuildUptoRoot() if needed
+	(RewritingContext): initialize rootStale to false
+	(class RewritingContext): toot() is no longer const
+
+	* rewritingContext.cc (markReachableNodes): mark nodes in redexStack
+
+	* rewritingContext.hh (class RewritingContext): added decls for
+	eagerRewrite() and eager()
+
+	* rewritingContext.cc (eagerRewrite): added
+	(eager): added
+
+	* redexPosition.hh (replaceNode): added
+
+	* rewritingContext.hh (class RewritingContext): added decl for
+	rebuildUptoRoot()
+
+	* rewritingContext.cc (rebuildUptoRoot): added
+
+	* rewritingContext.hh (class RewritingContext): added data members
+	redexStack and currentIndex
+	
+===================================Engine65==================================================
+
+2001-02-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (Module): commented out symbol deletion to chase bug
+
+2001-02-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.cc (checkCondition): initialize trialRef if
+	findFirst - this fixed an uninit bug that shows up under purify
+
+2001-02-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc: completely rewritten; we fixed a nasty memory
+	leak where we weren't deleting subproblems that failed to have
+	even a first solution
+
+	* searchState.hh: completely rewritten
+
+	* core.hh: added forward decls for RewriteSearchState and
+	MatchSearchState
+
+	* matchSearchState.hh: created
+
+	* matchSearchState.cc: created
+
+	* rewriteSearchState.hh: created
+
+	* rewriteSearchState.cc: created
+
+2001-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc (getResult): deleted
+	(getRule): added
+	(getReplacement): added
+
+	* searchState.hh (class SearchState): added decls for getRule()
+	and getReplacement(); delete decl for getResult()
+
+	* searchState.cc (getMatch): deleted
+
+	* searchState.hh: completely rewritten using class PositionState
+	(getContext): added
+	(getPattern): added
+
+	* searchState.cc: completely rewritten using class PositionState
+
+	* core.hh: added forward decl for class PositionState
+
+	* positionState.hh: created
+
+	* positionState.cc: created
+
+	* conditionState.cc (ConditionState): use addInCount() rather than
+	incrementCount()
+
+	* conditionFragment.cc (solve): use addInCount() rather than
+	incrementCount() (2 places)
+
+	* rewritingContext.hh (class RewritingContext): added decls for
+	clearCount() and addInCount()
+	(clearCount): added
+	(addInCount): added
+
+2001-02-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pattern.cc (traceBeginTrial): added
+
+	* searchState.cc (findNextMatch): getAutomaton() ->
+	getLhsAutomaton()
+
+	* pattern.cc (~Pattern): deleted
+	(Pattern): rewritten using PreEquation calls
+
+	* pattern.hh (class Pattern): derive from PreEquation rather than
+	VariableInfo; added decl for traceBeginTrial(); deleted decls for
+	getTerm(), getAutomaton() and dtor; deleted data members term and
+	automaton; ctor decl takes extra arg with default
+	(getTerm): deleted
+	(getAutomaton): deleted
+
+	* sortConstraint.hh (class SortConstraint): made traceBeginTrial()
+	private; use noCondition as default arg for ctor
+
+	* rule.hh (class Rule): made traceBeginTrial() private; use
+	noCondition as default arg for ctor
+
+	* equation.hh (class Equation): use noCondition as default arg for
+	ctor
+	(class Equation): made traceBeginTrial() private
+
+	* preEquation.hh (class PreEquation): added protected data member
+	noCondition
+
+2001-01-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortConstraintTable.cc (constrainToSmallerSort2): check
+	context.traceAbort() after calling context.tracePreScApplication()
+
+	* conditionFragment.cc (solve): deleted commented out
+	getTraceStatus() stuff (2 places)
+
+	* preEquation.cc (checkCondition): check context.traceAbort()
+	after calling traceBeginTrial() since this might set abort
+	condition
+
+2001-01-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc (getMatch): return extensionInfo vai 3rd ref arg
+
+	* searchState.hh (class SearchState): updated decl for getMatch()
+
+2001-01-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc (findNextMatch): fixed memory leak where we were
+	not deleting matchingSubproblem when it failed
+	(SearchState): (both versions) clear extensionInfo pointer
+	(findNextMatch): delete extensionInfo before assigning to
+	extensionInfo to fix a memory leak where old extensionInfo
+	pointer was overwritten without being deleted
+
+2001-01-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pattern.hh (getTerm): added
+
+	* searchState.cc (getMatch): moved here so that files that include
+	searchState.hh fon't have to know about Pattern and
+	RewritingContext for pointer conversions
+	(findNextMatch): need to call clear()
+
+	* searchState.hh (getMatch): now pass back variable info
+
+2001-01-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc (findNextMatch): added
+
+	* searchState.hh (getMatch): added
+	(class SearchState): added data member firstMatch
+
+	* searchState.cc (SearchState): code cleaning
+	(SearchState): added Pattern* version
+	(~SearchState): delete pattern
+
+	* core.hh: added forward decl for class Pattern
+
+	* pattern.cc: created
+
+	* pattern.hh: created
+	
+===================================Engine64==================================================
+
+2000-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc (findNextPosition): don't look for a next
+	position if maxDepth < 0
+	(findNextRewrite): don't add 1 to rewrite count to account for
+	apply
+
+	* module.cc (~Module): delete sorts here so we delete sorts when a
+	module is destructed even if the sort set has not been closed
+
+	* connectedComponent.cc (~ConnectedComponent): don't delete sorts
+	here
+
+2000-12-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* conditionState.cc (ConditionState): initialize subproblem
+
+	* conditionFragment.cc (solve): delete newly created
+	ConditionState if we fail to find an initial solution
+
+2000-12-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* core.hh: added forward decl for class SearchState
+
+	* searchState.hh (class SearchState): updated decl for getResult()
+
+	* searchState.cc (getResult): pass back substitution
+
+	* searchState.hh (class SearchState): substValues becomes
+	Vector<DagRoot*>
+	(setInitialSubstitution): use DagRoot
+
+	* searchState.cc (SearchState): rewriten passing subject via
+	DagRoot; Unmade - we need to maintain RewritingContext between
+	to findNextRewrite() since it holds the substitution
+	(initSubstitution): use DagRoot
+
+2000-12-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc (findNextRewrite): fixed bug where we were not
+	initializing subject and extensionn info correctly after finding
+	our first position that satisfies minimum depth criteria
+	(findNextRewrite): pass number of rewrites used via stepCount ref
+	arg
+
+	* searchState.hh (class SearchState): updated  findNextRewrite()
+	decl
+
+	* searchState.cc (initSubstitution): substValues is now an array
+	of RewritingContext*
+	(~SearchState): delete substitution stuff entrusted to us by our
+	creator
+	(SearchState): don't init  substVariables, substValues
+ 
+	* searchState.hh (setInitialSubstitution): move here and
+	rewritten; we now take responsibility for delete the substitution info
+
+	* searchState.cc (~SearchState): delete context, don't call context.finished()
+	(SearchState): changed handling of context
+	(findNextRewrite): changed handling of context
+	(getResult): changed handling of context
+	(initSubstitution): changed handling of context
+
+	* searchState.hh (class SearchState): updated decl for
+	setInitialSubstitution()
+	(class SearchState): upadted decl for local variables context,
+	substVariables and substValues
+	(class SearchState): updated decl for ctor
+
+	* rule.cc (compile): fixed bug - we must use compileTopRhs()
+	rather than compileRhs() to ensure builder will not be empty
+
+2000-11-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc (setInitialSubstitution): added
+	(findNextRewrite): call initSubstitution()
+	(SearchState): zero substVariables and substValues
+
+	* searchState.hh (class SearchState): added decl for initSubstitution()
+
+	* searchState.cc (initSubstitution): added
+
+	* searchState.hh (class SearchState): added data members
+	substVariables and substValues
+
+	* searchState.cc (findNextRewrite): make sure first position tried
+	meets minDepth criteria
+
+	* searchState.hh (class SearchState): added data member minDepth,
+	updated ctor decl
+
+	* searchState.cc (SearchState): set extensionInfo correctly in
+	non-ext case
+	(SearchState): initialize depth array
+	(findNextRewrite): check rule's label before using it
+	(SearchState): added minDepth arg
+
+2000-11-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.hh (class SearchState): added data member trialRef
+
+	* searchState.cc: stack -> redexStack to avoid clash with stack
+	template
+	(~SearchState): empty condition stack
+	(checkCondition): deleted
+	(findNextRewrite): rewritten using new checkCondition()
+	(SearchState): initialize trialRef
+
+	* core.hh: added forward decl for class ConditionState
+
+	* preEquation.hh (class PreEquation): brought decls into line with
+	latest reorganization
+
+	* preEquation.cc (solveCondition2): added
+	(solveCondition): use solveCondition2()
+	(checkCondition): new general purpose version added that allows
+	looking for new solutions to a condition that has already suceeded
+	(checkCondition): rewritten in terms of more general version
+	(solveCondition): deleted
+	(solveCondition2): becomes new solveCondition()
+
+	* searchState.hh (class SearchState): added data member
+	conditionStack
+
+	* searchState.cc (findNextRewrite): use getNonExtLhsAutomaton()
+
+	* preEquation.cc (PreEquation): delete lhsAutomaton before calling
+	lhs->deepSelfDestruct() - this should make any difference but it's
+	cleaner since lhsAutomaton may have pointers into lhs but no
+	vice versa
+
+	* rule.cc (Rule): clear nonExtLhsAutomaton
+	(~Rule): delete nonExtLhsAutomaton
+	(getNonExtLhsAutomaton): added
+
+	* rule.hh (class Rule): added decl for getNonExtLhsAutomaton() and
+	data member nonExtLhsAutomaton
+
+2000-11-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.cc (solveCondition): delete state elements before
+	returning - this fixes a nasty bug where we left RewritingContext
+	objects around with root pointers pointing to old dagnodes whose
+	symbols might be deleted if their module is delete or replaced,
+	leading to disater during a garbage collect
+
+	* preEquation.hh (class PreEquation): updated decl for trialRef
+
+	* preEquation.cc (solveCondition): take trialRef arg and pass it
+	to traceBeginFragment() and traceEndFragment()
+	(checkCondition): pass trialRef to solveCondition()
+
+	* rewritingContext.cc (traceBeginFragment): added trialRef arg
+	(traceEndFragment): added trialRef arg
+
+	* rewritingContext.hh (class RewritingContext): updated decls for
+	traceBeginFragment() and traceEndFragment()
+
+2000-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* oneStep.hh: #define _oneContext_hh_ -> _oneStep_hh_; not really
+	a bug - just an inconsistancy
+
+2000-10-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* conditionFragment.hh (class ConditionFragment): deleted decl for
+	remapIndices()
+
+	* preEquation.cc (compileMatch): don't call
+	ConditionFragment::remapIndices()
+
+	* conditionFragment.cc (compileBuild): call
+	determineContextVariables() and insertAbstractionVariables() here
+	(compileMatch): don't call determineContextVariables() and
+	insertAbstractionVariables() here
+	(compileMatch): do index remapping here
+	(remapIndices): deleted
+
+	* preEquation.cc (compileBuild): call determineContextVariables()
+	and insertAbstractionVariables() here
+	(compileMatch): don't call determineContextVariables() and
+	insertAbstractionVariables() here
+
+2000-10-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.cc (compileMatch): we have a nasty problem in that
+	compileLhs() is called before computeIndexRemapping(), while
+	computeIndexRemapping() can add new protected variables. This
+	means that the Substitutions inside the matching amtomata made by
+	compileLhs() could be the wrong size (too small) with bad things
+	happening when such substitutions are copied back to the main
+	substitution during matching & solving. We introduce a temporary
+	hack that does computeIndexRemapping() earlier, but breaks the
+	condition fragment version of compileMatch() in the case that the
+	latter introduces abstraction variables in order to see if the
+	above mentioned bug is the sole cause of current crashes
+
+	* substitution.hh (copy): make Assert message more detailed
+
+2000-08-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* core.hh: deleted class ComplexSort
+	
+	* complexSort.cc: deleted
+	
+	* complexSort.hh: deleted
+	
+===================================Engine62==================================================
+
+2000-08-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* connectedComponent.cc (ConnectedComponent): insert newly created
+	error sorts into module
+
+	* module.cc (closeSortSet): postpone setting status =
+	SORT_SET_CLOSED until end so that we can add in error sorts
+
+2000-08-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* conditionFragment.cc (remapIndices): get remapping correct for
+	each fragment type
+
+	* connectedComponent.hh (class ConnectedComponent): added back
+	decl for findMaximalSorts()
+
+	* connectedComponent.cc (findMaximalSorts): added back since we
+	need this form metalevel
+
+2000-08-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* complexSort.cc (operator<<): don't handle union sorts
+
+	* ruleTable.cc (applyRules): don't check for subject in
+	error sort in pattern in error sort
+
+	* equation.cc (compile): no longer have to parse to
+	non-error sort to be "fast"
+
+	* equation.hh (class Equation): no longer have to parse to
+	non-error sort to be "fast"
+
+	* equationTable.cc (applyReplace): don't check for subject in
+	error sort in pattern in error sort
+
+2000-08-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (findMinSortIndex): don't make local NatSet static
+	since there isn't any saving unless we have more than 32 op decls
+	(buildSortDiagram): ditto (2 places)
+
+2000-07-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* connectedComponent.cc (findIndex): made const
+
+	* connectedComponent.hh (class ConnectedComponent): deleted data
+	member unionSorts
+	(class ConnectedComponent): make findIndex() decl const
+
+	* sortTable.cc (dumpSortDiagram): don't use ComplexSort (2 places)
+
+	* sort.cc (dump): don't use ComplexSort
+
+	* sort.hh (leq): (int, Sort*) version: don't handle union sorts
+	(leq): (Sort*, int) version: don't handle union sorts
+	added decl for operator<<
+
+	* connectedComponent.hh (class ConnectedComponent): deleted decls
+	for findMaximalSorts() (both versions)
+
+	* connectedComponent.cc (findMaximalSorts): deleted (both versions)
+
+	* sortTable.hh (class SortTable): deleted decl for
+	lookupSortIndex()
+
+	* sortTable.cc (lookupSortIndex): deleted - this only existed to
+	handle sort computations when and argument was in a union sort
+
+	* connectedComponent.cc (findIndex): don't return a union sort;
+	instead return the sort with largest index that is greater or
+	equal to all of the sorts in the input set
+	(getLeqSorts): don't handle union sorts
+	(leq): don't handle union sorts
+
+	* sort.hh (class Sort): removed UNION_SORT from enum SpecialSorts
+	
+===================================Engine61==================================================
+
+2000-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (traceBeginFragment): added firstAttempt arg
+
+	* preEquation.cc (solveCondition): pass firstAttempt arg to
+	traceBeginFragment()
+
+	* rewritingContext.hh (class RewritingContext): added firstAttempt
+	arg to traceBeginFragment() decl
+
+	* conditionFragment.hh: added decl for operator<<
+
+	* rewritingContext.hh (class RewritingContext): added decls for
+	traceBeginFragment(), traceEndFragment()
+
+	* preEquation.cc (solveCondition): call traceBeginFragment(),
+	traceEndFragment(), check for abort
+
+	* conditionFragment.cc (remapIndices): moved here
+	(remapIndices): remap rhsIndex and lhsIndex if appropriate
+
+	* variableInfo.cc (computeIndexRemapping): added
+
+	* variableInfo.hh (remapIndex): added
+	(class VariableInfo): added newIndex field to struct ConstructionIndex
+
+	* conditionFragment.hh (class ConditionFragment): added decl for
+	remapIndices()
+	(remapIndices): added
+
+	* rule.cc (compile): call remapIndices()
+
+	* equation.cc (compile): call remapIndices()
+
+	* preEquation.cc (compileMatch): call computeIndexRemapping();
+	call remapIndices() on each fragment
+
+	* rhsBuilder.cc (remapIndices): added
+
+	* rhsBuilder.hh (class RhsBuilder): added decl for remapIndices()
+
+	* trivialRhsAutomaton.hh (class TrivialRhsAutomaton): added decl
+	for remapIndices(); data member no longer const
+
+	* copyRhsAutomaton.hh (class CopyRhsAutomaton): added decl for
+	remapIndices((); data members are no longer const
+
+	* copyRhsAutomaton.cc (remapIndices): added
+
+2000-07-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableInfo.hh (class VariableInfo): adde decls for
+	computeIndexRemapping() and remapIndex()
+
+	* rule.cc (compile): don't call Substitution::notify()
+
+	* sortConstraint.cc (compile): don't call Substitution::notify()
+
+	* equation.cc (compile): use getNrProtectedVariables()
+	instead of nrVariables(); don't call Substitution::notify()
+
+	* ruleTable.cc (applyRules): use getNrProtectedVariables()
+	instead of nrVariables()
+
+	* equationTable.cc (applyReplace): use getNrProtectedVariables()
+	instead of nrVariables()
+
+	* sortConstraintTable.cc (constrainToSmallerSort2): use
+	getNrProtectedVariables() instead of nrVariables()
+
+	* oneStep.cc (findNextRewrite): use getNrProtectedVariables()
+	instead of nrVariables()
+
+	* variableInfo.hh (class VariableInfo): added enum Values with
+	MAX_NR_PROTECTED_VARIABLES since we cannot use -ve indices for
+	constructionIndices
+	(useIndex): was useConstructionIndex() but now we can call it on
+	any index
+	(class VariableInfo): decl for useConstructionIndex() becomes
+	useIndex()
+
+	* conditionFragment.cc (compileBuild): call endOfFragment();
+
+	* variableInfo.hh (makeProtectedVariable): added
+	(endOfFragment): added
+	(useConstructionIndex): added
+
+	* variableInfo.cc (makeAbstractionVariable): deleted
+	(allocateIndex): deleted
+	(VariableInfo): added
+
+	* variableInfo.hh (nrVariables): deleted
+	(getNrRealVariables): added
+	(getNrProtectedVariables): added
+	(class VariableInfo): added decl for getNrRealVariables(),
+	getNrProtectedVariables(), makeProtectedVariable(),
+	makeConstructionIndex(), endOfFragment(), useConstructionIndex()
+	(class VariableInfo): deleted decls for nrVariables(),
+	makeAbstractionVariable() and allocateIndex()
+
+	* preEquation.cc (PreEquation): delete lhsAutomaton
+	
+===================================Engine60==================================================
+
+2000-07-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* conditionFragment.cc (solve): use safeConstruct()
+
+	* rhsBuilder.hh (safeConstruct): added; this can be called even on
+	empty RhsBuilder
+	(class RhsBuilder): added decl for safeConstruct()
+
+	* conditionFragment.cc (compileBuild): use compileTopRhs() (4 places)
+	(compileBuild): unmade previous change
+
+	* preEquation.hh (class PreEquation): added decl for solveCondition()
+
+	* preEquation.cc (solveCondition): added
+	(checkCondition): rewritten using solveCondition()
+
+	* conditionState.hh (class ConditionState): rhsContext becomes a pointer
+
+	* conditionFragment.cc (solve): added
+
+	* conditionState.cc (ConditionState): use Substitution::copy()
+
+2000-07-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equation.cc (compile): use compileTopRhs()
+
+	* conditionFragment.hh (getType): made const
+	(getLhs): made const
+	(getRhs): made const
+	(getSort): made const
+
+2000-07-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (indexSortConstraints): lhs() -> getLhs()
+	(indexEquations): lhs() -> getLhs()
+	(indexRules): lhs() -> getLhs()
+	(insertLateSymbol): lhs() -> getLhs() (3 places)
+
+	* oneStep.cc (findNextRewrite): don't call copyProblemBindings()
+	(findNextRewrite): use getLhsAutomaton() instead of lhsAutomaton()
+	(findNextRewrite): use getRhsBuilder() instead of rhsAutomaton()
+
+	* rhsBuilder.cc (dump): aliens -> automata
+
+	* sortConstraintTable.cc (sortConstraintLt): use getSort() instead
+	of sort()
+	(constrainToSmallerSort2): use getLhsAutomaton() instead of
+	lhsAutomaton()
+	(constrainToSmallerSort2): use getSort() instead of sort()
+
+	* ruleTable.cc (applyRules): use getUnboundVariables() instead of
+	variableSafe()
+	(applyRules): use getLhsAutomaton() instead of lhsAutomaton()
+	(applyRules): don't call copyProblemBindings()
+	(applyRules): use getRhsBuilder() instead of rhsAutomaton() (2
+	places)
+
+	* equationTable.cc (applyReplace): use getLhsAutomaton() instead
+	of lhsAutomaton() (2 places)
+	(applyReplace): use getRhsBuilder() instead of rhsAutomaton() (4
+	places)
+	(applyReplace): don't call copyProblemBindings()
+	(dumpEquationTable): use getLhsAutomaton() instead of
+	lhsAutomaton()
+	(applyReplace): use getLhs() instead of lhs()
+
+	* sortConstraint.cc (check): rewritten
+	(preprocess): use new names for things
+	(compile): rewritten
+	(SortConstraint): rewritten
+
+	* sortConstraint.hh (class SortConstraint): updated ctor decl;
+	sort() -> getSort(); scSort -> sort; scCompiled -> compiled
+	(sort): becomes getSort()
+
+	* rule.cc (apply): use builder instead of rhsAutomaton
+
+	* rule.hh (label): becomes getLabel()
+
+	* rule.cc (Rule): rewritten
+	(~Rule): don't delete rhsAutomaton
+	(check): rewritten
+	(preprocess): use new names for things; don't call addRhsVariables()
+	(compile): rewritten
+	(apply): check unboundVariables rather than variableSafeFlag
+	(apply): use getLhsAutomaton() instead of lhsAutomaton()
+	(apply): don't call copyProblemBindings()
+
+	* rule.hh (class Rule): upated decl got ctor; decl for
+	getRhsBuilder() replaces decl for rhsAutomaton(); 
+	(class Rule): label() -> getLabel(); ruleLabel -> label; ruleRhs
+	-> rhs; rlCompiled -> compiled; deleted data member
+	ruleProblemVariables; ruleRhsAutomaton replaced by data member
+	builder
+	(rhs): becomes getRhs()
+	(problemVariables): deleted
+	(variableSafe): deleted
+	(class Rule): deleted decl for variableSafe(); deleted data member
+	variableSafeFlag
+	(rhsAutomaton): becomes getRhsBuilder()
+
+	* rhsBuilder.hh (construct): made const
+	(replace): made const
+	(class RhsBuilder): updated decls for construct() and replace()
+
+	* equation.cc (Equation): don't clear rhsAutomaton
+	(Equation): don't delete rhsAutomaton
+
+	* equation.hh (class Equation): deleted data member rhsAutomaton;
+	added data member builder; decl for getRhsAutomaton() becomes
+	getRhsBuilder()
+	(getRhsBuilder): added
+	(getRhsAutomaton): deleted
+
+	* equation.cc (check): rewritten
+	(preprocess): don't call addRhsVariables()
+	(compile): rewritten
+
+	* preEquation.hh (class PreEquation): updated decl for check()
+
+	* preEquation.cc (check): pass back boundVariables set though
+	reference arg
+
+	* equation.cc (Equation): rewritten
+	(~Equation): rewritten
+
+	* equation.hh (class Equation): updated ctor decl; eqCompiled ->
+	compiled; eqRhsAutomaton -> rhsAutomaton; eqRhs -> rhs; rhs() ->
+	getRhs(); rhsAutomaton() -> getRhsAutomaton(); deleted
+	eqProblemVariables; deleted decl for problemVariables()
+	(rhs): becomes getRhs()
+	(rhsAutomaton): becomes getRhsAutomaton()
+	(problemVariables): deleted
+
+	* conditionFragment.cc (compileBuild): set nrIndicesToProtect
+
+	* conditionFragment.hh (class ConditionFragment): added data
+	member nrIndicesToProtect
+
+	* preEquation.hh (class PreEquation): updated decl for check();
+	added decls for compileBuild() and compileMatch(); deleted decl
+	for compile()
+
+	* preEquation.cc (check): lose checkCondVars arg
+	(check): greatly simplified
+	(preprocess): simplified
+	(compileBuild): added
+	(compileMatch): added
+	(compile): deleted
+
+	* variableInfo.hh (rhsVariables): deleted
+	(getUnboundVariables): added
+
+	* conditionFragment.hh (class ConditionFragment): checkVariables()
+	decl -> check()
+
+	* conditionFragment.cc (checkVariables): becomes check(); use
+	addUnboundVariables(); lose last arg
+
+	* variableInfo.hh (class VariableInfo): deleted decl for
+	rhsVariables(); deleted data member rhsVars; deleted decl for
+	addRhsVariables(); added decl for getUnboundVariables(); added
+	decl for add UnboundVariables(); added data member
+	unboundVariables
+	(class VariableInfo): conditionVars -> conditionVariables;
+	conditionVariables() decl -> getConditionVariables()
+	(addUnboundVariables): added
+	(addRhsVariables): deleted
+	(conditionVariables): becomes getConditionVariables()
+
+	* preEquation.cc (PreEquation): rewritten
+	(~PreEquation): rewritten
+
+	* preEquation.hh (class PreEquation): deleted data members
+	peCondLhs, peCondRhs, peEagerVariables, peCondLhsAutomaton,
+	peCondRhsAutomaton, peProblemVariables; added data member
+	condition
+	(lhs): becomes getLhs()
+	(class PreEquation): peLhs -> lhs; peLhsAutomaton -> lhsAutomaton;
+	lhs() decl -> getLhs(); lhsAutomaton() -> getLhsAutomaton()
+	(condLhs): deleted
+	(condRhs): deleted
+	(getCondition): added
+	(hasCondition): use isNull()
+	(eagerVariables): deleted
+	(lhsAutomaton): becomes getLhsAutomaton()
+	(class PreEquation): added decl for getCondition(); deleted decls
+	for condLhs(), condRhs() and eagerVariables()
+	(class PreEquation): updated decl for ctor
+	(class PreEquation): deleted decl for setLhsAutomaton() (this
+	seems to be left over from 3 years ago!)
+
+2000-07-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* conditionFragment.hh (class ConditionFragment): added decls for
+	compileBuild() and compileMatch()
+
+	* conditionFragment.cc (ConditionFragment): initialize lhsIndex
+	and rhsIndex
+	(~ConditionFragment): don't delete lhsBuilder or rhsBuilder
+	(~ConditionFragment): deepSelfDestruct() rhs
+	(compileBuild): added
+	(compileMatch): added
+
+	* conditionFragment.hh (class ConditionFragment): added data
+	member builder
+	(class ConditionFragment): lhsBuilder and rhsBuilder become
+	lhsIndex and rhsIndex
+
+	* core.hh: added forward decl for class ConditionFragment
+
+	* rhsBuilder.hh (class RhsBuilder): added decl for empty()
+	(empty): added
+
+	* core.hh: added forward declaration for class TrivialRhsAutomaton
+
+	* trivialRhsAutomaton.hh: created
+
+	* trivialRhsAutomaton.cc: created
+
+	* variableInfo.hh (class VariableInfo): added decl for allocateIndex()
+
+	* variableInfo.cc (allocateIndex): added
+
+	* core.hh: added forward declarations for class TermBag and class
+	RhsBuilder
+
+	* rhsBuilder.hh: created
+
+	* rhsBuilder.cc: created
+
+	* termBag.hh: created
+
+	* termBag.cc: created
+	
+===================================Engine59==================================================
+
+2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* core.hh: added forwards decls for class BindingLhsAutomaton and
+	class CopyRhsAutomaton
+
+	* bindingLhsAutomaton.cc (match): only bind variable if match succeeds
+
+	* copyRhsAutomaton.cc: created
+
+	* copyRhsAutomaton.hh: created
+
+2000-07-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bindingLhsAutomaton.hh: created
+
+	* bindingLhsAutomaton.cc: created
+
+2000-06-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* conditionFragment.cc: created
+
+	* conditionFragment.hh: created
+
+2000-06-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableInfo.hh (class VariableInfo): don't use NO_COPYING()
+	macro since we need to be able to copy objects of this class
+	afterall
+
+2000-06-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableInfo.cc (variable2Index): use equal()
+	(makeAbstractionVariable): append (Term*) 0 to variables
+
+	* variableInfo.hh (class VariableInfo): variable2Index() takes
+	VariableTerm* rather than VariableSymbol*; index2Variable()
+	returns const Term* rather than VariableSymbol*
+	(class VariableInfo): data member variables is now Vector<Term*>
+	(class VariableInfo): use NO_COPYING() macro
+	(index2Variable): return const Term*
+	
+===================================Engine58==================================================
+
+2000-05-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.cc (preprocess): added AdvisoryCheck() for patterns
+	in error sort
+
+2000-04-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rule.cc (apply): now that variable in conditions need not occur
+	in lhs we insist that any variable not occuring in the lhs be
+	bound; this fixes a bug that we introduced when we allowed the
+	more flexiable rule syntax
+
+2000-03-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* cachedDag.hh (getDag): added HACK to set sort info in created
+	dag if it is set in original term. This is to avoid a nasty bug
+	where a variable is bound to an identity dag which doesn't have
+	sort info and is then matched into via idempotency.
+
+2000-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (dumpSortDiagram): ifdef'd
+
+	* sortTable.hh (class SortTable): use NO_COPYING() macro; ifdef'd
+	dumpSortDiagram() decl
+
+	* sort.cc (dump): ifdef'd
+
+	* sort.hh (class Sort): use NO_COPYING() macro; ifdef'd dump()
+	decl
+
+	* module.cc (dump): ifdef'd
+
+	* module.hh (class Module): ifdef'd dump() decl
+
+	* localBinding.hh (class LocalBinding): use NO_COPYING() macro
+
+	* localBinding.cc (dump): ifdef'd (both versions)
+
+	* localBinding.hh (class LocalBinding): ifdef'd dump() decls
+
+	* equationTable.cc (dumpEquationTable): ifdef'd
+
+	* equationTable.hh (class EquationTable): ifdef'd
+	dumpEquationTable() decl
+
+	* connectedComponent.cc (dump): ifdef'd
+
+	* connectedComponent.hh (class ConnectedComponent): use
+	NO_COPYING() macro; ifdef'd dump() decl
+
+	* module.cc (indexSortConstraints): standardized AdvisoryCheck()
+	(indexRules): standardized AdvisoryCheck()
+	(indexEquations): standardized AdvisoryCheck()
+
+	* sortTable.cc (findMinSortIndex): standardized WarningCheck()
+
+2000-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (insertLateSymbol): do postInterSymbolPass() if we
+	have closed fixups
+
+2000-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* connectedComponent.cc (findIndex): added Assert() to check sortCount
+
+2000-03-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preEquation.cc (checkCondition): check for abort after condition
+	checked so we don't end up calling traceEndTrial() or
+	traceExhausted() during an abort
+
+2000-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (insertSortConstraint): moved here, no longer inline
+	(insertEquation): moved here, no longer inline
+	(insertRule): moved here, no longer inline
+
+2000-03-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rule.hh (class Rule): added decl for check()
+
+	* module.cc (indexRules): moved call to preprocess
+	inside test for badness; actually nothing sets badness for rules
+	now as ther is no constraint of variables - we do this for
+	symmetry
+
+	* module.hh (insertRule): call check()
+
+	* rule.cc (check): added
+	(preprocess): simplified
+
+	* module.cc (indexSortConstraints): moved call to preprocess
+	inside test for badness as badness flag is now set by check()
+
+	* module.hh (insertSortConstraint): call check()
+
+	* sortConstraint.hh (class SortConstraint): added decl for check();
+
+	* sortConstraint.cc (check): added
+	(preprocess): simplified
+
+	* module.hh (insertEquation): call check()
+
+	* equation.cc (check): added
+
+	* equation.hh (class Equation): added decl for check()
+
+	* module.cc (indexEquations): moved call to preprocess inside test
+	for badness as badness flag is now set by check()
+
+	* equation.cc (preprocess): greatly simplified
+
+	* preEquation.hh (class PreEquation): added decl for check()
+
+	* preEquation.cc (check): added
+	(preprocess): greatly simplified
+
+	* module.hh (class Module): added FIX_UPS_CLOSED to enum Status
+
+	* module.cc (closeFixUps): added; now do interSymbol passes and
+	postInterSymbol pass here
+	(closeTheory): Assert now checks for FIX_UPS__CLOSED; no longer do
+	interSymbol passes and postInterSymbol pass here
+
+	* module.hh (class Module): use NO_COPYING() macro
+	(class Module): added decl for closeFixUps();
+	
+===================================Engine56==================================================
+
+2000-02-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (Module): revert to simple symbol deletion code; this
+	should now be safe as we will forbid dag node dtors from accessing
+	symbols
+	(notifyOfGC): deleted
+
+	* module.hh (class Module): made closeSortSet(), closeSignature()
+	and closeTheory() virtual
+	(class Module): deleted static members virgin, seen1GC,
+	seen2OrMoreGCs
+	(class Module): deleted decl for notifyOfGC()
+
+2000-02-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sort.cc (Sort): don't pass type arg to NamedEntity
+
+	* module.cc (Module): don't pass type arg to NamedEntity
+
+	* label.hh (Label): don't pass type arg to NamedEntity
+
+	* namedEntity.hh (class NamedEntity): deleted enum EntityType,
+	data member etype and decl for type(); ctor no longer takes type;
+	name now const
+	(type): deleted
+	(NamedEntity): don't take type arg
+
+2000-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (generateSortDiagram): use struct Flags
+	
+===================================Engine55==================================================
+
+2000-01-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sort.cc (generateSortVector): added
+
+2000-01-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (minimize): only allow live decl to partially
+	subsume other live decls; in particular we need to avoid the case
+	where a cycle of subsumptions remove all decls!
+	(minimize): check that alive is not empty before taking min and
+	max
+
+2000-01-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (generateSortDiagram): renamed from compileSortDiagram()
+
+	* sortTable.hh (class SortTable): added decl for compileSortDiagram()
+	(class SortTable): compileSortDiagram() -> generateSortDiagram()
+
+2000-01-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): added decls for
+	partiallySubsumes() and minimize()
+
+	* sortTable.cc (partiallySubsumes): added
+	(minimize): added
+	(buildSortDiagram): call minimize
+
+1999-12-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sort.hh (errorFreeMaximal): added
+	(class Sort): added decl for errorFreeMaximal();
+
+1999-11-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoTable.cc (markReachableNodes): (SourceSet version) added;
+	(markReachableNodes): (MemoMap version) don't bother to check for
+	null pointers
+	(memoRewrite): rewritten to take and update sourceSet arg
+	(memoize): deleted
+	(memoEnter): added
+
+	* memoTable.hh (class MemoTable): added member class SourceSet,
+	updated decl for memoRewrite(), replaced decl for memoize() with
+	that for memoEnter()
+
+1999-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (clearMemo): added dynamic_cast hack; maybe it wasn't
+	such a good idea to split stuff off into Standard Symbol after all
+
+	* memoTable.cc: added disambiguation to template arg dagNodeLt for
+	the benefit of egcs (on BeOS)
+
+1999-10-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* strategy.cc (setStrategy): don't set memo
+
+	* strategy.hh (isMemoized): deleted
+	(class Strategy): deleted data member memo and decl for isMemoized()
+
+	* memoTable.hh (class MemoTable): added decl for isMemoized();
+	ctor now takes memoFlag arg
+	(class MemoTable): added memo data member
+	(isMemoized): added
+	(MemoTable): take memoFlag arg
+	
+===================================Engine53==================================================
+
+1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (indexSortConstraints): VariableTerm::dynamicCast()
+	-> dynamic_cast<VariableTerm*>()
+	(indexEquations): VariableTerm::dynamicCast()
+	-> dynamic_cast<VariableTerm*>()
+	(indexRules): VariableTerm::dynamicCast()
+	-> dynamic_cast<VariableTerm*>()
+	(insertLateSymbol): VariableTerm::dynamicCast()
+	-> dynamic_cast<VariableTerm*>() (*3)
+
+1999-10-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoTable.cc (memoRewrite): support tracing of memoized rewrites
+
+	* equationTable.cc (applyReplace): updated call to
+	tracePreEqRewrite()
+
+	* rewritingContext.hh (builtInReplace): updated call to
+	tracePreEqRewrite()
+
+	* rewritingContext.cc (tracePreEqRewrite): added type arg
+
+	* rewritingContext.hh (class RewritingContext): added enum
+	RewriteType
+	(class RewritingContext): added type arg to traceBeginEqTrial()
+
+1999-10-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.hh (class Module): added decl for clearMemo()
+
+	* module.cc (Module): added call to clearMemo()
+	(clearMemo): added
+
+	* memoTable.cc (~MemoTable): moved here
+	(clearMemo): moved here
+
+	* strategy.cc (setStrategy): take memoFlag arg; set memo data
+	member; if we have an empty strategy and memoFlag is true; create
+	an eager strategy
+	(setStrategy): stdStrategy is always false if memoFlag is true
+
+	* strategy.hh (class Strategy): added memo data member
+	(isMemoized): added
+
+	* memoTable.hh (clear): renamed to clearMemo() to avoid possible
+	confusion in our subclasses
+
+	* memoTable.cc (markReachableNodes): added
+
+	* memoTable.hh (GC): added member class MemoMap
+
+1999-10-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* localBinding.cc (LocalBinding): greatly simplified
+	(~ocalBinding): deleted
+	(markReachableNodes): simplified
+	(dump): don't dump prev/next (both versions)
+	(dumpList): commented out
+
+	* localBinding.hh (class LocalBinding): derive from
+	SimpleRootContainer; members deleted
+	(class LocalBinding): members of struct Binding reordered to favor
+	alpha
+
+	* rewritingContext.hh (~RewritingContext): added
+	(RewritingContext): moved here from rewritingContext.cc and made
+	inline
+
+	* rewritingContext.cc (RewritingContext): greatly simplified
+	(~RwritingContext): deleted
+	(markReachableNodes): greatly simplified
+
+	* rewritingContext.hh (class RewritingContext): derive from
+	SimpleRootContainer; members deleted
+
+	* dagRoot.hh (DagRoot): rewritten
+	(class DagRoot): derive from RootContainer; many members deleted
+
+	* dagRoot.cc (markReachableNodes): rewritten
+
+	* core.cc: handle implementation for SimpleRootContainer
+
+	* core.hh: added forward decls for RootContainer and SimpleRootContainer
+
+	* simpleRootContainer.hh: created
+
+	* rootContainer.cc: created
+
+	* rootContainer.hh: created
+
+1999-10-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoTable.hh: created
+
+	* memoTable.cc: created
+
+1999-10-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* core.hh: added forward decl for DagNodeSet
+
+	* dagNodeSet.hh: created
+
+	* dagNodeSet.cc: created
+
+1999-10-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortConstraintTable.hh (class SortConstraintTable): added decl
+	for constraintToExactSort()
+	(constrainToSmallerSort): commented out as temporary measure
+	(constrainToExactSort): added
+	
+===================================Engine52=================================================
+
+1999-08-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* oneStep.cc (findNextRewrite): call context.finished() just
+	before returning 0
+
+1999-08-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* oneStep.cc (findNextRewrite): commented out call to
+	context.finished() since it loses pointers to fragile bindings
+	that we will need for future calls to findNextRewrite()
+
+1999-08-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* oneStep.cc (findNextRewrite): commented out unsafe
+	DagNode::okToCollectGarbage()
+
+1999-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortConstraintTable.hh (class SortConstraintTable):
+	sortConstraintLeqs -> ortConstraintLt
+
+	* sortConstraintTable.cc (sortConstraintLeq): -> sortConstraintLt()
+	(orderSortConstraints): sortConstraintLeqs -> ortConstraintLt
+
+1999-07-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortConstraintTable.hh (class SortConstraintTable): decl for
+	compareSortConstraints replaced by decl for sortConstraintLeq()
+
+	* sortConstraintTable.cc (orderSortConstraints): use STL sort function
+	(compareSortConstraints): becomes sortConstraintLeq()
+	
+===================================Engine50==================================================
+
+1999-06-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (rangeComponent): commented const out of return type
+
+1999-06-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh (clear): replaced SPEED_HACK with VECTOR_HACK
+
+1999-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): deleted decl for
+	computeTrueSort() virtual function
+
+	* module.cc (closeTheory): don't call finalizeSymbol()
+	(insertLateSymbol): don't call finalizeSymbol()
+
+1999-05-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): removed computeBaseSort(); we
+	want to dispatch this off Symbol rather than EquationTable to save
+	base pointer adjustments on call and function entry
+
+	* equationTable.hh (class EquationTable): removed eqRewrite(); we
+	want to dispatch this off Symbol rather than EquationTable to save
+	base pointer adjustments on call and function entry
+
+	* sortTable.cc (buildSortDiagram): compute singleNonErrorSort
+	correctly in constant case
+
+	* module.cc (insertLateSymbol): call orderSortConstraints() and
+	finalizeSortInfo() after indexing sort constraints
+
+1999-05-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): added decl for
+	getSingleNonErrorSort() and data membersingleNonErrorSort
+
+	* sortTable.cc (buildSortDiagram): compute singleNonErrorSort
+	(SortTable): initialize singleNonErrorSort to 0
+
+1999-04-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* oneStep.cc (findNextRewrite): don't do final reduce because we
+	destroy the substitution in the context that we need to find the
+	next rewrite
+
+1999-04-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* oneStep.cc (findNextRewrite): fixed nasty bug where we were not
+	setting matchingSubproblem & extensionInfo to 0 after deleting
+	them and then deleting them a 2nd time in dtor
+	
+
+	* oneStep.hh: created
+
+	* oneStep.cc: created
+
+1999-04-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (canProduceErrorSort): handle constant case
+
+	* connectedComponent.cc (ConnectedComponent): set errorFreeFlag = true
+
+	* module.cc (closeSignature): adde code to decide which components
+	are error free 
+
+	* sortTable.cc (canProduceErrorSort): added
+
+	* sortTable.hh (class SortTable): added decl for 
+	(specialSortHandling): made const
+
+	* connectedComponent.hh (class ConnectedComponent): added data
+	member errorFreeFlag; made nrMaxSorts a short
+	(errorSortSeen): added
+	(errorFree): addedcanProduceErrorSort()
+
+1999-04-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (domainComponent): moved here and made inline
+	(rangeComponent): moved here and made inline
+	(specialSortHandling): added so that Symbol::mightMatchSymbol()
+	can know if can depend on looking at op decls
+	(lookupSort): commented out; we might not really need it; now
+	deleted
+
+
+1999-04-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (rangeComponent): don't use componentVector since
+	it not guarenteed to be set up
+	(domainComponent): don't use componentVector
+
+1999-04-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): rangeComponent() and
+	domainComponent() made non-virtual
+	
+
+	* complexSort.cc (ComplexSort): use instance free version of
+	rangeComponent()
+
+	* sortTable.cc (rangeComponent): (instace version) deleted
+
+	* sortTable.hh (class SortTable): deleted decl for instance
+	version of rangeComponent();
+	
+===================================Engine48==================================================
+===================================Maude 1.0.2 released=======================================
+===================================Maude 1.0.1 released=======================================
+
+1999-03-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equation.hh (fastNrVariables): added
+	(class Equation): added decl for fastNrVariables()
+	(class Equation): rearranged data members to optimize processor
+	data cache usage!
+
+	* equationTable.cc (applyReplace): added fast case
+
+	* equation.hh (class Equation): added fast data member
+
+	* equation.cc (compile): set fast data member
+
+1999-02-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equationTable.cc (applyReplace): added SPEED_HACK for equations
+	(applyReplace): unmade change because it loses!
+
+1999-02-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh (clear): clear 1 value even in the size = 0
+	case; this allows us to use a do-while() loop
+
+	* substitution.cc: initialize allocateSize to 1 rather than 0
+
+	* rewritingContext.hh (copyProblemBindings): use isNull()
+
+	* ruleTable.hh (ruleFree): use isNull()
+
+	* sortConstraintTable.hh (sortConstraintFree): use isNull()
+
+	* equationTable.hh (equationFree): use isNull()
+	
+===================================VectorExperiment==========================================
+
+1999-02-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rule.cc (preprocess): use fillInSortInfo() rather than
+	parse(); don't bother with Assert()
+
+	* preEquation.cc (preprocess): use fillInSortInfo() rather than
+	parse(); don't bother with Assert() (3 places)
+
+	* equation.cc (preprocess): use fillInSortInfo() rather than
+	parse(); don't bother with Assert()
+
+	* sortTable.hh (class SortTable): deleted decl for parse(); added
+	decl for fillInSortInfo()
+
+1999-02-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (buildSortDiagram): build "all" NatSet in reverse
+	order for efficiency
+	(buildSortDiagram): make "viable" NatSet static and use
+	makeEmpty() to clear it
+	(buildSortDiagram): make "nextState" NatSet static and use
+	assignment to initialize it
+	(findMinSortIndex): reorganized - do state test first
+	(findMinSortIndex): make NatSet infSoFar and initialize it with assignment
+	(findMinSortIndex): reorganized innermost test
+	(findMinSortIndex): extreme simplification of innermost test
+
+===================================Engine47==================================================
+===================================Maude 1.00 released=======================================
+
+1999-01-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (~Module): implemeted delayed deletion policy for symbols
+
+	* module.hh (class Module): added static data members virgin,
+	seen1GC, seen2OrMoreGCs; added decl for notifyOfGC()
+
+	* module.cc (notifyOfGC): added
+
+1999-01-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* connectedComponent.cc (ConnectedComponent): replaced
+	ErrorCheck()s by IssueWarning()s and markAsBad()s
+
+1999-01-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (lookupSortIndex): made IntSet currentStates,
+	Vector<int> maxSorts and IntSet nextStates static
+	
+===================================Engine46==================================================
+
+1999-01-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equation.cc (preprocess): fixed similar bug
+
+	* rule.cc (preprocess): fixed similar bug
+
+	* preEquation.cc (preprocess): fixed nasty bug where we were
+	calling Symbol::parse() inside Assert() (used to be inside
+	ErrorCheck()) and thus were failing to fill in sorts when compiled
+	with NO_ASSERT
+
+1998-12-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortConstraint.cc (preprocess): don't do Asserts for bad
+	equations
+
+	* rule.cc (preprocess): don't do any more processing if
+	PreEquation::process) sets bad flag
+	(preprocess): changed ErrorCheck() to Assert() for rhs failed to
+	parse
+	(preprocess): changed ErrorCheck() to Assert() for component clash
+
+	* equation.cc (preprocess): if bad after PreEquation
+	preprocessing, return
+	(preprocess): ErrorCheck() changed to IssueWarning() for variable
+	in rhs not in lhs
+
+	* preEquation.cc (preprocess): ErrorCheck() changed to
+	IssueWarning() for variable in condition lhs not in lhs
+	(preprocess): ErrorCheck() changed to Assert() for lhs of
+	condition failed to parse
+	(preprocess): ErrorCheck() changed to IssueWarning() for
+	variable in condition rhs not in lhs
+	(preprocess): ErrorCheck() changed to Assert() for rhs of
+	condition failed to parse
+	(preprocess): ErrorCheck() changed to Assert() for condition
+	component clash
+	(preprocess): ErrorCheck() changed to Assert() for lhs failed to
+	parse
+
+	* module.cc (indexEquations): don't index bad equations
+	(indexRules): don't index bad rules
+	(indexSortConstraints): don't index bad sort constraints
+	(insertLateSymbol): don't offer bad rules
+	(insertLateSymbol): don't offer bad equations
+	(insertLateSymbol): don't offer bad sort constraints
+
+	* core.cc: provide implementation for class BadFlag
+
+	* module.hh (class Module): derive from class BadFlag
+
+	* preEquation.hh (class PreEquation): derive from class BadFlag
+
+	* badFlag.hh (class BadFlag): created
+
+1998-12-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equation.cc (preprocess): turned Assert() for "variable in rhs not
+	in lhs" into an ErrorCheck(); added line number and equation to
+	the message
+	
+===================================Engine45==================================================
+
+Tue Dec 15 16:33:54 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortConstraint.cc (preprocess): Changed ErrorCheck() to Assert()
+	for lhs/sort component check since mixfix fornt end should not
+	allow the user to make this mistake
+
+	* sortTable.cc (compileOpDeclarations): ifdef'd check on
+	components for subsort overloaded operator declarations; use
+	Assert() rather than ErrorCheck()
+
+Mon Nov 30 11:53:37 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ruleTable.cc (applyRules): more decl of sp inside loop
+	(applyRules): call traceAbort(); tidy up and return 0 if aborting
+
+	* preEquation.cc (checkCondition): call traceAbort(); we return
+	true rather than false when aborting in the hope that this will
+	allow the caller to abort more quickly (rather than trying to
+	match the next eq/rl/sc
+
+Wed Nov 25 10:44:47 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rewritingContext.hh (builtInReplace): call traceAbort(); now we
+	return a bool; false if we're aborting
+
+	* equationTable.cc (applyReplace): first attempt at handling traceAbort()
+	(applyReplace): now call tracePreEqRewrite() before traceAbort()
+	(applyReplace): moved decl fo var sp inside loop - may help code
+	optimizer
+	(applyReplace): small reorg of control structures
+	(applyReplace): do copyProblemBindings() after testing trace
+
+	* rewritingContext.cc (traceAbort): added
+
+	* rewritingContext.hh (class RewritingContext): added decl for
+	virtual member fn traceAbort()
+
+Mon Nov 16 09:24:55 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rewritingContext.hh (builtInReplace): added
+
+	* rewritingContext.cc (makeSubcontext): changed arg decl
+
+	* rewritingContext.hh (class RewritingContext): pass
+	makeSubcontext() perpose arg as int rather than Purpose so that
+	derived classes can expand the set of purposes.
+
+	* ruleTable.cc (applyRules): use getTraceStatus() rather than
+	traceStatus()
+
+	* rule.cc (apply): use getTraceStatus() rather than traceStatus()
+
+	* preEquation.cc (checkCondition): use getTraceStatus() rather
+	than traceStatus() (3 places)
+
+	* equationTable.cc (applyReplace): use getTraceStatus() rather
+	than traceStatus()
+
+	* rewritingContext.cc (RewritingContext): no longer set trace status
+	(makeSubcontext): don't pass trace status to RewritingContext()
+
+	* rewritingContext.hh (class RewritingContext): trace flag is now
+	a static data member
+	(class RewritingContext): ctor no longer takes traceStatus flag
+	(class RewritingContext): added decls for getTraceStatus() and
+	setTraceStatus()
+	(traceStatus): deleted
+	(getTraceStatus): added
+	(setTraceStatus): added
+
+Tue Nov  3 19:14:14 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* preEquation.hh (class PreEquation): derive from LineNumber
+
+	* module.hh (class Module): derive from LineNumber
+
+	* sort.hh (class Sort): derive from LineNumber
+	
+===================================Engine43==================================================
+
+Mon Oct 26 09:36:48 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* core.cc: provide implementation for SymbolMap
+
+Fri Oct 23 17:48:18 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sort.hh (class Sort): added back decl for getSupersorts() - we
+	need this for hierarchical module importation.
+	(getSupersorts): added back; actually we may not need this
+	function after all but we'll leave it in for now
+
+Thu Oct 15 13:46:43 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* core.cc: no longer provide implementation of class CachedDag
+
+	* cachedDag.cc: created
+
+	* cachedDag.hh (class CachedDag): added decls for normalize() and
+	prepare()
+	(normalize): added
+
+Wed Oct 14 11:25:37 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* cachedDag.hh (getTerm): added
+	(class CachedDag): added decl for getTerm()
+	(setTerm): cannot delete term here because we may be replacing
+	term with part of itself (in normalization case)
+
+	* core.cc: provide implementation of class CachedDag
+
+	* core.hh: added fwd decl for class CachedDag
+
+	* cachedDag.hh: created
+	
+===================================Engine42==================================================
+
+Thu Oct  8 10:27:05 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* lineNumber.hh (class LineNumber): fixed setLineNumber() decl
+
+	* connectedComponent.cc (ConnectedComponent): don't set errorFreeFlag
+
+	* connectedComponent.hh (class ConnectedComponent): deleted decl
+	for errorFree()
+	(class ConnectedComponent): deleted data member errorFreeFlag
+	(errorFree): deleted
+	(flagErrorPossible): deleted
+	(class ConnectedComponent): deleted decl for flagErrorPossible()
+
+	* lineNumber.hh (getLineNumber): added
+	(setLineNumber): added
+
+	* sort.cc (computeLeqSorts): changed definition of sortTest along
+	the lines of Pats idea: fastTest for sort s is the smallest
+	integer such that all sorts with index >= fastTest are <= s
+
+Fri Oct  2 10:46:21 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sort.cc (computeLeqSorts): simplified
+
+Thu Oct  1 16:29:27 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sort.cc (computeLeqSorts): compute the value of fastTest
+	(dump): dump fastTest
+
+	* sort.hh (class Sort): added data member fastTest
+	(leq): (int,Sort*) version, use fastTest
+	
+===================================Engine41==================================================
+
+Fri Sep 25 17:06:02 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* core.hh: added forward decl for LineNumber
+
+	* lineNumber.hh: created
+
+Fri Sep 18 17:35:19 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* connectedComponent.cc (findMaximalSorts): added 2nd version;
+	eventually 1st version should be defined in terms of this
+
+	* connectedComponent.hh (class ConnectedComponent): added decl for
+	2nd findMaximalSorts()
+
+	* sort.hh (class Sort): deleted all remaining <=() decls
+
+	* connectedComponent.cc (getLeqSorts): added
+
+	* connectedComponent.hh (class ConnectedComponent): added decl for
+	getLeqSorts()
+
+Thu Sep 17 10:26:45 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* Makefile: removed sortCode.o from MODULES
+
+	* complexSort.hh: removed data member sortCode
+
+	* complexSort.cc (operator<<): rewritten without sort codes
+	(ComplexSort): removed sort codes from all ctors
+
+	* sortTable.cc (buildSortDiagram): use leq(Sort*, Sort*)
+	(findMinSortIndex): rewritten using leqSorts
+
+	* connectedComponent.hh (class ConnectedComponent): added decl for
+	new findIndex()
+
+	* connectedComponent.cc (findIndex): reimplemented using leqSorts
+
+	* sortTable.hh: delete decl for both versions of lookupUnionSort()
+
+	* sortTable.cc (lookupSortIndex): added
+	(lookupUnionSort): deleted both versions
+
+	* complexSort.hh (class ComplexSort): temp hacks to deal with not
+	having sort codes
+
+	* sortTable.hh (class SortTable): added decl for lookupSortIndex()
+
+	* sort.hh (leq): (Sort*,Sort*) version added
+	(leq): (int, Sort*) version added
+	(leq): (Sort*, int) version added
+	(operator<=): deleted both versions
+	(class Sort): added friend decls for all 3 leq() functions;
+	deleted friend decls for all 3 <=() functions
+
+	* connectedComponent.hh (class ConnectedComponent): added decl for
+	leq(); delete decl for unionSortLeq()
+
+	* connectedComponent.cc (leq): added
+	(unionSortLeq): deleted
+
+	* sortConstraintTable.cc (constrainToSmallerSort2): use sort
+	indices and leq functions rather than sort codes and <=; use
+	DagNode::setSortIndex() rather than DagNode::setSortInfo()
+
+	* core.cc: deleted template instantiation for class
+	Vector<SortCode> and class Vector<Sort**>
+	
+
+	* core.hh: deleted forward decl of class SortCode
+
+	* sortCode.cc: deleted
+
+	* sortCode.hh: deleted
+
+	* sort.hh (getLeqSorts): added
+	(class Sort): added decl for getLeqSorts()
+
+	* connectedComponent.hh (class ConnectedComponent): update decl
+	for findMaximalSorts(), deleted decl for findIndex(), added decl
+	for unionSortLeq()
+
+	* connectedComponent.cc (ConnectedComponent): call
+	processSubsorts() rather than insertLesserSorts(); call
+	computeLeqSorts() rather than computeSortCode()
+	(findMaximalSorts): first arg now an int; stub only
+	(findIndex): deleted
+	(unionSortLeq): added
+
+	* connectedComponent.hh (class ConnectedComponent): added data
+	member unionSorts
+
+Wed Sep 16 17:17:24 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sort.cc (insertLesserSorts): becomes processSubsorts(); don't
+	need argument because we know which is out connected component
+	(computeSortCode): becomes computeLeqSorts(); work on leqSorts
+	rather than sortCode
+	(dump): don't dump sortCode (maybe we should dump other stuff?)
+
+	* sort.hh (class Sort): deleted decls for getSupersorts(), code()
+	(class Sort): decl for insertLesserSorts() becomes
+	processSubsorts(), losing argument; computeSortCode() becomes
+	computeLeqSorts()
+	(class Sort): deleted data member sortCode, added data member leqSorts
+	(class Sort): move sortIndex and nrUnresolvedSupersorts into an
+	anonymous union
+	(getSupersorts): deleted
+	(code): deleted
+	(operator<=): (Sort& version) reimplemented using leqSorts rather
+	than sortCode
+	(operator<=): (int version) reimplemented using leqSorts rather
+	than sortCode; we don't allow -ve sort indices (which would
+	technically refer to unknown sort or union sorts)
+
+Fri Sep 11 14:37:37 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortCheckSubproblem.cc (SortCheckSubproblem): SortCode -> Sort
+	(solve): SortCode -> Sort
+
+	* sortCheckSubproblem.hh (class SortCheckSubproblem): SortCode ->
+	Sort throughout
+
+	* sort.hh (operator<=): (int, Sort&) added
+	(operator>=): deleted
+	(class Sort): deleted dec for >=(int), added decl for <=(int,
+	Sort&)
+	(class Sort): added decl for <=(Term*, Sort&)
+
+	* sortTable.cc (compileOpDeclarations): deleted code for setting
+	up dimensionVector
+
+	* sortTable.hh (class SortTable): deleted dimensionVector
+
+Thu Sep 10 10:00:04 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sort.hh (operator>=): added
+	(class Sort): added decl for operator>=()
+
+	* sortTable.hh (lookupSort): fixed bug were we were return a sort
+	from the wrong component
+
+	* sortTable.cc (lookupUnionSort): temporary hack to use
+	lookupSort() rather than sortTable; This will change once bit
+	vectors are replaced
+
+	* sortTable.hh (class SortTable): updated decl for
+	dumpSortDiagram(); deleted decl for adjustSort(), dumpSortTable(),
+	dumpSortAndTab(), findMinResultSort(), incrementSortVector(),
+	buildSortTable()
+	(class SortTable): deleted data member sortTable;
+  
+
+	* sortTable.cc (findMinResultSort): deleted
+	(incrementSortVector): deleted
+	(buildSortTable): deleted
+	(compileOpDeclarations): don't call buildSortTable()
+	(adjustSort): deleted
+	(dumpSortDiagram): take stream and indent level args
+	(dumpSortAndTab): deleted
+	(dumpSortTable): deleted
+
+	* rewritingContext.hh (count): use Int64
+	(incrementCount): use Int64
+	(class RewritingContext): rewriteCount becomes an Int64; updated
+	decls for
+
+	* sortTable.hh (class SortTable): added decl for dumpSortDiagram()
+
+	* sortTable.cc (dumpSortDiagram): added
+	(compileOpDeclarations): call buildSortDiagram() and dumpSortDiagram()
+
+	* sortTable.hh (lookupSort): reimplemented interms of traverse() -
+	this is a temporary measure; evetually callers will use traverse()
+	to avoid copying sort indices into a vector first.
+	
+	* sortTable.cc (buildSortDiagram): handle nrArgs == 0 case
+
+Wed Sep  9 18:05:11 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTable.hh (class SortTable): added data member sortDiagram
+	(class SortTable): added decls for buildSortDiagram(),
+	findStateNumber() and findMinSortIndex()
+	(traverse): added
+	(class SortTable): added decl for traverse()
+
+	* sortTable.cc (buildSortDiagram): added
+	(findStateNumber): added
+	(findMinSortIndex): added
+	
+===================================Engine40==================================================
+
+Fri Jul 17 19:05:20 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbolMap.hh (class SymbolMap): created
+	
+===================================Engine39==================================================
+
+Thu Jul  2 15:20:38 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* complexSort.cc (ComplexSort): added ctor for Term* case
+
+	* complexSort.hh (class ComplexSort): added ctor decl for Term* case
+
+Tue Jun 30 10:53:38 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sort.hh (getSupersorts): added
+	(class Sort): added decl for getSupersorts()
+	(operator<=): added on const Sort&
+
+Tue Jun 16 15:59:24 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (insertLateSymbol): call setModuleInfo() on late symbol
+
+Thu Jun 11 17:36:18 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* termSet.cc (insert): cast PointerSet::insert() return value to void 
+
+Wed Jun 10 11:29:35 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* equation.cc (preprocess): pass dummy 2nd arg in call to normalize()
+
+	* rule.cc (preprocess): pass dummy 2nd arg in call to normalize()
+
+	* preEquation.cc (preprocess): pass dummy 2nd arg in calls to normalize()
+
+	* module.cc (closeTheory): call interSymbolPass() and
+	postInterSymbolPass(); chiefly to inter-normalize identities
+
+	* sortConstraint.cc (preprocess): Validate() -> ErrorCheck();
+	deleted superfluous includes
+
+Tue Jun  9 11:07:58 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* complexSort.hh: added #include "sortCode.hh"
+
+	* sortConstraint.cc: deleted #include "intSet.hh"
+
+	* substitution.cc: deleted #include "intSet.hh"
+
+	* strategy.cc (setStrategy): IntSet -> NatSet
+
+	* sortTable.cc: deleted #include "intSet.hh"
+
+	* ruleTable.cc: deleted #include "intSet.hh"
+
+	* rule.cc: deleted #include "intSet.hh", #include
+	"preEquation.hh", #include "label.hh", #include "substitution.hh"
+	(apply): IntSet -> NatSet
+
+	* preEquation.cc: deleted #include "intSet.hh", #include "variableInfo.hh"
+	(compile): IntSet -> NatSet
+
+	* module.cc: deleted #include "intSet.hh"
+
+	* localBinding.cc: deleted #include "intSet.hh"
+
+	* equationTable.cc: deleted #include "intSet.hh"
+
+	* equation.cc: deleted #include "intSet.hh"
+
+	* core.cc: deleted #include "intSet.hh"
+
+	* variableInfo.hh: IntSet -> NatSet
+
+	* strategy.hh: IntSet -> NatSet
+
+	* preEquation.hh: IntSet -> NatSet
+	
+===================================Engine38==================================================
+
+Fri Apr 17 16:45:12 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* equation.cc (preprocess): Validate()s changed to Assert()s
+
+Mon Apr 13 10:37:10 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (closeSortSet): call setModuleInfo() on newly created
+	connected component
+
+	* module.hh (insertSort): call setModuleInfo()
+	(insertSymbol): call setModuleInfo()
+
+	* connectedComponent.hh (class ConnectedComponent): inherit from ModuleItem
+
+Fri Apr 10 18:15:19 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* core.cc: provide implementation for ModuleItem
+
+	* moduleItem.hh (class ModuleItem): created
+
+	* sort.hh (class Sort): inherit from ModuleItem
+	
+===================================Engine37==================================================
+
+Thu Apr  9 18:36:00 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.hh (getConnectedComponents): added; together with decl
+
+Thu Feb 26 12:01:48 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sort.hh (class Sort): added decl for DagNode* <= Sort& operator;
+	this is a slightly ugly but very convenient operator for hiding
+	sort codes since the most common sort operation is to compare a
+	dag nodes sort to that of a variable.
+
+Wed Feb 25 11:30:24 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* connectedComponent.hh (class ConnectedComponent): added decls
+	for errorFree() and flagErrorPossible()
+	(errorFree): added
+	(flagErrorPossible): added
+
+	* connectedComponent.cc (ConnectedComponent): initialize errorFreeFlag
+	(ConnectedComponent): Assert()s testing for cycle change to ErrorCheck()s
+
+	* connectedComponent.hh (class ConnectedComponent): added data
+	member errorFreeFlag
+
+Tue Feb 24 15:46:24 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* localBinding.cc (dump): added new version
+
+Fri Feb 20 15:46:42 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rewritingContext.cc (ruleRewrite): use DagNode::isUrewritable()
+	and DagNode::setUrewritable() to avoid retrying failed matches
+	(ruleRewrite): if calling stackArguments() on a node does not
+	increase stack size then flag node as unstackable
+
+===================================Engine36==================================================
+
+Fri Feb 13 11:33:22 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (~Module): no longer delete sorts here
+	(~Module): Major rewrite to avoid subtle but deadly bug: we must
+	make sure there are no dag nodes belonging to this module
+	lying around waiting to be garbage collected after this module is
+	gone since the mark phase will access our symbols.
+	(Module): commented out symbol deletion as we still have problems;
+	and since we hit the problems in mark() there must still be dag
+	nodes from the deleted module reachable!
+
+	* connectedComponent.cc (~ConnectedComponent): added
+
+	* connectedComponent.hh (class ConnectedComponent): added decl for
+	~ConnectedComponent(); we need to delete sorts here rather than in
+	Module in order to be able to delete the error sort
+
+	* preEquation.cc (PreEquation): dont' self destruct non-existant
+	condition terms
+
+	* rule.cc (~Rule): delete rhs automaton
+	(Rule): clear rhs automaton to allow safe destruction at any
+	stage.
+
+	* sortConstraint.hh (class SortConstraint): deleted decl for
+	~SortConstraint()
+
+	* sortConstraint.cc (~SortConstraint): deleted
+
+	* equation.cc (~Equation): delete rhs automaton
+	(Equation): clear rhs automaton to allow safe destruction at any
+	stage.
+
+	* preEquation.cc (~PreEquation): delete automata
+	(PreEquation): clear automata pointers to allow safe destruction
+	at any stage.
+
+	* connectedComponent.hh (class ConnectedComponent): deleted decl
+	for ~ConnectedComponent() as default is perfectly adequate
+
+	* connectedComponent.cc (~ConnectedComponent): deleted
+
+	* sort.hh (class Sort): deleted decl for ~Sort() as default is
+	perfectly adequate
+
+	* sort.cc (~Sort): deleted
+
+	* module.cc (Module): implemented
+
+Wed Feb 11 15:42:45 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* preEquation.cc (checkCondition): compare() == 0 replaced by equal()
+
+	* localBinding.cc (assert): compare() != 0 replaced by !equal()
+
+	* equalitySubproblem.cc: compare() == 0 replaced by equal() (2 places)
+
+	* extensionMatchSubproblem.cc (solve): use delete rather than
+	deepSelfDestruct on sunproblem
+
+	* variableAbstractionSubproblem.cc (solve): use delete rather than
+	deepSelfDestruct on sunproblem
+
+	* sortConstraintTable.cc (constrainToSmallerSort2): use delete rather than
+	deepSelfDestruct() for subproblems (2 places)
+
+	* rule.cc (apply): use delete rather than
+	deepSelfDestruct() for subproblems (3 places)
+
+	* ruleTable.cc (applyRules): use delete rather than
+	deepSelfDestruct() for subproblems (2 places)
+
+	* equationTable.cc (applyReplace): use delete rather than
+	deepSelfDestruct() for subproblems (2 places)
+
+	* extensionMatchSubproblem.cc (~ExtensionMatchSubproblem): adapted
+	from old deepSelfDestruct(); use delete rather than calling
+	deepSelfDestruct()
+
+	* extensionMatchSubproblem.hh (class ExtensionMatchSubproblem): deleted decl
+	for deepSelfDestruct(); added decl for dtor
+
+	* equalitySubproblem.hh (class EqualitySubproblem): deleted decl
+	for deepSelfDestruct()
+
+	* equalitySubproblem.cc (deepSelfDestruct): deleted
+
+	* variableAbstractionSubproblem.hh (class
+	VariableAbstractionSubproblem): deleted decl for
+	deepSelfDestruct(); added decl for dtor
+
+	* variableAbstractionSubproblem.cc (deepSelfDestruct): becomes
+	dtor; use delete rather than calling deepSelfDestruct()
+
+	* sortCheckSubproblem.cc (deepSelfDestruct): deleted
+
+	* sortCheckSubproblem.hh (class SortCheckSubproblem): deleted decl
+	for deepSelfDestruct()
+
+	* disjunctiveSubproblemAccumulator.cc (extract): amended comment
+	about deepSelfDestruct()
+	(~DisjunctiveSubproblemAccumulator): use delete rather than calling
+	deepSelfDestruct() on firstSubproblem and disjunction
+	(extract): in the single option case we no longer delete
+	firstDifference and set firstDifference since this can be left to
+	our destructor; ditto with first ExtensionInfo
+
+	* subproblemDisjunction.cc (~SubproblemDisjunction): created from
+	old deepSelfDestruct(); use delete rather than calling
+	deepSelfDestruct()
+
+	* subproblemDisjunction.hh (class SubproblemDisjunction): deleted
+	declaration for deepSelfDestruct()
+	(class SubproblemDisjunction): added decl for dtor
+
+	* subproblemAccumulator.hh (SubproblemAccumulator): use delete
+	rather than calling deepSelfDestruct()
+
+	* subproblemSequence.cc (deepSelfDestruct): becomes destructor;
+	use delete rather than calling deepSelfDestruct()
+
+	* subproblemSequence.hh (class SubproblemSequence): declaration
+	for deepSelfDestruct() deleted
+	(SubproblemSequence): removed dummy destructor
+
+===================================Engine35==================================================
+
+Wed Dec 17 18:06:40 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.hh (getSymbols): made const
+	(getSorts): made const
+	(getSortConstraints): added
+	(getRules): added
+	(getEquations): added
+	(class Module): updated decls
+
+Mon Dec 15 16:26:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTable.cc (findMinResultSort): added temporary hack so that
+	operator names print correctly in WarningCheck()
+	(compileOpDeclarations): added temporary hack so that
+	operator names print correctly in ErrorCheck()
+
+Thu Dec 11 10:48:32 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTable.hh (lookupSort): change assertion to indices.length()
+	>= arity because a shared sortIndiciesBuffer may be bigger than
+	needed. This ugliness will be removed when we redo sort mechanism
+
+Mon Dec  1 14:57:50 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* strategy.cc (setStrategy): fixed bug; test should be a > nrArgs
+	rather than a >= nrArgs since strat arg numbers start from 1
+
+Wed Nov 26 17:27:59 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* strategy.cc (setStrategy): set unevalArgs flag to correct value
+
+	* strategy.hh (unevaluatedArguments): added
+
+	* strategy.cc: created
+
+	* strategy.hh (class Strategy): created
+
+Sun Nov 23 16:13:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* equationTable.cc (dumpEquationTable): use new LhsAutomaton
+	dump() convention
+	
+===================================Engine33==================================================
+
+Fri Nov 21 18:38:49 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* preEquation.cc (compile): if we don't compile lhs set
+	peLhsAutomaton = 0 to avoid breaking dump()
+	
+===================================Engine32==================================================
+
+Fri Nov  7 17:15:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* disjunctiveSubproblemAccumulator.cc (extract): don't try to
+	assert firstDifference if it is null
+
+Thu Nov  6 11:37:49 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* extensionMatchSubproblem.cc: created
+
+	* extensionMatchSubproblem.hh (class ExtensionMatchSubproblem): created
+
+Wed Nov  5 14:04:53 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.hh (class Module): made dtor virtual
+
+	* module.cc (reset): added
+
+	* module.hh (class Module): added decl for virtual function reset()
+
+	* sortConstraintTable.cc (orderSortConstraints): handle the empty
+	table efficiently; set tableComplete = true; use
+	acceptSortConstraint() in place of retainSortConstraint()
+	(SortConstraintTable): added
+
+	* sortConstraintTable.hh (class SortConstraintTable): added
+	safeToInspectSortConstraints() and tableComplete decls; deleted
+	retainSortConstraint() decl
+	(class SortConstraintTable): added decl for explicit ctor
+	(safeToInspectSortConstraints): added
+
+Mon Nov  3 10:22:28 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* disjunctiveSubproblemAccumulator.cc (extract): fixed bug; in the
+	case where we were returning disjunction we were failing to set
+	disjunction = 0 to stop it from being deepSelfDestruct()'d by our dtor
+
+Fri Oct 31 10:56:00 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* disjunctiveSubproblemAccumulator.cc (addOption): had
+	local/global the wrong way around
+
+	* disjunctiveSubproblemAccumulator.hh (empty): added
+
+	* subproblemDisjunction.cc (solve): only copy extesion when
+	findFirst == true
+	(addOption): take LocalBinding rather than Substitution
+
+	* subproblemDisjunction.hh (class SubproblemDisjunction): changed
+	addOption() to take LocalBinding rather than Substitution
+
+	* variableInfo.hh (class VariableInfo): make
+	addConditionVariables() public to that we can implement external
+	match function; this may be only temporary
+	
+=================================Engine31==================================================
+
+Wed Oct 29 18:43:30 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* disjunctiveSubproblemAccumulator.cc: created
+
+	* disjunctiveSubproblemAccumulator.hh (class
+	DisjunctiveSubproblemAccumulator): created 
+
+Tue Oct 28 09:42:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rule.cc (apply): no extension infomation and subject in error
+	sort case before trying anything else.
+
+	* subproblemDisjunction.cc (addOption): unmade previous change;
+	deciding whether extension info should be saved in this branch is
+	once again the responsiblity of the caller; nor do we clear
+	extension info once we have copied it.
+
+	* equationTable.cc (applyReplace): previous change deleted; The
+	idea is that only code that cares about the state of
+	the extension valid flag after a successful match need clear it
+	before calling match(). match() has the duty of clearing the flag
+	if (1) it returns true; (2) it sets the flag (implicity by calling
+	setWholeFlag() while set up extension info, or by calling another
+	match that sets extension info); and (3) the extension
+	info is no longer valid (a rare case that can be caused by having
+	different extension info in different branches of a disjunction).
+
+	* ruleTable.cc (applyRules): previous change deleted
+
+	* rule.cc (apply): clear extensionInfo before each
+	match() call
+	(apply): previous change deleted
+
+	* ruleTable.cc (applyRules): clear extensionInfo before each
+	match() call
+
+	* equationTable.cc (applyReplace): clear extensionInfo before each
+	match() call
+
+	* subproblemDisjunction.cc (addOption): check to see if
+	extensionInfo is really valid before saving it; if we save it,
+	call clear() on original. 
+
+Mon Oct 27 11:20:14 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* subproblemDisjunction.cc (deepSelfDestruct): delete Option::extensionInfo
+	(addOption): now store extension info along with each option if neccessary
+	(solve): now assert extension info for selected option if present
+
+	* subproblemDisjunction.hh (class SubproblemDisjunction): added
+	extensionInfo arg to addOption; added extensionInfo member to
+	struct Option; added data member realExtensionInfo
+
+Fri Oct 24 16:47:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagRoot.cc: created
+
+	* dagRoot.hh (class DagRoot): added; this works differently from
+	the old DagRoot in that only DagRoots with non-null pointers are
+	kept on the linked list.
+
+	* equalitySubproblem.hh (class EqualitySubproblem): created from
+	exclusionSubproblem.hh for greater generality.
+
+Thu Oct 23 10:16:47 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (indexRules): AdvisoryCheck() for collapse at top
+	(indexEquations): AdvisoryCheck() for collapse at top
+	(indexSortConstraints): AdvisoryCheck() for collapse at top
+
+Tue Oct 21 11:28:08 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* exclusionSubproblem.hh (class ExclusionSubproblem): created
+
+	* exclusionSubproblem.cc: created
+
+	* variableAbstractionSubproblem.cc (solve): removed temporary hack
+	to fix problem of identity elements with uninitialized sort info
+	now that term2Dag(true) puts this sort info into the identity dag
+
+	* termSet.hh (makeEmpty): added
+	(class TermSet): use access declarations to make
+	PointerSet::cardinality() and PointerSet::makeEmpty() public
+	(cardinality): deleted
+	(makeEmpty): deleted
+
+Wed Oct 15 13:53:18 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (indexSortConstraints): use
+	VariableTerm::dynamicCast() instead of VariableSymbol::dynamicCast()
+	(insertLateSymbol): use VariableTerm::dynamicCast() instead of
+	VariableSymbol::dynamicCast() in 3 places
+	(indexEquations): use VariableTerm::dynamicCast() instead of
+	VariableSymbol::dynamicCast()
+	(indexRules): use VariableTerm::dynamicCast() instead of
+	VariableSymbol::dynamicCast()
+
+Tue Oct 14 17:31:20 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (indexSortConstraints): use VariableSymbol::dynamicCast()
+	(indexEquations): use VariableSymbol::dynamicCast()
+	(indexRules): use VariableSymbol::dynamicCast()
+	(insertLateSymbol): use VariableSymbol::dynamicCast() in 3 places
+
+Mon Oct 13 16:01:03 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* preEquation.cc (preprocess): use Term::analyseCollapses()
+	(compile): use Term::insertAbstractionVariables()
+
+Fri Oct 10 16:34:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rule.cc (compile): symbolCount() -> nrVariables()
+	(apply): symbolCount() -> nrVariables() (*2)
+
+	* equation.cc (compile): symbolCount() -> nrVariables()
+
+	* preEquation.cc (checkCondition): symbolCount() -> nrVariables()
+
+	* localBinding.cc (dumpList): VariableIndex -> VariableInfo
+	(dump): VariableIndex -> VariableInfo
+	(dump): index2Symbol() -> index2Variable()
+
+	* localBinding.hh (class LocalBinding): VariableIndex -> VariableInfo
+
+	* preEquation.hh (class PreEquation): no longer derived from VariableIndex
+
+	* sortConstraintTable.cc (constrainToSmallerSort2): symbolCount()
+	-> nrVariables()
+
+	* core.cc: no longer provide  implementation for "variableInfo.hh"
+
+	* core.hh: deleted forward ref to class VariableIndex
+
+	* variableIndex.cc: deleted
+
+	* variableIndex.hh (class VariableIndex): deleted
+
+	* variableInfo.hh (index2Variable): added
+
+	* variableInfo.cc (variable2Index): added
+	(makeAbstractionVariable): added
+
+	* variableInfo.hh (class VariableInfo): heavily modified to take
+	over role of variableIndex; linear variable stuff deleted
+	
+=================================Engine30==================================================
+
+Wed Oct  8 15:53:38 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* termSet.cc (hash): return 0 to stop g++ from complaining
+
+Tue Oct  7 12:02:41 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* termSet.cc (hash): because of new PointerSet implementation and
+	changes below this function should never be called; so put an
+	Assert here to make sure
+	(insert): made non-inline because we need Term::getHashValue()
+	(term2Index): made non-inline because we need Term::getHashValue()
+
+	* termSet.hh (insert): use 2 arg insert()
+	(term2Index): use 2 arg pointer2Index()
+
+Fri Oct  3 18:24:44 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rule.cc (compile): DataSet -> TermSet
+
+	* preEquation.cc (compile): DataSet -> TermSet
+
+	* equation.cc (compile): DataSet -> TermSet
+
+	* termSet.cc: created
+
+	* termSet.hh: created
+	
+=================================Engine29==================================================
+
+Thu Oct  2 18:15:54 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* equation.cc (compile): pass DataSet to compileRhs()
+
+	* rule.cc (compile): pass DataSet to compileRhs()
+
+	* preEquation.cc (compile): pass DataSet to compileRhs()
+
+Thu Sep 25 15:13:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* core.hh: added forward decls for classes SortTable,
+	SortConstraintTable, EquationTable, RuleTable
+
+	* module.cc (closeTheory): added call to finalizeSymbol()
+	(insertLateSymbol): added call to finalizeSymbol()
+
+	* sortTable.hh (class SortTable): added decl for domainComponent()
+
+	* sortTable.cc (rangeComponent): added
+	(domainComponent): added
+
+	* sortTable.hh (class SortTable): added decl for no arg rangeComponent()
+
+Wed Sep 24 10:44:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* equationTable.cc (dumpEquationTable): added
+
+	* ruleTable.cc (RuleTable): added
+
+	* ruleTable.hh (class RuleTable): added ctor decl
+
+	* sortTable.hh (getOpDeclarations): created
+
+Tue Sep 23 11:00:03 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortConstraintTable.hh (class SortConstraintTable): added decl
+	for retainSortConstraint()
+
+	* ruleTable.cc: created
+
+	* ruleTable.hh (ruleFree): added
+
+	* equationTable.cc (acceptEquation): deleted; now becomes pure virtual
+	added includes
+
+	* equationTable.hh (offerEquation): simplified
+
+Mon Sep 22 15:39:37 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortConstraintTable.hh: created
+
+	* ruleTable.hh: created
+
+	* equationTable.hh: created
+
+	* equationTable.cc: created
+	
+=================================Engine28==================================================
+
+Wed Sep  3 18:29:46 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableAbstractionSubproblem.cc (solve): temporary hack to fix
+	uninitialized sorts in identity bug; call
+	computeTrueSort(solution) on value bound to abstraction variable
+
+Fri Aug 29 13:03:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rule.cc (preprocess): rewritten to allow rule to have rhs
+	variable that don't occur in lhs; set variableSafeFlag to false in
+	this case, true otherwise
+	(apply): if variableSafeFlag false then check that unsafe
+	variables are actually bound
+
+	* rule.hh (class Rule): added variableSafeFlag
+	(variableSafe): added
+	
+=================================Engine27==================================================
+
+Thu Aug  7 11:22:33 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (insertLateSymbol): fixed 3 bugs where we were checking
+	the wrong thing against Symbol::VARIABLE
+
+	* module.hh (class Module): added decl for insertLateSymbol()
+	(getStatus): added
+
+	* module.cc (addLateSymbol): changed to insertLateSymbol() for consistancy
+
+	* module.hh (class Module): added enum Status and status variable
+	(insertSort): added status Assert
+	(insertSymbol): added status Assert
+	(insertSortConstraint): added status Assert
+	(insertEquation): added status Assert
+	(insertRule): added status Assert
+
+	* module.cc (Module): initialize status
+	(closeSortSet): Assert and update status
+	(closeSignature): Assert and update status
+	(closeTheory): Assert and update status
+	(addLateSymbol): added; the idea is that created on the fly
+	builtin symbols (or other symbols that have no eq/sc/rls) can be
+	added after the signature or theory is closed. This avoids
+	creating a large number of special symbols in advance just in case
+	they might be used the the term to be rewritten (for
+	if-then-else-fi, _==_ etc)
+
+Wed Jul 23 11:28:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rule.cc (preprocess): pass full = false to normalize() call
+	(preprocess): don't call determineCollapseSymbols()
+
+	* equation.cc (preprocess): pass full = false to normalize() call
+	(preprocess): don't call determineCollapseSymbols()
+
+	* preEquation.cc (preprocess): pass full flag to normalize() calls;
+	true for lhs and false for cond lhs and rhs
+	(preprocess): don't call determineCollapseSymbols() on cond lhs and
+	rhs
+	
+=================================Engine26b======================================================
+	
+Wed Jul 16 17:10:45 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* preEquation.cc (compile): calls to markEagerArguments() replaced
+	by calls to markEager() for reason discussed below. this also
+	allows one side of a condition to be shared with an identical
+	subterm in the other side of the condition correctly. The was a
+	_very_ rarely encountered bug!
+
+	* equation.cc (compile): call to markEagerArguments() replaced by
+	call to markEager() for reason discussed below
+
+	* rule.cc (compile): call to markEagerArguments() replaced by call
+	to markEager(); this ensures that the top Term gets an eager
+	context; originally this was a very minor bug but now we are going
+	to use eagerContexts to perspone normalization in rhs construction
+	its important that all the parents of an term with eagerContext
+	flag set have their eagerContext flags set otherwise we could end
+	up trying to normalize something with denormalized args during rhs
+	construction
+	
+===============================Engine26=================================================
+	
+Fri Jun 27 15:47:40 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rewritingContext.hh (copyProblemBindings): use copyReducible
+	rather than copyUptoEager() and clearCopyPointers(); we lose the
+	capability to share copies between problem variables with this
+	change but we increase robustness.
+	(copyProblemBindings): previous change unmade; since we have to
+	have copyEagerUptoReduced() and clearCopyPointers() public after all
+
+Wed Jun 25 11:55:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* preEquation.cc (checkCondition): pass purpose arg to makeSubcontext()
+
+	* rewritingContext.cc (makeSubcontext): added purpose arg
+
+	* rewritingContext.hh (class RewritingContext): added enum
+	Purpose; added purpose arg to makeSubcontext()
+
+Tue Jun 24 10:57:43 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortConstraint.cc: added #include "variable.hh"
+
+	* rule.cc: added #include "variable.hh"
+	deleted #include "variableSymbol.hh"
+
+	* equation.cc: added #include "variable.hh"
+	deleted #include "variableSymbol.hh"
+
+	* localBinding.cc: added #include "variable.hh"
+
+	* module.cc: added #include "variable.hh"
+
+	* variableIndex.cc: added #include "variable.hh"
+
+	* core.hh: class VariableSymbol, class Variable,  class
+	VariableLhsAutomaton, class VariableRhsAutomaton forward decls
+
+Tue Jun 17 17:04:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableSymbol.cc (acceptSortConstraint): added
+	(acceptEquation): added
+	(acceptRule): added
+
+	* variableSymbol.hh (class VariableSymbol): added decls for
+	acceptSortConstraint(), acceptEquation() and acceptRule()
+
+Mon Jun 16 12:04:47 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rule.cc (compile): add lhs variables as condition variables to
+	ensure all solutions are generated
+
+	* module.cc (closeTheory): added orderSortConstraints() pass
+
+Fri Jun 13 16:30:35 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* preEquation.hh (class PreEquation): can't have Term* const
+	because nomalize() could change pointers
+
+	* module.hh (class Module): added decls for
+	insertSortConstraint(), insertRule(), indexSortConstraints(),
+	indexEquations() and indexRules(); delete decls for foreign stuff
+	(insertRule): added
+	(insertSortConstraint): added
+
+	* module.cc (closeTheory): rewritten; added finalizeSortInfo()
+	pass; deleted foreign stuff
+	(indexSortConstraints): added
+	(indexEquations): converted from insertEquations()
+	(indexRules): added
+
+	* rule.cc (Rule): clear rlCompiled flag
+	(preprocess): added
+	(compile): rewritten; now only do stuff not in preprocess()
+
+	* rule.hh (class Rule): added preprocess() decl; added
+	compileLhs to compile() decl; added rlCompiled flag
+
+	* sortConstraint.cc (SortConstraint): clear scCompiled flag
+	(preprocess): added
+	(compile): rewritten
+
+	* sortConstraint.hh (class SortConstraint): added preprocess() decl; added
+	compileLhs to compile() decl; added scCompiled flag
+
+	* equation.cc (Equation): clear eqCompiled
+	(preprocess): added
+	(compile): rewritten; now only do stuff not in preprocess()
+
+	* equation.hh (class Equation): added preprocess() decl; added
+	compileLhs to compile() decl; added eqCompiled flag
+
+	* preEquation.cc (preprocess): added; don't bother tracking linear
+	Variables; we will delete all linear variable code at some later
+	date since it is made redundant by contextVariable code
+	(compile): rewritten; only do the things not done by preprocess
+
+	* preEquation.hh (class PreEquation): make Term* data memebers const
+
+	* preEquation.hh (class PreEquation): add preprocess() decl; add
+	new flags to compile(); delete setLhsAutomaton();
+	(setLhsAutomaton): deleted
+
+Thu Jun 12 14:53:20 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (closeTheory): call insertEquations() rather than insertForeignEquations()
+
+	* module.hh (class Module): added data members sortConstraints,
+	equations, rules
+	(insertEquation): added
+	(class Module): insertForeignEquations() decl becomes insertEquations()
+
+Fri Jun  6 11:16:59 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variable.cc (compileLhs): pass sort rather than sortCode to
+	VariableLhsAutomaton() ctor
+
+	* variableLhsAutomaton.cc (dump): change sortCode to sort
+	(VariableLhsAutomaton): change sortCode to sort
+
+	* variableLhsAutomaton.hh (class VariableLhsAutomaton): change
+	sortCode to sort
+
+	* variableLhsAutomaton.cc (match): simplified using
+	DagNode::matchVariable()
+
+Thu Jun  5 11:59:59 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortCheckSubproblem.cc (solve): use new checkSort() rather than
+	computeTrueSortWhilePreservingContext()
+
+	* variableSymbol.cc (VariableSymbol): don't pass stable arg to
+	Symbol()
+	
+==============================Engine24====================================	
+
+Mon Jun  2 10:32:47 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableAbstractionSubproblem.cc (solve): check for case where
+	difference = 0
+	(solve): get substitution subtract the right way around
+	(solve): fix memory leak by deleting difference on failure
+
+	* substitution.hh (class Substitution): nrFragileBindings() too
+	useful to be protected - make it public
+
+	* variableAbstractionSubproblem.cc (deepSelfDestruct): remember to
+	delete ourselves
+	(VariableAbstractionSubproblem): move here from .hh file
+	(deepSelfDestruct): delete difference
+	(solve): rewritten to use local and difference so that we can
+	restore original solution after failure
+
+	* variableAbstractionSubproblem.hh (class
+	VariableAbstractionSubproblem): added LocalBinding* difference and
+	Substitution local
+
+Fri May 30 19:55:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* preEquation.cc (compile): fix bug where we were taking final
+	count of variable before possibly added abstraction variables
+
+Wed May 28 11:00:55 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* subproblemDisjunction.cc (deepSelfDestruct): don't try to
+	deepSelfDestruct() null subproblems.
+
+	* subproblemDisjuction.cc: created
+
+Tue May 27 11:52:59 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* subproblemDisjuction.hh (class SubproblemDisjuction): created
+
+Tue May 20 16:02:14 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableIndex.cc (makeAbstractionVariable): added
+	(symbol2Index): added Assert to check for null variable symbol
+
+	* variableIndex.hh (class VariableIndex): added decl for makeAbstractionVariable()
+
+Wed May 14 10:58:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (insertForeignRules): use Term::collapseSymbols()
+	rather than Term::analyseCollapses()
+	(insertForeignEquations): use Term::collapseSymbols()
+	rather than Term::analyseCollapses()
+	(insertForeignSortConstraints): use Term::collapseSymbols()
+	rather than Term::analyseCollapses()
+
+	* rule.cc (compile): call determineCollapseSymbols() on rhs
+
+	* equation.cc (compile): call determineCollapseSymbols() on rhs
+
+	* preEquation.cc (compile): call determineCollapseSymbols() on
+	lhs, condition lhs and condition rhs
+
+	* variableLhsAutomaton.cc (match): we no longer assume that the
+	subject has its sort already computed; instead we call DagNode::checkSort()
+
+Tue May 13 18:23:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* preEquation.cc (compile): fixed longstanding bug where we were
+	calling markEagerArguments() twice on peCondLhs and not at all on peCondRhs
+
+Thu May  8 11:24:22 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.hh (class Module): decls for
+	insertForeignSortConstraints(), insertForeignEquations() and
+	insertForeignRules() added
+
+	* module.cc (closeSortSet): added
+	(closeSignature): greatly simplified
+	(closeTheory): implemented
+	(insertForeignSortConstraints): added
+	(insertForeignEquations): added
+	(insertForeignRules): added
+
+	* module.hh (class Module): added decl for closeSortSet()
+
+Wed May  7 15:53:08 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableAbstractionSubproblem.hh: created
+
+	* variable.cc (analyseCollapses): added
+	(analyseCollapses): deleted
+
+Thu Apr 10 19:08:08 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rule.cc (apply): added tracing
+
+Wed Apr  9 17:23:28 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): added decl for
+	traceExhausted()
+
+	* rewritingContext.cc (traceExhausted): added
+
+	* preEquation.cc (checkCondition): hacked to call traceExhausted
+	if all solutions fail
+
+Tue Apr  8 15:02:19 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rewritingContext.cc (RewritingContext): deleted
+	(makeSubcontext): use traceFlag version of constructor
+
+	* rewritingContext.hh (class RewritingContext): conditionDepth
+	data member deleted
+	(class RewritingContext): constructor that takes an original
+	RewritingContext deleted
+	(depth): deleted
+	(traceStatus): made const
+
+Mon Apr  7 19:02:29 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): added consts to
+	eq/rl/sc args
+
+	* rule.cc (traceBeginTrial): added
+	(apply): calls to checkCondition() now take subject
+
+	* equation.cc (traceBeginTrial): added
+
+	* equation.hh (class Equation): added traceBeginTrial() decl
+
+	* rule.hh (class Rule): added traceBeginTrial() decl
+
+	* rewritingContext.cc (traceBeginEqTrial): added
+	(traceBeginRuleTrial): added
+	(traceBeginScTrial): added
+	(traceEndTrial): added
+
+	* rewritingContext.hh (class RewritingContext): added decls for 4
+	trace trial functions
+
+	* sortConstraint.cc (traceBeginTrial): added
+
+	* sortConstraint.hh (class SortConstraint): decl for
+	traceBeginTrial() added
+
+	* preEquation.hh (class PreEquation): decl for traceBeginTrial()
+	virtual function
+
+	* preEquation.cc (checkCondition): rewritten to do tracing
+
+Fri Apr  4 15:47:21 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rewritingContext.cc (ruleRewrite): use tracePostRuleRewrite()
+
+	* preEquation.cc (checkCondition): rewriten to use makeSubContext();
+
+	* rewritingContext.cc (tracePreScApplication): added
+	(tracePostRuleRewrite): added
+	(tracePostEqRewrite): added
+	(tracePreEqRewrite): added
+	(tracePreRuleRewrite): added
+	(makeSubcontext): added
+
+	* rewritingContext.hh (class RewritingContext): virtual functions
+	added for tracing and subcontexts; trace flag is now a bool
+
+Thu Apr  3 15:47:43 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rule.cc (apply): deepSelfDestruct subproblem when we fail
+	(memory leak discovered by purify)
+
+Wed Apr  2 17:51:45 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variable.cc (deepSelfDestruct): need to delete our object (to
+	fix memory leak detected by purify)
+
+Fri Mar 28 15:13:50 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rule.cc (apply): added
+
+Thu Feb 13 12:41:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* complexSort.cc (ComplexSort): arg made const
+
+Tue Dec 24 11:34:33 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortCheckSubproblem.cc (solve):
+	computeSortWhilePreservingContext() call changed to
+	computeTrueSortWhilePreservingContext()
+
+	* variableSymbol.cc (computeBaseSort): added
+	(computeTrueSort): used to be computeSort()
+	(eqRewrite): used to be rewrite()
+
+	* variableSymbol.hh (class VariableSymbol): rewrite() ->
+	eqRewrite(); computeSort() replaced by computeBaseSort() and
+	computeTrueSort()
+
+Mon Dec  9 18:57:53 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (closeSignature): check for sort constraints with
+	variable lhs
+
+Fri Dec  6 14:31:19 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* preEquation.hh (class PreEquation): peLhsAutomaton memebr added
+	(setLhsAutomaton): added
+	(lhsAutomaton): added
+
+Thu Dec  5 16:38:27 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variable.cc (compileLhs): calculate whether we are at risk of
+	overwriting dag node that we need to form replacement
+
+	* variableLhsAutomaton.hh (class VariableLhsAutomaton):
+	usedInReplacement -> copyToAvoidOverwriting
+
+	* variableLhsAutomaton.cc (match): make use of usedInReplacement
+	when deciding whether to clone the dagNode we just matched
+	(VariableLhsAutomaton): initialize usedInReplacement flag
+	(match): usedInReplacement -> copyToAvoidOverwriting
+
+	* variableLhsAutomaton.hh (class VariableLhsAutomaton):
+	usedInReplacement flag added to avoid needless cloning of dagNode
+	matched by variable. This cloning avoids a pointer circularity
+	the the equation case but could introduce a sort computation
+	circularity in the sort constraint case.
+
+Tue Dec  3 18:00:20 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (closeSignature): check for rules with variable lhs
+
+Mon Nov 25 19:32:59 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableSymbol.cc (VariableSymbol): added constructor arg
+
+Fri Nov 15 16:46:29 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableLhsAutomaton.cc (match): call
+	matchVariableWithExtension() if there is non-null extensionInfo
+
+Thu Nov 14 18:06:28 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableLhsAutomaton.cc (match): bind variable to clone of
+	subject to avoid introducing cycles in term graph when rewriting
+	with equation with bare variable lhs
+
+Wed Oct 30 18:44:49 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* module.cc (closeSignature): hacked to look for equations with
+	variable lhs
+
+Fri Oct 25 15:18:06 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortCode.cc (operator<<): sortCode arg made const
+
+	* sortCode.hh (operator<<): sortCode arg made const
+
+	* variableLhsAutomaton.hh: created
+
+	* variableLhsAutomaton.cc: created
+
+Fri Oct 18 16:28:22 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sort.hh (getSubsorts): added
+
+Wed Oct 16 10:26:39 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableRhsAutomaton.cc (dump): indentLevel arg added
+
+Wed Oct  9 11:38:21 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* connectedComponent.cc (findMaximalSorts): fixed bug; we now give
+	the correct result if run on the error sorts code; this actually
+	occurs in Symbol::parse() for AC/A arg list with subterms in the
+	error sort
+
+Tue Oct  8 16:08:48 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* core.cc: Vector<Vector<Sort*>*> changed to Vector<Vector<Sort*>>
+
+	* rule.cc (Rule): removed equals
+	(~Rule): implemented
+
+	* sortConstraint.cc (SortConstraint): removed equals
+
+	* equation.cc (Equation): removed equals
+	(~Equation): implemented
+
+	* preEquation.cc (~PreEquation): implemented and made virtual
+	(PreEquation): removed bool equals
+	(checkCondition): do test without bool equals
+
+	* preEquation.hh (condLhs): added
+	(condRhs): added
+
+Wed Sep 25 19:40:27 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortCheckSubproblem.cc (solve): fixed bug where we were solving
+	subproblem positively in infinitely many ways leading to infinite loop
+
+Fri Aug 30 10:56:07 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* variable.cc (subsumes): modified to take in to account
+	occurences of the variable in context
+	(subsumes): Now return UNDECIDED is sort small enough but
+	variable occurs in its own context
+
+Thu Aug 22 12:29:37 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* rewritingContext.cc (ruleRewrite): added limit arg
+
+	* rule.hh (class Rule): ruleLabel now has type Label
+
+	* label.hh (Label): created
+
+Fri Aug  9 14:54:08 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* rewritingContext.cc (ruleRewrite): rewritten to use explicit
+	stack of redex positions
+	(ruleRewrite): fixed silly semi-colon bug
+	(ruleRewrite): rewritten to explore node on an as needed basis
+
+	* redexPosition.hh (class RedexPosition): created
+
+Thu Aug  8 10:10:51 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* rewritingContext.cc (ruleRewrite): added
+	(ruleRewrite): need to collect garbage and trace
+
+	* rewritingContext.hh (class RewritingContext): removed const-ness
+	of rootNode so that rule based rewrite can replace it
+
+	* core.hh: added class Rule declaration
+
+	* core.cc: added template class Vector<Rule*> instantiation
+
+	* module.cc (closeSignature): added call to compile rules
+
+	* rule.cc: created
+
+	* rule.hh (class Rule): created
+
+	* preEquation.cc (compile): Validate() replaced by ErrorCheck()
+
+Tue Aug  6 16:13:06 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* variable.cc (analyseConstraintPropagation): matchAtTop arg removed from
+	analyseConstraintPropagation(); boundAbove arg removed from compileLhs()
+
+	* variable.hh (class Variable): matchAtTop arg removed from
+	analyseConstraintPropagation(); boundAbove arg removed from compileLhs()
+
+Thu Aug  1 18:36:00 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* core.cc: removed templates for Vector<int> and
+	Vector<Vector<int> > (now in frontEnd.cc)
+
+Wed Jul 31 17:08:14 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* variableSymbol.cc (makeTerm): added
+
+Tue Jul  2 16:29:02 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* rewritingContext.cc: ASsert() -> Assert()
+
+Fri Jun 28 17:10:14 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* localBinding.cc: ASsert() -> Assert()
+
+Tue Jun 25 16:41:03 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* core.cc: added instantiation for Vector<SortCode>
+
+Fri Jun 21 18:02:10 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variable.cc (compileLhs): changed arg list
+
+	* variable.hh (class Variable): changed arg list of compileLhs()
+
+	* equation.cc (compile): call VariableInfo::addRhsVariables()
+
+	* preEquation.cc (compile): use VariableInfo functions
+
+	* preEquation.hh: added VariableInfo as a base class;
+	leftLinearVariables() and conditionVariables() functionality removed
+
+	* variableInfo.hh: created
+
+Thu Jun 13 11:01:25 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* subproblemSequence.hh (SubproblemSequence): now take 2 args
+
+	* subproblemSequence.cc (simplify): deleted
+
+	* core.cc: now implementation file for subproblemAccumulator.hh
+
+	* subproblemAccumulator.hh: created
+
+	* core.hh: class SubproblemAccumulator added
+
+	* substitution.hh (copy): moved out of substitution.cc and inlined
+	(class Substitution): make copy constructor private
+	(clear): added speed hack
+
+Wed Jun 12 10:45:43 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* substitution.cc (copy): speed hack added
+
+	* variable.cc (compileLhs): added nrVariables arg
+
+Tue Jun 11 17:25:34 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* substitution.hh (class Substitution): switch to
+	Vector<DagNode*>; new constructor added for building local
+	substitutions that will reside in lhs automata; explicit
+	destructor removed
+
+Fri Jun  7 16:14:38 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* subproblemSequence.cc (simplify): no longer deal with empty sequences
+
+	* subproblemSequence.hh (append): added
+	(SubproblemSequence): now take arg
+
+	* core.cc: Sequence's abolished throughout module
+
+Sun Jun  2 18:56:52 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variable.cc (subsumes): added
+
+Fri May 31 15:59:15 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* sortCheckSubproblem.cc (SortCheckSubproblem): 2nd arg made const
+
+Fri May 24 11:57:56 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variable.cc (analyseConstraintPropagation): implemented (rather
+	than Assert we will never be called)
+
+Thu May 23 10:26:45 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* sort.cc (dump): now use sortCode << op
+
+	* sortCode.cc (operator<<): added (replaces dump)
+
+Wed May 22 17:33:32 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* sortCheckSubproblem.cc: created
+
+	* sortCheckSubproblem.hh: created
+
+Tue May 21 11:36:49 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* localBinding.cc (dump): added
+	(dumpList): added
+
+Mon May 20 10:12:22 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* substitution.cc (operator-): replaces subtract(); now creates a
+	new localBinding on the heap if needed; otherwise returns 0
+
+	* localBinding.cc (LocalBinding): now take argument to
+	preallocate storage for bindings
+
+	* substitution.cc (subtract): now use LocalBinding class
+	(assert): deleted
+	(retract): deleted
+
+	* substitution.hh (class Substitution): nested class Difference deleted
+
+Sun May 19 17:28:40 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* rewritingContext.cc (RewritingContext): horrible bug fixed:
+	failing to initialize prev in 2nd constructor
+
+	* rewritingContext.hh (class RewritingContext): dagRoot member
+	replaced by DagNode* member, next and prev members added
+
+	* rewritingContext.cc (RewritingContext): outlined, now link in
+	rewriting context to global list
+	(~RewritingContext): added to unlink rewriting context
+	(markReachableNodes): added
+
+	* substitution.hh (nrFragileBindings): added
+	(finished): added
+
+	* localBinding.cc: added
+
+	* localBinding.hh (class LocalBinding): added
+
+Fri May 17 10:52:40 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* rewritingContext.hh (dumpContext): deleted
+	(RewritingContext): dumpContext arg deleted
+
+	* core.hh: class DumpContext deleted
+
+	* connectedComponent.cc (dumpSort): deleted
+
+	* module.cc (dump): now use streams
+
+	* preEquation.cc: #include "dumpContext.hh" removed
+
+	* sort.cc (dump): now use streams
+
+	* sortCode.hh (class SortCode): now use streams and WORD_SIZE
+
+	* variableRhsAutomaton.cc (dump): now use streams
+
+	* sortConstraint.cc: #include "dumpContext.hh" removed
+
+	* complexSort.cc (operator<<): use nrMaximalSorts()
+	rather than using (now revoked) friendship with connectedComponent
+	(operator<<): use nrSorts() rather than using (now revoked)
+	friendship with connectedComponent
+	(ComplexSort): added new constructor to make a complex sort from a
+	normal sort so that error sorts can be printed correctly
+
+	* connectedComponent.hh (nrSorts): added
+	(class ConnectedComponent): operator<<(ostream& s, const
+	ComplexSort& c) no longer a friend
+
+Wed May 15 14:48:50 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* connectedComponent.cc (operator<<): deleted
+
+	* connectedComponent.hh: ComplexSort nested class removed
+
+	* complexSort.hh: created
+
+	* complexSort.cc: created
+
+	* connectedComponent.cc (operator<<): added for ComplexSort
+
+	* connectedComponent.hh (class ConnectedComponent): added
+	ComplexSort nested class 
+
+	* namedEntity.hh: added declaration of
+	operator<<(ostream& s, const NamedEntity* e)
+
+Sat May 11 16:30:32 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variableSymbol.cc (VariableSymbol): pass stable = false
+
+Fri Apr 26 11:01:07 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagRoot.hh (setNode): added
+
+Tue Apr 23 10:58:22 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* subproblemSequence.cc (solve): now take RewritingContext& as argument
+
+Wed Apr 17 12:01:29 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* substitution.hh (class Substitution): struct Binding now has
+	active flag; "tests" vector removed
+
+	* substitution.cc (assert): adapted from insert()
+	(retract): added
+	(subtract): no longer keep tests and bindings seperate; clear
+	active flags
+
+Fri Apr 12 17:16:35 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variable.hh: added atTop argument to
+	analyseConstraintPropagation(), removed commenting from unused parameters
+
+	* variable.cc (analyseConstraintPropagation): added atTop argument
+
+Thu Apr 11 16:07:37 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* substitution.cc (subtract): added
+	(insert): added
+
+	* substitution.hh: added internal class Difference
+
+Thu Mar 28 14:36:58 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variableIndex.cc: rewritten
+
+	* variableIndex.hh: now use Vector<>
+
+Fri Mar 22 10:19:11 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variable.cc (findEagerVariables): atTop commented out
+
+Thu Mar 21 15:12:35 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* sort.hh: added ERROR_SORT = 0
+
+Wed Mar 20 11:26:47 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* substitution.hh: values chenged to constant pointer; currentSize
+	-> copySize; order of values and copySize switched; inline
+	functions updated
+
+	* substitution.cc (Substitution): now initialize values as a
+	constant pointer; currentSize -> copySize
+	(copy): currentSize -> copySize
+
+Mon Mar 11 10:25:57 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* sort.hh: "static const int" replaced enum
+
+Sat Mar  9 16:26:06 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variable.cc (compileLhs): simple arg removed
+
+Thu Feb 15 10:52:11 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variable.hh: commenting removed from findEagerVariables() args
+
+	* variable.cc (findEagerVariables): implemented (rather than
+	asserting that we would never be called)
+
+Wed Feb 14 17:57:19 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* equation.cc (compile): pass true to PreEquation::compile()
+
+	* sortConstraint.cc (compile): pass false to PreEquation::compile()
+
+	* preEquation.hh: added eagerVariablesAllowed flag to compile()
+	made compile() protected
+
+	* preEquation.cc (compile): added flag so that eager variables can
+	be denied to sort constraint lhs patterns
+
+Tue Feb  6 11:16:56 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* preEquation.cc (compile): call Substitution::notify() even if
+	there is no condition
+
+	* module.cc (closeSignature): now compile sort constraints
+
+	* sortConstraint.cc: created
+
+	* sortConstraint.hh: created
+
+Fri Feb  2 15:33:47 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* preEquation.cc (compile): parse lhs of equation
+
+	* equation.cc (compile): parse rhs of equation and check it
+	against lhs
+
+	* preEquation.cc (compile): use new parse()
+
+Thu Feb  1 14:07:36 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* preEquation.cc (compile): parse condition terms
+
+	* variableSymbol.hh: parse() deleted
+
+	* variableSymbol.cc: parse() deleted
+
+	* variableSymbol.hh: parse() added
+
+	* variableSymbol.cc (parse): added
+
+Wed Jan 31 10:32:36 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* equation.hh: complete rewrite based on PreEquation
+	(rhs): added
+
+	* equation.cc: complete rewrite based on PreEquation
+
+	* preEquation.hh (hasCondition): added
+
+	* preEquation.cc (checkCondition): heavily modified; no expects
+	first solution of subproblem to already have been found. No longer
+	self destructs subproblem. Now asserts that condition actually
+	exists (rather than coping with the case where it doesn't).
+	(conditionSatisfied): deleted, code pushed into checkCondition()
+
+	* variable.hh: added lookupSort()
+
+	* variable.cc (lookupSort): added
+
+Tue Jan 30 17:35:43 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* module.cc (closeSignature): generateSortTable() -> compileOpDeclarations()
+
+Thu Jan 11 18:04:51 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* sort.hh: added UNION_SORT constant
+
+	* connectedComponent.cc (dumpSort): MULTISORT -> Sort::UNION_SORT
+
+	* connectedComponent.hh: deleted MULTISORT constant
+
+Wed Jan 10 16:30:40 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variableSymbol.cc (VariableSymbol): don't pass a sharable arg to Symbol()
+
+	* core.cc: added more template instantiations
+
+Fri Dec 15 12:44:45 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* equation.cc (compile): crude hack to move compilation into a
+	different function so we can delay compilation until sort info is stable
+
+	* equation.hh: added compile()
+
+Thu Dec 14 10:39:28 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* connectedComponent.cc (dumpSort): added code to deal with union sorts
+	(dumpSort): avoid excess "," in union case
+
+	* connectedComponent.hh: added findIndex() and findMaximalSorts()
+
+	* connectedComponent.cc (findIndex): added
+	(findMaximalSorts): added
+
+	* sortCode.hh (operator!=): added
+	(makeEmpty): added
+
+Wed Dec 13 11:54:57 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dumpContext.hh: added dumpSortTab()
+
+	* dumpContext.cc (dumpSortTab): added
+
+	* sort.cc (dump): use dumpSortTab()
+
+	* dumpContext.cc (dumpSort): chnaged to use ConnectedComponent::dumpSort()
+
+	* connectedComponent.cc (ConnectedComponent): now set nrMaxSorts
+	(dumpSort): added
+
+	* connectedComponent.hh: added dumpSort()
+	
+
+Fri Dec  8 10:04:56 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* equation.cc: deleted Equation(Term* lhs, RhsAutomaton* rhsAutomaton)
+	(printEquation): removed built-in rhs case
+
+	* equation.hh: deleted Equation(Term* lhs, RhsAutomaton* rhsAutomaton)
+
+	* variableSymbol.cc (rewrite): added
+
+	* variableSymbol.hh: added dummy rewrite()
+
+Thu Dec  7 11:00:44 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagRoot.hh: public data member removed and replaced by node() function
+
+	* rewritingContext.cc (reduce): use new node() function
+
+	* rewritingContext.hh (root): use new node() function; this
+	function now declared const
+
+Wed Dec  6 17:13:41 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* namedEntity.hh (id, type): made const
+
+	* sort.hh: now derived from NamedEntity
+
+Tue Dec  5 12:12:15 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* module.cc: added call to NamedEntity constructor
+
+	* module.hh: now derived from NamedEntity
+
+	* namedEntity.hh: created
+
+Fri Dec  1 09:51:42 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* module.cc (closeSignature): added code to call
+	generateSortTable() on each symbol
+
+	* sort.cc (dump): use dumpContext::dumpSort()
+
+	* sortCode.hh (meet): added togther with == and <=
+	added explicit ctors
+
+Thu Nov 30 15:39:50 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* module.cc: calls to Sort/ConnectedComponent functions updated
+
+	* sort.cc (registerConnectedSorts): radically restructured
+
+	* connectedComponent.cc: radically restructured to include error
+	sorts as real sorts
+
+Mon Nov 27 10:52:59 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* core.cc: non longer implement SortCode
+
+	* sortCode.cc: created
+
+	* connectedComponent.cc (dump): added dump()
+
+	* module.cc (dump): added dump()
+
+	* sort.cc (dump): added dump()
+
+Wed Nov 22 10:25:22 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dumpContext.cc: created
+
+	* core.cc: removed DumpContext implementation from this file
+
+	* dumpContext.hh (dumpSort): added
+
+	* module.cc (closeSignature): pass first sort to connected component
+
+	* sort.cc (insertMaximalSorts): call component.increment() each
+	time we find a new sort in current connected component
+
+	* connectedComponent.hh (increment): added code to keep count of
+	sorts in component so that we can detect cycles;
+	Code also added to save first sort so that we have a name for the
+	component and its error sort
+
+	* connectedComponent.cc (appendSort): added Assert to check for cycle
+
+	* sort.cc: fixed bug where we were exploring sort with non-null components
+
+Tue Nov 21 17:50:09 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* core.cc: template instantiations added
+	added implementation line for sortCode.hh
+
+	* core.hh: 4 new classes added
+
+	* sortCode.hh: created
+
+	* connectedComponent.cc: created
+
+	* connectedComponent.hh: created
+
+	* module.cc: created
+
+	* module.hh: created
+
+	* sort.hh: created
+
+	* sort.cc: created
+
+Tue Nov  7 10:11:28 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* substitution.cc (Substitution): use of allocatedSize removed,
+	allocateSize definition added
+
+	* substitution.hh (notify): added; expand() deleted and various
+	Asserts now use aloocateSize rather the currentSize since the
+	latter may not be valid for a "fast" equation
+
+	* equation.cc (Equation): changed rule->equation for all names; now
+	compute substitution size required and notify Substitution class;
+	also determine if equation is fast.
+	(conditionSatisfied): changed naming
+	(Equation): changed naming
+	(slowApplyReplace): formed from traceApplyReplace()
+
+Mon Nov  6 16:47:05 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* equation.hh : created from rule.hh, names changed, eqFast flag
+	added, fastApplyReplace(), slowApplyReplace() added.
+
+Mon Oct 23 10:26:39 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dumpContext.hh : added virtual destructor to silence g++'s complaints
+
+	* rule.hh : definition added for new functions
+
+	* rule.cc : huge amount of code rewritten; many new functions to
+	assist tracing
+
+	* rule.hh (applyReplace): recoded to call traceApplyReplace(),
+	conditionSatified() or subproblemSolved() according to tests
+	(applyReplace): switch arg order for consistancy
+
+	* rewritingContext.hh : Changed TraceType to new kinds of tracing
+
+Tue Oct 17 11:21:05 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* rule.hh (applyReplace): changed code to use conditionSatified()
+
+	* rule.cc (conditionSatified): added
+
+	* core.hh: added DumpContext
+
+	* core.cc: added DumpContext
+
+	* rule.hh (applyReplace): updated to copy dump context
+
+	* variableRhsAutomaton.cc (dump): updated to use dump context
+
+	* variableRhsAutomaton.hh: updated to use dump context
+
+	* rewritingContext.hh: updated to store dump context
+
+	* rule.cc (dump): updated to use dump context
+
+	* dumpContext.hh: created DumpContext
+
+	* rule.cc (Rule): remove calls to analyseVariables()
+
+	* variable.cc: removed indexVariables(VariableIndex& indicies)
+
+	* variable.hh (setIndex): added setIndex()
+	removed indexVariables(VariableIndex& indicies)
+
+	* rewritingContext.cc (reduce): now use DagNode::reduce()
+
+	* rule.hh: unvirtualized applyReplace()
+
+Fri Oct 13 15:39:09 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* variable.cc: removed getVariable()
+
+	* variable.hh: removed CHECK_SHARABILITY constant
+	Added downCast()
+	removed getVariable()
+
+	* substitution.cc: "old"/"source" args changed to "original"
+	Spacing clean up
+
+	* substitution.hh: "old"/"source" args changed to "original"
+	Asserts added to clear() and expand();
+
+	* rule.hh (Rule): virtualized applyReplace() to find out cost of
+	not being able to inline it and having to make a virtual function
+	call; having different kinds of rule with a virtual applyReplace()
+	is one way of getting light weight built-ins where no special
+	matching is needed - only special rewrite rules (==, =/=)
+	
+	* substitution.hh (Substitution): added destructor to delete
+	values array and fix memory leak

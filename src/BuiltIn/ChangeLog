@@ -1,0 +1,2072 @@
+2003-11-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (getDataAttachments): fixed bug where we were
+	returning NumberOpSymbol rather than StringOpSymbol
+
+2003-11-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.cc (getDataAttachments): added
+	(getTermAttachments): added
+
+	* branchSymbol.hh (class BranchSymbol): added decls for
+	getDataAttachments() and getTermAttachments()
+
+	* equalitySymbol.cc (getDataAttachments): added
+	(getTermAttachments): added
+
+	* equalitySymbol.hh (class EqualitySymbol): added decls for
+	getDataAttachments() and getTermAttachments()
+
+2003-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatOpSymbol.cc (getDataAttachments): added
+	(getSymbolAttachments): added
+	(getTermAttachments): added
+
+	* stringOpSymbol.cc (getDataAttachments): added
+	(getSymbolAttachments): added
+	(getTermAttachments): added
+
+	* stringOpSymbol.hh (class StringOpSymbol): added decls for
+	getDataAttachments(), getSymbolAttachments(), getTermAttachments()
+
+	* floatOpSymbol.hh (class FloatOpSymbol): added decls for
+	getDataAttachments(), getSymbolAttachments(), getTermAttachments()
+
+	* divisionSymbol.hh (class DivisionSymbol): added decls
+	for getDataAttachments() and getSymbolAttachments()
+
+	* divisionSymbol.cc (getDataAttachments): added
+	(getSymbolAttachments): added
+
+	* minusSymbol.cc (getDataAttachments): added
+
+	* minusSymbol.hh (class MinusSymbol): added decl for
+	getDataAttachments()
+
+	* ACU_NumberOpSymbol.cc (getDataAttachments): added
+	(getSymbolAttachments): added
+
+	* ACU_NumberOpSymbol.hh (class ACU_NumberOpSymbol): added decls
+	for getDataAttachments() and getSymbolAttachments()
+
+	* CUI_NumberOpSymbol.cc (getDataAttachments): added
+	(getSymbolAttachments): added
+
+	* CUI_NumberOpSymbol.hh (class CUI_NumberOpSymbol): added decls
+	for getDataAttachments() and getSymbolAttachments()
+
+	* numberOpSymbol.cc (getDataAttachments): added
+	(getSymbolAttachments): added
+	(getTermAttachments): added
+
+	* numberOpSymbol.hh (class NumberOpSymbol): added decls for
+	getDataAttachments(), getSymbolAttachments(), getTermAttachments()
+
+	* succSymbol.cc (getDataAttachments): added
+	(getTermAttachments): added
+
+	* bindingMacros.hh (APPEND_DATA): added
+
+	* succSymbol.hh (class SuccSymbol): added decls for
+	getDataAttachments() and getTermAttachments()
+
+	* bindingMacros.hh (APPEND_TERM): added
+
+2003-11-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bindingMacros.hh (APPEND_SYMBOL): added
+
+2003-10-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equalitySymbol.hh (class EqualitySymbol): updated decl for
+	EqualitySymbol()
+
+	* equalitySymbol.cc (EqualitySymbol): don't take term args
+
+	* branchSymbol.hh (class BranchSymbol): updated decl for
+	BranchSymbol()
+
+	* branchSymbol.cc (BranchSymbol): take nrArgs arg rather than term
+	arg
+
+	* equalitySymbol.hh (class EqualitySymbol): deleted decl for
+	~EqualitySymbol()
+
+	* equalitySymbol.cc (~EqualitySymbol): deleted now we no longer
+	need to prevent deep self destruction of equalTerm and
+	notEqualTerm
+
+	* branchSymbol.cc (~BranchSymbol): deepSelfDestruct() test terms
+
+2003-10-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equalitySymbol.cc (attachData): added
+	(copyAttachments): added
+	(attachTerm): added
+
+	* equalitySymbol.hh (class EqualitySymbol): added declarations for
+	attachData(), attachTerm(), copyAttachments()
+
+2003-10-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.cc (attachData): added
+	(attachTerm): added
+	(copyAttachments): added
+
+	* branchSymbol.hh (class BranchSymbol): added declarations for
+	attachData(), attachTerm(), copyAttachments()
+
+===================================Maude83===========================================
+
+2003-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatSymbol.cc: need to include mathStuff.hh
+
+2003-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatSymbol.cc: removed #include <ieeefp.h> and #include <math.h>
+
+	* floatOpSymbol.cc: use mathStuff.hh
+
+2003-07-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.hh: use ropeStuff.hh
+
+	* stringDagNode.hh: use ropeStuff.hh
+
+	* stringTerm.hh: use ropeStuff.hh
+	
+===================================Maude81===========================================
+
+2003-05-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equalitySymbol.cc (domainSortAlwaysLeqThan): added
+
+	* equalitySymbol.hh (class EqualitySymbol): added decl for
+	domainSortAlwaysLeqThan()
+
+	* branchSymbol.cc (rangeSortNeverLeqThan): added
+	(rangeSortAlwaysLeqThan): added
+	(domainSortAlwaysLeqThan): added
+
+	* branchSymbol.hh (class BranchSymbol): added decls for
+	rangeSortNeverLeqThan(), rangeSortAlwaysLeqThan(),
+	domainSortAlwaysLeqThan()
+
+2003-05-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NumberOpSymbol.cc (eqRewrite2): fix bug in case that some
+	args aren't numbers
+
+	* ACU_NumberOpSymbol.hh (class ACU_NumberOpSymbol): added decl for
+	eqRewrite2()
+
+	* ACU_NumberOpSymbol.cc (eqRewrite2): added; do most of the work
+	here to avoid a large stack frame for eqRewrite()
+	(eqRewrite): use new reduceArgumentsAndNormalize() convention; use
+	eqRewrite2()
+	(eqRewrite2): use getACU_DagNode(), getArgument(),
+	getMultiplicity()
+	
+===================================Maude80a===========================================
+
+2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatDagNode.cc (overwriteWithClone): rewritten
+	(makeClone): rewritten
+
+	* stringDagNode.cc (overwriteWithClone): rewritten
+	(makeClone): rewritten
+	
+===================================Maude80===========================================
+
+2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (fwdFind): static_cast<int>(start) to avoid
+	NONE being converted to unsigned
+
+	* succSymbol.cc: removed #pragma
+	(makeNatTerm): updated Assert()
+	(makeNatDag): updated Assert()
+	(getNat): updated Assert()s (both versions)
+	(rewriteToNat): updated Assert()s
+
+	* succSymbol.hh: removed #pragma
+
+	* stringTerm.cc: removed #pragma
+
+	* stringTerm.hh: removed #pragma
+
+	* stringSymbol.cc: removed #pragma
+
+	* stringSymbol.hh: removed #pragma
+
+	* stringOpSymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()s
+
+	* stringOpSymbol.hh: removed #pragma
+
+	* stringDagNode.cc: removed #pragma
+
+	* stringDagNode.hh: removed #pragma
+
+	* sortTestSymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()
+
+	* sortTestSymbol.hh: removed #pragma
+
+	* numberOpSymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()s
+
+	* numberOpSymbol.hh: removed #pragma
+
+	* minusSymbol.cc: removed #pragma
+	(makeNegDag): updated Assert()
+	(isNeg): updated Assert() (both versions)
+	(getNeg): updated Assert() (both versions)
+
+	* minusSymbol.hh: removed #pragma
+
+	* floatTerm.cc: removed #pragma
+
+	* floatTerm.hh: removed #pragma
+
+	* floatSymbol.cc: removed #pragma
+
+	* floatSymbol.hh: removed #pragma
+
+	* floatOpSymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()s; Assert() -> CantHappen() (*2)
+
+	* floatOpSymbol.hh: removed #pragma
+
+	* floatDagNode.cc: removed #pragma
+
+	* floatDagNode.hh: removed #pragma
+
+	* equalitySymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()
+
+	* equalitySymbol.hh: removed #pragma
+
+	* divisionSymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()s
+	(makeRatDag): updated Assert()
+	(isRat): updated Assert() (both versions)
+	(getRat): updated Assert()s (both versions)
+	(makeRatTerm): updated Assert()
+
+	* divisionSymbol.hh: removed #pragma
+
+	* branchSymbol.cc: removed #pragma
+	(fillInSortInfo): updated Assert()s
+	(eqRewrite): updated Assert()
+	(computeBaseSort): updated Assert()
+
+	* branchSymbol.hh: removed #pragma
+
+	* CUI_NumberOpSymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()
+
+	* CUI_NumberOpSymbol.hh: removed #pragma
+
+	* ACU_NumberOpSymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()s
+
+	* ACU_NumberOpSymbol.hh: removed #pragma
+	
+===================================Maude79===========================================
+
+2003-01-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NumberOpSymbol.cc (eqRewrite): rewritten to avoid making use
+	of ACU_DagNode; less efficient - need to revisit this once
+	red-black stuff is working
+	
+===================================Maude76==================================================
+
+2002-11-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringDagNode.cc (StringDagNode): commented out Assert() to
+	avoid accessing MemoryCell::Word
+
+	* stringTerm.hh: added using namespace __gnu_cxx to for g++3.2
+
+	* stringDagNode.hh: added using namespace __gnu_cxx to for g++3.2
+
+2002-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (fwdFind): changed semantics for empty pattern
+	case
+	(revFind): changed smenatics for empty pattern case
+	(fwdFind): fixed wrap around bug introduced when we optimized the
+	tests in previous change; added comment since this is a bug we
+	fixed on 2001-01-17 and them optimized away the fix
+
+2002-10-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (eqRewrite): removed Assert(false,...) that
+	could be reached if 1st arg was bad; converted other
+	Assert(false,...)s  to CantHappen()s
+
+2002-10-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NumberOpSymbol.cc (eqRewrite): added check for abort after
+	redcuing arguments and before doing expensive eager numerical
+	calculations. This partly fixes the slow abort problem but
+	cascading ACU normalizations during an abort can still be
+	expensive
+
+2002-10-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.cc (stackArguments): only stack args that aren't
+	frozen or unstackable
+
+===================================Maude76==================================================
+
+2002-09-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatSymbol.hh (class FloatSymbol): added decl for
+	isConstructor()
+
+	* floatSymbol.cc (isConstructor): added
+
+	* stringSymbol.hh (class StringSymbol): added decl for
+	isConstructor()
+
+	* stringSymbol.cc (isConstructor): added
+
+2002-08-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringSymbol.cc (compileOpDeclarations): use new
+	getOpDeclarations() semantics
+
+	* floatSymbol.cc (compileOpDeclarations): use new
+	getOpDeclarations() semantics
+
+	* branchSymbol.cc (fillInSortInfo): use new getOpDeclarations()
+	semantics
+	(computeBaseSort): use new getOpDeclarations() semantics
+	
+===================================Maude75==================================================
+
+2002-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* builtIn.hh: deleted forward decls for classes
+	MachineIntegerSymbol, MachineIntegerTerm, MachineIntegerDagNode
+	and MachineIntegerOpSymbol
+
+	* stringOpSymbol.cc (StringOpSymbol): don't clear
+	machineIntegerSymbol
+	(attachSymbol): don't bind machineIntegerSymbol
+	(copyAttachments): don't copy machineIntegerSymbol
+	(eqRewrite): deleted machineInt operation
+	(eqRewrite): deleted string operation for machineInts
+
+	* stringOpSymbol.hh (class StringOpSymbol): deleted data member
+	machineIntegerSymbol
+
+	* floatOpSymbol.cc (FloatOpSymbol): don't clear
+	machineIntegerSymbol
+	(attachSymbol): don't bind machineIntegerSymbol
+	(copyAttachments): don't copy machineIntegerSymbol
+	(eqRewrite): deleted machineInt operation
+	(eqRewrite): deleted float operation for machineInts
+
+	* floatOpSymbol.hh (class FloatOpSymbol): deleted data member
+	machineIntegerSymbol
+
+===================================Maude74==================================================
+
+2002-06-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatOpSymbol.cc (eqRewrite): support float(Rat) operation
+
+2002-06-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatOpSymbol.hh (class FloatOpSymbol): added data members
+	succSymbol, minusSymbol and divisionSymbol
+
+	* floatOpSymbol.cc (attachSymbol): handle succSymbol, minusSymbol
+	and divisionSymbol
+	(copyAttachments): handle succSymbol, minusSymbol and
+	divisionSymbol
+	(FloatOpSymbol): clear succSymbol, minusSymbol and divisionSymbol
+	(eqRewrite): support rat(Float) op
+
+	* stringOpSymbol.cc (eqRewrite): use Uint for substr index and
+	length; use fits_uint_p(), get_ui() and UINT_MAX
+	(substring): we no longer allow -ve index
+	(fwdFind): we no longer allow -ve start
+	(revFind): we no longer allow -ve start
+
+	* stringOpSymbol.hh (class StringOpSymbol): updated decls for
+	substring(), fwdFind() and revFind()
+	(class StringOpSymbol): make ropeToNumber() static
+
+	* stringOpSymbol.cc (substring): Int64 -> crope::size_type
+	(fwdFind): Int64 -> crope::size_type
+	(revFind): Int64 -> crope::size_type
+
+	* stringOpSymbol.hh (class StringOpSymbol): added decl for
+	ropeToNumber()
+
+	* stringOpSymbol.cc (ropeToNumber): added
+	(eqRewrite): support string(Rat, Nat) and rat(String, Nat) ops
+
+2002-06-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.hh (class StringOpSymbol): added data member
+	divisionSymbol
+
+	* stringOpSymbol.cc: MachineFloat -> Float
+	(StringOpSymbol): clear divisionSymbol
+	(attachSymbol): handle divisionSymbol
+
+	* stringOpSymbol.hh (class StringOpSymbol): data member
+	machineFloatSymbol becomes floatSymbol
+
+	* machineFloatOpSymbol.cc: MachineFloat -> Float; becomes
+	floatOpSymbol.cc
+
+	* machineFloatOpSymbol.hh: MachineFloat -> Float; becomes
+	floatOpSymbol.hh
+
+	* machineFloatDagNode.cc: MachineFloat -> Float; becomes
+	floatDagNode.cc
+
+	* machineFloatDagNode.hh: MachineFloat -> Float; becomes
+	floatDagNode.hh
+
+	* machineFloatTerm.cc: MachineFloat -> Float; becomes floatTerm.cc
+
+	* machineFloatTerm.hh: MachineFloat -> Float; becomes floatTerm.hh
+
+	* machineFloatSymbol.cc: MachineFloat -> Float; becomes
+	floatSymbol.cc
+
+	* machineFloatSymbol.hh: MachineFloat -> Float; becomes
+	floatSymbol.hh
+
+	* stringOpSymbol.hh (class StringOpSymbol): added data member
+	minusSymbol
+
+	* stringOpSymbol.cc (eqRewrite): machineFloat op becomes float
+	(eqRewrite): converted decFloat to use Ints
+	(StringOpSymbol): clear minusSymbol
+	(attachSymbol): handle minusSymbol
+	(copyAttachments): handle minusSymbol
+
+2002-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* succSymbol.hh (class SuccSymbol): added decl for
+	getSignedInt64()
+
+	* succSymbol.cc (getSignedInt64): added
+
+	* succSymbol.hh (class SuccSymbol): added decl for getSignedInt()
+
+	* succSymbol.cc (getSignedInt): added
+
+2002-06-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (eqRewrite): use Nats for substr
+	(eqRewrite): use Nats for find and rfind
+	(eqRewrite): use Nats for char
+
+2002-06-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (StringOpSymbol): init succSymbol
+	(attachSymbol): handle succSymbol
+	(copyAttachments): copy succSymbol
+	(eqRewrite): use Nats for length and ascii ops
+
+	* stringOpSymbol.hh (class StringOpSymbol): added data member
+	succSymbol
+	
+===================================Maude73==================================================
+
+2002-06-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* numberOpSymbol.cc (eqRewrite): handle -1^bignum, 0^bignum,
+	1^bignum and 0 << bignum
+
+2002-05-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* divisionSymbol.cc (isRat): added Term* version
+	(getRat): added Term* version
+
+	* divisionSymbol.hh (class DivisionSymbol): added decl for Term*
+	versions of isRat() and getRat()
+
+	* minusSymbol.cc (isNeg): added Term* version
+	(getNeg): added Term* version
+
+	* minusSymbol.hh (class MinusSymbol): added decls for Term*
+	versions of isNeg() and getNeg()
+
+	* divisionSymbol.cc (getRat): added
+	(makeRatTerm): added
+
+2002-05-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* divisionSymbol.cc (eqRewrite): use succSymbol->rewriteToNat()
+
+	* CUI_NumberOpSymbol.cc (eqRewrite): use succSymbol->rewriteToNat()
+
+	* ACU_NumberOpSymbol.cc (eqRewrite): use succSymbol->rewriteToNat()
+
+	* numberOpSymbol.cc (eqRewrite): use succSymbol->rewriteToNat()
+
+	* succSymbol.hh (class SuccSymbol): added decl for rewriteToNat()
+
+	* succSymbol.cc (rewriteToNat): added
+
+	* divisionSymbol.cc (eqRewrite): added optimization to avoid
+	trying to simplify the same rational twice
+
+2002-05-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* divisionSymbol.cc: (isRat) don't treat 0 / NzNat as a Rat
+	(eqRewrite): use isRat(); no longer try to simplify 0 / NzNat
+	since it is not in ctor form.
+	(eqRewrite): use makeRatDag()
+
+	* minusSymbol.cc (isNeg): don't treat - 0 as neg since some caller
+	expect to find a SuccSymbol under the MinusSymbol in the true
+	case.
+
+	* builtIn.hh: added fwd decl for class DivisionSymbol
+
+	* divisionSymbol.hh: created
+
+	* divisionSymbol.cc: created
+
+2002-05-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* minusSymbol.hh (class MinusSymbol): added decl for makeIntTerm()
+
+	* minusSymbol.cc (makeIntTerm): added
+
+	* succSymbol.cc (makeNatTerm): put more info in Assert()
+
+2002-05-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* numberOpSymbol.cc (eqRewrite): added abs operation
+
+	* minusSymbol.cc (attachData): convert MinusSymbol attachment into
+	NumberOpSymbol attachment
+
+	* ACU_NumberOpSymbol.cc (attachSymbol): use MinusSymbol*
+	(copyAttachments): use MinusSymbol*
+
+	* ACU_NumberOpSymbol.hh (class ACU_NumberOpSymbol): minusSymbol
+	now has type MinusSymbol*
+
+	* numberOpSymbol.cc (copyAttachments): use MinusSymbol*
+
+	* minusSymbol.hh: created
+
+	* minusSymbol.cc: created
+
+	* builtIn.hh: added fwd decl for MinusSymbol
+
+	* numberOpSymbol.cc (makeNegDag): deleted
+	(isNeg): deleted
+	(getNeg): deleted
+	(attachSymbol): use MinusSymbol*
+
+	* numberOpSymbol.hh (getSuccSymbol): added
+	(class NumberOpSymbol): minusSymbol now has type MinusSymbol*
+
+2002-05-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* numberOpSymbol.cc (eqRewrite): rewritten to handle -ve Ints
+
+	* numberOpSymbol.hh (class NumberOpSymbol): updated decls
+
+	* numberOpSymbol.cc (makeIntDag): becomes makeNegDag(); simplified
+	for -ve case
+
+	* ACU_NumberOpSymbol.cc (eqRewrite): use isNeg(), getNeg() and
+	makeNegDag()
+
+	* numberOpSymbol.cc (getInt): becomes getNeg(); simplified for -ve
+	case
+	(isInt): becomes isNeg(); simplified for -ve case
+
+	* ACU_NumberOpSymbol.cc (eqRewrite): rewritten using isInt(),
+	getInt() and makeIntDag()
+
+	* numberOpSymbol.cc (makeIntDag): added
+	(isInt): added
+	(getInt): added
+
+	* numberOpSymbol.hh (class NumberOpSymbol): added decls for
+	makeIntDag(), isInt(), getInt()
+
+2002-05-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* numberOpSymbol.cc (eqRewrite): fix bad CODE for quo
+
+	* CUI_NumberSymbol.hh: created
+
+	* CUI_NumberSymbol.cc: created
+
+2002-05-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* numberOpSymbol.cc (eqRewrite): added div, mod, gcd, lcm, ^, <<
+	and >> cases
+	(eqRewrite): have >> case work correctly even for extreme values
+	of 2nd arg
+	(eqRewrite): added - and modular exponent cases
+	(eqRewrite): div becomes quo
+	(eqRewrite): added divides case
+
+2002-05-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NumberOpSymbol.cc (eqRewrite): updated usedMultiplicity 
+	(attachData): fixed bug where we were looking for hook named
+	NumberOpSymbol rather than ACU_NumberOpSymbol
+	(eqRewrite): handle the high multiplicity case for *
+	(eqRewrite): added gcd and lcm cases
+	(eqRewrite): fixed bug in xor case
+	(eqRewrite): handle the case where >= 2 but not all of the args
+	are numbers
+
+2002-05-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* builtIn.hh: added fwd decl for ACU_NumberOpSymbol
+
+	* ACU_NumberOpSymbol.hh: created
+
+	* ACU_NumberOpSymbol.cc: created
+
+2002-05-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* succSymbol.hh (class SuccSymbol): added decl for attachData()
+
+	* succSymbol.cc (attachData): added in order to deal with null
+	data attach
+
+	* bindingMacros.hh (NULL_DATA): added
+
+	* numberOpSymbol.hh: created
+
+	* numberOpSymbol.cc: created
+
+	* builtIn.hh: added forwards decls for SuccSymbol and
+	NumberOpSymbol
+
+	* succSymbol.hh: created
+
+	* succSymbol.cc: created
+	
+===================================Maude72==================================================
+
+2002-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.hh (class StringOpSymbol): deleted static data
+	member eagerStrategy
+
+	* stringOpSymbol.cc (StringOpSymbol): deleted strategy argument
+	passed to FreeSymbol()
+
+	* sortTestSymbol.hh (class SortTestSymbol): deleted static data
+	member eagerStrategy
+
+	* sortTestSymbol.cc (SortTestSymbol): use standard instead of
+	eagerStrategy
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol):
+	deleted static data member eagerStrategy
+
+	* machineIntegerOpSymbol.cc (MachineIntegerOpSymbol): deleted
+	strategy argument passed to FreeSymbol()
+
+	* machineFloatOpSymbol.hh (class MachineFloatOpSymbol): deleted
+	static data member eagerStrategy
+
+	* machineFloatOpSymbol.cc (MachineFloatOpSymbol): deleted strategy
+	argument passed to FreeSymbol()
+
+	* branchSymbol.hh (class BranchSymbol): deleted static data
+	member eagerStrategy
+
+	* branchSymbol.cc (BranchSymbol): deleted strategy argument passed
+	to FreeSymbol()
+
+2002-01-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringTerm.hh: ifdef LIBv3 for libstdc++-v3
+
+	* stringDagNode.hh: ifdef LIBv3 for libstdc++-v3
+
+	* stringOpSymbol.hh: ifdef LIBv3 for libstdc++-v3
+	
+===================================Maude70==================================================
+
+2002-01-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (eqRewrite): undid hack because it doesn't
+	work - for unknown reasons; reverted to old library
+	(eqRewrite): redid hack; fixed \0 termination bug in second copy
+	of hack
+
+2002-01-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (eqRewrite): fixed bug where we weren't \0
+	terminating our temporary C-string copy of left arg rope; bug was
+	introduced by hack below
+
+2001-12-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringDagNode.hh: #include <rope> -> #include <ext/rope>
+
+	* stringOpSymbol.cc (eqRewrite): added hacks to get around the
+	problem of Rope::c_str() not working in libstdc++-v3
+
+	* stringTerm.hh: #include <rope> -> #include <ext/rope>
+	
+===================================Maude69==================================================
+
+2001-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (rewriteToString): incrementCount() -> incrementEqCount()
+
+	* sortTestSymbol.cc (eqRewrite): incrementCount() ->
+	incrementEqCount()
+
+	* machineIntegerOpSymbol.cc (eqRewrite): simplified using
+	rewriteToMachineInteger()
+
+	* machineIntegerSymbol.cc (rewriteToMachineInteger):
+	incrementCount() -> incrementEqCount()
+
+	* machineFloatSymbol.cc (rewriteToMachineFloat): incrementCount()
+	-> incrementEqCount()
+
+2001-03-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.hh (class BranchSymbol): added decl for
+	stackArguments()
+
+	* branchSymbol.cc (stackArguments): added
+	
+===================================Engine65==================================================
+
+2001-02-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (eqRewrite): put result of left + right in a
+	local variable for safety
+	(eqRewrite): put result of int64ToString() into a local variable
+	for safety
+	(eqRewrite): use safeCast() for down casting in many places
+
+2001-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bindingMacros.hh (BIND_OP): return true in op == t case
+
+2001-01-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (attachData): simplified using BIND_OP; call
+	FreeSymbol::attachData()
+	(attachSymbol): call FreeSymbol::copyAttachments()
+	(attachTerm): don't self destruct term; call
+	FreeSymbol::attachTerm()
+	(copyAttachments): simplified using COPY_SYMBOL and COPY_TERM;
+	call FreeSymbol::copyAttachments()
+
+	* machineFloatOpSymbol.cc (attachData): simplified using
+	BIND_OP; call FreeSymbol::attachData()
+	(attachSymbol): call FreeSymbol::copyAttachments()
+	(attachTerm): don't self destruct term; call
+	FreeSymbol::attachTerm()
+	(copyAttachments): simplified using COPY_SYMBOL and COPY_TERM;
+	call FreeSymbol::copyAttachments()
+
+	* machineIntegerOpSymbol.cc (attachData): simplified using
+	BIND_OP; call FreeSymbol::attachData()
+
+	* bindingMacros.hh (BIND_OP): added
+	(BIND_OP): added
+
+	* machineIntegerOpSymbol.cc (copyAttachments): simplified using
+	COPY_SYMBOL and COPY_TERM
+	(copyAttachments): call FreeSymbol::copyAttachments()
+	(attachTerm): don't self destruct term; call
+	FreeSymbol::attachTerm()
+	(attachSymbol): call FreeSymbol::attachSymbol()
+
+	* bindingMacros.hh (COPY_SYMBOL): added
+	(COPY_TERM): added
+
+2001-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (fwdFind): protect against wrap-around when
+	start is close to the maximum 64 signed int
+	(substring): protect against wrap-around when length or index are
+	close to the minimum 64 signed int;protect against wrap-around
+	when length is close to the maximum 64 signed int
+
+	* machineFloatOpSymbol.cc (postInterSymbolPass): simplified
+	using PREPARE_TERM()
+
+	* machineIntegerOpSymbol.cc (postInterSymbolPass): simplified
+	using PREPARE_TERM()
+
+	* stringOpSymbol.cc (postInterSymbolPass): simplified using
+	PREPARE_TERM()
+
+	* bindingMacros.hh (PREPARE_TERM): added
+
+2001-01-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineFloatOpSymbol.hh (class MachineFloatOpSymbol): deleted
+	decls for fixUp() and copyFixUp()
+
+	* machineFloatOpSymbol.cc (fixUp): deleted
+	(copyFixUp): deleted
+	(attachSymbol): simplified using BIND_SYMBOL()
+	(attachTerm): simplified using BIND_TERM(); self-destruct term in
+	the case we don't recognize purpose
+
+	* stringOpSymbol.hh (class StringOpSymbol): deleted decls for
+	fixUp() and copyFixUp()
+
+	* machineIntegerOpSymbol.cc (attachTerm): self-destruct term in
+	the case we don't recognize purpose
+
+	* stringOpSymbol.cc (attachSymbol): simplified using BIND_SYMBOL()
+	(attachTerm): simplified using BIND_TERM(); self-destruct term in
+	the case we don't recognize purpose so that when we return false
+	caller knows they don't have to garbage collect term
+	(fixUp): deleted
+	(copyFixUp): deleted
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol):
+	deleted decls for fixUp() and copyFixUp()
+
+	* bindingMacros.hh (BIND_SYMBOL): created
+
+	* machineIntegerOpSymbol.cc (fixUp): deleted
+	(copyFixUp): deleted
+	(attachSymbol): simplified using BIND_SYMBOL()
+	(attachTerm): simplified using BIND_TERM()
+
+2001-01-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (StringOpSymbol): initialize op, stringSymbol,
+	machineIntegerSymbol, machineFloatSymbol, decFloatSymbol
+	(attachData): added
+	(attachSymbol): added
+	(attachTerm): added
+	(copyAttachments): added
+
+	* machineFloatOpSymbol.cc (MachineFloatOpSymbol): initialize op,
+	machineFloatSymbol, machineIntegerSymbol
+	(attachData): added
+	(attachSymbol): added
+	(attachTerm): added
+	(copyAttachments): added
+
+	* machineFloatOpSymbol.hh (class MachineFloatOpSymbol): added
+	decls for attachData(), attachSymbol(), attachTerm(),
+	copyAttachments()
+
+	* machineIntegerOpSymbol.cc (attachData): added purpose arg
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): added
+	purpose argument to attachData() decl
+
+2001-01-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineIntegerOpSymbol.cc (MachineIntegerOpSymbol): initialize
+	op = NONE and machineIntegerSymbol = 0
+	(attachTerm): handle the case where we are handed multiple terms
+	with the same purpose - ok if they are equal, error otherwise
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): added
+	declarations for attachData(), attachSymbol(), attachTerm(),
+	copyAttachments()
+
+	* machineIntegerOpSymbol.cc (attachData): added
+	(attachTerm): added
+	(attachSymbol): added
+	(copyAttachments): added
+
+===================================Engine64==================================================
+
+2000-06-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineFloatOpSymbol.cc (eqRewrite): check for wrap around in
+	float to int conversion (happens on alpha and linux with -O2)
+
+	* machineFloatOpSymbol.hh (class MachineFloatOpSymbol): added decl
+	for use safePow()
+
+	* machineFloatOpSymbol.cc (safePow): added
+	(eqRewrite): use safePow()
+
+2000-06-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineFloatOpSymbol.cc (eqRewrite): define +/-Infinity ^ X
+	properly
+	(eqRewrite): check arguments to asin and acos
+	(eqRewrite): define atan2(+/-Infinity, +/-Infinity)
+
+	* machineFloatOpSymbol.hh (class MachineFloatOpSymbol): added decl
+	for isOdd()
+
+	* machineFloatOpSymbol.cc (eqRewrite): fix pow() again (we had it
+	wrong the first time)
+	(isOdd): added
+	(eqRewrite): define -Infinity ^ X properly
+	(eqRewrite): use isOdd
+
+2000-06-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (fixUp): save decFloatSymbol
+	(copyFixUp): copy decFloatSymbol
+
+	* stringOpSymbol.hh (class StringOpSymbol): added data member
+	decFloatSymbol
+	(class StringOpSymbol): upaded decl for fixUp()
+
+	* stringOpSymbol.cc (eqRewrite): implemented decFloat operation
+
+2000-06-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineFloatOpSymbol.cc (eqRewrite): check for errno != 0 and
+	NaN in result
+	(eqRewrite): don't check for errno != 0 after all: solaris sets
+	this for log(0) and pow() overflows whereas linux does
+	not. Instead we check the inputs to functions whose output in
+	extreme cases varies between platforms
+	(eqRewrite): fix pow() result in the case that first arg is -ve
+	and pow() produces wrongly sign result; goto failure if sign
+	cannot be reliably determined
+
+2000-06-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineFloatTerm.cc (MachineFloatTerm): don't allow -0.0
+	to be stored
+
+	* machineFloatDagNode.cc (MachineFloatDagNode): don't allow -0.0
+	to be stored
+
+	* stringOpSymbol.cc (fixUp): store machineFloatSymbol
+	(copyFixUp): copy machineFloatSymbol
+	(eqRewrite): added code for MachineFloat <-> String
+
+	* stringOpSymbol.hh (class StringOpSymbol): added data member
+	machineFloatSymbol; updated decl for ctor
+
+2000-06-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineFloatOpSymbol.cc (eqRewrite): use rewriteToMachineFloat()
+	(eqRewrite): handle machine integer to machine float conversion
+
+	* machineFloatSymbol.hh (class MachineFloatSymbol): added decl for
+	rewriteToMachineFloat()
+
+	* machineFloatSymbol.cc (rewriteToMachineFloat): added
+
+	* stringOpSymbol.hh (class StringOpSymbol): deleted decl for
+	rewriteToMachineInteger()
+
+	* stringOpSymbol.cc (eqRewrite): use
+	MachineIntegerSymbol::rewriteToMachineInteger() (3 places)
+	(rewriteToMachineInteger): deleted
+
+	* machineFloatOpSymbol.cc (eqRewrite): support machine float to
+	machine integer conversion
+
+	* machineIntegerSymbol.hh (class MachineIntegerSymbol): added decl
+	for rewriteToMachineInteger()
+
+	* machineIntegerSymbol.cc (rewriteToMachineInteger): added
+
+	* machineFloatOpSymbol.cc (fixUp): save machineIntegerSym
+	(copyFixUp): copy machineIntegerSym
+
+	* machineFloatOpSymbol.hh (class MachineFloatOpSymbol): added data
+	member machineIntegerSymbol; updated decl for fixUp()
+
+2000-06-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineIntegerSymbol.cc (fillInSortInfo): use getValue() rather
+	than isZero()
+
+	* machineIntegerTerm.hh (isZero): deleted
+
+	* machineFloatOpSymbol.hh: created
+
+	* machineFloatOpSymbol.cc: created
+
+	* machineFloatTerm.cc: created
+
+	* machineFloatTerm.hh: created
+
+	* builtIn.hh: added forward decls for MachineFloat classes
+
+	* machineFloatDagNode.cc: created
+
+	* machineFloatSymbol.cc: created
+
+	* machineFloatDagNode.hh: created
+
+	* machineFloatSymbol.hh: created
+
+2000-05-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (eqRewrite): parse becomes machineInt, format
+	becomes string
+
+2000-05-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (eqRewrite): add code for format and parse
+	operations
+
+2000-04-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (eqRewrite): added functionality for char()
+	and ascii() ops
+
+	* builtIn.hh: added forward decls for class StringSymbol, class
+	StringTerm, class StringDagNode, class StringOpSymbol
+
+	* stringOpSymbol.cc (fixUp): take StringSymbol* arg
+	(copyFixUp): cast to StringSymbol*
+
+	* stringOpSymbol.hh (class StringOpSymbol): updated fixUp() decl
+	(class StringOpSymbol): stringSymbol becomes a StringSymbol*
+
+	* stringDagNode.cc (StringDagNode): take StringSymbol* arg
+	(overwriteWithClone): cast to StringSymbol*
+	(makeClone): cast to StringSymbol*
+
+	* stringDagNode.hh (class StringDagNode): updated decl for
+	StringDagNode()
+
+	* stringTerm.cc (StringTerm): take StringSymbol* arg
+	(deepCopy2): cast to StringSymbol*
+	(overwriteWithDagNode): cast to StringSymbol*
+	(makeDagNode): cast to StringSymbol*
+
+	* stringTerm.hh (class StringTerm): updated decl for StringTerm()
+
+	* stringSymbol.hh: created
+
+	* stringSymbol.cc: created
+
+2000-04-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringDagNode.cc (StringDagNode): call setCallDtor() so that
+	crope can be destructed on garbage collection
+
+2000-04-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (substring): return crope rather than const
+	crope&
+
+	* stringOpSymbol.hh (class StringOpSymbol): substring() must
+	return crope rather than const crope&
+
+2000-04-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc: created
+
+	* stringOpSymbol.hh: created
+
+2000-04-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringDagNode.cc: created
+
+	* stringDagNode.hh: created
+
+2000-04-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringTerm.cc: created
+
+	* stringTerm.hh: created
+	
+===================================Maude 1.0.5 finished=======================================
+
+2000-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.cc (computeBaseSort): code cleaning
+	
+===================================Engine56==================================================
+
+2000-01-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equalitySymbol.cc (generateCode): call generateIncrement()
+	(generateCode): don't call generateIncrement() after all as
+	generateRhs() does so
+
+2000-01-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equalitySymbol.hh (class EqualitySymbol): added decl for generateCode()
+
+	* equalitySymbol.cc (generateCode): added
+	
+===================================Engine54==================================================
+
+1999-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineIntegerDagNode.cc (getHashValue): cast to int before
+	hashing
+
+	* machineIntegerTerm.cc (normalize): cast to int before hashing
+
+	* machineIntegerDagNode.cc (MachineIntegerDagNode): int -> Int64
+
+	* machineIntegerDagNode.hh (class MachineIntegerDagNode): int ->
+	Int64
+
+	* machineIntegerOpSymbol.cc (eqRewrite): specialEval becomes a
+	bool; int -> Int64
+
+	* machineIntegerTerm.cc (MachineIntegerTerm): int -> Int64
+	(compareArguments): (both versions) int -> Int64
+
+	* machineIntegerTerm.hh (class MachineIntegerTerm): int -> Int64
+	(getValue): int -> Int64
+	
+===================================Engine53==================================================
+
+1999-10-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTestSymbol.cc (eqRewrite): updated call to
+	tracePreEqRewrite()
+
+	* machineIntegerOpSymbol.cc (eqRewrite): updated call to
+	tracePreEqRewrite()
+
+1999-10-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineIntegerDagNode.cc (getHashValue): added
+
+	* machineIntegerDagNode.hh (class MachineIntegerDagNode): added
+	decl for getHashValue()
+
+1999-10-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTestSymbol.cc (eqRewrite): call constrainToExactSort(t,
+	context);
+	
+===================================Engine52==================================================
+
+1999-04-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.cc (compileSortConstraints): deleted
+	(compileEquations): deleted
+	(fillInSortInfo): added extra assert for component of 2nd arg
+
+	* branchSymbol.hh (class BranchSymbol): deleted decls for
+	compileEquations() and compileSortConstraints()
+
+	* branchSymbol.cc (eqRewrite): call FreeSymbol::eqRewrite(subject,
+	context) if we can't match 1st arg
+
+	* sortTestSymbol.cc (makeLazyStrategy): made lazyStrategy a local
+	static
+	(fillInSortInfo): deleted
+	(computeBaseSort): deleted
+	(compileOpDeclarations): deleted
+	(compileSortConstraints): deleted
+	(acceptEquation): added
+
+	* sortTestSymbol.hh (class SortTestSymbol): added decl for
+	acceptEquation(); deleted decls for fillInSortInfo(),
+	computeBaseSort(), compileOpDeclarations(),
+	compileSortConstraints()
+	(makeLazyStrategy): moved to sortTestSymbol.cc
+
+	* equalitySymbol.cc (computeBaseSort): deleted
+	(compileOpDeclarations): deleted
+	(compileSortConstraints): deleted; fixes nasty bug where we dump
+	core on uncompiled sort constraints
+	(fillInSortInfo): deleted
+	(acceptEquation): added
+
+	* equalitySymbol.hh (class EqualitySymbol): added decl for
+	acceptEquation(); deleted decls for fillInSortInfo(),
+	computeBaseSort(), compileOpDeclarations(),
+	compileSortConstraints()
+
+1999-04-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* machineIntegerSymbol.cc (compileOpDeclarations): don't do
+	default sort processing anymore since rangeComponent() and
+	domainComponent() no longer require this
+
+1999-04-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equalitySymbol.cc (fillInSortInfo): use correct arg of op decl
+	(computeBaseSort): use correct arg of op decl
+	(fillInSortInfo): use domainComponent() in asserts
+
+	* branchSymbol.cc (fillInSortInfo): use domainComponent()
+
+	* branchSymbol.hh (class BranchSymbol): deleted data members
+	expectedSort and range
+	(class BranchSymbol): updated decl for ctor
+	(class BranchSymbol): deleted decls for rangeComponent() and
+	domainComponent()
+
+	* branchSymbol.cc (rangeComponent): deleted; default will now work
+	(domainComponent): deleted; default will now work
+	(BranchSymbol): don't take range arg or initialize range
+	(computeBaseSort): use (default) rangeComponent() rather than
+	range data member
+	(computeBaseSort): use getOpDeclarations() rather than
+	expectedSort
+	(fillInSortInfo): use getOpDeclarations() rather than
+	expectedSort
+	(BranchSymbol): don't take testSort arg or initialize expectedSort
+
+	* equalitySymbol.hh (class EqualitySymbol): delete rangeSort and
+	argComponent data members
+	(class EqualitySymbol): delete obsolete strategy stuff
+	(class EqualitySymbol): update ctor decl
+	(class EqualitySymbol): deleted decls for rangeComponent() and
+	domainComponent()
+
+	* equalitySymbol.cc (domainComponent): deleted; default will now
+	work
+	(rangeComponent): deleted; default will now work
+	(EqualitySymbol): don't take or initialize argComponent
+	(fillInSortInfo): use getOpDeclarations() rather than rangeSort
+	(fillInSortInfo): split Assert to check both args against op decl
+	(computeBaseSort): use getOpDeclarations() rather than rangeSort
+	(EqualitySymbol): don't initialize range sort or take resultSort
+	arg
+
+	* sortTestSymbol.hh (class SortTestSymbol): deleted rangeSort data
+	member
+	(class SortTestSymbol): updated ctor decl
+	(class SortTestSymbol): deleted decls for rangeComponent() and
+	domainComponent()
+
+	* sortTestSymbol.cc (rangeComponent): (instance version) deleted
+	(fillInSortInfo): use getOpDeclarations() rather than rangeSort
+	(computeBaseSort): use getOpDeclarations() rather than rangeSort
+	(rangeComponent): deleted; default will now work
+	(domainComponent): deleted; default will now work
+	(SortTestSymbol): don't initialize rangeSort; don't take
+	resultSort arg
+
+	* sortTestSymbol.hh (class SortTestSymbol): deleted decl for
+	rangeComponent() instance version
+
+	* branchSymbol.cc (rangeComponent): (instance version) deleted
+	(computeBaseSort): don't use (instance version) rangeComponent()
+
+	* branchSymbol.hh (class BranchSymbol): deleted decl for
+	rangeComponent() instance version
+
+	* equalitySymbol.cc (rangeComponent): (instance version) deleted
+
+	* equalitySymbol.hh (class EqualitySymbol): deleted decl for
+	rangeComponent() instance version
+
+	* machineIntegerDagNode.cc (specialPrint): deleted
+
+	* machineIntegerDagNode.hh (class MachineIntegerDagNode): decl
+	for specialPrint()
+
+	* machineIntegerTerm.cc (specialPrint): deleted
+
+	* machineIntegerTerm.hh (class MachineIntegerTerm): deleted decl
+	for specialPrint()
+
+1999-04-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.cc: use equal() rather than compare() for checking
+	1st arg against test terms
+
+	* equalitySymbol.cc (eqRewrite): call computeTrueSort() on bith
+	args inorder to force normalization; we don't actually use the
+	sorts; this fixes a bug that we shared with OBJ3 === op
+	
+===================================Engine48==================================================
+===================================Maude 1.0.2 released=======================================
+===================================Maude 1.0.1 released=======================================
+
+1999-02-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.cc (fillInSortInfo): fixed bad Assert() test
+	
+===================================VectorExperiment==========================================
+
+1999-02-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTestSymbol.cc (parse): deleted
+	(fillInSortInfo): added
+
+	* sortTestSymbol.hh (class SortTestSymbol): deleted decl for
+	parse(); added decl for fillInSortInfo()
+
+	* equalitySymbol.cc (parse): deleted
+	(fillInSortInfo): added
+
+	* equalitySymbol.hh (class EqualitySymbol): deleted decl for
+	parse(); added decl for fillInSortInfo()
+
+	* machineIntegerSymbol.cc (parse): deleted
+	(fillInSortInfo): added
+
+	* machineIntegerSymbol.hh (class MachineIntegerSymbol): deleted
+	decl for parse(); added decl for fillInSortInfo()
+
+	* branchSymbol.cc (parse): deleted
+	(fillInSortInfo): added
+
+	* branchSymbol.hh (class BranchSymbol): deleted decl for parse();
+	added decl for fillInSortInfo()
+	
+===================================Engine47==================================================
+===================================Maude 1.00 released=======================================
+
+1999-01-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.cc (BranchSymbol): don't delete TestTerms for the
+	moment - another HACK
+
+	* equalitySymbol.hh (class EqualitySymbol): added decl for
+	~EqualitySymbol()
+
+	* equalitySymbol.cc (~EqualitySymbol): added so we can zero out
+	terms in CachedDags to avoid them being deep self destructed; this
+	is a hack - need to find a better solution after release.
+
+	* branchSymbol.cc (BranchSymbol): use deep copy rather than loop
+	
+=================================Engine46==================================================
+
+Sun Dec 13 16:44:05 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.cc (copyFixUp): fixed bug where we we
+	setting trueTerm twice and not setting falseTerm
+
+Thu Dec 10 14:33:33 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTestSymbol.cc (rangeComponent): added (no args version)
+	(domainComponent): added
+
+	* sortTestSymbol.hh (class SortTestSymbol): added decls for
+	rangeComponent() (no args version) and domainComponent()
+
+	* branchSymbol.cc (domainComponent): added
+	(rangeComponent): added (no args version)
+	(BranchSymbol): handle range arg
+
+	* branchSymbol.hh (class BranchSymbol): added decls for
+	rangeComponent() (no args version) and domainComponent()
+	(class BranchSymbol): added range arg to ctor
+	(class BranchSymbol): added range data member
+
+	* equalitySymbol.hh (class EqualitySymbol): added data member
+	argComponent; deleted data member eagerFlag
+
+	* equalitySymbol.cc (EqualitySymbol): handle argComponent
+	(rangeComponent): added (no args version)
+	(domainComponent): added
+
+	* equalitySymbol.hh (class EqualitySymbol): added decls for
+	rangeComponent() (no args version) and domainComponent()
+	(class EqualitySymbol): added argComponent arg to ctor
+
+Tue Dec  8 11:45:16 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.hh (getFalseTerm): deleted
+	(getTrueTerm): deleted
+	(getMachineIntegerSymbol): deleted
+	(getOp): deleted
+	(class MachineIntegerOpSymbol): updated decls
+
+	* machineIntegerOpSymbol.cc (copyFixUp): replaces new version of
+	fixUp()
+
+Mon Dec  7 11:44:21 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): added
+	decl for new version of fixUp()
+
+	* machineIntegerOpSymbol.cc (fixUp): added 2nd version that
+	takes an op code rather than a name
+
+	* machineIntegerOpSymbol.hh (getOp): added
+	(getMachineIntegerSymbol): added
+	(getTrueTerm): added
+	(getFalseTerm): added
+	
+=================================Engine44==================================================
+
+Wed Nov 25 17:22:39 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTestSymbol.cc (eqRewrite): call traceAbort()
+
+	* machineIntegerOpSymbol.cc (eqRewrite): return result of builtInReplace()
+	since this may now be false in abort case
+	(eqRewrite): call traceAbort() in the case that our result is a in
+	place construction of a MachineIntegerDagNode
+
+	* branchSymbol.cc (eqRewrite): return result of builtInReplace()
+	since this may now be false in abort case
+
+	* equalitySymbol.cc (eqRewrite): return result of builtInReplace()
+	since this may now be false in abort case
+
+Mon Nov 16 10:13:54 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* branchSymbol.cc (eqRewrite): simplified using
+	RewritingContext::builtInReplace()
+
+	* machineIntegerOpSymbol.cc (eqRewrite): simplified using
+	RewritingContext::builtInReplace()
+
+	* equalitySymbol.cc (eqRewrite): simplified using
+	RewritingContext::builtInReplace()
+
+	* machineIntegerOpSymbol.cc (eqRewrite): use getTraceStatus()
+	instead of traceStatus()
+
+	* sortTestSymbol.cc (eqRewrite): use getTraceStatus() instead of
+	traceStatus()
+
+	* equalitySymbol.cc (eqRewrite): use getTraceStatus() instead of
+	traceStatus()
+
+	* branchSymbol.cc (eqRewrite): use getTraceStatus() instead of
+	traceStatus()
+
+Fri Nov  6 16:30:22 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerTerm.cc (deepCopy): -> deepCopy2()
+
+	* machineIntegerTerm.hh (class MachineIntegerTerm): deepCopy() ->
+	deepCopy2()
+	
+=================================Engine43==================================================
+
+Thu Oct 15 14:58:33 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.cc: becomes postInterSymbolPass()
+	(postInterSymbolPass): use CachedDag::normalize() and prepare()
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol):
+	interSymbolPass() decl becomes postInterSymbolPass() decl
+
+	* equalitySymbol.hh (class EqualitySymbol): interSymbolPass() decl
+	becomes postInterSymbolPass() decl
+
+	* equalitySymbol.cc (interSymbolPass): becomes postInterSymbolPass()
+	(postInterSymbolPass): use CachedDag::normalize() and prepare()
+
+Wed Oct 14 11:23:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol):
+	deleted decl for dtor
+
+	* machineIntegerOpSymbol.cc (MachineIntegerOpSymbol): simplified
+	(~MachineIntegerOpSymbol): deleted
+	(interSymbolPass): use CachedDag::getTerm() and setTerm()
+	(reset): use CachedDag::reset()
+	(fixUp): use CachedDag::setTerm()
+	(eqRewrite): simplified using CachedDag::getDag()
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): use
+	CachedDag rather than DagRoot and Term* 
+
+	* equalitySymbol.hh (class EqualitySymbol): deleted decl for dtor
+
+	* equalitySymbol.cc (EqualitySymbol): use CachedDag ctor
+	(~EqualitySymbol): deleted (default will do)
+	(reset): use CachedDag::reset()
+	(eqRewrite): simplified using CachedDag::getDag()
+	(interSymbolPass): use CachedDag::getTerm() and setTerm()
+
+	* equalitySymbol.hh (class EqualitySymbol): use CachedDag rather
+	than DagRoot and Term*
+
+=================================Engine42==================================================
+
+Thu Oct  8 14:35:23 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerDagNode.cc (compareArguments): added const
+
+	* machineIntegerTerm.cc (compareArguments): (DagNode* version)
+	inserted const 
+	(compareArguments): (Term* version) inserted const
+	
+=================================Engine41==================================================
+
+Fri Sep 18 17:07:45 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* branchSymbol.cc (parse): use new setSortInfo() conventions,
+	ConnectedComponent::getLeqSorts(), findIndex()
+	(computeBaseSort): use setSortIndex(),
+	ConnectedComponent::getLeqSorts(), findIndex()
+
+	* equalitySymbol.cc (parse): use new setSortInfo() convention
+	(computeBaseSort): se setSortIndex()
+
+	* sortTestSymbol.cc (parse): use new setSortInfo() convention
+	(eqRewrite): use DagNode::leq()
+	(computeBaseSort): use setSortIndex()
+
+	* machineIntegerSymbol.cc (parse): use new setSortInfo() convention
+	(computeBaseSort): use setSortIndex()
+
+Fri Sep 11 18:31:56 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTestSymbol.cc (eqRewrite): use <=(DagNode*,Sort&)
+
+Fri Jul 31 15:34:46 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerTerm.hh (class MachineIntegerTerm): added decl for
+	getValue()
+	(getValue): added
+
+Wed Jul 29 14:33:30 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerSymbol.cc (compileOpDeclarations): need to do
+	default processing in order for rangeComponent() to work
+
+	* machineIntegerSymbol.hh (class MachineIntegerSymbol): deletede
+	decl for fixUp()
+
+	* machineIntegerSymbol.cc (compileOpDeclarations): added
+	(fixUp): deleted
+
+	* machineIntegerSymbol.hh (class MachineIntegerSymbol): added decl
+	for compileOpDeclarations();
+
+Tue Jul 21 10:51:19 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.cc (eqRewrite): use Terms and DagRoots
+	rather than symbols for true/false results
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): added
+	data members trueDag and falseDag
+
+	* machineIntegerOpSymbol.cc (~MachineIntegerOpSymbol): added
+	(interSymbolPass): added
+	(reset): added
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol):
+	deleted decl for setSymbols(); added decl for fixUp(); updated
+	decl for ctor
+	(class MachineIntegerOpSymbol): trueSymbol -> trueTerm;
+	falseSymbol -> falseTerm
+	(class MachineIntegerOpSymbol): added decl for dtor;
+	interSymbolPass() and reset()
+
+	* machineIntegerOpSymbol.cc (fixUp): added
+	(setSymbols): deleted
+	(MachineIntegerOpSymbol): now just take name and arity
+
+	* machineIntegerSymbol.hh (class MachineIntegerSymbol): updated
+	ctor decl; added decl for fixUp();
+
+	* machineIntegerSymbol.cc (fixUp): added
+	(MachineIntegerSymbol): so longer set sort info or pass it to NA_Symbol()
+
+	* machineIntegerTerm.hh (class MachineIntegerTerm): added
+
+	* machineIntegerTerm.cc (deepCopy): added
+
+Fri Jul 17 10:16:13 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* equalitySymbol.cc (EqualitySymbol): rewritten
+	(~EqualitySymbol): added
+	(interSymbolPass): added
+	(reset): added
+	(eqRewrite): obey general FreeSymbol strategy
+	(eqRewrite): generate result DagNode and use overwriteWithClone()
+	(eqRewrite): don't copy sort info when making dag
+
+	* equalitySymbol.hh (class EqualitySymbol): deleted data members
+	equalResult, notEqualResult and eager flag; added data members
+	equalTerm, notEqualTerm, equalDag, notEqualDag
+	(class EqualitySymbol): added decls for interSymbolPass() and reset()
+	(class EqualitySymbol): take strategy arg rather than eager arg;
+	args eq and neq become Term*
+	(makeLazyStrategy): deleted
+	(class EqualitySymbol): deleted decl for makeLazyStrategy() and
+	static members eagerStrategy and lazyStrategy
+	
+=================================Engine39==================================================
+
+Tue Jul  7 17:41:16 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): added
+	decl for setSymbols()
+
+	* machineIntegerOpSymbol.cc (MachineIntegerOpSymbol): no longer
+	initialize symbol pointers like constants
+	(setSymbols): added
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol):
+	removed const from symbol pointers to allow them to be initialized
+	later; added defualt value of 0 for machineIntegerSymbol so we can
+	call ctor without supplying necessary symbols
+
+Wed Jun 10 18:23:46 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerTerm.hh (class MachineIntegerTerm): updated
+	normalize() decl
+
+	* machineIntegerTerm.cc (normalize): clear changed flag
+	
+=================================Engine38==================================================
+
+Fri Feb 13 14:42:16 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* branchSymbol.cc (~BranchSymbol): added to self destruct test terms
+
+	* branchSymbol.hh (class BranchSymbol): added decl for ~BranchSymbol();
+
+Thu Feb 12 14:51:37 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* equalitySymbol.cc (eqRewrite): compare() == 0 changed to equal()
+	
+=================================Engine35==================================================
+
+Thu Dec  4 14:30:33 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.cc (MachineIntegerOpSymbol): don't pass
+	inert arg to FreeSymbol()
+
+	* sortTestSymbol.cc (SortTestSymbol): don't pass inert arg to FreeSymbol()
+
+	* equalitySymbol.cc (EqualitySymbol): don't pass inert arg to FreeSymbol()
+
+	* branchSymbol.cc (BranchSymbol): don't pass inert arg to FreeSymbol()
+
+Wed Oct 15 16:40:07 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.cc (MachineIntegerOpSymbol): remove constructor arg from
+	call to FreeSymbol()
+
+	* branchSymbol.cc (BranchSymbol): remove constructor arg from
+	call to FreeSymbol()
+
+	* sortTestSymbol.cc (SortTestSymbol): remove constructor arg from
+	call to FreeSymbol()
+
+	* equalitySymbol.cc (EqualitySymbol): remove constructor arg from
+	call to FreeSymbol()
+	
+=================================Engine30==================================================
+
+Wed Oct  1 16:38:08 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTestSymbol.hh (eager): added
+	(sort): added
+
+Tue Sep 30 14:30:53 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerTerm.hh (class MachineIntegerTerm): added decl for
+	normalize()
+
+	* machineIntegerTerm.cc (normalize): added in order to compute
+	distict hash value
+	
+=================================Engine28==================================================
+
+Fri Aug 29 16:31:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTestSymbol.cc (eqRewrite): rewritten using FreeDagNode::getArgument()
+
+	* equalitySymbol.cc (eqRewrite): rewritten using FreeDagNode::getArgument()
+	(computeBaseSort): simplified
+
+	* branchSymbol.cc (eqRewrite): rewritten using FreeDagNode::getArgument()
+	(computeBaseSort): rewritten using FreeDagNode::getArgument()
+	(rangeComponent): rewritten using FreeDagNode::getArgument()
+
+Thu Aug 28 11:07:50 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): update
+	MachineIntegerOpSymbol() decl
+
+	* machineIntegerOpSymbol.cc (MachineIntegerOpSymbol): now take
+	arity argument;
+	(eqRewrite): rewritten to use CODE() macro, remove u- and add >>
+	and <<
+	
+=================================Engine27==================================================
+
+Tue Aug 12 17:19:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerSymbol.cc (computeBaseSort): use getValue() rather
+	than isZero()
+
+	* machineIntegerOpSymbol.cc (eqRewrite): use getValue() rather
+	than acessing MachineIntegerDagNode private part
+
+	* machineIntegerDagNode.hh (class MachineIntegerDagNode): removed
+	friend class MachineIntegerOpSymbol
+
+	* machineIntegerDagNode.cc: delete #include "intSet.hh"
+
+	* machineIntegerDagNode.hh (isZero): replaced with getValue();
+	typically most applications of machine int (eg meta level) will
+	need at least this.
+	(class MachineIntegerDagNode): delete decl for isZero(), added
+	decl for getValue()
+
+	* builtIn.hh: added decls for MachineIntegerSymbol,
+	MachineIntegerTerm, MachineIntegerDagNode and
+	MachineIntegerOpSymbol
+
+Tue Aug  5 16:12:57 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.cc (eqRewrite): use getArgument() rather
+	than argArray()
+
+Mon Aug  4 11:10:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.cc (eqRewrite): split call to
+	context.tracePreEqRewrite() so that we don't call it in a div by
+	zero situation
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): 
+	NA_Symbol -> MachineIntegerSymbol in ctor decl
+	(class MachineIntegerOpSymbol): NA_Symbol ->
+	MachineIntegerSymbol for data member
+
+	* machineIntegerOpSymbol.cc (MachineIntegerOpSymbol): NA_Symbol ->
+	MachineIntegerSymbol
+
+	* machineIntegerTerm.hh (class MachineIntegerTerm): 
+	NA_Symbol -> MachineIntegerSymbol in ctor decl
+
+	* machineIntegerTerm.cc (overwriteWithDagNode): NA_Symbol ->
+	MachineIntegerSymbol
+	(makeDagNode): NA_Symbol -> MachineIntegerSymbol
+	(MachineIntegerTerm): NA_Symbol -> MachineIntegerSymbol
+
+	* machineIntegerDagNode.hh (class MachineIntegerDagNode):
+	NA_Symbol -> MachineIntegerSymbol in ctor decl
+
+	* machineIntegerDagNode.cc (makeClone): NA_Symbol -> MachineIntegerSymbol
+	(overwriteWithClone): NA_Symbol -> MachineIntegerSymbol
+	(MachineIntegerDagNode): NA_Symbol -> MachineIntegerSymbol
+
+	* machineIntegerDagNode.hh (isZero): added
+
+	* machineIntegerTerm.hh (isZero): added
+
+	* machineIntegerSymbol.cc: created
+
+	* machineIntegerSymbol.hh (class MachineIntegerSymbol): created
+
+Thu Jul 31 10:33:28 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerOpSymbol.cc: created
+
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): created
+
+	* machineIntegerDagNode.cc: created
+
+	* machineIntegerDagNode.hh (class MachineIntegerDagNode): created
+
+Wed Jul 30 19:27:49 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* machineIntegerTerm.hh (class MachineIntegerTerm): created
+
+	* machineIntegerTerm.cc: created
+
+Wed Jul 23 11:59:39 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc (pullDown2): pass full = false to
+	normalize()
+	
+=================================Engine26b==================================================
+	
+Tue Jul 15 15:47:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTestSymbol.cc (SortTestSymbol): pass inert = false
+
+	* branchSymbol.cc (BranchSymbol): pass inert = false
+
+	* metaRewriteSymbol.cc (MetaRewriteSymbol): pass inert = false
+
+	* equalitySymbol.cc (EqualitySymbol): pass inert = false
+	
+================================Engine26=====================================================
+	
+Mon Jun 30 10:59:50 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc (pullDown): if symbol pulled down is a
+	variable, set index to 0 to avoid uninitialized read in
+	Variable::markEagerArguments(). This is a horrible hack the will
+	disappear when this code is replaced by the new meta-level
+	(pullDown): horrible hack removed in favour of change to
+	Variable::markEagerArguments() whcih also works for top level
+	reduction terms.
+
+Wed Jun 25 12:04:00 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc (eqRewrite): pass purpose arg to makeSubcontext()
+
+Tue Jun 24 16:35:39 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc: added #include "variable.hh"
+
+Thu Apr 10 18:34:40 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc (errorRewrite): deepSelfDestruct t rather than
+	relying on pushdUp2() to do it
+	(eqRewrite): deepSelfDestruct t rather than relying on pushdUp2()
+	to do it
+	(pushUp2): don't deepSelfDestruct t
+	(errorRewrite): increment rewrite count; handle tracing for the
+	meta-*() ---> error* step.
+	(eqRewrite): no longer start by incrementing rewrite count
+	(eqRewrite): major rehack to handle tracing
+
+Tue Apr  8 14:38:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* branchSymbol.cc (eqRewrite): added tracing
+
+	* sortTestSymbol.cc (eqRewrite): added tracing
+
+	* equalitySymbol.cc (eqRewrite): added tracing
+
+Fri Apr  4 17:58:06 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc (eqRewrite): removed trace flag from
+	RewritingContext constructor calls
+
+Tue Apr  1 15:19:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc (eqRewrite): heavily rewritten to use
+	pushUpSubstitution()
+
+	* metaRewriteSymbol.hh (class MetaRewriteSymbol): added decl for
+	pushUpSubstitution()
+
+	* metaRewriteSymbol.cc (pushUpSubstitution): added
+
+Mon Mar 31 10:28:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc (errorRewrite): context arg removed
+	(eqRewrite): removed context arg from errorRewrite() call
+
+	* metaRewriteSymbol.hh (class MetaRewriteSymbol): added
+	errorRewrite() decl
+
+	* metaRewriteSymbol.cc (errorRewrite): added
+	(eqRewrite): use errorRewrite()
+
+Fri Mar 28 16:08:10 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc (pushUp2): added
+	(pullDown2): added
+	(eqRewrite): rewritten to use Rule::apply()
+	(eqRewrite): in meta-apply() case use result of apply in final reduce! 
+	(pullDownSubstitution): added
+	(pullDownAssignment): added
+	(pushUp2): now take Term* rather than DagNode*
+	(eqRewrite): meta-rewrite2 partly implemented
+	(pullDownSubstitution): remember to move to next assignment within
+	loop
+
+Thu Mar 27 16:23:48 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc (MetaRewriteSymbol): added params for
+	symbols needed to implement meta-apply2
+	(eqRewrite): use arity rather than applyFlag to determine which
+	operator we are
+
+	* metaRewriteSymbol.hh (class MetaRewriteSymbol): added data members for
+	symbols needed to implement meta-apply2
+
+Fri Jan  3 15:28:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* metaRewriteSymbol.cc (eqRewrite): fixed bug where we were
+	failing to evaluate 3rd arg of meta-apply
+
+Tue Dec 24 18:33:42 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTestSymbol.cc (eqRewrite): call to computeSort() replaced by
+	computeTrueSort()
+
+	* metaRewriteSymbol.cc (eqRewrite): name change from rewrite()
+
+	* metaRewriteSymbol.hh (class MetaRewriteSymbol): rewrite() -> eqRewrite()
+
+	* sortTestSymbol.cc (computeBaseSort): adapted from computeSort();
+	now we assume that subterms are correctly sorted
+
+	* sortTestSymbol.hh (class SortTestSymbol): computeSort() ->
+	computeBaseSort(); rewrite() -> eqRewrite()
+
+	* equalitySymbol.cc (computeBaseSort): adapted from computeSort();
+	now we assume that subterms are correctly sorted; how should
+	sorting work on ERROR_SORT?
+
+	* equalitySymbol.hh (class EqualitySymbol): computeSort() ->
+	computeBaseSort(); rewrite() -> eqRewrite()
+
+	* branchSymbol.cc (computeBaseSort): adapted from computeSort();
+	now we assume that subterms are correctly sorted
+
+	* branchSymbol.hh (class BranchSymbol): computeSort() ->
+	computeBaseSort(); rewrite() -> eqRewrite()
+
+Mon Nov 25 19:08:24 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortTestSymbol.cc (SortTestSymbol): added constructor arg
+
+	* metaRewriteSymbol.cc (MetaRewriteSymbol): added constructor arg
+
+	* equalitySymbol.cc (EqualitySymbol): added constructor arg
+
+	* branchSymbol.cc (BranchSymbol): added constructor arg
+
+Sun Aug 25 11:24:07 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* metaRewriteSymbol.cc (rewrite): added code to re-reduce result
+	after a sucessful rewrite
+
+Thu Aug 15 11:35:27 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* metaRewriteSymbol.cc (pullDown): fixed infinite loop bug
+	(MetaRewriteSymbol): apply flag added
+	(rewrite): extended to handle apply case
+
+	* builtIn.hh: added fwd decl of MetaRewriteSymbol
+
+	* metaRewriteSymbol.cc: created
+
+	* metaRewriteSymbol.hh (class MetaRewriteSymbol): created
+
+Fri Aug  2 16:02:34 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* sortTestSymbol.cc (SortTestSymbol): new strategy passing code
+
+	* branchSymbol.cc (BranchSymbol): new strategy passing code
+
+	* sortTestSymbol.hh (makeLazyStrategy): added
+
+	* equalitySymbol.cc (EqualitySymbol): new strategy passing code
+
+	* equalitySymbol.hh (makeLazyStrategy): added
+
+	* sortTestSymbol.cc (compileSortConstraints): added
+	(compileEquations): added
+	(compileOpDeclarations): added
+
+	* equalitySymbol.cc (compileSortConstraints): added
+	(compileEquations): added
+	(compileOpDeclarations): added
+
+	* branchSymbol.cc (compileSortConstraints): added
+	(compileEquations): added
+	(compileOpDeclarations): added
+
+Thu Feb  8 11:11:19 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* branchSymbol.cc (computeSort): use dagNode::computeSort()
+
+	* sortTestSymbol.cc (computeSort): use new dagNode::computeSort()
+	(rewrite): now call dagNode::computeSort() on subterm in the
+	lazy case
+
+	* equalitySymbol.cc (computeSort): use new dagNode::computeSort()
+	on arguments.
+
+	* sortTestSymbol.hh: added lazyStrategy, eager parameter
+
+	* equalitySymbol.cc: added lazyStrategy, eager parameter and
+ 	code to store and handle it
+
+	* equalitySymbol.hh: added lazyStrategy, eager parameter
+
+	* sortTestSymbol.cc: added lazyStrategy, eager parameter and
+ 	code to store and handle it
+
+Wed Feb  7 14:38:50 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* builtIn.hh: created
+
+	* sortTestSymbol.cc: created
+
+	* sortTestSymbol.hh: created
+
+Fri Feb  2 15:36:04 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* branchSymbol.hh: changed parse() parameters
+
+	* branchSymbol.cc (parse): rewritten
+
+	* equalitySymbol.cc (parse): rewritten
+
+	* equalitySymbol.hh: changed parse() parameters
+
+Thu Feb  1 15:08:27 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* branchSymbol.cc (parse): added
+
+	* branchSymbol.hh: parse() added
+
+	* equalitySymbol.cc (parse): added
+
+	* equalitySymbol.hh: parse() added
+
+Thu Jan 11 18:11:32 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* equalitySymbol.cc (computeSort): DagNode::SORT_UNKNOWN ->
+	Sort::SORT_UNKNOWN
+
+	* branchSymbol.cc (computeSort): DagNode::SORT_UNKNOWN ->
+	Sort::SORT_UNKNOWN
+
+Wed Jan 10 17:21:28 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* branchSymbol.cc (BranchSymbol): don't pass sharable argument
+
+	* equalitySymbol.cc (EqualitySymbol): don't pass sharable argument
+
+Thu Dec 14 12:17:30 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* equalitySymbol.cc (EqualitySymbol): store resultSort
+	(rangeComponent): added
+	(computeSort): implemented
+
+	* equalitySymbol.hh (EqualitySymbol) added resultSort argument
+	plus storage. Also rangeComponent() added.
+
+	* branchSymbol.cc (computeSort): now use rangeComponent()
+	(rangeComponent): added
+
+	* branchSymbol.hh (BranchSymbol): we now take and store the sort
+	of the test expression
+	added rangeComponent()
+
+	* branchSymbol.cc (computeSort): implemented
+
+Tue Dec 12 14:49:28 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* equalitySymbol.cc (computeSort): added
+
+	* branchSymbol.cc (computeSort): added
+
+Fri Dec  8 15:07:58 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* branchSymbol.cc: created
+
+	* branchSymbol.hh: created
+
+	* equalitySymbol.hh: created
+
+	* equalitySymbol.cc: created
+

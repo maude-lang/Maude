@@ -1,0 +1,9 @@
+2003-09-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configure.ac: deleted  AC_DEFINE([SPEED_HACKS])
+
+
+2003-07-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* Created standard files that automake expects to see. Look in
+	individual source directories for detailed changes.

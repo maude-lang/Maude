@@ -1,0 +1,38 @@
+set show timing off .
+set show advisories off .
+
+select META-LEVEL .
+
+red metaReduce(['BOOL], 'true.Bool) .
+
+red upTerm(1) .
+red upTerm(X:Nat + 21) .
+
+red downTerm('s_['0.Zero], 0) .
+red downTerm('_+_['X:Nat,'s_^21['0.Zero]], 0) .
+
+red upTerm(upTerm(X:Nat + 21)) .
+red upTerm(upTerm(upTerm(X:Nat + 21))) .
+
+red downTerm(upTerm(X:Nat + 21), 0) .
+red downTerm(downTerm(upTerm(upTerm(X:Nat + 21)), X:Term), 0) .
+
+set trace on .
+red downTerm(downTerm(downTerm(
+upTerm(upTerm(upTerm(X:Nat + 21)))
+, X:Term), X:Term), 0) .
+set trace off .
+
+fmod UP-DOWN-TEST is
+  inc META-LEVEL .
+  sort Foo .
+  ops a b c d e : -> Foo .
+  op f : Foo Foo -> Foo .
+  eq c = d .
+endfm
+
+red upTerm(f(a, f(b, c))) .
+red upTerm(upTerm(f(a, f(b, c)))) .
+red downTerm(upTerm(upTerm(f(a, f(b, c)))), X:Term) .
+red downTerm(downTerm(upTerm(upTerm(f(a, f(b, c)))), X:Term), a) .
+red downTerm('f['a.Foo,'f['b.Foo,'c.Foo]], a) .

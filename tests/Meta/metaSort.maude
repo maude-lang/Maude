@@ -1,0 +1,255 @@
+set show timing off .
+set show advisories off .
+
+select META-LEVEL .
+
+red sortLeq(
+fmod 'FOO is
+  nil
+  sorts 'NzNat ; 'Nat ; 'NzInt ; 'Int .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  subsort 'Nat < 'Int .
+  subsort 'NzInt < 'Int .
+  none
+  none
+  none
+endfm, 'NzNat, 'Int) .
+
+red sortLeq(
+fmod 'FOO is
+  nil
+  sorts 'NzNat ; 'Nat ; 'NzInt ; 'Int .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  subsort 'Nat < 'Int .
+  subsort 'NzInt < 'Int .
+  none
+  none
+  none
+endfm, 'Int, 'NzInt) .
+
+red sameKind(
+fmod 'FOO is
+  nil
+  sorts 'NzNat ; 'Nat ; 'NzInt ; 'Int .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  subsort 'Nat < 'Int .
+  subsort 'NzInt < 'Int .
+  none
+  none
+  none
+endfm, '`[Int`], 'NzInt) .
+
+red sameKind(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'NzNat ; 'Nat ; 'NzInt ; 'Int .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  subsort 'Nat < 'Int .
+  subsort 'NzInt < 'Int .
+  none
+  none
+  none
+endfm, '`[Int`], 'Bool) .
+
+red leastSort(
+fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'pi.Float) .
+
+red completeName(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'NzNat ; 'Nat ; 'NzInt .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  none
+  none
+  none
+endfm, '`[NzInt`]) .
+
+red completeName(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'NzNat ; 'Nat ; 'NzInt .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  none
+  none
+  none
+endfm, '`[NzInt`,Nat`]) .
+
+red lesserSorts(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'NzNat ; 'Nat ; 'NzInt ; 'Int .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  subsort 'Nat < 'Int .
+  subsort 'NzInt < 'Int .
+  none
+  none
+  none
+endfm, 'Int) .
+
+red lesserSorts(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'NzNat ; 'Nat ; 'NzInt ; 'Int .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  subsort 'Nat < 'Int .
+  subsort 'NzInt < 'Int .
+  none
+  none
+  none
+endfm, 'NzNat) .
+
+red lesserSorts(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'NzNat ; 'Nat ; 'NzInt ; 'Int .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  subsort 'Nat < 'Int .
+  subsort 'NzInt < 'Int .
+  none
+  none
+  none
+endfm, 'Nat) .
+
+red glbSorts(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'NzNat ; 'Nat ; 'NzInt ; 'Int .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  subsort 'Nat < 'Int .
+  subsort 'NzInt < 'Int .
+  none
+  none
+  none
+endfm, 'Nat, 'NzInt) .
+
+red glbSorts(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'NzNat ; 'Nat ; 'NzInt ; 'Int .
+  subsort 'NzNat < 'Nat .
+  subsort 'NzNat < 'NzInt .
+  subsort 'Nat < 'Int .
+  subsort 'NzInt < 'Int .
+  none
+  none
+  none
+endfm, 'Nat, 'Int) .
+
+red glbSorts(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Nat ; 'NzInt ; 'Int .
+  subsort 'Nat < 'Int .
+  subsort 'NzInt < 'Int .
+  none
+  none
+  none
+endfm, 'Nat, 'NzInt) .
+
+red getKind(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo  [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, 'Foo) .
+
+red getKind(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo  [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, 'Bar) .
+
+red getKind(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo  [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, '`[Bar`]) .
+
+red getKinds(fmod 'FOO is
+  nil
+  sorts none .
+  none 
+  none
+  none
+  none
+endfm) .
+
+red getKinds(fmod 'FOO is
+  protecting 'BOOL .
+  sorts none .
+  none 
+  none
+  none
+  none
+endfm) .
+
+red getKinds(fmod 'FOO is
+  protecting 'META-LEVEL .
+  sorts none .
+  none 
+  none
+  none
+  none
+endfm) .
+
+red maximalSorts(fmod 'FOO is
+  protecting 'META-LEVEL .
+  sorts none .
+  none 
+  none
+  none
+  none
+endfm, '`[Qid`]) .
+
+red minimalSorts(fmod 'FOO is
+  protecting 'META-LEVEL .
+  sorts none .
+  none 
+  none
+  none
+  none
+endfm, '`[Qid`]) .
+
+*** These two don't reduce because the 2nd arg should be a kind
+red maximalSorts(fmod 'FOO is
+  protecting 'META-LEVEL .
+  sorts none .
+  none 
+  none
+  none
+  none
+endfm, 'Qid) .
+
+red minimalSorts(fmod 'FOO is
+  protecting 'META-LEVEL .
+  sorts none .
+  none 
+  none
+  none
+  none
+endfm, 'Qid) .

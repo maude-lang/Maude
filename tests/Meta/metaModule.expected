@@ -1,0 +1,63 @@
+Maude> ==========================================
+reduce in META-MODULE : subsort 'Foo < 'Bar . .
+rewrites: 0
+result SubsortDecl: subsort 'Foo < 'Bar .
+==========================================
+reduce in META-MODULE : op 'f : 'Foo -> 'Bar [none] . .
+rewrites: 0
+result OpDecl: op 'f : 'Foo -> 'Bar [none] .
+==========================================
+reduce in META-MODULE : ceq 'f['X:Foo] = 'a.Bar if 'g['a.Foo,'Y:Foo] := 'X:Foo
+    [none] . .
+rewrites: 0
+result Equation: ceq 'f['X:Foo] = 'a.Bar if 'g['a.Foo,'Y:Foo] := 'X:Foo [none]
+    .
+==========================================
+reduce in META-MODULE : 'g['a.Foo,'Y:Foo] := 'X:Foo .
+rewrites: 0
+result EqCondition: 'g['a.Foo,'Y:Foo] := 'X:Foo
+==========================================
+reduce in META-MODULE : fmod 'FOO is
+  including 'MACHINE-INT .
+  sorts 'Bar ; 'Foo .
+  subsort 'Foo < 'Bar .
+  op 'f : 'Foo -> 'Bar [none] .
+  op 'g : '`[Bar`] -> '`[Bar`] [none] .
+  cmb 'X:Bar : 'Foo if 'f['Y:Bar] := 'f['X:Bar] /\ 'g['Y:Bar,'a.Foo] = 'a.Foo [
+    none] .
+  eq 'f['X:Foo] = 'g['a.Foo,'X:Foo] [none] .
+  ceq 'f['X:Foo] = 'a.Bar if 'g['a.Foo,'Y:Foo] := 'X:Foo [none] .
+endfm .
+rewrites: 0
+result FModule: fmod 'FOO is
+  including 'MACHINE-INT .
+  sorts 'Bar ; 'Foo .
+  subsort 'Foo < 'Bar .
+  op 'f : 'Foo -> 'Bar [none] .
+  op 'g : '`[Bar`] -> '`[Bar`] [none] .
+  cmb 'X:Bar : 'Foo if 'f['Y:Bar] := 'f['X:Bar] /\ 'g['Y:Bar,'a.Foo] = 'a.Foo [
+    none] .
+  eq 'f['X:Foo] = 'g['a.Foo,'X:Foo] [none] .
+  ceq 'f['X:Foo] = 'a.Bar if 'g['a.Foo,'Y:Foo] := 'X:Foo [none] .
+endfm
+==========================================
+reduce in META-MODULE : fmod 'FOO is
+  including 'MACHINE-INT .
+  sorts 'Bar ; 'Foo .
+  subsort 'Foo < 'Bar .
+  op 'f : 'Foo -> 'Bar [none] .
+  op 'g : '`[Bar`] -> '`[Bar`] [none] .
+  none
+  eq 'f['X:Foo] = 'g['a.Foo,'X:Foo] [none] .
+endfm .
+rewrites: 0
+result FModule: fmod 'FOO is
+  including 'MACHINE-INT .
+  sorts 'Bar ; 'Foo .
+  subsort 'Foo < 'Bar .
+  op 'f : 'Foo -> 'Bar [none] .
+  op 'g : '`[Bar`] -> '`[Bar`] [none] .
+  none
+  eq 'f['X:Foo] = 'g['a.Foo,'X:Foo] [none] .
+endfm
+Maude> Bye.

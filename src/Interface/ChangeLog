@@ -1,0 +1,3512 @@
+2004-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (copyEagerUptoReduced): set the copy flag after
+	rather than before calling copyEagerUptoReduced2(); this fixes a
+	subtle but nasty bug where copyEagerUptoReduced2() does an in
+	place transformation on the dag node (say ACU tree -> array rep)
+	that loses the copy pointer an prevents us from replacing the
+	symbol
+	
+===================================Maude83a==========================================
+
+2003-11-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (getDataAttachments): added
+	(getSymbolAttachments): added
+	(getTermAttachments): added
+
+	* symbol.hh (class Symbol): added declatations for
+	getDataAttachments(), getSymbolAttachments(), getTermAttachments()
+
+2003-10-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (attachTerm): added error message
+	(attachSymbol): added error message
+	(attachData): added error message
+
+===================================Maude83===========================================
+
+2003-05-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.hh (class AssociativeSymbol): deleted decl for
+	kindLevelDeclarationsOnly()
+
+	* associativeSymbol.cc (kindLevelDeclarationsOnly): deleted
+
+	* symbol.hh (class Symbol): virtualized rangeSortNeverLeqThan(),
+	rangeSortAlwaysLeqThan(), domainSortAlwaysLeqThan()
+
+2003-05-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* binarySymbol.cc (rightIdentitySortCheck): updated comment
+
+	* associativeSymbol.cc (associativeSortCheck): use QUOTE()
+
+2003-05-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.hh (class AssociativeSymbol): added decl for
+	kindLevelDeclarationsOnly()
+
+	* associativeSymbol.cc (kindLevelDeclarationsOnly): added
+	(associativeSortCheck): use kindLevelDeclarationsOnly(); warn if
+	there are memberships together with declarations that are not at
+	the kind level
+
+	* dagNode.hh (okToCollectGarbage): deleted
+	
+===================================Maude80b===========================================
+
+2003-05-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (mark): tighten Assert()
+
+2003-05-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (compileRhs): added DebugAdvisory() got CopyRhsAutomaton
+	use
+
+2003-05-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (class Term): added UNKNOWN to enum ReturnValues
+	(partialCompare): simplified
+
+2003-05-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* binarySymbol.hh (computeSortIndex): added
+	(computeMultSortIndex): added
+	
+===================================Maude80a===========================================
+
+2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (copySetRewritingFlags): added
+	
+===================================Maude80===========================================
+
+2003-03-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.hh (getUniqueSortIndex): added
+
+2003-03-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interface.hh: removed class HeuristicLhsAutomaton
+
+	* heuristicLhsAutomaton.cc: deleted
+
+	* heuristicLhsAutomaton.hh: deleted
+
+2003-02-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc: removed #pragmas
+	(commonSymbols): updated Assert()
+
+	* term.hh: removed #pragmas
+	(dagify): updated Assert()s
+
+	* symbol.cc: removed #pragmas
+	(fillInSortInfo): updated Assert()s
+	(computePossibleDomainSorts): updated Assert()s
+	(isConstructor): updated Assert()
+
+	* symbol2.hh: removed #pragma
+
+	* symbol.hh: removed #pragma
+
+	* rhsAutomaton.hh: removed #pragma
+
+	* rawArgumentIterator.hh: removed #pragma
+
+	* rawDagArgumentIterator.hh: removed #pragma
+
+	* lhsAutomaton.hh: removed #pragma
+
+	* interface.cc: deleted
+
+	* subproblem.hh (class Subproblem): added empty implementation for
+	dump() 
+	removed #pragma
+
+	* heuristicLhsAutomaton.cc: removed #pragma
+
+	* heuristicLhsAutomaton.hh: removed #pragma
+
+	* extensionInfo.hh: removed #pragma
+
+	* dagNode.cc: removed #pragma
+
+	* dagNode.hh: removed #pragma
+	(new): updated Assert() (both versions)
+	(mark): updated Assert()s
+
+	* binarySymbol.cc: removed #pragma
+	(commutativeSortCompletion): updated Assert()
+	(processIdentity): updated Assert()
+	(leftIdentitySortCheck): updated Assert()s
+	(rightIdentitySortCheck): updated Assert()s
+	(idempotentSortCheck): updated Assert()
+
+	* binarySymbol.hh: removed #pragma
+	(setIdentity): updated Assert()
+	(getIdentityDag): updated Assert()
+
+	* associativeSymbol.cc: removed #pragma
+	(associativeSortCheck): updated Assert()
+	(fillInSortInfo): updated Assert()s
+
+	* associativeSymbol.hh: removed #pragma
+	
+===================================Maude79===========================================
+
+2003-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (stable): use flags data member
+
+	* term.cc (dumpCommon): use honorsGroundOutMatch() and
+	hasEagerContext()
+	(insertAbstractionVariables): use honorsGroundOutMatch()
+	(analyseCollapses): added
+
+	* term.hh (class Term): added decl for analyseCollapses()
+	(class Term): added enum Flags
+	(class Term): added flags data member; removed
+	honorsGroundOutMatchFlag and eagerContext flags
+	(honorsGroundOutMatch): use flags data member
+	(setHonorsGroundOutMatch): use flags data member
+	(willGroundOutMatch): use honorsGroundOutMatch()
+	(Term): clear flags rather than eagerContext
+	(markEager): use flags data member
+
+	* term.cc (analyseCollapses): becomes analyseCollapses2()
+
+	* term.hh (class Term): analyseCollapses() -> analyseCollapses2()
+
+2003-01-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* extensionInfo.hh (class ExtensionInfo): added comments to
+	explain data members
+	
+===================================Maude78===========================================
+
+2003-01-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (partialCompare): fixed bug in that we are supposed to
+	return LESS, GREATER, EQUAL or UNDECIDED rather than an arbitrary
+	int
+
+	* term.cc (partialCompareUnstable): added
+
+	* term.hh (class Term): added decl for partialCompareUnstable()
+
+	* term.cc (partialCompareArguments): added
+
+	* term.hh (class Term): added enum ReturnValues
+	(partialCompare): added
+	(class Term): added decls for partialCompareArguments() and
+	partialCompare()
+
+2002-11-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh: major rewrite, using new MemoryCell semantics
+	
+===================================Maude77==================================================
+
+2002-11-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.cc (processIdentity): use new style
+	WarningCheck()s
+	(associativeSortCheck): use new style WarningCheck()s
+
+	* binarySymbol.cc (processIdentity): use new style WarningCheck()s
+	(leftIdentitySortCheck): use new style WarningCheck()s
+	(rightIdentitySortCheck): use new style WarningCheck()s
+	(idempotentSortCheck): use new style WarningCheck()s; fix bug
+	where the check was the wrong way around
+
+2002-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interface.hh: class MemoryCell no longer declared here
+
+
+2002-10-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoryCell.cc (slowNew): use callDtor() and initialize()
+
+	* memoryCell.hh (class MemoryCell): added decls for callDtor() and
+	initialize()
+
+	* memoryCellNew.hh (new): use callDtor(), initialize(), getFlag()
+	and clearFlag()
+	(callDtor): added
+
+	* dagNode.hh (new): (reuse version) use clearAllExceptMarked();
+	use repudiateSortInfo()
+	(DagNode): don't use setSortIndex(); we will rely on the new
+	functions to do this
+
+	* memoryCell.hh (class MemoryCell): made collectGarbage() private
+	(clearAllExceptMarked): added
+
+	* dagNode.hh (class DagNode): use NR_EXTRA_WORDS
+
+	* memoryCell.hh (class MemoryCell): added enum SpecialValues
+
+2002-10-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* argVec.hh: use MemoryCell::allocateStorage() throughout
+
+	* dagNode.cc (checkSort): (both versions) don't access sortIndex
+	directly
+
+	* dagNode.hh: almost complete rewrite; now derived from MemoryCell
+
+	* memoryCellNew.hh (_memoryCellNew_hh_): created
+
+2002-10-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoryCell.hh: created
+
+	* memoryCell.cc: created
+
+2002-10-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (postOpDeclarationPass): added
+
+	* symbol.hh (class Symbol): added declaration for
+	postOpDeclarationPass(); the idea is that this function will be
+	called after the sort table has been calculated. interSymbolPass()
+	and postInterSymbolPass() are now done before the sort table is
+	calculated
+
+2002-10-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.hh (class AssociativeSymbol): added fwd decl
+	for struct Inv
+
+	* associativeSymbol.cc (associativeSortCheck): implemented faster
+	check based on inverting the first step of sort diagram traversal;
+	we also test on kinds now that the user can add declarations at
+	the kind level.
+
+2002-10-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): updated comment for UNSTACKABLE flag
+	to take frozen arg into account
+	(class DagNode): updated decl for complex copyWithReplacement()
+
+	* binarySymbol.hh (class BinarySymbol): added decl for
+	setPermuteFrozen()
+
+	* binarySymbol.cc (setPermuteFrozen): added
+
+	* associativeSymbol.cc (setFrozen): added
+
+	* associativeSymbol.hh (class AssociativeSymbol): added decl for
+	setFrozen()
+
+2002-10-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added respectFrozen argument to
+	stackArguments() decl
+	
+===================================Maude76==================================================
+
+2002-09-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.cc (isConstructor): use getCtorStatus()
+
+	* symbol.cc (isConstructor): rewritten using getCtorStatus()
+
+2002-08-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.cc (isConstructor): added
+
+	* associativeSymbol.hh (class AssociativeSymbol): added decl for
+	isConstructor()
+
+	* associativeSymbol.cc (isConstructor): added
+
+	* symbol.cc (fillInSortInfo): added #ifdefs to avoid unneeded
+	computation in nondebug case
+	(isConstructor): added
+
+	* symbol.hh (class Symbol): added decl for isConstructor()
+
+2002-08-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (mightMatchSymbol): use class OpDeclaration
+	(rangeSortNeverLeqThan): use class OpDeclaration
+	(rangeSortAlwaysLeqThan): use class OpDeclaration
+	(domainSortAlwaysLeqThan): use class OpDeclaration
+	(computePossibleDomainSorts): use class OpDeclaration
+
+	* binarySymbol.cc (commutativeSortCompletion): rewritten to use
+	class OpDeclaration and to do constructor completion as well as
+	sort completion; newDecl is no longer static
+
+2002-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (compileRhs): don't call useIndex() at all - in it now
+	the caller responsibility, since the actually last use of the
+	index may be later than now
+	(compileTopRhs): call useIndex()
+	
+===================================Maude75==================================================
+
+2002-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (compileRhs): call useIndex() after we call
+	makeConstructionIndex() or compileRhs2() to insure the use of the
+	return index is recorded for coloring purposes
+
+2002-08-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (matchVariableWithExtension): replaced
+	Assert(false,...) with CantHappen()
+	(partialReplace): replaced Assert(false,...) with CantHappen()
+	(partialConstruct): replaced Assert(false,...) with CantHappen()
+
+2002-07-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (class Term): subsumes() now takes sameVariableSet arg
+	to indicate whether X in "this" term is the same variable as X in
+	"other" term. Also we now return a bool; false is used to cover
+	the UNDECIDED case.
+
+	* term.cc (subsumes): take sameVariableSet arg; always return
+	false
+	
+===================================Maude74==================================================
+
+2002-05-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.hh/symbol2.hh/symbol.cc.dagNode.hh: reverted; the scheme
+	for eliminating symbol2.hh has a flaw in that as the definitation
+	of Symbol::fastComputeTrueSort() is not available when
+	DagNode::reduce() is defined, it does not get inlined, even though
+	it is always defined before DagNode::reduce() is called
+
+	* symbol2.hh: deleted
+
+	* dagNode.hh: don't include symbol2.hh
+
+	* symbol.cc: no longer provide implementation for symbol2.hh
+
+	* symbol.hh (fastComputeTrueSort): moved here from symbol2.hh;
+	include dagNode.hh just before
+	
+===================================Maude72==================================================
+
+2002-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (class Term): added static data member discard; use
+	discard as default 2nd arg to normalize
+
+	* symbol.hh (class Symbol): added static const data member noArgs
+	
+===================================Maude71a==================================================
+
+2002-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.hh (class Symbol): updated decl for
+	computePossibleDomainSorts()
+
+	* symbol.cc (computePossibleDomainSorts): now handle all args at
+	once for efficiency
+
+	* symbol.hh (class Symbol): addedd decl for
+	computePossibleDomainSorts()
+
+	* symbol.cc (computePossibleDomainSorts): added
+
+2002-03-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.cc: deleted explicit template instantiation
+
+	* interface.cc: deleted explicit template instantiations
+	
+===================================Maude71==================================================
+
+2001-12-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): made dagNodeSize a static member
+	rather than a static non-member so initialization can take the
+	size of private data structures.
+	
+===================================Maude69==================================================
+
+2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for Vector<RedexPosition>
+	version of copyWithReplacement()
+	
+===================================Engine66==================================================
+
+2001-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (checkSort): use addInCount() rather than
+	incrementCount() and count()
+
+2001-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.hh (class Symbol): added decl for stackArguments()
+
+===================================Engine65==================================================
+
+2001-01-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): changed decl for markArguments() so
+	that it now returns a DagNode*
+	(mark): rewritten using new markArguments() semantics
+	(markIfNotMarkedAlready): deleted
+	(class DagNode): deleted decl for markIfNotMarkedAlready()
+	(class DagNode): make markArguments() protected
+
+2001-01-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (attachTerm): self destruct term
+
+2001-01-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (attachData): added purpose argument
+
+	* symbol.hh (class Symbol): added purpose argument to attachData()
+	decl
+
+2001-01-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (attachTerm): now return false
+	(attachSymbol): now return false
+	(attachData): now return false
+
+2001-01-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.hh (class Symbol): added decls for attachData(),
+	attachSymbol(), attachTerm(), copyAttachments()
+
+	* symbol.cc (attachData): added
+	(attachSymbol): added
+	(attachTerm): added
+	(copyAttachments): added
+	
+===================================Engine64==================================================
+
+2000-12-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* binarySymbol.cc (processIdentity): deleted commented out
+	ErrorCheck about id having own function symbols on top since this
+	is only relavent to AssocitaiveSymbols and is checked for there
+	(leftIdentitySortCheck): no longer check for collapsing from the
+	error sort to an output sort. I can't remember why I only worried
+	about collapsing to output sorts and not any non-error sort but
+	its clear that any any supersort to the coutput component would
+	otherwise cause problems for operators with identities. Now that
+	we allow rewrites to take place at the error sort level there
+	doesn't seem to be anything to worry about. The code code for
+	computing the set of output sorts was buggy in the case the two
+	argument components were different.
+	(rightIdentitySortCheck): changes symmetric with above
+
+2000-11-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (compileRhs): rewritten to fix 2 potetial problems. Most
+	obviously we were treating unbound variables as eager whereas we
+	need to treat them as lazy. Also when we create a CopyRhsAutomaton
+	to use an lazy variable in an eager position we were storing in
+	the index of the copy in the saveIndex of the lazy lhs occurence
+	rather than the eager rhs occurence that was inserted into
+	availableTerms
+	
+===================================Engine63==================================================
+
+2000-08-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* binarySymbol.cc (leftIdentitySortCheck): don't use ComplexSort()
+	(4 places)
+	(rightIdentitySortCheck): ditto
+
+	* term.hh (class Term): added decl for getSort()
+	(getSort): added
+
+	* dagNode.hh (getSort): added
+	(class DagNode): added decl for getSort()
+
+===================================Engine62==================================================
+
+2000-08-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.cc (fillInSortInfo): don't deal with union
+	sorts
+
+	* binarySymbol.cc (processIdentity): don't check for union sorts
+
+	* symbol.cc (fillInSortInfo): don't handle union sorts
+
+2000-07-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rhsAutomaton.hh (class RhsAutomaton): added decl for remapIndices()
+
+	* term.hh (class Term): make saveIndex an int rather than a short
+
+	* term.cc (compileRhs): use makeProtectedVariable() instead of
+	allocateIndex() for use in left->right sharing
+	(compileRhs): use makeConstructionIndex() instead of
+	allocateIndex() when we're make an eager copy of a variable that
+	only occurs in a lazy context
+
+2000-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interface.cc: now generates implementation for rhsAutomaton.hh
+
+	* rhsAutomaton.cc: deleted
+
+	* rhsAutomaton.hh (class RhsAutomaton): deleted data member aliens
+	and decls for addAlien() and buildAliens()
+	(addAlien): deleted
+	(buildAliens): deleted
+
+	* term.hh (class Term): deleted decl for old compileRhs()
+	
+===================================Engine60==================================================
+
+2000-07-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh: made 2nd argument of operator<<() const
+
+2000-07-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (compileRhs): set our save index; not t->saveIndex
+
+2000-07-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (greedySafe): conditionVariables() ->
+	getConditionVariables()
+
+	* associativeSymbol.cc (associativeSortBoundsAnalysis): sort() ->
+	getSort() (2 places)
+
+	* symbol.cc (acceptSortConstraint): lhs() -> getLhs()
+	(acceptEquation): lhs() -> getLhs()
+	(acceptRule): lhs() -> getLhs()
+	(rangeSortNeverLeqThan): sort() -> getSort()
+	(mightMatchSymbol): sort() -> getSort()
+
+2000-07-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (class Term): added atTop arg to findAvailableTerms()
+	(setSaveIndex): added
+	(class Term): added decl for setSaveIndex()
+
+2000-07-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (class Term): added decls for compileRhs2(),
+	compileTopRhs() and new version of compileRhs()
+	(class Term): added decl for findAvailableTerms()
+
+	* term.cc (compileRhs): added new version
+	(compileTopRhs): added
+	
+===================================Engine59==================================================
+
+2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (class Term): added decl for getSaveIndex();
+	(getSaveIndex): added
+
+	* term.cc (compileLhs): added
+
+	* term.hh (class Term): added data member saveIndex
+	(class Term): compileLhs() becomes non-virtual; replaced by
+	compileLhs2()
+	(Term): initialize saveIndex = NONE
+
+2000-06-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (mightMatchSymbol): code cleaning
+
+	* term.cc (indexVariables): use VariableTerm* rather than
+	VariableSymbol*
+	(gatherPartialResults): index() -> getIndex()
+	
+===================================Engine58==================================================
+
+2000-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interface.cc (dump):  ifdef'd
+
+	* heuristicLhsAutomaton.cc (dump): ifdef'd
+
+	* heuristicLhsAutomaton.hh (class HeuristicLhsAutomaton): ifdef'd
+	dump() decl
+
+	* subproblem.hh (class Subproblem): ifdef'd dump() decl
+
+	* dagNode.hh (class DagNode): use NO_COPYING() macro
+
+	* rhsAutomaton.cc (dump): ifdef'd
+
+	* rhsAutomaton.hh (class RhsAutomaton): ifdef'd dump() decl
+
+	* lhsAutomaton.hh (class LhsAutomaton): ifdef'd dump() decl
+
+	* memoryManager.cc (stompArenas): ifdef'd
+	(checkArenas): ifdef'd
+	(checkInvariant): ifdef'd
+	(dumpMemoryVariables): ifdef'd
+
+	* dagNode.cc (dump): ifdef'd
+	(dumpCommon): ifdef'd
+
+	* dagNode.hh (class DagNode): ifdef'd dump routine decls
+
+	* term.cc (dump): ifdef'd
+	(dumpCommon): ifdef'd
+	(dumpVariableSet): ifdef'd
+	(dumpSymbolSet): ifdef'd
+
+	* symbol.hh (class Symbol): use NO_COPYING() macro
+
+	* term.hh (class Term): ifdef'd dump routine decls
+	(class Term): use NO_COPYING() macro
+
+	* symbol.hh (class Symbol): ifdef'd dump() decl
+
+	* symbol.cc (dump): ifdef'd
+
+	* binarySymbol.cc (leftIdentitySortCheck): standardized WarningCheck()s
+	(rightIdentitySortCheck): standardized WarningCheck()s
+	(idempotentSortCheck): standardized WarningCheck()
+
+	* associativeSymbol.cc (processIdentity): standardized
+	WarningCheck()
+	(associativeSortCheck): standardized WarningCheck()s
+
+2000-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* binarySymbol.cc (processIdentity): commented out ErrorCheck for
+	identity element having its owner as top symbol; this is already
+	checked for in AssociativeSymbol and shouldn't be a problem in
+	non-assoc case
+	(processIdentity): downgraded variable in identity elt to a
+	WarningCheck()
+	(processIdentity): downgraded union and error sorts in identity
+	elt to WarningCheck()s
+	(processIdentity): added Assert() for our sort index
+	(leftIdentitySortCheck): left id vs left arg component
+	ErrorCheck() becomes and Assert()
+	(rightIdentitySortCheck): right id vs left arg component
+	ErrorCheck() becomes and Assert()
+
+2000-03-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* binarySymbol.cc (commutativeSortCompletion): ErrorCheck() ->
+	Assert() 
+	(leftIdentitySortCheck): ErrorCheck() -> Assert() for domain/range
+	component mismatch
+	(rightIdentitySortCheck): ErrorCheck() -> Assert() for domain/range
+	component mismatch
+	(idempotentSortCheck): ErrorCheck() -> Assert()
+
+	* associativeSymbol.cc (associativeSortCheck): ErrorCheck() ->
+	Assert() 
+
+2000-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (class Term): updated decls for commonSymbols() and
+	commonWithOtherPatterns()
+
+	* term.cc (commonSymbols): fixed bug where we weren't passing
+	Vector arg by ref
+	(commonWithOtherPatterns): fixed bug where we weren't passing
+	Vector arg by ref
+
+===================================Engine56==================================================
+
+2000-02-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoryManager.cc (collectGarbage): don't call Module::notifyOfGC()
+
+2000-02-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (Symbol): don't pass type arg to NamedEntity
+
+2000-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (fillInSortInfo): message in component error Assert()
+	made more detailed
+	
+===================================Engine55==================================================
+
+1999-12-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (generateRhs): new convention for calling
+	setTailRecursive() and context.setNrSafeSlots()
+
+	* symbol.cc (fullCompile): call beginNewFuction()
+	(generateCode): don't call setTailRecursive() or setNrSafeSlots()
+
+	* term.hh (class Term): updated decl for generateRhs()
+
+	* term.cc (generateRhs): rewritten to new convention
+
+	* symbol.cc (generateCode): don't take tailRecursive arg or return
+	a value; call setTailRecursive() and setNrSafeSlots()
+	(fullCompile): use isTailRecursive(), getNrSafeSlots() and new
+	generateCode() calling convention
+
+	* symbol.hh (class Symbol): removed tailRecursive arg
+	from generateCode() decl
+	
+===================================Engine54==================================================
+
+1999-11-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (rangeSortNeverLeqThan): added
+	(rangeSortAlwaysLeqThan): added
+	(domainSortAlwaysLeqThan): added
+
+	* symbol.hh (class Symbol): added decls for
+	rangeSortNeverLeqThan(), rangeSortAlwaysLeqThan(),
+	domainSortAlwaysLeqThan()
+
+1999-11-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (generateRhs): updated
+
+	* term.hh (class Term): updated decl for generateRhs()
+
+1999-11-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (generateBody): deleted
+	(generateCode): deleted
+	(generateCode): added new version
+	(fullCompile): call generateCode()
+
+	* symbol.hh (class Symbol): added decl for fullCompile()
+	(class Symbol): added decl for new generateCode()
+
+	* symbol.cc (fullCompile): added
+
+1999-10-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoryManager.cc (Arena): unioned nextArena with an Int64 inside
+	struct DagNode::Arena to force DagNodes to be aligned on 8 byte
+	boundries for machine where this is critical (eg SPARC)
+
+1999-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* standardSymbol.hh (class StandardSymbol): deleted
+
+	* interface.hh: class StandardSymbol deleted
+
+	* binarySymbol.cc (BinarySymbol): init Symbol
+
+	* binarySymbol.hh (class BinarySymbol): revert to base Symbol
+
+	* symbol.cc (Symbol): init MemoTable
+
+	* symbol.hh (class Symbol): restored MemoTable and Strategy bases
+	- it's just simpler to have it all in Symbol whether its needed or
+	not; things like clearMemo() need to be called safely on all
+	symbols
+
+	* binarySymbol.cc (BinarySymbol): init StandardSymbol rather than
+	Symbol
+	(setPermuteStrategy): reverted to previous version
+	(setPermuteStrategy): pass memoFlag to both calls to setStrategy()
+
+	* binarySymbol.hh (class BinarySymbol): derive from StandardSymbol
+	rather than Symbol
+
+	* symbol.cc (Symbol): don't take memoFlag argument or call
+	MemoTable initializer
+
+	* symbol.hh (class Symbol): no longer have MemoTable as a base; no
+	longer take memoFlag
+
+	* standardSymbol.hh: created
+
+	* symbol.hh (class Symbol): made RuleTable first base class to
+	avoid dynamic_cast problem if first base in non-polymorphic
+
+1999-10-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.cc (AssociativeSymbol): don't take or pass
+	theory arg; take and pass memoFlag arg
+
+	* associativeSymbol.hh (class AssociativeSymbol): delete theory
+	arg and added memoflag arg to ctor decl
+
+	* binarySymbol.cc (BinarySymbol): take and pass memoFlag argument;
+	don't take or pass theory argument
+	(setPermuteStrategy): don't call setStrategy()
+
+	* binarySymbol.hh (class BinarySymbol): don't take theory arg
+	(class BinarySymbol): take memoFlag argument
+
+	* symbol.cc (Symbol): take memoFlag arg, don't take theory arg or
+	init theoryName
+
+	* symbol.hh (class Symbol): no longer take theory arg; no longer
+	derived from Strategy, take memoFlag arg; data member theoryName
+	deleted; decl for theory() deleted
+	(theory): deleted
+	
+===================================Engine53==================================================
+
+1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (stable): use test on
+	dynamic_cast<VariableSymbol*>(topSymbol) to avoid constness
+	problem
+
+	* symbol.cc (mightMatchSymbol): VariableSymbol::dynamicCast() ->
+	dynamic_cast<VariableSymbol*>()
+
+	* associativeSymbol.cc (mightCollapseToOurSymbol):
+	VariableSymbol::dynamicCast() -> dynamic_cast<VariableSymbol*>()
+
+	* binarySymbol.cc (mightMatchOurIdentity):
+	VariableSymbol::dynamicCast() -> dynamic_cast<VariableSymbol*>()
+	(*2)
+
+	* term.cc (indexVariables): VariableSymbol::dynamicCast() ->
+	dynamic_cast<VariableSymbol*>()
+	(commonWithOtherPatterns): VariableSymbol::dynamicCast() ->
+	dynamic_cast<VariableSymbol*>()
+	(hasGeqOrIncomparableVariable): VariableSymbol::dynamicCast() ->
+	dynamic_cast<VariableSymbol*>() (*2)
+	(gatherPartialResults): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+
+	* term.hh (stable): test on VariableSymbol::dynamicCast(topSymbol)
+	replaced by one on dynamic_cast<VariableTerm*>(this)
+
+1999-10-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.hh (class Symbol): add MemoTable to base classes
+
+1999-10-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoryManager.cc (collectGarbage): call
+	RootContainer::markPhase(), don't call
+	RewritingContext::markReachableNodes(),
+	LocalBinding::markReachableNodes(), DagRoot::markReachableNodes()
+
+1999-10-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for getHashValue()
+	(hash): added (2 and 3 arg versions)
+	(class DagNode): added decl for hash() (2 and 3 arg versions)
+
+1999-10-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): union Word moved from private to
+	protected
+	(class DagNode): HASHED flag becomes HASH_VALID flag
+	(class DagNode): added decls for setHashValid() and isHashValid()
+	(setHashValid): added
+	(isHashValid): added
+	
+===================================Engine52==================================================
+
+1999-08-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoryManager.cc (collectGarbage): call stompArenas() to try and
+	force fast fail
+
+	* dagNode.hh (class DagNode): added decl for stompArenas();
+
+	* memoryManager.cc (slowAllocateStorage): added
+	static_cast<char*>(t) to allow ANSI legal ptr arith (3 places)
+	(collectGarbage): use b + 1 rather than static_cast<void*>(b) +
+	sizeof(Bucket) to keep ANSI happy
+	(slowAllocateStorage): rewrote bucket creation code to simplify casting
+	(stompArenas): added
+
+1999-07-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (allocateStorage): static_cast<char*> before adding
+	bytesNeeded
+
+1999-07-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (generateRhs): generate code to increment rewrite
+	counter in the case where we have a collapse equation
+
+1999-06-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.hh (class Symbol): updated decls for generateCode() and
+	generateBody()
+
+	* symbol.cc (generateCode): pass hfile to generateBody()
+
+	* term.cc (generateRhs): handle tail recursion in sinngle function
+	call case
+
+1999-06-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (class Term): updated decl of generateRhs()
+
+	* term.cc (generateRhs): now take lhs symbol arg
+	(generateRhs): added code for tail recursion elimination
+
+	* symbol.cc (generateCode): output start label
+
+	* term.cc (generateRhs): generate code to increment g.count; use
+	g.safePtr
+	(generateRhs): use correct union members for safe[] in genertaed
+	code
+
+1999-06-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (generateRhs): need to handle the bare variable case
+
+1999-06-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (class Term): added decls for generateRhs() and
+	gatherPartialResults()
+
+	* term.cc (generateRhs): added
+	(gatherPartialResults): added
+
+1999-06-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (generateCode): added
+	(generateBody): added
+
+	* symbol.hh (class Symbol): added decls for generateCode() and
+	generateBody()
+	
+===================================Engine50==================================================
+
+1999-06-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* argVec.hh: added ARG_VEC_HACK and CONST_ARG_VEC_HACK macros
+
+1999-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (computeTrueSort): computeTrueSort() ->
+	normalizeAndComputeTrueSort()
+
+	* symbol.hh (class Symbol): deleted decl for finalizeSymbol()
+	(class Symbol): added decl for normalizeAndComputeTrueSort()
+
+	* symbol.cc (finalizeSymbol): deleted
+
+1999-05-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (reduce): added sortIndex == Sort::SORT_UNKNOWN check
+	back for the moment
+	(reduce): commented test out again
+
+1999-05-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.hh (class Symbol): added decl for slowComputeTrueSort()
+
+	* symbol.cc (slowComputeTrueSort): added
+
+	* symbol2.hh (fastComputeTrueSort): use slowComputeTrueSort()
+
+	* dagNode.hh (reduce): don't bother checking sortIndex to see if
+	its unknown; just assume it is; branch that does sortConstraints
+	will do the check to make sure we don't repeat work in that case;
+	We guess that the repeated work in all othercases isn't worth the
+	cost of the test
+
+1999-05-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.hh (class Symbol): moved decls for eqRewrite() and
+	computeBaseSort() here to optimize dispatch
+
+	* symbol2.hh (fastComputeTrueSort): split into 3 cases
+
+	* symbol.cc (finalizeSortInfo): created to do unique sort index
+	computation
+	(postInterSymbolPass): no longer do unique sort index computation
+	here
+	(Symbol): initialize uniqueSortIndex = 0
+	(finalizeSortInfo): check sortConstraintFree() before setting
+	uniqueSortIndex
+
+	* symbol.hh (class Symbol): added decl for finalizeSortInfo()
+
+	* associativeSymbol.cc (finalizeSortInfo): call
+	BinarySymbol::finalizeSortInfo() before doing our stuff
+
+	* symbol2.hh (fastComputeTrueSort): moved here to resolve
+	interdepency with dagNode.hh
+
+	* dagNode.hh (reduce): use fastComputeTrueSort()
+
+	* symbol.cc (postInterSymbolPass): compute unique sort index
+
+	* symbol.hh (fastComputeTrueSort): added
+	(class Symbol): added decl for fastComputeTrueSort() and data
+	member uniqueSortIndex
+
+1999-05-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.hh (class AssociativeSymbol): updated decl for
+	checkUniformity()
+
+	* associativeSymbol.cc (associativeSortCheck): use
+	getSingleNonErrorSort() in uniform sort determination
+	(associativeSortCheck): No longer assert that we must have at
+	least one none error output sort; this is because we may allow ops
+	to be defined only at the kind level at some point in the future
+	(checkUniformity): take nrSorts rather than component
+
+1999-04-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (markIfNotMarkedAlready): added so that we can try
+	tail recursion elimination in mark phase
+	
+===================================Engine49==================================================
+
+1999-04-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* binarySymbol.cc (idempotentSortCheck): use traverse() rather
+	than lookupSort()
+	(leftIdentitySortCheck): use traverse() rather than lookupSort()
+	(rightIdentitySortCheck): not quite symmetric changes
+
+	* symbol.cc (mightMatchSymbol): use specialSortHandling() to fix
+	bug that was created when rangeComponent stopped returning 0 to
+	indicate special sort handling
+
+	* associativeSymbol.hh (class AssociativeSymbol): updated
+	checkUniformity() decl
+
+	* associativeSymbol.cc (checkUniformity): first arg make const
+
+	* binarySymbol.cc (commutativeSortCompletion): use
+	rangeComponent() and domainComponent(); removed unnecessary
+	Assert()
+	(leftIdentitySortCheck): use rangeComponent() and
+	domainComponent(); removed unnecessary Assert()
+	(rightIdentitySortCheck): symmetric changes
+	(idempotentSortCheck): use rangeComponent() and domainComponent();
+	simplified ErrorCheck; removed unnecessary Assert()
+
+	* associativeSymbol.cc (associativeSortBoundsAnalysis): use
+	rangeComponent(); removed unnecessary Assert()
+	(associativeSortStructureAnalysis): use rangeComponent(); removed
+	unnecessary Assert()
+	(associativeSortCheck): use rangeComponent() and
+	domainComponent(); simplified ErrorCheck - plan to make this an
+	assert eventually; removed unnecessary Assert()
+
+1999-04-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (specialPrint): deleted
+
+	* term.hh (class Term): deleted decl for specialPrint()
+
+	* dagNode.cc (specialPrint): deleted
+
+	* dagNode.hh (getTheoryBit): deleted
+	(setTheoryBit): deleted
+	(class DagNode): THEORY_BIT changed to HASHED
+	(clearTheoryBit): deleted
+	(class DagNode): deleted decls for getTheoryBit(), setTheoryBit(),
+	clearTheoryBit()
+	(class DagNode): deleted decl for specialPrint()
+	
+===================================Engine48==================================================
+===================================Maude 1.0.2 released=======================================
+===================================Maude 1.0.1 released=======================================
+
+1999-02-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rhsAutomaton.hh (buildAliens): rewritten using isNull()
+	
+===================================VectorExperiment==========================================
+
+1999-02-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.cc (fillInSortInfo): fixed bug where we were
+	not advancing arg iterator
+	(associativeSortStructureAnalysis): total rewrite to check limit
+	property before checking for purity; error sorts are always
+	considered to be pure and are not checked; error sorts can not
+	break main purity property and are not tested against; leq sorts
+	have larger indices and this can be use to optimized limit sort
+	check loops
+
+1999-02-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* binarySymbol.cc (processIdentity): use fillInSortInfo() in place
+	of parse
+
+	* symbol.cc (fillInSortInfo): added
+
+	* symbol.hh (class Symbol): added decl for
+	fillInSortInfo(); deleted decl for parse()
+
+	* associativeSymbol.hh (class AssociativeSymbol): added decl for
+	fillInSortInfo(); deleted decl for parse()
+
+	* associativeSymbol.cc (associativeSortBoundsAnalysis): use
+	traverse() rather than lookupSort()
+	(associativeSortBoundsAnalysis): don't call
+	insertGreaterOrEqualSorts() if tooBig already contains our sort -
+	since tooBig is always closed upward calling
+	insertGreaterOrEqualSorts() would be a waste of time
+	(associativeSortBoundsAnalysis): make NatSet tooBig static and
+	reset it with an assignment each time
+	(associativeSortBoundsAnalysis): make NatSet unbounded static and
+	reset it with makeEmpty()
+	(associativeSortBoundsAnalysis): don't call
+	insertGreaterOrEqualSorts() if our sort is the error sort
+	(parse): made Vector<int> sortIndices static; although we are
+	recursive we never call ourself or anything that could call us
+	from the block in which sortIndices is used
+	(parse): rewritten to use traverse() rather than lookupSortIndex()
+	where possible
+	(fillInSortInfo): added; this is basically a 1-pass verion of
+	parse() that deals with component errors by Assert()s rather than
+	passing back error flags. Component errors shouldn't happen!
+
+1999-02-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* associativeSymbol.cc (checkUniformity): rewritten to use
+	traverse() rather than lookupSort()
+	(associativeSortCheck): completely revised uniform sort
+	calculation loop, using traverse() rather than lookupSort()
+	(associativeSortCheck): main sort check rewritten using traverse()
+	rather than lookupSort(); 3 static vectors deleted
+	(associativeSortCheck): deleted static vector v1
+
+	* binarySymbol.cc (leftIdentitySortCheck): replace lookupSort() by
+	traverse() in one place; it doesn't seem worth the hassle to do it
+	in the other place
+	(rightIdentitySortCheck): symmetric change
+
+	* associativeSymbol.cc (associativeSortStructureAnalysis): use
+	traverse() rather than lookupSort() for efficiency
+	(associativeSortStructureAnalysis): deleted indicies static vector
+	
+===================================Engine47==================================================
+===================================Maude 1.00 released=======================================
+
+
+1999-01-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* memoryManager.cc (collectGarbage): call Module::notifyOfGC()
+
+1999-01-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (class Term): make sortIndex a short and changed its
+	position to save a word
+	
+===================================Engine46==================================================
+
+1998-12-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): set nrWords = 3, ARENA_SIZE = 5460
+	(class DagNode): delete data member dummyWord
+
+===================================Engine45==================================================
+
+Tue Nov 10 16:32:10 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* memoryManager.cc (collectGarbage): become a no-op if no arenas
+	have yet been allocated; We could get called when deleted a module
+	even though no dag nodes have been allocated!
+
+Fri Nov  6 15:17:07 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.hh (class Term): deepCopy() -> deepCopy2(); added
+	non-virtual decl for deepCopy()
+	(deepCopy): added; we call deepCopy2() and then copy the line
+	number
+
+Tue Nov  3 19:20:17 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.hh (class Term): derive from LineNumber
+
+	* symbol.hh (class Symbol): derive from LineNumber
+	
+===================================Engine43==================================================
+
+Thu Oct 29 12:10:02 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* associativeSymbol.cc (associativeSortCheck): Give single
+	detailed warning rather that huge list of warning for an
+	associative operator with non-associative sort declarations
+
+Fri Oct 16 09:56:41 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* memoryManager.cc (checkArenas): added, to search for bugs in GC
+	(checkInvariant): added
+	(collectGarbage): fix nasty bug by calculating endPointer _after_
+	we have created any extra arenas
+	(slowNew): assert that d->flags == 0 rather than clear d->flags in
+	the allocate new arena case
+	ifdef GC_DEBUG used throughout file to control inclusion of self
+	test and dump code
+
+Thu Oct 15 14:47:46 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (getIdentityDag): moved to .hh file and made inline
+	(interSymbolPass): simplified using CachedDag::normalize()
+	(processIdentity): simplified using CachedDag::prepare()
+
+Wed Oct 14 10:14:00 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.hh (class BinarySymbol): deleted dtor decl
+
+	* binarySymbol.cc (BinarySymbol): use CachedDag ctor
+	(~BinarySymbol): deleted
+	(interSymbolPass): use CachedDag::setTerm() and getTerm()
+	(reset): use CachedDag::reset()
+	(processIdentity): use CachedDag::getTerm()
+	(getIdentityDag): simplified using CachedDag::getDag()
+	(leftIdentitySortCheck): use CachedDag::getTerm()
+	(rightIdentitySortCheck): use CachedDag::getTerm()
+
+	* binarySymbol.hh (class BinarySymbol): use CachedDag rather than
+	Term* and DagRoot
+	(setIdentity): use CachedDag::setTerm() and getTerm()
+	(takeIdentity): use CachedDag::getTerm()
+	(getIdentity): use CachedDag::getTerm()
+
+	* dagNode.hh (class DagNode): doubled RESERVE_SIZE to 256 since we
+	seem to be allocated lots of extra arenas on big_sieve example.
+	(class DagNode): reduced ARENA_SIZE to 4 * 1024 - 1 to see what
+	effect that has
+	
+===================================Engine42==================================================
+
+Thu Oct  8 11:54:12 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (DagNode): deleted default ctor
+
+	* memoryManager.cc (allocateNewArena): removed static_cast
+	(slowNew): removed static_cast (4 places)
+	(tidyArenas): removed static_cast (2 places)
+	(collectGarbage): removed static_cast
+	(firstNode): added to Arena
+	(allocateNewArena): use firstNode()
+	(slowNew): use firstNode() (4 places)
+	(tidyArenas): use firstNode() (2 places)
+	(collectGarbage): use firstNode()
+
+	* dagNode.hh (DagNode): added default ctor; for use by
+	DummyDagNode ctor only
+
+Tue Sep 29 11:47:25 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* memoryManager.cc (slowNew): clear flags before returning pointer to
+	dagnode in all except new arrena case (since new areanas always
+	have their flags zeroed
+
+	* dagNode.hh (DagNode): don't clear flags because we can't afford
+	to lose mark flag during in place replacement
+	(new): (normal version) clear flags before returning pointer to
+	dagnode
+	(new): (overwrite version) clear all flags _except_ MARKED before
+	returning pointer to dagnode
+
+	* memoryManager.cc (collectGarbage): major bug! we weren't setting
+	endPointer after gc
+	(slowNew): fixed subtle bug; when new() calls us it has not
+	updated nextNode so if we try to use reserve we end up overwriting
+	nodes which are actually in use (but have just had their marked
+	flags reset buy this lazy sweep. Of couse we could update nextNode
+	in new() but since it is a macro we chose to update nextNode here;
+	there is an invariant that the correct value of nextNode when we
+	are called is actually endPointer and so we can use this in the
+	reserve case; in all other cases we change arena and reset
+	nextNode as a matter of course
+	(tidyArenas): inefficient hack to avoid relying on lastActiveArena
+	and lastActiveNode in order to locate a bug
+
+	* dagNode.hh (class DagNode): added decl for dumpMemoryVariables()
+
+	* memoryManager.cc (dumpMemoryVariables): added
+
+Mon Sep 28 11:22:30 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added static data member
+	currentArenaPastActiveArena
+
+	* memoryManager.cc (slowNew): handle initial case (currentArena == 0)
+	(allocateNewArena): return pointer to new arena
+	(tidyArenas): handle currentArenaPastActiveArena flag
+
+	* dagNode.hh (class DagNode): added decls for tidyArenas() and slowNew()
+	(okToCollectGarbage): test needToCollectGarbage
+	(class DagNode): deleted static data members arenaList, freeList and nrFree
+	(class DagNode): updated decl for allocateNewArena()
+
+	* memoryManager.cc (tidyArenas): added
+
+	* dagNode.hh (class DagNode): added static data member nrArenas
+	(mark): increment nrNodesInUse
+
+	* memoryManager.cc (allocateNewArena): reimplemented
+	(collectGarbage): rewritten
+
+	* dagNode.hh (class DagNode): added static data members
+	nrNodesInUse and needToCollectGarbage
+
+Fri Sep 25 17:51:37 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (new): reimplemented using lazy sweep idea
+	(DummyDagNode): moved definition here
+	(class DagNode): added static data members nextNode, endPointer,
+	currentArena, lastActiveArena, lastActiveNode
+
+===================================Engine41==================================================
+
+Mon Sep 21 11:20:34 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (parse): lookupSortIndex() doesm't work in the nrArgs
+	== 0 case so use traverse(0, 0) instead
+
+Sat Sep 19 16:34:08 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (parse): need to initialize sortIndices with a size!
+
+Thu Sep 17 13:22:55 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* associativeSymbol.cc (parse): rewritten using lookupSortIndex()
+
+	* symbol.cc (parse): use lookupSortIndex() (2 places)
+
+	* associativeSymbol.cc (checkUniformity): use leq(int, Sort*) (2
+	places)
+	(insertGreaterOrEqualSorts): use leq(Sort*, int)
+	(associativeSortStructureAnalysis): use leq(Sort*, Sort*) (2
+	places)
+	(associativeSortStructureAnalysis): use leq(int, Sort*) (2 places)
+
+	* term.cc (hasGeqOrIncomparableVariable): use leq(Sort*, Sort*) (2
+	places)
+
+	* symbol.cc: (mightMatchSymbol): use leq(Sort*, Sort*) (2 places)
+	
+	* dagNode.cc (checkSort): (Subproblem*& version) use leq() (2 places)
+	(checkSort): (RewritingContext& version) use leq() (2 places)
+
+	* binarySymbol.cc (mightMatchOurIdentity): use Term::leq() (2 places)
+	(leftIdentitySortCheck): use leq(int, Sort*) (will probably chnage
+	in future)
+	(rightIdentitySortCheck): use leq(int, Sort*)
+	(idempotentSortCheck): use leq(Sort*, int)
+
+	* binarySymbol.hh (takeIdentity): use Term::leq()
+
+	* term.hh (leq): added
+	(operator<=): deleted
+	(class Term): added decl for leq()
+
+	* dagNode.hh (leq): added
+	(operator<=): deleted
+	(class DagNode): added decl for leq()
+
+	* term.cc (dumpCommon): don't dump sortCode
+
+	* term.hh (class Term): deleted decl for getSortCode(); updated
+	decl for setSortInfo()
+	(class Term): deleted data member sortCode
+	(dagify): use DagNode::setSortIndex()
+	(getSortCode): deleted
+	(setSortInfo): no longer set sortCode
+
+	* dagNode.hh (class DagNode): decl for setSortInfo() becomes
+	setSortIndex(); decl for getSortCode() deleted
+	(class DagNode): deleted data member sortCode; added data member
+	dummyWord to take its place
+	(setSortInfo): becomes setSortIndex()
+	(getSortCode): deleted
+
+Fri Sep 11 10:07:33 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.cc (checkSort): use Sort* rather than SortCode&
+	throughout (both versions); need to optimize these sometime
+	(matchVariable): use new checkSort() convention
+
+	* dagNode.hh (class DagNode): updated both checkSort() decls
+
+	* binarySymbol.cc (mightMatchOurIdentity): use <=(Term*, Sort&)
+	instead of code()
+
+	* binarySymbol.hh (takeIdentity): use <=(Term*, Sort&) instead of
+	code()
+
+	* term.hh (operator<=): (Term*, Sort&) added
+
+	* associativeSymbol.cc (checkUniformity): switched <=(int, Sort&)
+	for >=(Sort&, int)
+	(associativeSortStructureAnalysis): switched <=(int, Sort&)
+	for >=(Sort&, int)
+
+	* term.cc (hasGeqOrIncomparableVariable): use <= on Sorts instead
+	of code()
+
+	* symbol.cc (mightMatchSymbol): use <= on Sorts instead of code()
+
+	* binarySymbol.cc (leftIdentitySortCheck): use <= on Sorts instead
+	of code()
+	(rightIdentitySortCheck): symmetric change
+	(idempotentSortCheck): use <= on Sorts instead of code()
+
+	* associativeSymbol.cc (associativeSortStructureAnalysis): use <=
+	on Sorts and (Sort, int) pairs instead of code()
+
+Thu Sep 10 15:55:51 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* associativeSymbol.cc (checkUniformity): use <= on Sorts instead
+	of code()
+	(insertGreaterOrEqualSorts): use <= on Sorts instead of code()
+	(checkUniformity): use >= on (Sort, int) pair instead of <= on
+	Sorts
+
+	* symbol.cc (dump): dumpSortTable() -> dumpSortDiagram()
+
+Wed Sep  9 11:45:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (commutativeSortCompletion): rewritten; now
+	works by using addOpDeclaration() rather than adjustSort() because
+	commutative sort completion can potential eliminate a
+	pre-regularity problem and anyway it will be hard to implement
+	adjustSort() when we upgrade from sort tables to sort decision
+	diagrams.
+	
+===================================Engine40==================================================
+
+Mon Jul 20 19:14:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.hh (class Term): added decl for deepCopy()
+	
+===================================Engine39==================================================
+
+Thu Jun 11 17:42:03 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (commonSymbols): cast PointerSet::insert()
+	return value to void (*2)
+
+	* term.hh (addCollapseSymbol): cast PointerSet::insert()
+	return value to void
+
+Wed Jun 10 17:02:36 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (interSymbolPass): added
+
+	* binarySymbol.hh (normalizeIdentity): deleted
+	(class BinarySymbol): deleted normalizeIdentity() decl; added
+	interSymbolPass() decl
+
+	* binarySymbol.cc (BinarySymbol): don't initialize identity status
+
+	* symbol.cc (interSymbolPass): added
+	(postInterSymbolPass): added
+
+	* symbol.hh (class Symbol): added decls for interSymbolPass() and
+	postInterSymbolPass()
+
+	* binarySymbol.cc (processIdentity): removed normalization code
+
+	* binarySymbol.hh (class BinarySymbol): deleted enum
+	IdentityStatus, and data member identityStatus
+	(class BinarySymbol): added decl for normalizeIdentity()
+	(normalizeIdentity): added
+
+	* binarySymbol.cc (earlyGetIdentity): deleted
+
+	* binarySymbol.hh (class BinarySymbol): deleetd decl for earlyGetIdentity()
+
+	* term.hh (class Term): added changed flag to decl for normalize()
+
+Tue Jun  9 18:01:41 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* associativeSymbol.hh: IntSet -> NatSet
+
+	* term.cc: IntSet -> NatSet
+
+	* binarySymbol.cc: IntSet -> NatSet
+
+	* associativeSymbol.cc: IntSet -> NatSet
+
+	* term.hh: IntSet -> NatSet
+	
+===================================Engine38==================================================
+
+Thu Jun  4 10:57:22 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (BinarySymbol): need to initialize identityStatus
+	(leftIdentitySortCheck): make sure identity is in correct component
+	(rightIdentitySortCheck): make sure identity is in correct component
+
+	* binarySymbol.hh (setIdentity): fixed buggy Assert
+
+Wed Jun  3 15:28:50 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* associativeSymbol.cc (processIdentity): added
+
+	* associativeSymbol.hh (class AssociativeSymbol): added decl for processIdentity()
+
+	* binarySymbol.hh (setIdentity): added; we now allow identity to
+	be set after the the symbol is created as long as the identity was
+	originally 0
+
+	* binarySymbol.cc (earlyGetIdentity): added
+	(processIdentity): normalize identity and mark it as such.
+	(BinarySymbol): don't normalize identity
+	(~BinarySymbol): destruct identity if it exists; we assume
+	identities are not shared bewteen symbols.
+
+	* binarySymbol.hh (class BinarySymbol): added enum IdentityStatus;
+	decl for earlyGetIdentity()
+
+Mon Apr 13 10:38:26 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh (class Symbol): inherit from ModuleItem
+	
+===================================Engine37==================================================
+
+Thu Feb 26 12:11:11 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (operator<=): for (const DagNode* dagNode, const
+	Sort& sort); put here rather than in sort.hh because of inclusion
+	order conflict
+
+Tue Feb 24 11:07:20 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* interface.cc (dump): added as temporary hack
+
+	* dagNode.cc (dump): added
+	(dumpCommon): added
+
+	* dagNode.hh (class DagNode): added decls for dump() and dumpCommon()
+
+	* subproblem.hh (class Subproblem): added virtual function dump
+
+Fri Feb 20 15:42:07 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decls for setUnrewritable()
+	and isUnrewritable()
+	(isUnrewritable): added
+	(setUnrewritable): added
+	(class DagNode): added decls for setUnstackable() and
+	isUnstackable()
+	(setUnstackable): addded
+	(isUnstackable): added
+
+Thu Feb 19 17:22:43 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (parse): simplified; no longer need to handle the
+	flattened assoc case
+
+	* associativeSymbol.cc (parse): added
+
+	* associativeSymbol.hh (class AssociativeSymbol): added decl for
+	parse()
+	
+===================================Engine36==================================================
+
+Fri Feb 13 13:47:51 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (~BinarySymbol): commented out identity destruct
+	code because of serious bug if identity shared
+
+Wed Feb 11 15:38:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (mightMatchOurIdentity): compare() replaced by equal()
+
+	* dagNode.hh (equal): added
+	(class DagNode): added decl for equal()
+
+	* term.hh (class Term): for added decls for equal() (Term* and
+	dagNode* versions)
+	(equal): added (Term* version)
+	(equal): added (DagNode* version)
+
+	* subproblem.hh (class Subproblem): abstract function
+	deepSelfDestruct() deleted; standard destructor will now be deep
+	
+===================================Engine35==================================================
+
+Thu Jan  8 15:42:40 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (mightMatchOurIdentity): commented out assertion
+	that subterm is not our identity since this can happen if we only
+	have a left or right identity
+	(mightMatchOurIdentity): must return true if subterm is our
+	identity - even though it is ground
+
+Tue Dec 23 12:34:21 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.hh (class Term): added greedySafe() decl
+
+	* term.cc (greedySafe): added
+
+Thu Dec 18 17:53:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.hh (takeIdentity): added
+	(class BinarySymbol): added takeIdentity() decl
+
+Tue Dec 16 16:47:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* interface.hh: added forward decl for class HeuristicLhsAutomaton
+
+	* heuristicLhsAutomaton.cc: created
+
+	* heuristicLhsAutomaton.hh: created
+	
+===================================Engine34==================================================
+
+Fri Dec  5 11:20:28 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* associativeSymbol.hh (class AssociativeSymbol): added decl for
+	finalizeSortInfo(); made associativeSortCheck(),
+	associativeSortBoundsAnalysis() and
+	associativeSortStructureAnalysis() private
+
+	* associativeSymbol.cc (finalizeSortInfo): added
+
+Thu Dec  4 12:43:10 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh: commented out all inert stuff; I don't think we need
+	it now that we don't try and build stuff already reduced
+
+	* associativeSymbol.cc (AssociativeSymbol): deleted inert arg
+
+	* associativeSymbol.hh (class AssociativeSymbol): deleted inert
+	arg from ctor decl
+
+	* binarySymbol.cc (BinarySymbol): deleted inert arg
+
+	* binarySymbol.hh (class BinarySymbol): deleted inert arg from
+	ctor decl
+
+	* symbol.cc (Symbol): deleted inert arg; set inertFlag = true
+
+	* symbol.hh (class Symbol): added decl for noteSpecialSemantics()
+	(class Symbol): deleted inert arg from ctor decl
+	(noteSpecialSemantics): added
+
+Tue Dec  2 16:15:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for copyAndReduce()
+	(copyAndReduce): added
+
+Mon Dec  1 10:29:28 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.hh (getPermuteStrategy): made const
+
+	* associativeSymbol.cc: created from old permuteSymbol.cc
+	(AssociativeSymbol): greatly simplified; use setPermuteStrategy()
+	(commutativeSortCompletion): deleted
+
+	* associativeSymbol.hh (class AssociativeSymbol): created from old
+	PermuteSymbol class
+	(class AssociativeSymbol): enum Strategy deleted
+	(class AssociativeSymbol): decls for strategy() and
+	commutativeSortCompletion() deleted
+	(class AssociativeSymbol): strat data member deleted
+	(strategy): deleted
+
+	* binarySymbol.cc (commutativeSortCompletion): copied from PermuteSymbol
+
+	* binarySymbol.hh (class BinarySymbol): added decl forcommutativeSortCompletion()
+
+	* binarySymbol.cc (setPermuteStrategy): added
+
+	* binarySymbol.hh (class BinarySymbol): added decl for setPermuteStrategy()
+	(class BinarySymbol): added enum PermuteStrategy
+	(class BinarySymbol): added decl for getPermuteStrategy()
+	(getPermuteStrategy): added
+
+Wed Nov 26 17:53:58 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh (class Symbol): derive from Strategy
+
+Mon Nov 24 19:36:19 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* interface.cc: no longer provide implemetation for rhsAutomaton.hh
+
+	* rhsAutomaton.cc (dump): added
+	(~RhsAutomaton): added
+
+	* rhsAutomaton.hh (class RhsAutomaton): added decl for
+	buildAliens() and data member aliens
+	(buildAliens): added
+	(class RhsAutomaton): added decl for addAlien()
+
+Sun Nov 23 16:06:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rhsAutomaton.hh (class RhsAutomaton): added variableInfo arg to dump()
+
+	* lhsAutomaton.hh (class LhsAutomaton): rearranged dump();
+	indentLevel is now last and variableInfo is a reference
+	
+===================================Engine33==================================================
+
+Fri Nov 21 14:35:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): unusedByte changed to theoryByte
+	(getTheoryByte): added
+	(setTheoryByte): 
+
+Tue Nov 18 18:07:20 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (dumpCommon): added
+	(dump): rewritten
+	(dumpArguments): deleted
+
+	* term.hh (class Term): replace dumpArguments() decl with
+	dumpCommon(); virtualized dump()
+
+	* term.cc (dump): switch order of variableInfo and indentLevel
+	(dumpVariableSet): pass variableInfo by ref
+	(dump): removed const
+	(dumpArguments): removed const
+
+	* term.hh (class Term): put variableInfo before indentLevel and
+	pass it by reference
+
+Mon Nov 17 10:28:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decls for getTheoryBit(),
+	setTheoryBit(), clearTheoryBit()
+	(getTheoryBit): added
+	(setTheoryBit): added
+	(clearTheoryBit): added
+	
+===================================Engine32==================================================
+
+Wed Nov  5 10:43:36 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (getIdentityDag): moved here from
+	binarySymbol.hh
+
+	* memoryManager.cc (collectGarbage): removed call to
+	BinarySymbol::invalidateIdentityDags()
+
+	* binarySymbol.cc (reset): added
+	deleted listHead
+
+	* binarySymbol.hh (class BinarySymbol): deleted decls for
+	invalidateIdentityDags() and makeIdentityDag()
+	(class BinarySymbol): deleted secl for listHead
+
+	* binarySymbol.cc (makeIdentityDag): deleted
+
+	* binarySymbol.hh (getIdentityDag): actually make the identity dag
+	if it does not exist
+
+	* binarySymbol.cc (BinarySymbol): simplified
+	(BinarySymbol): greatly simplified
+	(invalidateIdentityDags): deleted
+
+	* binarySymbol.hh (class BinarySymbol): added decl for reset()
+	(class BinarySymbol): change identityDag from a DagNode* to a
+	DagRoot; delete nextActive and prevActive
+	(getIdentityDag): use DagRoot::getNode()
+
+	* symbol.cc (reset): added
+
+	* symbol.hh (class Symbol): made mightMatchPattern() public
+	(class Symbol): deleted decls for scMightMatchSymbol() and
+	retainSortConstraint()
+	(class Symbol): added decl for virtual function reset()
+
+	* symbol.cc (mightMatchSymbol): use safeToInspectSortConstraints()
+	(retainSortConstraint): deleted
+	(acceptSortConstraint): simplified to old retainSortConstraint() def
+	(scMightMatchSymbol): deleted
+
+	* term.hh (class Term): added decl for commonWithOtherPatterns()
+	and hasGeqOrIncomparableVariable()
+
+	* term.cc (commonSymbols): added
+	(commonWithOtherPatterns): added
+	(hasGeqOrIncomparableVariable): added
+
+	* term.hh (class Term): added decl for commonSymbols()
+	
+=============================Engine31========================================================
+
+Wed Oct 29 10:20:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* extensionInfo.hh (valid): changed to validAfterMatch()
+	(clear): changed to setValidAfterMatch()
+	(setWholeFlag): changed to setMatchedWhole()
+	(setMatchedWhole): no longer mess with valid flag
+	(matchedWhole): no longer make assertion about valid flag
+	(class ExtensionInfo): changed all decls to agree with preceedng changes
+
+Tue Oct 28 09:14:40 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* extensionInfo.hh (ExtensionInfo): added
+	(valid): added
+	(reset): added
+	(matchedWhole): Assert that validFlag is true
+	(setWholeFlag): set valid flag to true
+	(class ExtensionInfo): added decls for ExtensionInfo(), valid()
+	and reset(); Added data member validFlag; changed fro bool to Bool
+	(reset): renamed to clear()
+	(ExtensionInfo): deleted
+
+Mon Oct 27 10:57:55 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* extensionInfo.hh (class ExtensionInfo): added two new virtual
+	function decls makeClone() and copy() to overcome the following
+	problem: Suppose in a multiway collapse at tome with extension,
+	one or more of the alternatives fills out the extensionInfo
+	structure. Then when we form a subproblemDisjunction this
+	information is lost (since there is only one extensionInfo
+	structure provided by the match() caller). With these functions
+	SubproblemDisjuction can make local copies of extension info for
+	each branch. We will now have an invariant on match algorithms:
+	if you return a subproblem then you may not fill out the
+	extensionInfo structure at match time.
+
+Fri Oct 24 13:26:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* memoryManager.cc (collectGarbage): call DagRoot::markReachableNodes()
+
+	* extensionInfo.hh (class ExtensionInfo): subject and getSubject
+	decl deleted; subject arg to ctor deleted; this stuff is better of
+	in the derived classes
+	(ExtensionInfo): deleted
+	(getSubject): deleted
+
+Thu Oct 23 18:11:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* extensionInfo.hh (class ExtensionInfo): major reorganization
+	with new data member subject and new function members
+	(ExtensionInfo): added explicitly; now takes argument
+	(getSubject): added
+
+Tue Oct 21 11:31:02 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (dagify): renamed to term2Dag()
+
+	* term.hh (class Term): protected dagify() make public and public
+	dagify() renamed to term2Dag()
+
+	* binarySymbol.cc (makeIdentityDag): use new dagify with
+	setSortInfo = true. This fixes a long standing bug in ACU where we
+	were matching abstracted patterns against indentity dags that might
+	have uninitialized sort info below the top
+	symbol. VariableAbstractionSubproblem::solve() had a small hack to
+	fix the problem in the case where it was used to resolve
+	abstracted patterns but in other cases where abstracted patterns
+	were resolved directly in the ACU matcher the problem remained.
+
+	* term.hh (dagify): enter sort info into dag and set reduced flag
+	if we are in setSortInfo mode
+
+	* term.cc (dagify): added public version of dagify() that sets up
+	global data and then calls protected version of dagify()
+
+	* term.hh (class Term): added subDags and converted as static data
+	members
+	(class Term): add protected no arguments version of dagify()
+	(class Term): make public version of dagify just take setSortInfo arg
+	(class Term): removed args from dagify2()
+
+Thu Oct 16 14:25:02 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (mightMatchOurIdentity): added Assert to check
+	for null identity
+	(mightMatchOurIdentity): return false if null identity because
+	that is what caller expects; this bug mut have been around since
+	the analyseCollapses()/insertAbstractionVariables() split
+
+Tue Oct 14 10:42:37 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* permuteSymbol.cc (PermuteSymbol): changed args
+	(mightCollapseToOurSymbol): added
+
+	* permuteSymbol.hh (class PermuteSymbol): added decl for mightCollapseToOurSymbol()
+	(class PermuteSymbol): rearranged args for ctor
+
+	* memoryManager.cc (collectGarbage): call BinarySymbol::invalidateIdentityDags()
+
+	* binarySymbol.cc (mightMatchOurIdentity): added
+	(processIdentity): added
+	(invalidateIdentityDags): added
+	(makeIdentityDag): link symbol onto active identity list
+	(~BinarySymbol): link symbol from active identity list
+
+	* binarySymbol.hh (class BinarySymbol): deleted identityAutomaton
+	and identitySubstitution
+
+	* binarySymbol.cc (rightIdentitySortCheck): deleted arg
+	(leftIdentitySortCheck): deleted arg
+
+	* binarySymbol.hh (getIdentity): added
+	(getIdentityDag): added
+
+	* binarySymbol.cc (BinarySymbol): rewritten
+
+	* binarySymbol.hh (class BinarySymbol): deleted constructor arg
+	and added identity arg to ctor; added decls for getIdentity(),
+	getIdentityDag(), processIdentity(), makeIdentityDag()
+	(class BinarySymbol): added data members identity, identityDag,
+	identityAutomaton, identitySubstitution
+	(class BinarySymbol): deleted arg from leftIdentitySortCheck() and
+	rightIdentitySortCheck()
+	(class BinarySymbol): added decl for mightMatchOurIdentity()
+
+	* dagNode.hh (new): replaced old style cast with static_cast (both
+	new functions)
+
+	* term.cc (indexVariables): use VariableSymbol::dynamicCast()
+
+	* term.hh (stable): use VariableSymbol::dynamicCast()
+
+	* symbol.cc (Symbol): rewritten to reflect new design
+	(scMightMatchSymbol): use VariableSymbol::dynamicCast()
+	(mightMatchSymbol): use VariableSymbol::dynamicCast() and getSort()
+
+	* symbol.hh (class Symbol): deleted enum Theory; deleted
+	constructor flag from ctor; theory arg in now a const string.
+	(constructor): deleted
+	(theory): now return const char*
+
+Mon Oct 13 12:41:28 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (analyseCollapses): added
+	(determineCollapseSymbols): added
+	(determineCollapseSymbols): deleted
+
+	* term.hh (class Term): added decls for analyseCollapses() and
+	insertAbstractionVariables(); deleted decl for determineCollapseSymbols()
+
+Fri Oct 10 16:54:44 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (indexVariables): VariableIndex -> VariableInfo
+	(indexVariables): symbol2Index() -> variable2Index()
+	(determineCollapseSymbols): VariableIndex -> VariableInfo
+	(dump): VariableIndex -> VariableInfo
+	(dumpArguments): VariableIndex -> VariableInfo
+	(dumpVariableSet): VariableIndex -> VariableInfo
+	(dumpVariableSet): index2Symbol() -> 
+
+	* lhsAutomaton.hh (class LhsAutomaton): VariableIndex -> VariableInfo
+
+	* term.hh (class Term): VariableIndex -> VariableInfo
+	
+=================================Engine30==================================================
+
+Thu Oct  9 10:27:10 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (new): only call dtor iff CALL_DTOR
+
+	* memoryManager.cc (collectGarbage): only call virtual destructor
+	for garbage collected dag nodes that have their CALL_DTOR flag set.
+
+	* dagNode.hh (needToCallDtor): added
+	(setCallDtor): added
+
+	* argVec.hh (class ArgVec): ctor deleted; initialize() added; we
+	should now be able to use ArgVec in unions
+	(class ArgVec): change unmade since we can't use ArgVec in
+	FreeDagNode union after all :-( (See FreeTheory for reason.)
+
+	* dagNode.hh (class DagNode): added UNREWRITABLE, UNSTACKABLE,
+	CALL_DTOR and THEORY_BIT to flags
+	(class DagNode): flags type changed to Ubyte
+
+Wed Oct  8 11:35:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (mark): undid small optimization as
+	it made 0 difference (compiler must do this optimization itself)
+	(copyEagerUptoReduced): setMarked() right after isMarked() to
+	allow compiler to optimize memory ref
+	(clearCopyPointers): clearMarked() right after isMarked() to
+	allow compiler to optimize memory ref
+	(clearCopied): added
+	(setCopied): added
+	(isCopied): added
+	(copyEagerUptoReduced): use isCopied() and setCopied()
+	(clearCopyPointers): use isCopied() and clearCopied()
+
+	* memoryManager.cc (collectGarbage): undid small optimization as
+	it made 0 difference (compiler must do this optimization itself)
+
+	* dagNode.hh (mark): make small optimization to testing and
+	setting marked flag
+
+	* memoryManager.cc (collectGarbage): use isMarked() and clearMarked
+	(collectGarbage): replaced old style casts with static_cast<>s;
+	Made small optimization to testing and clearing marked flag.
+
+	* dagNode.hh (isMarked): added
+	(clearMarked): added
+	(setMarked): added
+	(setReduced): changed to use flags
+	(isReduced): changed to use flags
+	(class DagNode): added enum Flags; added flags and unusedByte data
+	members; deleted reduced and marked data members
+	(DagNode): clear flags rather than reduced and marked
+	(mark): use isMarked() and setMarked()
+	(copyEagerUptoReduced): use isMarked() and setMarked()
+
+Tue Oct  7 15:17:40 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh: added decl for pure virtual makeDagNode()
+
+Fri Oct  3 18:49:11 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (hash): deleted
+	(isEqual): deleted
+
+	* term.hh (class Term): no longer derived from DataSet::Data
+	(class Term): TermSet replaces DataSet throughout
+	(dagify): use term2Index() rather than data2Index()
+	
+=================================Engine29==================================================
+
+Thu Oct  2 16:52:58 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.hh (term): DataSet::Data inheritance changed to protected
+	so that derived classes can down cast and up cast to and from Data*
+	(term): now changed to public because protected didn't work
+
+	* term.cc (findEqual): deleted
+
+	* term.hh (term): deleted decl for findEqual()
+	(term): changed compileRhs() compiled decl from Vector<Term*> to DataSet&
+
+Tue Sep 30 10:49:14 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.hh (Term): converted is now a DataSet ref
+	(dagify): added
+	(Term): derivation is now private, dagify2() decl added
+
+	* term.cc (isEqual): added
+	(hash): added
+
+	* term.hh (hash): added 2 and 3 arg versions
+	(class Term): derive from DataSet::Data
+
+	* symbol.hh (getHashValue): added
+
+	* term.hh (setHashValue): added
+	(getHashValue): added
+	(class Term): added data member hashValue
+
+Thu Sep 25 15:29:18 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* permuteSymbol.cc (commutativeSortCompletion): use getOpDeclarations()
+	(associativeSortCheck): use getOpDeclarations()
+	(associativeSortBoundsAnalysis): use getOpDeclarations()
+	(associativeSortStructureAnalysis): use getOpDeclarations()
+	(associativeSortCheck): use getSortConstraints()
+	(associativeSortBoundsAnalysis): use getSortConstraints()
+	(associativeSortStructureAnalysis): use getSortConstraints()
+
+	* binarySymbol.cc (leftIdentitySortCheck): use getOpDeclarations()
+	(rightIdentitySortCheck): use getOpDeclarations()
+	(idempotentSortCheck): use getOpDeclarations()
+
+	* symbol.hh (class Symbol): added decl for finalizeSymbol()
+
+	* symbol.cc (mightMatchSymbol): rewritten to use new rangeComponent()
+	(scMightMatchSymbol): rewritten to use new rangeComponent()
+	(parse): rewritten to use new rangeComponent() and domainComponent()
+	(finalizeSymbol): added
+
+Wed Sep 24 11:52:47 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (retainSortConstraint): added
+
+	* symbol.hh (class Symbol): heavily rewritten; now derived from
+	SortTable, SortConstraintTable, EquationTable and RuleTable
+
+=================================Engine28==================================================
+
+Sat Aug 30 12:52:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortHandling.cc (parse): in the 0 arg case if there is only one
+	op dec, don't use sort table since it may not exist
+
+	* symbol.hh (class Symbol): made Vector<Vector<int> > version of
+	lookupUnionSort() private.
+
+	* sortHandling.cc (parse): rewritten to use Vector<SortCode>
+	version of lookupUnionSort()
+	(lookupUnionSort): if there is a single op decl don't bother finding
+	maximal sorts or looking for the sort table
+
+	* symbol.hh (lookupSort): now handle the case where there the sort
+	table is not built.
+	(class Symbol): added decl for buildSortTable()
+
+	* sortHandling.cc (buildSortTable): added
+	(compileOpDeclarations): rewritten using buildSortTable()
+	(adjustSort): call buildSortTable() if sort table is not 
+
+Fri Aug 29 13:31:55 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ruleHandling.cc (applyRules): ignore rules that are not variable
+	safe.
+	
+=================================Engine27==================================================
+
+Mon Aug 25 12:18:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (reduce): fixed a bug where no rewrite took place but
+	top symbol changed due to collapse. We now reload top symbol
+	before calling computeBaseSort() and constrainToSmallerSort()
+	(reduce): loop simplified because we don't try and save the top
+	symbol for the sort calculation
+
+Tue Aug  5 16:49:59 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sortHandling.cc (findMinResultSort): fixed very long standing
+	bug. When infSoFar == resultCode we must still see if result is
+	applicable since it may be the least sort; infSoFar is found by
+	the meets of several sorts so it may have the code of the least
+	sort without having considered the least sort. The bug leads to
+	warnings about "failed pre-regularity check" and incorrect sort
+	tables for certain complicated pre-regular signatures.
+
+Wed Jul 30 18:31:07 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for virtual specialPrint()
+
+	* dagNode.cc (specialPrint): added
+
+	* term.hh (class Term): added decl for virtual specialPrint()
+
+	* term.cc (specialPrint): added
+
+Tue Jul 29 16:47:11 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh (class Symbol): added NA_THEORY to enum Theory
+
+	* sortHandling.cc (compileOpDeclarations): added symbol printout
+	to Assert for no operator declarations
+
+Wed Jul 23 11:25:10 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.hh (class Term): added full arg to normalize
+
+=====================================Engine26b======================================
+	
+Fri Jul 18 15:50:17 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decls for
+	normalizeEagerUpToReduced2() and normalizeEagerUpToReduced()
+	(normalizeEagerUpToReduced): added
+	(normalizeEagerUptoReduced): (26b) deleted
+	(class DagNode): (26b) stripped all normalizeEagerUpToReduced() stuff
+
+Thu Jul 17 11:23:41 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.hh (hasEagerContext): added
+
+Tue Jul 15 15:12:06 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* permuteSymbol.hh (class PermuteSymbol): added inert arg to ctor
+
+	* binarySymbol.cc (BinarySymbol): added inert arg
+
+	* binarySymbol.hh (class BinarySymbol): added inert arg to ctor
+
+	* symbol.cc (Symbol): initialize symbolInert
+
+	* symbol.hh (equationFree): made from old inert()
+	(offerSortConstraint): clear symbolInert flag
+	(offerEquation): clear symbolInert flag
+	(inert): added
+	(class Symbol): added symboInert data member
+
+=======================================Engine26=================================================
+
+Wed Jul  9 18:15:55 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh (class Symbol): made inert() public
+
+Tue Jul  1 10:33:55 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh (compare): no longer reverse order; symbols with big
+	arity are considered bigger than those with small arity; amongst
+	symbols with same arity newer symbols are bigger than older symbols.
+
+Fri Jun 27 15:40:04 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): copyEagerUptoReduced(),
+	clearCopyPointers(), copyEagerUptoReduced2(), clearCopyPointers2()
+	made protected
+	(copyReducible): added; this will be used in preference to
+	copyUptoReduced() since with the latter we often forget to call
+	clearCopyPointers(), introducing a subtle bug into the code.
+	(class DagNode): copyEagerUptoReduced(), clearCopyPointers() since
+	for some reason we can't call them from ACU_DagNode!! (is this a
+	g++ bug?)
+	(class DagNode): nrWords changed to 4;
+	(class DagNode): topSymbol and copyPointer made into an anonymous union
+	(copyEagerUptoReduced): use new marked protocol
+	(clearCopyPointers): use new marked protocol and restore topSymbol
+	(DagNode): don't clear copy pointer since in now shares the top
+	symbol slot. This has the advantage of speeding up dagNode
+	initialization by 1 write
+	(clearCopyPointers): fix bug where we were calling
+	clearCopyPointers2() before restoring top symbol; this is fatal
+	because some derived classes (eg FreeDagNode) will inspect top
+	symbol in clearCopyPointers2()
+
+Wed Jun 25 12:02:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.cc (checkSort): pass purpose arg to makeSubcontext()
+
+Tue Jun 24 14:49:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* permuteSymbol.cc: added #include "variable.hh"
+
+	* binarySymbol.cc: added #include "variable.hh"
+
+	* symbol.cc: added #include "variable.hh
+
+	* term.cc: added #include "variableTerm.hh"
+
+Tue Jun 17 11:15:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* interface.cc: deleted template class Vector<Symbol::Foreign>
+
+	* sortConstraintHandling.cc (acceptSortConstraint): added
+	(scMightMatchSymbol): added
+	(compileSortConstraints): greatly simplified
+	(orderSortConstraints): added
+	(constrainToSmallerSort2): greatly simplified; native and foreign
+	sort constraints are now all handle by the same loop
+	(addForeignSortConstraint):  deleted
+	(offerForeignSortConstraint): deleted
+
+Mon Jun 16 12:10:32 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (mightMatchSymbol): adapted from mightHaveSort()
+	(mightMatchPattern): added
+
+	* ruleHandling.cc (compileRules): greatly simplified
+	(acceptRule): added
+	(applyRules): simplified; no longer have to deal with foreign rules
+	(applySpecificRule): simplified; no longer have to deal with foreign rules
+	(offerForeignRule): deleted
+
+	* equationHandling.cc (acceptEquation): added
+	(compileEquations): greatly simplified
+	(applyReplace): no longer bother with foreignApplyReplace()
+	(foreignApplyReplace2): deleted
+	(offerForeignEquation): deleted
+
+	* sortConstraintHandling.cc: created
+
+	* symbol.cc: most functionality moved out into sortHandling.cc,
+	sortConstraintHandling.cc, equationHandling.cc, ruleHandling.cc
+
+	* equationHandling.cc: created
+
+	* ruleHandling.cc: created
+
+	* sortHandling.cc: created
+	(finalizeSortInfo): added
+
+	* symbol.hh (class Symbol): added decls for orderSortConstraints(),
+	acceptSortConstraint(), acceptEquation(), acceptRule()
+	(offerSortConstraint): added
+	(offerEquation): added
+	(offerRule): added
+
+Fri Jun 13 18:55:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh: total rewrite to remove foreign stuff
+
+Wed Jun 11 10:28:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (findBestSequence): delete both
+
+	* term.hh (willGroundOutMatch): added
+	(class Term): delete findBestSequence() decls
+
+Fri Jun  6 11:52:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.cc (partialReplace): better error reporting
+	(partialConstruct): better error reporting
+	(matchVariable): use DagNode::matchVariableWithExtension()
+
+	* symbol.cc (matchVariableWithExtension): deleted
+
+	* dagNode.cc (matchVariableWithExtension): added
+
+	* dagNode.hh (class DagNode): decl for matchVariableWithExtension() added
+
+	* symbol.hh (class Symbol): decl for matchVariableWithExtension() deleted
+
+Thu Jun  5 11:12:46 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (copyEagerUptoReduced): added
+	(clearCopyPointers): added
+	(getCopyPointer): deleted
+	(setCopyPointer): deleted
+	(class DagNode): decls for copyEagerUptoReduced() and
+	clearCopyPointers() made non-virtual;
+	(class DagNode): decls for virtual functions
+	copyEagerUptoReduced2() and clearCopyPointers2() added
+	(class DagNode): decls for setCopyPointer() and getCopyPointer() deleted
+
+	* dagNode.cc (checkSort): added RewritingContext& version
+	(computeTrueSortWhilePreservingContext): deleted
+	memory management code split off into memoryManager.cc
+
+	* dagNode.hh (class DagNode): added decl for
+	checkSort(const SortCode& boundCode, RewritingContext& context)
+	deleted decl for computeTrueSortWhilePreservingContext()
+
+	* binarySymbol.cc (BinarySymbol): removed stable arg
+
+	* permuteSymbol.cc (PermuteSymbol): removed stable arg
+
+	* symbol.cc (Symbol): removed stable arg
+
+	* symbol.hh (stable): deleted
+	(class Symbol): delete symbolStable
+
+==============================Engine24====================================
+
+Thu May 29 16:29:44 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (determineCollapseSymbols): set honorsGroundOutMatchFlag
+	true unless we have a subterm for which its flag false.
+	(dump): print honorsGroundOutMatchFlag
+
+	* term.hh (class Term): added honorsGroundOutMatchFlag. We set
+	this flag to indicate that matching with this term as pattern will
+	not return a subproblem if all the variables below are already
+	bound. We used to assume that this always held, but it is actually
+	quite a strong requirement on the matching algorithms; one that
+	can be hard to satisfy in the presence of abstraction
+	variables. Thus when we see that the "groundOutMatch" property
+	cannot be guarenteed (during collpase preprocessing say) we set
+	this flag to false and thus disable matching optimizations above
+	us that depend on the property for their correctness.
+	(honorsGroundOutMatch): added
+	(setHonorsGroundOutMatch): added
+
+Tue May 27 10:47:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.cc (matchVariable): added
+
+	* dagNode.hh (class DagNode): added decl for matchVariable()
+
+Fri May 16 10:54:38 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (earlyMatchFailOnInstanceOf): use Term::stable()
+	(subsumes): use Term::stable()
+
+	* term.hh (stable): added; this seems to be a more important
+	notion than symbol stability and may replace it everywhere in the future
+
+Thu May 15 10:46:30 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.hh (Term): initialize sortIndex to SORT_UNKNOWN
+
+	* term.cc (dumpSymbolSet): added
+	(dumpVariableSet): added
+	(dumpArguments): added
+	(dump): added
+	(earlyMatchFailOnInstanceOf): use collapseSet rather than stable()
+	(subsumes): use collapseSet rather than stable(); return false in
+	more situations since if we are not a variable and can't collapse
+	we can never subsume any term with a different top symbol
+
+	* term.hh (class Term): added dump() and dumpArguments() decls
+
+Wed May 14 14:39:34 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (analyseCollapses): deleted
+
+	* term.hh (class Term): deleted analyseCollapses() decl
+
+	* term.cc (determineCollapseSymbols): added
+
+	* term.hh (class Term): added decl for determineCollapseSymbols()
+	(class Term): added decl for collapseSymbols()
+	(class Term): added decls for addCollapseSymbol() and addCollapseSymbols()
+	(collapseSymbols): added
+	(addCollapseSymbol): added
+	(addCollapseSymbols): added
+
+	* dagNode.hh (inErrorSort): only invalid computed base sort if
+	there are sort constraints for the top symbol
+
+	* symbol.cc (foreignApplyReplace2): no longer compute true sort
+	of subject up front; this will be done by
+	VariableLhsAutomaton::match() if needed. If foreign equations
+	lhs's don't collapse to variables then this computation will not
+	be needed
+
+Tue May 13 10:06:11 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.cc (checkSort): use existing sort if it exists
+	(checkSort): make first arg const
+
+Mon May 12 11:26:02 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for checkSort()
+
+	* dagNode.cc (checkSort): added
+
+Thu May  8 17:09:47 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (offerForeignEquation): now return flag to say whether
+	we accepted equation
+	(offerForeignRule): now return flag to say whether
+	we accepted rule
+	(offerForeignSortConstraint):  now return flag to say whether
+	we accepted sort constraint
+
+	* symbol.hh (class Symbol): offerForeignEquation() no longer
+	virtual and now return bool to indicate whether equation was
+	accepted. addForeignEquation() no longer protected.
+	(class Symbol): offerForeignRule() no longer
+	virtual and now return bool to indicate whether rule was
+	accepted. addForeignRule() no longer protected.
+	(class Symbol): offerForeignSortConstraint() no longer
+	virtual and now return bool to indicate whether sort constraint
+	was accepted. addForeignSortConstraint() no longer protected
+
+Wed May  7 15:39:17 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.cc (analyseCollapses): added
+
+	* term.hh (class Term): added analyseCollapses() decl
+
+Mon Apr 21 14:35:36 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (Symbol): use symbolCount in place of id when forming orderInt
+	added Symbol::symbolCount
+
+	* symbol.hh (class Symbol): added static int symbolCount
+
+Mon Apr  7 19:28:58 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (constrainToSmallerSort2): calls to checkCondition()
+	now take subject
+	(foreignApplyReplace2): call to checkCondition()
+	now takes subject
+	(applyRules): call to checkCondition() now takes subject
+	(applySpecificRule): calls to checkCondition()
+	now take subject
+	(applyReplace): call to checkCondition()
+	now takes subject
+
+Fri Apr  4 16:51:58 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (constrainToSmallerSort2): use tracePreScApplication()
+
+	* dagNode.cc (computeTrueSortWhilePreservingContext): use makeSubcontext()
+
+	* symbol.cc (applyRules): use tracePreRuleRewrite()
+	(applyReplace): use tracePreEqRewrite() and tracePostEqRewrite()
+	(foreignApplyReplace2): use tracePreEqRewrite() and tracePostEqRewrite()
+
+Fri Mar 28 14:53:19 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): decl for makeExtensionInfo() added
+
+	* dagNode.cc (makeExtensionInfo): added
+
+	* symbol.cc (makeExtensionInfo): added
+	(makeExtensionInfo): deleted
+
+	* symbol.hh (totalNrRules): added
+	(getRule): added
+
+Tue Feb 18 11:55:57 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (rightIdentitySortCheck): made symmetric with
+	leftIdentitySortCheck()
+	(rightIdentitySortCheck): allow collapse from error sorts to
+	non-output non-error sorts without generating a warning
+	(leftIdentitySortCheck): same change
+
+Thu Feb 13 12:21:43 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* permuteSymbol.cc (commutativeSortCompletion): added more detail
+	to warning message
+	(associativeSortCheck): added more detail to warning message
+
+	* binarySymbol.cc (leftIdentitySortCheck): more explicit warning messages
+	(leftIdentitySortCheck): use ComplexSort to get error sorts to
+	print correctly
+
+Wed Feb 12 19:16:44 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (dump): deal with null lhsAutomaton (as happens in
+	free theory)
+
+Fri Feb  7 16:22:29 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* binarySymbol.cc (leftIdentitySortCheck): issue a warning
+	whenever a reverse collapse moves from a non-error sort to the
+	error sort.
+	(rightIdentitySortCheck): same change
+
+Wed Jan  8 14:45:43 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh (class Symbol): ACU_THEORY constant added
+
+	* binarySymbol.cc (leftIdentitySortCheck): added
+	(rightIdentitySortCheck): added
+
+	* binarySymbol.hh (class BinarySymbol): added decls for
+	leftIdentitySortCheck() and rightIdentitySortCheck()
+
+Tue Jan  7 10:37:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (applyReplace): use inErrorSort rather than computeBaseSort()
+
+	* dagNode.hh (inErrorSort): added
+
+Tue Dec 24 11:03:26 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (applyReplace): call to computeSort() replaced by cal
+	to computeBaseSort()
+	(foreignApplyReplace2): call to computeSort() replaced by call to computeTrueSort()
+
+	* symbol.hh (class Symbol): rewrite() -> eqRewrite()
+	(class Symbol): sortConstraintFree() made public
+
+	* dagNode.hh (reduce): removed context arg from call to computeBaseSort()
+	(reduce): rewrite() -> eqRewrite()
+
+	* symbol.hh (class Symbol): removed context arg from computeBaseSort()
+
+	* dagNode.cc (computeTrueSortWhilePreservingContext): adapted from
+	computeSortWhilePreservingContext(); now check to see if there are
+	sortConstraints before creating a new rewriting context.
+
+	* dagNode.hh (class DagNode):
+	computeSortWhilePreservingContext() changed to
+	computeTrueSortWhilePreservingContext()
+
+Mon Dec 23 16:35:10 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (computeTrueSort): adapted from computeSort()
+	(reduce): rewritten to use computeBaseSort() and local variable in
+	the hope of gaining more speed
+
+	* symbol.hh (class Symbol): computeSort() replaced by
+	computeBaseSort() and computeTrueSort()
+	(class Symbol): constrainToSmallerSort() made public
+
+Thu Dec 12 15:33:43 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (mightHaveSort): updated to take foreign sort
+	constraints into consideration
+
+Tue Dec 10 11:01:32 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (applyRules): considerable simplification of sort
+	handling. we assume that true sort of subject is known. If there
+	is no extension info we immediatly check for error sort and give
+	up if so. Otherwise we don't further consider subjects sort: if it
+	is in the error sort it is the job of the code that handle the
+	extension to check the the matched portion is not in the error sort.
+	(applySpecificRule): similar chenges with same justification
+
+	* dagNode.hh (reduce): set reduced flag before computing sort
+	since compuation of sort may involve foreign sort constraints that
+	need to put temp sort in node. If reduced flag is not set these
+	nodes may be copied, leaving temp sort info behind and causing
+	infinite loop since full calculation of sort will fire the same
+	foreign sort constraint. test for sort already computed removed;
+	can't remember why we put it here in the first place (maybe to
+	avoid recomputation of sort needed for eager error pattern?) but it
+	seems inefficient in general case.
+
+	* symbol.cc (addForeignSortConstraint): fix bug where we were
+	added foreign equations rather than sort constraints
+
+Mon Dec  9 12:30:18 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (constrainToSmallerSort2): changed to new calling convention
+	(constrainToSmallerSort2): now support foreign sort constraints
+	(offerForeignSortConstraint): lose sortcode argument
+
+	* symbol.hh (constrainToSmallerSort): changed to new calling convention
+
+	* symbol.cc (addForeignSortConstraint): added
+	(offerForeignSortConstraint): added
+
+	* symbol.hh (sortConstraintFree): added
+	(class Symbol): Vector<Foreign> foreignSortConstraints added
+
+Fri Dec  6 15:49:44 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (compileSortConstraints): scLhs replaced by
+	PreEquation::setLhsAutomaton() and applicationOrder;
+	comparePairs() replaced by compareSortConstraints()
+	(constrainToSmallerSort2): use applicationOrder and
+	PreEquation::setLhsAutomaton() instead of scLhs
+
+	* symbol.hh (class Symbol): applicationOrder changed to
+	Vector<SortConstraint*>
+
+	* symbol.cc (compareSortConstraints): replaces comparePairs()
+
+	* interface.cc: template class Vector<Symbol::Pair> deleted
+
+	* symbol.cc (compileEquations): use PreEquation::setLhsAutomaton()
+	in place of eqLhs
+	(applyReplace): use PreEquation::lhsAutomaton() in place of eqLhs
+	(dump): use PreEquation::lhsAutomaton() in place of eqLhs
+	(foreignApplyReplace2): use PreEquation::lhsAutomaton() in place
+	of eqLhs
+	(compileRules): use PreEquation::setLhsAutomaton() in place of ruleLhs
+	(applyRules): use PreEquation::lhsAutomaton() in place of ruleLhs
+	(applySpecificRule): use PreEquation::lhsAutomaton() in place of ruleLhs
+
+	* symbol.hh (class Symbol): Vector<LhsAutomaton*> eqLhs deleted,
+	Vector<LhsAutomaton*> ruleLhs deleted,
+	Vector<Pair> scLhs replace by Vector<int> applicationOrder
+	struct Pair deleted
+	(constrainToSmallerSort): use applicationOrder.length() instead of
+	scLhs.length()
+
+Wed Dec  4 13:55:32 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (applyRules): fix bug where we were not taking foreign
+	rules into account when wrppaing around rule number
+	(Symbol): fixed long standing initialization bug for nextRule
+	(applyRules): force computation of sort if we are trying to apply
+	a foreign rule and there is no extension info
+	(applySpecificRule): now support foreign rules
+
+Tue Dec  3 17:40:35 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (applyRules): now take foreign rules into account
+
+Mon Dec  2 16:21:19 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (couldHaveSort): added
+	(mightHaveSort): renamed from couldHaveSort() to reflect that we
+	return true if we are uncertain
+	(offerForeignRule): added
+	(offerForeignEquation): use mightHaveSort()
+	(mightHaveSort): take sort constraints into account (we still have
+	to worry about default sort constraints)
+
+	* symbol.hh (class Symbol): added Vector foreignRules,
+	offerForeignRule(), addForeignRule() declarations
+	(addForeignRule): added
+
+Mon Nov 25 16:57:14 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* permuteSymbol.cc (PermuteSymbol): added constructor arg
+
+	* binarySymbol.cc (BinarySymbol): added constructor arg
+
+	* symbol.cc (Symbol): take constructor argument
+
+	* symbol.hh (constructor): added
+
+Wed Nov 20 15:52:22 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (foreignApplyReplace2): take in to account that if the
+	subject is in the error sort we cannot be certain that part of it
+	will not rewrite via a foreign equation if extension is used
+
+	* symbol.hh (inert): added; might be worthwhile storing a flag
+	rather than computing this each time.
+
+Fri Nov 15 15:50:17 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (matchVariableWithExtension): added
+	(matchVariableWithExtension): changed args to take index and
+	sortCode rather than variable
+
+Thu Nov 14 17:44:57 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added declaration of makeClone()
+
+Wed Nov 13 11:53:07 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (foreignApplyReplace2): now take extension info, do
+	almost all the work of applying equations
+	(offerForeignEquation): for symbols with standard op decl
+	procesing; check sort component and sort code before accepting
+	foreign equation
+
+	* symbol.hh (foreignApplyReplace): now take extension info
+
+Thu Oct 31 17:06:10 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (offerForeignEquation): added
+
+Wed Oct 30 11:44:15 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh (constrainToSmallerSort): rewritten
+
+	* symbol.cc (constrainToSmallerSort2): renamed from
+	checkSortConstraints() for consistancy
+
+Tue Oct 29 17:40:24 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.hh (foreignApplyReplace): guts moved to foreignApplyReplace2()
+
+	* symbol.cc (applyRules): 0 -> Sort::ERROR_SORT, break rather than
+	continuing if error sort found
+	(applySpecificRule): 0 -> Sort::ERROR_SORT, break rather than
+	continuing if error sort found
+	(applyReplace): 0 -> Sort::ERROR_SORT, return false rather than
+	continuing if error sort found
+	(foreignApplyReplace2): added since we can't call
+	DagNode::computeSort() from inline because symbol.hh is always
+	included before dagNode.hh
+
+	* symbol.hh (foreignApplyReplace): compute the sort of the subject
+	up front to make life simpler, at the cost of some efficiency in
+	rare cases
+
+Thu Oct 24 17:00:01 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* interface.cc: template class Vector<Symbol::Foreign> added
+
+	* symbol.cc (applyReplace): call foreignApplyReplace() instead of
+	returning false
+
+	* symbol.hh (foreignApplyReplace): added
+
+	* symbol.cc (applyForeignEquation): added
+
+	* symbol.hh (class Symbol): extra declarations for foreign
+	equation handling added
+	(addForeignEquation): added
+
+Thu Oct 17 16:16:46 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* term.hh (Term): untilityFlag = false deleted
+	(setUtilityFlag): deleted
+	(getUtilityFlag): deleted
+
+Wed Oct 16 14:38:47 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (dumpSortTable): hacked to handle indent
+	(dump): hacked to handle indent
+
+Tue Oct 15 16:48:54 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* rhsAutomaton.hh (class RhsAutomaton): indentLevel and added to dump
+
+	* lhsAutomaton.hh (class LhsAutomaton): indentLevel arg added to dump
+
+Fri Oct 11 16:22:09 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* symbol.cc (applyRules): use new partialConstruct()
+	(applySpecificRule): use new partialConstruct()
+	(applyReplace): use new partialReplace()
+
+	* dagNode.cc (partialReplace): added
+	(partialConstruct): added
+
+	* symbol.cc (partialReplace): deleted
+	(partialConstruct): deleted
+
+Tue Oct  8 17:44:06 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* permuteSymbol.cc (commutativeSortCompletion): use new opDeclarations() def
+	(associativeSortCheck): use new opDeclarations() def
+	(associativeSortBoundsAnalysis): use new opDeclarations() def
+	(associativeSortStructureAnalysis): use new opDeclarations() def
+
+	* binarySymbol.cc (idempotentSortCheck): use new opDeclarations() def
+
+	* symbol.cc (findMinResultSort): revised using new
+	symbolOpDeclarations def
+	(compileOpDeclarations): revised using new symbolOpDeclarations def
+
+	* symbol.hh (addOpDeclaration): made inline
+
+	* symbol.cc (~Symbol): body deleted
+	(addOpDeclaration): considerably simplified
+
+	* symbol.hh (class Symbol): symbolOpDeclarations changed from
+	Vector<Vector<Sort*>*> to Vector<Vector<Sort*>>
+	(opDeclarations): changed return type
+
+Wed Oct  2 17:33:51 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.cc (dump): deleted
+	(slowAllocateStorage): update nrBuckets and bucketStorage
+	(copyWithReplacement): deleted
+	(stackArguments): deleted
+
+	* dagNode.hh (setShowGC): added
+	(class DagNode): major reorganization
+
+Tue Oct  1 14:55:16 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.cc (collectGarbage): don't let target ever decrease; the
+	idea is that when we have allocated lots of storage, we should
+	make maximal use of it before doing a GC. This could hurt us in
+	some cases where the already allocated store is huge and causes
+	cache or page thrashing but should win on smallish examples where
+	a reasonable amount of store has already been allocated
+
+	* dagNode.hh (trackStorage): deleted
+	(allocateStorage): move here and inlined
+
+	* interface.cc: template class ArgVec<DagNode*> instantiation added
+
+Mon Sep 30 10:52:42 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.cc (collectGarbage): modified to use unusedList algorithm
+	(slowAllocateStorage): modified to use unusedList algorithm
+	(dump): modified to use unusedList algorithm
+
+Fri Sep 27 15:40:41 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dagNode.cc (collectGarbage): switch bucket and comdemed lists
+	for crude copying collect
+	(collectGarbage): remember for reset all buckets on condemed list
+	after mark phase
+	(dump): added
+	(allocateStorage): increment storageInUse
+	(collectGarbage): update target
+	(collectGarbage): remember to reset storageInUse
+	(slowAllocateStorage): add new bucket to end rather than begining
+	of list
+
+	* argVec.hh (expandBy): fixed bug where we were shadowing "vector"
+
+	* dagNode.cc (allocateStorage): added
+	(slowAllocateStorage): added
+
+	* argVec.hh: heavily rewritten
+
+Sun Aug 25 16:07:00 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* symbol.cc (applySpecificRule): fixed bug in null subproblem +
+	condition logic
+
+Thu Aug 22 14:16:14 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* symbol.cc (applySpecificRule): use new Label class; idea: may be
+	rules should be named entities rather then labels? or is it
+	reasonable to have multiple labels per rule at some future time
+	(applyRules): added label printing for tracing
+
+Fri Aug 16 14:51:02 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* permuteSymbol.cc (associativeSortStructureAnalysis): changed
+	sc[i]->sort()->code() <= code to sc[j]->sort()->code() <= code
+
+Thu Aug 15 19:37:21 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* symbol.cc (applySpecificRule): added
+	(specificRewrite): added
+
+	* symbol.hh (class Symbol): added applySpecificRule()
+
+Fri Aug  9 15:46:03 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* symbol.hh (class Symbol): added partialConstruct()
+
+	* symbol.cc (ruleRewrite): added
+	(applyRules): now deal with extension
+	(partialConstruct): added
+
+	* symbol.hh (class Symbol): ruleRewrite() interface changed
+
+	* dagNode.hh (class DagNode): copyWithReplacement() and
+	stackArguments() added
+
+Thu Aug  8 12:01:11 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* symbol.cc (applyRules): added
+	(applyRules): use n intead of i in all places (horrible bug when n
+	!= i of rule and rule lhs getting out of sync)
+
+	* symbol.hh (addRule): added
+	(rules): added
+
+	* symbol.cc (compileRules): added
+
+Tue Aug  6 14:42:33 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* symbol.cc (compileEquations): removed boundAbove from call to compileLhs()
+	(compileSortConstraints): removed boundAbove from call to compileLhs()
+
+	* term.cc (findBestSequence): removed matchAtTop argument from
+	call to analyseConstraintPropagation()
+
+	* term.hh (class Term): boundAbove arg removed from compileLhs();
+	matchAtTop arg removed from analyseConstraintPropagation()
+
+Wed Jul 31 17:10:22 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* symbol.hh (class Symbol): pure abstract makeTerm() added
+
+Tue Jul  9 16:59:40 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* permuteSymbol.hh (uniformSort): added
+
+	* permuteSymbol.cc (associativeSortCheck): now check for uniform
+	sorts and enforce restrictions on sort constraints
+	(checkUniformity): added
+
+Sat Jul  6 17:29:38 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.hh (class DagNode): trackStorage() made public
+
+Wed Jun 26 10:12:50 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* permuteSymbol.cc (associativeSortCheck): fixed bug; should do
+	check even when there is only one op decl
+	(commutativeSortCompletion): fixed bug; should do completion
+	even when there is only one op decl
+	(associativeSortBoundsAnalysis): added Assert
+	(associativeSortStructureAnalysis): added Assert
+	(associativeSortCheck): made vectors static for efficiency
+	(commutativeSortCompletion): made vectors static for efficiency
+	(associativeSortBoundsAnalysis): made vector static for efficiency
+	(associativeSortStructureAnalysis): made vector static for efficiency
+
+Tue Jun 25 15:59:51 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (lookupUnionSort): added
+
+	* symbol.hh (class Symbol): added new lookupUnionSort()
+
+Fri Jun 21 15:30:37 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (compileEquations): use new compileLhs()
+	(compileSortConstraints): use new compileLhs()
+
+	* term.hh (class Term): changed arg list of compileLhs()
+
+	* binarySymbol.cc: most functionality moved to permuteSymbol.cc
+
+	* binarySymbol.hh (class BinarySymbol): most functionality moved
+	to permuteSymbol
+
+	* permuteSymbol.hh: created
+
+	* permuteSymbol.cc: created
+
+Wed Jun 19 12:15:37 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.cc (collectGarbage): update maxExtra if needed
+
+	* dagNode.hh (trackStorage): added
+	(class DagNode): added EXTRA_BOUND  and EXTRA_FACTOR constants
+	(class DagNode): extraStorage and maxExtra data members added
+	(okToCollectGarbage): now take extra storage into account when
+	deciding when to do GC
+
+Thu Jun 13 16:28:04 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* lhsAutomaton.hh (class LhsAutomaton): have extensionInfo = 0 default
+
+Wed Jun 12 10:41:10 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (compileEquations): pass # of variable to compileLhs()
+	(compileSortConstraints): pass # of variable to compileLhs()
+
+	* term.hh (class Term): compileLhs() now takes int nrVariables
+
+Tue Jun 11 16:04:17 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* term.cc (determineContextVariables): added
+
+	* term.hh (occursInContext): added
+	(class Term): added contextSet data member
+
+Sat Jun  8 16:26:07 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* term.hh (matchIndependent): added
+
+Fri Jun  7 15:09:24 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* interface.cc: Sequences abolished throughout module
+
+	* symbol.cc (lookupUnionSort): switched over to Vector<Vector<int> >
+	(parse): switched over to Vector<Vector<int> >
+
+Thu Jun  6 10:12:03 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* term.hh (compare): both versions: optimization reversed for symmetry
+
+	* dagNode.hh (compare): optimization reversed: it appears that
+	constants are almost always the same shared node anyway so
+	optimization makes things slightly slower
+
+	* term.hh (compare): DagNode version: optimized for 0 args case
+	(compare): Term version: optimized for 0 args case
+
+	* dagNode.hh (compare): optimized for 0 args case
+
+Mon Jun  3 10:27:51 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* term.cc (matchIndependent): replaces quasiUnifiable()
+	(earlyMatchFailOnInstanceOf): replaces matchIndependent() because
+	matchers for different theories may differ in their power to
+	detect early failure
+
+Fri May 31 17:24:48 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* term.cc (quasiUnifiable): added; replaces potentially unifiable
+
+	* binarySymbol.cc (associativeSortStructureAnalysis): the purity
+	of the error sort or of a maximal sort cannot be destroyed by a
+	sort constraint. A sort constraint can never pull a term
+	into a maximal sort from "outside" since "outside" could only be
+	the error sort or an another (incomparable) maximal sort
+
+Thu May 30 12:20:54 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* binarySymbol.cc (associativeSortBoundsAnalysis): renamed (used
+	to be associativeSortAnalysis())
+	(operator<<): added
+	(associativeSortStructureAnalysis): fixed bug: result tests were
+	the wrong way around
+	(associativeSortStructureAnalysis): fixed bug: updating
+	lessOrEqual in third nested loop invalidates it for future
+	iterations; now have bothLessOrEqual which is computed inside
+	third loop
+
+	* binarySymbol.hh (class BinarySymbol): added enum Structure
+
+	* binarySymbol.cc (associativeSortStructureAnalysis): added
+
+Tue May 28 16:40:31 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* term.cc (findBestSequence): added (public version)
+	(findBestSequence): added (private recursive version)
+
+Thu May 23 10:15:43 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (dumpSortTable): added
+	(dump): now dump LHS automata
+
+	* lhsAutomaton.hh (class LhsAutomaton): now take variableIndex arg
+
+Tue May 21 09:52:25 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.cc (collectGarbage): no longer trace DagRoots
+
+	* term.cc (potentiallyUnifiable): added
+
+Sun May 19 17:57:14 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.cc (collectGarbage): call
+	RewritingContext::markReachableNodes() and
+	LocalBinding::markReachableNodes()
+
+	* symbol.cc (applyReplace): call DagNode::okToCollectGarbage()
+	even if we fail to match because matching process may create many
+	new DAG nodes (eg by matching under assoc symbol)
+	(applyReplace): call finished() when finished with context to
+	allow substitution nodes to be garbage collected
+	(checkSortConstraints): same changes as above for same reasons
+
+Sat May 18 14:59:44 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* binarySymbol.cc (Symbol): rewritten to compute strategies correctly
+
+Fri May 17 11:29:42 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* lhsAutomaton.hh (class LhsAutomaton): dump() now takes stream arg
+
+	* symbol.cc (dumpSortAndTab): added
+	(dump): rewritten to use streams rather than DumpContext
+
+Wed May 15 15:07:21 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added enum Sizes
+
+	* binarySymbol.cc (commutativeSortCompletion): use ErrorCheck()
+	and WarningCheck()
+	(associativeSortCheck): use ErrorCheck() and WarningCheck()
+
+	* symbol.cc (compileOpDeclarations): replaced Validate() with ErrorCheck()
+	(findMinResultSort): replaced Validate with WarningCheck
+
+Sat May 11 16:19:18 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* binarySymbol.cc (Symbol): added stable arg
+
+	* binarySymbol.hh (class BinarySymbol): added stable arg
+
+	* symbol.cc (Symbol): added stable argument
+
+	* symbol.hh (class Symbol): bool sharable() deleted,
+	bool stable() added,
+
+Fri May  3 11:44:32 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.hh (compare): optimized for symbols equal case
+
+	* symbol.cc (compileSortConstraints): compile sort contraints with
+	at top flag = false to prevent extension
+
+Thu May  2 11:59:46 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.cc (computeSortWhilePreservingContext): added; note that
+	this is needed to ensure that (1) solution in original context in
+	not corrupted during execution of sort contraints; (2) the node
+	itself (which may have been constructed on-the-fly) does not get
+	garbage collected during the execution of sort contraints.
+
+	* binarySymbol.cc (associativeSortAnalysis): bug fixed; when we
+	insert a sort into "tooBig", all larger sorts (except error sort)
+	must also be inserted. Otherwise sorts that don't appear in the
+	table but that are greater than some sort that does will get an
+	incorrect upper bound of 1.
+	(insertGreaterOrEqualSorts): added
+	(associativeSortAnalysis): ensure that sorts constrained to by
+	sort constraints and any larger sorts are always unbounded
+
+Fri Apr 26 19:20:36 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* binarySymbol.cc (associativeSortAnalysis): fixed trivial for
+	condition bug
+
+Wed Apr 24 17:54:48 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (applyReplace): only check for loose patterns if there
+	is no extension info structure; this places responsibility for
+	ensure that garbage is not matched with those theories that
+	require extension info. The reason for this is that the subject
+	could be in the error sort, but with extension, the part of the
+	subject actually matched could be in a user sort.
+
+Tue Apr 23 11:01:33 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* subproblem.hh (class Subproblem): solve() now takes RewritingContext&
+
+Thu Apr 18 17:13:09 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* extensionInfo.hh (matchedWhole): made a const member function
+
+Wed Apr 17 17:00:03 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* interface.cc: now implements "extensionInfo.hh"
+
+	* extensionInfo.hh (setWholeFlag): added
+	(matchedWhole): added
+
+	* symbol.cc (applyConstruct): added
+	(applyConstruct): deleted
+	(applyReplace): augemnted to handle extension info
+
+	* symbol.hh (class Symbol): applyConstruct() added
+
+Tue Apr 16 10:45:03 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* binarySymbol.cc (associativeSortAnalysis): added
+
+	* binarySymbol.hh (class BinarySymbol): associativeSortCheck() and
+	associativeSortAnalysis() added
+
+	* binarySymbol.cc (associativeSortCheck): added
+
+	* binarySymbol.hh (class BinarySymbol):
+	commutativeSortCompletion() added
+
+	* binarySymbol.cc (commutativeSortCompletion): added
+
+	* symbol.cc (adjustSort): added
+
+	* symbol.hh (class Symbol): adjustSort() added
+
+Fri Apr 12 17:15:05 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* term.hh: matchAtTop added to analyseConstraintPropagation()
+
+Wed Apr 10 16:20:22 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.hh (mark): added Asserts that we are going to remove
+	from *::markArguments()
+
+	* interface.hh: BinarySymbol added
+
+Tue Apr  9 18:12:55 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* binarySymbol.cc: created
+
+	* binarySymbol.hh: created
+
+Mon Mar 25 10:56:33 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* term.hh (setUtilityFlag): added
+	(getUtilityFlag): added
+
+Thu Mar 21 14:44:44 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (compileOpDeclarations): added code to set uniformSort
+	(containsErrorSort): added
+	(compileSortConstraints): zero out uniform sort if there are sort constraints
+	Fancy uniform sort code stripped as it appears to offer no
+	performance advantage
+
+	* symbol.hh (singleSort): added
+
+Wed Mar 20 16:57:41 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh (constrainToSmallerSort): now a inline test and wrap
+	for checkSortConstraints()
+
+	* symbol.cc (checkSortConstraints): renamed from constrainToLowerSort()
+
+Thu Mar 14 14:41:18 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh: dump() virtualized
+
+Sun Mar 10 15:44:22 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (applyReplace): build() -> match()
+	(constrainToSmallerSort): build() -> match()
+
+Sat Mar  9 16:18:52 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (compileSortConstraints): simple arg removed from call
+	to compileLhs()
+	(compileEquations): simple arg removed from call to compileLhs()
+
+	* term.hh: simple argument removed from compileLhs()
+
+Fri Mar  8 11:32:44 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* interface.cc: added instantiation for Vector<Term*>;
+
+Wed Mar  6 17:04:03 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (compileSortConstraints): expand() -> expandTo()
+
+Mon Mar  4 16:13:00 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (constrainToSmallerSort): don't break from loop if
+	s->code() imcomparable with currentCode
+
+Tue Feb 27 13:51:59 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.hh: unnecessary #include <stddef.h> removed
+
+Tue Feb 20 11:37:29 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh: fixed comments
+
+Wed Feb 14 11:46:21 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (applyReplace): check for loose patterns and check
+	sort of subject before using them
+
+	* dagNode.hh (repudiateSortInfo): added
+
+Thu Feb  8 15:44:11 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (findMinResultSort): fixed bad Validate fn name
+
+	* dagNode.hh (computeSort): added
+	(reduce): check that sort is not set before calling Symbol::computeSort()
+
+Tue Feb  6 11:20:57 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (compileSortConstraints): implemented properly
+	(comparePairs): added
+	(constrainToSmallerSort): added
+	(compileSortConstraints): must compile sort constraint as well as
+	its left hand side
+
+	* interface.cc: template class Vector<Symbol::Pair> added
+
+	* symbol.hh (addSortConstraint): added
+	(sortConstraints): added
+
+Fri Feb  2 15:27:37 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* term.hh: sort info and functions added
+
+	* symbol.hh: parse parameters changed
+
+	* symbol.cc (parse): rewritten
+
+Thu Feb  1 14:08:17 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh: parse() added
+	(fixedDomainComponent): added
+	(fixedRangeComponent): added
+	deleted fixedDomainComponent(), fixedRangeComponent()
+	parse() no longer pure virtual
+
+Wed Jan 31 11:10:30 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (rangeComponent): Assert added
+	(compileOpDeclarations): now expand dimensionVector and
+	componentVector when needed rather than starting with them at full
+	size. This way we can tell if they have been initialized in Asserts
+	(compileOpDeclarations): check that symbolArity > 0 before
+	expanding dimensionVector
+	(compileEquations): rewritten
+	(applyReplace): added
+	(applyReplace): remember to self destruct subproblems
+
+	* symbol.hh (lookupSort): Assert added
+
+	* symbol.cc (lookupUnionSort): Asserts added
+
+Tue Jan 30 14:24:15 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (lookupUnionSort): various renaming
+
+	* symbol.hh: restored previous version.
+ 	void generateSortTable() -> virtual void compileOpDeclarations()
+	virtual void compileSortConstraints() added
+	const Sequence<Vector<Sort*>*>& opDeclarations() added
+	lookupSort() & lookupUnionSort() now protected
+	
+	* symbolWithOD.hh: created using sort computation
+	code from old symbol.hh
+
+	* symbolWithOD.cc : created using sort computation code from old symbol.cc
+
+	* symbol.cc: Stripped operator declaration and and sort stuff
+
+	* symbol.hh: All stuff to do with sorts and operator declarations
+	stripped out except for modified  addOpDeclaration() and new
+	opDeclarations()
+
+Thu Jan 11 18:01:15 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.hh (DagNode): moved SORT_UNKNOWN into class Sort
+
+Wed Jan 10 11:27:16 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh (lookupSort): make Vector parameter const
+
+	* symbol.cc (generateSortTable): now use Vectors
+	(incrementSortVector): now use Vectors
+	(findMinResultSort): now use Vectors (also renamed from private computeSort())
+	(addOpDeclaration): now use Vectors
+	(NamedEntity): now use Vectors; sharable parameter dropped
+	(Symbol): now delete opDeclarations vectors
+	(lookupUnionSort): now use Vectors
+	(lookupUnionSort): make Vector parameter const
+
+	* symbol.hh (lookupSort): changed to use Vector template class
+
+Tue Dec 19 16:52:25 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh: made orderInt symbolTheory and symbolArity into
+	constants. resultComponent() deleted
+
+	* dagNode.hh: made topSymbol a constant
+
+Fri Dec 15 12:56:59 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh: added lookupUnionSort()
+
+	* symbol.cc (generateSortTable): added code to call compile() on
+	each equation
+	(compileEquations): previous code moved here so that equation
+	compilation can be done after _all_ sort computations have been done
+
+Thu Dec 14 14:46:34 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (rangeComponent): added
+
+	* symbol.hh (resultComponent): commented out; replaced by
+	virtual function rangeComponent() that takes the acual instance as a
+	parameter to deal with polymorphic symbols 
+
+Wed Dec 13 15:25:09 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (dump): use dumpSortTab()
+
+	* symbol.hh (resultComponent): added
+
+Tue Dec 12 10:22:27 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh (lookupSort): added
+
+	* dagNode.hh (setSortInfo): added
+	added getSortIndex() and getSortCode()
+	(reduce): now compute sort for term once it has been reduced
+
+	* symbol.hh: added public computeSort() for DagNodes
+
+Fri Dec  8 18:03:52 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.hh: normalize() and rewrite() deleted
+
+Thu Dec  7 10:38:32 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.hh: commented out virtual DagNode* normalize() and
+	virtual bool rewrite()
+	(reduce): now use Symbol::rewrite()
+
+	* symbol.hh: added virtual bool rewrite();
+
+	* symbol.cc (computeSort): wholesale renaming of identifiers
+
+	* symbol.hh: sortInfo -> opDeclarations
+
+	* dagNode.hh: reduced nrWords to 3, added sortCode, changed
+	minSort to sortIndex
+
+Wed Dec  6 17:09:44 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh: now derived from NamedEntity
+
+	* symbol.cc (Symbol, ~Symbol): no longer inline
+
+Fri Dec  1 11:12:59 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc (dump): added
+
+Thu Nov 30 18:17:25 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.cc: much hacking for sort table computation
+
+Tue Nov 28 17:40:25 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh: added addSortInfo() and symbolSortInfo
+
+Tue Nov 21 17:26:13 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* interface.cc: added Sequence<Symbol*> Template instantiation
+
+Wed Oct 25 17:22:54 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* dagNode.hh (new): removed DagNode::replenish(), and replaced
+	call to it with call to DagNode::allocateNewArena()
+
+	* dagNode.cc: removed DagNode::replenish(); corrected comment on
+	DagNode::allocateNewArena()
+
+Mon Oct 23 18:04:49 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* symbol.hh: removed symbol2String() declaration
+
+Tue Oct 17 14:04:25 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* rhsAutomaton.hh: updated to use dump context
+
+	* lhsAutomaton.hh: updated to use dump context
+
+	* term.cc (indexVariables): added analyseVariables() code; removed
+	actual analyseVariables()
+
+	* term.hh: removed analyseVariables()
+
+	* dagNode.hh (reduce): added reduce() inline member function
+
+Fri Oct 13 17:55:50 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* term.cc: removed findIdentical()
+	removed getVariable()
+
+	* term.hh: removed findIdentical()
+	removed getVariable()

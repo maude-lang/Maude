@@ -1,0 +1,53 @@
+Maude> ==========================================
+reduce in QID : 'a:s .
+rewrites: 0
+result Qid: 'a:s
+==========================================
+reduce in META-TERM : 'a:s .
+rewrites: 0
+result Variable: 'a:s
+==========================================
+reduce in META-TERM : ''a:b .
+rewrites: 0
+result Variable: ''a:b
+==========================================
+reduce in META-TERM : getName('a.s) .
+rewrites: 6
+result Sort: 'a
+==========================================
+reduce in META-TERM : getType('a.s) .
+rewrites: 7
+result Sort: 's
+==========================================
+reduce in META-TERM : getName('a:s) .
+rewrites: 6
+result Sort: 'a
+==========================================
+reduce in META-TERM : getType('a:s) .
+rewrites: 7
+result Sort: 's
+==========================================
+reduce in META-TERM : '`[s`] .
+rewrites: 0
+result Kind: '`[s`]
+==========================================
+reduce in META-TERM : '`[s`,t`] .
+rewrites: 0
+result Kind: '`[s`,t`]
+==========================================
+reduce in META-TERM : getName('a.`[s`,t`]) .
+rewrites: 6
+result Sort: 'a
+==========================================
+reduce in META-TERM : getType('a.`[s`,t`]) .
+rewrites: 7
+result Kind: '`[s`,t`]
+==========================================
+reduce in META-TERM : getName('a:`[s`,t`]) .
+rewrites: 6
+result Sort: 'a
+==========================================
+reduce in META-TERM : getType('a:`[s`,t`]) .
+rewrites: 7
+result Kind: '`[s`,t`]
+Maude> Bye.

@@ -1,0 +1,48 @@
+Overview of Changes in Maude 2.1
+================================
+* added -no-banner flag
+* fixed bug where syntax errors corrupted memory
+* added rudimentary test suite
+
+Overview of Changes in Maude alpha83a
+=====================================
+* fixed crash that occurred when bubbles are imported
+* fixed memory corruption when copying persistent representations
+* fixed crash on imported module overwrite following a descent
+  function failure
+* simple module expressions are now supported at both the object and
+  metalevel 
+* bashing together unrelated sorts and ops is now legal
+* added show modules command
+
+Overview of Changes in Maude alpha83
+====================================
+* made polymorphs explicit with poly attribute
+* added many new metalevel functions
+* fixed meta-context iter bug
+* fixed object level Bubble-Exclude bug
+* show all/show module now prints specials
+
+Overview of Changes in Maude alpha82
+====================================
+* fixed crash that occurred when printing redeclaration of sort error
+  from the metalevel
+* extended quo/rem/gcd/lcm/divides to Rats
+* made constructor coloring work corectly for iter operators
+* changed operational semantics of owise equations wrt nondefault
+  operator stategies
+* fixed bugs in show module/show all commands
+* fixed metaPrettyPrint kind variable bug
+* fixed break point with builtin op seg fault
+* added upTerm() and downTerm()
+* Infinity/-Infinity now work on FreeBSD & MacOSX
+* building with Tecla is now optional
+
+Overview of Changes in Maude 2.0.1
+==================================
+* switched build system to autoconf/automake
+* many portability fixes
+* added --help and --version flags
+* fixed infinite recursion with unary empty syntax bug
+* internal ordering on Qids is now alphabetical
+* fixed serious bugs in the ACU matcher

@@ -1,0 +1,83 @@
+set show timing off .
+set show advisories off .
+
+select RAT .
+
+red 2 / 3 + 1 / 4 .
+red 2 / 3 + -1 / 4 .
+red trunc(13 / 12) .
+red trunc(-13 / 12) .
+red frac(13 / 12) .
+red frac(-13 / 12) .
+red floor(13 / 12) .
+red floor(-13 / 12) .
+red ceiling(13 / 12) .
+red ceiling(-13 / 12) .
+
+red 2 / 3 + 1 / 3 .
+
+red 1/4 divides 1/2 .
+red 1/4 divides 1/12 .
+red 2/3 divides 3/2 .
+red 2/3 divides 4/3 .
+red 2/3 divides 5 .
+
+red 5 quo 2/3 .
+red -5 quo 2/3 .
+red -5 quo -2/3 .
+red 5 quo -2/3 .
+
+red 1 quo 3/100 .
+
+red 5 rem 2/3 .
+red -5 rem 2/3 .
+red -5 rem -2/3 .
+red 5 rem -2/3 .
+
+red 3 rem 2 .
+red -3 rem 2 .
+red 3 rem -2 .
+red -3 rem -2 .
+
+red 1 rem 3/100 .
+
+red 1 rem 7/100 .
+
+red 1 rem 13/100 .
+
+red gcd(1/2, 1/3) .
+red gcd(1/2, 0) .
+
+red gcd(5/6, 1/2, 9/13) .
+
+red lcm(1/2, 1/3) .
+red lcm(1/2, 2/3) .
+
+red lcm(1/2, 1/6) .
+red lcm(1/2, 0) .
+
+
+fmod RAT-BENCH is
+  pr RAT .
+  ops f g : Nat -> Rat .
+
+var N : Nat .
+  eq f(0) = 1 .
+  eq f(s N) = - f(N) + N / (s N) .
+  eq g(0) = 1 .
+  eq g(s N) = - g(N) * (s N / (N + 2)) .
+endfm
+
+red f(100) .
+red g(100) .
+
+fmod FOO is
+  inc RAT .
+  ops a b c d e : -> Rat .
+  eq a = 42 .
+  eq b = -42 .
+  eq c = -42/1 .
+  eq d = -42/29 .
+endfm
+
+show all FOO .

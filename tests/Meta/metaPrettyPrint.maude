@@ -1,0 +1,137 @@
+set show timing off .
+set show advisories off .
+
+select META-LEVEL .
+
+red metaPrettyPrint(
+fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '_+_['1.0.FiniteFloat,'1.0.FiniteFloat]) .
+
+red metaPrettyPrint(
+fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'X:Float) .
+
+mod TEST is
+  inc LOOP-MODE .
+  inc META-LEVEL .
+  op a : -> Module .
+  eq a = (fmod 'FOO is
+              nil
+              sorts 'Foo .
+              none
+              op 'r : nil -> 'Foo [format('r 'o)] .
+              op 'b : nil -> 'Foo [format('b 'o)] .
+              op 'g : nil -> 'Foo [format('g 'o)] .
+	      op '__ : 'Foo 'Foo -> 'Foo [assoc] .
+              none
+              none
+            endfm) .
+
+  op null : -> State .
+  op init : -> System .
+  
+  var QIL : QidList .
+  
+  rl init => [nil, null, nil] .
+  
+  crl [QIL, null, nil] =>
+      [nil, null, metaPrettyPrint(a, '__['r.Foo, 'g.Foo, 'b.Foo])] if QIL =/= nil .
+endm
+
+loop init .
+
+(a)
+
+
+set print number on .
+
+red in META-LEVEL : metaPrettyPrint(
+fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 's_['0.Zero]) .
+
+red in META-LEVEL : metaPrettyPrint(
+fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 's_['s_['0.Zero]]) .
+
+set print number off .
+
+red in META-LEVEL : metaPrettyPrint(
+fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm,
+'s_['s_['0.Zero]]) .
+
+set print number on .
+
+red in META-LEVEL : metaPrettyPrint(
+fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm,
+'-_['s_['0.Zero]]) .
+
+red in META-LEVEL : metaPrettyPrint(
+fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm,
+'_/_['-_['s_['0.Zero]], 's_['0.Zero]]) .
+
+red in META-LEVEL : metaPrettyPrint(
+fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm,
+'-_['s_^22['0.Zero]]) .
+
+red in META-LEVEL : metaPrettyPrint(
+fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm,
+'_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]]) .

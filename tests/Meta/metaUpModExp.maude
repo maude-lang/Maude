@@ -1,0 +1,51 @@
+set show timing off .
+set show advisories off .
+
+red in META-LEVEL : upImports('META-LEVEL) .
+
+fmod FOO is
+  sorts Foo Bar .
+  subsort Foo < Bar .
+  op a : -> Foo .
+endfm
+
+fmod BAR is 
+  inc FOO * (sort Foo to Baz, op a to b) .
+endfm
+
+red in META-LEVEL : upImports('BAR) .
+
+fmod FOO' is
+  sorts Foo Bar Baz .
+  subsort Foo < Bar .
+  op a : -> Baz .
+  op _+_ : Foo Foo -> Foo [prec 31 gather (e E) assoc comm] .
+  op _+_ : Baz Baz -> Foo [prec 31 gather (e E)] .
+endfm
+
+fmod BAR' is 
+  inc FOO' *
+  (
+    sort Foo to Quux,
+    op _+_ : Foo Foo -> Foo to _*_ [prec 29 gather (E e)],
+    op _+_ : Baz Baz -> Foo to _._ [prec 27 gather (E e)]
+  ) .
+endfm
+
+red in META-LEVEL : upImports('BAR') .
+
+fmod BAZ is 
+  inc FOO' *
+  (
+    sort Foo to Quux,
+    op _+_ : Foo Foo -> Foo to _*_ [prec 29 format (s s s s)],
+    op _+_ : Baz Baz -> Foo to _._ [prec 27 gather (E e)],
+    label a to b
+  )  + NAT .
+endfm
+
+red in META-LEVEL : upImports('BAZ) .
+
+red in META-LEVEL : upModule('BAZ, false) .
+
+red in META-LEVEL : upModule('BAZ, true) .

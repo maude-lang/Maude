@@ -1,0 +1,137 @@
+set show timing off .
+set show advisories off .
+
+select META-LEVEL .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  subsort 'Foo < 'Bar .
+  op 'a : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, 'a.Foo) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, 'b.Foo) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo  [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, 'X:Foo <- 'a.Foo) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, 'X:Foo <- 'a.Foo ; 'Y:Foo <- 'a.Foo) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, 'X:Foo <- 'a.Foo ; 'Y:Foo <- 'b.Foo) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, none) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, 'X:Foo <- 'a.Foo ; 'X:Foo <- 'b.Foo) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'X:Bar <- 'a.Foo) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, 'X:Bar <- 'true.Bool) .
+
+red wellFormed(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  mb 'a.Foo : 'Bar [none] .
+  none
+endfm, 'X:Bool <- 'true.Bool) .
+
+red wellFormed(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  none
+  none
+  rl 'a.Foo => 'b.Foo [label('k)] .
+endm, 'X:Bar <- 'true.Bool) .

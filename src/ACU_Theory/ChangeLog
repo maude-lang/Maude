@@ -1,0 +1,4273 @@
+2003-08-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for
+	rewriteAtTopNoOwise()
+
+	* ACU_Symbol.cc (complexStrategy): rewritten to use
+	rewriteAtTopNoOwise() for first 0 in semi-eager case
+	(memoStrategy): ditto
+	(rewriteAtTopNoOwise): added
+	
+===================================Maude82===========================================
+
+2003-07-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LazySubproblem.cc (bindCollector): fixed nasty bug where we
+	were binding local rather than solution
+	(solve): need to retract() after a successful assert() followed by
+	subproblem failure (2 places)
+
+===================================Maude81===========================================
+
+2003-05-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeMatcher.cc (treeMatch): added extra Assert()s for FULL case
+
+	* ACU_LhsAutomaton.cc (addTopVariable): update nrExpectedUnboundVariables
+	(ACU_LhsAutomaton): clear nrExpectedUnboundVariables
+	(addTopVariable): fix bug where we were not checking that
+	multiplicity == 1 in order to set collectorSeen
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): data member
+	nrExpectedUnboundVariables
+
+	* ACU_LhsAutomaton.cc (complete): fix bug where we weren't
+	checking that single nga had multiplicity 1 before enabling
+	treeMatchOK in FULL case
+
+	* ACU_TreeMatcher.cc (treeMatch): check for only 1 thing left in
+	FULL case
+
+	* ACU_LazySubproblem.cc (ACU_LazySubproblem): call ctors for
+	matchTime and local
+	(bindCollector): use checkSort()
+	(bindCollector): added Assert() for empty tree
+
+	* ACU_LhsAutomaton.cc (complete): allow the use of tree matching
+	in some FULL cases
+
+	* ACU_LazySubproblem.cc (bindCollector): simplified as
+	collectorSort will never be 0
+
+	* ACU_TreeMatcher.cc (treeMatch): use ACU_LazySubproblem()
+
+	* ACU_LazySubproblem.hh (class ACU_LazySubproblem): added decl for
+	bindCollector()
+	(class ACU_LazySubproblem): replaced topSymbol with subject;
+	updated decls for bindCollector() and ctor
+
+	* ACU_LazySubproblem.cc (ACU_LazySubproblem): init topSymbol
+
+	* ACU_LazySubproblem.hh (class ACU_LazySubproblem): added data
+	member topSymbol; updated decl for ctor
+
+	* ACU_LazySubproblem.cc (ACU_LazySubproblem): remaining arg is now
+	a const ACU_Tree&; use copy() to initialize matchTime
+	(bindCollector): added
+
+	* ACU_LazySubproblem.hh (class ACU_LazySubproblem): data member
+	remaining becomes ACU_Tree; updated decl for ctor
+
+2003-05-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Normalize.cc (normalizeAtTop): use useTree()
+	(insertAlien): use useTree()
+
+	* ACU_Symbol.hh (class ACU_Symbol): updated decl for ACU_Symbol()
+	(useTree): added
+
+	* ACU_Symbol.cc (ACU_Symbol): initialize useTreeFlag
+
+	* ACU_Symbol.hh (class ACU_Symbol): added data member useTreeFlag
+
+2003-05-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (stackArguments): rewritten; handle tree case; use
+	FOR_EACH_CONST() in ArgVec case
+	(ruleRewrite): use ruleFree(); don't use getACU_DagNode()
+
+2003-05-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (reduceArgumentsAndNormalize): rewritten; now
+	return true for collapse and false owise
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decls for normalize()
+	and copyReduceSubtermsAndNormalize()
+
+	* ACU_Symbol.cc (memoStrategy): rewritten
+	(normalize): added
+	(complexStrategy): simplified using normalize()
+	(memoStrategy): simplified using normalize()
+	(normalizeAndComputeTrueSort): simplified using normalize()
+	(copyAndReduceSubterms): rewritten
+	(copyAndReduceSubterms): becomes copyReduceSubtermsAndNormalize()
+	(memoStrategy): simplified using copyReduceSubtermsAndNormalize()
+	(complexStrategy): simplified using
+	copyReduceSubtermsAndNormalize()
+
+	* ACU_TreeDagNode.cc (treeToArgVec): pass ASSIGNMENT to
+	ACU_DagNode()
+
+	* ACU_Symbol.cc (reduceArgumentsAndNormalize): use isFresh()
+	(eqRewrite): use isFresh()
+	(complexStrategy): use isFresh()
+	(memoStrategy): use isFresh() (2 places)
+	(normalizeAndComputeTrueSort): rewritten; only call
+	computeTrueSort() on args and normalize if our normalization
+	status is FRESH
+
+	* ACU_BaseDagNode.hh (isFresh): added
+
+	* ACU_Symbol.cc (computeBaseSort): use isTree()
+
+2003-05-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_ExtensionInfo.hh (useUnmatched): deleted
+	(class ACU_ExtensionInfo): deleted decls for convertToUnmatched(0
+	and useUnmatched()
+
+	* ACU_ExtensionInfo.cc (buildMatchedPortion): rewritten using
+	iterators
+	(convertToUnmatched): deleted
+
+	* ACU_DagNode.cc (partialReplace): need to set normalization
+	status to FRESH
+
+	* ACU_TreeMatcher.cc (makeHighMultiplicityAssignment): use new
+	ACU_DagNode() convention
+	(tryToBindLastVariable): use new ACU_DagNode() convention
+	(forcedLoneVariableCase): use new ACU_DagNode() convention
+
+	* ACU_Subproblem.cc (oneVariableCase): use new ACU_DagNode()
+	convention
+	(computeAssignment): use new ACU_DagNode() convention
+	(solveVariables): don't call setNormalizationStatus()
+
+	* ACU_NonLinearLhsAutomaton.cc (match): use new ACU_DagNode()
+	convention
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): use new ACU_DagNode()
+	convention
+
+	* ACU_ExtensionInfo.cc (buildUnmatchedPortion): use new
+	ACU_DagNode() convention
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): use new ACU_DagNode()
+	convention
+
+	* ACU_CollectorLhsAutomaton.cc (collect): use new ACU_DagNode()
+	convention
+
+	* ACU_DagNode.hh (ACU_DagNode): take NormalizationStatus arg
+
+	* ACU_ExtensionInfo.cc (buildUnmatchedPortion): rewritten to
+	handle tree case and use iterators
+
+	* ACU_ExtensionInfo.hh (getUnmatched): deleted
+
+	* ACU_MergeSort.cc (flattenSortAndUniquize): moved here
+
+	* ACU_Normalize.cc (copyAndBinaryInsert): moved here
+
+	* ACU_DagNode.hh (class ACU_DagNode): deleted decls for
+	extensionNormalizeAtTop() and binaryInsert()
+
+	* ACU_DagNormalization.cc (extensionNormalizeAtTop): deleted
+	(binaryInsert): deleted
+
+	* ACU_Symbol.cc (reduceArgumentsAndNormalize): removed EXTENSION
+	case
+	(complexStrategy): test for ACU_BaseDagNode::FRESH
+	(memoStrategy): removed EXTENSION case
+
+	* ACU_BaseDagNode.hh (class ACU_BaseDagNode): deleted EXTENSION
+	from enum NormalizationStatus
+
+	* ACU_DagNode.cc (partialReplace): simplified using
+	buildUnmatchedPortion(); don't use EXTENSION normalization status
+	(partialConstruct): simplified using buildUnmatchedPortion()
+
+	* ACU_ExtensionInfo.hh (class ACU_ExtensionInfo): added decl for
+	buildUnmatchedPortion()
+
+	* ACU_ExtensionInfo.cc (buildUnmatchedPortion): added
+
+2003-05-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (copyEagerUptoReduced2): avoid treeToArgVec()
+	in the case that our symbol is not eager
+	(clearCopyPointers2): changed CantHappen() to Assert() now that we
+	handle non-eager copies ourself
+
+	* ACU_DagNode.cc (clearCopyPointers2): only need to clear copy
+	pointer if we're eager - lazy argumnets don't get copied
+
+2003-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (eqRewrite): simplified
+	(complexStrategy): rewritten to avoid converting from tree to
+	argvec form unless we need to evaluate aour args
+
+	* ACU_TreeDagNode.cc (getHashValue): cache hash value
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): deleted decl for
+	treeComputeBaseSort()
+	(class ACU_TreeDagNode): added data member hashCache
+
+	* ACU_TreeDagNode.cc (treeComputeBaseSort): deleted
+
+	* ACU_Symbol.cc (computeBaseSort): use ACU_Tree::computeBaseSort()
+
+	* ACU_TreeMatcher.cc (tryToBindLastVariable): use
+	ACU_Tree::computeBaseSort()
+
+	* ACU_CollectorLhsAutomaton.cc (collect): (ACU_Tree version)
+	simplified
+
+	* ACU_LhsAutomaton.cc (complete): removed SAT_MULT test and
+	comment
+
+	* ACU_LhsCompiler0.cc (tryToMakeNonLinearLhsAutomaton): removed
+	SAT_MULT test and comment
+
+	* ACU_NonLinearLhsAutomaton.cc (ACU_NonLinearLhsAutomaton):
+	removed SAT_MULT part of Assert()
+
+	* ACU_TreeMatcher.cc (treeMatch): deleted SAT_MULT Assert()
+
+2003-05-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagOperations.cc (findFirstPotentialMatch): use
+	Term::UNKNOWN
+
+2003-05-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): redBlackMatch() ->
+	treeMatch()
+
+	* ACU_TreeMatcher.cc (redBlackMatch): becomes treeMatch()
+
+	* ACU_Matcher.cc (match): redBlackOK -> treeMatchOK,
+	redBlackMatch() -> treeMatch()
+
+	* ACU_LhsAutomaton.cc: redBlackOK -> treeMatchOK
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): redBlackOK ->
+	treeMatchOK
+
+	* ACU_TreeMatcher.cc: remamed from ACU_RedBlackMatcher.cc
+
+	* ACU_RedBlackMatcher.cc (eliminateBoundVariables): use deleteMult()
+	(makeHighMultiplicityAssignment): use class ACU_Tree
+	(redBlackMatch): use getTree()
+	(eliminateGroundAliens): use deleteMult()
+	(eliminateGroundedOutAliens): use deleteMult()
+	(greedyMatch): use deleteMult()
+	(tryToBindVariable): use deleteMult()
+	(tryToBindLastVariable): use deleteMult()
+	(eliminateBoundVariables): use ACU_Tree::find()
+	(eliminateGroundAliens): use ACU_Tree::find()
+	(eliminateGroundedOutAliens): use
+	ACU_Tree::findFirstPotentialMatch()
+	(greedyMatch): use ACU_Tree::findFirstPotentialMatch()
+	(tryToBindVariable): use ACU_Tree::findGeqMult()
+	(tryToBindLastVariable): use getSoleDagNode()
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): current becomes an
+	ACU_Tree
+
+	* ACU_GndLhsAutomaton.cc (match): use getTree()
+
+	* ACU_ExtensionInfo.cc (convertToUnmatched): use getTree()
+
+	* ACU_Term.cc (compareArguments): use getTree()
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decl for
+	makeHighMultiplicityAssignment()
+
+	* ACU_NGA_LhsAutomaton.cc (match): use getTree()
+
+	* ACU_NonLinearLhsAutomaton.cc (match): use getTree()
+
+	* ACU_VarLhsAutomaton.cc (match): use getTree()
+
+	* ACU_Flatten.cc (flattenSortAndUniquize): use getTree()
+
+	* ACU_Normalize.cc (normalizeAtTop): use class ACU_Tree
+
+	* ACU_FastMerge.cc (fastMerge): use getTree() (2 versions)
+
+	* ACU_DagNode.hh (class ACU_DagNode): replace struct Pair with a
+	typedef from ACU_Pair
+
+	* ACU_Normalize.cc (insertAlien): use class ACU_Tree
+
+	* ACU_DagNode.cc (compareArguments): use getTree()
+
+	* ACU_Convert.cc: deleted
+
+	* ACU_DagNode.hh (class ACU_DagNode): deleted decls for
+	makeTree(), pow2min1(), makeTree()
+
+	* ACU_BaseDagNode.cc (getSize): use getTree()
+
+	* ACU_TreeDagNode.cc (recComputeBaseSort): deleted
+	(arguments): use tree data member
+	(getHashValue): use tree data member
+	(overwriteWithClone): use tree data member
+	(makeClone): use tree data member
+	(compareArguments): use tree data member
+	(stackArguments): use tree data member
+	(markArguments): use ACU_Tree::mark()
+	(treeToArgVec): use tree data member
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): use ACU_Tree data
+	element
+	(getRoot): becomes getTree()
+	(class ACU_TreeDagNode): deleted decl for recComputeBaseSort()
+
+	* ACU_Symbol.hh (computeMultSortIndex): deleted
+	(computeSortIndex): deleted
+	
+===================================Maude80a===========================================
+
+2003-05-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for rewriteAtTop()
+
+	* ACU_Symbol.cc (rewriteAtTop): added
+	(eqRewrite): use rewriteAtTop() to avoid having an
+	ACU_ExtensionInfo on our stack frame
+	(eqRewrite): simplified; we no longer assume that if we have
+	standard strategy and our subject was produced by an assignment
+	that we cannot be equation free; mbs can prevent exact sort
+	calculation and setting of reduced flag
+	(reduceArgumentsAndNormalize): only remove identity in
+	ACU_DagNode::EXTENSION case
+
+	* ACU_DagNode.cc (markArguments): avoid recursing on the first arg
+	that shares our symbol
+
+2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (overwriteWithClone): use
+	copySetRewritingFlags()
+	(makeClone): use copySetRewritingFlags()
+
+	* ACU_DagNode.cc (overwriteWithClone): use copySetRewritingFlags()
+	and fastCopy()
+	(makeClone): use copySetRewritingFlags() and fastCopy()
+
+2003-04-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler3.cc (findLongestIncreasingSequence): added
+	comment to explain why calling subsumes() is safe even in the
+	presence of external agencies that can bind variables in the
+	subsumer
+	
+===================================Maude80===========================================
+
+2003-03-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): deleted decl for
+	copyMultiplicity()
+
+	* ACU_Matcher.cc (fullMatch): call addSubjects() here
+	(aliensOnlyMatch): call addSubjects() here
+	(buildBipartiteGraph): don't call addSubjects() here
+	(aliensOnlyMatch): check for trivial graph
+	(match): expand copyMultiplicity() here since it's only called
+	from this one place
+	(copyMultiplicity): deleted
+
+2003-03-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Matcher.cc (fullMatch): check for trivial bipartite graph
+
+2003-03-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Subproblem.hh (noPatterns): added
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): now handle identity
+	case here; no longer local_inline
+	(match): don't handle lone variable identity case here
+
+	* ACU_RedBlackMatcher.cc (forcedLoneVariableCase): code cleaning
+
+	* ACU_Theory.hh: deleted fwd decl for class
+	ACU_AlienAlienLhsAutomaton
+
+	* ACU_DagNode.hh (class ACU_DagNode): deleted decl for
+	findFirstOccurrence()
+
+	* ACU_DagOperations.cc (findFirstOccurrence): deleted
+
+	* ACU_Term.hh (class ACU_Term): deleted decl for
+	tryToMakeAlienAlienLhsAutomaton()
+
+	* ACU_LhsCompiler0.cc (tryToMakeAlienAlienLhsAutomaton): deleted
+	(tryToMakeSpecialCaseAutomaton): don't call
+	tryToMakeAlienAlienLhsAutomaton()
+
+	* ACU_AlienAlienLhsAutomaton.cc: deleted
+
+	* ACU_AlienAlienLhsAutomaton.hh: deleted
+
+	* ACU_Matcher.cc (buildBipartiteGraph): new ACU_Subproblem()
+	convention to get arround the probelm that currentMultipplicities
+	can change
+
+	* ACU_DagNode.cc (matchVariableWithExtension): new
+	ACU_Subproblem() convention
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): added decl for
+	addSubjects(); updated decl for ctor
+
+	* ACU_Subproblem.cc (addSubjects): added
+	(ACU_Subproblem): don't set currentMultiplicity here
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decl for
+	buildBipartiteGraph()
+
+	* ACU_Matcher.cc (buildBipartiteGraph): take SubproblemAccumulator
+	arg
+	(fullMatch): new buildBipartiteGraph() convention
+	(aliensOnlyMatch): new buildBipartiteGraph() convention
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): added decl for
+	removePatternNode()
+
+	* ACU_Subproblem.cc (removePatternNode): added
+
+	* ACU_Matcher.cc (buildBipartiteGraph): force patterns that only
+	have a single edge
+
+2003-03-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decls for
+	forcedLoneVariableCase(), greedyPureMatch(),
+	tryToBindLastVariable(), tryToBindVariable(), greedyMatch(),
+	eliminateGroundedOutAliens(), eliminateGroundAliens(),
+	eliminateBoundVariables()
+
+	* ACU_RedBlackMatcher.cc (eliminateBoundVariables): simplified
+	argument list
+	(eliminateGroundAliens): simplified argument list
+	(eliminateGroundedOutAliens): simplified argument list
+	(greedyMatch): simplified argument list
+	(greedyMatch): simpified call to greedyPureMatch()
+	(tryToBindVariable): simplified argument list
+	(makeHighMultiplicityAssignment): current -> root so we don't
+	confuse arg with data member
+	(tryToBindLastVariable): simplified argument list
+	(greedyPureMatch): simplified argument list
+	(greedyPureMatch): simplified calls to tryToBindLastVariable() and
+	tryToBindVariable()
+	(redBlackMatch): assignto data members rather than local variables
+	for current and matchedMultiplicity
+	(redBlackMatch): simplified calls to eliminateBoundVariables(),
+	eliminateGroundAliens(), eliminateGroundedOutAliens(),
+	forcedLoneVariableCase() and greedyMatch()
+	(forcedLoneVariableCase): simplified argument list
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decl for
+	red-black version of forcedLoneVariableCase()
+	(class ACU_LhsAutomaton): added data members current,
+	nrUnboundVariables and matchedMultiplicity so we don't have to
+	drag these values around as arguments at match time
+
+	* ACU_RedBlackMatcher.cc (forcedLoneVariableCase): added red-black
+	version
+	(redBlackMatch): use forcedLoneVariableCase()
+
+	* ACU_Matcher.cc (match): pass returnedSubproblem arg to
+	redBlackMatch()
+
+	* ACU_RedBlackMatcher.cc (redBlackMatch): now take
+	returnedSubproblem arg
+
+2003-03-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_AlienAlienLhsAutomaton.cc (match): use safeCast()
+
+	* ACU_ExtensionInfo.cc (copy): use safeCast()
+
+	* ACU_Matcher.cc (match): use safeCast()
+
+	* ACU_Term.cc (normalizeAliensAndFlatten): use safeCast() (3
+	places)
+
+	* ACU_DagNode.cc (partialReplace): use safeCast()
+	(partialConstruct): use safeCast()
+	(matchVariableWithExtension): use safeCast()
+
+	* ACU_NonLinearLhsAutomaton.cc (match): use safeCast() (2 places)
+
+	* ACU_GndLhsAutomaton.cc (ACU_GndLhsAutomaton): don't initialize
+	trueFailure
+	(match): test extensionInfo == 0 rather than trueFailure
+	(dump): don't dump trueFailure
+
+	* ACU_GndLhsAutomaton.hh (class ACU_GndLhsAutomaton): deleted data
+	member trueFailure
+
+	* ACU_CollectorLhsAutomaton.cc (ACU_CollectorLhsAutomaton): added
+	Assert to check for sort constraint freeness
+	(collect): don't check for sort constraint freeness (both
+	versions)
+	(collect): use getUniqueSortIndex() (both versions)
+
+	* ACU_LhsCompiler0.cc (tryToMakeCollectorLhsAutomaton): require
+	that top symbol be sort constraint free
+
+2003-03-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.hh (class ACU_Term): added decl for
+	tryToMakeSpecialCaseAutomaton()
+
+	* ACU_LhsCompiler0.cc (tryToMakeSpecialCaseAutomaton): added
+	(compileLhs2): simplified using tryToMakeSpecialCaseAutomaton()
+
+	* ACU_NGA_LhsAutomaton.cc (match): call setValidAfterMatch()
+
+	* ACU_VarLhsAutomaton.cc (match): call setValidAfterMatch()
+
+	* ACU_GndLhsAutomaton.cc (match): call setValidAfterMatch()
+
+	* ACU_TreeDagNode.hh (ACU_TreeDagNode): added Assert() to check
+	that we don't make an ACU_TreeDagNode with single argument
+
+	* ACU_NonLinearLhsAutomaton.cc (match): fixed symmetric bug
+	(dump): dump pureSort
+	(match): deleted superfluous setValidAfterMatch()
+
+	* ACU_RedBlackMatcher.cc (greedyPureMatch): fixed bug where we
+	were creating ACU node with single argument when setting extension
+
+	* ACU_NonLinearLhsAutomaton.cc (match): restructured
+
+2003-03-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.hh (class ACU_Term): updated decl for
+	tryToMakeNonLinearLhsAutomaton()
+
+	* ACU_LhsCompiler0.cc (tryToMakeNonLinearLhsAutomaton): don't take
+	matchAtTop arg since now it must be true
+	(tryToMakeNonLinearLhsAutomaton): allow LIMIT_SORT, check that
+	multiplicity <= SAT_MULT; new ACU_NonLinearLhsAutomaton() calling
+	convention
+	(compileLhs2): use new tryToMakeNonLinearLhsAutomaton() convention
+
+	* ACU_NonLinearLhsAutomaton.cc (match): check getMaxMult() here so
+	that we can return false if there is no subject with enough
+	multiplicity
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	updated decl for ctor
+
+	* ACU_NonLinearLhsAutomaton.cc (ACU_NonLinearLhsAutomaton): don't
+	take matchAtTop (must be true) or collapsePossible (must be false)
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	deleted data members topSymbol and matched; added data member
+	pureSort
+	(class ACU_NonLinearLhsAutomaton): deleted decl for treeMatch()
+
+	* ACU_NonLinearLhsAutomaton.cc (match): use
+	makeHighMultiplicityAssignment() rather than treeMatch()
+	(match): deleted non-extension case; this will now be handled in
+	the general greedy matcher
+	(dump): don't dump topSymbol
+	(match): use getSymbol rather than topSymbol
+	(ACU_NonLinearLhsAutomaton): init pureSort; allow LIMIT_SORT
+	(ACU_NonLinearLhsAutomaton): don't init topSymbol
+	(treeMatch): deleted
+
+	* ACU_Subproblem.cc (~ACU_Subproblem): use FOR_EACH_CONST
+	(solveVariables): use FOR_EACH_CONST
+
+	* ACU_RedBlackMatcher.cc (greedyMatch): new convention for
+	greedyPureMatch()
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decl for
+	greedyPureMatch(); made makeHighMultiplicityAssignment() protected
+
+	* ACU_RedBlackMatcher.cc (greedyPureMatch): return bool now that
+	we no longer try to make a distiction between true failure and
+	UNDECIDED
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decls for
+	decidePhase1FailureMode() and decidePhase2FailureMode()
+
+	* ACU_GreedyMatcher.cc (decidePhase1FailureMode): rewritten
+	(greedyPureMatch): use new decidePhase1FailureMode() convention
+	(decidePhase2FailureMode): simplified to avoid nasty bug where a
+	unit variable could be given a lower sort subject when it actually
+	needs a higher sort subject in order for the match to succeed and
+	we could end up returning false when a match is really possible
+	(greedyPureMatch): use new decidePhase2FailureMode() convention
+
+2003-03-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decls for
+	decidePhase1FailureMode() and decidePhase2FailureMode()
+
+	* ACU_GreedyMatcher.cc (decidePhase1FailureMode): added
+	(decidePhase2FailureMode): added
+	(greedyPureMatch): use decidePhase1FailureMode() and
+	decidePhase2FailureMode()
+
+	* ACU_Matcher.cc (match): don't pass returnUndecidedOnFail arg to
+	greedyPureMatch() 
+
+	* ACU_GreedyMatcher.cc (greedyMatch): don't pass
+	returnUndecidedOnFail arg to greedyPureMatch()
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decl for
+	greedyPureMatch()
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): don't take
+	returnUndecidedOnFail since greedyMatch() already checks for true
+	and wasted effort is slight and rare
+
+	* ACU_Matcher.cc (eliminateGroundAliens): use FOR_EACH_CONST
+	(eliminateGroundedOutAliens): use FOR_EACH_CONST
+	(eliminateGroundedOutAliens): rewritten to be almost symmetric
+	with red-black version
+	(computeTotalMultiplicity): use FOR_EACH_CONST
+	(copyMultiplicity): use FOR_EACH_CONST
+	(fullMatch): use FOR_EACH_CONST
+	(handleElementVariables): use FOR_EACH_CONST
+
+	* ACU_GreedyMatcher.cc (greedyMatch): rewritten to be mostly
+	symmetric with red-black version
+
+	* ACU_LhsAutomaton.cc (dump): dump redBlackOK and collectorSeen
+
+	* ACU_LhsCompiler3.cc (compileGreedyAndFullCases): new complete()
+	convention
+
+	* ACU_LhsCompiler2.cc (compileAliensOnlyCase): new complete()
+	convention
+
+	* ACU_LhsCompiler1.cc (compileLhs3): new complete() convention
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decl for
+	complete()
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton): init collectorSeen
+	(addTopVariable): update collectorSeen
+	(complete): new redBlackOK calculation
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decl for
+	addTopVariable()
+	(class ACU_LhsAutomaton): added data member collectorSeen
+
+	* ACU_LhsCompiler1.cc (compileLhs3): use new addTopVariable()
+	convention
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton): init redBlackOK = true
+	(addAbstractionVariable): falsify redBlackOK
+	(addGroundedOutAlien): falsify redBlackOK if alien unstable
+	(addNonGroundAlien): falsify redBlackOK if alien unstable
+
+2003-03-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler3.cc (compileGreedyAndFullCases): use new
+	complete() convention
+
+	* ACU_LhsCompiler2.cc (compileAliensOnlyCase): use new complete()
+	convention
+
+	* ACU_LhsCompiler1.cc (compileLhs3): use new complete() convention
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decl for
+	complete()
+
+	* ACU_LhsAutomaton.cc (complete): take redBlackPossible arg; we
+	can't rely on strategy == LONE_VARIABLE beacuse of variable
+	abstraction
+
+	* ACU_LhsCompiler1.cc (compileLhs3): use empty() rather than
+	length() == 0
+
+2003-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (recComputeBaseSort): fixed nasty bug where
+	we were using getLeft() twice instead of getRight() and computing
+	the wrong sort
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton): don't set redBlackOK
+	here
+	(complete): set redBlackOK here
+
+	* ACU_RedBlackMatcher.cc (redBlackMatch): call greedyMatch()
+
+2003-03-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decl for
+	makeHighMultiplicityAssignment()
+	(class ACU_LhsAutomaton): added data member matched
+
+	* ACU_RedBlackMatcher.cc (makeHighMultiplicityAssignment): added
+	(tryToBindLastVariable): added high multiplicity cases
+
+2003-03-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decl for
+	tryToBindLastVariable()
+
+	* ACU_RedBlackMatcher.cc (tryToBindLastVariable): added
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decls for
+	eliminateBoundVariables(), eliminateGroundAliens(),
+	eliminateGroundedOutAliens() and greedyMatch(); added decl for
+	tryToBindVariable()
+	(class ACU_LhsAutomaton): updated decl for greedyPureMatch()
+
+	* ACU_RedBlackMatcher.cc (eliminateBoundVariables): update
+	matchedMultiplicity
+	(eliminateGroundAliens): update matchedMultiplicity
+	(greedyMatch): update matchedMultiplicity
+	(tryToBindVariable): added
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decls for
+	red-black versions of greedyPureMatch() and greedyMatch(); updated
+	decl for eliminateBoundVariables()
+
+	* ACU_RedBlackMatcher.cc (greedyMatch): added red-black version
+	(eliminateBoundVariables): keep track of number of unbound
+	variables rather than making a linked list of them.
+	(eliminateBoundVariables): use iterators
+	(eliminateBoundVariables): use FOR_EACH_CONST() macro
+	(eliminateGroundAliens): use FOR_EACH_CONST() macro
+	(eliminateGroundedOutAliens): use FOR_EACH_CONST() macro
+	(greedyPureMatch): added red-black version
+
+2003-03-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Matcher.cc (eliminateGroundAliens): use iterators
+	(eliminateGroundedOutAliens): use iterators
+	(eliminateGroundedOutAliens): rearrange tests; now only look at
+	multiplicity after we have a match; if current multiplicity is too
+	small we can rewturn false since ground out alien must  match a
+	unique subject subterm
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decls for
+	red-black versions of eliminateBoundVariables(),
+	eliminateGroundAliens() and eliminateGroundedOutAliens()
+
+	* ACU_RedBlackMatcher.cc (eliminateBoundVariables): added
+	red-black version
+	(eliminateGroundAliens): added red-black version
+	(eliminateGroundedOutAliens): added red-black version
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton): initialize redBlackOK
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decl for
+	redBlackMatch()
+
+	* ACU_RedBlackMatcher.cc (redBlackMatch): added stub
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added data member
+	redBlackOK
+
+	* ACU_Matcher.cc (match): use redBlackOK and redBlackMatch()
+
+2003-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NGA_LhsAutomaton.hh (class ACU_NGA_LhsAutomaton): delete
+	data memeber trueFailure
+
+	* ACU_NGA_LhsAutomaton.cc (ACU_NGA_LhsAutomaton): added Assert()s
+	to check to stripper term is non-ground and stable
+	(match): do full match if collect() fails; this fixes a nasty bug
+	where we tried to continue but collect() has destroyed the
+	iterator
+	(ACU_NGA_LhsAutomaton): don't initialize trueFailure
+
+	* ACU_VarLhsAutomaton.cc (ACU_VarLhsAutomaton): allow trueFailure
+	if stripper variable has pure sort
+
+	* ACU_LhsCompiler0.cc (tryToMakeCollectorLhsAutomaton): no longer
+	require stripper variable to have unit or pure sort
+
+	* ACU_VarLhsAutomaton.cc (match): do full match if collect()
+	fails; this fixes a nasty bug where we tried to continue but
+	collect() has destroyed the iterator
+	(ACU_VarLhsAutomaton): changed definition of trueFailure to take
+	account of the fact that failures due to collect() never test
+	trueFailure
+	(ACU_VarLhsAutomaton): added Assert() to check that stripper
+	variable can't take identity
+
+	* ACU_LhsCompiler0.cc (tryToMakeCollectorLhsAutomaton): chnage
+	requirement on collect variable to have unbounded sort rather than
+	pure or limit sort. The is a wweaker condition that is now allowed
+	because we gave up on the fast sort computation trick.
+
+	* ACU_GndLhsAutomaton.cc (ACU_GndLhsAutomaton): added Assert() to
+	check that stripper term is ground
+
+	* ACU_CollectorLhsAutomaton.cc (ACU_CollectorLhsAutomaton): added
+	Assert() to check that collector has unbounded sort
+
+	* ACU_NGA_LhsAutomaton.hh (class ACU_NGA_LhsAutomaton): deleted
+	data member local
+
+	* ACU_NGA_LhsAutomaton.cc (match): use getLocal()
+	(ACU_NGA_LhsAutomaton): don't initialize local
+
+	* ACU_LhsAutomaton.hh (getLocal): added
+	(getLocal2): added
+
+	* ACU_NGA_LhsAutomaton.hh (class ACU_NGA_LhsAutomaton): deleted
+	data members topSymbol and collapsePossible; added data member
+	trueFailure
+
+	* ACU_NGA_LhsAutomaton.cc (match): use getSymbol()
+	(match): use getCollapsePossible()
+	(dump): don't dump topSymbol or collapsePossible
+	(ACU_NGA_LhsAutomaton): don't initialize topSymbol or
+	collapsePossible; initialize trueFailure
+	(match): reorganized search loops using trueFailure
+
+2003-03-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NGA_LhsAutomaton.cc (match): use new collapse() convention
+
+	* ACU_GndLhsAutomaton.cc (ACU_GndLhsAutomaton): initialize
+	trueFailure
+	(match): use trueFailure
+	(dump): dump trueFailure
+
+	* ACU_GndLhsAutomaton.hh (class ACU_GndLhsAutomaton): added data
+	member trueFailure
+
+	* ACU_VarLhsAutomaton.cc (match): rewrote argVec case
+	(dump): dump trueFailure
+
+	* ACU_VarLhsAutomaton.hh (class ACU_VarLhsAutomaton): added data
+	member trueFailure
+
+	* ACU_VarLhsAutomaton.cc (ACU_VarLhsAutomaton): don't initialize
+	topSymbol or collapsePossible
+	(dump): don't dump topSymbol or collapsePossible
+	(match): use use getSymbol() and getCollapsePossible(); use new
+	collapse() convention
+	(match): fixed bug where we were returing false even though
+	assigning multiple things to stripper, or putting stuff in
+	extension or applying a membership might have produced a match.
+	(ACU_VarLhsAutomaton): initialize trueFailure
+
+	* ACU_VarLhsAutomaton.hh (class ACU_VarLhsAutomaton): deleted data
+	members topSymbol and collapsePossible
+
+	* ACU_GndLhsAutomaton.cc (match): use new collapse() convention
+
+	* ACU_CollectorLhsAutomaton.hh (collapse): use getSymbol()
+	(class ACU_CollectorLhsAutomaton): updated decl for collapse()
+
+	* ACU_GndLhsAutomaton.cc (ACU_GndLhsAutomaton): don't initialize
+	topSymbol or collapsePossible
+	(dump): don't dump topSymbol or collapsePossible
+	(match): fixed bug where we assumed red-black collect failing
+	implied no match, where as some of teh suff might have been put in
+	the extension
+	(match): use getSymbol() (two places) and getCollapsePossible()
+
+	* ACU_GndLhsAutomaton.hh (class ACU_GndLhsAutomaton): deleted data
+	members topSymbol and collapsePossible
+
+	* ACU_LhsAutomaton.hh (getSymbol): added
+	(getCollapsePossible): added
+
+	* ACU_CollectorLhsAutomaton.cc (collect): major simplification; we
+	no longer try to do sort check as we build, instead we use
+	argVecComputeBaseSort() afterwards; this can lose in the case that
+	we are not in an error free component (argVecComputeBaseSort() has
+	to look at each arg) and we are not reduced (didn't need to have
+	th exact base sort); but it simplifies things greatly
+	(ACU_CollectorLhsAutomaton): swich of sort checks for kind
+	variables
+
+2003-03-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (computeBaseSort): complete rewrite using
+	argVecComputeBaseSort(); this fixes a nasty bug where we assumed
+	that ACU_DagNodes with getNormalizationStatus() == ASSIGNMENT
+	could not be in the error sort - no longer true since we allowed
+	variables at the kind level
+
+	* ACU_DagNode.cc (argVecComputeBaseSort): unroll first iteration
+	of standand case loop to move initial case branch out of loop
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for
+	argVecComputeBaseSort()
+
+	* ACU_DagNode.cc (argVecComputeBaseSort): added
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): deleted decl for
+	makeDelete(); updated decl for treeComputeBaseSort()
+
+	* ACU_Symbol.cc (computeBaseSort): use new treeComputeBaseSort()
+	convention
+
+	* ACU_TreeDagNode.cc (treeComputeBaseSort): return index of
+	computed sort rather than calling setSortIndex()
+	(makeDelete): deleted
+
+	* ACU_CollectorLhsAutomaton.cc (collect): (tree version) use
+	treeComputeBaseSort(); don't use makeDelete(); use setSortIndex();
+	don't use repudiateSortInfo()
+
+	* ACU_Symbol.cc (computeBaseSort): use treeComputeBaseSort()
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): updated decls for
+	recComputeBaseSort() and treeComputeBaseSort()
+
+	* ACU_TreeDagNode.cc (computeBaseSort): computeMultBaseSort() ->
+	computeMultSortIndex(); computeBaseSort() -> computeSortIndex() (2
+	places)
+	(computeBaseSort): becomes recComputeBaseSort()
+	(computeBaseSort): treeComputeBaseSort()
+
+	* ACU_NonLinearLhsAutomaton.cc (treeMatch): computeMultBaseSort()
+	-> computeMultSortIndex() (2 places)
+
+	* ACU_Symbol.hh (computeBaseSort): renamed to computeSortIndex()
+	to avoid confusion
+	(computeMultBaseSort): renamed to computeMultSortIndex() for the
+	sake on consistancy
+
+	* ACU_TreeDagNode.cc (computeBaseSort): use new
+	computeMultBaseSort() calling convention
+
+	* ACU_NonLinearLhsAutomaton.cc (treeMatch): use new
+	computeMultBaseSort() calling convention (2 places)
+
+	* ACU_Symbol.hh (computeMultBaseSort): rewritten
+	(class ACU_Symbol): updated decl for computeMultBaseSort()
+
+2003-03-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.hh (class ACU_Term): updated decl for
+	tryToMakeAlienAlienLhsAutomaton()
+
+	* ACU_LhsCompiler0.cc (compileLhs2): use new alien-alien automata
+	convention
+	(tryToMakeAlienAlienLhsAutomaton): use new
+	ACU_AlienAlienLhsAutomaton() convention
+
+	* ACU_AlienAlienLhsAutomaton.cc (ACU_AlienAlienLhsAutomaton): call
+	ACU_LhsAutomaton()
+	(match): call ACU_LhsAutomation::match() instead of fullMatch()
+	(dump): call ACU_LhsAutomaton::dump() rather than
+	HeuristicLhsAutomaton::dump()
+
+	* ACU_AlienAlienLhsAutomaton.hh: derive from ACU_LhsAutomaton
+	rather than HeuristicLhsAutomaton; updated decl for ctor
+
+	* ACU_CollectorLhsAutomaton.cc (dump): call
+	ACU_LhsAutomaton::dump() rather than HeuristicLhsAutomaton::dump()
+
+	* ACU_LhsCompiler0.cc (tryToMakeCollectorLhsAutomaton): use new
+	ACU_GndLhsAutomaton() convention
+	(tryToMakeCollectorLhsAutomaton): use new ACU_VarLhsAutomaton()
+	convention
+	(tryToMakeCollectorLhsAutomaton): use new ACU_NGA_LhsAutomaton()
+	convention
+	(compileLhs2): use new compilation conventions for collector
+	automata
+
+	* ACU_NGA_LhsAutomaton.cc (ACU_NGA_LhsAutomaton): use new
+	ACU_CollectorLhsAutomaton() convention
+	(match): call ACU_LhsAutomation::match() instead of fullMatch() (3
+	places)
+
+	* ACU_NGA_LhsAutomaton.hh (class ACU_NGA_LhsAutomaton): updated
+	decl for ctor
+
+	* ACU_VarLhsAutomaton.cc (ACU_VarLhsAutomaton): use new
+	ACU_CollectorLhsAutomaton() convention
+	(match): call ACU_LhsAutomation::match() instead of fullMatch() (2
+	places)
+
+	* ACU_VarLhsAutomaton.hh (class ACU_VarLhsAutomaton): updated decl
+	for ctor
+
+	* ACU_GndLhsAutomaton.cc (ACU_GndLhsAutomaton): use new
+	ACU_CollectorLhsAutomaton() convention
+	(match): call ACU_LhsAutomation::match() instead of fullMatch()
+
+	* ACU_GndLhsAutomaton.hh (class ACU_GndLhsAutomaton): updated decl
+	for ctor
+
+	* ACU_CollectorLhsAutomaton.cc (ACU_CollectorLhsAutomaton): call
+	ACU_LhsAutomaton()
+
+	* ACU_CollectorLhsAutomaton.hh (class ACU_CollectorLhsAutomaton):
+	derive from ACU_LhsAutomaton rather than HeuristicLhsAutomaton;
+	updated decl for ctor
+
+2003-03-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler0.cc (compileLhs2): use new
+	ACU_NonLinearLhsAutomaton convention
+	(tryToMakeNonLinearLhsAutomaton): use new
+	ACU_NonLinearLhsAutomaton convention
+
+	* ACU_NonLinearLhsAutomaton.cc (ACU_NonLinearLhsAutomaton): call
+	ACU_LhsAutomaton()
+	(treeMatch): call ACU_LhsAutomaton::match() instead of fullMatch()
+	(match): call ACU_LhsAutomaton::match() instead of fullMatch()
+	(dump): call instead ACU_LhsAutomaton::dump() of
+	HeuristicLhsAutomaton::dump()
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	derive from ACU_LhsAutomaton rather than HeuristicLhsAutomaton
+	(class ACU_NonLinearLhsAutomaton): updated decl for ctor
+
+	* ACU_LhsCompiler1.cc (compileLhs3): don't return automaton
+
+	* ACU_Term.hh (class ACU_Term): updated decl for compileLhs3()
+
+	* ACU_LhsCompiler1.cc (compileLhs3): take ACU_LhsAutomaton rather
+	than creating it
+
+	* ACU_LhsCompiler0.cc (compileLhs2): create ACU_LhsAutomaton;
+	use new compileLhs3() convention
+
+	* ACU_LhsCompiler1.cc (compileLhs3): use new ACU_LhsAutomaton()
+	convention
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton): clear
+	uniqueCollapseAutomaton rather than setting it
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decl for
+	ctor; added decl for addUniqueCollapseAutomaton()
+	(addUniqueCollapseAutomaton): added
+
+2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_VarLhsAutomaton.cc: removed #pragma
+	(match): updated Assert()
+
+	* ACU_VarLhsAutomaton.hh: removed #pragma
+
+	* ACU_TreeDagNode.cc (computeBaseSort): updated Assert()
+	(treeToArgVec): updated Assert()
+
+	* ACU_TreeDagArgumentIterator.cc (argument): updated Assert()
+	(next): updated Assert()
+
+	* ACU_Term.cc: removed #pragma
+	(Term): updated Assert()
+	(normalizeAliensAndFlatten): updated Assert()
+	(compareArguments): updated Assert()s (both versions)
+	(insertAbstractionVariables): updated DebugAdvisoryCheck()
+
+	* ACU_Term.hh: removed #pragma
+
+	* ACU_Symbol.cc: removed #pragma
+	(makeDagNode): updated Assert()
+	(computeBaseSort): updated Assert()s
+	(normalizeAndComputeTrueSort): updated Assert()
+
+	* ACU_Symbol.hh: removed #pragma
+
+	* ACU_Subproblem.cc: removed #pragma
+
+	* ACU_Subproblem.hh: removed #pragma
+
+	* ACU_RhsAutomaton.cc: removed #pragma
+	(buildArguments): updated Assert()s
+
+	* ACU_RhsAutomaton.hh: removed #pragma
+
+	* ACU_NonLinearLhsAutomaton.cc: removed #pragma
+	(ACU_NonLinearLhsAutomaton): updated Assert()
+	(fillOutExtensionInfo): updated Assert()
+	(treeMatch): updated Assert()s
+	(match): updated Assert()s
+
+	* ACU_NonLinearLhsAutomaton.hh: removed #pragma
+
+	* ACU_NGA_LhsAutomaton.cc: removed #pragma
+	(match): updated Assert()
+
+	* ACU_NGA_LhsAutomaton.hh: removed #pragma
+
+	* ACU_MergeSort.cc (mergeSortAndUniquize): updated Assert()
+
+	* ACU_Matcher.cc (eliminateGroundedOutAliens): updated Assert()
+	(forcedLoneVariableCase): updated Assert()s
+	(match): updated Assert()s
+
+	* ACU_LhsCompiler3.cc (findGreedySequence): updated Assert()
+
+	* ACU_LhsCompiler2.cc (compileAliensOnlyCase): updated Assert()s
+	(findConstraintPropagationSequence): updated Assert()
+
+	* ACU_LhsCompiler1.cc (compileLhs3): updated Assert()
+
+	* ACU_LhsAutomaton.cc: removed #pragma
+	(complete): updated Assert()
+
+	* ACU_LhsAutomaton.hh: removed #pragma
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): updated Assert()s
+
+	* ACU_GndLhsAutomaton.cc: removed #pragma
+	(match): updated Assert()
+
+	* ACU_GndLhsAutomaton.hh: removed #pragma
+
+	* ACU_ExtensionInfo.cc (buildMatchedPortion): updated Assert()s
+	(convertToUnmatched): updated Assert()s
+
+	* ACU_ExtensionInfo.hh (useUnmatched): updated Assert()
+
+	* ACU_DagOperations.cc (findFirstOccurrence): updated Assert()
+	(findFirstPotentialMatch): updated Assert()
+	(binarySearch): updated Assert() (both versions)
+
+	* ACU_DagNormalization.cc (extensionNormalizeAtTop): updated Assert()
+
+	* ACU_DagNode.cc: removed #pragma
+	(compareArguments): updated Assert()s
+	(markArguments): updated Assert()
+	(copyWithReplacement): updated Assert()
+	(partialReplace): updated Assert()s
+	(partialConstruct): updated Assert()
+
+	* ACU_DagNode.hh: removed #pragma
+
+	* ACU_DagArgumentIterator.cc: removed #pragma
+	(argument): updated Assert()
+	(next): updated Assert()
+
+	* ACU_DagArgumentIterator.hh: removed #pragma
+
+	* ACU_CollectorLhsAutomaton.cc: removed #pragma
+	(collect): updated Assert()s
+
+	* ACU_CollectorLhsAutomaton.hh: removed #pragma
+
+	* ACU_CollapseMatcher.cc (uniqueCollapseMatch): updated Assert()s
+	(multiwayCollapseMatch): updated Assert()s
+
+	* ACU_ArgumentIterator.cc: removed #pragma
+	(argument): updated Assert()
+	(next): updated Assert()
+
+	* ACU_ArgumentIterator.hh: removed #pragma
+
+	* ACU_AlienAlienLhsAutomaton.cc: removed #pragma
+
+	* ACU_AlienAlienLhsAutomaton.hh: removed #pragma
+	
+===================================Maude79===========================================
+
+2003-02-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Flatten.cc (flattenSortAndUniquize): use fastCopy(); handle
+	ACU_TreeDagNode* case; don't bother trying to combine flattened in
+	argument list with current run
+	(flattenSortAndUniquize): can't use fastCopy() after all - need to
+	multiply by multiplicity
+	(flattenSortAndUniquize): removed optimize involving d+1 as it
+	fails due to strict iterator checking
+
+	* ACU_DagNormalization.cc (copyAndBinaryInsert): don't treat
+	nrSourceArgs > 1 as a special case
+	(extensionNormalizeAtTop): fixed longstanding performance bug
+	where we were copying an argArray rather than taking its reference
+	(extensionNormalizeAtTop): handle ACU_TreeDagNode* case
+
+2003-02-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Convert.cc (makeTree): don't use fast version of
+	ACU_RedBlackNode() since we don't have the maxMult value to hand
+
+2003-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Flatten.cc (flattenSortAndUniquize): moved here
+
+	* ACU_MergeSort.cc (mergeSortAndUniquize): moved here
+	(sortAndUniquize): moved here
+
+	* ACU_Convert.cc (makeTree): added optional code for checking
+	red-black property
+
+	* ACU_ExtensionInfo.cc (convertToUnmatched): reimplemented to
+	handle unmatched dag root case
+
+2003-02-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_ExtensionInfo.cc (copy): reimplemented to handle unmatched
+	dag root case
+	(makeClone): reimplemented to handle unmatched dag root case
+	(buildMatchedPortion): reimplemented to handle ACU_TreeDagNode
+	case
+
+	* ACU_DagNode.hh (class ACU_DagNode): deleted decl for
+	makeExtensionInfo()
+
+	* ACU_DagNode.cc (makeExtensionInfo): deleted
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): deleted decl for
+	makeExtensionInfo()
+
+	* ACU_TreeDagNode.cc (makeExtensionInfo): deleted
+
+	* ACU_BaseDagNode.hh (class ACU_BaseDagNode): added decl for
+	makeExtensionInfo()
+
+	* ACU_BaseDagNode.cc (makeExtensionInfo): added
+
+	* ACU_TreeDagNode.cc (partialConstruct): reimplemented without
+	using treeToArgVec()
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): deleted decls for
+	argVecToTree(), overwriteWithInsert() and makeTree()
+
+	* ACU_TreeDagNode.cc (argVecToTree): deleted
+	(pow2min1): deleted
+	(makeTree): deleted
+	(overwriteWithInsert): deleted
+
+	* ACU_NewNormalize.cc: deleted
+
+	* ACU_Normalize.cc (insertAlien): use makeTree() in place of
+	argVecToTree() (2 places)
+	(insertAlien): use consInsert() in place of overwriteWithInsert()
+	(normalizeAtTop): use makeTree() in place of argVecToTree()
+	(normalizeAtTop): removed alternative merge case code
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for makeTree()
+	(both versions) and pow2min1()
+
+	* ACU_Convert.cc: created
+
+	* ACU_Normalize.cc (insertAlien): use CONVERT_THRESHOLD
+	(insertAlien): fixed bug in alterate code when we fall below the
+	threshold
+
+	* ACU_DagNode.hh (class ACU_DagNode): added MERGE_THRESHOLD to
+	enum Sizes; THRESHOLD -> CONVERT_THRESHOLD
+
+	* ACU_Normalize.cc (normalizeAtTop): use MERGE_THRESHOLD
+
+2003-02-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Normalize.cc (normalizeAtTop): don't convert back to
+	re-black ofer merging two red-black trees
+
+	* ACU_NonLinearLhsAutomaton.cc (treeMatch):
+	setNormalizationStatus(ACU_DagNode::ASSIGNMENT) now that we are
+	extract hi mult arguments in order
+
+2003-02-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): added ctor decl for Pair
+	(Pair): added
+	(Pair): added default ctor
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	added data member matched
+
+	* ACU_NonLinearLhsAutomaton.cc (treeMatch): rewritten
+	(match): use treeMatch()
+
+2003-02-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	added decl for treeMatch()
+
+	* ACU_NonLinearLhsAutomaton.cc (treeMatch): added
+
+2003-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (partialReplace): simplified using new
+	ACU_Extension interface
+
+	* ACU_NonLinearLhsAutomaton.cc (match): use new ACU_Extension
+	interface
+
+	* ACU_ExtensionInfo.hh (clearMatched): deleted
+	(addMatched): deleted
+	(getMatched): deleted
+	(clear): set unmatched to 0 rather than clearing matched
+	(reset): set unmatched to 0 rather than clearing matched
+	(class ACU_ExtensionInfo): deleted data member matched; added data
+	member unmatched
+	(setUnmatched): added DagNode* version
+	(getUnmatched): added DagNode* version
+	(useUnmatched): use unmatched
+
+2003-02-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc: (complexStrategy): use new normalizeAtTop() (2
+	places)
+	(reduceArgumentsAndNormalize): use new normalizeAtTop()
+	(eqRewrite): use new normalizeAtTop()
+	(memoStrategy): use new normalizeAtTop() (3 places)
+	(normalizeAndComputeTrueSort): use new normalizeAtTop()
+
+	* ACU_DagNode.hh (class ACU_DagNode): added THRESHHOLD to enum Sizes
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): made ctor public
+
+	* ACU_Normalize.cc (normalizeAtTop): reimplemented
+	(insertAlien): added
+
+2003-02-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Normalize.cc: created
+
+	* ACU_DagNode.hh (fastCopy): moved here
+	(fastCopy): added ACU_FastIter version
+	(class ACU_DagNode): added decls for additional versions of fastMerge()
+
+	* ACU_FastMerge.cc: created
+
+	* ACU_TreeDagNode.cc (markArguments): rewritten to do a preorder
+	traversal, ignoring marked red-black nodes
+	(partialReplace): added replacement == matched arg heuristic
+
+2003-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NewNormalize.cc (normalizeAtTop): fixed stupid brace bug in
+	two red-black tree case
+
+	* ACU_NonLinearLhsAutomaton.cc (match): fixed bug where we weren't
+	dealing with the case that we matched everything
+
+	* ACU_TreeDagNode.cc (partialReplace): fixed bug where we were not
+	testing r->getMultiplicity() against 1
+
+	* ACU_NewNormalize.cc (normalizeAtTop): added code for two
+	red-black trees case
+
+	* ACU_Term.cc (analyseCollapses): becomes analyseCollapses2()
+
+	* ACU_Term.hh (class ACU_Term): analyseCollapses() ->
+	analyseCollapses2()
+
+	* ACU_TreeDagArgumentIterator.cc: moved here
+
+	* ACU_TreeDagArgumentIterator.hh: moved here
+
+	* ACU_TreeDagNode.cc: moved here
+
+	* ACU_TreeDagNode.hh: moved here
+
+	* ACU_Theory.hh: added fwd decls for ACU_TreeDagNode and
+	ACU_TreeDagArgumentIterator
+
+2003-01-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_CollectorLhsAutomaton.cc (collect): ACU_SlowIter ->
+	ACU_Stack
+
+	* ACU_CollectorLhsAutomaton.hh (class ACU_CollectorLhsAutomaton):
+	ACU_SlowIter -> ACU_Stack
+
+	* ACU_NGA_LhsAutomaton.cc (match): use
+	ACU_RedBlackNode::findFirstPotentialMatch rather than
+	ACU_TreeDagNode::findFirstPotentialMatch
+
+2003-01-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_VarLhsAutomaton.cc (match): getArgument() -> getDagNode()
+
+	* ACU_Term.cc (compareArguments): getArgument() -> getDagNode()
+
+	* ACU_NonLinearLhsAutomaton.cc (match): getArgument() ->
+	getDagNode()
+
+	* ACU_NGA_LhsAutomaton.cc (match): getArgument() -> getDagNode()
+	(2 places)
+
+	* ACU_DagNode.cc (compareArguments): getArgument() -> getDagNode()
+
+2003-01-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_ExtensionInfo.hh (class ACU_ExtensionInfo): added decl for
+	convertToUnmatched()
+
+	* ACU_ExtensionInfo.cc (convertToUnmatched): added
+
+	* ACU_ExtensionInfo.hh (useUnmatched): added
+
+	* ACU_NewNormalize.cc (normalizeAtTop): use isTree() (2 places)
+
+	* ACU_DagNode.cc (getACU_DagNode): use isTree()
+
+	* ACU_NonLinearLhsAutomaton.cc (match): added red-black case
+
+2003-01-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_VarLhsAutomaton.cc (match): added red-black case
+
+	* ACU_GndLhsAutomaton.cc (match): added red-black case
+
+	* ACU_NGA_LhsAutomaton.cc (match): fixed if nesting bug; it hadn't
+	bitten because collect() seldom return false;
+
+	* ACU_Symbol.cc (eqRewrite): use isTree()
+
+	* ACU_NGA_LhsAutomaton.cc (match): use isTree()
+
+	* ACU_ExtensionInfo.hh (clear): use getSize()
+	(reset): use getSize()
+	(clearMatched): added
+
+	* ACU_BaseDagNode.cc: created
+
+	* ACU_ExtensionInfo.hh (ACU_ExtensionInfo): take ACU_BaseDagNode*
+	(class ACU_ExtensionInfo): added struct Matched and data member
+	matched
+
+2003-01-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (compareArguments): rewritten to use left to
+	right comparison and handle ACU_TreeDagNodes
+
+	* ACU_Term.cc (compareArguments): (DagNode* version) rewritten to
+	use left to right comparison and handle ACU_TreeDagNodes
+	(compareArguments): (Term*) rewritten to use iterators and left to
+	right comparison
+
+2003-01-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_BaseDagNode.hh (isTree): added
+
+2003-01-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (eqRewrite): fixed casting bug in tree case
+
+2003-01-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (computeBaseSort): added
+	(computeMultBaseSort): added
+
+	* ACU_ExtensionInfo.hh (ACU_ExtensionInfo): added ACU_TreeDagNode*
+	version
+
+	* ACU_Symbol.cc (eqRewrite): handle TREE case
+
+	* ACU_CollectorLhsAutomaton.cc (collect): added ACU_TreeDagNode*
+	version
+
+2003-01-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NGA_LhsAutomaton.cc (match): added support for
+	ACU_TreeDagNodes
+
+	* ACU_CollectorLhsAutomaton.hh (class ACU_CollectorLhsAutomaton):
+	added decl for ACU_TreeDagNode* version of collect
+
+2003-01-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (eqRewrite): rewritten to use new normalizeAtTop()
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for new version
+	of normalizeAtTop()
+
+	* ACU_NewNormalize.cc: created
+
+	* ACU_DagNode.cc (getACU_DagNode): made into a global function
+
+	* ACU_DagNode.hh (class ACU_DagNode): made getACU_DagNode() a
+	friend function rather than a static member function
+
+	* ACU_VarLhsAutomaton.cc (match): used getACU_DagNode()
+
+	* ACU_Term.cc (compareArguments): used getACU_DagNode() +
+	const_cast<DagNode*>()
+
+	* ACU_Subproblem.cc (solveVariables): used getACU_DagNode()
+
+	* ACU_NonLinearLhsAutomaton.cc (match): used getACU_DagNode()
+
+	* ACU_NGA_LhsAutomaton.cc (match): used getACU_DagNode()
+
+	* ACU_Matcher.cc (match): used getACU_DagNode()
+
+	* ACU_GndLhsAutomaton.cc (match): used getACU_DagNode()
+
+	* ACU_AlienAlienLhsAutomaton.cc (match): used getACU_DagNode()
+
+	* ACU_Term.hh (symbol): replaced static_cast<ACU_Symbol>() with
+	safeCast() 
+
+	* ACU_Symbol.cc (ruleRewrite): used getACU_DagNode()
+	(reduceArgumentsAndNormalize): used getACU_DagNode()
+	(eqRewrite): used getACU_DagNode()
+	(complexStrategy): used getACU_DagNode()
+	(memoStrategy): used getACU_DagNode()
+	(computeBaseSort): used getACU_DagNode()
+	(normalizeAndComputeTrueSort): used getACU_DagNode()
+	(stackArguments): used getACU_DagNode()
+
+	* ACU_DagNormalization.cc (flattenSortAndUniquize): used
+	getACU_DagNode()
+	(normalizeAtTop): used getACU_DagNode() in many places
+	(extensionNormalizeAtTop): used getACU_DagNode()
+
+	* ACU_DagOperations.cc (eliminateSubject): use getACU_DagNode()
+	rather than static_cast<ACU_DagNode*>
+
+	* ACU_DagNode.cc (compareArguments): handle TREE case
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for
+	getACU_DagNode()
+
+	* ACU_DagNode.cc (getACU_DagNode): added
+
+2003-01-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (eqRewrite): added crude hack to see if we can
+	convert to re-black form and back
+
+	* ACU_DagNode.hh (class ACU_DagNode): made ACU_TreeDagNode a friend
+
+	* ACU_Theory.hh: added ACU_BaseDagNode;
+
+	* ACU_DagNode.cc (~ACU_DagNode): deleted
+
+	* ACU_DagNode.hh (class ACU_DagNode): rewritten, deriving from
+	ACU_BaseDagNode
+
+	* ACU_BaseDagNode.hh: created
+
+2003-01-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler0.cc (tryToMakeCollectorLhsAutomaton): use new
+	ACU_NGA_LhsAutomaton() convention
+
+	* ACU_NGA_LhsAutomaton.cc (ACU_NGA_LhsAutomaton): replaced
+	stripperTopSymbol with stripperTerm
+	(match): rewritten using stripperTerm
+	(dump): sump stripperTerm
+
+	* ACU_NGA_LhsAutomaton.hh (class ACU_NGA_LhsAutomaton): replaced
+	stripperTopSymbol with stripperTerm
+	(class ACU_NGA_LhsAutomaton): updated decl for
+	ACU_NGA_LhsAutomaton()
+
+	* ACU_GreedyMatcher.cc (greedyMatch): use partialCompare() and
+	findFirstPotentialMatch()
+
+	* ACU_Matcher.cc (eliminateGroundedOutAliens): use
+	partialCompare() and findFirstPotentialMatch()
+	(aliensOnlyMatch): use partialCompare() and
+	findFirstPotentialMatch()
+	(buildBipartiteGraph): use partialCompare() and
+	findFirstPotentialMatch()
+
+	* ACU_LhsAutomaton.cc (addGroundedOutAlien): assign to term rather
+	than topSymbol
+	(addNonGroundAlien): assign to term rather than topSymbol
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): term replaces
+	topSymbol in struct NonGroundAlien
+
+	* ACU_DagOperations.cc (findFirstPotentialMatch): added
+
+===================================Maude78==================================================
+
+2003-01-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.hh (class ACU_Term): updated decl for
+	tryToMakeCollectorLhsAutomaton()
+
+	* ACU_LhsCompiler0.cc (compileLhs2): use new
+	tryToMakeCollectorLhsAutomaton() calling convention
+	(tryToMakeCollectorLhsAutomaton): Allow collector variable to
+	occur in context and/or condition as long as stripper is a ground
+	term and we have no extension. This is ok because the ground term
+	must strip exactly one occurence of itself from subject with the
+	rest of the subject providing a unique binding for the collector
+
+2002-12-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_CollectorLhsAutomaton.cc (collect): optimized no sort check
+	case
+	(collect): optimized sort check case
+
+2002-12-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagOperations.cc (binarySearch): (Term* version): use
+	setOnLs(), setOnGeq()
+
+2002-12-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decl for
+	handleElementVariables()
+
+	* ACU_Matcher.cc (handleElementVariables): added
+	(fullMatch): use handleElementVariables()
+	(buildBipartiteGraph): don't handle element variables here
+
+	* ACU_DagNormalization.cc (copyAndBinaryInsert): rewritten using
+	resizeWithoutPreservation()
+	(fastMerge): rewritten using resizeWithoutPreservation()
+
+2002-12-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNormalization.cc (copyAndBinaryInsert): use fastCopy() in
+	place of STL copy() (3 places)
+	(fastMerge): use use fastCopy() in place of STL copy() (2 places)
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for fastCopy()
+
+	* ACU_DagNormalization.cc (fastCopy): added
+
+	* ACU_DagNode.cc (markArguments): rewritten to avoid seperate
+	iteration count
+
+2002-11-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): added decl for
+	noVariableCase(); updated decl for oneVariableCase()
+
+	* ACU_Subproblem.cc (noVariableCase): added
+	(oneVariableCase): generalized to handle the case where there may
+	be multiple varibales but only one is unbound
+	(extractDiophantineSystem): rewritten to handle a number of
+	special cases efficiently
+
+	* ACU_Matcher.cc (buildBipartiteGraph): use new addEdge() calling
+	convention
+	(buildBipartiteGraph): use new addEdge() calling convention
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): updated decl for
+	addEdge()
+
+	* ACU_Subproblem.cc (addEdge): take difference rather than global
+	and local bindings
+
+2002-11-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Matcher.cc (buildBipartiteGraph): fixed bug we introduced by
+	checking for matchable outside of the right scope
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): updated decl for
+	addPatternNode()
+
+	* ACU_Subproblem.cc (addPatternNode): return index to created
+	pattern node
+
+	* ACU_Matcher.cc (buildBipartiteGraph): treat unbound variables
+	that take exactly one subject as non-ground aliens
+	(fullMatch): don't treat unbound variables that take exactly one
+	subject as top variables
+
+2002-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (matchVariableWithExtension): now check & use
+	sort bound
+
+2002-11-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Subproblem.cc (oneVariableCase): partly optimized using
+	iterators
+
+	* ACU_DagNormalization.cc (copyAndBinaryInsert): rewritten using
+	iterators and copy() algorithm template
+	(copyAndBinaryInsert): put back missing expandBy()
+	(fastMerge):rewritten using iterators and copy() algorithm
+	template
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	updated decl for fillOutExtensionInfo()
+
+	* ACU_NonLinearLhsAutomaton.cc (match): rewritten using iterators
+	to replace CONST_ARG_VEC_HACK()
+	(fillOutExtensionInfo): pass chosen as a const
+	ArgVec<ACU_DagNode::Pair>::const_iterator
+	(match): new fillOutExtensionInfo() calling convention
+
+2002-11-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagOperations.cc (findFirstOccurrence): replaced
+	CONST_ARG_VEC_HACK() with const_iterator 
+	(binarySearch): (both versions) replaced CONST_ARG_VEC_HACK() with
+	const_iterator
+
+	* ACU_Matcher.cc (multiplicityChecks): rewritten using
+	const_iterator in place of CONST_ARG_VEC_HACK()
+
+	* ACU_NonLinearLhsAutomaton.cc (fillOutExtensionInfo): rewritten
+	using const_iterator in place of CONST_ARG_VEC_HACK()
+
+	* ACU_DagNode.cc (compareArguments): need to iterate backwards for
+	consistancy
+
+	* ACU_RhsAutomaton.cc (buildArguments): rewritten using iterator
+	in place of ARG_VEC_HACK()
+
+	* ACU_DagNode.cc (compareArguments): rewritten using
+	iterators in place of CONST_ARG_VEC_HACK()s
+	(partialReplace): rewritten using
+	CONST_ARG_VEC_HACK()/ARG_VEC_HACK()
+
+	* ACU_CollectorLhsAutomaton.cc (collect): rewritten using
+	itterators in place of CONST_ARG_VEC_HACK()/ARG_VEC_HACK()
+	
+===================================Maude77==================================================
+
+2002-11-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Subproblem.cc (solveVariables):
+	DagNode::okToCollectGarbage() -> MemoryCell::okToCollectGarbage()
+
+2002-11-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Subproblem.cc (oneVariableCase): try using set() rather
+	than Pair(); on sparc this saves 1 ld instruction in loop - wins
+	under quantify but loses in actual run - must be a sparc
+	scheduling problem
+
+	* ACU_DagNode.hh (Pair): deleted as it loses
+	(set): added
+
+	* ACU_Subproblem.cc (oneVariableCase): use ACU_DagNode::Pair() to
+	see if enables g++ to generate better code
+
+	* ACU_DagNode.hh (Pair): added
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): added decl for
+	oneVariableCase() and updated decl for extractDiophantineSystem()
+
+	* ACU_Subproblem.cc (oneVariableCase): added
+	(extractDiophantineSystem): use oneVariableCase(); take
+	RewritingContext& since we need to pass it to oneVariableCase()
+
+2002-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Subproblem.cc (extractDiophantineSystem): deleted
+	excessively cute trivial case code; if we have no subjects but can
+	succeed by binding unbound variables to the identity, do the
+	binding here rather than in solveVariables()
+	(solveVariables): don't do identity binding in null system case;
+	code reorganized to share unbinding loop
+	(extractDiophantineSystem): use clear()
+
+	* ACU_Matcher.cc (multiplicityChecks): replaced VECTOR_HACK() with
+	Vector<int>::iterator
+
+	* ACU_RhsAutomaton.cc (buildArguments): replaced
+	CONST_VECTOR_HACK() with Vector<Argument>::const_iterator
+
+2002-10-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler0.cc (compileLhs2): added DebugAdvisory() for
+	when we fail to produce heuristic ACU automaton
+
+2002-10-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): postInterSymbolPass() ->
+	postOpDeclarationPass()
+
+	* ACU_Symbol.cc (postInterSymbolPass): becomes
+	postOpDeclarationPass() since sort tables arem't computed at
+	postInterSymbolPass time
+
+2002-10-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (copyWithReplacement): complex version: rewritten
+	to fix a serious bug where we were relying on unstackable flags to
+	figure out when args had been stacked and needed
+	replacement. Since unstackable flags can be set after stacking
+	this approach fails badly, corrupting the dag node
+
+2002-10-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for the more
+	complex copyWithReplacement()
+
+	* ACU_DagNode.cc (copyWithReplacement): rewritten to handle
+	situation where only some args are stacked.
+
+	* ACU_Symbol.cc (stackArguments): we no longer stack all
+	arguments; if we have frozen arguments we don't stack anything;
+	otherwise we stack only those arguments that have not been flagged
+	as unstackable
+
+2002-10-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for
+	stackArguments()
+
+	* ACU_DagNode.cc (stackArguments): handle respectFrozen argument
+	
+===================================Maude76==================================================
+
+2002-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.cc (compileRhs2): added code to flag last use of each
+	source
+
+2002-07-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler3.cc (findLongestIncreasingSequence): same as
+	below
+
+	* ACU_LhsCompiler0.cc (tryToMakeAlienAlienLhsAutomaton): pass
+	sameVariableSet = true to calls of subsumes() since both subterms
+	are from the same pattern
+	
+===================================Maude74==================================================
+
+2002-05-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for multiplicities
+	version of makeDagNode()
+
+	* ACU_Symbol.cc (makeDagNode): added multiplicities version; this
+	is so that derived symbol classes can build new AC_DagNodes from
+	old ones with reasonable efficiency
+
+2002-05-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for
+	reduceArgumentsAndNormalize()
+	(class ACU_Symbol): added defaults for strategy and memo args
+
+	* ACU_Symbol.cc (reduceArgumentsAndNormalize): added; this is a
+	special purpose function the all ACU builtin symbols to get an ACU
+	dag in normal form
+	
+===================================Maude72==================================================
+
+2002-03-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.cc: deleted explicit template instantiation
+
+	* ACU_Subproblem.cc: deleted explicit template instantiation
+
+	* ACU_RhsAutomaton.cc: deleted explicit template instantiation
+
+	* ACU_DagNode.cc: deleted explicit template instantiation
+
+	* ACU_LhsAutomaton.cc: deleted explicit template instantiations
+	
+===================================Maude71==================================================
+
+2001-12-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): made class
+	ACU_DagArgumentIterator a friend
+
+	* ACU_Term.hh (class ACU_Term): made class ACU_ArgumentIterator a
+	friend
+	
+===================================Maude69==================================================
+
+2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for
+	Vector<RedexPosition> version of copyWithReplacement()
+
+	* ACU_DagNode.cc (copyWithReplacement): added
+	(Vector<RedexPosition> version)
+	
+===================================Engine66==================================================
+
+2001-03-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for
+	stackArguments()
+
+	* ACU_Symbol.cc (stackArguments): added
+	
+===================================Engine65==================================================
+
+2001-01-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for
+	markArguments() and made it private
+
+	* ACU_DagNode.cc (markArguments): rewritten with new semantics
+	
+===================================Engine64==================================================
+
+2000-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (matchVariableWithExtension): don't pass
+	inErrorSort arg to ACU_Subproblem()
+
+	* ACU_Subproblem.cc (ACU_Subproblem): no longer take inErrorSort
+	arg
+	(dump): don't dump inErrorSort data member
+	(solveVariables): don't test inErrorSort (2 places)
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): ctor decl no longer
+	has inErrorSort flag
+	(class ACU_Subproblem): deleted data member inErrorSort
+
+	* ACU_Matcher.cc (buildBipartiteGraph): don't pass inErrorSort
+	flag to ACU_Subproblem()
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton): don't take inErrorSort
+	arg
+	(dump): don't dump inErrorSort data member
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): deleted data
+	member inErrorSort
+	(class ACU_LhsAutomaton): updared ctor decl
+
+	* ACU_LhsCompiler1.cc (compileLhs3): no longer care if pattern is
+	in error sort; don't pass inErrorSort flags to ACU_LhsAutomaton()
+
+	* ACU_LhsCompiler0.cc (compileLhs2): no longer care if pattern is
+	in error sort
+	(tryToMakeNonLinearLhsAutomaton): no longer care if pattern is
+	in error sort
+
+	* ACU_Symbol.cc (complexStrategy): greatly simplified now that we
+	no longer treat last strategy zero specially when term is in the
+	error sort
+	(memoStrategy): ditto
+
+	* ACU_DagNode.hh (class ACU_DagNode): assumption "our sort 
+	(which may not be known) is not the error sort." for the
+	ASSIGNMENT case is no longer true
+
+2000-07-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (computeBaseSort): don't handle union sorts
+	
+===================================Engine61==================================================
+
+2000-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_RhsAutomaton.cc (remapIndices): added
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): added decl for
+	remapIndices()
+
+2000-07-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler1.cc (compileLhs3): use
+	getNrProtectedVariables() instead of nrVariables()
+
+	* ACU_LhsCompiler0.cc (tryToMakeAlienAlienLhsAutomaton): use
+	getNrProtectedVariables() instead of nrVariables()
+	(tryToMakeCollectorLhsAutomaton): use getNrProtectedVariables()
+	instead of nrVariables()
+
+	* ACU_Term.cc (insertAbstractionVariables): use
+	makeProtectedVariable() instead of makeAbstractionVariable()
+	(compileRhs2): use makeConstructionIndex() instead of
+	allocateIndex()
+
+2000-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.cc (findAvailableTerms): don't insert ground terms into
+	availableTerms since we can't do left->right sharing on them
+
+	* ACU_LhsAutomaton.cc (dump): cast Bool member before print so
+	they don't print out as chars
+
+	* ACU_RhsAutomaton.cc (construct): don't call buildAliens()
+	(replace): don't call buildAliens()
+	(dump): don't call RhsAutomaton::dump()
+
+	* ACU_Term.hh (class ACU_Term): deleted decl for compileRhs()
+
+	* ACU_Term.cc (compileRhs): deleted
+	
+===================================Engine60==================================================
+
+2000-07-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler0.cc (tryToMakeNonLinearLhsAutomaton): use
+	getConditionVariables() 
+	(tryToMakeCollectorLhsAutomaton): use getConditionVariables()
+
+	* ACU_LhsCompiler1.cc (compileLhs3): use getConditionVariables()
+
+2000-07-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.cc (compileRhs2): call addRhsAutomaton()
+
+2000-07-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.cc (findAvailableTerms): added
+	(compileRhs2): added
+
+	* ACU_Term.hh (class ACU_Term): added declarations for
+	findAvailableTerms() and compileRhs2()
+	
+===================================Engine59==================================================
+
+	
+2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler0.cc (compileLhs2): call to compileLhs2() becomes
+	call to compileLhs3()
+
+	* ACU_LhsCompiler1.cc (compileLhs2): becomes compileLhs3()
+
+	* ACU_Term.hh (class ACU_Term): old compileLhs2() -> compileLhs3() 
+
+	* ACU_LhsCompiler0.cc (compileLhs): becomes compileLhs2()
+
+	* ACU_Term.hh (class ACU_Term): compileLhs() -> compileLhs2()
+
+2000-06-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.cc (compileRhs): modifiedIndex() -> getModifiedIndex()
+
+	* ACU_VarLhsAutomaton.cc (ACU_VarLhsAutomaton): index() ->
+	getIndex()
+	(ACU_VarLhsAutomaton): lookupSort() -> getSort()
+
+	* ACU_LhsCompiler1.cc (analyseConstraintPropagation): index() ->
+	getIndex()
+	(compileLhs2): index() -> getIndex()
+
+	* ACU_LhsCompiler0.cc (tryToMakeCollectorLhsAutomaton): index() ->
+	getIndex()
+	(tryToMakeNonLinearLhsAutomaton): index() -> getIndex()
+	(tryToMakeNonLinearLhsAutomaton): lookupSort() -> getSort()
+	(tryToMakeCollectorLhsAutomaton): lookupSort() -> getSort()
+
+	* ACU_LhsAutomaton.cc (addTopVariable): lookupSort() -> getSort()
+	(addTopVariable): index() -> getIndex()
+
+	* ACU_CollectorLhsAutomaton.cc (ACU_CollectorLhsAutomaton):
+	index() -> getIndex()
+	(ACU_CollectorLhsAutomaton): lookupSort() -> getSort()
+	
+===================================Engine58==================================================
+
+2000-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_VarLhsAutomaton.hh (class ACU_VarLhsAutomaton): use
+	NO_COPYING() macro; ifdef'd dump() decl
+
+	* ACU_Term.cc (dump): ifdef'd
+
+	* ACU_Term.hh (class ACU_Term): use NO_COPYING() macro; ifdef'd
+	dump() decl
+
+	* ACU_Subproblem.cc (dump): ifdef'd
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): use NO_COPYING()
+	macro; ifdef'd dump() decl
+
+	* ACU_RhsAutomaton.cc (dump): ifdef'd
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): use NO_COPYING()
+	macro; ifdef'd dump() decl
+
+	* ACU_NonLinearLhsAutomaton.cc (dump): ifdef'd
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	use NO_COPYING() macro; ifdef'd dump() decl
+
+	* ACU_NGA_LhsAutomaton.cc (dump): ifdef'd
+
+	* ACU_NGA_LhsAutomaton.hh (class ACU_NGA_LhsAutomaton): use
+	NO_COPYING() macro; ifdef'd dump() decl
+
+	* ACU_LhsAutomaton.cc (dump): ifdef'd
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): use NO_COPYING()
+	macro; ifdef'd dump() decl
+
+	* ACU_GndLhsAutomaton.cc (dump): ifdef'd
+
+	* ACU_GndLhsAutomaton.hh (class ACU_GndLhsAutomaton): use
+	NO_COPYING() macro; ifdef'd dump() decl 
+
+	* ACU_CollectorLhsAutomaton.cc (dump): ifdef'd
+
+	* ACU_CollectorLhsAutomaton.hh (class ACU_CollectorLhsAutomaton):
+	use NO_COPYING() macro; ifdef'd dump() decl
+
+	* ACU_AlienAlienLhsAutomaton.cc (dump): ifdef'd
+
+	* ACU_AlienAlienLhsAutomaton.hh (class
+	ACU_AlienAlienLhsAutomaton): use NO_COPYING() macro; ifdef'd
+	dump() decl
+
+	* ACU_Symbol.cc (complexStrategy): AdvisoryCheck() -> IssueAdvisory()
+	(memoStrategy): AdvisoryCheck() -> IssueAdvisory()
+
+2000-03-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NonLinearLhsAutomaton.cc (match): fixed nasty bug:
+	if (nrArgs == 1 || args[0].multiplicity == fastMult) should be
+	if (nrArgs == 1 && args[0].multiplicity == fastMult)
+	
+===================================Engine56==================================================
+
+2000-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Subproblem.cc (solveVariables): allow collection of garbage
+	in fail case to avoid build up of failed solutions
+	
+===================================Engine54==================================================
+
+1999-11-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for memoStrategy()
+
+	* ACU_Symbol.cc (memoStrategy): added
+	(complexStrategy): simplified using revised MemoTable
+	(memoStrategy): simplified using revised MemoTable
+
+1999-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (eqRewrite): use standardStrategy()
+
+1999-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (ACU_Symbol): use new AssociativeSymbol
+	conventions
+	
+===================================Engine53==================================================
+
+1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler1.cc (analyseConstraintPropagation):
+	VariableTerm::dynamicCast() -> dynamic_cast<VariableTerm*>()
+	(compileLhs2): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+
+	* ACU_LhsCompiler0.cc (tryToMakeNonLinearLhsAutomaton):
+	VariableTerm::dynamicCast() -> dynamic_cast<VariableTerm*>()
+	(tryToMakeCollectorLhsAutomaton): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>() (*2)
+
+	* ACU_Term.cc (compileRhs): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+	(insertAbstractionVariables): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+
+	* ACU_Symbol.cc (ACU_Symbol): added memoFlag arg
+
+	* ACU_Symbol.hh (class ACU_Symbol): added memoFlag arg to ctor
+	decl
+
+1999-10-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (getHashValue): added
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for
+	getHashValue()
+	
+===================================Engine52==================================================
+
+1999-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): decl for
+	topVariableCompare() replaced by decl for topVariableLt()
+
+	* ACU_LhsAutomaton.cc (complete): use STL sort function
+	(topVariableCompare): becomes topVariableLt()
+
+	* ACU_Term.hh (class ACU_Term): decl for pairCompare() replaced by
+	decl for pairLt()
+
+	* ACU_Term.cc (normalize): use STL sort function
+	(pairCompare): becomes pairLt()
+
+1999-06-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for complexStrategy()
+
+	* ACU_Symbol.cc (complexStrategy): added, taking guts from eqRewrite()
+	(eqRewrite): rewritten using complexStrategy()
+
+	* ACU_NonLinearLhsAutomaton.cc (match): CONST_ARG_VEC_HACK
+	(fillOutExtensionInfo): CONST_ARG_VEC_HACK
+	(match): fastMult hack - register copy of multiplicity to avoid
+	reloading after writes to memory
+
+	* ACU_VarLhsAutomaton.cc (match): very minor optimization using
+	temporary to hold pointer to (potentially) stripped term
+
+	* ACU_DagOperations.cc (eliminateSubject): updated calling
+	convention for binarySearch() (2 places)
+	(eliminateArgument): updated calling convention for binarySearch()
+
+	* ACU_DagNormalization.cc (copyAndBinaryInsert): updated calling
+	convention for binarySearch()
+	(binaryInsert): updated calling convention for binarySearch()
+
+	* ACU_GndLhsAutomaton.cc (match): updated calling convention for
+	binarySearch()
+
+	* ACU_NGA_LhsAutomaton.cc (match): updated calling
+	convention for findFirstOccurrence()
+
+	* ACU_Matcher.cc (eliminateGroundedOutAliens): updated calling
+	convention for findFirstOccurrence()
+	(aliensOnlyMatch): updated calling convention for
+	findFirstOccurrence()
+	(buildBipartiteGraph): updated calling convention for
+	findFirstOccurrence()
+	(eliminateGroundAliens): updated calling convention for
+	binarySearch()
+
+	* ACU_GreedyMatcher.cc (greedyMatch): updated calling convention
+	for findFirstOccurrence()
+
+	* ACU_AlienAlienLhsAutomaton.cc (match): updated calling convention
+	for findFirstOccurrence() (2 places)
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decls for
+	findFirstOccurrence() and binarySearch (both versions)
+
+	* ACU_DagOperations.cc (findFirstOccurrence): made into member
+	function; use CONST_ARG_VEC_HACK()
+	(binarySearch): (both versions): made into member function; use
+	CONST_ARG_VEC_HACK()
+
+1999-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_CollectorLhsAutomaton.cc (collect): simplified the case
+	where there's only one unstripped arg and no new ACU_DagNode is
+	needed
+	(collect): loses so try another rearrangement
+	(collect): yet another rearrangement
+	(collect): 4th attempt
+	(collect): 5th attempt
+
+1999-06-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNormalization.cc (fastMerge): take ACU_DagNode*
+	rather than ArgVec<Pair>& for both args
+	(normalizeAtTop): updated calling convention for fastMerge()
+	(flattenSortAndUniquize): fixed bug that we introduced, since we
+	were originally calling mergeSortAndUniquize() on newArray rather
+	than argArray; now swap them before the call.
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated
+	copyAndBinaryInsert() decl
+
+	* ACU_DagNormalization.cc (copyAndBinaryInsert): take ACU_DagNode*
+	rather than ArgVec<Pair>& as 1st arg
+	(normalizeAtTop): pass ACU_DagNode* rather than ArgVec<Pair> to
+	copyAndBinaryInsert() (2 places)
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for
+	mergeSortAndUniquize()
+
+	* ACU_DagNormalization.cc (mergeSortAndUniquize): get rid of
+	runs arg and use runsBuffer directly
+	(sortAndUniquize): don't pass runsBuffer to mergeSortAndUniquize()
+	(flattenSortAndUniquize): don't pass runsBuffer to
+	mergeSortAndUniquize()
+	(extensionNormalizeAtTop): don't pass runsBuffer to
+	mergeSortAndUniquize()
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for
+	mergeSortAndUniquize(), no longer static
+
+	* ACU_DagNormalization.cc (mergeSortAndUniquize): removed argArray
+	arg; now going to be a member function
+	(sortAndUniquize): call mergeSortAndUniquize() like a member
+	function
+	(flattenSortAndUniquize): call mergeSortAndUniquize() like a member
+	function
+	(extensionNormalizeAtTop): call mergeSortAndUniquize() like a member
+	function
+
+1999-06-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): update decl for binaryInsert()
+
+	* ACU_DagNormalization.cc (binaryInsert): moved here as it its
+	only used for normalization
+	(binaryInsert): first arg deleted; made non-static
+	(extensionNormalizeAtTop): use new binaryInsert() calling convention
+
+	* ACU_DagNode.cc (partialReplace): added ARG_VEC_HACK
+	(partialReplace): changed for() loop into do-while loop
+
+	* ACU_CollectorLhsAutomaton.cc (collect): replaced SPEED_HACK with
+	CONST_ARG_VEC_HACK and ARG_VEC_HACK for cleaness
+
+	* ACU_DagNode.cc (compareArguments): replaced SPEED_HACK with
+	CONST_ARG_VEC_HACKs for cleaness
+	(markArguments): replaced SPEED_HACK with CONST_ARG_VEC_HACK for
+	cleaness
+	(markArguments): converted for() loop into do-while since we
+	always have at least 1 arg
+
+	* ACU_Matcher.cc (multiplicityChecks): replaced SPEED_HACKs with
+	CONST_ARG_VEC_HACK and VECTOR_HACK for cleaness
+
+	* ACU_RhsAutomaton.cc (buildArguments): replaced SPEED_HACK with
+	ARG_VEC_HACK and CONST_VECTOR_HACK for cleaness
+
+	* ACU_DagNormalization.cc (fastMerge): add heursitic to try and
+	avoid full merge
+	(fastMerge): removed previous heursitic as it seems to lose on
+	average
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for fastMerge()
+
+	* ACU_DagNormalization.cc (fastMerge): added
+	(normalizeAtTop): call fastMerge()
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decls for
+	binarySearch() (both versions) and copyAndBinaryInsert()
+
+	* ACU_DagNormalization.cc (copyAndBinaryInsert): use ARG_VEC_HACKs
+
+	* ACU_DagOperations.cc (binarySearch): (both versions) made first
+	arg const
+
+	* ACU_DagNormalization.cc (normalizeAtTop): fix bug where we were
+	using copyAndBinaryInsert() even when the arg to be flattened in
+	had arity > 1
+	(copyAndBinaryInsert): make first arg const
+
+1999-05-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNormalization.cc (copyAndBinaryInsert): fixed bug; we
+	were searching in argArray rarther than source
+	(normalizeAtTop): rearranged if statements to favor common cases
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for copyAndBinaryInsert()
+
+	* ACU_DagNormalization.cc (fastNormalizeAtTop): added
+	(copyAndBinaryInsert): added
+	(flattenSortAndUniquize): no longer local inline
+	(sortAndUniquize): no longer local inline
+	(normalizeAtTop): incorporate fastNormalizeAtTop()
+	(fastNormalizeAtTop): deleted
+
+1999-05-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (markArguments): added SPEED_HACK
+
+	* ACU_AlienAlienLhsAutomaton.cc: find first occurence of second
+	symbol before entering outermost loop
+
+	* ACU_CollectorLhsAutomaton.cc (ACU_CollectorLhsAutomaton): set
+	noSortChecks flag if the collector variable has a sort that is the
+	unique maximal sort in an error free component
+	(ACU_CollectorLhsAutomaton): indicate "sort checks off" by setting
+	collectorSort to 0
+	(collect): handle "sort checks off" in the 3 cases with superfast
+	loops in the main case
+	(dump): handle "sort checks off"
+
+1999-05-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (makeClone): copy theory byte
+	(overwriteWithClone): copy theory byte
+
+1999-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): computeTrueSort() ->
+	normalizeAndComputeTrueSort()
+
+	* ACU_Symbol.cc (computeTrueSort): become
+	normalizeAndComputeTrueSort()
+	(normalizeAndComputeTrueSort): use fastComputeTrueSort()
+
+1999-05-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_RhsAutomaton.cc (buildArguments): made local_inline
+	(buildArguments): added SPEED_HACK
+
+===================================Engine49==================================================
+
+1999-04-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* Unmade previous chnage in all files due to huge number of
+	functions that should have been in-lined but weren't (ans not
+	reported either!) length(), expandTo(), contractTo()
+
+1999-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Subproblem.cc: try commenting out template decls
+
+	* ACU_LhsAutomaton.cc: try commenting out template decls
+
+	* ACU_RhsAutomaton.cc: try commenting out template decls
+
+	* ACU_DagNode.cc: try commenting out template decls
+
+	* ACU_Term.cc: try commenting out template decls
+	
+===================================Maude 1.0.2 released=======================================
+===================================Maude 1.0.1 released=======================================
+
+1999-02-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_RhsAutomaton.cc (buildArguments): for() changed to
+	do-while()
+	
+===================================VectorExperiment==========================================
+
+1999-01-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsCompiler0.cc (tryToMakeAlienAlienLhsAutomaton): fixed
+	nasty long running bug where we were not dealing correctly with
+	UNDECIDED from Term::subsumes()
+
+1999-01-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): changed
+	matchAtTop, inErrorSort and collapsePossible to Bool to save memory
+	(class ACU_LhsAutomaton): changed matchStrategy to Byte to save memory
+
+	* ACU_Term.hh (class ACU_Term): made
+	Pair::abstractionVariableIndex a short to save memory
+	
+===================================Engine46==================================================
+
+Tue Dec  8 10:48:45 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (Term): fixed nasty bug where we were not copying
+	multiplicity correctly
+	
+===================================Engine44==================================================
+
+Fri Nov  6 15:30:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (deepCopy): -> deepCopy2()
+
+	* ACU_Term.hh (class ACU_Term): deepCopy() -> deepCopy2()
+	
+===================================Engine43==================================================
+
+Wed Oct 28 14:41:53 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_AlienAlienLhsAutomaton.cc (match): fixed nasty bug in
+	extension setting code: e->setUnmatched(i, m); becomes
+	e->setUnmatched(k, m);
+
+Thu Oct  8 13:41:45 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (compareArguments): (DagNode* version) added
+	const_cast
+	(compareArguments): (DagNode* version) removed const_cast, added
+	const
+	(compareArguments): (Term* version) added const
+
+	* ACU_Term.hh: added #include "ACU_Symbol.hh" so that we can down
+	cast everwhere in symbol()
+
+Fri Oct  2 11:20:43 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Matcher.cc (multiplicityChecks): added SPEED_HACKS
+	(multiplicityChecks): rewritten; simpler and much faster in the
+	maxPatternMultiplicity > 1 fail case at the cost of being slightly
+	slower (or maybe not?) in the success case. When
+	maxPatternMultiplicity > 1 failure seems to be _much_ more
+	likely.
+	
+===================================Engine41==================================================
+
+Tue Sep 22 14:52:16 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (computeBaseSort): use lastIndex heuristic in
+	uniform sort structure case
+
+	* ACU_CollectorLhsAutomaton.cc (collect): put collectorSort
+	pointer into local variable to avoid reload; Use lastIndex
+	heuristic to try and avoid sort comparisons; use leq(int, Sort*)
+	instead of DagNode::Sort* where neccessary
+
+Fri Sep 18 11:28:08 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.cc (overwriteWithClone): use setSortIndex()
+	(makeClone): use setSortIndex()
+
+	* ACU_Symbol.cc (computeBaseSort): rewritten using setSortIndex(),
+	DagNode::leq(), traverse() and lookupSortIndex()
+
+Thu Sep 17 18:17:18 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_VarLhsAutomaton.cc (match): use DagNode::leq() (2 places)
+
+	* ACU_NonLinearLhsAutomaton.cc (match): use DagNode::leq() (5
+	places)
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): use DagNode::leq()
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): use DagNode::leq() (2
+	places)
+	(greedyPureMatch): use leq(Sort*,Sort*)
+
+	* ACU_CollectorLhsAutomaton.cc (collect): use DagNode::leq() (5
+	places)
+
+Fri Sep 11 17:26:33 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Subproblem.cc (solveVariables): use new checkSort() convention
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): use new checkSort()
+	convention
+
+	* ACU_Symbol.cc (computeBaseSort): use <=(DagNode*,Sort&) (1 place)
+
+	* ACU_VarLhsAutomaton.cc (match): use <=(DagNode*,Sort&) (2
+	places)
+
+	* ACU_NonLinearLhsAutomaton.cc (match): use <=(DagNode*,Sort&)
+	(5 places)
+
+	* ACU_DagNode.cc (matchVariableWithExtension): pass sort rather
+	than code to addTopVariable()
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): use <=(DagNode*,Sort&)
+	(fullMatch): pass sort rather than code to addTopVariable()
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): use <=(DagNode*,Sort&)
+	(2 places) and <=(Sort&,Sort&)
+
+	* ACU_CollectorLhsAutomaton.cc (collect): use <=(DagNode*,Sort&)
+	(5 places)
+
+	* ACU_Subproblem.cc (addTopVariable): store sort rather than sortCode
+	(solveVariables): temporary hack: pass sort->code() to checkSort()
+	(dump): sort rather than sortCode
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): struct TopVariable now
+	has sort rather than sortCode; addTopVariable() decl updated
+
+Wed Sep  9 11:52:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (compileOpDeclarations): call
+	commutativeSortCompletion() before Symbol::compileOpDeclarations()
+	due to new implementation
+	
+===================================Engine40==================================================
+
+Mon Jul 20 19:35:25 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.hh (class ACU_Term): added decl for new ctor
+
+	* ACU_Term.cc (deepCopy): added
+	(ACU_Term): added new ctor
+
+	* ACU_Term.hh (class ACU_Term): added decl for deepCopy()
+	
+===================================Engine39==================================================
+
+Wed Jun 10 11:57:08 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (postInterSymbolPass): added to do identity stuff
+	(compileOpDeclarations): don't do identity stuff here anymore
+
+	* ACU_Term.hh (class ACU_Term): updated
+	normalizeAliensAndFlatten() and normalize() decls
+
+	* ACU_Term.cc: IntSet -> NatSet
+	(normalize): go back to getIdentity(); set changed flag if
+	normalization made any changes to term; clear changed otherwise
+	(normalizeAliensAndFlatten): return flag to say wether we changed term
+
+	* ACU_LhsCompiler3.cc: IntSet -> NatSet
+
+	* ACU_LhsCompiler2.cc: IntSet -> NatSet
+
+	* ACU_LhsCompiler1.cc: IntSet -> NatSet
+
+	* ACU_LhsCompiler0.cc: IntSet -> NatSet
+
+	* ACU_Term.hh: IntSet -> NatSet
+	
+===================================Engine38==================================================
+
+Wed Jun  3 16:29:33 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (normalize): use earlyGetIdentity()
+	
+===================================Engine37==================================================
+
+Fri Mar  6 17:22:37 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagOperations.cc (eliminateSubject): fixed nasty bug  - test
+	should be identity != 0 && identity->equal(target) and we had ||
+
+Tue Feb 24 11:10:10 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Matcher.cc (eliminateBoundVariables): simplify now that
+	eliminateSubject() handle identity
+
+	* ACU_DagOperations.cc (eliminateSubject): handle identity; this
+	fixes a serious bug in ACU_Subproblem::extractDiophantineSystem()
+	which assumed we were
+
+	* ACU_Subproblem.cc (dump): added
+	(dump): dump local bindings
+	(solveVariables): fixed serious bug - in the trivial Diophantine
+	system case where findFirst is false we must unbind any variables
+	we bound to the identity the first time around before returning false.
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): added decl for dump()
+
+Fri Feb 20 17:27:13 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.cc (stackArguments): only stack arguments that are
+	not flagged as unstackable
+	
+===================================Engine36==================================================
+
+Sat Feb 14 14:45:02 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton): need to delete
+	uniqueCollapseAutomaton and abstraction automata
+
+Thu Feb 12 17:50:45 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_NGA_LhsAutomaton.cc (~ACU_NGA_LhsAutomaton): added
+
+	* ACU_NGA_LhsAutomaton.hh (class ACU_NGA_LhsAutomaton): added decl
+	for ~ACU_NGA_LhsAutomaton()
+
+	* ACU_AlienAlienLhsAutomaton.cc (~ACU_AlienAlienLhsAutomaton): add
+
+	* ACU_AlienAlienLhsAutomaton.hh (class
+	ACU_AlienAlienLhsAutomaton): added decl for
+	~ACU_AlienAlienLhsAutomaton()
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton): added
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decl for
+	~ACU_LhsAutomaton()
+
+Wed Feb 11 16:46:29 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_VarLhsAutomaton.cc (match): compare() != 0 replaced by
+	!equal()
+
+	* ACU_Term.cc (normalize): compare() == 0 replaced by equal() (2
+	places)
+
+	* ACU_Matcher.cc (eliminateBoundVariables): compare() != 0
+	replaced by !equal()
+
+	* ACU_GndLhsAutomaton.cc (match): compare() != 0 replaced by
+	!equal()
+
+	* ACU_CollapseMatcher.cc (uniqueCollapseMatch): compare() != 0
+	replaced by !equal()
+	(multiwayCollapseMatch): compare() != 0 replaced by !equal()
+	(multiwayCollapseMatch): compare() == 0 replaced by equal() (2
+	places)
+
+	* ACU_NGA_LhsAutomaton.cc (match): use delete rather than
+	calling deepSelfDestruct()
+
+	* ACU_Matcher.cc (buildBipartiteGraph): use delete rather than
+	calling deepSelfDestruct()
+
+	* ACU_GreedyMatcher.cc (greedyMatch): use delete rather than
+	calling deepSelfDestruct()
+
+	* ACU_AlienAlienLhsAutomaton.cc (match): use delete rather than
+	calling deepSelfDestruct()
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): deleted decl for
+	deepSelfDestruct()
+
+	* ACU_Subproblem.cc (deepSelfDestruct): deleted
+	(~ACU_Subproblem): inserted bulk of code from old
+	deepSelfDestruct(); use delete rather than calling
+	deepSelfDestruct()
+	
+===================================Engine35==================================================
+
+Fri Jan 16 18:19:12 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (insertAbstractionVariables): changed
+	AdvisoryCheck() to DebugAdvisoryCheck()
+
+Wed Dec 24 15:34:20 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsAutomaton.cc (dump): dump uniqueCollapseAutomaton if it exists
+
+Tue Dec 23 12:38:55 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsAutomaton.cc (dump): don't try to print name of an
+	abstraction variable
+
+	* ACU_LhsCompiler1.cc (compileLhs2): use greedySafe()
+
+	* ACU_LhsCompiler0.cc (tryToMakeAlienAlienLhsAutomaton): use greedySafe()
+	(tryToMakeCollectorLhsAutomaton): use greedySafe()
+
+Thu Dec 18 18:01:52 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsAutomaton.cc (addTopVariable): use Term::takeIdentity()
+
+	* ACU_LhsCompiler0.cc (tryToMakeNonLinearLhsAutomaton): use
+	Term::takeIdentity()
+	(tryToMakeCollectorLhsAutomaton): use Term::takeIdentity()
+
+Wed Dec 17 12:03:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_NonLinearLhsAutomaton.cc (match): check to see that we
+	actually have a match before allocating ACU_DagNode in non ext
+	case; the space for the ACU_DagNode can be very big and this case
+	is likely to fail.
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	made varIndex, multiplicity, varSort, unitSort const
+
+Tue Dec 16 11:52:36 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.hh (class ACU_Term): added decl for tryToMakeNonLinearLhsAutomaton()
+
+	* ACU_LhsCompiler0.cc (compileLhs): major rewrite and simplification
+	(tryToMakeNonLinearLhsAutomaton): added
+
+	* ACU_NonLinearLhsAutomaton.cc (match): handle case where variable
+	is bound
+	(dump): call HeuristicLhsAutomaton::dump()
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	derive from HeuristicLhsAutomaton
+
+	* ACU_AlienAlienLhsAutomaton.cc (complete): deleted
+	(match): use fullMatch()
+	(dump): call HeuristicLhsAutomaton::dump()
+
+	* ACU_AlienAlienLhsAutomaton.hh (class
+	ACU_AlienAlienLhsAutomaton): derive from HeuristicLhsAutomaton;
+	deleted decl for complete(); data member fullAutomaton;
+
+	* ACU_CollectorLhsAutomaton.cc (dump): call HeuristicLhsAutomaton::dump()
+	(complete): deleted
+
+	* ACU_CollectorLhsAutomaton.hh (class ACU_CollectorLhsAutomaton):
+	derive from HeuristicLhsAutomaton
+	(class ACU_CollectorLhsAutomaton): deleted decls for complete()
+	and fullMatch()
+	(fullMatch): deleted
+	(class ACU_CollectorLhsAutomaton): deleted data member fullAutomaton
+
+	* ACU_LhsCompiler0.cc (compileLhs): insert index of variable into
+	boundUniquely when making a ACU_NonLinearLhsAutomaton
+
+	* ACU_NonLinearLhsAutomaton.cc (match): fixed bug where we were
+	forgetting to increment p when building new ACU_DagNode
+
+	* ACU_LhsCompiler0.cc (compileLhs): added code to make
+	ACU_NonLinearLhsAutomaton where appropriate
+
+Mon Dec 15 18:54:20 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_NonLinearLhsAutomaton.cc: created
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	created
+	
+===================================Engine34==================================================
+
+Thu Dec 11 18:24:11 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Subproblem.cc (solveVariables): check that we actually have
+	a sort before calling d->setReduced() since d->checkSort() is not
+	guarenteed to leave a sort behind (in the presence of sort constraints).
+
+Fri Dec  5 11:23:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagOperations.cc (eliminateArgument): code cleaning
+
+	* ACU_Symbol.cc (eqRewrite): optimized use of nrArgs
+	(compileOpDeclarations): only call leftIdentitySortCheck() and
+	rightIdentitySortCheck() if we actually have an identity
+
+	* ACU_Symbol.hh (class ACU_Symbol): deleted utilityBuffer static
+	class member decl
+
+	* ACU_Symbol.cc (finalizeSortInfo): deleted
+	(compileOpDeclarations): call leftIdentitySortCheck() and
+	rightIdentitySortCheck()
+	deleted utilityBuffer static class member
+	(computeBaseSort): use local static sortIndexBuffer in place of
+	utilityBuffer
+
+	* ACU_Symbol.hh (class ACU_Symbol): deleted finalizeSortInfo() decl
+
+Thu Dec  4 12:52:46 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (compareArguments): compare multiplicity before
+	actaul argument (dagNode version)
+	(compareArguments): compare multiplicity before
+	actaul argument (term version)
+
+	* ACU_DagNode.cc (compareArguments): compare multiplicity before
+	actaul argument; this may avoid comparison of argument in some cases.
+
+	* ACU_Symbol.cc (ACU_Symbol): deleted inert arg
+
+	* ACU_Symbol.hh (class ACU_Symbol): deleted inert
+	arg from ctor decl
+
+Tue Dec  2 16:40:08 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (copyAndReduceSubterms): use DagNode::copyAndReduce()
+
+Mon Dec  1 11:33:38 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (eqRewrite): use getPermuteStrategy() (*3)
+
+	* ACU_Term.cc (markEagerArguments): use getPermuteStrategy()
+	(findEagerVariables): use getPermuteStrategy()
+
+	* ACU_Symbol.cc (ACU_Symbol): PermuteSymbol -> AssociativeSymbol
+	(eqRewrite): PermuteSymbol -> AssociativeSymbol (*3)
+
+	* ACU_Term.cc (findEagerVariables): PermuteSymbol -> BinarySymbol (*3)
+	(markEagerArguments): PermuteSymbol -> BinarySymbol
+
+	* ACU_LhsCompiler0.cc (tryToMakeCollectorLhsAutomaton): PermuteSymbol ->
+	AssociativeSymbol (*2)
+
+	* ACU_LhsAutomaton.cc (addAbstractionVariable): PermuteSymbol ->
+	AssociativeSymbol
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): PermuteSymbol ->
+	AssociativeSymbol (*4)
+
+	* ACU_DagOperations.cc (eliminateArgument): use getPermuteStrategy()
+
+	* ACU_DagNode.cc (copyEagerUptoReduced2): use getPermuteStrategy()
+
+	* ACU_Symbol.hh (class ACU_Symbol): PermuteSymbol ->
+	AssociativeSymbol
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): PermuteSymbol ->
+	AssociativeSymbol
+
+Mon Nov 24 11:09:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_AlienAlienLhsAutomaton.cc (dump): implemented
+
+	* ACU_DagNode.hh (class ACU_DagNode): ACU_FastLhsAutomaton no
+	longer exists and hence is no longer a friend
+
+	* ACU_RhsAutomaton.cc (buildAliens): deleted
+	(dump): implemented
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): deleted aliens
+	data member
+	(addAlien): deleted
+
+	* ACU_Term.hh (class ACU_Term): updated member function declarations
+
+	* ACU_LhsCompiler0.cc (compileLhs): rewrutten
+	(tryToMakeFastAutomation2): renamed to
+	tryToMakeAlienAlienLhsAutomaton() 
+	(tryToMakeFastAutomaton): renamed to
+	tryToMakeCollectorLhsAutomaton() 
+	(tryToMakeCollectorLhsAutomaton): rewrittten to use new derived classes
+
+	* ACU_GndLhsAutomaton.cc: created
+
+	* ACU_GndLhsAutomaton.hh (class ACU_GndLhsAutomaton): created
+
+	* ACU_DagNode.hh (class ACU_DagNode): ACU_VarLhsAutomaton becomes
+	a friend
+	(class ACU_DagNode): ACU_GndLhsAutomaton becomes a friend
+
+	* ACU_VarLhsAutomaton.hh (class ACU_VarLhsAutomaton): created
+
+	* ACU_VarLhsAutomaton.cc: created
+
+	* ACU_DagNode.hh (class ACU_DagNode): ACU_NGA_LhsAutomaton becomes
+	a friend
+
+	* ACU_CollectorLhsAutomaton.cc (complete): added
+	(dump): now dump fullAutomaton
+
+	* ACU_CollectorLhsAutomaton.hh (fullMatch): added
+
+	* ACU_NGA_LhsAutomaton.hh (class ACU_NGA_LhsAutomaton): created
+
+	* ACU_NGA_LhsAutomaton.cc: created
+
+Sun Nov 23 17:27:37 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): ACU_CollectorLhsAutomaton
+	becomes a friend
+
+	* ACU_FastLhsAutomaton.cc (dump): rewritten as a temporary hack
+	9this class will soon be split 3 ways)
+
+	* ACU_FastLhsAutomaton.hh (class ACU_FastLhsAutomaton): updated
+	dump() decl
+
+	* ACU_AlienAlienLhsAutomaton.hh (class
+	ACU_AlienAlienLhsAutomaton): updated dump() decl
+
+	* ACU_LhsAutomaton.cc (dump): rewritten
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): updated dump() decl
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated dump() decl
+
+	* ACU_CollectorLhsAutomaton.cc: created from ACU_FastLhsAutomaton.cc
+
+	* ACU_CollectorLhsAutomaton.hh: created from
+	ACU_FastLhsAutomaton.hh
+	
+===================================Engine33==================================================
+
+Fri Nov 21 14:28:50 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNormalization.cc (extensionNormalizeAtTop): added
+
+	* ACU_Symbol.cc (eqRewrite): have special handling for case when
+	normalizationStatus == ACU_DagNode::EXTENSION
+
+	* ACU_DagNode.cc (partialReplace): use setNormalizationStatus()
+
+	* ACU_Subproblem.cc (solveVariables): use setNormalizationStatus()
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): use setNormalizationStatus()
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): use setNormalizationStatus()
+
+	* ACU_FastLhsAutomaton.cc (collect): use setNormalizationStatus()
+
+	* ACU_DagNode.hh (ACU_DagNode): set theory byte to 0
+
+	* ACU_Symbol.cc (computeBaseSort): use getNormalizationStatus()
+	(eqRewrite): use getNormalizationStatus() (3 times)
+
+	* ACU_DagNode.hh (clearShortCircuit): deleted
+	(setShortCircuit): deleted
+	(getShortCircuit): deleted
+	(getNormalizationStatus): added
+	(setNormalizationStatus): added
+
+	* ACU_DagNode.cc (partialReplace): made and unmade change to
+	remove implicit flattening. The advantage of not implicitly
+	flattening is that we don't mix sorted reduced stuff with unsorted
+	undeduced stuff and thereby defeat are fast normalization. The
+	problem is that we need an extra dag node, more match attempts and
+	the new "not in error sort" semantics of the shortCircuit flag in
+	unsafe here since the extension part could be in the error sort.
+
+Thu Nov 20 11:58:34 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_ExtensionInfo.hh (reset): added; allows extensionInfo to be
+	prepared for use without wasting time clearing it.
+
+	* ACU_AlienAlienLhsAutomaton.cc (match): put automata pointers into
+	local variable to avoid gcc generating register reloads after
+	function calls. Use ACU_ExtensionInfo::reset().
+
+	* ACU_LhsCompiler0.cc (tryToMakeFastAutomation2): fixed bug where
+	we were compile same t1 twice and t2 not at all
+
+	* ACU_AlienAlienLhsAutomaton.cc (match): handle cases where
+	first/second symbol does not occcur in subject
+	(match): fixed bug where we using wrong local substitution in 2nd match
+
+	* ACU_LhsCompiler0.cc (tryToMakeFastAutomation2): added missing
+	return for AlienAlien case
+
+	* ACU_DagNode.hh (class ACU_DagNode): class
+	ACU_AlienAlienLhsAutomaton becomes a friend
+
+	* ACU_AlienAlienLhsAutomaton.hh (class ACU_AlienAlienLhsAutomaton): created
+
+	* ACU_AlienAlienLhsAutomaton.cc (ACU_AlienAlienLhsAutomaton): created
+
+Tue Nov 18 18:25:08 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (dump): added
+	(dumpArguments): deleted
+
+	* ACU_Term.hh (class ACU_Term): dumpArguments() decl becomes dump()
+
+	* ACU_Term.cc (dumpArguments): removed const; pass variableInfo by
+	ref; switch varableInfo, indentLevel args
+
+	* ACU_Term.hh (class ACU_Term): dumpArguments() decl now passes
+	variableInfo by ref; removed const; switch varableInfo,
+	indentLevel args
+
+Mon Nov 17 11:07:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Subproblem.cc (computeAssignment): don't pass shortCircuit
+	argument to ACU_DagNode()
+	(solveVariables): setShortCircuit()
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): call setShortCircuit()
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): call setShortCircuit()
+
+	* ACU_FastLhsAutomaton.cc (collect): call setShortCircuit()
+
+	* ACU_Symbol.cc (eqRewrite): use getShortCircuit() (three places)
+
+	* ACU_DagNode.cc (partialReplace): call clearShortCircuit()
+
+	* ACU_DagNode.hh (class ACU_DagNode): removed shortCircuit arg from
+	ctor
+	(class ACU_DagNode): added decls for getShortCircuit() and
+	setShortCircuit() and clearShortCircuit()
+	(class ACU_DagNode): deleted shortCircuit data member
+	(ACU_DagNode): non longer intialize shortCircuit
+	(setShortCircuit): added
+	(getShortCircuit): added
+	(clearShortCircuit): added
+
+Fri Nov 14 10:20:07 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsAutomaton.cc (dump): dump collapsePossible
+
+	* ACU_FastLhsAutomaton.cc (collect): added speed hack
+	(dump): implemented
+
+	* ACU_LhsCompiler0.cc: don't use fast automaton if we're in error
+	sort and we have extension
+
+	* ACU_FastLhsAutomaton.cc (collect): hand optimized
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): all todays changes
+	unmade as they made things slower 
+
+	* ACU_Matcher.cc: all todays changes unmade as they made things slower
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): data memeber
+	totalMultiplicity deleted
+	(class ACU_LhsAutomaton): updated multiplicityChecks() decl
+
+	* ACU_Matcher.cc (multiplicityChecks): rewritten; first case now
+	just does copying without multiplicity checks in the case where
+	they will all trvially succeed. Second case now has early failure
+	when totalSubjectMultiplicity > totalUpperBound
+	(multiplicityChecks): rewritten; now sets extensionInfo upperBound
+	(match): pass extensionInfo to multiplicityChecks(); don't set
+	extensionInfo upperBound
+
+	* ACU_FastLhsAutomaton.cc (ACU_FastLhsAutomaton): changed
+	stripperTopSymbol to stripperSymbol to avoid confusion with data member
+	(match): make sure we actually bind stripper variable
+	(match): bind collector variable in local rather than solution so
+	it does not get overwritten when we copy local into solution
+
+	* ACU_LhsCompiler0.cc (tryToMakeFastAutomation): pass
+	!(collapseSymbols().empty()) for collapsePossible (2 places)
+
+Thu Nov 13 16:11:00 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsCompiler0.cc: created
+
+	* ACU_Term.hh (class ACU_Term): added decl for compileLhs2()
+
+	* ACU_LhsCompiler1.cc (compileLhs2): created from old
+	compileLhs(); now returns ACU_LhsAutomaton*
+
+	* ACU_DagNode.hh (class ACU_DagNode): ACU_FastLhsAutomaton becomes
+	a friend
+
+	* ACU_FastLhsAutomaton.hh (class ACU_FastLhsAutomaton): created
+
+	* ACU_FastLhsAutomaton.cc: created
+	
+===================================Engine32==================================================
+
+Fri Oct 31 16:56:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): removed buggy
+	optimization where we were binding variables to identity in
+	solution after they had been considered for match against whole
+	subject; the problem is that solution gets returned to caller with
+	these not always correct bindings
+	(multiwayCollapseMatch): make use of the faxt that all variables
+	with multiplicity > 1 will be bound to dentity once we reach the
+	disjuction loop; use DisjunctiveSubproblemAccumulator to simplify code.
+	(multiwayCollapseMatch): eliminated first flag by using empty()
+
+Wed Oct 29 10:30:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.cc (matchVariableWithExtension): call
+	extensionInfo->setValidAfterMatch(false)
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): don't call
+	extensionInfo->clear()
+	(multiwayCollapseMatch): use extensionInfo->validAfterMatch()
+	(multiwayCollapseMatch): use
+	extensionInfo->setValidAfterMatch(false) in place of extensionInfo->clear()
+	(multiwayCollapseMatch): in the case where the subject is our
+	identity we fix a bug by checking for extension info and calling
+	extensionInfo->setValidAfterMatch(true) and
+	extensionInfo->setMatchedWhole(true) if so. Previously we didn't
+	worry about extension with the result that it was never set,
+	allowing an uninitialized data read in partialConstruct() for example.
+	(multiwayCollapseMatch): non viable variable that are unbound are
+	bound to identity at the outset (that is unbound variables that
+	have multiplicity > 1). The case where nrViableVariables == 0
+	contained a bug since we could still get a match if extension was
+	present. The case where nrViableVariables == 1 clean up now we
+	know that all other variables are bound to identity.
+
+	* ACU_Subproblem.cc (fillOutExtensionInfo): use setMatchedWhole()
+	in place of setWholeFlag() (2 places)
+	(solveVariables): use setMatchedWhole() in place of setWholeFlag()
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): call
+	setValidAfterMatch(true) if we fill out the extension info
+
+	* ACU_Matcher.cc (fullMatch): call setValidAfterMatch(false) since
+	extension info will not be valid until solve phase
+
+	* ACU_ExtensionInfo.cc (makeClone): use setValidAfterMatch(),
+	validAfterMatch() and setMatchedWhole()
+	(copy): use setValidAfterMatch(),
+	validAfterMatch() and setMatchedWhole()
+
+Tue Oct 28 10:19:21 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): clear extension
+	information if it exists before each call to matchVariable; only
+	save extensionInfo in SubproblemDisjunction in the case where it
+	is valid (regardless of whether subproblem == 0 because we can
+	have the case where extensionInfo is valid but subproblem != 0);
+	Before exiting with true we clear any old extension info that
+	might exist be cause it will now be invalid (having been saved on
+	one of the disjuction paths it cannot be globally valid).
+
+Mon Oct 27 11:43:56 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): save
+	extensionInfo in SubproblemDisjunction in the case where subproblem == 0
+
+	* ACU_ExtensionInfo.hh (class ACU_ExtensionInfo): subject made non
+	const in order to do copy()
+
+	* ACU_ExtensionInfo.cc (makeClone): added
+	(copy): added
+
+	* ACU_ExtensionInfo.hh (class ACU_ExtensionInfo): added decls for
+	makeClone() and copy()
+
+Fri Oct 24 13:07:30 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Subproblem.cc (solveVariables): use
+	ExtensionInfo::buildMatchedPortion() and DagNode::inErrorSort()
+	instead of matchedPortionOK(); call fillOutExtensionInfo() first
+	(matchedPortionOK): deleted
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): deleted decl for
+	matchedPortionOK();
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): use
+	EqualitySubproblem instead of ExclusionSubproblem
+
+	* ACU_DagNode.hh (class ACU_DagNode): class ACU_ExtensionInfo is
+	now a friend
+
+	* ACU_Symbol.cc (ruleRewrite): switched to new ACU_ExtensionInfo convention
+	(eqRewrite): switched to new ACU_ExtensionInfo convention (3 places)
+
+	* ACU_DagNode.cc (makeExtensionInfo): switched to new
+	ACU_ExtensionInfo convention
+
+	* ACU_Theory.cc: deleted
+
+	* ACU_ExtensionInfo.cc: created
+
+	* ACU_ExtensionInfo.hh (ACU_ExtensionInfo): ctor now takes subject
+	rather than nrArgs; added decl for buildMatchedPortion()
+	(clear): use subject data member
+	(ACU_ExtensionInfo): store subject arg in data member
+
+Tue Oct 21 12:23:04 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): add exclusion
+	subproblems to eliminate duplicate solutions in the case that the
+	subject matches out identity with extension.
+
+	* ACU_Term.cc (dagify2): switched to new convention
+
+	* ACU_Term.hh (class ACU_Term): switched dagify2() decl to new convention
+
+Wed Oct 15 17:17:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Subproblem.cc (solveVariables): use BinarySymbol::getIdentityDag()
+	(2 places)
+	(solveVariables): delete identityDag local variable
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): use BinarySymbol::getIdentityDag()
+	(greedyPureMatch): delete identityDag local variable
+
+	* ACU_Matcher.cc (match): use BinarySymbol::getIdentityDag()
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): delete identityDag
+	arg from bindUnboundVariablesToIdentity()
+
+	* ACU_CollapseMatcher.cc (uniqueCollapseMatch): use BinarySymbol::getIdentityDag()
+	(bindUnboundVariablesToIdentity): use
+	BinarySymbol::getIdentityDag(); remove identityDag arg
+	(multiwayCollapseMatch): use BinarySymbol::getIdentityDag()
+
+	* ACU_LhsCompiler1.cc (analyseConstraintPropagation): use VariableTerm::dynamicCast()
+	(compileLhs): use VariableTerm::dynamicCast()
+
+	* ACU_Term.cc (mightCollapseToOurSymbol): deleted
+	(mightMatchOurIdentity): deleted
+	(analyseCollapses): use BinarySymbol::mightMatchOurIdentity()
+	(insertAbstractionVariables): use BinarySymbol::mightMatchOurIdentity()
+	(insertAbstractionVariables): use PermuteSymbol::mightCollapseToOurSymbol()
+	(compileRhs): use VariableTerm::dynamicCast()
+	(insertAbstractionVariables): use VariableTerm::dynamicCast()
+
+	* ACU_Term.hh (class ACU_Term): deleted decls for
+	mightCollapseToOurSymbol() and mightMatchOurIdentity()
+
+	* ACU_Symbol.cc (~ACU_Symbol): deleted
+	(compileOpDeclarations): use BinarySymbol::processIdentity()
+	(eqRewrite): use getIdentity() (2 places)
+	(computeTrueSort): use getIdentity()
+
+	* ACU_Symbol.hh (class ACU_Symbol): delete dtor decl
+
+	* ACU_Symbol.cc (ACU_Symbol): rewritten to use new PermuteSymbol conventions
+
+	* ACU_Symbol.hh (class ACU_Symbol): removed constructor arg from
+	ctor; deleted decls for getIdentity() and makeIdentityDag();
+	(class ACU_Symbol): deleted identity, identityAutomaton and
+	identitySubstitution data members
+	(getIdentity): deleted
+	(makeIdentityDag): deleted
+
+Mon Oct 13 10:36:57 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (mightCollapseToOurSymbol): added
+	(mightMatchOurIdentity): added
+	(analyseCollapses): added
+	(insertAbstractionVariables): added
+	(determineCollapseSymbols): deleted
+
+	* ACU_Term.hh (class ACU_Term): added decls for analyseCollapses()
+	and insertAbstractionVariables(); delete decl for determineCollapseSymbols()
+
+	* ACU_LhsAutomaton.cc (dump): index2Symbol() -> index2Variable()
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): VariableIndex -> VariableInfo
+
+	* ACU_LhsAutomaton.cc (dump): VariableIndex -> VariableInfo
+
+	* ACU_Term.cc (dumpArguments): VariableIndex -> VariableInfo
+	(determineCollapseSymbols): VariableIndex -> VariableInfo
+	(dumpArguments): VariableIndex -> VariableInfo
+
+	* ACU_Term.hh (class ACU_Term): VariableIndex -> VariableInfo
+
+	* ACU_Symbol.cc (compileOpDeclarations): VariableIndex ->
+	VariableInfo
+	
+===================================Engine30==================================================
+
+Tue Oct  7 15:32:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for makeDagNode()
+
+	* ACU_Symbol.cc (makeDagNode): added
+
+Fri Oct  3 19:26:11 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (compileOpDeclarations): DataSet -> TermSet
+
+	* ACU_Term.cc (compileRhs): DataSet -> TermSet
+	(dagify2): DataSet -> TermSet
+
+	* ACU_Term.hh (class ACU_Term): DataSet -> TermSet
+	
+===================================Engine29==================================================
+
+Thu Oct  2 17:43:48 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (compileOpDeclarations): pass DataSet to compileRhs()
+
+	* ACU_Term.hh (class ACU_Term): updated compileRhs() decl
+
+	* ACU_Term.cc (compileRhs): adapted to use DataSet& compiled
+
+Tue Sep 30 12:18:57 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.hh (class ACU_Term): dagify() decl changed to dagify2()
+
+	* ACU_Term.cc (normalize): now compute hash values
+	(dagify2): adapted from dagify()
+
+Thu Sep 25 16:38:20 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (determineCollapseSymbols): use getOpDeclarations()
+
+	* ACU_Symbol.cc (specificRewrite): deleted
+
+	* ACU_Symbol.hh (class ACU_Symbol): deleted decl for
+	specificRewrite()
+	
+===================================Engine28==================================================
+
+Mon Aug 25 12:11:34 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (eqRewrite): fixed a bug where we could collapse
+	to an unreduced subterm and stop rewriting at this node. We now
+	return true in this case to force rewriting to continue.
+
+Tue Aug 19 15:27:21 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.hh (nrArgs): added
+	(getArgument): added
+	(getMultiplicity): added
+	(class ACU_DagNode): added decl for nrArgs(), getArgument(int i),
+	getMultiplicity(int i). This provide a fast interface to the
+	argument list for non ACU_Theory code that is ACU_Theory aware
+	(maybe classes derived from ACU_Symbol).
+
+Fri Jul 25 18:04:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.cc (partialReplace): removed Assert(getSortIndex() ==
+	Sort::SORT_UNKNOWN, cerr << "shouldn't have valid sort"); since if
+	node was original created by matcher it may well have valid sort
+
+Thu Jul 24 11:20:50 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): optimized vector
+	accesses for assignment building
+	(greedyPureMatch): optimized inner loop for assigning unassigned subjects
+
+	* ACU_Subproblem.cc (computeAssignment): pass shortCircuit =
+	true to ACU_DagNode()
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): pass shortCircuit =
+	true to ACU_DagNode()
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): pass shortCircuit =
+	true to ACU_DagNode()
+
+	* ACU_Symbol.cc (eqRewrite): added s->eliminateArgument(identity)
+	calls after new normalizeAtTop() calls
+	(eqRewrite): rewritten from scatch to make use of short circuit
+
+	* ACU_DagNode.cc (partialReplace): clear shortCircuit flag
+
+	* ACU_DagNode.hh (ACU_DagNode): set shortCircuit flag
+
+	* ACU_Symbol.cc (eqRewrite): added normalizeAtTop() calls after
+	sort computation for LAZY and SEMI_EAGER cases; this fixes a bug
+	introduced by just-in-time normalization
+
+	* ACU_DagNode.hh (class ACU_DagNode): added shortCircuit data
+	member; the idea is to set this when an ACU_DagNode is created in
+	the matcher cut down need for normalization checking
+
+Wed Jul 23 11:50:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.cc (partialReplace): added call to repudiateSortInfo()
+
+	* ACU_Term.cc (normalize): added full flag
+	(normalize): don't call normalizeAliensAndFlatten() if full = false
+	(normalizeAliensAndFlatten): pass full = true to normalize()
+
+	* ACU_Term.hh (class ACU_Term): added full flag to normalize
+
+	* ACU_Symbol.cc (ACU_Symbol): pass full = true to normalize()
+	(compileOpDeclarations): deleted superfluous normalization call
+
+Mon Jul 21 10:24:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): updated
+	buildArguments() decl
+
+	* ACU_RhsAutomaton.cc (buildArguments): take argArray rather than node
+
+	* ACU_Symbol.cc (computeTrueSort): now do normalization
+
+	* ACU_DagNode.hh (class ACU_DagNode): deleted
+	normalizeEagerUptoReduced2() and nonEagerInsert() decls
+
+	* ACU_DagNode.cc (normalizeEagerUptoReduced2): deleted
+	(partialReplace): no longer attempt to normalize node
+	(partialConstruct): no longer attempt to normalize node
+	(copyWithReplacement): no longer attempt to normalize node
+	(nonEagerInsert): deleted
+
+	* ACU_Term.cc (compileRhs): no longer pass normalize flag to ACU_RhsAutomaton
+	(compileRhs): no longer pass term to addArgument()
+
+	* ACU_RhsAutomaton.cc (ACU_RhsAutomaton): no longer initialize simpleCtor
+	(buildArguments): no longer check for reduced args or return bool
+	(construct): greatly simplified; no longer attempt normalization
+	under any circumstance
+	(replace): greatly simplified; no longer attempt normalization
+	under any circumstance
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): removed simpleCtor
+	member
+	(class ACU_RhsAutomaton): changed buildArguments() decl
+
+===================================Engine26b==================================================
+	
+Fri Jul 18 16:11:45 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): (26) updated to
+	agree with all the changes below
+
+	* ACU_RhsAutomaton.cc (ACU_RhsAutomaton): (26b) stripped stable stuff;
+	deleted normalize arg
+	(addArgument): (26b) all stable stuff removed; term arg removed
+	(close): (26b) all stable stuff removed
+	(calculateFlattening): (26b) all stable stuff removed
+	(normalizeBuildArguments): (26b) deleted
+	(buildArguments): (26b) created from old fastBuildArguments)
+	(calculateFlattening): (26b) deleted
+	(buildArguments): (26b) now return allReducedFlag
+	(tryToSetReducedFlag): (26b) deleted
+	(allArgumentsReduced): (26b) deleted
+	(replace): (26b) rewritten
+	(construct): (26b) rewritten
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): (26b) stripped
+	stable stuff
+	(class ACU_RhsAutomaton): (26b) stripped normalize flag
+	(class ACU_RhsAutomaton): (26b) removed normalize arg from ctor
+
+	* ACU_DagNode.cc (normalizeEagerUpToReduced2): added
+	(nonEagerInsert): use normalizeEagerUpToReduced()
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for
+	normalizeEagerUpToReduced2()
+
+Thu Jul 17 10:38:22 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for nonEagerInsert()
+
+	* ACU_DagNode.cc (nonEagerInsert): added
+	(partialReplace): rewritten using nonEagerInsert()
+	(partialConstruct): rewritten using nonEagerInsert()
+	(copyWithReplacement): rewritten using nonEagerInsert()
+
+	* ACU_RhsAutomaton.cc (addArgument): changed criteria for stable
+	arg; must
+	(1) be stable term;
+	(2) not have our top symbol on top (+NEW*)
+	(3) not have our identity's top symbol on top (*NEW*)
+	(4) have a top symbol greater than that of last stable arg
+	Condition (2) is necessary since we will no longer flatten rhs in
+	eager context. Condition (3) allows us to restrict search for
+	identity to case where we have unstable args.
+	(normalizeBuildArguments): code for removing identity elements
+	pushed into unstable case
+
+	* ACU_Term.cc (compileRhs): calculate and pass normalize flag to
+	ACU_RhsAutomaton()
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): runs -> runsBuffer
+	(class ACU_RhsAutomaton): added and changed memebr function decls
+	to agree with all the recent changes in ACU_RhsAutomaton.cc
+
+	* ACU_RhsAutomaton.cc (normalizeBuildArguments): created from old
+	buildArguments(); now do identity elimination
+	(close): runs renamed to runsBuffer
+	(replace): rewritten from scratch to be like new construct()
+	(ACU_RhsAutomaton): initialize normalize flag
+
+Wed Jul 16 11:41:48 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_RhsAutomaton.cc (construct): fixed bug where we were
+	applying tryToSetReducedFlag() to a non ACU dagnode produced by
+	eliminateArgument(identity)
+	(replace): fix bug similar to above
+	(construct): rewritten from scratch to handle building dagNode in
+	normalized or denormalized form depending on the circumstances
+	(buildAliens): now much simpler; return void
+	(allArgumentsReduced): added
+	(calculateFlattening): added
+	(fastBuildArguments): added
+	(tryToSetReducedFlag): simplified
+
+Tue Jul 15 15:33:28 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_RhsAutomaton.cc (ACU_RhsAutomaton): simpleCtor
+	initialization simplified
+
+	* ACU_Symbol.cc (ACU_Symbol): added inert arg
+	(eqRewrite): inert() call replaced by equationFree() call
+
+	* ACU_Symbol.hh (class ACU_Symbol): added inert arg to ctor
+	
+=====================================Engine26=================================================
+	
+Mon Jul 14 10:48:39 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): changed decl for
+	sortAndUniquize(); tidied private function decls
+
+	* ACU_DagNormalization.cc (sortAndUniquize): code cleaned; make
+	non-static; arg deleted; made local_inline
+	(flattenSortAndUniquize): made local_inline
+	(normalizeAtTop): deleted arg from sortAndUniquize() call
+
+Fri Jul 11 12:01:09 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for flattenSortAndUniquize()
+
+	* ACU_DagNormalization.cc: created
+	(normalizeAtTop): optimized; now use flattenSortAndUniquize()
+	(flattenSortAndUniquize): added
+
+	* ACU_DagOperations.cc: created
+
+	* ACU_DagNode.cc: ACU specific functions split off into
+	ACU_DagNormalization.cc and ACU_DagOperations.cc
+
+Wed Jul  9 10:53:22 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): added decl for
+	tryToSetReducedFlag()
+
+	* ACU_RhsAutomaton.cc (topSymbol): initialize simpleCtor
+	(tryToSetReducedFlag): added
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): simpleStor flag added
+
+	* ACU_Subproblem.cc (computeAssignment): added comment to note the
+	fact that assigments are built in normal form
+	(solveVariables): added topSymbol and buildReducedNodes local
+	variables; now set reduced flags on nodes with our top symbol if
+	the subject is reduced.
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): set reduced flag on
+	created ACU dag node if subject is reduced and new dag node has
+	its true sort after sort checkSort()
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): if the subject is
+	reduced and the top symbol is sort constraint free when we build
+	assignments using the top symbols we compute their true sort
+	(which is equal to their base sort) and set the reduced flag. This
+	avoid unnecessary future normalization and matching attempts at
+	the cost of a small matching overhead and having the matcher no
+	longer oblivious to reduced flags and sort constraints. Ideally
+	this optimization should only be done for assignments to variables
+	that are "useful"; i.e. that appear in the rhs or condition. At
+	some point we should add a "useful" flag to TopVariable or maybe a
+	more sophisticated mechanism that would allow optimization of solutions.
+
+Tue Jul  1 10:19:58 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.cc (compareArguments): use modified multiset ordering
+
+	* ACU_Term.cc (compareArguments): use modified multiset ordering
+	(compareArguments): use modified multiset ordering
+
+	* ACU_DagNode.cc (sortAndUniquize): switched two tests on "r"
+	because we now sort in ascending order
+	(mergeSortAndUniquize): switched two tests on "r"
+	because we now sort in ascending order
+	(findFirstOccurrence): switched test on "r" because we now
+	sort in ascending order
+	(binarySearch): switched test on "r" because we now
+	sort in ascending order (DagNode* version)
+	(binarySearch): switched test on "r" because we now
+	sort in ascending order (Term* version)
+
+Mon Jun 30 16:28:11 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.cc (compareArguments): rewritten to do multiset ordering under the
+	assumption that args are sorted in ascending order
+
+	* ACU_RhsAutomaton.cc (buildArguments): changed comparison to r >
+	0 now that we want to swap args into ascending order
+	(addArgument): changed test for adding new stable arg to < 0 since
+	stable args will now be in ascending order of symbols
+
+	* ACU_Term.cc (pairCompare): use ascending rather than descending
+	order to sort ACU arg list
+	(compareArguments): rewritten to do multiset ordering under the
+	assumption that args are sorted in ascending order (Term* version)
+	(compareArguments): rewritten to do multiset ordering under the
+	assumption that args are sorted in ascending order (DagNode* version)
+
+Fri Jun 27 15:50:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): copyEagerUptoReduced2() and
+	clearCopyPointers2() made private
+
+	* ACU_DagNode.cc (eliminateArgument): use copyReducible()
+	rather than copyUptoEager(); we weren't calling
+	clearCopyPointers() which was a serious but subtle bug.
+	(copyWithReplacement): use copyReducible()
+	rather than copyUptoEager(); we weren't calling
+	clearCopyPointers()
+	(partialReplace): use copyReducible()
+	rather than copyUptoEager(); we weren't calling
+	clearCopyPointers()
+	(partialConstruct): use copyReducible()
+	rather than copyUptoEager(); we weren't calling
+	clearCopyPointers()
+
+	* ACU_Symbol.cc (copyAndReduceSubterms): use copyReducible()
+	rather than copyUptoEager() and clearCopyPointers();
+
+Wed Jun 25 15:15:12 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc: added #include "variable.hh"
+
+Tue Jun 24 15:53:31 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsAutomaton.cc (addTopVariable): changed Variable*
+	to VariableTerm*
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): changed Variable*
+	to VariableTerm* in addTopVariable() decl
+
+	* ACU_Term.cc: added #include "variable.hh"
+
+	* ACU_LhsCompiler1.cc (analyseConstraintPropagation): use VariableTerm::downCast()
+	(compileLhs): use VariableTerm::downCast()
+
+	* ACU_Term.cc (compileRhs): use VariableTerm::downCast()
+
+Thu Jun 19 10:38:03 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc: deleted #include "unionFind.hh"
+
+Tue Jun 17 16:40:13 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (compileOpDeclarations): no longer do the assoc
+	stuff here
+
+	* ACU_Symbol.hh (class ACU_Symbol): deleted compileEquations() decl
+
+	* ACU_Symbol.cc (finalizeSortInfo): added
+	(compileEquations): deleted
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for finalizeSortInfo()
+
+Wed Jun 11 10:35:22 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsCompiler1.cc (analyseConstraintPropagation): use
+	willGroundOutMatch()
+	(compileLhs): use willGroundOutMatch()
+
+	* ACU_LhsCompiler2.cc (findConstraintPropagationSequence): use
+	willGroundOutMatch()
+
+Tue Jun 10 10:24:35 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsCompiler2.cc (findConstraintPropagationSequence): don't
+	add in grounded out aliens unless they also "honor ground out match".
+
+Fri Jun  6 18:32:04 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.hh (class ACU_Term): deleted addSubsumedAliens() decl
+
+	* ACU_LhsCompiler2.cc (compileAliensOnlyCase): removed call to
+	addSubsumedAliens(); We cannot safely add subsumed aliens for the
+	following reason: Even though the subsumed alien will not steal
+	the only match for its subsuming alien (unless there is no overall
+	match) it could take the wrong match if there is a subproblem; and
+	we would not discover this until the solve phase when it is too
+	late. We could make the use of this optimization conditional on
+	there being no subproblem at match time but this complicates what is
+	a very minor infrequently usable optimization beyond its utility -
+	so we ditch it altogether.
+	(addSubsumedAliens): deleted
+
+	* ACU_DagNode.hh (class ACU_DagNode): added
+	matchVariableWithExtension() decl
+
+	* ACU_Symbol.hh (class ACU_Symbol): deleted
+	matchVariableWithExtension() decl
+
+	* ACU_DagNode.cc (matchVariableWithExtension): added
+
+	* ACU_Symbol.cc (matchVariableWithExtension): deleted
+
+Thu Jun  5 11:48:46 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.cc (copyEagerUptoReduced2): adapted from old
+	copyEagerUptoReduced()
+	(clearCopyPointers2): adapted from old clearCopyPointers()
+
+	* ACU_DagNode.hh (class ACU_DagNode): decls for
+	clearCopyPointers() and copyEagerUptoReduced() changed
+
+	* ACU_Subproblem.cc (solveVariables): don't pass context in call
+	to computeAssignment()
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): updated
+	computeAssignment() decl
+
+	* ACU_Subproblem.cc (computeAssignment): no longer compute sort of
+	returned DagNode
+	(solveVariables): use inErrorSort() rather than
+	computeTrueSortWhilePreservingContext()
+	(solveVariables): use checkSort() now that assignment is no longer
+	guarenteed to have a sort
+	(computeAssignment): removed context arg as no longer needed
+
+	* ACU_Symbol.cc (ACU_Symbol): don't pass stable arg to Symbol; in
+	fact we were aleays passing true which was a bug!
+	
+==============================Engine24====================================
+
+Tue Jun  3 17:01:31 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_CollapseMatcher.cc (uniqueCollapseMatch): now cope with
+	abstraction variables
+	(multiwayCollapseMatch): removed error check for matching identity
+	at top because such a match may ultimately fail due to abstraction
+	subproblems and is therefore not necessarily illegal.
+	(collapseMatch): handle abstraction variables in multiway collapse
+	case
+
+Mon Jun  2 11:16:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (compileOpDeclarations): move identity code here
+	because we need sorts to be done before we can do collapse analysis
+
+	* ACU_LhsAutomaton.cc (dump): handle abstraction variables
+
+	* ACU_Matcher.cc (match): Assert in wrong place
+
+	* ACU_Term.cc (determineCollapseSymbols): fixed bug where we had
+	wrong test for setting p.collapseToOurSymbol
+
+	* ACU_LhsAutomaton.cc (addAbstractionVariable): fixed bug where we
+	were assigning tv.upperBound to itself rather than initializing it
+	from upperBound arg
+
+	* ACU_Matcher.cc (fullMatch): pass nrVariables arg to
+	VariableAbstractionSubproblem()
+
+Fri May 30 11:56:07 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsCompiler1.cc (compileLhs): check abstractionVariableIndex
+	against NONE rather than 0
+
+	* ACU_Matcher.cc (match): handle the variable only case
+	case where the last unbound variable is an abstraction variable
+	and there is nothing to bind it to except identity
+	(forcedLoneVariableCase): rewritten to deal with abstraction variables
+	(fullMatch): deal with abstraction variables
+
+	* ACU_LhsCompiler1.cc (compileLhs): rewritten to
+	handle abstractionVariable and honorsGroundOutMatch()
+
+	* ACU_LhsAutomaton.cc (addTopVariable): set abstracted to 0
+
+	* ACU_LhsCompiler1.cc (analyseConstraintPropagation): rewritten to
+	handle abstractionVariable and honorsGroundOutMatch()
+
+	* ACU_LhsAutomaton.cc (addAbstractionVariable): added
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added abstracted
+	field to struct TopVariable
+	(class ACU_LhsAutomaton): added decl for addAbstractionVariable()
+
+Thu May 29 16:57:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (determineCollapseSymbols): major rewrite to set
+	honorsGroundOutMatch and collapseToOurSymbol and matchOurIdentity flags
+	(dumpArguments): print collapseToOurSymbol and matchOurIdentity
+
+	* ACU_Term.hh (class ACU_Term): added collapseToOurSymbol and
+	matchOurIdentity to struct Pair
+
+Wed May 28 11:29:39 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Subproblem.cc (deepSelfDestruct): fixed long standing memory
+	leak where we were deleting rather than deepSelfDestruct()ing edge
+	subproblems
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): pass identityDag
+	arg to bindUnboundVariablesToIdentity()
+	(bindUnboundVariablesToIdentity): added identityDag arg
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added identityDag
+	arg to bindUnboundVariablesToIdentity()
+
+	* ACU_LhsAutomaton.cc: added include for SubproblemDisjunction
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): now use
+	SubproblemDisjunction rather than ACU_CollapseSubproblem
+
+Tue May 27 11:19:03 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): considerably
+	simplified using DagNode::matchVariable()
+
+Fri May 23 14:18:00 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_CollapseSubproblem.cc: created
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): general case added
+
+	* ACU_CollapseSubproblem.hh (class ACU_CollapseSubproblem): created
+
+	* ACU_CollapseMatcher.cc (uniqueCollapseMatch): code cleaning;
+	vi eliminated
+	(bindUnboundVariablesToIdentity): added
+	(multiwayCollapseMatch): implemented 1 bound variable, identity
+	subject, 0 viable variables and 1 viable variable cases 
+
+Thu May 22 10:48:52 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Matcher.cc (match): Don't do matchAtTop assertion until
+	we've established that the subject actualy has our symbol on top
+	since an alien (e.g. free) symbol may not have extension.
+
+	* ACU_LhsCompiler1.cc (compileLhs): fixed bug where
+	we were using !empty rather than !empty() to decide whether
+	collapse possible
+	(compileLhs): uniqueCollapseAutomaton must be passed our
+	matchAtTop flag to ensure matching with extension is performed if
+	necessary.
+
+	* ACU_CollapseMatcher.cc (multiwayCollapseMatch): added
+	(uniqueCollapseMatch): added
+
+Wed May 21 15:19:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton): initialize
+	uniqueCollapseAutomaton
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): add
+	uniqueCollapseAutomaton arg to ctor decl
+
+	* ACU_LhsCompiler1.cc (compileLhs): pass flag saying whether we
+	could collapse to ACU_LhsAutomaton()
+	(compileLhs): compute uniqueCollapseAutomaton if needed
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): add
+	collapsePosible arg to ctor decl
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton): initialize collapse
+	possible flag
+
+	* ACU_Term.cc (determineCollapseSymbols): need to insert
+	abstraction variables for subterms that can't collapse but which
+	have our identity as their top symbol and are non-ground.
+	(determineCollapseSymbols): non longer assume that a subterm might
+	match the idenitity element because it has the same top symbol as
+	the identity element - check to see also that it is non-ground.
+
+Tue May 20 16:24:31 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (dumpArguments): added
+
+	* ACU_Term.hh (class ACU_Term): added decl for dumpArguments()
+
+	* ACU_Matcher.cc (match): temporarily comment out unfinished
+	collapse code so we can test variable abstraction
+
+	* ACU_Term.cc (determineCollapseSymbols): rewritten to do
+	selective variable abstraction
+
+Mon May 19 10:48:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (determineCollapseSymbols): now fill out
+	uniqueCollapseSubtermIndex and abstractionVariableIndex
+
+	* ACU_Term.hh (class ACU_Term): added uniqueCollapseSubtermIndex
+	(class ACU_Term): added abstractionVariableIndex to Pair (no
+	longer really a pair! If this works out we will rename it to Triple.
+
+Fri May 16 11:38:36 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_CollapseMatcher.cc: created
+
+	* ACU_Matcher.cc (match): added call to collapseMatch() in the
+	case where top symbol mis-matches and collapsePossible
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added
+	collapsePossible flag and uniqueCollapseAutomaton pointer
+
+	* ACU_Term.cc (compileRhs): pass Term* rather than Symbol* for
+	first arg of addArgument()
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): change decl for
+	addArgument()
+
+	* ACU_RhsAutomaton.cc (addArgument): rewritten to use se
+	Term::stable() rather than Symbol::stable(). First arg is now a Term*
+
+	* ACU_LhsAutomaton.cc (addGroundedOutAlien): use Term::stable()
+	rather than Symbol::stable()
+	(addNonGroundAlien): use Term::stable() rather than Symbol::stable()
+
+Wed May 14 15:42:04 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (analyseCollapses): deleted
+
+	* ACU_Term.hh (class ACU_Term): deleted analyseCollapses() decl
+
+	* ACU_Term.cc (determineCollapseSymbols): added
+
+	* ACU_Term.hh (class ACU_Term): added decl for determineCollapseSymbols()
+
+	* ACU_Symbol.cc (eqRewrite): changed comment on repudiate call now
+	that inErrorSort() can leave sort info behind
+
+Tue May 13 10:29:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsAutomaton.cc: comment out #include "sortCheckSubproblem.hh"
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): use
+	DagNode::checkSort() to simplify code
+
+Fri May  9 15:55:04 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (analyseCollapses): fixed bug where we need to check
+	multiplicity against 1 in order to return early
+
+Wed May  7 16:46:17 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (analyseCollapses): added
+
+Thu Apr 10 16:16:03 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Matcher.cc (forcedLoneVariableCase): must repudiateSort() in
+	the case where the base sort is not small enough and
+ 	the top symbol is not sort constraint free as the
+	base sort we calculated may not be the true sort and will inhibit
+	the calculation of the true sort during the solution of the sort
+	check subprblem.
+
+Wed Apr  2 16:54:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Subproblem.cc (solveVariables): when solving a trivial
+	system with extension, use extensionInfo->setWholeFlag(true)
+	rather than extensionInfo->clear() (trying to fix UMR:
+	Uninitialized memory read reported by purify).
+
+Fri Mar 28 16:51:53 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): decl for makeExtensionInfo()
+	added
+
+	* ACU_DagNode.cc (makeExtensionInfo): added
+
+Wed Mar 26 11:02:46 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Matcher.cc (buildBipartiteGraph): rewritten to use findFirstOccurrence()
+	(aliensOnlyMatch): rewritten to use findFirstOccurrence()
+	(eliminateGroundedOutAliens): rewritten to use findFirstOccurrence()
+
+	* ACU_GreedyMatcher.cc (greedyMatch): test top symbol before multiplicity
+
+Tue Mar 25 12:17:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_GreedyMatcher.cc (greedyMatch): rewritten to use findFirstOccurrence()
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for
+	findFirstOccurrence()
+
+	* ACU_DagNode.cc (findFirstOccurrence): added
+
+	* ACU_Subproblem.cc (computeAssignment): initialized col to avoid
+	spurious uninit warning from g++
+
+	* ACU_LhsCompiler3.cc (compileGreedyAndFullCases): pass term in
+	addNonGroundAlien() call
+
+	* ACU_LhsCompiler2.cc (compileAliensOnlyCase): pass term in
+	addNonGroundAlien() calls
+
+	* ACU_LhsCompiler1.cc (compileLhs): pass term in
+	addGroundedOutAlien() call
+
+	* ACU_LhsAutomaton.cc (addGroundedOutAlien): store topSymbol if
+	stable, 0 otherwise
+	(addNonGroundAlien): store topSymbol if stable, 0 otherwise
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added topSymbol field
+	to NonGroundAlien struct; added Term* alien arg to
+	addGroundedOutAlien() and addNonGroundAlien()
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): new condition for
+	choosing between false and UNDECIDED when we can't find a variable
+	to assign some subject to in phase 2.
+
+Fri Mar 21 18:54:28 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): new technique for
+	calculating failure mode in phase 1.
+	(greedyMatch): call greedyPureMatch with extra arg
+
+	* ACU_Matcher.cc (match): call greedyPureMatch with extra arg
+
+Thu Mar 20 16:05:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Matcher.cc (multiplicityChecks): split off case where
+	maxPatternMultiplicity = 1 
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): extensionInfo
+	removed from multiplicityChecks and totalMultiplicity added as
+	data member; the aim is to save the totalSubjectMultiplicity so we
+	don't have to mess with extensionInfo until it is clear that it is
+	needed. (After checking with quantify)
+
+Tue Mar 18 16:07:47 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (matchVariableWithExtension): set extensionInfo
+	upperBound to avoid crashing when trying to build diophantine system
+
+Wed Feb 19 16:08:49 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsCompiler3.cc (findFullSequence): remember to expand
+	sequenece before putting stuff in it.
+
+Thu Feb 13 10:41:49 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsCompiler1.cc (compileLhs): greedy = !inErrorSort
+
+Wed Feb 12 16:11:35 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_GreedyMatcher.cc (greedyPureMatch): make sure we don't
+	assign to much to extension
+
+	* ACU_Subproblem.cc (extractDiophantineSystem): use extensionInfo
+	upper bound to bound extension row in diophantine system
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): amended
+	multiplicityChecks() decl
+
+	* ACU_ExtensionInfo.hh (setUpperBound): added
+	(getUpperBound): added
+
+	* ACU_Matcher.cc (match): pass extensionInfo to
+	multiplicityChecks(); test extensionInfo rather than matchAtTop
+	(multiplicityChecks): set upper bound on size of extension if necessary
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): identityDag deleted
+
+	* ACU_Subproblem.cc (solveVariables): added code to bind variables
+	to idenity in the case where ther are unbound variables and no system
+	(solveVariables): handle the case where the sort of the dag node
+	reeturn by computeAssignment() is unknown; this can only be the
+	identity case
+	(solveVariables): unbinding code simplified
+	(extractDiophantineSystem): handle case where there are no
+	unused subjects but all variables case take the identity by
+	keeping track of nrNonIdentityVariables
+	(computeAssignment): don't bother computing the sort of the
+	identity dag since our lower bound condition guarentees that the
+	variable can take the identity element
+	(computeAssignment): return 0 in identity case
+	(solveVariables): handle case where 0 is returned from computeAssignment()
+
+Fri Feb  7 14:49:35 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc (findEagerVariables): static_cast removed for symbol()
+	(markEagerArguments): static_cast removed for symbol()
+
+	* ACU_DagNode.cc (copyEagerUptoReduced): static_cast removed for symbol()
+	(overwriteWithClone): static_cast removed for symbol()
+	(makeClone): static_cast removed for symbol()
+	(copyWithReplacement): static_cast removed for symbol()
+	(partialReplace): static_cast removed for symbol()
+	(partialConstruct): static_cast removed for symbol()
+	(eliminateArgument): static_cast removed for symbol()
+
+	* ACU_DagNode.hh (symbol): added
+
+	* ACU_Subproblem.hh (class ACU_Subproblem): identityDag pointer added
+
+	* ACU_Subproblem.cc (addEdge): optimized
+	(addTopVariable): optimized
+	(extractDiophantineSystem): optimized
+	(solveVariables): zero out idenity dag pointer since the identity
+	element that it may point to may get garbage collected before in
+	can be used
+	(computeAssignment): handle identity case
+
+	* ACU_Matcher.cc (fullMatch): pass 0 as lower bound for variables
+	that can take identity
+
+	* ACU_LhsCompiler1.cc (compileLhs): set error sort flag only if we
+	are matching with extension. Prevent compiling with greedy
+	strategy if we are in the error sort flag is set.
+ 	This fixes a bug because the ACU
+	greedy matcher does not do sort check for matched part.
+
+Thu Feb  6 16:46:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_GreedyMatcher.cc (greedyMatch): simplified
+	(greedyPureMatch): deal with identity in first phase by allowing a
+	variable with takeIdentity set to have no firstSubject if none can
+	be found.
+	(greedyPureMatch): in 3rd phase deal with variables that were
+	assigned nothing by binding them to identity dag
+
+Wed Feb  5 11:57:26 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (ACU_Symbol): zero identityAutomaton and
+	identitySubstitution. Handle no identity case.
+
+	* ACU_Symbol.hh (makeIdentityDag): added
+
+	* ACU_Symbol.cc (compileEquations): added code to compile a
+	rhsAutomaton for our identity element. Handle no identity case 
+
+	* ACU_GreedyMatcher.cc: created
+
+	* ACU_Matcher.cc (multiplicityChecks): totalPatternMultiplicity ->
+	totalLowerBound
+	(eliminateBoundVariables): handle the case where a top variable is
+	bound to our identity
+	(match): recognize and handle special case of one variable which
+	can take identity vs no subjects (no extension case)
+
+Tue Feb  4 12:18:37 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsAutomaton.cc (updateTotals): totalPatternMultiplicity ->
+	totalLowerBound
+	(addTopVariable): fill out takeIdentity field and take it into
+	account when updating totals
+	(dump): output takeIdenity field
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): takeIdentity field
+	added to struct TopVariable
+	(class ACU_LhsAutomaton): totalPatternMultiplicity ->
+	totalLowerBound (since identity may result in some pattern
+	variables not being counted)
+
+	* ACU_LhsCompiler3.cc (findFullSequence): use weakConstraintPropogation()
+
+	* ACU_LhsCompiler2.cc (compileAliensOnlyCase): use weakConstraintPropogation()
+
+	* ACU_LhsCompiler1.cc (weakConstraintPropogation): added
+
+	* ACU_LhsCompiler3.cc (compileGreedyAndFullCases): simplified
+	using findFullSequence()
+	(findFullSequence): added
+
+Fri Jan 31 17:07:29 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsCompiler3.cc (compileGreedyAndFullCases): removed greedy
+	argument; code cleaning
+	(lengthCompare): deleted
+	(findGreedySequence): no longer deal with fully independent aliens
+	first as I can't see any justification for doing so
+	(findIndependentSets): no longer sort independent sets by length
+	(can't think of any justification).
+
+	* ACU_LhsCompiler1.cc (compileLhs): compileGreedyAndFullCases() no
+	longer takes greedy argument
+
+	* ACU_LhsCompiler2.cc (compileAliensOnlyCase): code cleaning
+
+	* ACU_LhsCompiler1.cc (compileLhs): code cleaning; make sure
+	subproblemLikely is false in lone variable case
+
+Thu Jan 30 16:17:56 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsCompiler3.cc: created
+	(compileGreedyAndFullCases): added
+
+	* ACU_Term.hh (symbol): added
+
+	* ACU_LhsCompiler2.cc: created
+	(compileAliensOnlyCase): added
+
+Mon Jan 27 10:59:41 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_LhsAutomaton.hh: created
+
+	* ACU_LhsAutomaton.cc: created
+
+	* ACU_Matcher.cc: created
+
+Thu Jan 16 18:17:11 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): topSymbol is
+	ACU_Symbol* rather that Symbol*
+
+	* ACU_RhsAutomaton.cc (construct): added call to eliminate identity
+	elements
+	(replace): added call to eliminate identity elements
+	(ACU_RhsAutomaton): take ACU_Symbol* rather that Symbol*
+
+Mon Jan 13 12:53:38 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_RhsAutomaton.hh: created
+
+Fri Jan 10 11:15:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Term.cc: created
+	(normalize): now delete idenity elements, collapsing to subterm
+	where necessary
+
+	* ACU_DagNode.hh (class ACU_DagNode): enum NormalizationResult
+	removed; declaration for eliminateArgument() added
+
+	* ACU_DagNode.cc (copyWithReplacement): handle case where collapse
+	is avoided because single remaining argument has multiplicity > 1
+	(partialReplace): handle case where collapse
+	is avoided because single remaining argument has multiplicity > 1
+	(partialConstruct): handle case where collapse
+	is avoided because single remaining argument has multiplicity > 1
+	(eliminateArgument): added to handle the removal of identity elements
+
+Thu Jan  9 15:40:11 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_DagNode.cc: created
+	(overwriteWithClone): fixed serious bug where we were copying sort
+	of overwritten node rather than overwriting node
+	(mergeSortAndUniquize): old commented out flip code removed
+	(eliminateSubject): unnecessary ACU_DagNode::'s removed
+	(partialConstruct): handle case where replacement it the identity element
+	(partialReplace): handle case where replacement it the identity element
+	(copyWithReplacement): handle case where replacement it the identity element
+
+Wed Jan  8 10:26:06 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* ACU_Symbol.cc (eqRewrite): now cope with the possibility that
+	whenever we normalize at top it is possible that we could collpase
+	out of the current theory
+	(computeBaseSort): added uniform sort code optimization;
+	simplified uniform sort code computation by passing vectors of
+	sort codes rather thhan vectors of vectors of int
+
+	* ACU_DagNode.hh (class ACU_DagNode): added enum NormalizationResult
+
+	* ACU_Symbol.cc: created
+	(~ACU_Symbol): added
+	(compileEquations): added as a hack to process identity element
+	after all other op decl processing has been done.
+	(ACU_Symbol): do normalization here to avoid problem of later
+	identities that could possibly depend on this one.
+
+	* ACU_DagArgumentIterator.cc: created
+
+	* ACU_ArgumentIterator.hh (class ACU_ArgumentIterator): created
+
+	* ACU_DagArgumentIterator.hh (class ACU_DagArgumentIterator): created
+
+	* ACU_ArgumentIterator.cc: created
+
+	* ACU_ExtensionInfo.hh (class ACU_ExtensionInfo): created
+
+	* ACU_Theory.cc: created
+
+	* ACU_Theory.hh: created
+
+	* ACU_Term.hh (class ACU_Term): created
+
+	* ACU_Symbol.hh (getIdentity): added
+
+	* ACU_DagNode.hh (class ACU_DagNode): created
+
+	* ACU_Symbol.hh (class ACU_Symbol): created
+

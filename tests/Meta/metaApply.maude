@@ -1,0 +1,290 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test the metaApply() descent function.
+***
+
+fmod TEST is
+  pr META-LEVEL .
+  op m : -> Module .
+  eq m =
+(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  none
+  none
+  rl 'a.Foo => 'b.Foo [label('k)] .
+endm) .
+endfm
+
+red metaApply(m, 'a.Foo, 'k, none, 0) .
+red metaApply(m, 'a.Foo, 'k, none, 1) .
+red metaApply(m, 'a.Foo, 'k, none, unbounded) .
+red metaApply(m, 'a.Foo, 'k, none, 10000000000000000000000000000) .
+
+
+fmod TEST2 is
+  pr META-LEVEL .
+  op m : -> Module .
+  eq m =
+(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+endm) .
+endfm
+
+red metaApply(m, 'f['a.Foo, 'b.Foo], 'k, none, 0) .
+red metaApply(m, 'f['a.Foo, 'b.Foo], 'k, none, 1) .
+red metaApply(m, 'f['a.Foo, 'b.Foo], 'k, none, 2) .
+red metaApply(m, 'f['a.Foo, 'b.Foo], 'k, none, 10000000000000000000000000000) .
+
+
+*** Testing substitutions
+fmod TEST3 is
+  pr META-LEVEL .
+  op m : -> Module .
+  eq m =
+(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+endm) .
+endfm
+
+red metaApply(m, 'f['a.Foo, 'b.Foo], 'k, 'Y:Foo <- 'b.Foo, 0) .
+red metaApply(m, 'f['a.Foo, 'b.Foo], 'k, 'Y:Foo <- 'b.Foo, 1) .
+red metaApply(m, 'f['b.Foo, 'b.Foo], 'k, 'X:Foo <- 'b.Foo, 0) .
+red metaApply(m, 'f['b.Foo, 'b.Foo], 'k, 'X:Foo <- 'b.Foo, 1) .
+red metaApply(m, 'f['b.Foo, 'b.Foo], 'k, 'Z:Foo <- 'b.Foo, 0) .
+red metaApply(m, 'f['b.Foo, 'b.Foo], 'k, 'Z:Foo <- 'b.Foo, 1) .
+
+
+*** Testing conditional
+fmod TEST4 is
+  pr META-LEVEL .
+  op m : -> Module .
+  eq m =
+(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  none
+  none
+  crl 'f['Y:Foo, 'Y:Foo] => 'X:Foo
+      if 'X:Foo := 'f['Y:Foo, 'a.Foo] [label('k)] .
+endm) .
+endfm
+
+red metaApply(m, 'f['b.Foo, 'b.Foo], 'k, 'Z:Foo <- 'b.Foo, 0) .
+red metaApply(m, 'f['b.Foo, 'b.Foo], 'k, 'Z:Foo <- 'b.Foo, 1) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  crl 'f['X:Foo, 'Y:Foo] => 'Z:Foo
+      if 'Q:Foo := 'g['X:Foo, 'Y:Foo] /\ 
+	 'g['Z:Foo, 'A:Foo] := 'Q:Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo, 'c.Foo], 'k, 'A:Foo <- 'b.Foo, 0) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  crl 'f['X:Foo, 'Y:Foo] => 'Z:Foo
+      if 'Q:Foo := 'g['X:Foo, 'Y:Foo] /\ 
+	 'g['Z:Foo, 'A:Foo] := 'Q:Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo, 'c.Foo], 'k, 'A:Foo <- 'b.Foo, 1) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  crl 'f['X:Foo, 'Y:Foo] => 'Z:Foo
+      if 'Q:Foo := 'g['X:Foo, 'Y:Foo] /\ 
+	 'g['Z:Foo, 'A:Foo] := 'Q:Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo, 'c.Foo], 'k, 'A:Foo <- 'b.Foo, 2) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo, 'c.Foo], 'k, none, 0) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo, 'c.Foo], 'k, none, 1) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo, 'c.Foo], 'k, none, 2) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo, 'c.Foo], 'k, none, 3) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo, 'c.Foo], 'k, none, 4) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo, 'c.Foo], 'k, none, 5) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo, 'c.Foo], 'k, none, 6) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+  rl 'a.Foo => 'c.Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo], 'k, none, 0) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+  rl 'a.Foo => 'c.Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo], 'k, none, 1) .
+
+red in META-LEVEL : metaApply(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+  rl 'a.Foo => 'c.Foo [label('k)] .
+endm, 'f['a.Foo, 'b.Foo], 'k, none, 2) .

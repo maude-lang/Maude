@@ -1,0 +1,102 @@
+Maude> ==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '_+_['1.0.FiniteFloat,'1.0.FiniteFloat]) .
+rewrites: 1
+result QidList: '1.0 '+ '1.0
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'X:Float) .
+rewrites: 1
+result Variable: 'X:Float
+
+r g b
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 's_['0.Zero]) .
+rewrites: 1
+result Sort: '1
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 's_['s_['0.Zero]]) .
+rewrites: 1
+result TypeList: 's '1
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 's_['s_['0.Zero]]) .
+rewrites: 1
+result TypeList: 's 's '0
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '-_['s_['0.Zero]]) .
+rewrites: 1
+result Sort: '-1
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '_/_['-_['s_['0.Zero]],'s_['0.Zero]]) .
+rewrites: 1
+result Sort: '-1/1
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '-_['s_^22['0.Zero]]) .
+rewrites: 1
+result Sort: '-22
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '_/_['-_['s_^6789['0.Zero]],'s_^12345['0.Zero]]) .
+rewrites: 1
+result Sort: '-6789/12345
+Maude> Bye.

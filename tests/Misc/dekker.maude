@@ -1,0 +1,207 @@
+set show timing off .
+set show advisories off .
+
+***(
+Dekker's algorithm is generally defined with two processes on a shared
+memory machine specified in an imperative language. Rather than give a
+translation of Dekker's algorithm into rewriting logic we give a deep
+embedding of a toy language just powerful enough to express Dekker's
+algorithm.
+)
+
+load model-checker
+
+***(
+Naive model of memory with locations named by Qids and holding
+Ints.
+)
+
+fmod MEMORY is
+  inc INT .
+  inc QID .
+
+  sorts Memory .
+  op none : -> Memory .	
+  op __ : Memory Memory -> Memory [assoc comm id: none] .
+  op [_,_] : Qid Int -> Memory .
+endfm
+
+***(
+Equality test comparing the contents of a named memory location to a
+given machine integer.
+)
+
+fmod TESTS is
+  inc MEMORY .
+
+  sort Test .
+  op _=_ : Qid Int -> Test .
+  op eval : Test Memory -> Bool .
+
+  var Q : Qid .
+  var M : Memory .
+  vars N N' : Int .
+
+  eq eval(Q = N, [Q, N'] M) = N == N' .
+endfm
+
+***(
+Syntax for a trival sequential programming langauge.
+)
+
+fmod SEQUENTIAL is
+  inc TESTS .
+
+  sorts UserStatement Program .
+  subsort UserStatement < Program .
+  op skip : -> Program .
+  op _;_ : Program Program -> Program [prec 61 assoc id: skip] .
+  op _:=_ : Qid Int -> Program .
+  op if_then_fi : Test Program -> Program .
+  op while_do_od : Test Program -> Program .
+  op repeat_forever : Program -> Program .
+endfm
+
+***(
+Processes have a process identifier and a program.
+The machine state is a soup of processes, a shared memory and a
+process identifier. The latter records the id of the last process
+to execute and is needed to talk about fairness. The operational
+semantics of the programming language running on this machine is given
+by just 5 rules.
+)
+
+mod PARALLEL is
+  inc SEQUENTIAL .
+  inc TESTS .
+
+  sorts Pid Process Soup MachineState .
+  subsort Process < Soup .
+  op [_,_] : Pid Program -> Process .
+  op empty : -> Soup .
+  op _|_ : Soup Soup -> Soup [prec 61 assoc comm id: empty] .
+  op {_,_,_} : Soup Memory Pid -> MachineState .
+
+  vars P R : Program .
+  var S : Soup .
+  var U : UserStatement .
+  vars I J : Pid .
+  var M : Memory .
+  var Q : Qid .
+  vars N X : Int .
+  var T : Test .
+
+  rl {[I, U ; R] | S, M, J} => {[I, R] | S, M, I} .
+
+  rl {[I, (Q := N) ; R] | S, [Q, X] M, J} =>
+	{[I, R] | S, [Q, N] M, I} .
+
+  rl {[I, if T then P fi ; R] | S, M, J} =>
+	{[I, if eval(T, M) then P else skip fi ; R] | S, M, I} .
+
+  rl {[I, while T do P od ; R] | S, M, J} =>
+        {[I, if eval(T, M) then (P ; while T do P od) else skip fi ; R]
+         | S, M, I} .
+
+  rl {[I, repeat P forever ; R] | S, M, J} =>
+	{[I, P ; repeat P forever ; R] | S, M, I} .
+endm
+
+***(
+The classical Dekker's algorithm for mutual exclusion between two
+processes using 3 variables, 'c1, 'c2 and 'turn, in shared memory.
+crit is used to represent the critical section and rem is used to
+represent the remainder (non-critical) part of each program.
+)
+
+mod DEKKER is
+  inc PARALLEL .
+  subsort Int < Pid .
+  ops crit rem : -> UserStatement .
+  ops p1 p2 : -> Program .
+  op initialMem : -> Memory .
+  op initial : -> MachineState .
+
+  eq p1 =
+	repeat
+	  'c1 := 0 ;
+	  while 'c2 = 0 do
+	    if 'turn = 2 then 
+	      'c1 := 1 ;
+	      while 'turn = 2 do skip od ;
+	      'c1 := 0
+	    fi
+	  od ;
+	  crit ;
+	  'turn := 2 ;
+	  'c1 := 1 ;
+	  rem
+	forever .
+
+  eq p2 =
+	repeat
+	  'c2 := 0 ;
+	  while 'c1 = 0 do
+	    if 'turn = 1 then 
+	      'c2 := 1 ;
+	      while 'turn = 1 do skip od ;
+	      'c2 := 0
+	    fi
+	  od ;
+	  crit ;
+	  'turn := 1 ;
+	  'c2 := 1 ;
+	  rem
+	forever .
+
+  eq initialMem = ['c1, 1] ['c2, 1] ['turn, 1] .
+  eq initial = { [1, p1] | [2, p2], initialMem, 0 } .
+endm
+
+***(
+The model check. Note how the operation enterCrit is used to represent
+two propositions: enterCrit(1) means process 1 is about to enter it's
+critical section and enterCrit(2) means process 2 is about to enter
+it's critical section. Similarly exec(1) means process 1 just executed
+and exec(2) means process 2 just executed.
+)
+
+mod CHECK is
+  inc DEKKER .
+  inc MODEL-CHECKER .
+  subsort MachineState < State .
+  ops enterCrit exec : Pid -> Prop .
+
+  var M : Memory .
+  vars R : Program .
+  var S : Soup .
+  vars I J : Pid .
+
+  eq {[I, crit ; R] | S, M, J} |= enterCrit(I) = true .
+  eq {S, M, J} |= exec(J) = true .
+endm
+
+***(
+Safety: we check that always we are not in a state where p1 is about
+to enter it's critical section and p2 is about to enter it's critical
+section.
+)
+
+red modelCheck(initial, [] ~ (enterCrit(1) /\ enterCrit(2))) .
+
+***(
+"Strong" liveness: if p1 gets to execute infinitely often then it
+enters it's critical section infinitely often. This is not true
+with Dekker's algorithm.
+)
+
+red modelCheck(initial, []<> exec(1) -> []<> enterCrit(1)) .
+*** Counterexample has a 9 state lead in to a 2 state cycle.
+
+***(
+"Weaker" liveness: if p1 and p2 both get to execute infinitely often
+then p1 and p2 both enter their critical sections infinitely often.
+)
+
+red modelCheck(initial, ([]<> exec(1) /\ []<> exec(2)) ->
+    ([]<> enterCrit(1) /\ []<> enterCrit(2))) .

@@ -1,0 +1,143 @@
+Maude> ==========================================
+reduce in META-LEVEL : fmod 'FOO is
+  including ('INT + 'NAT) * (
+    sort 'Nat to 'Nat2,
+    (label 'foo to 'bar,
+    op 'baz : 'Quux 'Quux -> 'Quux to 'quux [prec(10)]),
+    op 'foo to 'bar [none]
+  ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm .
+rewrites: 0
+result FModule: fmod 'FOO is
+  including ('INT + 'NAT) * (
+    sort 'Nat to 'Nat2,
+    label 'foo to 'bar,
+    op 'foo to 'bar [none],
+    op 'baz : 'Quux 'Quux -> 'Quux to 'quux [prec(10)]
+  ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  including 'INT + 'NAT .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '0.Nat) .
+rewrites: 1
+result ResultPair: {'0.Zero,'Zero}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  including 'NAT * (
+    sort 'Zero to 'ZZ
+  ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '0.Nat) .
+rewrites: 1
+result ResultPair: {'0.ZZ,'ZZ}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  including ('FLOAT + 'NAT) * (
+    sort 'Zero to 'ZZ,
+    op '_+_ to 'plus [none]
+  ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, 'plus['s_^2['0.Nat],'s_^2['0.Nat]]) .
+rewrites: 2
+result ResultPair: {'s_^4['0.ZZ],'NzNat}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  including 'NAT * (
+    op '_+_ to 'plus [none]
+  ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, 'plus['s_^2['0.Nat],'s_^2['0.Nat]]) .
+rewrites: 2
+result ResultPair: {'s_^4['0.Zero],'NzNat}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  including 'NAT .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '_+_['s_^2['0.Nat],'s_^2['0.Nat]]) .
+rewrites: 2
+result ResultPair: {'s_^4['0.Zero],'NzNat}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  including 'NAT * (
+    op '_+_ to 'plus [none]
+  ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '_*_['s_^2['0.Nat],'s_^2['0.Nat]]) .
+rewrites: 2
+result ResultPair: {'s_^4['0.Zero],'NzNat}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  including 'NAT * (
+    sort 'Zero to 'ZZ
+  ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '_*_['s_^2['0.Nat],'s_^2['0.Nat]]) .
+rewrites: 2
+result ResultPair: {'s_^4['0.ZZ],'NzNat}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  including 'NAT * (
+    sort 'Zero to 'ZZ
+  ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, 'sd['s_^3['0.Nat],'s_^2['0.Nat]]) .
+rewrites: 2
+result ResultPair: {'s_['0.ZZ],'NzNat}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  including 'NAT * (
+    op '_+_ to 'plus [none]
+  ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '0.Nat) .
+rewrites: 1
+result ResultPair: {'0.Zero,'Zero}
+Maude> Bye.

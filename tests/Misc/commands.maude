@@ -1,0 +1,38 @@
+set show timing off .
+set show advisories off .
+
+mod FOO is inc INT .
+  op f : Int Int -> Int [assoc comm id: 1] .
+  sort Foo .
+  subsort Int < Foo .
+  vars X Y Z : Int .
+  eq f(f(X, Y), X) = f(Y, Y) .
+  cq f(f(X, Y), Y) = f(Y, X) if X =/= Y .
+  rl f(f(X, Y), X) => f(Y, Y) .
+  crl f(f(X, Y), Y) => f(Z, X) if Z =/= Y .
+  mb f(X, X) : NzInt .
+  cmb f(X, Y) : NzInt if X =/= Y .
+endm
+
+show mod .
+show all FOO .
+show sorts .
+show kinds .
+show eqs .
+show mbs .
+show rls .
+show vars .
+show summary .
+
+select INT .
+show mod .
+show mod FOO .
+show eqs FOO .
+
+parse in FOO : f(0, 2) .
+set print mixfix off .
+show all FOO .
+set print mixfix on .
+set print with parens on .
+show all FOO .
+set print with parens off .

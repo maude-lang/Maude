@@ -1,0 +1,110 @@
+set show timing off .
+set show advisories off .
+
+red in META-LEVEL : (
+fmod 'FOO is
+  including ('NAT + 'INT) *
+(sort 'Nat to 'Nat2,
+ op 'foo to 'bar [none],
+ op 'baz : 'Quux 'Quux -> 'Quux to 'quux [prec(10)],
+ label 'foo to 'bar) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm
+
+) .
+
+select META-LEVEL .
+
+red metaReduce(
+fmod 'FOO is
+  including 'NAT + 'INT .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '0.Nat) .
+
+red metaReduce(
+fmod 'FOO is
+  including 'NAT * (sort 'Zero to 'ZZ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '0.Nat) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  including ('NAT + 'FLOAT) * (sort 'Zero to 'ZZ, op '_+_ to 'plus [none]) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, 'plus['s_^2['0.Nat],'s_^2['0.Nat]]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  including 'NAT * (op '_+_ to 'plus [none]) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, 'plus['s_^2['0.Nat],'s_^2['0.Nat]]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  including 'NAT .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '_+_['s_^2['0.Nat],'s_^2['0.Nat]]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  including 'NAT * (op '_+_ to 'plus [none]) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '_*_['s_^2['0.Nat],'s_^2['0.Nat]]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  including 'NAT * (sort 'Zero to 'ZZ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '_*_['s_^2['0.Nat],'s_^2['0.Nat]]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  including 'NAT * (sort 'Zero to 'ZZ) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, 'sd['s_^3['0.Nat],'s_^2['0.Nat]]) .
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  including 'NAT * (op '_+_ to 'plus [none]) .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfm, '0.Nat) .

@@ -1,0 +1,132 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test the metaXapply() descent function.
+***
+
+fmod TEST is
+  pr META-LEVEL .
+  op m : -> Module .
+  eq m =
+(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+  rl 'a.Foo => 'c.Foo [label('k)] .
+endm) .
+endfm
+
+red metaXapply(m, 'f['a.Foo, 'b.Foo], 'k, none, 0, 100, 0) .
+red metaXapply(m, 'f['a.Foo, 'b.Foo], 'k, none, 0, 100, 1) .
+red metaXapply(m, 'f['a.Foo, 'b.Foo], 'k, none, 0, 100, 2) .
+red metaXapply(m, 'f['a.Foo, 'b.Foo], 'k, none, 0, 100, 3) .
+red metaXapply(m, 'f['a.Foo, 'b.Foo], 'k, none, 0, unbounded, 0) .
+red metaXapply(m, 'f['a.Foo, 'b.Foo], 'k, none, 0, unbounded, 1) .
+red metaXapply(m, 'f['a.Foo, 'b.Foo], 'k, none, 0, unbounded, 2) .
+red metaXapply(m, 'f['a.Foo, 'b.Foo], 'k, none, 0, unbounded, 3) .
+
+
+fmod TEST2 is
+  pr META-LEVEL .
+  op m : -> Module .
+  eq m =
+(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+  rl 'a.Foo => 'c.Foo [label('k)] .
+endm) .
+endfm
+
+red metaXapply(m, 'g['f['a.Foo, 'b.Foo], 'a.Foo], 'k, none, 0, 100, 0) .
+red metaXapply(m, 'g['f['a.Foo, 'b.Foo], 'a.Foo], 'k, none, 0, 100, 1) .
+red metaXapply(m, 'g['f['a.Foo, 'b.Foo], 'a.Foo], 'k, none, 0, 100, 2) .
+red metaXapply(m, 'g['f['a.Foo, 'b.Foo], 'a.Foo], 'k, none, 0, 100, 3) .
+red metaXapply(m, 'g['f['a.Foo, 'b.Foo], 'a.Foo], 'k, none, 0, 100, 4) .
+
+
+fmod TEST3 is
+  pr META-LEVEL .
+  op m : -> Module .
+  eq m =
+(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+  rl 'a.Foo => 'f['c.Foo, 'c.Foo] [label('l)] .
+endm) .
+endfm
+
+red metaXapply(m, 'g['f['a.Foo, 'b.Foo], 'a.Foo], 'l, none, 0, 100, 0) .
+red metaXapply(m, 'g['f['a.Foo, 'b.Foo], 'a.Foo], 'l, none, 0, 100, 1) .
+red metaXapply(m, 'g['f['a.Foo, 'b.Foo], 'a.Foo], 'l, none, 0, 100, 0) .
+red metaXapply(m, 'g['f['a.Foo, 'b.Foo], 'a.Foo], 'l, none, 0, 100, 2) .
+red metaXapply(m, 'g['f['a.Foo, 'b.Foo], 'a.Foo], 'l, none, 0, 100, 0) .
+
+
+fmod ALL-ONE-STEP-REWRITES is
+  including META-LEVEL .
+  sort TermSet .
+  subsort Term < TermSet .
+  op _|_ : TermSet TermSet -> TermSet [assoc comm id: mt ctor] .
+  op mt : -> TermSet [ctor] .
+
+  var T : Term .        var M : Module .
+  var L : Qid .         var N : Nat .
+
+  op findAllRews : Module Term Qid -> TermSet .
+  op findAllRewsAux : Module Term Qid Nat -> TermSet .
+
+  eq findAllRews(M, T, L) = findAllRewsAux(M, T, L, 0) .
+
+  eq findAllRewsAux(M, T, L, N) =
+    if metaXapply(M, T, L, none, 0, unbounded, N) :: Result4Tuple then
+      (getTerm(metaXapply(M, T, L, none, 0, unbounded, N)) |
+       findAllRewsAux(M, T, L, N + 1))
+    else
+      mt
+    fi .
+
+  op m : -> Module .
+  eq m =
+(mod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+  rl 'f['X:Foo, 'Y:Foo] => 'X:Foo [label('k)] .
+  rl 'a.Foo => 'c.Foo [label('k)] .
+endm) .
+endfm
+
+red findAllRews(m, 'f['a.Foo, 'b.Foo], 'k) .

@@ -1,0 +1,94 @@
+set show timing off .
+set show advisories off .
+
+mod ATTR-TEST is
+  sort Foo .
+  ops a b c d e : -> Foo .
+  op f : Foo Foo -> Foo .
+
+var Y : Foo .
+
+  eq [first]: f(X:Foo, a) = X:Foo [metadata "this is the first equation"].
+  eq f(b, Y) = b [metadata "this is the second equation"].
+
+  mb [baz]: a : Foo [metadata "this is an mb"].
+  rl a => b [label r1] .
+endm
+
+
+red in META-LEVEL : upEqs('ATTR-TEST, true) .
+red in META-LEVEL : upRls('ATTR-TEST, true) .
+red in META-LEVEL : upMbs('ATTR-TEST, true) .
+
+red in META-LEVEL : upEqs('ATTR-TEST, false) .
+red in META-LEVEL : upRls('ATTR-TEST, false) .
+red in META-LEVEL : upMbs('ATTR-TEST, false) .
+
+select META-LEVEL .
+
+red upRls('BOOL, true) .
+
+
+mod KNIGHT is
+  pr INT .
+  sorts Pair List .
+  subsort Pair < List .
+  op nil : -> List .
+  op __ : List List -> List [assoc id: nil] .
+  op [_,_] : Int Int -> Pair .
+  op move_ : Pair -> [Pair] .
+  op legal : Pair -> Bool .
+  op contains : List Pair -> Bool .
+  op knight : Int -> [List] .
+
+  vars N X Y : Int .
+  var P Q : Pair .
+  var L : List .
+
+  eq legal([X, Y]) = X >= 1 and Y >= 1 and X <= 3 and Y <= 4 .
+  eq contains(nil, P) = false .
+  eq contains(Q L, P) = if P == Q then true else contains(L, P) fi .
+
+  rl knight(0) => [1, 1] .
+  crl knight(N) => L P Q
+	if N > 0
+	/\ knight(N - 1) => L P
+	/\ move P => Q
+	/\ legal(Q)
+	/\ not(contains(L P, Q)) .
+
+  rl move [X, Y] => [X + 2, Y + 1] .
+  rl move [X, Y] => [X + 2, Y - 1] .
+  rl move [X, Y] => [X - 2, Y + 1] .
+  rl move [X, Y] => [X - 2, Y - 1] .
+  rl move [X, Y] => [X + 1, Y + 2] .
+  rl move [X, Y] => [X + 1, Y - 2] .
+  rl move [X, Y] => [X - 1, Y + 2] .
+  rl move [X, Y] => [X - 1, Y - 2] .
+endm
+
+select META-LEVEL .
+
+red upRls('KNIGHT, true) .
+
+
+mod INTROSPECTION is
+  inc META-LEVEL .
+  op rules : -> RuleSet . 
+  rl rules => upRls('INTROSPECTION, false) .
+endm
+
+rew rules .
+
+mod SELF-REFLECTION is
+  inc INTROSPECTION .
+  op allRules : -> RuleSet . 
+  rl allRules => upRls('SELF-REFLECTION, true) .
+  op myRules : -> RuleSet . 
+  rl myRules => upRls('SELF-REFLECTION, false) .
+endm
+
+rew myRules .
+rew allRules .
+
+red in META-LEVEL : upEqs('META-LEVEL, true) .

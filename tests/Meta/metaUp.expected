@@ -1,0 +1,190 @@
+Maude> ==========================================
+reduce in META-LEVEL : upEqs('ATTR-TEST, true) .
+rewrites: 1
+result EquationSet: eq '_and_['A:Bool,'A:Bool] = 'A:Bool [none] .
+eq '_and_['A:Bool,'_xor_['B:Bool,'C:Bool]] = '_xor_['_and_['A:Bool,'B:Bool],
+    '_and_['A:Bool,'C:Bool]] [none] .
+eq '_and_['false.Bool,'A:Bool] = 'false.Bool [none] .
+eq '_and_['true.Bool,'A:Bool] = 'A:Bool [none] .
+eq '_implies_['A:Bool,'B:Bool] = 'not_['_xor_['A:Bool,'_and_['A:Bool,'B:Bool]]]
+    [none] .
+eq '_or_['A:Bool,'B:Bool] = '_xor_['_and_['A:Bool,'B:Bool],'_xor_['A:Bool,
+    'B:Bool]] [none] .
+eq '_xor_['A:Bool,'A:Bool] = 'false.Bool [none] .
+eq '_xor_['false.Bool,'A:Bool] = 'A:Bool [none] .
+eq 'f['X:Foo,'a.Foo] = 'X:Foo [label('first) metadata(
+    "this is the first equation")] .
+eq 'f['b.Foo,'Y:Foo] = 'b.Foo [metadata("this is the second equation")] .
+eq 'not_['A:Bool] = '_xor_['true.Bool,'A:Bool] [none] .
+==========================================
+reduce in META-LEVEL : upRls('ATTR-TEST, true) .
+rewrites: 1
+result Rule: rl 'a.Foo => 'b.Foo [label('r1)] .
+==========================================
+reduce in META-LEVEL : upMbs('ATTR-TEST, true) .
+rewrites: 1
+result MembAx: mb 'a.Foo : 'Foo [label('baz) metadata("this is an mb")] .
+==========================================
+reduce in META-LEVEL : upEqs('ATTR-TEST, false) .
+rewrites: 1
+result EquationSet: eq 'f['X:Foo,'a.Foo] = 'X:Foo [label('first) metadata(
+    "this is the first equation")] .
+eq 'f['b.Foo,'Y:Foo] = 'b.Foo [metadata("this is the second equation")] .
+==========================================
+reduce in META-LEVEL : upRls('ATTR-TEST, false) .
+rewrites: 1
+result Rule: rl 'a.Foo => 'b.Foo [label('r1)] .
+==========================================
+reduce in META-LEVEL : upMbs('ATTR-TEST, false) .
+rewrites: 1
+result MembAx: mb 'a.Foo : 'Foo [label('baz) metadata("this is an mb")] .
+==========================================
+reduce in META-LEVEL : upRls('BOOL, true) .
+rewrites: 1
+result RuleSet: (none).RuleSet
+==========================================
+reduce in META-LEVEL : upRls('KNIGHT, true) .
+rewrites: 1
+result RuleSet: rl 'knight['0.Zero] => '`[_`,_`]['s_['0.Zero],'s_['0.Zero]] [
+    none] .
+rl 'move_['`[_`,_`]['X:Int,'Y:Int]] => '`[_`,_`]['_+_['X:Int,'s_['0.Zero]],
+    '_+_['Y:Int,'s_^2['0.Zero]]] [none] .
+rl 'move_['`[_`,_`]['X:Int,'Y:Int]] => '`[_`,_`]['_+_['X:Int,'s_['0.Zero]],
+    '_-_['Y:Int,'s_^2['0.Zero]]] [none] .
+rl 'move_['`[_`,_`]['X:Int,'Y:Int]] => '`[_`,_`]['_+_['X:Int,'s_^2['0.Zero]],
+    '_+_['Y:Int,'s_['0.Zero]]] [none] .
+rl 'move_['`[_`,_`]['X:Int,'Y:Int]] => '`[_`,_`]['_+_['X:Int,'s_^2['0.Zero]],
+    '_-_['Y:Int,'s_['0.Zero]]] [none] .
+rl 'move_['`[_`,_`]['X:Int,'Y:Int]] => '`[_`,_`]['_-_['X:Int,'s_['0.Zero]],
+    '_+_['Y:Int,'s_^2['0.Zero]]] [none] .
+rl 'move_['`[_`,_`]['X:Int,'Y:Int]] => '`[_`,_`]['_-_['X:Int,'s_['0.Zero]],
+    '_-_['Y:Int,'s_^2['0.Zero]]] [none] .
+rl 'move_['`[_`,_`]['X:Int,'Y:Int]] => '`[_`,_`]['_-_['X:Int,'s_^2['0.Zero]],
+    '_+_['Y:Int,'s_['0.Zero]]] [none] .
+rl 'move_['`[_`,_`]['X:Int,'Y:Int]] => '`[_`,_`]['_-_['X:Int,'s_^2['0.Zero]],
+    '_-_['Y:Int,'s_['0.Zero]]] [none] .
+crl 'knight['N:Int] => '__['L:List,'__['P:Pair,'Q:Pair]] if '_>_['N:Int,
+    '0.Zero] = 'true.Bool /\ 'knight['_-_['N:Int,'s_['0.Zero]]] => '__['L:List,
+    'P:Pair] /\ 'move_['P:Pair] => 'Q:Pair /\ 'legal['Q:Pair] = 'true.Bool /\
+    'not_['contains['__['L:List,'P:Pair],'Q:Pair]] = 'true.Bool [none] .
+==========================================
+rewrite in INTROSPECTION : rules .
+rewrites: 2
+result Rule: rl 'rules.RuleSet => 'upRls[''INTROSPECTION.Sort,'false.Bool] [
+    none] .
+==========================================
+rewrite in SELF-REFLECTION : myRules .
+rewrites: 2
+result RuleSet: rl 'allRules.RuleSet => 'upRls[''SELF-REFLECTION.Sort,
+    'true.Bool] [none] .
+rl 'myRules.RuleSet => 'upRls[''SELF-REFLECTION.Sort,'false.Bool] [none] .
+==========================================
+rewrite in SELF-REFLECTION : allRules .
+rewrites: 2
+result RuleSet: rl 'allRules.RuleSet => 'upRls[''SELF-REFLECTION.Sort,
+    'true.Bool] [none] .
+rl 'myRules.RuleSet => 'upRls[''SELF-REFLECTION.Sort,'false.Bool] [none] .
+rl 'rules.RuleSet => 'upRls[''INTROSPECTION.Sort,'false.Bool] [none] .
+==========================================
+reduce in META-LEVEL : upEqs('META-LEVEL, true) .
+rewrites: 1
+result EquationSet: eq '_&_['K:Kind,'K:Kind] = 'K:Kind [none] .
+eq '_;_['A:Assignment,'A:Assignment] = 'A:Assignment [none] .
+eq '_;_['S:Sort,'S:Sort] = 'S:Sort [none] .
+eq '__['A:Attr,'A:Attr] = 'A:Attr [none] .
+eq '__['E:Equation,'E:Equation] = 'E:Equation [none] .
+eq '__['M:MembAx,'M:MembAx] = 'M:MembAx [none] .
+eq '__['O:OpDecl,'O:OpDecl] = 'O:OpDecl [none] .
+eq '__['R:Rule,'R:Rule] = 'R:Rule [none] .
+eq '__['S:SubsortDecl,'S:SubsortDecl] = 'S:SubsortDecl [none] .
+eq '_and_['A:Bool,'A:Bool] = 'A:Bool [none] .
+eq '_and_['A:Bool,'_xor_['B:Bool,'C:Bool]] = '_xor_['_and_['A:Bool,'B:Bool],
+    '_and_['A:Bool,'C:Bool]] [none] .
+eq '_and_['false.Bool,'A:Bool] = 'false.Bool [none] .
+eq '_and_['true.Bool,'A:Bool] = 'A:Bool [none] .
+eq '_implies_['A:Bool,'B:Bool] = 'not_['_xor_['A:Bool,'_and_['A:Bool,'B:Bool]]]
+    [none] .
+eq '_or_['A:Bool,'B:Bool] = '_xor_['_and_['A:Bool,'B:Bool],'_xor_['A:Bool,
+    'B:Bool]] [none] .
+eq '_xor_['A:Bool,'A:Bool] = 'false.Bool [none] .
+eq '_xor_['false.Bool,'A:Bool] = 'A:Bool [none] .
+eq '`[_`]['Q:Qid] = 'mod_is_sorts_._____endm['Q:Qid,'protecting_.['Q:Qid],
+    'none.SortSet,'none.SubsortDeclSet,'none.OpDeclSet,'none.MembAxSet,
+    'none.EquationSet,'none.RuleSet] [none] .
+eq 'getContext['`{_`,_`,_`,_`}['T:Term,'T:Type,'S:Substitution,'C:Context]] =
+    'C:Context [none] .
+eq 'getContext['`{_`,_`}['S:Substitution,'C:Context]] = 'C:Context [none] .
+eq 'getEqs['fmod_is_sorts_.____endfm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
+    'EQS:EquationSet [none] .
+eq 'getEqs['mod_is_sorts_._____endm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
+    'RLS:RuleSet]] = 'EQS:EquationSet [none] .
+eq 'getImports['fmod_is_sorts_.____endfm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
+    'IL:ImportList [none] .
+eq 'getImports['mod_is_sorts_._____endm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
+    'RLS:RuleSet]] = 'IL:ImportList [none] .
+eq 'getMbs['fmod_is_sorts_.____endfm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
+    'MAS:MembAxSet [none] .
+eq 'getMbs['mod_is_sorts_._____endm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
+    'RLS:RuleSet]] = 'MAS:MembAxSet [none] .
+eq 'getName['C:Constant] = 'qid['substr['string['C:Constant],'0.Zero,'rfind[
+    'string['C:Constant],'".".Char,'length['string['C:Constant]]]]] [none] .
+eq 'getName['V:Variable] = 'qid['substr['string['V:Variable],'0.Zero,'rfind[
+    'string['V:Variable],'":".Char,'length['string['V:Variable]]]]] [none] .
+eq 'getName['fmod_is_sorts_.____endfm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
+    'Q:Qid [none] .
+eq 'getName['mod_is_sorts_._____endm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
+    'RLS:RuleSet]] = 'Q:Qid [none] .
+eq 'getOps['fmod_is_sorts_.____endfm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
+    'OPDS:OpDeclSet [none] .
+eq 'getOps['mod_is_sorts_._____endm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
+    'RLS:RuleSet]] = 'OPDS:OpDeclSet [none] .
+eq 'getRls['fmod_is_sorts_.____endfm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
+    'none.RuleSet [none] .
+eq 'getRls['mod_is_sorts_._____endm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
+    'RLS:RuleSet]] = 'RLS:RuleSet [none] .
+eq 'getSorts['fmod_is_sorts_.____endfm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
+    'SS:SortSet [none] .
+eq 'getSorts['mod_is_sorts_._____endm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
+    'RLS:RuleSet]] = 'SS:SortSet [none] .
+eq 'getSubsorts['fmod_is_sorts_.____endfm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
+    'SSDS:SubsortDeclSet [none] .
+eq 'getSubsorts['mod_is_sorts_._____endm['Q:Qid,'IL:ImportList,'SS:SortSet,
+    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
+    'RLS:RuleSet]] = 'SSDS:SubsortDeclSet [none] .
+eq 'getSubstitution['`{_`,_`,_`,_`}['T:Term,'T:Type,'S:Substitution,
+    'C:Context]] = 'S:Substitution [none] .
+eq 'getSubstitution['`{_`,_`,_`}['T:Term,'T:Type,'S:Substitution]] =
+    'S:Substitution [none] .
+eq 'getSubstitution['`{_`,_`}['S:Substitution,'C:Context]] = 'S:Substitution [
+    none] .
+eq 'getTerm['`{_`,_`,_`,_`}['T:Term,'T:Type,'S:Substitution,'C:Context]] =
+    'T:Term [none] .
+eq 'getTerm['`{_`,_`,_`}['T:Term,'T:Type,'S:Substitution]] = 'T:Term [none] .
+eq 'getTerm['`{_`,_`}['T:Term,'T:Type]] = 'T:Term [none] .
+eq 'getType['C:Constant] = 'qid['substr['string['C:Constant],'_+_['s_['0.Zero],
+    'rfind['string['C:Constant],'".".Char,'length['string['C:Constant]]]],
+    'length['string['C:Constant]]]] [none] .
+eq 'getType['V:Variable] = 'qid['substr['string['V:Variable],'_+_['s_['0.Zero],
+    'rfind['string['V:Variable],'":".Char,'length['string['V:Variable]]]],
+    'length['string['V:Variable]]]] [none] .
+eq 'getType['`{_`,_`,_`,_`}['T:Term,'T:Type,'S:Substitution,'C:Context]] =
+    'T:Type [none] .
+eq 'getType['`{_`,_`,_`}['T:Term,'T:Type,'S:Substitution]] = 'T:Type [none] .
+eq 'getType['`{_`,_`}['T:Term,'T:Type]] = 'T:Type [none] .
+eq 'not_['A:Bool] = '_xor_['true.Bool,'A:Bool] [none] .
+Maude> Bye.

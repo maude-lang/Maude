@@ -1,0 +1,600 @@
+Maude> ==========================================
+reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
+    'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, 2, 0) .
+rewrites: 2
+result MatchPair: {
+	'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
+	'Y:Nat <- 'c.Nat ; 
+	'Z:Nat <- 'b.Nat,'_*_['a.Nat,[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
+    'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, 2, 1) .
+rewrites: 2
+result MatchPair: {
+	'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
+	'Y:Nat <- 'b.Nat ; 
+	'Z:Nat <- 'c.Nat,'_*_['a.Nat,[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
+    'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, 2, 2) .
+rewrites: 2
+result MatchPair?: (noMatch).MatchPair?
+==========================================
+reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
+    'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, unbounded, 0) .
+rewrites: 2
+result MatchPair: {
+	'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
+	'Y:Nat <- 'c.Nat ; 
+	'Z:Nat <- 'b.Nat,'_*_['a.Nat,[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
+    'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, unbounded, 1) .
+rewrites: 2
+result MatchPair: {
+	'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
+	'Y:Nat <- 'b.Nat ; 
+	'Z:Nat <- 'c.Nat,'_*_['a.Nat,[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
+    'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, unbounded, 2) .
+rewrites: 2
+result MatchPair?: (noMatch).MatchPair?
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  (((op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
+    nil, 0, 100, 0) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'a.Foo ; 
+	'Y:Foo <- 'b.Foo ; 
+	'Z:Foo <- 'f['c.Foo,'c.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  (((op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
+    nil, 0, unbounded, 0) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'a.Foo ; 
+	'Y:Foo <- 'b.Foo ; 
+	'Z:Foo <- 'f['c.Foo,'c.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  (((op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
+    nil, 0, unbounded, 1) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'b.Foo ; 
+	'Y:Foo <- 'a.Foo ; 
+	'Z:Foo <- 'f['c.Foo,'c.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  (((op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
+    nil, 0, unbounded, 2) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'c.Foo ; 
+	'Y:Foo <- 'c.Foo ; 
+	'Z:Foo <- 'f['a.Foo,'b.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  (((op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
+    nil, 0, unbounded, 3) .
+rewrites: 1
+result MatchPair?: (noMatch).MatchPair?
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  (((op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]], nil, 0, 100,
+    0) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'a.Foo ; 
+	'Y:Foo <- 'b.Foo,'g['f['c.Foo,'c.Foo],[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  (((op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]], nil, 0, 100,
+    1) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'b.Foo ; 
+	'Y:Foo <- 'a.Foo,'g['f['c.Foo,'c.Foo],[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  (((op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]], nil, 0, 100,
+    2) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'c.Foo ; 
+	'Y:Foo <- 'c.Foo,'g['f['a.Foo,'b.Foo],[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  (((op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]], nil, 0, 100,
+    3) .
+rewrites: 1
+result MatchPair?: (noMatch).MatchPair?
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 0) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'a.Foo ; 
+	'Y:Foo <- 'f['b.Foo,'c.Foo,'c.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 1) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'b.Foo ; 
+	'Y:Foo <- 'f['a.Foo,'c.Foo,'c.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 2) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'c.Foo ; 
+	'Y:Foo <- 'f['a.Foo,'b.Foo,'c.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 3) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'f['a.Foo,'b.Foo] ; 
+	'Y:Foo <- 'f['c.Foo,'c.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 4) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'f['a.Foo,'c.Foo] ; 
+	'Y:Foo <- 'f['b.Foo,'c.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 5) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'f['b.Foo,'c.Foo] ; 
+	'Y:Foo <- 'f['a.Foo,'c.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 4) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'f['a.Foo,'c.Foo] ; 
+	'Y:Foo <- 'f['b.Foo,'c.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 6) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'f['c.Foo,'c.Foo] ; 
+	'Y:Foo <- 'f['a.Foo,'b.Foo],[]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 7) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'f['a.Foo,'b.Foo,'c.Foo] ; 
+	'Y:Foo <- 'c.Foo,[]}
+Maude> ==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 10) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'b.Foo ; 
+	'Y:Foo <- 'f['c.Foo,'c.Foo],'f['a.Foo,[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 14) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'a.Foo ; 
+	'Y:Foo <- 'f['c.Foo,'c.Foo],'f['b.Foo,[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 17) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'f['c.Foo,'c.Foo] ; 
+	'Y:Foo <- 'a.Foo,'f['b.Foo,[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 20) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'c.Foo ; 
+	'Y:Foo <- 'f['a.Foo,'b.Foo],'f['c.Foo,[]]}
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 31) .
+rewrites: 1
+result MatchPair?: (noMatch).MatchPair?
+==========================================
+reduce in META-LEVEL : metaXmatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Bar ; 'Foo .
+  subsort 'Bar < 'Foo .
+  ((op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  none
+endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 30) .
+rewrites: 1
+result MatchPair: {
+	'X:Foo <- 'b.Foo ; 
+	'Y:Foo <- 'a.Foo,'f['f['c.Foo,'c.Foo],[]]}
+==========================================
+xmatch in FOO : f(X:Foo, Y:Foo) <=? f(a, b, c, c) .
+
+Solution 1
+Matched portion = (whole)
+X:Foo --> a
+Y:Foo --> f(b, c, c)
+
+Solution 2
+Matched portion = (whole)
+X:Foo --> b
+Y:Foo --> f(a, c, c)
+
+Solution 3
+Matched portion = (whole)
+X:Foo --> c
+Y:Foo --> f(a, b, c)
+
+Solution 4
+Matched portion = (whole)
+X:Foo --> f(a, b)
+Y:Foo --> f(c, c)
+
+Solution 5
+Matched portion = (whole)
+X:Foo --> f(a, c)
+Y:Foo --> f(b, c)
+
+Solution 6
+Matched portion = (whole)
+X:Foo --> f(b, c)
+Y:Foo --> f(a, c)
+
+Solution 7
+Matched portion = (whole)
+X:Foo --> f(c, c)
+Y:Foo --> f(a, b)
+
+Solution 8
+Matched portion = (whole)
+X:Foo --> f(a, b, c)
+Y:Foo --> c
+
+Solution 9
+Matched portion = (whole)
+X:Foo --> f(a, c, c)
+Y:Foo --> b
+
+Solution 10
+Matched portion = (whole)
+X:Foo --> f(b, c, c)
+Y:Foo --> a
+
+Solution 11
+Matched portion = f(b, c, c)
+X:Foo --> b
+Y:Foo --> f(c, c)
+
+Solution 12
+Matched portion = f(b, c, c)
+X:Foo --> c
+Y:Foo --> f(b, c)
+
+Solution 13
+Matched portion = f(b, c, c)
+X:Foo --> f(b, c)
+Y:Foo --> c
+
+Solution 14
+Matched portion = f(b, c, c)
+X:Foo --> f(c, c)
+Y:Foo --> b
+
+Solution 15
+Matched portion = f(a, c, c)
+X:Foo --> a
+Y:Foo --> f(c, c)
+
+Solution 16
+Matched portion = f(a, c, c)
+X:Foo --> c
+Y:Foo --> f(a, c)
+
+Solution 17
+Matched portion = f(a, c, c)
+X:Foo --> f(a, c)
+Y:Foo --> c
+
+Solution 18
+Matched portion = f(a, c, c)
+X:Foo --> f(c, c)
+Y:Foo --> a
+
+Solution 19
+Matched portion = f(a, b, c)
+X:Foo --> a
+Y:Foo --> f(b, c)
+
+Solution 20
+Matched portion = f(a, b, c)
+X:Foo --> b
+Y:Foo --> f(a, c)
+
+Solution 21
+Matched portion = f(a, b, c)
+X:Foo --> c
+Y:Foo --> f(a, b)
+
+Solution 22
+Matched portion = f(a, b, c)
+X:Foo --> f(a, b)
+Y:Foo --> c
+
+Solution 23
+Matched portion = f(a, b, c)
+X:Foo --> f(a, c)
+Y:Foo --> b
+
+Solution 24
+Matched portion = f(a, b, c)
+X:Foo --> f(b, c)
+Y:Foo --> a
+
+Solution 25
+Matched portion = f(c, c)
+X:Foo --> c
+Y:Foo --> c
+
+Solution 26
+Matched portion = f(b, c)
+X:Foo --> b
+Y:Foo --> c
+
+Solution 27
+Matched portion = f(b, c)
+X:Foo --> c
+Y:Foo --> b
+
+Solution 28
+Matched portion = f(a, c)
+X:Foo --> a
+Y:Foo --> c
+
+Solution 29
+Matched portion = f(a, c)
+X:Foo --> c
+Y:Foo --> a
+
+Solution 30
+Matched portion = f(a, b)
+X:Foo --> a
+Y:Foo --> b
+
+Solution 31
+Matched portion = f(a, b)
+X:Foo --> b
+Y:Foo --> a
+Maude> Bye.

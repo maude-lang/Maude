@@ -1,0 +1,93 @@
+set show timing off .
+set show advisories off .
+
+select STRING .
+
+red ascii("A") .
+red ascii("AB") .
+
+red length("AAA") .
+red length("") .
+red length("abcdefghijklmnopqrstuvwxyz") .
+
+red substr("abcdefghijklmnopqrstuvwxyz", 10, 5) .
+red substr("abcdefghijklmnopqrstuvwxyz", 1000000000000000000, 5) .
+red substr("abcdefghijklmnopqrstuvwxyz", 10, 500000000000000000) .
+red substr("abcdefghijklmnopqrstuvwxyz", 0, 5) .
+red substr("abcdefghijklmnopqrstuvwxyz", 10, 0) .
+
+red find("abcdefghijabcdefghij", "cde", 0) .
+red find("abcdefghijabcdefghij", "cde", 1) .
+red find("abcdefghijabcdefghij", "cde", 2) .
+red find("abcdefghijabcdefghij", "cde", 3) .
+red find("abcdefghijabcdefghij", "cde", 30000000000000000000000) .
+
+red rfind("abcdefghijabcdefghij", "cde", 0) .
+red rfind("abcdefghijabcdefghij", "cde", 1) .
+red rfind("abcdefghijabcdefghij", "cde", 2) .
+red rfind("abcdefghijabcdefghij", "cde", 12) .
+red rfind("abcdefghijabcdefghij", "cde", 13) .
+red rfind("abcdefghijabcdefghij", "cde", 30000000000000000000000) .
+
+red char(65) .
+red char(2000) .
+red char(20000000000000000000000) .
+red char(0) .
+red char(255) .
+
+red "test" .
+
+red "test" + "2" .
+
+red substr("cat", 1, 1) .
+
+red substr("\n\r\f", 1, 1) .
+
+red "\007" .
+
+red substr("a\"\"b", 0, 0) .
+red substr("a\"\"b", 0, 2) .
+red substr("a\"\"b", 0, 100) .
+red substr("a\"\"b", 3, 1) .
+red substr("a\"\"b", 4, 1) .
+red "abracadabra" < "aardvark" .
+red "AAA" < "aardvark" .
+red length("aardvark") .
+red "abc" == "a" + "b" + "c" .
+
+red find("catcat", "tc", 0) .
+red find("catcat", "jr", 0) .
+red rfind("catcat", "t", 10) .
+red rfind("catcat", "t", 4) .
+
+red "\0" .
+
+red "\377" .
+
+red "\399" .
+
+red "\477" .
+
+red "\40" .
+
+red "\101" .
+
+fmod FOO is inc STRING .
+  sort Foo .
+  op "this is not a string" : -> Foo .
+endfm
+
+red "this is not a string" .
+red ("this is not a string").Foo .
+red ("this is not a string").String .
+
+red "this is a string" .
+
+select STRING .
+
+red "this is a really long string; this is a really long string; this is a really long string; this is a really long string; this is a really long string." .
+
+red char(65) .
+red ascii(" ") .
+red ascii("aa") .
+red char(1000) .

@@ -1,0 +1,150 @@
+set show timing off .
+set show advisories off .
+
+mod SEARCH-TEST is
+  sort Nat .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 5] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 3] .
+  ops a b c d e 0 1 : -> Nat .
+  vars W X Y Z : Nat .
+  eq 0 * X = 0 .
+  eq 1 * X = X .
+  eq 0 + X = X .
+  rl X * (Y + Z) => X * Y + X * Z .
+  rl X * Y + X * Z => X * (Y + Z) .
+endm
+
+select META-LEVEL .
+
+red metaMatch(['SEARCH-TEST],
+    'X:Nat,
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    '_*_['Y:Nat, 'Z:Nat] := 'X:Nat,
+    0) .
+
+red metaMatch(['SEARCH-TEST],
+    'X:Nat,
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    '_*_['Y:Nat, 'Z:Nat] := 'X:Nat,
+    1) .
+
+red metaMatch(['SEARCH-TEST],
+    'X:Nat,
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    '_*_['Y:Nat, 'Z:Nat] := 'X:Nat,
+    2) .
+
+red metaMatch(['SEARCH-TEST],
+    'X:Nat,
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    '_*_['Y:Nat, 'Z:Nat] := 'X:Nat /\ 'Y:Nat = 'a.Nat,
+    0) .
+
+red metaMatch(['SEARCH-TEST],
+    'X:Nat,
+    '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]],
+    '_*_['Y:Nat, 'Z:Nat] := 'X:Nat /\ 'Y:Nat = 'a.Nat,
+    1) .
+
+red in META-LEVEL : metaMatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  none
+  none
+endfm, 'f['Y:Foo, 'Y:Foo], 'f['b.Foo, 'b.Foo], nil, 0) .
+
+red in META-LEVEL : metaMatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  none
+  none
+endfm, 'f['Y:Foo, 'Y:Foo], 'f['b.Foo, 'b.Foo], nil, 1) .
+
+red in META-LEVEL : metaMatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  none
+  none
+endfm, 'f['X:Foo, 'Y:Foo], 'f['a.Foo, 'b.Foo], nil, 0) .
+
+red in META-LEVEL : metaMatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  none
+  none
+endfm, 'f['X:Foo, 'Y:Foo], 'f['a.Foo, 'b.Foo], nil, 1) .
+
+red in META-LEVEL : metaMatch(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  none
+  none
+endfm, 'f['X:Foo, 'Y:Foo], 'f['a.Foo, 'b.Foo], nil, 2) .
+
+red in META-LEVEL : metaMatch(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+endfm,
+'g['f['X:Foo, 'Y:Foo], 'Z:Foo],
+'g['f['a.Foo, 'b.Foo], 'f['c.Foo, 'c.Foo]], nil, 0) .
+
+red in META-LEVEL : metaMatch(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+endfm,
+'g['f['X:Foo, 'Y:Foo], 'Z:Foo],
+'g['f['a.Foo, 'b.Foo], 'f['c.Foo, 'c.Foo]], nil, 2) .
+
+red in META-LEVEL : metaMatch(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo ; 'Bar .
+  subsort 'Bar < 'Foo .
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [comm] .
+  op 'g : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  none
+endfm,
+'g['f['X:Foo, 'Y:Foo], 'Z:Foo],
+'g['f['a.Foo, 'b.Foo], 'f['c.Foo, 'c.Foo]], nil, 1) .

@@ -1,0 +1,72 @@
+set show timing off .
+set show advisories off .
+
+select META-LEVEL .
+
+red upSorts('META-LEVEL, true) .
+red upSorts('META-LEVEL, false) .
+
+red upSubsortDecls('META-LEVEL, true) .
+red upSubsortDecls('META-LEVEL, false) .
+
+red upImports('META-LEVEL) .
+red upImports('NAT) .
+red upImports('TRUTH-VALUE) .
+
+set trace on .
+red upOpDecls('TRUTH-VALUE, true) .
+set trace off .
+
+red upOpDecls('META-LEVEL, true) .
+red upOpDecls('META-LEVEL, false) .
+
+red upOpDecls('IDENTICAL, true) .
+
+red in META-LEVEL : upModule('META-LEVEL, true) .
+red in META-LEVEL : upModule('META-LEVEL, false) .
+
+
+red in META-LEVEL : upModule('BOOL, true) .
+
+red in META-LEVEL : metaReduce(upModule('BOOL, true),
+'_==_['true.Bool, 'false.Bool]) .
+
+red in META-LEVEL : upModule('BOOL, false) .
+
+red in META-LEVEL : metaReduce(upModule('BOOL, false),
+'_==_['true.Bool, 'false.Bool]) .
+
+red in META-LEVEL : upModule('TRUTH, true) .
+
+
+red in META-LEVEL : upModule('NAT, true) .
+red in META-LEVEL : metaReduce(upModule('NAT, true),
+'_+_[upTerm(100), upTerm(66)]) .
+
+red in META-LEVEL : upModule('NAT, false) .
+red in META-LEVEL : metaReduce(upModule('NAT, false),
+'_+_[upTerm(100), upTerm(66)]) .
+
+red in META-LEVEL : metaReduce(upModule('NAT, true),
+'modExp[upTerm(100), upTerm(66), upTerm(17)]) .
+
+red in META-LEVEL : upModule('META-LEVEL, true) .
+
+red in META-LEVEL : upModule('STRING, true) .
+red in META-LEVEL : metaReduce(upModule('STRING, true),
+'_+_[upTerm("a"), upTerm("b")]) .
+
+
+red in META-LEVEL : metaReduce(upModule('META-LEVEL, true),
+'modExp[upTerm(100), upTerm(66), upTerm(17)]) .
+
+red in META-LEVEL : metaReduce(upModule('META-LEVEL, true),
+'upModule[upTerm('META-LEVEL), upTerm(true)]) .
+
+red upTerm(upModule('META-LEVEL, true)) .
+
+red {upTerm(upModule('META-LEVEL, true)), 'FModule} .
+
+red in META-LEVEL : metaReduce(upModule('META-LEVEL, true),
+'upModule[upTerm('META-LEVEL), upTerm(true)]) ==
+{upTerm(upModule('META-LEVEL, true)), 'FModule} .
