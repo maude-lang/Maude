@@ -1,0 +1,505 @@
+2003-05-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Tree.hh (deleteMult2): added
+
+2003-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): deleted SAT_MULT
+	from enum PublicValues
+
+2003-05-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Tree.hh (class ACU_Tree): added decl for computeBaseSort2()
+
+	* ACU_Tree.cc (recComputeBaseSort): deleted
+
+	* ACU_Tree.hh (computeBaseSort): moved here and rewritten
+
+	* ACU_Tree.cc (computeBaseSort2): added
+	(recComputeBaseSort): deleted
+
+	* ACU_Find.cc (findFirstPotentialMatch): use Term::UNKNOWN
+
+2003-05-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Rebalance.cc (copyRebalance): use makeRedIfRed() (2 places)
+
+	* ACU_Insert.cc (consInsert): use makeRedIfRed()
+
+	* ACU_Delete.cc (consDelete): use makeRedIfRed()
+
+	* ACU_Copy.cc (copy): use makeRedIfRed() (both versions)
+
+	* ACU_RedBlackNode.hh (makeRedIfRed): added
+
+	* ACU_Find.cc (findGeqMult): removed SAT_MULT Assert()
+
+	* ACU_Insert.cc (consInsert): don't pass size to
+	ACU_RedBlackNode()
+	(consInsert): use getChild()
+	(consInsert): removed SAT_MULT check
+
+	* ACU_Copy.cc (copy): don't pass size to ACU_RedBlackNode() (both
+	versions)
+	(copy): simplified maxMult computation (both versions)
+
+	* ACU_Stack.hh (class ACU_Stack): deleted decl for pathToIndex()
+
+	* ACU_Stack.cc (pathToIndex): deleted
+
+	* ACU_Find.cc (findIth): deleted
+
+	* ACU_RedBlackNode.hh (getSize): deleted
+	(class ACU_RedBlackNode): store maxMult as an int data member;
+	deleted data member size
+	(getMaxMult): use maxMult data member
+	(ACU_RedBlackNode): don't set size; optimize maxMult calculation
+	(class ACU_RedBlackNode): deleted decl for findIth()
+
+	* ACU_Tree.hh (getSoleDagNode): added
+	(class ACU_Tree): aded default ctor
+	(clear): added
+	(getSoleMultiplicity): added
+
+	* ACU_Persistent.hh: renamed from ACU_RedBlack.hh; added class
+	ACU_Tree, class ACU_Pair
+
+	* ACU_SlowIter.hh (ACU_SlowIter): rewritten
+
+	* ACU_FastIter.hh (ACU_FastIter): rewritten
+
+	* ACU_Tree.hh (class ACU_Tree): added decl for
+	recComputeBaseSort()
+	(class ACU_Tree): updated decl for computeBaseSort()
+
+	* ACU_Tree.cc (computeBaseSort): added
+	(recComputeBaseSort): added
+
+	* ACU_Tree.hh (class ACU_Tree): added decls for pow2min1() and
+	makeTree()
+
+	* ACU_Tree.cc (pow2min1): added
+	(makeTree): added
+
+2003-05-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Tree.cc: created
+
+	* ACU_Stack.hh (class ACU_Stack): ACU_RedBlackNode no longer a
+	friend in CHECK_RED_BLACK case
+
+	* ACU_Delete.cc (consDelete): handle delta argument
+
+	* ACU_Tree.hh (insertMult): rewritten
+	(deleteMult): rewritten
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): updated decls for
+	consInsert() and consDelete()
+
+	* ACU_Insert.cc (consInsert): handle delta argument
+
+	* ACU_Stack.hh (save): added
+	(restore): added
+	(class ACU_Stack): added data member old
+
+2003-04-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Tree.hh: created
+
+	* ACU_Pair.hh: created
+	
+===================================Maude80===========================================
+
+2003-03-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Find.cc (find): use getChild() (both versions)
+
+	* ACU_RedBlackNode.hh (getChild): added
+	(class ACU_RedBlackNode): flipped LEFT_INDEX and RIGHT_INDEX
+	values
+
+2003-03-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): made getMaxMult()
+	public
+
+2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Insert.cc (consInsert2): updated Assert()
+
+	* ACU_Find.cc (findGeqMult): updated Assert()s
+	(findIth): updated Assert()
+
+	* ACU_Delete.cc (consDelete2): updated Assert()
+
+	* ACU_Stack.hh (top): updated Assert()
+	(push): updated Assert()
+	(pop): updated Assert()
+	(unpop): updated Assert()
+	(multiPop): updated Assert()
+
+	* ACU_RedBlackNode.hh (new): updated Assert()
+	(ACU_RedBlackNode): updated Assert()s
+	
+===================================Maude79===========================================
+
+2003-02-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): deleted decls for
+	fastFindGeqMult(), searchGeqMult(), maxMultOK(),
+	stackLeftmostMultPath(), nextMult(), maxMultValid(), setMaxMult()
+	(class ACU_RedBlackNode): made slow ctor public
+	(ACU_RedBlackNode): fixed bug where we weren't setting maxMult
+
+	* ACU_Find.cc: rewritten to take advantantage of new maxMult
+	assumptions
+	(maxMultOK): deleted
+	(stackLeftmostMultPath): deleted
+	(nextMult): deleted
+	(fastFindGeqMult): deleted
+	(searchGeqMult): deleted
+
+	* ACU_Insert.cc (consInsert): handle maxMult
+
+	* ACU_Delete.cc (consDelete): don't use optimized
+	ACU_RedBlackNode() since we have no fast way of obtaining maxMult
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): deleted
+	MAX_MULT_VALID
+	(setMaxMult): deleted
+	(maxMultValid): deleted
+	(ACU_RedBlackNode): handle maxMult (both versions)
+
+	* ACU_Copy.cc (copy): perform maxMult calculations (both copies)
+
+2003-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Delete.cc (consDelete): added optional code for cheching the
+	red-black property
+
+	* ACU_Insert.cc (consInsert): added optional code for cheching the
+	red-black property
+
+	* ACU_Rebalance.cc (copyRebalance): removed bug catching code now
+	that bug fixed
+
+	* ACU_Delete.cc (consDelete): fixed nasty bug where we were making
+	a black copy of a red victim in the case that the victim has
+	enough multiplicity that it isn't removed from the tree - just has
+	it's multiplicity lowered
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): added decls for
+	both versions of checkRedBlackProperty()
+
+	* ACU_RedBlackNode.cc (checkRedBlackProperty): added (2 versions)
+
+	* ACU_Rebalance.cc (copyRebalance): added code to dump everything
+	when bug in logic3 example happens
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): added decl for
+	dump()
+
+	* ACU_RedBlackNode.cc (dump): added
+
+2003-02-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Find.cc (multOK): added
+	(nextMult): rewritten using maxMultOK()
+	(stackLeftmostMultPath): rewritten using maxMultOK()
+	(nextMult): optimized
+
+	* ACU_SlowIter.hh (next): fixed bug where we had !empty rather
+	than !empty()
+
+2003-02-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_SlowIter.hh (next): simplified
+
+	* ACU_Find.cc (nextMult): rewritten to fix symmetric bug
+
+	* ACU_SlowIter.hh (next): rewritten to fix nasty stack underflow
+	bug
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): added decls for
+	stackLeftmostMultPath() and nextMult()
+
+	* ACU_Find.cc (stackLeftmostMultPath): added
+	(nextMult): added
+	(findGeqMult): rewritten using stackLeftmostMultPath() and
+	nextMult()
+
+2003-02-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_FastIter.hh (setMarked): deleted
+
+	* ACU_RedBlackNode.hh (isMarked): added
+
+2003-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Stack.cc: deleted commented out copy ctor & assignment code
+
+2003-01-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): updated decl for
+	makeDelete()
+
+	* ACU_TreeDagNode.cc (markArguments): use ACU_FastIter::setMarked()
+	(makeDelete): ACU_SlowIter -> ACU_Stack
+
+	* ACU_FastIter.hh (setMarked): added
+
+	* ACU_TreeDagNode.cc (getHashValue): reimplemented using
+	ACU_FastIter
+	(stackArguments): reimplemented using ACU_FastIter
+	(partialReplace): ACU_SlowIter -> ACU_Stack
+	(makeExtensionInfo): reimplemented
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): deleted decl for
+	findFirstPotentialMatch
+
+	* ACU_TreeDagNode.cc (findFirstPotentialMatch): deleted
+
+	* ACU_Find.cc: ACU_SlowIter -> ACU_Stack
+
+	* ACU_RedBlack.cc: deleted
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): ACU_SlowIter ->
+	ACU_Stack
+
+	* ACU_FastIter.hh (ACU_FastIter): use stackLeftmostPath()
+	(next): use stackLeftmostPath()
+	(leftMost): deleted
+
+	* ACU_SlowIter.hh (ACU_SlowIter): use stackLeftmostPath()
+	(next): use stackLeftmostPath()
+	(leftMost): deleted
+
+	* ACU_Stack.hh (stackLeftmostPath): added
+
+	* ACU_Insert.cc (consInsert): rewritten to make use of blackNode()
+	and copy()
+
+2003-01-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagArgumentIterator.cc (argument): use getDagNode()
+
+	* ACU_TreeDagNode.cc: use new conventions in all routines
+
+	* ACU_FastIter.hh (getArgument): becomes getDagNode()
+
+	* ACU_Insert.cc (consInsert): use new conventions
+
+	* ACU_Delete.cc (consDelete): use new conventions
+
+	* ACU_Rebalance.cc (copyRebalance): use new conventions
+
+	* ACU_SlowIter.hh (getArgument): becomes getDagNode()
+
+	* ACU_Find.cc: use new conventions in all routines
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): major
+	reoranization of class for efficiency and cleaness
+
+	* ACU_Copy.cc (copy): rewritten to use new ctor and delta trick
+	(both versions)
+
+2003-01-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_SlowIter.hh (class ACU_SlowIter): made base class ACU_Stack
+	public until we figure out best permissions
+
+2003-01-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): updated decl for
+	findIth()
+
+	* ACU_Find.cc (findIth): implemented; return void
+
+	* ACU_TreeDagNode.cc (partialReplace): rewritten using consDelete()
+
+	* ACU_RedBlackNode.hh (getDagNode): added
+	(getMultiplicity): added
+
+2003-01-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (compareArguments): fix bug where we weren't
+	checking r after doing subcompare
+
+	* ACU_TreeDagNode.hh (getRoot): added
+
+2003-01-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (compareArguments): added tree comparison
+
+	* ACU_TreeDagArgumentIterator.cc: removed #pragma
+
+	* ACU_TreeDagArgumentIterator.hh: removed #pragma
+
+	* ACU_TreeDagNode.cc: removed #pragma
+
+	* ACU_TreeDagNode.hh: removed #pragma
+
+	* ACU_RedBlackNode.cc: removed #pragma
+
+	* ACU_FastIter.hh (leftMost): use getLeft()
+	(next): use getRight()
+
+	* ACU_SlowIter.hh (next): use getRight()
+	(leftMost): use getLeft()
+
+	* ACU_Rebalance.cc (copyRebalance): use ACU_Stack
+
+	* ACU_Copy.cc (copy): use ACU_Stack (both versions)
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): updated decls for
+	copy() (both versions) and copyRebalance()
+
+	* ACU_RedBlack.cc: deleted
+
+	* ACU_RedBlackNode.hh: removed #pragma
+
+	* ACU_FastIter.hh (class ACU_FastIter): derive from ACU_Stack
+
+	* ACU_SlowIter.hh (class ACU_SlowIter): derive from ACU_Stack
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): made getSize()
+	public; added decls for getLeft() and getRight()
+	(getLeft): added
+	(getRight): added
+
+	* ACU_Stack.cc: created
+
+	* ACU_Stack.hh: created; moved ACU_RedBlackNode::Stack stuff here
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): added PublicValues
+
+2003-01-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (computeBaseSort): fixed stupid bug where we
+	were looking at the left child twice instread of the right child
+
+	* ACU_RedBlackNode.cc (Stack): commented out assignment and copy
+	ctor; places where we might want to use them seem unsafe because
+	of possible garbage colection of ACU_RedBlackNode following a
+	representation change
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): added decl for
+	pathToIndex()
+
+	* ACU_RedBlackNode.cc (Stack): (copy ctor) added
+	(operator=): added
+	(pathToIndex): added
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): added copy ctor
+	and assignment for Stack
+
+2003-01-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_RedBlackNode.hh (setSortIndex): added
+	(getSortIndex): added
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): added decls for
+	computeBaseSort() (2 versions)
+
+	* ACU_TreeDagNode.cc (computeBaseSort): added 2 versions
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): added decl for
+	makeDelete()
+
+	* ACU_TreeDagNode.cc (makeDelete): added
+
+2003-01-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (findFirstPotentialMatch): added
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): added decl for
+	findFirstPotentialMatch()
+
+2003-01-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (argVecToTree): copy sortIndex and reduced
+	flag 
+	(treeToArgVec): copy sortIndex and reduced flag 
+
+2003-01-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): added decl for
+	overwriteWithInsert()
+
+	* ACU_TreeDagNode.cc (overwriteWithInsert): added
+
+	* ACU_Delete.cc (consDelete): use blackNode(); fixed bug where we
+	weren't returning the new node
+
+	* ACU_RedBlackNode.hh (redNode): moved here
+
+	* ACU_RedBlackNode.cc (blackNode): moved here
+
+	* ACU_Rebalance.cc (copyRebalance): many simplifications
+	(copyRebalance): more code factoring
+
+2003-01-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Rebalance.cc: created from experimental code
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): added decls for
+	copyRebalance() and consDelete()
+	(class ACU_RedBlackNode): added declarations for blackNode() and
+	redNode()
+
+	* ACU_Delete.cc: created
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): added decl for
+	findFirstPotentialMatch(); deletd decls for findFirst() and
+	createFromSortedVector()
+
+	* ACU_Find.cc (findFirstPotentialMatch): added
+	(findFirst): deleted
+
+	* ACU_TreeDagNode.cc (markArguments): implemented
+
+	* ACU_FastIter.hh: added ACU_TreeDagNode as a friend
+
+2003-01-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (arguments): implemented
+	(overwriteWithClone): implemented
+	(makeClone): implemented
+
+	* ACU_TreeDagArgumentIterator.cc: created
+
+	* ACU_TreeDagArgumentIterator.hh (class
+	ACU_TreeDagArgumentIterator): created
+
+	* ACU_TreeDagNode.cc (makeTree): need to end recursion at size ==
+	0
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): ACU_TreeDagNode
+	becomes a friend
+
+	* ACU_TreeDagNode.cc (makeTree): added
+
+	* ACU_RedBlack.cc: created
+
+	* ACU_RedBlack.hh: created
+
+	* ACU_TreeDagNode.cc: created
+
+	* ACU_TreeDagNode.hh: created
+
+	* ACU_Copy.cc: created from experimental code
+
+	* ACU_Insert.cc: created from experimental code
+
+	* ACU_Find.cc: created from experimental code
+
+	* ACU_SlowIter.hh: created from experimental code
+
+	* ACU_FastIter.hh: created from experimental code
+
+	* ACU_RedBlackNode.cc: created from experimental code
+
+	* ACU_RedBlackNode.hh: created from experimental code
+	(ACU_RedBlackNode): set size here, rather than trying to compute
+	it lazily
+

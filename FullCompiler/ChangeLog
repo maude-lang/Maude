@@ -1,0 +1,17 @@
+2003-05-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* runtime.hh: added using namespace std
+	
+===================================Maude80b===========================================
+
+2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableName.hh: removed #pragma
+
+	* compilationContext.cc: removed #pragma
+
+	* compilationContext.hh: removed #pragma
+
+	* fullCompiler.cc: deleted
+
+===================================Maude79===========================================

@@ -1,0 +1,106 @@
+2003-05-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configSymbol.cc (compileRules): use isNonexec(); no longer check
+	for unbound variables
+	(ruleRewrite): added a call to tracePreRuleRewrite()
+
+2003-05-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configSymbol.cc (ruleRewrite): use leftOverRewrite()
+
+	* configSymbol.hh (class ConfigSymbol): added decl for
+	leftOverRewrite()
+
+	* configSymbol.cc (resetRules): added
+	(compileRules): fill out leftOver
+	(objMsgRewrite): attempt rule fairness
+	(compileRules): only put rule that have no unbound variables in
+	leftOver
+	(leftOverRewrite): added
+
+	* configSymbol.hh (class ConfigSymbol): added decl for resetRules()
+
+	* configSymbol.cc (checkArgs): chech that object and message
+	patterns are stable
+	(compileRules): fill out ruleMap
+	(objMsgRewrite): take messageSymbol arg
+	(ruleRewrite): use new objMsgRewrite() semantics
+
+	* configSymbol.hh (class ConfigSymbol): added struct symbolLt and
+	struct RuleSet, typedef RuleMap and data members ruleMap and
+	leftOvers; deleted data member objMsgRules
+
+	* configSymbol.cc (ConfigSymbol): don't init mode
+	(ruleRewrite): use ObjectSystemRewritingContext
+
+	* configSymbol.hh (class ConfigSymbol): delete enum Mode, data
+	memeber mode and decl for setMode();
+	(setMode): deleted
+	(class ConfigSymbol): deleted struct AutomatonPair
+
+	* objectSystem.hh: added class ObjectSystemRewritingContext
+
+	* objectSystemRewritingContext.hh (class
+	ObjectSystemRewritingContext): created
+
+2003-05-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configSymbol.cc (objMsgRewrite): use objMsgRules
+	(compileRules): use objMsgRules
+	(ruleRewrite): handle mode
+	(ruleRewrite): rewrote obj-msg recognition loop; use Asserts()
+	that DagArgumentIterators are valid; handle duplicate object more
+	gracefully
+
+	* configSymbol.hh (class ConfigSymbol): dleted data member
+	automatonPairs; added data members mode and objMsgRules
+
+2003-05-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configSymbol.cc (ruleRewrite): rewritten using objMsgRewrite()
+	and retrieveObject()
+
+	* configSymbol.hh (class ConfigSymbol): added decls for
+	objMsgRewrite() and retrieveObject()
+	(class ConfigSymbol): added enum Mode
+
+	* configSymbol.cc (objMsgRewrite): added
+	(retrieveObject): added
+
+	* remainder.cc: created
+
+	* configSymbol.cc (ConfigSymbol): pass useTree = false to
+	ACU_Symbol()
+
+	* objectMap.cc: moved ObjectMap decls here
+	(dump): added
+
+	* configSymbol.cc (markReachableNodes): use FOR_EACH_CONST()
+	(markReachableNodes): use FOR_EACH_CONST()
+
+===================================Maude80a===========================================
+
+2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configSymbol.cc: removed #pragma
+	(checkArgs): updated Assert()
+
+	* configSymbol.hh: removed #pragma
+	
+===================================Maude79===========================================
+
+2001-04-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configSymbol.hh (class ConfigSymbol): added struct MessageQueue,
+	struct dagNodeLt, class ObjectMap
+	(class ConfigSymbol): added struct AutomatonPair and data member
+	automatonPairs
+
+	* configSymbol.cc (checkArgs): added
+
+2001-04-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configSymbol.hh: created
+
+	* objectSystem.hh: created
+

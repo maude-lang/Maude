@@ -1,0 +1,841 @@
+Mon Feb  3 14:07:20 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_DagNode.cc (overwriteWithClone): fixed serious bug
+        where we were copying sort of overwritten node rather than
+        overwriting node
+
+Tue Jan  7 10:56:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_Symbol.cc (eqRewrite): Lazy case rewritten using
+	inErrorSort() to fix two subtle bugs: (1) If after coputing base
+	sort we were not in the error sort we would return with a
+	possibly incorrect sort in the dag node which would be accepted as
+	gospel by reduce(). (2) If after copying and reducing subterms the
+	and normalizing at top the number of subterms changed, our
+	extension information would be invalid.
+	(eqRewrite): Semi-eager case: removed superfluous Assert and
+	repudiateSortInfo().
+	(eqRewrite): replaced calls to repudiateSortInfo() since
+	applyReplace() may compute true sort which is invalidated by
+	rewriting below
+
+Tue Dec 24 17:27:21 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (forcedLoneVariableCase): rewritten to use
+	computeBaseSort() and sortConstraintFree()
+
+	* AC_Subproblem.cc (matchedPortionOK): call to findBaseSort()
+	replaced by call to computeBaseSort()
+	(computeAssignment): computeSortWhilePreservingContext() ->
+	computeTrueSortWhilePreservingContext()
+	(solveVariables): computeSortWhilePreservingContext() ->
+	computeTrueSortWhilePreservingContext()
+
+	* AC_Symbol.hh (class AC_Symbol): findBaseSort() deleted
+
+	* AC_Symbol.cc (eqRewrite): adapted from rewrite(); call to
+	DagNode::computeSort() replaced by DagNode::computeTrueSort();
+ 	call to Symbol::computeSort() in lazy case replaced by
+	Symbol::computeBaseSort();
+	(computeBaseSort): adapted from findBaseSort()
+	(computeTrueSort): adapted from computeSort()
+
+	* AC_Symbol.hh (class AC_Symbol): computeSort() replaced by
+	computeBaseSort() and computeTrueSort(); rewrite() -> eqRewrite()
+
+Thu Dec 19 14:12:11 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_DagNode.cc (makeClone): copy sort information to avoid recomputation
+
+Thu Dec 12 17:43:19 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_DagNode.cc (overwriteWithClone): copy sort information; this
+	is needed so then when we rewrite with a collapse equation we do
+	not lose sort infomation with the possibility of infinite looping
+	on foreign sort constraints
+
+Wed Dec 11 12:04:02 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_Symbol.cc (findBaseSort): use sortConstraintFree() rather
+	than obselete test
+
+Mon Dec  9 15:10:26 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_Symbol.cc (computeSort): use new constrainToSmallerSort()
+	calling convention
+
+Mon Nov 25 19:00:06 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_Symbol.cc (AC_Symbol): added constructor arg
+
+Wed Nov 20 12:15:40 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_Symbol.cc (matchVariableWithExtension): implemented
+
+Tue Nov 19 18:33:05 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_Symbol.hh (class AC_Symbol): matchVariableWithExtension() added
+
+	* AC_LhsAutomaton.cc (fullMatch): pass 1 as lowerBound to
+	addTopVariable()
+
+	* AC_Subproblem.cc (addTopVariable): lowerBound added
+	(extractDiophantineSystem): use lowerBound
+
+	* AC_Subproblem.hh (class AC_Subproblem): lowerBound added to
+	addTopVariable() and struct TopVariable
+
+Thu Nov 14 18:01:50 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_DagNode.cc (makeClone): added
+
+Tue Oct 15 17:16:01 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_RhsAutomaton.cc (dump): added indentLevel arg
+
+	* AC_LhsAutomaton.cc (dump): rewritten to do indentation
+
+Fri Oct 11 17:49:08 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_Symbol.cc (partialReplace): deleted
+	(partialConstruct): deleted
+
+	* AC_DagNode.cc (copyWithReplacement): AC_DagNode:: removed from
+	mergeSortAndUniquize() call
+	(partialReplace): added
+	(partialConstruct): added
+
+Fri Sep 27 11:24:48 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* AC_DagNode.cc (AC_DagNode): trackStorage call removed
+	(markArguments): evacuate() call added
+
+	* AC_DagNode.hh (DagNode): trackStorage call removed
+
+	* AC_DagNode.cc (mergeSortAndUniquize): mergeBuffer made local
+	automatic rather than class static
+
+Fri Aug 16 16:47:49 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* AC_Symbol.cc (specificRewrite): added
+
+Fri Aug  9 19:01:59 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* AC_Symbol.cc (partialConstruct): added
+	(ruleRewrite): added
+
+	* AC_DagNode.cc (stackArguments): added
+	(copyWithReplacement): added
+
+Tue Aug  6 15:21:40 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* AC_LhsCompiler.cc: created by extracting compilation code from AC_Term.cc
+	(analyseConstraintPropagation): matchAtTop arg removed
+	(compileLhs): boundAbove arg reoved togtehr with code that updates
+	it and passes it
+	(findConstraintPropagationSequence): don't pass matchAtTop arg
+
+	* AC_Term.hh (class AC_Term): removed boundAbove arg from
+	compileLhs(); removed matchAtTop arg from analyseConstraintPropagation()
+
+Wed Jul 31 17:24:27 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* AC_Symbol.cc (makeTerm): added
+
+Thu Jul 18 16:45:12 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Term.cc (findLongestIncreasingSequence): fixed bug where we
+	were not handling UNDECIDED value from subsumes() correctly
+	(addSubsumedAliens): fixed bug where we
+	were not handling UNDECIDED value from subsumes() correctly
+
+Fri Jun 28 17:13:03 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_DagNode.cc (normalizeAtTop): else branch inside loop simplified
+
+	* AC_Term.cc (findGreedySequence): ASsert() -> Assert()
+
+	* AC_Symbol.cc: ASsert() -> Assert()
+
+Fri Jun 21 10:09:03 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Term.cc (compileLhs): heavy rewrite to use new compileLhs()
+	and track subproblemLikely; use variableIndex.conditionVariables()
+
+	* AC_Symbol.cc (compileOpDeclarations): use new PermuteSymbol functions
+	(AC_Symbol): initialize BinarySymbol
+
+	* AC_Symbol.hh (class AC_Symbol): now derived from PermuteSymbol
+
+	* AC_Term.cc (addIndependentAliens): added
+	(addSubsumedAliens): add; these two functions replace addForceableAliens()
+	(addSubsumedAliens): fixed goto label bug
+	(compileLhs): subsumed aliens cannot be allowed to affect
+	baoundUniquely even though any variables they bind won't exists in
+	their context or the condition since this would cause our internal
+	consistancy checks to fail
+
+Thu Jun 20 14:12:21 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Term.cc (findConstraintPropagationSequence): fixed bug where
+	we were swaping wrong element when adding grounded out stuff to sequence
+	(findConstraintPropagationSequence): fix bug: i -> j in search for
+	grounded out stuff
+
+	* AC_LhsAutomaton.cc (buildBipartiteGraph): fixed bug where we
+	were passing wrong pattern # to addEdge() when firstAlien != 0
+
+	* AC_Term.cc (findConstraintPropagationSequence): added
+	(compileLhs): major rewrite
+	(findGreedySequence): renamed (was findOptimalSequence())
+	(addForceableAliens): added
+	(analyseConstraintPropagation): completely rewritten to match more
+	powerful constraint propagation in compileLhs()
+
+Tue Jun 18 15:03:04 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_DagNode.cc (compareArguments): added SPEED_HACK
+
+	* AC_Term.cc (compareArguments): clean up both versions to make
+	them look more like AC_DagNode::compareArguments()
+
+	* AC_Term.hh (class AC_Term): revoked AC_ArgumentIterator friendship
+
+	* AC_Term.cc (normalizeAliensAndFlatten): simplified and corrected
+	possible bug arising from flattening in subterm with single arg of
+	> 1 multiplicity
+
+	* AC_DagNode.cc (compareArguments): optimized
+	(mergeSortAndUniquize): use mergeBuffer; some code cleaning
+	(normalizeAtTop): rewritten to avoid allocating destination vector
+	(copyEagerUptoReduced): replaced C cast with static_cast
+	(compareArguments): put const in static cast;
+	(eliminateSubject): superfluous scope op deleted
+
+	* AC_DagNode.hh (class AC_DagNode): added mergeBuffer
+
+	* AC_DagNode.cc (sortAndUniquize): use runsBuffer
+
+	* AC_DagNode.hh (class AC_DagNode): runsBuffer added
+
+	* AC_Symbol.cc (findBaseSort): replaced sortIndexBuffer with
+	utilityBuffer
+	(partialReplace): replaced runs with utilityBuffer
+	(partialReplace): remember to set utilityBuffer[0] = 0
+
+	* AC_Symbol.hh (class AC_Symbol): sortIndexBuffer and runs
+	replaced by static Vector<int> utilityBuffer
+
+Mon Jun 17 13:20:52 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_DagNode.cc (sortAndUniquize): use AC_DagNode's runs vector
+	(mergeSortAndUniquize): use static Vector and ensure we don't end
+	up giving its allocated memory to the node we were working on
+
+	* AC_Symbol.cc (partialReplace): use static runs vector
+	(AC_Symbol): initialize runs buffer
+
+Sat Jun 15 14:11:03 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (operator<<): added
+
+	* AC_Term.cc (findLongestIncreasingSequence): a term can only
+	subsume another for greedy matching if it has multiplicity 1
+	(compileLhs): fixed bug in the nrNonGroundAliens == 1 case
+
+Fri Jun 14 15:27:47 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Term.cc (compileLhs): rewrote to use new match strategies
+
+	* AC_LhsAutomaton.cc (match): rewritten to use matchStrategy
+	(greedyMatch): handle case where alien multiplicity > 1
+	(buildBipartiteGraph): matchable now a bool
+	(forcedLoneVariableCase): removed returnedSubproblem = 0 (twice)
+	(dump): removed linearUnconditional
+	(AC_LhsAutomaton): removed linearUnconditional
+	(topVariableCompare): now sort variables by decreasing
+	multiplicity first
+	(greedyPureMatch): handle variables with multiplicity > 1
+
+	* AC_LhsAutomaton.hh (class AC_LhsAutomaton): enum MatchStrategy
+	added; linearUnconditional deleted
+
+Thu Jun 13 17:18:21 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (aliensOnlyMatch): use SubproblemAccumulator
+	(aliensOnlyMatch): fixed bug where we were only considering
+	subject with = rather than >= multyiplicity
+	(aliensOnlyMatch): avoid copying solution if local copy is known
+	to be the same as current solution
+	(greedyMatch): optimized use of scratch substitution
+
+Wed Jun 12 10:53:24 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (aliensOnlyMatch): reorganised to use built
+	in local Substitution
+	(buildBipartiteGraph): reorganised to use built
+	in local Substitution
+	(greedyMatch): reorganised to use built in local and scratch Substitutions
+
+	* AC_LhsAutomaton.hh (class AC_LhsAutomaton): added local and
+	scratch data members to avoid run time allocation of substitutions
+
+	* AC_LhsAutomaton.cc (AC_LhsAutomaton): added nrVariables arg,
+	initialized local and scratch substitutions
+
+	* AC_Term.cc (compileLhs): added nrVariables arg
+
+Sat Jun  8 15:54:31 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (greedyMatch): return false if we couldn't
+	find a match for an independent alien
+	(dump): dump totalNonGroundAliensMultiplicity and nrIndependentAliens
+
+	* AC_Term.cc (findIndependentSets): added
+	(lengthCompare): added
+	(findOptimalSequence): added
+	(findLongestIncreasingSequence): added
+	(compileLhs): added code for optimal sequence in greedy case
+
+	* AC_LhsAutomaton.cc (addGroundedOutAlien): added
+
+	* AC_Term.cc (compileLhs): rewritten; we deliberately introduce a
+	bug in the case where the candidate is a non ground alien; this
+	will be fixed when the constraint propagation code is revamped
+
+Fri Jun  7 14:14:38 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (aliensOnlyMatch): use new SubproblemSequence
+	constructor and semantics
+
+	* AC_Theory.cc: Sequence's abolished throughout module
+
+	* AC_Subproblem.cc (extractDiophantineSystem): use Vector.append()
+	(twice)
+
+	* AC_DagNode.cc (sortAndUniquize): use Vector.append()
+
+Thu Jun  6 12:25:45 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_DagNode.cc (compareArguments): reversed size order
+	REVERTING TO Engine13 AC_DagNode.cc AND AC_Term.cc; new orderings
+	on multisets may be cheaper to compute but cause more shuffling of
+	subterms and lower performance
+
+	* AC_Term.cc (compareArguments): both versions: ordering changed
+	to that on DagNodes
+	(compareArguments): both versions: reversed size order
+
+	* AC_DagNode.cc (compareArguments): optimized loop
+	(compareArguments): changed ordering on multisets of subterms in
+	the interest of more speed
+
+Wed Jun  5 18:27:19 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Subproblem.cc (extractDiophantineSystem): pass pre allocate
+	sizes to diophantine system
+
+	* AC_LhsAutomaton.cc (greedyPureMatch): modified to use new
+	AC_ExtensionInfo semantics
+
+	* AC_Subproblem.cc (fillOutExtensionInfo): modified to use new
+	AC_ExtensionInfo semantics
+
+	* AC_ExtensionInfo.hh (class AC_ExtensionInfo): revise to avoid
+	allocating memeory for vector until it is clear it will actually
+	be used
+	(clear): don't set whole flag
+
+Sun Jun  2 17:08:38 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (aliensOnlyMatch): added
+	(buildBipartiteGraph): added
+	(fullMatch): simplified, using buildBipartiteGraph()
+	(match): major rewrite
+
+Sat Jun  1 14:53:43 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (fullMatch): optimized use of local substitution
+
+	* AC_Term.cc (compileLhs): dont pass linear unconditional arg
+
+	* AC_LhsAutomaton.cc (addTopVariable): linearUnconditional arg
+	removed; code cleaning
+	(updateTotals): added
+	(addGroundAlien): code cleaning
+	(addNonGroundAlien): code cleaning
+	(AC_LhsAutomaton): clear totalNonGroundAliensMultiplicity
+	(addNonGroundAlien): update totalNonGroundAliensMultiplicity
+	(multiplicityChecks): code cleaning
+	(eliminateGroundAliens): code cleaning
+	(forcedAliensCase): fixed bug where we were possibly trashing
+	global solution whenever alien match failed
+	(forcedAliensCase): deepSelfDestruct seq rather than delete it to
+	avoid memory leak!
+	(computeTotalMultiplicity): added
+	(copyMultiplicity): renamed
+	(match): code cleaning
+	(greedyMatch): code cleaning
+	(greedyPureMatch): code cleaning; use cheap failureMode optimization
+	(dump): removed dump of TopVariable linearUnconditional field
+
+	* AC_LhsAutomaton.hh (class AC_LhsAutomaton): added
+	totalNonGroundAliensMultiplicity and nrIndependentNonGroundAliens
+	data members; struct TopVariable loses its linearUnconditional flag
+
+	* AC_LhsAutomaton.cc (fullMatch): serious memory leak where we
+	forgetting to deepSelfDestruct subproblem on failure fixed
+	(greedyMatch): fix memory leak where we were failing to
+	deepSelfDestruct subproblem passes back to us
+
+Fri May 31 15:09:12 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (AC_LhsAutomaton): store linearUnconditional flag
+	(greedyMatch): added
+	(copyMultiplicities): added
+	(greedyPureMatch): removed linearUnconditional checks and
+	multiplicity copying
+	(match): added calls to copyMultiplicities() and additional
+	linearUnconditional check
+	(dump): now dump linearUnconditional flag
+
+	* AC_Term.cc (compileLhs): pass linearUnconditional flag to
+	AC_LhsAutomaton constructor
+
+	* AC_LhsAutomaton.cc (forcedLoneVariableCase): hacked to use Sort*
+	rather than SortCode
+	(addTopVariable): store Sort* rather than SortCode
+	(fullMatch): hacked for Sort* rather than SortCode
+	(greedyPureMatch): hacked for Sort* rather than SortCode
+	(dump): hacked for Sort* rather than SortCode
+	(greedyPureMatch): temporrary warning about inefficiency added;
+	code cleaning
+
+	* AC_LhsAutomaton.hh (class AC_LhsAutomaton): struct TopVariable
+	now hold Sort* rather than SortCode
+
+	* AC_LhsAutomaton.cc (complete): added
+	(topVariableCompare): added
+
+	* AC_Term.cc (compileLhs): call AC_LhsAutomaton::complete()
+
+	* AC_LhsAutomaton.cc (match): switched order of
+	eliminateGroundAliens() and eliminateBoundVariables()
+	(greedyPureMatch): added code to return false where possible if we
+	fail to assign something to a variable
+
+Thu May 30 12:27:49 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (dump): dump structure and linearUnconditional
+	slots
+	(greedyPureMatch): added
+	(greedyPureMatch): bug fix: testing for bound rather than unbound
+	variable in firstSubject assignment loop
+	(match): need to clear returnedSubproblem if greedyPureMatch() succeeds
+
+	* AC_Term.cc (compileLhs): pass linearUnconditional flag to addTopVariable
+
+	* AC_LhsAutomaton.cc (addTopVariable): fill out structure slot
+	(addTopVariable): take linearUnconditional arg and fill out
+	linearUnconditional slot
+
+	* AC_Symbol.cc (compileOpDeclarations): call associativeSortStructureAnalysis()
+
+	* AC_Symbol.hh (sortStructure): added
+
+Wed May 29 16:32:51 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (addTopVariable): code cleaning
+	(eliminateGroundedOutAliens): code cleaning
+	(forcedLoneVariableCase): much code cleaning
+	(forcedAliensCase): added
+	(AC_fullMatch): added
+
+	* AC_LhsAutomaton.hh (class AC_LhsAutomaton): new fields added to
+	struct TopVariable to make way for greedy pure matcher
+	(class AC_LhsAutomaton): struct Subject added
+	(class AC_LhsAutomaton): subjects and lastUnboundvariable data
+	members added
+
+	* AC_LhsAutomaton.cc (multiplicityChecks): added
+	(eliminateBoundVariables): added
+	(eliminateGroundAliens): added
+	(eliminateGroundedOutAliens): added
+	(forcedLoneVariableCase): added
+	(match): major rewrite using new functions
+
+Tue May 28 11:52:29 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Term.cc (compileLhs): added code to detect opportunities to
+	use greedy heuristic
+
+Fri May 24 11:07:17 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Subproblem.cc (matchedPortionOK): use findBaseSort(), context
+	arg removed
+
+	* AC_LhsAutomaton.cc (match): do necessary sort check on created
+	AC_DagNode in "no aliens, 1 variable" case, using findBaseSort()
+	and sortCheckSubproblem
+	
+	* AC_Symbol.hh (class AC_Symbol): added sortIndexBuffer data member
+
+	* AC_Symbol.cc (findBaseSort): added
+	(computeSort): reimplemented using findBaseSort()
+	(findBaseSort): have sortIndexBuffer in AC_Symbol object rather
+	than automatic to save a malloc() call
+
+	* AC_Term.cc (analyseConstraintPropagation): reimplemented; assume
+	Variable::analyseConstraintPropagation() works and use it to
+	simplify code
+	(compileLhs): changed to update boundUniquely correctly
+
+	* AC_LhsAutomaton.cc (match): added code for "no aliens" case
+
+Thu May 23 10:19:28 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (match): added code to deal with grounded out
+	case without returning non-null subproblem
+	(match): added code for the "no unbound variables" case
+
+	* AC_Term.cc (compileLhs): do boundAbove.insert() after
+	compileLhs(); is it really needed anyway?
+	(compileLhs): insert(t->occursBelow()) not insert(occursBelow())
+	(compileLhs): fixed bug in test to determine if alien is grounded out
+
+	* AC_LhsAutomaton.cc (dump): implemented, now take variableIndex arg
+
+Wed May 22 18:17:08 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (match): eliminate grounded out aliens early on
+
+	* AC_Term.cc (compileLhs): calculate grounded out arg for addNonGroundAlien()
+
+	* AC_LhsAutomaton.hh (class AC_LhsAutomaton): store grounded out
+	aliens in seperate vector
+
+	* AC_LhsAutomaton.cc (addNonGroundAlien): take grounded out argument
+
+Mon May 20 10:20:56 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Subproblem.hh (class AC_Subproblem): secure member in struct
+ 	TopVariable removed because DagRoots cannot be safely relocated 
+
+	* AC_Subproblem.cc (solveVariables): don't set secure
+
+	* AC_Subproblem.hh (class AC_Subproblem): difference member of
+	struct Edge is now a pointer to a LocalBinding since LocalBindings
+	cannot be safely relocated when a vector expands
+
+	* AC_Subproblem.cc (PatternNode::solve): use LocalBinding assert
+	and retract
+	(deepSelfDestruct): now delete difference along with subproblem
+	(addEdge): use new operator- on Substitution
+	(solve): check if difference is 0 before calling member functions
+	on it
+
+	* AC_Subproblem.hh (class AC_Subproblem): Edge struct now has
+	LocalBinding member (rather that Substitution::Difference)
+
+Sat May 18 11:22:18 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Symbol.cc (rewrite): rewritten to use copyAndReduceSubterms()
+ 	and to implement going eager on lazy AC symbols in the error sort
+
+Fri May 17 16:14:56 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Symbol.cc (copyAndReduceSubterms): added
+
+	* AC_DagNode.cc: #include "dumpContext.hh" removed
+	(normalizeAtTop): now return a bool; true if at least one
+	flattening took place
+
+	* AC_Subproblem.cc: #include "dumpContext.hh" removed
+
+	* AC_LhsAutomaton.cc (dump): use streams
+
+	* AC_RhsAutomaton.cc (dump): use streams
+
+Tue May 14 11:37:13 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_RhsAutomaton.cc (buildArguments): treat two runs of length 1
+	as a special case to avoid expensive call to mergeSortAndUniquize()
+
+	* AC_DagNode.cc (normalizeAtTop): must sortAndUniquize(argArray)
+	after flattening
+
+	* AC_RhsAutomaton.cc (buildArguments): removed const since we may
+	need to write to "runs" vector
+
+	* AC_Term.cc (compileRhs): pass symbol to addArgument()
+
+	* AC_RhsAutomaton.cc (close): outlined; now flip unstable args
+	back into original order; have a non-empty runs vector if there
+	are any unstable args
+	(addArgument): outline; stack stable args at front and unstable
+	args at back; take symbols argument to make sure stable arg is
+	less than last stable arg to really qualify for stable stack
+	(Symbol): initialize new data members
+
+	* AC_Term.cc (compileRhs): use addArgument(), close() and stable()
+
+	* AC_RhsAutomaton.cc (topSymbol): now clears nrStable
+
+	* AC_RhsAutomaton.hh (addArgument): created from setArgument();
+	now tracks stable arguments.
+	(close): created from setDestination(); now sets up "runs" vector
+	if needed; must be called _after_ all argumments have been added
+
+Mon May 13 13:44:57 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_DagNode.cc (mergeSortAndUniquize): fixed bug where we were
+	changing the value of d before we stored the position of the start
+	of the odd run. Moved run position storage statement to start of
+	basic block and then put an Assert in front of it to ensure we
+	don't overwrite start position of previous odd run.
+	(mergeSortAndUniquize): stripped out optimzation of back and forth
+	copies because there is a serious bug: the copies may be needed in
+	order to move elements backwards because the number of earlier
+	elements shrunk during pass; we can't predict ahead of time
+	whether the copy-back will need to happen so we can't omit the copy.
+
+	* AC_Symbol.cc (partialReplace): use mergeSortAndUniquize() and
+	binaryInsert()
+
+	* AC_DagNode.cc (sortAndUniquize): now merge equal args and
+	reverse out of order pairs of args to reduce number of runs
+	(fastSortAndUniquize): deleted; old sortAndUniquize() deleted
+	(sortAndUniquize): bug in recompuation of r fixed
+	(mergeSortAndUniquize): avoid copying odd run if it will still be
+	odd in next pass (or we avoided copying is last pass). This avoids
+	copying a run back and forth without possibility of merging.
+	(binaryInsert): added
+	(pairCompare): deleted
+
+Sat May 11 16:32:40 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_RhsAutomaton.cc (buildArguments): use new sortAndUniquize()
+
+	* AC_DagNode.cc (mergeSortAndUniquize): added
+	(sortAndUniquize): reimplemented using mergeSortAndUniquize()
+	(normalizeAtTop): use new sortAndUniquize()
+
+	* AC_Symbol.cc (AC_Symbol): pass stable = true
+
+Thu May  2 10:16:26 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Subproblem.cc (solveVariables): use
+	computeSortWhilePreservingContext() to avoid corrupting current solution
+	(computeAssignment): use computeSortWhilePreservingContext()
+	to avoid corrupting current solution
+	(matchedPortionOK): use computeSortWhilePreservingContext()
+	to avoid corrupting current solution
+
+	* AC_Symbol.cc (rewrite): repudiate sort in SEMI_EAGER case; this
+	is because Symbol::applyReplace() may indirectly call
+	AC_Subproblem::solveVariables() which under rare circumstances may
+	compute a sort for the subject; which may have been invalidated by
+	reducing the subjects arguments (and normalizing)
+	(computeSort): now handle sort constraints
+
+	* AC_Subproblem.cc (solveVariables): added check against whole
+	subject being in the error sort in the case where the diophantine
+	system is null.
+
+Wed May  1 10:39:56 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Subproblem.cc (solveVariables): fixed subtle bug where
+	binding found for variables involved in old diophantine system
+	were being eliminated from afterMultiplicity during formation of
+	new diophantine system.
+
+	* AC_Term.cc (compileLhs): fixed bug where we were passing
+	boundUniquely rather than local to subautomaton compilation
+
+	* AC_ExtensionInfo.hh (clear): added
+
+	* AC_Subproblem.cc (extractDiophantineSystem): handle trvial
+	system correctly
+	(fillOutExtensionInfo): modified to use AC_ExtensionInfo.clear()
+	(solveVariables): modified to deal with null system correctly; use
+	AC_ExtensionInfo.clear()
+
+Tue Apr 30 15:20:45 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Subproblem.cc (AC_Subproblem): use initializers for const
+	data members
+	(deepSelfDestruct): implemented
+
+	* AC_Subproblem.hh (class AC_Subproblem): rearranged data members,
+	made some const
+
+	* AC_Subproblem.cc (computeAssignment): added; bug where we failed
+	to build AC binding for single subterm with > 1 multiplicity removed
+	(solveVariables): use computeAssignment(), check sorts of variable
+	bindings.
+	(matchedPortionOK): added
+	(solveVariables): use matchedPortionOK()
+	(extractDiophantineSystem): added
+	(fillOutExtensionInfo): added
+	(solveVariables): use extractDiophantineSystem() and fillOutExtensionInfo()
+
+Mon Apr 29 10:45:06 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Subproblem.cc (solveVariables): added missing "return true"
+
+	* AC_DagNode.cc (normalizeAtTop): may need to flatten even if
+	expansion = 0 (subterm may only have 1 actual subterm but with > 1
+	multiplicity). needToFlatten flag added
+
+	* AC_Symbol.cc (rewrite): update nrArgs after  both normalizeAtTop()
+	calls since flattening may increase number of args
+
+	* AC_Subproblem.cc (solveVariables): use subject->symbol() in
+	place of topSymbol
+	(solveVariables): set extensionInfo whole flag correctly
+	(solvePatterns): deal with the nrPatterns == 0 case
+	(solveVariables): fixed for loop bug: nrRows -> nrColumns
+	(solveVariables): fixed for loop bug: <= -> <
+	(solveVariables): use nrVars instead of nrRows to take account of
+	extension row
+	(solveVariables): added extensionRow variable
+
+	* AC_Subproblem.hh (class AC_Subproblem): topSymbol data member removed
+
+Fri Apr 26 11:04:19 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Term.cc (compileLhs): implemented
+	(compileLhs): fixed trivial bug - missing '()'s after "theory"
+
+	* AC_LhsAutomaton.cc (addNonGroundAlien): added
+	(addGroundAlien): added
+	(addTopVariable): added
+
+	* AC_Symbol.hh (sortBound): added
+
+	* AC_LhsAutomaton.cc (eliminateSubject): deleted
+	(match): modified to use AC_DagNode::eliminateSubject()
+	(match): modified to use new AC_Subproblem constructor
+
+	* AC_DagNode.cc (eliminateSubject): added
+
+	* AC_DagNode.hh (class AC_DagNode): eliminateSubject() added
+
+	* AC_Subproblem.hh (class AC_Subproblem): "DagRoot secure" added to
+	struct TopVariable.
+
+Thu Apr 25 10:48:32 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (match): pass inErrorSort flag to AC_Subproblem()
+
+	* AC_Subproblem.cc (AC_Subproblem): take extra arg to initialize
+	errorSortFlag
+
+	* AC_Subproblem.hh (class AC_Subproblem): inErrorSort flag added
+
+	* AC_LhsAutomaton.hh (class AC_LhsAutomaton): inErrorSort flag added
+
+	* AC_Symbol.cc (rewrite): optimization where we returned false
+	immmediately from lazy case if there were no equations
+	removed. This is done for consistancy with free case.
+	(rewrite): rewritten so that users strategy is no longer abandoned
+	if the top operator is found to be in ther error sort. This is
+	done because its difficult to know what constitutes a lazy subterm
+	when an existing lazy subterm rewrites into our theory.
+
+Tue Apr 23 11:04:38 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Subproblem.cc: Substitution& args replace by
+	RewritingContext& args throughout
+	(addPatternNode): added
+	(addEdge): added
+	(addTopVariable): added
+
+Mon Apr 22 14:25:11 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_LhsAutomaton.cc (eliminateSubject): added
+
+Sat Apr 20 13:18:01 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_DagNode.cc (binarySearch): added
+	(binarySearch): added a term version
+
+Fri Apr 19 16:23:23 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Symbol.cc (computeSort): implemented
+
+Thu Apr 18 16:08:25 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Symbol.cc (partialReplace): implemented
+
+	* AC_DagNode.cc (normalizeAtTop): added
+
+	* AC_Symbol.cc (rewrite): implemented
+
+Wed Apr 17 14:45:08 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Symbol.cc (applyReplace): added
+	(partialReplace): added
+	(applyReplace): deleted
+
+	* AC_ExtensionInfo.hh: created
+
+	* AC_Subproblem.cc (solve): inserted calls to assert() and retract()
+
+	* AC_Subproblem.hh (class AC_Subproblem): bound added to struct TopVariable
+
+Tue Apr 16 16:46:40 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Symbol.cc (compileOpDeclarations): added
+
+	* AC_Symbol.hh (class AC_Symbol): compileOpDeclarations() added
+
+Fri Apr 12 14:40:40 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Term.cc (dagify): implemented
+	(compileRhs): implemented
+	(analyseConstraintPropagation): implemented
+
+	* AC_RhsAutomaton.hh (addAlien): added
+	(setArgument): added (replaces  addArgument())
+	(setDestination): added
+
+	* AC_RhsAutomaton.cc: heavily revised to allow sharing subDAGs
+	with other automata
+	(addArgument): added
+
+	* AC_DagNode.cc (pairCompare): added
+	(sortAndUniquize): added
+
+	* AC_RhsAutomaton.hh: created
+
+	* AC_RhsAutomaton.cc: created
+
+Wed Apr 10 11:41:46 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_DagArgumentIterator.hh: created
+
+	* AC_DagArgumentIterator.cc: created
+
+	* AC_DagNode.hh: created
+
+	* AC_DagNode.cc: created
+
+	* AC_Term.cc (compareArguments): implemented
+
+	* AC_Symbol.cc: created
+	
+	* AC_Theory.hh: created
+
+	* AC_Term.hh: created
+
+	* AC_Term.cc: created
+
+	* AC_ArgumentIterator.hh: created
+
+	* AC_ArgumentIterator.cc: created
+
+Fri Apr  5 17:19:02 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* AC_Symbol.hh: created
+

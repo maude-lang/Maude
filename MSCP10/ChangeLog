@@ -1,0 +1,19 @@
+2003-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* scp_parser.cc: replaced with new version from J.-F. Quesada;
+	removed "=0" initializers; reverted to original due to many
+	problems
+
+===================================Maude80a===========================================
+
+2003-04-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* scp_compiler.cc: updated use of Assert() throughout
+
+2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* scp_parser.hh: removed #pragma
+
+	* scp_kernel.hh: removed #pragma
+
+===================================Maude79===========================================

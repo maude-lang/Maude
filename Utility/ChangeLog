@@ -1,0 +1,1743 @@
+2003-05-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (FOR_EACH_CONST): added parens around container
+	
+===================================Maude80a===========================================
+
+2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (swap): deleted
+	(min): deleted
+	(max): deleted
+
+	* checkedConstIterator.hh (operator*): made const
+	(operator->): made const
+
+	* checkedIterator.hh (operator*): made const
+	(operator->): made const
+	
+===================================Maude80===========================================
+
+2003-03-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added FOR_EACH_CONST() macro
+
+2003-03-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (getSignBit): added
+
+2003-02-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* checkedIterator.hh (difference_type>): made class const_iterator
+	a friend
+
+	* checkedConstIterator.hh (difference_type>): added decl for
+	conversion ctor
+	(const_iterator): added conversion version
+
+2003-02-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (Vector): updated Assert()
+	(operator[]): updated Assert() (both versions)
+	(expandTo): updated Assert()
+	(clear): updated Assert()
+
+	* unionFind.cc: 
+
+	* unionFind.hh: 
+
+	* ttyAttributes.hh: removed #pragma
+
+	* tty.cc: removed #pragma
+
+	* tty.hh: removed #pragma
+
+	* timer.cc: removed #pragma
+
+	* timer.hh: removed #pragma
+
+	* stringTable.cc: removed #pragma
+
+	* stringTable.hh: removed #pragma
+
+	* sequencePartition.cc (SequencePartition): removed #pragma
+	(insertPart): updated Assert()s
+	(solve): updated Assert()
+	(mainSolve): updated Assert()s
+
+	* sequencePartition.hh: removed #pragma
+	(start): updated Assert()s
+	(end): updated Assert()s
+
+	* preVector.cc: removed #pragma
+
+	* preVector.hh: removed #pragma
+	(setLength): updated Assert()
+
+	* pointerSet.cc: removed #pragma
+	(findEntry): updated Assert()
+
+	* pointerSet.hh: removed #pragma
+
+	* pointerMap.cc: removed #pragma
+	(setMap): updated Assert()
+	(getMap): updated Assert()
+
+	* pointerMap.hh: removed #pragma
+
+	* natSet.cc: removed #pragma
+	(topBit): updated Assert()
+	(bottomBit): updated Assert()
+	(getMask): updated Assert()
+	(getWordNr): updated Assert()
+	(arrayContains): updated Assert()
+	(insert): updated Assert()
+	(subtract): updated Assert()
+	(operator++): updated Assert()
+
+	* natSet.hh: removed #pragma
+	(contains): updated Assert()
+	(operator*): updated Assert()
+
+	* intSet.cc: removed #pragma
+	(findEntry): updated Assert()
+
+	* intSet.hh: removed #pragma
+
+	* indexedSet.hh: removed #pragma
+
+	* indent.cc: removed #pragma
+
+	* indent.hh: removed #pragma
+
+	* graph.cc: removed #pragma
+
+	* diophantineSystem.cc: removed #pragma
+
+	* graph.hh: removed #pragma
+
+	* diophantineSystem.cc (insertRow): updated Assert()s
+	(insertColumn): updated Assert()s
+	(solve): updated Assert()
+	(buildSolubilityVectors): updated Assert()
+	(precompute): updated Assert()s
+	(multisetSelect): updated Assert()s
+	(multisetComplex): updated Assert()s
+	(solveLastRowComplex): updated Assert()
+	(solveRowComplex): updated Assert()s
+
+	* diophantineSystem.hh: removed #pragma
+	(solution): updated Assert()s
+
+	* digraph.cc: removed #pragma
+
+	* digraph.hh: removed #pragma
+
+	* decBuf.cc: removed #pragma
+	(ascii): updated Assert()
+
+	* decBuf.hh: removed #pragma
+
+	* binBuf.cc: removed #pragma
+	(init): updated Assert()
+
+	* binBuf.hh: removed #pragma
+
+	* checkedIterator.hh (checkValid): updated Assert()s
+	(checkDereferenceable): updated Assert()s
+	(operator--): updated Assert()
+	(operator+): updated Assert()
+	(operator-): updated Assert()
+	(operator[]): updated Assert()
+	(operator<): updated Assert()
+	(operator-): updated Assert()
+
+	* checkedConstIterator.hh (checkValid): updated Assert()s
+	(checkDereferenceable): updated Assert()s
+	(operator--): updated Assert()
+	(operator+): updated Assert()
+	(operator-): updated Assert()
+	(operator[]): updated Assert()
+	(operator<): updated Assert()
+	(operator-): updated Assert()
+
+	* bddUser.cc: removed #pragma
+
+	* bddUser.hh: removed #pragma
+
+	* bdd.cc: removed #pragma
+
+	* bdd.hh: removed #pragma
+
+	* macros.hh (floorDivision): updated Assert()
+	(ceilingDivision): updated Assert()
+
+	* flagSet.hh: removed #pragma
+
+	* macros.cc: removed #pragmas
+	(int64ToString): updated Assert()
+	(stringToInt64): updated Assert()
+
+	* macros.hh: removed #pragma
+	(DebugAdvisoryCheck): message rather than action
+	(Assert): message rather than action
+
+===================================Maude79===========================================
+
+2003-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (safeCast): handle null pointers in the assert case
+	
+===================================Maude78===========================================
+	
+2003-01-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.cc (doubleToString): special case for 0.0
+
+2003-01-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (SpecialConstants): added BITS_PER_BYTE and BITS_PER_INT
+	(setOnLs): use BITS_PER_INT
+	(setOnGeq): use BITS_PER_INT
+
+2002-12-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (setOnLs): added
+	(setOnGeq): added
+
+2002-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh: removed #pragma interface since it causes g++3.2 not
+	to emit default and copy contructors for nested classes in certain
+	complex situations
+
+2002-11-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.cc (doubleToString): rewritten using correctEcvt() since
+	ostrstreams don't get precision right with version 3 of stdc++
+	library
+	
+===================================Maude77============================================
+	
+2002-11-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (union MachineWord): added
+
+2002-11-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.cc (doubleToString): made "misplaced exponent" Assert
+	more detailed since it is failing
+	(doubleToString): don't clean number up because new libc++ is not
+	returning number in requested format
+
+	* indexedSet.hh: added many typenames to placate g++3.2
+
+2002-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* checkedConstIterator.hh (checkDereferenceable): fixed Assert()
+	message
+
+	* checkedIterator.hh (checkDereferenceable): fixed Assert()
+	message
+
+	* vector.hh (rawBasePointer): (both versions) deleted
+
+2002-11-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* checkedConstIterator.hh: added many typenames to placate g++3.2
+
+	* checkedIterator.hh: added many typenames to placate g++3.2
+	
+===================================Maude77==================================================
+
+2002-11-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: rewrote Advisory/Warning macros
+
+2002-11-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added fwd decl for class FlagSet
+
+	* macros.cc: provide implementation for flagSet.hh
+
+	* flagSet.hh: created
+
+2002-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh: deleted VECTOR_HACK() and CONST_VECTOR_HACK() macros
+
+	* timer.cc: moved here
+
+	* timer.hh: moved here
+
+	* macros.hh: deleted class BigNum; added class Timer
+
+2002-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh: added many typename's to placate g++3.2
+	
+===================================Maude76==================================================
+
+2002-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* graph.cc (color): resize coloring as a precaution
+
+2002-08-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (DebugAdvisory): added
+
+2002-07-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* natSet.hh (operator*): added assert to check that we are not at
+	the end of the set
+	
+===================================Maude74==================================================
+
+2002-06-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added typedef unsigned int Uint
+
+2002-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (SpecialConstants): added BITS_PER_UINT
+	
+===================================Maude73==================================================
+
+2002-05-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added CantHappen() macro
+
+2002-05-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bigNum.cc: deleted
+
+	* bigNum.hh: deleted
+
+2002-04-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bigNum.hh (class BigNum): added unsigned int versions of
+	assignAdd(), assignSub(), assignMul(); added getValue(),
+	getRemainder()
+
+2002-04-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bigNum.hh (class BigNum): made makeString() const
+	
+===================================Maude72==================================================
+
+2002-04-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added fwd decl for class BigNum
+
+2002-04-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added fwd decl for class Tty;
+
+2002-04-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (clear): added
+	
+===================================Maude71a==================================================
+
+2002-03-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: made base have default value of 10 for
+	int64ToString() and stringToInt64()
+
+2002-03-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pointerSet.hh (swap): added
+
+2002-03-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unionFind.cc: deleted explicit template instantiation
+
+	* sequencePartition.cc: deleted explicit template instantiation
+
+	* pointerSet.cc: deleted explicit template instantiation
+
+	* pointerMap.cc: deleted explicit template instantiation
+
+	* macros.cc: deleted explicit template instantiations
+
+	* diophantineSystem.cc: deleted explicit template instantiations
+	
+===================================Maude71==================================================
+
+2002-03-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (begin): fixed casting bug
+	(end): fixed casting bug
+
+2002-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (capacity): added
+
+	* preVector.hh (empty): rewritten to generate better code when
+	inlined on x86. Generating good code on Sparc seems impossible -
+	the compiler always wants to generate a 0 or 1 result in a
+	register as a result  of this function and then test it to see if
+	it 0 or 1 in the calling if statement!
+
+	* vector.hh (empty): added
+
+	* preVector.hh (empty): added
+
+2002-03-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* checkedConstIterator.hh (class const iterator): declare ptr
+	using type const_pointer
+
+	* checkedIterator.hh (checkValid): use static_cast<pointer>
+	(checkDereferenceable): use static_cast<pointer>
+	(class iterator): declare ptr using type pointer
+
+	* checkedConstIterator.hh (checkValid): use
+	static_cast<const_pointer>()
+	(checkDereferenceable): use static_cast<const_pointer>()
+
+	* checkedIterator.hh (iterator): (private version) use pointer
+	type in cast
+
+	* vector.hh (class Vector): support const_iterator
+
+	* checkedConstIterator.hh: created
+
+	* vector.hh (operator): must not call freeMemory() if getBase()
+	returns 0
+
+	* preVector.hh (class PreVector): deleted decl for reallocate()
+
+	* preVector.cc (reallocate): deleted
+
+	* vector.hh (Vector): (1 arg version) new initAllocate()
+	convention; call setLength()
+	(Vector): (2 arg version) new initAllocate() convention; we
+	alreday call setLength()
+	(Vector): (copy ctor) new initAllocate() convention; call
+	setLength()
+	(expandTo): new initAllocate() convention
+	(append): new initAllocate() convention (2 places); call
+	setLength() (1st place)
+	(operator=): use freeMemory() & initAllocate() in place of
+	reallocate()
+
+	* preVector.cc (initAllocate): take atLeastBytes rather than
+	length and size arguments. The idea is to do the multiply on the
+	outside where the multiplier will probably be a known constant
+	(initAllocate): don't set length because we don't have this value;
+	it will have to be done on the outside
+
+	* preVector.hh: updated decl for initAllocate()
+
+	* vector.hh (expandTo): reallocate memory using a temporary
+	PreVector; copy and delete objects
+	(append): reallocate memory using a temporary PreVector; copy and
+	delete objects; fix long standing bug that we were reallocating
+	when pv.getAllocatedBytes() <= neededBytes rather than when
+	pv.getAllocatedBytes() < neededBytes
+
+	* preVector.hh (initSteal): added
+
+2002-03-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (resize): rewritten to fix bug now that subtraction
+	cannot produce -ve results
+
+	* checkedIterator.hh (iterator): added a bunch of typedefs so that
+	sort() algorithm from the STL will work
+
+	* vector.hh (operator): use size() rather than length() (both
+	versions)
+
+	* preVector.hh: int -> size_t throughout
+
+	* preVector.cc (initAllocate): int -> size_t
+
+	* checkedIterator.hh: int -> size_type throughout
+	(checkValid): removed Assert() now that we can't be -ve
+	(checkDereferenceable): removed Assert() now that we can't be -ve
+	(operator+=): removed Assert() now that we can't be -ve
+	(operator-=): removed Assert() now that we can't be -ve
+	(operator[]): removed Assert() now that we can't be -ve
+
+	* vector.hh: int -> size_type throughout
+	(class Vector): retain int for length() just in case we add a -ve
+	value to in somewhere. Eventually we should move to size() and
+	check this
+	(size): added
+	(Vector): removed Assert() now that we can't be -ve (2 versions)
+	(operator[]): removed Assert() now that we can't be -ve (2 versions)
+	(expandBy): removed Assert() now that we can't be -ve
+
+	* checkedIterator.hh (operator--): added both versions
+	(operator+=): added
+	(operator-=): added
+	(operator+): added
+	(operator-): added
+	(operator[]): added
+	(operator<): added
+	(operator=): added
+	(operator-): added iterator difference version
+	(operator+): added friend version
+	(operator-): optimized
+	(operator+): optimized
+	(iterator): give up on trying to provide operator+(int, iterator&)
+	- not clear how this can be accomplished and deque<>::iterator in
+	the STL fails to provide this despite the STL documentation
+
+2002-03-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh: use checked iterators for begin() and end()
+
+	* checkedIterator.hh: created
+
+2002-02-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added forward decl for class Bdd
+
+	* bddUser.cc (extractPrimeImplicant): removed
+
+	* bddUser.hh: cleaned up; removed class Bdd stuff
+
+	* bdd.cc (extractPrimeImplicant): moved here
+
+	* bdd.hh (class Bdd): moved here
+
+2002-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bddUser.hh (class Bdd): added ctors
+
+	* bddUser.cc (extractPrimeImplicant): added
+
+	* bddUser.hh (class Bdd): added decl for extractPrimeImplicant()
+
+2002-02-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tty.hh (setEscapeSequencesAllowed): added
+
+	* tty.cc: created
+
+	* tty.hh: created
+	
+===================================Maude70==================================================
+
+2002-01-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (pluralize): added
+
+	* macros.cc: added globalVerboseFlag
+
+	* macros.hh: added Verbose() macro
+
+2001-12-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* indexedSet.hh (insert): added FastPair version
+	(class IndexedSet): added FastPair type
+	(insert): use -> for iterator
+	(find): use -> for iterator
+	(ithElement): use -> for iterator
+
+2001-12-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* natSet.hh (operator=): test element before natSet
+	(operator!): test element before natSet
+
+	* natSet.cc (operator++): implemented
+	(getWord): becomes getWordNr
+	(getMask): added Assert()
+	(getWordNr): added Assert
+	(operator<<): rewritten using iterators
+
+2001-12-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* natSet.hh (min): moved here and rewritten in terms of
+	arrayMin(); made inline
+
+	* natSet.cc (countBits): use 16 entry lookup table method; make
+	local_inline
+	(arrayMin): added
+
+	* natSet.hh (clear): was makeEmpty()
+
+	* natSet.cc (topBit): don't test for zero word here, Assert()
+	instead
+	(bottomBit): added Assert() for zero word
+	(cardinality): becomes size()
+
+	* natSet.hh (max): do test for empty set here
+
+2001-12-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* natSet.cc (min): made non-inline since with gc++ 3.0 it's not
+	possible to have a function inline in one file and yet have an
+	outlined copy for calls from other files: "An inline function must
+	be defined in every translation unit that references it." - g++
+	problem report 3833 response
+
+2001-12-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (Vector): added const to cast on originalVector
+	(operator[]): use const in cast
+	(operator): added const to cast on originalVector
+	(rawBasePointer): use const in cast
+
+===================================Maude69==================================================
+
+2001-12-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker2.hh (getLeadIn): added
+	(getCycle): added
+
+	* modelChecker2.cc (dfs2PropertyTransitions): store counterexample
+	info
+	(dfs1PropertyTransitions): store counterexample info
+
+	* veryWeakAlternatingAutomaton.cc (computeTransitionSet): use
+	ithvar() and nithvar()
+
+	* bddUser.hh (class BddUser): added enum Constants
+
+	* bddUser.cc (BddUser): use enum Constants
+
+	* bddUser.hh (ithvar): added
+	(nithvar): added
+
+2001-12-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker2.cc: created
+
+	* modelChecker2.hh: created
+
+2001-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton2.hh (getInitialStates): added
+
+2001-11-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton2.cc (remapNatSet): added
+	(hasNonAcceptingTarget): added
+	(transformTransitionMap): added
+	(collapseStates): added
+	(BuchiAutomaton2): use collapseStates()
+
+	* genBuchiAutomaton.cc (dump): don't print out undefined states;
+	these states can be created during VWAA->GBA conversion but never
+	get fleshed out because the transition(s) to them are subsumed in
+	the transitions sets in which they occur
+
+	* sccOptimizations.cc (sccOptimizations): fixed bug in rebuiling
+	the GBA where we were looking the state number up in
+	fairTransitionSets rather than the state number after translation
+	into a fair set number
+
+	* buchiAutomaton2.cc (generate): fixed new state number
+	calculation bug
+
+2001-11-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton2.cc (dump): don't try to print transition sets
+	for empty states
+
+	* buchiAutomaton2.hh (class BuchiAutomaton2): added decls for
+	generate() and insertTransition()
+
+	* buchiAutomaton2.cc (generate): added
+	(insertTransition): added
+
+2001-11-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* genBuchiAutomaton.hh (getNrStates): added
+	(getNrFairnessSets): added
+	(getInitialStates): added
+	(getFairnessCombination): added
+	(getTransitions): added
+
+	* buchiAutomaton2.hh: created
+
+	* buchiAutomaton2.cc: created
+
+2001-11-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sccOptimizations.cc (handleComponent): fixed bug where a
+	degenerate SCC (i.e. a single node without a self transition)
+	could be labelled as fair if there were no fairness sets.
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): complete
+	redesign of data structure for SCC optimizations
+	(class GenBuchiAutomaton): updated decl for handleComponent()
+
+	* sccOptimizations.cc: complete rewrite of all functions using new
+	data structures; fix a bug where we were failing to remove
+	fairness info from transitions leaving fair component
+
+2001-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sccOptimizations.cc (sccOptimizations): moved here
+	(eliminateFairness): moved here
+	(transformFairTransitionSet2): moved here
+	(strongConnected): moved here
+	(handleComponent): moved here
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): optimize() ->
+	collapseStates()
+
+	* genBuchiAutomaton.cc (GenBuchiAutomaton): loop on
+	collapseStates() until number of states is equal to number of
+	distinct transtions
+
+	* collapseStates.cc (optimize): moved here; renamed to collapseStates()
+	(transformFairTransitionSet): moved here
+	(insertFairTransition2): moved here
+
+	* genBuchiAutomaton.cc (optimize): initialStates becomes a NatSet,
+	use remapNatSet()
+	(GenBuchiAutomaton): initialStates becomes a NatSet
+	(dump): initialStates becomes a NatSet
+	(sccOptimizations): initialStates becomes a NatSet
+
+2001-11-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* genBuchiAutomaton.cc (remapNatSet): added
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added decls for
+	eliminateFairness(), transformFairTransitionSet2(), remapNatSet()
+
+	* genBuchiAutomaton.cc (eliminateFairness): added
+	(transformFairTransitionSet2): added
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added data
+	members essential, eliminated
+
+	* genBuchiAutomaton.cc (GenBuchiAutomaton): call sccOptimizations()
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added data
+	members alive, tarjan, stateStack
+	(class GenBuchiAutomaton): added decls for sccOptimizations(),
+	strongConnected(), handleComponent()
+	(class GenBuchiAutomaton): added data members nrFairnessSets,
+	stateCount, componentNr
+
+	* genBuchiAutomaton.cc (sccOptimizations): added
+	(strongConnected): added
+	(handleComponent): added
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added data
+	member allFair
+
+	* genBuchiAutomaton.cc (GenBuchiAutomaton): initialize allFair
+	(generateState): use allFair
+
+2001-11-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added decls for
+	insertFairTransition2(), transformFairTransitionSet(), optimize()
+
+	* genBuchiAutomaton.cc (transformFairTransitionSet): added
+	(optimize): added
+	(GenBuchiAutomaton): call optimize()
+
+	* indexedSet.hh (swap): added
+
+	* genBuchiAutomaton.cc (dump): updated to use new states
+	(generateState): updated to use new states
+	(insertFairTransition2): added
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added typedef
+	for FairTransitionSetTable and data member fairTransitionSets;
+	changed states to Vector<int>
+
+2001-11-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* genBuchiAutomaton.cc (insertFairTransition): bdd -> Bdd
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): bdd -> Bdd
+
+	* rawTransitionSet.hh (Transition>): don't use class LtTransition
+
+	* transitionSet.hh: bdd -> Bdd
+
+	* transitionSet.cc (insert): bdd -> Bdd
+
+	* transitionSet.hh (struct LtTransition): deleted
+
+	* bddUser.hh (class Bdd): added
+
+2001-11-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* veryWeakAlternatingAutomaton.cc (computeFairnessSet): fixed
+	nasty bug where we were calling checkFairness() with final states
+	index in final state array rather than its index in state array
+
+	* veryWeakAlternatingAutomaton.hh (getNrFinalStates): added
+
+	* genBuchiAutomaton.cc (generateState): handle empty state case
+
+2001-11-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* genBuchiAutomaton.cc (GenBuchiAutomaton): implemented
+	(dump): added
+
+	* veryWeakAlternatingAutomaton.hh (getInitialStates): added
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added decl for
+	getStateIndex(); componentStates -> vwaaStateSets
+
+	* genBuchiAutomaton.cc (generateState): use
+	VeryWeakAlternatingAutomaton::computeFairnessSet(); much simplification
+	componentStates -> vwaaStateSets throughout
+	(getStateIndex): added
+	(generateState): simplified using getStateIndex()
+
+	* veryWeakAlternatingAutomaton.hh (class
+	VeryWeakAlternatingAutomaton): added decl for
+	computeFairnessSet(); made checkFairness() private
+
+	* veryWeakAlternatingAutomaton.cc (computeTransitionSet): append()
+	rather than finalStates
+	(reachabilityOpt): rewrote final states renaming code
+	(dump): updated final state code
+	(computeFairnessSet): added
+
+	* veryWeakAlternatingAutomaton.hh (class
+	VeryWeakAlternatingAutomaton): finalStates changed to vector<int>
+
+2001-11-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* genBuchiAutomaton.cc (insertFairTransition): added
+
+	* rawTransitionSet.hh (class RawTransitionSet): turned product()
+	decl into a ctor decl
+
+	* rawTransitionSet.cc (product): make into a ctor to avoid the
+	need for a default ctor
+
+	* veryWeakAlternatingAutomaton.hh (getTransitionSet): added
+
+	* genBuchiAutomaton.cc: created
+
+	* genBuchiAutomaton.hh: created
+
+2001-11-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* transition.hh: created
+
+	* rawTransitionSet.hh: created
+
+	* veryWeakAlternatingAutomaton.hh (class
+	VeryWeakAlternatingAutomaton): added decl for checkFairness()
+
+	* rawTransitionSet.cc: created
+
+	* veryWeakAlternatingAutomaton.cc (checkFairness): added
+
+2001-11-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* transitionSet.cc (product): fixed bug in computation of new
+	transition bdd
+
+	* transitionSet.hh (class TransitionSet): added decl for rename()
+
+	* transitionSet.cc (rename): added
+
+	* veryWeakAlternatingAutomaton.cc: rewritten using new state
+	representation
+
+	* veryWeakAlternatingAutomaton.hh (class
+	VeryWeakAlternatingAutomaton): make states have type TransitionSet
+	rather than structs containg a pointer to a TransitionSet
+
+	* transitionSet.hh (swap): added
+
+	* veryWeakAlternatingAutomaton.cc: complete rewrite using class
+	TransitionSet
+
+	* veryWeakAlternatingAutomaton.hh (class
+	VeryWeakAlternatingAutomaton): complete rewrite using class
+	TransitionSet
+
+	* transitionSet.hh (class TransitionSet): added decl for dump()
+
+	* natSet.cc (operator<<): added
+
+	* natSet.hh: added decl for operator<<
+
+	* transitionSet.cc (dump): added
+
+2001-11-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* transitionSet.hh: created
+
+	* transitionSet.cc: created
+
+2001-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* veryWeakAlternatingAutomaton.cc (reachable): added
+	(reachabilityOpt): added
+	(VeryWeakAlternatingAutomaton): call reachabilityOpt()
+
+	* veryWeakAlternatingAutomaton.hh (class
+	VeryWeakAlternatingAutomaton): added decls for relabelNatSet() and
+	relabel()
+
+	* veryWeakAlternatingAutomaton.cc (relabel): added
+	(relabelNatSet): added
+
+	* natSet.hh (swap): added
+
+2001-11-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* veryWeakAlternatingAutomaton.cc (simplify): fixed bug with inner
+	loop bound
+	(VeryWeakAlternatingAutomaton): generate automtata in most naive
+	way possible
+	(dump): added
+	(dump): (NatSet version) added
+	(product): fixed inner loop initilaization bug (both versions)
+
+2001-10-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* veryWeakAlternatingAutomaton.hh (class
+	VeryWeakAlternatingAutomaton): added decls for sum(), product()
+	and computeConjunctionSet()
+
+	* veryWeakAlternatingAutomaton.cc (product): fixed bug where we
+	were insert *j twice and not *i; don't call clear()
+	(product): added ConjunctionSet version
+	(sum): don't call clear()
+	(sum): added ConjunctionSet version
+	(computeConjunctionSet): added
+	(computeTransitionSet): handle NEXT case
+
+2001-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* veryWeakAlternatingAutomaton.hh (class
+	VeryWeakAlternatingAutomaton): added decl for
+	computeTransitionSet()
+
+	* veryWeakAlternatingAutomaton.cc (computeTransitionSet): added
+
+	* veryWeakAlternatingAutomaton.hh (getNrStates): added
+
+	* veryWeakAlternatingAutomaton.cc (sum): clear result before
+	inserting stuff
+	(product): clear result before inserting stuff
+	(~VeryWeakAlternatingAutomaton): added
+
+	* buchiAutomaton.hh (implies): deleted
+
+	* bddUser.hh (implies): added
+	(implies): added
+
+	* natSet.hh (class NatSet): added decl for operator<()
+
+	* natSet.cc (operator<): added
+
+	* veryWeakAlternatingAutomaton.hh (operator<): added
+
+2001-10-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bddUser.hh: added decl for setNrVariables()
+
+	* bddUser.cc (setNrVariables): added
+
+	* buchiAutomaton.hh (getNrStates): added
+	(isAccepting): added
+	(getTransitions): added
+
+	* buchiAutomaton.cc (handleComponent): check doAlphaBalls flag
+	(BuchiAutomaton): make sure first round of sccOptimizations
+	doesn't simplify alpha-balls
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added data member
+	doAlphaBalls
+
+2001-10-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.cc (BuchiAutomaton): don't call
+	simulationReduction() if there are no states
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added alphaBallIndex
+	to struct State; added data member alphaBallLabels;
+
+	* buchiAutomaton.cc (handleComponent): handle alpha-balls
+	(sccOptimizations): handle alpha-balls
+
+2001-10-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.cc (simulationReduction): handle construction of
+	new automata
+	(simulationReduction): we have a subtle bug in that if the
+	simulationReductionStep merely permutes the colors, we think
+	nothing has changed and build the new automaton using out of date
+	neighborhood data in the current color set. This bug is provoked
+	when we start with a coloring of accepting = 0 because then state
+	0 gets color 1. So for a quick fix we swap the roles of 0 and 1 in
+	initial coloring
+	(simulationReductionStep): need to return true if the number of
+	colors increases even in the partial order does not
+	(BuchiAutomaton): loop over sccOptimizations() and
+	simulationReduction() to fixed point
+	(simulationReduction): need check for increase in number of colors
+	here rather than in simulationReductionStep()
+
+2001-10-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.cc (simulationReduction): added
+	(simulationReductionStep): added
+	(insertMaximal): added
+	(dominates): added
+	(dominates): added
+
+	* indexedSet.hh (clear): added
+	(ithElement): fix bug where we were trying to return map pair
+	rather than first element
+
+	* buchiAutomaton.hh (operator<): added
+	(ArcType): added
+
+	* indexedSet.hh (insert): fixed bug where we were using
+	IndexMap::iterator rather than EltMap::iterator
+
+2001-10-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added all the typedefs
+	needed to construct colr sets
+
+	* indexedSet.hh: created
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added decl for
+	handleComponent()
+
+	* buchiAutomaton.cc (sccOptimizations): remap live states
+	(handleComponent): added
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added alive field
+
+2001-10-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added decls for
+	sccOptimizations() and strongConnected()
+
+	* buchiAutomaton.cc (sccOptimizations): added
+	(strongConnected): added
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added number and
+	lowLink fields to struct State
+	(class BuchiAutomaton): deleted lowLink since we will used the
+	optimized Tarjan SCC algorithm; added component field
+
+2001-10-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.cc (dump): use BddUser::dump()
+
+	* bddUser.hh (class BddUser): added decl for dump()
+
+	* bddUser.cc (dump): added
+
+	* buchiAutomaton.cc (BuchiAutomaton): fix missing arc bug; handle
+	no nrAcceptingSets case
+
+2001-10-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* generalizedBuchiAutomaton.hh (getNrAcceptingSets): added
+	(getNrStates): added
+	(getAcceptingStates): added
+	(getFormulaIndices): added
+	(getInitialStates): added
+	(getNextStates): added
+
+	* bddUser.cc: created
+
+	* bddUser.hh: created
+
+	* buchiAutomaton.cc: created
+
+	* buchiAutomaton.hh: created
+
+	* generalizedBuchiAutomaton.cc: used to be buchiAutomaton.cc;
+	everything renamed
+
+	* generalizedBuchiAutomaton.hh: used to be buchiAutomaton.hh;
+	everything renamed
+
+2001-09-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.cc: moved here from Higher; simplified includes
+	(cover): Assert() that TRUE and FALSE cannot occur in main switch;
+	true should imply redundant() while false should imply
+	contradiction()
+
+	* buchiAutomaton.hh: moved here from Higher
+
+	* logicFormula.cc: moved here from Higher
+	(makeProp): store propositions as ints
+	(dump): dump propositions as ints
+
+	* logicFormula.hh: moved here from Higher
+	(class LogicFormula): store propositions as ints rather than
+	dagnode ptrs
+	(getProp): updated
+
+===================================Maude68==================================================
+
+2001-05-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.cc (doubleToString): fixed bug where we didn't allocate
+	space in buffer[] for trailing '\0' causing ABRs and ABWs under
+	purify (and potential memory corruption)
+	
+===================================Engine67==================================================
+
+2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bigNum.hh (class BigNum): fixed long standing bug - all 3
+	compare()s now correctly return int rather than bool
+	
+===================================Engine66==================================================
+
+2000-06-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (safeCast): added
+	
+===================================Engine58==================================================
+
+2000-06-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.cc (doubleToString): handle NaN and +/-Infinity specially
+	to get consistant behavior across platforms
+
+2000-06-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.cc (correctEcvt): return sign as 1, 0 or -1 rather than 1
+	=> -ve
+
+	* macros.hh: added decl for correctEcvt()
+
+	* macros.cc (correctEcvt): added (allong with decBuf.hh,
+	decBuf.cc, binBuf.hh binBuf.cc)
+
+2000-06-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added #define for INT_DOUBLE_MAX
+
+2000-06-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.cc (looksLikeFloat): recognize +Infinity, -Infinity, Infinity
+
+2000-06-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.cc (doubleToString): clean up number by removing trailing
+	zeros from mantissa and leading zeros from exponent; if exponent
+	is zero, remove it altogether
+
+2000-06-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added decl for looksLikeFloat()
+
+	* macros.cc (looksLikeFloat): added
+
+2000-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added typedefs for Int32 and Uint32
+
+2000-05-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (Vector): updated Assert()
+	(Vector): updated Assert()s
+	(operator[]): (both versions) updated Assert()
+	(expandTo): updated Assert()
+	(contractTo): updated Assert()
+
+2000-05-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.cc (int64ToString): rewritten using Uint64 -
+	simpler/faster
+	(stringToInt64): simplified
+
+2000-05-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added decl for Uint64
+
+2000-05-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added decls for int64ToString() and stringToInt64()
+
+	* macros.cc (int64ToString): added
+	(stringToInt64): added
+
+2000-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (ErrorCheck): commented out
+	
+===================================Engine56==================================================
+
+2000-02-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (NO_COPYING): used to be NO_DEFAULTS
+
+2000-02-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (NO_DEFAULTS): added NO_DEFAULTS macro
+
+2000-02-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (sort): commented out function deleted
+	(operator): updated Asserts
+	
+===================================Engine55==================================================
+
+1999-12-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unionFind.hh (elementCount): made const
+
+	* unionFind.cc (findRep): made const
+
+	* unionFind.hh (class UnionFind): made vector mutable and made
+	findRep() and elementCount() decls const
+	
+===================================Engine54==================================================
+
+1999-12-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* natSet.cc (disjoint): call ::min() for disambiguation
+	(intersect): call ::min() for disambiguation
+
+	* natSet.hh (class NatSet): added decl for bottomBit()
+
+	* natSet.cc (bottomBit): added
+	(min): added
+
+	* natSet.hh (class NatSet): added decl for min();
+
+1999-11-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* natSet.hh (max): fixed long standing precedence bug (+ vs <<)
+
+1999-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (INT64_MAX): added #defines for INT64_MAX, INT64_MIN
+	and INT64_MIN_STRING
+
+1999-10-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.cc: added def for globalAdvisoryFlag
+
+	* macros.hh: added extern dec for globalAdvisoryFlag
+	(AdvisoryCheck): test globalAdvisoryFlag
+	(IssueAdvisory): test globalAdvisoryFlag
+
+1999-10-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pointerSet.cc (hash): reinterpret_cast<unsigned> ->
+	reinterpret_cast<unsigned long> in order to compile on alpha
+
+	* pointerMap.cc (hash): reinterpret_cast<int> ->
+	reinterpret_cast<long> in order to compile on alpha
+	(hash2): reinterpret_cast<int> -> reinterpret_cast<long> in order
+	to compile on alpha
+
+1999-08-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sequencePartition.cc (insertPart): plus() -> uplus()
+
+	* macros.hh (plus): changed to uplus() to avoid conflict with STL
+
+1999-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem.cc (precompute): rowLeq() -> rowLt()
+	(rowLt): from rowleq()
+
+	* diophantineSystem.hh (class DiophantineSystem): rowLeq() -> rowLt()
+
+1999-07-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem.hh (class DiophantineSystem): updated decl for
+	rowLeq()
+
+	* diophantineSystem.cc (rowLeq): need to take references rather
+	than pointers!
+
+	* diophantineSystem.hh (class DiophantineSystem): replaced decl
+	for rowCompare() with decl for rowLeq()
+
+	* diophantineSystem.cc (precompute): use STL sort function
+	(rowCompare): replaced by rowLeq()
+
+	* vector.hh (begin): added
+	(end): added
+
+1999-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: use iostream and fstream rather than iostream.h and
+	fstream.h
+	
+===================================Engine51==================================================
+
+1999-06-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (CONST_VECTOR_HACK): added VECTOR_HACK and
+	CONST_VECTOR_HACK macros
+
+1999-02-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (Vector): have to call setLength since length is not
+	the same as preallocate!
+	(append): unmade prev change as it did not save a register load
+	(append): try reversing outer if-the-else
+
+	* preVector.cc (initAllocate): remember to actually store length!
+
+	* preVector.hh (class PreVector): deleted decl for test()
+
+	* preVector.cc (test): deleted
+
+	* vector.hh (operator=): use reallocate() instead of initAllocate()
+	(append): call setLength() in both inner branches in the hope of
+	avoiding a register load in the common case
+
+	* preVector.cc (initAllocate): now take length and size rather
+	than bytes needed
+
+	* preVector.hh (class PreVector): updated decl for initAllocate()
+
+	* vector.hh (Vector): use new initAllocate() semantics (all 3 versions)
+	(Vector): for() -> do-while() (2 non-preallocate versions
+
+	* pointerSet.hh (class PointerSet): removed implicit inline ~PointerSet()
+
+	* pointerSet.cc (~PointerSet): added
+
+	* unionFind.hh (class UnionFind): deleted explicit ctors/dtors
+
+	* vector.hh (Vector): made copy ctor inline
+	(~Vector): made destructor inline
+	(Vector): makesure we actually use preallocate value
+	(expandTo): check for non-null vector before calling setLength()
+
+	* preVector.hh (setLength): changed test on ptr != 0 to an Assert()
+
+	* vector.hh (sort): removed call to test
+	(append): split into two cases
+	(contractTo): check for non-null vector before calling setLength()
+	(operator=): check for non-null vector before calling setLength()
+
+1999-02-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (isNull): added for fast tests for unused vectors
+
+	* preVector.cc (test): temporarily added to try and locate UMR
+
+1999-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh: completely rewritten using PreVector
+	(operator=): check to see that vector is non-zero before calling
+	freeMemory() since the memory we actually free will be vector -
+	sizeof(...) and will break delete on null
+	(sort): don't call qsort() unless we have > 1 objects in vector
+
+	* preVector.cc: created
+
+	* preVector.hh: created
+
+1999-02-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh: rewritten to use 1 word vectors for space efficiency
+	(bytesAllocated): now return size_t rather than int
+	(reallocate): only call memcpy if vector != 0
+	(allocate): remember to add sizeof(VectorHeader) to freshly
+	allocated memory to get vector
+	(reallocate): likewise
+	(allocate): remember to subtract off size of header to get
+	allocated bytes
+	(reallocate): likewise
+	(allocate): added static_cast<char*>
+	(reallocate): added static_cast<char*>
+
+===================================VectorExperiment==========================================
+
+1999-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* natSet.cc: completely rewritten using bit array + first word
+	implementation
+	(arrayContains): added
+	(topBit): added
+	(countBits): added
+	(getMask): added
+
+	* macros.hh (SpecialConstants): added LOG_WORD_SIZE to enum SpecialConstants
+
+	* natSet.hh: completely rewritten using bit array + first word
+	implementation
+
+1999-02-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* natSet.hh (class NatSet): added decl for makeEmpty()
+	(makeEmpty): added
+
+===================================Engine47==================================================
+===================================Maude 1.00 released=======================================
+
+1999-01-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (Vector): copy ctor; only allocated enough memory
+
+1999-01-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* vector.hh (class Vector): modified MIN_SIZE and TAG_SIZE after
+	having a look at the latest version of Doug Lea's malloc(); need
+	to modify overall approach to be 64bit compatable sometime
+
+1999-01-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (IssueAdvisory): call cerr.flush()
+	(IssueAdvisory): unmade chane since it seems superfluous after all
+
+==============================Engine46==========================================
+
+Thu Oct 29 11:45:08 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh (IssueAdvisory): added
+
+Thu Oct 22 13:30:47 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh (IssueWarning): added
+
+Thu Oct  8 11:38:47 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* pointerMap.cc (hash): use reinterprete_cast
+	(hash2): use reinterprete_cast
+
+	* pointerSet.cc (hash): use reinterprete_cast
+
+	* vector.hh (Vector): (both ctors) cast new to void
+	
+==============================Engine38==========================================
+
+Thu Sep 10 13:46:08 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh: added typedef for Int64
+
+Thu Jun 11 15:57:41 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* intSet.hh: created; loosely based on pointerSet.hh
+
+	* intSet.cc: created; loosely based on pointerSet.cc
+
+	* pointerSet.cc (insert): (pointer version): slightly optimized;
+	now return index of inserted pointer
+
+	* pointerSet.hh (class PointerSet): insert() members now return
+	index to inserted pointer
+	(insert): return index to inserted pointer
+
+	* stringTable.cc (resize): optimized along the lines of pointerSet
+	hash table
+	(encode): partly optimized
+
+Wed Jun 10 18:02:36 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh: deleted Validate macro
+
+Tue Jun  9 11:53:15 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* graph.cc: IntSet -> NatSet
+
+	* digraph.cc: deleted #include "intSet.hh"
+
+	* macros.hh: IntSet -> NatSet
+
+	* natSet.cc: renamed from IntSet.cc; IntSet -> NatSet
+
+	* natSet.hh (class NatSet): renamed from IntSet.hh; IntSet ->
+	NatSet
+	
+==============================Engine38==========================================
+
+Fri Jan 16 18:14:31 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh (DebugAdvisoryCheck): added
+
+Fri Jan  9 14:57:50 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh (operator<<): added version for Bool
+	deleted --- C++ typedefs don't create new types so we can't have
+	overloaded i/o operators for Bool
+	
+==============================Engine34==========================================
+
+Mon Nov 10 16:02:38 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* pointerSet.cc (insert): fixed longstanding bug where we were
+	inserting our set rather than other set!
+
+Tue Oct  7 11:39:13 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* pointerSet.cc: major rewrite as described below
+
+	* pointerSet.hh (class PointerSet): major rewrite to allow
+	possibility of passing hash values in with pointers rather than
+	overloading hash(void*) for a call back. In some situations the
+	hash value may be available to the caller but cannot be cached in
+	the pointed to object and therefore would need to be recomputed in
+	the call back - which might be expensive.
+
+Fri Oct  3 16:12:55 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dataSet.cc: deleted
+
+	* dataSet.hh: deleted
+
+	* pointerSet.cc: heavily rewritten; we now store raw hash values
+	to avoid unnecessary virtual function calls
+
+	* pointerSet.hh (class PointerSet): heavily redesigned for greater
+	generality and performance. It can now serve as a base class and
+	eliminates the need for class DataSet
+	
+==============================Engine29==========================================
+
+Tue Sep 30 15:54:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* dataSet.hh (data2Index): make work correctly wth empty set
+
+	* pointerSet.hh (pointer2Index): added
+
+	* dataSet.cc (hash): created
+
+	* dataSet.hh (class DataSet): created
+	
+==============================Engine28==========================================
+
+Wed Aug 20 16:45:50 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh: added #include <ctype.h>
+
+Wed Aug 13 10:55:18 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh (SpecialConstants): added INT_TEXT_SIZE
+	added #include <strstream.h>
+
+Tue Jun  3 14:34:06 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* diophantineSystem.cc: changed "inline" to "local_inline" throughout
+
+	* diophantineSystem.hh (class DiophantineSystem): altered comment
+	on maxLeave data member of struct Row since it is now used in
+	simple case as well as the complex case.
+
+	* diophantineSystem.cc (solveRowSimple): fixed serious bug where
+	we were leaving too much stuff for last row (in the case where the
+	last row had an upper bound). We now take r.maxLeave into account
+	when calculating the minimum assignment size for current row.
+
+Tue May 20 10:45:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* bigNum.hh (class BigNum): added wrappers for comparison macros
+
+Wed May  7 15:51:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh: added forward decl for PointerSet
+
+Tue Apr 29 15:29:52 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* parser.cc (extractParse): added
+	(extract): added
+	(exists): added
+	(getSon): added
+	(getRule): added
+	(dumpParseTree): added
+	(dumpNode): added
+
+Thu Apr 24 16:04:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* parser.cc (addItem): added
+	(complete): added
+
+Wed Apr 23 16:11:22 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* parser.hh (class Parser): created
+
+	* parser.cc: created
+
+Thu Apr 17 11:23:12 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.cc: added 3 template instantiations
+
+Wed Apr 16 15:44:06 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* pointerSet.cc: created
+
+Tue Apr 15 18:35:13 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* pointerSet.hh: created
+
+Wed Apr  2 12:06:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* stringTable.cc (StringTable): use delete [] rather than delete
+	to free string (bug detected by demo purify)
+
+Wed Feb  5 12:00:39 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh (local_inline): added
+
+Wed Oct 16 10:48:31 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* macros.hh (SpecialConstants): DEFAULT = -1 added
+
+Wed Oct  9 11:40:21 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* indent.cc: created
+
+	* indent.hh: created
+
+Thu Sep 19 11:39:32 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* sequencePartition.hh (end): return sequenceLength - 1 for end of
+	last part
+
+Wed Sep 18 16:27:36 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* diophantineSystem.hh: comments fixed
+
+	* diophantineSystem.cc (insertRow): Assert test simplified to make
+	use of UNBOUNDED as a comparable value (MAX_INT)
+
+	* sequencePartition.cc: created
+
+	* sequencePartition.hh (class SequencePartition): created
+
+Thu Aug 15 11:37:37 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* macros.hh: added PointerMap to forward class declarations
+
+Wed Aug 14 18:02:28 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* pointerMap.cc (resize): fixed missing mask for hash(p.from)
+	(resize): fixed bug where we were checking old hash table rather
+	than new hash table
+
+Wed Aug  7 09:37:32 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* macros.hh (SpecialConstants): NR_PTR_ZERO_BITS renamed to
+	NR_PTR_LOSE_BITS since chopped bits will not neccessarily be zero
+
+	* pointerMap.hh (class PointerMap): created
+
+	* pointerMap.cc: created
+
+	* symbolTable.cc (setDefinition): need to increment "used"
+
+Tue Aug  6 16:50:38 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* macros.hh (SpecialConstants): NR_PTR_ZERO_BITS added so we can
+	chop the zeros of a pointer when hashing
+
+Fri Aug  2 15:23:34 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* symbolTable.cc (SymbolTable): fixed initial size bug
+
+Wed Jul 31 10:35:40 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* symbolTable.cc (SymbolTable): no longer initialize stringTable base
+
+	* symbolTable.hh (class SymbolTable): created
+	(class SymbolTable): no longer derived from string table
+
+	* stringTable.hh (class StringTable): make hash() and hash2() static
+
+	* symbolTable.cc: created
+
+Tue Jul 30 15:37:44 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* stringTable.cc: created (adapted from old symbolTable.cc)
+
+	* macros.hh (SpecialConstants): UNUSED = -1 added (enum used be SpecialValues)
+
+	* stringTable.hh (class StringTable): created (adapted from old SymbolTable)
+
+Thu Jul 11 15:59:24 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* macros.hh (plus): added
+
+Fri Jun 28 17:17:17 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* macros.hh (ASsert): deleted
+
+Thu Jun 20 14:27:26 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* macros.hh (swap): added
+
+Wed Jun 19 12:10:07 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* vector.hh (bytesAllocated): added
+	(bytesAllocated): now return int
+
+Tue Jun 18 17:28:14 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* vector.hh (expandBy): allow expansion by 0 for cleaner calling code
+
+Sat Jun 15 14:45:57 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* intSet.cc (subtract): added (int case)
+	(subtract): added (intSet case)
+	(intersect): added
+
+Fri Jun 14 16:33:18 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* macros.hh: added forward declarations for utility classes 
+
+Thu Jun 13 10:57:07 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* vector.hh (rawBasePointer): const version added
+	ASsert() -> Assert()
+
+Sat Jun  8 14:02:46 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* graph.cc (visit): fixed stupid infinite loop
+
+	* digraph.hh: created
+
+	* digraph.cc: created
+
+	* graph.cc (~Graph): deleted
+	(Graph): now call Vector constructor rather than creating C++ array
+	(colorNode): use UNDEFINED rather than -1
+	(color): use UNDEFINED rather than -1
+	(findComponents): added
+	(visit): added
+
+	* graph.hh (class Graph): use Vector<Bool> rather than raw array
+
+Fri Jun  7 14:03:24 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* diophantineSystem.cc (insertColumn): use append
+
+	* vector.hh (append): added
+
+Wed Apr 24 10:31:15 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* diophantineSystem.cc (DiophantineSystem): use estNrRows,
+	estNrColumns to initialize vectors' allocation
+
+	* diophantineSystem.hh (class DiophantineSystem): local UNBOUNDED
+	removed; estNrRows, estNrColumns parameters added to constructor
+	(class DiophantineSystem): removed destructor (default is adequate)
+
+Thu Apr  4 15:55:38 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* diophantineSystem.hh: added
+
+	* diophantineSystem.cc: added & debugged
+
+Fri Mar 22 18:18:10 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* unionFind.cc: added
+
+	* unionFind.hh: added
+
+Tue Mar  5 14:39:44 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* graph.cc: added
+
+	* graph.hh: added

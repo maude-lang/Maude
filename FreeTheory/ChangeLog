@@ -1,0 +1,3079 @@
+2003-05-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.hh (fastMatchReplace): use
+	MemoryCell::okToCollectGarbage()
+
+	* freeRemainder.cc (slowMatchReplace): use
+	MemoryCell::okToCollectGarbage()
+	
+===================================Maude80b===========================================
+
+2003-05-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (partialCompareArguments): use FOR_EACH_CONST()
+	(partialCompareArguments): use safeCast()
+
+2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (overwriteWithClone): use copySetRewritingFlags()
+	(makeClone): use copySetRewritingFlags()
+	
+===================================Maude79===========================================
+
+2003-03-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.cc (buildTernaryTree): use notEqual[] in place of less
+	and greater
+	(dump): use notEqual[] in place of less and greater
+	(tripleLt): removed pointer comparison SPEED_HACK
+
+	* freeNetExec.cc (applyReplace2): use notEqual[] and getSignBit()
+	to do branch-free choice in discrimination net
+
+	* freeNet.hh (class FreeNet): notEqual array replaces less and
+	greater in struct TestNode
+	(class FreeNet): added enum SpecialValues
+
+2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNetSubsumption.cc (subsumesWrtReducedFringe): removed
+	unused variable sf
+
+	* freeUnarySymbol.cc: removed #pragma
+
+	* freeUnarySymbol.hh: removed #pragma
+
+	* freeTheory.cc: deleted
+
+	* freeTernarySymbol.cc: removed #pragma
+
+	* freeTernarySymbol.hh: removed #pragma
+
+	* freeTerm.cc: removed #pragma
+	(FreeTerm): updated Assert()
+	(compareArguments): updated Assert() (both versions)
+	(partialCompareArguments): updated Assert()
+	(findActiveSlots): updated Assert()
+
+	* freeTerm.hh: removed #pragma
+
+	* freeSymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()
+	(computeBaseSort): updated Assert()s
+	(normalizeAndComputeTrueSort): updated Assert()
+
+	* freeSymbol.hh: removed #pragma
+
+	* freeSubterm.hh: removed #pragma
+
+	* freeRhsAutomaton.cc: removed #pragma
+
+	* freeRhsAutomaton.hh: removed #pragma
+
+	* freeRemainder.hh (fastMatchReplace): updated Assert()s
+
+	* freeRemainder.cc: removed #pragma
+	(FreeRemainder): updated Assert()s
+	(slowMatchReplace2): updated Assert()
+
+	* freeRemainder.hh: removed #pragma
+
+	* freePreNetSubsumption.cc (subsumesWrtReducedFringe): updated
+	Assert()
+
+	* freePreNetSemiCompiler.cc (semiCompileNode): updated Assert()s
+	(allocateSlot): updated Assert()
+	(buildSlotTranslation): updated Assert()s
+
+	* freePreNetFullCompiler.cc (allocateVariables): updated Assert()
+
+	* freePreNet.cc: removed #pragma
+	(buildNet): DebugAdvisoryCheck() -> DebugAdvisory()
+	(makeNode): updated Assert()
+	(partiallySubsumed): updated Assert()
+
+	* freePreNet.hh: removed #pragma
+
+	* freePositionTable.cc: removed #pragma
+
+	* freePositionTable.hh: removed #pragma
+
+	* freeOccurrence.hh: removed #pragma
+
+	* freeNet.cc: removed #pragma
+	(fillOutNode): updated Assert()
+
+	* freeNet.hh: removed #pragma
+
+	* freeLhsStructs.hh: removed #pragma
+
+	* freeLhsCompiler.cc (compileRemainder): updated Assert()
+	(compileLhs2): updated Assert()
+	(findConstraintPropagationSequence): updated Assert()
+
+	* freeLhsAutomaton.cc: removed #pragma
+	(match): updated Assert()s
+
+	* freeLhsAutomaton.hh: removed #pragma
+
+	* freeDagNode.cc: removed #pragma
+	(compareArguments): updated Assert()
+	(copyWithReplacement): updated Assert()
+	(copyWithReplacement): updated Assert()s
+
+	* freeDagNode.hh: removed #pragma
+	(getArgument): updated Assert()s
+
+	* freeDagArgumentIterator.cc: removed #pragma
+	(argument): updated Assert()
+	(next): updated Assert()
+
+	* freeDagArgumentIterator.hh: removed #pragma
+
+	* freeBinarySymbol.cc: removed #pragma
+
+	* freeBinarySymbol.hh: removed #pragma
+
+	* freeArgumentIterator.cc: removed #pragma
+	(argument): updated Assert()
+	(next): updated Assert()
+
+	* freeArgumentIterator.hh: removed #pragma
+	
+===================================Maude79===========================================
+
+2003-01-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.hh (class FreeTerm): added decl for
+	partialCompareArguments()
+
+	* freeTerm.cc (partialCompareArguments): added
+	
+===================================Maude78==================================================
+
+2002-11-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): added hack to get around the
+	invisibility of MemoryCell::Word
+
+2002-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.cc (dump): use &(stack[0]) in place of
+	stack.rawBasePointer()
+
+	* freeNetExec.cc: replaced rawBasePointer() call with
+	const_iterators
+	(applyReplace2): reordering the initial assignments restored
+	performance accounding to quantify
+	
+===================================Maude77==================================================
+
+2002-11-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (compileEquations): pass false to FreePreNet ctor
+	(generateCode): pass true to FreePreNet ctor
+
+	* freePreNet.cc (FreePreNet): added
+	(dump): only dump patternIndex and nextPattern for remainder nodes
+	if expandRemainderNodes is true; in the false case these fields
+	won't be set
+	(makeNode): only expand remainder nodes if expandRemainderNodes ==
+	true
+
+	* freePreNet.hh (class FreePreNet): added data member
+	expandRemainderNodes
+	(class FreePreNet): added decl for FreePreNet()
+
+2002-10-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (copyWithReplacement): simple version: added
+	Assert(), removed test for nrArgs != 0
+	(copyWithReplacement): complex version: added Assert()s, removed
+	test for nrArgs != 0
+
+2002-10-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): updated decl for complex
+	version of copyWithReplacement()
+
+	* freeDagNode.cc (copyWithReplacement): complex version: rewritten
+	to handle case where not all arguments have been stacked
+
+	* freeSymbol.cc (stackArguments): rewritten to stack only those
+	args that are not frozen and not unstackable
+
+2002-10-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): updated decl for
+	stackArguments()
+
+	* freeDagNode.cc (stackArguments): take and handle respectFrozen
+	flag
+	
+===================================Maude76==================================================
+
+2002-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (compileRhs3): call useIndex() on source obtained by
+	recursive call; this fixes a bug with new constrcution index
+	coloring scheme; may also fix a potential bug with fragments
+	(compileRhs3): fix bug properly this time - we need to flag last
+	use of each source after all the sources have been compiled
+
+	* freePreNetSubsumption.cc (subsumesWrtReducedFringe): fixed bug
+	where we weren't calling subsumerArgs.next() and were running of
+	the end of domainSorts[]
+
+2002-07-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): added class
+	FreeTernarySymbol to friends
+
+	* freeSymbol.cc (newFreeSymbol): use FreeTernarySymbol
+
+	* freeTernarySymbol.cc: created
+
+	* freeTernarySymbol.hh: created
+
+	* freeNetExec.cc (applyReplace2): added pointer comparison trick
+	for SPEED_HACKS case
+
+	* freeNet.cc (buildRemainders): fixed bug in SPEED_HACKS version
+	(tripleLt): added pointer comparison trick for SPEED_HACKS case
+
+2002-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): added decl for moreImportant()
+
+	* freeNet.cc: moved all the freeNetAlt.cc stuff here since is now
+	the only way rather than an alternative way to build FreeNets
+	(moreImportant): added
+	(buildTernaryTree): use moreImportant() to bias selection of
+	test symbols
+
+	* freePreNetSemiCompiler.cc (buildSlotTranslation): use new
+	conflicts structure
+
+	* freePreNet.hh (class FreePreNet): conflicts becomes Vector<NatSet>
+
+	* freeTerm.hh (class FreeTerm): updated decl for findActiveSlots()
+
+	* freeTerm.cc (findActiveSlots): changed arg to NatSet&
+
+	* freeNet.cc (dump): handle new applicable strcuture
+
+	* freeNetExec.cc (applyReplace2): simplified slow case
+
+	* freeNetAlt.cc (addRemainderList): simplified
+	(buildRemainders): rewritten
+
+	* freeNet.hh (class FreeNet): reorganized struct TestNode
+	(class FreeNet): applicable changed to Vector<natSet> from
+	Vector<Vector<int> >
+
+2002-07-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): deleted struct Position
+
+	* freeSymbol.cc (compileEquations): deleted commented out call to
+	discriminationNet.compileEquations()
+
+	* freeNet.hh (class FreeNet): deleted decls for
+	conservativePartialSubsumptionApproximation(),
+	buildSlotTranslation(), findBestPosition(), setVisitedFlags(),
+	allocateSlot(), buildPatternVector(), buildFringe(), buildNet(),
+	buildApplicable(), isSubsumed(), compileEquations(),
+	generateCode()
+
+	* freeNet.cc (compileEquations): deleted
+	(buildSlotTranslation): deleted
+	(findBestPosition): deleted
+	(buildNet): deleted
+	(buildApplicable): deleted
+	(setVisitedFlags): deleted
+	(allocateSlot): deleted
+	(buildPatternVector): deleted
+	(buildFringe): deleted
+
+	* freePreNetSubsumption.cc (subsumesWrtReducedFringe): same as
+	below
+
+	* freePreNet.cc (buildNet): pass sameVariableSet = false to
+	subsumes() since patterns are from different universally
+	quantified equations
+
+	* freeTerm.cc (subsumes): handle sameVariableSet arg
+
+	* freeTerm.hh (class FreeTerm): updated decl for subsumes()
+
+	* freePreNetSubsumption.cc: updated comments to make them less
+	obscure
+
+2002-07-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNetSemiCompiler.cc (semiCompile): don't do precompilation
+	stuff here because it is too late
+
+	* freeSymbol.cc (compileEquations): need to do precompilation
+	stuff here before we create the FreePreNet so that
+	Term::contextSet is set up correctly in each subterm and
+	subsumption can take account of nonlinear variables
+
+	* freePreNet.cc (buildNet): added DebugAdvisoryCheck() for
+	subsumption
+
+	* freePreNetSubsumption.cc (subsumesWrtReducedFringe): fix bug
+	where we weren't dealing with the possibility that subsumes()
+	could return UNDECIDED
+
+	* freeNet.cc (dump): handle null remainder pointers
+
+	* freeNet.hh (class FreeNet): updated decl for buildRemainders()
+
+	* freeNetAlt.cc (buildRemainders): handle patternsUsed arg
+
+	* freePreNetSemiCompiler.cc (semiCompile): pass patternsUsed to
+	buildRemainders()
+
+	* freePreNet.hh (class FreePreNet): added data member patternsUsed
+
+	* freePreNetSemiCompiler.cc (semiCompileNode): update patternsUsed
+
+	* freeRemainder.cc (dump): fixed bug where we were calling
+	index2Variable() on indices of pseudo variables
+	(FreeRemainder): added Assert() for parent slots
+	(FreeRemainder): static_cast<>() -> safeCast()
+
+	* freePreNetSemiCompiler.cc (semiCompileNode): fixed bug where we
+	passing NONE (-1) rather than 0 to fillOutNode() for the fail case
+
+2002-07-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNetSemiCompiler.cc (semiCompile): need to compile
+	equations and set term root slots
+
+	* freeTerm.cc (findActiveSlots): adde Assert() to check for
+	missing slot index in active FreeTerm
+
+	* freePreNetSemiCompiler.cc (semiCompile): handle empty net case
+	(semiCompileNode): fig bug where we weren't filling out symbols[]
+	(semiCompileNode): on both branches!
+	(semiCompileNode): passing wrong live set to allocateSlot()
+	resulting in NULLs in conflicts
+
+	* freeSymbol.cc (compileEquations): use FreePreNet
+
+	* freePreNetSemiCompiler.cc (semiCompile): call buildRemainders()
+
+	* freeNetAlt.cc: created
+
+	* freeNet.hh (class FreeNet): added decl for buildRemainders()
+
+2002-07-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNetSemiCompiler.cc (semiCompileNode): created
+
+	* freeNet.hh (class FreeNet): added decls for allocateNode(),
+	fillOutNode(), addRemainderList()
+	(class FreeNet): added decl for translateSlots()
+
+	* freePreNet.hh (class FreePreNet): added freeNetIndex to struct
+	Node
+	(class FreePreNet): added data member conflicts
+	(class FreePreNet): added typedef for SlotMap
+
+2002-07-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNetFullCompiler.cc (generateNode): use generatePointer()
+	rather than generatePointer2() in the testing of bound variables
+	part so we take advantage of the case where the pointer to the
+	dagnode matching the nonlinear occurrence is already in an 'r'
+	variables as a result of previous test nodes (generated for the
+	benefit of other patterns)
+
+2002-07-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNetFullCompiler.cc (generateCode): move call to
+	allocateVariables here from FreePreNet::buildNet()
+
+	* freePreNet.cc (findBestPosition): modify heuristic to prefer
+	positions that are stable in early subsumers so they get to
+	discard later patterns by partial subsumption more quickly
+
+2002-07-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc (partiallySubsumed): fixed bug where we we
+	iterating off the end of liveSet
+	
+===================================Maude74==================================================
+
+2002-05-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeBinarySymbol.cc (FreeBinarySymbol): don't pass eagerStrategy
+	to FreeSymbol
+
+	* freeBinarySymbol.hh (class FreeBinarySymbol): deleted static
+	data member eagerStrategy
+
+	* freeUnarySymbol.cc (FreeUnarySymbol): don't pass eagerStrategy
+	to FreeSymbol
+
+	* freeUnarySymbol.hh (class FreeUnarySymbol): deleted static data
+	member eagerStrategy
+	
+===================================Maude72==================================================
+
+2002-03-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc (makeNode): fixed potential bug where calling
+	makeNode() could invalidate the reference net[nrNodes].sons[i].target
+	(findLiveSet): fix potential bug where psition reference could be
+	evaluated by  a call to partiallySubsumed() since whis in turn
+	calls subsumesWrtReducedFringe() which adds new positions to table
+
+2002-03-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc (partiallySubsumed): fixed bug where we weren't
+	handling empty liveSet
+	(makeNode): fixed subtle bug: now that reallocation of a vector
+	causes vectors contents to be copied, pointers and references into
+	vectors within vectors become invalid when the outer vector is
+	resized since the inner vectors are copied. We were storing an
+	Arc& ref across a call to makeNode() which resizes the outer vector
+
+	* freePreNet.hh (class FreePreNet): updated decls for makeNode(),
+	reduceFringe(), findLiveSet(); delete decl for FreeTerm* version
+	of partiallySubsumed()
+
+	* freePreNet.cc (buildNet): removed all mention of difficult sets
+	(makeNode): removed all mention of difficult sets
+	(reduceFringe): removed all mention of difficult sets
+	(findLiveSet): removed all mention of difficult sets
+	(partiallySubsumed): deleted FreeTerm* version
+
+	* freePreNet.hh (class FreePreNet): added data member topPositionIndex
+
+	* freePreNet.cc (partiallySubsumed): rewritten
+
+	* freePreNet.hh (class FreePreNet): updated decls for
+	subsumesWrtReducedFringe() (both versions)
+
+	* freePreNetSubsumption.cc (subsumesWrtReducedFringe): moved here
+	(both versions)
+	(subsumesWrtReducedFringe): rewritten to avoid calling
+	locateSubterm() (both versions)
+
+2002-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.hh (class FreePreNet): added decls for
+	subsumesWrtReducedFringe() (both versions)
+
+	* freePreNet.cc (subsumesWrtReducedFringe): added FreeTerm*
+	version
+	(subsumesWrtReducedFringe): added const NatSet& version
+
+2002-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.hh (class FreePreNet): deleted decl for
+	isDomainMaximalLinearVariable()
+
+	* freePreNet.cc (isDomainMaximalLinearVariable): delete; it was
+	based on domainSortAlwaysLeqThan() which is now unsound since mbs
+	can drag a term out of the kind (error sort) into a regular sort.
+	(reduceFringe): don't call isDomainMaximalLinearVariable() -
+	assume false
+	(findLiveSet): don't call isDomainMaximalLinearVariable() - assume
+	false; NatSet::const_iter clean up
+	(partiallySubsumed): (FreeTerm* version) don't call
+	isDomainMaximalLinearVariable() - assume false; NatSet::const_iter
+	clean up
+
+2002-03-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.hh (class FreePreNet): updated decl for
+	isDomainMaximalLinearVariable()
+
+	* freePreNet.cc (findBestPosition): simplified using
+	NatSet::const_iterators and PointerSet::swap()
+	(reduceFringe): simplified using NatSet::const_iterators
+	(isDomainMaximalLinearVariable): take FreeTerm*; Assert() that
+	subterm exists since it is an error to try and dynamic_cast a null
+	pointer (this was an almost bug in previous version)
+	(reduceFringe): added safeCast to FreeTerm*
+
+	* freePositionTable.cc: added comments to explain not so obvious
+	digital search tree implementation
+
+2002-03-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeLhsAutomaton.cc: deleted explicit template instantiations
+
+	* freeNet.cc: deleted explicit template instantiations
+
+	* freePositionTable.cc: deleted explicit template instantiation
+
+	* freePreNet.cc: deleted explicit template instantiations
+
+	* freeRhsAutomaton.cc: deleted explicit template instantiation
+
+	* freeTheory.cc: deleted explicit template instantiations
+
+===================================Maude71==================================================
+
+2002-03-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): turn for loops into
+	do-while loops for speed
+
+	* freeLhsAutomaton.cc (match): turn for loops into do-while loops
+	for speed
+
+2002-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeLhsAutomaton.cc (match): use iterators for stack access
+	(match): use const_iterators for loops
+
+	* freeRhsAutomaton.cc (fillOutArgs): rewritten using
+	const_iterators in place of CONST_VECTOR_HACKs
+	(construct): rewritten using const_iterators in place of
+	CONST_VECTOR_HACKs
+	(replace): rewritten using const_iterators in place of
+	CONST_VECTOR_HACKs
+
+	* freeRemainder.hh (fastMatchReplace): fixed stupid begin()/end()
+	wrong-way-around bug
+
+	* freeRemainder.cc (slowMatchReplace2): rewrote using
+	const_iterators for loops
+
+	* freeTheory.cc: provide implementation for FreeLhsStructs
+
+	* freeTheory.hh: added fwd decl for FreeLhsStructs
+
+	* freeRemainder.cc (slowMatchReplace2): remove FreeLhsAutomaton::'s
+
+	* freeRemainder.hh (class FreeRemainder): derive from
+	FreeLhsStructs
+	(fastMatchReplace): remove FreeLhsAutomaton::'s
+
+	* freeLhsAutomaton.hh (class FreeLhsAutomaton): derive from
+	FreeLhsStructs
+
+	* freeLhsStructs.hh: created
+
+	* freeRemainder.hh (fastMatchReplace): rewritten using
+	const_iterators in place of CONST_VECTOR_HACKs
+	(fastMatchReplace): use const_cast<> to add constness and get the
+	correct iterator
+
+2002-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.hh (class FreeSymbol): added strategy = standard
+	default argument to both ctor and newFreeSymbol()
+	
+===================================Maude70==================================================
+
+2001-12-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (newFreeSymbol): replaced ?: with if-then-else to
+	avoid g++ 3.0 complaints abount distinct pointer types
+	
+===================================Maude69==================================================
+
+2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): added dec for
+	Vector<RedexPosition> verison of copyWithReplacement()
+
+	* freeDagNode.cc (copyWithReplacement): added
+	(Vector<RedexPosition> verison)
+	
+===================================Engine66==================================================
+
+2001-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): incrementCount() ->
+	incrementEqCount()
+
+	* freeRemainder.hh (fastMatchReplace): incrementCount() ->
+	incrementEqCount()
+
+2001-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (stackArguments): added
+
+	* freeSymbol.hh (class FreeSymbol): added decl for
+	stackArguments()
+	
+===================================Engine65==================================================
+
+2001-01-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): updated decl for
+	markArguments and made it private
+
+	* freeDagNode.cc (markArguments): code cleaning
+	(markArguments): rewritten with new semantics
+
+2001-01-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.hh (class FreeRemainder): deleted decl for
+	generateRemainder()
+
+	* freeRemainder.cc (generateRemainder): deleted
+
+	* freeNet.hh (class FreeNet): deleted decls for
+	calculateLivePatterns(), generateNode(), generateBranch(),
+	gatherAlternatives(), gatherAlternatives2()
+
+	* freeNet.cc (calculateLivePatterns): deleted
+	(generateCode): deleted
+	(generateNode): deleted
+	(gatherAlternatives): deleted
+	(gatherAlternatives2): deleted
+	(generateBranch): deleted
+	
+===================================Engine64==================================================
+
+2000-10-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (compileRhsAliens): fixed bug where we were using
+	eagerContext rather than argEager in call to findTerm()
+	(compileRhs3): fixed bug where we were using eagerContext rather
+	than argEager in calls to findTerm() and insertBuiltTerm()
+
+2000-10-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (compileRhs2): call compileRhsAliens(); the idea is
+	that we need a completely seperate pass over the free skeleton to
+	comple all the aliens first otherwise we can end up with common
+	subexpressions being used by an alien subterm before they are
+	built by the FreeRhsAutomaton; we still need to clean up
+	compileRhs3() now that some of the work is done in this seperate
+	pass
+
+	* freeTerm.hh (class FreeTerm): added decl for compileRhsAliens()
+
+	* freeTerm.cc (compileRhsAliens): added
+	
+===================================Engine63==================================================
+
+2000-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace): no longer call
+	inErrorSort() when pattern is in the error sort
+	(FreeRemainder): no care if pattern is in error sort when deciding
+	if we're suitable for "fast" treatment
+
+	* freeSymbol.cc (complexStrategy): removed special handling for
+	last 0 of a user defined strategy
+	(memoStrategy): ditto
+
+2000-07-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (computeBaseSort): don't handle union sorts
+	
+===================================Engine61==================================================
+
+2000-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRhsAutomaton.cc (remapIndices): added
+
+	* freeRhsAutomaton.hh (class FreeRhsAutomaton): added decl for
+	remapIndices()
+
+2000-07-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace): use
+	getNrProtectedVariables() instead of nrVariables()
+
+	* freePreNetFullCompiler.cc (generateNode): use
+	getNrRealVariables() instead of nrVariables()
+
+	* freeTerm.cc (compileRhs3): use makeConstructionIndex() instead
+	of allocateIndex()
+
+2000-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (findAvailableTerms): don't insert ground terms into
+	availableTerms since we can't do left->right sharing on them
+
+	* freeRhsAutomaton.cc (construct): don't call buildAliens()
+	(replace): don't call buildAliens()
+	(dump): don't call RhsAutomaton::dump()
+
+	* freeTerm.hh (class FreeTerm): deleted decl for compileRhs()
+
+	* freeTerm.cc (compileRhs): deleted
+	
+===================================Engine60==================================================
+
+2000-07-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (compileRhsAliens): deleted
+	(compileRhsFree): deleted
+
+2000-07-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.hh (class FreeTerm): deleted decl for compileRhs()
+	(class FreeTerm): deleted decls for compileRhsAliens() and
+	compileRhsFree()
+
+	* freeTerm.cc (compileRhs3): call self on subterm, not on own object
+	(compileRhs3): need to check if free subterm in availableTerms and
+	insert free subterm into availableTerms after we compile it - not
+	self
+	(compileRhs): deleted
+
+	* freeRemainder.cc (FreeRemainder): use freeSymbols not freeVars
+	when adding pseudo variables
+
+	* freeNet.hh (class FreeNet): removed extraneous dump() decl
+
+2000-07-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (FreeRemainder): use getLhs() instead of lhs()
+	(slowMatchReplace): use getLhs() instead of lhs()
+	(generateRemainder): use getRhs() instead of rhs()
+	(FreeRemainder): don't check for problem variables
+	(slowMatchReplace2): don't call copyProblemBindings()
+	(slowMatchReplace2): use getLhsAutomaton() instead of
+	lhsAutomaton()
+
+	* freePreNet.cc (buildNet): use getConditionVariables() instead of
+	condLhs() and condRhs()
+	(buildNet): use getRhs() instead of rhs()
+	(buildNet): use getLhs() instead of lhs()
+
+	* freePreNetFullCompiler.cc (generateNode): use getRhs() instead
+	of rhs()
+
+	* freeNet.cc (compileEquations): use getLhs() instead of lhs()
+
+	* freeRemainder.cc (slowMatchReplace2): use getRhsBuilder()
+	instead of rhsAutomaton()
+
+	* freeRemainder.hh (fastMatchReplace): use getRhsBuilder() instead
+	of rhsAutomaton()
+
+	* freeTerm.cc (compileRhs2): need to call addRhsAutomaton()
+
+2000-07-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.hh (class FreeTerm): added decl for compileRhs3()
+
+	* freeTerm.cc (findAvailableTerms): added
+	(compileRhs2): added
+	(compileRhs3): added
+
+	* freeTerm.hh (class FreeTerm): added decls for
+	findAvailableTerms() and compileRhs2()
+
+	* freeRemainder.cc (dump): dump pseudo variables correctly
+
+	* freeLhsAutomaton.cc (dump): dump saveIndex for free subterms
+
+	* freeTerm.cc (findActiveSlots): the slots of free terms which
+	have a free term arg that is needed for left -> right sharing are
+	now added to active slots
+
+	* freeRemainder.cc: added code to create extra free variables for
+	left -> right sharing
+
+	* freeNet.cc: removed old commented out conservative partial
+	suubsumption code
+	
+===================================Engine58==================================================
+
+2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeLhsAutomaton.cc (match): bind pseudo-variable for
+	FreeSubterms with saveIndex != NONE
+	(freeSubterms): set freeSubterms[].saveIndex
+
+	* freeLhsAutomaton.hh (class FreeLhsAutomaton): added saveIndex
+	data member to struct FreeSubterm
+
+	* freeLhsCompiler.cc (compileLhs): becomes compileLhs2()
+
+	* freeTerm.hh (class FreeTerm): compileLhs() -> compileLhs2()
+	
+2000-06-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (FreeRemainder): lookupSort() -> getSort()
+	(FreeRemainder): index() -> getIndex()
+
+	* freePreNet.cc (isDomainMaximalLinearVariable): lookupSort() ->
+	getSort()
+
+	* freePreNetFullCompiler.cc (generateNode): index() -> getIndex()
+	(generateNode): lookupSort() -> getSort()
+
+	* freePreNet.cc (isDomainMaximalLinearVariable): index() ->
+	getIndex()
+
+	* freeLhsAutomaton.cc (freeSubterms): lookupSort() -> getSort();
+	index() -> getIndex()
+
+	* freeTermFullCompiler.cc (scanFreeSkeleton): lookupSort() -> getSort()
+
+	* freeTerm.cc (compileRhsFree): modifiedIndex() -> getModifiedIndex()
+
+	* freeTermFullCompiler.cc (scanFreeSkeleton): index() ->
+	getIndex()
+
+	* freeLhsCompiler.cc (analyseConstraintPropagation): index() ->
+	getIndex()
+	(compileRemainder): index() -> getIndex()
+	(compileLhs): index() -> getIndex()
+
+	* freeRemainder.cc (FreeRemainder): use safeCast() macro in
+	place of VariableTerm::downCast() (2 places)
+
+	* freeLhsAutomaton.cc (freeSubterms): use safeCast() macro in
+	place of VariableTerm::downCast() (2 places)
+	
+===================================Engine58==================================================
+
+2000-03-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.cc (isSubsumed): commented out
+	(conservativePartialSubsumptionApproximation): commented out
+	(calculateLivePatterns): commented out
+
+	* freeTheory.cc: ifdef'd #pragma implementation "freeSubterm.hh"
+
+2000-03-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeLhsAutomaton.cc (match): made Assert() message more detailed
+
+2000-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeLhsAutomaton.cc (dump): ifdef'd
+
+	* freeRhsAutomaton.cc (dump): ifdef'd
+
+	* freeLhsAutomaton.hh (class FreeLhsAutomaton): used NO_COPYING()
+	macro; ifdef'd dump() decl
+
+	* freeRhsAutomaton.hh (class FreeRhsAutomaton): ifdef'd dump() decl
+
+	* freeRemainder.hh (class FreeRemainder): used NO_COPYING() macro;
+	ifdef'd dump() decl
+
+	* freeRemainder.cc (dump): ifdef'd
+
+	* freeSymbol.hh (class FreeSymbol): used NO_COPYING() macro;
+	ifdef'd dump() decl
+
+	* freeSymbol.cc (dump): ifdef'd
+
+	* freePreNet.cc (dump): ifdef'd
+	(dumpSlotMap): ifdef'd
+	(dumpPath): ifdef'd
+	(dumpPositionSet): ifdef'd
+	(dumpNatSet): ifdef'd
+
+	* freePreNet.hh (class FreePreNet): ifdef'd dump routine decls
+
+	* freeNet.cc (dump): ifdef'd
+
+	* freeNet.hh (class FreeNet): ifdef'd dump() decl
+
+	* freeSymbol.cc (complexStrategy): standardized IssueAdvisory()
+	(memoStrategy): standardized IssueAdvisory()
+
+2000-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): added version of struct TestNode
+	optimized for 64bit pts and #ifdef'd on ALPHA
+
+2000-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): updated decls for isSubsumed() and
+	calculateLivePatterns()
+
+	* freeNet.cc (isSubsumed): fixed bug where we weren't passing
+	Vector arg by ref
+	(calculateLivePatterns): fixed bug where we weren't passing
+	Vector arg by ref
+
+===================================Engine56==================================================
+
+2000-02-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (FreeDagNode): delete Assert() since we are now
+	forbidden to access symbol and hence cannot find our arity
+	
+===================================Engine55==================================================
+
+2000-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (generateCons): generate code to fill out
+	all flags including sort index in one step
+
+	* freePreNetFullCompiler.cc (generateNode): use struct Flags
+	
+===================================Engine54==================================================
+
+2000-01-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNetFullCompiler.cc (allocateVariables): use flags field
+	instead of unfailing
+	(generateNode): use flags field instead of unfailing
+
+	* freePreNet.cc (partiallySubsumed): use flags field instead of
+	subsumers
+	(dump): use flags field instead of subsumers; print unfailing flag
+	as well
+
+	* freePreNet.hh (class FreePreNet): added enum Flags; replaced
+	unflailing field with flags field in struct Pattern; deleted
+	subsumers data member
+
+	* freePreNetFullCompiler.cc (generateNode): call usedSort()
+
+2000-01-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTermFullCompiler.cc (scanFreeSkeleton): must insert index if
+	free variables into boundVariables!
+
+	* freePreNetFullCompiler.cc (generateNode): added special handling
+	for next remainder; need to avoid generating goto in shared case
+	and force generation of label in last parent case
+	(generateCode): new calling convention for generateNode()
+	(generateNode): generate code for comparing binding to nonlinear variables
+
+2000-01-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNetFullCompiler.cc (allocateVariables): increment
+	nrFailParents for nextPattern arcs where there is no next pattern
+	and the cirrent pattern is not unfailing
+	(generateNode): now generate code to test sort of a node bound to
+	a variable
+
+	* freePreNet.hh (class FreePreNet): added unfailing flag to struct pattern
+
+	* freeTerm.hh (class FreeTerm): updated decl for
+	scanFreeSkeleton()
+
+	* freeTermFullCompiler.cc (scanFreeSkeleton): added unfailing
+	calculation and result; a pattern is unfailing iff it is
+	guarenteed to matching any instance of its free skeleton:
+	all variables must be linear and have sorts at the top of
+	error-free components. No aliens are allowed.
+
+2000-01-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (generateCode): only generate call
+	generateSortDiagram() if we are not single sorted
+	(generateCons): generate full sort look up if we can produce error
+	sort
+
+2000-01-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (generateCons): rewritten to simplify code in
+	normal case
+	(generateCode): call generateSortDiagram()
+	(generateCons): generate code to do sort calculation in naive case
+	(generateCons): handle single non-error sort case
+
+1999-12-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc (partiallySubsumed): in the case that a fringe
+	position exists in subsumer but not in victim, don't automatically
+	return false; instead see if the subterm in the subsumer is domain
+	maximal linear variable
+	(findLiveSet): use f rather than patterns[i].term in call to
+	isDomainMaximalLinearVariable()
+
+1999-12-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc (generateNode): call generateRhs()
+	(generateNode): 'p' -> 'r' for generated variables
+	(generatePointer): 'p' -> 'r' for generated variables
+	(generateCode): 'p' -> 'r' for generated variables
+
+	* freeSymbol.hh (class FreeSymbol): updated decl for
+	generateCode()
+
+	* freeSymbol.cc (generateCode): updated for new calling
+	conventions
+
+1999-12-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (generateCons): added
+
+	* freePreNet.cc (buildNet): clear nrFailParents and nrFailVisits
+	(allocateVariables): increment nrFailParents
+
+	* freePreNet.hh (class FreePreNet): added data member topSymbol
+	(class FreePreNet): added data members nrFailParents and nrFailVisits
+
+	* freePreNet.cc (generateNode): added
+	(generatePointer2): added
+	(generatePointer): added
+	(generateCode): added
+	(makeNode): clear nrParents and nrVisits
+	(allocateVariables): increment and test nrParents
+	(buildNet): set topSymbol
+
+	* freePreNet.hh (class FreePreNet): added data members nrParents
+	and nrVisits to struct Node; deleted data member pass2
+
+1999-12-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.hh (class FreePreNet): added data member slotTranslation
+
+	* freePreNet.cc (buildNet): call allocateVariables()
+
+	* freePreNet.hh (class FreePreNet): aded decl for dumpSlotMap()
+
+	* freePreNet.cc (dumpSlotMap): added
+	(dump): call dumpSlotMap()
+
+===================================Engine54==================================================
+
+1999-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc2 (makeNode): clear pass2 flag
+	(allocateVariables): set pass2 flag
+
+1999-12-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTermFullCompiler.cc (scanFreeSkeleton): rewritten
+
+	* freeSubterm.hh: created
+
+	* freePreNet.hh (class FreePreNet): deleted saveSlot from struct
+	Node; deleted decl for deleteSlot(); updated decl for slotMapUnion()
+
+	* freePreNet.cc (slotMapUnion): added avoidIndex arg
+	(allocateVariables): don't delete testPositionIndex from local
+	slot map, instead we rely on not passing it up; this way we avoid
+	having to keep a copy in saveSlot
+	(slotMapUnion): rewritten, now take fromNodeNr
+
+1999-12-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.hh (class FreePreNet): added decl for deleteSlot()
+
+	* freePreNet.cc (findSlot): added
+	(slotMapInsert): added
+	(slotMapUnion): added
+	(allocateVariables): added
+
+	* freePreNet.hh (class FreePreNet): added struct Pair; add slotMap
+	and pass2 members to struct Node; added decls for
+	allocateVariables(), slotMapUnion(), slotMapInsert(), findSlot()
+
+	* freePositionTable.cc (parentIndex): added
+
+	* freePositionTable.hh (class FreePositionTable): added decl for parentIndex()
+
+	* freePreNet.hh (class FreePreNet): updated decl for makeNode()
+	(class FreePreNet): added positionsTested member to struct Node
+	(class FreePreNet): added slots data member
+
+	* freePreNet.cc (makeNode): fill out nextPattern and patternIndex
+	if reducedFringe empty
+	(dump): dump nextPattern and patternIndex
+	(makeNode): keep track of positions tested
+	(dump): dump positionsTested
+
+	* freePreNet.hh (class FreePreNet): added nextPattern and
+	patternIndex members to struct Node
+
+	* freeTheory.hh: added forward decl for class FreePositionTable
+
+	* freeTerm.hh (class FreeTerm): added decl for full compiler
+	version of scanFreeSkeleton()
+
+	* freeRemainder.cc (FreeRemainder): use errorFreeMaximal
+
+1999-11-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc (findBestPosition): must increment nrLive for each
+	live pattern
+
+1999-11-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc (makeNode): set testPositionIndex
+	(dump): dump testPositionIndex
+	(dumpPositionSet): added
+	(dumpNatSet): added
+	(dump): use dumpPositionSet() and dumpNatSet()
+	(makeNode): fixed nasty stale ref bug on n.sons; set n.neqTarget =
+	UNBOUNDED in the not test position case to distinguish it from
+	fail case
+	(makeNode): inserted temporary to force evaluation of
+	makeNode(newLiveSet, newFringe, newDifficultSets) before
+	net[nrNodes].neqTarget  (but should this be necessary?)
+	(buildNet): need to eliminate patterns via subsumption at very top
+	because our future elimination through partial subsumption is
+	incremental
+
+	* freePreNet.hh (class FreePreNet): added decls for dump() and
+	dumpPath()
+	(class FreePreNet): added testPositionIndex to struct Node
+
+	* freePreNet.cc (dump): added
+	(dumpPath): added
+
+1999-11-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.hh (class FreePreNet): added decls for
+	expandFringe(), reduceFringe(), findLiveSet(), partiallySubsumed()
+	(both versions)
+
+	* freePreNet.cc (expandFringe): added
+	(reduceFringe): added
+	(findLiveSet): added
+	(partiallySubsumed): added (2 versions)
+
+	* freePreNet.hh (class FreePreNet): added decl for
+	isDomainMaximalLinearVariable()
+
+	* freePreNet.cc (isDomainMaximalLinearVariable): added
+
+	* freeTerm.cc (locateSubterm): handle backup arg
+
+	* freeTerm.hh (class FreeTerm): added backup arg to locateSubterm()
+
+1999-11-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc (addPosition): deleted
+	(buildNet): use FreePositionTable
+	(findBestPosition): use FreePositionTable
+
+	* freePreNet.hh (class FreePreNet): use FreePositionTable
+
+	* freePositionTable.cc (position2Int): code cleaning
+
+1999-11-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePositionTable.cc: created
+
+	* freePositionTable.hh: created
+
+1999-11-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): added decls for isSubsumed() and
+	calculateLivePatterns()
+
+1999-11-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.cc (isSubsumed): added
+	(calculateLivePatterns): added
+
+1999-11-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.hh (class FreeTerm): added decl for locateSubterm2()
+
+	* freeTerm.cc (locateSubterm2): added
+
+	* freeNet.hh (class FreeNet): added decl for
+	conservativePartialSubsumptionApproximation()
+
+	* freeNet.cc (conservativePartialSubsumptionApproximation): added
+
+1999-11-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.cc: Reverted; partial subsumption is much more subtle
+	than expected
+
+	* freeNet.hh (class FreeNet): updated decl for buildNet()
+	Reverted
+
+	* freeNet.cc (compileEquations): compute subsuming; pass extra args
+	to buildNet()
+	(buildNet): build a new unknownPositions where and pass it on
+	default arc and on arcs labelled with alien symbols
+
+1999-11-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (generateRemainder): updated
+
+1999-11-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): decl for generateBody() replaced by
+	decl for generateCode(); updated decls for generateNode() and
+	generateBranch()
+
+	* freeRemainder.hh (class FreeRemainder): updated decl for
+	generateRemainder()
+
+	* freeNet.cc (generateCode): added; replaces generateBody()
+	(generateNode): updated to use CompilationContext
+	(generateBranch): updated to use CompilationContext
+
+	* freeSymbol.hh (class FreeSymbol): decl for generateCode()
+	replaces that for generateBody()
+
+	* freeSymbol.cc (generateCode): added; replaces generateBody()
+
+1999-11-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.hh (class FreeSymbol): updated decl for
+	memoStrategy()
+
+	* freeSymbol.cc (complexStrategy): simplified using revised
+	MemoTable
+	(memoStrategy): simplified using revised MemoTable
+
+1999-11-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (complexStrategy): no longer try the memo table
+	before reducing arguments; this departs from the OBJ3 practice but
+	avoids difficulties regarding whether to normalize before trying
+	the memo table
+	(memoStrategy): try memo table before each rewrite at top attempt
+	rather than after each argument reduction
+
+1999-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (FreeSymbol): init Symbol
+
+	* freeSymbol.hh (class FreeSymbol): revert to base Symbol
+
+	* freeSymbol.cc (FreeSymbol): init StandardSymbol rather than Symbol
+
+	* freeSymbol.hh (class FreeSymbol): derive from StandardSymbol
+	rather than Symbol and Strategy
+
+1999-10-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (markEagerArguments): added static_cast<FreeSymbol*>()
+
+	* freeSymbol.cc (FreeSymbol): don't pass theory arg, pass memoFlag
+	arg to Symbol
+	deleted freeTheoryString
+
+	* freeSymbol.hh (class FreeSymbol): derive from Strategy (now that
+	this is no longer a base of Symbol)
+	(class FreeSymbol): deleted decl for static data member
+	freeTheoryString
+
+===================================Engine53==================================================
+
+1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeLhsCompiler.cc (analyseConstraintPropagation):
+	VariableTerm::dynamicCast() -> dynamic_cast<VariableTerm*>()
+	(compileRemainder): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+	(compileLhs): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+	(scanFreeSkeleton): FreeTerm::dynamicCast() ->
+	dynamic_cast<FreeTerm*>()
+
+	* freeNet.cc (compileEquations): FreeTerm::dynamicCast() ->
+	dynamic_cast<FreeTerm*>() (*2)
+	(findBestPosition): FreeTerm::dynamicCast() ->
+	dynamic_cast<FreeTerm*>()
+	(buildNet): FreeSymbol::dynamicCast() ->
+	dynamic_cast<FreeSymbol*>()
+	(setVisitedFlags): FreeTerm::dynamicCast() ->
+	dynamic_cast<FreeTerm*>() (*2)
+	(allocateSlot): FreeTerm::dynamicCast() ->
+	dynamic_cast<FreeTerm*>()
+	(buildPatternVector): FreeTerm::dynamicCast() ->
+	dynamic_cast<FreeTerm*>()
+
+	* freeTerm.cc (locateSubterm): FreeTerm::dynamicCast() ->
+	dynamic_cast<FreeTerm*>()
+	(findActiveSlots): FreeTerm::dynamicCast() ->
+	dynamic_cast<FreeTerm*>()
+	(compileRhsAliens): FreeTerm::dynamicCast() ->
+	dynamic_cast<FreeTerm*>()
+	(compileRhsAliens): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+	(compileRhsFree): FreeTerm::dynamicCast() ->
+	dynamic_cast<FreeTerm*>()
+	(compileRhsFree): VariableTerm::dynamicCast() ->
+	dynamic_cast<VariableTerm*>()
+
+	* freeTerm.hh (dynamicCast): deleted
+	(class FreeTerm): deleted decl for dynamicCast()
+
+	* freeSymbol.hh (dynamicCast): deleted
+	(class FreeSymbol): deleted decl for dynamicCast()
+
+	* freeSymbol.cc (complexStrategy): AdvisoryCheck() ->
+	IssueAdvisory()
+	(memoStrategy): AdvisoryCheck() -> IssueAdvisory()
+
+1999-10-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): updated call to
+	tracePreEqRewrite()
+
+	* freeSymbol.hh (class FreeSymbol): added decl for memoStrategy()
+
+	* freeSymbol.cc (complexStrategy): no longer do memo stuff here
+	(memoStrategy): added
+
+1999-10-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (FreeSymbol): take memoFlag arg
+	(complexStrategy): handle memoization
+	(newFreeSymbol): have to take memoFlag onto account when deciding
+	when to check for non-standard strategy
+
+	* freeSymbol.hh (class FreeSymbol): updated decls for FreeSymbol()
+	and newFreeSymbol()
+
+	* freeSymbol.cc (newFreeSymbol): take memoFlag arg
+
+1999-10-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (getHashValue): 
+
+1999-10-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): added hashCache array to
+	data member union
+	
+===================================Engine52==================================================
+
+1999-08-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (markArguments): try using typeid() as
+	dynamic_cast is painfully slow
+	(markArguments): unmade change as typeid() causes more reg window
+	traps
+
+1999-08-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): tripleLeq() -> tripleLt()
+
+	* freeNet.cc (buildNet): tripleLeq() -> tripleLt()
+	(tripleLeq): -> tripleLt()
+
+1999-07-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): replaced decl for tripleCompare()
+	with decl for tripleLeq()
+
+	* freeNet.cc (buildNet): use STL sort function
+	(tripleCompare): becomes tripleLeq()
+
+1999-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (markArguments): use dynamic_cast rather than
+	comparison of pointers to member functions to figure out if we can
+	tail recurse
+
+	* freeDagNode.hh (class FreeDagNode): made FreeUnarySymbol and
+	FreeBinarySymbol friends
+	
+===================================Engine51==================================================
+
+1999-07-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.cc (generateBody): handle the case where we have an
+	empty net but nonzero applicables - eg k = f(a) or f(X) = k
+
+1999-07-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (generateBody): void* -> char* in generated code
+	(generateBody): added needed casts in generated code
+
+1999-06-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): upadted decl for generateBody()
+
+	* freeRemainder.hh (class FreeRemainder): updated decl for
+	generateRemainder()
+
+	* freeRemainder.cc (generateRemainder): return number of safe
+	slots needed
+
+	* freeNet.cc (generateBody): return maxSafe
+
+	* freeSymbol.hh (class FreeSymbol): updates decl for generateBody()
+
+	* freeSymbol.cc (generateBody): print maxSafe define to hfile
+
+1999-06-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.hh (class FreeRemainder): updated decl for generateRemainder()
+
+	* freeRemainder.cc (generateRemainder): take useArgList arg
+
+	* freeNet.hh (class FreeNet): upaded decls of generateNode() and
+	generateBranch()
+
+	* freeNet.cc (generateBranch): keep track of which ap lists use
+	arg list and which consider slot 0 to have been reused
+	(generateNode): carry aps arg arround
+	(generateBody): pass useArgList flag to generateRemainder()
+
+	* freeSymbol.cc (generateBody): reorganized fail case to to handle
+	GC case properly
+
+1999-06-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (generateRemainder): pass lhs top symbol to
+	generateRhs() to enable tail recursion elimination
+
+	* freeSymbol.cc (generateBody): use g.memNext and g.memEnd
+
+1999-06-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (generateBody): generate code to allocate new dag
+	node
+
+1999-06-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (generateRemainder): call generateRhs();
+
+1999-06-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.cc (buildApplicable): rewritten to check existing
+	applicable lists and avoid generating duplicates
+
+	* freeRemainder.cc (generateRemainder): added
+
+	* freeNet.cc (generateBody): use generateRemainder()
+
+	* freeRemainder.hh (class FreeRemainder): added decl for
+	generateRemainder() 
+
+1999-06-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): added decls for gatherAlternatives()
+	and gatherAlternatives2(); deleted decl for isSimple()
+
+	* freeNet.cc (isSimple): deleted
+	(generateNode): rewriting to generate switch statements
+	(gatherAlternatives): added
+	(gatherAlternatives2): added
+
+1999-06-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.cc (generateNode): optimize case where both fail
+	branches are simple
+	(isSimple): allow fail branches in simple node to be a remainder
+	rather than just a fail
+
+	* freeNet.hh (class FreeNet): added decl for isSimple()
+
+	* freeNet.cc (generateNode): optimize code in fail vs simple
+	equality branch case using isSimple()
+	(isSimple): added
+
+1999-06-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.cc (generateNode): added
+	(generateBranch): added
+	(generateBody): added
+
+	* freeSymbol.hh (class FreeSymbol): added decl for generateBody()
+
+	* freeSymbol.cc (generateBody): added
+	
+===================================Maude 1.0.3 released=======================================
+
+1999-06-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRhsAutomaton.hh (class FreeRhsAutomaton): updated decl for
+	fillOutArgs()
+
+	* freeRhsAutomaton.cc (fillOutArgs): replaced SPEED_HACK with
+	CONST_VECTOR_HACK
+	(construct): replaced SPEED_HACK with CONST_VECTOR_HACK
+	(fillOutArgs): made 2nd arg const
+	(replace): replaced SPEED_HACK with CONST_VECTOR_HACK
+
+	* freeRemainder.hh (fastMatchReplace): replaced SPEED_HACKs with
+	CONST_VECTOR_HACKs
+
+1999-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.hh (class FreeSymbol): computeTrueSort() ->
+	normalizeAndComputeTrueSort()
+
+	* freeSymbol.cc (computeTrueSort): becomes
+	normalizeAndComputeTrueSort()
+	(normalizeAndComputeTrueSort): use fastComputeTrueSort()
+
+1999-05-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNetExec.cc (applyReplace2): try reversing symbol test
+	if-then-else
+	(applyReplace2): unmade change; test was the best way around originally
+
+	* freeSymbol.hh (class FreeSymbol): added decl for newFreeSymbol()
+
+1999-05-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeBinarySymbol.cc: created
+
+	* freeBinarySymbol.hh: created
+
+	* freeUnarySymbol.cc: created
+
+	* freeUnarySymbol.hh: created
+
+	* freeSymbol.cc (eqRewrite): added test for nrArgs > 0 and
+	replaced for loop with do-while loop
+	(eqRewrite): unmade change as it appeas to lose
+	(newFreeSymbol): added
+
+===================================Engine48==================================================
+
+1999-05-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (applyReplace): reverse test; this apparently has an
+	impact on performance; put most important branch first for ?: and
+	if-then-else
+
+	* freeSymbol.cc (eqRewrite): use normal applyReplace() which is
+	(once again) an inlined wrapper for an outlined version
+
+	* freeNet.cc: revert
+
+	* freeNet.hh: revert
+
+	* freeNet.cc (outlineApplyReplace): added
+
+	* freeSymbol.cc (complexStrategy): deleted
+	(eqRewrite): reverted
+	(eqRewrite): use outlineApplyReplace() in complex strat case
+
+	* freeNet2.hh: resurected
+
+	* freeNet.cc: implement freeNet2.hh again
+
+	* freeNet.hh (class FreeNet): deleted applyReplace() wrapper and
+	decl; inserted decl for outlineApplyReplace()
+
+1999-05-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (complexStrategy): created to outline complex
+	strategy case and reduce eqRewrite stack frame size for non-reg
+	window machines
+	(eqRewrite): use complexStrategy()
+
+	* freeNet.cc: no longer implement freeNet2.hh
+
+	* freeNet.hh (applyReplace): moved here; now jsut a wrapper for
+	applyReplace2()
+
+	* freeNet2.hh: deleted
+
+	* freeNetExec.cc: created to contain outlined applyReplace2()
+
+	* freeSymbol.cc (eqRewrite): try outlining call to applyReplace()
+	since this makes stackframe big (144bytes vs 112bytes on sparc) on what can
+	be a higly recursive function
+
+1999-05-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (FreeRemainder): check to see if variables
+	sort component is error-free and revoke superfast treatment if not
+
+	* freeRemainder.hh (fastMatchReplace): remove check for arg in
+	error sort in superfast case; we now assume component is error-free
+
+1999-04-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (markArguments): try new tail recursion
+	elimination scheme that does highly dubious comparison on pointers
+	to virtual functions
+	(markArguments): use markArgument() rather than mark() on last arg
+	in != case inorder to share cose with == case.
+
+1999-04-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (markArguments): added tail recursion
+	eliminiation hack for 1 and 2 arg cases
+
+	* freeNet2.hh (applyReplace): (SPEED_HACKS version) experimentally
+	merged the "no patterns have free symbols" with the start of the
+	"at least one pattern has free symbols" to simplify control flow
+	(applyReplace): unmade change as quantify shows that it loses ever
+	so slightly
+	
+===================================Engine48==================================================
+===================================Maude 1.0.2 released=======================================
+===================================Maude 1.0.1 released=======================================
+
+1999-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh: removed extreme pointerization SPEED_HACK due to
+	slowness
+
+	* freeNet2.hh: removed extreme pointerization SPEED_HACK due to
+	slowness
+
+	* freeNet.cc: removed extreme pointerization SPEED_HACK due to
+	slowness
+
+	* freeNet2.hh (applyReplace): optimized using extreme
+	pointerization SPEED_HACK for TestNode arcs
+
+	* freeNet.hh (class FreeNet): deleted dummy field from TestNode
+
+	* freeNet.cc (compileEquations): extreme pointerization SPEED_HACK
+	for TestNode arcs
+
+	* freeRemainder.cc (slowMatchReplace2): made const
+	(slowMatchReplace): made const
+
+	* freeRemainder.hh (fastMatchReplace): added consts
+	(class FreeRemainder): added consts decl
+
+	* freeNet.cc (compileEquations): fill out fastApplicable in
+	SPEED_HACKS case
+
+	* freeNet2.hh (applyReplace): use fastApplicable in SPEED_HACKS
+	case and revert to old code in debug case
+
+	* freeNet.hh (class FreeNet): have fastApplicable for SPEED_HACKS
+	case but keep applicable for net construction
+
+1999-02-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet2.hh (applyReplace): rewrote both versions to use new
+	applicable vector
+
+	* freeNet.hh (class FreeNet): applicable becomes a
+	Vector<Vector<FreeRemainder*> >
+
+1999-02-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet2.hh (applyReplace): unmade previous change as quantify
+	shows no change in # of cycles
+
+1999-02-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet2.hh (applyReplace): added eqIndices SPEED_HACK to share
+	lookup on eqIndicespyt between length() and operator []
+
+	* freeLhsAutomaton.cc (match): use isNull() (5 places)
+
+	* freeRemainder.cc (slowMatchReplace2): use isNull() (4 places)
+	
+===================================VectorExperiment==========================================
+
+1999-01-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.hh (class FreeTerm): made slotIndex a short and
+	visitedFlag a Bool to save memory
+	
+===========================Engine46===========================================================
+
+Wed Nov 25 10:59:26 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): first attempt at using
+	traceAbort(); we have introduced a suble bug that we will worry
+	about later
+	(slowMatchReplace2): do tracePreEqRewrite() before traceAbort()
+	and copyProblemBindings() after tracing stuff
+	(slowMatchReplace2): reorg of control structures using gotos (ugly
+	but effective)
+	(slowMatchReplace2): fix afore-mentioned bug in brute force way -
+	always restore the stack after a checkCondition() because we may
+	end up aborting
+	(slowMatchReplace2): removed gotos and put back deletes
+
+Tue Nov 24 18:09:00 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): fix longstanding and very
+	nasty re-entrancy bug by saving stack before evaluating a
+	condition and restoring it if we fail
+
+Mon Nov 16 10:00:50 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): use getTraceStatus() in
+	place of traceStatus()
+
+	* freeRemainder.hh (fastMatchReplace): use getTraceStatus() in
+	place of traceStatus()
+
+Fri Nov  6 15:13:05 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeTerm.hh (class FreeTerm): deepCopy() decl -> deepCopy2()
+
+	* freeTerm.cc (deepCopy): -> deepCopy2()
+	
+===========================Engine43===========================================================
+
+Thu Oct  8 11:08:18 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeLhsCompiler.cc (analyseConstraintPropagation): static_cast
+	-> const_cast
+
+	* freeTerm.cc (compareArguments): inserted const_cast
+	(subsumes): inserted const_cast
+	(earlyMatchFailOnInstanceOf): inserted const_cast
+
+	* freeDagNode.hh (argArray): replaced static_cast with const_cast
+
+	* freeSymbol.hh (class FreeSymbol): deleted static data member
+	sortIndexBuffer
+
+	* freeSymbol.cc: deleted sortIndexBuffer
+	(FreeSymbol): don't expand sortIndexBuffer
+	
+===========================Engine41===========================================================
+
+Fri Sep 25 10:30:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet2.hh (applyReplace): don't check context.traceStatus()
+	here
+	(applyReplace): Reason for counter-intuitive speed up when moving
+	test into loop is that loop (almost) always executes exactly 1
+	iteration. Make use of the fast that loop never executes 0
+	iterations by turning it into do-while loop
+
+	* freeRemainder.hh (fastMatchReplace): try checking
+	context.traceStatus() here
+
+	* freeNet2.hh (applyReplace): highly speculative reorganization
+	aimed at improving performance in non-constant case
+	(applyReplace): Slower! - proabably extra branch around else case;
+	Try hoisting code after branch and specializing - since after
+	suceessfully matching a symbol we never go strait to failure.
+	(applyReplace): Faster! - try horrible goto hack to simplify main
+	loop
+	(applyReplace): Slower; try simplified goto trick
+	(applyReplace): Much slower; reverted to hoisted code version
+	(applyReplace): Try rearrange the 6 assignments at the top of main
+	loop to maximize paralleism on superscalars (and make use of load
+	delay stots on processors that have them)
+	(applyReplace): Slower! assume that the write in to memory via a
+	pointer messes up the compilers data flow analysis; revert
+	(applyReplace): Try hack to avoid checking net.length()
+
+	* freeRemainder.hh (fastMatchReplace): reversed previous hack
+	because it makes things every so slightly slower; try combining
+	rather than duplicating code.
+	(fastMatchReplace): even slower! revert to Wednesdays version
+	(fastMatchReplace): try reversing then and else parts inside loop
+
+Thu Sep 24 20:47:48 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.hh (fastMatchReplace): very experimental speed
+	hack duplicating code in the hope of reducing branching
+
+Wed Sep 23 10:16:56 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.hh (fastMatchReplace): made slowMatchReplace()
+	public so that we can call in from FreeNet::applyReplace()
+
+	* freeRemainder.cc (FreeRemainder): added test for super-fast status
+	(slowMatchReplace2): reorganized sort test
+	(dump): dump fast and foreign flags
+
+	* freeNet2.hh (applyReplace): (both versions) split equations loop
+	into slowMatchReplace() and fastMatchReplace() versions
+
+	* freeRemainder.hh (fastMatchReplace): implemented "super-fast:
+	mode; no longer check context.traceStatus(); fast flag now an int
+
+Mon Sep 21 10:09:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (computeBaseSort): remember to return after nrArgs
+	== 0 hack!
+
+Fri Sep 18 16:53:25 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (computeBaseSort): hack for nrArgs == 0 case;
+	eventually this should be dealt with by uniqueSort mechanism and
+	we will just have an Assert that nrArgs > 0
+
+Thu Sep 17 17:41:51 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.cc (overwriteWithClone): setSortInfo() ->
+	setSortIndex()
+	(makeClone): setSortInfo() -> setSortIndex()
+
+	* freeSymbol.cc (computeBaseSort): rewritten using traverse(),
+	setSortIndex() and lookupSortIndex()
+
+	* freeLhsAutomaton.cc (match): use DagNode::leq()
+
+	* freeRemainder.cc (slowMatchReplace2): use DagNode::leq()
+
+	* freeRemainder.hh (fastMatchReplace): use DagNode::leq()
+
+Fri Sep 11 16:35:41 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeLhsAutomaton.cc (freeSubterms): set sort rather than
+	sortCode
+	(match): use <= on (DagNode*, Sort&) instead of sortCode
+	(dump): sort rather than sortCode
+
+	* freeRemainder.cc (FreeRemainder): set sort rather than sortCode
+	(slowMatchReplace2): use <= on (DagNode*, Sort&) instead of
+	sortCode
+	(dump): sort rather than sortCode
+
+	* freeRemainder.hh (fastMatchReplace): use <= on (DagNode*, Sort&)
+	instead of sortCode
+
+	* freeLhsAutomaton.hh (class FreeLhsAutomaton):
+	FreeVariable::sortCode becomes FreeVariable::sort
+	
+===========================Engine40===========================================================
+
+Mon Jul 20 19:16:50 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeTerm.cc (FreeTerm): added new ctor
+	(deepCopy): added
+
+	* freeTerm.hh (class FreeTerm): added decl for deepCopy()
+	(class FreeTerm): delete bad initializer from arguments arg of
+	FreeTerm() (g++ should not have accepted this!)
+
+===========================Engine39===========================================================
+
+Wed Jun 10 11:24:06 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeTerm.hh (class FreeTerm): updated normalize() decl
+
+	* freeTerm.cc: IntSet -> NatSet
+	(normalize): compute changed flag
+
+	* freeLhsCompiler.cc: IntSet -> NatSet
+
+	* freeDagNode.cc: deleted #include "intSet.hh"
+
+	* freeTerm.hh: IntSet -> NatSet
+	
+===========================Engine38===========================================================
+
+Fri Feb 20 16:18:38 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.cc (stackArguments): only stack arguments that have
+	not been flagged as unstackable
+	(stackArguments): simplified & optimized 
+
+===========================Engine36===========================================================
+
+Wed Feb 18 10:23:12 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet.cc (compileEquations): added code to pointerize slots
+	and positions in SPEED_HACKS case
+	(dump): dump pointerized slots and positions correctly
+
+	* freeNet2.hh (applyReplace): revert to reorganized loop; although
+	this is very slightly slower on dec example in wins in fibo
+	example; the partially optimized loop is the same as the
+	reorganized loop but uglier
+	(applyReplace): split into two versions; a super-fast,
+	super-hairy, partly pointerized version for optimized builds
+	and a more or less straight-forward version for debugging
+
+Sat Feb 14 19:56:53 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet2.hh (applyReplace): reorganized loop using new variables
+	ds to store d->symbol() and p to store n->position in the hope of
+	avoiding reloading d->symbol() after the d->symbol() != n->symbol case
+	(applyReplace): partly reversed previous change since things got
+	slower - maybe due to messing up branch delay slots
+
+Fri Feb 13 09:50:45 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (~FreeRemainder): added
+
+	* freeRemainder.hh (class FreeRemainder): added decl for ~FreeRemainder()
+
+	* freeNet.hh (class FreeNet): delete ctor decl as default will do
+	(class FreeNet): added anon unions to struct TestNode for future
+	position/slot pointerization
+
+	* freeNet.cc (~FreeNet): implemented
+
+Thu Feb 12 18:24:52 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeLhsAutomaton.cc (~FreeLhsAutomaton): implemented
+
+Wed Feb 11 17:07:55 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): compare() != 0 replaced by
+	!equal() (2 places)
+
+	* freeLhsAutomaton.cc (match): compare() != 0 replaced by !equal()
+	(3 places)
+
+	* freeRemainder.cc (slowMatchReplace2): use delete rather than
+	calling deepSelfDestruct() (4 places)
+	
+===========================Engine35===========================================================
+
+Thu Dec  4 12:50:37 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (FreeSymbol): deleted inert arg
+
+	* freeSymbol.hh (class FreeSymbol): deleted inert
+	arg from ctor decl
+
+Tue Dec  2 16:35:13 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (eqRewrite): use copyAndReduce()
+	(eqRewrite): call repudiateSortInfo() after copying and reducing
+	in the case where we abandon the users strategy
+
+Wed Nov 26 17:59:06 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.cc (copyEagerUptoReduced2): use class Strategy stuff
+
+	* freeTerm.cc (findEagerVariables): use class Strategy stuff
+	(markEagerArguments): use class Strategy stuff
+
+	* freeSymbol.cc: (eqRewrite): rewritten to use class Strategy stuff
+
+	* freeSymbol.hh (class FreeSymbol): deleted decl for ~FreeSymbol()
+
+	* freeSymbol.cc (FreeSymbol): use Strategy::setStrategy(); this
+	eliminates most of the code.
+	(~FreeSymbol): deleted
+
+	* freeSymbol.hh (class FreeSymbol): delete decls for eagerSet(),
+	evaluatedSet() and data members strat, eager, evaluated.
+	(eagerSet): deleted
+	(evaluatedSet): deleted
+
+Mon Nov 24 19:51:34 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRhsAutomaton.cc (construct): use rhsAutomaton::buildAliens()
+	(replace): use rhsAutomaton::buildAliens()
+	(dump): use RhsAutomaton::dump()
+
+	* freeRhsAutomaton.hh (addAlien): deleted
+	(class FreeRhsAutomaton): deleted aliens data member and
+	addAlien() decl
+
+Sun Nov 23 16:47:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (dump): use new LhsAutomaton::dump() convention
+
+	* freeLhsAutomaton.cc (dump): rewritten
+
+	* freeRhsAutomaton.cc (dump): rewritten
+
+	* freeRhsAutomaton.hh (class FreeRhsAutomaton): updated dump()
+	decl
+
+	* freeLhsAutomaton.hh (class FreeLhsAutomaton): updated dump()
+	decl
+	
+===========================Engine33===========================================================
+
+Tue Oct 21 11:56:14 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeTerm.cc (dagify2): switch to new convention
+
+	* freeTerm.hh (class FreeTerm): witch dagify2() decl to
+	new convention
+
+Thu Oct 16 12:19:41 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.hh (class FreeSymbol): freeTheoryString changed from 
+	array to pointer
+
+	* freeSymbol.cc: freeTheoryString changed from array to pointer
+
+Wed Oct 15 10:03:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): deleted decl for isFreeTerm()
+
+	* freeNet.cc (isFreeTerm): use FreeTerm::dynamicCast()
+	(buildNet): use FreeSymbol::dynamicCast()
+	(compileEquations): use FreeTerm::dynamicCast() (2 places)
+	(findBestPosition): use FreeTerm::dynamicCast()
+	(setVisitedFlags): use FreeTerm::dynamicCast() (2 places)
+	(allocateSlot): use FreeTerm::dynamicCast()
+	(buildPatternVector): use FreeTerm::dynamicCast()
+	(isFreeTerm): deleted
+
+	* freeLhsCompiler.cc (analyseConstraintPropagation): use
+	VariableTerm::dynamicCast()
+	(compileRemainder): use VariableTerm::dynamicCast()
+	(compileLhs): use VariableTerm::dynamicCast()
+	(scanFreeSkeleton): use VariableTerm::dynamicCast()
+
+	* freeTerm.cc (compileRhsFree): rewritten using
+	VariableTerm::dynamicCast() and FreeTerm::dynamicCast()
+	(compileRhsAliens): rewritten using
+	VariableTerm::dynamicCast() and FreeTerm::dynamicCast()
+
+	* freeTerm.hh (class FreeTerm): added decl for dynamicCast()
+	(dynamicCast): added
+
+	* freeSymbol.hh (class FreeSymbol): added decl for dynamicCast()
+	(dynamicCast): added
+
+	* freeTerm.cc (locateSubterm): use FreeTerm::dynamicCast()
+	(findActiveSlots): simplified using FreeTerm::dynamicCast()
+
+	* freeSymbol.cc (computeTrueSort): replaced old style cast
+	(eqRewrite): replaced old style cast
+	(computeBaseSort): replaced old style cast
+
+	* freeDagNode.hh (argArray): replaced old style cast
+
+	* freeSymbol.cc (FreeSymbol): use new Symbol ctor; expand static
+	sortIndexBuffer if too small for current arity
+
+	* freeSymbol.hh (class FreeSymbol): added static data member freeTheoryString
+	(class FreeSymbol): drop constructor flag from ctor arg list
+	(class FreeSymbol): make sortIndexBuffer static
+
+Fri Oct 10 18:22:39 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (dump): index2Symbol -> index2Variable
+	(slowMatchReplace2): symbolCount() -> nrVariables()
+
+	* freeLhsAutomaton.cc (dump): VariableIndex -> VariableInfo
+	(dump): index2Symbol -> index2Variable
+
+	* freeLhsAutomaton.hh (class FreeLhsAutomaton): VariableIndex ->
+	VariableInfo
+	
+===========================Engine30===========================================================
+
+Thu Oct  9 11:48:31 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRhsAutomaton.cc (fillOutArgs): optimized the nrArgs = 0 case
+	(construct): use fillOutArgs()
+
+	* freeRhsAutomaton.hh (class FreeRhsAutomaton): added decl for fillOutArgs()
+
+	* freeRhsAutomaton.cc (replace): for some strange reason splitting
+	off final iteration made things much slower! try rearranging loop
+	(replace): revert to original version: original loop is eather
+	careful to utilize branch slots I think!
+	(replace): Added more SPEED_HACKS
+	(fillOutArgs): added
+	(replace): use fillOutArgs()
+
+	* freeDagNode.cc (FreeDagNode): elminated test since destructor
+	should only be called on free dag nodes with external storage;
+	added Assert to check this.
+
+	* freeRhsAutomaton.cc (replace): split off final iteration for efficiency
+
+	* freeDagNode.hh (class FreeDagNode): external changed to ArgVec<DagNode*>
+	(FreeDagNode): call initialize() on external
+	(class FreeDagNode): unmade change; Because free matcher keeps
+	stack of pointers to raw argument arrays we can't safely use
+	ArgVec as the position of the raw argument array will move
+	during a garbage collect;
+	(FreeDagNode): unmade change
+
+Tue Oct  7 15:20:02 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (makeDagNode): added
+
+	* freeSymbol.hh (class FreeSymbol): added decl for makeDagNode()
+
+Fri Oct  3 19:13:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeTerm.cc (compileRhs): DataSet -> TermSet
+	(compileRhsAliens): DataSet -> TermSet
+	(compileRhsFree): DataSet -> TermSet
+	(dagify2): DataSet -> TermSet
+
+	* freeTerm.hh (class FreeTerm): DataSet -> TermSet
+	
+===========================Engine29===========================================================
+
+Thu Oct  2 17:02:57 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeTerm.hh (class FreeTerm): updated compileRhsAliens() decl
+	(class FreeTerm): updated compileRhsFree() decl
+
+	* freeTerm.cc (compileRhs): modified to use DataSet&
+	(compileRhsAliens): modified to use DataSet&
+	(compileRhsFree): modified to use DataSet&; const removed; cast removed
+
+	* freeTerm.hh (class FreeTerm): updated compileRhs() decl
+
+Tue Sep 30 11:03:03 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeTerm.cc (dagify2): adapted from dagify()
+
+	* freeTerm.hh (class FreeTerm): dagify() decl changed to dagify2()
+
+	* freeTerm.cc (normalize): now compute hash value
+
+Thu Sep 25 16:29:56 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet.cc (compileEquations): use getEquations()
+	
+===========================Engine28===========================================================
+
+Sat Aug 30 15:10:32 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (computeBaseSort): rewrote union case to use
+	Vector<SortCode> version of lookupUnionSort()
+	
+===========================Engine27===========================================================
+
+Tue Aug  5 14:06:08 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.cc (copyWithReplacement): removed extraneous "eager"
+	variable left over from previous changes
+
+	* freeDagNode.hh (getArgument): added; this provides fast access
+	to arguments without exposing raw pointer to arg vector (internal
+	or external). It is intended for use by classes that treat free
+	theory as special; e.g. classes that are derived from FreeDagNode
+	or FreeSymbol.
+	(class FreeDagNode): changed argArray() back to private; added
+	public decl for getArgument()
+
+Thu Jul 31 16:23:49 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): changed argArray() from
+	private to protected
+	(class FreeDagNode): changed argArray() to public. this is a gross
+	hack to get machine integers working; we want to provide a safe
+	hook into FreeDagNode a.s.a.p.
+
+Wed Jul 23 11:39:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeTerm.cc (normalize): added full flag
+
+	* freeTerm.hh (class FreeTerm): added full flag to normalize()
+
+Mon Jul 21 19:15:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): deleted
+	normalizeEagerUptoReduced2() decl
+
+	* freeDagNode.cc (normalizeEagerUptoReduced2): deleted
+	(copyWithReplacement): don't call normalizeEagerUptoReduced()
+
+===========================Engine26b===========================================================
+	
+Fri Jul 18 15:59:29 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.cc (normalizeEagerUpToReduced2): added
+	(copyWithReplacement): normalize replacement if it is to be put in
+	an eager position
+
+	* freeDagNode.hh (class FreeDagNode): added decl for
+	normalizeEagerUpToReduced2()
+
+Tue Jul 15 14:53:04 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (FreeSymbol): added inert arg
+
+	* freeSymbol.hh (class FreeSymbol): added inert arg to ctor
+
+	* freeDagNode.cc (markArguments): optimized
+	(compareArguments): optimized
+
+===============================Engine26========================================================
+
+Mon Jun 30 11:18:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeTerm.cc (FreeTerm): print symbol name in assert message
+
+Fri Jun 27 16:18:03 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): clearCopyPointers2() and
+	DagNode* copyEagerUptoReduced2() made private
+  
+
+	* freeSymbol.cc (eqRewrite): copyEagerUptoReduced() and
+	clearCopyPointers() replaced by copyReducible() (twice)
+
+Wed Jun 25 15:12:55 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet.cc: added #include "variable.hh"
+
+	* freeSymbol.cc: added #include "variable.hh"
+
+Tue Jun 24 14:57:38 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc: changed #include "variable.hh" to #include "variableTerm.hh"
+	(slowMatchReplace2): need to find first solution to subproblem if
+	it exists in "foreign" case
+
+	* freeLhsAutomaton.cc: added #include "variable.hh"
+
+	* freeLhsCompiler.cc (compileRemainder): use VariableTerm::downCast()
+	(compileLhs): se VariableTerm::downCast()
+
+	* freeTerm.cc: added #include "variable.hh"
+
+	* freeRemainder.cc (FreeRemainder): use VariableTerm::downCast()
+
+	* freeTerm.cc (compileRhsFree): use VariableTerm::downCast()
+	changed #include "variable.hh" to #include "variableTerm.hh"
+
+	* freeLhsAutomaton.cc (freeSubterms): use VariableTerm::downCast()
+	changed #include "variable.hh" to #include "variableTerm.hh"
+
+Tue Jun 17 16:36:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (eqRewrite): deleted call to foreignApplyReplace()
+	(eqRewrite): changed comment; a call to
+	discriminationNet.applyReplace() can now compute a top sort if we
+	match a foreign remainder against the whole subject and the
+	foreign matcher decides to compute the sort of its subjects
+	(e.g. for a variable pattern or a collapse to a variable).
+
+	* freeNet.cc (compileEquations): use new Equation::compile conventions
+
+Thu Jun 12 11:36:04 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet.cc (isFreeTerm): moved here and made local_inline to
+	avoid header file problems
+
+	* freeSymbol.cc (eqRewrite): don't call foreignApplyReplace()
+
+	* freeRemainder.cc (slowMatchReplace2): local_inline it
+	(slowMatchReplace2): handle foreign case
+
+	* freeRemainder.hh (class FreeRemainder): added foreign flag;
+	removed fast flag from main ctor decl; added "foreign" ctor decl
+
+	* freeRemainder.cc (FreeRemainder): move decision on whether
+	"fast" or not inside ctor
+	(FreeRemainder): added ctor for "foreign" case
+
+Wed Jun 11 10:31:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet.hh (isFreeTerm): added
+
+	* freeNet.cc (buildSlotTranslation): take reference rather than
+	make copy of conflicts vector; this was a long standing bug
+	that caused loss of compilation speed
+	replaced -1 with NONE throughout
+	(compileEquations): We are now going to allow patterns that don't
+	have our symbol on top but that could match a subject headed by
+	our term anyway:
+	(1) We only setSlotIndex(0) for patterns that have a FreeTerm at
+	their root; since free symbols don't ever collapse ths implicitly
+	menas it is our symbol.
+	(2) We only use compileRemainder() for patterns that have a
+	FreeTerm at their root; for other patterns we use a special
+	FreeRemainder ctor
+	(findBestPosition): only try to locateSubterm() in those patterns
+	that have a FreeTerm at their root.
+	(setVisitedFlags): only try to locateSubterm() in those patterns
+	that have a FreeTerm at their root.
+	(allocateSlot): only try to locateSubterm() and findActiveSlots()
+	in those patterns that have a FreeTerm at their root.
+	(buildPatternVector): only try to locateSubterm() in those patterns
+	that have a FreeTerm at their root.
+
+	* freeTerm.hh (class FreeTerm): delete findBestSequence() decl
+
+	* freeLhsCompiler.cc (insertGroundOutAliens): use willGroundOutMatch()
+	(findBestSequence): deleted
+	(analyseConstraintPropagation): use
+	findConstraintPropagationSequence() rather than findBestSequence()
+	(compileRemainder): use findConstraintPropagationSequence() rather
+	than findBestSequence()
+	(compileLhs): use findConstraintPropagationSequence() rather
+	than findBestSequence()
+
+Tue Jun 10 10:50:03 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeLhsCompiler.cc (findConstraintPropagationSequence): added
+	(insertGroundOutAliens): added
+
+Thu Jun  5 11:34:41 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): decls for
+	clearCopyPointers() and copyEagerUptoReduced() changed
+
+	* freeDagNode.cc (clearCopyPointers2): adapted from old
+	clearCopyPointers()
+	(copyEagerUptoReduced2): adapted from old copyEagerUptoReduced()
+
+	* freeSymbol.cc (FreeSymbol): don't pass stable arg to Symbol
+	
+==============================Engine24====================================
+
+Fri May 16 10:58:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeTerm.cc (earlyMatchFailOnInstanceOf): use Term::stable() rather than
+	testing for collapseSymbols and checking for variable
+
+	* freeNet.cc (findBestPosition): use Term::stable() rather than
+	testing for collapseSymbols and checking for variable
+	(buildPatternVector): use Term::stable() rather than
+	testing for collapseSymbols and checking for variable
+
+Thu May 15 16:25:46 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet.cc (buildPatternVector): change condition for pattern to
+	survive; instead of "subterm !Symbol::stable()" we use "subterm is a variable
+	or subterm could collapse at its top". We could have a much more
+	sophisticated test: We could check to see if subterm could
+	collapse to a variable or the required symbol. But this would be
+	dangerous since the subterm could also collapse to some other
+	symbol that does not have a branch and would miss being on the
+	default branch. We could build the branches differently but this
+	would be complicated and we would run in to problems extending the
+	unexplored fringe if this other symbol that now got its own branch
+	happened to be free. So we adopt a suboptimal solution that will
+	occassionally try a remainder (which will contain at least one
+	collapsing alien) that is bound to fail.
+	(findBestPosition): now consider a subterm to be stable if it is
+	not a variable and cannot collapse at its top. We use
+	collapseSymbols() rather than stable()
+	(findBestPosition): corrected sizeSum formula; this is a
+	longstanding bug that doesn't manifest any symptoms except for
+	occasional tiny performance deficit.
+	(findBestPosition): use PointerSet rather that Vector<Symbol*> for
+	simpler code
+
+	* freeTerm.cc (earlyMatchFailOnInstanceOf): use collapseSymbols()
+	rather than stable()
+
+Mon Apr  7 19:27:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): call to checkCondition()
+	now takes subject
+
+Fri Apr  4 17:48:20 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): use tracePreEqRewrite()
+	and tracePostEqRewrite()
+
+	* freeRemainder.hh (fastMatchReplace): check for traceStatus()
+
+Wed Feb 12 19:15:10 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet.cc (compileEquations): zero lhsAutomaton for equation to
+	make sure dump works correctly
+
+Thu Jan  9 15:47:32 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.cc (overwriteWithClone): fixed serious bug
+	where we were copying sort of overwritten node rather than
+	overwriting node
+
+Tue Jan  7 11:52:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace): replaced call to
+	computeBaseSort() call to inErrorSort()
+
+	* freeSymbol.cc (eqRewrite): semiEager -> seenZero
+	(eqRewrite): use inErrorSort() rather than computeBaseSort()
+	(eqRewrite): remove now redundant repudiateSortInfo() call
+
+Thu Jan  2 17:36:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (eqRewrite): fixed bug where when processing final
+	0, if it was the only 0 then arguments that have not been
+	evaluated will not have a valid sort when we call computeBaseSort(subject)
+
+Tue Dec 24 14:10:34 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace): modified to use computeBaseSort()
+
+	* freeSymbol.cc (eqRewrite): adapted from rewrite(); computeSort()
+	call replaced by computeTrueSort() call
+	(eqRewrite): final 0 case computeSort() call replaced by
+	computeBaseSort() call
+	(computeBaseSort): adapted from computeSort()
+	(computeTrueSort): added
+
+	* freeSymbol.hh (class FreeSymbol): rewrite() -> eqRewrite();
+	computeSort() replaced by computeBaseSort() and computeTrueSort()
+
+Thu Dec 19 13:21:57 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.cc (overwriteWithClone): simplified by not treating
+	0 args as special case
+	(makeClone): simplified by not treating
+	0 args as special case; copy sort information
+
+Thu Dec 12 17:39:47 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.cc (overwriteWithClone): copy sort information; this
+	is needed so then when we rewrite with a collapse equation we do
+	not lose sort infomation with the possibility of infinite looping
+	on foreign sort constraints
+
+Mon Dec  9 15:22:45 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (computeSort): modified to use new
+	constrainToSmallerSort() calling convention
+
+Mon Nov 25 19:04:25 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (Symbol): added constructor arg
+
+Thu Nov 14 17:51:18 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeDagNode.cc (makeClone): added
+
+Wed Oct 30 12:07:15 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeSymbol.cc (rewrite): hacked to use Symbol::foreignApplyReplace()
+
+	* freeNet2.hh (applyReplace): minor rewrite
+
+Thu Oct 17 16:03:50 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet2.hh (applyReplace): stack argArray only when slot >= 0
+
+	* freeNet.cc (findBestPosition): stability used rather than
+	freeness to determine if a symbol can be tested during match of
+	free skeleton
+	(buildPatternVector): treat stable aliens as constants
+	(buildNet): treat stable aliens as constants
+
+	* freeTerm.cc (FreeTerm): set visitedFlag = false
+
+	* freeNet.cc (buildNet): use setVisitedFlags()
+	(setVisitedFlags): used to be setUtilityFlags()
+
+	* freeTerm.hh (class FreeTerm): visitedFlag added
+	(setVisitedFlag): added
+
+	* freeTerm.cc (findActiveSlots): rewritten to use visited flag
+
+Wed Oct 16 11:21:54 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeNet.cc (dump): hacked to do indentation
+
+Tue Oct 15 18:27:45 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* freeRemainder.cc (dump): rewritten to do indentation
+
+	* freeRhsAutomaton.cc (dump): indentLevel arg added but not yet used
+
+	* freeLhsAutomaton.cc (dump): rewritten to do indentation
+
+Fri Aug 30 13:50:50 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* freeTerm.cc (subsumes): much simplified not that subsumtion on
+	variables handles non-linearities correctly
+
+Fri Aug  9 15:53:39 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* freeDagNode.cc (stackArguments): added
+	(copyWithReplacement): added
+
+	* freeSymbol.cc: ruleRewrite() stripped
+
+	* freeSymbol.hh (class FreeSymbol): ruleRewrite() stripped
+
+Thu Aug  8 16:29:21 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* freeSymbol.cc (ruleRewrite): added
+
+Tue Aug  6 14:45:37 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* freeLhsAutomaton.cc (freeSubterms): freeVars parameter and code
+	to fill out freeVariables vector deleted
+	(match): code to bind free variables removed
+	(dump): code to dump free variables removed
+
+	* freeLhsAutomaton.hh (class FreeLhsAutomaton): freeVars rag
+	removed from constructor
+	(class FreeLhsAutomaton): freeVariables vector removed
+
+	* freeLhsCompiler.cc: created by extraacting compiler code from freeTerm.cc
+	(analyseConstraintPropagation): matchAtTop arg removed
+	(compileRemainder): no longer pass boundAbove
+	(compileLhs): boundAbove arg removed, no longer update and pass
+	this set
+
+	* freeTerm.hh (class FreeTerm): boundAbove arg removed from
+	compileLhs(); matchAtTop arg removed from analyseConstraintPropagation()
+
+Fri Aug  2 17:21:28 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* freeSymbol.cc (Symbol): take strategy has a reference rather
+	than a pointer to a constant Vector<int> for consistancy with
+	other theories
+
+Thu Aug  1 17:10:13 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* freeSymbol.cc (FreeSymbol): hacked to handle empty strategy list correctly 
+
+Wed Jul 31 17:17:47 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* freeSymbol.cc (makeTerm): added
+
+Fri Jun 28 17:34:01 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (earlyMatchFailOnInstanceOf): added
+
+Fri Jun 21 18:53:39 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (compileLhs): new arg list; handle subproblem likely
+	flag
+	(compileRemainder): use new compileLhs()
+
+	* freeTerm.hh (class FreeTerm): changed compileLhs() args
+
+Thu Jun 13 16:26:44 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeLhsAutomaton.cc (match): use SubproblemAccumulator
+
+	* freeRemainder.cc (slowMatchReplace2): use SubproblemAccumulator
+
+Wed Jun 12 10:49:40 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (compileLhs): added nrVariables arg
+	(compileRemainder): pass nrVariables
+
+Fri Jun  7 16:51:41 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): use new SubproblemSequence
+	constructor and semantics
+
+	* freeLhsAutomaton.cc: use new SubproblemSequence constructor and semantics
+
+	* freeTheory.cc: Sequence's removed throughout module
+
+Wed May 29 16:36:53 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeRemainder.cc (dump): multi-character character constant removed
+
+Tue May 28 17:03:58 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (findBestSequence): top level version: modified to
+	use Term::findBestSequence()
+	(findBestSequence): recursive version: deleted
+
+Thu May 23 11:38:51 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeNet.cc (dump): now dump remainders
+	(dump): fixed bug where we assumed net to be empty if there were
+	no test nodes
+
+	* freeRemainder.cc (dump): added
+
+Sun May 19 18:29:36 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace2): added
+	(slowMatchReplace): call slowMatchReplace2() to actually do the
+	work; we acll finished() to unprotect DAG nodes in the
+	substitution and call DagNode::okToCollectGarbage() even if match
+	failed as matching can created garbage (eg in assoc or AC theories)
+
+Sat May 18 15:55:30 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (rewrite): print Advisory if users strategy is abandoned
+
+Fri May 17 16:20:38 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeDagNode.cc: deleted #include "dumpContext.hh"
+
+	* freeNet.cc (dump): use streams
+
+	* freeLhsAutomaton.cc (dump): use streams
+
+	* freeRhsAutomaton.cc (dump): use streams
+
+	* freeSymbol.cc (dump): use streams
+
+Sat May 11 16:31:39 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (FreeSymbol): pass stable = true
+
+Fri Apr 12 17:22:59 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (analyseConstraintPropagation): added atTop parameter
+	(findBestSequence): call analyseConstraintPropagation() with atTop
+	= false
+
+	* freeTerm.hh: added atTop parameter to analyseConstraintPropagation()
+
+Wed Apr 10 12:04:46 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeDagNode.cc (markArguments): Asserts removed (placed in
+	DagNode::mark() instead)
+
+	* freeTerm.cc (markEagerArguments): use argArray.length() in place
+	of sym->arity()
+	(markEagerArguments): replaced old style cast with static_cast and
+	removed local variable that was only used once
+	(findEagerVariables): replaced old style cast with static_cast
+
+Wed Mar 27 11:28:10 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTheory.cc: template class
+	Sequence<FreeRhsAutomaton::Instruction> removed
+
+	* freeTerm.cc (compileRhs): rewritten to use revised
+	FreeRhsAutomaton class
+	(compileRhsAliens): rewritten to use revised FreeRhsAutomaton class
+	(compileRhsFree): rewritten to use revised FreeRhsAutomaton class
+
+	* freeRhsAutomaton.hh (addAlien): added
+
+	* freeRhsAutomaton.cc (construct): rewritten
+	(replace): rewritten
+	(dump): rewritten
+	(addFree): added
+
+	* freeTheory.cc: template instantiation for Vector<FreeRemainder*>
+	moved here
+
+	* freeNet.hh: data members slots and conflicts removed; function
+	declarations updated; many functions that don't need to access
+	class data members declared static
+	
+	* freeNet.cc (buildPatternVector): greatly simplified by removing
+	slot handling code
+	(allocateSlot): created
+	(buildPatternVector): further simplified by not counting and
+	returning number of live patterns
+	(buildPatternVector): previous simplification reversed - we need
+	count after all for default case
+	(buildNet): simplified by moving slot code into allocateSlot()
+	(compileEquations): slots and conflicts are now local data
+	structure rather than being data members of class
+	(buildSlotTranslation): take slots and conflicts as arguments;
+	obscure variable names changed
+
+Tue Mar 26 13:56:39 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeNet.cc (buildNet): call findActiveSlots on each live pattern
+	to find conflicts with newly created slot
+	(setUtilityFlags): created, to mark and unmark those terms that
+	have been matched during construction of the discrimination net
+	(compileEquations): expand conflict vector to keep it in sync with
+	slots data structure
+	(compileEquations): code to use graph coloring added to
+	slotTranslation code
+	(buildSlotTranslation): created
+	(compileEquations): rearranged to use buildSlotTranslation()
+	(buildNet): don't allocate slots for symbols with zero arity
+	(buildPatternVector): don't try to union slot where non has been allocated
+
+	* freeTerm.cc (findActiveSlots): infinite recursion bug fixed
+
+Mon Mar 25 09:56:49 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (findActiveSlots): added
+
+	* freeNet.cc (findBestPosition): return symbols via Vector<Triple>
+	(buildNet): modified to use new findBestPosition()
+	(findBestPosition): now check that bestSymbols exists before
+	taking it length; don't bother treating length 0 as a special case
+	as Vector<T>::expandTo(0) now works OK
+
+Sat Mar 23 14:12:33 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeNet.cc (findBestPosition): ExtSequence removed because of
+	instatiation problems
+	(compileEquations): long standing bug wherein position were not
+	translated to match slots fixed
+	(compileEquations): bug introduced by previous bugfix fixed; don't
+	try to translate -1 as a slot or position member
+	(buildApplicable): added
+
+	* freeNet.hh: UnionFind data member added
+
+	* freeNet.cc: routines changed to use UnionFind class
+
+Thu Mar 21 10:12:05 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (computeSort): rewritten to treat uniform sort
+	case as special case
+	(computeSort): hacked uniform case to try to improve performance
+	(computeSort): fancy uniform sort sort code stripped
+
+	* freeRemainder.hh (fastMatchReplace): #ifdef'd raw access to
+	Vector<> arrays added
+
+	* freeNet2.hh (applyReplace): #ifdef'd raw access to Vector<> arrays
+
+Fri Mar 15 14:00:46 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeNet2.hh (applyReplace): more loop reorganization
+	(applyReplace): gross hacks involving raw access of Vector<> arrays
+	(applyReplace): more hacking: netBase moved inwards, if statement
+	reversed
+
+	* freeNet.cc (buildTernaryTree): continuation subtree now
+	propogate -1 for position and argIndex to enable detection of case
+	where subject node does note change
+	make sure implementation of freeNet2.hh included
+
+	* freeNet2.hh (applyReplace): loop reorganized to avoid reloaded
+	pointer to dag node in case when we know it won't change
+
+Thu Mar 14 11:01:27 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeNet.cc (buildFringe): now take slot arg; all routines
+	updated to use Position rather than Sequence<int>
+	(dump): added
+
+	* freeNet.hh: added struct Position to carry slot index for parent
+	node along with path
+ec
+Wed Mar 13 15:38:42 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeNet.cc (buildPatternVector): now return number of live patterns
+	(tripleCompare): args changed from refs to pointers
+
+	* freeDagNode.hh: FreeNet is now a friend
+
+	* freeNet.cc: Pair->Triple throughout
+	(buildNet): allocateSlot for each symbol at chosen position
+	(buildPatternVector): set slot index for each pattern with
+	appropriate symbol at chosen position
+	(findSlot): added
+	(unionSlots): addded
+	(allocateSlot): added
+	(compileEquations): added crude slot resolution code
+
+	* freeNet.hh (applyReplace): check for no equations; check for top
+	symbol being a constant (0 size stack); use static_casts; check
+	d->symbol()-arity() rather than n.symbol.arity() to let gcc do
+	common subexpression elimination with inlined argArray() body.
+	Pair -> Triple
+
+Tue Mar 12 17:03:36 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (compileRemainder): variable set parameters removed
+	(compileRemainder): removed fast arg; fast determination now done
+	completely inside this function
+
+	* freeSymbol.cc: old applyReplace removed
+	template instatiations removed
+	(compileEquations): added (but commented out until freeNet ready)
+
+	* freeSymbol.hh: old discrimination net struct and data members removed
+	strategy() removed
+
+	* freeNet.hh (applyReplace): equation arg dropped from call to
+	fastMatchReplace(); code changed for new applicable data structure
+	(applyReplace): code changed back; we need to avoid a chicken and
+	egg situation with applicable and net
+
+	* freeTerm.cc (compileRemainder): now take equation arg
+
+	* freeRemainder.hh (fastMatchReplace): no longer take equation arg
+	pointer to the equation that we're the remainder of is now stored
+	as a data member
+
+	* freeRemainder.cc (slowMatchReplace): no longer take equation arg
+	(freeVariables): take and store equation arg
+
+Mon Mar 11 09:56:04 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeRemainder.cc (slowMatchReplace): Sequence accesses changed
+	to Vector accesses
+
+	* freeRemainder.hh: construct decl added, Sequence<>s changed to
+	Vector<>s, local structs chendd to FreeLhsAutomaton structs
+
+	* freeTerm.cc (compileRemainder): added
+
+	* freeTerm.hh: public version of findBestSequence() privatized
+	compileRemainder() added
+
+	* freeSymbol.cc (rewrite): make sure we compute sorts of subterms
+	before applying at top with user strategy - subtle bug removed,
+	Assert() added
+
+	* freeLhsAutomaton.cc (match): Assert()s added to check for
+	missing sort info
+
+Sun Mar 10 14:58:39 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeLhsAutomaton.hh: build() -> match()
+
+	* freeLhsAutomaton.cc (match): build() -> match()
+
+	* freeRemainder.cc (slowMatchReplace): build() -> match()
+
+	* freeLhsAutomaton.cc: completely rewritten, using Vector<>s
+
+Sat Mar  9 16:20:28 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (analyseConstraintPropagation): nrPos removed from
+	call to scanFreeSkeleton()
+	(compileLhs): nrPos removed from call to scanFreeSkeleton();
+	(compileLhs): much simplification
+	(scanFreeSkeleton): heavily rewritten; semantics have changed: top
+	free term now gets placed in freeSymbols; also positions stored in
+	FreeOccurrence now refer to freeSymbols index of parent rather
+	than stack position under compilation; this make this function
+	more generally useful but means that extra works has to be done
+	else where to compute stack positions for compilation 
+
+	* freeTerm.hh: removed "position" parameter from scanFreeSkeleton()
+
+	* freeTerm.cc (compileLhs): "simple" argument removed
+
+Fri Mar  8 10:37:33 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (Term): set slotIndex to -1
+	(findBestSequence): split into two functions, a private recursive
+	function that does most of the work and a public wrapper that
+	initializes the search variables. Callers changed to call wrapper
+
+	* freeArgumentIterator.cc (valid): changed to Vector<> representation
+	(argument): changed to Vector<> representation
+	(next): changed to Vector<> representation
+
+	* freeArgumentIterator.hh: changed to Vector<> representation
+
+	* freeTerm.cc (Term): now take reference to arg list; code
+	considerably simplified
+	(arguments): recoded using Vector<>s
+	(FreeTerm): now empty function
+	(deepSelfDestruct): recoded using Vector<>s
+	(normalize): recoded using Vector<>s
+	(compareArguments): recoded using Vector<>s
+	(compareArguments): recoded using Vector<>s, still treat 0 args as
+	special case and walk pointer over dagNode args
+
+	* freeTerm.hh: slotIndex added. argument put in Vector<Term*>
+
+Thu Mar  7 17:09:14 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeLhsAutomaton.cc (FreeLhsAutomaton): args changed to use Vector<>s
+
+	* freeLhsAutomaton.hh: ctor args changed to use Vector<>s
+
+	* freeTerm.cc (compileLhs): use Vector for subAutomata
+
+	* freeTerm.hh: findBestSequence() params changed
+
+	* freeTerm.cc (findBestSequence): IntSet::copy() -> IntSet::operator=
+	(findBestSequence): changed to use Vector<int> to hold current
+	sequence; callers changed; "Best" struct changed
+
+Wed Mar  6 17:53:27 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeNet.cc (buildFringe): expand() -> expandTo()
+	(buildNet): expand() -> expandBy()
+
+Mon Mar  4 09:59:56 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeNet.hh (applyReplace): created from idea.cc and code moved
+	out of freeSymbol.*
+
+Fri Mar  1 10:09:40 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.hh: added locateSubterm()
+
+	* freeTerm.cc (locateSubterm): added
+
+Thu Feb 22 11:38:28 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeRemainder.cc: template instantiations added
+
+	* freeSymbol.cc (applyReplace): rewritten to use fastMatchReplace()
+
+	* freeRemainder.cc (slowMatchReplace): added (made from old slowMatchRemainder())
+
+	* freeRemainder.hh (fastMatchReplace): added (made from old fastMatchRemainder())
+
+	* freeSymbol.cc (applyReplace): added
+
+Thu Feb 15 10:50:16 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (findEagerVariables): simplified, making use of the
+	fact that Variable::findEagerVariables() is now usable
+
+Wed Feb 14 11:39:29 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (rewrite): rewritten yet again! Now we trust user
+	strategy upto but not including final zero. Just before final zero
+	we check to see if the top operator is in the error sort and if so
+	copy and evaluate all unevaluated arguments in an attempt to bring
+	it down.
+	(rewrite): evaluated set has arg positions that start from 1
+	rather than 0
+
+Tue Feb 13 14:55:02 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (rewrite): rewritten so than when when current
+	symbol has a custom strategy we find the sort and if it is a error
+	sort we use default strategy, making copies of any non-eager subterms.
+	(rewrite): need to invalidate stale sort info
+	(rewrite): rewritten again; for custom strategy:
+		(1) evaluate eager args
+		(2) each time we hit 0 in strategy, force top sort to be
+		computed; if error sort, copy and evaluate all non-eager
+		subterms and invalidate the sort we just computed. Then
+		rewrite at top if possible and exit
+		(3) otherwise rewrite at top if possible
+		(4) otherwise continue with custom strategy, copying and
+		evaluating semi-eager arguments until we hit 0; in that
+		case goto (2)
+	Since all strategies end in 0 we know that the last sort that we
+	computed in (2) will be valid if we finish strategy without having
+	been able to rewrite at top
+
+Thu Feb  8 17:26:08 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (computeSort): removed test for UNKNOWN_SORT (this
+	is now done in dagNode::computeSort()
+	(rewrite): use dagNode::computeSort()
+
+Tue Feb  6 16:59:29 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (computeSort): use constrainToSmallerSort()
+
+Thu Feb  1 14:06:10 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc: parse() deleted
+
+	* freeSymbol.hh: parse() deleted
+
+	* freeTerm.hh: FreeSymbol friendship revoked
+
+	* freeSymbol.cc (parse): added
+
+	* freeTerm.hh: FreeSymbol is now a friend
+
+	* freeSymbol.hh: parse() added
+
+Wed Jan 31 10:21:36 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (rewrite): use new applyReplace()
+
+	* freeFastLhsAutomaton.cc (FreeFastLhsAutomaton): call to
+	Symbol::lookupSort() replaced by Variable::lookupSort()
+
+	* freeLhsAutomaton.cc (makeVariableOccurVector): call to
+	Symbol::lookupSort() replaced by Variable::lookupSort()
+
+Fri Jan 12 11:21:55 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeDagNode.hh: tests show that gcc is capable of reusing results
+	of inlined symbol() and arity() calls, so passing arity to
+	argArray() to avoid multiple such calls is unnecessarily
+	ugly. Thus the arity parameter is removed throughout freeTheory code.
+
+Thu Jan 11 18:09:02 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (computeSort): DagNode::SORT_UNKOWN ->
+	Sort::SORT_UNKOWN, DagNode::MULTISORT -> Sort UNION_SORT
+	
+
+Wed Jan 10 16:53:36 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeFastLhsAutomaton.cc (FreeFastLhsAutomaton): added dummy
+	vector so we can get the sort of a variable
+
+	* freeLhsAutomaton.cc (makeVariableOccurVector): added dummy
+	vector so we can get the sort of a variable
+
+	* freeSymbol.cc (Symbol): deleted sharable, initialize sortIndexBuffer
+	(computeSort): use Vectors
+
+	* freeSymbol.hh: don't have sharable arg for constructor; use
+	Vector for sortIndexBuffer
+
+Thu Dec 21 17:12:23 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeFastLhsAutomaton.cc (build): fixed subtle bug where we were
+	modifying automatons nrArgs field!
+
+Fri Dec 15 11:43:51 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (computeSort): added code to deal with union sorts
+	(computeSort): commented out the delete in case this is the cause
+	of heap corruption
+	(computeSort): changed delete to delete[]
+
+	* freeLhsAutomaton.cc (build): added code to check sorts
+	(makeVariableOccurVector): added code to store sort codes
+
+	* freeFastLhsAutomaton.cc (FreeFastLhsAutomaton): added code to
+	store sort code in unboundVariableOccur[]
+	(build) added code to check sorts
+
+Tue Dec 12 11:05:55 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeSymbol.cc (computeSort): fixed bug where we were making a
+	(possibly) recursive virtual call based on the current symbol
+	rather than the subjects subterm symbol
+
+	* freeSymbol.hh: addded sortIndexBuffer
+
+	* freeSymbol.cc (rewrite): added code to determine sorts for
+	non-eager arguments before matching at top, and to reduce any
+	arguments that wind up in error sort.
+	(FreeSymbol): addded sortIndexBuffer initialization
+	(computeSort): added
+
+	* freeSymbol.hh: added computeSort()
+
+Fri Dec  8 18:05:26 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeDagNode.cc: deleted normalize() and rewrite()
+
+	* freeDagNode.hh: deleted normalize() and rewrite()
+
+Thu Dec  7 18:00:16 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeDagNode.cc: commented out normalize() and rewrite()
+
+	* freeDagNode.hh: commented out normalize() and rewrite()
+
+	* freeSymbol.cc (rewrite): added
+
+	* freeSymbol.hh: added bool rewrite()
+	commented out strategy()
+
+Tue Nov  7 11:18:02 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTerm.cc (compileLhs): added "simple" argument
+
+	* freeDagNode.cc (rewrite): rule->equation names changed
+
+Thu Oct 26 11:23:34 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeTheory.hh: added FreeFastLhsAutomaton
+
+	* freeDagNode.hh: made FreeFastLhsAutomaton a friend
+
+	* freeTerm.cc (compileLhs): added code to use FreeFastLhsAutomaton
+
+	* freeFastLhsAutomaton.hh: created
+
+	* freeFastLhsAutomaton.cc: created
+
+	* freeLhsAutomaton.cc (build): fix bug where we failed to set
+	returnedSubproblem = 0 when matching a constant
+
+Mon Oct 23 18:01:26 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeRhsAutomaton.cc (dump): removed symbol2String() usage
+
+	* freeLhsAutomaton.cc (dump): removed symbol2String() usage
+
+Tue Oct 17 11:24:58 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeRhsAutomaton.cc (dump): updated to use dump context
+
+	* freeRhsAutomaton.hh: updated to use dump context
+
+	* freeLhsAutomaton.cc (dump): updated to use dump context
+
+	* freeLhsAutomaton.hh: updated to use dump context
+
+	* freeDagNode.cc (rewrite): modified reduction loop in default
+	strategy case to see if it speeds this up
+	(rewrite): now use reduce() member function to reduce arguments;
+	don't call setReduced();
+
+	* freeRhsAutomaton.cc (replace): treat replacement node as a
+	special case
+
+Fri Oct 13 17:45:10 1995  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* freeRhsAutomaton.cc (dump): removed CHECK_SHARABILITY
+
+	* freeTerm.cc (compileLhs): removed getVariable()
+
+	(analyseConstraintPropagation): removed getVariable()
+	replaced all (Variable*)s with downCast()s
+

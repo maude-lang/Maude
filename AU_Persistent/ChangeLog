@@ -1,0 +1,148 @@
+2003-04-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Deque.hh (copyFromArgVec): make into ctor
+
+2003-04-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_StackNode.cc (mark): fixed nasty bug where we were not
+	marking ourself
+	(checkIntegrity): fixed bug where we were alloing zero args in
+	non-start node
+
+	* AU_Deque.cc (computeBaseSort): use checkIntegrity()
+
+	* AU_Deque.hh (class AU_Deque): added decl for checkIntegrity()
+
+	* AU_Deque.cc (checkIntegrity): added
+
+	* AU_StackNode.hh (class AU_StackNode): added decl for
+	checkIntegrity()
+
+	* AU_StackNode.cc (checkIntegrity): added
+
+2003-04-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Deque.hh (topRight): added
+	(topLeft): added
+
+	* AU_StackNode.hh (class AU_StackNode): updatede decl for split()
+
+	* AU_StackNode.cc (split): switch method fo returning pointers
+
+	* AU_StackNode.hh (class AU_StackNode): added decl for pop()
+
+	* AU_StackNode.cc (pop): added
+
+	* AU_Deque.hh (popRight): added
+	(popLeft): added
+
+2003-04-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_StackNode.cc (push): fixed nasty bug where we were forgetting
+	to clear unused elements
+
+	* AU_StackSort.cc (revComputeBaseSort): code cleaning
+	(fwdComputeBaseSort): code cleaning
+
+2003-04-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_StackSort.cc (fwdComputeBaseSort): fixed bug where we were
+	starting at ELEMENTS_PER_NODE rather than ELEMENTS_PER_NODE - 1 (2
+	places)
+	(revComputeBaseSort): fixed symmetric bug
+
+	* AU_Deque.hh (pushRight): added argArray version
+	(pushLeft): added argArray version
+
+	* AU_StackNode.hh (class AU_StackNode): added decls for fwdJoin()
+	and revJoin()
+
+	* AU_StackArgVec.cc (fwdJoin): added
+	(revJoin): added
+
+	* AU_StackNode.hh (class AU_StackNode): updated decls for
+	fwdMake() and revMake()
+	(partialClone): added
+
+	* AU_StackArgVec.cc (revMake): take AU_StackNode* arg
+	(fwdMake): take AU_StackNode* arg
+
+2003-04-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Deque.hh (pushLeft): added DagNode* version
+	(pushRight): added DagNode* version
+
+	* AU_StackNode.cc (push): added
+
+	* AU_StackNode.hh (class AU_StackNode): added decl for push()
+
+	* AU_Deque.hh (pushLeft): added AU_Deque version
+	(pushRight): added AU_Deque version
+
+	* AU_StackNode.hh (class AU_StackNode): updated decl for
+	prepend()
+
+	* AU_StackNode.cc (prepend): rewritten to used explicit base
+	pointer rather than this pointer; work correctly with null base
+	pointer
+
+2003-04-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Deque.hh (class AU_Deque): updated decl for computeBaseSort()
+
+	* AU_Deque.cc (computeBaseSort): made const
+
+	* AU_StackArgVec.cc (fwdMake): fix bug where we were checking i >
+	0 rather than i >= 0 (2 places)
+	(revMake): fix symmetric bug
+
+	* AU_DequeIter.cc (reverseRight): fixed bug where we were
+	incorrectly setting index
+
+2003-04-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Deque.hh (length): made const
+
+	* AU_StackNode.hh (setSortIndex): added
+	(getSortIndex): added
+
+	* AU_StackSort.cc: created
+
+	* AU_Deque.cc: created
+
+	* AU_Deque.hh: created
+
+	* AU_StackArgVec.cc: created
+
+	* AU_DequeIter.cc (reverseRight): rewritten
+
+	* AU_Persistent.hh: created
+
+2003-04-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DequeIter.hh: created
+
+	* AU_DequeIter.cc: created
+
+	* AU_StackNode.hh (class AU_StackNode): make class AU_DequeIter a
+	friend
+
+	* AU_Deque.hh: created
+
+	* AU_StackNode.cc (mark): added
+
+	* AU_StackNode.hh (new): added
+	(getMemoryCell): added (2 versions)
+	(setMarked): added
+	(isMarked): added
+	(class AU_StackNode): added decl for mark()
+
+	* AU_StackNode.cc (revCopy): added
+	(split): rewritten
+
+2003-04-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_StackNode.hh: created
+
+	* AU_StackNode.cc: created
+

@@ -1,0 +1,44 @@
+#
+#	Optimized version for Linux.
+#
+
+#
+#	GNU stuff
+#
+BISON =	bison
+FLEX =	flex
+AR =	ar
+CC =   gcc-3.2
+CXX =  g++-3.2
+
+WFLAGS =	-Wall \
+		-Winline \
+		-Wno-non-virtual-dtor
+
+OFLAGS =	-fno-exceptions \
+		-fomit-frame-pointer \
+		-fforce-addr \
+		-finline-limit=10000 \
+		-O2 \
+		-mpreferred-stack-boundary=2 \
+		-mcpu=pentium4
+
+DFLAGS =	-DLINUX \
+		-DLIBv3 \
+		-DNO_ASSERT \
+		-DSPEED_HACKS \
+		-DLOCAL_INLINES \
+		-I/homes/eker/include \
+		-L/homes/eker/Linux/3.2/lib \
+		$(OFLAGS) $(WFLAGS)
+
+#		-DCOMPILER \
+#		-DANNOTATE \
+
+GMP_LIB_DIR =	/homes/eker/Linux/3.2/lib
+
+LINKAGE =	-static
+
+ARFLAGS =	rus
+
+DLMALLOC=	-ldlmalloc

@@ -1,0 +1,141 @@
+/*
+
+    This file is part of the Maude 2 interpreter.
+
+    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+*/
+
+//
+//	Class for terms in the free theory.
+//
+
+#ifndef _freeTerm_hh_
+#define _freeTerm_hh_
+#include "term.hh"
+#include "freeSubterm.hh"
+
+class FreeTerm : public Term
+{
+public:
+  FreeTerm(FreeSymbol* symbol, const Vector<Term*>& arguments);
+  ~FreeTerm();
+  //
+  //	functions required by theory interface
+  //
+  RawArgumentIterator* arguments();
+  void deepSelfDestruct();
+  Term* deepCopy2(SymbolMap* map) const;
+  Term* normalize(bool full, bool& changed);
+  int compareArguments(const Term* other) const;
+  int compareArguments(const DagNode* other) const;
+  void findEagerVariables(bool atTop, NatSet& eagerVariables) const;
+  void analyseConstraintPropagation(NatSet& BoundUniquely) const;
+  LhsAutomaton* compileLhs2(bool matchAtTop,
+			    const VariableInfo& variableInfo,
+			    NatSet& boundUniquely,
+			    bool& subproblemLikely);
+  void markEagerArguments(int nrVariables,
+			  const NatSet& eagerVariables,
+			  Vector<int>& problemVariables);
+  DagNode* dagify2();
+
+  void findAvailableTerms(TermBag& availableTerms, bool eagerContext, bool atTop);
+  int compileRhs2(RhsBuilder& rhsBuilder,
+		  VariableInfo& variableInfo,
+		  TermBag& availableTerms,
+		  bool eagerContext);
+  //
+  //	Optional stuff that is easy to define for free theory.
+  //
+  bool earlyMatchFailOnInstanceOf(const Term* other) const;
+  bool subsumes(const Term* other, bool sameVariableSet) const;
+  int partialCompareArguments(const Substitution& partialSubstitution,
+			      DagNode* other) const;
+  //
+  //	Functions particular to free terms.
+  //
+  Term* locateSubterm(const Vector<int>& position, int backup = 0);
+  Term* locateSubterm2(Vector<int>& position);
+  int getSlotIndex() const;
+  void setSlotIndex(int index);
+  void setVisitedFlag(bool state);
+  void findActiveSlots(NatSet& slots);
+  FreeRemainder* compileRemainder(Equation* equation, const Vector<int>& slotTranslation);
+  //#ifdef COMPILER
+  bool  scanFreeSkeleton(const NatSet& usedVariables,
+			 Vector<int>& path,
+			 FreePositionTable& positions,
+			 NatSet& boundVariables,
+			 Vector<FreeSubterm>& subterms);
+  //#endif
+
+private:
+  FreeTerm(const FreeTerm& original, SymbolMap* map);
+
+  struct CP_Sequence;
+
+  static void findConstraintPropagationSequence(const Vector<FreeOccurrence>& aliens,
+						const NatSet& boundUniquely,
+						CP_Sequence& bestSequence);
+  static void insertGroundOutAliens(const Vector<FreeOccurrence>& aliens,
+				    Vector<int>& sequence,
+				    const NatSet& boundUniquely,
+				    int& step);
+  static void findConstraintPropagationSequence(const Vector<FreeOccurrence>& aliens,
+						const Vector<int>& currentSequence,
+						const NatSet& boundUniquely,
+						int step,
+						CP_Sequence& bestSequence);
+  void scanFreeSkeleton(Vector<FreeOccurrence>& freeSymbols,
+			Vector<FreeOccurrence>& otherSymbols,
+			int parent = -1,
+			int argIndex = -1);
+  void compileRhsAliens(RhsBuilder& rhsBuilder,
+			VariableInfo& variableInfo,
+			TermBag& availableTerms,
+			bool eagerContext);
+  int compileRhs3(FreeRhsAutomaton* automaton,
+		  RhsBuilder& rhsBuilder,
+		  VariableInfo& variableInfo,
+		  TermBag& availableTerms,
+		  bool eagerContext);
+
+  Vector<Term*> argArray;
+  short slotIndex;
+  Bool visitedFlag;
+};
+
+inline int
+FreeTerm::getSlotIndex() const
+{
+  return slotIndex;
+}
+
+inline void
+FreeTerm::setSlotIndex(int index)
+{
+  slotIndex = index;
+}
+
+inline void
+FreeTerm::setVisitedFlag(bool state)
+{
+  visitedFlag = state;
+}
+
+#endif

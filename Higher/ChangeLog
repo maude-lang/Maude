@@ -1,0 +1,809 @@
+2003-05-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSearchState.cc (findNextRewrite): use isNonexec()
+
+	* rewriteSearchState.hh (class RewriteSearchState): added enum
+	Flags containing ALLOW_NONEXEC
+
+2003-04-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* positionState.hh (getExtensionInfo): no longer const
+
+	* positionState.cc (PositionState): init extensionInfoValid
+	(findNextPosition): don't call makeExtensionInfo() here; set
+	extensionInfoValid false if we're working with extension
+
+	* positionState.hh (class PositionState): added data member
+	extensionInfoValid
+	(getExtensionInfo): call makeExtensionInfo() on demand
+	
+===================================Maude80===========================================
+
+2003-02-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equalityConditionFragment.cc (preprocess): updated Assert()
+
+	* assignmentConditionFragment.cc (preprocess): updated Assert()
+
+	* rewriteSearchState.cc: removed #pragma
+
+	* rewriteSearchState.hh: removed #pragma
+
+	* temporalSymbol.cc: removed #pragma
+
+	* temporalSymbol.hh: removed #pragma
+
+	* stateTransitionGraph3.cc: removed #pragma
+
+	* stateTransitionGraph3.hh: removed #pragma
+
+	* sortTestConditionFragment.cc: removed #pragma
+	(preprocess): updated Assert()
+
+	* sortTestConditionFragment.hh: removed #pragma
+
+	* searchState.cc: removed #pragma
+
+	* searchState.hh: removed #pragma
+
+	* satSolverSymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()
+	(makeFormula): updated Assert()s
+
+	* satSolverSymbol.hh: removed #pragma
+
+	* rewriteSequenceSearch.cc: removed #pragma
+
+	* rewriteSequenceSearch.hh: removed #pragma
+
+	* rewriteConditionState.cc: removed #pragma
+
+	* rewriteConditionState.hh: removed #pragma
+
+	* rewriteConditionFragment.cc: removed #pragma
+	(preprocess): updated Assert()
+
+	* rewriteConditionFragment.hh: removed #pragma
+
+	* positionState.cc: removed #pragma
+
+	* positionState.hh: removed #pragma
+	(getDagNode): updated Assert()
+	(getExtensionInfo): updated Assert()
+
+	* pattern.cc: removed #pragma
+
+	* pattern.hh: removed #pragma
+
+	* modelCheckerSymbol.cc: removed #pragma
+	(eqRewrite): updated Assert()
+
+	* modelCheckerSymbol.hh: removed #pragma
+
+	* matchSearchState.cc: removed #pragma
+
+	* matchSearchState.hh: removed #pragma
+
+	* equalityConditionFragment.cc: removed #pragma
+
+	* equalityConditionFragment.hh: removed #pragma
+
+	* assignmentConditionState.cc: removed #pragma
+
+	* assignmentConditionState.hh: removed #pragma
+
+	* assignmentConditionFragment.cc: removed #pragma
+
+	* assignmentConditionFragment.hh: removed #pragma
+	
+===================================Maude79===========================================
+
+2003-02-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelCheckerSymbol.hh (class ModelCheckerSymbol): parentSymbol
+	-> satisfiesSymbol in struct SystemAutomaton; added data member
+	satisfiesSymbol
+
+	* modelCheckerSymbol.cc (ModelCheckerSymbol): clear
+	satisfiesSymbol
+	(attachSymbol): handle satisfiesSymbol
+	(copyAttachments): handle satisfiesSymbol
+	(checkProposition): removed hacks that were needed because same
+	symbol was used for model checking and satisfaction
+	(checkProposition): use satisfiesSymbol
+	(eqRewrite): use satisfiesSymbol
+
+===================================Maude78=====================================
+	
+2002-11-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* positionState.cc (PositionState): switch initializer order to
+	placate g++3.2
+
+2002-11-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelCheckerSymbol.cc (eqRewrite): use new style IssueAdvisory()
+
+	* satSolverSymbol.cc (eqRewrite): use new style IssueAdvisory()
+
+2002-10-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* positionState.cc (exploreNextPosition): pass respectFrozen arg
+	to stackArguments()
+	
+===================================Maude76==================================================
+
+2002-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTestConditionFragment.cc (compileBuild): call useIndex() on
+	lhsIndex; don't set nrIndicesToProtect
+
+	* sortTestConditionFragment.hh (class SortTestConditionFragment):
+	deleted data member nrIndicesToProtect
+
+	* rewriteConditionFragment.cc (compileBuild): call useIndex() on
+	lhsIndex; don't set nrIndicesToProtect
+
+	* rewriteConditionFragment.hh (class RewriteConditionFragment):
+	deleted data member nrIndicesToProtect
+
+	* equalityConditionFragment.cc (compileBuild): don't set
+	nrIndicesToProtect
+
+	* equalityConditionFragment.hh (class EqualityConditionFragment):
+	deleted data member nrIndicesToProtect
+
+	* assignmentConditionFragment.hh (class
+	AssignmentConditionFragment): deleted data member
+	nrIndicesToProtect
+
+	* assignmentConditionFragment.cc (compileBuild): call useIndex()
+	on rhsIndex, since we are now changing who is responsible for
+	caling useIndex()
+	(compileBuild): don't set nrIndicesToProtect
+
+2002-08-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equalityConditionFragment.cc (compileBuild): fixed nasty bug
+	introduced by the coloring of constrcution indices: we need to
+	call useIndex() to stop lhsIndex and rhsIndex from being shared
+	via index coloring
+	
+===================================Maude75==================================================
+
+2002-06-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pattern.cc (Pattern): pass NONE as PreEquation() label arg
+	(Pattern): withExtensionconst -> withExtension (dunno how
+	withExtensionconst ever came about!)
+
+2002-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTestConditionFragment.cc (check): simplified normalize()
+	call
+
+	* rewriteConditionFragment.cc (check): simplified normalize()
+	call (2 places)
+
+	* equalityConditionFragment.cc (check): simplified normalize()
+	call (2 places)
+
+	* assignmentConditionFragment.cc (check): simplified normalize()
+	call (2 places)
+
+	* modelCheckerSymbol.cc (makeTransition): simplified now that
+	makeDagNode() takes a default argument
+	
+===================================Maude71a==================================================
+
+2002-02-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelCheckerSymbol.cc (eqRewrite): use pluralize() in Verbose()
+	call
+
+	* satSolverSymbol.cc (postInterSymbolPass): call
+	TemporalSymbol::postInterSymbolPass();
+	(eqRewrite): fix mistake in advisory - we don't compute negation
+	here
+	(eqRewrite): added Verbose()
+
+	* modelCheckerSymbol.cc (eqRewrite): findCounterExample() ->
+	findCounterexample()
+
+	* modelCheckerSymbol.hh (class ModelCheckerSymbol):
+	makeCounterExample() -> makeCounterexample()
+	counterExampleSymbol -> counterexampleSymbol
+
+	* higher.hh: ModelSymbol -> ModelCheckerSymbol
+
+	* modelCheckerSymbol.cc: was modelSymbol.cc
+
+	* modelSymbol.cc: ModelSymbol -> ModelCheckerSymbol
+	(ModelCheckerSymbol): counterExampleSymbol -> counterexampleSymbol
+	(attachSymbol): counterExampleSymbol -> counterexampleSymbol
+	(copyAttachments): counterExampleSymbol -> counterexampleSymbol
+	(makeCounterExample): counterExampleSymbol -> counterexampleSymbol
+	(attachSymbol): don't bind LTL symbols
+	(copyAttachments): don't copy LTL symbols
+	(checkProposition): FreeSymbol -> TemporalSymbol
+	(attachData): FreeSymbol -> TemporalSymbol
+	(attachSymbol): FreeSymbol -> TemporalSymbol
+	(attachTerm): FreeSymbol -> TemporalSymbol
+	(copyAttachments): FreeSymbol -> TemporalSymbol
+	(reset): FreeSymbol -> TemporalSymbol
+	(build): deleted
+	(ModelCheckerSymbol): don't initialize LTL symbols
+	(postInterSymbolPass): call TemporalSymbol::postInterSymbolPass()
+	(makeCounterExample): becomes makeCounterexample()
+	(eqRewrite): makeCounterExample() -> makeCounterexample()
+	(eqRewrite): use negate()
+	(eqRewrite): use safeCast()
+
+	* modelCheckerSymbol.hh: ModelSymbol -> ModelCheckerSymbol
+	(class ModelCheckerSymbol): derive from TemporalSymbol rather than
+	FreeSymbol
+	(class ModelCheckerSymbol): removed all the LTL Symbo, data members
+	(class ModelCheckerSymbol): delete decl for build()
+	(class ModelCheckerSymbol): counterExampleSymbol ->
+	counterexampleSymbol
+
+2002-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* temporalSymbol.cc (conjunct): rewritten since andSymbol may not
+	be assoc and therefore we can only pass 2 args at a time to
+	makeDagNode()
+
+	* satSolverSymbol.cc (makeFormula): added
+	(makeFormulaList): use makeFormula()
+
+	* temporalSymbol.cc (conjunct): added
+
+	* temporalSymbol.hh: added decl for conjunct()
+
+2002-02-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* higher.hh: added fwd decls for class TemporalSymbol and class
+	SatSolverSymbol
+
+	* satSolverSymbol.cc: created
+
+	* temporalSymbol.cc: created
+
+	* temporalSymbol.hh: created
+
+	* satSolverSymbol.hh: created
+
+2002-02-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteConditionState.cc (solve): use transferCount() for
+	StateTransitionGraph3
+
+	* stateTransitionGraph3.hh (transferCount): added
+
+	* rewriteSequenceSearch.cc (findNextMatch): use transferCount() in
+	place of addInCount() for MatchSearchState
+
+	* stateTransitionGraph3.cc (getNextState): use transferCount() in
+	place of addInCount() for RewriteSearchState
+
+	* rewriteSearchState.cc (findNextRewrite): don't call clearCount()
+
+	* matchSearchState.cc (findNextMatch): don't call clearCount()
+
+	* searchState.hh (transferCount): added
+
+2002-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteConditionState.hh (class RewriteConditionState): updated
+	data members
+
+	* rewriteConditionState.cc (findNextState): simplified
+	(RewriteConditionState): new initialization
+
+2002-02-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* higher.hh: added forward decls for new classes
+
+	* rewriteConditionState.cc: created
+
+	* rewriteConditionState.hh: created
+
+	* rewriteConditionFragment.cc (solve): replaced stub with
+	implementation
+
+	* assignmentConditionFragment.cc (solve): use
+	AssignmentConditionState 
+
+	* assignmentConditionState.cc: created
+
+	* assignmentConditionState.hh: created
+
+	* rewriteConditionFragment.hh: created
+
+	* rewriteConditionFragment.cc: created
+
+2002-02-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* assignmentConditionFragment.hh: created
+
+	* assignmentConditionFragment.cc: created
+
+	* sortTestConditionFragment.hh: created
+
+	* sortTestConditionFragment.cc: created
+
+	* equalityConditionFragment.hh: created
+
+	* equalityConditionFragment.cc: created
+
+2002-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc (ModelSymbol): deleted strategy argument passed
+	to FreeSymbol()
+
+	* modelSymbol.hh (class ModelSymbol): deleted static data member
+	eagerStrategy
+	
+===================================Maude70==================================================
+
+2002-01-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc (eqRewrite): fixed a nasty bug where we were
+	deleting newContext to early; this left proposition dags that may
+	have been copied by a collapse equation unprotected from the
+	garbage collector and caused havoc when testing propositions;
+	the bug must have been introduced by code cleaning since Alpha68
+
+2002-01-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc (eqRewrite): Added Verbose() call to print number
+	of system states examined
+
+2002-01-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSequenceSearch.cc (findNextInterestingState): yet another
+	rewrite: we now avoid examining more than one arc from each
+	maximum depth state if we are looking for normal forms - the
+	existence of a single state means we don't have a normal form and
+	since we are at max depth we will not explore children
+	(RewriteSequenceSearch): handle ONE_STEP by setting maxDepth = 1
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch):
+	nextIndex -> nextArc
+
+	* rewriteSequenceSearch.cc (findNextInterestingState): rewritten
+	to return exactly those states we should try matching against;
+	nextIndex -> nextArc throughout
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): added
+	data member needToTryInitialState
+
+	* rewriteSequenceSearch.cc (RewriteSequenceSearch): added maxDepth
+	arg, init maxDepth, exploreDepth, firstDeeperNodeNr
+	(findNextMatch): rewritten, assuming smarter findNextInterestingState()
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): added
+	data members maxDepth, exploreDepth, firstDeeperNodeNr; add
+	maxDepth arg to ctor decl
+
+2002-01-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSequenceSearch.cc (findNextMatch): add rewrites from
+	matchState to initial rewriting context
+	(findNextInterestingState): check for traceAbort() when we fail to
+	find a next arc from current explore state
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): updated decls
+
+	* rewriteSequenceSearch.cc (findNextInterestingState): added
+	(findNextMatch): rewritten using findNextInterestingState()
+	(findNextMatch): don't use startMatch()
+	(startMatch): deleted
+	(RewriteSequenceSearch): don't use startMatch()
+
+2002-01-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSequenceSearch.cc: complete rewrite based on StateTransitionGraph3
+
+	* rewriteSequenceSearch.hh: complete rewrite based on StateTransitionGraph3
+
+	* stateTransitionGraph3.hh (getContext): added
+	(getStateParent): added
+
+	* modelSymbol.cc (eqRewrite): check for bad LTL formula
+
+	* stateTransitionGraph3.hh (getStateFwdArcs): added
+
+	* modelSymbol.cc (makeCounterExample): pass last target to
+	makeTransitionList()
+	(makeTransitionList): pass target to makeTransition()
+	(makeTransition): include label in transition
+	(build): check that formula under LogicFormula::NOT is a proposition
+
+2002-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc (makeCounterExample): use makeTransitionList()
+
+	* modelSymbol.hh (class ModelSymbol): updated decls; changed data
+	members to symbols need for new style counter-examples
+
+	* modelSymbol.cc (ModelSymbol): handle symbols for new style
+	counter-examples
+	(attachSymbol): handle symbols for new style counter-examples
+	(copyAttachments): handle symbols for new style counter-examples
+	(makeStateList): becomes makeTransitionList()
+	(makeTransitionList): added
+
+2002-01-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc: use StateTransitionGraph3 throughout
+
+	* modelSymbol.hh (class ModelSymbol): use StateTransitionGraph3
+
+	* stateTransitionGraph3.cc: created
+
+	* stateTransitionGraph3.hh: created
+
+2001-12-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.hh (class ModelSymbol): use StateTransitionGraph2
+
+	* stateTransitionGraph2.hh: created
+
+	* stateTransitionGraph2.cc: created
+
+2001-12-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* positionState.hh (class PositionState): use NO_COPYING() macro
+
+	* searchState.hh (class SearchState): updated decl for initSubstitution()
+
+	* searchState.cc (initSubstitution): made arg const VariableInfo&
+
+	* searchState.hh (class SearchState): updated decl for
+	findFirstSolution(), made data member preEquation, const PreEquation*
+
+	* searchState.cc (findFirstSolution): make first arg const PreEquation*
+
+2001-12-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker.cc: deleted
+
+	* modelChecker.hh: deleted
+
+	* modelSymbol.cc: cleaned up includes
+
+	* modelSymbol.hh: cleaned up includes; delete class LogicFormula
+	hack
+	
+===================================Maude69==================================================
+
+2001-12-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stateTransitionGraph.cc (getNextState): use addInCount() and
+	clearCount() to move rewrites counts from reducing new states to
+	initil rewriting context
+
+	* modelSymbol.cc (check): commented out
+	(checkProposition): add in test rewrite count to parent rewrite count
+
+2001-12-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.hh (class ModelSymbol): added data members
+	stateListSymbol, nilStateListSymbol, counterExampleSymbol; added
+	decls for makeStateList() and makeCounterExample()
+
+	* modelSymbol.cc (ModelSymbol): handle stateListSymbol,
+	nilStateListSymbol and counterExampleSymbol
+	(attachSymbol): handle stateListSymbol, nilStateListSymbol and
+	counterExampleSymbol
+	(copyAttachments): handle stateListSymbol, nilStateListSymbol and
+	counterExampleSymbol
+	(makeStateList): added
+	(makeCounterExample): added
+	(eqRewrite): use makeCounterExample()
+
+	* modelSymbol.hh (class ModelSymbol): added decl for dump()
+
+	* modelSymbol.cc (dump): added
+	(eqRewrite): use getLeadIn(), getCycle()
+
+2001-12-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc (getNextState): added
+	(checkProposition): added
+	(eqRewrite): rewritten using ModelChecker2
+
+	* modelSymbol.hh (class ModelSymbol): added struct SystemAutomaton
+
+2001-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker.cc (explorePropertyTransitions): use BuchiAutomaton2
+	(explorePropertyTransitions): fixed nasty state ref bug to
+	intersectionStates - stale after call to
+	exploreSystemTransitions() beacuse intersectionStates vector may expand
+
+	* modelChecker.hh (class ModelChecker): use BuchiAutomaton2
+
+	* modelChecker.cc (findCounterExample): deal with multiple initial states
+
+2001-11-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc (eqRewrite): added hack to test BuchiAutomaton2
+
+2001-11-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc (eqRewrite): added hack to test GenBuchiAutomaton
+	class
+
+2001-11-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc (eqRewrite): added hack to test
+	VeryWeakAlternatingAutomaton class
+
+2001-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc (check): fixed nasty bug where we were not
+	deleting testContext; this is more than a memory leak since we
+	keep dag roots that point to dagNodes whose symbol pointers can
+	become stale when a module is deleted, leading to seg faults and
+	bus error in the mark pahse of garbage collection
+	(eqRewrite): fixed similar bug with newContext; note that
+	sysContext will be deleted by ModelChecker via
+	StateTransitionGraph
+
+2001-10-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker.cc (findCounterExample): need to make
+	intersectionStates of length 1 before starting
+	(exploreSystemTransitions): need to increase size of
+	intersectionStates if we find a new state;
+	(exploreSystemTransitions): added code to fake a loop transition
+	if we arrive a a dealocked system state (no other transitions
+	available)
+
+	* modelSymbol.cc (eqRewrite): use the ModelChecker class to do the
+	model check
+	(check): call index2DagNode()
+
+2001-10-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.hh (class ModelSymbol): added decls for
+	attachTerm(), postInterSymbolPass() and reset(); added data
+	members trueTerm and falseTerm
+
+	* modelSymbol.cc (postInterSymbolPass): added
+	(copyAttachments): copy trueTerm and falseTerm
+	(attachTerm): added
+	(reset): added
+
+	* modelChecker.cc (explorePropertyTransitions): look for accepting
+	cycles; handle returning bool
+	(exploreSystemTransitions): handle returning bool
+
+2001-10-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker.hh (class ModelChecker): added decls for
+	explorePropertyTransitions() and exploreSystemTransitions()
+	(class ModelChecker): added typedef StatePair and data member
+	searchStack
+
+	* modelChecker.cc (explorePropertyTransitions): created
+	(exploreSystemTransitions): created
+
+2001-10-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker.hh: rewritten
+
+	* modelChecker.cc: created
+
+2001-09-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.hh (class ModelSymbol): updated decl for build()
+
+	* modelSymbol.cc (build): convert propositions to indices before
+	inserting them into LogicFormula
+	(eqRewrite): pass propositions set to build()
+
+===================================Maude68==================================================
+
+2001-08-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSequenceSearch.cc (RewriteSequenceSearch): need to make a
+	new ArcMap for initial node of search graph
+	(findNextMatch): fixed bug where we were eclipsing data member
+	stateNr by a local variable and thus getting uninitialized memory
+	reads
+
+2001-08-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSequenceSearch.cc (findNextMatch): rewritten
+	(~RewriteSequenceSearch): delete fwdArcs
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): deleted
+	fwdRules field, made fwdArcs a map<int, set<Rule*> >*
+	(getStateFwdRules): deleted
+
+	* rewriteSequenceSearch.cc (findNextMatch): keep track of forward
+	arcs and their rules
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): added
+	fwdArcs and fwdRules fields to struct State
+	(getStateFwdArcs): added
+	(getStateFwdRules): added
+
+2001-06-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.cc (dump): dump accepting sets
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added decls for
+	findUntilSubformulae(), findAcceptingStates(); deleted decls for
+	SI(), SI_Neg(), containsNegation()
+
+	* buchiAutomaton.cc (contradiction): use structuallyContradicts()
+	instead if SI_Neg()
+	(redundant): added LTL2AUT optimization
+	(SI_Neg): deleted
+	(SI): deleted
+	(containsNegation): deleted
+	(findUntilSubformulae): added
+	(findAcceptingStates): added
+	(BuchiAutomaton): do accepting states calculation
+
+	* logicFormula.cc (isNegation): rewritten
+
+2001-06-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* logicFormula.hh (class LogicFormula): added decls for
+	structuallyImplies(), structuallyContradicts(), containsNegation()
+	and isNegation()
+
+	* logicFormula.cc (isNegation): added
+	(containsNegation): added
+	(structuallyContradicts): added
+	(structuallyImplies): added
+
+2001-06-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.cc (contradiction): use SI_Neg()
+	(hasToBeStored): return false always
+	(SI_Neg): fixed bug in TRUE case
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added decl for SI_Neg()
+
+	* buchiAutomaton.cc (SI_Neg): added
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added decls for add(),
+	SI(), containsNegation()
+
+	* buchiAutomaton.cc (cover): use approach similar to published
+	algorithm to avoid re-covering subformulae; added Assert() to
+	check that we do it correctly
+	(add): added
+	(SI): added
+	(containsNegation): added
+
+2001-06-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.cc (cover): quick hack to check if we've found to
+	cause of the extra states.
+
+2001-06-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.cc (contradiction): implemented
+	(BuchiAutomaton): do breadth-first search
+	(contradiction): fixed bugs in PROPOSITION case: need to examine
+	upto _and_ including max and we need to check that covered
+	actually contains i
+
+2001-06-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.hh: complete rewrite
+
+	* buchiAutomaton.cc: complete rewrite using Daniele, Giunchilia &
+	Vardi approach
+
+2001-06-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* buchiAutomaton.hh (class BuchiAutomaton): added decls for dump()
+	and dumpNatSet()
+
+	* buchiAutomaton.cc (dump): added
+	(dumpNatSet): added
+
+	* logicFormula.cc (dump): added
+
+	* modelSymbol.hh (class ModelSymbol): added decl for build()
+
+	* buchiAutomaton.cc (BuchiAutomaton): call expand()
+
+	* modelSymbol.cc (build): added
+
+2001-06-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelSymbol.cc (attachData): added
+
+	* higher.hh: added forward decl for class ModelSymbol
+
+	* modelSymbol.hh: created
+
+	* modelSymbol.cc: created
+
+	* higher.hh: added forward decls for classes LogicFormula,
+	BuchiAutomaton and StateTransitionGraph
+
+	* buchiAutomaton.cc: created
+
+	* buchiAutomaton.hh: created
+
+2001-05-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSequenceSearch.cc (findNextMatch): crude support for
+	tracing and traceAbort()
+
+2001-05-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSequenceSearch.hh (getStateNr): added
+	(getStateParent): added
+	(getStateDag): added
+
+	* rewriteSequenceSearch.cc (RewriteSequenceSearch): use new
+	definition of seen
+	(~RewriteSequenceSearch): use new definition of seen
+	(findNextMatch): store parent states and rules used
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): added
+	struct State
+
+	* rewriteSequenceSearch.cc (findNextMatch): set stateNt whenever
+	we create a new matchState
+
+	* rewriteSequenceSearch.hh (getStateNr): added stateNr
+	(class RewriteSequenceSearch): added data member 
+
+	* positionState.hh (class PositionState): fixed a nasty bug where
+	flags was a bool rather than an int
+
+2001-05-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSequenceSearch.hh (getNrStates): added
+
+	* rewriteSequenceSearch.cc: created
+
+	* rewriteSequenceSearch.hh: created
+
+2001-04-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc (initSubstitution): if there is no substition,
+	check that the set of unbound variables is empty
+
+2001-04-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSearchState.hh (class RewriteSearchState): updated ctor
+	decl
+
+	* rewriteSearchState.cc (RewriteSearchState): handle flags arg
+
+	* matchSearchState.cc (MatchSearchState): take and pass flags arg
+	(~MatchSearchState): delete pattern only if flag set
+
+	* matchSearchState.hh (class MatchSearchState): added enum Flags;
+	added flags arg to ctor
+
+	* searchState.hh (class SearchState): added enum Flags
+
+	* searchState.cc (SearchState): take flags arg rather than
+	respectFrozen arg
+	(~SearchState): delete substitution and context only if flags set
+
+	* searchState.hh (class SearchState): flags replace respectFrozen
+	in ctor decl
+
+	* positionState.cc (PositionState): take flags arg rather than
+	respectFrozen arg
+	(exploreNextPosition): test flags rather than respectFrozen
+
+	* positionState.hh (class PositionState): delete respectFrozen
+	data member; added enum Flags and flags data member; added flags
+	arg to ctor decl
+	(getFlags): added

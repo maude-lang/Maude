@@ -1,0 +1,507 @@
+2003-05-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.cc (partialCompareUnstable): use Term::UNKNOWN
+
+2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (overwriteWithClone): use
+	copySetRewritingFlags()
+	(makeClone): use copySetRewritingFlags()
+	
+===================================Maude80===========================================
+
+2003-02-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableSymbol.cc (makeTerm): updated Assert()
+	(makeDagNode): updated Assert()
+
+	* variableSymbol.hh (getSort): updated Assert()s
+
+	* variableTerm.cc: removed #pragma
+
+	* variableTerm.hh: removed #pragma
+
+	* variableSymbol.cc: removed #pragma
+
+	* variableSymbol.hh: removed #pragma
+
+	* variableLhsAutomaton.cc: removed #pragma
+
+	* variableLhsAutomaton.hh: removed #pragma
+
+	* variableDagNode.cc: removed #pragma
+
+	* variableDagNode.hh: removed #pragma
+	
+===================================Maude79===========================================
+
+2003-01-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.cc (partialCompareUnstable): added
+
+	* variableTerm.hh (class VariableTerm): added decl for
+	partialCompareUnstable()
+	
+===================================Engine78===========================================
+	
+2002-10-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (copyWithReplacement): (both versions) use
+	CantHappen() macro
+
+2002-10-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (copyWithReplacement): complex version:
+	changed last (unused) arg
+
+	* variableDagNode.hh (class VariableDagNode): updated decl for
+	complex version of copyWithReplacement()
+
+2002-10-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.hh (class VariableDagNode): updated decl for
+	stackArguments()
+
+	* variableDagNode.cc (stackArguments): take respectFrozen flag
+	
+===================================Engine76==================================================
+
+2002-08-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableSymbol.hh (getSort): updated "temporary hack" to use
+	class OpDeclaration
+
+2002-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): deleted superfluous decl
+	for compileRhs()
+
+2002-08-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.cc (compileRhs2): CantHappen() replaces Assert()
+	
+===================================Engine75==================================================
+
+2002-07-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.cc (subsumes): rewritten to handle sameVariableSet
+	arg
+
+	* variableTerm.hh (class VariableTerm): updated decl for
+	subsumes()
+	
+===================================Engine74==================================================
+
+2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.hh (class VariableDagNode): added decl for
+	Vector<RedexPosition> version of copyWithReplacement()
+
+	* variableDagNode.cc (copyWithReplacement): added
+	(Vector<RedexPosition> version)
+	
+===================================Engine66==================================================
+
+2001-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableSymbol.hh (class VariableSymbol): added decl for
+	stackArguments()
+
+	* variableSymbol.cc (stackArguments): added
+	
+===================================Engine65==================================================
+
+2001-01-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.hh (class VariableDagNode): updated
+	markArguments() decl and made it private
+
+	* variableDagNode.cc (markArguments): return 0
+	
+===================================Engine64==================================================
+
+2000-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.cc (VariableTerm): don't set modifiedIndex
+	(markEagerArguments): becomes the empty function
+
+	* variable.hh: deleted forward decl for class VariableRhsAutomaton
+
+	* variableTerm.hh (class VariableTerm): deleted decl for compileRhs()
+	(class VariableTerm): deleted data member modifiedIndex; index
+	becomes an int
+	(setIndex): don't set modifiedIndex
+	(getModifiedIndex): deleted
+	(class VariableTerm): deleted decl for getModifiedIndex()
+
+	* variableTerm.cc (compileRhs): deleted
+
+	* variableRhsAutomaton.cc: deleted
+
+	* variableRhsAutomaton.hh: deleted
+	
+===================================Engine60==================================================
+
+2000-07-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableRhsAutomaton.cc (dump): varIndex -> index
+
+	* variableTerm.cc (compileLhs2): commented out use of
+	variableInfo.rhsVariables() since we no longer have this
+
+2000-07-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): added decls for
+	findAvailableTerms() and compileRhs2()
+
+	* variableTerm.cc (findAvailableTerms): added
+	(compileRhs2): added
+	
+===================================Engine59==================================================
+
+2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): compileLhs() -> compileLhs2()
+
+	* variableTerm.cc (compileLhs): becomes compileLhs2()
+
+2000-06-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.hh (getSort): made const
+
+	* variableRhsAutomaton.hh (class VariableRhsAutomaton): made index
+	const
+
+	* variableRhsAutomaton.cc (VariableRhsAutomaton): use index
+	(construct): use index
+	(replace): use index
+	(dump): use index
+
+	* variableRhsAutomaton.hh (class VariableRhsAutomaton): varIndex
+	-> index
+
+	* variableDagNode.hh (class VariableDagNode): use NO_COPYING() macro
+
+	* variableTerm.cc (compareArguments): use safeCast() (both versions)
+	(dagify2): pass id()
+
+	* variableDagNode.cc (getHashValue): use id() in hash computation
+	(compareArguments): compare ids()
+	(copyEagerUptoReduced2): copy id()
+	(overwriteWithClone): copy id()
+	(makeClone): copy id()
+
+	* variableDagNode.hh (class VariableDagNode): derive from class
+	NamedEntity; ctor takes name arg
+	(VariableDagNode): pass name to NamedEntity
+
+	* variableTerm.hh (getSort): use safeCast() macro
+
+	* variableTerm.cc (deepCopy2): use safeCast() macro
+
+	* variableTerm.hh (class VariableTerm): added decl for getSort()
+	(getSort): added
+
+	* variableTerm.cc (VariableTerm): deal with anme arg; use index
+	and modifiedIndex
+	(deepCopy2): pass id() to new VariableTerm()
+	(normalize): include id() in hash calculation
+	(compareArguments): compare id()s (both versions)
+	(findEagerVariables): use index
+	(analyseConstraintPropagation): use index
+	(compileLhs): use index and getSort()
+	(markEagerArguments): use index and modifiedIndex
+	(compileRhs): use modifiedIndex
+	(subsumes): compare id()s and use index
+	(lookupSort): deleted
+
+	* variableTerm.hh (downCast): deleted
+	(index): becomes getIndex()
+	(modifiedIndex): becomes getModifiedIndex()
+	(class VariableTerm): data members varIndex and modifiedVarIndex
+	become index and modifiedIndex
+	(setIndex): set index and modifiedIndex
+	(class VariableTerm): ctor takes name arg
+
+2000-06-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): derive from NamedEntity,
+	use NO_COPYING() macro
+	(class VariableTerm): deleted decls for downCast() and lookupSort()
+
+	* variableSymbol.hh (class VariableSymbol): use NO_COPYING() macro
+
+	* variableSymbol.cc (makeTerm): now a dummy function
+	(makeDagNode): now a dummy function
+	
+===================================Engine58==================================================
+
+2000-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableRhsAutomaton.cc (dump): ifdef'd
+
+	* variableRhsAutomaton.hh (class VariableRhsAutomaton): use
+	NO_COPYING() macro; ifdef'd dump() decls
+
+	* variableLhsAutomaton.cc (dump): ifdef'd
+
+	* variableLhsAutomaton.hh (class VariableLhsAutomaton): use
+	NO_COPYING() macro; ifdef'd dump() decls
+
+1999-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableSymbol.cc: deleted variableString
+	(VariableSymbol): call Symbol with new conventions
+	(VariableSymbol): don't pass memoFlag arg to Symbol
+
+	* variableSymbol.hh: deleted static data member variableString
+	
+===================================Engine53==================================================
+
+1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableSymbol.hh (dynamicCast): deleted
+	(class VariableSymbol): deleted decl for dynamicCast()
+
+	* variableTerm.hh (downCast): rewritten using
+	dynamic_cast<VariableTerm*>()
+	(dynamicCast): deleted
+	(class VariableTerm): deleted decl for dynamicCast()
+
+1999-10-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (getHashValue): added
+
+	* variableDagNode.hh (class VariableDagNode): added decl for
+	getHashValue()
+	
+===================================Engine52==================================================
+
+1999-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableSymbol.hh (class VariableSymbol): computeTrueSort() ->
+	normalizeAndComputeTrueSort()
+
+	* variableSymbol.cc (computeTrueSort): become
+	normalizeAndComputeTrueSort()
+	(normalizeAndComputeTrueSort): use fastComputeTrueSort()
+
+===================================Engine49==================================================
+
+1999-01-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): made varIndex and
+	modifiedVarIndex shorts to save memory
+	
+===================================Engine46==================================================
+
+Fri Nov  6 16:26:56 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.cc (deepCopy): -> deepCopy2()
+
+	* variableTerm.hh (class VariableTerm): deepCopy() -> deepCopy2()
+	
+===================================Engine43==================================================
+
+Thu Sep 17 17:27:06 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableSymbol.cc (computeBaseSort): setSortInfo() -> setSortIndex()
+
+	* variableTerm.cc (subsumes): use ConnectedComponent::leq()
+
+	* variableDagNode.cc (overwriteWithClone): setSortInfo() ->
+	setSortIndex()
+	(makeClone): setSortInfo() -> setSortIndex()
+	
+===================================Engine40==================================================
+
+Tue Jul 21 10:42:34 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): aded decl for deepCopy()
+
+	* variableTerm.cc (deepCopy): added
+	
+===================================Engine39==================================================
+
+Wed Jun 10 18:21:38 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): updated normalize() decl
+
+	* variableTerm.cc (normalize): clear changed flag
+
+Tue Jun  9 18:13:41 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.cc: IntSet -> NatSet
+
+	* variableTerm.hh: IntSet -> NatSet
+	
+===================================Engine38==================================================
+
+Thu Dec  4 13:13:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableSymbol.cc (VariableSymbol): don't pass inert arg to
+	Symbol()
+
+Sun Nov 23 16:15:06 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableLhsAutomaton.cc (dump): rewritten
+
+	* variableRhsAutomaton.cc (dump): rewritten
+
+	* variableRhsAutomaton.hh (class VariableRhsAutomaton): added
+	variableInfo arg
+
+	* variableLhsAutomaton.hh (class VariableLhsAutomaton): rearranged
+	dump() args
+	
+===================================Engine33==================================================
+
+Tue Oct 21 11:48:48 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.cc (dagify2): switch to new convention
+
+	* variableTerm.hh (class VariableTerm): switch dagify2() decl to
+	new convention
+
+Thu Oct 16 12:16:26 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableSymbol.cc: variableString changed
+	from array to pointer to get around some slippery C++ semantics
+
+	* variableSymbol.hh (class VariableSymbol): variableString changed
+	from array to pointer to get around some slippery C++ semantics
+
+Wed Oct 15 12:11:49 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): added decl for dynamicCast()
+	(dynamicCast): added
+
+Tue Oct 14 11:15:46 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.hh (downCast): use VariableSymbol::dynamicCast()
+
+	* variableSymbol.cc (makeTerm): ErrorCheck() changed to Assert()
+
+	* variableSymbol.hh (getSort): added
+
+	* variableSymbol.cc (computeBaseSort): use getSort();
+
+	* variableSymbol.hh (class VariableSymbol): added decls for
+	getSort() and dynamicCast()
+	(class VariableSymbol): added variableString static data member
+	(dynamicCast): added
+
+Fri Oct 10 17:52:59 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableLhsAutomaton.cc (dump): VariableIndex -> VariableInfo,
+	index2Symbol() -> index2Variable()
+
+	* variableLhsAutomaton.hh (class VariableLhsAutomaton):
+	VariableIndex -> VariableInfo
+	
+===================================Engine30==================================================
+
+Tue Oct  7 15:47:52 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableSymbol.cc (makeDagNode): added
+
+	* variableSymbol.hh (class VariableSymbol): added decl for makeDagNode()
+
+Fri Oct  3 18:58:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.cc (compileRhs): DataSet -> TermSet
+	(dagify2): DataSet -> TermSet
+
+	* variableTerm.hh (class VariableTerm): DataSet -> TermSet
+	
+===================================Engine29==================================================
+
+Thu Oct  2 18:31:02 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): updated compileRhs() decl
+
+	* variableTerm.cc (compileRhs): adapted to DataSet& compiled
+
+Tue Sep 30 12:42:45 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): dagify() decl becomes dagify2()
+
+	* variableTerm.cc (normalize): set hash value
+	(dagify2): adapted from dagify()
+
+Thu Sep 25 16:32:49 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.cc (lookupSort): use getOpDeclarations()
+
+	* variableSymbol.cc (computeBaseSort): use getOpDeclarations()
+	
+===================================Engine28==================================================
+
+Wed Jul 23 11:36:19 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.cc (normalize): added full flag
+
+	* variableTerm.hh (class VariableTerm): added full flag to normalize()
+
+Mon Jul 21 19:17:26 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableDagNode.cc (normalizeEagerUptoReduced2): deleted
+
+	* variableDagNode.hh (class VariableDagNode): deleted
+	normalizeEagerUptoReduced2() decl
+	
+===================================Engine26b==================================================
+
+Fri Jul 18 15:55:29 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableDagNode.cc (normalizeEagerUpToReduced2): added
+
+	* variableDagNode.hh (class VariableDagNode): added decl for
+	normalizeEagerUpToReduced2()
+
+Tue Jul 15 15:26:54 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableSymbol.cc (VariableSymbol): pass inert = true to Symbol()
+
+===================================Engine26==================================================
+	
+Mon Jun 30 11:09:58 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableTerm.cc (markEagerArguments): handle case where varIndex
+	is UNDEFINED
+	(VariableTerm): initialize varIndex = modifiedVarIndex = UNDEFINED
+
+Fri Jun 27 16:24:21 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableDagNode.hh (class VariableDagNode):
+	copyEagerUptoReduced2() and clearCopyPointers2() made private
+
+Wed Jun 25 14:32:29 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableSymbol.cc (acceptSortConstraint): deleted
+	(acceptEquation): deleted
+	(acceptRule): deleted
+
+	* variableSymbol.hh (class VariableSymbol): deleted
+	acceptSortConstraint(), acceptEquation() and acceptRule() decls
+
+Tue Jun 24 11:04:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* variableSymbol.cc (eqRewrite): now do right thing
+	(computeTrueSort): now do right thing
+	(computeBaseSort): now do right thing
+
+	* variableTerm.cc (dagify): now make VaraibleDagNode s
+
+	* variableDagNode.cc: created
+
+	* variableDagNode.hh: created
+
+	* variableSymbol.cc (makeTerm): use VariableTerm rather than Variable
+
+	* variableTerm.cc: created from old variable.cc
+
+	* variableTerm.hh: created from old variable.hh
+
+	* variable.hh: created to provide forward decls for variable classes
+

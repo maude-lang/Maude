@@ -1,0 +1,271 @@
+2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_Term.cc: removed #pragma
+
+	* NA_Term.hh: removed #pragma
+
+	* NA_Symbol.cc: removed #pragma
+	(makeTerm): Assert() -> CantHappen()
+	(makeDagNode): Assert() -> CantHappen()
+
+	* NA_Symbol.hh: removed #pragma
+
+	* NA_RhsAutomaton.cc: removed #pragma
+
+	* NA_RhsAutomaton.hh: removed #pragma
+
+	* NA_LhsAutomaton.cc: removed #pragma
+
+	* NA_LhsAutomaton.hh: removed #pragma
+
+	* NA_DagNode.cc: removed #pragma
+
+	* NA_DagNode.hh: removed #pragma
+	
+===================================Maude79===========================================
+
+2002-10-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.cc (copyWithReplacement): (both versions) use
+	CantHappen() macro
+
+2002-10-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.hh (class NA_DagNode): updated decl for complex
+	version of copyWithReplacement()
+
+	* NA_DagNode.cc (copyWithReplacement): complex version: changed
+	name of unused last arg
+
+2002-10-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.hh (class NA_DagNode): updated decl for respectFrozen
+
+	* NA_DagNode.cc (stackArguments): take respectFrozen flag
+	
+=================================Engine76==================================================
+
+2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.cc (copyWithReplacement): added
+	(Vector<RedexPosition> verison)
+
+	* NA_DagNode.hh (class NA_DagNode): added dec for
+	Vector<RedexPosition> verison of copyWithReplacement()
+	
+=================================Engine66==================================================
+
+2001-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_Symbol.cc (stackArguments): added
+
+	* NA_Symbol.hh (class NA_Symbol): added decl for stackArguments()
+	
+=================================Engine65==================================================
+
+2001-01-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.hh (class NA_DagNode): updated markArguments() decl
+
+	* NA_DagNode.cc (markArguments): return 0
+	
+=================================Engine64==================================================
+
+2000-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_RhsAutomaton.hh (class NA_RhsAutomaton): added decl for
+	remapIndices()
+
+	* NA_RhsAutomaton.cc (remapIndices): added
+
+2000-07-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_Term.cc (compileRhs2): use makeConstructionIndex() instead of
+	allocateIndex()
+
+2000-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_Term.cc (findAvailableTerms): becomes null function; we no
+	longer try to do left->right sharing on ground terms since these
+	typically are matched by direct comparison rather than by an
+	automaton and hence we can't use are trick of interposing a
+	BindingLhsAutomaton before the true LhsAutomaton to get a pointer
+	to the dag node for sharing
+
+	* NA_Term.hh (class NA_Term): deleted decl for compileRhs()
+
+	* NA_Term.cc (compileRhs): deleted
+	
+=================================Engine60==================================================
+
+2000-07-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_Term.cc (findAvailableTerms): added
+	(compileRhs2): added
+
+	* NA_Term.hh (class NA_Term): added decls for findAvailableTerms()
+	and compileRhs2()
+	
+=================================Engine59==================================================
+
+2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_Term.cc (compileLhs): becomes compileLhs2()
+
+	* NA_Term.hh (class NA_Term): compileLhs() -> compileLhs2()
+	
+=================================Engine58==================================================
+
+2000-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_RhsAutomaton.cc (dump): ifdef'd
+
+	* NA_RhsAutomaton.hh (class NA_RhsAutomaton): use NO_COPYING()
+	macro; ifdef'd dump() decls
+
+	* NA_LhsAutomaton.cc (dump): ifdef'd
+
+	* NA_LhsAutomaton.hh (class NA_LhsAutomaton): use NO_COPYING()
+	macro; ifdef'd dump() decls
+	
+=================================Engine56==================================================
+
+1999-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_Symbol.cc (NA_Symbol): use new Symbol conventions
+
+1999-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_Symbol.hh (class NA_Symbol): computeTrueSort() ->
+	normalizeAndComputeTrueSort()
+
+	* NA_Symbol.cc (computeTrueSort): become
+	normalizeAndComputeTrueSort()
+	(normalizeAndComputeTrueSort): use fastComputeTrueSort()
+
+=================================Engine49==================================================
+
+Fri Sep 18 16:48:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Symbol.cc (computeBaseSort): use setSortIndex() and
+	traverse()
+	
+=================================Engine40==================================================
+
+Tue Jul 21 14:02:23 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Symbol.hh (class NA_Symbol): updated ctor decl
+
+	* NA_Symbol.cc (NA_Symbol): don't take sort arg and don't call
+	addOpDeclaration()
+	
+=================================Engine39==================================================
+
+Wed Jun 10 12:06:24 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Term.cc: IntSet -> NatSet
+
+	* NA_Term.hh (class NA_Term): IntSet -> NatSet
+	
+=================================Engine38==================================================
+
+Thu Feb 12 14:50:03 1998  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_LhsAutomaton.cc (match): compare() == 0 changed to equal()
+	
+=================================Engine35==================================================
+
+Thu Dec  4 13:12:00 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Symbol.cc (NA_Symbol): don't pass inert arg to Symbol()
+
+Tue Nov 25 11:38:06 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_RhsAutomaton.cc (dump): updated
+
+	* NA_RhsAutomaton.hh (class NA_RhsAutomaton): updated decl for
+	dump()
+
+	* NA_LhsAutomaton.cc (dump): updated
+
+	* NA_LhsAutomaton.hh (class NA_LhsAutomaton): updated decl for
+	dump()
+	
+=================================Engine33==================================================
+
+Tue Oct 21 11:53:13 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Term.cc (dagify2): switch to new convention
+
+	* NA_Term.hh (class NA_Term): switch dagify2() decl to
+	new convention
+
+Tue Oct 14 18:04:35 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Symbol.cc (NA_Symbol): use revised Symbol ctor
+
+Fri Oct 10 18:18:43 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_LhsAutomaton.cc (dump): VariableIndex -> VariableInfo
+
+	* NA_LhsAutomaton.hh (class NA_LhsAutomaton): VariableIndex ->
+	VariableInfo
+	
+=================================Engine30==================================================
+
+Tue Oct  7 15:44:35 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Symbol.cc (makeDagNode): added
+
+	* NA_Symbol.hh (class NA_Symbol): added decl for makeDagNode()
+
+Fri Oct  3 19:06:36 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Term.cc (dagify2): DataSet -> TermSet
+	(compileRhs): DataSet -> TermSet
+
+	* NA_Term.hh (class NA_Term): DataSet -> TermSet
+	
+=================================Engine29==================================================
+
+Thu Oct  2 18:11:14 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Term.hh (class NA_Term): updated compileRhs() decl
+
+	* NA_Term.cc (compileRhs): adapted to DataSet& compiled
+
+Tue Sep 30 14:35:30 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Term.hh (class NA_Term): dagify() decl becomes dagify2()
+
+	* NA_Term.cc (normalize): deleted; now must be supplied by derived
+	class as it does hash calculation
+	(dagify2): adapted from dagify()
+
+	* NA_Term.hh (class NA_Term): deleted normalize() decl
+	
+=================================Engine28==================================================
+
+Wed Jul 30 10:56:52 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_LhsAutomaton.cc: created
+
+	* NA_RhsAutomaton.hh (class NA_RhsAutomaton): created
+
+	* NA_LhsAutomaton.hh (class NA_LhsAutomaton): created
+
+	* NA_Term.cc: created
+
+	* NA_DagNode.hh (class NA_DagNode): created
+
+	* NA_Theory.hh: created
+
+	* NA_DagNode.cc: created
+
+	* NA_Term.hh (class NA_Term): created
+
+Tue Jul 29 17:37:41 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* NA_Symbol.cc: created
+
+	* NA_Symbol.hh (class NA_Symbol): created

@@ -1,0 +1,35 @@
+#
+#	Debug version for Solaris.
+#
+
+#
+#	Purify stuff.
+#
+QUANTIFY =	quantify
+PURECOV =	purecov
+PURIFY =	purify
+QUANTIFY_INCLUDE =	/csl/include
+#
+#	GNU stuff
+#
+BISON =	bison
+FLEX =	flex
+CC =	gcc-3.2
+CXX =	g++-3.2
+AR =	ar
+
+DFLAGS =	-Wall -Wno-non-virtual-dtor -DSOLARIS -DLIBv3 \
+		-g -DDUMP -DTDEBUG -fno-exceptions \
+		-I/homes/eker/include \
+		-L/homes/eker/Solaris/3.2/lib
+
+#		-g -DDUMP -DCOMPILER -DANNOTATE -DTDEBUG -fno-exceptions \
+
+GMP_LIB_DIR =	/homes/eker/Solaris/3.2/lib
+
+
+LINKAGE =
+
+ARFLAGS =	rus
+
+DLMALLOC=	-ldlmalloc

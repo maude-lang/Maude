@@ -1,0 +1,734 @@
+Fri Dec  5 11:25:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (finalizeSortInfo): deleted
+
+	* A_Symbol.hh (class A_Symbol): deleted finalizeSortInfo() decl
+
+Thu Dec  4 12:54:26 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (A_Symbol): deleted inert arg
+
+	* A_Symbol.hh (class A_Symbol): deleted inert arg from ctor decl
+
+Tue Dec  2 16:41:48 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (copyAndReduceSubterms): use DagNode::copyAndReduce()
+
+Mon Dec  1 12:11:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (eqRewrite): use getPermuteStrategy()
+
+	* A_GreedyMatcher.cc (greedyMatchVariableBlock): PermuteSymbol ->
+	AssociativeSymbol (*3)
+
+	* A_DagNode.cc (copyEagerUptoReduced2): use getPermuteStrategy();
+	PermuteSymbol -> BinarySymbol
+
+	* A_LhsCompiler.cc (compileLhs): PermuteSymbol -> AssociativeSymbol
+
+	* A_Term.cc (findEagerVariables): use getPermuteStrategy();
+	PermuteSymbol -> BinarySymbol (*3)
+	(markEagerArguments): use getPermuteStrategy();
+	PermuteSymbol -> BinarySymbol
+
+	* A_LhsAutomaton.hh (class A_LhsAutomaton): PermuteSymbol ->
+	AssociativeSymbol
+
+	* A_Symbol.cc (A_Symbol): PermuteSymbol -> AssociativeSymbol
+	(eqRewrite): remove PermuteSymbol context (*3)
+
+	* A_Symbol.hh (class A_Symbol): PermuteSymbol -> AssociativeSymbol
+
+Tue Nov 25 11:58:40 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_RhsAutomaton.cc (buildAliens): deleted
+	(dump): implemented
+
+	* A_RhsAutomaton.hh (class A_RhsAutomaton): updated dump() decl;
+	deleted addAlien(), buildAliens() decls; deleted aliens data
+	member
+	(addAlien): deleted
+
+	* A_LhsAutomaton.cc (dump): updated
+
+	* A_LhsAutomaton.hh (class A_LhsAutomaton): updated dump() decl
+	
+===============================Engine33===================================================
+
+Tue Nov 11 17:04:26 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_LhsAutomaton.cc (forcedLoneVariableCase): fixed long standing
+	bug; in lone variable bound case if b->symbol() != topSymbol then
+	we need to check for nrSubjects != 1 to return false and not
+	nrSubjects == 1
+	
+===============================Engine31===================================================
+
+Wed Oct 29 15:35:35 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Subproblem.cc (solveVariableBlocks): setWholeFlag() ->
+	setMatchedWhole() 
+
+	* A_DagNode.cc (matchVariableWithExtension): call setValidAfterMatch(false)
+
+	* A_GreedyMatcher.cc (greedyMatch): setWholeFlag() ->
+	setMatchedWhole() (7 places)
+	(greedyMatch): call setValidAfterMatch(true) if there is extension
+	info
+
+	* A_FullMatcher.cc (fullMatch): call setValidAfterMatch(false) if
+	there is extension information
+
+	* A_LhsAutomaton.cc (match): move matchAtTop == (extensionInfo !=
+	0) assertion to after check of top symbol since caller need not know
+	that we can't collapse and could fail to pass us extensionInfo if
+	subject was in a theory without extension.
+
+	* A_ExtensionInfo.cc (copy): use setValidAfterMatch(),
+	validAfterMatch() and setMatchedWhole()
+	(makeClone): use setValidAfterMatch(), validAfterMatch() and
+	setMatchedWhole()
+
+Mon Oct 27 11:54:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_ExtensionInfo.cc (makeClone): added
+	(copy): added
+
+	* A_ExtensionInfo.hh (class A_ExtensionInfo): added decls for
+	makeClone() and copy()
+	(class A_ExtensionInfo): subject made non const in order to do copy
+
+Fri Oct 24 14:59:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (ruleRewrite): use new A_ExtensionInfo ctor
+	(eqRewrite): use new A_ExtensionInfo ctor (3 places)
+
+	* A_DagNode.cc (makeExtensionInfo): use new A_ExtensionInfo ctor
+
+	* A_DagNode.hh (class A_DagNode): class A_ExtensionInfo is now a friend
+
+	* A_Theory.cc: deleted
+
+	* A_ExtensionInfo.cc: created
+
+	* A_ExtensionInfo.hh (class A_ExtensionInfo): added data member
+	subject and decls for explicit ctor and buildMatchedPortion()
+	(A_ExtensionInfo): added
+
+Tue Oct 21 12:32:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Term.cc (dagify2): switched to new convention
+
+	* A_Term.hh (class A_Term): switched dagify2() decl to new convention
+
+Wed Oct 15 16:12:36 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_LhsCompiler.cc (compileLhs): use VariableTerm::dynamicCast()
+	(2 places)
+	(addFixedLengthBlock): use VariableTerm::dynamicCast()
+	(findConstraintPropagationSequence): use
+	VariableTerm::dynamicCast() (2 places)
+
+	* A_Term.cc (compileRhs): use VariableTerm::dynamicCast()
+
+	* A_Symbol.cc (A_Symbol): rewritten for new symbol conventions
+
+	* A_Symbol.hh (class A_Symbol): removed constructor arg from ctor
+
+Fri Oct 10 18:42:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_LhsAutomaton.hh (class A_LhsAutomaton): VariableIndex -> VariableInfo
+
+	* A_LhsAutomaton.cc (dump): VariableIndex -> VariableInfo
+	(dump): index2Symbol() -> index2Variable()
+
+===============================Engine30===================================================
+
+Tue Oct  7 15:38:16 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (makeDagNode): added
+
+	* A_Symbol.hh (class A_Symbol): added decl for makeDagNode()
+
+Fri Oct  3 19:35:02 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Term.cc (compileRhs): DataSet -> TermSet
+	(dagify2): DataSet -> TermSet
+
+	* A_Term.hh (class A_Term): DataSet -> TermSet
+	
+===============================Engine29===================================================
+
+Thu Oct  2 18:01:02 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Term.hh (class A_Term): updated compileRhs() decl
+
+	* A_Term.cc (compileRhs): adapted to use DataSet& compiled
+
+Tue Sep 30 12:39:29 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Term.hh (class A_Term): dagify() decl chaged to dagify2()
+
+	* A_Term.cc (normalize): now calculate hash value
+	(dagify2): adapted from dagify()
+
+Thu Sep 25 16:49:08 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.hh (class A_Symbol): deleted decl for specificRewrite()
+
+	* A_Symbol.cc (specificRewrite): deleted
+	
+===============================Engine28===================================================
+
+Tue Aug 19 12:37:48 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.hh (getArgument): added
+	(nrArgs): added
+	(class A_DagNode): added nrArgs() and getArgument() decls as fast
+	theory specific interface to argument list for code outside the
+	A_Theory that is A_Theory aware (maybe classes derived from A_Symbol).
+
+Fri Jul 25 18:02:05 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (partialReplace): removed Assert(getSortIndex() ==
+	Sort::SORT_UNKNOWN, cerr << "shouldn't have valid sort"); since if
+	node was original created by matcher it may well have valid sort
+  
+
+Thu Jul 24 11:39:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (eqRewrite): added normalizeAtTop() calls after
+	sort computation for LAZY and SEMI_EAGER cases; this fixes a bug
+	introduced by just-in-time normalization
+
+Wed Jul 23 11:46:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (partialReplace): added call to repudiateSortInfo()
+
+	* A_Term.cc (normalize): added full flag; only do flattening if
+	full flag true
+
+	* A_Term.hh (class A_Term): added full flag to normalize()
+
+Mon Jul 21 11:27:59 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (computeTrueSort): do normalization
+
+	* A_DagNode.cc (partialReplace): simplified; no longer normalize
+	(partialConstruct): simplified; no longer normalize
+	(copyWithReplacement): simplified; no longer normalize
+	(partialReplace): put in Assert to ensure we don't have a valid sort
+
+	* A_RhsAutomaton.hh (class A_RhsAutomaton): updated buildAliens() decl
+
+	* A_RhsAutomaton.cc (buildAliens): simplified; no longer do
+	flattening calcs
+	(buildArguments): simplified; no longer flatten
+	(replace): simplified
+	(construct): simplified
+
+===============================Engine26b===================================================
+
+Tue Jul 15 15:42:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (A_Symbol): added inert arg
+	(eqRewrite): changed inert() call to equationFree()
+
+	* A_Symbol.hh (class A_Symbol): added inert arg to ctor
+	
+================================Engine26====================================================
+	
+Fri Jun 27 16:13:40 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.hh (class A_DagNode): copyEagerUptoReduced2() and
+	clearCopyPointers2() made private
+
+	* A_Symbol.cc (copyAndReduceSubterms): copyEagerUptoReduced() and
+	clearCopyPointers() replaced by copyReducible()
+
+Wed Jun 25 15:16:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc: added #include "variable.hh"
+
+Tue Jun 24 16:22:21 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_LhsAutomaton.hh (class A_LhsAutomaton): Variable* ->
+	VariableTerm* for addRigidVariable() and addFlexVariable() decls
+
+	* A_LhsAutomaton.cc (addRigidVariable): use VariableTerm*
+	(addFlexVariable): use VariableTerm*
+
+	* A_LhsCompiler.cc (analyseConstraintPropagation): use VariableTerm::downCast()
+	(compileLhs): use VariableTerm::downCast()
+	(addFixedLengthBlock): use VariableTerm::downCast()
+	(findConstraintPropagationSequence): use VariableTerm::downCast()
+
+	* A_Term.cc: added #include "variableTerm.hh"
+	(compileRhs): use VariableTerm::downCast()
+
+Thu Jun 19 10:38:43 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc: deleted #include "unionFind.hh"
+
+Tue Jun 17 16:55:43 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.hh (class A_Symbol): deleted decl for compileOpDeclarations()
+
+	* A_Symbol.cc (compileOpDeclarations): deleted
+
+	* A_Symbol.hh (class A_Symbol): added decl for finalizeSortInfo()
+
+	* A_Symbol.cc (finalizeSortInfo): added
+
+Fri Jun  6 18:44:49 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.hh (class A_DagNode): matchVariableWithExtension()
+	decl added
+
+	* A_Symbol.hh (class A_Symbol): matchVariableWithExtension() decl
+	deleted
+
+	* A_DagNode.cc (matchVariableWithExtension): added
+
+	* A_Symbol.cc (matchVariableWithExtension): deleted
+
+Thu Jun  5 11:55:09 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (copyEagerUptoReduced2): adapted from old
+	copyEagerUptoReduced()
+	(clearCopyPointers2): adapted from old clearCopyPointers()
+
+	* A_DagNode.hh (class A_DagNode): decls for
+	clearCopyPointers() and copyEagerUptoReduced() changed
+
+	* A_Subproblem.hh (class A_Subproblem): updated
+	computeAssignment() decl
+
+	* A_Subproblem.cc (bindVariables): use checkSort() to check the
+	sort of DagNode returned from computeAssignment(); don't pass
+	context to computeAssignment()
+	(computeAssignment): deleted context arg; don't compute sort of
+	newly created DagNode
+
+	* A_Symbol.cc (A_Symbol): don't pass stable arg to PermuteSymbol()
+
+==============================Engine24====================================	
+
+Wed May 14 15:43:13 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (eqRewrite): changed comment on repudiate call now
+	that inErrorSort() can leave sort info behind
+
+Tue May 13 10:41:19 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* Makefile: make libA_Theory.a instead of libAC_Theory.a
+
+	* A_LhsAutomaton.cc (forcedLoneVariableCase): use
+	DagNode::checkProblem() to simplify code
+	Commented out "sortCheckSubproblem.hh"
+
+Thu Apr 10 16:19:35 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_LhsAutomaton.cc (forcedLoneVariableCase): must repudiateSort() in
+	the case where the base sort is not small enough and
+ 	the top symbol is not sort constraint free as the
+	base sort we calculated may not be the true sort and will inhibit
+	the calculation of the true sort during the solution of the sort
+	check subprblem.
+
+Fri Mar 28 16:55:19 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (makeExtensionInfo): added
+
+	* A_DagNode.hh (class A_DagNode): added decl for makeExtensionInfo()
+
+Thu Jan  9 15:45:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (overwriteWithClone): fixed serious bug
+	where we were copying sort of overwritten node rather than
+	overwriting node
+
+Tue Jan  7 11:39:30 1997  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (eqRewrite): fixed bug in lazy case where we were
+	computing a base sort and then returning with out repudiating it
+	if it was not the error sort. Use new inerrorSort() function.
+	(eqRewrite): removed superfluous repudiateSortInfo() from
+	semi-eager case.
+	(eqRewrite): replaced calls to repudiateSortInfo() since
+	applyReplace() may compute true sort which may then have been
+	invalidated by rewriting below
+
+Tue Dec 24 18:04:23 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_LhsAutomaton.cc (forcedLoneVariableCase): rewritten to use
+	computeBaseSort() and sortConstraintFree()
+
+	* A_Subproblem.cc (computeAssignment):
+	computeSortWhilePreservingContext() ->
+	computeTrueSortWhilePreservingContext()
+
+	* A_Symbol.cc (eqRewrite): adapted from rewrite(); use
+	computeTrueSort() and computeBaseSort()
+	(computeTrueSort): adapted from computeSort()
+	(computeBaseSort): adapted from findBaseSort()
+
+	* A_Symbol.hh (class A_Symbol): computeSort() replaced by
+	computeBaseSort() and computeTrueSort(); findBaseSort() deleted
+	(class A_Symbol): rewrite() -> eqRewrite()
+
+Thu Dec 19 14:17:24 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (makeClone): copy sort information to avoid recomputation
+
+Thu Dec 12 17:49:03 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (overwriteWithClone): copy sort information; this
+	is needed so then when we rewrite with a collapse equation we do
+	not lose sort infomation with the possibility of infinite looping
+	on foreign sort constraints
+
+Wed Dec 11 11:55:43 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (findBaseSort): sortConstraintFree() used in place
+	of obsolete test (2 places)
+
+Mon Dec  9 14:40:21 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (computeSort): modified to use new
+	constrainToSmallerSort() convections
+
+Mon Dec  2 11:07:58 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Subproblem.cc (addTopVariable): put bounds args in the correct
+	order!
+
+	* A_Symbol.cc (rewrite): use inert() rather then checking for
+	equations because there may be foreign equations
+
+	* A_FullMatcher.cc (addVariableBlocks): updated addTopVariable() call
+
+	* A_Subproblem.cc (buildPartition): make use of lowerBound in
+	TopVariable struct
+	(addTopVariable): store lowerBound
+
+	* A_Subproblem.hh (class A_Subproblem): added lowerBound to
+	TopVariable struct
+
+Wed Nov 27 17:10:12 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (matchVariableWithExtension): implemented
+
+	* A_Symbol.hh (class A_Symbol): matchVariableWithExtension() added
+
+Mon Nov 25 19:01:59 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (A_Symbol): added constructor arg
+
+Thu Nov 14 18:07:59 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (makeClone): added
+
+Tue Oct 29 17:05:54 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (rewrite): updates to nrArgs removed as nrArgs is
+	not used afterwards; Assert checking that sort is invalid after
+	applyReduce() in semi-eager case removed since applyReduce() may
+	have good reasons for computing and storing the subjects sorts
+	(e.g. a lhs that parses to the error sort or a foreign lhs that is
+	(or collapses to) a variable).
+
+Tue Oct 15 17:48:41 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_RhsAutomaton.cc (dump): added indentLevel arg
+
+	* A_LhsAutomaton.cc (dump): rewritten to handle indentation
+
+Fri Oct 11 16:44:55 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Symbol.cc (partialConstruct): deleted
+	(partialReplace): deleted
+
+	* A_DagNode.cc (partialReplace): added
+	(partialConstruct): added
+
+Wed Oct  2 19:01:26 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (normalizeAtTop): added call to DagNode::okToCollectGarbage()
+
+Tue Oct  1 14:22:11 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (normalizeAtTop): removed trackStorage() call
+
+	* A_Symbol.cc (partialReplace): removed trackStorage() call
+
+	* A_DagNode.cc (markArguments): call to evacuate() added
+
+	* A_DagNode.hh (A_DagNode): removed trackStorage() call
+
+	* A_DagNode.cc (A_DagNode): removed trackStorage() call
+
+	* A_Term.cc: Vector -> ArgVec
+
+	* A_Symbol.cc: Vector -> ArgVec
+
+	* A_Subproblem.cc: Vector -> ArgVec
+
+	* A_RhsAutomaton.cc: Vector -> ArgVec
+
+	* A_LhsAutomaton.cc: Vector -> ArgVec
+
+	* A_GreedyMatcher.cc: Vector -> ArgVec
+
+	* A_FullMatcher.cc: Vector -> ArgVec
+
+	* A_DagNode.cc: Vector -> ArgVec
+
+	* A_RhsAutomaton.hh (class A_RhsAutomaton): Vector -> ArgVec
+
+	* A_DagNode.hh (class A_DagNode): Vector -> ArgVec
+
+	* A_LhsAutomaton.hh (class A_LhsAutomaton): Vector -> ArgVec
+
+	* A_DagArgumentIterator.hh (class A_DagArgumentIterator): Vector -> ArgVec
+
+Wed Sep 25 14:21:39 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_DagNode.cc (stackArguments): added
+	(copyWithReplacement): added
+
+	* A_Symbol.cc (ruleRewrite): added
+	(specificRewrite): added
+	(partialConstruct): added
+
+Tue Sep 24 14:41:39 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Subproblem.cc (addNode): remember last blockPair has dummy
+	pattern part with no targets; so we have to change test to
+	blockNr + 1 < blockPairs.length() - 1
+
+	* A_FullMatcher.cc (buildLeftmostPath): deal with cases where
+	first rigid block has no (unbound) variables to the left of it, last rigid
+	block has no (unbound) variables to the right of it, and single
+	rigid block has no (unbound) variables either side of it
+	(addRemainingPaths): implemented
+
+	* A_Subproblem.cc (bindVariables): Asserts regarding part length
+	replaced by if statements that return false: non-linear variable
+	blocks can cause bound variable to have wrong length part
+	(bindVariables): fix index: i -> j
+
+	* A_Subproblem.hh (class A_Subproblem): deleted boundVariablesOK()
+	decl
+
+	* A_Subproblem.cc (bindVariables): major rewrite; now does the
+	work of boundVariablesOK() as well
+	(buildPartition): set boundByUs flag correctly in non-linear
+	variable block case
+	(solveVariableBlock): removed unbindVariables() temp fix
+
+Mon Sep 23 17:50:22 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Subproblem.cc (solvePatternBlock): Assert condition should be
+	>= instead of >
+	(deepSelfDestruct): don't deepSelfDestruct() null subproblem
+	(solveVariableBlock): big mess regarding bound and unbound
+	variables in different involacations on same subproblem; temp fix
+	is to unbind variables at start of non-first invocation
+	(solvePatternBlocks): need to initialize selectedNode first first
+	blockPair correctly
+
+	* A_FullMatcher.cc (buildLeftmostPath): nrRigid + 1 block pairs in
+	subproblem
+	(buildLeftmostPath): formula for nextSubject fixed
+
+Fri Sep 20 16:11:55 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Subproblem.cc: finally compiled after much rewriting
+	(addNode): added
+	(addTopVariable): added
+
+Fri Sep 13 18:29:49 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_FullMatcher.cc (determineRigidBlocks): calculate rigid blocks
+	in new way
+
+Thu Sep 12 18:24:34 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_Subproblem.hh (class A_Subproblem): added BlockPair struct to
+	try to simplify VariableBlock/RigidBlock handling
+
+Wed Sep 11 19:24:04 1996  Steven Eker  <eker@lilac.csl.sri.com>
+
+	* A_LhsAutomaton.hh (class A_LhsAutomaton): added struct
+	RigidBlock plus match-time storage for rigidBlocks
+
+Thu Aug 29 12:13:34 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* A_Subproblem.hh (class A_Subproblem): have at most two edges
+	exits from each node; a down edge and a right edge.
+
+Tue Aug  6 15:58:22 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* A_LhsCompiler.cc (findConstraintPropagationSequence): matchAtTop
+	arg removed from calls to analyseConstraintPropagation()
+
+	* A_Term.hh (class A_Term): boundAbove arg removed from addFixedLengthBlock()
+
+	* A_LhsCompiler.cc: created by extracting match compilation code
+	form A_Term.cc
+	(analyseConstraintPropagation): matchAtTop arg removed
+	(compileLhs): boundAbove arg and code with updated it and passed
+	it deleted
+	(addFixedLengthBlock): boundAbove arg and code with updated it and passed
+	it deleted 
+
+	* A_Term.hh (class A_Term): matchAtTop arg removed from
+	analyseConstraintPropagation(); boundAbove arg removed from compileLhs()
+
+Wed Jul 31 17:37:28 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* A_Symbol.cc (makeTerm): added
+
+Fri Jul 26 16:49:46 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* A_GreedyMatcher.cc (greedyMatch): set extension whole flag correctly
+	(greedyMatch): need to update spare in the case that we enf the
+	main loop with a rigid block still to process
+
+	* A_Term.cc (compileLhs): call addFixedLengthBlock() with
+	boundAbove, boundUniquely the right way around
+	(compileLhs): allow flex part to end with fixed length block
+	if we have extension
+	(compileLhs): need to compile fixed length block that ends the
+	flex part if we have extension
+
+	* A_GreedyMatcher.cc (greedyMatch): heavily revised; now store
+	"spare" rather than "rigidBlockSubjectsNeeded"
+	(greedyMatchVariableBlock): calculate spare correctly
+
+Thu Jul 25 11:13:37 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* A_GreedyMatcher.cc (greedyMatchFixedLengthBlock): no longer do
+	substitution copying; pass back shift factor rather than next
+	shift; code simplified
+	(greedyMatchRigidBlock): do substitution copying
+	(greedyMatch): heavily revised; variableBlockLength no longer needed
+
+	* A_LhsAutomaton.cc (complete): code corrected to do blockLengths for
+	fixed length in _flex_ part (not rigid part!)
+
+Wed Jul 24 16:44:37 1996  Steven Eker  <eker@nmos.csl.sri.com>
+
+	* A_LhsAutomaton.cc (dump): rewritten
+	(complete): added code to fill in blockLength for each rigid subterm
+
+	* A_Subproblem.cc: created
+
+	* A_Subproblem.hh (class A_Subproblem): created
+
+Mon Jul 22 10:44:25 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_DagNode.cc (eliminateSubject): rewritten, now only eliminates
+	target from fixed position
+	(eliminateSubject): rewritten; now only examines single position
+
+Sat Jul 20 18:02:24 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_LhsAutomaton.hh (class A_LhsAutomaton): maxMatchable field in
+	struct Subterm deleted
+
+	* A_GreedyMatcher.cc (greedyMatchVariableBlock): extensionInfo
+	parameter deleted
+	(greedyMatch): rewritten yet again; now group bound variables with
+	fixed length blocks to make rigid blocks which are matched as
+	whoel units
+
+Fri Jul 19 10:34:55 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_GreedyMatcher.cc (greedyMatchVariableBlock): rewritten from scratch
+	(greedyMatch): heavily rewritten
+
+	* A_LhsAutomaton.cc: split off greedy matcher into A_GreedyMatcher.cc
+
+Thu Jul 18 14:28:16 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_Term.cc (addFixedLengthBlock): added
+
+	* A_Term.hh (symbol): added
+
+	* A_Term.cc (findConstraintPropagationSequence): when two
+	sequences bind the same number of variables uniquely; choose the
+	longer sequenece. Store the position of the first flex arg in
+	bestSequence structure so we can propagate it easily in the lone
+	variable case
+	(analyseConstraintPropagation): add lone variable in flex part to
+	those variables that we guarantee to bind uniquely
+
+Tue Jul 16 19:13:08 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_LhsAutomaton.cc (greedyMatchVariableBlock): rewritten
+
+Mon Jul 15 16:31:25 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_LhsAutomaton.cc (greedyMatchFixedLengthBlock2): renamed from
+	matchFixedLengthBlock()
+
+Thu Jul 11 10:42:29 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_LhsAutomaton.cc (updateWholeBounds): use plus() to simplify
+	(updateFlexBounds): use plus() to simplify
+
+	* A_ExtensionInfo.hh (setMatched): deleted
+	(setFirstMatched): added
+	(setLastMatched): added
+
+	* A_DagNode.cc (eliminateSubject): added
+
+	* A_LhsAutomaton.cc (nextMatchForFixedLengthBlock): added
+	(matchFixedLengthBlock): added
+	(compareArgArrays): added
+
+Tue Jul  9 17:20:35 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_Symbol.cc (findBaseSort): added code to use uniform sort
+	structure if it exists
+
+Sat Jul  6 17:24:21 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_Symbol.cc (partialReplace): dded code to track storage
+	during expansion
+
+	* A_DagNode.cc (normalizeAtTop): added code to track storage
+	during expansion
+
+Fri Jul  5 17:46:56 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_LhsAutomaton.cc (A_LhsAutomaton): fixed flex bound
+	initilaization problem
+
+	* A_Term.cc (findConstraintPropagationSequence): added
+
+Wed Jul  3 11:41:32 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_Term.cc (compileLhs): crude implementation
+	(analyseConstraintPropagation): implemented
+
+	* A_LhsAutomaton.cc (updateWholeBounds): added
+	(updateFlexBounds): added
+	(addRigidVariable): added
+	(addFlexVariable): added
+	(addRigidGroundAlien): added
+	(addRigidNonGroundAlien): added
+	(addFlexGroundAlien): added
+	(addFlexNonGroundAlien): added
+	(complete): added
+
+Tue Jul  2 16:06:28 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_LhsAutomaton.cc (forcedLoneVariableCase): completed
+
+Sat Jun 29 15:31:14 1996  Steven Eker  <eker@ponder.csl.sri.com>
+
+	* A_LhsAutomaton.cc (matchRigidPart): added
+

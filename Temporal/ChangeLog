@@ -1,0 +1,293 @@
+2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* veryWeakAlternatingAutomaton.cc: removed #pragma
+	(computeTransitionSet): updated Assert()
+
+	* veryWeakAlternatingAutomaton.hh: removed #pragma
+
+	* transitionSet.cc: removed #pragma
+	(insert): updated Assert()
+	(rename): updated Assert()
+
+	* transitionSet.hh: removed #pragma
+
+	* sccAnalysis.cc (handleComponent): updated Assert()
+
+	* satSolve.cc (bfsToFairComponent): updated Assert()
+	(bfsToMoreFairness): updated Assert()
+	(bfsToTarget): updated Assert()
+
+	* rawTransitionSet.cc: removed #pragma
+
+	* rawTransitionSet.hh: removed #pragma
+
+	* parityGame.cc: removed #pragma
+	(makeNode): updated Assert()s
+
+	* parityGame.hh: removed #pragma
+
+	* modelChecker2.cc: removed #pragma
+	(dfs2SystemTransitions): updated Assert()
+
+	* modelChecker2.hh: removed #pragma
+
+	* logicFormula.cc: removed #pragma
+
+	* logicFormula.hh: removed #pragma
+
+	* genBuchiAutomaton.cc: removed #pragma
+	(getStateIndex): updated Assert()
+	(insertFairTransition): updated Assert()s
+
+	* genBuchiAutomaton.hh: removed #pragma
+
+	* collapseStates.cc (transformFairTransitionSet): updated Assert()
+	(insertFairTransition2): updated Assert()s
+
+	* buchiAutomaton2.cc: removed #pragma
+
+	* buchiAutomaton2.hh: removed #pragma
+	
+===================================Maude79===========================================
+
+2002-03-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parityGame.hh: created
+
+	* parityGame.cc: created
+
+2002-02-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* satSolve.cc (satSolve): try to get a shorter cycle by ignoring
+	redundant fairness conditions
+
+	* modelChecker2.cc (findCounterExample): renamed to
+	findCounterexample()
+
+	* modelChecker2.hh (class ModelChecker2): findCounterExample() ->
+	findCounterexample()
+
+	* satSolve.cc (satSolve): use Bdd:implies()
+
+	* veryWeakAlternatingAutomaton.cc: use Bdd:implies()
+
+2002-02-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* satSolve.cc (satSolve): added call to maximallyCollapseStates();
+	in turn out this produce simpler models by combining states that
+	have arcs into a fair SCC with states with self arcs actually in
+	SCC
+	(satSolve): added lead-in roll-into-cycle optimization; does this
+	subsume the advantage of calling maximallyCollapseStates()?
+
+	* veryWeakAlternatingAutomaton.cc (dnf): added comment as reorder
+	statements in the default case to make this more understandable
+
+2002-02-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* logicFormula.cc (makeProp): 
+	(makeProp): set propositional flag
+	(makeOp): compute propositional flag
+	(structuallyImplies): commented out
+	(structuallyContradicts): commented out
+	(containsNegation): commented out
+	(isNegation): commented out
+
+	* logicFormula.hh (class LogicFormula): added propositional field
+	to struct Node, made op field short
+	(isPropositional): added
+	(getOp): use cast
+
+2002-02-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): updated decls
+	for satSolve(), bfsToFairComponent(), bfsToMoreFairness(),
+	bfsToTarget()
+
+	* satSolve.cc (satSolve): rewritten
+	(bfsToFairComponent): rewritten
+	(bfsToMoreFairness): rewritten
+	(bfsToTarget): rewritten
+	(bfsToMoreFairness): need to make sure we don't leave SCC
+	(bfsToTarget): need to make sure we don't leave SCC
+
+2002-02-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added decls for
+	bfsToFairComponent(), bfsToMoreFairness(), bfsToTarget()
+
+	* satSolve.cc: created
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): stateCount ->
+	traversalCount; .number -> .traversalNumber
+
+	* sccAnalysis.cc (strongConnected): stateCount -> traversalCount
+	(sccAnalysis): stateCount -> traversalCount
+	(strongConnected): .number -> .traversalNumber
+	(sccAnalysis): .number -> .traversalNumber
+
+	* sccOptimizations.cc (sccOptimizations): use sccAnalysis()
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added decl for
+	sccAnalysis()
+
+	* sccAnalysis.cc (sccAnalysis): added
+	(strongConnected): moved here
+	(handleComponent): moved here
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added decl for
+	satSolve()
+
+	* buchiAutomaton2.cc (BuchiAutomaton2): call simplify() on
+	GenBuchiAutomaton
+
+	* genBuchiAutomaton.hh (class GenBuchiAutomaton): added decls for
+	maximallyCollapseStates() and simplify()
+
+	* genBuchiAutomaton.cc (simplify): added
+	(GenBuchiAutomaton): optimization code deleted; we now call
+	simplify() if we want to do this stuff; for sat solving we want to
+	do things differently
+
+	* collapseStates.cc (maximallyCollapseStates): added
+
+	* genBuchiAutomaton.cc (getStateIndex): added comment
+
+	* veryWeakAlternatingAutomaton.cc (VeryWeakAlternatingAutomaton):
+	removed commented out code
+
+2002-01-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker2.cc (ModelChecker2): added Verbose() call to print
+	out the number of property automtaton states
+
+2001-12-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker2.cc (dfs1PropertyTransitions): merged 3 if
+	statements into 1
+	(dfs1SystemTransitions): made local_inline
+	(dfs2PropertyTransitions): made local_inline
+
+	* collapseStates.cc (collapseStates): use FastPair optimization
+	for inserting fair transition sets into table
+
+	* sccOptimizations.cc (sccOptimizations): use FastPair
+	optimization for inserting fair transition sets into table
+
+	* genBuchiAutomaton.cc (generateState): use FastPair optimization
+	for inserting fair transition sets into table
+
+	* veryWeakAlternatingAutomaton.hh (class
+	VeryWeakAlternatingAutomaton): updated decl for dnf()
+
+	* veryWeakAlternatingAutomaton.cc (dnf): no longer const
+
+	* veryWeakAlternatingAutomaton.hh (class
+	VeryWeakAlternatingAutomaton): updated decl for
+	computeTransitionSet()
+
+	* veryWeakAlternatingAutomaton.cc (dnf): call
+	computeTransitionSet() on subformulas that are reachable from dnf;
+	i.e. there is a transition going to their state in the dnf
+	transition set
+	(computeTransitionSet): don't take result arg; write result
+	directly into state; check to see if state is already computed;
+	recursive calls to compute transition sets for states that we need
+	in out computation
+	(computeTransitionSet): turned op == LogicFormula::RELEASE into an
+	Assert
+	(VeryWeakAlternatingAutomaton): don't iterate over states; they
+	are now computed on demand
+
+2001-12-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker2.cc (findCounterExample): use
+	NatSet::const_iterator
+	(dfs1PropertyTransitions): use pre rather than post increment
+	(dfs2PropertyTransitions): use pre rather than post increment
+	(dfs1PropertyTransitions): use i->foo rather than (*i).foo
+	(dfs2PropertyTransitions): use i->foo rather than (*i).foo
+
+	* buchiAutomaton2.cc (BuchiAutomaton2): use NatSet::const_iterator
+	(generate): use pre rather than post increment
+	(transformTransitionMap): use pre rather than post increment
+	(hasNonAcceptingTarget): use pre rather than post increment
+	(dump): use pre rather than post increment
+	(generate): use i->foo rather than (*i).foo
+	(insertTransition): use i->foo rather than (*i).foo
+	(transformTransitionMap): use i->foo rather than (*i).foo
+	(hasNonAcceptingTarget): use i->foo rather than (*i).foo
+
+	* rawTransitionSet.cc (RawTransitionSet): use i->foo rather than
+	(*i).foo; use pre rather than post increment
+
+	* sccOptimizations.cc (eliminateFairness): use pre rather than
+	post increment
+	(sccOptimizations): use NatSet::const_iterator
+	(strongConnected): use pre rather than post increment
+	(transformFairTransitionSet2): use pre rather than post increment
+	(handleComponent): use pre rather than post increment
+	(eliminateFairness): use i->foo rather than (*i).foo
+	(transformFairTransitionSet2): use i->foo rather than (*i).foo
+	(strongConnected): use i->foo rather than (*i).foo
+	(handleComponent): use i->foo rather than (*i).foo
+
+	* collapseStates.cc (transformFairTransitionSet): use pre rather
+	than post increment
+	(transformFairTransitionSet): use i->foo rather than (*i).foo
+	(insertFairTransition2): use i->foo rather than (*i).foo
+
+	* genBuchiAutomaton.cc (generateState): use NatSet::const_iterator
+	(GenBuchiAutomaton): use pre rather than post increment
+	(generateState): use pre rather than post increment
+	(GenBuchiAutomaton): use i->foo rather than (*i).foo
+	(generateState): use i->foo rather than (*i).foo
+	(insertFairTransition): use i->foo rather than (*i).foo
+	(dump): use i->foo rather than (*i).foo
+
+	* veryWeakAlternatingAutomaton.cc (findReachable): use i->foo
+	rather than (*i).foo
+	(checkFairness): use i->foo rather than (*i).foo
+
+	* transitionSet.cc (insert): use pre rather than post increment
+	(product): use pre rather than post increment
+	(rename): use pre rather than post increment
+	(rename): use NatSet::const_iterator
+	(insert): use i->foo rather than (*i).foo for complex iterators
+	(product): use i->foo rather than (*i).foo for complex iterators
+	(dump): use i->foo rather than (*i).foo for complex iterators
+	(rename): use i->foo rather than (*i).foo for complex iterators
+
+	* veryWeakAlternatingAutomaton.cc (findReachable): use
+	NatSet::const_iterator; use pre rather than post increment for
+	complex iterators
+	(checkFairness): use pre rather than post increment for complex
+	iterators
+
+2001-12-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modelChecker2.hh: removed class LogicFormula hack
+
+	* buchiAutomaton2.cc: cleaned up includes
+
+	* buchiAutomaton2.hh: cleaned up includes
+
+	* genBuchiAutomaton.cc: cleaned up includes
+
+	* genBuchiAutomaton.hh: cleaned up includes
+
+	* logicFormula.cc: cleaned up includes
+
+	* transitionSet.cc: cleaned up includes
+
+	* transition.hh: deleted
+
+	* transitionSet.hh: cleaned up includes
+
+	* veryWeakAlternatingAutomaton.hh: removed class LogicFormula hack
+
+	* veryWeakAlternatingAutomaton.cc: cleaned up includes
+
+	* temporal.hh: created
+
+===================================Maude69==================================================
