@@ -57,7 +57,16 @@ RewritingContext::ruleRewrite(Int64 limit)
 		      finish = len;
 		      break;
 		    }
-		  d->setUnstackable();
+		  //
+		  //	Because redexStack didn't grow, all of d's arguments must
+		  //	be unstackable. We might assume that d is unrewritable otherwise
+		  //	we would have already rewritten it; but for safety in the future
+		  //	(say if we use this routine in conjunction with objects that
+		  //	couldn't rewrite at some point but might become rewritable in the
+		  //	future) we do an explicit check.
+		  //
+		  if (d->isUnrewritable())
+		    d->setUnstackable();
 		}
 	    }
 
@@ -65,9 +74,7 @@ RewritingContext::ruleRewrite(Int64 limit)
 	  if (d->isUnrewritable())
 	    continue;
 	  DagNode* r = d->symbol()->ruleRewrite(d, *this);
-	  if (r == 0)
-	    d->setUnrewritable();
-	  else
+	  if (r != 0)
 	    {
 	      int argIndex = redexStack[nextToRewrite].argIndex();
 	      DagNode* p = r;
@@ -285,8 +292,7 @@ RewritingContext::doRewriting(bool argsUnstackable)
   //	Return false we stop because we ran out of gas or because
   //	no more rewrites are possible.
   //	Updates redexStack, currentGas, nrRewritesAllowed, progress.
-  //	Only routine in fair rewriting that sets unrewritable/unstackable
-  //	flags.
+  //	Only routine in fair rewriting that sets unstackable flag.
   //
   DagNode* d = redexStack[currentIndex].node();
   if (d->isUnrewritable())
@@ -311,12 +317,14 @@ RewritingContext::doRewriting(bool argsUnstackable)
 	  if (r == 0)
 	    {
 	      //
-	      //	Always set unrewritable flag, even if we are
-	      //	also unstackable since *d may have been
-	      //	stacked multiple times along different paths.
+	      //	Just because we couldn't do any rewrites it doesn't follow
+	      //	that we will never be able to do rewrites here - some external
+	      //	agency might force a rewrite; so we check to see if the
+	      //	unrewritable flag was set by ruleRewrite(). This virtual function
+	      //	will be aware of any external agency that might affect its symbol
+	      //	and will act accordingly.
 	      //
-	      d->setUnrewritable();
-	      if (argsUnstackable)
+	      if (argsUnstackable && d->isUnrewritable())
 		d->setUnstackable();
 	      break;
 	    }

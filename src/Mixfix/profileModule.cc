@@ -222,9 +222,37 @@ ProfileModule::profileFragment(const PreEquation* preEquation,
   // must be a top level pattern fragment
 }
 
+#define PC(n)	(n) << " (" << ((100 * n) / floatTotal) << "%)"
+
 void
 ProfileModule::showProfile(ostream& s) const
 {
+  double floatTotal;
+  {
+    //
+    //	First compute a grand total.
+    //
+    Int64 total = 0;
+    int nrSymbols = symbolInfo.length();
+    for (int i = 0; i < nrSymbols; i++)
+      {
+	const SymbolProfile& p = symbolInfo[i];
+	total += p.nrBuiltinMbRewrites;
+	total += p.nrBuiltinEqRewrites;
+	total += p.nrBuiltinRlRewrites;
+	total += p.nrMemoRewrites;
+      }
+    int nrMbs = mbInfo.length();
+    for (int i = 0; i < nrMbs; i++)
+      total += mbInfo[i].nrRewrites;
+    int nrEqs = eqInfo.length();
+    for (int i = 0; i < nrEqs; i++)
+      total += eqInfo[i].nrRewrites;
+    int nrRls = rlInfo.length();
+    for (int i = 0; i < nrRls; i++)
+      total += rlInfo[i].nrRewrites;
+    floatTotal = total;
+  }
   {
     const Vector<Symbol*>& symbols = getSymbols();
     int nrSymbols = symbolInfo.length();
@@ -238,21 +266,21 @@ ProfileModule::showProfile(ostream& s) const
 	    const char* g = "";
 	    if (p.nrBuiltinMbRewrites > 0)
 	      {
-		s << "built-in mb rewrites: " << p.nrBuiltinMbRewrites;
+		s << "built-in mb rewrites: " << PC(p.nrBuiltinMbRewrites);
 		g = "\t";
 	      }
 	    if (p.nrBuiltinEqRewrites > 0)
 	      {
-		s << g << "built-in eq rewrites: " << p.nrBuiltinEqRewrites;
+		s << g << "built-in eq rewrites: " << PC(p.nrBuiltinEqRewrites);
 		g = "\t";
 	      }
 	    if (p.nrBuiltinRlRewrites > 0)
 	      {
-		s << g << "built-in rl rewrites: " << p.nrBuiltinRlRewrites;
+		s << g << "built-in rl rewrites: " << PC(p.nrBuiltinRlRewrites);
 		g = "\t";
 	      }
 	    if (p.nrMemoRewrites > 0)
-	      s << g << "memo rewrites: " << p.nrMemoRewrites;
+	      s << g << "memo rewrites: " << PC(p.nrMemoRewrites);
 	    s << "\n\n";
 	  }
       }
@@ -267,14 +295,14 @@ ProfileModule::showProfile(ostream& s) const
 	  {
 	    s << mbs[i] << '\n';
 	    s << "lhs matches: " << p.nrConditionStarts <<
-	      "\trewrites: " << p.nrRewrites << '\n';
+	      "\trewrites: " << PC(p.nrRewrites) << '\n';
 	    showFragmentProfile(s, p.fragmentInfo, p.nrConditionStarts);
 	    s << '\n';
 	  }
 	else if (p.nrRewrites > 0)
 	  {
 	    s << mbs[i] << '\n';
-	    s << "rewrites: " << p.nrRewrites << "\n\n";
+	    s << "rewrites: " << PC(p.nrRewrites) << "\n\n";
 	  }
       }
   }
@@ -288,14 +316,14 @@ ProfileModule::showProfile(ostream& s) const
 	  {
 	    s << eqs[i] << '\n';
 	    s << "lhs matches: " << p.nrConditionStarts <<
-	      "\trewrites: " << p.nrRewrites << '\n';
+	      "\trewrites: " << PC(p.nrRewrites) << '\n';
 	    showFragmentProfile(s, p.fragmentInfo, p.nrConditionStarts);
 	    s << '\n';
 	  }
 	else if (p.nrRewrites > 0)
 	  {
 	    s << eqs[i] << '\n';
-	    s << "rewrites: " << p.nrRewrites << "\n\n";
+	    s << "rewrites: " << PC(p.nrRewrites) << "\n\n";
 	  }
       }
   }
@@ -309,14 +337,14 @@ ProfileModule::showProfile(ostream& s) const
 	  {
 	    s << rls[i] << '\n';
 	    s << "lhs matches: " << p.nrConditionStarts <<
-	      "\trewrites: " << p.nrRewrites << '\n';
+	      "\trewrites: " << PC(p.nrRewrites) << '\n';
 	    showFragmentProfile(s, p.fragmentInfo, p.nrConditionStarts);
 	    s << '\n';
 	  }
 	else if (p.nrRewrites > 0)
 	  {
 	    s << rls[i] << '\n';
-	    s << "rewrites: " << p.nrRewrites << "\n\n";
+	    s << "rewrites: " << PC(p.nrRewrites) << "\n\n";
 	  }
       }
   }

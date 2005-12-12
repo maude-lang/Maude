@@ -36,6 +36,7 @@
 #include "core.hh"
 #include "ACU_RedBlack.hh"
 #include "ACU_Theory.hh"
+#include "objectSystem.hh"
 
 //      interface class definitions
 #include "symbol.hh"
@@ -72,6 +73,7 @@ ConfigSymbol::ConfigSymbol(int id,
 			   Term* identity)
   : ACU_Symbol(id, strategy, memoFlag, identity, false)
 {
+  //cerr << "ConfigSymbol::ConfigSymbol()\n";
 }
 
 void
@@ -168,9 +170,12 @@ ConfigSymbol::resetRules()
 DagNode*
 ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 {
+  //cerr << "ruleRewrite() " << subject << endl;
   ObjectSystemRewritingContext* rc = safeCast(ObjectSystemRewritingContext*, &context);
-  if (rc->getObjectMode() == ObjectSystemRewritingContext::STANDARD)
+  ObjectSystemRewritingContext::Mode mode = rc->getObjectMode();
+  if (mode == ObjectSystemRewritingContext::STANDARD)
     return ACU_Symbol::ruleRewrite(subject, context);
+  bool external = (mode == ObjectSystemRewritingContext::EXTERNAL);
 
   ACU_DagNode* s = safeCast(ACU_DagNode*, subject);
   int nrArgs = s->nrArgs();
@@ -185,7 +190,8 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 	{
 	  DagArgumentIterator j(d);
 	  Assert(j.valid(), "no args for object symbol");
-	  MessageQueue& mq = objectMap[j.argument()];
+	  DagNode* objectName = j.argument();
+	  MessageQueue& mq = objectMap[objectName];
 	  if (mq.object == 0)
 	    {
 	      mq.object = d;
@@ -225,13 +231,17 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
   if (objectMap.empty())
     return ACU_Symbol::ruleRewrite(subject, context);
 
-  bool delivered = false;
   Vector<DagNode*> dagNodes(2);
   Vector<int> multiplicities(2);
+  bool delivered = false;
   const ObjectMap::iterator e = objectMap.end();
   for (ObjectMap::iterator i = objectMap.begin(); i != e; ++i)
     {
-      FOR_EACH_CONST(j, list<DagNode*>, i->second.messages)
+      list<DagNode*>& messages = i->second.messages;
+      if (external && rc->getExternalMessages(i->first, messages))
+	delivered = true;  // make sure we do a rewrite
+
+      FOR_EACH_CONST(j, list<DagNode*>, messages)
 	{
 	  DagNode* object = i->second.object;
 	  if (object != 0)
@@ -266,6 +276,16 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 		{
 		  context.addInCount(*t);
 		  delete t;
+		}
+	    }
+	  else
+	    {
+	      //cerr << "unresolved message " << *j << endl;
+	      //  cerr << "external = " << external << endl;
+	      if (external && rc->offerMessageExternally(i->first, *j))
+		{
+		  delivered = true;  // make sure we do a rewrite
+		  continue;  // next message
 		}
 	    }
 	  //

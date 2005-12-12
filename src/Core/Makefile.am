@@ -45,7 +45,8 @@ libcore_a_SOURCES = \
 
 EXTRA_DIST = \
 	run.cc \
-	ctorDiagram.cc
+	ctorDiagram.cc \
+	sortErrorAnalysis.cc
 
 noinst_HEADERS = \
 	argVec.hh \

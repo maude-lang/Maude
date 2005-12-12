@@ -40,7 +40,7 @@ public:
   //
   RawArgumentIterator* arguments();
   void deepSelfDestruct();
-  Term* deepCopy2(SymbolMap* map) const;
+  Term* deepCopy2(SymbolMap* translator) const;
   Term* normalize(bool full, bool& changed);
   int compareArguments(const Term* other) const;
   int compareArguments(const DagNode* other) const;
@@ -85,7 +85,7 @@ private:
 
   struct CP_Sequence;
 
-  AU_Term(const AU_Term& original, SymbolMap* map);
+  AU_Term(const AU_Term& original, AU_Symbol* symbol, SymbolMap* translator);
   bool unitVariable(VariableTerm* vt, int index) const;
   void findConstraintPropagationSequence(const NatSet& boundUniquely,
 					 CP_Sequence& bestSequence) const;

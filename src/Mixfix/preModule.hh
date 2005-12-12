@@ -25,16 +25,20 @@
 //
 #ifndef _preModule_hh_
 #define _preModule_hh_
+#include <set>
 #include "namedEntity.hh"
 #include "lineNumber.hh"
+#include "syntaxContainer.hh"
 #include "commonTokens.hh"
 #include "importModule.hh"
+#include "moduleDatabase.hh"
 
 class PreModule
   : public NamedEntity,
     public LineNumber,
-    private CommonTokens,
-    private ImportModule::Parent
+    public SyntaxContainer,
+    public Entity::User,
+    private CommonTokens
 {
   NO_COPYING(PreModule);
 
@@ -46,13 +50,14 @@ public:
     TERM_HOOK
   };
 
-  PreModule(Token moduleName, MixfixModule::ModuleType moduleType);
+  PreModule(Token startToken, Token moduleName);
   ~PreModule();
 
   void loseFocus();
-  void finishModule();
+  void finishModule(Token endToken);
   bool isComplete();
 
+  void addParameter(Token name, ModuleExpression*  theory);
   void addImport(Token mode, ModuleExpression* expr);
   void addSortDecl(const Vector<Token>& sortDecl);
   void addSubsortDecl(const Vector<Token>& subsortDecl);
@@ -64,6 +69,7 @@ public:
   void setFlag(int flag);
   void setPrec(Token range);
   void setGather(const Vector<Token>& gather);
+  void setMetadata(Token metaDataTok);
   void setFormat(const Vector<Token>& format);
   void setIdentity(const Vector<Token>& identity);
   void setStrat(const Vector<Token>& strategy);
@@ -77,18 +83,20 @@ public:
   VisibleModule* getFlatModule();
 
   MixfixModule::ModuleType getModuleType() const;
-  int getNrAutoImports() const;
+  const ModuleDatabase::ImportMap& getAutoImports() const;
   int getNrImports() const;
-  int getAutoImport(int index) const;
   int getImportMode(int index) const;
   const ModuleExpression* getImport(int index) const;
+  int getNrParameters() const;
+  int getParameterName(int index) const;
+  const ModuleExpression* getParameter(int index) const;
 
   void process();
 
   void dump();
   void showModule(ostream& s = cout);
 
-  static ImportModule* makeModule(const ModuleExpression* expr);
+  static ImportModule* makeModule(const ModuleExpression* expr, ImportModule* enclosingModule = 0);
 
   //
   //	Utility functions - maybe they should go elsewhere?
@@ -118,12 +126,6 @@ private:
     int bubbleSpecIndex;
   };
 
-  struct Type
-  {
-    bool kind;
-    Vector<Token> tokens;
-  };
-
   struct OpDef
   {
     OpDef();
@@ -137,12 +139,19 @@ private:
     int prec;
     Vector<int> gather;
     Vector<int> format;
+    int metadata;
     SymbolType symbolType;
     string latexMacro;
     //
     //	Filled out from types after connected components are determined.
     //
     Vector<Sort*> domainAndRange;
+  };
+
+  struct Parameter
+  {
+    Token name;
+    ModuleExpression* theory;
   };
 
   struct Import
@@ -153,8 +162,9 @@ private:
 
   static void printAttributes(ostream& s, const OpDef& opDef);
   static ImportModule*  getModule(int name, const LineNumber& lineNumber);
+  static void printSortTokenVector(ostream& s, const Vector<Token>& sorts);
 
-  void regretToInform(ImportModule* doomedModule);
+  void regretToInform(Entity* doomedEntity);
   int findHook(const Vector<Hook>& hookList, HookType type, int name);
 
   Symbol* findHookSymbol(const Vector<Token>& fullName);
@@ -178,21 +188,22 @@ private:
   void processStatements();
   DagNode* makeDag(Term* subjectTerm);
   DagNode* makeDag(const Vector<Token>& subject);
+  bool compatible(int endTokenCode);
 
   MixfixModule::ModuleType moduleType;
+  int startTokenCode;
   Bool lastSawOpDecl;
   Bool isCompleteFlag;
+  Vector<Parameter> parameters;
   Vector<Import> imports;
   Vector<Vector<Token> > sortDecls;
   Vector<Vector<Token> > subsortDecls;
   Vector<OpDecl> opDecls;
   Vector<OpDef> opDefs;
   Vector<Vector<Token> > statements;
-  IntSet labels;
-  IntSet autoImports;
+  set<int> potentialLabels;
+  ModuleDatabase::ImportMap autoImports;
   VisibleModule* flatModule;
-
-  friend ostream& operator<<(ostream& s, const PreModule::Type& type);
 };
 
 inline bool
@@ -219,22 +230,16 @@ PreModule::addSubsortDecl(const Vector<Token>& subsortDecl)
   subsortDecls.append(subsortDecl);
 }
 
-inline int
-PreModule::getNrAutoImports() const
+inline const ModuleDatabase::ImportMap&
+PreModule::getAutoImports() const
 {
-  return autoImports.cardinality();
+  return autoImports;
 }
 
 inline int
 PreModule::getNrImports() const
 {
   return imports.length();
-}
-
-inline int
-PreModule::getAutoImport(int index) const
-{
-  return autoImports.index2Int(index); 
 }
 
 inline int
@@ -248,5 +253,34 @@ PreModule::getImport(int index) const
 {
   return imports[index].expr;
 }
+
+inline int
+PreModule::getNrParameters() const
+{
+  return parameters.length();
+}
+
+inline int
+PreModule::getParameterName(int index) const
+{
+  return parameters[index].name.code();
+}
+
+inline const ModuleExpression*
+PreModule::getParameter(int index) const
+{
+  return parameters[index].theory;
+}
+
+#ifndef NO_ASSERT
+inline ostream&
+operator<<(ostream& s, const PreModule* p)
+{
+  //
+  //	Needed to avoid ambiguity.
+  //
+  s << static_cast<const NamedEntity*>(p);
+}
+#endif
 
 #endif

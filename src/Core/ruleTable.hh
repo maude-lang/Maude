@@ -25,6 +25,8 @@
 //
 #ifndef _ruleTable_hh_
 #define _ruleTable_hh_
+#include <list>
+#include <stack>
 
 class RuleTable
 {
@@ -36,7 +38,9 @@ public:
   virtual void compileRules();
   virtual DagNode* ruleRewrite(DagNode* subject, RewritingContext& context);
   virtual void resetRules();
-  
+  virtual void saveHiddenState();
+  virtual void restoreHiddenState();
+
 protected:
   virtual bool acceptRule(Rule* rule) = 0;
   DagNode* applyRules(DagNode* subject,
@@ -44,8 +48,11 @@ protected:
 		      ExtensionInfo* extensionInfo);
 
 private:
+  typedef stack<int, list<int> > IntStack;  // optimize for the empty case
+
   Vector<Rule*> rules;
-  int nextRule;		// for rule fairness
+  int nextRule;
+  IntStack nextRuleStack;
 };
 
 inline const Vector<Rule*>&
@@ -65,12 +72,6 @@ inline bool
 RuleTable::ruleFree() const
 {
   return rules.isNull();
-}
-
-inline void
-RuleTable::resetRules()
-{
-  nextRule = 0;
 }
 
 #endif

@@ -19,7 +19,8 @@ libutility_a_SOURCES = \
 	bddUser.cc \
 	tty.cc \
 	bdd.cc \
-	timer.cc
+	timer.cc \
+	mpzSystem.cc
 
 noinst_HEADERS = \
 	bdd.hh \
@@ -49,4 +50,11 @@ noinst_HEADERS = \
 	vector.hh \
 	timeStuff.hh \
 	mathStuff.hh \
-	ropeStuff.hh
+	ropeStuff.hh \
+	mpzSystem.hh
+
+EXTRA_DIST = \
+	mpzContejeanDevie.cc \
+	mpzGcdInit.cc \
+	mpzGcdTrivial.cc \
+	mpzGcdBasedSolver.cc

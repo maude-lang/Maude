@@ -25,6 +25,7 @@
 //
 #ifndef _dagNode_hh_
 #define _dagNode_hh_
+#include "symbol.hh"
 #include "redexPosition.hh"
 
 class DagNode

@@ -1,12 +1,12 @@
 Maude> ==========================================
 reduce in META-LEVEL : upImports('META-LEVEL) .
 rewrites: 1
-result ImportList: including 'BOOL .
+result ImportList: protecting 'BOOL .
 protecting 'META-MODULE .
 ==========================================
 reduce in META-LEVEL : upImports('BAR) .
 rewrites: 1
-result ImportList: including 'BOOL .
+result ImportList: protecting 'BOOL .
 including 'FOO * (
   sort 'Foo to 'Baz,
   op 'a to 'b [none]
@@ -14,7 +14,7 @@ including 'FOO * (
 ==========================================
 reduce in META-LEVEL : upImports('BAR') .
 rewrites: 1
-result ImportList: including 'BOOL .
+result ImportList: protecting 'BOOL .
 including 'FOO' * (
   sort 'Foo to 'Quux,
   op '_+_ : 'Baz 'Baz -> 'Foo to '_._ [prec(27) gather('E 'e)],
@@ -23,7 +23,7 @@ including 'FOO' * (
 ==========================================
 reduce in META-LEVEL : upImports('BAZ) .
 rewrites: 1
-result ImportList: including 'BOOL .
+result ImportList: protecting 'BOOL .
 including 'NAT + 'FOO' * (
   sort 'Foo to 'Quux,
   label 'a to 'b,
@@ -34,7 +34,7 @@ including 'NAT + 'FOO' * (
 reduce in META-LEVEL : upModule('BAZ, false) .
 rewrites: 1
 result FModule: fmod 'BAZ is
-  including 'BOOL .
+  protecting 'BOOL .
   including 'NAT + 'FOO' * (
     sort 'Foo to 'Quux,
     label 'a to 'b,
@@ -58,20 +58,20 @@ result FModule: fmod 'BAZ is
   subsort 'Zero < 'Nat .
   op '0 : nil -> 'Zero [ctor] .
   op '_&_ : 'Nat 'Nat -> 'Nat [assoc comm prec(53) special(
-    id-hook('NumberOpSymbol, '&) 
+    id-hook('ACU_NumberOpSymbol, '&) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op '_*_ : 'Nat 'Nat -> 'Nat [assoc comm prec(31) special(
-    id-hook('NumberOpSymbol, '*) 
+    id-hook('ACU_NumberOpSymbol, '*) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op '_*_ : 'NzNat 'NzNat -> 'NzNat [assoc comm prec(31) special(
-    id-hook('NumberOpSymbol, '*) 
+    id-hook('ACU_NumberOpSymbol, '*) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op '_*_ : 'Quux 'Quux -> 'Quux [assoc comm prec(29) format('s 's 's 's)] .
   op '_+_ : 'Nat 'Nat -> 'Nat [assoc comm prec(33) special(
-    id-hook('NumberOpSymbol, '+) 
+    id-hook('ACU_NumberOpSymbol, '+) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op '_+_ : 'NzNat 'Nat -> 'NzNat [assoc comm prec(33) special(
-    id-hook('NumberOpSymbol, '+) 
+    id-hook('ACU_NumberOpSymbol, '+) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op '_._ : 'Baz 'Baz -> 'Quux [prec(27) gather('E 'e)] .
   op '_<<_ : 'Nat 'Nat -> 'Nat [prec(35) gather('E 'e) special(
@@ -130,22 +130,22 @@ result FModule: fmod 'BAZ is
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op '_xor_ : 'Bool 'Bool -> 'Bool [assoc comm prec(57)] .
   op '_xor_ : 'Nat 'Nat -> 'Nat [assoc comm prec(55) special(
-    id-hook('NumberOpSymbol, 'xor) 
+    id-hook('ACU_NumberOpSymbol, 'xor) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op '_|_ : 'Nat 'Nat -> 'Nat [assoc comm prec(57) special(
-    id-hook('NumberOpSymbol, '|) 
+    id-hook('ACU_NumberOpSymbol, '|) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op '_|_ : 'NzNat 'Nat -> 'NzNat [assoc comm prec(57) special(
-    id-hook('NumberOpSymbol, '|) 
+    id-hook('ACU_NumberOpSymbol, '|) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op 'a : nil -> 'Baz [none] .
   op 'false : nil -> 'Bool [ctor special(
     id-hook('SystemFalse, nil))] .
   op 'gcd : 'Nat 'Nat -> 'Nat [assoc comm special(
-    id-hook('NumberOpSymbol, 'gcd) 
+    id-hook('ACU_NumberOpSymbol, 'gcd) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op 'gcd : 'NzNat 'Nat -> 'NzNat [assoc comm special(
-    id-hook('NumberOpSymbol, 'gcd) 
+    id-hook('ACU_NumberOpSymbol, 'gcd) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op 'if_then_else_fi : 'Bool 'Universal 'Universal -> 'Universal [poly(2 3 0)
     special(
@@ -153,10 +153,22 @@ result FModule: fmod 'BAZ is
     term-hook('1, 'true.Bool) 
     term-hook('2, 'false.Bool))] .
   op 'lcm : 'Nat 'Nat -> 'Nat [assoc comm special(
-    id-hook('NumberOpSymbol, 'lcm) 
+    id-hook('ACU_NumberOpSymbol, 'lcm) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op 'lcm : 'NzNat 'NzNat -> 'NzNat [assoc comm special(
-    id-hook('NumberOpSymbol, 'lcm) 
+    id-hook('ACU_NumberOpSymbol, 'lcm) 
+    op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
+  op 'max : 'Nat 'Nat -> 'Nat [assoc comm special(
+    id-hook('ACU_NumberOpSymbol, 'max) 
+    op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
+  op 'max : 'NzNat 'Nat -> 'NzNat [assoc comm special(
+    id-hook('ACU_NumberOpSymbol, 'max) 
+    op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
+  op 'min : 'Nat 'Nat -> 'Nat [assoc comm special(
+    id-hook('ACU_NumberOpSymbol, 'min) 
+    op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
+  op 'min : 'NzNat 'NzNat -> 'NzNat [assoc comm special(
+    id-hook('ACU_NumberOpSymbol, 'min) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op 'modExp : '`[Nat`] '`[Nat`] '`[Nat`] -> '`[Nat`] [special(
     id-hook('NumberOpSymbol, 'modExp) 
@@ -166,7 +178,7 @@ result FModule: fmod 'BAZ is
     id-hook('SuccSymbol, nil) 
     term-hook('zeroTerm, '0.Zero))] .
   op 'sd : 'Nat 'Nat -> 'Nat [comm special(
-    id-hook('NumberOpSymbol, 'sd) 
+    id-hook('CUI_NumberOpSymbol, 'sd) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
   op 'true : nil -> 'Bool [ctor special(
     id-hook('SystemTrue, nil))] .

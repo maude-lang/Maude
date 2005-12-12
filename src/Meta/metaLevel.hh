@@ -66,6 +66,11 @@ public:
 			  DagNode* metaContext,
 			  MixfixModule* m);
   DagNode* upFailure4Tuple();
+
+  DagNode* upTrace(const RewriteSequenceSearch& state, MixfixModule* m);
+  DagNode* upFailureTrace();
+
+
   DagNode* upContext(DagNode* dagNode,
 		     MixfixModule* m,
 		     DagNode* hole,
@@ -96,12 +101,15 @@ public:
 		     MixfixModule* m,
 		     PointerMap& qidMap,
 		     PointerMap& dagNodeMap);
+  DagNode* upTypeListSet(const Vector<OpDeclaration>& opDecls,
+			 const NatSet& chosenDecls,
+			 PointerMap& qidMap);
 
   bool downBound(DagNode* metaBound, int& bound) const;
   bool downSaturate(DagNode* metaBound, int& bound) const;
   bool downBound64(DagNode* metaBound, Int64& bound) const;
   bool downSaturate64(DagNode* metaBound, Int64& bound) const;
-
+  bool downPrintOptionSet(DagNode* metaPrintOptionSet, int& printFlags) const;
   bool downBool(DagNode* metaBool, bool& value);
   bool downQid(DagNode* metaQid, int& id);
   MetaModule* downModule(DagNode* metaModule);
@@ -122,6 +130,7 @@ public:
   bool downSimpleSort(DagNode* metaSort, MixfixModule* m, Sort*& sort);
   bool downType(DagNode* metaType, MixfixModule* m, Sort*& type);
   bool downQidList(DagNode* metaQidList, Vector<int>& ids);
+  bool downTypeList(DagNode* metaTypeList, MixfixModule* m, Vector<Sort*>& typeList);
   bool downComponent(DagNode* metaComponent,
 		     MixfixModule* m,
 		     ConnectedComponent*& component);
@@ -164,6 +173,7 @@ private:
     int prec;
     Vector<int> gather;
     Vector<int> format;
+    int metadata;
     DagNode* identity;
     DagNode* fixUpInfo;
   };
@@ -186,6 +196,9 @@ private:
 			PointerMap& qidMap,
 			PointerMap& dagNodeMap);
 
+  DagNode* upHeader(PreModule* pm, PointerMap& qidMap);
+  DagNode* upParameterDecls(PreModule* pm, PointerMap& qidMap);
+  DagNode* upParameterDecl(PreModule* pm, int index, PointerMap& qidMap);
   DagNode* upPolymorphDecl(ImportModule* m, int index, PointerMap& qidMap);
   DagNode* upOpDecl(ImportModule* m, int symbolNr, int declNr, PointerMap& qidMap);
   DagNode* upMb(const SortConstraint* mb, MixfixModule* m, PointerMap& qidMap);
@@ -224,11 +237,26 @@ private:
 		     MixfixModule* m,
 		     PointerMap& qidMap);
   DagNode* upModuleExpression(const ModuleExpression* e, PointerMap& qidMap);
+  DagNode* upArguments(const Vector<Token>& arguments, PointerMap& qidMap);
   DagNode* upRenaming(const Renaming* r, PointerMap& qidMap);
   DagNode* upTypeSorts(const set<int>& sorts, PointerMap& qidMap);
   DagNode* upRenamingAttributeSet(const Renaming* r, int index, PointerMap& qidMap);
 
-  bool downModuleExpression(DagNode* metaExpr, ImportModule*& m);
+  DagNode* upTraceStep(const RewriteSequenceSearch& state,
+		       int stateNr,
+		       MixfixModule* m,
+		       PointerMap& qidMap,
+		       PointerMap& dagNodeMap);
+
+  DagNode* upTypeList(const Vector<Sort*>& types,
+		      bool omitLast,
+		      PointerMap& qidMap);
+
+  bool downHeader(DagNode* metaHeader, int& id, DagNode*& metaParameterDeclList);
+  bool downParameterDeclList(DagNode* metaParameterDeclList, ImportModule* m);
+  bool downParameterDecl(DagNode* metaParameterDecl, ImportModule* m);
+
+  bool downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule, ImportModule*& m);
   bool downRenamings(DagNode* metaRenamings, Renaming* renaming);
   bool downRenaming(DagNode* metaRenaming, Renaming* renaming);
   bool downRenamingTypes(DagNode* metaTypes, Renaming* renaming);
@@ -237,7 +265,6 @@ private:
   bool downRenamingAttribute(DagNode* metaRenamingAttribute, Renaming* renaming);
   
   bool downVariable(DagNode* metaVariable, MixfixModule* m, Symbol*& vs);
-  bool downTypeList(DagNode* metaTypeList, MixfixModule* m, Vector<Sort*>& typeList);
   bool downPolymorphTypeList(DagNode* metaTypeList,
 			     MixfixModule* m,
 			     const NatSet& polyArgs,
@@ -260,6 +287,8 @@ private:
 		      Symbol* topSymbol,
 		      int& bubbleSpecIndex);
 
+  bool downPrintOption(DagNode* metaPrintOption, int& printFlags) const;
+
   void checkHookList(DagNode* metaHookList, SymbolType& symbolType);
   void checkHook(DagNode* metaIdHook, SymbolType& symbolType);
  
@@ -277,6 +306,7 @@ private:
   bool downRules(DagNode* metaRules, MixfixModule* m);
   bool downRule(DagNode* metaRule, MixfixModule* m);
   bool downTermList(DagNode* metaTermList, MixfixModule* m, Vector<Term*>& termList);
+  bool downInstantiationArguments(DagNode* metaArguments, Vector<int>& arguments);
   bool downAssignment(DagNode* metaAssignment,
 		      MixfixModule* m,
 		      Vector<Symbol*>& variables,
@@ -321,6 +351,7 @@ inline
 MetaLevel::AttributeInfo::AttributeInfo()
 {
   prec = DEFAULT;
+  metadata = NONE;
   identity = 0;
   fixUpInfo = 0;
 }

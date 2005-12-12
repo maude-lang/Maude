@@ -71,13 +71,13 @@ AU_Term::AU_Term(AU_Symbol* symbol, const Vector<Term*>& arguments)
     argArray[i].term = arguments[i];
 }
 
-AU_Term::AU_Term(const AU_Term& original, SymbolMap* map)
-  : Term(map == 0 ? original.symbol() : map->translate(original.symbol())),
+AU_Term::AU_Term(const AU_Term& original, AU_Symbol* symbol, SymbolMap* translator)
+  : Term(symbol),
     argArray(original.argArray.length())
 {
   int nrArgs = original.argArray.length();
   for (int i = 0; i < nrArgs; i++)
-    argArray[i].term = original.argArray[i].term->deepCopy(map);
+    argArray[i].term = original.argArray[i].term->deepCopy(translator);
 }
 
 RawArgumentIterator*
@@ -95,9 +95,58 @@ AU_Term::deepSelfDestruct()
 }
 
 Term*
-AU_Term::deepCopy2(SymbolMap* map) const
+AU_Term::deepCopy2(SymbolMap* translator) const
 {
-  return new AU_Term(*this, map);
+  AU_Symbol* s = symbol();
+  if (translator != 0)
+    {
+      Symbol* s2 = translator->translate(s);
+      if (s2 == 0)
+	{
+	  int nrArgs = argArray.length();
+	  if (nrArgs == 2)
+	    return translator->translateTerm(this);
+	  //
+	  //	Tricky situtation - we have to use translateTerm() since
+	  //	we are translating to a term but we have more than 2
+	  //	2 arguments. We resolve it by creating a temporary
+	  //	expanded term.
+	  //
+	  Vector<Term*> args(2);
+	  args[0] = argArray[0].term;
+	  for (int i = 1; i < nrArgs; ++i)
+	    {
+	      args[1] = argArray[i].term;
+	      args[0] = new AU_Term(s, args);
+	    }
+	  Term* t = args[0];
+	  Term* r = translator->translateTerm(t);
+	  for (int i = 1; i < nrArgs; ++i)
+	    {
+	      Term* n = safeCast(AU_Term*, t)->argArray[0].term;
+	      delete t;
+	      t = n;
+	    }
+	  return r;
+	}
+      s = dynamic_cast<AU_Symbol*>(s2);
+      if (s == 0)
+	{
+	  //
+	  //	Another tricky situation - we are translating to a non-AU_Symbol.
+	  //
+	  Vector<Term*> args(2);
+	  args[0] = argArray[0].term->deepCopy(translator);
+	  int nrArgs = argArray.length();
+	  for (int i = 1; i < nrArgs; ++i)
+	    {
+	      args[1] = argArray[i].term->deepCopy(translator);
+	      args[0] = s2->makeTerm(args);
+	    }
+	  return args[0];
+	}
+    }
+  return new AU_Term(*this, s, translator);
 }
 
 Term*

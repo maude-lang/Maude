@@ -40,7 +40,7 @@ public:
   int nrMaximalSorts() const;
   Sort* sort(int index) const;
   bool leq(int index1, int index2) const;
-  void findMaximalSorts(const NatSet& uSorts, Vector<int>& indices) const;
+  void findMaximalSorts(const NatSet& uSorts, Vector<Sort*>& maxSorts) const;
   int findIndex(const NatSet& leqSorts) const;
   const NatSet& getLeqSorts(int index) const;
   bool errorFree() const;

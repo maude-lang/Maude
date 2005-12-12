@@ -1,3 +1,28 @@
+2005-10-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.cc (deepCopy2): fix bug where we were testing s rather
+	than s2 for 0
+
+===================================Maude86c===========================================
+
+2005-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.hh (class ACU_Term): updated decl for SymbolMap*
+	version of ctor
+
+	* ACU_Term.cc (deepCopy2): handle translation to a non-ACU_Symbol
+	(ACU_Term): force symbol arg to be a ACU_Symbol*
+
+2005-07-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.hh (class ACU_Term): updated decls for deepCopy2() and
+	SymbolMap* version of ctor
+
+	* ACU_Term.cc (deepCopy2): rewritten
+	(ACU_Term): (SymbolMap* version) rewritten
+
+===================================Maude86b===========================================
+
 2003-08-28  Steven Eker  <eker@goo.csl.sri.com>
 
 	* ACU_Symbol.hh (class ACU_Symbol): added decl for

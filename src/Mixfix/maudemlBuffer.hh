@@ -39,6 +39,7 @@ public:
   void generateReduce(DagNode* subject);
   void generateRewrite(DagNode* subject, Int64 limit);
   void generateFrewrite(DagNode* subject, Int64 limit, Int64 gas);
+  void generateErewrite(DagNode* subject, Int64 limit, Int64 gas);
   void generateSearch(DagNode* subject,
 		      PreEquation* pattern,
 		      const string& searchType,

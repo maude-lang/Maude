@@ -48,8 +48,8 @@
 #include "userLevelRewritingContext.hh"
 #include "visibleModule.hh"
 
-VisibleModule::VisibleModule(int name, ModuleType moduleType, Parent* parent)
-  : ImportModule(name, moduleType, parent)
+VisibleModule::VisibleModule(int name, ModuleType moduleType, Entity::User* parent)
+  : ImportModule(name, moduleType, TEXT, parent)
 {
 }
 
@@ -161,9 +161,17 @@ VisibleModule::showSortsAndSubsorts(ostream& s) const
 void
 VisibleModule::showModule(ostream& s, bool all) const
 {
-  if (getModuleType() == FUNCTIONAL_MODULE)
-    s << 'f';
-  s << "mod " << this << " is\n";
+  s << moduleTypeString(getModuleType()) << ' ' << this;
+  int nrParameters = getNrParameters();
+  if (nrParameters > 0)
+    {
+      s << '{' << Token::name(getParameterName(0)) << " :: " << getParameterTheory(0);
+      for (int i = 1; i < nrParameters; ++i)
+	s << ", " << Token::name(getParameterName(i)) << " :: " << getParameterTheory(i);
+      s << '}';
+    }
+  s << " is\n";
+
   showSorts1(s, true, all);
   showSubsorts(s, true, all);
   showPolymorphs(s, true, all);
@@ -174,7 +182,7 @@ VisibleModule::showModule(ostream& s, bool all) const
   showRls(s, true, all);
   if (UserLevelRewritingContext::interrupted())
     return;
-  s << ((getModuleType() == FUNCTIONAL_MODULE) ? "endfm\n" : "endm\n");
+  s << moduleEndString(getModuleType()) << '\n';
 }
 
 void
@@ -389,6 +397,11 @@ VisibleModule::showPolymorphAttributes(ostream& s, int index) const
 	}
       s << ')';
     }
+
+  int metadata = getPolymorphMetadata(index);
+  if (metadata != NONE)
+    s << " metadata " << Token::name(metadata);
+
   if (st.hasSpecial())
     {
       s << " special (";
@@ -416,9 +429,21 @@ VisibleModule::showPolymorphAttributes(ostream& s, int index) const
 	    const Vector<Sort*>& domainAndRange =
 	      op->getOpDeclarations()[0].getDomainAndRange();
 	    int nrSorts = domainAndRange.length() - 1;
+	    //
+	    //	We don't use operator<< for sorts in an op-hook since they
+	    //	should always be printed as single tokens.
+	    //
 	    for (int j = 0; j < nrSorts; j++)
-	      s << hookSort(domainAndRange[j]) << ' ';
-	    s << "~> " << hookSort(domainAndRange[nrSorts]) << ')';
+	      {
+		Sort* sort = domainAndRange[j];
+		if (sort->index() == Sort::KIND)
+		  sort = sort->component()->sort(1);
+		s << Token::name(sort->id()) << ' ';
+	      }
+	    Sort* sort = domainAndRange[nrSorts];
+	    if (sort->index() == Sort::KIND)
+	      sort = sort->component()->sort(1);
+	    s << "~> " << Token::name(sort->id()) << ')';
 	  }
       }
       {
@@ -511,24 +536,28 @@ VisibleModule::showDecls(ostream& s, bool indent, int index, bool all) const
       for (int j = 0; j < nrArgs; j++)
 	s << ' ' << dec[j];
       s << " -> " << dec[nrArgs];
-      showAttributes(s, symbol, opDecls[i]);
+      showAttributes(s, symbol, i);
       s << " .\n";
     }
 }
 
 void
-VisibleModule::showAttributes(ostream& s, Symbol* symbol, const OpDeclaration& decl) const
+VisibleModule::showAttributes(ostream& s, Symbol* symbol, int opDeclIndex) const
 {
   Vector<int> gather;
   getGather(symbol, gather);  // there will be a gather whenever there is mixfix syntax and args
   int gatherLength = gather.length();
   SymbolType st = getSymbolType(symbol);
+  const OpDeclaration& decl = symbol->getOpDeclarations()[opDeclIndex];
   bool ctor = decl.isConstructor();
+  int metadata = getMetadata(symbol, opDeclIndex);
+
 
   if (gatherLength == 0 &&
       st.getBasicType() == SymbolType::STANDARD &&
       !(st.hasFlag(SymbolType::ATTRIBUTES)) &&
-      !ctor)
+      !ctor &&
+      metadata == NONE)
     return;  // no attributes;
 
   const char* space = "";
@@ -673,6 +702,11 @@ VisibleModule::showAttributes(ostream& s, Symbol* symbol, const OpDeclaration& d
 	}
       s << ')';
     }
+  if (metadata != NONE)
+    {
+      s << space << "metadata " << Token::name(metadata);
+      space = " ";
+    }
   if (st.hasSpecial())
     {
       s << space << "special (";
@@ -707,18 +741,21 @@ VisibleModule::showAttributes(ostream& s, Symbol* symbol, const OpDeclaration& d
 	    const Vector<Sort*>& domainAndRange =
 	      op->getOpDeclarations()[0].getDomainAndRange();
 	    int nrSorts = domainAndRange.length() - 1;
+	    //
+	    //	We don't use operator<< for sorts in an op-hook since they
+	    //	should always be printed as single tokens.
+	    //
 	    for (int j = 0; j < nrSorts; j++)
 	      {
 		Sort* sort = domainAndRange[j];
 		if (sort->index() == Sort::KIND)
 		  sort = sort->component()->sort(1);
-		s << sort << ' ';
+		s << Token::name(sort->id()) << ' ';
 	      }
-	    s << "~> ";
 	    Sort* sort = domainAndRange[nrSorts];
 	    if (sort->index() == Sort::KIND)
 	      sort = sort->component()->sort(1);
-	    s << sort << ')';
+	    s << "~> " << Token::name(sort->id()) << ')';
 	  }
       }
       purposes.clear();

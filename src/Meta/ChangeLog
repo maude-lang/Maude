@@ -1,3 +1,324 @@
+2005-11-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownOps.cc (downAttr): fix long standing bug where we were
+	not setting PREC flag
+
+===================================Maude86e===========================================
+
+2005-11-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* descentFunctions.cc (metaLesserSorts): use downType() rather
+	than downSimpleSort() to fix a bug
+	(metaSortLeq): use downType() rather than downSimpleSort() (2
+	places)
+
+2005-11-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaModuleCache.cc (regretToInform): fix longstanding bug where
+	we moving cached pairs the wrong way after a deletion
+
+===================================Maude86d===========================================
+
+2005-09-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownRenamings.cc (downModuleExpression): allow bound
+	parameters in modules that are to be renamed
+
+2005-09-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownRenamings.cc (downModuleExpression): check for
+	instantiation having both a PEM and a theory-view
+
+2005-09-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownRenamings.cc: use parametersBound() rather than
+	getNrBoundParameters()
+	(downModuleExpression): use getNrParameters() rather than
+	getNrFreeParameters()
+	(downModuleExpression): use getParameterTheory() rather than
+	getFreeParameterTheory() (2 places)
+
+	* metaDown.cc (downImport): use parametersBound() and
+	getNrParameters() rather than getNrFreeParameters()
+
+2005-07-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownRenamings.cc (downModuleExpression): check bad flag in
+	modules returned by interpreter member functions
+
+2005-07-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.hh (class MetaLevel): added decls for
+	upParameterDecl(), upParameterDecls(), upHeader()
+
+	* metaUpModule.cc (upParameterDecl, upParameterDecls, upHeader):
+	added
+	(upModule): use upHeader()
+
+	* metaLevel.hh (class MetaLevel): added decl for upArguments()
+
+	* metaUpModule.cc (upArguments): added
+	(upModuleExpression): support instantiation
+
+2005-07-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.hh (class MetaLevel): added decls for downHeader(),
+	downParameterDeclList(), downParameterDecl()
+
+	* metaDown.cc (downModule): use safeCase()
+	(downHeader): added
+	(downParameterDeclList): added
+	(downParameterDecl): added
+	(downModule): handle parameter lists
+
+	* metaLevelSignature.cc (MACRO): added headerSymbol,
+	parameterDeclSymbol, parameterDeclListSymbol
+
+	* metaDown.cc (downImport): check that we don't have free parameters
+
+	* metaLevel.hh (class MetaLevel): added decl for
+	downInstantiationArguments()
+
+	* metaDownRenamings.cc (downModuleExpression): implemented
+	instantiationSymbol case
+	(downInstantiationArguments): added
+
+	* metaDown.cc (downImport): pass enclosingModule argument to
+	downModuleExpression()
+
+	* metaLevel.hh (class MetaLevel): updated decl for
+	downModuleExpression()
+
+	* metaDownRenamings.cc (downModuleExpression): don't allow modules
+	with parameters to be summed
+	(downModuleExpression): don't allow modules with bound parameters
+	to be renamed
+	(downModuleExpression): take and pass enclosingModule argument
+
+2005-07-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownRenamings.cc (downModuleExpression): added code stub for
+	instantiationSymbol case
+	(downModuleExpression): fixed nasty bug where we were returning
+	the result of makeSummation() rather than assigning it to m
+
+	* metaLevelSignature.cc (MACRO): added instantiationSymbol
+
+2005-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownRenamings.cc (downRenamingType): new addType() calling
+	convention
+	
+===================================Maude86b===========================================
+
+2005-04-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaModule.cc (MetaModule): pass origin argument to
+	ImportModule()
+
+2005-04-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownRenamings.cc (downRenamingType): AUX_PARAMETERIZED_SORT
+	-> AUX_STRUCTURED_SORT
+
+	* metaDown.cc (downType2): AUX_PARAMETERIZED_SORT ->
+	AUX_STRUCTURED_SORT
+
+===================================Maude86a===========================================
+
+2005-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaModuleCache.cc (regretToInform): removed removeUser() hack
+
+2005-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaModuleCache.cc (regretToInform): call removeUser()
+
+	* metaModule.cc (MetaModule): Parent* -> User*
+	(MetaModule): User* -> Entity::User*
+
+	* metaModule.hh (class MetaModule): Parent* -> User*
+
+	* metaModuleCache.cc (regretToInform): need to cast doomedEntity
+
+	* metaModuleCache.hh (User): derive from Entity::User rather than
+	ImportModule::Parent; update decl for regretToInform()
+
+2005-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownRenamings.cc (downRenamingType): handle
+	AUX_PARAMETERIZED_SORT
+
+	* metaDown.cc (downType2): handle AUX_PARAMETERIZED_SORT
+
+2005-02-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaMatch.cc (makeMatchSearchState2): use downTermPair() to
+	simplify and fix bug where pattern and subject are in different
+	kinds
+
+2005-01-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDown.cc (downPrintOption): support ratSymbol
+
+	* metaLevelSignature.cc (MACRO): added ratSymbol
+
+2005-01-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* descentSignature.cc (MACRO): metaPrettyPrint now takes 3 arguments
+
+	* metaLevel.hh (class MetaLevel): added decls for
+	downPrintOptionSet() and downPrintOption()
+
+	* metaDown.cc (downPrintOptionSet): added
+	(downPrintOption): added
+
+	* descentFunctions.cc (metaPrettyPrint): handle print options argument
+
+	* metaLevelSignature.cc (MACRO): added print option constructors
+
+===================================Maude86===========================================
+
+2004-12-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUpModule.cc (upPolymorphDecl): handle metadata
+
+	* metaDownOps.cc (downOpDecl): pass metadata to addPolymorph()
+
+	* metaUpModule.cc (upOpDecl): handle metadata
+
+	* metaDownOps.cc (downAttr): handle metadata
+
+	* metaLevel.hh (AttributeInfo): set metadata to NONE
+
+	* metaDownOps.cc (downOpDecl): pass metadata to addOpDeclaration()
+
+	* metaLevel.hh (class MetaLevel): added metadata field to struct AttributeInfo
+
+2004-12-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownOps.cc (downOpDecl): pass dummy metadata arg to
+	addOpDeclaration()
+
+===================================Maude85a===========================================
+
+2004-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* descentFunctions.cc (metaMaximalAritySet): use upTypeListSet()
+	and getMaximalOpDeclSet()
+
+	* metaLevel.hh (class MetaLevel): added decls for upTypeListSet()
+	and upTypeList()
+
+	* metaUp.cc (upTypeListSet): added
+	(upTypeList): added
+
+2004-12-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUp.cc (upKindSet): use SortSet ctors rather than KindSet
+	ctors
+
+	* metaLevelSignature.cc (MACRO): deleted KindSet ctors (we have
+	combined these with SortSet,TypeSet ctors)
+
+2004-12-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.hh (class MetaLevel): made downTypeList() public
+
+	* descentFunctions.cc (metaMaximalAritySet): added
+
+	* descentSignature.cc (MACRO): added metaMaximalAritySet
+
+2004-11-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.hh (class MetaLevel): added decls for upTrace() and
+	upTraceStep()
+
+	* metaUp.cc (upTraceStep): added
+	(upTrace): added
+
+	* metaSearch.cc (metaSearchPath): added
+
+	* metaLevel.hh (class MetaLevel): added decl for upFailureTrace()
+
+	* metaUp.cc (upFailureTrace): added
+
+	* descentSignature.cc (MACRO): added metaSearchPath
+
+	* metaLevelSignature.cc (MACRO): added traceStepSymbol,
+	nilTraceSymbol, traceSymbol. failureTraceSymbol
+
+	* metaSearch.cc (makeRewriteSequenceSearch): removed local inline
+
+2004-09-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUp.cc (upJoin): use KIND
+	(upTerm): fix bug by using the exact sort for VARIABLE case rather
+	than relying on MixfixModule::disambiguatorSort()
+	(upType): use KIND
+	(upSortSet): use upType() in place of upQid() so we can handle
+	kinds
+
+	* descentFunctions.cc (metaGlbSorts): use downType() rather than
+	downSimpleSort()
+	(metaGlbSorts): simplified using new findMaximalSorts() interface
+	(metaMinimalSorts): use KIND
+	(metaMaximalSorts): use KIND
+
+===================================Maude85===========================================
+
+2004-06-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDown.cc: print the metaterm in the "could not find an
+	operator" advisory
+	
+===================================Maude84d===========================================
+
+2004-06-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaApply.cc (metaApply): support tracing of meta applications
+	(metaXapply): support tracing of meta applications
+	(metaXapply): unprotect metamodule on abort
+	(metaApply): unprotect metamodule on abort
+
+2004-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* descentFunctions.cc (metaRewrite): use saveHiddenState() and
+	restoreHiddenState()
+	(metaFrewrite): use saveHiddenState() and restoreHiddenState()
+	
+===================================Maude84c===========================================
+
+2004-05-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownFixUps.cc (fixUpBubble): use new fixUpBubbleSpec()
+	convention
+
+2004-05-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUpModule.cc (upModule): handle theories
+
+	* metaDown.cc (downImport): create line number as a temporary
+
+2004-05-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUpModule.cc (upImports): PROTECTING and EXTENDING now belong
+	to ImportModule
+
+	* metaDown.cc (downModule): handle theories
+	(downImport): handle import modes and new addImport() conventions
+
+	* metaLevelSignature.cc (MACRO): added fthSymbol and thSymbol
+	
+===================================Maude84b===========================================
+
+2004-04-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUpModule.cc (upImports): use getAutoImports() and handle
+	protecting/extending
+	
+===================================Maude84a===========================================
+
 2004-02-27  Steven Eker  <eker@goo.csl.sri.com>
 
 	* metaDownRenamings.cc (downModuleExpression): use interpreter

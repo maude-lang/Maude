@@ -84,21 +84,18 @@ ConnectedComponent::leq(int index1, int index2) const
 }
 
 void
-ConnectedComponent::findMaximalSorts(const NatSet& uSorts, Vector<int>& indices) const
+ConnectedComponent::findMaximalSorts(const NatSet& uSorts, Vector<Sort*>& maxSorts) const
 {
   NatSet unionSoFar;
-  for (int i = 0; unionSoFar != uSorts; i++)
+  for (int i = 0; !(unionSoFar.contains(uSorts)); i++)
     {
       Assert(i < sortCount, "index overrun");
-      if (uSorts.contains(i))
-        {
-          const NatSet& leqSorts = sorts[i]->getLeqSorts();
-          if (!(unionSoFar.contains(leqSorts)))
-            {
-              unionSoFar.insert(leqSorts);
-              indices.append(i);
-            }
-        }
+      if (uSorts.contains(i) && !(unionSoFar.contains(i)))
+	{
+	  Sort* s = sorts[i];
+	  maxSorts.append(s);
+	  unionSoFar.insert(s->getLeqSorts());
+	}
     }
 }
 

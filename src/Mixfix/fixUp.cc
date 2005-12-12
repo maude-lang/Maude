@@ -40,26 +40,40 @@ PreModule::findHook(const Vector<Hook>& hookList, HookType type, int name)
 Symbol*
 PreModule::findHookSymbol(const Vector<Token>& fullName)
 {
-  static Vector<Token> name;
-  name.contractTo(0);
-  int pos;
-  for (pos = 0; fullName[pos].code() != colon; pos++)
-    name.append(fullName[pos]);
-  int prefixName = Token::bubbleToPrefixNameCode(name);
-
-  static Vector<ConnectedComponent*> domain;
-  domain.contractTo(0);
-  for (pos++; fullName[pos].code() != partial; pos++)
+  Vector<Token> name;
+  int len = fullName.size();
+  for (int pos = 0; pos < len; pos++)
     {
-      Sort* s = flatModule->findSort(fullName[pos].code());
-      if (s == 0)
-	return 0;
-      domain.append(s->component());
+      if (fullName[pos].code() == colon)
+	{
+	  int prefixName = Token::bubbleToPrefixNameCode(name);
+	  Vector<ConnectedComponent*> domain;
+	  for (pos++; pos < len; pos++)
+	    {
+	      int code = fullName[pos].code();
+	      if (code == partial)
+		{
+		  if (++pos < len)
+		    {
+		      if (Sort* s = flatModule->findSort(fullName[pos].code()))
+			return flatModule->findSymbol(prefixName, domain, s->component());
+		    }
+		  break;
+		}
+	      else
+		{
+		  Sort* s = flatModule->findSort(fullName[pos].code());
+		  if (s == 0)
+		    break;
+		  domain.append(s->component());
+		}
+	    }
+	  break;
+	}
+      else
+	name.append(fullName[pos]);
     }
-  ++pos;
-  return flatModule->findSymbol(prefixName,
-				domain,
-				flatModule->findSort(fullName[pos].code())->component());
+  return 0;
 }
 
 bool
@@ -80,21 +94,30 @@ PreModule::defaultFixUp(OpDef& opDef, Symbol* symbol)
 	    for (int j = 0; j < nrDetails; j++)
 	      hd[j] = h.details[j].name();
 	    if (!(symbol->attachData(opDef.domainAndRange, name, hd)))
-	      return false;
+	      {
+		DebugAdvisory("ID_HOOK " << name << " failed");
+		return false;
+	      }
 	    break;
 	  }
 	case OP_HOOK:
 	  {
 	    Symbol* hs = findHookSymbol(h.details);
 	    if (hs == 0 || !(symbol->attachSymbol(name, hs)))
-	      return false;
+	      {
+		DebugAdvisory("OP_HOOK " << name << " failed");
+		return false;
+	      }
 	    break;
 	  }
 	case TERM_HOOK:
 	  {
 	    Term* ht = flatModule->parseTerm(h.details); // potential component problem
 	    if (ht == 0 || !(symbol->attachTerm(name, ht)))
-	      return false;
+	      {
+		DebugAdvisory("TERM_HOOK " << name << " failed");
+		return false;
+	      }
 	    break;
 	  }
 	}
@@ -213,6 +236,16 @@ PreModule::fixUpSymbols()
 	      
 	    }
 	}
+      else
+	{
+	  if (opDef.symbolType.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
+	    {
+	      IssueWarning(LineNumber(opDecl.prefixName.lineNumber()) <<
+			   ": missing identity for operator " <<
+			   QUOTE(opDecl.prefixName) << '.');
+	      FIX_UP_FAILED;
+	    }      
+	}
       //
       //	Handle specials.
       //
@@ -241,15 +274,12 @@ PreModule::fixUpSymbols()
 	}
       else if (opDef.symbolType.getBasicType() == SymbolType::BUBBLE)
 	{
-	  int h = findHook(opDef.special, OP_HOOK, Token::encode("qidSymbol"));
-	  if (h == NONE)
-	    FIX_UP_FAILED;
-	  QuotedIdentifierSymbol* quotedIdentifierSymbol =
-	    static_cast<QuotedIdentifierSymbol*>(findHookSymbol(opDef.special[h].details));
-	  if (quotedIdentifierSymbol == 0)
-	    FIX_UP_FAILED;
+	  Symbol* quotedIdentifierSymbol = 0;
 	  Symbol* nilQidListSymbol = 0;
 	  Symbol* qidListSymbol = 0;
+	  int h = findHook(opDef.special, OP_HOOK, Token::encode("qidSymbol"));
+	  if (h != NONE)
+	    quotedIdentifierSymbol = findHookSymbol(opDef.special[h].details);
 	  h = findHook(opDef.special, OP_HOOK, Token::encode("nilQidListSymbol"));
 	  if (h != NONE)
 	    nilQidListSymbol = findHookSymbol(opDef.special[h].details);

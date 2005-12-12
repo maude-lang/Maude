@@ -20,7 +20,8 @@ TESTS = \
 	metaUpModExp \
 	metaModExp \
 	metaPolymorph \
-	metaUpDown
+	metaUpDown \
+	metaMetadata
 
 MAUDE_FILES = \
 	metaApply.maude \
@@ -44,7 +45,8 @@ MAUDE_FILES = \
 	metaUpModExp.maude \
 	metaModExp.maude \
 	metaPolymorph.maude \
-	metaUpDown.maude
+	metaUpDown.maude \
+	metaMetadata.maude
 
 RESULT_FILES = \
 	metaApply.expected \
@@ -70,6 +72,7 @@ RESULT_FILES = \
 	metaUpModExp.expected \
 	metaModExp.expected \
 	metaPolymorph.expected \
-	metaUpDown.expected
+	metaUpDown.expected \
+	metaMetadata.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

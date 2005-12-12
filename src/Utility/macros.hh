@@ -35,15 +35,28 @@
 //
 //	C stuff.
 //
+#if HAVE_STDDEF_H
 #include <stddef.h>
+#endif
+#if HAVE_LIMITS_H
 #include <limits.h>
+#endif
+#if HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
+#if HAVE_STDIO_H
 #include <stdio.h>
+#endif
+#if HAVE_CTYPE_H
 #include <ctype.h>
+#endif
 #if HAVE_STRINGS_H
 #include <strings.h>
 #elif HAVE_STRING_H
 #include <string.h>
+#endif
+#if HAVE_UNISTD_H
+#include <unistd.h>  // needed by solaris
 #endif
 //
 //	C++ stuff.
@@ -166,7 +179,19 @@ enum SpecialConstants
   //
   BITS_PER_BYTE = 8,
   BITS_PER_INT = BITS_PER_BYTE * sizeof(int),
-  BITS_PER_UINT = BITS_PER_BYTE * sizeof(unsigned int)
+  BITS_PER_UINT = BITS_PER_BYTE * sizeof(unsigned int),
+  //
+  //	GARBAGE is used where we want a value to store or pass as an argument and we don't
+  //	care about which value. For most CPUs, 0 is the easiest value to generate but
+  //	when debugging we want a value that sticks out like a raw thumb in case we mistakenly
+  //	try to use it for something. Note that GARBAGE should not be used as an out-of-band
+  //	value that we test against since in this case we _do_ care what value is used.
+  //
+#ifdef NO_ASSERT
+  GARBAGE = 0
+#else
+  GARBAGE = -333333333
+#endif
 };
 
 #ifdef NO_IMPLEMENT_INLINES
@@ -204,12 +229,22 @@ abort())
 #define \
 DebugAdvisoryCheck(condition, message) \
 if (!(condition) && globalAdvisoryFlag) \
-((cerr << "DEBUG ADVISORY: " << message << endl))
+((cerr << Tty(Tty::BLUE) << "DEBUG ADVISORY: " << Tty(Tty::RESET) << message << endl))
 
 #define \
 DebugAdvisory(message) \
 if (globalAdvisoryFlag) \
-(cerr << "DEBUG ADVISORY: " << message << endl)
+(cerr << Tty(Tty::BLUE) << "DEBUG ADVISORY: " << Tty(Tty::RESET) << message << endl)
+
+#define \
+DebugPrint(v) \
+if (globalAdvisoryFlag) \
+(cerr << #v << " = " << v << '\t')
+
+#define \
+DebugPrintNL(v) \
+if (globalAdvisoryFlag) \
+(cerr << #v << " = " << v << '\n')
 
 #else
 
@@ -217,6 +252,8 @@ if (globalAdvisoryFlag) \
 #define CantHappen(message)
 #define DebugAdvisoryCheck(condition, message)
 #define DebugAdvisory(message)
+#define DebugPrint(v)
+#define DebugPrintNL(v)
 
 #endif
 
@@ -240,6 +277,10 @@ if (!(condition) && globalAdvisoryFlag) \
 #define \
 IssueWarning(message) \
 (cerr << WARNING_HEADER << message << endl)
+
+#define \
+ComplexWarning(message) \
+(cerr << WARNING_HEADER << message)
 
 #define \
 IssueAdvisory(message) \

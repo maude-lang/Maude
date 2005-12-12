@@ -24,7 +24,7 @@
 //      Implementation for class UserLevelRewritingContext
 //
 
-#include <unistd.h>  // HACK
+//#include <unistd.h>  // HACK
 
 //      utility stuff
 #include "macros.hh"
@@ -68,16 +68,7 @@
 #include "trial.cc"
 
 bool UserLevelRewritingContext::tracePostFlag = false;
-bool UserLevelRewritingContext::traceConditionFlag = true;
-bool UserLevelRewritingContext::traceWholeFlag = false;
-bool UserLevelRewritingContext::traceSubstitutionFlag = true;
-bool UserLevelRewritingContext::traceSelectFlag = false;
-bool UserLevelRewritingContext::traceScFlag = true;
-bool UserLevelRewritingContext::traceEqFlag = true;
-bool UserLevelRewritingContext::traceRuleFlag = true;
 const char UserLevelRewritingContext::header[] = "*********** ";
-IntSet UserLevelRewritingContext::selected;
-IntSet UserLevelRewritingContext::excluded;
 
 UserLevelRewritingContext::UserLevelRewritingContext(DagNode* root)
   : ObjectSystemRewritingContext(root),
@@ -103,37 +94,17 @@ UserLevelRewritingContext::makeSubcontext(DagNode* root, int purpose)
 {
   return new UserLevelRewritingContext(root, this, purpose,
 				       localTraceFlag &&
-				       (purpose != CONDITION_EVAL || traceConditionFlag));
-}
-
-void
-UserLevelRewritingContext::selectSymbols(const IntSet& symbols, bool add)
-{
-  if (add)
-    selected.insert(symbols);
-  else
-    selected.subtract(symbols);
-}
-
-void
-UserLevelRewritingContext::excludeModules(const IntSet& modules, bool add)
-{
-  if (add)
-    excluded.insert(modules);
-  else
-    excluded.subtract(modules);
+				       (purpose != CONDITION_EVAL || interpreter.getFlag(Interpreter::TRACE_EQ)));
 }
 
 bool
 UserLevelRewritingContext::dontTrace(const DagNode* redex, const PreEquation* pe)
 {
-  //  if (!traceRuleFlag)
-  //    return true;
   Symbol* symbol = redex->symbol();
-  return (traceSelectFlag &&
-	  !(selected.contains(symbol->id()) ||
-	    (pe != 0 && selected.contains(pe->getLabel().id())))) ||
-    excluded.contains(symbol->getModule()->id());
+  return (interpreter.getFlag(Interpreter::TRACE_SELECT) &&
+	  !(interpreter.traceId(symbol->id()) ||
+	    (pe != 0 && interpreter.traceId(pe->getLabel().id())))) ||
+    interpreter.excludedModule(symbol->getModule()->id());
 }
 
 void
@@ -146,13 +117,18 @@ UserLevelRewritingContext::tracePreEqRewrite(DagNode* redex,
       safeCast(ProfileModule*, root()->symbol()->getModule())->
 	profileEqRewrite(redex, equation, type);
     }
-  if (handleDebug(redex, equation) || !localTraceFlag || !traceEqFlag || dontTrace(redex, equation))
+  if (handleDebug(redex, equation) ||
+      !localTraceFlag ||
+      !(interpreter.getFlag(Interpreter::TRACE_EQ)) ||
+      dontTrace(redex, equation))
     {
       tracePostFlag = false;
       return;
     }
   tracePostFlag = true;
-  cout << header << "equation\n";
+
+  if (interpreter.getFlag(Interpreter::TRACE_BODY))
+    cout << header << "equation\n";
   if (equation == 0)
     {
       if (type == RewritingContext::BUILTIN)
@@ -162,13 +138,25 @@ UserLevelRewritingContext::tracePreEqRewrite(DagNode* redex,
     }
   else
     {
-      cout << equation << '\n';
-      if (traceSubstitutionFlag)
-	printSubstitution(*this, *equation);
+      if (interpreter.getFlag(Interpreter::TRACE_BODY))
+	{
+	  cout << equation << '\n';
+	  if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
+	    printSubstitution(*this, *equation);
+	}
+      else
+	{
+	  const Label& label = equation->getLabel();
+	  if (label.id() == NONE)
+	    cout << "(unlabeled equation)\n";
+	  else
+	    cout << &label << '\n';
+	}
     }
-  if (traceWholeFlag)
+  if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
     cout << "Old: " << root() << '\n';
-  cout << redex << "\n--->\n";
+  if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
+    cout << redex << "\n--->\n";
 }
 
 void
@@ -177,8 +165,9 @@ UserLevelRewritingContext::tracePostEqRewrite(DagNode* replacement)
   if (tracePostFlag)
     {
       Assert(!abortFlag, "abort flag set");
-      cout << replacement << '\n';
-      if (traceWholeFlag)
+      if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
+	cout << replacement << '\n';
+      if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
 	cout << "New: " << root() << '\n';
     }
 }
@@ -191,24 +180,40 @@ UserLevelRewritingContext::tracePreRuleRewrite(DagNode* redex, const Rule* rule)
       safeCast(ProfileModule*, root()->symbol()->getModule())->
 	profileRlRewrite(redex, rule);
     }
-  if (handleDebug(redex, rule) || !localTraceFlag || !traceRuleFlag || dontTrace(redex, rule))
+  if (handleDebug(redex, rule) ||
+      !localTraceFlag ||
+      !(interpreter.getFlag(Interpreter::TRACE_RL)) ||
+      dontTrace(redex, rule))
     {
       tracePostFlag = false;
       return;
     }
   tracePostFlag = true;
-  cout << header << "rule\n";
+  if (interpreter.getFlag(Interpreter::TRACE_BODY))
+    cout << header << "rule\n";
   if (rule == 0)
     cout << "(built-in rule for symbol " << redex->symbol() << ")\n";
   else
     {
-      cout << rule << '\n';
-      if (traceSubstitutionFlag)
-	printSubstitution(*this, *rule);
+      if (interpreter.getFlag(Interpreter::TRACE_BODY))
+	{
+	  cout << rule << '\n';
+	  if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
+	    printSubstitution(*this, *rule);
+	}
+      else
+	{
+	  const Label& label = rule->getLabel();
+	  if (label.id() == NONE)
+	    cout << "(unlabeled rule)\n";
+	  else
+	    cout << &label << '\n';
+	}
     }
-  if (traceWholeFlag)
+  if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
     cout << "Old: " << root() << '\n';
-  cout << redex << "\n--->\n";
+  if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
+    cout << redex << "\n--->\n";
 }
 
 void
@@ -216,8 +221,9 @@ UserLevelRewritingContext::tracePostRuleRewrite(DagNode* replacement)
 {
   if (tracePostFlag)
     {
-      cout << replacement << '\n';
-      if (traceWholeFlag)
+      if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
+	cout << replacement << '\n';
+      if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
 	cout << "New: " << root() << '\n';
     }
 }
@@ -230,20 +236,36 @@ UserLevelRewritingContext::tracePreScApplication(DagNode* subject, const SortCon
       safeCast(ProfileModule*, root()->symbol()->getModule())->
 	profileMbRewrite(subject, sc);
     }
-  if (handleDebug(subject, sc) || !localTraceFlag || !traceScFlag || dontTrace(subject, sc))
+  if (handleDebug(subject, sc) ||
+      !localTraceFlag ||
+      !(interpreter.getFlag(Interpreter::TRACE_MB)) ||
+      dontTrace(subject, sc))
     return;
-  cout << header << "membership axiom\n";
+  if (interpreter.getFlag(Interpreter::TRACE_BODY))
+    cout << header << "membership axiom\n";
   if (sc == 0)
     cout << "(built-in membership axiom for symbol " << subject->symbol() << ")\n";
   else
     {
-      cout << sc << '\n';
-      if (traceSubstitutionFlag)
-	printSubstitution(*this, *sc);
+      if (interpreter.getFlag(Interpreter::TRACE_BODY))
+	{
+	  cout << sc << '\n';
+	  if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
+	    printSubstitution(*this, *sc);
+	}
+      else
+	{
+	  const Label& label = sc->getLabel();
+	  if (label.id() == NONE)
+	    cout << "(unlabeled membership axiom)\n";
+	  else
+	    cout << &label << '\n';
+	}
     }
-  if (traceWholeFlag)
+  if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
     cout << "Whole: " << root() << '\n';
-  cout << subject->getSort() << ": " << subject << " becomes " << sc->getSort() << '\n';
+  if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
+    cout << subject->getSort() << ": " << subject << " becomes " << sc->getSort() << '\n';
 }
 
 void

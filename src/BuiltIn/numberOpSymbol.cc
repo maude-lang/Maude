@@ -42,7 +42,6 @@
 #include "symbolMap.hh"
 
 //      free theory class definitions
-#include "freeNet.hh"
 #include "freeDagNode.hh"
 
 //      built in stuff
@@ -101,37 +100,40 @@ NumberOpSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
 				   Vector<const char*>& purposes,
 				   Vector<Vector<const char*> >& data)
 {
-  int nrDataAttachments = purposes.length();
-  purposes.resize(nrDataAttachments + 1);
-  purposes[nrDataAttachments] = "NumberOpSymbol";
-  data.resize(nrDataAttachments + 1);
-  data[nrDataAttachments].resize(1);
-  const char*& d = data[nrDataAttachments][0];
-  switch (op)
+  if (op != NONE)
     {
-    CODE_CASE(d, '-', 0, "-")
-    CODE_CASE(d, '~', 0, "~")
-    CODE_CASE(d, 'a', 'b', "abs")
-    CODE_CASE(d, '+', 0, "+")
-    CODE_CASE(d, '*', 0, "*")
-    CODE_CASE(d, 'g', 'c', "gcd")
-    CODE_CASE(d, 'l', 'c', "lcm")
-    CODE_CASE(d, '|', 0, "|")
-    CODE_CASE(d, '&', 0, "&")
-    CODE_CASE(d, 'x', 'o', "xor")
-    CODE_CASE(d, 'q', 'u', "quo")
-    CODE_CASE(d, 'r', 'e', "rem")
-    CODE_CASE(d, '^', 0, "^")
-    CODE_CASE(d, '<', '<', "<<")
-    CODE_CASE(d, '>', '>', ">>")
-    CODE_CASE(d, '<', 0, "<")
-    CODE_CASE(d, '<', '=', "<=")
-    CODE_CASE(d, '>', 0, ">")
-    CODE_CASE(d, '>', '=', ">=")
-    CODE_CASE(d, 'd', 'i', "divides")
-    CODE_CASE(d, 'm', 'o', "modExp")
-    default:
-      CantHappen("bad number op");
+      int nrDataAttachments = purposes.length();
+      purposes.resize(nrDataAttachments + 1);
+      purposes[nrDataAttachments] = "NumberOpSymbol";
+      data.resize(nrDataAttachments + 1);
+      data[nrDataAttachments].resize(1);
+      const char*& d = data[nrDataAttachments][0];
+      switch (op)
+	{
+	  CODE_CASE(d, '-', 0, "-")
+	  CODE_CASE(d, '~', 0, "~")
+	  CODE_CASE(d, 'a', 'b', "abs")
+	  CODE_CASE(d, '+', 0, "+")
+	  CODE_CASE(d, '*', 0, "*")
+	  CODE_CASE(d, 'g', 'c', "gcd")
+	  CODE_CASE(d, 'l', 'c', "lcm")
+	  CODE_CASE(d, '|', 0, "|")
+	  CODE_CASE(d, '&', 0, "&")
+	  CODE_CASE(d, 'x', 'o', "xor")
+	  CODE_CASE(d, 'q', 'u', "quo")
+	  CODE_CASE(d, 'r', 'e', "rem")
+	  CODE_CASE(d, '^', 0, "^")
+	  CODE_CASE(d, '<', '<', "<<")
+	  CODE_CASE(d, '>', '>', ">>")
+	  CODE_CASE(d, '<', 0, "<")
+	  CODE_CASE(d, '<', '=', "<=")
+	  CODE_CASE(d, '>', 0, ">")
+	  CODE_CASE(d, '>', '=', ">=")
+	  CODE_CASE(d, 'd', 'i', "divides")
+	  CODE_CASE(d, 'm', 'o', "modExp")
+	  default:
+	    CantHappen("bad number op");
+	}
     }
   FreeSymbol::getDataAttachments(opDeclaration, purposes, data);
 }
@@ -406,7 +408,7 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 			  break;
 			}
 		      default:
-			CantHappen("bad number op");
+			CantHappen("bad number op " << op << " in subject " << subject);
 		      }
 		    Assert(trueTerm.getTerm() != 0 && falseTerm.getTerm() != 0,
 			   "null true/false for relational op");
@@ -442,4 +444,26 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
     }
  fail:
   return FreeSymbol::eqRewrite(subject, context);
+}
+
+bool
+NumberOpSymbol::getNumber(DagNode* dagNode, mpz_class& value) const
+{
+  if (dagNode->symbol() == minusSymbol)
+    {
+      if (minusSymbol->isNeg(dagNode))
+	{
+	  (void) minusSymbol->getNeg(dagNode, value);
+	  return true;
+	}
+    }
+  else
+    {
+      if (succSymbol->isNat(dagNode))
+	{
+	  value = succSymbol->getNat(dagNode);
+	  return true;
+	}
+    }
+  return false;
 }

@@ -25,7 +25,7 @@
 //
 #ifndef _S_DagNode_hh_
 #define _S_DagNode_hh_
-#include <gmpxx.h>
+#include "gmpxx.h"
 #include "dagNode.hh"
 
 class S_DagNode : public DagNode

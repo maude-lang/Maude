@@ -71,18 +71,30 @@ ModuleExpression::ModuleExpression(ModuleExpression* module, Renaming* renaming)
 {
 }
 
+ModuleExpression::ModuleExpression(ModuleExpression* module, const Vector<Token>& arguments)
+ : type(INSTANTIATION),
+   module(module),
+   arguments(arguments)
+{
+}
+
 void
 ModuleExpression::deepSelfDestruct()
 {
-  if (type == RENAMING)
+  switch (type)
     {
-      module->deepSelfDestruct();
+    case RENAMING:
       delete renaming;
-    }
-  else
-    {
-      FOR_EACH_CONST(i, list<ModuleExpression*>, modules)
-	(*i)->deepSelfDestruct();
+      // fall thru
+    case INSTANTIATION:
+      module->deepSelfDestruct();
+      break;
+    case SUMMATION:
+      {
+	FOR_EACH_CONST(i, list<ModuleExpression*>, modules)
+	  (*i)->deepSelfDestruct();
+	break;
+      }
     }
   delete this;
 }
@@ -112,10 +124,31 @@ operator<<(ostream& s, const ModuleExpression* expr)
       {
 	const ModuleExpression* module = expr->getModule();
 	if (module->getType() == ModuleExpression::SUMMATION)
-	  s << '(' << expr->getModule() << ')';
+	  s << '(' << module << ')';
 	else
-	  s << expr->getModule();
+	  s << module;
 	s << " * " << expr->getRenaming();
+	break;
+      }
+    case ModuleExpression::INSTANTIATION:
+      {
+	const ModuleExpression* module = expr->getModule();
+	if (module->getType() == ModuleExpression::SUMMATION ||
+	    module->getType() == ModuleExpression::RENAMING)
+	  s << '(' << module << "){";
+	else
+	  s << module << '{';
+	const Vector<Token>& arguments = expr->getArguments();
+	const Vector<Token>::const_iterator e = arguments.end();
+	for (Vector<Token>::const_iterator i = arguments.begin();;)
+	  {
+	    s << *i;
+	    ++i;
+	    if (i == e)
+	      break;
+	    s  << ", ";
+	  }
+	s << '}';
 	break;
       }
     default:

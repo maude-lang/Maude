@@ -1,3 +1,116 @@
+Overview of Changes in Maude alpha86e
+=====================================
+* fixed longstanding metalevel prec bug
+
+Overview of Changes in Maude alpha86d2
+======================================
+* reorganized metalevel list sorts to fix sufficient completeness
+  problem 
+
+Overview of Changes in Maude alpha86d
+=====================================
+* fixed stale pointer bug in view reevaluation
+* minor fixes to prelude.maude
+* fixed uninitialized format attribute bug
+* fixed parameter theory module expression memory leak
+* fixed polymorph identity memory leak
+* fixed polymorph identity processing bug
+* added and used QID-SET fmod
+* fixed metamodule cache deletion bug
+* sortLeq and lesserSort now work on types
+
+Overview of Changes in Maude alpha86c
+=====================================
+* improved recovery from surface syntax errors
+* added DEFAULT fth, various views and ARRAY fmod
+* added LIST-AND-SET fmod
+* added linear Diophantine solver
+* warn about object level duplicate attributes
+* fixed backquote in created module name bug
+* fixed view ACU op->term mapping bug
+* added -no-wrap command line option
+* disallow parameter passing in nonfinal instantiations
+* allow renaming of modules with bound parameters
+
+Overview of Changes in Maude alpha86b
+=====================================
+* module garbage collection bug fixed
+* metasummation bug fixed
+* target modules with free parameters no longer allowed in views
+* illegal importations no longer tolerated
+* views can no longer map module defined stuff
+* renamings can no longer map parameter defined stuff
+* operator mappings now allowed in views
+* dependency tracking supports views
+* meta support for parameterization
+* identity elements added for various structures in prelude
+
+Overview of Changes in Maude alpha86a
+=====================================
+* fixed parameter checking bug for modules with both free and bound
+  parameters
+* structured sorts printed correctly in various places
+* theory-views now pushed into parameterized sorts
+* new naming convention for otf modules
+* bound parameter instantiation now handled like Full Maude
+* -no-advise command line flag
+* declined messages to external objects generate advisories
+
+Overview of Changes in Maude alpha86
+====================================
+* fixed loop mode \/ bug
+* metaPrettyPrint() now supports options
+* preregularity and constructor consistancy errors now produce a
+  single informative warning
+* set trace rewrite and set trace body options
+* fixed metaXmatch() kind clash bug
+* SO_REUSEADDR flag set on server sockets
+* first attempt at parameterization in module system
+
+Overview of Changes in Maude alpha85a
+=====================================
+* fixed more sufficient completeness issues in the prelude
+* metadata attribute now allowed for operator declarations
+* added crude support for sockets as external objects
+
+Overview of Changes in Maude alpha85
+====================================
+* added min/max functions to number hierarchy
+* fixed bug in up'ing FloatOpSymbol hook
+* fixed sufficient completeness issues in the prelude
+* fixed a bug in up'ing terms which gave kind variables the wrong
+  sort
+* glbSorts() now handles kinds
+* show profile now includes percentages
+* show path labels command added
+* metaSearchPath() added
+* set clear rules on/off command added
+* maximalAritySet() added
+
+Overview of Changes in Maude alpha84d
+=====================================
+* fixed 0.0 ^ -1.0 bug
+* module selectors now support theories
+
+Overview of Changes in Maude alpha84c
+=====================================
+* added random number generation
+* added counters
+* trace applications in metaApply()/metaXapply()
+
+Overview of Changes in Maude 2.1.1
+==================================
+* set protect/extend <module> on/off added, BOOL now protected
+* fixed upModule() bug wrt CUI_NumberSymbol and ACU_NumberSymbol hooks
+* theory syntax and meta-syntax added
+* fixed label renaming bug
+* overparsing added
+* warnings added for illegal ad hoc overloading
+* rudimentary checking for bubble hooks
+* fixed missing id importation bug
+* fixed AU sort calculation bug
+* fixed op renaming bug
+
 Overview of Changes in Maude 2.1
 ================================
 * added -no-banner flag

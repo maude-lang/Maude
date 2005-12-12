@@ -26,18 +26,54 @@ MetaLevel::upModule(bool flat, PreModule* pm, PointerMap& qidMap)
   static Vector<DagNode*> args;
   args.clear();
 
+  args.append(upHeader(pm, qidMap));
   ImportModule* m = pm->getFlatModule();
-  args.append(upQid(m->id(), qidMap));
   args.append(flat ? nilImportListSymbol->makeDagNode() : upImports(pm, qidMap));
   args.append(upSorts(flat, m, qidMap));
   args.append(upSubsortDecls(flat, m, qidMap));
   args.append(upOpDecls(flat, m, qidMap));
   args.append(upMbs(flat, m, qidMap));
   args.append(upEqs(flat, m, qidMap));
-  if (m->getModuleType() == MixfixModule::FUNCTIONAL_MODULE)
+  MixfixModule::ModuleType mt = m->getModuleType();
+  if (mt == MixfixModule::FUNCTIONAL_MODULE)
     return fmodSymbol->makeDagNode(args);
+  else if (mt == MixfixModule::FUNCTIONAL_THEORY)
+    return fthSymbol->makeDagNode(args);
   args.append(upRls(flat, m, qidMap));
-  return modSymbol->makeDagNode(args);
+  return ((mt == MixfixModule::SYSTEM_MODULE) ? modSymbol : thSymbol)->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upHeader(PreModule* pm, PointerMap& qidMap)
+{
+  DagNode* name = upQid(pm->id(), qidMap);
+  if (pm->getNrParameters() == 0)
+    return name;
+  Vector<DagNode*> args(2);
+  args[0] = name;
+  args[1] = upParameterDecls(pm, qidMap);
+  return headerSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upParameterDecls(PreModule* pm, PointerMap& qidMap)
+{
+  int nrParameters = pm->getNrParameters();
+  if (nrParameters == 1)
+    return upParameterDecl(pm, 0, qidMap);
+  Vector<DagNode*> args(nrParameters);
+  for (int i = 0; i < nrParameters; ++i)
+    args[i] = upParameterDecl(pm, i, qidMap);
+  return parameterDeclListSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upParameterDecl(PreModule* pm, int index, PointerMap& qidMap)
+{
+  Vector<DagNode*> args(2);
+  args[0] = upQid(pm->getParameterName(index), qidMap);
+  args[1] = upModuleExpression(pm->getParameter(index), qidMap);
+  return parameterDeclSymbol->makeDagNode(args);
 }
 
 DagNode*
@@ -50,11 +86,16 @@ MetaLevel::upImports(PreModule* pm, PointerMap& qidMap)
   //	Handle automatic imports.
   //
   {
-    int nrAutoImports = pm->getNrAutoImports();
-    for (int i = 0; i < nrAutoImports; i++)
+    const ModuleDatabase::ImportMap& autoImports = pm->getAutoImports();
+    FOR_EACH_CONST(i, ModuleDatabase::ImportMap, autoImports)
       {
-	args2[0] = upQid(pm->getAutoImport(i), qidMap);
-	args.append(includingSymbol->makeDagNode(args2));
+	args2[0] = upQid(i->first, qidMap);
+	Symbol* s = includingSymbol;
+	if (i->second == ImportModule::PROTECTING)
+	  s = protectingSymbol;
+	else if (i->second == ImportModule::EXTENDING)
+	  s = extendingSymbol;
+	args.append(s->makeDagNode(args2));
       }
   }
   //
@@ -105,10 +146,30 @@ MetaLevel::upModuleExpression(const ModuleExpression* e, PointerMap& qidMap)
 	args[1] = upRenaming(e->getRenaming(), qidMap);
 	return renamingSymbol->makeDagNode(args);
       }
+    case ModuleExpression::INSTANTIATION:
+      {
+	Vector<DagNode*> args(2);
+	args[0] = upModuleExpression(e->getModule(), qidMap);
+	args[1] = upArguments(e->getArguments(), qidMap);
+	return instantiationSymbol->makeDagNode(args);
+      }
     default:
       CantHappen("bad module expression");
     }
   return 0;
+}
+
+DagNode*
+MetaLevel::upArguments(const Vector<Token>& arguments, PointerMap& qidMap)
+{
+  int nrArguments = arguments.size();
+  Assert(nrArguments >= 1, "no arguments");
+  if (nrArguments == 1)
+    return upQid(arguments[0].code(), qidMap);
+  Vector<DagNode*> args(nrArguments);
+  for (int i = 0; i < nrArguments; ++i)
+    args[i] = upQid(arguments[i].code(), qidMap);
+  return metaArgSymbol->makeDagNode(args);
 }
 
 DagNode*
@@ -367,6 +428,13 @@ MetaLevel::upPolymorphDecl(ImportModule* m, int index, PointerMap& qidMap)
       }
     if (st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
       attrArgs.append(upIdentity(m, st, m->getPolymorphIdentity(index), qidMap));
+    int metadata = m->getPolymorphMetadata(index);
+    if (metadata != NONE)
+      {
+	Vector<DagNode*> args2(1);
+	args2[0] = new StringDagNode(stringSymbol, Token::codeToRope(metadata));
+	attrArgs.append(metadataSymbol->makeDagNode(args2));
+      }
     if (st.hasSpecial())
       attrArgs.append(upPolymorphSpecial(index, m, qidMap));
     args[3] = upAttributeSet(st, attrArgs);
@@ -496,6 +564,14 @@ MetaLevel::upOpDecl(ImportModule* m, int symbolNr, int declNr, PointerMap& qidMa
       }
     if (st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
       attrArgs.append(upIdentity(m, st, safeCast(BinarySymbol*, symbol)->getIdentity(), qidMap));
+
+    int metadata = m->getMetadata(symbol, declNr);
+    if (metadata != NONE)
+      {
+	Vector<DagNode*> args2(1);
+	args2[0] = new StringDagNode(stringSymbol, Token::codeToRope(metadata));
+	attrArgs.append(metadataSymbol->makeDagNode(args2));
+      }
     if (st.hasSpecial())
       attrArgs.append(upSpecial(symbol, d, m, qidMap));
     args[3] = upAttributeSet(st, attrArgs);

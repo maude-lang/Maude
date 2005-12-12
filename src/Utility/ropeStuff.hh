@@ -35,7 +35,7 @@
 //	different header file.
 //
     #include <ext/rope>
-    #if __GNUC_MINOR__ > 0
+    #if __GNUC_MINOR__ > 0 || __GNUC__ > 3
 //
 //	In version 3.1 onwards it also lives in a different namespace.
 //

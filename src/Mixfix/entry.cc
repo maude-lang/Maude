@@ -82,6 +82,7 @@ MixfixModule::addOpDeclaration(Token prefixName,
 			       int prec,
 			       const Vector<int>& gather,
 			       const Vector<int>& format,
+			       int metadata,
 			       bool& firstDecl)
 {
   Assert(symbolType.getBasicType() != SymbolType::VARIABLE,
@@ -96,14 +97,14 @@ MixfixModule::addOpDeclaration(Token prefixName,
 
   int nrArgs = domainAndRange.length() - 1;
   int name = prefixName.code();
-  int index = symbolNames.int2Index(name);
   int iflags = 0;
-  if (index != NONE)
+  IntMap::const_iterator first = firstSymbols.find(name);
+  if (first != firstSymbols.end())
     {
       //
       //	Examine all existing symbols with same name.
       //
-      for (int i = firstSymbols[index]; i != NONE; i = symbolInfo[i].next)
+      for (int i = first->second; i != NONE; i = symbolInfo[i].next)
 	{
 	  Symbol* s = getSymbols()[i];
 	  int iNrArgs = s->arity();
@@ -117,7 +118,7 @@ MixfixModule::addOpDeclaration(Token prefixName,
 	      //	We have the same name and could appear to have
 	      //	the same number of arguments. Thus ambiguity is possible
 	      //	and we have to rely on context or actual arguments for
-	      //	disambiguarion.
+	      //	disambiguation.
 	      //
 	      const Vector<Sort*>& iDomainAndRange =
 		s->getOpDeclarations()[0].getDomainAndRange();
@@ -140,8 +141,14 @@ MixfixModule::addOpDeclaration(Token prefixName,
 					   ": declaration for " << QUOTE(s) <<
 					   " has different attributes from declaration on " <<
 					   *s << '.');
+			      DebugAdvisory("orginal symbol type: " << getSymbolType(s) <<
+					    "\tnew symbol type: " << symbolType <<
+					    "\tflag difference: " <<
+					    (getSymbolType(s).getFlags() ^ symbolType.getFlags()));
 			      markAsBad();
 			    }
+			  if (metadata != NONE)
+			    insertMetadata(s, s->getOpDeclarations().length(), metadata);
 			  s->addOpDeclaration(domainAndRange,
 					      symbolType.hasFlag(SymbolType::CTOR));
 			  return s;
@@ -150,14 +157,33 @@ MixfixModule::addOpDeclaration(Token prefixName,
 			{
 			  IssueWarning(LineNumber(prefixName.lineNumber()) <<
 				       ": declaration for " << QUOTE(s) <<
-				       " clashes declaration on " << *s <<
+				       " clashes with declaration on " << *s <<
 				       " because of associativity.");
 			  overloadType =
 			    ADHOC_OVERLOADED | DOMAIN_OVERLOADED | RANGE_OVERLOADED;
 			}
 		    }
 		  else
-		    overloadType = ADHOC_OVERLOADED | DOMAIN_OVERLOADED;
+		    {
+		      if (nrArgs > 0)
+			{
+			  if (nrArgs == iNrArgs)
+			    {
+			      IssueWarning(LineNumber(prefixName.lineNumber()) <<
+					   ": declaration for " << QUOTE(s) <<
+					   " has the same domain kinds as the declaration on " <<
+					   *s << " but a different range kind.");
+			    }
+			  else
+			    {
+			      IssueWarning(LineNumber(prefixName.lineNumber()) <<
+					   ": declaration for " << QUOTE(s) <<
+					   " clashes with declaration on " << *s <<
+					   ", which has a different range kind, because of associativity.");
+			    }
+			}
+		      overloadType = ADHOC_OVERLOADED | DOMAIN_OVERLOADED;
+		    }
 		}
 	      else
 		{
@@ -169,7 +195,9 @@ MixfixModule::addOpDeclaration(Token prefixName,
 	    }
 	}
     }
- 
+  //
+  //	Need to create a new symbol.
+  //
   if (symbolType.hasFlag(SymbolType::DITTO))
     {
       IssueWarning(LineNumber(prefixName.lineNumber()) <<
@@ -253,11 +281,6 @@ MixfixModule::addOpDeclaration(Token prefixName,
 	  iflags |= PSEUDO_RAT;
 	}
     }
-  else if (nrArgs == 1)
-    {
-      if (symbolType.hasFlag(SymbolType::ITER))
-	iterSymbols.insert(name);
-    }
 
   int nrSymbols = symbolInfo.length();
   symbolInfo.expandBy(1);
@@ -332,23 +355,13 @@ MixfixModule::addOpDeclaration(Token prefixName,
   si.symbolType = symbolType;
   si.symbolType.clearFlags(SymbolType::CTOR);  // don't store ctor flag in per-symbol struct
   si.iflags = iflags;
-  
-  if (index == NONE)
-    {
-      symbolNames.insert(name);
-      si.next = NONE;
-      firstSymbols.append(nrSymbols);
-      Assert(symbolNames.cardinality() == firstSymbols.length(),
-	     "symbolNames & firstSymbols out of sync");
-    }
-  else
-    {
-      si.next = firstSymbols[index];
-      firstSymbols[index] = nrSymbols;
-    }
+  si.next = (first == firstSymbols.end()) ? NONE : first->second;
+  firstSymbols[name] = nrSymbols;
 
-  symbol->addOpDeclaration(domainAndRange, symbolType.hasFlag(SymbolType::CTOR));
   Module::insertSymbol(symbol);
+  if (metadata != NONE)
+    insertMetadata(symbol, symbol->getOpDeclarations().length(), metadata);
+  symbol->addOpDeclaration(domainAndRange, symbolType.hasFlag(SymbolType::CTOR));
   firstDecl = true;
   switch (symbolType.getBasicType())
     {
@@ -497,7 +510,8 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new SatSolverSymbol(name);
     case SymbolType::SUCC_SYMBOL:
       {
-	if (!(kindsWithSucc.insert(kindIndex).second))
+	pair<set<int>::iterator, bool> p = kindsWithSucc.insert(kindIndex);
+	if (!(p.second))
 	  {
 	    IssueWarning(LineNumber(prefixName.lineNumber()) <<
 	      ": multiple SuccSymbols in same kind will cause pretty printing problems.");
@@ -506,7 +520,8 @@ MixfixModule::newFancySymbol(Token prefixName,
       }
     case SymbolType::MINUS_SYMBOL:
       {
-	if (!(kindsWithMinus.insert(kindIndex).second))
+	pair<set<int>::iterator, bool> p = kindsWithMinus.insert(kindIndex);
+	if (!(p.second))
 	  {
 	    IssueWarning(LineNumber(prefixName.lineNumber()) <<
 	      ": multiple MinusSymbols in same kind will cause pretty printing problems.");
@@ -519,13 +534,22 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new ACU_NumberOpSymbol(name);
     case SymbolType::DIVISION_SYMBOL:
       {
-	if (!(kindsWithDivision.insert(kindIndex).second))
+	pair<set<int>::iterator, bool> p = kindsWithDivision.insert(kindIndex);
+	if (!(p.second))
 	  {
 	    IssueWarning(LineNumber(prefixName.lineNumber()) <<
 	    ": multiple DivisionSymbols in same kind will cause pretty printing problems.");
 	  }
 	return new DivisionSymbol(name);
       }
+    case SymbolType::RANDOM_OP_SYMBOL:
+      return new RandomOpSymbol(name);
+    case SymbolType::MATRIX_OP_SYMBOL:
+      return new MatrixOpSymbol(name, nrArgs);
+    case SymbolType::COUNTER_SYMBOL:
+      return new CounterSymbol(name);
+    case SymbolType::SOCKET_MANAGER_SYMBOL:
+      return new SocketManagerSymbol(name);
     }
 
   int lineNr = prefixName.lineNumber();
@@ -671,7 +695,8 @@ MixfixModule::addPolymorph(Token prefixName,
 			   const NatSet& frozen,
 			   int prec,
 			   const Vector<int>& gather,
-			   const Vector<int>& format)
+			   const Vector<int>& format,
+			   int metadata)
 {
   int index = findPolymorphIndex(prefixName.code(), domainAndRange);
   if (index != NONE)
@@ -691,6 +716,7 @@ MixfixModule::addPolymorph(Token prefixName,
   p.strategy = strategy;  // deep copy
   p.frozen = frozen;  // deep copy
   p.identity = 0;
+  p.metadata = metadata;
   int nrUnderscores = Token::extractMixfix(prefixName.code(), p.symbolInfo.mixfixSyntax);
   if (p.symbolInfo.mixfixSyntax.length() == 0)
     {

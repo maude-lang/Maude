@@ -70,6 +70,19 @@ int CommonTokens::otherwise;
 int CommonTokens::owise;
 int CommonTokens::lessThan;
 int CommonTokens::partial;
+int CommonTokens::th;
+int CommonTokens::fth;
+int CommonTokens::mod;
+int CommonTokens::fmod;
+int CommonTokens::omod;
+int CommonTokens::obj;
+int CommonTokens::endth;
+int CommonTokens::endfth;
+int CommonTokens::endm;
+int CommonTokens::endfm;
+int CommonTokens::endom;
+int CommonTokens::endo;
+int CommonTokens::jbo;
 
 CommonTokens::CommonTokens()
 {
@@ -113,5 +126,18 @@ CommonTokens::CommonTokens()
       owise = Token::encode("owise");
       lessThan = Token::encode("<");
       partial = Token::encode("~>");
+      th = Token::encode("th");
+      fth = Token::encode("fth");
+      mod = Token::encode("mod");
+      fmod = Token::encode("fmod");
+      omod = Token::encode("omod");
+      obj = Token::encode("obj");
+      endth = Token::encode("endth");
+      endfth = Token::encode("endfth");
+      endm = Token::encode("endm");
+      endfm = Token::encode("endfm");
+      endom = Token::encode("endom");
+      endo = Token::encode("endo");
+      jbo = Token::encode("jbo");
     }
 }

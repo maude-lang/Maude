@@ -253,3 +253,10 @@ red minimalSorts(fmod 'FOO is
   none
   none
 endfm, 'Qid) .
+
+red maximalAritySet(['RAT], '_+_, 'Nat 'Nat, 'PosRat) .
+red maximalAritySet(['RAT], '_+_, 'Nat 'Nat, 'Rat) .
+red maximalAritySet(['RAT], '_/_, 'Nat 'Nat, 'Nat) .
+red maximalAritySet(['META-LEVEL], '_;_, 'TypeSet 'TypeSet, 'KindSet) .
+red maximalAritySet(['NAT], '0, nil, 'Nat) .
+red glbSorts(['RAT], '`[Int`], 'Int) .

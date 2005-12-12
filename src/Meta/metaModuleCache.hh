@@ -27,7 +27,7 @@
 #define _metaModuleCache_hh_
 #include "importModule.hh"
 
-class MetaModuleCache : public ImportModule::Parent
+class MetaModuleCache : public Entity::User
 {
   NO_COPYING(MetaModuleCache);
 
@@ -48,7 +48,7 @@ private:
     MetaModule* module;
   };
 
-  void regretToInform(ImportModule* doomedModule);
+  void regretToInform(Entity* doomedEntity);
   MetaModule* moveToFront(int chosen);
 
   const int maxSize;

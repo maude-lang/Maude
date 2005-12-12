@@ -34,7 +34,6 @@ class S_Term : public Term
 
 public:
   S_Term(S_Symbol* symbol, const mpz_class& number, Term* arg);
-  S_Term(const S_Term& original, SymbolMap* map);
   //
   //    Functions required by theory interface.
   //
@@ -60,6 +59,10 @@ public:
 		  VariableInfo& variableInfo,
 		  TermBag& availableTerms,
 		  bool eagerContext);
+  //
+  //	Needed because we have hidden data.
+  //
+  Term* instantiate2(const Vector<Term*>& varBindings, SymbolMap* translator);
 
 #ifdef DUMP
   void dump(ostream& s, const VariableInfo& variableInfo, int indentLevel);
@@ -72,6 +75,8 @@ public:
   Term* getArgument() const;
 
 private:
+  S_Term(const S_Term& original, S_Symbol* symbol, SymbolMap* translator);
+
   mpz_class number;
   Term* arg;
   int abstractionVariableIndex;

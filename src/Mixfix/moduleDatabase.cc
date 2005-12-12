@@ -37,19 +37,16 @@
 #include "preModule.hh"
 #include "moduleDatabase.hh"
 
-ModuleDatabase::~ModuleDatabase()
+void
+ModuleDatabase::deleteNamedModules()
 {
-#ifndef NO_ASSERT
   //
-  //	Cleaning up makes for a slow exit, but it helps catch
-  //	dangling pointers and leaked memory when debugging.
+  //	We can't do this in our dtor because we don't know what
+  //	data structures may have already be destroyed.
   //
-  /* NEED TO FIX
   const ModuleMap::const_iterator e = moduleMap.end();
   for (ModuleMap::const_iterator i = moduleMap.begin(); i != e; ++i)
     delete i->second;
-  */
-#endif
 }
 
 bool
@@ -83,13 +80,15 @@ ModuleDatabase::deleteModule(int name)
 }
 
 void
-ModuleDatabase::setInclude(Token name, bool polarity)
+ModuleDatabase::setAutoImport(ImportModule::ImportMode importMode,
+			      Token name,
+			      bool polarity)
 {
   int code = name.code();
   if (polarity)
-    defaultIncludes.insert(code);
+    autoImports[code] = importMode;
   else
-    defaultIncludes.subtract(code);
+    autoImports.erase(code);
 }
 
 void
@@ -99,16 +98,15 @@ ModuleDatabase::setOmodInclude(Token name, bool polarity)
   if (polarity)
     defaultOmodIncludes.insert(code);
   else
-    defaultOmodIncludes.subtract(code);
+    defaultOmodIncludes.erase(code);
 }
 
 void
-ModuleDatabase::showNamedModules() const
+ModuleDatabase::showNamedModules(ostream& s) const
 {
   FOR_EACH_CONST(i, ModuleMap, moduleMap)
     {
       PreModule* m = i->second;
-      cout << ((m->getModuleType() == MixfixModule::SYSTEM_MODULE) ? "mod " : "fmod ") <<
-	m << '\n';
+      s << MixfixModule::moduleTypeString(m->getModuleType()) << ' ' << m << '\n';
     }
 }

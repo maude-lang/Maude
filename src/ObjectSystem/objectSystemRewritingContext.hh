@@ -25,7 +25,11 @@
 //
 #ifndef _objectSystemRewritingContext_hh_
 #define _objectSystemRewritingContext_hh_
+#include <map>
+#include <list>
 #include "rewritingContext.hh"
+#include "simpleRootContainer.hh"
+#include "objectSystem.hh"
 
 class ObjectSystemRewritingContext : public RewritingContext
 {
@@ -40,12 +44,36 @@ public:
   };
 
   ObjectSystemRewritingContext(DagNode* root);
+  ~ObjectSystemRewritingContext();
+
+  void addExternalObject(DagNode* name, ExternalObjectManagerSymbol* manager);
+  void deleteExternalObject(DagNode* name);
+  void bufferMessage(DagNode* target, DagNode* message);
+
+  bool getExternalMessages(DagNode* target, list<DagNode*>& messages);
+  bool offerMessageExternally(DagNode* target, DagNode* message);
 
   void setObjectMode(Mode m);
   Mode getObjectMode() const;
 
+protected:
+  void markReachableNodes();
+
 private:
+  struct dagNodeLt
+  {
+    bool operator()(const DagNode* d1, const DagNode* d2)
+    {
+      return d1->compare(d2) < 0;
+    }
+  };
+
+  typedef map<DagNode*, ExternalObjectManagerSymbol*, dagNodeLt> ObjectMap;
+  typedef map<DagNode*, list<DagNode*>, dagNodeLt> MessageMap;
+  
   Mode mode;
+  ObjectMap externalObjects;
+  MessageMap incomingMessages;
 };
 
 inline

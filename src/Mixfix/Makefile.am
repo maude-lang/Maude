@@ -2,7 +2,9 @@ bin_PROGRAMS = maude
 
 data_DATA = \
 	prelude.maude \
-	model-checker.maude
+	model-checker.maude \
+	socket.maude \
+	linear.maude
 
 if BUILD_COMPILER
   COMPILER_SRC = compiler.cc
@@ -35,6 +37,7 @@ maude_CPPFLAGS = \
 	-I$(top_srcdir)/src/AU_Persistent \
 	-I$(top_srcdir)/src/AU_Theory \
 	-I$(top_srcdir)/src/Meta \
+	-I$(top_srcdir)/src/3rdParty \
 	-I$(top_srcdir)/src/FullCompiler
 
 maude_LDADD = \
@@ -64,7 +67,10 @@ maude_LDADD = \
 	$(DLMALLOC_LIB)
 
 maude_SOURCES = \
+	syntaxContainer.cc \
 	renaming.cc \
+	view.cc \
+	entity.cc \
 	moduleCache.cc \
 	moduleExpression.cc \
 	importModule.cc \
@@ -85,6 +91,7 @@ maude_SOURCES = \
 	maudemlBuffer.cc \
 	interpreter.cc \
 	moduleDatabase.cc \
+	viewDatabase.cc \
 	profileModule.cc \
 	mixfixParser.cc \
 	visibleModule.cc \
@@ -126,6 +133,7 @@ lexer.cc: \
 
 EXTRA_DIST = \
 	renameModule.cc \
+	parameterization.cc \
 	lexerAux.cc \
 	import.cc \
 	process.cc \
@@ -138,6 +146,7 @@ EXTRA_DIST = \
 	specialSymbolTypes.cc \
 	doParse.cc \
 	makeGrammar.cc \
+	auxProperty.cc \
 	termPrint.cc \
 	dagNodePrint.cc \
 	sharedPrint.cc \
@@ -155,10 +164,14 @@ EXTRA_DIST = \
 	graphPrint.cc \
 	ansiEscapeSequences.cc \
 	prelude.maude \
-	model-checker.maude
+	model-checker.maude \
+	socket.maude \
+	linear.maude
 
 noinst_HEADERS = \
 	renaming.hh \
+	view.hh \
+	entity.hh \
 	moduleCache.hh \
 	moduleExpression.hh \
 	commonTokens.hh \
@@ -176,6 +189,7 @@ noinst_HEADERS = \
 	mixfixModule.hh \
 	mixfixParser.hh \
 	moduleDatabase.hh \
+	viewDatabase.hh \
 	preModule.hh \
 	profileModule.hh \
 	quotedIdentifierDagNode.hh \
@@ -186,4 +200,5 @@ noinst_HEADERS = \
 	token.hh \
 	userLevelRewritingContext.hh \
 	visibleModule.hh \
-	xmlBuffer.hh
+	xmlBuffer.hh \
+	syntaxContainer.hh

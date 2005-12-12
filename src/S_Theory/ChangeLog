@@ -1,3 +1,46 @@
+2005-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_Term.hh (class S_Term): updated decl for SymbolMap version of
+	ctor
+
+	* S_Term.cc (deepCopy2): handle translation to a non-S_Symbol
+	(S_Term): SymbolMap version: force symbol arg to be a S_Symbol
+
+2005-07-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_Term.cc (deepCopy2): fix Assert()
+
+2005-06-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_Term.cc (deepCopy2): expand when translating to a term
+
+	* S_Term.hh (class S_Term): updated decl for SymbolMap version of
+	ctor; made private
+
+	* S_Term.cc (deepCopy2): rewritten
+	(S_Term): (SymbolMap version) rewritten
+
+2005-06-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_Term.hh (class S_Term): updated decl for instantiate2()
+
+	* S_Term.cc (instantiate2): use findTargetVersionOfSymbol(); new
+	calling convention
+
+2005-06-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_Term.hh (class S_Term): added decl for instantiate2()
+
+	* S_Term.cc (instantiate2): added
+
+===================================Maude86b===========================================
+
+2004-06-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.hh: use #include "gmpxx.h"
+	
+===================================Maude84c===========================================
+
 2003-08-29  Steven Eker  <eker@goo.csl.sri.com>
 
 	* S_Symbol.cc (memoStrategy): use applyReplaceNoOwise()

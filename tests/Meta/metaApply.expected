@@ -1,7 +1,7 @@
 Maude> ==========================================
 reduce in TEST : metaApply(m, 'a.Foo, 'k, none, 0) .
 rewrites: 3
-result ResultTriple: {'b.Foo,'Foo,none}
+result ResultTriple: {'b.Foo,'Foo,(none).Substitution}
 ==========================================
 reduce in TEST : metaApply(m, 'a.Foo, 'k, none, 1) .
 rewrites: 2

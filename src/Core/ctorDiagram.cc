@@ -24,8 +24,8 @@
 //	Code for building the constructor diagram.
 //
 
-int
-SortTable::containsConstructor(const NatSet& state)
+bool
+SortTable::containsConstructor(const NatSet& state, bool& unique)
 {
   bool seenCtor = false;
   bool seenNonCtor = false;
@@ -37,10 +37,7 @@ SortTable::containsConstructor(const NatSet& state)
       else
 	seenNonCtor = true;
     }
-  WarningCheck(!(seenCtor && seenNonCtor),
-               "ctor declarations for operator " <<
-	       QUOTE(static_cast<const Symbol*>(this)) <<  // HACK
-               " failed ctor consistency check.");
+  unique = !(seenCtor && seenNonCtor);
   return seenCtor;
 }
 
@@ -179,12 +176,16 @@ SortTable::buildCtorDiagram()
 
   if (nrArgs == 0)
     {
-      ctorDiagram.append(containsConstructor(all));
+      bool unique;
+      ctorDiagram.append(containsConstructor(all, unique));
+      WarningCheck(unique, "constructor declarations for constant " << QUOTE(safeCast(Symbol*, this)) <<
+		   " are inconsistant.");
       return;
     }
 
   Vector<NatSet> nextStates;
   int currentBase = 0;
+  set<int> badTerminals;
   for (int i = 0; i < nrArgs; i++)
     {
       const ConnectedComponent* component = componentVector[i];
@@ -212,7 +213,10 @@ SortTable::buildCtorDiagram()
 	      if (nrNextSorts == 0)
 		{
 		  minimizeWrtCtor(nextState, i + 1);
-		  ctorDiagram[index] = containsConstructor(nextState);
+		  bool unique;
+		  ctorDiagram[index] = containsConstructor(nextState, unique);
+		  if (!unique)
+		    badTerminals.insert(index);
 		}
 	      else
 		{
@@ -226,4 +230,6 @@ SortTable::buildCtorDiagram()
       nextStates.contractTo(0);
       currentBase = nextBase;
     }
+  if (!(badTerminals.empty()))
+    sortErrorAnalysis(false, badTerminals);
 }

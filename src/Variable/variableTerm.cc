@@ -71,11 +71,17 @@ VariableTerm::deepSelfDestruct()
 }
 
 Term*
-VariableTerm::deepCopy2(SymbolMap* map) const
+VariableTerm::deepCopy2(SymbolMap* translator) const
 {
   VariableSymbol* vs = safeCast(VariableSymbol*,
-				(map == 0 ? symbol() : map->translate(symbol())));
+				(translator == 0 ? symbol() : translator->translate(symbol())));
   return new VariableTerm(vs, id());
+}
+
+Term*
+VariableTerm::instantiate2(const Vector<Term*>& varBindings, SymbolMap* translator)
+{
+  return varBindings[index]->deepCopy(translator);
 }
 
 Term*

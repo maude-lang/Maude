@@ -71,6 +71,10 @@ public:
     ACU_NUMBER_OP_SYMBOL,
     CUI_NUMBER_OP_SYMBOL,
     DIVISION_SYMBOL,
+    RANDOM_OP_SYMBOL,
+    MATRIX_OP_SYMBOL,
+    COUNTER_SYMBOL,
+    SOCKET_MANAGER_SYMBOL,
 
     END_OF_SYMBOLS_WITH_ATTACHMENTS
   };
@@ -115,6 +119,7 @@ public:
     //	Conjunctions.
     //
     AXIOMS = ASSOC | COMM | LEFT_ID | RIGHT_ID | IDEM,
+    SIMPLE_ATTRIBUTES = ASSOC | COMM | IDEM | MEMO | CTOR | CONFIG | OBJECT | MESSAGE,
     ATTRIBUTES = PREC | GATHER | FORMAT | LATEX | STRAT | MEMO | FROZEN |
     CONFIG | OBJECT | MESSAGE | AXIOMS | ITER
   };
@@ -138,6 +143,7 @@ public:
   bool isCreatedOnTheFly() const;
   bool compatible(SymbolType other) const;
   bool dittoProblem() const;
+  bool nonAlgebraic() const;
 
   static int specialNameToBasicType(const char* name);
 
@@ -223,10 +229,24 @@ SymbolType::hasSpecial() const
 }
 
 inline bool
+SymbolType::nonAlgebraic() const
+{
+  //
+  //	These symbols with these types store nonalebraic "hidden" data.
+  //
+  int t = getBasicType();
+  return t == STRING || t == FLOAT || t == QUOTED_IDENTIFIER;
+}
+
+inline bool
 SymbolType::isCreatedOnTheFly() const
 {
   int t = getBasicType();
   return hasFlag(POLY) || t == VARIABLE || t == SORT_TEST;
 }
+
+#ifndef NO_ASSERT
+ostream& operator<<(ostream& s, SymbolType st);
+#endif
 
 #endif

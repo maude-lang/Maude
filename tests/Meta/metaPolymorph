@@ -4,7 +4,7 @@ MAUDE_LIB=$srcdir/../../src/Mixfix
 export MAUDE_LIB
 
 ../../src/Mixfix/maude \
-  < $srcdir/metaPolymorph.maude -no-banner \
+  < $srcdir/metaPolymorph.maude -no-banner -no-advise \
   > metaPolymorph.out 2>&1
 
 diff $srcdir/metaPolymorph.expected metaPolymorph.out > /dev/null 2>&1

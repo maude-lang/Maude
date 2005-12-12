@@ -37,7 +37,7 @@ MetaLevel::convertToTokens(const Vector<int>& ids, Vector<Token>& tokens)
 }
 
 bool
-MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule*& m)
+MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule, ImportModule*& m)
 {
   int moduleName;
   if (downQid(metaExpr, moduleName))
@@ -45,8 +45,7 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule*& m)
       if (PreModule* pm = interpreter.getModule(moduleName))
 	{
 	  m = pm->getFlatSignature();
-	  if (!(m->isBad()))
-	    return true;
+	  return !(m->isBad());
 	}
     }
   else
@@ -57,25 +56,114 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule*& m)
 	  Vector<ImportModule*> fms;
 	  for (DagArgumentIterator i(metaExpr); i.valid(); i.next())
 	    {
-	      if (!downModuleExpression(i.argument(), m))
+	      if (!downModuleExpression(i.argument(), enclosingModule, m) || m->getNrParameters() > 0)
 		return false;
 	      fms.append(m);
 	    }
-	  return interpreter.makeSummation(fms);
+	  m = interpreter.makeSummation(fms);
+	  if (m->isBad())
+	    return false;
+	  return true;
 	}
       else if (me == renamingSymbol)
 	{
 	  FreeDagNode* f = safeCast(FreeDagNode*, metaExpr);
 	  Renaming renaming;  // object level renaming is ephemeral
 	  if (downRenamings(f->getArgument(1), &renaming) &&
-	      downModuleExpression(f->getArgument(0), m))
+	      downModuleExpression(f->getArgument(0), enclosingModule, m))
 	    {
 	      m = interpreter.makeRenamedCopy(m, &renaming);
+	      if (m->isBad())
+		return false;
+	      return true;
+	    }
+	}
+      else if (me == instantiationSymbol)
+	{
+	  FreeDagNode* f = safeCast(FreeDagNode*, metaExpr);
+	  Vector<int> names;
+	  if (downInstantiationArguments(f->getArgument(1), names) &&
+	      downModuleExpression(f->getArgument(0), enclosingModule, m))
+	    {
+	      int nrParameters = m->getNrParameters();
+	      if (nrParameters != names.size())
+		return false;  // wrong number of arguments
+
+	      Vector<View*> views(nrParameters);
+	      bool hasTheoryView = false;
+	      bool hasPEM = false;
+	      for (int i = 0; i < nrParameters; ++i)
+		{
+		  int code  = names[i];
+		  if (enclosingModule != 0)
+		    {
+		      int index = enclosingModule->findParameterIndex(code);
+		      if (index != NONE)
+			{
+			  //
+			  //	Parameters from an enclosing module occlude views.
+			  //
+			  ImportModule* enclosingModuleParameterTheory = enclosingModule->getParameterTheory(index);
+			  ImportModule* requiredParameterTheory = m->getParameterTheory(i);
+			  if (enclosingModuleParameterTheory != requiredParameterTheory)
+			    return false;  // theory mismatch
+			  views[i] = 0;
+			  hasPEM = true;
+			  continue;
+			}
+		    }
+		  if (View* v = interpreter.getView(code))
+		    {
+		      //
+		      //	Instantiation is a view.
+		      //
+		      if (!(v->evaluate()))
+			return false;  // bad view
+		      ImportModule* fromTheory = v->getFromTheory();
+		      ImportModule* requiredParameterTheory = m->getParameterTheory(i);
+		      if (fromTheory != requiredParameterTheory)
+			return false;  // theory mismatch
+		      views[i] = v;
+		      if (v->getToModule()->isTheory())
+			hasTheoryView = true;
+		    }
+		  else
+		    return false;  // nonexistent view
+		}
+	      if (hasTheoryView && hasPEM)
+		return false;
+	      m = interpreter.makeInstatiation(m, views, names);
+	      if (m->isBad())
+		return false;
 	      return true;
 	    }
 	}
     }
   return false;
+}
+
+bool
+MetaLevel::downInstantiationArguments(DagNode* metaArguments, Vector<int>& arguments)
+{
+  Assert(arguments.empty(), "nonempty arg list");
+  if (metaArguments->symbol() == metaArgSymbol)
+    {
+      for (DagArgumentIterator i(metaArguments); i.valid(); i.next())
+	{
+	  int id;
+	  if (!downQid(i.argument(), id))
+	    return false;
+	  arguments.append(id);
+	}
+    }
+  else
+    {
+      int id;
+      if (!downQid(metaArguments, id))
+	return false;
+      arguments.append(id);
+    }
+  return true;
 }
 
 bool
@@ -190,10 +278,11 @@ MetaLevel::downRenamingType(DagNode* metaType, Renaming* renaming)
       switch (Token::auxProperty(id))
 	{
 	case Token::AUX_SORT:
+	case Token::AUX_STRUCTURED_SORT:
 	  {
 	    Vector<Token> type(1);
 	    type[0].tokenize(id, FileTable::META_LEVEL_CREATED);
-	    renaming->addType(type);
+	    renaming->addType(false, type);
 	    return true;
 	  }
 	case Token::AUX_KIND:
@@ -202,7 +291,7 @@ MetaLevel::downRenamingType(DagNode* metaType, Renaming* renaming)
 	    Token::splitKind(id, sortNames);
 	    Vector<Token> type;
 	    convertToTokens(sortNames, type);
-	    renaming->addType(type);
+	    renaming->addType(true, type);
 	    return true;
 	  }
 	default:

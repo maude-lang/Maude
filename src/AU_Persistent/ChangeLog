@@ -1,3 +1,13 @@
+2004-06-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_StackSort.cc (revComputeBaseSort): fixed nasty bug where we
+	were failing to take account of a sort calculated for part of a
+	list and therefore ignored that part of the list for sort
+	calculation purposes
+	(fwdComputeBaseSort): fixed symmetric bug
+	
+===================================Maude84c==================================
+
 2003-04-23  Steven Eker  <eker@goo.csl.sri.com>
 
 	* AU_Deque.hh (copyFromArgVec): make into ctor

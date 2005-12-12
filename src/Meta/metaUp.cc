@@ -37,7 +37,7 @@ DagNode*
 MetaLevel::upType(Sort* sort, PointerMap& qidMap)
 {
   int id = sort->id();
-  if (sort->index() == Sort::ERROR_SORT)
+  if (sort->index() == Sort::KIND)
     {
       string fullName("`[");
       ConnectedComponent* component = sort->component();
@@ -58,7 +58,7 @@ MetaLevel::upJoin(int id, Sort* sort, char sep, PointerMap& qidMap)
   Assert(sort != 0, "null sort");
   string fullName(Token::name(id));
   fullName += sep;
-  if (sort->index() == Sort::ERROR_SORT)
+  if (sort->index() == Sort::KIND)
     {
       fullName += "`[";
       ConnectedComponent* component = sort->component();
@@ -192,8 +192,8 @@ MetaLevel::upTerm(const Term* term, MixfixModule* m, PointerMap& qidMap)
       }
     case SymbolType::VARIABLE:
       {
-	int id = static_cast<const VariableTerm*>(term)->id();
-	return upVariable(id, MixfixModule::disambiguatorSort(term), qidMap);
+	const VariableTerm* vt = safeCast(const VariableTerm*, term);
+	return upVariable(vt->id(), vt->getSort(), qidMap);
       }
     default:
       {
@@ -436,6 +436,48 @@ MetaLevel::upFailure4Tuple()
 }
 
 DagNode*
+MetaLevel::upTrace(const RewriteSequenceSearch& state, MixfixModule* m)
+{
+  Vector<int> steps;
+  for (int i = state.getStateNr(); i != 0; i = state.getStateParent(i))
+    steps.append(i);
+
+  int nrSteps = steps.size();   
+  if (nrSteps == 0)
+    return nilTraceSymbol->makeDagNode();
+
+  Vector<DagNode*> args(nrSteps);
+  PointerMap qidMap;
+  PointerMap dagNodeMap;
+  int j = 0;
+  for (int i = nrSteps - 1; i >= 0; --i, ++j)
+    args[j] = upTraceStep(state, steps[i], m, qidMap, dagNodeMap);
+  return (nrSteps == 1) ? args[0] : traceSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upTraceStep(const RewriteSequenceSearch& state,
+		       int stateNr,
+		       MixfixModule* m,
+		       PointerMap& qidMap,
+		       PointerMap& dagNodeMap)
+{
+  static Vector<DagNode*> args(3);
+  int parentNr = state.getStateParent(stateNr);
+  DagNode* dagNode = state.getStateDag(parentNr);
+  args[0] = upDagNode(dagNode, m, qidMap, dagNodeMap);
+  args[1] = upType(dagNode->getSort(), qidMap);
+  args[2] = upRl(state.getStateRule(stateNr), m, qidMap);
+  return traceStepSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upFailureTrace()
+{
+  return failureTraceSymbol->makeDagNode();
+}
+
+DagNode*
 MetaLevel::upNoParse(int badTokenIndex)
 {
   static Vector<DagNode*> args(1);
@@ -470,14 +512,14 @@ MetaLevel::upKindSet(const Vector<ConnectedComponent*>& kinds)
 {
   int nrKinds = kinds.length();
   if (nrKinds == 0)
-    return new FreeDagNode(emptyKindSetSymbol);
+    return new FreeDagNode(emptySortSetSymbol);
   PointerMap qidMap;
   if (nrKinds == 1)
     return upType(kinds[0]->sort(0), qidMap);
   Vector<DagNode*> args(nrKinds);
   for (int i = 0; i < nrKinds; i++)
     args[i] = upType(kinds[i]->sort(0), qidMap);
-  return kindSetSymbol->makeDagNode(args);
+  return sortSetSymbol->makeDagNode(args);
 }
 
 DagNode*
@@ -496,10 +538,10 @@ MetaLevel::upSortSet(const Vector<Sort*>& sorts,
   if (nrSorts == 0)
     return new FreeDagNode(emptySortSetSymbol);
   if (nrSorts == 1)
-    return upQid(sorts[begin]->id(), qidMap);
+    return upType(sorts[begin], qidMap);
   Vector<DagNode*> args(nrSorts);
   for (int i = 0; i < nrSorts; i++, begin++)
-    args[i] = upQid(sorts[begin]->id(), qidMap);
+    args[i] = upType(sorts[begin], qidMap);
   return sortSetSymbol->makeDagNode(args);
 }
 
@@ -521,5 +563,39 @@ MetaLevel::upQidList(const Vector<int>& ids, PointerMap& qidMap)
   Vector<DagNode*> args(nrIds);
   for (int i = 0; i < nrIds; i++)
     args[i] = upQid(ids[i], qidMap);
+  return qidListSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upTypeListSet(const Vector<OpDeclaration>& opDecls,
+			 const NatSet& chosenDecls,
+			 PointerMap& qidMap)
+{
+  Vector<DagNode*> args;
+  FOR_EACH_CONST(i, NatSet, chosenDecls)
+    args.append(upTypeList(opDecls[*i].getDomainAndRange(), true, qidMap));
+  int nrArgs = args.size();
+  if (nrArgs == 0)
+    return new FreeDagNode(emptySortSetSymbol);
+  if (nrArgs == 1)
+    return args[0];
+  return sortSetSymbol->makeDagNode(args);
+}		     
+
+DagNode*
+MetaLevel::upTypeList(const Vector<Sort*>& types,
+		      bool omitLast,
+		      PointerMap& qidMap)
+{
+  int nrTypes = types.size();
+  if (omitLast)
+    --nrTypes;
+  if (nrTypes == 0)
+    return new FreeDagNode(nilQidListSymbol);
+  if (nrTypes == 1)
+    return upType(types[0], qidMap);
+  Vector<DagNode*> args(nrTypes);
+  for (int i = 0; i < nrTypes; ++i)
+    args[i] = upType(types[i], qidMap);
   return qidListSymbol->makeDagNode(args);
 }

@@ -70,6 +70,19 @@ protected:
   static int owise;
   static int lessThan;
   static int partial;
+  static int th;
+  static int fth;
+  static int mod;
+  static int fmod;
+  static int omod;
+  static int obj;
+  static int endth;
+  static int endfth;
+  static int endm;
+  static int endfm;
+  static int endom;
+  static int endo;
+  static int jbo;
 };
 
 #endif

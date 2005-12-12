@@ -76,7 +76,7 @@
 #include "ACU_LhsCompiler3.cc"
 
 ACU_Term::ACU_Term(ACU_Symbol* symbol, const Vector<Term*>& arguments)
-: Term(symbol), argArray(arguments.length())
+  : Term(symbol), argArray(arguments.length())
 {
   int nrArgs = arguments.length();
   Assert(nrArgs >= 2, "insufficient arguments for operator " << symbol);
@@ -87,14 +87,14 @@ ACU_Term::ACU_Term(ACU_Symbol* symbol, const Vector<Term*>& arguments)
     }
 }
 
-ACU_Term::ACU_Term(const ACU_Term& original, SymbolMap* map)
-: Term(map == 0 ? original.symbol() : map->translate(original.symbol())),
-  argArray(original.argArray.length())
+ACU_Term::ACU_Term(const ACU_Term& original, ACU_Symbol* symbol, SymbolMap* translator)
+  : Term(symbol),
+    argArray(original.argArray.length())
 {
   int nrArgs = original.argArray.length();
   for (int i = 0; i < nrArgs; i++)
     {
-      argArray[i].term = original.argArray[i].term->deepCopy(map);
+      argArray[i].term = original.argArray[i].term->deepCopy(translator);
       argArray[i].multiplicity = original.argArray[i].multiplicity;
     }
 }
@@ -115,9 +115,83 @@ ACU_Term::deepSelfDestruct()
 }
 
 Term*
-ACU_Term::deepCopy2(SymbolMap* map) const
+ACU_Term::deepCopy2(SymbolMap* translator) const
 {
-  return new ACU_Term(*this, map);
+  ACU_Symbol* s = symbol();
+  if (translator != 0)
+    {
+      Symbol* s2 = translator->translate(s);
+      if (s2 == 0)
+	{
+	  int nrArgs = argArray.length();
+	  if ((nrArgs == 1 && argArray[0].multiplicity == 2) ||
+	      (nrArgs == 2 && argArray[0].multiplicity == 1 && argArray[1].multiplicity == 1))
+	    return translator->translateTerm(this);
+	  //
+	  //	Tricky situtation - we have to use translateTerm() since
+	  //	we are translating to a term but we have more than
+	  //	2 arguments. We resolve it by creating a temporary
+	  //	expanded term.
+	  //
+	  Vector<Term*> args(2);
+	  Term* arg = argArray[0].term;
+	  args[0] = arg;
+	  int remainingMultiplicity = argArray[0].multiplicity - 1;
+	  int nrNewTerms = remainingMultiplicity;
+	  for (int i = 0;; nrNewTerms += remainingMultiplicity)
+	    {
+	      //
+	      //	Normally it is a no-no for sharing of subterms, but
+	      //	here we are just making a temporary construction that
+	      //	will be translated and then carefully destructed.
+	      //
+	      for (; remainingMultiplicity > 0; --remainingMultiplicity)
+		{
+		  args[1] = arg;
+		  args[0] = new ACU_Term(s, args);
+		}
+	      if (++i == nrArgs)
+		break;
+	      arg = argArray[i].term;
+	      remainingMultiplicity = argArray[i].multiplicity;
+	    }
+	  Term* t = args[0];
+	  Term* r = translator->translateTerm(t);
+	  for (int i = 0; i < nrNewTerms; ++i)
+	    {
+	      Term* n = safeCast(ACU_Term*, t)->argArray[0].term;
+	      delete t;
+	      t = n;
+	    }
+	  return r;
+	}
+      s = dynamic_cast<ACU_Symbol*>(s2);
+      if (s == 0)
+	{
+	  //
+	  //	Another tricky situation - we are translating to a non-ACU_Symbol.
+	  //
+	  Vector<Term*> args(2);
+	  Term* arg = argArray[0].term;
+	  int remainingMultiplicity = argArray[0].multiplicity - 1;
+	  args[0] = arg->deepCopy(translator);
+	  int nrArgs = argArray.length();
+	  for (int i = 0;;)
+	    {
+	      for (; remainingMultiplicity > 0; --remainingMultiplicity)
+		{
+		  args[1] = arg->deepCopy(translator);
+		  args[0] = s2->makeTerm(args);
+		}
+	      if (++i == nrArgs)
+		break;
+	      arg = argArray[i].term;
+	      remainingMultiplicity = argArray[i].multiplicity;
+	    }
+	  return args[0];
+	}
+    }
+  return new ACU_Term(*this, s, translator);
 }
 
 bool

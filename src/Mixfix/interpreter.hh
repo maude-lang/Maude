@@ -25,15 +25,19 @@
 //
 #ifndef _interpreter_hh_
 #define _interpreter_hh_
+#include <set>
 #include "moduleDatabase.hh"
 #include "moduleCache.hh"
 #include "compiler.hh"
-#include "intSet.hh"
+#include "viewDatabase.hh"
 
-class Interpreter : public ModuleDatabase, public ModuleCache
+class Interpreter
+  : public ModuleDatabase,
+    public ModuleCache,
 #ifdef COMPILER
-, public Compiler
+    public Compiler,
 #endif
+    public ViewDatabase
 {
   NO_COPYING(Interpreter);
 
@@ -76,24 +80,12 @@ public:
     TRACE_MB = 0x20000,
     TRACE_EQ = 0x40000,
     TRACE_RL = 0x80000,
+    TRACE_REWRITE = 0x100000,
+    TRACE_BODY = 0x200000,
     //
-    //	General prettyprinter flags.
+    //	Counter flags.
     //
-    PRINT_GRAPH = 0x100000,
-    PRINT_CONCEAL = 0x200000,
-    PRINT_FORMAT = 0x400000,
-    PRINT_MIXFIX = 0x800000,
-    PRINT_WITH_PARENS = 0x1000000,
-    //
-    //	Prettyprinter flags for particular symbol types.
-    //
-    PRINT_WITH_ALIASES = 0x2000000,	// for variables
-    PRINT_FLAT = 0x4000000,		// for assoc symbols
-    //PRINT_ITER = 0x800000,		// for iter symbols
-    PRINT_NUMBER = 0x8000000,		// for nats & ints
-    PRINT_RAT = 0x10000000,		// for rats
-
-    PRINT_COLOR = 0x20000000,		// for dag node coloring
+    AUTO_CLEAR_RULES = 0x40000000,
     //
     //	Compiler flags.
     //
@@ -105,9 +97,30 @@ public:
 
     DEFAULT_FLAGS = SHOW_COMMAND | SHOW_STATS | SHOW_TIMING | SHOW_LOOP_TIMING |
     COMPILE_COUNT |
-    TRACE_CONDITION | TRACE_SUBSTITUTION | TRACE_MB | TRACE_EQ | TRACE_RL |
-    AUTO_CLEAR_PROFILE |
-    PRINT_FORMAT | PRINT_MIXFIX | PRINT_WITH_ALIASES |
+    TRACE_CONDITION | TRACE_SUBSTITUTION | TRACE_MB | TRACE_EQ | TRACE_RL | TRACE_REWRITE | TRACE_BODY |
+    AUTO_CLEAR_PROFILE | AUTO_CLEAR_RULES
+  };
+
+  enum PrintFlags
+  {
+    //
+    //	General prettyprinter flags.
+    //
+    PRINT_GRAPH = 0x1,		// print as a set of DAG nodes
+    PRINT_CONCEAL = 0x2,	// respect concealed argument lists
+    PRINT_FORMAT = 0x4,		// respect format attribute
+    PRINT_MIXFIX = 0x8,		// mixfix notation
+    PRINT_WITH_PARENS = 0x10,	// maximal parens
+    PRINT_COLOR = 0x20,		// dag node coloring based on ctor/reduced status
+    //
+    //	Prettyprinter flags for particular symbol types.
+    //
+    PRINT_WITH_ALIASES = 0x100,	// for variables
+    PRINT_FLAT = 0x200,		// for assoc symbols
+    PRINT_NUMBER = 0x400,	// for nats & ints
+    PRINT_RAT = 0x800,		// for rats
+
+    DEFAULT_PRINT_FLAGS = PRINT_FORMAT | PRINT_MIXFIX | PRINT_WITH_ALIASES |
     PRINT_FLAT | PRINT_NUMBER | PRINT_RAT
   };
 
@@ -120,22 +133,31 @@ public:
 
   void setFlag(Flags flag, bool polarity);
   bool getFlag(Flags flag) const;
+  void setPrintFlag(PrintFlags flag, bool polarity);
+  bool getPrintFlag(PrintFlags flag) const;
+  int getPrintFlags() const;
 
   PreModule* getCurrentModule() const;
   bool setCurrentModule(const Vector<Token>& moduleExpr, int start = 0);
   void setCurrentModule(PreModule* module);
   void makeClean(int lineNumber);
 
+  View* getCurrentView() const;
+  bool setCurrentView(const Vector<Token>& viewExpr);
+  void setCurrentView(View* view);
+
   void parse(const Vector<Token>& subject);
   void reduce(const Vector<Token>& subject, bool debug);
   void creduce(const Vector<Token>& subject);
   void rewrite(const Vector<Token>& subject, Int64 limit, bool debug);
   void fRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool debug);
+  void eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool debug);
   void cont(Int64 limit, bool debug);
 
   void match(const Vector<Token>& bubble, bool withExtension, Int64 limit);
   void search(const Vector<Token>& bubble, Int64 limit);
   void showSearchPath(int stateNr);
+  void showSearchPathLabels(int stateNr);
   void showSearchGraph();
 
   void loop(const Vector<Token>& subject);
@@ -145,7 +167,12 @@ public:
   void traceSelect(bool add);
   void breakSelect(bool add);
   void traceExclude(bool add);
-  void printConceal(bool polarity);
+  void printConceal(bool add);
+
+  bool traceId(int id);
+  bool breakId(int id);
+  bool excludedModule(int id);
+  bool concealedSymbol(Symbol* symbol);
 
   void showProfile() const;
   void showKinds() const;
@@ -153,6 +180,7 @@ public:
   void showSortsAndSubsorts() const;
   void showModule(bool all = true) const;
   void showModules(bool all) const;
+  void showView() const;
   void showVars() const;
   void showOps(bool all = true) const;
   void showMbs(bool all = true) const;
@@ -177,6 +205,7 @@ private:
 		    ContinueFuncPtr cf = 0);
   void rewriteCont(Int64 limit, bool debug);
   void fRewriteCont(Int64 limit, bool debug);
+  void eRewriteCont(Int64 limit, bool debug);
   bool contLoop2(const Vector<Token>& input);
   void doLoop(DagNode* d, VisibleModule* module);
   void searchCont(Int64 limit, bool debug);
@@ -193,12 +222,15 @@ private:
 		  int solutionCount,
 		  int limit);
   void matchCont(Int64 limit, bool debug);
+  void updateSet(set<int>& target, bool add);
 
   ofstream* xmlLog;
   MaudemlBuffer* xmlBuffer;
 
   int flags;
+  int printFlags;
   PreModule* currentModule;
+  View* currentView;
   //
   //	Continuation information.
   //
@@ -210,8 +242,54 @@ private:
   ContinueFuncPtr continueFunc;
   Vector<Token> savedLoopSubject;
 
-  IntSet selected;
+  set<int> selected;		// temporary for building set of identifiers
+  set<int> traceIds;		// names of symbols/labels selected for tracing
+  set<int> breakIds;		// names of symbols/labels selected as break points
+  set<int> excludedModules;	// names of modules to be excluded from tracing
+  set<int> concealedSymbols;	// names of symbols to have their arguments concealed during printing
 };
+
+inline void
+Interpreter::traceSelect(bool add)
+{
+  updateSet(traceIds, add);
+}
+
+inline void
+Interpreter::breakSelect(bool add)
+{
+  updateSet(breakIds, add);
+}
+
+inline void
+Interpreter::traceExclude(bool add)
+{
+  updateSet(excludedModules, add);
+}
+
+inline void
+Interpreter::printConceal(bool add)
+{
+  updateSet(concealedSymbols, add);
+}
+
+inline bool
+Interpreter::traceId(int id)
+{
+  return traceIds.find(id) != traceIds.end();
+}
+
+inline bool
+Interpreter::breakId(int id)
+{
+  return breakIds.find(id) != breakIds.end();
+}
+
+inline bool
+Interpreter::excludedModule(int id)
+{
+  return excludedModules.find(id) != excludedModules.end();
+}
 
 inline MaudemlBuffer*
 Interpreter::getXmlBuffer() const
@@ -225,10 +303,34 @@ Interpreter::getFlag(Flags flag) const
   return flags & flag;
 }
 
+inline bool
+Interpreter::getPrintFlag(PrintFlags flag) const
+{
+  return printFlags & flag;
+}
+
+inline int
+Interpreter::getPrintFlags() const
+{
+  return printFlags;
+}
+
 inline PreModule*
 Interpreter::getCurrentModule() const
 {
   return currentModule;
+}
+
+inline View*
+Interpreter::getCurrentView() const
+{
+  return currentView;
+}
+
+inline void
+Interpreter::setCurrentView(View* view)
+{
+  currentView = view;
 }
 
 #endif

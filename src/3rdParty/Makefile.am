@@ -6,3 +6,6 @@ libdlmalloc_a_SOURCES = \
 	malloc.c
 
 endif
+
+noinst_HEADERS = \
+	MersenneTwister.h

@@ -33,7 +33,7 @@ class MetaModule : public ImportModule, public MetaOpCache
   NO_COPYING(MetaModule);
 
 public:
-  MetaModule(int name, ModuleType moduleType, Parent* parent);
+  MetaModule(int name, ModuleType moduleType, Entity::User* parent);
 
   void addComplexSymbol(int type, int index, DagNode* identity, DagNode* fixUpInfo);
   void addComplexSymbol(int type,

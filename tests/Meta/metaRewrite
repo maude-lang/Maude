@@ -4,7 +4,7 @@ MAUDE_LIB=$srcdir/../../src/Mixfix
 export MAUDE_LIB
 
 ../../src/Mixfix/maude \
-  < $srcdir/metaRewrite.maude -no-banner \
+  < $srcdir/metaRewrite.maude -no-banner -no-advise \
   > metaRewrite.out 2>&1
 
 diff $srcdir/metaRewrite.expected metaRewrite.out > /dev/null 2>&1

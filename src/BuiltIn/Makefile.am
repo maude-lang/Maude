@@ -11,7 +11,8 @@ libbuiltIn_a_CPPFLAGS = \
 	-I$(top_srcdir)/src/ACU_Theory \
 	-I$(top_srcdir)/src/CUI_Theory \
 	-I$(top_srcdir)/src/S_Theory \
-	-I$(top_srcdir)/src/FreeTheory
+	-I$(top_srcdir)/src/FreeTheory \
+	-I$(top_srcdir)/src/3rdParty
 
 libbuiltIn_a_SOURCES = \
 	equalitySymbol.cc \
@@ -30,7 +31,13 @@ libbuiltIn_a_SOURCES = \
 	minusSymbol.cc \
 	ACU_NumberOpSymbol.cc \
 	CUI_NumberOpSymbol.cc \
-	divisionSymbol.cc
+	divisionSymbol.cc \
+	randomOpSymbol.cc \
+	counterSymbol.cc \
+	matrixOpSymbol.cc
+
+EXTRA_DIST = \
+	matrixOpSignature.cc
 
 noinst_HEADERS = \
 	ACU_NumberOpSymbol.hh \
@@ -51,4 +58,7 @@ noinst_HEADERS = \
 	stringOpSymbol.hh \
 	stringSymbol.hh \
 	stringTerm.hh \
-	succSymbol.hh
+	succSymbol.hh \
+	randomOpSymbol.hh \
+	counterSymbol.hh \
+	matrixOpSymbol.hh

@@ -55,8 +55,6 @@ loop init .
 (a)
 
 
-set print number on .
-
 red in META-LEVEL : metaPrettyPrint(
 fmod 'FOO is
   protecting 'RAT .
@@ -75,9 +73,7 @@ fmod 'FOO is
   none
   none
   none
-endfm, 's_['s_['0.Zero]]) .
-
-set print number off .
+endfm, 's_['s_['0.Zero]], mixfix flat format number rat) .
 
 red in META-LEVEL : metaPrettyPrint(
 fmod 'FOO is
@@ -87,10 +83,7 @@ fmod 'FOO is
   none
   none
   none
-endfm,
-'s_['s_['0.Zero]]) .
-
-set print number on .
+endfm, 's_['s_['0.Zero]], none) .
 
 red in META-LEVEL : metaPrettyPrint(
 fmod 'FOO is
@@ -100,8 +93,7 @@ fmod 'FOO is
   none
   none
   none
-endfm,
-'-_['s_['0.Zero]]) .
+endfm, '-_['s_['0.Zero]]) .
 
 red in META-LEVEL : metaPrettyPrint(
 fmod 'FOO is
@@ -111,8 +103,7 @@ fmod 'FOO is
   none
   none
   none
-endfm,
-'_/_['-_['s_['0.Zero]], 's_['0.Zero]]) .
+endfm, '_/_['-_['s_['0.Zero]], 's_['0.Zero]]) .
 
 red in META-LEVEL : metaPrettyPrint(
 fmod 'FOO is
@@ -122,8 +113,7 @@ fmod 'FOO is
   none
   none
   none
-endfm,
-'-_['s_^22['0.Zero]]) .
+endfm, '-_['s_^22['0.Zero]]) .
 
 red in META-LEVEL : metaPrettyPrint(
 fmod 'FOO is
@@ -133,5 +123,34 @@ fmod 'FOO is
   none
   none
   none
-endfm,
-'_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]]) .
+endfm, '_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]]) .
+
+red in META-LEVEL : metaPrettyPrint(
+fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]], mixfix) .
+
+red in META-LEVEL : metaPrettyPrint(
+fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]], mixfix number) .
+
+red in META-LEVEL : metaPrettyPrint(
+fmod 'FOO is
+  protecting 'RAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, '_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]], mixfix rat) .

@@ -66,9 +66,14 @@ public:
   void insertEquation(Equation* equation);
   void insertRule(Rule* rule);
   void insertLateSymbol(Symbol*s);
-  void clearMemo();  // clear memo table for each symbol
+  //
+  //	Call the appropriate function on each symbol.
+  //
   virtual void reset();  // clear misc caches for each symbol
-  void resetRules();  // reset round robin counter for each symbol
+  void clearMemo();  // clear memo table for each symbol
+  void resetRules();  // clear rule hidden state
+  void saveHiddenState();  // save rule hidden state
+  void restoreHiddenState();  // restore rule hidden state
 
 #ifdef DUMP
   void dump(ostream& s);

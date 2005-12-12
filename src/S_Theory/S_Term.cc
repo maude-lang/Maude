@@ -62,11 +62,11 @@ S_Term::S_Term(S_Symbol* symbol, const mpz_class& number, Term* arg)
   Assert(arg != 0, "null arg");
 }
 
-S_Term::S_Term(const S_Term& original, SymbolMap* map)
-  : Term(map == 0 ? original.symbol() : map->translate(original.symbol())),
+S_Term::S_Term(const S_Term& original, S_Symbol* symbol, SymbolMap* translator)
+  : Term(symbol),
     number(original.number)
 {
-  arg = original.arg->deepCopy(map);
+  arg = original.arg->deepCopy(translator);
 }
 
 RawArgumentIterator*
@@ -83,9 +83,56 @@ S_Term::deepSelfDestruct()
 }
 
 Term*
-S_Term::deepCopy2(SymbolMap* map) const
+S_Term::deepCopy2(SymbolMap* translator) const
 {
-  return new S_Term(*this, map);
+  S_Symbol* s = symbol();
+  if (translator != 0)
+    {
+      Symbol* s2 = translator->translate(s);
+      if (s2 == 0)
+	{
+	  if (number == 1)
+	    return translator->translateTerm(this);
+	  //
+	  //	Tricky situtation - we have to use translateTerm() since
+	  //	we are translating to a term , but we have hidden data. 
+	  //	We resolve it by creating a temporary expanded term.
+	  //
+	  mpz_class n = 1;
+	  Term* t = arg;
+	  for (mpz_class i = 0; i < number; ++i)
+	    t = new S_Term(s, n, t);
+	  Term* r = translator->translateTerm(t);
+	  for (mpz_class i = 0; i < number; ++i)
+	    {
+	      Term* n = safeCast(S_Term*, t)->arg;
+	      delete t;
+	      t = n;
+	    }
+	  return r;
+	}
+      s = dynamic_cast<S_Symbol*>(s2);
+      if (s == 0)
+	{
+	  //
+	  //	Another tricky situation - we are translating to a non-S_Symbol.
+	  //
+	  Vector<Term*> args(1);
+	  args[0] = arg->deepCopy(translator);
+	  for (mpz_class i = 0; i < number; ++i)
+	    args[0] = s2->makeTerm(args);
+	  return args[0];
+	}
+    }
+  return new S_Term(*this, s, translator);
+}
+
+Term*
+S_Term::instantiate2(const Vector<Term*>& varBindings, SymbolMap* translator)
+{
+  return new S_Term(safeCast(S_Symbol*, translator->findTargetVersionOfSymbol(symbol())),
+		    number,
+		    arg->instantiate2(varBindings, translator));
 }
 
 Term*

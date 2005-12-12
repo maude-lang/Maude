@@ -1,0 +1,104 @@
+set show timing off .
+
+fmod FOO is
+  sorts Foo Bar .
+  subsort Foo < Bar .
+endfm
+
+fmod BAR is 
+  inc FOO * (sort Foo to Baz, sort Bar to Quux) .
+endfm
+
+show mod .
+show all .
+
+fmod ONE is
+  sorts Foo Bar .
+  subsort Foo < Bar .
+endfm
+
+fmod TWO is
+  inc ONE * (sort Foo to Baz) .
+  sort Quux .
+  subsort Quux < Baz .
+endfm
+
+fmod THREE is
+  inc TWO * (sort Foo to Foo', sort Baz to Baz', sort Quux to Quux') .
+  sort Jaz .
+  subsort Jaz < Baz' .
+endfm
+
+show mod .
+show all .
+
+
+fmod FOO is
+  sorts Foo Bar .
+  subsort Foo < Bar .
+  op a : -> Foo .
+endfm
+
+fmod BAR is 
+  inc FOO * (sort Foo to Baz, op a to b) .
+endfm
+
+show mod .
+show all .
+
+fmod FOO' is
+  sorts Foo Bar Baz .
+  subsort Foo < Bar .
+  op a : -> Baz .
+  op _+_ : Foo Foo -> Foo [prec 31 gather (e E) assoc comm] .
+  op _+_ : Baz Baz -> Foo [prec 31 gather (e E)] .
+endfm
+
+fmod BAR' is 
+  inc FOO' *
+  (
+    sort Foo to Quux,
+    op _+_ : Foo Foo -> Foo to _*_ [prec 29 gather (E e)],
+    op _+_ : Baz Baz -> Foo to _._ [prec 27 gather (E e)]
+  ) .
+endfm
+
+show mod .
+show all .
+
+red a . a * a . a .
+
+fmod BAR'' is 
+  inc FOO' *
+  (
+    sort Foo to Quux,
+    op _+_ to _*_ [prec 29 gather (E E)]
+  ) .
+endfm
+
+show mod .
+show all .
+
+red a * a * a * a .
+red (a * a) * (a * a) .
+
+*** Check splitting renaming over bashed together ops
+
+fmod DIFF is
+  sorts Foo Bar .
+  op f : Foo -> Foo .
+  op f : Bar -> Bar .
+endfm
+
+fmod BASH is
+  inc DIFF .
+  subsort Foo < Bar .
+endfm
+
+fmod TEST is
+  inc BASH * (op f : Foo -> Foo to g) .
+endfm
+
+show mod .
+show all .
+show modules .

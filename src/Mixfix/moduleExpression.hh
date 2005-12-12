@@ -35,18 +35,21 @@ public:
   {
     MODULE,
     SUMMATION,
-    RENAMING
+    RENAMING,
+    INSTANTIATION
   };
 
   ModuleExpression(Token moduleName);
   ModuleExpression(ModuleExpression* left, ModuleExpression* right);
   ModuleExpression(ModuleExpression* module, Renaming* renaming);
+  ModuleExpression(ModuleExpression* module, const Vector<Token>& arguments);
 
   Type getType() const;
   Token getModuleName() const;
   const list<ModuleExpression*>& getModules() const;
   ModuleExpression* getModule() const;
   Renaming* getRenaming() const;
+  const Vector<Token>& getArguments() const;
   void deepSelfDestruct();
 
 private:
@@ -60,10 +63,17 @@ private:
   //
   list<ModuleExpression*> modules;
   //
-  //	For renaming.
+  //	For renaming and instantiation.
   //
   ModuleExpression* module;
+  //
+  //	For renaming.
+  //
   Renaming* renaming;
+  //
+  //	For instantiation.
+  //
+  Vector<Token> arguments;
 };
 
 ostream& operator<<(ostream& s, const ModuleExpression* expr);
@@ -91,7 +101,7 @@ ModuleExpression::getModules() const
 inline ModuleExpression*
 ModuleExpression::getModule() const
 {
-  Assert(type == RENAMING, "not a renaming");
+  Assert(type == RENAMING || type == INSTANTIATION, "not a renaming or instantiation");
   return module;
 }
 
@@ -100,6 +110,13 @@ ModuleExpression::getRenaming() const
 {
   Assert(type == RENAMING, "not a renaming");
   return renaming;
+}
+
+inline const Vector<Token>&
+ModuleExpression::getArguments() const
+{
+  Assert(type == INSTANTIATION, "not instantiation");
+  return arguments;
 }
 
 #endif

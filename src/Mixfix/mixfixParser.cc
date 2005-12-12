@@ -93,8 +93,7 @@ MixfixParser::getTokenSet()  // HACK
 
 MixfixParser::MixfixParser(MixfixModule& client)
   : client(client),
-    specialTerminals(Token::LAST_PROPERTY),
-    variableTerminals(client.getSorts().length())
+    specialTerminals(Token::LAST_PROPERTY)
 {
   bubblesAllowed = false;
 }
@@ -181,17 +180,15 @@ MixfixParser::insertSpecialTerminal(int tokenProperty, int codeToUse)
 }
 
 void
-MixfixParser::insertVariableTerminal(int sortIndex, int codeToUse)
+MixfixParser::insertVariableTerminal(int sortNameCode, int codeToUse)
 {
-  variableTerminals[sortIndex] = tokens.insert(codeToUse);
+  variableTerminals[sortNameCode] = tokens.insert(codeToUse);
 }
 
 void
-MixfixParser::insertIterSymbolTerminal(int iterSymbolIndex, int codeToUse)
+MixfixParser::insertIterSymbolTerminal(int iterSymbolNameCode, int codeToUse)
 {
-  if (iterSymbolIndex >= iterSymbolTerminals.length())
-    iterSymbolTerminals.resize(iterSymbolIndex + 1);
-  iterSymbolTerminals[iterSymbolIndex] = tokens.insert(codeToUse);
+  iterSymbolTerminals[iterSymbolNameCode] = tokens.insert(codeToUse);
 }
 
 int
@@ -203,17 +200,18 @@ MixfixParser::translateSpecialToken(int code)
       int varName;
       int sortName;
       Token::split(code, varName, sortName);
-      if (Sort* sort = client.findSort(sortName))
-	return variableTerminals[sort->getIndexWithinModule()];
+      IntMap::const_iterator i = variableTerminals.find(sortName);
+      if (i != variableTerminals.end())
+	return i->second;
     }
   else if (sp == Token::ITER_SYMBOL)
     {
       int opName;
       mpz_class dummy;
       Token::split(code, opName, dummy);
-      int iterSymbolIndex = client.findIterSymbolIndex(opName);
-      if (iterSymbolIndex != NONE)
-	return iterSymbolTerminals[iterSymbolIndex];
+      IntMap::const_iterator i = iterSymbolTerminals.find(opName);
+      if (i != iterSymbolTerminals.end())
+	return i->second;
     }
   else if (sp != NONE)
     return specialTerminals[sp];
@@ -471,7 +469,9 @@ MixfixParser::makeTerm(int node)
 	int varName;
 	int sortName;
 	Token::split((*currentSentence)[pos].code(), varName, sortName);
-	Assert(sortName == NONE || sortName == sort->id(),
+	Assert(sortName == NONE ||
+	       sortName == sort->id() ||
+	       Token::auxProperty(sort->id()) == Token::AUX_STRUCTURED_SORT,
 	       "sort name clash");
 	t = new VariableTerm(symbol, varName);
 	break;

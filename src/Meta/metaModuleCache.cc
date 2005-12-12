@@ -126,8 +126,9 @@ MetaModuleCache::flush()
 }
 
 void
-MetaModuleCache::regretToInform(ImportModule* doomedModule)
+MetaModuleCache::regretToInform(Entity* doomedEntity)
 {
+  ImportModule* doomedModule = static_cast<ImportModule*>(doomedEntity);
   //
   //	Must remove doomed module from cache if it's there.
   //
@@ -137,8 +138,8 @@ MetaModuleCache::regretToInform(ImportModule* doomedModule)
       if (doomedModule == cache[i].module)
 	{
 	  delete cache[i].dag;
-	  for (int j = nrPairs - 1; j > i; j--)
-	    cache[j] = cache[j - 1];
+	  for (++i; i < nrPairs; ++i)
+	    cache[i - 1] = cache[i];
 	  cache.contractTo(nrPairs - 1);
 	  return;
 	}

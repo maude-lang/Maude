@@ -29,12 +29,13 @@ AU_StackNode::fwdComputeBaseSort(Symbol* symbol)
 {
   AU_StackNode* p = this;
   AU_StackNode* n;
+  int index = Sort::SORT_UNKNOWN;
   //
   //	First we perform pointer reversal on all nodes except the first
   //	that need their sort calculated.
   //
   for (AU_StackNode* i = p->next;
-       i != 0 && i->getSortIndex() == Sort::SORT_UNKNOWN;
+       i != 0 && (index = i->getSortIndex()) == Sort::SORT_UNKNOWN;
        i = n)
     {
       n = i->next;
@@ -49,12 +50,13 @@ AU_StackNode::fwdComputeBaseSort(Symbol* symbol)
   //	and next pointer restored. n is the old next pointer value that
   //	needs to be restored.
   //
-  int index = Sort::SORT_UNKNOWN;
   for (AU_StackNode* i = p; i != this; i = p)
     {
-      int index2 = i->args[ELEMENTS_PER_NODE - 1]->getSortIndex();
-      index = (index == Sort::SORT_UNKNOWN) ? index2 :
-	symbol->traverse(symbol->traverse(0, index2), index);
+      {
+	int index2 = i->args[ELEMENTS_PER_NODE - 1]->getSortIndex();
+	index = (index == Sort::SORT_UNKNOWN) ? index2 :
+	  symbol->traverse(symbol->traverse(0, index2), index);
+      }
       for (int j = ELEMENTS_PER_NODE - 2; j >= 0; --j)
 	{
 	  int index2 = i->args[j]->getSortIndex();
@@ -93,12 +95,13 @@ AU_StackNode::revComputeBaseSort(Symbol* symbol)
   //
   AU_StackNode* p = this;
   AU_StackNode* n;
+  int index = Sort::SORT_UNKNOWN;
   //
   //	First we perform pointer reversal on all nodes except the first
   //	that need their sort calculated.
   //
   for (AU_StackNode* i = p->next;
-       i != 0 && i->getSortIndex() == Sort::SORT_UNKNOWN;
+       i != 0 && (index = i->getSortIndex()) == Sort::SORT_UNKNOWN;
        i = n)
     {
       n = i->next;
@@ -113,12 +116,13 @@ AU_StackNode::revComputeBaseSort(Symbol* symbol)
   //	and next pointer restored. n is the old next pointer value that
   //	needs to be restored.
   //
-  int index = Sort::SORT_UNKNOWN;
   for (AU_StackNode* i = p; i != this; i = p)
     {
-      int index2 = i->args[ELEMENTS_PER_NODE - 1]->getSortIndex();
-      index = (index == Sort::SORT_UNKNOWN) ? index2 :
-	symbol->traverse(symbol->traverse(0, index), index2);
+      {
+	int index2 = i->args[ELEMENTS_PER_NODE - 1]->getSortIndex();
+	index = (index == Sort::SORT_UNKNOWN) ? index2 :
+	  symbol->traverse(symbol->traverse(0, index), index2);
+      }
       for (int j = ELEMENTS_PER_NODE - 2; j >= 0; --j)
 	{
 	  int index2 = i->args[j]->getSortIndex();

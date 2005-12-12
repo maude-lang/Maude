@@ -79,7 +79,7 @@ inline int
 IndexedSet<T>::insert(const T& element)
 {
   pair<typename EltMap::iterator, bool> p =
-    eltMap.insert(EltMap::value_type(element, indexMap.size()));
+    eltMap.insert(typename EltMap::value_type(element, indexMap.size()));
   if (p.second)
     indexMap.push_back(p.first);
   return p.first->second;

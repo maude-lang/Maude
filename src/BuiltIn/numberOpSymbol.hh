@@ -27,6 +27,7 @@
 #define _numberOpSymbol_hh_
 #include "freeSymbol.hh"
 #include "cachedDag.hh"
+#include "gmpxx.h"
 
 class NumberOpSymbol : public FreeSymbol
 {
@@ -53,12 +54,16 @@ public:
   //
   //	Functions special to NumberOpSymbol.
   //
+  /*
   DagNode* makeNegDag(const mpz_class& integer);
   bool isNeg(const DagNode* dagNode) const;
   const mpz_class& getNeg(const DagNode* dagNode, mpz_class& result) const;
+  */
 
 protected:
   SuccSymbol* getSuccSymbol() const;
+  MinusSymbol* getMinusSymbol() const;
+  bool getNumber(DagNode* dagNode, mpz_class& value) const;
 
 private:
   enum ImplementationConstants
@@ -77,6 +82,11 @@ inline SuccSymbol*
 NumberOpSymbol::getSuccSymbol() const
 {
   return succSymbol;
+}
+inline MinusSymbol*
+NumberOpSymbol::getMinusSymbol() const
+{
+  return minusSymbol;
 }
 
 #endif

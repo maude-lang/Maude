@@ -126,11 +126,24 @@ MetaLevelOpSymbol::metaApply(FreeDagNode* subject, RewritingContext& context)
 	  m->insert(subject, state, solutionNr);
 	  {
 	    Rule* rule = state->getRule();
+	    bool trace = RewritingContext::getTraceStatus();
+	    if (trace)
+	      {
+		RewritingContext* originalContext = state->getContext();
+		originalContext->tracePreRuleRewrite(state->getDagNode(), rule);
+		if (originalContext->traceAbort())
+		  {
+		    (void) m->unprotect();
+		    return false;
+		  }
+	      }
 	    DagNode* replacement = state->getReplacement();
 	    Substitution* substitution = state->getContext();
 	    DagNode* top = state->rebuildDag(replacement);
 	    RewritingContext* resultContext =
 	      context.makeSubcontext(top, UserLevelRewritingContext::META_EVAL);
+	    if (trace)
+	      resultContext->tracePostRuleRewrite(replacement);
 	    resultContext->reduce();
 	    context.addInCount(*resultContext);
 	    context.incrementRlCount();
@@ -234,6 +247,17 @@ MetaLevelOpSymbol::metaXapply(FreeDagNode* subject, RewritingContext& context)
 	  m->insert(subject, state, solutionNr);
 	  {
 	    Rule* rule = state->getRule();
+	    bool trace = RewritingContext::getTraceStatus();
+	    if (trace)
+	      {
+		RewritingContext* originalContext = state->getContext();
+		originalContext->tracePreRuleRewrite(state->getDagNode(), rule);
+		if (originalContext->traceAbort())
+		  {
+		    (void) m->unprotect();
+		    return false;
+		  }
+	      }
 	    DagNode* replacement = state->getReplacement()->makeClone();  // for unique ptr
 	    Substitution* substitution = state->getContext();
 	    DagNode* top = state->rebuildDag(replacement);
@@ -242,6 +266,8 @@ MetaLevelOpSymbol::metaXapply(FreeDagNode* subject, RewritingContext& context)
 	    DagRoot metaContext(metaLevel->upContext(top, m, replacement, qidMap, dagNodeMap));
 	    RewritingContext* resultContext =
 	      context.makeSubcontext(top, UserLevelRewritingContext::META_EVAL);
+	    if (trace)
+	      resultContext->tracePostRuleRewrite(replacement);
 	    resultContext->reduce();
 	    context.addInCount(*resultContext);
 	    context.incrementRlCount();

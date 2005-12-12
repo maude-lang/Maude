@@ -66,7 +66,7 @@ be patched up and thus it cannot be used or imported.");
       return;
     }
   flatModule->closeSignature();
-  flatModule->insertLabels(labels);
+  flatModule->insertPotentialLabels(potentialLabels);
   flatModule->fixUpImportedOps();
   fixUpSymbols();  // this set bad flag for some reason
   if (flatModule->isBad())
@@ -116,7 +116,7 @@ PreModule::processSorts()
 	  else
 	    {
 	      IssueWarning(LineNumber(token.lineNumber()) <<
-			   ": redeclaration of sort " << QUOTE(token.name()) << '.');
+			   ": redeclaration of sort " << QUOTE(sort) << '.');
 	    }
 	}
     }
@@ -172,10 +172,10 @@ PreModule::getSort(Token token)
   Sort* sort = flatModule->findSort(code);
   if (sort == 0)
     {
-      IssueWarning(LineNumber(token.lineNumber()) <<
-		   ": undeclared sort " << QUOTE(token.name()) << '.');
       sort = flatModule->addSort(code);
       sort->setLineNumber(FileTable::SYSTEM_CREATED);
+      IssueWarning(LineNumber(token.lineNumber()) <<
+		   ": undeclared sort " << QUOTE(sort) << '.');
     }
   return sort;
 }
@@ -277,7 +277,8 @@ PreModule::processOps()
 							   opDef.frozen,
 							   opDef.prec,
 							   opDef.gather,
-							   opDef.format);
+							   opDef.format,
+							   opDef.metadata);
 	  opDecl.originator = true;  // HACK
 	}
       else if (opDef.symbolType.getBasicType() == SymbolType::VARIABLE)
@@ -296,6 +297,7 @@ PreModule::processOps()
 						       opDef.prec,
 						       opDef.gather,
 						       opDef.format,
+						       opDef.metadata,
 						       opDecl.originator);
 	  if (opDef.symbolType.getBasicType() == SymbolType::BUBBLE)
 	    {

@@ -116,7 +116,7 @@ FloatOpSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
 {
   int nrDataAttachments = purposes.length();
   purposes.resize(nrDataAttachments + 1);
-  purposes[nrDataAttachments] = "NumberOpSymbol";
+  purposes[nrDataAttachments] = "FloatOpSymbol";
   data.resize(nrDataAttachments + 1);
   data[nrDataAttachments].resize(1);
   const char*& d = data[nrDataAttachments][0];
@@ -468,10 +468,18 @@ FloatOpSymbol::safePow(double a1, double a2, bool& defined)
 	}
       return 0;
     }
+  if (a1 == 0.0 && a2 < 0.0)
+    {
+      //
+      //	Some platforms return Infinity.
+      //
+      defined = false;
+      return 0.0;
+    }
   double r = pow(a1, a2);
   if (isnan(r))
     defined = false;
-  else if (a1 < 0 && r != 0)
+  else if (a1 < 0.0 && r != 0.0)
     {
       //
       //	Some platforms get this badly wrong.

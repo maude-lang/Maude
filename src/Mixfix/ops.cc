@@ -19,6 +19,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 */
+#define LINE_NUMBER	LineNumber(opDef.types[0].tokens[0].lineNumber())
 
 void
 PreModule::addVarDecl(Token varName)
@@ -81,14 +82,24 @@ PreModule::convertSortsToKinds()
 void
 PreModule::setIdentity(const Vector<Token>& identity)
 {
-  opDefs[opDefs.length() - 1].identity = identity;  // deep copy
+  OpDef& opDef = opDefs[opDefs.length() - 1];
+  if (opDef.identity.empty())
+    opDef.identity = identity;  // deep copy
+  else
+    IssueWarning(LINE_NUMBER << ": multiple identity declarations.");
 }
 
 void
 PreModule::setFlag(int flag)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
-  opDef.symbolType.setFlags(flag);
+  if (opDef.symbolType.hasFlag(flag))
+    {
+      if (flag & SymbolType::SIMPLE_ATTRIBUTES)
+	IssueWarning(LINE_NUMBER << ": duplicate attributes.");
+    }
+  else
+    opDef.symbolType.setFlags(flag);
 }
 
 void
@@ -99,8 +110,13 @@ PreModule::setPrec(Token precTok)
       prec >= MixfixModule::MIN_PREC && prec <= MixfixModule::MAX_PREC)
     {
       OpDef& opDef = opDefs[opDefs.length() - 1];
-      opDef.prec = prec;
-      opDef.symbolType.setFlags(SymbolType::PREC);
+      if (opDef.symbolType.hasFlag(SymbolType::PREC))
+	IssueWarning(LINE_NUMBER << ": multiple precedence attributes.");
+      else
+	{
+	  opDef.prec = prec;
+	  opDef.symbolType.setFlags(SymbolType::PREC);
+	}
     }
   else
     {
@@ -112,12 +128,16 @@ PreModule::setPrec(Token precTok)
 void
 PreModule::setGather(const Vector<Token>& gather)
 {
-  int length = gather.length();
   OpDef& opDef = opDefs[opDefs.length() - 1];
+  if (opDef.symbolType.hasFlag(SymbolType::GATHER))
+    {
+      IssueWarning(LINE_NUMBER << ": multiple gather attributes.");
+      return;
+    }
+  int length = gather.length();
   if (length != opDef.types.length() - 1)
     {
-      IssueWarning(LineNumber(gather[0].lineNumber()) <<
-		   ": bad gather length.");
+      IssueWarning(LINE_NUMBER << ": bad gather length.");
       return;
     }
   for (int i = 0; i < length; i++)
@@ -145,6 +165,25 @@ PreModule::setGather(const Vector<Token>& gather)
       return;
     }
   opDef.symbolType.setFlags(SymbolType::GATHER);
+}
+
+void
+PreModule::setMetadata(Token metaDataTok)
+{
+  if (metaDataTok.specialProperty() == Token::STRING)
+    {
+      OpDef& opDef = opDefs[opDefs.length() - 1];
+      if (opDef.metadata == NONE)
+	opDef.metadata = metaDataTok.code();
+      else
+	IssueWarning(LINE_NUMBER << ": multiple metadata attributes.");
+      //opDef.symbolType.setFlags(SymbolType::METADATA);
+    }
+  else
+    {
+      IssueWarning(LineNumber(metaDataTok.lineNumber()) <<
+		   ": bad value " << QUOTE(metaDataTok) << " for metadata attribute.");
+    }
 }
 
 bool
@@ -178,8 +217,13 @@ PreModule::checkFormatString(const char* string)
 void
 PreModule::setFormat(const Vector<Token>& format)
 {
-  int length = format.length();
   OpDef& opDef = opDefs[opDefs.length() - 1];
+  if (opDef.symbolType.hasFlag(SymbolType::FORMAT))
+    {
+      IssueWarning(LINE_NUMBER << ": multiple format attributes.");
+      return;
+    }
+  int length = format.length();
   for (int i = 0; i < length; i++)
     {
       const char* str = format[i].name();
@@ -200,9 +244,14 @@ PreModule::setFormat(const Vector<Token>& format)
 void
 PreModule::setFrozen(const Vector<Token>& frozen)
 {
-  int length = frozen.length();
   OpDef& opDef = opDefs[opDefs.length() - 1];
+  if (opDef.symbolType.hasFlag(SymbolType::FROZEN))
+    {
+      IssueWarning(LINE_NUMBER << ": multiple frozen attributes.");
+      return;
+    }
   int maxArgPos = opDef.types.length() - 1;
+  int length = frozen.length();
   if (length == 0)
     {
       if (maxArgPos == 0)
@@ -245,9 +294,14 @@ PreModule::setFrozen(const Vector<Token>& frozen)
 void
 PreModule::setStrat(const Vector<Token>& strategy)
 {
-  int length = strategy.length();
   OpDef& opDef = opDefs[opDefs.length() - 1];
+  if (opDef.symbolType.hasFlag(SymbolType::STRAT))
+    {
+      IssueWarning(LINE_NUMBER << ": multiple strategy attributes.");
+      return;
+    }
   int maxArgPos = opDef.types.length();
+  int length = strategy.length();
   for (int i = 0; i < length; i++)
     {
       const char* str = strategy[i].name();
@@ -271,9 +325,14 @@ PreModule::setStrat(const Vector<Token>& strategy)
 void
 PreModule::setPoly(const Vector<Token>& polyArgs)
 {
-  int length = polyArgs.length();
   OpDef& opDef = opDefs[opDefs.length() - 1];
+  if (opDef.symbolType.hasFlag(SymbolType::POLY))
+    {
+      IssueWarning(LINE_NUMBER << ": multiple polymorphic attributes.");
+      return;
+    }
   int maxArgPos = opDef.types.length();
+  int length = polyArgs.length();
   for (int i = 0; i < length; i++)
     {
       const char* str = polyArgs[i].name();
@@ -296,8 +355,13 @@ void
 PreModule::setLatexMacro(const string& latexMacro)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
-  opDef.latexMacro = latexMacro;
-  opDef.symbolType.setFlags(SymbolType::LATEX);
+  if (opDef.symbolType.hasFlag(SymbolType::LATEX))
+    IssueWarning(LINE_NUMBER << ": multiple latex attributes.");
+  else
+    {
+      opDef.latexMacro = latexMacro;
+      opDef.symbolType.setFlags(SymbolType::LATEX);
+    }
 }
 
 void

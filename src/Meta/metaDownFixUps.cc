@@ -292,7 +292,7 @@ MetaLevel::downOpHook(DagNode* metaOpHook, MetaModule* m, int& purpose, Symbol*&
 bool
 MetaLevel::fixUpBubble(DagNode* metaHookList, MetaModule* m, int bubbleSpecIndex)
 {
-  QuotedIdentifierSymbol* qidSymbol = 0;
+  Symbol* qidSymbol = 0;
   Symbol* nilQidListSymbol = 0;
   Symbol* qidListSymbol = 0;
   if (metaHookList->symbol() != hookListSymbol)
@@ -306,15 +306,15 @@ MetaLevel::fixUpBubble(DagNode* metaHookList, MetaModule* m, int bubbleSpecIndex
 	  Symbol* s;
 	  if (!downOpHook(metaHook, m, purpose, s))
 	    return false;
-	  const char* string = Token::name(purpose);
-	  if (strcmp(string, "qidSymbol") == 0)
-	    qidSymbol = safeCast(QuotedIdentifierSymbol*, s);
-	  else if (strcmp(string, "nilQidListSymbol") == 0)
+	  const char* str = Token::name(purpose);
+	  if (strcmp(str, "qidSymbol") == 0)
+	    qidSymbol = s;
+	  else if (strcmp(str, "nilQidListSymbol") == 0)
 	    nilQidListSymbol = s;
-	  else if (strcmp(string, "qidListSymbol") == 0)
+	  else if (strcmp(str, "qidListSymbol") == 0)
 	    qidListSymbol = s;
 	  else
-	    IssueAdvisory("bad bubble op-hook " << QUOTE(string) <<
+	    IssueAdvisory("bad bubble op-hook " << QUOTE(str) <<
 			  " in meta-module " << QUOTE(m) << '.');
 	}
     }

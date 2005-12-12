@@ -205,7 +205,7 @@ template<class T>
 inline typename ArgVec<T>::const_iterator
 ArgVec<T>::const_iterator::operator++(int)
 {
-  ArgVec::const_iterator tmp(*this);
+  typename ArgVec::const_iterator tmp(*this);
   operator++();
   return tmp;
 }
@@ -225,7 +225,7 @@ template<class T>
 inline typename ArgVec<T>::const_iterator
 ArgVec<T>::const_iterator::operator--(int)
 {
-  ArgVec::const_iterator tmp(*this);
+  typename ArgVec::const_iterator tmp(*this);
   operator--();
   return tmp;
 }
@@ -245,7 +245,7 @@ template<class T>
 inline typename ArgVec<T>::const_iterator
 ArgVec<T>::const_iterator::operator+(difference_type delta) const
 {
-  ArgVec::const_iterator tmp(*this);
+  typename ArgVec::const_iterator tmp(*this);
   return tmp += delta;
 }
 
@@ -264,7 +264,7 @@ template<class T>
 inline typename ArgVec<T>::const_iterator
 ArgVec<T>::const_iterator::operator-(difference_type delta) const
 {
-  ArgVec::const_iterator tmp(*this);
+  typename ArgVec::const_iterator tmp(*this);
   return tmp -= delta;
 }
 

@@ -83,7 +83,8 @@ void
 Interpreter::doLoop(DagNode* d, VisibleModule* module)
 {
   UserLevelRewritingContext* context = new UserLevelRewritingContext(d);
-  module->resetRules();
+  if (getFlag(AUTO_CLEAR_RULES))
+    module->resetRules();
 #ifdef QUANTIFY_REWRITING
   quantify_start_recording_data();
 #endif
@@ -162,19 +163,19 @@ Interpreter::printBubble(ostream& s, const Vector<int>& bubble)
 		  {
 		    s << '\n';
 		    needSpace = false;
-		    break;
+		    continue;
 		  }
 		case 't':
 		  {
 		    s << '\t';
 		    needSpace = false;
-		    break;
+		    continue;
 		  }
 		case 's':
 		  {
 		    s << ' ';
 		    needSpace = false;
-		    break;
+		    continue;
 		  }
 		case '\\':
 		  {
@@ -182,23 +183,22 @@ Interpreter::printBubble(ostream& s, const Vector<int>& bubble)
 		      s << ' ';
 		    s << '\\';
 		    needSpace = true;
-		    break;
+		    continue;
 		  }
 		  //
 		  //	ANSI stuff.
 		  //
 #define MACRO(m, t) \
-case m: { s << Tty(Tty::t); ansiActive = true; break; }
+case m: { s << Tty(Tty::t); ansiActive = true; continue; }
 #include "ansiEscapeSequences.cc"
 #undef MACRO
 		case 'o':
 		  {
 		    s << Tty(Tty::RESET);
 		    ansiActive = false;
-		    break;
+		    continue;
 		  }
 		}
-	      continue;
 	    }
 	  else if (n[1] == '`' &&  n[3] == 0)
 	    {

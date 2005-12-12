@@ -65,6 +65,7 @@
 #include "token.hh"
 #include "loopSymbol.hh"
 #include "visibleModule.hh"
+#include "view.hh"
 #include "preModule.hh"
 #include "interpreter.hh"
 #include "maudemlBuffer.hh"
@@ -81,11 +82,20 @@
 #include "ops.cc"
 #include "command.cc"
 
-PreModule::PreModule(Token moduleName, MixfixModule::ModuleType moduleType)
+PreModule::PreModule(Token startToken, Token moduleName)
   : NamedEntity(moduleName.code()),
     LineNumber(moduleName.lineNumber()),
-    moduleType(moduleType)
+    startTokenCode(startToken.code())
 {
+  if (startTokenCode == th)
+    moduleType = MixfixModule::SYSTEM_THEORY;
+  else if (startTokenCode == fth)
+    moduleType = MixfixModule::FUNCTIONAL_THEORY;
+  else if (startTokenCode == mod || startTokenCode == omod)
+    moduleType = MixfixModule::SYSTEM_MODULE;
+  else
+    moduleType = MixfixModule::FUNCTIONAL_MODULE;
+
   lastSawOpDecl = false;
   isCompleteFlag = false;
   flatModule = 0;
@@ -95,14 +105,20 @@ PreModule::~PreModule()
 {
   if (flatModule != 0)
     flatModule->deepSelfDestruct();
-  FOR_EACH_CONST(i, Vector<Import>, imports)
-    i->expr->deepSelfDestruct();
+  {
+    FOR_EACH_CONST(i, Vector<Import>, imports)
+      i->expr->deepSelfDestruct();
+  }
+  {
+    FOR_EACH_CONST(i, Vector<Parameter>, parameters)
+      i->theory->deepSelfDestruct();
+  }
 }
 
 void
-PreModule::regretToInform(ImportModule* doomedModule)
+PreModule::regretToInform(Entity* doomedEntity)
 {
-  Assert(doomedModule == flatModule, "module pointer error");
+  Assert(doomedEntity == flatModule, "module pointer error");
   flatModule = 0;
 #ifdef COMPILER
   interpreter.invalidate(this);
@@ -146,10 +162,35 @@ PreModule::getFlatSignature()
   return flatModule;
 }
 
-void
-PreModule::finishModule()
+bool
+PreModule::compatible(int endTokenCode)
 {
-  autoImports = interpreter.getIncludes(); // deep copy
+  if (startTokenCode == th)
+    return endTokenCode == endth;
+  if (startTokenCode == fth)
+    return endTokenCode == endfth;
+  if (startTokenCode == mod)
+    return endTokenCode == endm;
+  if (startTokenCode == fmod)
+    return endTokenCode == endfm;
+  if (startTokenCode == omod)
+    return endTokenCode == endom;
+  //
+  //	OBJ backward compatibility.
+  //
+  return endTokenCode == endo || endTokenCode == jbo;
+}
+
+void
+PreModule::finishModule(Token endToken)
+{
+  if (!compatible(endToken.code()))
+    {
+      IssueWarning(LineNumber(endToken.lineNumber()) << ": module started with " <<
+		   QUOTE(Token::name(startTokenCode)) << " ends with "
+		   << QUOTE(endToken) << '.');
+    }
+  autoImports = interpreter.getAutoImports(); // deep copy
   isCompleteFlag = true;
   interpreter.insertModule(id(), this);
   process();
@@ -158,6 +199,16 @@ PreModule::finishModule()
 PreModule::OpDef::OpDef()
 {
   prec = DEFAULT;
+  metadata = NONE;
+}
+
+void
+PreModule::addParameter(Token name, ModuleExpression* theory)
+{
+  int nrParameters = parameters.length();
+  parameters.resize(nrParameters + 1);
+  parameters[nrParameters].name = name;
+  parameters[nrParameters].theory = theory;
 }
 
 void
@@ -172,10 +223,25 @@ PreModule::addImport(Token mode, ModuleExpression* expr)
 void
 PreModule::addStatement(const Vector<Token>& statement)
 {
+  int keywordCode = statement[0].code();
+  if (keywordCode == rl || keywordCode == crl)
+    {
+      if (moduleType == MixfixModule::FUNCTIONAL_THEORY)
+	{
+	  IssueWarning(LineNumber(statement[0].lineNumber()) <<
+		       ": rule not allowed in a functional theory.");
+	}
+      else if (moduleType == MixfixModule::FUNCTIONAL_MODULE)
+	{
+	  IssueWarning(LineNumber(statement[0].lineNumber()) <<
+		       ": rule not allowed in a functional module.");
+	}
+    }
+
   if (statement[1].code() == leftBracket &&
       statement[3].code() == rightBracket &&
       statement[4].code() == colon)
-    (void) labels.insert(statement[2].code());
+    (void) potentialLabels.insert(statement[2].code());
 
   int i = statement.length() - 1;
   if (statement[i].code() == rightBracket)
@@ -191,7 +257,7 @@ PreModule::addStatement(const Vector<Token>& statement)
 		break;
 	    }
 	  else if (t == label)
-	    labels.insert(statement[i+1].code());
+	    potentialLabels.insert(statement[i+1].code());
 	  else if (t == rightBracket)
 	    ++bracketCount;
 	}

@@ -87,7 +87,7 @@ FreeDagNode::FreeDagNode(Symbol* symbol) : DagNode(symbol)
   if (nrArgs > nrWords)
     {
       setCallDtor();  // need our dtor called when garbage collected so we can free arg array
-      external = new (DagNode*)[nrArgs];
+      external = new DagNode*[nrArgs];
     }
 }
 

@@ -30,6 +30,9 @@
 
 #include "token.hh"
 
+//	our stuff
+#include "auxProperty.cc"
+
 StringTable Token::stringTable;
 Vector<int> Token::specialProperties;
 Vector<int> Token::auxProperties;
@@ -127,9 +130,22 @@ Token::reallocateBuffer(int length)
   bufferLength = length;
 }
 
+int
+Token::parameterRename(int parameterCode, int originalCode)
+{
+  string newName(stringTable.name(parameterCode));
+  newName += '$';
+  newName += stringTable.name(originalCode);
+  return encode(newName.c_str());
+}
+
 void
 Token::fixUp(const char* tokenString, int& lineNumber)
 {
+  //
+  //	This essentially a version of tokenize() that removes
+  //	\ newline sequences from the tokenString before tokenizing.
+  //
   int nrBackslashNewlineCombos = 0;
   int j = 0;
   for (int i = 0;; i++)
@@ -139,7 +155,6 @@ Token::fixUp(const char* tokenString, int& lineNumber)
 	{
 	  //
 	  //	Fix up \ newline case.
-	  //      if (c == '\0')
 	  //
 	  ++i;
 	  ++nrBackslashNewlineCombos;
@@ -156,6 +171,15 @@ Token::fixUp(const char* tokenString, int& lineNumber)
   codeNr = encode(buffer);
   lineNr = lineNumber;
   lineNumber += nrBackslashNewlineCombos;
+}
+
+void
+Token::dropChar(const Token& original)
+{
+  string truncated(stringTable.name(original.codeNr));
+  truncated.resize(truncated.size() - 1);
+  codeNr = encode(truncated.c_str());
+  lineNr = original.lineNr;
 }
 
 int
@@ -321,101 +345,6 @@ Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
   if (!token.empty())
     mixfixSyntax.append(encode(token.c_str()));
   return nrUnderscores;
-}
-
-const char*
-Token::skipSortName(const char* tokenString)
-{
-  for (const char* p = tokenString;; p++)
-    {
-      switch (*p)
-	{
-	case '\0':
-	  return p == tokenString ? 0 : p;
-	case '.':
-	case ':':
-	  return p;
-	case '`':
-	  {
-	    switch (*(p + 1))
-	      {
-	      case '[':
-	      case ']':
-	      case ',':
-		return p;
-	      case '\0':
-		return 0;
-	      }
-	    break;
-	  }
-	}
-    }
-}
-
-int
-Token::computeAuxProperty(const char* tokenString)
-{
-  {
-    //
-    //	Check for kind.
-    //
-    const char* p = tokenString;
-    if (*p++ == '`' && *p == '[')
-      {
-	for(;;)
-	  {
-	    p = skipSortName(p);
-	    if (p != 0 && *p++ == '`')
-	      {
-		switch (*p++)
-		  {
-		  case ']':
-		    {
-		      if (*p == '\0')
-			return AUX_KIND;
-		      break;
-		    }
-		  case ',':
-		    continue;
-		  }
-	      }
-	    break;
-	  }
-      }
-  }
-  {
-    //
-    //	Check for sort.
-    //
-    const char* p = skipSortName(tokenString);
-    if (p != 0 && *p == '\0')
-      return AUX_SORT;
-  }
-  {
-    //
-    //	Check for constant or variable.
-    //
-    int len = strlen(tokenString);
-    for (int i = len - 1; i > 0; i--)
-      {
-	char c = tokenString[i];
-	if (c == '.')
-	  {
-	    int t = computeAuxProperty(tokenString + i + 1);
-	    if (t == AUX_SORT || t == AUX_KIND)
-	      return AUX_CONSTANT;
-	    break;
-	  }
-	else if (c == ':')
-	  {
-	    int t = computeAuxProperty(tokenString + i + 1);
-	    if (t == AUX_SORT || t == AUX_KIND)
-	      return AUX_VARIABLE;
-	    break;
-	  }
-      }
-  }
-  return NONE;
 }
 
 void
@@ -594,7 +523,7 @@ Token::split(int code, int& opName, mpz_class& number)
 bool
 Token::splitKind(int code, Vector<int>& codes)
 {
-  codes.contractTo(0);
+  codes.clear();
   const char* p = stringTable.name(code);
   size_t len = strlen(p);
   char* t = new char[len + 1];
@@ -603,7 +532,8 @@ Token::splitKind(int code, Vector<int>& codes)
     {
       for(;;)
 	{
-	  char *p2 = const_cast<char*>(skipSortName(p));
+	  bool dummy;
+	  char *p2 = const_cast<char*>(skipSortName(p, dummy));
 	  if (p2 != 0 && *p2 == '`')
 	    {
 	      *p2 = 0;
@@ -972,3 +902,39 @@ Token::getRational(mpz_class& numerator, mpz_class& denominator)
   mpz_set_str(numerator.get_mpz_t(), s, 10);
   mpz_set_str(denominator.get_mpz_t(), p + 1, 10);
 }
+
+void
+Token::peelParens(Vector<Token>& tokens)
+{
+  //
+  //	If tokens look like ( ... ) with middle part having balanced parens, peel outer parens.
+  //
+  int len = tokens.size();
+  if (len < 2)
+    return;
+  int open = encode("(");
+  int close = encode(")");
+  if (tokens[0].codeNr != open && tokens[len - 1].codeNr != close)
+    return;
+  int depth = 0;
+  for (int i = 1; i < len - 1; ++i)
+    {
+      int codeNr = tokens[i].codeNr;
+      if (codeNr == open)
+	++depth;
+      else if (codeNr == close)
+	{
+	  --depth;
+	  if (depth < 0)
+	    return;
+	}
+    }
+  if (depth != 0)
+    return;
+  for (int i = 1; i < len - 1; ++i)
+    tokens[i - 1] = tokens[i];
+  tokens.resize(len - 2);
+}
+  
+
+

@@ -79,17 +79,17 @@ FreeTerm::FreeTerm(FreeSymbol* symbol, const Vector<Term*>& arguments)
   visitedFlag = false;
 }
 
-FreeTerm::FreeTerm(const FreeTerm& original, SymbolMap* map)
-  : Term(map == 0 ? original.symbol() : map->translate(original.symbol())),
+FreeTerm::FreeTerm(const FreeTerm& original, FreeSymbol* symbol, SymbolMap* translator)
+  : Term(symbol),
     argArray(original.argArray.length())
 {
   int nrArgs = original.argArray.length();
-  for (int i = 0; i < nrArgs; i++)
-    argArray[i] = original.argArray[i]->deepCopy(map);
+  for (int i = 0; i < nrArgs; ++i)
+    argArray[i] = original.argArray[i]->deepCopy(translator);
   slotIndex = -1;
   visitedFlag = false;
 }
-  
+
 FreeTerm::~FreeTerm()
 {
 }
@@ -113,9 +113,25 @@ FreeTerm::deepSelfDestruct()
 }
 
 Term*
-FreeTerm::deepCopy2(SymbolMap* map) const
+FreeTerm::deepCopy2(SymbolMap* translator) const
 {
-  return new FreeTerm(*this, map);
+  FreeSymbol* s = symbol();
+  if (translator != 0)
+    {
+      Symbol* s2 = translator->translate(s);
+      if (s2 == 0)
+	return translator->translateTerm(this);
+      s = dynamic_cast<FreeSymbol*>(s2);
+      if (s == 0)
+	{
+	  int nrArgs = argArray.length();
+	  Vector<Term*> args(nrArgs);
+	  for (int i = 0; i < nrArgs; ++i)
+	    args[i] = argArray[i]->deepCopy(translator);
+	  return s2->makeTerm(args);
+	}
+    }
+  return new FreeTerm(*this, s, translator);
 }
 
 Term*
@@ -194,7 +210,7 @@ void
 FreeTerm::findEagerVariables(bool atTop, NatSet& eagerVariables) const
 {
   int nrArgs = argArray.length();
-  FreeSymbol* sym = static_cast<FreeSymbol*>(symbol());
+  FreeSymbol* sym = symbol();
   for (int i = 0; i < nrArgs; i++)
     {
       if (atTop ? sym->eagerArgument(i) : sym->evaluatedArgument(i))
@@ -208,7 +224,7 @@ FreeTerm::markEagerArguments(int nrVariables,
 			     Vector<int>& problemVariables)
 {
   int nrArgs = argArray.length();
-  FreeSymbol* sym = static_cast<FreeSymbol*>(symbol());
+  FreeSymbol* sym = symbol();
   for (int i = 0; i < nrArgs; i++)
     {
       if (sym->eagerArgument(i))

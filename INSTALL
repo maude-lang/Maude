@@ -17,7 +17,7 @@ Maude requires the following packages:
 
 GNU gmp		http://www.swox.com/gmp/
 Tecla		http://www.astro.caltech.edu/~mcs/tecla/
-BuDDY		http://www.it-c.dk/research/buddy/
+BuDDY		http://sourceforge.net/projects/buddy
 
 
 Configuring the 3rd party packages
@@ -39,9 +39,8 @@ with the command:
 
 to avoid linking issues on various platforms.
 
-BuDDy is configured by editing the config file in the top
-directory. If you are using gcc you should uncomment the line
-# BUDDYUINT64 = -DBUDDYUINT64="long long"
+As of 2.4 BuDDy has moved to autoconf. The option --disable-shared is
+recommended to avoid linking issues on various platforms.
 
 
 Building Maude

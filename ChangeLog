@@ -1,3 +1,95 @@
+2005-11-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configure.ac: don't use Doug Lea's malloc() on x86-64/linux
+	because of linking issues
+
+2005-11-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configure.ac: x86-64 specific stuff
+
+===================================Maude86d===========================================
+
+2005-10-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Misc/diophantine.maude: created
+
+	* tests/Misc/diophantine (MAUDE_LIB): created
+
+	* tests/Misc/diophantine.expected: created
+
+	* tests/Misc/parameterization.maude: created
+
+	* tests/Misc/parameterization (MAUDE_LIB): created
+
+	* tests/Misc/parameterization.expected: created
+
+2005-10-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Misc/dataStructures.expected: created
+
+	* tests/Misc/dataStructures.maude: created
+
+	* tests/Misc/dataStructures (MAUDE_LIB): created
+
+===================================Maude86c===========================================
+
+2005-06-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Misc/renaming (MAUDE_LIB): created
+
+	* tests/Misc/renaming.expected: created
+
+	* tests/Misc/renaming.maude: added
+
+===================================Maude86b===========================================
+
+2005-01-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Meta/metaPrettyPrint.maude: updated test for print option argument
+
+2004-12-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Meta/Makefile.am: added metaMetadata
+
+	* tests/Meta/metaMetadata: created
+
+	* tests/Meta/metaMetadata.maude: created
+
+===================================Maude85a===========================================
+
+2004-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Meta/metaSort.maude: added maximalAritySet() test; added
+	test for glbSorts() on a kind
+	
+
+2004-12-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Meta/metaSearch.maude: added tests for metaSearchPath()
+
+	* tests/BuiltIn/Makefile.am: added counters
+
+	* tests/BuiltIn/counters: created
+
+	* tests/BuiltIn/counters.expected: created
+
+	* tests/BuiltIn/counters.maude: created
+
+2004-11-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configure.ac: CCFLAGS -> CFLAGS
+	replaced ETR_SOCKET_NSL with AC_CHECK_LIB() calls for nsl and
+	socket libraries
+
+2004-11-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configure.ac: changed -mcpu=v8 to -march=v8 since -mcpu= is
+	deprecated in gcc versions >= 3.1; added ETR_SOCKET_NSL
+
+2004-10-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configure.ac: added --enable-mos option to support legacy apps
+
 2003-09-02  Steven Eker  <eker@goo.csl.sri.com>
 
 	* configure.ac: deleted  AC_DEFINE([SPEED_HACKS])

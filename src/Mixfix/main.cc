@@ -38,6 +38,8 @@
 #include "interface.hh"
 #include "core.hh"
 #include "higher.hh"
+#include "freeTheory.hh"
+#include "builtIn.hh"
 #include "mixfix.hh"
  
 //      interface class definitions
@@ -45,6 +47,9 @@
  
 //      core class definitions
 #include "lineNumber.hh"
+
+//      built in stuff
+#include "randomOpSymbol.hh"
 
 //      system class definitions
 #include "IO_Manager.hh"
@@ -67,7 +72,8 @@
 int lineNumber = 1;
 FileTable fileTable;
 DirectoryManager directoryManager;
-Interpreter interpreter;
+Interpreter& interpreter = *(new Interpreter);
+//Interpreter interpreter;
 IO_Manager ioManager;
 
 string executableDirectory;
@@ -89,9 +95,7 @@ main(int argc, char* argv[])
   extern Vector<char*> pendingFiles;
   const char* isFlag(const char* arg, const char* flag);
 
-
-  ioManager.setAutoWrap();
-
+  bool lineWrapping = true;
   bool handleCtrlC = true;
   bool readPrelude = true;
   bool forceInteractive = false;
@@ -106,12 +110,14 @@ main(int argc, char* argv[])
 	{
 	  if (const char* s = isFlag(arg, "-xml-log="))
 	    interpreter.beginXmlLog(s);
+	  else if (const char* s = isFlag(arg, "-random-seed="))
+	    RandomOpSymbol::setGlobalSeed(strtoul(s, 0, 0));
 	  else if (strcmp(arg, "--help") == 0)
 	    printHelp(argv[0]);
 	  else if (strcmp(arg, "--version") == 0)
 	    printVersion();
 	  else if (strcmp(arg, "-no-mixfix") == 0)
-	    MixfixModule::setPrintMixfix(false);
+	    interpreter.setPrintFlag(Interpreter::PRINT_MIXFIX, false);
 	  else if (strcmp(arg, "-ansi-color") == 0)
 	    ansiColor = true;
 	  else if (strcmp(arg, "-no-ansi-color") == 0)
@@ -124,6 +130,10 @@ main(int argc, char* argv[])
 	    readPrelude = false;
 	  else if (strcmp(arg, "-no-banner") == 0)
 	    outputBanner = false;
+	  else if (strcmp(arg, "-no-advise") == 0)
+	    globalAdvisoryFlag = false;
+	  else if (strcmp(arg, "-no-wrap") == 0)
+	    lineWrapping = false;
 	  else if (strcmp(arg, "-batch") == 0)
 	    handleCtrlC = false;
 	  else if (strcmp(arg, "-interactive") == 0)
@@ -137,6 +147,9 @@ main(int argc, char* argv[])
       else
 	pendingFiles.append(arg);
     }
+
+  if (lineWrapping)
+    ioManager.setAutoWrap();
 
   if (ansiColor == UNDECIDED)
     {
@@ -219,13 +232,17 @@ printHelp(const char* name)
     "  --version\t\tDisplay version number\n" <<
     "  -no-prelude\t\tDo not read in the standard prelude\n" <<
     "  -no-banner\t\tDo not output banner on startup\n" <<
+    "  -no-advise\t\tNo advisories on startup\n" <<
     "  -no-mixfix\t\tDo not use mixfix notation for output\n" <<
+    "  -no-wrap\t\tDo not automatic line wrapping for output\n" <<
     "  -ansi-color\t\tUse ANSI control sequences\n" <<
     "  -no-ansi-color\tDo not use ANSI control sequences\n" <<
     "  -tecla\t\tUse tecla command line editing\n" <<
     "  -no-tecla\t\tDo not use tecla command line editing\n" <<
     "  -batch\t\tRun in batch mode\n" <<
     "  -interactive\t\tRun in interactive mode\n" <<
+    "  -random-seed=<int>\tSet seed for random number generator\n" <<
+    "  -xml-log=<filename>\tSet file in which to produce an xml log\n" <<
     "\n" <<
     "Send bug reports to: " << PACKAGE_BUGREPORT << endl;
   exit(0);

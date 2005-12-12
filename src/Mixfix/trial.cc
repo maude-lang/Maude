@@ -35,7 +35,7 @@ UserLevelRewritingContext::traceBeginEqTrial(DagNode* subject, const Equation* e
     }
   if (handleDebug(subject, equation))
     return UNDEFINED;
-  if (!localTraceFlag || !traceEqFlag || dontTrace(subject, equation))
+  if (!localTraceFlag || !(interpreter.getFlag(Interpreter::TRACE_EQ)) || dontTrace(subject, equation))
     return UNDEFINED;
   cout << header << "trial #" << ++trialCount << '\n';
   if (equation == 0)
@@ -43,7 +43,7 @@ UserLevelRewritingContext::traceBeginEqTrial(DagNode* subject, const Equation* e
   else
     {
       cout << equation << '\n';
-      if (traceSubstitutionFlag)
+      if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
 	printSubstitution(*this, *equation);
     }
   return trialCount;
@@ -59,7 +59,7 @@ UserLevelRewritingContext::traceBeginRuleTrial(DagNode* subject, const Rule* rul
     }
   if (handleDebug(subject, rule))
     return UNDEFINED;
-  if (!localTraceFlag || !traceRuleFlag || dontTrace(subject, rule))
+  if (!localTraceFlag || !(interpreter.getFlag(Interpreter::TRACE_RL)) || dontTrace(subject, rule))
     return UNDEFINED;
   cout << header << "trial #" << ++trialCount << '\n';
   if (rule == 0)
@@ -67,7 +67,7 @@ UserLevelRewritingContext::traceBeginRuleTrial(DagNode* subject, const Rule* rul
   else
     {
       cout << rule << '\n';
-      if (traceSubstitutionFlag)
+      if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
 	printSubstitution(*this, *rule);
     }
   return trialCount;
@@ -83,7 +83,7 @@ UserLevelRewritingContext::traceBeginScTrial(DagNode* subject, const SortConstra
     }
   if (handleDebug(subject, sc))
     return UNDEFINED;
-  if (!localTraceFlag || !traceScFlag || dontTrace(subject, sc))
+  if (!localTraceFlag || !(interpreter.getFlag(Interpreter::TRACE_MB)) || dontTrace(subject, sc))
     return UNDEFINED;
   cout << header << "trial #" << ++trialCount << '\n';
   if (sc == 0)
@@ -91,7 +91,7 @@ UserLevelRewritingContext::traceBeginScTrial(DagNode* subject, const SortConstra
   else
     {
       cout << sc << '\n';
-      if (traceSubstitutionFlag)
+      if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
 	printSubstitution(*this, *sc);
     }
   return trialCount;
@@ -140,17 +140,11 @@ UserLevelRewritingContext::traceEndFragment(int trialRef,
   if (abortFlag || trialRef == UNDEFINED)
     return;
 
-  //ImportModule* module = safeCast(ImportModule*, preEquation->getLhs()->symbol()->getModule());
-  // module->profileEndFragment(preEquation, fragmentIndex);
-
-  //safeCast(MixfixModule*, preEquation->getLhs()->symbol()->getModule())->
-  //  profileEndFragment(preEquation, fragmentIndex);
-
   ConditionFragment* fragment = (preEquation->getCondition())[fragmentIndex];
   if (success)
     {
       cout << header << "success for condition fragment" << '\n' << fragment << '\n';
-      if (traceSubstitutionFlag)
+      if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
 	printSubstitution(*this, *preEquation);
     }
   else

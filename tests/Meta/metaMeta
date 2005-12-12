@@ -4,7 +4,7 @@ MAUDE_LIB=$srcdir/../../src/Mixfix
 export MAUDE_LIB
 
 ../../src/Mixfix/maude \
-  < $srcdir/metaMeta.maude -no-banner \
+  < $srcdir/metaMeta.maude -no-banner -no-advise \
   > metaMeta.out 2>&1
 
 diff $srcdir/metaMeta.expected metaMeta.out > /dev/null 2>&1

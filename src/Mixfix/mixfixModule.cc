@@ -27,7 +27,6 @@
 //      utility stuff
 #include "macros.hh"
 #include "vector.hh"
-#include "intSet.hh"
 #include "pointerSet.hh"
 #include "tty.hh"
 
@@ -105,6 +104,9 @@
 #include "ACU_NumberOpSymbol.hh"
 #include "CUI_NumberOpSymbol.hh"
 #include "divisionSymbol.hh"
+#include "randomOpSymbol.hh"
+#include "matrixOpSymbol.hh"
+#include "counterSymbol.hh"
 
 //	higher class definitions
 #include "rewriteSequenceSearch.hh"
@@ -117,6 +119,7 @@
 
 //	object system class definitions
 #include "configSymbol.hh"
+#include "socketManagerSymbol.hh"
 
 //	front end class definitions
 #include "mixfixParser.hh"
@@ -141,6 +144,12 @@ Vector<int> MixfixModule::gatherPrefixPrefix(2);
 Vector<int> MixfixModule::gatherAny0(2);
 
 inline int
+MixfixModule::newNonTerminal()
+{
+  return --nextNonTerminal;
+}
+
+inline int
 MixfixModule::domainComponentIndex(const Symbol* symbol, int argNr)
 {
   return symbol->domainComponent(argNr)->getIndexWithinModule();
@@ -155,13 +164,7 @@ MixfixModule::nonTerminal(int componentIndex, NonTerminalType type)
 inline int
 MixfixModule::nonTerminal(const Sort* sort, NonTerminalType type)
 {
-  return nonTerminal(sort->component()->getIndexWithinModule(), TERM_TYPE);
-}
-
-inline int
-MixfixModule::iterSymbolNonTerminal(int iterSymbolIndex)
-{
-  return componentNonTerminalBase - 1 - iterSymbolIndex;
+  return nonTerminal(sort->component()->getIndexWithinModule(), type);
 }
 
 //	our stuff
@@ -214,12 +217,29 @@ MixfixModule::~MixfixModule()
   int nrPolymorphs = polymorphs.length();
   for (int i = 0; i < nrPolymorphs; i++)
     {
-      Vector<TermHook>& termHooks = polymorphs[i].termHooks;
+      Polymorph& p = polymorphs[i];
+      if (p.identity != 0)
+	p.identity->deepSelfDestruct();
+      Vector<TermHook>& termHooks = p.termHooks;
       int nrTermHooks = termHooks.length();
       for (int j = 0; j < nrTermHooks; j++)
 	termHooks[j].term->deepSelfDestruct();
     }
   delete parser;
+}
+
+const char*
+MixfixModule::moduleTypeString(ModuleType type)
+{
+  static const char* typeStrings[] = {"fmod", "mod", "fth", "th"};
+  return typeStrings[type];
+}
+
+const char*
+MixfixModule::moduleEndString(ModuleType type)
+{
+  static const char* typeStrings[] = {"endfm", "endm", "endfth", "endth"};
+  return typeStrings[type];
 }
 
 void 
@@ -265,7 +285,7 @@ MixfixModule::economize()
 }
 
 Sort*
-MixfixModule::findSort(int name)
+MixfixModule::findSort(int name) const
 {
   SortMap::const_iterator i = sortNames.find(name);
   return (i == sortNames.end()) ? 0 : (*i).second;
@@ -277,10 +297,10 @@ MixfixModule::findSymbol(int name,
 			 ConnectedComponent* rangeComponent)
 {
   int nrArgs = domainComponents.length();
-  int index = symbolNames.int2Index(name);
-  if (index != NONE)
+  IntMap::const_iterator first = firstSymbols.find(name);
+  if (first != firstSymbols.end())
     {
-      for (int i = firstSymbols[index]; i != NONE; i = symbolInfo[i].next)
+      for (int i = first->second; i != NONE; i = symbolInfo[i].next)
 	{
 	  Symbol* s = getSymbols()[i];
 	  Assert(s->id() == name, "name lookup error " <<
@@ -983,14 +1003,85 @@ MixfixModule::getTermAttachments(Symbol* symbol,
 
 void
 MixfixModule::fixUpBubbleSpec(int bubbleSpecIndex,
-			      QuotedIdentifierSymbol *qidSymbol,
+			      Symbol* qidSymbol,
 			      Symbol* nilQidListSymbol,
 			      Symbol* qidListSymbol)
 {
   BubbleSpec& b =  bubbleSpecs[bubbleSpecIndex];
-  b.qidSymbol = qidSymbol;
   b.nilQidListSymbol = nilQidListSymbol;
   b.qidListSymbol = qidListSymbol;
+  //
+  //	Check that needed symbols exist and have the right properties/arities/sorts.
+  //
+  if (qidSymbol == 0)
+    {
+      IssueWarning(*(b.topSymbol) << ": qidSymbol hook needed for bubble.");
+      markAsBad();
+      return;
+    }
+  b.qidSymbol = dynamic_cast<QuotedIdentifierSymbol*>(qidSymbol);
+  if (b.qidSymbol == 0)
+    {
+      IssueWarning(*(b.topSymbol) << ": inappropriate symbol " << QUOTE(qidSymbol) <<
+		   " for qidSymbol hook.");
+      markAsBad();
+      return;
+    }
+  if (b.lowerBound < 1)
+    {
+      if (nilQidListSymbol == 0)
+	{
+	  IssueWarning(*(b.topSymbol) << ": nilQidListSymbol hook needed for bubble.");
+	  markAsBad();
+	}
+      else
+	{
+	  if (nilQidListSymbol->arity() != 0 ||  // not perfect - might be special symbol
+	      nilQidListSymbol->rangeComponent() != qidSymbol->rangeComponent())
+	    {
+	      IssueWarning(*(b.topSymbol) << ": inappropriate symbol " << QUOTE(nilQidListSymbol) <<
+			   " for nilQidListSymbol hook.");
+	      markAsBad();
+	    }
+	}
+    }
+  if (b.upperBound > 1)
+    {
+      if (qidListSymbol == 0)
+	{
+	  IssueWarning(*(b.topSymbol) << ": qidListSymbol hook needed for bubble.");
+	  markAsBad();
+	  return;
+	}
+      if (getSymbolType(qidListSymbol).hasFlag(SymbolType::ASSOC))
+	{
+	  if (qidListSymbol->rangeComponent() == qidSymbol->rangeComponent())
+	    return;  // OK
+	}
+      else
+	{
+	  int nrArgs = qidListSymbol->arity();
+	  if (b.upperBound == nrArgs &&
+	      (b.upperBound == b.lowerBound ||
+	       (b.upperBound == 2 && qidListSymbol->rangeComponent() == qidSymbol->rangeComponent())))
+	    {
+	      for (int i = 0; i < nrArgs; i++)
+		{
+		  if (qidListSymbol->domainComponent(i) != qidSymbol->rangeComponent())
+		    {
+		      IssueWarning(*(b.topSymbol) << ": bad domain kind in symbol " <<
+				   QUOTE(qidListSymbol) << " for qidListSymbol hook.");
+		      markAsBad();
+		      return;
+		    }
+		}
+	      return;  // OK
+	    }
+	}
+      IssueWarning(*(b.topSymbol) << ": inappropriate symbol " << QUOTE(qidListSymbol) <<
+		   " for qidListSymbol hook.");
+      markAsBad();
+    }
 }
 
 int

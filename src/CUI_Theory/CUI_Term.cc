@@ -69,12 +69,12 @@ CUI_Term::CUI_Term(CUI_Symbol* symbol, const Vector<Term*>& arguments)
   argArray[1] = arguments[1];
 }
 
-CUI_Term::CUI_Term(const CUI_Term& original, SymbolMap* map)
-  : Term(map == 0 ? original.symbol() : map->translate(original.symbol())),
+CUI_Term::CUI_Term(const CUI_Term& original, CUI_Symbol* symbol, SymbolMap* translator)
+  : Term(symbol),
     argArray(2)
 {
-  argArray[0] = original.argArray[0]->deepCopy(map);
-  argArray[1] = original.argArray[1]->deepCopy(map);
+  argArray[0] = original.argArray[0]->deepCopy(translator);
+  argArray[1] = original.argArray[1]->deepCopy(translator);
 }
 
 RawArgumentIterator*
@@ -92,9 +92,24 @@ CUI_Term::deepSelfDestruct()
 }
 
 Term*
-CUI_Term::deepCopy2(SymbolMap* map) const
+CUI_Term::deepCopy2(SymbolMap* translator) const
 {
-  return new CUI_Term(*this, map);
+  CUI_Symbol* s = symbol();
+  if (translator != 0)
+    {
+      Symbol* s2 = translator->translate(s);
+      if (s2 == 0)
+	return translator->translateTerm(this);
+      s = dynamic_cast<CUI_Symbol*>(s2);
+      if (s == 0)
+	{
+	  Vector<Term*> args(2);
+	  args[0] = argArray[0]->deepCopy(translator);
+	  args[1] = argArray[1]->deepCopy(translator);
+	  return s2->makeTerm(args);
+	}
+    }
+  return new CUI_Term(*this, s, translator);
 }
 
 Term*

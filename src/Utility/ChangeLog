@@ -1,3 +1,395 @@
+2005-10-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: #if before includes; include <unistd.h>
+	(DebugAdvisory): make them blue
+
+	* ropeStuff.hh: fix #if test for g++ major versions > 3
+
+2005-09-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.hh: deleted
+
+	* diophantineSystem2.cc:  deleted
+
+	* diophantineSystem2.hh:  deleted
+
+	* diophantineSolve.cc:  deleted
+
+	* diophantineSystem3.cc:  deleted
+
+	* mpzGcdInit.cc (integerGaussianElimination, initializeGcd): ifdef
+	out analysis code
+
+	* mpzGcdBasedSolver.cc (solveDiagonal): ifdef out analysis code
+
+2005-09-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mpzGcdBasedSolver.cc (nextSolution): handle nrFreeVariables == 0
+	case; simplified
+	(solveDiagonal): check for trivial solution
+	(fillOutLastEntry): handle zero coefficient variables
+
+	* mpzGcdInit.cc (initializeGcd): added DebugAdvisory() for all
+	positive equation; updated comments
+	(initializeGcd): init lastPrediagNeg to NONE in all +ve case
+
+2005-09-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mpzGcdBasedSolver.cc (nextSolution): don't use nrEquations
+	(solveDiagonal, fillOutLastEntry): don't use nrEquations
+
+	* mpzGcdInit.cc (integerGaussianElimination): initialize nrFreeVariables
+
+	* mpzGcdBasedSolver.cc (findNextMinimalSolutionGcd): moved a lot
+	of initialization code
+
+	* mpzGcdInit.cc (initializeGcd): to here
+
+	* mpzSystem.hh (class MpzSystem): data member nrEquations replaced
+	by nrFreeVariables
+
+	* mpzGcdInit.cc (initializeGcd): don't init lastPrediagNonzero
+	(initializeGcd): added divid thru by final gcd optimization
+
+	* mpzSystem.hh (class MpzSystem): deleted data members
+	pruneLastPrediag, lastPrediagNonzero
+
+	* mpzGcdBasedSolver.cc (fillOutStackEntry): initialize base, inc
+	and bound to default values
+	(solveDiagonal): added optimization for diagonal variables all
+	zero case
+
+2005-08-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mpzSystem.hh (class MpzSystem): deleted zeroSoFar field from
+	struct StackEntry
+
+	* mpzGcdBasedSolver.cc (solveDiagonal): cleaned up
+	(fillOutStackEntry): decide if our current partial solution is all
+	zero by comparing leftOver to sumBound rather than by using
+	zeroSoFar field
+	(fillOutLastEntry): symmetric change
+	(findNextMinimalSolutionGcd): don't init zeroSoFar field
+	(nextSolution): don't clear zeroSoFar field
+	(fillOutStackEntry): don't init zeroSoFar field
+	(fillOutStackEntry): use updateResidues()
+	(fillOutLastEntry): use updateResidues()
+
+	* mpzSystem.hh (class MpzSystem): added decl for updateResidues()
+
+	* mpzGcdBasedSolver.cc (updateResidues): added
+	(nextSolution): simplify using updateResidues()
+	(nextSolution): restructuring
+
+2005-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mpzGcdBasedSolver.cc (findNextMinimalSolutionGcd): return
+	solutions incrementally; re-permute solutions
+
+	* mpzSystem.hh (class MpzSystem): added decl for computeSumBound()
+
+	* mpzGcdInit.cc (computeSumBound): added
+	(initializeGcd): use computeSumBound(); recompute sumBound after
+	integerGaussianElimination()
+
+	* mpzSystem.hh (class MpzSystem): added decl for dumpEqns()
+	(class MpzSystem): added decls for findConcensus() and
+	solveTwoVariableProblem()
+	(class MpzSystem): added many gcd solver specific data members
+	(class MpzSystem): addded struct StackEntry, decls for
+	nextSolution(), fillOutStackEntry(), fillOutLastEntry(),
+	solveDiagonal()
+
+	* mpzSystem.cc (dumpEqns): added
+
+	* mpzContejeanDevie.cc (initialize): use initializeUpperBounds()
+
+	* mpzSystem.hh (class MpzSystem): added decl for
+	initializeUpperBounds()
+
+	* mpzSystem.cc (initializeUpperBounds): added
+
+2005-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mpzSystem.hh (class MpzSystem): reorganized to split out solver
+	specific stuff
+
+	* mpzContejeanDevie.cc (isZero): moved here
+
+	* mpzSystem.cc (minimal): moved here
+
+	* mpzGcdBasedSolver.cc: created
+
+	* mpzContejeanDevie.cc (findNextMinimalSolution): code cleaning
+	(findNextMinimalSolution): use the invariant that variables that
+	have reached their upper bounds are frozen to simplify test
+
+2005-08-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mpzContejeanDevie.cc (initialize): code cleaning
+	(initialize): check for zero upper bound
+
+2005-08-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mpzSystem.cc (insertEqn): fixed eqn vs eqns bug
+
+	* mpzSystem.hh: created
+
+	* mpzContejeanDevie.cc: created
+
+	* mpzSystem.cc: created
+
+	* macros.hh (DebugPrint): added
+	(DebugPrintNL): added
+
+===================================Maude86c===========================================
+
+2005-03-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (enum SpecialConstants): added GARBAGE to enum SpecialConstants
+
+2005-01-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (ComplexWarning): added
+	
+===================================Maude86===========================================
+
+2004-12-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh (DebugAdvisory): print debug advisories in red
+
+2004-11-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSolve.cc (solveDiagonal): negate the residue before dividing
+	(fillOutStackEntry): fix bad zeroSoFar propagation
+
+	* diophantineSystem3.cc (findNextMinimalSolution): initialize
+	leftOver, residue, solution, stack
+
+2004-11-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.hh (class DiophantineSystem3): added decls
+	for nextSolution(), fillOutStackEntry(), fillOutLastEntry(),
+	solveDiagonal()
+	(class DiophantineSystem3): added data members solution and residues
+	(class DiophantineSystem3): added struct StackEntry
+	(class DiophantineSystem3): added data members stack, leftOver
+
+	* diophantineSystem3.cc (takeStep): fix upper bounds bug
+
+	* diophantineSolve.cc: created
+
+2004-11-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.cc (initialize): fill out lastPrediagNonzero properly
+	(takeStep): implement lastPrediagNeg opt
+	(integerGaussianElimination): fixed double increment bug in erase case
+
+2004-11-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.cc (finalStep): zero out unbound variables;
+	check minimality
+	(takeStep): added minimality check for partial solution
+	(takeStep): put minimality check in search loop
+
+	* diophantineSystem3.hh (class DiophantineSystem3): added decls
+	for greaterEqual() and minimal()
+
+	* diophantineSystem3.cc (findNextMinimalSolution): zero solution
+	to allow minimality testing on partial solutions
+	(takeStep): zero out variable once we are done
+	(greaterEqual): added
+	(minimal): added
+
+2004-11-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.cc (takeStep): handle zeroSoFar arg
+	(finalStep): handle zeroSoFar arg
+
+	* diophantineSystem3.hh (class DiophantineSystem3): replaced
+	pruneLastPrediag with firstPrunablePrediag; added data member
+	lastPrediagNonzero
+
+2004-11-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.cc (initialize): do sign calculations for
+	prediagonal columns
+	(finalStep): avoid trivial solution; pruneLastPrediag optimization
+
+	* diophantineSystem3.hh (class DiophantineSystem3): added data
+	members lastPrediagNeg and pruneLastPrediag
+
+2004-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.cc (finalStep): added
+
+2004-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.cc: init gcds
+	(takeStep): added
+	(concensus): added
+	(findNextMinimalSolution): call takeStep()
+
+	* diophantineSystem3.hh (class DiophantineSystem3): added decl fo
+	solve(); added data member gcds
+
+	* diophantineSystem3.cc (solve): added
+
+2004-10-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.cc (integerGaussianElimination): added
+	DebugAdvisory() for all zero equations
+
+2004-10-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.cc (integerGaussianElimination): rewritten
+
+2004-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem3.cc: created
+
+	* diophantineSystem3.hh: created
+
+	* diophantineSystem2.cc (solve): handle the case where a gets
+	negated on its own properly
+	(takeStep): rewrite to handle g = 0 properly
+
+2004-10-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.hh (class DiophantineSystem2): added decls
+	for finalStep() and takeStep()
+
+	* diophantineSystem2.cc (concensus): got args to solve() the wrong
+	way arround
+	(solve): x_base vs x_start conflict
+	(finalStep): added
+	(takeStep): added
+
+2004-10-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.hh (class DiophantineSystem2): added decl for concensus()
+
+	* diophantineSystem2.cc (concensus): added
+
+	* diophantineSystem2.hh (class DiophantineSystem2): added decls
+	for newSolve() and gcd()
+
+	* diophantineSystem2.cc (gcd): added
+	(newSolve): added
+
+2004-10-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.hh (class DiophantineSystem2): added data
+	member sumBound
+
+	* diophantineSystem2.cc (initialize): added sum bound computation
+
+2004-10-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.hh (class DiophantineSystem2): updated decl
+	for solve()
+
+	* diophantineSystem2.cc (solve): rewritten to allow the option of
+	allowing -ve values for y and also of placing upper bounds on x
+	and y
+
+2004-10-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.cc (dumpMatrix): added
+	(integerGaussianElimination): added
+	(initialize): use integerGaussianElimination()
+
+2004-10-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* checkedConstIterator.hh (operator++, operator--, operator+) 
+	(operator-): added typename to pacify g++ 2.4.2
+
+	* checkedIterator.hh (operator++): added typename to pacify g++ 2.4.2
+	(operator--): added extra typename to pacify g++ 2.4.2
+	(operator-): added extra typename to pacify g++ 2.4.2
+	(operator+): added extra typename to pacify g++ 2.4.2
+
+2004-10-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* indexedSet.hh (insert): added extra typename to pacify g++ 2.4.2
+
+2004-09-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.cc (findNextMinimalSolution): added variable
+	forcing code
+	(findNextMinimalSolution): freeze variable when we hit bounds
+	(initialize): freeze variable in its start vector if it has bound 1
+
+2004-09-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.hh (class DiophantineSystem2): deleted decl
+	for product()
+
+	* diophantineSystem2.cc (initialize): rewritten
+	(findNextMinimalSolution): rewritten
+	(findNextMinimalSolution): avoid copying residue
+	(product): deleted
+	(greaterEqual): made local_inline
+	(minimal): made local_inline
+	(isZero): made local_inline
+	(scalerProduct): made local_inline
+
+	* diophantineSystem2.hh (class DiophantineSystem2): added struct
+	State; changed many data members
+
+2004-09-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.hh (class DiophantineSystem2): leaves becomes
+	list<int>; added data member current
+
+	* diophantineSystem2.cc (initialize): clear residue and current
+	(findNextMinimalSolution): rewritten using new stack structure
+
+	* diophantineSystem2.hh (class DiophantineSystem2): decl for
+	greater() becomes greaterEqual()
+
+	* diophantineSystem2.cc (greater): become greaterEqual() since
+	this is a faster computation
+	(minimal): use greaterEqual() in place of greater
+
+2004-09-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.hh (class DiophantineSystem2): adde decls for
+	setUpperBounds, initialize and residue
+
+	* diophantineSystem2.cc (setUpperBounds): added
+	(initialize): added
+
+	* diophantineSystem2.hh (class DiophantineSystem2): updated decl
+	for scalerProduct(); added VecList
+
+	* diophantineSystem2.cc (scalerProduct): rewritten to be specific
+	to system
+	(DiophantineSystem2): deleted
+	(product): don't resize result; use new rows type
+	(scalerProduct): use new rows type
+	(findNextMinimalSolution): rewritten
+
+2004-09-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.cc (greater): fixed bug where j was not being
+	incremented
+
+2004-09-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.cc (findNextMinimalSolution): rewritten to
+	avoid explicit frozen flags and start with a set of vectors
+
+2004-08-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.cc: created
+
+2004-08-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantineSystem2.hh: created
+	
+===================================Maude85===========================================
+
 2004-03-16  Steven Eker  <eker@goo.csl.sri.com>
 
 	* macros.hh (DebugAdvisoryCheck): allow to be switched off with

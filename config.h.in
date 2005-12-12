@@ -18,11 +18,23 @@
 /* have conditional move instruction */
 #undef HAVE_CMOV
 
+/* Define to 1 if you have the <ctype.h> header file. */
+#undef HAVE_CTYPE_H
+
 /* Define to 1 if you have the <ieeefp.h> header file. */
 #undef HAVE_IEEEFP_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `nsl' library (-lnsl). */
+#undef HAVE_LIBNSL
+
+/* Define to 1 if you have the `socket' library (-lsocket). */
+#undef HAVE_LIBSOCKET
+
+/* Define to 1 if you have the <limits.h> header file. */
+#undef HAVE_LIMITS_H
 
 /* Define to 1 if you have the <math.h> header file. */
 #undef HAVE_MATH_H
@@ -36,8 +48,14 @@
 /* Define to 1 if you have the <ostream.h> header file. */
 #undef HAVE_OSTREAM_H
 
+/* Define to 1 if you have the <stddef.h> header file. */
+#undef HAVE_STDDEF_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
@@ -65,6 +83,9 @@
 
 /* inline and discard selected local functions */
 #undef LOCAL_INLINES
+
+/* support MOS oracles */
+#undef MOS
 
 /* don't do runtime checks */
 #undef NO_ASSERT

@@ -1,0 +1,130 @@
+set show timing off .
+
+fmod SORTABLE-LIST-TEST is
+  inc SORTABLE-LIST{Nat<} .
+
+  var N : Nat .
+  var L : List{Nat<} .
+
+  op gen : Nat -> List{Nat<} .
+  eq gen(N) = gen2(N, nil) .
+
+  op gen2 : Nat List{Nat<} -> List{Nat<} .
+  eq gen2(0, L) = L .
+  eq gen2(s N, L) = gen2(N, ((s N * s N) rem 100) L) .
+endfm
+
+red size(gen(100)) .
+red sort(gen(100)) .
+red reverse(sort(gen(100))) .
+red occurs(5, gen(100)) .
+red occurs(24, gen(100)) .
+
+
+fmod SET-TEST is
+  inc SET{Nat} .
+
+  var N M : Nat .
+  var A : Set{Nat} .
+
+  op gen : Nat Nat -> Set{Nat} .
+  eq gen(N, M) = gen2(N, M, empty) .
+
+  op gen2 : Nat Nat Set{Nat} -> Set{Nat} .
+  eq gen2(0, M, A) = A .
+  eq gen2(s N, M, A) = gen2(N, M, insert(s N * M, A)) .
+endfm
+
+red intersection(gen(100, 13), gen(100, 4)) .
+red union(gen(100, 13), gen(100, 4)) .
+red gen(100, 13) \ gen(100, 52) .
+red intersection(gen(100, 13), gen(100, 4)) \ gen(100, 52) .
+red | gen(100, 13) | .
+red delete(3,(4,5,3)) .
+red 53 in union(gen(100, 13), gen(100, 4)) .
+red 52 in union(gen(100, 13), gen(100, 4)) .
+
+
+fmod LIST-AND-SET-TEST is
+  inc LIST-AND-SET{Nat} .
+
+  var N : Nat .
+  var L : List{Nat} .
+
+  op gen : Nat -> List{Nat} .
+  eq gen(N) = gen2(N, nil) .
+
+  op gen2 : Nat List{Nat} -> List{Nat} .
+  eq gen2(0, L) = L .
+  eq gen2(s N, L) = gen2(N, ((s N * s N) rem 100) L) .
+endfm
+
+red gen(100) .
+red makeSet(gen(100)) .
+red makeList(makeSet(gen(100))) .
+red filter(gen(100), makeSet(gen(10))) .
+red filterOut(gen(100), makeSet(gen(10))) .
+
+
+fmod LIST*-TEST is
+  inc LIST*{Nat} .
+  ops a b : -> List{Nat} .
+  eq a = [[1 2 3] [] [3 4 5 6]] .
+  eq b = [[[1] []] 2 [1 2 3]] .
+endfm
+
+red append(a, b) .
+red size(append(a, b)) .
+red reverse(append(a, b)) .
+red head(a) .
+red tail(a) .
+red last(a) .
+red front(a) .
+red occurs([], a) .
+red occurs([2 3], a) .
+
+fmod SET*-TEST is
+  inc SET*{Nat} .
+
+  var N : Nat .
+
+  op zf : Nat -> Set{Nat} .
+  eq zf(0) = {} .
+  eq zf(s N) = union({zf(N)}, zf(N)) .
+endfm
+
+red zf(0) .
+red zf(1) .
+red zf(2) .
+red zf(3) .
+red zf(4) .
+
+red | zf(10) | .
+red | zf(100) | .
+
+red 2^ zf(4) .
+red | 2^ zf(9) | .
+
+fmod MAP-TEST is
+  inc MAP{String, Nat} .
+  op a : -> Map{String, Nat} .
+  eq a = insert("three", 3, insert("two", 2, insert("one", 1, insert("zero", 0, empty)))) .
+endfm
+
+red a .
+red a["one"] .
+
+fmod ARRAY-TEST is
+  inc ARRAY{Nat, Nat0} .
+
+  var N : Nat .
+
+  op gen : Nat -> Array{Nat, Nat0} .
+  eq gen(0) = empty .
+  eq gen(s N) = insert(s N, s N rem 10, gen(N)) .
+endfm
+
+red gen(100) .
+red gen(100)[55] .
+red gen(100)[60] .
+red gen(100)[1000000000000000000000] .

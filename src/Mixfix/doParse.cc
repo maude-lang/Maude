@@ -29,11 +29,10 @@ MixfixModule::getParserStats(int& nrNonterminals, int& nrTerminals, int& nrProdu
 {
   makeGrammar();
   int nrKinds = getConnectedComponents().length();
-  nrNonterminals = - nonTerminal(nrKinds, TERM_TYPE) - 1;
+  nrNonterminals = - nextNonTerminal;
   nrTerminals = parser->getTokenSet().cardinality();
   nrProductions = parser->getNrProductions();
 }
-
 
 Term*
 MixfixModule::parseTerm(const Vector<Token>& bubble,
@@ -169,7 +168,7 @@ MixfixModule::parseSentence(const Vector<Token>& bubble, int root, int begin, in
 	  IssueWarning(LineNumber(bubble[firstBad].lineNumber()) <<
 		       ": bad token " << QUOTE(bubble[firstBad].name()) << '.');
 	}
-      else if (firstBad == nrTokens)
+      else if (firstBad == begin + nrTokens)
 	{
 	  IssueWarning(LineNumber(bubble[end].lineNumber()) <<
 		       " : unexpected end of tokens.");

@@ -209,7 +209,7 @@ template<class T>
 inline typename Vector<T>::const_iterator
 Vector<T>::const_iterator::operator++(int)
 {
-  Vector::const_iterator tmp(*this);
+  typename Vector::const_iterator tmp(*this);
   operator++();
   return tmp;
 }
@@ -229,7 +229,7 @@ template<class T>
 inline typename Vector<T>::const_iterator
 Vector<T>::const_iterator::operator--(int)
 {
-  Vector::const_iterator tmp(*this);
+  typename Vector::const_iterator tmp(*this);
   operator--();
   return tmp;
 }
@@ -249,7 +249,7 @@ template<class T>
 inline typename Vector<T>::const_iterator
 Vector<T>::const_iterator::operator+(difference_type delta) const
 {
-  Vector::const_iterator tmp(*this);
+  typename Vector::const_iterator tmp(*this);
   return tmp += delta;
 }
 
@@ -268,7 +268,7 @@ template<class T>
 inline typename Vector<T>::const_iterator
 Vector<T>::const_iterator::operator-(difference_type delta) const
 {
-  Vector::const_iterator tmp(*this);
+  typename Vector::const_iterator tmp(*this);
   return tmp -= delta;
 }
 

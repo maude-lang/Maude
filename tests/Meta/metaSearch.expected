@@ -114,4 +114,39 @@ reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_+_['_*_['a.Nat,'b.Nat],
     1) .
 rewrites: 8
 result ResultTriple?: (failure).ResultTriple?
+==========================================
+reduce in META-LEVEL : metaSearch(['SEARCH], 'a.State, 'e.State, nil, '*,
+    unbounded, 0) .
+rewrites: 6
+result ResultTriple: {'e.State,'State,(none).Substitution}
+==========================================
+reduce in META-LEVEL : metaSearch(['SEARCH], 'a.State, 'e.State, nil, '*,
+    unbounded, 1) .
+rewrites: 2
+result ResultTriple?: (failure).ResultTriple?
+==========================================
+reduce in META-LEVEL : metaSearchPath(['SEARCH], 'a.State, 'e.State, nil, '*,
+    unbounded, 0) .
+rewrites: 6
+result Trace: {'a.State,'State,rl 'a.State => 'c.State [label('a-move2)] .}
+{'c.State,'State,rl 'c.State => 'e.State [label('c-move)] .}
+==========================================
+reduce in META-LEVEL : metaSearchPath(['SEARCH], 'a.State, 'e.State, nil, '*,
+    unbounded, 1) .
+rewrites: 2
+result Trace?: (failure).Trace?
+==========================================
+reduce in META-LEVEL : metaSearchPath(['ARITH], '_*_['_+_['a.Int,'b.Int],'_+_[
+    'c.Int,'d.Int]], '_+_['I:Int,'J:Int,'K:Int,'L:Int], nil, '*, unbounded, 0)
+    .
+rewrites: 21
+result Trace: {'_*_['_+_['a.Int,'b.Int],'_+_['c.Int,'d.Int]],'Int,rl '_*_[
+    'I:Int,'_+_['J:Int,'K:Int]] => '_+_['_*_['I:Int,'J:Int],'_*_['I:Int,
+    'K:Int]] [none] .}
+{'_+_['_*_['a.Int,'_+_['c.Int,'d.Int]],'_*_['b.Int,'_+_['c.Int,'d.Int]]],'Int,
+    rl '_*_['I:Int,'_+_['J:Int,'K:Int]] => '_+_['_*_['I:Int,'J:Int],'_*_[
+    'I:Int,'K:Int]] [none] .}
+{'_+_['_*_['a.Int,'c.Int],'_*_['a.Int,'d.Int],'_*_['b.Int,'_+_['c.Int,
+    'd.Int]]],'Int,rl '_*_['I:Int,'_+_['J:Int,'K:Int]] => '_+_['_*_['I:Int,
+    'J:Int],'_*_['I:Int,'K:Int]] [none] .}
 Maude> Bye.

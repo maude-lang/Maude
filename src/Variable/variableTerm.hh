@@ -38,7 +38,7 @@ public:
 
   RawArgumentIterator* arguments();
   void deepSelfDestruct();
-  Term* deepCopy2(SymbolMap* map) const;
+  Term* deepCopy2(SymbolMap* translator) const;
   Term* normalize(bool full, bool& changed);
   int compareArguments(const Term* other) const;
   int compareArguments(const DagNode* other) const;
@@ -59,14 +59,16 @@ public:
 		  VariableInfo& variableInfo,
 		  TermBag& availableTerms,
 		  bool eagerContext);
-
   //
   //	Optional stuff that is easy to define for variable terms.
   //
   bool subsumes(const Term* other, bool sameVariableSet) const;
   int partialCompareUnstable(const Substitution& partialSubstitution,
 			     DagNode* other) const;
-
+  //
+  //	Needed because we actually do the instantiation of variables.
+  //
+  Term* instantiate2(const Vector<Term*>& varBindings, SymbolMap* translator);
   //
   //	Functions particular to variable terms.
   //

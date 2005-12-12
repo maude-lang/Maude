@@ -48,6 +48,12 @@
      //	META-MODULE stuff:
      //
      //
+     //	Module header constructors.
+     //
+     MACRO(headerSymbol, FreeSymbol, 0, 2)
+     MACRO(parameterDeclSymbol, FreeSymbol, 0, 2)
+     MACRO(parameterDeclListSymbol, Symbol, SymbolType::ASSOC, 2)
+     //
      //	Importation constructors.
      //
      MACRO(protectingSymbol, FreeSymbol, 0, 1)
@@ -94,7 +100,8 @@
      //
      MACRO(sumSymbol, Symbol, SymbolType::ASSOC | SymbolType::COMM, 2)
      MACRO(renamingSymbol, FreeSymbol, 0, 2)
-     //
+     MACRO(instantiationSymbol, FreeSymbol, 0, 1)
+    //
      //	Hook constructors.
      //
      MACRO(termHookSymbol, FreeSymbol, 0, 2)
@@ -171,16 +178,13 @@
      //	Module constructors.
      //
      MACRO(fmodSymbol, FreeSymbol, 0, 7)
+     MACRO(fthSymbol, FreeSymbol, 0, 7)
      MACRO(modSymbol, FreeSymbol, 0, 8)
+     MACRO(thSymbol, FreeSymbol, 0, 8)
 
      //
      //	META-LEVEL stuff:
      //
-     //
-     //	Kind set constructors.
-     //
-     MACRO(emptyKindSetSymbol, Symbol, 0, 0)
-     MACRO(kindSetSymbol, Symbol, SymbolType::ASSOC | SymbolType::COMM, 2)
      //
      //	Argument values.
      //  
@@ -192,6 +196,9 @@
      MACRO(resultTripleSymbol, FreeSymbol, 0, 3)
      MACRO(result4TupleSymbol, FreeSymbol, 0, 4)
      MACRO(matchPairSymbol, FreeSymbol, 0, 2)
+     MACRO(traceStepSymbol, FreeSymbol, 0, 3)
+     MACRO(nilTraceSymbol, Symbol, 0, 0)
+     MACRO(traceSymbol, Symbol, SymbolType::ASSOC, 2)
      //
      //	Failure constructors.
      //
@@ -201,3 +208,15 @@
      MACRO(failure4Symbol, Symbol, 0, 0)
      MACRO(noMatchSubstSymbol, Symbol, 0, 0)
      MACRO(noMatchPairSymbol, Symbol, 0, 0)
+     MACRO(failureTraceSymbol, Symbol, 0, 0)
+     //
+     //	Print option constructors.
+     //
+     MACRO(mixfixSymbol, Symbol, 0, 0)
+     MACRO(withParensSymbol, Symbol, 0, 0)
+     MACRO(flatSymbol, Symbol, 0, 0)
+     MACRO(formatPrintOptionSymbol, Symbol, 0, 0)
+     MACRO(numberSymbol, Symbol, 0, 0)
+     MACRO(ratSymbol, Symbol, 0, 0)
+     MACRO(emptyPrintOptionSetSymbol, Symbol, 0, 0)
+     MACRO(printOptionSetSymbol, Symbol, SymbolType::ASSOC | SymbolType::COMM, 2)

@@ -4,7 +4,7 @@ MAUDE_LIB=$srcdir/../../src/Mixfix
 export MAUDE_LIB
 
 ../../src/Mixfix/maude \
-  < $srcdir/string.maude -no-banner \
+  < $srcdir/string.maude -no-banner -no-advise \
   > string.out 2>&1
 
 diff $srcdir/string.expected string.out > /dev/null 2>&1

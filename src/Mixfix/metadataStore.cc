@@ -52,3 +52,19 @@ MetadataStore::getMetadata(ItemType itemType, const ModuleItem* item) const
     return NONE;
   return (*i).second;
 }
+
+void
+MetadataStore::insertMetadata(ModuleItem* symbol, int opDeclIndex, int metadata)
+{
+  if (metadata != NONE)
+    metadataMap[(static_cast<Int64>(opDeclIndex) << 32) | symbol->getIndexWithinModule()] = metadata; 
+}
+
+int
+MetadataStore::getMetadata(ModuleItem* symbol, int opDeclIndex) const
+{
+    MetadataMap::const_iterator i = metadataMap.find((static_cast<Int64>(opDeclIndex) << 32) | symbol->getIndexWithinModule());
+  if (i == metadataMap.end())
+    return NONE;
+  return (*i).second;
+}

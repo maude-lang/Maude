@@ -27,7 +27,7 @@
 const char*
 MixfixModule::computeColor(SymbolType st)
 {
-  if (interpreter.getFlag(Interpreter::PRINT_COLOR))
+  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
     {
       if (st.hasFlag(SymbolType::ASSOC))
 	{
@@ -80,7 +80,7 @@ MixfixModule::handleIter(ostream& s,
   if (!(si.symbolType.hasFlag(SymbolType::ITER)))
     return false;
   if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL &&
-      interpreter.getFlag(Interpreter::PRINT_NUMBER))
+      interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
     {
       SuccSymbol* succSymbol = safeCast(SuccSymbol*, term->symbol());
       if (succSymbol->isNat(term))
@@ -119,7 +119,7 @@ MixfixModule::handleMinus(ostream& s,
 			  bool rangeKnown,
 			  const char* color)
 {
-  if (interpreter.getFlag(Interpreter::PRINT_NUMBER))
+  if (interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
     {
       const MinusSymbol* minusSymbol = safeCast(MinusSymbol*, term->symbol());
       if (minusSymbol->isNeg(term))
@@ -143,7 +143,7 @@ MixfixModule::handleDivision(ostream& s,
 			     bool rangeKnown,
 			     const char* color)
 {
-  if (interpreter.getFlag(Interpreter::PRINT_RAT))
+  if (interpreter.getPrintFlag(Interpreter::PRINT_RAT))
     {
       const DivisionSymbol* divisionSymbol = safeCast(DivisionSymbol*, term->symbol());
       if (divisionSymbol->isRat(term))
@@ -289,9 +289,10 @@ MixfixModule::prettyPrint(ostream& s,
   int nrArgs = symbol->arity();
   if (needDisambig)
     s << '(';
-  if ((printMixfix && si.mixfixSyntax.length() != 0) ||
+  if ((interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX) && si.mixfixSyntax.length() != 0) ||
       basicType == SymbolType::SORT_TEST)
     {
+      bool printWithParens = interpreter.getPrintFlag(Interpreter::PRINT_WITH_PARENS);
       bool needParen = !needDisambig &&
 	(printWithParens || requiredPrec < si.prec ||
 	 ((iflags & LEFT_BARE) && leftCapture <= si.gather[0] &&
@@ -373,7 +374,9 @@ MixfixModule::prettyPrint(ostream& s,
 	      Term* t = a.argument();
 	      a.next();
 	      int moreArgs = a.valid();
-	      if (arg >= nrArgs - 1 && !printFlat && moreArgs)
+	      if (arg >= nrArgs - 1 &&
+		  !(interpreter.getPrintFlag(Interpreter::PRINT_FLAT)) &&
+		  moreArgs)
 		{
 		  ++nrTails;
 		  printPrefixName(s, prefixName, si);

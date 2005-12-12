@@ -1,3 +1,20 @@
+2005-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_Term.cc (CUI_Term): force symbol arg to be a CUI_Symbol
+	(deepCopy2): handle translation to non-CUI_Symbol
+
+	* CUI_Term.hh (class CUI_Term): updated decl for SymbolMap* ctor
+
+2005-06-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_Term.hh (class CUI_Term): updated decls for SymbolMap* ctor
+	and deepCopy2()
+
+	* CUI_Term.cc (deepCopy2): rewritten
+	(CUI_Term): SymbolMap* rewritten
+
+===================================Maude86b===========================================
+
 2003-08-29  Steven Eker  <eker@goo.csl.sri.com>
 
 	* CUI_Symbol.cc (eqRewrite): use applyReplaceNoOwise()

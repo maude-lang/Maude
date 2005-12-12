@@ -299,11 +299,13 @@ AU_Symbol::copyAndReduceSubterms(AU_DagNode* subject, RewritingContext& context)
 void
 AU_Symbol::computeBaseSort(DagNode* subject)
 {
+  //cerr << "AU_Symbol::computeBaseSort()\nsubject = " << subject << endl;
   Assert(this == subject->symbol(), "bad symbol");
   if (safeCast(AU_BaseDagNode*, subject)->isDeque())
     {
       subject->setSortIndex(safeCast(AU_DequeDagNode*, subject)->
 			    getDeque().computeBaseSort(this));
+      //cerr << "deque computation yields " << subject->getSortIndex() << endl;
       return;
     }
   ArgVec<DagNode*>& args = safeCast(AU_DagNode*, subject)->argArray;
@@ -326,6 +328,7 @@ AU_Symbol::computeBaseSort(DagNode* subject)
 		  if (!(leq(index, uniSort)))
 		    {
 		      subject->setSortIndex(Sort::ERROR_SORT);
+		      //cerr << "fast error return\n";
 		      return;
 		    }
 		  lastIndex = index;
@@ -333,6 +336,7 @@ AU_Symbol::computeBaseSort(DagNode* subject)
 	    }
 	}
       subject->setSortIndex(uniSort->index());
+      //cerr << "fast computation yields " << subject->getSortIndex() << endl;
       return;
     }
   //
@@ -347,6 +351,7 @@ AU_Symbol::computeBaseSort(DagNode* subject)
 	traverse(traverse(0, sortIndex), t);
     }
   subject->setSortIndex(sortIndex);
+  //cerr << "standard computation yields " << subject->getSortIndex() << endl;
 }
 
 void

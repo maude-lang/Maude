@@ -36,13 +36,20 @@ MixfixModule::makeGrammar(bool complexFlag)
 
   parser = new MixfixParser(*this);
   complexParser = complexFlag;
-  componentNonTerminalBase = (complexParser ? COMPLEX_BASE : SIMPLE_BASE) -
-    iterSymbols.cardinality();
+  //
+  //	NonTerminals are allocated as follows:
+  //	  fixed one-off:	-1,..., componentNonTerminalBase + 1
+  //	  per component:	componentNonTerminalBase,..., componentNonTerminalBase - NUMBER_OF_TYPES * #components + 1
+  //	  on demand:		componentNonTerminalBase - NUMBER_OF_TYPES * #components,... downwards
+  //
+  componentNonTerminalBase = complexParser ? COMPLEX_BASE : SIMPLE_BASE;
+  nextNonTerminal = componentNonTerminalBase - NUMBER_OF_TYPES * getConnectedComponents().length() + 1;
   if (complexFlag)
     makeComplexProductions();
   makeStatementProductions();
   makeConditionProductions();
   makeAttributeProductions();
+  makeParameterizedSortProductions();
   makeComponentProductions();
   makeSymbolProductions();
   makeVariableProductions();
@@ -51,6 +58,51 @@ MixfixModule::makeGrammar(bool complexFlag)
   makeSpecialProductions();
   makePolymorphProductions();
   makeBubbleProductions();
+  //
+  //	These two data structures are only used for making the grammar and must be cleared in
+  //	case we ever need to regenerate the grammar, since the nonterminals they contain will
+  //	no longer be valid.
+  //
+  iterSymbols.clear();
+  leadTokens.clear();
+}
+
+void
+MixfixModule::makeParameterizedSortProductions()
+{
+  FOR_EACH_CONST(i, SortMap, sortNames)
+    {
+      int name= i->first;
+      if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT)
+	{
+	  //
+	  //	Need to make a non-terminal for each lead token of a parameterized sort
+	  //	so we can parse on-the-fly variables.
+	  //
+	  Vector<int> parts;
+	  Token::splitParameterizedSort(name, parts);
+	  int lead = parts[0];
+	  pair<IntMap::iterator, bool> p = leadTokens.insert(IntMap::value_type(lead, GARBAGE));
+	  if (p.second)
+	    {
+	      //
+	      //	First time we've seen this lead token so we need to make a nonterminal,
+	      //	terminal and production for it so we can parse on-the-fly variables for
+	      //	for parameterized sorts starting with this token.
+	      //
+	      int nt = newNonTerminal();
+	      string leadString(Token::name(lead));
+	      int t = Token::encode((leadString + " variable").c_str());
+
+	      p.first->second = nt;
+	      Vector<int> rhs(1);
+	      rhs[0] = t;
+	      //cout << "para " << nt << " ::= " << rhs[0] << endl;
+	      parser->insertProduction(nt, rhs, 0, emptyGather);
+	      parser->insertVariableTerminal(lead, t);
+	    }
+	}
+    }
 }
 
 void
@@ -333,21 +385,49 @@ MixfixModule::makeComponentProductions()
 	  //	Terminals for sorts and dotted sorts.
 	  //
 	  rhsOne[0] = sortNameCode;
-	  parser->insertProduction(sortNt, rhsOne, 0, emptyGather,
-				   MixfixParser::NOP, sortIndex);  // CHECK sort index needed?
+	  parser->insertProduction(sortNt, rhsOne, 0, emptyGather, MixfixParser::NOP, sortIndex);
 	  rhsOne[0] = Token::dotNameCode(sortNameCode);
 	  parser->insertProduction(dotSortNt, rhsOne, 0, emptyGather);
+	  if (Token::auxProperty(sortNameCode) == Token::AUX_STRUCTURED_SORT)
+	    {
+	      //
+	      //	Syntax for multitoken versions of parameterized sorts.
+	      //
+	      Vector<int> parts;
+	      Token::splitParameterizedSort(sortNameCode, parts);
+	      parser->insertProduction(sortNt, parts, 0, emptyGather, MixfixParser::NOP, sortIndex);
+	      int lead = parts[0];
+	      parts[0] = Token::dotNameCode(lead);
+	      parser->insertProduction(dotSortNt, parts, 0, emptyGather);
+	      //
+	      //	Syntax for unseen variable of multitoken sort.
+	      //
+	      parts[0] = leadTokens[lead];  // nonterminal
+	      parser->insertProduction(termNt, parts, 0, gatherAny,
+				       MixfixParser::MAKE_VARIABLE, sortIndex);
+	    }
 	  //
-	  //	Terminal for as yet unseen variables of our sort.
+	  //	Syntax for yet unseen variables of our sort.
 	  //
-	  string sortName(Token::name(sortNameCode));
-	  int t = Token::encode((sortName + " variable").c_str());
-	  rhsOne[0] = t;
-	  //cout << "HERE t = " << t << "\n";
-	  parser->insertProduction(termNt, rhsOne, 0, emptyGather,
-				   MixfixParser::MAKE_VARIABLE, sortIndex);
-	  parser->insertVariableTerminal(sortIndex, t);
-	  //cout << "END\n";
+	  IntMap::const_iterator p = leadTokens.find(sortNameCode);
+	  if (p != leadTokens.end())
+	    {
+	      //cerr << "(" << p->first << ", " << p->second << ")" << endl;
+	      rhsOne[0] = p->second;
+	      //cerr << termNt << " ::= " << rhsOne[0] << endl;
+	      parser->insertProduction(termNt, rhsOne, 0, gatherAny,
+				       MixfixParser::MAKE_VARIABLE, sortIndex);
+	    }
+	  else
+	    {
+	      string sortName(Token::name(sortNameCode));
+	      int t = Token::encode((sortName + " variable").c_str());
+	      parser->insertVariableTerminal(sortNameCode, t);
+	      rhsOne[0] = t;
+	      //cerr << termNt << " ::= " << rhsOne[0] << endl;
+	      parser->insertProduction(termNt, rhsOne, 0, emptyGather,
+				       MixfixParser::MAKE_VARIABLE, sortIndex);
+	    }
 	}
       //
       //	Syntax for on the fly kind variable:
@@ -361,7 +441,7 @@ MixfixModule::makeComponentProductions()
       //	Syntax for term from unknown component:
       //	<TERM> ::= <FooTerm>
       //
-      if (!(bubbleComponents.contains(i)))
+      if (bubbleComponents.find(i) == bubbleComponents.end())
 	{
 	  rhsOne[0] = termNt;
 	  parser->insertProduction(TERM, rhsOne, 0, gatherAny, MixfixParser::PASS_THRU);
@@ -408,7 +488,7 @@ MixfixModule::makeComponentProductions()
       //	Syntax for parentheses:
       //	<FooTerm> ::= ( <FooTerm> )
       //
-      if (!(bubbleComponents.contains(i)))
+      if (bubbleComponents.find(i) == bubbleComponents.end())
 	{
 	  rhsParens[1] = termNt;
 	  parser->insertProduction(termNt, rhsParens, 0, gatherAny, MixfixParser::PASS_THRU);
@@ -532,8 +612,15 @@ MixfixModule::makeSymbolProductions()
 	  //
 	  if (si.symbolType.hasFlag(SymbolType::ITER))
 	    {
-	      rhs.resize(0);
-	      rhs.append(iterSymbolNonTerminal(iterSymbols.int2Index(symbol->id())));
+	      //
+	      //	An iter symbol with the same name may have already created a nonterminal;
+	      //	otherwise we need to create one.
+	      //
+	      pair<IntMap::iterator, bool> p = iterSymbols.insert(IntMap::value_type(symbol->id(), GARBAGE));
+	      if (p.second)
+		p.first->second = newNonTerminal();
+	      rhs.clear();
+	      rhs.append(p.first->second);
 	      rhs.append(leftParen);
 	      rhs.append(rangeNt);
 	      rhs.append(rightParen);
@@ -542,7 +629,7 @@ MixfixModule::makeSymbolProductions()
 	      gather.append(PREFIX_GATHER);
 	      parser->insertProduction(rangeNt, rhs, 0, gather, MixfixParser::MAKE_ITER, i);
 	      //
-	      //	If symbl is a successor symbol, add the syntax
+	      //	If symbol is a successor symbol, add the syntax
 	      //	<rangeTerm> ::= SMALL_NAT
 	      //	to handle decimal natural number syntax.
 	      //
@@ -648,10 +735,9 @@ MixfixModule::makeLabelProductions()
 #endif
 
   static Vector<int> rhs(1);
-  int nrLabels = labels.cardinality();
-  for (int i = 0; i < nrLabels; i++)
+  FOR_EACH_CONST(i, set<int>, potentialLabels)
     {
-      int label = labels.index2Int(i);
+      int label = *i;
       rhs[0] = label;
       parser->insertProduction(LABEL, rhs, 0, emptyGather, MixfixParser::MAKE_LABEL, label);
     }
@@ -722,13 +808,19 @@ MixfixModule::makeSpecialProductions()
 	    int varName;
 	    int sortName;
 	    Token::split(code, varName, sortName);
-	    if (Sort* sort = findSort(sortName))
+	    IntMap::const_iterator t = leadTokens.find(sortName);
+	    if (t != leadTokens.end())
+	      {
+		rhs[0] = code;
+		parser->insertProduction(t->second, rhs, 0, emptyGather);
+	      }
+	    else if (Sort* sort = findSort(sortName))
 	      {
 		int sortIndex = sort->getIndexWithinModule();
 		int componentIndex = sort->component()->getIndexWithinModule();
 		rhs[0] = code;
 		parser->insertProduction(nonTerminal(componentIndex, TERM_TYPE),
-			   rhs, 0, emptyGather, MixfixParser::MAKE_VARIABLE, sortIndex);
+					 rhs, 0, emptyGather, MixfixParser::MAKE_VARIABLE, sortIndex);
 	      }
 	    break;
 	  }
@@ -743,12 +835,11 @@ MixfixModule::makeSpecialProductions()
 	    int opName;
 	    mpz_class dummy;
 	    Token::split(code, opName, dummy);
-	    int index = iterSymbols.int2Index(opName);
-	    if (index != NONE)
+	    IntMap::const_iterator t = iterSymbols.find(opName);
+	    if (t != iterSymbols.end())
 	      {
 		rhs[0] = code;
-		parser->insertProduction(iterSymbolNonTerminal(index),
-					 rhs, 0, emptyGather);
+		parser->insertProduction(t->second, rhs, 0, emptyGather);
 	      }
 	  }
 	}
@@ -805,16 +896,16 @@ MixfixModule::makeSpecialProductions()
     parser->insertProduction(ENDS_IN_COLON_NT, rhs, 0, emptyGather);
   }
   {
-    int nrIterSymbols = iterSymbols.cardinality();
-    for (int i = 0; i < nrIterSymbols; i++)
+    FOR_EACH_CONST(i, IntMap, iterSymbols)
       {
+	int iterSymbolNameCode = i->first;
 	string str("[ ");
-	str += Token::name(iterSymbols.index2Int(i));
+	str += Token::name(iterSymbolNameCode);
 	str += " ]";
 	int t = Token::encode(str.c_str());
-	parser->insertIterSymbolTerminal(i, t);
+	parser->insertIterSymbolTerminal(iterSymbolNameCode, t);
 	rhs[0] = t;
-	parser->insertProduction(iterSymbolNonTerminal(i), rhs, 0, emptyGather);
+	parser->insertProduction(i->second, rhs, 0, emptyGather);
       }
   }
 }
@@ -886,7 +977,7 @@ MixfixModule::makePolymorphProductions()
       //
      for (int j = 0; j < nrComponents; j++)
 	{
-	  if (!(bubbleComponents.contains(j)))
+	  if (bubbleComponents.find(j) == bubbleComponents.end())
 	    {
 	      int termNt = nonTerminal(j, TERM_TYPE);
 	      const Sort* s = p.domainAndRange[nrArgs];

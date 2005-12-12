@@ -22,7 +22,7 @@
 
 //
 //	Class for objects that are numbered within a module.
-//	This provides with
+//	This provides us with:
 //	  (1) a way of getting back to the module containing an object; and
 //	  (2) a number that is useful for indexing.
 //

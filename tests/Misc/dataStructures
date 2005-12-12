@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Mixfix
+export MAUDE_LIB
+
+../../src/Mixfix/maude \
+  < $srcdir/dataStructures.maude -no-banner -no-advise \
+  > dataStructures.out 2>&1
+
+diff $srcdir/dataStructures.expected dataStructures.out > /dev/null 2>&1

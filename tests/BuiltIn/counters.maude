@@ -1,0 +1,122 @@
+set show timing off .
+set show advisories off .
+
+mod COUNTER-TEST is
+  inc COUNTER .
+  sort List .
+  subsort Nat < List .
+  op __ : List List -> List [assoc id: nil] .
+  op nil : -> List .
+
+  op f : Nat -> List .
+  var N : Nat .
+  eq f(s N) = counter f(N) .
+  eq f(0) = nil .
+endm
+
+rew counter .
+rew f(11)  .
+rew f(11)  .
+set clear rules off .
+rew f(11)  .
+set clear rules on .
+rew f(11)  .
+
+mod COUNTER-TEST2 is
+  inc COUNTER .
+  inc RANDOM .
+  sort List .
+  subsort Nat < List .
+  op __ : List List -> List [assoc id: nil] .
+  op nil : -> List .
+
+  op f : Nat -> List .
+  var N : Nat .
+  eq f(s N) = random(counter) f(N) .
+  eq f(0) = nil .
+endm
+
+rew random(counter) .
+rew f(11)  .
+rew f(100)  .
+
+mod FOO is
+  sort Foo .
+  ops a b c d e : -> Foo .
+
+  rl a => b .
+  rl a => c .
+  rl a => d .
+  rl a => e .
+endm
+
+rew a .
+rew a .
+set clear rules off .
+rew a .
+rew a .
+rew a .
+rew a .
+set clear rules on .
+rew a .
+
+
+mod COUNTER-TEST3 is
+  inc COUNTER .
+  sort List .
+  subsort Nat < List .
+  op __ : List List -> List [assoc id: nil] .
+  op nil : -> List .
+
+  op f : Nat -> List .
+  var N : Nat .
+  eq f(s N) = counter f(N) .
+  eq f(0) = nil .
+endm
+
+debug rew f(4)  .
+step .
+step .
+step .
+step .
+step .
+step .
+step .
+rew counter .
+resume .
+
+debug frew f(4)  .
+step .
+step .
+step .
+step .
+step .
+step .
+step .
+rew counter .
+resume .
+
+rew [4] f(8)  .
+cont .
+
+
+mod COUNTER-TEST4 is
+  inc COUNTER .
+  inc COUNTER * (op counter to counter2) .
+  sort List .
+  subsort Nat < List .
+  op __ : List List -> List [assoc id: nil] .
+  op nil : -> List .
+
+  op f : Nat -> List .
+  var N : Nat .
+  eq f(s N) = counter (counter2 f(N)) .
+  eq f(0) = nil .
+endm
+
+rew f(4)  .
+
+search f(4) =>* L:List .
+
+red in META-LEVEL : metaRewrite(['COUNTER-TEST4], '__['counter.Nat,
+'counter.Nat], 2) .

@@ -28,7 +28,7 @@
 #include <map>
 #include "importModule.hh"
 
-class ModuleCache : public ImportModule::Parent
+class ModuleCache : public Entity::User
 {
   NO_COPYING(ModuleCache);
 
@@ -36,15 +36,18 @@ public:
   ModuleCache();
   ImportModule* makeRenamedCopy(ImportModule* module, Renaming* renaming);
   ImportModule* makeSummation(const Vector<ImportModule*>& modules);
+  ImportModule* makeParameterCopy(int parameterName, ImportModule* module);
+  ImportModule* makeInstatiation(ImportModule* module, const Vector<View*>& views, const Vector<int>& parameterArgs);
+
   void destructUnusedModules();
-  void showCreatedModules() const;
+  void showCreatedModules(ostream& s) const;
 
 private:
   typedef map<int, ImportModule*> ModuleMap;
 
   static bool moduleCompare(const ImportModule* m1, const ImportModule* m2);
 
-  void regretToInform(ImportModule* doomedModule);
+  void regretToInform(Entity* doomedEntity);
 
   ModuleMap moduleMap;
 };

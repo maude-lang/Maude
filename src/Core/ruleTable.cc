@@ -57,7 +57,25 @@ RuleTable::compileRules()
   int nrRules = rules.length();
   for (int i = 0; i < nrRules; i++)
     rules[i]->compile(true);
+}
+
+void
+RuleTable::resetRules()
+{
   nextRule = 0;
+}
+
+void
+RuleTable::saveHiddenState()
+{
+  nextRuleStack.push(nextRule);
+}
+
+void
+RuleTable::restoreHiddenState()
+{
+  nextRule = nextRuleStack.top();
+  nextRuleStack.pop();
 }
 
 DagNode*
@@ -119,5 +137,6 @@ RuleTable::applyRules(DagNode* subject,
 	}
       context.finished();
     }
+  subject->setUnrewritable();
   return 0;
 }

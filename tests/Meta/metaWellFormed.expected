@@ -111,7 +111,7 @@ wellFormed(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   mb 'a.Foo : 'Bar [none] .
   none
-endfm, (none).SortSet)
+endfm, (none).EmptyTypeSet)
 
 Arbitrarily taking the first as correct.
 ==========================================

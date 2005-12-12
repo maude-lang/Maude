@@ -31,8 +31,8 @@ MetaLevelOpSymbol::metaSortLeq(FreeDagNode* subject, RewritingContext& context)
     {
       Sort* s1;
       Sort* s2;
-      if (metaLevel->downSimpleSort(subject->getArgument(1), m, s1) &&
-	  metaLevel->downSimpleSort(subject->getArgument(2), m, s2))
+      if (metaLevel->downType(subject->getArgument(1), m, s1) &&
+	  metaLevel->downType(subject->getArgument(2), m, s2))
 	{
 	  return context.builtInReplace(subject,
 					metaLevel->upBool(s1->component() == s2->component()
@@ -189,6 +189,38 @@ MetaLevelOpSymbol::metaLeastSort(FreeDagNode* subject, RewritingContext& context
 }
 
 bool
+MetaLevelOpSymbol::metaMaximalAritySet(FreeDagNode* subject, RewritingContext& context)
+{
+  //
+  //  maximalAritySet : Module Qid TypeList Sort ~> TypeListSet
+  //
+  if (ImportModule* m = metaLevel->downModule(subject->getArgument(0)))
+    {
+      int id;
+      Vector<Sort*> arity;
+      Sort *target;
+      if (metaLevel->downQid(subject->getArgument(1), id) &&
+	  metaLevel->downTypeList(subject->getArgument(2), m, arity) &&
+	  metaLevel->downSimpleSort(subject->getArgument(3), m, target))
+	{
+	  int nrArgs = arity.size();
+	  Vector<ConnectedComponent*> domain(nrArgs);
+	  for (int i = 0; i < nrArgs; i++)
+	    domain[i] = arity[i]->component();
+	  if (Symbol* s = m->findSymbol(id, domain, target->component()))
+	    {
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject,
+					    metaLevel->upTypeListSet(s->getOpDeclarations(),
+								     s->getMaximalOpDeclSet(target),
+								     qidMap));
+	    }
+	}
+    }
+  return false;
+}
+
+bool
 MetaLevelOpSymbol::metaCompleteName(FreeDagNode* subject, RewritingContext& context)
 {
   if (MixfixModule* m = metaLevel->downModule(subject->getArgument(0)))
@@ -209,7 +241,7 @@ MetaLevelOpSymbol::metaLesserSorts(FreeDagNode* subject, RewritingContext& conte
   if (MixfixModule* m = metaLevel->downModule(subject->getArgument(0)))
     {
       Sort* s;
-      if (metaLevel->downSimpleSort(subject->getArgument(1), m, s))
+      if (metaLevel->downType(subject->getArgument(1), m, s))
 	{
 	  ConnectedComponent* component = s->component();
 	  int nrSorts = component->nrSorts();
@@ -233,7 +265,7 @@ MetaLevelOpSymbol::metaMaximalSorts(FreeDagNode* subject, RewritingContext& cont
     {
       Sort* k;
       if (metaLevel->downType(subject->getArgument(1), m, k) &&
-	  k->index() == Sort::ERROR_SORT)
+	  k->index() == Sort::KIND)
 	{
 	  ConnectedComponent* component = k->component();
 	  int nrMaximalSorts = component->nrMaximalSorts();
@@ -253,7 +285,7 @@ MetaLevelOpSymbol::metaMinimalSorts(FreeDagNode* subject, RewritingContext& cont
     {
       Sort* k;
       if (metaLevel->downType(subject->getArgument(1), m, k) &&
-	  k->index() == Sort::ERROR_SORT)
+	  k->index() == Sort::KIND)
 	{
 	  ConnectedComponent* component = k->component();
 	  int nrSorts = component->nrSorts();
@@ -277,8 +309,8 @@ MetaLevelOpSymbol::metaGlbSorts(FreeDagNode* subject, RewritingContext& context)
     {
       Sort* s1;
       Sort* s2;
-      if (metaLevel->downSimpleSort(subject->getArgument(1), m, s1) &&
-	  metaLevel->downSimpleSort(subject->getArgument(2), m, s2))
+      if (metaLevel->downType(subject->getArgument(1), m, s1) &&
+	  metaLevel->downType(subject->getArgument(2), m, s2))
 	{
 	  Vector<Sort*> glbSorts;
 	  ConnectedComponent* component = s1->component();
@@ -286,12 +318,7 @@ MetaLevelOpSymbol::metaGlbSorts(FreeDagNode* subject, RewritingContext& context)
 	    {
 	      NatSet leqSorts(s1->getLeqSorts());
 	      leqSorts.intersect(s2->getLeqSorts());
-	      Vector<int> glbIndices;
-	      component->findMaximalSorts(leqSorts, glbIndices);
-	      int nrSorts = glbIndices.length();
-	      glbSorts.expandTo(nrSorts);
-	      for (int i = 0; i < nrSorts; i++)
-		glbSorts[i] = component->sort(glbIndices[i]);
+	      component->findMaximalSorts(leqSorts, glbSorts);
 	    }
 	  return context.builtInReplace(subject, metaLevel->upSortSet(glbSorts));
 	}
@@ -364,14 +391,16 @@ MetaLevelOpSymbol::metaRewrite(FreeDagNode* subject, RewritingContext& context)
               RewritingContext* objectContext =
                 context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
 	      //cerr << "after create\n"; RootContainer::dump(cerr);
-              m->resetRules();
               m->protect();
-              objectContext->ruleRewrite(limit);
+              //m->saveHiddenState();
+              m->resetRules();
+	      objectContext->ruleRewrite(limit);
 	      //cerr << "after run\n"; RootContainer::dump(cerr);
               context.addInCount(*objectContext);
               d = metaLevel->upResultPair(objectContext->root(), m);
               delete objectContext;
 	      //cerr << "after delete\n"; RootContainer::dump(cerr);
+	      //m->restoreHiddenState();
               (void) m->unprotect();
               return context.builtInReplace(subject, d);
             }
@@ -401,8 +430,9 @@ MetaLevelOpSymbol::metaFrewrite(FreeDagNode* subject, RewritingContext& context)
 	      safeCast(ObjectSystemRewritingContext*, objectContext)->
 		setObjectMode(ObjectSystemRewritingContext::FAIR);
 	      //cerr << "after create\n"; RootContainer::dump(cerr);
-	      m->resetRules();
 	      m->protect();
+	      //m->saveHiddenState();
+	      m->resetRules();
 	      objectContext->fairRewrite(limit, gas);
 	      //cerr << "after run\n"; RootContainer::dump(cerr);
 	      objectContext->root()->computeTrueSort(*objectContext);
@@ -411,6 +441,7 @@ MetaLevelOpSymbol::metaFrewrite(FreeDagNode* subject, RewritingContext& context)
 	      d = metaLevel->upResultPair(objectContext->root(), m);
 	      delete objectContext;
 	      //cerr << "after delete\n"; RootContainer::dump(cerr);
+	      //m->restoreHiddenState();
 	      (void) m->unprotect();
 	      return context.builtInReplace(subject, d);
 	    }
@@ -468,14 +499,18 @@ MetaLevelOpSymbol::metaParse(FreeDagNode* subject, RewritingContext& context)
 bool
 MetaLevelOpSymbol::metaPrettyPrint(FreeDagNode* subject, RewritingContext& context)
 {
-  if (MixfixModule* m = metaLevel->downModule(subject->getArgument(0)))
+  int printFlags;
+  if (metaLevel->downPrintOptionSet(subject->getArgument(2), printFlags))
     {
-      if (Term* t = metaLevel->downTerm(subject->getArgument(1), m))
+      if (MixfixModule* m = metaLevel->downModule(subject->getArgument(0)))
 	{
-	  Vector<int> buffer;
-	  m->bufferPrint(buffer, t);
-	  t->deepSelfDestruct();
-	  return context.builtInReplace(subject, metaLevel->upQidList(buffer));
+	  if (Term* t = metaLevel->downTerm(subject->getArgument(1), m))
+	    {
+	      Vector<int> buffer;
+	      m->bufferPrint(buffer, t, printFlags);
+	      t->deepSelfDestruct();
+	      return context.builtInReplace(subject, metaLevel->upQidList(buffer));
+	    }
 	}
     }
   return false;

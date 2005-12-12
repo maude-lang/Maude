@@ -26,41 +26,44 @@
 #ifndef _moduleDatabase_hh_
 #define _moduleDatabase_hh_
 #include <map>
-#include "intSet.hh"
+#include <set>
+#include "importModule.hh"
 
 class ModuleDatabase
 {
   NO_COPYING(ModuleDatabase);
 
 public:
+  typedef map<int, ImportModule::ImportMode> ImportMap;
+  typedef set<int> ImportSet;
+
   ModuleDatabase(){}
-  ~ModuleDatabase();
 
   bool insertModule(int name, PreModule* module);  // true if existing module displaced
   PreModule* getModule(int name) const;  // 0 if doesn't exist
   bool deleteModule(int name);  // true if module deleted
-
-  void setInclude(Token name, bool polarity);
+  void deleteNamedModules();
+  void setAutoImport(ImportModule::ImportMode importMode, Token name, bool polarity);
   void setOmodInclude(Token name, bool polarity);
-  const IntSet& getIncludes() const;
-  const IntSet& getOmodIncludes() const;
-  void showNamedModules() const;
+  const ImportMap& getAutoImports() const;
+  const ImportSet& getOmodIncludes() const;
+  void showNamedModules(ostream& s) const;
 
 private:
   typedef map<int, PreModule*> ModuleMap;
 
   ModuleMap moduleMap;
-  IntSet defaultIncludes;
-  IntSet defaultOmodIncludes;
+  ImportMap autoImports;
+  ImportSet defaultOmodIncludes;
 };
 
-inline const IntSet&
-ModuleDatabase::getIncludes() const
+inline const ModuleDatabase::ImportMap&
+ModuleDatabase::getAutoImports() const
 {
-  return defaultIncludes;
+  return autoImports;
 }
 
-inline const IntSet&
+inline const ModuleDatabase::ImportSet&
 ModuleDatabase::getOmodIncludes() const
 {
   return defaultOmodIncludes;

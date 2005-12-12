@@ -41,6 +41,7 @@ public:
     {
       KIND = 0,
       ERROR_SORT = 0,
+      FIRST_USER_SORT = 1,
       SORT_UNKNOWN = -1
     };
 

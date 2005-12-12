@@ -290,7 +290,7 @@ AU_LhsAutomaton::greedyMatchVariableBlock(ArgVec<DagNode*>& args,
 	    {
 	      tv.firstSubject = firstSubject;  // take nothing
 	      tv.lastSubject = firstSubject - 1;
-	      DebugAdvisory("1 tv.firstSubject " << tv.firstSubject);
+	      //DebugAdvisory("1 tv.firstSubject " << tv.firstSubject);
 	    }
 	  else
 	    return false;
@@ -314,7 +314,7 @@ AU_LhsAutomaton::greedyMatchVariableBlock(ArgVec<DagNode*>& args,
 	    {
 	      tv.firstSubject = pos;  // take nothing
 	      tv.lastSubject = pos - 1;
-	      DebugAdvisory("2 tv.firstSubject " << tv.firstSubject);
+	      //DebugAdvisory("2 tv.firstSubject " << tv.firstSubject);
 	    }
 	  else
 	    {
@@ -330,7 +330,7 @@ AU_LhsAutomaton::greedyMatchVariableBlock(ArgVec<DagNode*>& args,
 		}
 	      tv.firstSubject = tv.lastSubject = pos++;  // take first available
 	      --spare;
-	      DebugAdvisory("3 tv.firstSubject " << tv.firstSubject);
+	      //DebugAdvisory("3 tv.firstSubject " << tv.firstSubject);
 	    }
 	}
       else
@@ -365,7 +365,7 @@ AU_LhsAutomaton::greedyMatchVariableBlock(ArgVec<DagNode*>& args,
 	      leftExtend = false;
 	    }
 	  tv.firstSubject = tv.lastSubject = pos++;
-	  DebugAdvisory("4 tv.firstSubject " << tv.firstSubject);
+	  //DebugAdvisory("4 tv.firstSubject " << tv.firstSubject);
 	}
     }
   if (leftExtend)

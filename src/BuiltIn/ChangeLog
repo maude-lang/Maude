@@ -1,3 +1,191 @@
+2005-09-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.cc (eqRewrite): use GCD where algorithm ==
+	SYSTEMS_CHOICE and number of variables is <= number of equations +
+	1
+
+2005-09-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.cc (eqRewrite): init maxRowNr and maxColNr to -1
+	here; check that maxRowNr is >= 0 after downing stuff
+	(downMatrix): don't init matrix, maxRowNr and maxColNr here
+	(eqRewrite): revert to returning empty homogenous set if
+	inhomogenous set is empty
+
+2005-08-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSignature.cc (MACRO): added stringSymbol
+
+	* matrixOpSymbol.hh (class MatrixOpSymbol): added enum Algorithm
+	and decl for downAlgorithm()
+
+	* matrixOpSymbol.cc (downAlgorithm): addded
+	(eqRewrite): use downAlgorithm()
+
+2005-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.cc (eqRewrite): code cleaning
+	(upSet): code cleaning
+	(upVector): code cleaning
+	(downVector): clear vec
+	(downVectorEntry): clear new vec entries after resize()
+	(downMatrix): clear matrix
+	(downMatrixEntry): optimize
+
+2005-08-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.hh (class MatrixOpSymbol): updated dec for
+	upVector()
+
+	* matrixOpSymbol.cc (upVector): work with IntVec
+	(eqRewrite): use class MpzSystem
+
+	* matrixOpSymbol.hh (class MatrixOpSymbol): added typedef IntVec
+
+2005-08-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.hh (class MatrixOpSymbol): updated decls for
+	typedef SparseVector; deleted decl for downMatrixEntry(); updated
+	decls for downVectorEntry() and downVector()
+
+	* matrixOpSymbol.cc (downCoeff): deleted
+	(downMatrixEntry): use getNumber()
+	(downVectorEntry): rewritten
+	(downVector): updated
+
+	* numberOpSymbol.cc (getNumber): added
+
+	* numberOpSymbol.hh (class NumberOpSymbol): added decl for
+	getNumber()
+
+===================================Maude86c===========================================
+
+2004-10-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.cc (eqRewrite): quick hack to test DiophantineSystem3 
+
+2004-10-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.cc (getDataAttachments): return natSystemSolve as data
+	(eqRewrite): return nonempty homogenous solution set only if
+	inhomogenous nonempty
+
+2004-09-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.cc (downMatrixEntry): fixed bug where we were
+	returning true even after failing
+	(upVector): fixed bug where we were generating null pointer vector
+	entries
+
+2004-09-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.hh (class MatrixOpSymbol): added decls for new
+	member functions
+
+	* matrixOpSymbol.cc (downVector): added
+	(downVectorEntry): added
+	(downCoeff): added
+	(downMatrixEntry): added
+	(downMatrix): added
+
+	* numberOpSymbol.hh (class NumberOpSymbol): commented out
+	declarations for makeNegDag(), isNeg(), getNeg()
+	(getMinusSymbol): added
+
+	* matrixOpSymbol.cc (upSet): added
+	(upVector): added
+
+2004-09-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.cc: created
+
+	* matrixOpSymbol.hh: created
+
+	* matrixOpSignature.cc: created
+
+2004-09-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatOpSymbol.cc (getDataAttachments): fixed bug where we were
+	returning NumberSymbol rather than FloatOpSymbol
+
+2004-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NumberOpSymbol.cc (getDataAttachments): handle min and max
+	(eqRewrite2): added min and max
+
+===================================Maude85===========================================
+
+2004-06-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatOpSymbol.cc (safePow): fixed 0.0 ^ -1.0 = Infinity issue on
+	certain plaforms
+	
+===================================Maude84d===========================================
+
+2004-06-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* randomOpSymbol.cc (attachData): call
+	NumberOpSymbol::attachData() for consistancy
+	(getDataAttachments): call NumberOpSymbol::getDataAttachments()
+	for consistancy
+
+	* counterSymbol.cc (attachData): call NumberOpSymbol::attachData()
+	for consistancy
+	(getDataAttachments): call NumberOpSymbol::getDataAttachments()
+	for consistancy
+
+	* numberOpSymbol.cc (getDataAttachments): handle NONE case
+	gracefully
+
+2004-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* counterSymbol.cc (resetRules): call NumberOpSymbol::resetRules()
+	(saveHiddenState): added
+	(restoreHiddenState): added
+
+	* counterSymbol.hh (class CounterSymbol): added decl for
+	saveHiddenState() and restoreHiddenState(); added data member
+	currentValueStack
+
+	* counterSymbol.cc (reset): becomes resetRules()
+
+	* counterSymbol.hh (class CounterSymbol): replace reset() decl
+	with resetRules() decl
+
+2004-06-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* builtIn.hh: added decls for class RandomOpSymbol and class
+	CounterSymbol
+
+	* numberOpSymbol.hh: #include "gmpxx.h"
+
+	* counterSymbol.hh: created
+
+	* counterSymbol.cc: created
+
+2004-06-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* randomOpSymbol.hh (setGlobalSeed): added
+
+	* randomOpSymbol.cc: created
+
+	* randomOpSymbol.hh: created
+	
+===================================Maude84c===========================================
+
+2004-05-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_NumberOpSymbol.cc (getDataAttachments): fixed bug where we
+	were reporting our id hook as NumberOpSymbol
+
+	* CUI_NumberOpSymbol.cc (getDataAttachments): fixed bug where we
+	were reporting our id hook as NumberOpSymbol
+
+	* numberOpSymbol.cc (eqRewrite): added more detailed CantHappen()
+	message
+	
+===================================Maude84a===========================================
+
 2003-11-10  Steven Eker  <eker@goo.csl.sri.com>
 
 	* stringOpSymbol.cc (getDataAttachments): fixed bug where we were

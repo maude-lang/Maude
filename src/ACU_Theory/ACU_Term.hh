@@ -39,7 +39,7 @@ public:
   //
   RawArgumentIterator* arguments();
   void deepSelfDestruct();
-  Term* deepCopy2(SymbolMap* map) const;
+  Term* deepCopy2(SymbolMap* translator) const;
   Term* normalize(bool full, bool& changed);
   int compareArguments(const Term* other) const;
   int compareArguments(const DagNode* other) const;
@@ -82,7 +82,7 @@ private:
 
   struct CP_Sequence;
 
-  ACU_Term(const ACU_Term& original, SymbolMap* map);
+  ACU_Term(const ACU_Term& original, ACU_Symbol* symbol, SymbolMap* translator);
   bool normalizeAliensAndFlatten();
   static bool pairLt(const Pair& p1, const Pair& p2);
   static void weakConstraintPropagation(const Vector<Pair>& aliens,

@@ -203,6 +203,39 @@ Interpreter::showSearchPath(int stateNr)
 }
 
 void
+Interpreter::showSearchPathLabels(int stateNr)
+{
+  if (savedRewriteSequenceSearch == 0)
+    {
+      IssueWarning("no state graph.");
+      return;
+    }
+  if (stateNr < 0 || stateNr >= savedRewriteSequenceSearch->getNrStates())
+    {
+      IssueWarning("bad state number.");
+      return;
+    }
+  Vector<int> steps;
+  for (int i = stateNr; i != NONE; i = savedRewriteSequenceSearch->getStateParent(i))
+    steps.append(i);
+
+  int i = steps.length() - 2;
+  if (i < 0)
+    cout << "Empty path.\n";
+  else
+    { 
+      for (; i >= 0; i--)
+	{
+	  const Label& label = savedRewriteSequenceSearch->getStateRule(steps[i])->getLabel();
+	  if (label.id() == NONE)
+	    cout << "(unlabeled rule)\n";
+	  else
+	    cout << &label << '\n';
+	}
+    }
+}
+
+void
 Interpreter::showSearchGraph()
 {
   if (savedRewriteSequenceSearch == 0)

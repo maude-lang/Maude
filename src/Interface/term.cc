@@ -46,6 +46,7 @@
 #include "rhsBuilder.hh"
 #include "trivialRhsAutomaton.hh"
 #include "copyRhsAutomaton.hh"
+#include "symbolMap.hh"
 
 //	variable class definitions
 #include "variableSymbol.hh"
@@ -337,6 +338,19 @@ Term::greedySafe(const VariableInfo& variableInfo, const NatSet& boundUniquely) 
   badVariables.insert(contextSet);
   badVariables.intersect(occursSet);
   return boundUniquely.contains(badVariables);
+}
+
+Term*
+Term::instantiate2(const Vector<Term*>& varBindings, SymbolMap* translator)
+{
+  //
+  //	Naive implementation. Doesn't work for variables or any subclass
+  //	with hidden data. Possibly inefficient in other cases.
+  //
+  Vector<Term*> args;
+  for (ArgumentIterator a(*this); a.valid(); a.next())
+    args.append(a.argument()->instantiate2(varBindings, translator));
+  return translator->findTargetVersionOfSymbol(topSymbol)->makeTerm(args);
 }
 
 #ifdef COMPILER

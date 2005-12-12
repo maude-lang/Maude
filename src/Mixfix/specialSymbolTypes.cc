@@ -49,3 +49,7 @@
   MACRO(ACU_NumberOpSymbol, SymbolType::ACU_NUMBER_OP_SYMBOL)
   MACRO(CUI_NumberOpSymbol, SymbolType::CUI_NUMBER_OP_SYMBOL)
   MACRO(DivisionSymbol, SymbolType::DIVISION_SYMBOL)
+  MACRO(RandomOpSymbol, SymbolType::RANDOM_OP_SYMBOL)
+  MACRO(MatrixOpSymbol, SymbolType::MATRIX_OP_SYMBOL)
+  MACRO(CounterSymbol, SymbolType::COUNTER_SYMBOL)
+  MACRO(SocketManagerSymbol, SymbolType::SOCKET_MANAGER_SYMBOL)

@@ -29,7 +29,6 @@
 #include "symbolMap.hh"
 #include "pointerMap.hh"
 
-
 class ImportTranslation : public SymbolMap
 {
   NO_COPYING(ImportTranslation);
@@ -37,20 +36,40 @@ class ImportTranslation : public SymbolMap
 public:
   ImportTranslation(ImportModule* target, Renaming* renaming = 0);
   void push(Renaming* renaming, ImportModule* target);
+  //
+  //	These three functions are required by our base class.
+  //
   Symbol* translate(Symbol* symbol);
+  Term* translateTerm(const Term* term);
+  Symbol* findTargetVersionOfSymbol(Symbol* symbol);
+  //
+  //	Other public functions that we provide.
+  //
   Sort* translate(const Sort* sort);
   ConnectedComponent* translate(const ConnectedComponent* component);
   int translateLabel(int id);
 
 private:
+  ImportTranslation();
+
+  typedef list<Renaming*> RenamingList;
+  typedef list<ImportModule*> ModuleList;
+
   static ConnectedComponent* translate(Renaming* renaming,
 				       ImportModule* target,
 				       const ConnectedComponent* old);
+  Symbol* translateRegularSymbol(Symbol* symbol,
+				 RenamingList::const_iterator& opToTerm) const;
 
-  list<Renaming*> renamings;
-  list<ImportModule*> targets;
+  RenamingList renamings;
+  ModuleList targets;
   PointerMap directMap;
 };
+
+inline
+ImportTranslation::ImportTranslation()
+{
+}
 
 inline ConnectedComponent*
 ImportTranslation::translate(const ConnectedComponent* component)

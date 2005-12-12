@@ -1,0 +1,196 @@
+Maude> ==========================================
+rewrite in COUNTER-TEST : counter .
+rewrites: 1
+result Zero: 0
+==========================================
+rewrite in COUNTER-TEST : f(11) .
+rewrites: 23
+result List: 0 1 2 3 4 5 6 7 8 9 10
+==========================================
+rewrite in COUNTER-TEST : f(11) .
+rewrites: 23
+result List: 0 1 2 3 4 5 6 7 8 9 10
+==========================================
+rewrite in COUNTER-TEST : f(11) .
+rewrites: 23
+result List: 11 12 13 14 15 16 17 18 19 20 21
+==========================================
+rewrite in COUNTER-TEST : f(11) .
+rewrites: 23
+result List: 0 1 2 3 4 5 6 7 8 9 10
+==========================================
+rewrite in COUNTER-TEST2 : random(counter) .
+rewrites: 2
+result NzNat: 2357136044
+==========================================
+rewrite in COUNTER-TEST2 : f(11) .
+rewrites: 34
+result List: 2357136044 2546248239 3071714933 3626093760 2588848963 3684848379
+    2340255427 3638918503 1819583497 2678185683 2774094101
+==========================================
+rewrite in COUNTER-TEST2 : f(100) .
+rewrites: 301
+result List: 2357136044 2546248239 3071714933 3626093760 2588848963 3684848379
+    2340255427 3638918503 1819583497 2678185683 2774094101 1650906866
+    1879422756 1277901399 3830135878 243580376 4138900056 1171049868 1646868794
+    2051556033 3400433126 3488238119 2271586391 2061486254 2439732824
+    1686997841 3975407269 3590930969 305097549 1449105480 374217481 2783877012
+    86837363 1581585360 3576074995 4110950085 3342157822 602801999 3736673711
+    3736996288 4203133778 2034131043 3432359896 3439885489 1982038771
+    2235433757 3352347283 2915765395 507984782 3095093671 2748439840 2499755969
+    615697673 2308000441 4057322111 3258229280 2241321503 454869706 1780959476
+    2034098327 1136257699 800291326 3325308363 3165039474 1959150775 930076700
+    2441405218 580757632 80701568 1392175012 2652724277 642848645 2628931110
+    954863080 2649711348 1659957521 4053367119 3876630916 2928395881 1932520490
+    1544074682 2633087519 1877037944 3875557633 2996303169 426405863 258666409
+    4165298233 2863741219 2805215078 2880367735 734051083 903586222 1538251858
+    553734235 3224172416 1354754446 2610612835 1562125877 1396067212
+==========================================
+rewrite in FOO : a .
+rewrites: 1
+result Foo: b
+==========================================
+rewrite in FOO : a .
+rewrites: 1
+result Foo: b
+==========================================
+rewrite in FOO : a .
+rewrites: 1
+result Foo: c
+==========================================
+rewrite in FOO : a .
+rewrites: 1
+result Foo: d
+==========================================
+rewrite in FOO : a .
+rewrites: 1
+result Foo: e
+==========================================
+rewrite in FOO : a .
+rewrites: 1
+result Foo: b
+==========================================
+rewrite in FOO : a .
+rewrites: 1
+result Foo: b
+==========================================
+rewrite in COUNTER-TEST3 : f(4) .
+*********** equation
+eq f(s N) = counter f(N) .
+N --> 3
+f(4)
+--->
+counter f(3)
+*********** equation
+eq f(s N) = counter f(N) .
+N --> 2
+f(3)
+--->
+counter f(2)
+*********** equation
+eq f(s N) = counter f(N) .
+N --> 1
+f(2)
+--->
+counter f(1)
+*********** equation
+eq f(s N) = counter f(N) .
+N --> 0
+f(1)
+--->
+counter f(0)
+*********** equation
+eq f(0) = nil .
+empty substitution
+f(0)
+--->
+nil
+*********** rule
+(built-in rule for symbol counter)
+counter
+--->
+0
+0
+*********** rule
+(built-in rule for symbol counter)
+counter
+--->
+1
+1
+==========================================
+rewrite in COUNTER-TEST3 : counter .
+rewrites: 1
+result Zero: 0
+rewrites: 9
+result List: 0 1 1 2
+==========================================
+frewrite in COUNTER-TEST3 : f(4) .
+*********** equation
+eq f(s N) = counter f(N) .
+N --> 3
+f(4)
+--->
+counter f(3)
+*********** equation
+eq f(s N) = counter f(N) .
+N --> 2
+f(3)
+--->
+counter f(2)
+*********** equation
+eq f(s N) = counter f(N) .
+N --> 1
+f(2)
+--->
+counter f(1)
+*********** equation
+eq f(s N) = counter f(N) .
+N --> 0
+f(1)
+--->
+counter f(0)
+*********** equation
+eq f(0) = nil .
+empty substitution
+f(0)
+--->
+nil
+*********** rule
+(built-in rule for symbol counter)
+counter
+--->
+0
+0
+*********** rule
+(built-in rule for symbol counter)
+counter
+--->
+1
+1
+==========================================
+rewrite in COUNTER-TEST3 : counter .
+rewrites: 1
+result Zero: 0
+rewrites: 9
+result List: 0 1 1 2
+==========================================
+rewrite [4] in COUNTER-TEST3 : f(8) .
+rewrites: 13
+result [List]: 0 1 2 3 counter counter counter counter
+rewrites: 4
+result List: 0 1 2 3 4 5 6 7
+==========================================
+rewrite in COUNTER-TEST4 : f(4) .
+rewrites: 13
+result List: 0 0 1 1 2 2 3 3
+==========================================
+search in COUNTER-TEST4 : f(4) =>* L:List .
+
+No solution.
+states: 1  rewrites: 5
+==========================================
+reduce in META-LEVEL : metaRewrite(['COUNTER-TEST4], '__['counter.Nat,
+    'counter.Nat], 2) .
+rewrites: 4
+result ResultPair: {'__['0.Zero,'s_['0.Zero]],'List}
+Maude> Bye.

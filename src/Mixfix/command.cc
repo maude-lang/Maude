@@ -24,22 +24,6 @@
 //	Code for general top level commands.
 //
 
-ostream&
-operator<<(ostream& s, const PreModule::Type& type)
-{
-  if (type.kind)
-    {
-      s << '[' << type.tokens[0];
-      int nrTokens = type.tokens.length();
-      for (int i = 1; i < nrTokens; i++)
-	s << ',' << type.tokens[i];
-      s << ']';
-    }
-  else
-    s << type.tokens[0];
-  return s;
-}
-
 void
 PreModule::loseFocus()
 {
@@ -60,12 +44,27 @@ PreModule::dump()
 }
 
 void
+PreModule::printSortTokenVector(ostream& s, const Vector<Token>& sorts)
+{
+  int nrTokens = sorts.size();
+  s << Token::sortName(sorts[0].code());
+  for (int i = 1; i < nrTokens; ++i)
+    s << ' ' << Token::sortName(sorts[i].code());
+}
+
+void
 PreModule::showModule(ostream& s)
 {
-  
-  if (moduleType == MixfixModule::FUNCTIONAL_MODULE)
-    s << 'f';
-  s << "mod " << this << " is\n";
+  s << MixfixModule::moduleTypeString(moduleType) << ' ' << this;
+  int nrParameters = parameters.size();
+  if (nrParameters > 0)
+    {
+      s << '{' << parameters[0].name << " :: " << parameters[0].theory;
+      for (int i = 1; i < nrParameters; ++i)
+	s << ", " << parameters[i].name << " :: " << parameters[i].theory;
+      s << '}';
+    }
+  s << " is\n";
 
   int nrImports = imports.length();
   for (int i = 0; i < nrImports; i++)
@@ -80,7 +79,9 @@ PreModule::showModule(ostream& s)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << "  sorts " << sortDecls[i] << " .\n";
+      s << "  sorts ";
+      printSortTokenVector(s, sortDecls[i]);
+      s << " .\n";
     }
 
   int nrSubsortDecls = subsortDecls.length();
@@ -88,7 +89,9 @@ PreModule::showModule(ostream& s)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << "  subsorts " << subsortDecls[i] << " .\n";
+      s << "  subsorts ";
+      printSortTokenVector(s, subsortDecls[i]);
+      s << " .\n";
     }
 
   bool follow = false;
@@ -121,7 +124,8 @@ PreModule::showModule(ostream& s)
 	return;
       s << "  " << statements[i] << " .\n";
     }
-  s << ((moduleType == MixfixModule::FUNCTIONAL_MODULE) ? "endfm\n" : "endm\n");
+
+  s << MixfixModule::moduleEndString(moduleType) << '\n';
 }
 
 void
@@ -142,14 +146,13 @@ PreModule::printOpDef(ostream&s, int defIndex)
   s << ".\n";
 }
 
-
 void
 PreModule::printAttributes(ostream& s, const OpDef& opDef)
 {
   SymbolType st = opDef.symbolType;
   if (!(st.hasFlag(SymbolType::ATTRIBUTES | SymbolType::CTOR |
 		   SymbolType::POLY | SymbolType::DITTO)) &&
-      opDef.special.empty())
+      opDef.special.empty() && opDef.metadata == NONE)
     return;
 
   const char* space = "";
@@ -278,6 +281,11 @@ PreModule::printAttributes(ostream& s, const OpDef& opDef)
       s << space;
       space = " ";
       printFormat(s, opDef.format);
+    }
+  if (opDef.metadata != NONE)
+    {
+      s << space << "metadata " << Token::name(opDef.metadata);
+      space = " ";
     }
   if (!(opDef.special.empty()))
     {

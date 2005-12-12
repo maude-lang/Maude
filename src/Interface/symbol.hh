@@ -98,6 +98,9 @@ public:
   virtual bool interSymbolPass();
   virtual void postInterSymbolPass();
   virtual void postOpDeclarationPass();
+  //
+  //	Clear state information such as caches that affects performance but not result.
+  //
   virtual void reset();
   void finalizeSortInfo();  // virtual in base class SortTable
   void fillInSortInfo(Term* subject);  // virtual in base class SortTable

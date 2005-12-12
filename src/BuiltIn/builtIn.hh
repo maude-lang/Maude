@@ -46,4 +46,7 @@ class StringTerm;
 class StringDagNode;
 class StringOpSymbol;
 
+class RandomOpSymbol;
+class CounterSymbol;
+
 #endif

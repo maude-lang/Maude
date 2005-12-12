@@ -159,3 +159,38 @@ red metaSearch(['SEARCH-TEST],
    '*,
    1,
    1) .
+
+mod SEARCH is
+  sort State .
+  ops a b c d e : -> State .
+
+  rl [a-move1] : a => b .
+  rl [a-move2] : a => c .
+  rl [b-move] : b => d .
+  rl [c-move] : c  => e .
+endm
+
+select META-LEVEL .
+red metaSearch(['SEARCH], 'a.State, 'e.State, nil, '*, unbounded, 0) .
+red metaSearch(['SEARCH], 'a.State, 'e.State, nil, '*, unbounded, 1) .
+red metaSearchPath(['SEARCH], 'a.State, 'e.State, nil, '*, unbounded, 0) .
+red metaSearchPath(['SEARCH], 'a.State, 'e.State, nil, '*, unbounded, 1) .
+
+
+mod ARITH is inc INT .
+  vars I J K L : Int .
+
+  rl I * (J + K) => I * J + I * K .
+  rl I * J + I * K => I * (J + K) .
+
+  ops a b c d e : -> Int .
+endm
+
+select META-LEVEL .
+red metaSearchPath(['ARITH],
+'_*_[
+  '_+_['a.Int, 'b.Int],
+  '_+_['c.Int, 'd.Int]
+],
+'_+_['I:Int, 'J:Int, 'K:Int, 'L:Int],
+nil, '*, unbounded, 0) .

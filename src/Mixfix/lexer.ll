@@ -45,6 +45,7 @@
 #include "lexerAux.hh"
 #include "main.hh"
 #include "userLevelRewritingContext.hh"
+#include "interpreter.hh"
 
 //	bison generated token file
 #include "surface.h"
@@ -102,9 +103,9 @@ in					RETURN(KW_IN)
 }
 
 <INITIAL>{
-fmod|obj				RETURN(KW_FMOD)  // needed for FileTable
-mod					RETURN(KW_MOD)   // needed for FileTable
-omod					RETURN(KW_OMOD)   // needed for FileTable
+th|fth|mod|fmod|obj			RETURN(KW_MOD)  // need to know which one we saw
+omod					RETURN(KW_OMOD)
+view					RETURN(KW_VIEW);
 load					return KW_LOAD;
 pwd					return KW_PWD;
 cd					return KW_CD;
@@ -138,7 +139,7 @@ advise|advisory|advisories		return KW_ADVISE;
 verbose					return KW_VERBOSE;
 do					return KW_DO;
 clear					return KW_CLEAR;
-context					return KW_CONTEXT;
+body					return KW_BODY;
 whole					return KW_WHOLE;
 select					return KW_SELECT;
 deselect				return KW_DESELECT;
@@ -162,16 +163,19 @@ cmd|command				return KW_CMD;
 all					return KW_ALL;
 modules					return KW_MODULES;
 module					return KW_MODULE;
+views					return KW_VIEWS;
 sort|sorts				return KW_SORTS;
 op|ops					return KW_OPS;
 var|vars				return KW_VARS;
 mb|mbs					return KW_MBS;
 eq|eqs					return KW_EQS;
-rl|rls					return KW_RLS;
+rl|rls|rule|rules			return KW_RLS;
 summary					return KW_SUMMARY;
 kinds|components			return KW_KINDS;
 compile|compiler			return KW_COMPILE;
 count					return KW_COUNT;
+protect					return KW_PROTECT;
+extend					return KW_EXTEND;
 include					return KW_INCLUDE;
 exclude					return KW_EXCLUDE;
 debug					return KW_DEBUG;
@@ -183,6 +187,7 @@ dump					return KW_DUMP;
 break					return KW_BREAK;
 breakdown				return KW_BREAKDOWN;
 path					return KW_PATH;
+label|labels				return KW_LABEL;
 profile					return KW_PROFILE;
 number					return KW_NUMBER;
 rat|rational				return KW_RAT;
@@ -221,6 +226,7 @@ rat|rational				return KW_RAT;
   */
 <ID_MODE>{
 to					RETURN(KW_TO)
+from					RETURN(KW_FROM)
 label					RETURN(KW_LABEL)
 assoc|associative			RETURN(KW_ASSOC)
 comm|commutative			RETURN(KW_COMM)
@@ -231,6 +237,7 @@ left					RETURN(KW_LEFT)
 right					RETURN(KW_RIGHT)
 prec|precedence				RETURN(KW_PREC)
 gather					RETURN(KW_GATHER)
+metadata				RETURN(KW_METADATA)
 strat|strategy				RETURN(KW_STRAT)
 frozen					RETURN(KW_FROZEN)
 poly|polymorphic			RETURN(KW_POLY)
@@ -261,14 +268,15 @@ eq					RETURN(KW_EQ)
 ceq|cq					RETURN(KW_CEQ)
 rl					RETURN(KW_RL)
 crl					RETURN(KW_CRL)
-endfm|endo|jbo				RETURN(KW_ENDFM)
-endm					RETURN(KW_ENDM)
-endom					RETURN(KW_ENDOM)
+end(th|fth|m|fm|om|o)|jbo		RETURN(KW_ENDM)
+endv					RETURN(KW_ENDV)
 "->"					RETURN(KW_ARROW)
 "=>"					RETURN(KW_ARROW2)
 "~>"					RETURN(KW_PARTIAL)
-[:()\[\].,<=|+*]			RETURN(*yytext)
-{maudeId}|[{}]				FIX_UP(IDENTIFIER)
+"::"					RETURN(KW_COLON2)
+[:()\[\]{}.,<=|+*]			RETURN(*yytext)
+{maudeId}"."				FIX_UP(ENDS_IN_DOT)
+{maudeId}				FIX_UP(IDENTIFIER)
 }
 
 <FILE_NAME_MODE>{

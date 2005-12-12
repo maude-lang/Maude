@@ -1,3 +1,31 @@
+2005-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (findEagerVariables, markEagerArguments): removed
+	unnecessay static_cast
+
+	* freeTerm.hh (class FreeTerm): updated decls for SymbolMap*
+	version of ctor
+	(symbol): added
+
+	* freeTerm.cc (FreeTerm): SymbolMap* version: insist that symbol
+	is a FreeSymbol
+	(deepCopy2): handle translation to non-FreeSymbol
+
+2005-06-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.hh (class FreeTerm): updated decls for SymbolMap*
+	version of ctor and deepCopy2()
+
+	* freeTerm.cc (FreeTerm): rewrote SymbolMap* version
+	(deepCopy2): rewritten
+
+===================================Maude86b===========================================
+
+2004-10-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (FreeDagNode): removed parens from DagNode* to
+	appease g++ 2.4.2
+
 2003-09-02  Steven Eker  <eker@goo.csl.sri.com>
 
 	* freeSymbol.cc (complexStrategy): use applyReplaceNoOwise()

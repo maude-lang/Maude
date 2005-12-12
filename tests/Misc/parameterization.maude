@@ -1,0 +1,340 @@
+set show timing off .
+
+*** check renaming instantiation
+*** trivial case: no parameterized sorts in renaming
+
+fmod FOO{X :: TRIV, Y :: TRIV} is
+  sort Foo{X,Y} .
+  op f : Bool -> Bool .
+endfm
+
+fmod BAR{Z :: TRIV} is
+  inc FOO{Z, Nat} .
+endfm
+
+fmod BAZ is
+  inc (BAR * (op f : Bool -> Bool to g)){Rat} .
+endfm
+
+show all .
+show modules .
+
+*** parameterized sorts in renaming
+
+fmod FOO{X :: TRIV, Y :: TRIV} is
+  sort Foo{X,Y} .
+  op f : Foo{X,Y} -> Foo{X,Y} .
+endfm
+
+fmod BAR{Z :: TRIV} is
+  inc FOO{Z, Nat} .
+endfm
+
+fmod BAZ is
+  inc (BAR * (sort Foo{Z, Nat} to Bar{Nat, Z},
+              op f : Foo{Z, Nat} -> Foo{Z, Nat} to g)
+      ){Rat} .
+endfm
+
+show all .
+show modules .
+
+*** parameter has the same name
+
+fmod FOO{X :: TRIV, Y :: TRIV} is
+  sort Foo{X,Y} .
+  op f : Foo{X,Y} -> Foo{X,Y} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO{X, Nat} .
+endfm
+
+fmod BAZ is
+  inc (BAR * (sort Foo{X, Nat} to Bar{Nat, X},
+              op f : Foo{X, Nat} -> Foo{X, Nat} to g)
+      ){Rat} .
+endfm
+
+show all .
+show modules .
+
+*** recapture of bound parameters instantiated by a theory-view
+
+fmod FOO{X :: TRIV} is
+  sort Foo{X} .
+  op f : Foo{X} -> Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO{X} .
+  sort Bar{X} .
+  op g : Bar{X} -> Foo{X} .
+endfm
+
+fmod BAZ is
+  inc (BAR * (sort Foo{X} to Foo'{X},
+              sort Bar{X} to Bar'{X},
+              op f : Foo{X} -> Foo{X} to f',
+              op g : Bar{X} -> Foo{X} to g')
+             ){TAO-SET}{Nat<} .
+endfm
+
+show all .
+show modules .
+
+*** op->term mappings
+
+fth T is
+  sort Elt .
+  op f : Elt -> Elt .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt -> X$Elt .
+  var A : X$Elt .
+  eq g(A) = f(f(A)) .
+endfm
+
+view V from T to NAT is
+  sort Elt to Nat .
+  op f(X:Elt) to term X:Nat + 1 .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all .
+
+*** with terms occuring as identities
+
+fth T is
+  sort Elt .
+  op s : Elt -> Elt .
+  op 0 : -> Elt .
+endfth
+
+fmod M{X :: T} is
+  op _#_ : X$Elt X$Elt -> X$Elt [id: s(0)] .
+  vars A B : X$Elt .
+  eq s(A) # s(B) = s(s(A # B)) .
+endfm
+
+view V from T to NAT is
+  sort Elt to Nat .
+  op s(X:Elt) to term s X:Nat .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all .
+
+red 0 # 1 .
+
+**** mapping iter ops to terms
+
+fth T is
+  sort Elt .
+  op s : Elt -> Elt [iter] .
+  op 0 : -> Elt .
+endfth
+
+fmod M{X :: T} is
+  op f : X$Elt -> X$Elt .
+  var A : X$Elt .
+  eq f(A) = s^10(A) .
+endfm
+
+view V from T to INT is
+  sort Elt to Int .
+  op s(X:Elt) to term - X:Int .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all .
+
+fth T is
+  sort Elt .
+  op s : Elt -> Elt [iter] .
+  op 0 : -> Elt .
+endfth
+
+fmod M{X :: T} is
+  op f : X$Elt -> X$Elt .
+  var A : X$Elt .
+  eq f(A) = s^3(A) .
+endfm
+
+view V from T to INT is
+  sort Elt to Int .
+  op s(X:Elt) to term X:Int * X:Int .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all .
+
+**** mapping assoc ops to terms
+
+fth T is
+  sort Elt .
+  op f : Elt Elt -> Elt [assoc] .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt X$Elt -> X$Elt .
+  vars A B : X$Elt .
+  eq g(A, B) = f(A, B, A, B) .
+endfm
+
+view V from T to NAT is
+  sort Elt to Nat .
+  op f(X:Elt, Y:Elt) to term X:Nat + Y:Nat .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all .
+
+fth T is
+  sort Elt .
+  op f : Elt Elt -> Elt [assoc] .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt X$Elt -> X$Elt .
+  vars A B : X$Elt .
+  eq g(A, B) = f(A, B, A, B) .
+endfm
+
+view V from T to INT is
+  sort Elt to Int .
+  op f(X:Elt, Y:Elt) to term X:Int - s Y:Int .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all .
+set print mixfix off .
+show all .
+set print mixfix on .
+
+**** mapping AC ops to terms
+
+fth T is
+  sort Elt .
+  op f : Elt Elt -> Elt [assoc comm] .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt X$Elt -> X$Elt .
+  vars A B : X$Elt .
+  eq g(A, B) = f(A, B, A, B) .
+endfm
+
+show all .
+
+view V from T to NAT is
+  sort Elt to Nat .
+  op f(X:Elt, Y:Elt) to term X:Nat + Y:Nat .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all .
+
+set print mixfix off .
+
+show all .
+
+fth T is
+  sort Elt .
+  op f : Elt Elt -> Elt [assoc comm] .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt X$Elt -> X$Elt .
+  vars A B : X$Elt .
+  eq g(A, B) = f(A, B, A, B) .
+endfm
+
+show all .
+
+view V from T to INT is
+  sort Elt to Int .
+  op f(X:Elt, Y:Elt) to term X:Int - s Y:Int .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all .
+set print mixfix off .
+show all .
+set print mixfix on .
+
+*** what if toTerm contains polymorph instances?
+
+fth T is
+  sort Elt .
+  op f : Elt Elt -> Elt [assoc comm] .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt X$Elt -> X$Elt .
+  vars A B : X$Elt .
+  eq g(A, B) = f(A, B, A, B) .
+endfm
+
+show all .
+
+view V from T to NAT is
+  sort Elt to Nat .
+  op f(X:Elt, Y:Elt) to term
+   if X:Nat > Y:Nat then X:Nat else Y:Nat fi .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all .
+set print mixfix off .
+show all .
+set print mixfix off .
+
+red g(5, 4) .
+
+*** check handling of illegal stuff
+*** summing modules with free parameters
+
+fmod FOO{X :: TRIV} is
+  inc (LIST + SET){X} .
+endfm
+
+*** summing modules with bound parameters
+
+fmod FOO{X :: TRIV} is
+  inc LIST{X} + SET{X} .
+endfm
+
+*** passing a PEM in a nonfinal instantiation
+
+fmod FOO{X :: TAO-SET, Y :: TRIV} is
+  inc MAP{TAO-SET, Y}{X} .
+endfm

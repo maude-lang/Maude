@@ -23,25 +23,9 @@
 //
 //	Code for pretty printing all kinds of things.
 //
-bool MixfixModule::printMixfix = true;
-bool MixfixModule::printWithParens = false;
-bool MixfixModule::printWithAliases = true;
-bool MixfixModule::printFlat = true;
-bool MixfixModule::printGraph = false;
-bool MixfixModule::printConceal = false;
-bool MixfixModule::printFormat = true;
-IntSet MixfixModule::concealed;
+
 int MixfixModule::globalIndent = 0;
 bool MixfixModule::attributeUsed = false;
-
-void
-MixfixModule::concealSymbols(const IntSet& symbols, bool add)
-{
-  if (add)
-    concealed.insert(symbols);
-  else
-    concealed.subtract(symbols);
-}
 
 ostream&
 operator<<(ostream& s, const NamedEntity* e)
@@ -58,13 +42,13 @@ operator<<(ostream& s, const Sort* sort)
   ConnectedComponent* c = sort->component();
   if (c != 0 && sort->index() == Sort::KIND)
     {
-      s << '[' << Token::name(c->sort(1)->id());
+      s << '[' << c->sort(1);
       int nrMax = c->nrMaximalSorts();
       for (int i = 2; i <= nrMax; i++)
-	s << ',' << Token::name(c->sort(i)->id());
+	s << ',' << c->sort(i);
       return s << ']';
     }
-  return s << Token::name(sort->id());
+  return s << Token::sortName(sort->id());
 }
 
 ostream&
@@ -86,12 +70,12 @@ operator<<(ostream& s, DagNode* dagNode)
 {
   MixfixModule::globalIndent = 0;
   MixfixModule* module = static_cast<MixfixModule*>(dagNode->symbol()->getModule());
-  if (MixfixModule::printGraph)
+  if (interpreter.getPrintFlag(Interpreter::PRINT_GRAPH))
     module->graphPrint(s, dagNode);
   else
     {
       MixfixModule::ColoringInfo coloringInfo;
-      if (interpreter.getFlag(Interpreter::PRINT_COLOR))
+      if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
 	{
 	  MixfixModule::computeGraphStatus(dagNode,
 					   coloringInfo.visited,
@@ -236,7 +220,7 @@ void
 MixfixModule::printVariable(ostream& s, int name, Sort* sort) const
 {
   s << Token::name(name);
-  if (printWithAliases)
+  if (interpreter.getPrintFlag(Interpreter::PRINT_WITH_ALIASES))
     {
       AliasMap::const_iterator i = variableAliases.find(name);
       if (i != variableAliases.end() && (*i).second == sort)
@@ -248,7 +232,7 @@ MixfixModule::printVariable(ostream& s, int name, Sort* sort) const
 void
 MixfixModule::printPrefixName(ostream& s, const char* prefixName, SymbolInfo& si)
 {
-  if (printFormat && (si.format.length() == 2))
+  if (interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() == 2))
     {
       fancySpace(s, si.format[0]);
       s << prefixName;
@@ -265,7 +249,7 @@ MixfixModule::printTokens(ostream& s,
 			  const char* color)
 {
   bool noSpace = (pos == 0);
-  bool hasFormat = printFormat && (si.format.length() > 0);
+  bool hasFormat = interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
   for (;;)
     {
       int token = si.mixfixSyntax[pos++];
@@ -297,7 +281,7 @@ MixfixModule::printTails(ostream& s,
 			 bool checkForInterrupt,
 			 const char* color)
 {
-  bool hasFormat = printFormat && (si.format.length() > 0);
+  bool hasFormat = interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
   int mixfixLength = si.mixfixSyntax.length();
   for (int i = 0;;)
     {
@@ -378,7 +362,7 @@ MixfixModule::fancySpace(ostream& s, int spaceToken)
 	  }
 	default:
 	  {
-	    if (interpreter.getFlag(Interpreter::PRINT_COLOR))
+	    if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
 	      break;
 	    switch (c)
 	      {
@@ -406,7 +390,7 @@ MixfixModule::chooseDisambiguator(Symbol* s)
   //	Choose the index of a disambiguating sort for an ad-hoc overloaded symbol.
   //
   //	Return smallest non-error sort index (largest sort) that the symbol can produce
-  //	or 1 if such an index such not exist.
+  //	or 1 if such an index does not exist.
   //
   const Vector<OpDeclaration>& opDecls = s->getOpDeclarations();
   int nrOpDecls = opDecls.length();

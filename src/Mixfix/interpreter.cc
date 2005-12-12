@@ -45,11 +45,15 @@
 #include "matchSearchState.hh"
 #include "rewriteSequenceSearch.hh"
 
+//	object system class definitions
+#include "pseudoThread.hh"
+
 //	front end class definitions
 #include "timer.hh"
 #include "userLevelRewritingContext.hh"
 #include "maudemlBuffer.hh"
 #include "preModule.hh"
+#include "view.hh"
 #include "visibleModule.hh"
 #include "loopSymbol.hh"
 #include "interpreter.hh"
@@ -66,7 +70,9 @@ Interpreter::Interpreter()
   xmlBuffer = 0;
 
   flags = DEFAULT_FLAGS;
+  printFlags = DEFAULT_PRINT_FLAGS;
   currentModule = 0;
+  currentView = 0;
 
   savedContext = 0;
   savedMatchSearchState = 0;
@@ -77,6 +83,11 @@ Interpreter::Interpreter()
 
 Interpreter::~Interpreter()
 {
+  //
+  //	Must delete modules before other destruction takes place to avoid
+  //	accessing free'd stuff.
+  //
+  deleteNamedModules();
   delete xmlBuffer;
   delete xmlLog;
 }
@@ -89,6 +100,15 @@ Interpreter::setFlag(Flags flag, bool polarity)
   else
     flags &= ~flag;
   RewritingContext::setTraceStatus(flags & EXCEPTION_FLAGS);
+}
+
+void
+Interpreter::setPrintFlag(PrintFlags flag, bool polarity)
+{
+  if (polarity)
+    printFlags |= flag;
+  else
+    printFlags &= ~flag;
 }
 
 void
@@ -169,6 +189,38 @@ Interpreter::setCurrentModule(PreModule* module)
     }
 }
 
+bool
+Interpreter::setCurrentView(const Vector<Token>& viewExpr)
+{
+  switch (viewExpr.size())
+    {
+    case 0:
+      {
+	if (currentView == 0)
+	  {
+	    IssueWarning("no view expression provided and no last view.");
+	    return false;
+	  }
+	return true;
+      }
+    case 1:
+      {
+	if (View* v = getView(viewExpr[0].code()))
+	  {
+	    setCurrentView(v);
+	    return true;
+	  }
+	// fall thru
+      }
+    default:
+      {
+	IssueWarning(LineNumber(viewExpr[0].lineNumber()) <<
+		   ": no view " << QUOTE(viewExpr) << '.');
+      }
+    }
+  return false;
+}
+
 void
 Interpreter::makeClean(int lineNumber)
 {
@@ -177,6 +229,12 @@ Interpreter::makeClean(int lineNumber)
       IssueAdvisory(LineNumber(lineNumber) << ": discarding incomplete module.");
       delete currentModule;
       currentModule = 0;
+    }
+  else if (currentView != 0 && !(currentView->isComplete()))
+    {
+      IssueAdvisory(LineNumber(lineNumber) << ": discarding incomplete view.");
+      delete currentView;
+      currentView = 0;
     }
 }
 
@@ -187,32 +245,24 @@ Interpreter::addSelected(const Vector<Token>& opName)
   //  opName.contractTo(0);
 }
 
-void
-Interpreter::traceSelect(bool add)
-{
-  UserLevelRewritingContext::selectSymbols(selected, add);
-  selected.makeEmpty();
-}
 
 void
-Interpreter::breakSelect(bool add)
+Interpreter::updateSet(set<int>& target, bool add)
 {
-  UserLevelRewritingContext::selectBreakSymbols(selected, add);
-  selected.makeEmpty();
+  if (add)
+    target.insert(selected.begin(), selected.end());
+  else
+    {
+      FOR_EACH_CONST(i, set<int>, selected)
+	target.erase(*i);
+    }
+  selected.clear();
 }
 
-void
-Interpreter::traceExclude(bool add)
+bool
+Interpreter::concealedSymbol(Symbol* symbol)
 {
-  UserLevelRewritingContext::excludeModules(selected, add);
-  selected.makeEmpty();
-}
-
-void
-Interpreter::printConceal(bool polarity)
-{
-  MixfixModule::concealSymbols(selected, polarity);
-  selected.makeEmpty();
+  return getPrintFlag(PRINT_CONCEAL) && concealedSymbols.find(symbol->id()) != concealedSymbols.end();
 }
 
 void
@@ -245,11 +295,17 @@ Interpreter::showModule(bool all) const
 }
 
 void
+Interpreter::showView() const
+{
+  currentView->showView(cout);
+}
+
+void
 Interpreter::showModules(bool all) const
 {
-  showNamedModules();
+  showNamedModules(cout);
   if (all)
-    showCreatedModules();
+    showCreatedModules(cout);
 }
 
 void

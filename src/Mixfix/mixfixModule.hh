@@ -34,7 +34,6 @@
 #include "freeTheory.hh"
 #include "builtIn.hh"
 #include "token.hh"
-#include "intSet.hh"
 #include "pointerSet.hh"
 #include "symbolType.hh"
 
@@ -42,11 +41,19 @@ class MixfixModule : public ProfileModule, public MetadataStore, protected Commo
 {
   NO_COPYING(MixfixModule);
 
+  enum Bits
+  {
+    SYSTEM = 1,
+    THEORY = 2
+  };
+
 public:
   enum ModuleType
   {
-    FUNCTIONAL_MODULE,
-    SYSTEM_MODULE
+    FUNCTIONAL_MODULE = 0,
+    SYSTEM_MODULE = SYSTEM,
+    FUNCTIONAL_THEORY = THEORY,
+    SYSTEM_THEORY = SYSTEM | THEORY
   };
 
   enum GatherSymbols
@@ -66,7 +73,7 @@ public:
   //
   //	Functions to insert stuff.
   //
-  void insertLabels(const IntSet& l);
+  void insertPotentialLabels(const set<int>& l);
   Sort* addSort(int name);
   Symbol* addOpDeclaration(Token prefixName,
 			   const Vector<Sort*>& domainAndRange,
@@ -76,6 +83,7 @@ public:
 			   int prec,
 			   const Vector<int>& gather,
 			   const Vector<int>& format,
+			   int metadata,
 			   bool& firstDecl);
   void addVariableAlias(Token name, Sort* sort);
   int addPolymorph(Token prefixName,
@@ -85,7 +93,8 @@ public:
 		   const NatSet& frozen,
 		   int prec,
 		   const Vector<int>& gather,
-		   const Vector<int>& format);
+		   const Vector<int>& format,
+		   int metadata);
   void addIdentityToPolymorph(int polymorphIndex,
 			      Term* identity);
   void addIdHookToPolymorph(int polymorphIndex,
@@ -97,7 +106,6 @@ public:
   void addTermHookToPolymorph(int polymorphIndex,
 			      int purpose,
 			      Term* term);
-
   //
   //	Functions to make things.
   //
@@ -107,14 +115,6 @@ public:
   Term* makeTrueTerm();
   Term* makeBubble(int bubbleSpecIndex, const Vector<Token>& tokens, int first, int last);
 
-  static void setPrintMixfix(bool polarity);
-  static void setPrintWithParens(bool polarity);
-  static void setPrintWithAliases(bool polarity);
-  static void setPrintFlat(bool polarity);
-  static void setPrintGraph(bool polarity);
-  static void setPrintConceal(bool polarity);
-  static void setPrintFormat(bool polarity);
-  static void concealSymbols(const IntSet& symbols, bool add);
   static void printCondition(ostream& s, const Vector<ConditionFragment*>& condition);
   static void printCondition(ostream& s, const PreEquation* pe);
   static void printAttributes(ostream& s, const PreEquation* pe, int metadata);
@@ -144,6 +144,8 @@ public:
   //	Get functions.
   //
   ModuleType getModuleType() const;
+  static const char* moduleTypeString(ModuleType type);
+  static const char* moduleEndString(ModuleType type);
   SymbolType getSymbolType(Symbol* symbol) const;
   int getPrec(Symbol* symbol) const;
   void getGather(Symbol* symbol, Vector<int>& gather) const;
@@ -163,14 +165,13 @@ public:
   //
   //	Find functions.
   //
-  Sort* findSort(int name);
+  Sort* findSort(int name) const;
   Symbol* findSymbol(int name,
 		     const Vector<ConnectedComponent*>& domainComponents,
 		     ConnectedComponent* rangeComponent);
   QuotedIdentifierSymbol* findQuotedIdentifierSymbol(const ConnectedComponent* component) const;
   StringSymbol* findStringSymbol(const ConnectedComponent* component) const;
   FloatSymbol* findFloatSymbol(const ConnectedComponent* component) const;
-  int findIterSymbolIndex(int opName) const;
   int findPolymorphIndex(int polymorphName, const Vector<Sort*>& domainAndRange) const;
   //
   //	Polymorph functions.
@@ -189,6 +190,7 @@ public:
   int getPolymorphPrec(int index) const;
   void getPolymorphGather(int index, Vector<int>& gather) const;
   const Vector<int>& getPolymorphFormat(int index) const;
+  int getPolymorphMetadata(int index) const;
   bool getPolymorphDataAttachment(int index, int nr, int& purpose, Vector<int>& items) const;
   bool getPolymorphSymbolAttachment(int index, int nr, int& purpose, Symbol*& op) const;
   bool getPolymorphTermAttachment(int index, int nr, int& purpose, Term*& term) const;
@@ -204,19 +206,23 @@ public:
   void copyBubbleSpec(Symbol* originalSymbol, Symbol* newSymbol);
   void copyFixUpBubbleSpec(Symbol* originalSymbol, SymbolMap* map);
   void fixUpBubbleSpec(int bubbleSpecIndex,
-		       QuotedIdentifierSymbol* qidSymbol,
+		       Symbol* qidSymbol,
 		       Symbol* nilQidListSymbol,
 		       Symbol* qidListSymbol);
   //
   //	Pretty print functions.
   //
-  void bufferPrint(Vector<int>& buffer, Term* term);
+  void bufferPrint(Vector<int>& buffer, Term* term, int printFlags);
   static Sort* disambiguatorSort(const Term* term);
   //
   //	Misc.
   //
   static Sort* hookSort(Sort* sort);
   static ModuleType join(ModuleType t1, ModuleType t2);
+  static bool isTheory(ModuleType t);
+  bool isTheory() const;
+  static bool canImport(ModuleType t1, ModuleType t2);
+  static bool canHaveAsParameter(ModuleType t1, ModuleType t2);
 
 protected:
   static int findMatchingParen(const Vector<Token>& tokens, int pos);
@@ -357,6 +363,7 @@ private:
     Vector<int> strategy;
     NatSet frozen;
     Term* identity;
+    int metadata;
     Vector<IdHook> idHooks;
     Vector<OpHook> opHooks;
     Vector<TermHook> termHooks;
@@ -383,7 +390,7 @@ private:
 
   int nonTerminal(int componentIndex, NonTerminalType type);
   int nonTerminal(const Sort* sort, NonTerminalType type);
-  int iterSymbolNonTerminal(int iterSymbolIndex);
+  int newNonTerminal();
 
   static int domainComponentIndex(const Symbol* symbol, int argNr);
   static int mayAssoc(Symbol* symbol, int argNr);
@@ -398,6 +405,7 @@ private:
   void makeStatementProductions();
   void makeConditionProductions();
   void makeAttributeProductions();
+  void makeParameterizedSortProductions();
   void makeComponentProductions();
   void makeSymbolProductions();
   void makeVariableProductions();
@@ -433,27 +441,39 @@ private:
 		   const ConnectedComponent* leftCaptureComponent,
 		   int rightCapture,
 		   const ConnectedComponent* rightCaptureComponent,
-		   bool rangeKnown);
-  static void handleVariable(Vector<int>& buffer, Term* term);
-  static void printKind(Vector<int>& buffer, const Sort* kind);
+		   bool rangeKnown,
+		   int printFlags);
+  static void handleVariable(Vector<int>& buffer, Term* term, int printFlags);
+  static void printKind(Vector<int>& buffer, const Sort* kind, int printFlags);
+  static void printSort(Vector<int>& buffer, const Sort* sort, int printFlags);
+  static void printDotSort(Vector<int>& buffer, const Sort* sort, int printFlags);
+  static void printVarSort(Vector<int>& buffer, string& fullName, const Sort* sort, int printFlags);
 
   static int computeGraphStatus(DagNode* dagNode,
 				PointerSet& visited,
 				Vector<int>& statusVec);
 
-  bool handleIter(Vector<int>& buffer, Term* term, SymbolInfo& si, bool rangeKnown);
-  bool handleMinus(Vector<int>& buffer, Term* term, SymbolInfo& si);
+  bool handleIter(Vector<int>& buffer, 
+		  Term* term, SymbolInfo& si,
+		  bool rangeKnown,
+		  int printFlags);
+  bool handleMinus(Vector<int>& buffer,
+		   Term* term,
+		   SymbolInfo& si,
+		   int printFlags);
   bool handleDivision(Vector<int>& buffer,
 		      Term* term,
-		      SymbolInfo& si);
-
-  int printTokens(Vector<int>& buffer, const SymbolInfo& si, int pos);
+		      SymbolInfo& si,
+		      int printFlags);
+  
+  int printTokens(Vector<int>& buffer, const SymbolInfo& si, int pos, int printFlags);
   void printTails(Vector<int>& buffer,
 		  const SymbolInfo& si,
 		  int pos,
 		  int nrTails,
-		  bool needAssocParen);
-  void printPrefixName(Vector<int>& buffer, int prefixName, SymbolInfo& si);
+		  bool needAssocParen,
+		  int printFlags);
+  void printPrefixName(Vector<int>& buffer, int prefixName, SymbolInfo& si, int printFlags);
   void handleFormat(Vector<int>& buffer, int spaceToken);
 
   static Vector<int> emptyGather;
@@ -463,15 +483,6 @@ private:
   static Vector<int> gatherPrefix;
   static Vector<int> gatherPrefixPrefix;
   static Vector<int> gatherAny0;
-
-  static bool printMixfix;
-  static bool printWithParens;
-  static bool printWithAliases;
-  static bool printFlat;
-  static bool printGraph;
-  static bool printConceal;
-  static bool printFormat;
-  static IntSet concealed;
   static int globalIndent;
   static bool attributeUsed;
 
@@ -508,12 +519,16 @@ private:
   MixfixParser *parser;
   bool complexParser;
   int componentNonTerminalBase;
-  IntSet iterSymbols;
+  int nextNonTerminal;
+
+  typedef map<int, int> IntMap;
+  IntMap iterSymbols;  // maps from name code to unique nonterminals
+  IntMap leadTokens;  // maps from lead tokens of structured sort to unique nonterminals
 
   typedef map<int, Sort*> SortMap;
   SortMap sortNames;  // maps from name codes to sort pointers
-  IntSet symbolNames;
-  Vector<int> firstSymbols;
+
+  IntMap firstSymbols;  // names from name codes to index of first symbol with that name
 
   struct BubbleSpec
   {
@@ -531,8 +546,8 @@ private:
 
   int findBubbleSpecIndex(Symbol* topSymbol) const;
 
-  IntSet labels;
-  IntSet bubbleComponents;
+  set<int> potentialLabels;
+  set<int> bubbleComponents;
   Vector<BubbleSpec> bubbleSpecs;
 
   //
@@ -618,7 +633,6 @@ private:
   //
   //	Member functions for Term* -> ostream& pretty printer.
   //
-  // static void prefix(ostream& s, bool needDisambig);
   static const char* computeColor(SymbolType st);
   static void suffix(ostream& s, Term* term, bool needDisambig, const char* color);
   bool handleIter(ostream& s,
@@ -664,48 +678,6 @@ private:
   friend ostream& operator<<(ostream& s, const Term* term);
   friend ostream& operator<<(ostream& s, DagNode* dagNode);
 };
-
-inline void
-MixfixModule::setPrintMixfix(bool polarity)
-{
-  printMixfix = polarity;
-}
-
-inline void
-MixfixModule::setPrintWithParens(bool polarity)
-{
-  printWithParens = polarity;
-}
-
-inline void
-MixfixModule::setPrintWithAliases(bool polarity)
-{
-  printWithAliases = polarity;
-}
-
-inline void
-MixfixModule::setPrintFlat(bool polarity)
-{
-  printFlat = polarity;
-}
-
-inline void
-MixfixModule::setPrintGraph(bool polarity)
-{
-  printGraph = polarity;
-}
-
-inline void
-MixfixModule::setPrintConceal(bool polarity)
-{
-  printConceal = polarity;
-}
-
-inline void
-MixfixModule::setPrintFormat(bool polarity)
-{
-  printFormat = polarity;
-}
 
 inline SymbolType
 MixfixModule::getSymbolType(Symbol* symbol) const
@@ -768,6 +740,12 @@ MixfixModule::getPolymorphFormat(int index) const
 }
 
 inline int
+MixfixModule::getPolymorphMetadata(int index) const
+{
+  return polymorphs[index].metadata;
+}
+
+inline int
 MixfixModule::getPrec(Symbol* symbol) const
 {
   return symbolInfo[symbol->getIndexWithinModule()].prec;
@@ -797,21 +775,15 @@ MixfixModule::getVariableAliases() const
 }
 
 inline void
-MixfixModule::insertLabels(const IntSet& l)
+MixfixModule::insertPotentialLabels(const set<int>& l)
 {
-  labels = l;
+  potentialLabels = l;
 }
 
 inline int
 MixfixModule::getNrPolymorphs() const
 {
   return polymorphs.length();
-}
-
-inline int
-MixfixModule::findIterSymbolIndex(int opName) const
-{
-  return iterSymbols.int2Index(opName);
 }
 
 inline Sort*
@@ -824,6 +796,38 @@ inline MixfixModule::ModuleType
 MixfixModule::join(ModuleType t1, ModuleType t2)
 {
   return static_cast<ModuleType>(t1 | t2);
+}
+
+inline bool
+MixfixModule::isTheory(ModuleType t)
+{
+  return t & THEORY;
+}
+
+inline bool
+MixfixModule::isTheory() const
+{
+  return isTheory(getModuleType()); 
+}
+
+inline bool
+MixfixModule::canImport(ModuleType t1, ModuleType t2)
+{
+  //
+  //	System can import anything; funtional can only import functional.
+  //	Theory can import anything; module can only import module.
+  //
+  return (t1 | t2) == t1;
+}
+
+inline bool
+MixfixModule::canHaveAsParameter(ModuleType t1, ModuleType t2)
+{
+  //
+  //	System can be parameterized by anything; functional can only be parameterized by functional.
+  //	Only theories can be parameters.
+  //
+  return isTheory(t2) && ((t1 | t2) & SYSTEM)  == (t1 & SYSTEM);
 }
 
 #endif

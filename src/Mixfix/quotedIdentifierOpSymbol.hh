@@ -1,4 +1,4 @@
-/*
+ /*
 
     This file is part of the Maude 2 interpreter.
 
@@ -19,7 +19,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 */
-
+#define MOS 1
 //
 //      Class for symbols for built in operations on quoted identifiers.
 //

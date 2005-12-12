@@ -46,11 +46,16 @@ AU_Deque::computeBaseSort(Symbol* symbol) const
   checkIntegrity();
 #endif
 
+  //cerr << "AU_Deque::computeBaseSort()\n";
+  //cerr << "left = " << left << " right = " << right << endl;
   if (left != 0)
     {
+      
       int index = left->getSortIndex();
+      //cerr << "left index = " << index << endl;
       if (index == Sort::SORT_UNKNOWN)
 	index = left->fwdComputeBaseSort(symbol);
+      //cerr << "left index now = " << index << endl;
 
 #ifdef CHECK_DEQUE
   checkIntegrity();
@@ -59,8 +64,11 @@ AU_Deque::computeBaseSort(Symbol* symbol) const
       if (right == 0)
 	return index;
       int index2 = right->getSortIndex();
+      //cerr << "right index = " << index2 << endl;
+
       if (index2 == Sort::SORT_UNKNOWN)
 	index2 = right->revComputeBaseSort(symbol);
+      //cerr << "right index now = " << index2 << endl;
 
 #ifdef CHECK_DEQUE
   checkIntegrity();
@@ -70,8 +78,10 @@ AU_Deque::computeBaseSort(Symbol* symbol) const
     }
   Assert(right != 0, "no args");
   int index = right->getSortIndex();
+  //cerr << "Right index = " << index << endl;
   if (index == Sort::SORT_UNKNOWN)
     index = right->revComputeBaseSort(symbol);
+  //cerr << "Right index now = " << index << endl;
 
 #ifdef CHECK_DEQUE
   checkIntegrity();

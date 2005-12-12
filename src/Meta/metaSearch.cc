@@ -64,7 +64,7 @@ MetaLevelOpSymbol::getCachedRewriteSequenceSearch(MetaModule* m,
   return false;
 }
 
-local_inline RewriteSequenceSearch*
+RewriteSequenceSearch*
 MetaLevelOpSymbol::makeRewriteSequenceSearch(MetaModule* m,
 					     FreeDagNode* subject,
 					     RewritingContext& context) const
@@ -139,6 +139,51 @@ MetaLevelOpSymbol::metaSearch(FreeDagNode* subject, RewritingContext& context)
 					       *(state->getGoal()),
 					       m);
 	  }
+	fail:
+	  (void) m->unprotect();
+	  return context.builtInReplace(subject, result);
+	}
+    }
+  return false;
+}
+
+bool
+MetaLevelOpSymbol::metaSearchPath(FreeDagNode* subject, RewritingContext& context)
+{
+  //
+  //	op metaSearchPath : Module Term Term Condition Qid Bound Nat ~> ResultTriple? .
+  //
+  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
+    {
+      Int64 solutionNr;
+      if (metaLevel->downSaturate64(subject->getArgument(6), solutionNr) &&
+	  solutionNr >= 0)
+	{
+	  RewriteSequenceSearch* state;
+	  Int64 lastSolutionNr;
+	  if (getCachedRewriteSequenceSearch(m, subject, context, solutionNr, state, lastSolutionNr))
+	    m->protect();  // Use cached state
+	  else if ((state = makeRewriteSequenceSearch(m, subject, context)))
+	    lastSolutionNr = -1;
+	  else
+	    return false;
+
+	  DagNode* result;
+	  while (lastSolutionNr < solutionNr)
+	    {
+	      bool success = state->findNextMatch();
+	      state->transferCount(context);
+	      Verbose("metaSearchPath: visited " << state->getNrStates() << " states.");
+	      if (!success)
+		{
+		  delete state;
+		  result = metaLevel->upFailureTrace();
+		  goto fail;
+		}
+	      ++lastSolutionNr;
+	    }
+	  m->insert(subject, state, solutionNr);
+	  result = metaLevel->upTrace(*state, m);
 	fail:
 	  (void) m->unprotect();
 	  return context.builtInReplace(subject, result);

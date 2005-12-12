@@ -1,3 +1,31 @@
+2005-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.cc (deepCopy2): rewritten to handle translation to
+	non-AU_Symbol
+
+	* AU_Term.hh (class AU_Term): updated decl for SymbolMap* version
+	of ctor
+
+	* AU_Term.cc (AU_Term): SymbolMap* version: require symbol to be
+	an AU_Symbol
+
+2005-07-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.hh (class AU_Term): updated decls for deepCopy2() and
+	SymbolMap* version of ctor
+
+	* AU_Term.cc (deepCopy2): rewritten
+	(AU_Term): rewritten
+
+===================================Maude86b===========================================
+
+2005-02-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_GreedyMatcher.cc (greedyMatchVariableBlock): commented out 4
+	DebugAdvisory()s
+
+===================================Maude86===========================================
+
 2003-08-29  Steven Eker  <eker@goo.csl.sri.com>
 
 	* AU_Symbol.hh (class AU_Symbol): added decl for

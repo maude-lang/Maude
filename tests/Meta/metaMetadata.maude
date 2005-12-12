@@ -1,0 +1,77 @@
+set show timing off .
+set show advisories off .
+
+set protect BOOL off .
+
+fmod FOO is
+  sort Foo .
+  ops a b : -> Foo [metadata "bla bla"] .
+  eq a = b [metadata "hmm"] .
+endfm
+
+show mod .
+show all .
+red in META-LEVEL : upModule('FOO, false) .
+
+
+fmod FOO2 is
+  sort Foo .
+  ops a b : -> Foo [metadata bla] .
+  eq a = b [metadata hmm] .
+endfm
+
+show mod .
+show all .
+red in META-LEVEL : upModule('FOO, false) .
+
+
+fmod FOO3 is
+  inc FOO .
+endfm
+
+show all .
+red in META-LEVEL : upModule('FOO3, true) .
+
+
+fmod FOO4 is
+  sort Foo .
+  op f : ??? -> Foo [poly (1) metadata "bla bla"] .
+endfm
+
+show mod .
+show all .
+red in META-LEVEL : upModule('FOO4, false) .
+
+
+fmod FOO5 is
+  inc FOO4 .
+endfm
+
+show all .
+red in META-LEVEL : upModule('FOO5, true) .
+
+
+red in META-LEVEL : metaReduce(
+fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [metadata("bla bla")] .
+  op 'b : nil -> 'Foo [metadata("bla bla")] .
+  none
+  eq 'a.Foo = 'b.Foo [metadata("hmm")] .
+endfm, 
+'a.Foo) .
+
+
+fmod BAR is
+  sorts Foo Bar .
+  subsort Foo < Bar .
+  op f : Foo -> Foo [metadata "fooy"] .
+  op f : Bar -> Bar [metadata "fubar"] .
+endfm
+
+show mod .
+show all .
+red in META-LEVEL : upModule('BAR, false) .
+

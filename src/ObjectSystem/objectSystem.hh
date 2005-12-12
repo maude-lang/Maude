@@ -28,5 +28,6 @@
  
 class ObjectSystemRewritingContext;
 class ConfigSymbol;
+class ExternalObjectManagerSymbol;
 
 #endif

@@ -4,7 +4,7 @@ MAUDE_LIB=$srcdir/../../src/Mixfix
 export MAUDE_LIB
 
 ../../src/Mixfix/maude \
-  < $srcdir/metaSort.maude -no-banner \
+  < $srcdir/metaSort.maude -no-banner -no-advise \
   > metaSort.out 2>&1
 
 diff $srcdir/metaSort.expected metaSort.out > /dev/null 2>&1

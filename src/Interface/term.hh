@@ -61,7 +61,8 @@ public:
   const NatSet& occursInContext() const;
   const PointerSet& collapseSymbols() const;
   unsigned int getHashValue() const;
-  Term* deepCopy(SymbolMap* map = 0) const;
+  Term* deepCopy(SymbolMap* translation = 0) const;
+  Term* instantiate(const Vector<Term*>& varBindings, SymbolMap* translation);
   int compare(const Term* other) const;
   int compare(const DagNode* other) const;
   bool equal(const Term* other) const;
@@ -102,7 +103,7 @@ public:
   //
   virtual RawArgumentIterator* arguments() = 0;
   virtual void deepSelfDestruct() = 0;
-  virtual Term* deepCopy2(SymbolMap* map) const = 0;
+  virtual Term* deepCopy2(SymbolMap* translator) const = 0;
   virtual Term* normalize(bool full, bool& changed = discard) = 0;
   virtual int compareArguments(const Term* other) const = 0;
   virtual int compareArguments(const DagNode* other) const = 0;
@@ -175,6 +176,11 @@ public:
 				      DagNode* other) const;
   virtual int partialCompareArguments(const Substitution& partialSubstitution,
 				      DagNode* other) const;
+  //
+  //	The following function should be redefined for any subclass that needs a
+  //	non-naive treatment of it's arguments or has hidden data.
+  //
+  virtual Term* instantiate2(const Vector<Term*>& varBindings, SymbolMap* translator);
 
 #ifdef COMPILER
   void generateRhs(CompilationContext& context,
@@ -297,9 +303,17 @@ Term::collapseSymbols() const
 }
 
 inline Term*
-Term::deepCopy(SymbolMap* map) const
+Term::deepCopy(SymbolMap* translator) const
 {
-  Term* t = deepCopy2(map);
+  Term* t = deepCopy2(translator);
+  t->setLineNumber(getLineNumber());
+  return t;
+}
+
+inline Term*
+Term::instantiate(const Vector<Term*>& varBindings, SymbolMap* translator)
+{
+  Term* t = instantiate2(varBindings, translator);
   t->setLineNumber(getLineNumber());
   return t;
 }

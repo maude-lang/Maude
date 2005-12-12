@@ -1,3 +1,2746 @@
+2005-11-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbolType.hh: added decl for operator<<()
+
+	* symbolType.cc (operator<<): added
+
+	* entry.cc (addOpDeclaration): added DebugAdvisory for when
+	attributes differ
+
+===================================Maude86e===========================================
+
+2005-11-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: op nil : -> HookList  is now a ctor; EmptyQidList
+	deleted; EmptyCommaList added; fixed confusion between __ and _,_
+	based lists of Qids
+
+===================================Maude86d2===========================================
+
+2005-11-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: sortLeq now defined on types
+
+	* interact.cc (commandLoop): fix bad endXmlLog() call
+
+2005-11-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.cc (MixfixModule): fix memory leak:
+	deepSelfDestruct() identities
+
+	* prelude.maude: added QID-SET; use QID-SET in META-MODULE; added
+	extra sorts and declarations to achieve preregularity and
+	associativity of _;_
+
+2005-11-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interact.cc (commandLoop): call endXmlLog()
+
+2005-11-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* moduleDatabase.hh (class ModuleDatabase): delete decl for
+	~ModuleDatabase(); add decl for deleteNamedModules()
+
+	* moduleDatabase.cc (deleteNamedModules): added
+	(~ModuleDatabase): deleted
+
+	* interact.cc (commandLoop): delete interpreter here
+
+	* preModule.cc (~PreModule): fix memory leak where we weren't
+	deleting module expressions for parameter theories
+
+	* viewDatabase.cc (~ViewDatabase): delete views
+
+2005-11-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* moduleCache.hh (User): updated decl for showCreatedModules()
+
+	* moduleDatabase.hh (class ModuleDatabase): updated decl for
+	showNamedModules()
+
+	* moduleDatabase.cc (showNamedModules): take ostream& parameter
+
+	* moduleCache.cc (showCreatedModules): take ostream& parameter
+
+	* interpreter.cc (showModules): pass cout to showNamedModules()
+	and showCreatedModules()
+
+	* main.hh: update decl for interpreter
+
+	* main.cc: make interpreter a reference to chase down memory leak
+
+2005-11-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.cc (clearOpTermMap): added
+	(~View): use clearOpTermMap()
+	(regretToInform): use clearOpTermMap() for fix stale term bug
+
+2005-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: fixed large number of white space issues; in
+	particular line no longer start with tab which messes with tecla
+
+	* renameModule.cc (donateOps2): fixed nasty scoping bug that left
+	format uninitialized in if branch
+
+2005-10-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* entry.cc (newFancySymbol): put pairs returned by insert() into
+	local variables to appease purify (3 places)
+
+2005-10-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: use protecting rather than inc in LIST-AND-SET
+
+===================================Maude86d===========================================
+
+2005-10-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added view TRIV
+
+	* view.cc (View): fix memory leak: deepSelfDestruct() fromExpr and
+	toExpr
+
+	* auxProperty.cc (splitParameterList): fixed nasty new[]/delete
+	bug
+	(splitParameterizedSort): symmetric bug
+
+	* main.cc (main): add -no-wrap flag
+	(printHelp): mention -no-wrap flag
+
+2005-10-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.cc (handleOpTermMappings): fix nasty bug where we were
+	forgetting to return a value at the end of function
+	(evaluate): same bug!
+
+	* interact.cc (segmentationFaultHandler): write \n\n after error message
+
+2005-10-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added fmod LIST-AND-SET
+
+2005-10-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: X$Elt -> Item{X} for several declarations in
+	LIST*
+
+	* modules.yy (expectedIs, expectedDot): fix type mismatch bug only
+	found by older (1.28) version of bison
+
+2005-09-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (instantiateBoundParameters): much
+	simplification
+
+2005-09-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importModule.hh (User): updated decl for
+	instantiateBoundParameters()
+
+	* parameterization.cc (instantiateBoundParameters): greatly
+	simplified now that we don't have to deal with nested bound
+	parameter instantiations
+	(instantiateBoundParameters): eagerly rebind escaped parameters
+	(handleRegularImports): deleted recapture code
+
+	* importModule.hh (User): updated decls: extraParameterMap ->
+	extraParameterSet
+
+	* parameterization.cc (handleInstantiationByTheoryView): remove
+	oldParameterName stuff now that parameters cannot clash and change
+	name
+	(handleInstantiationByTheoryView): extraParameterMap ->
+	extraParameterSet
+	(handleParameterizedSorts):  extraParameterMap ->
+	extraParameterSet
+	(makeInstantiation, instantiateBoundParameters) 
+	(instantiateSortName): extraParameterMap -> extraParameterSet
+	(instantiateRenaming): extraParameterMap -> extraParameterSet
+
+	* importModule.hh (User): added typedef ParameterSet
+
+	* parameterization.cc (instantiateBoundParameters): fix bug where
+	we putting the view name in extraParameterMap
+
+2005-09-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (instantiateBoundParameters): compute
+	parameterMap and extraParameterMap
+
+	* renaming.cc (makeTypeName): fix bug by using Token::sortName
+	instead of Token::name
+
+	* parameterization.cc (instantiateSortName): added
+	(instantiateRenaming): use instantiateSortName()
+	(instantiateBoundParameters): use instantiateRenaming()
+
+	* importModule.hh (User): added decl for instantiateRenaming()
+
+	* parameterization.cc (instantiateRenaming): added
+
+	* renaming.hh (class Renaming): added decl for
+	addOpMappingPartialCopy()
+
+	* renaming.cc (makeCanonicalVersion): clear term field of newly
+	created op mapping in specific case for cleanliness
+	(addOpMappingPartialCopy): added
+
+2005-09-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importModule.cc (parametersBound): moved here; made recursive to
+	deal with renaming modules having bound parameters
+
+2005-09-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* import.cc (makeModule): allow bound parameters in a module that
+	is to be renamed
+
+	* renameModule.cc (makeRenamedCopy): allow bound parameters
+
+	* parameterization.cc (instantiateBoundParameters): added back
+	old hacky code to deal with renamings
+
+	* modules.yy (renameExpr): added
+	(instantExpr): added
+	(moduleExpr2): use renameExpr
+	(moduleExpr3): use instantExpr, parenExpr
+	(expectedDot): added
+	(parenExpr): added
+	(moduleExprDot): use tokenBarDot, expectedDot, parenExpr,
+	renameExpr, instantExpr in order to detect and recover from
+	missing period
+	(typeDot): use expectedDot
+	(typeAttr): use expectedDot
+	(expectedIs, expectedDot): improve warnings
+
+2005-09-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (module): use expectedIs
+	(expectedIs): added
+	(view): use expectedIs
+
+2005-09-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* import.cc (makeModule): check for having both a theory-view and
+	a PEM
+
+2005-09-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importModule.cc (ImportModule): don't clear nrBoundParameters
+
+	* renameModule.cc (makeRenamedCopy): use parametersBound() in
+	place of nrBoundParameters
+
+	* view.cc (evaluate): getNrFreeParameters() -> getNrParameters()
+
+	* visibleModule.cc (showModule): remove "Free" from function calls
+
+	* import.cc (processImports): use parametersBound() rather than
+	getNrFreeParameters()
+	(makeModule): use getNrParameters() rather than
+	getNrFreeParameters()
+	(makeModule): use getParameterTheory() rather than
+	getFreeParameterTheory() (2 places)
+	(makeModule): use parametersBound() rather than
+	getNrBoundParameters()
+
+	* parameterization.cc (handleRegularImports): use
+	getParameterName() in place of getFreeParameterName()
+	(instantiateBoundParameters): use getParameterName() in place of
+	getFreeParameterName()
+	(handleRegularImports): use parametersBound() in place of
+	getNrFreeParameters()
+	(instantiateBoundParameters): use getNrParameters() in place of
+	getNrFreeParameters()
+
+	* importModule.hh (getNrBoundParameters): deleted
+	(getNrFreeParameters): deleted
+	(parametersBound): added
+	(User): deleted data member nrBoundParameters
+	(getFreeParameterTheory): deleted
+	(getFreeParameterName): becomes getParameterName()
+
+	* parameterization.cc (makeInstantiation): don't set
+	nrBoundParameters
+	(handleInstantiationByParameter): don't use nrBoundParameters
+	(handleInstantiationByTheoryView): don't use nrBoundParameters
+	(handleInstantiationByModuleView): don't use nrBoundParameters
+	(handleInstantiationByTheoryView): simplified
+	(handleInstantiationByModuleView): simplified
+	(handleInstantiationByTheoryView): replaced code to resolve
+	parameter clash with an Assert() that the clash does not happen
+	(handleRegularImports): use parametersBound() rather than testing
+	nrBoundParameters
+	(handleRegularImports): simplified now that we know we will have
+	no bound parameters
+	(handleRegularImports): check parametersBound rather than
+	nrBoundParameters
+	(makeInstantiation): check that we don't have bound parameters;
+	use getNrParameters() in place of getNrFreeParameters()
+	(makeInstantiation): don't copy bound parameters - there shouldn't
+	be any
+	(instantiateBoundParameters): check parametersBound rather than
+	nrBoundParameters
+	(instantiateBoundParameters): rearranged Asserts()
+	(makeInstantiation): rearranged Asserts()
+	(instantiateBoundParameters): commented out code for recursive
+	call
+	(instantiateBoundParameters): no need to check index against
+	nrBoundParameters since we only have bound parameters
+
+2005-09-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (handleRegularImports): made escaped
+	parameter Assert() very detail to try an nail obscure bug
+	(instantiateBoundParameters): added DebugAdvisory() for escapees
+
+2005-09-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renaming.cc (makeCanonicalVersion): genericsToAdd ->
+	genericsToConsider
+	(makeCanonicalVersion): clean up and fix bug that we weren't
+	generating an advisory when user tried to rename a parameter
+	polymorph
+
+2005-09-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* main.cc (dioTest): deleted
+
+2005-08-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: changed prec for _;_ operator in ARRAY
+
+2005-08-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ops.cc (setFlag): watn about duplicate simple attributes
+	(setIdentity): warn about multiple identities
+	(setPrec): warn about multiple precs
+	(setGather): warn about multiple gathers
+	(setMetadata): warn about multiple metadatas
+	(setFormat): warn about multiple formats
+	(setFrozen): warn about multiple frozens
+	(setPoly): want about multiple polys
+	(setLatexMacro): warn about multiple latexs
+	(setStrat): warn about multiple strats
+
+	* symbolType.hh (class SymbolType): added SIMPLE_ATTRIBUTES
+
+2005-08-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* linear.maude: built in natSystemSolve now takes a String; added
+	op-hook stringSymbol
+
+2005-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* linear.maude: fix _,_ renaming
+
+2005-08-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (mappingList): added error handling to mappingList to
+	ensure we swap back syntax containers
+	(renaming2): place error handling here instead
+	(viewDeclaration): addded error handling
+
+2005-08-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* linear.maude: created
+
+	* fixUp.cc (defaultFixUp): added DebugAdvisory()s
+
+	* prelude.maude: SPARSE-MAP becomes ARRAY
+
+2005-08-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added fth DEFAULT and associated views; added
+	SPARSE-MAP
+
+===================================Maude86c===========================================
+
+2005-07-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renaming.cc (makeCanonicalVersion): change the way generics are
+	added
+	(makeCanonicalVersion): rewritten to avoid renaming symbols and
+	polymorphs from parameters
+	(makeCanonicalVersion): added hack to that we generate advisory in
+	the generic non-polymorph case
+
+	* renaming.hh (class Renaming): added typedef IdSet
+
+	* renaming.cc (makeCanonicalVersion): ignore mappings for sorts
+	that come from parameters
+
+	* renameModule.cc (makeRenamedCopy): deleted commented out line to
+	copy nrBoundParameters - we do not rename modules with bound
+	parameters
+
+	* importModule.hh (parameterDeclared): added Symbol* and Sort*
+	vesions
+	(parameterDeclaredPolymorph): added
+
+	* importModule.cc (importOps): set nrSymbolsFromParameters and
+	nrPolymorphsFromParameters
+	(importSorts): set nrSortsFromParameters
+	(ImportModule): clear nrSortsFromParameters,
+	nrSymbolsFromParameters, nrPolymorphsFromParameters
+
+	* importModule.hh (User): added data members
+	nrSortsFromParameters, nrSymbolsFromParameters, and
+	nrPolymorphsFromParameters
+
+2005-07-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (addOpMappingsFromView): check
+	moduleDeclaredPolymorph()
+
+	* view.cc (checkPolymorphicOps): don't allow view to map module
+	declared polymorphs
+
+	* importModule.hh (User): added data member
+	polymorphDeclaredInModule
+	(moduleDeclaredPolymorph): added
+
+	* renameModule.cc (donateOps2): keep track of polymorphs declared
+	in modules and donated to theories
+
+	* parameterization.cc (addOpMappingsFromView): handle polymorphs
+
+	* view.hh (User): added decl for checkPolymorphicOps()
+
+	* view.cc (checkOps): check for bad mapping between non-algebraic
+	operators
+	(checkPolymorphicOps): created to hold polymorph checking code
+	(evaluate): use checkPolymorphicOps()
+	(checkPolymorphicOps): look at all polymorphs rather than just
+	imported ones
+
+	* symbolType.hh (nonAlgebraic): added
+
+	* view.cc (~View): deepSelfDestruct() terms in opTermMap
+
+2005-07-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (addOpMappingsFromView): don't map operators
+	that have a module declaration
+	(addOpMappingsFromView): prefer op->term mappings over op->op
+	mappings
+
+	* view.cc (checkOps): don't map operators that have a module
+	declaration
+
+	* view.hh (User): added decl for checkOps()
+
+	* view.cc (checkOps): created to hold op checking code
+	(evaluate): use checkOps()
+
+	* importModule.hh (moduleDeclared): added Symbol* version
+
+	* renameModule.cc (donateOps2): update opDeclaredInModule
+
+	* importModule.hh (moduleDeclared): added
+
+	* view.cc (checkSorts): don't allow mapping of module declared
+	sorts
+
+2005-07-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* import.cc (makeModule): check badFlag in summation case
+	(makeModule): reorg'd so that bad flag is always tested for
+	modules made by interpreter
+
+	* renameModule.cc (donateSorts2): handle the case where we have a
+	sort imported from both a module and a theory
+
+	* importModule.cc (addImport): changed messages; switch
+	importation module to including for theories and don't allow other
+	illegal imports at all.
+	(addParameter): deleted commented out parameterTheories code
+
+2005-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renameModule.cc (donateSorts2): update sortDeclaredInModule
+
+	* importModule.hh (User): added data members sortDeclaredInModule,
+	opDeclaredInModule
+
+2005-07-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preModule.hh (getNrParameters, getParameterName, getParameter):
+	added
+
+	* parameterization.cc (handleInstantiationByTheoryView) 
+	(handleInstantiationByModuleView, instantiateBoundParameters): use
+	new version of isTheory()
+	(makeParameterCopy): use new version of isTheory()
+	(instantiateBoundParameters): deleted commented out code to handle
+	the instantiation of a renaming of a module with bound parameters
+	since we no longer allow the renaming of modules with bound
+	parameters
+
+	* view.cc (evaluate): use new version of isTheory()
+
+2005-07-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.hh (isTheory): added non-static version
+
+	* prelude.maude: added hooks for headerSymbol,
+	parameterDeclSymbol, parameterDeclListSymbol
+
+	* view.cc (evaluate): check for free parameters in toModule
+
+2005-07-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: replace metalevel modules with experimental
+	metalevel; defined QID-LIST in terms of LIST{Qid} and added
+	NeTypeList to fix preregularity problems; defined NAT-LIST in
+	terms of LIST{Nat}; added op-hook for instantiation symbol
+
+2005-07-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.cc (evaluate): fullstop in "reexamining view" message
+
+	* importModule.cc (deepSelfDestruct): remove ourself as a user
+	from each view argument
+
+	* parameterization.cc (makeInstantiation): always keep track pf
+	view arguments
+
+	* importModule.hh (User): update comment on viewArgs
+
+	* parameterization.cc (handleInstantiationByModuleView): make copy
+	a user of argumentView
+	(handleInstantiationByTheoryView): make copy a user of
+	argumentView
+
+	* moduleCache.cc (destructUnusedModules): fix bug; we now look for
+	modules with a single user since _we_ are that user
+
+	* entity.hh (hasUsers): becomes getNrUsers()
+
+	* entity.cc (removeUser): fix {} problem
+
+	* view.cc (finishModule2): don't call addUser() - this is already
+	done by ImportModule()
+
+	* entity.cc (addUser): fix {} problem (DebugAdvisory() macro
+	contains an if statement)
+
+	* importModule.cc (ImportModule): replace delete
+	canonicalRenaming with an Assert()
+	(deepSelfDestruct): delete canonicalRenaming here
+
+2005-07-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (view): need to insert view _before_ we finish it to
+	avoid the existence of two views with the same name when a view is
+	replaced
+
+	* view.hh (User): UNKNOWN -> STALE
+
+	* view.cc (evaluate): added more DebugAdvisory()s
+	(regretToInform): UNKNOWN -> STALE
+	(evaluate): UNKNOWN -> STALE
+
+	* preModule.hh (operator<<): added
+	(User): made Entity::User derivation public
+
+	* view.hh (operator<<): added
+
+	* importModule.hh (operator<<): added
+
+	* entity.cc (operator<<): added Entity* and Entity::User* versions
+	(removeUser): rewritten
+	(addUser): rewritten
+	(informUsers): added DebugAdvisory()
+
+	* view.cc (regretToInform): rewritten
+	(~View): deepSelfDestruct() newFromTheory and newToModule
+	(finishModule2): call addUser()
+	(~View): call informUsers()
+
+	* importModule.cc (deepSelfDestruct): deleted commented out
+	parameterTheories code
+
+	* view.hh (User): derive from Entity
+
+	* entity.cc (informUsers): simplified by fusing loops
+
+2005-07-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renaming.cc: unmake change
+
+	* renaming.hh (class Renaming): unmake change
+
+	* importModule.hh (User): unmake change
+
+	* parameterization.cc: unmake previous changes since the
+	deepCopy() idea is a dead duck - both because of a chicken & egg
+	over sorts/symbols and the loss of variable index info from the
+	original
+
+	* renaming.cc (~Renaming): added
+
+	* renaming.hh (class Renaming): adde decl for dtor
+
+	* importModule.hh (User): updated decl for addOpMappingsFromView()
+
+	* parameterization.cc (addOpMappingsFromView): take instance
+	parameter; deepCopy() term part of op->term mappings into instance
+	rather than using the original
+	(handleInstantiationByTheoryView): pass instance parameter to
+	addOpMappingsFromView() 
+	(handleInstantiationByModuleView): pass instance parameter to
+	addOpMappingsFromView()
+
+2005-07-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importModule.hh (User): added decl for translateComponent()
+	(User): deleted commented out parameterTheories data member
+
+	* parameterization.cc (addOpMappingsFromView): use translateComponent()
+	(translateComponent): added
+
+	* importTranslation.cc (translate): use FIRST_USER_SORT
+
+2005-06-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.cc (evaluate): skip to symbol existence check for ops that
+	are being mapped to terms
+
+	* importTranslation.cc (translateTerm): added translation splitting
+	(translateTerm): added DebugAdvisory()s
+
+	* importTranslation.hh (class ImportTranslation): added typedef
+	ModuleList
+	(ImportTranslation): added private ctor
+
+2005-06-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importTranslation.hh (class ImportTranslation): updated decl for
+	translateRegularSymbol()
+
+	* importTranslation.cc (translateRegularSymbol): need to fill out
+	opToTerm when we hit op->term mapping
+	(translateRegularSymbol): pass back const_iterator
+	(translateTerm, translate): use const_iterator
+
+	* view.cc (evaluate): quick hack to allow bad views to be used for
+	testing
+
+	* importTranslation.cc (translateTerm): crude first implementation
+
+2005-06-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (addOpMappingsFromView): handle op->term
+	mappings
+
+	* view.hh (User): updated decls for getOpMapTerm() and both
+	versions of typeMatch()
+
+	* view.cc (typeMatch): rewritten (both versions)
+	(getOpMapTerm): rewritten
+
+	* parameterization.cc (addOpMappingsFromView): removed
+	qualification for renameOp() call
+
+	* view.cc (evaluate): removed qualification for renameOp() call
+
+	* renaming.hh (class Renaming): de-virtualized renameOp()
+
+	* view.cc (getOpMapTerm): removed CantHappen()
+	(renameOp): deleted
+
+	* view.hh (User): deleted decl for renameOp()
+
+	* importTranslation.cc (translateRegularSymbol): handle id == NONE
+	(translateRegularSymbol): moved Assert() checking for missing
+	translation here
+
+	* renaming.cc (printRenaming): added Assert() to check that we
+	don't try to print a renaming that contains an op->term mapping
+
+	* renaming.hh (class Renaming): added decl for getOpTargetTerm()
+	(getOpTargetTerm): added
+
+	* renaming.cc (addOpTarget): (both versions) clear term field
+	(addOpTargetTerm): added
+
+	* renaming.hh (class Renaming): added term field to struct
+	OpMapping
+	(class Renaming): added decl for addOpTargetTerm(Term* term)
+
+2005-06-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (addOpMappingsFromView): qualify renameOp()
+	call
+
+	* view.hh (User): added decls for typeMatch() (both versions)
+
+	* view.cc (typeMatch): added (two versions)
+	(renameOp): added
+	(getOpMapTerm): added
+	(evaluate): qualify renameOp() call
+
+	* view.hh (User): added decls for getOpMapTerm() and renameOp()
+
+	* renaming.hh (class Renaming): virtualize id version of
+	renameOp()
+
+	* importTranslation.cc (translate): only store mapping int
+	directMap if it is non-null, i.e. op->op; comment out Assert()
+	that mapping is non-null
+
+2005-06-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importTranslation.cc (translateTerm): term is const Term*
+
+	* importTranslation.hh (class ImportTranslation): updated decl for
+	translateTerm()
+
+	* importTranslation.cc (findTargetVersionOfSymbol): added
+	(translateTerm): new calling convention for instantiate()
+
+	* importTranslation.hh (class ImportTranslation): added decl for
+	findTargetVersionOfSymbol()
+
+2005-06-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importTranslation.cc (translate): use translateRegularSymbol()
+	(translateTerm): partly implemented
+
+	* importTranslation.hh (class ImportTranslation): added decl for
+	translateRegularSymbol()
+
+	* importTranslation.cc (translateRegularSymbol): added
+	(translate, translateLabel): using RenamingList
+
+	* renaming.hh (class Renaming): added decls for new member
+	functions
+
+	* renaming.cc (renameOp): added id version
+	(typeMatch): added Vector<int> version
+
+	* importTranslation.hh (class ImportTranslation): added typedef
+	RenamingList
+
+2005-06-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importTranslation.cc (makeTranslatedTerm): becomes translateTerm()
+
+	* importTranslation.hh (class ImportTranslation): replaced
+	makeTranslatedTerm() with translateTerm()
+
+2005-06-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (makeParameterCopy): simplified using new
+	addSortMapping(), parameterRename() and addLabelMapping()
+	functions
+	(handleInstantiationByParameter):  simplified using new
+	addSortMapping(), parameterRename()
+	(handleInstantiationByTheoryView): simplified using new
+	addSortMapping(), parameterRename()
+	(handleInstantiationByModuleView): simplified using new
+	addSortMapping()
+	(handleParameterizedSorts): simplified using new
+	addSortMapping()
+	(handleInstantiationByTheoryView): call addOpMappingsFromView() to
+	handle op mappings in the theory-view
+
+	* token.hh (class Token): updated decl for parameterRename()
+
+	* token.cc (parameterRename): now work on ints rather than tokens
+
+	* renaming.hh (class Renaming): added decls for new
+	addSortMapping() and addLabelMapping() versions
+
+	* renaming.cc (addSortMapping): added int version
+	(addLabelMapping): added int version
+
+2005-06-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.hh (CommonTokens): updated decl for findSort()
+
+	* mixfixModule.cc (findSort): made const
+
+	* parameterization.cc (addOpMappingsFromView): crude first implementation
+
+	* renaming.hh (class Renaming): added decls for new functions
+
+	* renaming.cc (addType): added component* version
+	(addOpTarget): added int version
+	(addOpMapping): added int version
+
+2005-06-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (handleInstantiationByModuleView): call
+	addOpMappingsFromView()
+
+	* importModule.hh (User): added decl for addOpMappingsFromView()
+
+	* parameterization.cc (makeInstantiation): use
+	handleInstantiationByTheoryView()
+	(handleInstantiationByModuleView): added
+	(makeInstantiation): use handleInstantiationByModuleView()
+	(addOpMappingsFromView): added stub
+
+	* importModule.hh (User): added decl for
+	handleInstantiationByTheoryView()
+
+	* parameterization.cc (handleInstantiationByTheoryView): added
+	(makeInstantiation): use handleInstantiationByParameter()
+
+	* importModule.hh (User): added decl for
+	handleInstantiationByParameter()
+
+	* parameterization.cc (handleInstantiationByParameter): created
+	(makeInstantiation): use handleParameterizedSorts()
+
+	* importModule.hh (User): added decl for handleRegularImports()
+
+	* parameterization.cc (makeInstantiation): use
+	handleRegularImports()
+	(handleParameterizedSorts): added
+
+	* importModule.hh (User): added decl for handleRegularImports()
+
+	* parameterization.cc (handleRegularImports): created
+
+2005-06-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (makeInstantiation): changed importation
+	mode for modules that are the target of module-views from
+	INCLUDING to PROTECTING
+
+2005-06-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importTranslation.cc (translate): ERROR_SORT -> KIND
+
+2005-06-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.hh (User): deleted struct OpTermMapping; updated typedef
+	OpTermMap
+
+	* view.cc (mapComponent, mapSort): moved here
+	(handleOpTermMappings): store from and to
+	(showView): print op->term mappings
+
+	* view.hh (User): updated decl for indexRhsVariables()
+
+	* view.cc (handleOpTermMappings): use mapSort(); put sort info in VarMap
+
+	* view.hh (mapSort): added
+
+	* view.cc (handleOpTermMappings): use mapComponent()
+	(evaluate): simplified using mapComponent()
+
+	* view.hh (mapComponent): added
+
+	* view.cc (indexRhsVariables): use VarMap; check variables sort
+
+	* view.hh (User): added decl for indexRhsVariables()
+	(User) IntMap becomes VarMap
+
+	* view.cc (handleOpTermMappings): use indexRhsVariables()
+	(indexRhsVariables): added
+
+2005-06-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.cc (handleOpTermMappings): added to handle op->term mapping
+	code
+	(evaluate): use handleOpTermMappings()
+	(handleOpTermMappings): check lhs arguments
+	(handleOpTermMappings): check for double use of variable name in
+	lhs
+
+	* view.hh (User): added decls for checkSorts(), handleVarDecls()
+
+	* view.cc (evaluate): handle variable aliases
+	(evaluate): fix line numbers for warnings in new code
+	(handleVarDecls): added to hold variable alias code
+	(evaluate): use handleVarDecls()
+	(checkSorts): added to hold sort checking code
+	(evaluate): use checkSorts()
+
+	* preModule.hh (User): deleted friend decl for operator<<()
+
+	* command.cc (operator<<): PreModule::Type& version; moved to
+	syntaxContainer.cc
+
+	* syntaxContainer.cc: created
+
+2005-06-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.hh (User): added decls for finishModule1(), finishModule2()
+
+	* view.cc (finishModule): added
+	(finishModule): split into finishModule1() and finishModule2()
+	(evaluate): generate and use newFromTheory, newToModule
+
+	* importModule.hh (User): added VIEW_LOCAL to enum Origin
+
+	* view.hh (User): added data members newFromTheory, newToModule
+
+	* view.cc (showView): handle variables
+	(View): clear newFromTheory, newToModule
+
+	* mixfix.hh: added class SyntaxContainer
+
+	* view.cc (addVarDecl): implemented
+	(addType): implemented
+
+	* view.hh (User): added struct VarDecl; typedef VarDeclList,
+	typedef TypeList; added data members varDecls and varDefs
+
+	* preModule.hh (User): deleted struct Type
+
+	* syntaxContainer.hh (class SyntaxContainer): added struct Type
+
+2005-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (view): set currentSyntaxContainer
+	(viewDeclaration): use varNameList, typeDot
+	(viewBadType, viewTypeDot, viewTypeList, viewType): deleted
+	(viewVarNameList, viewVarNameList): deleted
+	(viewEndOpMap): use typeList and typeName
+
+	* top.yy: added variable oldSyntaxContainer
+
+	* modules.yy (module): set currentSyntaxContainer
+	(varNameList): use currentSyntaxContainer
+	(badType): use currentSyntaxContainer
+	(typeName): use currentSyntaxContainer
+	(fromSpec): use typeList and typeName
+	(fromTypeList): deleted
+	(fromType): deleted
+	(renaming): save, set and restore currentSyntaxContainer
+
+	* top.yy: added variable currentSyntaxContainer
+
+	* view.hh (User): declaration for addType2() becomes addType()
+
+	* view.cc (addType2): becomes addType()
+
+	* renaming.cc (addVarDecl): added
+	(addType): updated
+
+	* renaming.hh (class Renaming): derive from SyntaxContainer
+	(class Renaming): added decl for addVarDecl(); updated decl for addType()
+
+	* preModule.hh (User): derive from SyntaxContainer
+
+	* syntaxContainer.hh: created
+
+	* modules.yy (viewDeclaration): added syntax for variable
+	declarations
+	(viewVarNameList, viewBadType, viewTypeDot, viewTypeDot): added
+
+	* view.cc (addVarDecl): added stub
+	(addType2): added stub
+
+	* view.hh (User): added decls for addVarDecl() and addType2()
+
+	* doParse.cc (parseSentence): fix longstanding bug where we were
+	testing firstBad against nrTokens rather than begin + nrTokens
+
+	* view.cc (addOpTermMapping): implemented
+	(evaluate): parse op->term mapping bubbles
+	(evaluate): make sure we parse destination term into the correct
+	component
+
+	* view.hh (User): added struct BubblePair, struct OpTermMapping,
+	typedef OpTermList, typedef OpTermMap; added data members
+	opTermList and opTermMap
+
+2005-06-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* lexer.ll: deleted KW_TERM
+
+	* view.hh (User): updated decl for addOpTermMapping(); deleted decl
+	for addOpTargetTerm()
+
+	* view.cc (addOpTermMapping): updated stub
+	(addOpTargetTerm): deleted stub
+
+	* top.yy: deleted decl for KW_TERM
+
+	* modules.yy (viewFromBubble): deleted
+	(viewDeclaration): use tokensBarColonTo
+	(viewEndOpMap): rewritten
+	(tokenBarTerm): deleted; removed all mention of KW_TERM
+
+	* token.hh (class Token): added decl for peelParens()
+
+	* token.cc (peelParens): added
+
+	* modules.yy (viewTypeList): was viewFromTypeList
+	(viewType): was viewFromType
+	(tokenBarDot, endToken, tokenBarCommaLeft, sortToken, identifier):
+	added KW_TERM
+	(inert): removed KW_TERM
+	(tokenBarColonTo): added KW_TERM
+	(tokenBarTerm): added
+	(viewFromBubble): set parenFlag
+
+2005-06-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.cc (addOpTermMapping): added stub
+	(addOpTargetTerm): added stub
+
+	* view.hh (User): added decls for addOpTermMapping() and
+	addOpTargetTerm()
+
+	* modules.yy (inert): added KW_TERM
+
+	* lexer.ll: added KW_TERM
+
+	* top.yy: added decl for KW_TERM
+
+	* modules.yy (viewFromType): added
+	(viewFromTypeList): added
+	(viewEndOpMap): added
+	(view): dont use currentRenaming = CV trick
+	(viewFromBubble): added
+	(viewDeclaration): rewritten to use viewFromBubble and
+	viewEndOpMap
+
+2005-06-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importTranslation.hh (class ImportTranslation): added decl for
+	makeTranslatedTerm()
+
+	* importTranslation.cc (makeTranslatedTerm): added stub
+	
+===================================Maude86b===========================================
+
+2005-04-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* main.cc (main): added -no-advise flag
+	(printHelp): mention -no-advise flag
+
+2005-04-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* moduleCache.cc (makeSummation): don't put parens around name
+	(makeRenamedCopy): put parens around module arg if it is a
+	summation
+	(makeInstatiation): put parens around module arg if it is a
+	renaming
+
+	* visibleModule.cc (VisibleModule): pass TEXT to ImportModule()
+
+	* importModule.cc (ImportModule): init origin from argument
+
+	* renameModule.cc (makeRenamedCopy): pass RENAMING to
+	ImportModule()
+
+	* parameterization.cc (makeParameterCopy): pass PARAMETER to
+	ImportModule()
+	(makeInstantiation): pass INSTANTIATION to ImportModule()
+
+	* moduleCache.cc (makeSummation): pass ImportModule::SUMMATION to
+	ImportModule()
+
+	* importModule.hh (User): added data member origin
+	(getOrigin): added
+	(User): update decl for ctor
+
+	* importModule.cc (ImportModule): init origin to TEXT
+
+	* importModule.hh (User): added enum Origin
+
+	* renameModule.cc (makeRenamedCopy): comment out code to copy
+	nrBoundParameters; Assert that nrBoundParameters == 0
+
+	* parameterization.cc (instantiateBoundParameters): comment out
+	code for handling renaming case; add Assert() to check that our
+	original arguments and base module exist
+
+	* import.cc (makeModule): don't allow renaming of modules with
+	bound parameters
+
+	* importModule.hh (getNrBoundParameters): added
+
+2005-04-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: do renaming on LIST{TAO-SET} in SORTABLE-LIST
+
+2005-04-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (makeInstantiation): added DebugAdvisory()
+	for rebinding case
+	(makeInstantiation): rewrote code that generates instantiations
+	for imports so that it can handle imports that share both free and
+	bound parameters
+	(instantiateBoundParameters): added DebugAdvisory() for bound
+	parameters that escape during the construction of a new foundation
+	(instantiateBoundParameters): rewrote code that generates new
+	instantiations of foundations so that it rebinds escaped
+	parameters
+
+	* importModule.hh (User): updated decl of
+	instantiateBoundParameters() and make it private
+
+	* parameterization.cc (instantiateBoundParameters): keep track of
+	escaped parameters
+	(makeInstantiation): check for escaped parameters from imports and
+	generate rebinding instantiations if needed
+
+2005-04-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (makeInstantiation): generate extra argument
+	lists for sorts parameterized by parameter instantiated by
+	theory-view
+	(makeInstantiation): added assert to check for free parameters in
+	instance of imported module
+
+2005-04-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (instantiateBoundParameters): added
+	(makeInstantiation): save arguments if we have bound parameters;
+	use instantiateBoundParameters() rather than
+	ModuleCache::makeInstatiation() to handle imports with bound
+	parameters
+	(makeInstantiation): simplified and reorganized, now that we never
+	have to instantiate bound parameters
+	(instantiateBoundParameters): rewritten for a first crude attempt
+	at handling renamed modules
+
+	* importModule.hh (User): added data members viewArgs, paramArgs
+	(User): added decl for instantiateBoundParameters()
+
+2005-04-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.cc (findSymbol): use new firstSymbols convention
+
+	* entry.cc (addOpDeclaration): use new firstSymbols convention
+
+	* mixfixModule.hh (CommonTokens): deleted data member symbolNames;
+	data member firstSymbols becomes an IntMap
+
+	* moduleDatabase.cc (setOmodInclude): substract() -> erase()
+
+	* moduleDatabase.hh (class ModuleDatabase): added typedef
+	ImportSet 
+	(class ModuleDatabase): defaultOmodIncludes becomes an ImportSet
+
+	* bufferPrint.cc (printDotSort, printVarSort, printSort):
+	AUX_PARAMETERIZED_SORT -> AUX_STRUCTURED_SORT
+
+	* mixfixParser.cc (makeTerm): AUX_PARAMETERIZED_SORT ->
+	AUX_STRUCTURED_SORT
+
+	* quotedIdentifierSymbol.cc (determineSort):
+	AUX_PARAMETERIZED_SORT -> AUX_STRUCTURED_SORT
+
+	* makeGrammar.cc (makeComponentProductions) 
+	(makeParameterizedSortProductions): AUX_PARAMETERIZED_SORT ->
+	AUX_STRUCTURED_SORT
+
+	* parameterization.cc (makeInstantiation): AUX_PARAMETERIZED_SORT
+	-> AUX_STRUCTURED_SORT
+
+	* token.hh (class Token): AUX_PARAMETERIZED_SORT ->
+	AUX_STRUCTURED_SORT
+
+	* auxProperty.cc (computeAuxProperty, sortName) 
+	(splitParameterizedSort, splitParameterList):
+	AUX_PARAMETERIZED_SORT -> AUX_STRUCTURED_SORT
+
+	* renaming.cc (printRenaming): use sortName for printing sort
+	mappings
+	(printRenamingType): use sortName
+
+	* visibleModule.cc (showModule): print parameters
+
+	* importModule.hh (getFreeParameterName): added
+
+	* command.cc (showModule): print parameters
+
+2005-04-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* command.cc (showModule): use printSortTokenVector() (2 places)
+
+	* preModule.hh (User): added decl for printSortTokenVector()
+
+	* command.cc (showModule): use sortName() on sort and subsort tokens
+	(operator<<): PreModule::Type& version; use sortName()
+	(printSortTokenVector): added
+
+	* prettyPrint.cc (operator<<): (Sort* version) simplified; no
+	longer check PRINT_MIXFIX flag
+
+	* view.cc (evaluate): use sortName() in error message about
+	missing sort
+
+	* import.cc (makeModule): use getFreeParameterTheory() rather than
+	getParameterTheory() in 2 of 3 places to fix bug in the case there
+	are bound parameters
+
+	* importModule.hh (getFreeParameterTheory): added
+
+	* parameterization.cc (makeParameterCopy): moved here from
+	renameModule.cc
+	(makeInstantiation): moved here from renameModule.cc
+	(makeInstantiation): allow promotion from fmod to mod if a view
+	has a system module as a target
+
+2005-04-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* banner.cc (printBanner): update copyright notice to 2005
+
+	* prelude.maude: changed prec and added format for _,_ in MAP;
+	changed prec for _,_ in META-TERM
+
+===================================Maude86a===========================================
+
+2005-04-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (parameters): fixed value bug that is picked up by
+	bison on darwin but not by bison on linux
+
+	* process.cc (processSorts): avoid using name() for redecl'd sort
+	(getSort): avoid using name() for undecl'd sort
+
+	* renameModule.cc (localSort2): use sortName()
+
+	* renaming.cc (makeCanonicalName): use sortName()
+
+	* prettyPrint.cc (operator<<): Sort* version: use sortName()
+
+	* auxProperty.cc (sortName): added
+
+	* token.hh (class Token): added decl for sortName()
+
+	* prelude.maude: added occurs op to LIST; added many standard
+	views; changed the way split works in an attempt to get stable
+	sort if incomparability happens to be transitive; added LIST*,
+	SET*, MAP
+
+2005-04-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added append() operator to LIST
+
+	* import.cc (makeModule): don't allow modules with parameters to
+	be summed
+	(processImports): don't allow modules with free parameters to be
+	imported
+
+	* importModule.hh (getNrParameters): added
+	(getParameterTheory): use getNrParameters()
+
+	* renameModule.cc (makeRenamedCopy): rewritten to handle
+	parameters correctly
+
+	* prelude.maude: added SET, moved COUNTER
+
+2005-04-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added TAO-SET, LIST and SORTABLE-LIST
+
+	* importModule.hh (User): added decl for finishCopy()
+
+	* renameModule.cc (makeInstantiation): rewritten to maintain a
+	parameter map for parameter names in sorts that need to be mapped
+	- this allows use to handle $ prefixing properly
+	(makeInstantiation): avoid generating identity sort mappings when
+	parameter X is instantiated by parameter X
+	(makeInstantiation): avoid added identity sort mappings in the
+	theory view case
+	(finishCopy): added
+	(makeInstantiation): use finishCopy()
+	(makeParameterCopy): use finishCopy()
+	(makeRenamedCopy): use finishCopy()
+
+	* importModule.hh (User): added typedef ParameterMap
+
+	* prelude.maude: give an explicit format for the _=[_]_ operator
+
+2005-04-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renameModule.cc (makeInstantiation): fix argument indexing
+
+	* importModule.hh (getNrFreeParameters): missing return (why
+	didn't g++ catch this?)
+
+	* renameModule.cc (makeInstantiation): added advisory for
+	parameter clash
+	(makeInstantiation): resolve parameter clashes by prefixing $ on
+	free parameter name
+
+	* moduleCache.cc (makeInstatiation): changed naming convention for
+	parameters instantiated by parameters
+
+	* renameModule.cc (makeInstantiation): only instantiate free
+	parmeters OR bound parameters; copy bound parameters if we are not
+	instantiating them
+	(makeInstantiation): fixed bug: passing parameterArgs rather than
+	names to makeInstatiation() for instantiating parameterized
+	imports
+	(makeInstantiation): added Assert()s for number of arguments
+	(makeInstantiation): fixed bug where we were checking if
+	findParameterIndex() returned != NONe rather than == NONE
+
+	* importModule.cc (ImportModule): clear nrBoundParameters
+
+	* importModule.hh (getParameterTheory): update Assert()
+
+	* import.cc (makeModule): use getNrFreeParameters()
+
+	* importModule.hh (getNrParameters): becomes getNrFreeParameters()
+
+	* renameModule.cc (makeInstantiation): keep track of number of
+	bound parameters
+
+	* importModule.cc (deepSelfDestruct): comment out
+	parameterTheories code
+
+	* renameModule.cc (makeInstantiation): split parameter and theory
+	view cases into seperate loops
+
+	* importModule.hh (User): added data member nrBoundParameters;
+	commented out data member parameterTheories
+
+2005-04-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (view): clear currentRenaming at the end in order to
+	avoid memory corruption on subsequent call to
+	cleanUpModuleExpression()
+
+2005-04-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added fth TRIV
+
+2005-03-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renameModule.cc (makeInstantiation): keep track of parameters
+	from enclosing module that have been used so we can handle things
+	like PAIR{X,X} without adding duplicate parameters
+
+2005-03-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* import.cc (makeModule): rewritten to check instantiation
+	arguments rigorously and provide detailed warnings
+
+	* importModule.cc (findParameterIndex): added
+	(addParameter): use findParameterIndex()
+
+	* preModule.hh (User): updated decl for makeModule()
+
+	* import.cc (processImports): pass flatModule to makeModule() 
+	(makeModule): take and pass enclosingModule
+
+	* renameModule.cc (makeInstantiation): don't replace parameter in
+	a parameterized sort if it is instantiated by a parameter form an
+	enclosing module
+	(localSort2): addded more info to Assert()
+	(makeInstantiation): crude hack to make sure that paramaterized
+	sorts coming from an imported parameterized module have their
+	parameters replaced
+	(makeInstantiation): do correct replacement of a parameter in a
+	parameterized sort if it is instantiated by a parameter form an
+	enclosing module
+
+2005-03-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* moduleCache.cc (makeInstatiation): rewrote name generation code
+
+	* renameModule.cc (makeInstantiation): handle parameters
+	instantiated by parameters from an enclosing module
+
+	* import.cc (makeModule): gross hack to generate a vector for
+	parameterArgs
+
+	* importModule.hh (User): updated decl for makeInstatiation()
+
+	* moduleCache.hh (User): updated decl for makeInstatiation()
+
+	* moduleCache.cc (makeInstatiation): accept and pass parameterArgs
+
+	* renameModule.cc (makeInstantiation): make instantiations of our
+	parameterized imports rather than merely importing them
+	(makeInstantiation): accept and pass parameterArgs
+
+2005-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renameModule.cc: added handling for "theory views"
+	(makeInstantiation): don't replace parameters in a parameterized
+	sort that got instantiated by a "theory view"
+
+	* auxProperty.cc (joinParameterList): fixed doubled { bug
+
+	* renameModule.cc (makeInstantiation): added crude first attempt
+	at parameterized sorts
+
+	* token.hh (class Token): added decls for splitParameterList() and
+	joinParameterList()
+
+	* auxProperty.cc (joinParameterList): added
+	(splitParameterList): added
+
+	* import.cc (makeModule): check that the number of arguments
+	matches the number of parameters in instantiation case; and check
+	that parameter theories agree with from theories
+
+	* view.hh (getToModule): added
+
+	* importModule.hh (getParameterTheory): added
+	(getNrParameters): added
+
+2005-03-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renameModule.cc (makeInstantiation): fix bad use of renameSort()
+	(makeInstantiation): only import modules that aren't parameters
+	into copy
+
+	* view.cc (evaluate): set status to GOOD if we pass all the checks
+
+	* moduleCache.hh (User): added decl for makeInstatiation()
+
+	* moduleCache.cc (makeInstatiation): added
+
+	* import.cc (makeModule): first crude attempt at handling
+	instantiation
+
+	* importModule.hh (User): added decl for makeInstantiation()
+
+	* renameModule.cc (makeInstantiation): added
+
+	* view.hh (getToModule): added
+
+	* view.cc (showView): use printRenaming()
+	(showView): print final .\n
+
+	* renaming.hh (class Renaming): added decls for
+	printRenamingType() and printRenaming()
+
+	* renaming.cc (printRenaming): added
+	(operator<<): use printRenaming
+	(printRenamingType): turn into member function
+
+	* view.cc (showView): added
+
+	* view.hh (isComplete): added
+
+	* modules.yy (view): use setCurrentView(), CV
+	(viewDeclaration): use CV
+
+	* interpreter.cc (Interpreter): clear currentView
+
+	* top.yy: added macro CV; delete variable currentView
+
+	* view.hh (User): added decls for isComplete(), showView()
+
+	* commands.yy (command): added "show view {name} ." command
+
+	* interpreter.hh (endif): added decl for showView()
+
+	* interpreter.cc (setCurrentView): added (complex version)
+	(showView): added
+
+	* interpreter.hh (setCurrentView): added (simple version)
+
+	* interpreter.cc (makeClean): discard incomplete view
+
+	* interpreter.hh (endif): added decls for getCurrentView(),
+	setCurrentView() (*2) 
+	(getCurrentView): added
+	(endif): added data member currentView
+
+	* commands.yy (command): added "show views ." command
+
+	* top.yy: declare KW_VIEWS
+
+	* lexer.ll: added KW_VIEWS
+
+2005-03-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (view): call insertView()
+
+	* interpreter.hh (endif): derive from ViewDatabase
+
+	* mixfix.hh: added class ModuleDatabase and class ViewDatabase
+
+	* viewDatabase.cc: created
+
+	* viewDatabase.hh (class ViewDatabase): created
+
+	* top.yy: added decl for sortDot
+
+	* modules.yy (sortDot): added
+	(viewDeclaration): use sortDot to allow overparsing for view sort
+	mappings
+
+	* view.cc (evaluate): added code to check for existence of
+	polymorphic operators
+
+	* modules.yy (viewDeclaration): clear bubble before viewToOpName
+	(viewToOpName): allow single token operator names
+	(viewToOpName): deleted
+	(viewDeclaration): use endStatement in place of viewToOpName
+
+	* view.cc (evaluate): added code to do basic operator existence
+	check
+
+2005-03-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* moduleExpression.cc (deepSelfDestruct): rewritten to handle
+	INSTANTIATION case
+	(operator<<): parenthsize syntactically legal but semantically
+	invalid module expressions correctly to avoid generating
+	unparsable nonsense from users mistakes
+
+	* moduleExpression.hh (getArguments): added
+
+	* moduleExpression.cc (operator<<): handle INSTANTIATION case
+
+	* import.cc (makeModule): warning for INSTANTIATION case
+
+	* moduleExpression.cc (ModuleExpression): (instantiation version)
+	added
+
+	* moduleExpression.hh (class ModuleExpression): added
+	INSTANTIATION to enum Type
+	(class ModuleExpression): added decl for instantiation ctor
+	(getModule): allow for instantiation
+	(class ModuleExpression): added arguments data member
+
+	* modules.yy (moduleExpr3): added
+	(moduleExpr): use moduleExpr3
+	(argList): added
+
+	* view.cc (evaluate): added code to check kinds and subsort
+	relations
+
+	* view.hh (User): added enum Status and data member status; added
+	decl for evaluate()
+	(User): added decl for dtor
+
+	* view.cc (View): set status to INITIAL
+	(regretToInform): set status to UNKNOWN
+	(View): added dtor
+	(regretToInform): self destruct all calculated stuff
+	(finishView): use evaluate()
+	(evaluate): added
+
+2005-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.hh (User): don't derive from BadFlag - a view should not
+	become irredeemably bad
+
+	* entity.cc (addUser): turned the Assert() for "already added
+	user" into a DebugAdvisory() since it's possible for a module or
+	view to use a module or view multiple times or in multiple ways
+	(removeUser): turned the Assert() for "missing user" into
+	DebugAdvisory() since if we add a user multiple times we may well
+	remove the user that number of times
+
+	* view.cc (regretToInform): added
+	(View): init fromTheory, toModule
+	(regretToInform): handle the case where fromTheory == toModule
+
+	* view.hh (User): derive from Entity::User
+	(User): added decl for regretToInform();
+
+	* entity.cc (removeUser): add entity name to debugging message if
+	it is an ImportModule
+
+	* entity.hh (class Entity): added decl for
+	dummyToAllowDynamicCasts() if we are debugging
+
+	* entity.cc (removeUser): fancier debugging messages
+
+	* preModule.cc (regretToInform): removed removeUser() hack
+
+	* moduleCache.cc (regretToInform): removed removeUser() hack
+
+	* entity.hh (class Entity): moved definition of UserLt here
+
+	* entity.cc (UserLt): added
+	(addUser): use insert() rather than push_back()
+	(removeUser): rewritten using set operations
+	(informUsers): rewritten to be robust in the face of not knowing
+	whether a call to regretToInform() will remove any particular user
+
+	* entity.hh (class Entity): added struct UserLt and typedef
+	UserSet; deleted typedef UserList; users becomes a UserSet
+
+2005-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* entity.cc (informUsers): 2nd attempt at fixing iterator
+	invalidation bug
+
+	* moduleCache.cc (regretToInform): call removeUser()
+
+	* preModule.cc (regretToInform): call removeUser()
+
+	* entity.cc (informUsers): fix nasty iterator invalidation bug
+
+	* importModule.cc (ImportModule): Parent -> Entity::User
+
+	* renameModule.cc (makeRenamedCopy, makeParameterCopy):
+	dependentModules.append() -> addUser()
+
+	* visibleModule.cc (VisibleModule): Parent -> Entity::User
+
+	* visibleModule.hh (class VisibleModule): Parent -> Entity::User
+
+	* preModule.cc (regretToInform): now takes Entity*
+
+	* preModule.hh (User): derive from Entity::User rather than
+	ImportModule::Parent; update decl for regretToInform()
+
+	* moduleCache.hh (Parent): derive from Entity::User rather than
+	ImportModule::Parent; update decl for regretToInform()
+
+	* moduleCache.cc (destructUnusedModules): hasUsers() in place of
+	hasDependents()
+	(regretToInform): need to cast doomedEntity
+
+	* importModule.cc (addImport): addUser() in place of
+	dependentModules.append() 
+	(addParameter): addUser() in place of dependentModules.append()
+	(deepSelfDestruct): removeUser() in place of removeDependent()
+	(deepSelfDestruct): use informUsers() in place of much special
+	purpose code()
+	(regretToInform): added
+	(removeDependent): deleted
+
+	* importModule.hh (hasDependents): deleted
+	(User): added decl for regretToInform()
+
+	* entity.hh (hasUsers): added
+
+	* importModule.hh (User): derive from Entity and Entity::User
+	(User): deleted class Parent, updated ctor decl
+	(User): deleted data members parent and dependentModules
+	(User): deleted decl for removeDependent()
+
+	* mixfix.hh: added class Entity
+
+	* entity.cc: created
+
+	* entity.hh: created
+
+	* view.cc (finishView): evaluate from and to parts; check that
+	from part is a theory
+
+	* view.hh (class View): added data members fromTheory, toModule
+	(class View) derive from BadFlag
+
+2005-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.cc (finishView): added stub
+
+	* view.hh (class View): added decl for finishView()
+
+	* modules.yy (viewToOpName): added
+	(viewDeclaration): use viewToOpName to fix shift/reduce conflict
+	and allow overparsing
+
+	* top.yy: declare KW_VIEW to have type yyToken
+
+	* lexer.ll: use RETURN() for KW_VIEW
+
+	* modules.yy (view): add calls to fileTable; reset lexer mode at
+	the end
+
+	* top.yy: added currentView
+
+	* modules.yy (view): add semantics
+	(viewDeclaration): add op mappings
+
+	* view.cc: created
+
+	* mixfix.hh: added class View
+
+	* view.hh: created
+
+2005-03-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.hh (CommonTokens): added decks for printDotSort()
+	and printVarSort()
+
+	* bufferPrint.cc (prettyPrint): use printDotSort()
+	(printDotSort): added
+	(printVarSort): added
+	(handleVariable): use printVarSort()
+
+	* mixfixModule.hh (CommonTokens): updated decls for
+	handleVariable(), printKind(); added decl for printSort()
+
+	* bufferPrint.cc (printKind): take printFlags argument
+	(handleVariable): take printFlags and pass it to printKind()
+	(prettyPrint): pass printFlags to handleVariable()
+	(printSort): added
+	(printKind): use printSort()
+
+2005-03-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prettyPrint.cc (operator<<): (Sort* version) only print
+	parameterized sorts as multitoken if PRINT_MIXFIX flag is set
+
+	* visibleModule.cc (showPolymorphAttributes): don't use operator<<
+	for sorts in op-hooks
+	(showPolymorphAttributes): handle the case that sorts in an
+	op-hook might be kinds
+	(showAttributes): don't use operator<< for sorts in op-hooks
+
+	* mixfixModule.cc (nonTerminal): (Sort* version) fix potential
+	rather than actual bug in that we were passing TERM_TYPE rather
+	than type (in all current uses, type is bound to TERM_TYPE)
+
+	* doParse.cc (getParserStats): pass back correct value for
+	nrNonterminals now that iter & oft variable nonterminals are
+	allocated on demand
+
+	* makeGrammar.cc (makeParameterizedSortProductions): use GARBAGE
+	as initial map entry
+	(makeSymbolProductions): use GARBAGE as initial map entry
+
+	* prettyPrint.cc (operator<<): (Sort* version) be recursive in the
+	kind case
+	(operator<<): (Sort* version) handle parameterized sorts
+
+2005-03-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.cc (makeTerm): changed Assert() to allow for
+	parameterized sorts in MAKE_VARIABLE case
+
+	* makeGrammar.cc (makeComponentProductions): add syntax for otf
+	variables of parameterized sorts; update syntax for otf variables
+	of non parameterized sorts that happen to be the lead token of a
+	parameterized sort
+	(makeSpecialProductions): take leadTokens into account for the
+	CONTAINS_COLON case
+	(makeParameterizedSortProductions): fixed nasty bug where we were
+	using iterSymbols instead of leadTokens
+	(makeComponentProductions): use gatherAny rather than emptyGather
+	where we have a nonterminal
+
+	* mixfixModule.hh (CommonTokens): added decl for
+	makeParameterizedSortProductions()
+
+	* makeGrammar.cc (makeParameterizedSortProductions): added
+	(makeGrammar): call makeParameterizedSortProductions()
+
+	* mixfixModule.hh (CommonTokens): added data member leadTokens
+
+	* makeGrammar.cc (makeSymbolProductions): handle the case where
+	we've already seen an iter symbol with the same name
+
+	* mixfixModule.hh (CommonTokens): deletd decl for
+	iterSymbolNonTerminal()
+	(CommonTokens): typedef IntMap;
+
+	* mixfixModule.cc (iterSymbolNonTerminal): deleted
+
+	* entry.cc (addOpDeclaration): don't update iterSymbols
+
+	* makeGrammar.cc (makeSymbolProductions): use new iterSymbols
+	together with newNonTerminal()
+	(makeSpecialProductions): use new iterSymbols semantics (2 places)
+
+	* mixfixModule.hh (CommonTokens): iterSymbols changed from IntSet
+	to map<int, int>
+
+	* makeGrammar.cc (makeGrammar): initialize nextNonTerminal; don't
+	use iterSymbols
+
+	* mixfixModule.hh (CommonTokens): added decl for newNonTerminal()
+
+	* mixfixModule.cc (newNonTerminal): added
+
+	* mixfixModule.hh (findIterSymbolIndex): deleted
+	(CommonTokens): added data member nextNonTerminal
+
+2005-03-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* makeGrammar.cc (makeSpecialProductions): use new
+	insertIterSymbolTerminal() convention
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	insertIterSymbolTerminal()
+
+	* mixfixParser.cc (insertIterSymbolTerminal): use
+	iterSymbolNameCode rather than iterSymbolIndex; no need to resize
+	iterSymbolTerminals
+	(translateSpecialToken): use new definition of iterSymbolTerminals
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	insertVariableTerminal()
+	(class MixfixParser): added typedef IntMap; change
+	iterSymbolTerminals from Vector<int> to IntMap
+
+	* mixfixParser.cc (insertVariableTerminal): use sortNameCode
+	rather than sortIndex
+	(MixfixParser): don't initialize variableTerminals
+	(translateSpecialToken): use map<int,int> rather than Vector<int>;
+	look up sortNameCode directly rather than sortIndex
+
+	* makeGrammar.cc (makeComponentProductions): pass sortNameCode
+	rather than sortIndex to insertVariableTerminal()
+
+	* mixfixParser.hh (class MixfixParser): change variableTerminals
+	from Vector<int> to map<int,int>
+
+	* token.hh (class Token): fix decl for skipSortName()
+
+	* auxProperty.cc (skipSortName): parameterized arg needs to be
+	passed by reference
+
+	* makeGrammar.cc (makeComponentProductions): insert productions
+	for multitoken versions of parameterized sorts
+	(makeComponentProductions): removed comment - sortIndex is
+	actually used in MixfixParser::getSort()
+
+	* token.hh (class Token): added decl for splitParameterizedSort()
+
+	* auxProperty.cc (splitParameterizedSort): added
+
+	* token.cc (splitKind): use clear()
+
+2005-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* token.hh (class Token): updated decl for skipSortName()
+
+	* token.cc (splitKind): use new skipSortName
+
+	* auxProperty.cc (skipSortName): rewritten to take account of
+	parameterized sorts and moved here
+	(computeAuxProperty): rewritten to take account of parameterized
+	sorts and moved here
+
+	* token.cc (computeAuxProperty): handle AUX_PARAMETERIZED_SORT
+
+	* quotedIdentifierSymbol.cc (determineSort): handle
+	AUX_PARAMETERIZED_SORT
+
+	* token.hh (class Token): added AUX_PARAMETERIZED_SORT
+
+2005-02-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (sortName): rewritten to fix a bunch of symmetric
+	reduce/reduce conflicts
+
+2005-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* top.yy: added fragClear(), fragStore(), fragments
+
+	* modules.yy (sortNameFrags): added 
+	(sortNameFrag): added
+	(sortName): rewritten
+
+	* top.yy: add back sortToken
+
+	* modules.yy (sortName): recursive definition
+
+	* top.yy: sortToken -> sortName
+
+	* modules.yy: type -> typeName, sortToken -> sortName,
+	sortTokens -> sortNames, sortTokenList -> sortNameList
+
+2005-02-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (startKeyword): added KW_ENDV
+	(inert): added KW_FROM
+	(midKeyword): moved KW_IS to inert
+	(endToken, tokenBarEqual, tokenBarIf, tokenBarColon) 
+	(tokenBarColonTo): removed KW_IS
+
+	* lexer.ll: added KW_VIEW, KW_FROM, KW_ENDV
+
+	* top.yy (item): added view; added KW_VIEW, KW_FROM, KW_ENDV
+
+	* modules.yy (view, viewDecList, viewDeclaration): added
+
+2005-02-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renameModule.cc (makeParameterCopy): first attempt at label
+	renaming
+	(makeParameterCopy): do local stuff first and imported stuff
+	second since with our naive approach will could get dup label
+	mappings which will safely be ignored by addSortAndLabelMappings()
+
+	* makeGrammar.cc (makeComponentProductions): use find() on
+	bubbleComponents (2 places)
+	(makePolymorphProductions): use find() on bubbleComponents
+
+	* mixfixModule.hh (CommonTokens): bubbleComponents becomes a set<int>
+
+2005-02-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* makeGrammar.cc (makeLabelProductions): use potentialLabels
+
+	* mixfixModule.hh (insertLabels): becomes insertPotentialLabels();
+	take const set<int>&
+	(CommonTokens): IntSet labels becomes set<int> potentialLabels
+
+	* process.cc (process): use insertPotentialLabels() and potentialLabels
+
+	* preModule.cc (addStatement): use potentialLabels
+
+	* preModule.hh (Parent): IntSet labels becomes set<int>
+	potentialLabels
+
+2005-02-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* import.cc (processImports): use makeParameterCopy()
+
+	* importModule.cc (addParameter): store parameterTheory in
+	importModules rather than parameterTheories
+
+	* moduleCache.hh (Parent): added decl for makeParameterCopy()
+
+	* moduleCache.cc (makeParameterCopy): added
+
+	* token.hh (class Token): added declaration for parameterRename()
+
+	* token.cc (parameterRename): added
+
+	* renaming.cc (addSortAndLabelMappings): added
+
+	* renaming.hh (class Renaming): added decl for
+	addSortAndLabelMappings()
+
+	* renameModule.cc (makeParameterCopy): added
+
+2005-02-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* import.cc (processImports): handle module expression for
+	parameter theory
+
+	* preModule.hh (Parent): updated decl for addParameter()
+	(Parent): updated struct Parameter
+
+	* preModule.cc (addParameter): take module expression
+
+	* modules.yy (parameter): allow parameters to be module
+	expressions
+
+2005-02-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* importModule.cc (deepSelfDestruct): use FOR_EACH_CONST() on
+	importedModules; handle parameters
+
+	* modules.yy (module): need to set current module before we parse
+	parameters so that parameters get added to the correct module
+
+	* import.cc (processImports): use FOR_EACH_CONST() in explicity
+	import code
+	(processImports): handle parameters
+
+	* modules.yy (parameter): call addParameter()
+
+	* preModule.hh (Parent): added decl for addParameter()
+	(Parent): added data member parameters
+
+	* preModule.cc (addParameter): added
+
+	* preModule.hh (Parent): added struct Parameter
+
+	* importModule.hh (class ImportModule): added decl for
+	addParameter()
+
+	* mixfixModule.hh (canHaveAsParameter): added
+
+	* importModule.cc (addParameter): added
+
+	* importModule.hh (class ImportModule): added data members
+	parameterNames and parameterTheories
+
+	* importModule.cc (addImport): simplified condition
+
+2005-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* lexer.ll (id): recognize :: { } tokens
+
+	* top.yy: declare inert, '{', '}', KW_COLON2
+
+	* modules.yy (parameters): added parameter syntax
+	(inert): added
+	(identifier): use inert
+	(tokenBarDot): use inert
+	(endToken): use inert
+	(tokenBarColonTo, tokenBarCommaLeft): use inert
+
+	* import.cc (processImports): no automatic imports for theories
+
+2005-01-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.hh (CommonTokens): deleted static data member
+	concealed and decl for concealSymbols()
+
+	* dagNodePrint.cc (prettyPrint): use concealedSymbol()
+
+	* interpreter.hh (endif): added decl for concealedSymbol()
+
+	* interpreter.cc (concealedSymbol): added
+
+	* prettyPrint.cc (concealSymbols): deleted
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	deleted decls for selectSymbols(), excludeModules(),
+	selectBreakSymbols(); deleted static data members selected,
+	excluded, breakSymbols
+
+	* interpreter.hh (traceId, excludedModule): added
+
+	* userLevelRewritingContext.cc (excludeModules, selectSymbols): deleted
+	(dontTrace): use excludedModule and traceId instead of excluded
+	and selected
+
+	* interpreter.hh (breakId): added
+
+	* interact.cc (selectBreakSymbols): deleted
+	(handleDebug): use breakId() instead of breakSymbols
+
+	* interpreter.hh (printConceal, traceExclude, breakSelect) 
+	(traceSelect): rewritten, moved here
+	(endif): added decl for updateSet()
+
+	* interpreter.cc (updateSet): added
+
+	* interpreter.hh (endif): added data members traceIds, breakIds,
+	excludedModules, concealedSymbols
+
+	* userLevelRewritingContext.cc (dontTrace): update testing of
+	excluded, selected
+
+	* interact.cc (selectBreakSymbols): rewritten
+
+	* userLevelRewritingContext.cc (selectSymbols): rewritten
+	(excludeModules): rewritten
+
+	* interact.cc (handleDebug): update testing of breakSymbols
+
+	* userLevelRewritingContext.cc: selected, breakSymbols changed
+	from IntSet to set<int>
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	selected, excluded, breakSymbols changed from IntSet to set<int>
+	(class UserLevelRewritingContext): updated decls for
+	selectSymbols(), excludeModules(), selectBreakSymbols()
+
+	* interpreter.cc (printConceal, traceExclude, breakSelect) 
+	(traceSelect): clear() replaces makeEmpty()
+
+	* interpreter.hh (endif): selected changed from IntSet to set<int>
+
+2005-01-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* userLevelRewritingContext.cc (tracePreScApplication) 
+	(tracePreRuleRewrite, tracePreEqRewrite): support TRACE_BODY
+	option
+
+	* interpreter.hh (endif): added TRACE_REWRITE and TRACE_BODY to
+	DEFAULT_FLAGS
+
+	* userLevelRewritingContext.cc (tracePreScApplication) 
+	(tracePostRuleRewrite, tracePreRuleRewrite, tracePostEqRewrite) 
+	(tracePreEqRewrite): implement TRACE_REWRITE option
+
+	* trial.cc (traceBeginRuleTrial): use getFlag() rather than
+	traceRuleFlag, traceSubstitutionFlag
+	(traceBeginScTrial): use getFlag() rather than
+	traceScFlag, traceSubstitutionFlag
+	(traceEndFragment): use getFlag() rather than
+	traceSubstitutionFlag
+
+	* userLevelRewritingContext.cc (tracePreRuleRewrite) 
+	(tracePreScApplication): use getFlag() rather than
+	traceSubstitutionFlag
+
+	* trial.cc (traceBeginEqTrial): use getFlag() rather than
+	traceEqFlag
+	(traceBeginEqTrial): use getFlag() rather than
+	traceSubstitutionFlag
+
+	* userLevelRewritingContext.cc: deleted defs for trace flags below
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	deleted static members traceConditionFlag, traceWholeFlag,
+	traceSubstitutionFlag, traceSelectFlag, traceScFlag, traceEqFlag,
+	traceRuleFlag
+	(setTraceConditionFlag, setTraceWholeFlag) 
+	(setTraceSubstitutionFlag, setTraceSelectFlag, setTraceScFlag) 
+	(setTraceEqFlag, setTraceRuleFlag): deleted
+
+	* userLevelRewritingContext.cc (dontTrace): use getFlag() rather
+	than traceSelectFlag
+	(tracePreEqRewrite): use getFlag() rather than traceEqFlag
+	(tracePostEqRewrite): use getFlag() rather than traceWholeFlag
+	(tracePreEqRewrite): use getFlag() rather than traceWholeFlag
+	(tracePreRuleRewrite): use getFlag() rather than traceRuleFlag
+	(tracePreRuleRewrite): use getFlag() rather than traceWholeFlag
+	(tracePostRuleRewrite): use getFlag() rather than traceWholeFlag
+	(tracePreScApplication): use getFlag() rather than traceScFlag
+	(tracePreScApplication): use getFlag() rather than traceWholeFlag
+	(tracePreEqRewrite): use getFlag() rather than
+	traceSubstitutionFlag
+	(makeSubcontext): use getFlag() rather than traceConditionFlag
+
+2005-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreter.hh (endif): added TRACE_REWRITE and TRACE_BODY to
+	enum Flags
+
+	* top.yy: declare traceOption and KW_BODY; delete decl for
+	KW_CONTEXT
+
+	* lexer.ll: added KW_BODY; deleted KW_CONTEXT
+
+	* commands.yy (command): use traceOption
+	(traceOption): added; include syntax for set trace rewrite and set
+	trace body
+
+	* mixfixModule.hh (CommonTokens): deleted decls for 7 setPrint*()
+	functions and the commented out functions themselves
+
+2005-01-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added rat print option
+
+2005-01-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added print option hooks
+
+2005-01-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added PrintOptions; metaPrettyPrint() now takes
+	PrintOptionSet arg; backward compatibility metaPrettyPrint() added
+	
+
+	* interpreter.hh (endif): renumbered enum PrintFlags
+
+	* main.cc (main): use setPrintFlag() instead of setPrintMixfix()
+
+	* mixfixModule.hh (CommonTokens): updated decls for printTokens(),
+	printTails() and printPrefixName()
+
+	* bufferPrint.cc (printTokens): use printFlags instead of
+	printFormat
+	(printPrefixName, printTails): use printFlags instead of
+	printFormat
+	(printTokens): added printFlags arg
+	(printTails): added printFlags arg
+	(printPrefixName): added printFlags arg
+	(prettyPrint): pass printFlags to printTokens(), printTails()
+	(handleIter): pass printFlags to printPrefixName()
+	(prettyPrint): pass printFlags to printPrefixName()
+
+	* prettyPrint.cc (printVariable): use getPrintFlag() instead of
+	printWithAliases
+
+	* bufferPrint.cc (prettyPrint): use printFlags instead of
+	printMixfix, printWithParens, printFlat
+
+	* mixfixModule.hh (setPrintMixfix, setPrintWithParens) 
+	(setPrintWithAliases, setPrintFlat, setPrintGraph) 
+	(setPrintConceal, setPrintFormat): deleted
+
+	* prettyPrint.cc: deleted static print* variables
+	(operator<<): use getPrintFlag() in place of printGraph
+	(printTokens): use getPrintFlag() in place of printFormat
+	(printPrefixName): use getPrintFlag() in place of printFormat
+	(printTails): use getPrintFlag() in place of printFormat
+
+	* mixfixModule.hh (CommonTokens): deleted static data members
+	printMixfix, printWithParens, printWithAliases, printFlat,
+	printGraph, printConceal, printFormat
+
+	* dagNodePrint.cc (prettyPrint): use getPrintFlag() in place of
+	printMixfix, printWithParens, printFlat, printConceal
+
+	* termPrint.cc (prettyPrint): use getPrintFlag() in place of
+	printMixfix, printWithParens, printFlat
+
+	* top.yy: added yyPrintFlag
+	added decl for printOption
+
+	* commands.yy (command): use setPrintFlag() for 3 print cases
+	(printOption): added
+	(command): combine all print options using printOption and
+	setPrintFlag()
+
+	* bufferPrint.cc (bufferPrint): handle printFlags arg
+
+	* mixfixModule.hh (CommonTokens): updated buffer print op decls
+
+	* bufferPrint.cc (handleIter): handle printFlags arg
+	(handleMinus): handle printFlags arg
+	(handleDivision): handle printFlags arg
+	(prettyPrint): pass printFlags arg to handleIter(), handleMinus(),
+	handleDivision()
+	(prettyPrint): take printFlags arg
+
+	* dagNodePrint.cc (computeColor, handleIter, handleMinus) 
+	(handleDivision, prettyPrint): use getPrintFlag()
+
+	* termPrint.cc (computeColor, handleIter, handleMinus) 
+	(handleDivision): use getPrintFlag()
+
+	* interpreter.hh (getPrintFlag): added
+
+	* prettyPrint.cc (operator<<): use getPrintFlag()
+
+	* interpreter.cc (Interpreter): init printFlags
+
+	* interpreter.hh (endif): added decl for setPrintFlag()
+
+	* interpreter.cc (setPrintFlag): added
+
+	* interpreter.hh (endif): added enum PrintFlags; moved print flags
+	here
+	(endif): added data member printFlags
+	(getPrintFlags): added
+
+2005-01-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* loopMode.cc (printBubble): print unknown tokens of the form \c
+	with naively rather than skipping them altogther - this at least
+	handles _\/_ pretty printed in mixfix mode correctly
+	
+===================================Maude86===========================================
+
+2004-12-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* execute.cc (eRewrite): call clearInterrupt() after eventLoop()
+	exits with an interrupt
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added decl for clearInterrupt()
+
+	* interact.cc (clearInterrupt): added
+
+2004-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added portal <> operator; made Portal a subsort
+	of Configuration
+
+	* socket.maude: removed Nat args from receive message; allowing
+	specification of min and max number of bytes we will deal with
+	seems more trouble than its worth
+	removed protocol family arg from createClientTcpSocket and
+	createServerTcpSocket; it seems unlikely we will support anything
+	other than IPv4 for the immediate future and we can always rewrite
+	outgoing messages for backwards compatibity if we go to a more
+	general interface
+	added reason arg to closedSocket message since sometimes we will
+	want to know if a socket closed naturally or because of a fatal
+	error
+
+2004-12-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* socket.maude: createServerTcpSocket now takes a backlog length;
+	acceptedClientMsg now passes back a client IP address
+
+	* execute.cc (eRewrite): call root() to force the virtual dag to
+	be concretized before doing another fairRewrite()
+
+2004-12-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* execute.cc (eRewrite): call eventLoop()
+
+2004-12-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* commands.yy (command): fixed nasty bug with optDebug KW_EREWRITE
+	where we were failing to initialize number2 to NONE
+
+	* execute.cc (eRewrite): call generateErewrite() rather than generateFrewrite()
+
+2004-12-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added _&_ : Nat Int -> Nat since anding with a
+	nat will remove any high order 1s
+
+2004-12-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* number-sorts.maude: created
+
+	* visibleModule.cc (showPolymorphAttributes): handle metadata
+
+	* renameModule.cc (donateOps2): handle metadata in polymorphs
+
+	* process.cc (processOps): pass metadata to addPolymorph()
+
+	* mixfixModule.hh (CommonTokens): updated addPolymorph() decl
+	(getPolymorphMetadata): added
+
+	* entry.cc (addPolymorph): take and handle metadata arg
+
+	* mixfixModule.hh (CommonTokens): added metadata field to struct Polymorph
+
+	* renameModule.cc (donateOps2): copy metadata
+
+	* command.cc (printAttributes): handle metadata
+
+2004-12-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* visibleModule.hh (class VisibleModule): updated decl for showAttributes()
+
+	* visibleModule.cc (showAttributes): take declIndex rather than
+	decl; handle metadata
+	(showDecls): new showAttributes() convention
+
+	* entry.cc (addOpDeclaration): store metadata
+
+	* ops.cc (setMetadata): check that metadata is actually a string
+
+	* modules.yy (attrKeyword2): added KW_METADATA
+
+	* lexer.ll (ID_MODE): added metadata
+
+	* top.yy: added KW_METADATA
+
+	* preModule.hh (Parent): added decl for setMetadata()
+
+	* ops.cc (setMetadata): added
+
+	* modules.yy (attribute): allow metadata in operator attributes
+
+	* preModule.cc (OpDef): initialize metadata to NONE
+
+	* preModule.hh (Parent): added metadata field to struct OpDef
+
+	* renameModule.cc (donateOps2): pass dummy metadata arg to
+	addOpDeclaration()
+
+	* process.cc (processOps): pass metadata arg to addOpDeclaration()
+
+	* mixfixModule.hh (CommonTokens): updated decl for
+	addOpDeclaration()
+
+	* entry.cc (addOpDeclaration): added metadata arg
+
+	* metadataStore.cc (insertMetadata): added opdecl version
+	(getMetadata): added opdecl version
+
+	* metadataStore.hh (class MetadataStore): rewritten to handle
+	symbol/opdecls
+
+	* prelude.maude: fixed 3 missing ctors
+
+===================================Maude85a===========================================
+
+2004-12-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* loopMode.cc (doLoop): check AUTO_CLEAR_RULES before calling
+	resetRules()
+
+2004-12-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: lift idempotence equation to TypeListSet
+	combined kind sets with sort sets and type sets
+	deleted kindSetSymbol and emptyKindSetSymbol op hooks
+	added EmptyTypeSet to avoid the issue of whether none belongs to
+	SortSet or KindSet
+	use ditto for TermList ctor
+
+2004-12-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added TypeListSets, maximalAritySet; change prec
+	of _;_ : SortSet SortSet-> SortSetto 43 to avoid interaction with
+	__ : TypeList TypeList -> TypeList
+
+	* execute.cc (rewrite): make calling resetRules() conditional on
+	AUTO_CLEAR_RULES
+	(fRewrite, eRewrite): make calling resetRules() conditional on
+	AUTO_CLEAR_RULES
+
+	* commands.yy (command): set clear counters -> set clear rls
+
+	* top.yy: removed KW_COUNTERS
+
+	* lexer.ll: removed counters; rule|rules synonym for rls
+
+	* interpreter.hh (endif): AUTO_CLEAR_COUNTERS -> AUTO_CLEAR_RULES
+
+2004-11-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* top.yy: added KW_COUNTERS
+
+	* lexer.ll: added counters
+
+	* commands.yy (command): added set clear counters on/off
+
+	* interpreter.hh (endif): added AUTO_CLEAR_COUNTERS to enum Flags;
+	added to DEFAULT_FLAGS
+
+2004-11-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added format attr to trace ctor
+
+2004-11-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added trace ctors; added metaSearchPath()
+
+2004-11-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* profileModule.cc: output a percentage for number of rewrites
+
+	* commands.yy (command): added show search path labels <nat> .
+
+	* interpreter.hh (endif): added decl for showSearchPathLabels()
+
+	* lexer.ll: recognize label in initial mode
+
+	* search.cc (showSearchPathLabels): added
+
+2004-10-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* diophantine.maude: diophantineSystemSolve -> natSystemSolve
+
+2004-09-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNodePrint.cc (prettyPrint): added handling for null pointer
+	in debugging case
+
+2004-09-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* entry.cc (newFancySymbol): handle MATRIX_OP_SYMBOL
+
+	* specialSymbolTypes.cc (MACRO): added MatrixOpSymbol
+
+	* symbolType.hh (class SymbolType): added MATRIX_OP_SYMBOL
+
+2004-09-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: glbSorts now defined on types
+
+2004-09-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: made notFound and unbounded into ctors; added
+	TypeSet
+
+2004-08-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added extra decl for _/_ to solve ctor problem
+
+2004-08-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added PosRat to RAT to solve assoc problems with
+	max op decls
+
+2004-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added min and max to NAT, INT and RAT
+	
+===================================Maude85===========================================
+
+2004-08-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* commands.yy (command): handle erewrite
+
+	* interpreter.hh (endif): added decls for eRewrite() and
+	eRewriteCont()
+
+	* maudemlBuffer.hh (class MaudemlBuffer): added decl for
+	generateErewrite()
+
+	* maudemlBuffer.cc (generateErewrite): added
+
+	* execute.cc (eRewrite): added
+	(eRewriteCont): added
+
+2004-07-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* entry.cc (newFancySymbol): handle SocketManagerSymbol rather
+	than SystemSymbol
+
+	* symbolType.hh (class SymbolType): SYSTEM_SYMBOL replaced by
+	SOCKET_MANAGER_SYMBOL
+
+	* specialSymbolTypes.cc (MACRO): SystemSymbol replaced by
+	SocketManagerSymbol
+
+2004-07-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* entry.cc (newFancySymbol): handle SYSTEM_SYMBOL
+
+	* specialSymbolTypes.cc (MACRO): added SYSTEM_SYMBOL
+
+	* symbolType.hh (class SymbolType): added SYSTEM_SYMBOL
+
+2004-06-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: make module selectors work on theories
+	
+===================================Maude84d===========================================
+
+2004-06-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renaming.cc (typeMatch): fixed bug where we weren't catching the
+	case where the arities differed
+
+2004-06-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* entry.cc (newFancySymbol): added case for CounterSymbol
+
+	* specialSymbolTypes.cc (MACRO): added CounterSymbol
+
+	* symbolType.hh (class SymbolType): added COUNTER_SYMBOL
+
+2004-06-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* main.cc (main): handle -random-seed= flag
+	(printHelp): added lines for -random-seed= and -xml-log= flags
+
+	* entry.cc (newFancySymbol): added case for RandomOpSymbol
+
+	* specialSymbolTypes.cc (MACRO): added RandomOpSymbol
+
+	* symbolType.hh (class SymbolType): added RANDOM_OP_SYMBOL
+
+2004-06-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added fmod RANDOM
+	
+===================================Maude84c===========================================
+
+2004-05-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* import.cc (getModule): don't fall into mutually recursive import
+	warning
+
+	* fixUp.cc (fixUpSymbols): added check for missing identity
+
+	* ops.cc (setIdentity): check for missing identity
+	(setIdentity): unmade change - parser never calls this function
+	with an empty bubble!
+
+2004-05-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.cc (fixUpBubbleSpec): pass qidSymbol as a Symbol*
+	and check it
+
+	* fixUp.cc (fixUpSymbols): use new fixUpBubbleSpec() convention
+
+	* mixfixModule.hh (CommonTokens): updated decl for
+	fixUpBubbleSpec()
+
+	* fixUp.cc (fixUpSymbols): use dynamic_cast<> instead of
+	safeCast()
+
+	* mixfixModule.cc (fixUpBubbleSpec): check for missing symbols
+
+2004-05-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* fixUp.cc (fixUpSymbols): use safeCast()
+	(findHookSymbol): rewritten to avoid running of the end of the
+	Vector if the hook has bad syntax
+
+	* entry.cc (addOpDeclaration): added warnings for ad hoc
+	overloaded operators that have same domain but different ranges
+
+2004-05-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: changed definition of ['FOO] so that it works
+	with theories
+
+	* importModule.hh (class ImportModule): updated decl for 
+
+	* importModule.cc (addImport): pass lineNumber by value
+	addImport()
+
+2004-05-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* commands.yy (importMode): ModuleDatabase -> ImportModule (3
+	places)
+
+	* moduleCache.cc (makeSummation): use new addImport() conventions
+
+	* import.cc (processImports): rewritten to use new addImport()
+	conventions
+
+	* moduleDatabase.cc (setAutoImport): ImportMode now belongs to
+	ImportModule
+
+	* moduleDatabase.hh (class ModuleDatabase): deleted enum
+	ImportMode
+
+	* importModule.hh (class ImportModule): added enum ImportMode;
+	updated decl for addImport()
+
+	* importModule.cc (addImport): take mode and lineNumber; do
+	importation checks here
+
+	* prelude.maude: added thSymbol and fthSymbol
+
+	* import.cc (processImports): added warnings for violation of
+	importation rules by automatic imports
+
+	* modules.yy (declaration): use moduleExprDot
+	(moduleExprDot): added
+	(moduleExprDot): added
+	(mapping): use sortToken rather than token for sort mappings; use
+	token rather than identifier for label mappings
+
+2004-05-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* top.yy: added decl for endsInDot
+
+	* modules.yy (endStatement): added
+	(endsInDot): added
+	(endToken): redefined to eliminate ENDS_IN_DOT
+	(endTokens): endsInDot replaces '.' (2 places)
+	(tokenBarDot): redefined to eliminate ENDS_IN_DOT
+	(endStatement): use dot
+
+	* top.yy: deleted decl for tokenBarLt
+
+	* modules.yy (subsortList): added
+	(listBarLt): deleted
+	(listBarDot): deleted
+	(typeAttr): added
+	(domainRangeAttr): use typeAttr
+	(typeDot): added
+	(badType): added
+	(typeAttr): use badType
+	(tokenBarLt): deleted
+
+	* token.cc (dropChar): added
+
+	* modules.yy (identifier): added ENDS_IN_DOT
+	(tokenBarColonTo): added ENDS_IN_DOT
+	(tokenBarCommaLeft): added ENDS_IN_DOT
+	(sortToken): rule out ENDS_IN_DOT and ,
+	(sortTokenList): added
+	(dot): added to try to recover from missing space
+
+	* lexer.ll (id): added decl for ENDS_IN_DOT
+
+	* top.yy: added ENDS_IN_DOT
+
+2004-05-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* import.cc (processImports): check to see that theories are only
+	imported using the including mode
+	(processImports): check that module types are legal for import
+
+	* mixfixModule.hh (CommonTokens): added enum Bits
+	(isTheory): added
+	(canImport): added
+
+	* preModule.cc (addStatement): check for rules in functional
+	theory/module
+
+	* preModule.hh (Parent): added decl for compatible()
+
+	* preModule.cc (PreModule): init startTokenCode
+	(compatible): added
+	(finishModule): use compatible()
+
+	* preModule.hh (Parent): added data member startTokenCode
+
+	* modules.yy (startModule): added
+
+	* lexer.ll: seperated out omod
+
+	* top.yy: put KW_OMOD back
+	added nonterminal startModule
+
+	* preModule.cc (PreModule): handle start token
+
+	* commonTokens.cc (CommonTokens): added th fth mod fmod omod obj
+	endth endfth endm endfm endom endo jbo
+
+	* commonTokens.hh (class CommonTokens): added th fth mod fmod omod
+	obj endth endfth endm endfm endom endo jbo
+
+	* preModule.hh (Parent): updated decls for ctor and finishModule()
+
+	* modules.yy (startKeyword2): deleted KW_ENDTH KW_ENDFTH KW_ENDFM
+	KW_ENDOM
+
+	* top.yy: deleted KW_ENDTH KW_ENDFTH KW_ENDFM KW_ENDOM KW_TH
+	KW_FTH KW_FMOD KW_OMOD
+
+	* lexer.ll: merged th fth fmod omod into mod; merged endth endfth
+	endfm into endm
+
+	* modules.yy: deleted productions for endfm notEndfm endm
+	notEndm endom notEndom
+	(module): simplified to a single production
+	(oDecList): deleted
+	(fDecList): deleted
+	(declaration): merged with fDeclaration and oDeclaration
+
+	* top.yy: deleted nonterminals notEndfm notEndm notEndom 
+
+	* modules.yy (startKeyword2): added KW_ENDTH KW_ENDFTH
+
+	* top.yy: added KW_TH KW_FTH KW_ENDTH KW_ENDFTH
+
+	* lexer.ll (id): added keywords th fth endth endfth
+	
+2004-05-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ops.cc (setIdentity): added check for empty identity; didn't
+	fix our proble though since we never get here with an empy
+	identity; reverted change
+	
+===================================Maude84b===========================================
+
+2004-04-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* command.cc (showModule): use moduleEndString()
+
+	* visibleModule.cc (showModule): use moduleEndString()
+
+	* mixfixModule.cc (moduleEndString): added
+
+	* mixfixModule.hh (CommonTokens): added decl for moduleEndString()
+
+	* moduleCache.cc (showCreatedModules): use moduleTypeString()
+
+	* moduleDatabase.cc (showNamedModules): use moduleTypeString()
+
+	* command.cc (showModule): use moduleTypeString()
+
+	* mixfixModule.cc (moduleTypeString): added
+
+	* mixfixModule.hh (CommonTokens): added FUNCTIONAL_THEORY and
+	SYSTEM_THEORY to enum ModuleType
+	(CommonTokens): added decl for moduleTypeString()
+
+	* import.cc (processImports): use new autoImports
+
+	* preModule.hh (Parent): data member autoImports becomes a
+	ModuleDatabase::ImportMap
+	(getAutoImport): becomes getAutoImports()
+	(getNrAutoImports): deleted
+
+	* preModule.cc (finishModule): use getAutoImports() in place of
+	getIncludes()
+
+	* moduleDatabase.cc (setAutoImport): use autoImports instead of
+	defaultIncludes
+
+	* moduleDatabase.hh (class ModuleDatabase): added ImportMap
+	typedef; getIncludes() becomes getAutoImports(); data member
+	defaultIncludes becomes autoImports
+	(getAutoImports): replaces getIncludes()
+
+	* prelude.maude: set include BOOL becomes set protect BOOL
+
+	* moduleDatabase.cc (setInclude): becomes setAutoImport()
+
+	* moduleDatabase.hh (class ModuleDatabase): setInclude() becomes
+	setAutoImport()
+
+	* top.yy: added yyImportMode to union
+
+	* commands.yy (importMode): added
+	(command): use setAutoImport()
+
+	* moduleDatabase.hh (class ModuleDatabase): added enum ImportMode
+
+	* top.yy: added tokens KW_PROTECT and KW_EXTEND
+
+	* lexer.ll: added keywords protect and extend
+	
+===================================Maude84a===========================================
+
 2004-03-10  Steven Eker  <eker@goo.csl.sri.com>
 
 	* modules.yy (fDeclaration): fixed nasty bug where we were not

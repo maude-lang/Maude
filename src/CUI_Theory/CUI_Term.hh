@@ -38,7 +38,7 @@ public:
   //
   RawArgumentIterator* arguments();
   void deepSelfDestruct();
-  Term* deepCopy2(SymbolMap* map) const;
+  Term* deepCopy2(SymbolMap* translator) const;
   Term* normalize(bool full, bool& changed);
   int compareArguments(const Term* other) const;
   int compareArguments(const DagNode* other) const;
@@ -70,7 +70,7 @@ public:
   CUI_Symbol* symbol() const;
 
 private:
-  CUI_Term(const CUI_Term& original, SymbolMap* map);
+  CUI_Term(const CUI_Term& original, CUI_Symbol* symbol, SymbolMap* translator);
   
   bool betterToReverseOrder(NatSet& boundUniquely) const;
   Term* collapseTo(int argNr);

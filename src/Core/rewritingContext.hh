@@ -102,13 +102,19 @@ public:
   static void dumpStack(ostream& s, const Vector<RedexPosition>& stack);
 #endif
 
+protected:
+  //
+  //	We make this protected so that a derived class can override it and then call
+  //	our version.
+  //
+  void markReachableNodes();
+
 private:
   enum Special
   {
     ROOT_OK = -2
   };
 
-  void markReachableNodes();
   void rebuildUptoRoot();
   void remakeStaleDagNode(int staleIndex, int childIndex);
   bool ascend();

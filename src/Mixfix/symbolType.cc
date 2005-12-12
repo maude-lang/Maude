@@ -53,3 +53,11 @@ SymbolType::specialNameToBasicType(const char* name)
 #undef MACRO
     return 0;
 }
+
+#ifndef NO_ASSERT
+ostream&
+operator<<(ostream& s, SymbolType st)
+{
+  s << "type = " << st.getBasicType() << " flags = " << st.getFlags();
+}
+#endif

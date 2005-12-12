@@ -4,7 +4,7 @@ MAUDE_LIB=$srcdir/../../src/Mixfix
 export MAUDE_LIB
 
 ../../src/Mixfix/maude \
-  < $srcdir/metaXapply.maude -no-banner \
+  < $srcdir/metaXapply.maude -no-banner -no-advise \
   > metaXapply.out  2>&1
 
 diff $srcdir/metaXapply.expected metaXapply.out > /dev/null 2>&1

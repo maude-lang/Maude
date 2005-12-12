@@ -104,6 +104,59 @@ MetaLevel::downBool(DagNode* metaBool, bool& value)
   return false;
 }
 
+bool
+MetaLevel::downHeader(DagNode* metaHeader, int& id, DagNode*& metaParameterDeclList)
+{
+  if (metaHeader->symbol() == headerSymbol)
+    {
+      FreeDagNode* f = safeCast(FreeDagNode*, metaHeader);
+      metaParameterDeclList = f->getArgument(1);
+      return downQid(f->getArgument(0), id);
+    }
+  metaParameterDeclList = 0;
+  return downQid(metaHeader, id);
+}
+
+bool
+MetaLevel::downParameterDeclList(DagNode* metaParameterDeclList, ImportModule* m)
+{
+  if (metaParameterDeclList == 0)
+    return true;
+  if (m->isTheory())
+    return false;
+  if (metaParameterDeclList->symbol() == parameterDeclListSymbol)
+    {
+      for (DagArgumentIterator i(metaParameterDeclList); i.valid(); i.next())
+	{
+	  if (!downParameterDecl(i.argument(), m))
+	    return false;
+	}
+      return true;
+    }
+  return downParameterDecl(metaParameterDeclList, m);
+}
+
+bool
+MetaLevel::downParameterDecl(DagNode* metaParameterDecl, ImportModule* m)
+{
+  if (metaParameterDecl->symbol() == parameterDeclSymbol)
+    {
+      FreeDagNode* f = safeCast(FreeDagNode*, metaParameterDecl);
+      int name;
+      ImportModule* theory;
+      if (downQid(f->getArgument(0), name) &&
+	  downModuleExpression(f->getArgument(1), 0, theory) &&
+	  theory->isTheory())
+	{
+	  Token t;
+	  t.tokenize(name, FileTable::META_LEVEL_CREATED);
+	  m->addParameter(t, interpreter.makeParameterCopy(name, theory));
+	  return true;
+	}
+    }
+  return false;
+}
+
 MetaModule*
 MetaLevel::downModule(DagNode* metaModule)
 {
@@ -111,77 +164,87 @@ MetaLevel::downModule(DagNode* metaModule)
   if (cm != 0)
     return cm;
   Symbol* ms = metaModule->symbol();
-  if (ms == fmodSymbol || ms == modSymbol)
+
+  MixfixModule::ModuleType mt;
+  if (ms == fmodSymbol)
+    mt = MixfixModule::FUNCTIONAL_MODULE;
+  else if (ms == fthSymbol)
+    mt = MixfixModule::FUNCTIONAL_THEORY;
+  else if (ms == modSymbol)
+    mt = MixfixModule::SYSTEM_MODULE;
+  else if (ms == thSymbol)
+    mt = MixfixModule::SYSTEM_THEORY;
+  else
+    return 0;
+
+  FreeDagNode* f = safeCast(FreeDagNode*, metaModule);
+  int id;
+  DagNode* metaParameterDeclList;
+  if (downHeader(f->getArgument(0), id, metaParameterDeclList))
     {
-      FreeDagNode* f = static_cast<FreeDagNode*>(metaModule);
-      int id;
-      if (downQid(f->getArgument(0), id))
+      MetaModule* m = new MetaModule(id, mt, &cache);
+      if (downParameterDeclList(metaParameterDeclList, m) &&
+	  downImports(f->getArgument(1), m))
 	{
-	  MetaModule* m = new MetaModule(id,
-					 ms == fmodSymbol ?
-					 MetaModule::FUNCTIONAL_MODULE :
-					 MetaModule::SYSTEM_MODULE,
-					 &cache);
-	  if (downImports(f->getArgument(1), m))
+	  m->importSorts();
+	  if (downSorts(f->getArgument(2), m) &&
+	      downSubsorts(f->getArgument(3), m))
 	    {
-	      m->importSorts();
-	      if (downSorts(f->getArgument(2), m) &&
-		  downSubsorts(f->getArgument(3), m))
+	      m->closeSortSet();
+	      if (!(m->isBad()))
 		{
-		  m->closeSortSet();
-		  if (!(m->isBad()))
+		  m->importOps();
+		  if (downOpDecls(f->getArgument(4), m))
 		    {
-		      m->importOps();
-		      if (downOpDecls(f->getArgument(4), m))
+		      m->closeSignature();
+		      m->fixUpImportedOps();
+		      if (downFixUps(m) && !(m->isBad()))
 			{
-			  m->closeSignature();
-			  m->fixUpImportedOps();
-			  if (downFixUps(m) && !(m->isBad()))
+			  m->closeFixUps();
+			  if (downMembAxs(f->getArgument(5), m) &&
+			      downEquations(f->getArgument(6), m) &&
+			      (mt == MixfixModule::FUNCTIONAL_MODULE ||
+			       mt == MixfixModule::FUNCTIONAL_THEORY ||
+			       downRules(f->getArgument(7), m)))
 			    {
-			      m->closeFixUps();
-			      if (downMembAxs(f->getArgument(5), m) &&
-				  downEquations(f->getArgument(6), m) &&
-				  (ms == fmodSymbol || downRules(f->getArgument(7), m)))
-				{
-				  m->localStatementsComplete();
-				  m->importStatements();
-				  m->closeTheory();
-				  m->resetImports();
-				  cache.insert(metaModule, m);
-				  //
-				  //	We may have displace a module from the 
-				  //	metamodule cache generating garbage in
-				  //	the expression. Also there may be an
-				  //	accumulation of garbage anyway from meta-meta
-				  //	processing so we should tidy the (expression)
-				  //	module cache regularly.
-				  //
-				  interpreter.destructUnusedModules();
-				  return m;
-				}
+			      m->localStatementsComplete();
+			      m->importStatements();
+			      m->closeTheory();
+			      m->resetImports();
+			      cache.insert(metaModule, m);
+			      //
+			      //	We may have displace a module from the 
+			      //	metamodule cache generating garbage in
+			      //	the expression. Also there may be an
+			      //	accumulation of garbage anyway from meta-meta
+			      //	processing so we should tidy the (expression)
+			      //	module cache regularly.
+			      //
+			      interpreter.destructUnusedModules();
+			      return m;
 			    }
 			}
 		    }
 		}
 	    }
-	  //
-	  //	Put the import status flags of any modules that the
-	  //	metamodule (transitively) depended on in a good state.
-	  //
-	  m->resetImports();
-	  //
-	  //	Deep self destruction ensures that pointers to the doomed
-	  //	metamodule are removed from modules it depends on.
-	  //
-	  m->deepSelfDestruct();
-	  //
-	  //	Pulling down module expressions may have resulted in
-	  //	the creation of cached modules that no longer have
-	  //	dependents now that we failed to build the metamodule.
-	  //	Thus we now need to tidy the module cache.
-	  //	
-	  interpreter.destructUnusedModules();
 	}
+      //
+      //	Put the import status flags of any modules that the
+      //	metamodule (transitively) depended on in a good state.
+      //
+      m->resetImports();
+      //
+      //	Deep self destruction ensures that pointers to the doomed
+      //	metamodule are removed from modules it depends on.
+      //
+      m->deepSelfDestruct();
+      //
+      //	Pulling down module expressions may have resulted in
+      //	the creation of cached modules that no longer have
+      //	dependents now that we failed to build the metamodule.
+      //	Thus we now need to tidy the module cache.
+      //	
+      interpreter.destructUnusedModules();
     }
   return 0;
 }
@@ -207,15 +270,23 @@ bool
 MetaLevel::downImport(DagNode* metaImport, MetaModule* m)
 {
   Symbol* mi = metaImport->symbol();
-  if (mi == protectingSymbol || mi == extendingSymbol || mi == includingSymbol)
+  ImportModule::ImportMode mode;
+  if (mi == protectingSymbol)
+    mode = ImportModule::PROTECTING;
+  else if (mi == extendingSymbol)
+    mode = ImportModule::EXTENDING;
+  else if (mi == includingSymbol)
+    mode = ImportModule::INCLUDING;
+  else
+    return false;
+  
+  FreeDagNode* f = safeCast(FreeDagNode*, metaImport);
+  ImportModule* im;
+  if (downModuleExpression(f->getArgument(0), m, im) &&
+      (im->getNrParameters() == 0 || im->parametersBound()))
     {
-      FreeDagNode* f = safeCast(FreeDagNode*, metaImport);
-      ImportModule* im;
-      if (downModuleExpression(f->getArgument(0), im))
-	{
-	  m->addImport(im);
-	  return true;
-	}
+      m->addImport(im, mode, LineNumber(FileTable::META_LEVEL_CREATED));
+      return true;
     }
   return false;
 }
@@ -335,6 +406,7 @@ MetaLevel::downType2(int id, MixfixModule* m, Sort*& type)
   switch (Token::auxProperty(id))
     {
     case Token::AUX_SORT:
+    case Token::AUX_STRUCTURED_SORT:
       {
 	Sort* s = m->findSort(id);
 	if (s != 0)
@@ -830,7 +902,6 @@ MetaLevel::downTermPair(DagNode* metaTerm1,
   return false;
 }
 
-
 Term*
 MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
 {
@@ -862,7 +933,8 @@ MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
 		}
 	    }
 	  IssueAdvisory("could not find an operator " << QUOTE(Token::name(id)) <<
-			" with appropriate domain in meta-module " << QUOTE(m) << '.');
+			" with appropriate domain in meta-module " << QUOTE(m) <<
+			" when trying to interprete metaterm " << QUOTE(metaTerm) << '.');
 	  // cerr << metaTerm << '\n';
 	  // m->showAll(cerr);
 	  for (int i = 0; i < nrArgs; i++)
@@ -1032,4 +1104,43 @@ MetaLevel::downAssignment(DagNode* metaAssignment,
 	}
     }
   return false;
+}
+
+bool
+MetaLevel::downPrintOptionSet(DagNode* metaPrintOptionSet, int& printFlags) const
+{
+  printFlags = 0;
+  Symbol* mp = metaPrintOptionSet->symbol();
+  if (mp == printOptionSetSymbol)
+    {
+      for (DagArgumentIterator i(metaPrintOptionSet); i.valid(); i.next())
+	{
+	  if (!downPrintOption(i.argument(), printFlags))
+	    return false;
+	}
+    }
+  else if (mp != emptyPrintOptionSetSymbol)
+    return downPrintOption(metaPrintOptionSet, printFlags);
+  return true;
+}
+
+bool
+MetaLevel::downPrintOption(DagNode* metaPrintOption, int& printFlags) const
+{
+  Symbol* mp = metaPrintOption->symbol();
+  if (mp == mixfixSymbol)
+    printFlags |= Interpreter::PRINT_MIXFIX;
+  else if (mp == withParensSymbol)
+    printFlags |= Interpreter::PRINT_WITH_PARENS;
+  else if (mp == flatSymbol)
+    printFlags |= Interpreter::PRINT_FLAT;
+  else if (mp == formatPrintOptionSymbol)
+    printFlags |= Interpreter::PRINT_FORMAT;
+  else if (mp == numberSymbol)
+    printFlags |= Interpreter::PRINT_NUMBER;
+  else if (mp == ratSymbol)
+    printFlags |= Interpreter::PRINT_RAT;
+  else
+    return false;
+  return true;
 }

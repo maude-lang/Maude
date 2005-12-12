@@ -41,6 +41,7 @@
 //
 #ifndef _argVec_hh_
 #define _argVec_hh_
+#include "dagNode.hh"
 
 template<class T>
 class ArgVec

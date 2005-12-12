@@ -40,8 +40,11 @@ public:
   void insertMetadata(ItemType itemType, ModuleItem* item, int metadata);
   int getMetadata(ItemType itemType, const ModuleItem* item) const;
 
+  void insertMetadata(ModuleItem* symbol, int opDeclIndex, int metadata);
+  int getMetadata(ModuleItem* symbol, int opDeclIndex) const;
+
 private:
-  typedef map<int, int> MetadataMap;
+  typedef map<Int64, int> MetadataMap;
   MetadataMap metadataMap;
 };
 

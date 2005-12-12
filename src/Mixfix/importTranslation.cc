@@ -37,6 +37,9 @@
 //      interface class definitions
 #include "term.hh"
 
+//      core class definitions
+#include "argumentIterator.hh"
+
 //	variable class definitions
 #include "variableSymbol.hh"
 
@@ -56,11 +59,11 @@ ImportTranslation::ImportTranslation(ImportModule* target, Renaming* renaming)
 Sort*
 ImportTranslation::translate(const Sort* sort)
 {
-  if (sort->index() == Sort::ERROR_SORT)
-    return translate(sort->component())->sort(Sort::ERROR_SORT);
+  if (sort->index() == Sort::KIND)
+    return translate(sort->component())->sort(Sort::KIND);
 
   int id = sort->id();
-  FOR_EACH_CONST(i, list<Renaming*>, renamings)
+  FOR_EACH_CONST(i, RenamingList, renamings)
     {
       if (Renaming* r = *i)
 	id = r->renameSort(id);
@@ -76,7 +79,7 @@ ImportTranslation::translateLabel(int id)
 {
   if (id != NONE)
     {
-      FOR_EACH_CONST(i, list<Renaming*>, renamings)
+      FOR_EACH_CONST(i, RenamingList, renamings)
 	{
 	  if (Renaming* r = *i)
 	    id = r->renameLabel(id);
@@ -109,42 +112,152 @@ ImportTranslation::translate(Symbol* symbol)
       }
     default:
       {
-	int nrArgs = symbol->arity();
-	Vector<ConnectedComponent*> domainComponents(nrArgs);
-	s = symbol;
-	list<ImportModule*>::const_iterator i2 = targets.begin();
-	FOR_EACH_CONST(i, list<Renaming*>, renamings)
-	  {
-	    Renaming* r =  *i;
-	    int id = s->id();
-	    //
-	    //	Change name if needed.
-	    //
-	    if (r != 0)
-	      {
-		int index = r->renameOp(s);
-		if (index != NONE)
-		  id = r->getOpTo(index);
-	      }
-	    //
-	    //	Now translate domain and range components.
-	    //
-	    for (int j = 0; j < nrArgs; j++)
-	      domainComponents[j] = translate(r, *i2, s->domainComponent(j));
-	    ConnectedComponent* rangeComponent = translate(r, *i2, s->rangeComponent());
-	    //
-	    //	Look up symbol in target module.
-	    //
-	    s = (*i2)->findSymbol(id, domainComponents, rangeComponent);
-	    Assert(s != 0, "no translation for renamed " << s  << " in " << *i2);
-	    ++i2;
-	  }
+	RenamingList::const_iterator dummy;
+	s = translateRegularSymbol(symbol, dummy);
 	break;
       }
     }
-  Assert(s != 0, "no translation for " << symbol << " in " << targets.back());
-  directMap.setMap(symbol, s);
+  if (s != 0)
+    directMap.setMap(symbol, s);
   return s;
+}
+
+Term*
+ImportTranslation::translateTerm(const Term* term)
+{
+  DebugAdvisory("translateTerm() on " << term << " we have size " << renamings.size());
+  //
+  //	We are called because the translation for the top symbol of term
+  //	involves at least one op->term mapping. We locate that first.
+  //
+  Symbol* symbol = term->symbol();
+  RenamingList::const_iterator firstOpToTerm;
+  (void) translateRegularSymbol(symbol, firstOpToTerm);
+  int index = (*firstOpToTerm)->renameOp(symbol);
+  Term* toTerm = (*firstOpToTerm)->getOpTargetTerm(index);
+  //
+  //	Usually there will be more renamings after the first op->term mapping;
+  //	If this is so we need to split our import translation into prefix and
+  //	suffix parts.
+  //
+  ImportTranslation* prefix = this;
+  ImportTranslation* suffix = 0;
+  ++firstOpToTerm;
+  const RenamingList::const_iterator e = renamings.end();
+  if (firstOpToTerm != e)
+    {
+      prefix = new ImportTranslation;
+      RenamingList::const_iterator i = renamings.begin();
+      ModuleList::const_iterator j = targets.begin();
+      for (; i != firstOpToTerm; ++i, ++j)
+	{
+	  prefix->renamings.push_back(*i);
+	  prefix->targets.push_back(*j);
+	}
+      DebugAdvisory("prefix has size " << prefix->renamings.size());
+      suffix = new ImportTranslation;
+      for (; i != e;  ++i, ++j)
+      	{
+	  suffix->renamings.push_back(*i);
+	  suffix->targets.push_back(*j);
+	}
+      DebugAdvisory("suffix has size " << suffix->renamings.size());
+    }
+  //
+  //	Collect the arguments under the top symbol, and use them to instantiate
+  //	toTerm via the prefix importTranslation.
+  //
+  Vector<Term*> varBindings(symbol->arity());
+  int j = 0;
+  for (ArgumentIterator i(*(const_cast<Term*>(term))); i.valid(); i.next(), ++j)
+    varBindings[j] = i.argument();
+  Term* translatedTerm = toTerm->instantiate(varBindings, prefix);
+  //
+  //	If there are more renamings to apply, apply them and tidy up.
+  //
+  if (suffix != 0)
+    {
+      Term* t = translatedTerm->deepCopy(suffix);
+      translatedTerm->deepSelfDestruct();
+      translatedTerm = t;
+      delete prefix;
+      delete suffix;
+    }
+  return translatedTerm;
+}
+
+Symbol*
+ImportTranslation::translateRegularSymbol(Symbol* symbol,
+					  RenamingList::const_iterator& opToTerm) const
+{
+  int nrArgs = symbol->arity();
+  int id = symbol->id();
+  Vector<int> sortNames(nrArgs + 1);
+  for (int i = 0; i < nrArgs; ++i)
+    sortNames[i] = symbol->domainComponent(i)->sort(1)->id();
+  sortNames[nrArgs] = symbol->rangeComponent()->sort(1)->id();
+
+  FOR_EACH_CONST(i, RenamingList, renamings)
+    {
+      Renaming* r =  *i;
+      if (r != 0)
+	{
+	  //
+	  //	Translate name.
+	  //
+	  int index = r->renameOp(id, sortNames);
+	  if (index != NONE)
+	    {
+	      id = r->getOpTo(index);
+	      if (id == NONE)
+		{
+		  opToTerm = i;
+		  return 0;  // must be an op->term mapping
+		}
+	    }
+	  //
+	  //	Translate domain and range sorts.
+	  //
+	  for (int j = 0; j <= nrArgs; ++j)
+	    sortNames[j] = r->renameSort(sortNames[j]);
+	}
+    }
+  //
+  //	Look up symbol in target module.
+  //
+  ImportModule* target = targets.back();
+  Vector<ConnectedComponent*> domainComponents(nrArgs);
+  for (int i = 0; i < nrArgs; ++i)
+    domainComponents[i] = target->findSort(sortNames[i])->component();
+  Symbol* s = target->findSymbol(id, domainComponents, target->findSort(sortNames[nrArgs])->component());
+  Assert(s != 0, "no translation for " << symbol << " in " << target);
+  return s;
+}
+
+Symbol*
+ImportTranslation::findTargetVersionOfSymbol(Symbol* symbol)
+{
+  ImportModule *target = targets.back();
+  switch (safeCast(MixfixModule*, symbol->getModule())->
+	  getSymbolType(symbol).getBasicType())
+    {
+    case SymbolType::VARIABLE:
+      {
+	Sort* sort = target->findSort(safeCast(VariableSymbol*, symbol)->getSort()->id());
+	return target->instantiateVariable(sort);
+      }
+    case SymbolType::SORT_TEST:
+      {
+	SortTestSymbol* t = safeCast(SortTestSymbol*, symbol);
+	return target->instantiateSortTest(target->findSort(t->sort()->id()), t->eager());
+      }
+    }
+  int nrArgs = symbol->arity();
+  Vector<ConnectedComponent*> domainComponents(nrArgs);
+  for (int i = 0; i < nrArgs; ++i)
+    domainComponents[i] = target->findSort(symbol->domainComponent(i)->sort(1)->id())->component();
+  ConnectedComponent* rangeComponent = target->findSort(symbol->rangeComponent()->sort(1)->id())->component();
+  return target->findSymbol(symbol->id(), domainComponents, rangeComponent);
 }
 
 ConnectedComponent*
@@ -152,7 +265,7 @@ ImportTranslation::translate(Renaming* renaming,
 			     ImportModule* target,
 			     const ConnectedComponent* old)
 {
-  Sort* sort = old->sort(1);
+  Sort* sort = old->sort(Sort::FIRST_USER_SORT);
   int id = sort->id();
   if (renaming != 0)
     id = renaming->renameSort(id);

@@ -1,3 +1,24 @@
+2005-06-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.hh (class VariableTerm): updated decl for
+	deepCopy2()
+
+	* variableTerm.cc (deepCopy2): changed arg name
+
+	* variableTerm.hh (class VariableTerm): updated decl for
+	instantiate2()
+
+	* variableTerm.cc (instantiate2): new calling convention
+
+2005-06-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableTerm.cc (instantiate2): added
+
+	* variableTerm.hh (class VariableTerm): added decl for
+	instantiate2()
+
+===================================Maude86b===========================================
+
 2003-05-06  Steven Eker  <eker@goo.csl.sri.com>
 
 	* variableTerm.cc (partialCompareUnstable): use Term::UNKNOWN

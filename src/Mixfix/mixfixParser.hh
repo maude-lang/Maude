@@ -25,6 +25,7 @@
 //
 #ifndef _mixfixParser_hh_
 #define _mixfixParser_hh_
+#include <map>
 #ifdef SCP
 #include "scp_parser.hh"
 #else
@@ -114,8 +115,8 @@ public:
 			      const Vector<int>& excluded,
 			      int bubbleSpecIndex);
   void insertSpecialTerminal(int tokenProperty, int codeToUse);
-  void insertVariableTerminal(int sortIndex, int codeToUse);
-  void insertIterSymbolTerminal(int iterSymbolIndex, int codeToUse);
+  void insertVariableTerminal(int sortNameCode, int codeToUse);
+  void insertIterSymbolTerminal(int iterSymbolNameCode, int codeToUse);
   //
   //	Function that parses a vector of tokens to a parse tree.
   //
@@ -143,6 +144,7 @@ public:
   int getNrProductions();
 
 private:
+  typedef map<int,int> IntMap;
   enum Flags
   {
     NONEXEC = 1,
@@ -171,8 +173,8 @@ private:
   IntSet tokens;			// mapping between token codes and terminal numbers
   Vector<Action> actions;		// action associated with each production
   Vector<int> specialTerminals;		// special terminals for tokens with special properties
-  Vector<int> variableTerminals;	// special terminals for on-the-fly variables
-  Vector<int> iterSymbolTerminals;	// special terminals for tokens like f^42
+  IntMap variableTerminals;		// special terminals for on-the-fly variables
+  IntMap iterSymbolTerminals;		// special terminals for tokens like f^42
   bool bubblesAllowed;			// do we allow bubbles of unknown tokens
   //
   //	We store the tokens we are parsing here to avoid passing extra parameters

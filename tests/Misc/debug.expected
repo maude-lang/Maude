@@ -9,27 +9,27 @@ result Bar: c
 ==========================================
 reduce in META-LEVEL : metaReduce(['BAR], 'a.Bar) .
 *********** equation
-eq [Q:Qid] = mod Q:Qid is
-  protecting Q:Qid .
+eq [Q:Qid] = th Q:Qid is
+  including Q:Qid .
   sorts none .
   none
   none
   none
   none
   none
-endm .
+endth .
 Q:Qid --> 'BAR
 ['BAR]
 --->
-mod 'BAR is
-  protecting 'BAR .
+th 'BAR is
+  including 'BAR .
   sorts none .
   none
   none
   none
   none
   none
-endm
+endth
 rewrites: 4
 result ResultPair: {'c.Bar,'Bar}
 Maude> Bye.

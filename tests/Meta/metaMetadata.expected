@@ -1,0 +1,139 @@
+Maude> fmod FOO is
+  sorts Foo .
+  ops a b : -> Foo [metadata "bla bla"] .
+  eq a = b [metadata "hmm"] .
+endfm
+fmod FOO is
+  sort Foo .
+  op a : -> Foo [metadata "bla bla"] .
+  op b : -> Foo [metadata "bla bla"] .
+  eq a = b [metadata "hmm"] .
+endfm
+==========================================
+reduce in META-LEVEL : upModule('FOO, false) .
+rewrites: 1
+result FModule: fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [metadata("bla bla")] .
+  op 'b : nil -> 'Foo [metadata("bla bla")] .
+  none
+  eq 'a.Foo = 'b.Foo [metadata("hmm")] .
+endfm
+Warning: <standard input>, line 19 (fmod FOO2): bad value bla for metadata
+    attribute.
+Warning: <standard input>, line 20 (fmod FOO2): bad token hmm.
+Warning: <standard input>, line 20 (fmod FOO2): no parse for statement
+eq a = b [metadata hmm] .
+fmod FOO2 is
+  sorts Foo .
+  ops a b : -> Foo .
+  eq a = b [metadata hmm] .
+endfm
+fmod FOO2 is
+  sort Foo .
+  op a : -> Foo .
+  op b : -> Foo .
+endfm
+==========================================
+reduce in META-LEVEL : upModule('FOO, false) .
+rewrites: 1
+result FModule: fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [metadata("bla bla")] .
+  op 'b : nil -> 'Foo [metadata("bla bla")] .
+  none
+  eq 'a.Foo = 'b.Foo [metadata("hmm")] .
+endfm
+fmod FOO3 is
+  sort Foo .
+  op a : -> Foo [metadata "bla bla"] .
+  op b : -> Foo [metadata "bla bla"] .
+  eq a = b [metadata "hmm"] .
+endfm
+==========================================
+reduce in META-LEVEL : upModule('FOO3, true) .
+rewrites: 1
+result FModule: fmod 'FOO3 is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [metadata("bla bla")] .
+  op 'b : nil -> 'Foo [metadata("bla bla")] .
+  none
+  eq 'a.Foo = 'b.Foo [metadata("hmm")] .
+endfm
+fmod FOO4 is
+  sorts Foo .
+  op f : ??? -> Foo [poly (1) metadata "bla bla"] .
+endfm
+fmod FOO4 is
+  sort Foo .
+  op f : Universal -> Foo [poly (1) metadata "bla bla"] .
+endfm
+==========================================
+reduce in META-LEVEL : upModule('FOO4, false) .
+rewrites: 1
+result FModule: fmod 'FOO4 is
+  nil
+  sorts 'Foo .
+  none
+  op 'f : 'Universal -> 'Foo [poly(1) metadata("bla bla")] .
+  none
+  none
+endfm
+fmod FOO5 is
+  sort Foo .
+  op f : Universal -> Foo [poly (1) metadata "bla bla"] .
+endfm
+==========================================
+reduce in META-LEVEL : upModule('FOO5, true) .
+rewrites: 1
+result FModule: fmod 'FOO5 is
+  nil
+  sorts 'Foo .
+  none
+  op 'f : 'Universal -> 'Foo [poly(1) metadata("bla bla")] .
+  none
+  none
+endfm
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'FOO is
+  protecting 'BOOL .
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [metadata("bla bla")] .
+  op 'b : nil -> 'Foo [metadata("bla bla")] .
+  none
+  eq 'a.Foo = 'b.Foo [metadata("hmm")] .
+endfm, 'a.Foo) .
+rewrites: 2
+result ResultPair: {'b.Foo,'Foo}
+fmod BAR is
+  sorts Foo Bar .
+  subsorts Foo < Bar .
+  op f : Foo -> Foo [metadata "fooy"] .
+  op f : Bar -> Bar [metadata "fubar"] .
+endfm
+fmod BAR is
+  sorts Foo Bar .
+  subsort Foo < Bar .
+  op f : Foo -> Foo [metadata "fooy"] .
+  op f : Bar -> Bar [metadata "fubar"] .
+endfm
+==========================================
+reduce in META-LEVEL : upModule('BAR, false) .
+rewrites: 1
+result FModule: fmod 'BAR is
+  nil
+  sorts 'Bar ; 'Foo .
+  subsort 'Foo < 'Bar .
+  op 'f : 'Bar -> 'Bar [metadata("fubar")] .
+  op 'f : 'Foo -> 'Foo [metadata("fooy")] .
+  none
+  none
+endfm
+Maude> Bye.

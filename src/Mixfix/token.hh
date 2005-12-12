@@ -54,6 +54,7 @@ public:
   enum AuxProperties
   {
     AUX_SORT,
+    AUX_STRUCTURED_SORT,
     AUX_VARIABLE,
     AUX_CONSTANT,
     AUX_KIND
@@ -61,7 +62,9 @@ public:
 
   void tokenize(const char* tokenString, int lineNumber);
   void tokenize(int code, int lineNumber);
+  static int parameterRename(int parameterCode, int originalCode);
   void fixUp(const char* tokenString, int& lineNumber);
+  void dropChar(const Token& original);
 
   void makePrefixName(const Vector<Token>& opBubble);
   const char* name() const;
@@ -72,6 +75,8 @@ public:
   bool getInt(int& value) const;
 
   static const char* name(int code);
+  static crope sortName(int code);
+
   static int specialProperty(int code);
   static int auxProperty(int code);
   static int encode(const char* tokenString);
@@ -91,6 +96,9 @@ public:
   static bool split(int code, int& prefix, int& suffix);
   static bool split(int code, int& opName, mpz_class& number);
   static bool splitKind(int code, Vector<int>& codes);
+  static void splitParameterizedSort(int code, Vector<int>& codes);
+  static void splitParameterList(int code, int& header, Vector<int>& parameters);
+  static int joinParameterList(int header, const Vector<int>& parameters);
   static Int64 codeToInt64(int code);
   static int int64ToCode(Int64 i);
   static double codeToDouble(int code);
@@ -103,13 +111,14 @@ public:
   static void printTokens(ostream& s,
 			  const Vector<Token>& tokens,
 			  const char* seperator);
+  static void peelParens(Vector<Token>& tokens);
 
 private:
   static void bufferExpandTo(int size);
   static void reallocateBuffer(int length);
   static void checkForSpecialProperty(const char* tokenString);
   static int computeAuxProperty(const char* tokenString);
-  static const char* skipSortName(const char* tokenString);
+  static const char* skipSortName(const char* tokenString, bool& parameterized);
   static bool looksLikeRational(const char* s);
   static StringTable stringTable;
   static Vector<int> specialProperties;

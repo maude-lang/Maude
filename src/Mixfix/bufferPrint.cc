@@ -25,14 +25,14 @@
 //
 
 void
-MixfixModule::bufferPrint(Vector<int>& buffer, Term* term)
+MixfixModule::bufferPrint(Vector<int>& buffer, Term* term, int printFlags)
 {
-  globalIndent = 0;
-  prettyPrint(buffer, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+  globalIndent = 0;  // HACK
+  prettyPrint(buffer, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
 }
 
 void
-MixfixModule::handleVariable(Vector<int>& buffer, Term* term)
+MixfixModule::handleVariable(Vector<int>& buffer, Term* term, int printFlags)
 {
   VariableTerm* v = safeCast(VariableTerm*, term);
   string fullName(Token::name(v->id()));
@@ -41,25 +41,23 @@ MixfixModule::handleVariable(Vector<int>& buffer, Term* term)
   if (sort->index() == Sort::KIND)
     {
       buffer.append(Token::encode(fullName.c_str()));
-      printKind(buffer, sort);
+      printKind(buffer, sort, printFlags);
     }
   else
-    {
-      fullName += Token::name(sort->id());
-      buffer.append(Token::encode(fullName.c_str()));
-    }
+    printVarSort(buffer, fullName, sort, printFlags);
 }
 
 bool
 MixfixModule::handleIter(Vector<int>& buffer,
 			 Term* term,
 			 SymbolInfo& si,
-			 bool rangeKnown)
+			 bool rangeKnown,
+			 int printFlags)
 {
   if (!(si.symbolType.hasFlag(SymbolType::ITER)))
     return false;
   if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL &&
-      interpreter.getFlag(Interpreter::PRINT_NUMBER))
+      (printFlags & Interpreter::PRINT_NUMBER))
     {
       SuccSymbol* succSymbol = safeCast(SuccSymbol*, term->symbol());
       if (succSymbol->isNat(term))
@@ -77,9 +75,9 @@ MixfixModule::handleIter(Vector<int>& buffer,
 
   string prefixName;
   makeIterName(prefixName, term->symbol()->id(), number);
-  printPrefixName(buffer, Token::encode(prefixName.c_str()), si);
+  printPrefixName(buffer, Token::encode(prefixName.c_str()), si, printFlags);
   buffer.append(leftParen);
-  prettyPrint(buffer, st->getArgument(), PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
+  prettyPrint(buffer, st->getArgument(), PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown, printFlags);
   buffer.append(rightParen);
   return true;
 }
@@ -88,10 +86,11 @@ MixfixModule::handleIter(Vector<int>& buffer,
 bool
 MixfixModule::handleMinus(Vector<int>& buffer,
 			  Term* term,
-			  SymbolInfo& si)
+			  SymbolInfo& si,
+			  int printFlags)
 {
   if (si.symbolType.getBasicType() == SymbolType::MINUS_SYMBOL &&
-      interpreter.getFlag(Interpreter::PRINT_NUMBER))
+      (printFlags & Interpreter::PRINT_NUMBER))
     {
       const MinusSymbol* minusSymbol = safeCast(MinusSymbol*, term->symbol());
       if (minusSymbol->isNeg(term))
@@ -109,10 +108,11 @@ MixfixModule::handleMinus(Vector<int>& buffer,
 bool
 MixfixModule::handleDivision(Vector<int>& buffer,
 			     Term* term,
-			     SymbolInfo& si)
+			     SymbolInfo& si,
+			     int printFlags)
 {
   if (si.symbolType.getBasicType() == SymbolType::DIVISION_SYMBOL &&
-      interpreter.getFlag(Interpreter::PRINT_RAT))
+      (printFlags & Interpreter::PRINT_RAT))
     {
       const DivisionSymbol* divisionSymbol = safeCast(DivisionSymbol*, term->symbol());
       if (divisionSymbol->isRat(term))
@@ -141,7 +141,8 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 			  const ConnectedComponent* leftCaptureComponent,
 			  int rightCapture,
 			  const ConnectedComponent* rightCaptureComponent,
-			  bool rangeKnown)
+			  bool rangeKnown,
+			  int printFlags)
 {
   Symbol* symbol = term->symbol();
   int nrArgs = symbol->arity();
@@ -200,21 +201,23 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
   if (needDisambig)
     buffer.append(leftParen);
   if (basicType == SymbolType::VARIABLE)
-    handleVariable(buffer, term);
+    handleVariable(buffer, term, printFlags);
   else if (basicType == SymbolType::FLOAT)
     buffer.append(Token::doubleToCode(mfValue));
   else if (basicType == SymbolType::STRING)
     buffer.append(Token::encode(strValue.c_str()));
   else if (basicType == SymbolType::QUOTED_IDENTIFIER)
     buffer.append(Token::quoteNameCode(qidCode));
-  else if (handleIter(buffer, term, si, rangeKnown))
+  else if (handleIter(buffer, term, si, rangeKnown, printFlags))
     ;
-  else if (handleMinus(buffer, term, si))
+  else if (handleMinus(buffer, term, si, printFlags))
     ;
-  else if (handleDivision(buffer, term, si))
+  else if (handleDivision(buffer, term, si, printFlags))
     ;
-  else if ((printMixfix && si.mixfixSyntax.length() != 0) || (basicType == SymbolType::SORT_TEST))
+  else if (((printFlags & Interpreter::PRINT_MIXFIX) && si.mixfixSyntax.length() != 0) ||
+	   (basicType == SymbolType::SORT_TEST))
     {
+      bool printWithParens = printFlags & Interpreter::PRINT_WITH_PARENS;
       bool needParen = !needDisambig &&
 	(printWithParens || requiredPrec < si.prec ||
 	 ((iflags & LEFT_BARE) && leftCapture <= si.gather[0] &&
@@ -236,14 +239,14 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	  Term* t = a.argument();
 	  a.next();
 	  moreArgs = a.valid();
-	  pos = printTokens(buffer, si, pos);
+	  pos = printTokens(buffer, si, pos, printFlags);
 	  if (arg == nrArgs - 1 && moreArgs)
 	    {
 	      ++nrTails;
 	      arg = 0;
 	      if (needAssocParen)
 		buffer.append(leftParen);
-	      pos = printTokens(buffer, si, 0);
+	      pos = printTokens(buffer, si, 0, printFlags);
 	    }
 	  int lc = UNBOUNDED;
 	  const ConnectedComponent* lcc = 0;
@@ -269,16 +272,16 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 		  rcc = rightCaptureComponent;
 		}
 	    }
-	  prettyPrint(buffer, t, si.gather[arg], lc, lcc, rc, rcc, rangeKnown);
+	  prettyPrint(buffer, t, si.gather[arg], lc, lcc, rc, rcc, rangeKnown, printFlags);
 	}
-      printTails(buffer, si, pos, nrTails, needAssocParen);
+      printTails(buffer, si, pos, nrTails, needAssocParen, printFlags);
       if (needParen)
 	buffer.append(rightParen);
     }
   else
     {
       int id = symbol->id();
-      printPrefixName(buffer, id, si);
+      printPrefixName(buffer, id, si, printFlags);
       ArgumentIterator a(*term);
       if (a.valid())
 	{
@@ -289,13 +292,15 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	      Term* t = a.argument();
 	      a.next();
 	      int moreArgs = a.valid();
-	      if (arg >= nrArgs - 1 && !printFlat && moreArgs)
+	      if (arg >= nrArgs - 1 &&
+		  !(printFlags & Interpreter::PRINT_FLAT) &&
+		  moreArgs)
 		{
 		  ++nrTails;
-		  printPrefixName(buffer, id, si);
+		  printPrefixName(buffer, id, si, printFlags);
 		  buffer.append(leftParen);
 		}
-	      prettyPrint(buffer, t, PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
+	      prettyPrint(buffer, t, PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown, printFlags);
 	      if (!moreArgs)
 		break;
 	      buffer.append(comma);
@@ -313,32 +318,87 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
       //
       //	sortIndex will never be the index of a kind.
       //
-      buffer.append(Token::dotNameCode(symbol->rangeComponent()->sort(sortIndex)->id()));
+      printDotSort(buffer, symbol->rangeComponent()->sort(sortIndex), printFlags);
     }
 }
 
 void
-MixfixModule::printKind(Vector<int>& buffer, const Sort* kind)
+MixfixModule::printKind(Vector<int>& buffer, const Sort* kind, int printFlags)
 {
   Assert(kind != 0, "null kind");
   ConnectedComponent* c = kind->component();
   Assert(c != 0, "null conponent");
 
   buffer.append(leftBracket);
-  buffer.append(c->sort(1)->id());
+  printSort(buffer, c->sort(1), printFlags);
   int nrMax = c->nrMaximalSorts();
   for (int i = 2; i <= nrMax; i++)
     {
       buffer.append(comma);
+      printSort(buffer, c->sort(i), printFlags);
       buffer.append(c->sort(i)->id());
     }
   buffer.append(rightBracket);
 }
 
-int
-MixfixModule::printTokens(Vector<int>& buffer, const SymbolInfo& si, int pos)
+void
+MixfixModule::printSort(Vector<int>& buffer, const Sort* sort, int printFlags)
 {
-  bool hasFormat = printFormat && (si.format.length() > 0);
+  int name = sort->id();
+  if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT &&
+      interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX))
+    {
+      Vector<int> parts;
+      Token::splitParameterizedSort(name, parts);
+      FOR_EACH_CONST(i, Vector<int>, parts)
+	buffer.append(*i);
+    }
+  else
+    buffer.append(name);
+}
+
+void
+MixfixModule::printDotSort(Vector<int>& buffer, const Sort* sort, int printFlags)
+{
+  int name = sort->id();
+  if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT &&
+      interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX))
+    {
+      Vector<int> parts;
+      Token::splitParameterizedSort(name, parts);
+      parts[0] = Token::dotNameCode(parts[0]);
+      FOR_EACH_CONST(i, Vector<int>, parts)
+	buffer.append(*i);
+    }
+  else
+    buffer.append(Token::dotNameCode(name));
+}
+
+void
+MixfixModule::printVarSort(Vector<int>& buffer, string& fullName, const Sort* sort, int printFlags)
+{
+  int name = sort->id();
+  if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT &&
+      interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX))
+    {
+      Vector<int> parts;
+      Token::splitParameterizedSort(name, parts);
+      fullName += Token::name(parts[0]);
+      parts[0] = Token::encode(fullName.c_str());
+      FOR_EACH_CONST(i, Vector<int>, parts)
+	buffer.append(*i);
+    }
+  else
+    {
+      fullName += Token::name(name);
+      buffer.append(Token::encode(fullName.c_str()));
+    }
+}
+
+int
+MixfixModule::printTokens(Vector<int>& buffer, const SymbolInfo& si, int pos, int printFlags)
+{
+  bool hasFormat = (printFlags & Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
   for (;;)
     {
       int token = si.mixfixSyntax[pos++];
@@ -358,9 +418,10 @@ MixfixModule::printTails(Vector<int>& buffer,
 			 const SymbolInfo& si,
 			 int pos,
 			 int nrTails,
-			 bool needAssocParen)
+			 bool needAssocParen,
+			 int printFlags)
 {
-  bool hasFormat = printFormat && (si.format.length() > 0);
+  bool hasFormat = (printFlags & Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
   int mixfixLength = si.mixfixSyntax.length();
   for (int i = 0;;)
     {
@@ -380,9 +441,9 @@ MixfixModule::printTails(Vector<int>& buffer,
 }
 
 void
-MixfixModule::printPrefixName(Vector<int>& buffer, int prefixName, SymbolInfo& si)
+MixfixModule::printPrefixName(Vector<int>& buffer, int prefixName, SymbolInfo& si, int printFlags)
 {
-  if (printFormat && (si.format.length() == 2))
+  if ((printFlags & Interpreter::PRINT_FORMAT) && (si.format.length() == 2))
     {
       handleFormat(buffer, si.format[0]);
       buffer.append(prefixName);

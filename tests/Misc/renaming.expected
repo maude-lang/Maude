@@ -1,0 +1,341 @@
+Maude> fmod BAR is
+  inc FOO * (sort Foo to Baz, sort Bar to Quux) .
+endfm
+fmod BAR is
+  sorts Bool Baz Quux .
+  subsort Baz < Quux .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+endfm
+fmod THREE is
+  inc TWO * (sort Foo to Foo', sort Baz to Baz', sort Quux to Quux') .
+  sorts Jaz .
+  subsorts Jaz < Baz' .
+endfm
+fmod THREE is
+  sorts Bool Baz' Bar Quux' Jaz .
+  subsorts Quux' Jaz < Baz' .
+  subsort Baz' < Bar .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+endfm
+fmod BAR is
+  inc FOO * (sort Foo to Baz, op a to b) .
+endfm
+fmod BAR is
+  sorts Bool Baz Bar .
+  subsort Baz < Bar .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op b : -> Baz .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+endfm
+fmod BAR' is
+  inc FOO' * (sort Foo to Quux, op _+_ : [Foo] [Foo] -> [Foo] to _*_ [prec 29
+    gather (E e)], op _+_ : [Baz] [Baz] -> [Foo] to _._ [prec 27 gather (E e)])
+    .
+endfm
+fmod BAR' is
+  sorts Bool Quux Bar Baz .
+  subsort Quux < Bar .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op a : -> Baz .
+  op _*_ : Quux Quux -> Quux [assoc comm prec 29 gather (E e)] .
+  op _._ : Baz Baz -> Quux [prec 27 gather (E e)] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+endfm
+==========================================
+reduce in BAR' : a . a * a . a .
+rewrites: 0
+result Quux: a . a * a . a
+fmod BAR'' is
+  inc FOO' * (sort Foo to Quux, op _+_ to _*_ [prec 29 gather (E E)]) .
+endfm
+fmod BAR'' is
+  sorts Bool Quux Bar Baz .
+  subsort Quux < Bar .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op a : -> Baz .
+  op _*_ : Quux Quux -> Quux [assoc comm prec 29 gather (E E)] .
+  op _*_ : Baz Baz -> Quux [prec 29 gather (E E)] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+endfm
+==========================================
+reduce in BAR'' : a * a * a * a .
+rewrites: 0
+result Quux: a * a * a * a
+==========================================
+reduce in BAR'' : a * a * a * a .
+rewrites: 0
+result Quux: a * a * a * a
+fmod TEST is
+  inc BASH * (op f : [Foo] -> [Foo] to g) .
+endfm
+fmod TEST is
+  sorts Bool Foo Bar .
+  subsort Foo < Bar .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op g : Foo -> Foo .
+  op g : Bar -> Bar .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+endfm
+fmod BOOL
+fmod TRUTH-VALUE
+fmod TRUTH
+fmod EXT-BOOL
+fmod IDENTICAL
+fmod NAT
+fmod INT
+fmod RAT
+fmod FLOAT
+fmod STRING
+fmod CONVERSION
+fmod RANDOM
+fmod QID
+fth TRIV
+fth TAO-SET
+fth DEFAULT
+fmod LIST
+fmod SORTABLE-LIST
+fmod SET
+fmod LIST-AND-SET
+fmod LIST*
+fmod SET*
+fmod MAP
+fmod ARRAY
+fmod NAT-LIST
+fmod QID-LIST
+fmod QID-SET
+fmod META-TERM
+fmod META-MODULE
+fmod META-LEVEL
+mod COUNTER
+mod LOOP-MODE
+mod CONFIGURATION
+fmod FOO
+fmod BAR
+fmod ONE
+fmod TWO
+fmod THREE
+fmod FOO'
+fmod BAR'
+fmod BAR''
+fmod DIFF
+fmod BASH
+fmod TEST
+fth X :: TRIV
+fth X :: TAO-SET
+fmod LIST{TAO-SET}
+fmod LIST{TAO-SET} * (sort NeList{TAO-SET}{X} to NeList{X}, sort List{TAO-SET}{
+    X} to List{X})
+fmod (LIST{TAO-SET} * (sort NeList{TAO-SET}{X} to NeList{X}, sort List{
+    TAO-SET}{X} to List{X})){[X]}
+fmod LIST{[X]}
+fmod SET{[X]}
+fth Y :: TRIV
+fth Y :: DEFAULT
+fmod LIST{Nat}
+fmod LIST{Nat} * (sort NeList{Nat} to NeNatList, sort List{Nat} to NatList)
+fmod LIST{Qid}
+fmod LIST{Qid} * (sort NeList{Qid} to NeQidList, sort List{Qid} to QidList)
+fmod SET{Qid}
+fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet)
+fmod QID-SET * (op _`,_ to _;_ [prec 43], op empty to none)
+fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet) * (op
+    _`,_ to _;_ [prec 43], op empty to none)
+fmod ONE * (sort Foo to Baz)
+fmod TWO * (sort Baz to Baz', sort Quux to Quux')
+fmod ONE * (sort Foo to Baz) * (sort Baz to Baz')
+fmod FOO * (sort Foo to Baz, op a to b)
+fmod FOO' * (sort Foo to Quux, op _+_ : [Baz] [Baz] -> [Foo,Bar] to _._ [prec
+    27 gather (E e)], op _+_ : [Foo,Bar] [Foo,Bar] -> [Foo,Bar] to _*_ [prec 29
+    gather (E e)])
+fmod FOO' * (sort Foo to Quux, op _+_ to _*_ [prec 29 gather (E E)])
+fmod BASH * (op f : [Foo,Bar] -> [Foo,Bar] to g)
+fmod DIFF * (op f : [Bar] -> [Bar] to g, op f : [Foo] -> [Foo] to g)
+Maude> Bye.

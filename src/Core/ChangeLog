@@ -1,3 +1,148 @@
+2005-11-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.cc (insertLateSymbol): do interSymbolPass() and
+	postOpDeclarationPass() now that we have identities in polymorphs
+
+===================================Maude86d===========================================
+
+2005-07-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sort.hh (class Sort): added FIRST_USER_SORT to enum SpecialSorts
+
+2005-06-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbolMap.hh (class SymbolMap): added decl for
+	findTargetVersionOfSymbol()
+	(class SymbolMap): updated decl for translateTerm()
+
+2005-06-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbolMap.hh (class SymbolMap): replaced makeTranslatedTerm()
+	with translateTerm()
+
+2005-06-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbolMap.hh (class SymbolMap): added decl for
+	makeTranslatedTerm()
+	
+===================================Maude86b===========================================
+
+2005-01-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (dumpSortDiagram): rewritten to use set<int> in
+	place of IntSet
+
+2005-01-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ctorDiagram.cc (containsConstructor): take unique arg
+	(buildCtorDiagram): keep track of badTerminals and call
+	sortErrorAnalysis() if needed
+
+	* sortErrorAnalysis.cc (sortErrorAnalysis): use ComplexWarning()
+
+	* sortTable.hh (class SortTable): updated decl for findMinSortIndex()
+
+	* sortTable.cc (buildSortDiagram): keep track of badTerminals and
+	call sortErrorAnalysis() if needed
+	(findMinSortIndex): take unique argument
+
+	* sortErrorAnalysis.cc (sortErrorAnalysis): take prereg argument
+	rather than diagram argument
+
+	* sortTable.hh (class SortTable): added decl for sortErrorAnalysis()
+	(class SortTable): added decls for struct Node
+
+	* sortErrorAnalysis.cc (sortErrorAnalysis): fix terminal case
+	(sortErrorAnalysis): generate warning
+
+2005-01-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortErrorAnalysis.cc: created
+
+===================================Maude86===========================================
+
+2004-12-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* run.cc (ruleRewrite): added extra isUnrewritable() test and
+	detailed comment
+
+	* ruleTable.cc (applyRules): call setUnrewritable() in the case
+	that we can't do any rewrites
+
+2004-12-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* run.cc (ruleRewrite): remove setUnrewritable() call
+	(doRewriting): test isUnrewritable() before calling
+	setUnstackable(); don't call setUnrewritable(); update comments
+
+2004-12-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ruleTable.cc (RuleTable): clear nextRule
+
+2004-12-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): added decls for
+	computeMaximalOpDeclSetTable() and domainSubsumes()
+
+	* sortTable.cc (computeMaximalOpDeclSetTable): added
+	(domainSubsumes): added
+
+	* sortTable.hh (class SortTable): added data member
+	maximalOpDeclSetTable
+	(getMaximalOpDeclSet): added
+
+2004-10-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* checkedArgVecIterator.hh (operator-, operator+, operator--) 
+	(operator++): added typename to pacify g++ 3.4.2
+
+	* checkedArgVecConstIterator.hh (operator++, operator--) 
+	(operator+, operator-): added typename to pacify g++ 3.4.2
+
+2004-10-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* argVec.hh: added #include <dagNode.hh> to pacify 3.4.2
+
+2004-09-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* connectedComponent.hh (class ConnectedComponent): updated decl
+	for findMaximalSorts()
+
+	* connectedComponent.cc (findMaximalSorts): rewritten in a more
+	efficient and robust manner; pass back Vector<Sort*> rather than
+	Vector<int>
+	
+===================================Maude85===========================================
+
+2004-07-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): made
+	markReachableNodes() protected rather than private
+	
+===================================Maude84d===========================================
+
+2004-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ruleTable.cc (resetRules): moved here
+
+	* module.cc (resetRules): use FOR_EACH_CONST()
+	(saveHiddenState): added
+	(restoreHiddenState): added
+
+	* module.hh (class Module): added decls for saveHiddenState() and
+	restoreHiddenState()
+
+	* ruleTable.cc (RuleTable): don't zero nextRule
+	(compileRules): don't zero nextRule
+	(saveHiddenState): added
+	(restoreHiddenState): added
+
+	* ruleTable.hh (class RuleTable): added decls for
+	saveHiddenState() and restoreHiddenState()
+	(class RuleTable): added data member nextRuleStack
+	
+===================================Maude84c==================================
+
 2003-08-28  Steven Eker  <eker@goo.csl.sri.com>
 
 	* equationTable.hh (class EquationTable): added decl for

@@ -372,8 +372,9 @@ Module::insertLateSymbol(Symbol*s)
   //
   //	closeFixUps() stuff:
   //	Late symbols are not allowed to affect other symbols so we
-  //	don't do the interSymbolPass() pass.
+  //	don't iterate the interSymbolPass() pass.
   //
+  s->interSymbolPass();
   s->postInterSymbolPass();
 
   if (status < THEORY_CLOSED)
@@ -384,6 +385,7 @@ Module::insertLateSymbol(Symbol*s)
   //	don't do the canProduceErrorSort() pass.
   //
   s->compileOpDeclarations();
+  s->postOpDeclarationPass();
 
   //
   //	See if any existing sort constraint could apply to late symbol.
@@ -467,9 +469,22 @@ Module::reset()
 void
 Module::resetRules()
 {
-  int nrSymbols = symbols.length();
-  for (int i = 0; i < nrSymbols; i++)
-    symbols[i]->resetRules();
+  FOR_EACH_CONST(i, Vector<Symbol*>, symbols)
+    (*i)->resetRules();
+}
+
+void
+Module::saveHiddenState()
+{
+  FOR_EACH_CONST(i, Vector<Symbol*>, symbols)
+    (*i)->saveHiddenState();
+}
+
+void
+Module::restoreHiddenState()
+{
+  FOR_EACH_CONST(i, Vector<Symbol*>, symbols)
+    (*i)->restoreHiddenState();
 }
 
 #ifdef DUMP

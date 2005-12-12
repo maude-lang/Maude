@@ -27,7 +27,7 @@
 const char*
 MixfixModule::computeColor(ColoringInfo& coloringInfo, DagNode* dagNode)
 {
-  if (interpreter.getFlag(Interpreter::PRINT_COLOR))
+  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
     {
       if (dagNode->isReduced())
 	{
@@ -89,7 +89,7 @@ MixfixModule::handleIter(ostream& s,
   if (!(si.symbolType.hasFlag(SymbolType::ITER)))
     return false;
   if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL &&
-      interpreter.getFlag(Interpreter::PRINT_NUMBER))
+      interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
     {
       SuccSymbol* succSymbol = safeCast(SuccSymbol*, dagNode->symbol());
       if (succSymbol->isNat(dagNode))
@@ -116,7 +116,7 @@ MixfixModule::handleIter(ostream& s,
   else
     printPrefixName(s, prefixName.c_str(), si);
   s << '(';
-  if (interpreter.getFlag(Interpreter::PRINT_COLOR))
+  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
     {
       coloringInfo.reducedDirectlyAbove = dagNode->isReduced();
       coloringInfo.reducedAbove = coloringInfo.reducedAbove ||
@@ -134,7 +134,7 @@ MixfixModule::handleMinus(ostream& s,
 			  bool rangeKnown,
 			  const char* color)
 {
-  if (interpreter.getFlag(Interpreter::PRINT_NUMBER))
+  if (interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
     {
       const MinusSymbol* minusSymbol = safeCast(MinusSymbol*, dagNode->symbol());
       if (minusSymbol->isNeg(dagNode))
@@ -158,7 +158,7 @@ MixfixModule::handleDivision(ostream& s,
 			     bool rangeKnown,
 			     const char* color)
 {
-  if (interpreter.getFlag(Interpreter::PRINT_RAT))
+  if (interpreter.getPrintFlag(Interpreter::PRINT_RAT))
     {
       const DivisionSymbol* divisionSymbol = safeCast(DivisionSymbol*, dagNode->symbol());
       if (divisionSymbol->isRat(dagNode))
@@ -249,6 +249,14 @@ MixfixModule::prettyPrint(ostream& s,
   if (UserLevelRewritingContext::interrupted())
     return;
 
+#ifndef NO_ASSERT
+  if (dagNode == 0)
+    {
+      s << "!!! NULL POINTER !!!";
+      return;
+    }
+#endif
+
   const char* color = computeColor(coloringInfo, dagNode);
   Symbol* symbol = dagNode->symbol();
   SymbolInfo& si = symbolInfo[symbol->getIndexWithinModule()];
@@ -303,7 +311,7 @@ MixfixModule::prettyPrint(ostream& s,
   bool argRangeKnown = !(iflags & ADHOC_OVERLOADED) ||
     (!(iflags & RANGE_OVERLOADED) && (rangeKnown || needDisambig));
   int nrArgs = symbol->arity();
-  if (interpreter.getFlag(Interpreter::PRINT_COLOR))
+  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
     {
       coloringInfo.reducedDirectlyAbove = dagNode->isReduced();
       coloringInfo.reducedAbove = coloringInfo.reducedAbove ||
@@ -311,10 +319,11 @@ MixfixModule::prettyPrint(ostream& s,
     }
   if (needDisambig)
     s << '(';
-  if ((printMixfix && si.mixfixSyntax.length() != 0 &&
-       !(printConceal && concealed.contains(symbol->id()))) ||
+  bool printConceal = interpreter.concealedSymbol(symbol);
+  if ((interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX) && si.mixfixSyntax.length() != 0 && !printConceal) ||
       (basicType == SymbolType::SORT_TEST))
     {
+      bool printWithParens = interpreter.getPrintFlag(Interpreter::PRINT_WITH_PARENS);
       bool needParen = !needDisambig &&
 	(printWithParens || requiredPrec < si.prec ||
 	 ((iflags & LEFT_BARE) && leftCapture <= si.gather[0] &&
@@ -383,8 +392,7 @@ MixfixModule::prettyPrint(ostream& s,
     }
   else
     {
-      int id = symbol->id();
-      const char* prefixName = Token::name(id);
+      const char* prefixName = Token::name(symbol->id());
       if (color != 0)
 	s << color << prefixName << Tty(Tty::RESET);
       else
@@ -392,7 +400,7 @@ MixfixModule::prettyPrint(ostream& s,
       DagArgumentIterator a(*dagNode);
       if (a.valid())
 	{
-	  if (printConceal && concealed.contains(id))
+	  if (printConceal)
 	    s << "(...)";
 	  else
 	    {
@@ -403,7 +411,9 @@ MixfixModule::prettyPrint(ostream& s,
 		  DagNode* d = a.argument();
 		  a.next();
 		  int moreArgs = a.valid();
-		  if (arg >= nrArgs - 1 && !printFlat && moreArgs)
+		  if (arg >= nrArgs - 1 &&
+		      !(interpreter.getPrintFlag(Interpreter::PRINT_FLAT)) &&
+		      moreArgs)
 		    {
 		      ++nrTails;
 		      if (color != 0)

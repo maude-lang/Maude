@@ -102,7 +102,7 @@ reduce in META-LEVEL : lesserSorts(fmod 'FOO is
   none
 endfm, 'Int) .
 rewrites: 1
-result SortSet: 'Nat ; 'NzInt ; 'NzNat
+result NeSortSet: 'Nat ; 'NzInt ; 'NzNat
 ==========================================
 reduce in META-LEVEL : lesserSorts(fmod 'FOO is
   protecting 'BOOL .
@@ -116,7 +116,7 @@ reduce in META-LEVEL : lesserSorts(fmod 'FOO is
   none
 endfm, 'NzNat) .
 rewrites: 1
-result SortSet: (none).SortSet
+result EmptyTypeSet: (none).EmptyTypeSet
 ==========================================
 reduce in META-LEVEL : lesserSorts(fmod 'FOO is
   protecting 'BOOL .
@@ -170,7 +170,7 @@ reduce in META-LEVEL : glbSorts(fmod 'FOO is
   none
 endfm, 'Nat, 'NzInt) .
 rewrites: 1
-result SortSet: (none).SortSet
+result EmptyTypeSet: (none).EmptyTypeSet
 ==========================================
 reduce in META-LEVEL : getKind(fmod 'FOO is
   protecting 'FLOAT .
@@ -214,7 +214,7 @@ reduce in META-LEVEL : getKinds(fmod 'FOO is
   none
 endfm) .
 rewrites: 1
-result KindSet: empty
+result EmptyTypeSet: (none).EmptyTypeSet
 ==========================================
 reduce in META-LEVEL : getKinds(fmod 'FOO is
   protecting 'BOOL .
@@ -236,13 +236,13 @@ reduce in META-LEVEL : getKinds(fmod 'FOO is
   none
 endfm) .
 rewrites: 1
-result KindSet: '`[AttrSet`] & '`[Bool`] & '`[Condition`] & '`[EquationSet`] &
-    '`[FindResult`,NatList`,Bound`] & '`[HookList`] & '`[ImportList`] &
-    '`[MatchPair?`] & '`[MembAxSet`] & '`[Module`] & '`[OpDeclSet`] &
-    '`[RenamingSet`] & '`[Result4Tuple?`] & '`[ResultPair?`] &
-    '`[ResultTriple?`] & '`[RuleSet`] &
-    '`[SortSet`,KindSet`,QidList`,Type?`,GTermList`,ModuleExpression`] &
-    '`[String`] & '`[SubsortDeclSet`] & '`[Substitution?`]
+result NeKindSet: '`[AttrSet`] ; '`[Bool`] ; '`[Condition`] ; '`[EquationSet`]
+    ; '`[FindResult`,NatList`,Bound`] ; '`[HookList`] ; '`[ImportList`] ;
+    '`[MatchPair?`] ; '`[MembAxSet`] ; '`[Module`] ; '`[OpDeclSet`] ;
+    '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[QidSet`,QidList`,TypeListSet`,GTermList`,ParameterList`,Type?`,ModuleExpression`,Header`] ;
+    '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
+    '`[ResultTriple?`] ; '`[RuleSet`] ; '`[String`] ; '`[SubsortDeclSet`] ;
+    '`[Substitution?`] ; '`[Trace?`]
 ==========================================
 reduce in META-LEVEL : maximalSorts(fmod 'FOO is
   protecting 'META-LEVEL .
@@ -253,8 +253,8 @@ reduce in META-LEVEL : maximalSorts(fmod 'FOO is
   none
 endfm, '`[Qid`]) .
 rewrites: 1
-result SortSet: 'GTermList ; 'KindSet ; 'ModuleExpression ; 'QidList ; 'SortSet
-    ; 'Type?
+result NeSortSet: 'GTermList ; 'Header ; 'ModuleExpression ; 'ParameterList ;
+    'QidList ; 'QidSet ; 'Type? ; 'TypeListSet
 ==========================================
 reduce in META-LEVEL : minimalSorts(fmod 'FOO is
   protecting 'META-LEVEL .
@@ -265,7 +265,8 @@ reduce in META-LEVEL : minimalSorts(fmod 'FOO is
   none
 endfm, '`[Qid`]) .
 rewrites: 1
-result SortSet: 'Constant ; 'Context ; 'Kind ; 'Sort ; 'Variable
+result NeSortSet: 'Constant ; 'Context ; 'EmptyCommaList ; 'EmptyTypeSet ;
+    'Kind ; 'Sort ; 'Variable
 ==========================================
 reduce in META-LEVEL : maximalSorts(fmod 'FOO is
   protecting 'META-LEVEL .
@@ -276,8 +277,8 @@ reduce in META-LEVEL : maximalSorts(fmod 'FOO is
   none
 endfm, 'Qid) .
 rewrites: 0
-result [SortSet,KindSet,QidList,Type?,GTermList,ModuleExpression]:
-    maximalSorts(fmod 'FOO is
+result [QidSet,QidList,TypeListSet,GTermList,ParameterList,Type?,
+    ModuleExpression,Header]: maximalSorts(fmod 'FOO is
   protecting 'META-LEVEL .
   sorts none .
   none
@@ -295,8 +296,8 @@ reduce in META-LEVEL : minimalSorts(fmod 'FOO is
   none
 endfm, 'Qid) .
 rewrites: 0
-result [SortSet,KindSet,QidList,Type?,GTermList,ModuleExpression]:
-    minimalSorts(fmod 'FOO is
+result [QidSet,QidList,TypeListSet,GTermList,ParameterList,Type?,
+    ModuleExpression,Header]: minimalSorts(fmod 'FOO is
   protecting 'META-LEVEL .
   sorts none .
   none
@@ -304,4 +305,29 @@ result [SortSet,KindSet,QidList,Type?,GTermList,ModuleExpression]:
   none
   none
 endfm, 'Qid)
+==========================================
+reduce in META-LEVEL : maximalAritySet(['RAT], '_+_, 'Nat 'Nat, 'PosRat) .
+rewrites: 2
+result TypeListSet: 'Nat 'PosRat ; 'PosRat 'Nat ; 'PosRat 'PosRat
+==========================================
+reduce in META-LEVEL : maximalAritySet(['RAT], '_+_, 'Nat 'Nat, 'Rat) .
+rewrites: 2
+result NeTypeList: 'Rat 'Rat
+==========================================
+reduce in META-LEVEL : maximalAritySet(['RAT], '_/_, 'Nat 'Nat, 'Nat) .
+rewrites: 2
+result EmptyTypeSet: (none).EmptyTypeSet
+==========================================
+reduce in META-LEVEL : maximalAritySet(['META-LEVEL], '_;_, 'TypeSet 'TypeSet,
+    'KindSet) .
+rewrites: 2
+result NeTypeList: 'KindSet 'KindSet
+==========================================
+reduce in META-LEVEL : maximalAritySet(['NAT], '0, nil, 'Nat) .
+rewrites: 2
+result TypeList: (nil).TypeList
+==========================================
+reduce in META-LEVEL : glbSorts(['RAT], '`[Int`], 'Int) .
+rewrites: 2
+result Sort: 'Int
 Maude> Bye.

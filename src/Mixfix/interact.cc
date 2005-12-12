@@ -30,20 +30,10 @@ bool UserLevelRewritingContext::ctrlC_Flag = false;
 bool UserLevelRewritingContext::stepFlag = false;
 bool UserLevelRewritingContext::abortFlag = false;
 int UserLevelRewritingContext::debugLevel = 0;
-IntSet UserLevelRewritingContext::breakSymbols;
 
 int yyparse(void*);
 void cleanUpParser();
 void cleanUpLexer();
-
-void
-UserLevelRewritingContext::selectBreakSymbols(const IntSet& symbols, bool add)
-{
-  if (add)
-    breakSymbols.insert(symbols);
-  else
-    breakSymbols.subtract(symbols);
-}
 
 void
 UserLevelRewritingContext::clearDebug()
@@ -51,6 +41,13 @@ UserLevelRewritingContext::clearDebug()
   setTraceStatus(interpreter.getFlag(Interpreter::EXCEPTION_FLAGS));
   stepFlag = false;
   abortFlag = false;
+}
+
+void
+UserLevelRewritingContext::clearInterrupt()
+{
+  setTraceStatus(interpreter.getFlag(Interpreter::EXCEPTION_FLAGS));
+  ctrlC_Flag =  false;
 }
 
 void
@@ -109,14 +106,14 @@ UserLevelRewritingContext::segmentationFaultHandler(int)
 {
   static char message1[] = "Maude internal error:\nPlease submit a bug report to ";
   static char message2[] = PACKAGE_BUGREPORT;
+  static char message3[] = "\n\n";
   //
-  //	Assume mechine state is bad - so use system calls.
+  //	Assume machine state is bad - so use system calls.
   //
   write(STDERR_FILENO, message1, sizeof(message1) - 1);
   write(STDERR_FILENO, message2, sizeof(message2) - 1);
+  write(STDERR_FILENO, message3, sizeof(message3) - 1);
 
-
-  //cerr << "Maude internal error: please submit a bug report to maude-bugs@maude.cs.uiuc.edu";
   /*
   cerr << "caught segv\n";
   struct rlimit rlim;
@@ -196,8 +193,27 @@ UserLevelRewritingContext::commandLoop()
 		break;
 	      }
 	    case QUIT:
-	      cout << "Bye.\n";
-	      exit(0);
+	      {
+		//
+		//	This is the only normal exit() that can be taken.
+		//
+		cout << "Bye.\n";
+#ifndef NO_ASSERT
+		//
+		//	Look for memory bugs.
+		//
+		delete &interpreter;
+#else
+		//
+		//	If we are not going to delete the interpreter
+		//	in the interests of a quick exit, at least clean
+		//	up any XML log we may have started.
+		//
+		interpreter.endXmlLog();
+#endif
+
+		exit(0);
+	      }
 	    }
 	}
     }
@@ -226,14 +242,14 @@ UserLevelRewritingContext::handleDebug(const DagNode* subject, const PreEquation
   if (interpreter.getFlag(Interpreter::BREAK))
     {
       Symbol* s = subject->symbol();
-      if (breakSymbols.contains(s->id()))
+      if (interpreter.breakId(s->id()))
 	{
 	  broken = true;
 	  brokenSymbol = s;
 	}
       else
 	{
-	  if (pe != 0 && breakSymbols.contains(pe->getLabel().id()))
+	  if (pe != 0 && interpreter.breakId(pe->getLabel().id()))
 	    broken = true;
 	}
     }

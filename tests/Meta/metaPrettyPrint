@@ -4,7 +4,7 @@ MAUDE_LIB=$srcdir/../../src/Mixfix
 export MAUDE_LIB
 
 ../../src/Mixfix/maude \
-  < $srcdir/metaPrettyPrint.maude -no-banner \
+  < $srcdir/metaPrettyPrint.maude -no-banner -no-advise \
   > metaPrettyPrint.out 2>&1
 
 diff $srcdir/metaPrettyPrint.expected metaPrettyPrint.out > /dev/null 2>&1

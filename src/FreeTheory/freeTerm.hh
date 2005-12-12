@@ -39,7 +39,7 @@ public:
   //
   RawArgumentIterator* arguments();
   void deepSelfDestruct();
-  Term* deepCopy2(SymbolMap* map) const;
+  Term* deepCopy2(SymbolMap* translator) const;
   Term* normalize(bool full, bool& changed);
   int compareArguments(const Term* other) const;
   int compareArguments(const DagNode* other) const;
@@ -69,6 +69,7 @@ public:
   //
   //	Functions particular to free terms.
   //
+  FreeSymbol* symbol() const;
   Term* locateSubterm(const Vector<int>& position, int backup = 0);
   Term* locateSubterm2(Vector<int>& position);
   int getSlotIndex() const;
@@ -85,7 +86,7 @@ public:
   //#endif
 
 private:
-  FreeTerm(const FreeTerm& original, SymbolMap* map);
+  FreeTerm(const FreeTerm& original, FreeSymbol* symbol, SymbolMap* translator);
 
   struct CP_Sequence;
 
@@ -119,6 +120,12 @@ private:
   short slotIndex;
   Bool visitedFlag;
 };
+
+inline FreeSymbol*
+FreeTerm::symbol() const
+{
+  return safeCast(FreeSymbol*, Term::symbol());
+}
 
 inline int
 FreeTerm::getSlotIndex() const

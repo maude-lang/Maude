@@ -1,3 +1,27 @@
+2005-06-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (instantiate): new calling convention
+	(class Term): updated decls for instantiate() and instantiate2()
+	(deepCopy): new arg name
+	(class Term): updated decls for deepCopy() and deepCopy2()
+
+	* term.cc (instantiate2): use findTargetVersionOfSymbol(); new
+	calling convention
+
+2005-06-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (instantiate2): added
+
+	* term.hh (class Term): added decls for instantiate(),
+	instantiate2()
+	(instantiate): added
+
+===================================Maude86b==========================================
+
+2004-10-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh: added #include "symbol.hh" to appease g++ 2.4.2
+
 2004-02-05  Steven Eker  <eker@goo.csl.sri.com>
 
 	* dagNode.hh (copyEagerUptoReduced): set the copy flag after
