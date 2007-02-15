@@ -59,5 +59,6 @@ class ModuleDatabase;
 class ViewDatabase;
 class Entity;
 class SyntaxContainer;
+class FreshVariableSource;
 
 #endif

@@ -33,7 +33,7 @@ class VariableDagNode : public DagNode, public NamedEntity
   NO_COPYING(VariableDagNode);
 
 public:
-  VariableDagNode(Symbol* symbol, int name);
+  VariableDagNode(Symbol* symbol, int name, int index);
   
   RawDagArgumentIterator* arguments();
   size_t getHashValue();
@@ -47,18 +47,39 @@ public:
   void stackArguments(Vector<RedexPosition>& stack,
 		      int parentIndex,
 		      bool respectFrozen);
+  //
+  //	Stuff for unification.
+  //
+  bool unify(DagNode* rhs,
+	     Substitution& solution,
+	     Subproblem*& returnedSubproblem,
+	     ExtensionInfo* extensionInfo);
+  bool computeBaseSortForGroundSubterms();
+  DagNode* instantiate2(Substitution& substitution);
+  bool occurs2(int index);
+
+  int getIndex() const;
 
 private:
   DagNode* markArguments();
   DagNode* copyEagerUptoReduced2();
   void clearCopyPointers2();
+
+  int index;
 };
 
 inline
-VariableDagNode::VariableDagNode(Symbol* symbol, int name)
+VariableDagNode::VariableDagNode(Symbol* symbol, int name, int index)
   : DagNode(symbol),
-    NamedEntity(name)
+    NamedEntity(name),
+    index(index)
 {
+}
+
+inline int
+VariableDagNode::getIndex() const
+{
+  return index;
 }
 
 #endif

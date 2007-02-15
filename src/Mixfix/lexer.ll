@@ -32,6 +32,7 @@
 #include "interface.hh"
 #include "core.hh"
 #include "higher.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
 
 //	core class definitions
@@ -43,7 +44,7 @@
 #include "directoryManager.hh"
 #include "preModule.hh"
 #include "lexerAux.hh"
-#include "main.hh"
+#include "global.hh"
 #include "userLevelRewritingContext.hh"
 #include "interpreter.hh"
 
@@ -103,7 +104,7 @@ in					RETURN(KW_IN)
 }
 
 <INITIAL>{
-th|fth|mod|fmod|obj			RETURN(KW_MOD)  // need to know which one we saw
+th|fth|mod|fmod|smod|obj		RETURN(KW_MOD)  // need to know which one we saw
 omod					RETURN(KW_OMOD)
 view					RETURN(KW_VIEW);
 load					return KW_LOAD;
@@ -121,7 +122,7 @@ cred|creduce				return KW_CREDUCE;
 rew|rewrite				return KW_REWRITE;
 erew|erewrite				return KW_EREWRITE;
 frew|frewrite				return KW_FREWRITE;
-orew|orewrite				return KW_OREWRITE;
+srew|srewrite				return KW_SREWRITE;
 loop					return KW_LOOP;
 cont|continue				return KW_CONTINUE;
 nar|narrow				return KW_NARROW;
@@ -140,6 +141,7 @@ verbose					return KW_VERBOSE;
 do					return KW_DO;
 clear					return KW_CLEAR;
 body					return KW_BODY;
+builtin					return KW_BUILTIN;
 whole					return KW_WHOLE;
 select					return KW_SELECT;
 deselect				return KW_DESELECT;
@@ -268,7 +270,7 @@ eq					RETURN(KW_EQ)
 ceq|cq					RETURN(KW_CEQ)
 rl					RETURN(KW_RL)
 crl					RETURN(KW_CRL)
-end(th|fth|m|fm|om|o)|jbo		RETURN(KW_ENDM)
+end(th|fth|m|fm|sm|om|o)|jbo		RETURN(KW_ENDM)
 endv					RETURN(KW_ENDV)
 "->"					RETURN(KW_ARROW)
 "=>"					RETURN(KW_ARROW2)

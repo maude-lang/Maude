@@ -63,6 +63,7 @@ class DagRoot;
 class SymbolMap;
 class CachedDag;
 class DagNodeSet;
+class DagNodeCache;
 class RootContainer;
 class SimpleRootContainer;
 class BindingLhsAutomaton;
@@ -73,5 +74,6 @@ class RhsBuilder;
 class ConditionFragment;
 class ConditionState;
 class OpDeclaration;
+class SortBdds;
 
 #endif

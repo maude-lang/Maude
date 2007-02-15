@@ -336,7 +336,6 @@ MixfixModule::printKind(Vector<int>& buffer, const Sort* kind, int printFlags)
     {
       buffer.append(comma);
       printSort(buffer, c->sort(i), printFlags);
-      buffer.append(c->sort(i)->id());
     }
   buffer.append(rightBracket);
 }

@@ -138,7 +138,7 @@ VariableTerm::markEagerArguments(int nrVariables,
 DagNode*
 VariableTerm::dagify2()
 {
-  return new VariableDagNode(symbol(), id());
+  return new VariableDagNode(symbol(), id(), index);
 }
 
 bool

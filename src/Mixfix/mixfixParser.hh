@@ -93,7 +93,22 @@ public:
     //
     //	Command construction actions.
     //
-    CONDITIONAL_COMMAND
+    CONDITIONAL_COMMAND,
+    //
+    //	Strategy expression construction actions
+    //
+    MAKE_TRIVIAL,
+    MAKE_ALL,
+    MAKE_APPLICATION,
+    MAKE_TOP,
+    MAKE_CONCATENATION,
+    MAKE_UNION,
+    MAKE_ITERATION,
+    MAKE_BRANCH,
+    MAKE_TEST,
+    MAKE_STRATEGY_LIST,
+
+    MAKE_SUBSTITUTION
   };
 
   MixfixParser(MixfixModule& client);
@@ -133,10 +148,16 @@ public:
   void makeMatchCommand(Term*& pattern,
 			Term*& subject,
 			Vector<ConditionFragment*>& condition);
+  void makeUnifyCommand(Term*& lhs, Term*& rhs);
   void makeSearchCommand(Term*& initial,
 			 int& searchType,
 			 Term*& target,
 			 Vector<ConditionFragment*>& condition);
+  void makeStrategyCommand(Term*& subject, StrategyExpression*& strategy);
+
+  void makeAssignment(int node, Vector<Term*>& variables, Vector<Term*>& values);
+  void makeSubstitution(int node, Vector<Term*>& variables, Vector<Term*>& values);
+
   //
   //	Functions to get info about the parser.
   //
@@ -160,11 +181,13 @@ private:
 
   Sort* getSort(int node);
   Term* makeTerm(int node);
+  StrategyExpression* makeStrategy(int node);
   ConditionFragment* makeConditionFragment(int node);
   void makeCondition(int node, Vector<ConditionFragment*>& condition);
   void makeStatement(int node);
   void makeAttributePart(int node, int& label, int& metadata, FlagSet& flags);
   void makeStatementPart(int node, int label, int metadata, FlagSet& flags);
+  void makeStrategyList(int node, Vector<StrategyExpression*>& strategies);
 
   int translateSpecialToken(int code);
 

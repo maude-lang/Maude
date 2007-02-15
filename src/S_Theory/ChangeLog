@@ -1,3 +1,35 @@
+2007-02-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_Symbol.cc (computeGeneralizedSort): use computeSortIndex()
+	(fillInSortInfo): simplified using computeSortIndex()
+	(computeBaseSort): simplified using computeSortIndex()
+
+	* S_Symbol.hh (computeSortIndex): added
+
+	* S_Symbol.cc (computeGeneralizedSort): compute negArgGenSort
+	vector to avoid repeating work
+
+2007-02-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (unify, computeBaseSortForGroundSubterms) 
+	(instantiate2, occurs2): added
+	(instantiate2): handle normalization if needed
+
+	* S_DagNode.hh (class S_DagNode): added decls for unify(),
+	computeBaseSortForGroundSubterms(), instantiate2(), occurs2()
+
+	* S_Symbol.cc (computeGeneralizedSort, computeSortFunctionBdds): added
+
+	* S_Symbol.hh (class S_Symbol): added decls for
+	computeSortFunctionBdds() and computeGeneralizedSort()
+
+2007-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_Symbol.cc (fillInSortInfo): added to fix bug in sort
+	calculation for terms
+
+	* S_Symbol.hh (class S_Symbol): added decl for fillInSortInfo()
+
 2005-07-28  Steven Eker  <eker@goo.csl.sri.com>
 
 	* S_Term.hh (class S_Term): updated decl for SymbolMap version of

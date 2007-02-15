@@ -138,7 +138,7 @@ MaudemlBuffer::generateFrewrite(DagNode* subject, Int64 limit, Int64 gas)
   attributePair("module", Token::name(subject->symbol()->getModule()->id()));
   if (limit != NONE)
     attributePair("limit", int64ToString(limit));
-  if (limit != NONE)
+  if (gas != NONE)
     attributePair("gas", int64ToString(gas));
   generate(subject);
   endElement();
@@ -151,7 +151,7 @@ MaudemlBuffer::generateErewrite(DagNode* subject, Int64 limit, Int64 gas)
   attributePair("module", Token::name(subject->symbol()->getModule()->id()));
   if (limit != NONE)
     attributePair("limit", int64ToString(limit));
-  if (limit != NONE)
+  if (gas != NONE)
     attributePair("gas", int64ToString(gas));
   generate(subject);
   endElement();
@@ -161,13 +161,16 @@ void
 MaudemlBuffer::generateSearch(DagNode* subject,
 			      PreEquation* pattern,
 			      const string& searchType,
-			      Int64 limit)
+			      Int64 limit,
+			      Int64 depth)
 {
   beginElement("search");
   attributePair("module", Token::name(subject->symbol()->getModule()->id()));
   attributePair("search-type", searchType);
   if (limit != NONE)
     attributePair("limit", int64ToString(limit));
+  if (depth != NONE)
+    attributePair("depth", int64ToString(depth));
   generate(subject);
   generate(pattern->getLhs());
   if (pattern->hasCondition())

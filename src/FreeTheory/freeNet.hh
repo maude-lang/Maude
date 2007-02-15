@@ -105,14 +105,13 @@ private:
 
   static bool tripleLt(const Triple& p1, const Triple& p2);
 
-  void
-  FreeNet::buildTernaryTree(int& nodeIndex,
-			    Vector<Triple>& triples,
-			    int first,
-			    int last,
-			    int defaultSubtree,
-			    int position,
-			    int argIndex);
+  void buildTernaryTree(int& nodeIndex,
+			Vector<Triple>& triples,
+			int first,
+			int last,
+			int defaultSubtree,
+			int position,
+			int argIndex);
   bool moreImportant(Symbol* first, Symbol* second);
   bool applyReplace2(DagNode* subject, RewritingContext& context);
   bool applyReplaceNoOwise2(DagNode* subject, RewritingContext& context);

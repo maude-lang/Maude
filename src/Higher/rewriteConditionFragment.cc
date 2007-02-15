@@ -139,3 +139,17 @@ RewriteConditionFragment::solve(bool findFirst,
     }
   return false;
 }
+
+DagNode*
+RewriteConditionFragment::makeLhsInstance(Substitution& solution)
+{
+  builder.safeConstruct(solution);
+  return solution.value(lhsIndex);
+}
+
+bool
+RewriteConditionFragment::matchRoot(RewritingContext& context, Subproblem*& subproblem)
+{
+  subproblem = 0;
+  return rhsMatcher->match(context.root(), context, subproblem);
+}

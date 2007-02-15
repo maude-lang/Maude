@@ -47,6 +47,7 @@
 //      core class definitions
 #include "rewritingContext.hh"
 #include "equation.hh"
+#include "sortBdds.hh"
 
 //	full compiler class definitions
 #include "compilationContext.hh"
@@ -306,6 +307,33 @@ FreeSymbol::stackArguments(DagNode* subject,
 	    stack.append(RedexPosition(args[i], parentIndex, i, eagerArgument(i)));
 	}
     }
+}
+
+void
+FreeSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
+				   const Vector<int> realToBdd,
+				   DagNode* subject,
+				   Vector<Bdd>& generalizedSort)
+{
+  int nrArgs = arity();
+  Assert(nrArgs > 0, "we shouldn't be called on constants");
+  DagNode** args = safeCast(FreeDagNode*, subject)->argArray();
+  int varCounter = 0;
+  bddPair* argMap = bdd_newpair();
+  for (int i = 0; i < nrArgs; i++)
+    {
+      Vector<Bdd> argGenSort;
+      args[i]->computeGeneralizedSort(sortBdds, realToBdd, argGenSort);
+      int nrBdds = argGenSort.size();
+      for (int j = 0; j < nrBdds; ++j, ++varCounter)
+	bdd_setbddpair(argMap, varCounter, argGenSort[j]);
+    }
+  const Vector<Bdd>& sortFunction = sortBdds.getSortFunction(getIndexWithinModule());
+  int nrBdds = sortFunction.size();
+  generalizedSort.resize(nrBdds);
+  for (int i = 0; i < nrBdds; ++i)
+    generalizedSort[i] = bdd_veccompose(sortFunction[i], argMap);
+  bdd_freepair(argMap);
 }
 
 #ifdef COMPILER

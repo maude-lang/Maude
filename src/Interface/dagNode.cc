@@ -46,6 +46,7 @@
 #include "dagArgumentIterator.hh"
 #include "module.hh"
 #include "rootContainer.hh"
+#include "sortBdds.hh"
 
 bool
 DagNode::checkSort(const Sort* boundSort, Subproblem*& returnedSubproblem)
@@ -92,6 +93,21 @@ DagNode::checkSort(const Sort* boundSort, RewritingContext& context)
 	}
     }
   return leq(boundSort);
+}
+
+void
+DagNode::computeGeneralizedSort(const SortBdds& sortBdds,
+				const Vector<int> realToBdd,
+				Vector<Bdd>& generalizedSort)
+{
+  int sortIndex = getSortIndex();
+  if (sortIndex == Sort::SORT_UNKNOWN)
+    symbol()->computeGeneralizedSort(sortBdds, realToBdd, this, generalizedSort);
+  else
+    {
+      int nrBdds = sortBdds.getNrVariables(symbol()->rangeComponent()->getIndexWithinModule());
+      sortBdds.makeIndexVector(nrBdds, sortIndex, generalizedSort);
+    }
 }
 
 bool

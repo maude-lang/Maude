@@ -25,7 +25,7 @@
 //
 
 void
-Interpreter::printMatchTiming(const Timer& timer)
+Interpreter::printDecisionTime(const Timer& timer)
 {
   Int64 real;
   Int64 virt;
@@ -37,8 +37,6 @@ Interpreter::printMatchTiming(const Timer& timer)
 	real / 1000 << "ms real)\n";
     }
 }
-
-// #include "lhsAutomaton.hh"
 
 void
 Interpreter::match(const Vector<Token>& bubble, bool withExtension, Int64 limit)
@@ -128,7 +126,7 @@ Interpreter::doMatching(Timer& timer,
 	{
 	  if (solutionCount == 0)
 	    {
-	      printMatchTiming(timer);
+	      printDecisionTime(timer);
 	      cout << "No match.\n";
 	    }
 	  break;
@@ -136,7 +134,7 @@ Interpreter::doMatching(Timer& timer,
 
       ++solutionCount;
       if (solutionCount == 1)
-	printMatchTiming(timer);
+	printDecisionTime(timer);
       cout << "\nSolution " << solutionCount << '\n';
       ExtensionInfo* extensionInfo = state->getExtensionInfo();
       if (extensionInfo != 0)

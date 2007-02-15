@@ -1,3 +1,10 @@
+2006-10-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* IO_Manager.hh (class IO_Manager): removed extraneous
+	quantification to appease gcc 4.1
+
+===================================Maude88b===========================================
+
 2003-10-08  Steven Eker  <eker@goo.csl.sri.com>
 
 	* IO_Manager.cc (getInput): rewritten to allow building without

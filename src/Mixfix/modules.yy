@@ -467,10 +467,38 @@ simpleOpName	:	tokenBarColon
 			tokens ')'		{ CM->addOpDecl(bubble); }
 		;
 
-domainRangeAttr	:	':' typeList arrow typeAttr
+domainRangeAttr	:	':' dra2		{}
+		;
+
+
+dra2		:	typeName dra3
+		|	arrow typeAttr
+			{
+			  if ($1)
+			    CM->convertSortsToKinds();
+			}
+		|	badType
+			{
+			  IssueWarning(LineNumber(lineNumber) <<
+				       ": missing " << QUOTE("->") << " in constant declaration.");
+			}
+
+		;
+
+dra3		:	typeName typeList arrow typeAttr
 			{
 			  if ($3)
 			    CM->convertSortsToKinds();
+			}
+		|	arrow typeAttr
+			{
+			  if ($1)
+			    CM->convertSortsToKinds();
+			}
+		|	'.'
+			{
+			  IssueWarning(LineNumber($1.lineNumber()) <<
+			  ": missing " << QUOTE("->") << " in constant declaration.");
 			}
 		;
 

@@ -43,7 +43,8 @@ public:
   void generateSearch(DagNode* subject,
 		      PreEquation* pattern,
 		      const string& searchType,
-		      Int64 limit);
+		      Int64 limit,
+		      Int64 depth);
   void generateContinue(const string& command, Module* module, Int64 limit);
   void generateSearchResult(Int64 number,
 			    RewriteSequenceSearch* state,

@@ -46,6 +46,11 @@
 //      core class definitions
 #include "substitution.hh"
 #include "rewritingContext.hh"
+#include "subproblemAccumulator.hh"
+#include "unificationSubproblemDisjunction.hh"
+
+//	variable class definitions
+#include "variableDagNode.hh"
 
 //      CUI theory class definitions
 #include "CUI_Symbol.hh"
@@ -216,3 +221,142 @@ CUI_DagNode::normalizeAtTop()
   return false;
 }
 
+bool
+CUI_DagNode::unify(DagNode* rhs,
+		   Substitution& solution,
+		   Subproblem*& returnedSubproblem,
+		   ExtensionInfo* extensionInfo)
+{
+  if (symbol() == rhs->symbol())
+    {
+      int nrBindings = solution.nrFragileBindings();
+      DagNode** rhsArgs = safeCast(CUI_DagNode*, rhs)->argArray;
+      {
+	//
+	//	Try in-order solution.
+	//
+	Substitution local(nrBindings);
+	local.copy(solution);
+	SubproblemAccumulator subproblems;
+	if (argArray[0]->unify(rhsArgs[0], local, returnedSubproblem, 0))
+	  {
+	    subproblems.add(returnedSubproblem);
+	    if (argArray[1]->unify(rhsArgs[1], local, returnedSubproblem, 0))
+	      {
+		subproblems.add(returnedSubproblem);
+		if (!(argArray[0]->equal(argArray[1])) && !(rhsArgs[0]->equal(rhsArgs[1])))
+		  {
+		    //
+		    //	We have one potential solution - now check the
+		    //	reverse order alternative.
+		    //
+		    Substitution local2(nrBindings);
+		    local2.copy(solution);
+		    SubproblemAccumulator subproblems2;
+		    if (argArray[0]->unify(rhsArgs[1], local2, returnedSubproblem, 0))
+		      {
+			subproblems2.add(returnedSubproblem);
+			if (argArray[1]->unify(rhsArgs[0], local2, returnedSubproblem, 0))
+			  {
+			    subproblems2.add(returnedSubproblem);
+			    //
+			    //	We have two potential solutions so we need to form a disjunction.
+			    //
+			    UnificationSubproblemDisjunction* disjunction = new UnificationSubproblemDisjunction(nrBindings);
+			    disjunction->addOption(local.unificationDifference(solution), subproblems.extractSubproblem());
+			    disjunction->addOption(local2.unificationDifference(solution), subproblems2.extractSubproblem());
+			    returnedSubproblem = disjunction;
+			    return true;
+			  }
+		      }
+		  }
+		//
+		//	Only the in-order solution is viable so return it.
+		//
+		solution.copy(local);
+		returnedSubproblem = subproblems.extractSubproblem();
+		return true;
+	      }
+	  }
+      }
+      if (!(argArray[0]->equal(argArray[1])) && !(rhsArgs[0]->equal(rhsArgs[1])))
+	{
+	  //
+	  //	Try reverse order solution.
+	  //
+	  SubproblemAccumulator subproblems;
+	  if (argArray[0]->unify(rhsArgs[1], solution, returnedSubproblem, 0))
+	    {
+	      subproblems.add(returnedSubproblem);
+	      if (argArray[1]->unify(rhsArgs[0], solution, returnedSubproblem, 0))
+		{
+		  returnedSubproblem = subproblems.extractSubproblem();
+		  return true;
+		}
+	    }
+	}
+      return false;
+    }
+  if (dynamic_cast<VariableDagNode*>(rhs))
+    return rhs->unify(this, solution, returnedSubproblem, 0);
+  return false;
+}
+
+bool
+CUI_DagNode::computeBaseSortForGroundSubterms()
+{
+  //
+  //	We need a recursive call on both subterms regardless of result.
+  //
+  bool ground = argArray[0]->computeBaseSortForGroundSubterms();
+  if (argArray[1]->computeBaseSortForGroundSubterms() && ground)
+    {
+      symbol()->computeBaseSort(this);
+      return true;
+    }
+  return false;
+}
+
+DagNode*
+CUI_DagNode::instantiate2(Substitution& substitution)
+{
+  bool changed = false;
+  DagNode* a0 = argArray[0];
+  if (DagNode* n = a0->instantiate(substitution))
+    {
+      a0 = n;
+      changed = true;
+    }
+  DagNode* a1 = argArray[1];
+  if (DagNode* n = a1->instantiate(substitution))
+    {
+      a1 = n;
+      changed = true;
+    }
+  if (changed)
+    {
+      CUI_Symbol* s = symbol();
+      CUI_DagNode* d = new CUI_DagNode(s);
+      if (a0->compare(a1) <= 0)
+	{
+	  d->argArray[0] = a0;
+	  d->argArray[1] = a1;
+	}
+      else
+	{
+	  d->argArray[0] = a1;
+	  d->argArray[1] = a0;
+	}
+      if (a0->getSortIndex() != Sort::SORT_UNKNOWN &&
+	  a1->getSortIndex() != Sort::SORT_UNKNOWN)
+	s->computeBaseSort(d);
+      return d;
+    }
+  return 0;
+}
+
+bool
+CUI_DagNode::occurs2(int index)
+{
+  return argArray[0]->occurs(index) || argArray[1]->occurs(index);
+}

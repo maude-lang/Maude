@@ -23,6 +23,7 @@
 //
 //      Implementation for abstract class SortTable.
 //
+#include <map>
 
 //	utility stuff
 #include "macros.hh"
@@ -37,6 +38,7 @@
 #include "term.hh"
 
 //      core class definitions
+#include "sortBdds.hh"
 #include "sortTable.hh"
 
 #ifdef COMPILER
@@ -342,6 +344,106 @@ SortTable::findMinSortIndex(const NatSet& state, bool& unique)
     }
   unique = (infSoFar == minSort->getLeqSorts());
   return minSort->index();
+}
+
+void
+SortTable::computeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFunctionBdds) const
+{
+  if (sortDiagram.isNull())
+    return;  // operator doesn't use our mechanism
+  //
+  //	We take our sort decision diagram and produce a BDD version, encoding each sort index
+  //	by a bit vector.
+  //
+  if (nrArgs == 0)
+    {
+      //
+      //	Generate constant BDD vector for constant operator.
+      //
+      sortBdds.makeIndexVector(sortBdds.getNrVariables(componentVector[nrArgs]->getIndexWithinModule()),
+			       singleNonErrorSort->index(),
+			       sortFunctionBdds);
+      return;
+    }
+  BddTable table(sortDiagram.size());  // only target entries actually used
+  //  for (int i = 0; i < sortDiagram.size(); ++i)
+  //    cerr << sortDiagram[i] << " ";
+  //  cerr << endl;
+  computeBddVector(sortBdds, 0, 0, table, 0);
+  sortFunctionBdds.swap(table[0]);
+}
+
+void
+SortTable::computeBddVector(const SortBdds& sortBdds,
+			    int bddVarNr,
+			    int argNr,
+			    BddTable& table,
+			    int nodeNr) const
+{
+  //  DebugAdvisory("starting computeBddVector(bddVarNr=" << bddVarNr << ",  argNr=" << argNr << ", nodeNr=" << nodeNr << ")");
+  Assert(argNr < nrArgs, "bad argNr");
+  BddVector& vec =  table[nodeNr];
+  if (!vec.isNull())
+    return;
+  //
+  //	We fill out the BDD vector vec to make it correspond to sortDiagram[nodeNr].
+  //
+  const ConnectedComponent* component = componentVector[argNr];
+  int nrBddVariables = sortBdds.getNrVariables(component->getIndexWithinModule());
+  //
+  //	We first look at each value of our argument and OR together BDDs for those
+  //	that go to the same place.
+  //	
+  //  DebugAdvisory("starting OR phase");
+  int nrSorts = component->nrSorts();
+  typedef map<int, Bdd> BddMap;
+  BddMap disjuncts;
+  for (int i = 0; i < nrSorts; ++i)
+    {
+      Bdd& disjunct = disjuncts[sortDiagram[nodeNr + i]];
+      Bdd indexBdd = sortBdds.makeIndexBdd(bddVarNr, nrBddVariables, i);
+      //DebugAdvisory("disjunct = " << disjunct.id() << " indexBdd = " << indexBdd.id());
+      disjunct = bdd_or(disjunct, indexBdd /*sortBdds.makeIndexBdd(bddVarNr, nrBddVariables, i)*/);
+      //DebugAdvisory("done disjunct = " << disjunct.id());
+    }
+  //
+  //	Now we go through the disjunctions we collected,  ANDing them with the
+  //	vectors at their targets and OR the products together to form our final
+  //	vector.
+  //
+  //  DebugAdvisory("starting OR of ANDs phase");
+  int nrBdds = sortBdds.getNrVariables(componentVector[nrArgs]->getIndexWithinModule());
+  vec.resize(nrBdds);
+  FOR_EACH_CONST(i, BddMap, disjuncts)
+    {
+      int target = i->first;
+      if (argNr + 1 == nrArgs)
+	{
+	  //
+	  //	Target is actually the index of a sort.
+	  //
+	  BddVector t;
+	  sortBdds.makeIndexVector(nrBdds, target, t);
+	  for (int j = 0; j < nrBdds; ++j)
+	    {
+	      //DebugAdvisory("vec[j] " << vec[j].id());
+	      //DebugAdvisory("t[j] " << t[j].id());
+	      vec[j] = bdd_or(vec[j], bdd_and(i->second, t[j]));
+	    }
+	}
+      else
+	{
+	  computeBddVector(sortBdds, bddVarNr + nrBddVariables, argNr + 1, table, target);
+	  BddVector& targetVec = table[target];
+	  for (int j = 0; j < nrBdds; ++j)
+	    {
+	      //DebugAdvisory("vec[j] " << vec[j].id());
+	      //DebugAdvisory("targetVec[j] " << targetVec[j].id());
+	      vec[j] = bdd_or(vec[j], bdd_and(i->second, targetVec[j]));
+	    }
+	}
+    }
+  //DebugAdvisory("done computeBddVector(bddVarNr=" << bddVarNr << ",  argNr=" << argNr << ", nodeNr=" << nodeNr << ")");
 }
 
 #ifdef COMPILER

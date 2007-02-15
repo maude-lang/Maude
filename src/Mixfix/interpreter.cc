@@ -34,19 +34,28 @@
 #include "core.hh"
 #include "AU_Theory.hh"
 #include "higher.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
 
 //      interface class definitions
 #include "term.hh"
 #include "extensionInfo.hh"
 
+//      core class definitions
+#include "unificationProblem.hh"
+
 //	higher class definitions
 #include "pattern.hh"
 #include "matchSearchState.hh"
 #include "rewriteSequenceSearch.hh"
+#include "unificationProblem.hh"
 
 //	object system class definitions
 #include "pseudoThread.hh"
+
+//	strategy languages definitions
+#include "strategyExpression.hh"
+#include "strategicSearch.hh"
 
 //	front end class definitions
 #include "timer.hh"
@@ -56,13 +65,18 @@
 #include "view.hh"
 #include "visibleModule.hh"
 #include "loopSymbol.hh"
+#include "freshVariableSource.hh"
+#include "freshVariableSource.hh"
 #include "interpreter.hh"
 
 //	our stuff
 #include "execute.cc"
 #include "match.cc"
+#include "unify.cc"
 #include "search.cc"
 #include "loopMode.cc"
+#include "erewrite.cc"
+#include "srewrite.cc"
 
 Interpreter::Interpreter()
 {
@@ -76,7 +90,9 @@ Interpreter::Interpreter()
 
   savedContext = 0;
   savedMatchSearchState = 0;
+  savedUnificationProblem = 0;
   savedRewriteSequenceSearch = 0;
+  savedStrategicSearch = 0;
   savedModule = 0;
   continueFunc = 0;
 }

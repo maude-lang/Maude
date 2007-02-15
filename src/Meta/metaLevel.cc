@@ -42,6 +42,7 @@
 #include "CUI_Theory.hh"
 #include "NA_Theory.hh"
 #include "builtIn.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
 
 //      interface class definitions
@@ -107,7 +108,7 @@
 #include "moduleExpression.hh"
 #include "renaming.hh"
 #include "view.hh"
-#include "main.hh"  // HACK to access global module database
+#include "global.hh"  // HACK to access global module database
 
 //	our stuff
 #include "metaDown.cc"

@@ -1,3 +1,18 @@
+2006-09-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_CollapseMatcher.cc (uniqueCollapseMatch): we have to bind an
+	unbound variable that can take identity in the rigid part
+	otherwise it could be bound to something other than identity later
+	on (we know it will be bound later on because it is in the rigid
+	part).
+
+2006-09-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_CollapseMatcher.cc (uniqueCollapseMatch): handle the case
+	where a variable that can take identity ends up in the rigid part
+	because we expect it to be bound by some other term in the rigid
+	part
+
 2005-07-28  Steven Eker  <eker@goo.csl.sri.com>
 
 	* AU_Term.cc (deepCopy2): rewritten to handle translation to

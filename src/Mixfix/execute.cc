@@ -32,10 +32,14 @@ Interpreter::clearContinueInfo()
 {
   delete savedContext;
   delete savedMatchSearchState;
+  delete savedUnificationProblem;
   delete savedRewriteSequenceSearch;
+  delete savedStrategicSearch;
   savedContext = 0;
   savedMatchSearchState = 0;
+  savedUnificationProblem = 0;
   savedRewriteSequenceSearch = 0;
+  savedStrategicSearch = 0;
   continueFunc = 0;
   if (savedModule != 0)
     {
@@ -84,6 +88,21 @@ Interpreter::beginRewriting(bool debug)
 #ifdef QUANTIFY_REWRITING
   quantify_start_recording_data();
 #endif
+}
+
+void
+Interpreter::printModifiers(Int64 number, Int64 number2)
+{
+  if (number2 != NONE || number2 != NONE)
+    {
+      cout << '[';
+      if (number != NONE)
+	cout << number;
+      if (number2 != NONE)
+	cout << ", " << number2;
+      cout << "] ";
+    }
+  cout << "in " << currentModule << " : ";
 }
 
 void
@@ -275,14 +294,8 @@ Interpreter::fRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 	{
 	  UserLevelRewritingContext::beginCommand();
 	  cout << "frewrite ";
-	  if (limit != NONE)
-	    {
-	      if (gas == NONE)
-		cout  << '[' << limit << "] ";
-	      else
-		cout  << '[' << limit << ", " << gas << "] ";
-	    }
-	  cout << "in " << currentModule << " : " << d << " .\n";
+	  printModifiers(limit, gas);
+	  cout << d << " .\n";
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateFrewrite(d, limit, gas);
 	}
@@ -317,6 +330,7 @@ Interpreter::fRewriteCont(Int64 limit, bool debug)
   endRewriting(timer, context, fm, &Interpreter::fRewriteCont);
 }
 
+/*
 void
 Interpreter::eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool debug)
 {
@@ -326,14 +340,8 @@ Interpreter::eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 	{
 	  UserLevelRewritingContext::beginCommand();
 	  cout << "erewrite ";
-	  if (limit != NONE)
-	    {
-	      if (gas == NONE)
-		cout  << '[' << limit << "] ";
-	      else
-		cout  << '[' << limit << ", " << gas << "] ";
-	    }
-	  cout << "in " << currentModule << " : " << d << " .\n";
+	  printModifiers(limit, gas);
+	  cout << d << " .\n";
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateErewrite(d, limit, gas);
 	}
@@ -348,7 +356,7 @@ Interpreter::eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
       Timer timer(getFlag(SHOW_TIMING));
       for (;;)
 	{
-	  context->fairRewrite(NONE /* HACK: should be limit */, (gas == NONE) ? 1 : gas);
+	context->fairRewrite(NONE // HACK: should be limit, (gas == NONE) ? 1 : gas);
 	  DebugAdvisory("calling PseudoThread::eventLoop()");
 	  int r = PseudoThread::eventLoop();
 	  DebugAdvisory("PseudoThread::eventLoop() returned " << r);
@@ -385,6 +393,7 @@ Interpreter::eRewriteCont(Int64 limit, bool debug)
   context->fairContinue(limit);
   endRewriting(timer, context, fm, &Interpreter::eRewriteCont);
 }
+*/
 
 void
 Interpreter::cont(Int64 limit, bool debug)

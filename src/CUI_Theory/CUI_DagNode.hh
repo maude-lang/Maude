@@ -47,6 +47,16 @@ public:
 		      int parentIndex,
 		      bool respectFrozen);
   //
+  //	Unification stuff.
+  //
+  bool unify(DagNode* rhs,
+	     Substitution& solution,
+	     Subproblem*& returnedSubproblem,
+	     ExtensionInfo* extensionInfo = 0);
+  bool computeBaseSortForGroundSubterms();
+  DagNode* instantiate2(Substitution& substitution);
+  bool occurs2(int index);
+  //
   //    Functions particular to CUI_DagNode.
   //
   CUI_Symbol* symbol() const;

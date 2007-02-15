@@ -1,9 +1,9 @@
 #!/bin/sh
 
-MAUDE_LIB=$srcdir/../../src/Mixfix
+MAUDE_LIB=$srcdir/../../src/Main
 export MAUDE_LIB
 
-../../src/Mixfix/maude \
+../../src/Main/maude \
   < $srcdir/metaFrewrite.maude -no-banner -no-advise \
   > metaFrewrite.out 2>&1
 

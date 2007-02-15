@@ -38,6 +38,9 @@
 #include "term.hh"
 
 //	core class definitions
+#include "sortBdds.hh"
+
+//	variable class definitions
 #include "variableSymbol.hh"
 #include "variableTerm.hh"
 #include "variableDagNode.hh"
@@ -84,4 +87,15 @@ VariableSymbol::stackArguments(DagNode* /* subject */,
 			       Vector<RedexPosition>& /* stack */,
 			       int /* parentIndex */)
 {
+}
+
+void
+VariableSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
+				       const Vector<int> realToBdd,
+				       DagNode* subject,
+				       Vector<Bdd>& generalizedSort)
+{
+  int firstVariable = realToBdd[safeCast(VariableDagNode*, subject)->getIndex()];
+  int nrVariables = sortBdds.getNrVariables(rangeComponent()->getIndexWithinModule());
+  sortBdds.makeVariableVector(firstVariable, nrVariables, generalizedSort);
 }

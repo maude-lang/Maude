@@ -1,12 +1,11 @@
 Maude> ==========================================
 reduce in META-LEVEL : upImports('META-LEVEL) .
 rewrites: 1
-result ImportList: protecting 'BOOL .
-protecting 'META-MODULE .
+result Import: protecting 'META-MODULE .
 ==========================================
 reduce in META-LEVEL : upImports('BAR) .
 rewrites: 1
-result ImportList: protecting 'BOOL .
+result ImportList: including 'BOOL .
 including 'FOO * (
   sort 'Foo to 'Baz,
   op 'a to 'b [none]
@@ -14,7 +13,7 @@ including 'FOO * (
 ==========================================
 reduce in META-LEVEL : upImports('BAR') .
 rewrites: 1
-result ImportList: protecting 'BOOL .
+result ImportList: including 'BOOL .
 including 'FOO' * (
   sort 'Foo to 'Quux,
   op '_+_ : 'Baz 'Baz -> 'Foo to '_._ [prec(27) gather('E 'e)],
@@ -23,7 +22,7 @@ including 'FOO' * (
 ==========================================
 reduce in META-LEVEL : upImports('BAZ) .
 rewrites: 1
-result ImportList: protecting 'BOOL .
+result ImportList: including 'BOOL .
 including 'NAT + 'FOO' * (
   sort 'Foo to 'Quux,
   label 'a to 'b,
@@ -34,7 +33,7 @@ including 'NAT + 'FOO' * (
 reduce in META-LEVEL : upModule('BAZ, false) .
 rewrites: 1
 result FModule: fmod 'BAZ is
-  protecting 'BOOL .
+  including 'BOOL .
   including 'NAT + 'FOO' * (
     sort 'Foo to 'Quux,
     label 'a to 'b,

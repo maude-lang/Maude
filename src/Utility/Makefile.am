@@ -20,7 +20,8 @@ libutility_a_SOURCES = \
 	tty.cc \
 	bdd.cc \
 	timer.cc \
-	mpzSystem.cc
+	mpzSystem.cc \
+	allSat.cc
 
 noinst_HEADERS = \
 	bdd.hh \
@@ -51,7 +52,8 @@ noinst_HEADERS = \
 	timeStuff.hh \
 	mathStuff.hh \
 	ropeStuff.hh \
-	mpzSystem.hh
+	mpzSystem.hh \
+	allSat.hh
 
 EXTRA_DIST = \
 	mpzContejeanDevie.cc \

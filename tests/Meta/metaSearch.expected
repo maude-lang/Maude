@@ -65,8 +65,9 @@ result ResultTriple: {'_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat]],'Nat,
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     'c.Nat]], 'X:Nat, nil, '+, 100, 1) .
-rewrites: 5
-result ResultTriple?: (failure).ResultTriple?
+rewrites: 4
+result ResultTriple: {'_*_['a.Nat,'_+_['b.Nat,'c.Nat]],'Nat,
+	'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]]}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_+_['_*_['a.Nat,'b.Nat],
     '_*_['a.Nat,'c.Nat]], '_*_['X:Nat,'Y:Nat], nil, '*, 100, 0) .

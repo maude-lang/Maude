@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 
 ***
 ***	Maude LTL satisfiability solver and model checker.
-***	Version 2.0.
+***	Version 2.3.
 ***
 
 fmod LTL is
-  sorts Prop Formula .
-  subsort Prop < Formula .
+  protecting BOOL .
+  sort Formula .
 
   *** primitive LTL operators
   ops True False : -> Formula [ctor format (g o)] .
@@ -71,7 +71,7 @@ fmod LTL is
 endfm
 
 fmod LTL-SIMPLIFIER is
-  inc LTL .
+  including LTL .
 
   *** The simplifier is based on:
   ***   Kousha Etessami and Gerard J. Holzman,
@@ -173,7 +173,7 @@ fmod LTL-SIMPLIFIER is
 endfm
 
 fmod SAT-SOLVER is
-  inc LTL .
+  protecting LTL .
 
   *** formula lists and results
   sorts FormulaList SatSolveResult TautCheckResult .
@@ -214,14 +214,16 @@ fmod SAT-SOLVER is
 endfm
 
 fmod SATISFACTION is
-  pr LTL .
-  sort State .
-  op _|=_ : State Formula ~> Bool .
+  protecting BOOL .
+  sorts State Prop .
+  op _|=_ : State Prop -> Bool [frozen] .
 endfm
 
 fmod MODEL-CHECKER is
-  pr QID .
-  inc SATISFACTION .
+  protecting QID .
+  including SATISFACTION .
+  including LTL .
+  subsort Prop < Formula .
 
   *** transitions and results
   sorts RuleName Transition TransitionList ModelCheckResult .
@@ -229,7 +231,7 @@ fmod MODEL-CHECKER is
   subsort Transition < TransitionList .
   subsort Bool < ModelCheckResult .
   ops unlabeled deadlock : -> RuleName .
-  op {_,_} : State RuleName -> Transition .
+  op {_,_} : State RuleName -> Transition [ctor] .
   op nil : -> TransitionList [ctor] .
   op __ : TransitionList TransitionList -> TransitionList [ctor assoc id: nil] .
   op counterexample : TransitionList TransitionList -> ModelCheckResult [ctor] .

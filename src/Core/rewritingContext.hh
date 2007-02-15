@@ -63,7 +63,8 @@ public:
   void incrementEqCount(Int64 i = 1);
   void incrementRlCount(Int64 i = 1);
   void clearCount();
-  void addInCount(RewritingContext& other);
+  void addInCount(const RewritingContext& other);
+  void transferCount(RewritingContext& other);
   Int64 getTotalCount() const;
   Int64 getMbCount() const;
   Int64 getEqCount() const;
@@ -72,6 +73,8 @@ public:
   void ruleRewrite(Int64 limit = NONE);
   void fairRewrite(Int64 limit = NONE, Int64 gas = 1);
   void fairContinue(Int64 limit = NONE);
+  void fairStart(Int64 gas);
+  bool fairTraversal(Int64& limit);
   bool builtInReplace(DagNode* old, DagNode* replacement);
 
   virtual RewritingContext* makeSubcontext(DagNode* root, int purpose = OTHER);
@@ -120,7 +123,7 @@ private:
   bool ascend();
   void descend();
   bool doRewriting(bool argsUnstackable);
-  bool fairTraversal(bool newTraversal);
+  bool fairTraversal();
 
   static bool traceFlag;
 
@@ -226,11 +229,22 @@ RewritingContext::clearCount()
 }
 
 inline void
-RewritingContext::addInCount(RewritingContext& other)
+RewritingContext::addInCount(const RewritingContext& other)
 {
   mbCount += other.mbCount;
   eqCount += other.eqCount;
   rlCount += other.rlCount;
+}
+
+inline void
+RewritingContext::transferCount(RewritingContext& other)
+{
+  mbCount += other.mbCount;
+  other.mbCount = 0;
+  eqCount += other.eqCount;
+  other.eqCount = 0;
+  rlCount += other.rlCount;
+  other.rlCount = 0;
 }
 
 inline bool

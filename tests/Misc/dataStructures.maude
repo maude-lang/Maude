@@ -61,9 +61,24 @@ endfm
 
 red gen(100) .
 red makeSet(gen(100)) .
-red makeList(makeSet(gen(100))) .
 red filter(gen(100), makeSet(gen(10))) .
 red filterOut(gen(100), makeSet(gen(10))) .
+
+fmod SORTABLE-LIST-AND-SET-TEST is
+  inc SORTABLE-LIST-AND-SET{Nat<} .
+
+  var N : Nat .
+  var L : List{Nat<} .
+
+  op gen : Nat -> List{Nat<} .
+  eq gen(N) = gen2(N, nil) .
+
+  op gen2 : Nat List{Nat<} -> List{Nat<} .
+  eq gen2(0, L) = L .
+  eq gen2(s N, L) = gen2(N, ((s N * s N) rem 100) L) .
+endfm
+
+red makeList(makeSet(gen(100))) .
 
 
 fmod LIST*-TEST is

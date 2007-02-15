@@ -77,7 +77,7 @@ fmod BAZ is
               sort Bar{X} to Bar'{X},
               op f : Foo{X} -> Foo{X} to f',
               op g : Bar{X} -> Foo{X} to g')
-             ){TAO-SET}{Nat<} .
+             ){STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Nat<} .
 endfm
 
 show all .
@@ -335,6 +335,6 @@ endfm
 
 *** passing a PEM in a nonfinal instantiation
 
-fmod FOO{X :: TAO-SET, Y :: TRIV} is
-  inc MAP{TAO-SET, Y}{X} .
+fmod FOO{X :: STRICT-WEAK-ORDER, Y :: TRIV} is
+  inc MAP{STRICT-WEAK-ORDER, Y}{X} .
 endfm

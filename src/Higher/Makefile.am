@@ -28,7 +28,8 @@ libhigher_a_SOURCES = \
 	assignmentConditionState.cc \
 	rewriteConditionState.cc \
 	temporalSymbol.cc \
-	satSolverSymbol.cc
+	satSolverSymbol.cc \
+	unificationProblem.cc
 
 noinst_HEADERS = \
 	assignmentConditionFragment.hh \
@@ -47,4 +48,5 @@ noinst_HEADERS = \
 	searchState.hh \
 	sortTestConditionFragment.hh \
 	stateTransitionGraph3.hh \
-	temporalSymbol.hh
+	temporalSymbol.hh \
+	unificationProblem.hh

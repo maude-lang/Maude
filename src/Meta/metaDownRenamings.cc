@@ -45,8 +45,13 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule
       if (PreModule* pm = interpreter.getModule(moduleName))
 	{
 	  m = pm->getFlatSignature();
-	  return !(m->isBad());
+	  if (!(m->isBad()))
+	    return true;
+	  IssueAdvisory(LineNumber(FileTable::META_LEVEL_CREATED) << ": unable to use module " <<
+			QUOTE(pm) << " due to unpatchable errors.");
 	}
+      IssueAdvisory(LineNumber(FileTable::META_LEVEL_CREATED) << ": module " <<
+		    QUOTE(Token::name(moduleName)) << " does not exist.");
     }
   else
     {

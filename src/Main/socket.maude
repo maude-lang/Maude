@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 2004 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2004-2006 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,11 +22,12 @@
 
 ***
 ***	Maude internet socket external objects.
+***	Version 2.3.
 ***
 
 mod SOCKET is
-  pr STRING .
-  inc CONFIGURATION .
+  protecting STRING .
+  including CONFIGURATION .
 
   op socket : Nat -> Oid [ctor] .
 

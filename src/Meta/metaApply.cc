@@ -139,9 +139,9 @@ MetaLevelOpSymbol::metaApply(FreeDagNode* subject, RewritingContext& context)
 	      }
 	    DagNode* replacement = state->getReplacement();
 	    Substitution* substitution = state->getContext();
-	    DagNode* top = state->rebuildDag(replacement);
+	    RewriteSearchState::DagPair top = state->rebuildDag(replacement);
 	    RewritingContext* resultContext =
-	      context.makeSubcontext(top, UserLevelRewritingContext::META_EVAL);
+	      context.makeSubcontext(top.first, UserLevelRewritingContext::META_EVAL);
 	    if (trace)
 	      resultContext->tracePostRuleRewrite(replacement);
 	    resultContext->reduce();
@@ -260,14 +260,14 @@ MetaLevelOpSymbol::metaXapply(FreeDagNode* subject, RewritingContext& context)
 	      }
 	    DagNode* replacement = state->getReplacement()->makeClone();  // for unique ptr
 	    Substitution* substitution = state->getContext();
-	    DagNode* top = state->rebuildDag(replacement);
+	    RewriteSearchState::DagPair top = state->rebuildDag(replacement);
 	    PointerMap qidMap;
 	    PointerMap dagNodeMap;
-	    DagRoot metaContext(metaLevel->upContext(top, m, replacement, qidMap, dagNodeMap));
+	    DagRoot metaContext(metaLevel->upContext(top.first, m, replacement, qidMap, dagNodeMap));
 	    RewritingContext* resultContext =
-	      context.makeSubcontext(top, UserLevelRewritingContext::META_EVAL);
+	      context.makeSubcontext(top.first, UserLevelRewritingContext::META_EVAL);
 	    if (trace)
-	      resultContext->tracePostRuleRewrite(replacement);
+	      resultContext->tracePostRuleRewrite(top.second);
 	    resultContext->reduce();
 	    context.addInCount(*resultContext);
 	    context.incrementRlCount();

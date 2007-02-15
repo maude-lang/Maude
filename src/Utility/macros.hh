@@ -86,6 +86,7 @@ class Bdd;
 class Tty;
 class Timer;
 class FlagSet;
+class AllSat;
 
 //
 //	Types for storage efficiency.

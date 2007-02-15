@@ -1,3 +1,28 @@
+2007-01-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.cc (compileOpDeclarations): call
+	FreeSymbol::compileOpDeclarations() as a quick hack to get
+	unification working
+
+===================================Maude88d===========================================
+
+2006-11-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatOpSymbol.cc (getDataAttachments): added min and max cases
+	(eqRewrite): added min and max cases
+
+===================================Maude88c===========================================
+
+2006-09-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatTerm.cc (instantiate2): added
+
+	* stringTerm.cc (instantiate2): added
+
+	* floatTerm.hh (class FloatTerm): added decl for instantiate2()
+
+	* stringTerm.hh (class StringTerm): added decl for instantiate2()
+
 2005-09-08  Steven Eker  <eker@goo.csl.sri.com>
 
 	* matrixOpSymbol.cc (eqRewrite): use GCD where algorithm ==

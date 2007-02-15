@@ -65,6 +65,10 @@ public:
 		      RewritingContext& context,
 		      Subproblem* subproblem) const;
 
+#ifdef DUMP
+  void dump(ostream& s, int indentLevel);
+#endif
+
 protected:
   void check(NatSet& boundVariables);
   void preprocess();

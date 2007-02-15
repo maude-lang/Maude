@@ -21,7 +21,7 @@
 */
 
 //
-//	Code for metaMatch and metaXmatch descent functions.
+//	Code for metaMatch() and metaXmatch() descent functions.
 //
 
 local_inline bool
@@ -140,29 +140,30 @@ MetaLevelOpSymbol::makeMatchSearchState2(MetaModule* m,
   if (metaLevel->downSaturate(subject->getArgument(4), minDepth) &&
       metaLevel->downBound(subject->getArgument(5), maxDepth))
     {
-      Term* p;
-      Term* s;
-      if (metaLevel->downTermPair(subject->getArgument(1), subject->getArgument(2), p, s, m))
-	{
-	  Vector<ConditionFragment*> condition;
-	  if (metaLevel->downCondition(subject->getArgument(3), m, condition))
-	    {
-	      if (maxDepth == NONE)
-		maxDepth = UNBOUNDED;  // NONE means no extension for MatchSearchState
-	      m->protect();
-	      Pattern* pattern = new Pattern(p, true, condition);
-	      RewritingContext* subjectContext = term2RewritingContext(s, context);
-	      subjectContext->root()->computeTrueSort(*subjectContext);
-	      context.addInCount(*subjectContext);
-	      return new MatchSearchState(subjectContext,
-					  pattern,
-					  MatchSearchState::GC_PATTERN |
-					  MatchSearchState::GC_CONTEXT |
-					  MatchSearchState::GC_SUBSTITUTION,
-					  minDepth,
-					  maxDepth);
+      if (Term* p = metaLevel->downTerm(subject->getArgument(1), m))
+        {
+          if (Term* s = metaLevel->downTerm(subject->getArgument(2), m))
+            {
+	      Vector<ConditionFragment*> condition;
+	      if (metaLevel->downCondition(subject->getArgument(3), m, condition))
+		{
+		  if (maxDepth == NONE)
+		    maxDepth = UNBOUNDED;  // NONE means no extension for MatchSearchState
+		  m->protect();
+		  Pattern* pattern = new Pattern(p, true, condition);
+		  RewritingContext* subjectContext = term2RewritingContext(s, context);
+		  subjectContext->root()->computeTrueSort(*subjectContext);
+		  context.addInCount(*subjectContext);
+		  return new MatchSearchState(subjectContext,
+					      pattern,
+					      MatchSearchState::GC_PATTERN |
+					      MatchSearchState::GC_CONTEXT |
+					      MatchSearchState::GC_SUBSTITUTION,
+					      minDepth,
+					      maxDepth);
+		}
 	    }
-        }
+	}
     }
   return false;
 }
@@ -207,11 +208,11 @@ MetaLevelOpSymbol::metaXmatch(FreeDagNode* subject, RewritingContext& context)
 	    Substitution* substitution = state->getContext();
 	    Sort* sort = pattern->getLhs()->getSort();  // HACK
 	    VariableSymbol* vs = safeCast(VariableSymbol*, m->instantiateVariable(sort));
-	    DagNode* hole = new VariableDagNode(vs, 0);
-	    DagNode* top = state->rebuildDag(hole);
+	    DagNode* hole = new VariableDagNode(vs, 0, UNDEFINED);
+	    RewriteSearchState::DagPair top = state->rebuildDag(hole);
 	    result = metaLevel->upMatchPair(*substitution,
 					    *pattern,
-					    top,
+					    top.first,
 					    hole,
 					    m);
 	  }

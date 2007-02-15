@@ -301,7 +301,7 @@ PreModule::processOps()
 						       opDecl.originator);
 	  if (opDef.symbolType.getBasicType() == SymbolType::BUBBLE)
 	    {
-	      int h = findHook(opDef.special, ID_HOOK, Token::encode("Bubble"));
+	      int h = findHook(opDef.special, ID_HOOK, bubble);
 	      Vector<Token>& details = opDef.special[h].details;
 	      int min = 1;
 	      int max = -1;
@@ -322,7 +322,7 @@ PreModule::processOps()
 			}
 		    }
 		}
-	      h = findHook(opDef.special, ID_HOOK, Token::encode("Exclude"));
+	      h = findHook(opDef.special, ID_HOOK, exclude);
 	      if (h != NONE)
 		{
 		  Vector<Token>& details = opDef.special[h].details;

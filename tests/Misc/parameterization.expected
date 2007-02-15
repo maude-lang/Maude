@@ -551,7 +551,6 @@ fmod BOOL
 fmod TRUTH-VALUE
 fmod TRUTH
 fmod EXT-BOOL
-fmod IDENTICAL
 fmod NAT
 fmod INT
 fmod RAT
@@ -561,12 +560,20 @@ fmod CONVERSION
 fmod RANDOM
 fmod QID
 fth TRIV
-fth TAO-SET
+fth STRICT-WEAK-ORDER
+fth STRICT-TOTAL-ORDER
+fth TOTAL-PREORDER
+fth TOTAL-ORDER
 fth DEFAULT
 fmod LIST
+fmod WEAKLY-SORTABLE-LIST
 fmod SORTABLE-LIST
+fmod WEAKLY-SORTABLE-LIST'
+fmod SORTABLE-LIST'
 fmod SET
 fmod LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET'
 fmod LIST*
 fmod SET*
 fmod MAP
@@ -584,14 +591,91 @@ fmod FOO
 fmod BAR
 fmod BAZ
 fth X :: TRIV
-fth X :: TAO-SET
-fmod LIST{TAO-SET}
-fmod LIST{TAO-SET} * (sort NeList{TAO-SET}{X} to NeList{X}, sort List{TAO-SET}{
-    X} to List{X})
-fmod (LIST{TAO-SET} * (sort NeList{TAO-SET}{X} to NeList{X}, sort List{
-    TAO-SET}{X} to List{X})){[X]}
+fth X :: STRICT-WEAK-ORDER
+fmod LIST{STRICT-WEAK-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{[X]} * (sort NeList{STRICT-WEAK-ORDER}{X} to
+    NeList{X}, sort List{STRICT-WEAK-ORDER}{X} to List{X})
+fth X :: STRICT-TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-TOTAL-ORDER}{X} to NeList{X}, sort List{STRICT-TOTAL-ORDER}{X} to
+    List{X})
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X})
+fth X :: TOTAL-PREORDER
+fmod LIST{TOTAL-PREORDER}
+fmod LIST{TOTAL-PREORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
+    sort List{TOTAL-PREORDER}{X} to List{X})
+fth X :: TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
 fmod LIST{[X]}
 fmod SET{[X]}
+fmod SORTABLE-LIST{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X}, sort NeSet{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeSet{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod SORTABLE-LIST'{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{
+    TOTAL-ORDER}{X} to NeList{X}, sort List{TOTAL-ORDER}{X} to List{X}, sort
+    NeSet{TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to Set{X})
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeSet{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeSet{X}, sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to
+    Set{X})
 fth Y :: TRIV
 fth Y :: DEFAULT
 fmod LIST{Nat}
@@ -1163,7 +1247,6 @@ fmod BOOL
 fmod TRUTH-VALUE
 fmod TRUTH
 fmod EXT-BOOL
-fmod IDENTICAL
 fmod NAT
 fmod INT
 fmod RAT
@@ -1173,12 +1256,20 @@ fmod CONVERSION
 fmod RANDOM
 fmod QID
 fth TRIV
-fth TAO-SET
+fth STRICT-WEAK-ORDER
+fth STRICT-TOTAL-ORDER
+fth TOTAL-PREORDER
+fth TOTAL-ORDER
 fth DEFAULT
 fmod LIST
+fmod WEAKLY-SORTABLE-LIST
 fmod SORTABLE-LIST
+fmod WEAKLY-SORTABLE-LIST'
+fmod SORTABLE-LIST'
 fmod SET
 fmod LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET'
 fmod LIST*
 fmod SET*
 fmod MAP
@@ -1196,14 +1287,91 @@ fmod FOO
 fmod BAR
 fmod BAZ
 fth X :: TRIV
-fth X :: TAO-SET
-fmod LIST{TAO-SET}
-fmod LIST{TAO-SET} * (sort NeList{TAO-SET}{X} to NeList{X}, sort List{TAO-SET}{
-    X} to List{X})
-fmod (LIST{TAO-SET} * (sort NeList{TAO-SET}{X} to NeList{X}, sort List{
-    TAO-SET}{X} to List{X})){[X]}
+fth X :: STRICT-WEAK-ORDER
+fmod LIST{STRICT-WEAK-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{[X]} * (sort NeList{STRICT-WEAK-ORDER}{X} to
+    NeList{X}, sort List{STRICT-WEAK-ORDER}{X} to List{X})
+fth X :: STRICT-TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-TOTAL-ORDER}{X} to NeList{X}, sort List{STRICT-TOTAL-ORDER}{X} to
+    List{X})
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X})
+fth X :: TOTAL-PREORDER
+fmod LIST{TOTAL-PREORDER}
+fmod LIST{TOTAL-PREORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
+    sort List{TOTAL-PREORDER}{X} to List{X})
+fth X :: TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
 fmod LIST{[X]}
 fmod SET{[X]}
+fmod SORTABLE-LIST{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X}, sort NeSet{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeSet{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod SORTABLE-LIST'{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{
+    TOTAL-ORDER}{X} to NeList{X}, sort List{TOTAL-ORDER}{X} to List{X}, sort
+    NeSet{TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to Set{X})
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeSet{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeSet{X}, sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to
+    Set{X})
 fth Y :: TRIV
 fth Y :: DEFAULT
 fmod LIST{Nat}
@@ -1779,7 +1947,6 @@ fmod BOOL
 fmod TRUTH-VALUE
 fmod TRUTH
 fmod EXT-BOOL
-fmod IDENTICAL
 fmod NAT
 fmod INT
 fmod RAT
@@ -1789,12 +1956,20 @@ fmod CONVERSION
 fmod RANDOM
 fmod QID
 fth TRIV
-fth TAO-SET
+fth STRICT-WEAK-ORDER
+fth STRICT-TOTAL-ORDER
+fth TOTAL-PREORDER
+fth TOTAL-ORDER
 fth DEFAULT
 fmod LIST
+fmod WEAKLY-SORTABLE-LIST
 fmod SORTABLE-LIST
+fmod WEAKLY-SORTABLE-LIST'
+fmod SORTABLE-LIST'
 fmod SET
 fmod LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET'
 fmod LIST*
 fmod SET*
 fmod MAP
@@ -1812,14 +1987,91 @@ fmod FOO
 fmod BAR
 fmod BAZ
 fth X :: TRIV
-fth X :: TAO-SET
-fmod LIST{TAO-SET}
-fmod LIST{TAO-SET} * (sort NeList{TAO-SET}{X} to NeList{X}, sort List{TAO-SET}{
-    X} to List{X})
-fmod (LIST{TAO-SET} * (sort NeList{TAO-SET}{X} to NeList{X}, sort List{
-    TAO-SET}{X} to List{X})){[X]}
+fth X :: STRICT-WEAK-ORDER
+fmod LIST{STRICT-WEAK-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{[X]} * (sort NeList{STRICT-WEAK-ORDER}{X} to
+    NeList{X}, sort List{STRICT-WEAK-ORDER}{X} to List{X})
+fth X :: STRICT-TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-TOTAL-ORDER}{X} to NeList{X}, sort List{STRICT-TOTAL-ORDER}{X} to
+    List{X})
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X})
+fth X :: TOTAL-PREORDER
+fmod LIST{TOTAL-PREORDER}
+fmod LIST{TOTAL-PREORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
+    sort List{TOTAL-PREORDER}{X} to List{X})
+fth X :: TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
 fmod LIST{[X]}
 fmod SET{[X]}
+fmod SORTABLE-LIST{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X}, sort NeSet{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeSet{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod SORTABLE-LIST'{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{
+    TOTAL-ORDER}{X} to NeList{X}, sort List{TOTAL-ORDER}{X} to List{X}, sort
+    NeSet{TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to Set{X})
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeSet{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeSet{X}, sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to
+    Set{X})
 fth Y :: TRIV
 fth Y :: DEFAULT
 fmod LIST{Nat}
@@ -1842,7 +2094,8 @@ fmod FOO{[X], Nat} * (sort Foo{X,Nat} to Bar{Nat,X}, op f : [Foo{X,Nat}] -> [
 fmod (BAR * (sort Foo{X,Nat} to Bar{Nat,X}, op f : [Foo{X,Nat}] -> [Foo{X,Nat}]
     to g)){Rat}
 fmod BAZ is
-  sorts Bool Zero NzNat Nat Foo'{TAO-SET}{Nat<} Bar'{TAO-SET}{Nat<} .
+  sorts Bool Zero NzNat Nat Foo'{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Nat<}
+    Bar'{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Nat<} .
   subsorts Zero NzNat < Nat .
   op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
     0 gather (& & &) special (
@@ -1969,8 +2222,10 @@ fmod BAZ is
     op-hook succSymbol (s_ : Nat ~> NzNat)
     term-hook trueTerm (true)
     term-hook falseTerm (false))] .
-  op f' : Foo'{TAO-SET}{Nat<} -> Foo'{TAO-SET}{Nat<} .
-  op g' : Bar'{TAO-SET}{Nat<} -> Foo'{TAO-SET}{Nat<} .
+  op f' : Foo'{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Nat<} -> Foo'{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Nat<} .
+  op g' : Bar'{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Nat<} -> Foo'{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Nat<} .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .
   eq A:Bool and A:Bool = A:Bool .
@@ -1985,7 +2240,6 @@ fmod BOOL
 fmod TRUTH-VALUE
 fmod TRUTH
 fmod EXT-BOOL
-fmod IDENTICAL
 fmod NAT
 fmod INT
 fmod RAT
@@ -1995,12 +2249,20 @@ fmod CONVERSION
 fmod RANDOM
 fmod QID
 fth TRIV
-fth TAO-SET
+fth STRICT-WEAK-ORDER
+fth STRICT-TOTAL-ORDER
+fth TOTAL-PREORDER
+fth TOTAL-ORDER
 fth DEFAULT
 fmod LIST
+fmod WEAKLY-SORTABLE-LIST
 fmod SORTABLE-LIST
+fmod WEAKLY-SORTABLE-LIST'
+fmod SORTABLE-LIST'
 fmod SET
 fmod LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET'
 fmod LIST*
 fmod SET*
 fmod MAP
@@ -2018,14 +2280,91 @@ fmod FOO
 fmod BAR
 fmod BAZ
 fth X :: TRIV
-fth X :: TAO-SET
-fmod LIST{TAO-SET}
-fmod LIST{TAO-SET} * (sort NeList{TAO-SET}{X} to NeList{X}, sort List{TAO-SET}{
-    X} to List{X})
-fmod (LIST{TAO-SET} * (sort NeList{TAO-SET}{X} to NeList{X}, sort List{
-    TAO-SET}{X} to List{X})){[X]}
+fth X :: STRICT-WEAK-ORDER
+fmod LIST{STRICT-WEAK-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{[X]} * (sort NeList{STRICT-WEAK-ORDER}{X} to
+    NeList{X}, sort List{STRICT-WEAK-ORDER}{X} to List{X})
+fth X :: STRICT-TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-TOTAL-ORDER}{X} to NeList{X}, sort List{STRICT-TOTAL-ORDER}{X} to
+    List{X})
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X})
+fth X :: TOTAL-PREORDER
+fmod LIST{TOTAL-PREORDER}
+fmod LIST{TOTAL-PREORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
+    sort List{TOTAL-PREORDER}{X} to List{X})
+fth X :: TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
 fmod LIST{[X]}
 fmod SET{[X]}
+fmod SORTABLE-LIST{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X}, sort NeSet{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeSet{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod SORTABLE-LIST'{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{
+    TOTAL-ORDER}{X} to NeList{X}, sort List{TOTAL-ORDER}{X} to List{X}, sort
+    NeSet{TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to Set{X})
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeSet{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeSet{X}, sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to
+    Set{X})
 fth Y :: TRIV
 fth Y :: DEFAULT
 fmod LIST{Nat}
@@ -2042,16 +2381,30 @@ fmod BAR * (sort Foo{X} to Foo'{X}, sort Bar{X} to Bar'{X}, op f : [Foo{X}] ->
     [Foo{X}] to f', op g : [Bar{X}] -> [Foo{X}] to g')
 fmod FOO{[X]} * (sort Foo{X} to Foo'{X}, op f : [Foo{X}] -> [Foo{X}] to f')
 fmod (BAR * (sort Foo{X} to Foo'{X}, sort Bar{X} to Bar'{X}, op f : [Foo{X}] ->
-    [Foo{X}] to f', op g : [Bar{X}] -> [Foo{X}] to g')){TAO-SET}
-fmod FOO{TAO-SET}
-fmod FOO{TAO-SET}{[X]}
-fmod FOO{TAO-SET}{[X]} * (sort Foo{TAO-SET}{X} to Foo'{TAO-SET}{X}, op f : [
-    Foo{TAO-SET}{X}] -> [Foo{TAO-SET}{X}] to f')
+    [Foo{X}] to f', op g : [Bar{X}] -> [Foo{X}] to g')){STRICT-WEAK-ORDER}
+fmod FOO{STRICT-WEAK-ORDER}
+fmod FOO{STRICT-WEAK-ORDER}{[X]}
+fmod FOO{STRICT-WEAK-ORDER}{[X]} * (sort Foo{STRICT-WEAK-ORDER}{X} to Foo'{
+    STRICT-WEAK-ORDER}{X}, op f : [Foo{STRICT-WEAK-ORDER}{X}] -> [Foo{
+    STRICT-WEAK-ORDER}{X}] to f')
 fmod (BAR * (sort Foo{X} to Foo'{X}, sort Bar{X} to Bar'{X}, op f : [Foo{X}] ->
-    [Foo{X}] to f', op g : [Bar{X}] -> [Foo{X}] to g')){TAO-SET}{Nat<}
-fmod FOO{TAO-SET}{Nat<}
-fmod FOO{TAO-SET}{Nat<} * (sort Foo{TAO-SET}{Nat<} to Foo'{TAO-SET}{Nat<}, op f
-    : [Foo{TAO-SET}{Nat<}] -> [Foo{TAO-SET}{Nat<}] to f')
+    [Foo{X}] to f', op g : [Bar{X}] -> [Foo{X}] to g')){STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}
+fmod FOO{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod FOO{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod FOO{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort Foo{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Foo'{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X}, op f : [Foo{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{
+    X}] -> [Foo{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X}] to f')
+fmod (BAR * (sort Foo{X} to Foo'{X}, sort Bar{X} to Bar'{X}, op f : [Foo{X}] ->
+    [Foo{X}] to f', op g : [Bar{X}] -> [Foo{X}] to g')){STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{Nat<}
+fmod FOO{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Nat<}
+fmod FOO{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Nat<} * (sort Foo{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Nat<} to Foo'{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{Nat<}, op f : [Foo{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{Nat<}] -> [Foo{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{
+    Nat<}] to f')
 fmod TEST is
   sorts Bool Zero NzNat Nat .
   subsorts Zero NzNat < Nat .
@@ -5123,6 +5476,6 @@ rewrites: 7
 result NzNat: 5
 Warning: summand module SET has parameters.
 Warning: summand module SET{[X]} has parameters.
-Warning: Instantiation MAP{TAO-SET, Y} uses both a theory-view and a parameter
-    from enclosing module FOO.
+Warning: Instantiation MAP{STRICT-WEAK-ORDER, Y} uses both a theory-view and a
+    parameter from enclosing module FOO.
 Maude> Bye.

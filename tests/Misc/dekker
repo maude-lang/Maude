@@ -1,9 +1,9 @@
 #!/bin/sh
 
-MAUDE_LIB=$srcdir/../../src/Mixfix
+MAUDE_LIB=$srcdir/../../src/Main
 export MAUDE_LIB
 
-../../src/Mixfix/maude \
+../../src/Main/maude \
   < $srcdir/dekker.maude -no-banner -no-advise \
   > dekker.out 2>&1
 

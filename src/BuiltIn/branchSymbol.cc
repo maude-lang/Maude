@@ -223,6 +223,7 @@ BranchSymbol::computeBaseSort(DagNode* subject)
 void
 BranchSymbol::compileOpDeclarations()
 {
+  FreeSymbol::compileOpDeclarations();  // Hack so BDD sort table can be constructed - even thought it's wrong
 }
 
 bool

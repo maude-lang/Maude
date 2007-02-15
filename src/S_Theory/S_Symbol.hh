@@ -26,6 +26,7 @@
 #ifndef _S_Symbol_hh_
 #define _S_Symbol_hh_
 #include "symbol.hh"
+#include "gmpxx.h"
 
 class S_Symbol : public Symbol
 {
@@ -49,6 +50,15 @@ public:
   void compileOpDeclarations();
   void finalizeSortInfo();
   bool isConstructor(DagNode* subject);
+  void fillInSortInfo(Term* subject);
+  //
+  //	Unification stuff.
+  //
+  void computeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFunctionBdds) const;
+  void computeGeneralizedSort(const SortBdds& sortBdds,
+			      const Vector<int> realToBdd,
+			      DagNode* subject,
+			      Vector<Bdd>& generalizedSort);
   //
   //	Member function specific to S_Symbol.
   //
@@ -57,6 +67,8 @@ public:
 private:
   struct SortPath
   {
+    int computeSortIndex(const mpz_class& number);
+
     Vector<int> sortIndices;
     int leadLength;
     //
@@ -74,5 +86,17 @@ private:
   
   Vector<SortPath> sortPathTable;
 };
+
+inline int
+S_Symbol::SortPath::computeSortIndex(const mpz_class& number)
+{
+  int pathLength = sortIndices.length();
+  if (number <= pathLength)
+    return sortIndices[number.get_si() - 1];
+  int cycleLength = pathLength - leadLength;
+  mpz_class cycleSteps = number - (leadLength + 1);
+  int remainder = mpz_tdiv_ui(cycleSteps.get_mpz_t(), cycleLength);
+  return sortIndices[leadLength + remainder];
+}
 
 #endif

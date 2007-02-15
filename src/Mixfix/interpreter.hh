@@ -82,6 +82,7 @@ public:
     TRACE_RL = 0x80000,
     TRACE_REWRITE = 0x100000,
     TRACE_BODY = 0x200000,
+    TRACE_BUILTIN = 0x400000,
     //
     //	Counter flags.
     //
@@ -97,7 +98,7 @@ public:
 
     DEFAULT_FLAGS = SHOW_COMMAND | SHOW_STATS | SHOW_TIMING | SHOW_LOOP_TIMING |
     COMPILE_COUNT |
-    TRACE_CONDITION | TRACE_SUBSTITUTION | TRACE_MB | TRACE_EQ | TRACE_RL | TRACE_REWRITE | TRACE_BODY |
+    TRACE_CONDITION | TRACE_SUBSTITUTION | TRACE_MB | TRACE_EQ | TRACE_RL | TRACE_REWRITE | TRACE_BODY | TRACE_BUILTIN |
     AUTO_CLEAR_PROFILE | AUTO_CLEAR_RULES
   };
 
@@ -152,10 +153,12 @@ public:
   void rewrite(const Vector<Token>& subject, Int64 limit, bool debug);
   void fRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool debug);
   void eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool debug);
+  void sRewrite(const Vector<Token>& subjectAndStrategy, Int64 limit, bool debug);
   void cont(Int64 limit, bool debug);
 
   void match(const Vector<Token>& bubble, bool withExtension, Int64 limit);
-  void search(const Vector<Token>& bubble, Int64 limit);
+  void unify(const Vector<Token>& bubble, bool withExtension, Int64 limit);
+  void search(const Vector<Token>& bubble, Int64 limit, Int64 depth);
   void showSearchPath(int stateNr);
   void showSearchPathLabels(int stateNr);
   void showSearchGraph();
@@ -198,6 +201,7 @@ private:
   void clearContinueInfo();
   DagNode* makeDag(const Vector<Token>& subject);
   void startUsingModule(VisibleModule* module);
+  void printModifiers(Int64 number, Int64 number2);
   void printStats(const Timer& timer, RewritingContext& context, bool timingFlag);
   void endRewriting(Timer& timer,
 		    UserLevelRewritingContext* context,
@@ -209,19 +213,33 @@ private:
   bool contLoop2(const Vector<Token>& input);
   void doLoop(DagNode* d, VisibleModule* module);
   void searchCont(Int64 limit, bool debug);
+  void sRewriteCont(Int64 limit, bool debug);
   void doSearching(Timer& timer,
 		   VisibleModule* module,
 		   RewriteSequenceSearch* state,
 		   int solutionCount,
 		   int limit);
-  void printMatchTiming(const Timer& timer);
+  void doExternalRewriting(UserLevelRewritingContext* context, Int64 limit);
+  void doStrategicSearch(Timer& timer,
+			 VisibleModule* module,
+			 StrategicSearch* state,
+			 int solutionCount,
+			 int limit);
+  void printDecisionTime(const Timer& timer);
   void printSearchTiming(const Timer& timer,  RewriteSequenceSearch* state);
   void doMatching(Timer& timer,
 		  VisibleModule* module,
 		  MatchSearchState* state,
 		  int solutionCount,
 		  int limit);
+
   void matchCont(Int64 limit, bool debug);
+  void doUnification(Timer& timer,
+		     VisibleModule* module,
+		     UnificationProblem* problem,
+		     int solutionCount,
+		     int limit);
+  void unifyCont(Int64 limit, bool debug);
   void updateSet(set<int>& target, bool add);
 
   ofstream* xmlLog;
@@ -236,7 +254,9 @@ private:
   //
   UserLevelRewritingContext* savedContext;
   MatchSearchState* savedMatchSearchState;
+  UnificationProblem* savedUnificationProblem;
   RewriteSequenceSearch* savedRewriteSequenceSearch;
+  StrategicSearch* savedStrategicSearch;
   int savedSolutionCount;
   VisibleModule* savedModule;
   ContinueFuncPtr continueFunc;

@@ -108,16 +108,17 @@ RewritingContext::fairRewrite(Int64 limit, Int64 gas)
   lazyMarker = NONE;
 
   reduce();
-  redexStack.contractTo(0);
+  redexStack.clear();
   redexStack.append(RedexPosition(rootNode, UNDEFINED, UNDEFINED, true));
 
   do
     {
       progress = false;
-      if (fairTraversal(true))
-	return;
+      if (fairTraversal())
+	return ;  // we hit our rewrite limit
     }
   while(progress);
+  return;  // no more redexes
 }
 
 void
@@ -126,31 +127,59 @@ RewritingContext::fairContinue(Int64 limit)
   if (progress)
     {
       rewriteLimit = limit;
-      if (fairTraversal(false))
-	return;
+      if (fairTraversal())
+	return;  // we hit our rewrite limit
       do
 	{
 	  progress = false;
-	  if (fairTraversal(true))
-	    return;
+	  if (fairTraversal())
+	    return;  // we hit our rewrite limit
 	}
       while (progress);
     }
+  return;  // no more redexes 
+}
+
+
+void
+RewritingContext::fairStart(Int64 gas)
+{
+  gasPerNode = gas;
+  currentIndex = 0;
+  lazyMarker = NONE;
+
+  reduce();
+  redexStack.clear();
+  redexStack.append(RedexPosition(rootNode, UNDEFINED, UNDEFINED, true));
 }
 
 bool
-RewritingContext::fairTraversal(bool newTraversal)
+RewritingContext::fairTraversal(Int64& limit)
+{
+  rewriteLimit = limit;
+  (void) fairTraversal();
+  limit = rewriteLimit;
+  return progress;  // progress during current traversal - not necessarily during this call
+}
+
+bool
+RewritingContext::fairTraversal()
 {
   //
   //	Return true if we stop mid-traversal because of rewrite limit
   //	and false if traversal completed.
   //
   bool argsUnstackable;
-  if (newTraversal)
+  if (currentIndex == 0) 
     {
+      //
+      //	Either this is our first traversal or we just completed a traversal.
+      //	Either way we descend the leftmost path to start a new traveral.
+      //
       descend();
       argsUnstackable = true;
       currentGas = gasPerNode;
+      progress = false;
     }
   else
     argsUnstackable = (redexStack[currentIndex].node()->symbol()->arity() == 0);

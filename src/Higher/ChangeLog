@@ -1,3 +1,206 @@
+2007-02-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (findOrderSortedUnifiers): use
+	sortedSolution
+	(~UnificationProblem): delete sortedSolution
+	(markReachableNodes): use sortedSolution
+	(findNextUnifier): use sortedSolution
+	(UnificationProblem): call Substitution::notify()
+
+	* unificationProblem.hh (class UnificationProblem): removed
+	Substitution as a base class
+	(class UnificationProblem): added data member sortedSolution
+	(getSolution): added
+
+2007-02-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (findNextUnifier): use reset()
+
+	* unificationProblem.hh (class UnificationProblem): added reset
+	function to class FreshVariableGenerator
+
+	* unificationProblem.cc (findOrderSortedUnifiers): only do the
+	instantiation step if we actually have free variables
+
+2007-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (findNextUnifier): second call to solve()
+	needs to have false flag
+	(findOrderSortedUnifiers): clear free variables from previous
+	unsorted unifier
+
+2007-02-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (markReachableNodes): no need to mark
+	unsortedSolution now that it is a RewritingContext
+
+	* unificationProblem.hh (class UnificationProblem): added data
+	member unsortedSolution
+
+	* unificationProblem.cc (findOrderSortedUnifiers): clone
+	unsortedSolution
+	(findNextUnifier): handle looking for solutions to subproblems
+	(markReachableNodes): mark unsortedSolution
+	(UnificationProblem): build solution in unsortedSolution; don't
+	call findOrderSortedUnifiers()
+
+2007-01-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): use
+	computeBaseSortForGroundSubterms()
+	(findOrderSortedUnifiers): use DagNode version of
+	computeGeneralizedSort()
+
+===================================Maude88e===========================================
+
+2007-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (~UnificationProblem): delete
+	freshVariableGenerator
+	(findOrderSortedUnifiers, findNextUnifier): use
+	freshVariableGenerator as a ptr rather than as a ref
+	(UnificationProblem): take freshVariableGenerator as a ptr rather
+	than as a ref
+
+	* unificationProblem.hh (class UnificationProblem): added virtual
+	dtor to FreshVariableGenerator; freshVariableGenerator now passed
+	as a ptr
+	(class UnificationProblem): freshVariableGenerator data member now
+	a ptr
+
+	* higher.hh: added class UnificationProblem
+
+	* unificationProblem.cc: moved here
+
+	* unificationProblem.hh: moved here
+
+===================================Maude88d===========================================
+
+2006-11-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSequenceSearch.cc (findNextInterestingState): rewritten
+	to use new flags and to allow cycles to the initial state in the
+	=>1 and =>+ cases
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): deleted
+	data member searchType; added data members reachingInitialStateOK
+	and normalFormNeeded
+
+	* rewriteSequenceSearch.cc (RewriteSequenceSearch): don't save
+	searchType; initialize reachingInitialStateOK and normalFormNeeded
+
+===================================Maude88c===========================================
+
+2006-11-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equalityConditionFragment.cc (solve): comment out state variable
+
+	* sortTestConditionFragment.cc (solve): comment out state variable
+
+2006-11-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* assignmentConditionFragment.cc (makeRhsInstance): take
+	Substitution& rather than RewritingContext&
+
+	* assignmentConditionFragment.hh (class
+	AssignmentConditionFragment): updated decl for makeRhsInstance()
+
+	* rewriteConditionFragment.hh (class RewriteConditionFragment):
+	updated decl for makeLhsInstance()
+
+	* rewriteConditionFragment.cc (makeLhsInstance): take
+	Substitution& rather than RewritingContext&
+
+2006-10-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteConditionFragment.cc (makeLhsInstance): added
+	(matchRoot): added
+
+	* rewriteConditionFragment.hh (class RewriteConditionFragment):
+	added decls for makeLhsInstance() and matchRoot()
+
+2006-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stateTransitionGraph3.cc (getNextState): fix trace bug using new
+	rebuildDag() semantics
+
+	* positionState.cc (rebuildDag): now return DagPair
+
+	* positionState.hh (class PositionState): added typedef DagPair;
+	both rebuildDag() functions now return DagPair
+
+2006-10-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* positionState.hh (getDagNode): added PositionIndex version
+
+2006-10-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* assignmentConditionFragment.cc (makeRhsInstance, matchRoot):
+	moved here
+
+2006-10-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* assignmentConditionFragment.hh (matchRoot): added
+	(makeRhsInstance): added
+
+2006-10-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equalityConditionFragment.cc (dump): added
+
+	* equalityConditionFragment.hh (class EqualityConditionFragment):
+	added decl for dump()
+
+===================================Maude88b===========================================
+
+2006-10-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc (findFirstSolution): check that pattern and
+	subject are in the same component
+
+2006-09-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* positionState.hh (rebuildDag): added simplified version
+	(getPositionIndex): added
+	(class PositionState): added typedef for PositionIndex
+
+	* positionState.cc (rebuildDag): rewritten to take external
+	extension info and position index
+
+2006-09-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* searchState.cc (hasCondition): added
+	(findNextSolution): use local version of hasCondition()
+	(findFirstSolution): use local version of hasCondition()
+	(hasCondition): use getFlags()
+
+	* searchState.hh (class SearchState): added decl for
+	hasCondition()
+
+	* rewriteSearchState.hh (class RewriteSearchState): renumbered
+	ALLOW_NONEXEC in enum Flags
+
+	* matchSearchState.hh (class MatchSearchState): renumbered
+	GC_PATTERN in enum Flags
+
+	* searchState.hh (class SearchState): added IGNORE_CONDITION to
+	enum Flags
+
+2006-09-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* positionState.hh (class PositionState): added explanation of
+	maxDepth edge cases
+
+===================================Maude88a===========================================
+
+2006-04-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSearchState.hh (class RewriteSearchState): add default
+	label arg for ctor
+
+	* rewriteSequenceSearch.cc: fix comment
+
+===================================Maude87a===========================================
+
 2003-11-06  Steven Eker  <eker@goo.csl.sri.com>
 
 	* satSolverSymbol.cc (attachData): use NULL_DATA()

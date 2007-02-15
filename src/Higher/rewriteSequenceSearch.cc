@@ -21,7 +21,7 @@
 */
 
 //
-//	Implementation for class RewriteSearchState.
+//	Implementation for class RewriteSequenceSearch.
 //
 
 //	utility stuff
@@ -49,7 +49,6 @@ RewriteSequenceSearch::RewriteSequenceSearch(RewritingContext* initial,
 					     Pattern* goal,
 					     int maxDepth)
   : StateTransitionGraph3(initial),
-    searchType(searchType),
     goal(goal),
     maxDepth((searchType == ONE_STEP) ? 1 : maxDepth)
 {
@@ -58,6 +57,8 @@ RewriteSequenceSearch::RewriteSequenceSearch(RewritingContext* initial,
   exploreDepth = -1;
   firstDeeperNodeNr = 0;
   needToTryInitialState = (searchType == ANY_STEPS);
+  reachingInitialStateOK = (searchType == AT_LEAST_ONE_STEP || searchType == ONE_STEP);
+  normalFormNeeded = (searchType == NORMAL_FORM);
   nextArc = NONE;
 }
 
@@ -96,9 +97,12 @@ RewriteSequenceSearch::findNextMatch()
 int
 RewriteSequenceSearch::findNextInterestingState()
 {
-  if (needToTryInitialState)  // special case - return initial state
+  if (needToTryInitialState)
     {
-      needToTryInitialState = false;
+      //
+      //	Special case: return the initail state.
+      //
+      needToTryInitialState = false;  // don't do this again
       return 0;
     }
 
@@ -116,7 +120,7 @@ RewriteSequenceSearch::findNextInterestingState()
       if (explore == firstDeeperNodeNr)
 	{
 	  ++exploreDepth;
-	  if (searchType == NORMAL_FORM)
+	  if (normalFormNeeded)
 	    {
 	      if (maxDepth > 0 && exploreDepth > maxDepth)
 		break;
@@ -136,20 +140,29 @@ RewriteSequenceSearch::findNextInterestingState()
       while ((nextStateNr = getNextState(explore, nextArc)) != NONE)
 	{
 	  ++nextArc;
-	  if (searchType == NORMAL_FORM)
+	  if (normalFormNeeded)
 	    {
 	      if (exploreDepth == maxDepth)
 		break;  // no point looking for further arcs
 	    }
 	  else
 	    {
-	      if (nextStateNr == nrStates)
+	      if (nextStateNr == nrStates)  // new state reached
 		return nextStateNr;
+	      if (nextStateNr == 0 && reachingInitialStateOK)
+		{
+		  //
+		  //	We have arrived back at our initial state, but because
+		  //	we didn't try matching the initial state, we do it now.
+		  //
+		  reachingInitialStateOK = false;  // don't do this again
+		  return 0;
+		}
 	    }
 	}
       if (getContext()->traceAbort())
 	return NONE;
-      if (searchType == NORMAL_FORM && nextArc == 0)
+      if (normalFormNeeded && nextArc == 0)
 	{
 	  nextArc = NONE;
 	  return explore;

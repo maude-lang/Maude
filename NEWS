@@ -1,6 +1,72 @@
-Overview of Changes in Maude alpha86e
+Overview of Changes in Maude alpha88f
 =====================================
-* fixed longstanding metalevel prec bug
+* added commutative unification
+* fixed free theory instantiation bug
+* fixed sort calculation of S_Theory terms bug
+* fixed unification with too many variables bug
+* added iter theory unification
+
+Overview of Changes in Maude alpha88e
+=====================================
+* string, qid and float constants allowed in unification
+* fixed unify f(X, Y) =? f(Y, X)  bug
+
+Overview of Changes in Maude alpha88d
+=====================================
+* set trace builtin on/off command
+* state caching in strategy language
+* first suppport for unification
+
+Overview of Changes in Maude alpha88c
+=====================================
+* extra advisories in metalevel
+* min/max operators in FLOAT
+* slight change to search semantics
+* metalevel projection functions now support parameterized metamodules
+* fixed kind printing bug in metaPrettyPrint()
+* erwrite supports limit and continue
+
+Overview of Changes in Maude alpha88b
+=====================================
+* minor syntactic changes to appease gcc 4.1
+* minor importation changes in prelude.maude and model-checker.maude
+* fixed extension tracing bugs in search/model checker, strategy
+  language and metalevel
+* revised/extended strategy language; cont now works with srew
+* fixed trace condition bug
+
+Overview of Changes in Maude alpha88a
+=====================================
+* many changes to the prelude to fix unsoundness concerns
+* process based reimplementation of strategy language
+* better overparsing for operator declarations
+* fixed bug with views mapping to terms from FLOAT/STRING/QID
+* fixed bug in AU unique collapse matcher
+* fixed bug that allowed parsing of parameterized theories
+* fixed upModule() bug affecting renamings
+* fixed metaXmatch() kind bug introduced by alpha86 fix
+* subset tests for SET and SET*
+* predefined term ordering module
+
+Overview of Changes in Maude alpha88
+====================================
+* fixed more sufficient completeness issues
+* search command now takes a depth bound
+* added metaNormalize()
+* added machine ints module
+
+Overview of Changes in Maude alpha87a
+=====================================
+* fixed bug in ! strategy combinator
+* fixed long standing bug in look up code for assoc ops
+
+Overview of Changes in Maude alpha87
+====================================
+* crude first version of strategy language
+
+Overview of Changes in Maude 2.2 (alpha86e)
+===========================================
+* fixed long standing metalevel prec bug
 
 Overview of Changes in Maude alpha86d2
 ======================================
@@ -98,8 +164,16 @@ Overview of Changes in Maude alpha84c
 * added counters
 * trace applications in metaApply()/metaXapply()
 
-Overview of Changes in Maude 2.1.1
-==================================
+Overview of Changes in Maude 2.1.1 (alpha84b.2)
+===============================================
+* fixed op renaming bug
+
+Overview of Changes in Maude alpha84b.1
+=======================================
+* fixed AU sort calculation bug
+
+Overview of Changes in Maude alpha84b
+=====================================
 * set protect/extend <module> on/off added, BOOL now protected
 * fixed upModule() bug wrt CUI_NumberSymbol and ACU_NumberSymbol hooks
 * theory syntax and meta-syntax added
@@ -108,11 +182,9 @@ Overview of Changes in Maude 2.1.1
 * warnings added for illegal ad hoc overloading
 * rudimentary checking for bubble hooks
 * fixed missing id importation bug
-* fixed AU sort calculation bug
-* fixed op renaming bug
 
-Overview of Changes in Maude 2.1
-================================
+Overview of Changes in Maude 2.1 (alpha84)
+==========================================
 * added -no-banner flag
 * fixed bug where syntax errors corrupted memory
 * added rudimentary test suite
@@ -151,8 +223,8 @@ Overview of Changes in Maude alpha82
 * Infinity/-Infinity now work on FreeBSD & MacOSX
 * building with Tecla is now optional
 
-Overview of Changes in Maude 2.0.1
-==================================
+Overview of Changes in Maude 2.0.1 (alpha81)
+============================================
 * switched build system to autoconf/automake
 * many portability fixes
 * added --help and --version flags

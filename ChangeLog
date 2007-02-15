@@ -1,3 +1,94 @@
+2006-10-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Meta/metaMetadata (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaUpDown (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaPolymorph (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaModExp (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaUpModExp (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaUp2 (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaUp (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaXmatch (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaXapply (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaWellFormed (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaTerm (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaSpecial (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaSort (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaSearch (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaRewrite (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaReduce (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaPrettyPrint (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaParse (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaModule (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaMeta (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaMatch (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaFrewrite (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Meta/metaApply (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Misc/parameterization.maude: use new order theories
+
+	* tests/Misc/dataStructures (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Misc/dekker (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Misc/commands (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Misc/debug (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Misc/parameterization (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Misc/diophantine (MAUDE_LIB): Mixfix -> Main
+
+	* tests/Misc/renaming (MAUDE_LIB): Mixfix -> Main
+
+	* tests/BuiltIn/nat (MAUDE_LIB): Mixfix -> Main
+
+	* tests/BuiltIn/int (MAUDE_LIB): Mixfix -> Main
+
+	* tests/BuiltIn/rat (MAUDE_LIB): Mixfix -> Main
+
+	* tests/BuiltIn/string (MAUDE_LIB): Mixfix -> Main
+
+	* tests/BuiltIn/counters (MAUDE_LIB): Mixfix -> Main
+
+	* configure.ac: support src/Main
+
+2006-09-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Misc/parameterization.maude: rewritten with new orderings
+	replacing TAO-SET
+
+	* tests/Misc/dataStructures.maude: rewritten to test fmod
+	SORTABLE-LIST-AND-SET
+
+===================================Maude88a===========================================
+
+2006-06-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* configure.ac: don't tweak -mpreferred-stack-boundary= on Intel
+	Macs because Darwin needs 16 byte alignment
+
 2005-11-16  Steven Eker  <eker@goo.csl.sri.com>
 
 	* configure.ac: don't use Doug Lea's malloc() on x86-64/linux

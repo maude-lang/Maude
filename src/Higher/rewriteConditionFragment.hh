@@ -46,6 +46,11 @@ public:
 
   Term* getLhs() const;
   Term* getRhs() const;
+  //
+  //	Needed for strategy language.
+  //
+  DagNode* makeLhsInstance(Substitution& solution);
+  bool matchRoot(RewritingContext& context, Subproblem*& subproblem);
 
 private:
   Term* lhs;

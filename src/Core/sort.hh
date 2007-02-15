@@ -52,7 +52,7 @@ public:
   ConnectedComponent* component() const;
   const Vector<Sort*>& getSubsorts() const;
   const Vector<Sort*>& getSupersorts() const;
-  const NatSet& Sort::getLeqSorts() const;
+  const NatSet& getLeqSorts() const;
   bool errorFreeMaximal() const;
 
 #ifdef COMPILER

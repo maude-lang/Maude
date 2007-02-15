@@ -65,6 +65,12 @@ QuotedIdentifierTerm::deepCopy2(SymbolMap* map) const
 }
 
 Term*
+QuotedIdentifierTerm::instantiate2(const Vector<Term*>& varBindings, SymbolMap* translator)
+{
+  return new QuotedIdentifierTerm(safeCast(QuotedIdentifierSymbol*, translator->findTargetVersionOfSymbol(symbol())), idIndex);
+}
+
+Term*
 QuotedIdentifierTerm::normalize(bool /* full */, bool& changed)
 {
   changed = false;

@@ -27,6 +27,7 @@
 //	utility stuff
 #include "macros.hh"
 #include "vector.hh"
+#include "indent.hh"
 
 //	forward declarations
 #include "interface.hh"
@@ -240,3 +241,30 @@ PreEquation::cleanStack(stack<ConditionState*>& conditionStack)
       conditionStack.pop();
     }
 }
+
+#ifdef DUMP
+void
+PreEquation::dump(ostream& s, int indentLevel)
+{
+  s << Indent(indentLevel) << "Begin{PreEquation}\n";
+  ++indentLevel;
+  s << Indent(indentLevel) << "lhs = " << lhs << '\n';
+  s << Indent(indentLevel) << "lhsAutomaton =";
+  if (lhsAutomaton == 0)
+    s << " 0\n";
+  else
+    {
+      s << '\n';
+      lhsAutomaton->dump(s, *this, indentLevel);
+    }
+  int nrFragments = condition.size();
+  if (nrFragments > 0)
+    {
+      s << Indent(indentLevel) << "Begin{Condition}\n";
+      for (int i = 0; i < nrFragments; ++i)
+	condition[i]->dump(s, *this, indentLevel + 1);
+      s << Indent(indentLevel) << "End{Condition}\n";
+    }
+  s << Indent(indentLevel - 1) << "End{PreEquation}\n";
+}
+#endif

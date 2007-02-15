@@ -1,3 +1,15 @@
+2007-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.cc (computeBaseSortForGroundSubterms): added
+	(unify): added
+	(unify): clear returnedSubproblem; pass 0 extensionInfo on
+	recursive call
+
+	* NA_DagNode.hh (class NA_DagNode): added declarations for unify()
+	and computeBaseSortForGroundSubterms()
+
+===================================Maude88e===========================================
+
 2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
 
 	* NA_Term.cc: removed #pragma

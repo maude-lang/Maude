@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2005 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,17 +22,17 @@
 
 ***
 ***	Maude Diophantine solver.
-***	Version 2.2.
+***	Version 2.3.
 ***
 
 fmod VECTOR{X :: DEFAULT} is
-  pr (ARRAY * (sort Entry{X,Y} to Entry{Y},
-               sort Array{X,Y} to Vector{Y})
-     ){Nat, X} .
+  protecting (ARRAY * (sort Entry{X,Y} to Entry{Y},
+                       sort Array{X,Y} to Vector{Y})
+             ){Nat, X} .
 endfm
 
 fmod INDEX-PAIR is
-  pr NAT .
+  protecting NAT .
   sort IndexPair .
   op _,_ : Nat Nat -> IndexPair [ctor] .
 endfm
@@ -42,15 +42,15 @@ view IndexPair from TRIV to INDEX-PAIR is
 endv
 
 fmod MATRIX{X :: DEFAULT} is
-  pr (ARRAY * (sort Entry{X,Y} to Entry{Y},
-               sort Array{X,Y} to Matrix{Y})
-     ){IndexPair, X} .
+  protecting (ARRAY * (sort Entry{X,Y} to Entry{Y},
+                       sort Array{X,Y} to Matrix{Y})
+             ){IndexPair, X} .
 endfm
 
 fmod INT-VECTOR is
-  pr VECTOR{Int0} * (sort Entry{Int0} to IntVectorEntry,
-                     sort Vector{Int0} to IntVector,
-		     op empty to zeroVector) .
+  protecting VECTOR{Int0} * (sort Entry{Int0} to IntVectorEntry,
+                             sort Vector{Int0} to IntVector,
+                             op empty to zeroVector) .
 endfm
 
 view IntVector from TRIV to INT-VECTOR is
@@ -58,18 +58,18 @@ view IntVector from TRIV to INT-VECTOR is
 endv
 
 fmod INT-MATRIX is
-  pr MATRIX{Int0} * (sort Entry{Int0} to IntMatrixEntry,
-                     sort Matrix{Int0} to IntMatrix,
-		     op empty to zeroMatrix) .
+  protecting MATRIX{Int0} * (sort Entry{Int0} to IntMatrixEntry,
+                             sort Matrix{Int0} to IntMatrix,
+		              op empty to zeroMatrix) .
 endfm
 
 fmod DIOPHANTINE is
-  pr STRING .
-  pr INT-MATRIX .
-  pr SET{IntVector} * (sort NeSet{IntVector} to NeIntVectorSet,
-                       sort Set{IntVector} to IntVectorSet,
-		       op _,_ : Set{IntVector} Set{IntVector} -> Set{IntVector} to
-                         (_,_) [prec 121 format (d d ni d)]) .
+  protecting STRING .
+  protecting INT-MATRIX .
+  protecting SET{IntVector} * (sort NeSet{IntVector} to NeIntVectorSet,
+                               sort Set{IntVector} to IntVectorSet,
+		               op _,_ : Set{IntVector} Set{IntVector} -> Set{IntVector} to
+                               (_,_) [prec 121 format (d d ni d)]) .
 
   sort IntVectorSetPair .
   op [_|_] : IntVectorSet IntVectorSet -> IntVectorSetPair [format (d n++i n ni n-- d)] .

@@ -61,6 +61,12 @@ FloatTerm::deepCopy2(SymbolMap* map) const
 }
 
 Term*
+FloatTerm::instantiate2(const Vector<Term*>& varBindings, SymbolMap* translator)
+{
+  return new FloatTerm(safeCast(FloatSymbol*, translator->findTargetVersionOfSymbol(symbol())), value);
+}
+
+Term*
 FloatTerm::normalize(bool /* full */, bool& changed)
 {
   changed = false;

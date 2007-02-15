@@ -60,6 +60,7 @@ public:
   const Vector<SortConstraint*>& getSortConstraints() const;
   const Vector<Equation*>& getEquations() const;
   const Vector<Rule*>& getRules() const;
+  const SortBdds* getSortBdds();
   void insertSort(Sort* sort);
   void insertSymbol(Symbol* symbol);
   void insertSortConstraint(SortConstraint* sortConstraint);
@@ -92,6 +93,7 @@ private:
   Vector<SortConstraint*> sortConstraints;
   Vector<Equation*> equations;
   Vector<Rule*> rules;
+  SortBdds* sortBdds;
 };
 
 inline Module::Status

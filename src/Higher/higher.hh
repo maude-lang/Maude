@@ -46,4 +46,6 @@ class TemporalSymbol;
 class ModelCheckerSymbol;
 class SatSolverSymbol;
 
+class UnificationProblem;
+
 #endif

@@ -21,9 +21,8 @@
 */
 
 //
-//	main() function and misc global data and functions.
+//	main() function and misc functions.
 //
-#include <unistd.h>
 #include "sys/param.h"
 #ifdef ALPHA
 #include <stropts.h>
@@ -40,6 +39,7 @@
 #include "higher.hh"
 #include "freeTheory.hh"
 #include "builtIn.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
  
 //      interface class definitions
@@ -61,22 +61,7 @@
 #include "directoryManager.hh"
 #include "mixfixModule.hh"
 #include "interpreter.hh"
-#include "main.hh"
-
-#define PRELUDE_NAME	"prelude.maude"
-#define MAUDE_LIB	"MAUDE_LIB"
-
-//
-//	Global variables
-//
-int lineNumber = 1;
-FileTable fileTable;
-DirectoryManager directoryManager;
-Interpreter& interpreter = *(new Interpreter);
-//Interpreter interpreter;
-IO_Manager ioManager;
-
-string executableDirectory;
+#include "global.hh"
 
 int
 main(int argc, char* argv[])
@@ -94,6 +79,9 @@ main(int argc, char* argv[])
   bool includeFile(const string& directory, const string& fileName, bool silent, int lineNr);
   extern Vector<char*> pendingFiles;
   const char* isFlag(const char* arg, const char* flag);
+  bool findExecutableDirectory(string& directory, string& executable);
+  bool findPrelude(string& directory, string& fileName);
+
 
   bool lineWrapping = true;
   bool handleCtrlC = true;
@@ -286,38 +274,5 @@ findPrelude(string& directory, string& fileName)
     }
   IssueWarning(LineNumber(FileTable::AUTOMATIC) <<
 	       ": unable to locate file: " << QUOTE(fileName));
-  return false;
-}
-
-bool
-findFile(const string& userFileName, string& directory, string& fileName, int lineNr)
-{
-  static char const* const ext[] = {".maude", ".fm", ".obj", 0};
-
-  string::size_type p = userFileName.rfind('/');
-  if (p == string::npos)
-    {
-      fileName = userFileName;
-      directory = ".";
-      if (directoryManager.checkAccess(directory, fileName, R_OK, ext))
-	return true;
-      if (directoryManager.searchPath(MAUDE_LIB, directory, fileName, R_OK, ext))
-	return true;
-      if (!(executableDirectory.empty()) &&
-	  directoryManager.checkAccess(executableDirectory, fileName, R_OK, ext))
-	{
-	  directory = executableDirectory;
-	  return true;
-	}
-    }
-  else if (p + 1 < userFileName.length())
-    {
-      directoryManager.realPath(userFileName.substr(0, p), directory);
-      fileName = userFileName.substr(p + 1);
-      if (directoryManager.checkAccess(directory, fileName, R_OK, ext))
-	return true;
-    }
-  IssueWarning(LineNumber(lineNr) <<
-	       ": unable to locate file: " << QUOTE(userFileName));
   return false;
 }

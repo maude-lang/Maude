@@ -57,7 +57,7 @@ public:
   void reset();
 
 private:
-  struct SystemAutomaton  : public ModelChecker2::System
+  struct SystemAutomaton : public ModelChecker2::System
   {
     int getNextState(int stateNr, int transitionNr);
     bool checkProposition(int stateNr, int propositionIndex) const;

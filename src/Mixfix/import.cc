@@ -59,13 +59,13 @@ PreModule::processImports()
 	    ImportModule::ImportMode mode;
 	    int code = i->mode.code();
 	    LineNumber lineNumber(i->mode.lineNumber());
-	    if (code == Token::encode("pr") || code == Token::encode("protecting"))
+	    if (code == pr || code == protecting)
 	      mode = ImportModule::PROTECTING;
-	    else if (code == Token::encode("ex") || code == Token::encode("extending"))
+	    else if (code == ex || code == extending)
 	      mode = ImportModule::EXTENDING;
-	    else if (code == Token::encode("inc") || code == Token::encode("including"))
+	    else if (code == inc || code == including)
 	      mode = ImportModule::INCLUDING;
-	    else if (code == Token::encode("us") || code == Token::encode("using"))
+	    else if (code == us || code == usingToken)
 	      {
 		IssueWarning(lineNumber <<
 			     ": importation mode " << QUOTE("using") <<

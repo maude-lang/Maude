@@ -35,6 +35,7 @@
 #include "interface.hh"
 #include "core.hh"
 #include "variable.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
 
 //      interface class definitions
@@ -61,7 +62,7 @@
 #include "autoWrapBuffer.hh"
 
 #include "interpreter.hh"  // HACK
-#include "main.hh"  // HACK shouldn't be accessing global variables
+#include "global.hh"  // HACK shouldn't be accessing global variables
 
 //	our stuff
 #include "interact.cc"
@@ -94,7 +95,7 @@ UserLevelRewritingContext::makeSubcontext(DagNode* root, int purpose)
 {
   return new UserLevelRewritingContext(root, this, purpose,
 				       localTraceFlag &&
-				       (purpose != CONDITION_EVAL || interpreter.getFlag(Interpreter::TRACE_EQ)));
+				       (purpose != CONDITION_EVAL || interpreter.getFlag(Interpreter::TRACE_CONDITION)));
 }
 
 bool
@@ -104,7 +105,8 @@ UserLevelRewritingContext::dontTrace(const DagNode* redex, const PreEquation* pe
   return (interpreter.getFlag(Interpreter::TRACE_SELECT) &&
 	  !(interpreter.traceId(symbol->id()) ||
 	    (pe != 0 && interpreter.traceId(pe->getLabel().id())))) ||
-    interpreter.excludedModule(symbol->getModule()->id());
+    interpreter.excludedModule(symbol->getModule()->id()) ||
+    (pe == 0 && !interpreter.getFlag(Interpreter::TRACE_BUILTIN));
 }
 
 void

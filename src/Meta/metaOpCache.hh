@@ -46,6 +46,8 @@ public:
 	      RewriteSequenceSearch*& search,
 	      Int64& lastSolutionNr);
 
+  void insert(FreeDagNode* metaOp, UnificationProblem* unification, Int64 lastSolutionNr);
+  bool remove(FreeDagNode* metaOp, UnificationProblem*& unification, Int64& lastSolutionNr);
 
 private:
   bool sameProblem(FreeDagNode* m1, DagNode* m2);
@@ -57,6 +59,7 @@ private:
     DagRoot* metaOp;
     SearchState* state;
     RewriteSequenceSearch* search;
+    UnificationProblem* unification;
     Int64 lastSolutionNr;
   };
 

@@ -74,9 +74,30 @@ MetaLevel::upJoin(int id, Sort* sort, char sep, PointerMap& qidMap)
   return upQid(Token::encode(fullName.c_str()), qidMap);
 }
 
-inline DagNode*
+local_inline DagNode*
 MetaLevel::upConstant(int id, Sort* sort, PointerMap& qidMap)
 {
+  return upJoin(id, sort, '.', qidMap);
+}
+
+DagNode*
+MetaLevel::upConstant(int id, DagNode* d, PointerMap& qidMap)
+{
+  Sort* sort = d->getSort();
+  if (sort == 0)
+    {
+      //
+      //	Can happen since sorts are not calculated in unifiers.
+      //	Fortunately there shouldn't be any membership axioms involved
+      //	in a unification problem and the precise sorts of constants is
+      //	non-critical for disambiguation.
+      //	So we temporarily compute a base sort.
+      //
+      Symbol* s = d->symbol();
+      s->computeBaseSort(d);
+      sort = s->rangeComponent()->sort(d->getSortIndex());
+      d->setSortIndex(Sort::SORT_UNKNOWN);
+    }
   return upJoin(id, sort, '.', qidMap);
 }
 
@@ -110,33 +131,34 @@ MetaLevel::upDagNode(DagNode* dagNode,
     case SymbolType::QUOTED_IDENTIFIER:
       {
 	int id = static_cast<QuotedIdentifierDagNode*>(dagNode)->getIdIndex();
-	d = upConstant(Token::quoteNameCode(id), dagNode->getSort(), qidMap);
+	d = upConstant(Token::quoteNameCode(id), dagNode, qidMap);
 	break;
       }
     case SymbolType::STRING:
       {
 	string result;
 	Token::ropeToString(static_cast<StringDagNode*>(dagNode)->getValue(), result);
-	d = upConstant(Token::encode(result.c_str()), dagNode->getSort(), qidMap);
+	d = upConstant(Token::encode(result.c_str()), dagNode, qidMap);
 	break;
       }
     case SymbolType::FLOAT:
       {
 	double mf = static_cast<FloatDagNode*>(dagNode)->getValue();
-	d = upConstant(Token::doubleToCode(mf), dagNode->getSort(), qidMap);
+	d = upConstant(Token::doubleToCode(mf), dagNode, qidMap);
 	break;
       }
     case SymbolType::VARIABLE:
       {
-	int id = static_cast<VariableDagNode*>(dagNode)->id();
-	d = upVariable(id, dagNode->getSort(), qidMap);
+	int id = safeCast(VariableDagNode*, dagNode)->id();
+	Sort* sort = safeCast(VariableSymbol*, dagNode->symbol())->getSort();
+	d = upVariable(id, sort, qidMap);
 	break;
       }
     default:
       {
 	int nrArgs = s->arity();
 	if (nrArgs == 0)
-	  d = upConstant(s->id(), dagNode->getSort(), qidMap);
+	  d = upConstant(s->id(), dagNode, qidMap);
 	else
 	  {
 	    args[0] = upQid(m->getSymbolType(s).hasFlag(SymbolType::ITER) ?

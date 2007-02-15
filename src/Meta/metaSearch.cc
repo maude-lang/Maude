@@ -151,7 +151,7 @@ bool
 MetaLevelOpSymbol::metaSearchPath(FreeDagNode* subject, RewritingContext& context)
 {
   //
-  //	op metaSearchPath : Module Term Term Condition Qid Bound Nat ~> ResultTriple? .
+  //	op metaSearchPath : Module Term Term Condition Qid Bound Nat ~> Trace? .
   //
   if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
     {

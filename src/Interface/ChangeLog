@@ -1,3 +1,38 @@
+2007-01-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (computeGeneralizedSort): added
+
+	* dagNode.hh (class DagNode): added decl for
+	computeBaseSortForGroundSubterms()
+	(instantiate): added
+	(class DagNode): added decl for instantiate2()
+	(class DagNode): added decl for occurs2()
+	(class DagNode): added decl for computeGeneralizedSort()
+
+===================================Maude88e==========================================
+
+2007-01-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): add returns to unification interface
+	functions in order to fail gracefully
+
+2007-01-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (replaceSymbol): added
+
+2006-12-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for instantiate()
+	(class DagNode): added decl for occurs
+
+2006-12-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for unify()
+
+	* term.cc (term2Dag): use clear()
+
+===================================Maude88d==========================================
+
 2005-06-24  Steven Eker  <eker@goo.csl.sri.com>
 
 	* term.hh (instantiate): new calling convention

@@ -23,6 +23,19 @@
 //
 //	Class for substitutions.
 //
+//	Substitutions are used to hold partly built dags as well as variable
+//	variable bindings so that the same dag construction code can handle
+//	variable and non-variable operator arguments without branching.
+//
+//	Default substitutions come in a standards size (allocateSize) allowing
+//	them to be reused rather than reallocated. Within a default substitution
+//	entries 0,..., copySize-1 are real entries (actual variables, shared dags)
+//	while the remaining entries may be used as temporaries by any function
+//	that cares to use them.
+//
+//	Special purpose substitutions of any size may be created, with no temporary
+//	storage.
+//
 #ifndef _substitution_hh_
 #define _substitution_hh_
 
@@ -41,12 +54,21 @@ public:
   DagNode* value(int index) const;
   void bind(int index, DagNode* value);
   void copy(const Substitution& original);
+  void clone(const Substitution& original);
   LocalBinding* operator-(const Substitution& original) const;
 
   int nrFragileBindings() const;
 
+  //
+  //	unificationBind() instantiate value to which variable will be bound,
+  //	performs occurs check or sort check as neccessary and handles the case
+  //	where a variable is bound to itself. Other bindings are updated to
+  //	eliminate the bound variable.
+  //
+  bool unificationBind(int index, Sort* varSort, DagNode* value);
+  LocalBinding* unificationDifference(const Substitution& original) const;
+
 private:
-  // Substitution(const Substitution& original);
   static int allocateSize;
 
   Vector<DagNode*> values;
@@ -98,7 +120,7 @@ inline DagNode*
 Substitution::value(int index) const
 {
   Assert(index >= 0, "-ve index");
-  Assert(index < allocateSize, "index too big");
+  Assert(index < values.size(), "index too big");
   return values[index];
 }
 
@@ -106,7 +128,7 @@ inline void
 Substitution::bind(int index, DagNode* value)
 {
   Assert(index >= 0, "-ve index");
-  Assert(index < allocateSize, "index too big");
+  Assert(index < values.size(), "index too big");
   values[index] = value;
 }
 
@@ -127,6 +149,29 @@ Substitution::copy(const Substitution& original)
 {
   Assert(copySize == original.copySize, "size mismatch (" << copySize <<
 	 " vs " << original.copySize << ')');
+  if (copySize > 0)
+    {
+      Vector<DagNode*>::iterator dest = values.begin();
+      Vector<DagNode*>::const_iterator source = original.values.begin();
+      Vector<DagNode*>::const_iterator end = source + copySize;
+      do
+	{
+	  *dest = *source;
+	  ++dest;
+	  ++source;
+	}
+      while (source != end);
+    }
+}
+
+inline void
+Substitution::clone(const Substitution& original)
+{
+  //
+  //	Unlike copy, we set the copy size from original instead of assuming them
+  //	to be the same.
+  //
+  copySize = original.copySize;
   if (copySize > 0)
     {
       Vector<DagNode*>::iterator dest = values.begin();

@@ -32,6 +32,7 @@
 #include "core.hh"
 #include "interface.hh"
 #include "variable.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
 
 //      interface class definitions

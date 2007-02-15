@@ -31,7 +31,11 @@
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "variable.hh"
 #include "NA_Theory.hh"
+
+//      variable class definitions
+#include "variableDagNode.hh"
 
 //      NA theory class definitions
 #include "NA_Symbol.hh"
@@ -81,4 +85,33 @@ NA_DagNode::stackArguments(Vector<RedexPosition>& /* stack */,
 			   int /* parentIndex */,
 			   bool /* respectFrozen */)
 {
+}
+
+bool
+NA_DagNode::unify(DagNode* rhs,
+		  Substitution& solution,
+		  Subproblem*& returnedSubproblem,
+		  ExtensionInfo* extensionInfo)
+{
+  //
+  //	As a constant we can only unify with ourself or a variable.
+  //
+  if (symbol() == rhs->symbol())
+    {
+      returnedSubproblem = 0;
+      return equal(rhs);
+    }
+  if (dynamic_cast<VariableDagNode*>(rhs))
+    return rhs->unify(this, solution, returnedSubproblem, 0);
+  return false;
+}
+
+bool
+NA_DagNode::computeBaseSortForGroundSubterms()
+{
+  //
+  //	As a constant we are trivially ground.
+  //
+  symbol()->computeBaseSort(this);
+  return true;
 }

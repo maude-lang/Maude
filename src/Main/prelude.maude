@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2005 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version 2.2.
+***	Version alpha88d.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
 ***
 
-set protect BOOL off .
+set include BOOL off .
 
 fmod TRUTH-VALUE is
   sort Bool .
@@ -76,9 +76,8 @@ fmod BOOL is
   eq A implies B = not(A xor A and B) .
 endfm
 
-set protect BOOL on .
-
 fmod EXT-BOOL is
+  protecting BOOL .
   op _and-then_ : Bool Bool -> Bool [strat (1 0) gather (e E) prec 55] .
   op _or-else_ : Bool Bool -> Bool [strat (1 0) gather (e E) prec 59] .
   var B : [Bool] .
@@ -88,25 +87,12 @@ fmod EXT-BOOL is
   eq false or-else B = B .
 endfm
 
-fmod IDENTICAL is
-  op _===_ : Universal Universal -> Bool 
-        [prec 51 poly (1 2) strat (0)
-         special (id-hook EqualitySymbol
-                  term-hook equalTerm (true)
-                  term-hook notEqualTerm (false))] .
-
-  op _=/==_ : Universal Universal -> Bool 
-        [prec 51 poly (1 2) strat (0)
-         special (id-hook EqualitySymbol
-                  term-hook equalTerm (false)
-                  term-hook notEqualTerm (true))] .
-endfm
-
 ***
 ***	Builtin data types.
 ***
 
 fmod NAT is
+  protecting BOOL .
   sorts Zero NzNat Nat .
   subsort Zero NzNat < Nat .
   op 0 : -> Zero [ctor] .
@@ -538,6 +524,7 @@ fmod RAT is
 endfm
 
 fmod FLOAT is
+  protecting BOOL .
   sorts FiniteFloat Float .
   subsort FiniteFloat < Float .
   op <Floats> : -> FiniteFloat [special (id-hook FloatSymbol)] .
@@ -592,6 +579,14 @@ fmod FLOAT is
 
   op ceiling : Float -> Float
         [special (id-hook FloatOpSymbol (ceiling)
+                  op-hook floatSymbol (<Floats> : ~> Float))] .
+
+  op min : Float Float -> Float
+        [special (id-hook FloatOpSymbol (min)
+                  op-hook floatSymbol (<Floats> : ~> Float))] .
+
+  op max : Float Float -> Float
+        [special (id-hook FloatOpSymbol (max)
                   op-hook floatSymbol (<Floats> : ~> Float))] .
 
   op sqrt : Float ~> Float
@@ -832,6 +827,8 @@ fth TRIV is
   sort Elt .
 endfth
 
+view TRIV from TRIV to TRIV is endv
+
 view Bool from TRIV to BOOL is
   sort Elt to Bool .
 endv
@@ -860,36 +857,84 @@ view Qid from TRIV to QID is
   sort Elt to Qid .
 endv
 
-fth TAO-SET is
+fth STRICT-WEAK-ORDER is
   protecting BOOL .
   including TRIV .
   op _<_ : Elt Elt -> Bool .
   vars X Y Z : Elt .
-  ceq X < Z = true if X < Y and Y < Z [nonexec label transitive] .
-  ceq X = Y if X < Y /\ Y < X [nonexec label antisymmetric] .
+  ceq X < Z = true if X < Y /\ Y < Z [nonexec label transitive] .
+  eq X < X = false [nonexec label irreflexive] .
+  ceq X < Y or Y < X or Y < Z or Z < Y = true if X < Z or Z < X
+    [nonexec label incomparability-transitive] .
 endfth
 
-view TRIV from TRIV to TRIV is endv
+view STRICT-WEAK-ORDER from TRIV to STRICT-WEAK-ORDER is endv
 
-view TAO-SET from TRIV to TAO-SET is endv
+fth STRICT-TOTAL-ORDER is
+  inc STRICT-WEAK-ORDER .
+  vars X Y : Elt .
+  ceq X = Y if X < Y = false /\ Y < X = false [nonexec label total] .
+endfth
 
-view Nat< from TAO-SET to NAT is
+view STRICT-TOTAL-ORDER from STRICT-WEAK-ORDER to STRICT-TOTAL-ORDER is endv
+
+view Nat< from STRICT-TOTAL-ORDER to NAT is
   sort Elt to Nat .
 endv
 
-view Int< from TAO-SET to INT is
+view Int< from STRICT-TOTAL-ORDER to INT is
   sort Elt to Int .
 endv
 
-view Rat< from TAO-SET to RAT is
+view Rat< from STRICT-TOTAL-ORDER to RAT is
   sort Elt to Rat .
 endv
 
-view Float< from TAO-SET to FLOAT is
+view Float< from STRICT-TOTAL-ORDER to FLOAT is
   sort Elt to Float .
 endv
 
-view String< from TAO-SET to STRING is
+view String< from STRICT-TOTAL-ORDER to STRING is
+  sort Elt to String .
+endv
+
+fth TOTAL-PREORDER is
+  protecting BOOL .
+  including TRIV .
+  op _<=_ : Elt Elt -> Bool .
+  vars X Y Z : Elt .
+  eq X <= X = true [nonexec label reflexive] .
+  ceq X <= Z = true if X <= Y /\ Y <= Z [nonexec label transitive] .
+  eq X <= Y or Y <= X = true [nonexec label total] .
+endfth
+
+view TOTAL-PREORDER from TRIV to TOTAL-PREORDER is endv
+
+fth TOTAL-ORDER is
+  inc TOTAL-PREORDER .
+  vars X Y : Elt .
+  ceq X = Y if X <= Y /\ Y <= X  [nonexec label antisymmetric] .
+endfth
+
+view TOTAL-ORDER from TOTAL-PREORDER to TOTAL-ORDER is endv
+
+view Nat<= from TOTAL-ORDER to NAT is
+  sort Elt to Nat .
+endv
+
+view Int<= from TOTAL-ORDER to INT is
+  sort Elt to Int .
+endv
+
+view Rat<= from TOTAL-ORDER to RAT is
+  sort Elt to Rat .
+endv
+
+view Float<= from TOTAL-ORDER to FLOAT is
+  sort Elt to Float .
+endv
+
+view String<= from TOTAL-ORDER to STRING is
   sort Elt to String .
 endv
 
@@ -983,10 +1028,10 @@ fmod LIST{X :: TRIV} is
   eq $size(E L, C) = $size(L, C + 1) .
 endfm
 
-fmod SORTABLE-LIST{X :: TAO-SET} is
-  protecting (LIST{TAO-SET} *
-              (sort NeList{TAO-SET}{X} to NeList{X},
-               sort List{TAO-SET}{X} to List{X})){X} .
+fmod WEAKLY-SORTABLE-LIST{X :: STRICT-WEAK-ORDER} is
+  protecting LIST{STRICT-WEAK-ORDER}{X} *
+              (sort NeList{STRICT-WEAK-ORDER}{X} to NeList{X},
+               sort List{STRICT-WEAK-ORDER}{X} to List{X}) .
   sort $Split{X} .
 
   vars E E' : X$Elt .
@@ -1015,12 +1060,62 @@ fmod SORTABLE-LIST{X :: TAO-SET} is
   eq $merge(L, nil, A) = A L .
   eq $merge(nil, L, A) = A L .
   eq $merge(E L, E' L', A) =
-      if E < E' == true then $merge(L, E' L', A E)
+      if E' < E then $merge(E L, L', A E')
+      else $merge(L, E' L', A E)
+      fi .
+endfm
+
+fmod SORTABLE-LIST{X :: STRICT-TOTAL-ORDER} is
+  protecting WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{X} *
+              (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+               sort List{STRICT-TOTAL-ORDER}{X} to List{X}) .
+endfm
+
+fmod WEAKLY-SORTABLE-LIST'{X :: TOTAL-PREORDER} is
+  protecting LIST{TOTAL-PREORDER}{X} *
+              (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
+               sort List{TOTAL-PREORDER}{X} to List{X}) .
+  sort $Split{X} .
+
+  vars E E' : X$Elt .
+  vars A A' L L' : List{X} .
+  var N : NeList{X} .
+
+  op sort : List{X} -> List{X} .
+  op sort : NeList{X} -> NeList{X} .
+  eq sort(nil) = nil .
+  eq sort(E) = E .
+  eq sort(E N) = $sort($split(E N, nil, nil)) .
+
+  op $sort : $Split{X} -> List{X} .
+  eq $sort($split(nil, L, L')) = $merge(sort(L), sort(L'), nil) .
+
+  op $split : List{X} List{X} List{X} -> $Split{X} [ctor] .
+  eq $split(E, A, A') = $split(nil, A E, A') .
+  eq $split(E L E', A, A') = $split(L, A E, E' A') .
+
+  op merge : List{X} List{X} -> List{X} .
+  op merge : NeList{X} List{X} -> NeList{X} .
+  op merge : List{X} NeList{X} -> NeList{X} .
+  eq merge(L, L') = $merge(L, L', nil) .
+
+  op $merge : List{X} List{X} List{X} -> List{X} .
+  eq $merge(L, nil, A) = A L .
+  eq $merge(nil, L, A) = A L .
+  eq $merge(E L, E' L', A) =
+      if E <= E' then $merge(L, E' L', A E)
       else $merge(E L, L', A E')
       fi .
 endfm
 
+fmod SORTABLE-LIST'{X :: TOTAL-ORDER} is
+  protecting WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{X} *
+              (sort NeList{TOTAL-ORDER}{X} to NeList{X},
+               sort List{TOTAL-ORDER}{X} to List{X}) .
+endfm
+
 fmod SET{X :: TRIV} is
+  protecting EXT-BOOL .
   protecting NAT .
   sorts NeSet{X} Set{X} .
   subsort X$Elt < NeSet{X} < Set{X} .
@@ -1076,6 +1171,13 @@ fmod SET{X :: TRIV} is
   op $diff : Set{X} Set{X} Set{X} -> Set{X} .
   eq $diff(empty, S', A) = A .
   eq $diff((E, S), S', A) = $diff(S, S', if E in S' then A else E, A fi) .
+
+  op _subset_ : Set{X} Set{X} -> Bool .
+  eq empty subset S' = true .
+  eq (E, S) subset S' = E in S' and-then S subset S' .
+
+  op _psubset_ : Set{X} Set{X} -> Bool .
+  eq S psubset S' = S =/= S' and-then S subset S' .
 endfm
 
 fmod LIST-AND-SET{X :: TRIV} is
@@ -1083,26 +1185,92 @@ fmod LIST-AND-SET{X :: TRIV} is
   protecting SET{X} .
 
   var E : X$Elt .
-  var L : List{X} .
+  vars A L : List{X} .
   var S : Set{X} .
 
   op makeSet : List{X} -> Set{X} .
   op makeSet : NeList{X} -> NeSet{X} .
-  eq makeSet(nil) = empty .
-  eq makeSet(E L) = E, makeSet(L) .
+  eq makeSet(L) = $makeSet(L, empty) .
+
+  op $makeSet : List{X} Set{X} -> Set{X} .
+  op $makeSet : NeList{X} Set{X} -> NeSet{X} .
+  op $makeSet : List{X} NeSet{X} -> NeSet{X} .
+  eq $makeSet(nil, S) = S .
+  eq $makeSet(E L, S) = $makeSet(L, (E, S)) .
+
+  op filter : List{X} Set{X} -> List{X} .
+  eq filter(L, S) = $filter(L, S, nil) .
+
+  op $filter : List{X} Set{X} List{X} -> List{X} .
+  eq $filter(nil, S, A) = A .
+  eq $filter(E L, S, A) = $filter(L, S, if E in S then A E else A fi) .
+
+  op filterOut : List{X} Set{X} -> List{X} .
+  eq filterOut(L, S) = $filterOut(L, S, nil) .
+
+  op $filterOut : List{X} Set{X} List{X} -> List{X} .
+  eq $filterOut(nil, S, A) = A .
+  eq $filterOut(E L, S, A) = $filterOut(L, S, if E in S then A else A E fi) .
+endfm
+
+fmod SORTABLE-LIST-AND-SET{X :: STRICT-TOTAL-ORDER} is
+  protecting SORTABLE-LIST{X} .
+***
+***	This double renaming is needed for correct sharing of a renamed
+***	copy of LIST since Core Maude does not evaluate the composition
+***	of renamings but applies them sequentially.
+***
+  protecting LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} *
+              (sort NeList{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+               sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{STRICT-TOTAL-ORDER}{X}) *
+              (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+               sort List{STRICT-TOTAL-ORDER}{X} to List{X},
+	       sort NeSet{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X},
+               sort Set{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X}) .
+  
+  var E : X$Elt .
+  var L : List{X} .
+  var S : Set{X} .
 
   op makeList : Set{X} -> List{X} .
   op makeList : NeSet{X} -> NeList{X} .
-  eq makeList(empty) = nil .
-  eq makeList((E, S)) = E makeList(S) .
+  eq makeList(S) = $makeList(S, nil) .
 
-  op filter : List{X} Set{X} -> List{X} .
-  eq filter(nil, S) = nil .
-  eq filter(E L, S) = if E in S then E filter(L, S) else filter(L, S) fi .
+  op $makeList : Set{X} List{X} -> List{X} .
+  op $makeList : NeSet{X} List{X} -> NeList{X} .
+  op $makeList : Set{X} NeList{X} -> NeList{X} .
+  eq $makeList(empty, L) = sort(L) .
+  eq $makeList((E, E, S), L) = $makeList((E, S), L) .
+  eq $makeList((E, S), L) = $makeList(S, E L) [owise] .
+endfm
 
-  op filterOut : List{X} Set{X} -> List{X} .
-  eq filterOut(nil, S) = nil .
-  eq filterOut(E L, S) = if E in S then filterOut(L, S) else E filterOut(L, S) fi .
+fmod SORTABLE-LIST-AND-SET'{X :: TOTAL-ORDER} is
+  protecting SORTABLE-LIST'{X} .
+***
+***	This double renaming is needed for the same reasons as above.
+***
+  protecting LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{X} *
+              (sort NeList{TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X},
+               sort List{TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) *
+              (sort NeList{TOTAL-ORDER}{X} to NeList{X},
+               sort List{TOTAL-ORDER}{X} to List{X},
+	       sort NeSet{TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeSet{X},
+               sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to Set{X}) .
+  
+  var E : X$Elt .
+  var L : List{X} .
+  var S : Set{X} .
+
+  op makeList : Set{X} -> List{X} .
+  op makeList : NeSet{X} -> NeList{X} .
+  eq makeList(S) = $makeList(S, nil) .
+
+  op $makeList : Set{X} List{X} -> List{X} .
+  op $makeList : NeSet{X} List{X} -> NeList{X} .
+  op $makeList : Set{X} NeList{X} -> NeList{X} .
+  eq $makeList(empty, L) = sort(L) .
+  eq $makeList((E, E, S), L) = $makeList((E, S), L) .
+  eq $makeList((E, S), L) = $makeList(S, E L) [owise] .
 endfm
 
 fmod LIST*{X :: TRIV} is
@@ -1169,6 +1337,7 @@ fmod LIST*{X :: TRIV} is
 endfm
 
 fmod SET*{X :: TRIV} is
+  protecting EXT-BOOL .
   protecting NAT .
   sorts Element{X} PreSet{X} NeSet{X} Set{X} .
   subsort X$Elt Set{X} < Element{X} < PreSet{X} .
@@ -1244,9 +1413,18 @@ fmod SET*{X :: TRIV} is
   op $augment : NeSet{X} Element{X} Set{X} -> Set{X} .
   eq $augment({S}, E, A) = insert(insert(E, S), A) .
   eq $augment({S, P}, E, A) = $augment({P}, E, $augment({S}, E, A)) .
+
+  op _subset_ : Set{X} Set{X} -> Bool .
+  eq {} subset S = true .
+  eq {E} subset S = E in S .
+  eq {E, P} subset S = E in S and-then {P} subset S .
+
+  op _psubset_ : Set{X} Set{X} -> Bool .
+  eq A psubset S = A =/= S and-then A subset S .
 endfm
 
 fmod MAP{X :: TRIV, Y :: TRIV} is
+  protecting BOOL .
   sorts Entry{X,Y} Map{X,Y} .
   subsort Entry{X,Y} < Map{X,Y} .
 
@@ -1260,15 +1438,26 @@ fmod MAP{X :: TRIV, Y :: TRIV} is
   var M : Map{X,Y} .
 
   op insert : X$Elt Y$Elt Map{X,Y} -> Map{X,Y} .
-  eq insert(D, R, (M, D |-> R')) = (M, D |-> R) .
+  eq insert(D, R, (M, D |-> R')) =
+     if $hasMapping(M, D) then insert(D, R, M)
+     else (M, D |-> R)
+     fi .
   eq insert(D, R, M) = (M, D |-> R) [owise] .
 
-  op _[_] : Map{X,Y} X$Elt -> [Y$Elt] .
-  eq (M, D |-> R)[D] = R .
+  op _[_] : Map{X,Y} X$Elt -> [Y$Elt] [prec 23] .
+  eq (M, D |-> R)[D] =
+     if $hasMapping(M, D) then undefined
+     else R
+     fi .
   eq M[D] = undefined [owise] .
+
+  op $hasMapping : Map{X,Y} X$Elt -> Bool .
+  eq $hasMapping((M, D |-> R), D) = true .
+  eq $hasMapping(M, D) = false [owise] .
 endfm
 
 fmod ARRAY{X :: TRIV, Y :: DEFAULT} is
+  protecting BOOL .
   sorts Entry{X,Y} Array{X,Y} .
   subsort Entry{X,Y} < Array{X,Y} .
 
@@ -1281,12 +1470,23 @@ fmod ARRAY{X :: TRIV, Y :: DEFAULT} is
   var A : Array{X,Y} .
 
   op insert : X$Elt Y$Elt Array{X,Y} -> Array{X,Y} .
-  eq insert(D, R, (A ; D |-> R')) = if R == 0 then A else (A ; D |-> R) fi .
+  eq insert(D, R, (A ; D |-> R')) =
+     if $hasMapping(A, D) then insert(D, R, A)
+     else if R == 0 then A else (A ; D |-> R) fi
+     fi .
+
   eq insert(D, R, A) = if R == 0 then A else (A ; D |-> R) fi [owise] .
 
-  op _[_] : Array{X,Y} X$Elt -> [Y$Elt] .
-  eq (A ; D |-> R)[D] = R .
+  op _[_] : Array{X,Y} X$Elt -> Y$Elt [prec 23] .
+  eq (A ; D |-> R)[D] =
+     if $hasMapping(A, D) then 0
+     else R
+     fi .
   eq A[D] = 0 [owise] .
+
+  op $hasMapping : Array{X,Y} X$Elt -> Bool .
+  eq $hasMapping((A ; D |-> R), D) = true .
+  eq $hasMapping(A, D) = false [owise] .
 endfm
 
 ***
@@ -1580,7 +1780,7 @@ fmod META-MODULE is
   subsorts FTheory < STheory < Module .
   sort Header .
   subsort Qid < Header .
-  op _{_}  : Qid ParameterDeclList -> Header .
+  op _{_}  : Qid ParameterDeclList -> Header [ctor] .
   op fmod_is_sorts_.____endfm : Header ImportList SortSet SubsortDeclSet
     OpDeclSet MembAxSet EquationSet -> FModule [ctor gather (& & & & & & &)
      format (d d s n++i ni d d ni ni ni ni n--i d)] .
@@ -1601,6 +1801,9 @@ fmod META-MODULE is
 
 *** projection functions
   var Q : Qid .
+  var PDL : ParameterDeclList .
+  var H : Header .
+  var M : Module .
   var IL : ImportList .
   var SS : SortSet .
   var SSDS : SubsortDeclSet .
@@ -1612,48 +1815,50 @@ fmod META-MODULE is
   op getName : Module -> Qid .
   eq getName(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = Q .
   eq getName(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = Q .
+  eq getName(fmod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS endfm) = Q .
+  eq getName(mod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = Q .
   eq getName(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = Q .
   eq getName(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = Q .
 
   op getImports : Module -> ImportList .
-  eq getImports(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = IL .
-  eq getImports(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = IL .
+  eq getImports(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = IL .
+  eq getImports(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = IL .
   eq getImports(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = IL .
   eq getImports(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = IL .
 
   op getSorts : Module -> SortSet .
-  eq getSorts(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = SS .
-  eq getSorts(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = SS .
+  eq getSorts(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = SS .
+  eq getSorts(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = SS .
   eq getSorts(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = SS .
   eq getSorts(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = SS .
 
   op getSubsorts : Module -> SubsortDeclSet .
-  eq getSubsorts(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = SSDS .
-  eq getSubsorts(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = SSDS .
+  eq getSubsorts(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = SSDS .
+  eq getSubsorts(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = SSDS .
   eq getSubsorts(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = SSDS .
   eq getSubsorts(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = SSDS .
 
   op getOps : Module -> OpDeclSet .
-  eq getOps(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = OPDS .
-  eq getOps(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = OPDS .
+  eq getOps(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = OPDS .
+  eq getOps(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = OPDS .
   eq getOps(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = OPDS .
   eq getOps(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = OPDS .
 
   op getMbs : Module -> MembAxSet .
-  eq getMbs(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = MAS .
-  eq getMbs(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = MAS .
+  eq getMbs(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = MAS .
+  eq getMbs(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = MAS .
   eq getMbs(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = MAS .
   eq getMbs(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = MAS .
 
   op getEqs : Module -> EquationSet .
-  eq getEqs(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = EQS .
-  eq getEqs(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = EQS .
+  eq getEqs(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = EQS .
+  eq getEqs(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = EQS .
   eq getEqs(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = EQS .
   eq getEqs(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = EQS .
 
   op getRls : Module -> RuleSet .
-  eq getRls(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = none .
-  eq getRls(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = RLS .
+  eq getRls(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = none .
+  eq getRls(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = RLS .
   eq getRls(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = none .
   eq getRls(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = RLS .
 endfm
@@ -1902,6 +2107,11 @@ fmod META-LEVEL is
         term-hook trueTerm		(true)
         term-hook falseTerm		(false))] .
 
+  op metaNormalize : Module Term ~> ResultPair
+        [special (
+           id-hook MetaLevelOpSymbol	(metaNormalize)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
   op metaRewrite : Module Term Bound ~> ResultPair
         [special (
            id-hook MetaLevelOpSymbol	(metaRewrite)
@@ -1930,6 +2140,11 @@ fmod META-LEVEL is
   op metaXmatch : Module Term Term Condition Nat Bound Nat ~> MatchPair?
         [special (
            id-hook MetaLevelOpSymbol	(metaXmatch)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaUnify : Module Term Term Nat ~> Substitution?
+        [special (
+           id-hook MetaLevelOpSymbol	(metaUnify)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
   op metaSearch : Module Term Term Condition Qid Bound Nat ~> ResultTriple?
@@ -2115,6 +2330,7 @@ mod CONFIGURATION is
   op <> : -> Portal [ctor] .
 endm
 
+set include BOOL on .
 set omod include CONFIGURATION on .
 
 select CONVERSION .

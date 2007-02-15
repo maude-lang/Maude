@@ -36,6 +36,7 @@
 #include "interface.hh"
 #include "core.hh"
 #include "higher.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
 
 //	core class definitions
@@ -53,7 +54,7 @@
 #include "userLevelRewritingContext.hh"
 #include "interpreter.hh"
 
-#include "main.hh"
+#include "global.hh"
 #define clear()			bubble.contractTo(0);
 #define store(token)		bubble.append(token)
 #define fragClear()		fragments.contractTo(0);
@@ -115,10 +116,10 @@ int yylex(YYSTYPE* lvalp);
 %token <yyToken> KW_MOD KW_OMOD KW_VIEW
 %token KW_PARSE KW_NORMALIZE KW_REDUCE KW_REWRITE
 %token KW_LOOP KW_NARROW KW_MATCH KW_XMATCH KW_UNIFY KW_XUNIFY
-%token KW_EREWRITE KW_FREWRITE KW_OREWRITE
+%token KW_EREWRITE KW_FREWRITE KW_SREWRITE
 %token KW_CONTINUE KW_SEARCH
 %token KW_SET KW_SHOW KW_ON KW_OFF 
-%token KW_TRACE KW_BODY KW_WHOLE KW_SELECT KW_DESELECT KW_CONDITION KW_SUBSTITUTION
+%token KW_TRACE KW_BODY KW_BUILTIN KW_WHOLE KW_SELECT KW_DESELECT KW_CONDITION KW_SUBSTITUTION
 %token KW_PRINT KW_GRAPH KW_MIXFIX KW_FLAT
 %token KW_WITH KW_PARENS KW_ALIASES KW_GC KW_TIME KW_STATS KW_TIMING
 %token KW_CMD KW_BREAKDOWN KW_BREAK KW_PATH
@@ -184,13 +185,13 @@ int yylex(YYSTYPE* lvalp);
 %type <yyToken> cToken cTokenBarDot cTokenBarDotColon cTokenBarIn
 %type <yyToken> cTokenBarLeftIn cTokenBarDotNumber cTokenBarDotRight
 %type <yyToken> cSimpleTokenBarDot
-%type <yyToken> cTokenBarDotCommaRight
+%type <yyToken> cTokenBarDotCommaRight cTokenBarDotCommaNumber
 %type <yyToken> sortName sortToken startModule sortDot
 
 /*
  *	Nonterminals that return bool.
  */
-%type <yyBool> polarity select match optDebug conceal exclude arrow
+%type <yyBool> polarity select match optDebug conceal exclude arrow unify
 /*
  *	Nonterminals that return int.
  */

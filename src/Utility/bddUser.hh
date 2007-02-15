@@ -46,6 +46,8 @@ private:
     DEFAULT_NR_VARIABLES = 10
   };
 
+  static void gc_handler(int pre, bddGbcStat* stat);
+
   static int nrUsers;
 };
 

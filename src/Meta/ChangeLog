@@ -1,3 +1,90 @@
+2007-02-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUnify.cc (metaUnify): use getSolution()
+
+2007-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.hh (class MetaLevel): added decl for new version of
+	upConstant()
+
+	* metaUp.cc (upDagNode): avoid calling getSort() in variable case
+	(upConstant): added DagNode* version that handles the not
+	calculated sort case possible with unification
+	(upDagNode): use new version of upConstant()
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): added decl for
+	getCachedUnificationProblem()
+
+	* metaUnify.cc: created
+
+	* metaOpCache.cc (insert, remove): added UnificationProblem
+	versions
+	(insert): (non-UnificationProblem versions) clear unification
+	field
+	(clear): handle unification field
+
+	* metaOpCache.hh (class MetaOpCache): added function and data
+	decls for UnificationProblem support
+
+	* descentSignature.cc (MACRO): added entry for metaUnify()
+
+2006-12-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaMatch.cc (metaXmatch): pass UNDEFINED index to VariableDagNode()
+
+===================================Maude88d===========================================
+
+2006-11-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownRenamings.cc: IssueAdvisory()s in the case of an
+	unusable or nonexistent module
+	
+===================================Maude88c===========================================
+
+2006-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaMatch.cc (metaXmatch): use new rebuildDag() semantics
+
+	* metaApply.cc (metaXapply): use new rebuildDag() semantics to fix
+	trace bug
+	(metaApply): use new rebuildDag() semantics
+
+===================================Maude88b===========================================
+
+2006-10-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaMatch.cc (makeMatchSearchState2): revert fix from 2005-02-16
+	since requiring pattern and subject to be in the same component is
+	too strong for metaXmatch()
+
+2006-09-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUpModule.cc (upRenaming): fix bug where we weren't handling
+	the single argument case
+
+===================================Maude88a===========================================
+
+2006-07-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* descentFunctions.cc (metaNormalize): added
+	(metaNormalize): need to fill out sort info
+
+	* descentSignature.cc (MACRO): added metaNormalize
+
+===================================Maude88===========================================
+
+2006-05-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaSearch.cc (metaSearchPath): fix comment
+
+===================================Maude87a===========================================
+
+2006-01-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* descentFunctions.cc (metaRewrite): added DebugAdvisory()s
+
+===================================Maude87===========================================
+
 2005-11-28  Steven Eker  <eker@goo.csl.sri.com>
 
 	* metaDownOps.cc (downAttr): fix long standing bug where we were

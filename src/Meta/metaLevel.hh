@@ -187,6 +187,7 @@ private:
   DagNode* upQid(int id, PointerMap& qidMap);
   DagNode* upJoin(int id, Sort* sort, char sep, PointerMap& qidMap);
   DagNode* upConstant(int id, Sort* sort, PointerMap& qidMap);
+  DagNode* upConstant(int id, DagNode* d, PointerMap& qidMap);
   DagNode* upVariable(int id, Sort* sort, PointerMap& qidMap);
   DagNode* upTerm(const Term* term, MixfixModule* m, PointerMap& qidMap);
 

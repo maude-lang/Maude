@@ -77,6 +77,11 @@ private:
 					     Int64 solutionNr,
 					     RewriteSequenceSearch*& search,
 					     Int64& lastSolutionNr);
+  static bool getCachedUnificationProblem(MetaModule* m,
+					  FreeDagNode* subject,
+					  Int64 solutionNr,
+					  UnificationProblem*& unification,
+					  Int64& lastSolutionNr);
 
   MatchSearchState* makeMatchSearchState(MetaModule* m,
 					 FreeDagNode* subject,

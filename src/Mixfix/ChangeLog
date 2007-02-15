@@ -1,3 +1,696 @@
+2007-02-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (doUnification): use getSolution()
+
+2007-02-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freshVariableSource.cc (reset): added
+
+	* freshVariableSource.hh (FreshVariableGenerator): added decl for
+	reset()
+
+===================================Maude88f===========================================
+
+2007-01-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreter.cc (Interpreter): clear savedStrategicSearch (fixed
+	bug)
+
+2007-01-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreter.hh (endif): added data member
+	savedUnificationProblem
+	(endif): added decls for doUnification() and unifyCont(); switched
+	decl for printMatchTiming() to printDecisionTime()
+
+	* execute.cc (clearContinueInfo): delete and clear
+	savedUnificationProblem
+
+	* interpreter.cc (Interpreter): clear savedUnificationProblem
+
+	* match.cc (printMatchTiming): becomes printDecisionTime()
+	(doMatching): use printDecisionTime()
+
+	* unify.cc (doUnification): added
+	(unifyCont): added
+	(unify): rewritten using doUnification()
+
+2007-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (unify): use FreshVariableSource
+	(Namer): deleted
+	(unify): create a new FreshVariableSource on the heap rather than
+	on the stack
+
+	* mixfix.hh: added class FreshVariableSource
+
+	* freshVariableSource.hh: created
+
+	* freshVariableSource.cc: created
+
+2007-01-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreter.hh (endif): deleted decl for
+	findOrderSortedUnifiers()
+
+	* unify.cc (getFreshVariableName): use Token:encode()
+	(findOrderSortedUnifiers): deleted
+
+2007-01-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (findOrderSortedUnifiers): use AllSat to extract sort
+	assignments from bdd
+
+2007-01-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (findOrderSortedUnifiers): created
+
+2007-01-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (unify): generate mgu bdd
+	(unify): use makeVariableBdd()
+
+2007-01-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (unify): generate unifier bdd
+
+2006-12-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (unify): clear solution
+
+2006-12-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* specialTokens.cc (MACRO): added unifies
+
+	* makeGrammar.cc (makeComponentProductions): added syntax for
+	UNIFY_PAIR
+	(makeComplexProductions): added syntax for UNIFY_COMMAND
+
+	* mixfixModule.hh: UNIFY_PAIR and UNIFY_COMMAND to enum
+	NonTerminal
+
+	* doParse.cc (parseUnifyCommand): added
+
+	* mixfixModule.hh: added decl for parseUnifyCommand()
+
+	* mixfixParser.cc (makeUnifyCommand): added
+
+	* mixfixParser.hh (class MixfixParser): added decl for
+	makeUnifyCommand()
+
+	* interpreter.hh (endif): added decl for unify()
+
+	* unify.cc: created
+
+	* top.yy: added unify nonterminal
+
+	* commands.yy (command): added syntax for unify
+
+2006-12-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* userLevelRewritingContext.cc (dontTrace): check TRACE_BUILTIN if
+	pe null
+
+	* top.yy: added KW_BUILTIN
+
+	* lexer.ll: added KW_BUILTIN
+
+	* commands.yy (traceOption): added KW_BUILTIN
+
+	* interpreter.hh (endif): added TRACE_BUILTIN to enum Flags
+
+===================================Maude88d===========================================
+
+2006-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bufferPrint.cc (printKind): fix bug where we were printing all
+	but the first sort twice
+
+	* erewrite.cc (doExternalRewriting): rewritten using fairTraversal()
+	(eRewrite): rewritten using fairStart()
+	(eRewriteCont): don't use fairContinue()
+
+2006-11-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreter.hh (endif): added decl for doExternalRewriting()
+
+	* erewrite.cc (eRewrite): moved here
+	(eRewriteCont): moved here
+	(eRewriteCont): rewritten using doExternalRewriting()
+	(doExternalRewriting): added
+	(eRewrite): rewritten using doExternalRewriting()
+
+===================================Maude88c===========================================
+
+2006-11-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* userLevelRewritingContext.cc (makeSubcontext): fix bug where we
+	were checking TRACE_EQ rather than TRACE_CONDITION
+
+	* interpreter.hh (endif): added decls for doStrategicSearch() and
+	sRewriteCont()
+
+	* srewrite.cc: created
+
+	* interpreter.hh (endif): added data member savedStrategicSearch
+
+	* execute.cc (sRewrite): clean up output
+	(clearContinueInfo): clear savedStrategicSearch
+
+2006-11-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* execute.cc (sRewrite): print rewrite count and timing info
+
+2006-11-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* strategyPrint.cc (prettyPrint): added BranchStrategy and
+	TestStrategy cases
+
+2006-11-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* execute.cc (sRewrite): use StrategyExpression version of
+	operator<<()
+
+	* strategyPrint.cc (prettyPrint): added
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	StrategyExpression* version of prettyPrint(); make
+	StrategyExpression* verison of operator<<() a friend
+
+	* strategyPrint.cc: created
+
+2006-11-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): use new
+	MAKE_APPLICATION semantics to handle all four cases
+
+	* mixfixParser.hh (class MixfixParser): deleted
+	MAKE_APPLICATION_WITH_SUBSTITUTION and
+	MAKE_APPLICATION_WITH_STRATEGY_LIST
+
+	* mixfixParser.cc (makeStrategy): combine all four application
+	cases
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added syntax
+	for applications with substitutions and strategy lists
+
+2006-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.hh (SharedTokens): added STRATEGY_LIST to enum NonTerminal
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added syntax
+	for strategy lists and applications with strategy lists
+
+	* mixfixParser.hh (class MixfixParser): added decl for
+	makeStrategyList()
+	(class MixfixParser): added MAKE_APPLICATION_WITH_STRATEGY_LIST
+	and MAKE_STRATEGY_LIST to enum SemanticActions
+
+	* mixfixParser.cc (makeStrategy): added
+	MAKE_APPLICATION_WITH_STRATEGY_LIST case
+	(makeStrategyList): created
+
+2006-10-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* specialTokens.cc (MACRO): added amatch
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): xmatch becomes
+	amatch; added new xmatch
+
+2006-10-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* banner.cc (printBanner): update copyright notice
+	
+===================================Maude88b===========================================
+
+	* modules.yy (domainRangeAttr): fix type clash
+
+2006-10-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (domainRangeAttr): remove dra3 production for
+	op : Foo [ctor] . case because [ctor] is a legal kind name and
+	after seeing the [ we can't be sure where we should process the
+	next token as an attribute or sort name
+
+	* global.cc: created to hold global stuff that used to live in
+	main.cc
+
+	* global.hh: created to hold things that used to live in main.hh
+
+	* term-order.maude: created
+
+2006-10-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: STO-SET becomes STRICT-TOTAL-ORDER, SWO-SET
+	becomes STRICT-WEAK-ORDER; added TOTAL-PREORDER, TOTAL-ORDER and a
+	version of all the order dependent stuff based on them; fix
+	confluent bug in SORTABLE-LIST-AND-SET
+
+2006-09-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* specialTokens.cc (MACRO): removed colon3
+
+	* makeGrammar.cc (makeBoolProductions): removed syntax for lazy
+	sort test operators
+	(makeComponentProductions): removed syntax for COLON3_PAIR
+
+2006-09-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* specialTokens.cc (MACRO): "orelse" -> "or-else"
+
+	* preModule.cc (addParameter): don't allow parameters to be added
+	to a theory
+
+2006-09-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* quotedIdentifierTerm.cc (instantiate2): added
+
+	* quotedIdentifierTerm.hh (class QuotedIdentifierTerm): added decl
+	for instantiate2()
+
+	* modules.yy (domainRangeAttr): support over parsing of constant
+	declarations with missing ->
+
+	* prelude.maude: fmod IDENTICAL expunged
+
+2006-09-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: rewrote MAP and ARRAY to fix non-confluence;
+	changed prec of _[_] to 23
+
+2006-09-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: make _[_] in ARRAY always return a result at the
+	sort level.
+
+2006-09-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.hh (SharedTokens): lowered STRAT_TEST_PREC to 93
+
+	* mixfixParser.cc (makeStrategy): handle match/xmatch without
+	"such that" clause
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): match strategy
+	expression takes a term rather than a match pair
+	(makeStrategyLanguageProductions): added match/xmatch without
+	"such that" clause
+
+2006-09-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.cc (makeStrategy): new TestStrategy() convention
+
+	* makeGrammar.cc (makeConditionProductions): implement
+	RULE_CONDITION_FRAGMENT in terms of CONDITION_FRAGMENT  via
+	PASS_THRU rather than duplicating productions
+	(makeBoolProductions): no longer need RULE_CONDITION_FRAGMENT
+	version of MAKE_TRUE
+
+	* mixfixParser.cc (makeConditionFragment): added PASS_THRU case
+
+	* prelude.maude: fix bug that the filter functions were reversing
+	the order of the list
+
+2006-09-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: replace old LIST-AND-SET fmod with new
+	accumulator based one; move makeList to SORTABLE-LIST-AND-SET
+
+2006-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added th & view TOSET; renamed SORTABLE-LIST to
+	PARTIALLY-SORTABLE-LIST, added new SORTABLE-LIST; turned
+	predefined TAOSET views into TOSET views
+
+2006-09-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: change importion in SORTABLE-LIST to avoid
+	renaming a module with free parameters
+
+2006-09-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.cc (makeStrategy): handle MAKE_TEST case
+
+	* mixfixParser.hh (class MixfixParser): rm MAKE_UNARY; added
+	MAKE_TEST
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): fix gather bug
+	in ?: syntax
+
+	* mixfixParser.cc (makeStrategy): don't pass data2 to IterationStrategy()
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): don't pass
+	data2 for + or *
+
+	* execute.cc (sRewrite): removed commented out set generator based
+	code
+
+2006-08-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.hh (SharedTokens): added STRAT_ORELSE_PREC to enum
+	Precedence; changed STRAT_BRANCH_PREC to 101
+
+	* mixfixParser.cc (makeStrategy): removed MAKE_UNARY case
+
+	* mixfixParser.hh (class MixfixParser): removed MAKE_UNARY from
+	enum SemanticActions
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added syntax
+	for orelse
+
+	* specialTokens.cc (MACRO): added orelse
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): pass
+	NEW_STRATEGY data to insertProduction()
+	(makeStrategyLanguageProductions): use MAKE_BRANCH for !
+	(makeStrategyLanguageProductions): use MAKE_BRANCH for not, test
+	and try
+
+	* mixfixParser.cc (makeStrategy): rewrote MAKE_BRANCH case to be
+	very general
+
+2006-08-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): use
+	BranchStrategy options for not, test and try
+	(makeStrategyLanguageProductions): implement s! as a unary branch
+	strategy
+	(makeStrategyLanguageProductions): fix gather for !
+
+	* mixfixParser.cc (makeStrategy): use new BranchStrategy()
+	convention
+	(makeStrategy): use BranchStrategy() to implement stuff that was
+	previously implemented by UnaryStrategy()
+
+	* prelude.maude: made sort() stable wrt incomparable elements;
+	added _subset_ and _psubset_ to SET and SET*
+
+2006-08-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* execute.cc (sRewrite): use class StrategicSearch
+	(sRewrite): added Assert()
+
+2006-07-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: use /\ instead of and for first TAO-SET ceq as
+	suggest by Narcisso
+
+===================================Maude88a===========================================
+
+2006-07-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* maudemlBuffer.hh (class MaudemlBuffer): update decl for
+	generateSearch()
+
+	* maudemlBuffer.cc (generateFrewrite): fix bug where we were
+	testing limit rather than gas
+	(generateErewrite): symmetric bug
+	(generateSearch): handle depth
+
+	* search.cc (search): pass extra arg to generateSearch()
+
+	* prelude.maude: added metaNormalize
+
+	* machine-int.maude: now part of the distribution
+
+	* top.yy: type decl for cTokenBarDotCommaNumber
+
+	* commands.yy (cTokenBarDotCommaNumber): added
+	(numbersModuleTerm1): use cTokenBarDotCommaNumber
+
+	* execute.cc (printModifiers): fix whitespace bug
+
+	* commands.yy (numbersModuleTerm6): fix missing moduleAndTerm
+
+
+	* doParse.cc (parseSentence): added Assert() to check for empty
+	sentence
+
+2006-07-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* search.cc (search): use printModifiers()
+	(search): pass depth arg to RewriteSequenceSearch() ctor
+
+	* execute.cc (fRewrite): use printModifiers()
+	(eRewrite): use printModifiers()
+
+	* interpreter.hh (endif): added decl for printModifiers()
+
+	* execute.cc (printModifiers): added
+
+	* interpreter.hh (endif): decl for search() now takes depth arg
+
+	* commands.yy (command): allow search to take 2 parameters
+
+2006-07-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* fixUp.cc (fixUpSymbols): use shared tokens
+
+	* process.cc (processOps): use shared tokens
+
+	* specialTokens.cc (MACRO): added hook tokens
+
+	* makeGrammar.cc (makeSpecialProductions): use shared
+	pseudo-tokens
+
+	* specialTokens.cc (MACRO): added pseudo-tokens
+
+	* makeGrammar.cc (makeComponentProductions): use shared tokens
+
+	* specialTokens.cc: added tokens <=? and <-
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): don't use
+	Token::encode() now that we store these things in SharedTokens
+
+	* specialTokens.cc (MACRO): added strategy keywords
+
+	* import.cc (processImports): don't use Token::encode() now that
+	we store these things in SharedTokens
+
+	* specialTokens.cc: added import keywords
+
+	* preModule.hh (User): derive from SharedTokens rather than
+	CommonTokens
+
+	* mixfixModule.hh (SharedTokens): derive from SharedTokens rather
+	than CommonTokens
+
+	* sharedTokens.cc: created from commonTokens.cc
+
+	* sharedTokens.hh (class SharedTokens): was commonTokens.hh
+
+	* commonTokens.hh (class CommonTokens): use specialTokens.cc
+
+	* specialTokens.cc (MACRO): added smod/endsm
+
+	* preModule.cc (PreModule): handle smod
+
+	* specialTokens.cc: created
+
+2006-07-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preModule.cc (compatible): handle smod/endsm
+
+	* lexer.ll (id): added syntax for smod, endsm
+
+	* model-checker.maude: {_,_} : State RuleName -> Transition
+	becomes a ctor
+	* prelude.maude: _{_}  : Qid ParameterDeclList -> Header becomes a
+	ctor
+
+===================================Maude88===========================================
+
+2006-07-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixModule.cc (findSymbol): for assoc op, domainAndRange[2]
+	and not domainAndRange[nrArgs] holds the range sort
+
+2006-04-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.hh (class MixfixParser): added MAKE_UNARY to enum
+	SemanticActions
+
+	* mixfixParser.cc (makeStrategy): added MAKE_UNARY case
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): fix bad gather
+	in top() syntax
+	(makeStrategyLanguageProductions): added syntax for not, test and
+	try strategies
+
+2006-04-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.cc (makeStrategy): support normalForm flag for IterationStrategy()
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): syntax for !
+	operator
+
+2006-04-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added syntax
+	for top() modifier
+
+	* mixfixParser.hh (class MixfixParser): added MAKE_TOP to 
+
+	* mixfixParser.cc (makeStrategy): added case for MAKE_TOP
+
+2006-04-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.hh (class MixfixParser): MAKE_SEQUENCE ->
+	MAKE_CONCATENATION
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): MAKE_SEQUENCE
+	-> MAKE_CONCATENATION
+
+	* mixfixParser.cc (makeStrategy): use ConcatenationStrategy() in
+	place of StrategySequence()
+	(makeStrategy): MAKE_SEQUENCE -> MAKE_CONCATENATION
+
+2006-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* execute.cc (sRewrite): handle limit = NONE case
+
+	* commands.yy (command): handle number for srewrite
+	(command): fix bug where erewrite wasn't allowed to take two
+	numbers
+
+	* interpreter.hh (endif): updated decl for sRewrite()
+
+	* execute.cc (sRewrite): support limit; garbage collect
+	context/gen/strategy; tidy up after aborts
+
+	* mixfixParser.cc (makeAssignment): check for and recover from
+	assignment to nonvariable
+
+2006-03-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.hh (class MixfixParser): added decls for
+	makeAssignment() and makeSubstitution()
+	(class MixfixParser): added MAKE_SUBSTITUTION to enum
+	SemanticActions
+	(class MixfixParser): added MAKE_APPLICATION_WITH_SUBSTITUTION to
+	enum SemanticActions
+
+	* mixfixParser.cc (makeStrategy): added semantics for applications
+	with substitutions
+	(makeSubstitution): added
+
+	* makeGrammar.cc (makeComponentProductions): added syntax for assignments
+	(makeComplexProductions): added syntax for substitutions
+	(makeStrategyLanguageProductions): added syntax for applications
+	with substitutions
+
+	* mixfixModule.hh (CommonTokens): added ASSIGNMENT and
+	SUBSTITUTION to enum NonTerminal
+
+	* mixfixParser.hh (class MixfixParser): added MAKE_ALL to enum
+	SemanticActions
+
+	* mixfixParser.cc (makeStrategy): added MAKE_ALL case
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added syntax
+	for all
+
+2006-03-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.hh (class MixfixParser): MAKE_ALTERNATION ->
+	MAKE_UNION
+
+	* mixfixParser.cc (makeStrategy): added semantics for MAKE_UNION
+
+	* mixfixModule.hh (CommonTokens): STRAT_ALT_PREC ->
+	STRAT_UNION_PREC
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added union
+	syntax
+
+2006-03-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.cc (makeStrategy): added semantics for MAKE_BRANCH
+
+	* mixfixModule.hh (CommonTokens): added STRAT_BRANCH_PREC to enum
+	Precedence
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added syntax
+	for branch strategy; code cleaning
+
+2006-03-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.cc (makeStrategy): added iterator and pass thru
+	cases
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added syntax
+	for iterators and parens
+
+	* execute.cc (sRewrite): need to reduce term first to ensure it
+	has sort info
+
+	* mixfixParser.cc (makeStrategy): handle trivial and sequence
+	cases
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added syntax
+	for fail, idle, sequencing
+
+	* mixfixModule.hh (CommonTokens): added STRAT_SEQ_PREC and
+	STRAT_ALT_PREC to enum Precedence
+
+	* makeGrammar.cc (makeComplexProductions): fix bad gathers for
+	arrow productions
+
+	* mixfixParser.hh (class MixfixParser): added more strategy
+	actions to enum SemanticActions
+
+2006-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.cc (makeStrategy): added
+	(makeStrategyCommand): use makeStrategy()
+
+2006-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): fix resize bug
+	(makeStrategyLanguageProductions): handle labels
+	(makeGrammar): don't call makeLabelProductions() for complex parsers
+
+	* mixfixParser.hh (class MixfixParser): added decl for
+	makeStrategyCommand()
+
+	* mixfixParser.cc (makeStrategyCommand): added
+
+	* doParse.cc (parseStrategyCommand): implement
+
+	* mixfixModule.hh (CommonTokens): added decl for
+	makeStrategyLanguageProductions()
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): created
+	(makeGrammar): call makeStrategyLanguageProductions()
+
+2006-03-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* makeGrammar.cc (makeComplexProductions): quick hack for strategy
+	command syntax
+
+	* mixfixModule.hh (CommonTokens): added decl for
+	parseStrategyCommand()
+	(CommonTokens): added STRATEGY_EXPRESSION and STRATEGY_COMMAND to
+	enum NonTerminal; renumbered
+
+	* doParse.cc (parseStrategyCommand): added stub
+
+	* execute.cc: added stub for sRewrite()
+
+	* lexer.ll: added sred; deleted ored
+
+	* top.yy: added KW_SREWRITE; deleted KW_OREWRITE
+
+	* interpreter.hh (endif): added decl for sRewrite()
+
+	* commands.yy (command): added syntax for srewrite
+
+2006-01-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* visibleModule.cc (showSortsAndSubsorts): for each line of
+	output, show main sort in color
+	
+===================================Maude87===========================================
+
 2005-11-28  Steven Eker  <eker@goo.csl.sri.com>
 
 	* symbolType.hh: added decl for operator<<()
@@ -8471,7 +9164,7 @@
 
 	* lexerAux.cc (eatComment): handle OBJ3 style pass-through comments
 
-	* lexer.flex: treat ---> equall to ***> and replace char with
+	* lexer.flex: treat ---> equal to ***> and replace char with
 	yyless(0); treat --- equal to ***
 
 	* mixfixModule.hh (class MixfixModule): added decl for printVariable()

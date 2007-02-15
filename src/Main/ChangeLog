@@ -1,0 +1,57 @@
+2007-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: moved set include BOOL on to after last module;
+	added syntax for metaUnify()
+	
+===================================Maude88d===========================================
+
+2006-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: rm getHeader() since this doesn't make sense with
+	theories
+
+2006-11-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added getHeader() and redefined getName();
+	modified other projection functions so that they work with
+	parameterized modules
+
+2006-11-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added min() and max() for Float
+
+===================================Maude88c===========================================
+
+2006-11-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* model-checker.maude: change protecting to including for
+	SATISFACTION and LTL in MODEL-CHECKER
+
+2006-11-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* model-checker.maude: many minor changes recommended by Jose
+
+2006-10-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* model-checker.maude: changed importation modes
+
+2006-10-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* socket.maude: minor clean up
+
+	* machine-int.maude: minor clean up
+
+	* linear.maude: minor clean up
+
+	* model-checker.maude: changed some importation modes
+
+	* prelude.maude: added protecting BOOL to a number of modules; use
+	set include BOOL on/off
+
+===================================Maude88b===========================================
+
+2006-10-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* main.cc: moved here and cleaned up
+
+===================================Maude88a===========================================

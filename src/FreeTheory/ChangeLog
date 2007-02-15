@@ -1,3 +1,66 @@
+2007-02-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (instantiate2): fixed bug where we were using
+	wrong index to copy already looked at arguments
+
+2007-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (unify): clean up
+	(unify): handle subproblems; zero extensionInfo on recursive calls
+
+2007-01-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (computeGeneralizedSort): use DagNode version of
+	computeGeneralizedSort()
+
+	* freeDagNode.hh (class FreeDagNode): instantiate() ->
+	instantiate2(); occurs() -> occurs2()
+
+	* freeDagNode.cc (computeBaseSortForGroundSubterms): added
+	(instantiate): becomes instantiate2()
+	(instantiate2): handle the computation of the base sort of a newly
+	dagnode if it turns out to be ground
+	(occurs): becomes occurs2()
+
+	* freeDagNode.hh (class FreeDagNode): added decl for
+	computeBaseSortForGroundSubterms()
+
+===================================Maude88e===========================================
+
+2007-01-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (computeGeneralizedSort): added
+
+	* freeSymbol.hh (class FreeSymbol): added decl for
+	computeGeneralizedSort()
+
+2006-12-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): added decls for
+	instantiate() and occurs()
+
+	* freeDagNode.cc (instantiate): added
+	(occurs): added
+
+2006-12-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (unify): added
+
+	* freeDagNode.hh (class FreeDagNode): added decl for unify()
+
+===================================Maude88d===========================================
+
+2006-10-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeRemainder.cc (dump): dump equation
+
+2006-10-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): removed extraneous quantifier to
+	appease gcc 4.1
+
+===================================Maude88b===========================================
+
 2005-07-28  Steven Eker  <eker@goo.csl.sri.com>
 
 	* freeTerm.cc (findEagerVariables, markEagerArguments): removed
@@ -3133,4 +3196,3 @@ Fri Oct 13 17:45:10 1995  Steven Eker  <eker@ponder.csl.sri.com>
 
 	(analyseConstraintPropagation): removed getVariable()
 	replaced all (Variable*)s with downCast()s
-

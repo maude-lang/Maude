@@ -32,6 +32,7 @@
 #include "interface.hh"
 #include "core.hh"
 #include "variable.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
 
 //      interface class definitions
@@ -141,7 +142,7 @@ VisibleModule::showSortsAndSubsorts(ostream& s) const
 		}
 	      s << " <";
 	    }
-	  s << ' ' << sorts[i];
+	  s << ' ' << Tty(Tty::MAGENTA) << sorts[i] << Tty(Tty::RESET);
 	  if (nrSupersorts > 0)
 	    {
 	      s << " <";

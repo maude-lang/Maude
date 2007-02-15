@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,21 +21,21 @@
 */
 
 //
-//	Global variables
+//      Class to hold codes for special tokens that are shared between various classes.
 //
-extern int lineNumber;
-extern FileTable fileTable;
-extern DirectoryManager directoryManager;
-//int yylex(YYSTYPE* lvalp);
-extern Interpreter& interpreter;
-//extern Interpreter interpreter;
-#include "IO_Manager.hh"  // HACK
-extern IO_Manager ioManager;
+#ifndef _sharedTokens_hh_
+#define _sharedTokens_hh_
 
-bool
-findPrelude(string& directory, string& fileName);
+class SharedTokens
+{
+public:
+  SharedTokens();
 
-bool
-findFile(const string& userFileName, string& directory, string& fileName, int lineNr);
+protected:
+#define MACRO(Name, String) \
+  static int Name;
+#include "specialTokens.cc"
+#undef MACRO
+};
 
-bool findExecutableDirectory(string& directory, string& executable);
+#endif

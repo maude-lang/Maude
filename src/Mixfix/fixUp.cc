@@ -277,13 +277,13 @@ PreModule::fixUpSymbols()
 	  Symbol* quotedIdentifierSymbol = 0;
 	  Symbol* nilQidListSymbol = 0;
 	  Symbol* qidListSymbol = 0;
-	  int h = findHook(opDef.special, OP_HOOK, Token::encode("qidSymbol"));
+	  int h = findHook(opDef.special, OP_HOOK, qidSymbolToken);
 	  if (h != NONE)
 	    quotedIdentifierSymbol = findHookSymbol(opDef.special[h].details);
-	  h = findHook(opDef.special, OP_HOOK, Token::encode("nilQidListSymbol"));
+	  h = findHook(opDef.special, OP_HOOK, nilQidListSymbolToken);
 	  if (h != NONE)
 	    nilQidListSymbol = findHookSymbol(opDef.special[h].details);
-	  h = findHook(opDef.special, OP_HOOK, Token::encode("qidListSymbol"));
+	  h = findHook(opDef.special, OP_HOOK, qidListSymbolToken);
 	  if (h != NONE)
 	    qidListSymbol = findHookSymbol(opDef.special[h].details);
 	  flatModule->fixUpBubbleSpec(opDecl.bubbleSpecIndex,

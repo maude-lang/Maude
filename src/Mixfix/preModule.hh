@@ -29,7 +29,7 @@
 #include "namedEntity.hh"
 #include "lineNumber.hh"
 #include "syntaxContainer.hh"
-#include "commonTokens.hh"
+#include "sharedTokens.hh"
 #include "importModule.hh"
 #include "moduleDatabase.hh"
 
@@ -38,7 +38,7 @@ class PreModule
     public LineNumber,
     public SyntaxContainer,
     public Entity::User,
-    private CommonTokens
+    private SharedTokens
 {
   NO_COPYING(PreModule);
 

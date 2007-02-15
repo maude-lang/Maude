@@ -37,6 +37,7 @@
 #include "freeTheory.hh"
 #include "NA_Theory.hh"
 #include "builtIn.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
  
 //      interface class definitions
@@ -63,6 +64,7 @@
 #include "rewriteSearchState.hh"
 #include "matchSearchState.hh"
 #include "rewriteSequenceSearch.hh"
+#include "unificationProblem.hh"
 
 //      free theory class definitions
 #include "freeNet.hh"
@@ -88,7 +90,8 @@
 #include "preModule.hh"
 #include "interpreter.hh"
 #include "visibleModule.hh"
-#include "main.hh"  // HACK shouldn't access global variables
+#include "global.hh"  // HACK: shouldn't access global variables
+#include "freshVariableSource.hh"
 
 //	our stuff
 #include "descentFunctions.cc"
@@ -96,6 +99,7 @@
 #include "metaApply.cc"
 #include "metaMatch.cc"
 #include "metaSearch.cc"
+#include "metaUnify.cc"
 
 MetaLevelOpSymbol::MetaLevelOpSymbol(int id, int nrArgs)
   : FreeSymbol(id, nrArgs)

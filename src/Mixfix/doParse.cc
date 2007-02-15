@@ -130,6 +130,28 @@ MixfixModule::parseMatchCommand(const Vector<Token>& bubble,
 }
 
 bool
+MixfixModule::parseUnifyCommand(const Vector<Token>& bubble,
+				Term*& lhs,
+				Term*& rhs)
+{
+  makeGrammar(true);
+  int r = parseSentence(bubble, UNIFY_COMMAND);
+  if (r <= 0)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": no parse for command.");
+      return false;
+    }
+  if (r > 1)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": multiple distinct parses for command.");
+    }
+  parser->makeUnifyCommand(lhs, rhs);
+  return true;
+}
+
+bool
 MixfixModule::parseSearchCommand(const Vector<Token>& bubble,
 				 Term*& initial,
 				 int& searchType,
@@ -153,9 +175,32 @@ MixfixModule::parseSearchCommand(const Vector<Token>& bubble,
   return true;
 }
 
+bool
+MixfixModule::parseStrategyCommand(const Vector<Token>& bubble,
+				   Term*& subject,
+				   StrategyExpression*& strategy)
+{
+  makeGrammar(true);
+  int r = parseSentence(bubble, STRATEGY_COMMAND);
+  if (r <= 0)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": no parse for command.");
+      return false;
+    }
+  if (r > 1)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": multiple distinct parses for command.");
+    }
+  parser->makeStrategyCommand(subject, strategy);
+  return true;
+}
+
 int
 MixfixModule::parseSentence(const Vector<Token>& bubble, int root, int begin, int end)
 {
+  Assert(bubble.length() >= 1, "empty sentence");
   if (end == DEFAULT)
     end = bubble.length() - 1;
   int nrTokens = end - begin + 1;

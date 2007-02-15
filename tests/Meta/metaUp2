@@ -1,9 +1,9 @@
 #!/bin/sh
 
-MAUDE_LIB=$srcdir/../../src/Mixfix
+MAUDE_LIB=$srcdir/../../src/Main
 export MAUDE_LIB
 
-../../src/Mixfix/maude \
+../../src/Main/maude \
   < $srcdir/metaUp2.maude -no-banner -no-advise \
   > metaUp2.out 2>&1
 

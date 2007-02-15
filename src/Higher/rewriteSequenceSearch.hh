@@ -56,7 +56,6 @@ public:
 private:
   int findNextInterestingState();
 
-  const SearchType searchType;
   Pattern* const goal;
   const int maxDepth;
   int explore;
@@ -64,6 +63,8 @@ private:
   int firstDeeperNodeNr;
   int nextArc;
   bool needToTryInitialState;
+  bool reachingInitialStateOK;
+  bool normalFormNeeded;
   MatchSearchState* matchState;
   int stateNr;
 };

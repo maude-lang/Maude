@@ -1,3 +1,280 @@
+2007-02-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh (value): check against valued.size() rather than
+	allocateSize so that we can use substitutions that are larger than
+	allocateSize
+	(bind): ditto
+
+2007-02-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationSubproblemDisjunction.cc (solve): simplify
+	(~UnificationSubproblemDisjunction): don't delete
+	savedSubstitution
+
+	* unificationSubproblemDisjunction.hh (class
+	UnificationSubproblemDisjunction): updated decl for
+	UnificationSubproblemDisjunction() 
+
+	* unificationSubproblemDisjunction.cc
+	(UnificationSubproblemDisjunction): take nrBinding arg
+
+2007-02-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationSubproblemDisjunction.hh (class
+	UnificationSubproblemDisjunction): added data members
+	savedSubstitution and assertionSubproblem
+
+	* substitution.cc (unificationDifference): added
+
+	* substitution.hh (class Substitution): added decl for
+	unificationDifference()
+
+	* localBinding.cc (unificationAssert): added
+
+	* localBinding.hh (class LocalBinding): added decl for
+	unificationAssert()
+
+	* unificationSubproblemDisjunction.cc: created
+
+	* unificationSubproblemDisjunction.hh: created
+
+2007-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.cc (unificationBind): allow varSort to be 0 in the
+	case that we don't know the sort of the variable we are binding to
+	- this needs to be fixed one the overall design of unification
+	with branching is clearer
+
+===================================Maude88f===========================================
+
+2007-02-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh (class Substitution): decl for unificationBind()
+	replaces decl for update()
+
+	* substitution.cc (update): becomes unificationBind()
+
+===================================Maude88e===========================================
+
+2007-01-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc (SortBdds): reorganized
+
+	* sortBdds.hh (class SortBdds): delete decl for getSortBdd();*i != 0
+	delete data member sortIndexBdds
+	(getSortBdd): deleted
+
+2007-01-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc (SortBdds): compute gt only using active BDD
+	variables; use makeIndexBdd()
+
+2007-01-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (markReachableNodes): mark lhsDag and rhsDag
+	(findOrderSortedUnifiers): handle the convention that instantiate
+	can return 0 if nothing changed
+	(UnificationProblem): new viable convention
+	(findNextUnifier): new viable convention
+	(findOrderSortedUnifiers): return early if unifier goes to false
+
+	* unificationProblem.hh (class UnificationProblem): updated decl
+	for ctor
+	(class UnificationProblem): deleted data member module; added data
+	members lhsDag and rhsDag
+	(class UnificationProblem): deleted data member mgu
+
+	* unificationProblem.cc (UnificationProblem): no need for module argument
+
+2007-01-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.hh (class UnificationProblem): added decl for
+	findOrderSortedUnifiers()
+	(class UnificationProblem): deleted struct FreeVariable
+
+	* unificationProblem.cc (findOrderSortedUnifiers): added
+
+2007-01-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc (makeVariableBdd): added
+
+	* sortBdds.hh (class SortBdds): added decl for makeVariableBdd()
+
+2007-01-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc (SortBdds): fill out leqRelations
+
+2007-01-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc (makeIndexVector): use bddtrue constant
+	(SortBdds): fill out sortFunctions
+
+2007-01-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc (makeVariableVector): added
+
+	* sortBdds.hh (class SortBdds): added decl for makeVariableVector()
+
+	* sortTable.hh (class SortTable): added decl for virtual function
+	computeGeneralizedSort()
+
+	* sortTable.cc (computeBddVector): fix the bug that nodes
+	corresponding to last argument in sort diagrams contain sort
+	indices rather than node indices and must be handled as such
+	(computeSortFunctionBdds): fix bug that we were falling into
+	non-constant case from constant case
+
+2007-01-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc (makeIndexVector): added
+	(makeIndexBdd): added
+
+	* sortBdds.hh (class SortBdds): added decls for makeIndexVector()
+	and makeIndexBdd()
+
+	* sortTable.hh (class SortTable): adde decl for
+	computeBddVector(); added typedefs BddVector and BddTable
+
+	* sortTable.cc (computeSortFunctionBdds): implemented
+	(computeBddVector): added
+
+2007-01-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.cc (computeSortFunctionBdds): added as stub
+
+	* sortTable.hh (class SortTable): added decl for
+	computeSortFunctionBdds()
+
+	* unificationProblem.cc (markReachableNodes): added
+
+	* unificationProblem.hh (class UnificationProblem): derive from
+	SimpleRootContainer; added decl for markReachableNodes()
+
+2006-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.hh: created
+
+	* unificationProblem.cc: created
+
+	* sortBdds.hh (getSortFunction): added
+	(class SortBdds): added data member sortFunctions
+	(getLeqRelation): added
+	(class SortBdds): added data member leqRelations
+
+2006-12-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc (SortBdds): calculate gtRelation
+
+	* module.cc (Module): initialize sortBdds to 0
+	(~Module): delete sortBdds
+	(getSortBdds): added
+
+	* module.hh (class Module): added data member sortBdds
+	(class Module): added decl for getSortBdds()
+
+	* core.hh: added class SortBdds
+
+2006-12-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc: created
+
+	* sortBdds.hh: created
+
+2006-12-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh (class Substitution): added decl for update()
+
+	* substitution.cc (update): added
+
+===================================Maude88d===========================================
+
+2006-11-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): update decl for
+	new fairTraversal()
+
+	* run.cc (fairTraversal): change convention for new version
+
+	* rewritingContext.hh (class RewritingContext): updated decls for
+	fairRewrite(), fairContinue(); added decls for fairStart(),
+	fairTraversal()
+
+	* run.cc (fairRewrite, fairContinue): go back to returning void
+	(fairStart, fairTraversal): added
+
+ 	* rewritingContext.hh (class RewritingContext): update decl for
+	fairTraversal()
+
+	* run.cc (fairTraversal): don't take new traversal flag since we
+	can figure this out from the currentIndex
+	(fairRewrite, fairContinue): new fairTraversal() convention
+
+2006-11-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): updated decls for
+	fairRewrite() and fairContinue()
+
+	* run.cc (fairRewrite): return unused rewriteLimit
+	(fairContinue): return unused rewriteLimit
+
+===================================Maude88c===========================================
+
+2006-11-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (transferCount): added
+	(addInCount): made arg const
+
+2006-10-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh (clone): added
+
+2006-10-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* conditionFragment.hh (class ConditionFragment): added decl for dump()
+
+	* preEquation.hh (class PreEquation): added decl for dump()
+
+	* preEquation.cc (dump): added
+
+2006-10-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sort.hh (class Sort): removed extraneous qualifier that is
+	reported to cause problems under gcc 4.1
+
+===================================Maude88b===========================================
+
+2006-09-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh: added comment to document how substitutions
+	work; removed commented out code
+
+2006-09-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rule.cc (compile): changed eagerness flag passed to
+	compileBuild() from false to !hasCondition(), because if we
+	rewrite in a lazy context, the lazy context will protect the
+	replacement term from evaluation
+
+2006-08-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNodeCache.cc (DagNodeCache): added
+
+	* dagNodeCache.hh (class DagNodeCache): NO_COPYING(); declare ctor
+
+	* core.hh: add class DagNodeCache
+
+	* dagNodeCache.cc: created
+
+	* dagNodeCache.hh: created
+
+===================================Maude88a===========================================
+
+2006-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* cachedDag.hh (getDagRoot): added
+
+===================================Maude87===========================================
+
 2005-11-10  Steven Eker  <eker@goo.csl.sri.com>
 
 	* module.cc (insertLateSymbol): do interSymbolPass() and
@@ -1021,7 +1298,7 @@
 
 	* preEquation.cc (compileBuild): fixed nasty bug where we were not
 	passing atTop = true to findAvailableTerms(); among other things
-	this causes evaluated subterms undert top symbol to be treated as
+	this causes evaluated subterms under top symbol to be treated as
 	eager rather than lazy as they should be. It also allows whole lhs
 	to be reused in rhs via l->r sharing - something that is
 	unsupportable by free theory discrimination nets since there is

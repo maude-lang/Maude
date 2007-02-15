@@ -1,3 +1,76 @@
+2007-02-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc: use unificationBind(); this fixes the bug
+	where we bind a variable X to a variable Y that is already bound
+	to X and fail the occurs check
+
+2007-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (unify): clear returnedSubproblem; pass 0
+	extensionInfo on recursive call
+
+2007-01-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (unify): do sort check when getting bound to
+	ground variable
+
+	* variableDagNode.hh (class VariableDagNode): occurs() ->
+	occurs2()
+
+	* variableDagNode.cc (instantiate): becomes instantiate2()
+	(occurs): becomes occurs2()
+
+	* variableDagNode.hh (class VariableDagNode): instantiate() ->
+	instantiate2()
+
+	* variableDagNode.cc (computeBaseSortForGroundSubterms): added
+
+	* variableDagNode.hh (class VariableDagNode): added decl for
+	computeBaseSortForGroundSubterms()
+
+===================================Maude88e===========================================
+
+2007-01-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (unify): handle the case where we unify an
+	unbound variable against itself
+
+2007-01-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableSymbol.cc (computeGeneralizedSort): added
+
+	* variableSymbol.hh (class VariableSymbol): added decl for
+	computeGeneralizedSort()
+
+2006-12-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (occurs): added
+	(unify): do occurs check
+
+	* variableDagNode.hh (class VariableDagNode): added decls for
+	occurs() and instantiate()
+
+	* variableDagNode.cc (instantiate): added
+	(unify): use instantiate()
+	(unify): use update()
+
+2006-12-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (unify): added
+
+2006-12-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (makeClone, overwriteWithClone) 
+	(copyEagerUptoReduced2): pass index to VariableDagNode()
+
+	* variableTerm.cc (dagify2): pass index to VariableDagNode()
+
+	* variableDagNode.hh (class VariableDagNode): added data member index
+	(getIndex): added
+	(VariableDagNode): handle index
+
+===================================Maude88d===========================================
+
 2005-06-24  Steven Eker  <eker@goo.csl.sri.com>
 
 	* variableTerm.hh (class VariableTerm): updated decl for

@@ -144,6 +144,8 @@ FloatOpSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
     CODE_CASE(d, '<', '=', "<=")
     CODE_CASE(d, '>', 0, ">")
     CODE_CASE(d, '>', '=', ">=")
+    CODE_CASE(d, 'm', 'i', "min")
+    CODE_CASE(d, 'm', 'a', "max")
     case CODE('f', 'l'):
       {
 	d = (succSymbol == 0) ? "floor" : "float";  // HACK
@@ -336,6 +338,16 @@ FloatOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		    a2 = (a2 < 0) ? -1 : 1;
 		  }
 		r = atan2(a1, a2);
+		break;
+	      }
+	    case CODE('m', 'i'):
+	      {
+		r = (a1 < a2) ? a1 : a2;
+		break;
+	      }
+	    case CODE('m', 'a'):
+	      {
+		r = (a1 < a2) ? a2 : a1;
 		break;
 	      }
 	    default:

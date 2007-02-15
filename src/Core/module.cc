@@ -40,6 +40,7 @@
 #include "sortConstraint.hh"
 #include "equation.hh"
 #include "rule.hh"
+#include "sortBdds.hh"
 #include "module.hh"
 
 //	variable class definitions
@@ -49,37 +50,12 @@ Module::Module(int id)
   : NamedEntity(id)
 {
   status = OPEN;
-}
-
-void
-Module::insertSortConstraint(SortConstraint* sortConstraint)
-{
-  Assert(status < THEORY_CLOSED, "bad status");
-  sortConstraint->setModuleInfo(this, sortConstraints.length());
-  sortConstraints.append(sortConstraint);
-  sortConstraint->check();
-}
-
-void
-Module::insertEquation(Equation* equation)
-{
-  Assert(status < THEORY_CLOSED, "bad status");
-  equation->setModuleInfo(this, equations.length());
-  equations.append(equation);
-  equation->check();
-}
-
-void
-Module::insertRule(Rule* rule)
-{
-  Assert(status < THEORY_CLOSED, "bad status");
-  rule->setModuleInfo(this, rules.length());
-  rules.append(rule);
-  rule->check();
+  sortBdds = 0;
 }
 
 Module::~Module()
 {
+  delete sortBdds;
   //
   //	This is delicate; first we lose any root pointers to
   //	dag nodes that might contain pointers to our symbols.
@@ -119,6 +95,41 @@ Module::~Module()
       memset(p, -1, sizeof(Symbol));
     }
 #endif
+}
+
+const SortBdds*
+Module::getSortBdds()
+{
+  if (sortBdds == 0)
+    sortBdds = new SortBdds(this);
+  return sortBdds;
+}
+
+void
+Module::insertSortConstraint(SortConstraint* sortConstraint)
+{
+  Assert(status < THEORY_CLOSED, "bad status");
+  sortConstraint->setModuleInfo(this, sortConstraints.length());
+  sortConstraints.append(sortConstraint);
+  sortConstraint->check();
+}
+
+void
+Module::insertEquation(Equation* equation)
+{
+  Assert(status < THEORY_CLOSED, "bad status");
+  equation->setModuleInfo(this, equations.length());
+  equations.append(equation);
+  equation->check();
+}
+
+void
+Module::insertRule(Rule* rule)
+{
+  Assert(status < THEORY_CLOSED, "bad status");
+  rule->setModuleInfo(this, rules.length());
+  rules.append(rule);
+  rule->check();
 }
 
 void

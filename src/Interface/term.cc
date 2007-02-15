@@ -66,7 +66,7 @@ DagNode*
 Term::term2Dag(bool setSortInfo)
 {
   setSortInfoFlag = setSortInfo;
-  subDags.contractTo(0);
+  subDags.clear();
   converted.makeEmpty();
   return dagify();
 }

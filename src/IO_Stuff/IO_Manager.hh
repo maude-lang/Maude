@@ -41,7 +41,7 @@ public:
     DEFAULT_LINES = 25
   };
 
-  IO_Manager::IO_Manager();
+  IO_Manager();
 
   void setAutoWrap();
   void setCommandLineEditing(size_t maxLineLength = MAX_LINE_LENGTH,

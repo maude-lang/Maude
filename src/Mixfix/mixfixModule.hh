@@ -30,14 +30,14 @@
 #include <map>
 #include "profileModule.hh"
 #include "metadataStore.hh"
-#include "commonTokens.hh"
+#include "sharedTokens.hh"
 #include "freeTheory.hh"
 #include "builtIn.hh"
 #include "token.hh"
 #include "pointerSet.hh"
 #include "symbolType.hh"
 
-class MixfixModule : public ProfileModule, public MetadataStore, protected CommonTokens
+class MixfixModule : public ProfileModule, public MetadataStore, protected SharedTokens
 {
   NO_COPYING(MixfixModule);
 
@@ -140,6 +140,12 @@ public:
 			 Term*& pattern,
 			 Term*& subject,
 			 Vector<ConditionFragment*>& condition);
+  bool parseUnifyCommand(const Vector<Token>& bubble,
+			 Term*& lhs,
+			 Term*& rhs);
+  bool parseStrategyCommand(const Vector<Token>& bubble,
+			    Term*& subject,
+			    StrategyExpression*& strategy);
   //
   //	Get functions.
   //
@@ -236,7 +242,16 @@ public:  // HACK
     PREFIX_PREC = 0,
     PREFIX_GATHER = 95,		// to allow _,_ to work correctly
     UNARY_PREC = 15,		// backward compatibility with OBJ3 defaults
-    INFIX_PREC = 41		// backward compatibility with OBJ3 defaults
+    INFIX_PREC = 41,		// backward compatibility with OBJ3 defaults
+    //
+    //	Precedences for strategy language.
+    //
+    ASSIGNMENT_PREC = 75,
+    STRAT_TEST_PREC = 93,
+    STRAT_SEQ_PREC = 95,
+    STRAT_UNION_PREC = 97,
+    STRAT_ORELSE_PREC = 99,
+    STRAT_BRANCH_PREC = 101
   };
 
 private:
@@ -308,11 +323,21 @@ private:
     MATCH_PAIR = -30,
     SEARCH_PAIR = -31,
     SUCH_THAT = -32,
+    STRATEGY_EXPRESSION = -33,
 
-    MATCH_COMMAND = -33,
-    SEARCH_COMMAND = -34,
+    MATCH_COMMAND = -34,
+    SEARCH_COMMAND = -35,
+    STRATEGY_COMMAND = -36,
 
-    COMPLEX_BASE = -35
+    ASSIGNMENT = -37,
+    SUBSTITUTION = -38,
+
+    STRATEGY_LIST = -39,
+
+    UNIFY_PAIR = -40,
+    UNIFY_COMMAND = -41,
+
+    COMPLEX_BASE = -42
   };
 
   enum NonTerminalType
@@ -402,6 +427,7 @@ private:
 
   void makeGrammar(bool complexFlag = false);
   void makeComplexProductions();
+  void makeStrategyLanguageProductions();
   void makeStatementProductions();
   void makeConditionProductions();
   void makeAttributeProductions();
@@ -672,11 +698,15 @@ private:
 		   const ConnectedComponent* rightCaptureComponent,
 		   bool rangeKnown);
 
+  static bool prettyPrint(ostream& s, StrategyExpression* strategy, int requiredPrec);
+
+
   NatSet objectSymbols;
   NatSet messageSymbols;
 
   friend ostream& operator<<(ostream& s, const Term* term);
   friend ostream& operator<<(ostream& s, DagNode* dagNode);
+  friend ostream& operator<<(ostream& s, StrategyExpression* strategy);
 };
 
 inline SymbolType

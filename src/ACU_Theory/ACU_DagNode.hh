@@ -156,6 +156,8 @@ private:
   friend ACU_DagNode* getACU_DagNode(DagNode* dagNode);
 };
 
+ACU_DagNode* getACU_DagNode(DagNode* dagNode);
+
 inline
 ACU_DagNode::ACU_DagNode(ACU_Symbol* symbol, int size, NormalizationStatus status)
   : ACU_BaseDagNode(symbol), argArray(size)

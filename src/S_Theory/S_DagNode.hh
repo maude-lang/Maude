@@ -62,6 +62,16 @@ public:
   DagNode* partialConstruct(DagNode* replacement, ExtensionInfo* extensionInfo);
   ExtensionInfo* makeExtensionInfo();
   //
+  //	Unification stuff.
+  //
+  bool unify(DagNode* rhs,
+	     Substitution& solution,
+	     Subproblem*& returnedSubproblem,
+	     ExtensionInfo* extensionInfo);
+  bool computeBaseSortForGroundSubterms();
+  DagNode* instantiate2(Substitution& substitution);
+  bool occurs2(int index);
+  //
   //	Functions specific to S_DagNode.
   //
   S_Symbol* symbol() const;

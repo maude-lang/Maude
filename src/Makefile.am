@@ -20,4 +20,6 @@ SUBDIRS = \
 	Meta \
 	FullCompiler \
 	MSCP10 \
-	Mixfix
+	StrategyLanguage \
+	Mixfix \
+	Main

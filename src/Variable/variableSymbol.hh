@@ -42,6 +42,14 @@ public:
   void stackArguments(DagNode* subject,
 		      Vector<RedexPosition>& stack,
 		      int parentIndex);
+
+  //
+  //	Unification stuff.
+  //
+  void computeGeneralizedSort(const SortBdds& sortBdds,
+			      const Vector<int> realToBdd,
+			      DagNode* subject,
+			      Vector<Bdd>& generalizedSort);
   //
   //	VariableSymbol specific functions.
   //

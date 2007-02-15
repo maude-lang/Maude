@@ -91,10 +91,10 @@ StateTransitionGraph3::getNextState(int stateNr, int index)
     {
       RewritingContext* newContext = initial->makeSubcontext(seenSet.index2DagNode(stateNr));
       n->rewriteState = new RewriteSearchState(newContext,
-					      NONE,
-					      RewriteSearchState::GC_CONTEXT,
-					      0,
-					      UNBOUNDED);
+					       NONE,
+					       RewriteSearchState::GC_CONTEXT,
+					       0,
+					       UNBOUNDED);
     }
 
   RewriteSearchState* rewriteState = n->rewriteState;
@@ -115,12 +115,12 @@ StateTransitionGraph3::getNextState(int stateNr, int index)
 		return NONE;
 	    }
 	  DagNode* replacement = rewriteState->getReplacement();
-	  DagNode* r = rewriteState->rebuildDag(replacement);
-          RewritingContext* c = context->makeSubcontext(r);
+	  RewriteSearchState::DagPair r = rewriteState->rebuildDag(replacement);
+          RewritingContext* c = context->makeSubcontext(r.first);
 	  initial->incrementRlCount();
 	  if (trace)
 	    {
-	      c->tracePostRuleRewrite(replacement);
+	      c->tracePostRuleRewrite(r.second);
 	      if (c->traceAbort())
 		{
 		  delete c;
@@ -135,12 +135,12 @@ StateTransitionGraph3::getNextState(int stateNr, int index)
             }
 	  initial->addInCount(*c);
 	  delete c;
-	  int nextState = seenSet.dagNode2Index(r);
+	  int nextState = seenSet.dagNode2Index(r.first);
 	  if (nextState == NONE)
 	    {
 	      nextState = seen.length();
 	      insertNewState(stateNr);
-	      seenSet.insert(r);
+	      seenSet.insert(r.first);
 	    }
 	  n->nextStates.append(nextState);
 	  n->fwdArcs[nextState].insert(rule);

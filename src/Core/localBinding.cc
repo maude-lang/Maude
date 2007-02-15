@@ -41,6 +41,7 @@
 //      core class definitions
 #include "variableInfo.hh"
 #include "substitution.hh"
+#include "subproblemAccumulator.hh"
 #include "localBinding.hh"
 
 LocalBinding::LocalBinding(int maxSize) : bindings(0, maxSize)
@@ -93,6 +94,29 @@ LocalBinding::retract(Substitution& substitution)
           substitution.bind(i->variableIndex, 0);
         }
     }
+}
+
+bool
+LocalBinding::unificationAssert(Substitution& substitution, Subproblem*& returnedSubproblem)
+{
+  SubproblemAccumulator subproblems;
+  int nrBindings = bindings.size();
+  for (int i = 0; i < nrBindings; ++i)
+    {
+      int index = bindings[i].variableIndex;
+      DagNode* newValue = bindings[i].value;
+      DagNode* originalValue = substitution.value(index);
+      if (originalValue == 0)
+	substitution.unificationBind(index, 0, newValue);
+      else
+	{
+	  if (!(originalValue->unify(newValue, substitution, returnedSubproblem, 0)))
+	    return false;
+	  subproblems.add(returnedSubproblem);
+	}
+      returnedSubproblem = subproblems.extractSubproblem();
+    }
+  return true;
 }
 
 #ifdef DUMP

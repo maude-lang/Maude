@@ -85,6 +85,11 @@ public:
 		     Subproblem*& returnedSubproblem,
 		     ExtensionInfo* extensionInfo);
   //
+  //	Currently only used as an efficiency measure in changing the sorts
+  //	of fresh variables introduced by unification.
+  //
+  void replaceSymbol(Symbol* newSymbol);
+  //
   //	These member functions must be defined for each derived class.
   //
   virtual RawDagArgumentIterator* arguments() = 0;
@@ -99,6 +104,25 @@ public:
   virtual void stackArguments(Vector<RedexPosition>& redexStack,
 			      int parentIndex,
 			      bool respectFrozen) = 0;
+
+  //
+  //	Temporary interface for unification experiments.
+  //
+  virtual bool unify(DagNode* rhs,
+		     Substitution& solution,
+		     Subproblem*& returnedSubproblem,
+		     ExtensionInfo* extensionInfo = 0) { CantHappen("Not implemented"); return false; }
+  virtual bool computeBaseSortForGroundSubterms() { CantHappen("Not implemented"); return false; }
+  //
+  //	instantiate() returns 0 if instantiation does not change term.
+  //
+  DagNode* instantiate(Substitution& substitution);
+  virtual DagNode* instantiate2(Substitution& substitution) { CantHappen("Not implemented"); return 0; }
+  bool occurs(int index);
+  virtual bool occurs2(int index) { CantHappen("Not implemented"); return true; }
+  void computeGeneralizedSort(const SortBdds& sortBdds,
+			      const Vector<int> realToBdd,  // first BDD variable for each free real variable
+			      Vector<Bdd>& generalizedSort);
   //
   //	These member functions must be defined for each derived class in theories
   //	that need extension
@@ -218,6 +242,12 @@ inline void
 DagNode::setSortIndex(int index)
 {
   getMemoryCell()->setHalfWord(index);
+}
+
+inline void
+DagNode::replaceSymbol(Symbol* newSymbol)
+{
+  topSymbol = newSymbol;
 }
 
 inline void
@@ -467,6 +497,24 @@ DagNode::copyAndReduce(RewritingContext& context)
   DagNode* d = copyReducible();
   d->reduce(context);
   return d;
+}
+
+inline DagNode*
+DagNode::instantiate(Substitution& substitution)
+{
+  //
+  //	If we know our sort we must be ground.
+  //
+  return (getSortIndex() == Sort::SORT_UNKNOWN) ? instantiate2(substitution) : 0;
+}
+
+inline bool
+DagNode::occurs(int index)
+{
+  //
+  //	If we know our sort we must be ground.
+  //
+  return (getSortIndex() == Sort::SORT_UNKNOWN) ? occurs2(index) : false;
 }
 
 inline bool

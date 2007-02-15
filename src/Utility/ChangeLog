@@ -1,3 +1,25 @@
+2007-01-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bddUser.hh (class BddUser): added decl for gc_handler()
+
+	* bddUser.cc (gc_handler): added
+	(BddUser): call bdd_gbc_hook()
+
+2007-01-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* allSat.cc (nextAssignment): fixed bug where we were not setting
+	assignment entry to 1 when we take high branch
+
+2007-01-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added class AllSat
+
+	* allSat.cc: created
+
+	* allSat.hh: created
+
+===================================Maude88d===========================================
+
 2005-10-06  Steven Eker  <eker@goo.csl.sri.com>
 
 	* macros.hh: #if before includes; include <unistd.h>

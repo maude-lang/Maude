@@ -38,6 +38,7 @@ public:
   bool normalize();
   void prepare();
   DagNode* getDag();
+  DagRoot* getDagRoot();
   void reset();
 
 private:
@@ -89,6 +90,12 @@ CachedDag::getDag()
       dag.setNode(d);
     }
   return d;
+}
+inline DagRoot*
+CachedDag::getDagRoot()
+{
+  (void) getDag();
+  return &dag;
 }
 
 inline void

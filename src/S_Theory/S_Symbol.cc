@@ -255,27 +255,19 @@ S_Symbol::computeBaseSort(DagNode* subject)
 {
   Assert(this == subject->symbol(), "bad symbol");
   S_DagNode* s = safeCast(S_DagNode*, subject);
-  const SortPath& path = sortPathTable[s->arg->getSortIndex()];
-  const mpz_class& number = *(s->number);
-  int pathLength = path.sortIndices.length();
-  if (number <= pathLength)
-    {
-      //
-      //	No cycle case.
-      //
-      s->setSortIndex(path.sortIndices[number.get_si() - 1]);
-    }
-  else
-    {
-      //
-      //	Cycle case.
-      //
-      int cycleLength = pathLength - path.leadLength;
-      mpz_class cycleSteps = number - (path.leadLength + 1);
-      int remainder = mpz_tdiv_ui(cycleSteps.get_mpz_t(), cycleLength);
-      s->setSortIndex(path.sortIndices[path.leadLength + remainder]);
-    }
-  return;
+  int argSortIndex = s->getArgument()->getSortIndex();
+  Assert(argSortIndex != Sort::SORT_UNKNOWN, "unknown sort");
+  subject->setSortIndex(sortPathTable[argSortIndex].computeSortIndex(s->getNumber()));
+}
+
+void
+S_Symbol::fillInSortInfo(Term* subject)
+{
+  Assert(this == subject->symbol(), "bad symbol");
+  S_Term* s = safeCast(S_Term*, subject);
+  Term* arg = s->getArgument();
+  arg->symbol()->fillInSortInfo(arg);
+  subject->setSortInfo(rangeComponent(), sortPathTable[arg->getSortIndex()].computeSortIndex(s->getNumber()));
 }
 
 bool
@@ -325,4 +317,70 @@ S_Symbol::mightCollapseToOurSymbol(const Term* subterm) const
         return true;
     }
   return false;
+}
+
+void
+S_Symbol::computeSortFunctionBdds(const SortBdds& /* sortBdds */, Vector<Bdd>& /* sortFunctionBdds */) const
+{
+  //
+  //	We don't make use of a precomputed sort function since we need to handle stacks of
+  //	symbols efficiently - therefore we don't waste time and space computing one.
+  //
+}
+
+void
+S_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
+				 const Vector<int> realToBdd,
+				 DagNode* subject,
+				 Vector<Bdd>& generalizedSort)
+{
+  Assert(this == subject->symbol(), "bad symbol");
+  //
+  //	First we compute the generalized sort of our argument.
+  //
+  S_DagNode* s = safeCast(S_DagNode*, subject);
+  DagNode* arg = s->getArgument();
+  const mpz_class& number = s->getNumber();
+  Vector<Bdd> argGenSort;
+  arg->computeGeneralizedSort(sortBdds, realToBdd, argGenSort);
+  //
+  //	Prepare all false generalized output sort vector.
+  //
+  Assert(generalizedSort.empty(), "non-empty generalizedSort");
+  int nrBits = argGenSort.size();
+  generalizedSort.resize(nrBits);
+  //
+  //	The negation of each input BDD will be used at least once
+  //	(otherwise the bit would always be 1 and hence unneeded) and
+  //	thus we calculate them in advance.
+  //
+  Vector<Bdd> negArgGenSort(nrBits);
+  for (int i = 0; i < nrBits; ++i)
+    negArgGenSort[i] = bdd_not(argGenSort[i]);
+  //
+  //	Then for each possible value of this sort we compute
+  //	the index of the sort produced by our iterated functon symbol.
+  //
+  int nrSorts = sortPathTable.size();
+  for (int i = 0; i < nrSorts; ++i)
+    {
+      //
+      //	equal will hold the BDD that returns true when our argument
+      //	has sort index i.
+      //
+      Bdd equal = bddtrue;
+      int inIndex = i;
+      for (int j = 0; j < nrBits; ++j, inIndex >>= 1)
+	equal = bdd_and(equal, (inIndex & 1) ? argGenSort[j] : negArgGenSort[j]);
+      //
+      //	We compute the output sort index and OR the equal BDD into each
+      //	output BDD whose corrresponding bit is 1 in the output sort index.
+      //
+      int outIndex = sortPathTable[i].computeSortIndex(number);
+      for (int j = 0; j < nrBits; ++j, outIndex >>= 1)
+	{
+	  if (outIndex & 1)
+	    generalizedSort[j] = bdd_or(generalizedSort[j], equal);
+	}
+    }
 }

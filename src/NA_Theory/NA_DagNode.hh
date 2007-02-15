@@ -48,6 +48,14 @@ public:
   void stackArguments(Vector<RedexPosition>& stack,
 		      int parentIndex,
 		      bool respectFrozen);
+  //
+  //	Stuff for unification.
+  //
+  bool unify(DagNode* rhs,
+	     Substitution& solution,
+	     Subproblem*& returnedSubproblem,
+	     ExtensionInfo* extensionInfo);
+  bool computeBaseSortForGroundSubterms();
 
 private:
   DagNode* markArguments();

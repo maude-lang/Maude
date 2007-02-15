@@ -27,6 +27,7 @@ libcore_a_SOURCES = \
 	localBinding.cc \
 	subproblemSequence.cc \
 	subproblemDisjunction.cc \
+	unificationSubproblemDisjunction.cc \
 	sortCheckSubproblem.cc \
 	disjunctiveSubproblemAccumulator.cc \
 	preEquation.cc \
@@ -40,8 +41,10 @@ libcore_a_SOURCES = \
 	cachedDag.cc \
 	extensionMatchSubproblem.cc \
 	dagNodeSet.cc \
+	dagNodeCache.cc \
 	memoTable.cc \
-	rootContainer.cc
+	rootContainer.cc \
+	sortBdds.cc
 
 EXTRA_DIST = \
 	run.cc \
@@ -63,6 +66,7 @@ noinst_HEADERS = \
 	core.hh \
 	dagArgumentIterator.hh \
 	dagNodeSet.hh \
+	dagNodeCache.hh \
 	dagRoot.hh \
 	disjunctiveSubproblemAccumulator.hh \
 	equalitySubproblem.hh \
@@ -88,6 +92,7 @@ noinst_HEADERS = \
 	ruleTable.hh \
 	simpleRootContainer.hh \
 	sort.hh \
+	sortBdds.hh \
 	sortCheckSubproblem.hh \
 	sortConstraint.hh \
 	sortConstraintTable.hh \
@@ -95,6 +100,7 @@ noinst_HEADERS = \
 	strategy.hh \
 	subproblemAccumulator.hh \
 	subproblemDisjunction.hh \
+	unificationSubproblemDisjunction.hh \
 	subproblemSequence.hh \
 	substitution.hh \
 	symbolMap.hh \

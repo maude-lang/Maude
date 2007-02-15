@@ -41,6 +41,10 @@ public:
   virtual bool solve(bool findFirst,
 		     RewritingContext& solution,
 		     stack<ConditionState*>& state) = 0;
+
+#ifdef DUMP
+  virtual void dump(ostream& s, const VariableInfo& variableInfo, int indentLevel) {}
+#endif
 };
 
 //

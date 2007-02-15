@@ -140,3 +140,17 @@ AssignmentConditionFragment::solve(bool findFirst,
     }
   return false;
 }
+
+DagNode*
+AssignmentConditionFragment::makeRhsInstance(Substitution& solution)
+{
+  builder.safeConstruct(solution);
+  return solution.value(rhsIndex);
+}
+
+bool
+AssignmentConditionFragment::matchRoot(RewritingContext& context, Subproblem*& subproblem)
+{
+  subproblem = 0;
+  return lhsMatcher->match(context.root(), context, subproblem);
+}

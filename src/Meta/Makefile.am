@@ -15,7 +15,8 @@ libmeta_a_CPPFLAGS = \
 	-I$(top_srcdir)/src/Mixfix \
 	-I$(top_srcdir)/src/BuiltIn \
 	-I$(top_srcdir)/src/MSCP10 \
-	-I$(top_srcdir)/src/IO_Stuff
+	-I$(top_srcdir)/src/IO_Stuff \
+	-I$(top_srcdir)/src/StrategyLanguage
 
 libmeta_a_SOURCES = \
 	metaModuleCache.cc \
@@ -36,6 +37,7 @@ EXTRA_DIST = \
 	ascentFunctions.cc \
 	metaApply.cc \
 	metaMatch.cc \
+	metaUnify.cc \
 	metaSearch.cc \
 	descentSignature.cc
 

@@ -38,7 +38,6 @@
 #include "dagNode.hh"
 
 //	core class definitions
-//#include "variableSymbol.hh"
 #include "variableInfo.hh"
 #include "substitution.hh"
 #include "trivialRhsAutomaton.hh"

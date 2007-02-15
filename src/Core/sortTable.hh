@@ -26,6 +26,7 @@
 #ifndef _sortTable_hh_
 #define _sortTable_hh_
 #include <set>
+#include "bdd.hh"
 #include "opDeclaration.hh"
 #include "fullCompiler.hh"
 #include "connectedComponent.hh"
@@ -60,6 +61,14 @@ public:
   int traverse(int position, int sortIndex) const;
   bool kindLevelDeclarationsOnly() const;
   const NatSet& getMaximalOpDeclSet(Sort* target);
+  //
+  //	Unification stuff.
+  //
+  virtual void computeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFunctionBdds) const;
+  virtual void computeGeneralizedSort(const SortBdds& sortBdds,
+				      const Vector<int> realToBdd,  // first BDD variable for each free real variable
+				      DagNode* subject,
+				      Vector<Bdd>& generalizedSort) { CantHappen("not implemented"); }
 
 #ifdef COMPILER
   void generateSortDiagram(CompilationContext& context) const;
@@ -74,9 +83,12 @@ protected:
 #endif
 
 private:
+  typedef Vector<Bdd> BddVector;
+  typedef Vector<BddVector> BddTable;
+
   struct Node;
   struct SpanningTree;
-
+  
   void buildSortDiagram();
   void buildCtorDiagram();
   void sortErrorAnalysis(bool preregProblem,
@@ -88,6 +100,11 @@ private:
   bool partiallySubsumes(int subsumer, int victim, int argNr);
   void minimize(NatSet& alive, int argNr);
 
+  void computeBddVector(const SortBdds& sortBdds,
+			int bddVarNr,
+			int argNr,
+			BddTable& table,
+			int nodeNr) const;
   // void panic() const;  // HACK
 
   bool containsConstructor(const NatSet& state, bool& unique);

@@ -61,6 +61,13 @@ public:
   void postOpDeclarationPass();
   void setFrozen(const NatSet& frozen);
   //
+  //	Unification stuff.
+  //
+  void computeGeneralizedSort(const SortBdds& sortBdds,
+			      const Vector<int> realToBdd,
+			      DagNode* subject,
+			      Vector<Bdd>& generalizedSort);
+  //
   //	Member function specific to CUI specific function CUI_Symbol.
   //
   bool comm() const;

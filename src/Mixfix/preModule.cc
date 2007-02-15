@@ -37,6 +37,7 @@
 #include "freeTheory.hh"
 #include "AU_Theory.hh"
 #include "higher.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
 
 //      interface class definitions
@@ -69,7 +70,7 @@
 #include "preModule.hh"
 #include "interpreter.hh"
 #include "maudemlBuffer.hh"
-#include "main.hh"  // HACK shouldn't be accessing global variables
+#include "global.hh"  // HACK shouldn't be accessing global variables
 
 #ifdef QUANTIFY_PROCESSING
 #include "quantify.h"
@@ -91,7 +92,7 @@ PreModule::PreModule(Token startToken, Token moduleName)
     moduleType = MixfixModule::SYSTEM_THEORY;
   else if (startTokenCode == fth)
     moduleType = MixfixModule::FUNCTIONAL_THEORY;
-  else if (startTokenCode == mod || startTokenCode == omod)
+  else if (startTokenCode == mod || startTokenCode == omod || startTokenCode == smod)
     moduleType = MixfixModule::SYSTEM_MODULE;
   else
     moduleType = MixfixModule::FUNCTIONAL_MODULE;
@@ -173,6 +174,8 @@ PreModule::compatible(int endTokenCode)
     return endTokenCode == endm;
   if (startTokenCode == fmod)
     return endTokenCode == endfm;
+  if (startTokenCode == smod)
+    return endTokenCode == endsm;
   if (startTokenCode == omod)
     return endTokenCode == endom;
   //
@@ -205,6 +208,14 @@ PreModule::OpDef::OpDef()
 void
 PreModule::addParameter(Token name, ModuleExpression* theory)
 {
+  if (MixfixModule::isTheory(moduleType))
+    {
+      IssueWarning(LineNumber(name.lineNumber()) <<
+		   ": parmaeterized theories are not supported; recovering by ignoring parameter " <<
+		   QUOTE(name) << '.');
+      delete theory;
+      return;
+    }
   int nrParameters = parameters.length();
   parameters.resize(nrParameters + 1);
   parameters[nrParameters].name = name;
