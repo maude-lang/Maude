@@ -34,6 +34,7 @@
 #include "substitution.hh"
 #include "simpleRootContainer.hh"
 #include "dagNode.hh"
+#include "module.hh"
 
 class RewritingContext : public Substitution, private SimpleRootContainer
 {
@@ -101,6 +102,13 @@ public:
 				int fragmentIndex,
 				bool success);
 
+  virtual void traceNarrowingStep(Rule* rule,
+				  DagNode* redex,
+				  DagNode* replacement,
+				  const NarrowingVariableInfo* variableInfo,
+				  const Substitution* substitution,
+				  DagNode* newState);
+
 #ifdef DUMP
   static void dumpStack(ostream& s, const Vector<RedexPosition>& stack);
 #endif
@@ -146,8 +154,10 @@ private:
 
 inline
 RewritingContext::RewritingContext(DagNode* root)
-  : rootNode(root)
+  : Substitution(root->symbol()->getModule()->getMinimumSubstitutionSize(), 0),
+    rootNode(root)
 {
+  //cout << "sub size is " << root->symbol()->getModule()->getMinimumSubstitutionSize() << endl;
   Assert(root != 0, "null root");
   mbCount = 0;
   eqCount = 0;

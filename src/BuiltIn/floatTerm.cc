@@ -70,7 +70,6 @@ Term*
 FloatTerm::normalize(bool /* full */, bool& changed)
 {
   changed = false;
-  Int64 bitPattern = *(reinterpret_cast<const Int64*>(&value));
   setHashValue(hash(symbol()->getHashValue(), bitPattern ^ (bitPattern >> 32)));
   return this;
 }

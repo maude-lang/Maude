@@ -554,6 +554,11 @@ Renaming::addOpMapping(const Vector<Token>& tokens)
   lastOpMapping = opMap.insert(OpMap::value_type(name, OpMapping()));
   lastOpMapping->second.prec = MixfixModule::MIN_PREC - 1;  // initialize to invalid value
   lastOpMapping->second.index = opMapIndex.size();
+  //
+  //	We insert safe dummy values in case addOpTarget() never gets called (because of a syntax error).
+  //
+  lastOpMapping->second.name = name;  // map op to itself
+  lastOpMapping->second.term = 0;
   opMapIndex.append(lastOpMapping);
 }
 

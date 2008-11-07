@@ -61,6 +61,7 @@ libmixfix_a_SOURCES = \
 	visibleModule.cc \
 	sharedTokens.cc \
 	metadataStore.cc \
+	printAttribute.cc \
 	banner.cc \
 	lexer.cc \
 	surface.cc \
@@ -151,6 +152,7 @@ noinst_HEADERS = \
 	global.hh \
 	maudemlBuffer.hh \
 	metadataStore.hh \
+	printAttribute.hh \
 	mixfix.hh \
 	mixfixModule.hh \
 	mixfixParser.hh \

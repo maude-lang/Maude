@@ -25,11 +25,14 @@
 //
 #ifndef _freeNet_hh_
 #define _freeNet_hh_
+#include <set>
 #include "unionFind.hh"
 
 class FreeNet
 {
 public:
+  typedef set<int> PatternSet;
+
   ~FreeNet();
 
   //
@@ -43,10 +46,10 @@ public:
 		   const Vector<int>& targets,
 		   const Vector<int>& slots,
 		   int neqTarget);
-  int addRemainderList(const NatSet& liveSet);
+  int addRemainderList(const PatternSet& liveSet);
   void translateSlots(int nrRealSlots, const Vector<int>& slotTranslation);
   void buildRemainders(const Vector<Equation*>& equations,
-		       const NatSet& patternsUsed,
+		       const PatternSet& patternsUsed,
 		       const Vector<int>& slotTranslation);
   //
   //	Function to use a FreeNet.
@@ -120,7 +123,7 @@ private:
   Vector<TestNode> net;
   Vector<Vector<FreeRemainder*> > fastApplicable;
   Vector<FreeRemainder*> remainders;
-  Vector<NatSet> applicable;
+  Vector<PatternSet> applicable;
 };
 
 inline bool

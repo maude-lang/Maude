@@ -47,7 +47,7 @@ public:
   //	Unification stuff.
   //
   void computeGeneralizedSort(const SortBdds& sortBdds,
-			      const Vector<int> realToBdd,
+			      const Vector<int>& realToBdd,
 			      DagNode* subject,
 			      Vector<Bdd>& generalizedSort);
   //

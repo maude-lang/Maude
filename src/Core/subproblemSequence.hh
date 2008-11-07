@@ -35,6 +35,7 @@ public:
 
   void append(Subproblem* sp);
   bool solve(bool findFirst, RewritingContext& solution);
+  bool unificationSolve(bool findFirst, UnificationContext& solution);
 
 private:
   Vector<Subproblem*> sequence;

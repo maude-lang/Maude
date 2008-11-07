@@ -62,15 +62,18 @@ public:
   DagNode* partialConstruct(DagNode* replacement, ExtensionInfo* extensionInfo);
   ExtensionInfo* makeExtensionInfo();
   //
-  //	Unification stuff.
+  //	Unification member functions.
   //
-  bool unify(DagNode* rhs,
-	     Substitution& solution,
-	     Subproblem*& returnedSubproblem,
-	     ExtensionInfo* extensionInfo);
-  bool computeBaseSortForGroundSubterms();
-  DagNode* instantiate2(Substitution& substitution);
-  bool occurs2(int index);
+  ReturnResult computeBaseSortForGroundSubterms();
+  bool computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
+
+  mpz_class nonVariableSize();
+  void insertVariables2(NatSet& occurs);
+  DagNode* instantiate2(const Substitution& substitution);
+  //
+  //	Narrowing member functions.
+  //
+  DagNode* instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag);
   //
   //	Functions specific to S_DagNode.
   //

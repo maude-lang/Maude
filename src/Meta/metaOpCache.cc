@@ -45,9 +45,7 @@
 #include "dagRoot.hh"
 
 //	higher class definitions
-#include "searchState.hh"
-#include "rewriteSequenceSearch.hh"
-#include "unificationProblem.hh"
+#include "cacheableState.hh"
 
 //      free theory class definitions
 #include "freeSymbol.hh"
@@ -58,6 +56,14 @@
 
 //      metalevel class definitions
 #include "metaOpCache.hh"
+
+
+local_inline void
+MetaOpCache::Item::clear()
+{
+  delete metaOp;
+  delete state;
+}
 
 MetaOpCache::MetaOpCache(int maxSize)
   : maxSize(maxSize)
@@ -70,21 +76,17 @@ MetaOpCache::~MetaOpCache()
     cache[i].clear();
 }
 
-void
-MetaOpCache::Item::clear()
-{
-  delete metaOp;
-  delete state;
-  delete search;
-  delete unification;
-}
-
 bool
 MetaOpCache::sameProblem(FreeDagNode* m1, DagNode* m2)
 {
   Symbol* s = m1->symbol();
   if (s == m2->symbol())
     {
+      //
+      //	We don't look at the first argument since that's our module which
+      //	must be equal, and we don't look at the last argument since that's
+      //	the solution number which will usually be different.
+      //
       int nrUsefulArgs = s->arity() - 1;
       FreeDagNode* m3 = static_cast<FreeDagNode*>(m2);
       for (int i = 1; i < nrUsefulArgs; i++)
@@ -98,7 +100,7 @@ MetaOpCache::sameProblem(FreeDagNode* m1, DagNode* m2)
 }
 
 void
-MetaOpCache::insert(FreeDagNode* metaOp, SearchState* state, Int64 lastSolutionNr)
+MetaOpCache::insert(FreeDagNode* metaOp, CacheableState* state, Int64 lastSolutionNr)
 {
   if (cache.length() < maxSize)
     cache.expandBy(1);
@@ -110,16 +112,11 @@ MetaOpCache::insert(FreeDagNode* metaOp, SearchState* state, Int64 lastSolutionN
 
   cache[0].metaOp = new DagRoot(metaOp->makeClone());
   cache[0].state = state;
-  cache[0].search = 0;
-  cache[0].unification = 0;
   cache[0].lastSolutionNr = lastSolutionNr;
 }
 
 bool
-MetaOpCache::remove(FreeDagNode* metaOp,
-		    RewritingContext& parentContext,
-		    SearchState*& state,
-		    Int64& lastSolutionNr)
+MetaOpCache::remove(FreeDagNode* metaOp, CacheableState*& state, Int64& lastSolutionNr)
 {
   int nrEntries = cache.length();
   for (int i = 0; i < nrEntries; i++)
@@ -128,91 +125,6 @@ MetaOpCache::remove(FreeDagNode* metaOp,
 	{
 	  delete cache[i].metaOp;
 	  state = cache[i].state;
-	  safeCast(UserLevelRewritingContext*, state->getContext())->
-	    beAdoptedBy(safeCast(UserLevelRewritingContext*, &parentContext));
-	  lastSolutionNr = cache[i].lastSolutionNr;
-	  for (i++; i < nrEntries; i++)
-	    cache[i - 1] = cache[i];
-	  cache.contractTo(nrEntries - 1);
-	  return true;
-	}
-    }
-  return false;
-}
-
-void
-MetaOpCache::insert(FreeDagNode* metaOp, RewriteSequenceSearch* search, Int64 lastSolutionNr)
-{
-  if (cache.length() < maxSize)
-    cache.expandBy(1);
-  else
-    cache[cache.length() - 1].clear();
-      
-  for (int i = cache.length() - 1; i >= 1; i--)
-    cache[i] = cache[i - 1];
-
-  cache[0].metaOp = new DagRoot(metaOp->makeClone());
-  cache[0].state = 0;
-  cache[0].search = search;
-  cache[0].unification = 0;
-  cache[0].lastSolutionNr = lastSolutionNr;
-}
-
-bool
-MetaOpCache::remove(FreeDagNode* metaOp,
-		    RewritingContext& parentContext,
-		    RewriteSequenceSearch*& search,
-		    Int64& lastSolutionNr)
-{
-  int nrEntries = cache.length();
-  for (int i = 0; i < nrEntries; i++)
-    {
-      if (sameProblem(metaOp, cache[i].metaOp->getNode()))
-	{
-	  delete cache[i].metaOp;
-	  search = cache[i].search;
-	  safeCast(UserLevelRewritingContext*, search->getContext())->
-	    beAdoptedBy(safeCast(UserLevelRewritingContext*, &parentContext));
-	  lastSolutionNr = cache[i].lastSolutionNr;
-	  for (i++; i < nrEntries; i++)
-	    cache[i - 1] = cache[i];
-	  cache.contractTo(nrEntries - 1);
-	  return true;
-	}
-    }
-  return false;
-}
-
-void
-MetaOpCache::insert(FreeDagNode* metaOp, UnificationProblem* unification, Int64 lastSolutionNr)
-{
-  if (cache.length() < maxSize)
-    cache.expandBy(1);
-  else
-    cache[cache.length() - 1].clear();
-      
-  for (int i = cache.length() - 1; i >= 1; i--)
-    cache[i] = cache[i - 1];
-
-  cache[0].metaOp = new DagRoot(metaOp->makeClone());
-  cache[0].state = 0;
-  cache[0].search = 0;
-  cache[0].unification = unification;
-  cache[0].lastSolutionNr = lastSolutionNr;
-}
-
-bool
-MetaOpCache::remove(FreeDagNode* metaOp,
-		    UnificationProblem*& unification,
-		    Int64& lastSolutionNr)
-{
-  int nrEntries = cache.length();
-  for (int i = 0; i < nrEntries; i++)
-    {
-      if (sameProblem(metaOp, cache[i].metaOp->getNode()))
-	{
-	  delete cache[i].metaOp;
-	  unification = cache[i].unification;
 	  lastSolutionNr = cache[i].lastSolutionNr;
 	  for (i++; i < nrEntries; i++)
 	    cache[i - 1] = cache[i];

@@ -25,8 +25,12 @@
 //
 #ifndef _userLevelRewritingContext_hh_
 #define _userLevelRewritingContext_hh_
+#include <signal.h>
+#ifdef USE_LIBSIGSEGV
+#include "sigsegv.h"
+#endif
 #include "objectSystemRewritingContext.hh"
-#include "module.hh"
+#include "metadataStore.hh"
 #include "rule.hh"
 class Token;  // HACK
 
@@ -92,15 +96,31 @@ public:
 			int fragmentIndex,
 			bool success);
 
+  void traceNarrowingStep(Rule* rule,
+			  DagNode* redex,
+			  DagNode* replacement,
+			  const NarrowingVariableInfo* variableInfo,
+			  const Substitution* substitution,
+			  DagNode* newState);
+
   static void printSubstitution(const Substitution& substitution,
 				const VariableInfo& varInfo);
+
+
 
 private:
   static void interruptHandler(int);
   static void interruptHandler2(...);
-  static void segmentationFaultHandler(int);
+
+#ifdef USE_LIBSIGSEGV
+  static void stackOverflowHandler(int emergency, stackoverflow_context_t scp);
+  static int sigsegvHandler(void *fault_address, int serious);
+#endif
+  static void internalErrorHandler(int signalNr);
+
   static void changePrompt();
   static bool dontTrace(const DagNode* redex, const PreEquation* pe);
+  void checkForPrintAttribute(MetadataStore::ItemType itemType, const PreEquation* item);
   bool handleDebug(const DagNode* subject, const PreEquation* pe);
   void where();
 

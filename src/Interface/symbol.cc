@@ -209,6 +209,7 @@ Symbol::finalizeSortInfo()
 void
 Symbol::reset()
 {
+  resetEachRule();
 }
 
 bool
@@ -450,6 +451,12 @@ Symbol::isConstructor(DagNode* subject)
       break;
     }
   return false;
+}
+
+int 
+Symbol::unificationPriority() const
+{
+  return 100;
 }
 
 #ifdef COMPILER

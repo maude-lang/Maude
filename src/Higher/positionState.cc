@@ -131,3 +131,31 @@ PositionState::rebuildDag(DagNode* replacement, ExtensionInfo* extInfo, Position
   //
   return DagPair(newDag, replacement);
 }
+
+PositionState::DagPair
+PositionState::rebuildAndInstantiateDag(DagNode* replacement, Substitution& substitution) const
+{
+  //
+  //	Extend the replacement term if needed.
+  //
+  if (extensionInfo != 0 && !(extensionInfo->matchedWhole()))
+    CantHappen("Extension not supported");
+  //replacement = positionQueue[index].node()->partialConstruct(replacement, extInfo);
+  //
+  //	Walk up the stack rebuilding.
+  //
+  DagNode* newDag = replacement;
+  int argIndex = positionQueue[nextToReturn].argIndex();
+  for (PositionIndex i = positionQueue[nextToReturn].parentIndex(); i != UNDEFINED;)
+    {
+      const RedexPosition& rp = positionQueue[i];
+      newDag = rp.node()->instantiateWithReplacement(substitution, argIndex, newDag);
+      argIndex = rp.argIndex();
+      i = rp.parentIndex();
+    }
+  //
+  //	We return the rebuilt dag, and the extended replacement term since the caller may
+  //	need the later for tracing purposes.
+  //
+  return DagPair(newDag, replacement);
+}

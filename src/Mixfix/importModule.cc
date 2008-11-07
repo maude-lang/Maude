@@ -404,7 +404,10 @@ ImportModule::deepCopyCondition(ImportTranslation* importTranslation,
 					   r->getRhs()->deepCopy(importTranslation));
 	}
       else
-	CantHappen("bad condition fragment");
+	{
+	  CantHappen("bad condition fragment");
+	  n = 0;  // avoid compiler warning
+	}
       copy[i] = n;
     }
 }
@@ -427,6 +430,41 @@ ImportModule::donateStatements(ImportModule* importer)
   //
   ImportTranslation importTranslation(importer);    
   donateStatements2(importer, importTranslation);
+}
+
+void
+ImportModule::copyMetadata(ImportModule* importer,
+			   ImportTranslation& importTranslation,
+			   ItemType itemType,
+			   PreEquation* original,
+			   PreEquation* copy)
+{
+  importer->insertMetadata(itemType, copy, getMetadata(itemType, original));
+  const PrintAttribute* p = getPrintAttribute(itemType, original);
+  if (p != 0)
+    {
+      int nrItems = p->getNrItems();
+      Vector<int> names(nrItems);
+      Vector<Sort*> sorts(nrItems);
+      for (int i = 0; i < nrItems; ++i)
+	{
+	  int code = p->getTokenCode(i);
+	  if (code == NONE)
+	    {
+	      int index = p->getVariableIndex(i);
+	      VariableTerm* v = safeCast(VariableTerm*, original->index2Variable(index));
+	      names[i] = v->id();
+	      Sort* sort = v->getSort();
+	      sorts[i] = importTranslation.translate(sort);
+	    }
+	  else
+	    {
+	      names[i] = code;
+	      sorts[i] = 0;
+	    }
+	}
+      importer->insertPrintAttribute(itemType, copy, names, sorts);
+    }
 }
 
 void
@@ -457,7 +495,8 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	    copy->setNonexec();
 	  copy->setLineNumber(ma->getLineNumber());
 	  importer->insertSortConstraint(copy);
-	  importer->insertMetadata(MEMB_AX, copy, getMetadata(MEMB_AX, ma));
+	  copyMetadata(importer, importTranslation, MEMB_AX, ma, copy);
+	  //importer->insertMetadata(MEMB_AX, copy, getMetadata(MEMB_AX, ma));
 	}
     }
   //
@@ -479,7 +518,8 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	    copy->setNonexec();
 	  copy->setLineNumber(e->getLineNumber());
 	  importer->insertEquation(copy);
-	  importer->insertMetadata(EQUATION, copy, getMetadata(EQUATION, e));
+	  copyMetadata(importer, importTranslation, EQUATION, e, copy);
+	  //importer->insertMetadata(EQUATION, copy, getMetadata(EQUATION, e));
 	}
     }
   //
@@ -501,7 +541,8 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	    copy->setNonexec();
 	  copy->setLineNumber(r->getLineNumber());
 	  importer->insertRule(copy);
-	  importer->insertMetadata(RULE, copy, getMetadata(RULE, r));
+	  copyMetadata(importer, importTranslation, RULE, r, copy);
+	  //importer->insertMetadata(RULE, copy, getMetadata(RULE, r));
 	}
     }
 }

@@ -58,6 +58,13 @@ public:
   void partialReplace(DagNode* replacement, ExtensionInfo* extensionInfo);
   DagNode* partialConstruct(DagNode* replacement, ExtensionInfo* extensionInfo);
   //
+  //	Interface for narrowing.
+  //
+  //	This is needed to remove any tree nodes from dag being narrowed since
+  //	unification and narrowing functionality doesn't support them.
+  //
+  bool indexVariables2(NarrowingVariableInfo& indices, int baseIndex);
+  //
   //	ACU_TreeDagNode -> ACU_DagNode in-place conversion function.
   //
   static ACU_DagNode* treeToArgVec(ACU_TreeDagNode* original);

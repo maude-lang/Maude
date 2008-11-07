@@ -220,7 +220,9 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	      case CODE('f', 'l'):
 		{
 		  bool error;
-		  //double fl = stringToDouble(left.c_str(), error);
+#ifdef ROPE_C_STR_BROKEN
+		  //
+		  //	This kudge doesn't seem to be need nowadays, but copy() doesn't work.
 		  //
 		  //	This messing about is needed because Rope::c_str()
 		  //	fails in libstdc++-v3
@@ -231,7 +233,9 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		  t[len] = '\0';
 		  double fl = stringToDouble(t, error);
 		  delete [] t;
-		  //
+#else
+		  double fl = stringToDouble(left.c_str(), error);
+#endif
 		  if (error)
 		    goto fail;
 		  return floatSymbol->rewriteToFloat(subject, context, fl);
@@ -282,6 +286,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		    break;
 		  default:
 		    CantHappen("bad string op");
+		    r = false;  // avoid compiler warning
 		  }
 		Assert(trueTerm.getTerm() != 0 && falseTerm.getTerm() != 0,
 		       "null true/false for relational op");
@@ -358,6 +363,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 			      break;
 			    default:
 			      CantHappen("bad string op");
+			      r = 0;  // avoid compiler warning
 			    }
 			  Assert(notFoundTerm.getTerm() != 0, "null notFound for find op");
 			  if (r == NONE)
@@ -591,6 +597,13 @@ StringOpSymbol::ropeToNumber(const crope& subject,
 		  if (!isalnum(subject[j]))
 		    return false;
 		}
+	      //
+	      //	We have detected a fraction form.
+	      //
+#ifdef ROPE_C_STR_BROKEN
+	      //
+	      //	This kudge doesn't seem to be need nowadays, but copy() doesn't work.
+	      //
 	      char* t = new char[len];  // longer than needed but who cares
 	      int dLen = len - (i + 1);
 	      subject.copy(i + 1, dLen, t);
@@ -609,20 +622,34 @@ StringOpSymbol::ropeToNumber(const crope& subject,
 		}
 	      delete [] t;
 	      return true;
+#else
+	      return mpz_set_str(denominator.get_mpz_t(), subject.substr(i + 1).c_str(), base) == 0 &&
+		mpz_set_str(numerator.get_mpz_t(), subject.substr(0,i).c_str(), base) == 0;
+#endif	      
 	    }
 	  else
 	    return false;
 	}
     }
+  //
+  //	We have a regular integer form.
+  //
+  denominator = 0;
+#ifdef ROPE_C_STR_BROKEN
+  //
+  //	This kudge doesn't seem to be need nowadays, but copy() doesn't work.
+  //
   char* t = new char[len + 1];
   subject.copy(t);
   t[len] = '\0';
   if (mpz_set_str(numerator.get_mpz_t(), t, base) == 0)
     {
       delete [] t;
-      denominator = 0;
       return true;
     }
   delete [] t;
-  return false;    
+  return false;
+#else
+  return mpz_set_str(numerator.get_mpz_t(), subject.c_str(), base) == 0;
+#endif
 }

@@ -118,7 +118,7 @@ MixfixModule::makeComplexProductions()
 
   static Vector<int> rhs(3);
 
-  rhs.contractTo(1);
+  rhs.resize(1);
   rhs[0] = arrowOne;
   parser->insertProduction(SEARCH_CONNECTIVE, rhs, 0, emptyGather,
 			   MixfixParser::NOP, RewriteSequenceSearch::ONE_STEP);
@@ -141,20 +141,27 @@ MixfixModule::makeComplexProductions()
 
   rhs[0] = suchThat;
   parser->insertProduction(SUCH_THAT, rhs, 0, gatherAny);
-  rhs.expandTo(2);
+
+  rhs.resize(2);
   rhs[0] = such;
   rhs[1] = that;
   parser->insertProduction(SUCH_THAT, rhs, 0, gatherAnyAny);
 
-  rhs.expandTo(3);
+  rhs.resize(3);
   rhs[0] = MATCH_PAIR;
   rhs[1] = SUCH_THAT;
   rhs[2] = CONDITION;
   parser->insertProduction(MATCH_COMMAND, rhs, 0, gatherAnyAnyAny,
 			   MixfixParser::CONDITIONAL_COMMAND);
+
   rhs[0] = SEARCH_PAIR;
   parser->insertProduction(SEARCH_COMMAND, rhs, 0, gatherAnyAnyAny,
 			   MixfixParser::CONDITIONAL_COMMAND);
+
+  rhs[0] = UNIFY_PAIR;
+  rhs[1] = wedge;
+  rhs[2] = UNIFY_COMMAND;
+  parser->insertProduction(UNIFY_COMMAND, rhs, 0, gatherAnyAny, MixfixParser::UNIFY_LIST);
   //
   //	Substitutions.
   //
@@ -427,7 +434,15 @@ MixfixModule::makeAttributeProductions()
   rhs[1] = STRING_NT;
   parser->insertProduction(ATTRIBUTE, rhs, 0, gatherAny,
 			   MixfixParser::MAKE_METADATA_ATTRIBUTE);
+  rhs[0] = print;
+  rhs[1] = PRINT_LIST;
+  parser->insertProduction(ATTRIBUTE, rhs, 0, gatherAny,
+			   MixfixParser::MAKE_PRINT_ATTRIBUTE);
+
   rhs.resize(1);
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
+			   MixfixParser::MAKE_PRINT_ATTRIBUTE);
+
   rhs[0] = nonexec;
   parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
 			   MixfixParser::MAKE_NONEXEC_ATTRIBUTE);
@@ -437,6 +452,23 @@ MixfixModule::makeAttributeProductions()
   rhs[0] = owise;
   parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
 			   MixfixParser::MAKE_OWISE_ATTRIBUTE);
+
+  //
+  //	Print items.
+  //
+  rhs[0] = STRING_NT;
+  parser->insertProduction(PRINT_ITEM, rhs, 0, gatherAny, MixfixParser::MAKE_STRING);
+  rhs[0] = VARIABLE;
+  parser->insertProduction(PRINT_ITEM, rhs, 0, gatherAny, MixfixParser::MAKE_VARIABLE);
+  //
+  //	Print lists.
+  //
+  rhs[0] = PRINT_ITEM;
+  parser->insertProduction(PRINT_LIST, rhs, 0, gatherAny);
+  rhs.resize(2);
+  rhs[1] = PRINT_LIST;
+  parser->insertProduction(PRINT_LIST, rhs, 0, gatherAnyAny,
+			   MixfixParser::MAKE_PRINT_LIST);
 }
 
 void
@@ -645,6 +677,8 @@ MixfixModule::makeComponentProductions()
 	      parts[0] = leadTokens[lead];  // nonterminal
 	      parser->insertProduction(termNt, parts, 0, gatherAny,
 				       MixfixParser::MAKE_VARIABLE, sortIndex);
+	      parser->insertProduction(VARIABLE, parts, 0, gatherAny,
+				       MixfixParser::MAKE_VARIABLE, sortIndex);
 	    }
 	  //
 	  //	Syntax for yet unseen variables of our sort.
@@ -657,6 +691,8 @@ MixfixModule::makeComponentProductions()
 	      //cerr << termNt << " ::= " << rhsOne[0] << endl;
 	      parser->insertProduction(termNt, rhsOne, 0, gatherAny,
 				       MixfixParser::MAKE_VARIABLE, sortIndex);
+	      parser->insertProduction(VARIABLE, rhsOne, 0, gatherAny,
+				       MixfixParser::MAKE_VARIABLE, sortIndex);
 	    }
 	  else
 	    {
@@ -667,6 +703,8 @@ MixfixModule::makeComponentProductions()
 	      //cerr << termNt << " ::= " << rhsOne[0] << endl;
 	      parser->insertProduction(termNt, rhsOne, 0, emptyGather,
 				       MixfixParser::MAKE_VARIABLE, sortIndex);
+	      parser->insertProduction(VARIABLE, rhsOne, 0, emptyGather,
+				       MixfixParser::MAKE_VARIABLE, sortIndex);
 	    }
 	}
       //
@@ -676,6 +714,8 @@ MixfixModule::makeComponentProductions()
       int sortIndex = component->sort(Sort::ERROR_SORT)->getIndexWithinModule();
       rhsKindVariable[2] = sortListNt;
       parser->insertProduction(termNt, rhsKindVariable, 0, gatherAnyAny,
+			       MixfixParser::MAKE_VARIABLE, sortIndex);
+      parser->insertProduction(VARIABLE, rhsKindVariable, 0, gatherAnyAny,
 			       MixfixParser::MAKE_VARIABLE, sortIndex);
       //
       //	Syntax for term from unknown component:
@@ -937,6 +977,8 @@ MixfixModule::makeVariableProductions()
       Sort* sort = (*i).second;
       parser->insertProduction(nonTerminal(sort, TERM_TYPE), rhs, 0, emptyGather,
 			       MixfixParser::MAKE_VARIABLE_FROM_ALIAS, sort->getIndexWithinModule());
+      parser->insertProduction(VARIABLE, rhs, 0, emptyGather,
+			       MixfixParser::MAKE_VARIABLE_FROM_ALIAS, sort->getIndexWithinModule());
     }
 }
 
@@ -1063,6 +1105,8 @@ MixfixModule::makeSpecialProductions()
 		rhs[0] = code;
 		parser->insertProduction(nonTerminal(componentIndex, TERM_TYPE),
 					 rhs, 0, emptyGather, MixfixParser::MAKE_VARIABLE, sortIndex);
+		parser->insertProduction(VARIABLE,
+					 rhs, 0, emptyGather, MixfixParser::MAKE_VARIABLE, sortIndex);
 	      }
 	    break;
 	  }
@@ -1172,7 +1216,7 @@ MixfixModule::makePolymorphProductions()
       Polymorph& p = polymorphs[i];
       //cerr << Token::name(p.name) << ' ' << p.polyArgs << endl;
       int nrArgs = p.domainAndRange.length() - 1;
-      int type = p.symbolInfo.symbolType.getBasicType();
+      //int type = p.symbolInfo.symbolType.getBasicType();
       //
       //	Prefix syntax.
       //

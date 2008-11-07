@@ -50,7 +50,6 @@ FloatDagNode::FloatDagNode(FloatSymbol* symbol, double value)
 size_t
 FloatDagNode::getHashValue()
 {
-  Int64 bitPattern = *(reinterpret_cast<const Int64*>(&value));
   return hash(symbol()->getHashValue(), bitPattern ^ (bitPattern >> 32));
 }
 

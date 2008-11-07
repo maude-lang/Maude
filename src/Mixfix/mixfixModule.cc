@@ -882,7 +882,7 @@ MixfixModule::copyFixUpBubbleSpec(Symbol* originalSymbol, SymbolMap* map)
   BubbleSpec& ob = originalModule->
     bubbleSpecs[originalModule->findBubbleSpecIndex(originalSymbol)];
   Symbol* newSymbol = map->translate(originalSymbol);
-  BubbleSpec& b = bubbleSpecs[findBubbleSpecIndex(map->translate(originalSymbol))];
+  BubbleSpec& b = bubbleSpecs[findBubbleSpecIndex(newSymbol)];
 
   if (b.qidSymbol == 0 && ob.qidSymbol != 0)
     b.qidSymbol = safeCast(QuotedIdentifierSymbol*, map->translate(ob.qidSymbol));

@@ -21,22 +21,21 @@
 */
 
 //
-//	Code for metaSearch descent function.
+//	Code for metaSearch()/metaSearchPath() descent functions.
 //
 
 local_inline bool
-MetaLevelOpSymbol::downSearchType(DagNode* arg,
-				  RewriteSequenceSearch::SearchType& searchType) const
+MetaLevelOpSymbol::downSearchType(DagNode* arg, SequenceSearch::SearchType& searchType) const
 {
   int qid;
   if (metaLevel->downQid(arg, qid))
     {
       if (qid == Token::encode("+"))
-	searchType = RewriteSequenceSearch::AT_LEAST_ONE_STEP;
+	searchType = SequenceSearch::AT_LEAST_ONE_STEP;
       else if (qid == Token::encode("*"))
-	searchType = RewriteSequenceSearch::ANY_STEPS;
+	searchType = SequenceSearch::ANY_STEPS;
       else if (qid == Token::encode("!"))
-	searchType = RewriteSequenceSearch::NORMAL_FORM;
+	searchType = SequenceSearch::NORMAL_FORM;
       else
 	return false;
       return true;
@@ -54,11 +53,21 @@ MetaLevelOpSymbol::getCachedRewriteSequenceSearch(MetaModule* m,
 {
   if (solutionNr > 0)
     {
-      if (m->remove(subject, context, search, lastSolutionNr))
+      CacheableState* cachedState;
+      if (m->remove(subject, cachedState, lastSolutionNr))
 	{
 	  if (lastSolutionNr < solutionNr)
-	    return true;
-	  delete search;
+	    {
+	      search = safeCast(RewriteSequenceSearch*, cachedState);
+	      //
+	      //	The parent context pointer of the root context in the
+	      //	NarrowingSequenceSearch is possibly stale.
+	      //
+	      safeCast(UserLevelRewritingContext*, search->getContext())->
+		beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
+	      return true;
+	    }
+	  delete cachedState;
 	}
     }
   return false;

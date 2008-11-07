@@ -309,14 +309,18 @@ FreeSymbol::stackArguments(DagNode* subject,
     }
 }
 
+//
+//	Unification code.
+//
+
 void
 FreeSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
-				   const Vector<int> realToBdd,
+				   const Vector<int>& realToBdd,
 				   DagNode* subject,
 				   Vector<Bdd>& generalizedSort)
 {
   int nrArgs = arity();
-  Assert(nrArgs > 0, "we shouldn't be called on constants");
+  Assert(nrArgs > 0, "we shouldn't be called on constants: " << subject);
   DagNode** args = safeCast(FreeDagNode*, subject)->argArray();
   int varCounter = 0;
   bddPair* argMap = bdd_newpair();

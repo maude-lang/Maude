@@ -642,35 +642,29 @@ MetaLevel::downConditionFragment(DagNode* metaConditionFragment,
 }
 
 bool
-MetaLevel::downStatementAttrSet(DagNode* metaAttrSet,
-				int& label,
-				int& metadata,
-				FlagSet& flags)
+MetaLevel::downStatementAttrSet(DagNode* metaAttrSet, MixfixModule* m, StatementAttributeInfo& ai)
 {
   Symbol* ma = metaAttrSet->symbol();
   if (ma == attrSetSymbol)
     {
       for (DagArgumentIterator i(metaAttrSet); i.valid(); i.next())
 	{
-	  if (!downStatementAttr(i.argument(), label, metadata, flags))
+	  if (!downStatementAttr(i.argument(), m, ai))
 	    return false;
 	}
     }
   else if (ma != emptyAttrSetSymbol)
-    return downStatementAttr(metaAttrSet, label, metadata, flags);
+    return downStatementAttr(metaAttrSet, m, ai);
   return true;
 }
 
 bool
-MetaLevel::downStatementAttr(DagNode* metaAttr,
-			     int& label,
-			     int& metadata,
-			     FlagSet& flags)
+MetaLevel::downStatementAttr(DagNode* metaAttr, MixfixModule* m, StatementAttributeInfo& ai)
 {
   Symbol* ma = metaAttr->symbol();
   if (ma == labelSymbol)
     {
-      if (!downQid(safeCast(FreeDagNode*, metaAttr)->getArgument(0), label))
+      if (!downQid(safeCast(FreeDagNode*, metaAttr)->getArgument(0), ai.label))
 	return false;
     }
   else if (ma == metadataSymbol)
@@ -680,15 +674,73 @@ MetaLevel::downStatementAttr(DagNode* metaAttr,
 	 return false;
        string str;
        Token::ropeToString(safeCast(StringDagNode*, metaStr)->getValue(), str);
-       metadata = Token::encode(str.c_str());
+       ai.metadata = Token::encode(str.c_str());
     }
   else if (ma == owiseSymbol)
-    flags.setFlags(OWISE);
+    ai.flags.setFlags(OWISE);
   else if (ma == nonexecSymbol)
-    flags.setFlags(NONEXEC);
+    ai.flags.setFlags(NONEXEC);
+  else if (ma == printSymbol && !ai.flags.getFlag(PRINT))
+    {
+      ai.flags.setFlags(PRINT);
+      if (!downPrintList(safeCast(FreeDagNode*, metaAttr)->getArgument(0), m, ai))
+	return false;
+    }
   else
     return false;
   return true;
+}
+
+bool
+MetaLevel::downPrintList(DagNode* metaPrintList, MixfixModule* m, StatementAttributeInfo& ai)
+{
+  Symbol* mp =  metaPrintList->symbol();
+  if (mp == qidListSymbol)
+    {
+      for (DagArgumentIterator i(metaPrintList); i.valid(); i.next())
+	{
+	  if (!downPrintListItem(i.argument(), m, ai))
+	    return false;
+	}
+      return true;
+    }
+  else if (mp == nilQidListSymbol || downPrintListItem(metaPrintList, m, ai))
+    return true;
+  return false;
+}
+
+bool
+MetaLevel::downPrintListItem(DagNode* metaPrintListItem, MixfixModule* m, StatementAttributeInfo& ai)
+{
+  if (metaPrintListItem->symbol() == qidSymbol)
+    {
+      int id = safeCast(QuotedIdentifierDagNode*, metaPrintListItem)->getIdIndex();
+      if (Token::specialProperty(id) == Token::STRING)
+	{
+	  ai.printNames.append(id);
+	  ai.printSorts.append(0);
+	  return true;
+	}
+      else if (Token::auxProperty(id) == Token::AUX_VARIABLE)
+	{
+	  int varName;
+	  int sortName;
+	  Token::split(id, varName, sortName);
+	  Sort* sort;
+	  if (downType2(sortName, m, sort))
+	    {
+	      ai.printNames.append(varName);
+	      ai.printSorts.append(sort);
+	      return true;
+	    }
+	  else
+	    {
+	      IssueAdvisory("could not find sort " << QUOTE(Token::name(sortName)) <<
+			    " in meta-module \"" << QUOTE(m) << '.');
+	    }
+	}
+    }
+  return false;
 }
 
 bool
@@ -715,26 +767,24 @@ MetaLevel::downMembAx(DagNode* metaMembAx, MixfixModule* m)
   if (mm == mbSymbol || mm == cmbSymbol)
     {
       FreeDagNode* f = static_cast<FreeDagNode*>(metaMembAx);
-      int label = NONE;
-      int metadata = NONE;
-      FlagSet flags;
-      if (downStatementAttrSet(f->getArgument((mm == mbSymbol) ? 2 : 3),
-			       label, metadata, flags))
+      StatementAttributeInfo ai;
+      if (downStatementAttrSet(f->getArgument((mm == mbSymbol) ? 2 : 3), m, ai))
 	{
 	  Term* l;
 	  Sort* sort;
 	  if (downTermAndSort(f->getArgument(0), f->getArgument(1), l, sort, m))
 	    {
 	      Vector<ConditionFragment*> condition;
-	      if (mm == mbSymbol ||
-		  downCondition(f->getArgument(2), m, condition))
+	      if (mm == mbSymbol || downCondition(f->getArgument(2), m, condition))
 		{
-		  SortConstraint* mb = new SortConstraint(label, l, sort, condition);
-		  if (flags.getFlag(NONEXEC))
+		  SortConstraint* mb = new SortConstraint(ai.label, l, sort, condition);
+		  if (ai.flags.getFlag(NONEXEC))
 		    mb->setNonexec();
 		  m->insertSortConstraint(mb);
-		  if (metadata != NONE)
-		    m->insertMetadata(MixfixModule::MEMB_AX, mb, metadata);
+		  if (ai.metadata != NONE)
+		    m->insertMetadata(MixfixModule::MEMB_AX, mb, ai.metadata);
+		  if (ai.flags.getFlag(PRINT))
+		    m->insertPrintAttribute(MixfixModule::MEMB_AX, mb, ai.printNames, ai.printSorts);
 		  return true;
 		}
 	      l->deepSelfDestruct();
@@ -768,27 +818,25 @@ MetaLevel::downEquation(DagNode* metaEquation, MixfixModule* m)
   if (me == eqSymbol || me == ceqSymbol)
     {
       FreeDagNode* f = safeCast(FreeDagNode*, metaEquation);
-      int label = NONE;
-      int metadata = NONE;
-      FlagSet flags;
-      if (downStatementAttrSet(f->getArgument((me == eqSymbol) ? 2 : 3),
-			       label, metadata, flags))
+      StatementAttributeInfo ai;
+      if (downStatementAttrSet(f->getArgument((me == eqSymbol) ? 2 : 3), m, ai))
 	{
 	  Term* l;
 	  Term* r;
 	  if (downTermPair(f->getArgument(0), f->getArgument(1), l, r, m))
 	    {
 	      Vector<ConditionFragment*> condition;
-	      if (me == eqSymbol  ||
-		  downCondition(f->getArgument(2), m, condition))
+	      if (me == eqSymbol  || downCondition(f->getArgument(2), m, condition))
 		{
-		  Equation* eq = new Equation(label, l, r,
-					      flags.getFlag(OWISE), condition);
-		  if (flags.getFlag(NONEXEC))
+		  Equation* eq = new Equation(ai.label, l, r,
+					      ai.flags.getFlag(OWISE), condition);
+		  if (ai.flags.getFlag(NONEXEC))
 		    eq->setNonexec();
 		  m->insertEquation(eq);
-		  if (metadata != NONE)
-		    m->insertMetadata(MixfixModule::EQUATION, eq, metadata);
+		  if (ai.metadata != NONE)
+		    m->insertMetadata(MixfixModule::EQUATION, eq, ai.metadata);
+		  if (ai.flags.getFlag(PRINT))
+		    m->insertPrintAttribute(MixfixModule::EQUATION, eq, ai.printNames, ai.printSorts);
 		  return true;
 		}
 	      l->deepSelfDestruct();
@@ -823,26 +871,24 @@ MetaLevel::downRule(DagNode* metaRule, MixfixModule* m)
   if (mr == rlSymbol || mr == crlSymbol)
     {
       FreeDagNode* f = safeCast(FreeDagNode*, metaRule);
-      int label = NONE;
-      int metadata = NONE;
-      FlagSet flags;
-      if (downStatementAttrSet(f->getArgument((mr == rlSymbol) ? 2 : 3),
-			       label, metadata, flags))
+      StatementAttributeInfo ai;
+      if (downStatementAttrSet(f->getArgument((mr == rlSymbol) ? 2 : 3), m, ai))
 	{
 	  Term* l;
 	  Term* r;
 	  if (downTermPair(f->getArgument(0), f->getArgument(1), l, r, m))
 	    {
 	      Vector<ConditionFragment*> condition;
-	      if (mr == rlSymbol ||
-		  downCondition(f->getArgument(2), m, condition))
+	      if (mr == rlSymbol || downCondition(f->getArgument(2), m, condition))
 		{
-		  Rule* rl = new Rule(label, l, r, condition);
-		  if (flags.getFlag(NONEXEC))
+		  Rule* rl = new Rule(ai.label, l, r, condition);
+		  if (ai.flags.getFlag(NONEXEC))
 		    rl->setNonexec();
 		  m->insertRule(rl);
-		  if (metadata != NONE)
-		    m->insertMetadata(MixfixModule::RULE, rl, metadata);
+		  if (ai.metadata != NONE)
+		    m->insertMetadata(MixfixModule::RULE, rl, ai.metadata);
+		  if (ai.flags.getFlag(PRINT))
+		    m->insertPrintAttribute(MixfixModule::RULE, rl, ai.printNames, ai.printSorts);
 		  return true;
 		}
 	      l->deepSelfDestruct();
@@ -877,16 +923,93 @@ MetaLevel::downTermAndSort(DagNode* metaTerm ,
 }
 
 bool
+MetaLevel::downUnificationProblem(DagNode* metaUnificationProblem,
+				  Vector<Term*>& leftHandSides,
+				  Vector<Term*>& rightHandSides,
+				  MixfixModule* m,
+				  bool makeDisjoint)
+{
+  leftHandSides.clear();
+  rightHandSides.clear();
+  Symbol* mu = metaUnificationProblem->symbol();
+  Term* lhs;
+  Term* rhs;
+  if (mu == unificationConjunctionSymbol)
+    {
+      for (DagArgumentIterator i(metaUnificationProblem); i.valid(); i.next())
+	{
+	  if (!downUnificandPair(i.argument(), lhs, rhs, m, makeDisjoint))
+	    {
+	      {
+		FOR_EACH_CONST(j, Vector<Term*>, leftHandSides)
+		  delete *j;
+	      }
+	      {
+		FOR_EACH_CONST(j, Vector<Term*>, rightHandSides)
+		  delete *j;
+	      }
+	      return false;
+	    }
+	  leftHandSides.append(lhs);
+	  rightHandSides.append(rhs);
+	}
+    }
+  else if (downUnificandPair(metaUnificationProblem, lhs, rhs, m, makeDisjoint))
+    {
+      leftHandSides.append(lhs);
+      rightHandSides.append(rhs);
+    }
+  else
+    return false;
+  return true;
+}
+
+bool
+MetaLevel::downUnificandPair(DagNode* metaUnificandPair,
+			     Term*& lhs,
+			     Term*& rhs,
+			     MixfixModule* m,
+			     bool makeDisjoint)
+{
+  Symbol* mu = metaUnificandPair->symbol();
+  if (mu == unificandPairSymbol)
+    {
+      FreeDagNode* f = safeCast(FreeDagNode*, metaUnificandPair);
+      lhs = downTerm(f->getArgument(0), m);
+      if (lhs != 0)
+	{
+	  flagVariables = makeDisjoint;
+	  rhs = downTerm(f->getArgument(1), m);
+	  flagVariables = false;
+	  if (rhs != 0)
+	    {
+	      if (lhs->symbol()->rangeComponent() ==
+		  rhs->symbol()->rangeComponent())
+		return true;
+	      IssueAdvisory("kind clash for unificand pair" << QUOTE(metaUnificandPair) <<
+			    " in meta-module " << QUOTE(m) << '.');
+	      rhs->deepSelfDestruct();
+	    }
+	  lhs->deepSelfDestruct();
+	}
+    }
+  return false;
+}
+
+bool
 MetaLevel::downTermPair(DagNode* metaTerm1,
 			DagNode* metaTerm2, 
 			Term*& term1,
 			Term*& term2,
-			MixfixModule* m)
+			MixfixModule* m,
+			bool makeDisjoint)
 {
   term1 = downTerm(metaTerm1, m);
   if (term1 != 0)
     {
+      flagVariables = makeDisjoint;
       term2 = downTerm(metaTerm2, m);
+      flagVariables = false;
       if (term2 != 0)
 	{
 	  if (term1->symbol()->rangeComponent() ==
@@ -955,6 +1078,8 @@ MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
 	      {
 		VariableSymbol* symbol = safeCast(VariableSymbol*,
 						  m->instantiateVariable(sort));
+		if (flagVariables)
+		  varName = Token::flaggedCode(varName);
 		return new VariableTerm(symbol, varName);
 	      }
 	    IssueAdvisory("could not find sort " << QUOTE(Token::name(sortName)) <<

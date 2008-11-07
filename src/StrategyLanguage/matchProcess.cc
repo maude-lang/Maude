@@ -79,6 +79,7 @@ MatchProcess::MatchProcess(SharedRewriteSearchState::Ptr rewriteState,
     strategyNr(strategyNr),  // copy strategy number
     pending(pending)  // copy pending stack
 {
+  DebugAdvisory("created MatchProcess, matchContext has nrFragileBindings = " << matchContext->nrFragileBindings());
   findFirst = true;
 }
 

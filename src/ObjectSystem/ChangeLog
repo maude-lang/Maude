@@ -1,3 +1,13 @@
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* socketAsync.cc (doError, doWrite): added #ifdef NO_ASSERT to
+	avoid compiler warning
+
+	* socketStuff.cc (createClientTcpSocket): delete decl of unused
+	domain variable
+
+===================================Maude91a===========================================
+
 2005-04-29  Steven Eker  <eker@goo.csl.sri.com>
 
 	* socketStuff.cc (createClientTcpSocket, createServerTcpSocket) 

@@ -1,3 +1,175 @@
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (computeBaseSortForGroundSubterms): added default
+	case to avoid compiler warning
+
+===================================Maude91a==========================================
+
+2008-04-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (unificationPriority): added
+
+	* symbol.hh (class Symbol): added decl for unificationPriority()
+
+===================================Maude91==========================================
+
+2008-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): deleted decls for old versions of
+	computeSolvedForm() and computeSolvedForm2()
+
+2008-03-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (computeSize): added
+
+	* term.hh (class Term): added data member cachedSize
+	(Term): initialize cachedSize
+	(class Term): added decl for computeSize()
+
+===================================Maude90a==========================================
+
+2008-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (computeSolvedForm, computeSolvedForm2): use
+	UnificationContext in place of Substitution
+
+	* dagNode.hh (class DagNode): updated decls for
+	computeSolvedForm() and computeSolvedForm2()
+
+2008-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (computeSolvedForm2): rewritten
+	(computeSolvedForm): rewritten
+
+	* dagNode.hh (class DagNode): updated decls for
+	computeSolvedForm() and computeSolvedForm2()
+
+2008-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationSubproblem.hh: created
+
+	* interface.hh: added class UnificationSubproblem
+
+	* symbol.hh (class Symbol): added decl for
+	makeUnificationSubproblem()
+
+2008-01-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.cc (compileRhs): removed commented out calls to useIndex()
+
+===================================Maude90==========================================
+
+2007-11-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (copySetRewritingFlags): add GROUND_FLAG to flags
+	that are copied
+
+2007-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (indexVariables2): added
+	(indexVariables2): don't call setGround() here since it is called
+	by indexVariables()
+
+	* dagNode.hh (class DagNode): updated decls for instantiate(),
+	instantiate2(), instantiateWithReplacement()
+	(instantiate): updated
+
+2007-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for indexVariables2();
+	indexVariables() becomes nonvirtual
+	(indexVariables): added
+
+2007-10-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (computeBaseSortForGroundSubterms): use setGround();
+	(computeSolvedForm): use isGround() rather than checking sort
+	indices
+	(nonVariableSize): use isGround() in Assert()
+	(computeGeneralizedSort): rewritten using isGround()
+
+	* dagNode.hh (class DagNode): added GROUND_FLAG to Flags
+	(setGround, isGround): added
+	(instantiate, insertVariables): use isGround()
+
+2007-10-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for indexVariables()
+
+2007-09-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.cc (reset): call resetEachRule()
+
+===================================Maude89h==========================================
+
+2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (computeSolvedForm): use equal() rather than compare()
+
+	* dagNode.hh (class DagNode): added enum ReturnResult; updated
+	decl for computeBaseSortForGroundSubterms()
+
+	* dagNode.cc (computeBaseSortForGroundSubterms): added
+
+2007-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (nonVariableSize): added
+
+	* dagNode.hh (class DagNode): de-virtualized computeSolvedForm();
+	added computeSolvedForm2()
+
+	* dagNode.cc (computeSolvedForm): added
+	(computeSolvedForm2): added
+
+===================================Maude89g==========================================
+	
+2007-06-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added extensionInfo arg to decl for
+	computeSolvedForm()
+
+===================================Maude89c==========================================
+
+2007-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): deleted decls for unify(), occurs(),
+	occurs2()
+	(occurs): deleted
+
+2007-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.cc (computeGeneralizedSort): pass realToBdd by reference
+
+	* dagNode.hh (class DagNode): pass realToBdd by reference rather
+	than by value in computeGeneralizedSort()
+
+===================================Maude89a==========================================
+
+2007-03-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* subproblem.hh (class Subproblem): added decl for unificationSolve()
+	(class Subproblem): solve() gets a default implementation
+
+2007-03-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): nonVariableSize() must return
+	mpz_class for correctness wrt S_Theory
+
+2007-02-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (insertVariables): added
+	(class DagNode): added decl for insertVariables2()
+
+2007-02-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for nonVariableSize()
+
+2007-02-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (class DagNode): added decl for computeSolvedForm()
+
+===================================Maude89==========================================
+
 2007-01-30  Steven Eker  <eker@goo.csl.sri.com>
 
 	* dagNode.cc (computeGeneralizedSort): added
@@ -404,8 +576,8 @@
 
 2002-08-23  Steven Eker  <eker@goo.csl.sri.com>
 
-	* term.cc (compileRhs): don't call useIndex() at all - in it now
-	the caller responsibility, since the actually last use of the
+	* term.cc (compileRhs): don't call useIndex() at all - it is now
+	the callers responsibility, since the actually last use of the
 	index may be later than now
 	(compileTopRhs): call useIndex()
 	

@@ -46,7 +46,11 @@ public:
   double getValue() const;
 
 private:
-  const double value;
+  const union
+  {
+    double value;
+    Int64 bitPattern;
+  };
 };
 
 inline double

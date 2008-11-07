@@ -44,10 +44,9 @@ moduleExprDot	:	tokenBarDot expectedDot
 			}
 		|	ENDS_IN_DOT
 			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-                                       ": missing space before period.");
 			  Token t;
 			  t.dropChar($1);
+			  missingSpace(t);
 			  moduleExpressions.push(new ModuleExpression(t));
 			}
 		;
@@ -90,7 +89,7 @@ instantExpr	:	moduleExpr3 '{'			{ clear(); }
 			{
 			  ModuleExpression* m = moduleExpressions.top();
 			  moduleExpressions.pop();
-			  moduleExpressions.push(new ModuleExpression(m, bubble));
+			  moduleExpressions.push(new ModuleExpression(m, tokenSequence));
 			}
 		;
 
@@ -132,33 +131,24 @@ mapping		:	KW_SORT sortName KW_TO sortName
 			{
 			  currentRenaming->addLabelMapping($2, $4);
 			}
-		|	KW_OP fromOpName fromSpec KW_TO toOpName toAttributes {}
+		|	KW_OP 			{ lexBubble(BAR_COLON | BAR_TO, 1); }
+			fromSpec KW_TO		{ lexBubble(BAR_COMMA | BAR_LEFT_BRACKET | BAR_RIGHT_PAREN, 1); }
+			toAttributes		{}
+		;
+/*
+ *	The ':' alternative forces lookahead which allows the lexer to grab the bubble.
+ */
+fromSpec	:	':'			{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
+			typeList arrow typeName {}
+		|				{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
 		;
 
-fromOpName	:	token			{ clear(); store($1); }
-			tokensBarColonTo
-			{
-			  currentRenaming->addOpMapping(bubble);
-			}
-		|	'(' 			{ clear(); }
-			tokens ')'
-			{
-			  currentRenaming->addOpMapping(bubble);
-			}
-		;
-
-fromSpec	:	':' typeList arrow typeName {}
-		|
-		;
-
-toOpName	:	token			{ clear(); store($1); }
-			tokensBarCommaLeft	{ currentRenaming->addOpTarget(bubble); }
-		|	'(' 			{ clear(); }
-			tokens ')'		{ currentRenaming->addOpTarget(bubble); }
-		;
-
-toAttributes	:	'[' toAttributeList ']'	{}
-		|
+/*
+ *	The '[' alternative forces lookahead which allows the lexer to grab the bubble.
+ */
+toAttributes	:	'['			{ Token::peelParens(lexerBubble); currentRenaming->addOpTarget(lexerBubble); }
+			toAttributeList ']'	{}
+		|				{ Token::peelParens(lexerBubble); currentRenaming->addOpTarget(lexerBubble); }
 		;
 
 toAttributeList	:	toAttributeList toAttribute
@@ -167,9 +157,9 @@ toAttributeList	:	toAttributeList toAttribute
 
 toAttribute	:	KW_PREC IDENTIFIER	{ currentRenaming->setPrec($2); }
 		|	KW_GATHER '('		{ clear(); }
-			idList ')'		{ currentRenaming->setGather(bubble); }
+			idList ')'		{ currentRenaming->setGather(tokenSequence); }
 		|	KW_FORMAT '('		{ clear(); }
-			idList ')'		{ currentRenaming->setFormat(bubble); }
+			idList ')'		{ currentRenaming->setFormat(tokenSequence); }
 		|	KW_LATEX '('		{ lexerLatexMode(); }
 			LATEX_STRING ')'	{ currentRenaming->setLatexMacro($4); }
 		;
@@ -209,18 +199,17 @@ viewDeclaration	:	KW_SORT sortName KW_TO sortDot
 			  CV->addSortMapping($2, $4);
 			}
 		|	KW_VAR varNameList ':' typeDot {}
-		|	KW_OP			{ clear(); }
-			tokensBarColonTo viewEndOpMap
+		|	KW_OP			{ lexBubble(BAR_COLON | BAR_TO, 1); }
+			viewEndOpMap
 		|	error '.'
 		;
 
 sortDot		:	sortName expectedDot		{ $$ = $1; }
 		|	ENDS_IN_DOT
 			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-                                       ": missing space before period.");
 			  Token t;
 			  t.dropChar($1);
+			  missingSpace(t);
 			  $$ = t;
 			}
 		;
@@ -230,17 +219,17 @@ viewEndOpMap	:	':'
 			  //
 			  //	Specific op->op mapping.
 			  //
-			  Token::peelParens(bubble);  // remove any enclosing parens from op name
-			  CV->addOpMapping(bubble);
+			  Token::peelParens(lexerBubble);  // remove any enclosing parens from op name
+			  CV->addOpMapping(lexerBubble);
 			}
 			typeList arrow typeName KW_TO
 			{
-			  clear();
+			  lexBubble(END_STATEMENT, 1);
 			}
-			endStatement
+			endBubble
 			{
-			  Token::peelParens(bubble);  // remove any enclosing parens from op name
-			  CV->addOpTarget(bubble);
+			  Token::peelParens(lexerBubble);  // remove any enclosing parens from op name
+			  CV->addOpTarget(lexerBubble);
 			}
 		|	KW_TO
 			{
@@ -249,17 +238,17 @@ viewEndOpMap	:	':'
 			  //	or a generic op->op mapping so we save the from description and
 			  //	press on.
 			  //
-			  opDescription = bubble;
-			  clear();
+			  opDescription = lexerBubble;
+			  lexBubble(END_STATEMENT, 1)
 			}
-			endStatement
+			endBubble
 			{
-			  if (bubble[0].code() == Token::encode("term"))
+			  if (lexerBubble[0].code() == Token::encode("term"))
 			    {
 			      //
 			      //	Op->term mapping.
 			      //
-			      CV->addOpTermMapping(opDescription, bubble);
+			      CV->addOpTermMapping(opDescription, lexerBubble);
 			    }
 			  else
 			    {
@@ -268,10 +257,25 @@ viewEndOpMap	:	':'
 			      //
 			      Token::peelParens(opDescription);  // remove any enclosing parens from op name
 			      CV->addOpMapping(opDescription);
-			      Token::peelParens(bubble);  // remove any enclosing parens from op name
-			      CV->addOpTarget(bubble);
+			      Token::peelParens(lexerBubble);  // remove any enclosing parens from op name
+			      CV->addOpTarget(lexerBubble);
 			    }
 			}
+		;
+
+
+endBubble	:	'.' {}
+		|	ENDS_IN_DOT
+			{
+			  Token t;
+			  t.dropChar($1);
+			  missingSpace(t);
+			  lexerBubble.append(t);
+			}
+		;
+
+parenBubble	:	'(' 			{ lexBubble(BAR_RIGHT_PAREN, 1); }
+			')'			{}
 		;
 
 /*
@@ -295,10 +299,9 @@ module		:	startModule		{ lexerIdMode(); }
 dot		:	'.' {}
 		|	ENDS_IN_DOT
 			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-                                       ": missing space before period.");
 			  Token t;
 			  t.dropChar($1);
+			  missingSpace(t);
 			  store(t);
 			}
 		;
@@ -321,29 +324,15 @@ parameter	:	token KW_COLON2 moduleExpr
 
 badType		:	ENDS_IN_DOT
 			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-                                       ": missing space before period.");
-			  Token t;
-			  t.dropChar($1);
-			  clear();
-			  store(t);
-			  currentSyntaxContainer->addType(false, bubble);
+			  singleton[0].dropChar($1);
+			  missingSpace(singleton[0]);
+			  currentSyntaxContainer->addType(false, singleton);
+			  $$ = $1;  // needed for line number
 			}
 		;
 
 typeDot		:	typeName expectedDot
-		|	badType
-		;
-
-endStatement	:	endTokens dot
-		|	ENDS_IN_DOT
-			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-                                       ": missing space before period.");
-			  Token t;
-			  t.dropChar($1);
-			  store(t);
-			}
+		|	badType {}
 		;
 
 startModule	:	KW_MOD | KW_OMOD
@@ -361,50 +350,51 @@ declaration	:	KW_IMPORT moduleExprDot
 			}
 
 		|	KW_SORT			{ clear(); }
-			sortNameList dot	{ CM->addSortDecl(bubble); }
+			sortNameList dot	{ CM->addSortDecl(tokenSequence); }
 
 		|	KW_SUBSORT		{ clear(); }
-			subsortList dot		{ CM->addSubsortDecl(bubble); }
+			subsortList dot		{ CM->addSubsortDecl(tokenSequence); }
 
-		|	KW_OP opName domainRangeAttr {}
+		|	KW_OP			{ lexBubble(BAR_COLON, 1); }
+			':'			{ Token::peelParens(lexerBubble); CM->addOpDecl(lexerBubble); }
+			domainRangeAttr		{}
 
-		|	KW_OPS opNameList domainRangeAttr {}
+		|	KW_OPS opNameList ':' domainRangeAttr {}
 
 		|	KW_VAR varNameList ':' typeDot {}
 
-		|	KW_MB			{ clear(); store($1); }
-			tokensBarColon ':'	{ store($4); }
-			endStatement		{ CM->addStatement(bubble); }
+		|	KW_MB			{ lexBubble($1, BAR_COLON, 1); }
+			':'			{ lexContinueBubble($3, END_STATEMENT, 1); }
+			endBubble	       	{ CM->addStatement(lexerBubble); }
 
-		|	KW_CMB			{ clear(); store($1); }
-			tokensBarColon ':'	{ store($4); }
-			tokensBarIf KW_IF	{ store($7); }
-			endStatement		{ CM->addStatement(bubble); }
+		|	KW_CMB			{ lexBubble($1, BAR_COLON, 1);  }
+			':'			{ lexContinueBubble($3, BAR_IF, 1); }
+			KW_IF			{ lexContinueBubble($5, END_STATEMENT, 1); }
+			endBubble		{ CM->addStatement(lexerBubble); }
 
-		|	KW_EQ			{ clear(); store($1); }
-			tokensBarEqual '='	{ store($4); }
-			endStatement		{ CM->addStatement(bubble); }
+		|	KW_EQ			{ lexBubble($1, BAR_EQUALS, 1); }
+			'='			{ lexContinueBubble($3, END_STATEMENT, 1); }
+			endBubble	  	{ CM->addStatement(lexerBubble); }
 
-		|	KW_CEQ			{ clear(); store($1); }
-			tokensBarEqual '='	{ store($4); }
-			tokensBarIf KW_IF		{ store($7); }
-			endStatement		{ CM->addStatement(bubble); }
+		|	KW_CEQ			{ lexBubble($1, BAR_EQUALS, 1); }
+			'='			{ lexContinueBubble($3, BAR_IF, 1); }
+			KW_IF			{ lexContinueBubble($5, END_STATEMENT, 1); }
+			endBubble	  	{ CM->addStatement(lexerBubble); }
 
-		|	KW_RL			{ clear(); store($1); }
-			tokensBarArrow2 KW_ARROW2  { store($4); }
-			endStatement		{ CM->addStatement(bubble); }
+		|	KW_RL			{ lexBubble($1, BAR_ARROW2, 1); }
+			KW_ARROW2		{ lexContinueBubble($3, END_STATEMENT, 1); }
+			endBubble		{ CM->addStatement(lexerBubble); }
 
-		|	KW_CRL			{ clear(); store($1); }
-			tokensBarArrow2 KW_ARROW2	{ store($4); }
-			tokensBarIf KW_IF		{ store($7); }
-			endStatement		{ CM->addStatement(bubble); }
+		|	KW_CRL			{ lexBubble($1, BAR_ARROW2, 1); }
+			KW_ARROW2		{ lexContinueBubble($3, BAR_IF, 1); }
+			KW_IF			{ lexContinueBubble($5, END_STATEMENT, 1); }
+			endBubble	    	{ CM->addStatement(lexerBubble); }
 
-		|	KW_MSG opName domainRangeAttr
-			{
-			  CM->setFlag(SymbolType::MESSAGE);
-			}
+		|	KW_MSG			{ lexBubble(BAR_COLON, 1); }
+			':'			{ Token::peelParens(lexerBubble); CM->addOpDecl(lexerBubble); }
+			domainRangeAttr		{ CM->setFlag(SymbolType::MESSAGE); }
 
-		|	KW_MSGS opNameList domainRangeAttr
+		|	KW_MSGS opNameList ':' domainRangeAttr
 			{
 			  CM->setFlag(SymbolType::MESSAGE);
 			}
@@ -417,7 +407,7 @@ declaration	:	KW_IMPORT moduleExprDot
 			}
 
 		|	KW_SUBCLASS		{ clear(); }
-			subsortList dot		{ CM->addSubsortDecl(bubble); }
+			subsortList dot		{ CM->addSubsortDecl(tokenSequence); }
 
 		|	error '.'
 		        {
@@ -447,63 +437,45 @@ varNameList	:	varNameList tokenBarColon	{ currentSyntaxContainer->addVarDecl($2)
 		|	tokenBarColon			{ currentSyntaxContainer->addVarDecl($1); }
 		;
 
-opName		:	token			{ clear(); store($1); }
-			tokensBarColon		{ CM->addOpDecl(bubble); }
-		|	'(' 			{ clear(); }
-			tokens ')'		{ CM->addOpDecl(bubble); }
-		;
-
 opNameList	:	opNameList simpleOpName
 		|	simpleOpName
 		;
 
-simpleOpName	:	tokenBarColon
-			{
-			  clear();
-			  store($1);
-			  CM->addOpDecl(bubble);
-			}
-		|	'('			{ clear(); }
-			tokens ')'		{ CM->addOpDecl(bubble); }
+simpleOpName	:	tokenBarColon		{ singleton[0] = $1; CM->addOpDecl(singleton); }
+		|	parenBubble		{ CM->addOpDecl(lexerBubble); }
 		;
 
-domainRangeAttr	:	':' dra2		{}
-		;
-
-
-dra2		:	typeName dra3
-		|	arrow typeAttr
-			{
-			  if ($1)
-			    CM->convertSortsToKinds();
-			}
+domainRangeAttr	:	typeName typeList dra2
+		|	rangeAttr
 		|	badType
 			{
 			  IssueWarning(LineNumber(lineNumber) <<
 				       ": missing " << QUOTE("->") << " in constant declaration.");
 			}
-
 		;
 
-dra3		:	typeName typeList arrow typeAttr
+dra2		:	rangeAttr
+		|	'.'
 			{
-			  if ($3)
-			    CM->convertSortsToKinds();
+			  IssueWarning(LineNumber($1.lineNumber()) <<
+			  ": missing " << QUOTE("->") << " in operator declaration.");
 			}
-		|	arrow typeAttr
+		|	badType
+			{
+			  IssueWarning(LineNumber($1.lineNumber()) <<
+			  ": missing " << QUOTE("->") << " in operator declaration.");
+			}
+		;
+
+rangeAttr	:	arrow typeAttr
 			{
 			  if ($1)
 			    CM->convertSortsToKinds();
 			}
-		|	'.'
-			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-			  ": missing " << QUOTE("->") << " in constant declaration.");
-			}
 		;
 
 typeAttr	:	typeName attributes expectedDot
-		|	badType
+		|	badType {}
 		;
 
 arrow		:	KW_ARROW      		{ $$ = false; }
@@ -516,14 +488,13 @@ typeList	:	typeList typeName
 
 typeName	:	sortName
 			{
-			  clear();
-			  store($1);
-			  currentSyntaxContainer->addType(false, bubble);
+			  singleton[0] = $1;
+			  currentSyntaxContainer->addType(false, singleton);
 			}
 		|	'['			{ clear(); }
 			sortNames ']'
 			{
-			  currentSyntaxContainer->addType(true, bubble);
+			  currentSyntaxContainer->addType(true, tokenSequence);
 			}
 		;
 
@@ -561,8 +532,8 @@ attribute	:	KW_ASSOC
 			{
 			  CM->setFlag(SymbolType::COMM);
 			}
-		|	idKeyword		{ clear(); }
-			identity		{ CM->setIdentity(bubble); }
+		|	idKeyword		{ lexBubble(BAR_RIGHT_BRACKET | BAR_OP_ATTRIBUTE, 1); }
+			identity		{ CM->setIdentity(lexerBubble); }
 		|	KW_IDEM
 			{
 			  CM->setFlag(SymbolType::IDEM);
@@ -573,13 +544,13 @@ attribute	:	KW_ASSOC
 			}
 		|	KW_PREC IDENTIFIER	{ CM->setPrec($2); }
 		|	KW_GATHER '('		{ clear(); }
-			idList ')'		{ CM->setGather(bubble); }
+			idList ')'		{ CM->setGather(tokenSequence); }
 		|	KW_FORMAT '('		{ clear(); }
-			idList ')'		{ CM->setFormat(bubble); }
+			idList ')'		{ CM->setFormat(tokenSequence); }
 		|	KW_STRAT '('		{ clear(); }
-			idList ')'		{ CM->setStrat(bubble); }
+			idList ')'		{ CM->setStrat(tokenSequence); }
 		|	KW_POLY '('		{ clear(); }
-			idList ')'		{ CM->setPoly(bubble); }
+			idList ')'		{ CM->setPoly(tokenSequence); }
 		|	KW_MEMO
 			{
 			  CM->setFlag(SymbolType::MEMO);
@@ -591,10 +562,10 @@ attribute	:	KW_ASSOC
 		|	KW_FROZEN
 			{
 			  clear();
-			  CM->setFrozen(bubble);
+			  CM->setFrozen(tokenSequence);
 			}
 		|	KW_FROZEN '('		{ clear(); }
-			idList ')'		{ CM->setFrozen(bubble); }
+			idList ')'		{ CM->setFrozen(tokenSequence); }
 		|	KW_CONFIG
 			{
 			  CM->setFlag(SymbolType::CONFIG);
@@ -620,6 +591,14 @@ attribute	:	KW_ASSOC
 			}
 		;
 
+/*
+ *	The ony point of this rule is to force a one token lookahead and allow the lexer to grab the
+ *	bubble corresponding to the identity. We never see a FORCE_LOOKAHEAD token.
+ */
+identity	:	FORCE_LOOKAHEAD
+		|
+		;
+
 idList		:	idList IDENTIFIER	{ store($2); }
 		|	IDENTIFIER		{ store($1); }
 		;
@@ -628,26 +607,10 @@ hookList	:	hookList hook
 		|	hook
 		;
 
-hook		:	KW_ID_HOOK token
-			{
-			  clear();
-			  CM->addHook(PreModule::ID_HOOK, $2, bubble);
-			}
-		|	KW_ID_HOOK token '(' 	{ clear(); }
-			tokens ')'
-			{
-			  CM->addHook(PreModule::ID_HOOK, $2, bubble);
-			}
-		|	KW_OP_HOOK token '('	{ clear(); }
-			tokens ')'
-			{
-			  CM->addHook(PreModule::OP_HOOK, $2, bubble);
-			}
-		|	KW_TERM_HOOK token '('	{ clear(); }
-			tokens ')'
-			{
-			  CM->addHook(PreModule::TERM_HOOK, $2, bubble);
-			}
+hook		:	KW_ID_HOOK token		{ clear(); CM->addHook(PreModule::ID_HOOK, $2, tokenSequence); }
+		|	KW_ID_HOOK token parenBubble	{ CM->addHook(PreModule::ID_HOOK, $2, lexerBubble); }
+		|	KW_OP_HOOK token parenBubble	{ CM->addHook(PreModule::OP_HOOK, $2, lexerBubble); }
+		|	KW_TERM_HOOK token parenBubble	{ CM->addHook(PreModule::TERM_HOOK, $2, lexerBubble); }
 		;
 
 /*
@@ -682,65 +645,6 @@ subsortList	:	subsortList sortName	{ store($2); }
 		;
 
 /*
- *	Token trees.
- */
-tokens		:	tokens '('		{ store($2); }
-			tokens ')'		{ store($5); }
-		|	tokens token		{ store($2); }
-		|
-		;
-
-tokensBarColon	:	tokensBarColon '('	{ store($2); }
-			tokens ')'		{ store($5); }
-		|	tokensBarColon tokenBarColon	{ store($2); }
-		|
-		;
-
-tokensBarColonTo	:	tokensBarColonTo '('	{ store($2); }
-				tokens ')'		{ store($5); }
-			|	tokensBarColonTo tokenBarColonTo	{ store($2); }
-			|
-			;
-
-tokensBarCommaLeft	:	tokensBarCommaLeft '('	{ store($2); }
-				tokens ')'		{ store($5); }
-			|	tokensBarCommaLeft tokenBarCommaLeft	{ store($2); }
-			|
-			;
-
-tokensBarEqual	:	tokensBarEqual '('	{ store($2); }
-			tokens ')'		{ store($5); }
-		|	tokensBarEqual tokenBarEqual	{ store($2); }
-		|
-		;
-
-tokensBarArrow2	:	tokensBarArrow2 '('	{ store($2); }
-			tokens ')'		{ store($5); }
-		|	tokensBarArrow2 tokenBarArrow2	{ store($2); }
-		|
-		;
-
-tokensBarIf	:	tokensBarIf '('		{ store($2); }
-			tokens ')'		{ store($5); }
-		|	tokensBarIf tokenBarIf	{ store($2); }
-		|
-		;
-
-endTokens	:	noTrailingDot
-		|	endTokens endsInDot	{ store($2); }
-		|	endsInDot		{ store($1); }
-		;
-
-noTrailingDot	:	'('			{ store($1); }
-			tokens ')'		{ store($4); }
-		|	endTokens '('		{ store($2); }
-			tokens ')'		{ store($5); }
-		|	noTrailingDot startKeyword	{ store($2); }
-		|	endTokens endToken	{ store($2); }
-		|	tokenBarDot		{ store($1); }
-		;
-
-/*
  *	Sort names
  */
 sortName	:	sortNameFrag
@@ -766,18 +670,6 @@ sortNameFrags	:	sortNameFrags ','	{ fragStore($2); }
 		;
 
 /*
- *	Special trees
- */
-identity	:	identityChunk		{ store($1); }
-		|	identity identityChunk	{ store($2); }
-		;
-
-identityChunk	:	identifier | startKeyword2 | midKeyword | '.'
-		|	'('			{ store($1); }
-			tokens ')'		{ $$ = $4; }
-		;
-
-/*
  *	Token types.
  */
 token		:	identifier | startKeyword | midKeyword | attrKeyword | '.'
@@ -787,34 +679,9 @@ tokenBarDot	:	inert | ',' | KW_TO
 		|	startKeyword | midKeyword | attrKeyword
 		;
 
-endToken	:	inert | ',' | KW_TO
-		|	midKeyword | attrKeyword
-		;
-
-tokenBarArrow2	:	identifier | startKeyword | attrKeyword | '.'
-		|	'<' | ':' | KW_ARROW | KW_PARTIAL | '=' | KW_IF
-		;
-
-tokenBarEqual	:	identifier | startKeyword | attrKeyword | '.'
-		|	'<' | ':' | KW_ARROW | KW_PARTIAL | KW_ARROW2 | KW_IF
-		;
-
-tokenBarIf	:	identifier | startKeyword | attrKeyword | '.'
-		|	'<' | ':' | KW_ARROW | KW_PARTIAL | '=' | KW_ARROW2
-		;
-
 tokenBarColon	:	identifier | startKeyword | attrKeyword | '.'
 		|	'<' | KW_ARROW | KW_PARTIAL | '=' | KW_ARROW2 | KW_IF
 		;
-
-tokenBarColonTo	:	inert | ENDS_IN_DOT | ','
-		|	startKeyword | attrKeyword | '.'
-		|	'<' | KW_ARROW | KW_PARTIAL | '=' | KW_ARROW2 | KW_IF
-		;
-
-tokenBarCommaLeft	:	inert | ENDS_IN_DOT | KW_TO
-			|	startKeyword | attrKeyword2 | '.' | ']' | midKeyword
-			;
 
 sortToken	:	IDENTIFIER | startKeyword | attrKeyword2
 		|	'=' | '|' | '+' | '*'

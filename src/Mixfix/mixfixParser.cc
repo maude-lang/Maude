@@ -23,6 +23,7 @@
 //
 //      Implementation for class MixfixParser.
 //
+#define PARSER_DEBUG 0
 
 //      utility stuff
 #include "macros.hh"
@@ -126,7 +127,7 @@ MixfixParser::insertProduction(int lhs,
       rhs2[i] = s < 0 ? s : tokens.insert(s);
     }
 
-#ifdef PARSER_DEBUG
+#if PARSER_DEBUG
   cout << "production: " << lhs << " ::= ";
   for (int i = 0; i < rhs2.length(); i++)
     cout << rhs2[i] << ' ';
@@ -171,7 +172,7 @@ MixfixParser::insertBubbleProduction(int lhs,
     cout << excludedTerminals[i] << ' ';
   cout << ")\n";
 #endif
-  
+
   parser.insertProd(lhs, lowerBound, upperBound, left, right, excludedTerminals);
   int nrActions = actions.length();
   actions.expandBy(1);
@@ -257,7 +258,7 @@ MixfixParser::parseSentence(const Vector<Token>& original,
       sentence[i] = terminal;
     }
 
-#ifdef PARSER_DEBUG
+#if PARSER_DEBUG
   cout << "parse: ";
   for (int i = 0; i < sentence.length(); i++)
     cout << sentence[i] << ' ';
@@ -277,7 +278,7 @@ MixfixParser::parseSentence(const Vector<Token>& original,
 	  int errorPos = parser.getErrorPosition(1);
 	  Assert(errorPos >= 0 && errorPos <= nrTokens,
 		 "parser return bad error position " << errorPos);
-	  firstBad = begin + parser.getErrorPosition(1);
+	  firstBad = begin + errorPos;
 	}
       else
 	firstBad = begin + nrTokens;  // this shouldn't happen but it does :(
@@ -285,7 +286,7 @@ MixfixParser::parseSentence(const Vector<Token>& original,
       firstBad = begin + nrTokens;  // HACK
 #endif
     }
-#ifdef PARSER_DEBUG
+#if PARSER_DEBUG
   parser.printCurrentParse();
 #endif
   return nrParses;
@@ -332,13 +333,19 @@ MixfixParser::makeMatchCommand(Term*& pattern,
 }
 
 void
-MixfixParser::makeUnifyCommand(Term*& lhs, Term*& rhs)
+MixfixParser::makeUnifyCommand(Vector<Term*>& lhs, Vector<Term*>& rhs)
 {
   Assert(nrParses > 0, "no parses");
-  int node = ROOT_NODE;
-  int unifyPair = parser.getChild(node, 0);
-  lhs = makeTerm(parser.getChild(unifyPair, 0));
-  rhs = makeTerm(parser.getChild(unifyPair, 1));
+  Assert(lhs.empty() && rhs.empty(), "return vectors should be empty");
+
+  for (int node = ROOT_NODE;; node = parser.getChild(node, 1))
+    {
+      int unifyPair = parser.getChild(node, 0);
+      lhs.append(makeTerm(parser.getChild(unifyPair, 0)));
+      rhs.append(makeTerm(parser.getChild(unifyPair, 1)));
+      if (actions[parser.getProductionNumber(node)].action != UNIFY_LIST)
+	break;
+    }
 }
 
 void
@@ -366,8 +373,8 @@ MixfixParser::makeStrategyCommand(Term*& subject, StrategyExpression*& strategy)
   int node = ROOT_NODE;
   int term = parser.getChild(node, 0);
   int strat = parser.getChild(node, 1);
-  subject = makeTerm(parser.getChild(node, 0));
-  strategy = makeStrategy(parser.getChild(node, 1));
+  subject = makeTerm(term);
+  strategy = makeStrategy(strat);
 }
 
 void
@@ -695,8 +702,8 @@ MixfixParser::makeTerm(int node)
 #endif
     default:
       {
-	t = 0;  // to avoid uninitialized variable warning
 	CantHappen("bad action");
+	return 0;  // to avoid uninitialized variable warning
       }
     }
   t->setLineNumber((*currentSentence)[pos].lineNumber());
@@ -775,13 +782,20 @@ MixfixParser::makeStatement(int node)
   int label = NONE;
   int metadata = NONE;
   FlagSet flags;
+  Vector<int> printNames;
+  Vector<Sort*> printSorts;
   if (actions[parser.getProductionNumber(node)].action == MAKE_ATTRIBUTE_PART)
-    makeAttributePart(parser.getChild(node, 1), label, metadata, flags);
-  makeStatementPart(parser.getChild(node, 0), label, metadata, flags);
+    makeAttributePart(parser.getChild(node, 1), label, metadata, flags, printNames, printSorts);
+  makeStatementPart(parser.getChild(node, 0), label, metadata, flags, printNames, printSorts);
 }
 
 void
-MixfixParser::makeAttributePart(int node, int& label, int& metadata, FlagSet& flags)
+MixfixParser::makeAttributePart(int node,
+				int& label,
+				int& metadata,
+				FlagSet& flags,
+				Vector<int>& printNames,
+				Vector<Sort*>& printSorts)
 {
   for (int listNode = parser.getChild(node, 0);; listNode = parser.getChild(listNode, 1))
     {
@@ -811,6 +825,13 @@ MixfixParser::makeAttributePart(int node, int& label, int& metadata, FlagSet& fl
 	    flags.setFlags(OWISE);
 	    break;
 	  }
+	case MAKE_PRINT_ATTRIBUTE:
+	  {
+	    flags.setFlags(PRINT);
+	    if (parser.getNumberOfChildren(attrNode) > 0)  // nonempty
+	      makePrintList(parser.getChild(attrNode, 0), printNames, printSorts);
+	    break;
+	  }
 	}
       if (actions[parser.getProductionNumber(listNode)].action != MAKE_ATTRIBUTE_LIST)
 	break;
@@ -818,7 +839,75 @@ MixfixParser::makeAttributePart(int node, int& label, int& metadata, FlagSet& fl
 }
 
 void
-MixfixParser::makeStatementPart(int node, int label, int metadata, FlagSet& flags)
+MixfixParser::makePrintList(int node, Vector<int>& names, Vector<Sort*>& sorts)
+{
+  typedef pair<int, int> IntPair;  // HACK
+  for (int listNode = node;; listNode = parser.getChild(listNode, 1))
+    {
+      //
+      //	listNode is either
+      //	  <PRINT_LIST> ::= <PRINT_ITEM>
+      //	or
+      //	  <PRINT_LIST> ::= <PRINT_ITEM> <PRINT_LIST>
+      //
+      //	printItemNode is either
+      //	  <PRINT_ITEM> ::= <STRING_NT>
+      //	or
+      //	  <PRINT_ITEM> ::= <VARIABLE>
+      //
+      int printItemNode = parser.getChild(listNode, 0);
+
+      switch (actions[parser.getProductionNumber(printItemNode)].action)
+	{
+	case MAKE_STRING:
+	  {
+	    int pos = currentOffset + parser.getFirstPosition(printItemNode);
+	    int code = (*currentSentence)[pos].code();
+	    DebugAdvisory("string = "  << (*currentSentence)[pos]);
+	    names.append(code);
+	    sorts.append(0);
+	    break;
+	  }
+	case MAKE_VARIABLE:
+	  {
+	    //
+	    //	The sort name is embedded in the action but we may have the get
+	    //	the variable base name by splitting a token.
+	    //
+	    int variableNode = parser.getChild(printItemNode, 0);
+	    DebugAdvisory("variableNode = "  << variableNode);
+	    Action& a = actions[parser.getProductionNumber(variableNode)];
+	    int pos = currentOffset + parser.getFirstPosition(variableNode);
+	    int varName = (*currentSentence)[pos].code();
+	    if (a.action != MAKE_VARIABLE_FROM_ALIAS)
+	      {
+		//
+		//	Full variable name given, need to split of base.
+		//
+		int baseName;
+		int sortName;
+		Token::split(varName, baseName, sortName);
+		varName = baseName;
+	      }
+	    names.append(varName);
+	    sorts.append(client.getSorts()[a.data]);
+	    break;
+	  }
+	default:
+	  CantHappen("unexpected item in print list");
+	}
+      if (actions[parser.getProductionNumber(listNode)].action != MAKE_PRINT_LIST)
+	break;
+    }
+}
+
+void
+MixfixParser::makeStatementPart(int node,
+				int label,
+				int metadata,
+				FlagSet& flags,
+				const Vector<int>& printNames,
+				const Vector<Sort*>& printSorts)
 {
   Vector<ConditionFragment*> condition;
   int action = actions[parser.getProductionNumber(node)].action;
@@ -855,6 +944,8 @@ MixfixParser::makeStatementPart(int node, int label, int metadata, FlagSet& flag
 	client.insertSortConstraint(sc);
 	if (metadata != NONE)
 	  client.insertMetadata(MixfixModule::MEMB_AX, sc, metadata);
+	if (flags.getFlag(PRINT))
+	  client.insertPrintAttribute(MixfixModule::MEMB_AX, sc, printNames, printSorts);
 	break;
       }
     case MAKE_EQ:
@@ -869,6 +960,8 @@ MixfixParser::makeStatementPart(int node, int label, int metadata, FlagSet& flag
 	client.insertEquation(eq);
 	if (metadata != NONE)
 	  client.insertMetadata(MixfixModule::EQUATION, eq, metadata);
+	if (flags.getFlag(PRINT))
+	  client.insertPrintAttribute(MixfixModule::EQUATION, eq, printNames, printSorts);
 	break;
       }
     case MAKE_RL:
@@ -886,6 +979,8 @@ MixfixParser::makeStatementPart(int node, int label, int metadata, FlagSet& flag
 	client.insertRule(rl);
 	if (metadata != NONE)
 	  client.insertMetadata(MixfixModule::RULE, rl, metadata);
+	if (flags.getFlag(PRINT))
+	  client.insertPrintAttribute(MixfixModule::RULE, rl, printNames, printSorts);
 	break;
       }
     default:

@@ -194,3 +194,16 @@ AU_DequeDagNode::dequeToArgVec(AU_DequeDagNode* original)
     d->setReduced();
   return d;
 }
+
+//
+//	Narrowing code.
+//
+
+bool
+AU_DequeDagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
+{
+  //
+  //	Just revert to argvec ACU representation and use its code.
+  //
+  return dequeToArgVec(this)->indexVariables2(indices, baseIndex);
+}

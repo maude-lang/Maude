@@ -34,7 +34,7 @@ Interpreter::eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 	  UserLevelRewritingContext::beginCommand();
 	  cout << "erewrite ";
 	  printModifiers(limit, gas);
-	  cout << d << " .\n";
+	  cout << d << " ." << endl;
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateErewrite(d, limit, gas);
 	}

@@ -64,7 +64,7 @@ SortTestConditionFragment::check(VariableInfo& variableInfo, NatSet& boundVariab
 {
   NatSet unboundVariables;
 
-  lhs->normalize(false);
+  lhs = lhs->normalize(false);
   lhs->indexVariables(variableInfo);
   variableInfo.addConditionVariables(lhs->occursBelow());
   unboundVariables.insert(lhs->occursBelow());

@@ -46,6 +46,7 @@ protected:
   DagNode* applyRules(DagNode* subject,
 		      RewritingContext& context,
 		      ExtensionInfo* extensionInfo);
+  void resetEachRule();
 
 private:
   typedef stack<int, list<int> > IntStack;  // optimize for the empty case

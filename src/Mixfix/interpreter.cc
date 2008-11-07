@@ -32,6 +32,7 @@
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "variable.hh"
 #include "AU_Theory.hh"
 #include "higher.hh"
 #include "strategyLanguage.hh"
@@ -49,6 +50,7 @@
 #include "matchSearchState.hh"
 #include "rewriteSequenceSearch.hh"
 #include "unificationProblem.hh"
+#include "narrowingSequenceSearch.hh"
 
 //	object system class definitions
 #include "pseudoThread.hh"
@@ -180,9 +182,14 @@ Interpreter::setCurrentModule(const Vector<Token>& moduleExpr, int start)
 	      setCurrentModule(m);
 	      return true;
 	    }
+	  IssueWarning(LineNumber(moduleExpr[start].lineNumber()) <<
+		       ": no module " << QUOTE(moduleExpr[start]) << '.');
 	}
-      IssueWarning(LineNumber(moduleExpr[0].lineNumber()) <<
-		   ": no module " << QUOTE(moduleExpr) << '.');
+      else 
+	{
+	  IssueWarning(LineNumber(moduleExpr[start].lineNumber()) <<
+		       ": module expressions not supported in commands.");
+	}
       return false;
     }
  bad:

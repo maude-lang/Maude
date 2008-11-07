@@ -117,7 +117,7 @@ public:
 
   static void printCondition(ostream& s, const Vector<ConditionFragment*>& condition);
   static void printCondition(ostream& s, const PreEquation* pe);
-  static void printAttributes(ostream& s, const PreEquation* pe, int metadata);
+  void printAttributes(ostream& s, const PreEquation* pe, ItemType itemType);
   //
   //	Parsing functions.
   //
@@ -141,8 +141,8 @@ public:
 			 Term*& subject,
 			 Vector<ConditionFragment*>& condition);
   bool parseUnifyCommand(const Vector<Token>& bubble,
-			 Term*& lhs,
-			 Term*& rhs);
+			 Vector<Term*>& lhs,
+			 Vector<Term*>& rhs);
   bool parseStrategyCommand(const Vector<Token>& bubble,
 			    Term*& subject,
 			    StrategyExpression*& strategy);
@@ -315,29 +315,33 @@ private:
     ZERO = -27,
     RATIONAL = -28,
 
-    SIMPLE_BASE = -29,
+    VARIABLE = -29,
+    PRINT_ITEM = -30,
+    PRINT_LIST = -31,
+
+    SIMPLE_BASE = -32,
     //
     //	Extra nonterminals needed to parse complex commands.
     //
-    SEARCH_CONNECTIVE = -29,
-    MATCH_PAIR = -30,
-    SEARCH_PAIR = -31,
-    SUCH_THAT = -32,
-    STRATEGY_EXPRESSION = -33,
+    SEARCH_CONNECTIVE = SIMPLE_BASE,
+    MATCH_PAIR = SIMPLE_BASE - 1,
+    SEARCH_PAIR = SIMPLE_BASE - 2,
+    SUCH_THAT = SIMPLE_BASE - 3,
+    STRATEGY_EXPRESSION = SIMPLE_BASE - 4,
 
-    MATCH_COMMAND = -34,
-    SEARCH_COMMAND = -35,
-    STRATEGY_COMMAND = -36,
+    MATCH_COMMAND = SIMPLE_BASE - 5,
+    SEARCH_COMMAND = SIMPLE_BASE - 6,
+    STRATEGY_COMMAND = SIMPLE_BASE - 7,
 
-    ASSIGNMENT = -37,
-    SUBSTITUTION = -38,
+    ASSIGNMENT = SIMPLE_BASE - 8,
+    SUBSTITUTION = SIMPLE_BASE - 9,
 
-    STRATEGY_LIST = -39,
+    STRATEGY_LIST = SIMPLE_BASE - 10,
 
-    UNIFY_PAIR = -40,
-    UNIFY_COMMAND = -41,
+    UNIFY_PAIR = SIMPLE_BASE - 11,
+    UNIFY_COMMAND = SIMPLE_BASE - 12,
 
-    COMPLEX_BASE = -42
+    COMPLEX_BASE = SIMPLE_BASE - 13
   };
 
   enum NonTerminalType

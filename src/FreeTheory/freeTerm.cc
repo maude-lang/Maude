@@ -354,7 +354,7 @@ FreeTerm::findAvailableTerms(TermBag& availableTerms, bool eagerContext, bool at
   if (ground())
     return;
   int nrArgs = argArray.length();
-  FreeSymbol* s = safeCast(FreeSymbol*, symbol());
+  FreeSymbol* s = symbol();
   if (atTop)
     {
       for (int i = 0; i < nrArgs; i++)
@@ -417,7 +417,7 @@ FreeTerm::compileRhsAliens(RhsBuilder& rhsBuilder,
 			   bool eagerContext)
 {
   int nrArgs = argArray.length();
-  FreeSymbol* s = safeCast(FreeSymbol*, symbol());
+  FreeSymbol* s = symbol();
   for (int i = 0; i < nrArgs; i++)
     {
       bool argEager = eagerContext && s->eagerArgument(i);
@@ -440,12 +440,25 @@ FreeTerm::compileRhs3(FreeRhsAutomaton* automaton,
 		      bool eagerContext)
 { // SHOULD BE CLEANED UP NOW WE HAVE compileRhsAliens()
   int nrArgs = argArray.length();
-  FreeSymbol* s = safeCast(FreeSymbol*, symbol());
-  Vector<int> sources;
+  //
+  //	We want to compile largest subterms first.
+  //
+  Vector<pair<int, int> > order(nrArgs);
   for (int i = 0; i < nrArgs; i++)
     {
-      bool argEager = eagerContext && s->eagerArgument(i);
-      Term* t = argArray[i];
+      order[i].first = - argArray[i]->computeSize();  // larger terms to the front
+      order[i].second = i;
+    }
+  sort(order.begin(), order.end());
+
+  FreeSymbol* s = symbol();
+  Vector<int> sources(nrArgs);
+  for (int i = 0; i < nrArgs; ++i)
+    {
+      int argNr = order[i].second;
+
+      bool argEager = eagerContext && s->eagerArgument(argNr);
+      Term* t = argArray[argNr];
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(t))
 	{
 	  if (!(availableTerms.findTerm(f, argEager)))
@@ -455,7 +468,7 @@ FreeTerm::compileRhs3(FreeRhsAutomaton* automaton,
 					  variableInfo,
 					  availableTerms,
 					  argEager);
-	      sources.append(source);
+	      sources[argNr] = source;
 	      f->setSaveIndex(source);
 	      availableTerms.insertBuiltTerm(f, argEager);
 	      continue;
@@ -464,9 +477,8 @@ FreeTerm::compileRhs3(FreeRhsAutomaton* automaton,
       //
       //	Alien, variable or available term so use standard mechanism.
       //
-      sources.append(t->compileRhs(rhsBuilder, variableInfo, availableTerms, argEager));
+      sources[argNr] = t->compileRhs(rhsBuilder, variableInfo, availableTerms, argEager);
     }
-
   //
   //	Need to flag last use of each source.
   //

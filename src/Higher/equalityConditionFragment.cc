@@ -69,12 +69,12 @@ EqualityConditionFragment::check(VariableInfo& variableInfo, NatSet& boundVariab
 {
   NatSet unboundVariables;
 
-  lhs->normalize(false);
+  lhs = lhs->normalize(false);
   lhs->indexVariables(variableInfo);
   variableInfo.addConditionVariables(lhs->occursBelow());
   unboundVariables.insert(lhs->occursBelow());
 
-  rhs->normalize(false);
+  rhs = rhs->normalize(false);
   rhs->indexVariables(variableInfo);
   variableInfo.addConditionVariables(rhs->occursBelow());
   unboundVariables.insert(rhs->occursBelow());

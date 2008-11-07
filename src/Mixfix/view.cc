@@ -207,13 +207,19 @@ View::checkSorts()
 {
   //
   //	We check that for each pair of sorts (A, B) lying in the same kind in
-  //	toTheory, there exists under our mapping sorts (A', B') that are in 
+  //	fromTheory, there exists under our mapping sorts (A', B') that are in 
   //	the same kind in toModule, and further more if A <= B then A' <= B'.
   //
   const Vector<ConnectedComponent*> kinds = fromTheory->getConnectedComponents();
+  //
+  //	We examine the sort structure of the from theory one connected component at a time.
+  //
   FOR_EACH_CONST(i, Vector<ConnectedComponent*>, kinds)
     {
       ConnectedComponent* kind = (*i);
+      //
+      //	For each kind, we examine its sorts.
+      //
       int nrSorts = kind->nrSorts();
       for (int j = 1; j < nrSorts; ++j)
 	{
@@ -235,6 +241,10 @@ View::checkSorts()
 	      return false;
 	    }
 	  ConnectedComponent* transKind = jTransSort->component();
+	  //
+	  //	Now we compare the sort to earlier sorts which have already been
+	  //	check for a valid translation.
+	  //
 	  for (int k = 1; k < j; ++k)
 	    {
 	      Sort* kSort = kind->sort(k);
@@ -242,7 +252,7 @@ View::checkSorts()
 	      if (!(fromTheory->moduleDeclared(kSort)))
 		kId = renameSort(kId);
 	      Sort* kTransSort = toModule->findSort(kId);
-	      if (jTransSort->component() != kTransSort->component())
+	      if (kTransSort->component() != transKind)
 		{
 		  IssueWarning(*this << ": sorts " << QUOTE(jSort) << " and " << QUOTE(kSort) << " from " <<
 			       QUOTE(fromTheory) << " are in the same kind but " <<

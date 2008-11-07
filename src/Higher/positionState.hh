@@ -59,7 +59,7 @@ public:
   PositionIndex getPositionIndex() const;
   DagPair rebuildDag(DagNode* replacement) const;
   DagPair rebuildDag(DagNode* replacement, ExtensionInfo* extInfo, PositionIndex index) const;
-
+  DagPair rebuildAndInstantiateDag(DagNode* replacement, Substitution& substitution) const;
   int getFlags() const;
 
 private:
@@ -95,7 +95,7 @@ PositionState::getDagNode() const
 inline DagNode*
 PositionState::getDagNode(PositionIndex index) const
 {
-  Assert(index >= 0 && index <= nextToReturn, "bad index");
+  Assert(index >= 0 && index <= nextToReturn, "bad index " << index << " nextToReturn = " << nextToReturn);
   return positionQueue[index].node();
 }
 

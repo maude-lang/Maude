@@ -95,17 +95,20 @@ operator<<(ostream& s, DagNode* dagNode)
 }
 
 void
-MixfixModule::printAttributes(ostream& s, const PreEquation* pe, int metadata)
+MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemType)
 {
   const Label& l = pe->getLabel();
   int id = l.id();
   const Equation* eq = dynamic_cast<const Equation*>(pe);
   bool owise = eq != 0 && eq->isOwise();
   bool nonexec = pe->isNonexec();
-  if (!nonexec && !owise && id == NONE && metadata == NONE)
+  int metadata = getMetadata(itemType, pe);
+  const PrintAttribute* printAttribute = getPrintAttribute(itemType, pe);
+
+  if (!nonexec && !owise && id == NONE && metadata == NONE && printAttribute == 0)
     return;
   s << " [";
-  char *space = "";
+  const char *space = "";
   if (nonexec)
     {
       s << "nonexec";
@@ -122,7 +125,15 @@ MixfixModule::printAttributes(ostream& s, const PreEquation* pe, int metadata)
       space = " ";
     }
   if (metadata != NONE)
-    s << space << "metadata " << Token::name(metadata);
+    {
+      s << space << "metadata " << Token::name(metadata);
+      space = " ";
+    }
+  if (printAttribute != 0)
+    {
+      s << space;
+      printAttribute->print(s, *pe);
+    }
   s << ']';
 }
 
@@ -136,9 +147,7 @@ operator<<(ostream& s, const SortConstraint* sc)
   if (sc->hasCondition())
     MixfixModule::printCondition(s, sc);
   MixfixModule* m = safeCast(MixfixModule*, sc->getModule());
-  MixfixModule::printAttributes(s,
-				sc,
-				m->getMetadata(MixfixModule::MEMB_AX, sc));
+  m->printAttributes(s, sc, MixfixModule::MEMB_AX);
   s << " .";
   return s;
 }
@@ -153,9 +162,7 @@ operator<<(ostream& s, const Equation* e)
   if (e->hasCondition())
     MixfixModule::printCondition(s, e);
   MixfixModule* m = safeCast(MixfixModule*, e->getModule());
-  MixfixModule::printAttributes(s,
-				e,
-				m->getMetadata(MixfixModule::EQUATION, e));
+  m->printAttributes(s, e, MixfixModule::EQUATION);
   s << " .";
   return s;
 }
@@ -170,9 +177,7 @@ operator<<(ostream& s, const Rule* r)
   if (r->hasCondition())
     MixfixModule::printCondition(s, r);
   MixfixModule* m = safeCast(MixfixModule*, r->getModule());
-  MixfixModule::printAttributes(s,
-				r,
-				m->getMetadata(MixfixModule::RULE, r));
+  m->printAttributes(s, r, MixfixModule::RULE);
   s << " .";
   return s;
 }
@@ -219,6 +224,16 @@ MixfixModule::printCondition(ostream& s, const PreEquation* pe)
 void
 MixfixModule::printVariable(ostream& s, int name, Sort* sort) const
 {
+  if (Token::isFlagged(name))
+    {
+      //
+      //	Variables with flagged codes are used internally to distinguish between two variables
+      //	with identical names during disjoint unification, and might be seen in a debugging
+      //	print statement.	
+      //
+      s << "(flagged)";
+      name = Token::unflaggedCode(name);
+    }
   s << Token::name(name);
   if (interpreter.getPrintFlag(Interpreter::PRINT_WITH_ALIASES))
     {

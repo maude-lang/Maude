@@ -195,7 +195,7 @@ Interpreter::reduce(const Vector<Token>& subject, bool debug)
       if (getFlag(SHOW_COMMAND))
 	{
 	  UserLevelRewritingContext::beginCommand();
-	  cout << "reduce in " << currentModule << " : " << d << " .\n";
+	  cout << "reduce in " << currentModule << " : " << d << " ." << endl;
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateReduce(d);
 	}
@@ -250,7 +250,7 @@ Interpreter::rewrite(const Vector<Token>& subject, Int64 limit, bool debug)
 	  cout << "rewrite ";
 	  if (limit != NONE)
 	    cout  << '[' << limit << "] ";
-	  cout << "in " << currentModule << " : " << d << " .\n";
+	  cout << "in " << currentModule << " : " << d << " ." << endl;
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateRewrite(d, limit);
 	}
@@ -295,7 +295,7 @@ Interpreter::fRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 	  UserLevelRewritingContext::beginCommand();
 	  cout << "frewrite ";
 	  printModifiers(limit, gas);
-	  cout << d << " .\n";
+	  cout << d << " ." << endl;
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateFrewrite(d, limit, gas);
 	}
@@ -330,71 +330,6 @@ Interpreter::fRewriteCont(Int64 limit, bool debug)
   endRewriting(timer, context, fm, &Interpreter::fRewriteCont);
 }
 
-/*
-void
-Interpreter::eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool debug)
-{
-  if (DagNode* d = makeDag(subject))
-    {
-      if (getFlag(SHOW_COMMAND))
-	{
-	  UserLevelRewritingContext::beginCommand();
-	  cout << "erewrite ";
-	  printModifiers(limit, gas);
-	  cout << d << " .\n";
-	  if (xmlBuffer != 0)
-	    xmlBuffer->generateErewrite(d, limit, gas);
-	}
-      UserLevelRewritingContext* context = new UserLevelRewritingContext(d);
-      context->setObjectMode(ObjectSystemRewritingContext::EXTERNAL);
-      VisibleModule* fm = currentModule->getFlatModule();
-
-      startUsingModule(fm);
-      if (getFlag(AUTO_CLEAR_RULES))
-	fm->resetRules();
-      beginRewriting(debug);
-      Timer timer(getFlag(SHOW_TIMING));
-      for (;;)
-	{
-	context->fairRewrite(NONE // HACK: should be limit, (gas == NONE) ? 1 : gas);
-	  DebugAdvisory("calling PseudoThread::eventLoop()");
-	  int r = PseudoThread::eventLoop();
-	  DebugAdvisory("PseudoThread::eventLoop() returned " << r);
-	  if (r != PseudoThread::EVENT_HANDLED)
-	    {
-	      if (r & PseudoThread::INTERRUPTED)
-		UserLevelRewritingContext::clearInterrupt();
-	      break;
-	    }
-	  //
-	  //	We must concretize the (potentially) virtual dag stored in
-	  //	our rewriting context before we can safely pass it to
-	  //	fairRewrite() again.
-	  //
-	  (void) context->root();  // force the virtual dag to be concretized
-	}
-      endRewriting(timer, context, fm, &Interpreter::eRewriteCont);
-    }
-}
-
-void
-Interpreter::eRewriteCont(Int64 limit, bool debug)
-{
-  UserLevelRewritingContext* context = savedContext;
-  VisibleModule* fm = savedModule;
-  savedContext = 0;
-  savedModule = 0;
-  continueFunc = 0;
-  if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
-    xmlBuffer->generateContinue("erewrite", fm, limit);
-  context->clearCount();
-  beginRewriting(debug);
-  Timer timer(getFlag(SHOW_TIMING));
-  context->fairContinue(limit);
-  endRewriting(timer, context, fm, &Interpreter::eRewriteCont);
-}
-*/
-
 void
 Interpreter::cont(Int64 limit, bool debug)
 {
@@ -418,7 +353,7 @@ Interpreter::creduce(const Vector<Token>& subject)
 	  if (getFlag(SHOW_COMMAND))
 	    {
 	      UserLevelRewritingContext::beginCommand();
-	      cout << "creduce in " << currentModule << " : " << d << " .\n";
+	      cout << "creduce in " << currentModule << " : " << d << " ." << endl;
 	    }
 	  //
 	  //	Write dag to file, run executable and read result from file.

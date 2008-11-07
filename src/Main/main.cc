@@ -81,7 +81,7 @@ main(int argc, char* argv[])
   const char* isFlag(const char* arg, const char* flag);
   bool findExecutableDirectory(string& directory, string& executable);
   bool findPrelude(string& directory, string& fileName);
-
+  void checkForPending();
 
   bool lineWrapping = true;
   bool handleCtrlC = true;
@@ -185,6 +185,8 @@ main(int argc, char* argv[])
       if (findPrelude(directory, fileName))
 	includeFile(directory, fileName, true, FileTable::AUTOMATIC);
     }
+  else
+    checkForPending();  // because we won't hit an EOF
   (void) UserLevelRewritingContext::commandLoop();
   return 0;
 }

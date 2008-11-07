@@ -30,7 +30,7 @@
 class DagNodeSet : private PointerSet
 {
 public:
-  void insert(DagNode* d);
+  int insert(DagNode* d);
   int dagNode2Index(DagNode* d) const;
   PointerSet::cardinality;
   PointerSet::makeEmpty;

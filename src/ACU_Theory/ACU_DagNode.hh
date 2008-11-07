@@ -65,6 +65,19 @@ public:
   void partialReplace(DagNode* replacement, ExtensionInfo* extensionInfo);
   DagNode* partialConstruct(DagNode* replacement, ExtensionInfo* extensionInfo);
   //
+  //	Unification member functions.
+  //
+  ReturnResult computeBaseSortForGroundSubterms();
+  bool computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
+  mpz_class nonVariableSize();
+  void insertVariables2(NatSet& occurs);
+  DagNode* instantiate2(const Substitution& substitution);
+  //
+  //	Interface for narrowing.
+  //
+  bool indexVariables2(NarrowingVariableInfo& indices, int baseIndex);
+  DagNode* instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag);
+  //
   //    Functions particular to ACU_DagNode.
   //
   int nrArgs() const;
@@ -101,6 +114,7 @@ private:
 					 ArgVec<Pair>::iterator d);
 
   bool normalizeAtTop();
+  bool dumbNormalizeAtTop();
   void copyAndBinaryInsert(const ACU_DagNode* source, DagNode* dagNode, int multiplicity);
   void fastMerge(const ACU_DagNode* source0, const ACU_DagNode* source1);
   void fastMerge(const ACU_DagNode* source0, const ACU_TreeDagNode* source1);
@@ -147,6 +161,7 @@ private:
   friend class ACU_NonLinearLhsAutomaton;	// for matching DAG subject
   friend class ACU_RhsAutomaton;	// for constructing replacement DAG
   friend class ACU_Subproblem;		// for constructing substitution
+  friend class ACU_UnificationSubproblem2;	// for constructing substitution
   friend class ACU_ExtensionInfo;	// for constructing matched portion
   friend class ACU_DagArgumentIterator;	// to accesss Pair
 

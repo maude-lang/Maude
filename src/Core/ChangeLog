@@ -1,3 +1,357 @@
+2008-09-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equationTable.cc (applyReplace): removed extraneous debugging
+	print statement
+
+===================================Maude91b===========================================
+
+2008-09-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rootContainer.hh (class RootContainer): added empty virtual dtor
+	for future safety
+
+	* symbolMap.hh (class SymbolMap): added empty virtual dtor for
+	future safety
+
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* disjunctiveSubproblemAccumulator.cc (extract): added #ifdef
+	NO_ASSERT to avoid unused variable warning
+
+	* sortTable.cc (compileOpDeclarations): added #ifndef NO_ASSERT to
+	avoid unused variable warning
+
+2008-06-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* equationTable.cc (applyReplace): added DebugAdvisory() for slow
+	case
+
+===================================Maude91a===========================================
+
+2008-04-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pendingUnificationStack.cc (makeNewSubproblem): ifdef out new
+	code and restore old code since new code has overhead for no
+	benefit
+
+2008-04-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pendingUnificationStack.cc (makeNewSubproblem): use
+	unificationPriority()
+
+2008-04-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pendingUnificationStack.cc (makeNewSubproblem): try ordering
+	theories base on number of unsolved unifications
+
+===================================Maude91===========================================
+
+2008-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* solvedFormSubproblemDisjunction.cc: deleted
+
+	* solvedFormSubproblemDisjunction.hh: deleted
+
+	* core.hh: removed class SolvedFormSubproblemDisjunction
+
+2008-03-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableInfo.cc (computeIndexRemapping): keep a vector of
+	conflict candidates to avoid quadratic behavior for large examples
+	with trival structure
+
+===================================Maude90a===========================================
+
+2008-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationContext.cc (markReachableNodes): added to fix bug
+	that our variable dags were being collected
+
+	* unificationContext.hh (class UnificationContext): derive from
+	SimpleRootContainer; added decl for markReachableNodes()
+
+	* pendingUnificationStack.cc (solve): check for empty case
+
+2008-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationContext.cc (unificationBind): added
+
+	* unificationContext.hh (class UnificationContext): added decls
+	for unificationBind() and getVariableDagNode(); added data member
+	variableDagNodes
+	(getVariableDagNode): added
+
+2008-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pendingUnificationStack.cc (push): fix == instead of = bug
+
+	* localBinding.hh (class LocalBinding): commented out
+	solvedFormAssert()
+
+	* localBinding.cc (solvedFormAssert): commented out
+
+	* substitution.cc: commented out makeLocalBinding(), merge() (both
+	versions)
+
+	* substitution.hh (class Substitution): commented out decls for
+	makeLocalBinding(), merge() (both versions)
+
+2008-01-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNodeSet.cc (insert): return index
+
+	* dagNodeSet.hh (class DagNodeSet): have insert() return index
+
+	* core.hh: added class PendingUnificationStack
+
+2008-01-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pendingUnificationStack.hh: created
+
+2008-01-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.cc (traceNarrowingStep): take new args
+
+	* rewritingContext.hh (class RewritingContext): updated decl for
+	traceNarrowingStep()
+
+2008-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewritingContext.hh (class RewritingContext): added decl for
+	traceNarrowingStep()
+
+	* substitution.cc: deleted commented out allocateSize
+	initialization
+
+	* solvedFormSubproblemDisjunction.hh (class
+	SolvedFormSubproblemDisjunction): updated decl for ctor
+
+	* solvedFormSubproblemDisjunction.cc
+	(SolvedFormSubproblemDisjunction): don't take
+	argument; initialize savedSubstitution with 0 length to avoid
+	marking uninitialized entries - this was a worry because the
+	uninitialized entries could stay uninitialized across rewriting if
+	the subproblem was itself on currently unvisited path in a another
+	subproblem disjunction
+
+	* substitution.hh (clear): added Assert() to prevent clearing of
+	substitutions with zero length vectors
+	(Substitution): allow zero length substitutions (both versions)
+	(value): have Assert() print out values size
+
+2008-01-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableInfo.cc (computeIndexRemapping): delete commented out
+	call to Substitution::notify()
+
+===================================Maude90===========================================
+
+2008-01-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* solvedFormSubproblemDisjunction.cc (unificationSolve): replaced
+	copy() with clone() as a quick hack to see what is going wrong
+	with C unification
+
+===================================Maude89j===========================================
+
+2007-11-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rule.cc (compile): pessimize the compilation of unconditional
+	rules to avoid left->right subterm sharing that would break
+	narrowing
+
+2007-11-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* core.hh: added class ProtectedDagNodeSet
+
+	* protectedDagNodeSet.cc: created
+
+	* protectedDagNodeSet.hh: created
+
+2007-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rule.cc (getLhsDag): call computeBaseSortForGroundSubterms() and
+	issue warning for function symbols without unification algorithms
+
+2007-10-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* core.hh: added class NarrowingVariableInfo
+
+	* narrowingVariableInfo.hh: created
+
+	* narrowingVariableInfo.cc: created
+
+2007-09-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh (clone): rewritten so that we never make the
+	underlying vector smaller - this used to cause a problem with the
+	strategy language
+	(addNewVariable): symmetric change - this didn't cause a problem
+	at the moment but might have done in the future with narrowing
+
+2007-09-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rule.hh (class Rule): added decl for getLhsDag()
+
+	* rule.cc (getLhsDag): added
+
+	* rule.hh (class Rule): added data member lhsDag
+
+	* rule.cc (reset): added
+
+	* rule.hh (class Rule): added decl for reset()
+
+	* ruleTable.cc (resetEachRule): added
+
+	* ruleTable.hh (class RuleTable): added decl for resetEachRule()
+
+2007-09-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh (notify): deleted
+	(Substitution): deleted no arg version
+	(clear): don't check against allocateSize
+	(class Substitution): deleted static data member allocateSize
+	(Substitution): adde 2 arg version
+
+	* module.cc (Module): initialize minimumSubstitutionSize
+
+	* preEquation.cc (compileMatch): look at the module of the lhs top
+	symbol instead
+
+	* rewritingContext.hh (RewritingContext): use getMinimumSubstitutionSize()
+
+	* module.hh (getMinimumSubstitutionSize): added
+	(notifySubstitutionSize): added
+	(class Module): added data member minimumSubstitutionSize
+
+	* preEquation.cc (compileMatch): call notifySubstitutionSize()
+
+	* variableInfo.hh (class VariableInfo): updated decl for
+	computeIndexRemapping()
+
+	* variableInfo.cc (computeIndexRemapping): don't call
+	Substitution::notify(); return minmum number of variables needed
+
+2007-09-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* disjunctiveSubproblemAccumulator.cc (extract): added Assert()
+	following coverity inspection
+
+===================================Maude89h===========================================
+
+2007-06-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freshVariableGenerator.hh (class FreshVariableGenerator): added
+	pure virtual member variableNameConflict()
+
+2007-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.cc (unificationBind, unificationDifference):
+	deleted
+
+	* substitution.hh (class Substitution): deleted decls for
+	unificationBind() and unificationDifference()
+
+	* localBinding.cc (unificationAssert): deleted
+
+	* localBinding.hh (class LocalBinding): deleted decl for
+	unificationAssert()
+
+	* core.hh: added class SolvedFormSubproblemDisjunction
+
+	* unificationSubproblemDisjunction.cc: deleted
+
+	* unificationSubproblemDisjunction.hh: deleted
+
+2007-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTable.hh (class SortTable): fix bug where we were passing
+	realToBdd by value rather than by reference
+
+===================================Maude89a===========================================
+
+2007-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* solvedFormSubproblemDisjunction.cc (markReachableNodes): added
+
+	* solvedFormSubproblemDisjunction.hh (class
+	SolvedFormSubproblemDisjunction): derive from SimpleRootContainer
+	(class SolvedFormSubproblemDisjunction): added decl for
+	markReachableNodes()
+
+	* unificationContext.cc (makeFreshVariable): record sort of fresh
+	variable
+
+	* unificationContext.hh (getFreshVariableSort): added
+
+	* unificationContext.cc (makeFreshVariable): fix off by one error
+	in value passed to getFreshVariableName()
+
+	* substitution.hh (clone): resize values
+	(bind): make Assert()s more verbose
+	(value): make Assert()s more verbose
+	(addNewVariable): added
+
+	* unificationContext.cc (UnificationContext): firstFreeIndex ->
+	nrOriginalVariables; initialize base class; don't initialize
+	nextName
+	(deallocateFreshVariables): deleted
+	(makeFreshVariable): rewritten
+
+	* unificationContext.hh (class UnificationContext): firstFreeIndex
+	becomes nrOriginalVariables; decl for deallocateFreshVariables()
+	deleted; data member nextName deleted
+
+2007-03-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationContext.cc: created
+	(UnificationContext): fixed bug where we were zeroing local
+	nextName variable
+	(makeFreshVariable): clear fresh variable to support reuse
+
+	* unificationContext.hh (class UnificationContext): rewritten
+
+2007-03-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* solvedFormSubproblemDisjunction.cc (solve): become unificationSolve()
+
+	* solvedFormSubproblemDisjunction.hh (class
+	SolvedFormSubproblemDisjunction): define unificationSolve() rather
+	than solve()
+
+	* subproblemSequence.hh (class SubproblemSequence): added decl for
+	unificationSolve()
+
+	* subproblemSequence.cc (unificationSolve): added
+
+	* unificationContext.hh (class UnificationContext): created
+
+2007-03-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* solvedFormSubproblemDisjunction.hh: created
+
+	* solvedFormSubproblemDisjunction.cc: created
+
+	* localBinding.hh (class LocalBinding): added decl for
+	solvedFormAssert()
+
+	* localBinding.cc (unificationAssert): fix bug where we were
+	extracting subproblem too soon
+	(solvedFormAssert): added
+
+	* substitution.cc (merge): added Substitution& version
+
+	* substitution.hh (class Substitution): added dec for merge()
+
+	* substitution.cc (merge): added
+
+	* substitution.hh (class Substitution): added decl for
+	makeLocalBinding()
+
+	* substitution.cc (makeLocalBinding): added
+
+===================================Maude89===========================================
+
 2007-02-13  Steven Eker  <eker@goo.csl.sri.com>
 
 	* substitution.hh (value): check against valued.size() rather than

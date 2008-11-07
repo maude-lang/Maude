@@ -91,7 +91,8 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule
 	      downModuleExpression(f->getArgument(0), enclosingModule, m))
 	    {
 	      int nrParameters = m->getNrParameters();
-	      if (nrParameters != names.size())
+	      int nrNames = names.size();
+	      if (nrParameters != nrNames)
 		return false;  // wrong number of arguments
 
 	      Vector<View*> views(nrParameters);

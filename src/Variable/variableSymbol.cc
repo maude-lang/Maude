@@ -91,7 +91,7 @@ VariableSymbol::stackArguments(DagNode* /* subject */,
 
 void
 VariableSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
-				       const Vector<int> realToBdd,
+				       const Vector<int>& realToBdd,
 				       DagNode* subject,
 				       Vector<Bdd>& generalizedSort)
 {

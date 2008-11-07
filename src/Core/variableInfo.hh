@@ -60,7 +60,7 @@ public:
   int makeConstructionIndex();
   void endOfFragment();
   void useIndex(int index);
-  void computeIndexRemapping();
+  int computeIndexRemapping();
   int remapIndex(int original);
   //
   //	Separate from the above we keep sets (of indices) of real variables

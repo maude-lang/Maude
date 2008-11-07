@@ -40,11 +40,10 @@
 //      core class definitions
 #include "substitution.hh"
 #include "localBinding.hh"
+#include "subproblemAccumulator.hh"
 
 //	variable class definitions
 #include "variableDagNode.hh"
-
-int Substitution::allocateSize = 1;
 
 LocalBinding*
 Substitution::operator-(const Substitution& original) const
@@ -76,102 +75,104 @@ Substitution::operator-(const Substitution& original) const
   return result;
 }
 
-bool
-Substitution::unificationBind(int index, Sort* varSort, DagNode* value)
-{
-  Assert(values[index] == 0, "trying to bind bound variable " << index << " to " << value);
-  //
-  //	First we instantiate the value with the current substitution.
-  //
-  DagNode* n = value->instantiate(*this);
-  if (n == 0)
-    n = value;
-  //
-  //	Check to see if we are binding to a ground or non-ground term.
-  //
-  int sortIndex = n->getSortIndex();
-  if (sortIndex == Sort::SORT_UNKNOWN)
-    {
-      //
-      //	Check to see if we are binding a variable to an expression
-      //	containing the variable.
-      //
-      if (n->occurs(index))
-	{
-	  //
-	  //	Check to see if we are binding a variable to itself.
-	  //
-	  if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(n))
-	    {
-	      if (v->getIndex() == index)
-		return true;
-	    }
-	  return false;
-	}
-    }
-  else
-    {
-      //
-      //	Check the sort of the ground term we are binding to.
-      //
-      if (varSort != 0 && !leq(sortIndex, varSort))
-	return false;
-    }
-  //
-  //	Finally we can bind the variable.
-  //
-  bind(index, n);
-  //
-  //	Now we eliminate the variable from existing bindings.
-  //
-  for (int i = 0; i < copySize; ++i)
-    {
-      if (i != index)
-	{
-	  DagNode* v = values[i];
-	  if (v != 0)
-	    {
-	      v = v->instantiate(*this);
-	      if (v != 0)
-		values[i] = v;
-	    }
-	}
-    }
-  return true;
-}
-
+/*
 LocalBinding*
-Substitution::unificationDifference(const Substitution& original) const
+Substitution::makeLocalBinding() const
 {
-  //
-  //	We allow the original and ourselves to have differing bindings for the
-  //	same variable as bindings can change under instantiation.
-  //	We are only interested in the variables for which we have a binding and the
-  //	original substitution does not. The converse case represents an inconsistancy.
-  //
-  int nrDiff = 0;
+  int nrBindings = 0;
   Vector<DagNode*>::const_iterator b = values.begin();
   Vector<DagNode*>::const_iterator e = b + copySize;
 
-  Vector<DagNode*>::const_iterator j = original.values.begin();
-  for (Vector<DagNode*>::const_iterator i = b; i != e; ++i, ++j)
+  for (Vector<DagNode*>::const_iterator i = b; i != e; ++i)
     {
-      Assert(*j == 0 || *i != 0,
-	     "substitution inconsistency at index " << i - b);
-      if (*i != 0 && *j == 0)
-	++nrDiff;
+      if (*i != 0)
+	++nrBindings;
     }
 
-  if (nrDiff == 0)
+  if (nrBindings == 0)
     return 0;
-  LocalBinding* result = new LocalBinding(nrDiff);
+  LocalBinding* result = new LocalBinding(nrBindings);
 
-  j = original.values.begin();
-  for (Vector<DagNode*>::const_iterator i = b; i != e; ++i, ++j)
+  for (Vector<DagNode*>::const_iterator i = b; i != e; ++i)
     {
       DagNode* d = *i;
-      if (d != 0 && *j == 0)
+      if (d != 0)
 	result->addBinding(i - b, d);
     }
   return result;
 }
+
+bool
+Substitution::merge(int index, DagNode* rhs, Subproblem*& returnedSubproblem)
+{
+  returnedSubproblem = 0;
+  {
+    //
+    //	Get canonical index of variable being bound.
+    //
+    DagNode* d;
+    VariableDagNode* v;
+    while ((d = values[index]) && (v = dynamic_cast<VariableDagNode*>(d)))
+      index = v->getIndex();
+  }
+
+  if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(rhs))
+    {
+      //
+      //	Variable against variable case.
+      //
+      VariableDagNode* rv = v->lastVariableInChain(*this);
+      int rIndex = rv->getIndex();
+      if (rIndex == index)
+	return true;
+      DagNode* ld = values[index];
+      if (ld == 0)
+	{
+	  values[index] = rv;
+	  return true;
+	}
+      DagNode* rd = values[rIndex];
+      if (rd == 0)
+	{
+	  values[rIndex] = ld;
+	  values[index] = rv;
+	  return true;
+	}
+      if (ld->nonVariableSize() < rd->nonVariableSize())
+	values[rIndex] = ld;  // keep smaller dag in binding
+      values[index] = rv;
+      return ld->computeSolvedForm(rd, *this, returnedSubproblem);
+    }
+  //
+  //	Variable against non-variable case
+  //
+  DagNode* ld = values[index];
+  if (ld == 0)
+    {
+      values[index] = rhs;
+      return true;
+    }
+  //
+  //	Hard case - our variable already has a solved form. We do a merge step.
+  //
+  if (ld->nonVariableSize() > rhs->nonVariableSize())
+    values[index] = rhs;
+  return ld->computeSolvedForm(rhs, *this, returnedSubproblem);
+}
+
+bool
+Substitution::merge(const Substitution& other, SubproblemAccumulator& subproblems)
+{
+  for (int i = 0; i < copySize; ++i)
+    {
+      if (DagNode* d = other.values[i])
+	{
+	  Subproblem* returnedSubproblem;
+	  if (!merge(i, d, returnedSubproblem))
+	    return false;
+	  subproblems.add(returnedSubproblem);
+	}
+    }
+  return true;
+}
+*/

@@ -26,10 +26,11 @@
 #ifndef _SearchState_hh_
 #define _SearchState_hh_
 #include <stack>
+#include "cacheableState.hh"
 #include "positionState.hh"
 #include "rewritingContext.hh"
 
-class SearchState : public PositionState
+class SearchState : public CacheableState, public PositionState
 {
   NO_COPYING(SearchState);
 

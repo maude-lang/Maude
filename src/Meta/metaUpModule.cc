@@ -868,6 +868,27 @@ MetaLevel::upStatementAttributes(MixfixModule* m,
     }
   if (pe->isNonexec())
     args.append(nonexecSymbol->makeDagNode());
+  const PrintAttribute* p = m->getPrintAttribute(type, pe);
+  if (p != 0)
+    {
+      Vector<DagNode*> args2(1);
+      int nrItems = p->getNrItems();
+      if (nrItems == 0)
+	args2[0] = nilQidListSymbol->makeDagNode();
+      else
+	{
+	  Vector<DagNode*> itemList(nrItems);
+	  for (int i = 0; i < nrItems; ++i)
+	    {
+	      int code = p->getTokenCode(i);
+	      itemList[i] = (code == NONE) ?
+		upTerm(pe->index2Variable(p->getVariableIndex(i)), m, qidMap) :  // variable
+		upQid(code, qidMap);  // string
+	    }
+	  args2[0] = (nrItems == 1) ? itemList[0] : qidListSymbol->makeDagNode(itemList);
+	}
+      args.append(printSymbol->makeDagNode(args2));
+    }
   const Equation* eq = dynamic_cast<const Equation*>(pe);
   if (eq != 0 && eq->isOwise())
     args.append(owiseSymbol->makeDagNode());
@@ -939,6 +960,9 @@ MetaLevel::upConditionFragment(const ConditionFragment* fragment,
       s = rewriteConditionSymbol;
     }
   else
-    CantHappen("bad condition fragment");
+    {
+      CantHappen("bad condition fragment");
+      return 0; //  avoid compiler warning
+    }
   return s->makeDagNode(args);
 }

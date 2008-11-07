@@ -26,6 +26,7 @@
 #ifndef _metadataStore_hh_
 #define _metadataStore_hh_
 #include <map>
+#include "printAttribute.hh"
 
 class MetadataStore
 {
@@ -37,15 +38,24 @@ public:
     RULE = 0x30000000
   };
 
-  void insertMetadata(ItemType itemType, ModuleItem* item, int metadata);
+  void insertMetadata(ItemType itemType, const ModuleItem* item, int metadata);
   int getMetadata(ItemType itemType, const ModuleItem* item) const;
 
   void insertMetadata(ModuleItem* symbol, int opDeclIndex, int metadata);
   int getMetadata(ModuleItem* symbol, int opDeclIndex) const;
 
+  void insertPrintAttribute(ItemType itemType,
+			    const PreEquation* statement,
+			    const Vector<int>& names,
+			    const Vector<Sort*>& sorts);
+  const PrintAttribute* getPrintAttribute(ItemType itemType, const ModuleItem* item) const;
+
 private:
   typedef map<Int64, int> MetadataMap;
+  typedef map<Int64, PrintAttribute> PrintAttributeMap;
+
   MetadataMap metadataMap;
+  PrintAttributeMap printAttributeMap;
 };
 
 #endif

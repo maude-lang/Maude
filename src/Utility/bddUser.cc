@@ -47,13 +47,6 @@ BddUser::gc_handler(int pre, bddGbcStat* stat)
   // We don't output any message.
 }
 
-void
-BddUser::setNrVariables(int nrVariables)
-{
-  if (nrVariables > bdd_varnum())
-    bdd_setvarnum(nrVariables);
-}
-
 BddUser::~BddUser()
 {
   --nrUsers;

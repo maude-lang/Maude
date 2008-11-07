@@ -31,6 +31,14 @@
 class Entity
 {
 public:
+#ifndef NO_ASSERT
+  //
+  //	We give ourself a virtual destructor so that debugging code can
+  //	use dynamic_cast<>s to figure out what derived object we are.
+  //
+  virtual ~Entity() {}
+#endif
+
   class User
   {
   public:
@@ -41,10 +49,6 @@ public:
   void removeUser(User* user);
   int getNrUsers() const;
   void informUsers();
-
-#ifndef NO_ASSERT
-  virtual void dummyToAllowDynamicCasts() {}
-#endif
 
 private:
   struct UserLt

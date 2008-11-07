@@ -79,7 +79,8 @@ private:
   const Bool oneSidedIdFlag;
   //
   //	Deque represention of arguments can be used if there is no
-  //	one-sided identity and there are no equations.
+  //	one-sided identity, no fancy strategy and there are no equations
+  //	at the top.
   //
   Bool useDequeFlag;
 };

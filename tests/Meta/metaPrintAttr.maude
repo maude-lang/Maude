@@ -1,0 +1,55 @@
+set show timing off .
+
+fmod COND is
+  sort Foo .
+  ops a b c d e : -> Foo .
+  ops f g : Foo Foo -> Foo .
+  op h : Foo -> Foo .
+var X Y Z : Foo .
+  ceq f(X, Y) = g(X, Z) if Z := h(Y) [print "X = " X ", Z = " Z] .
+endfm
+
+red f(a, b) .
+red in META-LEVEL : upModule('COND, false) .
+
+set print attribute on .
+
+red in META-LEVEL :
+metaReduce(
+fmod 'COND is
+  including 'BOOL .
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'd : nil -> 'Foo [none] .
+  op 'e : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [none] .
+  op 'g : 'Foo 'Foo -> 'Foo [none] .
+  op 'h : 'Foo -> 'Foo [none] .
+  none
+  ceq 'f['X:Foo,'Y:Foo] = 'g['X:Foo,'Z:Foo] if 'Z:Foo := 'h['Y:Foo]
+    [print('"X = " 'X:Foo '", Z = " 'Z:Foo)] .
+endfm, 
+'f['a.Foo, 'b.Foo]) .
+
+red in META-LEVEL :
+metaReduce(
+fmod 'COND is
+  including 'BOOL .
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'd : nil -> 'Foo [none] .
+  op 'e : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [none] .
+  op 'g : 'Foo 'Foo -> 'Foo [none] .
+  op 'h : 'Foo -> 'Foo [none] .
+  none
+  ceq 'f['X:Foo,'Y:Foo] = 'g['X:Foo,'Z:Foo] if 'Z:Foo := 'h['Y:Foo]
+    [print(nil)] .
+endfm, 
+'f['a.Foo, 'b.Foo]) .

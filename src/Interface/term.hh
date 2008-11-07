@@ -61,6 +61,7 @@ public:
   const NatSet& occursInContext() const;
   const PointerSet& collapseSymbols() const;
   unsigned int getHashValue() const;
+  int computeSize();
   Term* deepCopy(SymbolMap* translation = 0) const;
   Term* instantiate(const Vector<Term*>& varBindings, SymbolMap* translation);
   int compare(const Term* other) const;
@@ -255,6 +256,7 @@ private:
   ConnectedComponent* connectedComponent;
   int saveIndex;
   unsigned int hashValue;
+  int cachedSize;
 };
 
 inline
@@ -264,6 +266,7 @@ Term::Term(Symbol* symbol)
   flags = 0;
   sortIndex = Sort::SORT_UNKNOWN;
   saveIndex = NONE;
+  cachedSize = UNDEFINED;
 }
 
 inline Symbol*

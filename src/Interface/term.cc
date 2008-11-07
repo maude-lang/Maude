@@ -91,10 +91,6 @@ Term::compileRhs(RhsBuilder& rhsBuilder,
 	    return vt->getIndex();
 	  t->saveIndex = variableInfo.makeProtectedVariable();
 	}
-      /*
-      else  // must be rhs term
-	variableInfo.useIndex(t->saveIndex);
-      */
       return t->saveIndex;
     }
   else
@@ -117,7 +113,6 @@ Term::compileRhs(RhsBuilder& rhsBuilder,
 	      rhsBuilder.addRhsAutomaton(new CopyRhsAutomaton(varIndex, index));
 	      saveIndex = index;
 	      availableTerms.insertBuiltTerm(this, true);
-	      // variableInfo.useIndex(index);
 	      return index;  
 	    }
 	  return varIndex;  // unbound variable in lazy context
@@ -125,7 +120,6 @@ Term::compileRhs(RhsBuilder& rhsBuilder,
       int index = compileRhs2(rhsBuilder, variableInfo, availableTerms, eagerContext);
       saveIndex = index;
       availableTerms.insertBuiltTerm(this, eagerContext);
-      // variableInfo.useIndex(index);
       return index;
     }
 }
@@ -163,6 +157,19 @@ Term::indexVariables(VariableInfo& indicies)
 	  occursSet.insert(t->occursSet);
 	}
     }
+}
+
+int
+Term::computeSize()
+{
+  if (cachedSize == UNDEFINED)
+    {
+      int size = 1;
+      for (ArgumentIterator a(*this); a.valid(); a.next())
+	size += a.argument()->computeSize();
+      cachedSize = size;
+    }
+  return cachedSize;
 }
 
 void

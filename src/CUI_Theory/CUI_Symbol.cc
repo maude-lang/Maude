@@ -51,6 +51,7 @@
 #include "CUI_Symbol.hh"
 #include "CUI_DagNode.hh"
 #include "CUI_Term.hh"
+#include "CUI_UnificationSubproblem.hh"
 
 CUI_Symbol::CUI_Symbol(int id,
 		       const Vector<int>& strategy,
@@ -295,7 +296,7 @@ CUI_Symbol::setFrozen(const NatSet& frozen)
 
 void
 CUI_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
-				   const Vector<int> realToBdd,
+				   const Vector<int>& realToBdd,
 				   DagNode* subject,
 				   Vector<Bdd>& generalizedSort)
 {
@@ -316,4 +317,10 @@ CUI_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
   for (int i = 0; i < nrBdds; ++i)
     generalizedSort[i] = bdd_veccompose(sortFunction[i], argMap);
   bdd_freepair(argMap);
+}
+
+UnificationSubproblem*
+CUI_Symbol::makeUnificationSubproblem()
+{
+  return new CUI_UnificationSubproblem();
 }

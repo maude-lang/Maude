@@ -37,13 +37,13 @@ public:
   typedef Vector<mpz_class> IntVec;
 
   void insertEqn(const IntVec& eqn);
-  void setUpperBounds(const IntVec& bounds);
+  void setUpperBounds(const IntVec& bounds);  // pass NONE in place of UNBOUNDED
   bool findNextMinimalSolution(IntVec& solution);
   bool findNextMinimalSolutionGcd(IntVec& solution);
 
 private:
   //
-  //	Common data types functions and data.
+  //	Common data types, functions and data.
   //
   typedef list<IntVec> VecList;
 
@@ -56,7 +56,7 @@ private:
 
   int nrVariables;
   VecList eqns;			// Diophantine system
-  IntVec upperBounds;		// upper bounds for each variable
+  IntVec upperBounds;		// upper bounds for each variable, NONE means unbounded
   VecList solutions;		// minimal solutions found so far
   //
   //	Contejean-Devie specific stuff.

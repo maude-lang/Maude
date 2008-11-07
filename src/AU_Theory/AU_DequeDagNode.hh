@@ -53,6 +53,14 @@ public:
   //	Functions required to handle extension information.
   //
   ExtensionInfo* makeExtensionInfo();
+
+  //
+  //	Interface for narrowing.
+  //
+  //	This is needed to remove any deque nodes from dag being narrowed since
+  //	unification and narrowing functionality doesn't support them.
+  //
+  bool indexVariables2(NarrowingVariableInfo& indices, int baseIndex);
   //
   //	Functions particular to AU_DequeDagNode.
   //

@@ -1,3 +1,67 @@
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* intContejeanDevie.cc (findNextMinimalSolution): init lastNfnz to
+	aviod compiler warning
+
+	* mpzContejeanDevie.cc (findNextMinimalSolution): init lastNfnz to
+	aviod compiler warning
+
+	* binBuf.cc (times10): & -> &&
+
+2008-09-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: switch order of HAVE_STRING_H and HAVE_STRINGS_H to
+	appease gcc 4.3.1
+
+2008-05-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mpzContejeanDevie.cc (initialize): update upperbound Assert()
+	(findNextMinimalSolution): handle upperbound == NONE case
+
+	* mpzSystem.hh (class MpzSystem): added comments about new
+	representation of unbounded
+
+	* mpzSystem.cc (initializeUpperBounds): use NONE rather than
+	UNBOUNDED to represent unbounded since UNBOUNDED is actually a
+	valid result
+
+2008-05-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* macros.hh: added forwards decls for classes IntSet, Indent,
+	MpzSystem and IntSystem
+
+	* ttyAttributes.hh: deleted - appears to be redundant code
+
+	* intSystem.cc (IntSystem): added
+	(insertEqn): allow IntVecs of varying length to be passes and pad
+	them with zeros when making a deep copy
+
+	* intSystem.hh (class IntSystem): make nrVariables const; add decl
+	for ctor
+
+	* intContejeanDevie.cc: created
+
+	* intSystem.hh: created
+
+	* intSystem.cc: created
+
+===================================Maude91a===========================================
+
+2008-03-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* graph.cc (Graph, color, colorNode, visit): updated
+
+	* graph.hh (class Graph): convert to adjacency set representation
+	(insertEdge): updated
+
+===================================Maude90a===========================================
+
+2007-07-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bddUser.hh (setNrVariables): moved here and made inline
+
+===================================Maude89d===========================================
+
 2007-01-22  Steven Eker  <eker@goo.csl.sri.com>
 
 	* bddUser.hh (class BddUser): added decl for gc_handler()

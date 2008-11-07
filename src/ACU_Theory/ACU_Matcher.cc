@@ -382,7 +382,7 @@ ACU_LhsAutomaton::match(DagNode* subject,
 	}
     }
   //
-  //	If we have are matching with extension we have to insure that at least
+  //	If we have are matching with extension we have to ensure that at least
   //	two real subterms are actually matched; i.e. extension cannot be whole
   //	subject or whole subject except for one alien subterm.
   //
@@ -429,6 +429,7 @@ ACU_LhsAutomaton::fullMatch(ACU_DagNode* subject,
     return false;
   if (subproblem->noPatterns())
     {
+      //cout << "no patterns\n";
       //
       //	Check for trivial cases.
       //
@@ -483,6 +484,49 @@ ACU_LhsAutomaton::fullMatch(ACU_DagNode* subject,
 	      extensionInfo->setValidAfterMatch(true);
 	      goto succeed;
 	    }
+	  else
+	    {
+	      TopVariable& tv = topVariables[lastUnboundVariable];
+	      if (tv.prevUnbound == NONE)
+		{
+		  //
+		  //	We have extension, and a single unbound top variable.
+		  //	We check if we can force the lone variable to take a lone subject.
+		  //
+		  if (totalMultiplicity > 2)
+		    {
+		      if (tv.takeIdentity)
+			goto cantForce;
+		      //
+		      //	We had more than two subject, but we can't take the identity
+		      //	so there is still hope that there is only one left that
+		      //	can be forced.
+		      //
+		      int total = 0;
+		      int nrSubjects = currentMultiplicity.length();
+		      for (int i = 0; i < nrSubjects; i++)
+			{
+			  total += currentMultiplicity[i];
+			  if (total > 1)
+			    goto cantForce;
+			}
+		    }
+		  {
+		    delete subproblem;
+		    Subproblem* sp = 0;
+		    if (forcedLoneVariableCase(subject, solution, sp))
+		      {
+			subproblems.add(sp);
+			extensionInfo->setMatchedWhole(true);
+			extensionInfo->setValidAfterMatch(true);
+			goto succeed;
+		      } 
+		    return false;
+		  }
+		cantForce:
+		  ;
+		}
+	    }      
 	}
     }
   if (!handleElementVariables(subject, solution, subproblem))

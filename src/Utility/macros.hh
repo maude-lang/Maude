@@ -50,10 +50,10 @@
 #if HAVE_CTYPE_H
 #include <ctype.h>
 #endif
-#if HAVE_STRINGS_H
-#include <strings.h>
-#elif HAVE_STRING_H
+#if HAVE_STRING_H
 #include <string.h>
+#elif HAVE_STRINGS_H
+#include <strings.h>
 #endif
 #if HAVE_UNISTD_H
 #include <unistd.h>  // needed by solaris
@@ -87,6 +87,10 @@ class Tty;
 class Timer;
 class FlagSet;
 class AllSat;
+class IntSet;
+class Indent;
+class MpzSystem;
+class IntSystem;
 
 //
 //	Types for storage efficiency.

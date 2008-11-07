@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version alpha88d.
+***	Version 2.4.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -527,6 +527,8 @@ fmod FLOAT is
   protecting BOOL .
   sorts FiniteFloat Float .
   subsort FiniteFloat < Float .
+
+*** pseudo constructor for the set of double precision floats
   op <Floats> : -> FiniteFloat [special (id-hook FloatSymbol)] .
   op <Floats> : -> Float [ditto] .
 
@@ -671,8 +673,11 @@ fmod STRING is
   sorts String Char FindResult .
   subsort Char < String .
   subsort Nat < FindResult .
+
+*** pseudo constructor for the infinite set of strings
   op <Strings> : -> Char [special (id-hook StringSymbol)] .
   op <Strings> : -> String [ditto] .
+
   op notFound : -> FindResult [ctor] .
 
   op ascii : Char -> Nat
@@ -806,6 +811,8 @@ endfm
 fmod QID is
   protecting STRING .
   sort Qid .
+
+*** pseudo constructor for the infinite set of quoted identifiers
   op <Qids> : -> Qid [special (id-hook QuotedIdentifierSymbol)] .
 
   op string : Qid -> String 
@@ -1716,6 +1723,7 @@ fmod META-MODULE is
   op metadata : String -> Attr [ctor] .
   op owise : -> Attr [ctor] .
   op nonexec : -> Attr [ctor] .
+  op print : QidList -> Attr [ctor] .
 
 *** operator declarations
   sorts OpDecl OpDeclSet .
@@ -1883,30 +1891,45 @@ fmod META-LEVEL is
   op none : -> PrintOptionSet [ctor] .
   op __ : PrintOptionSet PrintOptionSet -> PrintOptionSet [ctor assoc comm id: none] .
 
+*** unification problems
+  sorts UnificandPair UnificationProblem .
+  subsort UnificandPair < UnificationProblem .
+  op _=?_ : Term Term -> UnificandPair [ctor prec 71] .
+  op _/\_ : UnificationProblem UnificationProblem -> UnificationProblem [ctor assoc comm prec 73] .
+
 *** success results
-  sorts ResultPair ResultTriple Result4Tuple MatchPair TraceStep Trace .
+  sorts ResultPair ResultTriple Result4Tuple MatchPair TraceStep Trace
+    UnificationPair UnificationTriple .
   subsort TraceStep < Trace .
   op {_,_} : Term Type -> ResultPair [ctor] .
   op {_,_,_} : Term Type Substitution -> ResultTriple [ctor] .
   op {_,_,_,_} : Term Type Substitution Context -> Result4Tuple [ctor] .
   op {_,_} : Substitution Context -> MatchPair [ctor] .
+  op {_,_} : Substitution Nat -> UnificationPair [ctor] .
+  op {_,_,_} : Substitution Substitution Nat -> UnificationTriple [ctor] .
   op {_,_,_} : Term Type Rule -> TraceStep [ctor] .
   op nil : -> Trace [ctor] .
   op __ : Trace Trace -> Trace [ctor assoc id: nil format (d n d)] .
 
 *** failure results
-  sorts ResultPair? ResultTriple? Result4Tuple? MatchPair? Substitution? Trace? .
+  sorts ResultPair? ResultTriple? Result4Tuple? MatchPair? Substitution? Trace?
+    UnificationPair? UnificationTriple? .
   subsort ResultPair < ResultPair? .
   subsort ResultTriple < ResultTriple? .
   subsort Result4Tuple < Result4Tuple? .
   subsort MatchPair < MatchPair? .
+  subsort UnificationPair < UnificationPair? .
+  subsort UnificationTriple < UnificationTriple? .
   subsort Substitution < Substitution? .
   subsort Trace < Trace? .
   op noParse : Nat -> ResultPair? [ctor] .
   op ambiguity : ResultPair ResultPair -> ResultPair? [ctor] .
+  op failure : -> ResultPair? [ctor] .
 
   op failure : -> ResultTriple? [ctor] .
   op failure : -> Result4Tuple? [ctor] .
+  op noUnifier : -> UnificationPair? [ctor] .
+  op noUnifier : -> UnificationTriple? [ctor] .
   op noMatch : -> Substitution? [ctor] .
   op noMatch : -> MatchPair? [ctor] .
   op failure : -> Trace? [ctor] .
@@ -2025,6 +2048,7 @@ fmod META-LEVEL is
         op-hook metadataSymbol		(metadata : String ~> Attr)
         op-hook owiseSymbol		(owise : ~> Attr)
         op-hook nonexecSymbol		(nonexec : ~> Attr)
+        op-hook printSymbol		(print : QidList ~> Attr)
 
         op-hook opDeclSymbol
                 (op_:_->_[_]. : Qid TypeList Type AttrSet ~> OpDecl)
@@ -2076,12 +2100,17 @@ fmod META-LEVEL is
 
         op-hook anyTypeSymbol		(anyType : ~> Type?)
 
+	op-hook unificandPairSymbol	(_=?_ : Term Term ~> UnificandPair)
+        op-hook unificationConjunctionSymbol	(_/\_ : UnificationProblem UnificationProblem ~> UnificationProblem)
+
         op-hook resultPairSymbol	({_,_} : Term Type ~> ResultPair)
         op-hook resultTripleSymbol
                 ({_,_,_} : Term Type Substitution ~> ResultTriple)
         op-hook result4TupleSymbol
                 ({_,_,_,_} : Term Type Substitution Context ~> Result4Tuple)
         op-hook matchPairSymbol		({_,_} : Substitution Context ~> MatchPair)
+        op-hook unificationPairSymbol	({_,_} : Substitution Nat ~> UnificationPair)
+        op-hook unificationTripleSymbol	({_,_,_} : Substitution Substitution Nat ~> UnificationTriple)
 
         op-hook traceStepSymbol		({_,_,_} : Term Type Rule ~> TraceStep)
         op-hook nilTraceSymbol		(nil : ~> Trace)
@@ -2089,8 +2118,11 @@ fmod META-LEVEL is
 
         op-hook noParseSymbol		(noParse : Nat ~> ResultPair?)
         op-hook ambiguitySymbol		(ambiguity : ResultPair ResultPair ~> ResultPair?)
+        op-hook failure2Symbol		(failure : ~> ResultPair?)
         op-hook failure3Symbol		(failure : ~> ResultTriple?)
         op-hook failure4Symbol		(failure : ~> Result4Tuple?)
+        op-hook noUnifierPairSymbol	(noUnifier : ~> UnificationPair?)
+        op-hook noUnifierTripleSymbol	(noUnifier : ~> UnificationTriple?)
         op-hook noMatchSubstSymbol	(noMatch : ~> Substitution?)
         op-hook noMatchPairSymbol	(noMatch : ~> MatchPair?)
         op-hook failureTraceSymbol	(failure : ~> Trace?)
@@ -2142,9 +2174,14 @@ fmod META-LEVEL is
            id-hook MetaLevelOpSymbol	(metaXmatch)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
-  op metaUnify : Module Term Term Nat ~> Substitution?
+  op metaUnify : Module UnificationProblem Nat Nat ~> UnificationPair?
         [special (
            id-hook MetaLevelOpSymbol	(metaUnify)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaDisjointUnify : Module UnificationProblem Nat Nat ~> UnificationTriple?
+        [special (
+           id-hook MetaLevelOpSymbol	(metaDisjointUnify)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
   op metaSearch : Module Term Term Condition Qid Bound Nat ~> ResultTriple?
@@ -2155,6 +2192,16 @@ fmod META-LEVEL is
   op metaSearchPath : Module Term Term Condition Qid Bound Nat ~> Trace?
         [special (
            id-hook MetaLevelOpSymbol	(metaSearchPath)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaNarrow : Module Term Term Qid Bound Nat ~> ResultTriple?
+        [special (
+           id-hook MetaLevelOpSymbol	(metaNarrow)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaNarrow : Module Term Qid Bound Bool Nat ~> ResultPair?
+        [special (
+           id-hook MetaLevelOpSymbol	(metaNarrow2)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
   op sortLeq : Module Type Type ~> Bool

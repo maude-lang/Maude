@@ -190,7 +190,7 @@ ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 	  int prec = DEFAULT;
 	  const Vector<int>* format;
 
-	  int index = (renaming == 0) ? NONE : renaming->renameOp(symbol);
+	  int index = (renaming == 0) ? NONE : renaming->renameOp(symbol);  // index of renaming that applies to symbol
 	  if (index == NONE)
 	    {
 	      name.tokenize(symbol->id(), symbol->getLineNumber());
@@ -203,7 +203,9 @@ ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 	    }
 	  else
 	    {
-	      name.tokenize(renaming->getOpTo(index), symbol->getLineNumber());
+	      int newName = renaming->getOpTo(index);
+	      DebugAdvisory("Old symbol = " << symbol << " newName = " << newName);
+	      name.tokenize(newName, symbol->getLineNumber());
 	      prec = renaming->getPrec(index);
 	      symbolType.assignFlags(SymbolType::PREC, prec != DEFAULT);
 	      gather = renaming->getGather(index);  // deep copy
@@ -226,7 +228,7 @@ ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 	      for (int k = 0; k < domainAndRangeLength; k++)
 		domainAndRange[k] = localSort(copy, renaming, oldDomainAndRange[k]);
 	      symbolType.assignFlags(SymbolType::CTOR, opDecls[j].isConstructor());
-	      Symbol* newSymbol = copy->addOpDeclaration(name,
+	      Symbol* newSymbol = copy->addOpDeclaration(name,  // BUG: name has codeNr = -1
 							 domainAndRange,
 							 symbolType,
 							 strategy,

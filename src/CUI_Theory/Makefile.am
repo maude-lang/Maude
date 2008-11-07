@@ -14,6 +14,7 @@ libCUI_Theory_a_SOURCES = \
 	CUI_RhsAutomaton.cc \
 	CUI_Term.cc \
 	CUI_ArgumentIterator.cc \
+	CUI_UnificationSubproblem.cc \
 	CUI_LhsAutomaton.cc
 
 EXTRA_DIST = \
@@ -28,4 +29,5 @@ noinst_HEADERS = \
 	CUI_RhsAutomaton.hh \
 	CUI_Symbol.hh \
 	CUI_Term.hh \
+	CUI_UnificationSubproblem.hh \
 	CUI_Theory.hh

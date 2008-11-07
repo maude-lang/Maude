@@ -45,9 +45,7 @@
  
 //      core class definitions
 #include "substitution.hh"
-#include "rewritingContext.hh"
-#include "subproblemAccumulator.hh"
-#include "unificationSubproblemDisjunction.hh"
+#include "pendingUnificationStack.hh"
 
 //	variable class definitions
 #include "variableDagNode.hh"
@@ -172,9 +170,10 @@ CUI_DagNode::stackArguments(Vector<RedexPosition>& stack,
   DagNode* d = argArray[0];
   if (!(respectFrozen && frozen.contains(0)) && !(d->isUnstackable()))
     stack.append(RedexPosition(d, parentIndex, 0));
-  d = argArray[1];
-  if (!(respectFrozen && frozen.contains(1)) && !(d->isUnstackable()))
-    stack.append(RedexPosition(d, parentIndex, 1));
+  DagNode* d2 = argArray[1];
+  if (!(respectFrozen && frozen.contains(1)) && !(d->isUnstackable()) &&
+      !(symbol()->comm() && d->equal(d2)))  // don't stack equal args in the comm case
+    stack.append(RedexPosition(d2, parentIndex, 1));
 }
 
 void
@@ -221,104 +220,159 @@ CUI_DagNode::normalizeAtTop()
   return false;
 }
 
+//
+//	Unification code.
+//
+
+DagNode::ReturnResult
+CUI_DagNode::computeBaseSortForGroundSubterms()
+{
+  CUI_Symbol* s = symbol();
+  if (s->leftId() || s->rightId() || s->idem())
+    {
+      //
+      //	We only support unification for commutativity at the moment
+      //	so let the backstop version handle it.
+      //
+      return DagNode::computeBaseSortForGroundSubterms();
+    }
+  ReturnResult r0 = argArray[0]->computeBaseSortForGroundSubterms();
+  if (r0 == UNIMPLEMENTED)
+    return UNIMPLEMENTED;
+  ReturnResult r1 = argArray[1]->computeBaseSortForGroundSubterms();
+  if (r1 == UNIMPLEMENTED)
+    return UNIMPLEMENTED;
+  if (r0 == GROUND && r1 == GROUND)
+    {
+      s->computeBaseSort(this);
+      return GROUND;
+    }
+  return NONGROUND;
+}
+
 bool
-CUI_DagNode::unify(DagNode* rhs,
-		   Substitution& solution,
-		   Subproblem*& returnedSubproblem,
-		   ExtensionInfo* extensionInfo)
+CUI_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
 {
   if (symbol() == rhs->symbol())
     {
-      int nrBindings = solution.nrFragileBindings();
+      //
+      //	Both dagnodes are assumed to have their arguments sorted in ascending order. Equality
+      //	between any two of the four arguments eliminates the need for branching.
+      //
       DagNode** rhsArgs = safeCast(CUI_DagNode*, rhs)->argArray;
-      {
-	//
-	//	Try in-order solution.
-	//
-	Substitution local(nrBindings);
-	local.copy(solution);
-	SubproblemAccumulator subproblems;
-	if (argArray[0]->unify(rhsArgs[0], local, returnedSubproblem, 0))
-	  {
-	    subproblems.add(returnedSubproblem);
-	    if (argArray[1]->unify(rhsArgs[1], local, returnedSubproblem, 0))
-	      {
-		subproblems.add(returnedSubproblem);
-		if (!(argArray[0]->equal(argArray[1])) && !(rhsArgs[0]->equal(rhsArgs[1])))
-		  {
-		    //
-		    //	We have one potential solution - now check the
-		    //	reverse order alternative.
-		    //
-		    Substitution local2(nrBindings);
-		    local2.copy(solution);
-		    SubproblemAccumulator subproblems2;
-		    if (argArray[0]->unify(rhsArgs[1], local2, returnedSubproblem, 0))
-		      {
-			subproblems2.add(returnedSubproblem);
-			if (argArray[1]->unify(rhsArgs[0], local2, returnedSubproblem, 0))
-			  {
-			    subproblems2.add(returnedSubproblem);
-			    //
-			    //	We have two potential solutions so we need to form a disjunction.
-			    //
-			    UnificationSubproblemDisjunction* disjunction = new UnificationSubproblemDisjunction(nrBindings);
-			    disjunction->addOption(local.unificationDifference(solution), subproblems.extractSubproblem());
-			    disjunction->addOption(local2.unificationDifference(solution), subproblems2.extractSubproblem());
-			    returnedSubproblem = disjunction;
-			    return true;
-			  }
-		      }
-		  }
-		//
-		//	Only the in-order solution is viable so return it.
-		//
-		solution.copy(local);
-		returnedSubproblem = subproblems.extractSubproblem();
-		return true;
-	      }
-	  }
-      }
-      if (!(argArray[0]->equal(argArray[1])) && !(rhsArgs[0]->equal(rhsArgs[1])))
+      DagNode* l0 = argArray[0];
+      DagNode* l1 = argArray[1];
+      DagNode* r0 = rhsArgs[0];
+      DagNode* r1 = rhsArgs[1];
+      //
+      //	We know l0 <= l1 and r0 <= r1 because of normal forms. We will decide if at least one of
+      //	the 6 possible equalities holds in at most 4 comparisons.
+      //
+      int r = l0->compare(r0);
+      if (r == 0)
+	return l1->computeSolvedForm(r1, solution, pending);
+      if (r < 0)
 	{
-	  //
-	  //	Try reverse order solution.
-	  //
-	  SubproblemAccumulator subproblems;
-	  if (argArray[0]->unify(rhsArgs[1], solution, returnedSubproblem, 0))
+	  r = l1->compare(r0);
+	  if (r == 0)
+	    return l0->computeSolvedForm(r1, solution, pending);
+	  if (r < 0)
 	    {
-	      subproblems.add(returnedSubproblem);
-	      if (argArray[1]->unify(rhsArgs[0], solution, returnedSubproblem, 0))
+	      //
+	      //	We have l0 <= l1 < r0 <= r1 so we just check the two inequalities.
+	      //
+	      if (l0->equal(l1) || r0->equal(r1))
+		goto dupArg;
+	    }
+	  else
+	    {
+	      r = l1->compare(r1);
+	      if (r == 0)
+		return l0->computeSolvedForm(r0, solution, pending);
+	      if (r < 0)
 		{
-		  returnedSubproblem = subproblems.extractSubproblem();
-		  return true;
+		  //
+		  //	We have l0 < r0 < l1 < r1. No equalities possible.
+		  //
+		}
+	      else
+		{
+		  //
+		  //	We have l0 < r0 < l1 and r1 < l1. So r0 <= r1 is our only possible equality.
+		  //
+		  if (r0->equal(r1))
+		    goto dupArg;
 		}
 	    }
+	  
 	}
-      return false;
+      else
+	{
+	  r = l0->compare(r1);
+	  if (r == 0)
+	    return l1->computeSolvedForm(r0, solution, pending);
+	  if (r < 0)
+	    {
+	      r = l1->compare(r1);
+	      if (r == 0)
+		return l0->computeSolvedForm(r0, solution, pending);
+	      if (r < 0)
+		{
+		  //
+		  //	We have r0 < l0 < r1 and l1 < r1. So l0 <= l1 is our only possible equality.
+		  //
+		  if (l0->equal(l1))
+		    goto dupArg;
+		}
+	      else
+		{
+		  //
+		  //	We have r0 < l0 < r1 < l1. No equalities possible.
+		  //
+		}
+	    }
+	  else
+	    {
+	      //
+	      //	We have r0 <= r1 < l0 <= l1 so we just check the two inequalities.
+	      //
+	      if (l0->equal(l1) || r0->equal(r1))
+		goto dupArg;
+
+	    }
+	}
+      //
+      //	We got here by falling out of one of the branches because no equalities were found. Therefore
+      //	we have two possible ways of unifying that could give a mgu and need to postpone the decision.
+      //
+      pending.push(symbol(), this, rhs);
+      return true;
+    dupArg:
+      //
+      //	We got here because one side of the problem had duplicate arguments.
+      //
+      return l0->computeSolvedForm(r0, solution, pending) && l1->computeSolvedForm(r1, solution, pending);
     }
   if (dynamic_cast<VariableDagNode*>(rhs))
-    return rhs->unify(this, solution, returnedSubproblem, 0);
+    return rhs->computeSolvedForm(this, solution, pending);
   return false;
 }
 
-bool
-CUI_DagNode::computeBaseSortForGroundSubterms()
+mpz_class
+CUI_DagNode::nonVariableSize()
 {
-  //
-  //	We need a recursive call on both subterms regardless of result.
-  //
-  bool ground = argArray[0]->computeBaseSortForGroundSubterms();
-  if (argArray[1]->computeBaseSortForGroundSubterms() && ground)
-    {
-      symbol()->computeBaseSort(this);
-      return true;
-    }
-  return false;
+  return 1 + argArray[0]->nonVariableSize() + argArray[1]->nonVariableSize();
+}
+
+void
+CUI_DagNode::insertVariables2(NatSet& occurs)
+{
+  argArray[0]->insertVariables(occurs);
+  argArray[1]->insertVariables(occurs);
 }
 
 DagNode*
-CUI_DagNode::instantiate2(Substitution& substitution)
+CUI_DagNode::instantiate2(const Substitution& substitution)
 {
   bool changed = false;
   DagNode* a0 = argArray[0];
@@ -337,26 +391,38 @@ CUI_DagNode::instantiate2(Substitution& substitution)
     {
       CUI_Symbol* s = symbol();
       CUI_DagNode* d = new CUI_DagNode(s);
-      if (a0->compare(a1) <= 0)
+      d->argArray[0] = a0;
+      d->argArray[1] = a1;
+      if(!(d->normalizeAtTop()) && a0->isGround() && a1->isGround())
 	{
-	  d->argArray[0] = a0;
-	  d->argArray[1] = a1;
+	  s->computeBaseSort(d);
+	  d->setGround();
 	}
-      else
-	{
-	  d->argArray[0] = a1;
-	  d->argArray[1] = a0;
-	}
-      if (a0->getSortIndex() != Sort::SORT_UNKNOWN &&
-	  a1->getSortIndex() != Sort::SORT_UNKNOWN)
-	s->computeBaseSort(d);
       return d;
     }
   return 0;
 }
 
+//
+//	Narrowing code.
+//
+
 bool
-CUI_DagNode::occurs2(int index)
+CUI_DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 {
-  return argArray[0]->occurs(index) || argArray[1]->occurs(index);
+  return argArray[0]->indexVariables(indices, baseIndex) &  // always make both calls
+    argArray[1]->indexVariables(indices, baseIndex);
+}
+
+DagNode*
+CUI_DagNode::instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* replacement)
+{
+  CUI_DagNode* d = new CUI_DagNode(symbol());
+  int other = 1 - argIndex;
+  d->argArray[argIndex] = replacement;
+  DagNode* n = argArray[other];
+  if (DagNode* c = n->instantiate(substitution))  // changed under substitutition
+    n = c;
+  d->argArray[other] = n;
+  return d;
 }

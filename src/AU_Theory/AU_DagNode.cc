@@ -120,7 +120,7 @@ DagNode*
 AU_DagNode::copyEagerUptoReduced2()
 {
   int nrArgs = argArray.length();
-  AU_Symbol* s = safeCast(AU_Symbol*, symbol());
+  AU_Symbol* s = symbol();
   AU_DagNode* n = new AU_DagNode(s, nrArgs);
   if (s->getPermuteStrategy() == BinarySymbol::EAGER)
     {
@@ -269,4 +269,106 @@ AU_DagNode::matchVariableWithExtension(int index,
   returnedSubproblem = subproblem;
   extensionInfo->setValidAfterMatch(false);
   return true;
+}
+
+//
+//	Unification code.
+//
+
+DagNode*
+AU_DagNode::instantiate2(const Substitution& substitution)
+{
+  AU_Symbol* s = symbol();
+  int nrArgs = argArray.length();
+  for (int i = 0; i < nrArgs; ++i)
+    {
+      if (DagNode* n = argArray[i]->instantiate(substitution))
+	{
+	  //
+	  //	Argument changed under instantiation - need to make a new
+	  //	dagnode.
+	  //
+	  bool ground = true;
+	  AU_DagNode* d = new AU_DagNode(s, nrArgs);
+	  //
+	  //	Copy the arguments we already looked at.
+	  //
+	  for (int j = 0; j < i; ++j)
+	    {
+	      if (!(argArray[j]->isGround()))
+		ground = false;
+	      d->argArray[j] = argArray[j];	
+	    }
+	  //
+	  //	Handle current argument.
+	  //
+	  d->argArray[i] = n;
+	  if (!(n->isGround()))
+	    ground = false;
+	  //
+	  //	Handle remaining arguments.
+	  //
+	  for (++i; i < nrArgs; ++i)
+	    {
+	      DagNode* a = argArray[i];
+	      if (DagNode* n = a->instantiate(substitution))
+		a = n;
+	      if (!(a->isGround()))
+		ground = false;
+	      d->argArray[i] = a;
+	    }
+	  //
+	  //	Normalize the new dagnode. We pass the dumb flag as true to prevent deque
+	  //	formation. If it doesn't collapse and all its arguments are ground we
+	  //	compute its base sort, and set ground flag.
+	  //
+	  if (d->normalizeAtTop(true) != COLLAPSED && ground)
+	    {
+	      s->computeBaseSort(d);
+	      d->setGround();
+	    }
+	  Assert(d->isDeque() == false, "Oops we got a deque! " << d);
+	  return d;	
+	}
+    }
+  return 0;  // unchanged
+}
+
+//
+//	Narrowing code.
+//
+
+bool
+AU_DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
+{
+  int nrArgs = argArray.length();
+  bool ground = true;
+  for (int i = 0; i < nrArgs; i++)
+    {   
+      if (!(argArray[i]->indexVariables(indices, baseIndex)))
+	ground = false;
+    }
+  return ground;
+}
+
+DagNode*
+AU_DagNode::instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag)
+{
+  int nrArgs = argArray.length();
+  AU_DagNode* n = new AU_DagNode(symbol(), nrArgs);
+  ArgVec<DagNode*>& args2 = n->argArray;
+  for (int i = 0; i < nrArgs; i++)
+    {
+      DagNode* d;
+      if (i == argIndex)
+	d = newDag;
+      else
+	{
+	  d = argArray[i];
+	  if (DagNode* c = d->instantiate(substitution))  // changed under substitutition
+	    d = c;
+	}
+      args2[i] = d;
+    }
+  return n;
 }

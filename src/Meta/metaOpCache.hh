@@ -34,20 +34,8 @@ public:
   MetaOpCache(int maxSize = 4);
   ~MetaOpCache();
 
-  void insert(FreeDagNode* metaOp, SearchState* state, Int64 lastSolutionNr);
-  bool remove(FreeDagNode* metaOp,
-	      RewritingContext& parentContext,
-	      SearchState*& state,
-	      Int64& lastSolutionNr);
-
-  void insert(FreeDagNode* metaOp, RewriteSequenceSearch* search, Int64 lastSolutionNr);
-  bool remove(FreeDagNode* metaOp,
-	      RewritingContext& parentContext,
-	      RewriteSequenceSearch*& search,
-	      Int64& lastSolutionNr);
-
-  void insert(FreeDagNode* metaOp, UnificationProblem* unification, Int64 lastSolutionNr);
-  bool remove(FreeDagNode* metaOp, UnificationProblem*& unification, Int64& lastSolutionNr);
+  void insert(FreeDagNode* metaOp, CacheableState* state, Int64 lastSolutionNr);
+  bool remove(FreeDagNode* metaOp, CacheableState*& state, Int64& lastSolutionNr);
 
 private:
   bool sameProblem(FreeDagNode* m1, DagNode* m2);
@@ -57,9 +45,7 @@ private:
     void clear();
 
     DagRoot* metaOp;
-    SearchState* state;
-    RewriteSequenceSearch* search;
-    UnificationProblem* unification;
+    CacheableState* state;
     Int64 lastSolutionNr;
   };
 

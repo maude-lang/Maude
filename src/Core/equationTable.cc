@@ -98,6 +98,8 @@ EquationTable::applyReplace(DagNode* subject,
 	  if (eq->getLhsAutomaton()->match(subject, context, sp, extensionInfo))
 	    {
 	    slowCase:
+	      DebugAdvisory("EquationTable::applyReplace() slowCase:\nsubject = " <<
+			    subject << "\neq = " << eq);
 	      if (sp == 0 || sp->solve(true, context))
 		{
 		  if (!(eq->hasCondition()) || eq->checkCondition(subject, context, sp))

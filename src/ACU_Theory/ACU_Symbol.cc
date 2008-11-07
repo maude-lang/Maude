@@ -35,12 +35,16 @@
 #include "ACU_Persistent.hh"
 #include "ACU_Theory.hh"
 
+//      core class definitions
+#include "sortBdds.hh"
+
 //	ACU theory class definitions
 #include "ACU_Symbol.hh"
 #include "ACU_DagNode.hh"
 #include "ACU_TreeDagNode.hh"
 #include "ACU_Term.hh"
 #include "ACU_ExtensionInfo.hh"
+#include "ACU_UnificationSubproblem2.hh"
 
 ACU_Symbol::ACU_Symbol(int id,
 		       const Vector<int>& strategy,
@@ -369,4 +373,68 @@ ACU_Symbol::stackArguments(DagNode* subject,
 	    }
 	}
     }
+}
+
+//
+//	Unification code.
+//
+
+void
+ACU_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
+				   const Vector<int>& realToBdd,
+				   DagNode* subject,
+				   Vector<Bdd>& generalizedSort)
+{
+  Assert(safeCast(ACU_BaseDagNode*, subject)->isTree() == false,
+	 "Tree case not implemented: " << subject <<
+	 " " <<  static_cast<void*>(dynamic_cast<ACU_DagNode*>(subject)) <<
+	 " " <<  static_cast<void*>(dynamic_cast<ACU_TreeDagNode*>(subject)));
+
+  const Vector<Bdd>& sortFunction = sortBdds.getSortFunction(getIndexWithinModule());
+  int nrBdds = sortFunction.size();
+
+  ArgVec<ACU_Pair>& args = safeCast(ACU_DagNode*, subject)->argArray;
+  bool firstArg = true;
+  bddPair* argMap = bdd_newpair();
+  FOR_EACH_CONST(i, ArgVec<ACU_Pair>, args)
+    {
+      Vector<Bdd> argGenSort;
+      i->dagNode->computeGeneralizedSort(sortBdds, realToBdd, argGenSort);
+      Assert(argGenSort.size() == nrBdds, "nrBdds clash");
+      int multiplicity = i->multiplicity;
+
+      if (firstArg)
+	{
+	  firstArg = false;
+	  generalizedSort = argGenSort;  // deep copy
+	  --multiplicity;
+	}
+
+      for(; multiplicity != 0; --multiplicity)
+	{
+	  //
+	  //	Do a sort function application step.
+	  //
+	  for (int j = 0; j < nrBdds; ++j)
+	    {
+	      bdd_setbddpair(argMap, j, generalizedSort[j]);
+	      bdd_setbddpair(argMap,  nrBdds + j, argGenSort[j]);
+	    }
+	  for (int j = 0; j < nrBdds; ++j)
+	    generalizedSort[j] = bdd_veccompose(sortFunction[j], argMap);
+	}
+    }
+  bdd_freepair(argMap);
+}
+
+UnificationSubproblem*
+ACU_Symbol::makeUnificationSubproblem()
+{
+  return new ACU_UnificationSubproblem2(this);
+}
+
+int 
+ACU_Symbol::unificationPriority() const
+{
+  return 10;
 }

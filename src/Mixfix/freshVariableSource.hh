@@ -25,19 +25,22 @@
 //
 #ifndef _freshVariableSource_hh_
 #define _freshVariableSource_hh_
-#include "unificationProblem.hh"
+#include <gmpxx.h>
+#include "freshVariableGenerator.hh"
 
-class FreshVariableSource : public UnificationProblem::FreshVariableGenerator
+class FreshVariableSource : public FreshVariableGenerator
 {
 public:
   FreshVariableSource(MixfixModule* module);
-  int getFreshVariableName();
+  FreshVariableSource(MixfixModule* module, const mpz_class& baseNumber);
+  int getFreshVariableName(int index);
   Symbol* getBaseVariableSymbol(Sort* sort);
-  void reset();
+  bool variableNameConflict(int id);
+
 private:
   MixfixModule* const module;
-  int counter;
-  char name[1 + INT_TEXT_SIZE + 1];
+  mpz_class baseNumber;
+  Vector<int> cache;
 };
 
 #endif

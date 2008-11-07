@@ -1,3 +1,728 @@
+2008-09-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* execute.cc: removed commented out eRewrite() and eRewriteCont()
+
+	* search.cc (search): same issue as below
+
+	* match.cc (match): same issue as below
+
+	* srewrite.cc (sRewrite): same issue as below
+
+	* erewrite.cc (eRewrite): same issue as below
+
+	* execute.cc (reduce): same issue as below
+	(rewrite): same issue as below
+	(fRewrite): same issue as below
+
+	* unify.cc (unify): make sure we output an endl after the command
+	to flush the output buffer - otherwise we could get error messages
+	getting ahead of the command that produced them
+
+	* view.hh (operator<<): added missing return statement
+
+	* symbolType.cc (operator<<): added missing return statement
+
+	* interact.cc (handleDebug): added return statement to silence
+	compiler warning
+
+	* importModule.hh (operator<<): added missing return statement
+
+	* entity.hh (class Entity): use a virtual dtor rather than
+	dummyToAllowDynamicCasts()
+
+	* entity.cc (operator<<): fixed missing return value (both
+	versions)
+
+	* interact.cc (sigsegvHandler): rewritten to avoid compiler
+	warning
+
+2008-09-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preModule.hh (operator<<): added missing return value
+
+	* process.cc (processOps): added a check to see of we are subsort
+	overloading an operator from one of our parameters
+
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.cc (checkSorts): clean up and comment code; use transKind
+
+	* mixfixParser.cc (parseSentence): don't make second call to
+	getErrorPosition()
+	(makeStrategyCommand): aviod duplicated parser.getChild() calls
+
+	* import.cc (makeModule): avoid sign/unsigned comparison warning
+	(processImports): push using check into Assert()
+
+	* mixfixModule.cc (copyFixUpBubbleSpec): use newSymbol rather than
+	do another translation
+
+	* doParse.cc (getParserStats): commented out unused variable nrKinds
+
+	* makeGrammar.cc (makePolymorphProductions): commented out unused
+	variable type
+
+	* importModule.cc (deepCopyCondition): assign dummy value to n to
+	avoid compiler warning
+
+	* moduleExpression.cc (deepSelfDestruct): added case MODULE to
+	avoid compiler warning
+
+2008-09-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interact.cc (where): fix char constness
+
+	* prettyPrint.cc (printAttributes): fix char constness
+
+	* top.yy: fix duplicated KW_OPS by renaming the non token
+	returning version to KW_OPS2
+
+	* commands.yy (command): KW_OPS -> KW_OPS2
+
+	* lexer.ll: KW_OPS -> KW_OPS2 for non token returning version
+
+2008-08-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* userLevelRewritingContext.cc (checkForPrintAttribute): fix bug
+	where we were checking PRINT_ATTRIBUTE instead of
+	PRINT_ATTRIBUTE_NEWLINE
+
+2008-08-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.cc (makeStatementPart): test PRINT flag rather than
+	number of items
+	(makeAttributePart): set PRINT flag; handle empty print attribute
+	case
+
+	* mixfixParser.hh (class MixfixParser): added PRINT to enum Flags
+
+	* makeGrammar.cc (makeAttributeProductions): added production for
+	empty print attribute
+
+2008-08-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prettyPrint.cc (printAttributes): rewritten
+
+	* userLevelRewritingContext.cc (checkForPrintAttribute): rewritten
+
+	* importModule.cc (copyMetadata): rewritten
+
+	* mixfixParser.hh (class MixfixParser): updated decls
+
+	* metadataStore.hh (class MetadataStore): updated decls
+
+	* metadataStore.cc (getPrintAttribute, insertPrintAttribute):
+	rewritten to use new convention
+
+	* mixfixParser.cc (makePrintList): rewritten to use two vector
+	convention
+	(makeStatement): update convention
+	(makeStatementPart): update convention
+
+	* printAttribute.cc: created
+
+	* printAttribute.hh: created
+
+	* mixfix.hh: added class PrintAttribute
+
+2008-08-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added decl for checkForPrintAttribute()
+
+	* userLevelRewritingContext.cc (tracePreScApplication) 
+	(tracePreRuleRewrite, tracePreEqRewrite): call
+	checkForPrintAttribute() 
+	(checkForPrintAttribute): added
+
+	* commands.yy (command): added syntax for set print attribute and
+	set print attribute newline
+
+	* lexer.ll: added attr as abbreviation for attribute
+
+	* interpreter.hh (endif): added flags PRINT_ATTRIBUTE and
+	PRINT_ATTRIBUTE_NEWLINE
+
+2008-08-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* top.yy: added KW_ATTRIBUTE, KW_NEWLINE
+
+	* lexer.ll: added keywords attribute and newline
+
+	* mixfixParser.hh (class MixfixParser): updated decls for
+	makeAttributePart(), makePrintList(), makeStatementPart()
+
+	* mixfixParser.cc (makePrintList): take and fill out printList argument
+	(makeAttributePart): take and pass printList argument
+	(makeStatement): pass printList argument
+
+2008-08-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metadataStore.cc (insertMetadata, insertPrintAttribute) 
+	(getPrintAttribute): const-ness change
+
+	* metadataStore.hh (class MetadataStore): changed const-ness for
+	ModuleItem* item in 3 declarations
+
+	* mixfixModule.hh (SharedTokens): update decl for printAttributes()
+
+	* prettyPrint.cc (printAttributes): handle printAttribute
+	(operator<<): pass extra argument to printAttributes()
+	(SortConstraint*, Equation*, Rule* versions)
+	(printAttributes): rewritten; no longer static
+	(operator<<): use new printAttributes() convention
+
+	* importModule.cc (copyMetadata): added
+	(donateStatements2): use copyMetadata (3 places)
+
+	* metadataStore.cc (insertPrintAttribute): added
+	(getPrintAttribute): added
+
+	* metadataStore.hh (class MetadataStore): added data member
+	printAttributeMap and decls for insertPrintAttribute() and
+	getPrintAttribute()
+
+2008-08-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* token.hh (tokenize): added Assert()
+
+	* mixfixParser.cc (makePrintList): fix bug where we doing extra
+	getChild() step
+
+2008-08-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (unify): support systems of equations
+
+	* mixfixModule.hh (SharedTokens): update decl for
+	parseUnifyCommand()
+
+	* doParse.cc (parseUnifyCommand): handle systems of equations
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	makeUnifyCommand()
+
+	* mixfixParser.cc (makeUnifyCommand): parse systems of equations
+
+	* mixfixParser.hh (class MixfixParser): added UNIFY_LIST to enum
+	SemanticActions
+
+	* makeGrammar.cc (makeComplexProductions): allow UNIFY_COMMAND to
+	consist of multiple UNIFY_PAIRs
+
+2008-05-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.hh (class MixfixParser): added decl for
+	makePrintList
+
+	* mixfixParser.cc (makePrintList): added
+
+	* makeGrammar.cc (makeAttributeProductions): pass MAKE_STRING and
+	MAKE_VARIABLE to appropriate items
+
+2008-05-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* makeGrammar.cc (makeComponentProductions): added VARIABLE
+	version of 4 variable productions
+	(makeVariableProductions): added VARIABLE version of variable
+	production
+	(makeSpecialProductions): added VARIABLE version of variable
+	production
+
+	* mixfixParser.hh (class MixfixParser): added MAKE_PRINT_LIST
+	to enum SemanticActions
+
+	* mixfixModule.hh (SharedTokens): added VARIABLE, PRINT_ITEM and
+	PRINT_LIST to enum NonTerminal; made extra nonterminals use
+	relative numbering
+
+	* makeGrammar.cc (makeAttributeProductions): added syntax for
+	print items and print lists
+
+2008-05-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* mixfixParser.hh (class MixfixParser): added MAKE_PRINT_ATTRIBUTE
+	to enum SemanticActions
+
+	* specialTokens.cc (MACRO): added print
+
+	* makeGrammar.cc (makeAttributeProductions): added syntax for
+	print attribute
+
+2008-05-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (doUnification): deleted extension handling code
+
+	* top.yy: deleted decl for nonterminal unify
+
+	* commands.yy (command): don't pass withExtension arg to unify
+	(unify): deleted
+
+	* interpreter.hh (endif): updated declf for unify()
+
+	* unify.cc (unify): remove with extension argument
+
+===================================Maude91a===========================================
+
+2008-04-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (unify): fix bug where we were not deleting problem
+	after problemOK failed, allowing a garbage collect to call the bad
+	problems markReachableNodes()
+
+===================================Maude91===========================================
+
+2008-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* top.yy: deleted KW_XUNIFY
+
+	* commands.yy (command): deleted xunify
+
+	* lexer.ll: deleted xunify
+
+===================================Maude90a===========================================
+
+2008-03-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interact.cc (internalErrorHandler): update message
+
+2008-03-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added declaration for void internalErrorHandler(); removed old
+	decls
+
+	* interact.cc (setHandlers): rewritten, dead code eliminated
+	(segmentationFaultHandler): becomes internalErrorHandler(); dead
+	code eliminated
+
+2008-03-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added decls for stackOverflowHandler() and sigsegvHandler()
+
+	* interact.cc: try using stackoverflow_install_handler()
+	(stackOverflowHandler, sigsegvHandler): added
+
+2008-02-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* lexer.ll (END_STATEMENT_MODE): treat whitespace after "." as
+	something that is left to global rule
+
+2008-02-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* lexer.ll: flag a nasty bug - we need to deal with white
+	space and comments after the end of statement . before we see a
+	keyword that tells us it is in fact the end of statement
+
+2008-02-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* lexer.ll (END_COMMAND_MODE,END_STATEMENT_MODE): handle .
+	combined common code
+	(END_COMMAND_MODE,END_STATEMENT_MODE): if we see a regular token
+	we need to push it back on the input and parse it in bubble mode
+	since it might have some special properties in bubble mode
+
+2008-02-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* commands.yy (opSelect, endSelect, badSelect): added
+	(command): use opSelect
+
+	* modules.yy (endBubble): use missingSpace()
+	(moduleExprDot, sortDot, dot, badType): use missingSpace()
+
+	* commands.yy (miscEndBubble): use missingSpace()
+
+	* top.yy: added decl for missingSpace();
+
+	* bottom.yy: added
+
+	* modules.yy (endBubble): better error message for missing space
+
+	* commands.yy: allow ENS_IN _DOT everywhere IDENTIFIER is used
+
+	* lexer.ll: added SEEN_DOT mode
+
+	* commands.yy (initialEndBubble): added
+	(moduleAndTerm, numberModuleTerm, numbersModuleTerm): use
+	initialEndBubble
+
+2008-02-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (badType): use singleton
+	(typeName): use singleton
+	(simpleOpName): use singleton
+
+	* commands.yy (cSimpleOpName): use singleton
+
+	* top.yy: added variable singleton
+
+	* commands.yy (miscEndBubble): added; use throughout
+
+	* top.yy: declare badType to return token
+
+	* modules.yy (domainRangeAttr): dra3 -> dra2
+	(rangeAttr): added
+	(dra2): use rangeAttr
+	(dra2): fuse empty and nonempty typeList cases
+	(domainRangeAttr): use rangeAttr
+	(badType): return token
+
+2008-02-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* top.yy: deleted cToken cTokenBarDot 
+
+	* commands.yy (command): use lexBubble() for select/dump
+	(command): use parenBubble to handle (...) commands
+	(cSimpleOpName): use parenBubble
+	(cToken, cTokenBarDot, cTokens, cTokensBarDot): deleted
+
+	* lexerAux.hh: updated decl for lexContinueBubble()
+
+	* lexerAux.cc (lexContinueBubble): take pCount arg
+
+	* top.yy: deleted cTokenBarDotColon
+
+	* lexerAux.hh: update decl for lexBubble()
+
+	* lexerAux.cc (lexBubble): check to see if first token is "("
+	(lexBubble): support pCount argument instead
+
+	* commands.yy (command): use lexerBubble for
+	rewrite/srewrite/match/unify
+	(numbersModuleTerm*): 7 nonterminals rewritten
+	(command): use lexerBubble for frewrite/erewrite/search
+
+	* lexerAux.hh: added decls for lexSave(), lexContinueSave()
+
+	* lexerAux.cc (lexSave, lexContinueSave): added
+
+	* commands.yy (command): use lexerBubble for parse/cred/red
+	commands
+	(moduleAndTerm, inEnd): rewritten using lexBubble()
+	(command): use lexerBubble for loop
+	(numberModuleTerm, numberModuleTerm1, numberModuleTerm2):
+	rewritten using lexBubble()
+
+	* lexer.ll (id): support switching to END_COMMAND_MODE
+
+	* lexerAux.hh (enum TERMINATION_TOKENS): added END_COMMAND
+
+	* lexer.ll (id): handle identifiers ending in "." in
+	END_STATEMENT_MODE; added END_COMMAND_MODE
+
+2008-02-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* lexer.ll: END_BUBBLE_MODE -> END_STATEMENT_MODE
+
+	* lexerAux.hh: deleted decl for lexerTokenTreeMode()
+
+	* lexerAux.cc (lexerTokenTreeMode): deleted
+
+	* lexer.ll (id): delete TOKEN_TREE_MODE
+	(id): delete END_STATEMENT_MODE
+
+	* commands.yy (command): bubble -> tokenSequence
+
+	* modules.yy: bubble -> tokenSequence
+
+	* top.yy: added FORCE_LOOKAHEAD; deleted identityChunk; bubble
+	becomes tokenSequence
+
+	* modules.yy (attribute): reimplement identity attribute using
+	lexerBubble
+	(tokenTree): deleted
+
+	* lexerAux.hh (enum TERMINATION_TOKENS): added BAR_RIGHT_BRACKET
+
+	* lexer.ll (id): added BAR_RIGHT_BRACKET case
+
+	* token.cc (peelParens): don't peel bubbles of size 2
+
+2008-02-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* lexer.ll (id): added BAR_OP_ATTRIBUTE case
+
+	* modules.yy (declaration): use lexerBubble for cmb/eq/ceq/rl/crl
+	(endTree): deleted
+	(parenBubble): added
+	(opName, simpleOpName): use parenBubble
+	(declaration): moved : into op/msg decls
+	(domainRangeAttr): deleted
+	(dra2): becomes domainRangeAttr
+	(declaration): use lexBubble() instead of opName for op/msg decls
+	(declaration): need to use peelParens()
+	(opName): deleted
+	(hook): use parenBubble rather than parenTree
+	(parenTree): deleted
+	(neTokenTree): deleted
+
+	* lexerAux.hh: added decl for lexContinueBubble()
+
+	* lexerAux.cc (lexContinueBubble): added
+
+	* modules.yy (declaration): use lexerBubble for mb
+
+	* lexerAux.hh: added decl for new version of lexerBubble()
+
+	* lexerAux.cc (lexBubble): added new version that allows an
+	initial token to be placed in the bubble
+
+	* modules.yy (endBubble): added
+	(viewEndOpMap): use endBubble (2 places)
+
+	* lexer.ll (id): do lexerBubble length checks in . and ENDS_IN_DOT
+	cases
+
+2008-02-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (mapping): use lexBubble(); delete fromOpName and toOpName
+
+	* top.yy: added decl for lexerBubble
+
+	* lexerAux.hh: added decl for lexBuble()
+
+	* lexer.ll: FIX_UP() -> RETURN_FIX_UP(); don't fix up .{} in
+	command mode; removed redundant code that would pass , as an
+	IDENTIFIER
+
+2008-02-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (identityChunk): use tokenTree
+	(tokens): deleted
+
+	* top.yy: deleted decls for tokenBarEqual tokenBarIf
+	tokenBarArrow2 endToken tokenBarCommaLeft tokenBarColonTo
+
+	* modules.yy (viewDeclaration): use neTokenTree
+	(opName): use tokenTree/neTokenTree
+	(parenTree): added
+	(fromOpName, toOpName, opName, simpleOpName): use parenTree
+	(hook): use parenTree
+	(endStatement, tokensBarColon, tokensBarColonTo) 
+	(tokensBarCommaLeft, tokensBarEqual): deleted
+	(noTrailingDot, endTokens, tokensBarIf, tokensBarArrow2): deleted
+	(endToken): deleted
+	(tokenBarEqual, tokenBarIf, tokenBarColonTo, tokenBarCommaLeft): deleted
+	(tokenBarArrow2): deleted
+
+	* lexerAux.hh (enum TERMINATION_TOKENS): added BAR_RIGHT_PAREN
+
+	* lexer.ll (id): support BAR_RIGHT_PAREN; fix BAR_LEFT_BRACKET
+
+	* modules.yy (endTree): added
+	(declaration): use tokenTree/endTree
+	(viewEndOpMap): use endTree
+	(fromOpName): use tokenTree
+
+	* search.cc (search): fix missing space in show cmd output
+
+	* lexer.ll (id): added END_STATEMENT_MODE; SAVE(), SAVE_FIX_UP(),
+	RETURN_SAVED() macros; savedToken, savedReturn variables
+
+2008-02-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* lexerAux.hh: added decl for lexerLatexMode()
+
+	* modules.yy (tokenTree): added
+
+	* lexerAux.cc (lexerTokenTreeMode): added
+
+	* lexerAux.hh (enum EXCLUDE_TOKENS): added
+	added decl for lexerTokenTreeMode()
+
+	* lexer.ll (id): added token tree mode
+
+2008-01-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* top.yy: added yySearchKind to %union; updated decl for search
+
+	* lexer.ll: added keyword xg-narrow
+
+	* commands.yy (conceal): support xg-narrow
+
+	* interpreter.hh (endif): updated decl for search()
+
+	* search.cc (search): added support for xg-narrow
+
+	* interpreter.hh (endif): added enum SearchKind
+
+	* search.cc (search): pass flags arg to NarrowingSequenceSearch
+
+	* banner.cc (printBanner): update copyright date
+
+	* userLevelRewritingContext.cc (traceNarrowingStep): rewritten to
+	support trace options
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	update decl for traceNarrowingStep()
+
+2008-01-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* userLevelRewritingContext.cc (traceNarrowingStep): added
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added decl for traceNarrowingStep()
+
+===================================Maude90===========================================
+
+2007-11-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freshVariableSource.hh (class FreshVariableSource): added cache
+	data member
+
+	* freshVariableSource.cc (getFreshVariableName): cache computed
+	codes and check cache before computing a new code
+
+2007-11-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* token.cc (bubbleToPrefixNameCode): commented out problematic
+	Assert() until further investigation
+
+2007-10-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreter.hh (endif): added decl for doNarrowing()
+
+	* search.cc (doNarrowing): added
+	(search): use doNarrowing
+
+2007-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* search.cc (search): use class NarrowingSequenceSearch
+
+2007-10-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (doUnification): use getVariableInfo()
+
+2007-10-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* top.yy: declare type of search
+
+	* search.cc (search): partial handling of narrowing flag
+
+	* interpreter.hh (endif): update decl for search()
+
+	* commands.yy (search): added
+	(command): hijack search code to handle narrowing case
+
+2007-09-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* trial.cc (traceBeginEqTrial): removed the equation == 0 case
+	since this should never occur and could cause a null deref in
+	profileEqConditionStart() if it did (discovered by coverity);
+	added Assert()
+	(traceBeginRuleTrial, traceBeginScTrial): symmetric changes to
+	above
+
+2007-09-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* userLevelRewritingContext.cc (tracePreScApplication): added
+	comment to flag coverity discovered bug - need interface change to
+	fix this properly
+
+	* mixfixParser.cc (makeTerm): return 0 in (unreachable) default
+	case rather than setting t to 0 inorder to avoid coverity warning
+
+===================================Maude89h===========================================
+
+2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (unify): variablesOK() -> problemOK()
+
+2007-08-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreter.cc (setCurrentModule): fix bug where we were
+	printing out "in" as part of the "no module" warning
+
+===================================Maude89e===========================================
+
+2007-07-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (doUnification): support extension
+	(unify): support extension
+
+2007-06-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* top.yy (directive): non need to eatComment() now that this in
+	done in file name lexing
+
+	* lexerAux.cc (lexerFileNameMode): erase accumulator
+
+	* lexer.ll: latexCode -> accumulator thoughout; added
+	FILE_NAME_QUOTE_MODE
+
+	* lexerAux.cc (lexerLatexMode): latexCode becomes accumulator
+
+	* lexer.ll: handle file names enclosed in quotes
+
+2007-06-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unify.cc (unify): use new UnificationProblem() interface
+
+2007-06-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freshVariableSource.cc (variableNameConflict): remember to
+	unflag codes
+
+	* unify.cc (unify): use variablesOK()
+
+	* freshVariableSource.cc (variableNameConflict): implemented
+	(getFreshVariableName): use baseNumber in +ve form
+	(FreshVariableSource): store baseNumber in +ve form
+
+2007-06-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freshVariableSource.cc (getFreshVariableName): rewritten to use
+	mpz_class
+
+	* freshVariableSource.hh (class FreshVariableSource): fix bug
+	where we forgot to use INT64_TEXT_SIZE
+	(class FreshVariableSource): base number becomes a mpz_class
+	(class FreshVariableSource): deleted data member name
+
+2007-06-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freshVariableSource.cc (variableNameConflict): added stub
+
+	* freshVariableSource.hh (class FreshVariableSource): added data
+	member baseNumber; updated decl for ctor
+
+	* freshVariableSource.cc (FreshVariableSource): handle 64 bit
+	numbers and baseNumber
+	(getFreshVariableName): handle 64 bit numbers and baseNumber
+
+2007-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prettyPrint.cc (printVariable): handle variables with flagged
+	name codes
+
+	* token.hh (flaggedCode, isFlagged, unflaggedCode): added
+
+===================================Maude89c===========================================
+
+2007-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renaming.cc (addOpMapping): give safe dummy values to name and
+	term fields to fail gracefully in the case where syntax error
+	prevents addOpTarget() from being called
+
+===================================Maude89a===========================================
+
+2007-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* lexerAux.hh: added decl for checkForPending()
+
+	* lexerAux.cc (checkForPending): added
+
+===================================Maude89===========================================
+
+2007-03-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freshVariableSource.cc (reset): deleted
+	(getFreshVariableName): rewritten
+	(FreshVariableSource): don't clear counter
+
+	* freshVariableSource.hh (class FreshVariableSource): rewritten
+
 2007-02-13  Steven Eker  <eker@goo.csl.sri.com>
 
 	* unify.cc (doUnification): use getSolution()

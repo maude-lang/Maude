@@ -50,6 +50,7 @@ operator<<(ostream& s, const Entity* e)
     s << "view " << v;
   else
     s << "unknown entity";
+  return s;
 }
 
 ostream&
@@ -63,6 +64,7 @@ operator<<(ostream& s, const Entity::User* u)
     s << "view " << v;
   else
     s << "unknown user";
+  return s;
 }
 #endif
  

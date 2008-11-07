@@ -92,16 +92,17 @@ FreePreNet::buildNet(FreeSymbol* symbol)
     return;
 
   patterns.expandTo(nrEquations);
-  NatSet liveSet;
+  LiveSet liveSet;
+  LiveSet potentialSubsumers;
   for (int i = 0; i < nrEquations; i++)
     {
       int flags = 0;
       Equation* e = equations[i];
       Term* p = e->getLhs();
       patterns[i].term = p;
-      for (int j = 0; j < i; j++)
+      FOR_EACH_CONST(j, LiveSet, potentialSubsumers)
 	{
-	  if ((patterns[j].flags & SUBSUMER) && patterns[j].term->subsumes(p, false))
+	  if (patterns[*j].term->subsumes(p, false))
 	    {
 	      DebugAdvisory(e << " subsumed");
 	      goto subsumedAtTop;
@@ -125,6 +126,8 @@ FreePreNet::buildNet(FreeSymbol* symbol)
 	    flags |= UNFAILING;
 	}
       liveSet.insert(i);
+      if ((flags & SUBSUMER) && !(p->ground()))
+	potentialSubsumers.insert(i);  //  to avoid trivial quadratic blow-up we keep track of potential subsumers
     subsumedAtTop:
       patterns[i].flags = flags;
     }
@@ -139,35 +142,38 @@ FreePreNet::buildNet(FreeSymbol* symbol)
 }
 
 int
-FreePreNet::makeNode(const NatSet& liveSet,
+FreePreNet::makeNode(const LiveSet& liveSet,
 		     const NatSet& reducedFringe,
 		     const NatSet& positionsTested)
 {
+  //cerr << "liveSet has " << liveSet.size() << " patterns" << endl;
   //
   //	First check to see if there is already a node with the same set
   //	of live patterns and the same reduced fringe that we can share.
   //
-  int nrNodes = net.length();
-  for (int i = 0; i < nrNodes; i++)
-    {
-      Node& n = net[i];
-      if (n.liveSet == liveSet && n.reducedFringe == reducedFringe)
-	{
-	  //
-	  //	We can share this node but the positionsTested must be reduced
-	  //	to those positions tested on all routes to this node.
-	  //
-	  n.positionsTested.intersect(positionsTested);
-	  return i;
-	}
-    }
+  NodeIndex key;
+  key.liveSet = liveSet;
+  key.reducedFringe = reducedFringe;
+  {
+    NodeMap::iterator i =  net.find(key);
+    if (i != net.end())
+      {
+	//
+	//	We can share this node but the positionsTested must be reduced
+	//	to those positions tested on all routes to this node.
+	//
+	i->second.positionsTested.intersect(positionsTested);
+	return i->second.nodeNr;
+      }
+  }
   //
   //	Need to make a brand new node.
   //
-  net.expandBy(1);
-  Node& n = net[nrNodes];
-  n.liveSet = liveSet;  // deep copy
-  n.reducedFringe = reducedFringe;  // deep copy
+  NodeMap::iterator i = (net.insert(NodeMap::value_type(key, NodeBody()))).first;
+  NodeBody& n = i->second;
+  n.nodeNr = netVec.size();
+  netVec.append(i);
+
   n.positionsTested = positionsTested;  // deep copy
   n.nrParents = 0;
   n.nrVisits = 0;
@@ -190,15 +196,13 @@ FreePreNet::makeNode(const NatSet& liveSet,
 	  //	remainders and we don't use the expansion of remainder
 	  //	nodes.
 	  //
-	  NatSet newLiveSet(liveSet);
-	  n.patternIndex = liveSet.min();
-	  newLiveSet.subtract(n.patternIndex);
+	  LiveSet::const_iterator start = liveSet.begin();
+	  n.patternIndex = *start;
+	  ++start;
+	  LiveSet newLiveSet(start, liveSet.end());
 	  int nextNode = newLiveSet.empty() ? NONE :
 	    makeNode(newLiveSet, reducedFringe, positionsTested);
-	  //
-	  //	makeNode() may have invalidated references to elements of net.
-	  //
-	  net[nrNodes].nextPattern = nextNode;
+	  n.nextPattern = nextNode;
 	}
     }
   else
@@ -206,17 +210,30 @@ FreePreNet::makeNode(const NatSet& liveSet,
       //
       //	Match node case; choose a test position.
       //
-      int positionIndex = findBestPosition(n);
+      int positionIndex = findBestPosition(key, n);
       NatSet newPositionsTested(positionsTested);
       newPositionsTested.insert(positionIndex);
       n.testPositionIndex = positionIndex;
+      //
+      //	Partition live set. This isn't strictly necessary but it
+      //	prevents a quadratic blow up on certain examples with
+      //	huge pattern set.
+      //
+      int totalSymbols = topSymbol->getModule()->getSymbols().size();
+      Vector<LiveSet> liveSets(totalSymbols);
+      LiveSet defaultLiveSet;
+      partitionLiveSet(liveSet,
+		       positionIndex,
+		       n.sons,	
+		       liveSets,
+		       defaultLiveSet);
       //
       //	Make an arc for each symbol we must check for.
       //
       int nrSymbols = n.sons.length();
       for (int i = 0; i < nrSymbols; i++)
 	{
-	  Symbol* symbol = net[nrNodes].sons[i].label;
+	  Symbol* symbol = n.sons[i].label;
 	  //
 	  //	Make a new fringe:
 	  //	(1) Remove tested position from old fringe.
@@ -229,8 +246,8 @@ FreePreNet::makeNode(const NatSet& liveSet,
 	  NatSet newFringe(reducedFringe);
 	  newFringe.subtract(positionIndex);
 	  expandFringe(positionIndex, symbol, newFringe);
-	  NatSet newLiveSet;
-	  findLiveSet(liveSet,
+	  LiveSet newLiveSet;
+	  findLiveSet(liveSets[symbol->getIndexWithinModule()],
 		      positionIndex,
 		      symbol, 
 		      newFringe,
@@ -239,29 +256,29 @@ FreePreNet::makeNode(const NatSet& liveSet,
 	  Assert(!(newLiveSet.empty()),
 		 "empty live set on arc labeled with symbol");
 	  int t = makeNode(newLiveSet, newFringe, newPositionsTested);
-	  net[nrNodes].sons[i].target = t;
+	  n.sons[i].target = t;
 	}
       //
       //	Make an arc for the default case.
       //
       NatSet newFringe(reducedFringe);
       newFringe.subtract(positionIndex);
-      NatSet newLiveSet;
-      findLiveSet(liveSet,
+      LiveSet newLiveSet;
+      findLiveSet(defaultLiveSet,
 		  positionIndex,
 		  0, 
 		  newFringe,
 		  newLiveSet);
       if (newLiveSet.empty())
-	net[nrNodes].neqTarget = NONE;
+	n.neqTarget = NONE;
       else
 	{
 	  reduceFringe(newLiveSet, newFringe);
 	  int t = makeNode(newLiveSet, newFringe, newPositionsTested);
-	  net[nrNodes].neqTarget = t;
+	  n.neqTarget = t;
 	}
     }
-  return nrNodes;
+  return n.nodeNr;
 }
 
 void
@@ -285,7 +302,7 @@ FreePreNet::expandFringe(int positionIndex, Symbol* symbol, NatSet& fringe)
 }
 
 void
-FreePreNet::reduceFringe(const NatSet& liveSet, NatSet& fringe) const
+FreePreNet::reduceFringe(const LiveSet& liveSet, NatSet& fringe) const
 {
   //
   //	For each position in the fringe.
@@ -297,8 +314,7 @@ FreePreNet::reduceFringe(const NatSet& liveSet, NatSet& fringe) const
       //
       //	See if at least one live pattern has a stable symbol at this position.
       //
-      const NatSet::const_iterator ej = liveSet.end();
-      for (NatSet::const_iterator j = liveSet.begin(); j != ej; ++j)
+      FOR_EACH_CONST(j, LiveSet, liveSet)
 	{
 	  if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[*j].term))
 	    {
@@ -316,33 +332,33 @@ FreePreNet::reduceFringe(const NatSet& liveSet, NatSet& fringe) const
 }
 
 void
-FreePreNet::findLiveSet(const NatSet& original,
+FreePreNet::findLiveSet(const LiveSet& original,
 			int positionIndex,
 			Symbol* symbol,
 			const NatSet& fringe,
-			NatSet& liveSet)
+			LiveSet& liveSet)
 {
-  const Vector<int> position(positions.index2Position(positionIndex));  // deep copy
+  const Vector<int> position(positions.index2Position(positionIndex));  // deep copy - because ref become stale
   
-  NatSet::const_iterator e = original.end();
-  for (NatSet::const_iterator i = original.begin(); i != e; ++i)
+  FOR_EACH_CONST(i, LiveSet, original)
     {
-      if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[*i].term))
+      int patternIndex = *i;
+      if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[patternIndex].term))
 	{
 	  if (Term* t = f->locateSubterm(position))
 	    {
 	      if (t->stable())
 		{
 		  if (symbol == t->symbol())
-		    liveSet.insert(*i);
+		    liveSet.insert(patternIndex);
 		  // else dead by not matching
 		}
 	      else  // not stable
 		{
 		  if (symbol == 0 || symbol->mightMatchPattern(t))
 		    {
-		      if (!partiallySubsumed(liveSet, *i, fringe))
-			liveSet.insert(*i);
+		      if (!partiallySubsumed(liveSet, patternIndex, fringe))
+			liveSet.insert(patternIndex);
 		      // else dead by subsumption
 		    }
 		  // else dead by not matching
@@ -350,26 +366,74 @@ FreePreNet::findLiveSet(const NatSet& original,
 	    }
 	  else // does not exist
 	    {
-	      if (!partiallySubsumed(liveSet, *i, fringe))
-		liveSet.insert(*i);
+	      if (!partiallySubsumed(liveSet, patternIndex, fringe))
+		liveSet.insert(patternIndex);
 	      // else dead by subsumption
 	    }
 	}
       else  // pattern not headed by a free function symbol
-	liveSet.insert(*i);
+	liveSet.insert(patternIndex);
+    }
+}
+
+void
+FreePreNet::partitionLiveSet(const LiveSet& original,
+			     int positionIndex,
+			     const Vector<Arc>& arcs,
+			     Vector<LiveSet>& liveSets,
+			     LiveSet& defaultLiveSet)
+{
+  const Vector<int>& position = positions.index2Position(positionIndex);  // safe because we won't add new positions
+  
+  FOR_EACH_CONST(i, LiveSet, original)
+    {
+      int patternIndex = *i;
+      if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[patternIndex].term))
+	{
+	  if (Term* t = f->locateSubterm(position))
+	    {
+	      if (t->stable())
+		liveSets[t->symbol()->getIndexWithinModule()].insert(patternIndex);
+	      else
+		{
+		  //
+		  //	Pattern has an unstable symbol at this position. Pattern goes into
+		  //	live set for the default arc.
+		  //
+		  defaultLiveSet.insert(patternIndex);
+		  //
+		  //	Need to consider pattern for the live set of each active
+		  //	symbol that could match our unstable subpattern.
+		  //
+		  FOR_EACH_CONST(j, Vector<Arc>, arcs)
+		    {
+		      Symbol* symbol = j->label;
+		      if (symbol->mightMatchPattern(t))
+			liveSets[symbol->getIndexWithinModule()].insert(patternIndex);
+		    }
+		}
+	      continue;
+	    }
+	}
+      //
+      //	Pattern not headed by a free symbol or the tested position does not exist.
+      //	Either way we add it to all live sets.
+      //
+      defaultLiveSet.insert(patternIndex);
+      FOR_EACH_CONST(j, Vector<Arc>, arcs)
+	liveSets[j->label->getIndexWithinModule()].insert(patternIndex);
     }
 }
 
 bool
-FreePreNet::partiallySubsumed(const NatSet& liveSet,
+FreePreNet::partiallySubsumed(const LiveSet& liveSet,
 			      int victim,
 			      const NatSet& fringe)
 {
   if (liveSet.empty())
     return false;
   Term* vp = patterns[victim].term;
-  NatSet::const_iterator e = liveSet.end();
-  for (NatSet::const_iterator i = liveSet.begin(); i != e; ++i)
+  FOR_EACH_CONST(i, LiveSet, liveSet)
     {
       Assert(*i < victim, "current liveSet contains pattern >= victim");
       if ((patterns[*i].flags & SUBSUMER) &&
@@ -380,7 +444,7 @@ FreePreNet::partiallySubsumed(const NatSet& liveSet,
 }
 
 int
-FreePreNet::findBestPosition(Node& n) const
+FreePreNet::findBestPosition(const NodeIndex& ni, NodeBody& n) const
 {
   //
   //	We chose a "best" position to test from node n's reduced fringe.
@@ -393,8 +457,8 @@ FreePreNet::findBestPosition(Node& n) const
   //
   //	Consider each position in the reduced fringe.
   //
-  const NatSet::const_iterator ei = n.reducedFringe.end();
-  for (NatSet::const_iterator i = n.reducedFringe.begin(); i != ei; ++i)
+  const NatSet::const_iterator ei = ni.reducedFringe.end();
+  for (NatSet::const_iterator i = ni.reducedFringe.begin(); i != ei; ++i)
     {
       const Vector<int>& path = positions.index2Position(*i);
       PointerSet symbols;
@@ -405,8 +469,7 @@ FreePreNet::findBestPosition(Node& n) const
       //	Gather the set of symbols that occur at this position
       //	in a live pattern.
       //
-      const NatSet::const_iterator ej = n.liveSet.end();
-      for (NatSet::const_iterator j = n.liveSet.begin(); j != ej; ++j)
+      FOR_EACH_CONST(j, LiveSet, ni.liveSet)
 	{
 	  if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[*j].term))
 	    {
@@ -471,21 +534,25 @@ FreePreNet::dump(ostream& s, int indentLevel) const
 	s << "  (unfailing)";
       s << '\n';
     }
-  int nrNodes = net.length();
+  int nrNodes = netVec.length();
   for (int i = 0; i < nrNodes; i++)
     {
-      const Node& n = net[i];
+      NodeMap::iterator j = netVec[i];
+      const NodeIndex& ni = j->first;
+      const NodeBody& n = j->second;
+      Assert(i == n.nodeNr, "node index clash");
+
       s << Indent(indentLevel - 1) << "Node " << i << '\n';
       s << Indent(indentLevel) << "Live set: ";
-      dumpNatSet(s, n.liveSet);
+      dumpLiveSet(s, ni.liveSet);
       s << '\n' << Indent(indentLevel) << "Reduced fringe: ";
-      dumpPositionSet(s, n.reducedFringe);
+      dumpPositionSet(s, ni.reducedFringe);
       s << '\n' << Indent(indentLevel) << "Positions tested: ";
       dumpPositionSet(s, n.positionsTested);
       s << '\n' << Indent(indentLevel) << "Slot map: ";
       dumpSlotMap(s, n.slotMap);
       s << '\n';
-      if (n.reducedFringe.empty())
+      if (ni.reducedFringe.empty())
 	{
 	  if (expandRemainderNodes)
 	    {
@@ -594,6 +661,25 @@ FreePreNet::dumpNatSet(ostream& s, const NatSet& natSet)
 		s << ", ";
 	      s << j;
 	    }
+	}
+    }
+}
+
+void
+FreePreNet::dumpLiveSet(ostream& s, const LiveSet& liveSet)
+{
+  if (liveSet.empty())
+    s << "*empty*";
+  else
+    {
+      bool first = true;
+      FOR_EACH_CONST(j, LiveSet, liveSet)
+	{
+	  if (first)
+	    first = false;
+	  else
+	    s << ", ";
+	  s << *j;
 	}
     }
 }

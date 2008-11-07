@@ -20,8 +20,6 @@ reduce in META-LEVEL : wellFormed(fmod 'FOO is
 endfm) .
 rewrites: 1
 result Bool: false
-Warning: the connected component in the sort graph that contains sort Bar has
-    no maximal sorts due to a cycle.
 ==========================================
 reduce in META-LEVEL : wellFormed(fmod 'FOO is
   protecting 'FLOAT .
@@ -32,6 +30,8 @@ reduce in META-LEVEL : wellFormed(fmod 'FOO is
   mb 'a.Foo : 'Bar [none] .
   none
 endfm) .
+Warning: the connected component in the sort graph that contains sort Bar has
+    no maximal sorts due to a cycle.
 rewrites: 1
 result Bool: false
 ==========================================

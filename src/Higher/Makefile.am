@@ -29,7 +29,10 @@ libhigher_a_SOURCES = \
 	rewriteConditionState.cc \
 	temporalSymbol.cc \
 	satSolverSymbol.cc \
-	unificationProblem.cc
+	unificationProblem.cc \
+	narrowingSearchState.cc \
+	narrowingUnificationProblem.cc \
+	narrowingSequenceSearch.cc
 
 noinst_HEADERS = \
 	assignmentConditionFragment.hh \
@@ -49,4 +52,9 @@ noinst_HEADERS = \
 	sortTestConditionFragment.hh \
 	stateTransitionGraph3.hh \
 	temporalSymbol.hh \
-	unificationProblem.hh
+	unificationProblem.hh \
+	narrowingSearchState.hh \
+	narrowingUnificationProblem.hh \
+	narrowingSequenceSearch.hh \
+	sequenceSearch.hh \
+	cacheableState.hh

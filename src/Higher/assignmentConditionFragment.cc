@@ -69,11 +69,11 @@ AssignmentConditionFragment::check(VariableInfo& variableInfo, NatSet& boundVari
 {
   NatSet unboundVariables;
 
-  lhs->normalize(true);
+  lhs = lhs->normalize(true);
   lhs->indexVariables(variableInfo);
   variableInfo.addConditionVariables(lhs->occursBelow());
 
-  rhs->normalize(false);
+  rhs = rhs->normalize(false);
   rhs->indexVariables(variableInfo);
   variableInfo.addConditionVariables(rhs->occursBelow());
   unboundVariables.insert(rhs->occursBelow());

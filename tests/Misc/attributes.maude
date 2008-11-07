@@ -1,0 +1,42 @@
+set show timing off .
+
+mod ATTRIBUTES is
+  sorts Foo Bar .
+  subsort Foo < Bar .
+
+  ops a b c : -> Foo .
+  op f : Foo Foo -> Foo [metadata "binary op"] .
+  op f : Bar Bar -> Bar [ditto] .
+  ops g h : Foo -> Bar [metadata "unary op"] .
+
+  var X : Foo .
+  var Y : Bar .
+  eq a = b [metadata "definition"] .
+  eq f(X, X) = g(X) [print "X = " X] .
+  eq f(g(X), X) = c [label collapse metadata "collapse" print "X = " X] .
+  eq g(X) = f(X, X) [label rev nonexec metadata "rev"] .
+
+  mb g(g(X)) : Foo [metadata "down sort" label downSort print "sort became Foo"] .
+  cmb Y : Foo if f(Y, a) = f(a, Y) [nonexec] .
+
+  rl f(X, X) => f(g(X), g(X)) [label expand nonexec] .
+  rl h(h(X)) => f(c, X) [metadata "step" label tick print "step X = " X:Foo] .
+endm
+
+show all .
+
+red f(c, c) .
+
+set print attr on .
+
+red f(c, c) .
+red f(g(c), c) .
+
+set print attr newline off .
+
+red f(g(c), c) .
+
+set print attr newline on .
+
+red g(g(c)) .
+rew h(h(b)) .

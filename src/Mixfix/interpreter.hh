@@ -42,6 +42,13 @@ class Interpreter
   NO_COPYING(Interpreter);
 
 public:
+  enum SearchKind
+    {
+      SEARCH,
+      NARROW,
+      XG_NARROW
+    };
+
   enum Flags
   {
     //
@@ -84,6 +91,16 @@ public:
     TRACE_BODY = 0x200000,
     TRACE_BUILTIN = 0x400000,
     //
+    //	Print attribute flags
+    //
+    PRINT_ATTRIBUTE = 0x800000,
+    PRINT_ATTRIBUTE_NEWLINE = 0x1000000,
+    /*
+    PRINT_ATTRIBUTE_MB = 0x2000000,
+    PRINT_ATTRIBUTE_EQ = 0x4000000,
+    PRINT_ATTRIBUTE_RL = 0x8000000,
+    */
+    //
     //	Counter flags.
     //
     AUTO_CLEAR_RULES = 0x40000000,
@@ -94,12 +111,12 @@ public:
     //
     //	Flag groups.
     //
-    EXCEPTION_FLAGS = TRACE | BREAK | PROFILE,
+    EXCEPTION_FLAGS = TRACE | BREAK | PROFILE | PRINT_ATTRIBUTE,
 
     DEFAULT_FLAGS = SHOW_COMMAND | SHOW_STATS | SHOW_TIMING | SHOW_LOOP_TIMING |
     COMPILE_COUNT |
     TRACE_CONDITION | TRACE_SUBSTITUTION | TRACE_MB | TRACE_EQ | TRACE_RL | TRACE_REWRITE | TRACE_BODY | TRACE_BUILTIN |
-    AUTO_CLEAR_PROFILE | AUTO_CLEAR_RULES
+    AUTO_CLEAR_PROFILE | AUTO_CLEAR_RULES | PRINT_ATTRIBUTE_NEWLINE
   };
 
   enum PrintFlags
@@ -157,8 +174,8 @@ public:
   void cont(Int64 limit, bool debug);
 
   void match(const Vector<Token>& bubble, bool withExtension, Int64 limit);
-  void unify(const Vector<Token>& bubble, bool withExtension, Int64 limit);
-  void search(const Vector<Token>& bubble, Int64 limit, Int64 depth);
+  void unify(const Vector<Token>& bubble, Int64 limit);
+  void search(const Vector<Token>& bubble, Int64 limit, Int64 depth, SearchKind searchKind);
   void showSearchPath(int stateNr);
   void showSearchPathLabels(int stateNr);
   void showSearchGraph();
@@ -217,6 +234,11 @@ private:
   void doSearching(Timer& timer,
 		   VisibleModule* module,
 		   RewriteSequenceSearch* state,
+		   int solutionCount,
+		   int limit);
+  void doNarrowing(Timer& timer,
+		   VisibleModule* module,
+		   NarrowingSequenceSearch* state,
 		   int solutionCount,
 		   int limit);
   void doExternalRewriting(UserLevelRewritingContext* context, Int64 limit);

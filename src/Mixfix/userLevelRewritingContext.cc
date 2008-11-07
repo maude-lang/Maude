@@ -51,9 +51,11 @@
 #include "sortConstraint.hh"
 #include "equation.hh"
 #include "rule.hh"
+#include "narrowingVariableInfo.hh"
 
 //      variable class definitions
 #include "variableTerm.hh"
+#include "variableDagNode.hh"
 
 //	front end class definitions
 #include "token.hh"
@@ -110,6 +112,22 @@ UserLevelRewritingContext::dontTrace(const DagNode* redex, const PreEquation* pe
 }
 
 void
+UserLevelRewritingContext::checkForPrintAttribute(MixfixModule::ItemType itemType, const PreEquation* item)
+{
+  if (item != 0)
+    {
+      MixfixModule* m = safeCast(MixfixModule*, item->getModule());
+      const PrintAttribute* pa = m->getPrintAttribute(itemType, item);
+      if (pa != 0)
+	{
+	  pa->print(cout, *this);
+	  if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE_NEWLINE))
+	    cout << '\n';
+	}
+    }
+}
+
+void
 UserLevelRewritingContext::tracePreEqRewrite(DagNode* redex,
 					     const Equation* equation,
 					     int type)
@@ -119,6 +137,9 @@ UserLevelRewritingContext::tracePreEqRewrite(DagNode* redex,
       safeCast(ProfileModule*, root()->symbol()->getModule())->
 	profileEqRewrite(redex, equation, type);
     }
+  if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE))
+    checkForPrintAttribute(MetadataStore::EQUATION, equation);
+
   if (handleDebug(redex, equation) ||
       !localTraceFlag ||
       !(interpreter.getFlag(Interpreter::TRACE_EQ)) ||
@@ -182,6 +203,9 @@ UserLevelRewritingContext::tracePreRuleRewrite(DagNode* redex, const Rule* rule)
       safeCast(ProfileModule*, root()->symbol()->getModule())->
 	profileRlRewrite(redex, rule);
     }
+  if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE))
+    checkForPrintAttribute(MetadataStore::RULE, rule);
+
   if (handleDebug(redex, rule) ||
       !localTraceFlag ||
       !(interpreter.getFlag(Interpreter::TRACE_RL)) ||
@@ -231,6 +255,57 @@ UserLevelRewritingContext::tracePostRuleRewrite(DagNode* replacement)
 }
 
 void
+UserLevelRewritingContext:: traceNarrowingStep(Rule* rule,
+					       DagNode* redex,
+					       DagNode* replacement,
+					       const NarrowingVariableInfo* variableInfo,
+					       const Substitution* substitution,
+					       DagNode* newState)
+{
+  if (handleDebug(redex, rule) ||
+      !localTraceFlag ||
+      !(interpreter.getFlag(Interpreter::TRACE_RL)) ||
+      dontTrace(redex, rule))
+    return;
+
+  if (interpreter.getFlag(Interpreter::TRACE_BODY))
+    {
+      cout << Tty(Tty::MAGENTA) << header << "narrowing step\n" << Tty(Tty::RESET) << rule << '\n';
+      if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
+	{
+	  cout << "Rule variable bindings:\n";
+	  printSubstitution(*substitution, *rule);
+
+	  cout << "Subject variable bindings:\n";
+	  int nrSubjectVariables = variableInfo->getNrVariables();
+	  if (nrSubjectVariables == 0)
+	    cout << "empty substitution\n";
+	  else
+	    {
+	      int variableBase = rule->getModule()->getMinimumSubstitutionSize();
+	      for (int i = 0; i < nrSubjectVariables; ++i)
+		{
+		  DagNode* v = variableInfo->index2Variable(i);
+		  DagNode* d = substitution->value(variableBase + i);
+		  Assert(v != 0, "null variable");
+		  cout << v << " --> ";
+		  if (d == 0)
+		    cout << "(unbound)\n";
+		  else
+		    cout << d << '\n';
+		}
+	    }
+	}
+    }
+  if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
+    cout << "Old: " << root() << '\n';
+  if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
+    cout << redex << "\n--->\n" << replacement << '\n';
+  if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
+    cout << "New: " << newState << '\n';
+}
+
+void
 UserLevelRewritingContext::tracePreScApplication(DagNode* subject, const SortConstraint* sc)
 {
   if (interpreter.getFlag(Interpreter::PROFILE))
@@ -238,6 +313,9 @@ UserLevelRewritingContext::tracePreScApplication(DagNode* subject, const SortCon
       safeCast(ProfileModule*, root()->symbol()->getModule())->
 	profileMbRewrite(subject, sc);
     }
+  if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE))
+    checkForPrintAttribute(MetadataStore::MEMB_AX, sc);
+
   if (handleDebug(subject, sc) ||
       !localTraceFlag ||
       !(interpreter.getFlag(Interpreter::TRACE_MB)) ||
@@ -266,8 +344,11 @@ UserLevelRewritingContext::tracePreScApplication(DagNode* subject, const SortCon
     }
   if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
     cout << "Whole: " << root() << '\n';
+  //
+  //	Coverity discovered bug - sc could be 0.
+  //
   if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
-    cout << subject->getSort() << ": " << subject << " becomes " << sc->getSort() << '\n';
+    cout << subject->getSort() << ": " << subject << " becomes " << sc->getSort() << '\n';  // BUG
 }
 
 void

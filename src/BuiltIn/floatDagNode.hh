@@ -40,7 +40,11 @@ public:
   double getValue() const;
 
 private:
-  const double value;
+  const union
+  {
+    double value;
+    Int64 bitPattern;
+  };
 
   friend class FloatTerm;		// for comparison
 };

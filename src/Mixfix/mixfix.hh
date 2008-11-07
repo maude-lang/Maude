@@ -60,5 +60,6 @@ class ViewDatabase;
 class Entity;
 class SyntaxContainer;
 class FreshVariableSource;
+class PrintAttribute;
 
 #endif

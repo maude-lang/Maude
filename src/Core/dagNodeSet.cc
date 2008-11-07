@@ -39,10 +39,10 @@
 //	core class definitions
 #include "dagNodeSet.hh"
 
-void
+int
 DagNodeSet::insert(DagNode* d)
 {
-  (void) PointerSet::insert(d, d->getHashValue());
+  return PointerSet::insert(d, d->getHashValue());
 }
 
 int

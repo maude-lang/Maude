@@ -60,3 +60,10 @@ cleanUpParser()
     }
   */
 }
+
+void
+missingSpace(const Token& token)
+{
+  IssueWarning(LineNumber(token.lineNumber()) << ": missing space between " <<
+	       QUOTE(token) << " and period.");
+}

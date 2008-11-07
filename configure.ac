@@ -3,7 +3,7 @@
 #
 #	Initialize autoconf stuff.
 #
-AC_INIT(Maude, 2.3, [maude-bugs@maude.cs.uiuc.edu])
+AC_INIT(Maude, 2.4, [maude-bugs@maude.cs.uiuc.edu])
 #
 #	Allow directory names that look like macros.
 #
@@ -16,7 +16,7 @@ AC_CANONICAL_HOST
 #
 #	Initialize automake stuff.
 #
-AM_INIT_AUTOMAKE(Maude, 2.3)
+AM_INIT_AUTOMAKE(Maude, 2.4)
 #
 #	Cause defines to be put in a header file rather than passed as
 #	compiler flags.
@@ -24,18 +24,18 @@ AM_INIT_AUTOMAKE(Maude, 2.3)
 AC_CONFIG_HEADER(config.h)
 #
 #	If the user set CFLAGS or CXXFLAGS we leave them alone.
-#	Otherwise we set them to -g to stop AC_PROG_CC and
+#	Otherwise we set them to -g -Wall to stop AC_PROG_CC and
 #	AC_PROG_CXX from setting them.
 #
 USER_SET_CFLAGS=yes
 if (test -z "$CFLAGS") then
   USER_SET_CFLAGS=no
-  CFLAGS="-g"
+  CFLAGS="-g -Wall"
 fi
 USER_SET_CXXFLAGS=yes
 if (test -z "$CXXFLAGS") then
   USER_SET_CXXFLAGS=no
-  CXXFLAGS="-g"
+  CXXFLAGS="-g -Wall"
 fi
 #
 #	*** PROGRAMS ***
@@ -93,6 +93,27 @@ else
   TECLA_LIBS=""
 fi
 AC_SUBST(TECLA_LIBS)
+#
+#	Check to see if we should use libsigsegv to handle segmentation faults.
+#
+AC_ARG_WITH(libsigsegv,
+	    AC_HELP_STRING([--with-libsigsegv],
+                           [use libsigsegv to handle segmentation faults [default=yes]]),
+			   [WITH_LIBSIGSEGV=$withval],
+			   [WITH_LIBSIGSEGV=yes])
+if (test $WITH_LIBSIGSEGV = yes) then
+#
+#	Check if user set particular libsigsegv to use and if
+#	not set default.
+#
+  AC_DEFINE([USE_LIBSIGSEGV], [], [use libsigsegv to handle segmentation faults])
+  if (test -z "$LIBSIGSEGV_LIB") then
+    LIBSIGSEGV_LIB="-lsigsegv"
+  fi
+else
+  LIBSIGSEGV_LIB=""
+fi
+AC_SUBST(LIBSIGSEGV_LIB)
 #
 #	Check if user set particular GMP libraries to use and if
 #	not set defaults.

@@ -1,0 +1,64 @@
+Maude> ==========================================
+reduce in COND : f(a, b) .
+rewrites: 1
+result Foo: g(a, h(b))
+==========================================
+reduce in META-LEVEL : upModule('COND, false) .
+rewrites: 1
+result FModule: fmod 'COND is
+  including 'BOOL .
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'd : nil -> 'Foo [none] .
+  op 'e : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [none] .
+  op 'g : 'Foo 'Foo -> 'Foo [none] .
+  op 'h : 'Foo -> 'Foo [none] .
+  none
+  ceq 'f['X:Foo,'Y:Foo] = 'g['X:Foo,'Z:Foo] if 'Z:Foo := 'h['Y:Foo] [print(
+    '"X = " 'X:Foo '", Z = " 'Z:Foo)] .
+endfm
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'COND is
+  including 'BOOL .
+  sorts 'Foo .
+  none
+  ((((((op 'g : 'Foo 'Foo -> 'Foo [none] .
+  op 'h : 'Foo -> 'Foo [none] .)
+  op 'f : 'Foo 'Foo -> 'Foo [none] .)
+  op 'e : nil -> 'Foo [none] .)
+  op 'd : nil -> 'Foo [none] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  ceq 'f['X:Foo,'Y:Foo] = 'g['X:Foo,'Z:Foo] if 'Z:Foo := 'h['Y:Foo] [print(
+    '"X = " 'X:Foo '", Z = " 'Z:Foo)] .
+endfm, 'f['a.Foo,'b.Foo]) .
+X = a, Z = h(b)
+rewrites: 2
+result ResultPair: {'g['a.Foo,'h['b.Foo]],'Foo}
+==========================================
+reduce in META-LEVEL : metaReduce(fmod 'COND is
+  including 'BOOL .
+  sorts 'Foo .
+  none
+  ((((((op 'g : 'Foo 'Foo -> 'Foo [none] .
+  op 'h : 'Foo -> 'Foo [none] .)
+  op 'f : 'Foo 'Foo -> 'Foo [none] .)
+  op 'e : nil -> 'Foo [none] .)
+  op 'd : nil -> 'Foo [none] .)
+  op 'c : nil -> 'Foo [none] .)
+  op 'b : nil -> 'Foo [none] .)
+  op 'a : nil -> 'Foo [none] .
+  none
+  ceq 'f['X:Foo,'Y:Foo] = 'g['X:Foo,'Z:Foo] if 'Z:Foo := 'h['Y:Foo] [print(
+    nil)] .
+endfm, 'f['a.Foo,'b.Foo]) .
+
+rewrites: 2
+result ResultPair: {'g['a.Foo,'h['b.Foo]],'Foo}
+Maude> Bye.

@@ -1,3 +1,57 @@
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* numberOpSymbol.cc (eqRewrite): assign dummy value to b in default
+	case to silence compiler warning
+
+	* floatOpSymbol.cc (eqRewrite): assign dummy values to r in default
+	cases to silence compiler warning
+
+	* stringOpSymbol.cc (eqRewrite): assign dummy values to r in
+	default cases to silence compiler warning
+
+	* floatDagNode.hh (class FloatDagNode): use anonymous union so I
+	can get the bit pattern for hashing without breaking
+	strict-aliasing rules under gcc 4
+
+	* floatDagNode.cc (getHashValue): remove the reinterpret_cast<>
+	now I have an anonymous union
+
+	* floatTerm.cc (normalize): remove the reinterpret_cast<> now I
+	have an anonymous union
+
+	* floatTerm.hh (class FloatTerm): use anonymous union so I can get
+	the bit pattern for hashing without breaking strict-aliasing rules
+	under gcc 4
+
+2008-09-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stringOpSymbol.cc (eqRewrite): ifdef out the kudge that was
+	avoiding Rope::c_str()
+	(ropeToNumber): ifdef out similar kudges
+
+2008-05-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.cc (eqRewrite): pass NONE rather than UNBOUNDED
+	to represent unbounded upper bound
+
+===================================Maude91a===========================================
+
+2008-04-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* matrixOpSymbol.cc (MACRO): added
+
+	* matrixOpSymbol.hh (class MatrixOpSymbol): added decl for
+	copyAttachments()
+
+===================================Maude91===========================================
+
+2007-09-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.cc (computeBaseSort): added explanation of what it
+	does following coverity inspection
+
+===================================Maude89h===========================================
+
 2007-01-18  Steven Eker  <eker@goo.csl.sri.com>
 
 	* branchSymbol.cc (compileOpDeclarations): call

@@ -63,7 +63,7 @@ MpzSystem::initializeUpperBounds()
       upperBounds.resize(nrVariables);
       IntVec::iterator e = upperBounds.end();
       for (IntVec::iterator i = upperBounds.begin(); i != e; ++i)
-	*i = UNBOUNDED;
+	*i = NONE;
     }
   else
     Assert(nrVariables == upperBounds.size(), "row size differs");

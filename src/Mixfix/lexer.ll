@@ -58,12 +58,37 @@
 #define RETURN(token) \
   { lvalp->yyToken.tokenize(yytext, lineNumber); return (token); }
 
-#define FIX_UP(token) \
+#define RETURN_FIX_UP(token) \
   { lvalp->yyToken.fixUp(yytext, lineNumber); return (token); }
 
+#define SAVE(token) \
+  { savedToken.tokenize(yytext, lineNumber); savedReturn = token; }
+
+#define SAVE_FIX_UP(token) \
+  { savedToken.fixUp(yytext, lineNumber); savedReturn = token; }
+
+#define RETURN_SAVED(token) \
+  { lvalp->yyToken = savedToken; return (token); }
+
+#define STORE \
+  { Token t; t.tokenize(yytext, lineNumber); lexerBubble.append(t); DebugAdvisory("Stored " << t); }
+#define STORE_FIX_UP \
+  { Token t; t.fixUp(yytext, lineNumber); lexerBubble.append(t); DebugAdvisory("Stored fixUp " << t); }
+
+#define EXIT(token) \
+  { yy_pop_state(); RETURN(token) }
+
+Token savedToken;
+int savedReturn;
 int braceCount;
 int parenCount;
-string latexCode;
+int terminationSet;
+string accumulator;
+string fileName;
+
+//int terminationCondition;
+int minLength;
+extern Vector<Token> lexerBubble;
 %}
 
 stringContent	([^[:cntrl:]"\\]|("\\"[^[:cntrl:]])|(\\\n))
@@ -75,7 +100,12 @@ maudeId		(({special}|{normalSeq})+)
 
 %s ID_MODE
 %s CMD_MODE
+%s SEEN_DOT
+%s BUBBLE_MODE
+%s END_STATEMENT_MODE
+%s END_COMMAND_MODE
 %x FILE_NAME_MODE
+%x FILE_NAME_QUOTE_MODE
 %x STRING_MODE
 %x LATEX_MODE
 %option stack
@@ -126,11 +156,11 @@ srew|srewrite				return KW_SREWRITE;
 loop					return KW_LOOP;
 cont|continue				return KW_CONTINUE;
 nar|narrow				return KW_NARROW;
+xg-narrow				return KW_XG_NARROW;
 match					return KW_MATCH;
 xmatch					return KW_XMATCH;
 search					return KW_SEARCH;
 unify					return KW_UNIFY;
-xunify					return KW_XUNIFY;
 set					return KW_SET;
 show					return KW_SHOW;
 on					return KW_ON;
@@ -150,6 +180,8 @@ reveal					return KW_REVEAL;
 cond|condition				return KW_CONDITION;
 subst|substitution			return KW_SUBSTITUTION;
 print					return KW_PRINT;
+attr|attribute				return KW_ATTRIBUTE;
+newline					return KW_NEWLINE;
 color					return KW_COLOR;
 graph					return KW_GRAPH;
 mixfix					return KW_MIXFIX;
@@ -167,7 +199,7 @@ modules					return KW_MODULES;
 module					return KW_MODULE;
 views					return KW_VIEWS;
 sort|sorts				return KW_SORTS;
-op|ops					return KW_OPS;
+op|ops					return KW_OPS2;
 var|vars				return KW_VARS;
 mb|mbs					return KW_MBS;
 eq|eqs					return KW_EQS;
@@ -219,7 +251,25 @@ rat|rational				return KW_RAT;
                                         }
 [:,()\[\]]				RETURN(*yytext)
 [1-9][0-9]*				RETURN(NUMERIC_ID)
-{maudeId}|[.{},]			FIX_UP(IDENTIFIER)
+[.{}]					RETURN(IDENTIFIER)
+{maudeId}"."				{
+					  SAVE_FIX_UP(ENDS_IN_DOT)
+					  BEGIN(SEEN_DOT);
+					}
+{maudeId}				RETURN_FIX_UP(IDENTIFIER)
+}
+
+<SEEN_DOT>{
+(([ \t\r\f\v]*\n)|([ \t\r\f\v]+("***"|"---")))	{
+					  yyless(0);
+					  BEGIN(CMD_MODE);
+					  RETURN_SAVED(savedReturn)
+					}
+.					{
+					  yyless(0);
+					  BEGIN(CMD_MODE);
+					  RETURN_SAVED(IDENTIFIER)
+					}
 }
 
  /*
@@ -277,15 +327,190 @@ endv					RETURN(KW_ENDV)
 "~>"					RETURN(KW_PARTIAL)
 "::"					RETURN(KW_COLON2)
 [:()\[\]{}.,<=|+*]			RETURN(*yytext)
-{maudeId}"."				FIX_UP(ENDS_IN_DOT)
-{maudeId}				FIX_UP(IDENTIFIER)
+{maudeId}"."				RETURN_FIX_UP(ENDS_IN_DOT)
+{maudeId}				RETURN_FIX_UP(IDENTIFIER)
+}
+
+ /*
+  *	Bubble mode squirrels tokens away in lexerBubble until some termination criteria is met.
+  */
+<BUBBLE_MODE>{
+:					{
+					  if (parenCount == 0 && (terminationSet & BAR_COLON) && lexerBubble.length() >= minLength)
+					    EXIT(*yytext)
+					  else
+					    STORE
+					}
+,					{
+					  if (parenCount == 0 && (terminationSet & BAR_COMMA) && lexerBubble.length() >= minLength)
+					    EXIT(*yytext)
+					  else
+					    STORE
+					}
+\[					{
+					  if (parenCount == 0 && (terminationSet & BAR_LEFT_BRACKET) && lexerBubble.length() >= minLength)
+					    EXIT(*yytext)
+					  else
+					    STORE
+					}
+\]					{
+					  if (parenCount == 0 && (terminationSet & BAR_RIGHT_BRACKET) && lexerBubble.length() >= minLength)
+					    EXIT(*yytext)
+					  else
+					    STORE
+					}
+=					{
+					  if (parenCount == 0 && (terminationSet & BAR_EQUALS) && lexerBubble.length() >= minLength)
+					    EXIT(*yytext)
+					  else
+					    STORE
+					}
+=>					{
+					  if (parenCount == 0 && (terminationSet & BAR_ARROW2) && lexerBubble.length() >= minLength)
+					    EXIT(KW_ARROW2)
+					  else
+					    STORE
+					}
+to					{
+					  if (parenCount == 0 && (terminationSet & BAR_TO) && lexerBubble.length() >= minLength)
+					    EXIT(KW_TO)
+					  else
+					    STORE
+					}
+if					{
+					  if (parenCount == 0 && (terminationSet & BAR_IF) && lexerBubble.length() >= minLength)
+					    EXIT(KW_IF)
+					  else
+					    STORE
+					}
+assoc|associative|comm|commutative|id:|identity:|idem|idempotent|iter|iterated|left|right|prec|precedence|gather|metadata|strat|strategy|frozen|poly|polymorphic|ctor|constructor|latex|special|config|configuration|obj|object|msg|message|ditto|format|memo	{
+					  if (parenCount == 0 && (terminationSet & BAR_OP_ATTRIBUTE) && lexerBubble.length() >= minLength)
+					    {
+					      yyless(0);  // need to re-lex it to get the correct return value
+					      yy_pop_state();
+					    }
+					  else
+					    STORE
+					}
+\(					{
+					  ++parenCount;
+					  STORE
+					}
+\)					{
+					  if (parenCount == 0)
+					    {
+					      if ((terminationSet & BAR_RIGHT_PAREN) && lexerBubble.length() >= minLength)
+					        EXIT(*yytext)
+					      IssueWarning(LineNumber(lineNumber) << ": mismatched parentheses.");
+					    }
+					  else
+					    --parenCount;
+					  STORE
+					}
+[\]{}]					STORE
+\.					{
+					  if (parenCount == 0 &&
+					      lexerBubble.length() >= minLength &&
+					      (terminationSet & (END_STATEMENT | END_COMMAND)))
+					    {
+					      SAVE(*yytext)
+					      BEGIN((terminationSet & END_STATEMENT) ? END_STATEMENT_MODE : END_COMMAND_MODE);
+					    }
+					  else
+					    STORE
+					}
+{maudeId}"."				{
+					  if (parenCount == 0 &&
+					      lexerBubble.length() + 1 >= minLength  &&
+					      (terminationSet & (END_STATEMENT | END_COMMAND)))
+					    {
+					      SAVE_FIX_UP(ENDS_IN_DOT)
+					      BEGIN((terminationSet & END_STATEMENT) ? END_STATEMENT_MODE : END_COMMAND_MODE);
+					    }
+					  else
+					    STORE_FIX_UP
+					}
+{maudeId}				STORE_FIX_UP
+}
+
+ /*
+  *	We have saved something that looks like a statement terminating period. We now lex the next
+  *	token to see if it ends a module or starts a new statement, and if so push the lexed token back
+  *	on to the input stream to be re-lexed in a new mode.
+  */
+<END_STATEMENT_MODE>{
+pr|protecting|ex|extending|us|using|inc|including|sort|sorts|subsort|subsorts|op|ops|var|vars|mb|cmb|eq|cq|ceq|rl|crl|end(th|fth|m|fm|sm|om|o|v)|jbo|msg|msgs|class|classes|subclass|subclasses		{
+					  yyless(0);  // BUG - need to deal with white space and comments after the .
+					  yy_pop_state();
+					  RETURN_SAVED(savedReturn)
+					}
+}
+
+<END_COMMAND_MODE>{
+(([ \t\r\f\v]*\n)|([ \t\r\f\v]+("***"|"---")))	{
+					  yyless(0);
+					  yy_pop_state();
+					  RETURN_SAVED(savedReturn)
+					}
+}
+
+<END_STATEMENT_MODE,END_COMMAND_MODE>{
+\.					{
+					  lexerBubble.append(savedToken);
+					  SAVE(*yytext);
+					}
+{maudeId}"."				{
+					  lexerBubble.append(savedToken);
+					  SAVE_FIX_UP(ENDS_IN_DOT)
+					}
+[^ \n\r\f\t\v]				{
+					  lexerBubble.append(savedToken);
+					  yyless(0);
+					  BEGIN(BUBBLE_MODE);
+					}
 }
 
 <FILE_NAME_MODE>{
-	[ \t]*				// eat white space
-	[^ \t\n\r\f]+			{
+	\"				{
+					  if (accumulator.empty())
+					    BEGIN(FILE_NAME_QUOTE_MODE);
+					  else
+					    accumulator += '"';
+					}
+	\\" "				accumulator += ' ';
+	\\\"				accumulator += '"';
+	\\\\				accumulator += '\\';
+	\\				accumulator += '\\';
+	[^"\\ \t\n\r\f]+		accumulator += yytext;
+	[ \t\r]				{
+					  if (!accumulator.empty())
+					    {
+					      yy_pop_state();
+					      lvalp->yyString = accumulator.c_str();
+					      eatComment(false);
+					      return FILE_NAME_STRING;
+					    }
+					}
+	[\n\f]				{
+			                  ++lineNumber;					
 					  yy_pop_state();
-					  lvalp->yyString = yytext;			  
+					  lvalp->yyString = accumulator.c_str();
+					  return FILE_NAME_STRING;
+					}
+}
+
+<FILE_NAME_QUOTE_MODE>{
+	["\t\r]				{
+					   yy_pop_state();
+					   lvalp->yyString = accumulator.c_str();
+					   eatComment(false);
+					   return FILE_NAME_STRING;
+					}
+	[^"\t\n\r\f]+			accumulator += yytext;
+	[\n\f]				{
+			                  ++lineNumber;					
+					  yy_pop_state();
+					  lvalp->yyString = accumulator.c_str();
 					  return FILE_NAME_STRING;
 					}
 }
@@ -305,11 +530,11 @@ endv					RETURN(KW_ENDV)
 }
 
 <LATEX_MODE>{
-(\\[{}()]{0,1})|([a-zA-Z0-9.:;,?!`'\[\]\-/*@#$%&~_^+=|<> \t]+)	latexCode += yytext;
+(\\[{}()]{0,1})|([a-zA-Z0-9.:;,?!`'\[\]\-/*@#$%&~_^+=|<> \t]+)	accumulator += yytext;
 \(					{
 					  if (braceCount == 0)
 					    ++parenCount;
-					  latexCode += yytext;
+					  accumulator += yytext;
 					}
 \)					{
 					  if (braceCount == 0)
@@ -319,23 +544,23 @@ endv					RETURN(KW_ENDV)
 					        {
 						  yyless(0);
 						  yy_pop_state();
-						  lvalp->yyString = latexCode.c_str();
+						  lvalp->yyString = accumulator.c_str();
 						  return LATEX_STRING;
 						}
 					    }
-					  latexCode += yytext;
+					  accumulator += yytext;
 					}
 \{					{
 					  ++braceCount;
-					  latexCode += yytext;
+					  accumulator += yytext;
 					}
 \}					{
 					  --braceCount;
-					  latexCode += yytext;
+					  accumulator += yytext;
 					}
 [\n\f]					{
 			                  ++lineNumber;					
-					  latexCode += yytext;
+					  accumulator += yytext;
 					}
 .					yy_pop_state();  // mindless recovery
 }

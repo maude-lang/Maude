@@ -96,7 +96,7 @@ RewriteTask::RewriteTask(StrategicSearch& searchObject,
   //
   //	We now reuse newContext to save a copy of the partial substitution (since we don't
   //	own substitutionSoFar an it will probably change between now and our call-backs being
-  //	called.
+  //	called.  We use clone() rather than copy() since the copy size will be wrong.
   //
   newContext->clone(*substitutionSoFar);
   //
@@ -121,6 +121,9 @@ RewriteTask::executionSucceeded(DagNode* result, StrategicProcess* insertionPoin
   //	We now need to match the result of a rewrite seach against our rhs pattern.
   //
   RewritingContext* matchContext = rewriteState->getContext()->makeSubcontext(result, RewritingContext::CONDITION_EVAL);
+  //
+  //	We need to use clone() rather than copy() since matchContext with have a copy size of zero.
+  //
   matchContext->clone(*newContext);
   Subproblem* subproblem;
   if (rcf->matchRoot(*matchContext, subproblem))

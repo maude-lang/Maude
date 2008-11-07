@@ -28,6 +28,7 @@ int UserLevelRewritingContext::trialCount = 0;
 int
 UserLevelRewritingContext::traceBeginEqTrial(DagNode* subject, const Equation* equation)
 {
+  Assert(equation != 0, "null equation in trial");
   if (interpreter.getFlag(Interpreter::PROFILE))
     {
       safeCast(ProfileModule*, root()->symbol()->getModule())->
@@ -37,21 +38,16 @@ UserLevelRewritingContext::traceBeginEqTrial(DagNode* subject, const Equation* e
     return UNDEFINED;
   if (!localTraceFlag || !(interpreter.getFlag(Interpreter::TRACE_EQ)) || dontTrace(subject, equation))
     return UNDEFINED;
-  cout << header << "trial #" << ++trialCount << '\n';
-  if (equation == 0)
-    cout << "(built-in equation for symbol " << subject->symbol() << ")\n";
-  else
-    {
-      cout << equation << '\n';
-      if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
-	printSubstitution(*this, *equation);
-    }
+  cout << header << "trial #" << ++trialCount << '\n' << equation << '\n';
+  if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
+    printSubstitution(*this, *equation);
   return trialCount;
 }
 
 int
 UserLevelRewritingContext::traceBeginRuleTrial(DagNode* subject, const Rule* rule)
 {
+  Assert(rule != 0, "null rule in trial");
   if (interpreter.getFlag(Interpreter::PROFILE))
     {
       safeCast(ProfileModule*, root()->symbol()->getModule())->
@@ -61,21 +57,16 @@ UserLevelRewritingContext::traceBeginRuleTrial(DagNode* subject, const Rule* rul
     return UNDEFINED;
   if (!localTraceFlag || !(interpreter.getFlag(Interpreter::TRACE_RL)) || dontTrace(subject, rule))
     return UNDEFINED;
-  cout << header << "trial #" << ++trialCount << '\n';
-  if (rule == 0)
-    cout << "(built-in rule for symbol " << subject->symbol() << ")\n";
-  else
-    {
-      cout << rule << '\n';
-      if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
-	printSubstitution(*this, *rule);
-    }
+  cout << header << "trial #" << ++trialCount << rule << '\n';
+  if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
+    printSubstitution(*this, *rule);
   return trialCount;
 }
 
 int
 UserLevelRewritingContext::traceBeginScTrial(DagNode* subject, const SortConstraint* sc)
 {
+  Assert(sc != 0, "null membership axiom in trial");
   if (interpreter.getFlag(Interpreter::PROFILE))
     {
       safeCast(ProfileModule*, root()->symbol()->getModule())->
@@ -85,15 +76,9 @@ UserLevelRewritingContext::traceBeginScTrial(DagNode* subject, const SortConstra
     return UNDEFINED;
   if (!localTraceFlag || !(interpreter.getFlag(Interpreter::TRACE_MB)) || dontTrace(subject, sc))
     return UNDEFINED;
-  cout << header << "trial #" << ++trialCount << '\n';
-  if (sc == 0)
-    cout << "(built-in membership axiom for symbol " << subject->symbol() << ")\n";
-  else
-    {
-      cout << sc << '\n';
-      if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
-	printSubstitution(*this, *sc);
-    }
+  cout << header << "trial #" << ++trialCount << sc << '\n';
+  if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
+    printSubstitution(*this, *sc);
   return trialCount;
 }
 

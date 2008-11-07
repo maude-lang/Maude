@@ -65,8 +65,9 @@ PreModule::processImports()
 	      mode = ImportModule::EXTENDING;
 	    else if (code == inc || code == including)
 	      mode = ImportModule::INCLUDING;
-	    else if (code == us || code == usingToken)
+	    else
 	      {
+		Assert(code == us || code == usingToken, "unknown importation mode");
 		IssueWarning(lineNumber <<
 			     ": importation mode " << QUOTE("using") <<
 			     " not supported - treating it like " <<
@@ -187,7 +188,8 @@ PreModule::makeModule(const ModuleExpression* expr, ImportModule* enclosingModul
 	  {
 	    int nrParameters = fm->getNrParameters();
 	    const Vector<Token>& arguments = expr->getArguments();
-	    if (arguments.size() != nrParameters)
+	    int nrArguments = arguments.size();
+	    if (nrArguments != nrParameters)
 	      {
 		IssueWarning("wrong number of parameters in module instantiation " << QUOTE(expr) << "; " <<
 			     nrParameters << " expected.");

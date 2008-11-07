@@ -60,11 +60,20 @@ maude_LDADD = \
 	../Utility/libutility.a \
 	$(BUDDY_LIB) \
 	$(TECLA_LIBS) \
+	$(LIBSIGSEGV_LIB) \
 	$(GMP_LIBS) \
 	$(DLMALLOC_LIB)
 
 maude_SOURCES = \
 	main.cc
+
+data_DATA = \
+	prelude.maude \
+	model-checker.maude \
+	socket.maude \
+	linear.maude \
+	machine-int.maude \
+	term-order.maude
 
 EXTRA_DIST = \
 	prelude.maude \

@@ -1,3 +1,120 @@
+2008-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (computeSolvedForm2): use unificationBind()
+	(5 places)
+	(computeSolvedForm2): missed one!
+
+	* variableDagNode.hh (class VariableDagNode): updated decl for
+	computeSolvedForm2()
+
+2008-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (computeSolvedForm2): rewritten
+
+	* variableDagNode.hh (class VariableDagNode): updated decl for
+	computeSolvedForm2()
+
+===================================Maude90===========================================
+
+2007-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (instantiate2): updated
+
+	* variableDagNode.hh (class VariableDagNode): updated decl for
+	instantiate2()
+
+2007-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.hh (class VariableDagNode): decl for
+	indexVariables() becomes indexVariables2()
+
+	* variableDagNode.cc (indexVariables): becomes indexVariables2();
+	return bool
+
+2007-10-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.hh (class VariableDagNode): adde decl for
+	indexVariables()
+
+	* variableDagNode.cc (indexVariables): added
+
+===================================Maude89h===========================================
+
+2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (computeBaseSortForGroundSubterms): updated
+
+	* variableDagNode.hh (class VariableDagNode): updated decl for
+	computeBaseSortForGroundSubterms()
+
+2007-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (computeSolvedForm): becomes
+	computeSolvedForm2()
+
+	* variableDagNode.hh (class VariableDagNode): added decl for
+	nonVariableSize()
+	(class VariableDagNode): computeSolvedForm() ->
+	computeSolvedForm2()
+
+	* variableDagNode.cc (nonVariableSize): added, now that default
+	returns 1
+
+===================================Maude89g===========================================
+
+2007-07-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (computeSolvedForm): detect and warn about
+	unimplemented bare variable case
+
+2007-06-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (computeSolvedForm): added extensionInfo arg
+
+	* variableDagNode.hh (class VariableDagNode): updated decl for
+	computeSolvedForm()
+
+===================================Maude89c===========================================
+
+2007-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (occurs2, unify): deleted
+
+	* variableDagNode.hh (class VariableDagNode): deleted decls for
+	unify(), occurs2()
+
+2007-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableSymbol.cc (computeGeneralizedSort): pass realToBdd by
+	ref
+
+	* variableSymbol.hh (class VariableSymbol): fix decl for
+	computeGeneralizedSort()
+
+===================================Maude89a===========================================
+
+2007-02-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (insertVariables2): added
+
+	* variableDagNode.hh (class VariableDagNode): added decl for
+	insertVariables2()
+
+2007-02-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableDagNode.cc (computeSolvedForm): fix sortIndex != bug
+
+	* variableDagNode.hh (class VariableDagNode): added decl for
+	lastVariableInChain()
+
+	* variableDagNode.cc (lastVariableInChain): added
+	(computeSolvedForm): added
+
+	* variableDagNode.hh (class VariableDagNode): added decl for
+	computeSolvedForm()
+
+===================================Maude89===========================================
+
 2007-02-02  Steven Eker  <eker@goo.csl.sri.com>
 
 	* variableDagNode.cc: use unificationBind(); this fixes the bug

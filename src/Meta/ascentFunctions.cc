@@ -41,7 +41,6 @@ bool
 MetaLevelOpSymbol::metaUpImports(FreeDagNode* subject, RewritingContext& context)
 {
   int moduleName;
-  bool flat;
   if (metaLevel->downQid(subject->getArgument(0), moduleName))
     {
       if (PreModule* pm = interpreter.getModule(moduleName))

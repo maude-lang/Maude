@@ -180,7 +180,7 @@ ACU_NonLinearLhsAutomaton::match(DagNode* subject,
 	  //	First find out how many subjects are assignable.
 	  //
 	  int size = 0;
-	  ArgVec<ACU_DagNode::Pair>::const_iterator last;
+	  ArgVec<ACU_DagNode::Pair>::const_iterator last;  // gcc gives uninitialized warning
 	  FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, s->argArray)
 	    {
 	      if (i->multiplicity >= fastMult && i->dagNode->leq(varSort))

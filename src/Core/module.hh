@@ -67,6 +67,8 @@ public:
   void insertEquation(Equation* equation);
   void insertRule(Rule* rule);
   void insertLateSymbol(Symbol*s);
+  int getMinimumSubstitutionSize() const;
+  void notifySubstitutionSize(int minimumSize);
   //
   //	Call the appropriate function on each symbol.
   //
@@ -94,6 +96,7 @@ private:
   Vector<Equation*> equations;
   Vector<Rule*> rules;
   SortBdds* sortBdds;
+  int minimumSubstitutionSize;
 };
 
 inline Module::Status
@@ -152,6 +155,23 @@ Module::insertSymbol(Symbol* symbol)
   Assert(status < SIGNATURE_CLOSED, cerr << "bad status");
   symbol->setModuleInfo(this, symbols.length());
   symbols.append(symbol);
+}
+
+inline int
+Module::getMinimumSubstitutionSize() const
+{
+  return minimumSubstitutionSize;
+}
+
+inline void
+Module::notifySubstitutionSize(int minimumSize)
+{
+  if (minimumSize > minimumSubstitutionSize)
+    {
+      DebugAdvisory("minimumSubstitutionSize for " << this << " increased from " <<
+		    minimumSubstitutionSize << " to " << minimumSize);
+      minimumSubstitutionSize = minimumSize;
+    }
 }
 
 #endif

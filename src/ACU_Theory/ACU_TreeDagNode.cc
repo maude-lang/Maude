@@ -231,3 +231,16 @@ ACU_TreeDagNode::treeToArgVec(ACU_TreeDagNode* original)
 
   return d;
 }
+
+//
+//	Narrowing code.
+//
+
+bool
+ACU_TreeDagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
+{
+  //
+  //	Just revert to argvec ACU representation and use its code.
+  //
+  return treeToArgVec(this)->indexVariables2(indices, baseIndex);
+}

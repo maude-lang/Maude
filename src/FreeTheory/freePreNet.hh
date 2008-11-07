@@ -26,6 +26,7 @@
 //
 #ifndef _freePreNet_hh_
 #define _freePreNet_hh_
+#include <set>
 #include <map>
 #include "unionFind.hh"
 #include "freePositionTable.hh"
@@ -50,6 +51,7 @@ public:
   void semiCompile(FreeNet& freeNet);
 
 private:
+  typedef set<int> LiveSet;  // live sets can be very sparse so don't use NatSet
   typedef map<int, int> SlotMap;
 
   enum Flags
@@ -86,9 +88,46 @@ private:
     int slot;
   };
 
+  struct NodeIndex
+  {
+    bool operator<(const NodeIndex& other) const;
+
+    LiveSet liveSet;	// set of indices to live patterns 
+    NatSet reducedFringe;	// set of indices to positions in reduced fringe
+  };
+
+  struct NodeBody
+  {
+    NatSet positionsTested;	// set of indices to positions tested on all paths to this node
+    Vector<Arc> sons;	// exiting arcs, empty denotes terminal node
+    union
+    {
+      int neqTarget;	// exiting arc for ? case in test node
+      int nextPattern;  // sole exiting arc in remainder node
+    };
+    union
+    {
+      int testPositionIndex;	// test position in test node
+      int patternIndex;		// pattern index in remainder node
+    };
+    Vector<Pair> slotMap;
+    int nodeNr;
+    //
+    //	Only used for semi-compiler.
+    //
+    int freeNetIndex;
+    //
+    //	Only used for full compiler.
+    //
+    int nrParents;
+    int nrVisits;
+  };
+
+  typedef map<NodeIndex, NodeBody> NodeMap;
+
   struct Node
   {
-    NatSet liveSet;	// set of indices to live patterns 
+    LiveSet liveSet;	// set of indices to live patterns 
     NatSet reducedFringe;	// set of indices to positions in reduced fringe
     NatSet positionsTested;	// set of indices to positions tested on all paths to this node
     Vector<Arc> sons;	// exiting arcs, empty denotes terminal node
@@ -114,20 +153,25 @@ private:
     int nrVisits;
   };
 
-  int makeNode(const NatSet& liveSet,
+  int makeNode(const LiveSet& liveSet,
 	       const NatSet& reducedFringe,
 	       const NatSet& positionsTested);
   void expandFringe(int positionIndex, Symbol* symbol, NatSet& fringe);
-  void reduceFringe(const NatSet& liveSet, NatSet& fringe) const;
-  void findLiveSet(const NatSet& original,
+  void reduceFringe(const LiveSet& liveSet, NatSet& fringe) const;
+  void findLiveSet(const LiveSet& original,
 		   int positionIndex,
 		   Symbol* symbol,
 		   const NatSet& fringe,
-		   NatSet& liveSet);
-  bool partiallySubsumed(const NatSet& liveSet,
+		   LiveSet& liveSet);
+  void partitionLiveSet(const LiveSet& original,
+			int positionIndex,
+			const Vector<Arc>& arc,
+			Vector<LiveSet>& liveSets,
+			LiveSet& defaultLiveSet);
+  bool partiallySubsumed(const LiveSet& liveSet,
 			 int victim,
 			 const NatSet& fringe);
-  int findBestPosition(Node& n) const;
+  int findBestPosition(const NodeIndex& ni, NodeBody& n) const;
 
   bool subsumesWrtReducedFringe(Term* subsumer,
 				Term* victim,
@@ -143,10 +187,10 @@ private:
   //	Semi-compiler stuff.
   //
   int semiCompileNode(FreeNet& freeNet, int nodeNr, const SlotMap& slotMap);
-  void setVisitedFlags(const NatSet& liveSet,
+  void setVisitedFlags(const LiveSet& liveSet,
 		  const Vector<int>& position,
 		  bool state);
-  int allocateSlot(const NatSet& liveSet,
+  int allocateSlot(const LiveSet& liveSet,
 		   const Vector<int>& position,
 		   Symbol* symbol);
   int buildSlotTranslation(Vector<int>& slotTranslation);
@@ -172,6 +216,7 @@ private:
 
 #ifdef DUMP
   static void dumpNatSet(ostream& s, const NatSet& natSet);
+  static void dumpLiveSet(ostream& s, const LiveSet& natSet);
   static void dumpPath(ostream& s, const Vector<int>& path);
   void dumpPositionSet(ostream& s, const NatSet& positionSet) const;
   void dumpSlotMap(ostream& s, const Vector<Pair>& slotMap) const;
@@ -179,7 +224,10 @@ private:
 
   const bool expandRemainderNodes;  // must be true for full compilation
   Vector<Pattern> patterns;
-  Vector<Node> net;
+
+  NodeMap net;
+  Vector<NodeMap::iterator> netVec;
+  //Vector<Node> net;
   FreePositionTable positions;
   FreeSymbol* topSymbol;
   int topPositionIndex;
@@ -191,7 +239,7 @@ private:
   //	Only used for semi-complier.
   //
   Vector<NatSet> conflicts;
-  NatSet patternsUsed;
+  LiveSet patternsUsed;
   //
   //	Only used for full compiler.
   //
@@ -199,5 +247,16 @@ private:
   int nrFailVisits;
   Vector<int> slotTranslation;
 };
+
+
+inline bool
+FreePreNet::NodeIndex::operator<(const NodeIndex& other) const
+{
+  if (liveSet < other.liveSet)
+    return true;
+  if (other.liveSet < liveSet)
+    return false;
+  return reducedFringe < other.reducedFringe;
+}
 
 #endif

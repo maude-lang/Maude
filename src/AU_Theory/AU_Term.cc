@@ -200,23 +200,37 @@ AU_Term::normalize(bool full, bool& changed)
   Term* identity = s->getIdentity();
   if (identity != 0)
     {
+      Term* savedId = 0;
       int p = 0;
       for (int i = 0; i < nrArgs; i++)
 	{
 	  Term* t = argArray[i].term;
 	  if (identity->equal(t) && idPossible(i))
 	    {
+	      if (savedId == 0)
+		savedId = t;
+	      else
+		t->deepSelfDestruct();
 	      changed = true;
 	      continue;
 	    }
 	  argArray[p].term = t;
 	  ++p;
 	}
-      if (p < 2)
+      if (p == 0)
 	{
 	  //
-	  //	Only one arg left (p == 1) or all args are identity elements (p == 0).
-	  //	Either way we collapse to first arg.
+	  //	All arguments were identity elements so we collapse to the saved one.
+	  //
+	  delete this;
+	  return savedId;
+	}
+      if (savedId != 0)
+	savedId->deepSelfDestruct();  // don't need it
+      if (p == 1)
+	{
+	  //
+	  //	Only one non-identity argument left so collapse to it.
 	  //
 	  Term* t = argArray[0].term;
 	  delete this;

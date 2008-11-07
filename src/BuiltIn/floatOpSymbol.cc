@@ -289,6 +289,7 @@ FloatOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	      }
 	    default:
 	      CantHappen("bad float op");
+	      r = 0.0;
 	    }
 	}
       else
@@ -368,6 +369,7 @@ FloatOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		    break;
 		  default:
 		    CantHappen("bad float op");
+		    r = 0.0;  // avoid compiler warning
 		  }
 		Assert(trueTerm.getTerm() != 0 && falseTerm.getTerm() != 0,
 		       "null true/false for relational op");

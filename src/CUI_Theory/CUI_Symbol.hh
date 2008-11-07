@@ -64,9 +64,10 @@ public:
   //	Unification stuff.
   //
   void computeGeneralizedSort(const SortBdds& sortBdds,
-			      const Vector<int> realToBdd,
+			      const Vector<int>& realToBdd,
 			      DagNode* subject,
 			      Vector<Bdd>& generalizedSort);
+  UnificationSubproblem* makeUnificationSubproblem();
   //
   //	Member function specific to CUI specific function CUI_Symbol.
   //

@@ -28,7 +28,7 @@ void
 MixfixModule::getParserStats(int& nrNonterminals, int& nrTerminals, int& nrProductions)
 {
   makeGrammar();
-  int nrKinds = getConnectedComponents().length();
+  //int nrKinds = getConnectedComponents().length();
   nrNonterminals = - nextNonTerminal;
   nrTerminals = parser->getTokenSet().cardinality();
   nrProductions = parser->getNrProductions();
@@ -131,8 +131,8 @@ MixfixModule::parseMatchCommand(const Vector<Token>& bubble,
 
 bool
 MixfixModule::parseUnifyCommand(const Vector<Token>& bubble,
-				Term*& lhs,
-				Term*& rhs)
+				Vector<Term*>& lhs,
+				Vector<Term*>& rhs)
 {
   makeGrammar(true);
   int r = parseSentence(bubble, UNIFY_COMMAND);

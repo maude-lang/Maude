@@ -1,3 +1,228 @@
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (computeBaseSortForGroundSubterms): added default
+	case to avoid compiler warning
+
+	* freePreNet.cc (buildNet): fix bug where we were not updating
+	potentialSubsumers
+
+	* freePreNetSubsumption.cc (subsumesWrtReducedFringe): pull
+	assignment out of if statement of avoid compiler warning about
+	unused variable
+
+===================================Maude91a===========================================
+
+2008-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): removed commented out
+	declaration for old version of computeSolvedForm2()
+
+	* freePreNetFullCompiler.cc (allocateVariables, slotMapUnion) 
+	(generateNode): use NetMap
+	(generateCode): use net.empty()
+
+	* freePreNetSemiCompiler.cc (semiCompile, semiCompileNode): use NetMap
+
+	* freePreNet.cc (dump): updated
+
+	* freePreNet.hh (class FreePreNet): updated decl for
+	findBestPosition(); added data member netVec
+
+	* freePreNet.cc (findBestPosition): updated
+	(makeNode): use NodeMap
+
+	* freePreNet.hh (operator<): added
+	(class FreePreNet): added structs NodeIndex and NodeBody; added
+	typedef NodeMap
+
+2008-03-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc (makeNode): make use of sets return by
+	partitionLiveSet() to speed up generation of new live sets
+	(buildNet): added potentialSubsumers optimization
+
+	* freePreNet.hh (class FreePreNet): findLiveSets() ->
+	partitionLiveSet()
+
+	* freePreNet.cc (partitionLiveSet): converted from findLiveSets()
+
+	* freePreNetSubsumption.cc (subsumesWrtReducedFringe): added
+	comments to both versions
+
+2008-03-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freePreNet.cc (findLiveSets): added
+
+2008-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.cc (addRemainderList, buildRemainders): update with new
+	PatternSet data structure
+	(dump): update with new PatternSet data structure
+
+	* freeNet.hh (class FreeNet): added typedef PatternSet; updated
+	decls
+
+	* freePreNet.hh (class FreePreNet): pattternsUsed becomes a
+	LiveSet
+
+	* freePreNetSemiCompiler.cc (semiCompileNode, setVisitedFlags) 
+	(allocateSlot): update with new LiveSet data structure
+
+	* freePreNet.cc (buildNet, makeNode, reduceFringe, findLiveSet) 
+	(partiallySubsumed, findBestPosition): update with new LiveSet
+	data structure
+	(dumpLiveSet): added
+
+	* freePreNet.hh (class FreePreNet): addeded typedef LiveSet;
+	updated other decls
+
+2008-03-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (compileRhs3): compile subterms in the order largest first
+
+===================================Maude90a===========================================
+
+2008-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (computeSolvedForm2): Substitution ->
+	UnificationContext
+
+	* freeDagNode.hh (class FreeDagNode): updated decl for
+	computeSolvedForm2()
+
+2008-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (computeSolvedForm2): rewritten
+
+	* freeDagNode.hh (class FreeDagNode): updated decl for computeSolvedForm2()
+
+2008-01-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (instantiateWithReplacement): code cleaning
+
+===================================Maude90===========================================
+
+2007-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (instantiateWithReplacement): handle the case
+	where instantiate() return 0 because dag is unchanged under
+	substitution
+
+	* freeTerm.cc (findAvailableTerms, compileRhsAliens, compileRhs3):
+	cast cleaning
+
+	* freeDagNode.cc (instantiate2, instantiateWithReplacement):
+	updated
+
+	* freeDagNode.hh (class FreeDagNode): updated decls for
+	instantiate2() and instantiateWithReplacement()
+
+2007-10-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (copyEagerUptoReduced2, copyWithReplacement) 
+	(instantiateWithReplacement): remove casts to FreeSymbol*
+
+	* freeDagNode.hh (symbol): added
+
+	* freeDagNode.cc (computeBaseSortForGroundSubterms): call
+	setGround() on ground terms
+	(instantiate2): removed temporary hack to handle ground terms
+
+	* freeDagNode.hh (class FreeDagNode): decl for indexVariables()
+	becomes indexVariables2()
+
+	* freeDagNode.cc (indexVariables): handle testing and setting of
+	ground flags
+	(indexVariables): becomes indexVariables2(); return bool
+
+2007-10-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (instantiateWithReplacement): added
+	(instantiate2): temporary hack to allow it to work on constants
+	(instantiate2): use isGround()/setGround()
+
+	* freeDagNode.hh (class FreeDagNode): added decl for
+	instantiateWithReplacement()
+
+2007-10-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): adde decl for
+	indexVariables()
+	(class FreeDagNode): added decl for indexVariables()
+
+	* freeDagNode.cc (indexVariables): added
+
+===================================Maude89h===========================================
+
+2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (computeBaseSortForGroundSubterms): rewritten
+
+	* freeDagNode.hh (class FreeDagNode): updated decl for
+	computeBaseSortForGroundSubterms()
+
+2007-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (computeSolvedForm): becomes computeSolvedForm2()
+	(computeSolvedForm2): simplified now that we should be called on
+	ground terms, e.g. constants
+
+	* freeDagNode.hh (class FreeDagNode): computeSolvedForm() ->
+	computeSolvedForm2()
+
+===================================Maude89g===========================================
+
+2007-06-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.hh (class FreeDagNode): updated decl for
+	computeSolvedForm()
+
+	* freeDagNode.cc (computeSolvedForm): added extensionInfo arg
+
+===================================Maude89c===========================================
+
+2007-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (unify, occurs2): deleted
+
+	* freeDagNode.hh (class FreeDagNode): deleted decls for unify()
+	and occurs2()
+
+2007-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (computeGeneralizedSort): pass realToBdd by ref
+
+	* freeSymbol.hh (class FreeSymbol): fix decl for
+	computeGeneralizedSort()
+
+===================================Maude89a===========================================
+
+2007-03-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (nonVariableSize): return mpz_class
+
+	* freeDagNode.hh (class FreeDagNode): nonVariableSize() now
+	returns mpz_class
+
+2007-02-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (insertVariables2): added
+
+	* freeDagNode.hh (class FreeDagNode): added decl for
+	insertVariables2()
+
+2007-02-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeDagNode.cc (nonVariableSize): added
+
+	* freeDagNode.hh (class FreeDagNode): added decl for
+	computeSolvedForm()
+	(class FreeDagNode): added decl for nonVariableSize();
+
+	* freeDagNode.cc (computeSolvedForm): added
+
+===================================Maude89===========================================
+
 2007-02-09  Steven Eker  <eker@goo.csl.sri.com>
 
 	* freeDagNode.cc (instantiate2): fixed bug where we were using

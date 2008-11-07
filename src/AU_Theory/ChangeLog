@@ -1,3 +1,59 @@
+2008-11-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.cc (normalize): fix a nasty bug where we were collapsing
+	to a subterm that had already been self destructed in the all
+	identity case
+
+===================================Maude91d===========================================
+
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Matcher.cc (determineRigidBlocks): initialized firstMatch
+	field to avoid compiler warning
+
+===================================Maude91a===========================================
+
+2007-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Term.cc (normalize): fix memory leak by calling
+	deepSelfDestruct() on removed identities
+
+2007-11-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Normalize.cc (normalizeAtTop): don't allow garbage collection
+	when we're in dumb mode
+
+2007-11-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.cc (instantiate2): pass dumb=true to
+	normalizeAtTop(); call setGround()
+
+	* AU_DagNode.hh (class AU_DagNode): updated decl for
+	normalizeAtTop() with dumb flag defaulting to false
+
+	* AU_Normalize.cc (normalizeAtTop): take dumb flag; only use
+	deques when dumb flag is false
+
+2007-11-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.cc (instantiateWithReplacement): fix bug where we
+	were making a cyclic dag
+
+	* AU_DequeDagNode.hh (class AU_DequeDagNode): added decl for
+	indexVariables2()
+
+	* AU_DequeDagNode.cc (indexVariables2): added
+
+2007-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_DagNode.cc (copyEagerUptoReduced2): remove unneeded cast
+	(indexVariables2, instantiateWithReplacement): added
+
+	* AU_DagNode.hh (class AU_DagNode): added declarations for
+	instantiate2(), indexVariables2(), instantiateWithReplacement()
+
+===================================Maude89h===========================================
+
 2006-09-26  Steven Eker  <eker@goo.csl.sri.com>
 
 	* AU_CollapseMatcher.cc (uniqueCollapseMatch): we have to bind an

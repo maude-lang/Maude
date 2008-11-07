@@ -24,6 +24,7 @@ noinst_HEADERS = \
 	rawDagArgumentIterator.hh \
 	rhsAutomaton.hh \
 	subproblem.hh \
+	unificationSubproblem.hh \
 	symbol.hh \
 	symbol2.hh \
 	term.hh

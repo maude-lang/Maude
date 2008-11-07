@@ -70,7 +70,7 @@ VariableInfo::makeConstructionIndex()
   return MAX_NR_PROTECTED_VARIABLES + nrConstructionIndices;
 }
 
-void
+int
 VariableInfo::computeIndexRemapping()
 {
   int nrConstructionIndices = constructionIndices.length();
@@ -97,7 +97,11 @@ VariableInfo::computeIndexRemapping()
   //
   //	We now build a graph of conflicts between remaining construction indices.
   //
+  //  if (nrConstructionIndices > 100)
+  //    cerr << "nrConstructionIndices = " << nrConstructionIndices << endl;
   Graph conflicts(nrConstructionIndices);
+  Vector<int> conflictCandidates;
+  Vector<int> nextConflictCandidates;
   for (int i = 0; i < nrConstructionIndices; i++)
     {
       if (constructionIndices[i].assignedFragment ==
@@ -106,15 +110,22 @@ VariableInfo::computeIndexRemapping()
 	  //
 	  //	A remaining construction index i conflicts with any earlier
 	  //	remaining construction index j whose last use is after the
-	  //	allocation of construction index i.
+	  //	allocation of construction index i. To speed things up
+	  //	when the number of construction indices is huge we keep track
+	  //	a smaller pool of candidates.
 	  //
-	  for (int j = 0; j < i; j++)
+	  nextConflictCandidates.clear();
+	  FOR_EACH_CONST(j, Vector<int>, conflictCandidates)
 	    {
-	      if (constructionIndices[j].assignedFragment ==
-		  constructionIndices[j].lastUseFragment &&
-		  constructionIndices[j].lastUseTime > i)
-		conflicts.insertEdge(i, j);
+	      int c = *j;
+	      if (constructionIndices[c].lastUseTime > i)
+		{
+		  conflicts.insertEdge(i, c);
+		  nextConflictCandidates.append(c);
+		}
 	    }
+	  nextConflictCandidates.append(i);
+	  conflictCandidates.swap(nextConflictCandidates);
 	}
     }
   //
@@ -129,12 +140,11 @@ VariableInfo::computeIndexRemapping()
 	constructionIndices[i].newIndex = nrProtectedVariables + coloring[i];
     }
   //
-  //	Finally, we need to notify class Substitution of the minimum size
-  //	of substitution needed.
+  //	Finally, we need return the minimum size of substitution needed.
   //
+  return nrProtectedVariables + nrColors;
   /*
   DebugAdvisory("nrProtectedVariables = " << nrProtectedVariables <<
 		"\tnrColors = " << nrColors);
   */
-  Substitution::notify(nrProtectedVariables + nrColors);
 }

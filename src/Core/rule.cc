@@ -129,7 +129,19 @@ Rule::compile(bool compileLhs)
   //	to avoid having a condition reduce a lazy subterm.
   //
   compileBuild(availableTerms, !hasCondition());
-  rhs->compileTopRhs(builder, *this, availableTerms);
+  //
+  //	HACK: we pessimize the compilation of unconditional rules to avoid
+  //	left->right subterm sharing that would break narrowing.
+  //
+  if (!hasCondition())
+    {
+      TermBag dummy;
+      rhs->compileTopRhs(builder, *this, dummy);
+    }
+  else
+    rhs->compileTopRhs(builder, *this, availableTerms);  // original code
+
+  //  builder.dump(cout, *this);
   compileMatch(compileLhs, true);
   builder.remapIndices(*this);
   //
@@ -145,4 +157,27 @@ int
 Rule::traceBeginTrial(DagNode* subject, RewritingContext& context) const
 {
   return context.traceBeginRuleTrial(subject, this);
+}
+
+DagNode*
+Rule::getLhsDag()
+{
+  DagNode* d = lhsDag.getNode();
+  if (d == 0)
+    {
+      d = getLhs()->term2Dag();
+      if (d->computeBaseSortForGroundSubterms() == DagNode::UNIMPLEMENTED)
+	{
+	  IssueWarning(*this << ": lefthand side of " << this <<
+		       " contains function symbols with nonvariable arguments that are not supported by unification.");
+	}
+      lhsDag.setNode(d);
+    }
+  return d;
+}
+
+void
+Rule::reset()
+{
+  lhsDag.setNode(0);
 }

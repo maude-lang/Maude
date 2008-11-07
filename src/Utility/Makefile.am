@@ -21,6 +21,7 @@ libutility_a_SOURCES = \
 	bdd.cc \
 	timer.cc \
 	mpzSystem.cc \
+	intSystem.cc \
 	allSat.cc
 
 noinst_HEADERS = \
@@ -46,16 +47,17 @@ noinst_HEADERS = \
 	stringTable.hh \
 	timer.hh \
 	tty.hh \
-	ttyAttributes.hh \
 	unionFind.hh \
 	vector.hh \
 	timeStuff.hh \
 	mathStuff.hh \
 	ropeStuff.hh \
 	mpzSystem.hh \
+	intSystem.hh \
 	allSat.hh
 
 EXTRA_DIST = \
+	intContejeanDevie.cc \
 	mpzContejeanDevie.cc \
 	mpzGcdInit.cc \
 	mpzGcdTrivial.cc \

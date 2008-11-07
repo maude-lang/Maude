@@ -96,28 +96,22 @@ LocalBinding::retract(Substitution& substitution)
     }
 }
 
+/*
 bool
-LocalBinding::unificationAssert(Substitution& substitution, Subproblem*& returnedSubproblem)
+LocalBinding::solvedFormAssert(Substitution& substitution, Subproblem*& returnedSubproblem)
 {
   SubproblemAccumulator subproblems;
   int nrBindings = bindings.size();
   for (int i = 0; i < nrBindings; ++i)
     {
-      int index = bindings[i].variableIndex;
-      DagNode* newValue = bindings[i].value;
-      DagNode* originalValue = substitution.value(index);
-      if (originalValue == 0)
-	substitution.unificationBind(index, 0, newValue);
-      else
-	{
-	  if (!(originalValue->unify(newValue, substitution, returnedSubproblem, 0)))
-	    return false;
-	  subproblems.add(returnedSubproblem);
-	}
-      returnedSubproblem = subproblems.extractSubproblem();
+      if (!(substitution.merge(bindings[i].variableIndex, bindings[i].value, returnedSubproblem)))
+	return false;
+      subproblems.add(returnedSubproblem);
     }
+  returnedSubproblem = subproblems.extractSubproblem();
   return true;
 }
+*/
 
 #ifdef DUMP
 void

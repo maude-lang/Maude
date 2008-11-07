@@ -1,0 +1,144 @@
+set show timing off .
+
+*** order sorted free theory unification is not unitary
+fmod TEST is
+  pr NAT .
+  op f : Nat Nat -> Nat .
+  op f : NzNat Nat -> NzNat .
+  op f : Nat NzNat -> NzNat .
+endfm
+
+unify f(X:Nat, Y:Nat) ^ B:NzNat =? A:NzNat ^ f(Y:Nat, Z:Nat) .
+
+*** quite modest AC unification problems can produce a large number of
+*** unifiers 
+unify [100] in NAT :
+  X:Nat + X:Nat + Y:Nat =? A:Nat + B:Nat + C:Nat .
+
+*** built-in constants are handled; built in functions are not
+*** evaluated 
+unify in CONVERSION :
+  X:String < "foo" + Y:Char =?
+  Z:String + string(pi) < "foo" + Z:String .
+
+*** using forbidden variable names in unificands fails with a warning
+unify in NAT : X:Nat ^ #1:Nat =? #2:Nat .
+
+fmod TEST2 is
+  pr NAT .
+  op f : Nat Nat -> Nat [assoc] .
+endfm
+
+*** using of a symbol from an unsupported theory above a non-gound
+*** term fails with a warning
+unify f(f(X:Nat, Y:Nat), Z:Nat) =? f(A:Nat, B:Nat) .
+
+*** all symbols are allowed in ground terms
+unify X:Nat + f(41, 42) =? Y:Nat + f(41, 42) .
+
+*** order sorted unification is efficient on the iter representation
+fmod ITER is
+  sorts NzEvenNat EvenNat OddNat NzNat Nat EvenInt OddInt NzInt Int .
+
+  subsorts OddNat < OddInt NzNat < NzInt < Int .
+  subsorts EvenNat < EvenInt Nat < Int .
+  subsorts NzEvenNat < NzNat EvenNat < Nat .
+
+  op 0 : -> EvenNat .
+
+  op s : EvenNat -> OddNat [iter] .
+  op s : OddNat -> NzEvenNat [iter] .
+  op s : Nat -> NzNat [iter] .
+
+  op s : EvenInt -> OddInt [iter] .
+  op s : OddInt -> EvenInt [iter] .
+  op s : Int -> Int [iter] .
+
+  op _+_ : Int Int -> Int [comm gather (E e)] .
+  op _+_ : OddInt OddInt -> EvenInt [ditto] .
+  op _+_ : EvenInt EvenInt -> EvenInt [ditto] .
+  op _+_ : OddInt EvenInt -> OddInt [ditto] .
+
+  op _+_ : Nat Nat -> Nat [ditto] .
+  op _+_ : Nat NzNat -> NzNat [ditto] .
+  op _+_ : OddNat OddNat -> NzEvenNat [ditto] .
+  op _+_ : NzEvenNat EvenNat -> NzEvenNat [ditto] .
+  op _+_ : EvenNat EvenNat -> EvenNat [ditto] .
+  op _+_ : OddNat EvenNat -> OddNat [ditto] .
+endfm
+
+unify s^1000000(X:OddNat) =? s^100000000001(Y:Int) .
+unify s^1000000(X:OddNat) =? s^100000000001(Y:Int + Z:Int + W:Int) .
+
+
+fmod AC is
+  sort Foo .
+  ops a b c d e z : -> Foo .
+  op f : Foo Foo -> Foo [assoc comm] .
+  op g : Foo Foo -> Foo .
+  vars W X Y Z A B C D E F : Foo .
+endfm
+
+unify f(X, Y) =? f(A, B) .
+
+unify f(X, Y) =? f(a, b) .
+unify f(X, Y) =? f(a, b, c) .
+match f(X, Y) <=? f(a, b, c) .
+
+unify f(X, X, Y) =? f(X, Y, Y) .
+unify f(X, X, Y) =? f(X, Y) .
+
+unify f(X, X, Y) =? f(A, B, C) .
+
+unify f(X, X, Y) =? f(a, B, C) .
+unify f(X, X, X) =? f(a, a) .
+unify f(X, X, X, Y) =? f(a, a) .
+
+fmod AC2 is
+  sort Elt Set .
+  subsort Elt < Set .
+  ops a b c d e z : -> Elt .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Set Set -> Set .
+  vars U V W X Y Z : Set .
+  vars A B C D E F : Elt .
+endfm
+
+unify f(A, B) =? f(C, D) .
+
+unify f(X, A) =? f(Y, B) .
+
+unify f(g(X, Y), g(X, Z), U) =? f(g(Y, Z), V) .
+
+unify  g(f(X, Y), f(X, U, Z)) =? g(f(U, V), f(W, A)) .
+
+fmod AC+C is
+  sort Elt Set .
+  subsort Elt < Set .
+  ops a b c d e z : -> Elt .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Set Set -> Set [comm] .
+  vars U V W X Y Z : Set .
+  vars A B C D E F : Elt .
+endfm
+
+unify f(g(X, Y), g(X, Z), U) =? f(g(Y, Z), V) .
+
+unify  g(f(X, Y), f(X, U, Z)) =? g(f(U, V), f(W, A)) .
+
+*** simultaneous unification
+
+fmod SIMULT is
+  sort Foo .
+  ops g h : Foo -> Foo .
+endfm
+
+unify g(X:Foo) =? g(Y:Foo) /\ h(X:Foo) =? h(Z:Foo) .
+
+unify g(X:Foo) =? Y:Foo /\ h(X:Foo) =? h(Z:Foo) .
+
+unify g(X:Foo) =? Y:Foo /\ h(X:Foo) =? h(Y:Foo) .
+
+unify g(X:Foo) =? Y:Foo /\ X:Foo =? h(Y:Foo) .
+
+unify [1] in SIMULT : g(X:Foo) =? Y:Foo /\ h(X:Foo) =? h(Z:Foo) .

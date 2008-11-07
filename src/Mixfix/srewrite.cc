@@ -42,7 +42,8 @@ Interpreter::sRewrite(const Vector<Token>& subjectAndStrategy, Int64 limit, bool
       if (limit != NONE)
 	cout << '[' << limit << "] ";
 
-      cout << "in " << currentModule << " : " << subjectDag << " using " << strategy << " .\n";
+      cout << "in " << currentModule << " : " << subjectDag <<
+	" using " << strategy << " ." << endl;
     }
 
   startUsingModule(fm);

@@ -66,7 +66,7 @@ public:
   //
   virtual void computeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFunctionBdds) const;
   virtual void computeGeneralizedSort(const SortBdds& sortBdds,
-				      const Vector<int> realToBdd,  // first BDD variable for each free real variable
+				      const Vector<int>& realToBdd,  // first BDD variable for each free real variable
 				      DagNode* subject,
 				      Vector<Bdd>& generalizedSort) { CantHappen("not implemented"); }
 

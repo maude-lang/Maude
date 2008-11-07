@@ -35,7 +35,7 @@ Interpreter::printSearchTiming(const Timer& timer,  RewriteSequenceSearch* state
 }
 
 void
-Interpreter::search(const Vector<Token>& bubble, Int64 limit, Int64 depth)
+Interpreter::search(const Vector<Token>& bubble, Int64 limit, Int64 depth, SearchKind searchKind)
 {
   VisibleModule* fm = currentModule->getFlatModule();
   Term* initial;
@@ -44,6 +44,11 @@ Interpreter::search(const Vector<Token>& bubble, Int64 limit, Int64 depth)
   Vector<ConditionFragment*> condition;
   if (!(fm->parseSearchCommand(bubble, initial, searchType, target, condition)))
     return;
+  if (searchKind != SEARCH && !condition.empty())
+    {
+      IssueWarning(*target << ": conditions are not currently supported for narrowing");
+      return;
+    }
 
   Pattern* pattern = new Pattern(target, false, condition);
   if (!(pattern->getUnboundVariables().empty()))
@@ -57,36 +62,97 @@ Interpreter::search(const Vector<Token>& bubble, Int64 limit, Int64 depth)
     }
   DagNode* subjectDag = makeDag(initial);
   
-  static char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!" };
+  static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!" };
   if (getFlag(SHOW_COMMAND))
     {
+      static const char* searchKindName[] = { "search", "narrow", "xg-narrow" };
+
       UserLevelRewritingContext::beginCommand();
-      cout << "search ";
+      cout << searchKindName[searchKind] << ' ';
       printModifiers(limit, depth);
       cout << subjectDag << ' ' << searchTypeSymbol[searchType] << ' ' << pattern->getLhs();
-      if (condition.length() > 0)
+      if (!condition.empty())
 	{
 	  cout << " such that ";
 	  MixfixModule::printCondition(cout, condition);	  
 	}
-      cout << " .\n";
+      cout << " ." << endl;
       if (xmlBuffer != 0)
 	xmlBuffer->generateSearch(subjectDag, pattern, searchTypeSymbol[searchType], limit, depth);
     }
 
   startUsingModule(fm);
-  RewriteSequenceSearch* state =
-    new RewriteSequenceSearch(new UserLevelRewritingContext(subjectDag),
-			      static_cast<RewriteSequenceSearch::SearchType>(searchType),
-			      pattern,
-			      depth);
 
 #ifdef QUANTIFY_REWRITING
   quantify_start_recording_data();
 #endif
+  
+  if (searchKind == SEARCH)
+    {
+      RewriteSequenceSearch* state =
+	new RewriteSequenceSearch(new UserLevelRewritingContext(subjectDag),
+				  static_cast<RewriteSequenceSearch::SearchType>(searchType),
+				  pattern,
+				  depth);
+      Timer timer(getFlag(SHOW_TIMING));
+      doSearching(timer, fm, state, 0, limit);
+    }
+  else
+    {
+      NarrowingSequenceSearch* state = new NarrowingSequenceSearch(new UserLevelRewritingContext(subjectDag),
+								   static_cast<NarrowingSequenceSearch::SearchType>(searchType),  // HACK
+								   pattern,
+								   depth,
+								   (searchKind == XG_NARROW ?
+								    NarrowingSearchState::ALLOW_NONEXEC | NarrowingSearchState::SINGLE_POSITION :
+								    NarrowingSearchState::ALLOW_NONEXEC),
+								   new FreshVariableSource(fm));
+      Timer timer(getFlag(SHOW_TIMING));
+      doNarrowing(timer, fm, state, 0, limit);
+    }
+}
 
-  Timer timer(getFlag(SHOW_TIMING));
-  doSearching(timer, fm, state, 0, limit);
+void
+Interpreter::doNarrowing(Timer& timer,
+			 VisibleModule* module,
+			 NarrowingSequenceSearch* state,
+			 int solutionCount,
+			 int limit)
+{
+  const VariableInfo* variableInfo = state->getGoal();
+  int i = 0;
+  for (; i != limit; i++)
+    {
+      bool result = state->findNextMatch();
+      if (UserLevelRewritingContext::aborted())
+	break;  // HACK: Is this safe - shouldn't we destroy context?
+      if (!result)
+	{
+	  cout << ((solutionCount == 0) ? "\nNo solution.\n" : "\nNo more solutions.\n");
+	  //printSearchTiming(timer, state);
+	  break;
+	}
+
+      ++solutionCount;
+      cout << "\nSolution " << solutionCount << "\n";
+      //printSearchTiming(timer, state);
+      UserLevelRewritingContext::printSubstitution(*(state->getSubstitution()), *variableInfo);
+      if (UserLevelRewritingContext::interrupted())
+	break;
+    }
+
+#ifdef QUANTIFY_REWRITING
+  quantify_stop_recording_data();
+#endif
+
+  clearContinueInfo();  // just in case debugger left info
+  //state->getContext()->clearCount();
+  //savedRewriteSequenceSearch = state;
+  //savedSolutionCount = solutionCount;
+  //savedModule = module;
+  //if (i == limit)  // possible to continue
+  //  continueFunc = &Interpreter::searchCont;
+  UserLevelRewritingContext::clearDebug();
 }
 
 void

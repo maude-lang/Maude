@@ -95,6 +95,8 @@ ModuleExpression::deepSelfDestruct()
 	  (*i)->deepSelfDestruct();
 	break;
       }
+    case MODULE:
+      ;  // nothing to delete - avoid compiler warning
     }
   delete this;
 }

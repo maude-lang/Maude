@@ -1,3 +1,54 @@
+2008-08-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added operator for print attribute
+
+2008-01-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added Bool arg to the XG specific version of
+	metaNarrow
+
+===================================Maude90===========================================
+
+2007-12-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added a failure operator for ResultPair?
+	added 5 arg version of metaNarrow
+
+2007-11-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: metaXunify()/metaDisjointXunify() deleted;
+	metaNarrow() added
+
+===================================Maude89h===========================================
+
+2007-06-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added metaXunify(), metaDisjointXunify() and
+	associated declarations
+
+2007-06-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: add UnificationProblem constructors; use for
+	metaUnify() and metaDisjointUnify()
+
+2007-06-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added UnificationPair and ctors; updated decl for
+	metaUnify()
+
+2007-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added UnificationTriple and ctors
+
+===================================Maude89c===========================================
+
+2007-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* main.cc (main): call checkForPending() if the -no-prelude flag
+	given since we won't hit a top level EOF to check for them
+	otherwise; this fixes a bug where we were ignoring command line
+	files if -no-prelude flag given
+
 2007-01-17  Steven Eker  <eker@goo.csl.sri.com>
 
 	* prelude.maude: moved set include BOOL on to after last module;

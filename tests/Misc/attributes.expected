@@ -1,0 +1,84 @@
+Maude> mod ATTRIBUTES is
+  sorts Bool Foo Bar .
+  subsort Foo < Bar .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op a : -> Foo .
+  op b : -> Foo .
+  op c : -> Foo .
+  op f : Foo Foo -> Foo [metadata "binary op"] .
+  op f : Bar Bar -> Bar .
+  op g : Foo -> Bar [metadata "unary op"] .
+  op h : Foo -> Bar [metadata "unary op"] .
+  var X : Foo .
+  var Y : Bar .
+  mb g(g(X)) : Foo [label downSort metadata "down sort" print
+    "sort became Foo"] .
+  cmb Y : Foo if f(Y, a) = f(a, Y) [nonexec] .
+  eq a = b [metadata "definition"] .
+  eq f(X, X) = g(X) [print "X = " X] .
+  eq f(g(X), X) = c [label collapse metadata "collapse" print "X = " X] .
+  eq g(X) = f(X, X) [nonexec label rev metadata "rev"] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  rl f(X, X) => f(g(X), g(X)) [nonexec label expand] .
+  rl h(h(X)) => f(c, X) [label tick metadata "step" print "step X = " X] .
+endm
+==========================================
+reduce in ATTRIBUTES : f(c, c) .
+rewrites: 1
+result Bar: g(c)
+==========================================
+reduce in ATTRIBUTES : f(c, c) .
+X = c
+rewrites: 1
+result Bar: g(c)
+==========================================
+reduce in ATTRIBUTES : f(g(c), c) .
+X = c
+rewrites: 1
+result Foo: c
+==========================================
+reduce in ATTRIBUTES : f(g(c), c) .
+X = crewrites: 1
+result Foo: c
+==========================================
+reduce in ATTRIBUTES : g(g(c)) .
+sort became Foo
+rewrites: 1
+result Foo: g(g(c))
+==========================================
+rewrite in ATTRIBUTES : h(h(b)) .
+step X = b
+rewrites: 1
+result Foo: f(c, b)
+Maude> Bye.

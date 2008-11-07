@@ -24,23 +24,16 @@
 //	Class for searching for sequences of rewrites within a DAG.
 //
 #ifndef _rewriteSequenceSearch_hh_
-#define _rewriteSequenceSearchState_hh_
+#define _rewriteSequenceSearch_hh_
+#include "sequenceSearch.hh"
 #include "stateTransitionGraph3.hh"
 #include "matchSearchState.hh"
 
-class RewriteSequenceSearch : public StateTransitionGraph3
+class RewriteSequenceSearch : public SequenceSearch, public StateTransitionGraph3
 {
   NO_COPYING(RewriteSequenceSearch);
 
 public:
-  enum SearchType
-  {
-    ONE_STEP,
-    AT_LEAST_ONE_STEP,
-    ANY_STEPS,
-    NORMAL_FORM
-  };
-
   RewriteSequenceSearch(RewritingContext* initial,
 			SearchType searchType,
 			Pattern* goal,

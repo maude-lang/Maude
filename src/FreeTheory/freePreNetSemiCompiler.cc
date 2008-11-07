@@ -26,16 +26,19 @@
 int
 FreePreNet::semiCompileNode(FreeNet& freeNet, int nodeNr, const SlotMap& slotMap)
 {
-  Node& n = net[nodeNr];
+  NodeMap::iterator nmi = netVec[nodeNr];
+  const NodeIndex& ni = nmi->first;
+  NodeBody& n = nmi->second;
+  
   if (n.freeNetIndex != UNBOUNDED)
     return n.freeNetIndex;
-  if (n.reducedFringe.empty())
+  if (ni.reducedFringe.empty())
     {
       //
       //	Remainder node.
       //
-      patternsUsed.insert(n.liveSet);
-      n.freeNetIndex = freeNet.addRemainderList(n.liveSet);
+      patternsUsed.insert(ni.liveSet.begin(), ni.liveSet.end());
+      n.freeNetIndex = freeNet.addRemainderList(ni.liveSet);
       return n.freeNetIndex;
     }
   else
@@ -44,7 +47,7 @@ FreePreNet::semiCompileNode(FreeNet& freeNet, int nodeNr, const SlotMap& slotMap
       //	Test node.
       //
       const Vector<int>& testPosition = positions.index2Position(n.testPositionIndex);
-      setVisitedFlags(n.liveSet, testPosition, true);
+      setVisitedFlags(ni.liveSet, testPosition, true);
 
       int nrMatchArcs = n.sons.length();
       n.freeNetIndex = freeNet.allocateNode(nrMatchArcs);
@@ -61,7 +64,7 @@ FreePreNet::semiCompileNode(FreeNet& freeNet, int nodeNr, const SlotMap& slotMap
 	  symbols[i] = symbol;
 	  if (dynamic_cast<FreeSymbol*>(symbol) != 0 && symbol->arity() > 0)
 	    {
-	      int slot = allocateSlot(net[target].liveSet, testPosition, symbol);
+	      int slot = allocateSlot(netVec[target]->first.liveSet, testPosition, symbol);
 	      SlotMap newMap(slotMap);
 	      newMap[n.testPositionIndex] = slot;
 	      targets[i] = semiCompileNode(freeNet, target, newMap);
@@ -87,7 +90,7 @@ FreePreNet::semiCompileNode(FreeNet& freeNet, int nodeNr, const SlotMap& slotMap
 			  saveSlots,
 			  neqTarget);
 
-      setVisitedFlags(n.liveSet, testPosition, false);
+      setVisitedFlags(ni.liveSet, testPosition, false);
       return n.freeNetIndex;
     }
 }
@@ -95,11 +98,11 @@ FreePreNet::semiCompileNode(FreeNet& freeNet, int nodeNr, const SlotMap& slotMap
 void
 FreePreNet::semiCompile(FreeNet& freeNet)
 {
-  int nrNodes = net.length();
+  int nrNodes = netVec.size();
   if (nrNodes == 0)
     return;
   for (int i = 0; i < nrNodes; i++)
-    net[i].freeNetIndex = UNBOUNDED;  // can't use NONE because of negatives
+    netVec[i]->second.freeNetIndex = UNBOUNDED;  // can't use NONE because of negatives
 
   SlotMap init;
   init[topPositionIndex] = slots.makeElement();  // allocate slot 0 to start everything off
@@ -114,12 +117,11 @@ FreePreNet::semiCompile(FreeNet& freeNet)
 }
 
 void
-FreePreNet::setVisitedFlags(const NatSet& liveSet,
+FreePreNet::setVisitedFlags(const LiveSet& liveSet,
 			    const Vector<int>& position,
 			    bool state)
 {
-  const NatSet::const_iterator e = liveSet.end();
-  for (NatSet::const_iterator i = liveSet.begin(); i != e; ++i)
+  FOR_EACH_CONST(i, LiveSet, liveSet)
     {
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[*i].term))
 	{
@@ -131,7 +133,7 @@ FreePreNet::setVisitedFlags(const NatSet& liveSet,
 }
 
 int
-FreePreNet::allocateSlot(const NatSet& liveSet,
+FreePreNet::allocateSlot(const LiveSet& liveSet,
 			 const Vector<int>& position,
 			 Symbol* symbol)
 {
@@ -141,8 +143,7 @@ FreePreNet::allocateSlot(const NatSet& liveSet,
 	 "slot/conflict data structures out of sync");
 
   // cerr << symbol << endl;
-  const NatSet::const_iterator e = liveSet.end();
-  for (NatSet::const_iterator i = liveSet.begin(); i != e; ++i)
+  FOR_EACH_CONST(i, LiveSet, liveSet)
     {
       // cerr << patterns[*i].term << endl;
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[*i].term))

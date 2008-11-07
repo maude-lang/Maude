@@ -64,6 +64,7 @@
 #include "rewriteSearchState.hh"
 #include "matchSearchState.hh"
 #include "rewriteSequenceSearch.hh"
+#include "narrowingSequenceSearch.hh"
 #include "unificationProblem.hh"
 
 //      free theory class definitions
@@ -100,6 +101,7 @@
 #include "metaMatch.cc"
 #include "metaSearch.cc"
 #include "metaUnify.cc"
+#include "metaNarrow.cc"
 
 MetaLevelOpSymbol::MetaLevelOpSymbol(int id, int nrArgs)
   : FreeSymbol(id, nrArgs)

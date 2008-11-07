@@ -56,7 +56,7 @@ public:
   //
   void computeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFunctionBdds) const;
   void computeGeneralizedSort(const SortBdds& sortBdds,
-			      const Vector<int> realToBdd,
+			      const Vector<int>& realToBdd,
 			      DagNode* subject,
 			      Vector<Bdd>& generalizedSort);
   //

@@ -34,7 +34,7 @@ AU_LhsAutomaton::uniqueCollapseMatch(DagNode* subject,
   //	Because one subterm cannot take the identity element we can only
   //	collapse to that subterm.
   //	Every other subterm will be a variable that can take identity. For a
-  //	matchto be possible it either must be already bound to identity oris
+  //	match to be possible it either must be already bound to identity or is
   //	now bound to identity.
   //
   Term* identity = topSymbol->getIdentity();
@@ -78,6 +78,9 @@ AU_LhsAutomaton::uniqueCollapseMatch(DagNode* subject,
 	  //	then it could be our uniqueCollapseSubterm even though
 	  //	f.variable.takeIdentity is true. Need to find a clean way of
 	  //	handling awkward variables.
+	  //
+	  //	11/6/08: This probably isn't a bug since awkward variables no longer get
+	  //	their takeIdentity flags set to true.
 	  //
 	  int index = f.variable.index;
 	  DagNode* d = solution.value(index);

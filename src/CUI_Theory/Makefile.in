@@ -60,6 +60,7 @@ am_libCUI_Theory_a_OBJECTS = libCUI_Theory_a-CUI_Symbol.$(OBJEXT) \
 	libCUI_Theory_a-CUI_RhsAutomaton.$(OBJEXT) \
 	libCUI_Theory_a-CUI_Term.$(OBJEXT) \
 	libCUI_Theory_a-CUI_ArgumentIterator.$(OBJEXT) \
+	libCUI_Theory_a-CUI_UnificationSubproblem.$(OBJEXT) \
 	libCUI_Theory_a-CUI_LhsAutomaton.$(OBJEXT)
 libCUI_Theory_a_OBJECTS = $(am_libCUI_Theory_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -106,6 +107,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FLEX = @FLEX@
 GMP_LIBS = @GMP_LIBS@
+GREP = @GREP@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -113,6 +115,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGSEGV_LIB = @LIBSIGSEGV_LIB@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 OBJEXT = @OBJEXT@
@@ -133,8 +136,6 @@ USE_DLMALLOC_TRUE = @USE_DLMALLOC_TRUE@
 VERSION = @VERSION@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -151,23 +152,30 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
@@ -187,6 +195,7 @@ libCUI_Theory_a_SOURCES = \
 	CUI_RhsAutomaton.cc \
 	CUI_Term.cc \
 	CUI_ArgumentIterator.cc \
+	CUI_UnificationSubproblem.cc \
 	CUI_LhsAutomaton.cc
 
 EXTRA_DIST = \
@@ -201,6 +210,7 @@ noinst_HEADERS = \
 	CUI_RhsAutomaton.hh \
 	CUI_Symbol.hh \
 	CUI_Term.hh \
+	CUI_UnificationSubproblem.hh \
 	CUI_Theory.hh
 
 all: all-am
@@ -257,6 +267,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libCUI_Theory_a-CUI_RhsAutomaton.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libCUI_Theory_a-CUI_Symbol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libCUI_Theory_a-CUI_Term.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libCUI_Theory_a-CUI_UnificationSubproblem.Po@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -355,6 +366,20 @@ libCUI_Theory_a-CUI_ArgumentIterator.obj: CUI_ArgumentIterator.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='CUI_ArgumentIterator.cc' object='libCUI_Theory_a-CUI_ArgumentIterator.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libCUI_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libCUI_Theory_a-CUI_ArgumentIterator.obj `if test -f 'CUI_ArgumentIterator.cc'; then $(CYGPATH_W) 'CUI_ArgumentIterator.cc'; else $(CYGPATH_W) '$(srcdir)/CUI_ArgumentIterator.cc'; fi`
+
+libCUI_Theory_a-CUI_UnificationSubproblem.o: CUI_UnificationSubproblem.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libCUI_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libCUI_Theory_a-CUI_UnificationSubproblem.o -MD -MP -MF "$(DEPDIR)/libCUI_Theory_a-CUI_UnificationSubproblem.Tpo" -c -o libCUI_Theory_a-CUI_UnificationSubproblem.o `test -f 'CUI_UnificationSubproblem.cc' || echo '$(srcdir)/'`CUI_UnificationSubproblem.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libCUI_Theory_a-CUI_UnificationSubproblem.Tpo" "$(DEPDIR)/libCUI_Theory_a-CUI_UnificationSubproblem.Po"; else rm -f "$(DEPDIR)/libCUI_Theory_a-CUI_UnificationSubproblem.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='CUI_UnificationSubproblem.cc' object='libCUI_Theory_a-CUI_UnificationSubproblem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libCUI_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libCUI_Theory_a-CUI_UnificationSubproblem.o `test -f 'CUI_UnificationSubproblem.cc' || echo '$(srcdir)/'`CUI_UnificationSubproblem.cc
+
+libCUI_Theory_a-CUI_UnificationSubproblem.obj: CUI_UnificationSubproblem.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libCUI_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libCUI_Theory_a-CUI_UnificationSubproblem.obj -MD -MP -MF "$(DEPDIR)/libCUI_Theory_a-CUI_UnificationSubproblem.Tpo" -c -o libCUI_Theory_a-CUI_UnificationSubproblem.obj `if test -f 'CUI_UnificationSubproblem.cc'; then $(CYGPATH_W) 'CUI_UnificationSubproblem.cc'; else $(CYGPATH_W) '$(srcdir)/CUI_UnificationSubproblem.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libCUI_Theory_a-CUI_UnificationSubproblem.Tpo" "$(DEPDIR)/libCUI_Theory_a-CUI_UnificationSubproblem.Po"; else rm -f "$(DEPDIR)/libCUI_Theory_a-CUI_UnificationSubproblem.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='CUI_UnificationSubproblem.cc' object='libCUI_Theory_a-CUI_UnificationSubproblem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libCUI_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libCUI_Theory_a-CUI_UnificationSubproblem.obj `if test -f 'CUI_UnificationSubproblem.cc'; then $(CYGPATH_W) 'CUI_UnificationSubproblem.cc'; else $(CYGPATH_W) '$(srcdir)/CUI_UnificationSubproblem.cc'; fi`
 
 libCUI_Theory_a-CUI_LhsAutomaton.o: CUI_LhsAutomaton.cc
 @am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libCUI_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libCUI_Theory_a-CUI_LhsAutomaton.o -MD -MP -MF "$(DEPDIR)/libCUI_Theory_a-CUI_LhsAutomaton.Tpo" -c -o libCUI_Theory_a-CUI_LhsAutomaton.o `test -f 'CUI_LhsAutomaton.cc' || echo '$(srcdir)/'`CUI_LhsAutomaton.cc; \

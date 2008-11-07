@@ -280,6 +280,7 @@ operator<<(ostream& s, const PreModule* p)
   //	Needed to avoid ambiguity.
   //
   s << static_cast<const NamedEntity*>(p);
+  return s;
 }
 #endif
 

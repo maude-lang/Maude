@@ -173,6 +173,9 @@ ApplicationProcess::doRewrite(StrategicSearch& searchObject,
       //	whole term and substitution just for tracing.
       //
       RewritingContext* tracingContext = baseContext->makeSubcontext(baseContext->root());
+      //
+      //	We use clone() rather than copy() because tracingContext will have copy size of 0.
+      //
       tracingContext->clone(*substitution);
       tracingContext->tracePreRuleRewrite(rewriteState->getDagNode(redexIndex), rule);
       delete tracingContext;
@@ -229,10 +232,11 @@ ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchOb
 						       StrategicProcess* other)
 {
   const Vector<ConditionFragment*>& fragments = rule->getCondition();
-  for (int nrFragments = fragments.size(); fragmentNr < nrFragments; ++fragmentNr)
+  int nrFragments = fragments.size();
+  for (; fragmentNr < nrFragments; ++fragmentNr)
     {
       ConditionFragment* fragment = fragments[fragmentNr];
-      if (RewriteConditionFragment* rf = dynamic_cast<RewriteConditionFragment*>(fragment))
+      if (dynamic_cast<RewriteConditionFragment*>(fragment) != 0)
 	{
 	  (void) new RewriteTask(searchObject,
 				 rewriteState,
@@ -248,12 +252,8 @@ ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchOb
 				 other);
 	  return SURVIVE;
 	}
-      else if (AssignmentConditionFragment* af = dynamic_cast<AssignmentConditionFragment*>(fragment))
+      else if (AssignmentConditionFragment* acf = dynamic_cast<AssignmentConditionFragment*>(fragment))
 	{
-	  //
-	  //	Find the L := R fragment that we are going to test.
-	  //
-	  AssignmentConditionFragment* acf = safeCast(AssignmentConditionFragment*, (rule->getCondition())[fragmentNr]);
 	  //
 	  //	Make a subcontext, construct and evalutate the instance of R.
 	  //
@@ -265,7 +265,10 @@ ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchOb
 	  //	some more rewriting with newContext.
 	  //
 	  searchObject.getContext()->transferCount(*newContext);
-	  newContext->clone(*substitutionSoFar);
+	  //
+	  //	We use clone() rather than copy() because newContext will have the wrong copy size.
+	  //
+	  newContext->clone(*substitutionSoFar);  // BUG: this seems to be reducing substitution size!
 	  Subproblem* subproblem;
 	  if (acf->matchRoot(*newContext, subproblem))
 	    {
@@ -296,6 +299,9 @@ ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchOb
       //
       RewritingContext* baseContext = rewriteState->getContext();
       RewritingContext* solveContext = baseContext->makeSubcontext(baseContext->root());
+      //
+      //	We use clone() rather than copy() because newContext will have copy size 0.
+      //
       solveContext->clone(*substitutionSoFar);
       stack<ConditionState*> dummy;
       bool success = fragment->solve(true, *solveContext, dummy);
@@ -314,7 +320,7 @@ ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchOb
       //	making instantiations; for example eager copies of variables. These
       //	must be copied back into substitutionSoFar.
       //
-      substitutionSoFar->clone(*solveContext);
+      substitutionSoFar->copy(*solveContext);
       delete solveContext;
     }
   //

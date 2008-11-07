@@ -134,6 +134,13 @@ MetaLevel::downOpDecl(DagNode* metaOpDecl, MetaModule* m)
 						       ai.format,
 						       ai.metadata,
 						       originator);
+		  if (m->parameterDeclared(symbol))
+		    {
+		      IssueWarning("operator declaration for operation " << QUOTE(prefixName) <<
+				   " subsort overloads an operator of the same name from a parameter.");
+		      return false;
+		    }
+
 		  if (ai.symbolType.getBasicType() == SymbolType::BUBBLE)
 		    {
 		      int bubbleSpecIndex;

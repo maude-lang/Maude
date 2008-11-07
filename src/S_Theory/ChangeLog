@@ -1,3 +1,117 @@
+2008-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.hh (class S_DagNode): deleted commented out decl for
+	computeSolvedForm2()
+
+===================================Maude90a===========================================
+
+2008-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (computeSolvedForm2): Substitution -> UnificationContext
+
+	* S_DagNode.hh (class S_DagNode): updated decl for
+	computeSolvedForm2()
+
+2008-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (computeSolvedForm2): rewritten
+
+	* S_DagNode.hh (class S_DagNode): updated decl for
+	computeSolvedForm2()
+
+===================================Maude90===========================================
+
+2007-11-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (instantiate2): if our argument is ground, set
+	ground flag and compute sort for new node
+
+2007-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (instantiateWithReplacement): added
+
+	* S_DagNode.hh (class S_DagNode): added decl for instantiateWithReplacement()
+
+2007-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (instantiate2): updated
+
+	* S_DagNode.hh (class S_DagNode): updated decl for instantiate2()
+
+===================================Maude89h===========================================
+
+2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (computeBaseSortForGroundSubterms): updated
+
+	* S_DagNode.hh (class S_DagNode): updated decl for
+	computeBaseSortForGroundSubterms()
+
+2007-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (computeSolvedForm): becomes computeSolvedForm2()
+
+	* S_DagNode.hh (class S_DagNode): computeSolvedForm() ->
+	computeSolvedForm2()
+
+===================================Maude89g===========================================
+
+2007-07-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (computeSolvedForm): give a warning that we don't
+	support extension
+
+	* S_LhsAutomaton.cc (match): added commments
+
+	* S_Subproblem.cc (S_Subproblem): handle mustMatchAtLeast arg
+	(solve): simplified; handle mustMatchAtLeast
+
+	* S_DagNode.cc (matchVariableWithExtension): pass mustMatchAtLeast
+	as 1
+
+	* S_Subproblem.hh (class S_Subproblem): added data member
+	mustMatchAtLeast; updated decl for ctor
+
+2007-06-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (computeSolvedForm): added extensionInfo arg
+
+	* S_DagNode.hh (class S_DagNode): updated decl for
+	computeSolvedForm()
+
+===================================Maude89c===========================================
+
+2007-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (occurs2, unify): deleted
+
+	* S_DagNode.hh (class S_DagNode): deleted decls for unify() and
+	occurs2()
+
+2007-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_Symbol.cc (computeGeneralizedSort): pass realToBdd by ref
+
+	* S_Symbol.hh (class S_Symbol): fix decl for
+	computeGeneralizedSort()
+
+===================================Maude89a===========================================
+
+2007-03-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_DagNode.cc (nonVariableSize): return mpz_class
+
+	* S_DagNode.hh (class S_DagNode): nonVariableSize() now returns
+	mpz_class
+
+	* S_DagNode.cc (computeSolvedForm, nonVariableSize) 
+	(insertVariables2): added
+
+	* S_DagNode.hh (class S_DagNode): added decls for
+	computeSolvedForm(), nonVariableSize(), insertVariables2()
+
+===================================Maude89===========================================
+
 2007-02-14  Steven Eker  <eker@goo.csl.sri.com>
 
 	* S_Symbol.cc (computeGeneralizedSort): use computeSortIndex()

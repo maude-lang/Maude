@@ -1,5 +1,6 @@
 TESTS = \
 	metaApply \
+	metaUnify \
 	metaFrewrite \
 	metaMatch \
 	metaMeta \
@@ -21,10 +22,12 @@ TESTS = \
 	metaModExp \
 	metaPolymorph \
 	metaUpDown \
+	metaPrintAttr \
 	metaMetadata
 
 MAUDE_FILES = \
 	metaApply.maude \
+	metaUnify.maude \
 	metaFrewrite.maude \
 	metaMatch.maude \
 	metaMeta.maude \
@@ -46,10 +49,12 @@ MAUDE_FILES = \
 	metaModExp.maude \
 	metaPolymorph.maude \
 	metaUpDown.maude \
+	metaPrintAttr.maude \
 	metaMetadata.maude
 
 RESULT_FILES = \
 	metaApply.expected \
+	metaUnify.expected \
 	metaFrewrite.expected \
 	metaApply.expected \
 	metaFrewrite.expected \
@@ -73,6 +78,7 @@ RESULT_FILES = \
 	metaModExp.expected \
 	metaPolymorph.expected \
 	metaUpDown.expected \
+	metaPrintAttr.expected \
 	metaMetadata.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

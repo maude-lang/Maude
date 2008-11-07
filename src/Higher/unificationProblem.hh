@@ -25,54 +25,99 @@
 //
 #ifndef _unificationProblem_hh_
 #define _unificationProblem_hh_
+#include "cacheableState.hh"
+#include "simpleRootContainer.hh"
 #include "variableInfo.hh"
 #include "substitution.hh"
-#include "simpleRootContainer.hh"
+#include "pendingUnificationStack.hh"
 
-class UnificationProblem : public VariableInfo, private SimpleRootContainer
+class UnificationProblem : public CacheableState, private SimpleRootContainer
 {
   NO_COPYING(UnificationProblem);
 
 public:
-  class FreshVariableGenerator
-  {
-  public:
-    virtual ~FreshVariableGenerator() {}
-    virtual int getFreshVariableName() = 0;
-    virtual Symbol* getBaseVariableSymbol(Sort* sort) = 0;
-    virtual void reset() = 0;
-  };
-
-  UnificationProblem(Term* lhs, Term* rhs, FreshVariableGenerator* freshVariableGenerator);
+  UnificationProblem(Vector<Term*>& lhs,
+		     Vector<Term*>& rhs,
+		     FreshVariableGenerator* freshVariableGenerator,
+		     bool withExtension = false);
   ~UnificationProblem();
 
+  bool problemOK() const;
   bool findNextUnifier();
   const Substitution& getSolution() const;
+  int getNrFreeVariables() const;
+  DagNode* makeContext(DagNode* filler) const;
+  ExtensionInfo* getExtensionInfo() const;
+  const Vector<Term*>& getLeftHandSides() const;  // HACK so we can get kind for context hole
+  const VariableInfo& getVariableInfo() const;
 
 private:
   void markReachableNodes();
   void findOrderSortedUnifiers();
+  bool extractUnifier();
+  bool explore(int index);
 
-  Term* lhs;
-  Term* rhs;
+  Vector<Term*> leftHandSides;
+  Vector<Term*> rightHandSides;
   FreshVariableGenerator* freshVariableGenerator;
 
-  const SortBdds* sortBdds;
-  DagNode* lhsDag;
-  DagNode* rhsDag;
+  VariableInfo variableInfo;
 
-  RewritingContext* unsortedSolution;
-  Subproblem* subproblem;
-  bool viable;
-  Vector<int> freeVariables;
-  AllSat* orderSortedUnifiers;
-  Substitution* sortedSolution;
+  const SortBdds* sortBdds;		// sort computation BDDs for our module
+  Vector<DagNode*> leftHandDags;
+  Vector<DagNode*> rightHandDags;
+
+  ExtensionInfo* extensionInfo;
+  UnificationContext* unsortedSolution;	// for accumulating solved forms and constructing unsorted unifiers
+  PendingUnificationStack pendingStack;
+  //Subproblem* subproblem;		// for stuff unresolved by computeSolvedForm() pass
+  bool problemOkay;			// true if problem didn't violate ctor invariants
+  bool viable;				// true if problem didn't fail computeSolvedForm() pass
+  Vector<int> freeVariables;	     	// indices (slots) of unbound variables in unsorted unifier
+  AllSat* orderSortedUnifiers;		// satisfiability problem encoding sorts for order-sorted unifiers
+  Substitution* sortedSolution;		// for construction order-sorted unifiers
+  //
+  //	Data for resolving dependencies in solved form.
+  //
+  Vector<int> order;			// we build an order in which to instantiate the solved forms
+  NatSet done;				// a variable is done when every variable it (indirectly) depends on is in the order
+  NatSet pending;			// variables on the current path though the dependency digraph
 };
+
+inline bool
+UnificationProblem::problemOK() const
+{
+  return problemOkay;
+}
 
 inline const Substitution&
 UnificationProblem::getSolution() const
 {
   return *sortedSolution;
+}
+
+inline const VariableInfo&
+UnificationProblem::getVariableInfo() const
+{
+  return variableInfo;
+}
+
+inline int
+UnificationProblem::getNrFreeVariables() const
+{
+  return freeVariables.size();
+}
+
+inline ExtensionInfo*
+UnificationProblem::getExtensionInfo() const
+{
+  return extensionInfo;
+}
+
+inline const Vector<Term*>&
+UnificationProblem::getLeftHandSides() const
+{
+  return leftHandSides;
 }
 
 #endif

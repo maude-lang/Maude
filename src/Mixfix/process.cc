@@ -299,6 +299,15 @@ PreModule::processOps()
 						       opDef.format,
 						       opDef.metadata,
 						       opDecl.originator);
+	  if (flatModule->parameterDeclared(opDecl.symbol))
+	    {
+	      IssueWarning(LineNumber(opDecl.prefixName.lineNumber())  <<
+			   ": operator declaration for operation " << QUOTE(opDecl.prefixName) <<
+			   " subsort overloads an operator of the same name from a parameter.");
+	      flatModule->markAsBad();
+	      return;
+	    }
+
 	  if (opDef.symbolType.getBasicType() == SymbolType::BUBBLE)
 	    {
 	      int h = findHook(opDef.special, ID_HOOK, bubble);

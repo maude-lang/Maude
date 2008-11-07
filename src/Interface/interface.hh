@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,10 +40,15 @@ class LhsAutomaton;
 class RhsAutomaton;
 //
 //	These classes must be derived from for equational theories that
-//	need to generate matching subproblems or pass back extension
-//	information respectively.
+//	need to generate matching or unification subproblems  or
+//	pass back extension information respectively.
 //
 class Subproblem;
 class ExtensionInfo;
+//
+//	This class must be defined for equational theories that generate
+//	unification subproblems.
+//
+class UnificationSubproblem;
 
 #endif

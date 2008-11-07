@@ -30,6 +30,10 @@ class SymbolMap
 {
 public:
   //
+  //	For safety since this class is intended to be derived from.
+  //
+  virtual ~SymbolMap() {}
+  //
   //	If translate() returns 0, this indicates that the symbol will
   //	be translated by a term an that the entire construction will be
   //	handled by calling makeTranslatedTerm() the orginal term.

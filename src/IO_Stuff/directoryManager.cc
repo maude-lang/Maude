@@ -196,7 +196,7 @@ void
 DirectoryManager::initialize()
 {
   char buffer[MAXPATHLEN];
-  char* cwd = getenv("PWD");
+  const char* cwd = getenv("PWD");
   if (cwd == 0)
     {
       cwd = getcwd(buffer, MAXPATHLEN);  // really want to emulate GNU xgetcwd

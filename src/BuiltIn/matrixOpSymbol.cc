@@ -45,6 +45,7 @@
 //      core class definitions
 #include "rewritingContext.hh"
 #include "dagArgumentIterator.hh"
+#include "symbolMap.hh"
 
 //      free theory class definitions
 #include "freeSymbol.hh"
@@ -89,6 +90,17 @@ MatrixOpSymbol::attachSymbol(const char* purpose, Symbol* symbol)
 #include "matrixOpSignature.cc"
 #undef MACRO
   return NumberOpSymbol::attachSymbol(purpose, symbol);
+}
+
+void
+MatrixOpSymbol::copyAttachments(Symbol* original, SymbolMap* map)
+{
+  MatrixOpSymbol* orig = safeCast(MatrixOpSymbol*, original);
+#define MACRO(SymbolName, SymbolClass, RequiredFlags, NrArgs) \
+  COPY_SYMBOL(orig, SymbolName, map, SymbolClass*);
+#include "matrixOpSignature.cc"
+#undef MACRO
+  NumberOpSymbol::copyAttachments(original, map);
 }
 
 void
@@ -308,7 +320,7 @@ MatrixOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	  ds.insertEqn(row);
 	}
       for (int j = 1; j < rowSize; j++)
-	row[j] = UNBOUNDED;
+	row[j] = NONE;
       row[0] = 1;
       ds.setUpperBounds(row);
       //

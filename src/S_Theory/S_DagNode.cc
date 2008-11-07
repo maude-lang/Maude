@@ -184,29 +184,44 @@ S_DagNode::matchVariableWithExtension(int index,
 				      Subproblem*& returnedSubproblem,
 				      ExtensionInfo* extensionInfo)
 {
+  //
+  //	Because we have not matched a S_Theory operator, we cannot put
+  //	put all the S_Theory operator into the extension and therefore we
+  //	pass mustMatchAtLeast = 1 rather than the default value of 0.
+  //
   returnedSubproblem =
     new S_Subproblem(this,
 		     *number,
 		     index,
 		     sort,
-		     safeCast(S_ExtensionInfo*, extensionInfo));
+		     safeCast(S_ExtensionInfo*, extensionInfo),
+		     1);
   return true;
 }
 
-bool
-S_DagNode::unify(DagNode* rhs,
-		 Substitution& solution,
-		 Subproblem*& returnedSubproblem,
-		 ExtensionInfo* extensionInfo)
+//
+//	Unification code.
+//
+
+DagNode::ReturnResult
+S_DagNode::computeBaseSortForGroundSubterms()
 {
-  //cout << this << " vs " << rhs << endl;
+  ReturnResult r = arg->computeBaseSortForGroundSubterms();
+  if (r == GROUND)
+    symbol()->computeBaseSort(this);
+  return r;
+}
+
+bool
+S_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
+{
   S_Symbol* s = symbol();
   if (s == rhs->symbol())
     {
       S_DagNode* rhs2 = safeCast(S_DagNode*, rhs);
       mpz_class diff = *(rhs2->number) - *number;
       if (diff == 0)
-	return arg->unify(rhs2->arg, solution, returnedSubproblem, 0);
+	return arg->computeSolvedForm(rhs2->arg, solution, pending);
       if (diff > 0)
 	{
 	  if (dynamic_cast<VariableDagNode*>(arg))
@@ -214,7 +229,7 @@ S_DagNode::unify(DagNode* rhs,
 	      DagNode* d = new S_DagNode(s, diff, rhs2->arg);
 	      if (rhs2->arg->getSortIndex() != Sort::SORT_UNKNOWN)
 		s->computeBaseSort(d);
-	      return arg->unify(d, solution, returnedSubproblem, 0);
+	      return arg->computeSolvedForm(d, solution, pending);
 	    }
 	}
       else
@@ -224,29 +239,30 @@ S_DagNode::unify(DagNode* rhs,
 	      DagNode* d = new S_DagNode(s, -diff, arg);
 	      if (arg->getSortIndex() != Sort::SORT_UNKNOWN)
 		s->computeBaseSort(d);
-	      return rhs2->arg->unify(d, solution, returnedSubproblem, 0);
+	      return rhs2->arg->computeSolvedForm(d, solution, pending);
 	    }
 	}
       return 0;
     }
   if (dynamic_cast<VariableDagNode*>(rhs))
-    return rhs->unify(this, solution, returnedSubproblem, 0);
+    return rhs->computeSolvedForm(this, solution, pending);
   return false;
 }
 
-bool
-S_DagNode::computeBaseSortForGroundSubterms()
+mpz_class
+S_DagNode::nonVariableSize()
 {
-  if (arg->computeBaseSortForGroundSubterms())
-    {
-      symbol()->computeBaseSort(this);
-      return true;
-    }
-  return false;
+  return *number + arg->nonVariableSize();
+}
+
+void
+S_DagNode::insertVariables2(NatSet& occurs)
+{
+  arg->insertVariables(occurs);
 }
 
 DagNode*
-S_DagNode::instantiate2(Substitution& substitution)
+S_DagNode::instantiate2(const Substitution& substitution)
 {
   if (DagNode* n = arg->instantiate(substitution))
     {
@@ -254,20 +270,32 @@ S_DagNode::instantiate2(Substitution& substitution)
       S_Symbol* s = symbol();
       if (s == n->symbol())
 	{
+	  //
+	  //	Our argument instantiated into our theory so we need
+	  //	to do theory normalization.
+	  //
 	  S_DagNode* t = safeCast(S_DagNode*, n);
 	  num += *(t->number);
 	  n = t->arg;
 	}
       DagNode* d =  new S_DagNode(s, num, n);
-      if (n->getSortIndex() != Sort::SORT_UNKNOWN)
-	s->computeBaseSort(d);
+      if (n->isGround())
+	{
+	  s->computeBaseSort(d);
+	  d->setGround();
+	}
       return d;
     }
   return 0;
 }
 
-bool
-S_DagNode::occurs2(int index)
+//
+//	Narrowing code.
+//
+
+DagNode*
+S_DagNode::instantiateWithReplacement(const Substitution& /* substitution */, int argIndex, DagNode* newDag)
 {
-  return arg->occurs(index);
+  Assert(argIndex == 0, "bad arg index");
+  return new S_DagNode(symbol(), *number, newDag);
 }

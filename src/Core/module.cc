@@ -51,6 +51,7 @@ Module::Module(int id)
 {
   status = OPEN;
   sortBdds = 0;
+  minimumSubstitutionSize = 1;
 }
 
 Module::~Module()

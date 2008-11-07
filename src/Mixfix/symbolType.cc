@@ -59,5 +59,6 @@ ostream&
 operator<<(ostream& s, SymbolType st)
 {
   s << "type = " << st.getBasicType() << " flags = " << st.getFlags();
+  return s;
 }
 #endif

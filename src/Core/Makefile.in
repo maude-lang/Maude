@@ -59,8 +59,10 @@ am_libcore_a_OBJECTS = libcore_a-memoryCell.$(OBJEXT) \
 	libcore_a-bindingLhsAutomaton.$(OBJEXT) \
 	libcore_a-trivialRhsAutomaton.$(OBJEXT) \
 	libcore_a-copyRhsAutomaton.$(OBJEXT) \
-	libcore_a-variableInfo.$(OBJEXT) libcore_a-termSet.$(OBJEXT) \
-	libcore_a-strategy.$(OBJEXT) libcore_a-sortTable.$(OBJEXT) \
+	libcore_a-variableInfo.$(OBJEXT) \
+	libcore_a-narrowingVariableInfo.$(OBJEXT) \
+	libcore_a-termSet.$(OBJEXT) libcore_a-strategy.$(OBJEXT) \
+	libcore_a-sortTable.$(OBJEXT) \
 	libcore_a-sortConstraintTable.$(OBJEXT) \
 	libcore_a-equationTable.$(OBJEXT) \
 	libcore_a-ruleTable.$(OBJEXT) libcore_a-sort.$(OBJEXT) \
@@ -69,7 +71,6 @@ am_libcore_a_OBJECTS = libcore_a-memoryCell.$(OBJEXT) \
 	libcore_a-localBinding.$(OBJEXT) \
 	libcore_a-subproblemSequence.$(OBJEXT) \
 	libcore_a-subproblemDisjunction.$(OBJEXT) \
-	libcore_a-unificationSubproblemDisjunction.$(OBJEXT) \
 	libcore_a-sortCheckSubproblem.$(OBJEXT) \
 	libcore_a-disjunctiveSubproblemAccumulator.$(OBJEXT) \
 	libcore_a-preEquation.$(OBJEXT) libcore_a-equation.$(OBJEXT) \
@@ -81,7 +82,10 @@ am_libcore_a_OBJECTS = libcore_a-memoryCell.$(OBJEXT) \
 	libcore_a-extensionMatchSubproblem.$(OBJEXT) \
 	libcore_a-dagNodeSet.$(OBJEXT) \
 	libcore_a-dagNodeCache.$(OBJEXT) libcore_a-memoTable.$(OBJEXT) \
-	libcore_a-rootContainer.$(OBJEXT) libcore_a-sortBdds.$(OBJEXT)
+	libcore_a-rootContainer.$(OBJEXT) libcore_a-sortBdds.$(OBJEXT) \
+	libcore_a-unificationContext.$(OBJEXT) \
+	libcore_a-protectedDagNodeSet.$(OBJEXT) \
+	libcore_a-pendingUnificationStack.$(OBJEXT)
 libcore_a_OBJECTS = $(am_libcore_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -127,6 +131,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FLEX = @FLEX@
 GMP_LIBS = @GMP_LIBS@
+GREP = @GREP@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -134,6 +139,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGSEGV_LIB = @LIBSIGSEGV_LIB@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 OBJEXT = @OBJEXT@
@@ -154,8 +160,6 @@ USE_DLMALLOC_TRUE = @USE_DLMALLOC_TRUE@
 VERSION = @VERSION@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -172,23 +176,30 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
@@ -208,6 +219,7 @@ libcore_a_SOURCES = \
 	trivialRhsAutomaton.cc \
 	copyRhsAutomaton.cc \
 	variableInfo.cc \
+	narrowingVariableInfo.cc \
 	termSet.cc \
 	strategy.cc \
 	sortTable.cc \
@@ -221,7 +233,6 @@ libcore_a_SOURCES = \
 	localBinding.cc \
 	subproblemSequence.cc \
 	subproblemDisjunction.cc \
-	unificationSubproblemDisjunction.cc \
 	sortCheckSubproblem.cc \
 	disjunctiveSubproblemAccumulator.cc \
 	preEquation.cc \
@@ -238,7 +249,10 @@ libcore_a_SOURCES = \
 	dagNodeCache.cc \
 	memoTable.cc \
 	rootContainer.cc \
-	sortBdds.cc
+	sortBdds.cc \
+	unificationContext.cc \
+	protectedDagNodeSet.cc \
+	pendingUnificationStack.cc
 
 EXTRA_DIST = \
 	run.cc \
@@ -294,7 +308,6 @@ noinst_HEADERS = \
 	strategy.hh \
 	subproblemAccumulator.hh \
 	subproblemDisjunction.hh \
-	unificationSubproblemDisjunction.hh \
 	subproblemSequence.hh \
 	substitution.hh \
 	symbolMap.hh \
@@ -302,7 +315,12 @@ noinst_HEADERS = \
 	termSet.hh \
 	trivialRhsAutomaton.hh \
 	variableAbstractionSubproblem.hh \
-	variableInfo.hh
+	variableInfo.hh \
+	narrowingVariableInfo.hh \
+	unificationContext.hh \
+	freshVariableGenerator.hh \
+	protectedDagNodeSet.hh \
+	pendingUnificationStack.hh
 
 all: all-am
 
@@ -367,7 +385,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-memoTable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-memoryCell.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-module.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-narrowingVariableInfo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-pendingUnificationStack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-preEquation.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-protectedDagNodeSet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-rewritingContext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-rhsBuilder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-rootContainer.Po@am__quote@
@@ -386,7 +407,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-termBag.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-termSet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-trivialRhsAutomaton.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-unificationSubproblemDisjunction.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-unificationContext.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-variableAbstractionSubproblem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcore_a-variableInfo.Po@am__quote@
 
@@ -501,6 +522,20 @@ libcore_a-variableInfo.obj: variableInfo.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='variableInfo.cc' object='libcore_a-variableInfo.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-variableInfo.obj `if test -f 'variableInfo.cc'; then $(CYGPATH_W) 'variableInfo.cc'; else $(CYGPATH_W) '$(srcdir)/variableInfo.cc'; fi`
+
+libcore_a-narrowingVariableInfo.o: narrowingVariableInfo.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-narrowingVariableInfo.o -MD -MP -MF "$(DEPDIR)/libcore_a-narrowingVariableInfo.Tpo" -c -o libcore_a-narrowingVariableInfo.o `test -f 'narrowingVariableInfo.cc' || echo '$(srcdir)/'`narrowingVariableInfo.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libcore_a-narrowingVariableInfo.Tpo" "$(DEPDIR)/libcore_a-narrowingVariableInfo.Po"; else rm -f "$(DEPDIR)/libcore_a-narrowingVariableInfo.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='narrowingVariableInfo.cc' object='libcore_a-narrowingVariableInfo.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-narrowingVariableInfo.o `test -f 'narrowingVariableInfo.cc' || echo '$(srcdir)/'`narrowingVariableInfo.cc
+
+libcore_a-narrowingVariableInfo.obj: narrowingVariableInfo.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-narrowingVariableInfo.obj -MD -MP -MF "$(DEPDIR)/libcore_a-narrowingVariableInfo.Tpo" -c -o libcore_a-narrowingVariableInfo.obj `if test -f 'narrowingVariableInfo.cc'; then $(CYGPATH_W) 'narrowingVariableInfo.cc'; else $(CYGPATH_W) '$(srcdir)/narrowingVariableInfo.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libcore_a-narrowingVariableInfo.Tpo" "$(DEPDIR)/libcore_a-narrowingVariableInfo.Po"; else rm -f "$(DEPDIR)/libcore_a-narrowingVariableInfo.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='narrowingVariableInfo.cc' object='libcore_a-narrowingVariableInfo.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-narrowingVariableInfo.obj `if test -f 'narrowingVariableInfo.cc'; then $(CYGPATH_W) 'narrowingVariableInfo.cc'; else $(CYGPATH_W) '$(srcdir)/narrowingVariableInfo.cc'; fi`
 
 libcore_a-termSet.o: termSet.cc
 @am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-termSet.o -MD -MP -MF "$(DEPDIR)/libcore_a-termSet.Tpo" -c -o libcore_a-termSet.o `test -f 'termSet.cc' || echo '$(srcdir)/'`termSet.cc; \
@@ -683,20 +718,6 @@ libcore_a-subproblemDisjunction.obj: subproblemDisjunction.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='subproblemDisjunction.cc' object='libcore_a-subproblemDisjunction.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-subproblemDisjunction.obj `if test -f 'subproblemDisjunction.cc'; then $(CYGPATH_W) 'subproblemDisjunction.cc'; else $(CYGPATH_W) '$(srcdir)/subproblemDisjunction.cc'; fi`
-
-libcore_a-unificationSubproblemDisjunction.o: unificationSubproblemDisjunction.cc
-@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-unificationSubproblemDisjunction.o -MD -MP -MF "$(DEPDIR)/libcore_a-unificationSubproblemDisjunction.Tpo" -c -o libcore_a-unificationSubproblemDisjunction.o `test -f 'unificationSubproblemDisjunction.cc' || echo '$(srcdir)/'`unificationSubproblemDisjunction.cc; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libcore_a-unificationSubproblemDisjunction.Tpo" "$(DEPDIR)/libcore_a-unificationSubproblemDisjunction.Po"; else rm -f "$(DEPDIR)/libcore_a-unificationSubproblemDisjunction.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='unificationSubproblemDisjunction.cc' object='libcore_a-unificationSubproblemDisjunction.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-unificationSubproblemDisjunction.o `test -f 'unificationSubproblemDisjunction.cc' || echo '$(srcdir)/'`unificationSubproblemDisjunction.cc
-
-libcore_a-unificationSubproblemDisjunction.obj: unificationSubproblemDisjunction.cc
-@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-unificationSubproblemDisjunction.obj -MD -MP -MF "$(DEPDIR)/libcore_a-unificationSubproblemDisjunction.Tpo" -c -o libcore_a-unificationSubproblemDisjunction.obj `if test -f 'unificationSubproblemDisjunction.cc'; then $(CYGPATH_W) 'unificationSubproblemDisjunction.cc'; else $(CYGPATH_W) '$(srcdir)/unificationSubproblemDisjunction.cc'; fi`; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libcore_a-unificationSubproblemDisjunction.Tpo" "$(DEPDIR)/libcore_a-unificationSubproblemDisjunction.Po"; else rm -f "$(DEPDIR)/libcore_a-unificationSubproblemDisjunction.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='unificationSubproblemDisjunction.cc' object='libcore_a-unificationSubproblemDisjunction.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-unificationSubproblemDisjunction.obj `if test -f 'unificationSubproblemDisjunction.cc'; then $(CYGPATH_W) 'unificationSubproblemDisjunction.cc'; else $(CYGPATH_W) '$(srcdir)/unificationSubproblemDisjunction.cc'; fi`
 
 libcore_a-sortCheckSubproblem.o: sortCheckSubproblem.cc
 @am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-sortCheckSubproblem.o -MD -MP -MF "$(DEPDIR)/libcore_a-sortCheckSubproblem.Tpo" -c -o libcore_a-sortCheckSubproblem.o `test -f 'sortCheckSubproblem.cc' || echo '$(srcdir)/'`sortCheckSubproblem.cc; \
@@ -935,6 +956,48 @@ libcore_a-sortBdds.obj: sortBdds.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='sortBdds.cc' object='libcore_a-sortBdds.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-sortBdds.obj `if test -f 'sortBdds.cc'; then $(CYGPATH_W) 'sortBdds.cc'; else $(CYGPATH_W) '$(srcdir)/sortBdds.cc'; fi`
+
+libcore_a-unificationContext.o: unificationContext.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-unificationContext.o -MD -MP -MF "$(DEPDIR)/libcore_a-unificationContext.Tpo" -c -o libcore_a-unificationContext.o `test -f 'unificationContext.cc' || echo '$(srcdir)/'`unificationContext.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libcore_a-unificationContext.Tpo" "$(DEPDIR)/libcore_a-unificationContext.Po"; else rm -f "$(DEPDIR)/libcore_a-unificationContext.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='unificationContext.cc' object='libcore_a-unificationContext.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-unificationContext.o `test -f 'unificationContext.cc' || echo '$(srcdir)/'`unificationContext.cc
+
+libcore_a-unificationContext.obj: unificationContext.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-unificationContext.obj -MD -MP -MF "$(DEPDIR)/libcore_a-unificationContext.Tpo" -c -o libcore_a-unificationContext.obj `if test -f 'unificationContext.cc'; then $(CYGPATH_W) 'unificationContext.cc'; else $(CYGPATH_W) '$(srcdir)/unificationContext.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libcore_a-unificationContext.Tpo" "$(DEPDIR)/libcore_a-unificationContext.Po"; else rm -f "$(DEPDIR)/libcore_a-unificationContext.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='unificationContext.cc' object='libcore_a-unificationContext.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-unificationContext.obj `if test -f 'unificationContext.cc'; then $(CYGPATH_W) 'unificationContext.cc'; else $(CYGPATH_W) '$(srcdir)/unificationContext.cc'; fi`
+
+libcore_a-protectedDagNodeSet.o: protectedDagNodeSet.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-protectedDagNodeSet.o -MD -MP -MF "$(DEPDIR)/libcore_a-protectedDagNodeSet.Tpo" -c -o libcore_a-protectedDagNodeSet.o `test -f 'protectedDagNodeSet.cc' || echo '$(srcdir)/'`protectedDagNodeSet.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libcore_a-protectedDagNodeSet.Tpo" "$(DEPDIR)/libcore_a-protectedDagNodeSet.Po"; else rm -f "$(DEPDIR)/libcore_a-protectedDagNodeSet.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='protectedDagNodeSet.cc' object='libcore_a-protectedDagNodeSet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-protectedDagNodeSet.o `test -f 'protectedDagNodeSet.cc' || echo '$(srcdir)/'`protectedDagNodeSet.cc
+
+libcore_a-protectedDagNodeSet.obj: protectedDagNodeSet.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-protectedDagNodeSet.obj -MD -MP -MF "$(DEPDIR)/libcore_a-protectedDagNodeSet.Tpo" -c -o libcore_a-protectedDagNodeSet.obj `if test -f 'protectedDagNodeSet.cc'; then $(CYGPATH_W) 'protectedDagNodeSet.cc'; else $(CYGPATH_W) '$(srcdir)/protectedDagNodeSet.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libcore_a-protectedDagNodeSet.Tpo" "$(DEPDIR)/libcore_a-protectedDagNodeSet.Po"; else rm -f "$(DEPDIR)/libcore_a-protectedDagNodeSet.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='protectedDagNodeSet.cc' object='libcore_a-protectedDagNodeSet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-protectedDagNodeSet.obj `if test -f 'protectedDagNodeSet.cc'; then $(CYGPATH_W) 'protectedDagNodeSet.cc'; else $(CYGPATH_W) '$(srcdir)/protectedDagNodeSet.cc'; fi`
+
+libcore_a-pendingUnificationStack.o: pendingUnificationStack.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-pendingUnificationStack.o -MD -MP -MF "$(DEPDIR)/libcore_a-pendingUnificationStack.Tpo" -c -o libcore_a-pendingUnificationStack.o `test -f 'pendingUnificationStack.cc' || echo '$(srcdir)/'`pendingUnificationStack.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libcore_a-pendingUnificationStack.Tpo" "$(DEPDIR)/libcore_a-pendingUnificationStack.Po"; else rm -f "$(DEPDIR)/libcore_a-pendingUnificationStack.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='pendingUnificationStack.cc' object='libcore_a-pendingUnificationStack.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-pendingUnificationStack.o `test -f 'pendingUnificationStack.cc' || echo '$(srcdir)/'`pendingUnificationStack.cc
+
+libcore_a-pendingUnificationStack.obj: pendingUnificationStack.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libcore_a-pendingUnificationStack.obj -MD -MP -MF "$(DEPDIR)/libcore_a-pendingUnificationStack.Tpo" -c -o libcore_a-pendingUnificationStack.obj `if test -f 'pendingUnificationStack.cc'; then $(CYGPATH_W) 'pendingUnificationStack.cc'; else $(CYGPATH_W) '$(srcdir)/pendingUnificationStack.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libcore_a-pendingUnificationStack.Tpo" "$(DEPDIR)/libcore_a-pendingUnificationStack.Po"; else rm -f "$(DEPDIR)/libcore_a-pendingUnificationStack.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='pendingUnificationStack.cc' object='libcore_a-pendingUnificationStack.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcore_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libcore_a-pendingUnificationStack.obj `if test -f 'pendingUnificationStack.cc'; then $(CYGPATH_W) 'pendingUnificationStack.cc'; else $(CYGPATH_W) '$(srcdir)/pendingUnificationStack.cc'; fi`
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)

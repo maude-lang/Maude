@@ -144,6 +144,16 @@ RewritingContext::traceEndFragment(int /* trialRef */,
 }
 
 void
+RewritingContext::traceNarrowingStep(Rule* /* rule */,
+				     DagNode* /* redex */,
+				     DagNode* /* replacement */,
+				     const NarrowingVariableInfo* /* variableInfo */,
+				     const Substitution* /* substitution */,
+				     DagNode* /* newState */)
+{
+}
+
+void
 RewritingContext::rebuildUptoRoot()
 {
   //  cout << "\nroot was " << rootNode << endl;

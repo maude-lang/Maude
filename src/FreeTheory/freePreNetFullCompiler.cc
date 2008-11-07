@@ -27,15 +27,17 @@
 void
 FreePreNet::allocateVariables(int nodeNr)
 {
+  NodeMap::iterator nmi = netVec[nodeNr];
+  const NodeIndex& ni = nmi->first;
+  NodeBody& n = nmi->second;
   //
   //	Allocated slots (which will become temporary pointer variables
   //	r0, r1, r2,... in the final code) for this node and its decendents.
   //
-  Node& n = net[nodeNr];
   ++n.nrParents;
   if (n.nrParents > 1)  // already done in on different path
     return;
-  if (n.reducedFringe.empty())
+  if (ni.reducedFringe.empty())
     {
       //
       //	Remainder node; first make recursive call on child node.
@@ -120,12 +122,14 @@ FreePreNet::allocateVariables(int nodeNr)
 void
 FreePreNet::slotMapUnion(Vector<Pair>& to, int fromNodeNr)
 {
-  const Node& n = net[fromNodeNr];
+  NodeMap::iterator nmi = netVec[fromNodeNr];
+  const NodeIndex& ni = nmi->first;
+  NodeBody& n = nmi->second;
   //
   //	Test nodes don't pass upwards a slot mapping for their test position
   //	since they are responsible for filling that slot.
   //
-  int avoidIndex = n.reducedFringe.empty() ? NONE : n.testPositionIndex;
+  int avoidIndex = ni.reducedFringe.empty() ? NONE : n.testPositionIndex;
   const Vector<Pair>& from = n.slotMap;
   int nrSlots = from.length();
   for (int i = 0; i < nrSlots; i++)
@@ -169,7 +173,7 @@ FreePreNet::findSlot(const Vector<Pair>& slotMap, int positionIndex)
 void
 FreePreNet::generateCode(CompilationContext& context)
 {
-  if (net.length() == 0)
+  if (net.empty())
     {
       topSymbol->generateCons(context, 1);
       return;
@@ -275,7 +279,10 @@ FreePreNet::generateNode(CompilationContext& context,
     }
   else
     {
-      Node& n = net[nodeNr];
+      NodeMap::iterator nmi = netVec[nodeNr];
+      const NodeIndex& ni = nmi->first;
+      NodeBody& n = nmi->second;
+
       ++n.nrVisits;
       if (n.nrVisits < n.nrParents)
 	{
@@ -286,7 +293,7 @@ FreePreNet::generateNode(CompilationContext& context,
 	{
 	  // if (nextRemainder || n.nrParents > 1) HACK
 	    context.body() << Indent(indentLevel - 1) << 'j' << nodeNr << ":\n";
-	  if (n.reducedFringe.empty())
+	  if (ni.reducedFringe.empty())
 	    {
 	      //
 	      //	Remainder node.

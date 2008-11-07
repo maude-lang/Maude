@@ -32,14 +32,14 @@ AU_DagNode::disappear(AU_Symbol* s, ArgVec<DagNode*>::const_iterator i)
 }
 
 AU_DagNode::NormalizationResult
-AU_DagNode::normalizeAtTop()
+AU_DagNode::normalizeAtTop(bool dumb)
 {
   AU_Symbol* s = symbol();
   Term* identity = s->getIdentity();
   int expansion = 0;
   int nrIdentities = 0;
   int maxDeque = 0;
-  ArgVec<DagNode*>::const_iterator maxDequeIter;
+  ArgVec<DagNode*>::const_iterator maxDequeIter;  // gcc gives uninitialized warning
   //
   //	First examine the argument list looking for either our top symbol
   //	or our identity.
@@ -54,7 +54,7 @@ AU_DagNode::normalizeAtTop()
 	      {
 		//
 		//	Since we have at least one deque we won't use
-		//	expandsion and therefore don't waste time
+		//	expansion and therefore don't waste time
 		//	updating it.
 		//
 		int nrArgs = safeCast(AU_DequeDagNode*, d)->nrArgs();
@@ -123,6 +123,7 @@ AU_DagNode::normalizeAtTop()
 	  }
       }
       (void) new (this) AU_DequeDagNode(symbol(), flat);
+      Assert(!dumb, "shouldn't be here if we're in dumb mode");
       MemoryCell::okToCollectGarbage();  // needed because of pathological nesting
       return DEQUED;
     }
@@ -207,11 +208,16 @@ AU_DagNode::normalizeAtTop()
       Assert(p == nrArgs + expansion - nrIdentities, "bad buffer size");
       argArray.swap(buffer);
     }
-  MemoryCell::okToCollectGarbage();  // needed because of pathological nesting
+  //
+  //	If we're in dumb mode then there may be a lot of partially built
+  //	instantiated dags lying around that are vunerable to garbage collection.
+  //
+  if (!dumb)
+    MemoryCell::okToCollectGarbage();  // needed because of pathological nesting
   //
   //	This is the one place where deques can come into existence.
   //
-  if (s->useDeque())
+  if (!dumb && s->useDeque())
     {
       AU_Deque flat(argArray);
       (void) new (this) AU_DequeDagNode(symbol(), flat);

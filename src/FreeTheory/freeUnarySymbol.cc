@@ -41,8 +41,8 @@
 #include "rewritingContext.hh"
 
 //	free theory class definitions
-#include "freeDagNode.hh"
 #include "freeUnarySymbol.hh"
+#include "freeDagNode.hh"
 
 FreeUnarySymbol::FreeUnarySymbol(int id)
   : FreeSymbol(id, 1)

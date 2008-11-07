@@ -55,8 +55,8 @@
 #include "interpreter.hh"
 
 #include "global.hh"
-#define clear()			bubble.contractTo(0);
-#define store(token)		bubble.append(token)
+#define clear()			tokenSequence.clear();
+#define store(token)		tokenSequence.append(token)
 #define fragClear()		fragments.contractTo(0);
 #define fragStore(token)	fragments.append(token)
 #define YYPARSE_PARAM	parseResult
@@ -65,6 +65,8 @@
 #define CM		interpreter.getCurrentModule()
 #define CV		interpreter.getCurrentView()
 
+#include "lexerAux.hh"
+/*
 void lexerInitialMode();
 void lexerIdMode();
 void lexerCmdMode();
@@ -73,9 +75,11 @@ void lexerStringMode();
 void lexerLatexMode();
 bool handleEof();
 bool includeFile(const string& directory, const string& fileName, bool silent, int lineNr);
-void eatComment(bool firstNonWhite);
-
-Vector<Token> bubble;
+//void eatComment(bool firstNonWhite);
+*/
+Vector<Token> singleton(1);
+Vector<Token> tokenSequence;
+Vector<Token> lexerBubble;
 Vector<Token> fragments;
 Vector<Token> moduleExpr;
 Vector<Token> opDescription;
@@ -91,6 +95,7 @@ static void yyerror(char *s);
 
 void cleanUpModuleExpression();
 void cleanUpParser();
+void missingSpace(const Token& token);
 %}
 %pure_parser
 
@@ -103,6 +108,7 @@ void cleanUpParser();
   ImportModule::ImportMode yyImportMode;
   Interpreter::Flags yyFlags;
   Interpreter::PrintFlags yyPrintFlags;
+  Interpreter::SearchKind yySearchKind;
 }
 
 %{
@@ -115,15 +121,15 @@ int yylex(YYSTYPE* lvalp);
  */
 %token <yyToken> KW_MOD KW_OMOD KW_VIEW
 %token KW_PARSE KW_NORMALIZE KW_REDUCE KW_REWRITE
-%token KW_LOOP KW_NARROW KW_MATCH KW_XMATCH KW_UNIFY KW_XUNIFY
+%token KW_LOOP KW_NARROW KW_XG_NARROW KW_MATCH KW_XMATCH KW_UNIFY
 %token KW_EREWRITE KW_FREWRITE KW_SREWRITE
 %token KW_CONTINUE KW_SEARCH
 %token KW_SET KW_SHOW KW_ON KW_OFF 
 %token KW_TRACE KW_BODY KW_BUILTIN KW_WHOLE KW_SELECT KW_DESELECT KW_CONDITION KW_SUBSTITUTION
-%token KW_PRINT KW_GRAPH KW_MIXFIX KW_FLAT
+%token KW_PRINT KW_GRAPH KW_MIXFIX KW_FLAT KW_ATTRIBUTE KW_NEWLINE
 %token KW_WITH KW_PARENS KW_ALIASES KW_GC KW_TIME KW_STATS KW_TIMING
 %token KW_CMD KW_BREAKDOWN KW_BREAK KW_PATH
-%token KW_MODULE KW_MODULES KW_VIEWS KW_ALL KW_SORTS KW_OPS KW_VARS
+%token KW_MODULE KW_MODULES KW_VIEWS KW_ALL KW_SORTS KW_OPS2 KW_VARS
 %token KW_MBS KW_EQS KW_RLS KW_SUMMARY KW_KINDS KW_ADVISE KW_VERBOSE
 %token KW_DO KW_CLEAR
 %token KW_PROTECT KW_EXTEND KW_INCLUDE KW_EXCLUDE
@@ -175,23 +181,33 @@ int yylex(YYSTYPE* lvalp);
 %token <yyToken> IDENTIFIER NUMERIC_ID ENDS_IN_DOT
 
 /*
+ *	This is a dummy token that is never passed by the lexer but by
+ *	giving this as an alternative we force the parser to lookahead
+ *	one token and allow the lexer to grab a bubble.
+ */
+%token FORCE_LOOKAHEAD
+
+/*
  *	Nonterminals that return tokens.
  */
 %type <yyToken> identifier inert startKeyword startKeyword2 midKeyword attrKeyword attrKeyword2
-%type <yyToken> token endToken endsInDot
-%type <yyToken> tokenBarColon tokenBarEqual tokenBarIf tokenBarArrow2
-%type <yyToken> tokenBarColonTo tokenBarCommaLeft
-%type <yyToken> identityChunk tokenBarDot
-%type <yyToken> cToken cTokenBarDot cTokenBarDotColon cTokenBarIn
+%type <yyToken> token endsInDot badType
+%type <yyToken> tokenBarColon
+%type <yyToken> tokenBarDot
+%type <yyToken> cTokenBarIn
 %type <yyToken> cTokenBarLeftIn cTokenBarDotNumber cTokenBarDotRight
 %type <yyToken> cSimpleTokenBarDot
 %type <yyToken> cTokenBarDotCommaRight cTokenBarDotCommaNumber
 %type <yyToken> sortName sortToken startModule sortDot
 
 /*
+ *	Nonterminals that return Interpreter::SearchKind.
+ */
+%type <yySearchKind> search
+/*
  *	Nonterminals that return bool.
  */
-%type <yyBool> polarity select match optDebug conceal exclude arrow unify
+%type <yyBool> polarity select match optDebug conceal exclude arrow
 /*
  *	Nonterminals that return int.
  */
@@ -233,7 +249,7 @@ directive	:	KW_IN		{ lexerFileNameMode(); }
 			FILE_NAME_STRING
 			{
 			  int lineNr = lineNumber;
-			  eatComment(false); // eat \n so that line number is correct
+			  //eatComment(false); // eat \n so that line number is correct
 			  string directory;
 			  string fileName;
 			  if (findFile($3, directory, fileName, lineNr))
@@ -243,7 +259,7 @@ directive	:	KW_IN		{ lexerFileNameMode(); }
 			FILE_NAME_STRING
 			{
 			  int lineNr = lineNumber;
-			  eatComment(false); // eat \n so that line number is correct
+			  //eatComment(false); // eat \n so that line number is correct
 			  string directory;
 			  string fileName;
 			  if (findFile($3, directory, fileName, lineNr))

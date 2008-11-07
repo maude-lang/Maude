@@ -127,6 +127,12 @@ public:
   //
   virtual bool isConstructor(DagNode* subject);
 
+  //
+  //	Interface for unification.
+  //
+  virtual UnificationSubproblem* makeUnificationSubproblem() { CantHappen("Not implemented"); return 0; }
+  virtual int unificationPriority() const;
+
 #ifdef COMPILER
   void fullCompile(CompilationContext& context, bool inLine) const;
   virtual void generateCode(CompilationContext& context) const;
@@ -135,6 +141,7 @@ public:
 #ifdef DUMP
   virtual void dump(ostream& s, int indentLevel = 0);
 #endif
+
 
 protected:
   bool acceptSortConstraint(SortConstraint* sortConstraint);

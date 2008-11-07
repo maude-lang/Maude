@@ -1,3 +1,315 @@
+2008-09-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Matcher.cc (fullMatch): fix bug where we weren't setting up
+	the extensionInfo in the new fast success case
+
+2008-09-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Matcher.cc (fullMatch): catch the case where we have no
+	patterns, one variable that can't take identity, one subject and
+	extension
+	(fullMatch): catch the same case where we can take identity but
+	we're not allowed to since there were only two things in the
+	subject
+
+===================================Maude91c===========================================
+
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (computeBaseSortForGroundSubterms): added default
+	case to avoid compiler warning
+
+2008-05-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationSubproblem2.cc (buildAndSolveDiophantineSystem):
+	use IntSystem rather than MpzSystem
+	(buildAndSolveDiophantineSystem): use new IntSystem semantics to
+	avoid making a zero padded copy of each equation
+
+===================================Maude91a===========================================
+
+2008-04-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for unificationPriority()
+
+	* ACU_Symbol.cc (unificationPriority): added
+
+===================================Maude91===========================================
+
+2008-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): ACU_UnificationSubproblem,
+	ACU_UnificationWithExtensionSubproblem no longer friends
+
+	* ACU_UnificationWithExtensionSubproblem.cc: deleted
+
+	* ACU_UnificationWithExtensionSubproblem.hh: deleted
+
+	* ACU_UnificationWithExtensionSubproblem.cc: deleted
+
+	* ACU_UnificationWithExtensionSubproblem.hh: deleted
+
+	* ACU_Theory.hh: removed classes ACU_UnificationSubproblem,
+	ACU_UnificationWithUnificationSubproblem
+
+	* ACU_DagNode.hh (class ACU_DagNode): deleted commented out decl
+	for old version of computeSolvedForm2()
+
+	* ACU_DagNode.cc (computeSolvedForm2): deleted commented out old
+	version
+
+===================================Maude90a===========================================
+
+2008-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added date member
+	preSolveSubstitution; added decl for unsolve()
+
+	* ACU_UnificationSubproblem2.cc (solve): unsolve solved forms in
+	our theory
+	(unsolve): added
+
+	* ACU_DagNode.cc (computeSolvedForm2): Substitution ->
+	UnificationContext
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for
+	computeSolvedForm2()
+
+2008-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (makeUnificationSubproblem): added
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for
+	makeUnificationSubproblem()
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for computeSolvedForm2()
+
+	* ACU_DagNode.cc (computeSolvedForm2): rewritten
+
+2008-02-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationSubproblem2.cc: created
+
+	* ACU_UnificationSubproblem2.hh: created
+
+2008-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationSubproblem.cc (ACU_UnificationSubproblem):
+	initialize savedSubstitution with 0 entries rather than with a
+	single entry (that will end up being marked in GC)
+
+===================================Maude90===========================================
+
+2007-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationSubproblem.cc (ACU_UnificationSubproblem):
+	savedSubstitution needs to be at least size 1 in new Substitution
+	handling
+	(unificationSolve): fix bug by using clone() to restore old
+	substitution
+
+2007-11-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (indexVariables2): added
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): added decl for
+	indexVariables2()
+
+2007-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (indexVariables2, instantiateWithReplacement): added
+	(instantiate2): use isGround() rather than checking for an unknown
+	sort
+	(instantiate2): call setGround()
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for
+	indexVariables2() and instantiateWithReplacement() 
+
+2007-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (instantiate2): updated
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for
+	instantiate2()
+
+2007-09-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationSubproblem.cc (unificationSolve): replaced two
+	clone() calls with copy() calls since when we copy back a saved
+	substitution, both substitutions should have the same copy size
+
+===================================Maude89h===========================================
+
+2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (computeBaseSortForGroundSubterms): rewritten
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for
+	computeBaseSortForGroundSubterms()
+
+	* ACU_UnificationSubproblem.cc (unificationSolve): added comments
+	to indicate that fresh variables are deallocated when done with
+
+2007-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationSubproblem.cc (buildSolution): use
+	sortAndUniquize() in place of dumbNormalizeAtTop()
+
+	* ACU_DagNode.cc (computeSolvedForm): becomes computeSolvedForm2()
+
+	* ACU_DagNode.hh (class ACU_DagNode): computeSolvedForm() ->
+	computeSolvedForm2()
+
+2007-08-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationSubproblem.cc (initialize): simplify and comment
+	(initialize): fix nasty bug by clearing previous selections
+
+2007-08-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationSubproblem.hh (class ACU_UnificationSubproblem):
+	update decl for addBasisElement()
+
+	* ACU_UnificationSubproblem.cc (addBasisElement): pass element by
+	reference; made assignment in if statement obvious
+
+===================================Maude89g===========================================
+
+2007-08-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for
+	dumbNormalizeAtTop()
+
+	* ACU_DagNode.cc (instantiate2): use dumbNormalizeAtTop() to avoid
+	getting a tree form
+
+	* ACU_UnificationSubproblem.cc (buildSolution): use
+	dumbNormalizeAtTop() to avoid getting a tree form
+
+	* ACU_Normalize.cc (dumbNormalizeAtTop): added
+	(normalizeAtTop): use dumbNormalizeAtTop() for general case
+
+	* ACU_UnificationSubproblem.cc (buildSolution): added Assert() to
+	protect against getting a tree form from normalizeAtTop()
+
+===================================Maude89f===========================================
+
+2007-07-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (computeSolvedForm): use
+	ACU_UnificationWithExtensionSubproblem()
+
+	* ACU_Theory.hh: added ACU_UnificationWithUnificationSubproblem
+
+2007-06-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationWithExtensionSubproblem.cc (generateUnificationSubproblem) 
+	(fillOutExtensionInfo, nextSelection): added
+
+2007-06-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationWithExtensionSubproblem.cc: created
+
+	* ACU_UnificationWithExtensionSubproblem.hh: created
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for
+	computeSolvedForm()
+
+	* ACU_DagNode.cc (computeSolvedForm): added extensionInfo arg
+
+===================================Maude89c===========================================
+
+2007-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (computeGeneralizedSort): reuse bddPair between
+	iterations
+
+2007-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (computeGeneralizedSort): pass realToBdd by ref
+
+	* ACU_Symbol.hh (class ACU_Symbol): fix decl for
+	computeGeneralizedSort()
+
+===================================Maude89a===========================================
+
+2007-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_UnificationSubproblem.hh (class ACU_UnificationSubproblem):
+	added decl for markReachableNodes()
+
+	* ACU_UnificationSubproblem.cc (markReachableNodes): added
+
+	* ACU_UnificationSubproblem.hh (class ACU_UnificationSubproblem):
+	derive from SimpleRootContainer
+
+	* ACU_UnificationSubproblem.cc (ACU_UnificationSubproblem):
+	initialize savedSubstitution
+	(unificationSolve): don't call deallocateFreshVariables(); restore
+	original substitution after we're done with selection
+
+2007-03-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (computeGeneralizedSort): added
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for
+	computeGeneralizedSort()
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for
+	instantiate2()
+
+	* ACU_DagNode.cc (instantiate2): added
+
+	* ACU_UnificationSubproblem.cc (unificationSolve): keep a copy of
+	the solution and restore is each time we give up on the current
+	basis selection
+
+	* ACU_UnificationSubproblem.hh (class ACU_UnificationSubproblem):
+	added data member savedSubstitution
+
+	* ACU_UnificationSubproblem.cc (buildSolution): added
+	(unificationSolve): fix bug that we were clearing selection that
+	we needed for backtracking
+
+	* ACU_UnificationSubproblem.hh (class ACU_UnificationSubproblem):
+	added decl for buildSolution()
+
+	* ACU_DagNode.hh (class ACU_DagNode): ACU_UnificationSubproblem
+	becomes a friend
+
+	* ACU_Theory.hh: added class ACU_UnificationSubproblem
+
+2007-03-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (computeSolvedForm): use coverable() check
+
+	* ACU_UnificationSubproblem.cc (coverable): added
+
+	* ACU_DagNode.cc (computeSolvedForm): use
+	ACU_UnificationSubproblem
+
+	* ACU_UnificationSubproblem.cc: created
+
+	* ACU_UnificationSubproblem.hh: created
+
+2007-03-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_DagNode.cc (computeBaseSortForGroundSubterms): added
+	(computeSolvedForm): take car of upper bounds
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decl for
+	computeBaseSortForGroundSubterms()
+
+	* ACU_DagNode.cc (nonVariableSize): added
+	(insertVariables2): added
+	(computeSolvedForm): added stub
+
+	* ACU_DagNode.hh (class ACU_DagNode): added decls for
+	computeSolvedForm(), nonVariableSize(), insertVariables2()
+
+===================================Maude89===========================================
+
 2006-10-10  Steven Eker  <eker@goo.csl.sri.com>
 
 	* ACU_DagNode.hh: added declaration for getACU_DagNode() to

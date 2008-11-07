@@ -1,0 +1,4925 @@
+Maude> ==========================================
+unify in TEST : f(X:Nat, Y:Nat) ^ B:NzNat =? A:NzNat ^ f(Y:Nat, Z:Nat) .
+
+Solution 1
+X:Nat --> #1:Nat
+Y:Nat --> #2:NzNat
+B:NzNat --> f(#2:NzNat, #3:Nat)
+A:NzNat --> f(#1:Nat, #2:NzNat)
+Z:Nat --> #3:Nat
+
+Solution 2
+X:Nat --> #1:NzNat
+Y:Nat --> #2:Nat
+B:NzNat --> f(#2:Nat, #3:NzNat)
+A:NzNat --> f(#1:NzNat, #2:Nat)
+Z:Nat --> #3:NzNat
+==========================================
+unify [100] in NAT : X:Nat + X:Nat + Y:Nat =? A:Nat + B:Nat + C:Nat .
+
+Solution 1
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat + #8:Nat
+Y:Nat --> #4:Nat + #7:Nat + #9:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat + #7:Nat
+C:Nat --> #3:Nat + #6:Nat + #8:Nat + #8:Nat + #9:Nat
+
+Solution 2
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat + #8:Nat
+Y:Nat --> #4:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat + #7:Nat
+C:Nat --> #3:Nat + #6:Nat + #8:Nat + #8:Nat
+
+Solution 3
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat
+Y:Nat --> #4:Nat + #7:Nat + #8:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat + #7:Nat
+C:Nat --> #3:Nat + #6:Nat + #8:Nat
+
+Solution 4
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat
+Y:Nat --> #4:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat + #7:Nat
+C:Nat --> #3:Nat + #6:Nat
+
+Solution 5
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat + #7:Nat
+Y:Nat --> #4:Nat + #8:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #6:Nat + #7:Nat + #7:Nat + #8:Nat
+
+Solution 6
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat + #7:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #6:Nat + #7:Nat + #7:Nat
+
+Solution 7
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat
+Y:Nat --> #4:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #6:Nat + #7:Nat
+
+Solution 8
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #6:Nat
+
+Solution 9
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #7:Nat
+Y:Nat --> #4:Nat + #6:Nat + #8:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #7:Nat + #7:Nat + #8:Nat
+
+Solution 10
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #7:Nat
+Y:Nat --> #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #7:Nat + #7:Nat
+
+Solution 11
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat + #6:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #7:Nat
+
+Solution 12
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat
+
+Solution 13
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat
+Y:Nat --> #4:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat
+C:Nat --> #3:Nat + #6:Nat + #6:Nat + #7:Nat
+
+Solution 14
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat
+C:Nat --> #3:Nat + #6:Nat + #6:Nat
+
+Solution 15
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat
+C:Nat --> #3:Nat + #6:Nat
+
+Solution 16
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #5:Nat
+C:Nat --> #3:Nat
+
+Solution 17
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #7:Nat
+Y:Nat --> #4:Nat + #6:Nat + #8:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #5:Nat + #7:Nat + #7:Nat + #8:Nat
+
+Solution 18
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #7:Nat
+Y:Nat --> #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #5:Nat + #7:Nat + #7:Nat
+
+Solution 19
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat + #6:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #5:Nat + #7:Nat
+
+Solution 20
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #5:Nat
+
+Solution 21
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat
+Y:Nat --> #4:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat
+C:Nat --> #3:Nat + #5:Nat + #6:Nat + #6:Nat + #7:Nat
+
+Solution 22
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat + #6:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat
+C:Nat --> #3:Nat + #5:Nat + #6:Nat + #6:Nat
+
+Solution 23
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat
+C:Nat --> #3:Nat + #5:Nat + #6:Nat
+
+Solution 24
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat
+C:Nat --> #3:Nat + #5:Nat
+
+Solution 25
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #6:Nat
+Y:Nat --> #4:Nat + #5:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat
+C:Nat --> #3:Nat + #6:Nat + #6:Nat + #7:Nat
+
+Solution 26
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #6:Nat
+Y:Nat --> #4:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat
+C:Nat --> #3:Nat + #6:Nat + #6:Nat
+
+Solution 27
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat + #5:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat
+C:Nat --> #3:Nat + #6:Nat
+
+Solution 28
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat + #5:Nat
+C:Nat --> #3:Nat
+
+Solution 29
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat
+C:Nat --> #3:Nat + #5:Nat + #5:Nat + #6:Nat
+
+Solution 30
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat
+C:Nat --> #3:Nat + #5:Nat + #5:Nat
+
+Solution 31
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat
+C:Nat --> #3:Nat + #5:Nat
+
+Solution 32
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat + #4:Nat
+B:Nat --> #2:Nat
+C:Nat --> #3:Nat
+
+Solution 33
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #5:Nat + #7:Nat
+Y:Nat --> #6:Nat + #8:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #5:Nat + #7:Nat + #7:Nat + #8:Nat
+
+Solution 34
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #5:Nat + #7:Nat
+Y:Nat --> #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #5:Nat + #7:Nat + #7:Nat
+
+Solution 35
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #5:Nat
+Y:Nat --> #6:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #5:Nat + #7:Nat
+
+Solution 36
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #5:Nat
+Y:Nat --> #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat + #6:Nat
+C:Nat --> #3:Nat + #5:Nat
+
+Solution 37
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #5:Nat + #6:Nat
+Y:Nat --> #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #3:Nat + #5:Nat + #6:Nat + #6:Nat + #7:Nat
+
+Solution 38
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #5:Nat
+Y:Nat --> #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #3:Nat + #5:Nat + #6:Nat
+
+Solution 39
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #6:Nat
+Y:Nat --> #5:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #3:Nat + #6:Nat + #6:Nat + #7:Nat
+
+Solution 40
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #6:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #3:Nat + #6:Nat + #6:Nat
+
+Solution 41
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #3:Nat + #6:Nat
+
+Solution 42
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #3:Nat
+
+Solution 43
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #5:Nat
+Y:Nat --> #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat
+C:Nat --> #3:Nat + #5:Nat + #5:Nat + #6:Nat
+
+Solution 44
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat
+C:Nat --> #3:Nat + #5:Nat
+
+Solution 45
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #6:Nat
+Y:Nat --> #5:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #5:Nat
+C:Nat --> #3:Nat + #4:Nat + #6:Nat + #6:Nat + #7:Nat
+
+Solution 46
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #6:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #5:Nat
+C:Nat --> #3:Nat + #4:Nat + #6:Nat + #6:Nat
+
+Solution 47
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #5:Nat
+C:Nat --> #3:Nat + #4:Nat + #6:Nat
+
+Solution 48
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #5:Nat
+C:Nat --> #3:Nat + #4:Nat
+
+Solution 49
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #5:Nat
+Y:Nat --> #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #3:Nat + #4:Nat + #5:Nat + #5:Nat + #6:Nat
+
+Solution 50
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #3:Nat + #4:Nat + #5:Nat
+
+Solution 51
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #3:Nat + #5:Nat + #5:Nat + #6:Nat
+
+Solution 52
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #3:Nat + #5:Nat + #5:Nat
+
+Solution 53
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #3:Nat + #5:Nat
+
+Solution 54
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #3:Nat
+
+Solution 55
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat
+C:Nat --> #3:Nat + #4:Nat + #4:Nat + #5:Nat
+
+Solution 56
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat
+C:Nat --> #3:Nat + #4:Nat
+
+Solution 57
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat + #7:Nat
+Y:Nat --> #3:Nat + #6:Nat + #8:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat + #6:Nat
+C:Nat --> #5:Nat + #7:Nat + #7:Nat + #8:Nat
+
+Solution 58
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat + #7:Nat
+Y:Nat --> #3:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat + #6:Nat
+C:Nat --> #5:Nat + #7:Nat + #7:Nat
+
+Solution 59
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat
+Y:Nat --> #3:Nat + #6:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat + #6:Nat
+C:Nat --> #5:Nat + #7:Nat
+
+Solution 60
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat
+Y:Nat --> #3:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat + #6:Nat
+C:Nat --> #5:Nat
+
+Solution 61
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat + #6:Nat
+Y:Nat --> #3:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #5:Nat + #6:Nat + #6:Nat + #7:Nat
+
+Solution 62
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat + #6:Nat
+Y:Nat --> #3:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #5:Nat + #6:Nat + #6:Nat
+
+Solution 63
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat
+Y:Nat --> #3:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #5:Nat + #6:Nat
+
+Solution 64
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat
+Y:Nat --> #3:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #5:Nat
+
+Solution 65
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #6:Nat
+Y:Nat --> #3:Nat + #5:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #6:Nat + #6:Nat + #7:Nat
+
+Solution 66
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #6:Nat
+Y:Nat --> #3:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #6:Nat + #6:Nat
+
+Solution 67
+X:Nat --> #1:Nat + #2:Nat + #4:Nat
+Y:Nat --> #3:Nat + #5:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat + #5:Nat
+C:Nat --> #6:Nat
+
+Solution 68
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat
+Y:Nat --> #3:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat
+C:Nat --> #5:Nat + #5:Nat + #6:Nat
+
+Solution 69
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat
+Y:Nat --> #3:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat
+C:Nat --> #5:Nat + #5:Nat
+
+Solution 70
+X:Nat --> #1:Nat + #2:Nat + #4:Nat
+Y:Nat --> #3:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #4:Nat
+C:Nat --> #5:Nat
+
+Solution 71
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #6:Nat
+Y:Nat --> #3:Nat + #5:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #5:Nat
+C:Nat --> #4:Nat + #6:Nat + #6:Nat + #7:Nat
+
+Solution 72
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #6:Nat
+Y:Nat --> #3:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #5:Nat
+C:Nat --> #4:Nat + #6:Nat + #6:Nat
+
+Solution 73
+X:Nat --> #1:Nat + #2:Nat + #4:Nat
+Y:Nat --> #3:Nat + #5:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #5:Nat
+C:Nat --> #4:Nat + #6:Nat
+
+Solution 74
+X:Nat --> #1:Nat + #2:Nat + #4:Nat
+Y:Nat --> #3:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat + #5:Nat
+C:Nat --> #4:Nat
+
+Solution 75
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat
+Y:Nat --> #3:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #4:Nat + #5:Nat + #5:Nat + #6:Nat
+
+Solution 76
+X:Nat --> #1:Nat + #2:Nat + #4:Nat + #5:Nat
+Y:Nat --> #3:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #4:Nat + #5:Nat + #5:Nat
+
+Solution 77
+X:Nat --> #1:Nat + #2:Nat + #4:Nat
+Y:Nat --> #3:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #4:Nat + #5:Nat
+
+Solution 78
+X:Nat --> #1:Nat + #2:Nat + #4:Nat
+Y:Nat --> #3:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #4:Nat
+
+Solution 79
+X:Nat --> #1:Nat + #2:Nat + #5:Nat
+Y:Nat --> #3:Nat + #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #5:Nat + #5:Nat + #6:Nat
+
+Solution 80
+X:Nat --> #1:Nat + #2:Nat + #5:Nat
+Y:Nat --> #3:Nat + #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #5:Nat + #5:Nat
+
+Solution 81
+X:Nat --> #1:Nat + #2:Nat
+Y:Nat --> #3:Nat + #4:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat + #4:Nat
+C:Nat --> #5:Nat
+
+Solution 82
+X:Nat --> #1:Nat + #2:Nat + #4:Nat
+Y:Nat --> #3:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat
+C:Nat --> #4:Nat + #4:Nat + #5:Nat
+
+Solution 83
+X:Nat --> #1:Nat + #2:Nat + #4:Nat
+Y:Nat --> #3:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat
+C:Nat --> #4:Nat + #4:Nat
+
+Solution 84
+X:Nat --> #1:Nat + #2:Nat
+Y:Nat --> #3:Nat + #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat + #3:Nat
+B:Nat --> #2:Nat
+C:Nat --> #4:Nat
+
+Solution 85
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #6:Nat
+Y:Nat --> #5:Nat + #7:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat + #4:Nat + #5:Nat
+C:Nat --> #4:Nat + #6:Nat + #6:Nat + #7:Nat
+
+Solution 86
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #6:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat + #4:Nat + #5:Nat
+C:Nat --> #4:Nat + #6:Nat + #6:Nat
+
+Solution 87
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat + #4:Nat + #5:Nat
+C:Nat --> #4:Nat + #6:Nat
+
+Solution 88
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat + #4:Nat + #5:Nat
+C:Nat --> #4:Nat
+
+Solution 89
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat + #5:Nat
+Y:Nat --> #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat + #4:Nat
+C:Nat --> #4:Nat + #5:Nat + #5:Nat + #6:Nat
+
+Solution 90
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat + #4:Nat
+C:Nat --> #4:Nat + #5:Nat
+
+Solution 91
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat + #4:Nat
+C:Nat --> #5:Nat + #5:Nat + #6:Nat
+
+Solution 92
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat + #4:Nat
+C:Nat --> #5:Nat + #5:Nat
+
+Solution 93
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat + #4:Nat
+C:Nat --> #5:Nat
+
+Solution 94
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat
+C:Nat --> #4:Nat + #4:Nat + #5:Nat
+
+Solution 95
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #3:Nat
+C:Nat --> #4:Nat
+
+Solution 96
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat + #6:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #4:Nat
+C:Nat --> #3:Nat + #5:Nat + #5:Nat + #6:Nat
+
+Solution 97
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #5:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #4:Nat
+C:Nat --> #3:Nat + #5:Nat + #5:Nat
+
+Solution 98
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat + #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #4:Nat
+C:Nat --> #3:Nat + #5:Nat
+
+Solution 99
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Y:Nat --> #4:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat + #4:Nat
+C:Nat --> #3:Nat
+
+Solution 100
+X:Nat --> #1:Nat + #2:Nat + #3:Nat + #4:Nat
+Y:Nat --> #5:Nat
+A:Nat --> #1:Nat + #1:Nat + #2:Nat
+B:Nat --> #2:Nat + #3:Nat
+C:Nat --> #3:Nat + #4:Nat + #4:Nat + #5:Nat
+==========================================
+unify in CONVERSION : X:String < "foo" + Y:Char =? Z:String + string(pi) <
+    "foo" + Z:String .
+
+Solution 1
+X:String --> #1:Char + string(pi)
+Y:Char --> #1:Char
+Z:String --> #1:Char
+==========================================
+unify in NAT : X:Nat ^ #1:Nat =? #2:Nat .
+Warning: unsafe variable name #1:Nat in unification problem.
+==========================================
+unify in TEST2 : f(f(X:Nat, Y:Nat), Z:Nat) =? f(A:Nat, B:Nat) .
+Warning: Term f(X:Nat, Y:Nat, Z:Nat) is non-ground and unification for its top
+    symbol is not currently supported.
+==========================================
+unify in TEST2 : X:Nat + f(41, 42) =? Y:Nat + f(41, 42) .
+
+Solution 1
+X:Nat --> #1:Nat
+Y:Nat --> #1:Nat
+==========================================
+unify in ITER : s^1000000(X:OddNat) =? s^100000000001(Y:Int) .
+
+Solution 1
+X:OddNat --> s^99999000001(#1:EvenNat)
+Y:Int --> #1:EvenNat
+==========================================
+unify in ITER : s^1000000(X:OddNat) =? s^100000000001(Y:Int + Z:Int + W:Int) .
+
+Solution 1
+X:OddNat --> s^99999000001(#1:OddNat + (#2:OddNat + #3:EvenNat))
+W:Int --> #1:OddNat
+Z:Int --> #2:OddNat
+Y:Int --> #3:EvenNat
+
+Solution 2
+X:OddNat --> s^99999000001(#1:OddNat + (#2:EvenNat + #3:OddNat))
+W:Int --> #1:OddNat
+Z:Int --> #2:EvenNat
+Y:Int --> #3:OddNat
+
+Solution 3
+X:OddNat --> s^99999000001(#1:EvenNat + (#2:OddNat + #3:OddNat))
+W:Int --> #1:EvenNat
+Z:Int --> #2:OddNat
+Y:Int --> #3:OddNat
+
+Solution 4
+X:OddNat --> s^99999000001(#1:EvenNat + (#2:EvenNat + #3:EvenNat))
+W:Int --> #1:EvenNat
+Z:Int --> #2:EvenNat
+Y:Int --> #3:EvenNat
+==========================================
+unify in AC : f(X, Y) =? f(A, B) .
+
+Solution 1
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+
+Solution 2
+X --> f(#1:Foo, #3:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> #3:Foo
+
+Solution 3
+X --> #1:Foo
+Y --> f(#2:Foo, #3:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> #3:Foo
+
+Solution 4
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #3:Foo)
+
+Solution 5
+X --> #1:Foo
+Y --> #2:Foo
+A --> #1:Foo
+B --> #2:Foo
+
+Solution 6
+X --> #2:Foo
+Y --> f(#1:Foo, #3:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #3:Foo)
+
+Solution 7
+X --> #2:Foo
+Y --> #1:Foo
+A --> #1:Foo
+B --> #2:Foo
+==========================================
+unify in AC : f(X, Y) =? f(a, b) .
+
+Solution 1
+X --> a
+Y --> b
+
+Solution 2
+X --> b
+Y --> a
+==========================================
+unify in AC : f(X, Y) =? f(a, b, c) .
+
+Solution 1
+X --> f(a, b)
+Y --> c
+
+Solution 2
+X --> f(a, c)
+Y --> b
+
+Solution 3
+X --> a
+Y --> f(b, c)
+
+Solution 4
+X --> f(b, c)
+Y --> a
+
+Solution 5
+X --> b
+Y --> f(a, c)
+
+Solution 6
+X --> c
+Y --> f(a, b)
+==========================================
+match in AC : f(X, Y) <=? f(a, b, c) .
+
+Solution 1
+X --> a
+Y --> f(b, c)
+
+Solution 2
+X --> b
+Y --> f(a, c)
+
+Solution 3
+X --> c
+Y --> f(a, b)
+
+Solution 4
+X --> f(a, b)
+Y --> c
+
+Solution 5
+X --> f(a, c)
+Y --> b
+
+Solution 6
+X --> f(b, c)
+Y --> a
+==========================================
+unify in AC : f(X, X, Y) =? f(X, Y, Y) .
+
+Solution 1
+X --> #1:Foo
+Y --> #1:Foo
+==========================================
+unify in AC : f(X, X, Y) =? f(X, Y) .
+No unifier.
+==========================================
+unify in AC : f(X, X, Y) =? f(A, B, C) .
+
+Solution 1
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo, #8:Foo)
+Y --> f(#4:Foo, #7:Foo, #9:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo, #7:Foo)
+C --> f(#3:Foo, #6:Foo, #8:Foo, #8:Foo, #9:Foo)
+
+Solution 2
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo, #8:Foo)
+Y --> f(#4:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo, #7:Foo)
+C --> f(#3:Foo, #6:Foo, #8:Foo, #8:Foo)
+
+Solution 3
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo)
+Y --> f(#4:Foo, #7:Foo, #8:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo, #7:Foo)
+C --> f(#3:Foo, #6:Foo, #8:Foo)
+
+Solution 4
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo)
+Y --> f(#4:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo, #7:Foo)
+C --> f(#3:Foo, #6:Foo)
+
+Solution 5
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo, #7:Foo)
+Y --> f(#4:Foo, #8:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #6:Foo, #7:Foo, #7:Foo, #8:Foo)
+
+Solution 6
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo, #7:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #6:Foo, #7:Foo, #7:Foo)
+
+Solution 7
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo)
+Y --> f(#4:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #6:Foo, #7:Foo)
+
+Solution 8
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #6:Foo)
+
+Solution 9
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #7:Foo)
+Y --> f(#4:Foo, #6:Foo, #8:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #7:Foo, #7:Foo, #8:Foo)
+
+Solution 10
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #7:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #7:Foo, #7:Foo)
+
+Solution 11
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #7:Foo)
+
+Solution 12
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+C --> #3:Foo
+
+Solution 13
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo)
+Y --> f(#4:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo)
+C --> f(#3:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 14
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo)
+C --> f(#3:Foo, #6:Foo, #6:Foo)
+
+Solution 15
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo)
+C --> f(#3:Foo, #6:Foo)
+
+Solution 16
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #5:Foo)
+C --> #3:Foo
+
+Solution 17
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #7:Foo)
+Y --> f(#4:Foo, #6:Foo, #8:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #5:Foo, #7:Foo, #7:Foo, #8:Foo)
+
+Solution 18
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #7:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #5:Foo, #7:Foo, #7:Foo)
+
+Solution 19
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #5:Foo, #7:Foo)
+
+Solution 20
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 21
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo)
+Y --> f(#4:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo)
+C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 22
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo, #6:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo)
+C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo)
+
+Solution 23
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo)
+C --> f(#3:Foo, #5:Foo, #6:Foo)
+
+Solution 24
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 25
+X --> f(#1:Foo, #2:Foo, #3:Foo, #6:Foo)
+Y --> f(#4:Foo, #5:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo)
+C --> f(#3:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 26
+X --> f(#1:Foo, #2:Foo, #3:Foo, #6:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo)
+C --> f(#3:Foo, #6:Foo, #6:Foo)
+
+Solution 27
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo)
+C --> f(#3:Foo, #6:Foo)
+
+Solution 28
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> f(#2:Foo, #5:Foo)
+C --> #3:Foo
+
+Solution 29
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> #2:Foo
+C --> f(#3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 30
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> #2:Foo
+C --> f(#3:Foo, #5:Foo, #5:Foo)
+
+Solution 31
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> #2:Foo
+C --> f(#3:Foo, #5:Foo)
+
+Solution 32
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo)
+B --> #2:Foo
+C --> #3:Foo
+
+Solution 33
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo, #7:Foo)
+Y --> f(#6:Foo, #8:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #5:Foo, #7:Foo, #7:Foo, #8:Foo)
+
+Solution 34
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo, #7:Foo)
+Y --> #6:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #5:Foo, #7:Foo, #7:Foo)
+
+Solution 35
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> f(#6:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #5:Foo, #7:Foo)
+
+Solution 36
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> #6:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 37
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo, #6:Foo)
+Y --> #7:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 38
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> #6:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#3:Foo, #5:Foo, #6:Foo)
+
+Solution 39
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#5:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#3:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 40
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#3:Foo, #6:Foo, #6:Foo)
+
+Solution 41
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> f(#5:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#3:Foo, #6:Foo)
+
+Solution 42
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> #3:Foo
+
+Solution 43
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> #6:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 44
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 45
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#5:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #5:Foo)
+C --> f(#3:Foo, #4:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 46
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #5:Foo)
+C --> f(#3:Foo, #4:Foo, #6:Foo, #6:Foo)
+
+Solution 47
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> f(#5:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #5:Foo)
+C --> f(#3:Foo, #4:Foo, #6:Foo)
+
+Solution 48
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #5:Foo)
+C --> f(#3:Foo, #4:Foo)
+
+Solution 49
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> #6:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> f(#3:Foo, #4:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 50
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> f(#3:Foo, #4:Foo, #5:Foo)
+
+Solution 51
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 52
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo)
+
+Solution 53
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 54
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> #3:Foo
+
+Solution 55
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #2:Foo
+C --> f(#3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 56
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #2:Foo
+C --> f(#3:Foo, #4:Foo)
+
+Solution 57
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #7:Foo)
+Y --> f(#3:Foo, #6:Foo, #8:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#5:Foo, #7:Foo, #7:Foo, #8:Foo)
+
+Solution 58
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #7:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#5:Foo, #7:Foo, #7:Foo)
+
+Solution 59
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#5:Foo, #7:Foo)
+
+Solution 60
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> #5:Foo
+
+Solution 61
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #6:Foo)
+Y --> f(#3:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#5:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 62
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #6:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#5:Foo, #6:Foo, #6:Foo)
+
+Solution 63
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#5:Foo, #6:Foo)
+
+Solution 64
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> #5:Foo
+
+Solution 65
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#6:Foo, #6:Foo, #7:Foo)
+
+Solution 66
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#6:Foo, #6:Foo)
+
+Solution 67
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> #6:Foo
+
+Solution 68
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo)
+C --> f(#5:Foo, #5:Foo, #6:Foo)
+
+Solution 69
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo)
+C --> f(#5:Foo, #5:Foo)
+
+Solution 70
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #4:Foo)
+C --> #5:Foo
+
+Solution 71
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 72
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo, #6:Foo)
+
+Solution 73
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo)
+
+Solution 74
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo, #5:Foo)
+C --> #4:Foo
+
+Solution 75
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 76
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo, #5:Foo)
+
+Solution 77
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo)
+
+Solution 78
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> #4:Foo
+
+Solution 79
+X --> f(#1:Foo, #2:Foo, #5:Foo)
+Y --> f(#3:Foo, #4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> f(#5:Foo, #5:Foo, #6:Foo)
+
+Solution 80
+X --> f(#1:Foo, #2:Foo, #5:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> f(#5:Foo, #5:Foo)
+
+Solution 81
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#2:Foo, #4:Foo)
+C --> #5:Foo
+
+Solution 82
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #2:Foo
+C --> f(#4:Foo, #4:Foo, #5:Foo)
+
+Solution 83
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #2:Foo
+C --> f(#4:Foo, #4:Foo)
+
+Solution 84
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #2:Foo
+C --> #4:Foo
+
+Solution 85
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#5:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 86
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo, #6:Foo)
+
+Solution 87
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> f(#5:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo)
+
+Solution 88
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> #4:Foo
+
+Solution 89
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> #6:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 90
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo)
+
+Solution 91
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#5:Foo, #5:Foo, #6:Foo)
+
+Solution 92
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#5:Foo, #5:Foo)
+
+Solution 93
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> #5:Foo
+
+Solution 94
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo, #5:Foo)
+
+Solution 95
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #3:Foo)
+C --> #4:Foo
+
+Solution 96
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 97
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo)
+
+Solution 98
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 99
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo, #4:Foo)
+C --> #3:Foo
+
+Solution 100
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 101
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo)
+
+Solution 102
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo, #5:Foo)
+
+Solution 103
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo)
+
+Solution 104
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#2:Foo, #3:Foo)
+C --> #4:Foo
+
+Solution 105
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #2:Foo
+C --> f(#3:Foo, #3:Foo, #4:Foo)
+
+Solution 106
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #2:Foo
+C --> #3:Foo
+
+Solution 107
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #7:Foo)
+Y --> f(#3:Foo, #6:Foo, #8:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#2:Foo, #5:Foo, #7:Foo, #7:Foo, #8:Foo)
+
+Solution 108
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #7:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#2:Foo, #5:Foo, #7:Foo, #7:Foo)
+
+Solution 109
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#2:Foo, #5:Foo, #7:Foo)
+
+Solution 110
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#2:Foo, #5:Foo)
+
+Solution 111
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #6:Foo)
+Y --> f(#3:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #5:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 112
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #6:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #5:Foo, #6:Foo, #6:Foo)
+
+Solution 113
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #5:Foo, #6:Foo)
+
+Solution 114
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #5:Foo)
+
+Solution 115
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 116
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #6:Foo, #6:Foo)
+
+Solution 117
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #6:Foo)
+
+Solution 118
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo, #5:Foo)
+C --> #2:Foo
+
+Solution 119
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 120
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo, #5:Foo)
+
+Solution 121
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo)
+
+Solution 122
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #4:Foo)
+C --> #2:Foo
+
+Solution 123
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 124
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo, #6:Foo)
+
+Solution 125
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo)
+
+Solution 126
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> f(#4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 127
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #4:Foo
+C --> f(#2:Foo, #4:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 128
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #4:Foo
+C --> f(#2:Foo, #4:Foo, #5:Foo, #5:Foo)
+
+Solution 129
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #4:Foo
+C --> f(#2:Foo, #4:Foo, #5:Foo)
+
+Solution 130
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #4:Foo
+C --> f(#2:Foo, #4:Foo)
+
+Solution 131
+X --> f(#1:Foo, #2:Foo, #5:Foo)
+Y --> f(#3:Foo, #4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #4:Foo
+C --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 132
+X --> f(#1:Foo, #2:Foo, #5:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #4:Foo
+C --> f(#2:Foo, #5:Foo, #5:Foo)
+
+Solution 133
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #4:Foo
+C --> f(#2:Foo, #5:Foo)
+
+Solution 134
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+B --> #4:Foo
+C --> #2:Foo
+
+Solution 135
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#5:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 136
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo, #6:Foo)
+
+Solution 137
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> f(#5:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo)
+
+Solution 138
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 139
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> #6:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #4:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 140
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #4:Foo, #5:Foo)
+
+Solution 141
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 142
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo, #5:Foo)
+
+Solution 143
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo)
+
+Solution 144
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> #2:Foo
+
+Solution 145
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 146
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 147
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#2:Foo, #3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 148
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#2:Foo, #3:Foo, #5:Foo, #5:Foo)
+
+Solution 149
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#2:Foo, #3:Foo, #5:Foo)
+
+Solution 150
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#2:Foo, #3:Foo)
+
+Solution 151
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#2:Foo, #3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 152
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#2:Foo, #3:Foo, #4:Foo)
+
+Solution 153
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 154
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#2:Foo, #4:Foo, #4:Foo)
+
+Solution 155
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#2:Foo, #4:Foo)
+
+Solution 156
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> #2:Foo
+
+Solution 157
+X --> f(#1:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#2:Foo, #5:Foo, #7:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 158
+X --> f(#1:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo, #6:Foo)
+
+Solution 159
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo)
+
+Solution 160
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> #4:Foo
+
+Solution 161
+X --> f(#1:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> f(#2:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 162
+X --> f(#1:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo, #5:Foo)
+
+Solution 163
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo)
+
+Solution 164
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> #4:Foo
+
+Solution 165
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#5:Foo, #5:Foo, #6:Foo)
+
+Solution 166
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#5:Foo, #5:Foo)
+
+Solution 167
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> #5:Foo
+
+Solution 168
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo, #5:Foo)
+
+Solution 169
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo)
+
+Solution 170
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo)
+C --> #4:Foo
+
+Solution 171
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 172
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo)
+
+Solution 173
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 174
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> #3:Foo
+
+Solution 175
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 176
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#3:Foo, #4:Foo, #4:Foo)
+
+Solution 177
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#3:Foo, #4:Foo)
+
+Solution 178
+X --> f(#1:Foo, #3:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> #3:Foo
+
+Solution 179
+X --> f(#1:Foo, #4:Foo)
+Y --> f(#2:Foo, #3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#4:Foo, #4:Foo, #5:Foo)
+
+Solution 180
+X --> f(#1:Foo, #4:Foo)
+Y --> f(#2:Foo, #3:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#4:Foo, #4:Foo)
+
+Solution 181
+X --> #1:Foo
+Y --> f(#2:Foo, #3:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo, #2:Foo)
+B --> #3:Foo
+C --> #4:Foo
+
+Solution 182
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 183
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo)
+
+Solution 184
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 185
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> #3:Foo
+
+Solution 186
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 187
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo)
+
+Solution 188
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo, #5:Foo)
+
+Solution 189
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo)
+
+Solution 190
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> #4:Foo
+
+Solution 191
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo)
+C --> f(#3:Foo, #3:Foo, #4:Foo)
+
+Solution 192
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #2:Foo)
+C --> #3:Foo
+
+Solution 193
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 194
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo)
+
+Solution 195
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 196
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> f(#2:Foo, #3:Foo)
+C --> #2:Foo
+
+Solution 197
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> #2:Foo
+C --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 198
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> #2:Foo
+C --> f(#2:Foo, #3:Foo)
+
+Solution 199
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #1:Foo)
+B --> #2:Foo
+C --> f(#3:Foo, #3:Foo, #4:Foo)
+
+Solution 200
+X --> f(#1:Foo, #3:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #1:Foo)
+B --> #2:Foo
+C --> f(#3:Foo, #3:Foo)
+
+Solution 201
+X --> #1:Foo
+Y --> f(#2:Foo, #3:Foo)
+A --> f(#1:Foo, #1:Foo)
+B --> #2:Foo
+C --> #3:Foo
+
+Solution 202
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #7:Foo)
+Y --> f(#3:Foo, #6:Foo, #8:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#2:Foo, #5:Foo, #7:Foo, #7:Foo, #8:Foo)
+
+Solution 203
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #7:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#2:Foo, #5:Foo, #7:Foo, #7:Foo)
+
+Solution 204
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo, #7:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#2:Foo, #5:Foo, #7:Foo)
+
+Solution 205
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo, #6:Foo)
+C --> f(#2:Foo, #5:Foo)
+
+Solution 206
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #6:Foo)
+Y --> f(#3:Foo, #7:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #5:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 207
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo, #6:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #5:Foo, #6:Foo, #6:Foo)
+
+Solution 208
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #5:Foo, #6:Foo)
+
+Solution 209
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #5:Foo)
+
+Solution 210
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo, #7:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 211
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #6:Foo, #6:Foo)
+
+Solution 212
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #6:Foo)
+
+Solution 213
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+C --> #2:Foo
+
+Solution 214
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 215
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo, #5:Foo)
+
+Solution 216
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo)
+
+Solution 217
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #4:Foo)
+C --> #2:Foo
+
+Solution 218
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo, #7:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 219
+X --> f(#1:Foo, #2:Foo, #4:Foo, #6:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo, #6:Foo)
+
+Solution 220
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo)
+
+Solution 221
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 222
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> f(#3:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo)
+C --> f(#2:Foo, #4:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 223
+X --> f(#1:Foo, #2:Foo, #4:Foo, #5:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo)
+C --> f(#2:Foo, #4:Foo, #5:Foo, #5:Foo)
+
+Solution 224
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo)
+C --> f(#2:Foo, #4:Foo, #5:Foo)
+
+Solution 225
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 226
+X --> f(#1:Foo, #2:Foo, #5:Foo)
+Y --> f(#3:Foo, #4:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 227
+X --> f(#1:Foo, #2:Foo, #5:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo, #5:Foo)
+
+Solution 228
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo)
+
+Solution 229
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #4:Foo)
+C --> #2:Foo
+
+Solution 230
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> #1:Foo
+C --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 231
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> #1:Foo
+C --> f(#2:Foo, #4:Foo, #4:Foo)
+
+Solution 232
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> #1:Foo
+C --> f(#2:Foo, #4:Foo)
+
+Solution 233
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo, #3:Foo)
+B --> #1:Foo
+C --> #2:Foo
+
+Solution 234
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#5:Foo, #7:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 235
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo, #6:Foo)
+
+Solution 236
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> f(#5:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo, #6:Foo)
+
+Solution 237
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 238
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> #6:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #4:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 239
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #4:Foo, #5:Foo)
+
+Solution 240
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 241
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo, #5:Foo)
+
+Solution 242
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #5:Foo)
+
+Solution 243
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> #2:Foo
+
+Solution 244
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 245
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 246
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 247
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #3:Foo, #5:Foo, #5:Foo)
+
+Solution 248
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #3:Foo, #5:Foo)
+
+Solution 249
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #4:Foo)
+C --> f(#2:Foo, #3:Foo)
+
+Solution 250
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> f(#2:Foo, #3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 251
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> f(#2:Foo, #3:Foo, #4:Foo)
+
+Solution 252
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 253
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo)
+
+Solution 254
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 255
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> #2:Foo
+
+Solution 256
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> #1:Foo
+C --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 257
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> #1:Foo
+C --> f(#2:Foo, #3:Foo)
+
+Solution 258
+X --> f(#1:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#2:Foo, #5:Foo, #7:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 259
+X --> f(#1:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo, #6:Foo)
+
+Solution 260
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#4:Foo, #6:Foo)
+
+Solution 261
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> #4:Foo
+
+Solution 262
+X --> f(#1:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> f(#2:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 263
+X --> f(#1:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo, #5:Foo)
+
+Solution 264
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#4:Foo, #5:Foo)
+
+Solution 265
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> #4:Foo
+
+Solution 266
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#5:Foo, #5:Foo, #6:Foo)
+
+Solution 267
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> f(#5:Foo, #5:Foo)
+
+Solution 268
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+C --> #5:Foo
+
+Solution 269
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo, #5:Foo)
+
+Solution 270
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo)
+
+Solution 271
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #3:Foo)
+C --> #4:Foo
+
+Solution 272
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 273
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo)
+
+Solution 274
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 275
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo, #4:Foo)
+C --> #3:Foo
+
+Solution 276
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 277
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo, #4:Foo)
+
+Solution 278
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo)
+
+Solution 279
+X --> f(#1:Foo, #3:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> #3:Foo
+
+Solution 280
+X --> f(#1:Foo, #4:Foo)
+Y --> f(#2:Foo, #3:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo, #5:Foo)
+
+Solution 281
+X --> f(#1:Foo, #4:Foo)
+Y --> f(#2:Foo, #3:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo)
+
+Solution 282
+X --> #1:Foo
+Y --> f(#2:Foo, #3:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#1:Foo, #3:Foo)
+C --> #4:Foo
+
+Solution 283
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> #1:Foo
+C --> f(#3:Foo, #3:Foo, #4:Foo)
+
+Solution 284
+X --> f(#1:Foo, #3:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> #1:Foo
+C --> f(#3:Foo, #3:Foo)
+
+Solution 285
+X --> #1:Foo
+Y --> f(#2:Foo, #3:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> #1:Foo
+C --> #3:Foo
+
+Solution 286
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 287
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo)
+
+Solution 288
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 289
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> #3:Foo
+
+Solution 290
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 291
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo)
+
+Solution 292
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo, #5:Foo)
+
+Solution 293
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo)
+
+Solution 294
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo)
+C --> #4:Foo
+
+Solution 295
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo)
+C --> f(#3:Foo, #3:Foo, #4:Foo)
+
+Solution 296
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #2:Foo)
+C --> #3:Foo
+
+Solution 297
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 298
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo)
+
+Solution 299
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 300
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo, #3:Foo)
+C --> #2:Foo
+
+Solution 301
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo)
+C --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 302
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo)
+C --> f(#2:Foo, #3:Foo)
+
+Solution 303
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo)
+C --> f(#3:Foo, #3:Foo, #4:Foo)
+
+Solution 304
+X --> f(#1:Foo, #3:Foo)
+Y --> #2:Foo
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo)
+C --> f(#3:Foo, #3:Foo)
+
+Solution 305
+X --> #1:Foo
+Y --> f(#2:Foo, #3:Foo)
+A --> #1:Foo
+B --> f(#1:Foo, #2:Foo)
+C --> #3:Foo
+
+Solution 306
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> #1:Foo
+C --> f(#2:Foo, #2:Foo, #3:Foo)
+
+Solution 307
+X --> #1:Foo
+Y --> #2:Foo
+A --> #1:Foo
+B --> #1:Foo
+C --> #2:Foo
+
+Solution 308
+X --> f(#1:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#2:Foo, #5:Foo, #7:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#1:Foo, #4:Foo, #6:Foo, #6:Foo, #7:Foo)
+
+Solution 309
+X --> f(#1:Foo, #3:Foo, #4:Foo, #6:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#1:Foo, #4:Foo, #6:Foo, #6:Foo)
+
+Solution 310
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#1:Foo, #4:Foo, #6:Foo)
+
+Solution 311
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo, #5:Foo)
+C --> f(#1:Foo, #4:Foo)
+
+Solution 312
+X --> f(#1:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> f(#2:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #4:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 313
+X --> f(#1:Foo, #3:Foo, #4:Foo, #5:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #4:Foo, #5:Foo, #5:Foo)
+
+Solution 314
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #4:Foo, #5:Foo)
+
+Solution 315
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #4:Foo)
+
+Solution 316
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 317
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #5:Foo, #5:Foo)
+
+Solution 318
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #5:Foo)
+
+Solution 319
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo, #4:Foo)
+C --> #1:Foo
+
+Solution 320
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo)
+C --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 321
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo)
+C --> f(#1:Foo, #4:Foo, #4:Foo)
+
+Solution 322
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo)
+C --> f(#1:Foo, #4:Foo)
+
+Solution 323
+X --> f(#1:Foo, #3:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #3:Foo)
+C --> #1:Foo
+
+Solution 324
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo, #6:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#1:Foo, #3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 325
+X --> f(#1:Foo, #3:Foo, #5:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#1:Foo, #3:Foo, #5:Foo, #5:Foo)
+
+Solution 326
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#1:Foo, #3:Foo, #5:Foo)
+
+Solution 327
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> f(#3:Foo, #4:Foo)
+C --> f(#1:Foo, #3:Foo)
+
+Solution 328
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> f(#2:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#1:Foo, #3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 329
+X --> f(#1:Foo, #3:Foo, #4:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#1:Foo, #3:Foo, #4:Foo, #4:Foo)
+
+Solution 330
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#1:Foo, #3:Foo, #4:Foo)
+
+Solution 331
+X --> f(#1:Foo, #3:Foo)
+Y --> #2:Foo
+A --> f(#1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#1:Foo, #3:Foo)
+
+Solution 332
+X --> f(#1:Foo, #4:Foo)
+Y --> f(#2:Foo, #3:Foo, #5:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 333
+X --> f(#1:Foo, #4:Foo)
+Y --> f(#2:Foo, #3:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#1:Foo, #4:Foo, #4:Foo)
+
+Solution 334
+X --> #1:Foo
+Y --> f(#2:Foo, #3:Foo, #4:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> #3:Foo
+C --> f(#1:Foo, #4:Foo)
+
+Solution 335
+X --> #1:Foo
+Y --> f(#2:Foo, #3:Foo)
+A --> f(#1:Foo, #2:Foo)
+B --> #3:Foo
+C --> #1:Foo
+
+Solution 336
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> f(#4:Foo, #6:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 337
+X --> f(#1:Foo, #2:Foo, #3:Foo, #5:Foo)
+Y --> #4:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #3:Foo, #5:Foo, #5:Foo)
+
+Solution 338
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(#4:Foo, #5:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #3:Foo, #5:Foo)
+
+Solution 339
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#1:Foo, #3:Foo)
+
+Solution 340
+X --> f(#1:Foo, #2:Foo, #3:Foo, #4:Foo)
+Y --> #5:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#1:Foo, #3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 341
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#1:Foo, #3:Foo, #4:Foo)
+
+Solution 342
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#1:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 343
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#1:Foo, #4:Foo, #4:Foo)
+
+Solution 344
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#1:Foo, #4:Foo)
+
+Solution 345
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> #1:Foo
+
+Solution 346
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo)
+C --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 347
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo)
+C --> f(#1:Foo, #3:Foo)
+
+Solution 348
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #3:Foo)
+C --> f(#1:Foo, #2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 349
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #3:Foo)
+C --> f(#1:Foo, #2:Foo, #4:Foo, #4:Foo)
+
+Solution 350
+X --> f(#1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #3:Foo)
+C --> f(#1:Foo, #2:Foo, #4:Foo)
+
+Solution 351
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #3:Foo)
+C --> f(#1:Foo, #2:Foo)
+
+Solution 352
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+A --> #1:Foo
+B --> #2:Foo
+C --> f(#1:Foo, #2:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 353
+X --> f(#1:Foo, #2:Foo)
+Y --> #3:Foo
+A --> #1:Foo
+B --> #2:Foo
+C --> f(#1:Foo, #2:Foo, #3:Foo)
+
+Solution 354
+X --> f(#1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+A --> #1:Foo
+B --> #2:Foo
+C --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 355
+X --> f(#1:Foo, #3:Foo)
+Y --> #2:Foo
+A --> #1:Foo
+B --> #2:Foo
+C --> f(#1:Foo, #3:Foo, #3:Foo)
+
+Solution 356
+X --> #1:Foo
+Y --> f(#2:Foo, #3:Foo)
+A --> #1:Foo
+B --> #2:Foo
+C --> f(#1:Foo, #3:Foo)
+
+Solution 357
+X --> #1:Foo
+Y --> #2:Foo
+A --> #1:Foo
+B --> #2:Foo
+C --> #1:Foo
+
+Solution 358
+X --> f(#2:Foo, #3:Foo, #5:Foo)
+Y --> f(#1:Foo, #4:Foo, #6:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo, #6:Foo)
+
+Solution 359
+X --> f(#2:Foo, #3:Foo, #5:Foo)
+Y --> f(#1:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo, #5:Foo)
+
+Solution 360
+X --> f(#2:Foo, #3:Foo)
+Y --> f(#1:Foo, #4:Foo, #5:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> f(#3:Foo, #5:Foo)
+
+Solution 361
+X --> f(#2:Foo, #3:Foo)
+Y --> f(#1:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo, #4:Foo)
+C --> #3:Foo
+
+Solution 362
+X --> f(#2:Foo, #3:Foo, #4:Foo)
+Y --> f(#1:Foo, #5:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 363
+X --> f(#2:Foo, #3:Foo, #4:Foo)
+Y --> #1:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo, #4:Foo)
+
+Solution 364
+X --> f(#2:Foo, #3:Foo)
+Y --> f(#1:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#3:Foo, #4:Foo)
+
+Solution 365
+X --> f(#2:Foo, #3:Foo)
+Y --> #1:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> #3:Foo
+
+Solution 366
+X --> f(#2:Foo, #4:Foo)
+Y --> f(#1:Foo, #3:Foo, #5:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo, #5:Foo)
+
+Solution 367
+X --> f(#2:Foo, #4:Foo)
+Y --> f(#1:Foo, #3:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> f(#4:Foo, #4:Foo)
+
+Solution 368
+X --> #2:Foo
+Y --> f(#1:Foo, #3:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo, #3:Foo)
+C --> #4:Foo
+
+Solution 369
+X --> f(#2:Foo, #3:Foo)
+Y --> f(#1:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo)
+C --> f(#3:Foo, #3:Foo, #4:Foo)
+
+Solution 370
+X --> f(#2:Foo, #3:Foo)
+Y --> #1:Foo
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo)
+C --> f(#3:Foo, #3:Foo)
+
+Solution 371
+X --> #2:Foo
+Y --> f(#1:Foo, #3:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #2:Foo)
+C --> #3:Foo
+
+Solution 372
+X --> f(#2:Foo, #4:Foo)
+Y --> f(#1:Foo, #3:Foo, #5:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 373
+X --> f(#2:Foo, #4:Foo)
+Y --> f(#1:Foo, #3:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo)
+
+Solution 374
+X --> #2:Foo
+Y --> f(#1:Foo, #3:Foo, #4:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 375
+X --> #2:Foo
+Y --> f(#1:Foo, #3:Foo)
+A --> #1:Foo
+B --> f(#2:Foo, #3:Foo)
+C --> #2:Foo
+
+Solution 376
+X --> f(#2:Foo, #3:Foo)
+Y --> f(#1:Foo, #4:Foo)
+A --> #1:Foo
+B --> #2:Foo
+C --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 377
+X --> f(#2:Foo, #3:Foo)
+Y --> #1:Foo
+A --> #1:Foo
+B --> #2:Foo
+C --> f(#2:Foo, #3:Foo, #3:Foo)
+
+Solution 378
+X --> #2:Foo
+Y --> f(#1:Foo, #3:Foo)
+A --> #1:Foo
+B --> #2:Foo
+C --> f(#2:Foo, #3:Foo)
+
+Solution 379
+X --> #2:Foo
+Y --> #1:Foo
+A --> #1:Foo
+B --> #2:Foo
+C --> #2:Foo
+
+Solution 380
+X --> #3:Foo
+Y --> f(#1:Foo, #2:Foo, #4:Foo)
+A --> #1:Foo
+B --> #2:Foo
+C --> f(#3:Foo, #3:Foo, #4:Foo)
+
+Solution 381
+X --> #3:Foo
+Y --> f(#1:Foo, #2:Foo)
+A --> #1:Foo
+B --> #2:Foo
+C --> f(#3:Foo, #3:Foo)
+==========================================
+unify in AC : f(X, X, Y) =? f(a, B, C) .
+
+Solution 1
+X --> f(a, #1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+B --> f(a, #1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 2
+X --> f(a, #1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+B --> f(a, #1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo)
+
+Solution 3
+X --> f(a, #1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+B --> f(a, #1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 4
+X --> f(a, #1:Foo, #2:Foo)
+Y --> #3:Foo
+B --> f(a, #1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> #2:Foo
+
+Solution 5
+X --> f(a, #1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+B --> f(a, #1:Foo, #1:Foo, #2:Foo)
+C --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 6
+X --> f(a, #1:Foo, #2:Foo)
+Y --> #3:Foo
+B --> f(a, #1:Foo, #1:Foo, #2:Foo)
+C --> f(#2:Foo, #3:Foo)
+
+Solution 7
+X --> f(a, #1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+B --> f(a, #1:Foo, #1:Foo, #2:Foo)
+C --> f(#3:Foo, #3:Foo, #4:Foo)
+
+Solution 8
+X --> f(a, #1:Foo, #3:Foo)
+Y --> #2:Foo
+B --> f(a, #1:Foo, #1:Foo, #2:Foo)
+C --> f(#3:Foo, #3:Foo)
+
+Solution 9
+X --> f(a, #1:Foo)
+Y --> f(#2:Foo, #3:Foo)
+B --> f(a, #1:Foo, #1:Foo, #2:Foo)
+C --> #3:Foo
+
+Solution 10
+X --> f(a, #1:Foo, #2:Foo)
+Y --> #3:Foo
+B --> f(a, #1:Foo, #1:Foo)
+C --> f(#2:Foo, #2:Foo, #3:Foo)
+
+Solution 11
+X --> f(a, #1:Foo)
+Y --> #2:Foo
+B --> f(a, #1:Foo, #1:Foo)
+C --> #2:Foo
+
+Solution 12
+X --> f(a, #1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+B --> f(a, #1:Foo, #2:Foo)
+C --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 13
+X --> f(a, #1:Foo, #3:Foo)
+Y --> #2:Foo
+B --> f(a, #1:Foo, #2:Foo)
+C --> f(#1:Foo, #3:Foo, #3:Foo)
+
+Solution 14
+X --> f(a, #1:Foo)
+Y --> f(#2:Foo, #3:Foo)
+B --> f(a, #1:Foo, #2:Foo)
+C --> f(#1:Foo, #3:Foo)
+
+Solution 15
+X --> f(a, #1:Foo)
+Y --> #2:Foo
+B --> f(a, #1:Foo, #2:Foo)
+C --> #1:Foo
+
+Solution 16
+X --> f(a, #1:Foo, #2:Foo)
+Y --> #3:Foo
+B --> f(a, #1:Foo)
+C --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo)
+
+Solution 17
+X --> f(a, #1:Foo)
+Y --> #2:Foo
+B --> f(a, #1:Foo)
+C --> f(#1:Foo, #2:Foo)
+
+Solution 18
+X --> f(a, #2:Foo)
+Y --> f(#1:Foo, #3:Foo)
+B --> f(a, #1:Foo)
+C --> f(#2:Foo, #2:Foo, #3:Foo)
+
+Solution 19
+X --> f(a, #2:Foo)
+Y --> #1:Foo
+B --> f(a, #1:Foo)
+C --> f(#2:Foo, #2:Foo)
+
+Solution 20
+X --> a
+Y --> f(#1:Foo, #2:Foo)
+B --> f(a, #1:Foo)
+C --> #2:Foo
+
+Solution 21
+X --> f(a, #1:Foo)
+Y --> #2:Foo
+B --> a
+C --> f(#1:Foo, #1:Foo, #2:Foo)
+
+Solution 22
+X --> a
+Y --> #1:Foo
+B --> a
+C --> #1:Foo
+
+Solution 23
+X --> f(a, #1:Foo, #2:Foo, #4:Foo)
+Y --> f(#3:Foo, #5:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> f(a, #2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 24
+X --> f(a, #1:Foo, #2:Foo, #4:Foo)
+Y --> #3:Foo
+B --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> f(a, #2:Foo, #4:Foo, #4:Foo)
+
+Solution 25
+X --> f(a, #1:Foo, #2:Foo)
+Y --> f(#3:Foo, #4:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> f(a, #2:Foo, #4:Foo)
+
+Solution 26
+X --> f(a, #1:Foo, #2:Foo)
+Y --> #3:Foo
+B --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> f(a, #2:Foo)
+
+Solution 27
+X --> f(a, #1:Foo, #2:Foo, #3:Foo)
+Y --> #4:Foo
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> f(a, #2:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 28
+X --> f(a, #1:Foo, #2:Foo)
+Y --> #3:Foo
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> f(a, #2:Foo, #3:Foo)
+
+Solution 29
+X --> f(a, #1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> f(a, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 30
+X --> f(a, #1:Foo, #3:Foo)
+Y --> #2:Foo
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> f(a, #3:Foo, #3:Foo)
+
+Solution 31
+X --> f(a, #1:Foo)
+Y --> f(#2:Foo, #3:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> f(a, #3:Foo)
+
+Solution 32
+X --> f(a, #1:Foo)
+Y --> #2:Foo
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> a
+
+Solution 33
+X --> f(a, #1:Foo, #2:Foo)
+Y --> #3:Foo
+B --> f(#1:Foo, #1:Foo)
+C --> f(a, #2:Foo, #2:Foo, #3:Foo)
+
+Solution 34
+X --> f(a, #1:Foo)
+Y --> #2:Foo
+B --> f(#1:Foo, #1:Foo)
+C --> f(a, #2:Foo)
+
+Solution 35
+X --> f(a, #1:Foo, #3:Foo)
+Y --> f(#2:Foo, #4:Foo)
+B --> f(#1:Foo, #2:Foo)
+C --> f(a, #1:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 36
+X --> f(a, #1:Foo, #3:Foo)
+Y --> #2:Foo
+B --> f(#1:Foo, #2:Foo)
+C --> f(a, #1:Foo, #3:Foo, #3:Foo)
+
+Solution 37
+X --> f(a, #1:Foo)
+Y --> f(#2:Foo, #3:Foo)
+B --> f(#1:Foo, #2:Foo)
+C --> f(a, #1:Foo, #3:Foo)
+
+Solution 38
+X --> f(a, #1:Foo)
+Y --> #2:Foo
+B --> f(#1:Foo, #2:Foo)
+C --> f(a, #1:Foo)
+
+Solution 39
+X --> f(a, #1:Foo, #2:Foo)
+Y --> #3:Foo
+B --> #1:Foo
+C --> f(a, #1:Foo, #2:Foo, #2:Foo, #3:Foo)
+
+Solution 40
+X --> f(a, #1:Foo)
+Y --> #2:Foo
+B --> #1:Foo
+C --> f(a, #1:Foo, #2:Foo)
+
+Solution 41
+X --> f(a, #2:Foo)
+Y --> f(#1:Foo, #3:Foo)
+B --> #1:Foo
+C --> f(a, #2:Foo, #2:Foo, #3:Foo)
+
+Solution 42
+X --> f(a, #2:Foo)
+Y --> #1:Foo
+B --> #1:Foo
+C --> f(a, #2:Foo, #2:Foo)
+
+Solution 43
+X --> a
+Y --> f(#1:Foo, #2:Foo)
+B --> #1:Foo
+C --> f(a, #2:Foo)
+
+Solution 44
+X --> a
+Y --> #1:Foo
+B --> #1:Foo
+C --> a
+
+Solution 45
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(a, #3:Foo, #5:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo, #5:Foo)
+
+Solution 46
+X --> f(#1:Foo, #2:Foo, #4:Foo)
+Y --> f(a, #3:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo, #4:Foo)
+
+Solution 47
+X --> f(#1:Foo, #2:Foo)
+Y --> f(a, #3:Foo, #4:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> f(#2:Foo, #4:Foo)
+
+Solution 48
+X --> f(#1:Foo, #2:Foo)
+Y --> f(a, #3:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo)
+C --> #2:Foo
+
+Solution 49
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> f(a, #4:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> f(#2:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 50
+X --> f(#1:Foo, #2:Foo, #3:Foo)
+Y --> a
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> f(#2:Foo, #3:Foo, #3:Foo)
+
+Solution 51
+X --> f(#1:Foo, #2:Foo)
+Y --> f(a, #3:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> f(#2:Foo, #3:Foo)
+
+Solution 52
+X --> f(#1:Foo, #2:Foo)
+Y --> a
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> #2:Foo
+
+Solution 53
+X --> f(#1:Foo, #3:Foo)
+Y --> f(a, #2:Foo, #4:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> f(#3:Foo, #3:Foo, #4:Foo)
+
+Solution 54
+X --> f(#1:Foo, #3:Foo)
+Y --> f(a, #2:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> f(#3:Foo, #3:Foo)
+
+Solution 55
+X --> #1:Foo
+Y --> f(a, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #1:Foo, #2:Foo)
+C --> #3:Foo
+
+Solution 56
+X --> f(#1:Foo, #2:Foo)
+Y --> f(a, #3:Foo)
+B --> f(#1:Foo, #1:Foo)
+C --> f(#2:Foo, #2:Foo, #3:Foo)
+
+Solution 57
+X --> f(#1:Foo, #2:Foo)
+Y --> a
+B --> f(#1:Foo, #1:Foo)
+C --> f(#2:Foo, #2:Foo)
+
+Solution 58
+X --> #1:Foo
+Y --> f(a, #2:Foo)
+B --> f(#1:Foo, #1:Foo)
+C --> #2:Foo
+
+Solution 59
+X --> f(#1:Foo, #3:Foo)
+Y --> f(a, #2:Foo, #4:Foo)
+B --> f(#1:Foo, #2:Foo)
+C --> f(#1:Foo, #3:Foo, #3:Foo, #4:Foo)
+
+Solution 60
+X --> f(#1:Foo, #3:Foo)
+Y --> f(a, #2:Foo)
+B --> f(#1:Foo, #2:Foo)
+C --> f(#1:Foo, #3:Foo, #3:Foo)
+
+Solution 61
+X --> #1:Foo
+Y --> f(a, #2:Foo, #3:Foo)
+B --> f(#1:Foo, #2:Foo)
+C --> f(#1:Foo, #3:Foo)
+
+Solution 62
+X --> #1:Foo
+Y --> f(a, #2:Foo)
+B --> f(#1:Foo, #2:Foo)
+C --> #1:Foo
+
+Solution 63
+X --> f(#1:Foo, #2:Foo)
+Y --> f(a, #3:Foo)
+B --> #1:Foo
+C --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo)
+
+Solution 64
+X --> f(#1:Foo, #2:Foo)
+Y --> a
+B --> #1:Foo
+C --> f(#1:Foo, #2:Foo, #2:Foo)
+
+Solution 65
+X --> #1:Foo
+Y --> f(a, #2:Foo)
+B --> #1:Foo
+C --> f(#1:Foo, #2:Foo)
+
+Solution 66
+X --> #1:Foo
+Y --> a
+B --> #1:Foo
+C --> #1:Foo
+
+Solution 67
+X --> #2:Foo
+Y --> f(a, #1:Foo, #3:Foo)
+B --> #1:Foo
+C --> f(#2:Foo, #2:Foo, #3:Foo)
+
+Solution 68
+X --> #2:Foo
+Y --> f(a, #1:Foo)
+B --> #1:Foo
+C --> f(#2:Foo, #2:Foo)
+==========================================
+unify in AC : f(X, X, X) =? f(a, a) .
+No unifier.
+==========================================
+unify in AC : f(X, X, X, Y) =? f(a, a) .
+No unifier.
+==========================================
+unify in AC2 : f(A, B) =? f(C, D) .
+
+Solution 1
+A --> #1:Elt
+B --> #2:Elt
+C --> #1:Elt
+D --> #2:Elt
+
+Solution 2
+A --> #1:Elt
+B --> #2:Elt
+C --> #2:Elt
+D --> #1:Elt
+==========================================
+unify in AC2 : f(X, A) =? f(Y, B) .
+
+Solution 1
+A --> #1:Elt
+X --> #2:Set
+B --> #1:Elt
+Y --> #2:Set
+
+Solution 2
+A --> #1:Elt
+X --> f(#2:Elt, #3:Set)
+B --> #2:Elt
+Y --> f(#1:Elt, #3:Set)
+
+Solution 3
+A --> #1:Elt
+X --> #2:Elt
+B --> #2:Elt
+Y --> #1:Elt
+==========================================
+unify in AC2 : f(g(X, Y), g(X, Z), U) =? f(g(Y, Z), V) .
+
+Solution 1
+U --> f(#4:Set, g(#3:Set, #2:Set))
+X --> #1:Set
+Z --> #2:Set
+Y --> #3:Set
+V --> f(#4:Set, g(#1:Set, #2:Set), g(#1:Set, #3:Set))
+
+Solution 2
+U --> #2:Set
+X --> #1:Set
+Z --> #1:Set
+Y --> #1:Set
+V --> f(#2:Set, g(#1:Set, #1:Set))
+
+Solution 3
+U --> #3:Set
+X --> #2:Set
+Z --> #1:Set
+Y --> #2:Set
+V --> f(#3:Set, g(#2:Set, #2:Set))
+
+Solution 4
+U --> g(#3:Set, #2:Set)
+X --> #1:Set
+Z --> #2:Set
+Y --> #3:Set
+V --> f(g(#1:Set, #2:Set), g(#1:Set, #3:Set))
+==========================================
+unify in AC2 : g(f(X, Y), f(X, U, Z)) =? g(f(U, V), f(W, A)) .
+
+Solution 1
+X --> f(#3:Set, #4:Set)
+Y --> f(#5:Set, #6:Set)
+Z --> f(#1:Elt, #2:Set)
+U --> f(#3:Set, #5:Set)
+V --> f(#4:Set, #6:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set, #5:Set)
+
+Solution 2
+X --> f(#3:Set, #4:Set)
+Y --> #5:Set
+Z --> f(#1:Elt, #2:Set)
+U --> f(#3:Set, #5:Set)
+V --> #4:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set, #5:Set)
+
+Solution 3
+X --> f(#3:Set, #4:Set)
+Y --> #5:Set
+Z --> f(#1:Elt, #2:Set)
+U --> #3:Set
+V --> f(#4:Set, #5:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set)
+
+Solution 4
+X --> #3:Set
+Y --> f(#4:Set, #5:Set)
+Z --> f(#1:Elt, #2:Set)
+U --> f(#3:Set, #4:Set)
+V --> #5:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set)
+
+Solution 5
+X --> #3:Set
+Y --> #4:Set
+Z --> f(#1:Elt, #2:Set)
+U --> #3:Set
+V --> #4:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set)
+
+Solution 6
+X --> #3:Set
+Y --> f(#4:Set, #5:Set)
+Z --> f(#1:Elt, #2:Set)
+U --> #4:Set
+V --> f(#3:Set, #5:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #4:Set)
+
+Solution 7
+X --> #3:Set
+Y --> #4:Set
+Z --> f(#1:Elt, #2:Set)
+U --> #4:Set
+V --> #3:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #4:Set)
+
+Solution 8
+X --> f(#2:Set, #3:Set)
+Y --> f(#4:Set, #5:Set)
+Z --> #1:Elt
+U --> f(#2:Set, #4:Set)
+V --> f(#3:Set, #5:Set)
+A --> #1:Elt
+W --> f(#2:Set, #2:Set, #3:Set, #4:Set)
+
+Solution 9
+X --> f(#2:Set, #3:Set)
+Y --> #4:Set
+Z --> #1:Elt
+U --> f(#2:Set, #4:Set)
+V --> #3:Set
+A --> #1:Elt
+W --> f(#2:Set, #2:Set, #3:Set, #4:Set)
+
+Solution 10
+X --> f(#2:Set, #3:Set)
+Y --> #4:Set
+Z --> #1:Elt
+U --> #2:Set
+V --> f(#3:Set, #4:Set)
+A --> #1:Elt
+W --> f(#2:Set, #2:Set, #3:Set)
+
+Solution 11
+X --> #2:Set
+Y --> f(#3:Set, #4:Set)
+Z --> #1:Elt
+U --> f(#2:Set, #3:Set)
+V --> #4:Set
+A --> #1:Elt
+W --> f(#2:Set, #2:Set, #3:Set)
+
+Solution 12
+X --> #2:Set
+Y --> #3:Set
+Z --> #1:Elt
+U --> #2:Set
+V --> #3:Set
+A --> #1:Elt
+W --> f(#2:Set, #2:Set)
+
+Solution 13
+X --> #2:Set
+Y --> f(#3:Set, #4:Set)
+Z --> #1:Elt
+U --> #3:Set
+V --> f(#2:Set, #4:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set)
+
+Solution 14
+X --> #2:Set
+Y --> #3:Set
+Z --> #1:Elt
+U --> #3:Set
+V --> #2:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set)
+
+Solution 15
+X --> f(#1:Elt, #3:Set, #4:Set)
+Y --> f(#5:Set, #6:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set, #5:Set)
+V --> f(#4:Set, #6:Set)
+A --> #1:Elt
+W --> f(#1:Elt, #2:Set, #3:Set, #3:Set, #4:Set, #5:Set)
+
+Solution 16
+X --> f(#1:Elt, #3:Set, #4:Set)
+Y --> #5:Set
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set, #5:Set)
+V --> #4:Set
+A --> #1:Elt
+W --> f(#1:Elt, #2:Set, #3:Set, #3:Set, #4:Set, #5:Set)
+
+Solution 17
+X --> f(#1:Elt, #3:Set, #4:Set)
+Y --> #5:Set
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set)
+V --> f(#4:Set, #5:Set)
+A --> #1:Elt
+W --> f(#1:Elt, #2:Set, #3:Set, #3:Set, #4:Set)
+
+Solution 18
+X --> f(#1:Elt, #3:Set)
+Y --> f(#4:Set, #5:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set, #4:Set)
+V --> #5:Set
+A --> #1:Elt
+W --> f(#1:Elt, #2:Set, #3:Set, #3:Set, #4:Set)
+
+Solution 19
+X --> f(#1:Elt, #3:Set)
+Y --> #4:Set
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set)
+V --> #4:Set
+A --> #1:Elt
+W --> f(#1:Elt, #2:Set, #3:Set, #3:Set)
+
+Solution 20
+X --> f(#1:Elt, #3:Set)
+Y --> f(#4:Set, #5:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #4:Set)
+V --> f(#3:Set, #5:Set)
+A --> #1:Elt
+W --> f(#1:Elt, #2:Set, #3:Set, #4:Set)
+
+Solution 21
+X --> f(#1:Elt, #3:Set)
+Y --> #4:Set
+Z --> #2:Set
+U --> f(#1:Elt, #4:Set)
+V --> #3:Set
+A --> #1:Elt
+W --> f(#1:Elt, #2:Set, #3:Set, #4:Set)
+
+Solution 22
+X --> f(#1:Elt, #3:Set)
+Y --> #4:Set
+Z --> #2:Set
+U --> #1:Elt
+V --> f(#3:Set, #4:Set)
+A --> #1:Elt
+W --> f(#1:Elt, #2:Set, #3:Set)
+
+Solution 23
+X --> #1:Elt
+Y --> f(#3:Set, #4:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set)
+V --> #4:Set
+A --> #1:Elt
+W --> f(#1:Elt, #2:Set, #3:Set)
+
+Solution 24
+X --> #1:Elt
+Y --> #3:Set
+Z --> #2:Set
+U --> #1:Elt
+V --> #3:Set
+A --> #1:Elt
+W --> f(#1:Elt, #2:Set)
+
+Solution 25
+X --> f(#1:Elt, #3:Set, #4:Set)
+Y --> f(#5:Set, #6:Set)
+Z --> #2:Set
+U --> f(#3:Set, #5:Set)
+V --> f(#1:Elt, #4:Set, #6:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set, #5:Set)
+
+Solution 26
+X --> f(#1:Elt, #3:Set, #4:Set)
+Y --> #5:Set
+Z --> #2:Set
+U --> f(#3:Set, #5:Set)
+V --> f(#1:Elt, #4:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set, #5:Set)
+
+Solution 27
+X --> f(#1:Elt, #3:Set, #4:Set)
+Y --> #5:Set
+Z --> #2:Set
+U --> #3:Set
+V --> f(#1:Elt, #4:Set, #5:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set)
+
+Solution 28
+X --> f(#1:Elt, #3:Set)
+Y --> f(#4:Set, #5:Set)
+Z --> #2:Set
+U --> f(#3:Set, #4:Set)
+V --> f(#1:Elt, #5:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set)
+
+Solution 29
+X --> f(#1:Elt, #3:Set)
+Y --> #4:Set
+Z --> #2:Set
+U --> f(#3:Set, #4:Set)
+V --> #1:Elt
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set)
+
+Solution 30
+X --> f(#1:Elt, #3:Set)
+Y --> #4:Set
+Z --> #2:Set
+U --> #3:Set
+V --> f(#1:Elt, #4:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set)
+
+Solution 31
+X --> f(#1:Elt, #3:Set)
+Y --> f(#4:Set, #5:Set)
+Z --> #2:Set
+U --> #4:Set
+V --> f(#1:Elt, #3:Set, #5:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #4:Set)
+
+Solution 32
+X --> f(#1:Elt, #3:Set)
+Y --> #4:Set
+Z --> #2:Set
+U --> #4:Set
+V --> f(#1:Elt, #3:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #4:Set)
+
+Solution 33
+X --> #1:Elt
+Y --> f(#3:Set, #4:Set)
+Z --> #2:Set
+U --> #3:Set
+V --> f(#1:Elt, #4:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set)
+
+Solution 34
+X --> #1:Elt
+Y --> #3:Set
+Z --> #2:Set
+U --> #3:Set
+V --> #1:Elt
+A --> #1:Elt
+W --> f(#2:Set, #3:Set)
+
+Solution 35
+X --> f(#3:Set, #4:Set)
+Y --> f(#1:Elt, #5:Set, #6:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set, #5:Set)
+V --> f(#4:Set, #6:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set, #5:Set)
+
+Solution 36
+X --> f(#3:Set, #4:Set)
+Y --> f(#1:Elt, #5:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set, #5:Set)
+V --> #4:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set, #5:Set)
+
+Solution 37
+X --> f(#3:Set, #4:Set)
+Y --> f(#1:Elt, #5:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set)
+V --> f(#4:Set, #5:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set)
+
+Solution 38
+X --> f(#3:Set, #4:Set)
+Y --> #1:Elt
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set)
+V --> #4:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set)
+
+Solution 39
+X --> #3:Set
+Y --> f(#1:Elt, #4:Set, #5:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set, #4:Set)
+V --> #5:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set, #4:Set)
+
+Solution 40
+X --> #3:Set
+Y --> f(#1:Elt, #4:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #3:Set)
+V --> #4:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #3:Set)
+
+Solution 41
+X --> #3:Set
+Y --> f(#1:Elt, #4:Set, #5:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #4:Set)
+V --> f(#3:Set, #5:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #4:Set)
+
+Solution 42
+X --> #3:Set
+Y --> f(#1:Elt, #4:Set)
+Z --> #2:Set
+U --> f(#1:Elt, #4:Set)
+V --> #3:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set, #4:Set)
+
+Solution 43
+X --> #3:Set
+Y --> f(#1:Elt, #4:Set)
+Z --> #2:Set
+U --> #1:Elt
+V --> f(#3:Set, #4:Set)
+A --> #1:Elt
+W --> f(#2:Set, #3:Set)
+
+Solution 44
+X --> #3:Set
+Y --> #1:Elt
+Z --> #2:Set
+U --> #1:Elt
+V --> #3:Set
+A --> #1:Elt
+W --> f(#2:Set, #3:Set)
+==========================================
+unify in AC+C : f(g(X, Y), g(X, Z), U) =? f(g(Y, Z), V) .
+
+Solution 1
+U --> f(#4:Set, g(#1:Set, #3:Set))
+Z --> #1:Set
+X --> #2:Set
+Y --> #3:Set
+V --> f(#4:Set, g(#1:Set, #2:Set), g(#2:Set, #3:Set))
+
+Solution 2
+U --> #3:Set
+Z --> #1:Set
+X --> #1:Set
+Y --> #2:Set
+V --> f(#3:Set, g(#1:Set, #1:Set))
+
+Solution 3
+U --> #3:Set
+Z --> #1:Set
+X --> #2:Set
+Y --> #2:Set
+V --> f(#3:Set, g(#2:Set, #2:Set))
+
+Solution 4
+U --> g(#1:Set, #3:Set)
+Z --> #1:Set
+X --> #2:Set
+Y --> #3:Set
+V --> f(g(#1:Set, #2:Set), g(#2:Set, #3:Set))
+==========================================
+unify in AC+C : g(f(X, Y), f(X, U, Z)) =? g(f(U, V), f(W, A)) .
+
+Solution 1
+X --> f(#3:Set, #4:Set)
+Y --> f(#5:Set, #6:Set)
+Z --> f(#1:Set, #2:Elt)
+U --> f(#3:Set, #5:Set)
+V --> f(#4:Set, #6:Set)
+W --> f(#1:Set, #3:Set, #3:Set, #4:Set, #5:Set)
+A --> #2:Elt
+
+Solution 2
+X --> f(#3:Set, #4:Set)
+Y --> #5:Set
+Z --> f(#1:Set, #2:Elt)
+U --> f(#3:Set, #5:Set)
+V --> #4:Set
+W --> f(#1:Set, #3:Set, #3:Set, #4:Set, #5:Set)
+A --> #2:Elt
+
+Solution 3
+X --> f(#3:Set, #4:Set)
+Y --> #5:Set
+Z --> f(#1:Set, #2:Elt)
+U --> #3:Set
+V --> f(#4:Set, #5:Set)
+W --> f(#1:Set, #3:Set, #3:Set, #4:Set)
+A --> #2:Elt
+
+Solution 4
+X --> #3:Set
+Y --> f(#4:Set, #5:Set)
+Z --> f(#1:Set, #2:Elt)
+U --> f(#3:Set, #4:Set)
+V --> #5:Set
+W --> f(#1:Set, #3:Set, #3:Set, #4:Set)
+A --> #2:Elt
+
+Solution 5
+X --> #3:Set
+Y --> #4:Set
+Z --> f(#1:Set, #2:Elt)
+U --> #3:Set
+V --> #4:Set
+W --> f(#1:Set, #3:Set, #3:Set)
+A --> #2:Elt
+
+Solution 6
+X --> #3:Set
+Y --> f(#4:Set, #5:Set)
+Z --> f(#1:Set, #2:Elt)
+U --> #4:Set
+V --> f(#3:Set, #5:Set)
+W --> f(#1:Set, #3:Set, #4:Set)
+A --> #2:Elt
+
+Solution 7
+X --> #3:Set
+Y --> #4:Set
+Z --> f(#1:Set, #2:Elt)
+U --> #4:Set
+V --> #3:Set
+W --> f(#1:Set, #3:Set, #4:Set)
+A --> #2:Elt
+
+Solution 8
+X --> f(#2:Set, #3:Elt, #4:Set)
+Y --> f(#5:Set, #6:Set)
+Z --> #1:Set
+U --> f(#2:Set, #3:Elt, #5:Set)
+V --> f(#4:Set, #6:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Elt, #4:Set, #5:Set)
+A --> #3:Elt
+
+Solution 9
+X --> f(#2:Set, #3:Elt, #4:Set)
+Y --> #5:Set
+Z --> #1:Set
+U --> f(#2:Set, #3:Elt, #5:Set)
+V --> #4:Set
+W --> f(#1:Set, #2:Set, #2:Set, #3:Elt, #4:Set, #5:Set)
+A --> #3:Elt
+
+Solution 10
+X --> f(#2:Set, #3:Elt, #4:Set)
+Y --> #5:Set
+Z --> #1:Set
+U --> f(#2:Set, #3:Elt)
+V --> f(#4:Set, #5:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Elt, #4:Set)
+A --> #3:Elt
+
+Solution 11
+X --> f(#2:Set, #3:Elt)
+Y --> f(#4:Set, #5:Set)
+Z --> #1:Set
+U --> f(#2:Set, #3:Elt, #4:Set)
+V --> #5:Set
+W --> f(#1:Set, #2:Set, #2:Set, #3:Elt, #4:Set)
+A --> #3:Elt
+
+Solution 12
+X --> f(#2:Set, #3:Elt)
+Y --> #4:Set
+Z --> #1:Set
+U --> f(#2:Set, #3:Elt)
+V --> #4:Set
+W --> f(#1:Set, #2:Set, #2:Set, #3:Elt)
+A --> #3:Elt
+
+Solution 13
+X --> f(#2:Set, #3:Set, #4:Elt)
+Y --> f(#5:Set, #6:Set)
+Z --> #1:Set
+U --> f(#2:Set, #5:Set)
+V --> f(#3:Set, #4:Elt, #6:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #5:Set)
+A --> #4:Elt
+
+Solution 14
+X --> f(#2:Set, #3:Set, #4:Elt)
+Y --> #5:Set
+Z --> #1:Set
+U --> f(#2:Set, #5:Set)
+V --> f(#3:Set, #4:Elt)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #5:Set)
+A --> #4:Elt
+
+Solution 15
+X --> f(#2:Set, #3:Set, #4:Elt)
+Y --> #5:Set
+Z --> #1:Set
+U --> #2:Set
+V --> f(#3:Set, #4:Elt, #5:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
+Solution 16
+X --> f(#2:Set, #3:Set)
+Y --> f(#4:Set, #5:Elt, #6:Set)
+Z --> #1:Set
+U --> f(#2:Set, #4:Set, #5:Elt)
+V --> f(#3:Set, #6:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #4:Set)
+A --> #5:Elt
+
+Solution 17
+X --> f(#2:Set, #3:Set)
+Y --> f(#4:Set, #5:Elt)
+Z --> #1:Set
+U --> f(#2:Set, #4:Set, #5:Elt)
+V --> #3:Set
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #4:Set)
+A --> #5:Elt
+
+Solution 18
+X --> f(#2:Set, #3:Set)
+Y --> f(#4:Elt, #5:Set)
+Z --> #1:Set
+U --> f(#2:Set, #4:Elt)
+V --> f(#3:Set, #5:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
+Solution 19
+X --> f(#2:Set, #3:Set)
+Y --> #4:Elt
+Z --> #1:Set
+U --> f(#2:Set, #4:Elt)
+V --> #3:Set
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
+Solution 20
+X --> f(#2:Set, #3:Elt)
+Y --> f(#4:Set, #5:Set)
+Z --> #1:Set
+U --> f(#2:Set, #4:Set)
+V --> f(#3:Elt, #5:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #4:Set)
+A --> #3:Elt
+
+Solution 21
+X --> f(#2:Set, #3:Elt)
+Y --> #4:Set
+Z --> #1:Set
+U --> f(#2:Set, #4:Set)
+V --> #3:Elt
+W --> f(#1:Set, #2:Set, #2:Set, #4:Set)
+A --> #3:Elt
+
+Solution 22
+X --> f(#2:Set, #3:Elt)
+Y --> #4:Set
+Z --> #1:Set
+U --> #2:Set
+V --> f(#3:Elt, #4:Set)
+W --> f(#1:Set, #2:Set, #2:Set)
+A --> #3:Elt
+
+Solution 23
+X --> #2:Set
+Y --> f(#3:Set, #4:Elt, #5:Set)
+Z --> #1:Set
+U --> f(#2:Set, #3:Set, #4:Elt)
+V --> #5:Set
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
+Solution 24
+X --> #2:Set
+Y --> f(#3:Elt, #4:Set)
+Z --> #1:Set
+U --> f(#2:Set, #3:Elt)
+V --> #4:Set
+W --> f(#1:Set, #2:Set, #2:Set)
+A --> #3:Elt
+
+Solution 25
+X --> f(#2:Elt, #3:Set)
+Y --> f(#4:Set, #5:Set)
+Z --> #1:Set
+U --> f(#2:Elt, #4:Set)
+V --> f(#3:Set, #5:Set)
+W --> f(#1:Set, #2:Elt, #3:Set, #4:Set)
+A --> #2:Elt
+
+Solution 26
+X --> f(#2:Elt, #3:Set)
+Y --> #4:Set
+Z --> #1:Set
+U --> f(#2:Elt, #4:Set)
+V --> #3:Set
+W --> f(#1:Set, #2:Elt, #3:Set, #4:Set)
+A --> #2:Elt
+
+Solution 27
+X --> f(#2:Elt, #3:Set)
+Y --> #4:Set
+Z --> #1:Set
+U --> #2:Elt
+V --> f(#3:Set, #4:Set)
+W --> f(#1:Set, #2:Elt, #3:Set)
+A --> #2:Elt
+
+Solution 28
+X --> #2:Elt
+Y --> f(#3:Set, #4:Set)
+Z --> #1:Set
+U --> f(#2:Elt, #3:Set)
+V --> #4:Set
+W --> f(#1:Set, #2:Elt, #3:Set)
+A --> #2:Elt
+
+Solution 29
+X --> #2:Elt
+Y --> #3:Set
+Z --> #1:Set
+U --> #2:Elt
+V --> #3:Set
+W --> f(#1:Set, #2:Elt)
+A --> #2:Elt
+
+Solution 30
+X --> f(#2:Set, #3:Elt)
+Y --> f(#4:Set, #5:Set)
+Z --> #1:Set
+U --> #4:Set
+V --> f(#2:Set, #3:Elt, #5:Set)
+W --> f(#1:Set, #2:Set, #4:Set)
+A --> #3:Elt
+
+Solution 31
+X --> f(#2:Set, #3:Elt)
+Y --> #4:Set
+Z --> #1:Set
+U --> #4:Set
+V --> f(#2:Set, #3:Elt)
+W --> f(#1:Set, #2:Set, #4:Set)
+A --> #3:Elt
+
+Solution 32
+X --> #2:Set
+Y --> f(#3:Set, #4:Elt, #5:Set)
+Z --> #1:Set
+U --> f(#3:Set, #4:Elt)
+V --> f(#2:Set, #5:Set)
+W --> f(#1:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
+Solution 33
+X --> #2:Set
+Y --> f(#3:Set, #4:Elt)
+Z --> #1:Set
+U --> f(#3:Set, #4:Elt)
+V --> #2:Set
+W --> f(#1:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
+Solution 34
+X --> #2:Set
+Y --> f(#3:Elt, #4:Set)
+Z --> #1:Set
+U --> #3:Elt
+V --> f(#2:Set, #4:Set)
+W --> f(#1:Set, #2:Set)
+A --> #3:Elt
+
+Solution 35
+X --> #2:Set
+Y --> #3:Elt
+Z --> #1:Set
+U --> #3:Elt
+V --> #2:Set
+W --> f(#1:Set, #2:Set)
+A --> #3:Elt
+
+Solution 36
+X --> #2:Elt
+Y --> f(#3:Set, #4:Set)
+Z --> #1:Set
+U --> #3:Set
+V --> f(#2:Elt, #4:Set)
+W --> f(#1:Set, #3:Set)
+A --> #2:Elt
+
+Solution 37
+X --> #2:Elt
+Y --> #3:Set
+Z --> #1:Set
+U --> #3:Set
+V --> #2:Elt
+W --> f(#1:Set, #3:Set)
+A --> #2:Elt
+
+Solution 38
+X --> f(#2:Set, #3:Set)
+Y --> f(#4:Set, #5:Set)
+Z --> #1:Elt
+U --> f(#2:Set, #4:Set)
+V --> f(#3:Set, #5:Set)
+W --> f(#2:Set, #2:Set, #3:Set, #4:Set)
+A --> #1:Elt
+
+Solution 39
+X --> f(#2:Set, #3:Set)
+Y --> #4:Set
+Z --> #1:Elt
+U --> f(#2:Set, #4:Set)
+V --> #3:Set
+W --> f(#2:Set, #2:Set, #3:Set, #4:Set)
+A --> #1:Elt
+
+Solution 40
+X --> f(#2:Set, #3:Set)
+Y --> #4:Set
+Z --> #1:Elt
+U --> #2:Set
+V --> f(#3:Set, #4:Set)
+W --> f(#2:Set, #2:Set, #3:Set)
+A --> #1:Elt
+
+Solution 41
+X --> #2:Set
+Y --> f(#3:Set, #4:Set)
+Z --> #1:Elt
+U --> f(#2:Set, #3:Set)
+V --> #4:Set
+W --> f(#2:Set, #2:Set, #3:Set)
+A --> #1:Elt
+
+Solution 42
+X --> #2:Set
+Y --> #3:Set
+Z --> #1:Elt
+U --> #2:Set
+V --> #3:Set
+W --> f(#2:Set, #2:Set)
+A --> #1:Elt
+
+Solution 43
+X --> #2:Set
+Y --> f(#3:Set, #4:Set)
+Z --> #1:Elt
+U --> #3:Set
+V --> f(#2:Set, #4:Set)
+W --> f(#2:Set, #3:Set)
+A --> #1:Elt
+
+Solution 44
+X --> #2:Set
+Y --> #3:Set
+Z --> #1:Elt
+U --> #3:Set
+V --> #2:Set
+W --> f(#2:Set, #3:Set)
+A --> #1:Elt
+
+Solution 45
+X --> f(#3:Set, #4:Elt)
+Y --> #5:Set
+Z --> #2:Set
+U --> #1:Set
+V --> f(#2:Set, #3:Set, #4:Elt)
+W --> f(#3:Set, #5:Set)
+A --> #4:Elt
+
+Solution 46
+X --> #3:Set
+Y --> f(#4:Set, #5:Elt)
+Z --> #2:Set
+U --> #1:Set
+V --> f(#2:Set, #3:Set)
+W --> f(#3:Set, #4:Set)
+A --> #5:Elt
+
+Solution 47
+X --> #3:Set
+Y --> #4:Elt
+Z --> #2:Set
+U --> #1:Set
+V --> f(#2:Set, #3:Set)
+W --> #3:Set
+A --> #4:Elt
+
+Solution 48
+X --> #3:Elt
+Y --> #4:Set
+Z --> #2:Set
+U --> #1:Set
+V --> f(#2:Set, #3:Elt)
+W --> #4:Set
+A --> #3:Elt
+==========================================
+unify in SIMULT : g(X:Foo) =? g(Y:Foo) /\ h(X:Foo) =? h(Z:Foo) .
+
+Solution 1
+X:Foo --> #1:Foo
+Y:Foo --> #1:Foo
+Z:Foo --> #1:Foo
+==========================================
+unify in SIMULT : g(X:Foo) =? Y:Foo /\ h(X:Foo) =? h(Z:Foo) .
+
+Solution 1
+X:Foo --> #1:Foo
+Y:Foo --> g(#1:Foo)
+Z:Foo --> #1:Foo
+==========================================
+unify in SIMULT : g(X:Foo) =? Y:Foo /\ h(X:Foo) =? h(Y:Foo) .
+No unifier.
+==========================================
+unify in SIMULT : g(X:Foo) =? Y:Foo /\ X:Foo =? h(Y:Foo) .
+No unifier.
+==========================================
+unify [1] in SIMULT : g(X:Foo) =? Y:Foo /\ h(X:Foo) =? h(Z:Foo) .
+
+Solution 1
+X:Foo --> #1:Foo
+Y:Foo --> g(#1:Foo)
+Z:Foo --> #1:Foo
+Maude> Bye.

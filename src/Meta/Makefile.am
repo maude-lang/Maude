@@ -39,6 +39,7 @@ EXTRA_DIST = \
 	metaMatch.cc \
 	metaUnify.cc \
 	metaSearch.cc \
+	metaNarrow.cc \
 	descentSignature.cc
 
 noinst_HEADERS = \

@@ -67,12 +67,12 @@ RewriteConditionFragment::check(VariableInfo& variableInfo, NatSet& boundVariabl
 {
   NatSet unboundVariables;
 
-  lhs->normalize(false);
+  lhs = lhs->normalize(false);
   lhs->indexVariables(variableInfo);
   variableInfo.addConditionVariables(lhs->occursBelow());
   unboundVariables.insert(lhs->occursBelow());
 
-  rhs->normalize(true);
+  rhs = rhs->normalize(true);
   rhs->indexVariables(variableInfo);
   variableInfo.addConditionVariables(rhs->occursBelow());
       

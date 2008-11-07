@@ -89,11 +89,13 @@ public:
     MAKE_METADATA_ATTRIBUTE,
     MAKE_NONEXEC_ATTRIBUTE,
     MAKE_OWISE_ATTRIBUTE,
+    MAKE_PRINT_ATTRIBUTE,
     MAKE_ATTRIBUTE_LIST,
     //
     //	Command construction actions.
     //
     CONDITIONAL_COMMAND,
+    UNIFY_LIST,
     //
     //	Strategy expression construction actions
     //
@@ -108,7 +110,9 @@ public:
     MAKE_TEST,
     MAKE_STRATEGY_LIST,
 
-    MAKE_SUBSTITUTION
+    MAKE_SUBSTITUTION,
+
+    MAKE_PRINT_LIST
   };
 
   MixfixParser(MixfixModule& client);
@@ -148,7 +152,7 @@ public:
   void makeMatchCommand(Term*& pattern,
 			Term*& subject,
 			Vector<ConditionFragment*>& condition);
-  void makeUnifyCommand(Term*& lhs, Term*& rhs);
+  void makeUnifyCommand(Vector<Term*>& lhs, Vector<Term*>& rhs);
   void makeSearchCommand(Term*& initial,
 			 int& searchType,
 			 Term*& target,
@@ -166,10 +170,12 @@ public:
 
 private:
   typedef map<int,int> IntMap;
+
   enum Flags
   {
     NONEXEC = 1,
-    OWISE = 2
+    OWISE = 2,
+    PRINT = 4
   };
 
   struct Action
@@ -185,8 +191,19 @@ private:
   ConditionFragment* makeConditionFragment(int node);
   void makeCondition(int node, Vector<ConditionFragment*>& condition);
   void makeStatement(int node);
-  void makeAttributePart(int node, int& label, int& metadata, FlagSet& flags);
-  void makeStatementPart(int node, int label, int metadata, FlagSet& flags);
+  void makeAttributePart(int node,
+			 int& label,
+			 int& metadata,
+			 FlagSet& flags,
+			 Vector<int>& printNames,
+			 Vector<Sort*>& printSorts);
+  void makePrintList(int node, Vector<int>& names, Vector<Sort*>& sorts);
+  void makeStatementPart(int node,
+			 int label,
+			 int metadata,
+			 FlagSet& flags,
+			 const Vector<int>& printNames,
+			 const Vector<Sort*>& printSorts);
   void makeStrategyList(int node, Vector<StrategyExpression*>& strategies);
 
   int translateSpecialToken(int code);

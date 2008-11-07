@@ -31,6 +31,7 @@
 //	forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "variable.hh"
 
 //	interface class definitions
 #include "symbol.hh"
@@ -38,6 +39,8 @@
 
 //      core class definitions
 #include "substitution.hh"
+#include "narrowingVariableInfo.hh"
+#include "unificationContext.hh"
 
 //	variable class definitions
 #include "variableSymbol.hh"
@@ -119,32 +122,131 @@ VariableDagNode::stackArguments(Vector<RedexPosition>& /* stack */,
 {
 }
 
-bool
-VariableDagNode::unify(DagNode* rhs,
-		       Substitution& solution,
-		       Subproblem*& returnedSubproblem,
-		       ExtensionInfo* extensionInfo)
+//
+//	Unification code.
+//
+
+DagNode::ReturnResult
+VariableDagNode::computeBaseSortForGroundSubterms()
 {
-  if (DagNode* b = solution.value(index))
-    return b->unify(rhs, solution, returnedSubproblem, 0);
-  returnedSubproblem = 0;
-  return solution.unificationBind(index, safeCast(VariableSymbol*, symbol())->getSort(), rhs);
+  return NONGROUND;
 }
 
 bool
-VariableDagNode::computeBaseSortForGroundSubterms()
+VariableDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
 {
-  return false;
+  VariableDagNode* lv = lastVariableInChain(solution);
+  if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(rhs))
+    {
+      //
+      //	Variable against variable case.
+      //
+      VariableDagNode* rv = v->lastVariableInChain(solution);
+      if (rv->index == lv->index)  // unifying a variable with itself
+	return true;
+      DagNode* lt = solution.value(lv->index);
+      if (lt == 0)  // left variable unbound
+	{
+	  solution.unificationBind(lv, rv);
+	  return true;
+	}
+      DagNode* rt = solution.value(rv->index);
+      if (rt == 0)  // right variable unbound
+	{
+	  solution.unificationBind(rv, lv);
+	  return true;
+	}
+      //
+      //	Hard case - two variable chains with solved forms.
+      //	In order to ensure termination we keep the smaller
+      //	solved form.
+      //
+      //	Suppose lt >= rt. Notionally we add lv =? rv to the mix.
+      //	Then we have:
+      //	  lv =? rv, lv =? lt, rv =? rt
+      //	By coalesce of lv and rv, we replace lv by rv, recording lv |-> rv and we get:
+      //	  lv |-> rv, rv =? lt, rv =? rt
+      //	and by merge on rv we get:
+      //	  lv |-> rv, rv =? rt, lt =? rt
+      //	which we implement by making the lv |-> rv binding followed
+      //	by a recursive call to resolve lt =? rt. The lt >= rt case
+      //	is almost symmetric.
+      //	
+      if (lt->nonVariableSize() >= rt->nonVariableSize())
+	solution.unificationBind(lv, rv);
+      else
+	solution.unificationBind(rv, lv);
+      return lt->computeSolvedForm(rt, solution, pending);
+    }
+  //
+  //	Variable against non-variable case
+  //
+  {
+    //
+    //	Quick check for sort failure on ground term.
+    //
+    int sortIndex = rhs->getSortIndex();
+    if (sortIndex != Sort::SORT_UNKNOWN && !::leq(sortIndex, safeCast(VariableSymbol*, symbol())->getSort()))
+      return false;
+  }
+  DagNode* lt = solution.value(lv->index);
+  if (lt == 0)
+    {
+      solution.unificationBind(lv, rhs);
+      return true;
+    }
+  //
+  //	Hard case - our variable already has a solved form. We do a merge step.
+  //
+  if (lt->nonVariableSize() > rhs->nonVariableSize())
+    solution.unificationBind(lv, rhs);
+  return lt->computeSolvedForm(rhs, solution, pending);
+}
+
+mpz_class
+VariableDagNode::nonVariableSize()
+{
+  return 0;
+}
+
+void
+VariableDagNode::insertVariables2(NatSet& occurs)
+{
+  occurs.insert(index);
 }
 
 DagNode*
-VariableDagNode::instantiate2(Substitution& substitution)
+VariableDagNode::instantiate2(const Substitution& substitution)
 {
   return substitution.value(index);
 }
 
-bool
-VariableDagNode::occurs2(int index)
+VariableDagNode*
+VariableDagNode::lastVariableInChain(Substitution& solution)
 {
-  return index == this->index;
+  //
+  //	If a variable has been bound to anther variable, it is notionally
+  //	replaced by that variable thoughout the problem, and in particular
+  //	we need chase the replacement chain and find out what variable is
+  //	notionally in its place.
+  //
+  VariableDagNode* v = this;
+  for (;;)
+    {
+      DagNode* d = solution.value(v->index);
+      if (d == 0)
+	break;
+      VariableDagNode* n = dynamic_cast<VariableDagNode*>(d);
+      if (n == 0)
+	break;
+      v = n;
+    }
+  return v;
+}
+
+bool
+VariableDagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
+{
+  index = baseIndex + indices.variable2Index(this);
+  return false;
 }

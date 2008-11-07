@@ -52,7 +52,7 @@ BinBuf::times10()
     {
       Uint64 r = (10ULL * buf[i]) + c;
       Uint32 t = r & 0xffffffff;
-      if (i == begin & t == 0)
+      if (i == begin && t == 0)
 	++begin;
       else
 	buf[i] = t;

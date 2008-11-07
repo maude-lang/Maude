@@ -29,6 +29,11 @@
 class RootContainer
 {
 public:
+  //
+  //	For safety since this class is intended to be derived from.
+  //
+  virtual ~RootContainer() {}
+
   static void markPhase();
 
 #ifdef DUMP

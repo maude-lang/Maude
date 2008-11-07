@@ -29,21 +29,19 @@
 #include "graph.hh"
 
 Graph::Graph(int nrNodes)
-  : nodeCount(nrNodes), adjMatrix(nrNodes * nrNodes)
+  : adjSets(nrNodes)
 {
-  int size = adjMatrix.length();
-  for (int i = 0; i < size; i++)
-    adjMatrix[i] = false;
 }
 
 int
 Graph::color(Vector<int>& coloring)
 {
-  coloring.resize(nodeCount);
-  for (int i = 0; i < nodeCount; i++)
+  int nrNodes = adjSets.size();
+  coloring.resize(nrNodes);
+  for (int i = 0; i < nrNodes; i++)
     coloring[i] = UNDEFINED;
   int maxColor = UNDEFINED;
-  for (int i = 0; i < nodeCount; i++)
+  for (int i = 0; i < nrNodes; i++)
     colorNode(i, maxColor, coloring);
   return maxColor + 1;
 }
@@ -54,38 +52,43 @@ Graph::colorNode(int i, int& maxColor, Vector<int>& coloring)
   if (coloring[i] != UNDEFINED)
     return;
   NatSet used;
-  int offset = i * nodeCount;
-  for (int j = 0; j < nodeCount; j++)
-    {
-      if (adjMatrix[offset + j])
-	{
-	  int c = coloring[j];
-	  if (c != UNDEFINED)
-	    used.insert(c);
-	}
-    }
-  for (int c = 0;; c++)
-    {
-      if (!(used.contains(c)))
-	{
-	  coloring[i] = c;
-	  if (c > maxColor)
-	    maxColor = c;
-	  break;
-	}
-    }  
-  for (int j = 0; j < nodeCount; j++)
-    {
-      if (adjMatrix[offset + j])
-	colorNode(j, maxColor, coloring);
-    }
+  AdjSet adjSet = adjSets[i];
+  {
+    //
+    //	Find colors already used by neighbours.
+    //
+    FOR_EACH_CONST(j, AdjSet, adjSet)
+      {
+	int c = coloring[*j];
+	if (c != UNDEFINED)
+	  used.insert(c);
+      }
+    
+  }
+  //
+  //	Find first unused color.
+  //
+  int color = 0;
+  while (used.contains(color))
+    ++color;
+  coloring[i] = color;
+  if (color > maxColor)
+    maxColor = color;
+  {
+    //
+    //	Color neighbours.
+    //
+    FOR_EACH_CONST(j, AdjSet, adjSet)
+      colorNode(*j, maxColor, coloring);
+  }
 }
 
 void
 Graph::findComponents(Vector<Vector<int> >& components)
 {
   NatSet visited;
-  for (int i = 0; i < nodeCount; i++)
+  int nrNodes = adjSets.size();
+  for (int i = 0; i < nrNodes; i++)
     {
       if (!visited.contains(i))
 	{
@@ -101,14 +104,11 @@ Graph::visit(int i, Vector<int>& component, NatSet& visited)
 {
   visited.insert(i);
   component.append(i);
-  int base = i * nodeCount;
-  for (int j = 0; j < nodeCount; j++)
+  AdjSet adjSet = adjSets[i];
+  FOR_EACH_CONST(j, AdjSet, adjSet)
     {
-      if (adjMatrix[base + j] && !(visited.contains(j)))
-	visit(j, component, visited);
+      int n = *j;
+      if (!visited.contains(n))
+	visit(n, component, visited);
     }
 }
-
- 
-
-

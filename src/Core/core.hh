@@ -75,5 +75,10 @@ class ConditionFragment;
 class ConditionState;
 class OpDeclaration;
 class SortBdds;
+class UnificationContext;
+class FreshVariableGenerator;
+class NarrowingVariableInfo;
+class ProtectedDagNodeSet;
+class PendingUnificationStack;
 
 #endif

@@ -330,7 +330,7 @@ S_Symbol::computeSortFunctionBdds(const SortBdds& /* sortBdds */, Vector<Bdd>& /
 
 void
 S_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
-				 const Vector<int> realToBdd,
+				 const Vector<int>& realToBdd,
 				 DagNode* subject,
 				 Vector<Bdd>& generalizedSort)
 {

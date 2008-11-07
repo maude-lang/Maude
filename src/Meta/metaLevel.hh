@@ -46,6 +46,12 @@ public:
   void postInterSymbolPass();
   void reset();
 
+  bool isNat(const DagNode* dagNode) const;
+  const mpz_class& getNat(const DagNode* dagNode) const;
+
+  void startVariableMapping(int varCounter, FreshVariableGenerator* varGenerator);
+  void stopVariableMapping();
+
   DagNode* upResultPair(DagNode* dagNode, MixfixModule* m);
   DagNode* upResultPair(Term* term, MixfixModule* m);
   DagNode* upNoParse(int badTokenIndex);
@@ -59,6 +65,7 @@ public:
 			  const Substitution& substitution,
 			  const VariableInfo& variableInfo,
 			  MixfixModule* m);
+  DagNode* upFailurePair();
   DagNode* upFailureTriple();
   DagNode* upResult4Tuple(DagNode* dagNode,
 			  const Substitution& substitution,
@@ -66,6 +73,34 @@ public:
 			  DagNode* metaContext,
 			  MixfixModule* m);
   DagNode* upFailure4Tuple();
+
+  DagNode* upUnificationPair(const Substitution& substitution,
+			     const VariableInfo& variableInfo,
+			     const mpz_class& variableIndex,
+			     MixfixModule* m);
+  DagNode* upUnificationTriple(const Substitution& substitution,
+			       const VariableInfo& variableInfo,
+			       const mpz_class& variableIndex,
+			       MixfixModule* m);
+  DagNode* upUnificationContextTriple(const Substitution& substitution,
+				      const VariableInfo& variableInfo,
+				      DagNode* dagNode,
+				      DagNode* hole,
+				      const mpz_class& variableIndex,
+				      MixfixModule* m);
+  DagNode* upUnificationContext4Tuple(const Substitution& substitution,
+				      const VariableInfo& variableInfo,
+				      DagNode* dagNode,
+				      DagNode* hole,
+				      const mpz_class& variableIndex,
+				      MixfixModule* m);
+  void upDisjointSubstitutions(const Substitution& substitution,
+			       const VariableInfo& variableInfo,
+			       MixfixModule* m,
+			       PointerMap& qidMap,
+			       PointerMap& dagNodeMap,
+			       DagNode*& left,
+			       DagNode*& right);
 
   DagNode* upTrace(const RewriteSequenceSearch& state, MixfixModule* m);
   DagNode* upFailureTrace();
@@ -76,11 +111,15 @@ public:
 		     DagNode* hole,
 		     PointerMap& qidMap,
 		     PointerMap& dagNodeMap);
-  DagNode* upSubstition(const Substitution& substitution,
-			const VariableInfo& variableInfo,
-			MixfixModule* m,
-			PointerMap& qidMap,
-			PointerMap& dagNodeMap);
+  DagNode* upSubstitution(const Substitution& substitution,
+			  const VariableInfo& variableInfo,
+			  MixfixModule* m,
+			  PointerMap& qidMap,
+			  PointerMap& dagNodeMap);
+  DagNode* upNoUnifierPair();
+  DagNode* upNoUnifierTriple();
+  DagNode* upNoUnifierContextTriple();
+  DagNode* upNoUnifierContext4Tuple();
   DagNode* upNoMatchSubst();
   DagNode* upNoMatchPair();
   DagNode* upMatchPair(const Substitution& substitution,
@@ -118,11 +157,22 @@ public:
 		       Term*& term ,
 		       Sort*& sort ,
 		       MixfixModule* m);
+  bool downUnificationProblem(DagNode* metaUnificationProblem,
+			      Vector<Term*>& leftHandSides,
+			      Vector<Term*>& rightHandSides,
+			      MixfixModule* m,
+			      bool makeDisjoint);
+  bool downUnificandPair(DagNode* metaUnificandPair,
+			 Term*& lhs,
+			 Term*& rhs,
+			 MixfixModule* m,
+			 bool makeDisjoint);
   bool downTermPair(DagNode* metaTerm1,
 		    DagNode* metaTerm2, 
 		    Term*& term1,
 		    Term*& term2,
-		    MixfixModule* m);
+		    MixfixModule* m,
+		    bool makeDisjoint = false);
   Term* downTerm(DagNode* metaTerm, MixfixModule* m);
   bool downCondition(DagNode* metaCondition,
 		     MixfixModule* m,
@@ -143,6 +193,7 @@ public:
 		      Vector<Term*>& variables,
 		      Vector<Term*>& values);
 
+
 private:
   enum Implementation
   {
@@ -159,7 +210,8 @@ private:
   enum Flags
   {
     NONEXEC = 1,
-    OWISE = 2
+    OWISE = 2,
+    PRINT = 4
   };
 
   struct AttributeInfo
@@ -176,6 +228,17 @@ private:
     int metadata;
     DagNode* identity;
     DagNode* fixUpInfo;
+  };
+
+  struct StatementAttributeInfo
+  {
+    StatementAttributeInfo();
+
+    FlagSet flags;
+    int label;
+    int metadata;
+    Vector<int> printNames;
+    Vector<Sort*> printSorts;
   };
 
   static int iterToken(DagNode* dagNode);
@@ -297,8 +360,10 @@ private:
 			     MixfixModule* m,
 			     ConditionFragment*& fragment);
 
-  bool downStatementAttrSet(DagNode* metaAttrSet, int& label, int& metadata, FlagSet& flags);
-  bool downStatementAttr(DagNode* metaAttr, int& label, int& metadata, FlagSet& flags);
+  bool downStatementAttrSet(DagNode* metaAttrSet, MixfixModule* m, StatementAttributeInfo& ai);
+  bool downStatementAttr(DagNode* metaAttr, MixfixModule* m, StatementAttributeInfo& ai);
+  bool downPrintList(DagNode* metaPrintList, MixfixModule* m, StatementAttributeInfo& ai);
+  bool downPrintListItem(DagNode* metaPrintListItem, MixfixModule* m, StatementAttributeInfo& ai);
 
   bool downMembAxs(DagNode* metaMembAxs, MixfixModule* m);
   bool downMembAx(DagNode* metaMembAx, MixfixModule* m);
@@ -346,6 +411,12 @@ private:
   CachedDag trueTerm;
   CachedDag falseTerm;
   MetaModuleCache cache;
+  //
+  //	Settings to modify behavior of methods.
+  //
+  bool flagVariables;
+  int variableBase;
+  FreshVariableGenerator* variableGenerator;
 };
 
 inline
@@ -355,6 +426,13 @@ MetaLevel::AttributeInfo::AttributeInfo()
   metadata = NONE;
   identity = 0;
   fixUpInfo = 0;
+}
+
+inline
+MetaLevel::StatementAttributeInfo::StatementAttributeInfo()
+{
+  label = NONE;
+  metadata = NONE;
 }
 
 inline DagNode*
@@ -368,6 +446,31 @@ MetaLevel::upGroup(const Vector<DagNode*>& args,
   else if (nrArgs == 1)
     return args[0];
   return multipleCase->makeDagNode(args);
+}
+
+inline bool
+MetaLevel::isNat(const DagNode* dagNode) const
+{
+  return succSymbol->isNat(dagNode);
+}
+
+inline const mpz_class&
+MetaLevel::getNat(const DagNode* dagNode) const
+{
+  return succSymbol->getNat(dagNode);
+}
+
+inline void
+MetaLevel::startVariableMapping(int varBase, FreshVariableGenerator* varGenerator)
+{
+  variableBase = varBase;
+  variableGenerator = varGenerator;
+}
+
+inline void
+MetaLevel::stopVariableMapping()
+{
+  variableGenerator = 0;
 }
 
 #endif

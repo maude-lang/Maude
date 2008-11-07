@@ -93,7 +93,6 @@ bool
 SocketManagerSymbol::createClientTcpSocket(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   Assert(message->getArgument(0)->symbol() == this, "misdirected message");
-  int domain;
   int port;
   DagNode* addressArg = message->getArgument(2);
 

@@ -126,7 +126,7 @@ ACU_ExtensionInfo::buildUnmatchedPortion() const
   Assert(!(subject->isTree()), "tree form!");
   
   int size = 0;
-  Vector<int>::const_iterator last;
+  Vector<int>::const_iterator last;  // gcc gives uninitialized warning
   {
     FOR_EACH_CONST(i, Vector<int>, unmatchedMultiplicity)
       {

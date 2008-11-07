@@ -61,10 +61,23 @@ public:
   DagNode* partialConstruct(DagNode* replacement, ExtensionInfo* extensionInfo);
   ExtensionInfo* makeExtensionInfo();
   //
+  //	Although we currently don't support unification or narrowing in AU nodes
+  //	we still need some functionality from the unification and narrowing interfaces
+  //	to allow narrowing to happen below us or in a sibling branch.
+  //
+  //	Unification member functions.
+  //
+  DagNode* instantiate2(const Substitution& substitution);
+  //
+  //	Interface for narrowing.
+  //
+  bool indexVariables2(NarrowingVariableInfo& indices, int baseIndex);
+  DagNode* instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag);
+  //
   //	Functions particular to AU_DagNode.
   //
   void setProducedByAssignment();
-  
+
 private:
   enum NormalizationResult
   {
@@ -83,7 +96,7 @@ private:
   //	Functions particular to AU_DagNode.
   //
   bool disappear(AU_Symbol* s, ArgVec<DagNode*>::const_iterator i);
-  NormalizationResult normalizeAtTop();
+  NormalizationResult normalizeAtTop(bool dumb = false);
   bool eliminateForward(DagNode* target, int& pos, int limit) const;
   bool eliminateBackward(DagNode* target, int& pos, int limit) const;
   DagNode* makeFragment(int start, int nrSubterms, bool extraId) const;

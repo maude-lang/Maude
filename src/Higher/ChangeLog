@@ -1,3 +1,515 @@
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingUnificationProblem.cc (findOrderSortedUnifiers): use &
+	rather that /\ in comment to avoid multi-line comment warning
+	(findOrderSortedUnifiers): delete nrFreeVariable
+	(findNextUnifier): added #if NO_ASSERT to avoid compiler warning
+	(2 places)
+
+	* unificationProblem.cc (findOrderSortedUnifiers): use & rather
+	that /\ in comment to avoid multi-line comment warning
+	(findNextUnifier): added #if NO_ASSERT to avoid compiler warning
+	(2 places)
+
+===================================Maude91a===========================================
+
+2008-04-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): change variable name
+	warning
+
+===================================Maude91===========================================
+
+2008-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingUnificationProblem.cc (markReachableNodes): symmetric
+	with below
+
+	* unificationProblem.cc (markReachableNodes): comment out
+	unsortedSolution now that UnificationContext handles this
+
+2008-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingUnificationProblem.cc (findNextUnifier): use
+	pendingStack rather than subproblem
+
+	* narrowingUnificationProblem.hh (class
+	NarrowingUnificationProblem): pendingStack replaces subproblem
+
+	* narrowingUnificationProblem.cc (NarrowingUnificationProblem):
+	use new computeSolvedForm() convention
+
+	* unificationProblem.hh (class UnificationProblem): pendingStack
+	replaces subproblem
+
+	* unificationProblem.cc (UnificationProblem): use new
+	computeSolvedForm() convention
+	(findNextUnifier): use pendingStack rather than subproblem
+
+2008-01-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.cc (NarrowingSequenceSearch): handle
+	narrowingFlags arg
+	(NarrowingSequenceSearch, findNextNormalForm) 
+	(findNextInterestingState): pass narrowingFlags to
+	NarrowingSearchState()
+
+	* narrowingSequenceSearch.hh (class NarrowingSequenceSearch):
+	added data member narrowing flags; updated decl for ctor
+
+	* narrowingSearchState.cc (NarrowingSearchState): initialize
+	noFurtherPositions
+	(findNextNarrowing): support SINGLE_POSITION flag
+
+	* narrowingSearchState.hh (class NarrowingSearchState): added
+	SINGLE_POSITION flag
+	(class NarrowingSearchState): added data member noFurtherPositions
+
+	* narrowingSequenceSearch.cc (findNextNormalForm): use new
+	getNarrowedDag() and traceNarrowingStep() conventions
+	(findNextInterestingState): ditto
+
+	* narrowingSearchState.hh (class NarrowingSearchState): updated
+	decl for getNarrowedDag()
+
+	* narrowingSearchState.cc (getNarrowedDag): return replacement via
+	a reference arg
+
+2008-01-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.cc (findNextInterestingState): support tracing
+	(findNextNormalForm): support tracing
+
+2008-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSearchState.hh (getVariableInfo): added
+
+===================================Maude90===========================================
+
+2007-12-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.hh (getVariableCounter) 
+	(setVariableCounter): deleted
+	(getVariableTotalForPreviouslyReturnedStates): added
+
+	* narrowingSequenceSearch.cc (findNextMatch): do variableTotal
+	accounting
+	(NarrowingSequenceSearch): clear
+	variableTotalForPreviouslyReturnedStates and
+	variableTotalForAllReturnedStates
+
+	* narrowingSequenceSearch.hh (class NarrowingSequenceSearch):
+	deleted data member variableCounter
+
+	* narrowingSearchState.hh (getNrOfVariablesInSubject): added
+
+	* narrowingSearchState.cc (NarrowingSearchState): comment out
+	whole info loop
+
+	* narrowingSequenceSearch.hh (getStateDag): use stateStack and
+	getContext() in place of contextStack()
+
+	* narrowingSearchState.hh (getContext): added
+
+	* narrowingSequenceSearch.hh (class NarrowingSequenceSearch):
+	deleted data member context stack
+	(getContext): added Assert() to protect against empty stack
+
+	* narrowingSequenceSearch.cc (NarrowingSequenceSearch): don't use
+	contextStack
+	(NarrowingSequenceSearch): don't delete stuff from contextStack
+	(findNextNormalForm, findNextInterestingState): don't use
+	contextStack
+
+	* narrowingSearchState.hh (class NarrowingSearchState): added data
+	member context
+
+	* narrowingSearchState.cc (NarrowingSearchState): save context
+	(NarrowingSearchState): delete context
+
+	* narrowingSequenceSearch.cc (findNextInterestingState): fix bug
+	where we weren't deleting state and context afte during
+	backtracking
+
+	* narrowingSearchState.cc (findNextNarrowing): fix bug where we
+	weren't deleting a UnificationProblem after it fails to provide
+	another solution
+
+2007-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.hh (getFreshVariableGenerator): added
+	(class NarrowingSequenceSearch): added data member variableCounter
+	(getVariableCounter, setVariableCounter): added
+
+	* narrowingSequenceSearch.cc (findNextMatch): handle null goal
+
+2007-11-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* higher.hh: added class CacheableState
+
+	* searchState.hh (class SearchState): derive from CacheableState
+
+	* sequenceSearch.hh: derive from CacheableState
+
+	* unificationProblem.hh (class UnificationProblem): derive from CacheableState
+
+	* cacheableState.hh: created
+
+2007-11-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSearchState.cc (findNextNarrowing): pass 0 as
+	extensionInfo to NarrowingUnificationProblem()
+
+2007-11-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortTestConditionFragment.cc (check): allow for the case that
+	normalize() deletes the original term due to collapse
+
+	* rewriteConditionFragment.cc (check): allow for the case that
+	normalize() deletes the original term due to collapse
+
+	* assignmentConditionFragment.cc (check): allow for the case that
+	normalize() deletes the original term due to collapse
+
+	* equalityConditionFragment.cc (check): allow for the case that
+	normalize() deletes the original term due to collapse
+
+2007-11-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.cc (findNextMatch): use getStateDag()
+
+	* narrowingSequenceSearch.hh (getContext): added
+	(getStateDag): added
+
+	* higher.hh: added class SequenceSearch
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): derive
+	from SequenceSearch
+
+	* narrowingSequenceSearch.hh (class NarrowingSequenceSearch):
+	derive from SequenceSearch
+
+	* sequenceSearch.hh (class SequenceSearch): created
+
+2007-11-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSearchState.hh (class NarrowingSearchState): added decl
+	for ~NarrowingSearchState()
+
+	* narrowingSearchState.cc (~NarrowingSearchState): added
+
+	* narrowingSequenceSearch.cc (~NarrowingSequenceSearch): delete
+	any pending states and contexts on the stacks
+	(~NarrowingSequenceSearch): delete freshVariableGenerator
+
+2007-11-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.cc (findNextNormalForm): use seenSet
+	(NarrowingSequenceSearch): initialize seenSet
+	(findNextInterestingState): use seenSet
+	(findNextNormalForm): falsify topOfStackFresh after detecting a
+	dup
+
+2007-11-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.hh (class NarrowingSequenceSearch):
+	added data member seenSet
+
+	* narrowingSequenceSearch.cc (findNextMatch): call
+	findNextNormalForm() from here
+	(findNextInterestingState): don't call findNextNormalForm() from
+	here
+
+	* narrowingSequenceSearch.hh (class NarrowingSequenceSearch):
+	replace firstCall flag with topOfStackFresh flag
+
+	* narrowingSequenceSearch.cc (findNextNormalForm): handle maxDepth
+	(findNextNormalForm): reorganized
+	(findNextNormalForm): simplified; get rid of firstCall flag
+	(NarrowingSequenceSearch): initialize topOfStackFresh flag
+
+2007-11-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.cc (NarrowingSequenceSearch): initialize
+	firstCall
+
+	* narrowingSequenceSearch.hh (class NarrowingSequenceSearch):
+	added decl for findNextNormalForm(); added data member firstCall
+
+	* narrowingSequenceSearch.cc (findNextNormalForm): added
+
+	* narrowingSequenceSearch.hh (class NarrowingSequenceSearch):
+	deleted data member reachingInitialStateOK
+
+	* narrowingSequenceSearch.cc (NarrowingSequenceSearch): don't
+	initialize reachingInitialStateOK
+
+2007-11-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSearchState.hh (class NarrowingSearchState): pass
+	ALLOW_NONEXEC as default flags argument
+
+2007-10-31  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.cc (findNextInterestingState): handle
+	maxDepth == NONE
+	(findNextInterestingState): handle trying of initial state
+
+2007-10-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.cc (findNextInterestingState): use
+	contextStack
+	(findNextMatch): use contextStack
+	(NarrowingSequenceSearch): initialize contextStack
+	(findNextInterestingState): start backtracking if current depth reached.
+
+	* narrowingSequenceSearch.hh (class NarrowingSequenceSearch):
+	added data member contextStack
+
+2007-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSequenceSearch.hh: created
+
+	* narrowingSequenceSearch.cc: created
+
+	* rewriteSequenceSearch.hh: #define _rewriteSequenceSearchState_hh_
+	becomes _rewriteSequenceSearch_hh_
+
+2007-10-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* positionState.hh (class PositionState): added decl for
+	rebuildAndInstantiateDag()
+
+	* positionState.cc (rebuildAndInstantiateDag): added
+
+2007-10-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSearchState.cc (findNextNarrowing): pass extension info
+	to NarrowingUnificationProblem()
+
+2007-10-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* higher.hh: added classes NarrowingUnificationProblem and
+	NarrowingSearchState
+
+	* narrowingSearchState.cc (getSubstitution): added
+	(findNextNarrowing): implemented
+
+	* narrowingSearchState.hh (class NarrowingSearchState): added data
+	member unificationProblem; added decl for getSubstitution()
+
+2007-10-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingSearchState.hh (class NarrowingSearchState): added data
+	member variableInfo
+
+	* narrowingSearchState.cc: created
+	(NarrowingSearchState): use variableInfo
+
+	* narrowingSearchState.hh: created
+
+	* narrowingUnificationProblem.cc: created
+
+	* narrowingUnificationProblem.hh: created
+
+2007-10-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): use data member variableInfo
+	(findNextUnifier): use variableInfo
+	(findOrderSortedUnifiers): use variableInfo
+	(extractUnifier): use variableInfo
+	
+	* unificationProblem.hh (class UnificationProblem): added many
+	commments
+	(getVariableInfo): added
+	(class UnificationProblem): made VariableInfo base class private
+	(class UnificationProblem): made VariableInfo a data member rather
+	than a base class
+
+===================================Maude89h===========================================
+
+2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (~UnificationProblem): varsOK ->
+	problemOkay
+	(UnificationProblem): varsOK -> problemOkay
+	(UnificationProblem): check for unimplemented theories
+
+	* unificationProblem.hh (variablesOK): becomes problemOK
+	(class UnificationProblem): varsOK becomes problemOkay
+
+2007-08-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): fix bug where we
+	were failing but leaving old subproblem ptr around for a double
+	deletion
+
+===================================Maude89e===========================================
+
+2007-07-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (findOrderSortedUnifiers): fix bug where
+	we were not telling the BDD package about the BDD variables we
+	allocate to represent the sorts of real variables
+
+===================================Maude89d===========================================
+
+2007-07-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): fix bug where we
+	we're initializing subproblem in the case that we returned early
+
+2007-07-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): pass extensionInfo
+
+2007-06-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (~UnificationProblem): delete
+	extensionInfo
+
+2007-06-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.hh (class UnificationProblem): added decl for
+	makeContext()
+	(class UnificationProblem): added data member extensionInfo
+	(getLeftHandSides): added
+	(getExtensionInfo): added
+
+	* unificationProblem.cc (UnificationProblem): added withExtension
+	arg (but not implementation yet)
+	(makeContext): added
+
+	* unificationProblem.hh (class UnificationProblem): added
+	withExtension arg to ctor
+
+2007-06-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.hh (class UnificationProblem): updated decl
+	for ctor
+	(class UnificationProblem): added data members leftHandDags,
+	rightHandDags, leftHandSides, rightHandSides; deleted data members
+	lhs, rhs, lhsDag, rhsDag
+
+	* unificationProblem.cc (~UnificationProblem): fix memory leak
+	where we weren't deleting terms if variables weren't ok
+	(UnificationProblem): rewritten to do simultaneous unification
+	(~UnificationProblem): destruct vectors of terms
+	(markReachableNodes): mark vectors of dags
+
+2007-06-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.hh (variablesOK): added
+	(class UnificationProblem): added data member varsOK
+
+	* unificationProblem.cc (UnificationProblem): check variable names
+	for safety
+	(UnificationProblem): don't delete uninitialized pointers if
+	variables names are not OK
+
+2007-06-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): removed
+	lastVariableIndex argument
+	(findOrderSortedUnifiers): don't use lastVariableIndex
+
+	* unificationProblem.hh (class UnificationProblem): updated ctor decl
+	(class UnificationProblem): removed lastVariableIndex data member
+
+2007-06-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): handle
+	lastVariableIndex arg
+	(findOrderSortedUnifiers): use lastVariableIndex
+
+===================================Maude89c===========================================
+
+2007-04-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): fix bug where
+	subproblem was not being initialized in failure case with
+	resulting memory corruption in dtor
+
+===================================Maude89b===========================================
+
+2007-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): removed support for
+	Robinson style unification
+	(findNextUnifier): removed support for Robinson style unification
+
+2007-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): need to delete
+	subproblem
+
+===================================Maude89a===========================================
+
+2007-03-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): don't call
+	Substitution::notify(); make sortedSolution a specific size
+	(findOrderSortedUnifiers): use actual variables rather than
+	original variables to determine the number of free variables
+	(extractUnifier): nrRealVariables -> nrOriginalVariables
+	(findOrderSortedUnifiers): use acutal variables rather than
+	original variables when binding free variables to fresh variables
+	(findOrderSortedUnifiers): use getFreshVariableSort() to get the
+	sort of fresh variables so we know how many BDD variables to
+	allocate them
+	(findOrderSortedUnifiers): same fix in two other places
+	(UnificationProblem): don't use Substitution::clear() since we may
+	have a large subsitution than has been notified
+	(markReachableNodes): split marking of sortedSolution and
+	unsortedSolution for safety
+	(UnificationProblem): zero sortedSolution to prevent barfing on GC
+
+2007-03-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (findNextUnifier): don't call
+	FreshVariableGenerator::reset()
+	(findOrderSortedUnifiers): new FreshVariableGenerator semantics
+
+2007-03-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.hh (class UnificationProblem):
+	unsortedSolution becomes a UnificationContext*
+
+	* unificationProblem.cc (findNextUnifier): use unificationSolve()
+	(UnificationProblem): use UnificationContext
+	(markReachableNodes): mark lhsDag and unsortedSolution
+
+2007-02-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (extractUnifier): need to bind unsortedSolution
+
+	* unificationProblem.hh (class UnificationProblem): decl for
+	extractUnifier() replaces decl for orderVariables()
+
+	* unificationProblem.cc (orderVariables): becomes extractUnifier()
+	(findNextUnifier, UnificationProblem): support solved form
+
+2007-02-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (findNextUnifier): fix bug in that we are
+	not looking for another unsorted solution if our current unsorted
+	solution fails to have at least on sorted solution
+
+	* unificationProblem.hh (class UnificationProblem): added data
+	members order, done and pending
+	(class UnificationProblem): added decls for orderVariables() and
+	explore()
+
+	* unificationProblem.cc (orderVariables): added
+	(explore): added
+
+2007-02-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): added solved form
+	hack for experimentation
+
+===================================Maude89===========================================
+
 2007-02-13  Steven Eker  <eker@goo.csl.sri.com>
 
 	* unificationProblem.cc (findOrderSortedUnifiers): use

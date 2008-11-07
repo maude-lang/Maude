@@ -1,13 +1,134 @@
-Overview of Changes in Maude alpha88f
+Overview of Changes in Maude alpha91d
 =====================================
+* fixed AU term normalization bug
+
+Overview of Changes in Maude alpha91c
+=====================================
+* Special case optimization for AC/ACU matching with extension
+
+Overview of Changes in Maude alpha91b
+=====================================
+* Removed extranous debugging print statement
+
+Overview of Changes in Maude alpha91a
+=====================================
+* Now solve diophantine equations over ints rather than mpzs for
+  unification
+* Extended unify command to handle systems
+* Added print attribute
+* Fixed Diophantine solver bug for results over 2^31 - 1
+* Install .maude files in the data directory
+* Fixed free theory discrimination net subsumption bug
+* Fixed gcc4 incompatibilities
+* Outlawed overloading operations from a parameter theory
+* Fixed longstanding stdout/stderr synchonization bugs
+
+Overview of Changes in Maude alpha91
+====================================
+* fixed bug where natSystemSolve() would lose hooks during importation
+* fixed bug where unify command was not cleaning up after bad
+  unification problem
+
+Overview of Changes in Maude alpha90a
+=====================================
+* added stack overflow handling using libsigsegv
+* semi-compilation of right hand sides optimized for huge right hand
+  sides 
+* construnction of free theory discrimination nets optimized for large
+  numbers of equations
+
+Overview of Changes in Maude alpha90
+====================================
+* new unification combination scheme to avoid AC cycling bug
+* C unification is smarter about avoiding redundant unifiers
+* reorganized surface syntax parser to allow deeply nested terms
+* more overparsing 
+
+Overview of Changes in Maude alpha89j (not released)
+====================================================
+* fixed bug that cause solved form subproblems to be lost in
+  commutative unification
+* added single redex per state narrowing option
+
+Overview of Changes in Maude alpha89i
+=====================================
+* fixed two bugs which caused narrowing structures not to be deleted
+* allow multiple calls to cached desent functions with same arguments
+  to be efficient in most cases
+* added another narrowing descent function
+
+Overview of Changes in Maude alpha89h
+=====================================
+* crude support for narrowing
+* fixed bug with condition fragment collapses during processing
+* fixed memory leak in AU term collapses
+
+Overview of Changes in Maude alpha89g
+=====================================
+* fixed selection from basis bug in AC unification algorithm
+* allow unification to work on ground terms from unimplemented
+  theories; made recovery in unimplemented cases consistent
+
+Overview of Changes in Maude alpha89f
+=====================================
+* fixed bug where large AC dags could get normalized into tree form
+  during unification with resulting chaos
+* fixed C unification breakage from alpha89c
+
+Overview of Changes in Maude alpha89e
+=====================================
+* fixed bug where we were deleting unification subproblems twice
+* fixed module name in "no module" warning
+
+Overview of Changes in Maude alpha89d
+=====================================
+* fixed bug where we were not reserving enough BDD variables for free
+  variable sorts
+
+Overview of Changes in Maude alpha89c
+=====================================
+* fixed bug iter theory matching with extension could return a match
+  where the matched portion was alien
+* added unification with extension
+* reimplement meta-unification interface to support control over fresh
+  variable names and disjoint unification
+* allow spaces in file names using \ and "" conventions
+
+Overview of Changes in Maude alpha89b
+=====================================
+* fixed bug where early unification failure caused memory corruption
+
+Overview of Changes in Maude alpha89a
+=====================================
+* fixed bug where syntax could leave renaming in bad state
+* fixed bug where were were passing variable->BDD mappings by value
+rather than by reference
+* fixed bug where we weren't clear new substitutions in CUI
+unification
+* fixed bug where we weren't deleting subproblems in unification
+problems
+
+Overview of Changes in Maude alpha89
+====================================
+* fixed bug where new unsorted unifier would not be look for after an
+  unsorted unifier failed to have at least one sorted solution
+* fixed bug where non-unifiers were generated in deeply nested
+  commutative unification examples
+* fixed bug where command line files were ignored with -no-prelude
+  flag
+* use dag solved forms for unification
+* first support for AC unification
+
+Overview of Changes in Maude 2.3 (alpha88f)
+===========================================
 * added commutative unification
 * fixed free theory instantiation bug
 * fixed sort calculation of S_Theory terms bug
 * fixed unification with too many variables bug
 * added iter theory unification
 
-Overview of Changes in Maude alpha88e
-=====================================
+Overview of Changes in alpha88e
+===============================
 * string, qid and float constants allowed in unification
 * fixed unify f(X, Y) =? f(Y, X)  bug
 

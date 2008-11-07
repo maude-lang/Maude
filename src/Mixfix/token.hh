@@ -112,8 +112,17 @@ public:
 			  const Vector<Token>& tokens,
 			  const char* seperator);
   static void peelParens(Vector<Token>& tokens);
+  static void peelParen(Vector<Token>& tokens);
+  static int flaggedCode(int code);
+  static bool isFlagged(int code);
+  static int unflaggedCode(int code);
 
 private:
+  enum SpecialValues
+    {
+      FLAG_BIT = 0x40000000	// we set this bit to create flagged codes
+    };
+
   static void bufferExpandTo(int size);
   static void reallocateBuffer(int length);
   static void checkForSpecialProperty(const char* tokenString);
@@ -218,6 +227,7 @@ Token::tokenize(const char* tokenString, int lineNumber)
 inline void
 Token::tokenize(int code, int lineNumber)
 {
+  Assert(code >= 0, "bad code = " << code);
   codeNr = code;
   lineNr = lineNumber;
 }
@@ -244,6 +254,24 @@ inline const char*
 Token::name(int code)
 {
   return stringTable.name(code);
+}
+
+inline int
+Token::flaggedCode(int code)
+{
+  return code | FLAG_BIT;
+}
+
+inline bool
+Token::isFlagged(int code)
+{
+  return code & FLAG_BIT;
+}
+
+inline int
+Token::unflaggedCode(int code)
+{
+  return code & ~FLAG_BIT;
 }
 
 ostream& operator<<(ostream& s, const Token& token);

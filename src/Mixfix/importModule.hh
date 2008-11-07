@@ -153,6 +153,14 @@ private:
   void resetImportPhase();
   void finishCopy(ImportModule* copy, Renaming* canonical);
 
+  void copyMetadata(ImportModule* importer,
+		    ImportTranslation& importTranslation,
+		    ItemType itemType,
+		    PreEquation* original,
+		    PreEquation* copy);
+  
+  ConnectedComponent* translateComponent(const Renaming* renaming, const ConnectedComponent* component) const;
+
   void addOpMappingsFromView(Renaming* canonical,
 			     const ImportModule* parameterCopyOfTheory,
 			     const View* view) const;
@@ -187,8 +195,6 @@ private:
 			    const Vector<View*>& arguments,
 			    const Vector<int>& parameterArgs,
 			    ModuleCache* moduleCache) const;
-
-  ConnectedComponent* translateComponent(const Renaming* renaming, const ConnectedComponent* component) const;
 
   const Origin origin;
   Phase importPhase;
@@ -453,6 +459,7 @@ operator<<(ostream& s, const ImportModule* m)
   //	Needed to avoid ambiguity.
   //
   s << static_cast<const MixfixModule*>(m);
+  return s;
 }
 #endif
 

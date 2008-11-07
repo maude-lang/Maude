@@ -23,64 +23,56 @@
 /*
  *	Commands.
  */
-command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
-			cToken			{ store($3); }
-			cTokensBarDot '.'
+command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1) }
+			endBubble
 			{
-			  lexerInitialMode();
-			  interpreter.setCurrentModule(bubble);
+			  interpreter.setCurrentModule(lexerBubble);
 			}
-		|	KW_DUMP			{ lexerCmdMode(); clear(); }
-			cToken			{ store($3); }
-			cTokensBarDot '.'
+		|	KW_DUMP			{ lexBubble(END_COMMAND, 1) }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    CM->dump();
 			}
 		|	KW_PARSE
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			}
 			moduleAndTerm
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.parse(bubble);
+			    interpreter.parse(lexerBubble);
 			}
 
 		|	KW_CREDUCE
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			}
 			moduleAndTerm
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.creduce(bubble);
+			    interpreter.creduce(lexerBubble);
 			}
 
 		|	optDebug KW_REDUCE
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			}
 			moduleAndTerm
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.reduce(bubble, $1);
+			    interpreter.reduce(lexerBubble, $1);
 			}
 
 		|	optDebug KW_REWRITE
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			  number = NONE;
 			}
@@ -88,12 +80,11 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.rewrite(bubble, number, $1);
+			    interpreter.rewrite(lexerBubble, number, $1);
 			}
 		|	optDebug KW_EREWRITE
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			  number = NONE;
 			  number2 = NONE;
@@ -102,12 +93,11 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.eRewrite(bubble, number, number2, $1);
+			    interpreter.eRewrite(lexerBubble, number, number2, $1);
 			}
 		|	optDebug KW_FREWRITE
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			  number = NONE;
 			  number2 = NONE;
@@ -116,12 +106,11 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.fRewrite(bubble, number, number2, $1);
+			    interpreter.fRewrite(lexerBubble, number, number2, $1);
 			}
 		|	optDebug KW_SREWRITE
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			  number = NONE;
 			}
@@ -129,12 +118,11 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.sRewrite(bubble, number, $1);
+			    interpreter.sRewrite(lexerBubble, number, $1);
 			}
-		|	KW_SEARCH
+		|	search
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			  number = NONE;
 			  number2 = NONE;
@@ -143,12 +131,11 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.search(bubble, number, number2);
+			    interpreter.search(lexerBubble, number, number2, $1);
 			}
 		|	match
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			  number = NONE;
 			}
@@ -156,12 +143,11 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.match(bubble, $1, number);
+			    interpreter.match(lexerBubble, $1, number);
 			}
-		|	unify
+		|	KW_UNIFY
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			  number = NONE;
 			}
@@ -169,7 +155,7 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.unify(bubble, $1, number);
+			    interpreter.unify(lexerBubble, number);
 			}
 		|	optDebug KW_CONTINUE optNumber '.'
 			{
@@ -178,44 +164,40 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 		|	KW_LOOP
 			{
 			  lexerCmdMode();
-			  clear();
 			  moduleExpr.contractTo(0);
 			}
 			moduleAndTerm
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.loop(bubble);
+			    interpreter.loop(lexerBubble);
 			}
-		|	'('			{ lexerCmdMode(); clear(); }
-			cTokens	')'
+		|	parenBubble
 			{
-			  lexerInitialMode();
 			  moduleExpr.contractTo(0);
 			  if (interpreter.setCurrentModule(moduleExpr))  // HACK
-			    interpreter.contLoop(bubble);
+			    interpreter.contLoop(lexerBubble);
 			}
-
 		|	KW_TRACE select		{ lexerCmdMode(); }
-			cOpNameList '.'
+			opSelect
 			{
 			  lexerInitialMode();
 			  interpreter.traceSelect($2);
 			}
 		|	KW_TRACE exclude		{ lexerCmdMode(); }
-			cOpNameList '.'
+			opSelect
 			{
 			  lexerInitialMode();
 			  interpreter.traceExclude($2);
 			}
 		|	KW_BREAK select		{ lexerCmdMode(); }
-			cOpNameList '.'
+			opSelect
 			{
 			  lexerInitialMode();
 			  interpreter.breakSelect($2);
 			}
 		|	KW_PRINT conceal		{ lexerCmdMode(); }
-			cOpNameList '.'
+			opSelect
 			{
 			  lexerInitialMode();
 			  interpreter.printConceal($2);
@@ -228,32 +210,28 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 /*
  *	Commands to show interpreter state.
  */
-		|	KW_SHOW KW_MOD		{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_MOD		{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    CM->showModule();
 			}
-		|	KW_SHOW KW_MODULE	{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_MODULE	{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    CM->showModule();
 			}
-		|	KW_SHOW KW_ALL		{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_ALL		{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showModule(true);
 			}
-		|	KW_SHOW KW_VIEW		{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_VIEW		{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentView(bubble))
+			  if (interpreter.setCurrentView(lexerBubble))
 			    interpreter.showView();
 			}
 		|	KW_SHOW KW_MODULES '.'
@@ -264,60 +242,52 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 			{
 			  interpreter.showNamedViews();
 			}
-		|	KW_SHOW KW_SORTS	{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_SORTS	{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showSortsAndSubsorts();
 			}
-		|	KW_SHOW KW_OPS		{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_OPS2		{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showOps();
 			}
-		|	KW_SHOW KW_VARS		{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_VARS		{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showVars();
 			}
-		|	KW_SHOW KW_MBS		{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_MBS		{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showMbs();
 			}
-		|	KW_SHOW KW_EQS		{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_EQS		{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showEqs();
 			}
-		|	KW_SHOW KW_RLS		{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_RLS		{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showRls();
 			}
-		|	KW_SHOW KW_SUMMARY	{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_SUMMARY	{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showSummary();
 			}
-		|	KW_SHOW KW_KINDS	{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_KINDS	{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showKinds();
 			}
 		|	KW_SHOW KW_PATH SIMPLE_NUMBER '.'
@@ -332,11 +302,10 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 			{
 			  interpreter.showSearchGraph();
 			}
-		|	KW_SHOW KW_PROFILE	{ lexerCmdMode(); clear(); }
-			cTokensBarDot '.'
+		|	KW_SHOW KW_PROFILE	{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  lexerInitialMode();
-			  if (interpreter.setCurrentModule(bubble))
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showProfile();
 			}
 /*
@@ -377,6 +346,14 @@ command		:	KW_SELECT		{ lexerCmdMode(); clear(); }
 		|	KW_SET KW_PRINT printOption polarity '.'
 			{
 			  interpreter.setPrintFlag($3, $4);
+			}
+		|	KW_SET KW_PRINT KW_ATTRIBUTE polarity '.'
+			{
+			  interpreter.setFlag(Interpreter::PRINT_ATTRIBUTE, $4);
+			}
+		|	KW_SET KW_PRINT KW_ATTRIBUTE KW_NEWLINE polarity '.'
+			{
+			  interpreter.setFlag(Interpreter::PRINT_ATTRIBUTE_NEWLINE, $5);
 			}
 		|	KW_SET KW_TRACE traceOption polarity '.'
 			{
@@ -502,13 +479,16 @@ exclude		:	KW_EXCLUDE	       	{ $$ = true; }
 conceal		:	KW_CONCEAL		{ $$ = true; }
 		|	KW_REVEAL		{ $$ = false; }
 		;
+/*
+ *	Return true if we should do a narrowing search.
+ */
+search		:	KW_NARROW		{ $$ = Interpreter::NARROW; }
+		|	KW_XG_NARROW		{ $$ = Interpreter::XG_NARROW; }
+		|	KW_SEARCH		{ $$ = Interpreter::SEARCH; }
+		;
 
 match		:	KW_XMATCH		{ $$ = true; }
 		|	KW_MATCH		{ $$ = false; }
-		;
-
-unify		:	KW_XUNIFY		{ $$ = true; }
-		|	KW_UNIFY		{ $$ = false; }
 		;
 
 optDebug       	:	KW_DEBUG 	       	{ $$ = true; }
@@ -529,16 +509,15 @@ importMode	:	KW_PROTECT		{ $$ = ImportModule::PROTECTING; }
  *	<module expression> is a (possibly empty) bubble not containing ':' or '.'
  *	<term> is a (non-empty) bubble not containing '.' except as first token
  */
-moduleAndTerm	:	KW_IN			{ store($1); }
-			cTokensBarDotColon inEnd
-		|	cTokenBarIn		{ store($1); }
-			cTokensBarDot '.'
+
+moduleAndTerm	:	initialEndBubble
+		|	cTokenBarIn		{ lexBubble($1, END_COMMAND, 0); }
+			endBubble
 		;
 
-inEnd		:	':'			{ moduleExpr = bubble; clear(); }
-			cToken			{ store($3); }
-			cTokensBarDot '.'	{}
-		|	'.'			{}
+inEnd		:	':'			{ moduleExpr = lexerBubble; lexBubble(END_COMMAND, 1); }
+			endBubble
+		|	endBubble
 		;
 
 /*
@@ -548,50 +527,44 @@ inEnd		:	':'			{ moduleExpr = bubble; clear(); }
  */
 
 numberModuleTerm
-		:	'['			{ store($1); }
+		:	'['			{ lexSave($1); }
 			numberModuleTerm1
-		|	KW_IN			{ store($1); }
-			cTokensBarDotColon inEnd
-		|	cTokenBarLeftIn		{ store($1); }
-			cTokensBarDot '.'
+		|	initialEndBubble
+		|	cTokenBarLeftIn		{ lexBubble($1, END_COMMAND, 0);  }
+			endBubble
 		;
 
 numberModuleTerm1
-		:	NUMERIC_ID		{ store($1); }
+		:	NUMERIC_ID		{ lexContinueSave($1); }
 			numberModuleTerm2
-		|	cTokenBarDotNumber	{ store($1); }
-			cTokensBarDot '.'
-		|	'.'			{}
+		|	cTokenBarDotNumber	{ lexContinueBubble($1, END_COMMAND, 0); }
+			endBubble
+		|	miscEndBubble
 		;
 
 numberModuleTerm2
-		:	']'
-			{
-			  number = Token::codeToInt64(bubble[1].code());
-			  clear();
-			}
+		:	']'			{ number = Token::codeToInt64(lexerBubble[1].code()); }
 			moduleAndTerm
-		|	cTokenBarDotRight	{ store($1); }
-			cTokensBarDot '.'
-		|	'.'			{}
+		|	cTokenBarDotRight	{ lexContinueBubble($1, END_COMMAND, 0); }
+			endBubble
+		|	miscEndBubble
 		;
 
 /*
- *	Optional [number] or [number, number] followed by optional module
- *	expression, followed by term, followed by dot.
- *	{"[" <number> "]"} {"in" <module expression> ":"} <term> "."
+ *	Optional [number],  [, number] or [number, number] followed by optional
+ *	module expression, followed by term, followed by dot.
+ *	{"[" { {<number>} , } <number> "]"} {"in" <module expression> ":"} <term> "."
  */
 
 /*
  *	Seen <command>; looking for "[", "in", or start of term.
  */
 numbersModuleTerm
-		:	'['			{ store($1); }
+		:	'['			{ lexSave($1); }
 			numbersModuleTerm1
-		|	KW_IN			{ store($1); }
-			cTokensBarDotColon inEnd
-		|	cTokenBarLeftIn		{ store($1); }
-			cTokensBarDot '.'
+		|	initialEndBubble
+		|	cTokenBarLeftIn		{ lexBubble($1, END_COMMAND, 0); }
+			endBubble
 		;
 
 /*
@@ -599,13 +572,13 @@ numbersModuleTerm
  *	term or "." to end command.
  */
 numbersModuleTerm1
-		:	NUMERIC_ID		{ store($1); }
+		:	NUMERIC_ID		{ lexContinueSave($1); }
 			numbersModuleTerm2
-		|	','			{ store($1); }
+		|	','			{ lexContinueSave($1); }
 			numbersModuleTerm5
-		|	cTokenBarDotCommaNumber	{ store($1); }
-			cTokensBarDot '.'
-		|	'.'			{}
+		|	cTokenBarDotCommaNumber	{ lexContinueBubble($1, END_COMMAND, 0); }
+			endBubble
+		|	miscEndBubble
 		;
 
 /*
@@ -613,17 +586,13 @@ numbersModuleTerm1
  *	continuation of term or "." to end command.
  */
 numbersModuleTerm2
-		:	']'
-			{
-			  number = Token::codeToInt64(bubble[1].code());
-			  clear();
-			}
+		:	']'			{ number = Token::codeToInt64(lexerBubble[1].code()); }
 			moduleAndTerm
-		|	','			{ store($1); }
+		|	','			{ lexContinueSave($1); }
 			numbersModuleTerm3
-		|	cTokenBarDotCommaRight	{ store($1); }
-			cTokensBarDot '.'
-		|	'.'			{}
+		|	cTokenBarDotCommaRight	{ lexContinueBubble($1, END_COMMAND, 0); }
+			endBubble
+		|	miscEndBubble
 		;
 
 /*
@@ -631,11 +600,11 @@ numbersModuleTerm2
  *	continuation of term or "." to end command.
  */
 numbersModuleTerm3
-		:	NUMERIC_ID		{ store($1); }
+		:	NUMERIC_ID		{ lexContinueSave($1); }
 			numbersModuleTerm4
-		|	cTokenBarDotNumber	{ store($1); }
-			cTokensBarDot '.'
-		|	'.'			{}
+		|	cTokenBarDotNumber	{ lexContinueBubble($1, END_COMMAND, 0); }
+			endBubble
+		|	miscEndBubble
 		;
 
 /*
@@ -645,14 +614,14 @@ numbersModuleTerm3
 numbersModuleTerm4
 		:	']'
 			{
-			  number = Token::codeToInt64(bubble[1].code());
-			  number2 = Token::codeToInt64(bubble[3].code());
+			  number = Token::codeToInt64(lexerBubble[1].code());
+			  number2 = Token::codeToInt64(lexerBubble[3].code());
 			  clear();
 			}
 			moduleAndTerm
-		|	cTokenBarDotRight	{ store($1); }
-			cTokensBarDot '.'
-		|	'.'			{}
+		|	cTokenBarDotRight	{ lexContinueBubble($1, END_COMMAND, 0); }
+			endBubble
+		|	miscEndBubble
 		;
 
 /*
@@ -660,11 +629,11 @@ numbersModuleTerm4
  *	term or "." to end command. 
  */
 numbersModuleTerm5
-		:	NUMERIC_ID	{ store($1); }
+		:	NUMERIC_ID		{ lexContinueSave($1); }
 			numbersModuleTerm6
-		|	cTokenBarDotNumber	{ store($1); }
-			cTokensBarDot '.'
-		|	'.'			{}
+		|	cTokenBarDotNumber	{ lexContinueBubble($1, END_COMMAND, 0); }
+			endBubble
+		|	miscEndBubble
 		;
 
 /*
@@ -672,102 +641,86 @@ numbersModuleTerm5
  *	of term or "." to end command. 
  */
 numbersModuleTerm6
-		:	']'
-			{
-			  number2 = Token::codeToInt64(bubble[2].code());
-			  clear();
-			}
+		:	']'			{ number2 = Token::codeToInt64(lexerBubble[2].code()); }
 			moduleAndTerm
-		|	cTokenBarDotRight	{ store($1); }
-			cTokensBarDot '.'
-		|	'.'			{}
+		|	cTokenBarDotRight	{ lexContinueBubble($1, END_COMMAND, 0); }
+			endBubble
+		|	miscEndBubble
 		;
 
-/*
- *	Command mode token trees.
- */
-cTokens		:	cTokens cToken		{ store($2); }
-		|
+miscEndBubble	:	'('			{ lexContinueBubble($1, END_COMMAND, 0, 1); }
+			endBubble
+		|	endBubble
 		;
 
-cTokensBarDot	:	cTokensBarDot cTokenBarDot	{ store($2); }
-		|
-		;
-
-cTokensBarDotColon
-		:	cTokensBarDotColon cTokenBarDotColon	{ store($2); }
-		|
+initialEndBubble
+		:	'('			{ lexBubble($1, END_COMMAND, 1, 1); }
+			endBubble
+		|	KW_IN			{ lexBubble($1, BAR_COLON | END_COMMAND, 0); }
+			inEnd
+		|	ENDS_IN_DOT
+			{
+			  lexerBubble.resize(1);
+			  lexerBubble[0].dropChar($1);
+			  missingSpace(lexerBubble[0]);
+			}
 		;
 
 /*
  *	Command mode token types.
  */
-cToken		:	IDENTIFIER | NUMERIC_ID | '[' | ']' | KW_IN | ':' | '.' | ','
-		|	'('			{ store($1); }
-			cTokens ')'		{ $$ = $4; }
-		;
-
-cTokenBarDot	:	IDENTIFIER | NUMERIC_ID | '[' | ']' | KW_IN | ':' | ','
-		|	'('			{ store($1); }
-			cTokens ')'		{ $$ = $4; }
-		;
-
-cTokenBarDotColon
-		:	IDENTIFIER | NUMERIC_ID | '[' | ']' | KW_IN | ','
-		|	'('			{ store($1); }
-			cTokens ')'		{ $$ = $4; }
-		;
-
 cTokenBarIn	:	IDENTIFIER | NUMERIC_ID | '[' | ']' | ':' | '.' | ','
-		|	'('			{ store($1); }
-			cTokens ')'		{ $$ = $4; }
 		;
 
 cTokenBarLeftIn	:	IDENTIFIER | NUMERIC_ID | ']' | ':' | '.' | ','
-		|	'('			{ store($1); }
-			cTokens ')'		{ $$ = $4; }
 		;
 
 cTokenBarDotNumber
 		:	IDENTIFIER | '[' | ']' | KW_IN | ':' | ','
-		|	'('			{ store($1); }
-			cTokens ')'		{ $$ = $4; }
 		;
 
 cTokenBarDotRight
 		:	IDENTIFIER | NUMERIC_ID | '[' | KW_IN | ':' | ','
-		|	'('			{ store($1); }	
-			cTokens ')'		{ $$ = $4; }
-		;
-
-cTokenBarDotCommaRight
-		:	IDENTIFIER | NUMERIC_ID | '[' | KW_IN | ':'
-		|	'('			{ store($1); }	
-			cTokens ')'		{ $$ = $4; }
 		;
 
 cTokenBarDotCommaNumber
 		:	IDENTIFIER | '[' | ']' | KW_IN | ':'
-		|	'('			{ store($1); }
-			cTokens ')'		{ $$ = $4; }
 		;
+
+cTokenBarDotCommaRight
+		:	IDENTIFIER | NUMERIC_ID | '[' | KW_IN | ':'
+		;
+
 /*
- *	Lists of operator names.
+ *	Selections are lists of operator names.
  */
+opSelect	:	cOpNameList endSelect
+		|	badSelect
+		;
+
+endSelect	:	'.'		{}
+		|	badSelect
+		;
+
+badSelect	:	ENDS_IN_DOT
+			{
+			  singleton[0].dropChar($1);
+			  missingSpace(singleton[0]);
+			  interpreter.addSelected(singleton);
+			}
+
 cOpNameList	:	cOpNameList cSimpleOpName
 		|	cSimpleOpName
 		;
 
 cSimpleOpName	:	cSimpleTokenBarDot
 			{
-			  clear();
-			  store($1);
-			  interpreter.addSelected(bubble);
+			  singleton[0] = $1;
+			  interpreter.addSelected(singleton);
 			}
-		|	'(' 			{ clear(); }
-			cTokens ')'
+		|	parenBubble
 			{
-			  interpreter.addSelected(bubble);
+			  interpreter.addSelected(lexerBubble);
 			}
 		;
 

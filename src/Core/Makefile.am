@@ -14,6 +14,7 @@ libcore_a_SOURCES = \
 	trivialRhsAutomaton.cc \
 	copyRhsAutomaton.cc \
 	variableInfo.cc \
+	narrowingVariableInfo.cc \
 	termSet.cc \
 	strategy.cc \
 	sortTable.cc \
@@ -27,7 +28,6 @@ libcore_a_SOURCES = \
 	localBinding.cc \
 	subproblemSequence.cc \
 	subproblemDisjunction.cc \
-	unificationSubproblemDisjunction.cc \
 	sortCheckSubproblem.cc \
 	disjunctiveSubproblemAccumulator.cc \
 	preEquation.cc \
@@ -44,7 +44,10 @@ libcore_a_SOURCES = \
 	dagNodeCache.cc \
 	memoTable.cc \
 	rootContainer.cc \
-	sortBdds.cc
+	sortBdds.cc \
+	unificationContext.cc \
+	protectedDagNodeSet.cc \
+	pendingUnificationStack.cc
 
 EXTRA_DIST = \
 	run.cc \
@@ -100,7 +103,6 @@ noinst_HEADERS = \
 	strategy.hh \
 	subproblemAccumulator.hh \
 	subproblemDisjunction.hh \
-	unificationSubproblemDisjunction.hh \
 	subproblemSequence.hh \
 	substitution.hh \
 	symbolMap.hh \
@@ -108,4 +110,9 @@ noinst_HEADERS = \
 	termSet.hh \
 	trivialRhsAutomaton.hh \
 	variableAbstractionSubproblem.hh \
-	variableInfo.hh
+	variableInfo.hh \
+	narrowingVariableInfo.hh \
+	unificationContext.hh \
+	freshVariableGenerator.hh \
+	protectedDagNodeSet.hh \
+	pendingUnificationStack.hh

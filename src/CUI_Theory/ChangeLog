@@ -1,3 +1,156 @@
+2008-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (computeSolvedForm2): deleted commented out old
+	version
+
+	* CUI_DagNode.hh (class CUI_DagNode): deleted commented out old
+	decl for computeSolvedForm2()
+
+===================================Maude90a===========================================
+
+2008-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_UnificationSubproblem.cc (solve): implemented
+
+	* CUI_UnificationSubproblem.hh (class CUI_UnificationSubproblem):
+	problems becomes a Vector<Problem>; delete ProblemList
+	(class CUI_UnificationSubproblem): lhs, rhs of Problem become
+	CUI_DagNode*
+
+2008-02-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_UnificationSubproblem.cc: created
+
+	* CUI_UnificationSubproblem.hh: created
+
+	* CUI_Symbol.cc (makeUnificationSubproblem): added
+
+	* CUI_Symbol.hh (class CUI_Symbol): added decl for
+	makeUnificationSubproblem()
+
+	* CUI_DagNode.cc (computeSolvedForm2): implemented stub
+
+2008-02-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (computeSolvedForm2): Substitution ->
+	UnificationContext
+
+	* CUI_DagNode.hh (class CUI_DagNode): updated decl for
+	computeSolvedForm2()
+
+2008-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (computeSolvedForm2): converted to stub
+
+	* CUI_DagNode.hh (class CUI_DagNode): updated decl for
+	computeSolvedForm2()
+
+2008-01-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (computeSolvedForm2): don't pass nrBindings to
+	SolvedFormSubproblemDisjunction
+
+===================================Maude90===========================================
+
+2008-01-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (computeSolvedForm2): add missing
+	subproblems.add() in reverse order only case
+
+===================================Maude89j===========================================
+
+2007-11-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (instantiate2): check ground flags of arguments;
+	set ground flag in new node if necessary
+	(instantiate2): call normalizeAtTop() rather than just assuming we
+	have a C symbol
+
+2007-11-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (stackArguments): optimize by not stacking equal
+	arguments in the comm case
+
+2007-11-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (indexVariables2): added
+	(instantiateWithReplacement): added
+
+	* CUI_DagNode.hh (class CUI_DagNode): added decls for
+	indexVariables2() and instantiateWithReplacement()
+
+	* CUI_DagNode.cc (instantiate2): updated
+
+	* CUI_DagNode.hh (class CUI_DagNode): updated decl for instantiate2()
+
+===================================Maude89h===========================================
+
+2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (computeBaseSortForGroundSubterms): reimplemented
+
+	* CUI_DagNode.hh (class CUI_DagNode): updated decl for
+	computeBaseSortForGroundSubterms()
+
+2007-08-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (computeSolvedForm): becomes computeSolvedForm2()
+
+	* CUI_DagNode.hh (class CUI_DagNode): computeSolvedForm() ->
+	computeSolvedForm2()
+
+===================================Maude89g===========================================
+
+2007-08-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.hh (class CUI_DagNode): updated decl for
+	computeSolvedForm()
+
+	* CUI_DagNode.cc (computeSolvedForm): added extensionInfo argument
+
+===================================Maude89f===========================================
+
+2007-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (unify, occurs2): deleted
+
+	* CUI_DagNode.hh (class CUI_DagNode): deleted decls for unify()
+	and occurs2()
+
+2007-03-15  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (computeSolvedForm): clear local substitutions
+
+	* CUI_Symbol.cc (computeGeneralizedSort): pass realToBdd by ref
+
+	* CUI_Symbol.hh (class CUI_Symbol): fix computeGeneralizedSort()
+	decl
+
+===================================Maude89a===========================================
+
+2007-03-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (nonVariableSize): return mpz_class
+
+	* CUI_DagNode.hh (class CUI_DagNode): nonVariableSize() now
+	returns mpz_class
+
+2007-03-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (computeSolvedForm): use merge(); don't copy
+	parent substitution
+	(computeSolvedForm): use class SolvedFormSubproblemDisjunction
+
+2007-03-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (nonVariableSize, insertVariables2): added
+	(computeSolvedForm): added
+
+	* CUI_DagNode.hh (class CUI_DagNode): added decls for
+	computeSolvedForm(), nonVariableSize() and insertVariables2()
+
+===================================Maude89===========================================
+
 2007-02-09  Steven Eker  <eker@goo.csl.sri.com>
 
 	* CUI_DagNode.cc (instantiate2): normalize wrt to comm

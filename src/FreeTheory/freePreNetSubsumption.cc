@@ -39,6 +39,10 @@ FreePreNet::subsumesWrtReducedFringe(Term* subsumer,
 {
   if (!(reducedFringe.contains(currentPositionIndex)))
     {
+      //
+      //	We haven't reached the fringe so we must be in part of the term that
+      //	has been matched on our current arc.
+      //
       if (FreeTerm* sf = dynamic_cast<FreeTerm*>(subsumer))
 	{
 	  //
@@ -47,7 +51,8 @@ FreePreNet::subsumesWrtReducedFringe(Term* subsumer,
 	  //	Therefore this free symbol will have been matched in
 	  //	the subject and we may be able to do better than naive subsumption.
 	  //
-	  if (FreeTerm* vf = dynamic_cast<FreeTerm*>(victim))
+	  FreeTerm* vf = dynamic_cast<FreeTerm*>(victim);
+	  if (vf != 0)
 	    {
 	      Assert(sf->symbol() == vf->symbol(), "free symbol clash");
 	      //
@@ -104,6 +109,10 @@ FreePreNet::subsumesWrtReducedFringe(Term* subsumer,
 {
   if (!(reducedFringe.contains(currentPositionIndex)))
     {
+      //
+      //	We haven't reached the fringe so we must be in part of the term that
+      //	has been matched on our current arc.
+      //
       if (dynamic_cast<FreeTerm*>(subsumer) != 0)
 	{
 	  Symbol* symbol = subsumer->symbol();

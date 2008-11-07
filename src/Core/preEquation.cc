@@ -112,7 +112,10 @@ PreEquation::compileBuild(TermBag& availableTerms, bool eagerContext)
 void
 PreEquation::compileMatch(bool compileLhs, bool withExtension)
 {
-  computeIndexRemapping();
+  //
+  //	We don't assume that our module was set so we look at the module of the lhs top symbol.
+  //
+  lhs->symbol()->getModule()->notifySubstitutionSize(computeIndexRemapping());
   if (compileLhs)
     {
       NatSet boundUniquely;

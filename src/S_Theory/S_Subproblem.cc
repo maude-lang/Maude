@@ -54,15 +54,18 @@ S_Subproblem::S_Subproblem(S_DagNode* subject,
 			   const mpz_class& leftOver,
 			   int varIndex,
 			   const Sort* varSort,
-			   S_ExtensionInfo* extensionInfo)
+			   S_ExtensionInfo* extensionInfo,
+			   int mustMatchAtLeast)
   : subject(subject),
     leftOver(leftOver),
     extensionInfo(extensionInfo),
     varIndex(varIndex),
-    varSort(varSort)
+    varSort(varSort),
+    mustMatchAtLeast(mustMatchAtLeast)
 {
   Assert(leftOver > 0, "only makes sense with leftOver > 0");
   Assert(extensionInfo != 0, "only makes sense with extensionInfo");
+  Assert(mustMatchAtLeast == 0 || mustMatchAtLeast == 1, "mustMatchAtLeast must be 0 or 1");
 }
 
 bool
@@ -81,18 +84,15 @@ S_Subproblem::solve(bool findFirst, RewritingContext& solution)
     }
   for (;;)
     {
-      const mpz_class& unmatched = extensionInfo->getUnmatched();
-      int result  = cmp(leftOver, unmatched);
-      Assert(result >= 0, "unmatched > diff");
-      if (result == 0)
+      mpz_class newUnmatched = extensionInfo->getUnmatched() + 1;
+      mpz_class matched = leftOver - newUnmatched;
+      if (matched < mustMatchAtLeast)
 	break;  // fail
-      
-      mpz_class newUnmatched = unmatched + 1;
-      extensionInfo->setUnmatched(newUnmatched);
 
-      mpz_class t = leftOver - newUnmatched;
-      DagNode* arg = subject->getArgument();
-      DagNode* d = (t == 0) ? arg : (new S_DagNode(subject->symbol(), t, arg));
+      extensionInfo->setUnmatched(newUnmatched);
+      DagNode* d = subject->getArgument();
+      if (matched > 0)
+	d = new S_DagNode(subject->symbol(), matched, d);
       solution.bind(varIndex, d);  // to protect potentially new dagnode
 
       if (d->checkSort(varSort, solution))

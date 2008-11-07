@@ -140,3 +140,11 @@ RuleTable::applyRules(DagNode* subject,
   subject->setUnrewritable();
   return 0;
 }
+
+void
+RuleTable::resetEachRule()
+{
+  FOR_EACH_CONST(r, Vector<Rule*>, rules)
+    (*r)->reset();
+}
+

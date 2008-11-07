@@ -1,3 +1,33 @@
+2008-09-17  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Meta/metaPrintAttr (MAUDE_LIB): created
+
+	* tests/Meta/metaPrintAttr.maude: created
+
+	* tests/Misc/attributes (MAUDE_LIB): created
+
+	* tests/Misc/attributes.maude: created
+
+2008-09-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Misc/unification.maude: added simultaneous unification
+	examples
+
+	* tests/Misc/parameterization.maude: added a check for illegally
+	overriding  an operator from a parameter theory
+
+===================================Maude91a===========================================
+
+2008-04-18  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/Meta/metaUnify (MAUDE_LIB): created
+
+	* tests/Misc/unification (MAUDE_LIB): created
+
+	* tests/Misc/unification.maude: created
+
+===================================Maude91===========================================
+
 2006-10-06  Steven Eker  <eker@goo.csl.sri.com>
 
 	* tests/Meta/metaMetadata (MAUDE_LIB): Mixfix -> Main

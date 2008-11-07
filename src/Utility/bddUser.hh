@@ -67,4 +67,11 @@ BddUser::nithvar(int i)
   return bdd_nithvar(i);
 }
 
+inline void
+BddUser::setNrVariables(int nrVariables)
+{
+  if (nrVariables > bdd_varnum())
+    bdd_setvarnum(nrVariables);
+}
+
 #endif

@@ -1,3 +1,44 @@
+2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.cc (computeBaseSortForGroundSubterms) 
+	(computeSolvedForm, nonVariableSize): deleted
+
+	* NA_DagNode.hh (class NA_DagNode): deleted decls for
+	computeBaseSortForGroundSubterms(), computeSolvedForm(),
+	nonVariableSize()
+
+2007-06-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.hh (class NA_DagNode): updated decl for
+	computeSolvedForm()
+
+	* NA_DagNode.cc (computeSolvedForm): added extensionInfo arg
+
+===================================Maude89c===========================================
+
+2007-03-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.cc (unify): deleted
+
+	* NA_DagNode.hh (class NA_DagNode): deleted decl for unify()
+
+===================================Maude89a===========================================
+
+2007-03-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.cc (nonVariableSize): return mpz_class
+
+	* NA_DagNode.hh (class NA_DagNode): nonVariableSize() now returns mpz_class
+
+2007-02-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_DagNode.cc (computeSolvedForm, nonVariableSize): added
+
+	* NA_DagNode.hh (class NA_DagNode): added decls for
+	computeSolvedForm() and nonVariableSize()
+
+===================================Maude89===========================================
+
 2007-01-31  Steven Eker  <eker@goo.csl.sri.com>
 
 	* NA_DagNode.cc (computeBaseSortForGroundSubterms): added

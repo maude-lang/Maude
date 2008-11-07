@@ -27,15 +27,25 @@
 //	utility stuff
 #include "macros.hh"
 #include "vector.hh"
+#include "mpzSystem.hh"
  
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "variable.hh"
 #include "ACU_Theory.hh"
 #include "ACU_Persistent.hh"
 
 //      interface class definitions
 #include "term.hh"
+
+//      core class definitions
+#include "substitution.hh"
+#include "pendingUnificationStack.hh"
+
+//	variable class definitions
+#include "variableSymbol.hh"
+#include "variableDagNode.hh"
 
 //      ACU theory class definitions
 #include "ACU_Symbol.hh"
@@ -460,4 +470,190 @@ ACU_DagNode::argVecComputeBaseSort() const
       sortIndex = s->computeMultSortIndex(sortIndex, index, i->multiplicity);
     }
   return sortIndex;
+}
+
+//
+//	Unification code.
+//
+
+DagNode::ReturnResult
+ACU_DagNode::computeBaseSortForGroundSubterms()
+{
+  ACU_Symbol* s = symbol();
+  if (s->getIdentity() != 0)
+    {
+      //
+      //	We only support unification for AC at the moment
+      //	so let the backstop version handle it.
+      //
+      return DagNode::computeBaseSortForGroundSubterms();
+    }
+  bool ground = true;
+  int nrArgs = argArray.length();
+  for (int i = 0; i < nrArgs; ++i)
+    {
+      switch (argArray[i].dagNode->computeBaseSortForGroundSubterms())
+	{
+	case NONGROUND:
+	  {
+	    ground = false;
+	    break;
+	  }
+	case UNIMPLEMENTED:
+	  return UNIMPLEMENTED;
+	default:
+	  ;  // to avoid compiler warning
+	}
+    }
+  if (ground)
+    {
+      s->computeBaseSort(this);
+      return GROUND;
+    }
+  return NONGROUND;
+}
+
+bool
+ACU_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
+{
+  if (symbol() == rhs->symbol())
+    {
+      //
+      //	AC unification problems with the same top symbol need to be collected and solved
+      //	simultaneously for termination reasons.
+      //
+      pending.push(symbol(), this, rhs);
+      return true;
+    }
+  if (dynamic_cast<VariableDagNode*>(rhs))
+    return rhs->computeSolvedForm(this, solution, pending);
+  return false;
+}
+
+mpz_class
+ACU_DagNode::nonVariableSize()
+{
+  mpz_class total = -1;
+  int nrArgs = argArray.length();
+  for (int i = 0; i < nrArgs; i++)
+    total += argArray[i].multiplicity * (argArray[i].dagNode->nonVariableSize() + 1);
+  return total;
+}
+
+void
+ACU_DagNode::insertVariables2(NatSet& occurs)
+{
+  int nrArgs = argArray.length();
+  for (int i = 0; i < nrArgs; i++)
+    argArray[i].dagNode->insertVariables(occurs);
+}
+
+DagNode*
+ACU_DagNode::instantiate2(const Substitution& substitution)
+{
+  ACU_Symbol* s = symbol();
+  int nrArgs = argArray.length();
+  for (int i = 0; i < nrArgs; ++i)
+    {
+      if (DagNode* n = argArray[i].dagNode->instantiate(substitution))
+	{
+	  //
+	  //	Argument changed under instantiation - need to make a new
+	  //	dagnode.
+	  //
+	  bool ground = true;
+	  ACU_DagNode* d = new ACU_DagNode(s, nrArgs);
+	  //
+	  //	Copy the arguments we already looked at.
+	  //
+	  for (int j = 0; j < i; ++j)
+	    {
+	      if (!(argArray[j].dagNode->isGround()))
+		ground = false;
+	      d->argArray[j] = argArray[j];	
+	    }
+	  //
+	  //	Handle current argument.
+	  //
+	  d->argArray[i].dagNode = n;
+	  d->argArray[i].multiplicity = argArray[i].multiplicity;
+	  if (!(n->isGround()))
+	    ground = false;
+	  //
+	  //	Handle remaining arguments.
+	  //
+	  for (++i; i < nrArgs; ++i)
+	    {
+	      DagNode* a = argArray[i].dagNode;
+	      if (DagNode* n = a->instantiate(substitution))
+		a = n;
+	      if (!(a->isGround()))
+		ground = false;
+	      d->argArray[i].dagNode = a;
+	      d->argArray[i].multiplicity = argArray[i].multiplicity;
+	    }
+	  //
+	  //	Normalize the new dagnode; if it doesn't collapse and
+	  //	all its arguments are ground we compute its base sort.
+	  //
+	  if (!(d->dumbNormalizeAtTop()) && ground)
+	    {
+	      s->computeBaseSort(d);  // FIXME: is this a good idea in the narrowing sense?
+	      d->setGround();
+	    }
+	  Assert(d->isTree() == false, "Oops we got a tree! " << d);
+	  return d;	
+	}
+    }
+  return 0;  // unchanged
+}
+
+//
+//	Narrowing code.
+//
+
+bool
+ACU_DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
+{
+  int nrArgs = argArray.length();
+  bool ground = true;
+  for (int i = 0; i < nrArgs; i++)
+    {   
+      if (!(argArray[i].dagNode->indexVariables(indices, baseIndex)))
+	ground = false;
+    }
+  return ground;
+}
+
+DagNode*
+ACU_DagNode::instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag)
+{
+  int nrArgs = argArray.length();
+  ACU_Symbol* s = symbol();
+  ACU_DagNode* n = new ACU_DagNode(s, nrArgs);
+  ArgVec<ACU_DagNode::Pair>& args2 = n->argArray;
+  int p = 0;
+
+  for (int i = 0; i < nrArgs; i++)
+    {
+      int m = argArray[i].multiplicity;
+      if (i == argIndex)
+	{
+	  --m;
+	  if (m == 0)
+	    continue;
+	}
+      DagNode* d = argArray[i].dagNode;
+      if (DagNode* c = d->instantiate(substitution))  // changed under substitutition
+	d = c;
+      args2[p].dagNode = d;
+      args2[p].multiplicity = m;
+      ++p;
+    }
+  Assert(p >= 1, "no arguments left");
+  args2.contractTo(p);
+  args2.expandBy(1);
+  args2[p].dagNode = newDag;
+  args2[p].multiplicity = 1;
+  return n;
 }

@@ -95,21 +95,6 @@ DagNode::checkSort(const Sort* boundSort, RewritingContext& context)
   return leq(boundSort);
 }
 
-void
-DagNode::computeGeneralizedSort(const SortBdds& sortBdds,
-				const Vector<int> realToBdd,
-				Vector<Bdd>& generalizedSort)
-{
-  int sortIndex = getSortIndex();
-  if (sortIndex == Sort::SORT_UNKNOWN)
-    symbol()->computeGeneralizedSort(sortBdds, realToBdd, this, generalizedSort);
-  else
-    {
-      int nrBdds = sortBdds.getNrVariables(symbol()->rangeComponent()->getIndexWithinModule());
-      sortBdds.makeIndexVector(nrBdds, sortIndex, generalizedSort);
-    }
-}
-
 bool
 DagNode::matchVariable(int index,
 		       const Sort* sort,
@@ -172,6 +157,115 @@ DagNode::partialConstruct(DagNode* /* replacement */, ExtensionInfo* /* extensio
 {
   CantHappen("Called on subject " << this);
   return 0;
+}
+
+//
+//	Unification code.
+//
+
+DagNode::ReturnResult
+DagNode::computeBaseSortForGroundSubterms()
+{
+  //
+  //	This is the backstop version for an unimplemented theory. If
+  //	all our subterms are ground we compute our sort and return GROUND
+  //	other we return UNIMPLEMENTED.
+  //
+  for (DagArgumentIterator a(*this); a.valid(); a.next())
+    {
+      switch (a.argument()->computeBaseSortForGroundSubterms())
+	{
+	case NONGROUND:
+	  IssueWarning("Term " << QUOTE(this) <<
+		       " is non-ground and unification for its top symbol is not currently supported.");
+	  // fall thru
+	case UNIMPLEMENTED:
+	  return UNIMPLEMENTED;
+	default:
+	  ;  // to avoid compiler warning
+	}
+    }
+  topSymbol->computeBaseSort(this);
+  setGround();
+  return GROUND;
+}
+
+bool
+DagNode::computeSolvedForm(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
+{
+  DebugAdvisory("computeSolvedForm() lhs = " << this << " rhs = " << rhs);
+  //
+  //	If we are nonground we dispatch the theory specific algorithm.
+  //
+  if (!isGround())
+    return computeSolvedForm2(rhs, solution, pending);
+  //
+  //	No extension and ground. If the other unificand is nonground, call its algorithm.
+  //
+  if (!(rhs->isGround()))
+    return rhs->computeSolvedForm2(this, solution, pending);
+  //
+  //
+  //	We have two ground terms and no extension so we can just compare them without the
+  //	need for an unification algorithm.
+  //
+  return equal(rhs);
+}
+
+bool
+DagNode::computeSolvedForm2(DagNode* /* rhs */, UnificationContext& /* solution */, PendingUnificationStack& /* pending */)
+{
+  IssueWarning("Unification modulo the theory of operator " << QUOTE(this->topSymbol) << " is not currently supported.");
+  return false;
+}
+
+mpz_class
+DagNode::nonVariableSize()
+{
+  //
+  //	terms in unimplemented theories should be ground and will be treated as constants.
+  //
+  Assert(isGround(), "expected ground " << this);
+  return 1;
+}
+
+void
+DagNode::computeGeneralizedSort(const SortBdds& sortBdds,
+				const Vector<int>& realToBdd,
+				Vector<Bdd>& generalizedSort)
+{
+  if (isGround())
+    {
+      //
+      //	We assume that any code setting the ground flag will also ensure a sort index is set.
+      //	FIXME: this may not be true if the node is unreduced.
+      //
+      Assert(getSortIndex() != Sort::SORT_UNKNOWN, "unknown sort in node flagged as ground");
+      int nrBdds = sortBdds.getNrVariables(symbol()->rangeComponent()->getIndexWithinModule());
+      sortBdds.makeIndexVector(nrBdds, getSortIndex(), generalizedSort);
+    }
+  else
+    symbol()->computeGeneralizedSort(sortBdds, realToBdd, this, generalizedSort);
+}
+
+//
+//	Narrowing code.
+//
+
+bool
+DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
+{
+  //
+  //	This is the backstop version for an unimplemented theory. It does the right
+  //	thing but is rather inefficient for runtime code.
+  //
+  bool ground = true;
+  for (DagArgumentIterator a(*this); a.valid(); a.next())
+    {
+      if (!(a.argument()->indexVariables(indices, baseIndex)))
+	ground = false;
+    }
+  return ground;
 }
 
 #ifdef DUMP

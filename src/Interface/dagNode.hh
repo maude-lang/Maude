@@ -25,6 +25,7 @@
 //
 #ifndef _dagNode_hh_
 #define _dagNode_hh_
+#include "gmpxx.h"
 #include "symbol.hh"
 #include "redexPosition.hh"
 
@@ -62,6 +63,8 @@ public:
   bool isUnrewritable() const;
   void setUnstackable();
   bool isUnstackable() const;
+  void setGround();
+  bool isGround() const;
   void copySetRewritingFlags(const DagNode* other);
   Byte getTheoryByte() const;
   void setTheoryByte(Byte value);
@@ -104,28 +107,41 @@ public:
   virtual void stackArguments(Vector<RedexPosition>& redexStack,
 			      int parentIndex,
 			      bool respectFrozen) = 0;
+  //
+  //	Interface for unification.
+  //
+  enum ReturnResult
+  {
+    GROUND,
+    NONGROUND,
+    UNIMPLEMENTED
+  };
 
-  //
-  //	Temporary interface for unification experiments.
-  //
-  virtual bool unify(DagNode* rhs,
-		     Substitution& solution,
-		     Subproblem*& returnedSubproblem,
-		     ExtensionInfo* extensionInfo = 0) { CantHappen("Not implemented"); return false; }
-  virtual bool computeBaseSortForGroundSubterms() { CantHappen("Not implemented"); return false; }
+  virtual ReturnResult computeBaseSortForGroundSubterms(
+);
+  bool computeSolvedForm(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
+  virtual bool computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
+
+  virtual mpz_class nonVariableSize();
+  void insertVariables(NatSet& occurs);
+  virtual void insertVariables2(NatSet& occurs) {}
   //
   //	instantiate() returns 0 if instantiation does not change term.
   //
-  DagNode* instantiate(Substitution& substitution);
-  virtual DagNode* instantiate2(Substitution& substitution) { CantHappen("Not implemented"); return 0; }
-  bool occurs(int index);
-  virtual bool occurs2(int index) { CantHappen("Not implemented"); return true; }
+  DagNode* instantiate(const Substitution& substitution);
+  virtual DagNode* instantiate2(const Substitution& substitution) { CantHappen("Not implemented"); return 0; }
   void computeGeneralizedSort(const SortBdds& sortBdds,
-			      const Vector<int> realToBdd,  // first BDD variable for each free real variable
+			      const Vector<int>& realToBdd,  // first BDD variable for each free real variable
 			      Vector<Bdd>& generalizedSort);
   //
+  //	Interface for narrowing.
+  //
+  bool indexVariables(NarrowingVariableInfo& indices, int baseIndex);
+  virtual bool indexVariables2(NarrowingVariableInfo& indices, int baseIndex);
+  virtual DagNode* instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag) { CantHappen("Not implemented"); return 0; }
+  //
   //	These member functions must be defined for each derived class in theories
-  //	that need extension
+  //	that need extension.
   //
   virtual bool matchVariableWithExtension(int index,
 					  const Sort* sort,
@@ -180,6 +196,7 @@ private:
     UNREWRITABLE = 4,	// reduced and not rewritable by rules
     UNSTACKABLE = 8,	// unrewritable and all subterms unstackable or frozen
     //CACHED = 16,	// node exists as part of a cache
+    GROUND_FLAG = 16,	// no variables occur below this node
     HASH_VALID = 32	// node has a valid hash value (storage is theory dependent)
   };
 
@@ -222,7 +239,7 @@ DagNode::getMemoryCell() const
 inline void
 DagNode::copySetRewritingFlags(const DagNode* other)
 {
-  getMemoryCell()->copySetFlags(REDUCED | UNREWRITABLE | UNSTACKABLE,
+  getMemoryCell()->copySetFlags(REDUCED | UNREWRITABLE | UNSTACKABLE | GROUND_FLAG,
 				other->getMemoryCell());
 }
 
@@ -366,6 +383,18 @@ DagNode::isUnstackable() const
 }
 
 inline void
+DagNode::setGround()
+{
+  getMemoryCell()->setFlag(GROUND_FLAG);
+}
+
+inline bool
+DagNode::isGround() const
+{
+  return getMemoryCell()->getFlag(GROUND_FLAG);
+}
+
+inline void
 DagNode::setHashValid()
 {
   getMemoryCell()->setFlag(HASH_VALID);
@@ -500,21 +529,27 @@ DagNode::copyAndReduce(RewritingContext& context)
 }
 
 inline DagNode*
-DagNode::instantiate(Substitution& substitution)
+DagNode::instantiate(const Substitution& substitution)
 {
-  //
-  //	If we know our sort we must be ground.
-  //
-  return (getSortIndex() == Sort::SORT_UNKNOWN) ? instantiate2(substitution) : 0;
+  return isGround() ? 0 : instantiate2(substitution);
+}
+
+inline void
+DagNode::insertVariables(NatSet& occurs)
+{
+  if (!isGround())
+    insertVariables2(occurs);
 }
 
 inline bool
-DagNode::occurs(int index)
+DagNode::indexVariables(NarrowingVariableInfo& indices, int baseIndex)
 {
-  //
-  //	If we know our sort we must be ground.
-  //
-  return (getSortIndex() == Sort::SORT_UNKNOWN) ? occurs2(index) : false;
+  if (isGround())
+    return true;  // no variables below us to index
+  bool ground = indexVariables2(indices, baseIndex);
+  if (ground)
+    setGround();
+  return ground;
 }
 
 inline bool

@@ -110,7 +110,7 @@ private:
   ImportModule* toModule;
   ImportModule* newFromTheory;	// copy of fromTheory with different variable aliases
   ImportModule* newToModule;	// copy of toModule with different variable aliases
-  VarDeclList varDecls;		// list of variable alias declared
+  VarDeclList varDecls;		// list of variable aliases declared
   TypeList varDefs;		// list of sorts used in variable declarations
   OpTermList opTermList;	// list of op->term mappings stored as unparsed bubble pairs
   OpTermMap opTermMap;		// map from op name to op->term mappings stored as term pairs
@@ -156,6 +156,7 @@ operator<<(ostream& s, const View* v)
   //	Needed to avoid ambiguity.
   //
   s << static_cast<const NamedEntity*>(v);
+  return s;
 }
 #endif
 

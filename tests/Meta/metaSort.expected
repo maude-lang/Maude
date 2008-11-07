@@ -242,7 +242,8 @@ result NeKindSet: '`[AttrSet`] ; '`[Bool`] ; '`[Condition`] ; '`[EquationSet`]
     '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[QidSet`,QidList`,TypeListSet`,GTermList`,ParameterList`,Type?`,ModuleExpression`,Header`] ;
     '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
     '`[ResultTriple?`] ; '`[RuleSet`] ; '`[String`] ; '`[SubsortDeclSet`] ;
-    '`[Substitution?`] ; '`[Trace?`]
+    '`[Substitution?`] ; '`[Trace?`] ; '`[UnificationPair?`] ;
+    '`[UnificationProblem`] ; '`[UnificationTriple?`]
 ==========================================
 reduce in META-LEVEL : maximalSorts(fmod 'FOO is
   protecting 'META-LEVEL .

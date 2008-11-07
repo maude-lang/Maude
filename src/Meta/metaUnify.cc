@@ -21,7 +21,7 @@
 */
 
 //
-//	Code for metaUnify() descent function.
+//	Code for unification descent functions.
 //
 
 local_inline bool
@@ -33,11 +33,79 @@ MetaLevelOpSymbol::getCachedUnificationProblem(MetaModule* m,
 {
   if (solutionNr > 0)
     {
-      if (m->remove(subject, unification, lastSolutionNr))
+      CacheableState* cachedState;
+      if (m->remove(subject, cachedState, lastSolutionNr))
 	{
-	  if (lastSolutionNr < solutionNr)
-	    return true;
-	  delete unification;
+	  if (lastSolutionNr <= solutionNr)
+	    {
+	      unification = safeCast(UnificationProblem*, cachedState);
+	      return true;
+	    }
+	  delete cachedState;
+	}
+    }
+  return false;
+}
+
+bool
+MetaLevelOpSymbol::metaUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint)
+{
+  //
+  //	We handle both metaUnify() and metaDisjointUnify().
+  //
+  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
+    {
+      Int64 solutionNr;
+      DagNode* metaVarIndex = subject->getArgument(2);
+      if (metaLevel->isNat(metaVarIndex) &&
+	  metaLevel->downSaturate64(subject->getArgument(3), solutionNr))
+	{
+	  const mpz_class& varIndex = metaLevel->getNat(metaVarIndex);
+	  UnificationProblem* unification;
+	  Int64 lastSolutionNr;
+	  if (!getCachedUnificationProblem(m, subject, solutionNr, unification, lastSolutionNr))
+	    {
+	      Vector<Term*> lhs;
+	      Vector<Term*> rhs;
+	      if (!metaLevel->downUnificationProblem(subject->getArgument(1), lhs, rhs, m, disjoint))
+		return false;
+	      DebugAdvisory("metaUnify2() - making unification problem for " << subject);
+	      unification = new UnificationProblem(lhs, rhs, new FreshVariableSource(m, varIndex));
+	      if (!(unification->problemOK()))
+		{
+		  delete unification;
+		  return false;
+		}
+	      lastSolutionNr = -1;
+	    }
+	  else
+	    DebugAdvisory("metaUnify2() - using existing unification problem for " << subject);
+
+	  DagNode* result;
+	  m->protect();
+	  DebugAdvisoryCheck(solutionNr - lastSolutionNr == 1,
+			     "unification jump from " <<  lastSolutionNr << " to " << solutionNr);
+	  for (; lastSolutionNr < solutionNr; ++lastSolutionNr)
+	    {
+	      if (!(unification->findNextUnifier()))
+		{
+		  delete unification;
+		  result = disjoint ? metaLevel->upNoUnifierTriple() : metaLevel->upNoUnifierPair();
+		  goto fail;
+		}
+	    }
+	  m->insert(subject, unification, solutionNr);
+	  {
+	    const Substitution& solution = unification->getSolution();
+	    const VariableInfo& variableInfo = unification->getVariableInfo();
+	    mpz_class lastVarIndex = varIndex + unification->getNrFreeVariables();
+	    result = disjoint ?
+	      metaLevel->upUnificationTriple(solution, variableInfo, lastVarIndex, m) :
+	      metaLevel->upUnificationPair(solution, variableInfo, lastVarIndex, m);
+	  }
+	fail:
+	  (void) m->unprotect();
+	  return context.builtInReplace(subject, result);
 	}
     }
   return false;
@@ -47,51 +115,16 @@ bool
 MetaLevelOpSymbol::metaUnify(FreeDagNode* subject, RewritingContext& context)
 {
   //
-  //	op metaUnify : Module Term Term Nat ~> Substitution? .
+  //	op metaUnify : Module UnificationProblem Nat Nat ~> UnificationPair? .
   //
-  Int64 solutionNr;
-  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
-    {
-      if (metaLevel->downSaturate64(subject->getArgument(3), solutionNr))
-	{
-	  UnificationProblem* unification;
-	  Int64 lastSolutionNr;
-	  if (!getCachedUnificationProblem(m, subject, solutionNr, unification, lastSolutionNr))
-	    {
-	      Term* lhs;
-	      Term* rhs;
-	      if (!metaLevel->downTermPair(subject->getArgument(1), subject->getArgument(2), lhs, rhs, m))
-		return false;
-	      unification = new UnificationProblem(lhs, rhs, new FreshVariableSource(m));
-	      lastSolutionNr = -1;
-	    }
-	  m->protect();
+  return metaUnify2(subject, context, false);
+}
 
-	  DagNode* result;
-	  while (lastSolutionNr < solutionNr)
-	    {
-	      if (!(unification->findNextUnifier()))
-		{
-		  delete unification;
-		  result = metaLevel->upNoMatchSubst();
-		  goto fail;
-		}
-	      ++lastSolutionNr;
-	    }
-	  m->insert(subject, unification, solutionNr);
-	  {
-	    PointerMap qidMap;
-	    PointerMap dagNodeMap;
-	    result = metaLevel->upSubstition(unification->getSolution(),
-					     *unification,
-					     m,
-					     qidMap,
-					     dagNodeMap);
-	  }
-	fail:
-	  (void) m->unprotect();
-	  return context.builtInReplace(subject, result);
-	}
-    }
-  return false;
+bool
+MetaLevelOpSymbol::metaDisjointUnify(FreeDagNode* subject, RewritingContext& context)
+{
+  //
+  //	op metaDisjointUnify : Module UnificationProblem Nat Nat ~> UnificationTriple? .
+  //
+  return metaUnify2(subject, context, true);
 }

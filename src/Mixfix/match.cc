@@ -75,7 +75,7 @@ Interpreter::match(const Vector<Token>& bubble, bool withExtension, Int64 limit)
 	  cout << " such that ";
 	  MixfixModule::printCondition(cout, condition);
 	}
-      cout << " .\n";
+      cout << " ." << endl;
     }
 
   // pattern->getLhsAutomaton()->dump(cerr, *pattern, 0);

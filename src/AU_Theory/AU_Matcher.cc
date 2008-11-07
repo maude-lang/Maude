@@ -421,6 +421,7 @@ AU_LhsAutomaton::determineRigidBlocks(Substitution& solution)
   r.start = NONE;
   r.nrSubjectsForUs = 0;
   r.nrSubjectsToLeave = 0;
+  r.firstMatch = NONE;  // to avoid compiler warning
   rigidBlocks.clear();
   nrSubjectsUsed = 0;
   int lastFlexPart = flexPart.length() - 1;

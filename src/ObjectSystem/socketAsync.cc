@@ -111,8 +111,12 @@ SocketManagerSymbol::doWrite(int fd)
     {
       int errorCode;
       socklen_t errorSize = sizeof(errorCode);
+#ifdef NO_ASSERT
+      (void) getsockopt(fd, SOL_SOCKET, SO_ERROR, &errorCode, &errorSize);
+#else
       int r = getsockopt(fd, SOL_SOCKET, SO_ERROR, &errorCode, &errorSize);
       Assert(r == 0 && errorSize == sizeof(errorCode), "getsockopt() problem");
+#endif
 
       FreeDagNode* message = safeCast(FreeDagNode*, as.lastMessage.getNode());
       ObjectSystemRewritingContext& context = *(as.originalContext);
@@ -196,9 +200,12 @@ SocketManagerSymbol::doError(int fd)
 	{
 	  int errorCode;
 	  socklen_t errorSize = sizeof(errorCode);
+#ifdef NO_ASSERT
+	  getsockopt(fd, SOL_SOCKET, SO_ERROR, &errorCode, &errorSize);
+#else
 	  int r = getsockopt(fd, SOL_SOCKET, SO_ERROR, &errorCode, &errorSize);
 	  Assert(r == 0 && errorSize == sizeof(errorCode), "getsockopt() problem");
-
+#endif
 	  //cerr << "injecting closed message\n";
 	  FreeDagNode* message = safeCast(FreeDagNode*, as.lastMessage.getNode());
 	  ObjectSystemRewritingContext& context = *(as.originalContext);

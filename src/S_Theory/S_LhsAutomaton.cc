@@ -142,10 +142,13 @@ S_LhsAutomaton::nonExtMatchGt(DagNode* subject,
 			      Subproblem*& returnedSubproblem)
 {
   if (type == GROUND_ALIEN || type == NON_GROUND_ALIEN)
-    return false;
+    return false;  // nothing to absort extra iter operators
   mpz_class diff = subjectNumber - number;
   if (type == VARIABLE)
     {
+      //
+      //	Need to check for and handle the bound variable case.
+      //
       if (DagNode* d = solution.value(varIndex))
 	{
 	  if (d->symbol() != topSymbol)
@@ -276,7 +279,13 @@ S_LhsAutomaton::match(DagNode* subject,
   Assert(matchAtTop == (extensionInfo != 0), "matchAtTop disagreement");
   S_DagNode* s = static_cast<S_DagNode*>(subject);
   const mpz_class& subjectNumber = s->getNumber();
-
+  //
+  //	The basic idea is that we can peel "number" iter operators off the subject or
+  //	else we fail. If the subject is now out of theory we have a straight forward
+  //	matching problem regardless of extension. If there are iter operators left on the
+  //	subject they will need to be absorbed by the extension or a lhs (possibly
+  //	abstraction) variable.
+  //
   int r = cmp(subjectNumber, number);  // Purify goes wrong here with gmp 4.0.1 opt asm!
   if (r < 0)
     return false;

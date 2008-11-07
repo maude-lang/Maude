@@ -5478,4 +5478,12 @@ Warning: summand module SET has parameters.
 Warning: summand module SET{[X]} has parameters.
 Warning: Instantiation MAP{STRICT-WEAK-ORDER, Y} uses both a theory-view and a
     parameter from enclosing module FOO.
+Warning: <standard input>, line 355 (fmod MOD): operator declaration for
+    operation f subsort overloads an operator of the same name from a
+    parameter.
+Warning: <standard input>, line 354 (fmod MOD): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 359 (fmod TEST): unable to use module MOD due
+    to unpatchable errors.
 Maude> Bye.

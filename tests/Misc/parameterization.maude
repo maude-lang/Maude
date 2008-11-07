@@ -338,3 +338,23 @@ endfm
 fmod FOO{X :: STRICT-WEAK-ORDER, Y :: TRIV} is
   inc MAP{STRICT-WEAK-ORDER, Y}{X} .
 endfm
+
+*** illegally overriding  an operator from a parameter theory
+
+fth T is
+  sort Elt .
+  op f : Elt -> Elt .
+endfth
+
+view V from T to NAT is
+  sort Elt to NzNat .
+  op f(X:Elt) to term X:NzNat .
+endv
+
+fmod MOD{M :: T} is
+  op f : M$Elt -> M$Elt .
+endfm
+
+fmod TEST is
+  protecting MOD{V} .
+endfm

@@ -1,3 +1,379 @@
+2008-09-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownOps.cc (downOpDecl): added a check to see of we are
+	subsort overloading an operator from one of our parameters
+
+2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ascentFunctions.cc (metaUpImports): deleted decl for unused
+	variable flat
+
+	* metaDownRenamings.cc (downModuleExpression): avoid sign/unsigned
+	comparison warning
+
+2008-08-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.hh (class MetaLevel): updated decls for
+	downStatementAttrSet(), downStatementAttr(), downPrintList(),
+	downPrintListItem()
+
+	* metaDown.cc (downMembAx): use StatementAttributeInfo
+	(downEquation): use StatementAttributeInfo
+	(downRule): use StatementAttributeInfo
+	(downStatementAttrSet, downStatementAttr, downStatementAttr) 
+	(downPrintList): use StatementAttributeInfo
+	(downStatementAttr): disallow multiple print attributes
+
+	* metaLevel.hh (StatementAttributeInfo): added
+	(class MetaLevel): added class StatementAttributeInfo
+
+2008-08-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.hh (class MetaLevel): updated decls for
+	downStatementAttrSet(), downStatementAttr(); added decls for
+	downPrintList(), downPrintListItem()
+	(class MetaLevel): added PRINT to enum Flags
+
+	* metaDown.cc (downStatementAttrSet, downStatementAttr): take
+	printNames, printSorts
+	(downPrintList, downPrintListItem): added
+	(downStatementAttrSet, downStatementAttr): take MixfixModule*
+	(downMembAx): support print attribute
+	(downEquation): support print attribute
+	(downRule): support print attribute
+
+	* metaUpModule.cc (upStatementAttributes): support print attribute
+
+	* metaLevelSignature.cc (MACRO): added printSymbol
+
+===================================Maude91a===========================================
+
+2008-03-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): deleted decl for
+	metaXunify2()
+
+	* metaUnify.cc (metaXunify2): deleted
+	(metaXunify): deleted
+	(metaDisjointXunify): deleted
+
+	* descentSignature.cc (MACRO): removed metaXunify and metaDisjointXunify
+
+===================================Maude90a===========================================
+
+2008-01-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUnify.cc (metaUnify2): added debug advisories to try and
+	discover unification problem that is causing infinite looping
+
+	* descentSignature.cc (MACRO): metaNarrow2 now has 6 arguments
+
+	* metaNarrow.cc (metaNarrow2): solution # is now arg 5
+	(makeNarrowingSequenceSearch2): handle bool arg
+
+2008-01-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaNarrow.cc (makeNarrowingSequenceSearch) 
+	(makeNarrowingSequenceSearch2): pass flags arg to
+	NarrowingSequenceSearch()
+
+===================================Maude90===========================================
+
+2007-12-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.cc (MetaLevel): need to clear variableGenerator in
+	renaming version of constructor 
+
+2007-12-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUp.cc (upVariable): deleted variable mapping code
+
+	* metaNarrow.cc (metaNarrow2): correct variableBase by
+	m->getMinimumSubstitutionSize()
+
+	* metaLevel.hh (class MetaLevel): data member variableCounter
+	replaced by variableBase
+	(startVariableMapping): variableCounter replaced by variableBase
+
+	* metaUp.cc (upDagNode): do variable name mapping here based on
+	the index in the VariableDagNode
+
+2007-12-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.hh (startVariableMapping, stopVariableMapping): added
+
+	* metaUp.cc (upVariable): handle variable mapping
+
+	* metaLevel.cc (MetaLevel): clear variableGenerator
+
+	* metaLevel.hh (class MetaLevel): added data members
+	variableCounter and variableGenerator
+
+	* metaNarrow.cc (makeNarrowingSequenceSearch2): don't bother with
+	Bool argument or setVariableCounter()
+
+	* metaLevelSignature.cc (MACRO): added failure2Symbol
+
+	* metaLevel.hh (class MetaLevel): added decl for upFailurePair()
+
+	* metaUp.cc (upFailurePair): added
+
+	* descentSignature.cc (MACRO): added metaNarrow2
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): added decl for
+	makeNarrowingSequenceSearch2()
+
+	* metaNarrow.cc (makeNarrowingSequenceSearch): comment out dead
+	code
+	(makeNarrowingSequenceSearch2): added
+	(metaNarrow2): added
+
+2007-11-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaApply.cc (getCachedRewriteSearchState): use new
+	remove() semantics; changed test from < to <=
+
+	* metaMatch.cc (getCachedMatchSearchState): use new
+	remove() semantics; changed test from < to <=
+
+2007-11-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaNarrow.cc (getCachedNarrowingSequenceSearch): use new
+	remove() semantics; changed test from < to <=
+
+	* metaUnify.cc (getCachedUnificationProblem): use new remove()
+	semantics 
+
+	* metaOpCache.cc (remove): collapse 4 versions to a single
+	simplified version
+	(clear): make local_inline
+
+	* metaOpCache.hh (class MetaOpCache): replaced decls for insert()
+	and remove()
+
+	* metaOpCache.cc (clear): simplified
+	(insert): collapse 4 versions to a single simplified version
+
+	* metaOpCache.hh (class MetaOpCache): use CachableState* rather
+	than the various specialized classes in struct Item
+
+2007-11-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUnify.cc (getCachedUnificationProblem): changed test from <
+	to <=
+
+	* metaOpCache.cc (insert): fix failure to clear unused entries bug
+	in all four versions
+
+	* metaOpCache.hh (class MetaOpCache): bumped default cache size to 40
+
+	* metaUnify.cc (metaUnify2): added DebugAdvisoryCheck() to report
+	unexpected jumps in solution number
+
+2007-11-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): added decls for
+	getCachedNarrowingSequenceSearch() and
+	makeNarrowingSequenceSearch()
+
+	* metaNarrow.cc: created
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): updated decl for
+	downSearchType()
+
+	* metaSearch.cc (downSearchType): use SequenceSearch in place of
+	RewriteSequenceSearch
+
+	* metaOpCache.hh (class MetaOpCache): added narrowingSearch to
+	struct Item
+
+	* metaOpCache.cc (insert, remove): added NarrowingSequenceSearch*
+	versions
+	(clear): delete narrowingSearch
+
+	* metaOpCache.hh (class MetaOpCache): added declarations for
+	NarrowingSequenceSearch* versions of insert() and remove()
+
+	* descentSignature.cc (MACRO): added metaNarrow
+
+2007-10-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUnify.cc (metaUnify2): use getVariableInfo()
+	(metaXunify2): use getVariableInfo()
+
+===================================Maude89h===========================================
+
+2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUnify.cc (metaXunify2): variablesOK() -> problemOK()
+	(metaUnify2): variablesOK() -> problemOK()
+
+	* metaUp.cc (upResultTriple, upResult4Tuple, upUnificationPair) 
+	(upUnificationContextTriple, upMatchPair): upSubstition() ->
+	upSubstitution()
+	(upSubstition): becomes upSubstitution()
+
+	* metaMatch.cc (metaMatch): upSubstition() -> upSubstitution()
+
+	* metaLevel.hh (class MetaLevel): upSubstition() ->
+	upSubstitution()
+
+===================================Maude89g===========================================
+
+2007-07-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.cc (MetaLevel): fix nasty bug where we weren't
+	initializing flagVariables in the copy via SymbolMap ctor
+
+2007-06-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUnify.cc (metaXunify2): pass disjoint arg to downTermPair()
+	(metaUnify2): new downUnificationProblem() convention
+
+	* metaDown.cc (downUnificationProblem): moved makeDisjoint arg
+
+	* metaLevel.hh (class MetaLevel): deleted decl for
+	downDisjointTermPair(); added makeDisjoint arg to downTermPair();
+	moved makeDisjoint arg in downUnificandPair() and
+	downUnificationProblem()
+
+	* metaDown.cc (downUnificandPair): moved makeDisjoint arg to last
+	place
+	(downTermPair): added makeDisjoint arg
+	(downDisjointTermPair): deleted
+
+	* metaUnify.cc (metaXunify2): don't assume that left hand sides
+	have had their sort information filled out
+
+	* metaLevelSignature.cc (MACRO): added
+	unificationContextTripleSymbol, unificationContext4TupleSymbol,
+	noUnifierContextTripleSymbol, noUnifierContext4TupleSymbol
+
+	* metaUnify.cc (metaXunify2): use upNoUnifierContext4Tuple(),
+	upNoUnifierContextTriple(), upUnificationContext4Tuple(),
+	upUnificationContextTriple()
+
+	* metaLevel.hh (class MetaLevel): added decls for
+	upNoUnifierContextTriple() and upNoUnifierContext4Tuple()
+
+	* metaUp.cc (upNoUnifierContextTriple, upNoUnifierContext4Tuple):
+	added
+
+	* metaLevel.hh (class MetaLevel): added decls for
+	upUnificationContextTriple() and upUnificationContext4Tuple()
+
+	* metaUp.cc (upUnificationContextTriple) 
+	(upUnificationContext4Tuple): added
+
+	* descentSignature.cc (MACRO): added entries for metaUnify(),
+	metaDisjointUnify()
+
+	* metaUnify.cc (metaUnify, metaDisjointUnify, metaXunify2): added
+
+2007-06-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): added decl for
+	metaUnify2()
+
+	* metaUnify.cc (metaUnify2): added
+	(metaUnify, metaDisjointUnify): use metaUnify2()
+
+2007-06-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* descentSignature.cc (MACRO): updated nr args for metaUnify and
+	metaDisjointUnify
+
+	* metaUnify.cc (metaDisjointUnify, metaUnify): use
+	downUnificationProblem()
+
+	* metaLevel.hh (class MetaLevel): added decls for
+	downUnificationProblem(), downUnificandPair()
+
+	* metaDown.cc (downUnificationProblem, downUnificandPair): added
+
+	* metaLevelSignature.cc (MACRO): added unificandPairSymbol and
+	unificationConjunctionSymbol
+
+	* metaUnify.cc (metaUnify, metaDisjointUnify): use new
+	UnificationProblem() interface
+
+2007-06-14  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUnify.cc (metaDisjointUnify, metaUnify): check variables and
+	don't do a reduction if a variable is unsafe
+
+	* descentSignature.cc (MACRO): updated entry for metaUnify()
+
+	* metaUnify.cc (metaUnify): rewritten for new semantics
+
+	* metaLevel.hh (class MetaLevel): added decls for
+	upUnificationPair() and upNoUnifierPair()
+
+	* metaUp.cc (upUnificationPair): added
+	(upNoUnifierPair): added
+
+	* metaLevelSignature.cc (MACRO): added unificationPairSymbol and
+	noUnifierPairSymbol
+
+2007-06-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUnify.cc (metaDisjointUnify): rewritten to respect bignum
+	values for varIndex
+
+	* metaLevel.hh (isNat, getNat): added
+
+2007-06-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUnify.cc (metaDisjointUnify): new UnificationProblem() and
+	FreshVariableSource() conventions
+
+2007-06-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUnify.cc (metaDisjointUnify): pass variableIndex to
+	upUnificationTriple()
+
+	* metaLevel.hh (class MetaLevel): updated decl for
+	upUnificationTriple()
+
+	* metaUp.cc (upUnificationTriple): handle variableIndex arg
+
+	* metaUnify.cc (metaDisjointUnify): pass variableIndex to
+	UnificationProblem()
+
+	* metaUp.cc (upVariable): use unflaggedCode()
+
+2007-06-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.hh (class MetaLevel): added decls for
+	upUnificationTriple() and upDisjointSubstitutions()
+
+	* metaUp.cc (upDisjointSubstitutions): added
+	(upUnificationTriple): added
+
+	* metaLevel.hh (class MetaLevel): added decl for
+	upNoUnifierTriple()
+
+	* metaUp.cc (upNoUnifierTriple): added
+
+	* metaLevelSignature.cc (MACRO): added unificationTripleSymbol and
+	noUnifierTripleSymbol
+
+	* metaLevel.hh (class MetaLevel): added decl for
+	downDisjointTermPair()
+
+	* metaDown.cc (downTerm): support flagVariables flag
+	(downDisjointTermPair): added
+
+	* metaLevel.cc (MetaLevel): init flagVariables
+
+	* metaLevel.hh (class MetaLevel): added flagVariables data member
+
+	* metaUnify.cc (metaDisjointUnify): added
+
+	* descentSignature.cc (MACRO): added metaDisjointUnify
+
+===================================Maude89c===========================================
+
 2007-02-13  Steven Eker  <eker@goo.csl.sri.com>
 
 	* metaUnify.cc (metaUnify): use getSolution()

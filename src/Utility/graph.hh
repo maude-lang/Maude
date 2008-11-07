@@ -25,6 +25,7 @@
 //
 #ifndef _graph_hh_
 #define _graph_hh_
+#include <set>
 
 class Graph
 {
@@ -39,16 +40,16 @@ private:
   void colorNode(int i, int& maxColor, Vector<int>& coloring);
   void visit(int i, Vector<int>& component, NatSet& visited);
 
-  const int nodeCount;
-  Vector<Bool> adjMatrix;
+  typedef set<int> AdjSet;
+
+  Vector<AdjSet> adjSets;
 };
 
 inline void
 Graph::insertEdge(int n1, int n2)
 {
-  adjMatrix[n1 * nodeCount + n2] = true;
-  adjMatrix[n2 * nodeCount + n1] = true;
+  adjSets[n1].insert(n2);
+  adjSets[n2].insert(n1);
 }
 
 #endif
-

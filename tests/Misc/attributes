@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/attributes.maude -no-banner -no-advise \
+  > attributes.out 2>&1
+
+diff $srcdir/attributes.expected attributes.out > /dev/null 2>&1

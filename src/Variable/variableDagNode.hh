@@ -48,17 +48,29 @@ public:
 		      int parentIndex,
 		      bool respectFrozen);
   //
-  //	Stuff for unification.
+  //	Unification member functions.
   //
-  bool unify(DagNode* rhs,
-	     Substitution& solution,
-	     Subproblem*& returnedSubproblem,
-	     ExtensionInfo* extensionInfo);
-  bool computeBaseSortForGroundSubterms();
-  DagNode* instantiate2(Substitution& substitution);
-  bool occurs2(int index);
+  ReturnResult computeBaseSortForGroundSubterms();
+  /*
+  bool computeSolvedForm2(DagNode* rhs,
+			  Substitution& solution,
+			  Subproblem*& returnedSubproblem,
+			  ExtensionInfo* extensionInfo);
+  */
+  bool computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
 
+  mpz_class nonVariableSize();
+  void insertVariables2(NatSet& occurs);
+  DagNode* instantiate2(const Substitution& substitution);
+  //
+  //	Narrowing member functions.
+  //
+  bool indexVariables2(NarrowingVariableInfo& indicies, int baseIndex);
+  //
+  //	Functions specific to VariableDagNode.
+  //
   int getIndex() const;
+  VariableDagNode* lastVariableInChain(Substitution& solution);
 
 private:
   DagNode* markArguments();

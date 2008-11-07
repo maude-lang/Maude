@@ -1,3 +1,9 @@
+2008-09-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* directoryManager.cc (initialize): fix char constness
+
+===================================Maude91a===========================================
+
 2006-10-10  Steven Eker  <eker@goo.csl.sri.com>
 
 	* IO_Manager.hh (class IO_Manager): removed extraneous

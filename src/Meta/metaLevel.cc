@@ -59,6 +59,7 @@
 #include "sortConstraint.hh"
 #include "substitution.hh"
 #include "symbolMap.hh"
+#include "freshVariableGenerator.hh"
 
 //      variable class definitions
 #include "variableDagNode.hh"
@@ -124,6 +125,8 @@ MetaLevel::MetaLevel()
   SymbolName = 0;
 #include "metaLevelSignature.cc"
 #undef MACRO
+  flagVariables = false;
+  variableGenerator = 0;
 }
 
 MetaLevel::~MetaLevel()
@@ -141,6 +144,8 @@ MetaLevel::MetaLevel(const MetaLevel* original, SymbolMap* map)
   trueTerm.setTerm((tt == 0) ? 0 : tt->deepCopy(map));
   Term* ft = original->falseTerm.getTerm();
   falseTerm.setTerm((ft == 0) ? 0 : ft->deepCopy(map));
+  flagVariables = false;
+  variableGenerator = 0;
 }
 
 bool

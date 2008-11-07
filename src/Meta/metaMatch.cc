@@ -34,15 +34,21 @@ MetaLevelOpSymbol::getCachedMatchSearchState(MetaModule* m,
 {
   if (solutionNr > 0)
     {
-      SearchState* s;
-      if (m->remove(subject, context, s, lastSolutionNr))
+      CacheableState* cachedState;
+      if (m->remove(subject, cachedState, lastSolutionNr))
 	{
-	  if (lastSolutionNr < solutionNr)
+	  if (lastSolutionNr <= solutionNr)
 	    {
-	      state = safeCast(MatchSearchState*, s);
+	      state = safeCast(MatchSearchState*, cachedState);
+	      //
+	      //	The parent context pointer of the root context in the
+	      //	NarrowingSequenceSearch is possibly stale.
+	      //
+	      safeCast(UserLevelRewritingContext*, state->getContext())->
+		beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
 	      return true;
 	    }
-	  delete s;
+	  delete cachedState;
 	}
     }
   return false;
@@ -116,11 +122,11 @@ MetaLevelOpSymbol::metaMatch(FreeDagNode* subject, RewritingContext& context)
 	    Substitution* substitution = state->getContext();
 	    PointerMap qidMap;
 	    PointerMap dagNodeMap;
-	    result = metaLevel->upSubstition(*substitution,
-					     *variableInfo,
-					     m,
-					     qidMap,
-					     dagNodeMap);
+	    result = metaLevel->upSubstitution(*substitution,
+					       *variableInfo,
+					       m,
+					       qidMap,
+					       dagNodeMap);
 	  }
 	fail:
 	  (void) m->unprotect();

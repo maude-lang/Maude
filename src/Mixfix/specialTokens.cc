@@ -64,6 +64,7 @@
   MACRO(nonexec, "nonexec")
   MACRO(otherwise, "otherwise")
   MACRO(owise, "owise")
+  MACRO(print, "print")
   MACRO(lessThan, "<")
   MACRO(partial, "~>")
   MACRO(th, "th")

@@ -84,7 +84,7 @@ MpzSystem::initialize()
 	    ++k;
 	  }
       }
-      Assert(upperBounds[i] > 0, "zero upper bound");
+      Assert(upperBounds[i] == NONE || upperBounds[i] > 0, "upper bound <= 0");
       //
       //	We maintain the invariant that any variable that has reached its
       //	upper bound is frozen.
@@ -127,7 +127,7 @@ MpzSystem::findNextMinimalSolution(IntVec& solution)
 	      ++res;
 	      bool ok = (d == 0);
 	      int nfnzCount = 0;
-	      int lastNfnz;
+	      int lastNfnz = NONE;
 	      for (int i = 0; i < nrVariables; ++i)
 		{
 		  if (!(s.frozen.contains(i)))
@@ -168,7 +168,8 @@ MpzSystem::findNextMinimalSolution(IntVec& solution)
 		      //cout << "div ok delta = " << delta << endl;
 		      Assert(delta > 0, "delta = " << delta);
 		      s.assignment[lastNfnz] += delta;
-		      if (s.assignment[lastNfnz] <= upperBounds[lastNfnz] && minimal(s.assignment))
+		      if ((upperBounds[lastNfnz] == NONE || s.assignment[lastNfnz] <= upperBounds[lastNfnz]) &&
+			  minimal(s.assignment))
 			{
 			  //
 			  //	Assignment produced a new state that satisfies upper bounds
@@ -228,7 +229,7 @@ MpzSystem::findNextMinimalSolution(IntVec& solution)
 		      //	We maintain the invariant that any variable that has reached its
 		      //	upper bound is frozen.
 		      //
-		      if  (component == upperBounds[i])
+		      if  (component == upperBounds[i])  // component will never be NONE
 			current.frozen.insert(i);
 		      n.frozen = current.frozen;
 		      ++stackPointer;

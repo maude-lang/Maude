@@ -26,19 +26,25 @@
 
 //      utility stuff
 #include "macros.hh"
+#include "vector.hh"
 
 //      forward declarations
-//#include "interface.hh"
+#include "interface.hh"
 #include "core.hh"
+//#include "variable.hh"
 
+//      interface class definitions
+#include "symbol.hh"
+#include "dagNode.hh"
+ 
 //      core class definitions
-#include "moduleItem.hh"
+#include "preEquation.hh"
 
 //	front end class definitions
 #include "metadataStore.hh"
 
 void
-MetadataStore::insertMetadata(ItemType itemType, ModuleItem* item, int metadata)
+MetadataStore::insertMetadata(ItemType itemType, const ModuleItem* item, int metadata)
 {
   if (metadata != NONE)
     metadataMap[itemType | item->getIndexWithinModule()] = metadata;
@@ -63,8 +69,27 @@ MetadataStore::insertMetadata(ModuleItem* symbol, int opDeclIndex, int metadata)
 int
 MetadataStore::getMetadata(ModuleItem* symbol, int opDeclIndex) const
 {
-    MetadataMap::const_iterator i = metadataMap.find((static_cast<Int64>(opDeclIndex) << 32) | symbol->getIndexWithinModule());
+  MetadataMap::const_iterator i = metadataMap.find((static_cast<Int64>(opDeclIndex) << 32) | symbol->getIndexWithinModule());
   if (i == metadataMap.end())
     return NONE;
   return (*i).second;
+}
+
+void
+MetadataStore::insertPrintAttribute(ItemType itemType,
+				    const PreEquation* statement,
+				    const Vector<int>& names,
+				    const Vector<Sort*>& sorts)
+{
+  printAttributeMap[itemType | statement->getIndexWithinModule()].fillOut(*statement, names, sorts);
+}
+
+
+const PrintAttribute*
+MetadataStore::getPrintAttribute(ItemType itemType, const ModuleItem* item) const
+{
+  PrintAttributeMap::const_iterator i = printAttributeMap.find(itemType | item->getIndexWithinModule());
+  if (i == printAttributeMap.end())
+    return 0;
+  return &(*i).second;
 }

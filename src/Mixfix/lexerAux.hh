@@ -24,17 +24,43 @@
 //	Declarations for auxiliary functions needed by lexical analyzer.
 //
 
-extern int inStackPtr;
-extern YY_BUFFER_STATE inStack[];
+//extern int inStackPtr;
+//extern YY_BUFFER_STATE inStack[];
 
 void getInput(char* buf, int& result, int max_size);
 void lexerIdMode();
+void lexerTokenTreeMode(int terminatingTokens);
 void lexerCmdMode();
 void lexerOpMode();
 void lexerInitialMode();
 void lexerFileNameMode();
 void lexerStringMode();
+void lexerLatexMode();
 bool includeFile(const string& directory, const string& fileName, bool silent, int lineNr);
 bool handleEof();
 void eatComment(bool firstNonWhite);
 void cleanUpLexer();
+void checkForPending();
+
+void lexBubble(int termination, int minLen);
+void lexBubble(const Token& first, int termination, int minLen, int pCount = 0);
+void lexContinueBubble(const Token& next, int termination, int minLen, int pCount = 0);
+void lexSave(const Token& first);
+void lexContinueSave(const Token& next);
+
+enum TERMINATION_TOKENS
+  {
+    BAR_COLON = 0x1,
+    BAR_COMMA = 0x2,
+    BAR_LEFT_BRACKET = 0x4,
+    BAR_EQUALS = 0x8,
+    BAR_ARROW2 = 0x10,
+    BAR_TO = 0x20,
+    BAR_IF = 0x40,
+    BAR_RIGHT_PAREN = 0x80,
+    BAR_OP_ATTRIBUTE = 0x100,
+    BAR_RIGHT_BRACKET = 0x200,
+
+    END_STATEMENT = 0x40000000,
+    END_COMMAND = 0x80000000
+  };

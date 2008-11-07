@@ -70,7 +70,10 @@ am_libhigher_a_OBJECTS = libhigher_a-rewriteSearchState.$(OBJEXT) \
 	libhigher_a-rewriteConditionState.$(OBJEXT) \
 	libhigher_a-temporalSymbol.$(OBJEXT) \
 	libhigher_a-satSolverSymbol.$(OBJEXT) \
-	libhigher_a-unificationProblem.$(OBJEXT)
+	libhigher_a-unificationProblem.$(OBJEXT) \
+	libhigher_a-narrowingSearchState.$(OBJEXT) \
+	libhigher_a-narrowingUnificationProblem.$(OBJEXT) \
+	libhigher_a-narrowingSequenceSearch.$(OBJEXT)
 libhigher_a_OBJECTS = $(am_libhigher_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -116,6 +119,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FLEX = @FLEX@
 GMP_LIBS = @GMP_LIBS@
+GREP = @GREP@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -123,6 +127,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGSEGV_LIB = @LIBSIGSEGV_LIB@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 OBJEXT = @OBJEXT@
@@ -143,8 +148,6 @@ USE_DLMALLOC_TRUE = @USE_DLMALLOC_TRUE@
 VERSION = @VERSION@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -161,23 +164,30 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
@@ -212,7 +222,10 @@ libhigher_a_SOURCES = \
 	rewriteConditionState.cc \
 	temporalSymbol.cc \
 	satSolverSymbol.cc \
-	unificationProblem.cc
+	unificationProblem.cc \
+	narrowingSearchState.cc \
+	narrowingUnificationProblem.cc \
+	narrowingSequenceSearch.cc
 
 noinst_HEADERS = \
 	assignmentConditionFragment.hh \
@@ -232,7 +245,12 @@ noinst_HEADERS = \
 	sortTestConditionFragment.hh \
 	stateTransitionGraph3.hh \
 	temporalSymbol.hh \
-	unificationProblem.hh
+	unificationProblem.hh \
+	narrowingSearchState.hh \
+	narrowingUnificationProblem.hh \
+	narrowingSequenceSearch.hh \
+	sequenceSearch.hh \
+	cacheableState.hh
 
 all: all-am
 
@@ -286,6 +304,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-equalityConditionFragment.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-matchSearchState.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-modelCheckerSymbol.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-narrowingSearchState.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-narrowingSequenceSearch.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-narrowingUnificationProblem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-pattern.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-positionState.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-rewriteConditionFragment.Po@am__quote@
@@ -550,6 +571,48 @@ libhigher_a-unificationProblem.obj: unificationProblem.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='unificationProblem.cc' object='libhigher_a-unificationProblem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libhigher_a-unificationProblem.obj `if test -f 'unificationProblem.cc'; then $(CYGPATH_W) 'unificationProblem.cc'; else $(CYGPATH_W) '$(srcdir)/unificationProblem.cc'; fi`
+
+libhigher_a-narrowingSearchState.o: narrowingSearchState.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libhigher_a-narrowingSearchState.o -MD -MP -MF "$(DEPDIR)/libhigher_a-narrowingSearchState.Tpo" -c -o libhigher_a-narrowingSearchState.o `test -f 'narrowingSearchState.cc' || echo '$(srcdir)/'`narrowingSearchState.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libhigher_a-narrowingSearchState.Tpo" "$(DEPDIR)/libhigher_a-narrowingSearchState.Po"; else rm -f "$(DEPDIR)/libhigher_a-narrowingSearchState.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='narrowingSearchState.cc' object='libhigher_a-narrowingSearchState.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libhigher_a-narrowingSearchState.o `test -f 'narrowingSearchState.cc' || echo '$(srcdir)/'`narrowingSearchState.cc
+
+libhigher_a-narrowingSearchState.obj: narrowingSearchState.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libhigher_a-narrowingSearchState.obj -MD -MP -MF "$(DEPDIR)/libhigher_a-narrowingSearchState.Tpo" -c -o libhigher_a-narrowingSearchState.obj `if test -f 'narrowingSearchState.cc'; then $(CYGPATH_W) 'narrowingSearchState.cc'; else $(CYGPATH_W) '$(srcdir)/narrowingSearchState.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libhigher_a-narrowingSearchState.Tpo" "$(DEPDIR)/libhigher_a-narrowingSearchState.Po"; else rm -f "$(DEPDIR)/libhigher_a-narrowingSearchState.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='narrowingSearchState.cc' object='libhigher_a-narrowingSearchState.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libhigher_a-narrowingSearchState.obj `if test -f 'narrowingSearchState.cc'; then $(CYGPATH_W) 'narrowingSearchState.cc'; else $(CYGPATH_W) '$(srcdir)/narrowingSearchState.cc'; fi`
+
+libhigher_a-narrowingUnificationProblem.o: narrowingUnificationProblem.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libhigher_a-narrowingUnificationProblem.o -MD -MP -MF "$(DEPDIR)/libhigher_a-narrowingUnificationProblem.Tpo" -c -o libhigher_a-narrowingUnificationProblem.o `test -f 'narrowingUnificationProblem.cc' || echo '$(srcdir)/'`narrowingUnificationProblem.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libhigher_a-narrowingUnificationProblem.Tpo" "$(DEPDIR)/libhigher_a-narrowingUnificationProblem.Po"; else rm -f "$(DEPDIR)/libhigher_a-narrowingUnificationProblem.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='narrowingUnificationProblem.cc' object='libhigher_a-narrowingUnificationProblem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libhigher_a-narrowingUnificationProblem.o `test -f 'narrowingUnificationProblem.cc' || echo '$(srcdir)/'`narrowingUnificationProblem.cc
+
+libhigher_a-narrowingUnificationProblem.obj: narrowingUnificationProblem.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libhigher_a-narrowingUnificationProblem.obj -MD -MP -MF "$(DEPDIR)/libhigher_a-narrowingUnificationProblem.Tpo" -c -o libhigher_a-narrowingUnificationProblem.obj `if test -f 'narrowingUnificationProblem.cc'; then $(CYGPATH_W) 'narrowingUnificationProblem.cc'; else $(CYGPATH_W) '$(srcdir)/narrowingUnificationProblem.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libhigher_a-narrowingUnificationProblem.Tpo" "$(DEPDIR)/libhigher_a-narrowingUnificationProblem.Po"; else rm -f "$(DEPDIR)/libhigher_a-narrowingUnificationProblem.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='narrowingUnificationProblem.cc' object='libhigher_a-narrowingUnificationProblem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libhigher_a-narrowingUnificationProblem.obj `if test -f 'narrowingUnificationProblem.cc'; then $(CYGPATH_W) 'narrowingUnificationProblem.cc'; else $(CYGPATH_W) '$(srcdir)/narrowingUnificationProblem.cc'; fi`
+
+libhigher_a-narrowingSequenceSearch.o: narrowingSequenceSearch.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libhigher_a-narrowingSequenceSearch.o -MD -MP -MF "$(DEPDIR)/libhigher_a-narrowingSequenceSearch.Tpo" -c -o libhigher_a-narrowingSequenceSearch.o `test -f 'narrowingSequenceSearch.cc' || echo '$(srcdir)/'`narrowingSequenceSearch.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libhigher_a-narrowingSequenceSearch.Tpo" "$(DEPDIR)/libhigher_a-narrowingSequenceSearch.Po"; else rm -f "$(DEPDIR)/libhigher_a-narrowingSequenceSearch.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='narrowingSequenceSearch.cc' object='libhigher_a-narrowingSequenceSearch.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libhigher_a-narrowingSequenceSearch.o `test -f 'narrowingSequenceSearch.cc' || echo '$(srcdir)/'`narrowingSequenceSearch.cc
+
+libhigher_a-narrowingSequenceSearch.obj: narrowingSequenceSearch.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libhigher_a-narrowingSequenceSearch.obj -MD -MP -MF "$(DEPDIR)/libhigher_a-narrowingSequenceSearch.Tpo" -c -o libhigher_a-narrowingSequenceSearch.obj `if test -f 'narrowingSequenceSearch.cc'; then $(CYGPATH_W) 'narrowingSequenceSearch.cc'; else $(CYGPATH_W) '$(srcdir)/narrowingSequenceSearch.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libhigher_a-narrowingSequenceSearch.Tpo" "$(DEPDIR)/libhigher_a-narrowingSequenceSearch.Po"; else rm -f "$(DEPDIR)/libhigher_a-narrowingSequenceSearch.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='narrowingSequenceSearch.cc' object='libhigher_a-narrowingSequenceSearch.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libhigher_a-narrowingSequenceSearch.obj `if test -f 'narrowingSequenceSearch.cc'; then $(CYGPATH_W) 'narrowingSequenceSearch.cc'; else $(CYGPATH_W) '$(srcdir)/narrowingSequenceSearch.cc'; fi`
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)

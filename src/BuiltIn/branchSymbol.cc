@@ -209,6 +209,12 @@ BranchSymbol::computeBaseSort(DagNode* subject)
   
   if (f->getArgument(0)->leq(getOpDeclarations()[0].getDomainAndRange()[0]))
     {
+      //
+      //	The branch argument had a low enough sort so compute a
+      //	least upper bound of the sorts of the alternative arguments.
+      //	This need not be unique - findIndex() finds the one with the
+      //	largest index.
+      //
       ConnectedComponent* range = rangeComponent();  // should be const
       NatSet unionSoFar(range->getLeqSorts(f->getArgument(1)->getSortIndex()));
       int nrArgs = arity();

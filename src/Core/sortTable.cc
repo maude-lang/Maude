@@ -114,8 +114,10 @@ SortTable::computeMaximalOpDeclSetTable()
 void
 SortTable::compileOpDeclarations()
 {
+#ifndef NO_ASSERT
   int nrDeclarations = opDeclarations.length();
   Assert(nrDeclarations > 0, "no operator declarations");
+#endif
 
   componentVector.expandTo(nrArgs + 1);
   for (int i = 0; i <= nrArgs; i++)

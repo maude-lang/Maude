@@ -112,7 +112,7 @@ FreeNet::fillOutNode(int nodeNr,
 }
 
 int
-FreeNet::addRemainderList(const NatSet& liveSet)
+FreeNet::addRemainderList(const PatternSet& liveSet)
 {
   applicable.append(liveSet);
   return - applicable.length();
@@ -137,23 +137,20 @@ FreeNet::translateSlots(int nrRealSlots, const Vector<int>& slotTranslation)
 
 void
 FreeNet::buildRemainders(const Vector<Equation*>& equations,
-			 const NatSet& patternsUsed,
+			 const PatternSet& patternsUsed,
 			 const Vector<int>& slotTranslation)
 {
   int nrEquations = equations.length();
   remainders.expandTo(nrEquations);
   for (int i = 0; i < nrEquations; i++)
+    remainders[i] = 0;
+  FOR_EACH_CONST(i, PatternSet, patternsUsed)
     {
-      Equation* e = equations[i];
-      if (patternsUsed.contains(i))
-	{
-	  if (FreeTerm* f = dynamic_cast<FreeTerm*>(e->getLhs()))
-	    remainders[i] = f->compileRemainder(e, slotTranslation);
-	  else
-	    remainders[i] = new FreeRemainder(e);  // remainder for "foreign" equation
-	}
-      else 
-	remainders[i] = 0;
+      Equation* e = equations[*i];
+      if (FreeTerm* f = dynamic_cast<FreeTerm*>(e->getLhs()))
+	remainders[*i] = f->compileRemainder(e, slotTranslation);
+      else
+	remainders[*i] = new FreeRemainder(e);  // remainder for "foreign" equation
     }
   //
   //	Build null terminated pointer version of applicable for added speed.
@@ -162,12 +159,11 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
   fastApplicable.resize(nrApplicables);
   for (int i = 0; i < nrApplicables; i++)
     {
-      NatSet& live = applicable[i];
+      PatternSet& liveSet = applicable[i];
       Vector<FreeRemainder*>& rems = fastApplicable[i];
-      rems.resize(live.size() + 1);
+      rems.resize(liveSet.size() + 1);
       Vector<FreeRemainder*>::iterator r = rems.begin();
-      const NatSet::const_iterator e = live.end();
-      for (NatSet::const_iterator j = live.begin(); j != e; ++j)
+      FOR_EACH_CONST(j, PatternSet, liveSet)
 	*r++ = remainders[*j];
       *r = 0;
     }
@@ -259,8 +255,10 @@ FreeNet::dump(ostream& s, int indentLevel)
   s << Indent(indentLevel - 1) << "applicable:\n";
   for (int i = 0; i < applicable.length(); i++)
     {
-      s << Indent(indentLevel) << "Applicable sequence " << -1 - i << ": " << 
-	applicable[i] << '\n';
+      s << Indent(indentLevel) << "Applicable sequence " << -1 - i << ':';
+      FOR_EACH_CONST(j, PatternSet, applicable[i])
+	s << ' ' << *j;
+      s << '\n';
     }
 
   s << Indent(indentLevel - 1) << "remainders:\n";

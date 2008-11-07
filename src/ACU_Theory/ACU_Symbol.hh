@@ -53,6 +53,15 @@ public:
   void compileOpDeclarations();
   void postOpDeclarationPass();
   //
+  //	Unification stuff.
+  //
+  void computeGeneralizedSort(const SortBdds& sortBdds,
+			      const Vector<int>& realToBdd,
+			      DagNode* subject,
+			      Vector<Bdd>& generalizedSort);
+  UnificationSubproblem* makeUnificationSubproblem();
+  int unificationPriority() const;
+  //
   //	Member functions special to ACU_Symbol.
   //
   bool useTree() const;

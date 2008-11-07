@@ -66,65 +66,84 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
       ctrlC_Handler.sa_flags = SA_INTERRUPT;
 #endif
       sigaction(SIGINT, &ctrlC_Handler, 0);
-
-      // sigaction(SIGCONT, &ctrlC_Handler, 0);
     }
-  {
-    //
-    //	Catch segmentation faults because they might be stack overflows.
-    //
-#if 0  // stack overflows are painful :(
-    stack_t sigstk;
-#if defined(ALPHA) && !defined(_XOPEN_SOURCE_EXTENDED)
-    sigstk.ss_sp = static_cast<char*>(operator new[](SIGSTKSZ));
-#else
-    sigstk.ss_sp = operator new[](SIGSTKSZ);
-#endif
-    sigstk.ss_size = SIGSTKSZ;
-    sigstk.ss_flags = 0;
-    sigaltstack(&sigstk, 0);
-#endif
-
 #ifdef NO_ASSERT
-    static struct sigaction segvHandler;
-    segvHandler.sa_handler = segmentationFaultHandler;
-    // segvHandler.sa_flags = SA_ONSTACK;
-    sigaction(SIGSEGV, &segvHandler, 0);
-    sigaction(SIGBUS, &segvHandler, 0);
+  //
+  //	If we're not debugging we handle internal errors and stack overflows.
+  //
+  signal(SIGBUS, internalErrorHandler);  // misaligned memory access or nonexistent real memeory
+  signal(SIGILL, internalErrorHandler);  // illegal instruction
+
+#ifdef USE_LIBSIGSEGV
+  //
+  //	Stack overflows are reported as SIGSEGV signals and so we need to use the
+  //	libsigsegv library to heuristically distinguish the two conditions.
+  //
+  static char altStack[SIGSTKSZ];
+  sigsegv_install_handler(sigsegvHandler);  // illegal memory access or stack overflow
+  stackoverflow_install_handler(stackOverflowHandler, altStack, sizeof(altStack));
+#else
+  //
+  //	If we can't use the library we will will catch SIGSEGVs but not install
+  //	an alternative stack so that that stack overflows will show up as
+  //	segmentation faults.
+  //
+  signal(SIGSEGV, internalErrorHandler);
 #endif
-  }
+#endif
   //
   //	HACK: this should go somewhere else.
   //
   changePrompt();
   ioManager.setContPrompt("> ");
-
 }
 
+#ifdef USE_LIBSIGSEGV
+
 void
-UserLevelRewritingContext::segmentationFaultHandler(int)
+UserLevelRewritingContext::stackOverflowHandler(int emergency, stackoverflow_context_t scp)
 {
-  static char message1[] = "Maude internal error:\nPlease submit a bug report to ";
-  static char message2[] = PACKAGE_BUGREPORT;
-  static char message3[] = "\n\n";
+  //
+  //	Assume machine state is bad - so use a system call.
+  //
+  static char message[] = "\nFatal error: stack overflow.\n\
+This can happen because you have an infinite computation, say a runaway\n\
+recursion, or model checking an infinite model. It can also happen because\n\
+the stacksize limit in your environment is set too low for the computation\n\
+you are trying to do. You can find the value of your stacksize with the\n\
+tcsh command 'limit stacksize' or the bash command 'ulimit -s'.\n\
+\n\
+Depending on your operating system configuration you may be able to\n\
+increase your stacksize with the tcsh command 'unlimit stacksize'\n\
+or the bash command 'ulimit -s unlimited'.\n\n";
+  write(STDERR_FILENO, message, sizeof(message) - 1);
+  _exit(1);  // don't call atexit() functions with a bad machine state
+}
+
+int
+UserLevelRewritingContext::sigsegvHandler(void *fault_address, int serious)
+{
+  if (serious)  // real segmentation fault
+    internalErrorHandler(SIGSEGV);  // doesn't return
+  return 0;  // must have been a stack overflow
+}
+
+#endif
+
+void
+UserLevelRewritingContext::internalErrorHandler(int /* signalNr */)
+{
   //
   //	Assume machine state is bad - so use system calls.
   //
+  static char message1[] = "\nMaude internal error.\nPlease submit a bug report to: ";
+  static char message2[] = PACKAGE_BUGREPORT;
+  static char message3[] = "\nPlease include the platform details, Maude version, and a file\n\
+`crash.maude' that can be loaded to reproduce the crash (it may load\n\
+other files).\n\n";
   write(STDERR_FILENO, message1, sizeof(message1) - 1);
   write(STDERR_FILENO, message2, sizeof(message2) - 1);
   write(STDERR_FILENO, message3, sizeof(message3) - 1);
-
-  /*
-  cerr << "caught segv\n";
-  struct rlimit rlim;
-  getrlimit (RLIMIT_STACK, &rlim);
-  cerr << "stack limit = " << rlim.rlim_cur << "\n";
-  */
-  /*
-  struct rusage r_usage
-  getrusage(RUSAGE_SELF, &r_usage);
-  cerr << "stack used = " << ru_isrss << '\n';
-  */
   _exit(1);  // don't call atexit() functions with a bad machine state
 }
 
@@ -211,7 +230,6 @@ UserLevelRewritingContext::commandLoop()
 		//
 		interpreter.endXmlLog();
 #endif
-
 		exit(0);
 	      }
 	    }
@@ -319,12 +337,13 @@ UserLevelRewritingContext::handleDebug(const DagNode* subject, const PreEquation
 	  CantHappen("bad value in case");
 	}
     }
+  return true;  // never executed
 }
 
 void
 UserLevelRewritingContext::where()
 {
-  static char* purposeString[] =
+  static const char* purposeString[] =
   {
     "which arose while checking a condition during the evaluation of:",
     "which arose while doing a sort computation during the evaluation of:",
