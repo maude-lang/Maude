@@ -383,9 +383,8 @@ FloatOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   else if (nrArgs == 1)
     {
       DagNode* a0 = d->getArgument(0);
-      if (op == CODE('f', 'l'))
+      if (op == CODE('f', 'l') && succSymbol != 0)  // check we're float() and not floor()
 	{
-	  Assert(succSymbol != 0, "succSymbol undefined");
 	  if (succSymbol->isNat(a0))
 	    {
 	      mpq_class tq(succSymbol->getNat(a0), 1);

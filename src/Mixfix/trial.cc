@@ -57,7 +57,7 @@ UserLevelRewritingContext::traceBeginRuleTrial(DagNode* subject, const Rule* rul
     return UNDEFINED;
   if (!localTraceFlag || !(interpreter.getFlag(Interpreter::TRACE_RL)) || dontTrace(subject, rule))
     return UNDEFINED;
-  cout << header << "trial #" << ++trialCount << rule << '\n';
+  cout << header << "trial #" << ++trialCount << '\n' << rule << '\n';
   if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
     printSubstitution(*this, *rule);
   return trialCount;
@@ -76,7 +76,7 @@ UserLevelRewritingContext::traceBeginScTrial(DagNode* subject, const SortConstra
     return UNDEFINED;
   if (!localTraceFlag || !(interpreter.getFlag(Interpreter::TRACE_MB)) || dontTrace(subject, sc))
     return UNDEFINED;
-  cout << header << "trial #" << ++trialCount << sc << '\n';
+  cout << header << "trial #" << ++trialCount << '\n' << sc << '\n';
   if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
     printSubstitution(*this, *sc);
   return trialCount;

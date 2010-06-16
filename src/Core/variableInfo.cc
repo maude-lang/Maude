@@ -97,8 +97,7 @@ VariableInfo::computeIndexRemapping()
   //
   //	We now build a graph of conflicts between remaining construction indices.
   //
-  //  if (nrConstructionIndices > 100)
-  //    cerr << "nrConstructionIndices = " << nrConstructionIndices << endl;
+  DebugAdvisoryCheck(nrConstructionIndices < 100, "nrConstructionIndices = " << nrConstructionIndices);
   Graph conflicts(nrConstructionIndices);
   Vector<int> conflictCandidates;
   Vector<int> nextConflictCandidates;

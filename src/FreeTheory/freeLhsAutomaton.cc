@@ -70,7 +70,7 @@ FreeLhsAutomaton::FreeLhsAutomaton(const Vector<FreeOccurrence>& freeSymbols,
 				   const Vector<FreeOccurrence>& nonGndAliens,
 				   const Vector<int>& bestSequence,
 				   const Vector<LhsAutomaton*>& subAutomata)
-: freeSubterms(freeSymbols.length() - 1),
+: freeSubterms(freeSymbols.length() - 1),    // skip topSymbol
   uncertainVariables(uncertainVars.length()),
   boundVariables(boundVars.length()),
   groundAliens(gndAliens.length()),
@@ -85,7 +85,7 @@ FreeLhsAutomaton::FreeLhsAutomaton(const Vector<FreeOccurrence>& freeSymbols,
     topTerm->setSlotIndex(0);
     int slotNr = 1;
     int nrFreeSymbols = freeSymbols.length();
-    for (int i = 1; i < nrFreeSymbols; i++)
+    for (int i = 1; i < nrFreeSymbols; i++)  // skip topSymbol
       {
 	const FreeOccurrence& oc = freeSymbols[i];
 	FreeTerm* parent = static_cast<FreeTerm*>(freeSymbols[oc.position()].term());

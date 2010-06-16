@@ -99,6 +99,10 @@ typedef char Bool;
 typedef signed char Byte;
 typedef unsigned char Ubyte;
 //
+//	Types for speed.
+//
+typedef int FastBool;  // testing a one-byte bool return value is expensive on some architectures
+//
 //	Shorthand.
 //
 typedef unsigned int Uint;
@@ -374,43 +378,6 @@ pluralize(int quantity)
 //	If the instruction set supports conditional moves then the naive code
 //	will beat the bit twiddling.
 //
-
-inline void
-setOnLs(int& d, int v, int t)
-{
-  //
-  //	set d to v iff t < 0
-  //
-#ifdef HAVE_CMOV
-  if (t < 0)
-    d = v;
-#else
-  d += (t >> (BITS_PER_INT - 1)) & (v - d);
-#endif
-}
-
-inline void
-setOnGeq(int& d, int v, int t)
-{
-  //
-  //	set d to v iff t >= 0
-  //
-#ifdef HAVE_CMOV
-  if (t >= 0)
-    d = v;
-#else
-  d += (~(t >> (BITS_PER_INT - 1))) & (v - d);
-#endif
-}
-
-inline int
-getSignBit(int n)
-{
-  //
-  //	Return 1 if -ve, 0 owise.
-  //
-  return (n >> (BITS_PER_INT - 1)) & 1;
-}
 
 const char* int64ToString(Int64 i, int base = 10);
 Int64 stringToInt64(const char* s, bool& error, int base = 10);

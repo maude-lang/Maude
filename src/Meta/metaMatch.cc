@@ -66,6 +66,7 @@ MetaLevelOpSymbol::makeMatchSearchState(MetaModule* m,
       Vector<ConditionFragment*> condition;
       if (metaLevel->downCondition(subject->getArgument(3), m, condition))
 	{
+	  DebugAdvisory("makeMatchSearchState() pattern =\n" << p << "\nsubject =\n" << s);
 	  m->protect();
 	  Pattern* pattern = new Pattern(p, false, condition);
 	  RewritingContext* subjectContext = term2RewritingContext(s, context);

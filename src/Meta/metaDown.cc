@@ -145,12 +145,13 @@ MetaLevel::downParameterDecl(DagNode* metaParameterDecl, ImportModule* m)
       int name;
       ImportModule* theory;
       if (downQid(f->getArgument(0), name) &&
-	  downModuleExpression(f->getArgument(1), 0, theory) &&
+	  downModuleExpression(f->getArgument(1), m, theory) &&
 	  theory->isTheory())
 	{
 	  Token t;
 	  t.tokenize(name, FileTable::META_LEVEL_CREATED);
-	  m->addParameter(t, interpreter.makeParameterCopy(name, theory));
+	  Interpreter* owner = safeCast(MetaModule*, m)->getOwner();  // HACK - probably all modules should have owners
+	  m->addParameter(t, owner->makeParameterCopy(name, theory));
 	  return true;
 	}
     }
@@ -158,9 +159,20 @@ MetaLevel::downParameterDecl(DagNode* metaParameterDecl, ImportModule* m)
 }
 
 MetaModule*
-MetaLevel::downModule(DagNode* metaModule)
+MetaLevel::downModule(DagNode* metaModule, bool cacheMetaModule, Interpreter* owner)
 {
-  MetaModule* cm = cache.find(metaModule);
+  if (owner == 0)
+    owner = &interpreter;  // NASTY HACK - should get default owner from metaModule rather than global variable
+  /*
+    Ideally we should get a symbol from metaModule, a module from symbol, and an owner from that module,
+    so that if an interpreter is not given we use the one containing the metaModule's, top symbol's module.
+    Currently we can't do this because only the MetaModule class supports ownership.
+  */
+
+  MetaModule* cm = cache.find(metaModule);  // BUG - could be in another interpreter
+  /*
+    Currently we side step this bug by not caching metaModules belonging to metaIntepreters.
+   */
   if (cm != 0)
     return cm;
   Symbol* ms = metaModule->symbol();
@@ -182,7 +194,7 @@ MetaLevel::downModule(DagNode* metaModule)
   DagNode* metaParameterDeclList;
   if (downHeader(f->getArgument(0), id, metaParameterDeclList))
     {
-      MetaModule* m = new MetaModule(id, mt, &cache);
+      MetaModule* m = new MetaModule(id, mt, cacheMetaModule ? &cache : 0, owner);
       if (downParameterDeclList(metaParameterDeclList, m) &&
 	  downImports(f->getArgument(1), m))
 	{
@@ -211,7 +223,8 @@ MetaLevel::downModule(DagNode* metaModule)
 			      m->importStatements();
 			      m->closeTheory();
 			      m->resetImports();
-			      cache.insert(metaModule, m);
+			      if (cacheMetaModule)  // HACK: this should probably be done elsewhere
+				cache.insert(metaModule, m);
 			      //
 			      //	We may have displace a module from the 
 			      //	metamodule cache generating garbage in

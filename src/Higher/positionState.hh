@@ -38,7 +38,8 @@ class PositionState
 public:
   enum Flags
   {
-    RESPECT_FROZEN = 1
+    RESPECT_FROZEN = 1,
+    SET_UNSTACKABLE = 128
   };
 
   typedef int PositionIndex;

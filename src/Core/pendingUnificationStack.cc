@@ -49,6 +49,11 @@ PendingUnificationStack::PendingUnificationStack()
 
 PendingUnificationStack::~PendingUnificationStack()
 {
+  //
+  //	Necessary to avoid memory leaks, and more importantly stale root pointers.
+  //
+  FOR_EACH_CONST(i, Vector<ActiveSubproblem>, subproblemStack)
+    delete i->subproblem;
 }
 
 void

@@ -1,3 +1,127 @@
+2010-04-01  Steven Eker  <eker@rho>
+
+	* unificationProblem.cc (UnificationProblem::markReachableNodes):
+	deleted commented out unsortedSolution marking code
+
+	* narrowingUnificationProblem.cc
+	(NarrowingUnificationProblem::markReachableNodes): deleted
+	commented out unsortedSolution marking code
+
+	* narrowingSearchState.cc
+	(NarrowingSearchState::findNextNarrowing): don't pass
+	extensionInfo to NarrowingUnificationProblem()
+
+	* narrowingUnificationProblem.hh (class
+	NarrowingUnificationProblem): updated ctor decl; deleted
+	extensionInfo data member; deleted subproblem commented out data
+	member
+
+	* narrowingUnificationProblem.cc
+	(NarrowingUnificationProblem::NarrowingUnificationProblem):
+	deleted commented out subproblem and extension unification code
+	(~NarrowingUnificationProblem): deleted commented out subproblem
+	code
+	(NarrowingUnificationProblem::findNextUnifier): deleted commented
+	out subproblem code
+	(NarrowingUnificationProblem::NarrowingUnificationProblem):
+	deleted extensionInfo argument
+
+	* unificationProblem.cc (UnificationProblem::UnificationProblem):
+	remove withExtension arg
+	(UnificationProblem::UnificationProblem): deleted commented out
+	subproblem code
+	(UnificationProblem::findNextUnifier): ditto
+
+	* unificationProblem.hh (class UnificationProblem): remove
+	withExtension arg from ctor
+
+	* unificationProblem.cc (UnificationProblem::UnificationProblem):
+	deleted extension handling code
+	(~UnificationProblem): don't delete extensionInfo
+	(UnificationProblem::makeContext): deleted
+
+	* unificationProblem.hh (class UnificationProblem): deleted decls
+	for makeContext(), getExtensionInfo(), getLeftHandSides(); deleted
+	data member extensionInfo and commented out data member subproblem
+	(UnificationProblem::getExtensionInfo, Vector): deleted
+
+===================================Maude93a===========================================
+
+2009-12-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stateTransitionGraph.cc (getNextState): pass SET_UNREWRITABLE
+	and SET_UNSTACKABLE flags
+
+	* rewriteSearchState.cc (RewriteSearchState): don't pass
+	SET_UNSTACKABLE flag
+
+	* rewriteSearchState.hh (class RewriteSearchState): added
+	SET_UNREWRITABLE to enum Flags
+
+2009-12-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSearchState.cc (RewriteSearchState): pass SET_UNSTACKABLE
+	flag
+
+	* positionState.cc (PositionState): make sure we have
+	SET_UNSTACKABLE set without also setting RESPECT_FROZEN
+	(exploreNextPosition): handle SET_UNSTACKABLE
+
+	* positionState.hh (class PositionState): added SET_UNSTACKABLE to
+	Flags
+
+2009-12-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* rewriteSearchState.cc (findNextRewrite): use
+	setUnrewritable()/isUnrewritable()
+
+2009-12-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stateTransitionGraph3.cc (getNextState): fix symmetric bug where
+	we weren't allowing garbage collection
+
+2009-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stateTransitionGraph.cc (getNextState): allow garbage collection
+	in the success case
+
+2009-11-25  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stateTransitionGraph.cc: created
+
+	* higher.hh: added class StateTransitionGraph
+
+2009-11-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* stateTransitionGraph.hh: created
+
+===================================Maude92b===========================================
+
+2009-11-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* narrowingUnificationProblem.cc (findOrderSortedUnifiers):
+	constrain free fresh variables to have sort indices in valid range
+
+	* unificationProblem.cc (findOrderSortedUnifiers): move
+	constraints on free fresh variables to after the BDD variables
+	have been allocate, using a separate loop
+
+2009-10-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (findOrderSortedUnifiers): fix a critical
+	bug in the algorithm - notion of a sort index being valid cannot
+	be carried through generalized sort computations, and therefore
+	for free variables that are also fresh variables, and won't
+	otherwise be constrained, additional constraints must be added to
+	ensure they only range over valid sort indices
+
+2009-09-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* unificationProblem.cc (findOrderSortedUnifiers): added
+	DebugAdvisory() to investigate the BDD variable bug
+
+===================================Maude92a===========================================
+
 2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
 
 	* narrowingUnificationProblem.cc (findOrderSortedUnifiers): use &

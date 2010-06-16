@@ -43,16 +43,16 @@ public:
 			  Vector<Vector<const char*> >& data);
   void getTermAttachments(Vector<const char*>& purposes,
 			  Vector<Term*>& terms);
-
-  void fillInSortInfo(Term* subject);
+  //
+  //	Built in equational rewriting semantics and strategy.
+  //
   bool eqRewrite(DagNode* subject, RewritingContext& context);
-  void computeBaseSort(DagNode* subject);
   void stackArguments(DagNode* subject,
 		      Vector<RedexPosition>& stack,
 		      int parentIndex);
   //
-  //	Needed since our sorting function is more complex than can
-  //	be specified using standard sort mechanism.
+  //	We need to insert some fake declarations to encode our sort
+  //	structure and we disable sort based optimizations.
   //
   void compileOpDeclarations();
   bool rangeSortNeverLeqThan(Sort* sort);

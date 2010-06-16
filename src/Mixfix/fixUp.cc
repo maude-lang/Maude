@@ -25,7 +25,7 @@
 //
 
 int
-PreModule::findHook(const Vector<Hook>& hookList, HookType type, int name)
+SyntacticPreModule::findHook(const Vector<Hook>& hookList, HookType type, int name)
 {
   int nrHooks = hookList.length();
   for (int i = 0; i < nrHooks; i++)
@@ -38,7 +38,7 @@ PreModule::findHook(const Vector<Hook>& hookList, HookType type, int name)
 }
 
 Symbol*
-PreModule::findHookSymbol(const Vector<Token>& fullName)
+SyntacticPreModule::findHookSymbol(const Vector<Token>& fullName)
 {
   Vector<Token> name;
   int len = fullName.size();
@@ -77,7 +77,7 @@ PreModule::findHookSymbol(const Vector<Token>& fullName)
 }
 
 bool
-PreModule::defaultFixUp(OpDef& opDef, Symbol* symbol)
+SyntacticPreModule::defaultFixUp(OpDef& opDef, Symbol* symbol)
 {
   const Vector<Hook>& hookList = opDef.special;
   int nrHooks = hookList.length();
@@ -126,7 +126,7 @@ PreModule::defaultFixUp(OpDef& opDef, Symbol* symbol)
 }
 
 bool
-PreModule::defaultFixUp(OpDef& opDef, int index)
+SyntacticPreModule::defaultFixUp(OpDef& opDef, int index)
 {
   const Vector<Hook>& hookList = opDef.special;
   int nrHooks = hookList.length();
@@ -168,7 +168,7 @@ PreModule::defaultFixUp(OpDef& opDef, int index)
 #define FIX_UP_FAILED	{flatModule->markAsBad(); continue;}
 
 void
-PreModule::fixUpSymbols()
+SyntacticPreModule::fixUpSymbols()
 {
   int nrOpDecls = opDecls.length();
   for (int i = 0; i < nrOpDecls; i++)

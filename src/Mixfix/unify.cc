@@ -53,7 +53,7 @@ Interpreter::unify(const Vector<Token>& bubble, Int64 limit)
 #endif
 
   Timer timer(getFlag(SHOW_TIMING));
-  UnificationProblem* problem = new UnificationProblem(lhs, rhs, new FreshVariableSource(fm), false);
+  UnificationProblem* problem = new UnificationProblem(lhs, rhs, new FreshVariableSource(fm));
   if (problem->problemOK())
     doUnification(timer, fm, problem, 0, limit);
   else

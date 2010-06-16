@@ -31,6 +31,7 @@ class AutoWrapBuffer;
 class Token;
 class FileTable;
 class DirectoryManager;
+class SyntacticPreModule;
 class PreModule;
 class MixfixModule;
 class ImportModule;

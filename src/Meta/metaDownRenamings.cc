@@ -39,10 +39,12 @@ MetaLevel::convertToTokens(const Vector<int>& ids, Vector<Token>& tokens)
 bool
 MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule, ImportModule*& m)
 {
+  Interpreter* owner = safeCast(MetaModule*, enclosingModule)->getOwner();  // HACK - probably all modules should have owners
+
   int moduleName;
   if (downQid(metaExpr, moduleName))
     {
-      if (PreModule* pm = interpreter.getModule(moduleName))
+      if (PreModule* pm = owner->getModule(moduleName))
 	{
 	  m = pm->getFlatSignature();
 	  if (!(m->isBad()))
@@ -65,7 +67,7 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule
 		return false;
 	      fms.append(m);
 	    }
-	  m = interpreter.makeSummation(fms);
+	  m = owner->makeSummation(fms);
 	  if (m->isBad())
 	    return false;
 	  return true;
@@ -77,7 +79,7 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule
 	  if (downRenamings(f->getArgument(1), &renaming) &&
 	      downModuleExpression(f->getArgument(0), enclosingModule, m))
 	    {
-	      m = interpreter.makeRenamedCopy(m, &renaming);
+	      m = owner->makeRenamedCopy(m, &renaming);
 	      if (m->isBad())
 		return false;
 	      return true;
@@ -118,7 +120,7 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule
 			  continue;
 			}
 		    }
-		  if (View* v = interpreter.getView(code))
+		  if (View* v = owner->getView(code))
 		    {
 		      //
 		      //	Instantiation is a view.
@@ -138,7 +140,7 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule
 		}
 	      if (hasTheoryView && hasPEM)
 		return false;
-	      m = interpreter.makeInstatiation(m, views, names);
+	      m = owner->makeInstatiation(m, views, names);
 	      if (m->isBad())
 		return false;
 	      return true;

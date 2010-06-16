@@ -109,8 +109,8 @@ ACU_GndLhsAutomaton::match(DagNode* subject,
 	      //	ArgVec case.
 	      //
 	      ACU_DagNode* s = safeCast(ACU_DagNode*, subject);
-	      int pos;
-	      if (!(s->binarySearch(stripperTerm, pos)))
+	      int pos = s->binarySearch(stripperTerm);
+	      if (pos < 0)
 		return false;
 	      if (collect(pos, s, solution))
 		{

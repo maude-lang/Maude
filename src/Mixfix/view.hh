@@ -44,11 +44,15 @@ public:
     OP_TERM_MAPPING = -2
   };
 
+  typedef multimap<int, pair<Term*, Term*> > OpTermMap;
+
   View(Token viewName);
   ~View();
 
   void addFrom(ModuleExpression* expr);
   void addTo(ModuleExpression* expr);
+  ModuleExpression* getFrom() const;
+  ModuleExpression* getTo() const;
   void addOpTermMapping(const Vector<Token>& fromOp, const Vector<Token>& toTerm);
   void addVarDecl(Token varName);
   void addType(bool kind, const Vector<Token>& tokens);
@@ -59,6 +63,7 @@ public:
   ImportModule* getFromTheory() const;
   ImportModule* getToModule() const;
   Term* getOpMapTerm(Symbol* symbol) const;
+  const OpTermMap& getOpTermMap() const;  // maybe this exposes too much be we need it for the metalevel
 
 private:
   enum Status
@@ -84,7 +89,6 @@ private:
   typedef list<VarDecl> VarDeclList;
   typedef list<Type> TypeList;
   typedef list<BubblePair> OpTermList;
-  typedef multimap<int, pair<Term*, Term*> > OpTermMap;
   typedef map<int, pair<Sort*, int> > VarMap;
 
   static bool typeMatch(const ConnectedComponent* c1, const ConnectedComponent* c2);
@@ -128,6 +132,18 @@ View::addTo(ModuleExpression* expr)
   toExpr = expr;
 }
 
+inline ModuleExpression*
+View::getFrom() const
+{
+  return fromExpr;
+}
+
+inline ModuleExpression*
+View::getTo() const
+{
+  return toExpr;
+}
+
 inline bool
 View::isComplete()
 {
@@ -146,6 +162,12 @@ View::getToModule() const
 {
   Assert(status == GOOD, "view status not good");
   return toModule;
+}
+
+inline  const View::OpTermMap&
+View::getOpTermMap() const
+{
+  return opTermMap;
 }
 
 #ifndef NO_ASSERT

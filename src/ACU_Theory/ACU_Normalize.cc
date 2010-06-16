@@ -33,18 +33,27 @@ ACU_DagNode::copyAndBinaryInsert(const ACU_DagNode* source,
   //	Copy source's argArray into our argArray, inserting dagNode
   //	in the correct place.
   //
-  int pos;
   int nrSourceArgs = source->argArray.length();
-  if (source->binarySearch(dagNode, pos))
+  int pos = source->binarySearch(dagNode);
+  // DebugAdvisory("copyAndBinaryInsert() " << pos << " out of " << nrSourceArgs);
+  if (pos >= 0)
     {
-      //DebugAdvisory("copyAndBinaryInsert() " << pos << " out of " << nrSourceArgs);
+      //
+      //	We found dagNode in the source argument array at index pos so we can
+      //	just do a fast copy of the source array and increment the multiplicity of
+      //	the argument at index pos.
+      //
       argArray.resizeWithoutPreservation(nrSourceArgs);
       fastCopy(source->argArray.begin(), source->argArray.end(), argArray.begin());
       argArray[pos].multiplicity += multiplicity;
     }
   else
     {
-      //DebugAdvisory("copyAndBinaryInsert() " << pos << " out of " << nrSourceArgs);
+      //
+      //	Didn't find dagNode, and pos is the 1's complement of the index
+      //	where dagNode should be inserted.
+      //
+      pos = ~pos;
       argArray.resizeWithoutPreservation(nrSourceArgs + 1);
       const ArgVec<Pair>::const_iterator i = source->argArray.begin();
       const ArgVec<Pair>::const_iterator p = i + pos;

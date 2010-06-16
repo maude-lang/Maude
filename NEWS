@@ -1,5 +1,77 @@
-Overview of Changes in Maude alpha91d
+Overview of Changes in Maude alpha93d2
+======================================
+* BOOL-OPS split off BOOL in prelude
+
+Overview of Changes in Maude alpha93d
 =====================================
+* fixed bug where fail term attachments to polymorphs cause crash
+* fixed bug where flattened meta-modules produced by upModule() still
+  had parameters
+
+Overview of Changes in Maude alpha93c
+=====================================
+* fixed bug where upView was producing bad metaViews
+
+Overview of Changes in Maude alpha93b
+=====================================
+* fixed bug in handing of metaRenamings
+
+Overview of Changes in Maude alpha93a
+=====================================
+* changed AC constraint propagation algorithm to reduce the risk of
+  exponential blow up at semi-compile time
+* changed free theory constraint propagation algorithm to reduce the
+  risk of exponential blow up at semi-compile time
+
+Overview of Changes in Maude alpha93
+====================================
+* fixed performance bug with huge AC/ACU right hand sides
+* fixed symmetric performace bug in A/AU theory
+* fixed a A/AU rewriting with extension bug
+* graceful recovery from tabs in string literals
+* optimizations for construction of rhs instances
+* bug where single token op names containing a string part were
+  considered to have mixfix syntax
+* unification code cleanup and potential bug fixed
+
+Overview of Changes in Maude alpha92c
+=====================================
+* fixed metaPrettyPrint() bug in assoc, with paren case
+* tail recusion elimination for dag node comparison
+* various low level optimizations
+
+Overview of Changes in Maude alpha92b
+=====================================
+* fixed failure to GC in rules only search
+* fixed unstackable flag bug in CUI theory
+* first attempt at hash consing for search/model checking
+* unrewritable/unstackable optimization for search/model checking
+
+Overview of Changes in Maude alpha92a
+=====================================
+* fixed BDD variable bug introduced by lazy computation of symbol sort
+  calculation BDDs in alpha92
+* fixed bug where free, fresh variables were not constrained to have a
+  valid sort
+* partly fixed a performance bug in constraint propagaion analysis
+  phase of pattern compilation
+* partial support for strat in metalevel builtins
+
+Overview of Changes in Maude alpha92
+====================================
+* fixed a bug in unification sort calculations on polymorphic symbols
+* if_then_else_fi now uses generic sort mechanism and can give
+  preregularity warnings
+* fixed module reparsing bug
+* fixed CUI matcher bug
+* fixed pending unification stack bug
+* added rewrite condition fragments to search command
+* fixed instantiation by theory-view bug
+* added meta-view syntax and upView() operator
+* first attempt at meta-interpreter
+
+Overview of Changes in Maude 2.4 (alpha91d)
+===========================================
 * fixed AU term normalization bug
 
 Overview of Changes in Maude alpha91c

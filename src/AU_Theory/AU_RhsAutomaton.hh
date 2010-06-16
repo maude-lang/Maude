@@ -49,6 +49,7 @@ private:
 
   AU_Symbol* const topSymbol;
   Vector<int> arguments;
+  int nrArguments;
   int destination;
 };
 
@@ -62,6 +63,7 @@ inline void
 AU_RhsAutomaton::close(int destinationIndex)
 {
   destination = destinationIndex;
+  nrArguments = arguments.size();
 }
 
 #endif

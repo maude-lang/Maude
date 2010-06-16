@@ -48,6 +48,37 @@
 #include "rootContainer.hh"
 #include "sortBdds.hh"
 
+#if 0
+//
+//	Outlined hash code for easy experimentation without changing header.
+//
+#include <gmpxx.h>
+size_t
+DagNode::hash(size_t v1, size_t v2)
+{
+
+  size_t sq = v1 * v1;
+  //  size_t result =  3 * v1 + v2;
+
+  //size_t result =  v1 ^ (v1 >> 16) ^ v2;
+  //size_t result =  sq  ^ (v1 >> 16) ^ v2;
+  size_t result =  sq ^ (sq >> 16) ^ (v1 >> 16) ^ v2;
+  /*
+  DebugAdvisory("hash v1 = " << mpz_get_str(0, 2, mpz_class(v1).get_mpz_t()) <<
+		" : v2 " << mpz_get_str(0, 2, mpz_class(v2).get_mpz_t()) <<
+		" : sq " << mpz_get_str(0, 2, mpz_class(sq).get_mpz_t()) <<
+		" : result " << mpz_get_str(0, 2, mpz_class(result).get_mpz_t()));
+  */
+  return result;
+
+
+  //return (v1 * v2 + ((v1 >> 16))) ^ (v2 >> 16);
+  //return (v1 >> 3) ^ (v1 << 29) ^ v2;
+  //return 3 * v1 + v2;  // bad hash function!
+  //return (v1 >> 1) + (v2 << 1);
+}
+#endif
+
 bool
 DagNode::checkSort(const Sort* boundSort, Subproblem*& returnedSubproblem)
 {

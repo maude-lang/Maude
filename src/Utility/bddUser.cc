@@ -29,6 +29,7 @@
 #include "bddUser.hh"
 
 int BddUser::nrUsers = 0;
+BddUser::ErrorHandler* BddUser::errorHandler = 0;
 
 BddUser::BddUser()
 {
@@ -37,6 +38,7 @@ BddUser::BddUser()
       bdd_init(DEFAULT_NODE_SIZE, DEFAULT_CACHE_SIZE);
       bdd_setvarnum(DEFAULT_NR_VARIABLES);
       bdd_gbc_hook(gc_handler);
+      bdd_error_hook(err_handler);
     }
   ++nrUsers;
 }
@@ -45,6 +47,15 @@ void
 BddUser::gc_handler(int pre, bddGbcStat* stat)
 {
   // We don't output any message.
+}
+
+void
+BddUser::err_handler(int errcode)
+{
+  if (errorHandler != 0)
+    (*errorHandler)(errcode);
+  else
+    CantHappen("buddy error " << errcode);  // need an abort() for debugging
 }
 
 BddUser::~BddUser()

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,8 +38,6 @@ public:
   void addBinding(int index, DagNode* value);
   bool assert(Substitution& substitution);
   void retract(Substitution& substitution);
-
-  //bool solvedFormAssert(Substitution& substitution, Subproblem*& returnedSubproblem);
 
 #ifdef DUMP
   void dump(ostream& s, const VariableInfo& variableInfo, int indentLevel) const;

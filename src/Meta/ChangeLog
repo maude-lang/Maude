@@ -1,3 +1,203 @@
+2010-05-07  Steven Eker  <eker@rho>
+
+	* metaLevel.hh (class MetaLevel): updated decl for upHeader()
+
+	* metaUpModule.cc (MetaLevel::upHeader): handle flat argument
+	(MetaLevel::upModule): pass flag arg to upHeader
+
+===================================Maude93d===========================================
+
+2010-05-05  Steven Eker  <eker@rho>
+
+	* metaUpView.cc (MetaLevel::upOpMappings): fixed bug where we
+	using sort mapping set constructors rather than the op mapping
+	ones
+
+2010-04-30  Steven Eker  <eker@rho>
+
+	* metaDown.cc (MetaLevel::downParameterDecl): fix bug by passing m
+	rather than 0 as enclosingModule to downModuleExpression()
+
+===================================Maude93b===========================================
+
+2009-11-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): updated ctor
+
+	* metaLevelOpSymbol.cc (complexStrategy): added
+	(eqRewrite): use complexStrategy()
+	(MetaLevelOpSymbol): take and pass strategy
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): added decl for
+	complexStrategy()
+
+2009-11-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaMatch.cc (makeMatchSearchState): added DebugAdvisory() to
+	investigate performance problem
+
+===================================Maude92a===========================================
+
+2009-08-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* meta.hh: added class InterpreterManagerSymbol
+
+2009-08-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for frewriteTerm()
+
+	* interpreterManagerSymbol.cc (frewriteTerm): added
+	(handleMessage): handle frewriteTermMsg
+
+	* interpreterSignature.cc: added frewriteTermMsg, frewroteTermMsg
+
+2009-08-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUpView.cc (upView): call upOpMappings()
+
+	* metaLevel.hh (class MetaLevel): added decl for upOpMappings()
+
+	* metaUpView.cc (upOpMappings): added
+
+	* metaLevelSignature.cc (MACRO): op mappings don't take
+	attributes!
+
+2009-08-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevel.hh (class MetaLevel): added decl for upSortMappings()
+
+	* metaUpView.cc (upSortMappings): added
+
+	* ascentFunctions.cc (metaUpView): added
+
+	* descentSignature.cc (MACRO): added metaUpView
+
+	* metaUpView.cc: created
+
+	* metaLevel.hh (class MetaLevel): added decl for upView()
+
+2009-08-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaLevelSignature.cc (MACRO): added sort/op mapping ctors, view
+	ctor
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for showModule()
+
+	* interpreterManagerSymbol.cc (showModule): added
+	(handleMessage): hande showModuleMsg
+
+2009-08-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreterSignature.cc (MACRO): added showModuleMsg,
+	showingModuleMsg
+
+2009-03-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreterManagerSymbol.cc (rewriteTerm): added
+	(handleMessage): support rewriteTermMsg
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for rewriteTerm()
+
+2009-02-26  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreterSignature.cc (MACRO): added quitMsg, byeMsg
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decls for quit() and deleteInterpreter()
+
+	* interpreterManagerSymbol.cc (quit): added
+	(cleanUp): implemented
+	(deleteInterpreter): added
+
+2009-02-20  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaPreModule.hh (class MetaPreModule): added decl for dtor
+
+	* metaPreModule.cc (getFlatModule): use new downModule()
+	convention; call addUser()
+	(~MetaPreModule): added
+
+	* metaLevel.hh (class MetaLevel): updated decl for downModule()
+
+	* metaDown.cc (downModule): take cacheMetaModule argument
+
+2009-02-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreterManagerSymbol.cc (reduceTerm): use upNat()
+
+	* metaLevel.hh (upNat): added
+
+	* interpreterManagerSymbol.cc (reduceTerm): added
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for reduceTerm()
+
+	* metaPreModule.cc: created
+
+	* metaPreModule.hh (class MetaPreModule): created
+
+	* interpreterManagerSymbol.cc (insertModule): make a MetaPreModule
+
+	* metaModule.cc (MetaModule): init VisibleModule
+
+	* metaModule.hh (class MetaModule): derive from VisibleModule
+	instead of ImportModule
+
+	* meta.hh: added class MetaPreModule
+
+2009-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaUpModule.cc: revert to PreModule
+
+	* metaDownRenamings.cc: revert to PreModule
+
+	* metaLevel.hh: revert to PreModule
+
+	* ascentFunctions.cc: revert to PreModule
+
+	* metaUpModule.cc: PreModule -> SyntacticPreModule
+
+	* metaDownRenamings.cc: PreModule -> SyntacticPreModule
+
+	* metaDownOps.cc: PreModule -> SyntacticPreModule
+
+	* ascentFunctions.cc: PreModule -> SyntacticPreModule
+
+	* metaLevel.hh: PreModule -> SyntacticPreModule
+
+2009-02-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaDownRenamings.cc (downModuleExpression): don't access global
+	interpreter variable (5 places)
+
+	* metaLevel.hh (class MetaLevel): update decl for downModule()
+
+	* metaDown.cc (downParameterDecl): use a modules owner rather than
+	interpreter global variable
+
+	* metaModule.cc (MetaModule): init owner data member
+
+	* metaModule.hh (class MetaModule): added owner data member;
+	updated decl for ctor
+	(getOwner): added
+
+2009-01-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreterManagerSymbol.hh: created
+
+	* interpreterManagerSymbol.cc: created
+
+	* metaLevelOpSymbol.hh (getMetaLevel): added
+
+	* metaLevelOpSymbol.cc (eqRewrite): Assert() that metaLevel is not
+	0 rather than testing it since this should be set in
+	postInterSymbolPass()
+
+===================================Maude92===========================================
+
 2008-09-12  Steven Eker  <eker@goo.csl.sri.com>
 
 	* metaDownOps.cc (downOpDecl): added a check to see of we are

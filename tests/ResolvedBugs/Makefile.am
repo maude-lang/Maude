@@ -1,0 +1,11 @@
+TESTS = \
+	CUIbug12-22-09
+
+
+MAUDE_FILES = \
+	CUIbug12-22-09.maude
+
+RESULT_FILES = \
+	CUIbug12-22-09.expected
+
+EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

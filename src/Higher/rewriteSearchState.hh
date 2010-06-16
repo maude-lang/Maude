@@ -34,7 +34,8 @@ class RewriteSearchState : public SearchState
 public:
   enum Flags
   {
-    ALLOW_NONEXEC = 32
+    ALLOW_NONEXEC = 32,
+    SET_UNREWRITABLE = 256
   };
 
   //

@@ -28,8 +28,9 @@
 #ifndef _ACU_Subproblem_hh_
 #define _ACU_Subproblem_hh_
 #include "subproblem.hh"
+#include "delayedSubproblem.hh"
 
-class ACU_Subproblem : public Subproblem
+class ACU_Subproblem : public Subproblem, public DelayedSubproblem
 {
   NO_COPYING(ACU_Subproblem);
 

@@ -89,6 +89,10 @@ VariableSymbol::stackArguments(DagNode* /* subject */,
 {
 }
 
+//
+//	Unification code.
+//
+
 void
 VariableSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
 				       const Vector<int>& realToBdd,
@@ -98,4 +102,18 @@ VariableSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
   int firstVariable = realToBdd[safeCast(VariableDagNode*, subject)->getIndex()];
   int nrVariables = sortBdds.getNrVariables(rangeComponent()->getIndexWithinModule());
   sortBdds.makeVariableVector(firstVariable, nrVariables, generalizedSort);
+}
+
+//
+//	Hash cons code.
+//
+
+DagNode*
+VariableSymbol::makeCanonical(DagNode* original, HashConsSet* /* hcs */)
+{
+  //
+  //	No arguments that could be non-canonical so we can make the original
+  //	instance into the canonical instance.
+  //
+  return original;
 }

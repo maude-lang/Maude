@@ -1,3 +1,16 @@
+2009-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_Symbol.cc (makeCanonical): fix bug where we were not copying
+	sort index and flags from old dag node into newly created dag node
+
+2009-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* S_Symbol.hh (class S_Symbol): added decl for makeCanonical()
+
+	* S_Symbol.cc (makeCanonical): added
+
+===================================Maude92b===========================================
+
 2008-03-23  Steven Eker  <eker@goo.csl.sri.com>
 
 	* S_DagNode.hh (class S_DagNode): deleted commented out decl for

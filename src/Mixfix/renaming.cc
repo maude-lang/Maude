@@ -39,7 +39,7 @@
 
 //	front end class definitions
 #include "token.hh"
-#include "preModule.hh"
+#include "syntacticPreModule.hh"
 #include "importModule.hh"
 #include "renaming.hh"
 
@@ -677,7 +677,7 @@ Renaming::setFormat(const Vector<Token>& format)
   OpMapping& opMapping = lastOpMapping->second;
   for (int i = 0; i < length; i++)
     {
-      if (PreModule::checkFormatString(format[i].name()))
+      if (SyntacticPreModule::checkFormatString(format[i].name()))
 	opMapping.format.append(format[i].code());
       else
 	{
@@ -757,13 +757,13 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2) const
 	      {
 		s << sep;
 		sep = " ";
-		PreModule::printGather(s, gather);
+		SyntacticPreModule::printGather(s, gather);
 	      }
 	    if (!(format.empty()))
 	      {
 		s << sep;
 		sep = " ";
-		PreModule::printFormat(s, format);
+		SyntacticPreModule::printFormat(s, format);
 	      }
 	    s << ']';
 	  }

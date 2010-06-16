@@ -59,6 +59,7 @@ ACU_Subproblem::ACU_Subproblem(ACU_DagNode* subject,
   : subject(subject),
     extensionInfo(extensionInfo)
 {
+  //cout << "ACU_Subproblem " << ((void*) this) << " created" << endl;
   system = 0;
 }
 
@@ -70,6 +71,7 @@ ACU_Subproblem::addSubjects(Vector<int>& multiplicity)
 
 ACU_Subproblem::~ACU_Subproblem()
 {
+  //cout << "ACU_Subproblem " << ((void*) this) << " destroyed" << endl;
   FOR_EACH_CONST(i, Vector<PatternNode>, patternNodes)
     {
       FOR_EACH_CONST(j, Vector<Edge>, i->edges)

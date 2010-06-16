@@ -274,7 +274,7 @@ MemoryCell::setCallDtor()
 inline void
 MemoryCell::okToCollectGarbage()
 {
-  if (needToCollectGarbage || storageInUse > target)
+  if (needToCollectGarbage)
     collectGarbage();
 }
 
@@ -284,6 +284,8 @@ MemoryCell::allocateStorage(size_t bytesNeeded)
   Assert(bytesNeeded % sizeof(MachineWord) == 0,
 	 "only whole machine words can be allocated");
   storageInUse += bytesNeeded;
+  if (storageInUse > target)
+    needToCollectGarbage = true;
   for (Bucket* b = bucketList; b; b = b->nextBucket)
     {
       if (b->bytesFree >= bytesNeeded)

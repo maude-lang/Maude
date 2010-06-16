@@ -36,7 +36,7 @@
 
 //	front end class definitions
 #include "importModule.hh"
-#include "preModule.hh"
+#include "syntacticPreModule.hh"
 #include "view.hh"
 #include "entity.hh"
 
@@ -67,7 +67,7 @@ operator<<(ostream& s, const Entity::User* u)
   return s;
 }
 #endif
- 
+
 void
 Entity::addUser(User* user)
 {

@@ -145,6 +145,11 @@ StateTransitionGraph3::getNextState(int stateNr, int index)
 	  n->nextStates.append(nextState);
 	  n->fwdArcs[nextState].insert(rule);
 	  ++nrNextStates;
+	  //
+	  //	If we didn't do any equational rewriting we will not have had a chance to
+	  //	collect garbage.
+	  //
+	  MemoryCell::okToCollectGarbage();
 	}
       else
 	{

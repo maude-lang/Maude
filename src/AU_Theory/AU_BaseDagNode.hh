@@ -37,7 +37,7 @@ public:
     //
     //	Default: no guarantees.
     //
-    FRESH,
+    FRESH = 0,
     //
     //	Node was produced by an assignment in AU matcher:
     //	(a) all arguments are reduced up to strategy of our symbol
@@ -45,12 +45,12 @@ public:
     //	(b) all arguments have their true sort; and
     //	(c) argument list in theory normal form.
     //
-    ASSIGNMENT,
+    ASSIGNMENT = 1,
     //
     //	As above but arguments are stored in a deque (AU_DequeNode)
     //	rather than in an ArgVec (AU_DagNode).
     //
-    DEQUE
+    DEQUE = 2
   };
 
   AU_BaseDagNode(AU_Symbol* symbol);
@@ -60,6 +60,7 @@ public:
   void setNormalizationStatus(NormalizationStatus status);
   bool isDeque() const;
   bool isFresh() const;
+  bool isProducedByAssignment() const;
 };
 
 inline
@@ -90,6 +91,12 @@ inline bool
 AU_BaseDagNode::isFresh() const
 {
   return getTheoryByte() == FRESH;
+}
+
+inline bool
+AU_BaseDagNode::isProducedByAssignment() const
+{
+  return getTheoryByte() == ASSIGNMENT;
 }
 
 inline void

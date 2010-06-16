@@ -48,7 +48,12 @@ RewriteSequenceSearch::RewriteSequenceSearch(RewritingContext* initial,
 					     SearchType searchType,
 					     Pattern* goal,
 					     int maxDepth)
-  : StateTransitionGraph3(initial),
+  :
+#if 0
+    StateTransitionGraph3(initial),
+#else
+    StateTransitionGraph(initial),
+#endif
     goal(goal),
     maxDepth((searchType == ONE_STEP) ? 1 : maxDepth)
 {

@@ -74,24 +74,6 @@ ACU_SlowIter::getMultiplicity() const
   return top()->getMultiplicity();
 }
 
-/*
-inline void
-ACU_SlowIter::next()
-{
-  ACU_RedBlackNode* t = pop();
-  if (t->getRight() != 0)
-    {
-      unpop();
-      stackLeftmostPath(t->getRight());
-    }
-  else
-    {
-      while (!empty() && top()->getRight() == t)
-	t = pop();
-    }
-}
-*/
-
 inline void
 ACU_SlowIter::next()
 {

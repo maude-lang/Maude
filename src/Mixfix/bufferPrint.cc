@@ -435,7 +435,7 @@ MixfixModule::printTails(Vector<int>& buffer,
       if (++i == nrTails)
 	break;
       if (needAssocParen)
-	buffer.append(leftParen);
+	buffer.append(rightParen);
     }
 }
 

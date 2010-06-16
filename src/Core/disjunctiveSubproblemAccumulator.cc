@@ -96,7 +96,7 @@ DisjunctiveSubproblemAccumulator::addOption(Substitution& local,
 
 bool
 DisjunctiveSubproblemAccumulator::extract(Substitution& solution,
-					  Subproblem*&returnedSubproblem,
+					  Subproblem*& returnedSubproblem,
 					  ExtensionInfo* extensionInfo)
 {
   //

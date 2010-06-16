@@ -27,12 +27,29 @@
 #include "vector.hh"
 #include "natSet.hh"
 
+
+local_inline NatSet::Word
+NatSet::getMaskSmall(int i)
+{
+  Assert(i >= 0, "-ve argument");
+  Assert(i < BITS_PER_WORD, "too big");
+  Word mask = 1;
+  return mask << i;
+}
+
+local_inline NatSet::Word
+NatSet::getMask(value_type i)
+{
+  Assert(i >= 0, "-ve argument");
+  return getMaskSmall(i & (BITS_PER_WORD - 1));
+}
+
 int
 NatSet::topBit(Word w)
 {
   Assert(w != 0, "zero word");
-  int i = WORD_SIZE - 1;
-  for (Word mask = (1 << i); (mask & w) == 0; mask >>= 1)
+  int i = BITS_PER_WORD - 1;
+  for (Word mask = getMaskSmall(i); (mask & w) == 0; mask >>= 1)
     --i;
   return i;
 }
@@ -57,18 +74,18 @@ NatSet::countBits(Word w)
   return count;
 }
 
-local_inline NatSet::Word
-NatSet::getMask(value_type i)
+local_inline unsigned int
+NatSet::getShift(value_type i)
 {
   Assert(i >= 0, "-ve argument");
-  return 1 << (i & (WORD_SIZE - 1));
+  return i & (BITS_PER_WORD - 1);
 }
 
 local_inline int
 NatSet::getWordNr(value_type i)
 {
   Assert(i >= 0, "-ve argument");
-  return i >> LOG_WORD_SIZE;
+  return static_cast<unsigned int>(i) / BITS_PER_WORD;
 }
 
 NatSet::value_type
@@ -78,27 +95,27 @@ NatSet::arrayMin(int i) const
   for (; i < len; i++)
     {
       if (array[i] != 0)
-	return (i + 1) * WORD_SIZE + bottomBit(array[i]);
+	return (i + 1) * BITS_PER_WORD + bottomBit(array[i]);
     }
   return -1;
 }
 
-bool
+FastBool
 NatSet::arrayContains(value_type i) const
 {
   int w = getWordNr(i);
-  Assert(i > 0, "bad value");
+  Assert(w > 0, "bad wordNr " << w);  // we don't deal with first word here
   if (w > array.length())
     return false;
-  return array[w - 1] & getMask(i);
+  return (array[w - 1] >> getShift(i)) & 1;
 }
 
 void
 NatSet::insert(value_type i)
 {
   Assert(i >= 0, "-ve argument");
-  if (i < WORD_SIZE)
-    firstWord |= (1 << i);
+  if (i < BITS_PER_WORD)
+    firstWord |= getMaskSmall(i);
   else
     {
       int w = getWordNr(i);
@@ -138,8 +155,8 @@ void
 NatSet::subtract(value_type i)
 {
   Assert(i >= 0, "-ve argument");
-  if (i < WORD_SIZE)
-    firstWord &= ~(1 << i);
+  if (i < BITS_PER_WORD)
+    firstWord &= ~(getMaskSmall(i));
   else
     {
       int w = getWordNr(i);

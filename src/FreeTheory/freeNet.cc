@@ -78,6 +78,9 @@ FreeNet::~FreeNet()
 int
 FreeNet::allocateNode(int nrMatchArcs)
 {
+  //
+  //	We will need a real node for each exiting arc from the virtual node that is labeled with a symbol. 
+  //
   int len = net.length();
   net.resize(len + nrMatchArcs);
   return len;
@@ -114,8 +117,9 @@ FreeNet::fillOutNode(int nodeNr,
 int
 FreeNet::addRemainderList(const PatternSet& liveSet)
 {
+  int index = applicable.size();
   applicable.append(liveSet);
-  return - applicable.length();
+  return ~index;
 }
 
 void
@@ -125,13 +129,8 @@ FreeNet::translateSlots(int nrRealSlots, const Vector<int>& slotTranslation)
   int nrNodes = net.length();
   for (int i = 0; i < nrNodes; i++)
     {
-      //
-      //	Pointerize slots and positions for added speed.
-      //
-      net[i].slotPtr = (net[i].slot == NONE) ? 0 :
-	&(stack[slotTranslation[net[i].slot]]);
-      net[i].positionPtr = (net[i].position == NONE) ? 0 :
-	&(stack[slotTranslation[net[i].position]]);
+      net[i].slot = (net[i].slot == NONE) ? NONE : slotTranslation[net[i].slot];
+      net[i].position = (net[i].position == NONE) ? NONE : slotTranslation[net[i].position];
     }
 }
 
@@ -172,7 +171,7 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
 local_inline bool
 FreeNet::tripleLt(const Triple& p1, const Triple& p2)
 {
-  return p1.symbol->compare(p2.symbol) < 0;
+  return p1.symbol->getIndexWithinModule() < p2.symbol->getIndexWithinModule();
 }
 
 void
@@ -184,16 +183,27 @@ FreeNet::buildTernaryTree(int& nodeIndex,
 			  int position,
 			  int argIndex)
 {
+  //
+  //	Pick a middle element as the test symbol.
+  //	If the sum of the first and last eligible indices is odd we have a choice
+  //	of middle elements and we try to break the tie in a smart way.
+  //
   int sum = first + last;
   int testSymbol = sum / 2;
   if ((sum & 1) && moreImportant(triples[testSymbol + 1].symbol, triples[testSymbol].symbol))
     ++testSymbol;
+  //
+  //	Fill out a new node.
+  //
   int i = nodeIndex++;
   net[i].position = position;
   net[i].argIndex = argIndex;
-  net[i].symbol = triples[testSymbol].symbol;
+  net[i].symbolIndex = triples[testSymbol].symbol->getIndexWithinModule();
   net[i].slot = triples[testSymbol].slot;
   net[i].equal = triples[testSymbol].subtree;
+  //
+  //	If the are any symbols remaining to the left of the test symbol, build a subtree for them.
+  //
   if (first < testSymbol)
     {
       net[i].notEqual[LESS] = nodeIndex;
@@ -201,6 +211,9 @@ FreeNet::buildTernaryTree(int& nodeIndex,
     }
   else
     net[i].notEqual[LESS] = defaultSubtree;
+  //
+  //	If the are any symbols remaining to the right of the test symbol, build a subtree for them.
+  //
   if (last > testSymbol)
     {
       net[i].notEqual[GREATER] = nodeIndex;
@@ -214,8 +227,12 @@ bool
 FreeNet::moreImportant(Symbol* first, Symbol* second)
 {
   //
-  //	Heuristic to decide which symbol is more importent and thus
+  //	Heuristic to decide which symbol is more important and thus
   //	should have the fastest matching.
+  //	The current heuristic favors free symbols over non-free symbols and
+  //	high arity symbols over low arity symbols.
+  //
+  //	Returns true if first symbol is considered more important.
   //
   FreeSymbol* f = dynamic_cast<FreeSymbol*>(first);
   FreeSymbol* s = dynamic_cast<FreeSymbol*>(second);
@@ -243,10 +260,10 @@ FreeNet::dump(ostream& s, int indentLevel)
   for (int i = 0; i < net.length(); i++)
     {
       s << Indent(indentLevel) << "Node " << i <<
-	": position " << net[i].positionPtr - &(stack[0]) <<
+	": position " << net[i].position <<
 	", argIndex " << net[i].argIndex <<
-	", symbol \"" << net[i].symbol <<
-	"\", slot " << net[i].slotPtr - &(stack[0]) <<
+	", symbolIndex " << net[i].symbolIndex <<
+	", slot " << net[i].slot <<
 	", equal " << net[i].equal <<
 	", notEqual[LESS] " << net[i].notEqual[LESS] <<
 	", notEqual[GREATER] " << net[i].notEqual[GREATER] << '\n';

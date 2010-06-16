@@ -305,7 +305,7 @@ ImportModule::getNrParameters() const
 inline ImportModule*
 ImportModule::getParameterTheory(int index) const
 {
-  Assert(index < getNrParameters(), "bad parameter index " << index);
+  Assert(index < getNrParameters(), "bad parameter index " << index << " in module " << (const MixfixModule*) this);
   return importedModules[index]->baseModule;
 }
 

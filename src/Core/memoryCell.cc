@@ -37,7 +37,6 @@
 #include "rootContainer.hh"
 
 #include "memoryCell.hh"
-//#include "memoryCellNew.hh"
 
 const int
 MemoryCell::dagNodeSize =

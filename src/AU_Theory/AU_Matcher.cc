@@ -384,8 +384,7 @@ AU_LhsAutomaton::forcedLoneVariableCase(AU_DagNode* subject,
   else
     {
       AU_DagNode* d = new AU_DagNode(topSymbol, nrSubjectsRemaining);
-      d->setProducedByAssignment();
-      int lastIndex = Sort::SORT_UNKNOWN;
+       int lastIndex = Sort::SORT_UNKNOWN;
       const Sort* cs = loneVariable.sort;
       ArgVec<DagNode*>::iterator j = d->argArray.begin();
       const ArgVec<DagNode*>::const_iterator e = args.begin() + rightPos + 1;
@@ -403,6 +402,7 @@ AU_LhsAutomaton::forcedLoneVariableCase(AU_DagNode* subject,
 	  *j = sd;
 	}
       Assert(j == d->argArray.end(), "iterator problem");
+      d->setProducedByAssignment();
       if (subject->isReduced() && topSymbol->sortConstraintFree())
 	{
 	  topSymbol->computeBaseSort(d);

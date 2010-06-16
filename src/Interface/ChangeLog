@@ -1,3 +1,63 @@
+2010-03-19  Steven Eker  <eker@rho>
+
+	* subproblem.hh (class Subproblem): delete unificationSolve()
+
+	* extensionInfo.hh (class ExtensionInfo): Bool -> bool
+
+	* dagNode.hh (DagNode::reduce): remove code to save a copy of
+	topSymbol since the register load we save is paid for with
+	register shuffling needed to preserve the value across a function
+	call
+
+2010-03-11  Steven Eker  <eker@rho>
+
+	* term.cc (Term::compileRhs): code cleaning and comments
+
+===================================Maude93==========================================
+
+2010-01-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (reduce): try storing topSymbol in a local variable
+	to avoid reloading it
+
+	* symbol.hh (class Symbol): makeCanonical() becomes null
+
+	* symbol.cc (makeUnificationSubproblem): moved here to avoid gcc
+	making copies for derived classes that don't define their own
+
+2009-12-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* term.hh (hash): updated both versions to be symmetrical with
+	DagNode versions
+
+	* dagNode.hh (hash): modified both versions; ifdef'd simple version
+
+	* dagNode.cc (hash): version added here for experiments
+
+2009-11-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* symbol.hh (class Symbol): added decl for makeCanonical()
+
+===================================Maude92b==========================================
+
+2009-01-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* dagNode.hh (reduce): new version that checks reduced flag after
+	each successful rewrite; this cost an extra flag test per
+	successful rewrite but avoids an eqRewrite() call and a sort
+	calculation if a collapse equation executes and the flag is set by
+	virtue of rewriting to an already reduced subterm
+
+===================================Maude92==========================================
+
+2008-12-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interface.hh: added class DelayedSubproblem
+
+	* delayedSubproblem.hh: created
+
+===================================Maude92==========================================
+
 2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
 
 	* dagNode.cc (computeBaseSortForGroundSubterms): added default

@@ -231,6 +231,9 @@ PointerSet::findEntry(void* p, unsigned int rawHashValue) const
       int step = localHash2(rawHashValue);
       do
 	{
+#ifndef NO_ASSERT
+	  collision(p, rawHashValue, pointerTable[j].pointer, pointerTable[j].rawHashValue, hashTable.length(), i);
+#endif
 	  i = (i + step) & mask;
 	  j = hashTable[i];
 	}

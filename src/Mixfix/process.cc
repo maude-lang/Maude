@@ -25,9 +25,9 @@
 //
 
 void
-PreModule::process()
+SyntacticPreModule::process()
 {
-  flatModule = new VisibleModule(id(), moduleType, this);
+  flatModule = new VisibleModule(id(), getModuleType(), this);
   flatModule->setLineNumber(getLineNumber());
 #ifdef QUANTIFY_PROCESSING
   quantify_start_recording_data();
@@ -93,7 +93,7 @@ be patched up and thus it cannot be used or imported.");
 }
 
 void
-PreModule::processSorts()
+SyntacticPreModule::processSorts()
 {
   //
   //	Handle sorts.
@@ -166,7 +166,7 @@ PreModule::processSorts()
 }
 
 Sort*
-PreModule::getSort(Token token)
+SyntacticPreModule::getSort(Token token)
 {
   int code = token.code();
   Sort* sort = flatModule->findSort(code);
@@ -181,7 +181,7 @@ PreModule::getSort(Token token)
 }
 
 void
-PreModule::checkOpTypes()
+SyntacticPreModule::checkOpTypes()
 {
   int nrOpDefs = opDefs.length();
   for (int i = 0; i < nrOpDefs; i++)
@@ -200,7 +200,7 @@ PreModule::checkOpTypes()
 }
 
 void
-PreModule::checkType(const Type& type)
+SyntacticPreModule::checkType(const Type& type)
 {
   int nrTokens = type.tokens.length();
   for (int i = 0; i < nrTokens; i++)
@@ -208,7 +208,7 @@ PreModule::checkType(const Type& type)
 }
 
 void
-PreModule::computeOpTypes()
+SyntacticPreModule::computeOpTypes()
 {
  int nrOpDefs = opDefs.length();
   for (int i = 0; i < nrOpDefs; i++)
@@ -228,7 +228,7 @@ PreModule::computeOpTypes()
 }
 
 Sort*
-PreModule::computeType(const Type& type)
+SyntacticPreModule::computeType(const Type& type)
 {
   if (type.kind)
     {
@@ -258,7 +258,7 @@ PreModule::computeType(const Type& type)
 }
 
 void
-PreModule::processOps()
+SyntacticPreModule::processOps()
 {
   //
   //	Process opDecls.
@@ -348,9 +348,71 @@ PreModule::processOps()
 }
 
 void
-PreModule::processStatements()
+SyntacticPreModule::processStatements()
 {
   int nrStatements = statements.length();
   for (int i = 0; i < nrStatements; i++)
     flatModule->parseStatement(statements[i]);
+}
+
+void
+SyntacticPreModule::processImports()
+{
+  //
+  //	Parameters.
+  //
+  {
+    FOR_EACH_CONST(i, Vector<Parameter>, parameters)
+      {
+	if (ImportModule* fm = interpreter.makeModule(i->theory))
+	  flatModule->addParameter(i->name, interpreter.makeParameterCopy(i->name.code(), fm));  // HACK maybe pass Token
+      }
+  }
+  //
+  //	Automatic imports (not for theories).
+  //
+  if (!(MixfixModule::isTheory(getModuleType())))
+    {
+      FOR_EACH_CONST(i, ModuleDatabase::ImportMap, autoImports)
+	{
+	  if (ImportModule* fm = interpreter.getModuleOrIssueWarning(i->first, *this))
+	    flatModule->addImport(fm, i->second, *this);
+	}
+    }
+  //
+  //	Explicit imports.
+  //
+  {
+    FOR_EACH_CONST(i, Vector<Import>, imports)
+      {
+	if (ImportModule* fm = interpreter.makeModule(i->expr, flatModule))
+	  {
+	    ImportModule::ImportMode mode;
+	    int code = i->mode.code();
+	    LineNumber lineNumber(i->mode.lineNumber());
+	    if (code == pr || code == protecting)
+	      mode = ImportModule::PROTECTING;
+	    else if (code == ex || code == extending)
+	      mode = ImportModule::EXTENDING;
+	    else if (code == inc || code == including)
+	      mode = ImportModule::INCLUDING;
+	    else
+	      {
+		Assert(code == us || code == usingToken, "unknown importation mode");
+		IssueWarning(lineNumber <<
+			     ": importation mode " << QUOTE("using") <<
+			     " not supported - treating it like " <<
+			     QUOTE("including") << '.');
+		mode = ImportModule::INCLUDING;
+	      }
+	    if (fm->getNrParameters() != 0 && !(fm->parametersBound()))
+	      {
+		IssueWarning(lineNumber << ": cannot import module " << fm <<
+			     " because it has free parameters.");
+	      }
+	    else
+	      flatModule->addImport(fm, mode, lineNumber);
+	  }
+      }
+  }
 }

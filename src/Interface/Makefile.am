@@ -25,6 +25,8 @@ noinst_HEADERS = \
 	rhsAutomaton.hh \
 	subproblem.hh \
 	unificationSubproblem.hh \
+	subproblem.hh \
 	symbol.hh \
 	symbol2.hh \
-	term.hh
+	term.hh \
+	delayedSubproblem.hh

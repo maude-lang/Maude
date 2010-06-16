@@ -68,9 +68,11 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
       sigaction(SIGINT, &ctrlC_Handler, 0);
     }
 #ifdef NO_ASSERT
+
   //
   //	If we're not debugging we handle internal errors and stack overflows.
   //
+  BddUser::setErrorHandler(internalErrorHandler);  // BuDDy detects misuse of BDDs
   signal(SIGBUS, internalErrorHandler);  // misaligned memory access or nonexistent real memeory
   signal(SIGILL, internalErrorHandler);  // illegal instruction
 
@@ -140,7 +142,8 @@ UserLevelRewritingContext::internalErrorHandler(int /* signalNr */)
   static char message2[] = PACKAGE_BUGREPORT;
   static char message3[] = "\nPlease include the platform details, Maude version, and a file\n\
 `crash.maude' that can be loaded to reproduce the crash (it may load\n\
-other files).\n\n";
+other files). Do not bother trying to simplify your example unless the\n\
+runtime to the bug being visible is greater than 10 seconds.\n\n";
   write(STDERR_FILENO, message1, sizeof(message1) - 1);
   write(STDERR_FILENO, message2, sizeof(message2) - 1);
   write(STDERR_FILENO, message3, sizeof(message3) - 1);

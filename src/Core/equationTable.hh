@@ -33,7 +33,6 @@ public:
   const Vector<Equation*>& getEquations() const;
   bool equationFree() const;
   virtual void compileEquations();
-  //virtual bool eqRewrite(DagNode* subject, RewritingContext& context) = 0;
 
 protected:
   virtual bool acceptEquation(Equation* equation) = 0;

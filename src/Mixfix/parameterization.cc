@@ -172,16 +172,29 @@ ImportModule::handleInstantiationByTheoryView(ImportModule* copy,
 	      extraParameterSet.insert(parameterName);
 	      //
 	      //	For each Foo -> X$Foo we mapped in the parameter copy of the parameter theory,
-	      //	we need to have a mapping X$Foo -> X$Bar where Bar is the target of Foo in our view.
+	      //	we need to have a mapping X$Foo -> X$Bar where the view maps Foo -> Bar.
 	      //
 	      const ImportModule* parameterCopyOfTheory = importedModules[i];
 	      const Renaming* parameterRenaming = parameterCopyOfTheory->canonicalRenaming;
 	      int nrSortMappings = parameterRenaming->getNrSortMappings();
 	      for (int j = 0; j < nrSortMappings; ++j)
 		{
+		  int oldFromName = parameterRenaming->getSortFrom(j);  // Foo
 		  int fromName = parameterRenaming->getSortTo(j);  // X$Foo
-		  int baseName = argumentView->renameSort(parameterRenaming->getSortFrom(j));  // Bar
-		  int toName = Token::parameterRename(parameterName, baseName);  // X$Bar
+		  int baseName = argumentView->renameSort(oldFromName);  // Bar
+		  //
+		  //	Find out what sort we land on in the target theory of the view.
+		  //
+		  Sort* toModuleSort = toModule->findSort(baseName);
+		  int toName = (toModule->moduleDeclared(toModuleSort)) ?
+		    baseName :  // sorts declared in a module will not get a X$ prefix and stay as Bar
+		    Token::parameterRename(parameterName, baseName);  // X$Bar
+
+		  DebugAdvisory("adding sort mapping during theory view instantiation: " <<
+				Token::name(oldFromName) << " to " << Token::name(fromName) <<
+				" becomes " <<
+				Token::name(fromName) << " to " << Token::name(toName));
+
 		  if (fromName != toName)
 		    canonical->addSortMapping(fromName, toName);
 		}
@@ -239,7 +252,7 @@ ConnectedComponent*
 ImportModule::translateComponent(const Renaming* renaming, const ConnectedComponent* component) const
 {
   Sort* sort = findSort(renaming->renameSort(component->sort(Sort::FIRST_USER_SORT)->id()));
-  Assert(sort != 0, cerr << "no sort translation for " << component->sort(Sort::FIRST_USER_SORT));
+  Assert(sort != 0, "no sort translation for " << component->sort(Sort::FIRST_USER_SORT));
   return sort->component();
 }
 

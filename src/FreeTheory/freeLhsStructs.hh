@@ -31,33 +31,32 @@ class FreeLhsStructs
 protected:
   struct FreeVariable
     {
-      int position;
-      int argIndex;
+      short position;
+      short argIndex;
       int varIndex;
       Sort* sort;
     };
  
   struct BoundVariable
     {
-      int position;
-      int argIndex;
+      short position;
+      short argIndex;
       int varIndex;
     };
  
   struct GroundAlien
     {
-      int position;
-      int argIndex;
+      short position;
+      short argIndex;
       Term* alien;
     };
  
   struct NonGroundAlien
     {
-      int position;
-      int argIndex;
+      short position;
+      short argIndex;
       LhsAutomaton* automaton;
     };
 };
 
 #endif
-

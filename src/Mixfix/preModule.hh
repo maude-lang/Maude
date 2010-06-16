@@ -21,195 +21,56 @@
 */
 
 //
-//      Class for surface syntax of modules.
+//      Abstract base class for module descriptions that can produce actual modules.
 //
 #ifndef _preModule_hh_
 #define _preModule_hh_
-#include <set>
 #include "namedEntity.hh"
-#include "lineNumber.hh"
-#include "syntaxContainer.hh"
-#include "sharedTokens.hh"
-#include "importModule.hh"
+#include "mixfixModule.hh"
 #include "moduleDatabase.hh"
 
 class PreModule
   : public NamedEntity,
-    public LineNumber,
-    public SyntaxContainer,
-    public Entity::User,
-    private SharedTokens
+    public Entity::User
 {
   NO_COPYING(PreModule);
 
 public:
-  enum HookType
-  {
-    ID_HOOK,
-    OP_HOOK,
-    TERM_HOOK
-  };
+  PreModule(int moduleName, Interpreter* owner);
+  virtual ~PreModule();
 
-  PreModule(Token startToken, Token moduleName);
-  ~PreModule();
-
-  void loseFocus();
-  void finishModule(Token endToken);
-  bool isComplete();
-
-  void addParameter(Token name, ModuleExpression*  theory);
-  void addImport(Token mode, ModuleExpression* expr);
-  void addSortDecl(const Vector<Token>& sortDecl);
-  void addSubsortDecl(const Vector<Token>& subsortDecl);
-  void addOpDecl(const Vector<Token>& opName);
-  void makeOpDeclsConsistent();
-
-  void addType(bool kind, const Vector<Token>& tokens);
-  void convertSortsToKinds();
-  void setFlag(int flag);
-  void setPrec(Token range);
-  void setGather(const Vector<Token>& gather);
-  void setMetadata(Token metaDataTok);
-  void setFormat(const Vector<Token>& format);
-  void setIdentity(const Vector<Token>& identity);
-  void setStrat(const Vector<Token>& strategy);
-  void setFrozen(const Vector<Token>& frozen);
-  void setPoly(const Vector<Token>& polyArgs);
-  void setLatexMacro(const string& latexMacro);
-  void addHook(HookType type, Token name, const Vector<Token>& details);
-  void addVarDecl(Token varName);
-  void addStatement(const Vector<Token>& statement);
-  VisibleModule* getFlatSignature();
-  VisibleModule* getFlatModule();
-
+  Interpreter* getOwner() const;
+  void setModuleType(MixfixModule::ModuleType type);
   MixfixModule::ModuleType getModuleType() const;
-  const ModuleDatabase::ImportMap& getAutoImports() const;
-  int getNrImports() const;
-  int getImportMode(int index) const;
-  const ModuleExpression* getImport(int index) const;
-  int getNrParameters() const;
-  int getParameterName(int index) const;
-  const ModuleExpression* getParameter(int index) const;
 
-  void process();
 
-  void dump();
-  void showModule(ostream& s = cout);
+  virtual int getNrParameters() const = 0;
+  virtual int getParameterName(int index) const = 0;
+  virtual const ModuleExpression* getParameter(int index) const = 0;
 
-  static ImportModule* makeModule(const ModuleExpression* expr, ImportModule* enclosingModule = 0);
+  virtual const ModuleDatabase::ImportMap& getAutoImports() const = 0;
+  virtual int getNrImports() const = 0;
+  virtual int getImportMode(int index) const = 0;
+  virtual const ModuleExpression* getImport(int index) const = 0;
 
-  //
-  //	Utility functions - maybe they should go elsewhere?
-  //
-  static void printGather(ostream& s, const Vector<int>& gather);
-  static void printFormat(ostream& s, const Vector<int>& format);
-  static bool checkFormatString(const char* string);
+  virtual VisibleModule* getFlatSignature() = 0;
+  virtual VisibleModule* getFlatModule() = 0;
 
 private:
-  struct Hook
-  {
-    HookType type;
-    int name;
-    Vector<Token> details;
-  };
-
-  struct OpDecl
-  {
-    Token prefixName;
-    int defIndex;
-    union
-    {
-      Symbol* symbol;
-      int polymorphIndex;
-    };
-    bool originator;  // did we originate this symbol in our flat module?
-    int bubbleSpecIndex;
-  };
-
-  struct OpDef
-  {
-    OpDef();
-
-    Vector<Type> types;
-    Vector<Token> identity;
-    Vector<Hook> special;
-    Vector<int> strategy;
-    NatSet frozen;
-    NatSet polyArgs;
-    int prec;
-    Vector<int> gather;
-    Vector<int> format;
-    int metadata;
-    SymbolType symbolType;
-    string latexMacro;
-    //
-    //	Filled out from types after connected components are determined.
-    //
-    Vector<Sort*> domainAndRange;
-  };
-
-  struct Parameter
-  {
-    Token name;
-    ModuleExpression* theory;
-  };
-
-  struct Import
-  {
-    Token mode;
-    ModuleExpression* expr;
-  };
-
-  static void printAttributes(ostream& s, const OpDef& opDef);
-  static ImportModule*  getModule(int name, const LineNumber& lineNumber);
-  static void printSortTokenVector(ostream& s, const Vector<Token>& sorts);
-
-  void regretToInform(Entity* doomedEntity);
-  int findHook(const Vector<Hook>& hookList, HookType type, int name);
-
-  Symbol* findHookSymbol(const Vector<Token>& fullName);
-  void printOpDef(ostream&s, int defIndex);
-  bool defaultFixUp(OpDef& opDef, Symbol* symbol);
-  bool defaultFixUp(OpDef& opDef, int index);
-  void extractSpecialTerms(const Vector<Token>& bubble,
-			   int begin,
-			   ConnectedComponent* component,
-			   Vector<Term*>& terms);
-  Symbol* extractSpecialSymbol(const Vector<Token>& bubble, int& pos);
-  void processImports();
-  void processSorts();
-  Sort* getSort(Token token);
-  void checkOpTypes();
-  void checkType(const Type& type);
-  void computeOpTypes();
-  Sort* computeType(const Type& type);
-  void processOps();
-  void fixUpSymbols();
-  void processStatements();
-  DagNode* makeDag(Term* subjectTerm);
-  DagNode* makeDag(const Vector<Token>& subject);
-  bool compatible(int endTokenCode);
-
+  Interpreter* const owner;
   MixfixModule::ModuleType moduleType;
-  int startTokenCode;
-  Bool lastSawOpDecl;
-  Bool isCompleteFlag;
-  Vector<Parameter> parameters;
-  Vector<Import> imports;
-  Vector<Vector<Token> > sortDecls;
-  Vector<Vector<Token> > subsortDecls;
-  Vector<OpDecl> opDecls;
-  Vector<OpDef> opDefs;
-  Vector<Vector<Token> > statements;
-  set<int> potentialLabels;
-  ModuleDatabase::ImportMap autoImports;
-  VisibleModule* flatModule;
 };
 
-inline bool
-PreModule::isComplete()
+inline Interpreter*
+PreModule::getOwner() const
 {
-  return isCompleteFlag;
+  return owner;
+}
+
+inline void
+PreModule::setModuleType(MixfixModule::ModuleType type)
+{
+  moduleType = type;
 }
 
 inline MixfixModule::ModuleType
@@ -218,66 +79,12 @@ PreModule::getModuleType() const
   return moduleType;
 }
 
-inline void
-PreModule::addSortDecl(const Vector<Token>& sortDecl)
-{
-  sortDecls.append(sortDecl);
-}
-
-inline void
-PreModule::addSubsortDecl(const Vector<Token>& subsortDecl)
-{
-  subsortDecls.append(subsortDecl);
-}
-
-inline const ModuleDatabase::ImportMap&
-PreModule::getAutoImports() const
-{
-  return autoImports;
-}
-
-inline int
-PreModule::getNrImports() const
-{
-  return imports.length();
-}
-
-inline int
-PreModule::getImportMode(int index) const
-{
-  return imports[index].mode.code();
-}
-
-inline const ModuleExpression*
-PreModule::getImport(int index) const
-{
-  return imports[index].expr;
-}
-
-inline int
-PreModule::getNrParameters() const
-{
-  return parameters.length();
-}
-
-inline int
-PreModule::getParameterName(int index) const
-{
-  return parameters[index].name.code();
-}
-
-inline const ModuleExpression*
-PreModule::getParameter(int index) const
-{
-  return parameters[index].theory;
-}
-
 #ifndef NO_ASSERT
 inline ostream&
 operator<<(ostream& s, const PreModule* p)
 {
   //
-  //	Needed to avoid ambiguity.
+  //	Needed to avoid overload ambiguity between NamedEntity and Entity::User.
   //
   s << static_cast<const NamedEntity*>(p);
   return s;

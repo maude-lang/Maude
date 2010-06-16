@@ -31,6 +31,8 @@
 
 class FreeTernarySymbol : public FreeSymbol
 {
+  NO_COPYING(FreeTernarySymbol);
+
 public:
   FreeTernarySymbol(int id);
   bool eqRewrite(DagNode* subject, RewritingContext& context);

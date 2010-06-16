@@ -3,7 +3,7 @@
 #
 #	Initialize autoconf stuff.
 #
-AC_INIT(Maude, 2.4, [maude-bugs@maude.cs.uiuc.edu])
+AC_INIT(Maude, 2.5, [maude-bugs@maude.cs.uiuc.edu])
 #
 #	Allow directory names that look like macros.
 #
@@ -16,7 +16,7 @@ AC_CANONICAL_HOST
 #
 #	Initialize automake stuff.
 #
-AM_INIT_AUTOMAKE(Maude, 2.4)
+AM_INIT_AUTOMAKE(Maude, 2.5)
 #
 #	Cause defines to be put in a header file rather than passed as
 #	compiler flags.
@@ -169,6 +169,9 @@ else
     OFLAGS="-O2 -fomit-frame-pointer -fforce-addr"
     case $GXX_VERSION in
     3.*)
+      OFLAGS="$OFLAGS -finline-limit=10000"
+      ;;
+    4.*)
       OFLAGS="$OFLAGS -finline-limit=10000"
       ;;
     esac
@@ -365,6 +368,7 @@ AC_CONFIG_FILES([Makefile
 		 tests/BuiltIn/Makefile
 		 tests/Meta/Makefile
 		 tests/Misc/Makefile
+		 tests/ResolvedBugs/Makefile
 ])
 
 AC_OUTPUT

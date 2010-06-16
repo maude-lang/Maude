@@ -91,8 +91,9 @@ ModuleCache::makeRenamedCopy(ImportModule* module, Renaming* renaming)
   //
   //	Create new module; and insert it in cache.
   //
-  DebugAdvisory("making " << name);
+  DebugAdvisory("making renamed copy " << name);
   ImportModule* copy = module->makeRenamedCopy(t, canonical, this);
+  DebugAdvisory("finish renamed copy " << name);
   moduleMap[t] = copy;
   return copy;
 }
@@ -120,8 +121,9 @@ ModuleCache::makeParameterCopy(int parameterName, ImportModule* module)
   //
   //	Create new module; and insert it in cache.
   //
-  DebugAdvisory("making " << name);
+  DebugAdvisory("making parameter copy " << name);
   ImportModule* copy = module->makeParameterCopy(t, parameterName, this);
+  DebugAdvisory("finished parameter copy " << name);
   moduleMap[t] = copy;
   return copy;
 }
@@ -174,8 +176,9 @@ ModuleCache::makeInstatiation(ImportModule* module, const Vector<View*>& views, 
   //
   //	Create new module; and insert it in cache.
   //
-  DebugAdvisory("making " << name);
+  DebugAdvisory("making instantiation " << name);
   ImportModule* copy = module->makeInstantiation(t, views, parameterArgs, this);
+  DebugAdvisory("finished instantiation " << name);
   moduleMap[t] = copy;
   return copy;
 }
@@ -220,7 +223,7 @@ ModuleCache::makeSummation(const Vector<ImportModule*>& modules)
   //
   //	Otherwise build it.
   //
-  DebugAdvisory("making " << name);
+  DebugAdvisory("making summation " << name);
 
   Vector<ImportModule*>::const_iterator i = local.begin();
   MixfixModule::ModuleType moduleType = (*i)->getModuleType();
@@ -233,20 +236,29 @@ ModuleCache::makeSummation(const Vector<ImportModule*>& modules)
 
   sum->importSorts();
   sum->closeSortSet();
-  
-  sum->importOps();
-  sum->closeSignature();
-
-  sum->fixUpImportedOps();
-  sum->closeFixUps();
-  //
-  //	We have no local statements.
-  //
-  sum->localStatementsComplete();
+  if (!(sum->isBad()))
+    {
+      sum->importOps();
+      if (!(sum->isBad()))
+	{
+	  sum->closeSignature();
+	  sum->fixUpImportedOps();
+	  if (!(sum->isBad()))
+	    { 
+	      sum->closeFixUps();
+	      //
+	      //	We have no local statements.
+	      //
+	      sum->localStatementsComplete();
+	    }
+	}
+    }
   //
   //	Reset phase counter in each imported module and return sum.
   //
   sum->resetImports();
+  DebugAdvisory("finished summation " << name);
+
   moduleMap[t] = sum;
   return sum;
 }

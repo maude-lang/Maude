@@ -50,8 +50,7 @@ public:
   NarrowingUnificationProblem(Rule* rule,
 			      DagNode* target,
 			      const NarrowingVariableInfo& variableInfo,
-			      FreshVariableGenerator* freshVariableGenerator,
-			      ExtensionInfo* extensionInfo);
+			      FreshVariableGenerator* freshVariableGenerator);
 
   ~NarrowingUnificationProblem();
 
@@ -69,14 +68,12 @@ private:
   DagNode* const target;
   const NarrowingVariableInfo& variableInfo;
   FreshVariableGenerator* const freshVariableGenerator;
-  ExtensionInfo* const extensionInfo;
 
   int firstTargetSlot;
   int substitutionSize;
   const SortBdds* sortBdds;		// sort computation BDDs for our module
 
   UnificationContext* unsortedSolution;	// for accumulating solved forms and constructing unsorted unifiers
-  //Subproblem* subproblem;		// for stuff unresolved by computeSolvedForm() pass
   PendingUnificationStack pendingStack;
   bool viable;				// true if problem didn't fail computeSolvedForm() pass
   NatSet freeVariables;	     		// indices (slots) of unbound variables in unsorted unifier

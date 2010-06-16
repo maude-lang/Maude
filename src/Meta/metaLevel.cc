@@ -101,7 +101,7 @@
 #include "quotedIdentifierOpSymbol.hh"
 #include "quotedIdentifierTerm.hh"
 #include "quotedIdentifierDagNode.hh"
-#include "preModule.hh"
+#include "syntacticPreModule.hh"
 #include "metaModule.hh"
 #include "metaLevel.hh"
 #include "interpreter.hh"
@@ -118,6 +118,7 @@
 #include "metaDownFixUps.cc"
 #include "metaUp.cc"
 #include "metaUpModule.cc"
+#include "metaUpView.cc"
 
 MetaLevel::MetaLevel()
 {

@@ -1,3 +1,29 @@
+2010-03-19  Steven Eker  <eker@rho>
+
+	* configure.ac: don't bother with -fomit-frame-pointer
+	-fforce-addr; check for gcc 4.*
+
+2009-12-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/ResolvedBugs/CUIbug12-22-09 (MAUDE_LIB): added; removed
+	previous tests
+
+2009-11-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/ResolvedBugs/Makefile.am (RESULT_FILES): added 6 tests
+
+2009-11-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* tests/ResolvedBugs/santiago9-21-09 (MAUDE_LIB): created
+
+	* tests/ResolvedBugs/paco10-6-09 (MAUDE_LIB): created
+
+	* tests/ResolvedBugs/santiago11-2-09 (MAUDE_LIB): created
+
+	* configure.ac: added tests/ResolvedBugs
+
+===================================Maude92a===========================================
+
 2008-09-17  Steven Eker  <eker@goo.csl.sri.com>
 
 	* tests/Meta/metaPrintAttr (MAUDE_LIB): created

@@ -73,7 +73,8 @@ data_DATA = \
 	socket.maude \
 	linear.maude \
 	machine-int.maude \
-	term-order.maude
+	term-order.maude \
+	metaInterpreter.maude
 
 EXTRA_DIST = \
 	prelude.maude \
@@ -81,4 +82,6 @@ EXTRA_DIST = \
 	socket.maude \
 	linear.maude \
 	machine-int.maude \
-	term-order.maude
+	term-order.maude \
+	metaInterpreter.maude
+

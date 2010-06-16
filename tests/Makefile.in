@@ -159,7 +159,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-SUBDIRS = BuiltIn Misc Meta
+SUBDIRS = BuiltIn Misc Meta ResolvedBugs
 all: all-recursive
 
 .SUFFIXES:

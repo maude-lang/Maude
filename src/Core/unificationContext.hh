@@ -28,6 +28,12 @@
 #include "substitution.hh"
 #include "simpleRootContainer.hh"
 
+//
+//	In addition to a substitution, we keep a track of stuff needed for unification:
+//	(1) a fresh variable generator
+//	(2) the sort (always a kind actually) of fresh variables
+//	(3) A dagnode representation of each variable that gets bound
+//
 class UnificationContext : public Substitution, private SimpleRootContainer
 {
 public:

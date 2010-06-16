@@ -55,9 +55,11 @@ ARFLAGS = cru
 libmeta_a_AR = $(AR) $(ARFLAGS)
 libmeta_a_LIBADD =
 am_libmeta_a_OBJECTS = libmeta_a-metaModuleCache.$(OBJEXT) \
-	libmeta_a-metaLevel.$(OBJEXT) libmeta_a-metaOpCache.$(OBJEXT) \
-	libmeta_a-metaModule.$(OBJEXT) \
-	libmeta_a-metaLevelOpSymbol.$(OBJEXT)
+	libmeta_a-metaLevel.$(OBJEXT) \
+	libmeta_a-interpreterManagerSymbol.$(OBJEXT) \
+	libmeta_a-metaOpCache.$(OBJEXT) libmeta_a-metaModule.$(OBJEXT) \
+	libmeta_a-metaLevelOpSymbol.$(OBJEXT) \
+	libmeta_a-metaPreModule.$(OBJEXT)
 libmeta_a_OBJECTS = $(am_libmeta_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -198,9 +200,11 @@ libmeta_a_CPPFLAGS = \
 libmeta_a_SOURCES = \
 	metaModuleCache.cc \
 	metaLevel.cc \
+	interpreterManagerSymbol.cc \
 	metaOpCache.cc \
 	metaModule.cc \
-	metaLevelOpSymbol.cc
+	metaLevelOpSymbol.cc \
+	metaPreModule.cc
 
 EXTRA_DIST = \
 	metaDown.cc \
@@ -217,15 +221,19 @@ EXTRA_DIST = \
 	metaUnify.cc \
 	metaSearch.cc \
 	metaNarrow.cc \
-	descentSignature.cc
+	descentSignature.cc \
+	interpreterSignature.cc \
+	metaUpView.cc
 
 noinst_HEADERS = \
 	meta.hh \
 	metaLevel.hh \
+	interpreterManagerSymbol.hh \
 	metaLevelOpSymbol.hh \
 	metaModule.hh \
 	metaModuleCache.hh \
-	metaOpCache.hh
+	metaOpCache.hh \
+	metaPreModule.hh
 
 all: all-am
 
@@ -274,11 +282,13 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmeta_a-interpreterManagerSymbol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmeta_a-metaLevel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmeta_a-metaLevelOpSymbol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmeta_a-metaModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmeta_a-metaModuleCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmeta_a-metaOpCache.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmeta_a-metaPreModule.Po@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -322,6 +332,20 @@ libmeta_a-metaLevel.obj: metaLevel.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmeta_a-metaLevel.obj `if test -f 'metaLevel.cc'; then $(CYGPATH_W) 'metaLevel.cc'; else $(CYGPATH_W) '$(srcdir)/metaLevel.cc'; fi`
 
+libmeta_a-interpreterManagerSymbol.o: interpreterManagerSymbol.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmeta_a-interpreterManagerSymbol.o -MD -MP -MF "$(DEPDIR)/libmeta_a-interpreterManagerSymbol.Tpo" -c -o libmeta_a-interpreterManagerSymbol.o `test -f 'interpreterManagerSymbol.cc' || echo '$(srcdir)/'`interpreterManagerSymbol.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libmeta_a-interpreterManagerSymbol.Tpo" "$(DEPDIR)/libmeta_a-interpreterManagerSymbol.Po"; else rm -f "$(DEPDIR)/libmeta_a-interpreterManagerSymbol.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interpreterManagerSymbol.cc' object='libmeta_a-interpreterManagerSymbol.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmeta_a-interpreterManagerSymbol.o `test -f 'interpreterManagerSymbol.cc' || echo '$(srcdir)/'`interpreterManagerSymbol.cc
+
+libmeta_a-interpreterManagerSymbol.obj: interpreterManagerSymbol.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmeta_a-interpreterManagerSymbol.obj -MD -MP -MF "$(DEPDIR)/libmeta_a-interpreterManagerSymbol.Tpo" -c -o libmeta_a-interpreterManagerSymbol.obj `if test -f 'interpreterManagerSymbol.cc'; then $(CYGPATH_W) 'interpreterManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/interpreterManagerSymbol.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libmeta_a-interpreterManagerSymbol.Tpo" "$(DEPDIR)/libmeta_a-interpreterManagerSymbol.Po"; else rm -f "$(DEPDIR)/libmeta_a-interpreterManagerSymbol.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interpreterManagerSymbol.cc' object='libmeta_a-interpreterManagerSymbol.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmeta_a-interpreterManagerSymbol.obj `if test -f 'interpreterManagerSymbol.cc'; then $(CYGPATH_W) 'interpreterManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/interpreterManagerSymbol.cc'; fi`
+
 libmeta_a-metaOpCache.o: metaOpCache.cc
 @am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmeta_a-metaOpCache.o -MD -MP -MF "$(DEPDIR)/libmeta_a-metaOpCache.Tpo" -c -o libmeta_a-metaOpCache.o `test -f 'metaOpCache.cc' || echo '$(srcdir)/'`metaOpCache.cc; \
 @am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libmeta_a-metaOpCache.Tpo" "$(DEPDIR)/libmeta_a-metaOpCache.Po"; else rm -f "$(DEPDIR)/libmeta_a-metaOpCache.Tpo"; exit 1; fi
@@ -363,6 +387,20 @@ libmeta_a-metaLevelOpSymbol.obj: metaLevelOpSymbol.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='metaLevelOpSymbol.cc' object='libmeta_a-metaLevelOpSymbol.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmeta_a-metaLevelOpSymbol.obj `if test -f 'metaLevelOpSymbol.cc'; then $(CYGPATH_W) 'metaLevelOpSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/metaLevelOpSymbol.cc'; fi`
+
+libmeta_a-metaPreModule.o: metaPreModule.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmeta_a-metaPreModule.o -MD -MP -MF "$(DEPDIR)/libmeta_a-metaPreModule.Tpo" -c -o libmeta_a-metaPreModule.o `test -f 'metaPreModule.cc' || echo '$(srcdir)/'`metaPreModule.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libmeta_a-metaPreModule.Tpo" "$(DEPDIR)/libmeta_a-metaPreModule.Po"; else rm -f "$(DEPDIR)/libmeta_a-metaPreModule.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='metaPreModule.cc' object='libmeta_a-metaPreModule.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmeta_a-metaPreModule.o `test -f 'metaPreModule.cc' || echo '$(srcdir)/'`metaPreModule.cc
+
+libmeta_a-metaPreModule.obj: metaPreModule.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmeta_a-metaPreModule.obj -MD -MP -MF "$(DEPDIR)/libmeta_a-metaPreModule.Tpo" -c -o libmeta_a-metaPreModule.obj `if test -f 'metaPreModule.cc'; then $(CYGPATH_W) 'metaPreModule.cc'; else $(CYGPATH_W) '$(srcdir)/metaPreModule.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libmeta_a-metaPreModule.Tpo" "$(DEPDIR)/libmeta_a-metaPreModule.Po"; else rm -f "$(DEPDIR)/libmeta_a-metaPreModule.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='metaPreModule.cc' object='libmeta_a-metaPreModule.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmeta_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmeta_a-metaPreModule.obj `if test -f 'metaPreModule.cc'; then $(CYGPATH_W) 'metaPreModule.cc'; else $(CYGPATH_W) '$(srcdir)/metaPreModule.cc'; fi`
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)

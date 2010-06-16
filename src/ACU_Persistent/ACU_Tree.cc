@@ -172,6 +172,19 @@ ACU_Tree::mark()
     }
 }
 
+bool
+ACU_Tree::makeCanonical(ACU_Tree& canonizedVersion, HashConsSet* hcs)
+{
+  ACU_RedBlackNode* c = root->canonicalRebuild(hcs);
+  if (c != root)
+    {
+      canonizedVersion.size = size;
+      canonizedVersion.root = c;
+      return true;
+    }
+  return false;
+}
+
 #ifdef CHECK_TREE
 
 void

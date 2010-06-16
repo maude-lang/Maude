@@ -166,12 +166,17 @@ CUI_DagNode::stackArguments(Vector<RedexPosition>& stack,
 			    int parentIndex,
 			    bool respectFrozen)
 {
+  /*
+  DebugAdvisory("CUI_DagNode::stackArguments() " << this <<
+		" left = " << argArray[0]->isUnstackable() <<
+		" right = " << argArray[1]->isUnstackable());
+  */
   const NatSet& frozen = symbol()->getFrozen();
   DagNode* d = argArray[0];
   if (!(respectFrozen && frozen.contains(0)) && !(d->isUnstackable()))
     stack.append(RedexPosition(d, parentIndex, 0));
   DagNode* d2 = argArray[1];
-  if (!(respectFrozen && frozen.contains(1)) && !(d->isUnstackable()) &&
+  if (!(respectFrozen && frozen.contains(1)) && !(d2->isUnstackable()) &&
       !(symbol()->comm() && d->equal(d2)))  // don't stack equal args in the comm case
     stack.append(RedexPosition(d2, parentIndex, 1));
 }

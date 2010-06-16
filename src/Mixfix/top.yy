@@ -49,7 +49,7 @@
 #include "moduleExpression.hh"
 #include "fileTable.hh"
 #include "directoryManager.hh"
-#include "preModule.hh"
+#include "syntacticPreModule.hh"
 #include "visibleModule.hh"  // HACK
 #include "userLevelRewritingContext.hh"
 #include "interpreter.hh"

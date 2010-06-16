@@ -1,3 +1,73 @@
+2010-03-17  Steven Eker  <eker@rho>
+
+	* AU_DagNode.hh (AU_DagNode::setProducedByAssignment): clean up
+	check for bug below
+
+	* AU_BaseDagNode.hh (AU_BaseDagNode::isProducedByAssignment):
+	added
+
+	* AU_DagNode.cc (AU_DagNode::partialReplace): fix nasty bug where
+	we had are normlization status set to ASSIGNMENT but replacement
+	violated the guarantees offered by this status
+
+2010-03-16  Steven Eker  <eker@rho>
+
+	* AU_DagNode.cc (AU_DagNode::overwriteWithClone)
+	(AU_DagNode::makeClone): use
+	setNormalizationStatus()/getNormalizationStatus() instead of
+	setTheoryByte()/getTheoryByte()
+
+	* AU_Symbol.cc (AU_Symbol::makeCanonical): don't call
+	setProducedByAssignment() until we have filled out arguements
+	(AU_Symbol::makeCanonical): ditto
+
+	* AU_Matcher.cc (AU_LhsAutomaton::forcedLoneVariableCase): don't
+	call setProducedByAssignment() until we have filled out arguements
+
+	* AU_Symbol.cc (AU_Symbol::eqRewrite): added look to check for
+	Riesco 1/18/10 buga
+
+	* AU_FullMatcher.cc (AU_LhsAutomaton::fullMatchFixedLengthBlock):
+	added Assert() to check for argument with missing sort information
+
+2010-03-12  Steven Eker  <eker@rho>
+
+	* AU_RhsAutomaton.cc (AU_RhsAutomaton::replace)
+	(AU_RhsAutomaton::construct): use nrArguments
+	(AU_RhsAutomaton::buildArguments): use nrArguments
+
+	* AU_RhsAutomaton.hh (class AU_RhsAutomaton): added data member nrArguments
+	(AU_RhsAutomaton::close): set nrArguments
+
+	* AU_RhsAutomaton.cc (AU_RhsAutomaton::buildArguments): rewrite to
+	use iterators; made local_inline
+
+	* AU_Term.cc (AU_Term::compileRhs2): rewritten to compile/build
+	largest arguments first - this fixes a potential compilation
+	performance issue
+
+===================================Maude93===========================================
+
+2009-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_Symbol.hh (class AU_Symbol): added decl for makeCanonical()
+
+	* AU_Symbol.cc (makeCanonical): added
+
+===================================Maude92b===========================================
+
+2009-11-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* AU_LhsCompiler.cc (findConstraintPropagationSequence): added
+	DebugAdvisory()'s to both versions to try and locate serious
+	performance bug
+	(findConstraintPropagationSequence): added an optimization where
+	we don't bother looking at the right alien if we forced all or all
+	but one arguments using the left alien
+	(unitVariable): added comment
+
+===================================Maude92a===========================================
+
 2008-11-06  Steven Eker  <eker@goo.csl.sri.com>
 
 	* AU_Term.cc (normalize): fix a nasty bug where we were collapsing

@@ -82,3 +82,17 @@ NA_Symbol::stackArguments(DagNode* /* subject */,
 			  int /* parentIndex */)
 {
 }
+
+//
+//	Hash cons code.
+//
+
+DagNode*
+NA_Symbol::makeCanonical(DagNode* original, HashConsSet* /* hcs */)
+{
+  //
+  //	No arguments that could be non-canonical so we can make the original
+  //	instance into the canonical instance.
+  //
+  return original;
+}

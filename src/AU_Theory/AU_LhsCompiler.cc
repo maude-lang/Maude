@@ -26,7 +26,7 @@
 
 struct AU_Term::CP_Sequence
 {
-  Vector<Bool> sequence;
+  Vector<Bool> sequence;  // true = take left term, false = take right term
   NatSet bound;
   int cardinality;
   int firstFlex;
@@ -39,6 +39,11 @@ AU_Term::unitVariable(VariableTerm* vt, int index) const
     return false;
   AU_Symbol* s = symbol();
   Sort* vs = vt->getSort();
+  //
+  //	A unit variable has a bound of one imposed by its sort and it cannot take an
+  //	identity either because a suitable left/right identity doesn't exist or
+  //	its sort is too low.
+  //
   return (s->sortBound(vs) == 1 && !(idPossible(index) && s->takeIdentity(vs)));
 }
 
@@ -347,6 +352,8 @@ void
 AU_Term::findConstraintPropagationSequence(const NatSet& boundUniquely,
 					   CP_Sequence& bestSequence) const
 {
+  DebugAdvisory("toplevel findConstraintPropagationSequence() - array length = " << argArray.length() <<
+		"  subterm = " << this);
   Vector<Bool> currentSequence;
   bestSequence.cardinality = -1;
   findConstraintPropagationSequence(currentSequence, boundUniquely,
@@ -372,6 +379,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
       bool leftBad = lt.collapseToOurSymbol || (lt.matchOurIdentity && idPossible(leftPos));
       if (!leftBad && boundUniquely.contains(lt.term->occursBelow()))
 	{
+	  DebugAdvisory("lower level findConstraintPropagationSequence() - ground out left " << leftPos);
 	  Vector<Bool> newSequence(currentSequence);
 	  newSequence.append(true);
 	  findConstraintPropagationSequence(newSequence, boundUniquely, leftPos + 1,
@@ -383,6 +391,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
 	(rt.matchOurIdentity && idPossible(rightPos));
       if (!rightBad && boundUniquely.contains(rt.term->occursBelow()))
 	{
+	  DebugAdvisory("lower level findConstraintPropagationSequence() - ground out right " << rightPos);
 	  Vector<Bool> newSequence(currentSequence);
 	  newSequence.append(false);
 	  findConstraintPropagationSequence(newSequence, boundUniquely, leftPos,
@@ -396,7 +405,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
       VariableTerm* ltVar = dynamic_cast<VariableTerm*>(lt.term);
       if (unitVariable(ltVar, leftPos))
 	{
-	  
+	  DebugAdvisory("lower level findConstraintPropagationSequence() - unit var left " << leftPos);
 	  Vector<Bool> newSequence(currentSequence);
 	  newSequence.append(true);
 	  NatSet newBound(boundUniquely);
@@ -408,6 +417,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
       VariableTerm* rtVar = dynamic_cast<VariableTerm*>(rt.term);
       if (leftPos < rightPos && unitVariable(rtVar, rightPos))
 	{
+	  DebugAdvisory("lower level findConstraintPropagationSequence() - unit var right " << rightPos);
 	  Vector<Bool> newSequence(currentSequence);
 	  newSequence.append(false);
 	  NatSet newBound(boundUniquely);
@@ -423,6 +433,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
       bool growth = false;
       if (!leftBad && ltVar == 0)
 	{
+	  DebugAdvisory("lower level findConstraintPropagationSequence() - alien left " << leftPos);
 	  Vector<Bool> newSequence(currentSequence);
 	  newSequence.append(true);
 	  NatSet newBound(boundUniquely);
@@ -431,8 +442,18 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
 					    rightPos, bestSequence);
 	  growth = true;
 	}
-      if (!rightBad && rtVar == 0)
+      if (bestSequence.sequence.length() >= argArray.length() - 1)
 	{
+	  //
+	  //	All arguments or all arguments but one have a forced match (with the left over argument taking what is left).
+	  //	There will be no branching at match time, so considering an alternative order is a waste of time.
+	  //
+	  DebugAdvisory("lower level findConstraintPropagationSequence() - aborting right branch");
+	  return;
+	}
+      if (!rightBad && rtVar == 0)  
+	{
+	  DebugAdvisory("lower level findConstraintPropagationSequence() - alien right " << rightPos);
 	  Vector<Bool> newSequence(currentSequence);
 	  newSequence.append(false);
 	  NatSet newBound(boundUniquely);

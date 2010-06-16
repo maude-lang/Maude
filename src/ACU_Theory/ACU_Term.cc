@@ -611,27 +611,49 @@ ACU_Term::compileRhs2(RhsBuilder& rhsBuilder,
 		      bool eagerContext)
 {
   int nrArgs = argArray.length();
-  ACU_RhsAutomaton* automaton = new ACU_RhsAutomaton(symbol(), nrArgs);
-  bool argEager = eagerContext && symbol()->getPermuteStrategy() == BinarySymbol::EAGER;
-  Vector<int> sources;
+  //
+  //	We want to minimize conflict between slots to avoid quadratic number of
+  //	conflict arcs on giant right hand sides. The heuristic we use is crude:
+  //	we sort in order of arguments by number of symbol occurences, and build
+  //	largest first.
+  //
+  typedef Vector<pair<int, int> > PairVec;
+  PairVec order(nrArgs);
   for (int i = 0; i < nrArgs; i++)
     {
-      int index = argArray[i].term->compileRhs(rhsBuilder,
-					       variableInfo,
-					       availableTerms,
-					       argEager);
-
-      automaton->addArgument(index, argArray[i].multiplicity);
-      sources.append(index);
+      order[i].first = - argArray[i].term->computeSize();  // larger terms to the front
+      order[i].second = i;
+    }
+  sort(order.begin(), order.end());
+  //
+  //	Compile each argument in largest first order.
+  //
+  bool argEager = eagerContext && symbol()->getPermuteStrategy() == BinarySymbol::EAGER;
+  Vector<int> sources(nrArgs);
+  FOR_EACH_CONST(i, PairVec, order)
+    {
+      int j = i->second;
+      sources[j] = argArray[j].term->compileRhs(rhsBuilder,
+						variableInfo,
+						availableTerms,
+						argEager);
     }
   //
-  //	Need to flag last use of each source.
+  //	Now add sources to automaton in original order, and flag last use
+  //	of each source for conflict arc generation.
   //
+  ACU_RhsAutomaton* automaton = new ACU_RhsAutomaton(symbol(), nrArgs);
   for (int i = 0; i < nrArgs; i++)
-    variableInfo.useIndex(sources[i]);
-
-  int index = variableInfo.makeConstructionIndex();
-  automaton->close(index);
+    {
+      int index = sources[i];
+      automaton->addArgument(index, argArray[i].multiplicity);
+      variableInfo.useIndex(index);
+    }
+  //
+  //	Complete the automaton and add it  to the rhs builder.
+  //
+  int destination = variableInfo.makeConstructionIndex();
+  automaton->close(destination);
   rhsBuilder.addRhsAutomaton(automaton);
-  return index;
+  return destination;
 }

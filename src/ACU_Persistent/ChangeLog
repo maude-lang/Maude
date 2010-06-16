@@ -1,3 +1,45 @@
+2010-04-19  Steven Eker  <eker@rho>
+
+	* ACU_FastIter.hh (ACU_FastIter::next): avoid passing null to
+	stackLeftmostPath()
+
+	* ACU_Delete.cc (ACU_RedBlackNode::consDelete): use
+	stackLeftmostPath()
+
+	* ACU_Stack.hh (ACU_Stack::stackLeftmostPath): converted loop from
+	while-do to do-while
+
+	* ACU_SlowIter.hh (ACU_SlowIter::next): deleted commented out
+	version
+
+===================================Maude93a===========================================
+
+2010-02-18  Steven Eker  <eker@rho>
+
+	* ACU_RedBlackNode.hh (ACU_RedBlackNode::getChild): use sign < 0
+	rather than getSignBit() in the hope that the compiler can be
+	smart about optimizing the right shift
+
+===================================Maude92c===========================================
+
+2009-12-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Tree.cc (makeCanonical): added
+
+	* ACU_Tree.hh (class ACU_Tree): added decl for makeCanonical()
+
+2009-12-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): added decl for
+	canonicalRebuild()
+
+	* ACU_RedBlackNode.cc (canonicalRebuild): added
+
+	* ACU_RedBlackNode.hh (ACU_RedBlackNode): removed what appears to
+	be an unneeded getMemoryCell()->setByte()
+
+===================================Maude92b===========================================
+
 2003-05-29  Steven Eker  <eker@goo.csl.sri.com>
 
 	* ACU_Tree.hh (deleteMult2): added

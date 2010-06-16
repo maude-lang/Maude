@@ -1,3 +1,12 @@
+2009-01-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* socketManagerSymbol.cc (attachData, attachSymbol, copyAttachments) 
+	(getDataAttachments, getSymbolAttachments): call
+	ExternalObjectManagerSymbol functions rather the FreeSymbol
+	functions
+
+===================================Maude92===========================================
+
 2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
 
 	* socketAsync.cc (doError, doWrite): added #ifdef NO_ASSERT to

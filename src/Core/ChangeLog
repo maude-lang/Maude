@@ -1,3 +1,166 @@
+2010-03-19  Steven Eker  <eker@rho>
+
+	* substitution.hh (Substitution::addNewVariable): don't do a
+	values.resize(copySize) as this appears to be a bug
+
+	* substitution.cc (Substitution::makeLocalBinding)
+	(Substitution::merge, Substitution::merge): deleted commented out
+	code
+
+	* substitution.hh (class Substitution): deleted commented out
+	decls for makeLocalBinding(), merge() (2 versions)
+
+	* sortBdds.cc (SortBdds::SortBdds): delete commented out sort
+	function computation code
+
+	* localBinding.cc (LocalBinding::solvedFormAssert): deleted (was
+	commented out)
+
+	* localBinding.hh (class LocalBinding): deleted commented out decl
+	for solvedFormAssert()
+
+	* subproblemSequence.cc (SubproblemSequence::unificationSolve): deleted
+
+	* subproblemSequence.hh (class SubproblemSequence): delete decl
+	for unificationSolve()
+
+2010-03-11  Steven Eker  <eker@rho>
+
+	* variableInfo.cc (VariableInfo::computeIndexRemapping): get test
+	in DebugAdvisoryCheck() the right way around
+
+	* argVec.hh (expandBy): use != rather than >
+	(evacuate): use != rather than >
+
+2010-03-09  Steven Eker  <eker@rho>
+
+	* variableInfo.cc (VariableInfo::computeIndexRemapping): replace
+	ad hoc print statement that was being left in shipped code with
+	DebugAdvisoryCheck()
+
+===================================Maude93===========================================
+
+2010-03-05  Steven Eker  <eker@rho>
+
+	* memoryCell.hh (MemoryCell::allocateStorage): check if
+	storageInUse > target and set needToCollectGarbage if so
+	(MemoryCell::okToCollectGarbage): don't check storageInUse >
+	target
+
+2010-03-03  Steven Eker  <eker@rho>
+
+	* substitution.hh (Substitution::clear): revert counter hack since
+	it appears to be a lose
+
+2010-03-02  Steven Eker  <eker@rho>
+
+	* substitution.hh (Substitution::clear): try keeping a counter on
+	the assumption that modern processors know how to do count down
+	loops without branch mispredicts
+
+2010-02-26  Steven Eker  <eker@rho>
+
+	* substitution.hh: reverted unroll changes since their effect was
+	questionable
+
+2010-02-25  Steven Eker  <eker@rho>
+
+	* substitution.hh (Substitution::Substitution): round up values
+	length up to even (both versions)
+	(Substitution::clone, Substitution::addNewVariable): round up
+	values length to even
+	(Substitution::clear): manually unroll loop
+
+	* equationTable.cc (EquationTable::applyReplace): make nrVariables
+	a long
+	(EquationTable::applyReplaceNoOwise): make nrVariable a long
+
+	* substitution.hh (Substitution::clear): try making size into a
+	unsigned int to allow zero extension when it is combined with a
+	pointer
+	(Substitution::clear): gcc isn't smart enough and forgets about
+	our "free" zero extension and does another explicit one - make
+	size a long instead
+
+2010-02-24  Steven Eker  <eker@rho>
+
+	* equation.hh (Equation::fastNrVariables): return long in the hope
+	having sign extension for free as part of a register load on x86-64
+	(class Equation): turn fast into a long since we still seem to be
+	getting a discrete cltq instruction
+
+===================================Maude92c===========================================
+
+2009-12-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* hashConsSet.hh (class HashConsSet): added ifdef'd
+	collisionCounter
+
+	* hashConsSet.cc (collision): increment collisionCounter
+
+2009-11-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* hashConsSet.hh (class HashConsSet): added decl for collision()
+
+	* hashConsSet.cc (collision): added
+
+2009-11-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* hashConsSet.cc: created
+
+	* hashConsSet.hh: created
+
+	* core.hh: added class HashConsSet
+
+2009-11-16  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc (makeIndexBdd): use bdd_ithvar() in place of
+	ithvar() and bdd_nithvar() in place of nithvar()
+
+	* sortTable.cc (computeSortFunctionBdds): calculate and allocate
+	the number of BDD variables we will need up front
+
+	* sortBdds.cc (makeVariableVector): use bdd_ithvar() in place of
+	ithvar()
+	(makeVariableBdd): bdd_ithvar() in place of ithvar()
+
+===================================Maude92b===========================================
+
+2009-10-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.cc (SortBdds): fix incorrect comment; add
+	DebugAdvisory()
+
+===================================Maude92a===========================================
+
+2009-08-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* substitution.hh (bind, value): added static_cast<>s to keep g++
+	-Wall quiet
+
+2009-07-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pendingUnificationStack.cc (~PendingUnificationStack): delete
+	subproblems belonging to stack; this might fix a nasty bug where
+	we have old LocalBinding objects with pointers to dag nodes with
+	stale symbol pointers
+
+2008-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* sortBdds.hh (class SortBdds): updated decl for getSortFunctiion()
+	(class SortBdds): made sortFunctions mutable
+
+	* sortBdds.cc (getSortFunction): moved here; make sort function on demand
+
+2008-12-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* module.hh (class Module): added data member environment
+	(getEnvironment): added
+
+	* environment.hh: created
+
+===================================Maude92===========================================
+
 2008-09-18  Steven Eker  <eker@goo.csl.sri.com>
 
 	* equationTable.cc (applyReplace): removed extraneous debugging

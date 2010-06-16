@@ -41,6 +41,7 @@ libcore_a_SOURCES = \
 	cachedDag.cc \
 	extensionMatchSubproblem.cc \
 	dagNodeSet.cc \
+	hashConsSet.cc \
 	dagNodeCache.cc \
 	memoTable.cc \
 	rootContainer.cc \
@@ -69,6 +70,7 @@ noinst_HEADERS = \
 	core.hh \
 	dagArgumentIterator.hh \
 	dagNodeSet.hh \
+	hashConsSet.hh \
 	dagNodeCache.hh \
 	dagRoot.hh \
 	disjunctiveSubproblemAccumulator.hh \
@@ -115,4 +117,5 @@ noinst_HEADERS = \
 	unificationContext.hh \
 	freshVariableGenerator.hh \
 	protectedDagNodeSet.hh \
-	pendingUnificationStack.hh
+	pendingUnificationStack.hh \
+	environment.hh

@@ -25,15 +25,15 @@
 //
 #ifndef _metaModule_hh_
 #define _metaModule_hh_
-#include "importModule.hh"
+#include "visibleModule.hh"
 #include "metaOpCache.hh"
 
-class MetaModule : public ImportModule, public MetaOpCache
+class MetaModule : public VisibleModule, public MetaOpCache
 {
   NO_COPYING(MetaModule);
 
 public:
-  MetaModule(int name, ModuleType moduleType, Entity::User* parent);
+  MetaModule(int name, ModuleType moduleType, Entity::User* parent, Interpreter* owner);
 
   void addComplexSymbol(int type, int index, DagNode* identity, DagNode* fixUpInfo);
   void addComplexSymbol(int type,
@@ -47,6 +47,8 @@ public:
 			   DagNode*& fixUpInfo,
 			   Vector<Sort*>& domainAndRange);
 
+  Interpreter* getOwner() const;
+
 private:
   struct ComplexSymbol
   {
@@ -57,7 +59,14 @@ private:
     Vector<Sort*> domainAndRange;
   };
 
+  Interpreter* const owner;  // HACK: probably need to move this somewhere else
   Vector<ComplexSymbol> complexSymbols;
 };
+
+inline Interpreter*
+MetaModule::getOwner() const
+{
+  return owner;
+}
 
 #endif

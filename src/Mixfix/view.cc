@@ -32,6 +32,7 @@
 #include "core.hh"
 #include "interface.hh"
 #include "variable.hh"
+#include "higher.hh"
 #include "strategyLanguage.hh"
 #include "mixfix.hh"
 
@@ -49,7 +50,11 @@
 //	front end class definitions
 #include "token.hh"
 #include "moduleExpression.hh"
-#include "preModule.hh"
+#include "syntacticPreModule.hh"
+#include "interpreter.hh"
+//#include "maudemlBuffer.hh"
+#include "global.hh"  // HACK shouldn't be accessing global variables
+
 #include "view.hh"
 
 View::View(Token viewName)
@@ -189,7 +194,9 @@ View::finishModule1(ImportModule* module)
 {
   module->importSorts();
   module->closeSortSet();
+  Assert(!(module->isBad()), "copy of a non-bad theory bad");
   module->importOps();
+  Assert(!(module->isBad()), "copy of a non-bad theory bad");
 }
 
 void
@@ -197,6 +204,7 @@ View::finishModule2(ImportModule* module)
 {
   module->closeSignature();
   module->fixUpImportedOps();
+  Assert(!(module->isBad()), "copy of a non-bad theory bad");
   module->closeFixUps();
   module->localStatementsComplete();
   module->resetImports();
@@ -431,7 +439,14 @@ View::handleOpTermMappings()
   finishModule1(newToModule);
   
   if (!varDecls.empty() && !handleVarDecls())
-    return false;
+    {
+      //
+      //	Need to reset the importPhase for any imported modules we touched.
+      //
+      newFromTheory->resetImports();
+      newToModule->resetImports();
+      return false;
+    }
   finishModule2(newFromTheory);
   finishModule2(newToModule);
   //
@@ -654,7 +669,7 @@ View::evaluate()
   //
   //	Evaluate from part.
   //
-  fromTheory = PreModule::makeModule(fromExpr);
+  fromTheory = interpreter.makeModule(fromExpr);
   if (fromTheory != 0)
     {
       fromTheory->addUser(this);
@@ -672,7 +687,7 @@ View::evaluate()
   //
   //	Evaluate to part.
   //
-  toModule = PreModule::makeModule(toExpr);
+  toModule = interpreter.makeModule(toExpr);
   if (toModule != 0)
     {
       toModule->addUser(this);

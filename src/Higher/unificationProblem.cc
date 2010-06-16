@@ -38,9 +38,6 @@
 //	interface class definitions
 #include "symbol.hh"
 #include "dagNode.hh"
-//#include "subproblem.hh"
-#include "extensionInfo.hh"
-
 //	variable class definitions
 #include "variableDagNode.hh"
 #include "variableTerm.hh"
@@ -49,8 +46,6 @@
 #include "module.hh"
 #include "sortBdds.hh"
 #include "connectedComponent.hh"
-//#include "subproblemAccumulator.hh"
-//#include "rewritingContext.hh"
 #include "unificationContext.hh"
 #include "freshVariableGenerator.hh"
 
@@ -59,8 +54,7 @@
 
 UnificationProblem::UnificationProblem(Vector<Term*>& lhs,
 				       Vector<Term*>& rhs,
-				       FreshVariableGenerator* freshVariableGenerator,
-				       bool withExtension)
+				       FreshVariableGenerator* freshVariableGenerator)
   : freshVariableGenerator(freshVariableGenerator)
 {
   //cerr << this << " UnificationProblem " << lhs[0] << " " << rhs[0] << endl;
@@ -111,14 +105,6 @@ UnificationProblem::UnificationProblem(Vector<Term*>& lhs,
     }
   problemOkay = true;
   //
-  //	Created extensionInfo object if needed.
-  //
-  extensionInfo = 0;
-  if (withExtension)
-    {
-      Assert(nrEquations == 1, "multiple equations with extension");
-      extensionInfo = rightHandDags[0]->makeExtensionInfo();
-    }
   //	Initialize the sorted and unsorted solutions.
   //
   orderSortedUnifiers = 0;
@@ -137,22 +123,17 @@ UnificationProblem::UnificationProblem(Vector<Term*>& lhs,
   for (int i = 0; i < nrEquations; ++i)
     cout << leftHandDags[i] << " =? " << rightHandDags[i] << endl;
 #endif
-  //SubproblemAccumulator subproblems;
   for (int i = 0; i < nrEquations; ++i)
     {
-      //      if (!(leftHandDags[i]->computeSolvedForm(rightHandDags[i], *unsortedSolution, subproblem, extensionInfo)))
       if (!(leftHandDags[i]->computeSolvedForm(rightHandDags[i], *unsortedSolution, pendingStack)))
 	{
 #if 0
 	  cout << "NO SOLVED FORM" << endl;
 #endif
 	  viable = false;
-	  //subproblem = 0;  // for safe destruction
 	  return;
 	}
-      //subproblems.add(subproblem);
     }
-  //subproblem = subproblems.extractSubproblem();
   viable = true;
 }
 
@@ -162,11 +143,9 @@ UnificationProblem::~UnificationProblem()
   delete freshVariableGenerator;
   if (problemOkay)
     {
-      //delete subproblem;
       delete orderSortedUnifiers;
       delete unsortedSolution;
       delete sortedSolution;
-      delete extensionInfo;
     }
   //
   //	Only now can we safely destruct these as they are needed by VariableInfo.
@@ -200,17 +179,6 @@ UnificationProblem::markReachableNodes()
 	  d->mark();
       }
   }
-  /*
-  {
-    int nrFragile = unsortedSolution->nrFragileBindings();
-    for (int i = 0; i < nrFragile; i++)
-      {
-	DagNode* d = unsortedSolution->value(i);
-	if (d != 0)
-	  d->mark();
-      }
-  }
-  */
 }
 
 bool
@@ -223,7 +191,6 @@ UnificationProblem::findNextUnifier()
       //
       //	First solution.
       //
-      //      if (subproblem != 0 && !(subproblem->unificationSolve(true, *unsortedSolution)))
       if (!(pendingStack.solve(true, *unsortedSolution)))
 	{
 #if 0
@@ -240,7 +207,7 @@ UnificationProblem::findNextUnifier()
       int nrRealVariables = variableInfo.getNrProtectedVariables();
       for (int i = 0; i < nrRealVariables; ++i)
 	{
-	  cout << index2Variable(i) << " =? ";
+	  cout << variableInfo.index2Variable(i) << " =? ";
 	  if (unsortedSolution->value(i) == 0)
 	    cout << "(null)" << endl;
 	  else
@@ -270,10 +237,25 @@ UnificationProblem::findNextUnifier()
 	  delete orderSortedUnifiers;
 	  orderSortedUnifiers = 0;
 	nextUnsorted:
-	  //	  if (subproblem == 0 || !(subproblem->unificationSolve(false, *unsortedSolution)))
 	  if (!(pendingStack.solve(false, *unsortedSolution)))
 	    return false;
 	  //cerr << "next unsorted solution";
+#if 0
+	  {
+	    cout << "total variables = " << unsortedSolution->nrFragileBindings() << endl;
+	    int nrRealVariables = variableInfo.getNrProtectedVariables();
+	    for (int i = 0; i < nrRealVariables; ++i)
+	      {
+		cout << variableInfo.index2Variable(i) << " =? ";
+		if (unsortedSolution->value(i) == 0)
+		  cout << "(null)" << endl;
+		else
+		  cout << unsortedSolution->value(i) << endl;
+	      }
+	    cout << "=== end of solved form ===" << endl;
+	  }
+#endif
+
 	  if (!extractUnifier())
 	    goto nextUnsorted;
 	  //freshVariableGenerator->reset();
@@ -294,6 +276,8 @@ UnificationProblem::findNextUnifier()
   FOR_EACH_CONST(i, Vector<int>, freeVariables)
     {
       DagNode* variable = sortedSolution->value(*i);
+      DebugAdvisory("findNextUnifier(): finding sort of free variable " << variable);
+
       ConnectedComponent* component = variable->symbol()->rangeComponent();
       //
       //	Compute the index of the new sort for this variable from the
@@ -308,10 +292,12 @@ UnificationProblem::findNextUnifier()
 	    ++index;
 	}
       bddVar += nrBddVariables;
+      DebugAdvisory("index = " << index);
       //
       //	Replace each variable symbol in a free variable with the
       //	variable symbol corresponding to its newly calculated sort.
       //
+      /* BREAKING HERE - index is too big */
       variable->replaceSymbol(freshVariableGenerator->getBaseVariableSymbol(component->sort(index)));
     }
   return true;
@@ -338,28 +324,59 @@ UnificationProblem::findOrderSortedUnifiers()
     {
       if (sortedSolution->value(i) == 0)
 	{
+	  DebugAdvisory("allocated BDD variables starting at " << nextBddVariable << " for variable with slot " << i);
 	  freeVariables.append(i);
 	  realToBdd[i] = nextBddVariable;
 	  Sort* sort = (i < nrOriginalVariables) ?
 	    safeCast(VariableSymbol*, variableInfo.index2Variable(i)->symbol())->getSort() :
 	    unsortedSolution->getFreshVariableSort(i);
-	  nextBddVariable += sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
+	  int nrBddVariables = sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
+	  nextBddVariable += nrBddVariables;
 	}
+      else
+	DebugAdvisory("variable with index " << i << " bound to " << sortedSolution->value(i));
     }
   //
   //	Make sure BDD package has enough variables allocated.
   //
+  DebugAdvisory("setting " << nextBddVariable << " BDD variables");
   BddUser::setNrVariables(nextBddVariable);
+  //
+  //	Constrains free fresh variables to have indices in valid range.
+  //
+  Bdd unifier = bddtrue;
+  for (int i = nrOriginalVariables; i < nrActualVariables; ++i)
+    {
+      if (sortedSolution->value(i) == 0)
+	{
+	  Sort* sort = unsortedSolution->getFreshVariableSort(i);
+	  int nrBddVariables = sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
+	  int firstVar = realToBdd[i];
+
+	  bddPair* bitMap = bdd_newpair();
+	  for (int j = 0; j < nrBddVariables; ++j)
+	    bdd_setbddpair(bitMap, j, bdd_ithvar(firstVar + j));
+
+	  Bdd leqRelation = sortBdds->getLeqRelation(sort->getIndexWithinModule());
+	  leqRelation = bdd_veccompose(leqRelation, bitMap);
+	  unifier = bdd_and(unifier, leqRelation);
+	  DebugAdvisory("Adding constraint for free, non-original variable: " << leqRelation <<
+			" unifier becomes " << unifier);
+	  bdd_freepair(bitMap);
+	}
+    }
   //
   //	Now compute a BDD which tells us if a given assignment of sorts to free
   //	variables yields an order-sorted unifier.
   //
-  Bdd unifier = bddtrue;
+  //  Bdd unifier = bddtrue;
   for (int i = 0; i < nrOriginalVariables; ++i)
     {
+      DebugAdvisory("Considering variable " << variableInfo.index2Variable(i));
       bddPair* bitMap = bdd_newpair();
       Sort* sort = safeCast(VariableSymbol*, variableInfo.index2Variable(i)->symbol())->getSort();
       Bdd leqRelation = sortBdds->getLeqRelation(sort->getIndexWithinModule());
+      DebugAdvisory("variable sort is " << sort << " which has a leqRelation " << leqRelation);
       DagNode* d = sortedSolution->value(i);
       if (d != 0)
 	{
@@ -372,6 +389,8 @@ UnificationProblem::findOrderSortedUnifiers()
 	  for (int j = 0; j < nrBdds; ++j)
 	    bdd_setbddpair(bitMap, j, genSort[j]);
 	  leqRelation = bdd_veccompose(leqRelation, bitMap);
+	  DebugAdvisory("bound to " << d << " induces leqRelation " << leqRelation);
+	  
 	}
       else
 	{
@@ -383,9 +402,11 @@ UnificationProblem::findOrderSortedUnifiers()
 	  for (int j = 0; j < nrBdds; ++j)
 	    bdd_setpair(bitMap, j, firstVar + j);
 	  leqRelation = bdd_replace(leqRelation, bitMap);
+	  DebugAdvisory("free variable induces leqRelation " << leqRelation);
 	}
       bdd_freepair(bitMap);
       unifier = bdd_and(unifier, leqRelation);
+      DebugAdvisory("findOrderSortedUnifiers(): unifier = " << unifier);
       if (unifier == bddfalse)
 	return;
     }
@@ -395,7 +416,11 @@ UnificationProblem::findOrderSortedUnifiers()
   //
   //	maximal(X1,...,  Xn) = unifier(X1,..., Xn) &
   //	  for each i in 1 ... n
-  //	    not(exists Yi .[gt(Yi,Xi) & unifier(X1,..., Y1,...., Xn)])
+  //	    not(exists Y .[gt(Y,Xi) & unifier(X1,..., Y,...., Xn)])
+  //
+  //	We actually evaluate this subterm as
+  //	  forall Y .[not(gt(Y,Xi) & unifier(X1,..., Y,...., Xn))]
+  //	pushing the not inside the quantifier.
   //
   Bdd maximal = unifier;
   int nrFreeVariables = freeVariables.size();
@@ -430,6 +455,7 @@ UnificationProblem::findOrderSortedUnifiers()
 					    sortBdds->makeVariableBdd(0, nrBddVariables)));
       Assert(maximal != bddfalse, "maximal false even though unifier isn't");
     }
+  DebugAdvisory("findOrderSortedUnifiers(): maximal = " << maximal);
   orderSortedUnifiers = new AllSat(maximal, secondBase, nextBddVariable - 1);
   if (nrFreeVariables > 0)
     {
@@ -518,12 +544,4 @@ UnificationProblem::explore(int index)
   order.append(index);
   done.insert(index);
   return true; 
-}
-
-DagNode*
-UnificationProblem::makeContext(DagNode* filler) const
-{
-  if (extensionInfo != 0 && !(extensionInfo->matchedWhole()))
-    filler = rightHandDags[0]->partialConstruct(filler, extensionInfo);
-  return filler;
 }

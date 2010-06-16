@@ -62,6 +62,10 @@ public:
   UnificationSubproblem* makeUnificationSubproblem();
   int unificationPriority() const;
   //
+  //	Hash cons stuff.
+  //
+  DagNode* makeCanonical(DagNode* original, HashConsSet* hcs);
+  //
   //	Member functions special to ACU_Symbol.
   //
   bool useTree() const;

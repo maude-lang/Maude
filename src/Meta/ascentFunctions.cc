@@ -159,3 +159,18 @@ MetaLevelOpSymbol::metaUpRls(FreeDagNode* subject, RewritingContext& context)
     }
   return false;
 }
+
+bool
+MetaLevelOpSymbol::metaUpView(FreeDagNode* subject, RewritingContext& context)
+{
+  int viewName;
+  if (metaLevel->downQid(subject->getArgument(0), viewName))
+    {
+      if (View* view = interpreter.getView(viewName))
+	{
+	  PointerMap qidMap;
+	  return context.builtInReplace(subject, metaLevel->upView(view, qidMap));
+	}
+    }
+  return false;
+}

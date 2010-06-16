@@ -122,8 +122,6 @@ private:
 						const NatSet& boundUniquely,
 						int step,
 						CP_Sequence& bestSequence);
-  static void addIndependentAliens(const Vector<Pair>& aliens,
-				   CP_Sequence& bestSequence);
   //
   //	Functions needed to compile full and greedy case matching.
   //

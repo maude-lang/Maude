@@ -69,7 +69,11 @@ public:
 			      Vector<Bdd>& generalizedSort);
   UnificationSubproblem* makeUnificationSubproblem();
   //
-  //	Member function specific to CUI specific function CUI_Symbol.
+  //	Hash cons stuff.
+  //
+  DagNode* makeCanonical(DagNode* original, HashConsSet* hcs);
+  //
+  //	Member functions specific to CUI_Symbol.
   //
   bool comm() const;
   bool leftId() const;

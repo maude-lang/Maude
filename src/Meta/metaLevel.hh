@@ -27,7 +27,7 @@
 #define _metaLevel_hh_
 #include "cachedDag.hh"
 #include "metaModuleCache.hh"
-
+#include "succSymbol.hh"
 class MetaLevel
 {
   NO_COPYING(MetaLevel);
@@ -52,6 +52,7 @@ public:
   void startVariableMapping(int varCounter, FreshVariableGenerator* varGenerator);
   void stopVariableMapping();
 
+  DagNode* upNat(const mpz_class& nat);
   DagNode* upResultPair(DagNode* dagNode, MixfixModule* m);
   DagNode* upResultPair(Term* term, MixfixModule* m);
   DagNode* upNoParse(int badTokenIndex);
@@ -128,6 +129,7 @@ public:
 		       DagNode* hole,
 		       MixfixModule* m);
 
+  DagNode* upView(View* view, PointerMap& qidMap);
   DagNode* upModule(bool flat, PreModule* pm, PointerMap& qidMap);
   DagNode* upImports(PreModule* pm, PointerMap& qidMap);
   DagNode* upSorts(bool flat, ImportModule* m, PointerMap& qidMap);
@@ -151,7 +153,7 @@ public:
   bool downPrintOptionSet(DagNode* metaPrintOptionSet, int& printFlags) const;
   bool downBool(DagNode* metaBool, bool& value);
   bool downQid(DagNode* metaQid, int& id);
-  MetaModule* downModule(DagNode* metaModule);
+  MetaModule* downModule(DagNode* metaModule, bool cacheMetaModule = true, Interpreter* owner = 0);
   bool downTermAndSort(DagNode* metaTerm ,
 		       DagNode* metaSort , 
 		       Term*& term ,
@@ -260,7 +262,7 @@ private:
 			PointerMap& qidMap,
 			PointerMap& dagNodeMap);
 
-  DagNode* upHeader(PreModule* pm, PointerMap& qidMap);
+  DagNode* upHeader(bool flat, PreModule* pm, PointerMap& qidMap);
   DagNode* upParameterDecls(PreModule* pm, PointerMap& qidMap);
   DagNode* upParameterDecl(PreModule* pm, int index, PointerMap& qidMap);
   DagNode* upPolymorphDecl(ImportModule* m, int index, PointerMap& qidMap);
@@ -305,6 +307,8 @@ private:
   DagNode* upRenaming(const Renaming* r, PointerMap& qidMap);
   DagNode* upTypeSorts(const set<int>& sorts, PointerMap& qidMap);
   DagNode* upRenamingAttributeSet(const Renaming* r, int index, PointerMap& qidMap);
+  DagNode* upSortMappings(View* view, PointerMap& qidMap);
+  DagNode* upOpMappings(View* view, PointerMap& qidMap);
 
   DagNode* upTraceStep(const RewriteSequenceSearch& state,
 		       int stateNr,
@@ -458,6 +462,12 @@ inline const mpz_class&
 MetaLevel::getNat(const DagNode* dagNode) const
 {
   return succSymbol->getNat(dagNode);
+}
+
+inline DagNode*
+MetaLevel::upNat(const mpz_class& nat)
+{
+  return succSymbol->makeNatDag(nat);
 }
 
 inline void

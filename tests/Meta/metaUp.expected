@@ -123,7 +123,9 @@ eq '__['A:Attr,'A:Attr] = 'A:Attr [none] .
 eq '__['E:Equation,'E:Equation] = 'E:Equation [none] .
 eq '__['M:MembAx,'M:MembAx] = 'M:MembAx [none] .
 eq '__['O:OpDecl,'O:OpDecl] = 'O:OpDecl [none] .
+eq '__['O:OpMapping,'O:OpMapping] = 'O:OpMapping [none] .
 eq '__['R:Rule,'R:Rule] = 'R:Rule [none] .
+eq '__['S:SortMapping,'S:SortMapping] = 'S:SortMapping [none] .
 eq '__['S:SubsortDecl,'S:SubsortDecl] = 'S:SubsortDecl [none] .
 eq '_and-then_['false.Bool,'B:`[Bool`]] = 'false.Bool [none] .
 eq '_and-then_['true.Bool,'B:`[Bool`]] = 'B:`[Bool`] [none] .
@@ -171,6 +173,9 @@ eq 'getEqs['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
 eq 'getEqs['th_is_sorts_._____endth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'EQS:EquationSet [none] .
+eq 'getFrom['view_from_to_is__endv['Q:Qid,'ME:ModuleExpression,
+    'ME':ModuleExpression,'SMS:SortMappingSet,'OMS:OpMappingSet]] =
+    'ME:ModuleExpression [none] .
 eq 'getImports['fmod_is_sorts_.____endfm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
     'IL:ImportList [none] .
@@ -217,6 +222,12 @@ eq 'getName['mod_is_sorts_._____endm['_`{_`}['Q:Qid,'PDL:ParameterDeclList],
 eq 'getName['th_is_sorts_._____endth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'Q:Qid [none] .
+eq 'getName['view_from_to_is__endv['Q:Qid,'ME:ModuleExpression,
+    'ME':ModuleExpression,'SMS:SortMappingSet,'OMS:OpMappingSet]] = 'Q:Qid [
+    none] .
+eq 'getOpMappings['view_from_to_is__endv['Q:Qid,'ME:ModuleExpression,
+    'ME':ModuleExpression,'SMS:SortMappingSet,'OMS:OpMappingSet]] =
+    'OMS:OpMappingSet [none] .
 eq 'getOps['fmod_is_sorts_.____endfm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
     'OPDS:OpDeclSet [none] .
@@ -241,6 +252,9 @@ eq 'getRls['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
 eq 'getRls['th_is_sorts_._____endth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'RLS:RuleSet [none] .
+eq 'getSortMappings['view_from_to_is__endv['Q:Qid,'ME:ModuleExpression,
+    'ME':ModuleExpression,'SMS:SortMappingSet,'OMS:OpMappingSet]] =
+    'SMS:SortMappingSet [none] .
 eq 'getSorts['fmod_is_sorts_.____endfm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
     'SS:SortSet [none] .
@@ -275,6 +289,9 @@ eq 'getTerm['`{_`,_`,_`,_`}['T:Term,'T:Type,'S:Substitution,'C:Context]] =
     'T:Term [none] .
 eq 'getTerm['`{_`,_`,_`}['T:Term,'T:Type,'S:Substitution]] = 'T:Term [none] .
 eq 'getTerm['`{_`,_`}['T:Term,'T:Type]] = 'T:Term [none] .
+eq 'getTo['view_from_to_is__endv['Q:Qid,'ME:ModuleExpression,
+    'ME':ModuleExpression,'SMS:SortMappingSet,'OMS:OpMappingSet]] =
+    'ME':ModuleExpression [none] .
 eq 'getType['C:Constant] = 'qid['substr['string['C:Constant],'_+_['s_['0.Zero],
     'rfind['string['C:Constant],'".".Char,'length['string['C:Constant]]]],
     'length['string['C:Constant]]]] [none] .

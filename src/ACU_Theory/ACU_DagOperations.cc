@@ -65,64 +65,69 @@ ACU_DagNode::findFirstPotentialMatch(Term* key, const Substitution& partial) con
   return first;
 }
 
-bool
-ACU_DagNode::binarySearch(DagNode* key, int& pos) const
+int
+ACU_DagNode::binarySearch(DagNode* key) const
 {
+  //
+  //	Returns index of argument equal key, or a -ve value pos otherwise.
+  //	In the latter case ~pos is the index of the smallest element greater
+  //	than key, and can be argArray.length() if key is greater than all elements
+  //	in the arrray.
+  //
   const ArgVec<Pair>::const_iterator args = argArray.begin();  // for speed
   int upper = argArray.length() - 1;
   Assert(upper >= 0, "no args");
   int lower = 0;
   do
     {
-      int probe = (upper + lower) / 2;
+      //
+      //	upper and lower will be non-negative at this point so declaring their sum
+      //	to be unsigned allows the compiler to optimize the division on machines
+      //	that round integer division towards zero.
+      //
+      unsigned int sum = upper + lower;
+      int probe = sum / 2;
       int r = key->compare(args[probe].dagNode);
       if (r == 0)
-	{
-	  pos = probe;
-	  return true;
-	}
-      /*
+	return probe;
       if (r < 0)
 	upper = probe - 1;
       else
 	lower = probe + 1;
-      */
-      setOnLs(upper, probe - 1, r);
-      setOnGeq(lower, probe + 1, r);
     }
   while (lower <= upper);
-  pos = lower;
-  return false;
+  return ~lower;
 }
 
-bool
-ACU_DagNode::binarySearch(Term* key, int& pos) const
+int
+ACU_DagNode::binarySearch(Term* key) const
 {
+  //
+  //	Returns index of argument equal key or -1 otherwise.
+  //
   const ArgVec<Pair>::const_iterator args = argArray.begin();  // for speed
   int upper = argArray.length() - 1;
   Assert(upper >= 0, "no args");
   int lower = 0;
   do
     {
-      int probe = (upper + lower) / 2;
+      //
+      //	upper and lower will be non-negative at this point so declaring their sum
+      //	to be unsigned allows the compiler to optimize the division on machines
+      //	that round integer division towards zero.
+      //
+      unsigned int sum = upper + lower;
+      int probe = sum / 2;
       int r = key->compare(args[probe].dagNode);
       if (r == 0)
-	{
-	  pos = probe;
-	  return true;
-	}
-      /*
+	return probe;
       if (r < 0)
 	upper = probe - 1;
       else
 	lower = probe + 1;
-      */
-      setOnLs(upper, probe - 1, r);
-      setOnGeq(lower, probe + 1, r);
     }
   while (lower <= upper);
-  pos = lower;
-  return false;
+  return -1;
 }
 
 bool
@@ -140,17 +145,17 @@ ACU_DagNode::eliminateSubject(DagNode* target,
       int nrArgs = args.length();
       for (int i = 0; i < nrArgs; i++)
         {
-          int pos;
           DagNode* d = args[i].dagNode;
           int m = args[i].multiplicity;
-          if (!binarySearch(d, pos) || (subjectMultiplicity[pos] -= m * multiplicity) < 0)
+	  int pos = binarySearch(d);
+          if (pos < 0 || (subjectMultiplicity[pos] -= m * multiplicity) < 0)
             return false;
         }
     }
   else
     {
-      int pos;
-      if (!binarySearch(target, pos) || (subjectMultiplicity[pos] -= multiplicity) < 0)
+      int pos = binarySearch(target);
+      if (pos < 0 || (subjectMultiplicity[pos] -= multiplicity) < 0)
         return false;
     }
   return true;
@@ -159,8 +164,8 @@ ACU_DagNode::eliminateSubject(DagNode* target,
 bool
 ACU_DagNode::eliminateArgument(Term* target)
 {
-  int pos;
-  if (binarySearch(target, pos))
+  int pos = binarySearch(target);
+  if (pos >= 0)
     {
       int nrArgs = argArray.length() - 1;
       for (int i = pos; i < nrArgs; i++)

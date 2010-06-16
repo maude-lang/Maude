@@ -26,13 +26,15 @@
 #ifndef _interpreter_hh_
 #define _interpreter_hh_
 #include <set>
+#include "environment.hh"
 #include "moduleDatabase.hh"
 #include "moduleCache.hh"
 #include "compiler.hh"
 #include "viewDatabase.hh"
 
 class Interpreter
-  : public ModuleDatabase,
+  : public Environment,
+    public ModuleDatabase,
     public ModuleCache,
 #ifdef COMPILER
     public Compiler,
@@ -155,9 +157,9 @@ public:
   bool getPrintFlag(PrintFlags flag) const;
   int getPrintFlags() const;
 
-  PreModule* getCurrentModule() const;
+  SyntacticPreModule* getCurrentModule() const;
   bool setCurrentModule(const Vector<Token>& moduleExpr, int start = 0);
-  void setCurrentModule(PreModule* module);
+  void setCurrentModule(SyntacticPreModule* module);
   void makeClean(int lineNumber);
 
   View* getCurrentView() const;
@@ -206,6 +208,9 @@ public:
   void showMbs(bool all = true) const;
   void showEqs(bool all = true) const;
   void showRls(bool all = true) const;
+
+  ImportModule* getModuleOrIssueWarning(int name, const LineNumber& lineNumber);
+  ImportModule* makeModule(const ModuleExpression* expr, ImportModule* enclosingModule = 0);
 
 private:
   typedef void (Interpreter::*ContinueFuncPtr)(Int64 limit, bool debug);
@@ -269,7 +274,7 @@ private:
 
   int flags;
   int printFlags;
-  PreModule* currentModule;
+  SyntacticPreModule* currentModule;
   View* currentView;
   //
   //	Continuation information.
@@ -357,7 +362,7 @@ Interpreter::getPrintFlags() const
   return printFlags;
 }
 
-inline PreModule*
+inline SyntacticPreModule*
 Interpreter::getCurrentModule() const
 {
   return currentModule;

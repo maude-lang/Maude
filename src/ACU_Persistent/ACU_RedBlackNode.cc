@@ -39,6 +39,9 @@
 #include "dagNode.hh"
 #include "term.hh"
 
+//      core class definitions
+#include "hashConsSet.hh"
+
 //	ACU red-black class definitions
 #include "ACU_RedBlackNode.hh"
 #include "ACU_Stack.hh"
@@ -59,6 +62,48 @@ ACU_RedBlackNode::blackNode(ACU_RedBlackNode* key,
 			      key->getMultiplicity(),
 			      left,
 			      right);
+}
+
+//
+//	Experimental hash consing code
+//
+ACU_RedBlackNode*
+ACU_RedBlackNode::canonicalRebuild(HashConsSet* hcs)
+{
+  //
+  //	Horribly inefficient - recode it after we determine it is worthwhile.
+  //
+  bool needRebuild = false;
+  ACU_RedBlackNode* left = getLeft();
+  if (left)
+    {
+      ACU_RedBlackNode* canonicalLeft = left->canonicalRebuild(hcs);
+      if (left != canonicalLeft)
+	{
+	  left = canonicalLeft;
+	  needRebuild = true;
+	}
+    }
+  ACU_RedBlackNode* right = getRight();
+  if (right)
+    {
+      ACU_RedBlackNode* canonicalRight = right->canonicalRebuild(hcs);
+      if (right != canonicalRight)
+	{
+	  right = canonicalRight;
+	  needRebuild = true;
+	}
+    }
+  DagNode* d = getDagNode();
+  DagNode* c = hcs->getCanonical(hcs->insert(d));
+  if (needRebuild || c != d)
+    {
+      ACU_RedBlackNode* n = new ACU_RedBlackNode(c, getMultiplicity(), left, right, getMaxMult());
+      n->makeRedIfRed(this);
+      n->setSortIndex(getSortIndex());
+      return n;
+    }
+  return this;
 }
 
 #ifdef CHECK_TREE

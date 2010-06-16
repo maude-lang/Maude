@@ -24,6 +24,7 @@ ImportModule*
 ImportModule::makeRenamedCopy(int name, Renaming* canonical, ModuleCache* moduleCache)
 {
   ImportModule* copy = new ImportModule(name, getModuleType(), RENAMING, moduleCache);
+  DebugAdvisory("makeRenamedCopy() made " << copy << " at address " << static_cast<void*>(copy));
   LineNumber lineNumber(FileTable::AUTOMATIC);
 
   int nrParameters = parameterNames.size();
@@ -57,17 +58,25 @@ ImportModule::finishCopy(ImportModule* copy, Renaming* canonical)
   donateSorts2(copy, canonical);
   copy->closeSortSet();
   
-  copy->importOps();
-  donateOps2(copy, canonical);
-  copy->closeSignature();
-
-  copy->fixUpImportedOps();
-  fixUpDonatedOps2(copy, canonical);
-  copy->closeFixUps();
-  //
-  //	Statements are not copied so we have no local statements.
-  //
-  copy->localStatementsComplete();
+  if (!(copy->isBad()))
+    {
+      copy->importOps();
+      donateOps2(copy, canonical);
+      if (!(copy->isBad()))
+	{
+	  copy->closeSignature();
+	  copy->fixUpImportedOps();
+	  fixUpDonatedOps2(copy, canonical);
+	  if (!(copy->isBad()))
+	    {
+	      copy->closeFixUps();
+	      //
+	      //	Statements are not copied so we have no local statements.
+	      //
+	      copy->localStatementsComplete();
+	    }
+	}
+    }
   //
   //	Reset phase counter in each imported module and return copy.
   //
@@ -204,7 +213,7 @@ ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 	  else
 	    {
 	      int newName = renaming->getOpTo(index);
-	      DebugAdvisory("Old symbol = " << symbol << " newName = " << newName);
+	      DebugAdvisory("Old symbol = " << symbol << " newName = " << Token::name(newName));
 	      name.tokenize(newName, symbol->getLineNumber());
 	      prec = renaming->getPrec(index);
 	      symbolType.assignFlags(SymbolType::PREC, prec != DEFAULT);

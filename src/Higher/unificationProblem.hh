@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,17 +38,13 @@ class UnificationProblem : public CacheableState, private SimpleRootContainer
 public:
   UnificationProblem(Vector<Term*>& lhs,
 		     Vector<Term*>& rhs,
-		     FreshVariableGenerator* freshVariableGenerator,
-		     bool withExtension = false);
+		     FreshVariableGenerator* freshVariableGenerator);
   ~UnificationProblem();
 
   bool problemOK() const;
   bool findNextUnifier();
   const Substitution& getSolution() const;
   int getNrFreeVariables() const;
-  DagNode* makeContext(DagNode* filler) const;
-  ExtensionInfo* getExtensionInfo() const;
-  const Vector<Term*>& getLeftHandSides() const;  // HACK so we can get kind for context hole
   const VariableInfo& getVariableInfo() const;
 
 private:
@@ -67,10 +63,8 @@ private:
   Vector<DagNode*> leftHandDags;
   Vector<DagNode*> rightHandDags;
 
-  ExtensionInfo* extensionInfo;
   UnificationContext* unsortedSolution;	// for accumulating solved forms and constructing unsorted unifiers
   PendingUnificationStack pendingStack;
-  //Subproblem* subproblem;		// for stuff unresolved by computeSolvedForm() pass
   bool problemOkay;			// true if problem didn't violate ctor invariants
   bool viable;				// true if problem didn't fail computeSolvedForm() pass
   Vector<int> freeVariables;	     	// indices (slots) of unbound variables in unsorted unifier
@@ -106,18 +100,6 @@ inline int
 UnificationProblem::getNrFreeVariables() const
 {
   return freeVariables.size();
-}
-
-inline ExtensionInfo*
-UnificationProblem::getExtensionInfo() const
-{
-  return extensionInfo;
-}
-
-inline const Vector<Term*>&
-UnificationProblem::getLeftHandSides() const
-{
-  return leftHandSides;
 }
 
 #endif

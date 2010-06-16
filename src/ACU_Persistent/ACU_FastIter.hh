@@ -72,7 +72,8 @@ ACU_FastIter::getMultiplicity() const
 inline void
 ACU_FastIter::next()
 {
-  stackLeftmostPath(pop()->getRight());
+  if (ACU_RedBlackNode* r = pop()->getRight())
+    stackLeftmostPath(r);
 }
 
 #endif

@@ -163,7 +163,7 @@ FreeTerm::compareArguments(const Term* other) const
     {
       int r = argArray[i]->compare(ta[i]);
       if (r != 0)
-	    return r;
+	return r;
     }
   return 0;
 }
@@ -172,15 +172,20 @@ int
 FreeTerm::compareArguments(const DagNode* other) const
 {
   Assert(symbol() == other->symbol(), "symbols differ");
-  int nrArgs = argArray.length();
+  int nrArgs = other->symbol()->arity();
   if (nrArgs != 0)
     {
-      DagNode** da = ((FreeDagNode*) other)->argArray();
-      for (int i = 0; i < nrArgs; i++, da++)
+      DagNode** q = static_cast<const FreeDagNode*>(other)->argArray();
+      Vector<Term*>::const_iterator p = argArray.begin();
+      for (;;)
 	{
-	  int r = argArray[i]->compare(*da);
+	  int r = (*p)->compare(*q);
 	  if (r != 0)
 	    return r;
+	  if (--nrArgs == 0)
+	    break;
+	  ++p;
+	  ++q;
 	}
     }
   return 0;
@@ -368,35 +373,6 @@ FreeTerm::findAvailableTerms(TermBag& availableTerms, bool eagerContext, bool at
     }
 }
 
-/*
-//
-//	Simplistic hacky version to test for bugs
-//
-
-int
-FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
-		      VariableInfo& variableInfo,
-		      TermBag& availableTerms,
-		      bool eagerContext)
-{
-  FreeSymbol* s = safeCast(FreeSymbol*, symbol());
-  Vector<int> sources;
-  int nrArgs = argArray.length();
-  for (int i = 0; i < nrArgs; i++)
-    {
-      bool argEager = eagerContext && s->eagerArgument(i);
-      Term* t = argArray[i];
-      sources.append(t->compileRhs(rhsBuilder, variableInfo, availableTerms, argEager));
-    }
-  int index = variableInfo.makeConstructionIndex();
-  FreeRhsAutomaton* automaton = new FreeRhsAutomaton();
-  automaton->addFree(s, index, sources);
-  rhsBuilder.addRhsAutomaton(automaton);
-  return index;
-}
-*/
-
-
 int
 FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
 		      VariableInfo& variableInfo,
@@ -416,6 +392,9 @@ FreeTerm::compileRhsAliens(RhsBuilder& rhsBuilder,
 			   TermBag& availableTerms,
 			   bool eagerContext)
 {
+  //
+  //	Traverse the free skeleton, calling compileRhs() on all non-free subterms.
+  //
   int nrArgs = argArray.length();
   FreeSymbol* s = symbol();
   for (int i = 0; i < nrArgs; i++)
@@ -438,29 +417,37 @@ FreeTerm::compileRhs3(FreeRhsAutomaton* automaton,
 		      VariableInfo& variableInfo,
 		      TermBag& availableTerms,
 		      bool eagerContext)
-{ // SHOULD BE CLEANED UP NOW WE HAVE compileRhsAliens()
+{
   int nrArgs = argArray.length();
   //
-  //	We want to compile largest subterms first.
+  //	We want to minimize conflict between slots to avoid quadratic number of
+  //	conflict arcs on giant right hand sides. The heuristic we use is crude:
+  //	we sort in order of arguments by number of symbol occurences, and build
+  //	largest first.
   //
-  Vector<pair<int, int> > order(nrArgs);
+  typedef Vector<pair<int, int> > PairVec;
+  PairVec order(nrArgs);
   for (int i = 0; i < nrArgs; i++)
     {
       order[i].first = - argArray[i]->computeSize();  // larger terms to the front
       order[i].second = i;
     }
   sort(order.begin(), order.end());
-
+  //
+  //	Consider each argument in largest first order.
+  //
   FreeSymbol* s = symbol();
   Vector<int> sources(nrArgs);
-  for (int i = 0; i < nrArgs; ++i)
+  FOR_EACH_CONST(i, PairVec, order)
     {
-      int argNr = order[i].second;
-
+      int argNr = i->second;
       bool argEager = eagerContext && s->eagerArgument(argNr);
       Term* t = argArray[argNr];
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(t))
 	{
+	  //
+	  //	Argument is free - see if we need to compile it into current automaton.
+	  //
 	  if (!(availableTerms.findTerm(f, argEager)))
 	    {
 	      int source = f->compileRhs3(automaton,
@@ -482,10 +469,14 @@ FreeTerm::compileRhs3(FreeRhsAutomaton* automaton,
   //
   //	Need to flag last use of each source.
   //
-  for (int i = 0; i < nrArgs; i++)
-    variableInfo.useIndex(sources[i]);
-
-  int index = variableInfo.makeConstructionIndex();
-  automaton->addFree(s, index, sources);
-  return index;
+  {
+    FOR_EACH_CONST(i, Vector<int>, sources)
+      variableInfo.useIndex(*i);
+  }
+  //
+  //	Add to free step to automaton.
+  //
+  int destination = variableInfo.makeConstructionIndex();
+  automaton->addFree(s, destination, sources);
+  return destination;
 }

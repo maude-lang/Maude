@@ -63,6 +63,7 @@ void
 ACU_RhsAutomaton::close(int destinationIndex)
 {
   destination = destinationIndex;
+  nrArguments = arguments.size();
 }
 
 void
@@ -78,8 +79,8 @@ local_inline void
 ACU_RhsAutomaton::buildArguments(ArgVec<ACU_DagNode::Pair>& argArray, Substitution& matcher) const
 {
   Vector<Argument>::const_iterator j = arguments.begin();
-  const Vector<Argument>::const_iterator e = arguments.end();
-  Assert(j != e, "no args");
+  const Vector<Argument>::const_iterator e = j + nrArguments;
+  Assert(nrArguments > 0, "no args");
   ArgVec<ACU_DagNode::Pair>::iterator i = argArray.begin();
   do
     {
@@ -95,7 +96,7 @@ ACU_RhsAutomaton::buildArguments(ArgVec<ACU_DagNode::Pair>& argArray, Substituti
 DagNode*
 ACU_RhsAutomaton::construct(Substitution& matcher)
 {
-  ACU_DagNode* n = new ACU_DagNode(topSymbol, arguments.length());
+  ACU_DagNode* n = new ACU_DagNode(topSymbol, nrArguments);
   buildArguments(n->argArray, matcher);
   matcher.bind(destination, n);
   return n;
@@ -104,7 +105,7 @@ ACU_RhsAutomaton::construct(Substitution& matcher)
 void
 ACU_RhsAutomaton::replace(DagNode* old, Substitution& matcher)
 {
-  buildArguments((new(old) ACU_DagNode(topSymbol, arguments.length()))->argArray, matcher);
+  buildArguments((new(old) ACU_DagNode(topSymbol, nrArguments))->argArray, matcher);
 }
 
 #ifdef DUMP

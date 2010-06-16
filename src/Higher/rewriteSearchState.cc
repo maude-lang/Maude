@@ -51,39 +51,51 @@ RewriteSearchState::RewriteSearchState(RewritingContext* context,
     label(label),
     withExtension(maxDepth >= 0)
 {
+  Assert(label == NONE || !(getFlags() & SET_UNREWRITABLE),
+	  "shouldn't set unrewritable flag if only looking at rules with a given label");
   ruleIndex = -1;
 }
 
 bool
 RewriteSearchState::findNextRewrite()
 {
+  bool rewriteSeenAtCurrentPosition;
   if (ruleIndex > -1)
     {
       if (findNextSolution())
 	return true;
+      rewriteSeenAtCurrentPosition = true;
     }
   else
     {
       if (!findNextPosition())
 	return false;
+      rewriteSeenAtCurrentPosition = false;
     }
   ++ruleIndex;
   bool allowNonexec = getFlags() & ALLOW_NONEXEC;
   do
     {
-      const Vector<Rule*>& rules = getDagNode()->symbol()->getRules();
-      for (int nrRules = rules.length(); ruleIndex < nrRules; ruleIndex++)
+      DagNode* d = getDagNode();
+      if (!(d->isUnrewritable()))
 	{
-	  Rule* rl = rules[ruleIndex];
-	  if ((allowNonexec || !(rl->isNonexec())) &&
-	      (label == UNDEFINED || rl->getLabel().id() == label))
+	  const Vector<Rule*>& rules = d->symbol()->getRules();
+	  for (int nrRules = rules.length(); ruleIndex < nrRules; ruleIndex++)
 	    {
-	      LhsAutomaton* a = withExtension ? rl->getExtLhsAutomaton() :
-		rl->getNonExtLhsAutomaton();
-	      if (findFirstSolution(rl, a))
-		return true;
+	      Rule* rl = rules[ruleIndex];
+	      if ((allowNonexec || !(rl->isNonexec())) &&
+		  (label == UNDEFINED || rl->getLabel().id() == label))
+		{
+		  LhsAutomaton* a = withExtension ? rl->getExtLhsAutomaton() :
+		    rl->getNonExtLhsAutomaton();
+		  if (findFirstSolution(rl, a))
+		    return true;
+		}
 	    }
+	  if (!rewriteSeenAtCurrentPosition && (getFlags() & SET_UNREWRITABLE))
+	    d->setUnrewritable();
 	}
+      rewriteSeenAtCurrentPosition = false;
       ruleIndex = 0;
     }
   while (findNextPosition());

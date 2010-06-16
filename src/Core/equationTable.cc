@@ -64,7 +64,7 @@ EquationTable::applyReplace(DagNode* subject,
     {
       Subproblem* sp;
       Equation* eq = *i;
-      int nrVariables = eq->fastNrVariables();
+      long nrVariables = eq->fastNrVariables();
       if (nrVariables >= 0)
 	{
 	  //
@@ -155,7 +155,7 @@ EquationTable::applyReplaceNoOwise(DagNode* subject,
       //
       if (eq->isOwise())
 	break;
-      int nrVariables = eq->fastNrVariables();
+      long nrVariables = eq->fastNrVariables();
       if (nrVariables >= 0)
 	{
 	  //

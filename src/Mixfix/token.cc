@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,6 +28,10 @@
 #include "macros.hh"
 #include "vector.hh"
 
+//	core stuff
+#include "lineNumber.hh"
+
+//	mixfix stuff
 #include "token.hh"
 
 //	our stuff
@@ -49,19 +53,6 @@ operator<<(ostream& s, const Token& token)
 ostream&
 operator<<(ostream& s, const Vector<Token>& tokens)
 {
-  /*
-  bool needSpace = false;
-  int nrTokens = tokens.length();
-  for (int i = 0; i < nrTokens; i++)
-    {
-      const char* name = tokens[i].name();
-      bool special = Token::specialChar(name[0]) && name[1] == '\0';
-      if (needSpace && !special)
-	s << ' ';
-      s << name;
-      needSpace = !special;
-    }
-  */
   Token::printTokenVector(s, tokens, 0, tokens.length() - 1, true);
   return s;
 }
@@ -145,6 +136,7 @@ Token::fixUp(const char* tokenString, int& lineNumber)
   //
   //	This essentially a version of tokenize() that removes
   //	\ newline sequences from the tokenString before tokenizing.
+  //	We also convert \t characters to spaces.
   //
   int nrBackslashNewlineCombos = 0;
   int j = 0;
@@ -160,7 +152,13 @@ Token::fixUp(const char* tokenString, int& lineNumber)
 	  ++nrBackslashNewlineCombos;
 	}
       else
-	{  
+	{
+	  if (c == '\t')
+	    {
+	      IssueWarning(LineNumber(lineNumber + nrBackslashNewlineCombos) <<
+		   ": tab character in string literal - replacing it with space");
+	      c = ' ';
+	    }
 	  bufferExpandTo(j + 1);
 	  buffer[j] = c;
 	  ++j;
@@ -207,80 +205,13 @@ Token::getInt(int& value) const
   return pointer != str && *pointer == '\0';
 }
 
-/*
-int
-Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
-{
-  
-  if (specialProperties[prefixNameCode] != NONE)
-    return 0;
-  const char* name = stringTable.name(prefixNameCode);
-  const char* p = name;
-  for (;; p++)
-    {
-      char c = *p;
-      if (c == '\0')
-	return 0;
-      if (c == '`' || c == '_')
-	break;
-    }
-  //
-  //	Has mixfix syntax.
-  //
-  int nrUnderscores = 0;
-  bufferExpandTo(strlen(name) + 1);
-  int j = p - name;
-  strncpy(buffer, name, j);
-  for (;; p++)
-    {
-      char c = *p;
-      if (c == '\0')
-	break;
-      else if (c == '`')
-	{
-	  if (j > 0)
-	    {
-	      buffer[j] = '\0';
-	      mixfixSyntax.append(encode(buffer));
-	      j = 0;
-	    }
-	  continue;
-	}
-      else if (c == '_')
-	++nrUnderscores;
-      else if (!specialChar(c))
-	{
-	  buffer[j++] = c;
-	  continue;
-	}
-      if (j > 0)
-	{
-	  buffer[j] = '\0';
-	  mixfixSyntax.append(encode(buffer));
-	  j = 0;
-	}
-      buffer[0] = c;
-      buffer[1] = '\0';
-      mixfixSyntax.append(encode(buffer));
-    }
-  if (j > 0)
-    {
-      buffer[j] = '\0';
-      mixfixSyntax.append(encode(buffer));
-    }
-  return nrUnderscores;
-}
-
-*/
-
 int
 Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
 {
   
   int sp = specialProperties[prefixNameCode];
-  if (sp != NONE && sp != CONTAINS_COLON && sp != ENDS_IN_COLON &&
-      sp != ITER_SYMBOL)
-    return 0;
+  if (sp != NONE && sp != CONTAINS_COLON && sp != ENDS_IN_COLON && sp != ITER_SYMBOL)
+    return 0;  // regular string literals exit here
   const char* name = stringTable.name(prefixNameCode);
   const char* p = name;
   for (;; p++)
@@ -292,7 +223,7 @@ Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
 	break;
     }
   //
-  //	Has mixfix syntax.
+  //	Potentially has mixfix syntax.
   //
   int nrUnderscores = 0;
   bool stringMode = false;
@@ -327,7 +258,7 @@ Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
 	      continue;
 	    }
 	  else if (c == '_')
-	    ++nrUnderscores;
+	    ++nrUnderscores;  // fall thru to special character code
 	  else if (!specialChar(c))
 	    {
 	      token += c;
@@ -335,6 +266,9 @@ Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
 		stringMode = true;
 	      continue;
 	    }
+	  //
+	  //	Special character: terminate current token and add special character as a token.
+	  //
 	  if (!token.empty())
 	    mixfixSyntax.append(encode(token.c_str()));
 	  token = c;
@@ -344,6 +278,15 @@ Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
     }
   if (!token.empty())
     mixfixSyntax.append(encode(token.c_str()));
+  //
+  //	If the mixfix syntax turned out to be a single token, and it wasn't an underscore
+  //	we treat it as not having mixfix syntax.
+  //
+  if (mixfixSyntax.size() == 1 && nrUnderscores == 0)
+    {
+      DebugAdvisory("deleting mixfixSyntax for " << name);
+      mixfixSyntax.clear();
+    }
   return nrUnderscores;
 }
 
@@ -427,13 +370,6 @@ Token::checkForSpecialProperty(const char* tokenString)
       specialProperties[tokenNr] = RATIONAL;
       return;
     }
-    
-  /*
-  bool error;
-  Int64 i = stringToInt64(tokenString, error, 10);
-  if (!error)
-    specialProperties[tokenNr] = (i == 0) ? ZERO : ((i < 0) ? SMALL_NEG : SMALL_NAT);
-  */
 }
 
 bool
@@ -817,36 +753,6 @@ Token::ropeToPrefixNameCode(const crope& r)
 int
 Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble)
 {
-  int r1;
-  //#if GOOD
-  {
-  int nrTokens = opBubble.length();
-  if (nrTokens == 1)
-    {
-      int code = opBubble[0].codeNr;
-      if (!specialChar(stringTable.name(code)[0]))
-	return code;
-    }
-  string result;
-  bool lastCharSpecial = true;
-  for (int i = 0; i < nrTokens; i++)
-    {
-      const char* name = stringTable.name(opBubble[i].codeNr);
-      char c = name[0];
-      // FIXME: it seems that `(_`) can start with `
-      //Assert(c != '`', "can't start token with ` : " << name << " in " << opBubble);
-      if (specialChar(c) || (!lastCharSpecial && c != '_'))
-	result += '`';
-      result += name;
-      char l = result[result.length() - 1];
-      lastCharSpecial = specialChar(l) || l == '_';
-    }
-  r1 = encode(result.c_str());
-  //  return encode(result.c_str());
-  }
-  //#else
-  int r2;
-  {
   int nrTokens = opBubble.length();
   if (nrTokens == 1)
     {
@@ -881,14 +787,7 @@ Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble)
     }
   bufferExpandTo(pos + 1);
   buffer[pos] = '\0';
-  r2 = encode(buffer);
-  //  return encode(buffer);
-  }
-  //#endif
-  if (r1 != r2)
-    cerr << "PROBLEM: " << opBubble << '\n' << stringTable.name(r1) << '\n' <<
-      stringTable.name(r2) << '\n';
-  return r2;
+  return encode(buffer);
 }
 
 void

@@ -205,7 +205,7 @@ Vector<T>::Vector(size_type length, size_type preallocate)
       pv.initAllocate(preallocate * sizeof(T));
       pv.setLength(length);
       T* vector = static_cast<T*>(pv.getBase());
-      for (size_type i = 0; i < length; i++)
+      for (size_type i = 0; i != length; i++)
 	(void) new(vector + i) T();  // call default constructor on each element
     }
 }
@@ -238,7 +238,7 @@ Vector<T>::~Vector()
   if (vector != 0)
     {
       size_type length = pv.getLength();
-      for (size_type i = 0; i < length; i++)
+      for (size_type i = 0; i != length; i++)
 	vector[i].~T();  // call destructor on each object in array
       pv.freeMemory();
     }
@@ -276,7 +276,7 @@ Vector<T>::expandTo(size_type newLength)
       if (originalVector != 0)
 	{
 	  T* vector = static_cast<T*>(tmp.getBase());
-	  for (size_type i = 0; i < oldLength; i++)
+	  for (size_type i = 0; i != oldLength; i++)
 	    {
 	      new(vector + i) T(originalVector[i]);  // copy each orginal element
 	      originalVector[i].~T();  // then destroy original.
@@ -289,7 +289,7 @@ Vector<T>::expandTo(size_type newLength)
   if (vector != 0)
     {
       pv.setLength(newLength);
-      for (size_type i = oldLength; i < newLength; i++)
+      for (size_type i = oldLength; i != newLength; i++)
 	new(vector + i) T();  // call default constructor on each new element
     }
 }
@@ -313,7 +313,7 @@ Vector<T>::contractTo(size_type newLength)
   if (vector != 0)
     {
       pv.setLength(newLength);
-      for (size_type i = newLength; i < oldLength; i++)
+      for (size_type i = newLength; i != oldLength; i++)
 	vector[i].~T();  // call destructor on each "lost" element
     }
 }
@@ -356,7 +356,7 @@ Vector<T>::append(const T& item)
 	  PreVector tmp;
 	  tmp.initAllocate(neededBytes);
 	  T* newVector = static_cast<T*>(tmp.getBase());
-	  for (size_type i = 0; i < oldLength; i++)
+	  for (size_type i = 0; i != oldLength; i++)
 	    {
 	      new(newVector + i) T(vector[i]);  // copy each orginal element
 	      vector[i].~T();  // then destroy original.
@@ -379,7 +379,7 @@ Vector<T>::operator=(const Vector<T>& original)
   //
   size_type length = pv.getLength();
   T* vector = static_cast<T*>(pv.getBase());
-  for (size_type i = 0; i < length; i++)
+  for (size_type i = 0; i != length; i++)
     vector[i].~T();  // call destructor on each object in destination array
   //
   //	reallocate memory if necessary
@@ -400,7 +400,7 @@ Vector<T>::operator=(const Vector<T>& original)
   if (vector != 0)
     {
       pv.setLength(originalLength);
-      for (size_type i = 0; i < originalLength; i++) 
+      for (size_type i = 0; i != originalLength; i++) 
 	new(vector + i) T(originalVector[i]);  // call copy constructor on used elements only
     }
   return *this;

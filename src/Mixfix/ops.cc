@@ -22,7 +22,7 @@
 #define LINE_NUMBER	LineNumber(opDef.types[0].tokens[0].lineNumber())
 
 void
-PreModule::addVarDecl(Token varName)
+SyntacticPreModule::addVarDecl(Token varName)
 {
   if (!lastSawOpDecl)
     {
@@ -38,7 +38,7 @@ PreModule::addVarDecl(Token varName)
 }
 
 void
-PreModule::addOpDecl(const Vector<Token>& opName)
+SyntacticPreModule::addOpDecl(const Vector<Token>& opName)
 {
   if (!lastSawOpDecl)
     opDefs.expandBy(1);
@@ -51,7 +51,7 @@ PreModule::addOpDecl(const Vector<Token>& opName)
 }
 
 void
-PreModule::addType(bool kind, const Vector<Token>& tokens)
+SyntacticPreModule::addType(bool kind, const Vector<Token>& tokens)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
   opDef.types.expandBy(1);
@@ -62,7 +62,7 @@ PreModule::addType(bool kind, const Vector<Token>& tokens)
 }
 
 void
-PreModule::convertSortsToKinds()
+SyntacticPreModule::convertSortsToKinds()
 {
   Assert(!lastSawOpDecl, "missing sort specs");
   OpDef& opDef = opDefs[opDefs.length() - 1];
@@ -80,7 +80,7 @@ PreModule::convertSortsToKinds()
 }
 
 void
-PreModule::setIdentity(const Vector<Token>& identity)
+SyntacticPreModule::setIdentity(const Vector<Token>& identity)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
   if (opDef.identity.empty())
@@ -90,7 +90,7 @@ PreModule::setIdentity(const Vector<Token>& identity)
 }
 
 void
-PreModule::setFlag(int flag)
+SyntacticPreModule::setFlag(int flag)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
   if (opDef.symbolType.hasFlag(flag))
@@ -103,7 +103,7 @@ PreModule::setFlag(int flag)
 }
 
 void
-PreModule::setPrec(Token precTok)
+SyntacticPreModule::setPrec(Token precTok)
 {
   int prec;
   if (precTok.getInt(prec) &&
@@ -126,7 +126,7 @@ PreModule::setPrec(Token precTok)
 }
 
 void
-PreModule::setGather(const Vector<Token>& gather)
+SyntacticPreModule::setGather(const Vector<Token>& gather)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
   if (opDef.symbolType.hasFlag(SymbolType::GATHER))
@@ -168,7 +168,7 @@ PreModule::setGather(const Vector<Token>& gather)
 }
 
 void
-PreModule::setMetadata(Token metaDataTok)
+SyntacticPreModule::setMetadata(Token metaDataTok)
 {
   if (metaDataTok.specialProperty() == Token::STRING)
     {
@@ -187,7 +187,7 @@ PreModule::setMetadata(Token metaDataTok)
 }
 
 bool
-PreModule::checkFormatString(const char* string)
+SyntacticPreModule::checkFormatString(const char* string)
 {
   if (string[0] == 'd' && string[1] == '\0')
     return true;
@@ -215,7 +215,7 @@ PreModule::checkFormatString(const char* string)
 }
 
 void
-PreModule::setFormat(const Vector<Token>& format)
+SyntacticPreModule::setFormat(const Vector<Token>& format)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
   if (opDef.symbolType.hasFlag(SymbolType::FORMAT))
@@ -242,7 +242,7 @@ PreModule::setFormat(const Vector<Token>& format)
 }
 
 void
-PreModule::setFrozen(const Vector<Token>& frozen)
+SyntacticPreModule::setFrozen(const Vector<Token>& frozen)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
   if (opDef.symbolType.hasFlag(SymbolType::FROZEN))
@@ -292,7 +292,7 @@ PreModule::setFrozen(const Vector<Token>& frozen)
 }
 
 void
-PreModule::setStrat(const Vector<Token>& strategy)
+SyntacticPreModule::setStrat(const Vector<Token>& strategy)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
   if (opDef.symbolType.hasFlag(SymbolType::STRAT))
@@ -323,7 +323,7 @@ PreModule::setStrat(const Vector<Token>& strategy)
 }
 
 void
-PreModule::setPoly(const Vector<Token>& polyArgs)
+SyntacticPreModule::setPoly(const Vector<Token>& polyArgs)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
   if (opDef.symbolType.hasFlag(SymbolType::POLY))
@@ -352,7 +352,7 @@ PreModule::setPoly(const Vector<Token>& polyArgs)
 }
 
 void
-PreModule::setLatexMacro(const string& latexMacro)
+SyntacticPreModule::setLatexMacro(const string& latexMacro)
 {
   OpDef& opDef = opDefs[opDefs.length() - 1];
   if (opDef.symbolType.hasFlag(SymbolType::LATEX))
@@ -365,7 +365,7 @@ PreModule::setLatexMacro(const string& latexMacro)
 }
 
 void
-PreModule::addHook(HookType type, Token name, const Vector<Token>& details)
+SyntacticPreModule::addHook(HookType type, Token name, const Vector<Token>& details)
 {
   int code = name.code();
   OpDef& opDef = opDefs[opDefs.length() - 1];
@@ -384,7 +384,7 @@ PreModule::addHook(HookType type, Token name, const Vector<Token>& details)
 }
 
 void
-PreModule::makeOpDeclsConsistent()
+SyntacticPreModule::makeOpDeclsConsistent()
 {
   //
   //	Call if we encounter a syntax error while parsing module to make sure

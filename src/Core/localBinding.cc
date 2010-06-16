@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -95,23 +95,6 @@ LocalBinding::retract(Substitution& substitution)
         }
     }
 }
-
-/*
-bool
-LocalBinding::solvedFormAssert(Substitution& substitution, Subproblem*& returnedSubproblem)
-{
-  SubproblemAccumulator subproblems;
-  int nrBindings = bindings.size();
-  for (int i = 0; i < nrBindings; ++i)
-    {
-      if (!(substitution.merge(bindings[i].variableIndex, bindings[i].value, returnedSubproblem)))
-	return false;
-      subproblems.add(returnedSubproblem);
-    }
-  returnedSubproblem = subproblems.extractSubproblem();
-  return true;
-}
-*/
 
 #ifdef DUMP
 void

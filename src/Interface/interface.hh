@@ -46,9 +46,14 @@ class RhsAutomaton;
 class Subproblem;
 class ExtensionInfo;
 //
-//	This class must be defined for equational theories that generate
+//	This class must be derived from for equational theories that generate
 //	unification subproblems.
 //
 class UnificationSubproblem;
+//
+//	This class can be derived from for equational theories that want to
+//	delay and batch	subproblems in the hope of reducing the search space.
+//
+class DelayedSubproblem;
 
 #endif

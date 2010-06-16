@@ -199,7 +199,7 @@ ArgVec<T>::expandBy(size_type extra)
     {
       pointer oldBasePtr = basePtr;
       basePtr = static_cast<pointer>(MemoryCell::allocateStorage(neededBytes));
-      for (pointer n = basePtr; oldLen > 0; oldLen--)
+      for (pointer n = basePtr; oldLen != 0; oldLen--)
 	*n++ = *oldBasePtr++;
       allocatedBytes = neededBytes;
     }
@@ -229,7 +229,7 @@ ArgVec<T>::evacuate()
   allocatedBytes = l * sizeof(T);
   pointer v = basePtr;
   basePtr = static_cast<pointer>(MemoryCell::allocateStorage(allocatedBytes));
-  for (pointer n = basePtr; l > 0; l--)
+  for (pointer n = basePtr; l != 0; l--)
     *n++ = *v++;
 }
 

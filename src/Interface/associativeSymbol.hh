@@ -21,7 +21,7 @@
 */
 
 //
-// 	Class for symbols from permutative theories
+// 	Class for symbols from permutative theories.
 //
 #ifndef _associativeSymbol_hh_
 #define _associativeSymbol_hh_

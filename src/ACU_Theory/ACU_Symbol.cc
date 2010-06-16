@@ -37,6 +37,7 @@
 
 //      core class definitions
 #include "sortBdds.hh"
+#include "hashConsSet.hh"
 
 //	ACU theory class definitions
 #include "ACU_Symbol.hh"
@@ -390,7 +391,7 @@ ACU_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
 	 " " <<  static_cast<void*>(dynamic_cast<ACU_DagNode*>(subject)) <<
 	 " " <<  static_cast<void*>(dynamic_cast<ACU_TreeDagNode*>(subject)));
 
-  const Vector<Bdd>& sortFunction = sortBdds.getSortFunction(getIndexWithinModule());
+  const Vector<Bdd>& sortFunction = sortBdds.getSortFunction(this);
   int nrBdds = sortFunction.size();
 
   ArgVec<ACU_Pair>& args = safeCast(ACU_DagNode*, subject)->argArray;
@@ -437,4 +438,61 @@ int
 ACU_Symbol::unificationPriority() const
 {
   return 10;
+}
+
+
+//
+//	Hash cons code.
+//
+
+DagNode*
+ACU_Symbol::makeCanonical(DagNode* original, HashConsSet* hcs)
+{
+  if (safeCast(ACU_BaseDagNode*, original)->isTree())
+    {
+      return safeCast(ACU_TreeDagNode*, original)->makeCanonical(hcs);
+      /*
+      //
+      //	Never use tree form as canonical.
+      //
+      const ACU_TreeDagNode* d = safeCast(const ACU_TreeDagNode*, original);
+      ACU_DagNode* n = new ACU_DagNode(this, d->tree.getSize(), ACU_BaseDagNode::ASSIGNMENT);
+      n->copySetRewritingFlags(original);
+      n->setSortIndex(original->getSortIndex());
+      ArgVec<ACU_DagNode::Pair>::iterator j = n->argArray.begin();
+      for (ACU_FastIter i(d->tree); i.valid(); i.next(), ++j)
+	{
+	  j->dagNode = hcs->getCanonical(hcs->insert(i.getDagNode()));
+	  j->multiplicity = i.getMultiplicity();
+	}
+      return n;
+      */
+    }
+  const ACU_DagNode* d = safeCast(const ACU_DagNode*, original);
+  int nrArgs = d->argArray.size();
+  for (int i = 0; i < nrArgs; i++)
+    {
+      DagNode* b = d->argArray[i].dagNode;
+      DagNode* c = hcs->getCanonical(hcs->insert(b));
+      if (c != b)
+        {
+	  //
+	  //	Detected a non-canonical argument so need to make a new node.
+	  //
+	  ACU_DagNode* n = new ACU_DagNode(this, nrArgs, ACU_BaseDagNode::ASSIGNMENT);
+	  n->copySetRewritingFlags(original);
+	  n->setSortIndex(original->getSortIndex());
+	  for (int j = 0; j < i; ++j)
+	    n->argArray[j] = d->argArray[j];
+	  n->argArray[i].dagNode = c;
+	  n->argArray[i].multiplicity = d->argArray[i].multiplicity;
+	  for (++i; i < nrArgs; i++)
+	    {
+	      n->argArray[i].dagNode = hcs->getCanonical(hcs->insert(d->argArray[i].dagNode));
+	      n->argArray[i].multiplicity = d->argArray[i].multiplicity;
+	    }
+	  return n;
+        }
+    }
+  return original;  // can use the original dag node as the canonical version
 }

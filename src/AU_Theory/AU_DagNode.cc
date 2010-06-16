@@ -144,7 +144,7 @@ AU_DagNode::overwriteWithClone(DagNode* old)
 {
   AU_DagNode* d = new(old) AU_DagNode(symbol(), argArray.length());
   d->copySetRewritingFlags(this);
-  d->setTheoryByte(getTheoryByte());
+  d->setNormalizationStatus(getNormalizationStatus());
   d->setSortIndex(getSortIndex());
   copy(argArray.begin(), argArray.end(), d->argArray.begin());
 }
@@ -155,7 +155,7 @@ AU_DagNode::makeClone()
   int nrArgs = argArray.length();
   AU_DagNode* d = new AU_DagNode(symbol(), nrArgs);
   d->copySetRewritingFlags(this);
-  d->setTheoryByte(getTheoryByte());
+  d->setNormalizationStatus(getNormalizationStatus());
   d->setSortIndex(getSortIndex());
   copy(argArray.begin(), argArray.end(), d->argArray.begin());
   return d;
@@ -223,7 +223,13 @@ AU_DagNode::partialReplace(DagNode* replacement, ExtensionInfo* extensionInfo)
   for (last++; last < nrArgs; last++)
     argArray[first++] = argArray[last];
   argArray.contractTo(first);
-  repudiateSortInfo();
+  repudiateSortInfo();  // probably not set but be safe
+  if (isProducedByAssignment())  // we _were_ in theory normal form
+    {
+      if (replacement->symbol() == symbol() ||  // replacement is in our theory -> we are no longer in theory normal form
+	  !(replacement->isReduced()))  // replacement is not reduced -> we are no longer in theory normal form
+	setNormalizationStatus(FRESH);
+    } 
 }
 
 DagNode*

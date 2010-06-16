@@ -155,6 +155,7 @@ MixfixModule::makeComplexProductions()
 			   MixfixParser::CONDITIONAL_COMMAND);
 
   rhs[0] = SEARCH_PAIR;
+  rhs[2] = RULE_CONDITION;
   parser->insertProduction(SEARCH_COMMAND, rhs, 0, gatherAnyAnyAny,
 			   MixfixParser::CONDITIONAL_COMMAND);
 

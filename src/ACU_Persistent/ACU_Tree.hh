@@ -61,12 +61,17 @@ public:
   void checkIntegrity(DagNode* dagNode = 0, int multiplicity = 0) const;
 #endif
 
+  //
+  //	Hash cons stuff.
+  //
+  bool makeCanonical(ACU_Tree& canonizedVersion, HashConsSet* hcs);
+
 private:
   static bool pow2min1(int i);
-  static ACU_RedBlackNode*  makeTree(const ArgVec<ACU_Pair>& args,
-				     int first,
-				     int size,
-				     bool makeRed);
+  static ACU_RedBlackNode* makeTree(const ArgVec<ACU_Pair>& args,
+				    int first,
+				    int size,
+				    bool makeRed);
   static int computeBaseSort2(BinarySymbol* symbol, ACU_RedBlackNode* root);
 
   int size;

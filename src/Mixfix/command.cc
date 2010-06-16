@@ -25,7 +25,7 @@
 //
 
 void
-PreModule::loseFocus()
+SyntacticPreModule::loseFocus()
 {
   if (flatModule != 0)
     {
@@ -36,7 +36,7 @@ PreModule::loseFocus()
 }
 
 void
-PreModule::dump()
+SyntacticPreModule::dump()
 {
 #ifdef DUMP
   getFlatModule()->dump(cout);
@@ -44,7 +44,7 @@ PreModule::dump()
 }
 
 void
-PreModule::printSortTokenVector(ostream& s, const Vector<Token>& sorts)
+SyntacticPreModule::printSortTokenVector(ostream& s, const Vector<Token>& sorts)
 {
   int nrTokens = sorts.size();
   s << Token::sortName(sorts[0].code());
@@ -53,9 +53,9 @@ PreModule::printSortTokenVector(ostream& s, const Vector<Token>& sorts)
 }
 
 void
-PreModule::showModule(ostream& s)
+SyntacticPreModule::showModule(ostream& s)
 {
-  s << MixfixModule::moduleTypeString(moduleType) << ' ' << this;
+  s << MixfixModule::moduleTypeString(getModuleType()) << ' ' << this;
   int nrParameters = parameters.size();
   if (nrParameters > 0)
     {
@@ -125,11 +125,11 @@ PreModule::showModule(ostream& s)
       s << "  " << statements[i] << " .\n";
     }
 
-  s << MixfixModule::moduleEndString(moduleType) << '\n';
+  s << MixfixModule::moduleEndString(getModuleType()) << '\n';
 }
 
 void
-PreModule::printOpDef(ostream&s, int defIndex)
+SyntacticPreModule::printOpDef(ostream&s, int defIndex)
 {
   OpDef& opDef = opDefs[defIndex];
   s << ": ";
@@ -147,7 +147,7 @@ PreModule::printOpDef(ostream&s, int defIndex)
 }
 
 void
-PreModule::printAttributes(ostream& s, const OpDef& opDef)
+SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
 {
   SymbolType st = opDef.symbolType;
   if (!(st.hasFlag(SymbolType::ATTRIBUTES | SymbolType::CTOR |
@@ -314,7 +314,7 @@ PreModule::printAttributes(ostream& s, const OpDef& opDef)
 }
 
 void
-PreModule::printGather(ostream& s, const Vector<int>& gather)
+SyntacticPreModule::printGather(ostream& s, const Vector<int>& gather)
 {
   static char gatherSymbols[] = {'e', 'E', '&'};
   s << "gather (";
@@ -327,7 +327,7 @@ PreModule::printGather(ostream& s, const Vector<int>& gather)
 }
 
 void
-PreModule::printFormat(ostream& s, const Vector<int>& format)
+SyntacticPreModule::printFormat(ostream& s, const Vector<int>& format)
 {
   s << "format (";
   int formatLen = format.length();

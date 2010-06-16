@@ -274,6 +274,7 @@ ImportModule::donateSorts(ImportModule* importer)
 {
   if (importPhase == SORTS_IMPORTED)
     return;
+  Assert(importPhase == UNVISITED, "bad importPhase = " << importPhase);
   importPhase = SORTS_IMPORTED;
   //
   //	First handle our own imports.
@@ -318,6 +319,7 @@ ImportModule::donateOps(ImportModule* importer)
 {
   if (importPhase == OPS_IMPORTED)
     return;
+  Assert(importPhase == SORTS_IMPORTED, "bad importPhase = " << importPhase);
   importPhase = OPS_IMPORTED;
   //
   //	First handle our own imports.
@@ -347,6 +349,7 @@ ImportModule::fixUpDonatedOps(ImportModule* importer)
 {
   if (importPhase == OPS_FIXED_UP)
     return;
+  Assert(importPhase == OPS_IMPORTED, "bad importPhase = " << importPhase);
   importPhase = OPS_FIXED_UP;
   //
   //	First handle our own imports.
@@ -417,6 +420,11 @@ ImportModule::donateStatements(ImportModule* importer)
 {
   if (importPhase == STATEMENTS_IMPORTED)
     return;
+  //
+  //	Normally statements are imported on demand after resetting, but in metalevel they can
+  //	be imported immediately after the operator fixup phase.
+  //
+  Assert(importPhase == UNVISITED || importPhase == OPS_FIXED_UP, "bad importPhase = " << importPhase);
   importPhase = STATEMENTS_IMPORTED;
   //
   //	First handle our own imports.

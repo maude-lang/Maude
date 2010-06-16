@@ -83,7 +83,7 @@ SocketManagerSymbol::attachData(const Vector<Sort*>& opDeclaration,
 				const Vector<const char*>& data)
 {
   NULL_DATA(purpose, SocketManagerSymbol, data);
-  return FreeSymbol::attachData(opDeclaration, purpose, data);
+  return ExternalObjectManagerSymbol::attachData(opDeclaration, purpose, data);
 }
 
 bool
@@ -94,7 +94,7 @@ SocketManagerSymbol::attachSymbol(const char* purpose, Symbol* symbol)
   BIND_SYMBOL(purpose, symbol, SymbolName, SymbolClass*)
 #include "socketSignature.cc"
 #undef MACRO
-  return FreeSymbol::attachSymbol(purpose, symbol);
+  return ExternalObjectManagerSymbol::attachSymbol(purpose, symbol);
 }
 
 void
@@ -105,7 +105,7 @@ SocketManagerSymbol::copyAttachments(Symbol* original, SymbolMap* map)
   COPY_SYMBOL(orig, SymbolName, map, SymbolClass*)
 #include "socketSignature.cc"
 #undef MACRO
-  FreeSymbol::copyAttachments(original, map);
+  ExternalObjectManagerSymbol::copyAttachments(original, map);
 }
 
 void
@@ -117,7 +117,7 @@ SocketManagerSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
   purposes.resize(nrDataAttachments + 1);
   purposes[nrDataAttachments] = "SocketManagerSymbol";
   data.resize(nrDataAttachments + 1);
-  FreeSymbol::getDataAttachments(opDeclaration, purposes, data);
+  ExternalObjectManagerSymbol::getDataAttachments(opDeclaration, purposes, data);
 }
 
 void
@@ -128,7 +128,7 @@ SocketManagerSymbol::getSymbolAttachments(Vector<const char*>& purposes,
   APPEND_SYMBOL(purposes, symbols, SymbolName)
 #include "socketSignature.cc"
 #undef MACRO
-  FreeSymbol::getSymbolAttachments(purposes, symbols);
+  ExternalObjectManagerSymbol::getSymbolAttachments(purposes, symbols);
 }
 
 bool

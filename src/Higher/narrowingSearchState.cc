@@ -137,8 +137,7 @@ NarrowingSearchState::findNextNarrowing()
 	      unificationProblem = new NarrowingUnificationProblem(rl,
 								   getDagNode(),
 								   variableInfo,
-								   freshVariableGenerator,
-								   0 /*getExtensionInfo()*/ );
+								   freshVariableGenerator);
 	      if (unificationProblem->findNextUnifier())
 		{
 		  noFurtherPositions = getFlags() & SINGLE_POSITION;

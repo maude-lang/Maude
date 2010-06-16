@@ -1,0 +1,51 @@
+***(
+Bug discovered 12/22/09.
+
+CUI_DagNode::stackArguments() checks the wrong UNSTACKABLE flag for the
+second argument resulting in a missed rewrite.
+
+Resolved in alpha92b.
+)
+
+mod CUI-BUG is
+  sort Foo .
+  ops a b c d 1 : -> Foo .
+  op f : Foo Foo -> Foo  [id: 1] .
+  op g : Foo -> Foo .
+
+  rl b => c .
+  rl c => d .
+endm
+
+rew f(a, g(b)) .
+
+***(
+first pass:
+f does not rewrite - marked unrewritable
+f stacks a and g(b)
+a does not rewrite - marked unrewritable
+g(b) does not rewrite - marked unrewritable
+a does not stack anything and is unrewritable - marked unstackable
+g stacks b
+b rewrites to c and we rebuild f(a, g(c)) with only the a node shared
+with the previous dag
+
+second pass:
+f is unrewritable
+f cannot stack a because it is unstackable
+f cannot stack g(c) because we check the wrong unstackable flag
+
+thus we miss c => d
+)
+
+mod CUI-BUG2 is
+  sort Foo .
+  ops a b c d 1 : -> Foo .
+  op f : Foo Foo -> Foo  [id: 1] .
+  op g : Foo -> Foo .
+
+  rl b => c .
+  rl g(c) => d .
+endm
+
+rew f(a, g(b)) .

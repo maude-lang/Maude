@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2009 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,35 +35,35 @@ void
 FreeTerm::analyseConstraintPropagation(NatSet& boundUniquely) const
 {
   //
-  //	First gather all symbols lying in or directly under free skeleton
+  //	First gather all symbols lying in or directly under free skeleton.
   //
   Vector<FreeOccurrence> freeSymbols;
   Vector<FreeOccurrence> otherSymbols;
   const_cast<FreeTerm*>(this)->scanFreeSkeleton(freeSymbols, otherSymbols); // cast way const
   //
-  //	Now extract the non-ground aliens and update BoundUniquely
+  //	Now extract the non-ground aliens and update BoundUniquely with variables
+  //	that lie directly under the free skeleton and thus will receive an unique binding.
   //
   Vector<FreeOccurrence> nonGroundAliens;
-  int nrOthers = otherSymbols.length();
-  for (int i = 0; i < nrOthers; i++)
+  FOR_EACH_CONST(i, Vector<FreeOccurrence>, otherSymbols)
     {
-      const FreeOccurrence& oc = otherSymbols[i];
-      Term* t = oc.term();
-      VariableTerm* v = dynamic_cast<VariableTerm*>(t);
-      if (v != 0)
+      Term* t = i->term();
+      if (VariableTerm* v = dynamic_cast<VariableTerm*>(t))
 	boundUniquely.insert(v->getIndex());
       else
 	{
 	  if (!(t->ground()))
-	    nonGroundAliens.append(oc);
+	    nonGroundAliens.append(*i);
 	}
     }
-  int nrAliens = nonGroundAliens.length();
-  if (nrAliens > 0)
+  if (!(nonGroundAliens.empty()))
     {
+      DebugAdvisory("FreeTerm::analyseConstraintPropagation() : looking at " << this <<
+		    " and saw " << nonGroundAliens.length() << " nonground aliens");
       //
-      //	Now we have to find a best sequence in which to match the
-      //	non-ground alien subterms
+      //	Now we have to find a best sequence in which to match the non-ground alien
+      //        subterms. Sequences that pin down unique values for variables allow those
+      //	values to be propagated.
       //
       CP_Sequence bestSequence;
       findConstraintPropagationSequence(nonGroundAliens, boundUniquely, bestSequence);
@@ -88,33 +88,30 @@ FreeTerm::compileRemainder(Equation* equation, const Vector<int>& slotTranslatio
   Vector<FreeOccurrence> groundAliens;      	// ground alien subterms
   Vector<FreeOccurrence> nonGroundAliens;	// non-ground alien subterms
   NatSet boundUniquely;
-  int nrOthers = otherSymbols.length();
-  for (int i = 0; i < nrOthers; i++)
+  FOR_EACH_CONST(i, Vector<FreeOccurrence>, otherSymbols)
     {
-      const FreeOccurrence& oc = otherSymbols[i];
-      Term* t = oc.term();
-      VariableTerm* v = dynamic_cast<VariableTerm*>(t);
-      if (v == 0)
-	{
-	  if (t->ground())
-	    groundAliens.append(oc);
-	  else
-	    nonGroundAliens.append(oc);
-	}
-      else
+      Term* t = i->term();
+      if (VariableTerm* v = dynamic_cast<VariableTerm*>(t))
 	{
 	  int index = v->getIndex();
 	  if (boundUniquely.contains(index))
-	    boundVariables.append(oc);
+	    boundVariables.append(*i);
 	  else
 	    {
 	      boundUniquely.insert(index);
-	      freeVariables.append(oc);
+	      freeVariables.append(*i);
 	    }
 	}
+      else
+	{
+	  if (t->ground())
+	    groundAliens.append(*i);
+	  else
+	    nonGroundAliens.append(*i);
+	}
     }
-  int nrAliens = nonGroundAliens.length();
   CP_Sequence bestSequence;
+  int nrAliens = nonGroundAliens.length();
   Vector<LhsAutomaton*> subAutomata(nrAliens);
   if (nrAliens > 0)
     {
@@ -155,33 +152,30 @@ FreeTerm::compileLhs2(bool /* matchAtTop */,
   Vector<FreeOccurrence> uncertainVariables;	// status when matched against uncertain
   Vector<FreeOccurrence> groundAliens;      	// ground alien subterms
   Vector<FreeOccurrence> nonGroundAliens;	// non-ground alien subterms
-  int nrOthers = otherSymbols.length();
-  for (int i = 0; i < nrOthers; i++)
+  FOR_EACH_CONST(i, Vector<FreeOccurrence>, otherSymbols)
     {
-      const FreeOccurrence& oc = otherSymbols[i];
-      Term* t = oc.term();
-      VariableTerm* v = dynamic_cast<VariableTerm*>(t);
-      if (v == 0)
-	{
-	  if (t->ground())
-	    groundAliens.append(oc);
-	  else
-	    nonGroundAliens.append(oc);
-	}
-      else
+      Term* t = i->term();
+      if (VariableTerm* v = dynamic_cast<VariableTerm*>(t))
 	{
 	  int index = v->getIndex();
 	  if (boundUniquely.contains(index))
-	    boundVariables.append(oc);
+	    boundVariables.append(*i);
 	  else
 	    {
 	      boundUniquely.insert(index);
-	      uncertainVariables.append(oc);
+	      uncertainVariables.append(*i);
 	    }
 	}
+      else
+	{
+	  if (t->ground())
+	    groundAliens.append(*i);
+	  else
+	    nonGroundAliens.append(*i);
+	}
     }
-  int nrAliens = nonGroundAliens.length();
   CP_Sequence bestSequence;
+  int nrAliens = nonGroundAliens.length();
   Vector<LhsAutomaton*> subAutomata(nrAliens);
   subproblemLikely = false;
   if (nrAliens > 0)
@@ -215,73 +209,124 @@ FreeTerm::findConstraintPropagationSequence(const Vector<FreeOccurrence>& aliens
   for (int i = 0; i < nrAliens; i++)
     currentSequence[i] = i;
   bestSequence.cardinality = -1;
-  int step = 0;
-  insertGroundOutAliens(aliens, currentSequence, boundUniquely, step);
   findConstraintPropagationSequence(aliens,
 				    currentSequence,
 				    boundUniquely,
-                                    step,
+                                    0,
 				    bestSequence);
   Assert(bestSequence.cardinality >= 0, "didn't find a sequence");
 }
 
-void
-FreeTerm::insertGroundOutAliens(const Vector<FreeOccurrence>& aliens,
-				Vector<int>& sequence,
-				const NatSet& boundUniquely,
-				int& step)
+bool
+FreeTerm::remainingAliensContain(const Vector<FreeOccurrence>& aliens,
+				 Vector<int>& currentSequence,
+				 int step,
+				 int us,
+				 const NatSet& interestingVariables)
 {
-  //
-  //	Add any alien that will "ground out match" to sequence.
-  //	By matching these early we maximize the chance of early failure.
-  //
-  int nrAliens = aliens.length();
+  if (interestingVariables.empty())
+    return false;
+  int nrAliens = aliens.size();
   for (int i = step; i < nrAliens; i++)
-   {
-      Term* t = aliens[sequence[i]].term();
-      if (t->willGroundOutMatch(boundUniquely))
-	{
-	  swap(sequence[step], sequence[i]);
-	  ++step;
-	}
+    {
+      if (i != us &&
+	  !(interestingVariables.disjoint(aliens[currentSequence[i]].term()->occursBelow())))
+	return true;
     }
+  return false;
 }
 
 void
 FreeTerm::findConstraintPropagationSequence(const Vector<FreeOccurrence>& aliens,
-					    const Vector<int>& currentSequence,
+					    Vector<int>& currentSequence,
 					    const NatSet& boundUniquely,
 					    int step,
 					    CP_Sequence& bestSequence)
 {
-  int nrAliens = aliens.length();
+  //
+  //	Add any alien that will "ground out match" to current sequence.
+  //	By matching these early we maximize the chance of early match failure,
+  //	and avoid wasted work at match time.
+  //
+  int nrAliens = aliens.size();
+  for (int i = step; i < nrAliens; i++)
+   {
+      if (aliens[currentSequence[i]].term()->willGroundOutMatch(boundUniquely))
+	{
+	  swap(currentSequence[step], currentSequence[i]);
+	  ++step;
+	}
+    }
   if (step < nrAliens)
     {
+      Vector<NatSet> newBounds(nrAliens);
       //
-      //        Try to grow search tree
+      //	Now we search over possible ordering of remaining NGAs.
       //
-      bool growth = false;
+      DebugAdvisory("FreeTerm::findConstraintPropagationSequence(): phase 1 step = " << step);
       for (int i = step; i < nrAliens; i++)
-        {
-	  Term* t = aliens[currentSequence[i]].term();
-	  NatSet newBound(boundUniquely);
-	  t->analyseConstraintPropagation(newBound);
-	  if (newBound != boundUniquely)
+	{
+	  newBounds[i] = boundUniquely;
+	  Term * t = aliens[currentSequence[i]].term();
+	  t->analyseConstraintPropagation(newBounds[i]);
+	  //
+	  //	We now check if t has the potential could benefit from delayed matching.
+	  //
+	  NatSet unbound(t->occursBelow());
+	  unbound.subtract(newBounds[i]);
+	  if (!remainingAliensContain(aliens, currentSequence, step, i, unbound))
 	    {
-	      Vector<int> newSequence(currentSequence);
-	      swap(newSequence[step], newSequence[i]);
-	      int newStep = step + 1;
-	      insertGroundOutAliens(aliens, newSequence, boundUniquely, newStep);
-	      findConstraintPropagationSequence(aliens,
-						newSequence,
-						newBound,
-						newStep,
-						bestSequence);
-	      growth = true;
+	      //
+	      //	No, so commit to matching it here.
+	      //
+	      DebugAdvisory("FreeTerm::findConstraintPropagationSequence(): step = " <<
+			    step << " committed to " << t);
+	      swap(currentSequence[step], currentSequence[i]);
+	      findConstraintPropagationSequence(aliens, currentSequence, newBounds[i], step + 1, bestSequence);
+	      return;
 	    }
 	}
-      if (growth)
-        return;
+      //
+      //	We didn't find a NGA that we could commit to matching without possibly missing a better sequence.
+      //	Now go over the NGAs again. This time we need to consider expanding multiple branches in the
+      //	search tree.
+      //
+      DebugAdvisory("FreeTerm::findConstraintPropagationSequence(): phase 2 step = " << step);
+      bool expandedAtLeastOneBranch = false;
+      for (int i = step; i < nrAliens; i++)
+	{
+	  //
+	  //	We expand this branch if it binds something that could help another NGA.
+	  //
+	  NatSet newlyBoundUniquely(newBounds[i]);
+	  newlyBoundUniquely.subtract(boundUniquely);
+	  if (remainingAliensContain(aliens, currentSequence, step, i, newlyBoundUniquely))	    
+	    {
+	      //
+	      //	Explore this path.
+	      //
+	      DebugAdvisory("FreeTerm::findConstraintPropagationSequence(): step = " <<
+			    step << " exploring " << aliens[currentSequence[i]].term());
+	      swap(currentSequence[step], currentSequence[i]);
+	      findConstraintPropagationSequence(aliens, currentSequence, newBounds[i], step + 1, bestSequence);
+	      swap(currentSequence[step], currentSequence[i]);
+	      expandedAtLeastOneBranch = true;
+	    }
+	}
+      if (expandedAtLeastOneBranch)
+	return;
+      //
+      //	If we get here, none of the remaining NGAs can bind a variable that could affect
+      //	the ability of other NGAs to bind variables, so there is no point persuing further
+      //	exploration. But we still need to union any other variable they may bind and score
+      //	the result, by making a recursive call to our leaf case.
+      //
+      DebugAdvisory("FreeTerm::findConstraintPropagationSequence(): phase 3 step = " << step);
+      NatSet newBoundUnion;
+      for (int i = step; i < nrAliens; i++)
+	newBoundUnion.insert(newBounds[i]);
+      findConstraintPropagationSequence(aliens, currentSequence, newBoundUnion, nrAliens, bestSequence);
+      return;
     }
   //
   //    Leaf of search tree.
@@ -308,13 +353,12 @@ FreeTerm::scanFreeSkeleton(Vector<FreeOccurrence>& freeSymbols,
   for (int i = 0; i < nrArgs; i++)
     {
       Term* t = argArray[i];
-      FreeTerm* f = dynamic_cast<FreeTerm*>(t);
-      if (f != 0)
+      if (FreeTerm* f = dynamic_cast<FreeTerm*>(t))
 	f->scanFreeSkeleton(freeSymbols, otherSymbols, ourPosition, i);
       else
 	{
-	  FreeOccurrence oc(ourPosition, i, t);
-	  otherSymbols.append(oc);
+	  FreeOccurrence oc2(ourPosition, i, t);
+	  otherSymbols.append(oc2);
 	}
     }
 }

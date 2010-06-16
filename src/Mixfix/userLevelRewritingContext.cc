@@ -30,6 +30,7 @@
 #include "macros.hh"
 #include "vector.hh"
 #include "pointerSet.hh"
+#include "bddUser.hh"
  
 //      forward declarations
 #include "interface.hh"
@@ -60,7 +61,7 @@
 //	front end class definitions
 #include "token.hh"
 #include "userLevelRewritingContext.hh"
-#include "preModule.hh"  // HACK
+//#include "preModule.hh"  // HACK
 #include "autoWrapBuffer.hh"
 
 #include "interpreter.hh"  // HACK

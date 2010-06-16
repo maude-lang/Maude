@@ -44,11 +44,19 @@ RewritingContext::ruleRewrite(Int64 limit)
 	{
 	  if (nextToRewrite == finish)
 	    {
+	      //
+	      //	No dag nodes to rewrite so stack the arguments of a dag node.
+	      //
 	      for (;;)
 		{
 		  if (nextToExplore == finish)
 		    return;
 		  DagNode* d = redexStack[nextToExplore].node();
+		  /*
+		  DebugAdvisory("Exploring " << d <<
+				" unrewritable = " << d->isUnrewritable() <<
+				" unstackable = " << d->isUnstackable());
+		  */
 		  d->stackArguments(redexStack, nextToExplore, true);
 		  ++nextToExplore;
 		  int len = redexStack.length();

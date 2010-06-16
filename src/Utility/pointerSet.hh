@@ -73,6 +73,18 @@ protected:
   virtual unsigned int hash(void* pointer) const;
   virtual bool isEqual(void* pointer1, void* pointer2) const;
 
+#ifndef NO_ASSERT
+  //
+  //	Allow analysis/debugging of collisions.
+  //
+  virtual void collision(void* pointer1,
+			 unsigned int rawHashValue1, 
+			 void* pointer2,
+			 unsigned int rawHashValue2,
+			 unsigned int tableSize,
+			 unsigned int disputedSlot) const {}
+#endif
+
 private:
   enum Parameters
   {

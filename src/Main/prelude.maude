@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2009 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version 2.4.
+***	Version 2.5.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -34,6 +34,25 @@ fmod TRUTH-VALUE is
   sort Bool .
   op true : -> Bool [ctor special (id-hook SystemTrue)] .
   op false : -> Bool [ctor special (id-hook SystemFalse)] .
+endfm
+
+fmod BOOL-OPS is
+  protecting TRUTH-VALUE .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57] .
+  op not_ : Bool -> Bool [prec 53] .
+  op _implies_ : Bool Bool -> Bool [gather (e E) prec 61] .
+  vars A B C : Bool .
+  eq true and A = A .
+  eq false and A = false .
+  eq A and A = A .
+  eq false xor A = A .
+  eq A xor A = false .
+  eq A and (B xor C) = A and B xor A and C .
+  eq not A = A xor true .
+  eq A or B = A and B xor A xor B .
+  eq A implies B = not(A xor A and B) .
 endfm
 
 fmod TRUTH is
@@ -58,22 +77,8 @@ fmod TRUTH is
 endfm
 
 fmod BOOL is
+  protecting BOOL-OPS .
   protecting TRUTH .
-  op _and_ : Bool Bool -> Bool [assoc comm prec 55] .
-  op _or_ : Bool Bool -> Bool [assoc comm prec 59] .
-  op _xor_ : Bool Bool -> Bool [assoc comm prec 57] .
-  op not_ : Bool -> Bool [prec 53] .
-  op _implies_ : Bool Bool -> Bool [gather (e E) prec 61] .
-  vars A B C : Bool .
-  eq true and A = A .
-  eq false and A = false .
-  eq A and A = A .
-  eq false xor A = A .
-  eq A xor A = false .
-  eq A and (B xor C) = A and B xor A and C .
-  eq not A = A xor true .
-  eq A or B = A and B xor A xor B .
-  eq A implies B = not(A xor A and B) .
 endfm
 
 fmod EXT-BOOL is
@@ -1526,8 +1531,8 @@ fmod META-TERM is
   op <Qids> : -> Kind [special (id-hook QuotedIdentifierSymbol (kindQid))] .
 
 *** terms
-  sorts Constant Variable GroundTerm Term NeGroundTermList GroundTermList NeTermList TermList .
-  subsorts Constant Variable < Qid Term .
+  sorts Constant Variable TermQid GroundTerm Term NeGroundTermList GroundTermList NeTermList TermList .
+  subsorts Constant Variable < TermQid < Qid Term .
   subsorts Constant < GroundTerm < Term NeGroundTermList < NeTermList .
   subsorts NeGroundTermList < NeTermList GroundTermList < TermList .
   op <Qids> : -> Constant [special (id-hook QuotedIdentifierSymbol (constantQid))] .
@@ -1871,8 +1876,60 @@ fmod META-MODULE is
   eq getRls(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = RLS .
 endfm
 
-fmod META-LEVEL is
+fmod META-VIEW is
   protecting META-MODULE .
+
+*** sort mappings
+  sorts SortMapping SortMappingSet .
+  subsort SortMapping < SortMappingSet .
+  op sort_to_. : Sort Sort -> SortMapping [ctor] .
+  op none : -> SortMappingSet [ctor] .
+  op __ : SortMappingSet SortMappingSet -> SortMappingSet
+    [ctor assoc comm id: none format (d ni d)] .
+  eq S:SortMapping S:SortMapping = S:SortMapping .
+
+*** operator mappings
+  sorts OpMapping OpMappingSet .
+  subsort OpMapping < OpMappingSet .
+
+  op (op_to_.) : Qid Qid -> OpMapping [ctor] .
+  op (op_:_->_to_.) : Qid TypeList Type Qid -> OpMapping [ctor] .
+  op (op_to term_.) : Term Term -> OpMapping [ctor] .
+
+  op none : -> OpMappingSet [ctor] .
+  op __ : OpMappingSet OpMappingSet -> OpMappingSet
+    [ctor assoc comm id: none format (d ni d)] .
+  eq O:OpMapping O:OpMapping = O:OpMapping .
+
+  sort View .
+  op view_from_to_is__endv : Header ModuleExpression ModuleExpression
+    SortMappingSet OpMappingSet -> View [ctor gather (& & & & &)
+     format (d d d d d d d n++i ni n--i d)] .
+
+*** projection functions
+  var Q : Qid .
+  vars ME ME' : ModuleExpression .
+  var SMS : SortMappingSet .
+  var OMS : OpMappingSet .
+
+  op getName : View -> Qid .
+  eq getName(view Q from ME to ME' is SMS OMS endv) = Q .
+
+  op getFrom : View -> ModuleExpression .
+  eq getFrom(view Q from ME to ME' is SMS OMS endv) = ME .
+
+  op getTo : View -> ModuleExpression .
+  eq getTo(view Q from ME to ME' is SMS OMS endv) = ME' .
+
+  op getSortMappings : View -> SortMappingSet .
+  eq getSortMappings(view Q from ME to ME' is SMS OMS endv) = SMS .
+
+  op getOpMappings : View -> OpMappingSet .
+  eq getOpMappings(view Q from ME to ME' is SMS OMS endv) = OMS .
+endfm
+
+fmod META-LEVEL is
+  protecting META-VIEW .
 
 *** bounds
   sort Bound .
@@ -2098,10 +2155,28 @@ fmod META-LEVEL is
                         Qid ImportList SortSet SubsortDeclSet OpDeclSet 
                         MembAxSet EquationSet RuleSet ~> Module)
 
+        op-hook sortMappingSymbol	(sort_to_. : Sort Sort ~> SortMapping [ctor] .)
+	op-hook emptySortMappingSetSymbol	(none : ~> SortMappingSet)
+        op-hook sortMappingSetSymbol
+                (__ : SortMappingSet SortMappingSet ~> SortMappingSet)
+
+        op-hook opMappingSymbol		(op_to_. : Qid Qid ~> OpMapping)
+        op-hook opSpecificMappingSymbol	(op_:_->_to_. : Qid TypeList Type Qid ~> OpMapping)
+        op-hook opTermMappingSymbol	(op_to`term_. : Term Term ~> OpMapping)
+
+	op-hook emptyOpMappingSetSymbol	(none : ~> OpMappingSet)
+        op-hook opMappingSetSymbol
+                (__ : OpMappingSet OpMappingSet ~> OpMappingSet)
+
+        op-hook viewSymbol
+                (view_from_to_is__endv : Header ModuleExpression ModuleExpression
+                 SortMappingSet OpMappingSet ~> View)
+
         op-hook anyTypeSymbol		(anyType : ~> Type?)
 
 	op-hook unificandPairSymbol	(_=?_ : Term Term ~> UnificandPair)
-        op-hook unificationConjunctionSymbol	(_/\_ : UnificationProblem UnificationProblem ~> UnificationProblem)
+        op-hook unificationConjunctionSymbol
+                (_/\_ : UnificationProblem UnificationProblem ~> UnificationProblem)
 
         op-hook resultPairSymbol	({_,_} : Term Type ~> ResultPair)
         op-hook resultTripleSymbol
@@ -2322,6 +2397,11 @@ fmod META-LEVEL is
   op upRls : Qid Bool ~> RuleSet
         [special (
            id-hook MetaLevelOpSymbol	(metaUpRls)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op upView : Qid ~> View
+        [special (
+           id-hook MetaLevelOpSymbol	(metaUpView)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
   op upTerm : Universal -> Term

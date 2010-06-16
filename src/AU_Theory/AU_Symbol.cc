@@ -35,6 +35,9 @@
 #include "AU_Persistent.hh"
 #include "AU_Theory.hh"
 
+//      core class definitions
+#include "hashConsSet.hh"
+
 //	AU persistent class definitions
 #include "AU_DequeIter.hh"
 
@@ -169,6 +172,21 @@ AU_Symbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	  //
 	  if (equationFree())
 	    return false;
+
+#ifndef NO_ASSERT
+	  //
+	  //	Look for Riesco 1/18/10 bug.
+	  //
+	  for (int i = 0; i < s->argArray.length(); i++)
+	    {
+	      DagNode* d = s->argArray[i];
+	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN,
+		     "AU_Symbol::eqRewrite(): unknown sort for AU argument " << d <<
+		     " at index " << i << " in subject " << subject <<
+		     " s->getNormalizationStatus() = " << s->getNormalizationStatus());
+	    }
+#endif
+
 	  return rewriteAtTop(s, context);
 	}
     }
@@ -299,13 +317,11 @@ AU_Symbol::copyAndReduceSubterms(AU_DagNode* subject, RewritingContext& context)
 void
 AU_Symbol::computeBaseSort(DagNode* subject)
 {
-  //cerr << "AU_Symbol::computeBaseSort()\nsubject = " << subject << endl;
   Assert(this == subject->symbol(), "bad symbol");
   if (safeCast(AU_BaseDagNode*, subject)->isDeque())
     {
       subject->setSortIndex(safeCast(AU_DequeDagNode*, subject)->
 			    getDeque().computeBaseSort(this));
-      //cerr << "deque computation yields " << subject->getSortIndex() << endl;
       return;
     }
   ArgVec<DagNode*>& args = safeCast(AU_DagNode*, subject)->argArray;
@@ -328,7 +344,6 @@ AU_Symbol::computeBaseSort(DagNode* subject)
 		  if (!(leq(index, uniSort)))
 		    {
 		      subject->setSortIndex(Sort::ERROR_SORT);
-		      //cerr << "fast error return\n";
 		      return;
 		    }
 		  lastIndex = index;
@@ -336,7 +351,6 @@ AU_Symbol::computeBaseSort(DagNode* subject)
 	    }
 	}
       subject->setSortIndex(uniSort->index());
-      //cerr << "fast computation yields " << subject->getSortIndex() << endl;
       return;
     }
   //
@@ -351,7 +365,6 @@ AU_Symbol::computeBaseSort(DagNode* subject)
 	traverse(traverse(0, sortIndex), t);
     }
   subject->setSortIndex(sortIndex);
-  //cerr << "standard computation yields " << subject->getSortIndex() << endl;
 }
 
 void
@@ -467,4 +480,53 @@ AU_Symbol::stackArguments(DagNode* subject,
 	    stack.append(RedexPosition(d, parentIndex, i, eager));
 	}
     }
+}
+
+//
+//	Hash cons code.
+//
+
+DagNode*
+AU_Symbol::makeCanonical(DagNode* original, HashConsSet* hcs)
+{
+  if (safeCast(AU_BaseDagNode*, original)->isDeque())
+    {
+      //
+      //	Never use deque form as canonical.
+      //
+      const AU_DequeDagNode* d = safeCast(const AU_DequeDagNode*, original);
+      const AU_Deque& deque = d->getDeque();
+      AU_DagNode* n = new AU_DagNode(this, deque.length());
+       n->copySetRewritingFlags(original);
+      n->setSortIndex(original->getSortIndex());
+      ArgVec<DagNode*>::iterator j = n->argArray.begin();
+      for (AU_DequeIter i(deque); i.valid(); i.next(), ++j)
+	*j = hcs->getCanonical(hcs->insert(i.getDagNode()));
+      n->setProducedByAssignment();  // deque form must be theory normal
+      return n;
+    }
+  const AU_DagNode* d = safeCast(const AU_DagNode*, original);
+  int nrArgs = d->argArray.size();
+  for (int i = 0; i < nrArgs; i++)
+    {
+      DagNode* b = d->argArray[i];
+      DagNode* c = hcs->getCanonical(hcs->insert(b));
+      if (c != b)
+        {
+	  //
+	  //	Detected a non-canonical argument so need to make a new node.
+	  //
+	  AU_DagNode* n = new AU_DagNode(this, nrArgs);
+	  n->copySetRewritingFlags(original);
+	  n->setSortIndex(original->getSortIndex());
+	  for (int j = 0; j < i; ++j)
+	    n->argArray[j] = d->argArray[j];
+	  n->argArray[i] = c;
+	  for (++i; i < nrArgs; i++)
+	    n->argArray[i] = hcs->getCanonical(hcs->insert(d->argArray[i]));
+	  n->setProducedByAssignment();  // only theory normal dags will be hash cons'd
+	  return n;
+        }
+    }
+  return original;  // can use the original dag node as the canonical version
 }

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
 #include "token.hh"
 #include "fileTable.hh"
 #include "directoryManager.hh"
-#include "preModule.hh"
+//#include "preModule.hh"
 #include "lexerAux.hh"
 #include "global.hh"
 #include "userLevelRewritingContext.hh"
@@ -71,9 +71,9 @@
   { lvalp->yyToken = savedToken; return (token); }
 
 #define STORE \
-  { Token t; t.tokenize(yytext, lineNumber); lexerBubble.append(t); DebugAdvisory("Stored " << t); }
+  { Token t; t.tokenize(yytext, lineNumber); lexerBubble.append(t); /*DebugAdvisory("Stored " << t);*/ }
 #define STORE_FIX_UP \
-  { Token t; t.fixUp(yytext, lineNumber); lexerBubble.append(t); DebugAdvisory("Stored fixUp " << t); }
+  { Token t; t.fixUp(yytext, lineNumber); lexerBubble.append(t); /*DebugAdvisory("Stored fixUp " << t);*/ }
 
 #define EXIT(token) \
   { yy_pop_state(); RETURN(token) }
@@ -91,7 +91,7 @@ int minLength;
 extern Vector<Token> lexerBubble;
 %}
 
-stringContent	([^[:cntrl:]"\\]|("\\"[^[:cntrl:]])|(\\\n))
+stringContent	([^[:cntrl:]"\\]|("\\"[^[:cntrl:]])|(\\\n)|\t)
 string		("\""{stringContent}*"\"")
 normal		([^[:cntrl:] ()\[\]{},`_"]|{string})
 normalSeq	({normal}("`"{normal})*)

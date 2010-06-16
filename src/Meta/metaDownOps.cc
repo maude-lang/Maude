@@ -319,7 +319,7 @@ MetaLevel::downAttr(DagNode* metaAttr, AttributeInfo& ai)
       for (int i = 0; i < formatLength; i++)
 	{
 	  const char* str = Token::name(ai.format[i]);
-	  if (!(PreModule::checkFormatString(str)))
+	  if (!(SyntacticPreModule::checkFormatString(str)))
 	    {
 	      IssueAdvisory("bad value " << QUOTE(str) <<
 			    " in format attribute at metalevel.");

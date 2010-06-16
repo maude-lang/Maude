@@ -49,8 +49,7 @@ private:
       Vector<int> sources;
     };
 
-  static void fillOutArgs(int nrArgs,
-			  const Instruction& instr,
+  static void fillOutArgs(const Instruction& instr,
 			  Substitution& matcher,
 			  FreeDagNode* d);
 

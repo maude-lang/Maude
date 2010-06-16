@@ -1,3 +1,36 @@
+2010-05-18  Steven Eker  <eker@rho>
+
+	* prelude.maude: split of Boolean operations into BOOL-OPS
+
+===================================Maude93d2===========================================
+
+2010-05-05  Steven Eker  <eker@rho>
+
+	* prelude.maude: added projection functions for meta-views
+
+2009-08-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: op mappings don't take AttrSets
+
+2009-08-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added upView()
+
+2009-08-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added fmod META-VIEW
+
+2009-08-05  Steven Eker  <eker@goo.csl.sri.com>
+
+	* metaIntepreter.maude: added showModule/showingModule messages
+
+2008-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* prelude.maude: added TermQid to fix lub problem - Variable and
+	Constant had multiple minimal upper bounds
+
+===================================Maude92===========================================
+
 2008-08-26  Steven Eker  <eker@goo.csl.sri.com>
 
 	* prelude.maude: added operator for print attribute

@@ -42,7 +42,6 @@ public:
   void stackArguments(DagNode* subject,
 		      Vector<RedexPosition>& stack,
 		      int parentIndex);
-
   //
   //	Unification stuff.
   //
@@ -50,6 +49,10 @@ public:
 			      const Vector<int>& realToBdd,
 			      DagNode* subject,
 			      Vector<Bdd>& generalizedSort);
+  //
+  //	Hash cons stuff.
+  //
+  DagNode* makeCanonical(DagNode* original, HashConsSet* /* hcs */);
   //
   //	VariableSymbol specific functions.
   //

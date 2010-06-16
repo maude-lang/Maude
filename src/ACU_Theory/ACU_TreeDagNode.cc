@@ -244,3 +244,22 @@ ACU_TreeDagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
   //
   return treeToArgVec(this)->indexVariables2(indices, baseIndex);
 }
+
+//
+//	Hash cons code.
+//
+
+ACU_TreeDagNode*
+ACU_TreeDagNode::makeCanonical(HashConsSet* hcs)
+{
+  ACU_Tree canonical;
+  if (tree.makeCanonical(canonical, hcs))
+    {
+      ACU_TreeDagNode* d = new ACU_TreeDagNode(symbol(), canonical);
+      d->copySetRewritingFlags(this);
+      d->setTheoryByte(getTheoryByte());
+      d->setSortIndex(getSortIndex());
+      return d;
+    }
+  return this;
+}

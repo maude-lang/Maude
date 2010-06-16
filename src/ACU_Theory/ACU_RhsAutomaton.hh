@@ -57,6 +57,7 @@ private:
   
   ACU_Symbol* const topSymbol;
   Vector<Argument> arguments;
+  int nrArguments;
   int destination;
 };
 

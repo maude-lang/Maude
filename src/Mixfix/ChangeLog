@@ -1,3 +1,233 @@
+2010-05-07  Steven Eker  <eker@rho>
+
+	* mixfixModule.cc (MixfixModule::instantiatePolymorph): avoid
+	calling deepSelfDestruct() on copy of term hook since attachTerm()
+	already does this when it fails
+
+===================================Maude93d===========================================
+
+2010-04-01  Steven Eker  <eker@rho>
+
+	* unify.cc (Interpreter::unify): don't pass withExtension flag to
+	UnificationProblem() ctor
+
+===================================Maude93a===========================================
+
+2010-03-18  Steven Eker  <eker@rho>
+
+	* token.cc (Token::bubbleToPrefixNameCode): removed r1 branch
+	since we only ever return r2
+
+	* parameterization.cc (ImportModule::translateComponent): removed
+	cerr from Assert()
+
+	* bottom.yy (cleanUpParser): delete commented out broken code
+
+	* entry.cc (MixfixModule::addOpDeclaration): print number of
+	underscore in warning
+	(MixfixModule::addPolymorph): ditto
+
+	* token.cc (operator<<): removed commented out code
+	(Token::getInt): removed commented out version
+	(Token::checkForSpecialProperty): removed commented out Int64 code
+	(Token::extractMixfix): treat mixfixSyntax of size 1 to be not
+	mixfix syntax after all
+
+	* lexer.ll: allow \t in stringContent for overparsing
+
+	* token.cc (Token::fixUp): handle tab characters
+
+===================================Maude93===========================================
+
+2010-03-05  Steven Eker  <eker@rho>
+
+	* bufferPrint.cc (MixfixModule::printTails): bug where we were
+	appending leftParen rather that rightParen in needAssocParen case
+
+===================================Maude92c===========================================
+
+2009-12-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* trial.cc (traceBeginRuleTrial): added missing '\n'
+	(traceBeginScTrial): symmetric fix
+
+===================================Maude92b===========================================
+
+2009-11-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* entry.cc (newFancySymbol): pass strategy to MetaLevelOpSymbol()
+
+2009-09-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interact.cc (setHandlers): call BddUser::setErrorHandler()
+
+===================================Maude92a===========================================
+
+2009-08-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* parameterization.cc (handleInstantiationByTheoryView): reorg
+	sort mapping code
+	(handleInstantiationByTheoryView): added DebugAdvisory()
+	(handleInstantiationByTheoryView): check if a sort is
+	moduleDeclared() wrt the target theory before sticking a parameter
+	prefix on it in the sort mapping
+
+	* moduleCache.cc (makeRenamedCopy, makeParameterCopy) 
+	(makeInstatiation, makeSummation): updated and added
+	DebugAdvisory()s
+
+2009-08-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interact.cc (internalErrorHandler): updated internal error
+	message
+
+2009-08-11  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.hh (User): make OpTermMap public
+
+2009-08-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.hh (getFrom): added
+	(getTo): added
+
+2009-07-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* syntacticPreModule.cc (finishModule): call
+	destructUnusedModules() here
+
+	* process.cc (processImports): don't call destructUnusedModules()
+	because we may be in a recursive call and there may be partially
+	built modules with no users in the cache
+
+2009-02-27  Steven Eker  <eker@goo.csl.sri.com>
+
+	* makeGrammar.cc (makeComplexProductions): allow rewrite
+	conditions in search command
+
+2009-02-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preModule.cc (PreModule): init owner data member
+
+	* preModule.hh (getOwner): added
+	(User): added data member owner
+
+	* banner.cc (printBanner): update copyright notice
+
+	* entity.cc (operator<<): use PreModule* rather than
+	SyntacticPreModule*
+
+	* preModule.hh (operator<<): added
+
+	* syntacticPreModule.hh (operator<<): deleted
+
+	* preModule.hh: inherit from Entity::User
+
+	* syntacticPreModule.hh: no longer inherit from Entity::User
+
+2009-02-13  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreter.hh: decl for getModuleOrIssueWarning()
+
+	* interpreter.cc (getModuleOrIssueWarning): was getModule() but we
+	were occluding needed function from base class
+
+	* syntacticPreModule.hh: removed decls for makeModule() and
+	getModule()
+
+	* interpreter.hh: added decls for makeModule() and new getModule()
+
+	* interpreter.cc (getModule): moved here
+
+	* import.cc: deleted
+
+	* interpreter.cc (makeModule): moved here - becomes part of
+	Interpreter class
+
+	* process.cc (processImports): moved here
+
+2009-02-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* import.cc (getModule): use PreModule
+
+	* moduleDatabase.cc: go back to using PreModule
+
+	* syntacticPreModule.cc (SyntacticPreModule): call PreModule ctor
+
+	* syntacticPreModule.hh: derive from PreModule
+
+	* preModule.cc: gutted
+
+	* preModule.hh (class PreModule): gutted
+
+	* modules.yy: PreModule -> SyntacticPreModule
+
+	* top.yy: PreModule -> SyntacticPreModule
+
+	* import.cc: PreModule -> SyntacticPreModule
+
+	* process.cc: PreModule -> SyntacticPreModule
+
+	* fixUp.cc: PreModule -> SyntacticPreModule
+
+	* ops.cc: PreModule -> SyntacticPreModule
+
+	* command.cc: PreModule -> SyntacticPreModule
+
+	* renaming.cc: PreModule -> SyntacticPreModule
+
+	* entity.cc (operator<<): PreModule -> SyntacticPreModule
+
+	* compiler.cc: PreModule -> SyntacticPreModule
+
+	* mixfix.hh: added class SyntacticPreModule
+
+	* moduleDatabase.hh: PreModule -> SyntacticPreModule
+
+	* interpreter.hh: PreModule -> SyntacticPreModule
+
+	* compiler.hh: PreModule -> SyntacticPreModule
+
+2009-02-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* preModule.hh: made process() private
+
+2009-01-29  Steven Eker  <eker@goo.csl.sri.com>
+
+	* renameModule.cc (donateOps2): fix DebugAdvisory()
+
+	* entry.cc (newFancySymbol): added InterpreterManagerSymbol case
+
+	* specialSymbolTypes.cc: added entry for InterpreterManagerSymbol
+
+2009-01-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* view.cc (handleOpTermMappings): call resetImports() after
+	handleVarDecls() failure to avoid importPhase weirdness later on
+
+	* importModule.cc (donateSorts, donateOps, fixUpDonatedOps) 
+	(donateStatements): added Assert() for bad importPhase
+
+	* view.cc (finishModule1, finishModule2): added Asserts() that
+	module under construction shouldn't become bad
+
+	* renameModule.cc (finishCopy): check bad flag in module under
+	construction and stop construction early if it becomes set to
+	avoid memory corruption
+
+	* moduleCache.cc (makeSummation): check bad flag in module under
+	construction and stop construction early if it becomes set to
+	avoid memory corruption
+
+2009-01-08  Steven Eker  <eker@goo.csl.sri.com>
+
+	* modules.yy (colon2): added
+
+2008-12-12  Steven Eker  <eker@goo.csl.sri.com>
+
+	* interpreter.hh: added Environment as a base class
+
+===================================Maude92===========================================
+
 2008-09-16  Steven Eker  <eker@goo.csl.sri.com>
 
 	* execute.cc: removed commented out eRewrite() and eRewriteCont()

@@ -63,12 +63,12 @@
 #include "timer.hh"
 #include "userLevelRewritingContext.hh"
 #include "maudemlBuffer.hh"
-#include "preModule.hh"
+#include "syntacticPreModule.hh"
 #include "view.hh"
 #include "visibleModule.hh"
 #include "loopSymbol.hh"
 #include "freshVariableSource.hh"
-#include "freshVariableSource.hh"
+#include "moduleExpression.hh"
 #include "interpreter.hh"
 
 //	our stuff
@@ -156,7 +156,7 @@ Interpreter::endXmlLog()
 bool
 Interpreter::setCurrentModule(const Vector<Token>& moduleExpr, int start)
 {
-  PreModule* m;
+  SyntacticPreModule* m;
   int nrTokens = moduleExpr.length() - start;
   if (moduleExpr.length() == 0)
     {
@@ -174,7 +174,7 @@ Interpreter::setCurrentModule(const Vector<Token>& moduleExpr, int start)
     {
       if (nrTokens == 1)
 	{
-	  m = getModule(moduleExpr[start].code());
+	  m = safeCast(SyntacticPreModule*, getModule(moduleExpr[start].code()));  // HACK
 	  if (m != 0)
 	    {      
 	      if (m->getFlatSignature()->isBad())
@@ -199,7 +199,7 @@ Interpreter::setCurrentModule(const Vector<Token>& moduleExpr, int start)
 }
 
 void
-Interpreter::setCurrentModule(PreModule* module)
+Interpreter::setCurrentModule(SyntacticPreModule* module)
 {
   if (currentModule != module)
     {
@@ -372,4 +372,195 @@ void
 Interpreter::showSummary() const
 {
   currentModule->getFlatModule()->showSummary(cout);
+}
+
+
+ImportModule*
+Interpreter::getModuleOrIssueWarning(int name, const LineNumber& lineNumber)
+{
+  if (PreModule* m = getModule(name))
+    {
+      if (ImportModule* fm = m->getFlatSignature())
+	{
+	  //
+	  //	We might have had to build a parser for this
+	  //	module in order to deal with local statements,
+	  //	term hooks and identities.
+	  //	We delete the parser since we don't
+	  //	have any further use for it.
+	  //
+	  fm->economize();
+	  if (fm->isBad())
+	    {
+	      IssueWarning(lineNumber << ": unable to use module " <<
+			   QUOTE(m) << " due to unpatchable errors.");
+	    }
+	  else
+	    return fm;
+	}
+      else
+	{
+	  IssueWarning(lineNumber <<
+		       ": mutually recursive import of module " <<
+		       QUOTE(m) << " ignored.");
+	}
+    }
+  else
+    {
+      IssueWarning(lineNumber <<
+		   ": module " << QUOTE(Token::name(name)) <<
+		   " does not exist.");
+    }
+  return 0;
+}
+
+ImportModule*
+Interpreter::makeModule(const ModuleExpression* expr, ImportModule* enclosingModule)
+{
+  switch (expr->getType())
+    {
+    case ModuleExpression::MODULE:
+      {
+	Token name = expr->getModuleName();
+	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.lineNumber()))
+	  return fm;
+	break;
+      }
+    case ModuleExpression::RENAMING:
+      {
+	if (ImportModule* fm = makeModule(expr->getModule(), enclosingModule))
+	  {
+	    /*
+	    if (fm->parametersBound())  // NEED TO FIX
+	      {
+		IssueWarning("renamed module " << fm << " has bound parameters.");
+		return 0;
+	      }
+	    */
+	    ImportModule* m = makeRenamedCopy(fm, expr->getRenaming());
+	    if (!(m->isBad()))
+	      return m;
+	  }
+	break;
+      }
+    case ModuleExpression::SUMMATION:
+      {
+	const list<ModuleExpression*>& modules = expr->getModules();
+	Vector<ImportModule*> fms;
+	FOR_EACH_CONST(i, list<ModuleExpression*>, modules)
+	  {
+	    if (ImportModule* fm = makeModule(*i, enclosingModule))
+	      {
+		if (fm->getNrParameters() > 0)
+		  {
+		    IssueWarning("summand module " << fm << " has parameters.");
+		    return 0;
+		  }
+		fms.append(fm);
+	      }
+	  }
+	if (!fms.empty())
+	  {
+	    ImportModule* m = makeSummation(fms);
+	    if (!(m->isBad()))
+	      return m;
+	  }
+	break;
+      }
+    case ModuleExpression::INSTANTIATION:
+      {
+	if (ImportModule* fm = makeModule(expr->getModule(), enclosingModule))
+	  {
+	    int nrParameters = fm->getNrParameters();
+	    const Vector<Token>& arguments = expr->getArguments();
+	    int nrArguments = arguments.size();
+	    if (nrArguments != nrParameters)
+	      {
+		IssueWarning("wrong number of parameters in module instantiation " << QUOTE(expr) << "; " <<
+			     nrParameters << " expected.");
+		break;
+	      }
+	    Vector<View*> views(nrParameters);
+	    Vector<int> names(nrParameters);
+	    bool hasTheoryView = false;
+	    bool hasPEM = false;
+	    for (int i = 0; i < nrParameters; ++i)
+	      {
+		Token name = arguments[i];
+		int code  = name.code();
+		if (enclosingModule != 0)
+		  {
+		    int index = enclosingModule->findParameterIndex(code);
+		    if (index != NONE)
+		      {
+			//
+			//	Parameters from an enclosing module occlude views.
+			//
+			ImportModule* enclosingModuleParameterTheory = enclosingModule->getParameterTheory(index);
+			ImportModule* requiredParameterTheory = fm->getParameterTheory(i);
+			if (enclosingModuleParameterTheory != requiredParameterTheory)
+			  {
+			    IssueWarning("In argument " << i + 1 << " of module instantiation " << QUOTE(expr) <<
+					 ", parameter " << QUOTE(name) << " from enclosing module " <<
+					 QUOTE(enclosingModule) << " has theory " <<
+					 QUOTE(enclosingModuleParameterTheory) <<
+					 " whereas theory " <<  QUOTE(requiredParameterTheory) << " is required.");
+			    return 0;
+			  }
+			views[i] = 0;
+			names[i] = code;
+			hasPEM = true;
+			continue;
+		      }
+		  }
+		if (View* v = getView(code))
+		  {
+		    //
+		    //	Instantiation is a view.
+		    //
+		    if (!(v->evaluate()))
+		      {
+			IssueWarning("unusable view " << QUOTE(name) << " while evaluating module instantiation " <<
+				     QUOTE(expr) << '.');
+			return 0;
+		      }
+		    ImportModule* fromTheory = v->getFromTheory();
+		    ImportModule* requiredParameterTheory = fm->getParameterTheory(i);
+		    if (fromTheory != requiredParameterTheory)
+		      {
+			IssueWarning("In argument " << i + 1 << " of module instantiation " << QUOTE(expr) <<
+				     ", view " << QUOTE(static_cast<NamedEntity*>(v)) << " is from theory " <<
+				     QUOTE(fromTheory) << " whereas theory " <<  QUOTE(requiredParameterTheory) <<
+				     " is required.");
+			return 0;
+		      }
+		    views[i] = v;
+		    names[i] = 0;
+		    if (v->getToModule()->isTheory())
+		      hasTheoryView = true;
+		  }
+		else
+		  {
+		    IssueWarning("In argument " << i + 1 << " of module instantiation " << QUOTE(expr) <<
+				 " could not find a parameter or view " << QUOTE(name) << ".");
+		    return 0;
+		  }
+	      }
+	    if (hasTheoryView && hasPEM)
+	      {
+		IssueWarning("Instantiation " << QUOTE(expr) <<
+			     " uses both a theory-view and a parameter from enclosing module " <<
+			     QUOTE(enclosingModule) << '.');
+		return 0;
+	      }
+	    ImportModule* m = makeInstatiation(fm, views, names);
+	    if (!(m->isBad()))
+	      return m;
+	  }
+	break;
+      }
+    default:
+      CantHappen("bad module expression");
+    }
+  return 0;
 }

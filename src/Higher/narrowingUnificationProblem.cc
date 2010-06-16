@@ -38,15 +38,12 @@
 //	interface class definitions
 #include "symbol.hh"
 #include "dagNode.hh"
-//#include "subproblem.hh"
 #include "extensionInfo.hh"
 
 //	core class definitions
 #include "module.hh"
 #include "sortBdds.hh"
 #include "connectedComponent.hh"
-//#include "subproblemAccumulator.hh"
-//#include "rewritingContext.hh"
 #include "unificationContext.hh"
 #include "freshVariableGenerator.hh"
 #include "rule.hh"
@@ -62,13 +59,11 @@
 NarrowingUnificationProblem::NarrowingUnificationProblem(Rule* rule,
 							 DagNode* target,
 							 const NarrowingVariableInfo& variableInfo,
-							 FreshVariableGenerator* freshVariableGenerator,
-							 ExtensionInfo* extensionInfo)
+							 FreshVariableGenerator* freshVariableGenerator)
   : rule(rule),
     target(target),
     variableInfo(variableInfo),
-    freshVariableGenerator(freshVariableGenerator),
-    extensionInfo(extensionInfo)
+    freshVariableGenerator(freshVariableGenerator)
 {
   Module* module = rule->getModule();
   firstTargetSlot = module->getMinimumSubstitutionSize();
@@ -88,16 +83,11 @@ NarrowingUnificationProblem::NarrowingUnificationProblem(Rule* rule,
   //
   //	Solve the underlying many-sorted unification problem.
   //
-  //SubproblemAccumulator subproblems;
-  //viable = rule->getLhsDag()->computeSolvedForm(target, *unsortedSolution, subproblem, extensionInfo);
   viable = rule->getLhsDag()->computeSolvedForm(target, *unsortedSolution, pendingStack);
-  //  if (!viable)
-  //    subproblem = 0;  // for safe destruction
 }
 
 NarrowingUnificationProblem::~NarrowingUnificationProblem()
 {
-  //delete subproblem;
   delete orderSortedUnifiers;
   delete unsortedSolution;
   delete sortedSolution;
@@ -115,17 +105,6 @@ NarrowingUnificationProblem::markReachableNodes()
 	  d->mark();
       }
   }
-  /*
-  {
-    int nrFragile = unsortedSolution->nrFragileBindings();
-    for (int i = 0; i < nrFragile; i++)
-      {
-	DagNode* d = unsortedSolution->value(i);
-	if (d != 0)
-	  d->mark();
-      }
-  }
-  */
 }
 
 bool
@@ -138,7 +117,6 @@ NarrowingUnificationProblem::findNextUnifier()
       //
       //	First solution.
       //
-      //      if (subproblem != 0 && !(subproblem->unificationSolve(true, *unsortedSolution)))
       if (!(pendingStack.solve(true, *unsortedSolution)))
 	  return false;
       if (!extractUnifier())
@@ -163,7 +141,6 @@ NarrowingUnificationProblem::findNextUnifier()
 	  delete orderSortedUnifiers;
 	  orderSortedUnifiers = 0;
 	nextUnsorted:
-	  //	  if (subproblem == 0 || !(subproblem->unificationSolve(false, *unsortedSolution)))
 	  if (!(pendingStack.solve(false, *unsortedSolution)))
 	    return false;
 	  if (!extractUnifier())
@@ -258,10 +235,36 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
   //
   BddUser::setNrVariables(nextBddVariable);
   //
+  //	Constrains free fresh variables to have indices in valid range.
+  //
+  Bdd unifier = bddtrue;
+  {
+    FOR_EACH_CONST(i, NatSet, freeVariables)
+      {
+	int fv = *i;
+	if (fv >= substitutionSize)
+	  {
+	    Sort* sort = unsortedSolution->getFreshVariableSort(fv);
+	    int nrBddVariables = sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
+	    int firstVar = realToBdd[fv];
+	    
+	    bddPair* bitMap = bdd_newpair();
+	    for (int j = 0; j < nrBddVariables; ++j)
+	      bdd_setbddpair(bitMap, j, bdd_ithvar(firstVar + j));
+	    
+	    Bdd leqRelation = sortBdds->getLeqRelation(sort->getIndexWithinModule());
+	    leqRelation = bdd_veccompose(leqRelation, bitMap);
+	    unifier = bdd_and(unifier, leqRelation);
+	    DebugAdvisory("NarrowingUnificationProblem::findOrderSortedUnifiers() : Adding constraint for free, non-original variable: "
+			  << leqRelation << " unifier becomes " << unifier);
+	    bdd_freepair(bitMap);
+	  }
+      }
+  }
+  //
   //	Now compute a BDD which tells us if a given assignment of sorts to free
   //	variables yields an order-sorted unifier.
   //
-  Bdd unifier = bddtrue;
   for (int i = 0; i < substitutionSize; ++i)
     {
       //

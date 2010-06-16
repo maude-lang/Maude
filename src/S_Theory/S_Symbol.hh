@@ -60,6 +60,10 @@ public:
 			      DagNode* subject,
 			      Vector<Bdd>& generalizedSort);
   //
+  //	Hash cons stuff.
+  //
+  DagNode* makeCanonical(DagNode* original, HashConsSet* hcs);
+  //
   //	Member function specific to S_Symbol.
   //
   bool mightCollapseToOurSymbol(const Term* subterm) const;

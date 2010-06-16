@@ -284,7 +284,7 @@ parenBubble	:	'(' 			{ lexBubble(BAR_RIGHT_PAREN, 1); }
 module		:	startModule		{ lexerIdMode(); }
 			token
 			{
-			  interpreter.setCurrentModule(new PreModule($1, $3));
+			  interpreter.setCurrentModule(new SyntacticPreModule($1, $3));
 			  currentSyntaxContainer = CM;
 			  fileTable.beginModule($1, $3);
 			}
@@ -314,11 +314,20 @@ parameterList	:	parameterList ',' parameter
 		|	parameter
 		;
 
-parameter	:	token KW_COLON2 moduleExpr
+parameter	:	token colon2 moduleExpr
 			{
 			  ModuleExpression* me = moduleExpressions.top();
 			  moduleExpressions.pop();
 			  CM->addParameter($1, me);
+			}
+		;
+
+colon2		:	KW_COLON2 {}
+		|	':'
+			{
+			  IssueWarning(LineNumber($1.lineNumber()) <<
+			    ": saw " << QUOTE(':') << " instead of " <<
+			    QUOTE("::") << " in parameter declaration.");
 			}
 		;
 
@@ -607,10 +616,10 @@ hookList	:	hookList hook
 		|	hook
 		;
 
-hook		:	KW_ID_HOOK token		{ clear(); CM->addHook(PreModule::ID_HOOK, $2, tokenSequence); }
-		|	KW_ID_HOOK token parenBubble	{ CM->addHook(PreModule::ID_HOOK, $2, lexerBubble); }
-		|	KW_OP_HOOK token parenBubble	{ CM->addHook(PreModule::OP_HOOK, $2, lexerBubble); }
-		|	KW_TERM_HOOK token parenBubble	{ CM->addHook(PreModule::TERM_HOOK, $2, lexerBubble); }
+hook		:	KW_ID_HOOK token		{ clear(); CM->addHook(SyntacticPreModule::ID_HOOK, $2, tokenSequence); }
+		|	KW_ID_HOOK token parenBubble	{ CM->addHook(SyntacticPreModule::ID_HOOK, $2, lexerBubble); }
+		|	KW_OP_HOOK token parenBubble	{ CM->addHook(SyntacticPreModule::OP_HOOK, $2, lexerBubble); }
+		|	KW_TERM_HOOK token parenBubble	{ CM->addHook(SyntacticPreModule::TERM_HOOK, $2, lexerBubble); }
 		;
 
 /*

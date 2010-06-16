@@ -46,6 +46,7 @@
 #include "rewritingContext.hh"
 #include "variableInfo.hh"
 #include "sortBdds.hh"
+#include "hashConsSet.hh"
 
 //	CUI theory class definitions
 #include "CUI_Symbol.hh"
@@ -294,6 +295,10 @@ CUI_Symbol::setFrozen(const NatSet& frozen)
     BinarySymbol::setFrozen(frozen);
 }
 
+//
+//	Unification code.
+//
+
 void
 CUI_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
 				   const Vector<int>& realToBdd,
@@ -311,7 +316,7 @@ CUI_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
       for (int j = 0; j < nrBdds; ++j, ++varCounter)
 	bdd_setbddpair(argMap, varCounter, argGenSort[j]);
     }
-  const Vector<Bdd>& sortFunction = sortBdds.getSortFunction(getIndexWithinModule());
+  const Vector<Bdd>& sortFunction = sortBdds.getSortFunction(this);
   int nrBdds = sortFunction.size();
   generalizedSort.resize(nrBdds);
   for (int i = 0; i < nrBdds; ++i)
@@ -323,4 +328,29 @@ UnificationSubproblem*
 CUI_Symbol::makeUnificationSubproblem()
 {
   return new CUI_UnificationSubproblem();
+}
+
+//
+//	Hash cons code.
+//
+
+DagNode*
+CUI_Symbol::makeCanonical(DagNode* original, HashConsSet* hcs)
+{
+  DagNode** p = safeCast(CUI_DagNode*, original)->argArray;
+  DagNode* d = p[0];
+  DagNode* c = hcs->getCanonical(hcs->insert(d));
+  DagNode* d1 = p[1];
+  DagNode* c1 = hcs->getCanonical(hcs->insert(d1));
+  if (c == d && c1 == d1)
+    return original;  // can use the original dag node as the canonical version
+  //
+  //	Need to make new node.
+  //
+  CUI_DagNode* n = new CUI_DagNode(this);
+  n->copySetRewritingFlags(original);
+  n->setSortIndex(original->getSortIndex());
+  n->argArray[0] = c;
+  n->argArray[1] = c1;
+  return n;
 }

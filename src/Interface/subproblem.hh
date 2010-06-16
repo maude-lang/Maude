@@ -29,9 +29,20 @@
 class Subproblem
 {
 public:
+#if 0
+  Subproblem()
+  {
+    cout << "BaseSubproblem " << ((void*) this) << " created" << endl;
+  }
+
+  virtual ~Subproblem()
+  {
+    cout << "BaseSubproblem " << ((void*) this) << " destroyed" << endl;
+  }
+#else
   virtual ~Subproblem() {}  // deep
+#endif
   virtual bool solve(bool findFirst, RewritingContext& solution) { CantHappen("Not implemented"); return false; }
-  virtual bool unificationSolve(bool findFirst, UnificationContext& solution) { CantHappen("Not implemented"); return false; }
 
 #ifdef DUMP
   virtual void dump(ostream& s,

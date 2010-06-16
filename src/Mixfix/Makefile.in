@@ -60,8 +60,9 @@ am__libmixfix_a_SOURCES_DIST = syntaxContainer.cc renaming.cc view.cc \
 	quotedIdentifierSymbol.cc quotedIdentifierDagNode.cc \
 	quotedIdentifierTerm.cc quotedIdentifierOpSymbol.cc \
 	mixfixModule.cc token.cc global.cc \
-	userLevelRewritingContext.cc preModule.cc symbolType.cc \
-	xmlBuffer.cc maudemlBuffer.cc interpreter.cc moduleDatabase.cc \
+	userLevelRewritingContext.cc preModule.cc \
+	syntacticPreModule.cc symbolType.cc xmlBuffer.cc \
+	maudemlBuffer.cc interpreter.cc moduleDatabase.cc \
 	viewDatabase.cc profileModule.cc mixfixParser.cc \
 	visibleModule.cc sharedTokens.cc metadataStore.cc \
 	printAttribute.cc banner.cc lexer.cc surface.cc \
@@ -83,6 +84,7 @@ am_libmixfix_a_OBJECTS = libmixfix_a-syntaxContainer.$(OBJEXT) \
 	libmixfix_a-global.$(OBJEXT) \
 	libmixfix_a-userLevelRewritingContext.$(OBJEXT) \
 	libmixfix_a-preModule.$(OBJEXT) \
+	libmixfix_a-syntacticPreModule.$(OBJEXT) \
 	libmixfix_a-symbolType.$(OBJEXT) \
 	libmixfix_a-xmlBuffer.$(OBJEXT) \
 	libmixfix_a-maudemlBuffer.$(OBJEXT) \
@@ -265,6 +267,7 @@ libmixfix_a_SOURCES = \
 	global.cc \
 	userLevelRewritingContext.cc \
 	preModule.cc \
+	syntacticPreModule.cc \
 	symbolType.cc \
 	xmlBuffer.cc \
 	maudemlBuffer.cc \
@@ -292,7 +295,6 @@ EXTRA_DIST = \
 	renameModule.cc \
 	parameterization.cc \
 	lexerAux.cc \
-	import.cc \
 	process.cc \
 	fixUp.cc \
 	ops.cc \
@@ -350,6 +352,7 @@ noinst_HEADERS = \
 	moduleDatabase.hh \
 	viewDatabase.hh \
 	preModule.hh \
+	syntacticPreModule.hh \
 	profileModule.hh \
 	quotedIdentifierDagNode.hh \
 	quotedIdentifierOpSymbol.hh \
@@ -440,6 +443,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-sharedTokens.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-surface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-symbolType.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-syntacticPreModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-syntaxContainer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-token.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-userLevelRewritingContext.Po@am__quote@
@@ -727,6 +731,20 @@ libmixfix_a-preModule.obj: preModule.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='preModule.cc' object='libmixfix_a-preModule.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmixfix_a-preModule.obj `if test -f 'preModule.cc'; then $(CYGPATH_W) 'preModule.cc'; else $(CYGPATH_W) '$(srcdir)/preModule.cc'; fi`
+
+libmixfix_a-syntacticPreModule.o: syntacticPreModule.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmixfix_a-syntacticPreModule.o -MD -MP -MF "$(DEPDIR)/libmixfix_a-syntacticPreModule.Tpo" -c -o libmixfix_a-syntacticPreModule.o `test -f 'syntacticPreModule.cc' || echo '$(srcdir)/'`syntacticPreModule.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libmixfix_a-syntacticPreModule.Tpo" "$(DEPDIR)/libmixfix_a-syntacticPreModule.Po"; else rm -f "$(DEPDIR)/libmixfix_a-syntacticPreModule.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='syntacticPreModule.cc' object='libmixfix_a-syntacticPreModule.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmixfix_a-syntacticPreModule.o `test -f 'syntacticPreModule.cc' || echo '$(srcdir)/'`syntacticPreModule.cc
+
+libmixfix_a-syntacticPreModule.obj: syntacticPreModule.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmixfix_a-syntacticPreModule.obj -MD -MP -MF "$(DEPDIR)/libmixfix_a-syntacticPreModule.Tpo" -c -o libmixfix_a-syntacticPreModule.obj `if test -f 'syntacticPreModule.cc'; then $(CYGPATH_W) 'syntacticPreModule.cc'; else $(CYGPATH_W) '$(srcdir)/syntacticPreModule.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libmixfix_a-syntacticPreModule.Tpo" "$(DEPDIR)/libmixfix_a-syntacticPreModule.Po"; else rm -f "$(DEPDIR)/libmixfix_a-syntacticPreModule.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='syntacticPreModule.cc' object='libmixfix_a-syntacticPreModule.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmixfix_a-syntacticPreModule.obj `if test -f 'syntacticPreModule.cc'; then $(CYGPATH_W) 'syntacticPreModule.cc'; else $(CYGPATH_W) '$(srcdir)/syntacticPreModule.cc'; fi`
 
 libmixfix_a-symbolType.o: symbolType.cc
 @am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmixfix_a-symbolType.o -MD -MP -MF "$(DEPDIR)/libmixfix_a-symbolType.Tpo" -c -o libmixfix_a-symbolType.o `test -f 'symbolType.cc' || echo '$(srcdir)/'`symbolType.cc; \

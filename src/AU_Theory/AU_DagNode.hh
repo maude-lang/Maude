@@ -127,6 +127,20 @@ inline void
 AU_DagNode::setProducedByAssignment()
 {
   setNormalizationStatus(ASSIGNMENT);
+
+#ifndef NO_ASSERT
+  //
+  //	Look for Riesco 1/18/10 bug.
+  //
+  for (int i = 0; i < argArray.length(); ++i)
+    {
+      DagNode* d = argArray[i];
+      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN,
+	     "AU_DagNode::setProducedByAssignment(): unknown sort for AU argument " << d <<
+	     " at index " << i << " in subject " << this);
+    }
+#endif
+
 }
 
 #endif

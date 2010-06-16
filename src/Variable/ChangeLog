@@ -1,3 +1,11 @@
+2009-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* variableSymbol.hh (class VariableSymbol): added decl for makeCanonical()
+
+	* variableSymbol.cc (makeCanonical): added
+
+===================================Maude92b===========================================
+
 2008-02-08  Steven Eker  <eker@goo.csl.sri.com>
 
 	* variableDagNode.cc (computeSolvedForm2): use unificationBind()

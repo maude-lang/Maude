@@ -64,6 +64,10 @@ public:
 				 bool leftEnd,  // match starts at left extreme
 				 bool rightEnd,  // match end at right extreme
 				 bool& nasty);
+  //
+  //	Hash cons stuff.
+  //
+  DagNode* makeCanonical(DagNode* original, HashConsSet* hcs);
 
 private:
   bool rewriteAtTop(AU_DagNode* subject, RewritingContext& context);

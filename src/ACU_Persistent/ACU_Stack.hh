@@ -72,7 +72,7 @@ ACU_Stack::empty() const
 inline ACU_RedBlackNode*
 ACU_Stack::top() const
 {
-  Assert(ptr > base, "ACU stack underflow");
+  Assert(ptr > base, "ACU_Stack::top() : stack underflow");
   return *(ptr - 1);
 }
 
@@ -85,39 +85,41 @@ ACU_Stack::clear()
 inline void
 ACU_Stack::push(ACU_RedBlackNode* node)
 {
-  Assert(ptr < base + STACK_SIZE, "ACU stack overflow");
+  Assert(ptr < base + STACK_SIZE, "ACU_Stack::push() : stack overflow");
   *ptr++ = node;
 }
 
 inline ACU_RedBlackNode*
 ACU_Stack::pop()
 {
-  Assert(ptr > base, "ACU stack underflow");
+  Assert(ptr > base, "ACU_Stack::pop() : stack underflow");
   return *(--ptr);
 }
 
 inline void
 ACU_Stack::unpop()
 {
-  Assert(ptr < base + STACK_SIZE, "ACU stack overflow");
+  Assert(ptr < base + STACK_SIZE, "ACU_Stack::unpop() :  stack overflow");
   ++ptr;
 }
 
 inline void
 ACU_Stack::multiPop(int nr)
 {
-  Assert(ptr - nr >= base, "ACU stack underflow");
+  Assert(ptr - nr >= base, "ACU_Stack::multiPop() : stack underflow");
   ptr -= nr;
 }
 
 inline void
 ACU_Stack::stackLeftmostPath(ACU_RedBlackNode* n)
 {
-  while (n != 0)  // might be optimized
+  Assert(n != 0, "ACU_Stack::stackLeftmostPath() : null pointer");
+  do
     {
       push(n);
       n = n->getLeft();
     }
+  while (n != 0);
 }
 
 inline void

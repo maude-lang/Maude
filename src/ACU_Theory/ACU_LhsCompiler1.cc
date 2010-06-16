@@ -53,28 +53,50 @@ ACU_Term::analyseConstraintPropagation(NatSet& boundUniquely) const
       VariableTerm* v = dynamic_cast<VariableTerm*>(t);
       if (v != 0)
 	{
-	  if (lastUnboundVariable != UNDEFINED || nonGroundAliens.length() != 0)
+	  //
+	  //	A variable.
+	  //
+	  //	Two unbound variables or an unbound variable plus an NGA kills
+	  //	constraint propagation analysis.
+	  //
+	  if (lastUnboundVariable != UNDEFINED || nonGroundAliens.size() != 0)
 	    return;
 	  lastUnboundVariable = v->getIndex();
 	}
       else
 	{
+	  //
+	  //	Must be a non-ground alien.
+	  //
+	  //	An NGA plus a unbound variable kills constraint propagation analysis.
+	  //
 	  if (lastUnboundVariable != UNDEFINED)
 	    return;
 	  nonGroundAliens.append(p);
 	}
     }
   if (lastUnboundVariable != UNDEFINED)
-    boundUniquely.insert(lastUnboundVariable);
+    {
+      Assert(nonGroundAliens.size() == 0, "ACU_Term::analyseConstraintPropagation() : shouldn't have NGAs");
+      //
+      //	If the only thing that doesn't ground out is a variable we can
+      //	bind it uniquely.
+      //
+      boundUniquely.insert(lastUnboundVariable);
+    }
   else if (nonGroundAliens.length() != 0)
     {
+      //
+      //	If the only things that don't ground out are NGAs we can choose a
+      //	sequence to propagate constraints on shared variables among them.
+      //
       CP_Sequence bestSequence;
       findConstraintPropagationSequence(nonGroundAliens, boundUniquely, bestSequence);
       boundUniquely = bestSequence.bound;  // deep copy
     }
 }
 
-#include "rule.hh" // HACK
+//#include "rule.hh" // HACK
 void
 ACU_Term::compileLhs3(bool matchAtTop,
 		      const VariableInfo& variableInfo,

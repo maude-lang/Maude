@@ -1,3 +1,25 @@
+2010-05-07  Steven Eker  <eker@rho>
+
+	* branchSymbol.cc (BranchSymbol::attachTerm): added
+	DebugAdvisory()
+
+===================================Maude93d===========================================
+
+2009-03-21  Steven Eker  <eker@goo.csl.sri.com>
+
+	* floatOpSymbol.cc (eqRewrite): fix bug where we were treating
+	floor() with an unevaluated argument as float()
+
+2008-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* branchSymbol.hh (class BranchSymbol): deleted decls for
+	fillInSortInfo() and computeBaseSort()
+
+	* branchSymbol.cc (compileOpDeclarations): add fake declarations
+	to encode our sort structure
+	(computeBaseSort): deleted
+	(fillInSortInfo): deleted
+
 2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
 
 	* numberOpSymbol.cc (eqRewrite): assign dummy value to b in default

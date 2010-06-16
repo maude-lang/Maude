@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,6 +62,11 @@ SortBdds::SortBdds(Module* module)
   //	  valid(s1) /\ valid(s2) /\ s1 > s2
   //	for sorts s1 and s2 in c.
   //
+  //	Here s1 is encoded by BDD variables:
+  //	  0,...,maxNrVariables-1
+  //	and s2 is encoded by BDD variables:
+  //	  maxNrVariables,...,2*maxNrVariables-1
+  //
   for (int i = 0; i < nrComponents; ++i)
     {
       int nrVariables = componentInfo[i].nrVariables;
@@ -72,11 +77,14 @@ SortBdds::SortBdds(Module* module)
 	{
 	  Bdd lesserSorts;   // initialized to false by default
 	  const NatSet& leqSorts = c->sort(s1)->getLeqSorts();
-	  for (int s2 = s1 + 1; s2 < nrSorts; ++s2)
+	  for (int s2 = s1 + 1; s2 < nrSorts; ++s2)  // starting at s1+1 rules out the equals case
 	    {
 	      if (leqSorts.contains(s2))
 		lesserSorts = bdd_or(lesserSorts, makeIndexBdd(maxNrVariables, nrVariables, s2));
 	    }
+	  //
+	  //	At this point lesserSorts holds the relation less_than_s1(s2) for current s1.
+	  //
 	  disjunct = bdd_or(disjunct, bdd_and(makeIndexBdd(0, nrVariables, s1), lesserSorts));
 	}
       componentInfo[i].gtRelation = disjunct;
@@ -84,7 +92,10 @@ SortBdds::SortBdds(Module* module)
   DebugAdvisory("After gtRelation computation: BDD nodes in use: " << bdd_getnodenum());
   //
   //	For each sort s we compute the BDD encoding the relation
-  //	  valid(s1) /\ s1 < s
+  //	  valid(s1) /\ s1 <= s
+  //
+  //	Here s1 is encoded by BDD variables:
+  //	  0,...,maxNrVariables-1
   //
   const Vector<Sort*>& sorts = module->getSorts();
   int nrSorts = sorts.size();
@@ -98,23 +109,43 @@ SortBdds::SortBdds(Module* module)
       FOR_EACH_CONST(j, NatSet, leqSorts)
 	disjunct = bdd_or(disjunct, makeIndexBdd(0, nrVariables, *j));
       leqRelations[i] = disjunct;
+      DebugAdvisory("leq BDD for sort " << s << " is " << disjunct << " using " << nrVariables << " variables");
     }
   DebugAdvisory("After leqRelation computation: BDD nodes in use: " << bdd_getnodenum());
+}
+
+const Vector<Bdd>&
+SortBdds::getSortFunction(Symbol* symbol) const
+{
   //
-  //	For each operator, we compute the vector of BDDs that encodes its sort
-  //	function.
+  //	We construct the sort function on demand. This is partly to save time and space
+  //	on symbols that don't occur in unification problems, but mostly to handle
+  //	late symbols.
   //
-  const Vector<Symbol*>& symbols = module->getSymbols();
-  int nrSymbols = symbols.size();
-  sortFunctions.resize(nrSymbols);
-  for (int i = 0; i < nrSymbols; ++i)
-    symbols[i]->computeSortFunctionBdds(*this, sortFunctions[i]);
-  DebugAdvisory("After sort function computation: BDD nodes in use: " << bdd_getnodenum());
+  int symbolIndex = symbol->getIndexWithinModule();
+  int currentSize = sortFunctions.size();
+  if (currentSize <= symbolIndex)
+    {
+      //
+      //	Resizing a vector of vectors of BDDs is very expensive so make it as large
+      //	as we currently expect.
+      //
+      sortFunctions.resize(symbol->getModule()->getSymbols().size());
+    }
+  Vector<Bdd>& f = sortFunctions[symbolIndex];
+  if (f.isNull())
+    symbol->computeSortFunctionBdds(*this, f);
+  return f;
 }
 
 void
 SortBdds::makeIndexVector(int nrBdds, int index, Vector<Bdd>& vec) const
 {
+  //
+  //	Make a vector of nrBdds true/false BDDs that encodes index.
+  //
+  //	This is useful for returning the vector of BDDs encoding of a constant sort.
+  //
   vec.resize(nrBdds);
   for (int i = 0; index != 0; ++i, (index >>= 1))
     {
@@ -126,29 +157,47 @@ SortBdds::makeIndexVector(int nrBdds, int index, Vector<Bdd>& vec) const
 void
 SortBdds::makeVariableVector(int firstVariable, int nrVariables, Vector<Bdd>& vec) const
 {
+  //
+  //	Make a vector of nrVariables BDDs that encodes the BDD variables 
+  //	firstVariable,..., firstVariable + nrVariables - 1.
+  //
+  //	This is useful for returning the vector of BDDs encoding of the undetermined
+  //	sort of a variable.
+  //
   vec.resize(nrVariables);
   for (int i = 0; i < nrVariables; ++i)
-    vec[i] = ithvar(firstVariable + i);
+    vec[i] = bdd_ithvar(firstVariable + i);
 }
 
 Bdd
 SortBdds::makeIndexBdd(int firstVariable, int nrVariables, int index) const
 {
+  //
+  //	Return a BDD in (firstVariable,..., firstVariable + nrVariables - 1) which is true exactly if
+  //	for all k in 0,..., nrVariables - 1, BDD variable firstVariable + k corresponds to the kth
+  //	bit in the binary representation of index.
+  //
   Bdd result = bdd_true();
   int end = firstVariable + nrVariables;
   for (int i = firstVariable; i < end; ++i, index >>= 1)
-    result = bdd_and(result, (index & 1) ? ithvar(i) : nithvar(i));  // HACK
-  //    result = bdd_and(result, (index & 1) ? bdd_ithvar(i) : bdd_nithvar(i));
+    result = bdd_and(result, (index & 1) ? bdd_ithvar(i) : bdd_nithvar(i));
   return result;
 }
 
 Bdd
 SortBdds::makeVariableBdd(int firstVariable, int nrVariables) const
 {
-   Bdd result = bdd_true();
+  //
+  //	Make a BDD that represents the set of BDD variables
+  //	  {firstVariable,  firstVariable + 1 firstVariable + nrVariables - 1}
+  //	as a conjunction.
+  //
+  //	This is useful for quantification over a set of BDD variables.
+  //
+  Bdd result = bdd_true();
   int end = firstVariable + nrVariables;
   for (int i = firstVariable; i < end; ++i)
-    result = bdd_and(result, ithvar(i));  // HACK
+    result = bdd_and(result, bdd_ithvar(i));
   return result;
 }
 

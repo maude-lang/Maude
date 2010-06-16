@@ -31,5 +31,7 @@ class MetaModule;
 class MetaModuleCache;
 class MetaLevelOpSymbol;
 class MetaOpCache;
+class MetaPreModule;
+class InterpreterManagerSymbol;
 
 #endif

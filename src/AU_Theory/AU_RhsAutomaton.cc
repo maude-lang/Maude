@@ -49,14 +49,6 @@ AU_RhsAutomaton::AU_RhsAutomaton(AU_Symbol* symbol, int nrArgs)
 }
 
 void
-AU_RhsAutomaton::buildArguments(ArgVec<DagNode*>& argArray, Substitution& matcher) const
-{
-  int nrArgs = arguments.length();
-  for (int i = 0; i < nrArgs; i++)
-    argArray[i] = matcher.value(arguments[i]);
-}
-
-void
 AU_RhsAutomaton::remapIndices(VariableInfo& variableInfo)
 {
   destination = variableInfo.remapIndex(destination);
@@ -65,10 +57,28 @@ AU_RhsAutomaton::remapIndices(VariableInfo& variableInfo)
     arguments[i] = variableInfo.remapIndex(arguments[i]);
 }
 
+local_inline void
+AU_RhsAutomaton::buildArguments(ArgVec<DagNode*>& argArray, Substitution& matcher) const
+{
+
+  Vector<int>::const_iterator j = arguments.begin();
+  const Vector<int>::const_iterator e = j + nrArguments;
+  Assert(nrArguments > 0, "no args");
+  ArgVec<DagNode*>::iterator i = argArray.begin();
+  do
+    {
+      *i = matcher.value(*j);
+      ++i;
+      ++j;
+    }
+  while (j != e);
+  Assert(i == argArray.end(), "iterator inconsistent");
+}
+
 DagNode*
 AU_RhsAutomaton::construct(Substitution& matcher)
 {
-  AU_DagNode* n = new AU_DagNode(topSymbol, arguments.length());
+  AU_DagNode* n = new AU_DagNode(topSymbol, nrArguments);
   buildArguments(n->argArray, matcher);
   matcher.bind(destination, n);
   return n;
@@ -77,7 +87,7 @@ AU_RhsAutomaton::construct(Substitution& matcher)
 void
 AU_RhsAutomaton::replace(DagNode* old, Substitution& matcher)
 {
-  buildArguments((new(old) AU_DagNode(topSymbol, arguments.length()))->argArray, matcher);
+  buildArguments((new(old) AU_DagNode(topSymbol, nrArguments))->argArray, matcher);
 }
 
 #ifdef DUMP

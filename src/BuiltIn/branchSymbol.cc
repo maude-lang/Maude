@@ -88,6 +88,10 @@ BranchSymbol::attachTerm(const char* purpose, Term* term)
 	  testTerms[index - 1] = term;
 	  return true;
 	}
+      else
+	{
+	  DebugAdvisory("BranchSymbol::attachTerm(): " << index << " slot already contains " << testTerms[index - 1]);
+	}
     }
   return FreeSymbol::attachTerm(purpose, term);
 }
@@ -149,35 +153,6 @@ BranchSymbol::getTermAttachments(Vector<const char*>& purposes,
   FreeSymbol::getTermAttachments(purposes, terms);
 }
 
-void
-BranchSymbol::fillInSortInfo(Term* subject)
-{
-  ArgumentIterator a(*subject);
-  Assert(a.valid(), "invalid first subterm");
-  Term* t = a.argument();
-  t->symbol()->fillInSortInfo(t);
-  Assert(t->getComponent() == domainComponent(0), "bad 1st component");
-
-  a.next();
-  Assert(a.valid(), "invalid second subterm");
-  Term* t2 = a.argument();
-  t2->symbol()->fillInSortInfo(t2);
-  ConnectedComponent* component = t2->getComponent();
-  Assert(component == domainComponent(1), "bad 2nd component");
-  
-  NatSet leqSorts(component->getLeqSorts(t2->getSortIndex()));
-  for (a.next(); a.valid(); a.next())
-    {
-      t2 = a.argument();
-      t2->symbol()->fillInSortInfo(t2);
-      Assert(t2->getComponent() == component, "bad component");
-      leqSorts.insert(component->getLeqSorts(t2->getSortIndex()));
-    }
-  subject->setSortInfo(component,
-		       t->leq(getOpDeclarations()[0].getDomainAndRange()[0]) ?
-		       component->findIndex(leqSorts) : Sort::ERROR_SORT);
-}
-
 bool
 BranchSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
@@ -201,35 +176,30 @@ BranchSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   return FreeSymbol::eqRewrite(subject, context);
 }
 
-void 
-BranchSymbol::computeBaseSort(DagNode* subject)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  FreeDagNode* f = static_cast<FreeDagNode*>(subject);
-  
-  if (f->getArgument(0)->leq(getOpDeclarations()[0].getDomainAndRange()[0]))
-    {
-      //
-      //	The branch argument had a low enough sort so compute a
-      //	least upper bound of the sorts of the alternative arguments.
-      //	This need not be unique - findIndex() finds the one with the
-      //	largest index.
-      //
-      ConnectedComponent* range = rangeComponent();  // should be const
-      NatSet unionSoFar(range->getLeqSorts(f->getArgument(1)->getSortIndex()));
-      int nrArgs = arity();
-      for (int i = 2; i < nrArgs; i++)
-	unionSoFar.insert(range->getLeqSorts(f->getArgument(i)->getSortIndex()));
-      subject->setSortIndex(range->findIndex(unionSoFar));
-    }
-  else
-    subject->setSortIndex(Sort::ERROR_SORT);
-}
-
 void
 BranchSymbol::compileOpDeclarations()
 {
-  FreeSymbol::compileOpDeclarations();  // Hack so BDD sort table can be constructed - even thought it's wrong
+  //
+  //	Add fake declarations to encode our sort structure.
+  //
+  const Vector<Sort*>& baseDecl = getOpDeclarations()[0].getDomainAndRange();
+  int declSize = baseDecl.size();
+  Vector<Sort*> domainAndRange(declSize);
+  domainAndRange[0] = baseDecl[0];
+  ConnectedComponent* kind =  baseDecl[1]->component();
+  int nrSorts = kind->nrSorts();
+  for (int i = 1; i < nrSorts; ++i)
+    {
+      Sort* sort = kind->sort(i);
+      //
+      //	Add a declaration
+      //	  firstSort sort sort ... sort -> sort
+      //
+      for (int j = 1; j < declSize; ++j)
+	domainAndRange[j] = sort;
+      addOpDeclaration(domainAndRange, false);  // should never be a ctor
+    }
+  FreeSymbol::compileOpDeclarations();
 }
 
 bool
@@ -255,6 +225,10 @@ BranchSymbol::stackArguments(DagNode* subject,
 			     Vector<RedexPosition>& stack,
 			     int parentIndex)
 {
+  //
+  //	We need to define this because we have a builtin strategy. We stack
+  //	the first argument as eager and the rest as lazy.
+  //
   const NatSet& frozen = getFrozen();
   FreeDagNode* f = safeCast(FreeDagNode*, subject);
   DagNode* d = f->getArgument(0);
@@ -265,6 +239,6 @@ BranchSymbol::stackArguments(DagNode* subject,
     {
       d = f->getArgument(i);
       if (!(frozen.contains(i)) && !(d->isUnstackable()))
-      stack.append(RedexPosition(d, parentIndex, i, false));
+	stack.append(RedexPosition(d, parentIndex, i, false));
     }
 }

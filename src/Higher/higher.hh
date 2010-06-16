@@ -37,6 +37,7 @@ class SequenceSearch;
 class RewriteSequenceSearch;
 
 class StateTransitionGraph3;
+class StateTransitionGraph;
 
 class EqualityConditionFragment;
 class SortTestConditionFragment;

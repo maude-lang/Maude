@@ -132,14 +132,18 @@ CUI_LhsAutomaton::freeMatch(DagNode* subject0,
 {
   Subproblem* sp0;
   Subproblem* sp1;
-  if (subpattern0.match(subject0, solution, sp0) &&
-      subpattern1.match(subject1, solution, sp1))
+  if (subpattern0.match(subject0, solution, sp0))
     {
-      SubproblemAccumulator subproblems;
-      subproblems.add(sp0);
-      subproblems.add(sp1);
-      returnedSubproblem = subproblems.extractSubproblem();
-      return true;
+      if (subpattern1.match(subject1, solution, sp1))
+	{
+	  SubproblemAccumulator subproblems;
+	  subproblems.add(sp0);
+	  subproblems.add(sp1);
+	  returnedSubproblem = subproblems.extractSubproblem();
+	  return true;
+	}
+      else
+	delete sp0;  // important!
     }
   return false;
 }
@@ -152,14 +156,18 @@ CUI_LhsAutomaton::id0CollapseMatch(DagNode* subject,
 {
   Subproblem* sp0;
   Subproblem* sp1;
-  if (subpattern0.match(topSymbol->getIdentityDag(), solution, sp0) &&
-      subpattern1.match(subject, solution, sp1, matchAtTop, extensionInfo))
+  if (subpattern0.match(topSymbol->getIdentityDag(), solution, sp0))
     {
-      SubproblemAccumulator subproblems;
-      subproblems.add(sp0);
-      subproblems.add(sp1);
-      returnedSubproblem = subproblems.extractSubproblem();
-      return true;
+      if (subpattern1.match(subject, solution, sp1, matchAtTop, extensionInfo))
+	{
+	  SubproblemAccumulator subproblems;
+	  subproblems.add(sp0);
+	  subproblems.add(sp1);
+	  returnedSubproblem = subproblems.extractSubproblem();
+	  return true;
+	}
+      else
+	delete sp0;
     }
   return false;
 }
@@ -175,16 +183,20 @@ CUI_LhsAutomaton::id1CollapseMatch(DagNode* subject,
     return false;  // we will have already discovered solution on id0Collapse branch
   Subproblem* sp0;
   Subproblem* sp1;
-  if (subpattern1.match(topSymbol->getIdentityDag(), solution, sp1) &&
-      subpattern0.match(subject, solution, sp0, matchAtTop, extensionInfo))
+  if (subpattern1.match(topSymbol->getIdentityDag(), solution, sp1))
     {
-      SubproblemAccumulator subproblems;
-      subproblems.add(sp1);
-      subproblems.add(sp0);
-      if (extensionInfo != 0 && (flags & ID0_COLLAPSE))
-	subproblems.add(new EqualitySubproblem(identity, extensionInfo, false));
-      returnedSubproblem = subproblems.extractSubproblem();
-      return true;
+      if (subpattern0.match(subject, solution, sp0, matchAtTop, extensionInfo))
+	{
+	  SubproblemAccumulator subproblems;
+	  subproblems.add(sp1);
+	  subproblems.add(sp0);
+	  if (extensionInfo != 0 && (flags & ID0_COLLAPSE))
+	    subproblems.add(new EqualitySubproblem(identity, extensionInfo, false));
+	  returnedSubproblem = subproblems.extractSubproblem();
+	  return true;
+	}
+      else
+	delete sp1;
     }
   return false;
 }
@@ -199,14 +211,18 @@ CUI_LhsAutomaton::idemCollapseMatch(DagNode* subject,
     return false; 
   Subproblem* sp0;
   Subproblem* sp1;
-  if (subpattern0.match(subject, solution, sp0, matchAtTop) &&
-      subpattern1.match(subject, solution, sp1, matchAtTop))
+  if (subpattern0.match(subject, solution, sp0, matchAtTop))
     {
-      SubproblemAccumulator subproblems;
-      subproblems.add(sp1);
-      subproblems.add(sp0);
-      returnedSubproblem = subproblems.extractSubproblem();
-      return true;
+      if (subpattern1.match(subject, solution, sp1, matchAtTop))
+	{
+	  SubproblemAccumulator subproblems;
+	  subproblems.add(sp1);
+	  subproblems.add(sp0);
+	  returnedSubproblem = subproblems.extractSubproblem();
+	  return true;
+	}
+      else
+	delete sp0;
     }
   return false;
 }

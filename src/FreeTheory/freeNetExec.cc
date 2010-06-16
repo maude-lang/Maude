@@ -35,49 +35,49 @@ FreeNet::applyReplace2(DagNode* subject, RewritingContext& context)
   //	(actually remainder pointers) which match the free symbol skeleton in the
   //	subject.
   //
-  int i;
+  long i;
   if (!(net.isNull()))  // at least one pattern has free symbols
     {
       DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->argArray();
       Vector<TestNode>::const_iterator netBase = net.begin();
       Vector<TestNode>::const_iterator n = netBase;
+      Vector<DagNode**>::iterator stackBase = stack.begin();
       DagNode* d = topArgArray[n->argIndex];
-      Symbol* ds = d->symbol();
+      int symbolIndex = d->symbol()->getIndexWithinModule();
       stack[0] = topArgArray;
       for (;;)
 	{
-	  DagNode*** p;
-	  if (ds != n->symbol)
+	  long p;
+	  int diff = symbolIndex - n->symbolIndex;
+	  if (diff != 0)
 	    {
-	      i = n->notEqual[getSignBit(ds->compare(n->symbol))];
+	      i = n->notEqual[diff < 0];
 	      if (i <= 0)
 		{
 		  if (i == 0)
 		    return false;
-		  i = (-1) - i;
 		  break;
 		}
 	      n = netBase + i;
-	      p = n->positionPtr;
-	      if (p == 0)
+	      p = n->position;
+	      if (p < 0)
 		continue;
 	    }
 	  else
 	    {
-	      if (n->slotPtr != 0)
-		*(n->slotPtr) = static_cast<FreeDagNode*>(d)->argArray();
+	      long s = n->slot;
+	      if (s >= 0)
+		stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
 	      i = n->equal;
 	      if (i <= 0)
-		{
-		  i = (-1) - i;
-		  break;
-		}
+		break;
 	      n = netBase + i;
-	      p = n->positionPtr;
+	      p = n->position;
 	    }
-	  d = (*p)[n->argIndex];
-	  ds = d->symbol();
+	  d = stackBase[p][n->argIndex];
+	  symbolIndex = d->symbol()->getIndexWithinModule();
 	}
+      i = ~i;
     }
   else
     {
@@ -101,6 +101,74 @@ FreeNet::applyReplace2(DagNode* subject, RewritingContext& context)
 }
 
 bool
+FreeNet::applyReplaceFast2(DagNode* subject, RewritingContext& context)
+{
+  //
+  //	Optimized version of the the above that only works for unary,
+  //	binary and ternary top symbols.
+  //
+  long i;
+  DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
+  stack[0] = topArgArray;
+  if (!(net.isNull()))  // at least one pattern has free symbols
+    {
+      Vector<TestNode>::const_iterator netBase = net.begin();
+      Vector<TestNode>::const_iterator n = netBase;
+      Vector<DagNode**>::iterator stackBase = stack.begin();
+      DagNode* d = topArgArray[n->argIndex];
+      int symbolIndex = d->symbol()->getIndexWithinModule();
+      for (;;)
+	{
+	  long p;
+	  int diff = symbolIndex - n->symbolIndex;
+	  if (diff != 0)
+	    {
+	      i = n->notEqual[diff < 0];
+	      if (i <= 0)
+		{
+		  if (i == 0)
+		    return false;
+		  break;
+		}
+	      n = netBase + i;
+	      p = n->position;
+	      if (p < 0)
+		continue;
+	    }
+	  else
+	    {
+	      long s = n->slot;
+	      if (s >= 0)
+		stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
+	      i = n->equal;
+	      if (i <= 0)
+		break;
+	      n = netBase + i;
+	      p = n->position;
+	    }
+	  d = stackBase[p][n->argIndex];
+	  symbolIndex = d->symbol()->getIndexWithinModule();
+	}
+      i = ~i;
+    }
+  else
+    i = 0;
+  //
+  //	Now go through the sequence of remainders, trying to finish the
+  //	matching process for each one in turn.
+  //
+  Vector<FreeRemainder*>::const_iterator p = fastApplicable[i].begin();
+  const FreeRemainder* r = *p;
+  do
+    {
+      if (r->fastMatchReplace(subject, context, stack))
+	return true;
+    }
+  while ((r = *(++p)) != 0);
+  return false;
+}
+
+bool
 FreeNet::applyReplaceNoOwise2(DagNode* subject, RewritingContext& context)
 {
   //
@@ -108,49 +176,49 @@ FreeNet::applyReplaceNoOwise2(DagNode* subject, RewritingContext& context)
   //	(actually remainder pointers) which match the free symbol skeleton in the
   //	subject.
   //
-  int i;
+  long i;
   if (!(net.isNull()))  // at least one pattern has free symbols
     {
       DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->argArray();
       Vector<TestNode>::const_iterator netBase = net.begin();
       Vector<TestNode>::const_iterator n = netBase;
+      Vector<DagNode**>::iterator stackBase = stack.begin();
       DagNode* d = topArgArray[n->argIndex];
-      Symbol* ds = d->symbol();
+      int symbolIndex = d->symbol()->getIndexWithinModule();
       stack[0] = topArgArray;
       for (;;)
 	{
-	  DagNode*** p;
-	  if (ds != n->symbol)
+	  long p;
+	  int diff = symbolIndex - n->symbolIndex;
+	  if (diff != 0)
 	    {
-	      i = n->notEqual[getSignBit(ds->compare(n->symbol))];
+	      i = n->notEqual[diff < 0];
 	      if (i <= 0)
 		{
 		  if (i == 0)
 		    return false;
-		  i = (-1) - i;
 		  break;
 		}
 	      n = netBase + i;
-	      p = n->positionPtr;
-	      if (p == 0)
+	      p = n->position;
+	      if (p < 0)
 		continue;
 	    }
 	  else
 	    {
-	      if (n->slotPtr != 0)
-		*(n->slotPtr) = static_cast<FreeDagNode*>(d)->argArray();
+	      long s = n->slot;
+	      if (s >= 0)
+		stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
 	      i = n->equal;
 	      if (i <= 0)
-		{
-		  i = (-1) - i;
-		  break;
-		}
+		break;
 	      n = netBase + i;
-	      p = n->positionPtr;
+	      p = n->position;
 	    }
-	  d = (*p)[n->argIndex];
-	  ds = d->symbol();
+	  d = stackBase[p][n->argIndex];
+	  symbolIndex = d->symbol()->getIndexWithinModule();
 	}
+      i = ~i;
     }
   else
     {

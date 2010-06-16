@@ -453,6 +453,17 @@ Symbol::isConstructor(DagNode* subject)
   return false;
 }
 
+//
+//	Putting this stuff here rather than the header file avoids gcc creating separate instances
+//	for derived classes tht don't define their own versions.
+//
+
+UnificationSubproblem*
+Symbol::makeUnificationSubproblem()
+{
+  CantHappen("Not implemented"); return 0;
+}
+
 int 
 Symbol::unificationPriority() const
 {

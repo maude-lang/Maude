@@ -39,8 +39,9 @@
 #include "metaModule.hh"
 
 
-MetaModule::MetaModule(int name, ModuleType moduleType, Entity::User* parent)
-  : ImportModule(name, moduleType, TEXT, parent)
+MetaModule::MetaModule(int name, ModuleType moduleType, Entity::User* parent, Interpreter* owner)
+  : VisibleModule(name, moduleType, parent),
+    owner(owner)
 {
 }
 

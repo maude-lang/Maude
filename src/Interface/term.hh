@@ -451,13 +451,13 @@ Term::getHashValue() const
 inline unsigned int
 Term::hash(unsigned int v1, unsigned int v2)
 {
-  return 3 * v1 + v2;
+  return (v1 * v1) ^ (v1 >> 16) ^ v2;  // symmetry with DagNode version
 }
 
 inline unsigned int
 Term::hash(unsigned int v1, unsigned int v2, unsigned int v3)
 {
-  return 3 * v1 + v2 * v3;
+  return (v1 * v1) ^ (v1 >> 16) ^ (v2 * v3);  // symmetry with DagNode version
 }
 
 inline void

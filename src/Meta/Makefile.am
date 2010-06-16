@@ -21,9 +21,11 @@ libmeta_a_CPPFLAGS = \
 libmeta_a_SOURCES = \
 	metaModuleCache.cc \
 	metaLevel.cc \
+	interpreterManagerSymbol.cc \
 	metaOpCache.cc \
 	metaModule.cc \
-	metaLevelOpSymbol.cc
+	metaLevelOpSymbol.cc \
+	metaPreModule.cc
 
 EXTRA_DIST = \
 	metaDown.cc \
@@ -40,12 +42,17 @@ EXTRA_DIST = \
 	metaUnify.cc \
 	metaSearch.cc \
 	metaNarrow.cc \
-	descentSignature.cc
+	descentSignature.cc \
+	interpreterSignature.cc \
+	metaUpView.cc
 
 noinst_HEADERS = \
 	meta.hh \
 	metaLevel.hh \
+	interpreterManagerSymbol.hh \
 	metaLevelOpSymbol.hh \
 	metaModule.hh \
 	metaModuleCache.hh \
-	metaOpCache.hh
+	metaOpCache.hh \
+	metaPreModule.hh
+

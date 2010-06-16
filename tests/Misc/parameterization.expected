@@ -549,6 +549,7 @@ Maude> fmod BAZ is
 endfm
 fmod BOOL
 fmod TRUTH-VALUE
+fmod BOOL-OPS
 fmod TRUTH
 fmod EXT-BOOL
 fmod NAT
@@ -583,6 +584,7 @@ fmod QID-LIST
 fmod QID-SET
 fmod META-TERM
 fmod META-MODULE
+fmod META-VIEW
 fmod META-LEVEL
 mod COUNTER
 mod LOOP-MODE
@@ -1245,6 +1247,7 @@ fmod BAZ is
 endfm
 fmod BOOL
 fmod TRUTH-VALUE
+fmod BOOL-OPS
 fmod TRUTH
 fmod EXT-BOOL
 fmod NAT
@@ -1279,6 +1282,7 @@ fmod QID-LIST
 fmod QID-SET
 fmod META-TERM
 fmod META-MODULE
+fmod META-VIEW
 fmod META-LEVEL
 mod COUNTER
 mod LOOP-MODE
@@ -1945,6 +1949,7 @@ fmod BAZ is
 endfm
 fmod BOOL
 fmod TRUTH-VALUE
+fmod BOOL-OPS
 fmod TRUTH
 fmod EXT-BOOL
 fmod NAT
@@ -1979,6 +1984,7 @@ fmod QID-LIST
 fmod QID-SET
 fmod META-TERM
 fmod META-MODULE
+fmod META-VIEW
 fmod META-LEVEL
 mod COUNTER
 mod LOOP-MODE
@@ -2238,6 +2244,7 @@ fmod BAZ is
 endfm
 fmod BOOL
 fmod TRUTH-VALUE
+fmod BOOL-OPS
 fmod TRUTH
 fmod EXT-BOOL
 fmod NAT
@@ -2272,6 +2279,7 @@ fmod QID-LIST
 fmod QID-SET
 fmod META-TERM
 fmod META-MODULE
+fmod META-VIEW
 fmod META-LEVEL
 mod COUNTER
 mod LOOP-MODE

@@ -131,6 +131,10 @@
 #include "branchStrategy.hh"
 #include "testStrategy.hh"
 
+//	metalevel class definitions
+#include "metaLevelOpSymbol.hh"
+#include "interpreterManagerSymbol.hh"
+
 //	front end class definitions
 #include "mixfixParser.hh"
 #include "mixfixModule.hh"
@@ -138,7 +142,6 @@
 #include "quotedIdentifierOpSymbol.hh"
 #include "quotedIdentifierTerm.hh"
 #include "quotedIdentifierDagNode.hh"
-#include "metaLevelOpSymbol.hh"
 #include "loopSymbol.hh"
 #include "userLevelRewritingContext.hh"
 
@@ -678,7 +681,7 @@ MixfixModule::instantiatePolymorph(int polymorphIndex, int kindIndex)
 		const char* purpose = Token::name(p.termHooks[i].purpose);
 		Term* copy = p.termHooks[i].term->deepCopy();
 		if (!(symbol->attachTerm(purpose, copy)))
-		  copy->deepSelfDestruct();  // HACK
+		  ;  // HACK
 	      }
 	  }
 	}

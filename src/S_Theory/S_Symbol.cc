@@ -35,6 +35,9 @@
 #include "variable.hh"
 #include "S_Theory.hh"
 
+//      core class definitions
+#include "hashConsSet.hh"
+
 //	successor theory class definitions
 #include "S_Symbol.hh"
 #include "S_DagNode.hh"
@@ -319,6 +322,10 @@ S_Symbol::mightCollapseToOurSymbol(const Term* subterm) const
   return false;
 }
 
+//
+//	Unification code.
+//
+
 void
 S_Symbol::computeSortFunctionBdds(const SortBdds& /* sortBdds */, Vector<Bdd>& /* sortFunctionBdds */) const
 {
@@ -383,4 +390,25 @@ S_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
 	    generalizedSort[j] = bdd_or(generalizedSort[j], equal);
 	}
     }
+}
+
+//
+//	Hash cons code.
+//
+
+DagNode*
+S_Symbol::makeCanonical(DagNode* original, HashConsSet* hcs)
+{
+  S_DagNode* s = safeCast(S_DagNode*, original);
+  DagNode* d = s->getArgument();
+  DagNode* c = hcs->getCanonical(hcs->insert(d));
+  if (c == d)
+    return original;  // can use the original dag node as the canonical version
+  //
+  //	Need to make new node.
+  //
+  S_DagNode* n = new S_DagNode(this, s->getNumber(), c);
+  n->copySetRewritingFlags(original);
+  n->setSortIndex(original->getSortIndex());
+  return n;
 }

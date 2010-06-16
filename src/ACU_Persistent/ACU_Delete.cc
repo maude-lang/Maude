@@ -57,12 +57,7 @@ ACU_RedBlackNode::consDelete(ACU_Stack& path, int multiplicity, int& delta)
 	  //	successor.
 	  //
 	  path.unpop();
-	  do
-	    {
-	      path.push(n);
-	      n = n->getLeft();
-	    }
-	  while (n != 0);
+	  path.stackLeftmostPath(n);
 
 	  ACU_RedBlackNode* surrogate = path.pop();
 	  child = surrogate->getRight();  // might be null

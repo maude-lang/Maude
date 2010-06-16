@@ -62,6 +62,7 @@ am_libhigher_a_OBJECTS = libhigher_a-rewriteSearchState.$(OBJEXT) \
 	libhigher_a-rewriteSequenceSearch.$(OBJEXT) \
 	libhigher_a-modelCheckerSymbol.$(OBJEXT) \
 	libhigher_a-stateTransitionGraph3.$(OBJEXT) \
+	libhigher_a-stateTransitionGraph.$(OBJEXT) \
 	libhigher_a-rewriteConditionFragment.$(OBJEXT) \
 	libhigher_a-assignmentConditionFragment.$(OBJEXT) \
 	libhigher_a-sortTestConditionFragment.$(OBJEXT) \
@@ -214,6 +215,7 @@ libhigher_a_SOURCES = \
 	rewriteSequenceSearch.cc \
 	modelCheckerSymbol.cc \
 	stateTransitionGraph3.cc \
+	stateTransitionGraph.cc \
 	rewriteConditionFragment.cc \
 	assignmentConditionFragment.cc \
 	sortTestConditionFragment.cc \
@@ -244,6 +246,7 @@ noinst_HEADERS = \
 	searchState.hh \
 	sortTestConditionFragment.hh \
 	stateTransitionGraph3.hh \
+	stateTransitionGraph.hh \
 	temporalSymbol.hh \
 	unificationProblem.hh \
 	narrowingSearchState.hh \
@@ -316,6 +319,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-satSolverSymbol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-searchState.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-sortTestConditionFragment.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-stateTransitionGraph.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-stateTransitionGraph3.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-temporalSymbol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhigher_a-unificationProblem.Po@am__quote@
@@ -445,6 +449,20 @@ libhigher_a-stateTransitionGraph3.obj: stateTransitionGraph3.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='stateTransitionGraph3.cc' object='libhigher_a-stateTransitionGraph3.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libhigher_a-stateTransitionGraph3.obj `if test -f 'stateTransitionGraph3.cc'; then $(CYGPATH_W) 'stateTransitionGraph3.cc'; else $(CYGPATH_W) '$(srcdir)/stateTransitionGraph3.cc'; fi`
+
+libhigher_a-stateTransitionGraph.o: stateTransitionGraph.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libhigher_a-stateTransitionGraph.o -MD -MP -MF "$(DEPDIR)/libhigher_a-stateTransitionGraph.Tpo" -c -o libhigher_a-stateTransitionGraph.o `test -f 'stateTransitionGraph.cc' || echo '$(srcdir)/'`stateTransitionGraph.cc; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libhigher_a-stateTransitionGraph.Tpo" "$(DEPDIR)/libhigher_a-stateTransitionGraph.Po"; else rm -f "$(DEPDIR)/libhigher_a-stateTransitionGraph.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='stateTransitionGraph.cc' object='libhigher_a-stateTransitionGraph.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libhigher_a-stateTransitionGraph.o `test -f 'stateTransitionGraph.cc' || echo '$(srcdir)/'`stateTransitionGraph.cc
+
+libhigher_a-stateTransitionGraph.obj: stateTransitionGraph.cc
+@am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libhigher_a-stateTransitionGraph.obj -MD -MP -MF "$(DEPDIR)/libhigher_a-stateTransitionGraph.Tpo" -c -o libhigher_a-stateTransitionGraph.obj `if test -f 'stateTransitionGraph.cc'; then $(CYGPATH_W) 'stateTransitionGraph.cc'; else $(CYGPATH_W) '$(srcdir)/stateTransitionGraph.cc'; fi`; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libhigher_a-stateTransitionGraph.Tpo" "$(DEPDIR)/libhigher_a-stateTransitionGraph.Po"; else rm -f "$(DEPDIR)/libhigher_a-stateTransitionGraph.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='stateTransitionGraph.cc' object='libhigher_a-stateTransitionGraph.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libhigher_a-stateTransitionGraph.obj `if test -f 'stateTransitionGraph.cc'; then $(CYGPATH_W) 'stateTransitionGraph.cc'; else $(CYGPATH_W) '$(srcdir)/stateTransitionGraph.cc'; fi`
 
 libhigher_a-rewriteConditionFragment.o: rewriteConditionFragment.cc
 @am__fastdepCXX_TRUE@	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libhigher_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libhigher_a-rewriteConditionFragment.o -MD -MP -MF "$(DEPDIR)/libhigher_a-rewriteConditionFragment.Tpo" -c -o libhigher_a-rewriteConditionFragment.o `test -f 'rewriteConditionFragment.cc' || echo '$(srcdir)/'`rewriteConditionFragment.cc; \

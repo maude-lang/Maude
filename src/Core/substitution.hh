@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -47,27 +47,20 @@ public:
   Substitution(int size, int cSize);  // rewriting contexts
   static void notify(int size);
 
-  void clear(int size);
+  void clear(long size);
   void finished();
   DagNode* value(int index) const;
   void bind(int index, DagNode* value);
   void copy(const Substitution& original);
   void clone(const Substitution& original);
   LocalBinding* operator-(const Substitution& original) const;
-
   int nrFragileBindings() const;
-  //
-  //	These operations are used by unification.
-  //
-  //LocalBinding* makeLocalBinding() const;
-  //bool merge(int index, DagNode* rhs, Subproblem*& returnedSubproblem);
-  //bool merge(const Substitution& other, SubproblemAccumulator& subproblems);
 
 protected:
   int addNewVariable();
 
 private:
-  Vector<DagNode*> values;
+  Vector<DagNode*> values;  // only allow even sizes
   int copySize;
 };
 
@@ -89,12 +82,20 @@ Substitution::Substitution(int size, int cSize) : values(size)
   copySize = cSize;
 }
 
+
 inline void
-Substitution::clear(int size)
+Substitution::clear(long size)
 {
+  //
+  //	Take a long argument to avoid the need for an explicit extension instruction on x86-64.
+  //
   Assert(size >= 0, "-ve size");
   Assert(size <= values.length(), "size > length");
   Assert(values.length() != 0, "clearing of zero length substitutions is not supported");
+  //
+  //	Save size early so we don't tie up a register.
+  //
+  copySize = size;
   //
   //	We alway clear at least 1 value in order to get a faster loop
   //	since the case size = 0 occurs very infrequently, and clearing
@@ -103,16 +104,17 @@ Substitution::clear(int size)
   Vector<DagNode*>::iterator i = values.begin();
   Vector<DagNode*>::iterator e = i + size;
   do
-    *i = 0;
+    {
+      *i = 0;
+    }
   while (++i < e);  // i > e possible if size = 0
-  copySize = size;
 }
 
 inline DagNode*
 Substitution::value(int index) const
 {
   Assert(index >= 0, "-ve index " << index);
-  Assert(index < values.size(), "index too big " << index << " vs " << values.size());
+  Assert(index < static_cast<int>(values.size()), "index too big " << index << " vs " << values.size());
   return values[index];
 }
 
@@ -120,7 +122,7 @@ inline void
 Substitution::bind(int index, DagNode* value)
 {
   Assert(index >= 0, "-ve index " << index);
-  Assert(index < values.size(), "index too big " << index << " vs " << values.size());
+  Assert(index < static_cast<int>(values.size()), "index too big " << index << " vs " << values.size());
   values[index] = value;
 }
 
@@ -201,7 +203,6 @@ Substitution::addNewVariable()
   //
   if (copySize > values.length())
     values.expandTo(copySize);
-  values.resize(copySize);
   values[index] = 0;
   return index;
 }

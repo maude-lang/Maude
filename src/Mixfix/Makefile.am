@@ -50,6 +50,7 @@ libmixfix_a_SOURCES = \
 	global.cc \
 	userLevelRewritingContext.cc \
 	preModule.cc \
+	syntacticPreModule.cc \
 	symbolType.cc \
 	xmlBuffer.cc \
 	maudemlBuffer.cc \
@@ -101,7 +102,6 @@ EXTRA_DIST = \
 	renameModule.cc \
 	parameterization.cc \
 	lexerAux.cc \
-	import.cc \
 	process.cc \
 	fixUp.cc \
 	ops.cc \
@@ -159,6 +159,7 @@ noinst_HEADERS = \
 	moduleDatabase.hh \
 	viewDatabase.hh \
 	preModule.hh \
+	syntacticPreModule.hh \
 	profileModule.hh \
 	quotedIdentifierDagNode.hh \
 	quotedIdentifierOpSymbol.hh \

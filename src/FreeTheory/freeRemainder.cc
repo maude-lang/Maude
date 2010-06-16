@@ -73,18 +73,18 @@ FreeRemainder::FreeRemainder(Equation* eqn,
 			     const Vector<int>& bestSequence,
 			     const Vector<LhsAutomaton*>& subAutomata,
 			     const Vector<int>& slotTranslation)
-  : freeVariables(freeVars.length()),
-    boundVariables(boundVars.length()),
-    groundAliens(gndAliens.length()),
-    nonGroundAliens(nonGndAliens.length())
+  : foreign(false),
+    freeVariables(freeVars.size()),
+    equation(eqn),
+    boundVariables(boundVars.size()),
+    groundAliens(gndAliens.size()),
+    nonGroundAliens(nonGndAliens.size())
 {
   //
-  //	Preliminary deternimation of whether remainder will qualify
+  //	Preliminary determination of whether remainder will qualify
   //	for "fast" runtime treatment
   //
   fast = !(eqn->hasCondition());
-  foreign = false;
-  equation = eqn;
   {
     //
     //  Variables that will be unbound.
@@ -102,7 +102,7 @@ FreeRemainder::FreeRemainder(Equation* eqn,
         freeVariables[i].varIndex = v->getIndex();
 	Sort* sort = v->getSort();
 	if (fast > 0 && !(sort->errorFreeMaximal()))
-	  fast = - fast;
+	  fast = - fast;  // need to check sort
         freeVariables[i].sort = sort;
       }
   }
@@ -145,7 +145,7 @@ FreeRemainder::FreeRemainder(Equation* eqn,
         boundVariables[i].position = slotTranslation[parent->getSlotIndex()];
         boundVariables[i].argIndex = oc.argIndex();
         boundVariables[i].varIndex = v->getIndex();
-	fast = false;
+	fast = false;  // need slow handling if there are nonlinear variables
       }
   }
   {
@@ -162,7 +162,7 @@ FreeRemainder::FreeRemainder(Equation* eqn,
         groundAliens[i].position = slotTranslation[parent->getSlotIndex()];
         groundAliens[i].argIndex = oc.argIndex();
         groundAliens[i].alien = oc.term();
-	fast = false;
+	fast = false;  // need slow handling if there are alien subterms
       }
   }
   {
@@ -179,16 +179,16 @@ FreeRemainder::FreeRemainder(Equation* eqn,
         nonGroundAliens[i].position = slotTranslation[parent->getSlotIndex()];
         nonGroundAliens[i].argIndex = oc.argIndex();
         nonGroundAliens[i].automaton = subAutomata[i];
-	fast = false;
+	fast = false;  // need slow handling if there are alien subterms
       }
   }
 }
 
 FreeRemainder::FreeRemainder(Equation* eqn)
+ : foreign(true),
+   equation(eqn)
 {
   fast = false;
-  foreign = true;
-  equation = eqn;
 }
 
 FreeRemainder::~FreeRemainder()
@@ -203,7 +203,7 @@ FreeRemainder::slowMatchReplace2(DagNode* subject,
 				 RewritingContext& context,
 				 Vector<DagNode**>& stack) const
 {
-  Subproblem* subproblem = 0;
+  Subproblem* subproblem = 0;  // need to zero subproblem here since later code may not initialize it
   if (foreign)
     {
       if(!(equation->getLhsAutomaton()->match(subject,  context, subproblem)))
@@ -216,8 +216,7 @@ FreeRemainder::slowMatchReplace2(DagNode* subject,
     }
   else
     {
-      Vector<DagNode**>::const_iterator stackBase =
-	const_cast<const Vector<DagNode**>&>(stack).begin();
+      Vector<DagNode**>::const_iterator stackBase = stack.begin();
       //
       //	Bind free variables
       //
@@ -300,9 +299,10 @@ FreeRemainder::slowMatchReplace2(DagNode* subject,
       //	the stack; but the stack must be preserved to allow us to handle
       //	the next remainder if the condition fails or rewriting is aborted.
       //
-      Vector<DagNode**> savedStack(stack);
+      Vector<DagNode**> savedStack(stack.size());
+      savedStack.swap(stack);  // save by swapping is safe since we no longer keep pointer to stack elements
       bool r = equation->checkCondition(subject, context, subproblem);
-      stack = savedStack;	// cannot swap because FreeNet may have pointers into stack
+      savedStack.swap(stack);
       if (!r)
 	{
 	  delete subproblem;

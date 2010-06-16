@@ -60,40 +60,52 @@ public:
   iterator end() const;
 
   void insert(value_type i);
-  void insert(const NatSet& other);
+  void insert(const NatSet& other);  // i.e. union
   void subtract(value_type i);
   void subtract(const NatSet& other);
   void intersect(const NatSet& other);
   NatSet& operator=(const NatSet& original);
-  bool contains(value_type i) const;
-  bool contains(const NatSet& other) const;
+  FastBool contains(value_type i) const;  // constant time
+  bool contains(const NatSet& other) const;  // i.e. improper subset test
   bool disjoint(const NatSet& other) const;
   bool operator==(const NatSet& other) const;
   bool operator!=(const NatSet& other) const;
-  bool operator<(const NatSet& other) const;
-  value_type max() const;
+  bool operator<(const NatSet& other) const;  // linear ordering; no other properties guaranteed
+  value_type max() const;  // constant time
   value_type min() const;
   void swap(NatSet& other);
-
   //
-  //	Legacy synonyms;
+  //	Legacy synonyms.
   //
   void makeEmpty();
   int cardinality() const;
 
 
 private:
-  typedef unsigned int Word;
+  //
+  //	long gives that natural word size on most machines.
+  //
+  typedef unsigned long Word;
+
+  enum Constants
+    {
+      BITS_PER_WORD = BITS_PER_BYTE * sizeof(Word)
+    };
 
   static int topBit(Word w);
   static int bottomBit(Word w);
   static int countBits(Word w);
+  static unsigned int getShift(value_type i);
+  static Word getMaskSmall(int i);
   static Word getMask(value_type i);
   static int getWordNr(value_type i);
 
   value_type arrayMin(int i) const;
-  bool arrayContains(value_type i) const;
-
+  FastBool arrayContains(value_type i) const;
+  //
+  //	Many sets will fit in a single machine word so we store the first word separately in
+  //	the hope of avoiding the allocation of a Vector.
+  //
   Word firstWord;
   Vector<Word> array;
 
@@ -158,11 +170,11 @@ NatSet::end() const
   return i;
 }
 
-inline bool
+inline FastBool
 NatSet::contains(value_type i) const
 {
   Assert(i >= 0, "-ve argument");
-  return i < WORD_SIZE ? (firstWord & (1 << i)) : arrayContains(i);
+  return i < BITS_PER_WORD ? ((firstWord >> i) & 1) : arrayContains(i);
 }
 
 inline bool
@@ -177,13 +189,13 @@ NatSet::max() const
   value_type len = array.length();
   if (len == 0)
     return (firstWord == 0) ? -1 : topBit(firstWord);
-  return (len << LOG_WORD_SIZE) + topBit(array[len - 1]);
+  return (len * BITS_PER_WORD) + topBit(array[len - 1]);
 }
 
 inline void
 NatSet::swap(NatSet& other)
 {
-  int t = firstWord;
+  Word t = firstWord;
   firstWord = other.firstWord;
   other.firstWord = t;
   array.swap(other.array);
@@ -225,7 +237,7 @@ ostream& operator<<(ostream& s, const NatSet& ns);
 inline void 
 NatSet::makeEmpty() { clear(); }
 
-inline int 
+inline int
 NatSet::cardinality() const { return size(); }
 
 #endif

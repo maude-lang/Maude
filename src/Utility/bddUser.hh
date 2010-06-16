@@ -30,6 +30,8 @@
 class BddUser
 {
 public:
+  typedef void ErrorHandler(int errorNr);
+
   BddUser();
   ~BddUser();
 
@@ -37,6 +39,7 @@ public:
   static bdd nithvar(int i);
   static void setNrVariables(int nrVariables);
   static void dump(ostream& s, bdd root);
+  static void setErrorHandler(ErrorHandler* errHandler);
 
 private:
   enum Constants
@@ -47,8 +50,11 @@ private:
   };
 
   static void gc_handler(int pre, bddGbcStat* stat);
+  static void err_handler(int errcode);
 
   static int nrUsers;
+
+  static ErrorHandler* errorHandler;
 };
 
 inline bdd
@@ -72,6 +78,12 @@ BddUser::setNrVariables(int nrVariables)
 {
   if (nrVariables > bdd_varnum())
     bdd_setvarnum(nrVariables);
+}
+
+inline void
+BddUser::setErrorHandler(ErrorHandler* errHandler)
+{
+  errorHandler = errHandler;
 }
 
 #endif

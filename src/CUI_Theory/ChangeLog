@@ -1,3 +1,32 @@
+2009-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_DagNode.cc (stackArguments): fixed nasty bug where we were
+	checking the first argument unstackable flag when deciding whether
+	we should stack the second argument
+
+2009-12-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_Symbol.hh (class CUI_Symbol): added decl for makeCanonical()
+
+	* CUI_Symbol.cc (makeCanonical): added
+
+===================================Maude92b===========================================
+
+2009-07-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_Matcher.cc (freeMatch): fix critical bug where pointer to
+	subproblem returned via sp0 was being lost without the subproblem
+	being deleted if the second Subpattern::match() called failed
+	(id0CollapseMatch, id1CollapseMatch, idemCollapseMatch): fix
+	symmetric bugs
+
+2008-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* CUI_Symbol.cc (computeGeneralizedSort): new getSortFunction()
+	convention
+
+===================================Maude92===========================================
+
 2008-03-23  Steven Eker  <eker@goo.csl.sri.com>
 
 	* CUI_DagNode.cc (computeSolvedForm2): deleted commented out old

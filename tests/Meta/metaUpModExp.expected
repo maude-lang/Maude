@@ -1,7 +1,7 @@
 Maude> ==========================================
 reduce in META-LEVEL : upImports('META-LEVEL) .
 rewrites: 1
-result Import: protecting 'META-MODULE .
+result Import: protecting 'META-VIEW .
 ==========================================
 reduce in META-LEVEL : upImports('BAR) .
 rewrites: 1

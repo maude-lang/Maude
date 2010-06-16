@@ -49,7 +49,7 @@ protected:
 
 private:
   //
-  //	Symbols need for LTL formulae.
+  //	Symbols needed for LTL formulae.
   //
   Symbol* trueSymbol;
   Symbol* falseSymbol;

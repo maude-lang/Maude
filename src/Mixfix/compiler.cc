@@ -49,7 +49,7 @@
 
 //	front end class definitions
 #include "visibleModule.hh"
-#include "preModule.hh"
+#include "syntacticPreModule.hh"
 #include "compiler.hh"
 
 Compiler::Compiler()
@@ -81,7 +81,7 @@ Compiler::makeBaseName()
 }
 
 bool
-Compiler::fullCompile(PreModule* module, bool countRewrites)
+Compiler::fullCompile(SyntacticPreModule* module, bool countRewrites)
 {
   IssueAdvisory("compiling module " << QUOTE(module) << '.');
   string hhName(makeBaseName() + ".hh");
@@ -198,7 +198,7 @@ Compiler::fullCompile(PreModule* module, bool countRewrites)
 }
 
 bool
-Compiler::makeExecutable(PreModule* module, bool countRewrites)
+Compiler::makeExecutable(SyntacticPreModule* module, bool countRewrites)
 {
   int nrSymbols = module->getFlatModule()->getSymbols().length();
   if (currentExecutable == module &&
@@ -292,7 +292,7 @@ Compiler::runExecutable()
 }
 
 void
-Compiler::invalidate(PreModule* module)
+Compiler::invalidate(SyntacticPreModule* module)
 {
   if (currentExecutable == module)
     {

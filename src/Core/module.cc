@@ -56,6 +56,7 @@ Module::Module(int id)
 
 Module::~Module()
 {
+  DebugAdvisory("destructing module " << this);
   delete sortBdds;
   //
   //	This is delicate; first we lose any root pointers to

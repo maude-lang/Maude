@@ -40,6 +40,10 @@ public:
   void stackArguments(DagNode* subject,
 		      Vector<RedexPosition>& stack,
 		      int parentIndex);
+  //
+  //	Hash cons stuff.
+  //
+  DagNode* makeCanonical(DagNode* original, HashConsSet* /* hcs */);
 };
 
 #endif

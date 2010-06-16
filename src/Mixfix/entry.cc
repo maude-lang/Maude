@@ -325,7 +325,7 @@ MixfixModule::addOpDeclaration(Token prefixName,
       if (nrArgs != nrUnderscores)
 	{
 	  IssueWarning(*symbol <<
-		       ": number of underscores does not match " <<
+		       ": number of underscores (" << nrUnderscores << ") does not match " <<
 		       "number of arguments (" << nrArgs << ") for operator " <<
 		       QUOTE(symbol) << '.');
 	  si.mixfixSyntax.contractTo(0);
@@ -503,7 +503,7 @@ MixfixModule::newFancySymbol(Token prefixName,
     case SymbolType::QUOTED_IDENTIFIER_OP:
       return new QuotedIdentifierOpSymbol(name, nrArgs);
     case SymbolType::META_LEVEL_OP_SYMBOL:
-      return new MetaLevelOpSymbol(name, nrArgs);
+      return new MetaLevelOpSymbol(name, nrArgs, strategy);
     case SymbolType::MODEL_CHECKER_SYMBOL:
       return new ModelCheckerSymbol(name);
     case SymbolType::SAT_SOLVER_SYMBOL:
@@ -550,6 +550,8 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new CounterSymbol(name);
     case SymbolType::SOCKET_MANAGER_SYMBOL:
       return new SocketManagerSymbol(name);
+    case SymbolType::INTERPRETER_MANAGER_SYMBOL:
+      return new InterpreterManagerSymbol(name);
     }
 
   int lineNr = prefixName.lineNumber();
@@ -749,8 +751,8 @@ MixfixModule::addPolymorph(Token prefixName,
       if (domainAndRange.length() - 1 != nrUnderscores)
 	{
 	  IssueWarning(LineNumber(prefixName.lineNumber()) <<
-		       ": number of underscores does not match " <<
-		       "number of arguments (" << domainAndRange.length() - 1 <<
+		       ": number of underscores does not match (" << nrUnderscores <<
+		       ") number of arguments (" << domainAndRange.length() - 1 <<
 		       ") for operator " <<
 		       QUOTE(prefixName) << '.');
 	  p.symbolInfo.mixfixSyntax.contractTo(0);

@@ -133,8 +133,8 @@ private:
   //	Functions for ACU specific operations.
   //
   int findFirstPotentialMatch(Term* key, const Substitution& partial) const;
-  bool binarySearch(DagNode* key, int& pos) const;
-  bool binarySearch(Term* key, int& pos) const;
+  int binarySearch(DagNode* key) const;
+  int binarySearch(Term* key) const;
   bool eliminateSubject(DagNode* target,
 			int multiplicity,
 			Vector<int>& subjectMultiplicity);

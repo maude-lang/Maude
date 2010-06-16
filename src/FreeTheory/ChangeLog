@@ -1,3 +1,268 @@
+2010-04-16  Steven Eker  <eker@rho>
+
+	* freeLhsCompiler.cc
+	(FreeTerm::findConstraintPropagationSequence): remove const (both
+	versions)
+
+	* freeTerm.hh (class FreeTerm): make both versions of
+	findConstraintPropagationSequence() static
+
+	* freeLhsCompiler.cc
+	(FreeTerm::findConstraintPropagationSequence): rewritten to save
+	results of first pass, and avoid searching once we detect we can
+	propagate any more bound uniquely variables
+
+2010-04-15  Steven Eker  <eker@rho>
+
+	* freeTerm.hh (class FreeTerm): added decl for
+	remainingAliensContain()
+
+	* freeLhsCompiler.cc
+	(FreeTerm::findConstraintPropagationSequence): rewritten to reduce
+	likelihood of exponential blow up
+	(FreeTerm::remainingAliensContain): added
+	(FreeTerm::findConstraintPropagationSequence): simplified using
+	remainingAliensContain()
+
+===================================Maude93a===========================================
+
+2010-03-18  Steven Eker  <eker@rho>
+
+	* freeRemainder.cc (FreeRemainder::FreeRemainder): don't set
+	nrFreeVariables
+
+	* freeRemainder.hh (FreeRemainder::fastMatchReplace): retrench to
+	original version
+	(FreeRemainder::fastMatchReplace): code cleaning
+	(class FreeRemainder): delete data member nrFreeVariables
+
+	* freeRemainder.cc (FreeRemainder::slowMatchReplace2): code cleaning
+
+2010-03-12  Steven Eker  <eker@rho>
+
+	* freeTerm.cc (FreeTerm::compileRhs3): clean up code
+
+2010-03-11  Steven Eker  <eker@rho>
+
+	* freeRhsAutomaton.cc (FreeRhsAutomaton::fillOutArgs): tried
+	turning loop into a count down to 0 loop
+	(FreeRhsAutomaton::construct, FreeRhsAutomaton::replace): use
+	count down to 0 loops; eliminate temporary
+	(FreeRhsAutomaton::construct, FreeRhsAutomaton::replace): code cleaning
+
+2010-03-10  Steven Eker  <eker@rho>
+
+	* freeRemainder.hh (FreeRemainder::fastMatchReplace): rewritten
+	after looking at asm output
+
+	* freeRemainder.cc (FreeRemainder::FreeRemainder): don't store
+	nrFreeVariables until we have processed pseudo variables which
+	might change the value
+
+	* freeNet.cc (FreeNet::buildRemainders): fix critical bug where we
+	were resize rems twice
+
+	* freeRemainder.cc (FreeRemainder::FreeRemainder): init foreign,
+	nrFreeVariables, equation
+
+	* freeRemainder.hh (class FreeRemainder): added data member
+	nrFreeVariables; made foreign const
+
+	* freeLhsStructs.hh (class FreeLhsStructs): made position and
+	argIndex short in all structs
+
+===================================Maude93===========================================
+
+2010-03-05  Steven Eker  <eker@rho>
+
+	* freeNet.cc (FreeNet::buildRemainders): try not zero terminating
+
+	* freeTerm.cc (FreeTerm::compareArguments): (DagNode* version) use
+	iterator to access Term args
+	(FreeTerm::compareArguments): fix bug in optimized version
+	(FreeTerm::compareArguments): try early loop termination
+	optimization
+	(FreeTerm::compareArguments): revert early loop termination
+	(FreeTerm::compareArguments): try getting nrArgs from
+	other->symbol()
+	(FreeTerm::compareArguments): do early loop termination properly
+	this time
+	(FreeTerm::compareArguments): use nrArgs to count down - saves a
+	register copy
+
+	* freeDagNode.cc (FreeDagNode::compareArguments): load symbol
+	into temporary; check symbols for equality before doing a symbol
+	comparison
+
+2010-03-04  Steven Eker  <eker@rho>
+
+	* freeDagNode.cc (FreeDagNode::compareArguments): rewrite using
+	tail recursion
+	(FreeDagNode::compareArguments): fix bug where we were comparing
+	the wrong nodes for equality (they were never equal so we failed
+	safe)
+	(FreeDagNode::compareArguments): fix bug where we were checking
+	the symbols of the wrong nodes
+
+	* freeRhsAutomaton.cc (FreeRhsAutomaton::fillOutArgs): delete
+	nrArgs arg
+	(FreeRhsAutomaton::replace): simplify
+	(FreeRhsAutomaton::construct): simplify
+
+2010-03-02  Steven Eker  <eker@rho>
+
+	* freeNetExec.cc (FreeNet::applyReplaceNoOwise2): fix bug where we
+	were checking p for equality rather than < 0 as it should be
+	de-pointerized code; make i long; load n->slot into long before
+	testing to get free sign extension
+	(FreeNet::applyReplace2): make i long; load n->slot into long
+	before testing to get free sign extension
+
+2010-02-26  Steven Eker  <eker@rho>
+
+	* freeNet.cc (FreeNet::addRemainderList): remove "too cute"
+	calculation of 1's complement in favor of explicit code since is
+	non-time critical
+
+2010-02-10  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNetExec.cc (applyReplace2, applyReplaceFast2) 
+	(applyReplaceNoOwise2): made p long to avoid extension on 64 bit
+	machines
+	(applyReplace2): use ~i
+	(applyReplaceNoOwise2): use ~i
+	(applyReplaceFast2): use ~i
+	(applyReplace2, applyReplaceFast2, applyReplaceNoOwise2): pull
+	common i = ~i to end of loop - compiler already does this
+	opimization but it makes the code eaiser to read
+
+	* freeNet.hh (class FreeNet): reorganized struct TestNode to avoid
+	32bit->64bit extension for position on 64bit machines, and to put
+	field in likely order of use for cache friendliness
+
+2010-02-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNet.hh (class FreeNet): rework TestNode to avoid pointers
+	into stack data structure
+
+	* freeNetExec.cc (applyReplaceNoOwise2): fix missing symbolIndex
+	update bug
+	(applyReplace2, applyReplaceFast2, applyReplaceNoOwise2):
+	depointerize stack acccess and use stackBase instead
+
+	* freeNet.cc (translateSlots): removed pointerization
+
+	* freeNet.hh (class FreeNet): fix longstanding TestNode
+	optimization bug on 64-bit machines
+
+	* freeNetExec.cc (applyReplaceFast2, applyReplace2) 
+	(applyReplaceNoOwise2): use diff < 0 rather than getSignBit(diff)
+	to let g++ do the logical shift trick
+
+2010-01-28  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTernarySymbol.hh (class FreeTernarySymbol): added
+	NO_COPYING() in the hope of cutting down the amount of ctor code
+	gcc generates in the assembler file
+
+2010-01-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTernarySymbol.cc (eqRewrite): use applyReplaceFast()
+
+	* freeBinarySymbol.cc (eqRewrite): use applyReplaceFast()
+
+	* freeUnarySymbol.cc (eqRewrite): use applyReplaceFast()
+
+	* freeNet.hh (applyReplaceFast): added
+	(class FreeNet): added decls for applyReplaceFast(),
+	applyReplaceFast2()
+
+	* freeNetExec.cc (applyReplaceFast2): added
+
+2010-01-07  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeNetExec.cc: rewritten using symbolIndex optimization
+
+	* freeNet.cc: rewritten to store symbolIndex rather than symbol
+	within TestNodes; added comments
+
+	* freeNet.hh (class FreeNet): replaced symbol field with
+	symbolIndex field in struct TestNode
+
+===================================Maude92c===========================================
+
+2009-12-01  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (normalize): revert hash function
+
+	* freeDagNode.cc (getHashValue): revert hash function
+
+2009-11-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.cc (normalize): modify hash function
+
+	* freeDagNode.cc (getHashValue): modify hash function
+
+2009-11-24  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (makeCanonical): added
+
+	* freeSymbol.hh (class FreeSymbol): added decl for makeCanonical()
+
+===================================Maude92b===========================================
+
+2009-11-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeTerm.hh (class FreeTerm): made both
+	findConstraintPropagationSequence() const
+
+	* freeLhsCompiler.cc (findConstraintPropagationSequence): made
+	const (both versions)
+
+	* freeTerm.hh (class FreeTerm): deleted decl for
+	insertGroundOutAliens(); made both
+	findConstraintPropagationSequence() decls non-static
+	(class FreeTerm): currentSequence no longer const in
+	findConstraintPropagationSequence() decl
+
+	* freeLhsCompiler.cc (analyseConstraintPropagation): code cleaning
+	(compileRemainder): code cleaning
+	(findConstraintPropagationSequence): (top level version) don't
+	call insertGroundOutAliens()
+	(findConstraintPropagationSequence): (lower level version)
+	rewritten to do insertGroundOutAliens() stuff internally; avoid
+	making copies of currentSequence where possible
+	(insertGroundOutAliens): deleted
+	(scanFreeSkeleton): code cleaing
+
+2009-11-04  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeLhsCompiler.cc (findConstraintPropagationSequence): added
+	early terminate once we find a branch that binds uniquely all
+	variables occuring below us.
+
+2009-11-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeLhsCompiler.cc (analyseConstraintPropagation): added
+	DebugAdvisory() to investigate performance problem
+
+2009-09-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (computeGeneralizedSort): fix nasty bug that we
+	were getting the sort function until after we've generated the
+	argMap we want to compose it with - but the generation of the sort
+	function may increase the number of bdd variables, and we need
+	those to make the argMap
+
+===================================Maude92a===========================================
+
+2008-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* freeSymbol.cc (computeGeneralizedSort): new getSortFunction()
+	convention
+
+===================================Maude92===========================================
+
 2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
 
 	* freeDagNode.cc (computeBaseSortForGroundSubterms): added default

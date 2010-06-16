@@ -74,10 +74,10 @@ private:
   //	is the unique maximal user sort in its component which must be error-free.
   //	
   //
-  int fast;	// > 0 super-fast; < 0 fast; = 0 slow
-  bool foreign;
-  Equation* equation;
+  Byte fast;  // > 0 super-fast; < 0 fast; = 0 slow
+  const bool foreign;  // remainder consists of a foreign equation that might collapse into free theory
   Vector<FreeVariable> freeVariables;
+  Equation* const equation;  // equation we are a remainder of
   Vector<BoundVariable> boundVariables;
   Vector<GroundAlien> groundAliens;
   Vector<NonGroundAlien> nonGroundAliens;
@@ -92,10 +92,8 @@ FreeRemainder::fastMatchReplace(DagNode* subject,
     {
       if (fast > 0)
 	{
-	  Vector<DagNode**>::const_iterator stackBase =
-	    const_cast<const Vector<DagNode**>&>(stack).begin();
-	  Vector<FreeVariable>::const_iterator e = freeVariables.end();
-	  for (Vector<FreeVariable>::const_iterator i = freeVariables.begin(); i != e; ++i)
+	  Vector<DagNode**>::const_iterator stackBase = stack.begin();
+	  FOR_EACH_CONST(i, Vector<FreeVariable>, freeVariables)
 	    {
 	      DagNode* d = stackBase[i->position][i->argIndex];
 	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
@@ -104,10 +102,8 @@ FreeRemainder::fastMatchReplace(DagNode* subject,
 	}
       else if (fast < 0)
 	{
-	  Vector<DagNode**>::const_iterator stackBase =
-	    const_cast<const Vector<DagNode**>&>(stack).begin();
-	  Vector<FreeVariable>::const_iterator e = freeVariables.end();
-	  for (Vector<FreeVariable>::const_iterator i = freeVariables.begin(); i != e; ++i)
+	  Vector<DagNode**>::const_iterator stackBase = stack.begin();
+	  FOR_EACH_CONST(i, Vector<FreeVariable>, freeVariables)
 	    {
 	      DagNode* d = stackBase[i->position][i->argIndex];
 	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");

@@ -48,6 +48,7 @@
 #include "rewritingContext.hh"
 #include "equation.hh"
 #include "sortBdds.hh"
+#include "hashConsSet.hh"
 
 //	full compiler class definitions
 #include "compilationContext.hh"
@@ -319,8 +320,16 @@ FreeSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
 				   DagNode* subject,
 				   Vector<Bdd>& generalizedSort)
 {
+  DebugAdvisory("computeGeneralizedSort() called on symbol " << this << " for dag " << subject);
   int nrArgs = arity();
   Assert(nrArgs > 0, "we shouldn't be called on constants: " << subject);
+  //
+  //	We need to do this early since it may increase the number of bdd variables and we
+  //	will need those variables for our argMap.
+  //
+  DebugAdvisory("getting sort function for " << this << " " << subject);
+  const Vector<Bdd>& sortFunction = sortBdds.getSortFunction(this);
+
   DagNode** args = safeCast(FreeDagNode*, subject)->argArray();
   int varCounter = 0;
   bddPair* argMap = bdd_newpair();
@@ -332,12 +341,46 @@ FreeSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
       for (int j = 0; j < nrBdds; ++j, ++varCounter)
 	bdd_setbddpair(argMap, varCounter, argGenSort[j]);
     }
-  const Vector<Bdd>& sortFunction = sortBdds.getSortFunction(getIndexWithinModule());
   int nrBdds = sortFunction.size();
   generalizedSort.resize(nrBdds);
   for (int i = 0; i < nrBdds; ++i)
     generalizedSort[i] = bdd_veccompose(sortFunction[i], argMap);
   bdd_freepair(argMap);
+}
+
+//
+//	Hash cons code.
+//
+
+DagNode*
+FreeSymbol::makeCanonical(DagNode* original, HashConsSet* hcs)
+{
+  int nrArgs = arity();
+  DagNode** p = safeCast(FreeDagNode*, original)->argArray();
+  for (int i = 0; i < nrArgs; i++)
+    {
+      DagNode* d = p[i];
+      DagNode* c = hcs->getCanonical(hcs->insert(d));
+      if (c != d)
+        {
+	  //
+	  //	Detected a non-canonical argument so need to make a new node.
+	  //
+	  FreeDagNode* n = new FreeDagNode(this);
+	  n->copySetRewritingFlags(original);
+	  n->setSortIndex(original->getSortIndex());
+	  DagNode** q = n->argArray();
+	  for (int j = 0; j < i; ++j, ++p, ++q)
+            *q = *p;
+	  *q = c;
+	  ++p;
+	  ++q;
+	  for (int j = i + 1; j < nrArgs;  ++j, ++p, ++q)
+	    *q = hcs->getCanonical(hcs->insert(*p));
+	  return n;
+        }
+    }
+  return original;  // can use the original dag node as the canonical version
 }
 
 #ifdef COMPILER

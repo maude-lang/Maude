@@ -27,9 +27,15 @@
 #define _rewriteSequenceSearch_hh_
 #include "sequenceSearch.hh"
 #include "stateTransitionGraph3.hh"
+#include "stateTransitionGraph.hh"
 #include "matchSearchState.hh"
 
-class RewriteSequenceSearch : public SequenceSearch, public StateTransitionGraph3
+class RewriteSequenceSearch : public SequenceSearch,
+#if 0
+  public StateTransitionGraph3
+#else
+  public StateTransitionGraph
+#endif
 {
   NO_COPYING(RewriteSequenceSearch);
 

@@ -91,6 +91,10 @@ public:
 				      int multiplicity,
 				      int& delta);
 
+  //
+  //	Experimental hash cons code.
+  //
+  ACU_RedBlackNode* canonicalRebuild(HashConsSet* hcs);
 
   void dump(ostream& s, int indent);
 
@@ -247,7 +251,6 @@ ACU_RedBlackNode::ACU_RedBlackNode(DagNode* dagNode,
 	     max((left == 0) ? 0 : left->maxMult,
 		 (right == 0) ? 0 : right->maxMult)),
 	  "bad maxMult");
-  getMemoryCell()->setByte(maxMult);
   children[LEFT_INDEX] = left;
   children[RIGHT_INDEX] = right;
 }
@@ -279,7 +282,7 @@ ACU_RedBlackNode::getRight() const
 inline ACU_RedBlackNode*
 ACU_RedBlackNode::getChild(int sign) const
 {
-  return children[getSignBit(sign)];
+  return children[sign < 0];
 }
 
 inline void

@@ -53,6 +53,7 @@ public:
   virtual void closeSignature();
   virtual void closeFixUps();
   virtual void closeTheory();
+  Environment* getEnvironment();
   Status getStatus() const;
   const Vector<Sort*>& getSorts() const;
   const Vector<Symbol*>& getSymbols() const;
@@ -88,6 +89,7 @@ private:
   void indexEquations();
   void indexRules();
 
+  Environment* environment;  // pointer to some object in which module exists
   Status status;
   Vector<Sort*> sorts;
   Vector<ConnectedComponent*> connectedComponents;
@@ -98,6 +100,12 @@ private:
   SortBdds* sortBdds;
   int minimumSubstitutionSize;
 };
+
+inline Environment*
+Module::getEnvironment()
+{
+  return environment;
+}
 
 inline Module::Status
 Module::getStatus() const

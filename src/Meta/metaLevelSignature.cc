@@ -182,6 +182,24 @@
      MACRO(modSymbol, FreeSymbol, 0, 8)
      MACRO(thSymbol, FreeSymbol, 0, 8)
      //
+     //	Sort mapping constructors.
+     //
+     MACRO(sortMappingSymbol, FreeSymbol, 0, 2)
+     MACRO(emptySortMappingSetSymbol, Symbol, 0, 0)
+     MACRO(sortMappingSetSymbol, Symbol, SymbolType::ASSOC | SymbolType::COMM, 2)
+     //
+     //	Op mapping constructors.
+     //
+     MACRO(opMappingSymbol, FreeSymbol, 0, 2)
+     MACRO(opSpecificMappingSymbol, FreeSymbol, 0, 4)
+     MACRO(opTermMappingSymbol, FreeSymbol, 0, 2)
+     MACRO(emptyOpMappingSetSymbol, Symbol, 0, 0)
+     MACRO(opMappingSetSymbol, Symbol, SymbolType::ASSOC | SymbolType::COMM, 2)
+     //
+     //	View constructor.
+     //
+     MACRO(viewSymbol, FreeSymbol, 0, 5)
+     //
      //	META-LEVEL stuff:
      //
      //

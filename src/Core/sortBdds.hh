@@ -40,7 +40,7 @@ public:
   int getNrVariables(int componentIndex) const;
   Bdd getGtRelation(int componentIndex) const;
   Bdd getLeqRelation(int sortIndex) const;
-  const Vector<Bdd>& getSortFunction(int symbolIndex) const;
+  const Vector<Bdd>& getSortFunction(Symbol* symbol) const;
 
   void makeIndexVector(int nrBdds, int index, Vector<Bdd>& vec) const;
   Bdd makeIndexBdd(int firstVariable, int nrVariables, int index) const;
@@ -70,7 +70,7 @@ private:
   //	For each symbol, we keep a vector of BDDs to hold its sort function - which
   //	may or may not be filled out.
   //
-  Vector<Vector<Bdd> > sortFunctions;
+  mutable Vector<Vector<Bdd> > sortFunctions;
 };
 
 inline int
@@ -95,12 +95,6 @@ inline Bdd
 SortBdds::getLeqRelation(int sortIndex) const
 {
   return leqRelations[sortIndex];
-}
-
-inline const Vector<Bdd>&
-SortBdds::getSortFunction(int symbolIndex) const
-{
-  return sortFunctions[symbolIndex];
 }
 
 #endif

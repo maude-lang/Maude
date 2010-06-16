@@ -77,7 +77,6 @@ Term::compileRhs(RhsBuilder& rhsBuilder,
 		 TermBag& availableTerms,
 		 bool eagerContext)
 {
-  //cerr << this << endl;
   if (Term* t = availableTerms.findTerm(this, eagerContext))
     {
       //
@@ -88,40 +87,44 @@ Term::compileRhs(RhsBuilder& rhsBuilder,
       if (t->saveIndex == NONE)  // must be lhs term/variable
 	{
 	  if (VariableTerm* vt = dynamic_cast<VariableTerm*>(this))
-	    return vt->getIndex();
-	  t->saveIndex = variableInfo.makeProtectedVariable();
+	    return vt->getIndex();  // lhs varible
+	  t->saveIndex = variableInfo.makeProtectedVariable();  // left->right sharing
 	}
       return t->saveIndex;
     }
-  else
+  if (VariableTerm* vt = dynamic_cast<VariableTerm*>(this))
     {
-      if (VariableTerm* vt = dynamic_cast<VariableTerm*>(this))
+      //
+      //	Variable must be either unbound (because we didn't see it during matching) OR
+      //	we're in eager context and variable was only matched in a lazy context.
+      //
+      int varIndex = vt->getIndex();
+      if (eagerContext)
 	{
 	  //
-	  //	Variable must be either unbound OR we're in eager context
-	  //	and variable only occurs in lazy context.
+	  //	Since we're using an unbound or lazy variable in
+	  //	an eager context we must arrange to copy its binding.
 	  //
-	  int varIndex = vt->getIndex();
-	  if (eagerContext)
-	    {
-	      //
-	      //	Since we're using an unbound or lazy variable in
-	      //	an eager context we must arrange to copy its binding.
-	      //
-	      // DebugAdvisory("made CopyRhsAutomaton for " << this);
-	      int index = variableInfo.makeConstructionIndex();
-	      rhsBuilder.addRhsAutomaton(new CopyRhsAutomaton(varIndex, index));
-	      saveIndex = index;
-	      availableTerms.insertBuiltTerm(this, true);
-	      return index;  
-	    }
-	  return varIndex;  // unbound variable in lazy context
+	  DebugAdvisory("made CopyRhsAutomaton for " << this);
+	  int index = variableInfo.makeConstructionIndex();
+	  rhsBuilder.addRhsAutomaton(new CopyRhsAutomaton(varIndex, index));
+	  saveIndex = index;
+	  availableTerms.insertBuiltTerm(this, true);
+	  return index;  
 	}
-      int index = compileRhs2(rhsBuilder, variableInfo, availableTerms, eagerContext);
-      saveIndex = index;
-      availableTerms.insertBuiltTerm(this, eagerContext);
-      return index;
+      return varIndex;  // unbound variable in lazy context
     }
+  //
+  //	Previously unseen non-variable term - let its theory compile it.
+  //
+  int index = compileRhs2(rhsBuilder, variableInfo, availableTerms, eagerContext);
+  //
+  //	Save the term and the index it was placed at so we can share its
+  //	instantiation if we encounter an equal term later on.
+  //
+  saveIndex = index;
+  availableTerms.insertBuiltTerm(this, eagerContext);
+  return index;
 }
 
 void

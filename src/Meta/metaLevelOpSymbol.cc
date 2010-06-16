@@ -88,7 +88,7 @@
 #include "metaLevel.hh"
 #include "metaLevelOpSymbol.hh"
 #include "fileTable.hh"
-#include "preModule.hh"
+#include "syntacticPreModule.hh"
 #include "interpreter.hh"
 #include "visibleModule.hh"
 #include "global.hh"  // HACK: shouldn't access global variables
@@ -103,8 +103,8 @@
 #include "metaUnify.cc"
 #include "metaNarrow.cc"
 
-MetaLevelOpSymbol::MetaLevelOpSymbol(int id, int nrArgs)
-  : FreeSymbol(id, nrArgs)
+MetaLevelOpSymbol::MetaLevelOpSymbol(int id, int nrArgs, const Vector<int>& strategy)
+  : FreeSymbol(id, nrArgs, strategy)
 {
   shareWith = 0;
   metaLevel = 0;
@@ -152,7 +152,6 @@ MetaLevelOpSymbol::attachSymbol(const char* purpose, Symbol* symbol)
     BIND_SYMBOL(purpose, symbol, shareWith, MetaLevelOpSymbol*);
   return (okToBind() && metaLevel->bind(purpose, symbol)) ? true :
     FreeSymbol::attachSymbol(purpose, symbol);
-    
 }
 
 bool
@@ -257,11 +256,46 @@ bool
 MetaLevelOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
   Assert(this == subject->symbol(), "Bad symbol");
-  if (metaLevel == 0)
-    metaLevel = shareWith->metaLevel;
+  Assert(metaLevel != 0, "metaLevel not set for " << this);
+  //if (metaLevel == 0)
+  //  metaLevel = shareWith->metaLevel;
   FreeDagNode* d = safeCast(FreeDagNode*, subject);
   int nrArgs = arity();
-  for (int i = 0; i < nrArgs; i++)
-    d->getArgument(i)->reduce(context);
+  if (standardStrategy())
+    {
+      for (int i = 0; i < nrArgs; i++)
+	d->getArgument(i)->reduce(context);
+      return (this->*descentFunction)(d, context) || FreeSymbol::eqRewrite(subject, context);
+    }
+  return complexStrategy(subject, context);
+}
+
+bool
+MetaLevelOpSymbol::complexStrategy(DagNode* subject, RewritingContext& context)
+{
+  FreeDagNode* d = safeCast(FreeDagNode*, subject);
+  //
+  //	Execute user supplied strategy.
+  //
+  //	We can't deal with multiple zeros in strategy, both because
+  //	(1) we have no way to apply user equations at an non-final zero; and
+  //	(2) we have no way to replace semi-eager arguments so that they can be evaluated.
+  //
+  const Vector<int>& userStrategy = getStrategy();
+  int stratLen = userStrategy.length();
+  for (int i = 0; i < stratLen - 1; i++)
+    {
+      int a = userStrategy[i];
+      if(a == 0)
+	{
+	  //
+	  //	Zero must be the end of the strategy and is treated as such.
+	  //
+	  IssueWarning("multiple zeros in strategy for MetaLevelOpSymbol " << QUOTE(this) << " not supported.");
+	  break;
+	}
+      else
+	d->getArgument(a - 1)->reduce(context);
+    }
   return (this->*descentFunction)(d, context) || FreeSymbol::eqRewrite(subject, context);
 }

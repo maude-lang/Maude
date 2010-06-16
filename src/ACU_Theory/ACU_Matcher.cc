@@ -67,9 +67,8 @@ ACU_LhsAutomaton::eliminateGroundAliens(ACU_DagNode* subject)
 {
   FOR_EACH_CONST(i, Vector<GroundAlien>, groundAliens)
     {
-      int pos;
-      if (!(subject->binarySearch(i->term , pos)) ||
-	  (currentMultiplicity[pos] -= i->multiplicity) < 0)
+      int pos = subject->binarySearch(i->term);
+      if (pos < 0 || (currentMultiplicity[pos] -= i->multiplicity) < 0)
 	return false;
     }
   return true;
@@ -498,7 +497,7 @@ ACU_LhsAutomaton::fullMatch(ACU_DagNode* subject,
 		      if (tv.takeIdentity)
 			goto cantForce;
 		      //
-		      //	We had more than two subject, but we can't take the identity
+		      //	We had more than two subjects, but we can't take the identity
 		      //	so there is still hope that there is only one left that
 		      //	can be forced.
 		      //

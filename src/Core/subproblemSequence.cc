@@ -63,25 +63,3 @@ SubproblemSequence::solve(bool findFirst, RewritingContext& solution)
     }
   return findFirst;
 }
-
-bool
-SubproblemSequence::unificationSolve(bool findFirst, UnificationContext& solution)
-{
-  int len = sequence.length();
-  int i = findFirst ? 0 : len - 1;
-  for(;;)
-    {
-      findFirst = sequence[i]->unificationSolve(findFirst, solution);
-      if (findFirst)
-	{
-	  if (++i == len)
-	    break;
-	}
-      else
-	{
-	  if (--i < 0)
-	    break;
-	}
-    }
-  return findFirst;
-}

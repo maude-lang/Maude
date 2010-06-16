@@ -45,6 +45,8 @@ PositionState::PositionState(DagNode* top, int flags, int minDepth, int maxDepth
     minDepth(minDepth),
     maxDepth(maxDepth)
 {
+  Assert(!(flags & SET_UNSTACKABLE) || (flags & RESPECT_FROZEN),
+	 "can't set unstackable if not respecting frozen");
   positionQueue.append(RedexPosition(top, UNDEFINED, UNDEFINED));
   depth.append(0);
   extensionInfo = 0;
@@ -79,6 +81,15 @@ PositionState::exploreNextPosition()
 	  for (; finish < newFinish; finish++)
 	    depth[finish] = ourDepth;
 	  break;
+	}
+      else
+	{
+	  //
+	  //	d didn't stack any arguments - check if we should make it
+	  //	unstackable.
+	  //
+	  if ((flags & SET_UNSTACKABLE) && d->isUnrewritable())
+	    d->setUnstackable();
 	}
     }
   return true;

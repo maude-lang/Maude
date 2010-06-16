@@ -239,11 +239,11 @@ rewrites: 1
 result NeKindSet: '`[AttrSet`] ; '`[Bool`] ; '`[Condition`] ; '`[EquationSet`]
     ; '`[FindResult`,NatList`,Bound`] ; '`[HookList`] ; '`[ImportList`] ;
     '`[MatchPair?`] ; '`[MembAxSet`] ; '`[Module`] ; '`[OpDeclSet`] ;
-    '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[QidSet`,QidList`,TypeListSet`,GTermList`,ParameterList`,Type?`,ModuleExpression`,Header`] ;
-    '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
-    '`[ResultTriple?`] ; '`[RuleSet`] ; '`[String`] ; '`[SubsortDeclSet`] ;
-    '`[Substitution?`] ; '`[Trace?`] ; '`[UnificationPair?`] ;
-    '`[UnificationProblem`] ; '`[UnificationTriple?`]
+    '`[OpMappingSet`] ; '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[QidSet`,QidList`,TypeListSet`,GTermList`,ParameterList`,Type?`,ModuleExpression`,Header`] ; '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
+    '`[ResultTriple?`] ; '`[RuleSet`] ; '`[SortMappingSet`] ; '`[String`] ;
+    '`[SubsortDeclSet`] ; '`[Substitution?`] ; '`[Trace?`] ;
+    '`[UnificationPair?`] ; '`[UnificationProblem`] ; '`[UnificationTriple?`] ;
+    '`[View`]
 ==========================================
 reduce in META-LEVEL : maximalSorts(fmod 'FOO is
   protecting 'META-LEVEL .

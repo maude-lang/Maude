@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -427,13 +427,14 @@ DagNode::setTheoryByte(Byte value)
 inline void
 DagNode::reduce(RewritingContext& context)
 {
-  if (!isReduced())
+  while (!isReduced())
     {
-      while (topSymbol->eqRewrite(this, context))
-	;
-      setReduced();
-      //      if (sortIndex == Sort::SORT_UNKNOWN)
-      topSymbol->fastComputeTrueSort(this, context);
+      if (!(topSymbol->eqRewrite(this, context)))
+	{
+	  setReduced();
+	  topSymbol->fastComputeTrueSort(this, context);
+	  break;
+	}
     }
 }
 
@@ -561,13 +562,13 @@ DagNode::leq(const Sort* sort) const
 inline size_t
 DagNode::hash(size_t v1, size_t v2)
 {
-  return 3 * v1 + v2;
+  return (v1 * v1) ^ (v1 >> 16) ^ v2;  // best function to date on empirical measurement
 }
 
 inline size_t
 DagNode::hash(size_t v1, size_t v2, size_t v3)
 {
-  return 3 * v1 + v2 * v3;
+  return (v1 * v1) ^ (v1 >> 16) ^ (v2 * v3);
 }
 
 #endif

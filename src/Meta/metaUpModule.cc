@@ -26,7 +26,7 @@ MetaLevel::upModule(bool flat, PreModule* pm, PointerMap& qidMap)
   static Vector<DagNode*> args;
   args.clear();
 
-  args.append(upHeader(pm, qidMap));
+  args.append(upHeader(flat, pm, qidMap));
   ImportModule* m = pm->getFlatModule();
   args.append(flat ? nilImportListSymbol->makeDagNode() : upImports(pm, qidMap));
   args.append(upSorts(flat, m, qidMap));
@@ -44,10 +44,10 @@ MetaLevel::upModule(bool flat, PreModule* pm, PointerMap& qidMap)
 }
 
 DagNode*
-MetaLevel::upHeader(PreModule* pm, PointerMap& qidMap)
+MetaLevel::upHeader(bool flat, PreModule* pm, PointerMap& qidMap)
 {
   DagNode* name = upQid(pm->id(), qidMap);
-  if (pm->getNrParameters() == 0)
+  if (flat || pm->getNrParameters() == 0)
     return name;
   Vector<DagNode*> args(2);
   args[0] = name;

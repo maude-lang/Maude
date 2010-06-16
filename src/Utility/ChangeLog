@@ -1,3 +1,88 @@
+2010-04-16  Steven Eker  <eker@rho>
+
+	* natSet.hh (class NatSet): added decl for getMaskSmall()
+
+	* natSet.cc (NatSet::getMask): fix bug where we were shifting a
+	32-bit 1
+	(NatSet::topBit): fix symmetric bug
+	(NatSet::insert, NatSet::subtract): fix symmetric bugs
+	(NatSet::getMaskSmall): added
+	(NatSet::topBit, NatSet::getMask, NatSet::insert)
+	(NatSet::subtract): use getMaskSmall()
+
+	* natSet.hh (NatSet::swap): fix bug where we were using an int as
+	a temporary rather than a Word
+
+	* natSet.cc (NatSet::topBit, NatSet::getShift, NatSet::getMask):
+	use BITS_PER_WORD
+	(NatSet::arrayMin, NatSet::insert, NatSet::subtract): use
+	BITS_PER_WORD
+	(NatSet::getWordNr): divide by unsigned value by BITS_PER_WORD
+	rather than right shift by LOG_WORD_SIZE
+
+	* natSet.hh (class NatSet): make Word a long; define BITS_PER_WORD
+	(NatSet::contains): use BITS_PER_WORD rather than WORD_SIZE
+	(NatSet::max): multiply by BITS_PER_WORD rather than shift by
+	LOG_WORD_SIZE
+
+===================================Maude93a===========================================
+
+2010-03-11  Steven Eker  <eker@rho>
+
+	* vector.hh: use != rather than < in for loops
+
+===================================Maude93===========================================
+
+2010-03-01  Steven Eker  <eker@rho>
+
+	* natSet.hh (class NatSet): added decl for getShift()
+
+	* natSet.cc (NatSet::arrayContains): changed return type to
+	FastBool; use getShift(); shift word left rather than 1 right
+	(NatSet::getShift): added
+
+	* natSet.hh: changed return type to FastBool; shift word left
+	rather than 1 right
+
+	* macros.hh: added typedef FastBool
+
+2010-02-26  Steven Eker  <eker@rho>
+
+	* macros.hh (setOnLs, setOnGeq): deleted
+
+2010-02-19  Steven Eker  <eker@rho>
+
+	* macros.hh (getSignBit): commented out
+
+===================================Maude92c===========================================
+
+2009-12-02  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pointerSet.cc (findEntry): move call to collision() inside loop
+
+2009-11-30  Steven Eker  <eker@goo.csl.sri.com>
+
+	* pointerSet.hh (class PointerSet): added decl for collision() in
+	debug mode
+
+===================================Maude92b===========================================
+
+2009-09-23  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bddUser.cc (err_handler): check and call errorHandler if set
+
+	* bddUser.hh (setErrorHandler): added
+	(class BddUser): added typedef ErrorHandler; static variable
+	errorHandler
+
+2009-09-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* bddUser.hh (class BddUser): added decl for err_handler()
+
+	* bddUser.cc (err_handler): added
+
+===================================Maude92a===========================================
+
 2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
 
 	* intContejeanDevie.cc (findNextMinimalSolution): init lastNfnz to

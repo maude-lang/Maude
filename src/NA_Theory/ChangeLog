@@ -1,3 +1,11 @@
+2009-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* NA_Symbol.hh (class NA_Symbol): added decl for makeCanonical()
+
+	* NA_Symbol.cc (makeCanonical): added
+
+===================================Maude92b===========================================
+
 2007-08-24  Steven Eker  <eker@goo.csl.sri.com>
 
 	* NA_DagNode.cc (computeBaseSortForGroundSubterms) 

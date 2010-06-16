@@ -1,1 +1,2 @@
-SUBDIRS = BuiltIn Misc Meta
+SUBDIRS = BuiltIn Misc Meta ResolvedBugs
+

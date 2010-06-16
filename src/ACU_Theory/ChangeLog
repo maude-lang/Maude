@@ -1,3 +1,130 @@
+2010-04-16  Steven Eker  <eker@rho>
+
+	* ACU_LhsCompiler1.cc (ACU_Term::analyseConstraintPropagation):
+	code cleaning
+
+2010-04-15  Steven Eker  <eker@rho>
+
+	* ACU_LhsCompiler2.cc
+	(ACU_Term::findConstraintPropagationSequence): minor code cleaning
+
+2010-04-14  Steven Eker  <eker@rho>
+
+	* ACU_LhsCompiler2.cc
+	(ACU_Term::findConstraintPropagationSequence): amongst sequences
+	that bind uniquely the same number of variables, perfer the longer
+	sequence
+
+	* ACU_Term.hh (class ACU_Term): deleted decl for
+	addIndependentAliens()
+
+	* ACU_LhsCompiler2.cc (ACU_Term::compileAliensOnlyCase): code
+	cleaning
+	(ACU_Term::findConstraintPropagationSequence): rewritten to avoid
+	exponential blow up in more cases.
+	(ACU_Term::findConstraintPropagationSequence): allow current
+	forceable NGA to be pruned if we've already explored a path and
+	there is nothing to be gained by matching it now
+	(ACU_Term::compileAliensOnlyCase): don't call
+	addIndependentAliens() since we assume best sequence will already
+	contain all forceable NGAs
+	(ACU_Term::addIndependentAliens): deleted
+
+===================================Maude93a===========================================
+
+2010-03-12  Steven Eker  <eker@rho>
+
+	* ACU_RhsAutomaton.cc (ACU_RhsAutomaton::buildArguments): use
+	nrArguments
+
+	* ACU_Term.cc (ACU_Term::compileRhs2): rewritten to compile/build
+	larger subterms first, to avoid quadratic conflict arcs on clt's
+	example
+
+	* ACU_RhsAutomaton.cc (ACU_RhsAutomaton::close): set nrArguments
+	(ACU_RhsAutomaton::construct, ACU_RhsAutomaton::replace): use
+	nrArguments rather than arguments.size() to avoid checking for a
+	null Vector
+
+	* ACU_RhsAutomaton.hh (class ACU_RhsAutomaton): added date element
+	nrArguments
+
+===================================Maude93===========================================
+
+2010-02-26  Steven Eker  <eker@rho>
+
+	* ACU_DagOperations.cc (ACU_DagNode::binarySearch): removed
+	setOnLs()/setOnGeq() since it seems to be a pessimization (both
+	versions)
+
+2010-02-24  Steven Eker  <eker@rho>
+
+	* ACU_Normalize.cc (ACU_DagNode::copyAndBinaryInsert): use new
+	binarySearch() convention
+
+2010-02-19  Steven Eker  <eker@rho>
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for DagNode*
+	version of binarySearch()
+
+	* ACU_DagOperations.cc (ACU_DagNode::binarySearch): rewrote
+	DagNode* version
+	(ACU_DagNode::eliminateSubject): use new binarySearch() convention
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for Term*
+	version of binarySearch()
+
+	* ACU_GndLhsAutomaton.cc (ACU_GndLhsAutomaton::match): use new
+	binarySearch() convention
+
+	* ACU_Matcher.cc (ACU_LhsAutomaton::eliminateGroundAliens): use
+	new binarySearch() convention
+
+	* ACU_DagOperations.cc (ACU_DagNode::binarySearch): rewritten to
+	return position rather than pass it back through a reference argument
+	(ACU_DagNode::eliminateArgument): use new binarySearch semantics
+
+2010-02-18  Steven Eker  <eker@rho>
+
+	* ACU_DagOperations.cc (ACU_DagNode::binarySearch): use unsigned
+	sum optimization in both versions
+
+2010-01-06  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Term.cc (compileRhs2): experiment code to check my
+	understanding of clt's extreme right nesting example
+
+===================================Maude92c===========================================
+
+2009-12-09  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (makeCanonical): added
+
+	* ACU_Symbol.cc (makeCanonical): use
+	ACU_TreeDagNode::makeCanonical()
+
+2009-12-03  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for makeCanonical()
+
+	* ACU_TreeDagNode.hh (class ACU_TreeDagNode): make ACU_Symbol a
+	friend
+
+	* ACU_Symbol.cc (makeCanonical): added
+
+===================================Maude92b===========================================
+
+2008-12-22  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Symbol.cc (computeGeneralizedSort): new getSortFunction()
+	convention
+
+2008-12-19  Steven Eker  <eker@goo.csl.sri.com>
+
+	* ACU_Subproblem.hh: derive from DelayedSubproblem
+
+===================================Maude92===========================================
+
 2008-09-24  Steven Eker  <eker@goo.csl.sri.com>
 
 	* ACU_Matcher.cc (fullMatch): fix bug where we weren't setting up

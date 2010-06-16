@@ -71,6 +71,11 @@ public:
 
   const ACU_Tree& getTree() const;
 
+  //
+  //	Hash cons stuff
+  //
+  ACU_TreeDagNode* makeCanonical(HashConsSet* hcs);
+
 private:
  //
   //	Theory interface functions.
@@ -86,6 +91,9 @@ private:
   //	Slot for caching hash value.
   //
   size_t hashCache;
+
+  friend class ACU_Symbol;		// HACK for hash consing
+
 };
 
 inline

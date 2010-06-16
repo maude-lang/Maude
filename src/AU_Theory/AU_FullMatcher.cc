@@ -180,6 +180,12 @@ AU_LhsAutomaton::fullMatchFixedLengthBlock(ArgVec<DagNode*>& args,
     {
       Subterm& f = flexPart[blockStart + i];
       DagNode* d = args[attemptedShift + i];
+      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN,
+	     "unknown sort for AU argument " << d <<
+	     " at index " << attemptedShift + i <<
+	     " topSymbol = " << topSymbol <<
+	     " blockStart = " << blockStart);
+
       shiftFactor = f.shiftFactor;
       switch (f.type)
         {
