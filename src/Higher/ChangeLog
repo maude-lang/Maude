@@ -1,3 +1,85 @@
+2010-11-30  Steven Eker  <eker@rho>
+
+	* pattern.cc (Pattern::Pattern): call setModuleInfo() to set null
+	info so we can identify PreEquations that don't belong to modules
+
+===================================Maude95b===========================================
+
+2010-09-16  Steven Eker  <eker@rho>
+
+	* modelCheckerSymbol.cc (SystemAutomaton::checkProposition): reverted
+
+	* satSolverSymbol.cc: reverted
+
+	* satSolverSymbol.hh (class SatSolverSymbol): reverted
+
+	* temporalSymbol.cc (TemporalSymbol::build): reverted - we need
+	proposition indices to be contiguous which is not guaranteed by
+	HashConsSet
+
+	* temporalSymbol.hh (class TemporalSymbol): reverted
+
+	* modelCheckerSymbol.cc (SystemAutomaton::checkProposition): use
+	HashConsSet
+
+	* modelCheckerSymbol.hh (class ModelCheckerSymbol): DagNodeSet ->
+	HashConsSet
+
+	* satSolverSymbol.cc (SatSolverSymbol::eqRewrite)
+	(SatSolverSymbol::makeModel, SatSolverSymbol::makeFormulaList)
+	(SatSolverSymbol::makeFormula): use HashConsSet
+
+	* satSolverSymbol.hh (class SatSolverSymbol): DagNodeSet ->
+	HashConsSet
+
+	* temporalSymbol.cc (TemporalSymbol::build): simplified using
+	HashConsSet
+
+	* temporalSymbol.hh (class TemporalSymbol): DagNodeSet -> HashConsSet
+
+	* stateTransitionGraph.cc (StateTransitionGraph::markReachableNodes): deleted
+
+	* stateTransitionGraph.hh (class StateTransitionGraph): remove
+	derivation from SimpleRootContainer
+	(class StateTransitionGraph): deleted decl for
+	markReachableNodes()
+
+===================================Maude95===========================================
+
+2010-07-20  Steven Eker  <eker@rho>
+
+	* unificationProblem.cc (UnificationProblem::findNextUnifier): use
+	solve()
+
+2010-07-16  Steven Eker  <eker@rho>
+
+	* unificationProblem.cc (UnificationProblem::findNextUnifier): use
+	solve2(); don't use extractUnifier()
+
+2010-05-21  Steven Eker  <eker@rho>
+
+	* rewriteConditionState.hh (class RewriteConditionState): use
+	StateTransitionGraph in place of StateTransitionGraph3
+
+	* stateTransitionGraph3.cc: deleted
+
+	* stateTransitionGraph3.hh: deleted
+
+	* rewriteSequenceSearch.cc
+	(RewriteSequenceSearch::RewriteSequenceSearch): removed mention of
+	StateTransitionGraph3
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): removed
+	mention of StateTransitionGraph3
+
+	* modelCheckerSymbol.cc: use StateTransitionGraph in place of
+	StateTransistionGraph3 throughout
+
+	* modelCheckerSymbol.hh (class ModelCheckerSymbol): use
+	StateTransitionGraph in place of StateTransistionGraph3
+
+===================================Maude94===========================================
+
 2010-04-01  Steven Eker  <eker@rho>
 
 	* unificationProblem.cc (UnificationProblem::markReachableNodes):
@@ -275,7 +357,8 @@
 
 	* sequenceSearch.hh: derive from CacheableState
 
-	* unificationProblem.hh (class UnificationProblem): derive from CacheableState
+	* unificationProblem.hh (class UnificationProblem): derive from
+	CacheableState
 
 	* cacheableState.hh: created
 

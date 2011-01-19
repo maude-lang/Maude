@@ -125,7 +125,7 @@ AU_DagNode::copyEagerUptoReduced2()
   if (s->getPermuteStrategy() == BinarySymbol::EAGER)
     {
       for (int i = 0; i < nrArgs; i++)
-	  n->argArray[i] = argArray[i]->copyEagerUptoReduced();
+	n->argArray[i] = argArray[i]->copyEagerUptoReduced();
     }
   else
     copy(argArray.begin(), argArray.end(), n->argArray.begin());

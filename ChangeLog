@@ -1,3 +1,10 @@
+2010-05-21  Steven Eker  <eker@rho>
+
+	* tests/ResolvedBugs/CUIbug12-22-09.maude (CUI_DagNode): use set
+	show timing off .
+
+===================================Maude94===========================================
+
 2010-03-19  Steven Eker  <eker@rho>
 
 	* configure.ac: don't bother with -fomit-frame-pointer

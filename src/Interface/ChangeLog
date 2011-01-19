@@ -1,3 +1,103 @@
+2010-10-20  Steven Eker  <eker@rho>
+
+	* dagNode.hh (DagNode::upgradeSortIndex): added
+	(DagNode::copySortIndex): added
+
+2010-10-19  Steven Eker  <eker@rho>
+
+	* symbol.hh (class Symbol): makeCanonicalCopyEagerUptoReduced() ->
+	makeCanonicalCopy()
+
+===================================Maude95a==========================================
+
+2010-09-30  Steven Eker  <eker@rho>
+
+	* symbol.hh (class Symbol): removed derivation from ModuleItem now
+	that MemoTable is derived from this
+
+2010-09-28  Steven Eker  <eker@rho>
+
+	* symbol.hh (class Symbol): added decl for
+	makeCanonicalCopyEagerUptoReduced()
+
+2010-09-09  Steven Eker  <eker@rho>
+
+	* binarySymbol.hh (BinarySymbol::hasUnequalLeftIdentityCollapse):
+	added
+	(BinarySymbol::hasUnequaRightIdentityCollapse): added
+	(class BinarySymbol): added data members unequalLeftIdCollapse and
+	unequalRightIdCollapse
+
+	* binarySymbol.cc (BinarySymbol::leftIdentitySortCheck): set
+	unequalLeftIdCollapse 
+	(BinarySymbol::rightIdentitySortCheck): set
+	unequalRightIdCollapse
+
+2010-08-18  Steven Eker  <eker@rho>
+
+	* dagNode.cc (DagNode::nonVariableSize): deleted
+
+	* dagNode.hh (class DagNode): deleted decl for nonVariableSize()
+
+===================================Maude95==========================================
+
+2010-08-11  Steven Eker  <eker@rho>
+
+	* binarySymbol.hh (BinarySymbol::setIdentity): set cyclicIdentity
+	= UNDECIDED
+
+	* binarySymbol.cc (BinarySymbol::BinarySymbol): initialize
+	cyclicIdentity
+
+	* binarySymbol.hh (class BinarySymbol): added data member
+	cyclicIdentity; added decl for lookForCycle()
+
+	* binarySymbol.cc (BinarySymbol::lookForCycle): added
+
+	* binarySymbol.hh (BinarySymbol::hasCyclicIdentity): added
+
+2010-08-04  Steven Eker  <eker@rho>
+
+	* dagNode.cc (DagNode::computeSolvedForm2): handle the ground term
+	vs variable case
+
+2010-08-03  Steven Eker  <eker@rho>
+
+	* unificationSubproblem.hh (class UnificationSubproblem): updated
+	decl for addUnification()
+
+2010-07-29  Steven Eker  <eker@rho>
+
+	* unificationSubproblem.hh (class UnificationSubproblem): updated
+	decl for addUnification
+
+2010-07-08  Steven Eker  <eker@rho>
+
+	* binarySymbol.hh (BinarySymbol::hasIdentity): added
+
+===================================Maude94a==========================================
+
+2010-06-29  Steven Eker  <eker@rho>
+
+	* symbol.cc (Symbol::canResolveTheoryClash): added
+
+	* symbol.hh (class Symbol): added decl for canResolveTheoryClash()
+
+2010-06-23  Steven Eker  <eker@rho>
+
+	* binarySymbol.cc (BinarySymbol::isStable): fix bug where we
+	didn't have a return statement
+
+2010-06-04  Steven Eker  <eker@rho>
+
+	* binarySymbol.cc (BinarySymbol::isStable): added
+
+	* binarySymbol.hh (class BinarySymbol): added decl for isStable()
+
+	* symbol.hh (class Symbol): added decl for isStable()
+
+===================================Maude94==========================================
+
 2010-03-19  Steven Eker  <eker@rho>
 
 	* subproblem.hh (class Subproblem): delete unificationSolve()

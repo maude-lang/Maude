@@ -231,6 +231,7 @@ ACU_LhsAutomaton::complete(MatchStrategy strategy,
   //	    aliens, in our context or in the condition;
   //	(3) there are no abstraction variables;
   //	(4) all groundout aliens and nonground aliens are stable; and
+  //	(5) - obsolete - (was SAT_MULT related)
   //
   //	For red-black greedy matching to be a win we require that
   //	(6) subproblems must be unlikely; and
@@ -241,7 +242,7 @@ ACU_LhsAutomaton::complete(MatchStrategy strategy,
   //	(6) is satisfied if strategy is  GREEDY or strategy is LONE_VARIABLE
   //	and (3) holds.
   //	treeMatchOK will have already been falsified if (3) or (4) fail to
-  //	hold. We check (5). (7) is recorded by the collectorSeen flag.
+  //	hold. (7) is recorded by the collectorSeen flag.
   //
   if (treeMatchOK)
     {
@@ -251,7 +252,7 @@ ACU_LhsAutomaton::complete(MatchStrategy strategy,
 	{
 	  //
 	  //	We now allow non-greedy tree matching if there is a single
-	  //	alien with multiplicity and a single unbound variable with
+	  //	NGA with multiplicity 1, a single unbound variable with
 	  //	multiplicity 1 and no extension.
 	  //
 	  treeMatchOK = collectorSeen &&

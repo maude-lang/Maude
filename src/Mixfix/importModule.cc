@@ -176,6 +176,8 @@ ImportModule::closeSortSet()
 void
 ImportModule::closeSignature()
 {
+  DebugAdvisory("closeSignature() on " << this);
+
   const Vector<Symbol*>& symbols = getSymbols();
   nrUserSymbols = symbols.length();  // exclude polymorph instances
   nrUserDecls.expandTo(nrUserSymbols);
@@ -272,6 +274,8 @@ ImportModule::importSorts()
 void
 ImportModule::donateSorts(ImportModule* importer)
 {
+  Assert(!isBad(), "original module bad " << this);
+
   if (importPhase == SORTS_IMPORTED)
     return;
   Assert(importPhase == UNVISITED, "bad importPhase = " << importPhase);
@@ -317,6 +321,8 @@ ImportModule::importOps()
 void
 ImportModule::donateOps(ImportModule* importer)
 {
+  Assert(!isBad(), "original module bad " << this);
+
   if (importPhase == OPS_IMPORTED)
     return;
   Assert(importPhase == SORTS_IMPORTED, "bad importPhase = " << importPhase);

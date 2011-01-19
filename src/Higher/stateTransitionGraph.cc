@@ -64,13 +64,6 @@ StateTransitionGraph::~StateTransitionGraph()
   delete initial;
 }
 
-void
-StateTransitionGraph::markReachableNodes()
-{
-  FOR_EACH_CONST(i, Vector<State*>, seen)
-    hashConsSet.getCanonical((*i)->hashConsIndex)->mark();
-}
-
 int
 StateTransitionGraph::getNextState(int stateNr, int index)
 {

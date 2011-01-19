@@ -39,7 +39,7 @@
 
 BranchTask::BranchTask(StrategyStackManager& strategyStackManager,
 		       StrategicExecution* sibling,
-		       DagNode* startDag,
+		       int startIndex,
 		       StrategyExpression* initialStrategy,
 		       BranchStrategy::Action successAction,
 		       StrategyExpression* successStrategy,
@@ -49,7 +49,7 @@ BranchTask::BranchTask(StrategyStackManager& strategyStackManager,
 		       StrategicProcess* insertionPoint)
   : StrategicTask(sibling),
     strategyStackManager(strategyStackManager),
-    startDag(startDag),
+    startIndex(startIndex),
     initialStrategy(initialStrategy),
     successAction(successAction),
     successStrategy(successStrategy),
@@ -58,14 +58,14 @@ BranchTask::BranchTask(StrategyStackManager& strategyStackManager,
     pending(pending)
 {
   success = false;
-  (void) new DecompositionProcess(startDag,
+  (void) new DecompositionProcess(startIndex,
 				  strategyStackManager.push(StrategyStackManager::EMPTY_STACK, initialStrategy),
 				  getDummyExecution(),
 				  insertionPoint);
 }
 
 StrategicExecution::Survival
-BranchTask::executionSucceeded(DagNode* result, StrategicProcess* insertionPoint)
+BranchTask::executionSucceeded(int resultIndex, StrategicProcess* insertionPoint)
 {
   success = true;
   switch (successAction)
@@ -74,12 +74,12 @@ BranchTask::executionSucceeded(DagNode* result, StrategicProcess* insertionPoint
       return DIE;
     case BranchStrategy::IDLE:
       {
-	(void) new DecompositionProcess(startDag, pending, this, insertionPoint);
+	(void) new DecompositionProcess(startIndex, pending, this, insertionPoint);
 	return DIE;
       }
     case BranchStrategy::PASS_THRU:
       {
-	(void) new DecompositionProcess(result, pending, this, insertionPoint);
+	(void) new DecompositionProcess(resultIndex, pending, this, insertionPoint);
 	break;
       }
     case BranchStrategy::NEW_STRATEGY:
@@ -88,7 +88,7 @@ BranchTask::executionSucceeded(DagNode* result, StrategicProcess* insertionPoint
 	//	Start a new process that applies the success strategy followed by the pending
 	//	strategies to the result. It will report to our owner.
 	//
-	DecompositionProcess* p = new DecompositionProcess(result, pending, this, insertionPoint);
+	DecompositionProcess* p = new DecompositionProcess(resultIndex, pending, this, insertionPoint);
 	p->pushStrategy(strategyStackManager, successStrategy);
 	break;
       }
@@ -100,7 +100,7 @@ BranchTask::executionSucceeded(DagNode* result, StrategicProcess* insertionPoint
 	//
 	  (void) new BranchTask(strategyStackManager,
 				this,
-				result,
+				resultIndex,
 				initialStrategy,
 				successAction,
 				successStrategy,
@@ -130,7 +130,7 @@ BranchTask::executionsExhausted(StrategicProcess* insertionPoint)
 	  break;
 	case BranchStrategy::IDLE:
 	  {
-	    (void) new DecompositionProcess(startDag, pending, this, insertionPoint);
+	    (void) new DecompositionProcess(startIndex, pending, this, insertionPoint);
 	    break;
 	  }
 	case BranchStrategy::NEW_STRATEGY:
@@ -139,7 +139,7 @@ BranchTask::executionsExhausted(StrategicProcess* insertionPoint)
 	    //	Start a new process that applies the failure strategy followed by the pending
 	    //	strategies to the original term. It will report to our owner.
 	    //
-	    DecompositionProcess* p = new DecompositionProcess(startDag, pending, this, insertionPoint);
+	    DecompositionProcess* p = new DecompositionProcess(startIndex, pending, this, insertionPoint);
 	    p->pushStrategy(strategyStackManager, failureStrategy);
 	    break;
 	  }

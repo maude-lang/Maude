@@ -270,7 +270,7 @@ MetaLevel::downOpHook(DagNode* metaOpHook, MetaModule* m, int& purpose, Symbol*&
       Vector<Sort*> domain;
       Sort* range;
       if (downQid(f->getArgument(0), purpose) &&
-	  downQid(f->getArgument(1), id) &&
+	  downOpName(f->getArgument(1), id) &&
 	  downSimpleSortList(f->getArgument(2), m, domain) &&
 	  downSimpleSort(f->getArgument(3), m, range))
 	{

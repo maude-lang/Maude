@@ -41,6 +41,7 @@
 #include "equation.hh"
 #include "rule.hh"
 #include "sortBdds.hh"
+#include "memoMap.hh"
 #include "module.hh"
 
 //	variable class definitions
@@ -52,6 +53,7 @@ Module::Module(int id)
   status = OPEN;
   sortBdds = 0;
   minimumSubstitutionSize = 1;
+  memoMap = 0;
 }
 
 Module::~Module()
@@ -466,9 +468,16 @@ Module::insertLateSymbol(Symbol*s)
 void
 Module::clearMemo()
 {
-  int nrSymbols = symbols.length();
-  for (int i = 0; i < nrSymbols; i++)
-    symbols[i]->clearMemo();
+  delete memoMap;
+  memoMap = 0;
+}
+
+MemoMap*
+Module::getMemoMap()
+{
+  if (memoMap == 0)
+    memoMap = new MemoMap;
+  return memoMap;
 }
 
 void

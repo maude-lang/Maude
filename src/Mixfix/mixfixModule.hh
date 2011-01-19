@@ -716,6 +716,7 @@ private:
 inline SymbolType
 MixfixModule::getSymbolType(Symbol* symbol) const
 {
+  Assert(symbol->getModule() == this, "symbol belongs to " << symbol->getModule() << " and not " << this);
   return symbolInfo[symbol->getIndexWithinModule()].symbolType;
 }
 

@@ -174,6 +174,9 @@ MetaLevel::upDagNode(DagNode* dagNode,
 	      args[1] = upDagNode(a.argument(), m, qidMap, dagNodeMap);
 	    else
 	      {
+		//
+		//	nrArgs is only a suggestion - flattened assoc operators may have more args.
+		//
 		Vector<DagNode*> args2(0, nrArgs);  // can't be static!
 		for (; a.valid(); a.next())
 		  args2.append(upDagNode(a.argument(), m, qidMap, dagNodeMap));
@@ -249,6 +252,9 @@ MetaLevel::upTerm(const Term* term, MixfixModule* m, PointerMap& qidMap)
 	      args[1] = upTerm(a.argument(), m, qidMap);
 	    else
 	      {
+		//
+		//	nrArgs is only a suggestion - flattened assoc operators may have more args.
+		//
 		Vector<DagNode*> args2(0, nrArgs);  // can't be static!
 		for (; a.valid(); a.next())
 		  args2.append(upTerm(a.argument(), m, qidMap));

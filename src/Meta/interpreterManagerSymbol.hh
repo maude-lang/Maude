@@ -21,7 +21,7 @@
 */
 
 //
-//      Abstract class to manage access to a shared MetaLevel object.
+//      Class to handle meta-interpreter objects.
 //
 #ifndef _interpreterManagerSymbol_hh_
 #define _interpreterManagerSymbol_hh_
@@ -60,6 +60,8 @@ private:
 
   bool insertModule(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool showModule(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  bool insertView(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  bool showView(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool reduceTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool rewriteTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool frewriteTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);

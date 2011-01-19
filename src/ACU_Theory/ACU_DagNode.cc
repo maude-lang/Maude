@@ -42,6 +42,7 @@
 //      core class definitions
 #include "substitution.hh"
 #include "pendingUnificationStack.hh"
+#include "unificationContext.hh"
 
 //	variable class definitions
 #include "variableSymbol.hh"
@@ -480,14 +481,6 @@ DagNode::ReturnResult
 ACU_DagNode::computeBaseSortForGroundSubterms()
 {
   ACU_Symbol* s = symbol();
-  if (s->getIdentity() != 0)
-    {
-      //
-      //	We only support unification for AC at the moment
-      //	so let the backstop version handle it.
-      //
-      return DagNode::computeBaseSortForGroundSubterms();
-    }
   bool ground = true;
   int nrArgs = argArray.length();
   for (int i = 0; i < nrArgs; ++i)
@@ -519,25 +512,27 @@ ACU_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, Pend
   if (symbol() == rhs->symbol())
     {
       //
-      //	AC unification problems with the same top symbol need to be collected and solved
+      //	ACU unification problems with the same top symbol need to be collected and solved
       //	simultaneously for termination reasons.
       //
       pending.push(symbol(), this, rhs);
       return true;
     }
-  if (dynamic_cast<VariableDagNode*>(rhs))
-    return rhs->computeSolvedForm(this, solution, pending);
-  return false;
-}
-
-mpz_class
-ACU_DagNode::nonVariableSize()
-{
-  mpz_class total = -1;
-  int nrArgs = argArray.length();
-  for (int i = 0; i < nrArgs; i++)
-    total += argArray[i].multiplicity * (argArray[i].dagNode->nonVariableSize() + 1);
-  return total;
+  if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(rhs))
+    {
+      VariableDagNode* r = v->lastVariableInChain(solution);
+      if (DagNode* value = solution.value(r->getIndex()))
+	return computeSolvedForm2(value, solution, pending);
+      //
+      //	We now treat unification problems f(...) =? X where X's representative
+      //	variable is unbound as full ACU unification problems now that the variable
+      //	theory no longerresolves such problems and we require
+      //	purification.
+      //
+      pending.push(symbol(), this, rhs);
+      return true;
+    }
+  return pending.resolveTheoryClash(this, rhs);
 }
 
 void

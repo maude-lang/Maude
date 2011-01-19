@@ -380,3 +380,42 @@ Interpreter::creduce(const Vector<Token>& subject)
     }
 #endif
 }
+
+void
+Interpreter::sreduce(const Vector<Token>& subject)
+{
+
+  if (DagNode* d = makeDag(subject))
+    {
+      if (getFlag(SHOW_COMMAND))
+	{
+	  UserLevelRewritingContext::beginCommand();
+	  cout << "sreduce in " << currentModule << " : " << d << " ." << endl;
+	}
+
+      VisibleModule* fm = currentModule->getFlatModule();
+      startUsingModule(fm);
+      Timer timer(getFlag(SHOW_TIMING));
+      //
+      //	Start of stack based reduction
+      //
+      DagNode* r = d;  // HACK - don't have implementation yet
+      int nrRewrites = 0;
+      //
+      //	End of stack based reduction.
+      //
+      if (getFlag(SHOW_STATS))
+	{
+	  cout << "rewrites: " << nrRewrites;
+	  Int64 real;
+	  Int64 virt;
+	  Int64 prof;
+	  if (getFlag(SHOW_TIMING) && timer.getTimes(real, virt, prof))
+	    printTiming(nrRewrites, prof, real);
+	  cout << '\n';
+	}
+      cout << "result " << r->getSort() << ": " << r << '\n';
+      cout.flush();
+      (void) fm->unprotect();
+    }
+}

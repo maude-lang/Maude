@@ -46,9 +46,21 @@
 #include "metaModule.hh"
 #include "metaModuleCache.hh"
 
-MetaModuleCache::MetaModuleCache(int maxSize)
-  : maxSize(maxSize)
+
+int MetaModuleCache::maxSize = UNDEFINED;
+
+MetaModuleCache::MetaModuleCache()
 {
+  if (maxSize == UNDEFINED)
+    {
+      maxSize = DEFAULT_MAX_SIZE;
+      if (const char* value = getenv("MAUDE_META_MODULE_CACHE_SIZE"))
+	{
+	  int size = atoi(value);
+	  if (size >= MIN_MAX_SIZE && size <= MAX_MAX_SIZE)
+	    maxSize = size;
+	}
+    }
 }
 
 MetaModuleCache::~MetaModuleCache()

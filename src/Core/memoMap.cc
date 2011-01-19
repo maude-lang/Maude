@@ -21,32 +21,34 @@
 */
 
 //
-//      Class for cache of pointers to dag nodes.
+//      Implementation for class MemoTable.
 //
-//	Unlike DagNodeSet, we protect our members from garbage collection.
-//	One day we might trade cpu for memory by doing a hash-cons copy of inserted stuff.
-//
-#ifndef _dagNodeCache_hh_
-#define _dagNodeCache_hh_
-#include "pointerSet.hh"
-#include "simpleRootContainer.hh"
 
-class DagNodeCache : private PointerSet, private SimpleRootContainer
+//	utility stuff
+#include "macros.hh"
+#include "vector.hh"
+
+//      forward declarations
+#include "interface.hh"
+#include "core.hh"
+
+//      core class definitions"
+#include "memoMap.hh"
+
+int
+MemoMap::getFromIndex(DagNode* fromDag)
 {
-  NO_COPYING(DagNodeCache);
-
-public:
-  DagNodeCache();
-  int insert(DagNode* d);
-  //PointerSet::cardinality;
-  //PointerSet::makeEmpty;
-  int dagNode2Index(DagNode* d) const;
-  DagNode* index2DagNode(int i) const;
-
-private:
-  unsigned int hash(void* pointer) const;
-  bool isEqual(void* pointer1, void* pointer2) const;
-  void markReachableNodes();
-};
-
-#endif
+  //
+  //	We assume that a fromDag is unreduced and therefore we never use
+  //	the original in the hash cons table incase it is reduced in place.
+  //
+  int fromIndex =  dags.insertCopy(fromDag);
+  int nrFromDags = toIndices.size();
+  if (fromIndex >= nrFromDags)
+    {
+      toIndices.resize(fromIndex + 1);
+      for (int i = nrFromDags; i <= fromIndex; ++i)
+	toIndices[i] = NONE;
+    }
+  return fromIndex;
+}

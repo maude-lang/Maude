@@ -1,0 +1,94 @@
+*** Unification problems where the order sorting interacts with collapse
+*** 9/14/10
+
+set show timing off .
+
+fmod FOO is
+  sorts Small Big .
+  subsort Small < Big .
+  op f : Big Big -> Big [assoc comm id: 1f] .
+  op 1f : -> Small .
+  op h : Small -> Big .
+endfm
+
+*** only collapse version is sortable
+unify X:Big =? h(f(Y:Big, Z:Big)) .
+
+
+fmod FOO1 is
+  sorts Small Big .
+  subsort Small < Big .
+  op f : Big Big -> Big [assoc comm id: 1f] .
+  op f : Small Small -> Small [ditto] .
+  op 1f : -> Big .
+endfm
+
+*** collapse version is no longer covered
+unify X:Small =? f(Y:Big, Z:Big) .
+
+fmod FOO2 is
+  sorts Small Big .
+  subsort Small < Big .
+  op a : -> Small .
+  op g : Big -> Big .
+  op f : Big Big -> Big [assoc comm id: g(a)] .
+  op f : Small Small -> Small [assoc comm id: g(a)] .
+  op 1f : -> Small .
+endfm
+
+*** only collapse version is sortable
+unify X:Small =? f(g(Y:Small), Z:Small) .
+
+fmod FOO3 is
+  sorts Small Big .
+  subsort Small < Big .
+  op a : -> Big .
+  op g : Big -> Big .
+  op g : Small -> Small .
+  op f : Big Big -> Big [assoc comm id: g(a)] .
+  op f : Small Small -> Small [assoc comm id: g(a)] .
+  op 1f : -> Small .
+endfm
+
+*** collapse version is no longer covered
+unify X:Small =? f(g(Y:Big), Z:Small) .
+
+fmod FOO4 is
+  sorts Small Big .
+  subsort Small < Big .
+  op a : -> Small .
+  op g : Big -> Big [iter] .
+  op f : Big Big -> Big [assoc comm id: g^1000000(a)] .
+  op f : Small Small -> Small [ditto] .
+  op 1f : -> Small .
+endfm
+
+*** only collapse version is sortable
+unify X:Small =? f(g(Y:Big), Z:Small) .
+
+
+fmod FOO5 is
+  sorts Small Big .
+  subsort Small < Big .
+  op a : -> Big .
+  op g : Big -> Big [iter].
+  op g : Small -> Small  [ditto] .
+  op f : Big Big -> Big [assoc comm id: g^1000000(a)] .
+  op f : Small Small -> Small [ditto] .
+  op 1f : -> Small .
+endfm
+
+*** collapse version is no longer covered
+unify X:Small =? f(g(Y:Big), Z:Small) .
+
+
+fmod FOO6 is
+  sorts Small Big .
+  subsort Small < Big .
+  op f : Big Big -> Big [assoc comm id: 1f] .
+  op 1f : -> Small .
+  op h : Small -> Big .
+endfm
+
+*** need empty basis selection
+unify X:Big =? h(f(Y:Big, Y:Big)) .

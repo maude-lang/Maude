@@ -34,12 +34,13 @@ AllSat::AllSat(Bdd formula, int firstVariable, int lastVariable)
     nodeStack(0, lastVariable - firstVariable + 1),
     dontCareSet(0, lastVariable - firstVariable + 1)
 {
+  firstAssignment = true;
 }
 
 bool
 AllSat::nextAssignment()
 {
-  if (assignment.empty())
+  if (firstAssignment)
     {
       //
       //	First solution.
@@ -50,6 +51,7 @@ AllSat::nextAssignment()
       for (int i = firstVariable; i <= lastVariable; ++i)
 	assignment[i] = UNDEFINED;
       forward(formula);
+      firstAssignment = false;
       return true;
     }
   //

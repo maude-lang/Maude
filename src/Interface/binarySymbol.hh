@@ -54,6 +54,10 @@ public:
   void setPermuteFrozen(const NatSet& frozen);
   void setIdentity(Term* id);
   Term* getIdentity() const;
+  bool hasIdentity() const;
+  bool hasUnequalLeftIdentityCollapse() const;
+  bool hasUnequalRightIdentityCollapse() const;
+  bool hasCyclicIdentity() const;
   DagNode* getIdentityDag();
   bool mightMatchOurIdentity(const Term* subterm) const;
   bool takeIdentity(const Sort* sort);
@@ -61,7 +65,11 @@ public:
   void reset();
   int computeSortIndex(int index1, int index2);
   int computeMultSortIndex(int index1, int index2, int multiplicity);
-
+  //
+  //	Default definition returns true iff we don't have an identity. This must
+  //	be overridden for any symbol with other behavior.
+  //
+  bool isStable() const;
 
 protected:
   void commutativeSortCompletion();
@@ -78,8 +86,23 @@ private:
     NORMALIZED
   };
 
+  bool lookForCycle(Term* term, NatSet& examinedIds) const;
+
   PermuteStrategy permuteStrategy;
   CachedDag identityTerm;
+  //
+  //	These flags record if we detected a collapse from one sort to another.
+  //	Collapsing to a lower sort is legal but complicates unification.
+  //
+  bool unequalLeftIdCollapse;
+  bool unequalRightIdCollapse;
+  //
+  //	This flag records if we can reach find a cycle of symbols by examining identities of symbols.
+  //	We need this information for breaking non-disjoint cycles during unification.
+  //	Because it is potentially expensive to compute we only compute it if needed and therefore
+  //	store it as an int so we can have an undecided state.
+  //
+  mutable int cyclicIdentity;
 };
 
 inline BinarySymbol::PermuteStrategy
@@ -93,12 +116,42 @@ BinarySymbol::setIdentity(Term* id)
 {
   Assert(identityTerm.getTerm() == 0, "overwriting identity for " << this);
   identityTerm.setTerm(id);
+  cyclicIdentity = UNDECIDED;
 }
 
 inline Term*
 BinarySymbol::getIdentity() const
 {
   return identityTerm.getTerm();
+}
+
+inline bool
+BinarySymbol::hasIdentity() const
+{
+  return identityTerm.getTerm() != 0;
+}
+
+inline bool
+BinarySymbol::hasCyclicIdentity() const
+{
+  if (cyclicIdentity == UNDECIDED)
+    {
+      NatSet examinedIds;
+      cyclicIdentity = lookForCycle(getIdentity(), examinedIds);
+    }
+  return cyclicIdentity;
+}
+
+inline bool
+BinarySymbol::hasUnequalLeftIdentityCollapse() const
+{
+  return unequalLeftIdCollapse;
+}
+
+inline bool
+BinarySymbol::hasUnequalRightIdentityCollapse() const
+{
+  return unequalRightIdCollapse;
 }
 
 inline bool

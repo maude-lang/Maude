@@ -477,8 +477,8 @@ View::handleOpTermMappings()
 	  if (!p.second)
 	    {
 	      IssueWarning(LineNumber(i->fromBubble[0].lineNumber()) <<
-			   ": using the same variable name " << QUOTE(Token::name(base)) <<
-			   " for two lhs variables in an operator mapping is not allowed.");
+			   ": using the same variable base name " << QUOTE(Token::name(base)) <<
+			   " for two left hand side variables in an operator mapping is not allowed.");
 	      from->deepSelfDestruct();
 	      return false;
 	    }

@@ -23,41 +23,31 @@
 //
 //      Class for memoization tables.
 //
+//	In the current implmentation this is just a shell - the actually dag nodes are store
+//	in the module.
+//
 #ifndef _memoTable_hh_
 #define _memoTable_hh_
-#include "simpleRootContainer.hh"
 
-class MemoTable
+class MemoTable : public ModuleItem
 {
 public:
-  class SourceSet : private SimpleRootContainer
-  {
-    void markReachableNodes();
-    Vector<DagNode*> sources;
-    friend class MemoTable;
-  };
+  typedef Vector<int> SourceSet;
 
   MemoTable(bool memoFlag);
-  ~MemoTable();
 
   bool isMemoized() const;
   bool memoRewrite(SourceSet& sourceSet, DagNode* subject, RewritingContext& context);
   void memoEnter(SourceSet& sourceSet, DagNode* destination);
-  void clearMemo();
 
 private:
-  struct dagNodeLt;
-  class MemoMap;
-
   const bool memo;
-  MemoMap* memoMap;
 };
 
 inline
 MemoTable::MemoTable(bool memoFlag)
   : memo(memoFlag)
 {
-  memoMap = 0;
 }
 
 inline bool
@@ -67,4 +57,3 @@ MemoTable::isMemoized() const
 }
 
 #endif
-

@@ -1,0 +1,91 @@
+*** Tricky unification problems
+*** 8/12/10
+
+set show timing off .
+
+fmod TEST is
+  sort Foo .
+  ops 1f a b c : -> Foo .
+  op g : Foo Foo -> Foo .
+  op h : Foo -> Foo .
+  op f  : Foo Foo -> Foo [assoc comm id: 1f] .
+  vars A B C X Y Z : Foo .
+endfm
+
+*** long running time with naive algorithm
+unify g(
+f(X, X, Y, Y, h(Z)),
+f(X, Y, Y, Z, Z)
+) =? g(
+f(A, A, A, B, C),
+f(A, B, B, h(C))
+) .
+
+
+fmod FOO is
+  sort Foo .
+  op f : Foo Foo -> Foo [assoc comm] .
+
+  vars W X Y Z : Foo .
+endfm
+
+*** fewer unifiers with eager variable replacement
+unify X =? W /\ f(X, Y) =? f(W, Z) .
+
+
+fmod NAT' is
+  protecting BOOL .
+  sorts Zero NzNat Nat .
+  subsort Zero NzNat < Nat .
+  op 0 : -> Zero .
+  op s_ : Nat -> NzNat [iter] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm id: s(0) prec 31] .
+  op _*_ : Nat Nat -> Nat [ditto] .
+
+  vars W X Y Z A B C D : Nat .
+endfm
+
+*** cycle breaking through S theory
+unify X =? s (X * Y) .
+unify X =? s X * Y .
+
+*** theory conflict
+unify s X =? s X * Y .
+unify s X =? X * Y .
+
+fmod COMM is
+  sort Foo .
+  ops a b c d : -> Foo .
+  op f : Foo Foo -> Foo [assoc comm id: c(a, b)] .
+  op c : Foo Foo -> Foo [comm] .
+  vars W X Y Z A B C D : Foo .
+endfm
+
+*** cycle breaking through comm theory
+unify X =? c(f(X, Y), Z) .
+
+
+fmod FOO2 is
+  sort Foo .
+  ops a b c d : -> Foo .
+  op f : Foo Foo -> Foo [assoc comm id: g(c, d)] .
+  op g : Foo Foo -> Foo [assoc comm id: f(a, b)] .
+
+  vars X Y : Foo .
+endfm
+
+*** cycle breaking with non-disjoint identities
+unify X =? f(Y, a, b) /\ Y =? g(X, c, d) .
+
+
+fmod FOO3 is
+  sort Foo .
+  ops a b : -> Foo .
+  op h : Foo -> Foo .
+  op f : Foo Foo -> Foo [assoc comm id: h(f(a, b))] .
+
+  vars X Y : Foo .
+endfm
+
+*** cycle breaking with non-disjoint identity
+unify X =? f(Y, a, b) /\ Y =? h(X) .

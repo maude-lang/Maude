@@ -1,3 +1,225 @@
+2010-10-20  Steven Eker  <eker@rho>
+
+	* hashConsSet.cc (HashConsSet::insert): use upgradeSortIndex() to
+	make sure any sort information in our argument is copied into an
+	existing canonical version
+
+2010-10-19  Steven Eker  <eker@rho>
+
+	* memoMap.cc (MemoMap::getFromIndex): use insertCopy() instead of
+	insertCopyEagerUptoReduced()
+
+	* hashConsSet.hh (class HashConsSet): insertCopyEagerUptoReduced()
+	becomes insertCopy(); decl for getCanonicalCopyEagerUptoReduced()
+	deleted
+	(HashConsSet::getCanonicalCopyEagerUptoReduced): deleted
+
+	* hashConsSet.cc (HashConsSet::insertCopyEagerUptoReduced):
+	becomes insertCopy() with change of semantics
+
+	* memoMap.hh (class MemoMap): reverted previous change - it
+	doesn't solve the problem since lazy symbols can still occur in
+	toDags
+
+	* memoMap.cc (MemoMap::getFromIndex): use fromDags
+
+	* memoMap.hh (class MemoMap): split dags in to fromDags and
+	toDags; this is to solve a nasty issue with reduced flags being
+	unset arbitarily deep in fromDags with lazy function symbols
+	(MemoMap::getToDag, MemoMap::assignToDag): use toDags
+
+===================================Maude95a===========================================
+
+2010-09-30  Steven Eker  <eker@rho>
+
+	* memoMap.cc: created
+
+	* memoTable.hh: complete rewrite using MemoMap
+
+	* memoTable.cc: complete rewrite using MemoMap
+
+	* module.cc (Module::clearMemo): now delete memoMap rather that
+	calling clearMemo() on each symbol
+	(Module::getMemoMap): added
+	(Module::Module): initialize memoMap
+
+	* module.hh (class Module): added data member memoMap and decl for
+	getMemoMap()
+
+	* core.hh: added class MemoMap
+
+	* memoMap.hh: created
+
+	* memoTable.hh (class MemoTable): derive from ModuleItem
+
+2010-09-29  Steven Eker  <eker@rho>
+
+	* hashConsSet.hh (HashConsSet::getCanonicalCopyEagerUptoReduced):
+	added
+
+	* hashConsSet.cc (HashConsSet::insertCopyEagerUptoReduced):
+	rewritten so that makeCanonicalCopyEagerUptoReduced() is only
+	called on unreduced nodes
+
+2010-09-28  Steven Eker  <eker@rho>
+
+	* hashConsSet.hh (class HashConsSet): added decl for
+	insertCopyEagerUptoReduced()
+
+2010-09-16  Steven Eker  <eker@rho>
+
+	* core.hh: deleted class DagNodeCache
+
+	* dagNodeCache.cc: deleted
+
+	* dagNodeCache.hh: deleted
+
+	* hashConsSet.cc (HashConsSet::markReachableNodes): added
+
+	* hashConsSet.hh (class HashConsSet): derive from
+	SimpleRootContainer; added decl for markReachableNodes()
+
+===================================Maude95===========================================
+
+2010-08-11  Steven Eker  <eker@rho>
+
+	* unificationSubproblemDisjunction.cc
+	(UnificationSubproblemDisjunction::addUnification): take mark argument
+
+	* compoundCycleSubproblem.cc (CompoundCycleSubproblem::solve):
+	implement cyclic identity base cycle breaking
+
+2010-08-03  Steven Eker  <eker@rho>
+
+	* pendingUnificationStack.cc
+	(PendingUnificationStack::makeNewSubproblem): pass marked to
+	addUnification()
+
+	* compoundCycleSubproblem.cc (CompoundCycleSubproblem::solve):
+	pass marked = true to push()
+
+	* unificationSubproblemDisjunction.cc
+	(UnificationSubproblemDisjunction::solve): pass marked = true to
+	push()
+
+	* pendingUnificationStack.cc (PendingUnificationStack::push): take
+	marked arg
+
+	* pendingUnificationStack.hh (class PendingUnificationStack):
+	added marked field to struct PendingUnification
+	(class PendingUnificationStack): updated decl for push()
+
+	* unificationContext.hh (class UnificationContext): updated decl
+	for makeFreshVariable() again
+
+	* unificationContext.cc (UnificationContext::makeFreshVariable):
+	return VariableDagNode*
+
+	* unificationContext.hh (class UnificationContext): updated decl
+	for makeFreshVariable()
+
+	* unificationContext.cc (UnificationContext::makeFreshVariable):
+	make arg const
+
+2010-07-29  Steven Eker  <eker@rho>
+
+	* unificationSubproblemDisjunction.hh (class
+	UnificationSubproblemDisjunction): updated decl for addUnification()
+
+	* unificationSubproblemDisjunction.cc
+	(UnificationSubproblemDisjunction::addUnification): take solution arg
+
+	* pendingUnificationStack.cc
+	(PendingUnificationStack::makeNewSubproblem): pass solution to
+	addUnification()
+
+2010-07-20  Steven Eker  <eker@rho>
+
+	* compoundCycleSubproblem.cc (CompoundCycleSubproblem::solve): fix
+	nasty bug where we were looking at cycle; optimization: remove
+	binding that we have reposed as pending unifications
+
+	* pendingUnificationStack.cc
+	(PendingUnificationStack::makeNewSubproblem): ignore variable to
+	variable bindings when compiling cycle
+
+	* pendingUnificationStack.hh (class PendingUnificationStack):
+	updated decl for makeNewSubproblem()
+
+	* pendingUnificationStack.cc
+	(PendingUnificationStack::makeNewSubproblem): take
+	UnificationContext argument
+
+	* pendingUnificationStack.hh (class PendingUnificationStack):
+	added enum SpecialTheory
+
+	* pendingUnificationStack.cc
+	(PendingUnificationStack::makeNewSubproblem): look for cycles here
+	and create a new CompoundCycleSubproblem if one found
+	(PendingUnificationStack::killTopSubproblem): be
+	CompoundCycleSubproblem aware
+
+	* core.hh: added class CompoundCycleSubproblem
+
+2010-07-19  Steven Eker  <eker@rho>
+
+	* compoundCycleSubproblem.cc: created
+
+	* compoundCycleSubproblem.hh: created
+
+2010-07-16  Steven Eker  <eker@rho>
+
+	* pendingUnificationStack.hh (class PendingUnificationStack):
+	added decl for solve2()
+
+	* pendingUnificationStack.cc (PendingUnificationStack::findCycle)
+	(PendingUnificationStack::findCycleFrom)
+	(PendingUnificationStack::solve2): added
+
+	* pendingUnificationStack.hh (class PendingUnificationStack):
+	added enum Status, data members variableStatus, variabeOrder;
+	added decls for findCycle() and findCycleFrom()
+
+	* unificationContext.hh
+	(UnificationContext::getNrOriginalVariables): added
+
+===================================Maude94a===========================================
+
+2010-06-30  Steven Eker  <eker@rho>
+
+	* pendingUnificationStack.cc
+	(PendingUnificationStack::markReachableNodes): added
+
+	* pendingUnificationStack.hh (class PendingUnificationStack):
+	privately inherit from SimpleRootContainer
+	(class PendingUnificationStack): added decl for
+	markReachableNodes()
+
+2010-06-29  Steven Eker  <eker@rho>
+
+	* pendingUnificationStack.cc
+	(PendingUnificationStack::resolveTheoryClash): added
+	(PendingUnificationStack::PendingUnificationStack): create special
+	theory table entry to track theory clashes
+	(PendingUnificationStack::makeNewSubproblem): handle theory clash
+	entries and use UnificationSubproblemDisjunction()
+
+	* pendingUnificationStack.hh (class PendingUnificationStack):
+	added decl for resolveTheoryClash()
+
+	* core.hh: added class UnificationSubproblemDisjunction
+
+	* unificationSubproblemDisjunction.cc: created
+
+	* unificationSubproblemDisjunction.hh: created
+
+	* pendingUnificationStack.cc
+	(PendingUnificationStack::makeNewSubproblem): deleted commented
+	out code that look for theory with greatest number of pending
+	unifications
+
+===================================Maude94===========================================
+
 2010-03-19  Steven Eker  <eker@rho>
 
 	* substitution.hh (Substitution::addNewVariable): don't do a

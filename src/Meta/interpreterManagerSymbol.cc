@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for class SharedMetaLevel.
+//      Implementation for class InterpreterManagerSymbol.
 //
  //      utility stuff
 #include "macros.hh"
@@ -225,6 +225,10 @@ InterpreterManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingC
     return insertModule(safeCast(FreeDagNode*, message), context);
   else if (s == showModuleMsg)
     return showModule(safeCast(FreeDagNode*, message), context);
+  if (s == insertViewMsg)
+    return insertView(safeCast(FreeDagNode*, message), context);
+  else if (s == showViewMsg)
+    return showView(safeCast(FreeDagNode*, message), context);
   else if (s == reduceTermMsg)
     return reduceTerm(safeCast(FreeDagNode*, message), context);
   else if (s == rewriteTermMsg)
@@ -289,6 +293,18 @@ InterpreterManagerSymbol::showModule(FreeDagNode* message, ObjectSystemRewriting
 	    }
 	}
     }
+  return false;
+}
+
+bool
+InterpreterManagerSymbol::insertView(FreeDagNode* message, ObjectSystemRewritingContext& context)
+{
+  return false;
+}
+
+bool
+InterpreterManagerSymbol::showView(FreeDagNode* message, ObjectSystemRewritingContext& context)
+{
   return false;
 }
 

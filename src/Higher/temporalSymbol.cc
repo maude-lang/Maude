@@ -45,7 +45,6 @@
 #include "dagArgumentIterator.hh"
 #include "rewritingContext.hh"
 #include "symbolMap.hh"
-#include "dagNodeSet.hh"
 
 //      free theory class definitions
 #include "freeDagNode.hh"

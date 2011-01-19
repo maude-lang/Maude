@@ -58,6 +58,18 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1) }
 			    interpreter.creduce(lexerBubble);
 			}
 
+		|	KW_SREDUCE
+			{
+			  lexerCmdMode();
+			  moduleExpr.contractTo(0);
+			}
+			moduleAndTerm
+			{
+			  lexerInitialMode();
+			  if (interpreter.setCurrentModule(moduleExpr, 1))
+			    interpreter.sreduce(lexerBubble);
+			}
+
 		|	optDebug KW_REDUCE
 			{
 			  lexerCmdMode();

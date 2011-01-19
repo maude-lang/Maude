@@ -196,7 +196,11 @@ ProfileModule::profileFragment(const PreEquation* preEquation,
 			       int fragmentIndex,
 			       bool success)
 {
+  Assert(preEquation->getModule() == this, "module mismatch " <<
+	 this << " vs " << preEquation->getModule());
   int index = preEquation->getIndexWithinModule();
+  Assert(index != NONE, "index = NONE");
+
   {
     const Vector<SortConstraint*>& mbs= getSortConstraints();
     if (index < mbs.length() && mbs[index] == preEquation)

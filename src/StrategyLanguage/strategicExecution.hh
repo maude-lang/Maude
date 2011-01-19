@@ -51,7 +51,7 @@ public:
   StrategicExecution* getNextSlave() const;
 
   void finished(StrategicProcess* insertionPoint);
-  void succeeded(DagNode* result, StrategicProcess* insertionPoint);
+  void succeeded(int resultIndex, StrategicProcess* insertionPoint);
 
   StrategicTask* getOwner() const;
 

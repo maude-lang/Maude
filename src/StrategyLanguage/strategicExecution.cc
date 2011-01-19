@@ -95,12 +95,11 @@ StrategicExecution::finished(StrategicProcess* insertionPoint)
 }
 
 void
-StrategicExecution::succeeded(DagNode* result, StrategicProcess* insertionPoint)
+StrategicExecution::succeeded(int resultIndex, StrategicProcess* insertionPoint)
 {
   //
   //	Can an execution succceed multiple times?
   //	- might be necessary for condition fragments.
-  //
   //
   //	First we remove ourselves from our owners list of slaves.
   //
@@ -109,7 +108,7 @@ StrategicExecution::succeeded(DagNode* result, StrategicProcess* insertionPoint)
   //
   //	Then we report our success to our owner.
   //
-  if (owner->executionSucceeded(result, insertionPoint) == DIE)
+  if (owner->executionSucceeded(resultIndex, insertionPoint) == DIE)
     {
       owner->finished(insertionPoint);
       delete owner;

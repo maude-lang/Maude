@@ -40,7 +40,7 @@ public:
   //
   //	Call-backs for interesting events.
   //
-  virtual Survival executionSucceeded(DagNode* result, StrategicProcess* insertionPoint) = 0;
+  virtual Survival executionSucceeded(int resultIndex, StrategicProcess* insertionPoint) = 0;
   virtual Survival executionsExhausted(StrategicProcess* insertionPoint) = 0;
 
   bool alreadySeen(int dagIndex, StrategyStackManager::StackId stackId);
@@ -49,6 +49,9 @@ protected:
   StrategicExecution* getDummyExecution();
 
 private:
+  //
+  //	A state is an index to a dag and a stack identifier.
+  //
   typedef pair<int, StrategyStackManager::StackId> State;
   typedef set<State> SeenSet;
   //

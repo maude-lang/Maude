@@ -49,7 +49,7 @@ ModuleCache::regretToInform(Entity* doomedEntity)
 {
   ImportModule* doomedModule = static_cast<ImportModule*>(doomedEntity);
   ModuleMap::iterator pos = moduleMap.find(doomedModule->id());
-  Assert(pos != moduleMap.end(), "could find self-destructing module");
+  Assert(pos != moduleMap.end(), "could find self-destructing module " << doomedModule);
   DebugAdvisory("removing module " << doomedModule << " from cache");
   moduleMap.erase(pos);
 }
@@ -94,6 +94,20 @@ ModuleCache::makeRenamedCopy(ImportModule* module, Renaming* renaming)
   DebugAdvisory("making renamed copy " << name);
   ImportModule* copy = module->makeRenamedCopy(t, canonical, this);
   DebugAdvisory("finish renamed copy " << name);
+
+  if (copy->isBad())
+    {
+      //
+      //	Renaming  a good module can produce a bad module.
+      //
+      //	We never want to cache bad modules.
+      //
+      IssueAdvisory(*copy << ": unable to make renamed module " << QUOTE(name) <<
+		    " due to earlier errors.");
+      copy->removeUser(this);  // since we are not adding a bad module to the cache
+      copy->deepSelfDestruct();
+      return 0;
+    }
   moduleMap[t] = copy;
   return copy;
 }
@@ -124,6 +138,8 @@ ModuleCache::makeParameterCopy(int parameterName, ImportModule* module)
   DebugAdvisory("making parameter copy " << name);
   ImportModule* copy = module->makeParameterCopy(t, parameterName, this);
   DebugAdvisory("finished parameter copy " << name);
+
+  Assert(!(copy->isBad()), "bad parameter copy");
   moduleMap[t] = copy;
   return copy;
 }
@@ -179,6 +195,23 @@ ModuleCache::makeInstatiation(ImportModule* module, const Vector<View*>& views, 
   DebugAdvisory("making instantiation " << name);
   ImportModule* copy = module->makeInstantiation(t, views, parameterArgs, this);
   DebugAdvisory("finished instantiation " << name);
+
+  if (copy->isBad())
+    {
+      //
+      //	It is possible for the instantiation of a non-bad module to be bad;
+      //	for example, by an attribute clash between an operator from the module
+      //	and one from the to-module in the instantiation; or perhaps the
+      //	instantiation of an import went bad.
+      //
+      //	We never want to cache bad modules.
+      //
+      IssueAdvisory(*copy << ": unable to make module instantiation " << QUOTE(name)
+		    << " due to earlier errors.");
+      copy->removeUser(this);  // since we are not adding a bad module to the cache
+      copy->deepSelfDestruct();
+      return 0;
+    }
   moduleMap[t] = copy;
   return copy;
 }
@@ -254,11 +287,24 @@ ModuleCache::makeSummation(const Vector<ImportModule*>& modules)
 	}
     }
   //
-  //	Reset phase counter in each imported module and return sum.
+  //	Reset phase counter in each imported module.
   //
   sum->resetImports();
   DebugAdvisory("finished summation " << name);
 
+  if (sum->isBad())
+    {
+      //
+      //	Summing good modules can produce a bad module.
+      //
+      //	We never want to cache bad modules.
+      //
+      IssueAdvisory(*sum << ": unable to make module summation " << QUOTE(name) <<
+		    " due to earlier errors.");
+      sum->removeUser(this);  // since we are not adding a bad module to the cache
+      sum->deepSelfDestruct();
+      return 0;
+    }
   moduleMap[t] = sum;
   return sum;
 }
@@ -271,7 +317,7 @@ ModuleCache::destructUnusedModules()
   //	simple. If the number of cached modules grows beyond a few hundred
   //	a more complex O(n) solution based on keeping a linked list of
   //	candidates would be appropriate. We would need a call back from
-  //	ImportModule to tell us when a module het down to 1 user (us!).
+  //	ImportModule to tell us when a module is down to 1 user (us!).
   //
  restart:
   {

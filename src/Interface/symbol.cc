@@ -458,6 +458,15 @@ Symbol::isConstructor(DagNode* subject)
 //	for derived classes tht don't define their own versions.
 //
 
+bool
+Symbol::canResolveTheoryClash()
+{
+  //
+  //	The default is that we can't resolve theory clashes.
+  //
+  return false;
+}
+
 UnificationSubproblem*
 Symbol::makeUnificationSubproblem()
 {

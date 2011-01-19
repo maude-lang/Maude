@@ -39,8 +39,8 @@ public:
   //
   //	These three functions are required by our base class.
   //
-  Symbol* translate(Symbol* symbol);
-  Term* translateTerm(const Term* term);
+  Symbol* translate(Symbol* symbol);  // returns 0 to indicate op->term mapping in play
+  Term* translateTerm(const Term* term);  // handles op->term mappings on a whole term basis
   Symbol* findTargetVersionOfSymbol(Symbol* symbol);
   //
   //	Other public functions that we provide.
@@ -51,7 +51,10 @@ public:
 
 private:
   ImportTranslation();
-
+  //
+  //	Typically we have a list of renamings that move stuff from module to module
+  //	until we arrive at the final target module.
+  //
   typedef list<Renaming*> RenamingList;
   typedef list<ImportModule*> ModuleList;
 
@@ -59,7 +62,8 @@ private:
 				       ImportModule* target,
 				       const ConnectedComponent* old);
   Symbol* translateRegularSymbol(Symbol* symbol,
-				 RenamingList::const_iterator& opToTerm) const;
+				 RenamingList::const_iterator& opToTerm,
+				 int& opToTermIndex) const;
 
   RenamingList renamings;
   ModuleList targets;

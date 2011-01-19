@@ -32,6 +32,7 @@
 //	forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "variable.hh"
 
 //	interface class definitions
 #include "symbol.hh"
@@ -47,6 +48,10 @@
 #include "module.hh"
 #include "rootContainer.hh"
 #include "sortBdds.hh"
+#include "unificationContext.hh"
+
+//	variable class definitions
+#include "variableDagNode.hh"
 
 #if 0
 //
@@ -231,33 +236,44 @@ DagNode::computeSolvedForm(DagNode* rhs, UnificationContext& solution, PendingUn
   if (!isGround())
     return computeSolvedForm2(rhs, solution, pending);
   //
-  //	No extension and ground. If the other unificand is nonground, call its algorithm.
+  //	Ground. If the other unificand is nonground, call its algorithm.
   //
   if (!(rhs->isGround()))
     return rhs->computeSolvedForm2(this, solution, pending);
   //
   //
-  //	We have two ground terms and no extension so we can just compare them without the
+  //	We have two ground terms so we can just compare them without the
   //	need for an unification algorithm.
   //
   return equal(rhs);
 }
 
 bool
-DagNode::computeSolvedForm2(DagNode* /* rhs */, UnificationContext& /* solution */, PendingUnificationStack& /* pending */)
+DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
 {
+  DebugAdvisory("DagNode::computeSolvedForm2() " << this << " vs " << rhs);
+
+  if (isGround())
+    {
+      //
+      //	We handle the case
+      //	  <ground term> =? X
+      //	for unimplmented theories now that variable code no longer binds variables to nonvariables.
+      //
+      if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(rhs))
+	{
+	  VariableDagNode* repVar = v->lastVariableInChain(solution);
+	  if (DagNode* value = solution.value(repVar->getIndex()))
+	    return computeSolvedForm(value, solution, pending);
+	  else
+	    {
+	      solution.unificationBind(repVar, this);  // bind variable to unpurified ground term
+	      return true;
+	    }
+	}
+    }
   IssueWarning("Unification modulo the theory of operator " << QUOTE(this->topSymbol) << " is not currently supported.");
   return false;
-}
-
-mpz_class
-DagNode::nonVariableSize()
-{
-  //
-  //	terms in unimplemented theories should be ground and will be treated as constants.
-  //
-  Assert(isGround(), "expected ground " << this);
-  return 1;
 }
 
 void

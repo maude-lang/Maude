@@ -1,3 +1,14 @@
+2010-07-21  Steven Eker  <eker@rho>
+
+	* allSat.cc (AllSat::nextAssignment): use firstAssignment rather
+	than emptiness of assignment to figure out if we are generating
+	our first solution so we can handle the degenerate with no
+	variables
+
+	* allSat.hh (class AllSat): added data member firstAssignment
+
+===================================Maude94a===========================================
+
 2010-04-16  Steven Eker  <eker@rho>
 
 	* natSet.hh (class NatSet): added decl for getMaskSmall()

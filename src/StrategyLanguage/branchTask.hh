@@ -38,7 +38,7 @@ class BranchTask : public StrategicTask
 public:
   BranchTask(StrategyStackManager& strategyStackManager,
 	     StrategicExecution* sibling,
-	     DagNode* startDag,
+	     int startIndex,
 	     StrategyExpression* initialStrategy,
 	     BranchStrategy::Action successAction,
 	     StrategyExpression* successStrategy,
@@ -49,12 +49,12 @@ public:
   //
   //	Call-backs for interesting events.
   //
-  virtual Survival executionSucceeded(DagNode* result, StrategicProcess* insertionPoint);
+  virtual Survival executionSucceeded(int resultIndex, StrategicProcess* insertionPoint);
   virtual Survival executionsExhausted(StrategicProcess* insertionPoint);
 
 private:
   StrategyStackManager& strategyStackManager;
-  DagNode* const startDag;
+  const int startIndex;
   StrategyExpression* const initialStrategy;
   BranchStrategy::Action successAction;
   StrategyExpression* const successStrategy;

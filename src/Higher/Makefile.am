@@ -20,7 +20,6 @@ libhigher_a_SOURCES = \
 	searchState.cc \
 	rewriteSequenceSearch.cc \
 	modelCheckerSymbol.cc \
-	stateTransitionGraph3.cc \
 	stateTransitionGraph.cc \
 	rewriteConditionFragment.cc \
 	assignmentConditionFragment.cc \
@@ -51,7 +50,6 @@ noinst_HEADERS = \
 	satSolverSymbol.hh \
 	searchState.hh \
 	sortTestConditionFragment.hh \
-	stateTransitionGraph3.hh \
 	stateTransitionGraph.hh \
 	temporalSymbol.hh \
 	unificationProblem.hh \

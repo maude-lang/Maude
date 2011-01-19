@@ -6,6 +6,7 @@ second argument resulting in a missed rewrite.
 
 Resolved in alpha92b.
 )
+set show timing off .
 
 mod CUI-BUG is
   sort Foo .

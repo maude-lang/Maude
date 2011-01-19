@@ -153,6 +153,7 @@ public:
   bool downPrintOptionSet(DagNode* metaPrintOptionSet, int& printFlags) const;
   bool downBool(DagNode* metaBool, bool& value);
   bool downQid(DagNode* metaQid, int& id);
+  bool downOpName(DagNode* metaQid, int& id);
   MetaModule* downModule(DagNode* metaModule, bool cacheMetaModule = true, Interpreter* owner = 0);
   bool downTermAndSort(DagNode* metaTerm ,
 		       DagNode* metaSort , 

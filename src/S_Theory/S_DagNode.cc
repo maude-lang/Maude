@@ -31,10 +31,15 @@
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "variable.hh"
 #include "S_Theory.hh"
  
 //      interface class definitions
 #include "term.hh"
+
+//      core class definitions
+#include "pendingUnificationStack.hh"
+#include "unificationContext.hh"
 
 //	variable class definitions
 #include "variableDagNode.hh"
@@ -222,37 +227,61 @@ S_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, Pendin
       mpz_class diff = *(rhs2->number) - *number;
       if (diff == 0)
 	return arg->computeSolvedForm(rhs2->arg, solution, pending);
+      //
+      //	Decompose by peeling the side with greatest iteration count.
+      //
       if (diff > 0)
 	{
-	  if (dynamic_cast<VariableDagNode*>(arg))
-	    {
-	      DagNode* d = new S_DagNode(s, diff, rhs2->arg);
-	      if (rhs2->arg->getSortIndex() != Sort::SORT_UNKNOWN)
-		s->computeBaseSort(d);
-	      return arg->computeSolvedForm(d, solution, pending);
-	    }
+	  DagNode* d = new S_DagNode(s, diff, rhs2->arg);
+	  if (rhs2->arg->getSortIndex() != Sort::SORT_UNKNOWN)
+	    s->computeBaseSort(d);
+	  return arg->computeSolvedForm(d, solution, pending);
+	}
+      DagNode* d = new S_DagNode(s, -diff, arg);
+      if (arg->getSortIndex() != Sort::SORT_UNKNOWN)
+	s->computeBaseSort(d);
+      return rhs2->arg->computeSolvedForm(d, solution, pending);
+    }
+  if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(rhs))
+    {
+      //
+      //	Get representative variable.
+      //
+      VariableDagNode* r = v->lastVariableInChain(solution);
+      if (DagNode* value = solution.value(r->getIndex()))
+	return computeSolvedForm2(value, solution, pending);
+      //
+      //	We need to bind the variable to our purified form.
+      //
+      //	We assume we are in normal form - thus our subject can only be
+      //	an alien or a variable, and only aliens need to be variable abstracted.
+      //
+      S_DagNode* purified;
+      if (VariableDagNode* a = dynamic_cast<VariableDagNode*>(arg))
+	{
+	  //
+	  //	Already pure but need to do an occurs check.
+	  //
+	  if (a->lastVariableInChain(solution)->equal(r))
+	    return false;  // occurs check fail
+	  purified = this;
 	}
       else
 	{
-	  if (dynamic_cast<VariableDagNode*>(rhs2->arg))
-	    {
-	      DagNode* d = new S_DagNode(s, -diff, arg);
-	      if (arg->getSortIndex() != Sort::SORT_UNKNOWN)
-		s->computeBaseSort(d);
-	      return rhs2->arg->computeSolvedForm(d, solution, pending);
-	    }
+	  //
+	  //	Abstract away alien.
+	  //
+	  VariableDagNode* abstractionVariable = solution.makeFreshVariable(s->domainComponent(0));
+	  //
+	  //	solution.unificationBind(abstractionVariable, arg) not safe since arg might be impure.
+	  //
+	  arg->computeSolvedForm(abstractionVariable, solution, pending);
+	  purified = new S_DagNode(s, *number, abstractionVariable);
 	}
-      return 0;
+      solution.unificationBind(r, purified);
+      return true;
     }
-  if (dynamic_cast<VariableDagNode*>(rhs))
-    return rhs->computeSolvedForm(this, solution, pending);
-  return false;
-}
-
-mpz_class
-S_DagNode::nonVariableSize()
-{
-  return *number + arg->nonVariableSize();
+  return pending.resolveTheoryClash(this, rhs);
 }
 
 void

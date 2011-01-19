@@ -32,7 +32,7 @@ class MetaModuleCache : public Entity::User
   NO_COPYING(MetaModuleCache);
 
 public:
-  MetaModuleCache(int maxSize = 4);
+  MetaModuleCache();
   ~MetaModuleCache();
 
   MetaModule* find(DagNode* dag);
@@ -40,6 +40,13 @@ public:
   void flush();
 
 private:
+  enum Sizes
+    {
+      DEFAULT_MAX_SIZE = 4, //  this is the normal maximum size of the cache
+      MIN_MAX_SIZE = 1,  // this is the smallest custom maximum size allowed
+      MAX_MAX_SIZE = 1024  // this is the largest custom maximum size allowed
+    };
+
   struct Pair
   {
     void clear();
@@ -51,7 +58,7 @@ private:
   void regretToInform(Entity* doomedEntity);
   MetaModule* moveToFront(int chosen);
 
-  const int maxSize;
+  static int maxSize;
   Vector<Pair> cache;
 };
 

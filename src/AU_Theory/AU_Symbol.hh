@@ -68,6 +68,7 @@ public:
   //	Hash cons stuff.
   //
   DagNode* makeCanonical(DagNode* original, HashConsSet* hcs);
+  DagNode* makeCanonicalCopy(DagNode* original, HashConsSet* hcs);
 
 private:
   bool rewriteAtTop(AU_DagNode* subject, RewritingContext& context);

@@ -74,10 +74,14 @@ public:
   //	Call the appropriate function on each symbol.
   //
   virtual void reset();  // clear misc caches for each symbol
-  void clearMemo();  // clear memo table for each symbol
   void resetRules();  // clear rule hidden state
   void saveHiddenState();  // save rule hidden state
   void restoreHiddenState();  // restore rule hidden state
+  //
+  //	Memoization stuff.
+  //
+  MemoMap* getMemoMap();
+  void clearMemo();
 
 #ifdef DUMP
   void dump(ostream& s);
@@ -99,6 +103,7 @@ private:
   Vector<Rule*> rules;
   SortBdds* sortBdds;
   int minimumSubstitutionSize;
+  MemoMap* memoMap;  // global memeo map for all symbols in module
 };
 
 inline Environment*

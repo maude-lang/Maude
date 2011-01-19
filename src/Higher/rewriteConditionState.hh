@@ -26,7 +26,7 @@
 #ifndef _rewriteConditionState_hh_
 #define _rewriteConditionState_hh_
 #include "conditionState.hh"
-#include "stateTransitionGraph3.hh"
+#include "stateTransitionGraph.hh"
 #include "substitution.hh"
 
 class RewriteConditionState : public ConditionState
@@ -42,7 +42,7 @@ public:
 private:
   int findNextState();
 
-  StateTransitionGraph3 stateGraph;
+  StateTransitionGraph stateGraph;
   LhsAutomaton* const matcher;
 
   Substitution saved;

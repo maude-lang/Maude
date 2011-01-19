@@ -1,3 +1,98 @@
+2010-09-22  Steven Eker  <eker@rho>
+
+	* applicationProcess.hh (class ApplicationProcess): updated decl
+	for doRewrite()
+
+	* branchTask.hh (class BranchTask): startIndex replaces startDag;
+	updated decl for ctor
+
+	* branchTask.cc (BranchTask::BranchTask): take startIndex rather
+	than startDag
+	(BranchTask::executionSucceeded): use startIndex rather than
+	startDag
+	(BranchTask::executionsExhausted): use startIndex rather than
+	startDag
+
+	* applicationProcess.hh (class ApplicationProcess): updated decl
+	for ctor
+
+	* applicationProcess.cc (ApplicationProcess::ApplicationProcess):
+	take startIndex rather than startDag
+
+	* applicationStrategy.cc (ApplicationStrategy::decompose): use
+	getDagIndex() in place of getDag()
+
+	* testStrategy.cc (TestStrategy::decompose): use getDagIndex()
+
+	* branchStrategy.cc (BranchStrategy::decompose): use getDagIndex()
+	rather than getDag()
+
+	* applicationProcess.cc (ApplicationProcess::doRewrite): return
+	result index
+	(ApplicationProcess::run): use resultIndex
+
+	* rewriteTask.cc (RewriteTask::RewriteTask): pass an index to
+	DecompositionProcess()
+
+	* rewriteTask.hh (class RewriteTask): updated decl for
+	executionSucceeded()
+
+	* rewriteTask.cc (RewriteTask::RewriteTask): initialize hashConsSet
+	(RewriteTask::executionSucceeded): use hashConsSet and resultIndex
+
+	* rewriteTask.hh (class RewriteTask): added data member hashConsSet
+
+	* branchTask.hh (class BranchTask): updated decl for
+	executionSucceeded()
+
+	* branchTask.cc (BranchTask::executionSucceeded): use resultIndex
+	rather than result
+
+	* strategicSearch.cc (StrategicSearch::executionSucceeded): take
+	resultIndex rather than result
+	(StrategicSearch::findNextSolution): use solutionIndex
+
+	* strategicSearch.hh (class StrategicSearch): solution becomes
+	solutionIndex
+
+	* strategicSearch.cc (StrategicSearch::StrategicSearch): call
+	insert() to get a dagIndex to pass to DecompositionProcess()
+
+	* strategicSearch.hh (class StrategicSearch): updated decl for
+	executionSucceeded()
+
+	* strategicTask.hh (class StrategicTask): updated decl for
+	resultIndex
+
+	* strategicExecution.hh (class StrategicExecution): updated decl
+	for succeeded()
+
+	* strategicExecution.cc (StrategicExecution::succeeded): take
+	resultIndex rather than result
+
+	* decompositionProcess.cc
+	(DecompositionProcess::DecompositionProcess): take dagIndex (both
+	versions)
+	(DecompositionProcess::run): no need to look up dagIndex
+
+	* decompositionProcess.hh (class DecompositionProcess): update
+	ctor decl
+	(class DecompositionProcess): dag becomes dagIndex
+	(DecompositionProcess::getDag): becomes getDagIndex()
+
+2010-09-16  Steven Eker  <eker@rho>
+
+	* decompositionProcess.cc (DecompositionProcess::run): use
+	HashConsSet rather than DagNodeCache
+
+	* applicationProcess.cc (ApplicationProcess::doRewrite): use
+	HashConsSet rather than DagNodeCache
+
+	* strategicSearch.hh (class StrategicSearch): derive from
+	HashConsSet rather than DagNodeCache
+
+===================================Maude95===========================================
+
 2008-09-11  Steven Eker  <eker@goo.csl.sri.com>
 
 	* applicationProcess.cc (resolveRemainingConditionFragments):

@@ -31,7 +31,7 @@
 class DecompositionProcess : public StrategicProcess
 {
 public:
-  DecompositionProcess(DagNode* dag,
+  DecompositionProcess(int dagIndex,
 		       StrategyStackManager::StackId pending,
 		       StrategicExecution* taskSibling,
 		       StrategicProcess* other);
@@ -44,10 +44,10 @@ public:
   Survival run(StrategicSearch& searchObject);
   void pushStrategy(StrategyStackManager& stackManager, StrategyExpression* strategy);
   StrategyStackManager::StackId getPending() const;
-  DagNode* getDag();
+  int getDagIndex() const;
 
 private:
-  DagNode* const dag;
+  int dagIndex;
   StrategyStackManager::StackId pending;
 };
 
@@ -63,11 +63,10 @@ DecompositionProcess::getPending() const
   return pending;
 }
 
-inline DagNode*
-DecompositionProcess::getDag()
+inline int
+DecompositionProcess::getDagIndex() const
 {
-  Assert(dag != 0, "null dag");
-  return dag;
+  return dagIndex;
 }
 
 #endif

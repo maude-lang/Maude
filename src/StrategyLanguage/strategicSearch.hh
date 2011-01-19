@@ -26,11 +26,11 @@
 #ifndef _stategicSearch_hh_
 #define _stategicSearch_hh_
 #include<list>
-#include "dagNodeCache.hh"
+#include "hashConsSet.hh"
 #include "strategicTask.hh"
 #include "strategyStackManager.hh"
 
-class StrategicSearch : public DagNodeCache, public StrategyStackManager, private StrategicTask
+class StrategicSearch : public HashConsSet, public StrategyStackManager, private StrategicTask
 {
   NO_COPYING(StrategicSearch);
 
@@ -48,13 +48,13 @@ private:
   //
   //	Virtual in StrategicTask.
   //
-  Survival executionSucceeded(DagNode* result, StrategicProcess* insertionPoint);
+  Survival executionSucceeded(int resultIndex, StrategicProcess* insertionPoint);
   Survival executionsExhausted(StrategicProcess* insertionPoint);
 
   RewritingContext* initial;
   StrategyExpression* strategy;
   bool exhausted;
-  DagNode* solution;
+  int solutionIndex;
   StrategicProcess* nextToRun;
 };
 

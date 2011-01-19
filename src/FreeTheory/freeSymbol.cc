@@ -268,7 +268,13 @@ FreeSymbol::computeBaseSort(DagNode* subject)
   for (int i = 0; i < nrArgs; i++)
     {
       int t = args[i]->getSortIndex();
-      Assert(t != Sort::SORT_UNKNOWN, "unknown sort");
+#if 0
+      DebugAdvisory("FreeSymbol::computeBaseSort() arg " << i <<
+		    " is " << args[i] <<
+		    " at " << ((void*) args[i]) <<
+		    " with sort index " << t);
+#endif
+      Assert(t != Sort::SORT_UNKNOWN, "unknown sort encounter for arg " << i << " subject = " << subject);
       state = traverse(state, t);
     }
   subject->setSortIndex(state);
@@ -348,6 +354,12 @@ FreeSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
   bdd_freepair(argMap);
 }
 
+bool
+FreeSymbol::isStable() const
+{
+  return true;
+}
+
 //
 //	Hash cons code.
 //
@@ -381,6 +393,24 @@ FreeSymbol::makeCanonical(DagNode* original, HashConsSet* hcs)
         }
     }
   return original;  // can use the original dag node as the canonical version
+}
+
+DagNode*
+FreeSymbol::makeCanonicalCopy(DagNode* original, HashConsSet* hcs)
+{
+  //
+  //	We have a unreduced node - copy forced.
+  //
+  FreeDagNode* n = new FreeDagNode(this);
+  n->copySetRewritingFlags(original);
+  n->setSortIndex(original->getSortIndex());
+  DagNode** q = n->argArray();
+
+  int nrArgs = arity();
+  DagNode** p = safeCast(FreeDagNode*, original)->argArray();
+  for (int i = 0; i < nrArgs; ++i, ++p, ++q)
+    *q = hcs->getCanonical(hcs->insert(*p));
+  return n;
 }
 
 #ifdef COMPILER

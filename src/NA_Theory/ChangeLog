@@ -1,3 +1,20 @@
+2010-10-19  Steven Eker  <eker@rho>
+
+	* NA_Symbol.cc (NA_Symbol::makeCanonicalCopy): added
+
+	* NA_Symbol.hh (class NA_Symbol): added decl for
+	makeCanonicalCopy()
+
+===================================Maude95a===========================================
+
+2010-06-04  Steven Eker  <eker@rho>
+
+	* NA_Symbol.cc (NA_Symbol::isStable): added
+
+	* NA_Symbol.hh (class NA_Symbol): added decl for isStable()
+
+===================================Maude94===========================================
+
 2009-12-03  Steven Eker  <eker@goo.csl.sri.com>
 
 	* NA_Symbol.hh (class NA_Symbol): added decl for makeCanonical()

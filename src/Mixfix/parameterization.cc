@@ -410,6 +410,12 @@ ImportModule::handleRegularImports(ImportModule* copy,
 	      names[j] = parameterArgs[indexInUs];
 	    }
 	  ImportModule* instance = import->instantiateBoundParameters(views, names, moduleCache);
+	  if (instance == 0)
+	    {
+	      DebugAdvisory("handleRegularImports() - instantiateBoundParameters() returned null");
+	      copy->markAsBad();
+	      return;
+	    }
 	  Assert(instance->getNrParameters() == 0 || instance->parametersBound(),
 		 "free parameter in instance " << instance << " of imported module " << import);
 	  copy->addImport(instance, INCLUDING, lineNumber);  // HACK need to fix including
@@ -423,9 +429,10 @@ ImportModule::makeInstantiation(int moduleName,
 				const Vector<int>& parameterArgs,
 				ModuleCache* moduleCache)
 {
+  Assert(!isBad(), "trying to instantiate bad module");
   Assert(!parametersBound(), "parameters bound");
-  Assert(arguments.size() == getNrParameters(), "arguments size mismatch");
-  Assert(parameterArgs.size() == getNrParameters(), "parameterArgs size mismatch");
+  Assert(static_cast<int>(arguments.size()) == getNrParameters(), "arguments size mismatch");
+  Assert(static_cast<int>(parameterArgs.size()) == getNrParameters(), "parameterArgs size mismatch");
   //
   //	An instantiation is a renamed copy of an parameterized module with
   //	different imports.
@@ -470,7 +477,18 @@ ImportModule::makeInstantiation(int moduleName,
   handleInstantiationByModuleView(copy, canonical, parameterMap, arguments);
   handleParameterizedSorts(canonical, parameterMap, extraParameterSet);
   handleRegularImports(copy, arguments, parameterArgs, moduleCache);
-  finishCopy(copy, canonical);
+  if (copy->isBad())
+    {
+      DebugAdvisory("ImportModule::makeInstantiation() - instantiation of " << this
+		    << " produced a bad module " << copy);
+      //
+      //	Need to delete renaming here since it could be in a bad state and will never
+      //	be added to the bad module.
+      //
+      delete canonical;
+    }
+  else
+    finishCopy(copy, canonical);
   return copy;
 }
 
@@ -488,8 +506,8 @@ ImportModule::instantiateBoundParameters(const Vector<View*>& arguments,
   //	instantiated with the new arguments.
   //
   Assert(parametersBound(), "parameters not bound");
-  Assert(arguments.size() == getNrParameters(), "arguments size bad");
-  Assert(parameterArgs.size() == getNrParameters(), "parameterArgs size bad");
+  Assert(static_cast<int>(arguments.size()) == getNrParameters(), "arguments size bad");
+  Assert(static_cast<int>(parameterArgs.size()) == getNrParameters(), "parameterArgs size bad");
   Assert(baseModule != 0, "no base module");
   Assert(viewArgs.size() == paramArgs.size(), "original args are inconsistant");
 
@@ -504,6 +522,8 @@ ImportModule::instantiateBoundParameters(const Vector<View*>& arguments,
       //
       ImportModule* newBase = baseModule->
         instantiateBoundParameters(arguments, parameterArgs, moduleCache);
+      if (newBase == 0)
+	return 0;  // something went wrong
 
       ParameterMap parameterMap;
       ParameterSet extraParameterSet;
@@ -535,7 +555,7 @@ ImportModule::instantiateBoundParameters(const Vector<View*>& arguments,
   //	we build a new set of arguments to instantiate our baseModule on.
   //
   int nrFreeParameters = baseModule->getNrParameters();
-  Assert(nrFreeParameters == viewArgs.size(), "nrFreeParameters clash");
+  Assert(nrFreeParameters == static_cast<int>(viewArgs.size()), "nrFreeParameters clash");
   Vector<View*> newViewArgs(nrFreeParameters);
   Vector<int> newParamArgs(nrFreeParameters);
   Vector<View*> extraViewArgs;
@@ -587,10 +607,13 @@ ImportModule::instantiateBoundParameters(const Vector<View*>& arguments,
 	  newParamArgs[i] = 0;
 	}
     }
-  ImportModule* instance = moduleCache->makeInstatiation(baseModule, newViewArgs, newParamArgs);
-  if (!extraParamArgs.empty())
-    instance = moduleCache->makeInstatiation(instance, extraViewArgs, extraParamArgs);
-  return instance;
+  if (ImportModule* instance = moduleCache->makeInstatiation(baseModule, newViewArgs, newParamArgs))
+    {
+      if (!extraParamArgs.empty())
+	instance = moduleCache->makeInstatiation(instance, extraViewArgs, extraParamArgs);
+      return instance;
+    }
+  return 0;
 }
 
 int

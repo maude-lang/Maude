@@ -69,7 +69,7 @@ BranchStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess* r
 {
   (void) new BranchTask(searchObject,
 			remainder,
-			remainder->getDag(),
+			remainder->getDagIndex(),
 			initialStrategy,
 			successAction,
 			successStrategy,

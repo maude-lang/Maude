@@ -113,8 +113,9 @@ ImportTranslation::translate(Symbol* symbol)
       }
     default:
       {
-	RenamingList::const_iterator dummy;
-	s = translateRegularSymbol(symbol, dummy);
+	RenamingList::const_iterator dummyIterator;
+	int dummyIndex;
+	s = translateRegularSymbol(symbol, dummyIterator, dummyIndex);
 	break;
       }
     }
@@ -129,17 +130,20 @@ ImportTranslation::translateTerm(const Term* term)
   DebugAdvisory("translateTerm() on " << term << " we have size " << renamings.size());
   //
   //	We are called because the translation for the top symbol of term
-  //	involves at least one op->term mapping. We locate that first.
+  //	involves at least one op->term mapping. We locate that first by rerunning
+  //	the translateRegularSymbol() and using the information passed back by the
+  //	extra arguments.
   //
   Symbol* symbol = term->symbol();
   RenamingList::const_iterator firstOpToTerm;
-  (void) translateRegularSymbol(symbol, firstOpToTerm);
-  int index = (*firstOpToTerm)->renameOp(symbol);
+  int index;
+  (void) translateRegularSymbol(symbol, firstOpToTerm, index);
   Term* toTerm = (*firstOpToTerm)->getOpTargetTerm(index);
   //
   //	Usually there will be more renamings after the first op->term mapping;
   //	If this is so we need to split our import translation into prefix and
-  //	suffix parts.
+  //	suffix parts. We can only do the prefix portion before we need to instantiate
+  //	the term part of the op->term mapping. Only then can we do the suffix portion.
   //
   ImportTranslation* prefix = this;
   ImportTranslation* suffix = 0;
@@ -189,7 +193,8 @@ ImportTranslation::translateTerm(const Term* term)
 
 Symbol*
 ImportTranslation::translateRegularSymbol(Symbol* symbol,
-					  RenamingList::const_iterator& opToTerm) const
+					  RenamingList::const_iterator& opToTerm,
+					  int& opToTermIndex) const
 {
   int nrArgs = symbol->arity();
   int id = symbol->id();
@@ -213,6 +218,7 @@ ImportTranslation::translateRegularSymbol(Symbol* symbol,
 	      if (id == NONE)
 		{
 		  opToTerm = i;
+		  opToTermIndex = index;
 		  return 0;  // must be an op->term mapping
 		}
 	    }

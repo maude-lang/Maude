@@ -44,7 +44,7 @@ public:
   CUI_UnificationSubproblem();
   ~CUI_UnificationSubproblem();
 
-  void addUnification(DagNode* lhs, DagNode* rhs);
+  void addUnification(DagNode* lhs, DagNode* rhs, bool marked, UnificationContext& solution);
   bool solve(bool findFirst, UnificationContext& solution, PendingUnificationStack& pending);
 
 #ifdef DUMP

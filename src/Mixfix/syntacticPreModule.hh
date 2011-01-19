@@ -209,7 +209,10 @@ SyntacticPreModule::isComplete()
 inline void
 SyntacticPreModule::addSortDecl(const Vector<Token>& sortDecl)
 {
-  sortDecls.append(sortDecl);
+  if (sortDecl.empty())
+    IssueWarning("skipped empty sort declaration.");  // would be nice to have a line number
+  else
+    sortDecls.append(sortDecl);
 }
 
 inline void

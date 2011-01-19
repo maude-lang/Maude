@@ -1,3 +1,10 @@
+2010-07-13  Steven Eker  <eker@rho>
+
+	* metaInterpreter.maude: added insertView/insertedView and
+	showView/showingView
+
+===================================Maude94a===========================================
+
 2010-05-18  Steven Eker  <eker@rho>
 
 	* prelude.maude: split of Boolean operations into BOOL-OPS

@@ -85,9 +85,18 @@ MetaLevel::upOpMappings(View* view, PointerMap& qidMap)
   const View::OpTermMap& opTermMap = view->getOpTermMap();
   FOR_EACH_CONST(i, View::OpTermMap, opTermMap)
     {
+      Term* fromTerm = i->second.first;
+      Term* toTerm = i->second.second;
+      //
+      //	Note that fromTerm and toTerm were parsed in special modules
+      //	belonging to the view and we need to use those modules
+      //	with upTerm().
+      //
+      MixfixModule* fromModule = safeCast(MixfixModule*, fromTerm->symbol()->getModule());
+      MixfixModule* toModule = safeCast(MixfixModule*, toTerm->symbol()->getModule());
       args2.resize(2);
-      args2[0] = upTerm(i->second.first, view->getFromTheory(), qidMap);
-      args2[1] = upTerm(i->second.second, view->getToModule(), qidMap);
+      args2[0] = upTerm(fromTerm, fromModule, qidMap);
+      args2[1] = upTerm(toTerm, toModule, qidMap);
       args.append(opTermMappingSymbol->makeDagNode(args2));
     }
 

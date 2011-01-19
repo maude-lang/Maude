@@ -42,13 +42,15 @@ libcore_a_SOURCES = \
 	extensionMatchSubproblem.cc \
 	dagNodeSet.cc \
 	hashConsSet.cc \
-	dagNodeCache.cc \
 	memoTable.cc \
+	memoMap.cc \
 	rootContainer.cc \
 	sortBdds.cc \
 	unificationContext.cc \
 	protectedDagNodeSet.cc \
-	pendingUnificationStack.cc
+	pendingUnificationStack.cc \
+	unificationSubproblemDisjunction.cc \
+	compoundCycleSubproblem.cc
 
 EXTRA_DIST = \
 	run.cc \
@@ -71,7 +73,6 @@ noinst_HEADERS = \
 	dagArgumentIterator.hh \
 	dagNodeSet.hh \
 	hashConsSet.hh \
-	dagNodeCache.hh \
 	dagRoot.hh \
 	disjunctiveSubproblemAccumulator.hh \
 	equalitySubproblem.hh \
@@ -82,6 +83,7 @@ noinst_HEADERS = \
 	lineNumber.hh \
 	localBinding.hh \
 	memoTable.hh \
+	memoMap.hh \
 	memoryCell.hh \
 	module.hh \
 	moduleItem.hh \
@@ -118,4 +120,6 @@ noinst_HEADERS = \
 	freshVariableGenerator.hh \
 	protectedDagNodeSet.hh \
 	pendingUnificationStack.hh \
-	environment.hh
+	environment.hh \
+	unificationSubproblemDisjunction.hh \
+	compoundCycleSubproblem.hh

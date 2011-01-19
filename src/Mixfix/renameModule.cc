@@ -38,8 +38,20 @@ ImportModule::makeRenamedCopy(int name, Renaming* canonical, ModuleCache* module
 
   int nrImports = importedModules.size();
   for (int i = nrParameters; i < nrImports; ++i)
-    copy->addImport(moduleCache->makeRenamedCopy(importedModules[i], canonical), INCLUDING, lineNumber);  // HACK should this be INCLUDING?
-
+    {
+      if (ImportModule* importCopy = moduleCache->makeRenamedCopy(importedModules[i], canonical))
+	copy->addImport(importCopy, INCLUDING, lineNumber);  // HACK should this be INCLUDING?
+      else
+	{
+	  //
+	  //	One of our imports failed its renaming. Abort construction of the
+	  //	renamed copy and mark it as bad. Let the module cache handle the
+	  //	clean up.
+	  //
+	  copy->markAsBad();
+	  return copy;
+	}
+    }
   finishCopy(copy, canonical);
   return copy;
 }
@@ -47,6 +59,7 @@ ImportModule::makeRenamedCopy(int name, Renaming* canonical, ModuleCache* module
 void
 ImportModule::finishCopy(ImportModule* copy, Renaming* canonical)
 {
+  Assert(!isBad(), "original module bad " << this);
   copy->canonicalRenaming = canonical;
   copy->baseModule = this;
   addUser(copy);
@@ -58,15 +71,21 @@ ImportModule::finishCopy(ImportModule* copy, Renaming* canonical)
   donateSorts2(copy, canonical);
   copy->closeSortSet();
   
+  DebugAdvisory("finishCopy() done with sorts - from " << this << " to " << copy <<
+		" copy->isBad() = " << copy->isBad());
   if (!(copy->isBad()))
     {
       copy->importOps();
       donateOps2(copy, canonical);
+      DebugAdvisory("finishCopy() done with ops - from " << this << " to " << copy <<
+		    " copy->isBad() = " << copy->isBad());
       if (!(copy->isBad()))
 	{
 	  copy->closeSignature();
 	  copy->fixUpImportedOps();
 	  fixUpDonatedOps2(copy, canonical);
+	  DebugAdvisory("finishCopy() done with fixups - from " << this << " to " << copy <<
+			" copy->isBad() = " << copy->isBad());
 	  if (!(copy->isBad()))
 	    {
 	      copy->closeFixUps();
@@ -106,6 +125,7 @@ ImportModule::localSort2(ImportModule* copy, Renaming* renaming, const Sort* sor
 void
 ImportModule::donateSorts2(ImportModule* copy, Renaming* renaming)
 {
+  Assert(!isBad(), "original module bad " << this);
   //
   //	Donate our sorts, after a possible renaming.
   //
@@ -172,6 +192,9 @@ ImportModule::donateSorts2(ImportModule* copy, Renaming* renaming)
 void
 ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 {
+  DebugAdvisory("donateOps2(), from " << this << " to " << copy);
+  Assert(!isBad(), "original module bad " << this);
+
   bool moduleDonatingToTheory = copy->isTheory() && !isTheory();
 
   Vector<int> gather;
@@ -256,7 +279,7 @@ ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 		    }
 		  else
 		    {
-		      IssueAdvisory(*copy << ": operator " << QUOTE(symbol) <<
+		      IssueAdvisory(*copy << ": operator " << QUOTE(newSymbol) <<
 				   " has been imported from both " << *newSymbol <<
 				   " and " << *symbol << " with no common ancestor.");
 		    }

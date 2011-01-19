@@ -40,10 +40,12 @@ public:
   void stackArguments(DagNode* subject,
 		      Vector<RedexPosition>& stack,
 		      int parentIndex);
+  bool isStable() const;
   //
   //	Hash cons stuff.
   //
   DagNode* makeCanonical(DagNode* original, HashConsSet* /* hcs */);
+  DagNode* makeCanonicalCopy(DagNode* original, HashConsSet* /* hcs */);
 };
 
 #endif

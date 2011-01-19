@@ -46,6 +46,14 @@ Pattern::Pattern(Term* patternTerm,
 		 const Vector<ConditionFragment*>& condition)
   : PreEquation(NONE, patternTerm, condition)
 {
+  //
+  //	Patterns belong to commands and descent function invocations; they
+  //	don't belong to modules - we set null information here so we don't
+  //	have uninitialized data and other things can recognize we don't belong
+  //	to a module.
+  //
+  setModuleInfo(0, NONE);
+
   NatSet boundVariables;  // variables bound by matching
   check(boundVariables);
   if (!(isBad()))

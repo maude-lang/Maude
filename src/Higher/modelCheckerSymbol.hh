@@ -28,8 +28,7 @@
 #include "temporalSymbol.hh"
 #include "cachedDag.hh"
 #include "modelChecker2.hh"
-#include "dagNodeSet.hh"
-#include "stateTransitionGraph3.hh"
+#include "stateTransitionGraph.hh"
 
 class ModelCheckerSymbol : public TemporalSymbol
 {
@@ -66,15 +65,15 @@ private:
     Symbol* satisfiesSymbol;
     RewritingContext* parentContext;
     DagNode* trueTerm;
-    StateTransitionGraph3* systemStates;
+    StateTransitionGraph* systemStates;
   };
 
-  void dump(const StateTransitionGraph3& states, const list<int>& path);
-  DagNode* makeTransition(const StateTransitionGraph3& states, int stateNr, int target);
-  DagNode* makeTransitionList(const StateTransitionGraph3& states,
+  void dump(const StateTransitionGraph& states, const list<int>& path);
+  DagNode* makeTransition(const StateTransitionGraph& states, int stateNr, int target);
+  DagNode* makeTransitionList(const StateTransitionGraph& states,
 			      const list<int>& path,
 			      int lastTarget);
-  DagNode* makeCounterexample(const StateTransitionGraph3& states, const ModelChecker2& mc);
+  DagNode* makeCounterexample(const StateTransitionGraph& states, const ModelChecker2& mc);
 
   Symbol* satisfiesSymbol;
   //

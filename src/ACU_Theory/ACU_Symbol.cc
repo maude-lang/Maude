@@ -70,8 +70,12 @@ ACU_Symbol::postOpDeclarationPass()
   processIdentity();
   if(getIdentity() != 0)
     {
+      //
+      //	No need to call rightIdentitySortCheck() - since we are commutative
+      //	if there is a problem it will show up with leftIdentitySortCheck() and
+      //	the latter is somewhat faster.
+      //
       leftIdentitySortCheck();
-      rightIdentitySortCheck();
     }
 }
 
@@ -401,7 +405,7 @@ ACU_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
     {
       Vector<Bdd> argGenSort;
       i->dagNode->computeGeneralizedSort(sortBdds, realToBdd, argGenSort);
-      Assert(argGenSort.size() == nrBdds, "nrBdds clash");
+      Assert((int) argGenSort.size() == nrBdds, "nrBdds clash");
       int multiplicity = i->multiplicity;
 
       if (firstArg)
@@ -428,6 +432,16 @@ ACU_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
   bdd_freepair(argMap);
 }
 
+bool
+ACU_Symbol::canResolveTheoryClash()
+{
+  //
+  //	We don't put this in parent class because return true has
+  //	the obligation to handle clashing in our unification subproblems.
+  //
+  return getIdentity() != 0;
+}
+
 UnificationSubproblem*
 ACU_Symbol::makeUnificationSubproblem()
 {
@@ -449,25 +463,8 @@ DagNode*
 ACU_Symbol::makeCanonical(DagNode* original, HashConsSet* hcs)
 {
   if (safeCast(ACU_BaseDagNode*, original)->isTree())
-    {
-      return safeCast(ACU_TreeDagNode*, original)->makeCanonical(hcs);
-      /*
-      //
-      //	Never use tree form as canonical.
-      //
-      const ACU_TreeDagNode* d = safeCast(const ACU_TreeDagNode*, original);
-      ACU_DagNode* n = new ACU_DagNode(this, d->tree.getSize(), ACU_BaseDagNode::ASSIGNMENT);
-      n->copySetRewritingFlags(original);
-      n->setSortIndex(original->getSortIndex());
-      ArgVec<ACU_DagNode::Pair>::iterator j = n->argArray.begin();
-      for (ACU_FastIter i(d->tree); i.valid(); i.next(), ++j)
-	{
-	  j->dagNode = hcs->getCanonical(hcs->insert(i.getDagNode()));
-	  j->multiplicity = i.getMultiplicity();
-	}
-      return n;
-      */
-    }
+    return safeCast(ACU_TreeDagNode*, original)->makeCanonical(hcs);
+
   const ACU_DagNode* d = safeCast(const ACU_DagNode*, original);
   int nrArgs = d->argArray.size();
   for (int i = 0; i < nrArgs; i++)
@@ -495,4 +492,41 @@ ACU_Symbol::makeCanonical(DagNode* original, HashConsSet* hcs)
         }
     }
   return original;  // can use the original dag node as the canonical version
+}
+
+DagNode*
+ACU_Symbol::makeCanonicalCopy(DagNode* original, HashConsSet* hcs)
+{
+  //
+  //	We have a unreduced node - copy forced.
+  //
+  if (safeCast(ACU_BaseDagNode*, original)->isTree())
+    {
+      //
+      //	Never use tree form as canonical for unreduced dag.
+      //
+      const ACU_TreeDagNode* d = safeCast(const ACU_TreeDagNode*, original);
+      ACU_DagNode* n = new ACU_DagNode(this, d->tree.getSize(), ACU_BaseDagNode::ASSIGNMENT);
+      n->copySetRewritingFlags(original);
+      n->setSortIndex(original->getSortIndex());
+      ArgVec<ACU_DagNode::Pair>::iterator j = n->argArray.begin();
+      for (ACU_FastIter i(d->tree); i.valid(); i.next(), ++j)
+	{
+	  j->dagNode = hcs->getCanonical(hcs->insert(i.getDagNode()));
+	  j->multiplicity = i.getMultiplicity();
+	}
+      return n;
+    }
+
+  const ACU_DagNode* d = safeCast(const ACU_DagNode*, original);
+  int nrArgs = d->argArray.size();
+  ACU_DagNode* n = new ACU_DagNode(this, nrArgs, ACU_BaseDagNode::ASSIGNMENT);
+  n->copySetRewritingFlags(original);
+  n->setSortIndex(original->getSortIndex());
+  for (int i = 0; i < nrArgs; i++)
+    {
+      n->argArray[i].dagNode = hcs->getCanonical(hcs->insert(d->argArray[i].dagNode));
+      n->argArray[i].multiplicity = d->argArray[i].multiplicity;
+    }
+  return n;
 }

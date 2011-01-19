@@ -31,6 +31,8 @@
 #include "unificationSubproblem.hh"
 #include "simpleRootContainer.hh"
 #include "natSet.hh"
+#include "bddUser.hh"
+#include "allSat.hh"
 #include "dagNode.hh"
 //#include "dagNodeSet.hh"
 #include "substitution.hh"
@@ -44,7 +46,7 @@ public:
   ACU_UnificationSubproblem2(ACU_Symbol* topSymbol);
   ~ACU_UnificationSubproblem2();
 
-  void addUnification(DagNode* lhs, DagNode* rhs);
+  void addUnification(DagNode* lhs, DagNode* rhs, bool marked, UnificationContext& solution);
   bool solve(bool findFirst, UnificationContext& solution, PendingUnificationStack& pending);
 
 #ifdef DUMP
@@ -58,17 +60,27 @@ private:
   {
     Vector<int> element;	// practical basis elements will fit in 32-bit machine integers
     NatSet remainder;		// which subterms will be assigned by remaining elements
+    int index;
   };
 
   typedef list<Entry> Basis;
+  typedef list<NatSet> NatSetList;
 
   void markReachableNodes();
 
-  void setMultiplicity(DagNode* dagNode, int multiplicity);
-  bool unsolve(int index, UnificationContext& solution);
+  int setMultiplicity(DagNode* dagNode, int multiplicity, UnificationContext& solution);
+  void unsolve(int index, UnificationContext& solution);
+
+  void classify(int subtermIndex,
+		UnificationContext& solution,
+		bool& canTakeIdentity,
+		int& upperBound,
+		Symbol*& stableSymbol);
   bool buildAndSolveDiophantineSystem(UnificationContext& solution);
   bool nextSelection(bool findFirst);
+  bool nextSelectionWithIdentity(bool findFirst);
   bool includable(Basis::const_iterator potential);
+  bdd computeLegalSelections();
   bool buildSolution(UnificationContext& solution, PendingUnificationStack& pending);
 
   ACU_Symbol* topSymbol;
@@ -80,12 +92,20 @@ private:
   NatSet accumulator;
   Vector<int> totals;
   Vector<int> upperBounds;
+  NatSet needToCover;
   NatSet uncovered;
   Vector<Basis::const_iterator> selection;
   Basis::const_iterator current;
   Substitution savedSubstitution;
   Substitution preSolveSubstitution;
   PendingUnificationStack::Marker savedPendingState;
+  //
+  //	Needed for identity case.
+  //
+  NatSetList old;
+  NatSet selectionSet;
+  AllSat* maximalSelections;
+  NatSet markedSubterms;  // indices of subterms that have been marked
 };
 
 #endif

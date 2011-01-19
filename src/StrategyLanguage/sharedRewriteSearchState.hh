@@ -21,7 +21,8 @@
 */
 
 //
-//	Class for a shared, simplified RewriteSearchState.
+//	Class for a simplified RewriteSearchState, together with reference counting smart pointers to
+//	determine when it is deleted, when it gets shared between multiple users.
 //
 #ifndef _sharedRewriteSearchState_hh_
 #define _sharedRewriteSearchState_hh_

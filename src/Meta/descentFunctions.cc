@@ -199,7 +199,7 @@ MetaLevelOpSymbol::metaMaximalAritySet(FreeDagNode* subject, RewritingContext& c
       int id;
       Vector<Sort*> arity;
       Sort *target;
-      if (metaLevel->downQid(subject->getArgument(1), id) &&
+      if (metaLevel->downOpName(subject->getArgument(1), id) &&
 	  metaLevel->downTypeList(subject->getArgument(2), m, arity) &&
 	  metaLevel->downSimpleSort(subject->getArgument(3), m, target))
 	{
@@ -559,14 +559,15 @@ bool
 MetaLevelOpSymbol::metaDownTerm(FreeDagNode* subject, RewritingContext& context)
 {
   MixfixModule* m = safeCast(MixfixModule*, getModule());
-  DagNode* d;
+  DagNode* d = subject->getArgument(1);
   if (Term* t = metaLevel->downTerm(subject->getArgument(0), m))
     {
-      t = t->normalize(false);
-      d = term2Dag(t);
+      if (t->symbol()->rangeComponent() == d->symbol()->rangeComponent())
+	{
+	  t = t->normalize(false);
+	  d = term2Dag(t);
+	}
       t->deepSelfDestruct();
     }
-  else
-    d = subject->getArgument(1);
   return context.builtInReplace(subject, d);
 }

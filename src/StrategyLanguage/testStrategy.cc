@@ -64,7 +64,7 @@ TestStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess* rem
   if (!pattern.getUnboundVariables().empty())
     return StrategicExecution::DIE;  // bad condition always fails
   RewritingContext* context = searchObject.getContext();
-  RewritingContext* newContext = context->makeSubcontext(remainder->getDag());
+  RewritingContext* newContext = context->makeSubcontext(searchObject.getCanonical(remainder->getDagIndex()));
   MatchSearchState* state = new MatchSearchState(newContext, &pattern, MatchSearchState::GC_CONTEXT, 0, depth);
   bool result = state->findNextMatch();
   state->transferCount(*context);

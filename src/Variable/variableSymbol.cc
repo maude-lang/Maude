@@ -104,6 +104,12 @@ VariableSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
   sortBdds.makeVariableVector(firstVariable, nrVariables, generalizedSort);
 }
 
+bool
+VariableSymbol::isStable() const
+{
+  return false;
+}
+
 //
 //	Hash cons code.
 //
@@ -116,4 +122,17 @@ VariableSymbol::makeCanonical(DagNode* original, HashConsSet* /* hcs */)
   //	instance into the canonical instance.
   //
   return original;
+}
+
+DagNode*
+VariableSymbol::makeCanonicalCopy(DagNode* original, HashConsSet* /* hcs */)
+{
+  //
+  //	We have a unreduced node - copy forced -  in principle variable could rewrite to something else!
+  //
+  VariableDagNode* v = safeCast(VariableDagNode*, original);
+  VariableDagNode* n = new VariableDagNode(this, v->id(), v->getIndex());
+  n->copySetRewritingFlags(original);
+  n->setSortIndex(original->getSortIndex());
+  return n;
 }

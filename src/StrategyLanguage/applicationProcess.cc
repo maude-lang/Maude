@@ -57,7 +57,7 @@
 #include "applicationProcess.hh"
 
 ApplicationProcess::ApplicationProcess(StrategicSearch& searchObject,
-				       DagNode* start,
+				       int startIndex,
 				       ApplicationStrategy* strategy,
 				       StrategyStackManager::StackId pending,
 				       StrategicExecution* taskSibling,
@@ -65,7 +65,10 @@ ApplicationProcess::ApplicationProcess(StrategicSearch& searchObject,
 
 
   : StrategicProcess(taskSibling, insertionPoint),
-    rewriteState(searchObject.getContext(), start, strategy->getLabel(), strategy->getTop() ? NONE : UNBOUNDED),
+    rewriteState(searchObject.getContext(),
+		 searchObject.getCanonical(startIndex),
+		 strategy->getLabel(),
+		 strategy->getTop() ? NONE : UNBOUNDED),
     pending(pending),
     strategy(strategy)
 {
@@ -127,14 +130,15 @@ ApplicationProcess::run(StrategicSearch& searchObject)
 	{
 	  if (strategy->getStrategies().size() > 0)
 	    return SURVIVE;  // might match a different rule on later runs
-	  if (DagNode* r = doRewrite(searchObject,
-				     rewriteState,
-				     rewriteState->getPositionIndex(),
-				     rewriteState->getExtensionInfo(),
-				     rewriteState->getContext(),
-				     rule))
+	  int resultIndex = doRewrite(searchObject,
+				      rewriteState,
+				      rewriteState->getPositionIndex(),
+				      rewriteState->getExtensionInfo(),
+				      rewriteState->getContext(),
+				      rule);
+	  if (resultIndex != NONE)
 	    {
-	      (void) new DecompositionProcess(r, pending, this, this);
+	      (void) new DecompositionProcess(resultIndex, pending, this, this);
 	      return SURVIVE;  // stick around to look for another rewrite
 	    }
 	}
@@ -143,7 +147,7 @@ ApplicationProcess::run(StrategicSearch& searchObject)
   return DIE;  // request deletion
 }
 
-DagNode*
+int
 ApplicationProcess::doRewrite(StrategicSearch& searchObject,
 			      SharedRewriteSearchState::Ptr rewriteState,
 			      PositionState::PositionIndex redexIndex,
@@ -180,7 +184,7 @@ ApplicationProcess::doRewrite(StrategicSearch& searchObject,
       tracingContext->tracePreRuleRewrite(rewriteState->getDagNode(redexIndex), rule);
       delete tracingContext;
       if (baseContext->traceAbort())
-	return 0;
+	return NONE;
     }
   //
   //	Instantiate the rhs of the rule with the substitution.
@@ -203,18 +207,19 @@ ApplicationProcess::doRewrite(StrategicSearch& searchObject,
       if (c->traceAbort())
 	{
 	  delete c;
-	  return 0;
+	  return NONE;
 	}
     }
   c->reduce();
   if (c->traceAbort())
     {
       delete c;
-      return 0;
+      return NONE;
     }
   searchObject.getContext()->addInCount(*c);
+  int dagIndex = searchObject.insert(c->root());
   delete c;
-  return searchObject.index2DagNode(searchObject.insert(r.first));
+  return dagIndex;
 }
 
 StrategicExecution::Survival
@@ -326,9 +331,10 @@ ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchOb
   //
   //	The condition succeeded so now we need to do the rewrite and resume the strategy.
   //
-  if (DagNode* r = doRewrite(searchObject, rewriteState, redexIndex, extensionInfo, substitutionSoFar, rule))
+  int resultIndex = doRewrite(searchObject, rewriteState, redexIndex, extensionInfo, substitutionSoFar, rule);
+  if (resultIndex != NONE)
     {
-      (void) new DecompositionProcess(r, pending, taskSibling, other);
+      (void) new DecompositionProcess(resultIndex, pending, taskSibling, other);
       return SURVIVE;  // stick around to look for another rewrite
     }
   return DIE;  // only happens when we are aborting

@@ -1,3 +1,76 @@
+2010-12-09  Steven Eker  <eker@rho>
+
+	* CUI_Symbol.cc (CUI_Symbol::postOpDeclarationPass): don't call
+	rightIdentitySortCheck() if we are commutative
+
+===================================Maude95b===========================================
+
+2010-10-19  Steven Eker  <eker@rho>
+
+	* CUI_Symbol.cc (CUI_Symbol::makeCanonicalCopyEagerUptoReduced):
+	becomes makeCanonicalCopy() with a change of semantics
+
+	* CUI_Symbol.hh (class CUI_Symbol):
+	makeCanonicalCopyEagerUptoReduced() -> makeCanonicalCopy()
+
+===================================Maude95a===========================================
+
+2010-09-29  Steven Eker  <eker@rho>
+
+	* CUI_Symbol.cc (CUI_Symbol::makeCanonicalCopyEagerUptoReduced):
+	simplify now that we are only passed unreduced nodes; use
+	getCanonicalCopyEagerUptoReduced()
+
+	* CUI_Symbol.hh (class CUI_Symbol): added decl for
+	makeCanonicalCopyEagerUptoReduced()
+
+	* CUI_Symbol.cc: added
+
+2010-08-18  Steven Eker  <eker@rho>
+
+	* CUI_DagNode.cc (CUI_DagNode::nonVariableSize): deleted
+
+	* CUI_DagNode.hh (class CUI_DagNode): deleted decl for
+	nonVariableSize()
+
+===================================Maude95===========================================
+
+2010-08-12  Steven Eker  <eker@rho>
+
+	* CUI_DagNode.cc (CUI_DagNode::computeSolvedForm2): use
+	computeSolvedForm() rather than unificationBind() to ensure we
+	don't bind the abstraction variable to an impure term
+	(CUI_DagNode::computeSolvedForm2): use equalt() rather than == for
+	comparing arguments during purification
+
+2010-08-10  Steven Eker  <eker@rho>
+
+	* CUI_DagNode.cc (CUI_DagNode::computeSolvedForm2): handle binding
+	of variables, purification and local occurs check
+
+2010-08-03  Steven Eker  <eker@rho>
+
+	* CUI_UnificationSubproblem.hh (class CUI_UnificationSubproblem):
+	updated decl for addUnification()
+
+	* CUI_UnificationSubproblem.cc
+	(CUI_UnificationSubproblem::addUnification): take marked arg
+
+2010-07-29  Steven Eker  <eker@rho>
+
+	* CUI_UnificationSubproblem.cc
+	(CUI_UnificationSubproblem::addUnification): take solution argument
+
+	* CUI_UnificationSubproblem.hh (class CUI_UnificationSubproblem):
+	updated decl for addUnification()
+
+===================================Maude94a===========================================
+
+2010-06-30  Steven Eker  <eker@rho>
+
+	* CUI_DagNode.cc (CUI_DagNode::computeSolvedForm2): use
+	resolveTheoryClash()
+
 2009-12-22  Steven Eker  <eker@goo.csl.sri.com>
 
 	* CUI_DagNode.cc (stackArguments): fixed nasty bug where we were

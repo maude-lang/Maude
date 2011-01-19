@@ -279,10 +279,11 @@ Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
   if (!token.empty())
     mixfixSyntax.append(encode(token.c_str()));
   //
-  //	If the mixfix syntax turned out to be a single token, and it wasn't an underscore
-  //	we treat it as not having mixfix syntax.
+  //	If the mixfix syntax turned out to be a single token, that wasn't different
+  //	from the prefix syntax we treat it as not having mixfix syntax in order to
+  //	avoid ambiguous parses.
   //
-  if (mixfixSyntax.size() == 1 && nrUnderscores == 0)
+  if (mixfixSyntax.size() == 1 && mixfixSyntax[0] == prefixNameCode)
     {
       DebugAdvisory("deleting mixfixSyntax for " << name);
       mixfixSyntax.clear();

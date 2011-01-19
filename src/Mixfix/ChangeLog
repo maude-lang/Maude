@@ -1,3 +1,150 @@
+2010-12-09  Steven Eker  <eker@rho>
+
+	* modules.yy (skipStrayArrow): added
+	(viewDeclaration): use skipStrayArrow to overparse var X : -> Foo .
+	(declaration): ditto
+	(skipStrayArrow): get line number from stray token
+	(skipStrayColon): added
+
+2010-11-30  Steven Eker  <eker@rho>
+
+	* profileModule.cc (ProfileModule::profileFragment): added
+	Asserts() to check for bad ModuleInfo
+
+	* trial.cc (UserLevelRewritingContext::traceEndFragment): check
+	for undefined trialRef before calling the profiler since this
+	generally means we are tracing a Pattern (which doesn't belong to
+	a module and can't be profiled in the current implementation)
+
+===================================Maude95b===========================================
+
+2010-10-19  Steven Eker  <eker@rho>
+
+	* quotedIdentifierSymbol.cc
+	(QuotedIdentifierSymbol::makeCanonicalCopyEagerUptoReduced):
+	deleted
+
+	* quotedIdentifierSymbol.hh (class QuotedIdentifierSymbol):
+	deleted decl for makeCanonicalCopyEagerUptoReduced()
+
+===================================Maude95a===========================================
+
+2010-10-06  Steven Eker  <eker@rho>
+
+	* renameModule.cc (ImportModule::donateOps2): use new symbol name
+	rather than old symbol name in Advisory()
+
+	* moduleCache.cc (ModuleCache::makeRenamedCopy): don't cache bad
+	renamed modules
+
+	* interpreter.cc (Interpreter::makeModule): simplified now that
+	ModuleCache::makeRenamedCopy() converts bad renamed copies to null
+
+	* renameModule.cc (ImportModule::makeRenamedCopy): handle
+	ModuleCache::makeRenamedCopy() returning null
+
+	* interpreter.cc (Interpreter::makeModule): simplified now that
+	ModuleCache::makeInstatiation() converts bad summations to null
+
+	* moduleCache.cc (ModuleCache::makeInstatiation): update
+	Advisory() for bad instantiations
+	(ModuleCache::makeSummation): don't cache bad summations
+
+	* parameterization.cc (ImportModule::makeInstantiation): don't
+	call finishCopy() on bad modules
+	(ImportModule::instantiateBoundParameters): added static_cast<>s
+	(ImportModule::makeInstantiation): added static_cast<>s
+
+	* moduleCache.cc (ModuleCache::makeParameterCopy): Assert() that
+	we never have a bad parameter copy
+
+2010-10-05  Steven Eker  <eker@rho>
+
+	* moduleCache.cc (ModuleCache::makeInstatiation): don't cache bad
+	modules; instead return null
+	(ModuleCache::makeInstatiation): deep self destruct bad modules
+	(ModuleCache::makeInstatiation): remove ourself as a user of the
+	bad module before self destructing it
+
+	* interpreter.cc (Interpreter::makeModule): new makeInstatiation() convention
+
+	* parameterization.cc (ImportModule::handleRegularImports): check
+	for instantiateBoundParameters() returning 0
+	(ImportModule::instantiateBoundParameters): handle
+	makeInstatiation() returning 0
+	(ImportModule::instantiateBoundParameters): handle
+	instantiateBoundParameters() returning 0
+
+	* importModule.cc (ImportModule::donateOps)
+	(ImportModule::donateSorts): added Assert() to check bad flag
+
+	* renameModule.cc (ImportModule::finishCopy): added Assert() to
+	check bad flag
+	(ImportModule::donateOps2, ImportModule::donateSorts2): added
+	Assert() to check bad flag
+
+	* parameterization.cc (ImportModule::makeInstantiation): added
+	Assert() to check bad flag
+
+2010-09-29  Steven Eker  <eker@rho>
+
+	* quotedIdentifierSymbol.hh (class QuotedIdentifierSymbol): added
+	decl for makeCanonicalCopyEagerUptoReduced()
+
+	* quotedIdentifierSymbol.cc
+	(QuotedIdentifierSymbol::makeCanonicalCopyEagerUptoReduced): added
+
+2010-09-08  Steven Eker  <eker@rho>
+
+	* lexer.ll (id): fix a bug in
+	<END_STATEMENT_MODE,END_COMMAND_MODE> where identifiers such as
+	.foo were being split by the first rule because there wasn't a
+	match longer than one charater
+
+===================================Maude95===========================================
+
+2010-06-29  Steven Eker  <eker@rho>
+
+	* prettyPrint.cc (operator<<): handle null pointer NamedEntity*
+	case
+
+2010-06-11  Steven Eker  <eker@rho>
+
+	* view.cc (View::handleOpTermMappings): updated warning message
+	for two lhs variables with same base name
+
+2010-06-10  Steven Eker  <eker@rho>
+
+	* importTranslation.hh (class ImportTranslation): updated decl for
+	translateRegularSymbol()
+
+	* importTranslation.cc (ImportTranslation::translateTerm): fix bug
+	where were weren't considering renamings before the first op->term
+	mapping by making use of extra translateRegularSymbol() arg
+	(ImportTranslation::translateRegularSymbol): use extra argument to
+	pass back the opToTerm index
+	(ImportTranslation::translate): use new translateRegularSymbol() convention
+
+2010-06-02  Steven Eker  <eker@rho>
+
+	* syntacticPreModule.hh (SyntacticPreModule::addSortDecl): don't
+	add empty sort declarations; this fixes a bug where empty sort
+	declarations crashed show module command
+
+2010-05-19  Steven Eker  <eker@rho>
+
+	* execute.cc (Interpreter::sreduce): added
+
+	* interpreter.hh (endif): added decl for sreduce
+
+	* commands.yy (command): added sreduce command
+
+	* top.yy: added KW_SREDUCE
+
+	* lexer.ll: added sreduce
+
+===================================Maude94===========================================
+
 2010-05-07  Steven Eker  <eker@rho>
 
 	* mixfixModule.cc (MixfixModule::instantiatePolymorph): avoid

@@ -83,6 +83,12 @@ NA_Symbol::stackArguments(DagNode* /* subject */,
 {
 }
 
+bool
+NA_Symbol::isStable() const
+{
+  return true;
+}
+
 //
 //	Hash cons code.
 //
@@ -95,4 +101,13 @@ NA_Symbol::makeCanonical(DagNode* original, HashConsSet* /* hcs */)
   //	instance into the canonical instance.
   //
   return original;
+}
+
+DagNode*
+NA_Symbol::makeCanonicalCopy(DagNode* original, HashConsSet* /* hcs */)
+{
+  //
+  //	Copy forced.
+  //
+  return original->makeClone();
 }

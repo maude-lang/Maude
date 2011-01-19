@@ -437,9 +437,7 @@ Interpreter::makeModule(const ModuleExpression* expr, ImportModule* enclosingMod
 		return 0;
 	      }
 	    */
-	    ImportModule* m = makeRenamedCopy(fm, expr->getRenaming());
-	    if (!(m->isBad()))
-	      return m;
+	    return makeRenamedCopy(fm, expr->getRenaming());
 	  }
 	break;
       }
@@ -460,11 +458,7 @@ Interpreter::makeModule(const ModuleExpression* expr, ImportModule* enclosingMod
 	      }
 	  }
 	if (!fms.empty())
-	  {
-	    ImportModule* m = makeSummation(fms);
-	    if (!(m->isBad()))
-	      return m;
-	  }
+	  return makeSummation(fms);
 	break;
       }
     case ModuleExpression::INSTANTIATION:
@@ -516,7 +510,7 @@ Interpreter::makeModule(const ModuleExpression* expr, ImportModule* enclosingMod
 		if (View* v = getView(code))
 		  {
 		    //
-		    //	Instantiation is a view.
+		    //	Instantiation argument is a view.
 		    //
 		    if (!(v->evaluate()))
 		      {
@@ -553,9 +547,7 @@ Interpreter::makeModule(const ModuleExpression* expr, ImportModule* enclosingMod
 			     QUOTE(enclosingModule) << '.');
 		return 0;
 	      }
-	    ImportModule* m = makeInstatiation(fm, views, names);
-	    if (!(m->isBad()))
-	      return m;
+	    return makeInstatiation(fm, views, names);  // may return null but never has bad flag set
 	  }
 	break;
       }

@@ -39,8 +39,9 @@ class UnificationContext : public Substitution, private SimpleRootContainer
 public:
   UnificationContext(FreshVariableGenerator* freshVariableGenerator, int nrOriginalVariables);
 
-  DagNode* makeFreshVariable(ConnectedComponent* component);
+  VariableDagNode* makeFreshVariable(const ConnectedComponent* component);
   Sort* getFreshVariableSort(int index) const;
+  int getNrOriginalVariables() const;
 
   void unificationBind(VariableDagNode* variable, DagNode* value);
   VariableDagNode* getVariableDagNode(int index);
@@ -70,6 +71,12 @@ UnificationContext::getVariableDagNode(int index)
 {
   int nrVariableDagNodes = variableDagNodes.size();
   return (index < nrVariableDagNodes) ? variableDagNodes[index] : 0;
+}
+
+inline int
+UnificationContext::getNrOriginalVariables() const
+{
+  return nrOriginalVariables;
 }
 
 #endif

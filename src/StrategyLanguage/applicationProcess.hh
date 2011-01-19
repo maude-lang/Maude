@@ -21,7 +21,7 @@
 */
 
 //
-//	Abstract base class for round-robin based strategic execution.
+//	Class for applying rls.
 //
 #ifndef _applicationProcess_hh_
 #define _applicationProcess_hh_
@@ -35,7 +35,7 @@ class ApplicationProcess : public StrategicProcess
 
 public:
   ApplicationProcess(StrategicSearch& searchObject,
-		     DagNode* start,
+		     int startIndex,
 		     ApplicationStrategy* strategy,
 		     StrategyStackManager::StackId pending,
 		     StrategicExecution* taskSibling,
@@ -58,12 +58,12 @@ public:
 				       StrategicProcess* other);
 
 private:
-  static DagNode* doRewrite(StrategicSearch& searchObject,
-			    SharedRewriteSearchState::Ptr rewriteState,
-			    PositionState::PositionIndex redexIndex,
-			    ExtensionInfo* extensionInfo,
-			    Substitution* substitution,
-			    Rule* rule);
+  static int doRewrite(StrategicSearch& searchObject,
+		       SharedRewriteSearchState::Ptr rewriteState,
+		       PositionState::PositionIndex redexIndex,
+		       ExtensionInfo* extensionInfo,
+		       Substitution* substitution,
+		       Rule* rule);
 
   SharedRewriteSearchState::Ptr rewriteState;
   StrategyStackManager::StackId pending;

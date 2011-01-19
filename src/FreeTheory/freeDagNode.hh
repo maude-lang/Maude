@@ -52,7 +52,6 @@ public:
   //
   ReturnResult computeBaseSortForGroundSubterms();
   bool computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
-  mpz_class nonVariableSize();
   void insertVariables2(NatSet& occurs);
   DagNode* instantiate2(const Substitution& substitution);
   //
@@ -66,7 +65,7 @@ public:
   FreeSymbol* symbol() const;
   //
   //
-  //	Fast theory specific access to argument list
+  //	Fast theory specific access to argument list.
   //
   DagNode* getArgument(int i) const;
 
@@ -89,7 +88,21 @@ private:
   DagNode* markArguments();
   DagNode* copyEagerUptoReduced2();  
   void clearCopyPointers2();
-    
+  //
+  //	Unification stuff
+  //
+  enum PurificationStatus
+    {
+      OCCURS_CHECK_FAIL,
+      PURE_AS_IS,
+      PURIFIED
+    };
+
+  PurificationStatus purifyAndOccurCheck(DagNode* repVar,
+					 UnificationContext& solution,
+					 PendingUnificationStack& pending,
+					 FreeDagNode*& purified);
+
   friend class FreeSymbol;		// to reduce subterms prior to rewrite
   friend class FreeUnarySymbol;		// to reduce subterms prior to rewrite
   friend class FreeBinarySymbol;	// to reduce subterms prior to rewrite

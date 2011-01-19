@@ -80,8 +80,9 @@ CUI_UnificationSubproblem::markReachableNodes()
 }
 
 void
-CUI_UnificationSubproblem::addUnification(DagNode* lhs, DagNode* rhs)
+CUI_UnificationSubproblem::addUnification(DagNode* lhs, DagNode* rhs, bool marked, UnificationContext& /* solution */)
 {
+  Assert(marked == false, "we don't handle collapse yet");
   problems.append(Problem(safeCast(CUI_DagNode*, lhs), safeCast(CUI_DagNode*, rhs)));
 }
 

@@ -1,3 +1,26 @@
+2010-10-19  Steven Eker  <eker@rho>
+
+	* AU_Symbol.cc (AU_Symbol::makeCanonicalCopyEagerUptoReduced):
+	becomes makeCanonicalCopy() with change of semantics
+
+	* AU_Symbol.hh (class AU_Symbol):
+	makeCanonicalCopyEagerUptoReduced() -> makeCanonicalCopy()
+
+===================================Maude95a===========================================
+
+2010-09-29  Steven Eker  <eker@rho>
+
+	* AU_Symbol.cc (AU_Symbol::makeCanonicalCopyEagerUptoReduced):
+	simplified now that we only deal with unreduced dag nodes; use
+	getCanonicalCopyEagerUptoReduced()
+
+	* AU_Symbol.hh (class AU_Symbol): added decl for
+	makeCanonicalCopyEagerUptoReduced()
+
+	* AU_Symbol.cc (AU_Symbol::makeCanonicalCopyEagerUptoReduced): added
+
+===================================Maude95===========================================
+
 2010-03-17  Steven Eker  <eker@rho>
 
 	* AU_DagNode.hh (AU_DagNode::setProducedByAssignment): clean up

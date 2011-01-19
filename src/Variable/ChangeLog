@@ -1,3 +1,66 @@
+2010-10-19  Steven Eker  <eker@rho>
+
+	* variableSymbol.cc
+	(VariableSymbol::makeCanonicalCopyEagerUptoReduced): becomes
+	makeCanonicalCopy() - no change in semantics needed
+
+	* variableSymbol.hh (class VariableSymbol):
+	makeCanonicalCopyEagerUptoReduced() -> makeCanonicalCopy()
+
+===================================Maude95a===========================================
+
+2010-09-29  Steven Eker  <eker@rho>
+
+	* variableSymbol.hh (class VariableSymbol): added decl for
+	makeCanonicalCopyEagerUptoReduced()
+
+	* variableSymbol.cc
+	(Variable_Symbol::makeCanonicalCopyEagerUptoReduced): added
+
+2010-08-18  Steven Eker  <eker@rho>
+
+	* variableDagNode.cc (VariableDagNode::computeSolvedForm2):
+	deleted
+	(VariableDagNode::computeSolvedForm2): deleted commented out old
+	version
+
+	* variableDagNode.hh (class VariableDagNode): deleted decl for
+	nonVariableSize()
+
+===================================Maude95===========================================
+
+2010-08-11  Steven Eker  <eker@rho>
+
+	* variableDagNode.cc (VariableDagNode::computeSolvedForm2): need
+	to check for unifying a variable against itself
+
+2010-08-04  Steven Eker  <eker@rho>
+
+	* variableDagNode.cc (VariableDagNode::computeSolvedForm2): use
+	computeSolvedForm() rather than computeSolvedForm2() in two places
+	since the nonvariable object might be ground
+	(VariableDagNode::computeSolvedForm2): reverted since we get
+	infinite loop - no one wants to handle variable vs ground term
+	(VariableDagNode::computeSolvedForm2): the two bound variables
+	case needs to use computeSolvedForm() since the bindings could be
+	ground and are guarenteed not to be variables
+
+2010-08-03  Steven Eker  <eker@rho>
+
+	* variableDagNode.cc (VariableDagNode::computeSolvedForm2):
+	rewritten; we now only handle the variable vs variable case and
+	punt the other cases to the nonvariable terms theory
+
+===================================Maude94a===========================================
+
+2010-06-04  Steven Eker  <eker@rho>
+
+	* variableSymbol.hh (class VariableSymbol): added decl for isStable()
+
+	* variableSymbol.cc (VariableSymbol::isStable): added
+
+===================================Maude94===========================================
+
 2009-12-03  Steven Eker  <eker@goo.csl.sri.com>
 
 	* variableSymbol.hh (class VariableSymbol): added decl for makeCanonical()

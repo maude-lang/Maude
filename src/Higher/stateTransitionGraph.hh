@@ -27,11 +27,10 @@
 #define _stateTransitionGraph_hh_
 #include <set>
 #include <map>
-#include "simpleRootContainer.hh"
 #include "hashConsSet.hh"
 #include "rewritingContext.hh"
 
-class StateTransitionGraph : private SimpleRootContainer
+class StateTransitionGraph
 {
   NO_COPYING(StateTransitionGraph);
 
@@ -65,7 +64,6 @@ private:
     ArcMap fwdArcs;
   };
 
-  void markReachableNodes();
   void insertNewState(int parent);
 
   RewritingContext* initial;

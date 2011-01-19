@@ -33,40 +33,48 @@
 #include "core.hh"
 #include "strategyLanguage.hh"
 
+#include "dagNode.hh"
+
 //	strategy language class definitions
 #include "decompositionProcess.hh"
 #include "strategyExpression.hh"
 #include "strategicSearch.hh"
 
-DecompositionProcess::DecompositionProcess(DagNode* dag,
+DecompositionProcess::DecompositionProcess(int dagIndex,
 					   StrategyStackManager::StackId pending,
 					   StrategicExecution* taskSibling,
 					   StrategicProcess* other)
   : StrategicProcess(taskSibling, other),
-    dag(dag),
+    dagIndex(dagIndex),
     pending(pending)
 {
-  Assert(dag != 0, "null dag");
   Assert(pending >= 0, "bad pending stack id " << pending);
 }
 
 DecompositionProcess::DecompositionProcess(DecompositionProcess* original)
   : StrategicProcess(original, original),
-    dag(original->dag),
+    dagIndex(original->dagIndex),
     pending(original->pending)
 {
   //
   //	A copy of a process will be owned by same task as original and will
   //	get put in the process queue just ahead of original. It will share
-  //	dag and will share the persistant pending stack.
+  //	the dagIndex and persistant pending stack.
+  //
+  //	Clones are handy when we want to explore several alternative futures in parallel.
   //
 }
 
 StrategicExecution::Survival
 DecompositionProcess::run(StrategicSearch& searchObject)
 {
-  if (getOwner()->alreadySeen(searchObject.dagNode2Index(dag), pending))
+  DebugAdvisory("DecompositionProcess::run(), dagIndex = " << dagIndex <<
+		" for " << searchObject.getCanonical(dagIndex));
+
+  if (getOwner()->alreadySeen(dagIndex, pending))
     {
+      DebugAdvisory("we've already been here: " << searchObject.getCanonical(dagIndex) <<
+		    ", " << pending);
       finished(this);
       return DIE;
     }
@@ -76,7 +84,7 @@ DecompositionProcess::run(StrategicSearch& searchObject)
       //
       //	Report our success.
       //
-      succeeded(dag, this);
+      succeeded(dagIndex, this);
       //
       //	Request deletion.
       //

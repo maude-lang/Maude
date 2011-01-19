@@ -30,7 +30,7 @@ bool MixfixModule::attributeUsed = false;
 ostream&
 operator<<(ostream& s, const NamedEntity* e)
 {
-  return s << Token::name(e->id());
+  return s << ((e == 0) ? "(null)" : Token::name(e->id()));
 }
 
 ostream&

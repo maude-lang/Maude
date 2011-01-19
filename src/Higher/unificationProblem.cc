@@ -215,8 +215,8 @@ UnificationProblem::findNextUnifier()
 	}
       cout << "=== end of solved form ===" << endl;
 #endif
-      if (!extractUnifier())
-	goto nextUnsorted;
+      //if (!extractUnifier())
+      //	goto nextUnsorted;
       findOrderSortedUnifiers();
       if (orderSortedUnifiers == 0)
 	goto nextUnsorted;

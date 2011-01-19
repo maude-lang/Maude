@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for abstract class StrategicTask.
+//      Implementation for class RewriteTask.
 //
 
 //	utility stuff
@@ -69,6 +69,7 @@ RewriteTask::RewriteTask(StrategicSearch& searchObject,
 			 StrategicExecution* taskSibling,
 			 StrategicProcess* insertionPoint)
   : StrategicTask(taskSibling),
+    hashConsSet(searchObject),
     rewriteState(rewriteState),  // share rewrite state
     redexIndex(redexIndex),  // copy redex index
     extensionInfoCopy((extensionInfo == 0) ? 0 : extensionInfo->makeClone()),  // clone extension info
@@ -103,7 +104,7 @@ RewriteTask::RewriteTask(StrategicSearch& searchObject,
   //	Start a new search from the result of evaluating L, using a substrategy.
   //
   StrategyExpression* substrategy = strategies[strategyNr];
-  (void) new DecompositionProcess(newContext->root(),
+  (void) new DecompositionProcess(searchObject.insert(newContext->root()),
 				  searchObject.push(StrategyStackManager::EMPTY_STACK, substrategy),
 				  getDummyExecution(),
 				  insertionPoint);
@@ -115,11 +116,12 @@ RewriteTask::~RewriteTask()
 }
 
 StrategicExecution::Survival
-RewriteTask::executionSucceeded(DagNode* result, StrategicProcess* insertionPoint)
+RewriteTask::executionSucceeded(int resultIndex, StrategicProcess* insertionPoint)
 {
   //
   //	We now need to match the result of a rewrite seach against our rhs pattern.
   //
+  DagNode* result = hashConsSet.getCanonical(resultIndex);
   RewritingContext* matchContext = rewriteState->getContext()->makeSubcontext(result, RewritingContext::CONDITION_EVAL);
   //
   //	We need to use clone() rather than copy() since matchContext with have a copy size of zero.

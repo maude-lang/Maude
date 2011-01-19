@@ -117,13 +117,14 @@ UserLevelRewritingContext::traceEndFragment(int trialRef,
 					    int fragmentIndex,
 					    bool success)
 {
+  if (abortFlag || trialRef == UNDEFINED)
+    return;
+
   if (interpreter.getFlag(Interpreter::PROFILE))
     {
       safeCast(ProfileModule*, root()->symbol()->getModule())->
 	profileFragment(preEquation, fragmentIndex, success);
     }
-  if (abortFlag || trialRef == UNDEFINED)
-    return;
 
   ConditionFragment* fragment = (preEquation->getCondition())[fragmentIndex];
   if (success)

@@ -75,8 +75,8 @@ UnificationContext::markReachableNodes()
     }
 }
 
-DagNode*
-UnificationContext::makeFreshVariable(ConnectedComponent* component)
+VariableDagNode*
+UnificationContext::makeFreshVariable(const ConnectedComponent* component)
 {
   Sort* s = component->sort(Sort::ERROR_SORT);
   Symbol* vs = freshVariableGenerator->getBaseVariableSymbol(s);
@@ -85,7 +85,7 @@ UnificationContext::makeFreshVariable(ConnectedComponent* component)
   freshVariableSorts.resize(freshVariableNr + 1);
   freshVariableSorts[freshVariableNr] = s;
   int name = freshVariableGenerator->getFreshVariableName(freshVariableNr);
-  DagNode* v = new VariableDagNode(vs, name, index);
+  VariableDagNode* v = new VariableDagNode(vs, name, index);
   //cout << "created " << v << endl;
   return v;
 }

@@ -1,3 +1,62 @@
+2010-10-19  Steven Eker  <eker@rho>
+
+	* S_Symbol.cc (S_Symbol::makeCanonicalCopyEagerUptoReduced):
+	becomes makeCanonicalCopy() with change of semantics
+
+	* S_Symbol.hh (class S_Symbol):
+	makeCanonicalCopyEagerUptoReduced() -> makeCanonicalCopy()
+
+===================================Maude95a===========================================
+
+2010-09-29  Steven Eker  <eker@rho>
+
+	* S_Symbol.cc (S_Symbol::makeCanonicalCopyEagerUptoReduced):
+	simplified now that we only deal with unreduced nodes; use
+	getCanonicalCopyEagerUptoReduced()
+
+	* S_Symbol.hh (class S_Symbol): added decl for
+	makeCanonicalCopyEagerUptoReduced()
+
+	* S_Symbol.cc (S_Symbol::makeCanonicalCopyEagerUptoReduced): added
+
+2010-08-18  Steven Eker  <eker@rho>
+
+	* S_DagNode.cc (S_DagNode::nonVariableSize): deleted
+
+	* S_DagNode.hh (class S_DagNode): deleted decl for
+	nonVariableSize()
+
+===================================Maude95===========================================
+
+2010-08-12  Steven Eker  <eker@rho>
+
+	* S_DagNode.cc (S_DagNode::computeSolvedForm2): use
+	computeSolvedForm() rather than unificationBind() to avoid
+	nontermination arising from binding the abstraction variable to an
+	impure term
+
+2010-08-10  Steven Eker  <eker@rho>
+
+	* S_DagNode.cc (S_DagNode::computeSolvedForm2): do variable
+	binding here; handle purification and local occurs check
+
+===================================Maude94a===========================================
+
+2010-06-30  Steven Eker  <eker@rho>
+
+	* S_DagNode.cc (S_DagNode::computeSolvedForm2): use
+	resolveTheoryClash() 
+	(S_DagNode::computeSolvedForm2): don't insist that smaller
+	iteration side has a variable argument before peeling
+
+2010-06-04  Steven Eker  <eker@rho>
+
+	* S_Symbol.hh (class S_Symbol): added decl for isStable()
+
+	* S_Symbol.cc (S_Symbol::isStable): added
+
+===================================Maude94===========================================
+
 2009-12-22  Steven Eker  <eker@goo.csl.sri.com>
 
 	* S_Symbol.cc (makeCanonical): fix bug where we were not copying

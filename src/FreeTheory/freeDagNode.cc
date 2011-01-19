@@ -32,6 +32,7 @@
 //	forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "variable.hh"
 #include "freeTheory.hh"
 
 //	interface class definitions
@@ -45,6 +46,8 @@
 //	core class definitions
 #include "rewritingContext.hh"
 #include "subproblemAccumulator.hh"
+#include "pendingUnificationStack.hh"
+#include "unificationContext.hh"
 
 //	variable class definitions
 #include "variableDagNode.hh"
@@ -316,9 +319,10 @@ FreeDagNode::computeBaseSortForGroundSubterms()
 bool
 FreeDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
 {
-  if (symbol() == rhs->symbol())
+  Symbol* s = symbol();
+  if (s == rhs->symbol())
     {
-      int nrArgs = symbol()->arity();
+      int nrArgs = s->arity();
       Assert(nrArgs > 0, "we shouldn't be called on constants " << this);
       DagNode** args = argArray();
       DagNode** rhsArgs = safeCast(FreeDagNode*, rhs)->argArray();
@@ -329,22 +333,156 @@ FreeDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, Pend
 	}
       return true;
     }
-  if (dynamic_cast<VariableDagNode*>(rhs))
-    return rhs->computeSolvedForm2(this, solution, pending);
-  return false;
+  if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(rhs))
+    {
+      //
+      //	Get representative variable.
+      //
+      VariableDagNode* r = v->lastVariableInChain(solution);
+      if (DagNode* value = solution.value(r->getIndex()))
+	return computeSolvedForm(value, solution, pending);
+      FreeDagNode* purified;
+      switch (purifyAndOccurCheck(r, solution, pending, purified))
+	{
+	case OCCURS_CHECK_FAIL:
+	  return false;
+	case PURE_AS_IS:
+	  purified = this;
+	  break;
+	case PURIFIED:
+	  break;
+	}
+      solution.unificationBind(r, purified);
+      return true;
+    }
+  return pending.resolveTheoryClash(this, rhs);
 }
 
-mpz_class
-FreeDagNode::nonVariableSize()
+FreeDagNode::PurificationStatus
+FreeDagNode::purifyAndOccurCheck(DagNode* repVar,
+				 UnificationContext& solution,
+				 PendingUnificationStack& pending,
+				 FreeDagNode*& purified)
 {
-  mpz_class s = 1;
-  int i = symbol()->arity();
-  if (i > 0)
+  //
+  //	For the moment we allow ground terms to be impure since they can't take part in cycles.
+  //
+  if (isGround())
+    return PURE_AS_IS;
+
+  FreeSymbol* s = symbol();
+  int nrArgs = s->arity();
+  DagNode** args = argArray();
+  for (int i = 0; i < nrArgs; ++i)
     {
-      for (DagNode** p = argArray(); i > 0; i--, p++)
-	s += (*p)->nonVariableSize();
+      DagNode* arg  = args[i];
+
+      if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(arg))
+	{
+	  //
+	  //	Variable - do an occur check.
+	  //
+	  if (v->lastVariableInChain(solution)->equal(repVar))
+	    return OCCURS_CHECK_FAIL;
+	  continue;
+	}
+
+      if (FreeDagNode* f = dynamic_cast<FreeDagNode*>(arg))
+	{
+	  //
+	  //	Free subterm - recursive call.
+	  //
+	  switch (f->purifyAndOccurCheck(repVar, solution, pending, purified))
+	    {
+	    case OCCURS_CHECK_FAIL:
+	      return OCCURS_CHECK_FAIL;
+	    case PURE_AS_IS:
+	      continue;
+	    case PURIFIED:
+	      {
+		arg = purified;
+		break;
+	      }
+	    }
+	}
+      else
+	{
+	  //
+	  //	Alien subterm - purify it by variable abstraction.
+	  //
+	  VariableDagNode* abstractionVariable = solution.makeFreshVariable(s->domainComponent(i));
+	  //
+	  //	We can't do solution.unificationBind(abstractionVariable, arg) here because
+	  //	arg may not be pure and this can lead to nontermination.
+	  //
+	  arg->computeSolvedForm(abstractionVariable, solution, pending);
+	  arg = abstractionVariable;
+	}
+      {
+	//
+	//	If we get here, either we purified an alien or purification happen below us.
+	//	Either way we need to rebuild.
+	//
+	FreeDagNode* d = new FreeDagNode(s);
+	DagNode** args2 = d->argArray();
+	//
+	//	Copy the arguments we already looked at.
+	//
+	for (int j = 0; j < i; ++j)
+	  args2[j] = args[j];
+	//
+	//	Handle current argument.
+	//
+	args2[i] = arg;
+	//
+	//	Handle remaining arguments.
+	//
+	for (++i; i < nrArgs; ++i)
+	  {
+	    DagNode* arg  = args[i];
+	    
+	    if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(arg))
+	      {
+		//
+		//	Variable - do an occur check.
+		//
+		if (v->lastVariableInChain(solution)->equal(repVar))
+		  return OCCURS_CHECK_FAIL;
+	      }
+	    else if (FreeDagNode* f = dynamic_cast<FreeDagNode*>(arg))
+	      {
+		//
+		//	Free subterm - recursive call.
+		//
+		switch (f->purifyAndOccurCheck(repVar, solution, pending, purified))
+		  {
+		  case OCCURS_CHECK_FAIL:
+		    return OCCURS_CHECK_FAIL;
+		  case PURE_AS_IS:
+		    break;
+		  case PURIFIED:
+		    {
+		      arg = purified;
+		      break;
+		    }
+		  }
+	      }
+	    else
+	      {
+		//
+		//	Alien subterm - purify it by variable abstraction.
+		//
+		VariableDagNode* abstractionVariable = solution.makeFreshVariable(s->domainComponent(i));
+		solution.unificationBind(abstractionVariable, arg);
+		arg = abstractionVariable;
+	      }
+	    args2[i] = arg;
+	  }
+	purified = d;
+	return PURIFIED;
+      }
     }
-  return s;
+  return PURE_AS_IS;
 }
 
 void

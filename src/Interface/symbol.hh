@@ -43,7 +43,6 @@ class Symbol
   : public RuleTable,
     public NamedEntity,
     public LineNumber,
-    public ModuleItem,
     public SortTable,
     public SortConstraintTable,
     public EquationTable,
@@ -133,9 +132,24 @@ public:
   virtual UnificationSubproblem* makeUnificationSubproblem();
   virtual int unificationPriority() const;
   //
+  //	Symbols that can disappear under substitution must rdefine this to return false.
+  //
+  virtual bool isStable() const = 0;
+  //
+  //	Symbols that can resolved theory clashes (typically by collapsing) should
+  //	redefined this to return true and be ready to handle alien right hand sides
+  //	by restricted unification in unification problem passed to their unification
+  //	subproblems.
+  //
+  virtual bool canResolveTheoryClash();
+  //
   //	Interface for hash consing.
   //
   virtual DagNode* makeCanonical(DagNode* original, HashConsSet* hcs) = 0;
+  //
+  //	Same as above but copying is forced - original can never be the canonical dagnode.
+  //
+  virtual DagNode* makeCanonicalCopy(DagNode* original, HashConsSet* hcs) = 0;
 
 #ifdef COMPILER
   void fullCompile(CompilationContext& context, bool inLine) const;

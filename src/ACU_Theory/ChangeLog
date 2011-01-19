@@ -1,3 +1,298 @@
+2010-12-09  Steven Eker  <eker@rho>
+
+	* ACU_Symbol.cc (ACU_Symbol::postOpDeclarationPass): don't call
+	rightIdentitySortCheck() since we are commutative
+
+===================================Maude95b===========================================
+
+2010-10-19  Steven Eker  <eker@rho>
+
+	* ACU_Symbol.cc (ACU_Symbol::makeCanonicalCopyEagerUptoReduced):
+	becomes makeCanonicalCopy()
+
+	* ACU_Symbol.hh (class ACU_Symbol):
+	makeCanonicalCopyEagerUptoReduced() -> makeCanonicalCopy()
+
+===================================Maude95a===========================================
+
+2010-09-29  Steven Eker  <eker@rho>
+
+	* ACU_Symbol.cc (ACU_Symbol::makeCanonicalCopyEagerUptoReduced):
+	simplifed now that we only get unreduced nodes; use
+	getCanonicalCopyEagerUptoReduced(); fix bug where we were not
+	copying flags and sort
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for
+	makeCanonicalCopyEagerUptoReduced()
+
+	* ACU_Symbol.cc (ACU_Symbol::makeCanonicalCopyEagerUptoReduced):
+	added
+	(ACU_Symbol::makeCanonical): removed commment out tree->array
+	conversion
+
+2010-09-23  Steven Eker  <eker@rho>
+
+	* ACU_LazySubproblem.cc (ACU_LazySubproblem::bindCollector): fix
+	bug where we weren't handling the case where our collector
+	variable had become bound by our stripper automaton
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton::complete): fixed out of
+	date comment
+
+2010-09-10  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::solve): don't exclude the null
+	solution in the unequal identity collapse case
+
+2010-09-09  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::solve): check
+	hasUnequalLeftIdentityCollapse() and force generation of
+	non-maximal solutions when it is true
+
+2010-08-18  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::nextSelectionWithIdentity): deleted
+	commented out old verions
+
+	* ACU_DagNode.cc (ACU_DagNode::nonVariableSize): deleted
+
+	* ACU_DagNode.hh (class ACU_DagNode): deleted decl for
+	nonVariableSize()
+
+===================================Maude95===========================================
+
+2010-08-11  Steven Eker  <eker@rho>
+
+	* ACU_DagNode.cc (ACU_DagNode::computeSolvedForm2): handle
+	unification agaist bound variable by unifying against variables
+	binding to avoid nontermination
+
+2010-08-04  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildSolution): handle <oldvar> =? d
+	the old way when the representative variable of <oldvar> is bound
+	to avoid generating problems of the same size as we solve
+	(ACU_UnificationSubproblem2::addUnification): handle variable rhs
+	even when we don't have an identity
+
+2010-08-03  Steven Eker  <eker@rho>
+
+	* ACU_DagNode.cc (ACU_DagNode::computeSolvedForm2): rewritten to
+	push problems of the form f(...) = X on the pending stack rather
+	than pass them to VariableDagNode::computeSolvedForm2()
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): updated decl for addUnification()
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::addUnification): handle marked
+	argument
+
+2010-07-29  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): updated decl for classify();
+	deleleted decl for isRestrictedSubterm(); updated decl for
+	unsolve(); updated decl for setMultiplicity()
+	(class ACU_UnificationSubproblem2): deleted data member
+	restrictedSubterms; added data member markedSubterms
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::addUnification): take solution as
+	argument
+	(ACU_UnificationSubproblem2::addUnification): simplified; keep set
+	of indices for marked subterms
+	(ACU_UnificationSubproblem2::setMultiplicity): use representative
+	variable in a chain; return subterm index
+	(ACU_UnificationSubproblem2::unsolve): simplified; never fail - we
+	let Diophantine solver worry about pathological X = f(..., X,...)
+	case
+	(ACU_UnificationSubproblem2::solve): simplified using new
+	unsolve() symantics
+	(ACU_UnificationSubproblem2::classify): simplified - no longer
+	chase variable chains as we should only have representative
+	variables in our system
+	(ACU_UnificationSubproblem2::isRestrictedSubterm): deleted
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): updated decl for addUnification()
+
+2010-07-21  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem):
+	comment out the case where with fail because we only have one
+	Diophantine variable since even with no basis elements we can
+	still get a unifier
+
+2010-07-20  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added decl for isRestrictedSubterm
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::classify): use equal() rather than ==
+	for checking for restricted subterms
+	(ACU_UnificationSubproblem2::isRestrictedSubterm): added
+	(ACU_UnificationSubproblem2::classify): rewritten using
+	isRestrictedSubterm() to ensure that variables can be restricted
+
+2010-07-19  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::markReachableNodes): fix bug where we
+	were deleting maximalSelections here rather than in
+	~ACU_UnificationSubproblem2()
+
+2010-07-09  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildSolution): add an Assert to
+	detect trivial bounds violation
+	(ACU_UnificationSubproblem2::computeLegalSelections): use index
+	member of basis element rather than separately maintained index
+	which is incorrect
+
+2010-07-08  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::solve): set maximalSelections
+	(ACU_UnificationSubproblem2::ACU_UnificationSubproblem2): clear
+	maximalSelections
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added data member maximalSelections
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::addUnification): use hasIdentity()
+	(ACU_UnificationSubproblem2::unsolve): use hasIdentity()
+	(ACU_UnificationSubproblem2::solve): use hasIdentity()
+
+	* ACU_DagNode.cc (ACU_DagNode::computeBaseSortForGroundSubterms):
+	removed commented out code
+
+2010-07-07  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added decl for
+	computeLegalSelections()
+
+===================================Maude94a===========================================
+
+2010-06-29  Steven Eker  <eker@rho>
+
+	* ACU_Symbol.cc (ACU_Symbol::canResolveTheoryClash): added
+
+	* ACU_DagNode.cc (ACU_DagNode::computeSolvedForm2): try using
+	resolveTheoryClash()
+
+2010-06-25  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::addUnification): handle the theory
+	clash case where the rhs is actually our identity
+
+	* ACU_DagNode.cc (ACU_DagNode::computeSolvedForm2): quick hack to
+	handle theory clashes asymetrically
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added data member restrictedSubterms
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::unsolve): handle X = f(..., X, ...)
+	case where collapse might be possible
+	(ACU_UnificationSubproblem2::addUnification): rewritten to handle
+	theory clash unifications
+	(ACU_UnificationSubproblem2::classify): handle restricted subterms
+
+2010-06-24  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem):
+	given each basis element a unique index
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added index field to struct Entry
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::nextSelectionWithIdentity): avoid
+	generating subsets of previous selections
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added data member old
+	(class ACU_UnificationSubproblem2): added NatSetList typedef
+	(class ACU_UnificationSubproblem2): added date member selectionSet
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem):
+	change criteria for failing due to lack of coverage
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added data member needToCover
+
+	* ACU_UnificationSubproblem2.cc: fill out needToCover
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added decl for
+	nextSelectionWithIdentity()
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildSolution): handle null
+	assignments by using getIdentityDag()
+	(ACU_UnificationSubproblem2::nextSelectionWithIdentity): added
+	(ACU_UnificationSubproblem2::solve): use
+	nextSelectionWithIdentity() in identity case
+
+2010-06-23  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): update decl for classify()
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::classify): fixed bug where we were
+	not checking for unbound variable
+	(ACU_UnificationSubproblem2::classify): fixed bug where we assume
+	we could treat our own top symbol as a stable symbol, even though
+	in any combination of basis elements it could take multiple things
+	and not be forced to unify against a single specific thing
+	(ACU_UnificationSubproblem2::classify): pass canTakeIdentity flag
+	rather than needToCover flag; fix bug where we could have left
+	needToCover false even when there was no identity
+	(ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem): use
+	new classify() semantics
+
+2010-06-22  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem):
+	rewritten using classify() to fix bug in basis element killing
+	code
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added decl for classify()
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::classify): added
+
+2010-06-07  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem):
+	added code to exclude basis elements that force unresolvable
+	theory clashes
+
+2010-05-21  Steven Eker  <eker@rho>
+
+	* ACU_DagNode.cc (ACU_DagNode::computeBaseSortForGroundSubterms):
+	hack to allow unification to proceed on non-ground ACU dags
+
+===================================Maude94===========================================
+
 2010-04-16  Steven Eker  <eker@rho>
 
 	* ACU_LhsCompiler1.cc (ACU_Term::analyseConstraintPropagation):

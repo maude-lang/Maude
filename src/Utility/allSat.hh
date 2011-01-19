@@ -21,7 +21,7 @@
 */
 
 //
-//	Class for finding all satisfying assigns over a set of variables
+//	Class for finding all satisfying assignments over a set of variables
 //	{firstVariable,..., lastVariable} for some formula given by a BDD.
 //
 #ifndef _allSat_hh_
@@ -46,6 +46,8 @@ private:
   Vector<Bdd> nodeStack;	// current path to true through BDD
   Vector<int> dontCareSet;	// set of variables of interest not mentioned on current path
   Vector<Byte> assignment;	// current assignment
+
+  bool firstAssignment;
 };
 
 inline const Vector<Byte>&

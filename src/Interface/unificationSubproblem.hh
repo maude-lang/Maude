@@ -31,7 +31,7 @@ class UnificationSubproblem
 public:
   virtual ~UnificationSubproblem() {}  // deep
 
-  virtual void addUnification(DagNode* lhs, DagNode* rhs) { CantHappen("Not implemented"); }
+  virtual void addUnification(DagNode* lhs, DagNode* rhs, bool marked, UnificationContext& solution) { CantHappen("Not implemented " << lhs << " vs " << rhs); }
   virtual bool solve(bool findFirst, UnificationContext& solution, PendingUnificationStack& pending) { CantHappen("Not implemented"); return false; }
 
 #ifdef DUMP

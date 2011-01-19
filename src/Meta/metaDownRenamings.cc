@@ -68,7 +68,7 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule
 	      fms.append(m);
 	    }
 	  m = owner->makeSummation(fms);
-	  if (m->isBad())
+	  if (m == 0)
 	    return false;
 	  return true;
 	}
@@ -80,7 +80,7 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule
 	      downModuleExpression(f->getArgument(0), enclosingModule, m))
 	    {
 	      m = owner->makeRenamedCopy(m, &renaming);
-	      if (m->isBad())
+	      if (m == 0)
 		return false;
 	      return true;
 	    }
@@ -141,8 +141,8 @@ MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule
 	      if (hasTheoryView && hasPEM)
 		return false;
 	      m = owner->makeInstatiation(m, views, names);
-	      if (m->isBad())
-		return false;
+	      if (m == 0)
+		return false;  // cache now does not cache bad modules
 	      return true;
 	    }
 	}

@@ -55,10 +55,12 @@ public:
 			      const Vector<int>& realToBdd,
 			      DagNode* subject,
 			      Vector<Bdd>& generalizedSort);
+  bool isStable() const;
   //
   //	Hash cons stuff.
   //
   DagNode* makeCanonical(DagNode* original, HashConsSet* hcs);
+  DagNode* makeCanonicalCopy(DagNode* original, HashConsSet* hcs);
 
 #ifdef COMPILER
   void generateCode(CompilationContext& context) const;

@@ -194,11 +194,19 @@ viewDecList	:	viewDecList viewDeclaration
 		|
 		;
 
+skipStrayArrow	:	KW_ARROW
+			{
+			  IssueWarning(LineNumber($1.lineNumber()) <<
+				       ": skipping " << QUOTE("->") << " in variable declaration.");
+			}
+		|
+		;
+
 viewDeclaration	:	KW_SORT sortName KW_TO sortDot
 			{
 			  CV->addSortMapping($2, $4);
 			}
-		|	KW_VAR varNameList ':' typeDot {}
+		|	KW_VAR varNameList ':' skipStrayArrow typeDot {}
 		|	KW_OP			{ lexBubble(BAR_COLON | BAR_TO, 1); }
 			viewEndOpMap
 		|	error '.'
@@ -370,7 +378,7 @@ declaration	:	KW_IMPORT moduleExprDot
 
 		|	KW_OPS opNameList ':' domainRangeAttr {}
 
-		|	KW_VAR varNameList ':' typeDot {}
+		|	KW_VAR varNameList ':' skipStrayArrow typeDot {}
 
 		|	KW_MB			{ lexBubble($1, BAR_COLON, 1); }
 			':'			{ lexContinueBubble($3, END_STATEMENT, 1); }
@@ -463,7 +471,16 @@ domainRangeAttr	:	typeName typeList dra2
 			}
 		;
 
-dra2		:	rangeAttr
+skipStrayColon 	:	':'
+			{
+			  IssueWarning(LineNumber($1.lineNumber()) <<
+				       ": skipping stray " << QUOTE(":") << " in operator declaration.");
+
+			}
+		|
+		;
+
+dra2		:	skipStrayColon rangeAttr
 		|	'.'
 			{
 			  IssueWarning(LineNumber($1.lineNumber()) <<

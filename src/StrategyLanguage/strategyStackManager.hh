@@ -21,11 +21,10 @@
 */
 
 //
-//      Class for managing persistent stacks of strategies.
+//      Class for managing a collection of persistent stacks of strategies with sharing.
 //
 #ifndef _strategyStackManager_hh_
 #define _strategyStackManager_hh_
-//#include "strategyExpression.hh"
 
 class StrategyStackManager
 {
@@ -50,6 +49,11 @@ private:
   {
     StrategyExpression* strategy;
     StackId restOfStack;
+    //
+    //	This fields are use solelyto keep a linked list of entries having
+    //	the same restOfStack so we can minimize the creation of duplicate
+    //	entries.
+    //
     StackId firstSuccessor;	// first stack that has us as restOfStack
     StackId nextPeer;		// next stack that shares our restOfStack
   };

@@ -1,3 +1,81 @@
+2010-10-19  Steven Eker  <eker@rho>
+
+	* freeSymbol.hh (class FreeSymbol):
+	makeCanonicalCopyEagerUptoReduced() -> makeCanonicalCopy()
+
+	* freeSymbol.cc (FreeSymbol::makeCanonicalCopyEagerUptoReduced):
+	becomes makeCanonicalCopy(); semantics change
+
+===================================Maude95a===========================================
+
+2010-09-29  Steven Eker  <eker@rho>
+
+	* freeSymbol.cc (FreeSymbol::makeCanonicalCopyEagerUptoReduced):
+	code cleaning
+	(FreeSymbol::makeCanonicalCopyEagerUptoReduced): simplified now
+	that we are only passed unreduced originals; use
+	getCanonicalCopyEagerUptoReduced()
+
+2010-09-28  Steven Eker  <eker@rho>
+
+	* freeSymbol.hh (class FreeSymbol): added decl for makeCanonicalCopyEagerUptoReduced()
+
+	* freeSymbol.cc (FreeSymbol::makeCanonicalCopyEagerUptoReduced): added
+
+2010-08-18  Steven Eker  <eker@rho>
+
+	* freeDagNode.hh (class FreeDagNode): deleted decl for 
+
+	* freeDagNode.cc (FreeDagNode::nonVariableSize): deleted
+
+===================================Maude95===========================================
+
+2010-08-12  Steven Eker  <eker@rho>
+
+	* freeDagNode.hh (class FreeDagNode): updated decl for
+	purifyAndOccurCheck()
+
+	* freeDagNode.cc (FreeDagNode::purifyAndOccurCheck): take pending
+	argument; use computeSolvedForm() rather than bind() to avoid
+	binding the abstraction variable to an impure term that might
+	cause nontermination
+	(FreeDagNode::computeSolvedForm2): pass pending to
+	purifyAndOccurCheck()
+
+2010-08-11  Steven Eker  <eker@rho>
+
+	* freeDagNode.cc (FreeDagNode::computeSolvedForm2): call
+	computeSolvedForm() rather than computeSolvedForm2() since we may
+	get constant vs constant by looking at variables binding
+
+2010-08-10  Steven Eker  <eker@rho>
+
+	* freeDagNode.cc (FreeDagNode::computeSolvedForm2): code cleaning
+
+2010-08-03  Steven Eker  <eker@rho>
+
+	* freeDagNode.hh (class FreeDagNode): added enum
+	PurificationStatus; added decl for purifyAndOccurCheck()
+
+	* freeDagNode.cc (FreeDagNode::purifyAndOccurCheck): added
+	(FreeDagNode::computeSolvedForm2): rewritten using
+	purifyAndOccurCheck()
+
+===================================Maude94a===========================================
+
+2010-06-30  Steven Eker  <eker@rho>
+
+	* freeDagNode.cc (FreeDagNode::computeSolvedForm2): use
+	resolveTheoryClash()
+
+2010-06-04  Steven Eker  <eker@rho>
+
+	* freeSymbol.cc (FreeSymbol::isStable): added
+
+	* freeSymbol.hh (class FreeSymbol): added decl for isStable()
+
+===================================Maude94===========================================
+
 2010-04-16  Steven Eker  <eker@rho>
 
 	* freeLhsCompiler.cc

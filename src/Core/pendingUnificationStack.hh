@@ -30,9 +30,10 @@
 //
 #ifndef _pendingUnificationStack_hh_
 #define _pendingUnificationStack_hh_
+#include "simpleRootContainer.hh"
 #include "substitution.hh"
 
-class PendingUnificationStack
+class PendingUnificationStack : private SimpleRootContainer
 {
   NO_COPYING(PendingUnificationStack);
 
@@ -42,11 +43,14 @@ public:
   PendingUnificationStack();
   ~PendingUnificationStack();
 
-  void push(Symbol* controllingSymbol, DagNode* lhs, DagNode* rhs);
+  void push(Symbol* controllingSymbol, DagNode* lhs, DagNode* rhs, bool marked = false);
+  bool resolveTheoryClash(DagNode* lhs, DagNode* rhs);
+
   Marker checkPoint() const;
   void restore(Marker mark);
 
   bool solve(bool findFirst, UnificationContext& solution);
+  bool solve2(bool findFirst, UnificationContext& solution);
 
   void dump(ostream& s);
 
@@ -63,6 +67,7 @@ private:
     int nextProblemInTheory;	// index into the stack for the next problem in our theory that isn't active (or NONE)
     DagNode* lhs;
     DagNode* rhs;
+    bool marked;		// set this to force the lhs to collapse;
   };
 
   struct ActiveSubproblem
@@ -72,12 +77,31 @@ private:
     UnificationSubproblem* subproblem;
   };
 
-  bool makeNewSubproblem();
+  void markReachableNodes();
+  bool makeNewSubproblem(UnificationContext& solution);
   void killTopSubproblem();
 
   Vector<Theory> theoryTable;
   Vector<PendingUnification> unificationStack;
   Vector<ActiveSubproblem> subproblemStack;
+  //
+  //	Cycle handling.
+  //
+  enum Status
+    {
+      UNEXPLORED = -1,
+      EXPLORED = -2
+    };
+
+  enum SpecialTheory
+    {
+      COMPOUND_CYCLE = -2
+    };
+
+  int findCycle(UnificationContext& solution);
+  int findCycleFrom(int index, UnificationContext& solution);
+  Vector<int> variableStatus;
+  Vector<int> variableOrder;
 };
 
 inline PendingUnificationStack::Marker

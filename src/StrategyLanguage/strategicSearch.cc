@@ -50,7 +50,7 @@ StrategicSearch::StrategicSearch(RewritingContext* initial, StrategyExpression* 
   Assert(initial != 0, "null context");
   Assert(initial->root() != 0, "null root");
   Assert(strategy != 0, "null strategy");
-  nextToRun = new DecompositionProcess(initial->root(),
+  nextToRun = new DecompositionProcess(insert(initial->root()),
 				       push(EMPTY_STACK, strategy),
 				       getDummyExecution(),
 				       0);
@@ -66,7 +66,7 @@ StrategicSearch::~StrategicSearch()
 DagNode*
 StrategicSearch::findNextSolution()
 {
-  solution = 0;
+  solutionIndex = NONE;
   while (!exhausted)
     {
       //
@@ -98,17 +98,17 @@ StrategicSearch::findNextSolution()
       //
       //	If the run triggered a solution we're done.
       //
-      if (solution != 0)
-	return solution;
+      if (solutionIndex != NONE)
+	return getCanonical(solutionIndex);
     }
   return 0;
 }
 
 StrategicExecution::Survival
-StrategicSearch::executionSucceeded(DagNode* result, StrategicProcess* /* insertionPoint */)
+StrategicSearch::executionSucceeded(int resultIndex, StrategicProcess* /* insertionPoint */)
 {
-  Assert(solution == 0, "multiple solutions from a single step");
-  solution = result;
+  Assert(solutionIndex == NONE, "multiple solutions from a single step");
+  solutionIndex = resultIndex;
   return SURVIVE;  // still want more solutions
 }
 

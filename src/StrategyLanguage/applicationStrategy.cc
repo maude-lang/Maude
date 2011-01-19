@@ -78,7 +78,7 @@ StrategicExecution::Survival
 ApplicationStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess* remainder)
 {
   (void) new ApplicationProcess(searchObject,
-				remainder->getDag(),
+				remainder->getDagIndex(),
 				this,
 				remainder->getPending(),
 				remainder, // working for same task

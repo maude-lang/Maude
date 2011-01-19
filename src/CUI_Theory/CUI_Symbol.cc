@@ -84,8 +84,15 @@ CUI_Symbol::postOpDeclarationPass()
   processIdentity();
   if (axioms & LEFT_ID)
     leftIdentitySortCheck();
-  if (axioms & RIGHT_ID)
-    rightIdentitySortCheck();
+  //
+  //	If we are commutative, a problem that shows up with rightIdentitySortCheck()
+  //	will already have shown up with leftIdentitySortCheck() and the latter is faster.
+  //
+  if (!(axioms & COMM))
+    {
+      if (axioms & RIGHT_ID)
+	rightIdentitySortCheck();
+    }
 }
 
 Term*
@@ -352,5 +359,20 @@ CUI_Symbol::makeCanonical(DagNode* original, HashConsSet* hcs)
   n->setSortIndex(original->getSortIndex());
   n->argArray[0] = c;
   n->argArray[1] = c1;
+  return n;
+}
+
+DagNode*
+CUI_Symbol::makeCanonicalCopy(DagNode* original, HashConsSet* hcs)
+{
+  //
+  //	We have a unreduced node - copy forced.
+  //
+  CUI_DagNode* n = new CUI_DagNode(this);
+  n->copySetRewritingFlags(original);
+  n->setSortIndex(original->getSortIndex());
+  DagNode** p = safeCast(CUI_DagNode*, original)->argArray;
+  n->argArray[0] = hcs->getCanonical(hcs->insert(p[0]));
+  n->argArray[1] = hcs->getCanonical(hcs->insert(p[1]));
   return n;
 }

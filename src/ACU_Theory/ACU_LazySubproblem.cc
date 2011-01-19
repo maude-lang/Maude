@@ -186,6 +186,15 @@ ACU_LazySubproblem::bindCollector(RewritingContext& solution)
       if (subject->isReduced() && d->getSortIndex() != Sort::SORT_UNKNOWN)
 	d->setReduced();
     }
+  //
+  //	It's possible that matching the stripper could have bound the collector,
+  //	since we are in the "FULL" case and not insisting on linearity.
+  //
+  if (DagNode* c = local.value(collectorVarIndex))
+    {
+      DebugAdvisory("ACU_LazySubproblem::bindCollector() Collector variable bound to " << d);
+      return c->equal(d);
+    }
   local.bind(collectorVarIndex, d);
   return true;
 }

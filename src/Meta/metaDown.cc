@@ -29,8 +29,21 @@ MetaLevel::downQid(DagNode* metaQid, int& id)
 {
   if (metaQid->symbol() == qidSymbol)
     {
-      id =
-	Token::unBackQuoteSpecials(static_cast<QuotedIdentifierDagNode*>(metaQid)->getIdIndex());
+      id = Token::unBackQuoteSpecials(static_cast<QuotedIdentifierDagNode*>(metaQid)->getIdIndex());
+      return true;
+    }
+  return false;
+}
+
+bool
+MetaLevel::downOpName(DagNode* metaQid, int& id)
+{
+  //
+  //	Like downQid() but we convert things like '`, to `, rather than ,
+  //
+  if (metaQid->symbol() == qidSymbol)
+    {
+      id = static_cast<QuotedIdentifierDagNode*>(metaQid)->getIdIndex();
       return true;
     }
   return false;
@@ -1047,7 +1060,7 @@ MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
     {
       FreeDagNode* f = static_cast<FreeDagNode*>(metaTerm);
       Vector<Term*> argList(0, nrPreallocatedArgs);  // pre-allocate memory for speed
-      if (downQid(f->getArgument(0), id) && downTermList(f->getArgument(1), m, argList))
+      if (downOpName(f->getArgument(0), id) && downTermList(f->getArgument(1), m, argList))
 	{
 	  int nrArgs = argList.length();
 	  static Vector<ConnectedComponent*> domain;

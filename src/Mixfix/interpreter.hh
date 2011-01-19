@@ -169,6 +169,7 @@ public:
   void parse(const Vector<Token>& subject);
   void reduce(const Vector<Token>& subject, bool debug);
   void creduce(const Vector<Token>& subject);
+  void sreduce(const Vector<Token>& subject);
   void rewrite(const Vector<Token>& subject, Int64 limit, bool debug);
   void fRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool debug);
   void eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool debug);

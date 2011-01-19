@@ -23,6 +23,10 @@
 //
 //      Class for fast subproblems in tree case.
 //
+//	We try to find each solution by stripping out one argument of the 
+//	subject and avoid copying a potentially huge number of subject
+//	arguments using non-destructive deletion.
+//
 #ifndef _ACU_LazySubproblem_hh_
 #define _ACU_LazySubproblem_hh_
 #include "subproblem.hh"

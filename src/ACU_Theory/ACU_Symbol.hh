@@ -61,10 +61,12 @@ public:
 			      Vector<Bdd>& generalizedSort);
   UnificationSubproblem* makeUnificationSubproblem();
   int unificationPriority() const;
+  bool canResolveTheoryClash();
   //
   //	Hash cons stuff.
   //
   DagNode* makeCanonical(DagNode* original, HashConsSet* hcs);
+  DagNode* makeCanonicalCopy(DagNode* original, HashConsSet* hcs);
   //
   //	Member functions special to ACU_Symbol.
   //

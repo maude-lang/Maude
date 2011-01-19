@@ -50,10 +50,11 @@ public:
   //
   //	Call-backs for interesting events.
   //
-  virtual Survival executionSucceeded(DagNode* result, StrategicProcess* insertionPoint);
+  virtual Survival executionSucceeded(int resultindex, StrategicProcess* insertionPoint);
   virtual Survival executionsExhausted(StrategicProcess* insertionPoint);
 
 private:
+  const HashConsSet& hashConsSet;			// reference to shared hash cons set
   SharedRewriteSearchState::Ptr rewriteState;		// smart pointer to rewrite state that found our redex
   const PositionState::PositionIndex redexIndex;	// index of redex withing rewrite state
   ExtensionInfo* extensionInfoCopy;			// copy of extension info from original match

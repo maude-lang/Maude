@@ -31,6 +31,7 @@
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "variable.hh"
 #include "CUI_Theory.hh"
  
 //      interface class definitions
@@ -46,6 +47,7 @@
 //      core class definitions
 #include "substitution.hh"
 #include "pendingUnificationStack.hh"
+#include "unificationContext.hh"
 
 //	variable class definitions
 #include "variableDagNode.hh"
@@ -258,7 +260,8 @@ CUI_DagNode::computeBaseSortForGroundSubterms()
 bool
 CUI_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
 {
-  if (symbol() == rhs->symbol())
+  CUI_Symbol* s = symbol();
+  if (s == rhs->symbol())
     {
       //
       //	Both dagnodes are assumed to have their arguments sorted in ascending order. Equality
@@ -350,7 +353,7 @@ CUI_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, Pend
       //	We got here by falling out of one of the branches because no equalities were found. Therefore
       //	we have two possible ways of unifying that could give a mgu and need to postpone the decision.
       //
-      pending.push(symbol(), this, rhs);
+      pending.push(s, this, rhs);
       return true;
     dupArg:
       //
@@ -358,15 +361,81 @@ CUI_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, Pend
       //
       return l0->computeSolvedForm(r0, solution, pending) && l1->computeSolvedForm(r1, solution, pending);
     }
-  if (dynamic_cast<VariableDagNode*>(rhs))
-    return rhs->computeSolvedForm(this, solution, pending);
-  return false;
-}
+  if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(rhs))
+    {
+      //
+      //	Get representative variable.
+      //
+      VariableDagNode* r = v->lastVariableInChain(solution);
+      if (DagNode* value = solution.value(r->getIndex()))
+	return computeSolvedForm2(value, solution, pending);
+      //
+      //	We need to bind the variable our purified form.
+      //
+      //	We cut a corner here by treating each commutative symbol as its
+      //	own theory, and rely on cycle detection to do occurs checks that
+      //	pass through multiple symbols.
+      //
+      bool needToRebuild = false;
 
-mpz_class
-CUI_DagNode::nonVariableSize()
-{
-  return 1 + argArray[0]->nonVariableSize() + argArray[1]->nonVariableSize();
+      DagNode* l0 = argArray[0];
+      if (VariableDagNode* a = dynamic_cast<VariableDagNode*>(l0))
+	{
+	  if (a->lastVariableInChain(solution)->equal(r))
+	    return false;  // occurs check fail
+	}
+      else
+	{
+	  VariableDagNode* abstractionVariable = solution.makeFreshVariable(s->domainComponent(0));
+	  //
+	  //	solution.unificationBind(abstractionVariable, l0) would be unsafe since l0 might not be pure.
+	  //
+	  l0->computeSolvedForm(abstractionVariable, solution, pending);
+	  l0 = abstractionVariable;
+	  needToRebuild = true;
+	}
+
+      DagNode* l1 = argArray[1];
+      if (l1->equal(argArray[0]))
+	l1 = l0;  // arguments equal so treat them the same in purified version
+      else
+	{
+	  if (VariableDagNode* a = dynamic_cast<VariableDagNode*>(l1))
+	    {
+	      if (a->lastVariableInChain(solution)->equal(r))
+		return false;  // occurs check fail
+	    }
+	  else
+	    {
+	      VariableDagNode* abstractionVariable = solution.makeFreshVariable(s->domainComponent(1));
+	      //
+	      //	solution.unificationBind(abstractionVariable, l1) would be unsafe since l1 might not be pure.
+	      //
+	      l1->computeSolvedForm(abstractionVariable, solution, pending);
+	      l1 = abstractionVariable;
+	      needToRebuild = true;
+	    }
+	}
+      
+      CUI_DagNode* purified = this;
+      if (needToRebuild)
+	{
+	  purified = new CUI_DagNode(s);
+	  if (l0->compare(l1) <= 0)
+	    {
+	      purified->argArray[0] = l0;
+	      purified->argArray[1] = l1;
+	    }
+	  else
+	    {
+	      purified->argArray[0] = l1;
+	      purified->argArray[1] = l0;
+	    }
+	}
+      solution.unificationBind(r, purified);
+      return true;
+    }
+  return pending.resolveTheoryClash(this, rhs);
 }
 
 void

@@ -132,81 +132,53 @@ VariableDagNode::computeBaseSortForGroundSubterms()
   return NONGROUND;
 }
 
+
 bool
 VariableDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
 {
-  VariableDagNode* lv = lastVariableInChain(solution);
+  //
+  //	In this version we only handle variable vs variable unfication and
+  //	punt on everything else.
+  //
   if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(rhs))
     {
-      //
-      //	Variable against variable case.
-      //
+      VariableDagNode* lv = lastVariableInChain(solution);
       VariableDagNode* rv = v->lastVariableInChain(solution);
-      if (rv->index == lv->index)  // unifying a variable with itself
+      if (lv->equal(rv))
 	return true;
+      //
+      //	Not clear if it safe to leave existing bindings in place or should we unsolve
+      //	and re-solve them to take care of any occurs check issues.
+      //
+      //	Also we might want to make sure we don't map an original variable to a fresh variable.
+      //
       DagNode* lt = solution.value(lv->index);
-      if (lt == 0)  // left variable unbound
+      if (lt == 0)
 	{
 	  solution.unificationBind(lv, rv);
 	  return true;
 	}
+
       DagNode* rt = solution.value(rv->index);
-      if (rt == 0)  // right variable unbound
+      if (rt == 0)
 	{
 	  solution.unificationBind(rv, lv);
 	  return true;
 	}
+
+      solution.unificationBind(lv, rv);
       //
-      //	Hard case - two variable chains with solved forms.
-      //	In order to ensure termination we keep the smaller
-      //	solved form.
+      //	Need to call computeSolvedForm() since lt and rt could be ground.
+      //	Safe to call computeSolvedForm() since neither lt nor rt are
+      //	variables so the problem can't be kicked back to us.
       //
-      //	Suppose lt >= rt. Notionally we add lv =? rv to the mix.
-      //	Then we have:
-      //	  lv =? rv, lv =? lt, rv =? rt
-      //	By coalesce of lv and rv, we replace lv by rv, recording lv |-> rv and we get:
-      //	  lv |-> rv, rv =? lt, rv =? rt
-      //	and by merge on rv we get:
-      //	  lv |-> rv, rv =? rt, lt =? rt
-      //	which we implement by making the lv |-> rv binding followed
-      //	by a recursive call to resolve lt =? rt. The lt >= rt case
-      //	is almost symmetric.
-      //	
-      if (lt->nonVariableSize() >= rt->nonVariableSize())
-	solution.unificationBind(lv, rv);
-      else
-	solution.unificationBind(rv, lv);
       return lt->computeSolvedForm(rt, solution, pending);
     }
   //
-  //	Variable against non-variable case
+  //	Calling computeSolvedForm() would just kick the problem back to us if
+  //	rhs is ground, since this is a variable, and cause an infinite recursion.
   //
-  {
-    //
-    //	Quick check for sort failure on ground term.
-    //
-    int sortIndex = rhs->getSortIndex();
-    if (sortIndex != Sort::SORT_UNKNOWN && !::leq(sortIndex, safeCast(VariableSymbol*, symbol())->getSort()))
-      return false;
-  }
-  DagNode* lt = solution.value(lv->index);
-  if (lt == 0)
-    {
-      solution.unificationBind(lv, rhs);
-      return true;
-    }
-  //
-  //	Hard case - our variable already has a solved form. We do a merge step.
-  //
-  if (lt->nonVariableSize() > rhs->nonVariableSize())
-    solution.unificationBind(lv, rhs);
-  return lt->computeSolvedForm(rhs, solution, pending);
-}
-
-mpz_class
-VariableDagNode::nonVariableSize()
-{
-  return 0;
+  return rhs->computeSolvedForm2(this, solution, pending);
 }
 
 void

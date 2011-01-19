@@ -47,8 +47,6 @@
 //#include "substitution.hh"
 #include "rewritingContext.hh"
 #include "symbolMap.hh"
-#include "dagNodeSet.hh"
-//#include "rule.hh"
 
 //      free theory class definitions
 #include "freeDagNode.hh"
@@ -250,4 +248,4 @@ SatSolverSymbol::makeFormula(const DagNodeSet& propositions,
 	}
     }
   return conjunct(args);
-}	  
+}

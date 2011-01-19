@@ -392,6 +392,12 @@ S_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
     }
 }
 
+bool
+S_Symbol::isStable() const
+{
+  return true;
+}
+
 //
 //	Hash cons code.
 //
@@ -407,6 +413,20 @@ S_Symbol::makeCanonical(DagNode* original, HashConsSet* hcs)
   //
   //	Need to make new node.
   //
+  S_DagNode* n = new S_DagNode(this, s->getNumber(), c);
+  n->copySetRewritingFlags(original);
+  n->setSortIndex(original->getSortIndex());
+  return n;
+}
+
+DagNode*
+S_Symbol::makeCanonicalCopy(DagNode* original, HashConsSet* hcs)
+{
+  //
+  //	We have a unreduced node - copy forced.
+  //
+  S_DagNode* s = safeCast(S_DagNode*, original);
+  DagNode* c = hcs->getCanonical(hcs->insert(s->getArgument()));
   S_DagNode* n = new S_DagNode(this, s->getNumber(), c);
   n->copySetRewritingFlags(original);
   n->setSortIndex(original->getSortIndex());

@@ -66,11 +66,12 @@ ACU_UnificationSubproblem2::ACU_UnificationSubproblem2(ACU_Symbol* topSymbol)
   DebugAdvisory("Created ACU_UnificationSubproblem2() base " << ((void*) this) <<
 		" for topSymbol " << topSymbol);
 #endif
+  maximalSelections = 0;
 }
-
 
 ACU_UnificationSubproblem2::~ACU_UnificationSubproblem2()
 {
+  delete maximalSelections;
 }
 
 void
@@ -96,79 +97,92 @@ ACU_UnificationSubproblem2::markReachableNodes()
 }
 
 void
-ACU_UnificationSubproblem2::addUnification(DagNode* lhs, DagNode* rhs)
+ACU_UnificationSubproblem2::addUnification(DagNode* lhs, DagNode* rhs, bool marked, UnificationContext& solution)
 {
   Assert(lhs->symbol() == topSymbol, "bad lhs dag " << lhs);
-  Assert(rhs->symbol() == topSymbol, "bad rhs dag " << rhs);
-
-  ArgVec<ACU_DagNode::Pair> lhsArgs = safeCast(ACU_DagNode*, lhs)->argArray;
-  ArgVec<ACU_DagNode::Pair> rhsArgs = safeCast(ACU_DagNode*, rhs)->argArray;
-  int nrLhsArgs = lhsArgs.length();
-  int nrRhsArgs = rhsArgs.length();
-  int i = 0;
-  int j = 0;
-  multiplicities.clear();
-  for (;;)
+  Assert(topSymbol->hasIdentity() ||
+	 rhs->symbol() == topSymbol ||
+	 dynamic_cast<VariableDagNode*>(rhs) != 0, "bad rhs for for non-collapse theory " << rhs);
+  Assert(topSymbol->hasIdentity() || !marked, "bad mark for non-collapse theory");
+  {
+    int nrSubterms = subterms.size();
+    for (int i = 0; i < nrSubterms; ++i)
+      multiplicities[i] = 0;
+  }
+  if (rhs->symbol() != topSymbol)
     {
-      int r;
-      if (i == nrLhsArgs)
-	{
-	  if (j == nrRhsArgs)
-	    break;
-	  r = 1;
-	}
-      else
-	r = (j == nrRhsArgs) ? -1 : lhsArgs[i].dagNode->compare(rhsArgs[j].dagNode);
-      
-      if (r < 0)
-	{
-	  setMultiplicity(lhsArgs[i].dagNode, lhsArgs[i].multiplicity);
-	  ++i;
-	}
-      else if (r > 0)
-	{
-	  setMultiplicity(rhsArgs[j].dagNode, - rhsArgs[j].multiplicity);
-	  ++j;
-	}
+      //
+      //	Must be of the form f(...) =? X
+      //	or a theory clash of the form f(...) =? g(...)
+      //
+      Term* identity = topSymbol->getIdentity();
+      if (identity != 0 && identity->equal(rhs))
+	;  // rhs disappears in our theory
       else
 	{
-	  int diff = lhsArgs[i].multiplicity - rhsArgs[j].multiplicity;
-	  if (diff != 0)
-	    setMultiplicity(lhsArgs[i].dagNode, diff);
-	  ++i;
-	  ++j;
-	}      
+	  int subtermIndex = setMultiplicity(rhs, -1, solution);
+	  if (marked)
+	    markedSubterms.insert(subtermIndex);  // cannot be assigned multiple things
+	}
     }
-  if (!multiplicities.empty())
-    unifications.push_back(multiplicities);
+  else
+    {
+      ArgVec<ACU_DagNode::Pair> rhsArgs = safeCast(ACU_DagNode*, rhs)->argArray;
+      FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, rhsArgs)
+	setMultiplicity(i->dagNode, - i->multiplicity, solution);
+    }
+
+  {
+    ArgVec<ACU_DagNode::Pair> lhsArgs = safeCast(ACU_DagNode*, lhs)->argArray;
+    FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, lhsArgs)
+      setMultiplicity(i->dagNode, i->multiplicity, solution);
+  }
+  //
+  //	Check to see if everything cancelled.
+  //
+  FOR_EACH_CONST(i, Vector<int>, multiplicities)
+    {
+      if (*i != 0)
+	{
+	  unifications.push_back(multiplicities);
+	  return;
+	}
+    }
+  //
+  //	No non-zero entries so we can ignore unification problem.
+  //
+}
+
+int
+ACU_UnificationSubproblem2::setMultiplicity(DagNode* dagNode, int multiplicity, UnificationContext& solution)
+{
+  //
+  //	First we replace a variable with its current representative. Really we should also
+  //	do this for variables within aliens as well.
+  //
+  if (VariableDagNode* varDagNode = dynamic_cast<VariableDagNode*>(dagNode))
+     dagNode = varDagNode->lastVariableInChain(solution);
+  //
+  //	Now look for dag in list of nominally abstracted dags.
+  //
+  int nrSubterms = subterms.size();
+  for (int i = 0; i < nrSubterms; ++i)
+    {
+      if (dagNode->equal(subterms[i]))
+	{
+	  multiplicities[i] += multiplicity;
+	  return i;
+	}
+    }
+  //
+  //	Not found so make a new entry.
+  //
+  subterms.append(dagNode);
+  multiplicities.append(multiplicity);
+  return nrSubterms;
 }
 
 void
-ACU_UnificationSubproblem2::setMultiplicity(DagNode* dagNode, int multiplicity)
-{
-  int nrSubterms = subterms.size();
-  int i = 0;
-  for (;; ++i)
-    {
-      if (i == nrSubterms)
-	{
-	  subterms.append(dagNode);
-	  break;
-	}
-      if (dagNode->equal(subterms[i]))
-	break;
-    }
-  int nrMultiplicities = multiplicities.size();
-  if (i >= nrMultiplicities)
-    {
-      multiplicities.resize(i + 1);
-      for (int j = nrMultiplicities; j < i; ++j)
-	multiplicities[j] = 0;
-    }
-  multiplicities[i] = multiplicity;
-}
-
-bool
 ACU_UnificationSubproblem2::unsolve(int index, UnificationContext& solution)
 {
   //
@@ -177,22 +191,21 @@ ACU_UnificationSubproblem2::unsolve(int index, UnificationContext& solution)
   //
   DagNode* variable = solution.getVariableDagNode(index);
   DagNode* value = solution.value(index);
+  solution.bind(index, 0);
+
   Assert(variable != 0, "couldn't get variable for index " << index << " bound to " << value);
   DebugAdvisory("### unsolving " << variable << " <- " << value);
 
-  multiplicities.clear();
+  {
+    int nrSubterms = subterms.size();
+    for (int i = 0; i < nrSubterms; ++i)
+      multiplicities[i] = 0;
+  }
   ArgVec<ACU_DagNode::Pair> args = safeCast(ACU_DagNode*, value)->argArray;
   FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, args)
-    {
-      DagNode* d = i->dagNode;
-      if (variable->equal(d))
-	return false;  // occur check fail
-      setMultiplicity(d, i->multiplicity);
-    }
-  setMultiplicity(variable, -1);
+    setMultiplicity(i->dagNode, i->multiplicity, solution);
+  setMultiplicity(variable, -1, solution);
   unifications.push_back(multiplicities);
-  solution.bind(index, 0);
-  return true;
 }
 
 bool
@@ -215,23 +228,64 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
 	{
 	  DagNode* value = solution.value(i);
 	  if (value != 0 && value->symbol() == topSymbol)
-	    {
-	      if (!unsolve(i, solution))
-		{
-		  solution.clone(preSolveSubstitution);
-		  return false;
-		}
-	    }
+	    unsolve(i, solution);
 	}
 
       if (!buildAndSolveDiophantineSystem(solution))
 	{
+	  //
+	  //	Restore current solution and fail.
+	  //
 	  solution.clone(preSolveSubstitution);
 	  return false;
 	}
+      if (topSymbol->hasIdentity())
+	{
+	  bdd legal = computeLegalSelections();
+	  DebugAdvisory("legal = " << legal <<
+			" node count = " << bdd_nodecount(legal) <<
+			" path count = " << bdd_pathcount(legal));
+	  int nrBasisElements = basis.size();
+	  bdd maximal = legal;
+	  if (topSymbol->hasUnequalLeftIdentityCollapse())
+	    {
+	      //
+	      //	Can't ignore non-maximal solutions because
+	      //	(1) Maximal solution may not have a sorting while a non-maximal solution may have.
+	      //	(2) The sorting of a maximal solution may exclude a non-maximal solution it was covering.
+	      //
+	    }
+	  else
+	    {
+	      //
+	      //	Assume that each variable introduced for a Diophantine basis element will
+	      //	be able to disappear by taking the basis element. Thus we only want maximal
+	      //	vectors from legal.
+	      //
+	      for (int i = 0; i < nrBasisElements; ++i)
+		{
+		  //
+		  //	bigger = not(ith var) /\ (legal restricted to ith var true)
+		  //
+		  //	i.e. bigger represents those vectors where the ith variable is false and we get
+		  //	a legal solution by making it true. Clearly the original vector was not maximal,
+		  //	even if it was a legal solution.
+		  //
+		  //	We need to eliminate these vectors if we want maximal solutions, so we compute the
+		  //	complement of this set of vectors and conjunct them in.
+		  //	
+		  bdd notBigger = bdd_or(bdd_ithvar(i), bdd_not(bdd_restrict(legal, bdd_ithvar(i))));
+		  maximal = bdd_and(maximal, notBigger);
+		}
+	    }
+	  DebugAdvisory("maximal = " << maximal <<
+			" node count = " << bdd_nodecount(maximal) <<
+			" path count = " << bdd_pathcount(maximal));
+	  maximalSelections = new AllSat(maximal, 0, nrBasisElements - 1);
+	}
       //
-      //	Save state of the pending stack so that it with the substitution
-      //	we can restore  in order to undo each of our solutions.
+      //	Save state of the pending stack with the substitution so that
+      //	we can restore both in order to undo each of our solutions.
       //
       savedSubstitution.clone(solution);
       savedPendingState = pending.checkPoint();
@@ -245,7 +299,7 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
       pending.restore(savedPendingState);
       solution.clone(savedSubstitution);
     }
-  while (nextSelection(findFirst))
+  while (topSymbol->hasIdentity() ? nextSelectionWithIdentity(findFirst) : nextSelection(findFirst))
     {
       findFirst = false;
 
@@ -262,16 +316,76 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
   return false;
 }
 
+void
+ACU_UnificationSubproblem2::classify(int subtermIndex,
+				     UnificationContext& solution,
+				     bool& canTakeIdentity,
+				     int& upperBound,
+				     Symbol*& stableSymbol)
+{
+  //
+  //	For a subterm that we have nominally abstraction by a Diophantine variable we determine:
+  //	(1) Is is possible that the subject can be unified against identity.
+  //	(2) Can we determine an upperbound on how many other subjects could be unified against it.
+  //	(3) Can we determine what it will only unify against something with a specific stable top symbol.
+  //
+  Term* identity = topSymbol->getIdentity();
+  //
+  //	Default determinations:
+  //
+  canTakeIdentity = (identity != 0);  // can unify with identity if it exists
+  upperBound = markedSubterms.contains(subtermIndex) ? 1 : UNBOUNDED;  // marked subterms are bounded by 1
+  stableSymbol = 0;  // no stable symbol
+  //
+  //	Now we try to tighten these restrictions.
+  //
+  DagNode* subject = subterms[subtermIndex];
+  if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(subject))
+    {
+      //
+      //	If subterm is a variable we may be able to constrain it based on its sort.
+      //
+      VariableSymbol* variableSymbol = safeCast(VariableSymbol*, v->symbol());
+      Sort* variableSort = variableSymbol->getSort();
+      int variableSortBound = topSymbol->sortBound(variableSort);
+      if (variableSortBound < upperBound)
+	upperBound = variableSortBound;
+      canTakeIdentity = canTakeIdentity && topSymbol->takeIdentity(variableSort);
+      subject = solution.value(v->getIndex());
+      if (subject == 0)
+	return;  // unbound variable
+      Assert(subject->symbol() != topSymbol, "variable " << (DagNode*) v <<
+	     " still bound into our theory " << subject << " even after unsolving phase");
+    }
+  //
+  //	Now we have a nonvariable, or a variable bound to a nonvariable.
+  //	We look to see if the top symbol is stable.
+  //
+  Symbol* symbol = subject->symbol();
+  DebugAdvisory("ACU_UnificationSubproblem2::classify() symbol = " << symbol <<
+	        " symbol->isStable() = " << symbol->isStable());
+  if (symbol->isStable())
+    {
+      //
+      //	Anything that unifies with subject must have symbol on top.
+      //
+      upperBound = 1;  // stable symbol can unify with at most one thing
+      canTakeIdentity = canTakeIdentity && (symbol == identity->symbol());
+      stableSymbol = symbol;
+    }
+}
+
 bool
 ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem(UnificationContext& solution)
 {
 #ifndef NO_ASSERT
   DebugAdvisory("building DiophantineSystem for ACU_UnificationSubproblem2 " << ((void*) this));
-  /*
-  for (int i = 0; i < subterms.length(); ++i)
-  cerr << subterms[i] << '\t';
-  cerr << endl;
-  */
+  if (globalAdvisoryFlag)
+    {
+      for (int i = 0; i < subterms.length(); ++i)
+	cerr << subterms[i] << '\t';
+      cerr << endl;
+    }
 #endif
   //
   //	Each distinct alien subdag from a unification problem that didn't get cancelled
@@ -279,8 +393,8 @@ ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem(UnificationContext& s
   //
   int nrDioVars = subterms.size();
   Assert(nrDioVars > 0, "shouldn't be called in degenerate case");
-  if (nrDioVars == 1)
-    return false;  // trivial failure
+  //if (nrDioVars == 1)
+  //  return false;  // trivial failure
   //
   //	Create the Diophantine system.
   //
@@ -292,56 +406,92 @@ ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem(UnificationContext& s
   //
   upperBounds.resize(nrDioVars);  // for basis selection use
   IntSystem::IntVec upperBnds(nrDioVars);  // for Diophantine system use
+  Vector<Symbol*> stableSymbols(nrDioVars);   // if we know we can only unify against a stable alien
   for (int i = 0; i < nrDioVars; ++i)
     {
-      int bound = 1;  // for aliens and variables bound to aliens
-      DagNode* d = subterms[i];
-      if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(d))
-	{
-	  DagNode* b = solution.value(v->lastVariableInChain(solution)->getIndex());
-	  if (b == 0 || b->symbol() == topSymbol)  // unbound or bound to a dag with our top symbol
-	    bound = topSymbol->sortBound(static_cast<VariableSymbol*>(v->symbol())->getSort());
-	}
-      upperBounds[i] = bound;
-      upperBnds[i] = bound;
+      bool canTakeIdentity;
+      int upperBound;
+      classify(i, solution, canTakeIdentity, upperBound, stableSymbols[i]);
+      DebugAdvisory("ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem() i = " << i <<
+		    " subterms[i] = " << subterms[i] <<
+		    " canTakeIdentity = " << canTakeIdentity <<
+		    " upperBound = " << upperBound);
+		    
+      if (!canTakeIdentity)
+	needToCover.insert(i);  // can't take identity so mark as uncovered and be sure to cover
+      upperBounds[i] = upperBound;
+      upperBnds[i] = upperBound;
     }
   system.setUpperBounds(upperBnds);
   //
   //	Extract the basis.
   //
   Vector<int> dioSol;
-  while (system.findNextMinimalSolution(dioSol))
+  for (int index = 0; system.findNextMinimalSolution(dioSol);)
     {
 #ifndef NO_ASSERT
       DebugAdvisory("added basis element for ACU_UnificationSubproblem2 " << ((void*) this));
-      /*
-      for (int i = 0; i < dioSol.length(); ++i)
-	cerr << dioSol[i] << '\t';
-      cerr << endl;
-      */
+      if (globalAdvisoryFlag)
+	{
+	  for (int i = 0; i < dioSol.length(); ++i)
+	    cerr << dioSol[i] << '\t';
+	  cerr << endl;
+	}
 #endif
-      basis.push_front(Entry());
-      Entry& e = basis.front();
-      e.remainder = accumulator;  // deep copy
-      e.element.resize(nrDioVars);
+      Symbol* existingStableSymbol = 0;
       for (int i = 0; i < nrDioVars; ++i)
 	{
-	  if ((e.element[i] = dioSol[i]) != 0)
-	    accumulator.insert(i);  // subterm i is covered
+	  int t = dioSol[i];
+	  if (t != 0)
+	    {
+	      Symbol* stableSymbol = stableSymbols[i];
+	      if (stableSymbol != 0)
+		{
+		  //
+		  //	We have a basis element that is going to force a term with a stable symbol to
+		  //	unify with something.
+		  //
+		  if (existingStableSymbol == 0)
+		    existingStableSymbol = stableSymbol;
+		  else if (existingStableSymbol != stableSymbol)
+		    {
+		      //
+		      //	Forced unification is guaranteed to fail.
+		      //
+		      DebugAdvisory("killing basis element, " << existingStableSymbol << " vs " << stableSymbol);
+		      goto killElement;
+		    }
+		}
+	    }
 	}
+      {
+	basis.push_front(Entry());
+	Entry& e = basis.front();
+	e.remainder = accumulator;  // deep copy
+	e.element.resize(nrDioVars);
+	for (int i = 0; i < nrDioVars; ++i)
+	  {
+	    if ((e.element[i] = dioSol[i]) != 0)
+	      accumulator.insert(i);  // subterm i is covered
+	  }
+	e.index = index;
+	++index;
+      }
+    killElement:
+      ;
     }
   //
-  //	Check that all the subterms are covered by at least one basis element and initialize
-  //	totals vector and uncovered set.
+  //	Check that each term that needs to be covered is covered by at least one basis element.
+  //
+  if (!accumulator.contains(needToCover))
+    return false;
+  //
+  //	Initialize totals vector and uncovered set.
   //
   totals.resize(nrDioVars);
   for (int i = 0; i < nrDioVars; ++i)
-    {
-      if (!(accumulator.contains(i)))
-	return false;
-      totals[i] = 0;
-      uncovered.insert(i);
-    }
+    totals[i] = 0;
+  uncovered = needToCover;
   return true;
 }
 
@@ -410,6 +560,23 @@ ACU_UnificationSubproblem2::nextSelection(bool findFirst)
 }
 
 bool
+ACU_UnificationSubproblem2::nextSelectionWithIdentity(bool /* findFirst */)
+{
+  if (maximalSelections->nextAssignment())
+    {
+      const Vector<Byte>& assignment = maximalSelections->getCurrentAssignment();
+      selection.clear();
+      FOR_EACH_CONST(i, Basis, basis)
+	{
+	  if (assignment[i->index])
+	    selection.append(i);
+	}
+      return true;
+    }
+  return false;
+}
+
+bool
 ACU_UnificationSubproblem2::includable(Basis::const_iterator potential)
 {
   int nrSubterms = subterms.size();
@@ -421,9 +588,84 @@ ACU_UnificationSubproblem2::includable(Basis::const_iterator potential)
   return true;
 }
 
+bdd
+ACU_UnificationSubproblem2::computeLegalSelections()
+{
+  int nrBasisElements = basis.size();
+  BddUser::setNrVariables(nrBasisElements);
+  bdd conjunction = bddtrue;
+  Vector<bdd> bounds;
+
+  int nrSubterms = subterms.size();
+  for (int i = 0; i < nrSubterms; ++i)
+    {
+      int upperBound = upperBounds[i];
+      if (upperBound != UNBOUNDED)
+	{
+	  //
+	  //	Compute a BDD that ensures the selection of basis elements
+	  //	keeps the assignment to the subterm at or below upper bound.
+	  //
+	  bounds.resize(upperBound + 1);
+	  for (int j = 0; j <= upperBound; ++j)
+	    bounds[j] = bddtrue;
+	  FOR_EACH_CONST(k, Basis, basis)
+	    {
+	      int value = k->element[i];
+	      if (value != 0)
+		{
+		  for (int j = upperBound; j >= 0; --j)
+		    {
+		      if (j - value >= 0)
+			bounds[j] = bdd_ite(bdd_ithvar(k->index), bounds[j - value], bounds[j]);
+		      else
+			bounds[j] = bdd_ite(bdd_ithvar(k->index), bddfalse, bounds[j]);
+		    }
+		}
+	    }
+	  DebugAdvisory("upperbound " << i <<
+			" bound = " << bounds[upperBound] <<
+			" node count = " << bdd_nodecount(bounds[upperBound]) <<
+			" path count = " << bdd_pathcount(bounds[upperBound]));
+	  conjunction = bdd_and(conjunction, bounds[upperBound]);
+	}
+      if (needToCover.contains(i))
+	{
+	  //
+	  //	Compute a BDD that ensures the selection of basis elements
+	  //	assigns at least one thing to the subterm.
+	  //
+	  bdd disjunction = bddfalse;
+	  FOR_EACH_CONST(k, Basis, basis)
+	    {
+	      if (k->element[i] != 0)
+		disjunction = bdd_or(disjunction, bdd_ithvar(k->index));
+	    }
+	  DebugAdvisory("need to cover " << i <<
+			" disjunction = " << disjunction <<
+			" node count = " << bdd_nodecount(disjunction) <<
+			" path count = " << bdd_pathcount(disjunction));
+	  conjunction = bdd_and(conjunction, disjunction);
+	}
+    }
+  return conjunction;
+}
+
 bool
 ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingUnificationStack& pending)
 {
+#ifndef NO_ASSERT
+  DebugAdvisory("buildSolution() using basis elements:");
+  if (globalAdvisoryFlag)
+    {
+      for (int j = 0; j < selection.size(); ++j)
+	{
+	  for (int i = 0; i < subterms.size(); ++i)
+	    cerr << selection[j]->element[i] << '\t';
+	  cerr << endl;
+	}
+    }
+#endif
   //
   //	First we allocate a fresh variable for each basis element selected.
   //
@@ -433,7 +675,7 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
   for (int i = 0; i < selectionSize; ++i)
     freshVariables[i] = solution.makeFreshVariable(component);
   //
-  //	Now for each abstracted subterm we unify it against its solution in
+  //	Now for each abstracted subterm we compute a solution in
   //	the purified problem.
   //
   int nrSubterms = subterms.size();
@@ -449,9 +691,21 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
 	      lastElement = j;
 	    }
 	}
-      Assert(nrElements > 0, "empty solution");
+      Assert(nrElements <= upperBounds[i], "have at least " << nrElements <<
+	     " assign variables vs upper bound of " << upperBounds[i] <<
+	     " for subterm " << subterms[i]);
       DagNode* d;
-      if (nrElements == 1 && selection[lastElement]->element[i] == 1)
+      if (nrElements == 0)
+	{
+	  d = topSymbol->getIdentityDag();
+	  //
+	  //	If this is the first time we use the identity element it is possible
+	  //	that it will not have its sort computed or ground flag set.
+	  //
+	  if (!(d->isGround()))
+	    d->computeBaseSortForGroundSubterms();
+	}
+      else if (nrElements == 1 && selection[lastElement]->element[i] == 1)
 	d = freshVariables[lastElement];
       else
 	{
@@ -475,6 +729,21 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
 	  a->sortAndUniquize();	  
 	  Assert(a->isTree() == false, "Oops we got a tree! " << a);
 	  d = a;
+	}
+
+      DagNode* subterm = subterms[i];
+      if (VariableDagNode* varSubterm = dynamic_cast<VariableDagNode*>(subterm))
+	{
+	  //
+	  //	We need to handle unbound variable subterms ourself to avoid
+	  //	generating another problem in our theory.
+	  //
+	  VariableDagNode* repVar = varSubterm->lastVariableInChain(solution);
+	  if (solution.value(repVar->getIndex()) == 0)
+	    {
+	      solution.unificationBind(repVar, d);
+	      continue;
+	    }
 	}
       if (!(subterms[i]->computeSolvedForm(d, solution, pending)))
 	return false;

@@ -3979,10 +3979,10 @@ C --> #1:Elt
 D --> #2:Elt
 
 Solution 2
-A --> #1:Elt
-B --> #2:Elt
-C --> #2:Elt
-D --> #1:Elt
+A --> #2:Elt
+B --> #1:Elt
+C --> #1:Elt
+D --> #2:Elt
 ==========================================
 unify in AC2 : f(X, A) =? f(Y, B) .
 
@@ -3993,16 +3993,16 @@ B --> #1:Elt
 Y --> #2:Set
 
 Solution 2
-A --> #1:Elt
-X --> f(#2:Elt, #3:Set)
-B --> #2:Elt
-Y --> f(#1:Elt, #3:Set)
+A --> #2:Elt
+X --> f(#1:Elt, #3:Set)
+B --> #1:Elt
+Y --> f(#2:Elt, #3:Set)
 
 Solution 3
-A --> #1:Elt
-X --> #2:Elt
-B --> #2:Elt
-Y --> #1:Elt
+A --> #2:Elt
+X --> #1:Elt
+B --> #1:Elt
+Y --> #2:Elt
 ==========================================
 unify in AC2 : f(g(X, Y), g(X, Z), U) =? f(g(Y, Z), V) .
 
@@ -4465,87 +4465,24 @@ V --> f(g(#1:Set, #2:Set), g(#2:Set, #3:Set))
 unify in AC+C : g(f(X, Y), f(X, U, Z)) =? g(f(U, V), f(W, A)) .
 
 Solution 1
-X --> f(#3:Set, #4:Set)
+X --> f(#2:Set, #3:Elt, #4:Set)
 Y --> f(#5:Set, #6:Set)
-Z --> f(#1:Set, #2:Elt)
-U --> f(#3:Set, #5:Set)
+Z --> #1:Set
+U --> f(#2:Set, #3:Elt, #5:Set)
 V --> f(#4:Set, #6:Set)
-W --> f(#1:Set, #3:Set, #3:Set, #4:Set, #5:Set)
-A --> #2:Elt
+W --> f(#1:Set, #2:Set, #2:Set, #3:Elt, #4:Set, #5:Set)
+A --> #3:Elt
 
 Solution 2
-X --> f(#3:Set, #4:Set)
+X --> f(#2:Set, #3:Elt, #4:Set)
 Y --> #5:Set
-Z --> f(#1:Set, #2:Elt)
-U --> f(#3:Set, #5:Set)
+Z --> #1:Set
+U --> f(#2:Set, #3:Elt, #5:Set)
 V --> #4:Set
-W --> f(#1:Set, #3:Set, #3:Set, #4:Set, #5:Set)
-A --> #2:Elt
+W --> f(#1:Set, #2:Set, #2:Set, #3:Elt, #4:Set, #5:Set)
+A --> #3:Elt
 
 Solution 3
-X --> f(#3:Set, #4:Set)
-Y --> #5:Set
-Z --> f(#1:Set, #2:Elt)
-U --> #3:Set
-V --> f(#4:Set, #5:Set)
-W --> f(#1:Set, #3:Set, #3:Set, #4:Set)
-A --> #2:Elt
-
-Solution 4
-X --> #3:Set
-Y --> f(#4:Set, #5:Set)
-Z --> f(#1:Set, #2:Elt)
-U --> f(#3:Set, #4:Set)
-V --> #5:Set
-W --> f(#1:Set, #3:Set, #3:Set, #4:Set)
-A --> #2:Elt
-
-Solution 5
-X --> #3:Set
-Y --> #4:Set
-Z --> f(#1:Set, #2:Elt)
-U --> #3:Set
-V --> #4:Set
-W --> f(#1:Set, #3:Set, #3:Set)
-A --> #2:Elt
-
-Solution 6
-X --> #3:Set
-Y --> f(#4:Set, #5:Set)
-Z --> f(#1:Set, #2:Elt)
-U --> #4:Set
-V --> f(#3:Set, #5:Set)
-W --> f(#1:Set, #3:Set, #4:Set)
-A --> #2:Elt
-
-Solution 7
-X --> #3:Set
-Y --> #4:Set
-Z --> f(#1:Set, #2:Elt)
-U --> #4:Set
-V --> #3:Set
-W --> f(#1:Set, #3:Set, #4:Set)
-A --> #2:Elt
-
-Solution 8
-X --> f(#2:Set, #3:Elt, #4:Set)
-Y --> f(#5:Set, #6:Set)
-Z --> #1:Set
-U --> f(#2:Set, #3:Elt, #5:Set)
-V --> f(#4:Set, #6:Set)
-W --> f(#1:Set, #2:Set, #2:Set, #3:Elt, #4:Set, #5:Set)
-A --> #3:Elt
-
-Solution 9
-X --> f(#2:Set, #3:Elt, #4:Set)
-Y --> #5:Set
-Z --> #1:Set
-U --> f(#2:Set, #3:Elt, #5:Set)
-V --> #4:Set
-W --> f(#1:Set, #2:Set, #2:Set, #3:Elt, #4:Set, #5:Set)
-A --> #3:Elt
-
-Solution 10
 X --> f(#2:Set, #3:Elt, #4:Set)
 Y --> #5:Set
 Z --> #1:Set
@@ -4554,7 +4491,7 @@ V --> f(#4:Set, #5:Set)
 W --> f(#1:Set, #2:Set, #2:Set, #3:Elt, #4:Set)
 A --> #3:Elt
 
-Solution 11
+Solution 4
 X --> f(#2:Set, #3:Elt)
 Y --> f(#4:Set, #5:Set)
 Z --> #1:Set
@@ -4563,7 +4500,7 @@ V --> #5:Set
 W --> f(#1:Set, #2:Set, #2:Set, #3:Elt, #4:Set)
 A --> #3:Elt
 
-Solution 12
+Solution 5
 X --> f(#2:Set, #3:Elt)
 Y --> #4:Set
 Z --> #1:Set
@@ -4572,34 +4509,43 @@ V --> #4:Set
 W --> f(#1:Set, #2:Set, #2:Set, #3:Elt)
 A --> #3:Elt
 
-Solution 13
-X --> f(#2:Set, #3:Set, #4:Elt)
-Y --> f(#5:Set, #6:Set)
-Z --> #1:Set
-U --> f(#2:Set, #5:Set)
-V --> f(#3:Set, #4:Elt, #6:Set)
-W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #5:Set)
-A --> #4:Elt
+Solution 6
+X --> f(#2:Set, #3:Set)
+Y --> f(#4:Set, #6:Set)
+Z --> f(#1:Set, #5:Elt)
+U --> f(#2:Set, #4:Set)
+V --> f(#3:Set, #6:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #4:Set)
+A --> #5:Elt
 
-Solution 14
-X --> f(#2:Set, #3:Set, #4:Elt)
-Y --> #5:Set
-Z --> #1:Set
-U --> f(#2:Set, #5:Set)
-V --> f(#3:Set, #4:Elt)
-W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #5:Set)
-A --> #4:Elt
+Solution 7
+X --> f(#2:Set, #3:Set)
+Y --> #4:Set
+Z --> f(#1:Set, #5:Elt)
+U --> f(#2:Set, #4:Set)
+V --> #3:Set
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #4:Set)
+A --> #5:Elt
 
-Solution 15
-X --> f(#2:Set, #3:Set, #4:Elt)
-Y --> #5:Set
+Solution 8
+X --> f(#2:Set, #3:Set, #5:Elt)
+Y --> f(#4:Set, #6:Set)
 Z --> #1:Set
-U --> #2:Set
-V --> f(#3:Set, #4:Elt, #5:Set)
-W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
-A --> #4:Elt
+U --> f(#2:Set, #4:Set)
+V --> f(#3:Set, #5:Elt, #6:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #4:Set)
+A --> #5:Elt
 
-Solution 16
+Solution 9
+X --> f(#2:Set, #3:Set, #5:Elt)
+Y --> #4:Set
+Z --> #1:Set
+U --> f(#2:Set, #4:Set)
+V --> f(#3:Set, #5:Elt)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #4:Set)
+A --> #5:Elt
+
+Solution 10
 X --> f(#2:Set, #3:Set)
 Y --> f(#4:Set, #5:Elt, #6:Set)
 Z --> #1:Set
@@ -4608,7 +4554,7 @@ V --> f(#3:Set, #6:Set)
 W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #4:Set)
 A --> #5:Elt
 
-Solution 17
+Solution 11
 X --> f(#2:Set, #3:Set)
 Y --> f(#4:Set, #5:Elt)
 Z --> #1:Set
@@ -4617,7 +4563,25 @@ V --> #3:Set
 W --> f(#1:Set, #2:Set, #2:Set, #3:Set, #4:Set)
 A --> #5:Elt
 
-Solution 18
+Solution 12
+X --> f(#2:Set, #3:Set)
+Y --> #5:Set
+Z --> f(#1:Set, #4:Elt)
+U --> #2:Set
+V --> f(#3:Set, #5:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
+Solution 13
+X --> f(#2:Set, #3:Set, #4:Elt)
+Y --> #5:Set
+Z --> #1:Set
+U --> #2:Set
+V --> f(#3:Set, #4:Elt, #5:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
+Solution 14
 X --> f(#2:Set, #3:Set)
 Y --> f(#4:Elt, #5:Set)
 Z --> #1:Set
@@ -4626,7 +4590,7 @@ V --> f(#3:Set, #5:Set)
 W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
 A --> #4:Elt
 
-Solution 19
+Solution 15
 X --> f(#2:Set, #3:Set)
 Y --> #4:Elt
 Z --> #1:Set
@@ -4635,34 +4599,34 @@ V --> #3:Set
 W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
 A --> #4:Elt
 
-Solution 20
-X --> f(#2:Set, #3:Elt)
-Y --> f(#4:Set, #5:Set)
-Z --> #1:Set
-U --> f(#2:Set, #4:Set)
-V --> f(#3:Elt, #5:Set)
-W --> f(#1:Set, #2:Set, #2:Set, #4:Set)
-A --> #3:Elt
+Solution 16
+X --> #2:Set
+Y --> f(#3:Set, #5:Set)
+Z --> f(#1:Set, #4:Elt)
+U --> f(#2:Set, #3:Set)
+V --> #5:Set
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
+A --> #4:Elt
 
-Solution 21
-X --> f(#2:Set, #3:Elt)
-Y --> #4:Set
+Solution 17
+X --> f(#2:Set, #4:Elt)
+Y --> f(#3:Set, #5:Set)
 Z --> #1:Set
-U --> f(#2:Set, #4:Set)
-V --> #3:Elt
-W --> f(#1:Set, #2:Set, #2:Set, #4:Set)
-A --> #3:Elt
+U --> f(#2:Set, #3:Set)
+V --> f(#4:Elt, #5:Set)
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
+A --> #4:Elt
 
-Solution 22
-X --> f(#2:Set, #3:Elt)
-Y --> #4:Set
+Solution 18
+X --> f(#2:Set, #4:Elt)
+Y --> #3:Set
 Z --> #1:Set
-U --> #2:Set
-V --> f(#3:Elt, #4:Set)
-W --> f(#1:Set, #2:Set, #2:Set)
-A --> #3:Elt
+U --> f(#2:Set, #3:Set)
+V --> #4:Elt
+W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
+A --> #4:Elt
 
-Solution 23
+Solution 19
 X --> #2:Set
 Y --> f(#3:Set, #4:Elt, #5:Set)
 Z --> #1:Set
@@ -4671,7 +4635,25 @@ V --> #5:Set
 W --> f(#1:Set, #2:Set, #2:Set, #3:Set)
 A --> #4:Elt
 
-Solution 24
+Solution 20
+X --> #2:Set
+Y --> #4:Set
+Z --> f(#1:Set, #3:Elt)
+U --> #2:Set
+V --> #4:Set
+W --> f(#1:Set, #2:Set, #2:Set)
+A --> #3:Elt
+
+Solution 21
+X --> f(#2:Set, #3:Elt)
+Y --> #4:Set
+Z --> #1:Set
+U --> #2:Set
+V --> f(#3:Elt, #4:Set)
+W --> f(#1:Set, #2:Set, #2:Set)
+A --> #3:Elt
+
+Solution 22
 X --> #2:Set
 Y --> f(#3:Elt, #4:Set)
 Z --> #1:Set
@@ -4680,7 +4662,7 @@ V --> #4:Set
 W --> f(#1:Set, #2:Set, #2:Set)
 A --> #3:Elt
 
-Solution 25
+Solution 23
 X --> f(#2:Elt, #3:Set)
 Y --> f(#4:Set, #5:Set)
 Z --> #1:Set
@@ -4689,7 +4671,7 @@ V --> f(#3:Set, #5:Set)
 W --> f(#1:Set, #2:Elt, #3:Set, #4:Set)
 A --> #2:Elt
 
-Solution 26
+Solution 24
 X --> f(#2:Elt, #3:Set)
 Y --> #4:Set
 Z --> #1:Set
@@ -4698,7 +4680,7 @@ V --> #3:Set
 W --> f(#1:Set, #2:Elt, #3:Set, #4:Set)
 A --> #2:Elt
 
-Solution 27
+Solution 25
 X --> f(#2:Elt, #3:Set)
 Y --> #4:Set
 Z --> #1:Set
@@ -4707,7 +4689,7 @@ V --> f(#3:Set, #4:Set)
 W --> f(#1:Set, #2:Elt, #3:Set)
 A --> #2:Elt
 
-Solution 28
+Solution 26
 X --> #2:Elt
 Y --> f(#3:Set, #4:Set)
 Z --> #1:Set
@@ -4716,7 +4698,7 @@ V --> #4:Set
 W --> f(#1:Set, #2:Elt, #3:Set)
 A --> #2:Elt
 
-Solution 29
+Solution 27
 X --> #2:Elt
 Y --> #3:Set
 Z --> #1:Set
@@ -4725,23 +4707,41 @@ V --> #3:Set
 W --> f(#1:Set, #2:Elt)
 A --> #2:Elt
 
+Solution 28
+X --> #2:Set
+Y --> f(#3:Set, #5:Set)
+Z --> f(#1:Set, #4:Elt)
+U --> #3:Set
+V --> f(#2:Set, #5:Set)
+W --> f(#1:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
+Solution 29
+X --> #2:Set
+Y --> #3:Set
+Z --> f(#1:Set, #4:Elt)
+U --> #3:Set
+V --> #2:Set
+W --> f(#1:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
 Solution 30
-X --> f(#2:Set, #3:Elt)
-Y --> f(#4:Set, #5:Set)
+X --> f(#2:Set, #4:Elt)
+Y --> f(#3:Set, #5:Set)
 Z --> #1:Set
-U --> #4:Set
-V --> f(#2:Set, #3:Elt, #5:Set)
-W --> f(#1:Set, #2:Set, #4:Set)
-A --> #3:Elt
+U --> #3:Set
+V --> f(#2:Set, #4:Elt, #5:Set)
+W --> f(#1:Set, #2:Set, #3:Set)
+A --> #4:Elt
 
 Solution 31
-X --> f(#2:Set, #3:Elt)
-Y --> #4:Set
+X --> f(#2:Set, #4:Elt)
+Y --> #3:Set
 Z --> #1:Set
-U --> #4:Set
-V --> f(#2:Set, #3:Elt)
-W --> f(#1:Set, #2:Set, #4:Set)
-A --> #3:Elt
+U --> #3:Set
+V --> f(#2:Set, #4:Elt)
+W --> f(#1:Set, #2:Set, #3:Set)
+A --> #4:Elt
 
 Solution 32
 X --> #2:Set
@@ -4780,121 +4780,121 @@ W --> f(#1:Set, #2:Set)
 A --> #3:Elt
 
 Solution 36
-X --> #2:Elt
-Y --> f(#3:Set, #4:Set)
+X --> #3:Elt
+Y --> f(#2:Set, #4:Set)
 Z --> #1:Set
-U --> #3:Set
-V --> f(#2:Elt, #4:Set)
-W --> f(#1:Set, #3:Set)
-A --> #2:Elt
+U --> #2:Set
+V --> f(#3:Elt, #4:Set)
+W --> f(#1:Set, #2:Set)
+A --> #3:Elt
 
 Solution 37
-X --> #2:Elt
-Y --> #3:Set
+X --> #3:Elt
+Y --> #2:Set
 Z --> #1:Set
-U --> #3:Set
-V --> #2:Elt
-W --> f(#1:Set, #3:Set)
-A --> #2:Elt
+U --> #2:Set
+V --> #3:Elt
+W --> f(#1:Set, #2:Set)
+A --> #3:Elt
 
 Solution 38
-X --> f(#2:Set, #3:Set)
-Y --> f(#4:Set, #5:Set)
-Z --> #1:Elt
-U --> f(#2:Set, #4:Set)
-V --> f(#3:Set, #5:Set)
-W --> f(#2:Set, #2:Set, #3:Set, #4:Set)
-A --> #1:Elt
-
-Solution 39
-X --> f(#2:Set, #3:Set)
-Y --> #4:Set
-Z --> #1:Elt
-U --> f(#2:Set, #4:Set)
-V --> #3:Set
-W --> f(#2:Set, #2:Set, #3:Set, #4:Set)
-A --> #1:Elt
-
-Solution 40
-X --> f(#2:Set, #3:Set)
-Y --> #4:Set
-Z --> #1:Elt
-U --> #2:Set
-V --> f(#3:Set, #4:Set)
-W --> f(#2:Set, #2:Set, #3:Set)
-A --> #1:Elt
-
-Solution 41
-X --> #2:Set
-Y --> f(#3:Set, #4:Set)
-Z --> #1:Elt
-U --> f(#2:Set, #3:Set)
-V --> #4:Set
-W --> f(#2:Set, #2:Set, #3:Set)
-A --> #1:Elt
-
-Solution 42
-X --> #2:Set
-Y --> #3:Set
-Z --> #1:Elt
-U --> #2:Set
-V --> #3:Set
-W --> f(#2:Set, #2:Set)
-A --> #1:Elt
-
-Solution 43
-X --> #2:Set
-Y --> f(#3:Set, #4:Set)
-Z --> #1:Elt
-U --> #3:Set
-V --> f(#2:Set, #4:Set)
-W --> f(#2:Set, #3:Set)
-A --> #1:Elt
-
-Solution 44
-X --> #2:Set
-Y --> #3:Set
-Z --> #1:Elt
-U --> #3:Set
-V --> #2:Set
-W --> f(#2:Set, #3:Set)
-A --> #1:Elt
-
-Solution 45
-X --> f(#3:Set, #4:Elt)
-Y --> #5:Set
-Z --> #2:Set
-U --> #1:Set
-V --> f(#2:Set, #3:Set, #4:Elt)
-W --> f(#3:Set, #5:Set)
+X --> f(#1:Set, #2:Set)
+Y --> f(#3:Set, #5:Set)
+Z --> #4:Elt
+U --> f(#1:Set, #3:Set)
+V --> f(#2:Set, #5:Set)
+W --> f(#1:Set, #1:Set, #2:Set, #3:Set)
 A --> #4:Elt
 
-Solution 46
-X --> #3:Set
-Y --> f(#4:Set, #5:Elt)
-Z --> #2:Set
+Solution 39
+X --> f(#1:Set, #2:Set)
+Y --> #3:Set
+Z --> #4:Elt
+U --> f(#1:Set, #3:Set)
+V --> #2:Set
+W --> f(#1:Set, #1:Set, #2:Set, #3:Set)
+A --> #4:Elt
+
+Solution 40
+X --> f(#1:Set, #2:Set)
+Y --> #4:Set
+Z --> #3:Elt
 U --> #1:Set
-V --> f(#2:Set, #3:Set)
-W --> f(#3:Set, #4:Set)
+V --> f(#2:Set, #4:Set)
+W --> f(#1:Set, #1:Set, #2:Set)
+A --> #3:Elt
+
+Solution 41
+X --> #1:Set
+Y --> f(#2:Set, #4:Set)
+Z --> #3:Elt
+U --> f(#1:Set, #2:Set)
+V --> #4:Set
+W --> f(#1:Set, #1:Set, #2:Set)
+A --> #3:Elt
+
+Solution 42
+X --> #1:Set
+Y --> #3:Set
+Z --> #2:Elt
+U --> #1:Set
+V --> #3:Set
+W --> f(#1:Set, #1:Set)
+A --> #2:Elt
+
+Solution 43
+X --> #1:Set
+Y --> f(#2:Set, #4:Set)
+Z --> #3:Elt
+U --> #2:Set
+V --> f(#1:Set, #4:Set)
+W --> f(#1:Set, #2:Set)
+A --> #3:Elt
+
+Solution 44
+X --> #1:Set
+Y --> #2:Set
+Z --> #3:Elt
+U --> #2:Set
+V --> #1:Set
+W --> f(#1:Set, #2:Set)
+A --> #3:Elt
+
+Solution 45
+X --> f(#2:Set, #3:Elt)
+Y --> #5:Set
+Z --> #1:Set
+U --> #4:Set
+V --> f(#1:Set, #2:Set, #3:Elt)
+W --> f(#2:Set, #5:Set)
+A --> #3:Elt
+
+Solution 46
+X --> #2:Set
+Y --> f(#4:Set, #5:Elt)
+Z --> #1:Set
+U --> #3:Set
+V --> f(#1:Set, #2:Set)
+W --> f(#2:Set, #4:Set)
 A --> #5:Elt
 
 Solution 47
-X --> #3:Set
+X --> #2:Set
 Y --> #4:Elt
-Z --> #2:Set
-U --> #1:Set
-V --> f(#2:Set, #3:Set)
-W --> #3:Set
+Z --> #1:Set
+U --> #3:Set
+V --> f(#1:Set, #2:Set)
+W --> #2:Set
 A --> #4:Elt
 
 Solution 48
-X --> #3:Elt
+X --> #2:Elt
 Y --> #4:Set
-Z --> #2:Set
-U --> #1:Set
-V --> f(#2:Set, #3:Elt)
+Z --> #1:Set
+U --> #3:Set
+V --> f(#1:Set, #2:Elt)
 W --> #4:Set
-A --> #3:Elt
+A --> #2:Elt
 ==========================================
 unify in SIMULT : g(X:Foo) =? g(Y:Foo) /\ h(X:Foo) =? h(Z:Foo) .
 

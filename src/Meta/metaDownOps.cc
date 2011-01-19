@@ -93,6 +93,7 @@ MetaLevel::downOpDecl(DagNode* metaOpDecl, MetaModule* m)
 	{
 	  Token prefixName;
 	  prefixName.tokenize(name, FileTable::META_LEVEL_CREATED);
+	  DebugAdvisory("prefix name is " << prefixName);
 	  if (ai.symbolType.hasFlag(SymbolType::POLY))
 	    {
 	      if (!downPolymorphTypeList(f->getArgument(1), m, ai.polyArgs, domainAndRange))
