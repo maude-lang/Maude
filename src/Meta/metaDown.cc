@@ -704,6 +704,8 @@ MetaLevel::downStatementAttr(DagNode* metaAttr, MixfixModule* m, StatementAttrib
     }
   else if (ma == owiseSymbol)
     ai.flags.setFlags(OWISE);
+  else if (ma == variantAttrSymbol)
+    ai.flags.setFlags(VARIANT);
   else if (ma == nonexecSymbol)
     ai.flags.setFlags(NONEXEC);
   else if (ma == printSymbol && !ai.flags.getFlag(PRINT))
@@ -858,6 +860,13 @@ MetaLevel::downEquation(DagNode* metaEquation, MixfixModule* m)
 					      ai.flags.getFlag(OWISE), condition);
 		  if (ai.flags.getFlag(NONEXEC))
 		    eq->setNonexec();
+		  if (ai.flags.getFlag(VARIANT))
+		    {
+		      if (condition.empty())
+			eq->setVariant();
+		      else
+			IssueAdvisory("variant attribute not allowed for conditional equation in meta-module " << QUOTE(m) << '.');
+		    }
 		  m->insertEquation(eq);
 		  if (ai.metadata != NONE)
 		    m->insertMetadata(MixfixModule::EQUATION, eq, ai.metadata);
@@ -1063,31 +1072,34 @@ MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
       if (downOpName(f->getArgument(0), id) && downTermList(f->getArgument(1), m, argList))
 	{
 	  int nrArgs = argList.length();
-	  static Vector<ConnectedComponent*> domain;
-	  domain.resize(nrArgs);
-	  for (int i = 0; i < nrArgs; i++)
-	    domain[i] = argList[i]->symbol()->rangeComponent(); // NEED TO FIX
-	  Symbol* s = m->findSymbol(id, domain, 0);
-	  if (s != 0)
-	    return s->makeTerm(argList);
-	  if (Token::specialProperty(id) == Token::ITER_SYMBOL)
+	  if (nrArgs > 0)
 	    {
-	      mpz_class number;
-	      int opName;
-	      if (Token::split(id, opName, number))
+	      static Vector<ConnectedComponent*> domain;
+	      domain.resize(nrArgs);
+	      for (int i = 0; i < nrArgs; i++)
+		domain[i] = argList[i]->symbol()->rangeComponent(); // NEED TO FIX
+	      Symbol* s = m->findSymbol(id, domain, 0);
+	      if (s != 0)
+		return s->makeTerm(argList);
+	      if (Token::specialProperty(id) == Token::ITER_SYMBOL)
 		{
-		  Symbol* s = m->findSymbol(opName, domain, 0);
-		  if (s != 0 && m->getSymbolType(s).hasFlag(SymbolType::ITER))
-		    return new S_Term(safeCast(S_Symbol*, s), number, argList[0]);
+		  mpz_class number;
+		  int opName;
+		  if (Token::split(id, opName, number))
+		    {
+		      Symbol* s = m->findSymbol(opName, domain, 0);
+		      if (s != 0 && m->getSymbolType(s).hasFlag(SymbolType::ITER))
+			return new S_Term(safeCast(S_Symbol*, s), number, argList[0]);
+		    }
 		}
-	    }
-	  IssueAdvisory("could not find an operator " << QUOTE(Token::name(id)) <<
-			" with appropriate domain in meta-module " << QUOTE(m) <<
-			" when trying to interprete metaterm " << QUOTE(metaTerm) << '.');
+	      IssueAdvisory("could not find an operator " << QUOTE(Token::name(id)) <<
+			    " with appropriate domain in meta-module " << QUOTE(m) <<
+			    " when trying to interprete metaterm " << QUOTE(metaTerm) << '.');
 	  // cerr << metaTerm << '\n';
 	  // m->showAll(cerr);
-	  for (int i = 0; i < nrArgs; i++)
-	    argList[i]->deepSelfDestruct();
+	      for (int i = 0; i < nrArgs; i++)
+		argList[i]->deepSelfDestruct();
+	    }
 	}
     }
   else if (downQid(metaTerm, id))
@@ -1178,7 +1190,8 @@ bool
 MetaLevel::downTermList(DagNode* metaTermList, MixfixModule* m, Vector<Term*>& termList)
 {
   termList.clear();
-  if (metaTermList->symbol() == metaArgSymbol)
+  Symbol* mtl = metaTermList->symbol();
+  if (mtl == metaArgSymbol)
     {
       for (DagArgumentIterator i(metaTermList); i.valid(); i.next())
 	{
@@ -1192,6 +1205,8 @@ MetaLevel::downTermList(DagNode* metaTermList, MixfixModule* m, Vector<Term*>& t
 	  termList.append(t);
 	}
     }
+  else if (mtl == emptyTermListSymbol)
+    return true;
   else
     {
       Term* t = downTerm(metaTermList, m);

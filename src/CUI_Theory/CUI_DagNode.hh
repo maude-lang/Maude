@@ -57,12 +57,15 @@ public:
   //	Interface for narrowing.
   //
   bool indexVariables2(NarrowingVariableInfo& indices, int baseIndex);
-  DagNode* instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag);
+  DagNode* instantiateWithReplacement(const Substitution& substitution, const Vector<DagNode*>& eagerCopies, int argIndex, DagNode* newDag);
+  DagNode* instantiateWithCopies2(const Substitution& substitution, const Vector<DagNode*>& eagerCopies);
   //
   //    Functions particular to CUI_DagNode.
   //
   CUI_Symbol* symbol() const;
   DagNode* getArgument(int i) const;
+
+  CUI_DagNode* makePurifiedVersion(UnificationContext& solution, PendingUnificationStack& pending);
 
 private:
   //
@@ -76,6 +79,10 @@ private:
   //
   void collapseTo(int argNr);
   bool normalizeAtTop();
+  //
+  //	Private unification stuff.
+  //
+  bool computeSolvedFormCommutativeCase(CUI_DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
   //
   //	Arguments under CUI symbol.
   //

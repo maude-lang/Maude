@@ -212,3 +212,39 @@ SortBdds::calculateNrBits(int nrIndicies)
     ;
   return nrBits;
 }
+
+Bdd
+SortBdds::getRemappedLeqRelation(Sort* sort, int firstVariable) const
+{
+  //
+  //	We return a BDD for the sort relation valid(s) /\ s <= sort
+  //	with the BDD variables representing s remapped to start from
+  //	firstVariable.
+  //
+  int nrVariables = getNrVariables(sort->component()->getIndexWithinModule());
+  bddPair* varMap = bdd_newpair();
+  for (int i = 0; i < nrVariables; ++i)
+    bdd_setpair(varMap, i, firstVariable + i);
+  Bdd leqRelation = bdd_replace(getLeqRelation(sort->getIndexWithinModule()), varMap);
+  bdd_freepair(varMap);
+  return leqRelation;
+}
+
+Bdd
+SortBdds::applyLeqRelation(Sort* sort, const Vector<Bdd>& argument) const
+{
+  //
+  //	We return a Bdd for the sort relation valid(s) /\ s <= sort
+  //	applied to an s given by a vector of BDDs.
+  //
+  int nrBdds = argument.size();
+  Assert(nrBdds == getNrVariables(sort->component()->getIndexWithinModule()),
+	 "wrong number of BDD arguments");
+
+  bddPair* argMap = bdd_newpair();
+  for (int i = 0; i < nrBdds; ++i)
+    bdd_setbddpair(argMap, i, argument[i]);
+  Bdd result = bdd_veccompose(getLeqRelation(sort->getIndexWithinModule()), argMap);
+  bdd_freepair(argMap);
+  return result;
+}

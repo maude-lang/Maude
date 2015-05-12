@@ -526,7 +526,7 @@ ACU_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, Pend
       //
       //	We now treat unification problems f(...) =? X where X's representative
       //	variable is unbound as full ACU unification problems now that the variable
-      //	theory no longerresolves such problems and we require
+      //	theory no longer resolves such problems and we require
       //	purification.
       //
       pending.push(symbol(), this, rhs);
@@ -621,10 +621,11 @@ ACU_DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 }
 
 DagNode*
-ACU_DagNode::instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag)
+ACU_DagNode::instantiateWithReplacement(const Substitution& substitution, const Vector<DagNode*>& eagerCopies, int argIndex, DagNode* newDag)
 {
   int nrArgs = argArray.length();
   ACU_Symbol* s = symbol();
+  bool eager = symbol()->getPermuteStrategy() == BinarySymbol::EAGER;
   ACU_DagNode* n = new ACU_DagNode(s, nrArgs);
   ArgVec<ACU_DagNode::Pair>& args2 = n->argArray;
   int p = 0;
@@ -639,8 +640,7 @@ ACU_DagNode::instantiateWithReplacement(const Substitution& substitution, int ar
 	    continue;
 	}
       DagNode* d = argArray[i].dagNode;
-      if (DagNode* c = d->instantiate(substitution))  // changed under substitutition
-	d = c;
+      SAFE_INSTANTIATE(d, eager, substitution, eagerCopies);
       args2[p].dagNode = d;
       args2[p].multiplicity = m;
       ++p;
@@ -651,4 +651,68 @@ ACU_DagNode::instantiateWithReplacement(const Substitution& substitution, int ar
   args2[p].dagNode = newDag;
   args2[p].multiplicity = 1;
   return n;
+}
+
+DagNode*
+ACU_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vector<DagNode*>& eagerCopies)
+{
+  ACU_Symbol* s = symbol();
+  bool eager = symbol()->getPermuteStrategy() == BinarySymbol::EAGER;
+  int nrArgs = argArray.length();
+  for (int i = 0; i < nrArgs; ++i)
+    {
+      DagNode* a = argArray[i].dagNode;
+      DagNode* n = eager ?
+	a->instantiateWithCopies(substitution, eagerCopies) :
+	a->instantiate(substitution);
+      if (n != 0)
+	{
+	  //
+	  //	Argument changed under instantiation - need to make a new
+	  //	dagnode.
+	  //
+	  bool ground = true;
+	  ACU_DagNode* d = new ACU_DagNode(s, nrArgs);
+	  //
+	  //	Copy the arguments we already looked at.
+	  //
+	  for (int j = 0; j < i; ++j)
+	    {
+	      if (!(argArray[j].dagNode->isGround()))
+		ground = false;
+	      d->argArray[j] = argArray[j];	
+	    }
+	  //
+	  //	Handle current argument.
+	  //
+	  d->argArray[i].dagNode = n;
+	  d->argArray[i].multiplicity = argArray[i].multiplicity;
+	  if (!(n->isGround()))
+	    ground = false;
+	  //
+	  //	Handle remaining arguments.
+	  //
+	  for (++i; i < nrArgs; ++i)
+	    {
+	      DagNode* a = argArray[i].dagNode;
+	      SAFE_INSTANTIATE(a, eager, substitution, eagerCopies);
+	      if (!(a->isGround()))
+		ground = false;
+	      d->argArray[i].dagNode = a;
+	      d->argArray[i].multiplicity = argArray[i].multiplicity;
+	    }
+	  //
+	  //	Normalize the new dagnode; if it doesn't collapse and
+	  //	all its arguments are ground we compute its base sort.
+	  //
+	  if (!(d->dumbNormalizeAtTop()) && ground)
+	    {
+	      s->computeBaseSort(d);  // FIXME: is this a good idea in the narrowing sense?
+	      d->setGround();
+	    }
+	  Assert(d->isTree() == false, "Oops we got a tree! " << d);
+	  return d;	
+	}
+    }
+  return 0;  // unchanged
 }

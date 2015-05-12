@@ -33,6 +33,7 @@ public:
   int findRep(int element) const;
   void formUnion(int e1, int e2);
   int elementCount() const;
+  void clear();
 
 private:
   struct Element
@@ -48,6 +49,12 @@ inline int
 UnionFind::elementCount() const
 {
   return vector.length();
+}
+
+inline void
+UnionFind::clear()
+{
+  vector.clear();
 }
 
 #endif

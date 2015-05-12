@@ -54,6 +54,7 @@ public:
   };
 
   RewritingContext(DagNode* root);
+  RewritingContext(int substitutionSize);  // limited use RewritingContext for matching
   virtual ~RewritingContext();
 
   static bool getTraceStatus();
@@ -63,6 +64,9 @@ public:
   void incrementMbCount(Int64 i = 1);
   void incrementEqCount(Int64 i = 1);
   void incrementRlCount(Int64 i = 1);
+  void incrementNarrowingCount(Int64 i = 1);
+  void incrementVariantNarrowingCount(Int64 i = 1);
+
   void clearCount();
   void addInCount(const RewritingContext& other);
   void transferCount(RewritingContext& other);
@@ -70,6 +74,8 @@ public:
   Int64 getMbCount() const;
   Int64 getEqCount() const;
   Int64 getRlCount() const;
+  Int64 getNarrowingCount() const;
+  Int64 getVariantNarrowingCount() const;
   void reduce();
   void ruleRewrite(Int64 limit = NONE);
   void fairRewrite(Int64 limit = NONE, Int64 gas = 1);
@@ -109,6 +115,16 @@ public:
 				  const Substitution* substitution,
 				  DagNode* newState);
 
+  virtual void traceVariantNarrowingStep(Equation* equation,
+					 const Vector<DagNode*>& oldVariantSubstitution,
+					 DagNode* redex,
+					 DagNode* replacement,
+					 const NarrowingVariableInfo& variableInfo,
+					 const Substitution* substitution,
+					 DagNode* newState,
+					 const Vector<DagNode*>& newVariantSubstitution,
+					 const NarrowingVariableInfo& originalVariables);
+
 #ifdef DUMP
   static void dumpStack(ostream& s, const Vector<RedexPosition>& stack);
 #endif
@@ -136,9 +152,13 @@ private:
   static bool traceFlag;
 
   DagNode* rootNode;
+
   Int64 mbCount;
   Int64 eqCount;
   Int64 rlCount;
+
+  Int64 narrowingCount;
+  Int64 variantNarrowingCount;
   //
   //	For rule rewriting
   //
@@ -162,7 +182,21 @@ RewritingContext::RewritingContext(DagNode* root)
   mbCount = 0;
   eqCount = 0;
   rlCount = 0;
+  
+  narrowingCount = 0;
+  variantNarrowingCount = 0;
   staleMarker = ROOT_OK;
+}
+
+inline
+RewritingContext::RewritingContext(int substitutionSize)
+  : Substitution(substitutionSize),
+    rootNode(0)
+{
+  //
+  //	This constructor exists so we can build RewritingContexts for use in the solve() phase of matching where
+  //	we don't otherwise have a RewritingContext to hand.
+  //
 }
 
 inline
@@ -193,7 +227,7 @@ RewritingContext::setTraceStatus(bool state)
 inline Int64
 RewritingContext::getTotalCount() const
 {
-  return mbCount + eqCount + rlCount;
+  return mbCount + eqCount + rlCount + narrowingCount + variantNarrowingCount;
 }
 inline Int64
 RewritingContext::getMbCount() const
@@ -210,6 +244,18 @@ inline Int64
 RewritingContext::getRlCount() const
 {
   return rlCount;
+}
+
+inline Int64
+RewritingContext::getNarrowingCount() const
+{
+  return narrowingCount;
+}
+
+inline Int64
+RewritingContext::getVariantNarrowingCount() const
+{
+  return variantNarrowingCount;
 }
 
 inline void
@@ -231,6 +277,19 @@ RewritingContext::incrementRlCount(Int64 i)
 }
 
 inline void
+RewritingContext::incrementNarrowingCount(Int64 i)
+{
+  narrowingCount += i;
+}
+
+inline void
+RewritingContext::incrementVariantNarrowingCount(Int64 i)
+{
+  variantNarrowingCount += i;
+}
+
+
+inline void
 RewritingContext::clearCount()
 {
   mbCount = 0;
@@ -244,6 +303,9 @@ RewritingContext::addInCount(const RewritingContext& other)
   mbCount += other.mbCount;
   eqCount += other.eqCount;
   rlCount += other.rlCount;
+
+  narrowingCount += other.narrowingCount;
+  variantNarrowingCount += other.variantNarrowingCount;
 }
 
 inline void
@@ -255,6 +317,11 @@ RewritingContext::transferCount(RewritingContext& other)
   other.eqCount = 0;
   rlCount += other.rlCount;
   other.rlCount = 0;
+
+  narrowingCount += other.narrowingCount;
+  other.narrowingCount = 0;
+  variantNarrowingCount += other.variantNarrowingCount;
+  other.variantNarrowingCount = 0;
 }
 
 inline bool

@@ -66,7 +66,13 @@
 #include "freeTerm.hh"
 #include "freeRemainder.hh"
 
+#include "freeNetExec.hh"
 #include "freeNetExec.cc"
+
+FreeNet::FreeNet()
+{
+  fast = true;  // until we know otherwise
+}
 
 FreeNet::~FreeNet()
 {
@@ -147,9 +153,20 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
     {
       Equation* e = equations[*i];
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(e->getLhs()))
-	remainders[*i] = f->compileRemainder(e, slotTranslation);
+	{
+	  FreeRemainder* r = f->compileRemainder(e, slotTranslation);
+	  remainders[*i] = r;
+	  //
+	  //	If a remainder doesn't have fast handling, neither can the discrimination net.
+	  //
+	  if (!(r->fastHandling()))
+	    fast = false;
+	}
       else
-	remainders[*i] = new FreeRemainder(e);  // remainder for "foreign" equation
+	{
+	  remainders[*i] = new FreeRemainder(e);  // remainder for "foreign" equation
+	  fast = false;  // a foreign equation always disables fast handling for the net
+	}
     }
   //
   //	Build null terminated pointer version of applicable for added speed.

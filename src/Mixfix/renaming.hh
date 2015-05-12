@@ -34,6 +34,8 @@
 class Renaming : public SyntaxContainer
 {
 public:
+  virtual ~Renaming() {}
+
   void addSortMapping(Token from, Token to);
   void addLabelMapping(Token from, Token to);
   void addOpMapping(const Vector<Token>& tokens);

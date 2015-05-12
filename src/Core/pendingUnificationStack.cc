@@ -139,7 +139,7 @@ PendingUnificationStack::resolveTheoryClash(DagNode* lhs, DagNode* rhs)
       swap(lhs, rhs);
     }
   DebugAdvisory("push to resolve theory clash");
-  push(controllingSymbol, lhs, rhs);
+  push(controllingSymbol, lhs, rhs, true);
   return true;
 }
 
@@ -189,6 +189,7 @@ PendingUnificationStack::solve(bool findFirst, UnificationContext& solution)
   return findFirst;
 }
 
+/*
 bool
 PendingUnificationStack::solve2(bool findFirst, UnificationContext& solution)
 {
@@ -224,6 +225,7 @@ PendingUnificationStack::solve2(bool findFirst, UnificationContext& solution)
     }
   return true;
 }
+*/
 
 bool
 PendingUnificationStack::makeNewSubproblem(UnificationContext& solution)
@@ -265,7 +267,7 @@ PendingUnificationStack::makeNewSubproblem(UnificationContext& solution)
         }
     }
   //
-  //	All unification problems solve - now check for compound cycles.
+  //	All unification problems solved - now check for compound cycles.
   //
   int cycleStart = findCycle(solution);
   if (cycleStart == NONE)

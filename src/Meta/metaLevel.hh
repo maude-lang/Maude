@@ -83,29 +83,24 @@ public:
 			       const VariableInfo& variableInfo,
 			       const mpz_class& variableIndex,
 			       MixfixModule* m);
-  DagNode* upUnificationContextTriple(const Substitution& substitution,
-				      const VariableInfo& variableInfo,
-				      DagNode* dagNode,
-				      DagNode* hole,
-				      const mpz_class& variableIndex,
-				      MixfixModule* m);
-  DagNode* upUnificationContext4Tuple(const Substitution& substitution,
-				      const VariableInfo& variableInfo,
-				      DagNode* dagNode,
-				      DagNode* hole,
-				      const mpz_class& variableIndex,
-				      MixfixModule* m);
-  void upDisjointSubstitutions(const Substitution& substitution,
-			       const VariableInfo& variableInfo,
-			       MixfixModule* m,
-			       PointerMap& qidMap,
-			       PointerMap& dagNodeMap,
-			       DagNode*& left,
-			       DagNode*& right);
+
+  DagNode* upVariant(const Vector<DagNode*>& variant, 
+		     const NarrowingVariableInfo& variableInfo,
+		     const mpz_class& variableIndex,
+		     MixfixModule* m);
+  DagNode* upNoVariant();
+
+  DagNode* upUnificationPair(const Vector<DagNode*>& unifier,
+			     const NarrowingVariableInfo& variableInfo,
+			     const mpz_class& variableIndex,
+			     MixfixModule* m);
+  DagNode* upUnificationTriple(const Vector<DagNode*>& unifier,
+			       const NarrowingVariableInfo& variableInfo,
+			       const mpz_class& variableIndex,
+			       MixfixModule* m);
 
   DagNode* upTrace(const RewriteSequenceSearch& state, MixfixModule* m);
   DagNode* upFailureTrace();
-
 
   DagNode* upContext(DagNode* dagNode,
 		     MixfixModule* m,
@@ -119,8 +114,6 @@ public:
 			  PointerMap& dagNodeMap);
   DagNode* upNoUnifierPair();
   DagNode* upNoUnifierTriple();
-  DagNode* upNoUnifierContextTriple();
-  DagNode* upNoUnifierContext4Tuple();
   DagNode* upNoMatchSubst();
   DagNode* upNoMatchPair();
   DagNode* upMatchPair(const Substitution& substitution,
@@ -177,6 +170,7 @@ public:
 		    MixfixModule* m,
 		    bool makeDisjoint = false);
   Term* downTerm(DagNode* metaTerm, MixfixModule* m);
+  bool downTermList(DagNode* metaTermList, MixfixModule* m, Vector<Term*>& termList);
   bool downCondition(DagNode* metaCondition,
 		     MixfixModule* m,
 		     Vector<ConditionFragment*>& condition);
@@ -214,7 +208,8 @@ private:
   {
     NONEXEC = 1,
     OWISE = 2,
-    PRINT = 4
+    PRINT = 4,
+    VARIANT = 8
   };
 
   struct AttributeInfo
@@ -258,6 +253,12 @@ private:
   DagNode* upTerm(const Term* term, MixfixModule* m, PointerMap& qidMap);
 
   DagNode* upAssignment(const Term* variable,
+			DagNode* value,
+			MixfixModule* m,
+			PointerMap& qidMap,
+			PointerMap& dagNodeMap);
+
+  DagNode* upAssignment(DagNode* variable,
 			DagNode* value,
 			MixfixModule* m,
 			PointerMap& qidMap,
@@ -321,6 +322,29 @@ private:
 		      bool omitLast,
 		      PointerMap& qidMap);
 
+  void upDisjointSubstitutions(const Substitution& substitution,
+			       const VariableInfo& variableInfo,
+			       MixfixModule* m,
+			       PointerMap& qidMap,
+			       PointerMap& dagNodeMap,
+			       DagNode*& left,
+			       DagNode*& right);
+
+  DagNode* upSubstitution(const Vector<DagNode*>& substitution,
+			  const NarrowingVariableInfo& variableInfo,
+			  int nrVariables,
+			  MixfixModule* m,
+			  PointerMap& qidMap,
+			  PointerMap& dagNodeMap);
+
+  void upDisjointSubstitutions(const Vector<DagNode*>& unifier,
+			       const NarrowingVariableInfo& variableInfo,
+			       MixfixModule* m,
+			       PointerMap& qidMap,
+			       PointerMap& dagNodeMap,
+			       DagNode*& left,
+			       DagNode*& right);
+
   bool downHeader(DagNode* metaHeader, int& id, DagNode*& metaParameterDeclList);
   bool downParameterDeclList(DagNode* metaParameterDeclList, ImportModule* m);
   bool downParameterDecl(DagNode* metaParameterDecl, ImportModule* m);
@@ -376,7 +400,6 @@ private:
   bool downEquation(DagNode* metaEquation, MixfixModule* m);
   bool downRules(DagNode* metaRules, MixfixModule* m);
   bool downRule(DagNode* metaRule, MixfixModule* m);
-  bool downTermList(DagNode* metaTermList, MixfixModule* m, Vector<Term*>& termList);
   bool downInstantiationArguments(DagNode* metaArguments, Vector<int>& arguments);
   bool downAssignment(DagNode* metaAssignment,
 		      MixfixModule* m,

@@ -34,7 +34,9 @@ libbuiltIn_a_SOURCES = \
 	divisionSymbol.cc \
 	randomOpSymbol.cc \
 	counterSymbol.cc \
-	matrixOpSymbol.cc
+	matrixOpSymbol.cc \
+	equalityExtor.cc \
+	equalityExtorFinal.cc
 
 EXTRA_DIST = \
 	matrixOpSignature.cc
@@ -61,4 +63,6 @@ noinst_HEADERS = \
 	succSymbol.hh \
 	randomOpSymbol.hh \
 	counterSymbol.hh \
-	matrixOpSymbol.hh
+	matrixOpSymbol.hh \
+	equalityExtor.hh \
+	equalityExtorFinal.hh

@@ -40,6 +40,8 @@ public:
   void safeConstruct(Substitution& matcher) const;
   void replace(DagNode* old, Substitution& matcher) const;
 
+  bool recordInfo(StackMachineRhsCompiler& compiler);
+
 #ifdef DUMP
   void dump(ostream& s, const VariableInfo& variableInfo, int indentLevel = 0);
 #endif

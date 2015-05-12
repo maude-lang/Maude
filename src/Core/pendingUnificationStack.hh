@@ -50,7 +50,7 @@ public:
   void restore(Marker mark);
 
   bool solve(bool findFirst, UnificationContext& solution);
-  bool solve2(bool findFirst, UnificationContext& solution);
+  //bool solve2(bool findFirst, UnificationContext& solution);
 
   void dump(ostream& s);
 
@@ -100,7 +100,16 @@ private:
 
   int findCycle(UnificationContext& solution);
   int findCycleFrom(int index, UnificationContext& solution);
+  //
+  //	variableStatus[i] holds the index of the variable occuring in variable i's binding that we are about to explore;
+  //	or one of the special values:
+  //	  UNEXPLORED : haven't visited variable i on this cycle check
+  //	  EXPLORED : fully explored variable i and didn't find cycle
+  //
   Vector<int> variableStatus;
+  //
+  //	variableOrder stores the variable indices in an order which they can be safely instantiated.
+  //
   Vector<int> variableOrder;
 };
 

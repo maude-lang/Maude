@@ -52,13 +52,15 @@
 
 NarrowingSearchState::NarrowingSearchState(RewritingContext* context,
 					   FreshVariableGenerator* freshVariableGenerator,
+					   bool odd,
 					   int label,
 					   int flags,
 					   int minDepth,
 					   int maxDepth)
   : PositionState(context->root(), flags, minDepth, maxDepth),
     context(context),
-    freshVariableGenerator(freshVariableGenerator),    
+    freshVariableGenerator(freshVariableGenerator),
+    odd(odd),
     label(label),
     withExtension(maxDepth >= 0)
 {
@@ -137,7 +139,8 @@ NarrowingSearchState::findNextNarrowing()
 	      unificationProblem = new NarrowingUnificationProblem(rl,
 								   getDagNode(),
 								   variableInfo,
-								   freshVariableGenerator);
+								   freshVariableGenerator,
+								   odd);
 	      if (unificationProblem->findNextUnifier())
 		{
 		  noFurtherPositions = getFlags() & SINGLE_POSITION;
@@ -165,15 +168,14 @@ NarrowingSearchState::getNarrowedDag(DagNode*& replacement) const
   Rule* r = getRule();
   Substitution& s = unificationProblem->getSolution();
   replacement =  r->getRhsBuilder().construct(s);
+  int nrSlots = r->getModule()->getMinimumSubstitutionSize();
   //
   //	Need to clear unused entries in solution that we may have touched to avoid confusing
   //	unification algorithm.
   //
-  int nrSlots = r->getModule()->getMinimumSubstitutionSize();
   for (int i = r->getNrProtectedVariables(); i < nrSlots; ++i)
     s.bind(i,0);
-  
-  return rebuildAndInstantiateDag(replacement, s).first;
+  return rebuildAndInstantiateDag(replacement, s, nrSlots, nrSlots + variableInfo.getNrVariables() - 1);
 }
 
 const Substitution&

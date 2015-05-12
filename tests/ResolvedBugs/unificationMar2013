@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/unificationMar2013.maude -no-banner -no-advise \
+  > unificationMar2013.out 2>&1
+
+diff $srcdir/unificationMar2013.expected unificationMar2013.out > /dev/null 2>&1

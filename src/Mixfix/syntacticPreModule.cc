@@ -130,8 +130,9 @@ VisibleModule*
 SyntacticPreModule::getFlatModule()
 {
   VisibleModule* m = getFlatSignature();
-  if (m->getStatus() != Module::THEORY_CLOSED)
+  if (m->getStatus() < Module::THEORY_CLOSED)
     {
+      //IssueWarning("module " << *m << " with status " << m->getStatus() << " being flattened and compiled");  //HACK
       //
       //	Need to flatten in statements and compile.
       //
@@ -143,7 +144,10 @@ SyntacticPreModule::getFlatModule()
 could not be patched up and thus it cannot be used or imported.");
 	}
       else
-	m->closeTheory();
+	{
+	  //IssueWarning("calling closeTheory on  " << *m);  // HACK
+	  m->closeTheory();
+	}
       m->resetImports();
     }
   return m;

@@ -4,10 +4,6 @@ if BUILD_COMPILER
   FULL_COMPILER_LIB = ../FullCompiler/libfullCompiler.a
 endif
 
-if USE_DLMALLOC
-  DLMALLOC_LIB = ../3rdParty/libdlmalloc.a
-endif
-
 maude_CPPFLAGS = \
 	-I$(top_srcdir)/src/Utility \
 	-I$(top_srcdir)/src/Temporal \

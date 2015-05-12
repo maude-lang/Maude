@@ -184,12 +184,19 @@ ACU_RedBlackNode::getMemoryCell() const
 inline void*
 ACU_RedBlackNode::operator new(size_t size)
 {
-  //
-  //	We rely on MemoryCell::allocateMemoryCell() setting the half word to
-  //	Sort::SORT_UNKNOWN.
-  //
   Assert(size <= sizeof(MemoryCell), "red-black node too big");
-  return MemoryCell::allocateMemoryCell();
+  MemoryCell* m = MemoryCell::allocateMemoryCell();
+  //
+  //	MemoryCell::allocateMemoryCell() no longer sets the half word to
+  //	Sort::SORT_UNKNOWN. This responsibility is shifted to us.
+  //
+  m->setHalfWord(Sort::SORT_UNKNOWN);
+  //
+  //	MemoryCell::allocateMemoryCell() no longer clears the memory
+  //	cell flags. This responsibility is shifted to us.
+  //
+  m->clearAllFlags();
+  return m;
 }
 
 inline void

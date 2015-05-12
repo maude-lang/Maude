@@ -195,3 +195,9 @@ QuotedIdentifierSymbol::compileOpDeclarations()
 	baseSort = s;  // set baseSort to largest (smallest index) declared sort
     }
 }
+
+Term*
+QuotedIdentifierSymbol::termify(DagNode* dagNode)
+{
+  return new QuotedIdentifierTerm(this, safeCast(QuotedIdentifierDagNode*, dagNode)->getIdIndex());
+}

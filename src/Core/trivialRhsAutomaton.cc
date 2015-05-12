@@ -40,6 +40,7 @@
 //	core class definitions
 #include "variableInfo.hh"
 #include "substitution.hh"
+#include "stackMachineRhsCompiler.hh"
 #include "trivialRhsAutomaton.hh"
 
 TrivialRhsAutomaton::TrivialRhsAutomaton(int index)
@@ -52,6 +53,16 @@ TrivialRhsAutomaton::remapIndices(VariableInfo& variableInfo)
 {
   index = variableInfo.remapIndex(index);
 }
+
+bool
+TrivialRhsAutomaton::recordInfo(StackMachineRhsCompiler& compiler)
+{
+  Vector<int> sources(1);
+  sources[0] = index;
+  compiler.recordFunctionEval(0, -1, sources);
+  return true;
+}
+
 
 DagNode*
 TrivialRhsAutomaton::construct(Substitution& matcher)

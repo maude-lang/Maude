@@ -105,7 +105,7 @@ FreePreNet::semiCompile(FreeNet& freeNet)
     netVec[i]->second.freeNetIndex = UNBOUNDED;  // can't use NONE because of negatives
 
   SlotMap init;
-  init[topPositionIndex] = slots.makeElement();  // allocate slot 0 to start everything off
+  init[topPositionIndex] = slots.makeElement();  // allocate slot 0 to start everything off MEMORY ALLOCATED HERE
   conflicts.resize(1);  // slot 0 has no conflicts
   
   semiCompileNode(freeNet, 0, init);
@@ -146,7 +146,9 @@ FreePreNet::allocateSlot(const LiveSet& liveSet,
   FOR_EACH_CONST(i, LiveSet, liveSet)
     {
       // cerr << patterns[*i].term << endl;
-      if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[*i].term))
+      int patternIndex = *i;
+      Term* pattern = patterns[patternIndex].term;
+      if (FreeTerm* f = dynamic_cast<FreeTerm*>(pattern))
 	{
 	  Term* t = f->locateSubterm(position);
 	  if (t != 0 && t->symbol() == symbol)
@@ -156,7 +158,15 @@ FreePreNet::allocateSlot(const LiveSet& liveSet,
 	      if (originalSlot == NONE)
 		ft->setSlotIndex(slot);
 	      else
-		slots.formUnion(slot, originalSlot);
+		{
+		  Assert(originalSlot < slot,
+			 "for term " << t << " of pattern " << pattern <<
+			 "\n which is " << patternIndex << " of " << patterns.size() <<
+			 " equations belonging to " << topSymbol <<
+			 "\n original slot = " << originalSlot <<
+			 " while new slot is = " << slot << " ; this will break union-find");
+		  slots.formUnion(slot, originalSlot);   // PROBLEM: originalSlot is 2 but slot is 1
+		}
 	    }
 	  f->findActiveSlots(conflicts[slot]);
 	}

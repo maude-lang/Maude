@@ -48,6 +48,8 @@
 //#include "narrowingSearchState.hh"
 #include "narrowingSequenceSearch.hh"
 #include "freshVariableGenerator.hh"
+#include "narrowingVariableInfo.hh"
+
 
 NarrowingSequenceSearch::NarrowingSequenceSearch(RewritingContext* initial,
 						 SearchType searchType,
@@ -61,15 +63,34 @@ NarrowingSequenceSearch::NarrowingSequenceSearch(RewritingContext* initial,
     narrowingFlags(narrowingFlags),
     freshVariableGenerator(freshVariableGenerator)
 {
-  initial->reduce();
-  seenSet.insert(initial->root());
+  //
+  //	First we replace all the variables in our initial term so they can't clash with variables in the rules.
+  //
+  NarrowingVariableInfo variableInfo;
+  initial->root()->indexVariables(variableInfo, 0);
+  int nrVariables = variableInfo.getNrVariables();
+  Substitution s(nrVariables);
+  for (int i = 0; i < nrVariables; ++i)
+    {
+      Sort* sort = safeCast(VariableSymbol*, variableInfo.index2Variable(i)->symbol())->getSort();
+      VariableDagNode* v = new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(sort),
+					       freshVariableGenerator->getFreshVariableName(i, false),
+					       i);
+      s.bind(i, v);
+    }
+  DagNode* newDag = initial->root()->instantiate(s);  // not safe if we haven't determined ground terms in context->root()
+  if (newDag == 0)
+    newDag = initial->root();
 
+  RewritingContext* redContext = initial->makeSubcontext(newDag);
+  redContext->reduce();
+
+  seenSet.insert(redContext->root());
   matchState = 0;
-
   //
-  //	initialState becomes responsible for deleting initial.
+  //	initialState becomes responsible for deleting redContext
   //
-  NarrowingSearchState* initialState = new NarrowingSearchState(initial, freshVariableGenerator, UNDEFINED, narrowingFlags);
+  NarrowingSearchState* initialState = new NarrowingSearchState(redContext, freshVariableGenerator, true, UNDEFINED, narrowingFlags);
   stateStack.append(initialState);
 
   needToTryInitialState = (searchType == ANY_STEPS);
@@ -87,6 +108,7 @@ NarrowingSequenceSearch::~NarrowingSequenceSearch()
   delete freshVariableGenerator;
   FOR_EACH_CONST(i, Vector<NarrowingSearchState*>, stateStack)
     delete *i;
+  delete initial;
 }
 
 bool
@@ -171,9 +193,17 @@ NarrowingSequenceSearch::findNextNormalForm()
 	  if (context->traceAbort())
 	    return false;
 	}
+      initial->incrementNarrowingCount();
 
       RewritingContext* newContext = initial->makeSubcontext(narrowedDag);
       newContext->reduce();
+      if (newContext->traceAbort())
+	{
+	  delete newContext;
+	  return false;
+	}
+      initial->addInCount(*newContext);
+      
       if (seenSet.dagNode2Index(newContext->root()) != NONE)
 	{
 	  delete newContext;
@@ -181,7 +211,7 @@ NarrowingSequenceSearch::findNextNormalForm()
 	  continue;
 	}
       seenSet.insert(newContext->root());
-      currentState = new NarrowingSearchState(newContext, freshVariableGenerator, UNDEFINED, narrowingFlags);
+      currentState = new NarrowingSearchState(newContext, freshVariableGenerator, !(currentState->isOdd()), UNDEFINED, narrowingFlags);
       stateStack.append(currentState);
       ++currentIndex;
       topOfStackFresh = true;
@@ -237,7 +267,7 @@ NarrowingSequenceSearch::findNextInterestingState()
 	      continue;
 	    }
 	  seenSet.insert(newContext->root());
-	  stateStack.append(new NarrowingSearchState(newContext, freshVariableGenerator, UNDEFINED, narrowingFlags));
+	  stateStack.append(new NarrowingSearchState(newContext, freshVariableGenerator, !(currentState->isOdd()), UNDEFINED, narrowingFlags));
 	  return true;
 	}
       //

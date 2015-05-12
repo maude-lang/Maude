@@ -196,6 +196,7 @@ bool
 StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
   Assert(this == subject->symbol(), "bad symbol");
+  DebugAdvisory("StringOpSymbol::eqRewrite() called on " << subject);
   int nrArgs = arity();
   FreeDagNode* d = safeCast(FreeDagNode*, subject);
   //
@@ -220,6 +221,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	      case CODE('f', 'l'):
 		{
 		  bool error;
+		  /*
 #ifdef ROPE_C_STR_BROKEN
 		  //
 		  //	This kudge doesn't seem to be need nowadays, but copy() doesn't work.
@@ -236,6 +238,12 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 #else
 		  double fl = stringToDouble(left.c_str(), error);
 #endif
+		  */
+
+		  char* flStr = makeZeroTerminatedString(left);
+		  double fl = stringToDouble(flStr, error);
+		  delete [] flStr;
+
 		  if (error)
 		    goto fail;
 		  return floatSymbol->rewriteToFloat(subject, context, fl);
@@ -294,6 +302,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	      }
 	    else if (op == CODE('r', 'a'))
 	      {
+		DebugAdvisory("StringOpSymbol::eqRewrite() entered rat case for " << subject);
 		DagNode* a1 = d->getArgument(1);
 		Assert(succSymbol != 0, "succSymbol undefined");
 		if (succSymbol->isNat(a1))
@@ -316,8 +325,15 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 			      r = divisionSymbol->makeRatDag(numerator, denominator);
 			    return context.builtInReplace(subject, r);
 			  }
+			else
+			  DebugAdvisory("StringOpSymbol::eqRewrite() rope to number failed " << subject);
 		      }
+		    else
+		      DebugAdvisory("StringOpSymbol::eqRewrite() a1 out of range " << subject);
 		  }
+		else
+		  DebugAdvisory("StringOpSymbol::eqRewrite() a1 not a nat " << subject);
+		DebugAdvisory("StringOpSymbol::eqRewrite() failed to rewrite " << subject);
 	      }
 	    break;
 	  }
@@ -600,6 +616,8 @@ StringOpSymbol::ropeToNumber(const crope& subject,
 	      //
 	      //	We have detected a fraction form.
 	      //
+
+	      /*
 #ifdef ROPE_C_STR_BROKEN
 	      //
 	      //	This kudge doesn't seem to be need nowadays, but copy() doesn't work.
@@ -626,6 +644,15 @@ StringOpSymbol::ropeToNumber(const crope& subject,
 	      return mpz_set_str(denominator.get_mpz_t(), subject.substr(i + 1).c_str(), base) == 0 &&
 		mpz_set_str(numerator.get_mpz_t(), subject.substr(0,i).c_str(), base) == 0;
 #endif	      
+	      */
+
+	      char* numStr = makeZeroTerminatedString(subject.substr(0, i));
+	      char* denomStr = makeZeroTerminatedString(subject.substr(i + 1));
+	      bool result = (mpz_set_str(denominator.get_mpz_t(), denomStr, base) == 0 &&
+			     mpz_set_str(numerator.get_mpz_t(), numStr, base) == 0);
+	      delete [] numStr;
+	      delete [] denomStr;
+	      return result;
 	    }
 	  else
 	    return false;
@@ -635,6 +662,7 @@ StringOpSymbol::ropeToNumber(const crope& subject,
   //	We have a regular integer form.
   //
   denominator = 0;
+  /*
 #ifdef ROPE_C_STR_BROKEN
   //
   //	This kudge doesn't seem to be need nowadays, but copy() doesn't work.
@@ -650,6 +678,17 @@ StringOpSymbol::ropeToNumber(const crope& subject,
   delete [] t;
   return false;
 #else
-  return mpz_set_str(numerator.get_mpz_t(), subject.c_str(), base) == 0;
+  DebugAdvisory("StringOpSymbol::ropeToNumber() on " << subject);
+  DebugAdvisory("StringOpSymbol::ropeToNumber() size =  " << subject.size());
+  const char* s = subject.c_str();
+  DebugAdvisory("StringOpSymbol::ropeToNumber() c_str() = " << s);
+  DebugAdvisory("StringOpSymbol::ropeToNumber() strlen = " << strlen(s));
+  return mpz_set_str(numerator.get_mpz_t(), s, base) == 0;
 #endif
+  */
+
+  char* numStr = makeZeroTerminatedString(subject);
+  bool result = (mpz_set_str(numerator.get_mpz_t(), numStr, base) == 0);
+  delete [] numStr;
+  return result;
 }

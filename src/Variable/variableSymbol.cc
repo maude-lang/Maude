@@ -89,6 +89,13 @@ VariableSymbol::stackArguments(DagNode* /* subject */,
 {
 }
 
+Term*
+VariableSymbol::termify(DagNode* dagNode)
+{
+  VariableDagNode* v = safeCast(VariableDagNode*, dagNode);
+  return new VariableTerm(this, v->id());
+}
+
 //
 //	Unification code.
 //

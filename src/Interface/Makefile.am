@@ -11,7 +11,10 @@ libinterface_a_SOURCES = \
 	binarySymbol.cc \
 	associativeSymbol.cc \
 	term.cc \
-	dagNode.cc
+	dagNode.cc \
+	regularInstruction.cc \
+	nonFinalInstruction.cc \
+	nonFinalExtor.cc
 
 noinst_HEADERS = \
 	associativeSymbol.hh \
@@ -29,4 +32,10 @@ noinst_HEADERS = \
 	symbol.hh \
 	symbol2.hh \
 	term.hh \
-	delayedSubproblem.hh
+	delayedSubproblem.hh \
+	instruction.hh \
+	regularInstruction.hh \
+	finalInstruction.hh \
+	nonFinalInstruction.hh \
+	nonFinalExtor.hh \
+	nonFinalCtor.hh

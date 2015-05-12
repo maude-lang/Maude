@@ -54,7 +54,8 @@ public:
   void stackArguments(DagNode* subject,
 		      Vector<RedexPosition>& stack,
 		      int parentIndex);
-
+  Term* termify(DagNode* dagNode);
+  //
   //	Member functions overiding default handling.
   //
   void compileOpDeclarations();
@@ -68,6 +69,7 @@ public:
 			      DagNode* subject,
 			      Vector<Bdd>& generalizedSort);
   UnificationSubproblem* makeUnificationSubproblem();
+  bool canResolveTheoryClash();
   //
   //	Hash cons stuff.
   //

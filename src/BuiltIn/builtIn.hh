@@ -49,4 +49,7 @@ class StringOpSymbol;
 class RandomOpSymbol;
 class CounterSymbol;
 
+class EqualityExtor;
+class EqualityExtorFinal;
+
 #endif

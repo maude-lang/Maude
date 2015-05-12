@@ -1,3 +1,55 @@
+2014-03-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: added metaGetIrredundantVariant()
+
+2014-02-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* main.cc (main): added -always-advise
+	(printHelp): added -always-advise
+
+===================================Maude101===========================================
+
+2014-02-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* main.cc (main): removed commented out code
+
+2014-02-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: version number = 2.7
+
+2014-01-31  Steven Eker  <eker@ape.csl.sri.com>
+
+	* Makefile.am: moved mention of dlmalloc
+
+===================================Maude100a===========================================
+
+2012-07-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: updated declarations for metaVariantUnify() and
+	metaVariantDisjointUnify()
+
+2012-07-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: metaGenerateVariant() replaced by
+	metaGetVariant(); Term and Substitution arguments switched in meta
+	variant ctor; added hood for emptyTermListSymbol
+
+===================================Maude96a===========================================
+
+2012-05-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: added meta representation of variant attribute
+
+2012-03-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: fix arity for metaGenerateVariant()
+
+2012-03-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: added variant narrowing syntax and descent functions
+
+===================================Maude96===========================================
+
 2010-07-13  Steven Eker  <eker@rho>
 
 	* metaInterpreter.maude: added insertView/insertedView and
@@ -93,7 +145,7 @@
 
 	* prelude.maude: moved set include BOOL on to after last module;
 	added syntax for metaUnify()
-	
+
 ===================================Maude88d===========================================
 
 2006-11-20  Steven Eker  <eker@goo.csl.sri.com>

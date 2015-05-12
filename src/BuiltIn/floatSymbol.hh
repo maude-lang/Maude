@@ -39,6 +39,7 @@ public:
   bool rewriteToFloat(DagNode* subject,
 		      RewritingContext& context,
 		      double result);
+  Term* termify(DagNode* dagNode);
 
 private:
   Sort* sort;

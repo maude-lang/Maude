@@ -101,11 +101,12 @@ MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemTy
   int id = l.id();
   const Equation* eq = dynamic_cast<const Equation*>(pe);
   bool owise = eq != 0 && eq->isOwise();
+  bool variant = eq != 0 && eq->isVariant();
   bool nonexec = pe->isNonexec();
   int metadata = getMetadata(itemType, pe);
   const PrintAttribute* printAttribute = getPrintAttribute(itemType, pe);
 
-  if (!nonexec && !owise && id == NONE && metadata == NONE && printAttribute == 0)
+  if (!nonexec && !owise && !variant && id == NONE && metadata == NONE && printAttribute == 0)
     return;
   s << " [";
   const char *space = "";
@@ -116,7 +117,12 @@ MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemTy
     }
   if (owise)
     {
-      s << "owise";
+      s << space << "owise";
+      space = " ";
+    }
+  if (variant)
+    {
+      s << space << "variant";
       space = " ";
     }
   if (id != NONE)

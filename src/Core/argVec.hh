@@ -96,7 +96,7 @@ template<class T>
 inline
 ArgVec<T>::ArgVec(size_type length)
 {
-  Assert(length >= 0, cerr << "-ve length");
+  Assert(length >= 0, "-ve length");
   len = length;
   allocatedBytes = length * sizeof(T);
   basePtr = static_cast<pointer>(MemoryCell::allocateStorage(allocatedBytes));

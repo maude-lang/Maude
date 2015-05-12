@@ -49,7 +49,10 @@ PseudoThread::processCallBacks(int& returnValue)
       CallBackRequest c = callBackQueue.top();  // deep copy
       long wait = c.notBefore - now;
       if (wait > 0)
-	return wait;
+	return wait;  // because call-backs are on in a priority queue, the first one with a positive wait determines the wait period
+      //
+      //	Need to pop current request before dispatching call back because call back may request a new one.
+      //
       callBackQueue.pop();
       c.client->doCallBack();
       returnValue |= EVENT_HANDLED;
@@ -70,6 +73,7 @@ PseudoThread::processFds(long wait)
     {
       Assert(fdInfo[i].flags != 0, "zero flags for " << i);
       ufds[nfds].fd = i;
+      //cout << "polling fd " << i << " for " << fdInfo[i].flags << endl;
       ufds[nfds].events = fdInfo[i].flags;
       if (fdInfo[i].timeOutAt != NONE)
 	{
@@ -89,8 +93,11 @@ PseudoThread::processFds(long wait)
       else
 	milliseconds = INT_MAX;
     }
+  //cout << "----calling poll with nfds = " << nfds << endl;
   int n = poll(ufds, nfds, milliseconds);
-  //	cerr << "poll returns " << n << endl;
+  now = getTime();  // a significant amount of time may have passed while we were in poll() call
+
+  //cout << "poll returns " << n << endl;
   if (n <= 0)
     {
       Assert(errno == EINTR, "poll() failed with " << errno);
@@ -102,10 +109,11 @@ PseudoThread::processFds(long wait)
   int returnValue = 0;
   for (int i = 0; i < nfds; i++)
     {
-      //  cerr << "fd = " << ufds[i].fd << "  revents = " << ufds[i].revents << endl;
+      //cout << "fd = " << ufds[i].fd << "  revents = " << ufds[i].revents << endl;
       int fd = ufds[i].fd;
       FD_Info& info = fdInfo[fd];
-      if (short t = ufds[i].revents)
+      short t = ufds[i].revents;
+      if (t != 0)
 	{
 	  Assert(!(t & POLLNVAL), "invalid fd " << fd);
 	  //
@@ -130,7 +138,9 @@ PseudoThread::processFds(long wait)
 	  //
 	  if (t & POLLIN)
 	    {
-	      if (!(info.flags = t & ~POLLIN))
+	      info.flags &= ~POLLIN;  // clear POLLIN flag
+	      //info.flags = t & ~POLLIN;  // reproduce bug;
+	      if (info.flags == 0)
 		unlink(fd);
 	      info.timeOutAt = NONE;
 	      info.owner->doRead(fd);
@@ -151,7 +161,9 @@ PseudoThread::processFds(long wait)
 	    }
 	  if (t & POLLOUT)
 	    {
-	      if (!(info.flags = t & ~POLLOUT))
+	      info.flags &= ~POLLOUT;  // clear POLLOUT flag
+	      //info.flags = t & ~POLLOUT;  // reproduce bug;
+	      if (info.flags == 0)
 		unlink(fd);
 	      info.timeOutAt = NONE;
 	      info.owner->doWrite(fd);
@@ -184,25 +196,33 @@ PseudoThread::eventLoop()
   //	INTERRUPTED: a non-ignored signal arrived
   //	EVENT_HANDLED: at least one callback was made
   //
-  if (callBackQueue.empty())
-    return firstActive == NONE ? NOTHING_PENDING : processFds(NONE);
-
   int returnValue = 0;
   for(;;)
     {
-      long wait = processCallBacks(returnValue);
-      if (firstActive == NONE)
-	{
-	  if (returnValue != 0)
-	    break;
-	  if (sleep(wait) != 0)
-	    return INTERRUPTED;
-	}
-      else
+      //
+      //	If we have timed call backs, dispatch any that are due, and
+      //	compute how many seconds until the next is ready to go.
+      //
+      long wait = NONE;
+      if (!callBackQueue.empty())
+	wait = processCallBacks(returnValue);
+      //
+      //	If we have fd call backs pending, process them.
+      //
+      if (firstActive != NONE)
 	{
 	  returnValue |= processFds(wait);
 	  if (returnValue != 0)
 	    break;
+	}
+      else
+	{
+	  if (returnValue != 0)
+	    break;
+	  if (wait == NONE)
+	    return NOTHING_PENDING;
+	  if (sleep(wait) != 0)
+	    return INTERRUPTED;
 	}
     }
   return returnValue;

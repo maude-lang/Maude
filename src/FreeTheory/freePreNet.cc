@@ -83,6 +83,7 @@ FreePreNet::FreePreNet(bool expandRemainderNodes)
 void
 FreePreNet::buildNet(FreeSymbol* symbol)
 {
+  //cout << "buildNet for " << symbol << endl;
   topSymbol = symbol;
   nrFailParents = 0;
   nrFailVisits = 0;
@@ -90,6 +91,8 @@ FreePreNet::buildNet(FreeSymbol* symbol)
   int nrEquations = equations.length();
   if (nrEquations == 0)
     return;
+
+  //cout << "nrEquations = " << nrEquations << endl;
 
   patterns.expandTo(nrEquations);
   LiveSet liveSet;
@@ -139,6 +142,7 @@ FreePreNet::buildNet(FreeSymbol* symbol)
   NatSet positionsTested;
   (void) makeNode(liveSet, fringe, positionsTested);
   // dump(cerr, 0);
+  //cout << "buildNet for " << symbol << " done; nodes = " << net.size() << endl;
 }
 
 int

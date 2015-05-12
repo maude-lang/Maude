@@ -106,7 +106,7 @@ CompoundCycleSubproblem::solve(bool findFirst, UnificationContext& solution, Pen
       int variableIndex = cycle[currentEdgeIndex % nrEdges];
       DagNode* assignment = solution.value(variableIndex);
       ++currentEdgeIndex;
-      int nextVariableIndex = cycle[currentEdgeIndex % nrEdges];
+      int nextVariableIndex = cycle[currentEdgeIndex % nrEdges];  // wrap around caused by %
       DagNode* nextVariable = solution.getVariableDagNode(nextVariableIndex);
 
       Symbol* controllingSymbol = assignment->symbol();

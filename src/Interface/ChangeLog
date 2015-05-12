@@ -1,3 +1,257 @@
+2014-02-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* symbol.hh (MemoTable): deleted inline stubs for
+	generateFinalInstruction() and generateInstruction()
+
+	* symbol.cc (generateFinalInstruction, generateInstruction)
+	(stackMachinePostProcess): added stubs
+
+	* symbol.hh (MemoTable): added decl for stackMachinePostProcess()
+
+2014-02-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* term.hh (recordSubterms): added
+	(LineNumber): added decls for term2InstructionSequence(),
+	recordSubterms2()
+
+===================================Maude101===========================================
+
+2014-02-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* nonFinalExtor.cc (setActiveSlots): fix signed vs unsigned
+	comparison warning
+
+2013-11-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* dagNode.hh (fastLeq): added
+
+===================================Maude100a===========================================
+
+2013-10-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* nonFinalExtor.cc (setActiveSlots): fix bug where unsigned NONE
+	was resulting in huge maxSlotToPreserve
+
+2013-10-27  Steven Eker  <eker@ape.csl.sri.com>
+
+	* nonFinalInstruction.cc: created
+
+	* instruction.hh (I): added virtual dtor
+
+2013-10-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* nonFinalExtor.hh (fastPushFrame): added
+
+2013-10-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* instruction.hh (I): added decl for dumpActiveSlots()
+
+	* regularInstruction.cc (dumpActiveSlots): added
+
+	* regularInstruction.hh (Instruction): added decl for
+	dumpActiveSlots()
+
+	* instruction.hh (getOpCode): added
+	(Instruction): added
+	(I): added enum OpCodes, typedef OpCode, data member opCode
+	(setOpCode): added
+
+2013-10-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* symbol.hh (getMatchIndex): made const
+	(setMatchIndex): return void
+	(getUniqueSortIndex): made const
+	(getHashValue): made const
+
+2013-10-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* term.cc (computeMatchIndices): added
+
+	* term.hh (LineNumber): added decl for computeMatchIndices()
+
+	* symbol.hh (getMatchIndex): added
+	(setMatchIndex): added
+
+	* symbol.cc (Symbol): initialize matchIndex to 0
+
+	* symbol.hh (MemoTable): added data member matchIndex
+
+2013-10-02  Steven Eker  <eker@ape.csl.sri.com>
+
+	* nonFinalCtor.hh: removed commented out stuff
+
+	* instruction.hh (I): deleted sole data member activeSlots - this
+	was a hang over from a previous GC mechanism
+
+2013-09-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* dagNode.hh (DagNode): set sort index to SORT_UNKNOWN here
+	(DagNode): take sortIndex as argument
+	(DagNode): take flags argument and call initFlags()
+	(DagNode): not safe to init flags here after all - we could be an
+	in-place allocation in which case we might clobber the marked flag
+	(new): try calling initFlags() here
+	(new): fixed comment now we're committed to initFlags()
+	(new): initFlags() becomes clearAllFlags()
+	(new): (in place version) don't call repudiateSortInfo() since
+	DagNode() ctor writes the sort info
+
+2013-09-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* finalInstruction.hh (returnResultAndContinue): added
+	(finishUp): deleted
+
+2013-09-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* interface.hh: added class NonFinalCtor
+
+	* nonFinalInstruction.hh (handleNextInstruction): deleted
+
+	* nonFinalCtor.hh: created
+
+	* nonFinalExtor.cc (setActiveSlots): use getDestinationIndex()
+
+	* nonFinalExtor.hh (getDestinationIndex): deleted
+	(NonFinalInstruction): delete data member destinationIndex
+	(NonFinalExtor): use new NonFinalInstruction ctor convention
+
+	* nonFinalInstruction.hh (getDestinationIndex): added
+	(NonFinalInstruction): take destinationIndex
+	(RegularInstruction): added data member destinationIndex
+
+===================================Maude98===========================================
+
+2013-09-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* finalInstruction.hh (finishUp): use popFrame() to avoid
+	reloading topFrame pointer
+	(finishUp): try preloading next instruction
+
+2013-08-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* finalInstruction.hh (finishUp): added
+
+	* nonFinalInstruction.hh (handleNextInstruction): try using
+	nextInstruction rather than ni argument
+	(handleNextInstruction): reverted - not using preloaded
+	instruction address looks like a lose
+
+2013-08-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* nonFinalInstruction.hh (handleNextInstruction): added
+
+2013-08-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* nonFinalExtor.cc (setActiveSlots): make sure destinationIndex is
+	preserved since GC mark phase will zero it and thus it can't be
+	safely overlapped
+
+	* nonFinalExtor.hh (getDestinationIndex): added
+	(NonFinalInstruction): added data member destinationIndex
+	(NonFinalExtor): store destinationIndex
+
+	* interface.hh: added class NonFinalExtor
+
+	* nonFinalExtor.cc: created
+
+	* nonFinalExtor.hh: created
+
+2013-08-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* instruction.hh (I): changed SlotIndex from int to size_t since
+	this has a performance advantage on x86-64 - 64-bit arithmetic can
+	be done using addressing mode and doesn't require sign extension
+	in order to be used for indexing
+
+	* regularInstruction.cc (setActiveSlots): fix bug where we were
+	ANDing rather than ORing
+
+	* instruction.hh (setActiveSlots, markActiveSlots): deleted
+	(I): made setActiveSlots() and markActiveSlots() pure virtual
+
+2013-08-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* nonFinalInstruction.hh: created
+
+	* finalInstruction.hh: created
+
+	* interface.hh: added forward declarations for RegularInstruction,
+	NonFinalInstruction, FinalInstruction
+
+	* regularInstruction.hh: created
+
+	* regularInstruction.cc: created
+
+2013-08-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* instruction.hh (markActiveSlots): check for null pointers
+
+2013-08-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* instruction.hh (markActiveSlots): added
+	(I): added data member markActiveSlots();
+	(setActiveSlots): added
+
+2013-07-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* instruction.hh (I): added decl for ctor since derived classes
+	need this
+	(I): added decl for dump()
+
+	* symbol.hh (MemoTable): added decls for
+	generateFinalInstruction() and generateInstruction()
+
+2013-06-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rhsAutomaton.hh (R): added decl for recordInfo()
+
+===================================Maude97===========================================
+
+2013-01-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* interface.hh: added forward decl for class Instruction
+
+	* instruction.hh: created
+
+===================================Maude96c==========================================
+
+2012-07-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* dagNode.hh (D): added decl for reducibleByVariantEquation()
+
+	* dagNode.cc (reducibleByVariantEquation): added
+
+2012-07-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* dagNode.hh (D): added IRREDUCIBLE_BY_VARIANT_EQUATIONS
+	(setIrreducibleByVariantEquations)
+	(isIrreducibleByVariantEquations): added
+
+===================================Maude96a==========================================
+
+2012-04-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* dagNode.hh (D): added declarations for instantiateWithCopies(),
+	instantiateWithCopies2(); updated declaration for
+	instantiateWithReplacement(); added SAFE_INSTANTIATE macro
+	(instantiateWithCopies): added
+
+2012-04-05  Steven Eker  <eker@ape.csl.sri.com>
+
+	* term.hh (addContextVariables): added
+
+2012-03-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* symbol.hh (MemoTable): added decl for termify()
+
+	* symbol.cc (termify): added
+
+2012-03-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* symbol.cc (reset): call resetEachEquation()
+
+===================================Maude96==========================================
+
 2010-10-20  Steven Eker  <eker@rho>
 
 	* dagNode.hh (DagNode::upgradeSortIndex): added

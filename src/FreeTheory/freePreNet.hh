@@ -34,6 +34,8 @@
 
 class FreePreNet
 {
+  NO_COPYING(FreePreNet);
+
 public:
   FreePreNet(bool expandRemainderNodes);
 
@@ -124,7 +126,7 @@ private:
   };
 
   typedef map<NodeIndex, NodeBody> NodeMap;
-
+  /*
   struct Node
   {
     LiveSet liveSet;	// set of indices to live patterns 
@@ -152,7 +154,7 @@ private:
     int nrParents;
     int nrVisits;
   };
-
+  */
   int makeNode(const LiveSet& liveSet,
 	       const NatSet& reducedFringe,
 	       const NatSet& positionsTested);
@@ -246,7 +248,6 @@ private:
   int nrFailVisits;
   Vector<int> slotTranslation;
 };
-
 
 inline bool
 FreePreNet::NodeIndex::operator<(const NodeIndex& other) const

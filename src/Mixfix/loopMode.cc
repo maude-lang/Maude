@@ -134,7 +134,7 @@ Interpreter::printBubble(ostream& s, const Vector<int>& bubble)
       //
       //	Single character case.
       //
-      if (n[1] == 0)
+      if (n[0] != 0 && n[1] == 0)
 	{
 	  switch (n[0])
 	    {

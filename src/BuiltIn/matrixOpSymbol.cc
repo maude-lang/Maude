@@ -225,13 +225,18 @@ MatrixOpSymbol::downAlgorithm(DagNode* dagNode, Algorithm& algorithm)
        algorithm = SYSTEMS_CHOICE;
      else
        {
-	 const char* algStr = alg.c_str();
+	 //const char* algStr = alg.c_str();
+	 char *algStr = makeZeroTerminatedString(alg);
 	 if (strcmp(algStr, "cd") == 0)
 	   algorithm = CD;
 	 else if (strcmp(algStr, "gcd") == 0)
 	   algorithm = GCD;
 	 else
-	   return false;
+	   {
+	     delete [] algStr;
+	     return false;
+	   }
+	 delete [] algStr;
        }
      return true;
    }

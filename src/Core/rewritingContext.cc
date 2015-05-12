@@ -46,7 +46,8 @@ bool RewritingContext::traceFlag = false;
 void
 RewritingContext::markReachableNodes()
 {
-  Assert(rootNode != 0, "null root");
+  if (rootNode == 0)
+    return;  // limited use RewritingContext
   rootNode->mark();
   int nrFragile = nrFragileBindings();
   for (int i = 0; i < nrFragile; i++)
@@ -150,6 +151,19 @@ RewritingContext::traceNarrowingStep(Rule* /* rule */,
 				     const NarrowingVariableInfo* /* variableInfo */,
 				     const Substitution* /* substitution */,
 				     DagNode* /* newState */)
+{
+}
+
+void
+RewritingContext::traceVariantNarrowingStep(Equation* /* equation */,
+					    const Vector<DagNode*>& /* oldVariantSubstitution */,
+					    DagNode* /* redex */,
+					    DagNode* /* replacement */,
+					    const NarrowingVariableInfo& /* variableInfo */,
+					    const Substitution* /* substitution */,
+					    DagNode* /* newState */,
+					    const Vector<DagNode*>& /* newVariantSubstitution */,
+					    const NarrowingVariableInfo& /* originalVariables */)
 {
 }
 

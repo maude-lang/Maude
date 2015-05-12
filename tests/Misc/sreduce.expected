@@ -1,0 +1,19 @@
+Maude> ==========================================
+sreduce in MODULAR : modExp(s s s s 0, s s 0 ^ ((s s 0 ^ s s s s 0) + s s s s
+    0), s s s s s 0) .
+rewrites: 40894656
+result NzNat: s 0
+==========================================
+sreduce in LIST-BENCH : head(multi(dup(a b c d e nil, s s s s 0 * s s s s 0), s
+    s s s s s s s s 0 * s s s s s s s s s 0)) .
+rewrites: 26870231
+result Elt: e
+==========================================
+sreduce in BIT : count(1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 nil) .
+rewrites: 1572843
+result List: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 nil
+==========================================
+sreduce in BINARY : count(fact(1 1 1 1 1 1 1 1 1 1 nil)) .
+rewrites: 18755260
+result Num: 0 0 0 1 0 0 0 0 1 1 1 1 nil
+Maude> Bye.

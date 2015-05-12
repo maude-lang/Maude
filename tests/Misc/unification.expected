@@ -4861,40 +4861,40 @@ W --> f(#1:Set, #2:Set)
 A --> #3:Elt
 
 Solution 45
-X --> f(#2:Set, #3:Elt)
+X --> f(#3:Set, #4:Elt)
 Y --> #5:Set
-Z --> #1:Set
-U --> #4:Set
-V --> f(#1:Set, #2:Set, #3:Elt)
-W --> f(#2:Set, #5:Set)
-A --> #3:Elt
+Z --> #2:Set
+U --> #1:Set
+V --> f(#2:Set, #3:Set, #4:Elt)
+W --> f(#3:Set, #5:Set)
+A --> #4:Elt
 
 Solution 46
-X --> #2:Set
+X --> #3:Set
 Y --> f(#4:Set, #5:Elt)
-Z --> #1:Set
-U --> #3:Set
-V --> f(#1:Set, #2:Set)
-W --> f(#2:Set, #4:Set)
+Z --> #2:Set
+U --> #1:Set
+V --> f(#2:Set, #3:Set)
+W --> f(#3:Set, #4:Set)
 A --> #5:Elt
 
 Solution 47
-X --> #2:Set
+X --> #3:Set
 Y --> #4:Elt
-Z --> #1:Set
-U --> #3:Set
-V --> f(#1:Set, #2:Set)
-W --> #2:Set
+Z --> #2:Set
+U --> #1:Set
+V --> f(#2:Set, #3:Set)
+W --> #3:Set
 A --> #4:Elt
 
 Solution 48
-X --> #2:Elt
+X --> #3:Elt
 Y --> #4:Set
-Z --> #1:Set
-U --> #3:Set
-V --> f(#1:Set, #2:Elt)
+Z --> #2:Set
+U --> #1:Set
+V --> f(#2:Set, #3:Elt)
 W --> #4:Set
-A --> #2:Elt
+A --> #3:Elt
 ==========================================
 unify in SIMULT : g(X:Foo) =? g(Y:Foo) /\ h(X:Foo) =? h(Z:Foo) .
 

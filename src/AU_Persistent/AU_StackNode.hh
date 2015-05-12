@@ -106,12 +106,19 @@ private:
 inline void*
 AU_StackNode::operator new(size_t size)
 {
-  //
-  //	We rely on MemoryCell::allocateMemoryCell() setting the
-  //	half word to Sort::SORT_UNKNOWN.
-  //
   Assert(size <= sizeof(MemoryCell), "stack node too big");
-  return MemoryCell::allocateMemoryCell();
+  MemoryCell* m = MemoryCell::allocateMemoryCell();
+  //
+  //	MemoryCell::allocateMemoryCell() no longer sets the half word to
+  //	Sort::SORT_UNKNOWN. This responsibility is shifted to us.
+  //
+  m->setHalfWord(Sort::SORT_UNKNOWN);
+  //
+  //	MemoryCell::allocateMemoryCell() no longer clears the memory
+  //	cell flags. This responsibility is shifted to us.
+  //
+  m->clearAllFlags();
+  return m;
 }
 
 inline MemoryCell*

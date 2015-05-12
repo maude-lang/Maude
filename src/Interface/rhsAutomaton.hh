@@ -35,6 +35,8 @@ public:
   virtual DagNode* construct(Substitution& matcher) = 0;
   virtual void replace(DagNode* old, Substitution& matcher) = 0;
 
+  virtual bool recordInfo(StackMachineRhsCompiler& compiler) { return false;  /* HACK until new engine is supported by all theories */ }
+
 #ifdef DUMP
   virtual void dump(ostream& s, const VariableInfo& variableInfo, int indentLevel = 0) = 0;
 #endif

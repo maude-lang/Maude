@@ -1,3 +1,80 @@
+2013-02-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_UnificationSubproblem2.cc (addUnification): call killCancelledSubterms()
+
+	* ACU_UnificationSubproblem2.hh (SimpleRootContainer): added decl
+	for killCancelledSubterms()
+
+	* ACU_UnificationSubproblem2.cc (killCancelledSubterms): added
+
+2013-02-27  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_UnificationSubproblem2.cc (ACU_UnificationSubproblem2):
+	removed pointless #ifndef
+	(addUnification): code cleaning
+	(markReachableNodes): code cleaning
+	(solve): fix performance bug where we were checking subterms
+	rather than unifications for emptiness to detect the degenerate
+	case
+	(markReachableNodes): protect preSolveSubstitution rather than
+	savedSubstitution since it will have a superset of bindings
+
+2013-02-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_UnificationSubproblem2.cc: only bind variables to dags which
+	are in our theory - leave everything else to
+	computeSolvedForm() - This is to fix a bug where we bind a variable
+	to itself, or form an occurs check problem in an alien theory
+
+===================================Maude96c===========================================
+
+2012-07-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_BaseDagNode.hh (DagNode): update comment on ASSIGNMENT now
+	that we can have variables at the kind level, and thus we don't
+	guarentee non-error sort this NormalizationStatus
+
+===================================Maude96a===========================================
+
+2012-04-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_Term.cc (ACU_Term): multiplicities version: fix Assert(),
+	now that we can have a single argument with multiplicity >= 2
+
+2012-04-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_DagNode.hh (ACU_BaseDagNode): updated decl for
+	instantiateWithReplacement(); added decl for
+	instantiateWithCopies2()
+
+	* ACU_DagNode.cc (instantiateWithReplacement): rewritten to
+	respect eager positions
+	(instantiateWithCopies2): added
+
+2012-03-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_Symbol.cc (termify): code cleaning
+
+2012-03-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_Symbol.hh (AssociativeSymbol): added decl for termify()
+
+	* ACU_Term.hh (Term): added decl for new ctor
+
+	* ACU_Term.cc (ACU_Term): added version that takes multiplicities
+
+	* ACU_Symbol.cc (termify): added
+
+===================================Maude96===========================================
+
+2011-11-22  Steven Eker  <eker@rho>
+
+	* ACU_UnificationSubproblem2.cc (ACU_UnificationSubproblem2::solve): use restoreFromClone()
+	to make sure that sort and dagnode information for variable created on the branch we are
+	backtracking get purged from our UnificationContext object (4 places)
+
+===================================Maude95c===========================================
+
 2010-12-09  Steven Eker  <eker@rho>
 
 	* ACU_Symbol.cc (ACU_Symbol::postOpDeclarationPass): don't call

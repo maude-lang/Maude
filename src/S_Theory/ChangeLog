@@ -1,3 +1,20 @@
+2012-04-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* S_DagNode.hh (DagNode): updated decl for
+	instantiateWithReplacement(); added decl for
+	instantiateWithCopies2()
+
+	* S_DagNode.cc (instantiateWithReplacement): use new convention
+	(instantiateWithCopies2): added
+
+2012-03-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* S_Symbol.hh (Symbol): added decl for termify()
+
+	* S_Symbol.cc (termify): added
+
+===================================Maude96===========================================
+
 2010-10-19  Steven Eker  <eker@rho>
 
 	* S_Symbol.cc (S_Symbol::makeCanonicalCopyEagerUptoReduced):

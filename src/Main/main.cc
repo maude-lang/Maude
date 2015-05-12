@@ -66,9 +66,6 @@
 int
 main(int argc, char* argv[])
 {
-  // extern int yydebug;
-  // yydebug = 0;
-
   //
   //	Global function declatations
   //
@@ -119,7 +116,15 @@ main(int argc, char* argv[])
 	  else if (strcmp(arg, "-no-banner") == 0)
 	    outputBanner = false;
 	  else if (strcmp(arg, "-no-advise") == 0)
-	    globalAdvisoryFlag = false;
+	    {
+	      if (!alwaysAdviseFlag)
+		globalAdvisoryFlag = false;
+	    }
+	  else if (strcmp(arg, "-always-advise") == 0)
+	    {
+	      alwaysAdviseFlag = true;
+	      globalAdvisoryFlag = true;
+	    }
 	  else if (strcmp(arg, "-no-wrap") == 0)
 	    lineWrapping = false;
 	  else if (strcmp(arg, "-batch") == 0)
@@ -223,6 +228,7 @@ printHelp(const char* name)
     "  -no-prelude\t\tDo not read in the standard prelude\n" <<
     "  -no-banner\t\tDo not output banner on startup\n" <<
     "  -no-advise\t\tNo advisories on startup\n" <<
+    "  -always-advise\t\tAlways show advisories regardless" <<
     "  -no-mixfix\t\tDo not use mixfix notation for output\n" <<
     "  -no-wrap\t\tDo not automatic line wrapping for output\n" <<
     "  -ansi-color\t\tUse ANSI control sequences\n" <<

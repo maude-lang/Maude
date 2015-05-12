@@ -53,7 +53,7 @@
 #include "variableDagNode.hh"
 
 //	free theory class definitions
-#include "freeNet.hh"
+//#include "freeNet.hh"
 #include "freeSymbol.hh"
 #include "freeDagNode.hh"
 #include "freeDagArgumentIterator.hh"
@@ -503,7 +503,7 @@ FreeDagNode::instantiate2(const Substitution& substitution)
   Symbol* s = symbol();
   int nrArgs = s->arity();
 
-  Assert(nrArgs > 0, "we shouldn't be called on constants");
+  Assert(nrArgs > 0, "we shouldn't be called on constants: " << this);
   DagNode** args = argArray();
   for (int i = 0; i < nrArgs; ++i)
     {
@@ -580,7 +580,7 @@ FreeDagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 }
 
 DagNode*
-FreeDagNode::instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag)
+FreeDagNode::instantiateWithReplacement(const Substitution& substitution, const Vector<DagNode*>& eagerCopies, int argIndex, DagNode* newDag)
 {
   FreeSymbol* s = symbol();
   FreeDagNode* d = new FreeDagNode(s);
@@ -596,10 +596,83 @@ FreeDagNode::instantiateWithReplacement(const Substitution& substitution, int ar
       else
 	{
 	  n = p[i];
-	  if (DagNode* c = n->instantiate(substitution))  // changed under substitutition
+	  DagNode* c = s->eagerArgument(i) ?
+	    n->instantiateWithCopies(substitution, eagerCopies) :
+	    n->instantiate(substitution);  // lazy case - ok to use original unifier bindings since we won't evaluate them
+	  if (c != 0)  // changed under substitutition
 	    n = c;
 	}
       q[i] = n;
     }
   return d;
+}
+
+DagNode*
+FreeDagNode::instantiateWithCopies2(const Substitution& substitution, const Vector<DagNode*>& eagerCopies)
+{
+  Symbol* s = symbol();
+  int nrArgs = s->arity();
+
+  Assert(nrArgs > 0, "we shouldn't be called on constants");
+  DagNode** args = argArray();
+  for (int i = 0; i < nrArgs; ++i)
+    {
+      DagNode* a = args[i];
+      DagNode* n = s->eagerArgument(i) ?
+	a->instantiateWithCopies(substitution, eagerCopies) :
+	a->instantiate(substitution);  // lazy case - ok to use original unifier bindings since we won't evaluate them
+
+      if (n != 0)
+	{
+	  //
+	  //	Argument changed under instantiation - need to make a new
+	  //	dagnode.
+	  //
+	  bool ground = true;
+	  FreeDagNode* d = new FreeDagNode(s);
+	  DagNode** args2 = d->argArray();
+	  //
+	  //	Copy the arguments we already looked at.
+	  //
+	  for (int j = 0; j < i; ++j)
+	    {
+	      DagNode* a = args[j];
+	      if (!(a->isGround()))
+		ground = false;
+	      args2[j] = a;
+	    }
+	  //
+	  //	Handle current argument.
+	  //
+	  args2[i] = n;
+	  if (!(n->isGround()))
+	    ground = false;
+	  //
+	  //	Handle remaining arguments.
+	  //
+	  for (++i; i < nrArgs; ++i)
+	    {
+	      DagNode* a = args[i];
+	      DagNode* n = s->eagerArgument(i) ?
+		a->instantiateWithCopies(substitution, eagerCopies) :
+		a->instantiate(substitution);  // lazy case - ok to use original unifier bindings since we won't evaluate them
+	      if (n != 0)
+		a = n;
+	      if (!(a->isGround()))
+		ground = false;
+	      args2[i] = a;
+	    }
+	  //
+	  //	Now if all the arguments of the new dagnode are ground
+	  //	we compute its base sort.
+	  //
+	  if (ground)
+	    {
+	      s->computeBaseSort(d);
+	      d->setGround();
+	    }
+	  return d;	
+	}
+    }
+  return 0;  // unchanged
 }

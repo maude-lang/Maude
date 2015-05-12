@@ -51,6 +51,7 @@ public:
   //
   NarrowingSearchState(RewritingContext* context,
 		       FreshVariableGenerator* freshVariableGenerator,
+		       bool odd,
 		       int label = UNDEFINED,
 		       int flags = ALLOW_NONEXEC,
 		       int minDepth = 0,
@@ -64,12 +65,15 @@ public:
   const Substitution& getSubstitution() const;
   int getNrOfVariablesInSubject() const;
   const NarrowingVariableInfo& getVariableInfo() const;
+  bool isOdd() const;
 
 private:
   RewritingContext* context;
   FreshVariableGenerator* freshVariableGenerator;
+  const bool odd;
   const int label;
   const bool withExtension;
+
 
   NarrowingVariableInfo variableInfo;
 
@@ -78,6 +82,12 @@ private:
   NarrowingUnificationProblem* unificationProblem;
   bool noFurtherPositions;
 };
+
+inline bool
+NarrowingSearchState::isOdd() const
+{
+  return odd;
+}
 
 inline RewritingContext*
 NarrowingSearchState::getContext() const

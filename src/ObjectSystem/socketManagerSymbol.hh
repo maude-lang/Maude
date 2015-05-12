@@ -81,6 +81,9 @@ private:
 
   struct ActiveSocket
   {
+    ActiveSocket();
+    ~ActiveSocket();
+
     int state;
     //
     //	If we are in a waiting state, we need to keep pointers to the last message
@@ -94,9 +97,10 @@ private:
     //
     ObjectSystemRewritingContext* originalContext;
     //
-    //	Outgoing text
+    //	Outgoing text.
     //
-    crope text;
+    //crope text;
+    char* textArray;
     const char* unsent;
     crope::size_type nrUnsent;
   };
@@ -104,7 +108,7 @@ private:
   typedef map<int, ActiveSocket> SocketMap;
 
   bool getPort(DagNode* protocolArg, int& protocol);
-  bool getActiveSocket(DagNode* socketArg, int& socketId);
+  bool getActiveSocket(DagNode* socketArg, int& socketId, ActiveSocket*& asp);
   bool getText(DagNode* textArg, crope& text);
   bool setNonblockingFlag(int fd, FreeDagNode* message, ObjectSystemRewritingContext& context);
 

@@ -245,6 +245,36 @@ PreEquation::cleanStack(stack<ConditionState*>& conditionStack)
     }
 }
 
+DagNode*
+PreEquation::getLhsDag()
+{
+  DagNode* d = lhsDag.getNode();
+  if (d == 0)
+    {
+      d = getLhs()->term2Dag();
+      if (d->computeBaseSortForGroundSubterms() == DagNode::UNIMPLEMENTED)
+	{
+	  IssueWarning(*this << ": lefthand side of " << this <<
+		       " contains function symbols with nonvariable arguments that are not supported by unification.");
+	}
+      lhsDag.setNode(d);
+    }
+  return d;
+}
+
+void
+PreEquation::reset()
+{
+  lhsDag.setNode(0);
+}
+
+ostream&
+operator<<(ostream& s, const PreEquation* pe)
+{
+  pe->print(s);
+  return s;
+}
+
 #ifdef DUMP
 void
 PreEquation::dump(ostream& s, int indentLevel)

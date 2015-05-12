@@ -34,6 +34,8 @@ public:
 	  bool withExtension,
 	  const Vector<ConditionFragment*>& condition = noCondition);
 
+  void print(ostream& s) const;
+
 private:
   int traceBeginTrial(DagNode* subject, RewritingContext& context) const;
 };

@@ -60,6 +60,7 @@
 #include "substitution.hh"
 #include "symbolMap.hh"
 #include "freshVariableGenerator.hh"
+#include "narrowingVariableInfo.hh"
 
 //      variable class definitions
 #include "variableDagNode.hh"

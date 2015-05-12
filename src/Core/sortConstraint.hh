@@ -39,6 +39,7 @@ public:
   void check();
   void preprocess();
   void compile(bool compileLhs);
+  void print(ostream& s) const;
 
 private:
   int traceBeginTrial(DagNode* subject, RewritingContext& context) const;

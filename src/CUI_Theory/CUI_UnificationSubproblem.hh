@@ -21,9 +21,8 @@
 */
 
 //
-//      Class for unification subproblems in the AC theory.
-//	It consists of the AC symbol, a vector of abstracted subterms and a basis for the
-//	Diophantine system corresponding the purified AC unification problem.
+//      Class for unification subproblems in the C theory.
+//	It consists of a vector of unification problems of the form f(u, v) =? f(s, t) where f is a C symbol.
 //
 #ifndef _CUI_UnificationSubproblem_hh_
 #define _CUI_UnificationSubproblem_hh_

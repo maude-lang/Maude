@@ -31,6 +31,7 @@
 #include "badFlag.hh"
 #include "label.hh"
 #include "natSet.hh"
+#include "dagRoot.hh"
 
 class PreEquation : public LineNumber, public ModuleItem, public VariableInfo, public BadFlag
 {
@@ -64,6 +65,10 @@ public:
   bool checkCondition(DagNode* subject,
 		      RewritingContext& context,
 		      Subproblem* subproblem) const;
+
+  DagNode* getLhsDag();
+  virtual void reset();
+  virtual void print(ostream& s) const = 0;
 
 #ifdef DUMP
   void dump(ostream& s, int indentLevel);
@@ -101,6 +106,7 @@ private:
   Label label;
   Term* lhs;
   LhsAutomaton* lhsAutomaton;
+  DagRoot lhsDag;  // for unification
   Vector<ConditionFragment*> condition;
 };
 
@@ -157,5 +163,8 @@ PreEquation::getLhsAutomaton() const
 {
   return lhsAutomaton;
 }
+
+ostream&
+operator<<(ostream& s, const PreEquation* pe);  // we define this to call a virtual function
 
 #endif

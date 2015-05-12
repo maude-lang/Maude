@@ -1,3 +1,11 @@
+2013-09-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_StackNode.hh (new): set half word to SORT_UNKNOWN rather than
+	relying on allocateMemoryCell()
+	(new): call initFlags()
+	(new): clean up; update comments; initFlags() becomes
+	clearAllFlags()
+
 2004-06-08  Steven Eker  <eker@goo.csl.sri.com>
 
 	* AU_StackSort.cc (revComputeBaseSort): fixed nasty bug where we

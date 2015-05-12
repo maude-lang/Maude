@@ -131,7 +131,9 @@ Interpreter::printStats(const Timer& timer, RewritingContext& context, bool timi
     {
       cout << "mb applications: " << context.getMbCount() <<
 	"  equational rewrites: " << context.getEqCount() <<
-	"  rule rewrites: " << context.getRlCount() << '\n';
+	"  rule rewrites: " << context.getRlCount() <<
+	"  variant narrowing steps: " << context.getVariantNarrowingCount() <<
+	"  narrowing steps: " << context.getNarrowingCount() << '\n';
     }
 }
 
@@ -381,26 +383,58 @@ Interpreter::creduce(const Vector<Token>& subject)
 #endif
 }
 
+#include "stackMachine.hh"
+#include "stackMachineRhsCompiler.hh"
+#include "frame.hh"
+
 void
 Interpreter::sreduce(const Vector<Token>& subject)
 {
-
-  if (DagNode* d = makeDag(subject))
+  if (Term* t = currentModule->getFlatModule()->parseTerm(subject))
     {
+      //
+      //	Partly normalize term (don't flatten).
+      //
+      t = t->normalize(false);
+      //
+      //	Set EAGER flag in eager terms since term2InstructionSequence() needs this
+      //	to determine subterm sharability.
+      //
+      NatSet eagerVariables;
+      Vector<int> problemVariables;
+      t->markEager(0, eagerVariables, problemVariables);
+      //
+      //	Now compile a sequence of instructions to build the term, evaluating alond the way.
+      //
+      Instruction* instructionSequence = t->term2InstructionSequence();
+      //
+      //	If some function symbol didn't generate an instruction we get the null sequence to
+      //	flag unsupported feature.
+      //
+      if (instructionSequence == 0)
+	{
+	  IssueWarning("sreduce unsupported operator (Maude VM compiler).");
+	  return;
+	}
+      //
+      //	Now run the sequence in a stack machine.
+      //
+      VisibleModule* fm = currentModule->getFlatModule();
+      fm->stackMachineCompile();
+
+      startUsingModule(fm);
+      Timer timer(getFlag(SHOW_TIMING));
+
       if (getFlag(SHOW_COMMAND))
 	{
 	  UserLevelRewritingContext::beginCommand();
-	  cout << "sreduce in " << currentModule << " : " << d << " ." << endl;
+	  cout << "sreduce in " << currentModule << " : " << t << " ." << endl;
 	}
-
-      VisibleModule* fm = currentModule->getFlatModule();
-      startUsingModule(fm);
-      Timer timer(getFlag(SHOW_TIMING));
-      //
-      //	Start of stack based reduction
-      //
-      DagNode* r = d;  // HACK - don't have implementation yet
-      int nrRewrites = 0;
+      
+      t->deepSelfDestruct();
+      StackMachine sm;
+      DagNode* r = sm.execute(instructionSequence);
+      Int64 nrRewrites = sm.getEqCount();
       //
       //	End of stack based reduction.
       //
@@ -416,6 +450,7 @@ Interpreter::sreduce(const Vector<Token>& subject)
 	}
       cout << "result " << r->getSort() << ": " << r << '\n';
       cout.flush();
+      delete instructionSequence;
       (void) fm->unprotect();
     }
 }

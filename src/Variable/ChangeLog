@@ -1,3 +1,29 @@
+2013-01-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableDagNode.hh (NamedEntity): added decl for
+	safeVirtualReplacement()
+
+	* variableDagNode.cc: force unsolving and re-solving to avoid
+	occurs check problem cause by implicit variable renaming
+	(safeVirtualReplacement): added
+	(computeSolvedForm2): use safeVirtualReplacement()
+
+===================================Maude96c===========================================
+
+2012-04-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableDagNode.hh (NamedEntity): added declaration for instantiateWithCopies2()
+
+	* variableDagNode.cc (instantiateWithCopies2): added
+
+2012-03-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableSymbol.hh (Symbol): added declaration for termify()
+
+	* variableSymbol.cc (termify): added
+
+===================================Maude96===========================================
+
 2010-10-19  Steven Eker  <eker@rho>
 
 	* variableSymbol.cc

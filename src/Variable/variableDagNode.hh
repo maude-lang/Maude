@@ -65,6 +65,7 @@ public:
   //	Narrowing member functions.
   //
   bool indexVariables2(NarrowingVariableInfo& indicies, int baseIndex);
+  DagNode* instantiateWithCopies2(const Substitution& substitution, const Vector<DagNode*>& eagerCopies);
   //
   //	Functions specific to VariableDagNode.
   //
@@ -75,6 +76,8 @@ private:
   DagNode* markArguments();
   DagNode* copyEagerUptoReduced2();
   void clearCopyPointers2();
+
+  bool safeVirtualReplacement(VariableDagNode* oldVar, VariableDagNode* newVar, UnificationContext& solution, PendingUnificationStack& pending);
 
   int index;
 };

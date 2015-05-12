@@ -243,7 +243,7 @@ result NeKindSet: '`[AttrSet`] ; '`[Bool`] ; '`[Condition`] ; '`[EquationSet`]
     '`[ResultTriple?`] ; '`[RuleSet`] ; '`[SortMappingSet`] ; '`[String`] ;
     '`[SubsortDeclSet`] ; '`[Substitution?`] ; '`[Trace?`] ;
     '`[UnificationPair?`] ; '`[UnificationProblem`] ; '`[UnificationTriple?`] ;
-    '`[View`]
+    '`[Variant?`] ; '`[View`]
 ==========================================
 reduce in META-LEVEL : maximalSorts(fmod 'FOO is
   protecting 'META-LEVEL .

@@ -323,8 +323,40 @@ S_DagNode::instantiate2(const Substitution& substitution)
 //
 
 DagNode*
-S_DagNode::instantiateWithReplacement(const Substitution& /* substitution */, int argIndex, DagNode* newDag)
+S_DagNode::instantiateWithReplacement(const Substitution& /* substitution */, const Vector<DagNode*>& /* eagerCopies */, int argIndex, DagNode* newDag)
 {
   Assert(argIndex == 0, "bad arg index");
   return new S_DagNode(symbol(), *number, newDag);
 }
+
+DagNode*
+S_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vector<DagNode*>& eagerCopies)
+{
+  S_Symbol* s = symbol();
+  DagNode* n = s->eagerArgument(0) ?
+	arg->instantiateWithCopies(substitution, eagerCopies) :
+	arg->instantiate(substitution); 
+  if (n != 0)
+    {
+      mpz_class num = *number;
+      if (s == n->symbol())
+	{
+	  //
+	  //	Our argument instantiated into our theory so we need
+	  //	to do theory normalization.
+	  //
+	  S_DagNode* t = safeCast(S_DagNode*, n);
+	  num += *(t->number);
+	  n = t->arg;
+	}
+      DagNode* d =  new S_DagNode(s, num, n);
+      if (n->isGround())
+	{
+	  s->computeBaseSort(d);
+	  d->setGround();
+	}
+      return d;
+    }
+  return 0;
+}
+

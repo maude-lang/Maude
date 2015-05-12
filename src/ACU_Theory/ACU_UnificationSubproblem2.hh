@@ -69,6 +69,7 @@ private:
   void markReachableNodes();
 
   int setMultiplicity(DagNode* dagNode, int multiplicity, UnificationContext& solution);
+  void killCancelledSubterms(int nrOldSubterms);
   void unsolve(int index, UnificationContext& solution);
 
   void classify(int subtermIndex,

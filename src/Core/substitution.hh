@@ -158,39 +158,6 @@ Substitution::copy(const Substitution& original)
     }
 }
 
-inline void
-Substitution::clone(const Substitution& original)
-{
-  //
-  //	Unlike copy, we set the copy size from original instead of assuming them
-  //	to be the same.
-  //
-  copySize = original.copySize;
-  if (copySize > 0)
-    {
-      //
-      //	We make the underlying substitution larger if necessary. We never make it smaller
-      //	since some slots may be reserved for construction purposes (not part of the copy size)
-      //	and we must not lose them.
-      //
-      if (copySize > values.length())
-	values.expandTo(copySize);
-      //
-      //	Copy entries using interator for speed.
-      //
-      Vector<DagNode*>::iterator dest = values.begin();
-      Vector<DagNode*>::const_iterator source = original.values.begin();
-      Vector<DagNode*>::const_iterator end = source + copySize;
-      do
-	{
-	  *dest = *source;
-	  ++dest;
-	  ++source;
-	}
-      while (source != end);
-    }
-}
-
 inline int
 Substitution::addNewVariable()
 {

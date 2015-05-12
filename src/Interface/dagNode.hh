@@ -34,7 +34,7 @@ class DagNode
   NO_COPYING(DagNode);
 
 public:
-  DagNode(Symbol* symbol);
+  DagNode(Symbol* symbol, int sortIndex = Sort::SORT_UNKNOWN);
   virtual ~DagNode() {}
   void setCallDtor();
   //
@@ -47,6 +47,7 @@ public:
   //
   void* operator new(size_t size);
   void* operator new(size_t size, DagNode* old);
+  void* operator new(size_t size, int);
   //
   //	These member functions should not be overridden.
   //
@@ -54,6 +55,7 @@ public:
   int compare(const DagNode* other) const;
   bool equal(const DagNode* other) const;
   bool leq(const Sort* sort) const;
+  bool fastLeq(const Sort* sort) const;
 
   bool isReduced() const;
   void reduce(RewritingContext& context);
@@ -65,6 +67,9 @@ public:
   bool isUnstackable() const;
   void setGround();
   bool isGround() const;
+  void setIrreducibleByVariantEquations();
+  bool isIrreducibleByVariantEquations() const;
+
   void copySetRewritingFlags(const DagNode* other);
   void copySortIndex(const DagNode* other);
   void upgradeSortIndex(const DagNode* other);
@@ -119,8 +124,7 @@ public:
     UNIMPLEMENTED
   };
 
-  virtual ReturnResult computeBaseSortForGroundSubterms(
-);
+  virtual ReturnResult computeBaseSortForGroundSubterms();
   bool computeSolvedForm(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
   virtual bool computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
 
@@ -131,6 +135,12 @@ public:
   //
   DagNode* instantiate(const Substitution& substitution);
   virtual DagNode* instantiate2(const Substitution& substitution) { CantHappen("Not implemented"); return 0; }
+  //
+  //	instantiateWithCopies() is similar but uses copies in eager positions.
+  //
+  DagNode* instantiateWithCopies(const Substitution& substitution, const Vector<DagNode*>& eagerCopies);
+  virtual DagNode* instantiateWithCopies2(const Substitution& substitution, const Vector<DagNode*>& eagerCopies)
+    { CantHappen("Not implemented"); return 0; }
   void computeGeneralizedSort(const SortBdds& sortBdds,
 			      const Vector<int>& realToBdd,  // first BDD variable for each free real variable
 			      Vector<Bdd>& generalizedSort);
@@ -139,7 +149,8 @@ public:
   //
   bool indexVariables(NarrowingVariableInfo& indices, int baseIndex);
   virtual bool indexVariables2(NarrowingVariableInfo& indices, int baseIndex);
-  virtual DagNode* instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag) { CantHappen("Not implemented"); return 0; }
+  virtual DagNode* instantiateWithReplacement(const Substitution& substitution, const Vector<DagNode*>& eagerCopies, int argIndex, DagNode* newDag)
+    { CantHappen("Not implemented"); return 0; }
   //
   //	These member functions must be defined for each derived class in theories
   //	that need extension.
@@ -152,6 +163,10 @@ public:
   virtual void partialReplace(DagNode* replacement, ExtensionInfo* extensionInfo);
   virtual DagNode* partialConstruct(DagNode* replacement, ExtensionInfo* extensionInfo);
   virtual ExtensionInfo* makeExtensionInfo();
+  //
+  //	Utility function for variant narrowing.
+  //
+  bool reducibleByVariantEquation(RewritingContext& context);
 
 #ifdef DUMP
   //
@@ -198,7 +213,12 @@ private:
     UNSTACKABLE = 8,	// unrewritable and all subterms unstackable or frozen
     //CACHED = 16,	// node exists as part of a cache
     GROUND_FLAG = 16,	// no variables occur below this node
-    HASH_VALID = 32	// node has a valid hash value (storage is theory dependent)
+    HASH_VALID = 32,	// node has a valid hash value (storage is theory dependent)
+    //
+    //	We can share a the same bit for this flag since the rule rewriting strategy that needs UNREWRITABLE will
+    //	never be combined with variant narrowing.
+    //
+    IRREDUCIBLE_BY_VARIANT_EQUATIONS = 4
   };
 
   bool isCopied() const;
@@ -217,6 +237,12 @@ private:
     DagNode* copyPointer;
   };
 };
+
+#define SAFE_INSTANTIATE(dagNode, eagerFlag, substitution, eagerCopies) \
+if (DagNode* _t = (eagerFlag ?						\
+		   dagNode->instantiateWithCopies(substitution, eagerCopies) : \
+		   dagNode->instantiate(substitution)))			\
+  dagNode = _t
 
 //
 //	Output function for DagNode must be defined by library user.
@@ -304,11 +330,40 @@ inline void*
 DagNode::operator new(size_t size)
 {
   //
-  //	We rely on MemoryCell::allocateMemoryCell() setting the half word to
-  //	Sort::SORT_UNKNOWN.
+  //	MemoryCell::allocateMemoryCell() no longer sets the half word to
+  //	Sort::SORT_UNKNOWN. This reposibility is shifted to DagNode::DagNode()
+  //	which can set it to other values as an optimization.
   //
   Assert(size <= sizeof(MemoryCell), "dag node too big");
-  return MemoryCell::allocateMemoryCell();
+  MemoryCell* m = MemoryCell::allocateMemoryCell();
+  //
+  //	We are obligated to clear the flags. We do this here rather than in
+  //	MemoryCell::allocateMemoryCell() to allow the compiler to optimize any
+  //	flag setting our caller might do.
+  //
+  m->clearAllFlags();
+  return m;
+}
+
+
+inline void*
+DagNode::operator new(size_t size, int)
+{
+  //
+  //	This is a specialized version of the above which creates the DagNode
+  //	with its reduced flag already set, to save an instruction.
+  //
+  //	The int parameter is a dummy to allow this version to be selected.
+  //
+  Assert(size <= sizeof(MemoryCell), "dag node too big");
+  MemoryCell* m = MemoryCell::allocateMemoryCell();
+  //
+  //	We are obligated to clear the flags. We do this here rather than in
+  //	MemoryCell::allocateMemoryCell() to allow the compiler to optimize any
+  //	flag setting our caller might do.
+  //
+  m->initFlags(REDUCED);
+  return m;
 }
 
 inline void*
@@ -317,15 +372,16 @@ DagNode::operator new(size_t /* size */, DagNode* old)
   if (old->getMemoryCell()->needToCallDtor())
     old->~DagNode();	// explicitly call virtual destructor
   old->getMemoryCell()->clearAllExceptMarked();
-  old->repudiateSortInfo();
+  // old->repudiateSortInfo();  // shouldn't be needed now that sort info setting has been shifted to DagNode::DagNode()
   //DebugAdvisory("in place new called, old = " << (void*)(old));
-  Assert(old->getSortIndex() == Sort::SORT_UNKNOWN, "bad sort init");
+  //Assert(old->getSortIndex() == Sort::SORT_UNKNOWN, "bad sort init");
   return static_cast<void*>(old);
 }
 
 inline
-DagNode::DagNode(Symbol* symbol)
+DagNode::DagNode(Symbol* symbol, int sortIndex)
 {
+  setSortIndex(sortIndex);
   topSymbol = symbol;
   //DebugAdvisory("created dag node for " << symbol << " at " << (void*)(this));
   //DebugAdvisoryCheck(getSortIndex() == Sort::SORT_UNKNOWN,
@@ -417,6 +473,18 @@ inline bool
 DagNode::isGround() const
 {
   return getMemoryCell()->getFlag(GROUND_FLAG);
+}
+
+inline void
+DagNode::setIrreducibleByVariantEquations()
+{
+  getMemoryCell()->setFlag(IRREDUCIBLE_BY_VARIANT_EQUATIONS);
+}
+
+inline bool
+DagNode::isIrreducibleByVariantEquations() const
+{
+  return getMemoryCell()->getFlag(IRREDUCIBLE_BY_VARIANT_EQUATIONS);
 }
 
 inline void
@@ -560,6 +628,12 @@ DagNode::instantiate(const Substitution& substitution)
   return isGround() ? 0 : instantiate2(substitution);
 }
 
+inline DagNode*
+DagNode::instantiateWithCopies(const Substitution& substitution, const Vector<DagNode*>& eagerCopies)
+{
+  return isGround() ? 0 : instantiateWithCopies2(substitution, eagerCopies);
+}
+
 inline void
 DagNode::insertVariables(NatSet& occurs)
 {
@@ -582,6 +656,15 @@ inline bool
 DagNode::leq(const Sort* sort) const
 {
   return ::leq(getSortIndex(), sort);
+}
+
+inline bool
+DagNode::fastLeq(const Sort* sort) const
+{
+  //
+  //	Only works for sorts on which fastGeqSufficient() is true.
+  //
+  return sort->fastGeq(getSortIndex());
 }
 
 inline size_t

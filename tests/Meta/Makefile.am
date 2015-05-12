@@ -23,7 +23,9 @@ TESTS = \
 	metaPolymorph \
 	metaUpDown \
 	metaPrintAttr \
-	metaMetadata
+	metaMetadata \
+	metaVariantUnify \
+	metaGetVariant
 
 MAUDE_FILES = \
 	metaApply.maude \
@@ -50,7 +52,9 @@ MAUDE_FILES = \
 	metaPolymorph.maude \
 	metaUpDown.maude \
 	metaPrintAttr.maude \
-	metaMetadata.maude
+	metaMetadata.maude \
+	metaVariantUnify.maude \
+	metaGetVariant.maude
 
 RESULT_FILES = \
 	metaApply.expected \
@@ -79,6 +83,8 @@ RESULT_FILES = \
 	metaPolymorph.expected \
 	metaUpDown.expected \
 	metaPrintAttr.expected \
-	metaMetadata.expected
+	metaMetadata.expected \
+	metaVariantUnify.expected \
+	metaGetVariant.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

@@ -1,3 +1,620 @@
+2014-02-27  Steven Eker  <eker@ape.csl.sri.com>
+
+	* run.cc (ruleRewrite): removed debugging code that was producing
+	spurious messages
+
+2014-02-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* module.cc (stackMachineCompile): reformatted
+
+	* cachedDag.hh (C): added data member instructionSequence
+	(CachedDag): init instructionSequence
+	(~CachedDag): delete instructionSequence
+	(generateInstructionSequence): added
+	(getInstructionSequence): added
+
+2014-02-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* termSet.cc (insert): return index where we inserted term
+
+	* termSet.hh (PointerSet): updated decl for insert()
+
+	* stackMachineRhsCompiler.hh (S): delete decl for addCopy() from
+	struct FunctionEval
+
+2014-02-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* copyRhsAutomaton.cc (recordInfo): don't pass needContiguous
+	argument to recordFunctionEval()
+
+	* trivialRhsAutomaton.cc (recordInfo): don't pass needContiguous
+	argument to recordFunctionEval()
+
+	* stackMachineRhsCompiler.cc (recordFunctionEval): deleted
+	needContiguous argument
+
+	* stackMachineRhsCompiler.hh (S): updated decl for
+	recordFunctionEval()
+
+	* stackMachineRhsCompiler.cc (compileInstructionSequence): handle
+	failure to generate an instruction gracefully
+
+===================================Maude101===========================================
+
+2014-02-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachineRhsCompiler.cc (dump): drastically simplified
+	(recordFunctionEval): don't initialize deleted data members
+
+	* stackMachineRhsCompiler.hh (S): deleted data members
+	needContiguous, contiguousSlot and copies from struct
+	FunctionEval; removed structs Copy, VirtualSlot
+	(addCopy): deleted
+	(S): deleted typedefs VirtualSlotMap, IntMap, SlotSet
+	(S): removed data members virtualSlots and lastUsed
+	(S): deleted decls for internal functions
+
+	* stackMachineRhsCompiler.cc (compileInstructionSequence): deleted
+	unused variable nrArgs
+	(recordFunctionEval): delete commented out code
+
+2014-02-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* dagNodeSet.hh (PointerSet): use using syntax for member
+	functions exported from base class
+
+	* termSet.hh (PointerSet): use using syntax for member functions
+	exported from base class
+
+2014-01-31  Steven Eker  <eker@ape.csl.sri.com>
+
+	* module.hh (BadFlag): added decl for stackMachineCompile()
+
+	* module.cc (stackMachineCompile): added
+
+	* module.hh (BadFlag): added STACK_MACHINE_COMPILED to enum Status
+
+	* equation.cc (compile): don't do stack machine compilation here
+	any more
+	(stackMachineCompile): added
+
+	* stackMachineRhsCompiler.hh (S): updated decl for
+	compileInstructionSequence()
+
+	* stackMachineRhsCompiler.cc (compileInstructionSequence): don't
+	take argument
+
+2013-12-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* equation.cc (compile): remap indices before doing stack machine
+	compilation
+
+	* stackMachineRhsCompiler.cc (recordFunctionEval): rewritten
+	(compileInstructionSequence): rewritten; rely on slots generated
+	by remap indices
+
+2013-11-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* sort.hh (fastGeqSufficient, fastGeq): added
+
+===================================Maude100a===========================================
+
+2013-10-27  Steven Eker  <eker@ape.csl.sri.com>
+
+	* equation.cc (Equation): init instructionSequence to 0
+	(Equation): delete instructionSequence
+
+	* stackMachine.hh (getRawScratchpad): commented out
+	(SimpleRootContainer): commnet out data member rawScratchPad
+
+	* stackMachine.cc (~StackMachine): delete protectedScratchPad
+	(StackMachine): comment out rawScratchPad init; make
+	protectedScratchPad bigger
+
+2013-10-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachine.hh (getProtectedScratchpad): added
+	(getRawScratchpad): added
+
+	* stackMachine.cc (StackMachine): initialize protected and raw
+	scratchpads
+
+2013-10-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachine.hh (incrementEqCount): allow rewriteCount to be
+	incremented by an amount rather than just by 1
+
+	* frame.hh (fastPop): added
+
+	* stackMachine.hh (fastPushFrame): added
+	(setTopFrame): added
+
+2013-10-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* returnInstruction.hh (getReturnSlot): added
+
+	* memoryCell.hh (wantToCollectGarbage): added
+	(M): made collectGarbage() public; added comment
+
+2013-10-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* equation.cc (compile): hack to avoid stack machine compilation
+	of equations with conditions, because we may share subterms with
+	the condition
+
+2013-10-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* connectedComponent.cc (ConnectedComponent): init
+	lastAllocatedMatchIndex
+
+	* module.cc (indexEquation): call computeMatchIndices()
+
+	* connectedComponent.hh (ModuleItem): added data member
+	lastAllocatedMatchIndex
+	(getNewMatchIndex): added
+	(getLastAllocatedMatchIndex): added
+
+2013-10-02  Steven Eker  <eker@ape.csl.sri.com>
+
+	* memoryCell.hh (initFlags): added
+
+2013-09-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* memoryCell.hh (initialize): deleted
+
+	* memoryCell.cc (slowNew): removed 4 calls to initialize()
+
+	* memoryCell.hh (initialize): comment out the setting of the
+	halfWord to Sort::SORT_UNKNOWN
+	(allocateMemoryCell): try calling initialize() in the slowNew() path
+	(initFlags): added
+	(clearAllFlags): was initFlags
+	(allocateMemoryCell): clean up; removed calls to initialize()
+
+2013-09-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* returnInstruction.cc (execute): rewritten using
+	returnResultAndContinue()
+
+2013-09-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* core.hh: deleted class class CopyInstruction
+
+	* copyInstruction.cc: deleted
+
+	* copyInstruction.hh: deleted
+
+===================================Maude98===========================================
+
+2013-09-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachine.hh (popFrame): added
+
+2013-08-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* returnInstruction.cc (execute): use finishUp()
+
+2013-08-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachineRhsCompiler.cc (compileInstructionSequence): fix
+	nasty bug where we were not filling out activeSlots for bare
+	variable ReturnInstruction
+
+	* stackMachine.hh (incrementEqCount): comment out
+	MemoryCell::okToCollectGarbage()
+
+	* stackMachine.cc (execute): try lcm unrolling trick
+
+	* copyInstruction.cc (execute): removed hack
+
+2013-08-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* copyInstruction.cc (execute): tried execute() hack
+
+2013-08-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachine.cc (execute): commented out check for GC
+
+	* stackMachine.hh (incrementEqCount): check for GC here
+
+	* stackMachine.cc (execute): new attempt
+
+	* stackMachine.hh (SimpleRootContainer): added data member
+	realResult
+	(newUnderFrame, newFrame): deleted
+
+	* stackMachine.cc (markReachableNodes): mark realResult
+
+	* stackMachine.hh (SimpleRootContainer): adde decl for new
+	execute()
+
+	* stackMachine.cc (execute): added dummy frame version
+
+	* core.hh: added class NullInstruction
+
+	* nullInstruction.hh: created
+
+	* nullInstruction.cc: created
+
+	* stackMachine.hh (makeFrameLift): added
+	(pushFrame): added
+
+2013-08-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* frame.hh: use Instruction::SlotIndex throughout
+
+	* copyInstruction.hh (NonFinalInstruction): deleted data member
+	nextInstruction
+
+	* returnInstruction.hh (FinalInstruction): derive from
+	FinalInstruction; use SlotIndex type
+
+	* copyInstruction.cc (CopyInstruction): call NonFinalInstruction
+	ctor
+	(execute): use getNextInstruction()
+	(dump): use getNextInstruction()
+
+	* copyInstruction.hh (NonFinalInstruction): derive from
+	NonFinalInstruction; use SlotIndex type
+
+2013-08-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* frame.hh (getArgumentListPtr): adde const version
+
+2013-08-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachine.cc (markReachableNodes): clear return value slots
+	for values that haven't been returned yet
+
+2013-08-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachine.cc (execute): call MemoryCell::okToCollectGarbage()
+
+	* frame.hh (markActiveSlots): added
+
+	* stackMachine.cc (markReachableNodes): added
+
+	* stackMachine.hh (SimpleRootContainer): derive from
+	SimpleRootContainer
+	(SimpleRootContainer): added decl for markReachableNodes();
+
+	* stackMachineRhsCompiler.cc (compileInstructionSequence): set
+	active slots
+
+2013-08-02  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachineRhsCompiler.cc (compileInstructionSequence): update
+	nrSlots if we have a destination slot that exceeds known slots
+
+	* stackMachineRhsCompiler.hh (S): updated decl for compileInstructionSequence()
+
+	* equation.cc (compile): pass nrSlots reference to compileInstructionSequence()
+
+	* equation.hh (PreEquation): added nrSlots data member
+
+2013-08-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachine.hh (newUnderFrame): added
+
+2013-07-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* frame.hh (setReturnAddress): added absolute address version
+
+	* stackMachine.cc (execute): use topFrame == 0 as stopping condition
+
+	* stackMachine.hh (getEqCount): added
+
+	* equation.hh (PreEquation): added data member instructionSequence
+	(getInstructionSequence): added
+
+	* copyInstruction.cc (dump): fix (has source and destination the
+	wrong way around)
+
+2013-07-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* frame.hh: moved FRAME_SIZE_HACK here for the moment
+
+2013-07-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* returnInstruction.cc (dump): added
+
+	* returnInstruction.hh (Instruction): added decl for dump()
+
+	* copyInstruction.cc (dump): added
+
+	* copyInstruction.hh (Instruction): added decl for dump()
+
+	* core.hh: added class ReturnInstruction and class CopyInstruction
+
+	* copyInstruction.hh: created
+
+	* copyInstruction.cc: created
+
+	* stackMachineRhsCompiler.cc (compileInstructionSequence):
+	generate instruction sequence
+
+	* returnInstruction.cc (ReturnInstruction): added
+
+	* returnInstruction.hh (Instruction): added decl for ctor; made
+	returnSlot const
+
+2013-07-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachineRhsCompiler.hh (S): added decl for findRealSlot()
+
+	* stackMachineRhsCompiler.cc (feasibleAssignment): IntSet ->
+	SlotSet
+	(isOK): keep track of slots that we've hypothetically mapped
+	(findRealSlot): added
+	(compileInstructionSequence): assign real slots to remaining
+	virtual slots
+
+	* stackMachineRhsCompiler.hh (S): IntSet ->SlotSet
+
+2013-07-05  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachineRhsCompiler.cc (computeUnforcedAssignment):
+	implemented
+	(isOK): added
+
+	* stackMachineRhsCompiler.hh (S): added copies field to
+	FunctionEval; added declarations for computeUnforcedAssignment()
+	and computeForcedAssignment()
+	(addCopy): added
+
+	* stackMachineRhsCompiler.cc (feasibleAssignment): fix bug
+	where we shadowing lastUserOfNeededSlot
+	(computeForcedAssignment): added
+	(computeUnforcedAssignment): added stub
+	(compileInstructionSequence): use computeForcedAssignment() and
+	computeUnforcedAssignment()
+	(dump): dump copy information
+
+2013-07-02  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableInfo.hh (isReal): added
+
+	* stackMachineRhsCompiler.cc (recordFunctionEval, dump): updated
+	(compileInstructionSequence): added stub
+
+	* stackMachineRhsCompiler.hh (S): redesigned internal data
+	structures; added decl for compileInstructionSequence()
+
+2013-07-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* returnInstruction.cc: created
+
+	* returnInstruction.hh: created
+
+	* trivialRhsAutomaton.cc (recordInfo): added
+
+	* trivialRhsAutomaton.hh (RhsAutomaton): added decl for recordInfo()
+
+	* copyRhsAutomaton.hh (RhsAutomaton): added decl for recordInfo()
+
+	* copyRhsAutomaton.cc (recordInfo): added
+
+	* equation.cc (compile): use class StackMachineRhsCompiler
+
+	* stackMachineRhsCompiler.hh: added decl for dump()
+
+	* stackMachineRhsCompiler.cc: added
+
+	* rhsBuilder.hh (R): added decl for recordInfo()
+
+	* rhsBuilder.cc (recordInfo): added
+
+2013-06-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachineRhsCompiler.hh: created
+
+	* stackMachineRhsCompiler.cc: created
+
+	* core.hh: added class StackMachineRhsCompiler
+
+2013-06-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* frame.hh (copyReturnInfo): added
+
+===================================Maude97===========================================
+
+2013-03-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* unificationContext.cc (unificationBind): use Assert() rather
+	than abort()
+
+	* module.hh (insertSort, insertSymbol): Assert() doesn't need cerr
+
+	* argVec.hh (ArgVec): Assert() doesn't need cerr
+
+2013-01-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachine.hh (popToFrame): added
+	(incrementEqCount): added
+
+	* frame.hh: NO_COPYING
+	(getArgumentListPtr): added
+
+	* stackMachine.hh: NO_COPYING
+
+2013-01-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* stackMachine.hh (S): added decls for StackMachine() and
+	~StackMachine()
+
+	* stackMachine.cc: created
+
+	* stackMachine.hh (newFrame, popDeadFrames): added
+	(S): added data member memoryBase
+
+	* frame.hh (setAncestorWithValidNextInstruction)
+	(getAncestorWithValidNextInstruction): added
+
+2013-01-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* core.hh: added forward decls for Frame and StackMachine
+
+	* stackMachine.hh: created
+
+	* frame.hh: created
+
+2012-12-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pendingUnificationStack.cc (resolveTheoryClash): pass marked =
+	true to push() for safety though eventually we would like the make
+	the marked flag implicit
+
+2012-12-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* unificationContext.hh (SimpleRootContainer): added more comments
+	to explain what data members are used for
+
+2012-12-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pendingUnificationStack.hh (SimpleRootContainer): added comments
+	to explain variableStatus and variableOrder
+
+	* pendingUnificationStack.cc (solve2): commented out - it was
+	purely debugging code
+
+	* pendingUnificationStack.hh (SimpleRootContainer): commented out
+	declaration for solve2()
+
+===================================Maude96c===========================================
+
+2012-07-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* unificationContext.cc (UnificationContext): take odd argument
+	(makeFreshVariable): go back to passing freshVariableNumber rather
+	than index to getFreshVariableName(), but now clashing variable
+	names is avoided by also passing odd
+
+	* unificationContext.hh (SimpleRootContainer): added data member
+	odd; updated decl for ctore
+
+===================================Maude96a===========================================
+
+2012-05-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* unificationContext.cc (makeFreshVariable): pass index rather
+	than freshVariableNumber to getFreshVariableName() to avoid clashing
+	names with existing variables during narrowing steps
+
+2012-05-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rewritingContext.hh (SimpleRootContainer): new decl for traceVariantNarrowingStep()
+	(addInCount, transferCount): update narrowingCount and variantNarrowingCount
+	(getTotalCount): include narrowingCount and variantNarrowingCount
+	(SimpleRootContainer): added data members narrowingCount and variantNarrowingCount
+	(RewritingContext): clear narrowingCount and variantNarrowingCount
+	(getNarrowingCount): added
+	(getVariantNarrowingCount): added
+	(incrementNarrowingCount, incrementVariantNarrowingCount): added
+
+2012-05-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rewritingContext.cc (traceVariantNarrowingStep): added stub
+
+	* rewritingContext.hh (SimpleRootContainer): added decl for traceVariantNarrowingStep()
+
+2012-05-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freshVariableGenerator.hh (F): added odd field
+
+2012-05-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* equation.cc (compile): always compile lhs for equations with the
+	variant attribute
+
+2012-05-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* equation.cc (compile): pessimize the variant case
+
+	* equation.hh (PreEquation): added VARIANT to flags
+	(isVariant): added
+	(setVariant): added
+
+2012-04-05  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rewritingContext.cc (markReachableNodes): check for limited use
+	RewritingContext
+
+	* rewritingContext.hh (RewritingContext): added ctor for limited
+	use RewritingContexts
+
+2012-03-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* equation.hh (PreEquation): added decl for print()
+
+	* sortConstraint.hh (PreEquation): added decl for print()
+
+	* equation.cc (print): added
+
+	* rule.cc (getLhsDag, reset): deleted
+	(print): added
+
+	* rule.hh (PreEquation): added decl for print(); deleted
+	declarations for getLhsDag(), reset()
+
+	* preEquation.hh (BadFlag): added decls for getLhsDag(), reset(),
+	print(), operator<<()
+
+	* preEquation.cc (getLhsDag): added
+	(getLhsDag): added
+	(reset): added
+
+	* preEquation.hh (BadFlag): added data member lhsDag
+
+	* equationTable.hh (E): added decl for resetEachEquation()
+
+	* equationTable.cc (resetEachEquation): added
+
+===================================Maude96===========================================
+
+2011-11-22  Steven Eker  <eker@rho>
+
+	* unificationContext.cc (UnificationContext::restoreFromClone): added
+
+	* unificationContext.hh (class UnificationContext): added decl for restoreFromClone()
+	(class UnificationContext): added decl for restoreFromClone()
+
+	* substitution.cc (Substitution::clone): moved here from .hh file
+
+2011-01-06  Steven Eker  <eker@rho>
+
+	* sortTable.cc (SortTable::linearComputeSortFunctionBdds): use
+	applyLeqRelation()
+	(SortTable::computeSortFunctionBdds): call both
+	recursiveComputeSortFunctionBdds() and
+	linearComputeSortFunctionBdds() and do a consistancy check
+
+	* sortTable.hh (class SortTable): added dec for
+	recursiveComputeSortFunctionBdds()
+
+	* sortTable.cc (SortTable::recursiveComputeSortFunctionBdds): added
+
+	* sortBdds.hh (class SortBdds): added decl for applyLeqRelation()
+
+	* sortBdds.cc (SortBdds::applyLeqRelation): added
+
+	* sortTable.cc (SortTable::linearComputeSortFunctionBdds): use
+	getRemappedLeqRelation()
+
+	* sortBdds.cc (getRemappedLeqRelation): added
+
+2011-01-05  Steven Eker  <eker@rho>
+
+	* sortTable.cc (SortTable::linearComputeSortFunctionBdds): added
+
+	* sortTable.hh (class SortTable): added decl for
+	linearComputeSortFunctionBdds()
+
+	* sortTable.cc (SortTable::computeMaximalOpDeclSetTable)
+	(SortTable::minimize, SortTable::buildSortDiagram): add comments
+	(SortTable::findMinSortIndex): rewritten using FOR_EACH_CONST
+
+===================================Maude95c===========================================
+
 2010-10-20  Steven Eker  <eker@rho>
 
 	* hashConsSet.cc (HashConsSet::insert): use upgradeSortIndex() to

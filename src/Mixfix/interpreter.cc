@@ -51,6 +51,10 @@
 #include "rewriteSequenceSearch.hh"
 #include "unificationProblem.hh"
 #include "narrowingSequenceSearch.hh"
+#include "variantSearch.hh"
+
+//	variable class definitions
+#include "variableDagNode.hh"
 
 //	object system class definitions
 #include "pseudoThread.hh"

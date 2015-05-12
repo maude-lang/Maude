@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metaGetVariant.maude -no-banner -no-advise \
+  > metaGetVariant.out 2>&1
+
+diff $srcdir/metaGetVariant.expected metaGetVariant.out > /dev/null 2>&1

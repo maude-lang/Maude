@@ -1,3 +1,33 @@
+2013-11-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* natSet.hh (containsSmall): added
+	(N): added enum Values
+
+===================================Maude100a===========================================
+
+2013-10-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* unionFind.hh (clear): added
+
+===================================Maude98===========================================
+
+2013-08-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* natSet.hh: include "vector.hh" to simplify inclusions
+
+===================================Maude97===========================================
+
+2012-08-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ropeStuff.hh: support USE_ROPE_UGLY_HACK
+
+2012-07-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* mpzSystem.cc (insertEqn, initializeUpperBounds): added
+	static_cast<>s to int to keep compiler happy
+
+===================================Maude96a===========================================
+
 2010-07-21  Steven Eker  <eker@rho>
 
 	* allSat.cc (AllSat::nextAssignment): use firstAssignment rather

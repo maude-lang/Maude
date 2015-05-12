@@ -95,6 +95,7 @@ VisibleModule::showKinds(ostream& s) const
 	s << '\t' << j << '\t' << c->sort(j) << '\n';
       if (i + 1 < nrKinds)
 	s << '\n';
+      DebugAdvisory("match indices = " << c->getLastAllocatedMatchIndex());
     }
 }
 

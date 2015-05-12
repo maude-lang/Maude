@@ -530,6 +530,8 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	  Equation* copy = new Equation(label, lhs, rhs, e->isOwise(), condition);
 	  if (e->isNonexec())
 	    copy->setNonexec();
+	  if (e->isVariant())
+	    copy->setVariant();
 	  copy->setLineNumber(e->getLineNumber());
 	  importer->insertEquation(copy);
 	  copyMetadata(importer, importTranslation, EQUATION, e, copy);

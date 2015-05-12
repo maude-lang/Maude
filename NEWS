@@ -1,5 +1,72 @@
-Overview of Changes in Maude alpha95b
+Overview of Changes in Maude 2.7 (alpha101)
+===========================================
+* fixed bug with debug text being output during rewriting
+* MVM now supports _==_ and _=/=_
+* incementalized (up to layer level) variant narrowing and unification
+* --always-advise flag
+
+Overview of Changes in alpha100a
+================================
+* dlmalloc removed (already disabled on most platforms)
+* MVM now supports non-linear variables
+* fixed bug with debug text being output during variant narrowing
+* (binary) Mac version now compiled with Mac Ports toolchain which
+  resolves several issues caused by Apple gcc and flex bugs, including
+  hanging on an end-of-file inside a comment
+* code cleaning to remove unused code and avoid many compiler warnings
+
+Overview of Changes in Maude alpha100 (source trees 97, 98, 99 abandoned)
+==========================================================================
+* added crude Maude VM based interpreter (sreduce)
+
+Overview of Changes in Maude alpha96c
 =====================================
+* added unification support for CU, U, Ul and Ur theories
+* fixed two related bugs where unifying a variable against a variable
+  generating an implicit renaming caused an in-theory occurs check issue
+  leading to non-termination
+* fixed a bug in the AC/ACU unification code where binding a variable to an alien
+  subterm caused a variety effects including missing unifiers and nontermination
+* performance fixes for AC/ACU unification where subterms cancel
+* fixed a GC bug in AC/ACU unification
+* fixed a bug where printing the empty QID in loop mode caused an out-of-bounds
+  memory read
+* fixed a bug in the free theory semi-compilation of variant equation left hand sides
+
+Overview of Changes in Maude alpha96b
+=====================================
+* fixed bug in variant narrowing of ground terms
+* fixed memory corruption bug in sockets
+* the print attribute now flushes its output
+* fixed a long standing bug where sockets could appear to be dropped on Mac
+
+Overview of Changes in Maude alpha96a
+=====================================
+* hack to allow building 64-bit binaries under Darwin
+* fixed bug in metaGenerateVariant() with singleton substitutions
+* fixed variable name clash bug in narrowing
+* support for irreducibility constraints in variant narrowing
+* support for variant unification
+
+Overview of Changes in Maude alpha96
+====================================
+* fixed bug in narrowing where unifiers were being eagerly rewritten in place
+* fixed bug in narrowing caused by abstraction variables
+* fixed bug in pretty printing of equation attributes
+* fixed fresh variable clash bug in narrowing
+* first attempt at supporting variant narrowing
+
+Overview of Changes in Maude alpha95c
+=====================================
+* fixed a bug where stale information about fresh variables was not
+  being cleaned up when backing out of a unification branch that
+  generated those variables
+* a bug where the socket write code was using memory might have been
+  deallocated
+* patched around apparent weirdness in rope::c_str()
+
+Overview of Changes in Maude 2.6 (alpha95b)
+===========================================
 * fixed a bug in the profiler provoked by condition fragments in a
 command or descent function invocation
 * more overparsing
@@ -23,6 +90,8 @@ patterns
 * fixed a bug in the module system where errors in modules constructed
 for module expressions could cause a crash
 * memo attribute reimplemented using hash consing
+* a memory corruption bug in the compilation of variant equations whose
+left hand side is headed by a free function symbol
 
 Overview of Changes in Maude alpha94a
 =====================================

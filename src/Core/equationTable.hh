@@ -33,6 +33,7 @@ public:
   const Vector<Equation*>& getEquations() const;
   bool equationFree() const;
   virtual void compileEquations();
+  void resetEachEquation();
 
 protected:
   virtual bool acceptEquation(Equation* equation) = 0;

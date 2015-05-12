@@ -181,8 +181,6 @@ private:
   void processOps();
   void fixUpSymbols();
   void processStatements();
-  DagNode* makeDag(Term* subjectTerm);
-  DagNode* makeDag(const Vector<Token>& subject);
   bool compatible(int endTokenCode);
 
   int startTokenCode;

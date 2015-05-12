@@ -82,7 +82,7 @@ FreeRemainder::FreeRemainder(Equation* eqn,
 {
   //
   //	Preliminary determination of whether remainder will qualify
-  //	for "fast" runtime treatment
+  //	for "fast" or "super-fast" runtime treatment
   //
   fast = !(eqn->hasCondition());
   {
@@ -101,8 +101,16 @@ FreeRemainder::FreeRemainder(Equation* eqn,
         freeVariables[i].argIndex = oc.argIndex();
         freeVariables[i].varIndex = v->getIndex();
 	Sort* sort = v->getSort();
-	if (fast > 0 && !(sort->errorFreeMaximal()))
-	  fast = - fast;  // need to check sort
+	if (!(sort->fastGeqSufficient()))
+	  fast = false;  // need slow handling for full sort check
+	else
+	  {
+	    if (fast > 0)  // currently super-fast
+	      {
+		if (!(sort->errorFreeMaximal()))
+		  fast = -1;  // downgrade super-fast to fast
+	      }
+	  }
         freeVariables[i].sort = sort;
       }
   }
@@ -344,6 +352,65 @@ FreeRemainder::slowMatchReplace(DagNode* subject,
   return r;
 }
 
+bool
+FreeRemainder::slowCheckAndBind(DagNode** binding, Vector<DagNode**>& stack) const
+{
+  //
+  //	Eventually we want to add a condition stack to the stack machine and take the stack
+  //	machine reference as an arguement. For the moment we only handle simple stuff.
+  //
+  Vector<DagNode**>::const_iterator stackBase = stack.begin();
+  //
+  //	Bind free variables
+  //
+  if (!freeVariables.isNull())
+    {
+      Vector<FreeVariable>::const_iterator i = freeVariables.begin();
+      Vector<FreeVariable>::const_iterator e = freeVariables.end();
+      do
+	{
+	  DagNode* d = stackBase[i->position][i->argIndex];
+	  Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
+	  if (!(d->leq(i->sort)))
+	    return false;
+	  binding[i->varIndex] = d;
+	}
+      while (++i != e);
+    }
+  //
+  //	Check bound variables
+  //
+  if (!boundVariables.isNull())
+    {
+      Vector<BoundVariable>::const_iterator i = boundVariables.begin();
+      Vector<BoundVariable>::const_iterator e = boundVariables.end();
+      do
+	{
+	  if (!(stackBase[i->position][i->argIndex]->equal(binding[i->varIndex])))
+	    return false;
+	}
+      while (++i != e);
+    }
+  //
+  //	Match ground aliens
+  //
+  if (!groundAliens.isNull())
+    {
+      Vector<GroundAlien>::const_iterator i = groundAliens.begin();
+      Vector<GroundAlien>::const_iterator e = groundAliens.end();
+      do
+	{
+	  if (!(i->alien->equal(stackBase[i->position][i->argIndex])))
+	    return false;
+	}
+      while (++i != e);
+    }
+  //
+  //	Don't known how to do nonground aliens and conditions.
+  //
+  return true;
+}
+
 #ifdef DUMP
 void
 FreeRemainder::dump(ostream& s, int indentLevel)
@@ -351,7 +418,7 @@ FreeRemainder::dump(ostream& s, int indentLevel)
   s << Indent(indentLevel) << "Begin{FreeRemainder}\n";
   ++indentLevel;
   equation->dump(s, indentLevel);
-  s << Indent(indentLevel) << "fast = " << fast << "\tforeign = " << foreign << '\n';
+  s << Indent(indentLevel) << "fast = " << static_cast<int>(fast) << "\tforeign = " << foreign << '\n';
   s << Indent(indentLevel) << "freeVariables:\n";
   ++indentLevel;
   int nrRealVariables = equation->getNrRealVariables();

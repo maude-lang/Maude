@@ -1,0 +1,59 @@
+Maude> ==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 0, 0) .
+rewrites: 3
+result Variant: {'_+_['cst1.Elem,'#1:XOR],
+	'X:XOR <- '#1:XOR,1}
+==========================================
+reduce in TEST : metaGetVariant(upModule('XOR, false), upTerm(cst1 + X:XOR),
+    empty, 0, 0) .
+rewrites: 3
+result Variant: {'_+_['cst1.Elem,'#1:XOR],
+	'X:XOR <- '#1:XOR,1}
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 10, 0) .
+rewrites: 3
+result Variant: {'_+_['cst1.Elem,'#11:XOR],
+	'X:XOR <- '#11:XOR,11}
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 0, 1) .
+rewrites: 6
+result Variant: {'cst1.Elem,
+	'X:XOR <- '0.XOR,(0).Zero}
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 0, 2) .
+rewrites: 3
+result Variant: {'0.XOR,
+	'X:XOR <- 'cst1.Elem,(0).Zero}
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 0, 3) .
+rewrites: 3
+result Variant: {'%1:XOR,
+	'X:XOR <- '_+_['cst1.Elem,'%1:XOR],1}
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 0, 4) .
+rewrites: 3
+result Variant?: noVariant
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst2 + X:XOR), upTerm(a +
+    X:XOR), 0, 0) .
+rewrites: 4
+result Variant: {'_+_['cst2.Elem,'#1:XOR],
+	'X:XOR <- '#1:XOR,1}
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst2 + X:XOR), upTerm(a +
+    X:XOR), 0, 1) .
+rewrites: 6
+result Variant: {'0.XOR,
+	'X:XOR <- 'cst2.Elem,(0).Zero}
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst2 + X:XOR), upTerm(a +
+    X:XOR), 0, 2) .
+rewrites: 4
+result Variant: {'%1:XOR,
+	'X:XOR <- '_+_['cst2.Elem,'%1:XOR],1}
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst2 + X:XOR), upTerm(a +
+    X:XOR), 0, 3) .
+rewrites: 4
+result Variant?: noVariant
+Maude> Bye.

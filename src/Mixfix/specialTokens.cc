@@ -64,6 +64,7 @@
   MACRO(nonexec, "nonexec")
   MACRO(otherwise, "otherwise")
   MACRO(owise, "owise")
+  MACRO(variant, "variant")
   MACRO(print, "print")
   MACRO(lessThan, "<")
   MACRO(partial, "~>")
@@ -110,6 +111,7 @@
   MACRO(match, "match")
   MACRO(xmatch, "xmatch")
   MACRO(amatch, "amatch")
+  MACRO(irreducible, "irreducible")
     //
     //	Special hook identifier tokens.
     //

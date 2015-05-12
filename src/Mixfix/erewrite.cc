@@ -76,6 +76,7 @@ Interpreter::doExternalRewriting(UserLevelRewritingContext* context, Int64 limit
       DebugAdvisory("calling PseudoThread::eventLoop()");
       int r = PseudoThread::eventLoop();
       DebugAdvisory("PseudoThread::eventLoop() returned " << r);
+      //cerr << "PseudoThread::eventLoop() returned " << r << endl;
       if (r != PseudoThread::EVENT_HANDLED)
 	{
 	  //

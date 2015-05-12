@@ -71,3 +71,9 @@ Pattern::traceBeginTrial(DagNode* subject, RewritingContext& context) const
 {
   return UNDEFINED;
 }
+
+void
+Pattern::print(ostream& s) const
+{
+  s << this;
+}

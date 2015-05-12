@@ -32,6 +32,18 @@ class FreeDagNode : public DagNode
 {
 public:
   FreeDagNode(Symbol* symbol);
+  //
+  //	For stack based execution.
+  //
+  FreeDagNode(Symbol* symbol, int dummy);
+  FreeDagNode(Symbol* symbol, DagNode* a0);
+  FreeDagNode(Symbol* symbol, DagNode* a0, DagNode* a1);
+  FreeDagNode(Symbol* symbol, DagNode* a0, DagNode* a1, DagNode* a2);
+  /*
+  FreeDagNode(Symbol* symbol, int dummy, DagNode* a0);
+  FreeDagNode(Symbol* symbol, int dummy, DagNode* a1, DagNode* a2);
+  FreeDagNode(Symbol* symbol, int dummy, DagNode* a0, DagNode* a1, DagNode* a2);
+  */
   ~FreeDagNode();
 
   RawDagArgumentIterator* arguments();
@@ -58,7 +70,8 @@ public:
   //	Narrowing member functions.
   //
   bool indexVariables2(NarrowingVariableInfo& indices, int baseIndex);
-  DagNode* instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag);
+  DagNode* instantiateWithReplacement(const Substitution& substitution, const Vector<DagNode*>& eagerCopies, int argIndex, DagNode* newDag);
+  DagNode* instantiateWithCopies2(const Substitution& substitution, const Vector<DagNode*>& eagerCopies);
   //
   //	Functions particular to free dag nodes.
   //
@@ -111,6 +124,12 @@ private:
   friend class FreeLhsAutomaton;	// for matching DAG subject
   friend class FreeNet;			// for matching DAG subject
   friend class FreeRhsAutomaton;	// for constructing replacement DAG
+
+  friend class FreeGeneralCtor;
+  friend class FreeGeneralCtorFinal;
+  friend class FreeGeneralExtor;
+  friend class FreeGeneralExtorFinal;
+
 };
 
 inline FreeSymbol*
@@ -129,6 +148,62 @@ FreeDagNode::FreeDagNode(Symbol* symbol) : DagNode(symbol)
       external = new DagNode*[nrArgs];
     }
 }
+
+inline
+FreeDagNode::FreeDagNode(Symbol* symbol, int /* dummy */)
+  : DagNode(symbol, symbol->traverse(0, 0))
+{
+}
+
+inline
+FreeDagNode::FreeDagNode(Symbol* symbol, DagNode* a0)
+  : DagNode(symbol, symbol->traverse(0, a0->getSortIndex()))
+{
+  internal[0] = a0;
+}
+
+inline
+FreeDagNode::FreeDagNode(Symbol* symbol, DagNode* a0, DagNode* a1)
+  : DagNode(symbol, symbol->traverse(symbol->traverse(0, a0->getSortIndex()), a1->getSortIndex()))
+{
+  internal[0] = a0;
+  internal[1] = a1;
+}
+
+inline
+FreeDagNode::FreeDagNode(Symbol* symbol, DagNode* a0, DagNode* a1, DagNode* a2)
+  : DagNode(symbol, symbol->traverse(symbol->traverse(symbol->traverse(0, a0->getSortIndex()), a1->getSortIndex()), a2->getSortIndex()))
+{
+  internal[0] = a0;
+  internal[1] = a1;
+  internal[2] = a2;
+}
+
+#if 0
+inline
+FreeDagNode::FreeDagNode(Symbol* symbol, int /* dummy */, DagNode* a0)
+  : DagNode(symbol, symbol->getUniqueSortIndex())
+{
+  internal[0] = a0;
+}
+
+inline
+FreeDagNode::FreeDagNode(Symbol* symbol, int /* dummy */, DagNode* a0, DagNode* a1)
+  : DagNode(symbol, symbol->getUniqueSortIndex())
+{
+  internal[0] = a0;
+  internal[1] = a1;
+}
+
+inline
+FreeDagNode::FreeDagNode(Symbol* symbol, int /* dummy */, DagNode* a0, DagNode* a1, DagNode* a2)
+  : DagNode(symbol, symbol->getUniqueSortIndex())
+{
+  internal[0] = a0;
+  internal[1] = a1;
+  internal[2] = a2;
+}
+#endif
 
 inline DagNode*
 FreeDagNode::getArgument(int i) const

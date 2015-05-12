@@ -1,0 +1,77 @@
+set show timing off .
+
+*** Ul theory
+
+fmod FOO is
+  sort Foo .
+  op f : Foo Foo -> Foo [left id: 1f] .
+  op 1f : -> Foo .
+
+  vars U V W X Y Z : Foo .
+endfm
+
+unify f(X, Y) =? f(U, V) .
+variant unify f(X, Y) =? f(U, V) .
+
+unify f(X, Y) =? X .
+variant unify f(X, Y) =? X .
+
+unify f(X, Y) =? Y .
+variant unify f(X, Y) =? Y .
+
+*** Ur theory
+
+fmod FOO2 is
+  sort Foo .
+  op f : Foo Foo -> Foo [right id: 1f] .
+  op 1f : -> Foo .
+
+  vars U V W X Y Z : Foo .
+endfm
+
+unify f(X, Y) =? f(U, V) .
+variant unify f(X, Y) =? f(U, V) .
+
+unify f(X, Y) =? X .
+variant unify f(X, Y) =? X .
+
+unify f(X, Y) =? Y .
+variant unify f(X, Y) =? Y .
+
+*** U theory
+
+fmod FOO3 is
+  sort Foo .
+  op f : Foo Foo -> Foo [id: 1f] .
+  op 1f : -> Foo .
+
+  vars U V W X Y Z : Foo .
+endfm
+
+unify f(X, Y) =? f(U, V) .
+variant unify f(X, Y) =? f(U, V) .
+
+unify f(X, Y) =? X .
+variant unify f(X, Y) =? X .
+
+unify f(X, Y) =? Y .
+variant unify f(X, Y) =? Y .
+
+*** CU theory
+
+fmod FOO4 is
+  sort Foo .
+  op f : Foo Foo -> Foo [comm id: 1f] .
+  op 1f : -> Foo .
+
+  vars U V W X Y Z : Foo .
+endfm
+
+unify f(X, Y) =? f(U, V) .
+variant unify f(X, Y) =? f(U, V) .
+
+unify f(X, Y) =? X .
+variant unify f(X, Y) =? X .
+
+unify f(X, Y) =? Y .
+variant unify f(X, Y) =? Y .

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/sreduce.maude -no-banner -no-advise \
+  > sreduce.out 2>&1
+
+diff $srcdir/sreduce.expected sreduce.out > /dev/null 2>&1

@@ -124,6 +124,7 @@ UserLevelRewritingContext::checkForPrintAttribute(MixfixModule::ItemType itemTyp
 	  pa->print(cout, *this);
 	  if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE_NEWLINE))
 	    cout << '\n';
+	  cout.flush();
 	}
     }
 }
@@ -181,6 +182,7 @@ UserLevelRewritingContext::tracePreEqRewrite(DagNode* redex,
     cout << "Old: " << root() << '\n';
   if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
     cout << redex << "\n--->\n";
+  DebugAdvisory(static_cast<void*>(redex));
 }
 
 void
@@ -191,6 +193,7 @@ UserLevelRewritingContext::tracePostEqRewrite(DagNode* replacement)
       Assert(!abortFlag, "abort flag set");
       if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
 	cout << replacement << '\n';
+      DebugAdvisory(static_cast<void*>(replacement));
       if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
 	cout << "New: " << root() << '\n';
     }
@@ -256,12 +259,12 @@ UserLevelRewritingContext::tracePostRuleRewrite(DagNode* replacement)
 }
 
 void
-UserLevelRewritingContext:: traceNarrowingStep(Rule* rule,
-					       DagNode* redex,
-					       DagNode* replacement,
-					       const NarrowingVariableInfo* variableInfo,
-					       const Substitution* substitution,
-					       DagNode* newState)
+UserLevelRewritingContext::traceNarrowingStep(Rule* rule,
+					      DagNode* redex,
+					      DagNode* replacement,
+					      const NarrowingVariableInfo* variableInfo,
+					      const Substitution* substitution,
+					      DagNode* newState)
 {
   if (handleDebug(redex, rule) ||
       !localTraceFlag ||
@@ -304,6 +307,86 @@ UserLevelRewritingContext:: traceNarrowingStep(Rule* rule,
     cout << redex << "\n--->\n" << replacement << '\n';
   if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
     cout << "New: " << newState << '\n';
+}
+
+void
+UserLevelRewritingContext::traceVariantNarrowingStep(Equation* equation,
+						     const Vector<DagNode*>& oldVariantSubstitution,
+						     DagNode* redex,
+						     DagNode* replacement,
+						     const NarrowingVariableInfo& variableInfo,
+						     const Substitution* substitution,
+						     DagNode* newState,
+						     const Vector<DagNode*>& newVariantSubstitution,
+						     const NarrowingVariableInfo& originalVariables)
+{
+  if (handleDebug(redex, equation) ||
+      !localTraceFlag ||
+      !(interpreter.getFlag(Interpreter::TRACE_EQ)) ||
+      dontTrace(redex, equation))
+    return;
+
+  if (interpreter.getFlag(Interpreter::TRACE_BODY))
+    {
+      cout << Tty(Tty::CYAN) << header << "variant narrowing step\n" << Tty(Tty::RESET) << equation << '\n';
+      if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
+	{
+	  cout << "Equation variable bindings:\n";
+	  printSubstitution(*substitution, *equation);
+
+	  cout << "Old variant variable bindings:\n";
+	  int nrSubjectVariables = variableInfo.getNrVariables();
+	  if (nrSubjectVariables == 0)
+	    cout << "empty substitution\n";
+	  else
+	    {
+	      int variableBase = equation->getModule()->getMinimumSubstitutionSize();
+	      for (int i = 0; i < nrSubjectVariables; ++i)
+		{
+		  DagNode* v = variableInfo.index2Variable(i);
+		  DagNode* d = substitution->value(variableBase + i);
+		  Assert(v != 0, "null variable");
+		  /*
+		  DebugAdvisory(static_cast<void*>(v) << " --> " <<
+				static_cast<void*>(d) << " / " <<
+				static_cast<void*>(d->symbol()));
+		  */
+
+		  cout << v << " --> ";
+		  if (d == 0)
+		    cout << "(unbound)\n";
+		  else
+		    cout << d << '\n';
+		}
+	    }
+	}
+    }
+  if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
+    {
+      cout << "\nOld variant: " << root() << '\n';
+      int nrBindings = oldVariantSubstitution.size();
+      for (int i = 0; i < nrBindings; ++i)
+	{
+	  DagNode* v = originalVariables.index2Variable(i);
+	  DagNode* d = oldVariantSubstitution[i];
+	  cout << v << " --> " << d << '\n';
+	}
+      cout << '\n';
+    }
+  if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
+    cout << redex << "\n--->\n" << replacement << '\n';
+  if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
+    {
+      cout << "\nNew variant: " << newState << '\n';
+      int nrBindings = newVariantSubstitution.size();
+      for (int i = 0; i < nrBindings; ++i)
+	{
+	  DagNode* v = originalVariables.index2Variable(i);
+	  DagNode* d = newVariantSubstitution[i];
+	  cout << v << " --> " << d << '\n';
+	}
+      cout << '\n';
+    }
 }
 
 void
@@ -365,9 +448,9 @@ UserLevelRewritingContext::printSubstitution(const Substitution& substitution,
 	{
 	  Term* v = varInfo.index2Variable(i);
 	  DagNode* d = substitution.value(i);
-	  //DebugAdvisory(static_cast<void*>(v) << " --> " <<
-	  //	static_cast<void*>(d) << " / " <<
-	  //	static_cast<void*>(d->symbol()));
+	  DebugAdvisory(static_cast<void*>(v) << " --> " <<
+			static_cast<void*>(d) << " / " <<
+			static_cast<void*>(d->symbol()));
 	  Assert(v != 0, "null variable");
 	  cout << v << " --> ";
 	  if (d == 0)

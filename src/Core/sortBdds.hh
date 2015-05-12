@@ -40,6 +40,8 @@ public:
   int getNrVariables(int componentIndex) const;
   Bdd getGtRelation(int componentIndex) const;
   Bdd getLeqRelation(int sortIndex) const;
+  Bdd getRemappedLeqRelation(Sort* sort, int firstVariable) const;
+  Bdd applyLeqRelation(Sort* sort, const Vector<Bdd>& argument) const;
   const Vector<Bdd>& getSortFunction(Symbol* symbol) const;
 
   void makeIndexVector(int nrBdds, int index, Vector<Bdd>& vec) const;

@@ -10,6 +10,7 @@ libfreeTheory_a_CPPFLAGS = \
 libfreeTheory_a_SOURCES = \
 	freeSymbol.cc \
 	freeUnarySymbol.cc \
+	freeNullarySymbol.cc \
 	freeBinarySymbol.cc \
 	freeTernarySymbol.cc \
 	freeTerm.cc \
@@ -21,7 +22,13 @@ libfreeTheory_a_SOURCES = \
 	freeNet.cc \
 	freePreNet.cc \
 	freeRemainder.cc \
-	freePositionTable.cc
+	freePositionTable.cc \
+	freeInstruction.cc \
+	freeFastInstruction.cc \
+	freeGeneralCtor.cc \
+	freeGeneralCtorFinal.cc \
+	freeGeneralExtor.cc \
+	freeGeneralExtorFinal.cc
 
 EXTRA_DIST = \
 	freeNetExec.cc \
@@ -33,12 +40,16 @@ EXTRA_DIST = \
 
 noinst_HEADERS = \
 	freeArgumentIterator.hh \
+	freeNullarySymbol.hh \
+	freeUnarySymbol.hh \
 	freeBinarySymbol.hh \
+	freeTernarySymbol.hh \
 	freeDagArgumentIterator.hh \
 	freeDagNode.hh \
 	freeLhsAutomaton.hh \
 	freeLhsStructs.hh \
 	freeNet.hh \
+	freeNetExec.hh \
 	freeOccurrence.hh \
 	freePositionTable.hh \
 	freePreNet.hh \
@@ -47,6 +58,10 @@ noinst_HEADERS = \
 	freeSubterm.hh \
 	freeSymbol.hh \
 	freeTerm.hh \
-	freeTernarySymbol.hh \
 	freeTheory.hh \
-	freeUnarySymbol.hh
+	freeInstruction.hh \
+	freeFastInstruction.hh \
+	freeGeneralCtor.hh \
+	freeGeneralCtorFinal.hh \
+	freeGeneralExtor.hh \
+	freeGeneralExtorFinal.hh

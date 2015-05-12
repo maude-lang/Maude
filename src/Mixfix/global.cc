@@ -68,6 +68,7 @@ IO_Manager ioManager;
 
 string executableDirectory;
 
+bool alwaysAdviseFlag = false;
 
 bool
 findFile(const string& userFileName, string& directory, string& fileName, int lineNr)

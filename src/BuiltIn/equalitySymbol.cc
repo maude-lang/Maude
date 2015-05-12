@@ -49,6 +49,8 @@
 //	built in class definitions
 #include "bindingMacros.hh"
 #include "equalitySymbol.hh"
+#include "equalityExtor.hh"
+#include "equalityExtorFinal.hh"
 
 //	full compiler classes
 #include "compilationContext.hh"
@@ -166,6 +168,18 @@ EqualitySymbol::compileEquations()
 {
 }
 
+Instruction*
+EqualitySymbol::generateFinalInstruction(const Vector<int>& argumentSlots)
+{
+  return new EqualityExtorFinal(this, argumentSlots[0], argumentSlots[1]);
+}
+
+Instruction*
+EqualitySymbol::generateInstruction(int destination, const Vector<int>& argumentSlots, Instruction* nextInstruction)
+{
+  return new EqualityExtor(this, argumentSlots[0], argumentSlots[1], destination, nextInstruction);
+}
+ 
 #ifdef COMPILER
 
 void

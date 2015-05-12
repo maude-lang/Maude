@@ -30,7 +30,7 @@ class FreshVariableGenerator
 {
 public:
   virtual ~FreshVariableGenerator() {}
-  virtual int getFreshVariableName(int index) = 0;
+  virtual int getFreshVariableName(int index, bool odd = false) = 0;
   virtual Symbol* getBaseVariableSymbol(Sort* sort) = 0;
   //
   //	The following member function checks if a given variable name could conflict

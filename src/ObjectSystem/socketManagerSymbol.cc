@@ -68,6 +68,16 @@
 #include "socketAsync.cc"
 #include "socketOutcomes.cc"
 
+SocketManagerSymbol::ActiveSocket::ActiveSocket()
+{
+  textArray = 0;  // make it safe for deletion
+}
+
+SocketManagerSymbol::ActiveSocket::~ActiveSocket()
+{
+  delete [] textArray;  // just in case we end up being delete while we're still waiting to send stuff
+}
+
 SocketManagerSymbol::SocketManagerSymbol(int id)
   : ExternalObjectManagerSymbol(id)
 {

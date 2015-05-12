@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for class ACU_Subproblem.
+//      Implementation for class ACU_UnificationSubproblem2.
 //
 
 //	utility stuff
@@ -62,10 +62,8 @@ ACU_UnificationSubproblem2::ACU_UnificationSubproblem2(ACU_Symbol* topSymbol)
     savedSubstitution(0),
     preSolveSubstitution(0)
 {
-#ifndef NO_ASSERT
   DebugAdvisory("Created ACU_UnificationSubproblem2() base " << ((void*) this) <<
 		" for topSymbol " << topSymbol);
-#endif
   maximalSelections = 0;
 }
 
@@ -77,22 +75,20 @@ ACU_UnificationSubproblem2::~ACU_UnificationSubproblem2()
 void
 ACU_UnificationSubproblem2::markReachableNodes()
 {
-  //  cout << this << endl;
-  int nrFragile = savedSubstitution.nrFragileBindings();
-  //  cout << "nrFragile = " << nrFragile << endl;
+  //
+  //	Protect dags in preSolveSubstitution.
+  //
+  int nrFragile = preSolveSubstitution.nrFragileBindings();
   for (int i = 0; i < nrFragile; i++)
     {
-      //      cout << i << endl;
-      DagNode* d = savedSubstitution.value(i);
+      DagNode* d = preSolveSubstitution.value(i);
       if (d != 0)
-	{
-	  //	  cout << d << endl;
-	  d->mark();
-	}
+	d->mark();
     }
   //
-  //	No need to mark preSolveSubstitution since it's dags are a subset of those in
-  //	savedSubstitution.
+  //	No need to mark  savedSubstitution since its dags are a subset of those in
+  //	preSolveSubstitution; we get from preSolveSubstitution to savedSubstitution by
+  //	unsolving bindings.
   //
 }
 
@@ -104,12 +100,30 @@ ACU_UnificationSubproblem2::addUnification(DagNode* lhs, DagNode* rhs, bool mark
 	 rhs->symbol() == topSymbol ||
 	 dynamic_cast<VariableDagNode*>(rhs) != 0, "bad rhs for for non-collapse theory " << rhs);
   Assert(topSymbol->hasIdentity() || !marked, "bad mark for non-collapse theory");
+
+  int nrSubterms = subterms.size();
   {
-    int nrSubterms = subterms.size();
+    //
+    //	We start with all multiplicities as zero and increment or decrement them as we find subterms.
+    //
     for (int i = 0; i < nrSubterms; ++i)
       multiplicities[i] = 0;
   }
-  if (rhs->symbol() != topSymbol)
+  //
+  //	We are guaranteed that the lhs has the form f(...) where f is our top symbol.
+  //	We first deal with the rhs.
+  //
+  if (rhs->symbol() == topSymbol)
+    {
+      //
+      //	The usual case where the unification looks like f(...) =? f(...)
+      //	We just insert the multiplicities into our table.
+      //
+      ArgVec<ACU_DagNode::Pair> rhsArgs = safeCast(ACU_DagNode*, rhs)->argArray;
+      FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, rhsArgs)
+	setMultiplicity(i->dagNode, - i->multiplicity, solution);
+    }
+  else
     {
       //
       //	Must be of the form f(...) =? X
@@ -125,20 +139,21 @@ ACU_UnificationSubproblem2::addUnification(DagNode* lhs, DagNode* rhs, bool mark
 	    markedSubterms.insert(subtermIndex);  // cannot be assigned multiple things
 	}
     }
-  else
-    {
-      ArgVec<ACU_DagNode::Pair> rhsArgs = safeCast(ACU_DagNode*, rhs)->argArray;
-      FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, rhsArgs)
-	setMultiplicity(i->dagNode, - i->multiplicity, solution);
-    }
-
+  //
+  //	Now deal with the lhs.
+  //
   {
     ArgVec<ACU_DagNode::Pair> lhsArgs = safeCast(ACU_DagNode*, lhs)->argArray;
     FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, lhsArgs)
       setMultiplicity(i->dagNode, i->multiplicity, solution);
   }
   //
-  //	Check to see if everything cancelled.
+  //	Some of the subterms might have cancelled - if they were newly introduced they are not needed.
+  //
+  killCancelledSubterms(nrSubterms);
+  //
+  //	Check to see if everything cancelled. If something did not there we need
+  //	to record the Diophantine equation corresponding to this unification problem.
   //
   FOR_EACH_CONST(i, Vector<int>, multiplicities)
     {
@@ -161,7 +176,7 @@ ACU_UnificationSubproblem2::setMultiplicity(DagNode* dagNode, int multiplicity, 
   //	do this for variables within aliens as well.
   //
   if (VariableDagNode* varDagNode = dynamic_cast<VariableDagNode*>(dagNode))
-     dagNode = varDagNode->lastVariableInChain(solution);
+    dagNode = varDagNode->lastVariableInChain(solution);
   //
   //	Now look for dag in list of nominally abstracted dags.
   //
@@ -183,6 +198,43 @@ ACU_UnificationSubproblem2::setMultiplicity(DagNode* dagNode, int multiplicity, 
 }
 
 void
+ACU_UnificationSubproblem2::killCancelledSubterms(int nrOldSubterms)
+{
+  int nrSubterms = subterms.size();
+  if (nrSubterms > nrOldSubterms)
+    {
+      //
+      //	We added subterms that need to be removed if they cancelled.
+      //
+      int destination = nrOldSubterms;
+      for (int i = nrOldSubterms; i < nrSubterms; ++i)
+	{
+	  int m = multiplicities[i];
+	  if (m != 0)
+	    {
+	      //
+	      //	Didn't cancel - need to preserve subterm and its multiplicity.
+	      //
+	      if (destination < i)
+		{
+		  subterms[destination] = subterms[i];
+		  multiplicities[destination] = m;
+		}
+	      ++destination;
+	    }
+	}
+      if (destination < nrSubterms)
+	{
+	  //
+	  //	We killed some subterms; get rid of the surplus entries.
+	  //
+	  subterms.resize(destination);
+	  multiplicities.resize(destination);
+	}
+    }
+}
+
+void
 ACU_UnificationSubproblem2::unsolve(int index, UnificationContext& solution)
 {
   //
@@ -195,24 +247,39 @@ ACU_UnificationSubproblem2::unsolve(int index, UnificationContext& solution)
 
   Assert(variable != 0, "couldn't get variable for index " << index << " bound to " << value);
   DebugAdvisory("### unsolving " << variable << " <- " << value);
-
+  //
+  //	Start with all multiplicities zero.
+  //
   {
     int nrSubterms = subterms.size();
     for (int i = 0; i < nrSubterms; ++i)
       multiplicities[i] = 0;
   }
+  //
+  //	Increment multiplicities for subterms of f(...)
+  //
   ArgVec<ACU_DagNode::Pair> args = safeCast(ACU_DagNode*, value)->argArray;
   FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, args)
     setMultiplicity(i->dagNode, i->multiplicity, solution);
+  //
+  //	Decrement multiplicity for X
+  //
   setMultiplicity(variable, -1, solution);
+  //
+  //	Record Diophantine equation (can never be all zero).
+  //
   unifications.push_back(multiplicities);
 }
 
 bool
 ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, PendingUnificationStack& pending)
 {
-  if (subterms.empty())
-    return findFirst;  // degenerate case where all unification problems cancelled
+  //
+  //	Check for degenerate case where all of the unification problems cancelled.
+  //
+  if (unifications.empty())
+    return findFirst;
+
   if (findFirst)
     {
       //
@@ -220,7 +287,7 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
       //
       preSolveSubstitution.clone(solution);
       //
-      //	Unsolve any solved forms that are in our theory. This seeming wasteful step
+      //	Unsolve any solved forms that are in our theory. This seemingly wasteful step
       //	has to be done in order to avoid nontermination.
       //
       int nrFragile = solution.nrFragileBindings();
@@ -236,7 +303,7 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
 	  //
 	  //	Restore current solution and fail.
 	  //
-	  solution.clone(preSolveSubstitution);
+	  solution.restoreFromClone(preSolveSubstitution);
 	  return false;
 	}
       if (topSymbol->hasIdentity())
@@ -297,8 +364,11 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
       //	any fresh variables we introduced.
       //
       pending.restore(savedPendingState);
-      solution.clone(savedSubstitution);
+      solution.restoreFromClone(savedSubstitution);
     }
+  //
+  //	Look for a solution in our theory.
+  //
   while (topSymbol->hasIdentity() ? nextSelectionWithIdentity(findFirst) : nextSelection(findFirst))
     {
       findFirst = false;
@@ -310,9 +380,12 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
       //	any fresh variables we introduced.
       //
       pending.restore(savedPendingState);
-      solution.clone(savedSubstitution);
+      solution.restoreFromClone(savedSubstitution);
     }
-  solution.clone(preSolveSubstitution);
+  //
+  //	No more solutions; restore any solved forms that we unsolved.
+  //
+  solution.restoreFromClone(preSolveSubstitution);
   return false;
 }
 
@@ -681,6 +754,7 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
   int nrSubterms = subterms.size();
   for (int i = 0; i < nrSubterms; ++i)
     {
+      bool inTheory = true;
       int nrElements = 0;
       int lastElement = NONE;
       for (int j = 0; j < selectionSize; ++j)
@@ -706,7 +780,10 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
 	    d->computeBaseSortForGroundSubterms();
 	}
       else if (nrElements == 1 && selection[lastElement]->element[i] == 1)
-	d = freshVariables[lastElement];
+	{
+	  d = freshVariables[lastElement];
+	  inTheory = false;  // we are assigning an alien term
+	}
       else
 	{
 	  ACU_DagNode* a = new ACU_DagNode(topSymbol, nrElements);
@@ -735,16 +812,17 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
       if (VariableDagNode* varSubterm = dynamic_cast<VariableDagNode*>(subterm))
 	{
 	  //
-	  //	We need to handle unbound variable subterms ourself to avoid
-	  //	generating another problem in our theory.
+	  //	We need to handle unbound variable subterms that we unify with something in our 
+	  //	theory ourself to avoid generating another problem in our theory.
 	  //
 	  VariableDagNode* repVar = varSubterm->lastVariableInChain(solution);
-	  if (solution.value(repVar->getIndex()) == 0)
+	  if (solution.value(repVar->getIndex()) == 0 && inTheory)
 	    {
 	      solution.unificationBind(repVar, d);
 	      continue;
 	    }
 	}
+      //  cerr << "solving " << subterms[i] << " vs " << d << endl;
       if (!(subterms[i]->computeSolvedForm(d, solution, pending)))
 	return false;
     }

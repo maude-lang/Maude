@@ -84,3 +84,9 @@ StringSymbol::compileOpDeclarations()
 	charSort = s;  // set charSort to smallest (largest index) declared sort
     }
 }
+
+Term*
+StringSymbol::termify(DagNode* dagNode)
+{
+  return new StringTerm(this, safeCast(StringDagNode*, dagNode)->getValue());
+}

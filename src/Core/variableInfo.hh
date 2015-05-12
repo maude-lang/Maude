@@ -71,6 +71,11 @@ public:
   const NatSet& getConditionVariables() const;
   const NatSet& getUnboundVariables() const;
 
+  //
+  //	Decide if an index is read or virtual.
+  //
+  static bool isReal(int index);
+
 private:
   enum Values
   {
@@ -164,6 +169,12 @@ inline void
 VariableInfo::addUnboundVariables(const NatSet& vars)
 {
   unboundVariables.insert(vars);
+}
+
+inline bool
+VariableInfo::isReal(int index)
+{
+  return index < MAX_NR_PROTECTED_VARIABLES;
 }
 
 #endif

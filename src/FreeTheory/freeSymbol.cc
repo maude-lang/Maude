@@ -57,6 +57,7 @@
 #include "freePreNet.hh"
 #include "freeNet.hh"
 #include "freeSymbol.hh"
+#include "freeNullarySymbol.hh"
 #include "freeUnarySymbol.hh"
 #include "freeBinarySymbol.hh"
 #include "freeTernarySymbol.hh"
@@ -66,10 +67,16 @@
 #include "freeLhsAutomaton.hh"
 #include "freeRemainder.hh"
 
+#include "freeFastInstruction.hh"
+#include "freeGeneralCtor.hh"
+#include "freeGeneralCtorFinal.hh"
+#include "freeGeneralExtor.hh"
+#include "freeGeneralExtorFinal.hh"
+
 FreeSymbol*
 FreeSymbol::newFreeSymbol(int id, int arity, const Vector<int>& strategy, bool memoFlag)
 {
-  if (arity >= 1 && arity <= 3)
+  if (arity <= 3)
     {
       if (memoFlag || strategy.length() != 0)
 	{
@@ -78,7 +85,9 @@ FreeSymbol::newFreeSymbol(int id, int arity, const Vector<int>& strategy, bool m
 	    return t;
 	  delete t;
 	}
-      if (arity == 1)
+      if (arity == 0)
+	return new FreeNullarySymbol(id);
+      else if (arity == 1)
 	return new FreeUnarySymbol(id);
       else if (arity == 2)
 	return new FreeBinarySymbol(id);
@@ -105,8 +114,14 @@ FreeSymbol::compileEquations()
       Term* p = e->getLhs();
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(p))
 	{
-	  f->setSlotIndex(0);
 	  e->compile(false);
+	  //
+	  //	Even though we pass compileLhs as false, if the equation has the variant property it will
+	  //	get compiled anyway and we need to reset the slot indices to make it safe to use them
+	  //	in constructing a discrimination net.
+	  //
+	  f->resetSlotIndices();
+	  f->setSlotIndex(0);
 	}
       else
 	e->compile(true);  // foreign equation so compile lhs
@@ -144,7 +159,7 @@ FreeSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
       DagNode** args = static_cast<FreeDagNode*>(subject)->argArray();
       for (int i = nrArgs; i > 0; i--, args++)
         (*args)->reduce(context);
-      return discriminationNet.applyReplace(subject, context);
+      return DISC_NET.applyReplace(subject, context);
     }
   return complexStrategy(subject, context);
 }
@@ -178,8 +193,8 @@ FreeSymbol::complexStrategy(DagNode* subject, RewritingContext& context)
 		args[j]->computeTrueSort(context);
 	      seenZero = true;
 	    }
-	  if ((i + 1 == stratLen) ? discriminationNet.applyReplace(subject, context) :
-	      discriminationNet.applyReplaceNoOwise(subject, context))
+	  if ((i + 1 == stratLen) ? DISC_NET.applyReplace(subject, context) :
+	      DISC_NET.applyReplaceNoOwise(subject, context))
 	    return true;
 	}
       else
@@ -227,8 +242,8 @@ FreeSymbol::memoStrategy(MemoTable::SourceSet& from,
 	    }
 	  if (memoRewrite(from, subject, context))
 	    return;
-	  if ((i + 1 == stratLen) ? discriminationNet.applyReplace(subject, context) :
-	      discriminationNet.applyReplaceNoOwise(subject, context))
+	  if ((i + 1 == stratLen) ? DISC_NET.applyReplace(subject, context) :
+	      DISC_NET.applyReplaceNoOwise(subject, context))
 	    {
 	      subject->reduce(context);
 	      return;
@@ -314,6 +329,20 @@ FreeSymbol::stackArguments(DagNode* subject,
 	    stack.append(RedexPosition(args[i], parentIndex, i, eagerArgument(i)));
 	}
     }
+}
+
+Term*
+FreeSymbol::termify(DagNode* dagNode)
+{
+  int nrArgs = arity();
+  Vector<Term*> args(nrArgs);
+  DagNode** dagNodeArgs = safeCast(FreeDagNode*, dagNode)->argArray();
+  for (int i = 0; i < nrArgs; i++)
+    {
+      DagNode* d = dagNodeArgs[i];
+      args[i] = d->symbol()->termify(d);
+    }
+  return new FreeTerm(this, args);
 }
 
 //
@@ -411,6 +440,62 @@ FreeSymbol::makeCanonicalCopy(DagNode* original, HashConsSet* hcs)
   for (int i = 0; i < nrArgs; ++i, ++p, ++q)
     *q = hcs->getCanonical(hcs->insert(*p));
   return n;
+}
+
+Instruction*
+FreeSymbol::generateFinalInstruction(const Vector<int>& argumentSlots)
+{
+  if (!(discriminationNet.fastHandling()))
+    return new FreeGeneralExtorFinal(this, argumentSlots);
+
+  int nrArgs = arity();
+  if (nrArgs > 3)
+    {
+      if (equationFree())
+	return new FreeGeneralCtorFinal(this, argumentSlots);
+      else
+	return new FreeGeneralExtorFinal(this, argumentSlots);
+    }
+  switch (nrArgs)
+    {
+    case 0:
+      return new FreeFastInstruction(this, 0, 0);
+    case 1:
+      return new FreeFastInstruction(this, argumentSlots[0], 0, 0);
+    case 2:
+      return new FreeFastInstruction(this, argumentSlots[0], argumentSlots[1], 0, 0);
+    case 3:
+      return new FreeFastInstruction(this, argumentSlots[0], argumentSlots[1], argumentSlots[2], 0, 0);
+    }
+  return 0;
+}
+
+Instruction*
+FreeSymbol::generateInstruction(int destination, const Vector<int>& argumentSlots, Instruction* nextInstruction)
+{
+  if (!(discriminationNet.fastHandling()))
+    return new FreeGeneralExtor(this, argumentSlots, destination, nextInstruction);
+
+  int nrArgs = arity();
+  if (nrArgs > 3)
+    {
+      if (equationFree())
+	return new FreeGeneralCtor(this, argumentSlots, destination, nextInstruction);
+      else
+	return new FreeGeneralExtor(this, argumentSlots, destination, nextInstruction);
+    }
+  switch (nrArgs)
+    {
+    case 0:
+      return new FreeFastInstruction(this, destination, nextInstruction);
+    case 1:
+      return new FreeFastInstruction(this, argumentSlots[0], destination, nextInstruction);
+    case 2:
+      return new FreeFastInstruction(this, argumentSlots[0], argumentSlots[1], destination, nextInstruction);
+    case 3:
+      return new FreeFastInstruction(this, argumentSlots[0], argumentSlots[1], argumentSlots[2], destination, nextInstruction);
+    }
+  return 0;
 }
 
 #ifdef COMPILER

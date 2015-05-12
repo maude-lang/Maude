@@ -159,25 +159,8 @@ Rule::traceBeginTrial(DagNode* subject, RewritingContext& context) const
   return context.traceBeginRuleTrial(subject, this);
 }
 
-DagNode*
-Rule::getLhsDag()
-{
-  DagNode* d = lhsDag.getNode();
-  if (d == 0)
-    {
-      d = getLhs()->term2Dag();
-      if (d->computeBaseSortForGroundSubterms() == DagNode::UNIMPLEMENTED)
-	{
-	  IssueWarning(*this << ": lefthand side of " << this <<
-		       " contains function symbols with nonvariable arguments that are not supported by unification.");
-	}
-      lhsDag.setNode(d);
-    }
-  return d;
-}
-
 void
-Rule::reset()
+Rule::print(ostream& s) const
 {
-  lhsDag.setNode(0);
+  s << this;
 }

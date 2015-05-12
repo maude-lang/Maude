@@ -37,10 +37,12 @@
 //#include "dagNode.hh"
 #include "term.hh"
 #include "rhsAutomaton.hh"
+#include "instruction.hh"
 
 //	core class definitions
 #include "rewritingContext.hh"
 #include "termBag.hh"
+#include "stackMachineRhsCompiler.hh"
 #include "equation.hh"
 
 Equation::Equation(int label,
@@ -54,11 +56,13 @@ Equation::Equation(int label,
   if (owise)
     setFlags(OWISE);
   Assert(rhs != 0, "null rhs");
+  instructionSequence = 0;
 }
 
 Equation::~Equation()
 {
   rhs->deepSelfDestruct();
+  delete instructionSequence;
 }
 
 void
@@ -99,17 +103,82 @@ Equation::compile(bool compileLhs)
   setCompiled();
   TermBag availableTerms;  // terms available for reuse
   compileBuild(availableTerms, true);
-  rhs->compileTopRhs(builder, *this, availableTerms);
+
+  if (isVariant())
+    {
+      //
+      //	If the equation has the variant attribute, we disallow left->right sharing so
+      //	that the rhs can still be instantiated, even if the substitution was made by
+      //	unification.
+      //
+      TermBag dummy;
+      rhs->compileTopRhs(builder, *this, dummy);
+      //
+      //	For an equation with the variant attribute we always compile the lhs, even if the parent symbol
+      //	doesn't make use of the compiled lhs (in the free theory because it uses a discrimination
+      //	net for lhs matching).
+      //
+      compileLhs = true;
+    }
+  else
+    rhs->compileTopRhs(builder, *this, availableTerms);  // normal case
+
   compileMatch(compileLhs, true);
-  //builder.dump(cerr, *this);
+
   builder.remapIndices(*this);
+
+  /*
+  StackMachineRhsCompiler compiler;
+  if (builder.recordInfo(compiler) && !hasCondition())  // we don't handle conditions, and rhs might share subterms with condition
+    {
+      //compiler.dump(cerr, *this);
+      //cerr << "\n\ndealing with " << this << endl;
+      nrSlots = getNrProtectedVariables();
+      instructionSequence = compiler.compileInstructionSequence(nrSlots);
+      //compiler.dump(cerr, *this);
+#ifdef DUMP2
+      cerr << Tty(Tty::GREEN) << "INSTRUCTION SEQUENCE for " << this << endl;
+      if (instructionSequence == 0)
+	cerr << Tty(Tty::RED) << "NULL" << endl;
+      else
+	instructionSequence->dump(cerr, 0);
+      cerr <<  Tty(Tty::RESET);
+      cerr << Tty(Tty::MAGENTA) << "nrSlots = " << nrSlots << Tty(Tty::RESET) << endl;
+#endif
+    }
+
+  //builder.dump(cerr, *this);
   //builder.dump(cerr, *this);
 
+  //builder.remapIndices(*this);
+  */
+
   fast = hasCondition() ? DEFAULT : getNrProtectedVariables();  // HACK
+}
+
+void
+Equation::stackMachineCompile()
+{
+  //
+  //	We assume that the equation has already been compiled and thus its builder contains
+  //	all the information on the rhs.
+  //	We now generation a stack machine instruction sequence for that rhs.
+  //
+  StackMachineRhsCompiler compiler;
+  if (builder.recordInfo(compiler) && !hasCondition())  // we don't handle conditions, and rhs might share subterms with condition
+    {
+      instructionSequence = compiler.compileInstructionSequence();
+    }
 }
 
 int
 Equation::traceBeginTrial(DagNode* subject, RewritingContext& context) const
 {
   return context.traceBeginEqTrial(subject, this);
+}
+
+void
+Equation::print(ostream& s) const
+{
+  s << this;
 }

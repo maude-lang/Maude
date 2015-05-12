@@ -229,6 +229,13 @@ EquationTable::applyReplaceNoOwise(DagNode* subject,
   return false;
 }
 
+void
+EquationTable::resetEachEquation()
+{
+  FOR_EACH_CONST(e, Vector<Equation*>, equations)
+    (*e)->reset();
+}
+
 #ifdef DUMP
 void
 EquationTable::dumpEquationTable(ostream& s, int indentLevel)

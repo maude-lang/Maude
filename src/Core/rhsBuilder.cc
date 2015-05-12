@@ -33,7 +33,7 @@
 #include "interface.hh"
 #include "core.hh"
 
-//      interface class definitions
+//      core class definitions
 #include "rhsBuilder.hh"
 
 RhsBuilder::~RhsBuilder()
@@ -52,6 +52,17 @@ RhsBuilder::remapIndices(VariableInfo& variableInfo)
     automata[i]->remapIndices(variableInfo);
   if (lastAutomaton != 0)
     lastAutomaton->remapIndices(variableInfo);
+}
+
+bool
+RhsBuilder::recordInfo(StackMachineRhsCompiler& compiler)
+{
+  FOR_EACH_CONST(i, Vector<RhsAutomaton*>, automata)
+    {
+      if (!((*i)->recordInfo(compiler)))
+	return false;
+    }
+  return (lastAutomaton == 0) ? true : lastAutomaton->recordInfo(compiler);
 }
 
 #ifdef DUMP

@@ -108,3 +108,9 @@ FloatSymbol::rewriteToFloat(DagNode* subject,
     context.tracePostEqRewrite(subject);
   return true;  
 }
+
+Term*
+FloatSymbol::termify(DagNode* dagNode)
+{
+  return new FloatTerm(this, safeCast(FloatDagNode*, dagNode)->getValue());
+}

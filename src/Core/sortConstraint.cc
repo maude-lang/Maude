@@ -90,3 +90,9 @@ SortConstraint::traceBeginTrial(DagNode* subject, RewritingContext& context) con
 {
   return context.traceBeginScTrial(subject, this);
 }
+
+void
+SortConstraint::print(ostream& s) const
+{
+  s << this;
+}

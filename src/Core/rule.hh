@@ -27,7 +27,6 @@
 #define _rule_hh_
 #include "preEquation.hh"
 #include "rhsBuilder.hh"
-#include "dagRoot.hh"
 
 class Rule : public PreEquation
 {
@@ -45,8 +44,7 @@ public:
   const RhsBuilder& getRhsBuilder() const;
   LhsAutomaton* getNonExtLhsAutomaton();
   LhsAutomaton* getExtLhsAutomaton();
-  DagNode* getLhsDag();
-  void reset();
+  void print(ostream& s) const;
 
 private:
   int traceBeginTrial(DagNode* subject, RewritingContext& context) const;

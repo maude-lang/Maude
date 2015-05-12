@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metaVariantUnify.maude -no-banner -no-advise \
+  > metaVariantUnify.out 2>&1
+
+diff $srcdir/metaVariantUnify.expected metaVariantUnify.out > /dev/null 2>&1

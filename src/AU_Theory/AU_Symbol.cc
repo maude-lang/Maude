@@ -482,6 +482,32 @@ AU_Symbol::stackArguments(DagNode* subject,
     }
 }
 
+Term*
+AU_Symbol::termify(DagNode* dagNode)
+{
+  Vector<Term*> arguments;
+
+  if (safeCast(AU_BaseDagNode*, dagNode)->isDeque())
+    {
+      const AU_Deque& deque = safeCast(const AU_DequeDagNode*, dagNode)->getDeque();
+      for (AU_DequeIter i(deque); i.valid(); i.next())
+	{
+	  DagNode* a = i.getDagNode();
+	  arguments.append(a->symbol()->termify(a));
+	}
+    }
+  else
+    {
+      const ArgVec<DagNode*>& argArray = safeCast(const AU_DagNode*, dagNode)->argArray;
+      FOR_EACH_CONST(i, ArgVec<DagNode*>, argArray)
+	{
+	  DagNode* a = *i;
+	  arguments.append(a->symbol()->termify(a));
+	}
+    }
+  return new AU_Term(this, arguments);
+}
+
 //
 //	Hash cons code.
 //

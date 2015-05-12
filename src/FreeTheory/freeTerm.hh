@@ -66,6 +66,8 @@ public:
   bool subsumes(const Term* other, bool sameVariableSet) const;
   int partialCompareArguments(const Substitution& partialSubstitution,
 			      DagNode* other) const;
+
+  void computeMatchIndices() const;
   //
   //	Functions particular to free terms.
   //
@@ -77,13 +79,12 @@ public:
   void setVisitedFlag(bool state);
   void findActiveSlots(NatSet& slots);
   FreeRemainder* compileRemainder(Equation* equation, const Vector<int>& slotTranslation);
-  //#ifdef COMPILER
   bool  scanFreeSkeleton(const NatSet& usedVariables,
 			 Vector<int>& path,
 			 FreePositionTable& positions,
 			 NatSet& boundVariables,
 			 Vector<FreeSubterm>& subterms);
-  //#endif
+  void resetSlotIndices();
 
 private:
   FreeTerm(const FreeTerm& original, FreeSymbol* symbol, SymbolMap* translator);

@@ -247,7 +247,7 @@ viewEndOpMap	:	':'
 			  //	press on.
 			  //
 			  opDescription = lexerBubble;
-			  lexBubble(END_STATEMENT, 1)
+			  lexBubble(END_STATEMENT, 1);
 			}
 			endBubble
 			{

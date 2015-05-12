@@ -273,6 +273,22 @@ Module::closeTheory()
 }
 
 void
+Module::stackMachineCompile()
+{
+  Assert(status >= THEORY_CLOSED, "bad status");
+  if (status == STACK_MACHINE_COMPILED)
+    return;
+  status = STACK_MACHINE_COMPILED;
+  {
+    const Vector<Equation*>& equations = getEquations();
+    FOR_EACH_CONST(i, Vector<Equation*>, equations)
+      {
+	(*i)->stackMachineCompile();
+      }
+  }
+}
+
+void
 Module::indexSortConstraints()
 {
   int nrSortConstraints = sortConstraints.length();
@@ -309,6 +325,7 @@ Module::indexEquation(Equation* eq)
   if (!(eq->isNonexec()))
     {
       Term* lhs = eq->getLhs();
+      lhs->computeMatchIndices();
       bool noCollapse = lhs->collapseSymbols().empty();
       AdvisoryCheck(noCollapse,
 		    *lhs << ": collapse at top of " << QUOTE(lhs) <<

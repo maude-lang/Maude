@@ -21,7 +21,7 @@
 */
 
 //
-//	Class for connected components in the sort hierarchy
+//	Class for connected components in the sort hierarchy.
 //
 #ifndef _connectedComponent_hh_
 #define _connectedComponent_hh_
@@ -46,10 +46,15 @@ public:
   bool errorFree() const;
   void errorSortSeen();
   //
-  //	for use by Sort only
+  //	For use by class Sort only.
   //
   void registerSort(Sort* sort);
   int appendSort(Sort* sort);
+  //
+  //	For new engine.
+  //
+  int getNewMatchIndex();
+  int getLastAllocatedMatchIndex() const;
 
 #ifdef DUMP
   void dump(ostream& s);
@@ -60,6 +65,10 @@ private:
   short nrMaxSorts;
   Bool errorFreeFlag;
   Vector<Sort*> sorts;
+  //
+  //	For new engine.
+  //
+  int lastAllocatedMatchIndex;
 };
 
 inline void
@@ -104,6 +113,18 @@ ConnectedComponent::appendSort(Sort* sort)
   int i = sorts.length();
   sorts.append(sort);
   return i;
+}
+
+inline int
+ConnectedComponent::getNewMatchIndex()
+{
+  return ++lastAllocatedMatchIndex;
+}
+
+inline int
+ConnectedComponent::getLastAllocatedMatchIndex() const
+{
+  return lastAllocatedMatchIndex;
 }
 
 #endif

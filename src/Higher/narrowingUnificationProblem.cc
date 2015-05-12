@@ -46,7 +46,7 @@
 #include "connectedComponent.hh"
 #include "unificationContext.hh"
 #include "freshVariableGenerator.hh"
-#include "rule.hh"
+#include "preEquation.hh"
 
 //	variable class definitions
 #include "variableDagNode.hh"
@@ -56,25 +56,81 @@
 #include "narrowingVariableInfo.hh"
 #include "narrowingUnificationProblem.hh"
 
-NarrowingUnificationProblem::NarrowingUnificationProblem(Rule* rule,
+NarrowingUnificationProblem::NarrowingUnificationProblem(PreEquation* preEquation,
 							 DagNode* target,
 							 const NarrowingVariableInfo& variableInfo,
-							 FreshVariableGenerator* freshVariableGenerator)
-  : rule(rule),
-    target(target),
+							 FreshVariableGenerator* freshVariableGenerator,
+							 bool odd)
+  : preEquation(preEquation),
+    nrPreEquationVariables(preEquation->getNrRealVariables()),
     variableInfo(variableInfo),
-    freshVariableGenerator(freshVariableGenerator)
+    freshVariableGenerator(freshVariableGenerator),
+    odd(odd)
 {
-  Module* module = rule->getModule();
+  //
+  //	This is the normal constructor where we are trying to narrow target with a rule or equation
+  //	given by preEquation.
+  //
+  Module* module = preEquation->getModule();
   firstTargetSlot = module->getMinimumSubstitutionSize();
   substitutionSize = firstTargetSlot + variableInfo.getNrVariables();
+  //cout << "firstTargetSlot = " << firstTargetSlot << " substitutionSize = " << substitutionSize << endl;
   sortBdds = module->getSortBdds();
   //
   //	Initialize the sorted and unsorted solutions.
   //
   orderSortedUnifiers = 0;
   sortedSolution = new Substitution(substitutionSize);
-  unsortedSolution = new UnificationContext(freshVariableGenerator, substitutionSize);
+  unsortedSolution = new UnificationContext(freshVariableGenerator, substitutionSize, odd);
+  for (int i = 0; i < substitutionSize; ++i)
+    {
+      sortedSolution->bind(i, 0);  // so GC doesn't barf
+      //
+      //	At very least the gap between the preEquation variables and the target variables
+      //	must be zero'd out so that PendingUnificationStack cycle detection doesn't look at garbage.
+      //	Also UnificationContext protects its slots from GC so they need to be safe values.
+      //
+      unsortedSolution->bind(i, 0);
+    }
+  //
+  //	Solve the underlying many-sorted unification problem.
+  //
+  viable = preEquation->getLhsDag()->computeSolvedForm(target, *unsortedSolution, pendingStack);
+}
+
+NarrowingUnificationProblem::NarrowingUnificationProblem(DagNode* lhs,
+							 DagNode* rhs,
+							 const NarrowingVariableInfo& variableInfo,
+							 FreshVariableGenerator* freshVariableGenerator,
+							 bool odd)
+  : preEquation(0),
+    nrPreEquationVariables(0),
+    variableInfo(variableInfo),
+    freshVariableGenerator(freshVariableGenerator),
+    odd(odd)
+{
+  //
+  //	This is a special constructor used for the final lhs =? rhs step in variant unification.
+  //	There is no rule or equation here. However we have indexed dagnodes rather than terms, and
+  //	need the non-destructive unifier generation and odd/even fresh variable naming capabilities
+  //	of this class. Thus we can't use class UnificationProblem.
+  //
+  //cout << lhs << " =? " << rhs << endl;
+  Module* module = lhs->symbol()->getModule();
+  //cout << "module: " << module << endl;
+
+  firstTargetSlot = module->getMinimumSubstitutionSize();
+  //cout << "firstTargetSlot: " << firstTargetSlot << endl;
+  //cout << "nr unification variables: " << variableInfo.getNrVariables() << endl;
+  substitutionSize = firstTargetSlot + variableInfo.getNrVariables();
+
+  sortBdds = module->getSortBdds();
+  //
+  //	Initialize the sorted and unsorted solutions.
+  //
+  orderSortedUnifiers = 0;
+  sortedSolution = new Substitution(substitutionSize);
+  unsortedSolution = new UnificationContext(freshVariableGenerator, substitutionSize, odd);
   for (int i = 0; i < substitutionSize; ++i)
     {
       sortedSolution->bind(i, 0);  // so GC doesn't barf
@@ -83,7 +139,7 @@ NarrowingUnificationProblem::NarrowingUnificationProblem(Rule* rule,
   //
   //	Solve the underlying many-sorted unification problem.
   //
-  viable = rule->getLhsDag()->computeSolvedForm(target, *unsortedSolution, pendingStack);
+  viable = lhs->computeSolvedForm(rhs, *unsortedSolution, pendingStack);
 }
 
 NarrowingUnificationProblem::~NarrowingUnificationProblem()
@@ -112,81 +168,151 @@ NarrowingUnificationProblem::findNextUnifier()
 {
   if (!viable)
     return false;
-  if (orderSortedUnifiers == 0)
+
+  bool first = true;
+  //
+  //	Do we already have an unsorted solution that we can find another of assigning sorts to.
+  //
+  if (orderSortedUnifiers != 0)
     {
-      //
-      //	First solution.
-      //
-      if (!(pendingStack.solve(true, *unsortedSolution)))
-	  return false;
-      if (!extractUnifier())
-	goto nextUnsorted;
-      findOrderSortedUnifiers();
-      if (orderSortedUnifiers == 0)
-	goto nextUnsorted;
-#ifdef NO_ASSERT
-      (void) orderSortedUnifiers->nextAssignment();
-#else
-      bool t = orderSortedUnifiers->nextAssignment();
-      Assert(t, "no first order sorted unifier");
-#endif
-    }
-  else
-    {
-      //
-      //	Try to find another way of assigning sorts to current solution.
-      //
-      if (!(orderSortedUnifiers->nextAssignment()))
+      if (orderSortedUnifiers->nextAssignment())
+	goto good;
+      else
 	{
 	  delete orderSortedUnifiers;
 	  orderSortedUnifiers = 0;
-	nextUnsorted:
-	  if (!(pendingStack.solve(false, *unsortedSolution)))
-	    return false;
-	  if (!extractUnifier())
-	    goto nextUnsorted;
-	  //freshVariableGenerator->reset();
-	  findOrderSortedUnifiers();
-	  if (orderSortedUnifiers == 0)
-	    goto nextUnsorted;
+	  first = false;
+	}
+    }
+  //
+  //	Keep extracting solved forms until we find one which has no cycles and which order-sortable.
+  //	If we run out solved forms, we're done.
+  //
+  for(;;)
+    {
+      if (!pendingStack.solve(first, *unsortedSolution))
+	return false;
+      if (extractUnifier() && findOrderSortedUnifiers())
+	{
 #ifdef NO_ASSERT
 	  (void) orderSortedUnifiers->nextAssignment();
 #else
 	  bool t = orderSortedUnifiers->nextAssignment();
 	  Assert(t, "no first order sorted unifier");
 #endif
+	  break;
 	}
+      first = false;
     }
 
-  const Vector<Byte>& assignment = orderSortedUnifiers->getCurrentAssignment();
-  int bddVar = sortBdds->getFirstAvailableVariable();
-  FOR_EACH_CONST(i, NatSet, freeVariables)
-    {
-      DagNode* variable = sortedSolution->value(*i);
-      ConnectedComponent* component = variable->symbol()->rangeComponent();
-      //
-      //	Compute the index of the new sort for this variable from the
-      //	value of the BDD variables in the current satisfying assignment.
-      //
-      int nrBddVariables = sortBdds->getNrVariables(component->getIndexWithinModule());
-      int index = 0;
-      for (int j = nrBddVariables - 1; j >= 0; --j)
-	{
-	  index <<= 1;
-	  if (assignment[bddVar + j])
-	    ++index;
-	}
-      bddVar += nrBddVariables;
-      //
-      //	Replace each variable symbol in a free variable with the
-      //	variable symbol corresponding to its newly calculated sort.
-      //
-      variable->replaceSymbol(freshVariableGenerator->getBaseVariableSymbol(component->sort(index)));
-    }
+ good:
+  if (!freeVariables.empty())
+    bindFreeVariables();
   return true;
 }
 
+Sort*
+NarrowingUnificationProblem::variableIndexToSort(int index)
+{
+  if (index < nrPreEquationVariables)
+    {
+      //
+      //	Original PreEquation variable.
+      //
+      return safeCast(VariableSymbol*, preEquation->index2Variable(index)->symbol())->getSort();
+    }
+  if (index < substitutionSize)
+    {
+      Assert(index >= firstTargetSlot, "variable index in no man's land " << index);
+      //
+      //	Original dag variable.
+      //
+      return safeCast(VariableSymbol*, variableInfo.index2Variable(index - firstTargetSlot)->symbol())->getSort();
+    }
+  //
+  //	Fresh variable introduced by unification.
+  //
+  return unsortedSolution->getFreshVariableSort(index);
+}
+
 void
+NarrowingUnificationProblem::bindFreeVariables()
+{
+  //
+  //	We go through the variables that were free in the unsorted unifier and bind each to a fresh variable, whose sort is either that
+  //	calculated by the BDDs for a constrained variables, or the sort of the original variable for an unconstrained variable.
+  //
+  const Vector<Byte>& assignment = orderSortedUnifiers->getCurrentAssignment();
+  int bddVar = sortBdds->getFirstAvailableVariable();
+  int freshVariableCount = 0;
+
+  FOR_EACH_CONST(i, NatSet, freeVariables)
+    {
+      //
+      //	Get original sort of variable and its connected component.
+      //
+      int fv = *i;
+      Sort* sort = variableIndexToSort(fv);
+      ConnectedComponent* component = sort->component();
+
+      Sort* newSort;
+      if (sortConstrainedVariables.contains(fv))
+	{
+	  //
+	  //	The index of the new sort is binary encoded by the assignments to the BDD variables for this free variable.
+	  //
+	  int nrBddVariables = sortBdds->getNrVariables(component->getIndexWithinModule());
+	  int newSortIndex = 0;
+	  for (int j = nrBddVariables - 1; j >= 0; --j)
+	    {
+	      newSortIndex <<= 1;
+	      if (assignment[bddVar + j])
+		++newSortIndex;
+	    }
+	  bddVar += nrBddVariables;
+	  newSort = component->sort(newSortIndex);
+	}
+      else
+	{
+	  //
+	  //	We have a free variable that didn't occur in any other variables binding; therefore its sort
+	  //	isn't constrained and remains the same.
+	  //
+	  newSort = sort;
+	}
+      //
+      //	Make a new fresh variable with correct sort and name.
+      //
+      //	By giving fv as the slot, we ensure that we can reinstantiate users of this variable for second
+      //	and subsequent sorted solutions corresponding to our unsorted solution.
+      //
+      DagNode* newVariable = new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(newSort),
+						 freshVariableGenerator->getFreshVariableName(freshVariableCount, odd),
+						 fv);
+      //
+      //	Bind slot to new variable.
+      //
+      sortedSolution->bind(fv, newVariable);
+      ++freshVariableCount;
+    }
+  //
+  //	Now go through the substitution, instantiating anything that is bound to something other than a free variable
+  //	on the new free variables.
+  //
+  for (int i = 0; i < substitutionSize; ++i)
+    {
+      if (DagNode* d = sortedSolution->value(i))  // might be an unused slot
+	{
+	  if (!(freeVariables.contains(i)))  // not a free variable
+	    {
+	      if (DagNode* d2 = d->instantiate(*sortedSolution))
+		sortedSolution->bind(i, d2);
+	    }
+	}
+    }
+}
+
+bool
 NarrowingUnificationProblem::findOrderSortedUnifiers()
 {
   //
@@ -198,8 +324,6 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
   //	For each free variable allocate a block of BDD variables based on the
   //	size of the connected component of its sort.
   //
-  int nrRuleVariables = rule->getNrProtectedVariables();
-  //
   //	We may have a bigger substitution than we started with due to fresh variables
   //	being created to express unifiers in theories such as AC.
   //	
@@ -210,36 +334,28 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
   Vector<int> realToBdd(newSubstitutionSize);
   int nextBddVariable = sortBdds->getFirstAvailableVariable();
   {
-    FOR_EACH_CONST(i, NatSet, freeVariables)
+    FOR_EACH_CONST(i, NatSet, sortConstrainedVariables)
       {
 	int fv = *i;
+	//cout << "variable with index " << fv << endl;
 	realToBdd[fv] = nextBddVariable;
-	//
-	//	There are 3 possibilities for a free variable:
-	//	(1) it came from the rule;
-	//	(2) it came from the dag being narrowed; or
-	//	(3) it was a fresh variable introduced by unsorted unification.
-	//
-	Sort* sort;
-	if (fv < nrRuleVariables)
-	  sort = safeCast(VariableSymbol*, rule->index2Variable(fv)->symbol())->getSort();
-	else if (fv < substitutionSize)
-	  sort = safeCast(VariableSymbol*, variableInfo.index2Variable(fv - firstTargetSlot)->symbol())->getSort();
-	else
-	  sort = unsortedSolution->getFreshVariableSort(fv);
+	Sort* sort = variableIndexToSort(fv);
 	nextBddVariable += sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
+	//cout << "allocated bdds" << endl;
       }
   }
+  DebugAdvisory("allocated " << nextBddVariable << " BDD variables" <<
+		"sc vars " << sortConstrainedVariables.size() << " freeVariables " << freeVariables.size());
   //
   //	Make sure BDD package has enough variables allocated.
   //
   BddUser::setNrVariables(nextBddVariable);
   //
-  //	Constrains free fresh variables to have indices in valid range.
+  //	Constrain fresh sort constrained variables to have sort indices in valid range.
   //
   Bdd unifier = bddtrue;
   {
-    FOR_EACH_CONST(i, NatSet, freeVariables)
+    FOR_EACH_CONST(i, NatSet, sortConstrainedVariables)
       {
 	int fv = *i;
 	if (fv >= substitutionSize)
@@ -255,8 +371,11 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
 	    Bdd leqRelation = sortBdds->getLeqRelation(sort->getIndexWithinModule());
 	    leqRelation = bdd_veccompose(leqRelation, bitMap);
 	    unifier = bdd_and(unifier, leqRelation);
-	    DebugAdvisory("NarrowingUnificationProblem::findOrderSortedUnifiers() : Adding constraint for free, non-original variable: "
-			  << leqRelation << " unifier becomes " << unifier);
+	    DebugAdvisory("NarrowingUnificationProblem::findOrderSortedUnifiers() : Adding constraint for free, non-original variable; nodes in new bdd = " <<
+			  bdd_nodecount(unifier) << " unifier = " << unifier);
+
+	    //	    DebugAdvisory("NarrowingUnificationProblem::findOrderSortedUnifiers() : Adding constraint for free, non-original variable: "
+	    //			  << leqRelation << " unifier becomes " << unifier);
 	    bdd_freepair(bitMap);
 	  }
       }
@@ -268,18 +387,20 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
   for (int i = 0; i < substitutionSize; ++i)
     {
       //
-      //	We don't even look at fresh variables. Each slot corresponds to:
+      //	We don't even look at fresh variables - they are not subject to original constraints - they get implicity constrained
+      //	by where they show up if they are free. Therefore each slot we examine corresponds to:
       //	(1) an original variable that was bound;
-      //	(2) an original variable that is free; or
-      //	(3) an unused slot lying between the rule variables and the dag variables.
+      //	(2) an original variable that is free but sort constrained by its occurrence in bindings to other variables
+      //	(3) an original variable that is free and doesn't occur in bindings to other variables; or
+      //	(4) an unused slot lying between the preEquation variables and the dag variables (no man's land).
+      //
+      //	Cases (3) and (4) place no role in the BDD based sort computations.
       //
       DagNode* d = sortedSolution->value(i);
-      if (d != 0 || freeVariables.contains(i))
+      if (d != 0 || sortConstrainedVariables.contains(i))
 	{
 	  bddPair* bitMap = bdd_newpair();
-	  Sort* sort = (i < nrRuleVariables) ?
-	    safeCast(VariableSymbol*, rule->index2Variable(i)->symbol())->getSort() :
-	    safeCast(VariableSymbol*, variableInfo.index2Variable(i - firstTargetSlot)->symbol())->getSort();
+	  Sort* sort = variableIndexToSort(i);
 	  Bdd leqRelation = sortBdds->getLeqRelation(sort->getIndexWithinModule());
 	  if (d != 0)
 	    {
@@ -296,7 +417,7 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
 	  else
 	    {
 	      //
-	      //	Free variable: sort assigned to free variable must be <= variables original sort.
+	      //	Free, sort constrained variable: sort assigned to free variable must be <= variables original sort.
 	      //
 	      int firstVar = realToBdd[i];
 	      int nrBdds= sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
@@ -307,7 +428,7 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
 	  bdd_freepair(bitMap);
 	  unifier = bdd_and(unifier, leqRelation);
 	  if (unifier == bddfalse)
-	    return;
+	    return false;
 	}
     }
   //
@@ -320,18 +441,11 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
   //
   Bdd maximal = unifier;
   int secondBase = sortBdds->getFirstAvailableVariable();
-  FOR_EACH_CONST(i, NatSet, freeVariables)
+  FOR_EACH_CONST(i, NatSet, sortConstrainedVariables)
     {
       int fv = *i;
-      Sort* sort;
-      if (fv < nrRuleVariables)
-	sort = safeCast(VariableSymbol*, rule->index2Variable(fv)->symbol())->getSort();
-      else if (fv < substitutionSize)
-	sort = safeCast(VariableSymbol*, variableInfo.index2Variable(fv - firstTargetSlot)->symbol())->getSort();
-      else
-	sort = unsortedSolution->getFreshVariableSort(fv);
-
-     int nrBddVariables = sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
+      Sort* sort = variableIndexToSort(fv);
+      int nrBddVariables = sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
       //
       //	Replace the bdd variables allocated to the real variable in unifier with 0...nrBddVariables-1.
       //	Replace the bdd variables firstAvail,..., firstAvail+nrBddVariables-1 in gtOp with the
@@ -356,38 +470,7 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
       Assert(maximal != bddfalse, "maximal false even though unifier isn't");
     }
   orderSortedUnifiers = new AllSat(maximal, secondBase, nextBddVariable - 1);
-  if (!freeVariables.empty())
-    {
-      int freshVariableCount = 0;
-      //
-      //	Finally we bind each free variable to a fresh variable of the appropriate sort and
-      //	instantiate all bindings to replace all occurences of the (formerly) free variables.
-      //
-      FOR_EACH_CONST(i, NatSet, freeVariables)
-	{
-	  int fv = *i;
-	  Sort* sort;
-	  if (fv < nrRuleVariables)
-	    sort = safeCast(VariableSymbol*, rule->index2Variable(fv)->symbol())->getSort();
-	  else if (fv < substitutionSize)
-	    sort = safeCast(VariableSymbol*, variableInfo.index2Variable(fv - firstTargetSlot)->symbol())->getSort();
-	  else
-	    sort = unsortedSolution->getFreshVariableSort(fv);
-
-	  sortedSolution->bind(fv, new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(sort),
-						      freshVariableGenerator->getFreshVariableName(freshVariableCount),
-						      fv));
-	  ++freshVariableCount;
-	}
-      for (int i = 0; i < substitutionSize; ++i)
-	{
-	  if (DagNode* d = sortedSolution->value(i))  // might be an unused slot
-	    {
-	      if (DagNode* d2 = d->instantiate(*sortedSolution))
-		sortedSolution->bind(i, d2);
-	    }
-	}
-    }
+  return true;
 }
 
 bool
@@ -398,16 +481,18 @@ NarrowingUnificationProblem::extractUnifier()
   //	bound variables by their dependencies and if that can be done, by
   //	instantiating their bindings in that order.
   //
-  int nrRuleVariables = rule->getNrProtectedVariables();
   order.clear();
   done.clear();
   pending.clear();
   freeVariables.clear();
+  sortConstrainedVariables.clear();
   for (int i = 0; i < substitutionSize; ++i)
     {
-      if (i < nrRuleVariables || i >= firstTargetSlot)
+      if (i < nrPreEquationVariables || i >= firstTargetSlot)
 	{
-	  if (!explore(i))
+	  if (unsortedSolution->value(i) == 0)
+	    freeVariables.insert(i);
+	  else if (!explore(i))
 	    return false;
 	}
     }
@@ -433,6 +518,7 @@ NarrowingUnificationProblem::explore(int index)
   if (d == 0)
     {
       freeVariables.insert(index);
+      sortConstrainedVariables.insert(index);
       done.insert(index);
       return true;
     }

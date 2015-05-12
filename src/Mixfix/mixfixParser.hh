@@ -89,6 +89,7 @@ public:
     MAKE_METADATA_ATTRIBUTE,
     MAKE_NONEXEC_ATTRIBUTE,
     MAKE_OWISE_ATTRIBUTE,
+    MAKE_VARIANT_ATTRIBUTE,
     MAKE_PRINT_ATTRIBUTE,
     MAKE_ATTRIBUTE_LIST,
     //
@@ -96,6 +97,7 @@ public:
     //
     CONDITIONAL_COMMAND,
     UNIFY_LIST,
+    MAKE_TERM_LIST,
     //
     //	Strategy expression construction actions
     //
@@ -157,6 +159,10 @@ public:
 			 int& searchType,
 			 Term*& target,
 			 Vector<ConditionFragment*>& condition);
+  void makeGetVariantsCommand(Term*& initial, Vector<Term*>& constraint);
+  void makeVariantUnifyCommand(Vector<Term*>& lhs,
+			       Vector<Term*>& rhs,
+			       Vector<Term*>& constraint);
   void makeStrategyCommand(Term*& subject, StrategyExpression*& strategy);
 
   void makeAssignment(int node, Vector<Term*>& variables, Vector<Term*>& values);
@@ -175,7 +181,8 @@ private:
   {
     NONEXEC = 1,
     OWISE = 2,
-    PRINT = 4
+    PRINT = 4,
+    VARIANT = 8
   };
 
   struct Action
@@ -204,6 +211,7 @@ private:
 			 FlagSet& flags,
 			 const Vector<int>& printNames,
 			 const Vector<Sort*>& printSorts);
+  void makeTermList(int node, Vector<Term*>& termList);
   void makeStrategyList(int node, Vector<StrategyExpression*>& strategies);
 
   int translateSpecialToken(int code);

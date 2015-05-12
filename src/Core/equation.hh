@@ -44,13 +44,20 @@ public:
   void compile(bool compileLhs);
   const RhsBuilder& getRhsBuilder() const;
   long fastNrVariables() const;
+  void print(ostream& s) const;
 
   bool isOwise() const;
+  void setVariant();
+  bool isVariant() const;
+
+  void stackMachineCompile();
+  Instruction* getInstructionSequence() const;
 
 private:
   enum Flags
   {
-    OWISE = 0x10
+    OWISE = 0x10,
+    VARIANT = 0x20
   };
 
   int traceBeginTrial(DagNode* subject, RewritingContext& context) const;
@@ -64,12 +71,29 @@ private:
   long fast;  // avoid the need for explicit extension instruction on x86-64
   Term* rhs;
   RhsBuilder builder;
+  //
+  //	For stack based execution.
+  //
+  Instruction* instructionSequence;
+  int nrSlots;
 };
 
 inline bool
 Equation::isOwise() const
 {
   return getFlag(OWISE);
+}
+
+inline bool
+Equation::isVariant() const
+{
+  return getFlag(VARIANT);
+}
+
+inline void
+Equation::setVariant()
+{
+  setFlags(VARIANT);
 }
 
 inline long
@@ -88,6 +112,12 @@ inline const RhsBuilder&
 Equation::getRhsBuilder() const
 {
   return builder;
+}
+
+inline Instruction*
+Equation::getInstructionSequence() const
+{
+  return instructionSequence;
 }
 
 //

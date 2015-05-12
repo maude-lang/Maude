@@ -53,6 +53,7 @@
 #include "CUI_DagNode.hh"
 #include "CUI_Term.hh"
 #include "CUI_UnificationSubproblem.hh"
+#include "CUI_UnificationSubproblem2.hh"
 
 CUI_Symbol::CUI_Symbol(int id,
 		       const Vector<int>& strategy,
@@ -302,6 +303,18 @@ CUI_Symbol::setFrozen(const NatSet& frozen)
     BinarySymbol::setFrozen(frozen);
 }
 
+Term*
+CUI_Symbol::termify(DagNode* dagNode)
+{
+  Vector<Term*> arguments(2);
+  DagNode** argArray = safeCast(CUI_DagNode*, dagNode)->argArray;
+  DagNode* d0 = argArray[0];
+  DagNode* d1 = argArray[1];
+  arguments[0] = d0->symbol()->termify(d0);
+  arguments[1] = d1->symbol()->termify(d1);
+  return new CUI_Term(this, arguments);
+}
+
 //
 //	Unification code.
 //
@@ -334,7 +347,15 @@ CUI_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
 UnificationSubproblem*
 CUI_Symbol::makeUnificationSubproblem()
 {
+  if (leftId() || rightId())
+    return new CUI_UnificationSubproblem2();
   return new CUI_UnificationSubproblem();
+}
+
+bool
+CUI_Symbol::canResolveTheoryClash()
+{
+  return leftId() || rightId();
 }
 
 //

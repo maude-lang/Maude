@@ -1,3 +1,71 @@
+2014-02-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* equalityExtor.cc (execute): rewritten; use tail call
+
+	* equalityExtorFinal.cc (execute): use tail call
+
+	* equalitySymbol.cc (generateFinalInstruction)
+	(generateInstruction): added
+
+	* equalitySymbol.hh (FreeSymbol): added decls for
+	generateFinalInstruction(), generateInstruction()
+
+	* builtIn.hh: added classes EqualityExtor and EqualityExtorFinal
+
+	* equalityExtorFinal.cc: created
+
+	* equalityExtorFinal.hh: created
+
+	* equalityExtor.cc (EqualityExtor): call stackMachineCompile
+
+	* equalitySymbol.hh (stackMachineCompile): added
+
+	* equalitySymbol.cc (stackMachinePostProcess): deleted
+
+	* equalitySymbol.hh (FreeSymbol): stackMachinePostProcess()
+	becomes stackMachineCompile()
+
+	* equalityExtor.cc (execute): use getEqualInstructionSequence(),
+	getNotEqualInstructionSequence()
+
+	* equalitySymbol.hh (FreeSymbol): added declaration for
+	stackMachinePostProcess()
+	(getEqualInstructionSequence, getNotEqualInstructionSequence): added
+
+	* equalitySymbol.cc (stackMachinePostProcess): added
+
+2014-02-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* equalityExtor.hh: created
+
+	* equalityExtor.cc: created
+
+===================================Maude101===========================================
+
+2012-03-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* floatSymbol.hh (NA_Symbol): added decl for termify()
+
+	* floatSymbol.cc (termify): added
+
+	* stringSymbol.hh (NA_Symbol): added decl for termify()
+
+	* stringSymbol.cc (termify): added
+
+===================================Maude96===========================================
+
+2011-12-31  Steven Eker  <eker@rho>
+
+	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): use makeZeroTerminatedString()
+	in place of c_str()
+	(StringOpSymbol::ropeToNumber): use makeZeroTerminatedString() in place of c_str()
+	(2 places)
+
+	* matrixOpSymbol.cc (MatrixOpSymbol::downAlgorithm): use makeZeroTerminatedString()
+	instead of c_str() since we now distrust the latter
+
+===================================Maude95c===========================================
+
 2010-10-19  Steven Eker  <eker@rho>
 
 	* stringSymbol.cc

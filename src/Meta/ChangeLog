@@ -1,3 +1,148 @@
+2014-03-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaLevelOpSymbol.hh (FreeSymbol): added decl for metaGetVariant2()
+
+	* metaVariant.cc (metaGetVariant2): renamed from metaGetVariant();
+	handle irredundant argument
+	(metaGetIrredundantVariant): added
+	(metaGetVariant): use metaGetVariant2()
+
+	* descentSignature.cc: added metaGetIrredundantVariant
+
+===================================Maude101===========================================
+
+2014-02-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (metaGetVariant, metaVariantUnify2): added
+	Asserts() on solutionNr
+	(metaVariantUnify, metaVariantDisjointUnify): removed stub code
+	(metaVariantUnify2): removed commented out code
+
+	* metaMatch.cc (makeMatchSearchState2): return 0 rather than false
+	in fail case
+
+	* metaUpModule.cc (upGather): initialize s to avoid warning
+
+===================================Maude100a===========================================
+
+2012-07-31  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (metaVariantUnify2): use upUnificationTriple(),
+	upUnificationPair()
+
+	* metaLevel.hh (M): added decls for 4 new narrow up functions
+
+	* metaUp.cc (upSubstitution): added narrowing version
+	(upUnificationPair): added narrowing version
+	(upVariant): use upSubstitution()
+	(upUnificationTriple): added narrowing version
+	(upDisjointSubstitutions): added narrowing version
+
+2012-07-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaLevelOpSymbol.hh (FreeSymbol): added decl for
+	metaVariantUnify2()
+
+	* metaVariant.cc (metaVariantUnify2): added
+
+	* descentSignature.cc: updated metaVariantUnify() and
+	metaVariantDisjointUnify()
+
+2012-07-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (metaGetVariant): call normalize() on blocker
+	terms to set hash values
+
+2012-07-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (metaGetVariant): convert blocker terms to
+	blocket dags
+
+	* metaUp.cc (upUnificationTriple): fix bug where we weren't
+	handling the singleton substitution case
+
+	* metaLevel.hh (M): make downTermList() public
+
+	* metaUp.cc (upUnificationTriple): switch term and substituion args
+
+	* metaDown.cc (downTerm): don't allow meta term syntax with empty
+	argument list
+	(downTermList): allow empty term lists
+
+	* metaLevelSignature.cc: added emptyTermListSymbol
+
+	* metaVariant.cc (metaGenerateVariant): becomes metaGetVariant()
+
+	* descentSignature.cc: replaced metaGenerateVariant() by
+	metaGetVariant()
+
+2012-07-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (metaGenerateVariant): pass blocker dags to VariantSearch
+
+===================================Maude96a===========================================
+
+2012-05-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (metaGenerateVariant): rewritten
+
+	* metaLevel.hh (M): updated decl for upVariant()
+	(M): added decl for DagNode* version of upAssignment()
+
+	* metaUp.cc (upAssignment): added DagNode* version
+	(upUnificationTriple): rewritten
+
+2012-05-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (getCachedVariantSearch): added
+
+2012-05-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaUpModule.cc (upStatementAttributes): handle variant attribute
+
+	* metaDown.cc (downStatementAttr): handle variantAttrSymbol
+	(downEquation): handle variant flag
+
+	* metaLevel.hh (M): added VARIANT to enum Flags
+
+	* metaLevelSignature.cc: added variantSymbol
+
+2012-03-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* descentSignature.cc: metaGenerateVariant() only takes 4 arguments
+
+2012-03-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc: created with stub functions
+
+	* descentSignature.cc: added metaGenerateVariant,
+	metaVariantUnify, metaVariantDisjointUnify
+
+	* metaLevel.hh (M): added decls for upVariant() and upNoVariant()
+
+	* metaUp.cc (upVariant): added
+	(upNoVariant): added
+
+	* metaLevelSignature.cc: added variantSymbol and noVariantSymbol
+
+	* metaLevel.hh (M): deleted declarations for
+	upNoUnifierContextTriple() and upNoUnifierContext4Tuple()
+
+	* metaUp.cc (upNoUnifierContextTriple): deleted
+	(upNoUnifierContext4Tuple): deleted
+
+	* metaLevelSignature.cc: deleted noUnifierContextTripleSymbol,
+	noUnifierContext4TupleSymbol, unificationContextTripleSymbol, unificationContext4TupleSymbol
+
+	* metaLevel.hh (M): deleted declarations for
+	upUnificationContextTriple() and upUnificationContext4Tuple()
+
+	* metaUp.cc (upUnificationContextTriple): deleted - unification
+	with extension isn't going to fly
+	(upUnificationContext4Tuple): deleted
+
+===================================Maude96===========================================
+
 2010-10-20  Steven Eker  <eker@rho>
 
 	* metaModuleCache.hh (Entity::User): added enum Sizes

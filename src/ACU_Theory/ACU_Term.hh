@@ -34,6 +34,7 @@ class ACU_Term : public Term
 
 public:
   ACU_Term(ACU_Symbol* symbol, const Vector<Term*>& arguments);
+  ACU_Term(ACU_Symbol* symbol, const Vector<Term*>& arguments, const Vector<int>& multiplicities);
   //
   //    Member functions required by theory interface.
   //

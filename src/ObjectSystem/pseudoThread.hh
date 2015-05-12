@@ -58,17 +58,36 @@ public:
     EVENT_HANDLED = 4
   };
 
+  //
+  //	Make any pending call backs.
+  //	If a call back was made or we were interrupted by a signal or there are no pending call backs, return appropriate code.
+  //	Otherwise sleep until interrupted or a call back happens.
+  //
   static int eventLoop();
+  //
+  //	Clear any requests for call backs on a given fd.
+  //
   static void clearFlags(int fd);
+  //
+  //	Request a call back when reading or writing on a given fd is possible.
+  //	timeOutAt is specified as an absolute number of seconds since the Unix Epoch, or NONE for never.
+  //	Only one object can wait on a given fd.
+  //
   void wantTo(int flags, int fd, long timeOutAt = NONE);
-  void requestCallBack(long notBefore = 0);
-
-  virtual void doRead(int fd);
-  virtual void doWrite(int fd);
-  virtual void doError(int fd);
-  virtual void doHungUp(int fd);
-  virtual void doTimeOut(int fd);
-  virtual void doCallBack();
+  //
+  //	Request a call back at or after a given time.
+  //	notBefore is specified as an absolute number of seconds since the Unix Epoch.
+  //
+  void requestCallBack(long notBefore);
+  //
+  //	Call back functions.
+  //
+  virtual void doRead(int fd);  // a read is possible (or the other end of a socket was closed for some OS)
+  virtual void doWrite(int fd);  // a write is possible
+  virtual void doError(int fd);   // a error happened
+  virtual void doHungUp(int fd);  // the other end of a socket was closed when wanting to do a write (for some OS, when wanting to do a read)
+  virtual void doTimeOut(int fd);  // timeOutAt time reached on an fd
+  virtual void doCallBack();  // notBefore time reached for a requested call back
 
 private:
   enum Values
@@ -78,26 +97,18 @@ private:
 
   struct FD_Info
   {
-    PseudoThread* owner;
+    PseudoThread* owner;  // only one owner allowed per fd
     short flags;
-    short nextActive;
+    short nextActive;  // maintain a linked list of active fds (those with non-zero flags)
     short prevActive;
     long timeOutAt;
   };
 
   struct CallBackRequest
   {
-    CallBackRequest(PseudoThread* client, long notBefore)
-      : client(client),
-	notBefore(notBefore)
-    {
-    }
+    CallBackRequest(PseudoThread* client, long notBefore);
 
-    bool
-    operator<(const CallBackRequest& c) const
-    {
-      return notBefore > c.notBefore;  // reversed!
-    }
+    bool operator<(const CallBackRequest& c) const;
 
     PseudoThread* client;
     long notBefore;
@@ -110,11 +121,26 @@ private:
   static int processFds(long wait);
   static void link(int fd);
   static void unlink(int fd);
-
+  //
+  //	All data is shared between PseudoThread objects since it refers to a common set of fds and a global call back queue.
+  //
   static FD_Info fdInfo[MAX_NR_FDS];
   static int firstActive;
   static CallBackQueue callBackQueue;
 };
+
+inline
+PseudoThread::CallBackRequest::CallBackRequest(PseudoThread* client, long notBefore)
+  : client(client),
+    notBefore(notBefore)
+{
+}
+
+inline bool
+PseudoThread::CallBackRequest::operator<(const CallBackRequest& c) const
+{
+  return notBefore > c.notBefore;  // reversed!
+}
 
 inline long
 PseudoThread::getTime()

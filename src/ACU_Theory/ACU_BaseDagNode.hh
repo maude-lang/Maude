@@ -40,8 +40,8 @@ public:
     //	Node was produced by an assignment in ACU matcher:
     //	(a) all arguments are reduced up to strategy of our symbol
     //	   (this only holds if it was true of subject before matching);
-    //	(b) all arguments have the correct sort;
-    //	(c) argument list in theory normal form; and
+    //	(b) all arguments have the correct sort; and
+    //	(c) argument list in theory normal form.
     //
     ASSIGNMENT,
     //

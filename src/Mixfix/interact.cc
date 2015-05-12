@@ -53,7 +53,6 @@ UserLevelRewritingContext::clearInterrupt()
 void
 UserLevelRewritingContext::setHandlers(bool handleCtrlC)
 {
-
   if (interactiveFlag && handleCtrlC)
     {
       static struct sigaction ctrlC_Handler;
@@ -67,8 +66,8 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
 #endif
       sigaction(SIGINT, &ctrlC_Handler, 0);
     }
-#ifdef NO_ASSERT
 
+#ifdef NO_ASSERT
   //
   //	If we're not debugging we handle internal errors and stack overflows.
   //
@@ -118,7 +117,7 @@ tcsh command 'limit stacksize' or the bash command 'ulimit -s'.\n\
 Depending on your operating system configuration you may be able to\n\
 increase your stacksize with the tcsh command 'unlimit stacksize'\n\
 or the bash command 'ulimit -s unlimited'.\n\n";
-  write(STDERR_FILENO, message, sizeof(message) - 1);
+  (void) write(STDERR_FILENO, message, sizeof(message) - 1);
   _exit(1);  // don't call atexit() functions with a bad machine state
 }
 
@@ -144,9 +143,9 @@ UserLevelRewritingContext::internalErrorHandler(int /* signalNr */)
 `crash.maude' that can be loaded to reproduce the crash (it may load\n\
 other files). Do not bother trying to simplify your example unless the\n\
 runtime to the bug being visible is greater than 10 seconds.\n\n";
-  write(STDERR_FILENO, message1, sizeof(message1) - 1);
-  write(STDERR_FILENO, message2, sizeof(message2) - 1);
-  write(STDERR_FILENO, message3, sizeof(message3) - 1);
+  (void) write(STDERR_FILENO, message1, sizeof(message1) - 1);
+  (void) write(STDERR_FILENO, message2, sizeof(message2) - 1);
+  (void) write(STDERR_FILENO, message3, sizeof(message3) - 1);
   _exit(1);  // don't call atexit() functions with a bad machine state
 }
 

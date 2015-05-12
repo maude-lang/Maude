@@ -358,11 +358,12 @@ AU_DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 }
 
 DagNode*
-AU_DagNode::instantiateWithReplacement(const Substitution& substitution, int argIndex, DagNode* newDag)
+AU_DagNode::instantiateWithReplacement(const Substitution& substitution, const Vector<DagNode*>& eagerCopies, int argIndex, DagNode* newDag)
 {
   int nrArgs = argArray.length();
   AU_DagNode* n = new AU_DagNode(symbol(), nrArgs);
   ArgVec<DagNode*>& args2 = n->argArray;
+  bool eager = symbol()->getPermuteStrategy() == BinarySymbol::EAGER;
   for (int i = 0; i < nrArgs; i++)
     {
       DagNode* d;
@@ -371,10 +372,74 @@ AU_DagNode::instantiateWithReplacement(const Substitution& substitution, int arg
       else
 	{
 	  d = argArray[i];
-	  if (DagNode* c = d->instantiate(substitution))  // changed under substitutition
-	    d = c;
+	  SAFE_INSTANTIATE(d, eager, substitution, eagerCopies);
 	}
       args2[i] = d;
     }
   return n;
+}
+
+DagNode*
+AU_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vector<DagNode*>& eagerCopies)
+{
+  AU_Symbol* s = symbol();
+  bool eager = s->getPermuteStrategy() == BinarySymbol::EAGER;
+
+  int nrArgs = argArray.length();
+  for (int i = 0; i < nrArgs; ++i)
+    {
+      DagNode* a = argArray[i];
+      DagNode* n = eager ?
+	a->instantiateWithCopies(substitution, eagerCopies) :
+	a->instantiate(substitution);
+
+      if (n != 0)
+	{
+	  //
+	  //	Argument changed under instantiation - need to make a new
+	  //	dagnode.
+	  //
+	  bool ground = true;
+	  AU_DagNode* d = new AU_DagNode(s, nrArgs);
+	  //
+	  //	Copy the arguments we already looked at.
+	  //
+	  for (int j = 0; j < i; ++j)
+	    {
+	      if (!(argArray[j]->isGround()))
+		ground = false;
+	      d->argArray[j] = argArray[j];	
+	    }
+	  //
+	  //	Handle current argument.
+	  //
+	  d->argArray[i] = n;
+	  if (!(n->isGround()))
+	    ground = false;
+	  //
+	  //	Handle remaining arguments.
+	  //
+	  for (++i; i < nrArgs; ++i)
+	    {
+	      DagNode* a = argArray[i];
+	      SAFE_INSTANTIATE(a, eager, substitution, eagerCopies);
+	      if (!(a->isGround()))
+		ground = false;
+	      d->argArray[i] = a;
+	    }
+	  //
+	  //	Normalize the new dagnode. We pass the dumb flag as true to prevent deque
+	  //	formation. If it doesn't collapse and all its arguments are ground we
+	  //	compute its base sort, and set ground flag.
+	  //
+	  if (d->normalizeAtTop(true) != COLLAPSED && ground)
+	    {
+	      s->computeBaseSort(d);
+	      d->setGround();
+	    }
+	  Assert(d->isDeque() == false, "Oops we got a deque! " << d);
+	  return d;	
+	}
+    }
+  return 0;  // unchanged
 }

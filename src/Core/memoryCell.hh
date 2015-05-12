@@ -42,8 +42,21 @@ public:
   //
   static MemoryCell* allocateMemoryCell();
   static void* allocateStorage(size_t bytesNeeded);
+  //
+  //	Normally we just inform the allocator at times when all the non-garbage
+  //	is accessible via root pointers.
+  //
   static void okToCollectGarbage();
+  //
+  //	Sometime we want separate the check and the call to the garbage collector
+  //	so we can do some extra work just before a garbage collect to make
+  //	sure all non-garbage is accessible from root pointers.
+  //
+  static bool wantToCollectGarbage();
+  static void collectGarbage();
+
   static void setShowGC(bool polarity);
+
   //
   //	Access to the unused byte and half word in a raw memory cell.
   //
@@ -59,7 +72,7 @@ public:
   void setFlag(int flag);
   void clearFlag(int flag);
   void copySetFlags(int flags, const MemoryCell* other);
-  //
+ //
   //	Access to garbage collector flags. We can't allow marked flag
   //	to be cleared and it only makes sense to clear the call dtor
   //	flag if we are clearing all flags other than marked.
@@ -69,11 +82,23 @@ public:
   bool needToCallDtor() const;
   void setCallDtor();
   //
+  //	This is needed when a fresh cell is allocated. The reason
+  //	for not doing this in the allocation code is to allow the compiler
+  //	to combine clearing all flags with immediately setting one or
+  //	more flags.
+  //
+  void clearAllFlags();
+  //
   //	This is needed when we reallocate a node that is already in use
   //	(for in-place replacement of a subterm); the marked flag must
   //	be preserved.
   //
   void clearAllExceptMarked();
+  //
+  //	This is used when a fresh cell is allocated and we want to start
+  //	with the flags in a state other than all clear.
+  //
+  void initFlags(int flags);
 
 private:
   enum Sizes
@@ -137,7 +162,6 @@ private:
   static void tidyArenas();
   static MemoryCell* slowNew();
   static void* slowAllocateStorage(size_t bytesNeeded);
-  static void collectGarbage();
 
   void callDtor();
 
@@ -167,21 +191,12 @@ struct MemoryCell::Header
 
 //
 //	A FullSizeMemoryCell is a MemoryCell with associated
-//	header info.
+//	header info. The header info is actually at the end of the cell.
 //
 struct MemoryCell::FullSizeMemoryCell : MemoryCell
 {
-  void initialize();
-
   Header h;
 };
-
-inline void
-MemoryCell::FullSizeMemoryCell::initialize()
-{
-  h.flags = 0;
-  h.halfWord = Sort::SORT_UNKNOWN;
-}
 
 struct MemoryCell::Bucket
 {
@@ -225,6 +240,18 @@ inline void
 MemoryCell::setFlag(int flag)
 {
   (static_cast<FullSizeMemoryCell*>(this))->h.flags |= flag;
+}
+
+inline void
+MemoryCell::clearAllFlags()
+{
+  (static_cast<FullSizeMemoryCell*>(this))->h.flags = 0;
+}
+
+inline void
+MemoryCell::initFlags(int flags)
+{
+  (static_cast<FullSizeMemoryCell*>(this))->h.flags = flags;
 }
 
 inline void
@@ -278,6 +305,12 @@ MemoryCell::okToCollectGarbage()
     collectGarbage();
 }
 
+inline bool
+MemoryCell::wantToCollectGarbage()
+{
+  return needToCollectGarbage;
+}
+
 inline void*
 MemoryCell::allocateStorage(size_t bytesNeeded)
 {
@@ -328,19 +361,13 @@ MemoryCell::allocateMemoryCell()
     {
       if ((c->h.flags & (MARKED | CALL_DTOR)) == 0)
 	{
-	  c->initialize();
 	  nextNode = c + 1;
-	  //DebugAdvisory("gc new nondtor case at "<< (void*)(c));
-	  Assert(c->h.halfWord == Sort::SORT_UNKNOWN, "bad sort init");
 	  return c;
 	}
       if ((c->h.flags & MARKED) == 0)
 	{
 	  c->callDtor();
-	  c->initialize();
 	  nextNode = c + 1;
-	  //DebugAdvisory("gc new dtor case at " << (void*)(c));
-	  Assert(c->h.halfWord == Sort::SORT_UNKNOWN, "bad sort init");
 	  return c;
 	}
       c->clearFlag(MARKED);

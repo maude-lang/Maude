@@ -1,3 +1,1090 @@
+2014-02-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeRhsAutomaton.cc (recordInfo): don't pass needContiguous
+	argument to recordFunctionEval()
+
+===================================Maude101===========================================
+
+2014-01-31  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeSymbol.cc (generateFinalInstruction, generateInstruction):
+	check for fast handling and use most general case if not
+
+	* freeNet.hh (fastHandling): added
+
+	* freeNet.cc (FreeNet): added
+
+	* freeNet.hh (F): declare ctor
+
+	* freeNet.cc (buildRemainders): compute value for fast data member
+
+	* freeRemainder.hh (fastCheckAndBind): added Assert() that we
+	really don't require slow case processing
+	(fastCheckAndBind, generalCheckAndBind): better commenting
+	(fastHandling): added
+
+2013-12-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeGeneralExtorFinal.cc (execute): use generalCheckAndBind()
+
+	* freeGeneralExtor.cc (execute): use generalCheckAndBind()
+
+	* freeRemainder.cc (slowCheckAndBind): added
+
+	* freeRemainder.hh (generalCheckAndBind): added
+	(FreeLhsStructs): added decl for slowCheckAndBind
+
+2013-11-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeInstruction.cc (execute): refactored, so that ctor cases
+	always preload symbol since this seems to give better code
+
+	* freeRemainder.cc (FreeRemainder): rearranged "fast" and
+	"super-fast" determination; use fastGeqSufficient()
+
+	* freeRemainder.hh (fastMatchReplace, fastCheckAndBind): use
+	fastLeq()
+
+===================================Maude100a===========================================
+
+2013-10-27  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeTheory.hh: added classes FreeGeneralExtor and
+	FreeGeneralExtorFinal
+
+	* freeSymbol.cc (generateFinalInstruction): use
+	FreeGeneralExtorFinal()
+
+	* freeGeneralExtorFinal.hh: created
+
+	* freeGeneralExtorFinal.cc: created
+
+	* freeDagNode.hh (DagNode): new friends FreeGeneralExtor and
+	FreeGeneralExtorFinal
+
+	* freeNet.hh (F): new friends FreeGeneralExtor and
+	FreeGeneralExtorFinal
+
+	* freeSymbol.cc (generateInstruction): use FreeGeneralExtor()
+
+	* freeGeneralExtor.hh: created
+
+	* freeGeneralExtor.cc: created
+
+	* freeNetExec.cc (applyReplaceNoOwise2, applyReplaceFast2)
+	(applyReplace2): make diff long to take advantage of long
+	symbolIndex in new TestNode
+
+	* freeNet.hh (F): new TestNode layout
+
+	* freeNetExec.hh (findRemainderListIndex): change diff to long
+
+	* freeNet.hh (F): undo "quick hack" from 2013/5/11
+
+	* freeInstruction.cc (execute): reverted to pre scratchpad code
+
+	* freeRemainder.hh (fastCheckAndBind): reverted to pre scratchpad
+	code
+
+	* freeNetExec.hh (findRemainderListIndex): reverted to pre
+	scratchpad code
+
+2013-10-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeInstruction.cc (execute): try storing pointer to
+	localArgList in scratchpad at the outset
+	(execute): fails - free net code craps on this pointer when it
+	reuses the 0 slot
+
+	* freeNetExec.hh (findRemainderListIndex): take argList as well
+
+	* freeInstruction.cc (execute): rewritten use use rawScratchPad
+
+	* freeRemainder.hh (fastCheckAndBind): take stackBase argument
+
+	* freeNet.hh (F): updated decl for findRemainderListIndex()
+
+	* freeNetExec.hh (findRemainderListIndex): use negation cheat on
+	non-unrolled version
+	(findRemainderListIndex): same cheat on unrolled loop
+	(findRemainderListIndex): take stackBase argument
+
+2013-10-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeDagNode.hh (DagNode): new friends: FreeGeneralCtor,
+	FreeGeneralCtorFinal
+
+	* freeSymbol.cc (generateFinalInstruction): use
+	FreeGeneralCtorFinal
+	(generateInstruction): use FreeGeneralCtor 
+
+	* freeGeneralCtorFinal.cc: created
+
+	* freeGeneralCtorFinal.hh: created
+
+	* freeGeneralCtor.cc: created
+
+	* freeGeneralCtor.hh: created
+
+	* freeSymbol.cc (generateFinalInstruction, generateInstruction):
+	use FreeGeneralInstruction
+
+	* freeInstruction.cc (execute): added generalCtor code
+
+	* freeGeneralInstruction.hh: created
+
+	* freeGeneralInstruction.cc: created
+
+	* freeInstruction.cc (FreeInstruction): don't set op code
+	(execute): use FastInstruction
+
+	* freeSymbol.cc (generateFinalInstruction, generateInstruction):
+	use FreeFastInstruction
+
+	* freeFastInstruction.cc: created
+
+	* freeFastInstruction.hh: created
+
+	* freeNullaryInstruction.cc: created
+
+	* freeNullaryInstruction.hh: created
+
+	* freeSymbol.cc (generateFinalInstruction, generateInstruction):
+	use FreeNullaryInstruction
+
+2013-10-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeInstruction.cc (execute): use arg specific instruction
+	classes
+	(FreeInstruction): deleted argumentSlots version
+
+	* freeSymbol.cc (generateFinalInstruction, generateInstruction):
+	copied arg specific instruction versions from Alpha99 tree
+
+	* freeInstruction.hh (NonFinalExtor): delete argIndex, and decl
+	for argumentSlots version ctor
+
+	* freeInstruction.cc (FreeInstruction): added version without argumentSlots
+
+	* freeInstruction.hh (NonFinalExtor): added decl for ctor without
+	argumentSlots
+	* freePreNet.hh (F): remove FreeNet2 stuff
+
+	* freeDagNode.hh (DagNode): FreeNet2 is no longer a friend
+
+	* freeTheory.hh: removed all extor/ctor classes; FreeNet2
+
+	* freeSymbol.cc (compileEquations): removed all FreeNet2 stuff
+
+	* freeSymbol.hh: removed all FreeNet2 stuff
+
+	* freeSymbol.cc (generateInstruction, generateFinalInstruction):
+	fix bugs by returning 0 for arity > 3
+
+===================================Maude100===========================================
+
+	2013-10-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeInstruction.cc (OK_TO_COLLECT_GARBAGE): call setTopFrame()
+	(TRY_REMAINDERS): use fastPushFrame()
+	(OK_TO_COLLECT_GARBAGE2): added
+	(TRY_REMAINDERS): don't call popToFrame()
+	(END_FRAME): use fastPop() in place of popFrame() and
+	getTopFrame()
+	(END_FRAME): use OK_TO_COLLECT_GARBAGE2() rather than
+	okToCollectGarbage()
+	(END_FRAME_NO_GC): use fastPop() in place of popFrame() and
+	getTopFrame()
+	(execute): use fastPushFrame()
+	(execute): use setTopFrame(frame) before returning
+	(WIN): increment local rewriteCount variable
+	(TRY_REMAINDERS_FINAL): increment local rewriteCount variable
+	(execute): increment local rewriteCount variable
+	(execute): add local rewriteCount to machine rewrite count
+
+2013-10-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeInstruction.cc (execute): fixed bugs in ternaryCtorFinal and
+	ternaryFastCtorFinal
+
+	* freeRemainder.cc (dump): make sure fast is printed out as an
+	integer
+
+	* freeRemainder.hh (fastCheckAndBind): handle "super-fast" case
+
+	* freeInstruction.cc (FreeInstruction): remove fall thru's in the
+	hope of removing constraints on fallen into code
+	(OK_TO_COLLECT_GARBAGE): added
+	(WIN): call OK_TO_COLLECT_GARBAGE()
+	(TRY_REMAINDERS_FINAL): call OK_TO_COLLECT_GARBAGE()
+	(END_FRAME): call MemoryCell::okToCollectGarbage()
+	(FreeInstruction): don't call MemoryCell::okToCollectGarbage()
+	(NEXT): call OK_TO_COLLECT_GARBAGE()
+	(WIN, TRY_REMAINDERS_FINAL): removed OK_TO_COLLECT_GARBAGE()
+	(execute): rewritten using label pointers
+	(execute): implement returnInstruction
+	(END_FRAME_NO_GC): added
+	(execute): no gc for nullary final ctor and return instruction
+	(NEXT_NO_GC): added
+	(execute): no gc for nullay nonfinal ctor
+	(execute): use localArgList for fail case of binaryExtor and
+	ternaryExtor
+
+2013-10-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeInsruction.hh: created
+
+	* freeInstruction.cc: created
+
+2013-10-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeBinaryFastCtorFinal.cc (execute): don't pass getUniqueSortIndex()
+
+	* freeBinaryFastCtor.cc (execute): don't pass getUniqueSortIndex()
+
+	* freeUnaryFastCtorFinal.cc (execute): don't pass getUniqueSortIndex()
+
+	* freeTernaryFastCtor.cc (execute): don't pass getUniqueSortIndex()
+
+	* freeTernaryFastCtorFinal.cc (execute): don't pass getUniqueSortIndex()
+
+	* freeUnaryFastCtor.cc (execute): don't pass getUniqueSortIndex()
+
+	* freeDagNode.hh (FreeDagNode): (3 new ctors) sortIndex becomes
+	dummy since we want to do the getUniqueSortIndex() after memory
+	cell allocation to avoid register pressure
+
+	* freeSymbol.cc (generateFinalInstruction, generateInstruction):
+	utilize fast ctors
+
+	* freeTheory.hh: added classes FreeUnaryFastCtor,
+	FreeUnaryFastCtorFinal, FreeBinaryFastCtor,
+	FreeBinaryFastCtorFinal, FreeTernaryFastCtor,
+	FreeTernaryFastCtorFinal
+
+	* freeTernaryFastCtorFinal.cc: created
+
+	* freeTernaryFastCtorFinal.hh: created
+
+	* freeTernaryFastCtor.cc: created
+
+	* freeTernaryFastCtor.hh: created
+
+	* freeBinaryFastCtorFinal.cc: created
+
+	* freeBinaryFastCtorFinal.hh: created
+
+	* freeBinaryFastCtor.cc: created
+
+	* freeBinaryFastCtor.hh: created
+
+	* freeUnaryFastCtorFinal.cc: created
+
+	* freeUnaryFastCtorFinal.hh: created
+
+	* freeUnaryFastCtor.cc: created
+
+	* freeUnaryFastCtor.hh: created
+
+	* freeDagNode.hh (FreeDagNode): added 3 ctors that take a sortIndex
+
+2013-10-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeNullaryCtor.cc (execute): don't load frame ptr until we need
+	it
+
+	* freeNullaryCtorFinal.cc (execute): don't load frame ptr until we
+	need it
+
+	* freeNullaryCtor.cc (execute): use getNode() optimization
+
+	* freeNullaryCtorFinal.cc (execute): use getNode() optimization
+
+	* freeNullaryCtor.cc (FreeNullaryCtor): cast symbol
+
+	* freeNullaryCtorFinal.cc (FreeNullaryCtorFinal): cast symbol
+
+	* freeNullaryCtorFinal.hh (FinalInstruction): symbol is now a
+	FreeNullarySymbol*
+
+	* freeTheory.hh: added classes FreeNullarySymbol, FreeUnarySymbol,
+	FreeBinarySymbol, FreeTernarySymbol
+
+	* freeNullaryCtor.hh (NonFinalCtor): symbol is now a
+	FreeNullarySymbol*
+
+	* freeSymbol.cc (newFreeSymbol): use freeNullarySymbol
+
+	* freeNullarySymbol.hh: created
+
+	* freeNullarySymbol.cc: created
+
+	* freeNet2Exec.hh (findRemainderListIndex): rearrange loads
+	(findRemainderListIndex): try unrolling
+
+	* freeSymbol.hh: added macros GET_NET, FREE_NET, DISC_NET
+
+	* freeNullaryFastExtorFinal.cc (execute): use FREE_NET/GET_NET
+
+	* freeNullaryFastExtor.cc (execute): use FREE_NET/GET_NET
+
+	* freeTernaryFastExtorFinal.cc (execute): use FREE_NET/GET_NET
+
+	* freeTernaryFastExtor.cc (execute): use FREE_NET/GET_NET
+
+	* freeBinaryFastExtorFinal.cc (execute): use FREE_NET/GET_NET
+
+	* freeBinaryFastExtor.cc (execute): use FREE_NET/GET_NET
+
+	* freeUnaryFastExtorFinal.cc (execute): use FREE_NET/GET_NET
+
+	* freeUnaryFastExtor.cc (execute): use FREE_NET/GET_NET
+
+	* freeTernarySymbol.cc (eqRewrite): use DISC_NET
+
+	* freeUnarySymbol.cc (eqRewrite): use DISC_NET
+
+	* freeSymbol.cc (memoStrategy): use DISC_NET (2 places)
+
+	* freeBinarySymbol.cc (eqRewrite): use DISC_NET
+
+	* freeSymbol.cc (makeDagNode): use DISC_NET macro
+	(complexStrategy): use DISC_NET (2 places)
+
+	* freeNet2Exec.cc (applyReplace2, applyReplaceNoOwise2): must set
+	stack[0] to top arg array
+
+	* freeNet2.cc (dump): added
+
+2013-10-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeNet2Exec.cc (applyReplace2, applyReplaceFast2)
+	(applyReplaceNoOwise2): need to deal with the i == 0 failure case
+
+	* freePreNetSemiCompiler2.cc (semiCompile): clear slots and conflicts
+
+	* freeSymbol.cc (compileEquations): call new semiCompile()
+
+	* freeSymbol.hh (Symbol): added data member discriminationNet2
+	(getNet2): added
+
+	* freePreNet.hh (F): added decls for FreeNet2 versions of
+	semiCompile() and semiCompileNode(); commented out struct Node
+	since it doesn't seem to be used
+
+	* freeNet2.cc (allocateNode): added
+	(fillOutNode): added
+	(addRemainderList): added
+	(translateSlots): added
+	(buildRemainders): added
+
+	* freeNet2Exec.cc (applyReplace2): symmetric change
+	(applyReplaceNoOwise2): symmetric change
+	(applyReplaceFast2): symmetric change
+
+	* freeNet2Exec.hh (findRemainderListIndex): can't do relative
+	addressing for net node, since we may need to move backwards
+
+2013-10-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeDagNode.hh (DagNode): FreeeNet2 becomes a friend
+
+	* freeNet2Exec.cc: created
+
+	* freeNet2.cc: created
+
+	* freeNet2Exec.hh: created
+
+	* freeTheory.hh: added class FreeNet2
+
+	* freeNet2.hh (F): created
+
+2013-10-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeTerm.hh (Term): adde decl for computeMatchIndices
+
+	* freeTerm.cc (computeMatchIndices): added
+
+2013-10-02  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeUnaryFastExtorFinal.cc (execute): rewrote ctor part; fix
+	minor bug that we were using an array of size 2
+
+	* freeTernaryFastExtorFinal.cc (execute): rewrote ctor part
+
+	* freeBinaryFastExtorFinal.cc (execute): rewrote ctor part
+
+	* freeUnaryFastExtor.cc (execute): rewrote ctor part
+
+	* freeTernaryFastExtor.cc (execute): rewrote ctor part
+
+	* freeBinaryFastExtor.cc (execute): rewrote ctor part
+
+	* freeNullaryCtorFinal.cc (execute): rewritten using new scheme
+
+	* freeNullaryCtor.cc (execute): rewritten using new scheme
+
+	* freeDagNode.hh (FreeDagNode): (nullary, unary and ternary
+	versions) fill out sort information
+
+	* freeUnaryCtor.cc (execute): rewritten using new scheme
+
+	* freeUnaryCtorFinal.cc (execute): rewritten using new scheme
+
+	* freeTernaryCtorFinal.cc (execute): rewritten using new scheme
+
+	* freeTernaryCtor.cc (execute): rewritten using new scheme
+
+	* freeBinaryCtor.cc (execute): clean up
+
+	* freeBinaryCtorFinal.cc (execute): clean up
+
+	* freeBinaryCtor.cc (execute): use new(NONE) to call reduced flag
+	setting version of new()
+
+	* freeBinaryCtorFinal.cc (execute): use new(NONE) to call reduced
+	flag setting version of new()
+
+2013-10-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeDagNode.hh (FreeDagNode): try moving setReduced() to first
+	statement to see if flag optimization can be recovered
+
+	* freeBinaryCtor.cc (execute): try passing expressions rather than
+	using local variables
+
+	* freeBinaryCtorFinal.cc (execute): rely on FreeDagNode ctor to
+	set reduced flag
+	(execute): try passing expressions rather than using local
+	variables
+
+	* freeBinaryCtor.cc (execute): rely on FreeDagNode ctor to set
+	reduced flag
+
+	* freeDagNode.hh (FreeDagNode): (2 arg version) do sort
+	computation here
+	(FreeDagNode): (2 arg version) set reduced flag here
+
+	* freeBinaryCtor.cc (execute): rely on sort index being computed
+	in FreeDagNode ctor
+
+	* freeBinaryCtorFinal.cc (execute): try passing sort index through
+	FreeDagNode ctor
+	(execute): rely on sort index being computed in FreeDagNode ctor
+
+2013-09-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeBinaryCtor.cc (execute): try passing sortIndex to FreeDagNode
+
+	* freeDagNode.hh (FreeDagNode): (2 arg version) take and pass sortIndex
+
+	* freeBinaryCtor.cc (execute): temporary hack avoiding the use of
+	saveResultAndContinue() because of worse register usage
+
+2013-09-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeTernaryCtorFinal.cc (execute): rewritten using
+	returnResultAndContinue()
+
+	* freeNullaryCtorFinal.cc (execute): rewritten using
+	returnResultAndContinue()
+
+	* freeUnaryCtorFinal.cc (execute): rewritten using
+	returnResultAndContinue()
+
+	* freeBinaryCtorFinal.cc (execute): rewritten using
+	returnResultAndContinue()
+
+2013-09-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeNullaryCtor.hh (NonFinalCtor): derive from NonFinalCtor;
+	deleted data member destIndex
+
+	* freeNullaryCtor.cc (FreeNullaryCtor): use new ctor convention
+	(execute): rewritten using saveResultAndContinue()
+	(dump): use getDestinationIndex()
+
+	* freeUnaryCtor.hh (NonFinalCtor): derive from NonFinalCtor;
+	deleted data member destIndex
+
+	* freeUnaryCtor.cc (FreeUnaryCtor): use new ctor convention
+	(execute): rewritten using saveResultAndContinue()
+	(dump): use getDestinationIndex()
+
+	* freeBinaryCtor.hh (NonFinalCtor): derive from NonFinalCtor;
+	deleted data member destIndex
+
+	* freeBinaryCtor.cc (FreeBinaryCtor): use new ctor convention
+	(execute): rewritten using saveResultAndContinue()
+	(dump): use getDestinationIndex()
+
+	* freeTernaryCtor.cc (FreeTernaryCtor): use new ctor convention
+	(dump): use getDestinationIndex()
+	(execute): rewritten using saveResultAndContinue()
+
+	* freeTernaryCtor.hh (NonFinalCtor): derive from NonFinalCtor
+	(NonFinalCtor): remove data member destIndex
+
+	* freeTheory.hh: remove all contig instruction classes
+
+===================================Maude98===========================================
+
+2013-09-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeBinaryFastExtor.cc (execute): fix oversized localArgList
+
+2013-09-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeTernaryFastExtorFinal.hh: rewritten to use non-contig convention
+
+	* freeTernaryFastExtorFinal.cc: rewritten to use non-contig convention
+
+	* freeBinaryFastExtorFinal.cc: rewritten to use non-contig convention
+
+	* freeBinaryFastExtor.cc: rewritten to use non-contig convention
+
+	* freeBinaryFastExtor.hh: rewritten to use non-contig convention
+
+	* freeTernaryFastExtor.cc: rewritten to use non-contig convention
+
+	* freeTernaryFastExtor.hh: rewritten to use non-contig convention
+
+	* freeTernaryCtorFinal.hh: rewritten to use non-contig convention
+
+	* freeTernaryCtorFinal.cc: rewritten to use non-contig convention
+
+	* freeTernaryCtor.cc: rewritten to use non-contig convention
+
+	* freeTernaryCtor.hh: rewritten to use non-contig convention
+
+	* freeBinaryCtorFinal.cc: rewritten to use non-contig convention
+
+	* freeBinaryCtorFinal.hh: rewritten to use non-contig convention
+
+	* freeBinaryCtor.cc: rewritten to use non-contig convention
+
+	* freeBinaryCtor.hh: rewritten to use non-contig convention
+
+	* freeSymbol.cc (generateFinalInstruction): use new ctor
+	conventions
+	(generateInstruction): use new ctor conventions
+
+	* freeNet.hh: added friend declarations for classes
+	FreeBinaryFastExtorContig,  FreeBinaryFastExtorContigFinal,
+	FreeTernaryFastExtorContig and  FreeTernaryFastExtorContigFinal
+
+	* freeTheory.hh: added classes FreeBinaryFastExtorContig,
+	FreeBinaryFastExtorContigFinal, FreeTernaryFastExtorContig and
+	FreeTernaryFastExtorContigFinal
+
+	* freeTernaryFastExtorContigFinal.cc: created
+
+	* freeTernaryFastExtorContigFinal.hh: created
+
+	* freeTernaryFastExtorContig.cc: created
+
+	* freeTernaryFastExtorContig.hh: created
+
+	* freeBinaryFastExtorContigFinal.cc: created
+
+	* freeBinaryFastExtorContigFinal.hh: created
+
+	* freeBinaryFastExtorContig.cc: created
+
+	* freeBinaryFastExtorContig.hh: created
+
+	* freeTheory.hh: added classes FreeBinaryCtorContig,
+	FreeBinaryCtorContigFinal, FreeTernaryCtorContig,
+	FreeTernaryCtorContigFinal
+
+	* freeTernaryCtorContigFinal.cc: created
+
+	* freeTernaryCtorContigFinal.hh: cteaed
+
+	* freeTernaryCtorContig.cc: created
+
+	* freeTernaryCtorContig.hh: created
+
+	* freeBinaryCtorContigFinal.hh: created
+
+	* freeBinaryCtorContigFinal.cc: created
+
+	* freeBinaryCtorContig.cc: created
+
+	* freeBinaryCtorContig.hh: created
+
+2013-08-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeNullaryCtorFinal.cc (execute): use finishUp()
+
+	* freeUnaryCtorFinal.cc (execute): use finishUp()
+
+	* freeTernaryCtorFinal.cc (execute): use finishUp()
+
+	* freeBinaryCtorFinal.cc (execute): use finishUp()
+
+2013-08-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeNetExec.hh (findRemainderListIndex): try unrolling loop
+
+2013-08-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeTernaryCtor.cc (execute): use handleNextInstruction()
+
+	* freeNullaryCtor.cc (execute): use handleNextInstruction()
+
+	* freeUnaryCtor.cc (execute): use handleNextInstruction()
+
+	* freeBinaryCtor.cc (execute): use handleNextInstruction()
+
+	* freeNullaryCtor.cc (execute): removed hack
+
+2013-08-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeNullaryCtor.cc (execute): tried execute() hack
+
+2013-08-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeNullaryFastExtor.cc (FreeNullaryFastExtor): pass destIndex to
+	NonFinalExtor
+	(execute, dump): use getDestinationIndex()
+
+	* freeTernaryFastExtor.cc (FreeTernaryFastExtor): pass destIndex to
+	NonFinalExtor
+	(execute, dump): use getDestinationIndex()
+
+	* freeUnaryFastExtor.cc (FreeUnaryFastExtor): pass destIndex to
+	NonFinalExtor
+	(execute, dump): use getDestinationIndex()
+
+	* freeBinaryFastExtor.cc (FreeBinaryFastExtor): pass destIndex to
+	NonFinalExtor
+	(execute, dump): use getDestinationIndex()
+
+	* freeNullaryFastExtor.hh (NonFinalExtor): deleted data member
+	destIndex
+
+	* freeTernaryFastExtor.hh (NonFinalExtor): deleted data member
+	destIndex
+
+	* freeUnaryFastExtor.hh (NonFinalExtor): deleted data member
+	destIndex
+
+	* freeBinaryFastExtor.hh (NonFinalExtor): deleted data member
+	destIndex
+
+	* freeNullaryFastExtor.cc (FreeNullaryFastExtor): pass
+	nextInstruction to NonFinalExtor
+	(execute): use pushFrame() rather than newFrame()
+
+	* freeUnaryFastExtor.cc (FreeUnaryFastExtor): pass
+	nextInstruction to NonFinalExtor
+	(execute): use pushFrame() rather than newFrame()
+
+	* freeTernaryFastExtor.cc (FreeTernaryFastExtor): pass
+	nextInstruction to NonFinalExtor
+	(execute): use pushFrame() rather than newFrame()
+
+	* freeTernaryFastExtor.hh (NonFinalExtor): derive from Nonfinal
+	Extor 
+
+	* freeNullaryFastExtor.hh (NonFinalExtor): derive from Nonfinal
+	Extor
+
+	* freeUnaryFastExtor.hh (NonFinalExtor): derive from Nonfinal
+	Extor
+
+	* freeBinaryFastExtor.cc (FreeBinaryFastExtor): pass
+	nextInstruction to NonFinalExtor
+	(execute): use pushFrame() rather than newFrame()
+
+	* freeBinaryFastExtor.hh (NonFinalExtor): derive from Nonfinal
+	Extor
+
+2013-08-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeUnaryFastExtorFinal.cc (execute): fix symmetric bug
+
+	* freeTernaryFastExtorFinal.cc (execute): fix bug where we passing
+	old arg list rather than copy
+
+	* freeNullaryFastExtorFinal.cc (execute): symmetric changes
+
+	* freeTernaryFastExtorFinal.cc (execute): symmetric changes
+
+	* freeUnaryFastExtorFinal.cc (execute): symmetric changes
+
+	* freeBinaryFastExtorFinal.cc (execute): implement local argument
+	list copy and stack frame reuse
+
+	* freeTernaryFastExtorFinal.hh (FinalInstruction): derive from
+	FinalInstruction; deleted nextInstruction data member; use
+	SlotIndex type
+
+	* freeNullaryFastExtorFinal.hh (FinalInstruction): derive from
+	FinalInstruction
+
+	* freeUnaryFastExtorFinal.hh (FinalInstruction): derive from
+	FinalInstruction; deleted nextInstruction data member; use
+	SlotIndex type
+
+	* freeBinaryFastExtorFinal.hh (FinalInstruction): derive from
+	FinalInstruction; deleted nextInstruction data member; use
+	SlotIndex type
+
+	* freeTernaryFastExtor.cc (FreeTernaryFastExtor): pass
+	nextInstruction to base class ctor
+	(execute): use getNextInstruction(); use SlotIndex type
+	(dump): use getNextInstruction()
+
+	* freeUnaryFastExtor.cc (FreeUnaryFastExtor): pass
+	nextInstruction to base class ctor
+	(execute): use getNextInstruction(); use SlotIndex type
+	(dump): use getNextInstruction()
+
+	* freeNullaryFastExtor.cc (FreeNullaryFastExtor): pass
+	nextInstruction to base class ctor
+	(execute): use getNextInstruction()
+	(dump): use getNextInstruction()
+
+	* freeNullaryFastExtor.hh (NonFinalInstruction): derive from
+	NonFinalInstruction; deleted nextInstruction data member
+
+	* freeTernaryFastExtor.hh (NonFinalInstruction): derive from
+	NonFinalInstruction; deleted nextInstruction data member; use
+	SlotIndex type
+
+	* freeUnaryFastExtor.hh (NonFinalInstruction): derive from
+	NonFinalInstruction; deleted nextInstruction data member; use
+	SlotIndex type
+
+	* freeBinaryFastExtor.cc (execute): use getNextInstruction(); use
+	SlotIndex type
+	(FreeBinaryFastExtor): pass nextInstruction to base class ctor
+	(dump): use getNextInstruction()
+
+	* freeBinaryFastExtor.hh (NonFinalInstruction): derive from
+	NonFinalInstruction; deleted nextInstruction data member; use
+	SlotIndex type
+
+	* freeTernaryCtorFinal.hh (FinalInstruction): derive from
+	FinalInstruction; use SlotIndex type
+
+	* freeNullaryCtorFinal.hh (FinalInstruction): derive from
+	FinalInstruction
+
+	* freeUnaryCtorFinal.hh (FinalInstruction): derive from
+	FinalInstruction; use SlotIndex type
+
+	* freeBinaryCtorFinal.hh (FinalInstruction): derive from
+	FinalInstruction; use SlotIndex type
+
+	* freeNullaryCtor.cc (FreeNullaryCtor): pass nextInstruction to
+	base class ctor
+	(execute): use getNextInstruction(); use SlotIndex type
+
+	* freeUnaryCtor.cc (FreeUnaryCtor): pass nextInstruction to base
+	class ctor
+	(execute): use getNextInstruction(); use SlotIndex type
+
+	* freeTernaryCtor.cc (FreeTernaryCtor): pass nextInstruction to
+	base class ctor
+	(execute): use getNextInstruction(); use SlotIndex type
+	(dump): use getNextInstruction()
+
+	* freeTernaryCtor.hh (NonFinalInstruction): derive from
+	NonFinalInstruction; deleted nextInstruction data member; use
+	SlotIndex type
+
+	* freeNullaryCtor.hh (NonFinalInstruction): derive from
+	NonFinalInstruction; deleted nextInstruction data member; use
+	SlotIndex type
+
+	* freeUnaryCtor.hh (NonFinalInstruction): derive from
+	NonFinalInstruction; deleted nextInstruction data member; use
+	SlotIndex type
+
+2013-08-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeBinaryCtor.cc (execute): use SlotIndex type
+
+	* freeBinaryCtor.hh (NonFinalInstruction): use SlotIndex type
+
+	* freeBinaryCtor.cc (execute): use getNextInstruction()
+	(FreeBinaryCtor): pass nextInstruction to base class ctor
+	(dump): use getNextInstruction()
+
+	* freeBinaryCtor.hh (NonFinalInstruction): derive from
+	NonFinalInstruction; deleted nextInstruction data member
+
+2013-08-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeBinaryFastExtorFinal.cc (execute): use newUnderFrame()
+
+2013-08-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeTernaryFastExtorFinal.cc (execute): use newUnderFrame()p
+
+2013-07-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeRemainder.hh (FreeLhsStructs): commented out
+	firstInstruction data member for the moment
+	(getFirstInstruction): use getInstructionSequence() for the moment
+
+	* freeNullaryCtorFinal.cc (dump): fix
+
+	* freeNullaryCtor.cc (dump): fix
+
+	* freeTernaryFastExtorFinal.cc (dump): fix
+
+	* freeTernaryFastExtor.cc (dump): fix
+
+	* freeTernaryCtorFinal.cc (dump): fix
+
+	* freeTernaryCtor.cc (dump): fix
+
+	* freeBinaryFastExtorFinal.cc (dump): fix
+
+	* freeBinaryFastExtor.cc (dump): fix
+
+	* freeBinaryCtorFinal.cc (dump): fix
+
+	* freeBinaryCtor.cc (dump): fix
+
+	* freeUnaryFastExtorFinal.cc (dump): fix
+
+	* freeUnaryFastExtor.cc (dump): fix
+
+	* freeUnaryCtor.cc (dump): fix
+
+	* freeUnaryCtorFinal.cc (dump): fix
+
+	* freeSymbol.cc (generateInstruction): use
+	FreeNullaryCtor/FreeNullaryExtor intructions
+
+2013-07-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeTheory.hh: added classes FreeNullaryCtor,
+	FreeNullaryCtorFinal, FreeNullaryFastExtor,
+	FreeNullaryFastExtorFinal
+
+	* freeNullaryFastExtorFinal.cc: created
+
+	* freeNullaryFastExtorFinal.hh: created
+
+	* freeNet.hh (F): added classes FreeNullaryFastExtor and
+	FreeNullaryFastExtorFinal as friends
+
+	* freeNullaryFastExtor.cc: created
+
+	* freeNullaryCtorFinal.cc: created
+
+	* freeNullaryCtorFinal.hh: created
+
+	* freeNullaryFastExtor.hh: created
+
+	* freeDagNode.hh (FreeDagNode): added 0 argument version with
+	dummy int argument to distinguish it from general case.
+
+	* freeNullaryCtor.hh: created
+
+	* freeNullaryCtor.cc: created
+
+	* freeNet.hh (F): made classes FreeUnaryFastExtor,
+	FreeUnaryFastExtorFinal, FreeTernaryFastExtor,
+	FreeTernaryFastExtorFinal friends
+
+	* freeTheory.hh: added classes FreeUnaryCtor, FreeUnaryCtorFinal,
+	FreeUnaryFastExtor, FreeUnaryFastExtorFinal, FreeTernaryCtor,
+	FreeTernaryCtorFinal, FreeTernaryFastExtor,
+	FreeTernaryFastExtorFinal
+
+	* freeTernaryFastExtorFinal.cc: created
+
+	* freeTernaryFastExtorFinal.hh: created
+
+	* freeTernaryFastExtor.cc: created
+
+	* freeTernaryFastExtor.hh: created
+
+	* freeTernaryCtorFinal.hh: created
+
+	* freeTernaryCtorFinal.cc: created
+
+	* freeTernaryCtor.cc: created
+
+	* freeTernaryCtor.hh: created
+
+2013-07-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeUnaryFastExtorFinal.cc: created
+
+	* freeUnaryFastExtorFinal.hh: created
+
+	* freeDagNode.hh (FreeDagNode): added 1 and 3 argument versions
+
+	* freeUnaryFastExtor.cc: created
+
+	* freeUnaryFastExtor.hh: created
+
+	* freeUnaryCtorFinal.hh: created
+
+	* freeUnaryCtorFinal.cc: created
+
+	* freeUnaryCtor.hh: created
+
+	* freeUnaryCtor.cc: created
+
+	* freeBinaryFastExtorFinal.cc (execute): use getNet()
+
+	* freeBinaryFastExtorFinal.hh (Instruction): added decl for ctor;
+	deleted data member net; made data const
+
+	* freeBinaryFastExtorFinal.cc (FreeBinaryFastExtorFinal): added
+
+	* freeBinaryCtorFinal.hh (Instruction): added decl for ctor; made
+	data const
+
+	* freeBinaryCtorFinal.cc (FreeBinaryCtorFinal): added
+
+	* freeBinaryFastExtor.hh (Instruction): added decl for ctor; made
+	data const
+
+	* freeBinaryFastExtor.cc (FreeBinaryFastExtor): added
+
+	* freeBinaryFastExtor.hh (Instruction): deleted data member net
+
+	* freeBinaryFastExtor.cc (execute): use getNet()
+
+	* freeSymbol.hh (getNet): added
+
+	* freeBinaryCtor.hh (Instruction): added decl for ctor; made data
+	const to allow compiler optimization possibilities
+
+	* freeBinaryCtor.cc (FreeBinaryCtor): added
+
+	* freeSymbol.hh (Symbol): added decls for
+	generateFinalInstruction() and generateInstruction()
+
+	* freeSymbol.cc (generateFinalInstruction): added
+	(generateInstruction): added
+
+2013-07-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeBinaryFastExtorFinal.cc (dump): added
+
+	* freeBinaryFastExtor.cc (dump): added
+
+	* freeBinaryCtorFinal.cc (dump): added
+
+	* freeBinaryCtor.cc (dump): added
+
+	* freeBinaryFastExtorFinal.hh (Instruction): added decl for dump()
+
+	* freeBinaryFastExtor.hh (Instruction): added decl for dump()
+
+	* freeBinaryCtorFinal.hh (Instruction): added decl for dump()
+
+	* freeBinaryCtor.hh (Instruction): added decl for dump()
+
+2013-06-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeRhsAutomaton.hh (RhsAutomaton): added decl for recordInfo()
+
+	* freeRhsAutomaton.cc (recordInfo): added
+
+2013-06-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeNet.hh (F): made class FreeBinaryFastExtorFinal a friend
+ 
+	* freeTheory.hh: added class FreeBinaryFastExtorFinal
+
+	* freeBinaryFastExtorFinal.hh: created
+
+	* freeBinaryFastExtorFinal.cc: created
+
+2013-05-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeNet.hh (F): quick hack to check for position and slot in
+	TestNode overflowing the 16-bit ints
+
+===================================Maude97===========================================
+
+2013-03-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeSymbol.cc (compileEquations): call resetSlotIndices(), and
+	then call setSlotIndex() to avoid using bad slot indices if the
+	lhs gets compiled for variant equation reducibility purposes
+
+	* freeTerm.hh (Term): added decl for resetSlotIndices()
+
+	* freeTerm.cc (resetSlotIndices): added
+
+	* freePreNet.hh (F): added call to NO_COPYING() macro
+
+2013-01-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeRemainder.hh (fastCheckAndBind, getFirstInstruction): added
+	(FreeLhsStructs): added data member firstInstruction
+
+	* freeNet.hh (F): added decl for findRemainderListIndex()
+
+	* freeNetExec.hh: created
+
+	* freeBinaryCtor.cc (execute): code cleaning
+
+	* freeBinaryCtor.hh (Instruction): FreeBinarySymbol* becomes
+	FreeSymbol
+
+	* freeBinaryCtorFinal.cc (execute): code cleaning
+
+	* freeBinaryCtorFinal.hh (Instruction): FreeBinarySymbol* becomes
+	FreeSymbol since we will eventually obsolete these subclasses
+
+2013-01-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeBinaryCtorFinal.cc: created
+
+	* freeBinaryCtorFinal.hh: created
+
+	* freeTheory.hh: added forward decl for freeBinaryCtorFinal
+
+2013-01-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeBinaryCtor.cc (execute): use traverse() instead of sortTable
+
+	* freeBinaryCtor.hh (Instruction): deleted data member sortTable
+
+2013-01-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeDagNode.hh (FreeDagNode): added binary ctor
+
+	* freeBinaryCtor.cc: created
+
+	* freeBinaryCtor.hh: created
+
+===================================Maude96c===========================================
+
+2012-04-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeDagNode.hh (DagNode): updated decl for
+	instantiateWithReplacement(); added decl for instantiateWithCopies2()
+
+	* freeDagNode.cc (instantiateWithCopies2): added
+	(instantiateWithReplacement): rewritten to handle eager positions correctly
+
+2012-03-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeSymbol.cc (termify): code cleaning
+
+2012-03-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeSymbol.hh (Symbol): added decl for termify()
+
+	* freeSymbol.cc (termify): added
+
+===================================Maude96===========================================
+
 2010-10-19  Steven Eker  <eker@rho>
 
 	* freeSymbol.hh (class FreeSymbol):

@@ -1,0 +1,211 @@
+set show timing off .
+set show advisories off .
+
+set include BOOL off .
+
+fmod MODULAR is
+  sorts Nat NzNat .
+  subsort NzNat < Nat .
+
+  var X Y Z : Nat .
+
+  op 0 : -> Nat .
+  op s_ : Nat -> NzNat .
+
+  op _+_ : Nat NzNat -> Nat .
+  op _+_ : Nat Nat -> Nat .
+  eq 0 + X = X .
+  eq s Y + X = s (Y + X) .
+
+  op _*_ : NzNat NzNat -> NzNat .
+  op _*_ : Nat Nat -> Nat .
+  eq 0 * X = 0 .
+  eq s Y * X = X + (Y * X) .
+ 
+  op _^_ : Nat Nat -> Nat .
+  op _^_ : NzNat Nat -> NzNat .
+  eq X ^ 0 = s 0 .
+  eq X ^ s Y = X * (X ^ Y) .
+
+  op c : Nat Nat -> Nat .
+  eq c(0, Y) = 0 .
+  eq c(X, 0) = X .
+  eq c(s X, s Y) = c(X, Y) .
+
+  op _mod_ : Nat NzNat -> Nat .
+  eq X mod Y = i(X, Y, Y) .
+  
+  op i : Nat Nat NzNat -> Nat .
+  eq i(0, 0, Z) = 0 .
+  eq i(0, s Y, Z) = c(Z, s Y) .
+  eq i(s X, 0, Z) = i(s X, Z, Z) .
+  eq i(s X, s Y, Z) = i(X, Y, Z) .
+
+  op modExp : Nat Nat NzNat ~> Nat .
+  eq modExp(X, 0, Z) = s 0 .
+  eq modExp(X, s Y, Z) = (X * modExp(X, Y, Z)) mod Z .
+endfm
+
+sred modExp(s s s s 0, s s 0 ^ ((s s 0 ^ s s s s 0) + s s s s 0),  s s s s s 0) .
+
+
+fmod NAT' is
+  sorts Nat NzNat .
+  subsort NzNat < Nat .
+
+  var X Y : Nat .
+
+  op 0 : -> Nat .
+  op s_ : Nat -> NzNat .
+
+  op _+_ : Nat NzNat -> Nat .
+  op _+_ : Nat Nat -> Nat .
+  eq 0 + X = X .
+  eq s Y + X = s (X + Y) .
+
+  op _*_ : NzNat NzNat -> NzNat .
+  op _*_ : Nat Nat -> Nat .
+  eq 0 * X = 0 .
+  eq s Y * X = X + (Y * X) .
+endfm
+
+fmod LIST-BENCH is
+  pr NAT' .
+  sorts Elt List .
+
+  op dirtyElt : ~> Elt .
+  op dirtyList : ~> List .
+
+  op nil : -> List .
+  op __ : Elt List -> List .
+  ops a b c d e : -> Elt .
+
+  vars E E' : Elt .
+  vars L L' : List .
+  var N : Nat .
+
+*** to make big lists by doubling
+  op cat : List List -> List .
+  eq cat(E L, L') = E cat(L, L') .
+  eq cat(nil, L') = L' .
+
+  op dup : List Nat -> List .
+  eq dup(L, 0) = L .
+  eq dup(L, s N) = cat(dup(L, N), dup(L, N)) .
+
+  op head : List -> Elt .
+  eq head(E L) = E .
+
+*** efficient reverse
+  op rev : List List -> List .
+  eq rev(E L, L') = rev(L, E L') .
+  eq rev(nil, L) = L .
+
+  op rev : List -> List .
+  eq rev(L) = rev(L, nil) .
+
+  op multi : List Nat -> List .
+  eq multi(L, 0) = L .
+  eq multi(L, s N) = rev(multi(L, N)) .
+endfm
+
+sred head(multi(dup(a b c d e nil, s s s s 0 * s s s s 0), s s s s s s s s s 0 * s s s s s s s s s 0)) .
+
+
+fmod BIT is
+  sorts Bool Bit List .
+  ops true false : -> Bool .
+  ops 0 1 : -> Bit .
+  op nil : -> List .
+  op __ : Bit List -> List .
+
+var L : List .
+
+  op isZero : List -> Bool .
+  eq isZero(nil) = true .
+  eq isZero(0 L) = isZero(L) .
+  eq isZero(1 L) = false .
+
+  op dec : List -> List .
+  eq dec(nil) = nil .
+  eq dec(0 L) = 1 dec(L) .
+  eq dec(1 L) = 0 L .
+
+  op count : List -> List .
+  eq count(L) = count'(isZero(L), L) .
+
+  op count' : Bool List -> List .
+  eq count'(false, L) = count(dec(L)) .
+  eq count'(true, L) = L .
+endfm
+
+sred count(1 1
+1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 nil) .
+
+***(
+sred count(1 1
+1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 1 nil) .
+)
+
+
+fmod BINARY is
+  sorts Bool Bit Num .
+  ops true false : -> Bool .
+  ops 0 1 : -> Bit .
+  op nil : -> Num .
+  op __ : Bit Num -> Num .
+
+var X Y : Num .
+var B : Bit .
+  op add : Num Num -> Num .
+  eq add(nil, X) = X .
+  eq add(X, nil) = X .
+  eq add(0 X, B Y) = B add(X, Y) .
+  eq add(B X, 0 Y) = B add(X, Y) .
+  eq add(1 X, 1 Y) = 0 c(X, Y) .
+
+  op c : Num Num -> Num .
+  eq c(nil, X) = add(1 nil, X) .
+  eq c(X, nil) = add(1 nil, X) .
+  eq c(1 X, B Y) = B c(X, Y) .
+  eq c(B X, 1 Y) = B c(X, Y) .
+  eq c(0 X, 0 Y) = 1 add(X, Y) .
+
+  op mult : Num Num -> Num .
+  eq mult(nil, X) = 0 nil .
+  eq mult(X, nil) = 0 nil .
+  eq mult(0 X, Y) = 0 mult(X, Y) .
+  eq mult(1 X, Y) = add(Y, 0 mult(X, Y)) .
+
+  op dec : Num -> Num .
+  eq dec(nil) = nil .
+  eq dec(0 X) = 1 dec(X) .
+  eq dec(1 X) = 0 X .
+
+  op isZero : Num -> Bool .
+  eq isZero(nil) = true .
+  eq isZero(0 X) = isZero(X) .
+  eq isZero(1 X) = false .
+
+  op fact : Num -> Num .
+  eq fact(X) = fact'(isZero(X), X) .
+
+  op fact' : Bool Num -> Num .
+  eq fact'(true, X) = 1 nil . 
+  eq fact'(false, X) = mult(X, fact(dec(X))) .
+
+  op count : Num -> Num .
+  eq count(nil) = 0 nil .
+  eq count(0 X) = count(X) .
+  eq count(1 X) = add(1 nil, count(X)) .
+endfm
+
+sred count(fact(1 1 1 1 1 1 1 1 1 1 nil)) .
+
+***(
+*** count 1's in binary representation of 4095!
+sred count(fact(1 1 1 1 1 1 1 1 1 1 1 1 nil)) .
+)

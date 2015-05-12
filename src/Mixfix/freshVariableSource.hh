@@ -33,7 +33,7 @@ class FreshVariableSource : public FreshVariableGenerator
 public:
   FreshVariableSource(MixfixModule* module);
   FreshVariableSource(MixfixModule* module, const mpz_class& baseNumber);
-  int getFreshVariableName(int index);
+  int getFreshVariableName(int index, bool odd);
   Symbol* getBaseVariableSymbol(Sort* sort);
   bool variableNameConflict(int id);
 
@@ -41,6 +41,7 @@ private:
   MixfixModule* const module;
   mpz_class baseNumber;
   Vector<int> cache;
+  Vector<int> oddCache;
 };
 
 #endif

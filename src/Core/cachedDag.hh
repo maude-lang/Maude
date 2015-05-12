@@ -26,6 +26,7 @@
 #ifndef _cachedDag_hh_
 #define _cachedDag_hh_
 #include "dagRoot.hh"
+#include "instruction.hh"
 
 class CachedDag
 {
@@ -40,21 +41,29 @@ public:
   DagNode* getDag();
   DagRoot* getDagRoot();
   void reset();
+  //
+  //	MVM stuff.
+  //
+  void generateInstructionSequence();
+  Instruction* getInstructionSequence() const;
 
 private:
   Term* term;
   DagRoot dag;
+  Instruction* instructionSequence;
 };
 
 inline
 CachedDag::CachedDag(Term* t)
 {
   term = t;
+  instructionSequence = 0;
 }
 
 inline
 CachedDag::~CachedDag()
 {
+  delete instructionSequence;
   if (term != 0)
     term->deepSelfDestruct();
 }
@@ -91,11 +100,24 @@ CachedDag::getDag()
     }
   return d;
 }
+
 inline DagRoot*
 CachedDag::getDagRoot()
 {
   (void) getDag();
   return &dag;
+}
+
+inline void
+CachedDag::generateInstructionSequence()
+{
+  instructionSequence = term->term2InstructionSequence();
+}
+
+inline Instruction*
+CachedDag::getInstructionSequence() const
+{
+  return instructionSequence;
 }
 
 inline void

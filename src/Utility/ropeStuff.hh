@@ -34,7 +34,16 @@
 //	class template in considered an extension and lives in a
 //	different header file.
 //
-    #include <ext/rope>
+    #ifdef USE_ROPE_UGLY_HACK
+//
+//	Mac rope implementation is quite broken and in particular violates C++ scoping rules
+//	enforced by newer compilers. Therefore we use a local hacked up version of the Mac
+//	rope implementation.
+//
+      #include "rope_UGLY_HACK"
+    #else
+      #include <ext/rope>
+    #endif
     #if __GNUC_MINOR__ > 0 || __GNUC__ > 3
 //
 //	In version 3.1 onwards it also lives in a different namespace.
@@ -49,4 +58,8 @@
 //
 #include <rope>
 #endif
+
+char* makeZeroTerminatedString(const crope& original);
+
 #endif
+

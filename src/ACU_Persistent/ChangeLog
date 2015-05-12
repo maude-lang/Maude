@@ -1,3 +1,13 @@
+2013-09-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_RedBlackNode.hh (new): set half word to SORT_UNKNOWN rather
+	than relying on allocateMemoryCell()
+	(new): call initFlags()
+	(new): clean up; update comments; initFlags() becomes
+	clearAllFlags()
+
+===================================Maude98===========================================
+
 2010-04-19  Steven Eker  <eker@rho>
 
 	* ACU_FastIter.hh (ACU_FastIter::next): avoid passing null to

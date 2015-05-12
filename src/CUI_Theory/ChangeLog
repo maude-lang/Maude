@@ -1,3 +1,69 @@
+2013-03-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* CUI_DagNode.cc (makePurifiedVersion): code cleaning
+	(computeSolvedForm2): use makePurifiedVersion() rather that using
+	in line code
+
+2012-12-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* CUI_UnificationSubproblem2.cc (tryAlternative): added occur checks
+
+	* CUI_DagNode.cc (computeBaseSortForGroundSubterms): handle left
+	and right identities
+	(computeSolvedFormCommutativeCase): don't try to deal with the
+	identity case because there is the possibility that a collapse to
+	a lower sort will require non-minimal unsorted unifiers
+	(computeSolvedForm2): handle identity case
+
+	* CUI_Symbol.cc (canResolveTheoryClash): added
+
+	* CUI_Symbol.hh (BinarySymbol): added decl for
+	canResolveTheoryClash()
+
+	* CUI_Symbol.cc (makeUnificationSubproblem): make
+	CUI_UnificationSubproblem2() in identity case
+
+	* CUI_UnificationSubproblem2.hh: created
+
+	* CUI_UnificationSubproblem2.cc: created
+
+	* CUI_DagNode.hh (DagNode): added decl for makePurifiedVersion()
+
+	* CUI_DagNode.cc (makePurifiedVersion): added
+
+2012-12-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* CUI_DagNode.cc (computeSolvedFormCommutativeCase): added
+	(computeSolvedForm2): use computeSolvedFormCommutativeCase()
+
+	* CUI_DagNode.hh (DagNode): added decl for
+	computeSolvedFormCommutativeCase()
+
+===================================Maude96c===========================================
+
+2012-04-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* CUI_DagNode.hh (DagNode): updated decl for
+	instantiateWithReplacement(); added decl for instantiateWithCopies2()
+
+	* CUI_DagNode.cc (instantiateWithReplacement): rewritten to use
+	instantiateWithCopies() on eager positions
+	(instantiateWithCopies2): added
+
+2012-03-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* CUI_Symbol.hh (BinarySymbol): added declaration for termify
+
+	* CUI_Symbol.cc (termify): added
+
+===================================Maude96===========================================
+
+2011-11-22  Steven Eker  <eker@rho>
+
+	* CUI_UnificationSubproblem.cc (CUI_UnificationSubproblem::solve): use restoreFromClone()
+	to make sure sort and dagnode information for fresh variables created on the path we
+	just backtrack from are properly cleared from our UnificationContext (2 places)
+
 2010-12-09  Steven Eker  <eker@rho>
 
 	* CUI_Symbol.cc (CUI_Symbol::postOpDeclarationPass): don't call

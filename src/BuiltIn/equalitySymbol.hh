@@ -54,6 +54,15 @@ public:
   bool acceptEquation(Equation* equation);
   void compileEquations();
   bool domainSortAlwaysLeqThan(Sort* sort, int argNr);
+  //
+  //	MVM stuff.
+  //
+  Instruction* generateFinalInstruction(const Vector<int>& argumentSlots);
+  Instruction* generateInstruction(int destination, const Vector<int>& argumentSlots, Instruction* nextInstruction);
+  void stackMachineCompile();
+  Instruction* getEqualInstructionSequence() const;
+  Instruction* getNotEqualInstructionSequence() const;
+
 #ifdef COMPILER
   void generateCode(CompilationContext& context) const;
 #endif
@@ -62,5 +71,27 @@ private:
   CachedDag equalTerm;
   CachedDag notEqualTerm;
 };
+
+inline void
+EqualitySymbol::stackMachineCompile()
+{
+  if (equalTerm.getInstructionSequence() == 0)
+    {
+      equalTerm.generateInstructionSequence();
+      notEqualTerm.generateInstructionSequence();
+    }
+}
+
+inline Instruction*
+EqualitySymbol::getEqualInstructionSequence() const
+{
+  return equalTerm.getInstructionSequence();
+}
+
+inline Instruction*
+EqualitySymbol::getNotEqualInstructionSequence() const
+{
+  return notEqualTerm.getInstructionSequence();
+}
 
 #endif

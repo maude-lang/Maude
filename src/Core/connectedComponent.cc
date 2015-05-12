@@ -69,6 +69,8 @@ ConnectedComponent::ConnectedComponent(Sort* firstSort)
     }
   for (int i = sortCount - 1; i >= 0; i--)
     sorts[i]->computeLeqSorts();
+
+  lastAllocatedMatchIndex = 0;
 }
 
 ConnectedComponent::~ConnectedComponent()

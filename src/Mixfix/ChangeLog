@@ -1,3 +1,338 @@
+2014-02-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (getVariants): handle irredundant flag
+	(getVariants): output timing information after each variant
+	number in incremental mode
+	(variantUnify): output timing information after each unifier
+	number
+
+	* lexer.ll: added KW_IRREDUNDANT
+
+	* top.yy: added type for optIrredundant; added KW_IRREDUNDANT
+
+	* commands.yy (optIrredundant): added
+	(command): use optIrredundant
+
+2014-02-27  Steven Eker  <eker@ape.csl.sri.com>
+
+	* interact.cc (stackOverflowHandler, internalErrorHandler): added
+	(void) casts
+
+2014-02-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* global.hh: added alwaysAdviseFlag
+
+	* global.cc: added alwaysAdviseFlag
+
+	* commands.yy (command): honor alwaysAdviseFlag
+
+===================================Maude101===========================================
+
+2014-02-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (sreduce): use term2InstructionSequence() to get
+	initial sequence of stack machine instructions
+
+2014-02-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* banner.cc (printBanner): update copyright yearl
+
+2014-02-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* mixfixParser.cc (makePrintList): delete unused typedef IntPair
+
+	* renaming.hh (SyntaxContainer): added virtual dtor to placate gcc
+
+2014-02-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* lexerAux.cc (eatComment): added IssueAdvisory() for null
+	characters in comments
+
+2014-01-31  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (sreduce): call stackMachineCompile()
+
+	* syntacticPreModule.cc (getFlatModule): use < rather than != for
+	comparing against THEORY_CLOSED
+
+===================================Maude100a===========================================
+
+	* execute.cc (sreduce): convert abstract slots in the dummyBuilder
+	into the concrete slots that StackMachineRhsCompiler now expects
+	(sreduce): removed old if'd out code
+
+2013-10-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (sreduce): rewritten
+
+===================================Maude100===========================================
+
+2013-09-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* modules.yy (viewEndOpMap): add missing ; after lexBubble call
+
+	* commands.yy (command): add missing ; after lexBubble() calls
+
+===================================Maude98===========================================
+
+2013-08-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (sreduce): use new execute() mechanism
+
+2013-03-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* loopMode.cc (printBubble): fixed a bug where printing the empty
+	token caused an out-of-bounds memory reference
+
+2012-11-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* userLevelRewritingContext.cc (tracePreEqRewrite): added call to flush()
+
+===================================Maude96b===========================================
+
+2012-08-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* commands.yy (command): call getVariants()
+
+	* lexer.ll: KW_GENERATE becomes KW_GET
+
+	* top.yy: KW_GENERATE becomes KW_GET
+
+	* commands.yy (command): support debug in variant unify command
+	(command): generate variants becomes get variants and takes debug
+	prefix
+	(genvars): deleted
+
+	* interpreter.hh (ViewDatabase): updated decl for variantUnify();
+	decl for getVariants() replaces decl for generateVariants()
+
+	* search.cc (variantUnify): added debug flag
+	(generateVariants): added debug flag; becomes getVariants()
+
+	* lexerAux.hh: don't declare getInput() here because yy_size_t is
+	only available within the flex output file
+
+	* lexerAux.cc (getInput): use yy_size_t rather than int because
+	Mac version of flex is 64-bit clean
+
+	* lexer.ll: moved decl for getInput() here; hack to deal with int
+	vs yy_size_t for YY_INPUT 2nd argument
+
+2012-07-31  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (variantUnify): call clearDebug()
+	(generateVariants): call clearDebug()
+
+2012-07-27  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (generateVariants): call unprotect()
+	(variantUnify): use makeUnificationProblemDag(); call unprotect()
+	(variantUnify): pass unificationMode flag to VariantSearch()
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	makeUnificationProblemDag()
+
+	* mixfixModule.cc (makeUnificationProblemDag): created
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	createInternalTupleSymbol(); added types IntList and
+	InternalTupleMap; added data member tupleSymbols
+
+	* mixfixModule.cc (createInternalTupleSymbol): added
+
+	* symbolType.hh (S): added INTERNALTUPLE
+
+2012-07-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (variantUnify): is parseVariantUnifyCommand(); echo
+	constraint
+
+	* mixfixParser.hh (M): added decl for makeVariantUnifyCommand()
+
+	* mixfixParser.cc (makeVariantUnifyCommand): added
+
+	* makeGrammar.cc (makeComplexProductions): added productions for
+	VARIANT_UNIFY_COMMAND
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	parseVariantUnifyCommand()
+
+	* doParse.cc (parseVariantUnifyCommand): added
+
+	* mixfixModule.hh (SharedTokens): added VARIANT_UNIFY_COMMAND
+
+	* search.cc (variantUnify): added
+
+	* interpreter.hh (ViewDatabase): added decl for variantUnify
+
+	* commands.yy (command): added syntax for variant unify command
+
+	* top.yy: added KW_VARIANT
+
+	* lexer.ll: added KW_VARIANT
+
+2012-07-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (generateVariants): output no variants message in the
+	case that there are no variants because a blocker dag is reducible
+	(generateVariants): use term2Dag() and deepSelfDestruct() instead
+	of makeDag()
+	(generateVariants): call normalize() after all to make sure hash
+	values are valid
+
+	* syntacticPreModule.hh (SharedTokens): removed two declarations
+	for makeDag() that don't seem to be used
+
+2012-07-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (generateVariants): echo constraint list
+	(generateVariants): turn constraint list in to blocker dags; #
+	variables from variableInfo is no longer accurate because of
+	variables in blocker dags
+
+	* mixfixParser.hh (M): added decl for makeTermList()
+	(M): added MAKE_TERM_LIST
+
+	* mixfixParser.cc (makeGetVariantsCommand): use makeTermList()
+	(makeTermList): added
+
+	* makeGrammar.cc (makeComplexProductions): added syntax for get
+	variants with irreducibility constraint; added syntax for
+	hetrogeneous term lists
+	(makeComplexProductions): use emptyGather for "such that" and "s.t."
+
+	* mixfixModule.hh (SharedTokens): added TERM_LIST
+
+	* search.cc (generateVariants): use parseGetVariantsCommand()
+
+	* mixfixParser.hh (M): added decl for makeGetVariantsCommand()
+
+	* mixfixParser.cc (makeGetVariantsCommand): added
+
+	* makeGrammar.cc (makeComplexProductions): added a production for
+	GET_VARIANTS_COMMAND
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	parseGetVariantsCommand()
+
+	* doParse.cc (parseGetVariantCommand): added
+
+	* specialTokens.cc: added irreducible
+
+	* mixfixModule.hh (SharedTokens): added GET_VARIANTS_COMMAND
+
+	* search.cc: deleted commented out functions
+	(generateVariants): respect limit
+
+2012-07-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (generateVariants): pass blocker dags to VariantSearch
+
+2012-07-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freshVariableSource.cc (getFreshVariableName): reenable %
+	variables 
+	(variableNameConflict): reenable % variables
+
+2012-07-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freshVariableSource.cc (getFreshVariableName)
+	(variableNameConflict): updated comments
+
+===================================Maude96a===========================================
+
+2012-05-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freshVariableSource.cc (variableNameConflict): disable %
+	variables for the moment
+	(getFreshVariableName): disable % variables for the moment
+
+2012-05-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (generateVariants): ignore limit as this seems to be
+	breaking things
+
+2012-05-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (generateVariants): check for traceAbort()
+	(generateVariants): check counter against limit
+	(generateVariants): delete freshVariableGenerator when we are done
+	(generateVariants): pass responsibility for deleting context and
+	freshVariableGenerator to ~VariantSearch() - this cleans interface
+	for metalevel
+
+	* execute.cc (printStats): print number of narrowing and variant
+	narrowing steps
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext):
+	updated decl for traceVariantNarrowingStep()
+
+	* userLevelRewritingContext.cc (traceVariantNarrowingStep): take
+	originalVariables argument and use it when printing out
+	substitution part of old and new variants
+
+	* search.cc (generateVariants): make output of variants consistent
+	with previous conventions
+
+2012-05-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext):
+	added decl for traceVariantNarrowingStep()
+
+	* userLevelRewritingContext.cc (traceVariantNarrowingStep): added
+
+2012-05-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* lexer.ll: allow get as a synonym for generate
+
+2012-05-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freshVariableSource.cc (getFreshVariableName): support odd field
+	(variableNameConflict): check for names beginning with %
+
+	* freshVariableSource.hh (FreshVariableGenerator): added odd field
+	to getFreshVariableName() decl
+	(FreshVariableGenerator): added data member oddCache
+
+2012-05-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prettyPrint.cc (printAttributes): print variant attribute
+
+	* importModule.cc (donateStatements2): copy variant attribute
+
+	* mixfixParser.cc (makeStatementPart): hande VARIANT attribute
+
+	* specialTokens.cc: added variant
+
+	* mixfixParser.hh (M): added MAKE_VARIANT_ATTRIBUTE to enum SemanticActions
+	(M): added VARIANT to enum Flags
+
+	* mixfixParser.cc (makeAttributePart): support VARIANT attribute
+
+	* makeGrammar.cc (makeAttributeProductions): added production for
+	variant attribute
+
+2012-04-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (generateVariants): use new version of UnifierFilter
+	(generateVariants): examine all non-variable positions in dag
+
+2012-03-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* quotedIdentifierSymbol.cc (termify): added
+
+2012-03-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (generateVariants): added
+
+2012-03-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* commands.yy (command): added syntax for generate variants command
+
+	* lexer.ll: added initial mode keywords generate and variant
+
+===================================Maude96===========================================
+
 2010-12-09  Steven Eker  <eker@rho>
 
 	* modules.yy (skipStrayArrow): added

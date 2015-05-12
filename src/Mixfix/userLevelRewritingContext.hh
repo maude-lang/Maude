@@ -103,6 +103,16 @@ public:
 			  const Substitution* substitution,
 			  DagNode* newState);
 
+  void traceVariantNarrowingStep(Equation* equation,
+				 const Vector<DagNode*>& oldVariantSubstitution,
+				 DagNode* redex,
+				 DagNode* replacement,
+				 const NarrowingVariableInfo& variableInfo,
+				 const Substitution* substitution,
+				 DagNode* newState,
+				 const Vector<DagNode*>& newVariantSubstitution,
+				 const NarrowingVariableInfo& originalVariables);
+
   static void printSubstitution(const Substitution& substitution,
 				const VariableInfo& varInfo);
 

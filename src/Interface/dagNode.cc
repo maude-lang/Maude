@@ -39,6 +39,8 @@
 #include "binarySymbol.hh"
 #include "dagNode.hh"
 #include "subproblem.hh"
+#include "lhsAutomaton.hh"
+#include "extensionInfo.hh"
 
 //	core class definitions
 #include "substitution.hh"
@@ -49,6 +51,7 @@
 #include "rootContainer.hh"
 #include "sortBdds.hh"
 #include "unificationContext.hh"
+#include "equation.hh"
 
 //	variable class definitions
 #include "variableDagNode.hh"
@@ -313,6 +316,55 @@ DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 	ground = false;
     }
   return ground;
+}
+
+//
+//	Variant narrowing code.
+//
+
+bool
+DagNode::reducibleByVariantEquation(RewritingContext& context)
+{
+  //
+  //	If it is already reduced wrt all equations it clearly can't be reduced by a variant equation.
+  //
+  if (isReduced() || isIrreducibleByVariantEquations())
+    return false;
+  //
+  //	Naive and inefficient approach.
+  //
+  for (DagArgumentIterator a(this); a.valid(); a.next())
+    {
+      if (a.argument()->reducibleByVariantEquation(context))
+	return true;
+    }
+
+  Subproblem* sp;
+  ExtensionInfo* extensionInfo = makeExtensionInfo();
+
+  const Vector<Equation*>& equations = symbol()->getEquations();
+  FOR_EACH_CONST(i, Vector<Equation*>, equations)
+    {
+      Equation* eq = *i;
+      if (eq->isVariant())
+	{
+	  int nrVariables = eq->getNrProtectedVariables();
+	  context.clear(nrVariables);
+	  if (eq->getLhsAutomaton()->match(this, context, sp, extensionInfo))
+	    {
+	      if (sp == 0 || sp->solve(true, context))
+		{
+		  delete extensionInfo;
+		  delete sp;
+		  return true;
+		}
+	      delete sp;
+	    }
+	}
+    }
+  setIrreducibleByVariantEquations();
+  delete extensionInfo;
+  return false;
 }
 
 #ifdef DUMP

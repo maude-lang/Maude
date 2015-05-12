@@ -42,6 +42,7 @@
 //	core class definitions
 #include "substitution.hh"
 #include "variableInfo.hh"
+#include "stackMachineRhsCompiler.hh"
 
 //	free theory class definitions
 #include "freeDagNode.hh"
@@ -58,6 +59,15 @@ FreeRhsAutomaton::addFree(Symbol* symbol,
   instructions[i].destination = destination;
   instructions[i].sources = sources;  // deep copy
 }
+
+bool
+FreeRhsAutomaton::recordInfo(StackMachineRhsCompiler& compiler)
+{
+  FOR_EACH_CONST(i, Vector<Instruction>, instructions)
+    compiler.recordFunctionEval(i->symbol, i->destination, i->sources);
+  return true;
+}
+
 
 void
 FreeRhsAutomaton::remapIndices(VariableInfo& variableInfo)

@@ -82,6 +82,7 @@ CUI_UnificationSubproblem::markReachableNodes()
 void
 CUI_UnificationSubproblem::addUnification(DagNode* lhs, DagNode* rhs, bool marked, UnificationContext& /* solution */)
 {
+  //cout << "CUI_UnificationSubproblem::addUnification() " << lhs << " vs " << rhs << endl;
   Assert(marked == false, "we don't handle collapse yet");
   problems.append(Problem(safeCast(CUI_DagNode*, lhs), safeCast(CUI_DagNode*, rhs)));
 }
@@ -105,6 +106,7 @@ CUI_UnificationSubproblem::solve(bool findFirst, UnificationContext& solution, P
 	  p.savedSubstitution.clone(solution);
 	  p.savedPendingState = pending.checkPoint();
 	  p.reverseTried = false;
+	  //cout << "CUI_UnificationSubproblem::solve() trying " << (DagNode*) p.lhs << " vs " << (DagNode*) p.rhs << " forwards" << endl;
 	  if (!(p.lhs->getArgument(0)->computeSolvedForm(p.rhs->getArgument(0), solution, pending) &&
 		p.lhs->getArgument(1)->computeSolvedForm(p.rhs->getArgument(1), solution, pending)))
 	    goto backtrack;
@@ -123,8 +125,9 @@ CUI_UnificationSubproblem::solve(bool findFirst, UnificationContext& solution, P
 	      //
 	      //	Restore the state to what it was before we solved this problem the first time.
 	      //
-	      solution.clone(p.savedSubstitution);
+	      solution.restoreFromClone(p.savedSubstitution);
 	      pending.restore(p.savedPendingState);
+	      //cout << "CUI_UnificationSubproblem::solve() trying " << (DagNode*) p.lhs << " vs " << (DagNode*) p.rhs << " backwards" << endl;
 	      if (p.lhs->getArgument(0)->computeSolvedForm(p.rhs->getArgument(1), solution, pending) &&
 		  p.lhs->getArgument(1)->computeSolvedForm(p.rhs->getArgument(0), solution, pending))
 		{
@@ -139,7 +142,7 @@ CUI_UnificationSubproblem::solve(bool findFirst, UnificationContext& solution, P
   //	Restore initial state.
   //
   Problem& p = problems[0];
-  solution.clone(p.savedSubstitution);
+  solution.restoreFromClone(p.savedSubstitution);
   pending.restore(p.savedPendingState);
   return false;
 }

@@ -32,8 +32,8 @@ class DagNodeSet : private PointerSet
 public:
   int insert(DagNode* d);
   int dagNode2Index(DagNode* d) const;
-  PointerSet::cardinality;
-  PointerSet::makeEmpty;
+  using PointerSet::cardinality;
+  using PointerSet::makeEmpty;
   DagNode* index2DagNode(int i) const;
 
 private:

@@ -45,7 +45,7 @@ MpzSystem::insertEqn(const IntVec& eqn)
   if (eqns.empty())
     nrVariables = eqn.size();
   else
-    Assert(nrVariables == eqn.size(), "eqn size differs: " << nrVariables << " vs " << eqn.size());
+    Assert(nrVariables == static_cast<int>(eqn.size()), "eqn size differs: " << nrVariables << " vs " << eqn.size());
   eqns.push_back(eqn);  // deep copy
 }
 
@@ -66,7 +66,7 @@ MpzSystem::initializeUpperBounds()
 	*i = NONE;
     }
   else
-    Assert(nrVariables == upperBounds.size(), "row size differs");
+    Assert(nrVariables == static_cast<int>(upperBounds.size()), "row size differs");
 }
 
 bool

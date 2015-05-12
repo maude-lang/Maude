@@ -10,8 +10,7 @@ GNU flex	http://www.gnu.org/software/flex/
 It is recommended that you use the latest versions of bison and flex
 since Maude is known to tickle bugs in certain older versions. You
 should use gcc 3.1 or later as there are code generation issues with
-the 3.0.* series. Doug Lea's malloc (dlmalloc) is now included in the
-Maude source tree (src/3rdParty/).
+the 3.0.* series.
 
 Maude requires the following packages:
 
@@ -87,3 +86,38 @@ installed in $(datadir). In order for the Maude binary to find the
 .maude files you should set the environment variable MAUDE_LIB to
 point to $(datadir). Alternatively you could move the .maude files to
 $(bindir).
+
+
+Note for Mac users
+==================
+Currently (February 7th, 2014):
+
+The official Apple version of gcc is an llvm front end from 2007 and is
+not capable of compiling Maude (Apple is pushing developers to clang).
+
+The offical Apple version of flex (2.5.35) contains a serious bug not
+present in the GNU version and which can cause Maude to hang.
+
+The are two viable routes to building Maude on Macs:
+
+(1) Install the tools and libraries from Mac Ports (http://www.macports.org/).
+(2) Build the tools and libraries from source.
+
+Going the Mac Ports route, the release binary was configured thus:
+
+../configure \
+CC=/opt/local/bin/gcc-mp-4.8  \
+CXX=/opt/local/bin/g++-mp-4.8 \
+FLEX=/opt/local/bin/flex \
+BISON=/opt/local/bin/bison \
+CFLAGS="-Wall -O2 -static-libstdc++ -static-libgcc -fno-crossjumping -fno-stack-protector -fstrict-aliasing -mmacosx-version-min=10.5 -finline-limit=10000" \
+CXXFLAGS="-Wall -O2 -static-libstdc++ -static-libgcc -fno-crossjumping -fno-stack-protector -fstrict-aliasing -mmacosx-version-min=10.5 -finline-limit=10000" \
+BUDDY_LIB="/opt/local/lib/libbdd.a" \
+TECLA_LIBS="/opt/local/lib/libtecla.a /usr/lib/libncurses.dylib" \
+LIBSIGSEGV_LIB="/opt/local/lib/libsigsegv.a" \
+GMP_LIBS="/opt/local/lib/libgmp.a /opt/local/lib/libgmpxx.a"
+
+This results in an almost static binary that should run on any x86-64 Mac
+running Leopard or later without the installation of extra libraries. Note
+that the Apple ncurses library is linked since the Mac Ports version depends
+on the Mac Ports terminfo data base, which most users will not have installed.

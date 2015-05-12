@@ -36,6 +36,7 @@
 #include "symbol.hh"
 #include "dagNode.hh"
 #include "extensionInfo.hh"
+#include "substitution.hh"
 
 //	core class definitions
 #include "positionState.hh"
@@ -138,35 +139,52 @@ PositionState::rebuildDag(DagNode* replacement, ExtensionInfo* extInfo, Position
     }
   //
   //	We return the rebuilt dag, and the extended replacement term since the caller may
-  //	need the later for tracing purposes.
+  //	need the latter for tracing purposes.
   //
   return DagPair(newDag, replacement);
 }
 
-PositionState::DagPair
-PositionState::rebuildAndInstantiateDag(DagNode* replacement, Substitution& substitution) const
+DagNode*
+PositionState::rebuildAndInstantiateDag(DagNode* replacement,
+					Substitution& substitution,
+					int firstVariable,
+					int lastVariable,
+					PositionIndex index) const
 {
   //
-  //	Extend the replacement term if needed.
+  //	We don't support extension for narrowing.
   //
-  if (extensionInfo != 0 && !(extensionInfo->matchedWhole()))
-    CantHappen("Extension not supported");
-  //replacement = positionQueue[index].node()->partialConstruct(replacement, extInfo);
+  Assert(extensionInfo == 0 || extensionInfo->matchedWhole(), "Extension not supported");
   //
   //	Walk up the stack rebuilding.
   //
   DagNode* newDag = replacement;
-  int argIndex = positionQueue[nextToReturn].argIndex();
-  for (PositionIndex i = positionQueue[nextToReturn].parentIndex(); i != UNDEFINED;)
+  if (index == DEFAULT)
+    index = nextToReturn;
+  int argIndex = positionQueue[index].argIndex();
+  PositionIndex i = positionQueue[index].parentIndex();
+  if (i != UNDEFINED)
     {
-      const RedexPosition& rp = positionQueue[i];
-      newDag = rp.node()->instantiateWithReplacement(substitution, argIndex, newDag);
-      argIndex = rp.argIndex();
-      i = rp.parentIndex();
+      //
+      //	Make eager copies of bindings we will use to avoid sharing dags that
+      //	might rewrite between eager and lazy positions.
+      //
+      Vector<DagNode*> eagerCopies(lastVariable + 1);
+      for (int j = firstVariable; j <= lastVariable; ++j)
+	eagerCopies[j] = substitution.value(j)->copyEagerUptoReduced();
+      for (int j = firstVariable; j <= lastVariable; ++j)
+	substitution.value(j)->clearCopyPointers();
+
+       while (i != UNDEFINED)
+	 {
+	   const RedexPosition& rp = positionQueue[i];
+	   newDag = rp.node()->instantiateWithReplacement(substitution, eagerCopies, argIndex, newDag);
+	   argIndex = rp.argIndex();
+	   i = rp.parentIndex();
+	 }
     }
   //
-  //	We return the rebuilt dag, and the extended replacement term since the caller may
-  //	need the later for tracing purposes.
+  //	We return the rebuilt dag.
   //
-  return DagPair(newDag, replacement);
+  return newDag;
 }

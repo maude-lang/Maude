@@ -1,6 +1,85 @@
+2014-02-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pseudoThread.cc (processCallBacks): added comment
+	(eventLoop): fix a bug where we were putting wait in a shadowing
+	variable
+
+===================================Maude100a===========================================
+
+2012-11-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pseudoThread.cc (processFds): update idea of time after poll() call
+	(eventLoop): rewritten so we can never return 0; we loop until we
+	handle an event, get interrupted or there are no pending call backs
+
+	* pseudoThread.hh (P): added comments explaining the arguments to
+	public member functions; removed default argument value for
+	requestCallBack()
+	(CallBackRequest, <): moved out of class declaration
+
+2012-11-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pseudoThread.cc (processFds): fix bugs where we were writing
+	wrong thing into info.flags in POLLIN and POLLOUT cases; code
+	cleaning
+
+2012-10-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* socketManagerSymbol.hh (PseudoThread): updated decl for
+	getActiveSocket()
+
+	* socketStuff.cc (getActiveSocket): pass back pointer to
+	ActiveSocket object
+	(acceptClient): use ActiveSocket pointer
+	(send): use ActiveSocket pointer
+	(receive): use ActiveSocket pointer
+	(closeSocket, cleanUp): pass extra argument to getActiveSocket
+
+	* socketOutcomes.cc (acceptedClientReply): don't set state here
+
+	* socketStuff.cc (acceptClient): set state on new accept socket here
+
+	* socketAsync.cc (doWrite): set state after call to createdSocketReply()
+	(doRead): set state on new accept socket here
+
+	* socketOutcomes.cc (createdSocketReply): don't set state here
+
+	* socketStuff.cc (createServerTcpSocket): changed comment on line
+	that sets state
+	(createClientTcpSocket): set state here rather than rely on
+	createdSocketReply()
+
+	* socketAsync.cc (doRead): commented out superfluous access of
+	activeSockets
+
+2012-10-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* socketManagerSymbol.cc (ActiveSocket): added in order to fix a
+	bug that we were implicitly deleting (via map) ActiveSockets with
+	an uninitialized textArray field
+
+	* socketManagerSymbol.hh (PseudoThread): added decl for explicit
+	ActiveSocket ctor
+
+===================================Maude96b===========================================
+
+2011-12-31  Steven Eker  <eker@rho>
+
+	* socketManagerSymbol.cc (ActiveSocket): added
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): replace text with textArray in struct
+	ActiveSocket
+
+	* socketStuff.cc (SocketManagerSymbol::send): fix bug where we were extracting a c_str() from
+	a rope that then went out of scope, potentially before we were finished with the const char*
+	from c_str()
+	(SocketManagerSymbol::send): check errno == EWOULDBLOCK for POSIX compliance
+
+===================================Maude95c===========================================
+
 2009-01-29  Steven Eker  <eker@goo.csl.sri.com>
 
-	* socketManagerSymbol.cc (attachData, attachSymbol, copyAttachments) 
+	* socketManagerSymbol.cc (attachData, attachSymbol, copyAttachments)
 	(getDataAttachments, getSymbolAttachments): call
 	ExternalObjectManagerSymbol functions rather the FreeSymbol
 	functions
@@ -19,20 +98,20 @@
 
 2005-04-29  Steven Eker  <eker@goo.csl.sri.com>
 
-	* socketStuff.cc (createClientTcpSocket, createServerTcpSocket) 
+	* socketStuff.cc (createClientTcpSocket, createServerTcpSocket)
 	(acceptClient, send, receive, closeSocket): most DebugAdvisory()s
 	turned into IssueAdvisory()s
 
 2005-04-15  Steven Eker  <eker@goo.csl.sri.com>
 
 	* socketStuff.cc (receive): added extra DebugAdvisory()
-	
+
 ===================================Maude86a===========================================
 
 2005-03-15  Steven Eker  <eker@goo.csl.sri.com>
 
 	* socketStuff.cc (createServerTcpSocket): set SO_REUSEADDR flag
-	
+
 2005-03-14  Steven Eker  <eker@goo.csl.sri.com>
 
 	* socketStuff.cc (createServerTcpSocket): make DebugAdvisory()
@@ -41,7 +120,7 @@
 	* objectSystemRewritingContext.cc (ObjectSystemRewritingContext):
 	added DebugAdvisory() to check for server sockets not being closed
 	after ^C
-	
+
 ===================================Maude86===========================================
 
 2004-12-23  Steven Eker  <eker@goo.csl.sri.com>

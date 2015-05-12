@@ -380,6 +380,35 @@ ACU_Symbol::stackArguments(DagNode* subject,
     }
 }
 
+Term*
+ACU_Symbol::termify(DagNode* dagNode)
+{
+  Vector<Term*> arguments;
+  Vector<int> multiplicities;
+
+  if (safeCast(const ACU_BaseDagNode*, dagNode)->isTree())
+    {
+      const ACU_Tree& tree = safeCast(const ACU_TreeDagNode*, dagNode)->getTree();
+      for (ACU_FastIter i(tree); i.valid(); i.next())
+	{
+	  DagNode* a = i.getDagNode();
+	  arguments.append(a->symbol()->termify(a));
+	  multiplicities.append(i.getMultiplicity());
+	}
+    }
+  else
+    {
+      const ArgVec<ACU_DagNode::Pair>& argArray = safeCast(const ACU_DagNode*, dagNode)->argArray;
+      FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, argArray)
+	{
+	  DagNode* a = i->dagNode;
+	  arguments.append(a->symbol()->termify(a));
+	  multiplicities.append(i->multiplicity);
+	}
+    }
+  return new ACU_Term(this, arguments, multiplicities);
+}
+
 //
 //	Unification code.
 //

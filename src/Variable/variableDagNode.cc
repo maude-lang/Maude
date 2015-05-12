@@ -132,7 +132,6 @@ VariableDagNode::computeBaseSortForGroundSubterms()
   return NONGROUND;
 }
 
-
 bool
 VariableDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
 {
@@ -147,38 +146,74 @@ VariableDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, 
       if (lv->equal(rv))
 	return true;
       //
-      //	Not clear if it safe to leave existing bindings in place or should we unsolve
-      //	and re-solve them to take care of any occurs check issues.
+      //	Need to replace one variable by the other throughout the problem. We do this
+      //	virtually and must check for implicit occurs check problems.
       //
-      //	Also we might want to make sure we don't map an original variable to a fresh variable.
+      //	Might need to check we never map an original variable to a fresh variable.
       //
       DagNode* lt = solution.value(lv->index);
       if (lt == 0)
-	{
-	  solution.unificationBind(lv, rv);
-	  return true;
-	}
+	return safeVirtualReplacement(lv, rv, solution, pending);
 
       DagNode* rt = solution.value(rv->index);
       if (rt == 0)
-	{
-	  solution.unificationBind(rv, lv);
-	  return true;
-	}
-
-      solution.unificationBind(lv, rv);
+	return safeVirtualReplacement(rv, lv, solution, pending);
       //
-      //	Need to call computeSolvedForm() since lt and rt could be ground.
-      //	Safe to call computeSolvedForm() since neither lt nor rt are
-      //	variables so the problem can't be kicked back to us.
+      //	Both variables are bound.
       //
-      return lt->computeSolvedForm(rt, solution, pending);
+      return safeVirtualReplacement(lv, rv, solution, pending) && lt->computeSolvedForm(rt, solution, pending);
     }
   //
   //	Calling computeSolvedForm() would just kick the problem back to us if
-  //	rhs is ground, since this is a variable, and cause an infinite recursion.
+  //	rhs is ground, since this is a variable, and this would cause an infinite recursion.
   //
   return rhs->computeSolvedForm2(this, solution, pending);
+}
+
+
+bool
+VariableDagNode::safeVirtualReplacement(VariableDagNode* oldVar, VariableDagNode* newVar, UnificationContext& solution, PendingUnificationStack& pending)
+{
+  //
+  //	We want to replace all occurrences of oldVar by newVar. We assume oldVar is unbound
+  //	(or has a binding which can be ignored) and newVar is the last variable in its chain.
+  //	We do this by binding oldVar to newVar and since whenever we access a variable,
+  //	we look for the last variable in the chain, accessing oldVar will give us newVar.
+  //
+  //	There is however a problem. If newVar is bound and its binding contains oldVar
+  //	(or a variable equivalent to it) we gererate an implicit occur check issue. We
+  //    could un-solve and re-solve its binding, but if there is no occur check issue,
+  //	re-solving could give us a similar variable replacement problem, also resulting in
+  //	non-termination.
+  //
+  //	So we check the binding of newVar to see if it contains oldVar, and only then
+  //	do we unsolve it.
+  //
+  solution.unificationBind(oldVar, newVar);
+  DagNode* newBinding = solution.value(newVar->index);
+  if (newBinding == 0 || newBinding->isGround())
+    return true;
+  
+  NatSet occurs;
+  newBinding->insertVariables(occurs);
+  FOR_EACH_CONST(i, NatSet, occurs)
+    {
+      if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(solution.value(*i)))
+	{
+	  if (v->lastVariableInChain(solution)->equal(newVar))
+	    {
+	      //
+	      //	We have an occur check issue. We unsolve newVar |-> newBinding and re-solve it.
+	      //
+	      solution.bind(newVar->index, 0);
+	      return newBinding->computeSolvedForm2(newVar, solution, pending);
+	    }
+	}
+    }
+  //
+  //	No implicit occurs check issue found. Leave the binding of newVar as it was.
+  //
+  return true;
 }
 
 void
@@ -211,14 +246,32 @@ VariableDagNode::lastVariableInChain(Substitution& solution)
       VariableDagNode* n = dynamic_cast<VariableDagNode*>(d);
       if (n == 0)
 	break;
+      if (v == n)
+	{
+	  cerr << "variable " << (DagNode*) v << " is bound to itself in a chain starting at " << (DagNode*) this << endl;
+	  abort();
+	}
       v = n;
     }
   return v;
 }
+
+//
+//	Narrowing code.
+//
 
 bool
 VariableDagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 {
   index = baseIndex + indices.variable2Index(this);
   return false;
+}
+
+DagNode*
+VariableDagNode::instantiateWithCopies2(const Substitution& /* substitution */, const Vector<DagNode*>& eagerCopies)
+{
+  //
+  //	We must be in an eager position so use the eager copy.
+  //
+  return eagerCopies[index];
 }

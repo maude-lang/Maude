@@ -37,7 +37,7 @@
 class UnificationContext : public Substitution, private SimpleRootContainer
 {
 public:
-  UnificationContext(FreshVariableGenerator* freshVariableGenerator, int nrOriginalVariables);
+  UnificationContext(FreshVariableGenerator* freshVariableGenerator, int nrOriginalVariables, bool odd = false);
 
   VariableDagNode* makeFreshVariable(const ConnectedComponent* component);
   Sort* getFreshVariableSort(int index) const;
@@ -45,6 +45,8 @@ public:
 
   void unificationBind(VariableDagNode* variable, DagNode* value);
   VariableDagNode* getVariableDagNode(int index);
+
+  void restoreFromClone(const Substitution& substitutionClone);
 
 protected:
   //
@@ -55,8 +57,18 @@ protected:
 
 private:
   FreshVariableGenerator* const freshVariableGenerator;
-  const int nrOriginalVariables;
+  const int nrOriginalVariables;  // actually some the the slots could be unused
+  const bool odd;  // what family of fresh variable names to use
+  //
+  //	Fresh variables are always create at the kind level. We keep track of this kind sort
+  //	for each fresh variable we create.
+  //
   Vector<Sort*> freshVariableSorts;
+  //
+  //	We track the dagnode of each variable bound using unificationBind(). These dagnodes are used
+  //	fo unsolving solved forms (where we need to solve all problems in a given theory simultaneously
+  //	for termination reasons) and for resolving compound cycles.
+  //
   Vector<VariableDagNode*> variableDagNodes;
 };
 

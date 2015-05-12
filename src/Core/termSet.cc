@@ -38,10 +38,10 @@
 //	core class definitions
 #include "termSet.hh"
 
-void
+int
 TermSet::insert(Term* t)
 {
-  (void) PointerSet::insert(t, t->getHashValue());
+  return PointerSet::insert(t, t->getHashValue());
 }
 
 int

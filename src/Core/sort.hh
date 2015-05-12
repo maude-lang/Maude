@@ -55,6 +55,9 @@ public:
   const NatSet& getLeqSorts() const;
   bool errorFreeMaximal() const;
 
+  bool fastGeq(int index) const;
+  bool fastGeqSufficient() const;
+
 #ifdef COMPILER
   void generateSortVector(CompilationContext& context);
 #endif
@@ -124,6 +127,23 @@ Sort::errorFreeMaximal() const
 }
 
 inline bool
+Sort::fastGeq(int index) const
+{
+  //
+  //	This function avoids pulling in general NatSet code but only returns the correct
+  //	result if (fastTest - 1) <= NatSet::smallIntBound
+  //
+  Assert(index != Sort::SORT_UNKNOWN, "unknown sort");
+  return (index >= fastTest) ? true : leqSorts.containsSmall(index);
+}
+
+inline bool
+Sort::fastGeqSufficient() const
+{
+  return (fastTest - 1) <= NatSet::smallIntBound;
+}
+
+inline bool
 leq(const Sort* sort1, const Sort* sort2)
 {
   return sort2->leqSorts.contains(sort1->sortIndex);
@@ -137,6 +157,7 @@ leq(int index1, const Sort* sort2)
     return true;
   return sort2->leqSorts.contains(index1);
 }
+
 
 inline bool
 leq(const Sort* sort1, int index2)

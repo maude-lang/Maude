@@ -63,6 +63,7 @@ Symbol::Symbol(int id, int arity, bool memoFlag)
     orderInt(symbolCount++ | (arity << 24))
 {
   uniqueSortIndex = 0;
+  matchIndex = 0;
 }
 
 Symbol::~Symbol()
@@ -196,9 +197,29 @@ Symbol::postOpDeclarationPass()
 {
 }
 
+/*
+Term*
+Symbol::termify(DagNode* dagNode)
+{
+  Vector<Term*> args;
+
+  for (DagArgumentIterator a(*dagNode); a.valid(); a.next())
+    {
+      DagNode* d = a.argument();
+      args.append(d->symbol()->termify(d));
+    }
+  return makeTerm(args);
+}
+*/
+
 void
 Symbol::finalizeSortInfo()
 {
+  //
+  //	If a symbol has sort constraints we leave uniqueSortIndex = 0 for slowest, most general handling.
+  //	Otherwise we check if it can produces a unique sort and set uniqueSortIndex to the index of this sort if so.
+  //	If neither case applies we set uniqueSortIndex = -1, to run fast, theory dependent case.
+  //
   if (sortConstraintFree())
     {
       Sort* s = getSingleNonErrorSort();
@@ -206,9 +227,27 @@ Symbol::finalizeSortInfo()
     }
 }
 
+Instruction*
+Symbol::generateFinalInstruction(const Vector<int>& /* argumentSlots */)
+{
+  return 0;
+}
+
+Instruction*
+Symbol::generateInstruction(int /* destination */,  const Vector<int>& /* argumentSlots */, Instruction* /* nextInstruction */)
+{
+  return 0;
+}
+
+void
+Symbol::stackMachinePostProcess()
+{
+}
+
 void
 Symbol::reset()
 {
+  resetEachEquation();
   resetEachRule();
 }
 

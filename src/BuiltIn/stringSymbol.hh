@@ -36,6 +36,7 @@ public:
   void computeBaseSort(DagNode* subject);
   bool isConstructor(DagNode* subject);
   void compileOpDeclarations();
+  Term* termify(DagNode* dagNode);
 
 private:
   Sort* sort;

@@ -96,6 +96,8 @@ private:
 						   FreeDagNode* subject,
 						   RewritingContext& context) const;
   bool metaUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint);
+  bool metaGetVariant2(FreeDagNode* subject, RewritingContext& context, bool irredundant);
+  bool metaVariantUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint);
   bool okToBind();
   bool downSearchType(DagNode* arg, SequenceSearch::SearchType& searchType) const;
 
@@ -105,6 +107,14 @@ private:
 					Int64 solutionNr,
 					NarrowingSequenceSearch*& search,
 					Int64& lastSolutionNr);
+
+  static bool getCachedVariantSearch(MetaModule* m,
+				     FreeDagNode* subject,
+				     RewritingContext& context,
+				     Int64 solutionNr,
+				     VariantSearch*& search,
+				     Int64& lastSolutionNr);
+
   NarrowingSequenceSearch* makeNarrowingSequenceSearch(MetaModule* m,
 						       FreeDagNode* subject,
 						       RewritingContext& context) const;

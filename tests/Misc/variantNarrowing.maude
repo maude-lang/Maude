@@ -1,0 +1,54 @@
+set show timing off .
+
+fmod CONSTANTS is 
+  sort Msg .
+
+  op null : -> Msg .
+  op 1 : -> Msg .
+  op 2 : -> Msg .
+  op 3 : -> Msg .
+  op 4 : -> Msg .
+  op 5 : -> Msg .
+
+  op f : Msg Msg -> Msg [frozen] .
+  op g : Msg Msg -> Msg [frozen] .
+endfm
+
+fmod TEST is
+  inc CONSTANTS .
+  op u : Msg Msg -> Msg [frozen assoc comm] .
+  
+  eq u(X:Msg, X:Msg) = (null).Msg [variant] .
+  eq u(X:Msg, X:Msg, Y:Msg) = Y:Msg [variant] .
+  eq u(X:Msg, (null).Msg) = X:Msg [variant] .
+endfm
+
+get variants in TEST : 
+g(f(u(u(X14:Msg,2),g(g(X3:Msg,X15:Msg),X16:Msg)),u(g(X12:Msg,X3:Msg),g(X8:Msg,g(X10:Msg,X9:Msg)))),f(u(f(X8:Msg,X15:Msg),u(X15:Msg,X9:Msg)),g(f(X2:Msg,X2:Msg),g(3,X6:Msg)))) .
+
+
+fmod XOR is
+  sort XOR .
+
+  sort Elem .
+  ops cst1 cst2 cst3 cst4 : -> Elem .
+
+  subsort Elem < XOR .
+  op _+_ : XOR XOR -> XOR [ctor assoc comm] .
+  op 0 : -> XOR .
+  op a : -> XOR .
+
+  vars X Y : XOR .
+
+  eq Y + 0 = Y [variant] .
+  eq X + X = 0 [variant] .
+  eq X + X + Y = Y [variant] .
+endfm
+
+get variants in XOR : X:XOR + cst1 .
+
+get variants in XOR : X:XOR + cst2 .
+get variants in XOR : X:XOR + cst2 such that X:XOR + a irreducible .
+
+get variants in XOR : X:XOR + Y:XOR + cst1 .
+get variants in XOR : X:XOR + Y:XOR + cst1 such that X:XOR + cst1, X:XOR + cst2 irreducible .

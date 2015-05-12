@@ -60,7 +60,11 @@ public:
   PositionIndex getPositionIndex() const;
   DagPair rebuildDag(DagNode* replacement) const;
   DagPair rebuildDag(DagNode* replacement, ExtensionInfo* extInfo, PositionIndex index) const;
-  DagPair rebuildAndInstantiateDag(DagNode* replacement, Substitution& substitution) const;
+  DagNode* rebuildAndInstantiateDag(DagNode* replacement,
+				    Substitution& substitution,
+				    int firstVariable,
+				    int lastVariable,
+				    PositionIndex = DEFAULT) const;
   int getFlags() const;
 
 private:

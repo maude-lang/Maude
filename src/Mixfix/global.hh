@@ -33,6 +33,7 @@ extern IO_Manager ioManager;
 
 extern string executableDirectory;
 
+extern bool alwaysAdviseFlag;
 
 #define PRELUDE_NAME	"prelude.maude"
 #define MAUDE_LIB	"MAUDE_LIB"

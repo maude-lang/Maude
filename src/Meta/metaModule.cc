@@ -43,6 +43,7 @@ MetaModule::MetaModule(int name, ModuleType moduleType, Entity::User* parent, In
   : VisibleModule(name, moduleType, parent),
     owner(owner)
 {
+  //cout << "made meta module " << name << endl;
 }
 
 void

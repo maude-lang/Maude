@@ -81,18 +81,32 @@ SortTable::domainSubsumes(int subsumer, int victim) const
 void
 SortTable::computeMaximalOpDeclSetTable()
 {
+  //
+  //	Fill out maximalOpDeclSetTable, which for each range sort gives the set
+  //	of operator declaration whose range is less than that sort and whose
+  //	domain is not subsumed by some other declaration in the set.
+  //
   const ConnectedComponent* range = rangeComponent();
   int nrSorts = range->nrSorts();
   maximalOpDeclSetTable.resize(nrSorts);
   int nrDeclarations = opDeclarations.length();
+  //
+  //	For each range sort.
+  //
   for (int i = 0; i < nrSorts; ++i)
     {
       NatSet& opDeclSet = maximalOpDeclSetTable[i];
       const Sort* target = range->sort(i);
+      //
+      //	For each declaration.
+      //
       for (int j = 0; j < nrDeclarations; ++j)
 	{
 	  if (leq(opDeclarations[j].getDomainAndRange()[nrArgs], target))
 	    {
+	      //
+	      //	For each previous declaration.
+	      //
 	      for (int k = 0; k < j; ++k)
 		{
 		  if (opDeclSet.contains(k))
@@ -210,6 +224,12 @@ SortTable::partiallySubsumes(int subsumer, int victim, int argNr)
 void
 SortTable::minimize(NatSet& alive, int argNr)
 {
+  //
+  //	We don't use NatSet iterators because alive is being modified.
+  //
+  //	If two declarations mutually subsume one another, the earlier one
+  //	removes the later one.
+  //
   if (!(alive.empty()))
     {
       int min = alive.min();
@@ -256,6 +276,9 @@ SortTable::buildSortDiagram()
   Vector<NatSet> nextStates;
   int currentBase = 0;
   set<int> badTerminals;
+  //
+  //	For each argument.
+  //
   for (int i = 0; i < nrArgs; i++)
     {
       const ConnectedComponent* component = componentVector[i];
@@ -265,16 +288,24 @@ SortTable::buildSortDiagram()
       int nextBase = currentBase + nrSorts * nrCurrentStates;
       sortDiagram.expandTo(nextBase);
       int nrNextSorts = (i == nrArgs - 1) ? 0 : componentVector[i + 1]->nrSorts();
-      
+      //
+      //	For each sort that the argument might have.
+      //
       for (int j = 0; j < nrSorts; j++)
 	{
 	  Sort* s = component->sort(j);
+	  //
+	  //	Compute the set of declarations that are viable with this argument having this sort.
+	  //
 	  NatSet viable;
 	  for (int k = 0; k < nrDeclarations; k++)
 	    {
 	      if (leq(s, opDeclarations[k].getDomainAndRange()[i]))
 		viable.insert(k);
 	    }
+	  //
+	  //	For each current state, compute a new state or a sort.
+	  //
 	  for (int k = 0; k < nrCurrentStates; k++)
 	    {
 	      NatSet nextState(viable);
@@ -282,6 +313,9 @@ SortTable::buildSortDiagram()
 	      int index = currentBase + k * nrSorts + j;
 	      if (nrNextSorts == 0)
 		{
+		  //
+		  //	Final argument case - we compute a sort.
+		  //
 		  bool unique;
 		  int sortIndex = findMinSortIndex(nextState, unique);
 		  sortDiagram[index] = sortIndex;
@@ -298,6 +332,10 @@ SortTable::buildSortDiagram()
 		}
 	      else
 		{
+		  //
+		  //	Nonfinal argument case - we compute a new state by discarding
+		  //	redundant declarations and getting a state number for it.
+		  //
 		  minimize(nextState, i + 1);
 		  sortDiagram[index] =
 		    nextBase + nrNextSorts * findStateNumber(nextStates, nextState);
@@ -333,17 +371,19 @@ SortTable::findMinSortIndex(const NatSet& state, bool& unique)
 {
   Sort* minSort = componentVector[nrArgs]->sort(Sort::ERROR_SORT);  // start with error sort
   NatSet infSoFar(minSort->getLeqSorts());
-  int nrDeclarations = opDeclarations.length();
-  for (int i = 0; i < nrDeclarations; i++)
+  FOR_EACH_CONST(i, NatSet, state)
     {
-      if (state.contains(i))
-	{
-	  Sort* result = opDeclarations[i].getDomainAndRange()[nrArgs];
-	  const NatSet& resultLeqSorts = result->getLeqSorts();
-	  infSoFar.intersect(resultLeqSorts);
-	  if (infSoFar == resultLeqSorts)
-	    minSort = result;
-        }
+      Sort* rangeSort = opDeclarations[*i].getDomainAndRange()[nrArgs];
+      const NatSet& rangeLeqSorts = rangeSort->getLeqSorts();
+      infSoFar.intersect(rangeLeqSorts);
+      //
+      //	This test only succeeds if rangeSort is less than or equal to
+      //	to the range sorts of the previous declarations in the state.
+      //	Thus in the case of a non-preregular operator we break in favor
+      //	of the earlier declaration
+      //
+      if (infSoFar == rangeLeqSorts)
+	minSort = rangeSort;
     }
   unique = (infSoFar == minSort->getLeqSorts());
   return minSort->index();
@@ -368,10 +408,37 @@ SortTable::computeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFu
 			       sortFunctionBdds);
       return;
     }
-  BddTable table(sortDiagram.size());  // only target entries actually used
-  //  for (int i = 0; i < sortDiagram.size(); ++i)
-  //    cerr << sortDiagram[i] << " ";
-  //  cerr << endl;
+  //
+  //	Calculate and allocate the number of BDD variables we will need to represent the domain sorts.
+  //
+  int nrBddVariablesForDomain = 0;
+  for (int i = 0; i < nrArgs; ++i)
+    nrBddVariablesForDomain += sortBdds.getNrVariables(componentVector[i]->getIndexWithinModule());
+  BddUser::setNrVariables(nrBddVariablesForDomain);
+  //
+  //	We have two alternative ways of computing the vector of BDDs to that represent the sort function.
+  //
+  recursiveComputeSortFunctionBdds(sortBdds, sortFunctionBdds);
+  Vector<Bdd> altSortFunctionBdds;
+  linearComputeSortFunctionBdds(sortBdds, altSortFunctionBdds);
+  //
+  //	Consistancy test code.
+  //
+  DebugAdvisory("computeSortFunctionBdds() - consistancy check");
+  int nrBdds = altSortFunctionBdds.size();
+  for (int i = 0; i < nrBdds; ++i)
+    {
+      if (altSortFunctionBdds[i] != sortFunctionBdds[i])
+	{
+	  DebugAdvisory("computeSortFunctionBdds() : *** computeSortFunctionBdds() recursive =\n" << sortFunctionBdds[i] <<
+			"linear =\n" << altSortFunctionBdds[i]);
+	}
+    }
+}
+
+void
+SortTable::recursiveComputeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFunctionBdds) const
+{
   //
   //	Calculate and allocate the number of BDD variables we will need to represent the domain sorts.
   //
@@ -380,8 +447,64 @@ SortTable::computeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFu
     nrBddVariablesForDomain += sortBdds.getNrVariables(componentVector[i]->getIndexWithinModule());
   BddUser::setNrVariables(nrBddVariablesForDomain);
 
+  BddTable table(sortDiagram.size());  // only target entries actually used
+  //  for (int i = 0; i < sortDiagram.size(); ++i)
+  //    cerr << sortDiagram[i] << " ";
+  //  cerr << endl;
   computeBddVector(sortBdds, 0, 0, table, 0);
   sortFunctionBdds.swap(table[0]);
+}
+
+void
+SortTable::linearComputeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFunctionBdds) const
+{
+  //
+  //	This is an alternative computation of the same BDDs, directly from the operator declarations.
+  //
+  const ConnectedComponent* rangeComponent = componentVector[nrArgs];
+  int nrBddVariables = sortBdds.getNrVariables(rangeComponent->getIndexWithinModule());
+  //
+  //	We start with the constant error sort everywhere function.
+  //
+  sortBdds.makeIndexVector(nrBddVariables, Sort::ERROR_SORT, sortFunctionBdds);
+  //
+  //	Because this algorithm breaks in favor of later considered declarations we consider the declarations
+  //	in reverse order for consistancy with the standard sort calculation on non-pregular signatures.
+  //
+  for (int i = opDeclarations.length() - 1; i >= 0; --i)
+    {
+      const Vector<Sort*>& opDeclaration = opDeclarations[i].getDomainAndRange();
+      Bdd replaceWithOurRangeSort = bdd_true();
+      //
+      //	First require all arguments to have a sort <= than than that of the
+      //	corresponding sort in the declaration.
+      //
+      int bddVarNr = 0;
+      for (int j = 0; j < nrArgs; ++j)
+	{
+	  Sort* sort = opDeclaration[j];
+	  Bdd leqRelation = sortBdds.getRemappedLeqRelation(sort, bddVarNr);
+	  replaceWithOurRangeSort = bdd_and(replaceWithOurRangeSort, leqRelation);
+	  bddVarNr += sortBdds.getNrVariables(componentVector[j]->getIndexWithinModule());
+	}
+      //
+      //	We require that the currently computed sort is not <= our range sort.
+      //	This allows our sort to replace the current sort in the incomparable case
+      //	and in the > case.
+      //
+      Sort* rangeSort = opDeclaration[nrArgs];
+      Bdd currentLeqOurRange = sortBdds.applyLeqRelation(rangeSort, sortFunctionBdds);
+      replaceWithOurRangeSort = bdd_and(replaceWithOurRangeSort, bdd_not(currentLeqOurRange));
+      //
+      //	We now have a BDD that tells us when to replace the currently computed sort
+      //	with our range sort. We update the currently computed sort BDD using ite.
+      //
+      Vector<Bdd> ourRangeSort;
+      sortBdds.makeIndexVector(nrBddVariables, rangeSort->index(), ourRangeSort);
+
+      for (int k = 0; k < nrBddVariables; ++k)
+	sortFunctionBdds[k] = bdd_ite(replaceWithOurRangeSort, ourRangeSort[k], sortFunctionBdds[k]);
+    }
 }
 
 void
@@ -424,7 +547,7 @@ SortTable::computeBddVector(const SortBdds& sortBdds,
   //
   //  DebugAdvisory("starting OR of ANDs phase");
   int nrBdds = sortBdds.getNrVariables(componentVector[nrArgs]->getIndexWithinModule());
-  vec.resize(nrBdds);
+  vec.resize(nrBdds);  // default construct sets all the elements to false
   FOR_EACH_CONST(i, BddMap, disjuncts)
     {
       int target = i->first;

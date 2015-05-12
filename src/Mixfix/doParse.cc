@@ -176,6 +176,51 @@ MixfixModule::parseSearchCommand(const Vector<Token>& bubble,
 }
 
 bool
+MixfixModule::parseGetVariantsCommand(const Vector<Token>& bubble,
+				     Term*& initial,
+				     Vector<Term*>& constraints)
+{
+  makeGrammar(true);
+  int r = parseSentence(bubble, GET_VARIANTS_COMMAND);
+  if (r <= 0)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": no parse for command.");
+      return false;
+    }
+  if (r > 1)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": multiple distinct parses for command.");
+    }
+  parser->makeGetVariantsCommand(initial, constraints);
+  return true;
+}
+
+bool
+MixfixModule::parseVariantUnifyCommand(const Vector<Token>& bubble,
+				       Vector<Term*>& lhs,
+				       Vector<Term*>& rhs,
+				       Vector<Term*>& constraints)
+{
+  makeGrammar(true);
+  int r = parseSentence(bubble, VARIANT_UNIFY_COMMAND);
+  if (r <= 0)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": no parse for command.");
+      return false;
+    }
+  if (r > 1)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": multiple distinct parses for command.");
+    }
+  parser->makeVariantUnifyCommand(lhs, rhs, constraints);
+  return true;
+}
+
+bool
 MixfixModule::parseStrategyCommand(const Vector<Token>& bubble,
 				   Term*& subject,
 				   StrategyExpression*& strategy)

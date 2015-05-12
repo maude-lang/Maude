@@ -322,6 +322,14 @@ S_Symbol::mightCollapseToOurSymbol(const Term* subterm) const
   return false;
 }
 
+Term*
+S_Symbol::termify(DagNode* dagNode)
+{
+  S_DagNode* d = safeCast(S_DagNode*, dagNode);
+  DagNode* a = d->getArgument();
+  return new S_Term(this, d->getNumber(), a->symbol()->termify(a));
+}
+
 //
 //	Unification code.
 //

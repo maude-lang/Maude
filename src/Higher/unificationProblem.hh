@@ -50,8 +50,8 @@ public:
 private:
   void markReachableNodes();
   void findOrderSortedUnifiers();
-  bool extractUnifier();
-  bool explore(int index);
+  //bool extractUnifier();
+  //bool explore(int index);
 
   Vector<Term*> leftHandSides;
   Vector<Term*> rightHandSides;
@@ -73,9 +73,9 @@ private:
   //
   //	Data for resolving dependencies in solved form.
   //
-  Vector<int> order;			// we build an order in which to instantiate the solved forms
-  NatSet done;				// a variable is done when every variable it (indirectly) depends on is in the order
-  NatSet pending;			// variables on the current path though the dependency digraph
+  //Vector<int> order;			// we build an order in which to instantiate the solved forms
+  //NatSet done;				// a variable is done when every variable it (indirectly) depends on is in the order
+  //NatSet pending;			// variables on the current path though the dependency digraph
 };
 
 inline bool

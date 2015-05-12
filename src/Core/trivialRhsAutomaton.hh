@@ -39,6 +39,8 @@ public:
   DagNode* construct(Substitution& matcher);
   void replace(DagNode* old, Substitution& matcher);
 
+  bool recordInfo(StackMachineRhsCompiler& compiler);
+
 #ifdef DUMP
   void dump(ostream& s, const VariableInfo& variableInfo, int indentLevel);
 #endif

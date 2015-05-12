@@ -79,7 +79,7 @@ UnificationProblem::UnificationProblem(Vector<Term*>& lhs,
   //
   //	Check that variables have safe names
   //
-  int nrOriginalVariables = variableInfo.getNrProtectedVariables();
+  int nrOriginalVariables = variableInfo.getNrRealVariables();
   for (int i = 0; i < nrOriginalVariables; ++i)
     {
       Term* v = variableInfo.index2Variable(i);
@@ -204,7 +204,7 @@ UnificationProblem::findNextUnifier()
       //cout << "=== final solved form ===" << endl;
 #if 0
       cout << "total variables = " << unsortedSolution->nrFragileBindings() << endl;
-      int nrRealVariables = variableInfo.getNrProtectedVariables();
+      int nrRealVariables = variableInfo.getNrRealVariables();
       for (int i = 0; i < nrRealVariables; ++i)
 	{
 	  cout << variableInfo.index2Variable(i) << " =? ";
@@ -243,7 +243,7 @@ UnificationProblem::findNextUnifier()
 #if 0
 	  {
 	    cout << "total variables = " << unsortedSolution->nrFragileBindings() << endl;
-	    int nrRealVariables = variableInfo.getNrProtectedVariables();
+	    int nrRealVariables = variableInfo.getNrRealVariables();
 	    for (int i = 0; i < nrRealVariables; ++i)
 	      {
 		cout << variableInfo.index2Variable(i) << " =? ";
@@ -256,8 +256,8 @@ UnificationProblem::findNextUnifier()
 	  }
 #endif
 
-	  if (!extractUnifier())
-	    goto nextUnsorted;
+	  //if (!extractUnifier())
+	  //   goto nextUnsorted;
 	  //freshVariableGenerator->reset();
 	  findOrderSortedUnifiers();
 	  if (orderSortedUnifiers == 0)
@@ -297,7 +297,7 @@ UnificationProblem::findNextUnifier()
       //	Replace each variable symbol in a free variable with the
       //	variable symbol corresponding to its newly calculated sort.
       //
-      /* BREAKING HERE - index is too big */
+      Assert(index < component->nrSorts(), "bad sort index " << index << " computed for free variable" << variable);
       variable->replaceSymbol(freshVariableGenerator->getBaseVariableSymbol(component->sort(index)));
     }
   return true;
@@ -319,9 +319,10 @@ UnificationProblem::findOrderSortedUnifiers()
   int nrActualVariables = sortedSolution->nrFragileBindings();
   Vector<int> realToBdd(nrActualVariables);
   int nextBddVariable = sortBdds->getFirstAvailableVariable();
-  int nrOriginalVariables = variableInfo.getNrProtectedVariables();
+  int nrOriginalVariables = variableInfo.getNrRealVariables();
   for (int i = 0; i < nrActualVariables; ++i)
     {
+      //cout << "variable with index " << i << endl;
       if (sortedSolution->value(i) == 0)
 	{
 	  DebugAdvisory("allocated BDD variables starting at " << nextBddVariable << " for variable with slot " << i);
@@ -332,17 +333,19 @@ UnificationProblem::findOrderSortedUnifiers()
 	    unsortedSolution->getFreshVariableSort(i);
 	  int nrBddVariables = sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
 	  nextBddVariable += nrBddVariables;
+	  //cout << "allocated bdds" << endl;
 	}
       else
 	DebugAdvisory("variable with index " << i << " bound to " << sortedSolution->value(i));
     }
+  //cout << "allocated " << nextBddVariable << " BDD variables" << endl;
   //
   //	Make sure BDD package has enough variables allocated.
   //
   DebugAdvisory("setting " << nextBddVariable << " BDD variables");
   BddUser::setNrVariables(nextBddVariable);
   //
-  //	Constrains free fresh variables to have indices in valid range.
+  //	Constrain free fresh variables to have indices in valid range.
   //
   Bdd unifier = bddtrue;
   for (int i = nrOriginalVariables; i < nrActualVariables; ++i)
@@ -350,19 +353,10 @@ UnificationProblem::findOrderSortedUnifiers()
       if (sortedSolution->value(i) == 0)
 	{
 	  Sort* sort = unsortedSolution->getFreshVariableSort(i);
-	  int nrBddVariables = sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
-	  int firstVar = realToBdd[i];
-
-	  bddPair* bitMap = bdd_newpair();
-	  for (int j = 0; j < nrBddVariables; ++j)
-	    bdd_setbddpair(bitMap, j, bdd_ithvar(firstVar + j));
-
-	  Bdd leqRelation = sortBdds->getLeqRelation(sort->getIndexWithinModule());
-	  leqRelation = bdd_veccompose(leqRelation, bitMap);
+	  Bdd leqRelation = sortBdds->getRemappedLeqRelation(sort, realToBdd[i]);
 	  unifier = bdd_and(unifier, leqRelation);
 	  DebugAdvisory("Adding constraint for free, non-original variable: " << leqRelation <<
 			" unifier becomes " << unifier);
-	  bdd_freepair(bitMap);
 	}
     }
   //
@@ -373,10 +367,8 @@ UnificationProblem::findOrderSortedUnifiers()
   for (int i = 0; i < nrOriginalVariables; ++i)
     {
       DebugAdvisory("Considering variable " << variableInfo.index2Variable(i));
-      bddPair* bitMap = bdd_newpair();
       Sort* sort = safeCast(VariableSymbol*, variableInfo.index2Variable(i)->symbol())->getSort();
-      Bdd leqRelation = sortBdds->getLeqRelation(sort->getIndexWithinModule());
-      DebugAdvisory("variable sort is " << sort << " which has a leqRelation " << leqRelation);
+      Bdd leqRelation;
       DagNode* d = sortedSolution->value(i);
       if (d != 0)
 	{
@@ -384,27 +376,18 @@ UnificationProblem::findOrderSortedUnifiers()
 	  //	Bound variable: term must have sort <= variables sort.
 	  //
 	  Vector<Bdd> genSort;
-	  d->computeGeneralizedSort(*sortBdds, realToBdd, genSort);	  
-	  int nrBdds =  genSort.size();
-	  for (int j = 0; j < nrBdds; ++j)
-	    bdd_setbddpair(bitMap, j, genSort[j]);
-	  leqRelation = bdd_veccompose(leqRelation, bitMap);
+	  d->computeGeneralizedSort(*sortBdds, realToBdd, genSort);
+	  leqRelation = sortBdds->applyLeqRelation(sort, genSort);
 	  DebugAdvisory("bound to " << d << " induces leqRelation " << leqRelation);
-	  
 	}
       else
 	{
 	  //
 	  //	Free variable: sort assigned to free variable must be <= variables original sort.
 	  //
-	  int firstVar = realToBdd[i];
-	  int nrBdds= sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
-	  for (int j = 0; j < nrBdds; ++j)
-	    bdd_setpair(bitMap, j, firstVar + j);
-	  leqRelation = bdd_replace(leqRelation, bitMap);
+	  leqRelation = sortBdds->getRemappedLeqRelation(sort, realToBdd[i]);
 	  DebugAdvisory("free variable induces leqRelation " << leqRelation);
 	}
-      bdd_freepair(bitMap);
       unifier = bdd_and(unifier, leqRelation);
       DebugAdvisory("findOrderSortedUnifiers(): unifier = " << unifier);
       if (unifier == bddfalse)
@@ -485,6 +468,7 @@ UnificationProblem::findOrderSortedUnifiers()
     }
 }
 
+/*
 bool
 UnificationProblem::extractUnifier()
 {
@@ -493,7 +477,7 @@ UnificationProblem::extractUnifier()
   //	bound variables by their dependencies and if that can be done, by
   //	instantiating their bindings in that order.
   //
-  int nrOriginalVariables = variableInfo.getNrProtectedVariables();
+  int nrOriginalVariables = variableInfo.getNrRealVariables();
   order.clear();
   done.clear();
   pending.clear();
@@ -545,3 +529,5 @@ UnificationProblem::explore(int index)
   done.insert(index);
   return true; 
 }
+*/
+

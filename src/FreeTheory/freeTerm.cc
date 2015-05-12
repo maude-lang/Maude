@@ -237,6 +237,23 @@ FreeTerm::markEagerArguments(int nrVariables,
     }
 }
 
+void
+FreeTerm::computeMatchIndices() const
+{
+  //
+  //	Make sure each stable symbol at the top of one of our arguments has
+  //	a non-zero match index. This is done recursively.
+  //
+  FOR_EACH_CONST(i, Vector<Term*>, argArray)
+    {
+      Term* t = *i;
+      Symbol* s = t->symbol();
+      if (s->isStable() && s->getMatchIndex() == 0)
+	s->setMatchIndex(s->rangeComponent()->getNewMatchIndex());
+      t->computeMatchIndices();
+    }
+}
+
 Term*
 FreeTerm::locateSubterm(const Vector<int>& position, int backup)
 {
@@ -479,4 +496,16 @@ FreeTerm::compileRhs3(FreeRhsAutomaton* automaton,
   int destination = variableInfo.makeConstructionIndex();
   automaton->addFree(s, destination, sources);
   return destination;
+}
+
+void
+FreeTerm::resetSlotIndices()
+{
+  slotIndex = -1;
+  int nrArgs = argArray.length();
+  for (int i = 0; i < nrArgs; i++)
+    {
+      if (FreeTerm* f = dynamic_cast<FreeTerm*>(argArray[i]))
+	f->resetSlotIndices();
+    }
 }

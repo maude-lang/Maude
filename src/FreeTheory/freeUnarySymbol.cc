@@ -53,5 +53,5 @@ bool
 FreeUnarySymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
   static_cast<FreeDagNode*>(subject)->internal[0]->reduce(context);
-  return discriminationNet.applyReplaceFast(subject, context);
+  return DISC_NET.applyReplaceFast(subject, context);
 }

@@ -456,6 +456,91 @@ MixfixModule::findSymbol(int name,
   return 0;
 }
 
+DagNode*
+MixfixModule::makeUnificationProblemDag(Vector<Term*>& lhs, Vector<Term*>& rhs)
+{
+  Assert(lhs.size() == rhs.size(), "size mismatch");
+  int nrPairs = lhs.size();
+  Vector<ConnectedComponent*> domain(nrPairs);
+  Vector<DagNode*> lhsDags(nrPairs);
+  Vector<DagNode*> rhsDags(nrPairs);
+  for (int i = 0; i < nrPairs; ++i)
+    {
+
+      Term* l = lhs[i];
+      domain[i] = l->symbol()->rangeComponent();
+      l = l->normalize(true);  // we don't really need to normalize but we do need to set hash values
+      lhsDags[i] = l->term2Dag();
+      l->deepSelfDestruct();
+
+      Term* r = rhs[i];
+      Assert(domain[i] == r->symbol()->rangeComponent(), "domain mismatch");
+      r = r->normalize(true);  // we don't really need to normalize but we do need to set hash values
+      rhsDags[i] = r->term2Dag();
+      r->deepSelfDestruct();
+    }
+
+  ConnectedComponent* range = domain[0];
+  Vector<DagNode*> args(2);
+  if (nrPairs == 1)
+    {
+      args[0] = lhsDags[0];
+      args[1] = rhsDags[0];
+    }
+  else
+    {
+      Symbol* tupleSymbol = createInternalTupleSymbol(domain, range);
+      args[0] = tupleSymbol->makeDagNode(lhsDags);
+      args[1] = tupleSymbol->makeDagNode(rhsDags);
+    }
+
+  domain.resize(2);
+  domain[1] = range;
+  Symbol* tupleSymbol = createInternalTupleSymbol(domain, range);
+  return tupleSymbol->makeDagNode(args);
+}
+
+Symbol*
+MixfixModule::createInternalTupleSymbol(const Vector<ConnectedComponent*>& domain, ConnectedComponent* range)
+{
+  //
+  //	Internal tuple symbols are made on-the-fly and are not intended to be seen by the user except perhaps during tracing.
+  //
+  IntList key;
+  FOR_EACH_CONST(i, Vector<ConnectedComponent*>, domain)
+    key.push_back((*i)->getIndexWithinModule());
+  key.push_back(range->getIndexWithinModule());
+
+  InternalTupleMap::iterator i = tupleSymbols.find(key);
+  if (i != tupleSymbols.end())
+    return i->second;
+  
+  int domainSize = domain.size();
+  int id = Token::encode("tuple[internal]");
+  Symbol* tupleSymbol = FreeSymbol::newFreeSymbol(id, domainSize);
+  tupleSymbols.insert(InternalTupleMap::value_type(key, tupleSymbol));
+
+  Vector<Sort*> domainAndRange(domainSize + 1);
+  for (int i = 0; i < domainSize; ++i)
+    domainAndRange[i] = domain[i]->sort(Sort::KIND);
+  domainAndRange[domainSize] = range->sort(Sort::KIND);
+  tupleSymbol->addOpDeclaration(domainAndRange, true);  // tuple symbols are always constructors
+  //
+  //	Need to record some syntactic info for symbol.
+  //
+  int nrSymbols = symbolInfo.length();
+  symbolInfo.expandBy(1);
+  SymbolInfo& si = symbolInfo[nrSymbols];
+
+  si.prec = 0;
+  si.symbolType.setBasicType(SymbolType::INTERNAL_TUPLE);
+  si.iflags = 0;
+  si.next = NONE;
+
+  insertLateSymbol(tupleSymbol);
+  return tupleSymbol;
+}
+
 Symbol*
 MixfixModule::instantiateVariable(Sort* sort)
 {

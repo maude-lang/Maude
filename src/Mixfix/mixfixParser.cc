@@ -367,6 +367,37 @@ MixfixParser::makeSearchCommand(Term*& initial,
 }
 
 void
+MixfixParser::makeGetVariantsCommand(Term*& initial, Vector<Term*>& constraint)
+{
+  Assert(nrParses > 0, "no parses");
+  int node = ROOT_NODE;
+  initial = makeTerm(parser.getChild(node, 0));
+  if (actions[parser.getProductionNumber(node)].action == CONDITIONAL_COMMAND)
+    makeTermList(parser.getChild(node, 2), constraint);
+}
+
+void
+MixfixParser::makeVariantUnifyCommand(Vector<Term*>& lhs,
+				      Vector<Term*>& rhs,
+				      Vector<Term*>& constraint)
+{
+  Assert(nrParses > 0, "no parses");
+  Assert(lhs.empty() && rhs.empty() && constraint.empty(), "return vectors should be empty");
+
+  for (int node = parser.getChild(ROOT_NODE, 0);; node = parser.getChild(node, 1))
+    {
+      int unifyPair = parser.getChild(node, 0);
+      lhs.append(makeTerm(parser.getChild(unifyPair, 0)));
+      rhs.append(makeTerm(parser.getChild(unifyPair, 1)));
+      if (actions[parser.getProductionNumber(node)].action != UNIFY_LIST)
+	break;
+    }
+
+  if (actions[parser.getProductionNumber(ROOT_NODE)].action == CONDITIONAL_COMMAND)
+    makeTermList(parser.getChild(ROOT_NODE, 2), constraint);
+}
+
+void
 MixfixParser::makeStrategyCommand(Term*& subject, StrategyExpression*& strategy)
 {
   Assert(nrParses > 0, "no parses");
@@ -514,6 +545,18 @@ MixfixParser::makeStrategy(int node)
       }
     }
   return s;
+}
+
+void
+MixfixParser::makeTermList(int node, Vector<Term*>& termList)
+{
+  while (actions[parser.getProductionNumber(node)].action == MAKE_TERM_LIST)
+    {
+      termList.append(makeTerm(parser.getChild(node, 0)));
+      node = parser.getChild(node, 1);
+    }
+  Assert(actions[parser.getProductionNumber(node)].action == PASS_THRU, "unexpected action: " << actions[parser.getProductionNumber(node)].action);
+  termList.append(makeTerm(parser.getChild(node, 0)));
 }
 
 void
@@ -825,6 +868,11 @@ MixfixParser::makeAttributePart(int node,
 	    flags.setFlags(OWISE);
 	    break;
 	  }
+	case MAKE_VARIANT_ATTRIBUTE:
+	  {
+	    flags.setFlags(VARIANT);
+	    break;
+	  }
 	case MAKE_PRINT_ATTRIBUTE:
 	  {
 	    flags.setFlags(PRINT);
@@ -841,7 +889,6 @@ MixfixParser::makeAttributePart(int node,
 void
 MixfixParser::makePrintList(int node, Vector<int>& names, Vector<Sort*>& sorts)
 {
-  typedef pair<int, int> IntPair;  // HACK
   for (int listNode = node;; listNode = parser.getChild(listNode, 1))
     {
       //
@@ -935,6 +982,9 @@ MixfixParser::makeStatementPart(int node,
 	WarningCheck(!(flags.getFlag(OWISE)),
 		     LineNumber(lineNumber) <<
 		     ": owise attribute not allowed for membership axioms.");
+	WarningCheck(!(flags.getFlag(VARIANT)),
+		     LineNumber(lineNumber) <<
+		     ": variant attribute not allowed for membership axioms.");
 	Term* lhs = makeTerm(parser.getChild(pairNode, 0));
 	Sort* sort = getSort(parser.getChild(pairNode, 1));
 	SortConstraint* sc = new SortConstraint(label, lhs, sort, condition);
@@ -956,6 +1006,13 @@ MixfixParser::makeStatementPart(int node,
 	Equation* eq = new Equation(label, lhs, rhs, flags.getFlag(OWISE), condition);
 	if (flags.getFlag(NONEXEC))
 	  eq->setNonexec();
+	if (flags.getFlag(VARIANT))
+	  {
+	    if (condition.empty())
+	      eq->setVariant();
+	    else
+	      IssueWarning(LineNumber(lineNumber) << ": variant attribute not allowed for conditional equations.");
+	  }
 	eq->setLineNumber(lineNumber);
 	client.insertEquation(eq);
 	if (metadata != NONE)
@@ -970,6 +1027,9 @@ MixfixParser::makeStatementPart(int node,
 	WarningCheck(!(flags.getFlag(OWISE)),
 		     LineNumber(lineNumber) <<
 		     ": owise attribute not allowed for rules.");
+	WarningCheck(!(flags.getFlag(VARIANT)),
+		     LineNumber(lineNumber) <<
+		     ": variant attribute not allowed for rules.");
 	Term* lhs = makeTerm(parser.getChild(pairNode, 0));
 	Term* rhs = makeTerm(parser.getChild(pairNode, 1));
 	Rule* rl = new Rule(label, lhs, rhs, condition);

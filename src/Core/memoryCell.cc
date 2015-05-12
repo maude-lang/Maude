@@ -124,7 +124,6 @@ MemoryCell::slowNew()
 	  endPointer = d + ARENA_SIZE - RESERVE_SIZE;
 	  nextNode = d + 1;
 	  Assert(d->h.flags == 0, "flags not cleared");
-	  d->initialize();
 	  return d;
 	}
       Arena* a = currentArena->nextArena;
@@ -152,7 +151,6 @@ MemoryCell::slowNew()
 	      endPointer = d + ARENA_SIZE;
 	      nextNode = d + 1;
 	      Assert(d->h.flags == 0, "flags not cleared");
-	      d->initialize();
 	      return d;
 	    }
 	}
@@ -180,14 +178,12 @@ MemoryCell::slowNew()
 	  if ((d->h.flags & (MARKED | CALL_DTOR)) == 0)
 	    {
 	      nextNode = d + 1;
-	      d->initialize();
 	      return d;
 	    }
 	  if ((d->h.flags & MARKED) == 0)
 	    {
 	      d->callDtor();
 	      nextNode = d + 1;
-	      d->initialize();
 	      return d;
 	    }
 	  d->h.flags &= ~MARKED;

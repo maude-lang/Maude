@@ -56,4 +56,9 @@ class NarrowingUnificationProblem;
 class NarrowingSearchState;
 class NarrowingSequenceSearch;
 
+class UnifierFilter;
+class VariantNarrowingSearchState;
+class VariantSearch;
+class VariantFolder;
+
 #endif

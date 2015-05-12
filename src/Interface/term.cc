@@ -47,6 +47,7 @@
 #include "trivialRhsAutomaton.hh"
 #include "copyRhsAutomaton.hh"
 #include "symbolMap.hh"
+#include "stackMachineRhsCompiler.hh"
 
 //	variable class definitions
 #include "variableSymbol.hh"
@@ -69,6 +70,14 @@ Term::term2Dag(bool setSortInfo)
   subDags.clear();
   converted.makeEmpty();
   return dagify();
+}
+
+void
+Term::computeMatchIndices() const
+{
+  //
+  //	Default is we do nothing; thus this term cannot be safely compiled for index based matching.
+  //
 }
 
 int
@@ -361,6 +370,31 @@ Term::instantiate2(const Vector<Term*>& varBindings, SymbolMap* translator)
   for (ArgumentIterator a(*this); a.valid(); a.next())
     args.append(a.argument()->instantiate2(varBindings, translator));
   return translator->findTargetVersionOfSymbol(topSymbol)->makeTerm(args);
+}
+
+Instruction*
+Term::term2InstructionSequence()
+{
+  StackMachineRhsCompiler compiler;
+  TermSet visited;
+
+  recordSubterms(compiler, visited);
+  return compiler.compileInstructionSequence();
+}
+
+int
+Term::recordSubterms2(StackMachineRhsCompiler& compiler, TermSet& visited)
+{
+  //
+  //	Super naive version.
+  //
+  Vector<int> argumentSlots;
+  for (ArgumentIterator a(*this); a.valid(); a.next())
+    argumentSlots.append(a.argument()->recordSubterms(compiler, visited));
+
+  int destination = visited.insert(this);
+  compiler.recordFunctionEval(symbol(), destination, argumentSlots);
+  return destination;
 }
 
 #ifdef COMPILER

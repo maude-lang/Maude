@@ -39,7 +39,7 @@ SocketManagerSymbol::createdSocketReply(int fd,
 					FreeDagNode* originalMessage,
 					ObjectSystemRewritingContext& context)
 {
-  activeSockets[fd].state = NOMINAL;
+  //activeSockets[fd].state = NOMINAL;
   Vector<DagNode*> reply(1, 3);
   reply[0] = succSymbol->makeNatDag(fd);
   DagNode* socketName = socketOidSymbol->makeDagNode(reply);
@@ -58,7 +58,7 @@ SocketManagerSymbol::acceptedClientReply(const char* addr,
 					 FreeDagNode* originalMessage,
 					 ObjectSystemRewritingContext& context)
 {
-  activeSockets[fd].state = NOMINAL;
+  //activeSockets[fd].state = NOMINAL;
   Vector<DagNode*> reply(1, 4);
   reply[0] = succSymbol->makeNatDag(fd);
   DagNode* socketName = socketOidSymbol->makeDagNode(reply);

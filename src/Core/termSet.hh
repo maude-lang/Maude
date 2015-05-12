@@ -30,10 +30,10 @@
 class TermSet : private PointerSet
 {
 public:
-  void insert(Term* t);
-  int term2Index(Term* t) const;
-  PointerSet::cardinality;
-  PointerSet::makeEmpty;
+  int insert(Term* t);
+  int term2Index(Term* t) const;  // returns NULL if t not in set or index otherwise
+  using PointerSet::cardinality;
+  using PointerSet::makeEmpty;
 
 private:
   unsigned int hash(void* pointer) const;

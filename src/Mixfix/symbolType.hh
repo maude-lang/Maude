@@ -41,6 +41,7 @@ public:
     //
     VARIABLE,
     SORT_TEST,
+    INTERNAL_TUPLE,
     //
     //	Special properties.
     //

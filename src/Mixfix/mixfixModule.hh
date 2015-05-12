@@ -28,6 +28,7 @@
 #include <gmpxx.h>
 #include <set>
 #include <map>
+#include <list>
 #include "profileModule.hh"
 #include "metadataStore.hh"
 #include "sharedTokens.hh"
@@ -114,6 +115,7 @@ public:
   Symbol* instantiatePolymorph(int polymorphIndex, int kindIndex);
   Term* makeTrueTerm();
   Term* makeBubble(int bubbleSpecIndex, const Vector<Token>& tokens, int first, int last);
+  DagNode* makeUnificationProblemDag(Vector<Term*>& lhs, Vector<Term*>& rhs);
 
   static void printCondition(ostream& s, const Vector<ConditionFragment*>& condition);
   static void printCondition(ostream& s, const PreEquation* pe);
@@ -146,6 +148,13 @@ public:
   bool parseStrategyCommand(const Vector<Token>& bubble,
 			    Term*& subject,
 			    StrategyExpression*& strategy);
+  bool parseGetVariantsCommand(const Vector<Token>& bubble,
+			       Term*& initial,
+			       Vector<Term*>& constraints);
+  bool parseVariantUnifyCommand(const Vector<Token>& bubble,
+				Vector<Term*>& lhs,
+				Vector<Term*>& rhs,
+				Vector<Term*>& constraints);
   //
   //	Get functions.
   //
@@ -341,7 +350,12 @@ private:
     UNIFY_PAIR = SIMPLE_BASE - 11,
     UNIFY_COMMAND = SIMPLE_BASE - 12,
 
-    COMPLEX_BASE = SIMPLE_BASE - 13
+    GET_VARIANTS_COMMAND = SIMPLE_BASE - 13,
+    TERM_LIST = SIMPLE_BASE - 14,  // for command separated list of hetrogeneous terms
+
+    VARIANT_UNIFY_COMMAND = SIMPLE_BASE - 15,
+
+    COMPLEX_BASE = SIMPLE_BASE - 16
   };
 
   enum NonTerminalType
@@ -704,9 +718,16 @@ private:
 
   static bool prettyPrint(ostream& s, StrategyExpression* strategy, int requiredPrec);
 
-
   NatSet objectSymbols;
   NatSet messageSymbols;
+
+  //
+  //	Stuff for internal tuples.
+  //
+  Symbol* createInternalTupleSymbol(const Vector<ConnectedComponent*>& domain, ConnectedComponent* range);
+  typedef list<int> IntList;
+  typedef map<IntList, Symbol*> InternalTupleMap;
+  InternalTupleMap tupleSymbols;
 
   friend ostream& operator<<(ostream& s, const Term* term);
   friend ostream& operator<<(ostream& s, DagNode* dagNode);

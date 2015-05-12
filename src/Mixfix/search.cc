@@ -333,3 +333,187 @@ Interpreter::showSearchGraph()
   if (xmlBuffer != 0)
     xmlBuffer->generateSearchGraph(savedRewriteSequenceSearch);
 }
+
+void
+Interpreter::getVariants(const Vector<Token>& bubble, Int64 limit, bool irredundant, bool debug)
+{
+  VisibleModule* fm = currentModule->getFlatModule();
+  Term* initial;
+  Vector<Term*> constraint;
+
+  if (!(fm->parseGetVariantsCommand(bubble, initial, constraint)))
+    return;
+
+  DagNode* d = makeDag(initial);
+  if (getFlag(SHOW_COMMAND))
+    {
+      UserLevelRewritingContext::beginCommand();
+      cout << "get " <<  (irredundant ? "irredundant variants " : "variants ");
+      if (limit != NONE)
+	cout  << '[' << limit << "] ";
+      cout << "in " << currentModule << " : " << d;
+      if (constraint.empty())
+	cout << " ." << endl;
+      else
+	{
+	  cout << " such that ";
+	  const char* sep = "";
+	  FOR_EACH_CONST(i, Vector<Term*>, constraint)
+	    {
+	      cout << sep << *i;
+	      sep = ", ";
+	    }
+	  cout << " irreducible ." << endl;
+	}
+    }
+
+  startUsingModule(fm);
+  Timer timer(getFlag(SHOW_TIMING));
+
+  FreshVariableGenerator* freshVariableGenerator = new FreshVariableSource(fm);
+  UserLevelRewritingContext* context = new UserLevelRewritingContext(d);
+  if (debug)
+    UserLevelRewritingContext::setDebug();
+
+  Vector<DagNode*> blockerDags;
+  FOR_EACH_CONST(i, Vector<Term*>, constraint)
+    {
+      Term* t = *i;
+      t = t->normalize(true);  // we don't really need to normalize but we do need to set hash values
+      blockerDags.append(t->term2Dag());
+      t->deepSelfDestruct();
+    }
+  //
+  //	Responsibility for deleting context and freshVariableGenerator is passed to ~VariantSearch().
+  //
+  VariantSearch vs(context, blockerDags, freshVariableGenerator, false, irredundant);
+
+  if (!(context->traceAbort()))
+    {
+      const NarrowingVariableInfo& variableInfo = vs.getVariableInfo();
+      if (irredundant)
+	printStats(timer, *context, getFlag(SHOW_TIMING));
+      cout << endl;
+      
+      int counter = 0;
+      const Vector<DagNode*>* variant;
+      int nrFreeVariables;
+      while (counter != limit && (variant = vs.getNextVariant(nrFreeVariables)))
+	{
+	  ++counter;
+	  cout << "Variant #" << counter << endl;
+	  if (!irredundant)
+	    printStats(timer, *context, getFlag(SHOW_TIMING));
+
+	  int nrVariables = variant->size() - 1;
+	  DagNode* d = (*variant)[nrVariables];
+	  cout << d->getSort() << ": " << d << '\n';
+	  for (int i = 0; i < nrVariables; ++i)
+	    {
+	      DagNode* v = variableInfo.index2Variable(i);
+	      cout << v << " --> " << (*variant)[i] << endl;
+	    }
+	  cout << endl;
+	}
+      if (counter != limit)
+	{
+	  cout << ((counter == 0) ? "No variants.\n" : "No more variants.\n");
+	  if (!irredundant)
+	    printStats(timer, *context, getFlag(SHOW_TIMING));
+	}
+    }
+  (void) fm->unprotect();
+  UserLevelRewritingContext::clearDebug();
+}
+
+void
+Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool debug)
+{
+  VisibleModule* fm = currentModule->getFlatModule();
+  Vector<Term*> lhs;
+  Vector<Term*> rhs;
+  Vector<Term*> constraint;
+
+  if (!(fm->parseVariantUnifyCommand(bubble, lhs, rhs, constraint)))
+    return;
+
+  if (getFlag(SHOW_COMMAND))
+    {
+      UserLevelRewritingContext::beginCommand();
+      cout << "variant unify ";
+      if (limit != NONE)
+	cout << '[' << limit << "] ";
+      cout << "in " << currentModule << " : ";
+      int nrPairs = lhs.size();
+      for (int i = 0; i < nrPairs; ++i)
+	cout << lhs[i] << " =? " << rhs[i] << ((i == nrPairs - 1) ? " " : " /\\ ");
+      if (constraint.empty())
+	cout << " ." << endl;
+      else
+	{
+	  cout << " such that ";
+	  const char* sep = "";
+	  FOR_EACH_CONST(i, Vector<Term*>, constraint)
+	    {
+	      cout << sep << *i;
+	      sep = ", ";
+	    }
+	  cout << " irreducible ." << endl;
+	}
+    }
+
+  startUsingModule(fm);
+  Timer timer(getFlag(SHOW_TIMING));
+  FreshVariableGenerator* freshVariableGenerator = new FreshVariableSource(fm);
+  if (debug)
+    UserLevelRewritingContext::setDebug();
+
+  DagNode* d = fm->makeUnificationProblemDag(lhs, rhs);
+  UserLevelRewritingContext* context = new UserLevelRewritingContext(d);
+
+  Vector<DagNode*> blockerDags;
+  FOR_EACH_CONST(i, Vector<Term*>, constraint)
+    {
+      Term* t = *i;
+      t = t->normalize(true);  // we don't really need to normalize but we do need to set hash values
+      blockerDags.append(t->term2Dag());
+      t->deepSelfDestruct();
+    }
+
+  //
+  //	Responsibility for deleting context and freshVariableGenerator is passed to ~VariantSearch().
+  //
+  VariantSearch vs(context, blockerDags, freshVariableGenerator, true, false);
+
+  if (!(context->traceAbort()))
+    {
+      const NarrowingVariableInfo& variableInfo = vs.getVariableInfo();
+      cout << endl;
+
+      int counter = 0;
+      const Vector<DagNode*>* unifier;
+      int nrFreeVariables;
+      while (counter != limit && (unifier = vs.getNextUnifier(nrFreeVariables)))
+	{
+	  ++counter;
+	  cout << "Unifier #" << counter << endl;
+	  printStats(timer, *context, getFlag(SHOW_TIMING));
+
+	  int nrVariables = unifier->size();
+
+	  for (int i = 0; i < nrVariables; ++i)
+	    {
+	      DagNode* v = variableInfo.index2Variable(i);
+	      cout << v << " --> " << (*unifier)[i] << endl;
+	    }
+	  cout << endl;
+	}
+      if (counter != limit)
+	{
+	  cout << ((counter == 0) ? "No unifiers.\n" : "No more unifiers.\n");
+	  printStats(timer, *context, getFlag(SHOW_TIMING));
+	}
+    }
+  (void) fm->unprotect();
+  UserLevelRewritingContext::clearDebug();
+}

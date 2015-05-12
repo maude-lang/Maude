@@ -114,6 +114,9 @@ private:
 			   int argNr);
   void minimizeWrtCtor(NatSet& alive, int argNr) const;
 
+  void linearComputeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFunctionBdds) const;
+  void recursiveComputeSortFunctionBdds(const SortBdds& sortBdds, Vector<Bdd>& sortFunctionBdds) const;
+
   const int nrArgs;
   Vector<OpDeclaration> opDeclarations;
   Vector<ConnectedComponent*> componentVector;

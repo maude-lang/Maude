@@ -138,14 +138,18 @@ MixfixModule::makeComplexProductions()
   parser->insertProduction(UNIFY_COMMAND, rhs, 0, gatherAny);
   rhs[0] = SEARCH_PAIR;
   parser->insertProduction(SEARCH_COMMAND, rhs, 0, gatherAny);
+  rhs[0] = TERM;
+  parser->insertProduction(GET_VARIANTS_COMMAND, rhs, 0, gatherAny);
+  rhs[0] = UNIFY_COMMAND;
+  parser->insertProduction(VARIANT_UNIFY_COMMAND, rhs, 0, gatherAny);
 
   rhs[0] = suchThat;
-  parser->insertProduction(SUCH_THAT, rhs, 0, gatherAny);
+  parser->insertProduction(SUCH_THAT, rhs, 0, emptyGather);
 
   rhs.resize(2);
   rhs[0] = such;
   rhs[1] = that;
-  parser->insertProduction(SUCH_THAT, rhs, 0, gatherAnyAny);
+  parser->insertProduction(SUCH_THAT, rhs, 0, emptyGather);
 
   rhs.resize(3);
   rhs[0] = MATCH_PAIR;
@@ -163,6 +167,33 @@ MixfixModule::makeComplexProductions()
   rhs[1] = wedge;
   rhs[2] = UNIFY_COMMAND;
   parser->insertProduction(UNIFY_COMMAND, rhs, 0, gatherAnyAny, MixfixParser::UNIFY_LIST);
+
+  rhs.resize(4);
+  rhs[0] = TERM;
+  rhs[1] = SUCH_THAT;
+  rhs[2] = TERM_LIST;
+  rhs[3] = irreducible;
+  parser->insertProduction(GET_VARIANTS_COMMAND, rhs, 0, gatherAnyAnyAny,
+			   MixfixParser::CONDITIONAL_COMMAND);
+
+  rhs.resize(4);
+  rhs[0] = UNIFY_COMMAND;
+  rhs[1] = SUCH_THAT;
+  rhs[2] = TERM_LIST;
+  rhs[3] = irreducible;
+  parser->insertProduction(VARIANT_UNIFY_COMMAND, rhs, 0, gatherAnyAnyAny,
+			   MixfixParser::CONDITIONAL_COMMAND);
+  //
+  //	Hetrogeneous term lists.
+  //
+  rhs.resize(1);
+  rhs[0] = TERM;
+  parser->insertProduction(TERM_LIST, rhs, 0, gatherAny, MixfixParser::PASS_THRU);
+  rhs.resize(3);
+  rhs[0] = TERM;
+  rhs[1] = comma;
+  rhs[2] = TERM_LIST;
+  parser->insertProduction(TERM_LIST, rhs, PREFIX_GATHER, gatherPrefixPrefix, MixfixParser::MAKE_TERM_LIST);
   //
   //	Substitutions.
   //
@@ -453,7 +484,9 @@ MixfixModule::makeAttributeProductions()
   rhs[0] = owise;
   parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
 			   MixfixParser::MAKE_OWISE_ATTRIBUTE);
-
+  rhs[0] = variant;
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
+			   MixfixParser::MAKE_VARIANT_ATTRIBUTE);
   //
   //	Print items.
   //

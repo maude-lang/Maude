@@ -55,5 +55,15 @@ class UnificationSubproblem;
 //	delay and batch	subproblems in the hope of reducing the search space.
 //
 class DelayedSubproblem;
+//
+//	These classes can be should be derived from for theories supported by
+//	the stack based interpreter.
+//
+class Instruction;
+class RegularInstruction;  // instruction with regular GC handling
+class NonFinalInstruction;  // regular instruction that is not the last instruction in its sequence
+class NonFinalCtor;  // regular ctor that is not the last instruction in its sequence
+class NonFinalExtor;  // regular extor that is not the last instruction in its sequence
+class FinalInstruction;  // regular instruction that is the final instruction in its sequence
 
 #endif

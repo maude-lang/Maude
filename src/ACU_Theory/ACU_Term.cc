@@ -76,7 +76,8 @@
 #include "ACU_LhsCompiler3.cc"
 
 ACU_Term::ACU_Term(ACU_Symbol* symbol, const Vector<Term*>& arguments)
-  : Term(symbol), argArray(arguments.length())
+  : Term(symbol),
+    argArray(arguments.length())
 {
   int nrArgs = arguments.length();
   Assert(nrArgs >= 2, "insufficient arguments for operator " << symbol);
@@ -84,6 +85,22 @@ ACU_Term::ACU_Term(ACU_Symbol* symbol, const Vector<Term*>& arguments)
     {
       argArray[i].term = arguments[i];
       argArray[i].multiplicity = 1;
+    }
+}
+
+ACU_Term::ACU_Term(ACU_Symbol* symbol, const Vector<Term*>& arguments, const Vector<int>& multiplicities)
+  : Term(symbol),
+    argArray(arguments.size())
+{
+  Assert(arguments.size() == multiplicities.size(), "vector size disagreement");
+
+  int nrArgs = arguments.size();
+  Assert(nrArgs >= 2 || (nrArgs == 1 && multiplicities[0] >= 2), "insufficient arguments for operator " << symbol);
+
+  for (int i = 0; i < nrArgs; i++)
+    {
+      argArray[i].term = arguments[i];
+      argArray[i].multiplicity = multiplicities[i];
     }
 }
 
