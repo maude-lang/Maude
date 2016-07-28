@@ -65,6 +65,8 @@ VariantSearch::VariantSearch(RewritingContext* context,
     freshVariableGenerator(freshVariableGenerator),
     unificationMode(unificationMode)
 {
+  incompleteFlag = false;
+  nrVariantsReturned = 0;  // we only track this is variant mode
   //
   //	Index variables in initial dag. We don't want to do reduction on initial dag for two reasons:
   //	(1) We rely on variable dags not going away to protect variable dags in variableInfo from GC.
@@ -192,8 +194,8 @@ void
 VariantSearch::markReachableNodes()
 {
   //
-  //	We don't mark the variable dag nodes in variableInfo - we rely on these existing in the original dag protected by the
-  //	original context.
+  //	We don't mark the variable dag nodes in variableInfo - we rely on these existing in the
+  //	original dag protected by the original context.
   //
   int substSize = protectedVariant.size();
   for (int i = 0; i < substSize; ++i)
@@ -203,20 +205,45 @@ VariantSearch::markReachableNodes()
 }
 
 const Vector<DagNode*>*
-VariantSearch::getNextVariant(int& nrFreeVariables)
+VariantSearch::getNextVariant(int& nrFreeVariables, int& parentIndex, bool& moreInLayer)
 {
   if (context->traceAbort())
     return 0;
 
-  const Vector<DagNode*>* v = variantCollection.getNextSurvivingVariant(nrFreeVariables);
+  int variantNumber;
+  int parentNumber;
+
+  const Vector<DagNode*>* v =
+    variantCollection.getNextSurvivingVariant(nrFreeVariables, &variantNumber, &parentNumber, &moreInLayer);
   if (v == 0 && !(frontier.empty()))
     {
       //
       //	Must be in incremental mode - try expanding current frontier.
       //
       expandLayer();
-      v = variantCollection.getNextSurvivingVariant(nrFreeVariables);
+      v = variantCollection.getNextSurvivingVariant(nrFreeVariables, &variantNumber, &parentNumber, &moreInLayer);
     }
+  if (v != 0)
+    {
+      //
+      //	We found a variant - need to keep track a mapping from its internal index
+      //	to its external index to we can convert the internal parent index of
+      //	its future children.
+      //
+      internalIndexToExternalIndex.insert(IntMap::value_type(variantNumber, nrVariantsReturned));
+      ++nrVariantsReturned;
+      parentIndex = (parentNumber == NONE) ? NONE : internalIndexToExternalIndex[parentNumber];
+    }
+  return v;
+}
+
+const Vector<DagNode*>*
+VariantSearch::getLastReturnedVariant(int& nrFreeVariables, int& parentIndex, bool& moreInLayer)
+{
+  int parentNumber;
+  const Vector<DagNode*>* v = variantCollection.getLastReturnedVariant(nrFreeVariables, &parentNumber, &moreInLayer);
+  Assert(v != 0, "shouldn't be asked for last returned variant, if last call didn't return a variant");
+  parentIndex = (parentNumber == NONE) ? NONE : internalIndexToExternalIndex[parentNumber];
   return v;
 }
 
@@ -341,6 +368,7 @@ VariantSearch::expandVariant(const Vector<DagNode*>& variant, int index)
       //
       protectedVariant.clear();
     }
+  incompleteFlag |= vnss.isIncomplete();
   //
   //	Move rewrite count from narrowing context to original context.
   //

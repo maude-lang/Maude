@@ -344,12 +344,38 @@ CUI_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
   bdd_freepair(argMap);
 }
 
+
+// experimental code for faster sort computations
+void
+CUI_Symbol::computeGeneralizedSort2(const SortBdds& sortBdds,
+				    const Vector<int>& realToBdd,
+				    DagNode* subject,
+				    Vector<Bdd>& outputBdds)
+{
+  DagNode** args = safeCast(CUI_DagNode*, subject)->argArray;
+  Vector<Bdd> inputBdds;
+  args[0]->computeGeneralizedSort2(sortBdds, realToBdd, inputBdds);
+  args[1]->computeGeneralizedSort2(sortBdds, realToBdd, inputBdds);
+  sortBdds.operatorCompose(this, inputBdds, outputBdds);
+}
+
 UnificationSubproblem*
 CUI_Symbol::makeUnificationSubproblem()
 {
   if (leftId() || rightId())
     return new CUI_UnificationSubproblem2();
   return new CUI_UnificationSubproblem();
+}
+
+int
+CUI_Symbol::unificationPriority() const
+{
+  if (idem())
+    return Symbol::unificationPriority();   // unimplemented
+  //
+  //	Make a rough guess about how branchy we are.
+  //
+  return comm() + 2 * (leftId() + rightId());
 }
 
 bool

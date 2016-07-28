@@ -26,7 +26,7 @@ unify in NAT : X:Nat ^ #1:Nat =? #2:Nat .
 
 fmod TEST2 is
   pr NAT .
-  op f : Nat Nat -> Nat [assoc] .
+  op f : Nat Nat -> Nat [assoc id: 0] .
 endfm
 
 *** using of a symbol from an unsupported theory above a non-gound

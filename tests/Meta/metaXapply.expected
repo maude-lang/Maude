@@ -13,7 +13,7 @@ result Result4Tuple: {'b.Foo,'Foo,
 ==========================================
 reduce in TEST : metaXapply(m, 'f['a.Foo,'b.Foo], 'k, none, 0, 100, 2) .
 rewrites: 3
-result Result4Tuple: {'f['b.Foo,'c.Foo],'Foo,none,'f['b.Foo,[]]}
+result Result4Tuple: {'f['b.Foo,'c.Foo],'Foo,(none).Substitution,'f['b.Foo,[]]}
 ==========================================
 reduce in TEST : metaXapply(m, 'f['a.Foo,'b.Foo], 'k, none, 0, 100, 3) .
 rewrites: 2
@@ -33,7 +33,7 @@ result Result4Tuple: {'b.Foo,'Foo,
 ==========================================
 reduce in TEST : metaXapply(m, 'f['a.Foo,'b.Foo], 'k, none, 0, unbounded, 2) .
 rewrites: 3
-result Result4Tuple: {'f['b.Foo,'c.Foo],'Foo,none,'f['b.Foo,[]]}
+result Result4Tuple: {'f['b.Foo,'c.Foo],'Foo,(none).Substitution,'f['b.Foo,[]]}
 ==========================================
 reduce in TEST : metaXapply(m, 'f['a.Foo,'b.Foo], 'k, none, 0, unbounded, 3) .
 rewrites: 2
@@ -42,8 +42,8 @@ result Result4Tuple?: (failure).Result4Tuple?
 reduce in TEST2 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'k, none, 0, 100,
     0) .
 rewrites: 3
-result Result4Tuple: {'g['c.Foo,'f['a.Foo,'b.Foo]],'Foo,none,'g['f['a.Foo,
-    'b.Foo],[]]}
+result Result4Tuple: {'g['c.Foo,'f['a.Foo,'b.Foo]],'Foo,(none).Substitution,'g[
+    'f['a.Foo,'b.Foo],[]]}
 ==========================================
 reduce in TEST2 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'k, none, 0, 100,
     1) .
@@ -62,8 +62,8 @@ result Result4Tuple: {'g['a.Foo,'b.Foo],'Foo,
 reduce in TEST2 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'k, none, 0, 100,
     3) .
 rewrites: 3
-result Result4Tuple: {'g['a.Foo,'f['b.Foo,'c.Foo]],'Foo,none,'g['a.Foo,'f[
-    'b.Foo,[]]]}
+result Result4Tuple: {'g['a.Foo,'f['b.Foo,'c.Foo]],'Foo,(none).Substitution,'g[
+    'a.Foo,'f['b.Foo,[]]]}
 ==========================================
 reduce in TEST2 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'k, none, 0, 100,
     4) .
@@ -73,20 +73,20 @@ result Result4Tuple?: (failure).Result4Tuple?
 reduce in TEST3 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'l, none, 0, 100,
     0) .
 rewrites: 3
-result Result4Tuple: {'g['f['c.Foo,'c.Foo],'f['a.Foo,'b.Foo]],'Foo,none,'g['f[
-    'a.Foo,'b.Foo],[]]}
+result Result4Tuple: {'g['f['c.Foo,'c.Foo],'f['a.Foo,'b.Foo]],'Foo,(
+    none).Substitution,'g['f['a.Foo,'b.Foo],[]]}
 ==========================================
 reduce in TEST3 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'l, none, 0, 100,
     1) .
 rewrites: 3
-result Result4Tuple: {'g['a.Foo,'f['b.Foo,'c.Foo,'c.Foo]],'Foo,none,'g['a.Foo,
-    'f['b.Foo,[]]]}
+result Result4Tuple: {'g['a.Foo,'f['b.Foo,'c.Foo,'c.Foo]],'Foo,(
+    none).Substitution,'g['a.Foo,'f['b.Foo,[]]]}
 ==========================================
 reduce in TEST3 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'l, none, 0, 100,
     0) .
 rewrites: 3
-result Result4Tuple: {'g['f['c.Foo,'c.Foo],'f['a.Foo,'b.Foo]],'Foo,none,'g['f[
-    'a.Foo,'b.Foo],[]]}
+result Result4Tuple: {'g['f['c.Foo,'c.Foo],'f['a.Foo,'b.Foo]],'Foo,(
+    none).Substitution,'g['f['a.Foo,'b.Foo],[]]}
 ==========================================
 reduce in TEST3 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'l, none, 0, 100,
     2) .
@@ -96,8 +96,8 @@ result Result4Tuple?: (failure).Result4Tuple?
 reduce in TEST3 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'l, none, 0, 100,
     0) .
 rewrites: 3
-result Result4Tuple: {'g['f['c.Foo,'c.Foo],'f['a.Foo,'b.Foo]],'Foo,none,'g['f[
-    'a.Foo,'b.Foo],[]]}
+result Result4Tuple: {'g['f['c.Foo,'c.Foo],'f['a.Foo,'b.Foo]],'Foo,(
+    none).Substitution,'g['f['a.Foo,'b.Foo],[]]}
 ==========================================
 reduce in ALL-ONE-STEP-REWRITES : findAllRews(m, 'f['a.Foo,'b.Foo], 'k) .
 rewrites: 27

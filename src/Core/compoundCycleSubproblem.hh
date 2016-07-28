@@ -34,7 +34,7 @@ class CompoundCycleSubproblem : public UnificationSubproblem, private SimpleRoot
 public:
   CompoundCycleSubproblem();
 
-  void addUnification(DagNode* lhs, DagNode* rhs) { CantHappen("we don't take unification problems"); }
+  void addUnification(DagNode* lhs, DagNode* rhs);
   void addComponent(int variableIndex);
   bool solve(bool findFirst, UnificationContext& solution, PendingUnificationStack& pending);
 

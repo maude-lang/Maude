@@ -43,6 +43,7 @@
 #include "NA_Theory.hh"
 #include "builtIn.hh"
 #include "strategyLanguage.hh"
+#include "SMT.hh"
 #include "mixfix.hh"
 
 //      interface class definitions
@@ -88,6 +89,12 @@
 #include "floatDagNode.hh"
 #include "floatTerm.hh"
 #include "succSymbol.hh"
+
+//	SMT class definitions
+//#include "SMT_Symbol.hh"
+#include "SMT_NumberSymbol.hh"
+#include "SMT_NumberTerm.hh"
+#include "SMT_NumberDagNode.hh"
 
 //     higher class definitions
 #include "equalityConditionFragment.hh"

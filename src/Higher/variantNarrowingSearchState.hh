@@ -51,7 +51,7 @@ public:
   //	Variant passed back is not GC protected by us.
   //
   bool findNextVariant(DagNode*& variantTerm, Vector<DagNode*>& variantSubstitution /*, int& nrFreeVariables */);
-
+  bool isIncomplete() const;
 private:
   void collectUnifiers(NarrowingUnificationProblem* unificationProblem, int positionIndex, int equationIndex);
 
@@ -62,9 +62,16 @@ private:
   const NarrowingVariableInfo& originalVariables;  // assumed to be protected from GC by whatever passed it to us; only needed for tracing
   Module* const module;
 
+  bool incompleteFlag;
   NarrowingVariableInfo variableInfo;
   UnifierFilter* unifiers;  // has own GC protection
   Substitution blockerSubstitution;  // filled out and done with before GC happens
 };
+
+inline bool
+VariantNarrowingSearchState::isIncomplete() const
+{
+  return incompleteFlag;
+}
 
 #endif

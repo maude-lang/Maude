@@ -763,8 +763,8 @@ MetaLevel::downPrintListItem(DagNode* metaPrintListItem, MixfixModule* m, Statem
 	    }
 	  else
 	    {
-	      IssueAdvisory("could not find sort " << QUOTE(Token::name(sortName)) <<
-			    " in meta-module \"" << QUOTE(m) << '.');
+	      //IssueAdvisory("could not find sort " << QUOTE(Token::name(sortName)) <<
+	      //	    " in meta-module \"" << QUOTE(m) << '.');
 	    }
 	}
     }
@@ -1120,8 +1120,8 @@ MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
 		  varName = Token::flaggedCode(varName);
 		return new VariableTerm(symbol, varName);
 	      }
-	    IssueAdvisory("could not find sort " << QUOTE(Token::name(sortName)) <<
-			  " in meta-module \"" << QUOTE(m) << '.');
+	    //IssueAdvisory("could not find sort " << QUOTE(Token::name(sortName)) <<
+	    //	  " in meta-module \"" << QUOTE(m) << '.');
 	    break; 
 	  }
 	case Token::AUX_CONSTANT:
@@ -1156,6 +1156,28 @@ MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
 			return new FloatTerm(s, Token::codeToDouble(cName));
 		      break;
 		    }
+		  case Token::ZERO:
+		  case Token::SMALL_NAT:
+		  case Token::SMALL_NEG:
+		    {
+		      SMT_NumberSymbol* s = m->findSMT_NumberSymbol(component, SMT_Info::INTEGER);
+		      if (s != 0)
+			{
+			  mpq_class q(Token::name(cName));
+			  return new SMT_NumberTerm(s, q);
+			}
+		      break;
+		    }
+		  case Token::RATIONAL:
+		    {
+		      SMT_NumberSymbol* s = m->findSMT_NumberSymbol(component, SMT_Info::REAL);
+		      if (s != 0)
+			{
+			  mpq_class q(Token::name(cName));
+			  return new SMT_NumberTerm(s, q);
+			}
+		      break;
+		    }
 		  }
 		static Vector<ConnectedComponent*> dummy;
 		Symbol* s = m->findSymbol(cName, dummy, component);
@@ -1170,8 +1192,8 @@ MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
 	      }
 	    else
 	      {
-		IssueAdvisory("could not find sort " << QUOTE(Token::name(sortName)) <<
-			      " in meta-module " << QUOTE(m) << '.');
+		//IssueAdvisory("could not find sort " << QUOTE(Token::name(sortName)) <<
+		//	      " in meta-module " << QUOTE(m) << '.');
 	      }
 	    break;
 	  }

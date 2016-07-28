@@ -22,4 +22,5 @@ SUBDIRS = \
 	MSCP10 \
 	StrategyLanguage \
 	Mixfix \
+	SMT \
 	Main

@@ -50,6 +50,11 @@ public:
 			      const Vector<int>& realToBdd,
 			      DagNode* subject,
 			      Vector<Bdd>& generalizedSort);
+  void computeGeneralizedSort2(const SortBdds& sortBdds,
+			       const Vector<int>& realToBdd,
+			       DagNode* subject,
+			       Vector<Bdd>& outputBdds);
+
   bool isStable() const;
   //
   //	Hash cons stuff.

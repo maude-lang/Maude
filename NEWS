@@ -1,3 +1,72 @@
+Overview of Changes in alpha110b
+================================
+* fixed typos and copyright date
+* minor configuation fixes
+
+Overview of Changes in alpha110a
+================================
+* fixed bug in ACU unification that was introduced in alpha108
+
+Overview of Changes in alpha110
+===============================
+* reorganization of unification sort computations
+* added -print-to-stderr flag
+* added cycle detection and depth bounds to PIG-PUG
+* fixed some uninitialized memory reads in SMT code
+
+Overview of Changes in alpha109
+===============================
+* new metalevel interface for variant narrowing
+* large number of finite variant examples from Jose Meseuger added
+  to the test suite
+
+Overview of Changes in alpha108a
+================================
+* fixed bug in variant narrowing where ground terms caused substitution size
+  mismatch and memory corruption during subsumption check
+* replacement rope library avoids build problems on Mac
+
+Overview of Changes in alpha108
+===============================
+* new associative unification algorithm based on PIG-PUG
+* unification infrastructure support for incomplete algorithms
+* fixed bug in metaGetIrredundantVariant()
+* fixed bug in variant narrowing where collapse terms were being narrowed
+  with variant equations from the wrong kind
+
+Overview of Changes in alpha107
+===============================
+* fixed bug where asking for the same variant or variant unify twice in
+succession from the metalevel resulted in memory corruption
+
+Overview of Changes in alpha106
+===============================
+* improvements to linear associative unification integration
+* fixed bug in SequenceAssignment code (low level associative unification code)
+
+Overview of Changes in alpha105
+===============================
+* experimental support for multi-step search modulo SMT
+
+Overview of Changes in alpha104
+===============================
+* fixed duplicate advisories about missing sorts
+* fixed missing echoing bug for commands with 2 optional arguments
+* fixed caching bug for descent functions
+* experimental support for 1-step rewriting modulo SMT
+
+Overview of Changes in alpha103
+===============================
+* 0/1 is now a valid Rat constant
+* advisory printed when downTerm() fails because of kind clash
+* experimental support for calling CVC4
+* fixed bug where metaPrettyPrint() was failing to generate needed
+  disambiguation for built-in data types
+
+Overview of Changes in alpha102
+===============================
+* experimental support for linear associative unification
+
 Overview of Changes in Maude 2.7 (alpha101)
 ===========================================
 * fixed bug with debug text being output during rewriting
@@ -16,7 +85,7 @@ Overview of Changes in alpha100a
 * code cleaning to remove unused code and avoid many compiler warnings
 
 Overview of Changes in Maude alpha100 (source trees 97, 98, 99 abandoned)
-==========================================================================
+=========================================================================
 * added crude Maude VM based interpreter (sreduce)
 
 Overview of Changes in Maude alpha96c

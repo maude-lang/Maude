@@ -93,7 +93,7 @@ Interpreter::beginRewriting(bool debug)
 void
 Interpreter::printModifiers(Int64 number, Int64 number2)
 {
-  if (number2 != NONE || number2 != NONE)
+  if (number != NONE || number2 != NONE)
     {
       cout << '[';
       if (number != NONE)
@@ -453,4 +453,46 @@ Interpreter::sreduce(const Vector<Token>& subject)
       delete instructionSequence;
       (void) fm->unprotect();
     }
+}
+
+#include "SMT_Info.hh"
+#include "variableGenerator.hh"
+
+void
+Interpreter::check(const Vector<Token>& subject)
+{
+  if (Term* term = currentModule->getFlatModule()->parseTerm(subject))
+    {
+      term = term->normalize(false);
+      DagNode* d = term->term2Dag();
+ 
+      if (getFlag(SHOW_COMMAND))
+	{
+	  UserLevelRewritingContext::beginCommand();
+	  cout << "check in " << currentModule << " : " << d << " ." << endl;
+	}
+
+      VisibleModule* fm = currentModule->getFlatModule();
+      startUsingModule(fm);
+
+      const SMT_Info& smtInfo = fm->getSMT_Info();
+      VariableGenerator vg(smtInfo);
+      VariableGenerator::Result result = vg.checkDag(d);
+      if (result == VariableGenerator::BAD_DAG)
+	IssueWarning (*term << ": term " << QUOTE(term) << " is not a valid SMT Boolean expression.");
+      else
+	{
+	  cout << "Result from sat solver is: " <<
+	    ((result == VariableGenerator::SAT) ? "sat" :
+	     ((result == VariableGenerator::UNSAT) ? "unsat" : "undecided")) << endl;
+	}
+
+      term->deepSelfDestruct();
+      fm->unprotect();
+    }
+}
+
+void
+Interpreter::test(const Vector<Token>& subject)
+{
 }

@@ -237,11 +237,11 @@ reduce in META-LEVEL : getKinds(fmod 'FOO is
 endfm) .
 rewrites: 1
 result NeKindSet: '`[AttrSet`] ; '`[Bool`] ; '`[Condition`] ; '`[EquationSet`]
-    ; '`[FindResult`,NatList`,Bound`] ; '`[HookList`] ; '`[ImportList`] ;
-    '`[MatchPair?`] ; '`[MembAxSet`] ; '`[Module`] ; '`[OpDeclSet`] ;
+    ; '`[FindResult`,NatList`,Bound`,Parent`] ; '`[HookList`] ; '`[ImportList`]
+    ; '`[MatchPair?`] ; '`[MembAxSet`] ; '`[Module`] ; '`[OpDeclSet`] ;
     '`[OpMappingSet`] ; '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[QidSet`,QidList`,TypeListSet`,GTermList`,ParameterList`,Type?`,ModuleExpression`,Header`] ; '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
-    '`[ResultTriple?`] ; '`[RuleSet`] ; '`[SortMappingSet`] ; '`[String`] ;
-    '`[SubsortDeclSet`] ; '`[Substitution?`] ; '`[Trace?`] ;
+    '`[ResultTriple?`] ; '`[RuleSet`] ; '`[SmtResult?`] ; '`[SortMappingSet`] ;
+    '`[String`] ; '`[SubsortDeclSet`] ; '`[Substitution?`] ; '`[Trace?`] ;
     '`[UnificationPair?`] ; '`[UnificationProblem`] ; '`[UnificationTriple?`] ;
     '`[Variant?`] ; '`[View`]
 ==========================================

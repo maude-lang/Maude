@@ -48,6 +48,7 @@
 #include "meta.hh"
 #include "strategyLanguage.hh"
 #include "mixfix.hh"
+#include "SMT.hh"
 
 //      interface class definitions
 #include "symbol.hh"
@@ -108,6 +109,13 @@
 #include "randomOpSymbol.hh"
 #include "matrixOpSymbol.hh"
 #include "counterSymbol.hh"
+
+//	SMT class definitions
+#include "SMT_Info.hh"
+#include "SMT_Symbol.hh"
+#include "SMT_NumberSymbol.hh"
+#include "SMT_NumberTerm.hh"
+#include "SMT_NumberDagNode.hh"
 
 //	higher class definitions
 #include "rewriteSequenceSearch.hh"
@@ -807,6 +815,23 @@ MixfixModule::findFloatSymbol(const ConnectedComponent* component) const
     static_cast<FloatSymbol*>((*i).second);
 }
 
+SMT_NumberSymbol*
+MixfixModule::findSMT_NumberSymbol(const ConnectedComponent* component, SMT_Info::SMT_Type type)
+{
+  map<int, Symbol*>::const_iterator i =
+    SMT_NumberSymbols.find(component->getIndexWithinModule());
+  if ((i == SMT_NumberSymbols.end()))
+    return 0;
+  //
+  //	Found an SMT_NumberSymbol; need to check if it is the right type.
+  //
+  Symbol* symbol = (*i).second;
+  Sort* sort = symbol->getRangeSort();
+  SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
+  Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
+  return (t == type) ? safeCast(SMT_NumberSymbol*, symbol) : 0;
+}
+
 void
 MixfixModule::addIdentityToPolymorph(int polymorphIndex,
 				     Term* identity)
@@ -1322,4 +1347,139 @@ MixfixModule::computePrecAndGather(int nrArgs, SymbolInfo& si, Symbol* symbol)
 	}
       Assert(si.gather.length() == nrArgs, "gather length != nrArgs");
     }
+}
+
+const SMT_Info&
+MixfixModule::getSMT_Info()
+{
+  if (smtInfo.getConjunctionOperator() == 0)  // HACK - we could have a problem if an SMT signature didn't have a conjunction operator
+    {
+      const Vector<Symbol*>& symbols = getSymbols();
+      FOR_EACH_CONST(i, Vector<Symbol*>, symbols)
+	{
+	  if (SMT_Symbol* s = dynamic_cast<SMT_Symbol*>(*i))
+	    s->fillOutSMT_Info(smtInfo);
+	  else if (SMT_NumberSymbol* s = dynamic_cast<SMT_NumberSymbol*>(*i))
+	    s->fillOutSMT_Info(smtInfo);
+	}
+      {
+	//
+	//	Make pretty printer aware of number sorts whose ASCII representation might cause
+	//	ambiguous syntax.
+	//
+	const Vector<Sort*>& sorts = getSorts();
+	FOR_EACH_CONST(i, Vector<Sort*>, sorts)
+	  {
+	    Sort* sort = *i;
+	    switch (smtInfo.getType(sort))
+	      {
+	      case SMT_Info::INTEGER:
+		{
+		  int kindIndex = sort->component()->getIndexWithinModule();
+		  pair<set<int>::iterator, bool> p = kindsWithSucc.insert(kindIndex);
+		  if (!(p.second))
+		    {
+		      IssueWarning(LineNumber(sort->getLineNumber()) <<
+				   ": multiple sets of constants that look like integers in same kind will cause pretty printing problems.");
+		    }
+		  //
+		  //	Only built-ins we care about so far that have a minus will look like integers so no need to issue
+		  //	an additional warning. But we do need to record the kind so that minus symbol disambiguation will work.
+		  //
+		  kindsWithMinus.insert(kindIndex);
+		  //
+		  //	SMT Integers have an implicit zero constant rather than an explicit zero constant, so we need to record that
+		  //	so disambiguation of zero will work correctly.
+		  //
+		  kindsWithZero.insert(kindIndex);
+		  break;
+		}
+	      case SMT_Info::REAL:
+		{
+		  int kindIndex = sort->component()->getIndexWithinModule();
+		  pair<set<int>::iterator, bool> p = kindsWithDivision.insert(kindIndex);
+		  if (!(p.second))
+		    {
+		      IssueWarning(LineNumber(sort->getLineNumber()) <<
+				   ": multiple sets of constants that look like rational numbers in same kind will cause pretty printing problems.");
+		    }
+		  //
+		  //	We don't record it in kindsWithMinus at the moment since REALs are always printed with a division symbol
+		  //	and can only be confused with other things having a division symbol.
+		  //
+		  break;
+		}
+	      default:
+		break;
+	      }
+	  }
+      }
+    }
+  return smtInfo;
+}
+
+int
+MixfixModule::getSMT_NumberToken(const mpq_class& value, Sort* sort)
+{
+  //
+  //	Figure out what SMT sort we correspond to.
+  //
+  SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
+  Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
+  string name = value.get_num().get_str();
+  if (t == SMT_Info::REAL)
+    {
+      name += '/';
+      name += value.get_den().get_str();
+    }
+  else
+    Assert(t == SMT_Info::INTEGER, "SMT number sort expected");
+  return Token::encode(name.c_str());
+}
+
+bool
+MixfixModule::validForSMT_Rewriting()
+{
+  bool ok = true;
+  if (!getEquations().empty())
+    {
+      IssueWarning("Can't rewrite modulo SMT in module " << QUOTE(this) << " because it has equations.");
+      ok = false;
+    }
+  
+  if (!getSortConstraints().empty())
+    {
+      IssueWarning("Can't rewrite modulo SMT in module " << QUOTE(this) << " because it has membership axioms.");
+      ok = false;
+    }
+
+  const Vector<Rule*>& rules = getRules();
+  if (rules.empty())
+    {
+      IssueWarning("Can't rewrite modulo SMT in module " << QUOTE(this) << " because it has no rules.");
+      ok = false;
+    }
+
+  const SMT_Info& info = getSMT_Info();
+  if (info.getConjunctionOperator() == 0)
+    {
+      IssueWarning("Can't rewrite modulo SMT in module " << QUOTE(this) << " because SMT conjunction operator could not be found.");
+      ok = false;
+    }
+
+  //
+  //	Should probably check for true so we know that sort Boolean is determined. Or maybe conjunction operator should determine true sort.
+  //
+
+  //
+  //	Need to check for each rule that lhs only contains no SMT operators and condition contains only SMT operators and variables.
+  //	Should also check that each condition fragment is of the form <Boolean term> = true or a suitable SMT equality operator exists.
+  //
+
+
+  //
+  //	Should check that user operators don't go in to SMT sorts.
+  //
+
+  return ok;  // might want to cache this when computing it becomes more expensive
 }

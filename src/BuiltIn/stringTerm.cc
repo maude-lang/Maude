@@ -46,15 +46,7 @@
 #include "stringTerm.hh"
 #include "stringDagNode.hh"
 
-#ifdef ALPHA
-//
-//	This explicit template instantiation seems to be necessary to create
-//	rope<char, allocator<char> >::_S_min_len
-//
-template class rope<char>;
-#endif
-
-StringTerm::StringTerm(StringSymbol* symbol, const crope& value)
+StringTerm::StringTerm(StringSymbol* symbol, const Rope& value)
   : NA_Term(symbol),
     value(value)
 {
@@ -79,7 +71,7 @@ StringTerm::normalize(bool /* full */, bool& changed)
 {
   changed = false;
   int hashValue = 0;
-  for (crope::const_iterator i(value.begin()); i != value.end(); i++)
+  for (Rope::const_iterator i(value.begin()); i != value.end(); ++i)
     hashValue = (hashValue << 1) + *i;
   setHashValue(hash(symbol()->getHashValue(), hashValue));
   return this;

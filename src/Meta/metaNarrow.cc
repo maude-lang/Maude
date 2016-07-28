@@ -32,24 +32,21 @@ MetaLevelOpSymbol::getCachedNarrowingSequenceSearch(MetaModule* m,
 						    NarrowingSequenceSearch*& search,
 						    Int64& lastSolutionNr)
 {
-  if (solutionNr > 0)
+  CacheableState* cachedState;
+  if (m->remove(subject, cachedState, lastSolutionNr))
     {
-      CacheableState* cachedState;
-      if (m->remove(subject, cachedState, lastSolutionNr))
+      if (lastSolutionNr <= solutionNr)
 	{
-	  if (lastSolutionNr <= solutionNr)
-	    {
-	      search = safeCast(NarrowingSequenceSearch*, cachedState);
-	      //
-	      //	The parent context pointer of the root context in the
-	      //	NarrowingSequenceSearch is possibly stale.
-	      //
-	      safeCast(UserLevelRewritingContext*, search->getContext())->
-		beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
-	      return true;
-	    }
-	  delete cachedState;
+	  search = safeCast(NarrowingSequenceSearch*, cachedState);
+	  //
+	  //	The parent context pointer of the root context in the
+	  //	NarrowingSequenceSearch is possibly stale.
+	  //
+	  safeCast(UserLevelRewritingContext*, search->getContext())->
+	    beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
+	  return true;
 	}
+      delete cachedState;
     }
   return false;
 }

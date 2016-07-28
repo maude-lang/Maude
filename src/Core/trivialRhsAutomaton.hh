@@ -25,7 +25,7 @@
 //	or replace using an already bound (pseudo)-variable.
 //
 #ifndef _trivialRhsAutomaton_hh_
-#define _trvialRhsAutomaton_hh_
+#define _trivialRhsAutomaton_hh_
 #include "rhsAutomaton.hh"
 
 class TrivialRhsAutomaton : public RhsAutomaton

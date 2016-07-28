@@ -21,7 +21,7 @@
 */
 
 //
-//	Class to storage bdds associate with each sort index and each component.
+//	Class to storage bdds associated with each sort index and each component.
 //	These are currently only used for order-sorted unification and can take up
 //	a fair amount of computation and storage. Thus they are computed on demand
 //	and cached in this structure.
@@ -46,8 +46,12 @@ public:
 
   void makeIndexVector(int nrBdds, int index, Vector<Bdd>& vec) const;
   Bdd makeIndexBdd(int firstVariable, int nrVariables, int index) const;
-  void makeVariableVector(int firstVariable, int nrVariables,  Vector<Bdd>& vec) const;
+  void makeVariableVector(int firstVariable, int nrVariables,  Vector<Bdd>& vec) const;  // might delete this eventually
+  void appendVariableVector(int firstBddVariable, int nrBddVariables, Vector<Bdd>& vec) const;
   Bdd makeVariableBdd(int firstVariable, int nrVariables) const;
+
+  void appendIndexVector(int nrBdds, int index, Vector<Bdd>& vec) const;
+  void operatorCompose(Symbol* op, const Vector<Bdd>& inputBdds, Vector<Bdd>& outputBdds) const;
 
 private:
   struct ComponentInfo

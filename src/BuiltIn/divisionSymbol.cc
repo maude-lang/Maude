@@ -148,9 +148,9 @@ DivisionSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 DagNode*
 DivisionSymbol::makeRatDag(const mpz_class& nr, const mpz_class& dr)
 {
-  Assert(nr != 0 && dr > 0, "not a strict rat");
+  Assert(dr > 0, "not a strict rat");
   DagNode* d = (nr >= 0) ? succSymbol->makeNatDag(nr) : minusSymbol->makeNegDag(nr);
-  if (dr == 1)
+  if (dr == 1 || nr == 0)
     return d;
 
   Vector<DagNode*> args(2);
@@ -195,7 +195,7 @@ DivisionSymbol::getRat(const DagNode* dagNode, mpz_class& numerator) const
 Term*
 DivisionSymbol::makeRatTerm(const mpz_class& nr, const mpz_class& dr)
 {
-  Assert(nr != 0 && dr > 0, "not a strict rat");
+  Assert(dr > 0, "not a strict rat");
   Vector<Term*> args(2);
   args[0] = (nr >= 0) ? succSymbol->makeNatTerm(nr) : minusSymbol->makeIntTerm(nr);
   args[1] = succSymbol->makeNatTerm(dr);

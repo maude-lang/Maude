@@ -28,7 +28,8 @@ libmixfix_a_CPPFLAGS = \
 	-I$(top_srcdir)/src/Meta \
 	-I$(top_srcdir)/src/3rdParty \
 	-I$(top_srcdir)/src/FullCompiler \
-	-I$(top_srcdir)/src/StrategyLanguage
+	-I$(top_srcdir)/src/StrategyLanguage \
+	-I$(top_srcdir)/src/SMT
 
 libmixfix_a_SOURCES = \
 	syntaxContainer.cc \
@@ -67,6 +68,7 @@ libmixfix_a_SOURCES = \
 	lexer.cc \
 	surface.cc \
 	freshVariableSource.cc \
+	variableGenerator.cc \
 	$(COMPILER_SRC)
 
 EXTRA_libmixfix_a_SOURCES = \
@@ -171,4 +173,5 @@ noinst_HEADERS = \
 	visibleModule.hh \
 	xmlBuffer.hh \
 	syntaxContainer.hh \
-	freshVariableSource.hh
+	freshVariableSource.hh \
+	variableGenerator.hh

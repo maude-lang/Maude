@@ -28,7 +28,7 @@
 #include <set>
 #include <map>
 #include "syntaxContainer.hh"
-#include "ropeStuff.hh"
+#include "rope.hh"
 #include "symbolType.hh"
 
 class Renaming : public SyntaxContainer
@@ -74,7 +74,7 @@ public:
   const set<int>& getTypeSorts(int index, int typeNr) const;
 
   Renaming* makeCanonicalVersion(ImportModule* module) const;
-  crope makeCanonicalName() const;
+  Rope makeCanonicalName() const;
 
   void addSortAndLabelMappings(const Renaming* original);
   void addOpMappingPartialCopy(const Renaming* original, int index);
@@ -111,7 +111,7 @@ private:
   static bool typeMatch(const Vector<set<int> >& types, Symbol* oldSymbol);
   static bool typeMatch(const Vector<set<int> >& types, const Vector<int>& sortNames);
   static void setType(set<int>& type, const ConnectedComponent* component);
-  static crope makeTypeName(const set<int>& type);
+  static Rope makeTypeName(const set<int>& type);
 
   void printRenamingType(ostream& s, int opMappingNr, int typeNr) const;
 

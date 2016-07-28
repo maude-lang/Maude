@@ -102,14 +102,14 @@ private:
     //crope text;
     char* textArray;
     const char* unsent;
-    crope::size_type nrUnsent;
+    Rope::size_type nrUnsent;
   };
 
   typedef map<int, ActiveSocket> SocketMap;
 
   bool getPort(DagNode* protocolArg, int& protocol);
   bool getActiveSocket(DagNode* socketArg, int& socketId, ActiveSocket*& asp);
-  bool getText(DagNode* textArg, crope& text);
+  bool getText(DagNode* textArg, Rope& text);
   bool setNonblockingFlag(int fd, FreeDagNode* message, ObjectSystemRewritingContext& context);
 
   void errorReply(const char* errorMessage,

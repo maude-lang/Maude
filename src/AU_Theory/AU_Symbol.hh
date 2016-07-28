@@ -66,6 +66,23 @@ public:
 				 bool rightEnd,  // match end at right extreme
 				 bool& nasty);
   //
+  //	Unification stuff (A only).
+  //
+  void computeGeneralizedSort(const SortBdds& sortBdds,
+			      const Vector<int>& realToBdd,
+			      DagNode* subject,
+			      Vector<Bdd>& generalizedSort);
+
+  void computeGeneralizedSort2(const SortBdds& sortBdds,
+			       const Vector<int>& realToBdd,
+			       DagNode* subject,
+			       Vector<Bdd>& outputBdds);
+
+  UnificationSubproblem* makeUnificationSubproblem();
+  // int unificationPriority() const;  // happy with default for the moment
+  //bool canResolveTheoryClash();  // default is false anyway
+
+  //
   //	Hash cons stuff.
   //
   DagNode* makeCanonical(DagNode* original, HashConsSet* hcs);

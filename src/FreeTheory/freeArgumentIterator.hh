@@ -24,7 +24,7 @@
 //	Class for argument iterators in the free theory.
 //
 #ifndef _freeArgumentIterator_hh_
-#define _freeArgumentIteraror_hh_
+#define _freeArgumentIterator_hh_
 
 class FreeArgumentIterator : public RawArgumentIterator 
 {

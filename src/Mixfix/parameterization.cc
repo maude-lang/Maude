@@ -388,6 +388,7 @@ ImportModule::handleRegularImports(ImportModule* copy,
   for (int i = parameterNames.size(); i < nrImports; ++i)
     {
       ImportModule* import = importedModules[i];
+      DebugAdvisory(Tty(Tty::GREEN) << "Instantiating " << this << " and now need to instantiate its import " << import << Tty(Tty::RESET));
       int nrImportParameters = import->parameterNames.size();
       if (nrImportParameters == 0)
 	copy->addImport(import, INCLUDING, lineNumber);  // HACK need to fix including
@@ -519,6 +520,10 @@ ImportModule::instantiateBoundParameters(const Vector<View*>& arguments,
       //        The bound parameters will be identical to our own so
       //        we first make a new instantiation of our base module and
       //        then rename it.
+      //
+      //	BUG: if the renaming mentions a parameter sort in a specific operator
+      //	renaming, this sort will not exist in the new instantiation and
+      //	the renaming will fail.
       //
       ImportModule* newBase = baseModule->
         instantiateBoundParameters(arguments, parameterArgs, moduleCache);

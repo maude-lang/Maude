@@ -1,3 +1,520 @@
+2016-06-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* pigPug-cycleDetection.cc (arrive): fixed type
+
+	* pigPug.cc (PigPug): fixed two typos
+	(firstMove): fixed typo
+
+===================================Maude110b===========================================
+
+2016-05-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* pigPug.cc (firstMove): only print one message per unification
+	subproblem about hitting depth bound
+
+2016-05-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* wordLevel.cc (chooseEquation): prefer an equation with disjoint lhs/rhs
+	variable sets
+
+	* pigPug.cc (dump): conditional compile
+	(dumpWord): conditional compile
+	(dump): take stream argument
+
+	* pigPug.hh (P): added declarations for arrive(), depart(),
+	confirmedLive()
+	(P): added typedefs CombinedWord, WordMap, StateStack and
+	struct StateInfo
+	(P): added data members wordMap, stateInfo and traversalStack
+
+	* wordDigraph.cc: deleted
+
+	* wordDigraph.hh: deleted
+
+	* pigPug-cycleDetection.cc (arrive, depart, confirmedLive): 
+	moved here from wordDiagraph.cc
+
+	* macros.hh: Verbose now prints its output in cyan
+
+2016-05-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* pigPug.cc (canCancelUnconstrained): use lastOriginalVariable + 1
+	rather than constraintMap.size()
+
+2016-05-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* wordDigraph.cc: rewritten
+
+	* wordDigraph.hh: rewritten
+
+	* pigPug.cc (undoMove): don't mask off flags
+	(cancel): use cancel flag
+	(nextMove): mask flags
+
+2016-05-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* pigPug.cc (variableOccurrencesBoundedBy2): fixed bug where we were zeroing
+	to vector pointer rather than vector entries
+
+	* pigPug.hh (P): added decls for firstMoveWithCycleDetection(),
+	nextMoveWithCycleDetection(), runWithCycleDetection()
+	(P): added data member wordDigraph
+
+	* pigPug-cycleDetection.cc (runWithCycleDetection): added
+	(firstMoveWithCycleDetection, nextMoveWithCycleDetection): added
+
+	* pigPug.hh (P): updated decl for makeStateKey(); deleted typedefs
+	StateKey, StateMap; deleted struct StateValue
+
+	* pigPug-cycleDetection.cc (makeStateKey): moved here; use WordDigraph::Word
+
+	* pigPug.cc (getNextUnifier): use runWithCycleDetection()
+	(variableOccurrencesBoundedBy2): don't care about constrained variables
+
+	* wordDigraph.hh: created
+
+	* wordDiagraph.cc: created
+
+2016-05-05  Steven Eker  <eker@install.csl.sri.com>
+
+	* pigPug.hh (P): added decl for variableOccurrencesBoundedBy2()
+
+	* pigPug.cc (variableOccurrencesBoundedBy2): added
+	(PigPug): use variableOccurrencesBoundedBy2()
+
+	* pigPug.hh (P): added decl for makeStateKey()
+	(P): added data member cycleDetection
+
+	* pigPug.cc (makeStateKey): added
+
+	* pigPug.hh (P): added struct StateValue, typedefs StateKey, StateMap
+
+	* pigPug.cc (run): don't do depthBound check here
+	(firstMove): do depthBound check here
+	(firstMove, nextMove): change order of branching so equate steps
+	are done first
+	(checkUnificand2): delete Assert() that is no longer true in the
+	general case
+	(firstMove, nextMove): reverted order of branching; it's currently
+	important to have equate come last since it has the same move
+	code as cancel, and cancel must not have successors
+
+2016-05-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* pigPug.hh (P): updated decl for getNextUnifier()
+
+	* wordLevel.cc (findNextPartialSolution): handle ReturnPair from
+	getNextUnifier()
+
+	* pigPug.cc (PigPug): initialize incompletenessFlag
+	(getNextUnifier): return ResultPair rather than int
+	(run): set incompletenessFlag if we hit depthBound
+
+	* pigPug.hh (P): added data member incompletenessFlag; added enum
+	OutcomeFlags; added typedef ResultPair
+
+	* wordLevel.cc (chooseEquation): clean up
+
+2016-04-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* wordLevel.cc (chooseEquation): return flag to say if chosen equation
+	is strict left linear
+	(findNextPartialSolution): pass strictLeftLinear flag to makePigPug()
+
+	* wordLevel.hh (W): updated decls for chooseEquation() and makePigPug()
+
+	* wordLevel.cc (makePigPug): take and pass strictLeftLinear flag
+
+	* pigPug.cc: use strictLeftLinear flag rather than using depthBound
+	as a proxy throughout code
+	(run): check depthBound
+
+	* pigPug.hh (P): made lastOriginalVariable and freshVariableStart
+	const; made depthBound non-const; added strictLeftLinear; updated
+	decl for ctor
+
+2016-04-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* pigPug.cc (extractUnifier): handle the general case
+	(completed): do occur checks in general case
+	(completed): X =? X should not be an occur check fail
+
+2016-04-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* pigPug.cc (firstMove, nextMove): rewritten to handle general case
+
+2016-04-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* pigPug.hh (P): added decls for canCancelUnconstrained() and
+	feasibleGeneralCase()
+
+	* pigPug.cc (equate): check for and handle the general case
+	(canCancelUnconstrained, feasibleGeneralCase): added
+
+	* pigPug.hh (P): updated decl for ctor
+	(P): added data member depthBound; made lastOriginalVariable and
+	freshVariableStart const
+
+	* pigPug.cc (rhsPeelGeneralCase): added
+	(PigPug): take and initialize depthBound
+
+	* pigPug.hh (P): added decl for lhsPeelGeneralCase(); updated decl for
+	checkUnificand2()
+
+	* pigPug.cc (undoMove): updated comment to mention general case
+	(checkUnificand2): now take offset argument rather than implicitly
+	assuming an offset of 1
+	(lhsPeelGeneralCase): added
+
+2016-03-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* bddUser.cc (~BddUser): free and clear cachedPairing
+	if allocated
+
+	* bddUser.hh (getCachedPairing): added
+	(setNrVariables): free and clear cachedPairing if number of
+	variables increases
+	(B): added data member cachedPairing
+
+===================================Maude110===========================================
+
+2015-12-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.hh (empty): added
+
+	* rope.cc (compare): added
+
+	* rope.hh (R): addded decls for makeZeroTerminatedString() and
+	compare()
+
+	* rope.cc (makeZeroTerminatedString): added
+
+2015-12-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.cc (dumpForest): use MAX_BALANCED_HEIGHT
+	(rebalance): use MAX_BALANCED_HEIGHT
+
+2015-12-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.cc (insertFragment): test against MAX_BALANCED_HEIGHT
+
+	* rope.hh (R): added constants MAX_BALANCED_HEIGHT and STACK_SIZE
+
+2015-12-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.hh (operator+=): moved here
+	(operator-=): added
+	(const_iterator): added decl for rebuildStack
+	(<): added
+
+	* rope.cc (const_iterator): clear absolutePosition
+	(const_iterator): copy absolutePosition
+	(operator=): copy absolutePosition
+	(operator==): test absolutePosition
+	(operator!=): test absolutePosition
+	(++): increment absolutePosition
+	(--): decrement absolutePosition
+	(rebuildStack): added
+	(operator+=): added
+
+	* rope.hh (const_iterator): added data member absolutePosition
+	(-): added
+
+2015-12-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.hh (R): updated decl for substr()
+
+	* rope.cc (substr): was previous called substring()
+
+2015-12-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.cc (~Rope): call decCount
+
+	* rope.hh (operator): call incCount ()and decCout()
+
+	* rope.cc (addFragment): inc ref counts of balanced nodes
+	encountered
+	(rebalance): don't inc ref counts here
+
+2015-12-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.hh (Rope): use new Fragment ctor
+
+	* rope.cc (makeTree, +, rawConcat, substring): use new Fragment
+	ctor
+
+	* rope.hh (R): added delc for deepDelete();
+	(incCount, decCount): added
+	(Fragment): added
+
+	* rope.cc (+, rebalance, substring): added incCount() calls
+	(deepDelete): added
+
+2015-11-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.hh (R): added decls for rebalance(), addFragment(),
+	insertFragment(), rawConcat()
+
+	* rope.cc (operator+): check for overflow
+	(rebalance, addFragment, insertFragment, rawConcat): added
+	(operator+): call rebalance if sum is unbalanced
+
+2015-11-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.cc (operator--): added
+	(operator--): consolidate cases
+
+2015-11-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.hh (R): added static data member fiboTable
+
+	* rope.cc (copy): added
+
+	* rope.hh (R): added decl for madeTree();
+
+	* rope.cc (makeTree): added
+
+	* rope.hh (operator!= added): added
+	(operator>=): added
+	(operator<): added
+	(operator>): added
+
+	* rope.cc (operator<=): added
+
+2015-11-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* rope.cc (+): fixed bug where we using the wrong length for the
+	right child leaf case
+
+	* rope.hh: added from separate development
+
+	* rope.cc: added from separate development
+
+2015-07-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordSystem.hh (W): updated decl for findNextSolution()
+
+	* wordSystem.cc (findNextSolution): returns int
+
+	* wordSystem.hh (W): incompletenessFlag replaces failureFlag
+
+	* wordSystem.cc (findNextSolution): use incompletenessFlag rather
+	than failureFlag
+
+	* wordSystem.hh (W): don't give local name to Outcome
+	(W): added enum OutcomeFlags
+
+	* wordLevel.hh (W): enum OutcomeFlags replaces enum Outcome;
+	ResultPair now has first component int
+	(W): incompletenessFlag replaces failureFlag
+
+	* wordLevel.cc (findNextPartialSolution): use incompletenessFlag
+	rather than failureFlag
+	(chooseEquation): set incompletenessFlag rather than failureFlag
+
+2015-07-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordLevel.hh (W): added data member failureFlag
+
+	* wordSystem.hh (W): added data member failureFlag
+
+	* wordSystem.cc (WordSystem): initialize failureFlag
+	(findNextSolution): handle new WordLevel Outcome value
+
+	* wordLevel.cc (findNextPartialSolution): use enum Outcome
+	(chooseEquation): set failureFlag to INCOMPLETE if we have to add
+	constraints
+	(WordLevel): initialize failureFlag
+
+	* wordLevel.hh (W): added enum Outcome; ResultPair now includes
+	Outcome
+
+2015-07-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordLevel.hh (addAssignment): support multiple assignments for
+	the same variable by turning subsequent assignments into equations
+
+2015-07-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordSystem.hh (getAssignment): made const
+	(getNrVariables): added
+
+	* wordLevel.hh (getNrVariables): added
+	(getAssignment): made const
+
+2015-07-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pigPug.hh (P): added decl for dumpWord()
+
+	* pigPug.cc (dumpWord): added
+
+	* wordSystem.hh (getAssignment): added
+
+	* wordLevel.hh (getAssignment): added
+
+2015-06-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordLevel.cc (makePigPug): implemented
+
+	* wordLevel.hh (WordLevel): added decls for chooseEquation(),
+	checkUnconstrainedVariables(), makePigPug()
+
+	* wordLevel.cc (~WordLevel): added
+	(findNextPartialSolution): call getNextUnifier() and
+	makeNewLevel()
+	(chooseEquation): added
+	(checkUnconstrainedVariables): added
+	(makePigPug): added stub
+
+2015-06-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordSystem.cc: created
+
+2015-06-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordLevel-simplifyEquations.cc (simplifyEquation): fixed bug
+	where we were passing the rhs twice to cancel() rather the lhs and
+	rhs
+
+	* wordLevel.cc (dump): handle cancelled equations
+
+2015-06-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordLevel-simplifyEquations.cc (simplifyEquation): newLhs/lhs
+	the wrong way around; ditto rhs
+
+	* wordLevel.hh (addAssignment): was addAssignment()
+
+2015-06-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordLevel.cc (dump): added
+	(dumpWord): added
+
+	* wordLevel.hh (W): added decl for dump()
+
+	* wordLevel-simplifyAssignments.cc (fullyExpandAssignments):
+	missing decl
+	(reallyExpandAssignment): missing qualifier
+
+2015-06-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordLevel-simplifyEquations.cc: created
+
+2015-06-05  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordLevel-simplifyAssignments.cc: created
+
+	* wordLevel.hh: created
+
+	* wordLevel.cc: created
+
+2015-05-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* wordSystem.hh: created
+
+2015-04-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pigPug.cc (run): compare value returned from completed() to fail
+
+===================================Maude108===========================================
+
+2015-02-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pigPug.hh (P): remapVariables() -> renameVariables()
+
+	* pigPug.cc (renameVariables): was remapVariables()
+
+2015-02-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pigPug.hh (P): added decls for fullyConstrained() and feasible()
+
+	* pigPug.cc (fullyConstrained): added
+	(feasible): added
+
+	* pigPug.hh: added decls for remapVariables(),
+	collectRangeVariables()
+	(P): updated delc for extractUnifier()
+
+	* pigPug.cc (extractUnifier): do variable remapping
+	(remapVariables, collectRangeVariables): added
+
+	* pigPug.hh (P): added data member lastOriginalVariable; deleted
+	data member linear
+
+	* pigPug.cc (PigPug): take lastOriginalVariable argument
+
+2015-02-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pigPug.cc (dump): added
+	(compose): (partial replacement version) fixed a nasty bug where
+	we were looking at the wrong variable in the existing substitution
+
+	* pigPug.hh (P): adde decl for dump()
+
+	* pigPug.cc (extractUnifier): added
+
+	* pigPug.hh (P): added decls for cancel(), compose(), compose2()
+
+	* pigPug.cc (cancel): added
+	(firstMove): use cancel()
+	(compose, compose2): added
+	(extractUnifier): use compose(), compose2()
+
+2015-02-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pigPug.cc: created
+
+	* pigPug.hh: created
+
+===================================Maude107===========================================
+
+2014-11-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* sequenceAssignment.cc (computeBoundSum): instrumented
+	(checkAndMakeMove): instrumented
+	(SequenceAssignment): fixed nasty bug: need to start
+	lhsCount[0]/rhsCount[0] at 1 since there is already an implicit 1-1
+	match before the first move.
+
+===================================Maude106===========================================
+
+2014-04-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* sequenceAssignment.cc (findNextSolution): fix a bug where we
+	were not initializing moveIndex in the findFirst == false case
+
+	* sequenceAssignment.hh (S): updated decl for findNextSolution()
+
+	* sequenceAssignment.cc (findNextSolution): take findFirst and use
+	it to determine when to initialize state
+
+2014-03-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* sequenceAssignment.cc (checkAndMakeMove): fixed bug where we
+	were using boundSum rather than bounds
+
+2014-03-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* sequenceAssignment.cc (findNextSolution): fixed bug where we
+	were  using lhsBoundSum.size() rather than rhsBoundSum.size()
+	(checkAndMakeMove): added
+	(unmakeMove): added
+
+2014-03-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* sequenceAssignment.cc: rewritten
+
+	* sequenceAssignment.hh: rewritten using "grid move" approach to
+	state representation
+
+2014-03-05  Steven Eker  <eker@ape.csl.sri.com>
+
+	* sequenceAssignment.cc: created
+
+	* sequenceAssignment.hh: created
+
+===================================Maude102===========================================
+
 2013-11-21  Steven Eker  <eker@ape.csl.sri.com>
 
 	* natSet.hh (containsSmall): added

@@ -1,0 +1,603 @@
+set show timing off .
+
+fmod A-UNIF is
+  sorts List Elt .
+  subsort Elt < List .
+  op __ : List List -> List [assoc] .
+  op f : List List -> List [assoc] .
+  op g : List List -> List .
+  op h : List List -> List [assoc comm] .
+  op i : List -> List .
+  op j : List List -> List [assoc comm id: 1] .
+  op 1 : -> List .
+  ops a b c d e : -> Elt .
+  vars A B C D
+       G H I J K L M N
+       P Q R S T U V W X Y Z : List .
+  vars E F : Elt .
+endfm
+
+
+*** linear elementary associative unification of n variables against m variables
+*** has a minimal complete set of unifiers of size D(n, m)
+
+***( Delannoy's numbers D(n, m)
+
+1       1       1       1       1       1       1       1       1       1       
+1       3       5       7       9       11      13      15      17      19      
+1       5       13      25      41      61      85      113     145     181     
+1       7       25      63      129     231     377     575     833     1159    
+1       9       41      129     321     681     1289    2241    3649    5641    
+1       11      61      231     681     1683    3653    7183    13073   22363   
+1       13      85      377     1289    3653    8989    19825   40081   75517   
+1       15      113     575     2241    7183    19825   48639   108545  224143  
+1       17      145     833     3649    13073   40081   108545  265729  598417  
+1       19      181     1159    5641    22363   75517   224143  598417  1462563 
+
+)
+
+unify A B =? X .
+unify A B =? X Y .
+unify A B C =? X Y .
+unify A B C =? X Y Z .
+unify A B C D =? X Y Z .
+unify A B C D G =? X Y Z .
+
+*** Simultaneous elementary associative unification is just a product as each
+*** equation is independent because of linearity
+
+unify A B C =? X Y Z /\ G H I =? M N .
+
+*** Non-linear problems are explicitly disallowed.
+
+unify A B =? B C .
+
+*** Non-variable subterms are allowed with the proviso:
+*** [1] Each such subterm must be headed by a collapse free symbol; and
+*** [2] No variable occuring directly under an associative symbol can be mentioned.
+
+unify a A a =? B a C .
+unify a A b =? B c C .
+unify a A a =? B a C a D .
+unify a A b =? B c C d D .
+
+unify h(A, B, B) C h(G, H) =? I h(J, i(K)) L .
+unify h(A, B) C h(G, H) =? I h(J, J) L h(M, M) N .
+unify A h(X, Y) B =? C h(U, V) D h(U, U) G .
+
+*** Because non-free theories introduce non-linear fresh variables for purification and expressing
+*** unifiers, associative symbols can only appear at the top or immediately under the free skeleton
+*** of a term.
+
+unify g(h(A, B, B) C h(G, H), X Y a Z) =?
+      g(I h(J, i(K)) L, U b V W) .
+
+*** The AC theory introduces fresh variables to express the AC unifiers on abstracted terms
+*** and these are necessarily non-linear [since each variable must show up on each side of the
+*** equation] which breaks linear associative unification.
+
+unify h(h(A, B, B) C h(G, H), X Y a Z) =?
+      h(I h(J, i(K)) L, U b V W) .
+
+***
+*** New algorithm lifts many of the above restrictions, though variables occuring under an associative
+*** symbol (perhaps indirectly via collapse) should still be linear, unless they are element variables
+*** or are otherwise constrained. No more than two subterms headed by the same associative symbol should
+*** the same variable unless at least for one of the terms has all the arguments are collapse-free
+*** aliens or element variables.
+***
+
+unify h(A, A) =? h(f(B, C), f(I, J)) .
+*** this is OK
+
+unify h(A, A, A) =? h(f(B, C), f(I, J), f(X, Y)) .
+*** this forces 3 h-terms to unify against A and fails
+
+unify h(f(a, b), f(a, b), f(a, b)) =? h(f(B, C), f(I, J), f(X, Y)) .
+*** this is OK
+
+unify A E B F C E D =? W F X E Y F Z .
+*** OK because the nonlinear variable are all element variables
+
+unify A =? h(B, C) /\ X A Y =? U h(C, D) V E A W .
+*** OK because A is bound to a collapse-free alien before the associative theory sees it
+
+unify X A Y =? U h(C, D) V E A W /\ A =? h(B, C) .
+unify A =? h(B, C) /\ X A Y =? U h(C, D) V E A W .
+*** Swapping the order no longer fails
+
+unify j(A, f(B, E, C), f(D, E, j(G, H), I)) =? j(U, f(V, W), f(X, j(Y, Z), S)) .
+*** very complicated cases with collapse work as long as only element variables are nonlinear
+
+*********************************************
+*** New non-linear examples added 5/15/16 ***
+*********************************************
+
+***(
+Associative unfication examples to test PIG-PUG with cycle detection where all variables appear at most twice.
+
+We are mostly interested in the rare cases where cycles are detected but they are found to be dead and
+don't generate infinite families of unifiers. This situation only seems to happen when element variables
+or free constants are present.
+)
+
+fmod FOO is
+  sorts Elt Foo .
+  subsort Elt < Foo .
+  op __ : Foo Foo -> Foo [assoc] .
+
+*** free constants
+  ops a b c d e f g h i j : -> Foo .
+
+*** element variables
+  vars E F G H I J K L M N : Elt .
+
+*** unconstrained variables
+  vars P Q R S T U V W X Y Z : Foo .
+endfm
+
+*** 7 symbol, element variables, PIG-PUG has dead cycle(s), no unifiers
+unify P P =? Q Q R R H .
+unify P P Q =? Q R R H .
+unify P P =? Q Q G G H .
+unify P P Q =? Q G G H .
+unify P P =? Q Q R H R .
+unify P P Q =? Q R H R .
+unify P P =? Q Q G H G .
+unify P P Q =? Q G H G .
+unify P P =? Q Q G S S .
+unify P P Q =? Q G S S .
+unify P P =? Q Q G H H .
+unify P P Q =? Q G H H .
+unify P P =? Q Q G H I .
+unify P P Q =? Q G H I .
+unify P P =? Q G Q S S .
+unify P P Q =? G Q S S .
+unify P P =? F R R S S .
+unify P P F =? R R S S .
+unify P Q P =? Q R R H .
+unify P Q P =? Q G G H .
+unify P Q P =? Q R H R .
+unify P Q P =? Q G H G .
+unify P Q P =? Q G S S .
+unify P Q P =? Q G H H .
+unify P Q P =? Q G H I .
+unify P Q P =? G Q S S .
+unify P F P =? R R S S .
+unify P Q Q =? R P R H .
+unify P Q Q =? G P G H .
+unify P Q Q =? R P H R .
+unify P Q Q =? G P H G .
+unify P Q Q =? G P S S .
+unify P Q Q =? G P H H .
+unify P Q Q =? G P H I .
+unify P Q Q =? R R P H .
+unify P Q Q =? G G P H .
+unify P Q Q =? R R H P .
+unify P Q Q =? G G H P .
+unify E Q Q =? R R S S .
+unify P Q Q =? R H P R .
+unify P Q Q =? G H P G .
+unify P Q Q =? G S P S .
+unify P Q Q =? G H P H .
+unify P Q Q =? G H P I .
+unify P Q Q =? R H R P .
+unify P Q Q =? G H G P .
+unify P Q Q =? G S S P .
+unify P Q Q =? G H H P .
+unify P Q Q =? G H I P .
+
+*** 9 symbol, element variables, PIG-PUG has dead cycle(s), 1 unifier
+unify P Q R R =? H H Q I I .
+unify P Q R R =? H H Q I J .
+unify P Q R R =? H I Q H I .
+unify P Q R R =? H I Q H J .
+unify P Q R R =? H I Q I H .
+unify P Q R R =? H I Q I J .
+unify P Q R R =? H I Q J H .
+unify P Q R R =? H I Q J I .
+unify P Q R R =? H I Q J J .
+unify P Q R R =? H I Q J K .
+
+*** 4 symbol, free constants, PIG-PUG has dead cycle(s), no unifiers
+unify a Q =? Q c .
+unify P b =? c P .
+
+*** 6 symbol, free constants, PIG-PUG has dead cycle(s), no unifiers
+unify a a Q =? Q c c .
+unify a a Q =? Q c S .
+unify a a Q =? Q R d .
+unify P P =? Q Q c d .
+unify P P Q =? Q c d .
+unify a a Q =? Q c d .
+unify a a Q =? R Q d .
+unify P P Q =? c Q d .
+unify P P =? b R R d .
+unify P P =? Q c d Q .
+unify P P b =? R d R .
+unify P P =? b c S S .
+unify a Q a =? Q c c .
+unify a Q a =? Q c S .
+unify a Q a =? Q R d .
+unify P Q P =? Q c d .
+unify a Q a =? Q c d .
+unify P b P =? R R d .
+unify a Q a =? R d Q .
+unify P Q P =? c d Q .
+unify P b P =? c S S .
+unify P b b =? c P c .
+unify P b b =? c P S .
+unify P b b =? R P d .
+unify P Q Q =? c P d .
+unify P b b =? c P d .
+unify P b b =? c c P .
+unify P b b =? c S P .
+unify P b b =? R d P .
+unify P Q Q =? c d P .
+unify P b b =? c d P .
+unify a Q Q =? R d R .
+unify P b R =? P R d .
+unify a b R =? a R d .
+unify P Q c =? P d Q .
+unify a Q c =? a d Q .
+unify P Q c =? Q P d .
+unify a Q c =? Q a d .
+unify P b c =? b P d .
+unify a Q c =? Q c a .
+unify a Q c =? Q c S .
+unify a Q R =? Q R d .
+unify P b R =? b R d .
+unify P Q c =? Q c d .
+unify a Q c =? Q c d .
+unify a Q c =? Q S a .
+unify a Q R =? Q d a .
+unify P Q c =? Q d P .
+unify a Q c =? Q d a .
+unify P b c =? b d P .
+unify a Q R =? Q d R .
+unify a Q c =? Q d c .
+unify a Q c =? Q S S .
+unify a Q R =? Q d d .
+unify P Q c =? Q d d .
+unify a Q c =? Q d d .
+unify a Q R =? Q d T .
+unify a Q c =? Q d T .
+unify P Q c =? Q S e .
+unify a Q c =? Q S e .
+unify a Q R =? Q d e .
+unify P Q c =? Q d e .
+unify a Q c =? Q d e .
+unify P b c =? c P b .
+unify P b c =? c P S .
+unify P b R =? R P d .
+unify a b R =? R a d .
+unify P Q c =? c P d .
+unify P b c =? c P d .
+unify a Q R =? R Q d .
+unify a b R =? R b d .
+unify P b R =? R d P .
+unify a b R =? R d a .
+unify P b c =? c d P .
+unify a Q R =? R d Q .
+unify a b R =? R d b .
+unify P Q c =? c d Q .
+unify a b R =? R S S .
+unify a Q R =? R d d .
+unify P b R =? R d d .
+unify a b R =? R d d .
+unify a b R =? R d T .
+unify a b R =? R S e .
+unify a Q R =? R d e .
+unify P b R =? R d e .
+unify a b R =? R d e .
+unify a Q c =? S a Q .
+unify P b c =? S P b .
+unify P b R =? d P b .
+unify P Q c =? d P Q .
+unify P b c =? d P b .
+unify P b R =? d P R .
+unify P b c =? d P c .
+unify P b c =? S P S .
+unify P b R =? d P d .
+unify P Q c =? d P d .
+unify P b c =? d P d .
+unify P b R =? d P T .
+unify P b c =? d P T .
+unify P Q c =? S P e .
+unify P b c =? S P e .
+unify P b R =? d P e .
+unify P Q c =? d P e .
+unify P b c =? d P e .
+unify P Q c =? d Q P .
+unify P b c =? d b P .
+unify a b R =? S R a .
+unify P b R =? d R P .
+unify P b c =? d c P .
+unify a b R =? S R S .
+unify P b R =? d R d .
+unify P b R =? S R e .
+unify a b R =? S R e .
+unify P b R =? d R e .
+unify P b c =? S S P .
+unify P b R =? d d P .
+unify P Q c =? d d P .
+unify P b c =? d d P .
+unify a Q c =? S S Q .
+unify P Q c =? d d Q .
+unify P b c =? d T P .
+unify P b c =? S e P .
+unify P b R =? d e P .
+unify P Q c =? d e P .
+unify P b c =? d e P .
+unify P Q c =? S e Q .
+unify a Q c =? S e Q .
+unify P Q c =? d e Q .
+
+*** 7 symbol, free constants, PIG-PUG has dead cycle(s), no unifiers
+unify P P =? Q Q R R d .
+unify P P Q =? Q R R d .
+unify P P =? Q Q c c d .
+unify P P Q =? Q c c d .
+unify P P =? Q Q R d R .
+unify P P Q =? Q R d R .
+unify P P =? Q Q c d c .
+unify P P Q =? Q c d c .
+unify P P =? Q Q c S S .
+unify P P Q =? Q c S S .
+unify P P =? Q Q c d d .
+unify P P Q =? Q c d d .
+unify P P =? Q Q c d e .
+unify P P Q =? Q c d e .
+unify P P =? Q c Q S S .
+unify P P Q =? c Q S S .
+unify P P =? b R R S S .
+unify P P b =? R R S S .
+unify P P b =? R R S e .
+unify P P b =? R S R e .
+unify P P b =? R S S e .
+unify P Q P =? Q R R d .
+unify P Q P =? Q c c d .
+unify P Q P =? Q R d R .
+unify P Q P =? Q c d c .
+unify P Q P =? Q c S S .
+unify P Q P =? Q c d d .
+unify P Q P =? Q c d e .
+unify P Q P =? c Q S S .
+unify P b P =? R R S S .
+unify P Q Q =? R P R d .
+unify P Q Q =? c P c d .
+unify P Q Q =? R P d R .
+unify P Q Q =? c P d c .
+unify P Q Q =? c P S S .
+unify P Q Q =? c P d d .
+unify P Q Q =? c P d e .
+unify P Q Q =? R R P d .
+unify P Q Q =? c c P d .
+unify P Q Q =? R R d P .
+unify P Q Q =? c c d P .
+unify a Q Q =? R R S S .
+unify P Q Q =? R d P R .
+unify P Q Q =? c d P c .
+unify P Q Q =? c S P S .
+unify P Q Q =? c d P d .
+unify P Q Q =? c d P e .
+unify P Q Q =? R d R P .
+unify P Q Q =? c d c P .
+unify P Q Q =? c S S P .
+unify P Q Q =? c d d P .
+unify P Q Q =? c d e P .
+unify P b R =? b R d d .
+unify P Q c =? Q c d d .
+unify P Q c =? Q c S e .
+unify P b R =? b R d e .
+unify P Q c =? Q c d e .
+unify a Q R =? Q d a d .
+unify a Q R =? Q d a T .
+unify a Q R =? Q d a e .
+unify P b R =? b d R d .
+unify P Q c =? Q d c d .
+unify P b R =? b S R e .
+unify P Q c =? Q S c e .
+unify P b R =? b d R e .
+unify P Q c =? Q d c e .
+unify a Q R =? Q d d a .
+unify a Q R =? Q d d T .
+unify P Q c =? Q S S e .
+unify a Q R =? Q d d e .
+unify P Q c =? Q d d e .
+unify a Q R =? Q d T a .
+unify a Q R =? Q d e a .
+unify a Q R =? Q d T d .
+unify P Q c =? Q d T d .
+unify a Q R =? Q d e d .
+unify P Q c =? Q d e d .
+unify a Q R =? Q d T T .
+unify P Q c =? Q S e e .
+unify a Q R =? Q d e e .
+unify P Q c =? Q d e e .
+unify a Q R =? Q d T U .
+unify a Q R =? Q d e U .
+unify P Q c =? Q S T f .
+unify a Q R =? Q d T f .
+unify P Q c =? Q d T f .
+unify P Q c =? Q S e f .
+unify a Q R =? Q d e f .
+unify P Q c =? Q d e f .
+unify P Q c =? c P d d .
+unify P Q c =? c P S e .
+unify P Q c =? c P d e .
+unify P Q c =? c Q d d .
+unify P Q c =? c Q S e .
+unify P Q c =? c Q d e .
+unify P Q c =? c d P d .
+unify P Q c =? c S P e .
+unify P Q c =? c d P e .
+unify P Q c =? c d d Q .
+unify a Q R =? R d d e .
+unify P b R =? R d d e .
+unify P Q c =? c S e Q .
+unify P Q c =? c d e Q .
+unify a Q R =? R d e d .
+unify P b R =? R d e d .
+unify a Q R =? R d e e .
+unify P b R =? R d e e .
+unify a Q R =? R d e f .
+unify P b R =? R d e f .
+unify P b R =? d P b d .
+unify P b R =? d P b T .
+unify P b R =? d P b e .
+unify P Q c =? d P c d .
+unify P Q c =? S P c e .
+unify P Q c =? d P c e .
+unify P b R =? d P d b .
+unify P b R =? d P d T .
+unify P Q c =? S P S e .
+unify P b R =? d P d e .
+unify P Q c =? d P d e .
+unify P b R =? d P T b .
+unify P b R =? d P e b .
+unify P b R =? d P T d .
+unify P Q c =? d P T d .
+unify P b R =? d P e d .
+unify P Q c =? d P e d .
+unify P b R =? d P T T .
+unify P Q c =? S P e e .
+unify P b R =? d P e e .
+unify P Q c =? d P e e .
+unify P b R =? d P T U .
+unify P b R =? d P e U .
+unify P Q c =? S P T f .
+unify P b R =? d P T f .
+unify P Q c =? d P T f .
+unify P Q c =? S P e f .
+unify P b R =? d P e f .
+unify P Q c =? d P e f .
+unify P b R =? d b R d .
+unify P Q c =? d Q c d .
+unify P b R =? S b R e .
+unify P Q c =? S Q c e .
+unify P b R =? d b R e .
+unify P Q c =? d Q c e .
+unify P Q c =? S Q S e .
+unify P Q c =? d Q d e .
+unify P Q c =? d Q T d .
+unify P Q c =? d Q e d .
+unify P Q c =? S Q e e .
+unify P Q c =? d Q e e .
+unify P Q c =? S Q T f .
+unify P Q c =? d Q T f .
+unify P Q c =? S Q e f .
+unify P Q c =? d Q e f .
+unify P Q c =? d c P d .
+unify P Q c =? S c P e .
+unify P Q c =? d c P e .
+unify P Q c =? d c d Q .
+unify P b R =? d R d e .
+unify P Q c =? S c e Q .
+unify P Q c =? d c e Q .
+unify P b R =? d R e d .
+unify P b R =? S R e e .
+unify P b R =? d R e e .
+unify P b R =? S R e f .
+unify P b R =? d R e f .
+unify P b R =? d d P b .
+unify P b R =? d d P T .
+unify P Q c =? S S P e .
+unify P b R =? d d P e .
+unify P Q c =? d d P e .
+unify P b R =? S S R e .
+unify P b R =? d d R e .
+unify P b R =? d d e P .
+unify P Q c =? d d e P .
+unify P Q c =? S S e Q .
+unify P Q c =? d d e Q .
+unify P b R =? d e P b .
+unify P Q c =? d T P d .
+unify P b R =? d e P d .
+unify P Q c =? d e P d .
+unify P Q c =? S e P e .
+unify P b R =? d e P e .
+unify P Q c =? d e P e .
+unify P b R =? d e P U .
+unify P Q c =? S T P f .
+unify P Q c =? d T P f .
+unify P Q c =? S e P f .
+unify P b R =? d e P f .
+unify P Q c =? d e P f .
+unify P b R =? d T R d .
+unify P b R =? d e R d .
+unify P b R =? S e R e .
+unify P b R =? d e R e .
+unify P b R =? S T R f .
+unify P b R =? d T R f .
+unify P b R =? S e R f .
+unify P b R =? d e R f .
+unify P b R =? d e d P .
+unify P Q c =? d e d P .
+unify P Q c =? d T d Q .
+unify P Q c =? d e d Q .
+unify P b R =? d e e P .
+unify P Q c =? d e e P .
+unify P Q c =? S e e Q .
+unify P Q c =? d e e Q .
+unify P b R =? d e f P .
+unify P Q c =? d e f P .
+unify P Q c =? S T f Q .
+unify P Q c =? d T f Q .
+unify P Q c =? S e f Q .
+unify P Q c =? d e f Q .
+
+*** 9 symbol, free constants, PIG-PUG has dead cycle(s), 1 unifier
+unify P Q R R =? d d Q e e .
+unify P Q R R =? d e Q f f .
+unify P b R S =? e b R e f .
+unify P Q c S =? e Q c e f .
+unify P b R S =? e b R f e .
+unify P Q c S =? e Q c f e .
+unify P b R S =? e b R f f .
+unify P Q c S =? e Q c f f .
+unify P b R S =? e b R f g .
+unify P Q c S =? e Q c f g .
+unify P Q c S =? e e Q c f .
+unify P Q c S =? e f Q c e .
+unify P Q c S =? e f Q c f .
+unify P Q c S =? e f Q c g .
+
+*** no cycle examples
+
+*** no unifiers
+unify X X =? Y a Y .
+unify X X =? E Y a b Y E .
+
+*** 1 unifier
+unify X X =? Y Y .
+unify X X =? Y a Y a .
+unify X X =? E Y F E Y F .
+unify X X =? E Y a b Y F .
+unify X X =? E Y F b Y E .
+unify X X =? E Y b b Y E .
+
+*** incomplete
+unify X Y =? Y X .
+unify X Y X =? Z Z .
+unify X X =? Y a a Y .
+
+
+*** other interesting cases
+
+*** infinite set of mgus X |-> W^n, Y |-> W^m where n, m are relatively prime
+unify X Y =? Y X .
+
+*** single mgu X |-> W W W W, Y |-> W W W
+unify X X X =? Y Y Y Y .
+
+*** simultaneous combination of both
+unify X Y =? Y X  /\ X X X =? Y Y Y Y .
+unify X X X =? Y Y Y Y  /\ X Y =? Y X .
+
+*** bounded depth
+
+unify X X =? Y Y Y .
+unify X Y X =? Y X Y .
+unify X X X =? Y Y Y Y .
+unify X Y X =? Y Y Y Y .

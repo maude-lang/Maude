@@ -1,3 +1,19 @@
+2016-03-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* S_Symbol.hh (Symbol): added decl for computeGeneralizedSort2()
+
+	* S_Symbol.cc (computeGeneralizedSort2): added
+
+===================================Maude110===========================================
+
+2015-08-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* S_Symbol.hh (Symbol): added decl for unificationPriority()
+
+	* S_Symbol.cc (unificationPriority): added
+
+===================================Maude108===========================================
+
 2012-04-13  Steven Eker  <eker@ape.csl.sri.com>
 
 	* S_DagNode.hh (DagNode): updated decl for

@@ -37,6 +37,8 @@
 #include "token.hh"
 #include "pointerSet.hh"
 #include "symbolType.hh"
+#include "SMT_Info.hh"
+#include "SMT_NumberSymbol.hh"
 
 class MixfixModule : public ProfileModule, public MetadataStore, protected SharedTokens
 {
@@ -187,6 +189,7 @@ public:
   QuotedIdentifierSymbol* findQuotedIdentifierSymbol(const ConnectedComponent* component) const;
   StringSymbol* findStringSymbol(const ConnectedComponent* component) const;
   FloatSymbol* findFloatSymbol(const ConnectedComponent* component) const;
+  SMT_NumberSymbol* findSMT_NumberSymbol(const ConnectedComponent* component, SMT_Info::SMT_Type type);
   int findPolymorphIndex(int polymorphName, const Vector<Sort*>& domainAndRange) const;
   //
   //	Polymorph functions.
@@ -229,6 +232,7 @@ public:
   //
   void bufferPrint(Vector<int>& buffer, Term* term, int printFlags);
   static Sort* disambiguatorSort(const Term* term);
+  int getSMT_NumberToken(const mpq_class& value, Sort* sort);
   //
   //	Misc.
   //
@@ -238,6 +242,8 @@ public:
   bool isTheory() const;
   static bool canImport(ModuleType t1, ModuleType t2);
   static bool canHaveAsParameter(ModuleType t1, ModuleType t2);
+  const SMT_Info& getSMT_Info();
+  bool validForSMT_Rewriting();
 
 protected:
   static int findMatchingParen(const Vector<Token>& tokens, int pos);
@@ -266,23 +272,24 @@ public:  // HACK
 private:
   enum InternalFlags
   {
-    LEFT_BARE = 0x1,
-    RIGHT_BARE = 0x2,
-    ADHOC_OVERLOADED = 0x4,
-    DOMAIN_OVERLOADED = 0x8,
-    RANGE_OVERLOADED = 0x10,
+    LEFT_BARE = 0x1,		// operator name has leading argument underscore
+    RIGHT_BARE = 0x2,		// operator name has trailing argument underscore
+    ADHOC_OVERLOADED = 0x4,	// another operator with the same name exists
+    DOMAIN_OVERLOADED = 0x8,	// another operator with the same name and domain kinds exists
+    RANGE_OVERLOADED = 0x10,	// another operator with the same name and range kind exists
     
-    PSEUDO_STRING = 0x40,
-    PSEUDO_QUOTED_IDENTIFIER = 0x80,
-    PSEUDO_FLOAT = 0x100,
-    PSEUDO_VARIABLE = 0x200,
+    PSEUDO_STRING = 0x40,	// nullary operator looks like a built-in string
+    PSEUDO_QUOTED_IDENTIFIER = 0x80,	// nullary operator looks like a built-in quoted identifier
+    PSEUDO_FLOAT = 0x100,	// nullary operator looks like a built-in float
+    PSEUDO_VARIABLE = 0x200,	// nullary operator looks like a explicit variable (i.e. X:Foo)
 
-    PSEUDO_NAT = 0x1000,
-    PSEUDO_NEG = 0x2000,
-    PSEUDO_RAT = 0x4000,
+    PSEUDO_NAT = 0x1000,	// nullary operator looks like a positive integer
+    PSEUDO_NEG = 0x2000,	// nullary operator looks like a negative integer
+    PSEUDO_RAT = 0x4000,	// nullary operator looks like a rational
+    PSEUDO_ZERO = 0x8000,	// nullary operator looks like zero integer
     
     PSEUDOS = PSEUDO_VARIABLE | PSEUDO_FLOAT | PSEUDO_STRING | PSEUDO_QUOTED_IDENTIFIER |
-      PSEUDO_NAT | PSEUDO_NEG | PSEUDO_RAT
+      PSEUDO_NAT | PSEUDO_NEG | PSEUDO_RAT | PSEUDO_ZERO
   };
 
   enum NonTerminal
@@ -478,6 +485,14 @@ private:
   static int chooseDisambiguator(Symbol* s);
   static void graphCount(DagNode* dagNode, PointerSet& visited, Vector<mpz_class>& counts);
   static void makeIterName(string& name, int id, const mpz_class& number);
+  static int computeGraphStatus(DagNode* dagNode,
+				PointerSet& visited,
+				Vector<int>& statusVec);
+  //
+  //	Member functions for Term* -> Vector<int>&  pretty printer.
+  //
+  static void prefix(Vector<int>& buffer, bool needDisambig);
+  static void suffix(Vector<int>& buffer, Term* term, bool needDisambig, int printFlags);
   void prettyPrint(Vector<int>& buffer,
 		   Term* term,
 		   int requiredPrec,
@@ -487,29 +502,21 @@ private:
 		   const ConnectedComponent* rightCaptureComponent,
 		   bool rangeKnown,
 		   int printFlags);
+
   static void handleVariable(Vector<int>& buffer, Term* term, int printFlags);
+  bool handleIter(Vector<int>& buffer, Term* term, SymbolInfo& si, bool rangeKnown, int printFlags);
+  bool handleMinus(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags);
+  bool handleDivision(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags);
+  void handleFloat(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags);
+  void handleString(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags);
+  void handleQuotedIdentifier(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags);
+  void handleSMT_NumberSymbol(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags);
+
   static void printKind(Vector<int>& buffer, const Sort* kind, int printFlags);
   static void printSort(Vector<int>& buffer, const Sort* sort, int printFlags);
   static void printDotSort(Vector<int>& buffer, const Sort* sort, int printFlags);
   static void printVarSort(Vector<int>& buffer, string& fullName, const Sort* sort, int printFlags);
 
-  static int computeGraphStatus(DagNode* dagNode,
-				PointerSet& visited,
-				Vector<int>& statusVec);
-
-  bool handleIter(Vector<int>& buffer, 
-		  Term* term, SymbolInfo& si,
-		  bool rangeKnown,
-		  int printFlags);
-  bool handleMinus(Vector<int>& buffer,
-		   Term* term,
-		   SymbolInfo& si,
-		   int printFlags);
-  bool handleDivision(Vector<int>& buffer,
-		      Term* term,
-		      SymbolInfo& si,
-		      int printFlags);
-  
   int printTokens(Vector<int>& buffer, const SymbolInfo& si, int pos, int printFlags);
   void printTails(Vector<int>& buffer,
 		  const SymbolInfo& si,
@@ -605,19 +612,21 @@ private:
   map<int, Symbol*> stringSymbols;
   set<int> overloadedQuotedIdentifiers;
   map<int, Symbol*> quotedIdentifierSymbols;
+  map<int, Symbol*> SMT_NumberSymbols;
   //
   //	We keep sets of integers and rationals whose decimal i/o
-  //	representation has been used user symbols of arity 0.
+  //	representation has been used for user symbols of arity 0.
   //
   set<mpz_class> overloadedIntegers;
   set<pair<mpz_class, mpz_class> > overloadedRationals;
   //
   //	We also keep sets of kinds that have succ, minus and division
-  //	symbols defined on them.
+  //	symbols defined on them, or that have an non-explicit zero.
   //
-  set<int> kindsWithSucc;
-  set<int> kindsWithMinus;
-  set<int> kindsWithDivision;
+  set<int> kindsWithSucc;  // also holds kinds with built-in constants that look like positive integers
+  set<int> kindsWithMinus;  // also holds kinds with built-in constants that look like negative integers
+  set<int> kindsWithDivision;  // also holds kinds with built-in that look like rationals
+  set<int> kindsWithZero;   // holds kinds with a built-in constnat that look like zero
 
   set<pair<int, int> > overloadedVariables;
 
@@ -629,6 +638,7 @@ private:
 				  const Vector<Sort*>& domainAndRange2);
 
   bool ambiguous(int iflags);
+  static bool rangeOfArgumentsKnown(int iflags, bool rangeKnown, bool rangeDisambiguated);
   //
   //	Member functions for DagNode* -> ostream& pretty printer.
   //
@@ -665,6 +675,10 @@ private:
 		      DagNode* dagNode,
 		      bool rangeKnown,
 		      const char* color);
+  void handleSMT_Number(ostream& s,
+			DagNode* dagNode,
+			bool rangeKnown,
+			const char* color);
   void prettyPrint(ostream& s,
 		   ColoringInfo& coloringInfo,
 		   DagNode* dagNode,
@@ -707,6 +721,10 @@ private:
 		      Term* term,
 		      bool rangeKnown,
 		      const char* color);
+  void handleSMT_Number(ostream& s,
+			Term* term,
+			bool rangeKnown,
+			const char* color);
   void prettyPrint(ostream& s,
 		   Term* term,
 		   int requiredPrec,
@@ -728,6 +746,8 @@ private:
   typedef list<int> IntList;
   typedef map<IntList, Symbol*> InternalTupleMap;
   InternalTupleMap tupleSymbols;
+
+  SMT_Info smtInfo;
 
   friend ostream& operator<<(ostream& s, const Term* term);
   friend ostream& operator<<(ostream& s, DagNode* dagNode);

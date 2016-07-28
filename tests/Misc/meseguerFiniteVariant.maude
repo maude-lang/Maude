@@ -1,0 +1,515 @@
+***(
+
+Based on code supplied by Jose Meseguer for specifications with
+the finite variant property, which in turn are based on:
+
+@TECHREPORT{var-sat, 
+      AUTHOR = {J. Meseguer},
+      TITLE = {Variant-Based Satisfiability in Initial Algebras}, 
+      INSTITUTION = {University of Illinois at Urbana-Champaign}, 
+      NUMBER = {\texttt{http://hdl.handle.net/2142/88408}},
+      MONTH = {November},
+      YEAR = {2015} 
+}
+
+)
+
+set show timing off .
+set include BOOL off .
+
+****************************************
+
+fmod BOOL-FVP is
+  sort Boolean .
+  ops tt ff : -> Boolean [ctor] .
+  op _/\_ : Boolean Boolean -> Boolean .
+  op _\/_ : Boolean Boolean -> Boolean .
+  op ~ : Boolean -> Boolean .
+  vars B X Y Z : Boolean .
+  eq B /\ tt = B  [variant] .
+  eq B /\ ff = ff [variant] .
+  eq B \/ ff = B  [variant] .
+  eq B \/ tt = tt [variant] .
+  eq ~(tt) = ff [variant] .
+  eq ~(ff) = tt [variant] .
+endfm
+
+*** expect 3
+get variants in BOOL-FVP : X /\ Y .
+
+*** expect 3
+get variants in BOOL-FVP : X \/ Y . 
+
+*** expect 3
+get variants in BOOL-FVP : ~(X) .
+
+****************************************
+
+fmod NAT-AC-MONUS is
+    sorts Nat NzNat Pred Lit Conj .
+    subsorts NzNat < Nat .
+    subsort Lit < Conj .
+    op 0 : -> Nat [ctor] .
+    op 1 : -> NzNat [ctor] .
+    op _+_ : NzNat NzNat -> NzNat [ctor assoc comm] .
+    op _=_ : Nat Nat -> Lit [ctor] .
+    op _=/=_ : Nat Nat -> Lit [ctor] .
+    op _=_ : Pred Pred -> Lit [ctor] .
+    op _=/=_ : Pred Pred -> Lit [ctor] .
+    op _/\_ : Conj Conj -> Conj [ctor assoc comm] .    
+   
+    *** defined functions
+
+    op _+_ : Nat Nat -> Nat [assoc comm] .
+
+    var n m : Nat .  vars p q : NzNat .
+
+    eq n + 0 = n [variant] .
+
+    op _-_ : Nat Nat -> Nat .  *** monus
+
+    eq n - (n + p) = 0 [variant].
+    eq (n + p) - n = p [variant] .
+    eq n - n = 0 [variant] .
+endfm
+
+*** expect 3
+get variants in NAT-AC-MONUS : n + m .
+
+*** expect 4
+get variants in NAT-AC-MONUS : n - m .
+
+****************************************
+
+fmod NAT-ACU-MONUS is
+    sorts Nat .
+    op 0 : -> Nat [ctor] .
+    op 1 : -> Nat [ctor] .
+    op _+_ : Nat Nat -> Nat [ctor assoc comm id: 0] .
+   
+*** defined functions monus
+    op _-_ : Nat Nat -> Nat .  *** monus
+
+    vars n m : Nat .  
+
+    eq n - (n + m) = 0 [variant].
+    eq (n + m) - n = m [variant] .
+endfm
+
+fmod NAT-ACU-MONUS-CONJ is
+    protecting NAT-ACU-MONUS .
+    sorts Lit Conj .
+    subsorts Lit < Conj .
+    op _=_ : Nat Nat -> Lit [ctor] .
+    op _=/=_ : Nat Nat -> Lit [ctor] .
+    op _/\_ : Conj Conj -> Conj [ctor assoc comm] .
+
+    vars n m : Nat .
+endfm
+
+*** expect 3
+get variants in NAT-ACU-MONUS : n - m .
+
+*** expect 3
+get variants in NAT-ACU-MONUS-CONJ : (n - m =/= 0) /\ (m - n =/= 0) .
+
+****************************************
+
+fmod NAT-ACU is
+    sorts Nat NzNat .
+    subsorts NzNat < Nat .
+    op 0 : -> Nat [ctor] .
+    op 1 : -> NzNat [ctor] .
+    op _+_ : NzNat NzNat -> NzNat [ctor assoc comm id: 0] .
+    op _+_ : Nat Nat -> Nat [ctor assoc comm id: 0] .
+endfm
+
+fmod INT-ACU is protecting NAT-ACU .
+    sorts NzNeg Int .
+    subsorts Nat NzNeg < Int .
+    op - : NzNat -> NzNeg [ctor] .
+
+    vars n m : NzNat . vars i j k l : Int .
+
+*** defined function
+    op _+_ : Int Int -> Int [assoc comm id: 0] .
+
+    eq i + -(n) + -(m) = i + -(n + m) [variant] . 
+    eq i + n + -(n) = i [variant] .
+    eq i + n + -(n + m) = i + -(m) [variant] .
+    eq i + n + m + -(n) = i + m [variant] .
+endfm
+
+*** expect 12
+get variants in INT-ACU : i + j .
+
+*** expect 1 but too slow to detect there are no further ones
+variant unify [1] in INT-ACU : i + j =? i + l .
+
+*** expect 1
+variant unify in INT-ACU : j =? l .
+
+****************************************
+
+fmod INT-OFFSET-COMP-LIST is
+  sorts Zero Nat Neg Int NeList List Lit Conj .
+  subsorts Zero < Nat Neg < Int .
+  subsort NeList < List .
+  subsort Lit < Conj .
+  op 0 : -> Zero [ctor] .
+  op s : Nat -> Nat [ctor] .
+  op p : Neg -> Neg [ctor] .
+  op nil : -> List [ctor] .
+  op _;_ : Int List -> NeList [ctor] .
+  op _=_ : Int Int -> Lit [ctor] .
+  op _=_ : List List -> Lit [ctor] .
+  op _=/=_ : Int Int -> Lit [ctor] .
+  op _=/=_ : List List -> Lit [ctor] .
+  op _/\_ : Lit Conj -> Conj [ctor] . 
+  var M : Nat . var N : Neg .  vars I J : Int .  var L : List .  var Q : NeList .
+
+  eq I ; I ; L = I ; L [variant] .
+   
+*** defined functions
+  ops s p : Int -> Int .
+
+  eq s(p(N)) = N [variant] .
+  eq p(s(M)) = M [variant] .
+
+  op head : NeList -> Int .
+
+  eq head(I ; L) = I [variant] .
+endfm
+
+*** expect 2
+get variants in INT-OFFSET-COMP-LIST : head(Q) .
+
+*** expect 2
+get variants in INT-OFFSET-COMP-LIST : I ; L .
+
+****************************************
+
+fmod INT-OFFSET-CONJ is
+  sorts Zero Nat Neg Int Lit Conj .
+  subsorts Zero < Nat Neg < Int .
+  subsort Lit < Conj .
+  op 0 : -> Zero [ctor] .
+  op s : Nat -> Nat [ctor] .
+  op p : Neg -> Neg [ctor] .
+  op _=_ : Int Int -> Lit [ctor] .
+  op _=/=_ : Int Int -> Lit [ctor] .
+  op _/\_ : Lit Conj -> Conj [ctor] .
+
+  var M : Nat . var N : Neg .  vars I J : Int .  
+
+*** defined functions
+  ops s p : Int -> Int .
+  eq s(p(N)) = N [variant] .
+  eq p(s(M)) = M [variant] .
+endfm
+
+*** expect 2
+get variants in INT-OFFSET-CONJ : s(I) .
+
+*** expect 2
+get variants in INT-OFFSET-CONJ : p(I) .
+
+****************************************
+
+set include BOOL off .
+
+fmod INT-OFFSET-MSET is
+  sorts Zero Nat Neg Int NeMSet MSet  Lit Conj Pred .
+  subsorts Zero < Nat Neg < Int < NeMSet < MSet .
+  subsort Lit < Conj .
+  op 0 : -> Zero [ctor] .
+  op s : Nat -> Nat [ctor] .
+  op p : Neg -> Neg [ctor] .
+  op mt : -> MSet [ctor] .
+  op _,_ : NeMSet NeMSet -> NeMSet [ctor assoc comm] .
+  op tt : -> Pred [ctor] .
+  op _in_ : Int MSet -> Pred [ctor] .    
+  op dupl : MSet -> Pred .
+
+  op _=_ : MSet MSet -> Lit [ctor] .
+  op _=/=_ : MSet MSet -> Lit [ctor] .
+  op _/\_ : Lit Conj -> Conj [ctor] . 
+
+  var m : Nat . var n : Neg .  vars x y : Int .  var Q Q' : MSet . vars M M' : NeMSet .
+
+  eq x in x = tt [variant] .
+  eq x in x,M = tt [variant] .
+  eq dupl(M,M) = tt [variant] .
+  eq dupl(M,M,M') = tt [variant] .
+
+*** defined functions
+  op _,_ : MSet MSet -> MSet [assoc comm] .
+  eq Q,mt = Q [variant] .
+  ops s p : Int -> Int .
+
+  eq s(p(n)) = n [variant] .
+  eq p(s(m)) = m [variant] .
+endfm
+
+*** expect 3
+get variants in INT-OFFSET-MSET : Q,Q' .
+
+*** expect 3
+get variants in INT-OFFSET-MSET : x in Q .
+
+*** expect 3
+get variants in INT-OFFSET-MSET : dupl(Q) .
+
+****************************************
+
+fmod INT-OFFSET-SET is
+  sorts Zero Nat Neg Int NeSet Set Lit Conj Pred .
+  subsorts Zero < Nat Neg < Int < NeSet < Set .
+  subsort Lit < Conj .
+  op 0 : -> Zero [ctor] .
+  op s : Nat -> Nat [ctor] .
+  op p : Neg -> Neg [ctor] .
+  op mt : -> Set [ctor] .
+  op _,_ : NeSet NeSet -> NeSet [ctor assoc comm] .
+  op tt : -> Pred [ctor] .
+  op _=<_ : Set Set -> Pred [ctor] .    
+
+  op _=_ : Set Set -> Lit [ctor] .
+  op _=/=_ : Set Set -> Lit [ctor] .
+  op _/\_ : Lit Conj -> Conj [ctor] . 
+
+  var m : Nat . var n : Neg .  vars x y : Int .  vars S S' : NeSet . var Q U V : Set .
+
+  eq S,S = S [variant] .
+  eq S,S,S' = S,S' [variant] .
+
+  eq mt =< U = tt [variant] .
+  eq U =< U = tt [variant] .
+  eq U =< U,V = tt [variant] .
+
+*** defined functions
+  op _,_ : Set Set -> Set [assoc comm] .
+  eq Q,mt = Q [variant] .
+  ops s p : Int -> Int .
+  eq s(p(n)) = n [variant] .
+  eq p(s(m)) = m [variant] .
+endfm
+
+*** expect 7
+get variants in INT-OFFSET-SET : V,U .
+
+*** expect 4
+get variants in INT-OFFSET-SET : U =< V .
+
+*** expect 3
+variant unify in INT-OFFSET-SET : x,y,S =? y,S  .
+
+****************************************
+
+fmod INT-OFFSET-SET is
+  sorts Zero Nat Neg Int NeMSet MSet NeSet Set Lit Conj Pred .
+  subsorts Zero < Nat Neg < Int < NeMSet < MSet .
+  subsort NeSet < Set .
+  subsort Lit < Conj .
+  op 0 : -> Zero [ctor] .
+  op s : Nat -> Nat [ctor] .
+  op p : Neg -> Neg [ctor] .
+  op mt : -> MSet [ctor] .
+  op null : -> Set [ctor] .
+  op {_} : NeMSet -> NeSet [ctor] .
+  op _,_ : NeMSet NeMSet -> NeMSet [ctor assoc comm] .
+  op tt : -> Pred [ctor] .
+  op _in_ : Int MSet -> Pred [ctor] .
+  op _in_ : Int Set -> Pred [ctor] .    
+  op dupl : MSet -> Pred .
+
+  op _=_ : MSet MSet -> Lit [ctor] .
+  op _=/=_ : MSet MSet -> Lit [ctor] .
+  op _/\_ : Lit Conj -> Conj [ctor] . 
+
+  var m : Nat . var n : Neg .  vars x y : Int .  var Q : MSet . vars M M' : NeMSet . var S : Set .
+
+  eq {M,M} = {M} [variant] .
+  eq {M,M,M'} = {M,M'} [variant] .
+  eq x in x = tt [variant] .
+  eq x in x,M = tt [variant] .
+  eq x in {x} = tt [variant] .
+  eq x in {x,M} = tt [variant] .    
+  eq dupl(M,M) = tt [variant] .
+  eq dupl(M,M,M') = tt [variant] .
+
+*** defined functions
+  op _,_ : MSet MSet -> MSet [assoc comm] .
+  eq Q,mt = Q [variant] .
+
+  op _U_ : Set Set -> Set [assoc comm] .
+  eq null U S = S [variant] .
+  eq S U null = S [variant] .
+  eq {M} U {M'} = {M,M'} [variant] .
+
+  ops s p : Int -> Int .
+  eq s(p(n)) = n [variant] .
+  eq p(s(m)) = m [variant] .
+endfm
+
+*** expect 111 but only the first 23 are fast enough for the test suite
+variant unify [23] in INT-OFFSET-SET : {M} =? {M'}  .
+
+****************************************
+
+fmod HF-SETS-CONJ is 
+  sorts Magma Set DNat Pred Lit Conj .   subsorts DNat < Set < Magma .  subsort Lit < Conj .
+  op _,_ : Magma Magma -> Magma [ctor assoc comm] .
+  op {_} : Magma -> Set [ctor] .
+  op {_} : DNat -> DNat [ctor] .    *** Dedekid number successor
+  op 0 : -> DNat [ctor] .
+  op tt : -> Pred [ctor] .
+  op _<=_ : Set Set -> Pred [ctor] .              *** set containment predicate
+  op _=_ : Magma Magma -> Lit [ctor] .
+  op _=/=_ : Magma Magma -> Lit [ctor] .
+  op _=_ : Pred Pred -> Lit [ctor] .
+  op _=/=_ : Pred Pred -> Lit [ctor] .  
+  op _/\_ : Lit Conj -> Conj [ctor] .
+
+  vars M M' : Magma .              vars S S' : Set .
+
+*** set idempotency equations
+  eq [1]: M, M = M [variant] .
+  eq [2]: M,M,M' = M,M' [variant] .    
+
+*** set containment equations
+  eq [3]: 0 <= S = tt [variant] . 
+  eq [4]: {M} <= {M} = tt [variant] .
+  eq [5]: {M} <= {M,M'} = tt [variant] .
+
+*** specification of defined functions
+    op _U_ : Set Set -> Set .   *** union
+    eq [6]: S U 0 = S [variant] .
+    eq [7]: 0 U S = S [variant] .    
+    eq [8]: {M} U {M'} = {M,M'} [variant] .
+endfm
+
+*** expect 5
+get variants in HF-SETS-CONJ : M,M' .
+
+*** expect 4
+get variants in HF-SETS-CONJ : S <= S' .
+
+*** expect 8
+get variants in HF-SETS-CONJ : S U S' .
+
+****************************************
+
+fmod NAT-ACU-CONJ is
+    protecting NAT-ACU .
+    sorts Lit Conj .
+    subsort Lit < Conj .
+    op _=_ : Nat Nat -> Lit [ctor] .
+    op _=~=_ : Nat Nat -> Lit [ctor] .
+    op _/\_ : Conj Conj -> Conj [ctor assoc comm] .
+endfm
+
+fmod NAT-PRES is protecting NAT-ACU-CONJ .
+  sort Pred .
+  op tt : -> Pred [ctor] .
+
+  op _=_ : Pred Pred -> Lit [ctor] .
+    op _=~=_ : Pred Pred -> Lit [ctor] .
+
+  vars n n' m : Nat .  vars p q : NzNat .
+
+  op _>_ : Nat Nat -> Pred [ctor] .  
+
+  eq p + n > n = tt [variant] .    
+endfm
+
+get variants in NAT-PRES : n > m .
+
+get variants in NAT-PRES :  (n > m =~= tt)  /\  (m > n =~= tt)  /\  (n =~= m) .
+
+****************************************
+
+fmod NAT-PRES-BOOL is protecting NAT-ACU-CONJ .
+  sort Truth .
+  ops true false : -> Truth [ctor] .
+
+  op _=_ : Truth Truth -> Lit [ctor] .
+  op _=~=_ : Truth Truth -> Lit [ctor] .
+
+  vars n n' m : Nat .  vars p q : NzNat .
+
+  op _>_ : Nat Nat -> Truth .  
+
+  eq p + n > n = true [variant] .
+  eq n > n + m = false [variant] .
+endfm
+
+get variants in NAT-PRES-BOOL : n > m .
+
+variant unify in NAT-PRES-BOOL : n > m =? true /\ m > n' =? true /\ n > n' =? false  .
+
+****************************************
+
+fmod NATU-ACU is
+    sort Nat .
+    ops 0 1 : -> Nat [ctor] .
+    op _+_ : Nat Nat -> Nat [ctor assoc comm id: 0] .
+endfm
+
+fmod NATU-PRES-BOOL is protecting NATU-ACU .
+    sort Truth .
+    ops true false : -> Truth [ctor] .
+    vars n n' m : Nat . 
+
+    op _>_ : Nat Nat -> Truth .
+    op _>=_ : Nat Nat -> Truth .
+
+    eq m + n + 1 > n = true [variant] .
+    eq n > n + m = false [variant] .
+
+    eq m + n >= n =  true [variant] .
+    eq n >= m + n + 1 = false [variant] .
+endfm
+
+get variants in NATU-PRES-BOOL : n > m .
+
+get variants in NATU-PRES-BOOL : n >= m .
+
+variant unify in NATU-PRES-BOOL : n > m =? true /\ m > n' =? true /\ n > n' =? false  .
+
+variant unify in NATU-PRES-BOOL : n >= m =? false /\ m >= n =? false  .
+
+****************************************
+
+fmod INT-PRES is protecting NAT-PRES .  extending INT-ACU .
+  op _>_ : Int Int -> Pred [ctor] .
+
+  var n : Nat . vars p q : NzNat .  vars i j k : Int .
+
+*** remaining equations for definign > outside Nat
+
+    eq n > -(q) = tt [variant] .
+    eq -(p) > -(p + q) = tt [variant] .    
+endfm
+
+get variants in INT-PRES : i > j .
+
+****************************************
+
+fmod INT-PRESS-BOOL is protecting INT-ACU .
+  sort Truth .
+  ops true false : -> Truth [ctor] .
+
+  vars n n' m : Nat .  vars p q : NzNat . vars i j k : Int .
+
+  op _>_ : Int Int -> Truth .  
+
+  eq p + n > n = true [variant] .
+  eq n > -(q) = true [variant] .
+  eq -(p) > -(p + q) = true [variant] .
+  eq i > i + n = false [variant] .
+endfm
+
+get variants in INT-PRESS-BOOL : i > j .
+
+variant unify in INT-PRESS-BOOL : i > j =? true /\ j > k =? true /\ i > k =? false  .

@@ -1,3 +1,570 @@
+2016-06-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* banner.cc (printBanner): update copyright year
+
+===================================Maude110b===========================================
+
+2016-05-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* execute.cc (check): use normalize() and markEager() on term before
+	dagifying it.
+	(check): don't bother with markEager()
+
+2016-04-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* userLevelRewritingContext.cc (checkForPrintAttribute): use
+	printAttrStream
+	added definition for printAttrStream
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext): added
+	decl for data member printAttrStream
+	(setPrintAttributeStream): added
+
+===================================Maude110===========================================
+
+2016-02-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* search.cc (getVariants): use new getNextVariant() interface
+
+===================================Maude109===========================================
+
+2015-12-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* token.cc (codeToRope): += rather than append()
+
+	* auxProperty.cc: crope -> Rope throughout
+
+	* moduleCache.cc (makeRenamedCopy, makeParameterCopy)
+	(makeInstatiation, makeSummation): use Token::ropeToCode()
+
+	* token.hh (T): added decl for ropeToCode()
+
+	* token.cc (ropeToCode): added
+
+	* renaming.hh: include "rope.hh" rather than "ropeStuff.hh"
+
+	* moduleCache.cc: crope -> Rope throughout
+
+	* renaming.hh: crope -> Rope throughout
+
+	* renaming.cc: crope -> Rope throughout
+
+	* token.cc: crope -> Rope throughout
+
+	* token.hh: crope -> Rope throughout
+
+===================================Maude108a===========================================
+
+2015-09-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prettyPrint.cc (<<): handle null DagNode* gracefully
+
+2015-08-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* bottom.yy: yyerror() now takes 2 args
+
+	* top.yy: #define YYPARSE_PARAM removed; %parse-param added;
+	PARSE_RESULT no longer needs a cast; yyerror() decl now takes 2
+	args
+
+	* interact.cc: yyparse() now takes
+	UserLevelRewritingContext::ParseResult* in decl
+
+	* top.yy: %pure_parser becomes %pure-parser
+
+2015-08-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.cc: respect USE_CVC4 flag
+
+	* variableGenerator.hh: respect USE_CVC4 flag
+
+2015-08-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (variantUnify): check for incompleteness
+	(getVariants): check for incompleteness
+
+2015-07-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* unify.cc (doUnification): check for incompleteness
+
+===================================Maude108===========================================
+
+2014-11-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* parameterization.cc (handleRegularImports): added
+	DebugAdvisory() for handling import of parameterized module during
+	instantiation
+
+	* renaming.cc (makeCanonicalVersion): added DebugAdvisory() for
+	empty canonical renaming case
+
+===================================Maude107===========================================
+
+2014-11-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* importTranslation.cc (translateRegularSymbol): more detailed Assert()
+
+===================================Maude106===========================================
+
+2014-10-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (smtSearch): deleted
+	(search): allocate VariableGenerator object on the heap now that
+	SMT_RewriteSequenceSearch destructs it
+	(search): call clearDebug() in SMT case
+	(search): call validForSMT_Rewriting()
+
+2014-10-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (search): new solution format for smt-search results
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext):
+	updated decl for printSubstitution
+
+	* userLevelRewritingContext.cc (printSubstitution): rewritten to
+	take ignoredIndices
+
+	* search.cc (search): use new SMT_RewriteSequenceSearch semantics
+	(search): use getFinalConstraint() rather than getMatchConstraint
+
+2014-10-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (search): rewritten to hande search modulo SMT
+	directly
+
+2014-10-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.cc (VariableGenerator): initialize pushCount
+
+	* variableGenerator.hh (push): added
+	(pop): added
+	(clearAssertions): handle pushCount;
+	(SMT_EngineWrapper): added data member pushCount
+
+2014-10-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (smtSearch): rewritten to use new
+	SMT_RewriteSequenceSearch design
+
+2014-10-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (smtSearch): rewritten to use SMT_RewriteSequenceSearch
+
+2014-10-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.hh (clearAssertions): made inline
+
+2014-10-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.cc (VariableGenerator): call push()
+
+	* variableGenerator.hh (clearAssertions): added
+
+2014-09-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (smtSearch): pass VariableGenerator object to
+	SMT_RewriteSearchState via pointer rather than reference
+
+	* variableGenerator.hh: SMT_VariableManager -> SMT_EngineWrapper
+
+===================================Maude105===========================================
+
+2014-09-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (test): turned in to stub
+
+2014-09-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.cc (makeFreshVariable): rewritten to use
+	mpz_class
+
+	* variableGenerator.hh (SMT_VariableManager): updated decl for
+	makeFreshVariable()
+
+2014-09-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* search.cc (smtSearch): no # in solution message to avoid
+	confusion with fresh varaible numbering
+
+2014-09-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (printModifiers): fixed longstanding bug where we
+	weren't printing the [] notation if number2 was NONE and number
+	was something else
+
+	* interpreter.hh (ViewDatabase): added decl for smtSearch()
+
+	* search.cc (search): call smtSearch()
+	(smtSearch): added
+
+	* interpreter.hh (ViewDatabase): added SMT_SEARCH to enum
+	SearchKind
+
+	* commands.yy (search): added KW_SMT_SEARCH
+
+	* top.yy: added KW_SMT_SEARCH
+
+	* lexer.ll: added smt-search
+
+2014-09-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.cc (VariableGenerator): use setOption() call
+
+	* variableGenerator.hh (SMT_VariableManager): deleted data member
+	options
+
+2014-09-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.cc (VariableGenerator): set options; create
+	exprManager and smtEngine
+	(~VariableGenerator): added to destruct exprManger and smtEngine
+	(dagToCVC4, makeVariable, assertDag, makeRationalConstant): deref
+	exprManager
+	(assertDag, checkDag): deref smtEngine
+
+	* variableGenerator.hh (SMT_VariableManager): added data member
+	options; made exprManager and smtEngine into pointers; added decl
+	for ~VariableGenerator()
+
+	* userLevelRewritingContext.cc (printSubstitution): fix bug where
+	we trying to dereference a null pointer in a DebugAdvisory() when
+	a variable was unbound
+
+2014-09-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.hh (SMT_VariableManager): makeVariable()
+	become private now it is no longer overriding an abstract function
+	in the base class
+
+	* variableGenerator.cc (VariableGenerator, makeVariable): use
+	exprManager
+	(makeBooleanExpr): use our local version of dagToCVC4()
+	(assertDag): use exprManager
+
+2014-09-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.hh (SMT_VariableManager): added decls for
+	makeRationalConstant() and dagToCVC4()
+
+	* variableGenerator.cc (dagToCVC4): added
+	(makeRationalConstant): added
+
+	* execute.cc (sreduce): use new VariableGenerator semantics
+
+2014-09-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.hh (SMT_VariableManager): added decl for
+	makeBooleanExpr()
+
+	* variableGenerator.cc (VariableGenerator): init smtEngine
+	(assertDag, checkDag): added
+	(makeBooleanExpr): added
+	(assertDag, checkDag): simplified using makeBooleanExpr()
+
+	* variableGenerator.hh (SMT_VariableManager): added declarations
+	for assertDag() and checkDag()
+	(SMT_VariableManager): added data member smtEngine
+
+2014-09-05  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (test): use validForSMT_Rewriting()
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	validForSMT_Rewriting()
+
+	* mixfixModule.cc (validForSMT_Rewriting): added
+
+2014-08-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (test): added
+
+	* interpreter.hh (ViewDatabase): added decl for test
+
+	* commands.yy (command): added actions for KW_TEST
+
+	* top.yy: added KW_TEST
+
+	* lexer.ll: added KW_TEST
+
+2014-08-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.cc (makeVariable): use SMT_Info
+	(makeFreshVariable): fleshed out stub
+
+2014-08-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* mixfixModule.cc (getSMT_NumberToken): use getSMT_Info()
+	(findSMT_NumberSymbol): use getSMT_Info()
+
+	* makeGrammar.cc (makeSymbolProductions): use getSMT_Info()
+
+	* graphPrint.cc (graphPrint): use getSMT_Info()
+
+	* bufferPrint.cc (handleSMT_NumberSymbol): use getSMT_Info()
+
+	* dagNodePrint.cc (handleSMT_Number): use getSMT_Info()
+
+	* termPrint.cc (handleSMT_Number): use getSMT_Info()
+
+	* mixfixModule.hh (SharedTokens): updated decl for findSMT_NumberSymbol()
+
+	* variableGenerator.cc (VariableGenerator): use smtInfo rather
+	than sortMap
+
+	* variableGenerator.hh (SMT_VariableManager): sortMap becomes
+	smtInfo; updated decl for ctor
+
+	* execute.cc (check): use smtInfo rather than sortMap
+
+	* mixfixModule.hh (SharedTokens): decl for getSMT_Info() replaces
+	decl for getSortMap();
+	(SharedTokens): sortMap becomes smtInfo
+
+	* mixfixModule.cc (getSortMap): becomes getSMT_Info()
+
+2014-08-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableGenerator.hh (SMT_VariableManager): added decl for
+	makeFreshVariable()
+
+	* variableGenerator.cc (makeFreshVariable): added
+
+2014-07-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (check): don't bother indexing variables
+
+2014-07-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (check): use VariableGenerator
+
+	* SMT_VariableGenerator.cc: becomes variableGenerator.cc
+
+	* SMT_VariableGenerator.hh: becomes variableGenerator.hh
+
+2014-07-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_VariableGenerator.cc: created
+
+	* SMT_VariableGenerator.hh: created
+
+===================================Maude104===========================================
+
+2014-06-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (check): clean up; extra sanity checks
+	(check): use QUOTE() in warnings
+
+	* dagNodePrint.cc (prettyPrint): deleted commented out code
+
+	* termPrint.cc (prettyPrint): deleted commented out code
+
+	* bufferPrint.cc (prettyPrint): deleted commented out code
+
+2014-06-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* termPrint.cc (handleSMT_Number): use getRangeSort()
+
+	* mixfixModule.cc (findSMT_NumberSymbol): use getRangeSort()
+
+	* makeGrammar.cc (makeSymbolProductions): use getRangeSort()
+
+	* graphPrint.cc (graphPrint): use getRangeSort()
+
+	* dagNodePrint.cc (handleSMT_Number): use getRangeSort()
+
+	* bufferPrint.cc (prettyPrint): pass argRangeKnown to recursive
+	call to fix bug we introduced when we rewrote the function
+	(handleSMT_NumberSymbol): use getRangeSort()
+
+2014-06-02  Steven Eker  <eker@ape.csl.sri.com>
+
+	* bufferPrint.cc (prettyPrint): use rangeOfArgumentsKnown()
+
+	* dagNodePrint.cc (prettyPrint): use rangeOfArgumentsKnown()
+
+	* termPrint.cc (prettyPrint): use rangeOfArgumentsKnown()
+
+	* sharedPrint.cc (ambiguous): added comments
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	rangeOfArgumentsKnown()
+
+	* sharedPrint.cc (rangeOfArgumentsKnown): added
+
+	* bufferPrint.cc (handleFloat, handleString)
+	(handleQuotedIdentifier): added
+	(prettyPrint): call handleFloat(), handleString(),
+	handleQuotedIdentifer()
+
+	* mixfixModule.hh (SharedTokens): added decls for handleFloat(),
+	handleString(), handleQuotedIdentifier()
+
+2014-05-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* mixfixModule.hh (SharedTokens): updated decls for handleIter(),
+	handleMinus(), handleDivision(), handleSMT_NumberSymbol()
+
+	* bufferPrint.cc (handleIter): rewritten
+	(handleMinus): rewritten
+	(handleDivision): rewritten
+	(handleSMT_NumberSymbol): rewritten
+
+	* mixfixModule.hh (SharedTokens): added decls for buffer print
+	versions of prefix() and suffix()
+
+	* bufferPrint.cc (prefix, suffix): added
+
+	* mixfixModule.cc (getSortMap): fill out kindsWithMinus
+
+	* entry.cc (addOpDeclaration): use PSEUDO_ZERO
+
+	* sharedPrint.cc (ambiguous): check PSEUDO_ZERO and kindsWithZero
+
+	* mixfixModule.hh (SharedTokens): added PSEUDO_ZERO to enum
+	InternalFlags
+	(SharedTokens): added data member kindsWithZero
+
+2014-05-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* entry.cc (addOpDeclaration): treat ZERO case as PSEUDO_NAT so
+	the SMT Integer disambiguation works for 0
+
+	* mixfixModule.hh (SharedTokens): added comments for InternalFlags
+
+	* sharedPrint.cc (prefix): moved here from dagNodePrint.cc
+
+2014-05-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc: deepSelfDestruct() term
+
+2014-05-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* token.cc (int64ToCode): fix bug where we weren't checking for
+	ZERO property - in practice this bug can't be exercised since
+	code it only called from the metalevel, and the prelude will
+	generate a 0 token before we can
+
+2014-05-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	getSMT_NumberToken()
+
+	* mixfixModule.cc (getSMT_NumberToken): added
+
+	* token.cc (looksLikeRational): allow 0/n
+
+2014-05-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* makeGrammar.cc (makeSymbolProductions): added production for
+	ZERO as an SMT_NUMBER
+
+	* prettyPrint.cc (<<): added ConnectedComponent version
+
+	* entry.cc (addOpDeclaration): fill out SMT_NumberSymbols map
+
+	* mixfixModule.cc (findSMT_NumberSymbol): implemented
+
+2014-05-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* mixfixModule.hh (SharedTokens): added SMT_NumberSymbols data
+	member
+
+	* mixfixModule.cc (findSMT_NumberSymbol): added stub
+
+	* mixfixModule.hh (SharedTokens): updated comments now that we use
+	kindsWith* sets slightly differently
+	(SharedTokens): added decl for findSMT_NumberSymbol
+
+	* mixfixModule.cc (getSortMap): record SMT integers as belonging
+	to kindsWithMinus
+
+2014-05-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* mixfixModule.hh (SharedTokens): added decl for buffer version of
+	handleSMT_NumberSymbol()
+
+	* bufferPrint.cc (handleSMT_NumberSymbol): added
+	(prettyPrint): call handleSMT_NumberSymbol()
+
+	* graphPrint.cc (graphPrint): handle SMT numbers
+
+	* mixfixParser.cc (makeTerm): call canonicalize() on newly created
+	SMT number
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	handleSMT_Number()
+
+	* dagNodePrint.cc (prettyPrint): call handleSMT_Number()
+	(handleSMT_Number): added
+
+2014-05-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* makeGrammar.cc (makeSymbolProductions): added SMT production for
+	SMALL_NAT
+
+	* mixfixParser.cc (makeTerm): added MAKE_SMT_NUMBER case
+
+	* mixfixParser.hh (M): added  MAKE_SMT_NUMBER to enum SemanticActions
+
+	* makeGrammar.cc (makeSymbolProductions): addd productions for SMT numbers
+
+	* mixfixModule.cc (getSortMap): track kinds containing things that
+	look like integers or rational numbers for pretty printing
+	disambiguation
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	handleSMT_Number()
+ 
+	* termPrint.cc (prettyPrint): added SMT_NUMBER_SYMBOL case
+	(handleSMT_Number): added
+
+2014-05-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* symbolType.hh (S): added SMT_NUMBER_SYMBOL
+
+	* entry.cc (newFancySymbol): added SMT_NumberSymbol
+
+	* specialSymbolTypes.cc: added SMT_NumberSymbol
+
+2014-05-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (check): pass sort map to dagToCVC4()
+
+2014-05-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (check): handle integer and real variables
+	(check): fix bug where we were making Boolean rather than Integer
+	variable
+
+	* mixfixModule.cc (getSortMap): added
+
+	* mixfixModule.hh (SharedTokens): addded decl for getSortMap()
+	(SharedTokens): added data member sortMap
+
+2014-04-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* execute.cc (check): rewritten to use new dagToCVC4 convention
+
+2014-04-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* interpreter.hh (ViewDatabase): added decl for check()
+
+	* commands.yy (command): added syntax for check command
+
+	* top.yy: added KW_CHECK
+
+	* lexer.ll: added KW_CHECK
+
+2014-04-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* symbolType.hh (S): added SMT_SYMBOL
+
+	* entry.cc (newFancySymbol): added SMT_Symbol
+
+	* specialSymbolTypes.cc: added SMT_Symbol
+
+===================================Maude103===========================================
+
 2014-02-28  Steven Eker  <eker@ape.csl.sri.com>
 
 	* search.cc (getVariants): handle irredundant flag
@@ -16223,7 +16790,7 @@ Thu Jun 11 18:26:40 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	(parseSentence): no need to use contains
 
 	* preModule.hh (class PreModule): IntTable -> IntSet
-	
+
 ===================================Engine38==================================================
 
 Mon Jun  8 18:21:46 1998  Steven Eker  <eker@lilac.csl.sri.com>

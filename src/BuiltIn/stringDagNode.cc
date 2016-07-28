@@ -41,20 +41,20 @@
 #include "stringSymbol.hh"
 #include "stringDagNode.hh"
 
-StringDagNode::StringDagNode(StringSymbol* symbol, const crope& value)
+StringDagNode::StringDagNode(StringSymbol* symbol, const Rope& value)
   : NA_DagNode(symbol),
     value(value)
 {
-  //Assert(sizeof(crope) <= DagNode::nrWords * sizeof(DagNode::Word),
-  // cerr << "crope too big for internal storage");  // HACK
-  setCallDtor();  // need our dtor called when garbage collected to destruct crope
+  Assert(sizeof(Rope) <= DagNode::nrWords * sizeof(MachineWord),
+	 cerr << "Rope too big for internal storage");
+  setCallDtor();  // need our dtor called when garbage collected to destruct Rope
 }
 
 size_t
 StringDagNode::getHashValue()
 {
   int hashValue = 0;
-  for (crope::const_iterator i(value.begin()); i != value.end(); i++)
+  for (Rope::const_iterator i(value.begin()); i != value.end(); ++i)
     hashValue = (hashValue << 1) + *i;
   return hash(symbol()->getHashValue(), hashValue);
 }

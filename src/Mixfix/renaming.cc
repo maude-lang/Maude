@@ -51,10 +51,10 @@ Renaming::setType(set<int>& type, const ConnectedComponent* component)
     type.insert(component->sort(i)->id());
 }
 
-crope
+Rope
 Renaming::makeTypeName(const set<int>& type)
 {
-  crope name;
+  Rope name;
   FOR_EACH_CONST(i, set<int>, type)
     {
       name += name.empty() ? "[" : ",";
@@ -63,10 +63,10 @@ Renaming::makeTypeName(const set<int>& type)
   return name + "]";
 }
 
-crope
+Rope
 Renaming::makeCanonicalName() const
 {
-  crope name;
+  Rope name;
   {
     FOR_EACH_CONST(i, IdMap, sortMap)
       {
@@ -92,9 +92,9 @@ Renaming::makeCanonicalName() const
   int nrOpMappings = opMap.size();
   if (nrOpMappings > 0)
     {
-      Vector<crope> opRopes(nrOpMappings);
+      Vector<Rope> opRopes(nrOpMappings);
       {
-	Vector<crope>::iterator j = opRopes.begin();
+	Vector<Rope>::iterator j = opRopes.begin();
 	FOR_EACH_CONST(i, OpMap, opMap)
 	  {
 	    *j = "op ";
@@ -179,7 +179,7 @@ Renaming::makeCanonicalName() const
       }
       sort(opRopes.begin(), opRopes.end());
       {
-	FOR_EACH_CONST(i, Vector<crope>, opRopes)
+	FOR_EACH_CONST(i, Vector<Rope>, opRopes)
 	  {
 	    if (!name.empty())
 	      name += ", ";
@@ -352,6 +352,7 @@ Renaming::makeCanonicalVersion(ImportModule* module) const
       canonical->labelMap.empty())
     {
       delete canonical;
+      DebugAdvisory("renaming " << this << " on " << module << " resulted in empty canonical renaming");
       return 0;
     }
   return canonical;

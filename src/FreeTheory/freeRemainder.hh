@@ -27,6 +27,7 @@
 #ifndef _freeRemainder_hh_
 #define _freeRemainder_hh_
 #include "freeLhsStructs.hh"
+#include "freeOccurrence.hh"
 #include "rewritingContext.hh"
 #include "equation.hh"
 

@@ -127,4 +127,6 @@ ConnectedComponent::getLastAllocatedMatchIndex() const
   return lastAllocatedMatchIndex;
 }
 
+ostream& operator<<(ostream& s, const ConnectedComponent* component);
+
 #endif

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,6 +32,30 @@ MixfixModule::bufferPrint(Vector<int>& buffer, Term* term, int printFlags)
 }
 
 void
+MixfixModule::prefix(Vector<int>& buffer, bool needDisambig)
+{
+  if (needDisambig)
+    buffer.append(leftParen);
+}
+
+void
+MixfixModule::suffix(Vector<int>& buffer, Term* term, bool needDisambig, int printFlags)
+{
+  if (needDisambig)
+    {
+      Symbol* symbol = term->symbol();
+      int sortIndex = term->getSortIndex();
+      if (sortIndex <= Sort::KIND)
+	sortIndex = chooseDisambiguator(symbol);
+      buffer.append(rightParen);
+      //
+      //	sortIndex will never be the index of a kind.
+      //
+      printDotSort(buffer, symbol->rangeComponent()->sort(sortIndex), printFlags);
+    }
+}
+
+void
 MixfixModule::handleVariable(Vector<int>& buffer, Term* term, int printFlags)
 {
   VariableTerm* v = safeCast(VariableTerm*, term);
@@ -48,11 +72,7 @@ MixfixModule::handleVariable(Vector<int>& buffer, Term* term, int printFlags)
 }
 
 bool
-MixfixModule::handleIter(Vector<int>& buffer,
-			 Term* term,
-			 SymbolInfo& si,
-			 bool rangeKnown,
-			 int printFlags)
+MixfixModule::handleIter(Vector<int>& buffer, Term* term, SymbolInfo& si, bool rangeKnown, int printFlags)
 {
   if (!(si.symbolType.hasFlag(SymbolType::ITER)))
     return false;
@@ -62,9 +82,13 @@ MixfixModule::handleIter(Vector<int>& buffer,
       SuccSymbol* succSymbol = safeCast(SuccSymbol*, term->symbol());
       if (succSymbol->isNat(term))
 	{
-	  char* name = mpz_get_str(0, 10, succSymbol->getNat(term).get_mpz_t());
+	  const mpz_class& nat = succSymbol->getNat(term);
+	  bool needDisambig = !rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat));
+	  prefix(buffer, needDisambig);
+	  char* name = mpz_get_str(0, 10, nat.get_mpz_t());
 	  buffer.append(Token::encode(name));
 	  free(name);
+	  suffix(buffer, term, needDisambig, printFlags);
 	  return true;
 	}
     }
@@ -73,6 +97,7 @@ MixfixModule::handleIter(Vector<int>& buffer,
   if (number == 1)
     return false;  // do default thing
 
+  // NEED TO FIX: disambig; i.e. we might have a regular operator called f^2
   string prefixName;
   makeIterName(prefixName, term->symbol()->id(), number);
   printPrefixName(buffer, Token::encode(prefixName.c_str()), si, printFlags);
@@ -82,23 +107,24 @@ MixfixModule::handleIter(Vector<int>& buffer,
   return true;
 }
 
-
 bool
-MixfixModule::handleMinus(Vector<int>& buffer,
-			  Term* term,
-			  SymbolInfo& si,
-			  int printFlags)
+MixfixModule::handleMinus(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
 {
-  if (si.symbolType.getBasicType() == SymbolType::MINUS_SYMBOL &&
-      (printFlags & Interpreter::PRINT_NUMBER))
+  if (printFlags & Interpreter::PRINT_NUMBER)
     {
       const MinusSymbol* minusSymbol = safeCast(MinusSymbol*, term->symbol());
       if (minusSymbol->isNeg(term))
 	{
 	  mpz_class neg;
-	  char* name = mpz_get_str(0, 10, minusSymbol->getNeg(term, neg).get_mpz_t());
+	  (void) minusSymbol->getNeg(term, neg);
+	  bool needDisambig = !rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg));
+	  prefix(buffer, needDisambig);
+
+	  char* name = mpz_get_str(0, 10, neg.get_mpz_t());
 	  buffer.append(Token::encode(name));
 	  free(name);
+
+	  suffix(buffer, term, needDisambig, printFlags);
 	  return true;
 	}
     }
@@ -106,31 +132,99 @@ MixfixModule::handleMinus(Vector<int>& buffer,
 }
 
 bool
-MixfixModule::handleDivision(Vector<int>& buffer,
-			     Term* term,
-			     SymbolInfo& si,
-			     int printFlags)
+MixfixModule::handleDivision(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
 {
-  if (si.symbolType.getBasicType() == SymbolType::DIVISION_SYMBOL &&
-      (printFlags & Interpreter::PRINT_RAT))
+  if (printFlags & Interpreter::PRINT_RAT)
     {
       const DivisionSymbol* divisionSymbol = safeCast(DivisionSymbol*, term->symbol());
       if (divisionSymbol->isRat(term))
 	{
-	  mpz_class numerator;
-	  const mpz_class& denominator = divisionSymbol->getRat(term, numerator);
-	  char* nn = mpz_get_str(0, 10, numerator.get_mpz_t());
+	  pair<mpz_class, mpz_class> rat;
+	  rat.second = divisionSymbol->getRat(term, rat.first);
+	  bool needDisambig = !rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
+	  prefix(buffer, needDisambig);
+
+	  char* nn = mpz_get_str(0, 10, rat.first.get_mpz_t());
 	  string prefixName(nn);
 	  free(nn);
 	  prefixName += '/';
-	  char* dn = mpz_get_str(0, 10, denominator.get_mpz_t());
+	  char* dn = mpz_get_str(0, 10, rat.second.get_mpz_t());
 	  prefixName += dn;
 	  free(dn);
 	  buffer.append(Token::encode(prefixName.c_str()));
+
+	  suffix(buffer, term, needDisambig, printFlags);
 	  return true;
 	}
     }
   return false;
+}
+
+void
+MixfixModule::handleFloat(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
+{
+  double mfValue = safeCast(FloatTerm*, term)->getValue();
+  bool needDisambig = !rangeKnown && (floatSymbols.size() > 1 || overloadedFloats.count(mfValue));
+  prefix(buffer, needDisambig);
+  buffer.append(Token::doubleToCode(mfValue));
+  suffix(buffer, term, needDisambig, printFlags);
+}
+
+void
+MixfixModule::handleString(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
+{
+  string strValue;
+  Token::ropeToString(safeCast(StringTerm*, term)->getValue(), strValue);
+  bool needDisambig = !rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue));
+  prefix(buffer, needDisambig);
+  buffer.append(Token::encode(strValue.c_str()));
+  suffix(buffer, term, needDisambig, printFlags);
+}
+
+void
+MixfixModule::handleQuotedIdentifier(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
+{
+  int qidCode = safeCast(QuotedIdentifierTerm*, term)->getIdIndex();
+  bool needDisambig = !rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode));
+  prefix(buffer, needDisambig);
+  buffer.append(Token::quoteNameCode(qidCode));
+  suffix(buffer, term, needDisambig, printFlags);
+}
+
+void
+MixfixModule::handleSMT_NumberSymbol(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
+{
+  //
+  //	Get value.
+  //
+  SMT_NumberTerm* n = safeCast(SMT_NumberTerm*, term);
+  const mpq_class& value = n->getValue();
+  //
+  //	Look up the index of our sort.
+  //
+  Symbol* symbol = term->symbol();
+  Sort* sort = symbol->getRangeSort();
+  //
+  //	Determine whether we need disambiguation.
+  //
+  bool needDisambig;
+  SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
+  Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
+  if (t == SMT_Info::INTEGER)
+   {
+      const mpz_class& integer = value.get_num();
+      needDisambig = !rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer));
+    }
+  else
+    {
+      Assert(t == SMT_Info::REAL, "SMT number sort expected");
+      pair<mpz_class, mpz_class> rat(value.get_num(), value.get_den());
+      needDisambig = !rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
+    }
+
+  prefix(buffer, needDisambig);
+  buffer.append(getSMT_NumberToken(value, sort));
+  suffix(buffer, term, needDisambig, printFlags);
 }
 
 void
@@ -145,78 +239,69 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 			  int printFlags)
 {
   Symbol* symbol = term->symbol();
-  int nrArgs = symbol->arity();
   int index = symbol->getIndexWithinModule();
   SymbolInfo& si = symbolInfo[index];
+  //
+  //	Check for special i/o representation.
+  //
+  if (handleIter(buffer, term, si, rangeKnown, printFlags))
+    return;
   int basicType = si.symbolType.getBasicType();
+  switch (basicType)
+    {
+    case SymbolType::MINUS_SYMBOL:
+      {
+	if (handleMinus(buffer, term, rangeKnown, printFlags))
+	  return;
+	break;
+      }
+    case SymbolType::DIVISION_SYMBOL:
+      {
+	if (handleDivision(buffer, term, rangeKnown, printFlags))
+	  return;
+	break;
+      }
+    case SymbolType::FLOAT:
+      {
+	handleFloat(buffer, term, rangeKnown, printFlags);
+	return;
+      }
+    case SymbolType::STRING:
+      {
+	handleString(buffer, term, rangeKnown, printFlags);
+	return;
+      }
+    case SymbolType::QUOTED_IDENTIFIER:
+      {
+	handleQuotedIdentifier(buffer, term, rangeKnown, printFlags);
+	return;
+      }
+    case SymbolType::VARIABLE:
+      {
+	handleVariable(buffer, term, printFlags);
+	return;
+      }
+    case SymbolType::SMT_NUMBER_SYMBOL:
+      {
+	handleSMT_NumberSymbol(buffer, term, rangeKnown, printFlags);
+	return;
+      }
+    default:
+      break;
+    }
+
   int iflags = si.iflags;
-  bool needDisambig = false;
-  double mfValue;
-  string strValue;
-  int qidCode;
+  bool needDisambig = !rangeKnown && ambiguous(iflags);
+  bool argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
+  int nrArgs = symbol->arity();
 
-  if (iflags & PSEUDO_VARIABLE)
-    needDisambig = !rangeKnown;
-  else if (basicType == SymbolType::FLOAT)
-    {
-      mfValue = static_cast<FloatTerm*>(term)->getValue();
-      needDisambig = !rangeKnown &&
-	(floatSymbols.size() > 1 || overloadedFloats.count(mfValue));
-    }
-  else if (iflags & PSEUDO_FLOAT)
-    {
-      needDisambig = !rangeKnown &&
-	(floatSymbols.size() > 0 || (iflags & DOMAIN_OVERLOADED));
-    }
-  else if (basicType == SymbolType::STRING)
-    {
-      Token::ropeToString(static_cast<StringTerm*>(term)->getValue(), strValue);
-      needDisambig = !rangeKnown &&
-	(stringSymbols.size() > 1 || overloadedStrings.count(strValue));
-    }
-  else if (iflags & PSEUDO_STRING)
-    {
-      needDisambig = !rangeKnown &&
-	(stringSymbols.size() > 0 || (iflags & DOMAIN_OVERLOADED));
-    }
-  else if (basicType == SymbolType::QUOTED_IDENTIFIER)
-    {
-      qidCode = static_cast<QuotedIdentifierTerm*>(term)->getIdIndex();
-      needDisambig = !rangeKnown &&
-	(quotedIdentifierSymbols.size() > 1 ||
-	 overloadedQuotedIdentifiers.count(qidCode));
-    }
-  else if (iflags & PSEUDO_QUOTED_IDENTIFIER)
-    {
-      needDisambig = !rangeKnown &&
-	(quotedIdentifierSymbols.size() > 0 || (iflags & DOMAIN_OVERLOADED));
-    }
-  else
-    {
-      needDisambig = !rangeKnown && (iflags & DOMAIN_OVERLOADED);
-      rangeKnown = !(iflags & ADHOC_OVERLOADED) ||
-	((rangeKnown | needDisambig) && !(iflags & RANGE_OVERLOADED));
-    }
-
-  if (needDisambig)
-    buffer.append(leftParen);
-  if (basicType == SymbolType::VARIABLE)
-    handleVariable(buffer, term, printFlags);
-  else if (basicType == SymbolType::FLOAT)
-    buffer.append(Token::doubleToCode(mfValue));
-  else if (basicType == SymbolType::STRING)
-    buffer.append(Token::encode(strValue.c_str()));
-  else if (basicType == SymbolType::QUOTED_IDENTIFIER)
-    buffer.append(Token::quoteNameCode(qidCode));
-  else if (handleIter(buffer, term, si, rangeKnown, printFlags))
-    ;
-  else if (handleMinus(buffer, term, si, printFlags))
-    ;
-  else if (handleDivision(buffer, term, si, printFlags))
-    ;
-  else if (((printFlags & Interpreter::PRINT_MIXFIX) && si.mixfixSyntax.length() != 0) ||
+  prefix(buffer, needDisambig);
+  if (((printFlags & Interpreter::PRINT_MIXFIX) && si.mixfixSyntax.length() != 0) ||
 	   (basicType == SymbolType::SORT_TEST))
     {
+      //
+      //	Mixfix case.
+      //
       bool printWithParens = printFlags & Interpreter::PRINT_WITH_PARENS;
       bool needParen = !needDisambig &&
 	(printWithParens || requiredPrec < si.prec ||
@@ -272,7 +357,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 		  rcc = rightCaptureComponent;
 		}
 	    }
-	  prettyPrint(buffer, t, si.gather[arg], lc, lcc, rc, rcc, rangeKnown, printFlags);
+	  prettyPrint(buffer, t, si.gather[arg], lc, lcc, rc, rcc, argRangeKnown, printFlags);
 	}
       printTails(buffer, si, pos, nrTails, needAssocParen, printFlags);
       if (needParen)
@@ -280,6 +365,9 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
     }
   else
     {
+      //
+      //	Prefix case.
+      //
       int id = symbol->id();
       printPrefixName(buffer, id, si, printFlags);
       ArgumentIterator a(*term);
@@ -300,7 +388,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 		  printPrefixName(buffer, id, si, printFlags);
 		  buffer.append(leftParen);
 		}
-	      prettyPrint(buffer, t, PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown, printFlags);
+	      prettyPrint(buffer, t, PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argRangeKnown, printFlags);
 	      if (!moreArgs)
 		break;
 	      buffer.append(comma);
@@ -309,17 +397,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	    buffer.append(rightParen);
 	}
     }
-  if (needDisambig)
-    {
-      int sortIndex = term->getSortIndex();
-      if (sortIndex <= Sort::KIND)
-	sortIndex = chooseDisambiguator(symbol);
-      buffer.append(rightParen);
-      //
-      //	sortIndex will never be the index of a kind.
-      //
-      printDotSort(buffer, symbol->rangeComponent()->sort(sortIndex), printFlags);
-    }
+  suffix(buffer, term, needDisambig, printFlags);
 }
 
 void

@@ -42,7 +42,7 @@ MetaLevelOpSymbol::getCachedMatchSearchState(MetaModule* m,
 	      state = safeCast(MatchSearchState*, cachedState);
 	      //
 	      //	The parent context pointer of the root context in the
-	      //	NarrowingSequenceSearch is possibly stale.
+	      //	MatchSearchState object is possibly stale.
 	      //
 	      safeCast(UserLevelRewritingContext*, state->getContext())->
 		beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
@@ -93,7 +93,7 @@ MetaLevelOpSymbol::metaMatch(FreeDagNode* subject, RewritingContext& context)
   Int64 solutionNr;
   if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
     {
-      if (metaLevel->downSaturate64(subject->getArgument(4), solutionNr))
+      if (metaLevel->downSaturate64(subject->getArgument(4), solutionNr) && solutionNr >= 0)
 	{
 	  MatchSearchState* state;
 	  Int64 lastSolutionNr;
@@ -184,8 +184,7 @@ MetaLevelOpSymbol::metaXmatch(FreeDagNode* subject, RewritingContext& context)
   if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
     {
       Int64 solutionNr;
-      if (metaLevel->downSaturate64(subject->getArgument(6), solutionNr) &&
-	  solutionNr >= 0)
+      if (metaLevel->downSaturate64(subject->getArgument(6), solutionNr) && solutionNr >= 0)
 	{
 	  MatchSearchState* state;
 	  Int64 lastSolutionNr;

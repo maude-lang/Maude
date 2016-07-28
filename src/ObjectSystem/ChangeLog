@@ -1,3 +1,28 @@
+2015-12-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* objectMap.cc (dagNodeLt): made dagNodeLt::operator() const
+
+	* configSymbol.hh (ACU_Symbol): made symbolLt::operator() const
+
+	* objectSystemRewritingContext.hh (RewritingContext): made
+	dagNodeLt::operator() const
+
+2015-12-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* socketStuff.cc (createClientTcpSocket): use
+	makeZeroTerminatedString()
+	(send): use empty()
+	(send): use makeZeroTerminatedString() member function
+	(send): use length() rather than size()
+
+	* socketOutcomes.cc (receivedMsgReply): crope -> Rope
+
+	* socketStuff.cc: crope -> Rope
+
+	* socketManagerSymbol.hh: crope -> Rope
+
+===================================Maude108a===========================================
+
 2014-02-06  Steven Eker  <eker@ape.csl.sri.com>
 
 	* pseudoThread.cc (processCallBacks): added comment

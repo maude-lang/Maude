@@ -31,10 +31,20 @@
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "variable.hh"
 #include "AU_Theory.hh"
  
 //      interface class definitions
 #include "term.hh"
+
+//      core class definitions
+#include "substitution.hh"
+#include "pendingUnificationStack.hh"
+#include "unificationContext.hh"
+
+//	variable class definitions
+#include "variableSymbol.hh"
+#include "variableDagNode.hh"
 
 //      AU theory class definitions
 #include "AU_Symbol.hh"
@@ -275,6 +285,90 @@ AU_DagNode::matchVariableWithExtension(int index,
   returnedSubproblem = subproblem;
   extensionInfo->setValidAfterMatch(false);
   return true;
+}
+
+//
+//	Supported for A only.
+//
+
+DagNode::ReturnResult
+AU_DagNode::computeBaseSortForGroundSubterms()
+{
+  AU_Symbol* s = symbol();
+  //
+  //	If we have an identity we bail to backstop version since AU/AUl/AUr is not
+  //	currently supported for unification.
+  //
+  if (s->hasIdentity())
+    return DagNode::computeBaseSortForGroundSubterms();
+
+  bool ground = true;
+  int nrArgs = argArray.length();
+  for (int i = 0; i < nrArgs; ++i)
+    {
+      switch (argArray[i]->computeBaseSortForGroundSubterms())
+	{
+	case NONGROUND:
+	  {
+	    ground = false;
+	    break;
+	  }
+	case UNIMPLEMENTED:
+	  return UNIMPLEMENTED;
+	default:
+	  ;  // to avoid compiler warning
+	}
+    }
+  if (ground)
+    {
+      s->computeBaseSort(this);
+      setGround();
+      return GROUND;
+    }
+  return NONGROUND;
+}
+
+bool
+AU_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
+{
+  //
+  //	If we have an identity we bail.
+  //
+  if (symbol()->hasIdentity())
+    return DagNode::computeSolvedForm2(rhs, solution, pending);
+
+  if (symbol() == rhs->symbol())
+    {
+      //
+      //	AU unification problems with the same top symbol need to be collected and solved
+      //	simultaneously for termination reasons.
+      //
+      pending.push(symbol(), this, rhs);
+      return true;
+    }
+  if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(rhs))
+    {
+      VariableDagNode* r = v->lastVariableInChain(solution);
+      if (DagNode* value = solution.value(r->getIndex()))
+	return computeSolvedForm2(value, solution, pending);
+      //
+      //	We now treat unification problems f(...) =? X where X's representative
+      //	variable is unbound as full AU unification problems now that the variable
+      //	theory no longer resolves such problems and we require
+      //	purification.
+      //
+      pending.push(symbol(), this, rhs);
+      return true;
+    }
+  return pending.resolveTheoryClash(this, rhs);
+}
+
+void
+AU_DagNode::insertVariables2(NatSet& occurs)
+{
+  int nrArgs = argArray.length();
+  for (int i = 0; i < nrArgs; i++)
+    argArray[i]->insertVariables(occurs);
 }
 
 //

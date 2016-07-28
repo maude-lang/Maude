@@ -25,13 +25,13 @@
 //
 #ifndef _stringTerm_hh_
 #define _stringTerm_hh_
-#include "ropeStuff.hh"
+#include "rope.hh"
 #include "NA_Term.hh"
 
 class StringTerm : public NA_Term
 {
 public:
-  StringTerm(StringSymbol* symbol, const crope& value);
+  StringTerm(StringSymbol* symbol, const Rope& value);
 
   Term* deepCopy2(SymbolMap* map) const;
   Term* normalize(bool full, bool& changed);
@@ -44,14 +44,14 @@ public:
   //
   Term* instantiate2(const Vector<Term*>& varBindings, SymbolMap* translator);
 
-  const crope& getValue() const;
+  const Rope& getValue() const;
 
 private:
-  const crope value;
+  const Rope value;
 };
 
 
-inline const crope&
+inline const Rope&
 StringTerm::getValue() const
 {
   return value;

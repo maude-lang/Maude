@@ -30,6 +30,7 @@
 
 int BddUser::nrUsers = 0;
 BddUser::ErrorHandler* BddUser::errorHandler = 0;
+bddPair* BddUser::cachedPairing = 0;
 
 BddUser::BddUser()
 {
@@ -62,7 +63,14 @@ BddUser::~BddUser()
 {
   --nrUsers;
   if (nrUsers == 0)
-    bdd_done();
+    {
+      if (cachedPairing != 0)
+	{
+	  bdd_freepair(cachedPairing);
+	  cachedPairing = 0;
+	}
+      bdd_done();
+    }
 }
 
 void

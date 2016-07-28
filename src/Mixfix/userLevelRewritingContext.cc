@@ -73,6 +73,7 @@
 
 bool UserLevelRewritingContext::tracePostFlag = false;
 const char UserLevelRewritingContext::header[] = "*********** ";
+ostream* UserLevelRewritingContext::printAttrStream = &cout;
 
 UserLevelRewritingContext::UserLevelRewritingContext(DagNode* root)
   : ObjectSystemRewritingContext(root),
@@ -121,10 +122,10 @@ UserLevelRewritingContext::checkForPrintAttribute(MixfixModule::ItemType itemTyp
       const PrintAttribute* pa = m->getPrintAttribute(itemType, item);
       if (pa != 0)
 	{
-	  pa->print(cout, *this);
+	  pa->print(*printAttrStream, *this);
 	  if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE_NEWLINE))
-	    cout << '\n';
-	  cout.flush();
+	    *printAttrStream << '\n';
+	  printAttrStream->flush();
 	}
     }
 }
@@ -437,26 +438,31 @@ UserLevelRewritingContext::tracePreScApplication(DagNode* subject, const SortCon
 
 void
 UserLevelRewritingContext::printSubstitution(const Substitution& substitution,
-					     const VariableInfo& varInfo)
+					     const VariableInfo& varInfo,
+					     const NatSet& ignoredIndices)
 {
   int nrVars = varInfo.getNrRealVariables();
-  if (nrVars == 0)
-    cout << "empty substitution\n";
-  else
+  bool printedVariable = false;
+  for (int i = 0; i < nrVars; i++)
     {
-      for (int i = 0; i < nrVars; i++)
-	{
-	  Term* v = varInfo.index2Variable(i);
-	  DagNode* d = substitution.value(i);
+      if (ignoredIndices.contains(i))
+	continue;
+
+      Term* v = varInfo.index2Variable(i);
+      DagNode* d = substitution.value(i);
+	  /*
 	  DebugAdvisory(static_cast<void*>(v) << " --> " <<
 			static_cast<void*>(d) << " / " <<
-			static_cast<void*>(d->symbol()));
-	  Assert(v != 0, "null variable");
-	  cout << v << " --> ";
-	  if (d == 0)
-	    cout << "(unbound)\n";
-	  else
-	    cout << d << '\n';
-	}
+			((d == 0) ? static_cast<void*>(0) : static_cast<void*>(d->symbol())));
+	  */
+      Assert(v != 0, "null variable");
+      cout << v << " --> ";
+      if (d == 0)
+	cout << "(unbound)\n";
+      else
+	cout << d << '\n';
+      printedVariable = true;
     }
+  if (!printedVariable)
+    cout << "empty substitution\n";
 }

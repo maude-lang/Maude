@@ -159,6 +159,7 @@ rew|rewrite				return KW_REWRITE;
 erew|erewrite				return KW_EREWRITE;
 frew|frewrite				return KW_FREWRITE;
 srew|srewrite				return KW_SREWRITE;
+check					return KW_CHECK;
 loop					return KW_LOOP;
 cont|continue				return KW_CONTINUE;
 nar|narrow				return KW_NARROW;
@@ -235,6 +236,8 @@ label|labels				return KW_LABEL;
 profile					return KW_PROFILE;
 number					return KW_NUMBER;
 rat|rational				return KW_RAT;
+test					return KW_TEST;
+smt-search				return KW_SMT_SEARCH;
 [.\[\]()]				return *yytext;
 0|([1-9][0-9]*)				{
 					  bool dummy;

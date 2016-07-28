@@ -67,6 +67,7 @@ public:
   static bool interrupted();
   static bool aborted();
   static void setInteractive(bool status);
+  static void setPrintAttributeStream(ostream* s);
   static void beginCommand();
   static void setDebug();
   static void clearDebug();
@@ -114,7 +115,8 @@ public:
 				 const NarrowingVariableInfo& originalVariables);
 
   static void printSubstitution(const Substitution& substitution,
-				const VariableInfo& varInfo);
+				const VariableInfo& varInfo,
+				const NatSet& ignoredIndices = NatSet());
 
 
 
@@ -147,10 +149,18 @@ private:
   static AutoWrapBuffer* wrapOut;
   static AutoWrapBuffer* wrapErr;
 
+  static ostream* printAttrStream;
+
   UserLevelRewritingContext* parent;
   const int purpose;
   bool localTraceFlag;
 };
+
+inline void
+UserLevelRewritingContext::setPrintAttributeStream(ostream* s)
+{
+  printAttrStream = s;
+}
 
 inline void
 UserLevelRewritingContext::clearTrialCount()

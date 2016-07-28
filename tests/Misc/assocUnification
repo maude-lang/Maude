@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/assocUnification.maude -no-banner -no-advise \
+  > assocUnification.out 2>&1
+
+diff $srcdir/assocUnification.expected assocUnification.out > /dev/null 2>&1

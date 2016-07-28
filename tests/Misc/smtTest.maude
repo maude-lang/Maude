@@ -1,0 +1,255 @@
+set show timing off .
+
+load smt
+
+*** Base theory
+fmod TEST-B is
+  pr BOOLEAN .
+  vars W X Y Z : Boolean .
+endfm
+
+check W =/== X and Y .
+check W === X and Y .
+check X =/== true and X =/== Y and Y =/== true .
+check X =/== true and X =/== Y and Y =/== false .
+check (X xor true) and (X xor Y) and (Y xor true) .
+check (X xor true) and (X xor Y) and (Y xor false) .
+check not (X or not X) .
+check not(X implies Y implies X) .
+check (X ? Y : Z) and (Y implies X) and (Z implies X) .
+check (X ? Y : Z) and (Y implies not X) and (Z implies X) .
+check X === Y and Y === Z .
+check X === Y and Y === Z and Z =/== X .
+
+*** Theory of integers
+fmod TEST-I is
+  pr INTEGER .
+  vars W X Y Z : Boolean .
+  vars I J K L : Integer .
+endfm
+
+check I > J and J > K .
+check I > J and J > K and K > I .
+check I < J and J < K .
+check I < J and J < K and K < I .
+check I >= J and J >= I .
+check I >= J and J >= I and I =/== J .
+check I <= J and J <= I .
+check I <= J and J <= I and I =/== J .
+
+check I === J + K and I > J and I > K .
+check I === J + K and I > J + K .
+check I === J + K and I > J + K + L .
+check I === J - K and I > J + K .
+check - I === J - K and I > J + K .
+check I =/== J + K and I > J + K .
+check (I > J ? I : J) >= I and (I > J ? I : J) >= J .
+check (I > J ? I : J) < I .
+check (I > J ? I : J) === I or (I > J ? I : J) === J .
+check not((I > J ? I : J) === I or (I > J ? I : J) === J) .
+check (I > J ? I : J) =/== I and (I > J ? I : J) =/== J .
+
+*** Theory of reals
+fmod TEST-R is
+  pr REAL .
+  vars W X Y Z : Boolean .
+  vars P Q R S : Real .
+endfm
+
+check P > Q and Q > R .
+check P > Q and Q > R and R > P .
+check P < Q and Q < R .
+check P < Q and Q < R and R < P .
+check P >= Q and Q >= P .
+check P >= Q and Q >= P and P =/== Q .
+check P <= Q and Q <= P .
+check P <= Q and Q <= P and P =/== Q .
+
+check P === Q + R and P > Q and P > R .
+check P === Q + R and P > Q + R .
+check P === Q + R and P > Q + R + S .
+check P === Q - R and P > Q + R .
+check - P === Q - R and P > Q + R .
+check P =/== Q + R and P > Q + R .
+check (P > Q ? P : Q) >= P and (P > Q ? P : Q) >= Q .
+check (P > Q ? P : Q) < P .
+check (P > Q ? P : Q) === P or (P > Q ? P : Q) === Q .
+check not((P > Q ? P : Q) === P or (P > Q ? P : Q) === Q) .
+check (P > Q ? P : Q) =/== P and (P > Q ? P : Q) =/== Q .
+
+*** Theory of reals + integers
+fmod TEST-RI is
+  pr REAL-INTEGER .
+  vars W X Y Z : Boolean .
+  vars I J K L : Integer .
+  vars P Q R S : Real .
+endfm
+
+check isInteger(toReal(I) + toReal(J)) =/== false .
+check isInteger(toReal(I) + toReal(J)) =/== true .
+check toInteger(R) + toInteger(P) === toInteger(R + P) .
+check not(toInteger(R) + toInteger(P) === toInteger(R + P)) .
+
+check 1/2 < P .
+check 1/2 < P and P < 3/4 .
+check 1/2 < P and P < 3/4 and isInteger(P) .
+check -2 < I .
+check -2 < I and -2 * I > -1 .
+check -2 < I and -2 * I > -1 and I =/== -1 .
+check -2 < I and -2 * I > -1 and I =/== -1 and I - I =/== I .
+
+*** meta-level version
+select META-LEVEL .
+
+red metaCheck(['REAL-INTEGER], '_=_['_+_['1.Integer, '1.Integer], '2.Integer]) .
+
+red metaCheck(['REAL-INTEGER], '_=_['_+_['1.Integer, '1.Integer], '3.Integer]) .
+
+fmod META-CHECK is
+  pr META-LEVEL .
+  pr REAL-INTEGER .
+  vars W X Y Z : Boolean .
+  vars I J K L : Integer .
+  vars P Q R S : Real .
+endfm
+
+red metaCheck(['META-CHECK], upTerm((I > J ? I : J) < I)) .
+red metaCheck(['META-CHECK], upTerm((I > J ? I : J) > I)) .
+
+red metaCheck(['META-CHECK], upTerm( (I > J ? I : J) === I or (I > J ? I : J) === J  )) .
+red metaCheck(['META-CHECK], upTerm( not((I > J ? I : J) === I or (I > J ? I : J) === J ) )) .
+red metaCheck(['META-CHECK], upTerm( (I > J ? I : J) =/== I and (I > J ? I : J) =/== J )) .
+red metaCheck(['META-CHECK], upTerm( (I > J ? I : J) =/== I or (I > J ? I : J) =/== J )) .
+
+mod MULTI is
+  pr INTEGER .
+
+  vars A B C D E : Boolean .
+  vars I J K L M N : Integer .
+  vars X Y : Foo .
+
+  sort Pair .
+  sort State .
+  op <_|_> : State Boolean -> Pair .
+
+  sort Foo .
+  ops f g : Integer Foo -> State .
+
+
+  crl f(I, X) => g(I + 1, Y) if I < 0 = true [nonexec] .
+endm
+
+smt-search [10] f(-2, X) =>* Z:State .
+
+mod TEST is
+  pr MULTI .
+  pr META-LEVEL .
+
+  vars X Y : Foo .
+
+endm
+
+red metaSmtSearch(['MULTI],
+                  upTerm(f(-2, X)),
+                  'Z:State,
+                  nil,
+                  '*, 1, 1, 0) .
+
+
+red metaSmtSearch(['MULTI],
+                  upTerm(f(-2, X)),
+                  'Z:State,
+                  nil,
+                  '*, 1, 1, 1) .
+
+red metaSmtSearch(['MULTI],
+                  upTerm(f(-2, X)),
+                  'Z:State,
+                  nil,
+                  '*, 1, 1, 2) .
+
+red metaSmtSearch(['MULTI],
+                  upTerm(f(-2, X)),
+                  'Z:State,
+                  nil,
+                  '+, 200, 1, 0) .
+
+red metaSmtSearch(['MULTI],
+                  upTerm(f(-2, X)),
+                  'Z:State,
+                  nil,
+                  '+, 200, 1, 1) .
+
+
+mod ITEST is
+  pr INTEGER .
+
+  vars A B C D E : Boolean .
+  vars I J K L M N : Integer .
+
+  sort State .
+
+  sort Foo .
+  ops f : Integer -> State .
+  var X : State .
+
+
+  crl f(I) => f(I + 1) if I >= 10 = true /\ I <= 12  = true .
+  crl f(I) => f(I - 1) if I >= 10 = true /\ I <= 12  = true .
+endm
+
+smt-search [4] f(11) =>1 X .
+smt-search [4] f(11) =>* X .
+smt-search [4] f(11) =>+ X .
+
+smt-search [4, 1] f(11) =>+ X .
+smt-search [4, 2] f(11) =>+ X .
+
+smt-search [4, 0] f(11) =>* X .
+smt-search [4, 1] f(11) =>* X .
+smt-search [4, 2] f(11) =>* X .
+
+smt-search [20] f(11) =>* X .
+
+smt-search [4] f(J) =>* X .
+
+smt-search [4] f(J) =>* f(J)  .
+
+smt-search [4] f(J) =>* f(K)  such that J = K .
+
+mod TEST2 is
+  pr ITEST .
+  pr META-LEVEL .
+  vars I J K L M N : Integer .
+endm
+
+red metaSmtSearch(['ITEST],
+                  upTerm(f(J)),
+                  upTerm(f(K)),
+                  'J:Integer = 'K:Integer,
+                  '*, 42, 2, 0) .
+
+red metaSmtSearch(['ITEST],
+                  upTerm(f(J)),
+                  upTerm(f(K)),
+                  'J:Integer = 'K:Integer,
+                  '*, 42, 2, 1) .
+
+red metaSmtSearch(['ITEST],
+                  upTerm(f(J)),
+                  upTerm(f(K)),
+                  'J:Integer = 'K:Integer,
+                  '*, 42, 2, 2) .
+
+red metaSmtSearch(['ITEST],
+                  upTerm(f(J)),
+                  upTerm(f(K)),
+                  'J:Integer = 'K:Integer,
+                  '*, 42, 2, 3) .
+
+
+red in TEST2 : metaSmtSearch(['ITEST],
+                  upTerm(f(J)),
+                  upTerm(f(K)),
+                  'J:Integer = 'K:Integer,
+                  '*, 42, unbounded, 3) .

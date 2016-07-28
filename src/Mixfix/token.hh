@@ -26,7 +26,7 @@
 #ifndef _token_hh_
 #define _token_hh_
 #include <gmpxx.h>
-#include "ropeStuff.hh"
+#include "rope.hh"
 #include "stringTable.hh"
 
 class Token
@@ -75,7 +75,7 @@ public:
   bool getInt(int& value) const;
 
   static const char* name(int code);
-  static crope sortName(int code);
+  static Rope sortName(int code);
 
   static int specialProperty(int code);
   static int auxProperty(int code);
@@ -103,9 +103,10 @@ public:
   static int int64ToCode(Int64 i);
   static double codeToDouble(int code);
   static int doubleToCode(double d);
-  static crope codeToRope(int code);
-  static void ropeToString(const crope& rope, string& result);
-  static int ropeToPrefixNameCode(const crope& r);
+  static Rope codeToRope(int code);
+  static void ropeToString(const Rope& rope, string& result);
+  static int ropeToCode(const Rope& r);
+  static int ropeToPrefixNameCode(const Rope& r);
   static int bubbleToPrefixNameCode(const Vector<Token>& opBubble);
   void getRational(mpz_class& numerator, mpz_class& denominator);
   static void printTokens(ostream& s,

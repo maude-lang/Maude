@@ -27,6 +27,7 @@
 #define _freeNet_hh_
 #include <set>
 #include "unionFind.hh"
+#include "freeRemainder.hh"
 
 class FreeNet
 {

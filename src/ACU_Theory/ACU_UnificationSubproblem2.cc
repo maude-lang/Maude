@@ -86,7 +86,7 @@ ACU_UnificationSubproblem2::markReachableNodes()
 	d->mark();
     }
   //
-  //	No need to mark  savedSubstitution since its dags are a subset of those in
+  //	No need to mark savedSubstitution since its dags are a subset of those in
   //	preSolveSubstitution; we get from preSolveSubstitution to savedSubstitution by
   //	unsolving bindings.
   //
@@ -135,7 +135,7 @@ ACU_UnificationSubproblem2::addUnification(DagNode* lhs, DagNode* rhs, bool mark
       else
 	{
 	  int subtermIndex = setMultiplicity(rhs, -1, solution);
-	  if (marked)
+	  if (marked && subtermIndex != NONE)
 	    markedSubterms.insert(subtermIndex);  // cannot be assigned multiple things
 	}
     }
@@ -176,7 +176,26 @@ ACU_UnificationSubproblem2::setMultiplicity(DagNode* dagNode, int multiplicity, 
   //	do this for variables within aliens as well.
   //
   if (VariableDagNode* varDagNode = dynamic_cast<VariableDagNode*>(dagNode))
-    dagNode = varDagNode->lastVariableInChain(solution);
+    {
+      varDagNode = varDagNode->lastVariableInChain(solution);
+      //
+      //	Normally we don't care about variables bound into our theory since they
+      //	will be unsolved as part of the AC/ACU unification procedure to ensure
+      //	termination. The exception is variables bound to our identity.
+      //
+      if (Term* identity = topSymbol->getIdentity())
+	{
+	  if (DagNode* subject = solution.value(varDagNode->getIndex()))
+	    {
+	      if (identity->equal(subject))
+		return NONE;  // identity elements are just eliminated
+	    }
+	}
+      //
+      //	Otherwise we work with the representative variable.
+      //
+      dagNode = varDagNode;
+    }
   //
   //	Now look for dag in list of nominally abstracted dags.
   //
@@ -289,6 +308,12 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
       //
       //	Unsolve any solved forms that are in our theory. This seemingly wasteful step
       //	has to be done in order to avoid nontermination.
+      //
+      //	The idea is that solved forms X = f(...) in our theory were created by us at some
+      //	earlier invokation and represent decisions made about the solution on the current
+      //	path. They must therefore be considered simultaneously with current unification
+      //	subproblems otherwise we might generate an additional binding for X which is
+      //	then resolved by creating yet another f-theory subproblem.
       //
       int nrFragile = solution.nrFragileBindings();
       for (int i = 0; i < nrFragile; ++i)
@@ -435,9 +460,16 @@ ACU_UnificationSubproblem2::classify(int subtermIndex,
   //	We look to see if the top symbol is stable.
   //
   Symbol* symbol = subject->symbol();
-  DebugAdvisory("ACU_UnificationSubproblem2::classify() symbol = " << symbol <<
-	        " symbol->isStable() = " << symbol->isStable());
-  if (symbol->isStable())
+  DebugAdvisory("ACU_UnificationSubproblem2::classify() subject = " << subject <<
+	        " symbol->isStable() = " << symbol->isStable() <<
+		" subject->isGround() = " << subject->isGround());
+  if (subject->isGround())
+    {
+      upperBound = 1;  // ground alien can unify with at most one thing
+      canTakeIdentity = false;  // identity should not appear as a subterm
+      stableSymbol = symbol;
+    }
+  else if (symbol->isStable())
     {
       //
       //	Anything that unifies with subject must have symbol on top.

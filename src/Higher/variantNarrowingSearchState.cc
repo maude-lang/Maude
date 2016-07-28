@@ -21,7 +21,7 @@
 */
 
 //
-//	Implementation for class NarrowingSearchState.
+//	Implementation for class VariantNarrowingSearchState.
 //
 
 //	utility stuff
@@ -71,6 +71,7 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
      module(context->root()->symbol()->getModule()),
      blockerSubstitution(originalVariables.getNrVariables())  // could be larger than variant substitution because of variables peculiar to blockerDags
 {
+  incompleteFlag = false;
   //cout << "VariantNarrowingSearchState() on " << context->root() << endl;
   if (originalVariables.getNrVariables() > 0)
     blockerSubstitution.clear(originalVariables.getNrVariables());  // this ensures that any variables peculiar to blockerDags are cleared
@@ -114,6 +115,7 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 											freshVariableGenerator,
 											odd);
       collectUnifiers(unificationProblem, 0, NONE);
+      incompleteFlag |= unificationProblem->isIncomplete();
       delete unificationProblem;
     }
 
@@ -131,11 +133,13 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 	  //
 	  Symbol* s = d->symbol();
 	  const Vector<Equation*>& equations = s->isStable() ? s->getEquations() : module->getEquations();
+	  const ConnectedComponent* topComponent = s->rangeComponent();
 
 	  FOR_EACH_CONST(i, Vector<Equation*>, equations)
 	    {
 	      Equation* eq = *i;
-	      if (eq->isVariant())  // only consider equations with the variant attribute
+	      if (eq->isVariant() &&  // only consider equations with the variant attribute
+		  eq->getLhs()->getComponent() == topComponent)  // and with lhs in the correct component
 		{
 		  NarrowingUnificationProblem* unificationProblem = new NarrowingUnificationProblem(eq,
 												    d,
@@ -143,6 +147,7 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 												    freshVariableGenerator,
 												    odd);
 		  collectUnifiers(unificationProblem, positionIndex, eq->getIndexWithinModule());
+		  incompleteFlag |= unificationProblem->isIncomplete();
 		  delete unificationProblem;
 		}
 	    }

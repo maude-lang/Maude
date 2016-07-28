@@ -169,6 +169,19 @@ SortBdds::makeVariableVector(int firstVariable, int nrVariables, Vector<Bdd>& ve
     vec[i] = bdd_ithvar(firstVariable + i);
 }
 
+void
+SortBdds::appendVariableVector(int firstBddVariable, int nrBddVariables, Vector<Bdd>& vec) const
+{
+  //
+  //	Make a vector of nrBddVariables BDDs that encodes the BDD variables 
+  //	firstBddVariable,..., firstBddVVariable + nrBddVVariables - 1 and append it to vec.
+  //
+  //	sort of a Maude variable.
+  //
+  for (int i = 0; i < nrBddVariables; ++i)
+    vec.append(bdd_ithvar(firstBddVariable + i));
+}
+
 Bdd
 SortBdds::makeIndexBdd(int firstVariable, int nrVariables, int index) const
 {
@@ -222,11 +235,14 @@ SortBdds::getRemappedLeqRelation(Sort* sort, int firstVariable) const
   //	firstVariable.
   //
   int nrVariables = getNrVariables(sort->component()->getIndexWithinModule());
-  bddPair* varMap = bdd_newpair();
+  //bddPair* varMap = bdd_newpair();
+  bddPair* varMap = getCachedPairing();
   for (int i = 0; i < nrVariables; ++i)
     bdd_setpair(varMap, i, firstVariable + i);
   Bdd leqRelation = bdd_replace(getLeqRelation(sort->getIndexWithinModule()), varMap);
-  bdd_freepair(varMap);
+  //bdd_freepair(varMap);
+  for (int i = 0; i < nrVariables; ++i)
+    bdd_setbddpair(varMap, i, bdd_false());
   return leqRelation;
 }
 
@@ -239,12 +255,66 @@ SortBdds::applyLeqRelation(Sort* sort, const Vector<Bdd>& argument) const
   //
   int nrBdds = argument.size();
   Assert(nrBdds == getNrVariables(sort->component()->getIndexWithinModule()),
-	 "wrong number of BDD arguments");
+	 "wrong number of BDD arguments: expecting " << getNrVariables(sort->component()->getIndexWithinModule()) <<
+	 " passed " << nrBdds <<
+	 " sort " << sort);
 
-  bddPair* argMap = bdd_newpair();
+  //bddPair* argMap = bdd_newpair();
+  bddPair* argMap = getCachedPairing();
   for (int i = 0; i < nrBdds; ++i)
     bdd_setbddpair(argMap, i, argument[i]);
   Bdd result = bdd_veccompose(getLeqRelation(sort->getIndexWithinModule()), argMap);
-  bdd_freepair(argMap);
+  //bdd_freepair(argMap);
+  for (int i = 0; i < nrBdds; ++i)
+    bdd_setbddpair(argMap, i, bdd_false());
   return result;
+}
+
+// experimental code for faster sort computations
+
+void
+SortBdds::appendIndexVector(int nrBdds, int index, Vector<Bdd>& vec) const
+{
+  //
+  //	Make a vector of nrBdds true/false BDDs that encodes index.
+  //
+  //	This is useful for returning the vector of BDDs encoding of a constant sort.
+  //
+  int oldSize = vec.size();
+  vec.resize(nrBdds + oldSize);
+  for (int i = oldSize; index != 0; ++i, (index >>= 1))
+    {
+      if (index & 1)
+	vec[i] = bddtrue;
+    }
+}
+
+void
+SortBdds::operatorCompose(Symbol* op, const Vector<Bdd>& inputBdds, Vector<Bdd>& outputBdds) const
+{
+  //
+  //	Calling this could increase the number of BDD variables so need to
+  //	get it out of the way before we get the caching pairing.
+  //
+  const Vector<Bdd>& sortFunction = getSortFunction(op);
+  //
+  //	Now fill out the cached pairing with our input BDDs.
+  //
+  bddPair* cachedPairing = getCachedPairing();
+  int nrInputBdds = inputBdds.size();
+  for (int i = 0; i < nrInputBdds; ++i)
+    bdd_setbddpair(cachedPairing, i, inputBdds[i]);
+  //
+  //	Apply compose with each of BDDs representing the sort function
+  //	and append the result to the output BDDs.
+  //
+  FOR_EACH_CONST(i, Vector<Bdd>, sortFunction)
+    outputBdds.append(bdd_veccompose(*i, cachedPairing));
+  //
+  //	Clean up the cached pairing by setting all the used slots
+  //	to bdd_false(). This avoids the cached pairing containing pointers
+  //	to unused junk and messing with garbage collection.
+  //
+  for (int i = 0; i < nrInputBdds; ++i)
+    bdd_setbddpair(cachedPairing, i, bdd_false());
 }

@@ -899,6 +899,28 @@ MixfixModule::makeSymbolProductions()
 		parser->insertProduction(rangeNt, rhs, 0, gatherAny, MixfixParser::MAKE_STRING, i);
 		break;
 	      }
+	    case SymbolType::SMT_NUMBER_SYMBOL:
+	      {
+		Sort* sort = symbol->getRangeSort();
+		SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
+		Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
+		if (t == SMT_Info::INTEGER)
+		  {
+		    rhs[0] = ZERO;
+		    parser->insertProduction(rangeNt, rhs, 0, gatherAny, MixfixParser::MAKE_SMT_NUMBER, i);
+		    rhs[0] = SMALL_NAT;
+		    parser->insertProduction(rangeNt, rhs, 0, gatherAny, MixfixParser::MAKE_SMT_NUMBER, i);
+		    rhs[0] = SMALL_NEG;
+		    parser->insertProduction(rangeNt, rhs, 0, gatherAny, MixfixParser::MAKE_SMT_NUMBER, i);
+		  }
+		else
+		  {
+		    Assert(t == SMT_Info::REAL, "SMT number sort expected");
+		    rhs[0] = RATIONAL;
+		    parser->insertProduction(rangeNt, rhs, 0, gatherAny, MixfixParser::MAKE_SMT_NUMBER, i);
+		  }
+		break;
+	      }
 	    default:
 	      {
 		parser->insertProduction(rangeNt, rhs, 0, emptyGather, MixfixParser::MAKE_TERM, i);

@@ -1,3 +1,242 @@
+2016-05-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* equalityConditionFragment.hh (normalize): added
+
+2016-04-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* unificationProblem.cc (findOrderSortedUnifiers): use
+	getCachedPairing()
+
+	* narrowingUnificationProblem.hh (SimpleRootContainer): deleted
+	data members order, done, pending; deleted decls for explore(),
+	extractUnifier()
+
+	* narrowingUnificationProblem.cc (explore, extractUnifier): deleted
+
+	* narrowingUnificationProblem.hh (SimpleRootContainer): added
+	decl for classifyVariables()
+
+	* narrowingUnificationProblem.cc (classifyVariables): added
+	(findNextUnifier): use classifyVariables()
+
+	* unificationProblem.cc (bindFreeVariables): added
+
+	* unificationProblem.hh (SimpleRootContainer): added decl for
+	bindFredVariables()
+
+	* unificationProblem.cc (findNextUnifier): code cleaning
+	(findNextUnifier): re-organization
+
+2016-04-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowingUnificationProblem.hh (SimpleRootContainer): updated comments
+
+	* narrowingUnificationProblem.cc (NarrowingUnificationProblem): code
+	cleaning
+
+2016-04-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowingUnificationProblem.cc (findOrderSortedUnifiers): code
+	cleaning
+
+	* unificationProblem.cc (findOrderSortedUnifiers): code
+	cleaning
+
+2016-04-01  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowingUnificationProblem.cc (findOrderSortedUnifiers): deleted
+	commented out code
+
+2016-03-31  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowingUnificationProblem.cc (findOrderSortedUnifiers): undo
+	last change as it introduced a bug where we were expecting
+	identities mappings on other BDD variables
+	(findOrderSortedUnifiers): use cached pairing for secondArgToReal
+	and explicitly add needed identity mappings
+
+2016-03-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowingUnificationProblem.cc (findOrderSortedUnifiers): use
+	cached pairing for realTofirstArg
+
+2016-03-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowingUnificationProblem.cc (findOrderSortedUnifiers):
+	use computeGeneralizedSort2()
+
+	* unificationProblem.cc (findOrderSortedUnifiers): use
+	computeGeneralizedSort2()
+
+===================================Maude110===========================================
+
+2016-02-05  Steven Eker  <eker@install.csl.sri.com>
+
+	* variantSearch.cc (getLastReturnedVariant): pass pointers
+	rather than references to
+	VariantFolder::getLastReturnedVariant()
+	(getNextVariant): pass pointers rather than references to
+	VariantFolder::getLastReturnedVariant()
+
+	* variantSearch.hh (getLastReturnedUnifier): removed dummy
+	variables now that we've changed interface to
+	VariantFolder::getNextSurvivingVariant()
+
+	* variantSearch.cc (getNextUnifier): removed dummy variables
+	now that we've changed interface to
+	VariantFolder::getNextSurvivingVariant()
+
+	* variantFolder.hh (SimpleRootContainer): updated decls for
+	getNextSurvivingVariant() and getLastReturnedVariant()
+
+	* variantFolder.cc (getNextSurvivingVariant): variantNumber,
+	parentNumber and moreInLayer are now pointers rather than
+	references so that they can be null if the information
+	isn't wanted by the caller
+	(getLastReturnedVariant): symmetric changes to above, for
+	parentNumber and moreInLayer
+
+2016-02-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* variantSearch.hh (getLastReturnedUnifier): pass dummy
+	args to VariantFolder::getLastReturnedVariant()
+
+	* variantSearch.cc (getLastReturnedVariant): added Assert()
+	to insist that there is actuualy a variant to return
+
+	* variantFolder.cc (getLastReturnedVariant): moved here; no
+	longer inline
+
+	* variantSearch.cc (getLastReturnedVariant): moved here; no
+	longer inline
+
+	* variantFolder.hh (getLastReturnedVariant): take parentNumber
+	and moreInLayer arguments
+
+	* variantSearch.hh (getLastReturnedVariant): take parentIndex
+	and moreInLayer args; updated decl for getNextVariant()
+
+	* variantSearch.cc (getNextVariant): return parentIndex and
+	moreInLayer
+
+2016-01-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* variantFolder.hh (SimpleRootContainer): updated decl for
+	getNextSurvivingVariant()
+
+	* variantFolder.cc (getNextSurvivingVariant): pass back
+	variantNumber and variantIndex
+
+	* variantSearch.cc (getNextVariant): use new getNextSurvivingVariant()
+	convention; track nrVariantReturned
+	(getNextUnifier): use new getNextSurvivingVariant() convention
+
+	* variantSearch.hh (SimpleRootContainer): added data members
+	nrVariantsReturned, internalIndexToExternalIndex 
+
+2016-01-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* variantSearch.cc (getNextUnifier, getNextVariant): pass dummy
+	argument to getNextSurvivingVariant()
+
+	* variantFolder.hh (SimpleRootContainer): updated decl for
+	getNextSurvivingVariant()
+
+	* variantFolder.cc (insertVariant): manage layerNumber field
+	(getNextSurvivingVariant): rewritten to check for a next variant in
+	the same layer as the one we just found
+
+	* variantFolder.hh (SimpleRootContainer): added layerNumber field to
+	struct RetainedVariant
+
+===================================Maude109===========================================
+
+2015-10-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* unifierFilter.cc (subsumes): symmetric change to below
+
+	* variantFolder.cc (subsumes): allocate at least one slot, but
+	clear the correct number of variables (even if it is 0) so that we
+	don't get a size mismatch with local substitutions in matching
+	automata
+
+===================================Maude108a===========================================
+
+2015-09-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variantNarrowingSearchState.cc (VariantNarrowingSearchState):
+	fixed nasty bug where we were narrowing with variant equations
+	from the wrong component
+
+	* narrowingUnificationProblem.cc (findOrderSortedUnifiers): use
+	getRemappedLeqRelation() for fresh variables
+	(findOrderSortedUnifiers): use applyLeqRelation() and
+	getRemappedLeqRelation() for original variables
+
+2015-08-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variantSearch.hh (SimpleRootContainer): get rid of default
+	values for arguments
+
+2015-08-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variantSearch.hh (SimpleRootContainer): added data member
+	incompleteFlag
+	(isIncomplete): added
+
+	* variantSearch.cc (expandVariant): update incompleteFlag
+	(VariantSearch): clear incompleteFlag
+
+	* narrowingUnificationProblem.hh (isIncomplete): added
+
+	* variantNarrowingSearchState.hh (PositionState): added data
+	member incompleteFlag
+	(isIncomplete): added
+
+	* variantNarrowingSearchState.cc (VariantNarrowingSearchState):
+	check unification problems for incompleteness and update incompleteFlag
+	(VariantNarrowingSearchState): clear incompleteFlag
+
+2015-07-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* unificationProblem.cc: deleted commented out variable order
+	stuff
+
+	* unificationProblem.hh (isIncomplete): added
+	(SimpleRootContainer): deleted commented out variable order stuff
+	that is now done in PendingUnficationStack as part of the cycle
+	breaking code
+
+===================================Maude108===========================================
+
+2015-02-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variantSearch.hh (getLastReturnedVariant)
+	(getLastReturnedUnifier): added
+
+	* variantFolder.hh (getLastReturnedVariant): added
+
+===================================Maude107===========================================
+
+2014-11-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* unificationProblem.cc (UnificationProblem): added
+	instrumentation
+
+	* narrowingUnificationProblem.cc (NarrowingUnificationProblem):
+	use DebugAdvisory()
+
+===================================Maude106===========================================
+
+2014-08-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* equalityConditionFragment.hh (ConditionFragment): added decl for
+	buildInstances()
+
+	* equalityConditionFragment.cc (buildInstances): added
+
+===================================Maude104===========================================
+
 2014-03-03  Steven Eker  <eker@ape.csl.sri.com>
 
 	* variantSearch.cc (VariantSearch): don't initialize

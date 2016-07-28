@@ -24,6 +24,9 @@
 //	Code for search command.
 //
 
+#include "equalityConditionFragment.hh"
+#include "SMT_RewriteSequenceSearch.hh"
+
 void
 Interpreter::printSearchTiming(const Timer& timer,  RewriteSequenceSearch* state)
 {
@@ -44,14 +47,36 @@ Interpreter::search(const Vector<Token>& bubble, Int64 limit, Int64 depth, Searc
   Vector<ConditionFragment*> condition;
   if (!(fm->parseSearchCommand(bubble, initial, searchType, target, condition)))
     return;
-  if (searchKind != SEARCH && !condition.empty())
+  //
+  //	Narrowing does not support conditions.
+  //
+  if ((searchKind == NARROW ||  searchKind == XG_NARROW) && !condition.empty())
     {
-      IssueWarning(*target << ": conditions are not currently supported for narrowing");
-      return;
+      IssueWarning(*target << ": conditions are not currently supported for narrowing.");
+      return;  // FIXME we should probably deep self destruct initial and condition here.
     }
+  //
+  //	SMT search does not support =>! mode since states are symbolic.
+  //	Only equational condition fragments are supported since they need to pushed in to the SMT solver.
+  //
+  Pattern* pattern;
+  if (searchKind == SMT_SEARCH)
+    {
+      if (searchType == SequenceSearch::NORMAL_FORM)
+	{
+	  IssueWarning(*target << ": =>! mode is not supported for searching modulo SMT.");
+	  return;  // FIXME clean up
+	}
+      if (!(fm->validForSMT_Rewriting()))
+	return;
+    }
+  else
+    pattern = new Pattern(target, false, condition);
 
-  Pattern* pattern = new Pattern(target, false, condition);
-  if (!(pattern->getUnboundVariables().empty()))
+  //
+  //	Regular seach cannot have unbound variables.
+  //
+  if (searchKind == SEARCH && !(pattern->getUnboundVariables().empty()))
     {
       IssueWarning(*target << ": variable " <<
 		   QUOTE(pattern->index2Variable(pattern->getUnboundVariables().min())) <<
@@ -60,25 +85,27 @@ Interpreter::search(const Vector<Token>& bubble, Int64 limit, Int64 depth, Searc
       delete pattern;
       return;
     }
+
   DagNode* subjectDag = makeDag(initial);
   
   static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!" };
   if (getFlag(SHOW_COMMAND))
     {
-      static const char* searchKindName[] = { "search", "narrow", "xg-narrow" };
+      static const char* searchKindName[] = { "search", "narrow", "xg-narrow", "smt-search" };
 
       UserLevelRewritingContext::beginCommand();
       cout << searchKindName[searchKind] << ' ';
       printModifiers(limit, depth);
-      cout << subjectDag << ' ' << searchTypeSymbol[searchType] << ' ' << pattern->getLhs();
+      cout << subjectDag << ' ' << searchTypeSymbol[searchType] << ' ' << target;
       if (!condition.empty())
 	{
 	  cout << " such that ";
 	  MixfixModule::printCondition(cout, condition);	  
 	}
       cout << " ." << endl;
+
       if (xmlBuffer != 0)
-	xmlBuffer->generateSearch(subjectDag, pattern, searchTypeSymbol[searchType], limit, depth);
+	xmlBuffer->generateSearch(subjectDag, pattern, searchTypeSymbol[searchType], limit, depth);  // does this work for narrowing?
     }
 
   startUsingModule(fm);
@@ -96,6 +123,43 @@ Interpreter::search(const Vector<Token>& bubble, Int64 limit, Int64 depth, Searc
 				  depth);
       Timer timer(getFlag(SHOW_TIMING));
       doSearching(timer, fm, state, 0, limit);
+    }
+  else if (searchKind == SMT_SEARCH)
+    {
+      const SMT_Info& smtInfo = fm->getSMT_Info();
+      VariableGenerator* vg = new VariableGenerator(smtInfo);
+      RewritingContext* initial = new UserLevelRewritingContext(subjectDag);
+
+      SMT_RewriteSequenceSearch* smtSearch =
+	new SMT_RewriteSequenceSearch(initial,
+				      static_cast<RewriteSequenceSearch::SearchType>(searchType),
+				      target,
+				      condition,
+				      smtInfo,
+				      vg,
+				      depth,
+				      0);
+      int solutionNr = 0;
+      while (solutionNr != limit)
+	{
+	  if (!(smtSearch->findNextMatch()))
+	    break;
+	  cout << "\nSolution " << ++solutionNr << endl;
+	  UserLevelRewritingContext::printSubstitution(*(smtSearch->getSubstitution()), *smtSearch, smtSearch->getSMT_VarIndices());
+	  cout << "where " << smtSearch->getFinalConstraint() << endl;
+	  DebugAdvisory("variable number = " << smtSearch->getMaxVariableNumber());
+	  /*
+	  int stateNr = smtSearch->getCurrentStateNumber();
+	  cout << "state number = " << stateNr << endl;
+	  cout << "state = " << smtSearch->getState(stateNr) << endl;
+	  cout << "constraint = " << smtSearch->getConstraint(stateNr) << endl;
+	  cout << "final constraint = " << smtSearch->getFinalConstraint() << endl;
+	  cout << "substitution =\n";
+	  UserLevelRewritingContext::printSubstitution(*(smtSearch->getSubstitution()), *smtSearch);
+	  */
+	}
+      delete smtSearch;  // will take initial and vg with it
+      UserLevelRewritingContext::clearDebug();
     }
   else
     {
@@ -398,7 +462,9 @@ Interpreter::getVariants(const Vector<Token>& bubble, Int64 limit, bool irredund
       int counter = 0;
       const Vector<DagNode*>* variant;
       int nrFreeVariables;
-      while (counter != limit && (variant = vs.getNextVariant(nrFreeVariables)))
+      int parentIndex;
+      bool moreInLayer;
+      while (counter != limit && (variant = vs.getNextVariant(nrFreeVariables, parentIndex, moreInLayer)))
 	{
 	  ++counter;
 	  cout << "Variant #" << counter << endl;
@@ -418,6 +484,8 @@ Interpreter::getVariants(const Vector<Token>& bubble, Int64 limit, bool irredund
       if (counter != limit)
 	{
 	  cout << ((counter == 0) ? "No variants.\n" : "No more variants.\n");
+	  if (vs.isIncomplete())
+	    IssueWarning("Some variants may have been missed due to incomplete unification algorithm(s).");
 	  if (!irredundant)
 	    printStats(timer, *context, getFlag(SHOW_TIMING));
 	}
@@ -511,6 +579,8 @@ Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool debug)
       if (counter != limit)
 	{
 	  cout << ((counter == 0) ? "No unifiers.\n" : "No more unifiers.\n");
+	  if (vs.isIncomplete())
+	    IssueWarning("Some unifiers may have been missed due to incomplete unification algorithm(s).");
 	  printStats(timer, *context, getFlag(SHOW_TIMING));
 	}
     }

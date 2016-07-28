@@ -1,0 +1,655 @@
+2016-05-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.cc (makeConstraintFromCondition): call normalize()
+	on fragment
+
+2014-10-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (findNextRewrite): call
+	tracePreRuleRewrite(), traceAbort(), traceAbort()
+	(findNextRewrite): call getTraceStatus()
+
+	* SMT_RewriteSequenceSearch.cc (~SMT_RewriteSequenceSearch): delete
+	context stored in State struct
+	(SMT_RewriteSequenceSearch): delete condition once we've make the
+	dag
+	(~SMT_RewriteSequenceSearch): delete engine
+
+	* SMT_RewriteSequenceSearch.hh (getRootContext): added
+
+2014-10-27  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.hh (getMaxVariableNumber): added
+
+	* SMT_RewriteSequenceSearch.cc (makeNewState): initialize search
+	to 0 so we don't have an issue deleting object
+
+	* SMT_RewriteSearchState.cc (checkConsistancy): switch the order
+	conjuncting constraint and condition so new stuff goes to the end
+
+2014-10-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.cc (findNextState): respect
+	needToTryInitialState and maxDepth
+	(SMT_RewriteSequenceSearch): compute sort of initial state
+
+	* SMT_RewriteSequenceSearch.hh (SimpleRootContainer): added data
+	member needToTryInitialState
+
+	* SMT_RewriteSequenceSearch.cc (SMT_RewriteSequenceSearch): force
+	maxDepth to 1 for searchType ONE_STEP
+	(SMT_RewriteSequenceSearch): initialize needToTryInitialState
+
+2014-10-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.cc (checkMatchConstraint): fix bug
+	where we weren't checking checkDag() result against
+	SMT_EngineWrapper::SAT
+
+	* SMT_RewriteSequenceSearch.hh (getSMT_VarIndices): added
+
+	* SMT_RewriteSequenceSearch.cc (checkMatchConstraint): rewritten
+	(markReachableNodes): mark finalConstraint rather than
+	matchConstraint
+	(SMT_RewriteSequenceSearch): init finalConstraint rather than
+	matchConstraint
+	(SMT_RewriteSequenceSearch): call findSMT_Variables()
+
+	* SMT_RewriteSequenceSearch.hh (SimpleRootContainer): replaced
+	data member match constraint with data member finalConstraint
+	(getMatchConstraint): becomes getFinalConstraint()
+
+	* SMT_RewriteSequenceSearch.cc (findSMT_Variables): added
+
+	* SMT_RewriteSequenceSearch.hh (SimpleRootContainer): deleted data
+	member goal
+	(SimpleRootContainer): added typedef SMT_VarDags, data members
+	smtVarIndices, smtVarDags
+	(SimpleRootContainer): added decl for findSMT_Variables()
+
+	* SMT_RewriteSequenceSearch.cc (makeConstraintFromCondition): added
+	(~SMT_RewriteSequenceSearch): don't delete goal
+
+	* SMT_RewriteSequenceSearch.hh (SimpleRootContainer): derive from
+	class Pattern
+	(SimpleRootContainer): updated ctor
+
+2014-10-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.hh (getSubstitution)
+	(getMatchConstraint, getCurrentStateNumber): added
+
+2014-10-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.hh (SimpleRootContainer): added data
+	member matchConstraint
+	(SimpleRootContainer): added decls for findNextMatch() and
+	checkMatchConstraint()
+	(SimpleRootContainer): added datat member newStateNr
+
+	* SMT_RewriteSequenceSearch.cc (checkMatchConstraint): added
+	(findNextMatch): added
+	(markReachableNodes): protect matchConstraint
+	(SMT_RewriteSequenceSearch): initialize matchConstraint
+
+	* SMT_RewriteSequenceSearch.hh (SimpleRootContainer): added data
+	member matchState
+
+	* SMT_RewriteSequenceSearch.cc (SMT_RewriteSequenceSearch): handle goal
+	(~SMT_RewriteSequenceSearch): delete goal
+	(SMT_RewriteSequenceSearch): init matchState
+	(~SMT_RewriteSequenceSearch): delete matchState
+
+	* SMT_RewriteSequenceSearch.hh (SimpleRootContainer): added data
+	member goal; updated decl for ctor
+
+	* SMT_EngineWrapper.hh (S): added declarations for push() and
+	pop()
+
+	* SMT_RewriteSearchState.cc (findNextRewrite): pop old SMT state
+	(checkConsistancy): use push() and pop()
+
+2014-10-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.hh (SimpleRootContainer): deleted data
+	members pairingSymbol, nextPair; added data members newState and
+	newConstraint
+
+	* SMT_RewriteSequenceSearch.hh (getState): used to be getStatePair()
+
+	* SMT_RewriteSequenceSearch.cc (makeNewState): use getNewState()
+	and getNewConstraint()
+	(findNextState): pass constraint to SMT_RewriteSearchState()
+
+	* SMT_RewriteSequenceSearch.hh (SimpleRootContainer): deleted data
+	member initial
+
+	* SMT_RewriteSequenceSearch.cc (SMT_RewriteSequenceSearch): take
+	and init constraint
+	(SMT_RewriteSequenceSearch): initialize constraint field of State
+	object
+	(markReachableNodes): added
+	(SMT_RewriteSequenceSearch): pass constraint to
+	SMT_RewriteSearchState(); don't init initial and constraint data
+	members after all
+
+	* SMT_RewriteSequenceSearch.hh (SequenceSearch): added constraint
+	field to struct State
+	(SimpleRootContainer): derive from SimpleRootContainer
+	(SimpleRootContainer): added decl for markReachableNodes()
+	(SimpleRootContainer): updated decl for ctor
+	(getConstraint): added
+
+	* SMT_RewriteSearchState.hh (getNewPair): deleted
+	(getNewState, getNewConstraint): added
+
+	* SMT_RewriteSearchState.cc (SMT_RewriteSearchState):
+	take/initialize constraint
+	(markReachableNodes): mark constaint
+	(checkAndConvertState): simplified
+	(markReachableNodes): mark newConstraint, newState
+	(SMT_RewriteSearchState): initialize newState and newConstraint
+	(SMT_RewriteSearchState): don't mention nextPair
+	(markReachableNodes): don't mention nextPair
+
+	* SMT_RewriteSearchState.hh (SimpleRootContainer): updated decl
+	for ctor; made constraint const
+
+2014-10-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.cc (findNextState): fix bug where we
+	were using wrong state object inside loop
+
+	* SMT_RewriteSequenceSearch.hh (getStateParent): added
+
+	* SMT_RewriteSequenceSearch.cc (makeNewState): use pr variable
+
+	* SMT_RewriteSequenceSearch.hh: added
+
+2014-10-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.cc (SMT_RewriteSequenceSearch):
+	swapped argument order on account of defaults
+
+	* SMT_RewriteSequenceSearch.hh (SequenceSearch): updated decl for
+	ctor
+
+	* SMT.hh: added class SMT_RewriteSequenceSearch
+
+2014-10-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.hh (SequenceSearch): added decl for
+	makeNewState()
+
+	* SMT_RewriteSequenceSearch.cc (findNextState): implemented
+	(makeNewState): added
+
+	* SMT_EngineWrapper.hh (S): added decl for clearAssertions()
+
+2014-10-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.cc: created
+
+	* SMT_RewriteSequenceSearch.hh: created
+
+2014-09-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (SMT_RewriteSearchState): take engine
+	as a pointer
+	(SMT_RewriteSearchState): engine is now a pointer
+	(checkConsistancy): engine is now a pointer
+	(checkAndConvertState): engine is now a pointer
+
+	* SMT_RewriteSearchState.hh (SimpleRootContainer): made engine
+	into a constant pointer rather than a reference
+	(SimpleRootContainer): updated decl for ctor
+
+	* SMT_RewriteSearchState.cc: SMT_VariableManager ->
+	SMT_EngineWrapper; variableManger -> engine throughout
+
+	* SMT_RewriteSearchState.hh (SimpleRootContainer):
+	SMT_VariableManager -> SMT_EngineWrapper; variableManger -> engine
+
+	* SMT_Symbol.hh: removed CVC4 specific stuff
+
+	* SMT_NumberSymbol.hh (SMT_Base): removed CVC4 specific stuff
+
+	* SMT.hh: SMT_EngineWrapper replaces SMT_VariableManager
+
+	* SMT_EngineWrapper.hh (S): renamed from SMT_VariableManager
+
+===================================Maude105===========================================
+
+2014-09-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (checkConsistancy): call
+	okToCollectGarbage()
+
+	* SMT_RewriteSearchState.hh (SimpleRootContainer): added decl for
+	markReachableNodes()
+
+	* SMT_RewriteSearchState.cc (SMT_RewriteSearchState): init nextPair
+	(markReachableNodes): added
+
+	* SMT_RewriteSearchState.hh (SimpleRootContainer): private
+	derivation from SimpleRootContainer
+
+	* SMT_RewriteSearchState.cc (SMT_RewriteSearchState): flags
+	replaces deleteContext
+	(SMT_RewriteSearchState): honor GC_ENGINE and GC_CONTEXT
+
+	* SMT_RewriteSearchState.hh (getNextVariableNumber): becomes
+	getMaxVariableNumber()
+	(CacheableState): added enum Flags
+	(CacheableState): updated decl for ctor
+	(CacheableState): flags replaces deleteContext
+
+	* SMT_RewriteSearchState.cc (SMT_RewriteSearchState):
+	firstVariableNumber becomes avoidVariableNumber
+	(checkConsistancy): firstVariableNumber becomes
+	avoidVariableNumber; increment newVariableNumber before using
+	rather than after
+
+	* SMT_RewriteSearchState.hh (CacheableState): firstVariableNumber
+	becomes avoidVariableNumber
+
+	* SMT_RewriteSearchState.cc (SMT_RewriteSearchState): take
+	mpz_class object by reference to avoid wasted copy
+
+	* SMT_RewriteSearchState.hh (getNextVariableNumber): return value
+	by reference to avoid wasted copy
+	(CacheableState): updated decl for ctor
+
+2014-09-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_VariableManager.hh (S): updated decl for makeFreshVariable()
+
+	* SMT_RewriteSearchState.hh (getNextVariableNumber): return
+	mpz_class
+	(CacheableState): newVariableNumber becomes an mpz_class
+
+	* SMT_RewriteSearchState.cc (SMT_RewriteSearchState):
+	firstVariableNumber arg becomes an mpz_class 
+
+	* SMT_RewriteSearchState.hh (getContext): added
+	(CacheableState): data member firstVariableNumber becomes an
+	mpz_class
+	(CacheableState): update decl for ctor
+
+2014-09-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (SMT_RewriteSearchState): handle
+	deleteContext arg
+	(~SMT_RewriteSearchState): delete context if requested
+
+	* SMT_RewriteSearchState.hh (CacheableState): added data member
+	deleteContext; updated ctor decl
+
+2014-09-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.hh (CacheableState): derive from
+	Cacheable state as a temporary measure so that we can cache object
+	of this class in the metalevel
+
+2014-09-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (checkConsistancy)
+	(SMT_RewriteSearchState): VariableIndex -> VariableNumber
+
+	* SMT_RewriteSearchState.hh (S): use VariableNumber rather than
+	VariableIndex for fresh variable naming scheme since variable
+	index refers to index in substitution
+	(getNextVariableNumber): added
+
+	* SMT_RewriteSearchState.cc (checkConsistancy): newVariableIndex
+	now belongs to the object
+
+	* SMT_RewriteSearchState.hh (S): added data member
+	firstVariableIndex; updated decl for ctor
+
+	* SMT_RewriteSearchState.cc (SMT_RewriteSearchState): handle
+	firstVariableIndex argument
+	(checkConsistancy): use firstVariableIndex
+
+	* SMT_RewriteSearchState.hh (S): added data member boundToFresh
+
+	* SMT_RewriteSearchState.cc (nextSolution): clear boundToFresh
+	variables before starting a new solution and after a failed
+	consistancy check
+	(checkConsistancy): keep track of variables that were bound to
+	fresh variables
+
+2014-09-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.cc (makeRationalConstant, dagToCVC4): deleted
+
+	* SMT_Symbol.hh (SMT_Base): strip CVC4 specific stuff
+
+	* SMT_Symbol.cc (attachData): need to handle unary minus specially
+	because it has the same hook data as binary minus
+
+	* SMT_VariableManager.hh (S): don't derive from  ExprManager
+
+	* SMT_Symbol.cc (attachData): use operatorNames
+	(getDataAttachments): use operatorNames
+	(fillOutSMT_Info): use new op names
+
+2014-09-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.hh (getOperator): added
+	(SMT_Base): added enum OPERATORS
+
+2014-09-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.hh (S): deleted data member smtEngine
+
+	* SMT_RewriteSearchState.cc (checkAndConvertState): rewritten
+	using assertDag()
+	(checkConsistancy): rewritten using checkDag()
+	(SMT_RewriteSearchState): don't init smtEngine
+	(~SMT_RewriteSearchState): don't delete smtEngine
+
+2014-09-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_VariableManager.hh (ExprManager): added enum Result and
+	declarations for assertDag() and checkDag()
+
+2014-09-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (findNextRewrite): fixed bug where we
+	were trying nextSolution() after solve() had failed; clarified
+	comments
+	(checkConsistancy): call computeTrueSort() on nextPair so it gets
+	normalized
+	(checkAndConvertState): fix bug where we allowing unsat
+	constraints to proceed
+	(checkAndConvertState): call computeTrueSort() here for
+	cleanliness
+	(findNextRewrite): no need to call computeTrueSort() here
+	(checkAndConvertState): don't rely on result from assertFormula()
+	since it doesn't do a full solve and may return unknown in trivial
+	cases
+
+2014-09-02  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (checkConsistancy): update comments
+
+2014-08-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (checkConsistancy): handle condition
+	optimized away case
+
+	* SMT_Info.cc (setEqualityOperator): fix bug where we were looking
+	at range component rather than domain component
+
+	* SMT_RewriteSearchState.cc (checkConsistancy): use
+	instantiateCondition()
+
+	* SMT_RewriteSearchState.hh (S): added decl for
+	instantiateCondition()
+
+	* SMT_RewriteSearchState.cc (instantiateCondition): created
+
+	* SMT_Info.hh (SMT_Info): initialize trueSymbol
+	(S): added typedef EqualityOperatorMap, data member
+	equalityOperatorMap, and decls for setEqualityOperator() and
+	getEqualityOperator()
+
+	* SMT_Info.cc: created
+
+	* SMT_Symbol.cc (getDataAttachments): new hook syntax
+	(dagToCVC4): new hook syntax
+	(fillOutSMT_Info): call setEqualityOperator()
+
+	* SMT_RewriteSearchState.cc (checkConsistancy): eliminate true
+	clause when the is something else to put in its place
+
+	* SMT_Symbol.cc (fillOutSMT_Info): call setTrueSymbol()
+
+	* SMT_Info.hh (setTrueSymbol, getTrueSymbol): added
+	(S): added data member trueSymbol
+
+	* SMT_Symbol.cc (dagToCVC4): fix divisibility case
+	(dagToCVC4): give up on divisibility for the moment
+
+2014-08-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (findNextRewrite): call
+	computeTrueSort()
+	(checkConsistancy): create new pair correctly when there is no
+	rule condition
+	(findNextRewrite): pass true rather than false the first time we
+	call solve()
+
+2014-08-13  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (findNextRewrite, nextSolution): added
+	debugging code
+	(checkAndConvertState): fix bug where we were not allowing BOOLEAN
+	constraints!
+
+	* SMT_RewriteSearchState.hh (getNewPair): added
+
+2014-08-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Base.hh (S): make fillOutSMT_Info() abstract
+
+	* SMT_RewriteSearchState.cc (SMT_RewriteSearchState): make smtInfo
+	const
+
+	* SMT_Symbol.cc (dagToCVC4): use SMT_Info
+
+2014-08-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.hh (S): updated decl for ctor
+
+	* SMT_Symbol.hh (SMT_Base): updated decl for dagToCVC4()
+
+	* SMT_Info.hh (SMT_Info): added
+
+	* SMT_RewriteSearchState.hh (S): SMT_Info replaces sortMap
+
+	* SMT_RewriteSearchState.cc: use SMT_Info in place of sortMap
+	thoughout
+
+	* SMT_Symbol.cc (dagToCVC4): use SMT_Info
+
+	* SMT_Info.hh (setType): return SMT_Type
+
+	* SMT_Symbol.cc (fillOutSMT_Info): replaces fillOutSortMap();
+	handle setting conjunction operator
+
+	* SMT_Symbol.hh (SMT_Base): fillOutSMT_Info() replaces
+	fillOutSortMap()
+
+	* SMT_Base.hh (S): delete enum SMT_Type and typedef
+	SortIndexToSMT_TypeMap
+
+	* SMT_NumberSymbol.cc (fillOutSMT_Info): added
+	(fillOutSortMap): deleted
+
+	* SMT_NumberSymbol.hh (SMT_Base): fillOutSMT_Info() replaces
+	fillOutSortMap()
+
+	* SMT_Base.hh (S): fillOutSMT_Info() replaces fillOutSortMap()
+
+	* SMT.hh: added class SMT_Info
+
+2014-08-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Info.hh: created
+
+2014-08-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (checkAndConvertState): use pairSymbol
+	(checkConsistancy): do sat check and next pair construction
+
+	* SMT_RewriteSearchState.hh (S): added data members pairingSymbol
+	and nextPair
+
+2014-08-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.hh (S): added data member currentRule
+
+	* SMT_RewriteSearchState.cc (checkConsistancy): partly fleshed out
+	stub
+	(checkConsistancy, findNextRewrite): use data member currentRule
+
+	* SMT_RewriteSearchState.hh (S): added data member constraint
+
+2014-08-05  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (nextSolution): added
+	(checkConsistancy): added stub
+	(findNextRewrite): use nextSolution and checkConsistancy()
+
+2014-08-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.cc (findNextRewrite): fleshed out stub
+
+	* SMT_RewriteSearchState.hh (S): added data member state; added
+	decl for ~SMT_RewriteSearchState()
+
+	* SMT_RewriteSearchState.cc (~SMT_RewriteSearchState): added
+
+	* SMT_RewriteSearchState.hh (S): added data members ruleIndex and
+	matchingSubproblem
+
+2014-07-31  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.hh: use SMT_VariableManager
+
+	* SMT.hh: added class SMT_RewriteSearchState
+
+	* SMT_RewriteSearchState.cc: rewritten to use SMT_VariableManager
+
+	* SMT_Symbol.hh (SMT_Base): deleted decl for old version of
+	dagToCVC4()
+
+	* SMT_Symbol.cc (dagToCVC4): deleted out old version
+
+2014-07-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_VariableManager.hh (ExprManager): removed commented out
+	stuff; added comment
+
+2014-07-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.cc (dagToCVC4): added SMT_VariableManager based version
+
+	* SMT_VariableManager.hh: created
+
+2014-07-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_RewriteSearchState.hh: created
+
+	* SMT_RewriteSearchState.cc: created
+
+===================================Maude104===========================================
+
+2014-06-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.cc (dagToCVC4): tidy up warnings
+
+2014-06-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_NumberSymbol.cc (fillOutSortMap): use getRangeSort() (2 places)
+
+	* SMT_Symbol.cc (fillOutSortMap): use getRangeSort()
+
+2014-05-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT.hh: created
+
+	* SMT_NumberSymbol.cc (termify): implemented
+
+2014-05-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_NumberDagNode.hh: fix bad #ifdef
+
+2014-05-12  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_NumberTerm.cc: created
+
+	* SMT_Symbol.hh (SMT_Base): deleted decl for makeIntegerConstant()
+
+	* SMT_Symbol.cc (makeIntegerConstant): deleted - mkConst() doesn't
+	actually support Integer objects despite documentation to the
+	contrary
+	(dagToCVC4): simplified - all numbers are treated as rationals at
+	CVC4 API
+
+	* SMT_Symbol.hh (SMT_Base): added decls for makeIntegerConstant(),
+	makeRationalConstant()
+
+	* SMT_Symbol.cc (makeIntegerConstant, makeRationalConstant): added stubs
+	(makeRationalConstant): use makeIntegerConstant(), makeRationalConstant()
+
+2014-05-09  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.cc (dagToCVC4): handle integer and real constants
+
+	* SMT_NumberDagNode.hh: created
+
+	* SMT_NumberDagNode.cc: created
+
+2014-05-08  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_NumberTerm.hh: created
+
+	* SMT_NumberSymbol.cc: created
+
+	* SMT_NumberSymbol.hh: created
+
+2014-05-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.cc (dagToCVC4): updated recursive call
+	(dagToCVC4): added remaining integer and real ops
+	(dagToCVC4): use IFF for Boolean equality
+
+	* SMT_Symbol.hh (SMT_Base): updated decl for dagToCVC4()
+
+	* SMT_Symbol.cc (dagToCVC4): take sort map
+
+2014-05-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.cc (dagToCVC4): added some arithmetic operators
+
+	* SMT_Symbol.hh (SMT_Base): derive from SMT_Base
+
+	* SMT_Base.hh (S): created
+
+	* SMT_Symbol.cc (fillOutSortMap): added
+
+2014-05-05  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.cc (getDataAttachments): use 3 letter codes; added
+	remaining operators
+	(dagToCVC4): use 3 letter codes
+	(attachData): use BIND_OP3
+
+2014-05-02  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.cc (dagToCVC4): added true and false cases
+	(dagToCVC4): added xor, implies
+	(getDataAttachments): added xor, implies
+
+2014-04-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.hh (FreeSymbol): updated decl for dagToCVC4()
+
+	* SMT_Symbol.cc (dagToCVC4): take Vector of SMT variables
+
+2014-04-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.hh (FreeSymbol): added decl for dagToCVC4()
+
+	* SMT_Symbol.cc (dagToCVC4): added
+
+2014-04-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* SMT_Symbol.cc: created
+
+	* SMT_Symbol.hh: created
+
+===================================Maude103===========================================

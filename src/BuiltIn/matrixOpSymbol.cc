@@ -220,13 +220,12 @@ MatrixOpSymbol::downAlgorithm(DagNode* dagNode, Algorithm& algorithm)
 {
  if (dagNode->symbol() == stringSymbol)
    {
-     const crope& alg = safeCast(StringDagNode*, dagNode)->getValue();
+     const Rope& alg = safeCast(StringDagNode*, dagNode)->getValue();
      if (alg.empty())
        algorithm = SYSTEMS_CHOICE;
      else
        {
-	 //const char* algStr = alg.c_str();
-	 char *algStr = makeZeroTerminatedString(alg);
+	 char *algStr = alg.makeZeroTerminatedString();
 	 if (strcmp(algStr, "cd") == 0)
 	   algorithm = CD;
 	 else if (strcmp(algStr, "gcd") == 0)
@@ -274,7 +273,6 @@ MatrixOpSymbol::upVector(const IntVec& row)
     return emptyVectorSymbol->makeDagNode();
   return (n == 1) ? elts[0] : vectorSymbol->makeDagNode(elts);
 }
-
 
 bool
 MatrixOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)

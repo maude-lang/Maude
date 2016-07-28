@@ -40,6 +40,8 @@ public:
   static void setNrVariables(int nrVariables);
   static void dump(ostream& s, bdd root);
   static void setErrorHandler(ErrorHandler* errHandler);
+  
+  static bddPair* getCachedPairing();
 
 private:
   enum Constants
@@ -55,6 +57,17 @@ private:
   static int nrUsers;
 
   static ErrorHandler* errorHandler;
+  //
+  //	These structures are expensive to create and destroy so we keep
+  //	a cached one and delete it every time the number of variables
+  //	increases so it is always the correct size if it exists.
+  //
+  //	If code uses this structure, it must be finished with it and
+  //	leave it in a clean state (all variables pointing to something
+  //	innocuous such as bdd_false() before calling other code that
+  //	could potentially use it.
+  //
+  static bddPair* cachedPairing;
 };
 
 inline bdd
@@ -77,13 +90,31 @@ inline void
 BddUser::setNrVariables(int nrVariables)
 {
   if (nrVariables > bdd_varnum())
-    bdd_setvarnum(nrVariables);
+    {
+      if (cachedPairing != 0)
+	{
+	  //
+	  //	Existing cached pair structure will be the wrong size.
+	  //
+	  bdd_freepair(cachedPairing);
+	  cachedPairing = 0;
+	}
+      bdd_setvarnum(nrVariables);
+    }
 }
 
 inline void
 BddUser::setErrorHandler(ErrorHandler* errHandler)
 {
   errorHandler = errHandler;
+}
+
+inline bddPair*
+BddUser::getCachedPairing()
+{
+  if (cachedPairing == 0)
+    cachedPairing = bdd_newpair();
+  return cachedPairing;
 }
 
 #endif

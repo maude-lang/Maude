@@ -53,4 +53,3 @@ public:
 ostream& operator<<(ostream& s, const ConditionFragment* c);
 
 #endif
-

@@ -59,8 +59,9 @@
 #define store(token)		tokenSequence.append(token)
 #define fragClear()		fragments.contractTo(0);
 #define fragStore(token)	fragments.append(token)
-#define YYPARSE_PARAM	parseResult
-#define PARSE_RESULT	(*((UserLevelRewritingContext::ParseResult*) parseResult))
+//#define YYPARSE_PARAM	parseResult
+//#define PARSE_RESULT	(*((UserLevelRewritingContext::ParseResult*) parseResult))
+#define PARSE_RESULT	(*parseResult)
 
 #define CM		interpreter.getCurrentModule()
 #define CV		interpreter.getCurrentView()
@@ -91,13 +92,14 @@ SyntaxContainer* oldSyntaxContainer = 0;
 Int64 number;
 Int64 number2;
 
-static void yyerror(char *s);
+static void yyerror(UserLevelRewritingContext::ParseResult* parseResult, char *s);
 
 void cleanUpModuleExpression();
 void cleanUpParser();
 void missingSpace(const Token& token);
 %}
-%pure_parser
+%pure-parser
+%parse-param {UserLevelRewritingContext::ParseResult* parseResult}
 
 %union
 {
@@ -121,7 +123,7 @@ int yylex(YYSTYPE* lvalp);
  */
 %token <yyToken> KW_MOD KW_OMOD KW_VIEW
 %token KW_PARSE KW_NORMALIZE KW_REDUCE KW_REWRITE
-%token KW_LOOP KW_NARROW KW_XG_NARROW KW_MATCH KW_XMATCH KW_UNIFY
+%token KW_LOOP KW_NARROW KW_XG_NARROW KW_MATCH KW_XMATCH KW_UNIFY KW_CHECK
 %token KW_GET KW_VARIANTS KW_VARIANT
 %token KW_EREWRITE KW_FREWRITE KW_SREWRITE
 %token KW_CONTINUE KW_SEARCH
@@ -138,7 +140,7 @@ int yylex(YYSTYPE* lvalp);
 %token KW_DEBUG KW_IRREDUNDANT KW_RESUME KW_ABORT KW_STEP KW_WHERE KW_CREDUCE KW_SREDUCE KW_DUMP KW_PROFILE
 %token KW_NUMBER KW_RAT KW_COLOR
 %token <yyInt64> SIMPLE_NUMBER
-%token KW_PWD KW_CD KW_PUSHD KW_POPD KW_LS KW_LOAD KW_QUIT KW_EOF
+%token KW_PWD KW_CD KW_PUSHD KW_POPD KW_LS KW_LOAD KW_QUIT KW_EOF KW_TEST KW_SMT_SEARCH
 
 /*
  *	Start keywords: signal end of mixfix statement if following '.'.

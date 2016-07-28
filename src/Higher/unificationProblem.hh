@@ -46,12 +46,12 @@ public:
   const Substitution& getSolution() const;
   int getNrFreeVariables() const;
   const VariableInfo& getVariableInfo() const;
+  bool isIncomplete() const;
 
 private:
   void markReachableNodes();
   void findOrderSortedUnifiers();
-  //bool extractUnifier();
-  //bool explore(int index);
+  void bindFreeVariables();
 
   Vector<Term*> leftHandSides;
   Vector<Term*> rightHandSides;
@@ -70,12 +70,6 @@ private:
   Vector<int> freeVariables;	     	// indices (slots) of unbound variables in unsorted unifier
   AllSat* orderSortedUnifiers;		// satisfiability problem encoding sorts for order-sorted unifiers
   Substitution* sortedSolution;		// for construction order-sorted unifiers
-  //
-  //	Data for resolving dependencies in solved form.
-  //
-  //Vector<int> order;			// we build an order in which to instantiate the solved forms
-  //NatSet done;				// a variable is done when every variable it (indirectly) depends on is in the order
-  //NatSet pending;			// variables on the current path though the dependency digraph
 };
 
 inline bool
@@ -100,6 +94,12 @@ inline int
 UnificationProblem::getNrFreeVariables() const
 {
   return freeVariables.size();
+}
+
+inline bool
+UnificationProblem::isIncomplete() const
+{
+  return pendingStack.isIncomplete();
 }
 
 #endif

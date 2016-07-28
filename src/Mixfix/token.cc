@@ -376,12 +376,24 @@ Token::checkForSpecialProperty(const char* tokenString)
 bool
 Token::looksLikeRational(const char* s)
 {
+  bool neg = false;
   if (*s == '-')
-    s++;
+    {
+      s++;
+      neg = true;
+    }
   {
     char c = *s++;
-    if (!isdigit(c) || c == '0')
+    if (!isdigit(c))
       return false;
+    if (c == '0')
+      {
+	//
+	//	We allow 0/n but not -0/n or 00/n.
+	//
+	if (neg || *s != '/')
+	  return false;
+      }
   }
   for (;;)
     {
@@ -517,7 +529,10 @@ Token::int64ToCode(Int64 i)
   int code = stringTable.encode(int64ToString(i, 10));
   if (code == specialProperties.length())
     {
-      specialProperties.append((i < 0) ? SMALL_NEG : SMALL_NAT);
+      specialProperties.append((i == 0) ? ZERO : ((i < 0) ? SMALL_NEG : SMALL_NAT));
+      //
+      //	Integers are always valid sorts.
+      //
       auxProperties.append(AUX_SORT);
     }
   return code;
@@ -539,15 +554,18 @@ Token::doubleToCode(double d)
   if (code == specialProperties.length())
     {
       specialProperties.append(FLOAT);
+      //
+      //	Floats might look like a sort or a "constant.sort".
+      //
       auxProperties.append(computeAuxProperty(stringTable.name(code)));
     }
   return code;
 }
 
-crope
+Rope
 Token::codeToRope(int code)
 {
-  crope result;
+  Rope result;
   bool seenBackslash = false;
   for (const char* p = stringTable.name(code) + 1; *p; p++)
     {
@@ -632,7 +650,7 @@ Token::codeToRope(int code)
 	      }
 	  }
 	}
-      result.append(c);
+      result += c;
       seenBackslash = false;
     }
   CantHappen("bad end to string");
@@ -640,10 +658,10 @@ Token::codeToRope(int code)
 }
 
 void
-Token::ropeToString(const crope& r, string& result)
+Token::ropeToString(const Rope& r, string& result)
 {
   result = '"';
-  for (crope::const_iterator i = r.begin(); i != r.end(); ++i)
+  for (Rope::const_iterator i = r.begin(); i != r.end(); ++i)
     {
       char c = *i;
       if (isprint(c))
@@ -706,14 +724,26 @@ Token::ropeToString(const crope& r, string& result)
 }
 
 int
-Token::ropeToPrefixNameCode(const crope& r)
+Token::ropeToCode(const Rope& r)
+{
+  //
+  //	Might want to do the code computation directly at some point.
+  //
+  char* s = r.makeZeroTerminatedString();
+  int code = encode(s);
+  delete [] s;
+  return code;
+}
+
+int
+Token::ropeToPrefixNameCode(const Rope& r)
 {
   string result;
   bool needBQ = false;
   bool lastCharSpecial = false;
   bool stringMode = false;
   bool seenBS = false;
-  for (crope::const_iterator i = r.begin(); i != r.end(); ++i)
+  for (Rope::const_iterator i = r.begin(); i != r.end(); ++i)
     {
       char c = *i;
       if (stringMode)

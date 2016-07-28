@@ -1,3 +1,269 @@
+2016-03-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* AU_Symbol.cc (computeGeneralizedSort2): code cleaning
+
+2016-03-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* AU_Symbol.cc (computeGeneralizedSort2): added
+
+2015-08-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_OldUnificationAlgorithm.cc: deleted
+
+	* AU_NewUnificationAlgorithm.cc: deleted
+
+	* AU_UnificationSubproblem.cc: deleted
+
+	* AU_UnificationSubproblem.hh: deleted
+
+2015-08-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem2.cc (solve): pass topSymbol to
+	flagAsIncomplete
+
+2015-07-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_DagNode.cc (computeBaseSortForGroundSubterms): call
+	setGround() in the ground case
+
+2015-07-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem2.cc (makeWordSystem): use constrained
+	variables to abstract ground terms even when their top symbol is
+	not stable
+	(makeWordSystem): same trick for variables bound to ground terms
+
+2015-07-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem2.cc (solve): use new WordSystem return
+	convention
+
+2015-07-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem2.cc (solve): call flagAsIncomplete()
+	rather than issuing a warning
+
+2015-07-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem2.cc (solve): handle new WordSystem
+	return value
+
+2015-07-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem2.cc (makeWordSystem): fixed a bug where
+	we were taking the symbol from the wrong dag to check for
+	stability when adding constraints
+
+2015-07-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem2.cc (makeWordSystem): fix code for
+	getting the sort of a variable
+
+	* AU_Symbol.cc (makeUnificationSubproblem): use
+	AU_UnificationSubproblem2
+
+	* AU_DagNode.hh (AU_BaseDagNode): AU_UnificationSubproblem2
+	becomes a friend
+
+	* AU_UnificationSubproblem2.hh (SimpleRootContainer): added decls
+	for dagToAbstract(), assocToAbstract(), makeWordSystem(),
+	unsolve(), abstractToFreshVariable(), buildSolution()
+
+	* AU_UnificationSubproblem2.cc (buildSolution): implemented
+	(makeWordSystem): insert constraints for variables bound to stable
+	aliens
+
+2015-07-02  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem2.cc: created
+
+	* AU_UnificationSubproblem2.hh: created
+
+===================================Maude108===========================================
+
+2014-11-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_NewUnificationAlgorithm.cc (simplify): unify with purified
+	lhs on first pass
+
+2014-11-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added decls
+	for constrained() and updateBounds()
+
+	* AU_NewUnificationAlgorithm.cc (computeBounds): check for
+	variables at that are bound to a term headed by our top symbol
+	(solve): do computeBounds() first so we can make use of any known
+	bounds when disposing of f(...) =? X type unifications
+	(updateBounds): added
+	(simplify): handle constrained cases first
+	(purifyAndBind): call updateBounds()
+	(constrained): added()
+
+2014-11-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): adde decls
+	for handleNonlinearVariable() and computeBounds()
+
+	* AU_NewUnificationAlgorithm.cc (computeBounds): added
+	(findUpperBound): added new version
+	(handleNonlinearVariable): added
+	(solve): call computeBounds()
+	(flattenDag): call handleNonlinearVariable() in 3 places
+	(flattenUnifications): no need to check for null return from
+	flattenDag()
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added data
+	member bounds
+
+2014-11-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_NewUnificationAlgorithm.cc (solve): need to undo old solution
+	before we look for a new one
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added decl
+	for dump()
+
+	* AU_NewUnificationAlgorithm.cc (dump): added
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added
+	declarations for makeSequenceAssignmentProblems(),
+	flattenUnifications(), flattenDag()
+
+	* AU_NewUnificationAlgorithm.cc (makeSequenceAssignments): added
+	(makeSequenceAssignmentProblems): added
+
+2014-11-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_NewUnificationAlgorithm.cc (flattenUnifications): added
+
+	* AU_UnificationSubproblem.cc: moved unification code from two
+	different algorithm out in to two different files
+	(markReachableNodes): need to protect dags in local unifications
+	for the new algorithm since it creates new local unifications and
+	modifies existing ones
+
+	* AU_NewUnificationAlgorithm.cc: created the hold code for second
+	associative unification algorithm
+
+	* AU_OldUnificationAlgorithm.cc: created to hold code from first
+	associative unification algorithm
+
+===================================Maude106===========================================
+
+2014-06-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem.cc (purifyAndBind): rewritten to no
+	longer do flattening
+	(simplify): use new purifyAndBind() convention
+	(interflattenBindings): added
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added decls
+	for hasArgumentBoundInTheory() and flatten()
+
+	* AU_UnificationSubproblem.cc (hasArgumentBoundInTheory): added
+	(flatten): addded
+
+2014-06-27  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added decls
+	for purifyAndBind() and simplify()
+
+	* AU_UnificationSubproblem.cc (purifyAndBind): added
+	(simplify): added
+
+2014-06-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem.cc (resolve): added comments and
+	DebugAdvisory()
+
+===================================Maude104===========================================
+
+2014-04-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem.cc (checkAndInsertVariable): check for
+	bound variables
+	(markReachableNodes): implemented
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added decls
+	for checkAndInsertVariable(), checkArgumentList(),
+	checkForCollapseAndNonLinearVariables()
+
+	* AU_UnificationSubproblem.cc (checkAndInsertVariable)
+	(checkArgumentList, checkForCollapseAndNonLinearVariables): added
+	(solve): call checkForCollapseAndNonLinearVariables()
+
+2014-04-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_DagNode.cc (computeSolvedForm2): bail in the case we have an
+	identity element
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added data
+	member preSolveState
+
+	* AU_UnificationSubproblem.cc (solve): support unifications of the
+	form f(...) = X
+	(solve): save and restore preSolveState - this is because
+	purification may create problems on the pending stack that must
+	retracted
+
+2014-04-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added decls
+	for findNextSolution() and new buildSolution()
+
+	* AU_UnificationSubproblem.cc (AU_UnificationSubproblem): delete
+	problems from struct Unification and not main object
+	(AU_UnificationSubproblem): don't clear problem field
+	(addUnification): clear problem field
+	(buildSolution): added 3 arg version
+	(findNextSolution): added
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added problem
+	member to struct Unification; removed problem field from class
+
+	* AU_UnificationSubproblem.cc (solve): pass findFirst to
+	findNextSolution()
+	(resolve): avoid binding a variable to itself
+
+2014-03-31  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem.cc (resolve): added
+	(buildSolution): added
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added decls
+	for buildSolution(), resolve(); added data members
+	savesSubstitution, preSolveSubstitution, savedPendingState
+
+2014-03-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* AU_UnificationSubproblem.cc (findUpperBound): added
+
+	* AU_UnificationSubproblem.hh (SimpleRootContainer): added decl
+	for findUpperBound()
+
+	* AU_DagNode.cc (computeBaseSortForGroundSubterms): added
+	(computeSolvedForm2): added
+	(insertVariables2): added
+
+	* AU_DagNode.hh (AU_BaseDagNode): added decls for
+	computeBaseSortForGroundSubterms(), computeSolvedForm2(),
+	insertVariables2()
+
+	* AU_UnificationSubproblem.cc: created a stub
+
+	* AU_Symbol.hh (AssociativeSymbol): added decls for
+	computeGeneralizedSort(), makeUnificationSubproblem()
+
+	* AU_Theory.hh: added AU_UnificationSubproblem
+
+	* AU_UnificationSubproblem.hh: created a stub
+
+	* AU_Symbol.cc (computeGeneralizedSort): added
+	(makeUnificationSubproblem): added
+
+===================================Maude102===========================================
+
 2012-04-13  Steven Eker  <eker@ape.csl.sri.com>
 
 	* AU_DagNode.hh (AU_BaseDagNode): added decl for

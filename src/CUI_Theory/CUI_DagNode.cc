@@ -252,6 +252,7 @@ CUI_DagNode::computeBaseSortForGroundSubterms()
   if (r0 == GROUND && r1 == GROUND)
     {
       s->computeBaseSort(this);
+      setGround();
       return GROUND;
     }
   return NONGROUND;

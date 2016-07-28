@@ -20,7 +20,8 @@ libAU_Theory_a_SOURCES = \
 	AU_LhsAutomaton.cc \
 	AU_ArgumentIterator.cc \
 	AU_Layer.cc \
-	AU_Subproblem.cc
+	AU_Subproblem.cc \
+	AU_UnificationSubproblem2.cc
 
 EXTRA_DIST = \
 	AU_DagOperations.cc \
@@ -47,4 +48,5 @@ noinst_HEADERS = \
 	AU_Subproblem.hh \
 	AU_Symbol.hh \
 	AU_Term.hh \
-	AU_Theory.hh
+	AU_Theory.hh \
+	AU_UnificationSubproblem2.hh

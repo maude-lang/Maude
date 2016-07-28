@@ -461,6 +461,89 @@ ACU_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
   bdd_freepair(argMap);
 }
 
+// experimental code
+void
+ACU_Symbol::computeGeneralizedSort2(const SortBdds& sortBdds,
+				    const Vector<int>& realToBdd,
+				    DagNode* subject,
+				    Vector<Bdd>& outputBdds)
+{
+  Assert(safeCast(ACU_BaseDagNode*, subject)->isTree() == false,
+	 "Tree case not implemented: " << subject <<
+	 " " <<  static_cast<void*>(dynamic_cast<ACU_DagNode*>(subject)) <<
+	 " " <<  static_cast<void*>(dynamic_cast<ACU_TreeDagNode*>(subject)));
+
+  ArgVec<ACU_Pair>& args = safeCast(ACU_DagNode*, subject)->argArray;
+  int lastArg = args.length() - 1;
+  Vector<Bdd> inputBdds;
+  Vector<Bdd> middleBdds;
+  for (int i = 0;; ++i)   
+    {
+      //
+      //	Generalized sort ith argument.
+      //
+      args[i].dagNode->computeGeneralizedSort2(sortBdds, realToBdd, inputBdds);
+      int multiplicity = args[i].multiplicity;
+      
+      if (i == 0)
+	{
+	  --multiplicity;
+	  if (multiplicity == 0)
+	    continue;  // must be a next argument
+	  //
+	  //	Special case - first argument has multiplicity > 1 so we
+	  //	need to clone its sort BDDs.
+	  //
+	  int nrBdds = inputBdds.size();
+	  //
+	  //	Need to be careful since we are reading and writing the same Vector
+	  //	and a reference can be come stale if the Vector reallocates.
+	  //	So we force the reallocation, if needed, up front.
+	  //
+	  inputBdds.resize(2 * nrBdds);
+	  for (int j = 0; j < nrBdds; ++j)
+	    inputBdds[nrBdds + j] = inputBdds[j];
+	}
+
+      for (--multiplicity; multiplicity != 0; --multiplicity)
+	{
+	  middleBdds.clear();
+	  sortBdds.operatorCompose(this, inputBdds, middleBdds);
+	  //
+          //    Copy middleBdds over first half of inputBdds.
+          //
+          Vector<Bdd>::iterator input = inputBdds.begin();
+          FOR_EACH_CONST(j, Vector<Bdd>, middleBdds)
+            {
+              *input = *j;
+              ++input;
+            }
+	}
+
+      if (i == lastArg)
+	{
+	  //
+	  //	Final application of our sort function with result
+	  //	directly appended to outputBdds.
+	  //
+	  sortBdds.operatorCompose(this, inputBdds, outputBdds);
+	  break;
+	}
+      else
+	{
+	  //
+	  //	Middle case - write result to middleBdds.
+	  //
+	  middleBdds.clear();
+	  sortBdds.operatorCompose(this, inputBdds, middleBdds);
+	  //
+	  //	middleBdds become first part of inputBdds.
+	  //
+	  inputBdds.swap(middleBdds);
+	}
+    }
+}
+
 bool
 ACU_Symbol::canResolveTheoryClash()
 {
@@ -480,9 +563,8 @@ ACU_Symbol::makeUnificationSubproblem()
 int 
 ACU_Symbol::unificationPriority() const
 {
-  return 10;
+  return 10 + 10 * (getIdentity() != 0);
 }
-
 
 //
 //	Hash cons code.

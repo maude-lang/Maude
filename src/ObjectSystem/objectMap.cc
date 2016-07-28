@@ -50,7 +50,7 @@ ConfigSymbol::MessageQueue::markReachableNodes() const
 
 struct ConfigSymbol::dagNodeLt
 {
-  bool operator()(const DagNode* d1, const DagNode* d2)
+  bool operator()(const DagNode* d1, const DagNode* d2) const
     {
       return d1->compare(d2) < 0;
     }

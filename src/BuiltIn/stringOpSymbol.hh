@@ -25,7 +25,7 @@
 //
 #ifndef _stringOpSymbol_hh_
 #define _stringOpSymbol_hh_
-#include "ropeStuff.hh"
+#include "rope.hh"
 #include "freeSymbol.hh"
 #include "cachedDag.hh"
 
@@ -64,14 +64,14 @@ private:
     //
     MAX_FLOAT_DIGITS = 1074
   };
-  bool rewriteToString(DagNode* subject, RewritingContext& context, const crope& result);
-  static bool ropeToNumber(const crope& subject,
+  bool rewriteToString(DagNode* subject, RewritingContext& context, const Rope& result);
+  static bool ropeToNumber(const Rope& subject,
 			   int base,
 			   mpz_class& numerator,
 			   mpz_class& denominator);
-  static crope substring(const crope& subject, crope::size_type index, crope::size_type length);
-  static int fwdFind(const crope& subject, const crope& pattern, crope::size_type start);
-  static int revFind(const crope& subject, const crope& pattern, crope::size_type start);
+  static Rope substring(const Rope& subject, Rope::size_type index, Rope::size_type length);
+  static int fwdFind(const Rope& subject, const Rope& pattern, Rope::size_type start);
+  static int revFind(const Rope& subject, const Rope& pattern, Rope::size_type start);
 
   int op;
   StringSymbol* stringSymbol;

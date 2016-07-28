@@ -267,6 +267,24 @@ MixfixModule::addOpDeclaration(Token prefixName,
 	  overloadedIntegers.insert(nat);
 	  iflags |= PSEUDO_NAT;
 	}
+      else if (sp == Token::ZERO)
+	{
+	  //
+	  //	This is not needed for built-in Nats because 0 appears as a regular constant
+	  //	and the standard operator pretty printing will handle the disambiguation.
+	  //	It is needed for SMT Integers, because here 0 is a built in non-algebraic
+	  //	constant, and the SMT pretty printer needs to know that another 0 exists.
+	  //
+	  //
+	  overloadedIntegers.insert(0);
+	  //
+	  //	Also when we print this constant we need to force a check of kindsWithZero
+	  //	when we decide whether disambiguation is needed. In the case of build-in
+	  //	Nats, the Nat constant zero will already set the abiguity flag, but
+	  //	in the case of SMT Integers, the constant zero is implicit.
+	  //
+	  iflags |= PSEUDO_ZERO;
+	}
       else if (sp == Token::SMALL_NEG)
 	{
 	  mpz_class neg(prefixName.name(), 10);
@@ -417,6 +435,11 @@ MixfixModule::addOpDeclaration(Token prefixName,
 	quotedIdentifierSymbols[c->getIndexWithinModule()] = symbol;
 	break;
       }
+    case SymbolType::SMT_NUMBER_SYMBOL:
+      {
+	ConnectedComponent* c = domainAndRange[nrArgs]->component();
+	SMT_NumberSymbols[c->getIndexWithinModule()] = symbol;
+      }
     }
   if (symbolType.hasFlag(SymbolType::CONFIG))
     {
@@ -552,6 +575,10 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new SocketManagerSymbol(name);
     case SymbolType::INTERPRETER_MANAGER_SYMBOL:
       return new InterpreterManagerSymbol(name);
+    case SymbolType::SMT_SYMBOL:
+      return new SMT_Symbol(name, nrArgs);
+    case SymbolType::SMT_NUMBER_SYMBOL:
+      return new SMT_NumberSymbol(name);
     }
 
   int lineNr = prefixName.lineNumber();

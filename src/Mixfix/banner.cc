@@ -53,8 +53,8 @@ printBanner(std::ostream& s)
     Tty(Tty::GREEN) << 'e' <<
     Tty(Tty::RESET) << " ---\n";
   s << "\t\t     /||||||||||||||||||\\\n";
-  s << "\t    " << PACKAGE_STRING << " built: " <<
+  s << "\t   " << PACKAGE_STRING << " built: " <<
     __DATE__ << ' ' << __TIME__ << '\n';
-  s << "\t    Copyright 1997-2014 SRI International\n";
+  s << "\t    Copyright 1997-2016 SRI International\n";
   s << "\t\t   " << ctime(&secs);
 }

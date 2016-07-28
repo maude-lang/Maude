@@ -334,6 +334,16 @@ S_Symbol::termify(DagNode* dagNode)
 //	Unification code.
 //
 
+int 
+S_Symbol::unificationPriority() const
+{
+  //
+  //	We don't expect this to be used by current code since there are no S Theory
+  //	unification subproblems.
+  //
+  return 1;
+}
+
 void
 S_Symbol::computeSortFunctionBdds(const SortBdds& /* sortBdds */, Vector<Bdd>& /* sortFunctionBdds */) const
 {
@@ -398,6 +408,97 @@ S_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
 	    generalizedSort[j] = bdd_or(generalizedSort[j], equal);
 	}
     }
+}
+
+// experimental code for faster sort computations
+void
+S_Symbol::computeGeneralizedSort2(const SortBdds& sortBdds,
+				    const Vector<int>& realToBdd,
+				    DagNode* subject,
+				    Vector<Bdd>& outputBdds)
+{
+  Assert(this == subject->symbol(), "bad symbol");
+  //
+  //	First we compute the generalized sort of our argument.
+  //
+  S_DagNode* s = safeCast(S_DagNode*, subject);
+  DagNode* arg = s->getArgument();
+  Vector<Bdd> inputBdds;
+  arg->computeGeneralizedSort2(sortBdds, realToBdd, inputBdds);
+  //
+  //	Since the range and domain of our operator is necessarily
+  //	the same kind, the number of bits encoding sorts will be
+  //	the same, and we can just get this from our inputBdds.
+  //
+  int nrBits = inputBdds.size();
+  //
+  //	The challenge here is that our exponent may be huge so
+  //	we cannot iterate our symbolic BDD sort function.
+  //
+  //	Instead we rely on the assumption that the number of input
+  //	sorts is relatively small.
+  //	We go through evey possible sort and apply the iterated (ground)
+  //	sort function; we then build the symbolic result as a case
+  //	split on input sort.
+  //
+  const mpz_class& number = s->getNumber();
+  //
+  //	The negation of each input BDD will be used at least once
+  //	(otherwise the bit would always be 1 and hence unneeded) and
+  //	thus we calculate them in advance.
+  //
+  Vector<Bdd> negatedInputBdds(nrBits);
+  for (int i = 0; i < nrBits; ++i)
+    negatedInputBdds[i] = bdd_not(inputBdds[i]);
+  //
+  //	We build the symbolic output sort in a stand alone vector.
+  //
+  Vector<Bdd> resultBdds(nrBits);
+  //
+  //	For each possible index that the input sort could have we compute
+  //	the index of the sort produced by our iterated functon symbol.
+  //
+  int nrSorts = sortPathTable.size();
+  for (int i = 0; i < nrSorts; ++i)
+    {
+      //
+      //	equalBdd will hold the BDD that returns true when our argument
+      //	(whose sort depends on variables whose sort is defined by our BDD
+      //	variables) has sort index i.
+      //
+      Bdd equalBdd = bdd_true();
+      int inIndex = i;
+      for (int j = 0; j < nrBits; ++j, inIndex >>= 1)
+	equalBdd = bdd_and(equalBdd, (inIndex & 1) ? inputBdds[j] : negatedInputBdds[j]);
+      //
+      //	We now do a ground sort computation to determined what our
+      //	output sort index is with input sort index i.
+      //
+      int outIndex = sortPathTable[i].computeSortIndex(number);
+      //
+      //	Finally we want to add the case:
+      //	  If input sort has index i, then output sort has index outIndex.
+      //	For each bit position, we say it the corresponding bit of outIndex if
+      //	equal is true and 0 otherwise.
+      //	And we want to OR these results for each bit position at we iterate
+      //	over all input sorts in our outer loop.
+      //
+      //	Thus for each bitPosition j, we need to OR in 1 iff
+      //	outIndex has a 1 and equal is true. Of course equal is symbolic
+      //	in terms of our BDD variables, so we OR in equal whenever
+      //	outIndex has a 1 bit.
+      //
+      for (int j = 0; j < nrBits; ++j, outIndex >>= 1)
+	{
+	  if (outIndex & 1)
+	    resultBdds[j] = bdd_or(resultBdds[j], equalBdd);
+	}
+    }
+  //
+  //	Finally we append our result BDDs to the output BDDs.
+  //
+  FOR_EACH_CONST(i, Vector<Bdd>, resultBdds)
+    outputBdds.append(*i);
 }
 
 bool

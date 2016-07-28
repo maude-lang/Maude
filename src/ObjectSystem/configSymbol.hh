@@ -25,6 +25,7 @@
 //
 #ifndef _configSymbol_hh_
 #define _configSymbol_hh_
+#include <map>
 #include "natSet.hh"
 #include "ACU_Symbol.hh"
 
@@ -50,7 +51,7 @@ public:
 private:
   struct symbolLt
   {
-    bool operator()(const Symbol* d1, const Symbol* d2)
+    bool operator()(const Symbol* d1, const Symbol* d2) const
     {
       return d1->compare(d2) < 0;
     }

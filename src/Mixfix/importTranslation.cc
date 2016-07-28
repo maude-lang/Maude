@@ -237,7 +237,7 @@ ImportTranslation::translateRegularSymbol(Symbol* symbol,
   for (int i = 0; i < nrArgs; ++i)
     domainComponents[i] = target->findSort(sortNames[i])->component();
   Symbol* s = target->findSymbol(id, domainComponents, target->findSort(sortNames[nrArgs])->component());
-  Assert(s != 0, "no translation for " << symbol << " in " << target);
+  Assert(s != 0, "no translation for " << symbol << " in " << target << " was looking for " << Token::name(id));
   return s;
 }
 

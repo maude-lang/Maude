@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if grep "#define USE_CVC4" ../../config.h ; # are we using CVC4?
+then
+  echo "testing CVC4"
+else
+  echo "no CVC4"
+  exit 77 # grep returned nonzero exit so skip this test
+fi
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/smtTest.maude -no-banner -no-advise \
+  > smtTest.out 2>&1
+
+diff $srcdir/smtTest.expected smtTest.out > /dev/null 2>&1

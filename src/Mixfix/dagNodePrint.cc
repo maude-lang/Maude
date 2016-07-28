@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -52,15 +52,6 @@ MixfixModule::computeColor(ColoringInfo& coloringInfo, DagNode* dagNode)
 }
 
 void
-MixfixModule::prefix(ostream& s, bool needDisambig, const char* color)
-{
-  if (needDisambig)
-    s << '(';
-  if (color != 0)
-    s << color;
-}
-
-void
 MixfixModule::suffix(ostream& s,
 		     DagNode* dagNode,
 		     bool needDisambig,
@@ -86,11 +77,24 @@ MixfixModule::handleIter(ostream& s,
 			 bool rangeKnown,
 			 const char* color)
 {
+  //
+  //	Check if dagNode is headed by a iter symbol and if so handle
+  //	any special printing requirements.
+  //	Returns true if handled, false if default handling required.
+  //
   if (!(si.symbolType.hasFlag(SymbolType::ITER)))
     return false;
+  //
+  //	Check if the top symbol is also a succ symbol and we have
+  //	number printing turned on.
+  //
   if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL &&
       interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
     {
+      //
+      //	If dagNode corresponds to a number we want to
+      //	print it as decimal number.
+      //
       SuccSymbol* succSymbol = safeCast(SuccSymbol*, dagNode->symbol());
       if (succSymbol->isNat(dagNode))
 	{
@@ -103,12 +107,15 @@ MixfixModule::handleIter(ostream& s,
 	  return true;
 	}
     }
+  //
+  //	Not going to print dagNode as a number, but might want to use special f^n(arg) representation.
+  //
   S_DagNode* sd = safeCast(S_DagNode*, dagNode);
   const mpz_class& number = sd->getNumber();
   if (number == 1)
     return false;  // do default thing
   
-  // NEED TO FIX: disambig
+  // NEED TO FIX: disambig; i.e. we might have a regular operator called f^2
   string prefixName;
   makeIterName(prefixName, dagNode->symbol()->id(), number);
   if (color != 0)
@@ -236,6 +243,48 @@ MixfixModule::handleVariable(ostream& s,
 }
 
 void
+MixfixModule::handleSMT_Number(ostream& s,
+			       DagNode* dagNode,
+			       bool rangeKnown,
+			       const char* color)
+{
+  //
+  //	Get value.
+  //
+  SMT_NumberDagNode* n = safeCast(SMT_NumberDagNode*, dagNode);
+  const mpq_class& value = n->getValue();
+  //
+  //	Look up the index of our sort.
+  //
+  Symbol* symbol = dagNode->symbol();
+  Sort* sort = symbol->getRangeSort();
+  //
+  //	Figure out what SMT sort we correspond to.
+  //
+  SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
+  Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
+  if (t == SMT_Info::INTEGER)
+    {
+      const mpz_class& integer = value.get_num();
+      bool needDisambig = !rangeKnown &&
+	(kindsWithSucc.size() > 1 || overloadedIntegers.count(integer));
+      prefix(s, needDisambig, color);
+      s << integer;
+      suffix(s, dagNode, needDisambig, color);
+    }
+  else
+    {
+      Assert(t == SMT_Info::REAL, "SMT number sort expected");
+      pair<mpz_class, mpz_class> rat(value.get_num(), value.get_den());
+      bool needDisambig = !rangeKnown &&
+	(kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
+      prefix(s, needDisambig, color);
+      s << rat.first << '/' << rat.second;
+      suffix(s, dagNode, needDisambig, color);
+    }
+}
+
+void
 MixfixModule::prettyPrint(ostream& s,
 			  ColoringInfo& coloringInfo,
 			  DagNode* dagNode,
@@ -300,6 +349,11 @@ MixfixModule::prettyPrint(ostream& s,
 	handleVariable(s, dagNode, rangeKnown, color);
 	return;
       }
+    case SymbolType::SMT_NUMBER_SYMBOL:
+      {
+	handleSMT_Number(s, dagNode, rangeKnown, color);
+	return;
+      }
     default:
       break;
     }
@@ -308,8 +362,7 @@ MixfixModule::prettyPrint(ostream& s,
   //
   int iflags = si.iflags;
   bool needDisambig = !rangeKnown && ambiguous(iflags);
-  bool argRangeKnown = !(iflags & ADHOC_OVERLOADED) ||
-    (!(iflags & RANGE_OVERLOADED) && (rangeKnown || needDisambig));
+  bool argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
   int nrArgs = symbol->arity();
   if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
     {
@@ -323,6 +376,9 @@ MixfixModule::prettyPrint(ostream& s,
   if ((interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX) && si.mixfixSyntax.length() != 0 && !printConceal) ||
       (basicType == SymbolType::SORT_TEST))
     {
+      //
+      //	Mixfix case.
+      //
       bool printWithParens = interpreter.getPrintFlag(Interpreter::PRINT_WITH_PARENS);
       bool needParen = !needDisambig &&
 	(printWithParens || requiredPrec < si.prec ||
@@ -392,6 +448,9 @@ MixfixModule::prettyPrint(ostream& s,
     }
   else
     {
+      //
+      //	Prefix case.
+      //
       const char* prefixName = Token::name(symbol->id());
       if (color != 0)
 	s << color << prefixName << Tty(Tty::RESET);

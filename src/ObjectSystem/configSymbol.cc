@@ -23,8 +23,7 @@
 //
 //      Implementation for class ConfigSymbol.
 //
-#include <list>
-#include <map>
+//#include <list>
 
 //	utility stuff
 #include "macros.hh"

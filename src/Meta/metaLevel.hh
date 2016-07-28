@@ -87,8 +87,10 @@ public:
   DagNode* upVariant(const Vector<DagNode*>& variant, 
 		     const NarrowingVariableInfo& variableInfo,
 		     const mpz_class& variableIndex,
+		     const mpz_class& parentIndex,
+		     bool moreInLayer,
 		     MixfixModule* m);
-  DagNode* upNoVariant();
+  DagNode* upNoVariant(bool incomplete);
 
   DagNode* upUnificationPair(const Vector<DagNode*>& unifier,
 			     const NarrowingVariableInfo& variableInfo,
@@ -112,8 +114,8 @@ public:
 			  MixfixModule* m,
 			  PointerMap& qidMap,
 			  PointerMap& dagNodeMap);
-  DagNode* upNoUnifierPair();
-  DagNode* upNoUnifierTriple();
+  DagNode* upNoUnifierPair(bool incomplete);
+  DagNode* upNoUnifierTriple(bool incomplete);
   DagNode* upNoMatchSubst();
   DagNode* upNoMatchPair();
   DagNode* upMatchPair(const Substitution& substitution,
@@ -121,6 +123,15 @@ public:
 		       DagNode* dagNode,
 		       DagNode* hole,
 		       MixfixModule* m);
+  DagNode* upSmtResult(DagNode* state,
+		       const Substitution& substitution,
+		       const VariableInfo& variableInfo,
+		       const NatSet& smtVariables,
+		       DagNode* constraint,
+		       const mpz_class& variableNumber,
+		       MixfixModule* m);
+  DagNode* upSmtFailure();
+
 
   DagNode* upView(View* view, PointerMap& qidMap);
   DagNode* upModule(bool flat, PreModule* pm, PointerMap& qidMap);
@@ -251,6 +262,7 @@ private:
   DagNode* upConstant(int id, DagNode* d, PointerMap& qidMap);
   DagNode* upVariable(int id, Sort* sort, PointerMap& qidMap);
   DagNode* upTerm(const Term* term, MixfixModule* m, PointerMap& qidMap);
+  DagNode* upSMT_Number(const mpq_class& value, Symbol* symbol, MixfixModule* m, PointerMap& qidMap);
 
   DagNode* upAssignment(const Term* variable,
 			DagNode* value,
@@ -344,6 +356,13 @@ private:
 			       PointerMap& dagNodeMap,
 			       DagNode*& left,
 			       DagNode*& right);
+
+  DagNode* upSmtSubstitution(const Substitution& substitution,
+			     const VariableInfo& variableInfo,
+			     const NatSet& smtVariables,
+			     MixfixModule* m,
+			     PointerMap& qidMap,
+			     PointerMap& dagNodeMap);
 
   bool downHeader(DagNode* metaHeader, int& id, DagNode*& metaParameterDeclList);
   bool downParameterDeclList(DagNode* metaParameterDeclList, ImportModule* m);

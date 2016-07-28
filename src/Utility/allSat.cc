@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for class NatSet.
+//      Implementation for class AllSat.
 //
 #include "macros.hh"
 #include "vector.hh"

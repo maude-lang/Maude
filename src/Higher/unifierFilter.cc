@@ -153,9 +153,10 @@ UnifierFilter::subsumes(const RetainedUnifier* retainedUnifier, const Substituti
   //	We check if retained unifier is at least as general as unifier on variables of interest.
   //
   int nrVariablesToUse = retainedUnifier->nrVariablesInBindings;
-  if (nrVariablesToUse == 0)
-    nrVariablesToUse = 1;  // substitutions always expect to have at least one variable
-  RewritingContext matcher(nrVariablesToUse);
+  int nrSlotsToAllocate = nrVariablesToUse;
+  if (nrSlotsToAllocate == 0)
+    nrSlotsToAllocate = 1;  // substitutions subject to clear() must always have at least one slot
+  RewritingContext matcher(nrSlotsToAllocate);
   SubproblemAccumulator subproblems;
 
   matcher.clear(nrVariablesToUse);

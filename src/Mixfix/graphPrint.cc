@@ -68,6 +68,27 @@ MixfixModule::graphPrint(ostream& s, DagNode* dagNode)
 	    s << '\'' << Token::name(safeCast(QuotedIdentifierDagNode*, dagNode)->getIdIndex());
 	    break;
 	  }
+	case SymbolType::SMT_NUMBER_SYMBOL:
+	  {
+	    SMT_NumberDagNode* n = safeCast(SMT_NumberDagNode*, dagNode);
+	    const mpq_class& value = n->getValue();
+	    //
+	    //	Look up the index of our sort.
+	    //
+	    Symbol* symbol = dagNode->symbol();
+	    Sort* sort = symbol->getRangeSort();
+	    //
+	    //	Figure out what SMT sort we correspond to.
+	    //
+	    SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
+	    Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
+	    s << value.get_num();
+	    if (t == SMT_Info::REAL)
+	      s << '/' << value.get_den();
+	    else
+	      Assert(t == SMT_Info::INTEGER, "SMT number sort expected");
+	    break;
+	  }
 	default:
 	  {
 	    s << Token::name(symbol->id());

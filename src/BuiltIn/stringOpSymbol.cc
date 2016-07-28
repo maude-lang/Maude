@@ -210,7 +210,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   DagNode* a0 = d->getArgument(0);
   if (a0->symbol() == stringSymbol)
     {
-      const crope& left = safeCast(StringDagNode*, a0)->getValue();
+      const Rope& left = safeCast(StringDagNode*, a0)->getValue();
       switch (nrArgs)
 	{
 	case 1:
@@ -221,26 +221,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	      case CODE('f', 'l'):
 		{
 		  bool error;
-		  /*
-#ifdef ROPE_C_STR_BROKEN
-		  //
-		  //	This kudge doesn't seem to be need nowadays, but copy() doesn't work.
-		  //
-		  //	This messing about is needed because Rope::c_str()
-		  //	fails in libstdc++-v3
-		  //
-		  int len = left.length();
-		  char* t = new char[len + 1];
-		  left.copy(t);
-		  t[len] = '\0';
-		  double fl = stringToDouble(t, error);
-		  delete [] t;
-#else
-		  double fl = stringToDouble(left.c_str(), error);
-#endif
-		  */
-
-		  char* flStr = makeZeroTerminatedString(left);
+		  char* flStr = left.makeZeroTerminatedString();
 		  double fl = stringToDouble(flStr, error);
 		  delete [] flStr;
 
@@ -270,13 +251,13 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	    DagNode* a1 = d->getArgument(1);
 	    if (a1->symbol() == stringSymbol)
 	      {
-		const crope& right = safeCast(StringDagNode*, a1)->getValue();
+		const Rope& right = safeCast(StringDagNode*, a1)->getValue();
 		bool r;
 		switch (op)
 		  {
 		  case '+':
 		    {
-		      crope t(left);
+		      Rope t(left);
 		      t += right;
 		      return rewriteToString(subject, context, t);
 		    }
@@ -361,7 +342,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		  DagNode* a1 = d->getArgument(1);
 		  if (a1->symbol() == stringSymbol)
 		    {
-		      const crope& pattern = safeCast(StringDagNode*, a1)->getValue();
+		      const Rope& pattern = safeCast(StringDagNode*, a1)->getValue();
 		      DagNode* a2 = d->getArgument(2);
 		      Assert(succSymbol != 0, "succSymbol undefined");
 		      if (succSymbol->isNat(a2))
@@ -439,7 +420,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		  if (succSymbol->isNat(a0))
 		    {
 		      char* ts = mpz_get_str(0, base, succSymbol->getNat(a0).get_mpz_t());
-		      crope tr(ts);
+		      Rope tr(ts);
 		      free(ts);
 		      return rewriteToString(subject, context, tr);
 		    }
@@ -451,7 +432,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		      mpz_class result;
 		      char* ts =
 			mpz_get_str(0, base, minusSymbol->getNeg(a0, result).get_mpz_t());
-		      crope tr(ts);
+		      Rope tr(ts);
 		      free(ts);
 		      return rewriteToString(subject, context, tr);
 		    }
@@ -463,7 +444,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		      mpz_class numerator;
 		      const mpz_class& denomenator = divisionSymbol->getRat(a0, numerator);
 		      char* ns = mpz_get_str(0, base, numerator.get_mpz_t());
-		      crope tr(ns);
+		      Rope tr(ns);
 		      free(ns);
 		      tr += '/';
 		      char* ds = mpz_get_str(0, base, denomenator.get_mpz_t());
@@ -489,7 +470,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		if (n0 <= 255)
 		  {
 		    char c = n0.get_si();
-		    return rewriteToString(subject, context, crope(c));
+		    return rewriteToString(subject, context, Rope(c));
 		  }
 	      }
 	    break;
@@ -503,7 +484,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 }
 
 bool
-StringOpSymbol::rewriteToString(DagNode* subject, RewritingContext& context, const crope& result)
+StringOpSymbol::rewriteToString(DagNode* subject, RewritingContext& context, const Rope& result)
 {
   bool trace = RewritingContext::getTraceStatus();
   if (trace)
@@ -519,10 +500,10 @@ StringOpSymbol::rewriteToString(DagNode* subject, RewritingContext& context, con
   return true;
 }
 
-crope
-StringOpSymbol::substring(const crope& subject, crope::size_type index, crope::size_type length)
+Rope
+StringOpSymbol::substring(const Rope& subject, Rope::size_type index, Rope::size_type length)
 {
-  crope::size_type sLen = subject.length();
+  Rope::size_type sLen = subject.length();
   //  if (index < 0)
   //    {
   //      if (length > 0)
@@ -530,16 +511,16 @@ StringOpSymbol::substring(const crope& subject, crope::size_type index, crope::s
   //      index = 0;
   //    }
   if (length == 0 || index >= sLen)
-    return crope();
+    return Rope();
   if (length > sLen - index)
     length = sLen - index;
   return subject.substr(index, length);
 }
   
 int
-StringOpSymbol::fwdFind(const crope& subject, const crope& pattern, crope::size_type start)
+StringOpSymbol::fwdFind(const Rope& subject, const Rope& pattern, Rope::size_type start)
 {
-  crope::size_type sLen = subject.length();
+  Rope::size_type sLen = subject.length();
   if (pattern.empty())
     return (start <= sLen) ? static_cast<int>(start) : NONE;
   //
@@ -548,9 +529,9 @@ StringOpSymbol::fwdFind(const crope& subject, const crope& pattern, crope::size_
   //
   if (start < sLen && start + pattern.length() <= sLen)
     {
-      crope::const_iterator b(subject.begin());
-      crope::const_iterator e(subject.end());
-      crope::const_iterator p(search(b + start, e, pattern.begin(), pattern.end()));
+      Rope::const_iterator b(subject.begin());
+      Rope::const_iterator e(subject.end());
+      Rope::const_iterator p(search(b + start, e, pattern.begin(), pattern.end()));
       if (p != e)
 	return p - b;
     }
@@ -558,29 +539,31 @@ StringOpSymbol::fwdFind(const crope& subject, const crope& pattern, crope::size_
 }
 
 int
-StringOpSymbol::revFind(const crope& subject, const crope& pattern, crope::size_type start)
+StringOpSymbol::revFind(const Rope& subject, const Rope& pattern, Rope::size_type start)
 {
-  crope::size_type sLen = subject.length();
+  Rope::size_type sLen = subject.length();
   if (pattern.empty())
     return (start <= sLen) ? start : sLen;
-  crope::size_type pLen = pattern.length();
+  Rope::size_type pLen = pattern.length();
   if (pLen <= sLen)
     {
-      crope::size_type reflect = sLen - pLen;
+      Rope::size_type reflect = sLen - pLen;  // pattern can't start after this since we need pLen characters.
       if (start > reflect)
 	start = reflect;
-      crope::const_reverse_iterator b(subject.rbegin());
-      crope::const_reverse_iterator e(subject.rend());
-      crope::const_reverse_iterator p =
-	search(b + (reflect - start), e, pattern.rbegin(), pattern.rend());
+      //
+      //	We are going to search the subject from beginning to beginning + start + pLen - 1
+
+      Rope::const_iterator b(subject.begin());
+      Rope::const_iterator e(b + (start + pLen));
+      Rope::const_iterator p = find_end(b, e, pattern.begin(), pattern.end());
       if (p != e)
-	return reflect - (p - b);
+	return p - b;
     }
   return NONE;
 }
 
 bool
-StringOpSymbol::ropeToNumber(const crope& subject,
+StringOpSymbol::ropeToNumber(const Rope& subject,
 			     int base,
 			     mpz_class& numerator,
 			     mpz_class& denominator)
@@ -616,38 +599,8 @@ StringOpSymbol::ropeToNumber(const crope& subject,
 	      //
 	      //	We have detected a fraction form.
 	      //
-
-	      /*
-#ifdef ROPE_C_STR_BROKEN
-	      //
-	      //	This kudge doesn't seem to be need nowadays, but copy() doesn't work.
-	      //
-	      char* t = new char[len];  // longer than needed but who cares
-	      int dLen = len - (i + 1);
-	      subject.copy(i + 1, dLen, t);
-	      t[dLen] = '\0';
-	      if (mpz_set_str(denominator.get_mpz_t(), t, base) != 0)
-		{
-		  delete [] t;
-		  return false;
-		}
-	      subject.copy(0, i, t);
-	      t[i] = '\0';
-	      if (mpz_set_str(numerator.get_mpz_t(), t, base) != 0)
-		{
-		  delete [] t;
-		  return false;
-		}
-	      delete [] t;
-	      return true;
-#else
-	      return mpz_set_str(denominator.get_mpz_t(), subject.substr(i + 1).c_str(), base) == 0 &&
-		mpz_set_str(numerator.get_mpz_t(), subject.substr(0,i).c_str(), base) == 0;
-#endif	      
-	      */
-
-	      char* numStr = makeZeroTerminatedString(subject.substr(0, i));
-	      char* denomStr = makeZeroTerminatedString(subject.substr(i + 1));
+	      char* numStr = subject.substr(0, i).makeZeroTerminatedString();
+	      char* denomStr = subject.substr(i + 1, len - (i + 1)).makeZeroTerminatedString();
 	      bool result = (mpz_set_str(denominator.get_mpz_t(), denomStr, base) == 0 &&
 			     mpz_set_str(numerator.get_mpz_t(), numStr, base) == 0);
 	      delete [] numStr;
@@ -662,32 +615,7 @@ StringOpSymbol::ropeToNumber(const crope& subject,
   //	We have a regular integer form.
   //
   denominator = 0;
-  /*
-#ifdef ROPE_C_STR_BROKEN
-  //
-  //	This kudge doesn't seem to be need nowadays, but copy() doesn't work.
-  //
-  char* t = new char[len + 1];
-  subject.copy(t);
-  t[len] = '\0';
-  if (mpz_set_str(numerator.get_mpz_t(), t, base) == 0)
-    {
-      delete [] t;
-      return true;
-    }
-  delete [] t;
-  return false;
-#else
-  DebugAdvisory("StringOpSymbol::ropeToNumber() on " << subject);
-  DebugAdvisory("StringOpSymbol::ropeToNumber() size =  " << subject.size());
-  const char* s = subject.c_str();
-  DebugAdvisory("StringOpSymbol::ropeToNumber() c_str() = " << s);
-  DebugAdvisory("StringOpSymbol::ropeToNumber() strlen = " << strlen(s));
-  return mpz_set_str(numerator.get_mpz_t(), s, base) == 0;
-#endif
-  */
-
-  char* numStr = makeZeroTerminatedString(subject);
+  char* numStr = subject.makeZeroTerminatedString();
   bool result = (mpz_set_str(numerator.get_mpz_t(), numStr, base) == 0);
   delete [] numStr;
   return result;

@@ -1,3 +1,70 @@
+2016-04-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* main.cc (main): added -print-to-stderr flag
+	(printHelp): fix format in -always-advise line
+
+===================================Maude110===========================================
+
+2016-01-29  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: update variant ctor; added Parent sort with
+	none ctor
+
+===================================Maude109===========================================
+
+2015-12-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* main.cc (main): add a tie between cout and cerr so streams don't
+	get out of sync on orion
+
+===================================Maude108a===========================================
+
+2015-08-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: added constant noVariantIncomplete
+
+2015-07-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: added two constants noUnifierIncomplete
+
+===================================Maude108===========================================
+
+2014-10-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: updated decls for metaSmtSearch() and SmtResult ctor
+
+===================================Maude105===========================================
+
+2014-09-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: added syntax for metaSmtSearch and its constructors
+
+2014-08-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* smt.maude: updated =/== and === hook syntax; commented out
+	divisible breaks of CVC4 breakage
+
+2014-08-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* smt.maude: don't include BOOL; include BOOLEAN; use === and =/==
+	in place of = and !=; use true and false in place of tt and ff
+
+===================================Maude104===========================================
+
+2014-05-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* prelude.maude: added metaCheck()
+
+2014-05-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* smt.maude: added modules INTEGER, REAL and REAL-INTEGER
+
+2014-04-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* Makefile.am (maude_LDADD): link in CVC4_LIB
+
+===================================Maude103===========================================
+
 2014-03-03  Steven Eker  <eker@ape.csl.sri.com>
 
 	* prelude.maude: added metaGetIrredundantVariant()

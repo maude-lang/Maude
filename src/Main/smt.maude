@@ -1,0 +1,102 @@
+***(
+
+    This file is part of the Maude 2 interpreter.
+
+    Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+)
+
+***
+***	SMT bindings.
+***	Version alpha 104.
+***
+
+set include BOOL off .
+set include BOOLEAN off .
+
+fmod BOOLEAN is
+  sort Boolean .
+  op true : -> Boolean [special (id-hook SMT_Symbol (true))] .
+  op false : -> Boolean [special (id-hook SMT_Symbol (false))] .
+
+  op not_ : Boolean -> Boolean [prec 53 special (id-hook SMT_Symbol (not))] .
+  op _and_ : Boolean Boolean -> Boolean [gather (E e) prec 55 special (id-hook SMT_Symbol (and))] .
+  op _xor_ : Boolean Boolean -> Boolean [gather (E e) prec 57 special (id-hook SMT_Symbol (xor))] .
+  op _or_ : Boolean Boolean -> Boolean [gather (E e) prec 59 special (id-hook SMT_Symbol (or))] .
+  op _implies_ : Boolean Boolean -> Boolean [gather (e E) prec 61 special (id-hook SMT_Symbol (implies))] .
+
+  op _===_ : Boolean Boolean -> Boolean [gather (e E) prec 51 special (id-hook SMT_Symbol (===))] .
+  op _=/==_ : Boolean Boolean -> Boolean [gather (e E) prec 51 special (id-hook SMT_Symbol (=/==))] .
+  op _?_:_ : Boolean Boolean Boolean -> Boolean [gather (e e e) prec 71 special (id-hook SMT_Symbol (ite))] .
+endfm
+
+fmod INTEGER is
+  protecting BOOLEAN .
+  sort Integer .
+  op <Integers> : -> Integer [special (id-hook SMT_NumberSymbol (integers))] .
+
+  op -_ : Integer -> Integer [special (id-hook SMT_Symbol (-))] .
+  op _+_ : Integer Integer -> Integer [gather (E e) prec 33 special (id-hook SMT_Symbol (+))] .
+  op _*_ : Integer Integer -> Integer [gather (E e) prec 31 special (id-hook SMT_Symbol (*))] .
+  op _-_ : Integer Integer -> Integer [gather (E e) prec 33 special (id-hook SMT_Symbol (-))] .
+  op _div_ : Integer Integer -> Integer [gather (E e) prec 31 special (id-hook SMT_Symbol (div))] .
+  op _mod_ : Integer Integer -> Integer [gather (E e) prec 31 special (id-hook SMT_Symbol (mod))] .
+
+  op _<_ : Integer Integer -> Boolean [prec 37 special (id-hook SMT_Symbol (<))] .
+  op _<=_ : Integer Integer -> Boolean [prec 37 special (id-hook SMT_Symbol (<=))] .
+  op _>_ : Integer Integer -> Boolean [prec 37 special (id-hook SMT_Symbol (>))] .
+  op _>=_ : Integer Integer -> Boolean [prec 37 special (id-hook SMT_Symbol (>=))] .
+
+  op _===_ : Integer Integer -> Boolean [gather (e E) prec 51 special (id-hook SMT_Symbol (===))] .
+  op _=/==_ : Integer Integer -> Boolean [gather (e E) prec 51 special (id-hook SMT_Symbol (=/==))] .
+  op _?_:_ : Boolean Integer Integer -> Integer [gather (e e e) prec 71 special (id-hook SMT_Symbol (ite))] .
+
+  *** seems to break CVC4
+  op _divisible_ : Integer Integer -> Boolean [prec 51 special (id-hook SMT_Symbol (divisible))] .
+endfm
+
+fmod REAL is
+  protecting BOOLEAN .
+  sort Real .
+  op <Reals> : -> Real [special (id-hook SMT_NumberSymbol (reals))] .
+ 
+  op -_ : Real -> Real [special (id-hook SMT_Symbol (-))] .
+  op _+_ : Real Real -> Real [gather (E e) prec 33 special (id-hook SMT_Symbol (+))] .
+  op _*_ : Real Real -> Real [gather (E e) prec 31 special (id-hook SMT_Symbol (*))] .
+  op _-_ : Real Real -> Real [gather (E e) prec 33 special (id-hook SMT_Symbol (-))] .
+  op _/_ : Real Real -> Real [gather (E e) prec 31 special (id-hook SMT_Symbol (/))] .
+
+  op _<_ : Real Real -> Boolean [prec 37 special (id-hook SMT_Symbol (<))] .
+  op _<=_ : Real Real -> Boolean [prec 37 special (id-hook SMT_Symbol (<=))] .
+  op _>_ : Real Real -> Boolean [prec 37 special (id-hook SMT_Symbol (>))] .
+  op _>=_ : Real Real -> Boolean [prec 37 special (id-hook SMT_Symbol (>=))] .
+
+  op _===_ : Real Real -> Boolean [gather (e E) prec 51 special (id-hook SMT_Symbol (===))] .
+  op _=/==_ : Real Real -> Boolean [gather (e E) prec 51 special (id-hook SMT_Symbol (=/==))] .
+  op _?_:_ : Boolean Real Real -> Real [gather (e e e) prec 71 special (id-hook SMT_Symbol (ite))] .
+endfm
+
+fmod REAL-INTEGER is
+  protecting INTEGER .
+  protecting REAL .
+
+  op toReal : Integer -> Real [special (id-hook SMT_Symbol (toReal))] .
+  op toInteger : Real -> Integer [special (id-hook SMT_Symbol (toInteger))] .
+  op isInteger : Real -> Boolean [special (id-hook SMT_Symbol (isInteger))] .
+endfm
+
+set include BOOLEAN on .

@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version 2.7.
+***	Version alpha109
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -1937,6 +1937,11 @@ fmod META-LEVEL is
   subsort Nat < Bound .
   op unbounded : -> Bound [ctor] .
 
+*** parents
+  sort Parent .
+  subsort Nat < Parent .
+  op none : -> Parent .
+
 *** argument values
   sort Type? .
   subsort Type < Type? .
@@ -1957,22 +1962,24 @@ fmod META-LEVEL is
 
 *** success results
   sorts ResultPair ResultTriple Result4Tuple MatchPair TraceStep Trace
-    UnificationPair UnificationTriple Variant .
+    UnificationPair UnificationTriple Variant SmtResult .
   subsort TraceStep < Trace .
+
   op {_,_} : Term Type -> ResultPair [ctor] .
   op {_,_,_} : Term Type Substitution -> ResultTriple [ctor] .
   op {_,_,_,_} : Term Type Substitution Context -> Result4Tuple [ctor] .
   op {_,_} : Substitution Context -> MatchPair [ctor] .
   op {_,_} : Substitution Nat -> UnificationPair [ctor] .
   op {_,_,_} : Substitution Substitution Nat -> UnificationTriple [ctor] .
-  op {_,_,_} : Term Substitution Nat -> Variant [ctor] .
+  op {_,_,_,_,_} : Term Substitution Nat Parent Bool -> Variant [ctor] .
   op {_,_,_} : Term Type Rule -> TraceStep [ctor] .
   op nil : -> Trace [ctor] .
   op __ : Trace Trace -> Trace [ctor assoc id: nil format (d n d)] .
+  op {_,_,_,_} : Term Substitution Term Nat -> SmtResult [ctor] .
 
 *** failure results
   sorts ResultPair? ResultTriple? Result4Tuple? MatchPair? Substitution? Trace?
-    UnificationPair? UnificationTriple? Variant? .
+    UnificationPair? UnificationTriple? Variant? SmtResult? .
   subsort ResultPair < ResultPair? .
   subsort ResultTriple < ResultTriple? .
   subsort Result4Tuple < Result4Tuple? .
@@ -1982,6 +1989,8 @@ fmod META-LEVEL is
   subsort Variant < Variant? .
   subsort Substitution < Substitution? .
   subsort Trace < Trace? .
+  subsort SmtResult < SmtResult? .
+
   op noParse : Nat -> ResultPair? [ctor] .
   op ambiguity : ResultPair ResultPair -> ResultPair? [ctor] .
   op failure : -> ResultPair? [ctor] .
@@ -1990,10 +1999,14 @@ fmod META-LEVEL is
   op failure : -> Result4Tuple? [ctor] .
   op noUnifier : -> UnificationPair? [ctor] .
   op noUnifier : -> UnificationTriple? [ctor] .
+  op noUnifierIncomplete : -> UnificationPair? [ctor] .
+  op noUnifierIncomplete : -> UnificationTriple? [ctor] .
   op noVariant : -> Variant? [ctor] .
+  op noVariantIncomplete : -> Variant? [ctor] .
   op noMatch : -> Substitution? [ctor] .
   op noMatch : -> MatchPair? [ctor] .
   op failure : -> Trace? [ctor] .
+  op failure : -> SmtResult? [ctor] .
 
 *** projection functions
   op getTerm : ResultPair -> Term .
@@ -2079,6 +2092,7 @@ fmod META-LEVEL is
         op-hook succSymbol		(s_ : Nat ~> NzNat)
         op-hook natListSymbol		(__ : NeNatList NeNatList ~> NeNatList)
         op-hook unboundedSymbol		(unbounded : ~> Bound)
+        op-hook noParentSymbol		(none : ~> Parent)
 
         op-hook stringSymbol		(<Strings> : ~> String)
         op-hook idHookSymbol		(id-hook : Qid QidList ~> Hook)
@@ -2192,7 +2206,8 @@ fmod META-LEVEL is
         op-hook matchPairSymbol		({_,_} : Substitution Context ~> MatchPair)
         op-hook unificationPairSymbol	({_,_} : Substitution Nat ~> UnificationPair)
         op-hook unificationTripleSymbol	({_,_,_} : Substitution Substitution Nat ~> UnificationTriple)
-        op-hook variantSymbol		({_,_,_} : Term Substitution Nat ~> Variant)
+        op-hook variantSymbol		({_,_,_,_,_} : Term Substitution Nat Parent Bool ~> Variant)
+        op-hook smtResultSymbol		({_,_,_,_} : Term Substitution Term Nat ~> SmtResult)
 
         op-hook traceStepSymbol		({_,_,_} : Term Type Rule ~> TraceStep)
         op-hook nilTraceSymbol		(nil : ~> Trace)
@@ -2205,10 +2220,14 @@ fmod META-LEVEL is
         op-hook failure4Symbol		(failure : ~> Result4Tuple?)
         op-hook noUnifierPairSymbol	(noUnifier : ~> UnificationPair?)
         op-hook noUnifierTripleSymbol	(noUnifier : ~> UnificationTriple?)
+        op-hook noUnifierIncompletePairSymbol	(noUnifierIncomplete : ~> UnificationPair?)
+        op-hook noUnifierIncompleteTripleSymbol	(noUnifierIncomplete : ~> UnificationTriple?)
         op-hook noVariantSymbol		(noVariant : ~> Variant?)
+        op-hook noVariantIncompleteSymbol	(noVariantIncomplete : ~> Variant?)
         op-hook noMatchSubstSymbol	(noMatch : ~> Substitution?)
         op-hook noMatchPairSymbol	(noMatch : ~> MatchPair?)
         op-hook failureTraceSymbol	(failure : ~> Trace?)
+        op-hook smtFailureSymbol	(failure : ~> SmtResult?)
 
         op-hook mixfixSymbol		(mixfix : ~> PrintOption)
         op-hook withParensSymbol	(with-parens : ~> PrintOption)
@@ -2345,6 +2364,16 @@ fmod META-LEVEL is
   op metaPrettyPrint : Module Term PrintOptionSet ~> QidList
         [special (
            id-hook MetaLevelOpSymbol	(metaPrettyPrint)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaCheck : Module Term ~> Bool 
+        [special (
+           id-hook MetaLevelOpSymbol	(metaCheck)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaSmtSearch : Module Term Term Condition Qid Nat Bound Nat ~> SmtResult?
+        [special (
+           id-hook MetaLevelOpSymbol	(metaSmtSearch)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
   op wellFormed : Module -> Bool

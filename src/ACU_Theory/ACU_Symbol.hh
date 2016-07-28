@@ -60,6 +60,10 @@ public:
 			      const Vector<int>& realToBdd,
 			      DagNode* subject,
 			      Vector<Bdd>& generalizedSort);
+  void computeGeneralizedSort2(const SortBdds& sortBdds,
+			       const Vector<int>& realToBdd,
+			       DagNode* subject,
+			       Vector<Bdd>& outputBdds);
   UnificationSubproblem* makeUnificationSubproblem();
   int unificationPriority() const;
   bool canResolveTheoryClash();

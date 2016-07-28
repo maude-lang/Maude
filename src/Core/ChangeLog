@@ -1,3 +1,131 @@
+2016-06-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* pendingUnificationStack.hh (flagAsIncomplete): fixed typo
+
+2016-04-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* pendingUnificationStack.cc (findCycle): added comment
+
+2016-03-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* sortBdds.cc (getRemappedLeqRelation, applyLeqRelation): use
+	getCachedPairing()
+
+2016-03-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* sortBdds.hh (BddUser): added decl for appendVariableVector()
+
+	* sortBdds.cc (appendVariableVector): added
+
+2016-03-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* sortBdds.cc (appendIndexVector): added
+
+	* sortTable.hh (S): added dec for computeGeneralizedSort2()
+
+	* sortBdds.hh (BddUser): updated decl for operatorCompose()
+
+	* sortBdds.cc (operatorCompose): rewritten to use a
+	Vector of output BDDs
+
+2016-03-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* sortBdds.hh (BddUser): updated decl for operatorCompose()
+
+	* sortBdds.cc (operatorCompose): made const
+
+2016-03-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* sortBdds.hh (BddUser): added decl for operatorCompose()
+
+	* sortBdds.cc (operatorCompose): added
+
+===================================Maude110===========================================
+
+2015-12-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* equation.hh (PreEquation): commented out nrSlots member since we
+	don't appear to use it
+
+===================================Maude108a===========================================
+
+2015-09-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* compoundCycleSubproblem.hh (SimpleRootContainer): declare but
+	don't define addUnification()
+
+	* compoundCycleSubproblem.cc (addUnification): moved here to try
+	and avoid clang warning
+
+	* trivialRhsAutomaton.hh (_trivialRhsAutomaton_hh_): fixed define
+
+2015-09-17  Steven Eker  <eker@ape.csl.sri.com>
+
+	* sortBdds.cc (applyLeqRelation): make Assert() message more
+	detailed
+
+2015-08-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pendingUnificationStack.hh (flagAsIncomplete): changed advisory
+	to warning
+
+2015-08-06  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pendingUnificationStack.hh (SimpleRootContainer): added data
+	member unimplementedSymbols
+	(flagAsUnimplemented): added
+	(isIncomplete): check unimplementedSymbols
+	(flagAsUnimplemented): deleted
+	(isIncomplete): don't check unimplementedSymbols after all
+	(SimpleRootContainer): deleted data member unimplementedSymbols
+
+	* pendingUnificationStack.cc (PendingUnificationStack): don't
+	initialize incompleteFlag anymore
+
+	* pendingUnificationStack.hh (SimpleRootContainer): replace
+	incompleteFlag with incompleteSymbols
+	(flagAsIncomplete): take argument; use incompleteSymbols
+	(isIncomplete): use incompleteSymbols
+
+2015-08-05  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pendingUnificationStack.cc (chooseTheoryToSolve): make use of
+	unficationPriority() in decided which theory to return
+
+2015-07-31  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pendingUnificationStack.cc (makeNewSubproblem): use
+	chooseTheoryToSolve()
+
+	* pendingUnificationStack.hh (SimpleRootContainer): added decl for
+	chooseTheoryToSolve() 
+
+	* pendingUnificationStack.cc (solve2): deleted commented out code
+	(chooseTheoryToSolve): added
+
+2015-07-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pendingUnificationStack.cc (PendingUnificationStack): initialize
+	incompleteFlag
+
+2015-07-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* pendingUnificationStack.hh (SimpleRootContainer): added data
+	member incompletenessFlag
+	(flagAsIncomplete, isIncomplete): added
+
+===================================Maude108===========================================
+
+2014-06-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* sortTable.hh (getRangeSort): added
+
+2014-05-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* connectedComponent.hh: added decl for operator<<
+
+===================================Maude103===========================================
+
 2014-02-27  Steven Eker  <eker@ape.csl.sri.com>
 
 	* run.cc (ruleRewrite): removed debugging code that was producing

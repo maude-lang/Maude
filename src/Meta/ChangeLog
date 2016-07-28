@@ -1,3 +1,272 @@
+2016-05-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* descentFunctions.cc (metaCheck): call normalize() and markEager()
+	before dagifying term
+	(metaCheck): don't bother with markEager()
+
+===================================Maude110===========================================
+
+2016-02-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaUp.cc (upVariant): fix arg vector size
+
+	* metaVariant.cc (metaGetVariant2): use new getNextVariant() interface
+
+2016-02-03  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaVariant.cc (metaGetVariant2): pass 2 dummy args to upVariant() for
+	the moment
+
+	* metaLevel.hh (M): updated decl for upVariant()
+
+	* metaUp.cc (upVariant): handle parentIndex and moreInLayer flag
+
+2016-01-29  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaLevelSignature.cc: added noParentSymbol; updated
+	variantSymbol
+
+===================================Maude109===========================================
+
+2015-08-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (metaGetVariant2): fix a bug where we were
+	passing the irredundant flag as the unificationMode argument with
+	resulting chaos in the metaGetIrredundantVariant() case
+	(metaVariantUnify2): don't rely on default value for last argument
+	of VariantSearch()
+
+2015-08-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaLevel.hh (M): updated decl for upNoVariant()
+
+	* metaUp.cc (upNoVariant): handle incomplete flag
+
+	* metaVariant.cc (metaVariantUnify2): pass incomplete flag to
+	upNoUnifierTriple() and upNoUnifierPair()
+	(metaGetVariant2): pass incomplete flag to upNoVariant()
+
+	* metaLevelSignature.cc: added noVariantIncompleteSymbol
+
+2015-07-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaUnify.cc (metaUnify2): pass incomplete flag to
+	upNoUnifierTriple() and upNoUnifierPair()
+
+	* metaUp.cc (upNoUnifierPair, upNoUnifierTriple): handle
+	incomplete flag
+
+	* metaLevel.hh (M): updated decls for upNoUnifierPair() and
+	upNoUnifierTriple()
+
+	* metaLevelSignature.cc: added noUnifierIncompletePairSymbol and
+	noUnifierIncompleteTripleSymbol
+
+===================================Maude108===========================================
+
+2015-02-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (getCachedVariantSearch): revert, now that we
+	have a way of getting last returned variant/unifier
+	(metaGetVariant2): use getLastReturnedVariant()
+	(metaVariantUnify2): use getLastReturnedUnifier()
+
+2015-01-05  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (getCachedVariantSearch): fix bug where we were
+	returning a cached state where lastSolutionNr < solutionNr even
+	though the code that uses the state doens't seem to be able to
+	handle this case
+
+===================================Maude106===========================================
+
+2014-11-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaUnify.cc (metaUnify2): use DebugAdvisory()
+
+	* metaVariant.cc (metaVariantUnify2, metaGetVariant2): use
+	DebugAdvisory()
+
+===================================Maude106===========================================
+
+2014-10-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaSearch.cc (makeSMT_RewriteSequenceSearch): check that search
+	type isn't =>!
+	(getCachedSMT_RewriteSequenceSearch): use getRootContext() to
+	patch potentially state parent pointer
+
+2014-10-28  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaLevelOpSymbol.hh (FreeSymbol):
+	getCachedSMT_RewriteSearchState() ->
+	getCachedSMT_RewriteSequenceSearch()
+	(FreeSymbol): makeSMT_RewriteSearchState() ->
+	makeSMT_RewriteSequenceSearch()
+
+	* metaSearch.cc (getCachedSMT_RewriteSearchState): becomes
+	getCachedSMT_RewriteSequenceSearch()
+	(metaSmtSearch): rewritten
+	(makeSMT_RewriteSearchState): becomes 
+
+2014-10-27  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaLevel.hh (M): added decl for upSmtSubstitution(); updated
+	decl for upSmtResult()
+
+	* metaUp.cc (upSmtResult): new 4 arg value
+	(upSmtSubstitution): created
+
+	* metaLevelSignature.cc: updated nr args for smtResultSymbol
+
+	* descentSignature.cc: updated metaSmtSearch nr args
+
+2014-09-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaSearch.cc (makeSMT_RewriteSearchState): pass
+	VariableGenerator object to SMT_RewriteSearchState by pointer
+	rather than reference
+
+===================================Maude105===========================================
+
+2014-09-26  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaSearch.cc (makeSMT_RewriteSearchState): new
+	SMT_RewriteSearchState ctor convention
+	(metaSmtSearch): use getMaxVariableNumber() instead of
+	getNextVariableNumber()
+	(metaSmtSearch): call validForSMT_Rewriting()
+
+2014-09-25  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaVariant.cc (metaVariantUnify2): check solutionNr >= 0
+	(getCachedVariantSearch): don't check solutionNr > 0
+
+	* metaNarrow.cc (getCachedNarrowingSequenceSearch): don't check
+	solutionNr > 0
+
+	* metaApply.cc (metaXapply, metaApply): check solutionNr >= 0
+	(getCachedRewriteSearchState): don't check solutionNr > 0; fix
+	comment about context adoption
+
+	* metaMatch.cc (metaMatch): check solutionNr >= 0
+	(getCachedMatchSearchState): don't check solutionNr > 0; fix
+	comment about context adoption
+
+	* metaUnify.cc (metaUnify2): check solutionNr >= 0
+	(getCachedUnificationProblem): don't check solutionNr > 0
+
+	* metaSearch.cc (getCachedRewriteSequenceSearch): allow retrieval
+	of solution number 0 and allow retrieval of solution number equal
+	to the wanted solution number
+	(getCachedRewriteSequenceSearch): don't test for solutionNr >= 0
+	since caller checks this
+	(getCachedSMT_RewriteSearchState): don't test for solutionNr >= 0;
+	use <= for lastSolutionNr check
+	(getCachedSMT_RewriteSearchState): adopt context from cachedState
+	to avoid stale parent pointer
+
+2014-09-24  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaSearch.cc (makeSMT_RewriteSearchState): pass extra args to
+	SMT_RewriteSearchState()
+	(makeSMT_RewriteSearchState, getCachedSMT_RewriteSearchState):
+	added DebugAdvisory()s
+
+2014-09-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaLevel.hh (M): added declarations for upSmtResult() and
+	upSmtFailure()
+
+	* metaUp.cc (upSmtFailure): added
+	(upSmtResult): added
+
+	* metaLevelOpSymbol.hh (FreeSymbol): added decls for
+	getCachedSMT_RewriteSearchStat() and
+	makeSMT_RewriteSearchState()
+
+	* metaSearch.cc (getCachedSMT_RewriteSearchState): added
+	(makeSMT_RewriteSearchState): added
+
+2014-09-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaSearch.cc (metaSmtSearch): added stub
+
+	* descentSignature.cc: added metaSmtSearch
+
+	* metaLevelSignature.cc: added smtResultSymbol and
+	smtFailureSymbol
+
+2014-09-10  Steven Eker  <eker@ape.csl.sri.com>
+
+	* descentFunctions.cc (metaDownTerm): rewritten using new
+	VariableGenerator semantics
+
+2014-08-11  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaDown.cc (downTerm): use SMT_Info rather SMT_Base
+
+	* descentFunctions.cc (metaCheck): use smtInfo rather than sortMap
+
+2014-07-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* descentFunctions.cc (metaCheck): rewritten using VariableGenerator
+
+2014-07-01  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaDown.cc (downPrintListItem): commented out IssueAdvisory()
+	since downType2() already does this
+	(downTerm): (2 places) commented out IssueAdvisory() since
+	downType2() already does this
+
+===================================Maude104===========================================
+
+2014-06-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* descentFunctions.cc (metaCheck): deleted commented out code
+	(metaCheck): use QUOTE() in advisories
+
+2014-06-03  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaUp.cc (upSMT_Number): use getRangeSort()
+
+	* descentFunctions.cc (metaCheck): use getRangeSort()
+
+2014-05-21  Steven Eker  <eker@ape.csl.sri.com>
+
+	* descentFunctions.cc (metaCheck): fix memory leak if we return
+	early
+
+2014-05-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* descentFunctions.cc (metaCheck): implemented
+	(metaCheck): added check for null Expr and advisories
+	(metaCheck): deepSelfDestruct() term
+
+	* descentSignature.cc: added metaCheck
+
+	* descentFunctions.cc (metaCheck): added stub
+
+2014-05-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaLevel.hh (M): added decl for upSMT_Number()
+
+	* metaUp.cc (upDagNode): added SMT_NUMBER_SYMBOL case
+	(upTerm): added SMT_NUMBER_SYMBOL case
+	(upSMT_Number): added
+
+2014-05-16  Steven Eker  <eker@ape.csl.sri.com>
+
+	* descentFunctions.cc (metaDownTerm): output advisory when term is
+	in the wrong kind
+
+2014-05-15  Steven Eker  <eker@ape.csl.sri.com>
+
+	* metaDown.cc (downTerm): added cases for SMT integers and reals
+	(downTerm): need to capture ZERO case as well
+
+===================================Maude103===========================================
+
 2014-03-03  Steven Eker  <eker@ape.csl.sri.com>
 
 	* metaLevelOpSymbol.hh (FreeSymbol): added decl for metaGetVariant2()

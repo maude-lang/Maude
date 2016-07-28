@@ -23,7 +23,7 @@
 %%
 
 static void
-yyerror(char *s)
+yyerror(UserLevelRewritingContext::ParseResult* /*parseResult*/, char *s)
 {
   if (!(UserLevelRewritingContext::interrupted()))
     IssueWarning(LineNumber(lineNumber) << ": " << s);

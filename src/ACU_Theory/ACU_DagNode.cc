@@ -501,6 +501,7 @@ ACU_DagNode::computeBaseSortForGroundSubterms()
   if (ground)
     {
       s->computeBaseSort(this);
+      setGround();
       return GROUND;
     }
   return NONGROUND;

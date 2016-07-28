@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/meseguerFiniteVariant.maude -no-banner -no-advise \
+  > meseguerFiniteVariant.out 2>&1
+
+diff $srcdir/meseguerFiniteVariant.expected meseguerFiniteVariant.out > /dev/null 2>&1

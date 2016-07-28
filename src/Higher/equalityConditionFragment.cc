@@ -134,6 +134,18 @@ EqualityConditionFragment::solve(bool findFirst,
   return success;
 }
 
+void
+EqualityConditionFragment::buildInstances(Substitution& substitution, DagNode*& lhs, DagNode*& rhs)
+{
+  //
+  //	Equality fragments have a very different operational semantics when rewriting module SMT.
+  //	All we do here is return the instantiated lhs and rhs terms.
+  //
+  builder.safeConstruct(substitution);
+  lhs = substitution.value(lhsIndex);
+  rhs = substitution.value(rhsIndex);
+}
+
 #ifdef DUMP
 void
 EqualityConditionFragment::dump(ostream& s, const VariableInfo& variableInfo, int indentLevel)

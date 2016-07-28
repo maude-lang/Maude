@@ -1,3 +1,62 @@
+2016-06-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Misc/smtTest (MAUDE_LIB): skip test if we don't define USE_CVC4
+
+	* configure.ac: use no argument form of AM_INIT_AUTOMAKE
+
+===================================Maude110b===========================================
+
+2016-05-05  Steven Eker  <eker@install.csl.sri.com>
+
+	* configure.ac: changed bug report address from maude-bugs@maude.cs.uiuc.edu
+	to maude-bugs@lists.cs.illinois.edu
+
+===================================Maude110===========================================
+
+2016-02-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Misc/meseguerFiniteVariant.maude: created
+
+	* tests/Misc/meseguerFiniteVariant: created
+
+===================================Maude109===========================================
+
+2014-11-19  Steven Eker  <eker@ape.csl.sri.com>
+
+	* tests/Misc/assocUnification.maude: added examples to test new capabilities
+
+===================================Maude106===========================================
+
+2014-10-29  Steven Eker  <eker@ape.csl.sri.com>
+
+	* tests/Misc/smtTest.maude: updated with new syntax and examples
+
+===================================Maude105===========================================
+
+2014-08-14  Steven Eker  <eker@ape.csl.sri.com>
+
+	* tests/Misc/smtTest.maude: use new syntax
+
+===================================Maude104===========================================
+
+2014-04-22  Steven Eker  <eker@ape.csl.sri.com>
+
+	* configure.ac: added configuration for CVC4 and POSIX Realtime
+	Extensions library (needed by CVC4)
+
+===================================Maude103===========================================
+
+2014-04-04  Steven Eker  <eker@ape.csl.sri.com>
+
+	* tests/Misc/assocUnification (MAUDE_LIB): created
+
+	* tests/Misc/assocUnification.maude: created
+
+	* tests/Misc/unification.maude: change assoc to assoc id: in TEST2
+	since assoc is now partially supported
+
+===================================Maude102===========================================
+
 2014-02-06  Steven Eker  <eker@ape.csl.sri.com>
 
 	* configure.ac: removed rope_UGLY_HACK option

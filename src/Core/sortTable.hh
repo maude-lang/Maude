@@ -50,6 +50,7 @@ public:
   const Vector<OpDeclaration>& getOpDeclarations() const;
   /* const */ ConnectedComponent* rangeComponent() const;
   const ConnectedComponent* domainComponent(int argNr) const;
+  Sort* getRangeSort() const;
   Sort* getSingleNonErrorSort() const;
   int getCtorStatus() const;
   virtual void compileOpDeclarations();
@@ -67,6 +68,11 @@ public:
 				      const Vector<int>& realToBdd,  // first BDD variable for each free real variable
 				      DagNode* subject,
 				      Vector<Bdd>& generalizedSort) { CantHappen("not implemented"); }
+
+  virtual void computeGeneralizedSort2(const SortBdds& sortBdds,
+				       const Vector<int>& realToBdd,  // first BDD variable for each free real variable
+				       DagNode* subject,
+				       Vector<Bdd>& generalizedSort) { CantHappen("not implemented"); }
 
 #ifdef COMPILER
   void generateSortDiagram(CompilationContext& context) const;
@@ -169,6 +175,17 @@ inline /* const */ ConnectedComponent*
 SortTable::rangeComponent() const
 {
   return opDeclarations[0].getDomainAndRange()[nrArgs]->component();
+}
+
+inline Sort*
+SortTable::getRangeSort() const
+{
+  //
+  //	If an operator has been declared with multiple range sort, this
+  //	function just returns the first, which is good enough for some
+  //	purposes.
+  //
+  return opDeclarations[0].getDomainAndRange()[nrArgs];
 }
 
 inline const ConnectedComponent*

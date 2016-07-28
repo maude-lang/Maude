@@ -150,6 +150,12 @@ MetaLevel::upDagNode(DagNode* dagNode,
 	d = upConstant(Token::doubleToCode(mf), dagNode, qidMap);
 	break;
       }
+    case SymbolType::SMT_NUMBER_SYMBOL:
+      {
+	const mpq_class& value = safeCast(SMT_NumberDagNode*, dagNode)->getValue();
+	d = upSMT_Number(value, s, m, qidMap);
+	break;
+      }
     case SymbolType::VARIABLE:
       {
 	VariableDagNode* v = safeCast(VariableDagNode*, dagNode);
@@ -219,6 +225,11 @@ MetaLevel::upTerm(const Term* term, MixfixModule* m, PointerMap& qidMap)
       {
 	double mf = static_cast<const FloatTerm*>(term)->getValue();
 	return upConstant(Token::doubleToCode(mf), MixfixModule::disambiguatorSort(term), qidMap);
+      }
+    case SymbolType::SMT_NUMBER_SYMBOL:
+      {
+	const mpq_class& value = safeCast(const SMT_NumberTerm*, term)->getValue();
+	return upSMT_Number(value, s, m, qidMap);
       }
     case SymbolType::VARIABLE:
       {
@@ -518,6 +529,72 @@ MetaLevel::upAssignment(DagNode* variable,
 }
 
 DagNode*
+MetaLevel::upSmtSubstitution(const Substitution& substitution,
+			     const VariableInfo& variableInfo,
+			     const NatSet& smtVariables,
+			     MixfixModule* m,
+			     PointerMap& qidMap,
+			     PointerMap& dagNodeMap)
+{
+  int nrVariables = variableInfo.getNrRealVariables();
+  Vector<DagNode*> args;
+
+  for (int i = 0; i < nrVariables; i++)
+    {
+      //
+      //	SMT variables are constrained rather than bound.
+      //
+      if (!smtVariables.contains(i))
+	{
+	  args.append(upAssignment(variableInfo.index2Variable(0),
+				   substitution.value(0),
+				   m,
+				   qidMap,
+				   dagNodeMap));
+	}
+    }
+
+  int nrBindings = args.size();
+  if (nrBindings == 0)
+    return emptySubstitutionSymbol->makeDagNode();
+  if (nrBindings == 1)
+    return args[0];
+  return substitutionSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upSmtResult(DagNode* state,
+		       const Substitution& substitution,
+		       const VariableInfo& variableInfo,
+		       const NatSet& smtVariables,
+		       DagNode* constraint,
+		       const mpz_class& variableNumber,
+		       MixfixModule* m)
+{
+  Assert(state != 0, "null state");
+  Assert(constraint != 0, "null constraint");
+  Vector<DagNode*> args(4);
+  PointerMap qidMap;
+  PointerMap dagNodeMap;
+  args[0] = upDagNode(state, m, qidMap, dagNodeMap);
+  args[1] = upSmtSubstitution(substitution,
+			     variableInfo,
+			     smtVariables,
+			     m,
+			     qidMap,
+			      dagNodeMap);
+  args[2] = upDagNode(constraint, m, qidMap, dagNodeMap);
+  args[3] = succSymbol->makeNatDag(variableNumber);
+  return smtResultSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upSmtFailure()
+{
+  return smtFailureSymbol->makeDagNode();
+}
+
+DagNode*
 MetaLevel::upFailurePair()
 {
   return failure2Symbol->makeDagNode();
@@ -530,15 +607,15 @@ MetaLevel::upFailureTriple()
 }
 
 DagNode*
-MetaLevel::upNoUnifierPair()
+MetaLevel::upNoUnifierPair(bool incomplete)
 {
-  return noUnifierPairSymbol->makeDagNode();
+  return (incomplete ? noUnifierIncompletePairSymbol : noUnifierPairSymbol)->makeDagNode();
 }
 
 DagNode*
-MetaLevel::upNoUnifierTriple()
+MetaLevel::upNoUnifierTriple(bool incomplete)
 {
-  return noUnifierTripleSymbol->makeDagNode();
+  return (incomplete ? noUnifierIncompleteTripleSymbol : noUnifierTripleSymbol)->makeDagNode();
 }
 
 DagNode*
@@ -845,21 +922,34 @@ DagNode*
 MetaLevel::upVariant(const Vector<DagNode*>& variant, 
 		     const NarrowingVariableInfo& variableInfo,
 		     const mpz_class& variableIndex,
+		     const mpz_class& parentIndex,
+		     bool moreInLayer,
 		     MixfixModule* m)
 {
   PointerMap qidMap;
   PointerMap dagNodeMap;
-  Vector<DagNode*> args(3);
+  Vector<DagNode*> args(5);
 
   int nrVariables = variant.size() - 1;
   args[0] = upDagNode(variant[nrVariables], m, qidMap, dagNodeMap);
   args[1] = upSubstitution(variant, variableInfo, nrVariables, m, qidMap, dagNodeMap);
   args[2] = succSymbol->makeNatDag(variableIndex);
+  args[3] = (parentIndex >= 0) ? succSymbol->makeNatDag(parentIndex) :
+    noParentSymbol->makeDagNode();
+  args[4] = upBool(moreInLayer);
   return variantSymbol->makeDagNode(args);
 }
 
 DagNode*
-MetaLevel::upNoVariant()
+MetaLevel::upNoVariant(bool incomplete)
 {
-  return noVariantSymbol->makeDagNode();
+  return (incomplete ? noVariantIncompleteSymbol : noVariantSymbol)->makeDagNode();
+}
+
+DagNode*
+MetaLevel::upSMT_Number(const mpq_class& value, Symbol* symbol, MixfixModule* m, PointerMap& qidMap)
+{
+  Sort* sort = symbol->getRangeSort();
+  int id = m->getSMT_NumberToken(value, sort);
+  return upJoin(id, sort, '.', qidMap);
 }

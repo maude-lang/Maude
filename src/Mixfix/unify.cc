@@ -81,6 +81,8 @@ Interpreter::doUnification(Timer& timer,
 	      printDecisionTime(timer);
 	      cout << "No unifier.\n";
 	    }
+	  if (problem->isIncomplete())
+	    IssueWarning("Some unifiers may have been missed due to incomplete unification algorithm(s).");
 	  break;
 	}
 

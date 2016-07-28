@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -221,6 +221,48 @@ MixfixModule::handleVariable(ostream& s,
 }
 
 void
+MixfixModule::handleSMT_Number(ostream& s,
+			       Term* term,
+			       bool rangeKnown,
+			       const char* color)
+{
+  //
+  //	Get value.
+  //
+  SMT_NumberTerm* n = safeCast(SMT_NumberTerm*, term);
+  const mpq_class& value = n->getValue();
+  //
+  //	Look up the index of our sort.
+  //
+  Symbol* symbol = term->symbol();
+  Sort* sort = symbol->getRangeSort();
+  //
+  //	Figure out what SMT sort we correspond to.
+  //
+  SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
+  Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
+  if (t == SMT_Info::INTEGER)
+    {
+      const mpz_class& integer = value.get_num();
+      bool needDisambig = !rangeKnown &&
+	(kindsWithSucc.size() > 1 || overloadedIntegers.count(integer));
+      prefix(s, needDisambig, color);
+      s << integer;
+      suffix(s, term, needDisambig, color);
+    }
+  else
+    {
+      Assert(t == SMT_Info::REAL, "SMT number sort expected");
+      pair<mpz_class, mpz_class> rat(value.get_num(), value.get_den());
+      bool needDisambig = !rangeKnown &&
+	(kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
+      prefix(s, needDisambig, color);
+      s << rat.first << '/' << rat.second;
+      suffix(s, term, needDisambig, color);
+    }
+}
+
+void
 MixfixModule::prettyPrint(ostream& s,
 			  Term* term,
 			  int requiredPrec,
@@ -276,6 +318,11 @@ MixfixModule::prettyPrint(ostream& s,
 	handleVariable(s, term, rangeKnown, color);
 	return;
       }
+    case SymbolType::SMT_NUMBER_SYMBOL:
+      {
+	handleSMT_Number(s, term, rangeKnown, color);
+	return;
+      }
     default:
       break;
     }
@@ -284,14 +331,16 @@ MixfixModule::prettyPrint(ostream& s,
   //
   int iflags = si.iflags;
   bool needDisambig = !rangeKnown && ambiguous(iflags);
-  bool argRangeKnown = !(iflags & ADHOC_OVERLOADED) ||
-    (!(iflags & RANGE_OVERLOADED) && (rangeKnown || needDisambig));
+  bool argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
   int nrArgs = symbol->arity();
   if (needDisambig)
     s << '(';
   if ((interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX) && si.mixfixSyntax.length() != 0) ||
       basicType == SymbolType::SORT_TEST)
     {
+      //
+      //	Mixfix case.
+      //
       bool printWithParens = interpreter.getPrintFlag(Interpreter::PRINT_WITH_PARENS);
       bool needParen = !needDisambig &&
 	(printWithParens || requiredPrec < si.prec ||
@@ -359,6 +408,9 @@ MixfixModule::prettyPrint(ostream& s,
     }
   else
     {
+      //
+      //	Prefix case.
+      //
       const char* prefixName = Token::name(symbol->id());
       if (color != 0)
 	s << color << prefixName << Tty(Tty::RESET);

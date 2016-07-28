@@ -30,7 +30,7 @@ class CacheableState
 {
 public:
   //
-  //	The only thing a cache needs to be able to do with a state is delete it.
+  //	A cache needs to be able to delete a state.
   //
   virtual ~CacheableState() {};
 };

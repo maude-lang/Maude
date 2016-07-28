@@ -1,3 +1,37 @@
+2016-03-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeSymbol.hh (Symbol): added decl for computeGeneralizedSort2()
+
+	* freeSymbol.cc (computeGeneralizedSort2): replaces outputIterator
+	version of computeGeneralizedSort()
+
+2016-03-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeSymbol.cc (computeGeneralizedSort): added outputIterator
+	version
+
+===================================Maude110===========================================
+
+2015-12-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeDagArgumentIterator.hh (_freeDagArgumentIterator_hh_): fixed
+	type in guard #define
+
+===================================Maude108===========================================
+
+2015-09-18  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeArgumentIterator.hh (_freeArgumentIterator_hh_): fixed
+	define guard
+
+2015-08-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* freeSymbol.hh (Symbol): added dec for unificationPriority()
+
+	* freeSymbol.cc (unificationPriority): added
+
+===================================Maude108===========================================
+
 2014-02-13  Steven Eker  <eker@ape.csl.sri.com>
 
 	* freeRhsAutomaton.cc (recordInfo): don't pass needContiguous

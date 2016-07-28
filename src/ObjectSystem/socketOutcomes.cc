@@ -90,7 +90,7 @@ SocketManagerSymbol::receivedMsgReply(char buffer[],
 				      FreeDagNode* originalMessage,
 				      ObjectSystemRewritingContext& context)
 {
-  crope text(buffer, length);
+  Rope text(buffer, length);
   Vector<DagNode*> reply(3);
   reply[1] = originalMessage->getArgument(0);
   reply[2] = new StringDagNode(stringSymbol, text);

@@ -1,3 +1,53 @@
+2016-05-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_UnificationSubproblem2.cc (addUnification): check for subtermIndex
+	!= NONE
+	(setMultiplicity): check for variable bound to identity; this fixes
+	a bug introduced in Maude108 where classify assumes such things
+	have already canceled
+
+===================================Maude110===========================================
+
+2016-05-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_Symbol.cc (computeGeneralizedSort2): fixed nasty FMR bug
+	where we were appending a reference to the same Vector which
+	became stale if the append forced reallocation
+
+2016-03-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_Symbol.cc (computeGeneralizedSort2): rewritten
+
+2016-03-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_Symbol.cc (computeGeneralizedSort2): added
+
+===================================Maude110===========================================
+
+2015-08-07  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_Symbol.cc (unificationPriority): make ACU have a lower
+	priority than AC
+
+2015-07-31  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_UnificationSubproblem2.cc (classify): handle ground aliens
+	specially
+
+2015-07-30  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_DagNode.cc (computeBaseSortForGroundSubterms): call
+	setGround() in the ground case
+
+===================================Maude108===========================================
+
+2014-06-20  Steven Eker  <eker@ape.csl.sri.com>
+
+	* ACU_UnificationSubproblem2.cc (solve): added comment with new
+	insight into why solved forms must be unsolved
+
+===================================Maude104===========================================
+
 2013-02-28  Steven Eker  <eker@ape.csl.sri.com>
 
 	* ACU_UnificationSubproblem2.cc (addUnification): call killCancelledSubterms()

@@ -37,6 +37,7 @@
 #include "strategyLanguage.hh"
 #include "mixfix.hh"
 #include "objectSystem.hh"
+#include "SMT.hh"
 
 //      interface class definitions
 #include "symbol.hh"

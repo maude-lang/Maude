@@ -33,24 +33,21 @@ MetaLevelOpSymbol::getCachedVariantSearch(MetaModule* m,
 					  VariantSearch*& search,
 					  Int64& lastSolutionNr)
 {
-  if (solutionNr > 0)
+  CacheableState* cachedState;
+  if (m->remove(subject, cachedState, lastSolutionNr))
     {
-      CacheableState* cachedState;
-      if (m->remove(subject, cachedState, lastSolutionNr))
+      if (lastSolutionNr <= solutionNr)
 	{
-	  if (lastSolutionNr <= solutionNr)
-	    {
-	      search = safeCast(VariantSearch*, cachedState);
-	      //
-	      //	The parent context pointer of the root context in the VariantSearch is possibly
-	      //	stale since it points the context from a different descent function call.
-	      //
-	      safeCast(UserLevelRewritingContext*, search->getContext())->
-		beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
-	      return true;
-	    }
-	  delete cachedState;
+	  search = safeCast(VariantSearch*, cachedState);
+	  //
+	  //	The parent context pointer of the root context in the VariantSearch is possibly
+	  //	stale since it points the context from a different descent function call.
+	  //
+	  safeCast(UserLevelRewritingContext*, search->getContext())->
+	    beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
+	  return true;
 	}
+      delete cachedState;
     }
   return false;
 }
@@ -58,6 +55,7 @@ MetaLevelOpSymbol::getCachedVariantSearch(MetaModule* m,
 bool
 MetaLevelOpSymbol::metaGetVariant2(FreeDagNode* subject, RewritingContext& context, bool irredundant)
 {
+  DebugAdvisory(Tty(Tty::CYAN) << "meta variant call: " << Tty(Tty::GREEN) << (DagNode*) subject << Tty(Tty::RESET));
   //
   //	We handle both metaGenerateVariant() and metaGenerateIrredundantVariant().
   //
@@ -66,8 +64,7 @@ MetaLevelOpSymbol::metaGetVariant2(FreeDagNode* subject, RewritingContext& conte
       DagNode* metaVarIndex = subject->getArgument(3);
       Int64 solutionNr;
       if (metaLevel->isNat(metaVarIndex) &&
-	  metaLevel->downSaturate64(subject->getArgument(4), solutionNr) &&
-	  solutionNr >= 0)
+	  metaLevel->downSaturate64(subject->getArgument(4), solutionNr) && solutionNr >= 0)
 	{
 	  const mpz_class& varIndex = metaLevel->getNat(metaVarIndex);
 	  VariantSearch* vs;
@@ -92,7 +89,7 @@ MetaLevelOpSymbol::metaGetVariant2(FreeDagNode* subject, RewritingContext& conte
 		      blockerDags.append(t->term2Dag());
 		      t->deepSelfDestruct();
 		    }
-		  vs = new VariantSearch(startContext, blockerDags, new FreshVariableSource(m, varIndex), irredundant);
+		  vs = new VariantSearch(startContext, blockerDags, new FreshVariableSource(m, varIndex), false, irredundant);
 		  lastSolutionNr = -1;
 		}
 	      else
@@ -102,24 +99,39 @@ MetaLevelOpSymbol::metaGetVariant2(FreeDagNode* subject, RewritingContext& conte
 	  DagNode* result;
 	  const Vector<DagNode*>* variant;
 	  int nrFreeVariables;
-	  Assert(lastSolutionNr < solutionNr, "bad solution number");
-	  while (lastSolutionNr < solutionNr)
-	    {
-	      variant = vs->getNextVariant(nrFreeVariables);
-	      if (variant == 0)
-		{
-		  delete vs;
-		  result = metaLevel->upNoVariant();
-		  goto fail;
-		}
+	  int parentIndex = -1;  // dummy
+	  bool moreInLayer = false;  // dummy
 
-	      context.transferCount(*(vs->getContext()));
-	      ++lastSolutionNr;
+	  if (lastSolutionNr == solutionNr)
+	    {
+	      //
+	      //	So the user can ask for the same variant over and over again without
+	      //	a horrible loss of performance.
+	      //
+	      variant = vs->getLastReturnedVariant(nrFreeVariables, parentIndex, moreInLayer);
+	    }
+	  else
+	    {
+	      while (lastSolutionNr < solutionNr)
+		{
+		  variant = vs->getNextVariant(nrFreeVariables, parentIndex, moreInLayer);
+		  if (variant == 0)
+		    {
+		      bool incomplete = vs->isIncomplete();
+		      delete vs;
+		      result = metaLevel->upNoVariant(incomplete);
+		      goto fail;
+		    }
+		  
+		  context.transferCount(*(vs->getContext()));
+		  ++lastSolutionNr;
+		}
 	    }
 	  {
 	    m->insert(subject, vs, solutionNr);
 	    mpz_class lastVarIndex = varIndex + nrFreeVariables;
-	    result = metaLevel->upVariant(*variant, vs->getVariableInfo(), lastVarIndex, m);
+	    mpz_class parentIndexBig(parentIndex);
+	    result = metaLevel->upVariant(*variant, vs->getVariableInfo(), lastVarIndex, parentIndexBig, moreInLayer, m); // dummy args
 	  }
 	fail:
 	  (void) m->unprotect();
@@ -150,6 +162,7 @@ MetaLevelOpSymbol::metaGetIrredundantVariant(FreeDagNode* subject, RewritingCont
 bool
 MetaLevelOpSymbol::metaVariantUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint)
 {
+  DebugAdvisory(Tty(Tty::CYAN) << "meta variant unify call: " << Tty(Tty::GREEN) << (DagNode*) subject << Tty(Tty::RESET));
   //
   //	We handle both metaVariantUnify() and metaVariantDisjointUnify().
   //
@@ -158,7 +171,7 @@ MetaLevelOpSymbol::metaVariantUnify2(FreeDagNode* subject, RewritingContext& con
       Int64 solutionNr;
       DagNode* metaVarIndex = subject->getArgument(3);
       if (metaLevel->isNat(metaVarIndex) &&
-	  metaLevel->downSaturate64(subject->getArgument(4), solutionNr))
+	  metaLevel->downSaturate64(subject->getArgument(4), solutionNr) && solutionNr >= 0)
 	{
 	  const mpz_class& varIndex = metaLevel->getNat(metaVarIndex);
 	  VariantSearch* vs;
@@ -194,26 +207,37 @@ MetaLevelOpSymbol::metaVariantUnify2(FreeDagNode* subject, RewritingContext& con
 		  blockerDags.append(t->term2Dag());
 		  t->deepSelfDestruct();
 		}
-	      vs = new VariantSearch(startContext, blockerDags, new FreshVariableSource(m, varIndex), true);
+	      vs = new VariantSearch(startContext, blockerDags, new FreshVariableSource(m, varIndex), true, false);
 	      lastSolutionNr = -1;
 	    }
 
 	  DagNode* result;
 	  const Vector<DagNode*>* unifier;
 	  int nrFreeVariables;
-	  Assert(lastSolutionNr < solutionNr, "bad solution number");
-	  while (lastSolutionNr < solutionNr)
+	  if (lastSolutionNr == solutionNr)
 	    {
-	      unifier = vs->getNextUnifier(nrFreeVariables);
-	      if (unifier == 0)
+	      //
+	      //	So the user can ask for the same unifier over and over again without
+	      //	a horrible loss of performance.
+	      //
+	      unifier = vs->getLastReturnedUnifier(nrFreeVariables);
+	    }
+	  else
+	    {
+	      while (lastSolutionNr < solutionNr)
 		{
-		  delete vs;
-		  result = disjoint ? metaLevel->upNoUnifierTriple() : metaLevel->upNoUnifierPair();
-		  goto fail;
-		}
+		  unifier = vs->getNextUnifier(nrFreeVariables);
+		  if (unifier == 0)
+		    {
+		      bool incomplete = vs->isIncomplete();
+		      delete vs;
+		      result = disjoint ? metaLevel->upNoUnifierTriple(incomplete) : metaLevel->upNoUnifierPair(incomplete);
+		      goto fail;
+		    }
 
-	      context.transferCount(*(vs->getContext()));
-	      ++lastSolutionNr;
+		  context.transferCount(*(vs->getContext()));
+		  ++lastSolutionNr;
+		}
 	    }
 	  {
 	    m->insert(subject, vs, solutionNr);

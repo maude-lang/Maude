@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -170,18 +170,18 @@ VariableDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, 
   return rhs->computeSolvedForm2(this, solution, pending);
 }
 
-
 bool
 VariableDagNode::safeVirtualReplacement(VariableDagNode* oldVar, VariableDagNode* newVar, UnificationContext& solution, PendingUnificationStack& pending)
 {
   //
-  //	We want to replace all occurrences of oldVar by newVar. We assume oldVar is unbound
-  //	(or has a binding which can be ignored) and newVar is the last variable in its chain.
+  //	We want to replace all occurrences of oldVar by newVar. We assume oldVar is the last
+  //	variable in its chain and is unbound (or has a binding which can be ignored because the
+  //	caller is dealing with it) and newVar is the last variable in its chain.
   //	We do this by binding oldVar to newVar and since whenever we access a variable,
   //	we look for the last variable in the chain, accessing oldVar will give us newVar.
   //
   //	There is however a problem. If newVar is bound and its binding contains oldVar
-  //	(or a variable equivalent to it) we gererate an implicit occur check issue. We
+  //	(or a variable equivalent to it) we generate an implicit occur check issue. We
   //    could un-solve and re-solve its binding, but if there is no occur check issue,
   //	re-solving could give us a similar variable replacement problem, also resulting in
   //	non-termination.

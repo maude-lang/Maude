@@ -33,6 +33,7 @@
 #include "vector.hh"
 #include "tty.hh"
 
+
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
@@ -131,6 +132,8 @@ main(int argc, char* argv[])
 	    handleCtrlC = false;
 	  else if (strcmp(arg, "-interactive") == 0)
 	    forceInteractive = true;
+	  else if (strcmp(arg, "-print-to-stderr") == 0)
+	    UserLevelRewritingContext::setPrintAttributeStream(&cerr);
 	  else
 	    {
 	      IssueWarning(LineNumber(FileTable::COMMAND_LINE) <<
@@ -173,6 +176,11 @@ main(int argc, char* argv[])
 	  isatty(STDIN_FILENO) == 0)
 	useTecla = false;
     }
+
+  //
+  //	Make sure we flush cout before we output any error messages so things hit the tty in a consistent order.
+  //
+  (void) cerr.tie(&cout);
 
   if (outputBanner)
     printBanner(cout);
@@ -228,7 +236,7 @@ printHelp(const char* name)
     "  -no-prelude\t\tDo not read in the standard prelude\n" <<
     "  -no-banner\t\tDo not output banner on startup\n" <<
     "  -no-advise\t\tNo advisories on startup\n" <<
-    "  -always-advise\t\tAlways show advisories regardless" <<
+    "  -always-advise\tAlways show advisories regardless\n" <<
     "  -no-mixfix\t\tDo not use mixfix notation for output\n" <<
     "  -no-wrap\t\tDo not automatic line wrapping for output\n" <<
     "  -ansi-color\t\tUse ANSI control sequences\n" <<
@@ -237,6 +245,7 @@ printHelp(const char* name)
     "  -no-tecla\t\tDo not use tecla command line editing\n" <<
     "  -batch\t\tRun in batch mode\n" <<
     "  -interactive\t\tRun in interactive mode\n" <<
+    "  -print-to-stderr\tPrint attribute should use stderr rather than stdout\n" <<
     "  -random-seed=<int>\tSet seed for random number generator\n" <<
     "  -xml-log=<filename>\tSet file in which to produce an xml log\n" <<
     "\n" <<

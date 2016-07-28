@@ -50,7 +50,9 @@ public:
   void restore(Marker mark);
 
   bool solve(bool findFirst, UnificationContext& solution);
-  //bool solve2(bool findFirst, UnificationContext& solution);
+
+  void flagAsIncomplete(Symbol* symbol);
+  bool isIncomplete() const;
 
   void dump(ostream& s);
 
@@ -58,7 +60,7 @@ private:
   struct Theory
   {
     Symbol* controllingSymbol;	// controlling symbol for this theory
-    int firstProblemInTheory;	// index into stack of first problem in this theory isn't active (or NONE)
+    int firstProblemInTheory;	// index into stack of first problem in this theory that isn't active (or NONE)
   };
 
   struct PendingUnification
@@ -78,12 +80,14 @@ private:
   };
 
   void markReachableNodes();
+  int chooseTheoryToSolve();
   bool makeNewSubproblem(UnificationContext& solution);
   void killTopSubproblem();
 
   Vector<Theory> theoryTable;
   Vector<PendingUnification> unificationStack;
   Vector<ActiveSubproblem> subproblemStack;
+  NatSet incompleteSymbols;
   //
   //	Cycle handling.
   //
@@ -117,6 +121,24 @@ inline PendingUnificationStack::Marker
 PendingUnificationStack::checkPoint() const
 {
   return unificationStack.size();
+}
+
+inline void
+PendingUnificationStack::flagAsIncomplete(Symbol* symbol)
+{
+  int index = symbol->getIndexWithinModule();
+  if (!(incompleteSymbols.contains(index)))
+    {
+      incompleteSymbols.insert(index);
+      IssueWarning("Unification modulo the theory of operator " << QUOTE(symbol) <<
+		    " has encountered an instance for which it may not be complete.");
+    }
+}
+
+inline bool
+PendingUnificationStack::isIncomplete() const
+{
+  return !(incompleteSymbols.empty());
 }
 
 #endif

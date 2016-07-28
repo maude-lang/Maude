@@ -1,0 +1,597 @@
+Maude> ==========================================
+check in TEST-B : W =/== X and Y .
+Result from sat solver is: sat
+==========================================
+check in TEST-B : W === X and Y .
+Result from sat solver is: sat
+==========================================
+check in TEST-B : X =/== true and X =/== Y and Y =/== true .
+Result from sat solver is: unsat
+==========================================
+check in TEST-B : X =/== true and X =/== Y and Y =/== false .
+Result from sat solver is: sat
+==========================================
+check in TEST-B : (X xor true) and (X xor Y) and (Y xor true) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-B : (X xor true) and (X xor Y) and (Y xor false) .
+Result from sat solver is: sat
+==========================================
+check in TEST-B : not (X or not X) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-B : not (X implies Y implies X) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-B : (X ? Y : Z) and (Y implies X) and (Z implies X) .
+Result from sat solver is: sat
+==========================================
+check in TEST-B : (X ? Y : Z) and (Y implies not X) and (Z implies X) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-B : X === Y and Y === Z .
+Result from sat solver is: sat
+==========================================
+check in TEST-B : X === Y and Y === Z and Z =/== X .
+Result from sat solver is: unsat
+==========================================
+check in TEST-I : I > J and J > K .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : I > J and J > K and K > I .
+Result from sat solver is: unsat
+==========================================
+check in TEST-I : I < J and J < K .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : I < J and J < K and K < I .
+Result from sat solver is: unsat
+==========================================
+check in TEST-I : I >= J and J >= I .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : I >= J and J >= I and I =/== J .
+Result from sat solver is: unsat
+==========================================
+check in TEST-I : I <= J and J <= I .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : I <= J and J <= I and I =/== J .
+Result from sat solver is: unsat
+==========================================
+check in TEST-I : I === J + K and I > J and I > K .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : I === J + K and I > J + K .
+Result from sat solver is: unsat
+==========================================
+check in TEST-I : I === J + K and I > J + K + L .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : I === J - K and I > J + K .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : - I === J - K and I > J + K .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : I =/== J + K and I > J + K .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : (I > J ? I : J) >= I and (I > J ? I : J) >= J .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : (I > J ? I : J) < I .
+Result from sat solver is: unsat
+==========================================
+check in TEST-I : (I > J ? I : J) === I or (I > J ? I : J) === J .
+Result from sat solver is: sat
+==========================================
+check in TEST-I : not ((I > J ? I : J) === I or (I > J ? I : J) === J) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-I : (I > J ? I : J) =/== I and (I > J ? I : J) =/== J .
+Result from sat solver is: unsat
+==========================================
+check in TEST-R : P > Q and Q > R .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : P > Q and Q > R and R > P .
+Result from sat solver is: unsat
+==========================================
+check in TEST-R : P < Q and Q < R .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : P < Q and Q < R and R < P .
+Result from sat solver is: unsat
+==========================================
+check in TEST-R : P >= Q and Q >= P .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : P >= Q and Q >= P and P =/== Q .
+Result from sat solver is: unsat
+==========================================
+check in TEST-R : P <= Q and Q <= P .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : P <= Q and Q <= P and P =/== Q .
+Result from sat solver is: unsat
+==========================================
+check in TEST-R : P === Q + R and P > Q and P > R .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : P === Q + R and P > Q + R .
+Result from sat solver is: unsat
+==========================================
+check in TEST-R : P === Q + R and P > Q + R + S .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : P === Q - R and P > Q + R .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : - P === Q - R and P > Q + R .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : P =/== Q + R and P > Q + R .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : (P > Q ? P : Q) >= P and (P > Q ? P : Q) >= Q .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : (P > Q ? P : Q) < P .
+Result from sat solver is: unsat
+==========================================
+check in TEST-R : (P > Q ? P : Q) === P or (P > Q ? P : Q) === Q .
+Result from sat solver is: sat
+==========================================
+check in TEST-R : not ((P > Q ? P : Q) === P or (P > Q ? P : Q) === Q) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-R : (P > Q ? P : Q) =/== P and (P > Q ? P : Q) =/== Q .
+Result from sat solver is: unsat
+==========================================
+check in TEST-RI : isInteger(toReal(I) + toReal(J)) =/== false .
+Result from sat solver is: sat
+==========================================
+check in TEST-RI : isInteger(toReal(I) + toReal(J)) =/== true .
+Result from sat solver is: unsat
+==========================================
+check in TEST-RI : toInteger(R) + toInteger(P) === toInteger(R + P) .
+Result from sat solver is: sat
+==========================================
+check in TEST-RI : not toInteger(R) + toInteger(P) === toInteger(R + P) .
+Result from sat solver is: sat
+==========================================
+check in TEST-RI : 1/2 < P .
+Result from sat solver is: sat
+==========================================
+check in TEST-RI : 1/2 < P and P < 3/4 .
+Result from sat solver is: sat
+==========================================
+check in TEST-RI : 1/2 < P and P < 3/4 and isInteger(P) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-RI : -2 < I .
+Result from sat solver is: sat
+==========================================
+check in TEST-RI : -2 < I and -2 * I > -1 .
+Result from sat solver is: sat
+==========================================
+check in TEST-RI : -2 < I and -2 * I > -1 and I =/== -1 .
+Result from sat solver is: sat
+==========================================
+check in TEST-RI : -2 < I and -2 * I > -1 and I =/== -1 and I - I =/== I .
+Result from sat solver is: unsat
+==========================================
+reduce in META-LEVEL : metaCheck(['REAL-INTEGER], '_=_['_+_['1.Integer,
+    '1.Integer],'2.Integer]) .
+rewrites: 1
+result [Bool]: metaCheck(th 'REAL-INTEGER is
+  including 'REAL-INTEGER .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+endth, '_=_['_+_['1.Integer,'1.Integer],'2.Integer])
+==========================================
+reduce in META-LEVEL : metaCheck(['REAL-INTEGER], '_=_['_+_['1.Integer,
+    '1.Integer],'3.Integer]) .
+rewrites: 1
+result [Bool]: metaCheck(th 'REAL-INTEGER is
+  including 'REAL-INTEGER .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+endth, '_=_['_+_['1.Integer,'1.Integer],'3.Integer])
+==========================================
+reduce in META-CHECK : metaCheck(['META-CHECK], upTerm((I > J ? I : J) < I)) .
+rewrites: 3
+result Bool: (false).Bool
+==========================================
+reduce in META-CHECK : metaCheck(['META-CHECK], upTerm((I > J ? I : J) > I)) .
+rewrites: 3
+result Bool: (true).Bool
+==========================================
+reduce in META-CHECK : metaCheck(['META-CHECK], upTerm((I > J ? I : J) === I or
+    (I > J ? I : J) === J)) .
+rewrites: 3
+result Bool: (true).Bool
+==========================================
+reduce in META-CHECK : metaCheck(['META-CHECK], upTerm(not ((I > J ? I : J) ===
+    I or (I > J ? I : J) === J))) .
+rewrites: 3
+result Bool: (false).Bool
+==========================================
+reduce in META-CHECK : metaCheck(['META-CHECK], upTerm((I > J ? I : J) =/== I
+    and (I > J ? I : J) =/== J)) .
+rewrites: 3
+result Bool: (false).Bool
+==========================================
+reduce in META-CHECK : metaCheck(['META-CHECK], upTerm((I > J ? I : J) =/== I
+    or (I > J ? I : J) =/== J)) .
+rewrites: 3
+result Bool: (true).Bool
+==========================================
+smt-search [10] in MULTI : f(-2, X) =>* Z:State .
+
+Solution 1
+Z:State --> f(-2, X)
+where true
+
+Solution 2
+Z:State --> g(-2 + 1, #1-Y:Foo)
+where -2 < 0
+==========================================
+reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '*,
+    1, 1, 0) .
+rewrites: 4
+result SmtResult: {'f['-2.Integer,'X:Foo],
+	'Z:State <- 'f['-2.Integer,'X:Foo],'true.Boolean,(1).NzNat}
+==========================================
+reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '*,
+    1, 1, 1) .
+rewrites: 4
+result SmtResult: {'g['_+_['-2.Integer,'1.Integer],'#2-Y:Foo],
+	'Z:State <- 'g['_+_['-2.Integer,'1.Integer],'#2-Y:Foo],'_<_[
+    '-2.Integer,'0.Integer],(2).NzNat}
+==========================================
+reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '*,
+    1, 1, 2) .
+rewrites: 3
+result SmtResult?: (failure).SmtResult?
+==========================================
+reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '+,
+    200, 1, 0) .
+rewrites: 4
+result SmtResult: {'g['_+_['-2.Integer,'1.Integer],'#201-Y:Foo],
+	'Z:State <- 'g['_+_['-2.Integer,'1.Integer],'#201-Y:Foo],'_<_[
+    '-2.Integer,'0.Integer],(201).NzNat}
+==========================================
+reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '+,
+    200, 1, 1) .
+rewrites: 3
+result SmtResult?: (failure).SmtResult?
+==========================================
+smt-search [4] in ITEST : f(11) =>1 X .
+
+Solution 1
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 2
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+==========================================
+smt-search [4] in ITEST : f(11) =>* X .
+
+Solution 1
+X --> f(11)
+where true
+
+Solution 2
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 3
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 4
+X --> f(11 + 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+==========================================
+smt-search [4] in ITEST : f(11) =>+ X .
+
+Solution 1
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 2
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 3
+X --> f(11 + 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+
+Solution 4
+X --> f(11 + 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+==========================================
+smt-search [4, 1] in ITEST : f(11) =>+ X .
+
+Solution 1
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 2
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+==========================================
+smt-search [4, 2] in ITEST : f(11) =>+ X .
+
+Solution 1
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 2
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 3
+X --> f(11 + 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+
+Solution 4
+X --> f(11 + 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+Warning: <standard input>, line 208: didn't expect token [:
+[ <---*HERE*
+Warning: <standard input>, line 208: no parse for command.
+==========================================
+smt-search [4, 1] in ITEST : f(11) =>* X .
+
+Solution 1
+X --> f(11)
+where true
+
+Solution 2
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 3
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+==========================================
+smt-search [4, 2] in ITEST : f(11) =>* X .
+
+Solution 1
+X --> f(11)
+where true
+
+Solution 2
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 3
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 4
+X --> f(11 + 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+==========================================
+smt-search [20] in ITEST : f(11) =>* X .
+
+Solution 1
+X --> f(11)
+where true
+
+Solution 2
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 3
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 4
+X --> f(11 + 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+
+Solution 5
+X --> f(11 + 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+
+Solution 6
+X --> f(11 - 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12)
+
+Solution 7
+X --> f(11 - 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12)
+
+Solution 8
+X --> f(11 + 1 - 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
+    >= 10 and 11 + 1 - 1 <= 12)
+
+Solution 9
+X --> f(11 + 1 - 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
+    >= 10 and 11 + 1 - 1 <= 12)
+
+Solution 10
+X --> f(11 - 1 + 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
+    >= 10 and 11 - 1 + 1 <= 12)
+
+Solution 11
+X --> f(11 - 1 + 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
+    >= 10 and 11 - 1 + 1 <= 12)
+
+Solution 12
+X --> f(11 + 1 - 1 + 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
+    >= 10 and 11 + 1 - 1 <= 12) and (11 + 1 - 1 + 1 >= 10 and 11 + 1 - 1 + 1 <=
+    12)
+
+Solution 13
+X --> f(11 + 1 - 1 + 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
+    >= 10 and 11 + 1 - 1 <= 12) and (11 + 1 - 1 + 1 >= 10 and 11 + 1 - 1 + 1 <=
+    12)
+
+Solution 14
+X --> f(11 + 1 - 1 - 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
+    >= 10 and 11 + 1 - 1 <= 12) and (11 + 1 - 1 - 1 >= 10 and 11 + 1 - 1 - 1 <=
+    12)
+
+Solution 15
+X --> f(11 + 1 - 1 - 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
+    >= 10 and 11 + 1 - 1 <= 12) and (11 + 1 - 1 - 1 >= 10 and 11 + 1 - 1 - 1 <=
+    12)
+
+Solution 16
+X --> f(11 - 1 + 1 + 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
+    >= 10 and 11 - 1 + 1 <= 12) and (11 - 1 + 1 + 1 >= 10 and 11 - 1 + 1 + 1 <=
+    12)
+
+Solution 17
+X --> f(11 - 1 + 1 + 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
+    >= 10 and 11 - 1 + 1 <= 12) and (11 - 1 + 1 + 1 >= 10 and 11 - 1 + 1 + 1 <=
+    12)
+
+Solution 18
+X --> f(11 - 1 + 1 - 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
+    >= 10 and 11 - 1 + 1 <= 12) and (11 - 1 + 1 - 1 >= 10 and 11 - 1 + 1 - 1 <=
+    12)
+
+Solution 19
+X --> f(11 - 1 + 1 - 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
+    >= 10 and 11 - 1 + 1 <= 12) and (11 - 1 + 1 - 1 >= 10 and 11 - 1 + 1 - 1 <=
+    12)
+
+Solution 20
+X --> f(11 + 1 - 1 + 1 - 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
+    >= 10 and 11 + 1 - 1 <= 12) and (11 + 1 - 1 + 1 >= 10 and 11 + 1 - 1 + 1 <=
+    12) and (11 + 1 - 1 + 1 - 1 >= 10 and 11 + 1 - 1 + 1 - 1 <= 12)
+==========================================
+smt-search [4] in ITEST : f(J) =>* X .
+
+Solution 1
+X --> f(J)
+where true
+
+Solution 2
+X --> f(J + 1)
+where J >= 10 and J <= 12
+
+Solution 3
+X --> f(J - 1)
+where J >= 10 and J <= 12
+
+Solution 4
+X --> f(J + 1 + 1)
+where J >= 10 and J <= 12 and (J + 1 >= 10 and J + 1 <= 12)
+==========================================
+smt-search [4] in ITEST : f(J) =>* f(J) .
+
+Solution 1
+empty substitution
+where true and J === J
+
+Solution 2
+empty substitution
+where J >= 10 and J <= 12 and (J + 1 >= 10 and J + 1 <= 12) and J === J + 1 - 1
+
+Solution 3
+empty substitution
+where J >= 10 and J <= 12 and (J - 1 >= 10 and J - 1 <= 12) and J === J - 1 + 1
+
+Solution 4
+empty substitution
+where J >= 10 and J <= 12 and (J + 1 >= 10 and J + 1 <= 12) and (J + 1 + 1 >=
+    10 and J + 1 + 1 <= 12) and (J + 1 + 1 - 1 >= 10 and J + 1 + 1 - 1 <= 12)
+    and J === J + 1 + 1 - 1 - 1
+==========================================
+smt-search [4] in ITEST : f(J) =>* f(K) such that J = K .
+
+Solution 1
+empty substitution
+where J === K and K === J
+
+Solution 2
+empty substitution
+where J === K and (J >= 10 and J <= 12) and (J + 1 >= 10 and J + 1 <= 12) and K
+    === J + 1 - 1
+
+Solution 3
+empty substitution
+where J === K and (J >= 10 and J <= 12) and (J - 1 >= 10 and J - 1 <= 12) and K
+    === J - 1 + 1
+
+Solution 4
+empty substitution
+where J === K and (J >= 10 and J <= 12) and (J + 1 >= 10 and J + 1 <= 12) and (
+    J + 1 + 1 >= 10 and J + 1 + 1 <= 12) and (J + 1 + 1 - 1 >= 10 and J + 1 + 1
+    - 1 <= 12) and K === J + 1 + 1 - 1 - 1
+==========================================
+reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
+    'J:Integer = 'K:Integer, '*, 42, 2, 0) .
+rewrites: 5
+result SmtResult: {'f['J:Integer],(none).Substitution,'_and_['_===_['J:Integer,
+    'K:Integer],'_===_['K:Integer,'J:Integer]],(42).NzNat}
+==========================================
+reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
+    'J:Integer = 'K:Integer, '*, 42, 2, 1) .
+rewrites: 5
+result SmtResult: {'f['_-_['_+_['J:Integer,'1.Integer],'1.Integer]],(
+    none).Substitution,'_and_['_and_['_and_['_===_['J:Integer,'K:Integer],
+    '_and_['_>=_['J:Integer,'10.Integer],'_<=_['J:Integer,'12.Integer]]],
+    '_and_['_>=_['_+_['J:Integer,'1.Integer],'10.Integer],'_<=_['_+_[
+    'J:Integer,'1.Integer],'12.Integer]]],'_===_['K:Integer,'_-_['_+_[
+    'J:Integer,'1.Integer],'1.Integer]]],(42).NzNat}
+==========================================
+reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
+    'J:Integer = 'K:Integer, '*, 42, 2, 2) .
+rewrites: 5
+result SmtResult: {'f['_+_['_-_['J:Integer,'1.Integer],'1.Integer]],(
+    none).Substitution,'_and_['_and_['_and_['_===_['J:Integer,'K:Integer],
+    '_and_['_>=_['J:Integer,'10.Integer],'_<=_['J:Integer,'12.Integer]]],
+    '_and_['_>=_['_-_['J:Integer,'1.Integer],'10.Integer],'_<=_['_-_[
+    'J:Integer,'1.Integer],'12.Integer]]],'_===_['K:Integer,'_+_['_-_[
+    'J:Integer,'1.Integer],'1.Integer]]],(42).NzNat}
+==========================================
+reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
+    'J:Integer = 'K:Integer, '*, 42, 2, 3) .
+rewrites: 4
+result SmtResult?: (failure).SmtResult?
+==========================================
+reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
+    'J:Integer = 'K:Integer, '*, 42, unbounded, 3) .
+rewrites: 8
+result SmtResult: {'f['_-_['_-_['_+_['_+_['J:Integer,'1.Integer],'1.Integer],
+    '1.Integer],'1.Integer]],(none).Substitution,'_and_['_and_['_and_['_and_[
+    '_and_['_===_['J:Integer,'K:Integer],'_and_['_>=_['J:Integer,'10.Integer],
+    '_<=_['J:Integer,'12.Integer]]],'_and_['_>=_['_+_['J:Integer,'1.Integer],
+    '10.Integer],'_<=_['_+_['J:Integer,'1.Integer],'12.Integer]]],'_and_['_>=_[
+    '_+_['_+_['J:Integer,'1.Integer],'1.Integer],'10.Integer],'_<=_['_+_['_+_[
+    'J:Integer,'1.Integer],'1.Integer],'12.Integer]]],'_and_['_>=_['_-_['_+_[
+    '_+_['J:Integer,'1.Integer],'1.Integer],'1.Integer],'10.Integer],'_<=_[
+    '_-_['_+_['_+_['J:Integer,'1.Integer],'1.Integer],'1.Integer],
+    '12.Integer]]],'_===_['K:Integer,'_-_['_-_['_+_['_+_['J:Integer,
+    '1.Integer],'1.Integer],'1.Integer],'1.Integer]]],(42).NzNat}
+Maude> Bye.

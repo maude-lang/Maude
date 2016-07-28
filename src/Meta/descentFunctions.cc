@@ -559,15 +559,69 @@ bool
 MetaLevelOpSymbol::metaDownTerm(FreeDagNode* subject, RewritingContext& context)
 {
   MixfixModule* m = safeCast(MixfixModule*, getModule());
+  DagNode* mt = subject->getArgument(0);
   DagNode* d = subject->getArgument(1);
-  if (Term* t = metaLevel->downTerm(subject->getArgument(0), m))
+  if (Term* t = metaLevel->downTerm(mt, m))
     {
-      if (t->symbol()->rangeComponent() == d->symbol()->rangeComponent())
+      ConnectedComponent* tc = t->symbol()->rangeComponent();
+      ConnectedComponent* wc = d->symbol()->rangeComponent();
+      if (tc == wc)
 	{
 	  t = t->normalize(false);
 	  d = term2Dag(t);
 	}
+      else
+	{
+	  IssueAdvisory("attempt to reflect down meta-term " << mt << " yielded term " << t << " in kind " << tc <<
+			" whereas a term in kind " << wc << " was expected.");
+	}
       t->deepSelfDestruct();
     }
   return context.builtInReplace(subject, d);
+}
+
+#include "SMT_Info.hh"
+#include "variableGenerator.hh"
+
+bool
+MetaLevelOpSymbol::metaCheck(FreeDagNode* subject, RewritingContext& context)
+{
+  if (ImportModule* m = metaLevel->downModule(subject->getArgument(0)))
+    {
+      if (Term* term = metaLevel->downTerm(subject->getArgument(1), m))
+	{
+	  m->protect();
+	  term = term->normalize(false);
+	  DagNode* d = term->term2Dag();
+
+	  const SMT_Info& smtInfo = m->getSMT_Info();
+	  VariableGenerator vg(smtInfo);
+	  VariableGenerator::Result result = vg.checkDag(d);
+	  switch (result)
+	    {
+	    case VariableGenerator::BAD_DAG:
+	      {
+		IssueAdvisory("term " << QUOTE(term) << " is not a valid SMT Boolean expression.");
+		break;
+	      }
+	    case VariableGenerator::SAT_UNKNOWN:
+	      {
+		IssueAdvisory("sat solver could not determined satisfiability of " << QUOTE(term) << ".");
+		break;
+	      }
+	    case VariableGenerator::UNSAT:
+	    case VariableGenerator::SAT:
+	      {
+		DagNode* r = metaLevel->upBool(result == VariableGenerator::SAT);
+		term->deepSelfDestruct();
+		(void) m->unprotect();
+		return context.builtInReplace(subject, r);
+	      }
+	    }
+
+	  term->deepSelfDestruct();
+	  (void) m->unprotect();
+	}
+    }
+  return false;
 }

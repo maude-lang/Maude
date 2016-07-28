@@ -148,3 +148,9 @@ CompoundCycleSubproblem::solve(bool findFirst, UnificationContext& solution, Pen
 
   return false;
 }
+
+void
+CompoundCycleSubproblem::addUnification(DagNode* lhs, DagNode* rhs)
+{
+  CantHappen("we don't take unification problems");
+}

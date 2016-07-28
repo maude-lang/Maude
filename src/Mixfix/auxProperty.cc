@@ -161,14 +161,14 @@ Token::computeAuxProperty(const char* tokenString)
   return NONE;
 }
 
-crope
+Rope
 Token::sortName(int code)
 {
   const char* name = stringTable.name(code);
   if (auxProperty(code) != AUX_STRUCTURED_SORT)
-    return crope(name);
+    return Rope(name);
 
-  crope acc;
+  Rope acc;
   for (;; ++name)
     {
       char c = *(name);
@@ -307,7 +307,7 @@ Token::splitParameterList(int code, int& header, Vector<int>& parameters)
 int
 Token::joinParameterList(int header, const Vector<int>& parameters)
 {
-  crope n(name(header));
+  Rope n(name(header));
   const char* sep = "`{";
   FOR_EACH_CONST(i, Vector<int>, parameters)
     {
@@ -316,5 +316,5 @@ Token::joinParameterList(int header, const Vector<int>& parameters)
       n += name(*i);
     }
   n += "`}";
-  return encode(n.c_str());
+  return ropeToCode(n);
 }

@@ -32,24 +32,21 @@ MetaLevelOpSymbol::getCachedRewriteSearchState(MetaModule* m,
 					       RewriteSearchState*& state,
 					       Int64& lastSolutionNr)
 {
-  if (solutionNr > 0)
+  CacheableState* cachedState;
+  if (m->remove(subject, cachedState, lastSolutionNr))
     {
-      CacheableState* cachedState;
-      if (m->remove(subject, cachedState, lastSolutionNr))
+      if (lastSolutionNr <= solutionNr)
 	{
-	  if (lastSolutionNr <= solutionNr)
-	    {
-	      state = safeCast(RewriteSearchState*, cachedState);
-	      //
-	      //	The parent context pointer of the root context in the
-	      //	NarrowingSequenceSearch is possibly stale.
-	      //
-	      safeCast(UserLevelRewritingContext*, state->getContext())->
-		beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
-	      return true;
-	    }
-	  delete cachedState;
+	  state = safeCast(RewriteSearchState*, cachedState);
+	  //
+	  //	The parent context pointer of the root context in the
+	  //	RewriteSearchState object is possibly stale.
+	  //
+	  safeCast(UserLevelRewritingContext*, state->getContext())->
+	    beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
+	  return true;
 	}
+      delete cachedState;
     }
   return false;
 }
@@ -64,7 +61,7 @@ MetaLevelOpSymbol::metaApply(FreeDagNode* subject, RewritingContext& context)
   Int64 solutionNr;
   if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
     {
-      if (metaLevel->downSaturate64(subject->getArgument(4), solutionNr))
+      if (metaLevel->downSaturate64(subject->getArgument(4), solutionNr) && solutionNr >= 0)
 	{
 	  RewriteSearchState* state;
 	  Int64 lastSolutionNr;
@@ -177,7 +174,7 @@ MetaLevelOpSymbol::metaXapply(FreeDagNode* subject, RewritingContext& context)
   if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
     {
       Int64 solutionNr;
-      if (metaLevel->downSaturate64(subject->getArgument(6), solutionNr))
+      if (metaLevel->downSaturate64(subject->getArgument(6), solutionNr) && solutionNr >= 0)
 	{
 	  RewriteSearchState* state;
 	  Int64 lastSolutionNr;

@@ -39,5 +39,6 @@ class AU_RhsAutomaton;
 class AU_Layer;
 class AU_Subproblem;
 class AU_ExtensionInfo;
+class AU_UnificationSubproblem;
 
 #endif

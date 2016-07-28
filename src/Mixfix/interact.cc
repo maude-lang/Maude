@@ -31,7 +31,7 @@ bool UserLevelRewritingContext::stepFlag = false;
 bool UserLevelRewritingContext::abortFlag = false;
 int UserLevelRewritingContext::debugLevel = 0;
 
-int yyparse(void*);
+int yyparse(UserLevelRewritingContext::ParseResult*);
 void cleanUpParser();
 void cleanUpLexer();
 

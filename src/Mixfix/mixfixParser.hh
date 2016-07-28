@@ -62,6 +62,7 @@ public:
     MAKE_SORT_TEST,  // HACK used for condition fragment as well
     MAKE_POLYMORPH,
     MAKE_ITER,
+    MAKE_SMT_NUMBER,
     MAKE_BUBBLE,
     //
     //	Statement construction actions.

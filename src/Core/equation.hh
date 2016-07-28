@@ -75,7 +75,7 @@ private:
   //	For stack based execution.
   //
   Instruction* instructionSequence;
-  int nrSlots;
+  // int nrSlots;
 };
 
 inline bool

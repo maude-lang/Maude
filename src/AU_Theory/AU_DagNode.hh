@@ -69,6 +69,13 @@ public:
   //
   DagNode* instantiate2(const Substitution& substitution);
   //
+  //	Supported for A only.
+  //
+  ReturnResult computeBaseSortForGroundSubterms();
+  bool computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
+  void insertVariables2(NatSet& occurs);
+
+  //
   //	Interface for narrowing.
   //
   bool indexVariables2(NarrowingVariableInfo& indices, int baseIndex);
@@ -112,6 +119,8 @@ private:
   friend class AU_Subproblem;		// for constructing substitution
   friend class AU_ExtensionInfo;	// for constructing matched portion
   friend class AU_DequeDagNode;		// for conversion & comparison
+  friend class AU_UnificationSubproblem;
+  friend class AU_UnificationSubproblem2;
 };
 
 AU_DagNode* getAU_DagNode(DagNode* dagNode);

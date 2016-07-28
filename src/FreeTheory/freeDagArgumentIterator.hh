@@ -24,7 +24,7 @@
 //  Class for DAG argument iterators in the free theory
 //
 #ifndef _freeDagArgumentIterator_hh_
-#define _freeDagArgumentIteraror_hh_
+#define _freeDagArgumentIterator_hh_
 
 class FreeDagArgumentIterator : public RawDagArgumentIterator
 {

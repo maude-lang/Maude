@@ -18,11 +18,12 @@ GNU gmp		http://www.swox.com/gmp/
 GNU libsigsegv	http://libsigsegv.sourceforge.net/
 Tecla		http://www.astro.caltech.edu/~mcs/tecla/
 BuDDY		http://sourceforge.net/projects/buddy
+CVC4 (optional)	http://cvc4.cs.nyu.edu/web/
 
 
 Configuring the 3rd party packages
 ==================================
-Because of C++ ABI incompatibilities, GNU gmp and BuDDy must be
+Because of C++ ABI incompatibilities, GNU gmp, BuDDy and CVC4 must be
 compiled with the same compiler you will use for Maude.
 
 GNU gmp	must be configured with --enable-cxx to generate the C++
@@ -51,6 +52,10 @@ build Maude with the commands:
 ./configure
 make
 
+If you don't have CVC4 you can pass --with-cvc4=no to configure. This
+disables the experimental rewriting modulo SMT feature, and produces
+a much smaller binary (CVC4 is much larger than Maude).
+
 A very basic test suite can be run using the command:
 
 make check
@@ -65,6 +70,7 @@ GMP_LIBS	(defaults to -lgmpxx -lgmp)
 LIBSIGSEGV_LIB	(defaults to -lsigsegv)
 TECLA_LIBS	(defaults to -ltecla -lcurses)
 BUDDY_LIB	(defaults to -lbuddy)
+CVC4_LIB	(defaults to -lcvc4)
 
 A more realistic configure to make, check and install a static binary
 using a separate build tree might look something like:
@@ -90,34 +96,21 @@ $(bindir).
 
 Note for Mac users
 ==================
-Currently (February 7th, 2014):
 
-The official Apple version of gcc is an llvm front end from 2007 and is
-not capable of compiling Maude (Apple is pushing developers to clang).
-
-The offical Apple version of flex (2.5.35) contains a serious bug not
-present in the GNU version and which can cause Maude to hang.
-
-The are two viable routes to building Maude on Macs:
-
-(1) Install the tools and libraries from Mac Ports (http://www.macports.org/).
-(2) Build the tools and libraries from source.
-
-Going the Mac Ports route, the release binary was configured thus:
+As of Mavericks, Apple no longer supports gcc so Maude must be compiled with clang.
+The easiest way is to install the Mac Ports version of each of
+the needed tools and libraries. With Mac Ports installed in /opt/local
+I use the configuration line:
 
 ../configure \
-CC=/opt/local/bin/gcc-mp-4.8  \
-CXX=/opt/local/bin/g++-mp-4.8 \
+CC=cc \
+CXX=c++ \
 FLEX=/opt/local/bin/flex \
 BISON=/opt/local/bin/bison \
-CFLAGS="-Wall -O2 -static-libstdc++ -static-libgcc -fno-crossjumping -fno-stack-protector -fstrict-aliasing -mmacosx-version-min=10.5 -finline-limit=10000" \
-CXXFLAGS="-Wall -O2 -static-libstdc++ -static-libgcc -fno-crossjumping -fno-stack-protector -fstrict-aliasing -mmacosx-version-min=10.5 -finline-limit=10000" \
+CFLAGS="-Wall -O2 -I/opt/local/include -fno-stack-protector -fstrict-aliasing" \
+CXXFLAGS="-Wall -O2 -I/opt/local/include -fno-stack-protector -fstrict-aliasing" \
 BUDDY_LIB="/opt/local/lib/libbdd.a" \
 TECLA_LIBS="/opt/local/lib/libtecla.a /usr/lib/libncurses.dylib" \
 LIBSIGSEGV_LIB="/opt/local/lib/libsigsegv.a" \
-GMP_LIBS="/opt/local/lib/libgmp.a /opt/local/lib/libgmpxx.a"
-
-This results in an almost static binary that should run on any x86-64 Mac
-running Leopard or later without the installation of extra libraries. Note
-that the Apple ncurses library is linked since the Mac Ports version depends
-on the Mac Ports terminfo data base, which most users will not have installed.
+GMP_LIBS="/opt/local/lib/libgmp.a /opt/local/lib/libgmpxx.a" \
+CVC4_LIB="/opt/local/lib/libcvc4.a"

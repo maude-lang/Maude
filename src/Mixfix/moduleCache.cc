@@ -68,7 +68,7 @@ ModuleCache::makeRenamedCopy(ImportModule* module, Renaming* renaming)
   //
   //	Build the canonical name of the module we want.
   //
-  crope name;
+  Rope name;
   if (module->getOrigin() == ImportModule::SUMMATION)
     name = '(';
   name += Token::name(module->id());
@@ -76,7 +76,8 @@ ModuleCache::makeRenamedCopy(ImportModule* module, Renaming* renaming)
     name += ')';
   name += " * (";
   name += canonical->makeCanonicalName() + ")";
-  int t = Token::encode(name.c_str());
+  //int t = Token::encode(name.c_str());
+  int t = Token::ropeToCode(name);
   //
   //	Check if we already have a renamed copy in cache.
   //	If so, just return it.
@@ -118,10 +119,11 @@ ModuleCache::makeParameterCopy(int parameterName, ImportModule* module)
   //
   //	Make the name of the module we want.
   //
-  crope name(Token::name(parameterName));
+  Rope name(Token::name(parameterName));
   name += " :: ";
   name += Token::name(module->id());
-  int t = Token::encode(name.c_str());
+  //int t = Token::encode(name.c_str());
+  int t = Token::ropeToCode(name);
   //
   //	Check if we already have a parameter copy in cache.
   //	If so, just return it.
@@ -150,7 +152,7 @@ ModuleCache::makeInstatiation(ImportModule* module, const Vector<View*>& views, 
   //
   //	Make the name of the module we want.
   //
-  crope name;
+  Rope name;
   if (module->getOrigin() == ImportModule::RENAMING)
     name = '(';
   name += Token::name(module->id());
@@ -178,7 +180,8 @@ ModuleCache::makeInstatiation(ImportModule* module, const Vector<View*>& views, 
 	name += Token::name(v->id());
     }
   name += "}";
-  int t = Token::encode(name.c_str());
+  //int t = Token::encode(name.c_str());
+  int t = Token::ropeToCode(name);
   //
   //	Check if we already have an instantiation in cache.
   //	If so, just return it.
@@ -236,14 +239,15 @@ ModuleCache::makeSummation(const Vector<ImportModule*>& modules)
   //
   //	Make name.
   //
-  crope name;
+  Rope name;
   for (Vector<ImportModule*>::const_iterator i = local.begin(); i != e; ++i)
     {
       if (!name.empty())
 	name += " + ";
       name += Token::name((*i)->id());
     }
-  int t = Token::encode(name.c_str());
+  //int t = Token::encode(name.c_str());
+  int t = Token::ropeToCode(name);
   //
   //	Check if it is already in cache.
   //

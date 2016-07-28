@@ -1,3 +1,18 @@
+2016-03-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* variableSymbol.hh (Symbol): added decl for computeGeneralizedSort2()
+
+	* variableSymbol.cc (computeGeneralizedSort2): added
+
+===================================Maude110===========================================
+
+2014-06-23  Steven Eker  <eker@ape.csl.sri.com>
+
+	* variableDagNode.cc (safeVirtualReplacement): update comment,
+	since we are assume that oldVar is the last variable it its chain
+
+===================================Maude104===========================================
+
 2013-01-04  Steven Eker  <eker@ape.csl.sri.com>
 
 	* variableDagNode.hh (NamedEntity): added decl for

@@ -144,6 +144,9 @@ public:
   void computeGeneralizedSort(const SortBdds& sortBdds,
 			      const Vector<int>& realToBdd,  // first BDD variable for each free real variable
 			      Vector<Bdd>& generalizedSort);
+  void computeGeneralizedSort2(const SortBdds& sortBdds,
+			       const Vector<int>& realToBdd,  // first BDD variable for each free real variable
+			       Vector<Bdd>& outputBdds);
   //
   //	Interface for narrowing.
   //

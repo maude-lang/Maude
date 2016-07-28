@@ -147,7 +147,7 @@ void
 PendingUnificationStack::restore(Marker mark)
 {
   //
-  //	We need to blow away all unifications upto and including unificationStack[mark].
+  //	We need to blow away all unifications up to and including unificationStack[mark].
   //
   for (int i = unificationStack.size() - 1; i >= mark; --i)
     {
@@ -189,47 +189,46 @@ PendingUnificationStack::solve(bool findFirst, UnificationContext& solution)
   return findFirst;
 }
 
-/*
-bool
-PendingUnificationStack::solve2(bool findFirst, UnificationContext& solution)
+int
+PendingUnificationStack::chooseTheoryToSolve()
 {
   //
-  //	Find a solution that has no cycles.
+  //	Chose a theory with unsolved unifications and return its index in the theory table.
   //
-  for (;;)
+  int priority = INT_MAX;
+  int theoryIndex = NONE;
+
+  int nrTheories = theoryTable.size();
+  for (int i = 0; i < nrTheories; ++i)
     {
-      if (!solve(findFirst, solution))
-	return false;
-      int cycleStart = findCycle(solution);
-      if (cycleStart == NONE)
-	break;
-      cerr << "Cycle found\n";
-      for (int i = cycleStart;;)
+      if (theoryTable[i].firstProblemInTheory != NONE)
 	{
-	  DagNode* variable = solution.getVariableDagNode(i);
-	  DagNode* value = solution.value(i);
-	  cerr << variable << " <- " << value << endl;
-	  i = variableStatus[i];
-	  if (i == cycleStart)
-	    break;
+	  Symbol* s = theoryTable[i].controllingSymbol;
+	  if (s == 0)
+	    return i;  // prioritize disjunctions
+	  //
+	  //	Otherwise we want the theory with the lowest unification priority number.
+	  //
+	  int p = s->unificationPriority();
+	  if (p < priority)
+	    {
+	      theoryIndex = i;
+	      priority = p;
+	    }
 	}
-      findFirst = false;
     }
-  //
-  //	Instantiate bound variables.
-  //
-  FOR_EACH_CONST(i, Vector<int>, variableOrder)
-    {
-      if (DagNode* d = solution.value(*i)->instantiate(solution))
-	solution.bind(*i, d);
-    }
-  return true;
+  return theoryIndex;
 }
-*/
 
 bool
 PendingUnificationStack::makeNewSubproblem(UnificationContext& solution)
 {
+  //
+  //	Try to make a new unification subproblem.
+  //
+  //	Returns true if a new unification subproblem made and false
+  //	if there are no unresolved unification problems in the stack.
+  //
   DebugAdvisory("makeNewSubproblem()");
 #ifndef NO_ASSERT
   //  dump(cerr);
@@ -238,33 +237,30 @@ PendingUnificationStack::makeNewSubproblem(UnificationContext& solution)
   //    Find a theory with unsolved unifications and put all of its unsolved unifications
   //    into a new active subproblem.
   //
-  int nrTheories = theoryTable.size();
-  for (int i = 0; i < nrTheories; ++i)
+  int i = chooseTheoryToSolve();
+  if (i != NONE)
     {
       int j = theoryTable[i].firstProblemInTheory;
-      if (j != NONE)
-        {
-	  Symbol* controllingSymbol = theoryTable[i].controllingSymbol;
-	  DebugAdvisory("makeNewSubproblem() making subproblem for controlling symbol " <<
-			controllingSymbol);
-          UnificationSubproblem* sp = (controllingSymbol == 0) ? new UnificationSubproblemDisjunction() :
-	    controllingSymbol->makeUnificationSubproblem();
-          do
-            {
-              PendingUnification& p = unificationStack[j];
-              sp->addUnification(p.lhs, p.rhs, p.marked, solution);
-              j = p.nextProblemInTheory;
-            }
-          while (j != NONE);
-          int nrSubproblems = subproblemStack.size();
-          subproblemStack.resize(nrSubproblems + 1);
-          ActiveSubproblem& a = subproblemStack[nrSubproblems];
-          a.theoryIndex = i;
-          a.savedFirstProblem = theoryTable[i].firstProblemInTheory;
-          a.subproblem = sp;
-          theoryTable[i].firstProblemInTheory = NONE;
-          return true;
-        }
+      Symbol* controllingSymbol = theoryTable[i].controllingSymbol;
+      DebugAdvisory("makeNewSubproblem() making subproblem for controlling symbol " <<
+		    controllingSymbol);
+      UnificationSubproblem* sp = (controllingSymbol == 0) ? new UnificationSubproblemDisjunction() :
+	controllingSymbol->makeUnificationSubproblem();
+      do
+	{
+	  PendingUnification& p = unificationStack[j];
+	  sp->addUnification(p.lhs, p.rhs, p.marked, solution);
+	  j = p.nextProblemInTheory;
+	}
+      while (j != NONE);
+      int nrSubproblems = subproblemStack.size();
+      subproblemStack.resize(nrSubproblems + 1);
+      ActiveSubproblem& a = subproblemStack[nrSubproblems];
+      a.theoryIndex = i;
+      a.savedFirstProblem = theoryTable[i].firstProblemInTheory;
+      a.subproblem = sp;
+      theoryTable[i].firstProblemInTheory = NONE;
+      return true;
     }
   //
   //	All unification problems solved - now check for compound cycles.
@@ -337,6 +333,10 @@ PendingUnificationStack::killTopSubproblem()
 int
 PendingUnificationStack::findCycle(UnificationContext& solution)
 {
+  //
+  //	This includes all the original variables together with
+  //	fresh variables we added during unification.
+  //
   int nrVariables = solution.nrFragileBindings();
   variableStatus.resize(nrVariables);
   for (int i = 0; i < nrVariables; ++i)
