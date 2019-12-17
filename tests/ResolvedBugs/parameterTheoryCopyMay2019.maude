@@ -1,0 +1,23 @@
+set show timing off .
+set show advisories off .
+
+
+*** trick parameter copy into failing
+fmod FOO is
+  sort Z$Elt .  *** nasty
+endfm
+
+fth TRIV' is
+  inc FOO .
+  sort Elt .
+endfth
+
+fmod BAR{Y :: TRIV'} is
+  sort Bar{Y} .
+endfm
+
+fmod BAZ{Z :: TRIV'} is
+  inc BAR{Z} .
+endfm
+
+show all .

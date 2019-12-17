@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -102,7 +102,7 @@ NA_Term::dagify2()
 }
 
 void
-NA_Term::findAvailableTerms(TermBag& /* availableTerm */s,
+NA_Term::findAvailableTerms(TermBag& /* availableTerm */,
 			    bool /* eagerContext */,
 			    bool /* atTop */)
 {

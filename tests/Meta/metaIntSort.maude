@@ -1,0 +1,310 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Test sort calculations in the meta-interpreter.
+***
+
+load metaInterpreter
+
+mod SORT-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op type:_ : Type -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var T : Type .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | type: T, AS > insertedModule(X, Y) =>
+     < X : User | AS > getLesserSorts(Y, X, 'RAT, T) .
+endm
+
+erew in SORT-TEST : <> 
+< me : User | type: 'Int > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST : <> 
+< me : User | type: 'Rat > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST : <> 
+< me : User | type: '`[Rat`] > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST : <> 
+< me : User | type: '`[Bool`] > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST : <> 
+< me : User | type: 'Bool > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod SORT-TEST2 is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op kind:_ : Type -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var K : Kind .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | kind: K, AS > insertedModule(X, Y) =>
+     < X : User | AS > getMaximalSorts(Y, X, 'RAT, K) .
+endm
+
+erew in SORT-TEST2 : <> 
+< me : User | kind: '`[Rat`] > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST2 : <> 
+< me : User | kind: '`[Bool`] > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod SORT-TEST3 is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op kind:_ : Type -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var K : Kind .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | kind: K, AS > insertedModule(X, Y) =>
+     < X : User | AS > getMinimalSorts(Y, X, 'RAT, K) .
+endm
+
+erew in SORT-TEST3 : <> 
+< me : User | kind: '`[Rat`] > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST3 : <> 
+< me : User | kind: '`[Bool`] > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod SORT-TEST4 is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op typePair:_:_ : Type Type -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  vars T1 T2 : Type .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | AS, typePair: T1 : T2 > insertedModule(X, Y) =>
+     < X : User | AS > compareTypes(Y, X, 'RAT, T1, T2) .
+endm
+
+erew in SORT-TEST4 : <> 
+< me : User | typePair: 'Nat : 'Bool > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST4 : <> 
+< me : User | typePair: 'Nat : 'Rat > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST4 : <> 
+< me : User | typePair: 'Rat : 'Rat > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST4 : <> 
+< me : User | typePair: 'Rat : 'Int > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST4 : <> 
+< me : User | typePair: 'NzRat : 'Int > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod SORT-TEST5 is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op type:_ : Type -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var T : Type .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | AS, type: T > insertedModule(X, Y) =>
+     < X : User | AS > getKind(Y, X, 'RAT, T) .
+endm
+
+erew in SORT-TEST5 : <> 
+< me : User | type: 'Nat > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST5 : <> 
+< me : User | type: 'Bool > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod SORT-TEST6 is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op module:_ : Qid -> Attribute .
+
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var Q : Qid .
+
+  rl < X : User | AS, module: Q > createdInterpreter(X, Y, Z) =>
+     < X : User | AS, module: Q > insertModule(Z, X, upModule(Q, true)) .
+
+  rl < X : User | AS, module: Q > insertedModule(X, Y) =>
+     < X : User | AS > getKinds(Y, X, Q) .
+endm
+
+erew in SORT-TEST6 : <> 
+< me : User | module: 'RAT > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST6 : <> 
+< me : User | module: 'META-LEVEL > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST6 : <> 
+< me : User | module: 'META-INTERPRETER > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod SORT-TEST7 is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op types:_ : TypeSet -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var T : TypeSet .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | AS, types: T > insertedModule(X, Y) =>
+     < X : User | AS > getGlbTypes(Y, X, 'RAT, T) .
+endm
+
+erew in SORT-TEST7 : <> 
+< me : User | types: ('Nat ; 'NzRat) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST7 : <> 
+< me : User | types: none > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST7 : <> 
+< me : User | types: '`[Nat`] > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST7 : <> 
+< me : User | types: ('Nat ; 'NzRat ; 'Zero) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST7 : <> 
+< me : User | types: ('Nat ; 'NzRat ; 'Int) > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod SORT-TEST8 is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op op:(_:_->_) : Qid TypeList Sort -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var Q : Qid .
+  var TL : TypeList .
+  var S : Sort .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | AS, op:(Q : TL -> S) > insertedModule(X, Y) =>
+     < X : User | AS > getMaximalAritySet(Y, X, 'RAT, Q, TL, S) .
+endm
+
+erew in SORT-TEST8 : <> 
+< me : User | op: ('_+_ : 'Nat 'Nat -> 'Nat) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST8 : <> 
+< me : User | op: ('_+_ : 'Nat 'Nat -> 'NzNat) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST8 : <> 
+< me : User | op: ('_+_ : 'Nat 'Nat -> 'NzRat) > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod SORT-TEST9 is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op term:_ : Term -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var T : Term .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | AS, term: T > insertedModule(X, Y) =>
+     < X : User | AS > normalizeTerm(Y, X, 'RAT, T) .
+endm
+
+erew in SORT-TEST9 : <> 
+< me : User | term: ('_+_['X:Nat, '_+_['Y:Rat, 'X:Nat]]) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST9 : <> 
+< me : User | term: ('_+_['_+_['X:Nat, 'Y:Rat], '_+_['Y:Rat, 'X:Nat]]) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SORT-TEST9 : <> 
+< me : User | term: ('_+_['_+_['X:NzNat, 'Y:PosRat], '_+_['Y:PosRat, 'X:NzNat]]) > 
+createInterpreter(interpreterManager, me, none) .

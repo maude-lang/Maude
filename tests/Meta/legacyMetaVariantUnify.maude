@@ -1,0 +1,182 @@
+set show timing off .
+
+fmod XOR is
+  sort XOR .
+
+  sort Elem .
+  ops cst1 cst2 cst3 cst4 : -> Elem .
+
+  subsort Elem < XOR .
+  op _+_ : XOR XOR -> XOR [ctor assoc comm] .
+  op 0 : -> XOR .
+
+  vars X Y : XOR .
+
+  eq Y + 0 = Y [variant] .
+  eq X + X = 0 [variant] .
+  eq X + X + Y = Y [variant] .
+
+endfm
+
+fmod META-TEST is
+  inc XOR .
+  inc META-LEVEL .
+endfm
+
+*** regular
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    0, 0) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    10, 0) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    0, 1) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    0, 2) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    0, 3) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    0, 4) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    0, 5) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    0, 6) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    0, 7) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    0, 8) .
+
+*** disjoint
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    empty,
+    0, 0) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    empty,
+    10, 0) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    empty,
+    0, 1) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    empty,
+    0, 2) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    empty,
+    0, 3) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    empty,
+    0, 4) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    empty,
+    0, 5) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    empty,
+    0, 6) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    empty,
+    0, 7) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    empty,
+    0, 8) .
+
+*** regular with irreducibility constraint
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    0, 0) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    10, 0) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    0, 1) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    0, 2) .
+
+red metaVariantUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    0, 3) .
+
+*** disjoint with irreducibility constraint
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    0, 0) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    10, 0) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    0, 1) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    0, 2) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    0, 3) .

@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in INT : - -1 .
 rewrites: 1
 result NzNat: 1
@@ -222,4 +222,4 @@ result Nat: s 0 << s_^200000000000000000001(0)
 reduce in INT : 0 << s_^200000000000000000001(0) .
 rewrites: 1
 result Zero: 0
-Maude> Bye.
+Bye.

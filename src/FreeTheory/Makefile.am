@@ -28,7 +28,13 @@ libfreeTheory_a_SOURCES = \
 	freeGeneralCtor.cc \
 	freeGeneralCtorFinal.cc \
 	freeGeneralExtor.cc \
-	freeGeneralExtorFinal.cc
+	freeGeneralExtorFinal.cc \
+	freeFast3RhsAutomaton.cc \
+	freeFast2RhsAutomaton.cc \
+	freeNullaryRhsAutomaton.cc \
+	freeUnaryRhsAutomaton.cc \
+	freeBinaryRhsAutomaton.cc \
+	freeTernaryRhsAutomaton.cc
 
 EXTRA_DIST = \
 	freeNetExec.cc \
@@ -64,4 +70,10 @@ noinst_HEADERS = \
 	freeGeneralCtor.hh \
 	freeGeneralCtorFinal.hh \
 	freeGeneralExtor.hh \
-	freeGeneralExtorFinal.hh
+	freeGeneralExtorFinal.hh \
+	freeFast3RhsAutomaton.hh \
+	freeFast2RhsAutomaton.hh \
+	freeNullaryRhsAutomaton.hh \
+	freeUnaryRhsAutomaton.hh \
+	freeBinaryRhsAutomaton.hh \
+	freeTernaryRhsAutomaton.hh

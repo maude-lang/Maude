@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -60,12 +60,12 @@ NarrowingUnificationProblem::NarrowingUnificationProblem(PreEquation* preEquatio
 							 DagNode* target,
 							 const NarrowingVariableInfo& variableInfo,
 							 FreshVariableGenerator* freshVariableGenerator,
-							 bool odd)
+							 int variableFamily)
   : preEquation(preEquation),
     nrPreEquationVariables(preEquation->getNrRealVariables()),
     variableInfo(variableInfo),
     freshVariableGenerator(freshVariableGenerator),
-    odd(odd)
+    variableFamily(variableFamily)
 {
   DebugAdvisory(Tty(Tty::MAGENTA) << "==== NarrowingUnificationProblem ====" << Tty(Tty::RESET));
   DebugAdvisory("preEquation->getLhsDag() = " << preEquation->getLhsDag());
@@ -84,7 +84,7 @@ NarrowingUnificationProblem::NarrowingUnificationProblem(PreEquation* preEquatio
   //
   orderSortedUnifiers = 0;
   sortedSolution = new Substitution(substitutionSize);
-  unsortedSolution = new UnificationContext(freshVariableGenerator, substitutionSize, odd);
+  unsortedSolution = new UnificationContext(freshVariableGenerator, substitutionSize, variableFamily);
   for (int i = 0; i < substitutionSize; ++i)
     {
       sortedSolution->bind(i, 0);  // so GC doesn't barf
@@ -105,12 +105,12 @@ NarrowingUnificationProblem::NarrowingUnificationProblem(DagNode* lhs,
 							 DagNode* rhs,
 							 const NarrowingVariableInfo& variableInfo,
 							 FreshVariableGenerator* freshVariableGenerator,
-							 bool odd)
+							 int variableFamily)
   : preEquation(0),
     nrPreEquationVariables(0),
     variableInfo(variableInfo),
     freshVariableGenerator(freshVariableGenerator),
-    odd(odd)
+    variableFamily(variableFamily)
 {
   DebugAdvisory(Tty(Tty::GREEN) << "==== NarrowingUnificationProblem ====" << Tty(Tty::RESET));
   DebugAdvisory("lhs = " << lhs);
@@ -119,7 +119,7 @@ NarrowingUnificationProblem::NarrowingUnificationProblem(DagNode* lhs,
   //
   //	This is a special constructor used for the final lhs =? rhs step in variant unification.
   //	There is no rule or equation here. However we have indexed dagnodes rather than terms, and
-  //	need the non-destructive unifier generation and odd/even fresh variable naming capabilities
+  //	need the non-destructive unifier generation and variable family fresh variable naming capabilities
   //	of this class. Thus we can't use class UnificationProblem.
   //
   Module* module = lhs->symbol()->getModule();
@@ -134,7 +134,7 @@ NarrowingUnificationProblem::NarrowingUnificationProblem(DagNode* lhs,
   //
   orderSortedUnifiers = 0;
   sortedSolution = new Substitution(substitutionSize);
-  unsortedSolution = new UnificationContext(freshVariableGenerator, substitutionSize, odd);
+  unsortedSolution = new UnificationContext(freshVariableGenerator, substitutionSize, variableFamily);
   for (int i = 0; i < substitutionSize; ++i)
     {
       sortedSolution->bind(i, 0);  // so GC doesn't barf
@@ -196,7 +196,6 @@ NarrowingUnificationProblem::findNextUnifier()
     {
       if (!pendingStack.solve(first, *unsortedSolution))
 	return false;
-      //if (extractUnifier() && findOrderSortedUnifiers())  // This looks like a BUG now that cycle detect is done in PendingUnificationStack
       classifyVariables();
       if (findOrderSortedUnifiers())
 	{
@@ -293,7 +292,7 @@ NarrowingUnificationProblem::bindFreeVariables()
       //	and subsequent sorted solutions corresponding to our unsorted solution.
       //
       DagNode* newVariable = new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(newSort),
-						 freshVariableGenerator->getFreshVariableName(freshVariableCount, odd),
+						 freshVariableGenerator->getFreshVariableName(freshVariableCount, variableFamily),
 						 fv);
       //
       //	Bind slot to new variable.
@@ -480,14 +479,19 @@ NarrowingUnificationProblem::classifyVariables()
   //	Thus we need to be careful about what unbound variables we treat as free
   //	variables and which variables get sorts represented by BDD variables.
   //
+  //	We are interested in two sets of variables:
+  //	  Those which must be bound to a fresh variable under our final numbering scheme.
+  //	  Those for which a sort must be calculated based on the their occurances in bindings.
+  //	The former is a superset of the latter.
+  //
 
   //
   //	Look at original variables. We compute two sets:
-  //	freeVariables starts as the set of unbound original variables
-  //	occurs is the set of variables appearing in a binding to an original variable.
+  //	freeVariables is intially the set of unbound original variables.
+  //	sortConstrainedVariables is the set of variables appearing in a binding to an original variable.
   //
   freeVariables.clear();
-  NatSet occurs;
+  sortConstrainedVariables.clear();
   for (int i = 0; i < substitutionSize; ++i)
     {
       if (i < nrPreEquationVariables || i >= firstTargetSlot)
@@ -496,18 +500,8 @@ NarrowingUnificationProblem::classifyVariables()
 	  if (value == 0)
 	    freeVariables.insert(i);
 	  else
-	    value->insertVariables(occurs);
+	    value->insertVariables(sortConstrainedVariables);
 	}
-    }
-  //
-  //	All unbound variables occuring in a binding to
-  //	an original variable are sort constrained.
-  //
-  sortConstrainedVariables.clear();
-  FOR_EACH_CONST(i, NatSet, occurs)
-    {
-      if (unsortedSolution->value(*i) == 0)
-	sortConstrainedVariables.insert(*i);
     }
   //
   //	Sort constrained variables are also treated as free variables

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 2004 SRI International, Menlo Park, CA 94025, USA.
 
@@ -41,16 +41,16 @@ public:
 			  Vector<const char*>& purposes,
 			  Vector<Vector<const char*> >& data);
   void resetRules();
-  void saveHiddenState();
-  void restoreHiddenState();
+  //void saveHiddenState();
+  //void restoreHiddenState();
   bool eqRewrite(DagNode* subject, RewritingContext& context);
   DagNode* ruleRewrite(DagNode* subject, RewritingContext& context);
 
 private:
-  typedef stack<mpz_class, list<mpz_class> > MpzStack;  // optimize for the empty case
+  //typedef stack<mpz_class, list<mpz_class> > MpzStack;  // optimize for the empty case
 
   mpz_class currentValue;
-  MpzStack currentValueStack;
+  // MpzStack currentValueStack;
 };
 
 #endif

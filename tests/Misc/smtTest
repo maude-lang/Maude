@@ -3,9 +3,13 @@
 if grep "#define USE_CVC4" ../../config.h ; # are we using CVC4?
 then
   echo "testing CVC4"
+else if grep "#define USE_YICES2" ../../config.h ; # are we using YICES2?
+then
+  echo "testing Yices2"
 else
-  echo "no CVC4"
+  echo "no SMT support compiled in"
   exit 77 # grep returned nonzero exit so skip this test
+fi
 fi
 
 MAUDE_LIB=$srcdir/../../src/Main

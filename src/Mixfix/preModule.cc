@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -83,4 +83,93 @@ PreModule::PreModule(int moduleName, Interpreter* owner)
 
 PreModule::~PreModule()
 {
+  {
+    FOR_EACH_CONST(i, Vector<Import>, imports)
+      i->expr->deepSelfDestruct();
+  }
+  {
+    FOR_EACH_CONST(i, Vector<Parameter>, parameters)
+      i->theory->deepSelfDestruct();
+  }
+}
+
+void
+PreModule::addParameter(Token name, ModuleExpression* theory)
+{
+  if (MixfixModule::isTheory(getModuleType()))
+    {
+      IssueWarning(LineNumber(name.lineNumber()) <<
+		   ": parmaeterized theories are not supported; recovering by ignoring parameter " <<
+		   QUOTE(name) << '.');
+      cout << "preModule = " << this << "  theory = " << theory << endl;
+      delete theory;
+      return;
+    }
+  int nrParameters = parameters.length();
+  parameters.resize(nrParameters + 1);
+  parameters[nrParameters].name = name;
+  parameters[nrParameters].theory = theory;
+}
+
+void
+PreModule::addImport(LineNumber lineNumber, ImportModule::ImportMode mode, ModuleExpression* expr)
+{
+  int nrImports = imports.length();
+  imports.resize(nrImports + 1);
+  imports[nrImports].lineNumber = lineNumber;
+  imports[nrImports].mode = mode;
+  imports[nrImports].expr = expr;
+}
+
+void
+PreModule::processParameters(ImportModule* flatModule)
+{
+  FOR_EACH_CONST(i, Vector<Parameter>, parameters)
+    {
+      if (ImportModule* fm = owner->makeModule(i->theory))
+	{
+	  if (MixfixModule::canHaveAsParameter(getModuleType(), fm->getModuleType()))
+	    {
+	      ImportModule* parameterCopy = owner->makeParameterCopy(i->name.code(), fm);
+	      if (parameterCopy != 0)
+		flatModule->addParameter(i->name, parameterCopy);
+	      else
+		{
+		  flatModule->markAsBad();
+		  return;
+		}
+	    }
+	  else
+	    {
+	      IssueWarning(LineNumber(i->name.lineNumber()) <<
+			   ": parameterization of " << 
+			   QUOTE(MixfixModule::moduleTypeString(getModuleType())) <<
+			   " " << this << " by " <<
+			   QUOTE(MixfixModule::moduleTypeString(fm->getModuleType())) <<
+			   " " << fm << " is not allowed.");
+	      flatModule->markAsBad();
+	    }
+	}
+    }
+}
+
+void
+PreModule::processExplicitImports(ImportModule* flatModule)
+{
+  FOR_EACH_CONST(i, Vector<Import>, imports)
+    {
+      if (ImportModule* fm = owner->makeModule(i->expr, flatModule))
+	{
+	  if (fm->hasFreeParameters())
+	    {
+	      IssueWarning(i->lineNumber << ": cannot import module " << fm <<
+			   " because it has free parameters.");
+	      flatModule->markAsBad();
+	    }
+	  else
+	    flatModule->addImport(fm, i->mode, i->lineNumber);
+	}
+      else
+	flatModule->markAsBad();
+    }
 }

@@ -1,0 +1,92 @@
+fmod TEST is
+  sorts Bar Foo{V2} Baz{V{V2}} .
+  op a : -> Bar .
+  op f : Bar -> Foo{V2} .
+  op g : Bar -> Baz{V{V2}} .
+endfm
+fmod TEST is
+  sorts Bar Foo{V2} Baz{V{V2}} .
+  op a : -> Bar .
+  op f : Bar -> Foo{V2} .
+  op g : Bar -> Baz{V{V2}} .
+endfm
+fmod TEST is
+  sorts Elt Foo{V2} Baz{V{V2}} .
+  op a : -> Elt .
+  op f : Elt -> Foo{V2} .
+  op g : Elt -> Baz{V{V2}} .
+endfm
+fmod TEST is
+  sorts Elt Foo{V2} Baz{V{V2}} .
+  op a : -> Elt .
+  op f : Elt -> Foo{V2} .
+  op g : Elt -> Baz{V{V2}} .
+endfm
+fmod TEST is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+  op g : Bar -> Bar .
+  op h : Bar Bar -> Bar .
+  eq g(X:Bar) = summation(X:Bar, X:Bar) .
+  eq h(X:Bar, Y:Bar) = summation(X:Bar, Y:Bar) .
+endfm
+fmod TEST is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+  op g : Bar -> Bar .
+  op h : Bar Bar -> Bar .
+  eq g(X:Bar) = summation(X:Bar, X:Bar) .
+  eq h(X:Bar, Y:Bar) = summation(X:Bar, Y:Bar) .
+endfm
+fmod TEST is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+  op g : Bar -> Bar .
+  op h : Bar Bar -> Bar .
+  eq g(X:Bar) = summation(X:Bar, X:Bar) .
+  eq h(X:Bar, Y:Bar) = summation(X:Bar, g(Y:Bar)) .
+endfm
+fmod TEST is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+  op inv : Bar -> Bar .
+  op g : Bar -> Bar .
+  op h : Bar Bar -> Bar .
+  eq g(X:Bar) = summation(inv(X:Bar), inv(X:Bar)) .
+  eq h(X:Bar, Y:Bar) = summation(inv(Y:Bar), inv(X:Bar)) .
+endfm
+fmod TEST is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+  op inv : Bar -> Bar .
+  op g : Bar -> Bar .
+  op h : Bar Bar Bar -> Bar .
+  eq g(X:Bar) = summation(inv(X:Bar), inv(X:Bar)) .
+  eq h(X:Bar, Y:Bar, Z:Bar) = summation(inv(X:Bar), inv(Z:Bar)) .
+endfm
+fmod TEST is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+  op inv : Bar -> Bar .
+  op g : Bar -> Bar .
+  op h : Bar Bar Bar Bar -> Bar .
+  eq g(X:Bar) = summation(inv(X:Bar), inv(X:Bar)) .
+  eq h(W:Bar, X:Bar, Y:Bar, Z:Bar) = summation(inv(X:Bar), inv(Z:Bar)) .
+endfm
+fmod TEST is
+  sorts Bar One{V2} Two{V2} MySort .
+  op h : Bar Universal -> Universal [poly (2 0)] .
+  op 1 : -> Bar .
+  op 2 : -> Bar .
+  op g1 : One{V2} -> One{V2} .
+  op g2 : Two{V2} -> Two{V2} .
+  op p : Bar MySort -> MySort .
+  eq g1(X:One{V2}) = h(1, X:One{V2}) .
+  eq g2(Y:Two{V2}) = h(2, Y:Two{V2}) .
+  eq p(X:Bar, Y:MySort) = h(X:Bar, Y:MySort) .
+endfm
+==========================================
+reduce in TEST : p(1, A:MySort) .
+rewrites: 1
+result [MySort]: h(1, A:MySort)
+Bye.

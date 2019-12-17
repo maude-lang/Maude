@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -55,13 +55,31 @@ MixfixModule::parseTerm(const Vector<Token>& bubble,
   Term* t1;
   Term* t2;
   parser->makeTerms(t1, t2);
+  /*
+  cerr << "t1 = " << t1 << endl;
+  if (r > 1)
+    cout << "t2 = " << t2 << endl;
+  */
   if (r > 1)
     {
-      t1->symbol()->fillInSortInfo(t1);
-      t2->symbol()->fillInSortInfo(t2);
+      if (getStatus() >= THEORY_CLOSED)
+	{
+	  //
+	  //	We have semi-compiled operator declarations so sort
+	  //	diagrams are valid and sort computations can safely be done.
+	  //
+	  t1->symbol()->fillInSortInfo(t1);
+	  t2->symbol()->fillInSortInfo(t2);
+	}
+      /*
       IssueWarning(LineNumber(bubble[0].lineNumber()) <<
 		   ": ambiguous term, two parses are:\n" << t1 <<
 		   "\n-versus-\n" << t2 <<
+		   "\n\nArbitrarily taking the first as correct.");
+      */
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": ambiguous term, two parses are:\n" << t1->getSort() << " : " <<  t1 <<
+		   "\n-versus-\n" << t2->getSort() << " : " << t2 <<
 		   "\n\nArbitrarily taking the first as correct.");
       t2->deepSelfDestruct();
     }
@@ -87,10 +105,53 @@ MixfixModule::parseTerm2(const Vector<Token>& bubble,
   return r;
 }
 
+StrategyExpression*
+MixfixModule::parseStrategyExpr(const Vector<Token>& bubble, int begin, int end)
+{
+  makeGrammar(true);
+
+  int r = parseSentence(bubble, STRATEGY_EXPRESSION, begin, end);
+
+  if (r <= 0)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+        ": no parse for strategy expression\n" << bubble << " .");
+      return 0;
+    }
+  StrategyExpression *e1, *e2;
+  parser->makeStrategyExprs(e1, e2);
+
+  if (r > 1)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+        ": multiple distinct parses for strategy expression.");
+      delete e2;
+    }
+  return e1;
+}
+
+int
+MixfixModule::parseStrategyExpr2(const Vector<Token>& bubble,
+				 StrategyExpression*& parse1,
+				 StrategyExpression*& parse2,
+				 int& firstBad)
+{
+  makeGrammar(true);
+  int r = parser->parseSentence(bubble, STRATEGY_EXPRESSION, firstBad,
+			0, bubble.length());
+
+  if (r > 0)
+    parser->makeStrategyExprs(parse1, parse2);
+  return r;
+}
+
 void
 MixfixModule::parseStatement(const Vector<Token>& bubble)
 {
-  makeGrammar();
+  // Activate strategy language productions only in strategy definitions
+  bool complexParser = bubble[0].code() == sd || bubble[0].code() == csd;
+  makeGrammar(complexParser);
+
   int r = parseSentence(bubble, STATEMENT);
   if (r <= 0)
     {

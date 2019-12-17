@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
 
@@ -28,13 +28,25 @@
 
 class NarrowingVariableInfo
 {
-public: 
+  NO_COPYING(NarrowingVariableInfo);
+
+public:
+  NarrowingVariableInfo() {}
+
   int getNrVariables() const;
   //
   //	These two functions map between indexes and variables.
   //
   int variable2Index(VariableDagNode* variableTerm);
+  int variable2IndexNoAdd(VariableDagNode* variableTerm) const;
   VariableDagNode* index2Variable(int index) const;
+  //
+  //	Forgets all but the first variables seen.
+  //	This hack is needed to deal with variables in blocker terms.
+  //
+  void forgetAllBut(int nrFirstVariables);
+
+  void copy(const NarrowingVariableInfo& other);
 
 private:
   //
@@ -53,6 +65,18 @@ inline VariableDagNode*
 NarrowingVariableInfo::index2Variable(int index) const
 {
   return variables[index];
+}
+
+inline void
+NarrowingVariableInfo::forgetAllBut(int nrFirstVariables)
+{
+  variables.resize(nrFirstVariables);
+}
+
+inline void
+NarrowingVariableInfo::copy(const NarrowingVariableInfo& other)
+{
+  variables = other.variables;
 }
 
 #endif

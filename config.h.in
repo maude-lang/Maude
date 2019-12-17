@@ -3,9 +3,6 @@
 /* annotate comiler output */
 #undef ANNOTATED
 
-/* support bubbles when parsing */
-#undef BUBBLES
-
 /* build the experimental integrated compiler */
 #undef COMPILER
 
@@ -26,9 +23,6 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the `nsl' library (-lnsl). */
-#undef HAVE_LIBNSL
 
 /* Define to 1 if you have the `rt' library (-lrt). */
 #undef HAVE_LIBRT
@@ -114,9 +108,6 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* use MSCP10 calling conventions */
-#undef SCP
-
 /* The size of `int', as computed by sizeof. */
 #undef SIZEOF_INT
 
@@ -146,6 +137,9 @@
 
 /* use Tecla command line editing library */
 #undef USE_TECLA
+
+/* use Yices2 SMT solver library */
+#undef USE_YICES2
 
 /* Version number of package */
 #undef VERSION

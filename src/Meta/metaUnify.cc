@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
 
@@ -24,26 +24,6 @@
 //	Code for unification descent functions.
 //
 
-local_inline bool
-MetaLevelOpSymbol::getCachedUnificationProblem(MetaModule* m,
-					       FreeDagNode* subject,
-					       Int64 solutionNr,
-					       UnificationProblem*& unification,
-					       Int64& lastSolutionNr)
-{
-  CacheableState* cachedState;
-  if (m->remove(subject, cachedState, lastSolutionNr))
-    {
-      if (lastSolutionNr <= solutionNr)
-	{
-	  unification = safeCast(UnificationProblem*, cachedState);
-	  return true;
-	}
-      delete cachedState;
-    }
-  return false;
-}
-
 bool
 MetaLevelOpSymbol::metaUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint)
 {
@@ -54,22 +34,26 @@ MetaLevelOpSymbol::metaUnify2(FreeDagNode* subject, RewritingContext& context, b
   if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
     {
       Int64 solutionNr;
-      DagNode* metaVarIndex = subject->getArgument(2);
-      if (metaLevel->isNat(metaVarIndex) &&
+      int variableFamilyName;
+      int variableFamily;
+      if (metaLevel->downQid(subject->getArgument(2), variableFamilyName) &&
+	  (variableFamily = FreshVariableSource::getFamily(variableFamilyName)) != NONE &&
 	  metaLevel->downSaturate64(subject->getArgument(3), solutionNr) &&
 	  solutionNr >= 0)
 	{
-	  const mpz_class& varIndex = metaLevel->getNat(metaVarIndex);
 	  UnificationProblem* unification;
 	  Int64 lastSolutionNr;
-	  if (!getCachedUnificationProblem(m, subject, solutionNr, unification, lastSolutionNr))
+	  if (!(m->getCachedStateObject(subject, solutionNr, unification, lastSolutionNr)))
 	    {
 	      Vector<Term*> lhs;
 	      Vector<Term*> rhs;
 	      if (!metaLevel->downUnificationProblem(subject->getArgument(1), lhs, rhs, m, disjoint))
 		return false;
 	      DebugAdvisory("metaUnify2() - making unification problem for " << subject);
-	      unification = new UnificationProblem(lhs, rhs, new FreshVariableSource(m, varIndex));
+	      unification = new UnificationProblem(lhs,
+						   rhs,
+						   new FreshVariableSource(m),
+						   variableFamily);
 	      if (!(unification->problemOK()))
 		{
 		  delete unification;
@@ -98,10 +82,10 @@ MetaLevelOpSymbol::metaUnify2(FreeDagNode* subject, RewritingContext& context, b
 	  {
 	    const Substitution& solution = unification->getSolution();
 	    const VariableInfo& variableInfo = unification->getVariableInfo();
-	    mpz_class lastVarIndex = varIndex + unification->getNrFreeVariables();
+	    int variableNameId = FreshVariableSource::getBaseName(unification->getVariableFamily());
 	    result = disjoint ?
-	      metaLevel->upUnificationTriple(solution, variableInfo, lastVarIndex, m) :
-	      metaLevel->upUnificationPair(solution, variableInfo, lastVarIndex, m);
+	      metaLevel->upUnificationTriple(solution, variableInfo, variableNameId, m) :
+	      metaLevel->upUnificationPair(solution, variableInfo, variableNameId, m);
 	  }
 	fail:
 	  (void) m->unprotect();
@@ -115,7 +99,7 @@ bool
 MetaLevelOpSymbol::metaUnify(FreeDagNode* subject, RewritingContext& context)
 {
   //
-  //	op metaUnify : Module UnificationProblem Nat Nat ~> UnificationPair? .
+  //	op metaUnify : Module UnificationProblem Qid Nat ~> UnificationPair? .
   //
   return metaUnify2(subject, context, false);
 }
@@ -124,7 +108,7 @@ bool
 MetaLevelOpSymbol::metaDisjointUnify(FreeDagNode* subject, RewritingContext& context)
 {
   //
-  //	op metaDisjointUnify : Module UnificationProblem Nat Nat ~> UnificationTriple? .
+  //	op metaDisjointUnify : Module UnificationProblem Qid Nat ~> UnificationTriple? .
   //
   return metaUnify2(subject, context, true);
 }

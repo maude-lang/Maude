@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -27,6 +27,7 @@
 
 bool UserLevelRewritingContext::interactiveFlag = true;
 bool UserLevelRewritingContext::ctrlC_Flag = false;
+bool UserLevelRewritingContext::infoFlag = false;
 bool UserLevelRewritingContext::stepFlag = false;
 bool UserLevelRewritingContext::abortFlag = false;
 int UserLevelRewritingContext::debugLevel = 0;
@@ -66,6 +67,18 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
 #endif
       sigaction(SIGINT, &ctrlC_Handler, 0);
     }
+  //
+  //	We want to have requests for info to be minimally disruptive
+  //	so we request system calls that are interrrupted be restarted.
+  //
+  static struct sigaction sigInfoHandler;
+  sigInfoHandler.sa_handler = infoHandler;
+  sigInfoHandler.sa_flags = SA_RESTART;
+#ifdef SIGINFO
+  sigaction(SIGINFO, &sigInfoHandler, 0);
+#else
+  sigaction(SIGUSR1, &sigInfoHandler, 0);
+#endif
 
 #ifdef NO_ASSERT
   //
@@ -117,12 +130,12 @@ tcsh command 'limit stacksize' or the bash command 'ulimit -s'.\n\
 Depending on your operating system configuration you may be able to\n\
 increase your stacksize with the tcsh command 'unlimit stacksize'\n\
 or the bash command 'ulimit -s unlimited'.\n\n";
-  (void) write(STDERR_FILENO, message, sizeof(message) - 1);
+  returnValueDump = write(STDERR_FILENO, message, sizeof(message) - 1);
   _exit(1);  // don't call atexit() functions with a bad machine state
 }
 
 int
-UserLevelRewritingContext::sigsegvHandler(void *fault_address, int serious)
+UserLevelRewritingContext::sigsegvHandler(void* /* fault_address */, int serious)
 {
   if (serious)  // real segmentation fault
     internalErrorHandler(SIGSEGV);  // doesn't return
@@ -143,23 +156,66 @@ UserLevelRewritingContext::internalErrorHandler(int /* signalNr */)
 `crash.maude' that can be loaded to reproduce the crash (it may load\n\
 other files). Do not bother trying to simplify your example unless the\n\
 runtime to the bug being visible is greater than 10 seconds.\n\n";
-  (void) write(STDERR_FILENO, message1, sizeof(message1) - 1);
-  (void) write(STDERR_FILENO, message2, sizeof(message2) - 1);
-  (void) write(STDERR_FILENO, message3, sizeof(message3) - 1);
+  returnValueDump = write(STDERR_FILENO, message1, sizeof(message1) - 1);
+  returnValueDump = write(STDERR_FILENO, message2, sizeof(message2) - 1);
+  returnValueDump = write(STDERR_FILENO, message3, sizeof(message3) - 1);
   _exit(1);  // don't call atexit() functions with a bad machine state
 }
 
 void
 UserLevelRewritingContext::interruptHandler(int)
 {
-  ctrlC_Flag =  true;
+  ctrlC_Flag = true;
   setTraceStatus(true);
+}
+
+void
+UserLevelRewritingContext::infoHandler(int)
+{
+  infoFlag = true;
+  setTraceStatus(true);
+  // write(STDERR_FILENO, "info handler called\n", sizeof("info handler called\n") - 1);
 }
 
 void
 UserLevelRewritingContext::interruptHandler2(...)
 {
   // windowChangedFlag = true;
+}
+
+bool
+UserLevelRewritingContext::handleInterrupt()
+{
+  if (infoFlag)
+    {
+      //
+      //	Interrupted by an info request.
+      //
+      printStatusReportCommon();
+      cerr << "Waiting for external event." << endl;
+      where(cerr);
+      cerr << endl;
+      infoFlag = false;
+      //
+      //	Clear the trace flag if nothing else is using it.
+      //
+      if (!ctrlC_Flag)
+        setTraceStatus(interpreter.getFlag(Interpreter::EXCEPTION_FLAGS));
+    }
+  //
+  //	This is called because a slow/blocked system call was interrupted
+  //	by a signal. We return true if we dealt with the issue and want
+  //	to restart the system call and false to quit.
+  //
+  //	If ctrl-C has been pressed we want to quit the system call so Maude
+  //	can respond to the user - might cause issues with files and sockets
+  //	but we prefer Maude to be responsive.
+  //
+  //	If it was cause by an info request we want to continue as normal. If
+  //	there are both ctrl-C and info events we treat it as a ctrl-C.
+  //
+  //cerr << "ctrlC_Flag = " << ctrlC_Flag << endl;
+  return !ctrlC_Flag;
 }
 
 void
@@ -252,11 +308,70 @@ UserLevelRewritingContext::beginCommand()
     cout << "==========================================\n";
 }
 
+void
+UserLevelRewritingContext::printStatusReportCommon()
+{
+  struct timeval t;
+  gettimeofday(&t, 0);
+  time_t secs = t.tv_sec;
+  cerr << "====> Maude status report on " << ctime(&secs);
+
+  Int64 mbTotal = 0;
+  Int64 eqTotal = 0;
+  Int64 rlTotal = 0;
+  Int64 nrTotal = 0;
+  Int64 vnTotal = 0;
+  for (UserLevelRewritingContext* p = this; p != 0; p = p->parent)
+    {
+      mbTotal += p->getMbCount();
+      eqTotal += p->getEqCount();
+      rlTotal += p->getRlCount();
+      nrTotal += p->getNarrowingCount();
+      vnTotal += p->getVariantNarrowingCount();
+    }
+  cerr << "membership applications: " << mbTotal <<
+    "\nequational rewrites: " << eqTotal <<
+    "\nrule rewrites: " << rlTotal <<
+    "\nvariant narrowing steps: " << nrTotal <<
+    "\nnarrowing steps: " << vnTotal <<
+    "\ntotal: " << mbTotal + eqTotal + rlTotal + nrTotal + vnTotal << '\n';
+}
+
+void
+UserLevelRewritingContext::printStatusReport(DagNode* subject, const PreEquation* pe)
+{
+  printStatusReportCommon();
+
+  cerr << "About to apply ";
+  if (const SortConstraint* mb = dynamic_cast<const SortConstraint*>(pe))
+    cerr << "membership axiom:\n  " << mb << '\n';
+  else if (const Equation* eq = dynamic_cast<const Equation*>(pe))
+    cerr << "equation:\n  " << eq << '\n';
+  else if (const Rule* rl = dynamic_cast<const Rule*>(pe))
+    cerr << "rule:\n  " << rl << '\n';
+  else
+    CantHappen("unidentified statement");
+  cerr << "on redex:\n" << subject << endl;
+  where(cerr);
+  cerr << endl;
+}
+
 bool
-UserLevelRewritingContext::handleDebug(const DagNode* subject, const PreEquation* pe)
+UserLevelRewritingContext::handleDebug(DagNode* subject, const PreEquation* pe)
 {
   if (abortFlag)
     return true;
+  if (infoFlag)
+    {
+      printStatusReport(subject, pe);
+      infoFlag = false;
+      //
+      //	If we are only slow routed by an INFO signal we want
+      //	to make sure we take the fast route now that we've made
+      //	our report.
+      //
+      setTraceStatus(interpreter.getFlag(Interpreter::EXCEPTION_FLAGS));
+    }
   bool broken = 0;
   Symbol* brokenSymbol = 0;
   if (interpreter.getFlag(Interpreter::BREAK))
@@ -298,6 +413,8 @@ UserLevelRewritingContext::handleDebug(const DagNode* subject, const PreEquation
 	    cout << "break on labeled equation:\n" << eq << '\n';
 	  else if (const Rule* rl = dynamic_cast<const Rule*>(pe))
 	    cout << "break on labeled rule:\n" << rl << '\n';
+	  else if (const StrategyDefinition* sdef = dynamic_cast<const StrategyDefinition*>(pe))
+	    cout << "break on labeled strategy definition:\n" << sdef << '\n';
 	  else
 	    CantHappen("unidentified statement");
 	}
@@ -332,7 +449,7 @@ UserLevelRewritingContext::handleDebug(const DagNode* subject, const PreEquation
 	  }
 	case WHERE:
 	  {
-	    where();
+	    where(cout);
 	    break;
 	  }
 	default:
@@ -343,8 +460,17 @@ UserLevelRewritingContext::handleDebug(const DagNode* subject, const PreEquation
 }
 
 void
-UserLevelRewritingContext::where()
+UserLevelRewritingContext::where(ostream& s)
 {
+  //
+  //	In the case of a race condition between info and ctrl-C
+  //	we want ctrl-C not to terminate the info but a second
+  //	ctrl-C could. Also, once we are done we want to restore
+  //	an existing ctrl-C so we can honor it.
+  //
+  bool savedCtrlC_Flag = ctrlC_Flag;
+  ctrlC_Flag = false;
+
   static const char* purposeString[] =
   {
     "which arose while checking a condition during the evaluation of:",
@@ -353,17 +479,19 @@ UserLevelRewritingContext::where()
     "which arose while executing a top level command.",
     "which arose while doing a meta-evaluation requested by:"
   };
-  cout << "Current term is:\n";
+  s << "Current term is:\n";
   for (UserLevelRewritingContext* p = this; p != 0; p = p->parent)
     {
-      cout << p->root() << '\n';
+      s << p->root() << '\n';
+      //
+      //	The user might reasonably terminate a huge list
+      //	of parent evaluations.
+      //
       if (ctrlC_Flag)
-	{
-	  ctrlC_Flag = false;
-	  return;
-	}
-      cout << purposeString[p->purpose] << '\n';
+	break;
+      s << purposeString[p->purpose] << '\n';
     }
+  ctrlC_Flag = savedCtrlC_Flag;
 }
 
 bool

@@ -1,0 +1,783 @@
+==========================================
+debug search [10] in COLLATZ : f(27) =>+ f(N) .
+*********** trial #1
+crl f(N) => f(N / 2) if N rem 2 = 0 .
+N --> 27
+*********** solving condition fragment
+N rem 2 = 0
+*********** equation
+(built-in equation for symbol _rem_)
+27 rem 2
+--->
+1
+*********** failure for condition fragment
+N rem 2 = 0
+*********** failure #1
+
+Solution 1 (state 1)
+states: 2  rewrites: 5
+N --> 82
+
+Solution 2 (state 2)
+states: 3  rewrites: 8
+N --> 41
+
+Solution 3 (state 3)
+states: 4  rewrites: 14
+N --> 124
+
+Solution 4 (state 4)
+states: 5  rewrites: 17
+N --> 62
+
+Solution 5 (state 5)
+states: 6  rewrites: 21
+N --> 31
+
+Solution 6 (state 6)
+states: 7  rewrites: 27
+N --> 94
+
+Solution 7 (state 7)
+states: 8  rewrites: 30
+N --> 47
+
+Solution 8 (state 8)
+states: 9  rewrites: 36
+N --> 142
+
+Solution 9 (state 9)
+states: 10  rewrites: 39
+N --> 71
+
+Solution 10 (state 10)
+states: 11  rewrites: 45
+N --> 214
+*********** trial #2
+crl f(N) => f(N / 2) if N rem 2 = 0 .
+N --> 214
+*********** solving condition fragment
+N rem 2 = 0
+
+Solution 11 (state 11)
+states: 12  rewrites: 3
+N --> 107
+
+Solution 12 (state 12)
+states: 13  rewrites: 9
+N --> 322
+
+Solution 13 (state 13)
+states: 14  rewrites: 12
+N --> 161
+
+Solution 14 (state 14)
+states: 15  rewrites: 18
+N --> 484
+
+Solution 15 (state 15)
+states: 16  rewrites: 21
+N --> 242
+
+Solution 16 (state 16)
+states: 17  rewrites: 25
+N --> 121
+
+Solution 17 (state 17)
+states: 18  rewrites: 31
+N --> 364
+
+Solution 18 (state 18)
+states: 19  rewrites: 34
+N --> 182
+
+Solution 19 (state 19)
+states: 20  rewrites: 38
+N --> 91
+
+Solution 20 (state 20)
+states: 21  rewrites: 44
+N --> 274
+
+Solution 21 (state 21)
+states: 22  rewrites: 3
+N --> 137
+
+Solution 22 (state 22)
+states: 23  rewrites: 9
+N --> 412
+
+Solution 23 (state 23)
+states: 24  rewrites: 12
+N --> 206
+
+Solution 24 (state 24)
+states: 25  rewrites: 16
+N --> 103
+
+Solution 25 (state 25)
+states: 26  rewrites: 22
+N --> 310
+
+Solution 26 (state 26)
+states: 27  rewrites: 25
+N --> 155
+
+Solution 27 (state 27)
+states: 28  rewrites: 31
+N --> 466
+
+Solution 28 (state 28)
+states: 29  rewrites: 34
+N --> 233
+
+Solution 29 (state 29)
+states: 30  rewrites: 40
+N --> 700
+
+Solution 30 (state 30)
+states: 31  rewrites: 43
+N --> 350
+
+Solution 31 (state 31)
+states: 32  rewrites: 47
+N --> 175
+
+Solution 32 (state 32)
+states: 33  rewrites: 53
+N --> 526
+
+Solution 33 (state 33)
+states: 34  rewrites: 56
+N --> 263
+
+Solution 34 (state 34)
+states: 35  rewrites: 62
+N --> 790
+
+Solution 35 (state 35)
+states: 36  rewrites: 65
+N --> 395
+
+Solution 36 (state 36)
+states: 37  rewrites: 71
+N --> 1186
+
+Solution 37 (state 37)
+states: 38  rewrites: 74
+N --> 593
+
+Solution 38 (state 38)
+states: 39  rewrites: 80
+N --> 1780
+
+Solution 39 (state 39)
+states: 40  rewrites: 83
+N --> 890
+
+Solution 40 (state 40)
+states: 41  rewrites: 87
+N --> 445
+
+Solution 41 (state 41)
+states: 42  rewrites: 93
+N --> 1336
+
+Solution 42 (state 42)
+states: 43  rewrites: 96
+N --> 668
+
+Solution 43 (state 43)
+states: 44  rewrites: 100
+N --> 334
+
+Solution 44 (state 44)
+states: 45  rewrites: 104
+N --> 167
+
+Solution 45 (state 45)
+states: 46  rewrites: 110
+N --> 502
+
+Solution 46 (state 46)
+states: 47  rewrites: 113
+N --> 251
+
+Solution 47 (state 47)
+states: 48  rewrites: 119
+N --> 754
+
+Solution 48 (state 48)
+states: 49  rewrites: 122
+N --> 377
+
+Solution 49 (state 49)
+states: 50  rewrites: 128
+N --> 1132
+
+Solution 50 (state 50)
+states: 51  rewrites: 131
+N --> 566
+
+Solution 51 (state 51)
+states: 52  rewrites: 135
+N --> 283
+
+Solution 52 (state 52)
+states: 53  rewrites: 141
+N --> 850
+
+Solution 53 (state 53)
+states: 54  rewrites: 144
+N --> 425
+
+Solution 54 (state 54)
+states: 55  rewrites: 150
+N --> 1276
+
+Solution 55 (state 55)
+states: 56  rewrites: 153
+N --> 638
+
+Solution 56 (state 56)
+states: 57  rewrites: 157
+N --> 319
+
+Solution 57 (state 57)
+states: 58  rewrites: 163
+N --> 958
+
+Solution 58 (state 58)
+states: 59  rewrites: 166
+N --> 479
+
+Solution 59 (state 59)
+states: 60  rewrites: 172
+N --> 1438
+
+Solution 60 (state 60)
+states: 61  rewrites: 175
+N --> 719
+
+Solution 61 (state 61)
+states: 62  rewrites: 181
+N --> 2158
+
+Solution 62 (state 62)
+states: 63  rewrites: 184
+N --> 1079
+
+Solution 63 (state 63)
+states: 64  rewrites: 190
+N --> 3238
+
+Solution 64 (state 64)
+states: 65  rewrites: 193
+N --> 1619
+
+Solution 65 (state 65)
+states: 66  rewrites: 199
+N --> 4858
+
+Solution 66 (state 66)
+states: 67  rewrites: 202
+N --> 2429
+
+Solution 67 (state 67)
+states: 68  rewrites: 208
+N --> 7288
+
+Solution 68 (state 68)
+states: 69  rewrites: 211
+N --> 3644
+
+Solution 69 (state 69)
+states: 70  rewrites: 215
+N --> 1822
+
+Solution 70 (state 70)
+states: 71  rewrites: 219
+N --> 911
+
+Solution 71 (state 71)
+states: 72  rewrites: 225
+N --> 2734
+
+Solution 72 (state 72)
+states: 73  rewrites: 228
+N --> 1367
+
+Solution 73 (state 73)
+states: 74  rewrites: 234
+N --> 4102
+
+Solution 74 (state 74)
+states: 75  rewrites: 237
+N --> 2051
+
+Solution 75 (state 75)
+states: 76  rewrites: 243
+N --> 6154
+
+Solution 76 (state 76)
+states: 77  rewrites: 246
+N --> 3077
+
+Solution 77 (state 77)
+states: 78  rewrites: 252
+N --> 9232
+
+Solution 78 (state 78)
+states: 79  rewrites: 255
+N --> 4616
+
+Solution 79 (state 79)
+states: 80  rewrites: 259
+N --> 2308
+
+Solution 80 (state 80)
+states: 81  rewrites: 263
+N --> 1154
+
+Solution 81 (state 81)
+states: 82  rewrites: 267
+N --> 577
+
+Solution 82 (state 82)
+states: 83  rewrites: 273
+N --> 1732
+
+Solution 83 (state 83)
+states: 84  rewrites: 276
+N --> 866
+
+Solution 84 (state 84)
+states: 85  rewrites: 280
+N --> 433
+
+Solution 85 (state 85)
+states: 86  rewrites: 286
+N --> 1300
+
+Solution 86 (state 86)
+states: 87  rewrites: 289
+N --> 650
+
+Solution 87 (state 87)
+states: 88  rewrites: 293
+N --> 325
+
+Solution 88 (state 88)
+states: 89  rewrites: 299
+N --> 976
+
+Solution 89 (state 89)
+states: 90  rewrites: 302
+N --> 488
+
+Solution 90 (state 90)
+states: 91  rewrites: 306
+N --> 244
+
+Solution 91 (state 91)
+states: 92  rewrites: 310
+N --> 122
+
+Solution 92 (state 92)
+states: 93  rewrites: 314
+N --> 61
+
+Solution 93 (state 93)
+states: 94  rewrites: 320
+N --> 184
+
+Solution 94 (state 94)
+states: 95  rewrites: 323
+N --> 92
+
+Solution 95 (state 95)
+states: 96  rewrites: 327
+N --> 46
+
+Solution 96 (state 96)
+states: 97  rewrites: 331
+N --> 23
+
+Solution 97 (state 97)
+states: 98  rewrites: 337
+N --> 70
+
+Solution 98 (state 98)
+states: 99  rewrites: 340
+N --> 35
+
+Solution 99 (state 99)
+states: 100  rewrites: 346
+N --> 106
+
+Solution 100 (state 100)
+states: 101  rewrites: 349
+N --> 53
+
+Solution 101 (state 101)
+states: 102  rewrites: 355
+N --> 160
+
+Solution 102 (state 102)
+states: 103  rewrites: 358
+N --> 80
+
+Solution 103 (state 103)
+states: 104  rewrites: 362
+N --> 40
+
+Solution 104 (state 104)
+states: 105  rewrites: 366
+N --> 20
+
+Solution 105 (state 105)
+states: 106  rewrites: 370
+N --> 10
+
+Solution 106 (state 106)
+states: 107  rewrites: 374
+N --> 5
+
+Solution 107 (state 107)
+states: 108  rewrites: 380
+N --> 16
+
+Solution 108 (state 108)
+states: 109  rewrites: 383
+N --> 8
+
+Solution 109 (state 109)
+states: 110  rewrites: 387
+N --> 4
+
+Solution 110 (state 110)
+states: 111  rewrites: 391
+N --> 2
+
+Solution 111 (state 111)
+states: 112  rewrites: 395
+N --> 1
+
+No more solutions.
+states: 112  rewrites: 401
+==========================================
+get variants [1] in XOR : cst1 + X .
+
+Variant #1
+rewrites: 0
+XOR: cst1 + #1:XOR
+X --> #1:XOR
+*********** variant narrowing step
+eq 0 + Y = Y [variant] .
+Equation variable bindings:
+Y --> cst1
+Old variant variable bindings:
+#1:XOR --> 0
+cst1 + #1:XOR
+--->
+cst1
+
+Variant #2
+rewrites: 3
+Elem: cst1
+X --> 0
+
+Variant #3
+rewrites: 0
+XOR: 0
+X --> cst1
+
+Variant #4
+rewrites: 0
+XOR: %1:XOR
+X --> cst1 + %1:XOR
+
+No more variants.
+rewrites: 0
+==========================================
+variant unify [2] in XOR : X + cst1 =? Y + cst2  .
+
+Unifier #1
+rewrites: 6
+X --> cst2 + %1:XOR
+Y --> cst1 + %1:XOR
+
+Unifier #2
+rewrites: 6
+X --> cst2
+Y --> cst1
+*********** variant narrowing step
+eq 0 + Y = Y [variant] .
+Equation variable bindings:
+Y --> cst2
+Old variant variable bindings:
+%1:XOR --> 0
+cst2 + %1:XOR
+--->
+cst2
+*********** variant narrowing step
+eq X + X = 0 [variant] .
+Equation variable bindings:
+X --> cst2
+Old variant variable bindings:
+%1:XOR --> cst2
+cst2 + %1:XOR
+--->
+0
+
+Unifier #3
+rewrites: 18
+X --> cst1 + cst2 + #1:XOR
+Y --> #1:XOR
+
+Unifier #4
+rewrites: 18
+X --> #1:XOR
+Y --> cst1 + cst2 + #1:XOR
+
+Unifier #5
+rewrites: 18
+X --> 0
+Y --> cst1 + cst2
+
+Unifier #6
+rewrites: 0
+X --> cst1
+Y --> cst2
+
+Unifier #7
+rewrites: 0
+X --> cst1 + cst2
+Y --> 0
+
+Unifier #8
+rewrites: 0
+X --> cst1 + %1:XOR
+Y --> cst2 + %1:XOR
+
+No more unifiers.
+rewrites: 0
+==========================================
+variant unify [1] in XOR : X + cst1 =? Y + cst2  such that X + cst1 irreducible
+    .
+
+Unifier #1
+rewrites: 3
+X --> cst2 + %1:XOR
+Y --> cst1 + %1:XOR
+
+Unifier #2
+rewrites: 0
+X --> cst2
+Y --> cst1
+
+Unifier #3
+rewrites: 0
+X --> #1:XOR
+Y --> cst1 + cst2 + #1:XOR
+
+No more unifiers.
+rewrites: 0
+==========================================
+debug narrow [5, 1] in FOO : f(A, A) =>+ C .
+*********** narrowing step
+rl f(X, Y, Y, Z) => f(X, Y, Z) [narrowing] .
+Rule variable bindings:
+X --> f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo)
+Y --> %2:Foo
+Z --> %3:Foo
+Subject variable bindings:
+#1:Foo --> f(%1:Foo, %2:Foo, %2:Foo, %3:Foo)
+f(#1:Foo, #1:Foo)
+--->
+f(f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo), %2:Foo, %3:Foo)
+
+Solution 1
+rewrites: 1
+state: f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo)
+C --> f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo)
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+
+Solution 2
+rewrites: 2
+state: f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo,
+    %2:Foo, %3:Foo)
+C --> f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo,
+    %3:Foo)
+
+Solution 3
+rewrites: 3
+state: f(%1:Foo, %2:Foo, %1:Foo, %3:Foo, %2:Foo, %1:Foo, %3:Foo, %2:Foo)
+C --> f(%1:Foo, %2:Foo, %1:Foo, %3:Foo, %2:Foo, %1:Foo, %3:Foo, %2:Foo)
+
+Solution 4
+rewrites: 4
+state: f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
+C --> f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
+
+Solution 5
+rewrites: 5
+state: f(%1:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
+C --> f(%1:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
+
+Solution 6
+rewrites: 1
+state: f(%1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo, %3:Foo)
+C --> f(%1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo, %3:Foo)
+
+Solution 7
+rewrites: 3
+state: f(%1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %2:Foo, %3:Foo)
+C --> f(%1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %2:Foo, %3:Foo)
+
+Solution 8
+rewrites: 4
+state: f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %2:Foo)
+C --> f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %2:Foo)
+
+Solution 9
+rewrites: 5
+state: f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo)
+C --> f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo)
+
+Solution 10
+rewrites: 6
+state: f(%1:Foo, %1:Foo, %1:Foo)
+C --> f(%1:Foo, %1:Foo, %1:Foo)
+
+Solution 11
+rewrites: 1
+state: f(%1:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
+C --> f(%1:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
+
+No more solutions.
+rewrites: 1
+Warning: Some solutions may have been missed due to incomplete unification
+    algorithm(s).
+==========================================
+debug vu-narrow [2] in BAZ : g(j(A, B)) =>* C .
+
+Solution 1
+rewrites: 1
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(j(@1:Foo, @2:Foo))
+#1:Foo --> @1:Foo
+#2:Foo --> @2:Foo
+
+Solution 2
+rewrites: 1
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(i(f(%1:Foo), %2:Foo))
+#1:Foo --> f(%2:Foo)
+#2:Foo --> %1:Foo
+*********** variant narrowing step
+eq j(f(X), Y) = i(f(Y), X) [variant] .
+Equation variable bindings:
+X --> @1:Foo
+Y --> @5:Foo
+Old variant variable bindings:
+%1:Foo --> @2:Foo
+%2:Foo --> @3:Foo
+%3:Foo --> @4:Foo
+%4:Foo --> f(@1:Foo)
+%5:Foo --> @5:Foo
+j(%4:Foo, %5:Foo)
+--->
+i(f(@5:Foo), @1:Foo)
+
+Solution 3
+rewrites: 2
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+Solution 4
+rewrites: 4
+state: h(f(@1:Foo))
+accumulated substitution:
+A --> f(k(@2:Foo, f(@1:Foo)))
+B --> @1:Foo
+variant unifier:
+C --> h(f(%1:Foo))
+@1:Foo --> %1:Foo
+
+Solution 5
+rewrites: 5
+state: f(k(@2:Foo, h(@1:Foo)))
+accumulated substitution:
+A --> f(k(@3:Foo, @2:Foo))
+B --> k(@1:Foo, @1:Foo)
+variant unifier:
+C --> f(k(%1:Foo, h(%2:Foo)))
+@2:Foo --> %1:Foo
+@1:Foo --> %2:Foo
+
+Solution 6
+rewrites: 1
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+Solution 7
+rewrites: 2
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, h(%1:Foo)))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 2
+==========================================
+debug srewrite [1] in FOO3 : f(a, b) using 1{all *} .
+*********** equation
+eq h(a) = i(d) .
+empty substitution
+h(a)
+--->
+i(d)
+
+Solution 1
+rewrites: 3
+result Foo: g(a, d)
+*********** rule
+crl f(X, Y) => g(Z, X) if h(X) => i(Z) [label 1] .
+X --> b
+Y --> a
+Z --> e
+f(a, b)
+--->
+g(e, b)
+
+Solution 2
+rewrites: 1
+result Foo: g(b, e)
+
+No more solutions.
+rewrites: 0
+Bye.

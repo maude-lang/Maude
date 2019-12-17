@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   including 'STRING .
   sorts 'Value .
@@ -137,4 +137,4 @@ reduce in META-LEVEL : metaReduce(fmod 'POLY-ID3 is
 endfm, '1.Foo) .
 rewrites: 1
 result ResultPair: {'1.`[Foo`],'`[Foo`]}
-Maude> Bye.
+Bye.

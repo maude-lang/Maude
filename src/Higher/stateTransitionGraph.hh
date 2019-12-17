@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2009 SRI International, Menlo Park, CA 94025, USA.
 
@@ -48,7 +48,7 @@ public:
   //	Stuff needed for search.
   //
   RewritingContext* getContext();
-  void transferCount(RewritingContext& recipient);
+  void transferCountTo(RewritingContext& recipient);
   int getStateParent(int stateNr) const;
 
 private:
@@ -106,10 +106,9 @@ StateTransitionGraph::getContext()
 }
 
 inline void
-StateTransitionGraph::transferCount(RewritingContext& recipient)
+StateTransitionGraph::transferCountTo(RewritingContext& recipient)
 {
-  recipient.addInCount(*initial);
-  initial->clearCount();
+  recipient.transferCountFrom(*initial);
 }
 
 inline int

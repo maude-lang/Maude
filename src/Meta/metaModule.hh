@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -33,7 +33,7 @@ class MetaModule : public VisibleModule, public MetaOpCache
   NO_COPYING(MetaModule);
 
 public:
-  MetaModule(int name, ModuleType moduleType, Entity::User* parent, Interpreter* owner);
+  MetaModule(int name, ModuleType moduleType, Interpreter* owner);
 
   void addComplexSymbol(int type, int index, DagNode* identity, DagNode* fixUpInfo);
   void addComplexSymbol(int type,
@@ -46,8 +46,7 @@ public:
 			   DagNode*& identity,
 			   DagNode*& fixUpInfo,
 			   Vector<Sort*>& domainAndRange);
-
-  Interpreter* getOwner() const;
+  void registerRuleLabels();
 
 private:
   struct ComplexSymbol
@@ -59,14 +58,7 @@ private:
     Vector<Sort*> domainAndRange;
   };
 
-  Interpreter* const owner;  // HACK: probably need to move this somewhere else
   Vector<ComplexSymbol> complexSymbols;
 };
-
-inline Interpreter*
-MetaModule::getOwner() const
-{
-  return owner;
-}
 
 #endif

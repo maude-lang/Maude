@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -39,7 +39,7 @@ public:
   View* getView(int name) const;  // 0 if doesn't exist
   bool deleteView(int name);  // true if view deleted
 
-  void showNamedViews() const;
+  void showNamedViews(ostream& s) const;
 
 private:
   typedef map<int, View*> ViewMap;

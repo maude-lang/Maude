@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -26,6 +26,7 @@
 #ifndef _importTranslation_hh_
 #define _importTranslation_hh_
 #include <list>
+#include "strategyLanguage.hh"
 #include "symbolMap.hh"
 #include "pointerMap.hh"
 
@@ -48,6 +49,8 @@ public:
   Sort* translate(const Sort* sort);
   ConnectedComponent* translate(const ConnectedComponent* component);
   int translateLabel(int id);
+  RewriteStrategy* translate(RewriteStrategy* strat);
+  StrategyExpression* translateExpr(const CallStrategy* cs);
 
 private:
   ImportTranslation();
@@ -64,9 +67,26 @@ private:
   Symbol* translateRegularSymbol(Symbol* symbol,
 				 RenamingList::const_iterator& opToTerm,
 				 int& opToTermIndex) const;
+  RewriteStrategy* translateStrategy(RewriteStrategy* strat,
+				     RenamingList::const_iterator& stratToExpr,
+				     int& stratToExprIndex) const;
+
+  void splitTranslation(RenamingList::const_iterator firstMapping,
+			ImportTranslation*& prefix,
+			ImportTranslation*& suffix);
 
   RenamingList renamings;
+  //
+  //	Usually we only need the last target module because that's the one
+  //	we're translating into. But in the case of an op->term mapping
+  //	we may need to split the ImportTranslation and to do this we
+  //	need an intermediate target.
+  //
   ModuleList targets;
+  //
+  //	Because translating symbols is the most frequent operation and also
+  //	fairly expensive, we cache translations here.
+  //
   PointerMap directMap;
 };
 

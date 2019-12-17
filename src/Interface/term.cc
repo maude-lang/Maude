@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -70,6 +70,20 @@ Term::term2Dag(bool setSortInfo)
   subDags.clear();
   converted.makeEmpty();
   return dagify();
+}
+
+DagNode*
+Term::term2DagEagerLazyAware(bool setSortInfo)
+{
+  //
+  //	This version marks eager paths first so we don't share identical
+  //	subterms between eager and lazy paths.
+  //
+  
+  NatSet eagerVariables;
+  Vector<int> problemVariables;
+  markEager(0, eagerVariables, problemVariables);
+  return term2Dag();
 }
 
 void

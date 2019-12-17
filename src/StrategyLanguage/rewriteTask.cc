@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -57,7 +57,7 @@
 #include "rewriteTask.hh"
 
 RewriteTask::RewriteTask(StrategicSearch& searchObject,
-			 SharedRewriteSearchState::Ptr rewriteState,
+			 SharedValue<RewriteSearchState> rewriteState,
 			 PositionState::PositionIndex redexIndex,
 			 ExtensionInfo* extensionInfo,
 			 Substitution* substitutionSoFar,
@@ -83,7 +83,7 @@ RewriteTask::RewriteTask(StrategicSearch& searchObject,
   //
   //	Find the L => R fragment that we are going to test.
   //
-  rcf = safeCast(RewriteConditionFragment*, (rule->getCondition())[fragmentNr]);
+  rcf = safeCastNonNull<RewriteConditionFragment*>((rule->getCondition())[fragmentNr]);
   //
   //	Make a subcontext, construct and evalutate the instance of L.
   //
@@ -112,6 +112,7 @@ RewriteTask::RewriteTask(StrategicSearch& searchObject,
 
 RewriteTask::~RewriteTask()
 {
+  delete extensionInfoCopy;
   delete newContext;  // Can we delete this earlier?
 }
 
@@ -147,7 +148,7 @@ RewriteTask::executionSucceeded(int resultIndex, StrategicProcess* insertionPoin
 }
 
 StrategicExecution::Survival
-RewriteTask::executionsExhausted(StrategicProcess* insertionPoint)
+RewriteTask::executionsExhausted(StrategicProcess*)
 {
   //
   //	We don't have any more slave executions so there are no more solutions to

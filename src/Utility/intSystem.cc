@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
 
@@ -78,7 +78,7 @@ IntSystem::initializeUpperBounds()
 	*i = UNBOUNDED;
     }
   else
-    Assert(nrVariables == upperBounds.size(), "row size differs");
+    Assert(static_cast<size_t>(nrVariables) == upperBounds.size(), "row size differs");
 }
 
 bool

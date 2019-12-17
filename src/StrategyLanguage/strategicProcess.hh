@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -36,6 +36,7 @@ public:
   ~StrategicProcess();
 
   StrategicProcess* getNextProcess() const;
+  StrategicProcess* getPrevProcess() const;
   virtual Survival run(StrategicSearch& searchObject) = 0;
 
 private:
@@ -47,6 +48,12 @@ inline StrategicProcess*
 StrategicProcess::getNextProcess() const
 {
   return next;
+}
+
+inline StrategicProcess*
+StrategicProcess::getPrevProcess() const
+{
+  return prev;
 }
 
 #endif

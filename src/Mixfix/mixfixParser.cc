@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -50,6 +50,8 @@
 #include "equation.hh"
 #include "rule.hh"
 #include "sortConstraint.hh"
+#include "rewriteStrategy.hh"
+#include "strategyDefinition.hh"
 #include "conditionFragment.hh"
 
 //	variable class definitions
@@ -87,6 +89,9 @@
 #include "iterationStrategy.hh"
 #include "branchStrategy.hh"
 #include "testStrategy.hh"
+#include "subtermStrategy.hh"
+#include "callStrategy.hh"
+#include "oneStrategy.hh"
 
 //	front end class definitions
 #include "mixfixModule.hh"
@@ -94,11 +99,7 @@
 #include "quotedIdentifierTerm.hh"
 #include "mixfixParser.hh"
 
-#ifdef SCP
-#define ROOT_NODE	(parser.getRootNode())
-#else
 #define ROOT_NODE	(0)
-#endif
 
 const IntSet&
 MixfixParser::getTokenSet()  // HACK
@@ -122,29 +123,32 @@ MixfixParser::insertProduction(int lhs,
 			       int data,
 			       int data2)
 {
-  static Vector<int> rhs2;
-
   int rhsLength = rhs.length();
-  rhs2.resize(rhsLength);
+  productionRhs.resize(rhsLength);
+  int ntCount = 0;
   for (int i = 0; i < rhsLength; i++)
     {
       int s = rhs[i];
-      rhs2[i] = s < 0 ? s : tokens.insert(s);
+      if (s < 0)
+	ntCount++;
+      productionRhs[i] = s < 0 ? s : tokens.insert(s);
     }
 
-#if PARSER_DEBUG
-  cout << "production: " << lhs << " ::= ";
-  for (int i = 0; i < rhs2.length(); i++)
-    cout << rhs2[i] << ' ';
-  cout << "\t\tprec: " << prec << "\tgather: ";
-  for (int i = 0; i < gather.length(); i++)
-    cout << gather[i] << ' ';
-  cout << "(action = " << action <<
-    ", data = " << data <<
-    ", data2 = " << data2 <<")\n";
+#ifndef NO_ASSERT
+  int gatherSize = gather.size();
+  if (ntCount != gatherSize)
+    {
+      cout << "production: " << lhs << " ::= ";
+      for (int i = 0; i < productionRhs.length(); i++)
+	cout << productionRhs[i] << ' ';
+      cout << "\t\tprec: " << prec << "\tgather: ";
+      for (int i = 0; i < gatherSize; i++)
+	cout << gather[i] << ' ';
+      cout << "(action = " << action << ", data = " << data << ", data2 = " << data2 <<")\n";
+    }
 #endif
 
-  parser.insertProd(lhs, rhs2, prec, gather);
+  parser.insertProd(lhs, productionRhs, prec, gather);
   int nrActions = actions.length();
   actions.expandBy(1);
   Action& a = actions[nrActions];
@@ -270,27 +274,9 @@ MixfixParser::parseSentence(const Vector<Token>& original,
   cout << ", " << root << '\n';
 #endif
   nrParses = parser.parseSentence(sentence, root);
-  DebugAdvisoryCheck(nrParses == 1, "MSCP10 returned " << nrParses << " parses");
-  if (nrParses < 0)
-    nrParses = INT_MAX;  // assume a wrap around error
-  else if (nrParses == 0)  // no parse
-    {
-#ifdef SCP
-      int nrErrors = parser.getNumberOfErrors();
-      DebugAdvisory("MSCP10 found " << nrErrors << " errors");
-      if (nrErrors >= 1)
-	{
-	  int errorPos = parser.getErrorPosition(1);
-	  Assert(errorPos >= 0 && errorPos <= nrTokens,
-		 "parser return bad error position " << errorPos);
-	  firstBad = begin + errorPos;
-	}
-      else
-	firstBad = begin + nrTokens;  // this shouldn't happen but it does :(
-#else
-      firstBad = begin + nrTokens;  // HACK
-#endif
-    }
+  DebugAdvisoryCheck(nrParses == 1, "New parser returned " << nrParses << " parses");
+  if (nrParses == 0)  // no parse
+    firstBad = begin + parser.getErrorPosition();
 #if PARSER_DEBUG
   parser.printCurrentParse();
 #endif
@@ -306,12 +292,24 @@ MixfixParser::makeTerms(Term*& first, Term*& second)
   second = 0;
   if (nrParses > 1)
     {
-#ifdef SCP
-      (void) parser.nextAnalysis();
-#else
-      (void) parser.extractNextParse();
-#endif
+      DebugSave(success, parser.extractNextParse());
+      Assert(success, "didn't find 2nd parse for ambigous sentence");
       second  = makeTerm(node);
+    }
+}
+
+void
+MixfixParser::makeStrategyExprs(StrategyExpression*& first, StrategyExpression*& second)
+{
+  Assert(nrParses > 0, "no parses");
+  int node = ROOT_NODE;
+  first = makeStrategy(node);
+  second = 0;
+  if (nrParses > 1)
+    {
+      DebugSave(success, parser.extractNextParse());
+      Assert(success, "didn't find 2nd parse for ambigous sentence");
+      second = makeStrategy(node);
     }
 }
 
@@ -483,6 +481,12 @@ MixfixParser::makeStrategy(int node)
 	s = new ApplicationStrategy(label, variables, values, strategies);
 	break;
       }
+    case MAKE_CALL:
+      {
+	pair<RewriteStrategy*, Term*> call = makeStrategyCall(parser.getChild(node, 0));
+	s = new CallStrategy(call.first, call.second);
+	break;
+      }
     case MAKE_TOP:
       {
 	s = makeStrategy(parser.getChild(node, 0));
@@ -494,6 +498,12 @@ MixfixParser::makeStrategy(int node)
 	    IssueWarning(LineNumber((*currentSentence)[pos].lineNumber()) <<
 			 ": use of top strategy modifier on a non-application strategy ignored.");
 	  }
+	break;
+      }
+    case MAKE_ONE:
+      {
+	StrategyExpression* child = makeStrategy(parser.getChild(node, 0));
+	s = new OneStrategy(child);
 	break;
       }
     case MAKE_CONCATENATION:
@@ -543,6 +553,25 @@ MixfixParser::makeStrategy(int node)
 	s = new TestStrategy(makeTerm(parser.getChild(node, 0)), actions[parser.getProductionNumber(node)].data, condition);
 	break;
       }
+    case MAKE_REW:
+      {
+	Vector<ConditionFragment*> condition;
+	int listIndex = 1;
+	if (parser.getNumberOfChildren(node) > 2)  // such that clause
+	  {
+	    makeCondition(parser.getChild(node, 2), condition);
+	    listIndex = 3;
+	  }
+	Vector<Term*> subterms;
+	Vector<StrategyExpression*> strategies;
+	makeUsingList(parser.getChild(node, listIndex), subterms, strategies);
+	s = new SubtermStrategy(makeTerm(parser.getChild(node, 0)),
+				actions[parser.getProductionNumber(node)].data,
+				condition,
+				subterms,
+				strategies);
+	break;
+      }
     default:
       {
 	s = 0;  // to avoid uninitialized variable warning
@@ -550,6 +579,50 @@ MixfixParser::makeStrategy(int node)
       }
     }
   return s;
+}
+
+pair<RewriteStrategy*, Term*>
+MixfixParser::makeStrategyCall(int node)
+{
+  int index = actions[parser.getProductionNumber(node)].data;
+
+  // Gets the symbol
+  RewriteStrategy* strategy = client.getStrategies()[index];
+
+  int nrChildren = parser.getNumberOfChildren(node);
+  Vector<Term*> values(nrChildren);
+
+  for (int i = 0; i < nrChildren; i++)
+    values[i] = makeTerm(parser.getChild(node, i));
+
+  Term* result = strategy->makeAuxiliaryTerm(values);
+
+  result->setLineNumber((*currentSentence)[currentOffset
+    + parser.getFirstPosition(node)].lineNumber());
+
+  return make_pair(strategy, result);
+}
+
+void
+MixfixParser::appendUsingPair(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies)
+{
+  Assert(actions[parser.getProductionNumber(node)].action == MAKE_USING_PAIR,
+	 "unexpected action: " << actions[parser.getProductionNumber(node)].action);
+  terms.append(makeTerm(parser.getChild(node, 0)));
+  strategies.append(makeStrategy(parser.getChild(node, 1)));
+}
+
+void
+MixfixParser::makeUsingList(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies)
+{
+  while (actions[parser.getProductionNumber(node)].action == MAKE_USING_LIST)
+    {
+      appendUsingPair(parser.getChild(node, 0), terms, strategies);
+      node = parser.getChild(node, 1);
+    }
+  Assert(actions[parser.getProductionNumber(node)].action == PASS_THRU,
+	 "unexpected action: " << actions[parser.getProductionNumber(node)].action);
+  appendUsingPair(parser.getChild(node, 0), terms, strategies);
 }
 
 void
@@ -560,7 +633,8 @@ MixfixParser::makeTermList(int node, Vector<Term*>& termList)
       termList.append(makeTerm(parser.getChild(node, 0)));
       node = parser.getChild(node, 1);
     }
-  Assert(actions[parser.getProductionNumber(node)].action == PASS_THRU, "unexpected action: " << actions[parser.getProductionNumber(node)].action);
+  Assert(actions[parser.getProductionNumber(node)].action == PASS_THRU,
+	 "unexpected action: " << actions[parser.getProductionNumber(node)].action);
   termList.append(makeTerm(parser.getChild(node, 0)));
 }
 
@@ -744,11 +818,11 @@ MixfixParser::makeTerm(int node)
 	SMT_NumberSymbol* symbol = safeCast(SMT_NumberSymbol*, client.getSymbols()[a.data]);
 	const char* name = (*currentSentence)[pos].name();
 	mpq_class rat(name);
-	rat.canonicalize();  // precautionary - we don't plan to compute with these ourself
+	rat.canonicalize();  // we don't compute with these ourself but SMT solver might require canonical form
 	t = new SMT_NumberTerm(symbol, rat);
 	break;
       }
-#ifdef BUBBLES
+      //#ifdef BUBBLES
     case MAKE_BUBBLE:
       {
 	return client.makeBubble(a.data,
@@ -756,14 +830,20 @@ MixfixParser::makeTerm(int node)
 				 currentOffset + parser.getFirstPosition(node),
 				 currentOffset + parser.getLastPosition(node) - 1);  // HACK last position
       }
-#endif
+      //#endif
     default:
       {
 	CantHappen("bad action");
 	return 0;  // to avoid uninitialized variable warning
       }
     }
-  t->setLineNumber((*currentSentence)[pos].lineNumber());
+  //
+  //	It's possible our production matched zero tokens at the end of the sentence if
+  //	the production rhs contained only empty bubbles. Thus pos might be outside
+  //	of the sentence.
+  //
+  int lastPos = currentSentence->size() - 1;
+  t->setLineNumber((*currentSentence)[(pos > lastPos) ? lastPos : pos].lineNumber());
   return t;
 }
 
@@ -887,6 +967,11 @@ MixfixParser::makeAttributePart(int node,
 	    flags.setFlags(VARIANT);
 	    break;
 	  }
+	case MAKE_NARROWING_ATTRIBUTE:
+	  {
+	    flags.setFlags(NARROWING);
+	    break;
+	  }
 	case MAKE_PRINT_ATTRIBUTE:
 	  {
 	    flags.setFlags(PRINT);
@@ -972,7 +1057,7 @@ MixfixParser::makeStatementPart(int node,
 {
   Vector<ConditionFragment*> condition;
   int action = actions[parser.getProductionNumber(node)].action;
-  if (action == MAKE_CMB || action == MAKE_CEQ || action == MAKE_CRL)
+  if (action == MAKE_CMB || action == MAKE_CEQ || action == MAKE_CRL || action == MAKE_CSD)
     makeCondition(parser.getChild(node, 1), condition);
 
   int bodyNode = parser.getChild(node, 0);
@@ -999,6 +1084,9 @@ MixfixParser::makeStatementPart(int node,
 	WarningCheck(!(flags.getFlag(VARIANT)),
 		     LineNumber(lineNumber) <<
 		     ": variant attribute not allowed for membership axioms.");
+	WarningCheck(!(flags.getFlag(NARROWING)),
+		     LineNumber(lineNumber) <<
+		     ": narrowing attribute not allowed for membership axioms.");
 	Term* lhs = makeTerm(parser.getChild(pairNode, 0));
 	Sort* sort = getSort(parser.getChild(pairNode, 1));
 	SortConstraint* sc = new SortConstraint(label, lhs, sort, condition);
@@ -1015,6 +1103,9 @@ MixfixParser::makeStatementPart(int node,
     case MAKE_EQ:
     case MAKE_CEQ:
       {
+	WarningCheck(!(flags.getFlag(NARROWING)),
+		     LineNumber(lineNumber) <<
+		     ": narrowing attribute not allowed for equations.");
 	Term* lhs = makeTerm(parser.getChild(pairNode, 0));
 	Term* rhs = makeTerm(parser.getChild(pairNode, 1));
 	Equation* eq = new Equation(label, lhs, rhs, flags.getFlag(OWISE), condition);
@@ -1049,12 +1140,39 @@ MixfixParser::makeStatementPart(int node,
 	Rule* rl = new Rule(label, lhs, rhs, condition);
 	if (flags.getFlag(NONEXEC))
 	  rl->setNonexec();
+	if (flags.getFlag(NARROWING))
+	  {
+	    if (condition.empty())
+	      rl->setNarrowing();
+	    else
+	      IssueWarning(LineNumber(lineNumber) << ": narrowing attribute not allowed for conditional rules.");
+	  }
 	rl->setLineNumber(lineNumber);
 	client.insertRule(rl);
 	if (metadata != NONE)
 	  client.insertMetadata(MixfixModule::RULE, rl, metadata);
 	if (flags.getFlag(PRINT))
 	  client.insertPrintAttribute(MixfixModule::RULE, rl, printNames, printSorts);
+	break;
+      }
+   case MAKE_SD:
+   case MAKE_CSD:
+      {
+	WarningCheck(!(flags.getFlag(NARROWING)),
+		LineNumber(lineNumber) <<
+		": narrowing attribute not allowed for strategy definitions.");
+	WarningCheck(!(flags.getFlag(OWISE)),
+		LineNumber(lineNumber) <<
+		": otherwise attribute not allowed for strategy definitions.");
+	pair<RewriteStrategy*, Term*> call = makeStrategyCall(parser.getChild(pairNode, 0));
+	StrategyExpression* rhs = makeStrategy(parser.getChild(pairNode, 1));
+	StrategyDefinition* sdef = new StrategyDefinition(label, call.first, call.second, rhs, condition);
+	sdef->setLineNumber(lineNumber);
+	client.insertStrategyDefinition(sdef);
+	if (metadata != NONE)
+	  client.insertMetadata(MixfixModule::STRAT_DEF, sdef, metadata);
+	if (flags.getFlag(PRINT))
+	  client.insertPrintAttribute(MixfixModule::STRAT_DEF, sdef, printNames, printSorts);
 	break;
       }
     default:

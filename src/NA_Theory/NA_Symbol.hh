@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -37,9 +37,6 @@ public:
   bool eqRewrite(DagNode* subject, RewritingContext& context);
   void computeBaseSort(DagNode* subject);
   void normalizeAndComputeTrueSort(DagNode* subject, RewritingContext& context);
-  void stackArguments(DagNode* subject,
-		      Vector<RedexPosition>& stack,
-		      int parentIndex);
   bool isStable() const;
   //
   //	Hash cons stuff.

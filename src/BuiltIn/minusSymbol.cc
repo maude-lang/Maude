@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -141,4 +141,20 @@ MinusSymbol::getNeg(/* const */ Term* term, mpz_class& result) const
   ArgumentIterator i(*term);
   result = - getSuccSymbol()->getNat(i.argument());
   return result;
+}
+
+bool
+MinusSymbol::getSignedInt64(const DagNode* dagNode, Int64& value) const
+{
+  if (static_cast<const Symbol*>(dagNode->symbol()) == this)
+    {
+      const FreeDagNode* f = safeCast(const FreeDagNode*, dagNode);
+      if (getSuccSymbol()->getSignedInt64(f->getArgument(0), value))
+	{
+	  value = -value;
+	  return true;
+	}
+      return false;
+    }
+  return getSuccSymbol()->getSignedInt64(dagNode, value);
 }

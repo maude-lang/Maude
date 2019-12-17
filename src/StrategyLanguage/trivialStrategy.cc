@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for abstract class Strategy.
+//      Implementation for the trivial strategy.
 //
 
 //	utility stuff
@@ -39,6 +39,17 @@
 
 TrivialStrategy::TrivialStrategy(bool result)
   : result(result)
+{
+}
+
+bool
+TrivialStrategy::check(VariableInfo&, const TermSet&)
+{
+  return true;
+}
+
+void
+TrivialStrategy::process()
 {
 }
 

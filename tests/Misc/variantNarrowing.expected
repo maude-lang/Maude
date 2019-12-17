@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 get variants in TEST : g(f(u(g(g(X3:Msg, X15:Msg), X16:Msg), u(2, X14:Msg)), u(
     g(X12:Msg, X3:Msg), g(X8:Msg, g(X10:Msg, X9:Msg)))), f(u(f(X8:Msg,
     X15:Msg), u(X15:Msg, X9:Msg)), g(f(X2:Msg, X2:Msg), g(3, X6:Msg)))) .
@@ -3718,4 +3718,4 @@ Y --> cst1 + #1:XOR + #2:XOR
 
 No more variants.
 rewrites: 23
-Maude> Bye.
+Bye.

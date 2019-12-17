@@ -1,0 +1,738 @@
+2019-11-07  Steven Eker  <eker@mu>
+
+	* parser.hh: fix typo in reference
+
+===================================Maude125===========================================
+
+2019-10-03  Steven Eker  <eker@mu>
+
+	* bubble.cc (processBubble): only respect excluded tokens
+	openParens == 0
+
+===================================Maude124===========================================
+
+2019-01-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc (insertProd): fix bad Assert() caught by
+	newer compiler
+
+===================================Maude121===========================================
+
+2018-04-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (expandCalls): fix bug where we were dereferencing
+	call2 after an calls.expandBy(1) could have invalidated it
+
+2018-04-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): deleted decls for buildExpansionTable(),
+	buildExpansion()
+
+	* pass2a.cc: becomes pass2.cc
+
+	* bubble.cc (processBubble, doBubbles, doEmptyBubbles):
+	moved here
+	(doEmptyBubbleReturns): moved here
+
+2018-04-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc (checkForEmptyBubbles): fix signed/unsigned
+	comparison
+
+	* pass1.cc (scanCalls): rewritten to remove duplicate test
+	and fix badTokenIndex bug
+
+	* parser.hh (getLastPosition): endToken -> endTokenNr
+
+	* pass2a.cc: endToken -> endTokenNr throughout
+
+	* parser.hh (getProductionNumber, getFirstPosition)
+	(getLastPosition): moved here; made inline
+	(P): endToken -> endTokenNr
+
+2018-04-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): delete decls for buildExpansionTables2(),
+	mergeInMap2(), compressCycle(), simplifyMaps(),
+	buildExpansionTable(), buildExpansion()
+
+	* compile2.cc (buildExpansionTables2): renamed to
+	buildExpansionTables() and moved here
+	(mergeInMap, makeExpansionList): moved here
+
+	* compile.cc (buildExpansionTables2): check for duplicate
+	SymbolToPrecMaps as we construct expansion lists
+	(mergeInMap2, compressCycle, simplifyMaps): deleted
+
+2018-04-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* compile.cc (mergeInMap2, compressCycle, simplifyMaps): added
+	(buildExpansionTables2): use simplifyMaps
+
+2018-04-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* compile.cc (buildExpansionTables2): fixed bug where we
+	were not flip()ing index into a nonterminal before calling
+	mergeInMap() (2 places)
+	(buildExpansionTables2): fixed bug where we were not flip()ing
+	index into a nonterminal before calling makeExpansionList()
+	(buildExpansionTables2): fixed bug where we were checking
+	against index rather than nonterminal
+	(buildExpansionTable): don't consider rules that go to lower
+	prec for the lhs nonterminal
+
+2018-04-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* compile.cc (makeExpansionList): added
+
+	* parser.hh (P): added decl for mergeInMap()
+	(P): added typdefs for SymbolToPrecMap, PrecToExpansionMap
+	Expansions
+
+	* compile.cc (mergeInMap): added
+	(buildExpansionTables): new implementation
+
+2018-04-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* drp.cc (findReturnOrDeterministicReductionPath)
+	(extractOneStepOfDeterministicReductionPath): new
+	rules representation
+
+	* pass2a.cc (findReturn, existsCall, findRootReturn)
+	(buildDeterministicReductionPathParseTree, extractNextSubparse)
+	(extractFirstSubparse, extractFirstSubparseToTheLeft):
+	new rules representation
+
+	* pass1.cc (chaseDeterministicReductionPath, processReturn)
+	(scanCalls, advanceRule, makeCall): new rules representation
+
+	* compile.cc (buildTerminalDecisionTrees)
+	(buildNonTerminalDecisionTrees, buildExpansionTable)
+	(buildExpansion): new rules representation
+
+	* parser.hh (P): added decl for ~Parser()
+
+	* parser.cc (insertProd): new rules representation
+	(dump): new rules representation
+	(~Parser): added
+
+	* parser.hh (P): make rules a Vector<Rule*>
+	(getNumberOfChildren): new rules representation
+
+2018-03-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (expandCalls): use new expansion list
+	(expandCalls): special case single call
+	(expandCalls): check for empty bubbles before using the
+	special case code
+
+	* parser.hh (P): added data member firstRealCall
+
+	* parser.cc (parseSentence): set and use firstRealCall
+
+	* compile.cc (buildExpansion): rewritten to build list from
+	Vector
+
+2018-03-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* compile.cc (buildTerminalDecisionTrees): removed commented out
+	bubble code
+	(buildNonTerminalDecisionTrees): removed commented out code
+
+2018-03-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (chaseDeterministicReductionPath): fixed commented out
+	Assert()
+	(chaseDeterministicReductionPath): deleted Assert() since
+	it turns out that with colliding DRPs we can't check anything
+	about equal nonterminals and unequal precs
+
+2018-03-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (chaseDeterministicReductionPath): converted
+	recursion to iteration
+
+2018-03-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (chaseDeterministicReductionPath): reimplemented
+	using extractOneStepOfDeterministicReductionPath()
+	(chaseDeterministicReductionPath): make a dummy memo item before
+	recursive call rather than a real memo item after
+	(processReturn): fix up dummy memo items
+
+2018-03-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (processReturn): rewritten to avoid Vector
+	of deferred returns
+
+2018-03-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (chaseDeterministicReductionPath): code cleaning
+
+===================================Maude117===========================================
+
+2018-03-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): added haveBubbles and haveEmptyBubbles
+	data members
+
+	* parser.cc (parseSentence): use haveBubbles and
+	haveEmptyBubbles flags
+	(insertProd): update haveBubbles and haveEmptyBubbles
+	flags
+	(Parser): clear haveBubbles and haveEmptyBubbles
+	flags
+akonadi:?item=62070&type=message%2Frfc822
+	* parser.hh (P): deleted member bubbleIndex from
+	struct Rule
+
+	* parser.cc (insertProd): don't set flags member
+	(insertProd): don't set bubbleIndex
+
+	* compile.cc (buildTerminalDecisionTrees):
+	BUBBLE_TERMINAL_BASE -> BUBBLE_TERMINAL
+
+	* parser.hh (P): deleted enum RuleFlags; deleted
+	flags member from struct Rule
+
+	* pass2a.cc (extractFirstSubparse): check for
+	BUBBLE_TERMINAL symbol rather than BUBBLE_INCLUSION
+	flag
+	(extractNextSubparse): check for BUBBLE_TERMINAL
+	symbol rather than BUBBLE_INCLUSION flag
+
+	* parser.hh (P): BUBBLE_TERMINAL_BASE ->
+	BUBBLE_TERMINAL
+
+	* parser.cc (insertProd): BUBBLE_TERMINAL_BASE ->
+	BUBBLE_TERMINAL
+	(insertProd): set bubble rule gather to 1 to match
+	comment
+
+	* parser.hh (P): deleted VIRTUAL from enum Special
+
+	* pass2.cc: deleted
+
+	* parser.hh (P): deleted declarations for extractNext()
+	and lookForDeterministicReductionPath()
+
+	* pass1.cc (chaseDeterministicReductionPath): use
+	ParserLog()
+
+	* drp.cc (extractDeterministicReductionPath): reimplemented
+	using extractOneStepOfDeterministicReductionPath()
+
+2018-03-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): updated decl for
+	findReturnOrDeterministicReductionPath()
+
+	* drp.cc (findReturnOrDeterministicReductionPath): take
+	endTokenNr
+
+	* pass2a.cc (extractFirstSubparse): pass endTokenNr to
+	findReturnOrDeterministicReductionPath()
+	(extractNextSubparse): pass endTokenNr to
+	findReturnOrDeterministicReductionPath()
+
+	* drp.cc (findReturnOrDeterministicReductionPath): abandon DRPs
+	if the first return above trigger is concrete
+	(returnExists): added
+
+	* parser.hh (P): added decl for
+	extractOneStepOfDeterministicReductionPath()
+
+	* drp.cc (existsMemo, findReturnOrDeterministicReductionPath): use
+	ParserLog()
+	(extractOneStepOfDeterministicReductionPath): added
+
+2018-03-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass2a.cc (extractFirstSubparse): clean up handling of
+	nextReturnToCheck and nextToken
+	(extractNextSubparse): set nextReturnToCheck in all cases
+	(buildDeterministicReductionPathParseTree): set
+	nextReturnToCheck to NONE is all cases now that caller
+	takes responsibility for this
+	(extractFirstSubparseToTheLeft): check for ambiguity now
+	we can be called by buildDeterministicReductionPathParseTree()
+	(buildDeterministicReductionPathParseTree): use
+	extractFirstSubparseToTheLeft() to handle nonterminal to the left
+	(buildDeterministicReductionPathParseTree): delete commented
+	out code
+
+2018-03-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass2a.cc (extractFirstSubparse): patch parse node one below
+	the top of a DRP to make sure we search for alternatives
+	(extractNextSubparse): symmetric hack
+
+2018-03-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass2a.cc (extractNextParse): take account of
+	extractNextSubparse(0) deleting parse node 0 on failure
+	(extractNextSubparse): don't delete the given parse node;
+	instead delete son nodes if extractNextSubparse() fails on them
+	(extractNextParse): unmade previous changes now that
+	extractNextSubparse() doensn't delete given parse node
+	(extractNextSubparse): fix bug where we were deleting wrong
+	parse node
+
+2018-03-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass2a.cc (extractNextSubparse): implemented
+
+	* parser.hh (P): added decl for extractFirstSubparseToTheLeft()
+
+	* pass2a.cc (extractFirstSubparseToTheLeft): added
+
+2018-03-05  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc (checkForEmptyBubbles): call doEmptyBubbleReturns()
+	(parseSentence): set lastReturnProcessed = NONE
+
+	* parser.hh (P): lastReturnProcessed becomes an int
+	(P): added decl for doEmptyBubbleReturns()
+
+	* parser.cc (parseSentence): don't initialize lastReturnProcessed
+
+	* pass1.cc (doEmptyBubbleReturns): added
+	(doReturns): don't handle empty bubble case
+
+2018-03-02  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc (insertProd): add Assert() and remove handling of
+	epsilon rules
+
+	* parser.hh (P): added decl for checkForEmptyBubbles()
+
+	* parser.cc (insertProd): don't initialize epsilonRule, bubbleRule
+	(checkForEmptyBubbles): added
+	(parseSentence): use checkForEmptyBubbles()
+
+	* parser.hh (P): deleted data members epsilonRule, bubbleRule
+	and bubbleMap
+
+	* pass1.cc (processReturn): removed all bubble specific code
+	(chaseDeterministicReductionPath): removed bubble Assert()s
+
+	* parser.hh (P): updated decl for processBubble()
+
+	* pass1.cc (processBubble): turn gotos into returns
+	(processBubble): don't take ruleNr
+	(doBubbles): don't pass ruleNr to processBubble()
+
+2018-03-01  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (advanceRule): removed bubble handling code
+
+	* parser.hh (P): deleted decls for checkBubbleTerminal()
+
+	* parser.cc (parseSentence): deleted commented out bubble code
+	(makeBubbleProductions): deleted
+	(insertProd): deleted commented out code
+
+	* pass1.cc (doEpsilonCalls): deleted
+	(scanCalls): deleted commented out early failure and bubble
+	handling code
+	(checkBubbleTerminal): deleted
+
+	* parser.hh (P): updated decl for doEmptyBubbles(); deleted decl
+	for doEpsilonCalls(), makeBubbleProductions()
+
+	* pass1.cc (doReturns): redo already processed zero
+	length returns
+	(doEmptyBubbles): return void
+
+	* parser.cc (parseSentence): call doEmptyBubbles()
+	(parseSentence): doBubbles() after doEmptyBubbles()
+
+	* parser.hh (P): added decl for doEmptyBubbles()
+
+2018-02-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (doEmptyBubbles): added
+
+2018-02-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (processBubble): fix bug where we were incrementing
+	counter in two different places
+
+	* compile.cc (buildTerminalDecisionTrees): allow multiple
+	<nt> ::= BUBBLE_TERMINAL_BASE rules
+
+	* pass1.cc (scanCalls): don't handle bubbles here
+
+	* parser.cc (insertProd): initialize firstBubbles[] entries
+	(insertProd): push bubble on front of firstBubbles[] list
+	(insertProd): use BUBBLE_TERMINAL_BASE as dummy terminal for bubble rule
+	(insertProd): set BUBBLE_INCLUSION flag here
+	(parseSentence): don't call makeBubbleProductions()
+	(parseSentence): call doBubbles()
+
+	* parser.hh (P): added decl for doBubbles()
+	(P): added firstBubble data member
+	(P): added nextBubble field to Bubble
+
+	* pass1.cc (processReturn): handle upperBound == NONE case
+	(doBubbles): added
+
+2018-02-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): adde decl for processBubble()
+
+	* pass1.cc (processBubble): added
+
+2018-02-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc (makeBubbleProductions): set bubbleIndex in the
+	BUBBLE_EXTENSION and BUBBLE_PAREN cases
+
+	* pass1.cc (chaseDeterministicReductionPath): Assert() bubbler user is
+	not seen in DRP
+	(processReturn): don't try a DRP for a return if any BUBBLE_USER
+	was seen as a user for the recognized nonterminal
+	(processReturn): skip bubble extensions that produce too large a bubble
+
+	* parser.cc (makeBubbleProductions): set BUBBLE_EXTENSION and
+	BUBBLE_PAREN flags
+	(makeBubbleProductions): only add rules for bubble parentheses if
+	upperbound >= 2
+	(insertProd): clear flags field of rule
+
+	* pass2a.cc (extractFirstSubparse): BUBBLE_RULE -> BUBBLE_INCLUSION
+
+	* pass1.cc (processReturn): BUBBLE_RULE -> BUBBLE_INCLUSION
+
+	* parser.hh (P): removed BUBBLE_RULE; added BUBBLE_INCLUSION,
+	BUBBLE_EXTENSION, BUBBLE_PAREN, BUBBLE_USER
+
+	* parser.cc (makeBubbleProductions): BUBBLE_RULE -> BUBBLE_INCLUSION
+
+2018-02-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): added decl for processReturn()
+
+	* pass1.cc (doReturns): reimplemented in terms of processReturn()
+	(processReturn): added
+
+2018-02-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (doReturns): check for return of implicit bubble rule
+	start and if so, check lowerBound
+
+	* parser.cc (makeBubbleProductions): fill out bubbleIndex field
+
+	* parser.hh (P): added bubbleIndex to struct Rule
+
+2018-02-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (makeReturn): use parserLog()
+
+	* parser.cc (parseSentence): deal with multiple nested epsilon
+	calls at the end of the sentence
+
+2018-02-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): updated decl for makeReturn()
+
+	* pass1.cc (makeReturn): return whether we actually made a return
+	or not
+
+	* parser.cc (parseSentence): call doReturns() and expandCalls()
+	after successful call to doEpsilonCalls()
+	(makeBubbleProductions): fix gather for parens rule
+	(parseSentence): handle epsilon rules happening after the last token
+	(parseSentence): allow multiple doEpsilonCalls() per parse list
+
+	* pass1.cc (doReturns): use lastReturnsProcessed so we can restart
+	if more returns added by epsilon calls
+
+	* parser.cc (parseSentence): initialize lastReturnProcessed
+
+	* parser.hh (P): added decl for doEpsilonCalls()
+	(P): added data member lastReturnProcessed
+
+	* parser.cc (parseSentence): call doEpsilonCalls()
+
+	* pass1.cc (doEpsilonCalls): added
+
+2018-02-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc (insertProd): set epsilonRule[] to NONE
+	(insertProd): store epsilon rules
+	(makeBubbleProductions): introduce epsilon productions if
+	a bubble could be empty
+	(insertProd): change gather to 2 so we could take epsilon production
+	(makeBubbleProductions): add rule for parens enclosing empty list of
+	tokens, in the case that this is not handled with an epsilon rule
+
+	* parser.hh (P): added epsilonRule data member
+
+2018-02-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc (parseSentence): don't clear unexpectedEndOfTokens
+
+	* pass1.cc (advanceRule): don't set unexpectedEndOfTokens
+
+	* parser.hh (getErrorPosition): moved here
+	(P): deleted data member unexpectedEndOfTokens
+
+	* pass2a.cc (getErrorPosition): use badTokenIndex
+	(getErrorPosition): deleted commented out code
+
+	* pass1.cc (advanceRule): update badTokenIndex after a successful
+	token match
+	(scanCalls): update badTokenIndex after an implied token match or
+	a bubble terminal match; call makeReturn() directly for bubble
+	terminal productions
+
+2018-02-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc (parseSentence): clear badTokenIndex
+
+	* parser.hh (P): added data member badTokenIndex
+
+	* pass2a.cc (getErrorPosition): use unexpectedEndOfTokens
+
+	* pass1.cc (scanCalls): don't check for sufficient tokens
+	(doReturns): don't check for sufficient tokens (2 places)
+
+	* parser.cc (parseSentence): clear unexpectedEndOfTokens
+
+	* parser.hh (P): added data member unexpectedEndOfTokens
+
+	* pass1.cc (advanceRule): check for end of tokens
+
+2018-02-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass2a.cc (extractFirstSubparse): don't expand rules withe
+	the BUBBLE_RULE flag
+
+	* parser.hh (P): added flags member to struct Rule; added enum RuleFlags
+
+	* parser.cc (makeBubbleProductions): use ParserLog()
+	(insertProd): use ParserLog()
+	(makeBubbleProductions): set BUBBLE_RULE flag in fixed up rule
+
+2018-02-05  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc: moved ParserLog() macro here
+	(parseSentence): use ParserLog()
+
+
+2018-02-01  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass2a.cc (buildDeterministicReductionPathParseTree): fixed bug where we
+	were missing drp[0]
+
+2018-01-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): added decls for extractFirstSubparse(),
+	extractNextSubparse(), buildDeterministicReductionPathParseTree()
+
+	* pass2a.cc (buildDeterministicReductionPathParseTree): added
+
+2018-01-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass2a.cc: created
+
+	* parser.hh (P): added nextReturnToCheck field to ParseNode
+
+2018-01-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc (dump): dump rule and return indices
+
+2018-01-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.cc (dump): handle memo items.
+
+2018-01-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass2.cc (extractNext): check for DRPs when backtracking; not sure
+	how to handle this yet
+
+2018-01-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass2.cc (extractNext): check for alternative DRP in right recursive case
+	(extractNext): push ambiguity checks into right-recursive and non-right-recursive
+	branches
+
+	* parser.hh (P): changed decl to findRootReturn()
+
+	* pass2.cc (findReturn): renamed two arg version to findRootReturn()
+	(extractNextParse): use findRootReturn()
+
+2018-01-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): deleted decl for lookForDeterministicReductionPath()
+
+	* drp.cc (lookForDeterministicReductionPath): deleted
+
+2017-12-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (scanCalls): handle bubble terminal rules
+	(advanceRule): handle bubble terminal symbols
+	(checkBubbleTerminal): added
+
+	* parser.hh (P): added data member bubbleRule
+
+	* compile.cc (buildTerminalDecisionTrees): handle terminal productions
+	with bubble terminal as lead symbol
+
+	* parser.hh (P): added decl for makeBubbleProductions()
+
+	* parser.cc (makeBubbleProductions): added
+
+	* parser.hh (P): added decl for bubble version of insertProd()
+	(P): added struct Bubble
+	(P): added data member bubbles
+
+	* parser.cc (getLastPosition): added
+	(insertProd): added bubble version
+
+	* parser.hh (P): added decl for getLastPosition()
+
+2017-12-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh: added decl for getErrorPosition()
+
+2017-12-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (chaseDeterministicReductionPath): updated comments to
+	explain why prec match must be exact and we can't increase the prec
+	to callers require for new memo items
+
+2017-12-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* drp.cc: #ifdef PARSER_DEBUG debugging prints
+
+	* pass2.cc: #ifdef PARSER_DEBUG debugging prints
+
+	* pass1.cc: #ifdef PARSER_DEBUG debugging prints
+
+2017-12-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass2.cc (extractNext): added code to look for alternative
+	parses in DRPs
+	(extractNext): set endToken correctly; contract parseTree on
+	failure
+	(extractNext): fix bug where we we're setting nextSibling after
+	a call to extractNext(,, NONE) created a new node
+
+	* drp.cc (buildDeterministicReductionPathTree): create VIRTUAL
+	retuns
+
+	* pass2.cc (extractNext): check for VIRTUAL returns
+
+	* parser.hh (P): added enum Special
+
+	* pass2.cc (extractNext): fix bug where we were falling out of
+	DRP case into regular case
+
+	* drp.cc (buildDeterministicReductionPathTree): fix bug where
+	we weren't setting endToken before handling nonterminals to
+	the left of the right recursion
+	(buildDeterministicReductionPathTree): fix off-by-one bug
+	in nrSons
+
+2017-12-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* drp.cc (buildDeterministicReductionPathTree): fill out ruleNr
+	and startTokenNr fields
+
+	* parser.cc (getFirstPosition): use startTokenNr field
+	(getProductionNumber): use ruleNr field
+
+	* pass2.cc (extractNext): fill out ruleNr and startTokenNr fields
+
+	* parser.hh (P): added decl for buildDeterministicReductionPathTree()
+	(P): added ruleNr and startTokenNr to struct ParseNode
+
+	* pass2.cc (extractNext): use buildDeterministicReductionPathTree()
+
+	* drp.cc (buildDeterministicReductionPathTree): added
+
+	* pass2.cc (extractNext): check for virtual returns
+
+2017-12-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): added decls for existsMemo() and
+	findReturnOrDeterministicReductionPath()
+
+	* drp.cc (existsMemo): created
+	(findReturnOrDeterministicReductionPath): created
+
+2017-12-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* drp.cc (extractDeterministicReductionPath): added
+
+	* pass2.cc (extractNext): call lookForDeterministicReductionPath()
+
+	* drp.cc (lookForDeterministicReductionPath): added
+
+2017-12-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (doReturns): make memo item when DRP seen and don't
+	do normal deferred return processing
+	(doReturns): use memo items to avoid making returns
+
+2017-12-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): add reference to Leo paper
+
+2017-11-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (chaseDeterministicReductionPath): use memo items
+
+2017-11-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): added typedef IntPair; added decl for makeMemoItem();
+	updated decl for chaseDeterministicReductionPath()
+
+	* parser.cc (parseSentence): clear memoItems
+	(parseSentence): initialize firstMemoItems
+
+	* pass1.cc (makeMemoItem): added
+
+	* parser.hh (P): added struct MemoItem and data members memoItems
+	and firstMemoItems
+
+2017-11-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* pass1.cc (doReturns): check for start of a deterministic
+	reduction path
+	(chaseDeterministicReductionPath): added
+	(doReturns): call chaseDeterministicReductionPath()
+
+2017-11-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): added struct DeferredReturn
+
+2017-11-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (flip): moved here from parse.cc
+	(ruleLt): moved out of class body
+
+	* compile.cc (buildTerminalDecisionTrees): deletedd commented out code;
+	added comments
+
+2017-11-03  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (getNumberOfChildren): added
+
+2017-11-02  Steven Eker  <eker@install.csl.sri.com>
+
+	* parser.hh (P): deleted decl for ruleCompare()
+
+	* compile.cc (buildTerminalDecisionTrees)
+	(buildNonTerminalDecisionTrees): use ruleLt
+	(ruleCompare): deleted
+
+	* parser.hh: added ruleLt
+
+	* parser.cc: deleted explicit template instantiations and GNU pragma
+
+	* compile.cc: restored from Maude71 with the rest of the Earley
+	based parser code
+

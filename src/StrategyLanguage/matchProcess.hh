@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -26,7 +26,8 @@
 #ifndef _matchProcess_hh_
 #define _matchProcess_hh_
 #include "strategicProcess.hh"
-#include "sharedRewriteSearchState.hh"
+#include "rewriteSearchState.hh"
+#include "sharedValue.hh"
 #include "strategyStackManager.hh"
 
 class MatchProcess : public StrategicProcess
@@ -34,7 +35,7 @@ class MatchProcess : public StrategicProcess
   NO_COPYING(MatchProcess);
 
 public:
-  MatchProcess(SharedRewriteSearchState::Ptr rewriteState,
+  MatchProcess(const SharedValue<RewriteSearchState>& rewriteState,
 	       PositionState::PositionIndex redexIndex,
 	       ExtensionInfo* extensionInfo,
 	       RewritingContext* matchContext,
@@ -51,7 +52,7 @@ public:
   Survival run(StrategicSearch& searchObject);
 
 private:
-  SharedRewriteSearchState::Ptr rewriteState;		// smart pointer to rewrite state that found our redex
+  SharedValue<RewriteSearchState> rewriteState;		// smart pointer to rewrite state that found our redex
   const PositionState::PositionIndex redexIndex;	// index of redex withing rewrite state
   ExtensionInfo* extensionInfoCopy;			// copy of extension info from original rule match
   RewritingContext* matchContext;			// rewrite context associated with our fragment match

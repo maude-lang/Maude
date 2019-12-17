@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -28,6 +28,7 @@
 #include <set>
 #include "strategicExecution.hh"
 #include "strategyStackManager.hh"
+#include "variableBindingsManager.hh"
 
 class StrategicTask : public StrategicExecution
 {
@@ -36,6 +37,8 @@ class StrategicTask : public StrategicExecution
 public:
   StrategicTask(StrategicTask* master);
   StrategicTask(StrategicExecution* sibling);
+  StrategicTask(StrategicExecution* sibling,
+		VariableBindingsManager::ContextId ctx);
   ~StrategicTask();
   //
   //	Call-backs for interesting events.
@@ -44,6 +47,11 @@ public:
   virtual Survival executionsExhausted(StrategicProcess* insertionPoint) = 0;
 
   bool alreadySeen(int dagIndex, StrategyStackManager::StackId stackId);
+
+  //
+  // Each task has a variable bindings context associated
+  //
+  VariableBindingsManager::ContextId getVarsContext() const;
 
 protected:
   StrategicExecution* getDummyExecution();
@@ -61,12 +69,20 @@ private:
   //
   StrategicExecution slaveList;
   SeenSet seenSet;
+
+  VariableBindingsManager::ContextId varsContext;
 };
 
 inline StrategicExecution*
 StrategicTask::getDummyExecution()
 {
   return &slaveList;
+}
+
+inline VariableBindingsManager::ContextId
+StrategicTask::getVarsContext() const
+{
+  return varsContext;
 }
 
 #endif

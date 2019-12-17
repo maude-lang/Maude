@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -27,6 +27,12 @@
 int
 ACU_DagNode::findFirstPotentialMatch(Term* key, const Substitution& partial) const
 {
+  //
+  //	Return the smallest index whose subdag is a potential match
+  //	for key, given the partial substitution for key's variables.
+  //	If we know that no subdag can match we return an index 1 beyond the
+  //	maximal index.
+  //
   const ArgVec<Pair>::const_iterator args = argArray.begin();  // for speed
   int first = argArray.length();  // return index beyond arg array prospects
   Assert(first > 0, "no args");
@@ -55,6 +61,10 @@ ACU_DagNode::findFirstPotentialMatch(Term* key, const Substitution& partial) con
 	  }
 	case Term::UNKNOWN:
 	  {
+	    //
+	    //	We need to treat probe as a potential match, and search to see if there
+	    //	is one with a smaller index.
+	    //
 	    first = probe;
 	    upper = probe - 1;
 	    break;

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metaIntSort.maude -no-banner -no-advise \
+  > metaIntSort.out 2>&1
+
+diff $srcdir/metaIntSort.expected metaIntSort.out > /dev/null 2>&1

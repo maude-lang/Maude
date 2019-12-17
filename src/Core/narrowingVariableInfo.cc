@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
 
@@ -52,4 +52,19 @@ NarrowingVariableInfo::variable2Index(VariableDagNode* variable)
     }
   variables.append(variable);
   return nrVariables;
+}
+
+int
+NarrowingVariableInfo::variable2IndexNoAdd(VariableDagNode* variable) const
+{
+  Assert(variable != 0, "null dagnode");
+  //cout << "looking at " << (DagNode*) variable << endl;
+  int nrVariables = variables.length();
+  for (int i = 0; i < nrVariables; i++)
+    {
+      if (variable->equal(variables[i]))
+	return i;
+      //cout << "not equal to " << (DagNode*) variables[i] << endl;
+    }
+  return NONE;
 }

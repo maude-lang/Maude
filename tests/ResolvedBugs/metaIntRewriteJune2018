@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metaIntRewriteJune2018.maude -no-banner -no-advise \
+  > metaIntRewriteJune2018.out 2>&1
+
+diff $srcdir/metaIntRewriteJune2018.expected metaIntRewriteJune2018.out > /dev/null 2>&1

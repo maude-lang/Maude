@@ -1,8 +1,8 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2019 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,45 +43,198 @@
 
 //      core class definitions
 #include "argumentIterator.hh"
+#include "rewriteStrategy.hh"
 
 //      variable class definitions
 #include "variableTerm.hh"
 
+// 	strategy language definitions
+#include "badFlag.hh"
+#include "callStrategy.hh"
+
 //	front end class definitions
 #include "token.hh"
 #include "moduleExpression.hh"
-#include "syntacticPreModule.hh"
 #include "interpreter.hh"
-//#include "maudemlBuffer.hh"
-#include "global.hh"  // HACK shouldn't be accessing global variables
-
+#include "parameter.hh"
+#include "importTranslation.hh"
 #include "view.hh"
 
-View::View(Token viewName)
-  : NamedEntity(viewName.code()),
-    LineNumber(viewName.lineNumber())
+//	our stuff
+#include "instantiateViewWithFreeParameters.cc"
+#include "instantiateViewWithBoundParameters.cc"
+
+//
+//	Version for original view.
+//
+View::View(Token viewName, Interpreter* owner)
+  : Argument(viewName.code()),
+    LineNumber(viewName.lineNumber()),
+    owner(owner),
+    baseView(0),  // marks this as an original
+    cleanName(viewName.code())
 {
   fromTheory = 0;
   toModule = 0;
-  newFromTheory = 0;
-  newToModule = 0;
+  fromExpr = 0;
+  toExpr = 0;
   status = INITIAL;
+}
+
+//
+//	Version for instantiation of a view.
+//
+View::View(int viewName,
+	   int cleanName,
+	   View* baseView,
+	   const Vector<Argument*>& arguments,
+	   Interpreter* owner)
+  : Argument(viewName),
+    LineNumber(baseView->getLineNumber()),
+    owner(owner),
+    baseView(baseView),  // marks this as an instantiation
+    savedArguments(arguments),
+    cleanName(cleanName)
+{
+  fromTheory = 0;
+  toModule = 0;
+  fromExpr = 0;
+  toExpr = 0;
+  status = INITIAL;
+  //
+  //	We're a user of our baseView, and need to self-destruct if
+  //	it goes away.
+  //
+  baseView->addUser(this);
+  //
+  //	We are likewise a user of our view arguments, though this
+  //	is probably not strictly necessary - we do this defensively.
+  //
+  FOR_EACH_CONST(i, Vector<Argument*>, arguments)
+    {
+      if (View* v = dynamic_cast<View*>(*i))
+	v->addUser(this);
+    }
+  //
+  //	Interpereter has base classes ModuleCache and ViewCache.
+  //	We want ViewCache to get the regretToInform() if we self-destuct.
+  //
+  ViewCache* viewCache = owner;
+  addUser(viewCache);
 }
 
 View::~View()
 {
   clearOpTermMap();
+  clearStratExprMap();
+  //
+  //	Remove ourselves as users of our baseView, fromTheory and toModule and
+  //	deepSelfDestruct() from/to expressions.
+  //
+  if (baseView != 0)
+    {
+      //
+      //	We're an instantiation of a view; need to deal with our
+      //	view arugments.
+      //
+      FOR_EACH_CONST(i, Vector<Argument*>, savedArguments)
+	{
+	  if (View* v = dynamic_cast<View*>(*i))
+	    v->removeUser(this);
+	}
+      baseView->removeUser(this);
+    }
   if (fromTheory != 0)
     fromTheory->removeUser(this);
   if (toModule != 0)
     toModule->removeUser(this);
-  if (newFromTheory != 0)
-    newFromTheory->deepSelfDestruct();
-  if (newToModule != 0)
-    newToModule->deepSelfDestruct();
-  fromExpr->deepSelfDestruct();
-  toExpr->deepSelfDestruct();
+  if (fromExpr != 0)
+    fromExpr->deepSelfDestruct();
+  if (toExpr != 0)
+    toExpr->deepSelfDestruct();
+  //
+  //	Remove ourselves as  users of our parameter theories and
+  //	deepSelfDestruct() parameter theory expressions.
+  //
+    FOR_EACH_CONST(i, Vector<ParameterDecl>, parameters)
+      {
+	if (i->theory != 0)
+	  i->theory->removeUser(this);
+	if (i->expr != 0)
+	  i->expr->deepSelfDestruct();
+      }
+  //
+  //	Warn our users of our impending demise.
+  //
   informUsers();
+}
+
+//
+//	The following four member functions are virtual in base class
+//	EnclosingObject and so can't be inline.
+//
+
+int
+View::findParameterIndex(int name) const
+{
+  int nrParameters = parameters.size();
+  for (int i = 0; i < nrParameters; ++i)
+    {
+      if (parameters[i].name == name)
+	return i;
+    }
+  return NONE;
+}
+
+ImportModule*
+View::getParameterTheory(int index) const
+{
+  return parameters[index].theory;
+}
+
+const char*
+View::getObjectType() const
+{
+  return "view";
+}
+
+const NamedEntity*
+View::getObjectName() const
+{
+  return this;
+}
+
+void
+View::addParameter(int name, ModuleExpression* expr)
+{
+  //
+  //	This version is for views created from syntax or meta-syntax
+  //	that are subject to evaluation(), perhaps multiple times to
+  //	compute the parameter theory from the module expression and
+  //	the current state of the module and view databases.
+  //
+  size_t nrParameters = parameters.size();
+  parameters.expandTo(nrParameters + 1);
+  parameters[nrParameters].name = name;
+  parameters[nrParameters].expr = expr;
+  parameters[nrParameters].theory = 0;
+}
+
+void
+View::addParameter(int name, ImportModule* theory)
+{
+  //
+  //	This version is for view instances that are created internally.
+  //	They are created in fully evaluated form and are thrown away
+  //	rather than re-evaluated if things change underneath them.
+  //	Thus paremeters come with a theory and no module expression.
+  //
+  size_t nrParameters = parameters.size();
+  parameters.expandTo(nrParameters + 1);
+  parameters[nrParameters].name = name;
+  parameters[nrParameters].expr = 0;
+  parameters[nrParameters].theory = theory;
+  theory->addUser(this);
 }
 
 void
@@ -96,48 +249,53 @@ View::clearOpTermMap()
 }
 
 void
-View::addVarDecl(Token varName)
+View::clearStratExprMap()
 {
-  varDecls.push_back(VarDecl());
-  varDecls.back().varName = varName;
-  varDecls.back().lastWithCurrentDef = false;
-}
-
-void
-View::addType(bool kind, const Vector<Token>& tokens)
-{
-  if (varDecls.empty() || varDecls.back().lastWithCurrentDef)
-    Renaming::addType(kind, tokens);  // not ours
-  else
+  FOR_EACH_CONST(i, StratExprMap, stratExprMap)
     {
-      varDecls.back().lastWithCurrentDef = true;
-      varDefs.push_back(Type());
-      varDefs.back().kind = kind;
-      varDefs.back().tokens = tokens;
+      delete i->second.call;
+      delete i->second.value;
     }
-}
-
-void
-View::addOpTermMapping(const Vector<Token>& fromOp, const Vector<Token>& toTerm)
-{
-  opTermList.push_back(BubblePair());
-  opTermList.back().fromBubble = fromOp;  // deep copy
-  opTermList.back().toBubble = toTerm;  // deep copy
+  stratExprMap.clear();
 }
 
 void
 View::regretToInform(Entity* doomedEntity)
 {
+  //
+  //	Something we depend on disappeared.
+  //
+  if (baseView != 0)
+    {
+      //
+      //	We're an instantiation that is generated from a module expression
+      //	so we just self-destruct.
+      //
+      DebugAdvisory("view instatiation " << this << " self-destructs");
+      delete this;
+      return;
+    }
+  //
+  //	We're an original syntactic or meta-syntactic view.
+  //
   if (doomedEntity == fromTheory)
     fromTheory = 0;
-  else if (doomedEntity == newFromTheory)
-    newFromTheory = 0;
   else if(doomedEntity == toModule)
     toModule = 0;
-  else if(doomedEntity == newToModule)
-    newToModule = 0;
   else
-    CantHappen("unexpected regretToInform()");
+    {
+      const Vector<ParameterDecl>::iterator e = parameters.end();
+      for (Vector<ParameterDecl>::iterator i = parameters.begin(); i != e; ++i)
+	{
+	  if (doomedEntity == i->theory)
+	    {
+	      i->theory = 0;
+	      goto ok;
+	    }
+	}
+      CantHappen("unexpected regretToInform() for view " << this);
+    }
+ ok:
   //
   //	Something we depended on changed so self destruct all calculated stuff.
   //
@@ -147,67 +305,49 @@ View::regretToInform(Entity* doomedEntity)
       fromTheory->removeUser(this);
       fromTheory = 0;
     }
-  if (newFromTheory != 0)
-    {
-      newFromTheory->deepSelfDestruct();
-      newFromTheory = 0;
-    }
   if (toModule != 0)
     {
       toModule->removeUser(this);
       toModule = 0;
     }
-  if (newToModule != 0)
+  const Vector<ParameterDecl>::iterator e = parameters.end();
+  for (Vector<ParameterDecl>::iterator i = parameters.begin(); i != e; ++i)
     {
-      newToModule->deepSelfDestruct();
-      newToModule = 0;
+      if (i->theory != 0)
+	{
+	  i->theory->removeUser(this);
+	  i->theory = 0;
+	}
     }
+  DebugAdvisory("view " << this << " becomes stale");
+  //
+  //	In almost all cases, when an original view becomes stale rather
+  //	than self destructing, all modules and views that depend on it,
+  //	either as a base-view or as an argument also depend on the
+  //	thing that went away to make it stale.
+  //
+  //	However there is an edge case, for example:
+  //	  view V{P1 :: T1, P2 :: T2} from T to M{P1} is ... endv
+  //	Here if T2 goes away, M1{P1} may not self-destruct and thus it
+  //	may not trigger the invalidation cascade for users of V.
+  //	To handle this rather dubious case, if we have parameters,
+  //	we pretend like we self-destructed and inform our users.
+  //
+  //	5/9/19 We no longer allow the dubious case and no longer
+  //	do the pretend self-destruct
+  //
+  //if (getNrParameters() != 0)
+  //  informUsers();
+  //
   status = STALE;
 }
 
 ConnectedComponent*
-View::mapComponent(const ConnectedComponent* component, ImportModule* module) const
+View::mapComponent(const ConnectedComponent* component) const
 {
-  Sort* sort = module->findSort(renameSort(component->sort(1)->id()));
+  Sort* sort = toModule->findSort(renameSort(component->sort(1)->id()));
   Assert(sort != 0, "translation for sort failed");
   return sort->component();
-}
-
-Sort*
-View::mapSort(const Sort* sort, ImportModule* module) const
-{
-  if (sort->index() == Sort::KIND)
-    return mapComponent(sort->component(), module)->sort(Sort::KIND);
-  Sort* transSort = module->findSort(renameSort(sort->id()));
-  Assert(transSort != 0, "translation for sort failed");
-  return transSort;
-}
-
-void
-View::finishView()
-{
-  evaluate();
-}
-
-void
-View::finishModule1(ImportModule* module)
-{
-  module->importSorts();
-  module->closeSortSet();
-  Assert(!(module->isBad()), "copy of a non-bad theory bad");
-  module->importOps();
-  Assert(!(module->isBad()), "copy of a non-bad theory bad");
-}
-
-void
-View::finishModule2(ImportModule* module)
-{
-  module->closeSignature();
-  module->fixUpImportedOps();
-  Assert(!(module->isBad()), "copy of a non-bad theory bad");
-  module->closeFixUps();
-  module->localStatementsComplete();
-  module->resetImports();
 }
 
 bool
@@ -225,6 +365,13 @@ View::checkSorts()
   FOR_EACH_CONST(i, Vector<ConnectedComponent*>, kinds)
     {
       ConnectedComponent* kind = (*i);
+      //
+      //	When an strategy view is instantiated to a functional or system
+      //	module, the auxiliary sort type must not be defined
+      //
+      if (fromTheory->isStrategic() && kind == fromTheory->getStrategyRangeSort()->component())
+	continue;
+      //
       //
       //	For each kind, we examine its sorts.
       //
@@ -246,6 +393,13 @@ View::checkSorts()
 	      IssueWarning(*this << ": failed to find sort " << QUOTE(Token::sortName(jTrans)) <<
 			   " in " << QUOTE(toModule) << " to represent sort " << QUOTE(jSort) <<
 			   " from " << QUOTE(fromTheory) << '.');
+	      return false;
+	    }
+	  if (fromTheory->moduleDeclared(jSort) && !(toModule->moduleDeclared(jTransSort)))
+	    {
+	      IssueWarning(*this << ": implicit mapping of sort " << QUOTE(jSort) <<
+			   " that was declared in a module to sort " << QUOTE(jTransSort) <<
+			   " derived from a parameter theory is not allowed.");
 	      return false;
 	    }
 	  ConnectedComponent* transKind = jTransSort->component();
@@ -282,86 +436,18 @@ View::checkSorts()
 	    }
 	}
     }
-  return true;
-}
-
-bool
-View::handleVarDecls()
-{
-  Sort* fromSort = 0;
-  Sort* toSort = 0;
-  TypeList::const_iterator j = varDefs.begin();
-  FOR_EACH_CONST(i, VarDeclList, varDecls)
+  //
+  //	Check that each our sort mappings maps a theory declared sort.
+  //
+  int nrSortMappings = getNrSortMappings();
+  for (int i = 0; i < nrSortMappings; ++i)
     {
+      int fromSortName = getSortFrom(i);
+      Sort* fromSort = fromTheory->findSort(fromSortName);
       if (fromSort == 0)
 	{
-	  int code = j->tokens[0].code();
-	  fromSort = newFromTheory->findSort(code);
-	  if (fromSort == 0)
-	    {
-	      IssueWarning(LineNumber(j->tokens[0].lineNumber()) <<
-			   ": failed to find sort " << QUOTE(Token::sortName(code)) <<
-			   " in " << QUOTE(newFromTheory) << '.');
-	      return false;
-	    }
-	  toSort = newToModule->findSort(renameSort(code));
-	  Assert(toSort != 0, "couldn't find translation of sort");
-	  if (j->kind)
-	    {
-	      int nrTokens = j->tokens.size();
-	      for (int k = 1; k < nrTokens; ++k)
-		{
-		  int code = j->tokens[k].code();
-		  Sort* extraSort = newFromTheory->findSort(code);
-		  if (extraSort == 0)
-		    {
-		      IssueWarning(LineNumber(j->tokens[k].lineNumber()) <<
-				   ": failed to find sort " << QUOTE(Token::sortName(code)) <<
-				   " in " << QUOTE(newFromTheory) << '.');
-		      return false;
-		    }
-		  if (extraSort->component() != fromSort->component())
-		    {
-		      IssueWarning(LineNumber(j->tokens[k].lineNumber()) <<
-				   ": sorts " << QUOTE(fromSort) << " and " <<
-				   QUOTE(extraSort) << " are in different components.");
-		      return false;
-		    }
-		}
-	      fromSort = fromSort->component()->sort(Sort::KIND);
-	      toSort = toSort->component()->sort(Sort::KIND);
-	    }
-	  ++j;
-	}
-      newFromTheory->addVariableAlias(i->varName, fromSort);
-      newToModule->addVariableAlias(i->varName, toSort);
-      if (i->lastWithCurrentDef)
-	fromSort = 0;
-    }
-  return true;
-}
-
-bool
-View::indexRhsVariables(Term* term, const VarMap& varMap, int lineNr)
-{
-  if (VariableTerm* vt = dynamic_cast<VariableTerm*>(term))
-    {
-      const VarMap::const_iterator i = varMap.find(vt->id());
-      if (i == varMap.end() || i->second.first != vt->getSort())
-	{
-	  IssueWarning(LineNumber(lineNr) <<
-		       ": rhs of operator mapping contains a variable " <<
-		       QUOTE(term) << " which is not the mapping of a lhs variable.");
-	  return false;
-	}
-      vt->setIndex(i->second.second);
-    }
-  else
-    { 
-      for (ArgumentIterator i(*term); i.valid(); i.next())
-	{
-	  if (!indexRhsVariables(i.argument(), varMap, lineNr))
-	    return false;
+	  IssueAdvisory(*this << ": sort mapping for " << QUOTE(Token::sortName(fromSortName)) <<
+			" redundant because there is no such sort in the from-theory.");
 	}
     }
   return true;
@@ -402,118 +488,62 @@ View::typeMatch(const Symbol* s1, const Symbol* s2)
   return typeMatch(s1->rangeComponent(), s2->rangeComponent());
 }
 
-Term*
-View::getOpMapTerm(Symbol* symbol) const
+bool
+View::typeMatch(const RewriteStrategy* s1, const RewriteStrategy* s2)
+{
+  //
+  //	Checks whether their domain componets match
+  //
+  int nrArgs = s1->arity();
+  const Vector<Sort*>& domain1 = s1->getDomain();
+  const Vector<Sort*>& domain2 = s2->getDomain();
+  if (s2->arity() != nrArgs)
+    return false;
+  for (int i = 0; i < nrArgs; ++i)
+    {
+      if (!typeMatch(domain1[i]->component(), domain2[i]->component()))
+	return false;
+    }
+  return true;
+}
+
+bool
+View::getOpToTermMapping(Symbol* symbol, Term*& fromTerm, Term*& toTerm) const
 {
   int id = symbol->id();
   const OpTermMap::const_iterator e = opTermMap.end();
   for (OpTermMap::const_iterator i = opTermMap.find(id); i != e && i->first == id; ++i)
     {
       if (typeMatch(i->second.first->symbol(), symbol))
-	return i->second.second;
+	{
+	  fromTerm = i->second.first;
+	  toTerm = i->second.second;
+	  return true;
+	}
     }
-  return 0;
+  return false;
 }
 
 bool
-View::handleOpTermMappings()
+View::getStratToExprMapping(RewriteStrategy* strat,
+			    CallStrategy*& fromCall,
+			    StrategyExpression*& toExpr,
+			    const Vector<int>*& varIndices) const
 {
-  LineNumber lineNumber(FileTable::AUTOMATIC);
-  //
-  //	Because we have op->term mappings we need to make new modules to parse
-  //	these mappings in, in order to exclude any existing variable aliases and
-  //	add any new ones.
-  //
-  newFromTheory = new ImportModule(fromTheory->id(),
-				   fromTheory->getModuleType(),
-				   ImportModule::VIEW_LOCAL,
-				   this);
-  newFromTheory->addImport(fromTheory, ImportModule::INCLUDING, lineNumber);
-  finishModule1(newFromTheory);
-  
-  newToModule = new ImportModule(toModule->id(),
-				 toModule->getModuleType(),
-				 ImportModule::VIEW_LOCAL,
-				 this);
-  newToModule->addImport(toModule, ImportModule::INCLUDING, lineNumber);
-  finishModule1(newToModule);
-  
-  if (!varDecls.empty() && !handleVarDecls())
+  Vector<Term*> vars;
+  int id = strat->id();
+  const StratExprMap::const_iterator e = stratExprMap.end();
+  for (StratExprMap::const_iterator i = stratExprMap.find(id); i != e && i->first == id; ++i)
     {
-      //
-      //	Need to reset the importPhase for any imported modules we touched.
-      //
-      newFromTheory->resetImports();
-      newToModule->resetImports();
-      return false;
+      if (typeMatch(i->second.call->getStrategy(), strat))
+	{
+	  fromCall = i->second.call;
+	  toExpr = i->second.value;
+	  varIndices = &i->second.contextSpec;
+	  return true;
+	}
     }
-  finishModule2(newFromTheory);
-  finishModule2(newToModule);
-  //
-  //
-  //	Now deal with op->term mappings.
-  //
-  FOR_EACH_CONST(i, OpTermList, opTermList)
-    {
-      Term* from = newFromTheory->parseTerm(i->fromBubble);
-      if (from == 0)
-	return false;
-      int argNr = 0;
-      VarMap varMap;
-      for (ArgumentIterator j(*from); j.valid(); j.next())
-	{
-	  VariableTerm* vt = dynamic_cast<VariableTerm*>(j.argument());
-	  if (vt == 0)
-	    {
-	      IssueWarning(LineNumber(i->fromBubble[0].lineNumber()) <<
-			   ": lhs of operator mapping has non-variable argument " <<
-			   QUOTE(j.argument()) << '.');
-	      from->deepSelfDestruct();
-	      return false;
-	    }
-	  int base = vt->id();
-	  Sort* sort = mapSort(vt->getSort(), newToModule);
-	  pair<VarMap::iterator, bool> p = varMap.insert(VarMap::value_type(base, make_pair(sort, argNr)));
-	  if (!p.second)
-	    {
-	      IssueWarning(LineNumber(i->fromBubble[0].lineNumber()) <<
-			   ": using the same variable base name " << QUOTE(Token::name(base)) <<
-			   " for two left hand side variables in an operator mapping is not allowed.");
-	      from->deepSelfDestruct();
-	      return false;
-	    }
-	  ++argNr;
-	}
-      Symbol* fromSymbol = from->symbol();
-      if (fromSymbol->arity() != argNr)
-	{
-	  Assert(fromSymbol->arity() < argNr, "too few args");
-	  IssueWarning(LineNumber(i->fromBubble[0].lineNumber()) <<
-		       ": lhs of operator mapping has too many arguments.");
-	  from->deepSelfDestruct();
-	  return false;
-	}
-      
-     Term* to = newToModule->parseTerm(i->toBubble, mapComponent(fromSymbol->rangeComponent(), newToModule), 1);
-      if (to == 0)
-	{
-	  from->deepSelfDestruct();
-	  return false;
-	}
-      if (!indexRhsVariables(to, varMap, i->toBubble[1].lineNumber()))
-	{
-	  from->deepSelfDestruct();
-	  to->deepSelfDestruct();
-	  return false;
-	}
-      opTermMap.insert(OpTermMap::value_type(from->symbol()->id(), make_pair(from, to)));
-    }
-  //
-  //	Dispense with bulky parsers.
-  //
-  newFromTheory->economize();
-  newToModule->economize();
-  return true;
+  return false;
 }
 
 bool
@@ -539,9 +569,11 @@ View::checkOps()
       //	Translate the name for those operators that have no module declarations.
       //
       int id = s->id();
+      Term* dummy1;
+      Term* dummy2;
       if (fromTheory->moduleDeclared(s))
 	{
-	  if (getOpMapTerm(s) != 0 || renameOp(s) != NONE)
+	  if (getOpToTermMapping(s, dummy1, dummy2) || renameOp(s) != NONE)
 	    {
 	      IssueAdvisory(*this << ": op mapping not applied to operator " << QUOTE(s) <<
 			    " as it has at least one declaration in a module.");
@@ -549,7 +581,7 @@ View::checkOps()
 	}
       else
 	{
-	  if (getOpMapTerm(s) != 0)
+	  if (getOpToTermMapping(s, dummy1, dummy2))
 	    continue;  // op is being mapped to a term which parses and therefore whose ops must exist
 	  int index = renameOp(s);
 	  if (index != NONE)
@@ -561,8 +593,8 @@ View::checkOps()
       int nrArgs = s->arity();
       Vector<ConnectedComponent*> domainComponents(nrArgs);
       for (int j = 0; j < nrArgs; ++j)
-	domainComponents[j] = mapComponent(s->domainComponent(j), toModule);
-      ConnectedComponent* rangeComponent = mapComponent(s->rangeComponent(), toModule);
+	domainComponents[j] = mapComponent(s->domainComponent(j));
+      ConnectedComponent* rangeComponent = mapComponent(s->rangeComponent());
       //
       //	Check to see that a suitable operator exists or can be made in toModule.
       //
@@ -647,6 +679,68 @@ View::checkPolymorphicOps()
 }
 
 bool
+View::checkStrats()
+{
+  //
+  //	Now we check that for each strategy
+  //	  s : D1 ... Dn @ R
+  //	in fromTheory, there exists (or can be instantiated) an strategy
+  //	  s' : D1' ... Dn' @ R'
+  //	in toModule where the prime mappings are obtained from the view.
+  //
+  const Vector<RewriteStrategy*>& strats = fromTheory->getStrategies();
+  int nrStrats = strats.length();
+  for (int i = 0; i < nrStrats; ++i)
+    {
+      RewriteStrategy* s = strats[i];
+      //
+      //	Translate the name for those operators that have no module declarations.
+      //
+      int id = s->id();
+      CallStrategy* dummy1;
+      StrategyExpression* dummy2;
+      const Vector<int>* dummy3;
+      if (fromTheory->moduleDeclared(s))
+	{
+	  if (getStratToExprMapping(s, dummy1, dummy2, dummy3) || renameStrat(s) != NONE)
+	    {
+	      IssueAdvisory(*this << ": strat mapping not applied to strategy " << QUOTE(s) <<
+	      " as it has at least one declaration in a module.");
+	    }
+	}
+      else
+	{
+	  if (getStratToExprMapping(s, dummy1, dummy2, dummy3))
+	    continue;  // strat is being mapped to an expression which parses
+
+	  int index = renameStrat(s);
+	  if (index != NONE)
+	    id = getStratTo(index);
+	}
+      //
+      //	Translate the domain and range components.
+      //
+      int nrArgs = s->arity();
+      const Vector<Sort*>& domain = s->getDomain();
+      Vector<ConnectedComponent*> domainComponents(nrArgs);
+      for (int j = 0; j < nrArgs; ++j)
+	domainComponents[j] = mapComponent(domain[j]->component());
+      //
+      //	Check to see that a suitable strategy exists or can be made in toModule.
+      //
+      RewriteStrategy* t = toModule->findStrategy(id, domainComponents);
+      if (!t)
+	{
+	  IssueWarning(*this << ": failed to find suitable strategy " << QUOTE(Token::name(id)) <<
+	  " in " << QUOTE(toModule) << " to represent strategy " << QUOTE(s) <<
+	  " from " << QUOTE(fromTheory) << '.');
+	  return false;
+	}
+    }
+  return true;
+}
+
+bool
 View::evaluate()
 {
   //
@@ -656,6 +750,11 @@ View::evaluate()
     {
     case INITIAL:
       break;
+    case PROCESSING:
+      {
+	IssueWarning(*this << ": recursive use of view " << QUOTE(this) << " is not allowed.");
+	return false;
+      }
     case GOOD:
       return true;
     case BAD:
@@ -666,10 +765,35 @@ View::evaluate()
 	break;
       }
     }
+  status = PROCESSING;  // to catch reentrant use
   //
-  //	Evaluate from part.
+  //	Evaluate parameter theories.
   //
-  fromTheory = interpreter.makeModule(fromExpr);
+  const Vector<ParameterDecl>::iterator e = parameters.end();
+  for (Vector<ParameterDecl>::iterator i = parameters.begin(); i != e; ++i)
+    {
+      if (ImportModule* pt = owner->makeModule(i->expr))
+	{
+	  i->theory = pt;
+	  pt->addUser(this);
+	  if (!(pt->isTheory()))
+	    {
+	      IssueWarning(*this << ": parameter theory " << QUOTE(i->expr) <<
+			   " of view " << this << " is not a theory.");
+	      status = BAD;
+	    }
+	}
+      else
+	{
+	  DebugAdvisory(*this << ": view " << this << " couldn't make parameter theory " <<
+			QUOTE(i->expr) << ".");
+	  status = BAD;
+	}
+    }
+  //
+  //	Evaluate "from" part.
+  //
+  fromTheory = owner->makeModule(fromExpr, this);
   if (fromTheory != 0)
     {
       fromTheory->addUser(this);
@@ -678,6 +802,14 @@ View::evaluate()
 	  IssueWarning(*this << ": from part of a view must be a theory.");
 	  status = BAD;
 	}
+      else if (!fromTheory->isStrategic() &&
+	    (!stratExprMap.empty() || getNrStratMappings() > 0))
+	{
+	  IssueWarning(*this << ": view from a non-strategic theory cannot contain strategy mappings. Recovering by ignoring them.");
+
+	  discardStratMappings();
+	  stratExprMap.clear();
+	}
     }
   else
     {
@@ -685,16 +817,39 @@ View::evaluate()
       status = BAD;
     }
   //
-  //	Evaluate to part.
+  //	Evaluate "to" part.
   //
-  toModule = interpreter.makeModule(toExpr);
-  if (toModule != 0)
+  if (ImportModule* target = owner->makeModule(toExpr, this))
     {
-      toModule->addUser(this);
-      if (toModule->getNrParameters() > 0)
+      setToModule(target);
+      if (target->hasFreeParameters())
 	{
 	  IssueWarning(*this << ": target of a view cannot have free parameters.");
 	  status = BAD;
+	}
+      for (Vector<ParameterDecl>::iterator i = parameters.begin(); i != e; ++i)
+	{
+	  if (target->findParameterIndex(i->name) == NONE)
+	    {
+	      //
+	      //	We refuse to handle parameterized views which have
+	      //	parameters not used in the toModule. Such parameters are
+	      //	useless: since they don't appear in the toModule their sorts,
+	      //	operations and sorts parameterized by them cannot appear
+	      //	in the range of the views mappings. They also allow construction
+	      //	of hard-to-deal-with pathological cases.
+	      //
+	      //	Having all the parameters bound in the toModule means we can
+	      //	use the toModule's machinery to do a lot of the heavy lifting:
+	      //	(1) tracking dependencies on view arguments
+	      //	(2) tracking conflicts
+	      //	(3) creating the canonical renaming to instantiate the view's guts
+	      //
+	      IssueWarning(*this << ": parameter " << QUOTE(Token::name(i->name)) <<
+			   " of view " << QUOTE(this) << " is not bound in target module " <<
+			  QUOTE(toExpr) << ".");
+	      status = BAD;
+	    }
 	}
     }
   else
@@ -705,49 +860,220 @@ View::evaluate()
   if (status == BAD)
     return false;
 
+  status = GOOD;  // until proven otherwise
+
   if (!checkSorts() ||
-      (!opTermList.empty() && !handleOpTermMappings()) ||
+      !handleTermAndExprMappings() ||
       !checkOps() ||
-      !checkPolymorphicOps())
+      !checkPolymorphicOps() ||
+      !checkStrats())
     {
       status = BAD;
       return false;
     }
-  status = GOOD;
+
   return true;
 }
 
-void
-View::showView(ostream& s)
+Sort*
+View::mapSort(const Sort* sort) const
 {
-  s << "view " << static_cast<NamedEntity*>(this) << " from " <<
-    fromExpr << " to " << toExpr << " is\n";
-  printRenaming(s, "  ", " .\n  ");
-  if (getNrSortMappings() > 0 || getNrOpMappings() > 0)
-    s << " .\n";
-  if (!varDecls.empty())
+  if (sort->index() == Sort::KIND)
+    return mapComponent(sort->component())->sort(Sort::KIND);
+  Sort* transSort = toModule->findSort(renameSort(sort->id()));
+  Assert(transSort != 0, "translation for sort failed");
+  return transSort;
+}
+
+bool
+View::indexRhsVariables(Term* term, const VarMap& varMap)
+{
+  //
+  //	We recurse through term, looking up each variable we encounter
+  //	in varMap, and setting its index to the corresponding argument
+  //	index obtained from varMap.
+  //
+  if (VariableTerm* vt = dynamic_cast<VariableTerm*>(term))
     {
-      bool startNew = true;
-      TypeList::const_iterator j = varDefs.begin();
-      FOR_EACH_CONST(i, VarDeclList, varDecls)
+      //
+      //	We look the variable up by name.
+      //
+      const VarMap::const_iterator i = varMap.find(vt->id());
+      if (i == varMap.end() || i->second.first != vt->getSort())
 	{
-	  if (startNew)
-	    {
-	      s << "  var";
-	      if (!(i->lastWithCurrentDef))
-		s << 's';
-	      startNew = false;
-	    }
-	  s << ' ' << i->varName;
-	  if (i->lastWithCurrentDef)
-	    {
-	      s << " : " << *j << " .\n";
-	      ++j;
-	      startNew = true;
-	    }
+	  IssueWarning(*term  << ": right-hand side of operator-to-term mapping contains a variable " <<
+		       QUOTE(term) << " which does not correspond to a left-hand side variable.");
+	  return false;
+	}
+      vt->setIndex(i->second.second);
+    }
+  else
+    { 
+      for (ArgumentIterator i(*term); i.valid(); i.next())
+	{
+	  if (!indexRhsVariables(i.argument(), varMap))
+	    return false;
 	}
     }
-  FOR_EACH_CONST(i, OpTermMap, opTermMap)
-    s << "  op " << i->second.first << " to term " << i->second.second << " .\n";
-  s << "endv\n";
+  return true;
+}
+
+bool
+View::insertOpToTermMapping(Term* fromTerm, Term* toTerm)
+{
+  //
+  //	If something goes wrong we return false and caller is responsible
+  //	for fromTerm and toTerm.
+  //
+  VarMap varMap;
+  //
+  //	First we check the arguments under fromTerm so see that
+  //	they are all variables, and for X:Foo at index p, we make an entry
+  //	X |-> (Bar, p) in varMap.
+  //
+  int argNr = 0;
+  for (ArgumentIterator i(*fromTerm); i.valid(); i.next())
+    {
+      VariableTerm* vt = dynamic_cast<VariableTerm*>(i.argument());
+      if (vt == 0)
+	{
+	  IssueWarning(*(i.argument()) << ": left-hand side " << QUOTE(fromTerm) <<
+		       " of an operator-to-term mapping has non-variable argument " <<
+		       QUOTE(i.argument()) << '.');
+	  return false;
+	}
+      int base = vt->id();
+      Sort* sort = mapSort(vt->getSort());
+      pair<VarMap::iterator, bool> p = varMap.insert(VarMap::value_type(base, make_pair(sort, argNr)));
+      if (!p.second)
+	{
+	  IssueWarning(*(i.argument()) <<
+		       ": variable " << QUOTE(Token::name(base)) <<
+		       " used more than once in the left-hand side " << QUOTE(fromTerm) <<
+		       " of an operator-to-term mapping.");
+	  return false;
+	}
+      ++argNr;
+    }
+  //
+  //	It could be that fromTerm parses but has to many arguments because of user flattened syntax.
+  //
+  Symbol* fromSymbol = fromTerm->symbol();
+  if (fromSymbol->arity() != argNr)
+    {
+      Assert(fromSymbol->arity() < argNr, "too few args");
+      IssueWarning(*fromTerm << ": left-hand side " << QUOTE(fromTerm) << " of operator-to-term mapping has " <<
+		   argNr << " arguments whereas 2 were expected.");
+      return false;
+    }
+  //
+  //	Check that each variable in toTerm has a matching entry in varMap. 
+  //
+  if (!indexRhsVariables(toTerm, varMap))
+    return false;
+  //
+  //	For op f(...) to term g(...) we insert
+  //	f |-> (f(...), g(...)) into opTermMap.
+  //
+  (void) opTermMap.insert(OpTermMap::value_type(fromSymbol->id(), make_pair(fromTerm, toTerm)));
+  //
+  //	We _do not_ insert this op->term map into our base Renaming. This is because
+  //	when the view is re-evaluated we cannot change stuff in Renaming - essentially this
+  //	stuff is considered original syntax that has no dependencies.
+  //
+  //	These op->term maps eventually make their way into canonicalRenamings using for
+  //	instantiations of modules and views using this view. But these are more ephemeral
+  //	and disappear if something under them changes.
+  //
+  return true;
+}
+
+bool
+View::handleTermAndExprMappings()
+{
+  CantHappen("handleTermAndExprMappings() called on instantiated view " << this);
+  return false;
+}
+
+bool
+View::insertStratToExprMapping(CallStrategy* fromCall,
+			       StrategyExpression* toExpr,
+			       ImportModule* targetModule)
+{
+  //
+  //	First we check the arguments under fromCall term so see that
+  //	they are all variables.
+  //
+  TermSet lhsVars;
+  Vector<Term*> vars;
+
+  int argNr = 0;
+  for (ArgumentIterator i(*fromCall->getTerm()); i.valid(); i.next())
+    {
+      VariableTerm* vt = dynamic_cast<VariableTerm*>(i.argument());
+      if (vt == 0)
+	{
+	  IssueWarning(*(i.argument()) <<
+		       ": lhs of strategy mapping has non-variable argument " <<
+		       QUOTE(i.argument()) << '.');
+	  delete fromCall;
+	  delete toExpr;
+	  FOR_EACH_CONST(i, Vector<Term*>, vars)
+	    delete *i;
+	  return false;
+	}
+      int base = vt->id();
+      Sort* sort = mapSort(vt->getSort());
+      Term* toVar = new VariableTerm(safeCast(VariableSymbol*, targetModule->instantiateVariable(sort)), base);
+      toVar->normalize(true);
+      if (lhsVars.term2Index(toVar) != NONE)
+	{
+	  IssueWarning(*(i.argument()) <<
+		       ": using the same variable base name " << QUOTE(Token::name(base)) <<
+		       " for two left hand side variables in an strategy mapping is not allowed.");
+	  delete fromCall;
+	  delete toExpr;
+	  delete toVar;
+	  FOR_EACH_CONST(i, Vector<Term*>, vars)
+	    delete *i;
+	  return false;
+	}
+      lhsVars.insert(toVar);
+      vars.append(toVar);
+      ++argNr;
+    }
+  //
+  //	The number of arguments does not need to be checked because strategy call
+  //	symbols are never flattened because they are free.
+  //
+  //	We check the rhs expression and build the context translation vector
+  //
+  VariableInfo vinfo;
+  if (!toExpr->check(vinfo, lhsVars))
+    {
+      delete fromCall;
+      delete toExpr;
+      return false;
+    }
+  int nrVars = vinfo.getNrRealVariables();
+  Vector<int> contextSpec(nrVars);
+  for (int i = 0; i < nrVars; i++)
+    {
+      Term* var = vinfo.index2Variable(i);
+
+      for (int j = 0; j < argNr; j++)
+	if (var->equal(vars[j]))
+	  contextSpec[i] = j;
+    }
+
+  FOR_EACH_CONST(i, Vector<Term*>, vars)
+      delete *i;
+
+  //
+  //	For strat s(...) to expr e we insert
+  //	s |-> (s(...), e) into stratExprMap.
+  //
+  stratExprMap.insert(StratExprMap::value_type(fromCall->getStrategy()->id(),
+					       StratExprInfo(fromCall, toExpr, contextSpec)));
+  return true;
 }

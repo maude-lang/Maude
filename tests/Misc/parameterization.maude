@@ -332,6 +332,7 @@ endfm
 fmod FOO{X :: TRIV} is
   inc LIST{X} + SET{X} .
 endfm
+*** Now LEGAL
 
 *** passing a PEM in a nonfinal instantiation
 

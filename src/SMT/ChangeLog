@@ -1,7 +1,55 @@
+2017-06-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.cc (SMT_RewriteSequenceSearch): don't
+	initialize data member searchType
+
+	* SMT_RewriteSequenceSearch.hh (SimpleRootContainer): deleted data
+	member searchType
+
+===================================Maude114===========================================
+
+2017-04-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.cc (findNextState): increment rule rewrite
+	count after we have a successful rewrite modulo SMT.
+
+===================================Maude112a===========================================
+
+2017-03-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.hh (SimpleRootContainer): getRootContext() ->
+	getContext() decl
+	(getRootContext): becomes getContext()
+
+===================================Maude112===========================================
+
+2017-02-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* SMT_RewriteSequenceSearch.hh (getStateRule): added
+
+	* SMT_RewriteSequenceSearch.cc (makeNewState): initialize rule member
+	of state correctly
+
+	* SMT_RewriteSearchState.hh (getRule): added
+
+	* SMT_RewriteSequenceSearch.cc (findNextState): use assertDag() rather
+	than checkDag() for the initial state, to fix a bug where we were not
+	checking the consistancy of the condition with the match constraint in
+	the initial state.
+	(findNextState): check for stateToExplore >= 0; we now create the initial
+	SMT_RewriteSearchState here, so we can clear anything asserted while
+	matching the initial state
+	(SMT_RewriteSequenceSearch): don't create initial SMT_RewriteSearchState;
+	stateToExplore = -1
+
+===================================Maude111b===========================================
+
 2016-05-17  Steven Eker  <eker@install.csl.sri.com>
 
 	* SMT_RewriteSequenceSearch.cc (makeConstraintFromCondition): call normalize()
 	on fragment
+
+===================================Maude110===========================================
 
 2014-10-29  Steven Eker  <eker@ape.csl.sri.com>
 

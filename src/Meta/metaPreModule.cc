@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2009 SRI International, Menlo Park, CA 94025, USA.
 
@@ -50,6 +50,8 @@ MetaPreModule::MetaPreModule(int name, DagNode* moduleDag, MetaLevel* metaLevel,
     metaLevel(metaLevel),
     flatModule(module)
 {
+  setModuleType(module->getModuleType());
+  module->addUser(this);
 }
 
 MetaPreModule::~MetaPreModule()
@@ -58,15 +60,56 @@ MetaPreModule::~MetaPreModule()
     flatModule->deepSelfDestruct();
 }
 
+const ModuleDatabase::ImportMap*
+MetaPreModule::getAutoImports() const
+{
+  return 0;
+}
+
 VisibleModule*
 MetaPreModule::getFlatModule()
 {
   DebugAdvisory("MetaPreModule::getFlatModule() called on " << this);
+
+  VisibleModule* m = getFlatSignature();
+  if (m != 0 && m->getStatus() < Module::THEORY_CLOSED)
+    {
+      //
+      //	We didn't import statements or compile module yet.
+      //
+      m->importStatements();
+      if (m->isBad())
+	{
+	  IssueWarning(*m <<
+		       ": this module contains one or more errors that \
+could not be patched up and thus it cannot be used or imported.");
+	}
+      else
+	{
+	  //
+	  //	Compile  module.
+	  //
+	  m->closeTheory();
+	  //
+	  //	We don't allow reserved fresh variable names in variant
+	  //	equations or narrowing rules.
+	  //
+	  m->checkFreshVariableNames();
+	}
+      m->resetImports();
+    }
+  return m;
+}
+
+VisibleModule*
+MetaPreModule::getFlatSignature()
+{
+  DebugAdvisory("MetaPreModule::getFlatSignature() called on " << this);
+
   if (flatModule == 0)
     {
-      IssueAdvisory("reparsing meta-module " << QUOTE(this) <<
-		    " due to changes in imported modules.");
-      flatModule = metaLevel->downModule(moduleDag.getNode(), false, getOwner());
+      IssueAdvisory("reparsing meta-module " << QUOTE(this) << " due to changes in imported modules.");
+      flatModule = metaLevel->downSignature(moduleDag.getNode(), getOwner());
       if (flatModule != 0)
 	flatModule->addUser(this);
     }
@@ -76,7 +119,7 @@ MetaPreModule::getFlatModule()
 void
 MetaPreModule::regretToInform(Entity* doomedEntity)
 {
-  DebugAdvisory("MetaPreModule::regretToInform() called");
+  DebugAdvisory("MetaPreModule::regretToInform() called on " << this);
   Assert(doomedEntity == flatModule, "module pointer error");
   flatModule = 0;
 }

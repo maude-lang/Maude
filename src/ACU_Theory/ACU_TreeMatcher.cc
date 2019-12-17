@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -84,7 +84,7 @@ ACU_LhsAutomaton::eliminateGroundedOutAliens(Substitution& solution)
 	{
 	  LhsAutomaton* a = i->automaton;
 	  DagNode* d = j.getDagNode();
-	  do
+	  for (;;)
 	    {
 	      Subproblem* sp;
 	      if (a->match(d, solution, sp))
@@ -101,8 +101,15 @@ ACU_LhsAutomaton::eliminateGroundedOutAliens(Substitution& solution)
 	      if (!j.valid())
 		break;
 	      d = j.getDagNode();
+	      if (t->partialCompare(solution, d) == Term::LESS)
+		{
+		  //
+		  //	Since t is less then d, it will also be less than
+		  //	all next nodes so we can quit now.
+		  //
+		  break;
+		}
 	    }
-	  while (t->partialCompare(solution, d) != Term::GREATER);
 	}
       return false;
     nextGroundedOutAlien:
@@ -129,7 +136,7 @@ ACU_LhsAutomaton::greedyMatch(ACU_TreeDagNode* subject,
 	  int multiplicity = i->multiplicity;
 	  LhsAutomaton* a = i->automaton;
 	  DagNode* d = j.getDagNode();
-	  do
+	  for (;;)
 	    {
 	      if (j.getMultiplicity() >= multiplicity)
 		{
@@ -155,8 +162,15 @@ ACU_LhsAutomaton::greedyMatch(ACU_TreeDagNode* subject,
 	      if (!j.valid())
 		break;
 	      d = j.getDagNode();
+	      if (t->partialCompare(solution, d) == Term::LESS)
+		{
+		  //
+		  //	Since t is less then d, it will also be less than
+		  //	all next nodes so we can quit now.
+		  //
+		  break;
+		}
 	    }
-	  while (t->partialCompare(solution, d) != Term::GREATER);
 	}
       return ((i - nonGroundAliens.begin()) < nrIndependentAliens) ?
 	false : UNDECIDED;
@@ -536,13 +550,43 @@ ACU_LhsAutomaton::treeMatch(ACU_TreeDagNode* subject,
     }
   if (matchStrategy == FULL)
     {
+      //
+      //	We're here because treeMatchOK was true, which implies:
+      //	  We're not matching at the top
+      //	  Expected nrUnboundVariables = 1
+      //	  That one variable has unbounded sort and multiplicity 1
+      //	  Number of NGAs = 1
+      //	  That one NGA is stable and has multiplicity 1
+      //	
       Assert(nrUnboundVariables <= 1, "nrUnboundVariables = " << nrUnboundVariables);
       if (nrUnboundVariables != 1)
-	return UNDECIDED;  // should be smarter
+	{
+	  //
+	  //	The variable we expected to be unbound and act as a collector
+	  //	variable was bound after all. We could potentially be
+	  //	smarter here but this is a very unlikely case.
+	  //
+	  return UNDECIDED;
+	}
       if (current.getSize() == 0)
-	return UNDECIDED;  // should be smarter
+	{
+	  //
+	  //	Subject exhausted - we don't expect this to happen in the
+	  //	red-black case where the subject is expected to be large.
+	  //	Though we could handle this efficiently it might be tricky
+	  //	to reach this code, even for test purposes so we don't bother.
+	  //
+	  return UNDECIDED;
+	}
       if (current.getSize() == 1 && current.getMaxMult() == 1)
-	return UNDECIDED;  // should be smarter
+	{
+	  //
+	  //	Subject reduced to a single item; again it would be tricky
+	  //	to reach this case, so we don't both with an efficient
+	  //	implementation.
+	  //
+	  return UNDECIDED;
+	}
       //
       //	The only way we can be here is if we have a nonground alien
       //	and a collector variable, and no extension.

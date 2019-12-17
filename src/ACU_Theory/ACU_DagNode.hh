@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -51,10 +51,7 @@ public:
   DagNode* copyWithReplacement(Vector<RedexPosition>& redexStack,
 			       int first,
 			       int last);
-  void stackArguments(Vector<RedexPosition>& stack,
-		      int parentIndex,
-		      bool respectFrozen);
-  //
+ //
   //	Member functions required to handle extension information.
   //
   bool matchVariableWithExtension(int index,
@@ -67,7 +64,7 @@ public:
   //
   //	Unification member functions.
   //
-  ReturnResult computeBaseSortForGroundSubterms();
+  ReturnResult computeBaseSortForGroundSubterms(bool warnAboutUnimplemented);
   bool computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
   void insertVariables2(NatSet& occurs);
   DagNode* instantiate2(const Substitution& substitution);
@@ -75,7 +72,10 @@ public:
   //	Interface for narrowing.
   //
   bool indexVariables2(NarrowingVariableInfo& indices, int baseIndex);
-  DagNode* instantiateWithReplacement(const Substitution& substitution, const Vector<DagNode*>& eagerCopies, int argIndex, DagNode* newDag);
+  DagNode* instantiateWithReplacement(const Substitution& substitution,
+				      const Vector<DagNode*>* eagerCopies,
+				      int argIndex,
+				      DagNode* newDag);
   DagNode* instantiateWithCopies2(const Substitution& substitution, const Vector<DagNode*>& eagerCopies);
   //
   //    Functions particular to ACU_DagNode.
@@ -103,6 +103,7 @@ private:
   //
   DagNode* markArguments();
   DagNode* copyEagerUptoReduced2();
+  DagNode* copyAll2();
   void clearCopyPointers2();
   //
   //	Normalization functions.
@@ -157,6 +158,7 @@ private:
   friend class ACU_CollectorLhsAutomaton;	// for matching DAG subject
   friend class ACU_NGA_LhsAutomaton;	// for matching DAG subject
   friend class ACU_VarLhsAutomaton;	// for matching DAG subject
+  friend class ACU_BndVarLhsAutomaton;	// for matching DAG subject
   friend class ACU_GndLhsAutomaton;	// for matching DAG subject
   friend class ACU_NonLinearLhsAutomaton;	// for matching DAG subject
   friend class ACU_RhsAutomaton;	// for constructing replacement DAG

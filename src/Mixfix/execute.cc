@@ -1,8 +1,8 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2017 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,16 +30,8 @@
 void
 Interpreter::clearContinueInfo()
 {
-  delete savedContext;
-  delete savedMatchSearchState;
-  delete savedUnificationProblem;
-  delete savedRewriteSequenceSearch;
-  delete savedStrategicSearch;
-  savedContext = 0;
-  savedMatchSearchState = 0;
-  savedUnificationProblem = 0;
-  savedRewriteSequenceSearch = 0;
-  savedStrategicSearch = 0;
+  delete savedState;
+  savedState = 0;
   continueFunc = 0;
   if (savedModule != 0)
     {
@@ -83,8 +75,11 @@ Interpreter::startUsingModule(VisibleModule* module)
 void
 Interpreter::beginRewriting(bool debug)
 {
+  UserLevelRewritingContext::clearInfo();
   if (debug)
     UserLevelRewritingContext::setDebug();
+  else
+    RewritingContext::setTraceStatus(flags & EXCEPTION_FLAGS);  // in case traceFlag was set by SIGINFO
 #ifdef QUANTIFY_REWRITING
   quantify_start_recording_data();
 #endif
@@ -139,7 +134,7 @@ Interpreter::printStats(const Timer& timer, RewritingContext& context, bool timi
 
 void
 Interpreter::endRewriting(Timer& timer,
-			  UserLevelRewritingContext* context,
+			  CacheableRewritingContext* context,
 			  VisibleModule* module,
 			  ContinueFuncPtr cf)
 {
@@ -176,7 +171,7 @@ Interpreter::endRewriting(Timer& timer,
 	}
       else
 	{
-	  savedContext = context;
+	  savedState = context;
 	  savedModule = module;
 	  continueFunc = cf;
 	}
@@ -193,7 +188,7 @@ Interpreter::reduce(const Vector<Token>& subject, bool debug)
 {
   if (DagNode* d = makeDag(subject))
     {
-      UserLevelRewritingContext* context = new UserLevelRewritingContext(d);
+      CacheableRewritingContext* context = new CacheableRewritingContext(d);
       if (getFlag(SHOW_COMMAND))
 	{
 	  UserLevelRewritingContext::beginCommand();
@@ -227,7 +222,7 @@ Interpreter::reduce(const Vector<Token>& subject, bool debug)
 		  cout << "CONVERT_THRESHOLD = " << CONVERT_THRESHOLD <<
 		    "\tMERGE_THRESHOLD = " << MERGE_THRESHOLD << endl;
 		  DagNode* d = makeDag(subject);
-		  UserLevelRewritingContext* context = new UserLevelRewritingContext(d);
+		  CacheableRewritingContext* context = new CacheableRewritingContext(d);
 		  VisibleModule* fm = currentModule->getFlatModule();
 		  startUsingModule(fm);
 		  beginRewriting(debug);
@@ -257,7 +252,7 @@ Interpreter::rewrite(const Vector<Token>& subject, Int64 limit, bool debug)
 	    xmlBuffer->generateRewrite(d, limit);
 	}
       
-      UserLevelRewritingContext* context = new UserLevelRewritingContext(d);
+      CacheableRewritingContext* context = new CacheableRewritingContext(d);
       VisibleModule* fm = currentModule->getFlatModule();
 
       startUsingModule(fm);
@@ -273,9 +268,9 @@ Interpreter::rewrite(const Vector<Token>& subject, Int64 limit, bool debug)
 void
 Interpreter::rewriteCont(Int64 limit, bool debug)
 {
-  UserLevelRewritingContext* context = savedContext;
+  CacheableRewritingContext* context = safeCast(CacheableRewritingContext*, savedState);
   VisibleModule* fm = savedModule;
-  savedContext = 0;
+  savedState = 0;
   savedModule = 0;
   continueFunc = 0;
   if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
@@ -301,7 +296,7 @@ Interpreter::fRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateFrewrite(d, limit, gas);
 	}
-      UserLevelRewritingContext* context = new UserLevelRewritingContext(d);
+      CacheableRewritingContext* context = new CacheableRewritingContext(d);
       context->setObjectMode(ObjectSystemRewritingContext::FAIR);
       VisibleModule* fm = currentModule->getFlatModule();
 
@@ -318,9 +313,9 @@ Interpreter::fRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 void
 Interpreter::fRewriteCont(Int64 limit, bool debug)
 {
-  UserLevelRewritingContext* context = savedContext;
+  CacheableRewritingContext* context = safeCast(CacheableRewritingContext*, savedState);
   VisibleModule* fm = savedModule;
-  savedContext = 0;
+  savedState = 0;
   savedModule = 0;
   continueFunc = 0;
   if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))

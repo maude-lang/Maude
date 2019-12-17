@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2012 SRI International, Menlo Park, CA 94025, USA.
 
@@ -235,7 +235,9 @@ UnifierFilter::RetainedUnifier::RetainedUnifier(const Substitution& original,
       //matchingAutomata[i]->dump(cerr, variableInfo);
     }
 
-  nrVariablesInBindings = variableInfo.getNrRealVariables();  // may also have some abstraction variables
+  nrVariablesInBindings = variableInfo.getNrProtectedVariables();  // may also have some abstraction variables
+  DebugAdvisory("compiled retained unifier has  " << variableInfo.getNrRealVariables() << " real variables");
+  DebugAdvisory("compiled retained unifier has  " << variableInfo.getNrProtectedVariables() << " protected variables");
 }
 
 UnifierFilter::RetainedUnifier::~RetainedUnifier()

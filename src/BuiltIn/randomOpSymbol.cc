@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 2004 SRI International, Menlo Park, CA 94025, USA.
 
@@ -90,6 +90,7 @@ RandomOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   if (succSymbol != 0 && succSymbol->isNat(a))
     {
       const mpz_class& wantedIndex = succSymbol->getNat(a);
+      DebugAdvisory("currentIndex = " << currentIndex << "  wantedIndex = " << wantedIndex);
       if (wantedIndex < currentIndex)
 	{
 	  currentIndex = 0;

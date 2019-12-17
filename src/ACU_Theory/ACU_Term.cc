@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -413,6 +413,12 @@ ACU_Term::compareArguments(const DagNode* other) const
       int r = len - d2->getTree().getSize();
       if (r != 0)
 	return r;
+      //
+      //	Because the lengths compare equal, we will iterate over
+      //	both the red-black tree and the Vector, only checking for
+      //	the end of the Vector, and not checking j.valid()
+      //	This will confuse static analyzers.
+      //
       ACU_FastIter j(d2->getTree());
       Vector<Pair>::const_iterator i = argArray.begin();
       const Vector<Pair>::const_iterator e = argArray.end();
@@ -428,7 +434,7 @@ ACU_Term::compareArguments(const DagNode* other) const
 	  ++i;
 	}
       while (i != e);
-      Assert(!j.valid(), "iterator problem");
+      Assert(!j.valid(), "iterator problem - didn't exhaust tree");
     }
   else
     {

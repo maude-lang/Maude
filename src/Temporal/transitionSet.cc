@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -39,22 +39,42 @@ TransitionSet::insert(const Transition& transition)
 {
   Bdd formula = transition.second;
   if (formula == bdd_false())
-    return;  // for robustness
+    return;  // ignore empty set of valuations for robustness
   const TransitionMap::iterator e = transitionMap.end();
   TransitionMap::iterator equal = e;
   for (TransitionMap::iterator i = transitionMap.begin(); i != e;)
     {
-      TransitionMap::iterator t = i++;
+      TransitionMap::iterator t = i++;  // because we might want to erase(t)
       if (t->first == transition.first)
-	equal = t;
+	{
+	  //
+	  //	We've found a pair with the same conjunction of next states.
+	  //	There can only be one of these, but we keep going because
+	  //	we may need to trim the valuations of some other pair with
+	  //	a strictly larger conjunction of states, or some other
+	  //	pair with a strictly smaller conjunction of states may
+	  //	need to trim our valuation set.
+	  //
+	  equal = t;
+	}
       else if (t->first.contains(transition.first))
 	{
+	  //
+	  //	Existing  pair has a strictly larger conjunction of next states.
+	  //	We subtract out our valuations from its valuations and
+	  //	erase it if this becomes empty.
+	  //
 	  t->second = bdd_and(t->second, bdd_not(formula));
 	  if (t->second == bdd_false())
 	    transitionMap.erase(t);  // existing pair completely subsumed
 	}
       else if (transition.first.contains(t->first))
 	{
+	  //
+	  //	Existing pair has a strictly smaller conjunction of next states.
+	  //	We subtract out its valuations from ours and quit
+	  //	if this becomes empty.
+	  //
 	  formula = bdd_and(formula, bdd_not(t->second));
 	  if (formula == bdd_false())
 	    return;  // new transition completely subsumed
@@ -62,12 +82,22 @@ TransitionSet::insert(const Transition& transition)
     }
   if (equal == e)
     {
+      //
+      //	No existing pair with the same conjunction of next states
+      //	so we juct do a simple insert.
+      //
       pair<TransitionMap::iterator, bool> p = transitionMap.insert(transition);
-      Assert(p.second, "failed to insert");
-      p.first->second = formula;
+      Assert(p.second, "failed to insert transition but no pair with the same conjunction of states currently exists");
+      p.first->second = formula;  // may have been updated in loop
     }
   else
-    equal->second = bdd_or(equal->second, formula);
+    {
+      //
+      //	OR our valuations into the valuations of a pair with the same
+      //	conjunction of next states.
+      //
+      equal->second = bdd_or(equal->second, formula);
+    }
 }
 
 void
@@ -105,7 +135,7 @@ TransitionSet::rename(const TransitionSet& original, const Vector<int>& renaming
 {
   //
   //	Renaming must be injective: no two old states must map to
-  //	the name new state. We make use of that to do a fast insertion
+  //	the same new state. We make use of that to do a fast insertion
   //	of the renamed state sets.
   //
   transitionMap.clear();

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -104,7 +104,7 @@ ACU_NGA_LhsAutomaton::match(DagNode* subject,
 		{
 		  DagNode* d = i.getDagNode();
 		  Substitution& local = getLocal();
-		  do
+		  for (;;)
 		    {
 		      local.copy(solution);
 		      if (stripperAutomaton->match(d, local, returnedSubproblem))
@@ -131,8 +131,15 @@ ACU_NGA_LhsAutomaton::match(DagNode* subject,
 		      if (!i.valid())
 			break;
 		      d = i.getDagNode();
+		      if (stripperTerm->partialCompare(solution, d) == Term::LESS)
+			{
+			  //
+			  //	stripperTerm is less than d, so it will be less than
+			  //	all next arguments and we can quit.
+			  //
+			  break;
+			}
 		    }
-		  while (stripperTerm->partialCompare(solution, d) != Term::GREATER);
 		}
 	    }
 	  else
@@ -147,7 +154,7 @@ ACU_NGA_LhsAutomaton::match(DagNode* subject,
 		{
 		  DagNode* d = s->argArray[i].dagNode;
 		  Substitution& local = getLocal();
-		  do
+		  for (;;)
 		    {
 		      local.copy(solution);
 		      if (stripperAutomaton->match(d, local, returnedSubproblem))
@@ -174,8 +181,15 @@ ACU_NGA_LhsAutomaton::match(DagNode* subject,
 		      if (i >= nrArgs)
 			break;
 		      d = s->argArray[i].dagNode;
+		      if (stripperTerm->partialCompare(solution, d) == Term::LESS)
+			{
+			  //
+			  //	stripperTerm is less than d, so it will be less than
+			  //	all next arguments and we can quit.
+			  //
+			  break;
+			}
 		    }
-		  while (stripperTerm->partialCompare(solution, d) != Term::GREATER);
 		}
 	    }
 	  return false;

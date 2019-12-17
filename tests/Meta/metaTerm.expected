@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in QID : 'a:s .
 rewrites: 0
 result Qid: 'a:s
@@ -50,4 +50,4 @@ result Sort: 'a
 reduce in META-TERM : getType('a:`[s`,t`]) .
 rewrites: 7
 result Kind: '`[s`,t`]
-Maude> Bye.
+Bye.

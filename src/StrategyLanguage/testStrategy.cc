@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for abstract class Strategy.
+//      Implementation for class TestStrategy.
 //
 
 //	utility stuff
@@ -46,28 +46,73 @@
 #include "strategicSearch.hh"
 #include "testStrategy.hh"
 
-
 TestStrategy::TestStrategy(Term* patternTerm, int depth, const Vector<ConditionFragment*>& condition)
-  : pattern(patternTerm, depth >= 0, condition),
+  : pattern(patternTerm, depth >= 0, condition, true),
     depth(depth)
 {
-  WarningCheck(pattern.getUnboundVariables().empty(),
-	       *patternTerm << ": variable " <<
-	       QUOTE(pattern.index2Variable(pattern.getUnboundVariables().min())) <<
-	       " is used before it is bound in condition of test strategy.");
   // need to do something about recovery
+}
+
+bool
+TestStrategy::check(VariableInfo& indices, const TermSet& boundVars)
+{
+  // Check that the unbound variables are defined in the context and
+  // builds a translation map between context indices and pattern indices
+  const NatSet& unboundSet = pattern.getUnboundVariables();
+  size_t nrVars = pattern.getNrRealVariables();
+
+  indexTranslation.resize(0);
+
+  for (size_t k = 0; k < nrVars; k++)
+    {
+      Term* var = pattern.index2Variable(k);
+
+      // var is not bound outside the pattern
+      if (boundVars.term2Index(var) == NONE)
+	{
+	  if (unboundSet.contains(k))
+	    {
+	      IssueWarning(*pattern.getLhs() << ": variable " << QUOTE(var) <<
+		" is used before it is bound in condition of test strategy.");
+
+	      return false;
+	    }
+	}
+      else
+	{
+	  int outerIndex = indices.variable2Index(static_cast<VariableTerm*>(var));
+	  indexTranslation.append(make_pair(k, outerIndex));
+	}
+    }
+  return true;
+}
+
+void
+TestStrategy::process()
+{
+  pattern.prepare();
 }
 
 StrategicExecution::Survival
 TestStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess* remainder)
 {
-  if (!pattern.getUnboundVariables().empty())
-    return StrategicExecution::DIE;  // bad condition always fails
   RewritingContext* context = searchObject.getContext();
   RewritingContext* newContext = context->makeSubcontext(searchObject.getCanonical(remainder->getDagIndex()));
-  MatchSearchState* state = new MatchSearchState(newContext, &pattern, MatchSearchState::GC_CONTEXT, 0, depth);
+  MatchSearchState* state = new MatchSearchState(newContext, &pattern, MatchSearchState::GC_CONTEXT |
+						 MatchSearchState::GC_SUBSTITUTION, 0, depth);
+
+  // Applies the variable bindings
+  if (!indexTranslation.isNull())
+    {
+      VariableBindingsManager::ContextId varBinds = remainder->getOwner()->getVarsContext();
+      Vector<Term*> vars;
+      Vector<DagRoot*> values;
+      searchObject.buildInitialSubstitution(varBinds, pattern, indexTranslation, vars, values);
+      state->setInitialSubstitution(vars, values);
+    }
+
   bool result = state->findNextMatch();
-  state->transferCount(*context);
+  state->transferCountTo(*context);
   delete state;
   return result ? StrategicExecution::SURVIVE : StrategicExecution::DIE;
 }

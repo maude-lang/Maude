@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -43,14 +43,17 @@
 //      core class definitions
 #include "equation.hh"
 #include "rule.hh"
+#include "rewriteStrategy.hh"
+#include "strategyDefinition.hh"
 #include "sortConstraint.hh"
 
 //	front end class definitions
 #include "userLevelRewritingContext.hh"
 #include "visibleModule.hh"
 
-VisibleModule::VisibleModule(int name, ModuleType moduleType, Entity::User* parent)
-  : ImportModule(name, moduleType, TEXT, parent)
+VisibleModule::VisibleModule(int name, ModuleType moduleType, Interpreter* owner)
+  : ImportModule(name, moduleType),
+    owner(owner)
 {
 }
 
@@ -75,14 +78,16 @@ VisibleModule::showSummary(ostream& s)
     "\n\tpolymorphic operators: " << getNrPolymorphs() <<
     "\n\tmembership axioms: " << getSortConstraints().length() <<
     "\n\tequations: " << getEquations().length() <<
-    "\n\trules: " << getRules().length() << '\n';
+    "\n\trules: " << getRules().length() <<
+    "\n\tstrategies: " << getStrategies().length() <<
+    "\n\tstrategy definitions: " << getStrategyDefinitions().length() << '\n';
 }
 
 void
 VisibleModule::showKinds(ostream& s) const
 {
   const Vector<ConnectedComponent*>& kinds = getConnectedComponents();
-  int nrKinds = kinds.length();
+  int nrKinds = getNrUserComponents();
   for (int i = 0; i < nrKinds; i++)
     {
       const ConnectedComponent* c = kinds[i];
@@ -182,6 +187,8 @@ VisibleModule::showModule(ostream& s, bool all) const
   showMbs(s, true, all);
   showEqs(s, true, all);
   showRls(s, true, all);
+  showStrats(s, true, all);
+  showSds(s, true, all);
   if (UserLevelRewritingContext::interrupted())
     return;
   s << moduleEndString(getModuleType()) << '\n';
@@ -288,6 +295,35 @@ VisibleModule::showRls(ostream& s, bool indent, bool all) const
       if (UserLevelRewritingContext::interrupted())
 	return;
       s << ind << rules[i] << '\n';
+    }
+}
+
+void
+VisibleModule::showStrats(ostream& s, bool indent, bool all) const
+{
+  const char* ind = indent ? "  " : "";
+  const Vector<RewriteStrategy*>& strategies = getStrategies();
+  int nrStrategies = strategies.size();
+  int start = all ? 0 : getNrImportedStrategies();
+  for (int i = start; i < nrStrategies; i++)
+    {
+      if (UserLevelRewritingContext::interrupted())
+       return;
+      s << ind << strategies[i] << '\n';
+    }
+}
+
+void
+VisibleModule::showSds(ostream& s, bool indent, bool all) const
+{
+  const char* ind = indent ? "  " : "";
+  const Vector<StrategyDefinition*>& defs = getStrategyDefinitions();
+  int nrDefs = all ? defs.length() : getNrOriginalStrategyDefinitions();
+  for (int i = 0; i < nrDefs; i++)
+    {
+      if (UserLevelRewritingContext::interrupted())
+	return;
+      s << ind << defs[i] << '\n';
     }
 }
 

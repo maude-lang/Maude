@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,20 +21,22 @@
 */
 
 //
-//      Class for generating SMT variables and handling CVC4 specifics.
+//      Class for generating SMT variables, with dummy version for no SMT support.
 //
 #ifndef _variableGenerator_hh_
 #define _variableGenerator_hh_
-#include <map>
 #include "SMT_Info.hh"
 #include "SMT_EngineWrapper.hh"
 
 #ifdef USE_CVC4
-#include "cvc4/expr/expr_manager.h"
-#include "cvc4/smt/smt_engine.h"
+#include "cvc4_Bindings.hh"
+#elif defined(USE_YICES2) 
+#include "yices2_Bindings.hh"
+#else
 
-using namespace CVC4;
-#endif
+//
+//	Code for no SMT support case.
+//
 
 class VariableGenerator : public SMT_EngineWrapper
 {
@@ -42,7 +44,7 @@ public:
   VariableGenerator(const SMT_Info& smtInfo);
   ~VariableGenerator();
   //
-  //	Extra functionality for when we do full abstraction of SMT solving.
+  //	Virtual functions for SMT solving.
   //
   Result assertDag(DagNode* dag);
   Result checkDag(DagNode* dag);
@@ -51,71 +53,7 @@ public:
   void pop();
 
   VariableDagNode* makeFreshVariable(Term* baseVariable, const mpz_class& number);
-
-private:
-#ifdef USE_CVC4
-
-  //
-  //	We identify Maude variables that correspond to SMT variables by a pair
-  //	where the first component in the variable's sort's index within its module
-  //	and the second component is the variables name.
-  //
-  typedef pair<int, int> SortIndexVariableNamePair;
-  //
-  //	When we generate SMT variables on-the-fly we keep track of them in a map.
-  //
-  typedef map<SortIndexVariableNamePair, Expr> VariableMap;
-
-  Expr makeVariable(VariableDagNode* v);
-  Expr makeBooleanExpr(DagNode* dag);
-  Expr makeRationalConstant(const mpq_class& rational);
-  Expr dagToCVC4(DagNode* dag);
-#endif
-
-  const SMT_Info& smtInfo;
-
-#ifdef USE_CVC4
-  VariableMap variableMap;
-  int pushCount;
-  //
-  //	CVC4 objects.
-  //
-  ExprManager* exprManager;
-  SmtEngine* smtEngine;
-#endif
 };
 
-inline void
-VariableGenerator::push()
-{
-#ifdef USE_CVC4
-  smtEngine->push();
-  ++pushCount;
 #endif
-}
-
-inline void
-VariableGenerator::pop()
-{
-#ifdef USE_CVC4
-  Assert(pushCount > 0, "bad pop");
-  smtEngine->pop();
-  --pushCount;
-#endif
-}
-
-inline void
-VariableGenerator::clearAssertions()
-{
-#ifdef USE_CVC4
-  while (pushCount > 0)
-    {
-      smtEngine->pop();
-      --pushCount;
-    }
-  smtEngine->pop();  // get back to original clean context
-  smtEngine->push();  // make a new context so we don't pollute the context we want to pop back to
-#endif
-}
-
 #endif

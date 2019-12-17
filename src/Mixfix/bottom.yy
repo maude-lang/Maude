@@ -32,22 +32,26 @@ yyerror(UserLevelRewritingContext::ParseResult* /*parseResult*/, char *s)
 void
 cleanUpModuleExpression()
 {
+  //cout << "cleanUpModuleExpression() called" << endl;
   //
   //	Delete pieces of a partly built module expression.
   //
   delete currentRenaming;
   currentRenaming = 0;
-  while (!moduleExpressions.empty())
-    {
-      moduleExpressions.top()->deepSelfDestruct();
-      moduleExpressions.pop();
-    }
 }
 
 void
 cleanUpParser()
 {
   interpreter.makeClean(lineNumber);
+}
+
+void
+deepSelfDestructViewExpressionVector(Vector<ViewExpression*>* viewExpressions)
+{
+  FOR_EACH_CONST(i, Vector<ViewExpression*>, *viewExpressions)
+    (*i)->deepSelfDestruct();
+  delete viewExpressions;
 }
 
 void

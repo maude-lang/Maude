@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -32,11 +32,13 @@
 //	^                ^                               ^
 //	0                #protected for rule             size of substitution for module
 //
-//	(4) Unifiers should be expressed in terms of "fresh" variables that reuse the variable name and
+//	(4) Narrowing unification allow extra variables that may not occur in the unification problem
+//	but that might occur in the larger term being narrowed. These get fresh variables in the unifiers.
+//	(5) Unifiers should be expressed in terms of "fresh" variables that reuse the variable name and
 //	substitution slot space.
-//	(5) Narrowing unification does not corrupt previously generated unifiers when making the next unifier, at
+//	(6) Narrowing unification does not corrupt previously generated unifiers when making the next unifier, at
 //	the cost of more copying if an unsorted unifier corresponds to multiple order-sorted unifiers.
-//	(6) Narrowing unification supports the idea of "odd" and "even" variables to avoid clashing variable
+//	(7) Narrowing unification supports the idea of variables families to avoid clashing variable
 //	names on successive steps of narrowing.
 //
 #ifndef _narrowingUnificationProblem_hh_
@@ -58,7 +60,7 @@ public:
 			      DagNode* target,
 			      const NarrowingVariableInfo& variableInfo,
 			      FreshVariableGenerator* freshVariableGenerator,
-			      bool odd = false);
+			      int variableFamily = 0);
   //
   //	However for variant unification, we also need to unify a pair of DagNode* arguments.
   //
@@ -66,7 +68,7 @@ public:
 			      DagNode* rhs,
 			      const NarrowingVariableInfo& variableInfo,
 			      FreshVariableGenerator* freshVariableGenerator,
-			      bool odd);
+			      int variableFamily);
 
   ~NarrowingUnificationProblem();
 
@@ -86,7 +88,7 @@ private:
   const int nrPreEquationVariables;
   const NarrowingVariableInfo& variableInfo;
   FreshVariableGenerator* const freshVariableGenerator;
-  const bool odd;
+  const int variableFamily;
 
   int firstTargetSlot;			// start of slots for variables in target
   int substitutionSize;			// initial substitution size (before any fresh variables are added)

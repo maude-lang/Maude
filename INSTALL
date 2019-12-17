@@ -5,20 +5,21 @@ Maude requires following the tools:
 
 GNU gcc		http://gcc.gnu.org/
 GNU bison	http://www.gnu.org/software/bison/
-GNU flex	http://www.gnu.org/software/flex/
+flex		https://github.com/westes/flex
 
 It is recommended that you use the latest versions of bison and flex
 since Maude is known to tickle bugs in certain older versions. You
-should use gcc 3.1 or later as there are code generation issues with
-the 3.0.* series.
+should use gcc 5.2 or later as there are code generation issues with
+earlier versions.
 
 Maude requires the following packages:
 
-GNU gmp		http://www.swox.com/gmp/
-GNU libsigsegv	http://libsigsegv.sourceforge.net/
-Tecla		http://www.astro.caltech.edu/~mcs/tecla/
-BuDDY		http://sourceforge.net/projects/buddy
-CVC4 (optional)	http://cvc4.cs.nyu.edu/web/
+GNU gmp		  https://gmplib.org/
+GNU libsigsegv	  https://www.gnu.org/software/libsigsegv/
+Tecla		  http://www.astro.caltech.edu/~mcs/tecla/
+BuDDY		  http://sourceforge.net/projects/buddy
+CVC4 (optional)	  https://cvc4.github.io/
+Yices2 (optional) https://github.com/SRI-CSL/yices2
 
 
 Configuring the 3rd party packages
@@ -43,18 +44,26 @@ to avoid linking issues on various platforms.
 As of 2.4 BuDDy has moved to autoconf. The option --disable-shared is
 recommended to avoid linking issues on various platforms.
 
+Yices2 must be built from source, and does not support building
+in an architecture specific subdirectory. It is recommend that the
+latest release be used as some ealier releases export a function,
+tputs(), that conflicts with the function of the same name in
+the curses/ncurses system library that is needed by Tecla.
 
 Building Maude
 ==============
+Only one of CVC4 and Yices2 should be linked to provide an SMT backend.
+By default, Maude is configured to use Yices2.
+
 If everything is installed in standard places you can configure and
 build Maude with the commands:
 
 ./configure
 make
 
-If you don't have CVC4 you can pass --with-cvc4=no to configure. This
-disables the experimental rewriting modulo SMT feature, and produces
-a much smaller binary (CVC4 is much larger than Maude).
+Passing --with-yices2=no --with-cvc4=yes to configure will use CVC4
+instead of Yices2. Passing both options as no will build Maude without
+SMT support.
 
 A very basic test suite can be run using the command:
 
@@ -71,6 +80,7 @@ LIBSIGSEGV_LIB	(defaults to -lsigsegv)
 TECLA_LIBS	(defaults to -ltecla -lcurses)
 BUDDY_LIB	(defaults to -lbuddy)
 CVC4_LIB	(defaults to -lcvc4)
+YICES2_LIB	(defaults to -lyices)
 
 A more realistic configure to make, check and install a static binary
 using a separate build tree might look something like:
@@ -93,16 +103,22 @@ installed in $(datadir). In order for the Maude binary to find the
 point to $(datadir). Alternatively you could move the .maude files to
 $(bindir).
 
+Note that if your CVC4 library is built using CLN then you must
+also link this library (-lcln).
 
 Note for Mac users
 ==================
 
-As of Mavericks, Apple no longer supports gcc so Maude must be compiled with clang.
-The easiest way is to install the Mac Ports version of each of
-the needed tools and libraries. With Mac Ports installed in /opt/local
-I use the configuration line:
+As of Mavericks, Apple no longer supports gcc so Maude must be compiled
+with clang. The easiest way is to install the Mac Ports version of each of
+the needed tools and libraries (except Yices2 and CVC4 which must built
+from source - the Mac Ports version of CVC4 is too old and will cause
+runtime failures). With Mac Ports installed in /opt/local
+to build a version without SMT support, I use the configuration line:
 
 ../configure \
+--with-yices2=no \
+--with-cvc4=no \
 CC=cc \
 CXX=c++ \
 FLEX=/opt/local/bin/flex \
@@ -112,5 +128,4 @@ CXXFLAGS="-Wall -O2 -I/opt/local/include -fno-stack-protector -fstrict-aliasing"
 BUDDY_LIB="/opt/local/lib/libbdd.a" \
 TECLA_LIBS="/opt/local/lib/libtecla.a /usr/lib/libncurses.dylib" \
 LIBSIGSEGV_LIB="/opt/local/lib/libsigsegv.a" \
-GMP_LIBS="/opt/local/lib/libgmp.a /opt/local/lib/libgmpxx.a" \
-CVC4_LIB="/opt/local/lib/libcvc4.a"
+GMP_LIBS="/opt/local/lib/libgmp.a /opt/local/lib/libgmpxx.a"

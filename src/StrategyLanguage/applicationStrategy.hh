@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -27,6 +27,7 @@
 #define _applicationStrategy_hh_
 #include "strategyExpression.hh"
 #include "cachedDag.hh"
+#include "variableInfo.hh"
 
 class ApplicationStrategy : public StrategyExpression
 {
@@ -45,16 +46,25 @@ public:
   int getLabel() const;
   const Vector<Term*>& getVariables() const;
   Vector<CachedDag>& getValues();
+  const Vector<CachedDag>& getValues() const;
   const Vector<StrategyExpression*>& getStrategies() const;
+
+  bool check(VariableInfo& indices, const TermSet& boundVars);
+  void process();
+
+  bool areSubsDagsReduced() const;
+  void setSubsDagsReduced();
 
   StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder);
 
 private:
-  bool top;  					// restrict rewrites to top of term
+  bool top;					// restrict rewrites to top of term
   const int label;
   Vector<Term*> variables;			// substitution
   Vector<CachedDag> valueDags;
   Vector<StrategyExpression*> strategies;	// strategies for searches in conditions
+  VariableInfo varInfo;				// variable information for the substitution values
+  bool subsDagsAreReduced;
 };
 
 inline void
@@ -87,10 +97,28 @@ ApplicationStrategy::getValues()
   return valueDags;
 }
 
+inline const Vector<CachedDag>&
+ApplicationStrategy::getValues() const
+{
+  return valueDags;
+}
+
 inline const Vector<StrategyExpression*>&
 ApplicationStrategy::getStrategies() const
 {
   return strategies;
+}
+
+inline bool
+ApplicationStrategy::areSubsDagsReduced() const
+{
+  return subsDagsAreReduced;
+}
+
+inline void
+ApplicationStrategy::setSubsDagsReduced()
+{
+  subsDagsAreReduced = true;
 }
 
 #endif

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -118,7 +118,19 @@ AU_DequeDagNode::markArguments()
 DagNode*
 AU_DequeDagNode::copyEagerUptoReduced2()
 {
+  //
+  //	Don't both trying to preserve deque in the case of
+  //	a lazy operator, since we cannot do greedy matching with
+  //	extension we will be forced to ArgVec representation when
+  //	we try to reduce at this node.
+  //
   return dequeToArgVec(this)->copyEagerUptoReduced2();
+}
+
+DagNode*
+AU_DequeDagNode::copyAll2()
+{
+  return dequeToArgVec(this)->copyAll2();
 }
 
 void
@@ -156,22 +168,6 @@ AU_DequeDagNode::copyWithReplacement(Vector<RedexPosition>& redexStack,
 				     int last)
 {
   return dequeToArgVec(this)->copyWithReplacement(redexStack, first, last);
-}
-
-void
-AU_DequeDagNode::stackArguments(Vector<RedexPosition>& stack,
-				int parentIndex,
-				bool respectFrozen)
-{
-  if (respectFrozen && !(symbol()->getFrozen().empty()))
-    return;
-  int j = 0;
-  for (AU_DequeIter i(deque); i.valid(); i.next(), ++j)
-    {
-       DagNode* d = i.getDagNode();
-      if (!(d->isUnstackable()))
-	stack.append(RedexPosition(d, parentIndex, j));
-    }
 }
 
 ExtensionInfo*

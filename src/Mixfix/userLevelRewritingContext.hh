@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,7 +21,7 @@
 */
 
 //
-//      Class for user level rewriting contexts
+//      Class for user level rewriting contexts.
 //
 #ifndef _userLevelRewritingContext_hh_
 #define _userLevelRewritingContext_hh_
@@ -56,11 +56,6 @@ public:
   };
 
   UserLevelRewritingContext(DagNode* root);
-  UserLevelRewritingContext(DagNode* root,
-			    UserLevelRewritingContext* parent,
-			    int purpose,
-			    bool localTraceFlag);
-
 
   static void setHandlers(bool handleCtrlC);
   static ParseResult commandLoop();
@@ -73,12 +68,14 @@ public:
   static void clearDebug();
   static void clearInterrupt();
   static void clearTrialCount();
+  static void clearInfo();
 
   RewritingContext* makeSubcontext(DagNode* root, int purpose);
   void beAdoptedBy(UserLevelRewritingContext* newParent);
   int traceBeginEqTrial(DagNode* subject, const Equation* equation);
   int traceBeginRuleTrial(DagNode* subject, const Rule* rule);
   int traceBeginScTrial(DagNode* subject, const SortConstraint* sc);
+  int traceBeginSdTrial(DagNode* subject, const StrategyDefinition* sdef);
   void traceEndTrial(int trailRef, bool success);
   void traceExhausted(int trialRef);
 
@@ -114,27 +111,47 @@ public:
 				 const Vector<DagNode*>& newVariantSubstitution,
 				 const NarrowingVariableInfo& originalVariables);
 
+  void traceStrategyCall(StrategyDefinition* sdef,
+			 DagNode* callDag,
+			 DagNode* subject,
+			 const Substitution* substitution);
+
   static void printSubstitution(const Substitution& substitution,
 				const VariableInfo& varInfo,
 				const NatSet& ignoredIndices = NatSet());
+  
+  static void printSubstitution(const Vector<DagNode*>& substitution,
+				const NarrowingVariableInfo& variableInfo);
 
+  static void printSubstitution(const Substitution& substitution,
+				const NarrowingVariableInfo& variableInfo);
 
 
 private:
+  UserLevelRewritingContext(DagNode* root,
+			    UserLevelRewritingContext* parent,
+			    int purpose,
+			    bool localTraceFlag);
+
   static void interruptHandler(int);
+  static void infoHandler(int);
   static void interruptHandler2(...);
 
 #ifdef USE_LIBSIGSEGV
   static void stackOverflowHandler(int emergency, stackoverflow_context_t scp);
-  static int sigsegvHandler(void *fault_address, int serious);
+  static int sigsegvHandler(void* fault_address, int serious);
 #endif
   static void internalErrorHandler(int signalNr);
 
   static void changePrompt();
   static bool dontTrace(const DagNode* redex, const PreEquation* pe);
+
+  bool handleInterrupt();
   void checkForPrintAttribute(MetadataStore::ItemType itemType, const PreEquation* item);
-  bool handleDebug(const DagNode* subject, const PreEquation* pe);
-  void where();
+  bool handleDebug(DagNode* subject, const PreEquation* pe);
+  void where(ostream& s);
+  void printStatusReportCommon();
+  void printStatusReport(DagNode* subject, const PreEquation* pe);
 
   static bool tracePostFlag;
   static int trialCount;
@@ -142,6 +159,7 @@ private:
 
   static bool interactiveFlag;
   static bool ctrlC_Flag;
+  static bool infoFlag;
   static bool stepFlag;
   static bool abortFlag;
   static int debugLevel;
@@ -185,6 +203,12 @@ UserLevelRewritingContext::setDebug()
 {
   setTraceStatus(true);
   stepFlag = true;
+}
+
+inline void
+UserLevelRewritingContext::clearInfo()
+{
+  infoFlag = false;
 }
 
 inline void

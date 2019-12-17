@@ -1,0 +1,25 @@
+view V from STRICT-TOTAL-ORDER to FOO is
+  sort Elt to Bool .
+  op X:Elt < Y:Elt to term p X:Bool + Y:Bool .
+endv
+view V from STRICT-TOTAL-ORDER to FOO is
+  sort Elt to Bool .
+  op X:Elt < Y:Elt to term p X:Bool + Y:Bool .
+endv
+==========================================
+reduce in META-LEVEL : upView('V) .
+rewrites: 1
+result View: view 'V from 'STRICT-TOTAL-ORDER to 'FOO is
+  sort 'Elt to 'Bool .
+  op '_<_['X:Elt,'Y:Elt] to term 'p_['_+_['X:Bool,'Y:Bool]] .
+  none
+endv
+==========================================
+reduce in META-LEVEL : upView('V) .
+rewrites: 1
+result View: view 'V from 'STRICT-TOTAL-ORDER to 'FOO is
+  sort 'Elt to 'Bool .
+  op '_<_['X:Elt,'Y:Elt] to term '_+_['p_['X:Bool],'Y:Bool] .
+  none
+endv
+Bye.

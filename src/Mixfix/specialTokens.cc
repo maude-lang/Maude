@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -55,6 +55,8 @@
   MACRO(rl, "rl")
   MACRO(crl, "crl")
   MACRO(cq, "cq")
+  MACRO(sd, "sd")
+  MACRO(csd, "csd")
   MACRO(ifToken, "if")
   MACRO(colon, ":")
   MACRO(colon2, "::")
@@ -65,11 +67,13 @@
   MACRO(otherwise, "otherwise")
   MACRO(owise, "owise")
   MACRO(variant, "variant")
+  MACRO(narrowing, "narrowing")
   MACRO(print, "print")
   MACRO(lessThan, "<")
   MACRO(partial, "~>")
   MACRO(th, "th")
   MACRO(fth, "fth")
+  MACRO(sth, "sth")
   MACRO(mod, "mod")
   MACRO(fmod, "fmod")
   MACRO(smod, "smod")
@@ -77,6 +81,7 @@
   MACRO(obj, "obj")
   MACRO(endth, "endth")
   MACRO(endfth, "endfth")
+  MACRO(endsth, "endsth")
   MACRO(endm, "endm")
   MACRO(endfm, "endfm")
   MACRO(endsm, "endsm")
@@ -95,6 +100,7 @@
   MACRO(idle, "idle")
   MACRO(all, "all")
   MACRO(top, "top")
+  MACRO(one, "one")
   MACRO(notToken, "not")
   MACRO(test, "test")
   MACRO(tryToken, "try")
@@ -111,6 +117,10 @@
   MACRO(match, "match")
   MACRO(xmatch, "xmatch")
   MACRO(amatch, "amatch")
+  MACRO(matchrew, "matchrew")
+  MACRO(xmatchrew, "xmatchrew")
+  MACRO(amatchrew, "amatchrew")
+  MACRO(by, "by")
   MACRO(irreducible, "irreducible")
     //
     //	Special hook identifier tokens.

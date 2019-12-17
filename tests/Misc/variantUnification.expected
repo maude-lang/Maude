@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 variant unify in FOO : f(X, g(Y, Z)) =? f(X, g(Y, Z))  .
 
 Unifier #1
@@ -231,4 +231,4 @@ Y --> cst1 + cst2 + #1:XOR
 
 No more unifiers.
 rewrites: 3
-Maude> Bye.
+Bye.

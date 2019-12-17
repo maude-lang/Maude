@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -37,7 +37,7 @@
 class UnificationContext : public Substitution, private SimpleRootContainer
 {
 public:
-  UnificationContext(FreshVariableGenerator* freshVariableGenerator, int nrOriginalVariables, bool odd = false);
+  UnificationContext(FreshVariableGenerator* freshVariableGenerator, int nrOriginalVariables, int variableFamily);
 
   VariableDagNode* makeFreshVariable(const ConnectedComponent* component);
   Sort* getFreshVariableSort(int index) const;
@@ -58,7 +58,7 @@ protected:
 private:
   FreshVariableGenerator* const freshVariableGenerator;
   const int nrOriginalVariables;  // actually some the the slots could be unused
-  const bool odd;  // what family of fresh variable names to use
+  const int variableFamily;  // what family of fresh variable names to use
   //
   //	Fresh variables are always create at the kind level. We keep track of this kind sort
   //	for each fresh variable we create.

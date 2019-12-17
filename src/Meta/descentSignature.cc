@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -52,8 +52,8 @@
   MACRO(metaGlbSorts, 3)
   MACRO(metaLeastSort, 2)
   MACRO(metaCompleteName, 2)
-  MACRO(metaParse, 3)
-  MACRO(metaPrettyPrint, 3)
+  MACRO(metaParse, 4)
+  MACRO(metaPrettyPrint, 4)
   MACRO(metaWellFormedModule, 1)
   MACRO(metaWellFormedTerm, 2)
   MACRO(metaGetKind, 2)
@@ -70,8 +70,25 @@
   MACRO(metaUpMbs, 2)
   MACRO(metaUpEqs, 2)
   MACRO(metaUpRls, 2)
+  MACRO(metaUpStratDecls, 2)
+  MACRO(metaUpSds, 2)
   MACRO(metaUpView, 1)
   MACRO(metaUpTerm, 1)
   MACRO(metaDownTerm, 2)
   MACRO(metaCheck, 2)
   MACRO(metaSmtSearch, 8)
+  MACRO(metaNarrowingApply, 5)
+  MACRO(metaNarrowingSearch, 7)
+  MACRO(metaNarrowingSearchPath, 7)
+  MACRO(metaSrewrite, 5)
+  MACRO(metaParseStrategy, 3)
+  MACRO(metaPrettyPrintStrategy, 4)
+//
+//	Legacy descent functions.
+//
+  MACRO(legacyMetaUnify, 4)
+  MACRO(legacyMetaDisjointUnify, 4)
+  MACRO(legacyMetaGetVariant, 5)
+  MACRO(legacyMetaGetIrredundantVariant, 5)
+  MACRO(legacyMetaVariantUnify, 5)
+  MACRO(legacyMetaVariantDisjointUnify, 5)

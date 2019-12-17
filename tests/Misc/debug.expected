@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in BAR : a .
 ==========================================
 reduce in BAR : a .
@@ -9,7 +9,7 @@ result Bar: c
 ==========================================
 reduce in META-LEVEL : metaReduce(['BAR], 'a.Bar) .
 *********** equation
-eq [Q:Qid] = th Q:Qid is
+eq [Q:Qid] = sth Q:Qid is
   including Q:Qid .
   sorts none .
   none
@@ -17,11 +17,13 @@ eq [Q:Qid] = th Q:Qid is
   none
   none
   none
-endth .
+  none
+  none
+endsth .
 Q:Qid --> 'BAR
 ['BAR]
 --->
-th 'BAR is
+sth 'BAR is
   including 'BAR .
   sorts none .
   none
@@ -29,7 +31,9 @@ th 'BAR is
   none
   none
   none
-endth
+  none
+  none
+endsth
 rewrites: 4
 result ResultPair: {'c.Bar,'Bar}
-Maude> Bye.
+Bye.

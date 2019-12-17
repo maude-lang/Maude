@@ -1,0 +1,60 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that the meta-interpreter ascent functions get module imports from from the
+***	meta-interpreter and not the object level interpreter.
+***
+
+set include BOOL off .
+
+fmod FOO is
+  sort ObjectLevelFoo .
+endfm
+
+load metaInterpreter 
+
+mod TEST is
+  pr META-INTERPRETER .
+  op me : -> Oid .
+  op User : -> Cid .
+  op state:_ : Nat -> Attribute .
+
+  op foo : -> Module .
+  eq foo = (
+fmod 'FOO is
+  nil
+  sorts 'MetaLevelFoo .
+  none
+  none
+  none
+  none
+endfm) .
+
+  vars X Y Z : Oid .
+
+  rl < X : User | state: 0 > createdInterpreter(X, Y, Z) =>
+     < X : User | state: 1 > insertModule(Z, X, foo) .
+
+  rl < X : User | state: 1 > insertedModule(X, Y) =>
+     < X : User | state: 2 > insertModule(Y, X, upModule('META-LEVEL, true)) .
+
+  rl < X : User | state: 2 > insertedModule(X, Y) =>
+     < X : User | state: 3 > reduceTerm(Y, X, 'META-LEVEL,
+        'upModule[''FOO.Qid, 'true.Bool]) .
+
+  op foo : -> Module .
+  eq foo = (
+fmod 'FOO is
+  nil
+  sorts 'MetaLevelFoo .
+  none
+  none
+  none
+  none
+endfm) .
+
+endm
+
+*** expecting meta-meta-module to contain sort MetaLevelFoo but get ObjectLevelFoo
+erew  <> < me : User | state: 0 > createInterpreter(interpreterManager, me, none) .

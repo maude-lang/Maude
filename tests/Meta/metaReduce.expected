@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   nil
   sorts 'Foo .
@@ -101,4 +101,4 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
 endfm, '_+_['s_['0.Int],'s_^12['0.Int]]) .
 rewrites: 2
 result ResultPair: {'s_^13['0.Zero],'NzNat}
-Maude> Bye.
+Bye.

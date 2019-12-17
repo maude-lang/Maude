@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -31,6 +31,7 @@
 
 //      utility stuff
 #include "macros.hh"
+#include "rope.hh"
 
 //	line editing stuff
 #ifdef USE_TECLA
@@ -48,9 +49,15 @@ IO_Manager::IO_Manager()
 {
   gl = 0;
   line = 0;
+  usePromptsAnyway = false;
   contFlag = false;
   wrapOut = 0;
   wrapErr = 0;
+
+  firstUnused = 0;
+  bufferEnd = 0;
+  bufferSize = 0;
+  buffer = 0;
 }
 
 void
@@ -85,8 +92,8 @@ IO_Manager::setAutoWrap()
   (void) cerr.rdbuf(wrapErr);
 }
 
-int
-IO_Manager::getInput(char* buf, int maxSize, FILE* stream)
+ssize_t
+IO_Manager::getInput(char* buf, size_t maxSize, FILE* stream)
 {
   if (stream != stdin)
     {
@@ -118,7 +125,7 @@ IO_Manager::getInput(char* buf, int maxSize, FILE* stream)
 	    return 0;
 	}
       
-      int n;
+      size_t n;
       for (n = 0;; n++)
 	{
 	  char c = *line;
@@ -135,16 +142,123 @@ IO_Manager::getInput(char* buf, int maxSize, FILE* stream)
       return n;
     }
 #endif
-
   //
   //	Read from stdin without using tecla.
+  //	It's important that we only read a line at a time from stdin,
+  //	now that we allow Maude programs to read from stdin. Otherwise
+  //	characters past \n could be buffered by the lexer.
   //
-  if (!contFlag)
+  if (usePromptsAnyway)
     {
-      
-      fputs(prompt.c_str(), stdout);  // HACK: bypass line wrapper
-      fflush(stdout);
+      //
+      //	We don't generate continuation prompts in this case to avoid breaking IOP.
+      //
+      if (!contFlag)
+	{
+	  fputs(prompt.c_str(), stdout);  // HACK: bypass line wrapper 
+	  fflush(stdout);
+	  contFlag = true;
+	}
     }
-  contFlag = true;
-  return read(fileno(stream), buf, maxSize);
+  return readFromStdin(buf, maxSize);
+}
+
+ssize_t
+IO_Manager::readFromStdin(char* buf, size_t maxSize)
+{
+  //
+  //	We bypass stdlib because we want to get whatever is available
+  //	from a pipe without waiting for a \n to avoid breaking IOP.
+  //
+  //	But we can't use read() in place of this function because
+  //	we don't want lexer swallowing characters past \n since they
+  //	may be wanted by the object system standard stream functionality.
+  //
+  //	Instead we keep a local buffer. We return whatever is in the
+  //	local buffer up to \n, maxSize, or the end of the buffer.
+  //	If the local buffer is empty, we refill it with whatever
+  //	is available from read(), and we don't make another call to
+  //	read() (which could block on a pipe or socket) until the local
+  //	buffer is empty.
+  //
+  if (firstUnused >= bufferEnd)
+    {
+      //
+      //	No buffered characters, need to do a read() and maybe block.
+      //
+      if (bufferSize < maxSize)
+	{
+	  //
+	  //	Need to reallocate our buffer first.
+	  //
+	  delete [] buffer;
+	  buffer = new char[maxSize];
+	  bufferSize = maxSize;
+	}
+
+      firstUnused = 0;
+      bufferEnd = read(STDIN_FILENO, buffer, maxSize);
+      if (bufferEnd <= 0)
+	return bufferEnd;  // EOF or error
+    }
+  //
+  //	Return the buffered characters, up to \n, maxSize or end of local buffer.
+  //
+  size_t  i = 0;
+  for (;;)
+    {
+      char c = buffer[firstUnused];
+      buf[i] = c;
+      ++firstUnused;
+      ++i;
+      if (c == '\n' || i == maxSize || firstUnused == bufferEnd)
+	break;
+    }
+  return i;
+}
+
+Rope
+IO_Manager::getLineFromStdin(const Rope& prompt)
+{
+  //
+  //	Get a line as a Rope, possibly using Tecla.
+  //
+#ifdef USE_TECLA
+  if (gl != 0 && isatty(STDIN_FILENO))
+    {
+      char* promptString = prompt.makeZeroTerminatedString();
+      line = gl_get_line(gl, promptString, NULL, -1);  //  ignore any partial line left in line
+      delete [] promptString;
+      if (line == 0)
+	return Rope();  // return empty rope on error or eof
+      Rope result(line);
+      line = 0;
+      return result;
+    }
+#endif
+  //
+  //	Non-Tecla case. Either Tecla not compiled it, or disabled or
+  //	we are getting the line from a file or pipe.
+  //	We keep reading, respecting buffered characters, until we get to \n or EOF.
+  //
+  char* promptString = prompt.makeZeroTerminatedString();
+  fputs(promptString, stdout);  // HACK: bypass line wrapper
+  fflush(stdout);
+  delete [] promptString;
+  //
+  //	We keep reading and accumulating characters until we hit \n, EOF or error.
+  //
+  Rope result;
+  for (;;)
+    {
+      char buf[BUFFER_SIZE];
+      ssize_t nrRead = readFromStdin(buf, BUFFER_SIZE);
+      if (nrRead <= 0)
+	break;
+      Rope t(buf, nrRead);
+      result += t;
+      if (buf[nrRead - 1] == '\n')
+	break;
+    }
+  return result;
 }

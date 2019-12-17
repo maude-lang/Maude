@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in RAT : 1/4 + 2/3 .
 rewrites: 5
 result PosRat: 11/12
@@ -719,4 +719,4 @@ fmod FOO is
   eq floor(- N:NzNat / M:NzNat) = - ceiling(N:NzNat / M:NzNat) .
   eq ceiling(- N:NzNat / M:NzNat) = - floor(N:NzNat / M:NzNat) .
 endfm
-Maude> Bye.
+Bye.

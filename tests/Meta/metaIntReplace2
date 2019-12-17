@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metaIntReplace2.maude -no-banner -no-advise \
+  > metaIntReplace2.out 2>&1
+
+diff $srcdir/metaIntReplace2.expected metaIntReplace2.out > /dev/null 2>&1

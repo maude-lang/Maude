@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
@@ -115,6 +115,7 @@ Token::reallocateBuffer(int length)
 {
   length *= 2;  // to avoid piecemeal expansion
   char* newBuffer = new char[length];
+  // FIXME Undefined behaviour when buffer is null and that happens
   (void) memcpy(newBuffer, buffer, bufferLength);
   delete [] buffer;
   buffer = newBuffer;
@@ -122,13 +123,40 @@ Token::reallocateBuffer(int length)
 }
 
 int
-Token::parameterRename(int parameterCode, int originalCode)
+Token::makeParameterInstanceName(int parameterCode, int originalCode)
 {
   string newName(stringTable.name(parameterCode));
   newName += '$';
   newName += stringTable.name(originalCode);
   return encode(newName.c_str());
 }
+
+/*
+bool
+Token::splitParameterInstanceName(int code, int& parameterName, int& baseName)
+{
+  //
+  //	Checks for a parameter instance name of the form:
+  //	  parameterName$baseName
+  //	and if so, splits it and returns true. Otherwise returns false.
+  //
+  const char* n = name(code);
+  for (const char* p = n; *p; ++p)
+    {
+      if (*p == '$' && p != n && *(p + 1) != 0)  // first $ not at one end
+	{
+	  size_t parameterLength = p - n;
+	  char* t = new char[parameterLength + 1];
+	  strncpy(t, n, parameterLength);
+	  t[parameterLength] = '\0';
+	  parameterName = encode(t);
+	  baseName = encode(p + 1);
+	  return true;
+	}
+    }
+  return false;
+}
+*/
 
 void
 Token::fixUp(const char* tokenString, int& lineNumber)
@@ -169,6 +197,37 @@ Token::fixUp(const char* tokenString, int& lineNumber)
   codeNr = encode(buffer);
   lineNr = lineNumber;
   lineNumber += nrBackslashNewlineCombos;
+}
+
+int
+Token::fixUp(const char* tokenString)
+{
+  //
+  //	Remove \ newline sequences.
+  //
+  int nrBackslashNewlineCombos = 0;
+  int j = 0;
+  for (int i = 0;; i++)
+    {
+      char c = tokenString[i];
+      if (c == '\\' && tokenString[i + 1] == '\n')
+	{
+	  //
+	  //	Fix up \ newline case.
+	  //
+	  ++i;
+	  ++nrBackslashNewlineCombos;
+	}
+      else
+	{
+	  bufferExpandTo(j + 1);
+	  buffer[j] = c;
+	  ++j;
+	  if (c == '\0')
+	    break;
+	}
+    } 
+  return encode(buffer);
 }
 
 void
@@ -866,6 +925,3 @@ Token::peelParens(Vector<Token>& tokens)
     tokens[i - 1] = tokens[i];
   tokens.resize(len - 2);
 }
-  
-
-

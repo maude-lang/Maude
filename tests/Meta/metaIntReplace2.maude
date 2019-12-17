@@ -1,0 +1,287 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Test replacing modules and views in meta-interpreter with op->term mappings.
+***
+
+load metaInterpreter
+
+set include BOOL off .
+
+fth T is
+  sort Elt .
+  op f : Elt -> Elt .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt -> X$Elt .
+var X : X$Elt .
+  eq g(X) = f(f(X)) .
+endfm
+
+fmod FOO is
+  sort Foo .
+  op h : Foo Foo -> Foo .
+  op c : -> Foo .
+endfm
+
+view V from T to FOO is
+  sort Elt to Foo .
+var X : Elt .
+  op f(X) to term h(X, c) .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+red g(X:Foo) .
+
+mod META1 is
+  pr META-INTERPRETER .
+
+  op T : -> Module .
+  eq T = upModule('T, false) .
+
+  op M : -> Module .
+  eq M = upModule('M, false) .
+
+  op FOO : -> Module .
+  eq FOO = upModule('FOO, false) .
+
+  op V : -> View .
+  eq V = upView('V) .
+
+  op TEST : -> Module .
+  eq TEST = upModule('TEST, false) .
+endm
+
+red T .
+red M .
+red FOO .
+red V .
+red TEST .
+
+mod META2 is
+  inc META1 .
+
+  op me : -> Oid .
+  op User : -> Cid .
+
+  var X Y Z : Oid .
+  var N : Nat .
+  var T : Term .
+  var S : Sort .
+
+  sort State .
+  ops 1 2 3 4 5 6 7 8 : -> State [ctor] .
+  op state:_ : State -> Attribute [ctor] .
+
+  rl < X : User | state: 1 > createdInterpreter(X, Y, Z) => < X : User | state: 2 >
+       insertModule(Z, X, T) .
+
+  rl < X : User | state: 2 > insertedModule(X, Y) => < X : User | state: 3 >
+       insertModule(Y, X, M) .
+
+  rl < X : User | state: 3 > insertedModule(X, Y) => < X : User | state: 4 >
+       insertModule(Y, X, FOO) .
+
+  rl < X : User | state: 4 > insertedModule(X, Y) => < X : User | state: 5 >
+       insertView(Y, X, V) .
+
+  rl < X : User | state: 5 > insertedView(X, Y) => < X : User | state: 6 >
+       insertModule(Y, X, TEST) .
+
+  rl < X : User | state: 6 > insertedModule(X, Y) => < X : User | state: 7 >
+       reduceTerm(Y, X, 'TEST, 'g['X:Foo]) .
+endm
+
+erew in META2 : <> 
+< me : User | state: 1 > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod META3 is
+  inc META1 .
+
+  op me : -> Oid .
+  op User : -> Cid .
+
+  var X Y Z : Oid .
+  var N : Nat .
+  var T : Term .
+  var S : Sort .
+
+  sort State .
+  ops 1 2 3 4 5 6 7 8 9 : -> State [ctor] .
+  op state:_ : State -> Attribute [ctor] .
+
+  op M2 : -> Module .
+  eq M2 = (
+fmod 'M{'X :: 'T} is
+  nil
+  sorts none .
+  none
+  op 'g : 'X$Elt -> 'X$Elt [none] .
+  none
+  eq 'g['X:X$Elt] = 'f['f['f['X:X$Elt]]] [none] .
+endfm
+) .
+
+  rl < X : User | state: 1 > createdInterpreter(X, Y, Z) => < X : User | state: 2 >
+       insertModule(Z, X, T) .
+
+  rl < X : User | state: 2 > insertedModule(X, Y) => < X : User | state: 3 >
+       insertModule(Y, X, M) .
+
+  rl < X : User | state: 3 > insertedModule(X, Y) => < X : User | state: 4 >
+       insertModule(Y, X, FOO) .
+
+  rl < X : User | state: 4 > insertedModule(X, Y) => < X : User | state: 5 >
+       insertView(Y, X, V) .
+
+  rl < X : User | state: 5 > insertedView(X, Y) => < X : User | state: 6 >
+       insertModule(Y, X, TEST) .
+
+  rl < X : User | state: 6 > insertedModule(X, Y) => < X : User | state: 7 >
+       reduceTerm(Y, X, 'TEST, 'g['X:Foo]) .
+
+  rl < X : User | state: 7 > reducedTerm(X, Y, N, T, S) => < X : User | state: 8 >
+       insertModule(Y, X, M2) .
+
+  rl < X : User | state: 8 > insertedModule(X, Y) => < X : User | state: 9 >
+       reduceTerm(Y, X, 'TEST, 'g['X:Foo]) .
+endm
+
+erew in META3 : <> 
+< me : User | state: 1 > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod META4 is
+  inc META1 .
+
+  op me : -> Oid .
+  op User : -> Cid .
+
+  var X Y Z : Oid .
+  var N : Nat .
+  var T : Term .
+  var S : Sort .
+
+  sort State .
+  ops 1 2 3 4 5 6 7 8 9 : -> State [ctor] .
+  op state:_ : State -> Attribute [ctor] .
+
+  op FOO2 : -> Module .
+  eq FOO2 = (
+fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'c : nil -> 'Foo [none] .
+  op 'h : 'Foo 'Foo -> 'Foo [comm] .
+  none
+  none
+endfm
+) .
+
+  rl < X : User | state: 1 > createdInterpreter(X, Y, Z) => < X : User | state: 2 >
+       insertModule(Z, X, T) .
+
+  rl < X : User | state: 2 > insertedModule(X, Y) => < X : User | state: 3 >
+       insertModule(Y, X, M) .
+
+  rl < X : User | state: 3 > insertedModule(X, Y) => < X : User | state: 4 >
+       insertModule(Y, X, FOO) .
+
+  rl < X : User | state: 4 > insertedModule(X, Y) => < X : User | state: 5 >
+       insertView(Y, X, V) .
+
+  rl < X : User | state: 5 > insertedView(X, Y) => < X : User | state: 6 >
+       insertModule(Y, X, TEST) .
+
+  rl < X : User | state: 6 > insertedModule(X, Y) => < X : User | state: 7 >
+       reduceTerm(Y, X, 'TEST, 'g['X:Foo]) .
+
+  rl < X : User | state: 7 > reducedTerm(X, Y, N, T, S) => < X : User | state: 8 >
+       insertModule(Y, X, FOO2) .
+
+  rl < X : User | state: 8 > insertedModule(X, Y) => < X : User | state: 9 >
+       reduceTerm(Y, X, 'TEST, 'g['X:Foo]) .
+endm
+
+erew in META4 : <> 
+< me : User | state: 1 > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod META5 is
+  inc META1 .
+
+  op me : -> Oid .
+  op User : -> Cid .
+
+  var X Y Z : Oid .
+  var N : Nat .
+  var T : Term .
+  var S : Sort .
+
+  sort State .
+  ops 1 2 3 4 5 6 7 8 9 10 : -> State [ctor] .
+  op state:_ : State -> Attribute [ctor] .
+
+  op FOO2 : -> Module .
+  eq FOO2 = (
+fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'd : nil -> 'Foo [none] .
+  op 'k : 'Foo 'Foo -> 'Foo [none] .
+  none
+  none
+endfm
+) .
+
+  op V2 : -> View .
+  eq V2 = (
+view 'V from 'T to 'FOO is
+  sort 'Elt to 'Foo .
+  op 'f['X:Elt] to term 'k['X:Foo,'d.Foo] .
+  none
+endv
+) .
+
+  rl < X : User | state: 1 > createdInterpreter(X, Y, Z) => < X : User | state: 2 >
+       insertModule(Z, X, T) .
+
+  rl < X : User | state: 2 > insertedModule(X, Y) => < X : User | state: 3 >
+       insertModule(Y, X, M) .
+
+  rl < X : User | state: 3 > insertedModule(X, Y) => < X : User | state: 4 >
+       insertModule(Y, X, FOO) .
+
+  rl < X : User | state: 4 > insertedModule(X, Y) => < X : User | state: 5 >
+       insertView(Y, X, V) .
+
+  rl < X : User | state: 5 > insertedView(X, Y) => < X : User | state: 6 >
+       insertModule(Y, X, TEST) .
+
+  rl < X : User | state: 6 > insertedModule(X, Y) => < X : User | state: 7 >
+       reduceTerm(Y, X, 'TEST, 'g['X:Foo]) .
+
+  rl < X : User | state: 7 > reducedTerm(X, Y, N, T, S) => < X : User | state: 8 >
+       insertModule(Y, X, FOO2) .
+
+  rl < X : User | state: 8 > insertedModule(X, Y) => < X : User | state: 9 >
+       insertView(Y, X, V2) .
+
+  rl < X : User | state: 9 > insertedView(X, Y) => < X : User | state: 10 >
+       reduceTerm(Y, X, 'TEST, 'g['X:Foo]) .
+endm
+
+erew in META5 : <> 
+< me : User | state: 1 > 
+createInterpreter(interpreterManager, me, none) .

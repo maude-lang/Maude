@@ -1,0 +1,23 @@
+Warning: <standard input>, line 20 (fmod M): parameterized module M has
+    multiple polymorphic operators with name g.
+Warning: <standard input>, line 20 (fmod M): this module contains one or more
+    errors that could not be patched up and thus it cannot be used or imported.
+Warning: <standard input>, line 44 (fmod TEST): unable to use module M due to
+    unpatchable errors.
+Warning: <standard input>, line 43 (fmod TEST): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 43 (fmod TEST): module TEST is unusable due to
+    unpatchable errors.
+Warning: <standard input>, line 56 (fmod M): parameterized module M has
+    multiple polymorphic operators with name g.
+Warning: <standard input>, line 56 (fmod M): this module contains one or more
+    errors that could not be patched up and thus it cannot be used or imported.
+Warning: <standard input>, line 72 (fmod TEST): unable to use module M due to
+    unpatchable errors.
+Warning: <standard input>, line 71 (fmod TEST): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 71 (fmod TEST): module TEST is unusable due to
+    unpatchable errors.
+Bye.

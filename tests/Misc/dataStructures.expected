@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in SORTABLE-LIST-TEST : size(gen(100)) .
 rewrites: 504
 result NzNat: 100
@@ -216,4 +216,4 @@ result Zero: 0
 reduce in ARRAY-TEST : gen(100)[1000000000000000000000] .
 rewrites: 502
 result Zero: 0
-Maude> Bye.
+Bye.

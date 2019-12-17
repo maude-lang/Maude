@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
 
@@ -763,9 +763,11 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
   DebugAdvisory("buildSolution() using basis elements:");
   if (globalAdvisoryFlag)
     {
-      for (int j = 0; j < selection.size(); ++j)
+      int selectionSize = selection.size();
+      for (int j = 0; j < selectionSize; ++j)
 	{
-	  for (int i = 0; i < subterms.size(); ++i)
+	  int nrSubterms = subterms.size();
+	  for (int i = 0; i < nrSubterms; ++i)
 	    cerr << selection[j]->element[i] << '\t';
 	  cerr << endl;
 	}
@@ -809,7 +811,7 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
 	  //	that it will not have its sort computed or ground flag set.
 	  //
 	  if (!(d->isGround()))
-	    d->computeBaseSortForGroundSubterms();
+	    d->computeBaseSortForGroundSubterms(false);
 	}
       else if (nrElements == 1 && selection[lastElement]->element[i] == 1)
 	{

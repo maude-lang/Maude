@@ -1,0 +1,118 @@
+==========================================
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 0 >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 84
+result Configuration: <> < me : User | pending: nil,level: 0 > erewroteTerm(me,
+    interpreter(0), 1, '`{`}.Set`{String`}, 'Set`{String`})
+==========================================
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 1 >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 160
+result Configuration: <> < me : User | pending: nil,level: 1 > erewroteTerm(me,
+    interpreter(0), 83, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+    'level:_['0.Zero],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
+    'interpreter['0.Zero],'s_['0.Zero],''`{`}.Set`{String`}.Constant,
+    ''Set`{String`}.Sort]], 'Configuration)
+==========================================
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 2 >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 236
+result Configuration: <> < me : User | pending: nil,level: 2 > erewroteTerm(me,
+    interpreter(0), 159, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+    'level:_['s_['0.Zero]],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
+    'interpreter['0.Zero],'s_^83['0.Zero],'_`[_`][''__.Sort,'_`,_[
+    ''<>.Portal.Constant,'_`[_`][''<_:_|_>.Variable,'_`,_[''me.Oid.Constant,
+    ''User.Cid.Constant,'_`[_`][''_`,_.Qid,'_`,_['_`[_`][''level:_.Variable,
+    ''0.Zero.Constant],'_`[_`][''pending:_.Variable,''nil.Seq.Constant]]]]],
+    '_`[_`][''erewroteTerm.Sort,'_`,_[''me.Oid.Constant,'_`[_`][
+    ''interpreter.Sort,''0.Zero.Constant],'_`[_`][''s_.Sort,''0.Zero.Constant],
+    '''`{`}.Set`{String`}.Constant.Constant,'''Set`{String`}.Sort.Constant]]]],
+    ''Configuration.Sort]], 'Configuration)
+==========================================
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 3 >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 312
+result Configuration: <> < me : User | pending: nil,level: 3 > erewroteTerm(me,
+    interpreter(0), 235, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+    'level:_['s_^2['0.Zero]],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
+    'interpreter['0.Zero],'s_^159['0.Zero],'_`[_`][''__.Sort,'_`,_[
+    ''<>.Portal.Constant,'_`[_`][''<_:_|_>.Variable,'_`,_[''me.Oid.Constant,
+    ''User.Cid.Constant,'_`[_`][''_`,_.Qid,'_`,_['_`[_`][''level:_.Variable,
+    '_`[_`][''s_.Sort,''0.Zero.Constant]],'_`[_`][''pending:_.Variable,
+    ''nil.Seq.Constant]]]]],'_`[_`][''erewroteTerm.Sort,'_`,_[
+    ''me.Oid.Constant,'_`[_`][''interpreter.Sort,''0.Zero.Constant],'_`[_`][
+    ''s_^83.Sort,''0.Zero.Constant],'_`[_`][''_`[_`].Qid,'_`,_[
+    '''__.Sort.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    '''<>.Portal.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''<_:_|_>.Variable.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    '''me.Oid.Constant.Constant,'''User.Cid.Constant.Constant,'_`[_`][
+    ''_`[_`].Qid,'_`,_['''_`,_.Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_['_`[_`][
+    ''_`[_`].Qid,'_`,_['''level:_.Variable.Constant,
+    '''0.Zero.Constant.Constant]],'_`[_`][''_`[_`].Qid,'_`,_[
+    '''pending:_.Variable.Constant,'''nil.Seq.Constant.Constant]]]]]]]]]],
+    '_`[_`][''_`[_`].Qid,'_`,_['''erewroteTerm.Sort.Constant,'_`[_`][
+    ''_`,_.Qid,'_`,_['''me.Oid.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''interpreter.Sort.Constant,'''0.Zero.Constant.Constant]],'_`[_`][
+    ''_`[_`].Qid,'_`,_['''s_.Sort.Constant,'''0.Zero.Constant.Constant]],
+    ''''`{`}.Set`{String`}.Constant.Constant.Constant,
+    ''''Set`{String`}.Sort.Constant.Constant]]]]]]]],
+    '''Configuration.Sort.Constant]]]],''Configuration.Sort]], 'Configuration)
+==========================================
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 4 >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 388
+result Configuration: <> < me : User | pending: nil,level: 4 > erewroteTerm(me,
+    interpreter(0), 311, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+    'level:_['s_^3['0.Zero]],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
+    'interpreter['0.Zero],'s_^235['0.Zero],'_`[_`][''__.Sort,'_`,_[
+    ''<>.Portal.Constant,'_`[_`][''<_:_|_>.Variable,'_`,_[''me.Oid.Constant,
+    ''User.Cid.Constant,'_`[_`][''_`,_.Qid,'_`,_['_`[_`][''level:_.Variable,
+    '_`[_`][''s_^2.Sort,''0.Zero.Constant]],'_`[_`][''pending:_.Variable,
+    ''nil.Seq.Constant]]]]],'_`[_`][''erewroteTerm.Sort,'_`,_[
+    ''me.Oid.Constant,'_`[_`][''interpreter.Sort,''0.Zero.Constant],'_`[_`][
+    ''s_^159.Sort,''0.Zero.Constant],'_`[_`][''_`[_`].Qid,'_`,_[
+    '''__.Sort.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    '''<>.Portal.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''<_:_|_>.Variable.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    '''me.Oid.Constant.Constant,'''User.Cid.Constant.Constant,'_`[_`][
+    ''_`[_`].Qid,'_`,_['''_`,_.Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_['_`[_`][
+    ''_`[_`].Qid,'_`,_['''level:_.Variable.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''s_.Sort.Constant,'''0.Zero.Constant.Constant]]]],'_`[_`][''_`[_`].Qid,
+    '_`,_['''pending:_.Variable.Constant,
+    '''nil.Seq.Constant.Constant]]]]]]]]]],'_`[_`][''_`[_`].Qid,'_`,_[
+    '''erewroteTerm.Sort.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    '''me.Oid.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''interpreter.Sort.Constant,'''0.Zero.Constant.Constant]],'_`[_`][
+    ''_`[_`].Qid,'_`,_['''s_^83.Sort.Constant,'''0.Zero.Constant.Constant]],
+    '_`[_`][''_`[_`].Qid,'_`,_['''_`[_`].Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''__.Sort.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''_`,_.Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''<>.Portal.Constant.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''_`[_`].Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''<_:_|_>.Variable.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''_`,_.Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''me.Oid.Constant.Constant.Constant,
+    ''''User.Cid.Constant.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''_`[_`].Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''_`,_.Qid.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''_`,_.Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_['_`[_`][''_`[_`].Qid,'_`,_[
+    '''_`[_`].Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''level:_.Variable.Constant.Constant,
+    ''''0.Zero.Constant.Constant.Constant]]]],'_`[_`][''_`[_`].Qid,'_`,_[
+    '''_`[_`].Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''pending:_.Variable.Constant.Constant,
+    ''''nil.Seq.Constant.Constant.Constant]]]]]]]]]]]]]]]]]]]],'_`[_`][
+    ''_`[_`].Qid,'_`,_['''_`[_`].Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''erewroteTerm.Sort.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''_`,_.Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''me.Oid.Constant.Constant.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
+    '''_`[_`].Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''interpreter.Sort.Constant.Constant,
+    ''''0.Zero.Constant.Constant.Constant]]]],'_`[_`][''_`[_`].Qid,'_`,_[
+    '''_`[_`].Qid.Constant,'_`[_`][''_`,_.Qid,'_`,_[
+    ''''s_.Sort.Constant.Constant,''''0.Zero.Constant.Constant.Constant]]]],
+    '''''`{`}.Set`{String`}.Constant.Constant.Constant.Constant,
+    '''''Set`{String`}.Sort.Constant.Constant.Constant]]]]]]]]]]]]]]]],
+    ''''Configuration.Sort.Constant.Constant]]]]]]]],
+    '''Configuration.Sort.Constant]]]],''Configuration.Sort]], 'Configuration)
+Bye.

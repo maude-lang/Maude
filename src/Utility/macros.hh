@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -91,6 +91,7 @@ class IntSet;
 class Indent;
 class MpzSystem;
 class IntSystem;
+class Rope;
 
 //
 //	Types for storage efficiency.
@@ -155,13 +156,31 @@ typedef unsigned int Uint32;
 //	Casting which is checked if debugging and fast otherwise.
 //
 #ifndef NO_ASSERT
+//
+//	This is good for all pointers including null pointers.
+//
 #define safeCast(T, P) \
   ((P != 0 && dynamic_cast<T>(P) == 0) ? \
     ((cerr << "cast error: "<< __FILE__ << ':' << __LINE__ << '\n'), abort(), static_cast<T>(0)) : \
     static_cast<T>(P))
+
 #else
 #define safeCast(T, P)	static_cast<T>(P)
 #endif
+
+template <typename T, typename P>
+inline T
+safeCastNonNull(P p)
+{
+#ifndef NO_ASSERT
+  if (dynamic_cast<T>(p) == 0)
+    {
+      cerr << "unexpected null or cast error: "<< __FILE__ << ':' << __LINE__ << '\n';
+      abort();
+    }
+#endif
+  return static_cast<T>(p);
+}
 
 enum SpecialConstants
 {
@@ -220,6 +239,13 @@ enum SpecialConstants
   #define local_inline
 #endif
 
+#define \
+AlwaysAssert(condition, message) \
+if (!(condition)) \
+((cerr << "ASSERT FAILED: " << \
+__FILE__ << ':' << __LINE__ << '\n' << message << endl), \
+abort())
+
 #ifndef NO_ASSERT
 
 #define \
@@ -246,6 +272,26 @@ if (globalAdvisoryFlag) \
 (cerr << Tty(Tty::BLUE) << "DEBUG ADVISORY: " << Tty(Tty::RESET) << message << endl)
 
 #define \
+DebugEnter(message) \
+if (globalAdvisoryFlag) \
+(cerr << Tty(Tty::MAGENTA) << "DEBUG ENTER: " << __PRETTY_FUNCTION__ << ": " << Tty(Tty::RESET) << message << endl)
+
+#define \
+DebugExit(message) \
+if (globalAdvisoryFlag) \
+(cerr << Tty(Tty::CYAN) << "DEBUG EXIT: " << __PRETTY_FUNCTION__ << ": " << Tty(Tty::RESET) << message << endl)
+
+#define \
+DebugInfo(message) \
+if (globalAdvisoryFlag) \
+(cerr << Tty(Tty::BLUE) << "DEBUG INFO: " << __PRETTY_FUNCTION__ << ": " << Tty(Tty::RESET) << message << endl)
+
+#define \
+DebugNew(message) \
+if (globalAdvisoryFlag) \
+(cerr << Tty(Tty::REVERSE) << "DEBUG NEW: " << __PRETTY_FUNCTION__ << ": " << Tty(Tty::RESET) << message << endl)
+
+#define \
 DebugPrint(v) \
 if (globalAdvisoryFlag) \
 (cerr << #v << " = " << v << '\t')
@@ -255,14 +301,27 @@ DebugPrintNL(v) \
 if (globalAdvisoryFlag) \
 (cerr << #v << " = " << v << '\n')
 
+//
+//	Always evaluate e and save the result in new variable v only if needed for debug mode.
+//
+#define DebugSave(v, e) auto v = (e)
 #else
 
 #define Assert(condition, message)
 #define CantHappen(message)
 #define DebugAdvisoryCheck(condition, message)
 #define DebugAdvisory(message)
+#define DebugEnter(message)
+#define DebugExit(message)
+#define DebugInfo(message)
+#define DebugNew(message)
 #define DebugPrint(v)
 #define DebugPrintNL(v)
+
+//
+//	Always evaluate e and save the result in new variable v only if needed for debug mode.
+//
+#define DebugSave(v, e) (void) (e)
 
 #endif
 
@@ -303,6 +362,13 @@ if (globalVerboseFlag) \
 
 extern bool globalAdvisoryFlag;
 extern bool globalVerboseFlag;
+//
+//	Used to circumvent GCC's unused result warnings; because (void)
+//	is deemed an inadequate indication that we REALLY don't care about
+//	a system call or library result, no matter what the runtime system
+//	or library author thinks.
+//
+extern int returnValueDump;
 
 //
 //	A machine word should be about to hold any pointer, int or size

@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : fmod 'FOO is
   including ('INT + 'NAT) * (
     sort 'Nat to 'Nat2,
@@ -140,4 +140,4 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
 endfm, '0.Nat) .
 rewrites: 1
 result ResultPair: {'0.Zero,'Zero}
-Maude> Bye.
+Bye.

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -55,6 +55,8 @@ enum TERMINATION_TOKENS
     BAR_RIGHT_PAREN = 0x80,
     BAR_OP_ATTRIBUTE = 0x100,
     BAR_RIGHT_BRACKET = 0x200,
+
+    BAR_ASSIGN = 0x400,
 
     END_STATEMENT = 0x40000000,
     END_COMMAND = 0x80000000

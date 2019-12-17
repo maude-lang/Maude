@@ -1,0 +1,63 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Test parsing in the meta-interpreter.
+***
+
+load metaInterpreter
+
+fmod FOO is
+  inc RAT .
+  sort Foo .
+  op 0 : -> Foo .
+endfm
+
+mod PARSE-TEST is
+  pr META-INTERPRETER .
+  pr RAT .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op term:_ : Term -> Attribute .
+  op qids:_ : QidList  -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var QL : QidList .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('FOO, true)) .
+
+  rl < X : User | AS, qids: QL > insertedModule(X, Y) =>
+     < X : User | AS > parseTerm(Y, X, 'FOO, 'X:Rat, QL, anyType) .
+endm
+
+
+erew in PARSE-TEST : <> 
+< me : User | qids: '1/2 > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PARSE-TEST : <> 
+< me : User | qids: ('1/2 '+ 'X:Rat) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PARSE-TEST : <> 
+< me : User | qids: ('1/2 '+ 'X) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PARSE-TEST : <> 
+< me : User | qids: ('1/2 '+ 'bad) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PARSE-TEST : <> 
+< me : User | qids: ('1/2 '- '1) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PARSE-TEST : <> 
+< me : User | qids: ('1/2 '- '1 '- '1 '/ '2) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PARSE-TEST : <> 
+< me : User | qids: '0 > 
+createInterpreter(interpreterManager, me, none) .

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
 
@@ -99,6 +99,7 @@ NarrowingSequenceSearch::NarrowingSequenceSearch(RewritingContext* initial,
   topOfStackFresh = true;
   variableTotalForPreviouslyReturnedStates = 0;
   variableTotalForAllReturnedStates = 0;
+  incompleteFlag = false;
 }
 
 NarrowingSequenceSearch::~NarrowingSequenceSearch()
@@ -140,7 +141,11 @@ NarrowingSequenceSearch::findNextMatch()
 					MatchSearchState::GC_CONTEXT);
     tryMatch:
       bool foundMatch = matchState->findNextMatch();
-      //matchState->transferCount(*(getContext()));
+      //
+      //	We don't transfer the rewrite count from matchState since there is
+      //	no condition, and there should be no membership axioms so count must
+      //	be zero.
+      //
       if (foundMatch)
 	return true;
       delete matchState;
@@ -162,6 +167,7 @@ NarrowingSequenceSearch::findNextNormalForm()
       //
       //	Backtrack.
       //
+      incompleteFlag |= stateStack[currentIndex]->isIncomplete();
       delete stateStack[currentIndex];
       stateStack.resize(currentIndex);
       --currentIndex;
@@ -256,6 +262,7 @@ NarrowingSequenceSearch::findNextInterestingState()
 	      if (context->traceAbort())
 		return false;
 	    }
+	  initial->incrementNarrowingCount();
 
 	  RewritingContext* newContext = initial->makeSubcontext(narrowedDag);
 	  newContext->reduce();
@@ -273,6 +280,7 @@ NarrowingSequenceSearch::findNextInterestingState()
       //
       //	Backtrack.
       //
+      incompleteFlag |= stateStack[currentIndex]->isIncomplete();
       delete stateStack[currentIndex];
       stateStack.resize(currentIndex);
        --currentIndex;

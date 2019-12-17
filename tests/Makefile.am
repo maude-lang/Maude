@@ -1,2 +1,1 @@
-SUBDIRS = BuiltIn Misc Meta ResolvedBugs
-
+SUBDIRS = BuiltIn Misc Meta ResolvedBugs StrategyLanguage

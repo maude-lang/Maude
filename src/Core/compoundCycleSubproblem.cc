@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
 
@@ -121,7 +121,7 @@ CompoundCycleSubproblem::solve(bool findFirst, UnificationContext& solution, Pen
 	      //	that it will not have its sort computed or ground flag set.
 	      //
 	      if (!(d->isGround()))
-		d->computeBaseSortForGroundSubterms();
+		d->computeBaseSortForGroundSubterms(false);
 	      DebugAdvisory("trying " << d << " vs " << nextVariable);
 	      if (d->computeSolvedForm(nextVariable, solution, pending))
 		return true;

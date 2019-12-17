@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 unify in TEST : g(f(X, X, Y, Y, h(Z)), f(X, Y, Y, Z, Z)) =? g(f(A, A, A, B, C),
     f(A, B, B, h(C))) .
 
@@ -631,4 +631,4 @@ unify in FOO3 : X =? f(Y, a, b) /\ Y =? h(X) .
 Solution 1
 X --> f(a, b)
 Y --> h(f(a, b))
-Maude> Bye.
+Bye.

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -42,7 +42,7 @@ public:
   void compileMatch(VariableInfo& variableInfo, NatSet& boundUniquely);
   bool solve(bool findFirst,
 	     RewritingContext& solution,
-	     stack<ConditionState*>& state);
+	     Stack<ConditionState*>& state);
 
   Term* getLhs() const;
   Term* getRhs() const;

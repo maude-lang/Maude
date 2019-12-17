@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -79,7 +79,8 @@ findFile(const string& userFileName, string& directory, string& fileName, int li
   if (p == string::npos)
     {
       fileName = userFileName;
-      directory = ".";
+      //directory = ".";
+      directory = directoryManager.getCwd();
       if (directoryManager.checkAccess(directory, fileName, R_OK, ext))
 	return true;
       if (directoryManager.searchPath(MAUDE_LIB, directory, fileName, R_OK, ext))

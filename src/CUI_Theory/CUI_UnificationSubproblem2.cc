@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2012 SRI International, Menlo Park, CA 94025, USA.
 
@@ -178,7 +178,7 @@ CUI_UnificationSubproblem2::Problem::tryAlternative(UnificationContext& solution
 	//	that it will not have its sort computed or ground flag set.
 	//
 	if (!(id->isGround()))
-	  id->computeBaseSortForGroundSubterms();
+	  id->computeBaseSortForGroundSubterms(false);
 	return lhs->getArgument(0)->computeSolvedForm(id, solution, pending) &&
 	  lhs->getArgument(1)->computeSolvedForm(rhs, solution, pending);
       }
@@ -190,7 +190,7 @@ CUI_UnificationSubproblem2::Problem::tryAlternative(UnificationContext& solution
 	//	that it will not have its sort computed or ground flag set.
 	//
 	if (!(id->isGround()))
-	  id->computeBaseSortForGroundSubterms();
+	  id->computeBaseSortForGroundSubterms(false);
 	return lhs->getArgument(1)->computeSolvedForm(id, solution, pending) &&
 	  lhs->getArgument(0)->computeSolvedForm(rhs, solution, pending);
       }
@@ -203,7 +203,7 @@ CUI_UnificationSubproblem2::Problem::tryAlternative(UnificationContext& solution
 	//	that it will not have its sort computed or ground flag set.
 	//
 	if (!(id->isGround()))
-	  id->computeBaseSortForGroundSubterms();
+	  id->computeBaseSortForGroundSubterms(false);
 	return r->getArgument(0)->computeSolvedForm(id, solution, pending) &&
 	  r->getArgument(1)->computeSolvedForm(lhs, solution, pending);
       }
@@ -216,7 +216,7 @@ CUI_UnificationSubproblem2::Problem::tryAlternative(UnificationContext& solution
 	//	that it will not have its sort computed or ground flag set.
 	//
 	if (!(id->isGround()))
-	  id->computeBaseSortForGroundSubterms();
+	  id->computeBaseSortForGroundSubterms(false);
 	return r->getArgument(1)->computeSolvedForm(id, solution, pending) &&
 	  r->getArgument(0)->computeSolvedForm(lhs, solution, pending);
       }

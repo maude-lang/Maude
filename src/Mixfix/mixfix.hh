@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -56,11 +56,31 @@ class ModuleExpression;
 class Renaming;
 class ModuleCache;
 class View;
+class SyntacticView;
 class ModuleDatabase;
 class ViewDatabase;
 class Entity;
 class SyntaxContainer;
 class FreshVariableSource;
 class PrintAttribute;
+class CacheableRewritingContext;
+class ViewExpression;
+class ViewCache;
+class EnclosingObject;
+class Argument;
+class Parameter;
+class ParameterDatabase;
+
+//
+//	Support for quantifying just active computations (rather than
+//	including waits for input).
+//
+#ifdef QUANTIFY_REWRITING
+#define QUANTIFY_START()	quantify_start_recording_data()
+#define QANTIFY_STOP()		quantify_stop_recording_data()
+#else
+#define QUANTIFY_START()
+#define QUANTIFY_STOP()
+#endif
 
 #endif

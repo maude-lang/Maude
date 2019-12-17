@@ -1,0 +1,46 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that characters read from stdin are correctly apportioned between
+***	the lexer and STD-STREAM.
+***
+
+load file .
+
+mod ROT13 is
+  inc STD-STREAM .
+  pr INT .
+  op myClass : -> Cid .
+  ops myObj : -> Oid .
+  op run : -> Configuration .
+  op rot13 : String -> String .
+
+  vars O O2 : Oid .
+  var A : AttributeSet .
+  vars S T : String .
+  var C : Char .
+
+  eq rot13(C) = if C >= "A" and C <= "Z" then
+                  char(ascii("A") + ((13 + (ascii(C) - ascii("A"))) rem 26))
+                else if C >= "a" and C <= "z" then
+                       char(ascii("a") + ((13 + (ascii(C) - ascii("a"))) rem 26))
+                      else
+                        C
+		      fi
+                fi .
+  eq rot13(S) = rot13(substr(S, 0, 1)) + rot13(substr(S, 1, length(S))) [owise] .
+
+  eq run = <> < myObj : myClass | none > write(stdout, myObj, "\nROT13 Encryption\n----------------\n") .
+  rl < O : myClass | A > wrote(O, O2) => < O : myClass | A > getLine(stdin, O, "Enter plain text> ") .
+  rl < O : myClass | A > gotLine(O, O2, T) => < O : myClass | A >
+    if T =/= "" then write(stdout, O, "Cypher text: " + rot13(T)) else none fi .
+endm
+
+erew run .
+The time has come the walrus said,
+  To talk of many things.
+Of shoes and ships and sealing wax,
+  Of cabbages and kings.
+Of why the sea is boiling hot,
+  And whether pigs have wings.

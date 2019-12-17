@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,7 +21,7 @@
 */
 
 //
-//      Class for idle and fail strategies.
+//      Class for match/xmatch/amatch strategies.
 //
 #ifndef _testStrategy_hh_
 #define _testStrategy_hh_
@@ -39,15 +39,30 @@ public:
   TestStrategy(Term* patternTerm, int depth, const Vector<ConditionFragment*>& condition);
 
   Term* getPatternTerm() const;
+  const Pattern& getPattern() const;
   int getDepth() const;
-  const Vector<ConditionFragment*>& getCondition();
+  const Vector<ConditionFragment*>& getCondition() const;
+  //
+  // Gets the index translation from the outer context to the matching
+  // pattern.
+  //
+  // The first entry of each pair is the outer context index and
+  // the second is the variable index in the pattern.
+  //
+  // This translation is calculated by check.
+  //
+  const Vector<std::pair<int, int> >& getIndexTranslation() const;
+
+  bool check(VariableInfo& indices, const TermSet& boundVars);
+  void process();
 
   StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder);
-
 
 private:
   Pattern pattern;
   const int depth;
+
+  Vector<std::pair<int, int> > indexTranslation;
 };
 
 inline Term*
@@ -63,9 +78,21 @@ TestStrategy::getDepth() const
 }
 
 inline const Vector<ConditionFragment*>&
-TestStrategy::getCondition()
+TestStrategy::getCondition() const
 {
   return pattern.getCondition();
+}
+
+inline const Pattern&
+TestStrategy::getPattern() const
+{
+  return pattern;
+}
+
+inline const Vector<std::pair<int, int> >&
+TestStrategy::getIndexTranslation() const
+{
+  return indexTranslation;
 }
 
 #endif

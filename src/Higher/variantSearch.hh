@@ -1,8 +1,8 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2012 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2016 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,29 +40,37 @@ class VariantSearch : public CacheableState, private SimpleRootContainer
 public:
   //
   //	Initial dag is the root of context. This context should not go away nor should the initial dag be
-  //	rewriten in place while the VariantSearch object is in existence because we rely in the variable dag nodes
-  //	in the dag being protected from garbage collection.
-  //	
+  //	rewritten in place while the VariantSearch object is in existence because we rely in the variable dag nodes
+  //	in the dag being protected from garbage collection. This context is deleted on destruction.
+  //
+  //	Blocker dags are protected from garbage collection.
+  //
+  //	Fresh variable generator can optionally be deleted on destruction (for use in a cached metalevel object).
+  //
   VariantSearch(RewritingContext* context,
 		const Vector<DagNode*>& blockerDags,
 		FreshVariableGenerator* freshVariableGenerator,
 		bool unificationMode,
-		bool irredundantMode);
+		bool irredundantMode,
+		bool deleteFreshVariableGenerator = true,
+		int incomingVariableFamily = NONE,
+		bool checkVariableNames = true);
   ~VariantSearch();
 
+  bool getIrredundantMode() const;
   const NarrowingVariableInfo& getVariableInfo() const;
-  const Vector<DagNode*>* getNextVariant(int& nrFreeVariables, int& parentIndex, bool& moreInLayer);
-  const Vector<DagNode*>* getNextUnifier(int& nrFreeVariables);
+  const Vector<DagNode*>* getNextVariant(int& nrFreeVariables, int& variableFamily, int& parentIndex, bool& moreInLayer);
+  const Vector<DagNode*>* getNextUnifier(int& nrFreeVariables, int& variableFamily);
   RewritingContext* getContext() const;
   bool isIncomplete() const;
   //
   //	Returns the last variant returned by getNextVariant().
   //
-  const Vector<DagNode*>* getLastReturnedVariant(int& nrFreeVariables, int& parentIndex, bool& moreInLayer);
+  const Vector<DagNode*>* getLastReturnedVariant(int& nrFreeVariables, int& variableFamily, int& parentIndex, bool& moreInLayer);
   //
   //	Returns the last unifier returned by getNextUnifier().
   //
-  const Vector<DagNode*>* getLastReturnedUnifier(int& nrFreeVariables);
+  const Vector<DagNode*>* getLastReturnedUnifier(int& nrFreeVariables, int& variableFamily);
 
 private:
   typedef map<int, int> IntMap;
@@ -80,7 +88,12 @@ private:
   const Vector<DagNode*> blockerDags;
   FreshVariableGenerator* const freshVariableGenerator;
   const bool unificationMode;
+  const bool irredundantMode;
+  const bool deleteFreshVariableGenerator;
+  const int firstVariableFamily;
+  const int secondVariableFamily;
 
+  DagNode* targetCopy;
   bool incompleteFlag;
   NarrowingVariableInfo variableInfo;
   int nrVariantVariables;
@@ -89,14 +102,19 @@ private:
   VariantIndexVec frontier;
   VariantIndexVec newFrontier;
   int currentIndex;
-  bool odd;
+  bool useFirstVariableFamily;
 
   int nrVariantsReturned;
   IntMap internalIndexToExternalIndex;
 
-
   Vector<DagNode*> protectedVariant;
 };
+
+inline bool
+VariantSearch::getIrredundantMode() const
+{
+  return irredundantMode;
+}
 
 inline const NarrowingVariableInfo&
 VariantSearch::getVariableInfo() const
@@ -111,9 +129,9 @@ VariantSearch::getContext() const
 }
 
 inline const Vector<DagNode*>*
-VariantSearch::getLastReturnedUnifier(int& nrFreeVariables)
+VariantSearch::getLastReturnedUnifier(int& nrFreeVariables, int& variableFamily)
 {
-  return variantCollection.getLastReturnedVariant(nrFreeVariables);
+  return variantCollection.getLastReturnedVariant(nrFreeVariables, variableFamily);
 }
 
 inline bool

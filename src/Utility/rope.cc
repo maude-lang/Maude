@@ -272,7 +272,7 @@ Rope::operator+(const Rope& other) const
   size_type needed = (n->height) < RELAXATION ? 1 : fiboTable[n->height - RELAXATION];  // relaxed requirement for balance since we won't be returning strictly balanced ropes
   if (n->length < needed)
     {
-      size_type len = n->length;
+      DebugSave(len, n->length);
       //cout << "rebalancing because at height " << n->height << " length " << len << " < " << needed << endl;
       Fragment* b = rebalance(n);
       decCount(n);  // should free old tree
@@ -552,7 +552,7 @@ Rope::const_iterator::const_iterator(const Rope& rope)
   if (ptr != 0)
     {
       //
-      //	stack path to left most leaf.
+      //	stack path to leftmost leaf.
       //
       while (ptr->height > 0)
 	{
@@ -564,7 +564,12 @@ Rope::const_iterator::const_iterator(const Rope& rope)
       index = 0;
     }
   else
-    index = END_MARKER;  // indicates end
+    {
+      //
+      //	begin() iterator to empty rope is also end() iterator.
+      //
+      index = END_MARKER;  // indicates end
+    }
 }
 
 Rope::const_iterator::const_iterator(const Rope* rope)
@@ -740,16 +745,17 @@ Rope::const_iterator::rebuildStack()
   //	We assume absolutePosition is correct and the bottom pointer in the stack points to the top-most fragment
   //	in the rope. We fill out the stack and the index.
   //
-  stackPtr = ptrStack;  // bottom of stack;
-  Fragment* ptr = stackPtr->ptr;
+  stackPtr = ptrStack;  // bottom of stack
+  Fragment* ptr = stackPtr->ptr;  // root fragment of rope
+  Assert(ptr != 0, "trying to add or subtract to an iterator into an empty rope");
+  Assert(absolutePosition <= ptr->length, "add or subtract makes iterator out of range");
 
-  if (ptr == 0 || absolutePosition >= ptr->length)
+  if (absolutePosition == ptr->length)
     {
       //
-      //	Absolute position beyond end of rope.
+      //	Absolute position at the end of rope.
       //
       index = END_MARKER;
-      absolutePosition = ptr->length;  // need correct value for == test
       return;
     }
 

@@ -1,4 +1,8 @@
 TESTS = \
+	view \
+	parameterizedView \
+	mapToParameterTheory \
+	badView \
 	dekker \
 	commands \
 	debug \
@@ -16,9 +20,18 @@ TESTS = \
 	CU_Unification \
 	assocUnification \
 	sreduce \
-	smtTest
+	smtTest \
+	narrow \
+	continue \
+	parse \
+	bubble \
+	rot13
 
 MAUDE_FILES = \
+	view.maude \
+	parameterizedView.maude \
+	mapToParameterTheory.maude \
+	badView.maude \
 	dekker.maude \
 	commands.maude \
 	debug.maude \
@@ -36,9 +49,18 @@ MAUDE_FILES = \
 	CU_Unification.maude \
 	assocUnification.maude \
 	sreduce.maude \
-	smtTest.maude
+	smtTest.maude \
+	narrow.maude \
+	continue.maude \
+	parse.maude \
+	bubble.maude \
+	rot13.maude
 
 RESULT_FILES = \
+	view.expected \
+	parameterizedView.expected \
+	mapToParameterTheory.expected \
+	badView.expected \
 	dekker.expected \
 	commands.expected \
 	debug.expected \
@@ -56,6 +78,11 @@ RESULT_FILES = \
 	CU_Unification.expected \
 	assocUnification.expected \
 	sreduce.expected \
-	smtTest.expected
+	smtTest.expected \
+	narrow.expected \
+	continue.expected \
+	parse.expected \
+	bubble.expected \
+	rot13.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

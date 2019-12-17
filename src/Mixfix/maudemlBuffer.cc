@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -53,6 +53,7 @@
 #include "sortConstraint.hh"
 #include "conditionFragment.hh"
 #include "module.hh"
+#include "rewriteStrategy.hh"
 
 //	variable class definitions
 #include "variableSymbol.hh"
@@ -80,6 +81,20 @@
 #include "rewriteConditionFragment.hh"
 #include "rewriteSequenceSearch.hh"
 #include "pattern.hh"
+
+//	strategy language class definitions
+#include "strategyLanguage.hh"
+#include "strategyExpression.hh"
+#include "trivialStrategy.hh"
+#include "applicationStrategy.hh"
+#include "branchStrategy.hh"
+#include "callStrategy.hh"
+#include "concatenationStrategy.hh"
+#include "iterationStrategy.hh"
+#include "oneStrategy.hh"
+#include "subtermStrategy.hh"
+#include "testStrategy.hh"
+#include "unionStrategy.hh"
 
 //	front end class definitions
 #include "token.hh"
@@ -158,6 +173,18 @@ MaudemlBuffer::generateErewrite(DagNode* subject, Int64 limit, Int64 gas)
 }
 
 void
+MaudemlBuffer::generateSRewrite(DagNode* subject, StrategyExpression* strat, Int64 limit, bool depthSearch)
+{
+  beginElement(depthSearch ? "dsrewrite" : "srewrite");
+  attributePair("module", Token::name(subject->symbol()->getModule()->id()));
+  if (limit != NONE)
+    attributePair("limit", int64ToString(limit));
+  generate(subject);
+  generate(strat);
+  endElement();
+}
+
+void
 MaudemlBuffer::generateSearch(DagNode* subject,
 			      PreEquation* pattern,
 			      const string& searchType,
@@ -211,7 +238,7 @@ MaudemlBuffer::generateSearchResult(Int64 number,
       generateStats(*(state->getContext()), timer, showTiming, showBreakdown);
     }
   if (number != NONE)
-  generateSubstitution(state->getSubstitution(), state->getGoal());
+    generateSubstitution(state->getSubstitution(), state->getGoal());
   endElement();
 }
 
@@ -254,7 +281,7 @@ MaudemlBuffer::generate(Term* term)
       attributePair("op", opName);
     }
   else if (FloatTerm* m = dynamic_cast<FloatTerm*>(term))
-      attributePair("op", doubleToString(m->getValue()));
+    attributePair("op", doubleToString(m->getValue()));
   else if (StringTerm* s = dynamic_cast<StringTerm*>(term))
     {
       string strValue;
@@ -418,6 +445,120 @@ MaudemlBuffer::generate(DagNode* dagNode, PointerSet* visited)
     {
       generate(a.argument(), visited);
       a.next();
+    }
+  endElement();
+}
+
+void
+MaudemlBuffer::generate(StrategyExpression* strat)
+{
+  beginElement("strat");
+  if (TrivialStrategy* te = dynamic_cast<TrivialStrategy*>(strat))
+    attributePair("type", te->getResult() ? "idle" : "fail");
+  else if (ApplicationStrategy* ae = dynamic_cast<ApplicationStrategy*>(strat))
+    {
+      attributePair("type", "application");
+      attributePair("label", Token::name(ae->getLabel()));
+
+      const Vector<Term*>& variables = ae->getVariables();
+      const Vector<CachedDag>& values = ae->getValues();
+      size_t subsLength = variables.length();
+      for (size_t i = 0; i < subsLength; i++)
+	{
+	  beginElement("assignment");
+	  generate(variables[i]);
+	  generate(values[i].getTerm());
+	  endElement();
+	}
+
+      for (StrategyExpression* substrat : ae->getStrategies())
+	generate(substrat);
+    }
+  else if (BranchStrategy* be = dynamic_cast<BranchStrategy*>(strat))
+    {
+      // Deduce the strategy type from the branch actions
+      string type;
+      switch (be->getSuccessAction())
+	{
+	  case BranchStrategy::FAIL:
+	    type = "not";
+	    break;
+	  case BranchStrategy::IDLE:
+	    type = "test";
+	    break;
+	  case BranchStrategy::PASS_THRU:
+	    type = (be->getFailureAction() == BranchStrategy::IDLE ? "try" :  "or-else");
+	    break;
+	  case BranchStrategy::NEW_STRATEGY:
+	    type = "conditional";
+	    break;
+	  case BranchStrategy::ITERATE:
+	    type = "normalization";
+	    break;
+	  default:
+	    type = "unknown branch";
+	}
+      attributePair("type", type);
+      generate(be->getInitialStrategy());
+      if (be->getSuccessStrategy() != 0)
+	generate(be->getSuccessStrategy());
+      if (be->getFailureStrategy() != 0)
+	generate(be->getFailureStrategy());
+    }
+  else if (CallStrategy* ce = dynamic_cast<CallStrategy*>(strat))
+    {
+      attributePair("type", "call");
+      attributePair("label", Token::name(ce->getStrategy()->id()));
+      Term* callTerm = ce->getTerm();
+      for (ArgumentIterator it(*callTerm); it.valid(); it.next())
+	generate(it.argument());
+    }
+  else if (ConcatenationStrategy* ce = dynamic_cast<ConcatenationStrategy*>(strat))
+    {
+      attributePair("type", "concatenation");
+      for (StrategyExpression* substrat : ce->getStrategies())
+	generate(substrat);
+    }
+  else if (IterationStrategy* ie = dynamic_cast<IterationStrategy*>(strat))
+    {
+      attributePair("type", "iteration");
+      attributePair("zeroAllowed", ie->getZeroAllowed() ? "true" : "false");
+      generate(ie->getStrategy());
+    }
+  else if (OneStrategy* oe = dynamic_cast<OneStrategy*>(strat))
+    {
+      attributePair("type", "one");
+      generate(oe->getStrategy());
+    }
+
+  else if (SubtermStrategy* se = dynamic_cast<SubtermStrategy*>(strat))
+    {
+      attributePair("type", "subterm");
+      attributePair("depth", int64ToString(se->getDepth()));
+      generate(se->getPatternTerm());
+      generateCondition(se->getCondition());
+
+      const Vector<Term*>& subpatterns = se->getSubterms();
+      const Vector<StrategyExpression*>& substrats = se->getStrategies();
+      size_t nrSubpatterns = subpatterns.length();
+      for (size_t i = 0; i < nrSubpatterns; i++)
+	{
+	  generate(subpatterns[i]);
+	  generate(substrats[i]);
+	}
+    }
+  else if (TestStrategy* te = dynamic_cast<TestStrategy*>(strat))
+    {
+      attributePair("type", "test");
+      attributePair("depth", int64ToString(te->getDepth()));
+      generate(te->getPatternTerm());
+      generateCondition(te->getCondition());
+    }
+  else if (UnionStrategy* ue = dynamic_cast<UnionStrategy*>(strat))
+    {
+      attributePair("type", "union");
+      for (StrategyExpression* substrat : ue->getStrategies())
+	generate(substrat);
     }
   endElement();
 }

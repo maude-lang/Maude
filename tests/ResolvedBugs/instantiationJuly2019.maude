@@ -1,0 +1,32 @@
+set show timing off .
+set show advisories off .
+
+fth FOO is
+  sort Small .
+  op a : -> Small .
+endfth
+
+fmod BAR{X :: FOO} is
+  sort Big .
+  subsort X$Small < Big .
+  op f : Big -> Bool .
+  eq f(a) = true .
+endfm
+
+fmod BAZ is
+  sort Baz .
+  op b : -> Baz .
+endfm
+
+*** make op a to b .
+*** incorrectly specialize to op a : -> Small to b .
+view V from FOO to BAZ is
+  sort Small to Baz .
+  op a to b .
+endv
+
+fmod TEST is
+  inc BAR{V} .
+endfm
+
+red b .

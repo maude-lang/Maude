@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -82,6 +82,25 @@ UserLevelRewritingContext::traceBeginScTrial(DagNode* subject, const SortConstra
   return trialCount;
 }
 
+int
+UserLevelRewritingContext::traceBeginSdTrial(DagNode* subject, const StrategyDefinition* sdef)
+{
+  Assert(sdef != 0, "null strategy definition in trial");
+  if (interpreter.getFlag(Interpreter::PROFILE))
+    {
+        safeCast(ProfileModule*, root()->symbol()->getModule())->
+	profileSdConditionStart(sdef);
+    }
+  if (handleDebug(subject, sdef))
+    return UNDEFINED;
+  if (!localTraceFlag || !(interpreter.getFlag(Interpreter::TRACE_SD)) || dontTrace(subject, sdef))
+    return UNDEFINED;
+  cout << header << "trial #" << ++trialCount << '\n' << sdef << '\n';
+  if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
+    printSubstitution(*this, *sdef);
+  return trialCount;
+}
+
 void
 UserLevelRewritingContext::traceEndTrial(int trialRef, bool success)
 {
@@ -117,14 +136,26 @@ UserLevelRewritingContext::traceEndFragment(int trialRef,
 					    int fragmentIndex,
 					    bool success)
 {
-  if (abortFlag || trialRef == UNDEFINED)
-    return;
-
   if (interpreter.getFlag(Interpreter::PROFILE))
     {
-      safeCast(ProfileModule*, root()->symbol()->getModule())->
-	profileFragment(preEquation, fragmentIndex, success);
+      //
+      //	Before we profile a fragment we need to check
+      //	if it belongs to a module and is therefore profileable.
+      //	PreEquations (Patterns actually) used for conditions
+      //	in commands and descent functions have a null module.
+      //
+      if (Module* module = preEquation->getModule())
+	{
+	  safeCast(ProfileModule*, module)->
+	    profileFragment(preEquation, fragmentIndex, success);
+	}
     }
+  //
+  //	If trialRef == UNDEFINED it means we're not tracing whatever
+  //	owns the condition that owns this condition fragment.
+  //
+  if (abortFlag || trialRef == UNDEFINED)
+    return;
 
   ConditionFragment* fragment = (preEquation->getCondition())[fragmentIndex];
   if (success)

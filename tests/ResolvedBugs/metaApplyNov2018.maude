@@ -1,0 +1,26 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that mb applications and eq rewrites for the initial
+***	reduction of the subject are not counted twice for
+***	metaApply()/metaXapply()
+***
+
+mod APPLY is
+  sorts Foo Bar .
+  subsort Foo < Bar .
+  ops a c  : -> Bar .
+  op b : -> Foo .
+  op f : Foo Foo -> Foo [comm] .
+
+  eq a = c .
+  mb c : Foo .
+  rl f(X:Foo, Y:Foo) => X:Foo [label k] .
+endm
+
+set trace on .
+set show breakdown on .
+
+red in META-LEVEL : metaApply(['APPLY], 'f['a.Foo, 'b.Foo], 'k, 'Y:Foo <- 'b.Foo, 0) .
+red in META-LEVEL : metaXapply(['APPLY], 'f['a.Foo, 'b.Foo], 'k, 'Y:Foo <- 'b.Foo, 0, 0, 0) .

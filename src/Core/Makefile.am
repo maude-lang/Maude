@@ -4,7 +4,8 @@ libcore_a_CPPFLAGS = \
 	-I$(top_srcdir)/src/Utility \
 	-I$(top_srcdir)/src/Interface \
 	-I$(top_srcdir)/src/Variable \
-	-I$(top_srcdir)/src/FullCompiler
+	-I$(top_srcdir)/src/FullCompiler \
+	-I$(top_srcdir)/src/StrategyLanguage
 
 libcore_a_SOURCES = \
 	memoryCell.cc \
@@ -54,7 +55,9 @@ libcore_a_SOURCES = \
 	stackMachine.cc \
 	stackMachineRhsCompiler.cc \
 	returnInstruction.cc \
-	nullInstruction.cc
+	nullInstruction.cc \
+	rewriteStrategy.cc \
+	strategyDefinition.cc
 
 EXTRA_DIST = \
 	run.cc \
@@ -131,4 +134,8 @@ noinst_HEADERS = \
 	stackMachine.hh \
 	stackMachineRhsCompiler.hh \
 	returnInstruction.hh \
-	nullInstruction.hh
+	nullInstruction.hh \
+	memoryInfo.hh \
+	memoryBlock.hh \
+	rewriteStrategy.hh \
+	strategyDefinition.hh

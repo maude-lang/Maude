@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -25,7 +25,7 @@
 //
 #ifndef _preEquation_hh_
 #define _preEquation_hh_
-#include <stack>
+#include "stack.hh"
 #include "lineNumber.hh"
 #include "variableInfo.hh"
 #include "badFlag.hh"
@@ -57,7 +57,7 @@ public:
 		      RewritingContext& context,
 		      Subproblem* subproblem,
 		      int& trialRef,
-		      stack<ConditionState*>& state) const;
+		      Stack<ConditionState*>& state) const;
   //
   //	Simplified interface to the above for the common case where we only care
   //	if a condition succeeds at least once or fails.
@@ -90,7 +90,7 @@ protected:
   void setCompiled();
 
 private:
-  static void cleanStack(stack<ConditionState*>& conditionStack);
+  static void cleanStack(Stack<ConditionState*>& conditionStack);
 
   enum Flags
   {
@@ -101,7 +101,7 @@ private:
   bool solveCondition(bool findFirst,
 		      int trialRef,
 		      RewritingContext& solution,
-		      stack<ConditionState*>& state) const;
+		      Stack<ConditionState*>& state) const;
 
   Label label;
   Term* lhs;

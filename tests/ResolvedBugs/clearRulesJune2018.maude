@@ -1,0 +1,23 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that object-message rewriting is correctly initialized after
+***	set clear rules off .
+***
+
+mod TEST is
+  including CONFIGURATION .
+  op m   : Oid Oid -> Msg [msg] .
+  ops 1 2 : -> Oid .
+  op User : -> Cid .
+
+  var A : AttributeSet .
+  vars X Y : Oid .
+
+  rl < X : User | A > m(X, Y) => < X : User | A > m(Y, X) .
+endm
+
+set clear rules off .
+
+frew [1] < 1 : User | none > m(1, 2) .

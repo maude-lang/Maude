@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -28,6 +28,7 @@
 #include "namedEntity.hh"
 #include "mixfixModule.hh"
 #include "moduleDatabase.hh"
+#include "importModule.hh"
 
 class PreModule
   : public NamedEntity,
@@ -43,22 +44,40 @@ public:
   void setModuleType(MixfixModule::ModuleType type);
   MixfixModule::ModuleType getModuleType() const;
 
+  void addParameter(Token name, ModuleExpression* theory);
+  int getNrParameters() const;
+  int getParameterName(int index) const;
+  const ModuleExpression* getParameter(int index) const;
+  void processParameters(ImportModule* flatModule);
 
-  virtual int getNrParameters() const = 0;
-  virtual int getParameterName(int index) const = 0;
-  virtual const ModuleExpression* getParameter(int index) const = 0;
+  void addImport(LineNumber lineNumber, ImportModule::ImportMode mode, ModuleExpression* expr);
+  int getNrImports() const;
+  ImportModule::ImportMode getImportMode(int index) const;
+  const ModuleExpression* getImport(int index) const;
+  void processExplicitImports(ImportModule* flatModule);
 
-  virtual const ModuleDatabase::ImportMap& getAutoImports() const = 0;
-  virtual int getNrImports() const = 0;
-  virtual int getImportMode(int index) const = 0;
-  virtual const ModuleExpression* getImport(int index) const = 0;
-
+  virtual const ModuleDatabase::ImportMap* getAutoImports() const = 0;
   virtual VisibleModule* getFlatSignature() = 0;
   virtual VisibleModule* getFlatModule() = 0;
 
 private:
+  struct Parameter
+  {
+    Token name;
+    ModuleExpression* theory;
+  };
+
+  struct Import
+  {
+    LineNumber lineNumber;
+    ImportModule::ImportMode mode;
+    ModuleExpression* expr;
+  };
+
   Interpreter* const owner;
   MixfixModule::ModuleType moduleType;
+  Vector<Parameter> parameters;
+  Vector<Import> imports;
 };
 
 inline Interpreter*
@@ -77,6 +96,42 @@ inline MixfixModule::ModuleType
 PreModule::getModuleType() const
 {
   return moduleType;
+}
+
+inline int
+PreModule::getNrImports() const
+{
+  return imports.length();
+}
+
+inline ImportModule::ImportMode
+PreModule::getImportMode(int index) const
+{
+  return imports[index].mode;
+}
+
+inline const ModuleExpression*
+PreModule::getImport(int index) const
+{
+  return imports[index].expr;
+}
+
+inline int
+PreModule::getNrParameters() const
+{
+  return parameters.length();
+}
+
+inline int
+PreModule::getParameterName(int index) const
+{
+  return parameters[index].name.code();
+}
+
+inline const ModuleExpression*
+PreModule::getParameter(int index) const
+{
+  return parameters[index].theory;
 }
 
 #ifndef NO_ASSERT

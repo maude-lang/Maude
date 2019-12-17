@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -29,10 +29,10 @@
 class RedexPosition
 {
 public:
-  RedexPosition() {}
-  RedexPosition(DagNode* node, int parentIndex, int argIndex);
+  RedexPosition() { CantHappen("called"); }  // needed so that Vector template can be instantiated
+  //  RedexPosition(DagNode* node, int parentIndex, int argIndex);
   RedexPosition(DagNode* node, int parentIndex, int argIndex, bool eager);
-  
+
   DagNode* node() const;
   int parentIndex() const;
   int argIndex() const;
@@ -55,6 +55,7 @@ private:
   int flags;
 };
 
+/*
 inline
 RedexPosition::RedexPosition(DagNode* node, int parentIndex, int argIndex)
   : dagNode(node),
@@ -63,6 +64,7 @@ RedexPosition::RedexPosition(DagNode* node, int parentIndex, int argIndex)
     flags(0)
 {
 }
+*/
 
 inline
 RedexPosition::RedexPosition(DagNode* node, int parentIndex, int argIndex, bool eager)

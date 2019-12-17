@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in CHECK : modelCheck(initial, []~ (enterCrit(1) /\ enterCrit(2))) .
 rewrites: 1048
 result Bool: true
@@ -101,4 +101,4 @@ reduce in CHECK : modelCheck(initial, []<> exec(1) /\ []<> exec(2) -> []<>
     enterCrit(1) /\ []<> enterCrit(2)) .
 rewrites: 1319
 result Bool: true
-Maude> Bye.
+Bye.

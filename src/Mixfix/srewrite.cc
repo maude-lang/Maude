@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -25,7 +25,7 @@
 //
 
 void
-Interpreter::sRewrite(const Vector<Token>& subjectAndStrategy, Int64 limit, bool debug)
+Interpreter::sRewrite(const Vector<Token>& subjectAndStrategy, Int64 limit, bool debug, bool depthSearch)
 {
   VisibleModule* fm = currentModule->getFlatModule();
   Term* subject;
@@ -33,20 +33,39 @@ Interpreter::sRewrite(const Vector<Token>& subjectAndStrategy, Int64 limit, bool
   if (!(fm->parseStrategyCommand(subjectAndStrategy, subject, strategy)))
     return;
 
+  TermSet nothing;
+  VariableInfo vinfo;
+  if (!strategy->check(vinfo, nothing))
+    {
+      subject->deepSelfDestruct();
+      delete strategy;
+      return;
+    }
+
   DagNode* subjectDag = makeDag(subject);
-  
+
   if (getFlag(SHOW_COMMAND))
     {
       UserLevelRewritingContext::beginCommand();
-      cout << "srewrite ";
+      if (debug)
+	cout << "debug ";
+      cout << (depthSearch ? "dsrewrite " : "srewrite ");
       if (limit != NONE)
 	cout << '[' << limit << "] ";
 
       cout << "in " << currentModule << " : " << subjectDag <<
 	" using " << strategy << " ." << endl;
     }
+  if (xmlBuffer != 0)
+    xmlBuffer->generateSRewrite(subjectDag, strategy, limit, depthSearch);
 
   startUsingModule(fm);
+
+  strategy->process();
+
+  if (debug)
+    UserLevelRewritingContext::setDebug();
+
   Timer timer(getFlag(SHOW_TIMING));
   UserLevelRewritingContext* context = new UserLevelRewritingContext(subjectDag);
   context->reduce();
@@ -60,19 +79,23 @@ Interpreter::sRewrite(const Vector<Token>& subjectAndStrategy, Int64 limit, bool
     }
 
   Assert(context->root() != 0, "null root");
-  StrategicSearch* state = new StrategicSearch(context, strategy);  // pass ownership of context and  strategy
-  doStrategicSearch(timer, fm, state, 0, limit);
+  // pass ownership of context and strategy
+  StrategicSearch* state = depthSearch ? new DepthFirstStrategicSearch(context, strategy)
+				       : static_cast<StrategicSearch*>(new
+					   FairStrategicSearch(context, strategy));
+  doStrategicSearch(timer, fm, state, 0, limit, depthSearch);
 }
 
 void
 Interpreter::doStrategicSearch(Timer& timer,
 			       VisibleModule* module,
 			       StrategicSearch* state,
-			       int solutionCount,
-			       int limit)
+			       Int64 solutionCount,
+			       Int64 limit,
+			       bool depthSearch)
 {
   RewritingContext* context = state->getContext();
-  int i = 0;
+  Int64 i = 0;
   for (; i != limit; ++i)  // limit could be -1 for "no limit"
     {
       DagNode* d = state->findNextSolution();
@@ -80,36 +103,85 @@ Interpreter::doStrategicSearch(Timer& timer,
 	break;
       if (d == 0)
 	{
-	  cout << "\nNo more solutions.\n";
+	  cout << endl << (solutionCount > 0
+	    ? "No more solutions." : "No solution.") << endl;
 	  if (getFlag(SHOW_STATS))
 	    printStats(timer, *context, getFlag(SHOW_TIMING));
 	  break;
 	}
+
       ++solutionCount;
-      cout << "\nSolution " << solutionCount<< '\n';
+      cout << "\nSolution " << solutionCount << '\n';
       if (getFlag(SHOW_STATS))
 	printStats(timer, *context, getFlag(SHOW_TIMING));
       cout << "result " << d->getSort() << ": " << d << '\n';
+      if (xmlBuffer != 0)
+	{
+	  xmlBuffer->generateResult(*context,
+				    timer,
+				    getFlag(SHOW_STATS),
+				    getFlag(SHOW_TIMING),
+				    getFlag(SHOW_BREAKDOWN));
+	}
     }
   clearContinueInfo();  // just in case debugger left info
-  context->clearCount();
-  savedStrategicSearch = state;
-  savedSolutionCount = solutionCount;
-  savedModule = module;
-  if (i == limit)  // possible to continue
-    continueFunc = &Interpreter::sRewriteCont;
+  if (i == limit)
+    {
+      //
+      //	The loop terminated because we hit user's limit so
+      //	continuation is still possible. We save the state,
+      //	solutionCount and module, and set a continuation function.
+      //
+      context->clearCount();
+      savedState = state;
+      savedSolutionCount = solutionCount;
+      savedModule = module;
+      continueFunc = depthSearch ? &Interpreter::dsRewriteCont : &Interpreter::sRewriteCont;
+    }
+  else
+    {
+      //
+      //	Either user aborted or we ran out of solutions; either
+      //	way we need to tidy up.
+      //
+      delete state;
+      module->unprotect();
+    }
   UserLevelRewritingContext::clearDebug();
 }
 
 void
-Interpreter::sRewriteCont(Int64 limit, bool /* debug */)
+Interpreter::sRewriteCont(Int64 limit, bool debug)
 {
-  StrategicSearch* state = savedStrategicSearch;
+  StrategicSearch* state = safeCast(StrategicSearch*, savedState);
   VisibleModule* fm = savedModule;
-  savedStrategicSearch = 0;
+  savedState = 0;
   savedModule = 0;
   continueFunc = 0;
 
+  if (debug)
+    UserLevelRewritingContext::setDebug();
+  if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
+    xmlBuffer->generateContinue("srewrite", fm, limit);
+
   Timer timer(getFlag(SHOW_TIMING));
-  doStrategicSearch(timer, fm, state, savedSolutionCount, limit);
+  doStrategicSearch(timer, fm, state, savedSolutionCount, limit, false);
+}
+
+void
+Interpreter::dsRewriteCont(Int64 limit, bool debug)
+{
+  StrategicSearch* state = safeCast(StrategicSearch*, savedState);
+  VisibleModule* fm = savedModule;
+  savedState = 0;
+  savedModule = 0;
+  continueFunc = 0;
+
+  if (debug)
+    UserLevelRewritingContext::setDebug();
+  if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
+    xmlBuffer->generateContinue("dsrewrite", fm, limit);
+
+  Timer timer(getFlag(SHOW_TIMING));
+  doStrategicSearch(timer, fm, state, savedSolutionCount, limit, true);
 }

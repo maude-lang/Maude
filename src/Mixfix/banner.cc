@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
@@ -53,8 +53,8 @@ printBanner(std::ostream& s)
     Tty(Tty::GREEN) << 'e' <<
     Tty(Tty::RESET) << " ---\n";
   s << "\t\t     /||||||||||||||||||\\\n";
-  s << "\t   " << PACKAGE_STRING << " built: " <<
+  s << "\t     " << PACKAGE_STRING << " built: " <<
     __DATE__ << ' ' << __TIME__ << '\n';
-  s << "\t    Copyright 1997-2016 SRI International\n";
+  s << "\t     Copyright 1997-2019 SRI International\n";
   s << "\t\t   " << ctime(&secs);
 }

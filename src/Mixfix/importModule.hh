@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -25,16 +25,17 @@
 //
 #ifndef _importModule_hh_
 #define _importModule_hh_
-#include <set>
-#include <map>
 #include "mixfixModule.hh"
 #include "entity.hh"
+#include "enclosingObject.hh"
 #include "fileTable.hh"
+#include "rewriteStrategy.hh"
 
 class ImportModule
   : public MixfixModule,
     public Entity,
-    public Entity::User
+    public Entity::User,
+    public EnclosingObject
 {
   NO_COPYING(ImportModule);
 
@@ -52,10 +53,10 @@ public:
     SUMMATION,
     RENAMING,
     PARAMETER,
-    INSTANTIATION,
-    VIEW_LOCAL
+    INSTANTIATION
   };
 
+  ImportModule(int name, ModuleType moduleType);
   ImportModule(int name, ModuleType moduleType, Origin origin, Entity::User* parent);
   ~ImportModule();
 
@@ -70,7 +71,9 @@ public:
   void importSorts();
   void importOps();
   void fixUpImportedOps();
+  void importStrategies();
   void importStatements();
+  void importRuleLabels();
   void resetImports();
 
   void localStatementsComplete();
@@ -79,12 +82,12 @@ public:
 
   Origin getOrigin() const;
   int getNrParameters() const;
-  bool parametersBound() const;
-  ImportModule* getParameterTheory(int index) const;
+  bool hasFreeParameters() const;
   int getParameterName(int index) const;
   int getNrImportedSorts() const;
   int getNrUserSorts() const;
   int getNrImportedSubsorts(int sortIndex) const;
+  int getNrUserComponents() const;
   int getNrImportedSymbols() const;
   int getNrImportedPolymorphs() const;
   int getNrUserSymbols() const;
@@ -93,20 +96,64 @@ public:
   int getNrOriginalMembershipAxioms() const;
   int getNrOriginalEquations() const;
   int getNrOriginalRules() const;
+  int getNrImportedStrategies() const;
+  int getNrOriginalStrategyDefinitions() const;
   const set<int>& getLabels() const;
   ImportModule* makeRenamedCopy(int name, Renaming* canonical, ModuleCache* moduleCache);
   ImportModule* makeParameterCopy(int moduleName, int parameterName, ModuleCache* moduleCache);
   ImportModule* makeInstantiation(int moduleName,
-				  const Vector<View*>& arguments,
-				  const Vector<int>& parameterArgs,
+				  const Vector<Argument*>& arguments,
 				  ModuleCache* moduleCache);
-  int findParameterIndex(int name) const;
+  static ImportModule* makeSummation(int moduleName, const Vector<ImportModule*>& modules, ModuleCache* moduleCache);
   bool moduleDeclared(Sort* sort) const;
   bool moduleDeclared(Symbol* symbol) const;
+  bool moduleDeclared(RewriteStrategy* strat) const;
   bool moduleDeclaredPolymorph(int index) const;
   bool parameterDeclared(Sort* sort) const;
   bool parameterDeclared(Symbol* symbol) const;
+  bool parameterDeclared(RewriteStrategy* strat) const;
   bool parameterDeclaredPolymorph(int index) const;
+  const Renaming* getCanonicalRenaming() const;  // only supported for parameter copies
+  //
+  //	Needed for EnclosingObject base.
+  //
+  int findParameterIndex(int name) const;
+  ImportModule* getParameterTheory(int index) const;
+  const char* getObjectType() const;
+  const NamedEntity* getObjectName() const;
+
+  ImportModule* instantiateBoundParameters(const Vector<Argument*>& arguments, ModuleCache* moduleCache);
+  
+  void handleParameterizedSorts(Renaming* canonical, 
+				const ParameterMap& parameterMap,
+				const ParameterSet& extraParameterSet) const;
+
+  void addSortMappingsFromTheoryView(Renaming* underConstruction,
+				     int parameterName,
+				     const View* view) const;
+  void addSortMappingsFromModuleView(Renaming* underConstruction, const View* view) const;
+  void addSortRenamingsForParameterChange(Renaming* underConstruction, int newParameterName) const;
+  void addOpMappingsFromView(Renaming* underConstruction,
+			     const View* view,
+			     const ImportModule* parameterCopyUser) const;
+  void addStratMappingsFromView(Renaming* underConstruction,
+				const View* view,
+				const ImportModule* parameterCopyUser) const;
+
+#ifndef NO_ASSERT
+  void dumpImports(ostream& s) const;
+#endif
+
+  // deepCopyStrategyExpression and instantiateExpression could have been
+  // defined as virtual methods of StrategyExpression. However, this would
+  // require including Mixfix in the imports of the StrategyLanguage, or
+  // define an abstract class like SymbolMap.
+  static StrategyExpression* deepCopyStrategyExpression(ImportTranslation* importTranslation,
+							StrategyExpression* original);
+  static StrategyExpression* instantiateExpression(StrategyExpression* expr,
+						   const Vector<int>& varsMap,
+						   const Vector<Term*>& values,
+						   ImportTranslation* translation);
 
 private:
   enum Phase
@@ -114,13 +161,11 @@ private:
     UNVISITED,
     SORTS_IMPORTED,
     OPS_IMPORTED,
+    STRATS_IMPORTED,
     OPS_FIXED_UP,
     STATEMENTS_IMPORTED,
     DOOMED
   };
-
-  typedef map<int,int> ParameterMap;
-  typedef set<int> ParameterSet;
 
   static Sort* localSort(ImportModule* copy, Renaming* renaming, const Sort* sort);
   static Sort* localSort2(ImportModule* copy, Renaming* renaming, const Sort* sort);
@@ -129,18 +174,25 @@ private:
 				const Vector<ConditionFragment*>& original,
 				Vector<ConditionFragment*>& copy);
 
-  static int instantiateSortName(int sortId,
-				 const ParameterMap& parameterMap,
-				 const ParameterSet& extraParameterSet);
+  static void instantiateCondition(const Vector<ConditionFragment*>& original,
+				   Vector<ConditionFragment*>& copy,
+				   const Vector<Term*>& subs,
+				   ImportTranslation* translation);
 
-  static Renaming* instantiateRenaming(const Renaming* original,
-				       const ParameterMap& parameterMap,
-				       const ParameterSet& extraParameterSet);
-  
-  ImportModule* instantiateBoundParameters(const Vector<View*>& arguments,
-					   const Vector<int>& parameterArgs,
-					   ModuleCache* moduleCache);
- 
+  static Term* instantiateTerm(Term* term,
+			       const Vector<Term*>& subs,
+			       const VariableInfo& varInfo,
+			       ImportTranslation* translation);
+
+  static Term* instantiateCall(Term* term,
+			       RewriteStrategy* strat,
+			       const Vector<Term*>& subs,
+			       ImportTranslation* translation);
+
+  static StrategyExpression* instantiateExpression(StrategyExpression* expr,
+						   const Vector<Term*>& subs,
+						   ImportTranslation* translation);
+
   void regretToInform(Entity* doomedEntity);
   void donateSorts(ImportModule* importer);
   void donateSorts2(ImportModule* copy, Renaming* renaming = 0);
@@ -148,63 +200,82 @@ private:
   void donateOps2(ImportModule* copy, Renaming* renaming = 0);
   void fixUpDonatedOps(ImportModule* importer);
   void fixUpDonatedOps2(ImportModule* copy, Renaming* renaming = 0);
+  void donateRuleLabels(ImportModule* copy, Renaming* renaming = 0);
+  void donateStrategies(ImportModule* importer);
+  void donateStrategies2(ImportModule* importer, Renaming* renaming = 0);
   void donateStatements(ImportModule* importer);
   void donateStatements2(ImportModule* importer, ImportTranslation& importTranslation);
   void resetImportPhase();
   void finishCopy(ImportModule* copy, Renaming* canonical);
 
+  void checkForPolymorphOperatorClash();
+  
   void copyMetadata(ImportModule* importer,
 		    ImportTranslation& importTranslation,
 		    ItemType itemType,
 		    PreEquation* original,
 		    PreEquation* copy);
   
-  ConnectedComponent* translateComponent(const Renaming* renaming, const ConnectedComponent* component) const;
-
-  void addOpMappingsFromView(Renaming* canonical,
-			     const ImportModule* parameterCopyOfTheory,
-			     const View* view) const;
+  ConnectedComponent* translateComponent(const ConnectedComponent* component,
+					const ImportModule* parameterCopyUser) const;
+  void addFromPartOfRenaming(Renaming* underConstruction,
+			     Symbol* s,
+			     const ImportModule* parameterCopyUser) const;  
   //
-  //	Because makeInstantiation() is such complex procedure we split out 5 major
-  //	subtasks.
+  //	Because makeInstantiation() is such complex procedure we split out 5 blocks of code.
   //
-  void handleInstantiationByParameter(ImportModule* copy,
-				      Renaming* canonical,
-				      ParameterMap& parameterMap,
-				      const Vector<View*>& arguments,
-				      const Vector<int>& parameterArgs,
-				      ModuleCache* moduleCache) const;
-
-  void handleInstantiationByTheoryView(ImportModule* copy,
+  bool handleInstantiationByTheoryView(ImportModule* copy,
 				       Renaming* canonical,
 				       ParameterMap& parameterMap,
 				       ParameterSet& extraParameterSet,
-				       const Vector<View*>& arguments,
+				       const Vector<Argument*>& arguments,
 				       ModuleCache* moduleCache) const;
+  
+  bool handleInstantiationByParameter(ImportModule* copy,
+				      Renaming* canonical,
+				      ParameterMap& parameterMap,
+				      NatSet& positionsInstantiatedParameter,
+				      const Vector<Argument*>& arguments,
+				      ModuleCache* moduleCache) const;
 
-  void handleInstantiationByModuleView(ImportModule* copy,
+  bool handleInstantiationByModuleView(ImportModule* copy,
 				       Renaming* canonical,
 				       ParameterMap& parameterMap,
-				       const Vector<View*>& arguments) const;
+				       const NatSet& positionsInstantiatedParameter,
+				       const Vector<Argument*>& arguments,
+				       ModuleCache* moduleCache) const;
 
-  void handleParameterizedSorts(Renaming* canonical, 
-				const ParameterMap& parameterMap,
-				const ParameterSet& extraParameterSet) const;
-
+  bool handleBoundParameters(ImportModule* copy, View* argumentView, ModuleCache* moduleCache) const;
+  
   void handleRegularImports(ImportModule* copy,
-			    const Vector<View*>& arguments,
-			    const Vector<int>& parameterArgs,
+			    const Vector<Argument*>& arguments,
 			    ModuleCache* moduleCache) const;
+  //
+  //	Because instantiateBoundParameters() is such complex procedure we split out 4 blocks of code.
+  //
+  ImportModule* handleSummation(const Vector<Argument*>& arguments, ModuleCache* moduleCache);
 
+  ImportModule* handleRenaming(const Vector<Argument*>& arguments, ModuleCache* moduleCache);
+  static Renaming* instantiateRenaming(const Renaming* original,
+				       const ParameterMap& parameterMap,
+				       const ParameterSet& extraParameterSet);
+
+  ImportModule* handleFinalInstantiation(const Vector<Argument*>& arguments, ModuleCache* moduleCache);
+  
   const Origin origin;
   Phase importPhase;
   //
-  //	These are the theories and modules we directly import.
-  //
-  //	0,..., parameterNames.size() - 1			parameters
-  //	parameterNames.size(),..., importedModules.size() - 1	regular imports
+  //	These are the names of our parameters and the associated parameter
+  //	theory copies. If we have a parameter X of theory TRIV then
+  //	we will have a parameter theory copy X :: TRIV with sort X$Elt.
+  //	We need to be careful to get back to TRIV (which will be stored as the
+  //	copies baseModule) if we are asked for the actual theory.
   //
   Vector<int> parameterNames;
+  Vector<ImportModule*> parameterTheories;
+  //
+  //	These are the modules we directly (as opposed to transitively) import.
+  //
   Vector<ImportModule*> importedModules;
   //
   //	Because for sorts, symbols, and polymorphs, stuff from parameter
@@ -215,6 +286,7 @@ private:
   int nrSortsFromParameters;
   int nrSymbolsFromParameters;
   int nrPolymorphsFromParameters;
+  int nrStrategiesFromParameters;
   //
   //	If we are a renaming, parameter copy or instantiation of another
   //	module we need to store this info.
@@ -228,16 +300,19 @@ private:
   //	with so we can build a new instantiation when our bound 
   //	parameters are instantiated.
   //
-  Vector<View*> viewArgs;
-  Vector<int> paramArgs;
+  Vector<Argument*> savedArguments;
   //
   //	These data structures are only filled out for theories and record
   //	the indices of any sorts and operators that were declared in an
   //	imported module and are therefore not eligible to be mapped by a
   //	view.
   //
+  //	As of 5/2/19 we keep track of sortDeclaredInModule for all imported
+  //	sorts, even for modules.
+  //
   NatSet sortDeclaredInModule;
   NatSet opDeclaredInModule;
+  NatSet stratDeclaredInModule;
   NatSet polymorphDeclaredInModule;
   //
   //	Need to keep track of what parts of MixfixModule actually belong
@@ -252,11 +327,12 @@ private:
   //
   //	For mbs, eqs, and rls, locals come first, then imports.
   //	The reason for this different order is to avoid imports unless
-  //	we ace actually going to do some work in the module.
+  //	we are actually going to do some work in the module.
   //
   int nrUserSorts;			// total number of user declared sorts
   int nrImportedSorts;			// how many of these were imported
   Vector<int> nrImportedSubsorts;	// for each sort, how many subsorts were imported
+  int nrUserComponents;			// total number of kinds from user declared sorts
 
   int nrUserSymbols;			// total number of user symbols
   int nrImportedSymbols;		// how many of these were imported
@@ -267,11 +343,19 @@ private:
   Vector<int> nrImportedDecls;		// total number of imported user declarations
 
   int nrImportedPolymorphs;		// number of polymorphs that were imported
+  int nrImportedStrategies;
   int nrOriginalMembershipAxioms;
   int nrOriginalEquations;
   int nrOriginalRules;
+  int nrOriginalStrategyDefinitions;
 
   set<int> labels;
+  //
+  //	Because the module may still be in use (by some interrupted computation)
+  //	after it has been overwritten by a new module with the same name entered
+  //	from the debugger, we keep a count of active users and postpone deletion
+  //	of an overwritten module until it has no more users.
+  //
   int protectCount;
 };
 
@@ -302,13 +386,6 @@ ImportModule::getNrParameters() const
   return parameterNames.size();
 }
 
-inline ImportModule*
-ImportModule::getParameterTheory(int index) const
-{
-  Assert(index < getNrParameters(), "bad parameter index " << index << " in module " << (const MixfixModule*) this);
-  return importedModules[index]->baseModule;
-}
-
 inline int
 ImportModule::getParameterName(int index) const
 {
@@ -331,6 +408,15 @@ ImportModule::getNrImportedSubsorts(int sortIndex) const
   //	Subsorts with index < this value were imported.
   //
   return (sortIndex < nrImportedSorts) ? nrImportedSubsorts[sortIndex] : 0;
+}
+
+inline int
+ImportModule::getNrUserComponents() const
+{
+  //
+  //	Components with index >= this value were generated (for non-user sorts).
+  //
+  return nrUserComponents;
 }
 
 inline int
@@ -405,6 +491,24 @@ ImportModule::getNrOriginalRules() const
   return nrOriginalRules;
 }
 
+inline int
+ImportModule::getNrImportedStrategies() const
+{
+  //
+  //	Strategies with index < this value were imported.
+  //
+  return nrImportedStrategies;
+}
+
+inline int
+ImportModule::getNrOriginalStrategyDefinitions() const
+{
+  //
+  //	 Strategy definitions with index >= this value were imported.
+  //
+  return nrOriginalStrategyDefinitions;
+}
+
 inline const set<int>&
 ImportModule::getLabels() const
 {
@@ -423,6 +527,13 @@ ImportModule::moduleDeclared(Symbol* symbol) const
 {
   Assert(symbol->getModule() == this, "wrong module");
   return opDeclaredInModule.contains(symbol->getIndexWithinModule());
+}
+
+inline bool
+ImportModule::moduleDeclared(RewriteStrategy* strat) const
+{
+  Assert(strat->getModule() == this, "wrong module");
+  return stratDeclaredInModule.contains(strat->getIndexWithinModule());
 }
 
 inline bool
@@ -446,9 +557,23 @@ ImportModule::parameterDeclared(Symbol* symbol) const
 }
 
 inline bool
+ImportModule::parameterDeclared(RewriteStrategy* strat) const
+{
+  Assert(strat->getModule() == this, "wrong module");
+  return strat->getIndexWithinModule() < nrStrategiesFromParameters;
+}
+
+inline bool
 ImportModule::parameterDeclaredPolymorph(int index) const
 {
   return index < nrPolymorphsFromParameters;
+}
+
+inline const Renaming*
+ImportModule::getCanonicalRenaming() const
+{
+  Assert(origin == PARAMETER, "called on origin = " << origin);
+  return canonicalRenaming;
 }
 
 #ifndef NO_ASSERT
@@ -462,5 +587,14 @@ operator<<(ostream& s, const ImportModule* m)
   return s;
 }
 #endif
+
+inline bool
+ImportModule::hasFreeParameters() const
+{
+  //
+  //	If we have parameters and they are not bound they must be free.
+  //
+  return getNrParameters() > 0 && !(hasBoundParameters());
+}
 
 #endif

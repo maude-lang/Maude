@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -75,18 +75,15 @@ MetaLevelOpSymbol::metaWellFormedSubstitution(FreeDagNode* subject, RewritingCon
       Vector<Term*> values;
       if (metaLevel->downSubstitution(subject->getArgument(1), m, variables, values))
 	{
-	  if (noDuplicates(variables))
+	  Vector<DagRoot*> dags;
+	  m->protect();
+	  if (MetaLevel::dagifySubstitution(variables, values, dags, context))
 	    {
-	      Vector<DagRoot*> dags;
-	      m->protect();
-	      if (dagifySubstitution(variables, values, dags, context))
-		{
-		  result = true;
-		  for (int i = variables.length() - 1; i >= 0; i--)
-		    delete dags[i];
-		}
-	      (void) m->unprotect();
+	      result = true;
+	      for (int i = variables.length() - 1; i >= 0; i--)
+		delete dags[i];
 	    }
+	  (void) m->unprotect();
 	  for (int i = variables.length() - 1; i >= 0; i--)
 	    {
 	      variables[i]->deepSelfDestruct();
@@ -98,50 +95,11 @@ MetaLevelOpSymbol::metaWellFormedSubstitution(FreeDagNode* subject, RewritingCon
   return false;
 }
 
-bool
-MetaLevelOpSymbol::noDuplicates(const Vector<Term*>& terms)
-{
-  for (int i = terms.length() - 1; i >= 1; i--)
-    {
-      for (int j = i - 1; j >= 0; j--)
-	{
-	  if (terms[i]->equal(terms[j]))
-	    return false;
-	}
-    }
-  return true;
-}
-
-bool
-MetaLevelOpSymbol::dagifySubstitution(const Vector<Term*>& variables,
-				      Vector<Term*>& values,
-				      Vector<DagRoot*>& dags,
-				      RewritingContext& context)
-{
-  int nrVars = variables.length();
-  dags.resize(nrVars);
-  for (int i = 0; i < nrVars; i++)
-    {
-      values[i] = values[i]->normalize(false);
-      DagNode* d = term2Dag(values[i]);
-      dags[i] = new DagRoot(d);
-      d->computeTrueSort(context);
-      VariableTerm* v = static_cast<VariableTerm*>(variables[i]);
-      if (!(leq(d->getSortIndex(), v->getSort())))
-	{
-	  for (int j = 0; j <= i ; j++)
-	    delete dags[j];
-	  return false;
-	}
-    }
-  return true;
-}
-
 RewritingContext*
 MetaLevelOpSymbol::term2RewritingContext(Term* term, RewritingContext& context)
 {
   term = term->normalize(false);
-  DagNode* d = term2Dag(term);
+  DagNode* d = term->term2DagEagerLazyAware();
   term->deepSelfDestruct();
   return context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
 }
@@ -171,7 +129,7 @@ MetaLevelOpSymbol::metaLeastSort(FreeDagNode* subject, RewritingContext& context
       if (Term* t = metaLevel->downTerm(subject->getArgument(1), m))
 	{
 	  t = t->normalize(false);
-	  DagNode* d = term2Dag(t);
+	  DagNode* d = t->term2DagEagerLazyAware();
 	  t->deepSelfDestruct();
 	  RewritingContext* objectContext =
 	    context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
@@ -198,7 +156,7 @@ MetaLevelOpSymbol::metaMaximalAritySet(FreeDagNode* subject, RewritingContext& c
     {
       int id;
       Vector<Sort*> arity;
-      Sort *target;
+      Sort* target;
       if (metaLevel->downOpName(subject->getArgument(1), id) &&
 	  metaLevel->downTypeList(subject->getArgument(2), m, arity) &&
 	  metaLevel->downSimpleSort(subject->getArgument(3), m, target))
@@ -345,8 +303,10 @@ MetaLevelOpSymbol::metaGetKind(FreeDagNode* subject, RewritingContext& context)
 bool
 MetaLevelOpSymbol::metaGetKinds(FreeDagNode* subject, RewritingContext& context)
 {
-  if (MixfixModule* m = metaLevel->downModule(subject->getArgument(0)))
-    return context.builtInReplace(subject, metaLevel->upKindSet(m->getConnectedComponents()));
+  if (ImportModule* m = dynamic_cast<ImportModule*>(metaLevel->downModule(subject->getArgument(0))))
+    return context.builtInReplace(subject,
+				  metaLevel->upKindSet(m->getConnectedComponents(),
+						       m->getNrUserComponents()));
   return false;
 }
 
@@ -358,7 +318,7 @@ MetaLevelOpSymbol::metaReduce(FreeDagNode* subject, RewritingContext& context)
       if (Term* t = metaLevel->downTerm(subject->getArgument(1), m))
 	{
 	  t = t->normalize(false);
-	  DagNode* d = term2Dag(t);
+	  DagNode* d = t->term2DagEagerLazyAware();
 	  t->deepSelfDestruct();
 	  RewritingContext* objectContext =
 	    context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
@@ -398,34 +358,34 @@ MetaLevelOpSymbol::metaRewrite(FreeDagNode* subject, RewritingContext& context)
     {
       Int64 limit;
       if (metaLevel->downBound64(subject->getArgument(2), limit) && limit != 0)
-        {
-          if (Term* t = metaLevel->downTerm(subject->getArgument(1), m))
-            {
-              t = t->normalize(false);
-              DagNode* d = term2Dag(t);
-              t->deepSelfDestruct();
+	{
+	  if (Term* t = metaLevel->downTerm(subject->getArgument(1), m))
+	    {
+	      t = t->normalize(false);
+	      DagNode* d = t->term2DagEagerLazyAware();
+	      t->deepSelfDestruct();
 	      //cerr << "before create\n"; RootContainer::dump(cerr);
-              RewritingContext* objectContext =
-                context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
+	      RewritingContext* objectContext =
+		  context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
 	      //cerr << "after create\n"; RootContainer::dump(cerr);
-              m->protect();
-              //m->saveHiddenState();
-              m->resetRules();
+	      m->protect();
+	      //m->saveHiddenState();
+	      m->resetRules();
 	      objectContext->ruleRewrite(limit);
 	      //cerr << "after run\n"; RootContainer::dump(cerr);
-              context.addInCount(*objectContext);
-              d = metaLevel->upResultPair(objectContext->root(), m);
-              delete objectContext;
+	      context.addInCount(*objectContext);
+	      d = metaLevel->upResultPair(objectContext->root(), m);
+	      delete objectContext;
 	      //cerr << "after delete\n"; RootContainer::dump(cerr);
 	      //m->restoreHiddenState();
-              (void) m->unprotect();
-              return context.builtInReplace(subject, d);
-            }
+	      (void) m->unprotect();
+	      return context.builtInReplace(subject, d);
+	    }
 	  else
 	    {
 	      DebugAdvisory("bad metaterm " << QUOTE(subject->getArgument(1)));
 	    }
-        }
+	}
       else
 	{
 	  DebugAdvisory("bad bound " << QUOTE(subject->getArgument(2)));
@@ -451,7 +411,7 @@ MetaLevelOpSymbol::metaFrewrite(FreeDagNode* subject, RewritingContext& context)
 	  if (Term* t = metaLevel->downTerm(subject->getArgument(1), m))
 	    {
 	      t = t->normalize(false);
-	      DagNode* d = term2Dag(t);
+	      DagNode* d = t->term2DagEagerLazyAware();
 	      t->deepSelfDestruct();
 	      //cerr << "before create\n"; RootContainer::dump(cerr);
 	      RewritingContext* objectContext =
@@ -482,13 +442,50 @@ MetaLevelOpSymbol::metaFrewrite(FreeDagNode* subject, RewritingContext& context)
 bool
 MetaLevelOpSymbol::metaParse(FreeDagNode* subject, RewritingContext& context)
 {
-  if (MixfixModule* m = metaLevel->downModule(subject->getArgument(0)))
+  //
+  //	  op metaParse : Module VariableSet QidList Type? ~> ResultPair?
+  //
+  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
     {
       ConnectedComponent* component;
       Vector<int> metaTokens;
-      if (metaLevel->downComponent(subject->getArgument(2), m, component) &&
-	  metaLevel->downQidList(subject->getArgument(1), metaTokens))
+      if (metaLevel->downComponent(subject->getArgument(3), m, component) &&
+	  metaLevel->downQidList(subject->getArgument(2), metaTokens))
 	{
+	  AliasMapParserPair* pair;
+	  CacheableState* cachedPair;
+	  Int64 dummy;
+	  if (m->remove(subject, cachedPair, dummy, 2 /* ignore last two arguments */))
+	    {
+	      DebugInfo("cache hit for " << subject);
+	      pair = safeCast(AliasMapParserPair*, cachedPair);
+	    }
+	  else
+	    {
+	      //
+	      //	We don't have a cached (AliasMap, MixfixParser) pair
+	      //	for (Module, VariableSet) so we need to make one.
+	      //
+	      //	We don't have special treatment for the empty AliasMap.
+	      //	MixfixParsers are only made by makeGrammar() in response
+	      //	to a parse request so we don't expect to have a default
+	      //	parser that we could use.
+	      //
+	      pair = new AliasMapParserPair();  // empty map, null parser
+	      if (!(metaLevel->downVariableDeclSet(subject->getArgument(1), pair->aliasMap, m)))
+		{
+		  delete pair;
+		  return false;
+		}
+	    }
+	  //
+	  //	Swap our (AliasMap, MixfixParser) pair with the AliasMap
+	  //	and Parser in m.
+	  //	
+	  m->swapVariableAliasMap(pair->aliasMap, pair->parser);
+	  //
+	  //	Do the parse.
+	  //
 	  int nrTokens = metaTokens.length();
 	  Vector<Token> tokens(nrTokens);
 	  for (int i = 0; i < nrTokens; i++)
@@ -496,7 +493,19 @@ MetaLevelOpSymbol::metaParse(FreeDagNode* subject, RewritingContext& context)
 	  Term* parse1;
 	  Term* parse2;
 	  int firstBad;
-	  switch(m->parseTerm2(tokens, component, parse1, parse2, firstBad))
+	  int result = m->parseTerm2(tokens, component, parse1, parse2, firstBad);
+	  //
+	  //	Restore AliasMaps and Parsers.
+	  //
+	  m->swapVariableAliasMap(pair->aliasMap, pair->parser);
+	  //
+	  //	Cache the AliasMap and Parser we just used.
+	  //
+	  m->insert(subject, pair, 0 /* dummy value */);
+	  //
+	  //	Handle the result from the parser.
+	  //
+	  switch(result)
 	    {
 	    case -1: 	// bad token
 	    case 0:	// no parse
@@ -529,16 +538,33 @@ bool
 MetaLevelOpSymbol::metaPrettyPrint(FreeDagNode* subject, RewritingContext& context)
 {
   int printFlags;
-  if (metaLevel->downPrintOptionSet(subject->getArgument(2), printFlags))
+  if (metaLevel->downPrintOptionSet(subject->getArgument(3), printFlags))
     {
-      if (MixfixModule* m = metaLevel->downModule(subject->getArgument(0)))
+      if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
 	{
-	  if (Term* t = metaLevel->downTerm(subject->getArgument(1), m))
+	  MixfixModule::AliasMap aliasMap;
+	  if (metaLevel->downVariableDeclSet(subject->getArgument(1), aliasMap, m))
 	    {
-	      Vector<int> buffer;
-	      m->bufferPrint(buffer, t, printFlags);
-	      t->deepSelfDestruct();
-	      return context.builtInReplace(subject, metaLevel->upQidList(buffer));
+	      if (Term* t = metaLevel->downTerm(subject->getArgument(2), m))
+		{
+		  //
+		  //	Swap in our alias map and a null parser.
+		  //
+		  MixfixParser* parser = 0;
+		  m->swapVariableAliasMap(aliasMap, parser);
+		  //
+		  //	Do the pretty print.
+		  //
+		  Vector<int> buffer;
+		  m->bufferPrint(buffer, t, printFlags);
+		  //
+		  //	Restore original alias map and parser.
+		  //
+		  m->swapVariableAliasMap(aliasMap, parser);
+		  
+		  t->deepSelfDestruct();
+		  return context.builtInReplace(subject, metaLevel->upQidList(buffer));
+		}
 	    }
 	}
     }
@@ -568,7 +594,7 @@ MetaLevelOpSymbol::metaDownTerm(FreeDagNode* subject, RewritingContext& context)
       if (tc == wc)
 	{
 	  t = t->normalize(false);
-	  d = term2Dag(t);
+	  d = t->term2DagEagerLazyAware();
 	}
       else
 	{
@@ -578,6 +604,133 @@ MetaLevelOpSymbol::metaDownTerm(FreeDagNode* subject, RewritingContext& context)
       t->deepSelfDestruct();
     }
   return context.builtInReplace(subject, d);
+}
+
+bool
+MetaLevelOpSymbol::metaParseStrategy(FreeDagNode* subject, RewritingContext& context)
+{
+  //
+  //	  op metaParseStrategy : Module VariableSet QidList Type? ~> Strategy?
+  //
+  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
+    {
+      Vector<int> metaTokens;
+      if (metaLevel->downQidList(subject->getArgument(2), metaTokens))
+	{
+	  AliasMapParserPair* pair;
+	  CacheableState* cachedPair;
+	  Int64 dummy;
+	  if (m->remove(subject, cachedPair, dummy, 1 /* ignore last argument */))
+	    {
+	      DebugInfo("cache hit for " << subject);
+	      pair = safeCast(AliasMapParserPair*, cachedPair);
+	    }
+	  else
+	    {
+	      //
+	      //	We don't have a cached (AliasMap, MixfixParser) pair
+	      //	for (Module, VariableSet) so we need to make one.
+	      //
+	      //	We don't have special treatment for the empty AliasMap.
+	      //	MixfixParsers are only made by makeGrammar() in response
+	      //	to a parse request so we don't expect to have a default
+	      //	parser that we could use.
+	      //
+	      pair = new AliasMapParserPair();  // empty map, null parser
+	      if (!(metaLevel->downVariableDeclSet(subject->getArgument(1), pair->aliasMap, m)))
+		{
+		  delete pair;
+		  return false;
+		}
+	    }
+	  //
+	  //	Swap our (AliasMap, MixfixParser) pair with the AliasMap
+	  //	and Parser in m.
+	  //
+	  m->swapVariableAliasMap(pair->aliasMap, pair->parser);
+
+	  int nrTokens = metaTokens.length();
+	  Vector<Token> tokens(nrTokens);
+	  for (int i = 0; i < nrTokens; i++)
+	    tokens[i].tokenize(metaTokens[i], FileTable::META_LEVEL_CREATED);
+
+	  StrategyExpression* parse1;
+	  StrategyExpression* parse2;
+	  int firstBad;
+	  int ok = m->parseStrategyExpr2(tokens, parse1, parse2, firstBad);
+	  //
+	  //	Restore AliasMaps and Parsers.
+	  //
+	  m->swapVariableAliasMap(pair->aliasMap, pair->parser);
+	  //
+	  //	Cache the AliasMap and Parser we just used.
+	  //
+	  m->insert(subject, pair, 0 /* dummy value */);
+	  //
+	  //	Handle the result from the parser.
+	  //
+	  switch(ok)
+	    {
+	    case -1: 	// bad token
+	    case 0:	// no parse
+	      {
+		return context.builtInReplace(subject, metaLevel->upNoParse(firstBad, true));
+	      }
+	    case 1:	// 1 parse
+	      {
+		// Strategies are not checked here
+
+		DagNode* d = metaLevel->upStratExpr(parse1, m);
+		delete parse1;
+		return context.builtInReplace(subject, d);
+	      }
+	    default:	// more than 1 parse
+	      {
+		DagNode* d = metaLevel->upAmbiguity(parse1, parse2, m);
+		delete parse1;
+		delete parse2;
+		return context.builtInReplace(subject, d);
+	      }
+	    }
+	}
+    }
+  return false;
+}
+
+bool
+MetaLevelOpSymbol::metaPrettyPrintStrategy(FreeDagNode* subject, RewritingContext& context)
+{
+  int printFlags;
+  if (metaLevel->downPrintOptionSet(subject->getArgument(3), printFlags))
+    {
+      if (MixfixModule* m = metaLevel->downModule(subject->getArgument(0)))
+	{
+	  MixfixModule::AliasMap aliasMap;
+	  if (metaLevel->downVariableDeclSet(subject->getArgument(1), aliasMap, m))
+	    {
+	      if (StrategyExpression* e = metaLevel->downStratExpr(subject->getArgument(2), m))
+		{
+		  //
+		  //	Swap in our alias map and a null parser.
+		  //
+		  MixfixParser* parser = 0;
+		  m->swapVariableAliasMap(aliasMap, parser);
+		  //
+		  //	Do the pretty print.
+		  //
+		  Vector<int> buffer;
+		  m->bufferPrint(buffer, e, printFlags);
+		  //
+		  //	Restore original alias map and parser.
+		  //
+		  m->swapVariableAliasMap(aliasMap, parser);
+		  delete e;
+		  return context.builtInReplace(subject, metaLevel->upQidList(buffer));
+		}
+	    }
+	}
+    }
+  return false;
 }
 
 #include "SMT_Info.hh"

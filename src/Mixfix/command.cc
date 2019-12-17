@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -56,22 +56,24 @@ void
 SyntacticPreModule::showModule(ostream& s)
 {
   s << MixfixModule::moduleTypeString(getModuleType()) << ' ' << this;
-  int nrParameters = parameters.size();
+  int nrParameters = getNrParameters();
   if (nrParameters > 0)
     {
-      s << '{' << parameters[0].name << " :: " << parameters[0].theory;
+      s << '{' << Token::name(getParameterName(0)) << " :: " << getParameter(0); // FIX NAME
       for (int i = 1; i < nrParameters; ++i)
-	s << ", " << parameters[i].name << " :: " << parameters[i].theory;
+	s << ", " << Token::name(getParameterName(i)) << " :: " << getParameter(i); // FIX NAME
       s << '}';
     }
   s << " is\n";
 
-  int nrImports = imports.length();
+  const char* modeStrings[] = { "protecting", "extending", "including" };
+
+  int nrImports = getNrImports();
   for (int i = 0; i < nrImports; i++)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << "  " << imports[i].mode << ' ' << imports[i].expr << " .\n";
+      s << "  " << modeStrings[getImportMode(i)] << ' ' << getImport(i) << " .\n";  // FIX MODE
     }
 
   int nrSortDecls = sortDecls.length();
@@ -117,6 +119,15 @@ SyntacticPreModule::showModule(ostream& s)
 	}
     }
 
+  int nrStratDecls = stratDecls.length();
+  for (int i = 0; i < nrStratDecls; i++)
+    {
+      printStratDecl(s, stratDecls[i]);
+
+      if (UserLevelRewritingContext::interrupted())
+	return;
+    }
+
   int nrStatements = statements.length();
   for (int i = 0; i < nrStatements; i++)
     {
@@ -143,6 +154,30 @@ SyntacticPreModule::printOpDef(ostream&s, int defIndex)
       s << "-> " << opDef.types[nrArgs] << ' ';
     }
   printAttributes(s, opDef);
+  s << ".\n";
+}
+
+void
+SyntacticPreModule::printStratDecl(ostream& s, const StratDecl& decl)
+{
+  size_t rangeIndex = decl.types.length() - 1;
+
+  s << (decl.names.length() == 1 ? "  strat " : "  strats ");
+
+  int nrNames = decl.names.length();
+  for (int i = 0; i < nrNames; i++)
+    s << decl.names[i] << ' ';
+
+  if (rangeIndex > 0)
+    {
+      s << ": ";
+
+      for (size_t i = 0; i < rangeIndex; i++)
+	s << decl.types[i] << " ";
+    }
+  s << "@ " << decl.types[rangeIndex] << ' ';
+
+  printAttributes(s, decl);
   s << ".\n";
 }
 
@@ -174,7 +209,7 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
 	  space = " ";
 	}
       s << ')';
-   }
+    }
   //
   //	Theory attributes.
   //
@@ -297,7 +332,9 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
 	    "id-hook", "op-hook", "term-hook"
 	  };
 	  s << "\n    " << hookTypes[i->type] << ' ' <<
-	    Token::name(i->name) << " (" << i->details << ')';
+	    Token::name(i->name);
+	  if (!(i->details.empty()))
+	    s << " (" << i->details << ')';
 	}
       s << ')';
     }
@@ -333,4 +370,12 @@ SyntacticPreModule::printFormat(ostream& s, const Vector<int>& format)
   int formatLen = format.length();
   for (int i = 0; i < formatLen; i++)
     s << Token::name(format[i]) << ((i == formatLen - 1) ? ')' : ' ');
+}
+
+void
+SyntacticPreModule::printAttributes(ostream& s, const StratDecl& stratDecl)
+{
+  if (stratDecl.metadata == NONE)
+    return;
+  s << "[metadata " << Token::name(stratDecl.metadata) << ']';
 }

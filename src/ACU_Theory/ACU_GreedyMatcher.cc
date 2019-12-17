@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -68,7 +68,7 @@ ACU_LhsAutomaton::greedyMatch(ACU_DagNode* subject,
 		break;
 	      d = args[j].dagNode;
 	    }
-	  while (t == 0 || t->partialCompare(solution, d) != Term::GREATER);
+	  while (t == 0 || t->partialCompare(solution, d) != Term::LESS);
 	}
       return ((i - nonGroundAliens.begin()) < nrIndependentAliens) ?
 	false : UNDECIDED;

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for class PreModule.
+//      Implementation for class SyntacticPreModule.
 //
 
 //      utility stuff
@@ -56,6 +56,7 @@
 #include "rewritingContext.hh"
 #include "argumentIterator.hh"
 #include "dagArgumentIterator.hh"
+#include "rewriteStrategy.hh"
 //#include "dagNodeSet.hh"
 
 //	front end class definitions
@@ -70,34 +71,37 @@
 #include "syntacticPreModule.hh"
 #include "interpreter.hh"
 #include "maudemlBuffer.hh"
-#include "global.hh"  // HACK shouldn't be accessing global variables
 
 #ifdef QUANTIFY_PROCESSING
 #include "quantify.h"
 #endif
 
 //	our stuff
-//#include "import.cc"
 #include "process.cc"
 #include "fixUp.cc"
 #include "ops.cc"
 #include "command.cc"
 
-SyntacticPreModule::SyntacticPreModule(Token startToken, Token moduleName)
-  : PreModule(moduleName.code(), &interpreter /* HACK */),
+SyntacticPreModule::SyntacticPreModule(Token startToken, Token moduleName, Interpreter* owner)
+  : PreModule(moduleName.code(), owner),
     LineNumber(moduleName.lineNumber()),
     startTokenCode(startToken.code())
 {
-  MixfixModule::ModuleType moduleType =  MixfixModule::FUNCTIONAL_MODULE;
+  MixfixModule::ModuleType moduleType = MixfixModule::FUNCTIONAL_MODULE;
   if (startTokenCode == th)
     moduleType = MixfixModule::SYSTEM_THEORY;
   else if (startTokenCode == fth)
     moduleType = MixfixModule::FUNCTIONAL_THEORY;
-  else if (startTokenCode == mod || startTokenCode == omod || startTokenCode == smod)
+  else if (startTokenCode == sth)
+    moduleType = MixfixModule::STRATEGY_THEORY;
+  else if (startTokenCode == mod || startTokenCode == omod)
     moduleType = MixfixModule::SYSTEM_MODULE;
+  else if (startTokenCode == smod)
+    moduleType = MixfixModule::STRATEGY_MODULE;
   setModuleType(moduleType);
 
   lastSawOpDecl = false;
+  isStrategy = false;
   isCompleteFlag = false;
   flatModule = 0;
 }
@@ -106,14 +110,6 @@ SyntacticPreModule::~SyntacticPreModule()
 {
   if (flatModule != 0)
     flatModule->deepSelfDestruct();
-  {
-    FOR_EACH_CONST(i, Vector<Import>, imports)
-      i->expr->deepSelfDestruct();
-  }
-  {
-    FOR_EACH_CONST(i, Vector<Parameter>, parameters)
-      i->theory->deepSelfDestruct();
-  }
 }
 
 void
@@ -122,7 +118,7 @@ SyntacticPreModule::regretToInform(Entity* doomedEntity)
   Assert(doomedEntity == flatModule, "module pointer error");
   flatModule = 0;
 #ifdef COMPILER
-  interpreter.invalidate(this);
+  getOwner()->invalidate(this);
 #endif
 }
 
@@ -147,6 +143,7 @@ could not be patched up and thus it cannot be used or imported.");
 	{
 	  //IssueWarning("calling closeTheory on  " << *m);  // HACK
 	  m->closeTheory();
+	  m->checkFreshVariableNames();
 	}
       m->resetImports();
     }
@@ -163,7 +160,10 @@ SyntacticPreModule::getFlatSignature()
       process();
     }
   else if (flatModule->getStatus() == Module::OPEN)
-    return 0;  // we must already be in the middle of processing this module
+    {
+      DebugNew("module " << this << " had flatModule status open");
+      return 0;  // we must already be in the middle of processing this module
+    }
   return flatModule;
 }
 
@@ -174,6 +174,8 @@ SyntacticPreModule::compatible(int endTokenCode)
     return endTokenCode == endth;
   if (startTokenCode == fth)
     return endTokenCode == endfth;
+  if (startTokenCode == sth)
+    return endTokenCode == endsth;
   if (startTokenCode == mod)
     return endTokenCode == endm;
   if (startTokenCode == fmod)
@@ -197,14 +199,45 @@ SyntacticPreModule::finishModule(Token endToken)
 		   QUOTE(Token::name(startTokenCode)) << " ends with "
 		   << QUOTE(endToken) << '.');
     }
-  autoImports = interpreter.getAutoImports(); // deep copy
+  autoImports = getOwner()->getAutoImports(); // deep copy
   isCompleteFlag = true;
-  interpreter.insertModule(id(), this);
+  getOwner()->insertModule(id(), this);
   process();
   //
   //	House keeping.
   //
-  interpreter.destructUnusedModules();
+  getOwner()->destructUnusedModules();
+}
+
+void
+SyntacticPreModule::addParameter2(Token name, ModuleExpression* theory)
+{
+  PreModule::addParameter(name, theory);
+}
+
+void
+SyntacticPreModule::addImport(Token modeToken, ModuleExpression* expr)
+{
+  ImportModule::ImportMode mode;
+  LineNumber lineNumber(modeToken.lineNumber());
+  int code = modeToken.code();
+  if (code == pr || code == protecting)
+    mode = ImportModule::PROTECTING;
+  else if (code == ex || code == extending)
+    mode = ImportModule::EXTENDING;
+  else if (code == inc || code == including)
+    mode = ImportModule::INCLUDING;
+  else
+    {
+      Assert(code == us || code == usingToken, "unknown importation mode");
+
+      IssueWarning(lineNumber <<
+		   ": importation mode " << QUOTE("using") <<
+		   " not supported - treating it like " <<
+		   QUOTE("including") << '.');
+      mode = ImportModule::INCLUDING;
+    }
+  PreModule::addImport(lineNumber, mode, expr);
 }
 
 SyntacticPreModule::OpDef::OpDef()
@@ -214,53 +247,38 @@ SyntacticPreModule::OpDef::OpDef()
 }
 
 void
-SyntacticPreModule::addParameter(Token name, ModuleExpression* theory)
-{
-  if (MixfixModule::isTheory(getModuleType()))
-    {
-      IssueWarning(LineNumber(name.lineNumber()) <<
-		   ": parmaeterized theories are not supported; recovering by ignoring parameter " <<
-		   QUOTE(name) << '.');
-      delete theory;
-      return;
-    }
-  int nrParameters = parameters.length();
-  parameters.resize(nrParameters + 1);
-  parameters[nrParameters].name = name;
-  parameters[nrParameters].theory = theory;
-}
-
-void
-SyntacticPreModule::addImport(Token mode, ModuleExpression* expr)
-{
-  int nrImports = imports.length();
-  imports.resize(nrImports + 1);
-  imports[nrImports].mode = mode;
-  imports[nrImports].expr = expr;
-}
-
-void
 SyntacticPreModule::addStatement(const Vector<Token>& statement)
 {
+  //
+  // Checks if this module admits the statement and issues a warning if
+  // it does not.
+  //
   int keywordCode = statement[0].code();
-  if (keywordCode == rl || keywordCode == crl)
-    {
-      if (getModuleType() == MixfixModule::FUNCTIONAL_THEORY)
-	{
+  {
+    MixfixModule::ModuleType moduleType = getModuleType();
+    bool isStrategic = MixfixModule::isStrategic(moduleType);
+    const char* modorth = MixfixModule::isTheory(moduleType) ? "theory." : "module.";
+
+    if (keywordCode == rl || keywordCode == crl)
+      {
+	if (moduleType == MixfixModule::FUNCTIONAL_MODULE ||
+	    moduleType == MixfixModule::FUNCTIONAL_THEORY)
 	  IssueWarning(LineNumber(statement[0].lineNumber()) <<
-		       ": rule not allowed in a functional theory.");
-	}
-      else if (getModuleType() == MixfixModule::FUNCTIONAL_MODULE)
-	{
-	  IssueWarning(LineNumber(statement[0].lineNumber()) <<
-		       ": rule not allowed in a functional module.");
-	}
-    }
+		       ": rule not allowed in a functional " << modorth);
+      }
+    else if ((keywordCode == sd || keywordCode == csd) && !isStrategic)
+	IssueWarning(LineNumber(statement[0].lineNumber()) <<
+	  ": strategy definition only allowed in a strategy module or theory.");
+  }
 
   if (statement[1].code() == leftBracket &&
       statement[3].code() == rightBracket &&
       statement[4].code() == colon)
-    (void) potentialLabels.insert(statement[2].code());
+    {
+      (void) potentialLabels.insert(statement[2].code());
+      if (keywordCode == rl || keywordCode == crl)
+	(void) potentialRuleLabels.insert(statement[2].code());
+    }
 
   int i = statement.length() - 1;
   if (statement[i].code() == rightBracket)
@@ -276,7 +294,11 @@ SyntacticPreModule::addStatement(const Vector<Token>& statement)
 		break;
 	    }
 	  else if (t == label)
-	    potentialLabels.insert(statement[i+1].code());
+	    {
+	      potentialLabels.insert(statement[i+1].code());
+	      if (keywordCode == rl || keywordCode == crl)
+		(void) potentialRuleLabels.insert(statement[i+1].code());
+	    }
 	  else if (t == rightBracket)
 	    ++bracketCount;
 	}

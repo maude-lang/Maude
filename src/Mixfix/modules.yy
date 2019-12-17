@@ -25,40 +25,32 @@
  */
 moduleExprDot	:	tokenBarDot expectedDot
                         {
-                          moduleExpressions.push(new ModuleExpression($1));
+                          $$ =  new ModuleExpression($1);
                         }
 		|	endsInDot '.'
                         {
-                          moduleExpressions.push(new ModuleExpression($1));
+                          $$ = new ModuleExpression($1);
                         }
 		|	parenExpr expectedDot
 		|	renameExpr expectedDot
 		|	instantExpr expectedDot
 		|	moduleExpr '+' moduleExprDot
 			{
-			  ModuleExpression* m1 = moduleExpressions.top();
-			  moduleExpressions.pop();
-			  ModuleExpression* m2 = moduleExpressions.top();
-			  moduleExpressions.pop();
-			  moduleExpressions.push(new ModuleExpression(m1, m2));
+			  $$ = new ModuleExpression($1, $3);
 			}
 		|	ENDS_IN_DOT
 			{
 			  Token t;
 			  t.dropChar($1);
 			  missingSpace(t);
-			  moduleExpressions.push(new ModuleExpression(t));
+			  $$ = new ModuleExpression(t);
 			}
 		;
 
 moduleExpr	:	moduleExpr2
 		|	moduleExpr '+' moduleExpr
 			{
-			  ModuleExpression* m1 = moduleExpressions.top();
-			  moduleExpressions.pop();
-			  ModuleExpression* m2 = moduleExpressions.top();
-			  moduleExpressions.pop();
-			  moduleExpressions.push(new ModuleExpression(m1, m2));
+			  $$ = new ModuleExpression($1, $3);
 			}
 		;
 
@@ -70,34 +62,56 @@ moduleExpr3	:	parenExpr
 		|	instantExpr
 		|	token
 		        {
-                          moduleExpressions.push(new ModuleExpression($1));
+                          $$ = new ModuleExpression($1);
                         }
 
 		;
 		
 renameExpr	:	moduleExpr2 '*' renaming
 			{
-			  ModuleExpression* m = moduleExpressions.top();
-			  moduleExpressions.pop();
-			  moduleExpressions.push(new ModuleExpression(m, currentRenaming));
+			  $$ = new ModuleExpression($1, currentRenaming);
 			  currentRenaming = 0;
 			}
 		;
 
-instantExpr	:	moduleExpr3 '{'			{ clear(); }
-			argList '}'
+instantExpr	:	moduleExpr3 '{' instantArgs '}'
 			{
-			  ModuleExpression* m = moduleExpressions.top();
-			  moduleExpressions.pop();
-			  moduleExpressions.push(new ModuleExpression(m, tokenSequence));
+			  $$ = new ModuleExpression($1, *($3));
+			  delete $3;
 			}
 		;
 
-parenExpr	:	'(' moduleExpr ')' {}
+parenExpr	:	'(' moduleExpr ')'
+			{
+			  $$ = $2;
+			}
 		;
 
-argList		:	argList ',' token		{ store($3); }
-		|	token				{ store($1); }
+/*
+ *	View expressions (parameters are treated as uninstantiated views for syntax purposes).
+ */
+viewExpr	:	viewExpr '{' instantArgs '}'
+			{
+			  $$ = new ViewExpression($1, *($3));
+			  delete $3;
+			}
+		|	token
+			{
+			  $$ = new ViewExpression($1);
+			}
+		;
+
+instantArgs	:	instantArgs ',' viewExpr
+			{
+			  $1->append($3);
+			  $$ = $1;
+			}
+		|	viewExpr
+			{
+			  Vector<ViewExpression*>* t =  new Vector<ViewExpression*>();
+			  t->append($1);
+			  $$ = t;
+			}
 		;
 
 /*
@@ -134,6 +148,9 @@ mapping		:	KW_SORT sortName KW_TO sortName
 		|	KW_OP 			{ lexBubble(BAR_COLON | BAR_TO, 1); }
 			fromSpec KW_TO		{ lexBubble(BAR_COMMA | BAR_LEFT_BRACKET | BAR_RIGHT_PAREN, 1); }
 			toAttributes		{}
+		|	KW_STRAT identifier	{ currentRenaming->addStratMapping($2); }
+			fromStratSpec
+			KW_TO identifier 	{ currentRenaming->addStratTarget($6); }
 		;
 /*
  *	The ':' alternative forces lookahead which allows the lexer to grab the bubble.
@@ -141,6 +158,10 @@ mapping		:	KW_SORT sortName KW_TO sortName
 fromSpec	:	':'			{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
 			typeList arrow typeName {}
 		|				{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
+		;
+
+fromStratSpec	:	stratSignature
+		|
 		;
 
 /*
@@ -168,21 +189,18 @@ toAttribute	:	KW_PREC IDENTIFIER	{ currentRenaming->setPrec($2); }
  *	Views.
  */
 view		:	KW_VIEW			{ lexerIdMode(); }
-			token KW_FROM moduleExpr
+			token
 			{
 			  fileTable.beginModule($1, $3);
-			  interpreter.setCurrentView(new View($3));
+			  interpreter.setCurrentView(new SyntacticView($3, &interpreter));
 			  currentSyntaxContainer = CV;
-			  CV->addFrom(moduleExpressions.top());
-			  moduleExpressions.pop();
 			}
+			parameters KW_FROM moduleExpr
 			KW_TO moduleExpr
-			{
-			  CV->addTo(moduleExpressions.top());
-			  moduleExpressions.pop();
-			}
 			expectedIs viewDecList KW_ENDV
 			{
+			  CV->addFrom($7);
+			  CV->addTo($9);
 			  lexerInitialMode();
 			  fileTable.endModule(lineNumber);
 			  interpreter.insertView(($3).code(), CV);
@@ -191,7 +209,7 @@ view		:	KW_VIEW			{ lexerIdMode(); }
 		;
 
 viewDecList	:	viewDecList viewDeclaration
-		|
+		|	{}
 		;
 
 skipStrayArrow	:	KW_ARROW
@@ -199,7 +217,7 @@ skipStrayArrow	:	KW_ARROW
 			  IssueWarning(LineNumber($1.lineNumber()) <<
 				       ": skipping " << QUOTE("->") << " in variable declaration.");
 			}
-		|
+		|	{}
 		;
 
 viewDeclaration	:	KW_SORT sortName KW_TO sortDot
@@ -209,6 +227,7 @@ viewDeclaration	:	KW_SORT sortName KW_TO sortDot
 		|	KW_VAR varNameList ':' skipStrayArrow typeDot {}
 		|	KW_OP			{ lexBubble(BAR_COLON | BAR_TO, 1); }
 			viewEndOpMap
+		|	KW_STRAT viewStratMap
 		|	error '.'
 		;
 
@@ -271,6 +290,59 @@ viewEndOpMap	:	':'
 			}
 		;
 
+strategyCall	:	identifier
+			{
+			  strategyCall.resize(1);
+			  strategyCall[0] = $1;
+			}
+		|	identifier '('			{ lexBubble(BAR_RIGHT_PAREN, 1); }
+			')'
+			{
+			  // Adds the identifier and parentheses to the lexer bubble
+			  int bubbleSize = lexerBubble.length();
+			  strategyCall.resize(bubbleSize + 3);
+			  strategyCall[0] = $1;
+			  strategyCall[1] = $2;
+			  for (int i = 0; i < bubbleSize; i++)
+			    strategyCall[2 + i] = lexerBubble[i];
+			  strategyCall[bubbleSize + 2] = $4;
+			}
+
+viewStratMap	:	identifier
+			{
+			  CV->addStratMapping($1);
+			}
+			stratSignature KW_TO identifier '.'
+			{
+			  CV->addStratTarget($5);
+			}
+		|	strategyCall KW_TO
+			{
+			  lexBubble(END_STATEMENT, 1);
+			}
+			endBubble
+			{
+			  if (lexerBubble[0].code() == Token::encode("expr"))
+			    {
+			      //
+			      //	Strat->expr mapping.
+			      //
+			      CV->addStratExprMapping(strategyCall, lexerBubble);
+			    }
+			  else if (strategyCall.length() == 1 && lexerBubble.length() == 1)
+			    {
+			      //
+			      //	Generic strat->strat mapping.
+			      //
+			      CV->addStratMapping(strategyCall[0]);
+			      CV->addStratTarget(lexerBubble[0]);
+			    }
+			  else {
+			    IssueWarning(LineNumber(strategyCall[0].lineNumber()) <<
+			      ": bad syntax for strategy mapping.");
+			  }
+			}
+		;
 
 endBubble	:	'.' {}
 		|	ENDS_IN_DOT
@@ -292,7 +364,7 @@ parenBubble	:	'(' 			{ lexBubble(BAR_RIGHT_PAREN, 1); }
 module		:	startModule		{ lexerIdMode(); }
 			token
 			{
-			  interpreter.setCurrentModule(new SyntacticPreModule($1, $3));
+			  interpreter.setCurrentModule(new SyntacticPreModule($1, $3, &interpreter));
 			  currentSyntaxContainer = CM;
 			  fileTable.beginModule($1, $3);
 			}
@@ -315,7 +387,7 @@ dot		:	'.' {}
 		;
 
 parameters	:	'{' parameterList '}' {}
-		|
+		|	{}
 		;
 
 parameterList	:	parameterList ',' parameter
@@ -324,9 +396,7 @@ parameterList	:	parameterList ',' parameter
 
 parameter	:	token colon2 moduleExpr
 			{
-			  ModuleExpression* me = moduleExpressions.top();
-			  moduleExpressions.pop();
-			  CM->addParameter($1, me);
+			  currentSyntaxContainer->addParameter2($1, $3);
 			}
 		;
 
@@ -356,14 +426,12 @@ startModule	:	KW_MOD | KW_OMOD
 		;
 
 decList		:	decList declaration
-		|
+		|	{}
 		;
 
 declaration	:	KW_IMPORT moduleExprDot
 			{
-			  ModuleExpression* me = moduleExpressions.top();
-			  moduleExpressions.pop();
-			  CM->addImport($1, me);
+			  CM->addImport($1, $2);
 			}
 
 		|	KW_SORT			{ clear(); }
@@ -407,6 +475,21 @@ declaration	:	KW_IMPORT moduleExprDot
 			KW_IF			{ lexContinueBubble($5, END_STATEMENT, 1); }
 			endBubble	    	{ CM->addStatement(lexerBubble); }
 
+		|	KW_SD			{ lexBubble($1, BAR_ASSIGN, 1); }
+			KW_ASSIGN		{ lexContinueBubble($3, END_STATEMENT, 1); }
+			endBubble		{ CM->addStatement(lexerBubble); }
+
+		|	KW_CSD			{ lexBubble($1, BAR_ASSIGN, 1); }
+			KW_ASSIGN		{ lexContinueBubble($3, BAR_IF, 1); }
+			KW_IF			{ lexContinueBubble($5, END_STATEMENT, 1); }
+			endBubble	    	{ CM->addStatement(lexerBubble); }
+
+		|	stratDeclKeyword	{ clear(); }
+			stratIdList
+			stratSignature
+			stratAttributes
+			dot			{}
+
 		|	KW_MSG			{ lexBubble(BAR_COLON, 1); }
 			':'			{ Token::peelParens(lexerBubble); CM->addOpDecl(lexerBubble); }
 			domainRangeAttr		{ CM->setFlag(SymbolType::MESSAGE); }
@@ -433,7 +516,7 @@ declaration	:	KW_IMPORT moduleExprDot
 			  //	to a partially processed declaration.
 			  //
 			  cleanUpModuleExpression();
-			  CM->makeOpDeclsConsistent();
+			  CM->makeDeclsConsistent();
 			}
 		;
 
@@ -471,13 +554,40 @@ domainRangeAttr	:	typeName typeList dra2
 			}
 		;
 
+stratDeclKeyword : 	KW_STRAT | KW_DSTRAT ;
+
+stratIdList	: 	stratIdList stratId
+		|	stratId
+		;
+
+stratId		:	identifier	{ CM->addStratDecl($1); }
+		;
+
+stratSignature	:	'@'
+			typeName
+		|	':'
+			typeList
+			'@'
+			typeName
+		;
+
+stratAttributes :	'[' stratAttrList ']'	{}
+		|	{}
+		;
+
+stratAttrList 	:	KW_METADATA IDENTIFIER
+			{
+			  CM->setMetadata($2);
+			}
+		;
+
 skipStrayColon 	:	':'
 			{
 			  IssueWarning(LineNumber($1.lineNumber()) <<
 				       ": skipping stray " << QUOTE(":") << " in operator declaration.");
 
 			}
-		|
+		|	{}
 		;
 
 dra2		:	skipStrayColon rangeAttr
@@ -509,7 +619,7 @@ arrow		:	KW_ARROW      		{ $$ = false; }
 		;
 
 typeList	:	typeList typeName
-		|
+		|	{}
 		;
 
 typeName	:	sortName
@@ -529,7 +639,7 @@ sortNames	:	sortNames ',' sortName		{ store($3); }
 		;
 
 attributes	:	'[' attributeList ']'	{}
-		|
+		|	{}
 		;
 
 attributeList	:	attributeList attribute
@@ -574,6 +684,8 @@ attribute	:	KW_ASSOC
 		|	KW_FORMAT '('		{ clear(); }
 			idList ')'		{ CM->setFormat(tokenSequence); }
 		|	KW_STRAT '('		{ clear(); }
+			idList ')'		{ CM->setStrat(tokenSequence); }
+		|	KW_ASTRAT '('		{ clear(); }
 			idList ')'		{ CM->setStrat(tokenSequence); }
 		|	KW_POLY '('		{ clear(); }
 			idList ')'		{ CM->setPoly(tokenSequence); }
@@ -622,15 +734,15 @@ attribute	:	KW_ASSOC
  *	bubble corresponding to the identity. We never see a FORCE_LOOKAHEAD token.
  */
 identity	:	FORCE_LOOKAHEAD
-		|
+		|	{}
 		;
 
 idList		:	idList IDENTIFIER	{ store($2); }
 		|	IDENTIFIER		{ store($1); }
 		;
 
-hookList	:	hookList hook
-		|	hook
+hookList	:	hookList hook		{}
+		|	hook	 		{}
 		;
 
 hook		:	KW_ID_HOOK token		{ clear(); CM->addHook(SyntacticPreModule::ID_HOOK, $2, tokenSequence); }
@@ -661,7 +773,7 @@ expectedDot	:	'.' {}
  *	Sort and subsort lists.
  */
 sortNameList	:	sortNameList sortName	{ store($2); }
-		|
+		|	{}
 		;
 
 subsortList	:	subsortList sortName	{ store($2); }
@@ -727,12 +839,13 @@ inert		:	IDENTIFIER | '{' | '}' | '+' | '*' | '|' | KW_COLON2 | KW_LABEL
 identifier	:	inert | ENDS_IN_DOT | ',' | KW_TO
 		;
 
-startKeyword	:	KW_MSG | startKeyword2
+startKeyword	:	KW_MSG | startKeyword2	// TODO if we add KW_STRATS here  => 71 conflicts red-red appear (there seem to be no need)
 		;
 
-startKeyword2	:	KW_IMPORT | KW_SORT | KW_SUBSORT | KW_OP | KW_OPS | KW_VAR
+startKeyword2	:	KW_IMPORT | KW_SORT | KW_SUBSORT | KW_OP | KW_OPS | KW_VAR | KW_DSTRAT
 		|	KW_MSGS | KW_CLASS | KW_SUBCLASS
 		|	KW_MB | KW_CMB | KW_EQ | KW_CEQ | KW_RL | KW_CRL | KW_ENDM | KW_ENDV
+		|	KW_SD | KW_CSD
 		;
 
 midKeyword	:	'<' | ':' | KW_ARROW | KW_PARTIAL | '=' | KW_ARROW2 | KW_IF

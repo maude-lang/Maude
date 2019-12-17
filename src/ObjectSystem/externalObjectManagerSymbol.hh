@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -48,6 +48,10 @@ public:
   //	allocated to an external object.
   //
   virtual void cleanUp(DagNode* objectId) = 0;
+
+  void trivialReply(Symbol* replySymbol, 
+		    FreeDagNode* originalMessage,
+		    ObjectSystemRewritingContext& context);
 };
 
 #endif

@@ -83,7 +83,7 @@ red wellFormed(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   mb 'a.Foo : 'Bar [none] .
   none
-endfm, none) .
+endfm, (none).Substitution) .
 
 red wellFormed(fmod 'FOO is
   protecting 'FLOAT .

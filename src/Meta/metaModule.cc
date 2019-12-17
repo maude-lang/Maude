@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -39,9 +39,8 @@
 #include "metaModule.hh"
 
 
-MetaModule::MetaModule(int name, ModuleType moduleType, Entity::User* parent, Interpreter* owner)
-  : VisibleModule(name, moduleType, parent),
-    owner(owner)
+MetaModule::MetaModule(int name, ModuleType moduleType, Interpreter* owner)
+  : VisibleModule(name, moduleType, owner)
 {
   //cout << "made meta module " << name << endl;
 }
@@ -94,4 +93,17 @@ MetaModule::removeComplexSymbol(int& type,
   domainAndRange = cs.domainAndRange;  // deep copy
   complexSymbols.contractTo(nrComplexSymbols);
   return true;
+}
+
+void
+MetaModule::registerRuleLabels()
+{
+  set<int> labels;
+  const Vector<Rule*>& rules = getRules();
+
+  for (Rule* rule : rules)
+    if (rule->getLabel().id() != NONE)
+      labels.insert(rule->getLabel().id());
+
+  insertPotentialRuleLabels(labels);
 }

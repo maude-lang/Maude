@@ -1,8 +1,8 @@
-Maude> Warning: <standard input>, line 12 (mod FOO): variable Z is used before it is
+Warning: <standard input>, line 12 (mod FOO): variable Z is used before it is
     bound in rule:
 crl f(X, Y, Y) => f(Z, X) if Z =/= Y = true .
 mod FOO is
-  inc INT .
+  including INT .
   sorts Foo .
   subsorts Int < Foo .
   op f : Int Int -> Int [assoc comm id: 1] .
@@ -404,9 +404,9 @@ var Z : Int .
 var X : Int .
 var Y : Int .
 Grammar:
-	nonterminals: 42
-	terminals: 124
-	productions: 192
+	nonterminals: 43
+	terminals: 126
+	productions: 197
 
 Term rewriting system:
 	kinds: 2
@@ -417,12 +417,14 @@ Term rewriting system:
 	membership axioms: 2
 	equations: 11
 	rules: 2
+	strategies: 0
+	strategy definitions: 0
 fmod INT is
   protecting NAT .
   sorts NzInt Int .
   subsorts NzNat < NzInt Nat < Int .
   op -_ : NzNat -> NzInt [ctor special (
-    id-hook MinusSymbol ()
+    id-hook MinusSymbol
     op-hook succSymbol (s_ : Nat ~> NzNat)
     op-hook minusSymbol (-_ : NzNat ~> Int))] .
   op -_ : NzInt -> NzInt [ditto] .
@@ -538,7 +540,7 @@ fmod INT is
     term-hook falseTerm (false))] .
 endfm
 mod FOO is
-  inc INT .
+  including INT .
   sorts Foo .
   subsorts Int < Foo .
   op f : Int Int -> Int [assoc comm id: 1] .
@@ -1229,4 +1231,4 @@ mod FOO is
   rl f(X, X, Y) => f(Y, Y) .
   crl f(X, Y, Y) => f(Z, X) if (Z =/= Y) = true [nonexec] .
 endm
-Maude> Bye.
+Bye.

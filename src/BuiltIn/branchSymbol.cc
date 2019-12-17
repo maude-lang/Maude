@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -223,7 +223,9 @@ BranchSymbol::domainSortAlwaysLeqThan(Sort* /* sort */, int /* argNr */)
 void
 BranchSymbol::stackArguments(DagNode* subject,
 			     Vector<RedexPosition>& stack,
-			     int parentIndex)
+			     int parentIndex,
+			     bool respectFrozen,
+			     bool eagerContext)
 {
   //
   //	We need to define this because we have a builtin strategy. We stack
@@ -232,13 +234,13 @@ BranchSymbol::stackArguments(DagNode* subject,
   const NatSet& frozen = getFrozen();
   FreeDagNode* f = safeCast(FreeDagNode*, subject);
   DagNode* d = f->getArgument(0);
-  if (!(frozen.contains(0)) && !(d->isUnstackable()))
-    stack.append(RedexPosition(d, parentIndex, 0, true));
+  if (!(respectFrozen && frozen.contains(0)) && !(d->isUnstackable()))
+    stack.append(RedexPosition(d, parentIndex, 0, eagerContext));
   int nrTerms = testTerms.length();
   for (int i = 1; i <= nrTerms; i++)
     {
       d = f->getArgument(i);
-      if (!(frozen.contains(i)) && !(d->isUnstackable()))
+      if (!(respectFrozen && frozen.contains(i)) && !(d->isUnstackable()))
 	stack.append(RedexPosition(d, parentIndex, i, false));
     }
 }

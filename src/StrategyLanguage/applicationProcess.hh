@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -26,7 +26,8 @@
 #ifndef _applicationProcess_hh_
 #define _applicationProcess_hh_
 #include "strategicProcess.hh"
-#include "sharedRewriteSearchState.hh"
+#include "rewriteSearchState.hh"
+#include "sharedValue.hh"
 #include "strategyStackManager.hh"
 
 class ApplicationProcess : public StrategicProcess
@@ -41,11 +42,13 @@ public:
 		     StrategicExecution* taskSibling,
 		     StrategicProcess* insertionPoint);
 
+  ~ApplicationProcess();
+
   Survival run(StrategicSearch& searchObject);
 
   static StrategicExecution::Survival
     resolveRemainingConditionFragments(StrategicSearch& searchObject,
-				       SharedRewriteSearchState::Ptr rewriteState,
+				       SharedValue<RewriteSearchState> rewriteState,
 				       PositionState::PositionIndex redexIndex,
 				       ExtensionInfo* extensionInfo,
 				       Substitution* substitutionSoFar,
@@ -59,15 +62,17 @@ public:
 
 private:
   static int doRewrite(StrategicSearch& searchObject,
-		       SharedRewriteSearchState::Ptr rewriteState,
+		       SharedValue<RewriteSearchState> rewriteState,
 		       PositionState::PositionIndex redexIndex,
 		       ExtensionInfo* extensionInfo,
 		       Substitution* substitution,
 		       Rule* rule);
 
-  SharedRewriteSearchState::Ptr rewriteState;
+  SharedValue<RewriteSearchState> rewriteState;
   StrategyStackManager::StackId pending;
   ApplicationStrategy* strategy;
+
+  Vector<DagRoot*> instedSubstitution;
 };
 
 #endif

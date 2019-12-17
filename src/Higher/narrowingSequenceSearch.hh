@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
 
@@ -57,6 +57,7 @@ public:
   RewritingContext* getContext() const;
   DagNode* getStateDag() const;
   int getVariableTotalForPreviouslyReturnedStates() const;
+  bool isIncomplete() const;
 
 private:
   bool findNextInterestingState();
@@ -80,6 +81,7 @@ private:
 
   int variableTotalForPreviouslyReturnedStates;
   int variableTotalForAllReturnedStates;
+  bool incompleteFlag;
 };
 
 inline const Pattern*
@@ -109,7 +111,6 @@ NarrowingSequenceSearch::getState() const
 inline RewritingContext*
 NarrowingSequenceSearch::getContext() const
 {
-  Assert(stateStack.size() > 0, "once stack is empty initial has been deleted");
   return initial;
 }
 
@@ -123,6 +124,15 @@ inline int
 NarrowingSequenceSearch::getVariableTotalForPreviouslyReturnedStates() const
 {
   return variableTotalForPreviouslyReturnedStates;
+}
+
+inline bool
+NarrowingSequenceSearch::isIncomplete() const
+{
+  //
+  //	Returns true if any incompleteness has been encountered so far.
+  //
+  return incompleteFlag;
 }
 
 #endif

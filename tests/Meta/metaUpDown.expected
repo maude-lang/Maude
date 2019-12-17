@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : metaReduce(['BOOL], 'true.Bool) .
 rewrites: 2
 result ResultPair: {'true.Bool,'Bool}
@@ -103,4 +103,4 @@ result Foo: f(a, f(b, d))
 reduce in UP-DOWN-TEST : downTerm('f['a.Foo,'f['b.Foo,'c.Foo]], a) .
 rewrites: 2
 result Foo: f(a, f(b, d))
-Maude> Bye.
+Bye.

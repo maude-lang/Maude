@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -100,6 +100,12 @@ S_DagNode::copyEagerUptoReduced2()
   return new S_DagNode(s, *number, argCopy);
 }
 
+DagNode*
+S_DagNode::copyAll2()
+{
+  return new S_DagNode(symbol(), *number, arg->copyAll());
+}
+
 void
 S_DagNode::clearCopyPointers2()
 {
@@ -151,16 +157,6 @@ S_DagNode::copyWithReplacement(Vector<RedexPosition>& redexStack,
 }
 
 void
-S_DagNode::stackArguments(Vector<RedexPosition>& stack,
-			  int parentIndex,
-			  bool respectFrozen)
-{
-  if (!(respectFrozen && symbol()->getFrozen().contains(0)) &&
-      !(arg->isUnstackable()))
-    stack.append(RedexPosition(arg, parentIndex, 0));
-}
-
-void
 S_DagNode::partialReplace(DagNode* replacement, ExtensionInfo* extensionInfo)
 {
   *number = safeCast(S_ExtensionInfo*, extensionInfo)->getUnmatched();
@@ -209,11 +205,14 @@ S_DagNode::matchVariableWithExtension(int index,
 //
 
 DagNode::ReturnResult
-S_DagNode::computeBaseSortForGroundSubterms()
+S_DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 {
-  ReturnResult r = arg->computeBaseSortForGroundSubterms();
+  ReturnResult r = arg->computeBaseSortForGroundSubterms(warnAboutUnimplemented);
   if (r == GROUND)
-    symbol()->computeBaseSort(this);
+    {
+      symbol()->computeBaseSort(this);
+      setGround();
+    }
   return r;
 }
 
@@ -323,7 +322,10 @@ S_DagNode::instantiate2(const Substitution& substitution)
 //
 
 DagNode*
-S_DagNode::instantiateWithReplacement(const Substitution& /* substitution */, const Vector<DagNode*>& /* eagerCopies */, int argIndex, DagNode* newDag)
+S_DagNode::instantiateWithReplacement(const Substitution& /* substitution */,
+				      const Vector<DagNode*>* /* eagerCopies */,
+				      int argIndex,
+				      DagNode* newDag)
 {
   Assert(argIndex == 0, "bad arg index");
   return new S_DagNode(symbol(), *number, newDag);
@@ -350,11 +352,24 @@ S_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vector
 	  n = t->arg;
 	}
       DagNode* d =  new S_DagNode(s, num, n);
+      //
+      //	Currently the only user of this function is PositionState::rebuildAndInstantiateDag()
+      //	via instantiateWithCopies(), SAFE_INSTANTIATE() and instantiateWithReplacement(),
+      //	and this is only used for various kinds of narrowing steps. These are followed
+      //	by reduction so we don't need to worry about:
+      //	  normal forms
+      //	  sort computations
+      //	  ground flags
+      //
+      //	If this changes in the future the following will be needed:
+      //
+#if 0
       if (n->isGround())
 	{
 	  s->computeBaseSort(d);
 	  d->setGround();
 	}
+#endif
       return d;
     }
   return 0;

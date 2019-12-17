@@ -1,0 +1,85 @@
+==========================================
+erewrite in APPLY-TEST : <> < me : User | subst: none > createInterpreter(
+    interpreterManager, me, none) .
+rewrites: 9
+mb applications: 0  equational rewrites: 3  rule rewrites: 6  variant narrowing
+    steps: 0  narrowing steps: 0
+result Configuration: <> < me : User | soln: 3,got: appliedRule(me,
+    interpreter(0), 1, 'a.Foo, 'Foo, 
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo),got: appliedRule(me, interpreter(0), 1, 'b.Foo, 'Foo, 
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'a.Foo),subst: none > noSuchResult(me, interpreter(0), 0)
+==========================================
+erewrite in APPLY-TEST : <> < me : User | subst: (
+  'Y:Foo <- 'b.Foo) > createInterpreter(interpreterManager, me, none) .
+rewrites: 6
+mb applications: 0  equational rewrites: 2  rule rewrites: 4  variant narrowing
+    steps: 0  narrowing steps: 0
+result Configuration: <> < me : User | soln: 2,got: appliedRule(me,
+    interpreter(0), 1, 'a.Foo, 'Foo, 
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo),subst: (
+  'Y:Foo <- 'b.Foo) > noSuchResult(me, interpreter(0), 0)
+==========================================
+erewrite in APPLY-TEST2 : <> < me : User | subst: none > createInterpreter(
+    interpreterManager, me, none) .
+rewrites: 39
+mb applications: 0  equational rewrites: 13  rule rewrites: 26  variant
+    narrowing steps: 0  narrowing steps: 0
+result Configuration: <> < me : User | soln: 13,got: appliedRule(me,
+    interpreter(0), 1, 'g['g['a.Foo]], 'Foo, 
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'f['b.Foo,'c.Foo], 'g['g[[]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['b.Foo]], 'Foo, 
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'f['a.Foo,'c.Foo], 'g['g[[]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['c.Foo]], 'Foo, 
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'f['a.Foo,'b.Foo], 'g['g[[]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['f['a.Foo,'b.Foo]]], 'Foo, 
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'c.Foo, 'g['g['f['b.Foo,[]]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['f['a.Foo,'b.Foo]]], 'Foo, 
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'c.Foo, 'g['g['f['a.Foo,[]]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['f['a.Foo,'b.Foo]]], 'Foo, 
+  'X:Foo <- 'f['a.Foo,'b.Foo] ; 
+  'Y:Foo <- 'c.Foo, 'g['g[[]]]),got: appliedRule(me, interpreter(0), 1, 'g['g[
+    'f['a.Foo,'c.Foo]]], 'Foo, 
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo, 'g['g['f['c.Foo,[]]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['f['a.Foo,'c.Foo]]], 'Foo, 
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'b.Foo, 'g['g['f['a.Foo,[]]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['f['a.Foo,'c.Foo]]], 'Foo, 
+  'X:Foo <- 'f['a.Foo,'c.Foo] ; 
+  'Y:Foo <- 'b.Foo, 'g['g[[]]]),got: appliedRule(me, interpreter(0), 1, 'g['g[
+    'f['b.Foo,'c.Foo]]], 'Foo, 
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'a.Foo, 'g['g['f['c.Foo,[]]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['f['b.Foo,'c.Foo]]], 'Foo, 
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'a.Foo, 'g['g['f['b.Foo,[]]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['f['b.Foo,'c.Foo]]], 'Foo, 
+  'X:Foo <- 'f['b.Foo,'c.Foo] ; 
+  'Y:Foo <- 'a.Foo, 'g['g[[]]]),subst: none > noSuchResult(me, interpreter(0),
+    0)
+==========================================
+erewrite in APPLY-TEST2 : <> < me : User | subst: (
+  'X:Foo <- 'a.Foo) > createInterpreter(interpreterManager, me, none) .
+rewrites: 12
+mb applications: 0  equational rewrites: 4  rule rewrites: 8  variant narrowing
+    steps: 0  narrowing steps: 0
+result Configuration: <> < me : User | soln: 4,got: appliedRule(me,
+    interpreter(0), 1, 'g['g['a.Foo]], 'Foo, 
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'f['b.Foo,'c.Foo], 'g['g[[]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['f['a.Foo,'b.Foo]]], 'Foo, 
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'c.Foo, 'g['g['f['b.Foo,[]]]]),got: appliedRule(me, interpreter(0),
+    1, 'g['g['f['a.Foo,'c.Foo]]], 'Foo, 
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo, 'g['g['f['c.Foo,[]]]]),subst: (
+  'X:Foo <- 'a.Foo) > noSuchResult(me, interpreter(0), 0)
+Bye.

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -28,26 +28,35 @@
 #include "macros.hh"
 #include "bddUser.hh"
 
-int BddUser::nrUsers = 0;
+bool BddUser::buddyInitialized = false;
 BddUser::ErrorHandler* BddUser::errorHandler = 0;
 bddPair* BddUser::cachedPairing = 0;
 
 BddUser::BddUser()
 {
-  if (nrUsers == 0)
+  if (!buddyInitialized)
     {
+      //
+      //	There seems to be a bug in BuDDy that is triggered by
+      //	repeated tear-downs and re-initializations. So we initialize
+      //	BuDDy exactly once and never call bdd_done() to recover
+      //	the memory, even if there are no longer any users.
+      //
       bdd_init(DEFAULT_NODE_SIZE, DEFAULT_CACHE_SIZE);
       bdd_setvarnum(DEFAULT_NR_VARIABLES);
       bdd_gbc_hook(gc_handler);
       bdd_error_hook(err_handler);
+      buddyInitialized = true;
     }
-  ++nrUsers;
 }
 
 void
 BddUser::gc_handler(int pre, bddGbcStat* stat)
 {
-  // We don't output any message.
+  //
+  //	We replace the standard handler with an empty one to avoid
+  //	generating a message every BuDDy garbage collect.
+  //
 }
 
 void
@@ -57,20 +66,6 @@ BddUser::err_handler(int errcode)
     (*errorHandler)(errcode);
   else
     CantHappen("buddy error " << errcode);  // need an abort() for debugging
-}
-
-BddUser::~BddUser()
-{
-  --nrUsers;
-  if (nrUsers == 0)
-    {
-      if (cachedPairing != 0)
-	{
-	  bdd_freepair(cachedPairing);
-	  cachedPairing = 0;
-	}
-      bdd_done();
-    }
 }
 
 void

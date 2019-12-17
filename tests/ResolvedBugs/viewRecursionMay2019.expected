@@ -1,0 +1,4 @@
+Warning: <standard input>, line 5 (view NatSet): recursive use of view NatSet
+    is not allowed.
+Warning: <standard input>, line 5 (view NatSet): unusable view NatSet.
+Bye.

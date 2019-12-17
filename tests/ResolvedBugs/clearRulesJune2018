@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/clearRulesJune2018.maude -no-banner -no-advise \
+  > clearRulesJune2018.out 2>&1
+
+diff $srcdir/clearRulesJune2018.expected clearRulesJune2018.out > /dev/null 2>&1

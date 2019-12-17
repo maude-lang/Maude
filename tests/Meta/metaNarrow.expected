@@ -1,0 +1,1456 @@
+==========================================
+unify in FOO : f(X, X) =? f(Y, Z, Z) .
+
+Solution 1
+X --> f(#1:Foo, #2:Foo, #2:Foo, #1:Foo, #2:Foo)
+Y --> f(#1:Foo, #2:Foo, #2:Foo, #1:Foo)
+Z --> f(#2:Foo, #1:Foo, #2:Foo)
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+
+Solution 2
+X --> f(#1:Foo, #1:Foo, #1:Foo)
+Y --> f(#1:Foo, #1:Foo)
+Z --> f(#1:Foo, #1:Foo)
+
+Solution 3
+X --> f(#1:Foo, #2:Foo, #2:Foo)
+Y --> f(#1:Foo, #2:Foo, #2:Foo, #1:Foo)
+Z --> #2:Foo
+
+Solution 4
+X --> f(#1:Foo, #1:Foo)
+Y --> f(#1:Foo, #1:Foo)
+Z --> #1:Foo
+Warning: Some unifiers may have been missed due to incomplete unification
+    algorithm(s).
+==========================================
+reduce in META-LEVEL : metaNarrow(['FOO], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]], 'W:Foo,
+    '+, unbounded, 0) .
+rewrites: 3
+result ResultTriple: {'h['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]],'Foo,
+  'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]]}
+==========================================
+reduce in META-LEVEL : metaNarrow(['FOO], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]], 'W:Foo,
+    '+, unbounded, 1) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 3
+result ResultTriple: {'h['f['%1:Foo,'%1:Foo,'%1:Foo]],'Foo,
+  'W:Foo <- 'h['f['%1:Foo,'%1:Foo,'%1:Foo]]}
+==========================================
+reduce in META-LEVEL : metaNarrow(['FOO], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]], 'W:Foo,
+    '+, unbounded, 2) .
+rewrites: 3
+result ResultTriple: {'h['f['%1:Foo,'%2:Foo,'%2:Foo]],'Foo,
+  'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo]]}
+==========================================
+reduce in META-LEVEL : metaNarrow(['FOO], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]], 'W:Foo,
+    '+, unbounded, 3) .
+rewrites: 3
+result ResultTriple: {'h['f['%1:Foo,'%1:Foo]],'Foo,
+  'W:Foo <- 'h['f['%1:Foo,'%1:Foo]]}
+==========================================
+reduce in META-LEVEL : metaNarrow(['FOO], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]], 'W:Foo,
+    '+, unbounded, 4) .
+rewrites: 2
+result ResultTriple?: (failureIncomplete).ResultTriple?
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['FOO], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]],
+    empty, '#, 0) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 3
+result NarrowingApplyResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]],'Foo,
+  [],
+  ',
+    'Y:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    'Z:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo],
+    'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['FOO], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]],
+    empty, '#, 1) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'h['f['@1:Foo,'@1:Foo,'@1:Foo]],'Foo,
+  [],
+  ',
+    'Y:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    'Z:Foo <- 'f['@1:Foo,'@1:Foo],
+    'X:Foo <- 'f['@1:Foo,'@1:Foo,'@1:Foo],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['FOO], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]],
+    empty, '#, 2) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo]],'Foo,
+  [],
+  ',
+    'Y:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    'Z:Foo <- '@2:Foo,
+    'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['FOO], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]],
+    empty, '#, 3) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'h['f['@1:Foo,'@1:Foo]],'Foo,
+  [],
+  ',
+    'Y:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    'Z:Foo <- '@1:Foo,
+    'X:Foo <- 'f['@1:Foo,'@1:Foo],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['FOO], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]],
+    empty, '#, 4) .
+rewrites: 2
+result NarrowingApplyResult?: (failureIncomplete).NarrowingApplyResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['FOO], 'g['f['#22:Foo,'#23:Foo,
+    '#23:Foo]], empty, '#, 0) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 3
+result NarrowingApplyResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]],'Foo,
+  [],
+  ',
+    '#22:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    '#23:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo],
+    'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['FOO], 'g['f['#22:Foo,'#23:Foo,
+    '#23:Foo]], empty, '#, 1) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'h['f['@1:Foo,'@1:Foo,'@1:Foo]],'Foo,
+  [],
+  ',
+    '#22:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    '#23:Foo <- 'f['@1:Foo,'@1:Foo],
+    'X:Foo <- 'f['@1:Foo,'@1:Foo,'@1:Foo],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['FOO], 'g['f['#22:Foo,'#23:Foo,
+    '#23:Foo]], empty, '#, 2) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo]],'Foo,
+  [],
+  ',
+    '#22:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    '#23:Foo <- '@2:Foo,
+    'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['FOO], 'g['f['#22:Foo,'#23:Foo,
+    '#23:Foo]], empty, '#, 3) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'h['f['@1:Foo,'@1:Foo]],'Foo,
+  [],
+  ',
+    '#22:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    '#23:Foo <- '@1:Foo,
+    'X:Foo <- 'f['@1:Foo,'@1:Foo],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['FOO], 'g['f['#22:Foo,'#23:Foo,
+    '#23:Foo]], empty, '#, 4) .
+rewrites: 2
+result NarrowingApplyResult?: (failureIncomplete).NarrowingApplyResult?
+==========================================
+variant unify in BAR : h(X) =? g(f(Y, Z, Z))  .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+
+Unifier #1
+rewrites: 4
+X --> f(#1:Foo, #2:Foo, #2:Foo, #1:Foo, #2:Foo)
+Y --> f(#1:Foo, #2:Foo, #2:Foo, #1:Foo)
+Z --> f(#2:Foo, #1:Foo, #2:Foo)
+
+Unifier #2
+rewrites: 4
+X --> f(#1:Foo, #1:Foo, #1:Foo)
+Y --> f(#1:Foo, #1:Foo)
+Z --> f(#1:Foo, #1:Foo)
+
+Unifier #3
+rewrites: 4
+X --> f(#1:Foo, #2:Foo, #2:Foo)
+Y --> f(#1:Foo, #2:Foo, #2:Foo, #1:Foo)
+Z --> #2:Foo
+
+Unifier #4
+rewrites: 4
+X --> f(#1:Foo, #1:Foo)
+Y --> f(#1:Foo, #1:Foo)
+Z --> #1:Foo
+
+No more unifiers.
+rewrites: 4
+Warning: Some unifiers may have been missed due to incomplete unification
+    algorithm(s).
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['BAR], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]],
+    empty, '#, 0) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 7
+result NarrowingApplyResult: {
+  'i['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]],'Foo,
+  [],
+  ',
+    'Y:Foo <- 'f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo] ; 
+    'Z:Foo <- 'f['%2:Foo,'%1:Foo,'%2:Foo],
+    'X:Foo <- 'f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['BAR], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]],
+    empty, '#, 1) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'i['f['%1:Foo,'%1:Foo,'%1:Foo]],'Foo,
+  [],
+  ',
+    'Y:Foo <- 'f['%1:Foo,'%1:Foo] ; 
+    'Z:Foo <- 'f['%1:Foo,'%1:Foo],
+    'X:Foo <- 'f['%1:Foo,'%1:Foo,'%1:Foo],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['BAR], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]],
+    empty, '#, 2) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'i['f['%1:Foo,'%2:Foo,'%2:Foo]],'Foo,
+  [],
+  ',
+    'Y:Foo <- 'f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo] ; 
+    'Z:Foo <- '%2:Foo,
+    'X:Foo <- 'f['%1:Foo,'%2:Foo,'%2:Foo],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['BAR], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]],
+    empty, '#, 3) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'i['f['%1:Foo,'%1:Foo]],'Foo,
+  [],
+  ',
+    'Y:Foo <- 'f['%1:Foo,'%1:Foo] ; 
+    'Z:Foo <- '%1:Foo,
+    'X:Foo <- 'f['%1:Foo,'%1:Foo],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['BAR], 'g['f['Y:Foo,'Z:Foo,'Z:Foo]],
+    empty, '#, 4) .
+rewrites: 2
+result NarrowingApplyResult?: (failureIncomplete).NarrowingApplyResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['W:Expr,
+    'b.Elt]],'Z:Expr], '_+_['W:Expr,'b.Elt], '#, 0) .
+rewrites: 9
+result NarrowingApplyResult: {
+  'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr],'Expr,
+  'f[[],'Z:Expr],
+  ',
+    'W:Expr <- '_+_['a.Elt,'@1:Expr] ; 
+    'Z:Expr <- '@2:Expr,
+    'Y:Expr <- '_+_['b.Elt,'@1:Expr],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['W:Expr,
+    'b.Elt]],'Z:Expr], '_+_['W:Expr,'b.Elt], '#, 1) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'f['h['b.Elt],'@1:Expr],'Expr,
+  'f[[],'Z:Expr],
+  ',
+    'W:Expr <- 'a.Elt ; 
+    'Z:Expr <- '@1:Expr,
+    'Y:Expr <- 'b.Elt,
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['W:Expr,
+    'b.Elt]],'Z:Expr], '_+_['W:Expr,'b.Elt], '#, 2) .
+rewrites: 3
+result NarrowingApplyResult: {
+  'f['h['_+_['a.Elt,'b.Elt,'%1:Expr]],'%2:Expr],'Expr,
+  'f[[],'Z:Expr],
+  ',
+    'W:Expr <- '%1:Expr ; 
+    'Z:Expr <- '%2:Expr,
+    'Y:Expr <- '_+_['a.Elt,'b.Elt,'%1:Expr],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['W:Expr,
+    'b.Elt]],'Z:Expr], '_+_['W:Expr,'b.Elt], '#, 3) .
+rewrites: 8
+result NarrowingApplyResult?: (failure).NarrowingApplyResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['W:Expr,
+    'b.Elt]],'Z:Expr], '_+_['X:Expr,'b.Elt], '#, 0) .
+rewrites: 33
+result NarrowingApplyResult: {
+  'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr],'Expr,
+  'f[[],'Z:Expr],
+  ',
+    'W:Expr <- '_+_['a.Elt,'@1:Expr] ; 
+    'Z:Expr <- '@2:Expr,
+    'Y:Expr <- '_+_['b.Elt,'@1:Expr],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['W:Expr,
+    'b.Elt]],'Z:Expr], '_+_['X:Expr,'b.Elt], '#, 11) .
+rewrites: 45
+result NarrowingApplyResult: {
+  'f['g['h['_+_['a.Elt,'@1:Expr]]],'@2:Expr],'Expr,
+  'f['g[[]],'Z:Expr],
+  ',
+    'W:Expr <- '_+_['b.Elt,'g['@1:Expr]] ; 
+    'Z:Expr <- '@2:Expr,
+    'Y:Expr <- '_+_['a.Elt,'@1:Expr],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['W:Expr,
+    'b.Elt]],'Z:Expr], '_+_['X:Expr,'b.Elt], '#, 12) .
+rewrites: 5
+result NarrowingApplyResult?: (failure).NarrowingApplyResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['#1:Expr,
+    'b.Elt]],'#2:Expr], '_+_['#3:Expr,'b.Elt], '#, 0) .
+rewrites: 33
+result NarrowingApplyResult: {
+  'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr],'Expr,
+  'f[[],'#2:Expr],
+  ',
+    '#1:Expr <- '_+_['a.Elt,'@1:Expr] ; 
+    '#2:Expr <- '@2:Expr,
+    'Y:Expr <- '_+_['b.Elt,'@1:Expr],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['#1:Expr,
+    'b.Elt]],'#2:Expr], '_+_['#3:Expr,'b.Elt], '#, 11) .
+rewrites: 45
+result NarrowingApplyResult: {
+  'f['g['h['_+_['a.Elt,'@1:Expr]]],'@2:Expr],'Expr,
+  'f['g[[]],'#2:Expr],
+  ',
+    '#1:Expr <- '_+_['b.Elt,'g['@1:Expr]] ; 
+    '#2:Expr <- '@2:Expr,
+    'Y:Expr <- '_+_['a.Elt,'@1:Expr],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['#1:Expr,
+    'b.Elt]],'#2:Expr], '_+_['#3:Expr,'b.Elt], '#, 12) .
+rewrites: 5
+result NarrowingApplyResult?: (failure).NarrowingApplyResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'none, 0) .
+rewrites: 3
+result NarrowingSearchResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  '#,
+    '#1:Foo <- '@1:Foo ; 
+    '#2:Foo <- '@2:Foo ; 
+    'C:Foo <- 'g['j['@1:Foo,'@2:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'none, 1) .
+rewrites: 2
+result NarrowingSearchResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  '#,
+    '#1:Foo <- 'f['%2:Foo] ; 
+    '#2:Foo <- '%1:Foo ; 
+    'C:Foo <- 'g['i['f['%1:Foo],'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'none, 2) .
+rewrites: 4
+result NarrowingSearchResult: {
+  'f['k['%2:Foo,'f['%3:Foo]]],'Foo,
+    'A:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+    'B:Foo <- '%3:Foo,
+  '%,
+    '%2:Foo <- '@1:Foo ; 
+    '%3:Foo <- '@2:Foo ; 
+    'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'none, 3) .
+rewrites: 3
+result NarrowingSearchResult?: (failure).NarrowingSearchResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'match, 0) .
+rewrites: 3
+result NarrowingSearchResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  '#,
+    '#1:Foo <- '@1:Foo ; 
+    '#2:Foo <- '@2:Foo ; 
+    'C:Foo <- 'g['j['@1:Foo,'@2:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'match, 1) .
+rewrites: 2
+result NarrowingSearchResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  '#,
+    '#1:Foo <- 'f['%2:Foo] ; 
+    '#2:Foo <- '%1:Foo ; 
+    'C:Foo <- 'g['i['f['%1:Foo],'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'match, 2) .
+rewrites: 4
+result NarrowingSearchResult: {
+  'f['k['%2:Foo,'f['%3:Foo]]],'Foo,
+    'A:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+    'B:Foo <- '%3:Foo,
+  '%,
+    '%2:Foo <- '@1:Foo ; 
+    '%3:Foo <- '@2:Foo ; 
+    'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'match, 3) .
+rewrites: 3
+result NarrowingSearchResult?: (failure).NarrowingSearchResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'none, 0) .
+rewrites: 3
+result NarrowingSearchPathResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,(nil).NarrowingTrace,
+    '#1:Foo <- '@1:Foo ; 
+    '#2:Foo <- '@2:Foo ; 
+    'C:Foo <- 'g['j['@1:Foo,'@2:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'none, 1) .
+rewrites: 2
+result NarrowingSearchPathResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,(nil).NarrowingTrace,
+    '#1:Foo <- 'f['%2:Foo] ; 
+    '#2:Foo <- '%1:Foo ; 
+    'C:Foo <- 'g['i['f['%1:Foo],'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'none, 2) .
+rewrites: 4
+result NarrowingSearchPathResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+      '#2:Foo <- '%3:Foo ; 
+      'X:Foo <- 'f['%3:Foo] ; 
+      'Y:Foo <- '%1:Foo ; 
+      'Z:Foo <- '%2:Foo,
+    '%,
+    'f['k['%2:Foo,'f['%3:Foo]]],'Foo,
+      'A:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+      'B:Foo <- '%3:Foo
+  },
+    '%2:Foo <- '@1:Foo ; 
+    '%3:Foo <- '@2:Foo ; 
+    'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'none, 3) .
+rewrites: 3
+result NarrowingSearchPathResult?: (failure).NarrowingSearchPathResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'match, 0) .
+rewrites: 3
+result NarrowingSearchPathResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,(nil).NarrowingTrace,
+    '#1:Foo <- '@1:Foo ; 
+    '#2:Foo <- '@2:Foo ; 
+    'C:Foo <- 'g['j['@1:Foo,'@2:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'match, 1) .
+rewrites: 2
+result NarrowingSearchPathResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,(nil).NarrowingTrace,
+    '#1:Foo <- 'f['%2:Foo] ; 
+    '#2:Foo <- '%1:Foo ; 
+    'C:Foo <- 'g['i['f['%1:Foo],'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'match, 2) .
+rewrites: 4
+result NarrowingSearchPathResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+      '#2:Foo <- '%3:Foo ; 
+      'X:Foo <- 'f['%3:Foo] ; 
+      'Y:Foo <- '%1:Foo ; 
+      'Z:Foo <- '%2:Foo,
+    '%,
+    'f['k['%2:Foo,'f['%3:Foo]]],'Foo,
+      'A:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+      'B:Foo <- '%3:Foo
+  },
+    '%2:Foo <- '@1:Foo ; 
+    '%3:Foo <- '@2:Foo ; 
+    'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['FOO], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '*, unbounded, 'match, 3) .
+rewrites: 3
+result NarrowingSearchPathResult?: (failure).NarrowingSearchPathResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 0) .
+rewrites: 2
+result NarrowingSearchResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  '#,
+    '#1:Foo <- '@1:Foo ; 
+    '#2:Foo <- '@2:Foo ; 
+    'W:Foo <- 'g['f['@1:Foo,'@2:Foo,'@2:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 1) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 3
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    'B:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo],
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 2) .
+rewrites: 3
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@1:Foo,'@1:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    'B:Foo <- 'f['@1:Foo,'@1:Foo],
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 3) .
+rewrites: 3
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    'B:Foo <- '@2:Foo,
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 4) .
+rewrites: 3
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@1:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    'B:Foo <- '@1:Foo,
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 5) .
+rewrites: 2
+result NarrowingSearchResult?: (failureIncomplete).NarrowingSearchResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'none, 0) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 6
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    'B:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo],
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'none, 1) .
+rewrites: 2
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@1:Foo,'@1:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    'B:Foo <- 'f['@1:Foo,'@1:Foo],
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'none, 2) .
+rewrites: 2
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    'B:Foo <- '@2:Foo,
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'none, 3) .
+rewrites: 2
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@1:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    'B:Foo <- '@1:Foo,
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'none, 4) .
+rewrites: 2
+result NarrowingSearchResult?: (failureIncomplete).NarrowingSearchResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 0) .
+rewrites: 2
+result NarrowingSearchResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  '#,
+    '#1:Foo <- '@1:Foo ; 
+    '#2:Foo <- '@2:Foo ; 
+    'W:Foo <- 'g['f['@1:Foo,'@2:Foo,'@2:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 1) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 3
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    'B:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo],
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 2) .
+rewrites: 3
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@1:Foo,'@1:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    'B:Foo <- 'f['@1:Foo,'@1:Foo],
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 3) .
+rewrites: 3
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    'B:Foo <- '@2:Foo,
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 4) .
+rewrites: 3
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@1:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    'B:Foo <- '@1:Foo,
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 5) .
+rewrites: 2
+result NarrowingSearchResult?: (failureIncomplete).NarrowingSearchResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'match, 0) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 6
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    'B:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo],
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'match, 1) .
+rewrites: 2
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@2:Foo,'@2:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+    'B:Foo <- '@2:Foo,
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'match, 2) .
+rewrites: 2
+result NarrowingSearchResult: {
+  'h['f['@1:Foo,'@1:Foo]],'Foo,
+    'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+    'B:Foo <- '@1:Foo,
+  '@,
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'match, 3) .
+rewrites: 2
+result NarrowingSearchResult?: (failureIncomplete).NarrowingSearchResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 0) .
+rewrites: 2
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,(nil).NarrowingTrace,
+    '#1:Foo <- '@1:Foo ; 
+    '#2:Foo <- '@2:Foo ; 
+    'W:Foo <- 'g['f['@1:Foo,'@2:Foo,'@2:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 1) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 3
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      '#2:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo] ; 
+      'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo],
+    '@,
+    'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      'B:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo]
+  },
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 2) .
+rewrites: 3
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      '#2:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      'X:Foo <- 'f['@1:Foo,'@1:Foo,'@1:Foo],
+    '@,
+    'h['f['@1:Foo,'@1:Foo,'@1:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      'B:Foo <- 'f['@1:Foo,'@1:Foo]
+  },
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 3) .
+rewrites: 3
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      '#2:Foo <- '@2:Foo ; 
+      'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo],
+    '@,
+    'h['f['@1:Foo,'@2:Foo,'@2:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      'B:Foo <- '@2:Foo
+  },
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 4) .
+rewrites: 3
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      '#2:Foo <- '@1:Foo ; 
+      'X:Foo <- 'f['@1:Foo,'@1:Foo],
+    '@,
+    'h['f['@1:Foo,'@1:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      'B:Foo <- '@1:Foo
+  },
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'none, 5) .
+rewrites: 2
+result NarrowingSearchPathResult?: (
+    failureIncomplete).NarrowingSearchPathResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'none, 0) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 6
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      '#2:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo] ; 
+      'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo],
+    '@,
+    'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      'B:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo]
+  },
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'none, 1) .
+rewrites: 2
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      '#2:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      'X:Foo <- 'f['@1:Foo,'@1:Foo,'@1:Foo],
+    '@,
+    'h['f['@1:Foo,'@1:Foo,'@1:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      'B:Foo <- 'f['@1:Foo,'@1:Foo]
+  },
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'none, 2) .
+rewrites: 2
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      '#2:Foo <- '@2:Foo ; 
+      'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo],
+    '@,
+    'h['f['@1:Foo,'@2:Foo,'@2:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      'B:Foo <- '@2:Foo
+  },
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'none, 3) .
+rewrites: 2
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      '#2:Foo <- '@1:Foo ; 
+      'X:Foo <- 'f['@1:Foo,'@1:Foo],
+    '@,
+    'h['f['@1:Foo,'@1:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      'B:Foo <- '@1:Foo
+  },
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'none, 4) .
+rewrites: 2
+result NarrowingSearchPathResult?: (
+    failureIncomplete).NarrowingSearchPathResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 0) .
+rewrites: 2
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,(nil).NarrowingTrace,
+    '#1:Foo <- '@1:Foo ; 
+    '#2:Foo <- '@2:Foo ; 
+    'W:Foo <- 'g['f['@1:Foo,'@2:Foo,'@2:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 1) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 3
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      '#2:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo] ; 
+      'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo],
+    '@,
+    'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      'B:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo]
+  },
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 2) .
+rewrites: 3
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      '#2:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      'X:Foo <- 'f['@1:Foo,'@1:Foo,'@1:Foo],
+    '@,
+    'h['f['@1:Foo,'@1:Foo,'@1:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      'B:Foo <- 'f['@1:Foo,'@1:Foo]
+  },
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 3) .
+rewrites: 3
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      '#2:Foo <- '@2:Foo ; 
+      'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo],
+    '@,
+    'h['f['@1:Foo,'@2:Foo,'@2:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      'B:Foo <- '@2:Foo
+  },
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 4) .
+rewrites: 3
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      '#2:Foo <- '@1:Foo ; 
+      'X:Foo <- 'f['@1:Foo,'@1:Foo],
+    '@,
+    'h['f['@1:Foo,'@1:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      'B:Foo <- '@1:Foo
+  },
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '*, unbounded, 'match, 5) .
+rewrites: 2
+result NarrowingSearchPathResult?: (
+    failureIncomplete).NarrowingSearchPathResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'match, 0) .
+Warning: Unification modulo the theory of operator f has encountered an
+    instance for which it may not be complete.
+rewrites: 6
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      '#2:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo] ; 
+      'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo],
+    '@,
+    'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      'B:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo]
+  },
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo,'%1:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'match, 1) .
+rewrites: 2
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      '#2:Foo <- '@2:Foo ; 
+      'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo],
+    '@,
+    'h['f['@1:Foo,'@2:Foo,'@2:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
+      'B:Foo <- '@2:Foo
+  },
+    '@1:Foo <- '%1:Foo ; 
+    '@2:Foo <- '%2:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%2:Foo,'%2:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'match, 2) .
+rewrites: 2
+result NarrowingSearchPathResult: {
+  'g['f['#1:Foo,'#2:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      '#2:Foo <- '@1:Foo ; 
+      'X:Foo <- 'f['@1:Foo,'@1:Foo],
+    '@,
+    'h['f['@1:Foo,'@1:Foo]],'Foo,
+      'A:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+      'B:Foo <- '@1:Foo
+  },
+    '@1:Foo <- '%1:Foo ; 
+    'W:Foo <- 'h['f['%1:Foo,'%1:Foo]],
+  '%
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAR], 'g['f['A:Foo,'B:Foo,
+    'B:Foo]], 'W:Foo, '!, unbounded, 'match, 3) .
+rewrites: 2
+result NarrowingSearchPathResult?: (
+    failureIncomplete).NarrowingSearchPathResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAZ], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '!, unbounded, 'none, 0) .
+rewrites: 11
+result NarrowingSearchResult: {
+  'h['h['%1:Foo]],'Foo,
+    'A:Foo <- 'f['k['%2:Foo,'f['k['%1:Foo,'%1:Foo]]]] ; 
+    'B:Foo <- 'k['%1:Foo,'%1:Foo],
+  '%,
+    '%1:Foo <- '@1:Foo ; 
+    'C:Foo <- 'h['h['@1:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAZ], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '!, unbounded, 'none, 1) .
+rewrites: 2
+result NarrowingSearchResult: {
+  'h['h['%1:Foo]],'Foo,
+    'A:Foo <- 'f['k['%2:Foo,'h['%1:Foo]]] ; 
+    'B:Foo <- 'k['%1:Foo,'%1:Foo],
+  '%,
+    '%1:Foo <- '@1:Foo ; 
+    'C:Foo <- 'h['h['@1:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAZ], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '!, unbounded, 'none, 2) .
+rewrites: 2
+result NarrowingSearchResult?: (failure).NarrowingSearchResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAZ], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '!, unbounded, 'match, 0) .
+rewrites: 11
+result NarrowingSearchResult: {
+  'h['h['%1:Foo]],'Foo,
+    'A:Foo <- 'f['k['%2:Foo,'f['k['%1:Foo,'%1:Foo]]]] ; 
+    'B:Foo <- 'k['%1:Foo,'%1:Foo],
+  '%,
+    '%1:Foo <- '@1:Foo ; 
+    'C:Foo <- 'h['h['@1:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearch(['BAZ], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '!, unbounded, 'match, 1) .
+rewrites: 2
+result NarrowingSearchResult?: (failure).NarrowingSearchResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAZ], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '!, unbounded, 'none, 0) .
+rewrites: 11
+result NarrowingSearchPathResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+      '#2:Foo <- '%3:Foo ; 
+      'X:Foo <- 'f['%3:Foo] ; 
+      'Y:Foo <- '%1:Foo ; 
+      'Z:Foo <- '%2:Foo,
+    '%,
+    'f['k['%2:Foo,'f['%3:Foo]]],'Foo,
+      'A:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+      'B:Foo <- '%3:Foo
+  } 
+  {
+    [],
+    ',
+      '%1:Foo <- '@2:Foo ; 
+      '%2:Foo <- 'f['@1:Foo] ; 
+      '%3:Foo <- '@1:Foo ; 
+      'X:Foo <- 'f['@1:Foo],
+    '@,
+    'h['f['@1:Foo]],'Foo,
+      'A:Foo <- 'f['k['@2:Foo,'f['@1:Foo]]] ; 
+      'B:Foo <- '@1:Foo
+  } 
+  {
+    'h[[]],
+    ',
+      '@1:Foo <- 'k['%1:Foo,'%1:Foo] ; 
+      '@2:Foo <- '%2:Foo ; 
+      'X:Foo <- '%1:Foo,
+    '%,
+    'h['h['%1:Foo]],'Foo,
+      'A:Foo <- 'f['k['%2:Foo,'f['k['%1:Foo,'%1:Foo]]]] ; 
+      'B:Foo <- 'k['%1:Foo,'%1:Foo]
+  },
+    '%1:Foo <- '@1:Foo ; 
+    'C:Foo <- 'h['h['@1:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAZ], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '!, unbounded, 'none, 1) .
+rewrites: 2
+result NarrowingSearchPathResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+      '#2:Foo <- '%3:Foo ; 
+      'X:Foo <- 'f['%3:Foo] ; 
+      'Y:Foo <- '%1:Foo ; 
+      'Z:Foo <- '%2:Foo,
+    '%,
+    'f['k['%2:Foo,'f['%3:Foo]]],'Foo,
+      'A:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+      'B:Foo <- '%3:Foo
+  } 
+  {
+    'f['k['%2:Foo,[]]],
+    ',
+      '%1:Foo <- '@3:Foo ; 
+      '%2:Foo <- '@2:Foo ; 
+      '%3:Foo <- 'k['@1:Foo,'@1:Foo] ; 
+      'X:Foo <- '@1:Foo,
+    '@,
+    'f['k['@2:Foo,'h['@1:Foo]]],'Foo,
+      'A:Foo <- 'f['k['@3:Foo,'@2:Foo]] ; 
+      'B:Foo <- 'k['@1:Foo,'@1:Foo]
+  } 
+  {
+    [],
+    ',
+      '@1:Foo <- '%1:Foo ; 
+      '@2:Foo <- 'h['%1:Foo] ; 
+      '@3:Foo <- '%2:Foo ; 
+      'X:Foo <- 'h['%1:Foo],
+    '%,
+    'h['h['%1:Foo]],'Foo,
+      'A:Foo <- 'f['k['%2:Foo,'h['%1:Foo]]] ; 
+      'B:Foo <- 'k['%1:Foo,'%1:Foo]
+  },
+    '%1:Foo <- '@1:Foo ; 
+    'C:Foo <- 'h['h['@1:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAZ], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '!, unbounded, 'none, 2) .
+rewrites: 2
+result NarrowingSearchPathResult?: (failure).NarrowingSearchPathResult?
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAZ], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '!, unbounded, 'match, 0) .
+rewrites: 11
+result NarrowingSearchPathResult: {
+  'g['j['#1:Foo,'#2:Foo]],'Foo,
+    'A:Foo <- '#1:Foo ; 
+    'B:Foo <- '#2:Foo,
+  {
+    [],
+    ',
+      '#1:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+      '#2:Foo <- '%3:Foo ; 
+      'X:Foo <- 'f['%3:Foo] ; 
+      'Y:Foo <- '%1:Foo ; 
+      'Z:Foo <- '%2:Foo,
+    '%,
+    'f['k['%2:Foo,'f['%3:Foo]]],'Foo,
+      'A:Foo <- 'f['k['%1:Foo,'%2:Foo]] ; 
+      'B:Foo <- '%3:Foo
+  } 
+  {
+    [],
+    ',
+      '%1:Foo <- '@2:Foo ; 
+      '%2:Foo <- 'f['@1:Foo] ; 
+      '%3:Foo <- '@1:Foo ; 
+      'X:Foo <- 'f['@1:Foo],
+    '@,
+    'h['f['@1:Foo]],'Foo,
+      'A:Foo <- 'f['k['@2:Foo,'f['@1:Foo]]] ; 
+      'B:Foo <- '@1:Foo
+  } 
+  {
+    'h[[]],
+    ',
+      '@1:Foo <- 'k['%1:Foo,'%1:Foo] ; 
+      '@2:Foo <- '%2:Foo ; 
+      'X:Foo <- '%1:Foo,
+    '%,
+    'h['h['%1:Foo]],'Foo,
+      'A:Foo <- 'f['k['%2:Foo,'f['k['%1:Foo,'%1:Foo]]]] ; 
+      'B:Foo <- 'k['%1:Foo,'%1:Foo]
+  },
+    '%1:Foo <- '@1:Foo ; 
+    'C:Foo <- 'h['h['@1:Foo]],
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingSearchPath(['BAZ], 'g['j['A:Foo,'B:Foo]],
+    'C:Foo, '!, unbounded, 'match, 1) .
+rewrites: 2
+result NarrowingSearchPathResult?: (failure).NarrowingSearchPathResult?
+Bye.

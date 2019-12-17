@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for abstract class StrategicTask.
+//      Implementation for DecompositionProcess.
 //
 
 //	utility stuff
@@ -33,6 +33,7 @@
 #include "core.hh"
 #include "strategyLanguage.hh"
 
+//	interface class definitions
 #include "dagNode.hh"
 
 //	strategy language class definitions
@@ -78,7 +79,7 @@ DecompositionProcess::run(StrategicSearch& searchObject)
       finished(this);
       return DIE;
     }
-  
+
   if (pending == StrategyStackManager::EMPTY_STACK)
     {
       //

@@ -1,0 +1,256 @@
+==========================================
+reduce in TEST : insert("one", {1}, insert("one-two", {1, 2}, empty)) .
+rewrites: 6
+result Array{String,SetAsDefault{Nat}}: "one" |-> {1} ; "one-two" |-> {1, 2}
+==========================================
+reduce in TEST : insert("one", {1}, insert("one-two", {1, 2}, empty))["unseen"]
+    .
+rewrites: 7
+result Set{Nat}: {}
+==========================================
+reduce in TEST : insert("one", {1}, insert("one-two", {1, 2}, empty))["one"] .
+rewrites: 9
+result NeSet{Nat}: {1}
+==========================================
+reduce in TEST2 : insert("one", {1}, insert("one-two", {1, 2}, empty)) .
+rewrites: 6
+result Array{String,SetAsDefault{Nat}}: "one" |-> {1} ; "one-two" |-> {1, 2}
+==========================================
+reduce in TEST2 : insert("one", {1}, insert("one-two", {1, 2}, empty))[
+    "unseen"] .
+rewrites: 7
+result Set{Nat}: {}
+==========================================
+reduce in TEST2 : insert("one", {1}, insert("one-two", {1, 2}, empty))["one"] .
+rewrites: 9
+result NeSet{Nat}: {1}
+==========================================
+reduce in TEST3 : insert("one", {1}, insert("one-two", {1, 2}, empty)) insert(
+    "one", {1}, insert("one-two-three", {1, 2, 3}, empty)) insert("two", {2},
+    insert("one-two-three", {1, 2, 3}, empty)) .
+rewrites: 15
+result NeList{ArrayOfSets{String,Nat}}: ("one" |-> {1} ; "one-two" |-> {1, 2})
+    ("one" |-> {1} ; "one-two-three" |-> {1, 2, 3}) ("one-two-three" |-> {1, 2,
+    3} ; "two" |-> {2})
+==========================================
+reduce in TEST4 : insert("one", {1}, insert("one-two", {1, 2}, empty))["one"] .
+rewrites: 9
+result NeSet{DEFAULT}{Nat0}: {1}
+view Bool
+view Nat
+view Int
+view Rat
+view Float
+view String
+view Qid
+view TRIV
+view STRICT-WEAK-ORDER
+view STRICT-TOTAL-ORDER
+view Nat<
+view Int<
+view Rat<
+view Float<
+view String<
+view TOTAL-PREORDER
+view TOTAL-ORDER
+view Nat<=
+view Int<=
+view Rat<=
+view Float<=
+view String<=
+view DEFAULT
+view Nat0
+view Int0
+view Rat0
+view Float0
+view String0
+view Qid0
+view List
+view WeaklySortableList
+view SortableList
+view WeaklySortableList'
+view SortableList'
+view Set
+view List*
+view Set*
+view Map
+view Array
+view SetAsDefault
+view ArrayOfSets
+view SetAsDefault{[Y]}
+view SetAsDefault{Nat}
+view ArrayOfSets{[X], [Y]}
+view ArrayOfSets{String, Nat}
+view SetAsDefault{DEFAULT}
+view SetAsDefault{DEFAULT}{Nat0}
+fmod BOOL
+fmod TRUTH-VALUE
+fmod BOOL-OPS
+fmod TRUTH
+fmod EXT-BOOL
+fmod NAT
+fmod INT
+fmod RAT
+fmod FLOAT
+fmod STRING
+fmod CONVERSION
+fmod RANDOM
+fmod BOUND
+fmod QID
+fth TRIV
+fth STRICT-WEAK-ORDER
+fth STRICT-TOTAL-ORDER
+fth TOTAL-PREORDER
+fth TOTAL-ORDER
+fth DEFAULT
+fmod LIST
+fmod WEAKLY-SORTABLE-LIST
+fmod SORTABLE-LIST
+fmod WEAKLY-SORTABLE-LIST'
+fmod SORTABLE-LIST'
+fmod SET
+fmod LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET'
+fmod LIST*
+fmod SET*
+fmod MAP
+fmod ARRAY
+fmod NAT-LIST
+fmod QID-LIST
+fmod QID-SET
+fmod META-TERM
+fmod META-CONDITION
+fmod META-STRATEGY
+fmod META-MODULE
+fmod META-VIEW
+fmod META-LEVEL
+fmod LEXICAL
+mod COUNTER
+mod LOOP-MODE
+mod CONFIGURATION
+fmod FOO
+fmod ARRAY-OF-SETS
+fmod TEST
+fmod TEST2
+fmod LIST-OF-ARRAYS-OF-SETS
+fmod TEST3
+fmod TEST4
+fth X :: TRIV
+fmod LIST{[X]}
+fth X :: STRICT-WEAK-ORDER
+fmod LIST{STRICT-WEAK-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{[X]} * (sort NeList{STRICT-WEAK-ORDER}{X} to
+    NeList{X}, sort List{STRICT-WEAK-ORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST{[X]}
+fth X :: STRICT-TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-TOTAL-ORDER}{X} to NeList{X}, sort List{STRICT-TOTAL-ORDER}{X} to
+    List{X})
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X})
+fmod SORTABLE-LIST{[X]}
+fth X :: TOTAL-PREORDER
+fmod LIST{TOTAL-PREORDER}
+fmod LIST{TOTAL-PREORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
+    sort List{TOTAL-PREORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST'{[X]}
+fth X :: TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
+fmod SORTABLE-LIST'{[X]}
+fmod SET{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X}, sort NeSet{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeSet{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod LIST-AND-SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{
+    TOTAL-ORDER}{X} to NeList{X}, sort List{TOTAL-ORDER}{X} to List{X}, sort
+    NeSet{TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to Set{X})
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeSet{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeSet{X}, sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to
+    Set{X})
+fmod LIST*{[X]}
+fmod SET*{[X]}
+fth Y :: TRIV
+fmod MAP{[X], [Y]}
+fth Y :: DEFAULT
+fmod ARRAY{[X], [Y]}
+fmod LIST{Nat}
+fmod LIST{Nat} * (sort NeList{Nat} to NeNatList, sort List{Nat} to NatList)
+fmod LIST{Qid}
+fmod LIST{Qid} * (sort NeList{Qid} to NeQidList, sort List{Qid} to QidList)
+fmod SET{Qid}
+fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet)
+fmod QID-SET * (op _`,_ to _;_ [prec 43], op empty to none)
+fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet) * (op
+    _`,_ to _;_ [prec 43], op empty to none)
+fmod SET{[X]} + MAP{[X], [Y]}
+fmod SET*{[Y]}
+fmod ARRAY{[X], SetAsDefault{[Y]}}
+fmod ARRAY-OF-SETS{String, Nat}
+fmod SET*{Nat}
+fmod ARRAY{String, SetAsDefault{Nat}}
+fmod LIST{ArrayOfSets{[X], [Y]}}
+fmod LIST-OF-ARRAYS-OF-SETS{String, Nat}
+fmod LIST{ArrayOfSets{String, Nat}}
+fmod SET*{DEFAULT}
+fth X :: DEFAULT
+fmod SET*{DEFAULT}{[X]}
+fmod SET*{DEFAULT}{Nat0}
+fmod ARRAY{String, SetAsDefault{DEFAULT}{Nat0}}
+Bye.

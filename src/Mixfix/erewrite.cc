@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -38,7 +38,7 @@ Interpreter::eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateErewrite(d, limit, gas);
 	}
-      UserLevelRewritingContext* context = new UserLevelRewritingContext(d);
+      CacheableRewritingContext* context = new CacheableRewritingContext(d);
       context->setObjectMode(ObjectSystemRewritingContext::EXTERNAL);
       VisibleModule* fm = currentModule->getFlatModule();
 
@@ -47,56 +47,18 @@ Interpreter::eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 	fm->resetRules();
       beginRewriting(debug);
       Timer timer(getFlag(SHOW_TIMING));
-      context->fairStart((gas == NONE) ? 1 : gas);
-      doExternalRewriting(context, limit);
+      context->fairStart(limit, (gas == NONE) ? 1 : gas);
+      context->externalRewrite();
       endRewriting(timer, context, fm, &Interpreter::eRewriteCont);
-    }
-}
-
-void
-Interpreter::doExternalRewriting(UserLevelRewritingContext* context, Int64 limit)
-{
-  for (;;)
-    {
-      //
-      //	Fair rewrite until we can make no further progress.
-      //
-      bool progress;
-      do
-	{
-	  DebugAdvisory("calling fairTraversal()");
-	  progress = context->fairTraversal(limit);
-	  if (limit == 0)
-	    return;  // ran out of rewrites
-	}
-      while (progress);
-      //
-      //	Now check for external events.
-      //
-      DebugAdvisory("calling PseudoThread::eventLoop()");
-      int r = PseudoThread::eventLoop();
-      DebugAdvisory("PseudoThread::eventLoop() returned " << r);
-      //cerr << "PseudoThread::eventLoop() returned " << r << endl;
-      if (r != PseudoThread::EVENT_HANDLED)
-	{
-	  //
-	  //	No external events - check to see if we were interrupted.
-	  //	For the moment we treat interrupts just like having no external
-	  //	events, except that we clear the interrupt.
-	  //
-	  if (r & PseudoThread::INTERRUPTED)
-	    UserLevelRewritingContext::clearInterrupt();
-	  return;
-	}
     }
 }
 
 void
 Interpreter::eRewriteCont(Int64 limit, bool debug)
 {
-  UserLevelRewritingContext* context = savedContext;
+  CacheableRewritingContext* context = safeCast(CacheableRewritingContext*, savedState);
   VisibleModule* fm = savedModule;
-  savedContext = 0;
+  savedState = 0;
   savedModule = 0;
   continueFunc = 0;
   if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
@@ -104,6 +66,7 @@ Interpreter::eRewriteCont(Int64 limit, bool debug)
   context->clearCount();
   beginRewriting(debug);
   Timer timer(getFlag(SHOW_TIMING));
-  doExternalRewriting(context, limit);
+  context->fairRestart(limit);
+  context->externalRewrite();
   endRewriting(timer, context, fm, &Interpreter::eRewriteCont);
 }

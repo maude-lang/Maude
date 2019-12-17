@@ -1,0 +1,44 @@
+==========================================
+erewrite in PARSE-TEST : <> < me : User | qids: '1/2 > createInterpreter(
+    interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > parsedTerm(me, interpreter(0), {
+    '_/_['s_['0.Zero],'s_^2['0.Zero]],'PosRat})
+==========================================
+erewrite in PARSE-TEST : <> < me : User | qids: ('1/2 '+ 'X:Rat) >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > parsedTerm(me, interpreter(0), {
+    '_+_['_/_['s_['0.Zero],'s_^2['0.Zero]],'X:Rat],'Rat})
+==========================================
+erewrite in PARSE-TEST : <> < me : User | qids: ('1/2 '+ 'X) >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > parsedTerm(me, interpreter(0), {
+    '_+_['_/_['s_['0.Zero],'s_^2['0.Zero]],'X:Rat],'Rat})
+==========================================
+erewrite in PARSE-TEST : <> < me : User | qids: ('1/2 '+ 'bad) >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > parsedTerm(me, interpreter(0),
+    noParse(2))
+==========================================
+erewrite in PARSE-TEST : <> < me : User | qids: ('1/2 '- '1) >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > parsedTerm(me, interpreter(0), {
+    '_-_['_/_['s_['0.Zero],'s_^2['0.Zero]],'s_['0.Zero]],'Rat})
+==========================================
+erewrite in PARSE-TEST : <> < me : User | qids: ('1/2 '- '1 '- '1 '/ '2) >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > parsedTerm(me, interpreter(0), {
+    '_-_['_-_['_/_['s_['0.Zero],'s_^2['0.Zero]],'s_['0.Zero]],'_/_['s_[
+    '0.Zero],'s_^2['0.Zero]]],'Rat})
+==========================================
+erewrite in PARSE-TEST : <> < me : User | qids: '0 > createInterpreter(
+    interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > parsedTerm(me, interpreter(0),
+    ambiguity({'0.Zero,'Zero}, {'0.Foo,'Foo}))
+Bye.

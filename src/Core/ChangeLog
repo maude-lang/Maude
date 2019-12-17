@@ -1,3 +1,286 @@
+2019-12-06  Steven Eker  <eker@mu>
+
+	* ruleTable.cc (saveHiddenState, restoreHiddenState): commented out
+
+	* ruleTable.hh (R): commented out decls for saveHiddenState(),
+	restoreHiddenState()
+	(R): commented out typedef IntStack and nextRuleStack data member
+
+	* module.hh (BadFlag): commented out decls for
+	saveHiddenState()/restoreHiddenState()
+
+	* module.cc (saveHiddenState): commented out
+	(restoreHiddenState): commented out
+
+===================================Maude127a===========================================
+
+2019-12-04  Steven Eker  <eker@mu>
+
+	* termBag.cc (insertBuiltTerm): use DebugSave() to avoid warning
+	about unused variable (2 places)
+
+2019-12-03  Steven Eker  <eker@mu>
+
+	* variableInfo.cc (variableNameConflict): use safeCastNonNull<>()
+
+	* unificationContext.cc (makeFreshVariable): use safeCastNonNull<>()
+	(unificationBind): use safeCastNonNull<>() (3 places)
+
+	* sortTable.cc (buildSortDiagram): use safeCastNonNull<>()
+
+	* ctorDiagram.cc (buildCtorDiagram): use safeCastNonNull<>()
+
+	* sortErrorAnalysis.cc (sortErrorAnalysis): use safeCastNonNull<>()
+
+===================================Maude127===========================================
+
+2019-11-11  Steven Eker  <eker@mu>
+
+	* compoundCycleSubproblem.cc (solve): pass false to
+	warnAboutUnimplemented arg
+
+	* preEquation.cc (getLhsDag): pass true to warnAboutUnimplemented arg
+
+===================================Maude125===========================================
+
+2019-10-10  Rubén Rubio  <rubenrub@ucm.es>
+
+	* strategyDefinition.cc (check): removed argument to TermSet constructor
+
+	* termSet.cc: reverted the changes on 2018-03-23
+
+	* termSet.hh: reverted the changes on 2018-03-23
+
+2019-07-02  Steven Eker  <eker@mu>
+
+	* memoryCell.hh (allocateMemoryCell): rewritten
+	(MemoryBlock): slowNew() now returns MemoryCell*
+
+	* memoryCell.cc (slowNew): return MemoryCell* rather than void*
+	(slowNew): don't set nextNode before we return since caller will
+	do this
+
+	* memoryInfo.hh (clearAllExceptMarked): fix bug where we were setting
+	to MARKED rather than ANDing with MARKED
+
+2019-07-01  Steven Eker  <eker@mu>
+
+	* core.hh: added classes MemoryInfo and MemoryBlock
+
+	* memoryCell.hh: rewritten to use MemoryInfo and MemoryBlock
+
+	* memoryInfo.hh: created
+
+	* memoryBlock.hh: created
+
+===================================Maude123===========================================
+
+2019-01-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* module.hh (insertSymbol): fix bad Assert() caught by
+	new compiler
+
+===================================Maude121===========================================
+
+2018-10-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* run.cc (ruleRewrite): use stackPhysicalArguments()
+
+2018-09-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* rewritingContext.hh (transferCount): becomes
+	transferCountFrom()
+
+2018-09-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* freshVariableGenerator.hh (F): don't have a default family for
+	getFreshVariableName()
+
+	* unificationContext.hh (SimpleRootContainer): remove default
+	value for variableFamily
+
+2018-09-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* freshVariableGenerator.hh (F): updated decl for
+	variableNameConflict()
+
+===================================Maude119===========================================
+
+2018-09-17  Rubén Rubio <rubenrub@ucm.es>
+
+	* strategyDefinition.cc (check): build context specification
+
+	* strategyDefinition.hh: added contextSpec
+	(getContextSpec): added
+
+2018-06-22  Rubén Rubio  <rubenrub@ucm.es>
+
+	* rewritingContext.cc (traceStrategyCall): added
+
+	* rewritingContext.hh (traceStrategyCall, traceBeginSdTrial): added
+
+	* strategyDefinition.cc (check): fixed a bug, unbound variables in the
+	condition were ignored
+	(traceBeginTrial): call traceBeginSdTrial
+
+2018-06-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* module.cc (closeTheory): converted commented out print into
+	DebugAdvisory()
+	(insertLateSymbol, closeTheory): deleted commented out calls
+	to finalizeSymbol()
+
+2018-05-29  Steven Eker  <eker@install.csl.sri.com>
+
+	* rewritingContext.cc (handleInterrupt): added
+
+	* rewritingContext.hh (SimpleRootContainer): added decl for
+	handleInterrupt();
+
+2018-05-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* rewritingContext.hh (SimpleRootContainer): deleted decl for limit
+	version of fairTraversal(); make other version public
+	(SimpleRootContainer): updated decl for fairStart()
+
+	* run.cc (fairTraversal): delete limit version
+
+	* rewritingContext.hh (fairRestart): added
+
+	* run.cc (fairStart): take limit argument
+
+	* rewritingContext.hh (getProgress): added
+
+	* run.cc (fairTraversal): rewritten
+
+	* rewritingContext.hh (SimpleRootContainer): update decl for public
+	fairTraversal()
+
+===================================Maude117===========================================
+
+2018-03-23  Rubén Rubio  <rubenrub@ucm.es>
+
+	* core.hh: added classes StrategyDefinition and RewriteStrategy
+
+	* Makefile.am: added inclusion for StrategyLanguage
+
+	* module.cc (insertStrategy, insertStrategyDefinition): added
+	(~Module): delete strategies and its definitions
+	(closeTheory): compile strategy definitions
+
+	* module.hh (insertStrategy, insertStrategyDefinition, getStrategy, getStrategyDefinitions): added
+
+	* rewriteStrategy.cc: added
+
+	* rewriteStrategy.hh: added
+
+	* strategyDefinition.cc: added
+
+	* strategyDefinition.hh: added
+
+	* termSet.cc (TermSet): added. A boolean parameter to avoid comparing
+	the eager context flag when checking term equality. This is needed (at
+	least until a better solution is found) because how TermSet is used in
+	StrategyExpression::check.
+	(isEqual): the boolean parameter above is included.
+
+	* termSet.hh (TermSet): added.
+
+2017-06-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* equation.hh (clearVariant): added
+
+	* rule.hh (clearNarrowing): added
+
+	* variableInfo.hh (V): added decl for variableNameConflict()
+
+	* variableInfo.cc (variableNameConflict): added
+
+===================================Maude114===========================================
+
+2017-05-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowingVariableInfo.hh (copy): added
+
+2017-04-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* rule.hh (isNarrowing, setNarrowing): added
+	(PreEquation): added enum Flags
+
+===================================Maude113===========================================
+
+2017-02-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* run.cc (ruleRewrite): pass eager flag to RedexPosition()
+	(ruleRewrite): use Symbol::stackArguments() in place of
+	DagNode::stackArguments()
+
+2017-02-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* rule.hh (setNarrowing, isNarrowing): deleted
+	(PreEquation): deleted enum Flags
+
+2017-01-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* rewritingContext.hh (reduce): moved here and made inline
+
+2017-01-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* conditionFragment.hh: stack<> -> Stack<>
+
+	* preEquation.cc: stack<> -> Stack<>
+
+	* preEquation.hh: stack<> -> Stack<>
+
+===================================Maude111b===========================================
+
+2017-01-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowingVariableInfo.hh (forgetAllBut): added
+
+===================================Maude111a===========================================
+
+2016-12-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* rewritingContext.hh (clearCount): clear narrowingCount and
+	variantNarrowingCount
+
+2016-12-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowingVariableInfo.hh (N): use NO_COPYING macro
+	(N): added ctor
+
+	* freshVariableGenerator.hh (F): added decl for belongsToFamily()
+
+2016-11-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* variableInfo.hh (V): added decl for new variable2Index()
+
+	* variableInfo.cc (variable2Index): added VariableDagNode* version
+
+2016-11-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowingVariableInfo.hh (N): added decl for variable2IndexNoAdd()
+
+	* narrowingVariableInfo.cc (variable2IndexNoAdd): added
+
+2016-10-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* unificationContext.cc (UnificationContext, makeFreshVariable): odd ->
+	variableFamily
+
+	* unificationContext.hh (SimpleRootContainer): updated decl for ctor
+	(SimpleRootContainer): data member odd becomes int variableFamily
+
+	* freshVariableGenerator.hh (F): updated decl for getFreshVariableName()
+
+2016-10-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* rule.hh (PreEquation): added enum Flags for NARROWING
+	(isNarrowing, setNarrowing): added
+
+===================================Maude111===========================================
+
 2016-06-27  Steven Eker  <eker@install.csl.sri.com>
 
 	* pendingUnificationStack.hh (flagAsIncomplete): fixed typo
@@ -1785,7 +2068,7 @@
 
 	* symbolMap.hh (class SymbolMap): added decl for
 	makeTranslatedTerm()
-	
+
 ===================================Maude86b===========================================
 
 2005-01-19  Steven Eker  <eker@goo.csl.sri.com>
@@ -1854,10 +2137,10 @@
 
 2004-10-08  Steven Eker  <eker@goo.csl.sri.com>
 
-	* checkedArgVecIterator.hh (operator-, operator+, operator--) 
+	* checkedArgVecIterator.hh (operator-, operator+, operator--)
 	(operator++): added typename to pacify g++ 3.4.2
 
-	* checkedArgVecConstIterator.hh (operator++, operator--) 
+	* checkedArgVecConstIterator.hh (operator++, operator--)
 	(operator+, operator-): added typename to pacify g++ 3.4.2
 
 2004-10-07  Steven Eker  <eker@goo.csl.sri.com>
@@ -1872,14 +2155,14 @@
 	* connectedComponent.cc (findMaximalSorts): rewritten in a more
 	efficient and robust manner; pass back Vector<Sort*> rather than
 	Vector<int>
-	
+
 ===================================Maude85===========================================
 
 2004-07-29  Steven Eker  <eker@goo.csl.sri.com>
 
 	* rewritingContext.hh (class RewritingContext): made
 	markReachableNodes() protected rather than private
-	
+
 ===================================Maude84d===========================================
 
 2004-06-07  Steven Eker  <eker@goo.csl.sri.com>
@@ -1901,7 +2184,7 @@
 	* ruleTable.hh (class RuleTable): added decls for
 	saveHiddenState() and restoreHiddenState()
 	(class RuleTable): added data member nextRuleStack
-	
+
 ===================================Maude84c==================================
 
 2003-08-28  Steven Eker  <eker@goo.csl.sri.com>
@@ -1910,7 +2193,7 @@
 	applyReplaceNoOwise()
 
 	* equationTable.cc (applyReplaceNoOwise): added
-	
+
 ===================================Maude82==================================
 
 2003-07-24  Steven Eker  <eker@goo.csl.sri.com>
@@ -1924,9 +2207,9 @@
 
 	* ctorDiagram.cc (containsConstructor): fixed spelling of
 	consistency
-	
+
 ===================================Maude81==================================
-	
+
 2003-05-30  Steven Eker  <eker@goo.csl.sri.com>
 
 	* sortTable.hh (class SortTable): added decl for

@@ -1,0 +1,24 @@
+fmod TEST is
+  sort Foo .
+  op g : Foo -> Foo .
+  eq g(X:Foo) = X:Foo .
+endfm
+fmod TEST is
+  sort Foo .
+  op c : -> Foo .
+  op g : Foo -> Foo .
+  eq g(X:Foo) = X:Foo .
+endfm
+fmod TEST is
+  sort Foo .
+  op c : -> Foo .
+  op g : Foo -> Foo .
+  eq g(X:Foo) = c .
+endfm
+fmod TEST is
+  sort Foo .
+  op h : Foo -> Foo .
+  op g : Foo -> Foo .
+  eq g(X:Foo) = h(h(X:Foo)) .
+endfm
+Bye.

@@ -1,0 +1,5 @@
+==========================================
+reduce in TEST : b .
+rewrites: 0
+result Baz: b
+Bye.

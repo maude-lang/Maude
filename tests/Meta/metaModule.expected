@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in META-MODULE : subsort 'Foo < 'Bar . .
 rewrites: 0
 result SubsortDecl: subsort 'Foo < 'Bar .
@@ -60,4 +60,4 @@ result FModule: fmod 'FOO is
   none
   eq 'f['X:Foo] = 'g['a.Foo,'X:Foo] [none] .
 endfm
-Maude> Bye.
+Bye.

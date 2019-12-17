@@ -1,0 +1,14 @@
+==========================================
+erewrite in TEST : <> < me : User | state: 1 > createInterpreter(
+    interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | state: 4 > showingModule(me,
+    interpreter(0), fmod 'BAR is
+  including 'FOO .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm)
+Bye.

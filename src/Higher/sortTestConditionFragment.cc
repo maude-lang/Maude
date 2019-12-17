@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -97,7 +97,7 @@ SortTestConditionFragment::compileMatch(VariableInfo& variableInfo, NatSet& boun
 bool
 SortTestConditionFragment::solve(bool findFirst,
 				 RewritingContext& solution,
-				 stack<ConditionState*>& /* state */)
+				 Stack<ConditionState*>& /* state */)
 {
   if (!findFirst)
     return false;

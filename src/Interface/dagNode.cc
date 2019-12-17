@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -172,30 +172,34 @@ DagNode::partialConstruct(DagNode* /* replacement */, ExtensionInfo* /* extensio
 //
 
 DagNode::ReturnResult
-DagNode::computeBaseSortForGroundSubterms()
+DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 {
   //
   //	This is the backstop version for an unimplemented theory. If
   //	all our subterms are ground we compute our sort and return GROUND
   //	other we return UNIMPLEMENTED.
   //
+  ReturnResult result = GROUND;
+  bool localWarning = warnAboutUnimplemented;
   for (DagArgumentIterator a(*this); a.valid(); a.next())
     {
-      switch (a.argument()->computeBaseSortForGroundSubterms())
+      if (a.argument()->computeBaseSortForGroundSubterms(warnAboutUnimplemented) != GROUND)
 	{
-	case NONGROUND:
-	  IssueWarning("Term " << QUOTE(this) <<
-		       " is non-ground and unification for its top symbol is not currently supported.");
-	  // fall thru
-	case UNIMPLEMENTED:
-	  return UNIMPLEMENTED;
-	default:
-	  ;  // to avoid compiler warning
+	  if (localWarning)
+	    {
+	      IssueWarning("Term " << QUOTE(this) <<
+			   " is non-ground and unification for its top symbol is not currently supported.");
+	      localWarning = false;  // only warn once per symbol
+	    }
+	  result = UNIMPLEMENTED;
 	}
     }
-  topSymbol->computeBaseSort(this);
-  setGround();
-  return GROUND;
+  if (result == GROUND)
+    {
+      topSymbol->computeBaseSort(this);
+      setGround();
+    }
+  return result;
 }
 
 bool
@@ -250,7 +254,7 @@ DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingU
   //	If rhs is nonground then its theory should have been given the problem.
   //	And we just handle the variable rhs case above.
   //	
-  CantHappen("this = " << this << "   rhs = " << rhs);
+  CantHappen("unimplemted theory this = " << this << "   rhs = " << rhs);
   //IssueWarning("Unification modulo the theory of operator " << QUOTE(this->topSymbol) << " is not currently supported.");
   return false;
 }

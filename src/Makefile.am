@@ -1,6 +1,7 @@
 SUBDIRS = \
 	3rdParty \
 	Utility \
+	Parser \
 	Temporal \
 	Interface \
 	Core \
@@ -19,7 +20,6 @@ SUBDIRS = \
 	ObjectSystem \
 	Meta \
 	FullCompiler \
-	MSCP10 \
 	StrategyLanguage \
 	Mixfix \
 	SMT \

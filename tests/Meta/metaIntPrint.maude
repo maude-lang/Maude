@@ -1,0 +1,57 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Test pretty printing in the meta-interpreter.
+***
+
+load metaInterpreter
+
+mod PRINT-TEST is
+  pr META-INTERPRETER .
+  pr RAT .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op term:_ : Term -> Attribute .
+  op flags:_ : PrintOptionSet  -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var T : Term .
+  var F : PrintOptionSet .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | AS, term: T, flags: F > insertedModule(X, Y) =>
+     < X : User | AS > printTerm(Y, X, 'RAT, 'X:Rat, T, F) .
+endm
+
+erew in PRINT-TEST : <> 
+< me : User | term: upTerm(1/2), flags: mixfix > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PRINT-TEST : <> 
+< me : User | term: upTerm(1/2), flags:  number > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PRINT-TEST : <> 
+< me : User | term: upTerm(1/2), flags: rat > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PRINT-TEST : <> 
+< me : User | term: upTerm(1/2 + X:Rat), flags: rat > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PRINT-TEST : <> 
+< me : User | term: upTerm(1/2 + X:Rat), flags: (rat mixfix) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PRINT-TEST : <> 
+< me : User | term: upTerm(1/2 + X:Rat), flags: (number mixfix) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in PRINT-TEST : <> 
+< me : User | term: upTerm(1/2 + X:Rat), flags: mixfix > 
+createInterpreter(interpreterManager, me, none) .

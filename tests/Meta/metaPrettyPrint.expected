@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   protecting 'FLOAT .
   sorts none .
@@ -42,7 +42,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
 endfm, 's_['s_['0.Zero]], mixfix flat format number rat) .
-rewrites: 1
+rewrites: 2
 result NeTypeList: 's '1
 ==========================================
 reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
@@ -53,7 +53,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
 endfm, 's_['s_['0.Zero]], none) .
-rewrites: 1
+rewrites: 2
 result NeTypeList: 's_ '`( 's_ '`( '0 '`) '`)
 ==========================================
 reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
@@ -108,7 +108,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
 endfm, '_/_['-_['s_^6789['0.Zero]],'s_^12345['0.Zero]], mixfix) .
-rewrites: 1
+rewrites: 2
 result NeTypeList: '- 's_^6789 '`( '0 '`) '/ 's_^12345 '`( '0 '`)
 ==========================================
 reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
@@ -119,7 +119,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
 endfm, '_/_['-_['s_^6789['0.Zero]],'s_^12345['0.Zero]], mixfix number) .
-rewrites: 1
+rewrites: 2
 result NeTypeList: '-6789 '/ '12345
 ==========================================
 reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
@@ -130,6 +130,28 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
 endfm, '_/_['-_['s_^6789['0.Zero]],'s_^12345['0.Zero]], mixfix rat) .
-rewrites: 1
+rewrites: 2
 result Sort: '-6789/12345
-Maude> Bye.
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'X:Float ; 'Y:Float, 'X:Float, mixfix) .
+rewrites: 1
+result Sort: 'X
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'X:Float ; 'Y:Float, '_/_['X:Float,'Y:Float], mixfix) .
+rewrites: 1
+result NeTypeList: 'X '/ 'Y
+Bye.

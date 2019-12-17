@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in TEST : metaFrewrite(m, t, 1, 1) .
 rewrites: 5
 result ResultPair: {'f['f['i['s_['0.Zero]],'i['s_['0.Zero]]],'f['i['s_^3[
@@ -82,4 +82,4 @@ result [ResultPair?]: metaFrewrite(mod 'FAIR is
   rl 'i['M:NzInt] => 'i['_-_['M:NzInt,'s_['0.Nat]]] [none] .
 endm, 'f['f['i['s_^2['0.Nat]],'i['s_['0.Nat]]],'f['i['s_^3['0.Nat]],'i['s_^2[
     '0.Nat]]]], 1, 0)
-Maude> Bye.
+Bye.

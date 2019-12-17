@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -36,7 +36,7 @@ StringTable::hash(const char* name)
 {
   int h = 0;
   for (const char* p = name; *p; p++)
-    h = (3 * h) + *p;
+    h = (3 * h) + *p;	// NOTE Undefined behavior (integer overflow)
   return h;
 }
 
@@ -45,7 +45,7 @@ StringTable::hash2(const char* name)  // 2nd hash function must always return an
 {
   int h = 0;
   for (const char* p = name; *p; p++)
-    h = (5 * h) ^ *p;
+    h = (5 * h) ^ *p; // NOTE Undefined behavior (integer overflow)
   return h | 1;
 }
 

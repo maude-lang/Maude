@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -334,11 +334,13 @@ ACU_Symbol::normalizeAndComputeTrueSort(DagNode* subject, RewritingContext& cont
 void
 ACU_Symbol::stackArguments(DagNode* subject,
 			   Vector<RedexPosition>& stack,
-			   int parentIndex)
+			   int parentIndex,
+			   bool respectFrozen,
+			   bool eagerContext)
 {
-  if (!(getFrozen().empty()))
+  if (respectFrozen && !(getFrozen().empty()))  // under AC, any frozen argument affects all
     return;
-  bool eager = (getPermuteStrategy() == EAGER);
+  bool eager = eagerContext & (getPermuteStrategy() == EAGER);
   int argNr = 0;
   if (safeCast(ACU_BaseDagNode*, subject)->isTree())
     {
@@ -376,6 +378,41 @@ ACU_Symbol::stackArguments(DagNode* subject,
 		  ++argNr;
 		}
 	    }
+	}
+    }
+}
+
+void
+ACU_Symbol::stackPhysicalArguments(DagNode* subject,
+				   Vector<RedexPosition>& stack,
+				   int parentIndex,
+				   bool respectFrozen,
+				   bool eagerContext)
+{
+  if (respectFrozen && !(getFrozen().empty()))  // under AC, any frozen argument affects all
+    return;
+  bool eager = eagerContext & (getPermuteStrategy() == EAGER);
+  if (safeCast(ACU_BaseDagNode*, subject)->isTree())
+    {
+      int argNr = 0;
+      const ACU_Tree& tree = safeCast(ACU_TreeDagNode*, subject)->getTree();
+      for (ACU_FastIter i(tree); i.valid(); i.next())
+	{
+	  DagNode* d = i.getDagNode();
+	  if (!(d->isUnstackable()))
+	    stack.append(RedexPosition(d, parentIndex, argNr, eager));
+	  ++argNr;
+	}
+    }
+  else
+    {
+      ArgVec<ACU_Pair>& argArray = safeCast(ACU_DagNode*, subject)->argArray;
+      int nrArgs = argArray.length();
+      for (int i = 0; i < nrArgs; i++)
+	{
+	  DagNode* d = argArray[i].dagNode;
+	  if (!(d->isUnstackable()))
+	    stack.append(RedexPosition(d, parentIndex, i, eager));
 	}
     }
 }

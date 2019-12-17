@@ -1,3 +1,15 @@
+2019-07-01  Steven Eker  <eker@mu>
+
+	* ACU_RedBlackNode.hh: rewritten using new MemoryCell definition
+
+===================================Maude123===========================================
+
+2017-04-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_Find.cc (findFirstPotentialMatch): added comment
+
+===================================Maude112a===========================================
+
 2013-09-26  Steven Eker  <eker@ape.csl.sri.com>
 
 	* ACU_RedBlackNode.hh (new): set half word to SORT_UNKNOWN rather

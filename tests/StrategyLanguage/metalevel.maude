@@ -1,0 +1,121 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Ascent functions
+***
+
+mod FOO is
+	sort Foo .
+	ops a b c : -> Foo .
+	rl [ab] : a => b .
+	rl [bc] : b => c .
+endm
+
+smod SFOO is
+	protecting FOO .
+
+	strat ac @ Foo .
+	sd ac := ab ; bc .
+endsm
+
+sth STRIV is
+	including TRIV .
+	strat st @ Elt .
+endsth
+
+red in META-LEVEL : upModule('SFOO, false) .
+red in META-LEVEL : upModule('SFOO, true) .
+red in META-LEVEL : upModule('STRIV, false) .
+red in META-LEVEL : upStratDecls('STRIV, true) .
+red in META-LEVEL : upSds('SFOO, false) .
+
+
+view SFoo from STRIV to SFOO is
+	sort Elt to Foo .
+	strat st to ac .
+endv
+
+view SFoo2 from STRIV to FOO is
+	sort Elt to Foo .
+	strat st to expr ab .
+endv
+
+red in META-LEVEL : upView('SFoo) .
+red in META-LEVEL : upView('SFoo2) .
+
+
+***
+*** Strategic rewrite
+***
+
+red in META-LEVEL : metaSrewrite(upModule('SFOO, false),
+	'a.Foo, 'ab[none]{empty} | 'ac[[empty]], breadthFirst, 0) .
+
+red in META-LEVEL : metaSrewrite(['SFOO],
+	'a.Foo, 'ab[none]{empty} | 'ac[[empty]], breadthFirst, 0) .
+
+red in META-LEVEL : metaSrewrite(['SFOO],
+	'a.Foo, 'ab[none]{empty} | 'ac[[empty]], breadthFirst, 0) .
+
+red in META-LEVEL : metaSrewrite(['SFOO],
+	'a.Foo, 'ab[none]{empty} | 'ac[[empty]], breadthFirst, 1) .
+
+red in META-LEVEL : metaSrewrite(['SFOO],
+	'a.Foo, 'ab[none]{empty} | 'ac[[empty]], breadthFirst, 2) .
+
+red in META-LEVEL : metaSrewrite(['SFOO],
+	'a.Foo, 'ab[none]{empty} | 'ac[[empty]], depthFirst, 1) .
+
+red in META-LEVEL : metaSrewrite(['SFOO],
+	'a.Foo, 'ab[none]{empty} | 'ac[[empty]], depthFirst, 0) .
+
+red in META-LEVEL : metaSrewrite(
+mod 'INC is
+  protecting 'NAT .
+  sorts none .
+  none
+  none
+  none
+  none
+  rl 'N:Nat => 's_['N:Nat] [label('inc)] .
+endm, '0.Nat, ('inc[none]{empty}) *, breadthFirst, 8) .
+
+red in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'bad-rule[none]{empty}, depthFirst, 0) .
+
+red in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'bad-strat[[empty]], depthFirst, 0) .
+
+
+***
+*** Parse and pretty-print
+***
+
+red in META-LEVEL : metaParseStrategy(['SFOO], none, 'ac '| 'ab) .
+
+red in META-LEVEL : metaParseStrategy(['NAT], 'N:Nat ; 'M:Nat,
+	'match 'N 's.t. 'M ':= '5 '/\ 'N '> 'M) .
+
+red in META-LEVEL : metaParseStrategy(['SFOO], 'N:Nat, 'idle) .
+
+red in META-LEVEL : metaParseStrategy(['SFOO], none, 'ab ';) .
+
+
+red in META-LEVEL : metaPrettyPrintStrategy(['SFOO], none,
+	'ac[[empty]] ; 'ab[none]{empty}, none) .
+
+red in META-LEVEL : metaPrettyPrintStrategy(['NAT], 'N:Nat,
+	match 'N:Nat s.t. ('M:Nat := 's_^5['0.Zero] /\ '_>_['N:Nat, 'M:Nat] = 'true.Bool), number) .
+
+
+red in META-LEVEL : metaPrettyPrintStrategy(
+smod 'CONFLICT is
+  protecting 'NAT .
+  sorts none .
+  none
+  none
+  none
+  none
+  rl 'N:Nat => '0.Zero [label('cancel)] .
+  strat 'cancel : nil @ 'Nat [none] .
+  sd 'cancel[[empty]] := match '0.Zero s.t. nil or-else ('cancel[none]{empty}) [none] .
+endsm, none, 'cancel[[empty]] | 'cancel[none]{empty}, none) .

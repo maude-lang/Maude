@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in STRING : ascii("A") .
 rewrites: 1
 result NzNat: 65
@@ -203,9 +203,9 @@ reduce in STRING : "A" .
 rewrites: 0
 result Char: "A"
 Warning: <standard input>, line 80: ambiguous term, two parses are:
-("this is not a string").Foo
+Foo : ("this is not a string").Foo
 -versus-
-("this is not a string").String
+String : ("this is not a string").String
 
 Arbitrarily taking the first as correct.
 ==========================================
@@ -244,4 +244,76 @@ result [FindResult]: ascii("aa")
 reduce in STRING : char(1000) .
 rewrites: 0
 result [String]: char(1000)
-Maude> Bye.
+==========================================
+reduce in STRING : lowerCase("a") .
+rewrites: 1
+result Char: "a"
+==========================================
+reduce in STRING : lowerCase("A") .
+rewrites: 1
+result Char: "a"
+==========================================
+reduce in STRING : lowerCase("123AAAaaa123aaaAAA123") .
+rewrites: 1
+result String: "123aaaaaa123aaaaaa123"
+==========================================
+reduce in STRING : lowerCase("AAAaaa123AAAaaa123aaaAAA123") .
+rewrites: 1
+result String: "aaaaaa123aaaaaa123aaaaaa123"
+==========================================
+reduce in STRING : lowerCase("abcdef") .
+rewrites: 1
+result String: "abcdef"
+==========================================
+reduce in STRING : lowerCase("abcdeF") .
+rewrites: 1
+result String: "abcdef"
+==========================================
+reduce in STRING : lowerCase("AbCdEf") .
+rewrites: 1
+result String: "abcdef"
+==========================================
+reduce in STRING : lowerCase("aBcDeF") .
+rewrites: 1
+result String: "abcdef"
+==========================================
+reduce in STRING : lowerCase("ABCDEF") .
+rewrites: 1
+result String: "abcdef"
+==========================================
+reduce in STRING : upperCase("a") .
+rewrites: 1
+result Char: "A"
+==========================================
+reduce in STRING : upperCase("A") .
+rewrites: 1
+result Char: "A"
+==========================================
+reduce in STRING : upperCase("123AAAaaa123aaaAAA123") .
+rewrites: 1
+result String: "123AAAAAA123AAAAAA123"
+==========================================
+reduce in STRING : upperCase("AAAaaa123AAAaaa123aaaAAA123") .
+rewrites: 1
+result String: "AAAAAA123AAAAAA123AAAAAA123"
+==========================================
+reduce in STRING : upperCase("abcdef") .
+rewrites: 1
+result String: "ABCDEF"
+==========================================
+reduce in STRING : upperCase("abcdeF") .
+rewrites: 1
+result String: "ABCDEF"
+==========================================
+reduce in STRING : upperCase("AbCdEf") .
+rewrites: 1
+result String: "ABCDEF"
+==========================================
+reduce in STRING : upperCase("aBcDeF") .
+rewrites: 1
+result String: "ABCDEF"
+==========================================
+reduce in STRING : upperCase("ABCDEF") .
+rewrites: 1
+result String: "ABCDEF"
+Bye.

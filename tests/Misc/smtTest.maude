@@ -217,6 +217,27 @@ smt-search [4] f(J) =>* f(J)  .
 
 smt-search [4] f(J) =>* f(K)  such that J = K .
 
+*** test continue
+
+smt-search [1] f(11) =>1 X .
+cont .
+
+smt-search [1] f(11) =>* X .
+cont 2 .
+cont 1 .
+cont 1 .
+
+debug smt-search [4] f(11) =>+ X .
+step .
+step .
+step .
+resume .
+
+smt-search [4] f(J) =>* f(K)  such that J = K .
+debug cont 1 .
+step .
+resume .
+
 mod TEST2 is
   pr ITEST .
   pr META-LEVEL .
@@ -253,3 +274,98 @@ red in TEST2 : metaSmtSearch(['ITEST],
                   upTerm(f(K)),
                   'J:Integer = 'K:Integer,
                   '*, 42, unbounded, 3) .
+
+*** check violations of SMT restrictions
+
+mod COLLAPSE-AXIOM is
+  pr INTEGER .
+  op bad : Foo Foo -> Foo [idem] .
+  sort Foo .
+  op f : Foo Foo -> Foo .
+  op g : Foo -> Foo .
+  op h : Integer -> Foo .
+
+vars A B C : Foo .
+vars X Y Z : Integer .
+  crl f(h(X), h(Y)) => g(h(X)) if X = Y .
+endm
+
+smt-search f(h(X), h(Y)) =>+ g(C) .
+
+mod COLLAPSE-AXIOM2 is
+  pr INTEGER .
+  op bad : Foo Foo -> Foo [poly (1 2 3) idem] .
+  sort Foo .
+  op f : Foo Foo -> Foo .
+  op g : Foo -> Foo .
+  op h : Integer -> Foo .
+
+vars A B C : Foo .
+vars X Y Z : Integer .
+  crl f(h(X), h(Y)) => g(h(X)) if X = Y .
+endm
+
+smt-search f(h(X), h(Y)) =>+ g(C) .
+
+mod SMT-OP-IN-LHS is
+  pr INTEGER .
+  sort Foo .
+  op f : Foo Foo -> Foo .
+  op g : Foo -> Foo .
+  op h : Integer -> Foo .
+
+vars A B C : Foo .
+vars X Y Z : Integer .
+  crl f(h(X), h(Y + 1)) => g(h(X)) if X = Y .
+endm
+
+smt-search f(h(X), h(Y)) =>+ g(C) .
+
+mod NONLINEAR-VAR-IN-LHS is
+  pr INTEGER .
+  sort Foo .
+  op f : Foo Foo -> Foo .
+  op g : Foo -> Foo .
+  op h : Integer -> Foo .
+
+vars A B C : Foo .
+vars X Y Z : Integer .
+  crl f(h(X), h(X)) => g(h(X)) if X = 1 .
+endm
+
+smt-search f(h(X), h(Y)) =>+ g(C) .
+
+mod EQ-AND-MB-NO_RULES is
+  pr INTEGER .
+  op bad : Foo Foo -> Foo .
+  sort Foo .
+  op f : Foo Foo -> Foo .
+  op g : Foo -> Foo .
+  op h : Integer -> Foo .
+
+vars A B C : Foo .
+vars X Y Z : Integer .
+  mb A : Foo .
+  eq f(A, A) = g(A) .
+endm
+
+smt-search f(h(X), h(Y)) =>+ g(C) .
+
+mod FOO is
+  pr INTEGER .
+  op bad : Foo Foo -> Foo .
+  sort Foo .
+  op f : Foo Foo -> Foo .
+  op g : Foo -> Foo .
+  op h : Integer -> Foo .
+
+vars A B C : Foo .
+vars X Y Z : Integer .
+  crl f(h(X), h(Y)) => g(h(X)) if X = Y .
+endm
+
+*** nonlinear variable in pattern
+smt-search f(h(X), h(Y)) =>+ f(C, C) .
+
+*** SMT operator in pattern
+smt-search f(h(X), h(Y)) =>+ h(X + Y) .

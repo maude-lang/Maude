@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in TEST : metaApply(m, 'a.Foo, 'k, none, 0) .
 rewrites: 3
 result ResultTriple: {'b.Foo,'Foo,(none).Substitution}
@@ -28,14 +28,14 @@ result ResultTriple?: (failure).ResultTriple?
 reduce in TEST2 : metaApply(m, 'f['a.Foo,'b.Foo], 'k, none, 0) .
 rewrites: 3
 result ResultTriple: {'a.Foo,'Foo,
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'b.Foo}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo}
 ==========================================
 reduce in TEST2 : metaApply(m, 'f['a.Foo,'b.Foo], 'k, none, 1) .
 rewrites: 3
 result ResultTriple: {'b.Foo,'Foo,
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'a.Foo}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'a.Foo}
 ==========================================
 reduce in TEST2 : metaApply(m, 'f['a.Foo,'b.Foo], 'k, none, 2) .
 rewrites: 2
@@ -47,50 +47,50 @@ rewrites: 2
 result ResultTriple?: (failure).ResultTriple?
 ==========================================
 reduce in TEST3 : metaApply(m, 'f['a.Foo,'b.Foo], 'k, 
-	'Y:Foo <- 'b.Foo, 0) .
+  'Y:Foo <- 'b.Foo, 0) .
 rewrites: 3
 result ResultTriple: {'a.Foo,'Foo,
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'b.Foo}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo}
 ==========================================
 reduce in TEST3 : metaApply(m, 'f['a.Foo,'b.Foo], 'k, 
-	'Y:Foo <- 'b.Foo, 1) .
+  'Y:Foo <- 'b.Foo, 1) .
 rewrites: 2
 result ResultTriple?: (failure).ResultTriple?
 ==========================================
 reduce in TEST3 : metaApply(m, 'f['b.Foo,'b.Foo], 'k, 
-	'X:Foo <- 'b.Foo, 0) .
+  'X:Foo <- 'b.Foo, 0) .
 rewrites: 3
 result ResultTriple: {'b.Foo,'Foo,
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'b.Foo}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'b.Foo}
 ==========================================
 reduce in TEST3 : metaApply(m, 'f['b.Foo,'b.Foo], 'k, 
-	'X:Foo <- 'b.Foo, 1) .
+  'X:Foo <- 'b.Foo, 1) .
 rewrites: 2
 result ResultTriple?: (failure).ResultTriple?
 ==========================================
 reduce in TEST3 : metaApply(m, 'f['b.Foo,'b.Foo], 'k, 
-	'Z:Foo <- 'b.Foo, 0) .
+  'Z:Foo <- 'b.Foo, 0) .
 rewrites: 3
 result ResultTriple: {'b.Foo,'Foo,
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'b.Foo}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'b.Foo}
 ==========================================
 reduce in TEST3 : metaApply(m, 'f['b.Foo,'b.Foo], 'k, 
-	'Z:Foo <- 'b.Foo, 1) .
+  'Z:Foo <- 'b.Foo, 1) .
 rewrites: 2
 result ResultTriple?: (failure).ResultTriple?
 ==========================================
 reduce in TEST4 : metaApply(m, 'f['b.Foo,'b.Foo], 'k, 
-	'Z:Foo <- 'b.Foo, 0) .
+  'Z:Foo <- 'b.Foo, 0) .
 rewrites: 3
 result ResultTriple: {'f['a.Foo,'b.Foo],'Foo,
-	'X:Foo <- 'f['a.Foo,'b.Foo] ; 
-	'Y:Foo <- 'b.Foo}
+  'X:Foo <- 'f['a.Foo,'b.Foo] ; 
+  'Y:Foo <- 'b.Foo}
 ==========================================
 reduce in TEST4 : metaApply(m, 'f['b.Foo,'b.Foo], 'k, 
-	'Z:Foo <- 'b.Foo, 1) .
+  'Z:Foo <- 'b.Foo, 1) .
 rewrites: 2
 result ResultTriple?: (failure).ResultTriple?
 ==========================================
@@ -108,14 +108,14 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
   crl 'f['X:Foo,'Y:Foo] => 'Z:Foo if 'Q:Foo := 'g['X:Foo,'Y:Foo] /\ 'g['Z:Foo,
     'A:Foo] := 'Q:Foo [label('k)] .
 endm, 'f['a.Foo,'b.Foo,'c.Foo], 'k, 
-	'A:Foo <- 'b.Foo, 0) .
+  'A:Foo <- 'b.Foo, 0) .
 rewrites: 2
 result ResultTriple: {'f['a.Foo,'c.Foo],'Foo,
-	'A:Foo <- 'b.Foo ; 
-	'Q:Foo <- 'g['b.Foo,'f['a.Foo,'c.Foo]] ; 
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'f['a.Foo,'c.Foo] ; 
-	'Z:Foo <- 'f['a.Foo,'c.Foo]}
+  'A:Foo <- 'b.Foo ; 
+  'Q:Foo <- 'g['b.Foo,'f['a.Foo,'c.Foo]] ; 
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'f['a.Foo,'c.Foo] ; 
+  'Z:Foo <- 'f['a.Foo,'c.Foo]}
 ==========================================
 reduce in META-LEVEL : metaApply(mod 'FOO is
   protecting 'BOOL .
@@ -131,14 +131,14 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
   crl 'f['X:Foo,'Y:Foo] => 'Z:Foo if 'Q:Foo := 'g['X:Foo,'Y:Foo] /\ 'g['Z:Foo,
     'A:Foo] := 'Q:Foo [label('k)] .
 endm, 'f['a.Foo,'b.Foo,'c.Foo], 'k, 
-	'A:Foo <- 'b.Foo, 1) .
+  'A:Foo <- 'b.Foo, 1) .
 rewrites: 2
 result ResultTriple: {'f['a.Foo,'c.Foo],'Foo,
-	'A:Foo <- 'b.Foo ; 
-	'Q:Foo <- 'g['b.Foo,'f['a.Foo,'c.Foo]] ; 
-	'X:Foo <- 'f['a.Foo,'c.Foo] ; 
-	'Y:Foo <- 'b.Foo ; 
-	'Z:Foo <- 'f['a.Foo,'c.Foo]}
+  'A:Foo <- 'b.Foo ; 
+  'Q:Foo <- 'g['b.Foo,'f['a.Foo,'c.Foo]] ; 
+  'X:Foo <- 'f['a.Foo,'c.Foo] ; 
+  'Y:Foo <- 'b.Foo ; 
+  'Z:Foo <- 'f['a.Foo,'c.Foo]}
 ==========================================
 reduce in META-LEVEL : metaApply(mod 'FOO is
   protecting 'BOOL .
@@ -154,7 +154,7 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
   crl 'f['X:Foo,'Y:Foo] => 'Z:Foo if 'Q:Foo := 'g['X:Foo,'Y:Foo] /\ 'g['Z:Foo,
     'A:Foo] := 'Q:Foo [label('k)] .
 endm, 'f['a.Foo,'b.Foo,'c.Foo], 'k, 
-	'A:Foo <- 'b.Foo, 2) .
+  'A:Foo <- 'b.Foo, 2) .
 rewrites: 1
 result ResultTriple?: (failure).ResultTriple?
 ==========================================
@@ -173,8 +173,8 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
 endm, 'f['a.Foo,'b.Foo,'c.Foo], 'k, none, 0) .
 rewrites: 2
 result ResultTriple: {'a.Foo,'Foo,
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'f['b.Foo,'c.Foo]}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'f['b.Foo,'c.Foo]}
 ==========================================
 reduce in META-LEVEL : metaApply(mod 'FOO is
   protecting 'BOOL .
@@ -191,8 +191,8 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
 endm, 'f['a.Foo,'b.Foo,'c.Foo], 'k, none, 1) .
 rewrites: 2
 result ResultTriple: {'b.Foo,'Foo,
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'f['a.Foo,'c.Foo]}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'f['a.Foo,'c.Foo]}
 ==========================================
 reduce in META-LEVEL : metaApply(mod 'FOO is
   protecting 'BOOL .
@@ -209,8 +209,8 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
 endm, 'f['a.Foo,'b.Foo,'c.Foo], 'k, none, 2) .
 rewrites: 2
 result ResultTriple: {'c.Foo,'Foo,
-	'X:Foo <- 'c.Foo ; 
-	'Y:Foo <- 'f['a.Foo,'b.Foo]}
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'f['a.Foo,'b.Foo]}
 ==========================================
 reduce in META-LEVEL : metaApply(mod 'FOO is
   protecting 'BOOL .
@@ -227,8 +227,8 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
 endm, 'f['a.Foo,'b.Foo,'c.Foo], 'k, none, 3) .
 rewrites: 2
 result ResultTriple: {'f['a.Foo,'b.Foo],'Foo,
-	'X:Foo <- 'f['a.Foo,'b.Foo] ; 
-	'Y:Foo <- 'c.Foo}
+  'X:Foo <- 'f['a.Foo,'b.Foo] ; 
+  'Y:Foo <- 'c.Foo}
 ==========================================
 reduce in META-LEVEL : metaApply(mod 'FOO is
   protecting 'BOOL .
@@ -245,8 +245,8 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
 endm, 'f['a.Foo,'b.Foo,'c.Foo], 'k, none, 4) .
 rewrites: 2
 result ResultTriple: {'f['a.Foo,'c.Foo],'Foo,
-	'X:Foo <- 'f['a.Foo,'c.Foo] ; 
-	'Y:Foo <- 'b.Foo}
+  'X:Foo <- 'f['a.Foo,'c.Foo] ; 
+  'Y:Foo <- 'b.Foo}
 ==========================================
 reduce in META-LEVEL : metaApply(mod 'FOO is
   protecting 'BOOL .
@@ -263,8 +263,8 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
 endm, 'f['a.Foo,'b.Foo,'c.Foo], 'k, none, 5) .
 rewrites: 2
 result ResultTriple: {'f['b.Foo,'c.Foo],'Foo,
-	'X:Foo <- 'f['b.Foo,'c.Foo] ; 
-	'Y:Foo <- 'a.Foo}
+  'X:Foo <- 'f['b.Foo,'c.Foo] ; 
+  'Y:Foo <- 'a.Foo}
 ==========================================
 reduce in META-LEVEL : metaApply(mod 'FOO is
   protecting 'BOOL .
@@ -298,8 +298,8 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
 endm, 'f['a.Foo,'b.Foo], 'k, none, 0) .
 rewrites: 2
 result ResultTriple: {'a.Foo,'Foo,
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'b.Foo}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo}
 ==========================================
 reduce in META-LEVEL : metaApply(mod 'FOO is
   protecting 'BOOL .
@@ -317,8 +317,8 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
 endm, 'f['a.Foo,'b.Foo], 'k, none, 1) .
 rewrites: 2
 result ResultTriple: {'b.Foo,'Foo,
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'a.Foo}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'a.Foo}
 ==========================================
 reduce in META-LEVEL : metaApply(mod 'FOO is
   protecting 'BOOL .
@@ -336,4 +336,4 @@ reduce in META-LEVEL : metaApply(mod 'FOO is
 endm, 'f['a.Foo,'b.Foo], 'k, none, 2) .
 rewrites: 1
 result ResultTriple?: (failure).ResultTriple?
-Maude> Bye.
+Bye.

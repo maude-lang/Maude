@@ -1,0 +1,24 @@
+Warning: <standard input>, line 23 (view BAD1): right-hand side of
+    operator-to-term mapping contains a variable Z which does not correspond to
+    a left-hand side variable.
+Warning: <standard input>, line 30 (view BAD2): left-hand side X . 0 of an
+    operator-to-term mapping has non-variable argument 0.
+Warning: <standard input>, line 37 (view BAD3): variable X used more than once
+    in the left-hand side X . X of an operator-to-term mapping.
+Warning: <standard input>, line 50 (view BAD4): left-hand side f(X, Y, Z) of
+    operator-to-term mapping has 3 arguments whereas 2 were expected.
+Warning: In nonfinal module instantiation MAP-TO-LIST-WRAP{TRIV, TRIV}
+    parameters C and D cannot both be instantiated by theory-views because of a
+    conflict in the underlying module MAP-TO-LIST-WRAP.
+Warning: <standard input>, line 77 (fmod TEST): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: In nonfinal view instantiation V{TRIV, TRIV} parameters A and B cannot
+    both be instantiated by theory-views because of a conflict in the
+    underlying view V.
+Warning: <standard input>, line 98 (fmod TEST): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 105 (view Wrapper): parameter V of view Wrapper
+    is not bound in target module NAT.
+Bye.

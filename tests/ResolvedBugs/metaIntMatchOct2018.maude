@@ -1,0 +1,79 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that mb applications and eq rewrites for the initial
+***	sort computations in the subject are not counted twice for
+***	metaMatch()/metaXmatch()/getMatch()/getXmatch().
+***
+
+fmod MATCH is
+  sorts Foo Bar .
+  subsorts Foo < Bar .
+  op f : Bar Bar -> Bar [comm] .
+  ops g h : Foo -> Foo .
+  ops a b c d e : -> Foo .
+
+vars X Y : Bar .
+var Z : Foo .
+
+  cmb f(X, Y) : Foo if h(X) = g(Y) .
+  eq h(a) = b .
+  eq g(c) = b .
+  eq h(c) = d .
+  eq g(a) = d .
+endfm
+
+set trace on .
+set show breakdown on .
+
+red in META-LEVEL : metaMatch(['MATCH], 'Z:Foo, 'f['a.Foo, 'c.Foo], nil, 0) .
+
+red in META-LEVEL : metaXmatch(['MATCH], 'Z:Foo, 'f['a.Foo, 'c.Foo], nil, 0, unbounded, 0) .
+
+load metaInterpreter
+
+mod MATCH-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op soln:_ : Nat -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('MATCH, true)) .
+
+  rl < X : User | soln: N, AS > insertedModule(X, Y) =>
+     < X : User | AS > getMatch(Y, X, 'MATCH, 'Z:Foo, 'f['a.Foo, 'c.Foo], nil, N) .
+endm
+
+erew in MATCH-TEST : <> 
+< me : User | soln: 0 > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod XMATCH-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op soln:_ : Nat -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('MATCH, true)) .
+
+  rl < X : User | soln: N, AS > insertedModule(X, Y) =>
+     < X : User | AS > getXmatch(Y, X, 'MATCH, 'Z:Foo, 'f['a.Foo, 'c.Foo], nil, 0, unbounded, N) .
+endm
+
+erew in XMATCH-TEST : <> 
+< me : User | soln: 0 > 
+createInterpreter(interpreterManager, me, none) .

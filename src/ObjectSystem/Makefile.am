@@ -22,7 +22,9 @@ libobjectSystem_a_SOURCES = \
 	objectSystemRewritingContext.cc \
 	externalObjectManagerSymbol.cc \
 	socketManagerSymbol.cc \
-	pseudoThread.cc 
+	pseudoThread.cc \
+	fileManagerSymbol.cc \
+	streamManagerSymbol.cc
 
 EXTRA_DIST = \
 	objectMap.cc \
@@ -30,7 +32,11 @@ EXTRA_DIST = \
 	socketSignature.cc \
 	socketStuff.cc \
 	socketAsync.cc \
-	socketOutcomes.cc
+	socketOutcomes.cc \
+	fileSignature.cc \
+	fileActions.cc \
+	fileOutcomes.cc \
+	streamSignature.cc
 
 noinst_HEADERS = \
 	configSymbol.hh \
@@ -38,4 +44,6 @@ noinst_HEADERS = \
 	objectSystemRewritingContext.hh \
 	externalObjectManagerSymbol.hh \
 	socketManagerSymbol.hh \
-	pseudoThread.hh
+	pseudoThread.hh \
+	fileManagerSymbol.hh \
+	streamManagerSymbol.hh

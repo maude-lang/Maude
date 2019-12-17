@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
 
@@ -99,8 +99,8 @@ MixfixModule::handleIter(ostream& s,
       if (succSymbol->isNat(dagNode))
 	{
 	  const mpz_class& nat = succSymbol->getNat(dagNode);
-	  bool needDisambig = !rangeKnown &&
-	    (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat));
+	  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat)));
 	  prefix(s, needDisambig, color);
 	  s << nat;
 	  suffix(s, dagNode, needDisambig, color);
@@ -115,7 +115,12 @@ MixfixModule::handleIter(ostream& s,
   if (number == 1)
     return false;  // do default thing
   
-  // NEED TO FIX: disambig; i.e. we might have a regular operator called f^2
+  bool needToDisambiguate;
+  bool argumentRangeKnown;
+  decideIteratedAmbiguity(rangeKnown, dagNode->symbol(), number, needToDisambiguate, argumentRangeKnown);
+  if (needToDisambiguate)
+    s << '(';
+
   string prefixName;
   makeIterName(prefixName, dagNode->symbol()->id(), number);
   if (color != 0)
@@ -130,8 +135,9 @@ MixfixModule::handleIter(ostream& s,
 	coloringInfo.reducedDirectlyAbove;
     }
   prettyPrint(s, coloringInfo, sd->getArgument(),
-	      PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
+	      PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argumentRangeKnown);
   s << ')';
+  suffix(s, dagNode, needToDisambiguate, color);
   return true;
 }
 
@@ -148,8 +154,8 @@ MixfixModule::handleMinus(ostream& s,
 	{
 	  mpz_class neg;
 	  (void) minusSymbol->getNeg(dagNode, neg);
-	  bool needDisambig = !rangeKnown &&
-	    (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg));
+	  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg)));
 	  prefix(s, needDisambig, color);
 	  s << neg;
 	  suffix(s, dagNode, needDisambig, color);
@@ -172,8 +178,8 @@ MixfixModule::handleDivision(ostream& s,
 	{
 	  pair<mpz_class, mpz_class> rat;
 	  rat.second = divisionSymbol->getRat(dagNode, rat.first);
-	  bool needDisambig = !rangeKnown &&
-	    (kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
+	  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
 	  prefix(s, needDisambig, color);
 	  s << rat.first << '/' << rat.second;
 	  suffix(s, dagNode, needDisambig, color);
@@ -190,8 +196,8 @@ MixfixModule::handleFloat(ostream& s,
 			  const char* color)
 {
   double mfValue = safeCast(FloatDagNode*, dagNode)->getValue();
-  bool needDisambig = !rangeKnown &&
-    (floatSymbols.size() > 1 || overloadedFloats.count(mfValue));
+  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (floatSymbols.size() > 1 || overloadedFloats.count(mfValue)));
   prefix(s, needDisambig, color);
   s << doubleToString(mfValue);
   suffix(s, dagNode, needDisambig, color);
@@ -205,8 +211,8 @@ MixfixModule::handleString(ostream& s,
 {
   string strValue;
   Token::ropeToString(safeCast(StringDagNode*, dagNode)->getValue(), strValue);
-  bool needDisambig = !rangeKnown &&
-    (stringSymbols.size() > 1 || overloadedStrings.count(strValue));
+  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue)));
   prefix(s, needDisambig, color);
   s << strValue;
   suffix(s, dagNode, needDisambig, color);
@@ -219,9 +225,8 @@ MixfixModule::handleQuotedIdentifier(ostream& s,
 				     const char* color)
 {
   int qidCode = safeCast(QuotedIdentifierDagNode*, dagNode)->getIdIndex();
-  bool needDisambig = !rangeKnown &&
-    (quotedIdentifierSymbols.size() > 1 ||
-     overloadedQuotedIdentifiers.count(qidCode));
+  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode)));
   prefix(s, needDisambig, color);
   s << '\'' << Token::name(qidCode);
   suffix(s, dagNode, needDisambig, color);
@@ -266,8 +271,8 @@ MixfixModule::handleSMT_Number(ostream& s,
   if (t == SMT_Info::INTEGER)
     {
       const mpz_class& integer = value.get_num();
-      bool needDisambig = !rangeKnown &&
-	(kindsWithSucc.size() > 1 || overloadedIntegers.count(integer));
+      bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	(!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer)));
       prefix(s, needDisambig, color);
       s << integer;
       suffix(s, dagNode, needDisambig, color);
@@ -276,8 +281,8 @@ MixfixModule::handleSMT_Number(ostream& s,
     {
       Assert(t == SMT_Info::REAL, "SMT number sort expected");
       pair<mpz_class, mpz_class> rat(value.get_num(), value.get_den());
-      bool needDisambig = !rangeKnown &&
-	(kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
+      bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	(!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
       prefix(s, needDisambig, color);
       s << rat.first << '/' << rat.second;
       suffix(s, dagNode, needDisambig, color);
@@ -362,8 +367,16 @@ MixfixModule::prettyPrint(ostream& s,
   //
   int iflags = si.iflags;
   bool needDisambig = !rangeKnown && ambiguous(iflags);
-  bool argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
+  bool argRangeKnown = false;
   int nrArgs = symbol->arity();
+  if (nrArgs == 0)
+    {
+      if (interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST))
+	needDisambig = true;
+    }
+  else
+    argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
+
   if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
     {
       coloringInfo.reducedDirectlyAbove = dagNode->isReduced();

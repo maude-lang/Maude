@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -188,7 +188,7 @@ Compiler::fullCompile(SyntacticPreModule* module, bool countRewrites)
   cmd += " -lruntime -o ";
   cmd += makeBaseName();
   int status = system(cmd.c_str());
-   cout << status << '\n' << cmd.c_str() << '\n';
+  cout << status << '\n' << cmd.c_str() << '\n';
   cout.flush();
 #ifndef ANNOTATE
   unlink(hhName.c_str());
@@ -288,7 +288,7 @@ Compiler::inputGraph(Int64& nrRewrites, Int64& cpu, Int64& real)
 void
 Compiler::runExecutable()
 {
-  system(makeBaseName().c_str());
+  returnValueDump = system(makeBaseName().c_str());
 }
 
 void

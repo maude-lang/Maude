@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 unify in FOO : X:Big =? h(f(Y:Big, Z:Big)) .
 
 Solution 1
@@ -76,4 +76,4 @@ unify in FOO6 : X:Big =? h(f(Y:Big, Y:Big)) .
 Solution 1
 X:Big --> h(1f)
 Y:Big --> 1f
-Maude> Bye.
+Bye.

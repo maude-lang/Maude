@@ -1,0 +1,72 @@
+*** Colliding Deterministic Reduction Paths for Leo's algorithm
+
+set print mixfix off .
+
+
+fmod COLLIDING-DRPs is
+  sorts A B C D .
+  op a_ : B -> A .
+  op b_ : C -> B .
+  op c_ : D -> C .
+  op d e : -> D .
+
+  op c d e : -> C .
+endfm
+
+*** ambiguous
+parse a b c d e .
+
+
+fmod COLLIDING-DRPs2 is
+  sorts A B C D .
+  op a_ : B -> A .
+  op b_ : C -> B .
+  op c d e : -> C .
+
+  op c _ e : D -> C .
+  op d : -> D .
+endfm
+
+*** ambiguous
+parse a b c d e .
+
+
+fmod SUB-DRP is
+  sorts A B C D E F G .
+
+  op a_ : B -> A [prec 10 gather (E)] .
+  op b_ : C -> B [prec 10 gather (E)] .
+  op c_ : D -> C [prec 10 gather (E)] .   *** t2
+  op d e : -> D [prec 10] .               *** t1
+
+  op _e : E -> D [prec 1 gather (E)] .   *** r2
+  op d : -> E .
+
+  op __ : G D -> F [prec 1 gather (E E)] .    *** u2
+  op c : -> G .
+  op a b_ : F -> A [prec 10 gather (E)] .
+endfm
+
+*** ambiguous - need to avoid generating the same parse twice
+parse a b c d e .
+
+
+fmod SUB-DRP2 is
+  sorts A B C D E F G H .
+
+  op a_ : B -> A [prec 10 gather (E)] .
+  op b_ : C -> B [prec 10 gather (E)] .
+  op c_ : D -> C [prec 10 gather (E)] .   *** t2
+  op d_ : H -> D [prec 10] .              *** now above t1
+  op e : -> H .                           *** new t1
+
+  op _e : E -> D [prec 1 gather (E)] .   *** r2
+  op d : -> E .
+
+  op __ : G D -> F [prec 1 gather (E E)] .    *** u2
+  op c : -> G .
+  op a b_ : F -> A [prec 10 gather (E)] .
+endfm
+
+*** ambiguous - need to avoid generating the same parse twice
+parse a b c d e .

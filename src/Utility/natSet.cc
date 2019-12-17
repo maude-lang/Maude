@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -281,8 +281,8 @@ NatSet::operator<(const NatSet& other) const
     return firstWord < other.firstWord;
   for (int i = 0; i < len; i++)
     {
-      int a = array[i];
-      int b = other.array[i];
+      Word a = array[i];
+      Word b = other.array[i];
       if (a != b)
 	return a < b;
     }

@@ -1,0 +1,12 @@
+set show advisories off .
+
+*** Make sure syntax error is reported in the correct place (after b).
+
+fmod FOO is
+  sort Foo .
+  op a_ : Foo -> Foo [prec 1 gather(e)] .
+  op b_ : Foo -> Foo [prec 1] .
+  op c : -> Foo .
+endfm
+
+parse a b c .

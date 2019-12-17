@@ -1,0 +1,169 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Test unification and disjoint unification in the meta-interpreter.
+***
+
+load metaInterpreter
+
+mod UNIFY-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op problem:_ : UnificationProblem -> Attribute .
+  op soln:_ : Nat -> Attribute .
+  op result:_ : Msg -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var U : UnificationProblem .
+  var S : Substitution .
+  var Q : Qid .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | AS, problem: U > insertedModule(X, Y) =>
+     < X : User | AS, problem: U, soln: 1 > getUnifier(Y, X, 'RAT, U, '#, 0) .
+
+  rl < X : User | AS, problem: U, soln: N > gotUnifier(X, Y, S, Q) =>
+     < X : User | AS,  problem: U, soln: (N + 1), result: gotUnifier(X, Y, S, Q) >
+     getUnifier(Y, X, 'RAT, U, '#, N) .
+endm
+
+erew in UNIFY-TEST : <> 
+< me : User | problem: ('_+_['X:Nat, 'Y:Nat] =? '_+_['Z:Nat, 'W:Nat]) > 
+createInterpreter(interpreterManager, me, none) .
+
+unify in RAT : X:Nat + Y:Nat =? W:Nat + Z:Nat .
+
+erew in UNIFY-TEST : <> 
+< me : User | problem: ('_+_['X:Nat, 'X:Nat] =? '_+_['Z:Nat, 'W:Nat]) > 
+createInterpreter(interpreterManager, me, none) .
+
+unify in RAT : X:Nat + X:Nat =? W:Nat + Z:Nat .
+
+
+fmod FOO is
+  sort Foo .
+  op __ : Foo Foo -> Foo [assoc] .
+endfm
+
+mod UNIFY-TEST2 is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op problem:_ : UnificationProblem -> Attribute .
+  op soln:_ : Nat -> Attribute .
+  op result:_ : Msg -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var U : UnificationProblem .
+  var S : Substitution .
+  var Q : Qid .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('FOO, true)) .
+
+  rl < X : User | AS, problem: U > insertedModule(X, Y) =>
+     < X : User | AS, problem: U, soln: 1 > getUnifier(Y, X, 'FOO, U, '%, 0) .
+
+  rl < X : User | AS, problem: U, soln: N > gotUnifier(X, Y, S, Q) =>
+     < X : User | AS,  problem: U, soln: (N + 1), result: gotUnifier(X, Y, S, Q) >
+     getUnifier(Y, X, 'FOO, U, '%, N) .
+endm
+
+erew in UNIFY-TEST2 : <> 
+< me : User | problem: ('__['X:Foo, 'Y:Foo] =? '__['Z:Foo, 'W:Foo]) > 
+createInterpreter(interpreterManager, me, none) .
+
+unify in FOO : X:Foo Y:Foo =? W:Foo Z:Foo .
+
+erew in UNIFY-TEST2 : <> 
+< me : User | problem: ('__['X:Foo, 'X:Foo] =? '__['Z:Foo, 'W:Foo]) > 
+createInterpreter(interpreterManager, me, none) .
+
+unify in FOO : X:Foo X:Foo =? W:Foo Z:Foo .
+
+erew in UNIFY-TEST2 : <> 
+< me : User | problem: ('__['X:Foo, 'Y:Foo] =? '__['Z:Foo, 'X:Foo]) > 
+createInterpreter(interpreterManager, me, none) .
+
+unify in FOO : X:Foo Y:Foo =? W:Foo X:Foo .
+
+mod DISJOINT-UNIFY-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op problem:_ : UnificationProblem -> Attribute .
+  op soln:_ : Nat -> Attribute .
+  op result:_ : Msg -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var U : UnificationProblem .
+  var S S' : Substitution .
+  var Q : Qid .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RAT, true)) .
+
+  rl < X : User | AS, problem: U > insertedModule(X, Y) =>
+     < X : User | AS, problem: U, soln: 1 > getDisjointUnifier(Y, X, 'RAT, U, '@, 0) .
+
+  rl < X : User | AS, problem: U, soln: N > gotDisjointUnifier(X, Y, S, S', Q) =>
+     < X : User | AS,  problem: U, soln: (N + 1), result: gotDisjointUnifier(X, Y, S, S', Q) >
+     getDisjointUnifier(Y, X, 'RAT, U, '@, N) .
+endm
+
+erew in DISJOINT-UNIFY-TEST : <> 
+< me : User | problem: ('_+_['X:Nat, 'Y:Nat] =? '_+_['X:Nat, 'Y:Nat]) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in  DISJOINT-UNIFY-TEST : <> 
+< me : User | problem: ('_+_['X:Nat, 'X:Nat] =? '_+_['X:Nat, 'Y:Nat]) > 
+createInterpreter(interpreterManager, me, none) .
+
+
+mod DISJOINT-UNIFY-TEST2 is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op problem:_ : UnificationProblem -> Attribute .
+  op soln:_ : Nat -> Attribute .
+  op result:_ : Msg -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var U : UnificationProblem .
+  var S S' : Substitution .
+  var Q : Qid .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('FOO, true)) .
+
+  rl < X : User | AS, problem: U > insertedModule(X, Y) =>
+     < X : User | AS, problem: U, soln: 1 > getDisjointUnifier(Y, X, 'FOO, U, '#, 0) .
+
+  rl < X : User | AS, problem: U, soln: N > gotDisjointUnifier(X, Y, S, S', Q) =>
+     < X : User | AS,  problem: U, soln: (N + 1), result: gotDisjointUnifier(X, Y, S, S', Q) >
+     getDisjointUnifier(Y, X, 'FOO, U, '#, N) .
+endm
+
+erew in DISJOINT-UNIFY-TEST2 : <> 
+< me : User | problem: ('__['X:Foo, 'Y:Foo] =? '__['X:Foo, 'Y:Foo]) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in DISJOINT-UNIFY-TEST2 : <> 
+< me : User | problem: ('__['X:Foo, 'Y:Foo, 'X:Foo] =? '__['X:Foo, 'X:Foo]) > 
+createInterpreter(interpreterManager, me, none) .

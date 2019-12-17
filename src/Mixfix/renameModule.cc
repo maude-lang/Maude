@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -32,14 +32,15 @@ ImportModule::makeRenamedCopy(int name, Renaming* canonical, ModuleCache* module
     {
       Token t;
       t.tokenize(parameterNames[i], FileTable::AUTOMATIC);
-      copy->addParameter(t, importedModules[i]);
-    }
-  //Assert(!parametersBound(), "renamed module has bound parameters");
-
-  int nrImports = importedModules.size();
-  for (int i = nrParameters; i < nrImports; ++i)
+      copy->addParameter(t, parameterTheories[i]);
+   }
+  copy->copyBoundParameters(this);
+  //
+  //	We only rename regular imports, not parameter theory copies.
+  //
+  FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
     {
-      if (ImportModule* importCopy = moduleCache->makeRenamedCopy(importedModules[i], canonical))
+      if (ImportModule* importCopy = moduleCache->makeRenamedCopy(*i, canonical))
 	copy->addImport(importCopy, INCLUDING, lineNumber);  // HACK should this be INCLUDING?
       else
 	{
@@ -82,6 +83,11 @@ ImportModule::finishCopy(ImportModule* copy, Renaming* canonical)
       if (!(copy->isBad()))
 	{
 	  copy->closeSignature();
+	  //
+	  // Copy strategies
+	  //
+	  copy->importStrategies();
+	  donateStrategies2(copy, canonical);
 	  copy->fixUpImportedOps();
 	  fixUpDonatedOps2(copy, canonical);
 	  DebugAdvisory("finishCopy() done with fixups - from " << this << " to " << copy <<
@@ -96,6 +102,11 @@ ImportModule::finishCopy(ImportModule* copy, Renaming* canonical)
 	    }
 	}
     }
+  //
+  //	Copy rule labels
+  //
+  copy->importRuleLabels();
+  donateRuleLabels(copy, canonical);
   //
   //	Reset phase counter in each imported module and return copy.
   //
@@ -117,8 +128,10 @@ ImportModule::localSort2(ImportModule* copy, Renaming* renaming, const Sort* sor
   if (renaming != 0)
     id = renaming->renameSort(id);
   Sort* ts = copy->findSort(id);
+  //DebugAdvisoryCheck(ts != 0, "couldn't find sort " << QUOTE(Token::sortName(id)) <<
+  //	 " renamed from " << QUOTE(sort) << " in module " << copy);
   Assert(ts != 0, "couldn't find sort " << QUOTE(Token::sortName(id)) <<
-	 " renamed from " << QUOTE(sort) << " in module " << copy);
+  	 " renamed from " << QUOTE(sort) << " in module " << copy);
   return ts;
 }
 
@@ -154,7 +167,7 @@ ImportModule::donateSorts2(ImportModule* copy, Renaming* renaming)
 	      //	down the road since sorts from modules are handled differently
 	      //	to sorts from thoeries; so we handle it harshly.
 	      //
-	      IssueWarning(*copy << ": sort " << QUOTE(original) <<
+	      IssueWarning(*copy << ": sort " << QUOTE(sort) <<
 			    " has been imported from both " << *original <<
 			   " and " << *sort <<
 			   ". Since it is imported from both a module and a theory, this renders theory " <<
@@ -168,7 +181,8 @@ ImportModule::donateSorts2(ImportModule* copy, Renaming* renaming)
 			    " and " << *sort << '.');
 	    }
 	}
-      if (moduleDonatingToTheory)
+      //      if (moduleDonatingToTheory)
+      if (!isTheory())
 	copy->sortDeclaredInModule.insert(sort->getIndexWithinModule());
     }
   //
@@ -192,7 +206,7 @@ ImportModule::donateSorts2(ImportModule* copy, Renaming* renaming)
 void
 ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 {
-  DebugAdvisory("donateOps2(), from " << this << " to " << copy);
+  DebugNew("donateOps2(), from " << this << " to " << copy);
   Assert(!isBad(), "original module bad " << this);
 
   bool moduleDonatingToTheory = copy->isTheory() && !isTheory();
@@ -223,6 +237,7 @@ ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 	  const Vector<int>* format;
 
 	  int index = (renaming == 0) ? NONE : renaming->renameOp(symbol);  // index of renaming that applies to symbol
+	  DebugNew("index = " << index);
 	  if (index == NONE)
 	    {
 	      name.tokenize(symbol->id(), symbol->getLineNumber());
@@ -260,6 +275,8 @@ ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 	      for (int k = 0; k < domainAndRangeLength; k++)
 		domainAndRange[k] = localSort(copy, renaming, oldDomainAndRange[k]);
 	      symbolType.assignFlags(SymbolType::CTOR, opDecls[j].isConstructor());
+	      Assert(name.code() != NONE, "bad code");
+	      Assert(name.lineNumber() != NONE, "bad line number");
 	      Symbol* newSymbol = copy->addOpDeclaration(name,  // BUG: name has codeNr = -1
 							 domainAndRange,
 							 symbolType,
@@ -298,6 +315,8 @@ ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
   for (int i = nrImportedPolymorphs; i < nrPolymorphs; i++)
     {
       Token name = getPolymorphName(i);
+      //cout << name;
+
       SymbolType symbolType = getPolymorphType(i);
       int prec = DEFAULT;
       const Vector<int>* format;
@@ -430,14 +449,30 @@ ImportModule::fixUpDonatedOps2(ImportModule* copy, Renaming* renaming)
 void
 ImportModule::localStatementsComplete()
 {
+  //
+  //	Record how many local statement we have so we can
+  //	distiguish them from later imports.
+  //
   nrOriginalMembershipAxioms = getSortConstraints().length();
   nrOriginalEquations = getEquations().length();
   nrOriginalRules = getRules().length();
-
+  nrOriginalStrategyDefinitions = getStrategyDefinitions().length();
+  {  // do we need this? CHECK
+   FOR_EACH_CONST(i, Vector<ImportModule*>, parameterTheories)
+     labels.insert((*i)->labels.begin(), (*i)->labels.end());
+  }
+  //
+  //	Collect labels from imports. Because labels is a set
+  //	we don't need to worry about duplicates from diamond imports.
+  //
   FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-    labels.insert((*i)->labels.begin(), (*i)->labels.end());
+    labels.insert((*i)->labels.begin(), (*i)->labels.end());  // what about transitive imports? CHECK
+
   if (canonicalRenaming == 0)
     {
+      //
+      //	We're an original module so collect labels from our
+      //	statements.
       {
 	FOR_EACH_CONST(i, Vector<SortConstraint*>, getSortConstraints())
 	  {
@@ -465,6 +500,10 @@ ImportModule::localStatementsComplete()
     }
   else
     {
+      //
+      //	We're a renaming of baseModule, so rename the labels
+      //	from baseModule.
+      //
       FOR_EACH_CONST(i, set<int>, baseModule->labels)
 	labels.insert(canonicalRenaming->renameLabel(*i));
     }

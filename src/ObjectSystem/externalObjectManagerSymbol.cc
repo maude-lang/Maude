@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -35,29 +35,32 @@
 #include "objectSystem.hh"
 
 //      interface class definitions
-//#include "symbol.hh"
-//#include "dagNode.hh"
-//#include "term.hh"
+#include "symbol.hh"
+#include "dagNode.hh"
 
 //      core class definitions
-//#include "rewritingContext.hh"
-//#include "symbolMap.hh"
+#include "rewritingContext.hh"
 
 //      free theory class definitions
-//#include "freeNet.hh"
-//#include "freeDagNode.hh"
-
-//      built in class definitions
-//#include "succSymbol.hh"
-//#include "stringSymbol.hh"
-//#include "stringDagNode.hh"
-//#include "stringOpSymbol.hh"
-//#include "bindingMacros.hh"
+#include "freeDagNode.hh"
 
 //	object system class definitions
+#include "objectSystemRewritingContext.hh"
 #include "externalObjectManagerSymbol.hh"
 
 ExternalObjectManagerSymbol::ExternalObjectManagerSymbol(int id)
   : FreeSymbol(id, 0)
 {
+}
+
+void
+ExternalObjectManagerSymbol::trivialReply(Symbol* replySymbol, 
+					  FreeDagNode* originalMessage,
+					  ObjectSystemRewritingContext& context)
+{
+  Vector<DagNode*> reply(2);
+  DagNode* target = originalMessage->getArgument(1);
+  reply[0] = target;
+  reply[1] = originalMessage->getArgument(0);
+  context.bufferMessage(target, replySymbol->makeDagNode(reply));
 }

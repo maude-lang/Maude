@@ -1,0 +1,159 @@
+set show timing off .
+set show advisories off .
+
+*** 
+*** We suck the prelude modules and views out of the object level interpreter into
+*** an interpreter object.
+***
+
+load metaInterpreter
+
+fmod SEQUENCE is
+  pr QID .
+  sort ViewCmd ModuleCmd Seq .
+  subsort ViewCmd ModuleCmd < Seq .
+  op v : Qid -> ViewCmd .
+  op m : Qid -> ModuleCmd .
+  op __  : Seq Seq -> Seq [assoc id: nil] .
+  op nil : -> Seq .
+
+  op prelude : -> Seq .
+  eq prelude = m('TRUTH-VALUE) m('BOOL-OPS) m('TRUTH) m('BOOL) m('EXT-BOOL)
+               m('NAT) m('INT) m('RAT) m('FLOAT) m('STRING)
+               m('CONVERSION) m('RANDOM) m('BOUND) m('QID) m('TRIV) 
+               v('Bool) v('Nat) v('Int) v('Rat) v('Float) v('String) v('Qid)
+               m('STRICT-WEAK-ORDER) v('STRICT-WEAK-ORDER)
+               m('STRICT-TOTAL-ORDER) v('STRICT-TOTAL-ORDER)
+               v('Nat<) v('Int<) v('Rat<) v('Float<) v('String<)
+               m('TOTAL-PREORDER) v('TOTAL-PREORDER)
+               m('TOTAL-ORDER) v('TOTAL-ORDER)
+               v('Nat<=) v('Int<=) v('Rat<=) v('Float<=) v('String<=)
+               m('DEFAULT) v('DEFAULT)
+               v('Nat0) v('Int0) v('Rat0) v('Float0) v('String0) v('Qid0)
+               m('LIST)
+               m('WEAKLY-SORTABLE-LIST) m('SORTABLE-LIST)
+               m('WEAKLY-SORTABLE-LIST') m('SORTABLE-LIST')
+               m('SET) m('LIST-AND-SET)
+               m('SORTABLE-LIST-AND-SET) m('SORTABLE-LIST-AND-SET')
+               m('LIST*) m('SET*) m('MAP) m('ARRAY)
+               m('NAT-LIST) m('QID-LIST) m('QID-SET)
+               m('META-TERM) m('META-CONDITION) m('META-STRATEGY)
+               m('META-MODULE) m('META-VIEW) m('META-LEVEL)
+               m('LEXICAL) m('COUNTER) m('LOOP-MODE) m('CONFIGURATION) .
+endfm
+
+mod RUN is
+  pr META-INTERPRETER .
+  pr SEQUENCE .
+
+  op me : -> Oid .
+  op User : -> Cid .
+
+  op pending : Seq -> Attribute .
+
+  vars X Y Z : Oid .
+  var Q : Qid .
+  var Rest : Seq .
+
+  rl < X : User | pending(m(Q) Rest) > createdInterpreter(X, Y, Z) =>
+     < X : User | pending(Rest) > insertModule(Z, X, upModule(Q, false)) .
+
+  rl < X : User | pending(m(Q) Rest) > insertedModule(X, Y) =>
+     < X : User | pending(Rest) > insertModule(Y, X, upModule(Q, false)) .
+
+  rl < X : User | pending(m(Q) Rest) > insertedView(X, Y) =>
+     < X : User | pending(Rest) > insertModule(Y, X, upModule(Q, false)) .
+
+  rl < X : User | pending(v(Q) Rest) > insertedModule(X, Y) =>
+     < X : User | pending(Rest) > insertView(Y, X, upView(Q)) .
+
+  rl < X : User | pending(v(Q) Rest) > insertedView(X, Y) =>
+     < X : User | pending(Rest) > insertView(Y, X, upView(Q)) .
+
+  rl < X : User | pending(nil) > insertedModule(X, Y) =>
+     < X : User | pending(nil) > reduceTerm(Y, X, 'NAT, '_+_['s_^2['0.Nat], 's_^3['0.Nat]]) .
+endm
+
+erew in RUN : <> 
+< me : User | pending(prelude) > 
+createInterpreter(interpreterManager, me, none) .
+
+mod RUN2 is
+  pr META-INTERPRETER .
+  pr SEQUENCE .
+
+  op me : -> Oid .
+  op User : -> Cid .
+
+  op pending : Seq -> Attribute .
+
+  vars X Y Z : Oid .
+  var Q : Qid .
+  var Rest : Seq .
+
+  op run : -> Term .
+  eq run = 'metaReduce['`[_`][''NAT.Sort],'_`[_`][''_+_.Sort,
+    '_`,_['_`[_`][''s_^2.Sort,''0.Nat.Constant],'_`[_`][
+    ''s_^3.Sort,''0.Nat.Constant]]]] .
+
+  rl < X : User | pending(m(Q) Rest) > createdInterpreter(X, Y, Z) =>
+     < X : User | pending(Rest) > insertModule(Z, X, upModule(Q, false)) .
+
+  rl < X : User | pending(m(Q) Rest) > insertedModule(X, Y) =>
+     < X : User | pending(Rest) > insertModule(Y, X, upModule(Q, false)) .
+
+  rl < X : User | pending(m(Q) Rest) > insertedView(X, Y) =>
+     < X : User | pending(Rest) > insertModule(Y, X, upModule(Q, false)) .
+
+  rl < X : User | pending(v(Q) Rest) > insertedModule(X, Y) =>
+     < X : User | pending(Rest) > insertView(Y, X, upView(Q)) .
+
+  rl < X : User | pending(v(Q) Rest) > insertedView(X, Y) =>
+     < X : User | pending(Rest) > insertView(Y, X, upView(Q)) .
+
+  rl < X : User | pending(nil) > insertedModule(X, Y) =>
+     < X : User | pending(nil) > reduceTerm(Y, X, 'META-LEVEL, run) .
+endm
+
+erew in RUN2 : <> 
+< me : User | pending(prelude) > 
+createInterpreter(interpreterManager, me, none) .
+
+mod RUN3 is
+  pr META-INTERPRETER .
+  pr SEQUENCE .
+
+  op me : -> Oid .
+  op User : -> Cid .
+
+  op pending : Seq -> Attribute .
+
+  vars X Y Z : Oid .
+  var Q : Qid .
+  var Rest : Seq .
+
+  op run : -> Term .
+  eq run = 'upModule[''META-LEVEL.Qid, 'false.Bool] .
+
+  rl < X : User | pending(m(Q) Rest) > createdInterpreter(X, Y, Z) =>
+     < X : User | pending(Rest) > insertModule(Z, X, upModule(Q, false)) .
+
+  rl < X : User | pending(m(Q) Rest) > insertedModule(X, Y) =>
+     < X : User | pending(Rest) > insertModule(Y, X, upModule(Q, false)) .
+
+  rl < X : User | pending(m(Q) Rest) > insertedView(X, Y) =>
+     < X : User | pending(Rest) > insertModule(Y, X, upModule(Q, false)) .
+
+  rl < X : User | pending(v(Q) Rest) > insertedModule(X, Y) =>
+     < X : User | pending(Rest) > insertView(Y, X, upView(Q)) .
+
+  rl < X : User | pending(v(Q) Rest) > insertedView(X, Y) =>
+     < X : User | pending(Rest) > insertView(Y, X, upView(Q)) .
+
+  rl < X : User | pending(nil) > insertedModule(X, Y) =>
+     < X : User | pending(nil) > reduceTerm(Y, X, 'META-LEVEL, run) .
+endm
+
+erew in RUN3 : <> 
+< me : User | pending(prelude) > 
+createInterpreter(interpreterManager, me, none) .

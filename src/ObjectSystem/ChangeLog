@@ -1,3 +1,302 @@
+2019-12-04  Steven Eker  <eker@mu>
+
+	* fileActions.cc (getOpenFile): use DebugSave() to avoid unused variable
+	warning when Assert() is compiled out
+
+2019-12-03  Steven Eker  <eker@mu>
+
+	* configSymbol.cc (ruleRewrite): use safeCastNonNull<>() (4 places)
+	(retrieveObject): use safeCastNonNull<>()
+
+===================================Maude127===========================================
+
+2019-11-27  Rubén Rubio  <rubenrub@ucm.es>
+
+	* fileActions.cc (write): fixed memory leak (textArray)
+
+2019-07-25  Steven Eker  <eker@mu>
+
+	* configSymbol.cc (compileRules): added comments
+	(checkArgs): add comments including explanation of why this isn't
+	a bug despite static analyzer finding.
+
+===================================Maude123===========================================
+
+2018-10-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* configSymbol.cc (ruleRewrite): pass subject = 0 to
+	tracePreRuleRewrite() in fake rewrite cases.
+
+
+2018-07-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* objectSystemRewritingContext.cc (externalRewrite): support
+	EXT_BIAS as a temporary hack
+
+	* socketManagerSymbol.hh (PseudoThread): increased READ_BUFFER_SIZE
+	to 208K
+
+===================================Maude118===========================================
+
+2018-07-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* streamManagerSymbol.cc (getLine): use getLineFromStdin()
+
+2018-05-31  Steven Eker  <eker@install.csl.sri.com>
+
+	* configSymbol.cc (compileRules): call resetRules() for safety
+
+	* objectSystemRewritingContext.cc (offerMessageExternally): turned
+	commented out print statement into DebugAdvisory()
+
+	* socketManagerSymbol.cc (handleManagerMessage, handleMessage): turned
+	commented out print statement into DebugAdvisory()
+
+	* configSymbol.cc (ruleRewrite): turned commented out print statement
+	into DebugAdvisory()
+
+2018-05-29  Steven Eker  <eker@install.csl.sri.com>
+
+	* objectSystemRewritingContext.hh (RewritingContext): added decl
+	for externalRewrite()
+
+	* objectSystemRewritingContext.cc (externalRewrite): added
+
+2018-05-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* pseudoThread.hh (P): added NOTHING_HAPPENED to enum ReturnStatus
+	(P): updated decl for eventLoop()
+
+	* pseudoThread.cc (processFds): support wait = 0 for non-blocking
+	poll of active file descriptors
+	(eventLoop): take block argument
+
+===================================Maude117===========================================
+
+2017-08-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* configSymbol.cc (ruleRewrite): added comments to explain
+	the tricky tracing code
+	(ruleRewrite): fake rewrites when tracing in the single subterm
+	case and in the ConfigSymbol went away/not leftOver rules
+	case
+
+2017-08-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* configSymbol.cc (ruleRewrite): do tracePostRuleRewrite()
+	after successful objMsgRewrite()
+	(objMsgRewrite): don't do tracePostRuleRewrite() here
+	since we don't have a context with the new dag
+
+===================================Maude115===========================================
+
+2017-08-02  Steven Eker  <eker@install.csl.sri.com>
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): updated
+	decl for getOpenFile()
+
+	* fileActions.cc (write, flush, getLine, getChars, getPosition)
+	(setPosition, closeFile): deleted no open file object advisory
+	since this should be able to happen
+	(getOpenFile): added a CantHappen()
+	(getOpenFile): rewritten to use Asserts()
+	(write, flush, getLine, getChars, getPosition, setPosition)
+	(closeFile, cleanUp): use new getOpenFile() convention
+
+2017-08-01  Steven Eker  <eker@install.csl.sri.com>
+
+	* fileSignature.cc: deleted stdinSymbol, stdoutSymbol,
+	stderrSymbol
+
+	* fileActions.cc (getLine): added comment about EOF case
+	(getLine): don't handle STDIN_FILENO
+	(openFile): don't handle stdin/stdout/stderr
+	(write): don't handle STDOUT_FILENO/STDERR_FILENO
+	(flush): don't handle STDOUT_FILENO/STDERR_FILENO
+	(getPosition): don't check STD_STREAM()
+	(setPosition): don't check STD_STREAM()
+	(closeFile): don't check STD_STREAM()
+	(cleanUp): don't check STD_STREAM()
+
+2017-07-31  Steven Eker  <eker@install.csl.sri.com>
+
+	* streamManagerSymbol.cc (write): flush cout
+	(getLine): implemented
+	(gotLineReply): added
+
+2017-07-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* streamManagerSymbol.cc: created
+
+	* streamSignature.cc: created
+
+	* fileSignature.cc: deleted unboundedSymbol
+
+	* streamManagerSymbol.hh: created
+
+2017-07-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* fileActions.cc (openFile): handle stdin
+	(getLine): handle stdin
+
+2017-07-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* fileActions.cc (cleanUp): don't close standard streams
+	(closeFile): don't close standard streams
+	(setPosition): don't fseek() in standard streams
+	(getPosition): don't ftell() in standard streams
+	(flush): handle stdout, stderr
+
+	* fileSignature.cc: added stdin, stdout, stderr
+
+	* fileActions.cc (write): handle stdout, stderr
+	(openFile): handle stdout, stderr
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): deleted
+	decls for  wroteMsgReply(), flushedReply(), closedFileReply()
+
+	* fileOutcomes.cc (flushedReply, closedFileReply, wroteMsgReply): deleted
+
+	* fileActions.cc (write): use trivialReply() instead of
+	wroteMsgReply()
+	(flush): use trivialReply() instead of flushedReply()
+	(closeFile): use trivialReply() instead of closedFileReply()
+
+2017-07-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* fileActions.cc (getLine): do seek if lastOpWasWrite
+	(getChars): do seek if lastOpWasWrite
+	(setPosition): clear lastOpWasWrite
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): added
+	decl for checkModeExt()
+
+	* fileActions.cc (checkModeExt): added
+	(getMode): use checkModeExt()
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): added
+	decl for getMode()
+
+	* fileActions.cc (setPosition): use
+	MinusSymbol::getSignedInt64()
+	(getChars): no need to check for -ve nr chars to read
+	(getMode): added
+	(openFile): use getMode
+
+	* fileSignature.cc: added minusSymbol
+
+	* fileManagerSymbol.cc (handleMessage): handle
+	setPositionMsg
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): added
+	decls for getBase(), setPosition()
+
+	* externalObjectManagerSymbol.cc (trivialReply): added
+
+	* externalObjectManagerSymbol.hh (FreeSymbol): added decl
+	for trivialReply
+
+	* fileActions.cc (getBase, setPosition): added
+
+	* fileSignature.cc: added startSymbol, currentSymbol,
+	endSymbol
+
+2017-07-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* fileManagerSymbol.cc (handleMessage): handle
+	getPositionMsg
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): added
+	decls for getPosition(), positionGotReply()
+
+	* fileOutcomes.cc (positionGotReply): added
+
+	* fileActions.cc (getPosition): added
+
+2017-07-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* fileManagerSymbol.cc (handleMessage): handle getChars
+	message
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): added
+	decls for getChars(), gotCharsReply()
+
+	* fileActions.cc (getChars): added
+
+	* fileOutcomes.cc (gotCharsReply): added
+
+	* fileActions.cc (closeFile): call deleteExternalObject()
+
+	* fileStuff.cc: becomes fileActions.cc
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): added
+	decls for getLine(), gotLineReply()
+
+	* fileOutcomes.cc (gotLineReply): added
+
+	* fileStuff.cc (getLine): added
+
+	* fileManagerSymbol.cc (handleMessage): handle getLineMsg
+
+2017-07-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): added
+	decls for flush(), flushedReply()
+
+	* fileOutcomes.cc (flushedReply): added
+
+	* fileStuff.cc (cleanUp): implemented
+	(flush): added
+
+	* fileManagerSymbol.cc (handleMessage): handle flushMsg
+
+	* fileStuff.cc (closeFile): added
+
+	* fileOutcomes.cc (closeFileReply): added
+
+	* fileManagerSymbol.cc (handleMessage): handle writeMsg,
+	closeFileMsg
+
+	* socketStuff.cc (getActiveSocket): remove duplicate call
+	to find()
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): added
+	decls for getOpenFile(), getText(), write(), wroteMsgReply()
+
+	* fileOutcomes.cc (wroteMsgReply): added
+
+	* fileStuff.cc (getOpenFile): added
+	(write): added
+	(getText): added
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): added
+	struct OpenFile, typedef FileMap, data member openFiles
+
+	* fileOutcomes.cc (openedFile): added
+
+	* fileManagerSymbol.hh (ExternalObjectManagerSymbol): added
+	decls for openFile(), errorReply()
+
+	* fileStuff.cc: created
+
+	* fileOutcomes.cc: created
+
+2017-07-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* fileSignature.cc: added flushMsg, flushedMsg
+
+2017-07-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* fileManagerSymbol.cc: created
+
+	* socketManagerSymbol.cc: code cleaning
+
+	* fileManagerSymbol.hh: created
+
+	* fileSignature.cc: created
+
+===================================Maude115===========================================
+
 2015-12-24  Steven Eker  <eker@ape.csl.sri.com>
 
 	* objectMap.cc (dagNodeLt): made dagNodeLt::operator() const

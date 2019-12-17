@@ -1,0 +1,40 @@
+set show timing off .
+
+fmod XOR is
+  sort XOR .
+
+  sort Elem .
+  ops cst1 cst2 cst3 cst4 : -> Elem .
+
+  subsort Elem < XOR .
+  op _+_ : XOR XOR -> XOR [ctor assoc comm] .
+  op 0 : -> XOR .
+  op a : -> XOR .
+
+  vars X Y : XOR .
+
+  eq Y + 0 = Y [variant] .
+  eq X + X = 0 [variant] .
+  eq X + X + Y = Y [variant] .
+endfm
+
+fmod TEST is
+  inc XOR .
+  inc META-LEVEL .
+endfm
+
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 0, 0) .
+
+red metaGetVariant(upModule('XOR, false), upTerm(X:XOR + cst1), empty, 0, 0) .
+
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 10, 0) .
+
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 0, 1) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 0, 2) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 0, 3) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 0, 4) .
+
+red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), 0, 0) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), 0, 1) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), 0, 2) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), 0, 3) .

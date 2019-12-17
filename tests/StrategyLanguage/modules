@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/modules.maude -no-banner -no-advise \
+  > modules.out 2>&1
+
+diff $srcdir/modules.expected modules.out > /dev/null 2>&1

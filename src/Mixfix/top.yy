@@ -45,12 +45,13 @@
 //	front end class definitions
 #include "token.hh"
 #include "renaming.hh"
-#include "view.hh"
 #include "moduleExpression.hh"
+#include "viewExpression.hh"
 #include "fileTable.hh"
 #include "directoryManager.hh"
 #include "syntacticPreModule.hh"
-#include "visibleModule.hh"  // HACK
+#include "visibleModule.hh"
+#include "syntacticView.hh"
 #include "userLevelRewritingContext.hh"
 #include "interpreter.hh"
 
@@ -67,24 +68,15 @@
 #define CV		interpreter.getCurrentView()
 
 #include "lexerAux.hh"
-/*
-void lexerInitialMode();
-void lexerIdMode();
-void lexerCmdMode();
-void lexerFileNameMode();
-void lexerStringMode();
-void lexerLatexMode();
-bool handleEof();
-bool includeFile(const string& directory, const string& fileName, bool silent, int lineNr);
-//void eatComment(bool firstNonWhite);
-*/
+
 Vector<Token> singleton(1);
 Vector<Token> tokenSequence;
 Vector<Token> lexerBubble;
 Vector<Token> fragments;
 Vector<Token> moduleExpr;
 Vector<Token> opDescription;
-stack<ModuleExpression*> moduleExpressions;
+Vector<Token> strategyCall;
+
 Renaming* currentRenaming = 0;
 SyntaxContainer* currentSyntaxContainer = 0;
 SyntaxContainer* oldSyntaxContainer = 0;
@@ -96,6 +88,7 @@ static void yyerror(UserLevelRewritingContext::ParseResult* parseResult, char *s
 
 void cleanUpModuleExpression();
 void cleanUpParser();
+void deepSelfDestructViewExpressionVector(Vector<ViewExpression*>* viewExpressions);
 void missingSpace(const Token& token);
 %}
 %pure-parser
@@ -111,8 +104,13 @@ void missingSpace(const Token& token);
   Interpreter::Flags yyFlags;
   Interpreter::PrintFlags yyPrintFlags;
   Interpreter::SearchKind yySearchKind;
+  ModuleExpression* yyModuleExpression;
+  ViewExpression* yyViewExpression;
+  Vector<ViewExpression*>* yyViewExpressionVector;
 }
 
+%destructor { $$->deepSelfDestruct(); } <yyModuleExpression> <yyViewExpression>
+%destructor { deepSelfDestructViewExpressionVector($$); } <yyViewExpressionVector>
 %{
 int yylex(YYSTYPE* lvalp);
 %}
@@ -125,35 +123,36 @@ int yylex(YYSTYPE* lvalp);
 %token KW_PARSE KW_NORMALIZE KW_REDUCE KW_REWRITE
 %token KW_LOOP KW_NARROW KW_XG_NARROW KW_MATCH KW_XMATCH KW_UNIFY KW_CHECK
 %token KW_GET KW_VARIANTS KW_VARIANT
-%token KW_EREWRITE KW_FREWRITE KW_SREWRITE
+%token KW_EREWRITE KW_FREWRITE KW_SREWRITE KW_DSREWRITE
 %token KW_CONTINUE KW_SEARCH
 %token KW_SET KW_SHOW KW_ON KW_OFF 
 %token KW_TRACE KW_BODY KW_BUILTIN KW_WHOLE KW_SELECT KW_DESELECT KW_CONDITION KW_SUBSTITUTION
 %token KW_PRINT KW_GRAPH KW_MIXFIX KW_FLAT KW_ATTRIBUTE KW_NEWLINE
 %token KW_WITH KW_PARENS KW_ALIASES KW_GC KW_TIME KW_STATS KW_TIMING
-%token KW_CMD KW_BREAKDOWN KW_BREAK KW_PATH
+%token KW_CMD KW_BREAKDOWN KW_BREAK KW_PATH KW_CONST
 %token KW_MODULE KW_MODULES KW_VIEWS KW_ALL KW_SORTS KW_OPS2 KW_VARS
-%token KW_MBS KW_EQS KW_RLS KW_SUMMARY KW_KINDS KW_ADVISE KW_VERBOSE
+%token KW_MBS KW_EQS KW_RLS KW_STRATS KW_SDS KW_SUMMARY KW_KINDS KW_ADVISE KW_VERBOSE
 %token KW_DO KW_CLEAR
 %token KW_PROTECT KW_EXTEND KW_INCLUDE KW_EXCLUDE
 %token KW_CONCEAL KW_REVEAL KW_COMPILE KW_COUNT
 %token KW_DEBUG KW_IRREDUNDANT KW_RESUME KW_ABORT KW_STEP KW_WHERE KW_CREDUCE KW_SREDUCE KW_DUMP KW_PROFILE
 %token KW_NUMBER KW_RAT KW_COLOR
 %token <yyInt64> SIMPLE_NUMBER
-%token KW_PWD KW_CD KW_PUSHD KW_POPD KW_LS KW_LOAD KW_QUIT KW_EOF KW_TEST KW_SMT_SEARCH
+%token KW_PWD KW_CD KW_PUSHD KW_POPD KW_LS KW_LL KW_LOAD KW_SLOAD KW_QUIT
+%token KW_EOF KW_TEST KW_SMT_SEARCH KW_VU_NARROW KW_FVU_NARROW
 
 /*
  *	Start keywords: signal end of mixfix statement if following '.'.
  */
 %token <yyToken> KW_ENDM KW_IMPORT KW_ENDV
-%token <yyToken> KW_SORT KW_SUBSORT KW_OP KW_OPS KW_MSGS KW_VAR KW_CLASS KW_SUBCLASS
-%token <yyToken> KW_MB KW_CMB KW_EQ KW_CEQ KW_RL KW_CRL
+%token <yyToken> KW_SORT KW_SUBSORT KW_OP KW_OPS KW_MSGS KW_VAR KW_CLASS KW_SUBCLASS KW_DSTRAT
+%token <yyToken> KW_MB KW_CMB KW_EQ KW_CEQ KW_RL KW_CRL KW_SD KW_CSD
 
 /*
  *	Mid keywords: need to be recognized in the middle of mixfix syntax.
  */
 %token <yyToken> KW_IS KW_FROM
-%token <yyToken> KW_ARROW KW_ARROW2 KW_PARTIAL KW_IF
+%token <yyToken> KW_ARROW KW_ARROW2 KW_PARTIAL KW_IF KW_ASSIGN
 %type <yyToken> ':' '=' '(' ')' '.' '<' '[' ']' ',' '|'
 
 /*
@@ -168,7 +167,7 @@ int yylex(YYSTYPE* lvalp);
  *	Attribute keywords need to be recognized when parsing attributes.
  */
 %token <yyToken> KW_ASSOC KW_COMM KW_ID KW_IDEM KW_ITER
-%token <yyToken> KW_LEFT KW_RIGHT KW_PREC KW_GATHER KW_METADATA KW_STRAT KW_POLY
+%token <yyToken> KW_LEFT KW_RIGHT KW_PREC KW_GATHER KW_METADATA KW_STRAT KW_ASTRAT KW_POLY
 %token <yyToken> KW_MEMO KW_FROZEN KW_CTOR KW_LATEX KW_SPECIAL KW_CONFIG KW_OBJ KW_MSG
 %token <yyToken> KW_DITTO KW_FORMAT
 %token <yyToken> KW_ID_HOOK KW_OP_HOOK KW_TERM_HOOK
@@ -227,6 +226,19 @@ int yylex(YYSTYPE* lvalp);
  *	Nonterminals that return PrintFlags.
  */
 %type <yyPrintFlags> printOption
+/*
+ *	Nonterminals that return ModuleExpression*.
+ */
+%type <yyModuleExpression> moduleExprDot moduleExpr moduleExpr2 moduleExpr3
+%type <yyModuleExpression> renameExpr instantExpr parenExpr
+/*
+ *	Nonterminals that return ViewExpression*.
+ */
+%type <yyViewExpression> viewExpr
+/*
+ *	Nonterminals that return Vector<ViewExpression*>*.
+ */
+%type <yyViewExpressionVector> instantArgs
 
 %start top
 
@@ -266,6 +278,16 @@ directive	:	KW_IN		{ lexerFileNameMode(); }
 			  string directory;
 			  string fileName;
 			  if (findFile($3, directory, fileName, lineNr))
+			    includeFile(directory, fileName, true, lineNr);
+			}
+		|	KW_SLOAD		{ lexerFileNameMode(); }
+			FILE_NAME_STRING
+			{
+			  int lineNr = lineNumber;
+			  string directory;
+			  string fileName;
+			  if (findFile($3, directory, fileName, lineNr) &&
+			      !directoryManager.alreadySeen(directory, fileName))
 			    includeFile(directory, fileName, true, lineNr);
 			}
 		|	KW_PWD
@@ -308,7 +330,12 @@ directive	:	KW_IN		{ lexerFileNameMode(); }
 		|	KW_LS		{ lexerStringMode(); }
 			UNINTERPRETED_STRING
 			{
-			  system((string("ls") + $3).c_str());
+			  returnValueDump = system((string("ls") + $3).c_str());
+			}
+		|	KW_LL		{ lexerStringMode(); }
+			UNINTERPRETED_STRING
+			{
+			  returnValueDump = system((string("ls -l") + $3).c_str());
 			}
 		|	KW_QUIT
 			{

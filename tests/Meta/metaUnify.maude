@@ -5,56 +5,61 @@ set show advisories off .
 reduce in META-LEVEL :
   metaDisjointUnify(['NAT],
             '_+_['X:Nat, 'Y:Nat] =? '_+_['X:Nat, 'Y:Nat],
-	    0, 0) .
+	    '#, 0) .
 
 reduce in META-LEVEL :
   metaDisjointUnify(['NAT],
             '_+_['X:Nat, 'Y:Nat] =? '_+_['X:Nat, 'Y:Nat],
-	    0, 1) .
+	    '#, 1) .
 
 reduce in META-LEVEL :
   metaDisjointUnify(['NAT],
             '_+_['X:Nat, 'Y:Nat] =? '_+_['X:Nat, 'Y:Nat],
-	    0, 2) .
+	    '#, 2) .
 
 reduce in META-LEVEL :
   metaDisjointUnify(['NAT],
             '_+_['X:Nat, 'Y:Nat] =? '_+_['X:Nat, 'Y:Nat],
-	    0, 3) .
+	    '#, 3) .
 
 reduce in META-LEVEL :
   metaDisjointUnify(['NAT],
             '_+_['X:Nat, 'Y:Nat] =? '_+_['X:Nat, 'Y:Nat],
-	    0, 4) .
+	    '#, 4) .
 
 reduce in META-LEVEL :
   metaDisjointUnify(['NAT],
             '_+_['X:Nat, 'Y:Nat] =? '_+_['X:Nat, 'Y:Nat],
-	    0, 5) .
+	    '#, 5) .
 
 reduce in META-LEVEL :
   metaDisjointUnify(['NAT],
             '_+_['X:Nat, 'Y:Nat] =? '_+_['X:Nat, 'Y:Nat],
-	    0, 6) .
+	    '#, 6) .
 
 reduce in META-LEVEL :
   metaDisjointUnify(['NAT],
             '_+_['X:Nat, 'Y:Nat] =? '_+_['X:Nat, 'Y:Nat],
-	    0, 7) .
+	    '#, 7) .
 
-*** variable names allow arbitrarily large numbering
+*** variable families '% and '@ are also supported
 reduce in META-LEVEL :
   metaUnify(['NAT],
             '_+_['X:Nat, 'Y:Nat] =? '_+_['A:Nat, 'B:Nat],
-	    100000000000000000000, 0) .
+	    '%, 0) .
 
-*** using variable names in unifications with larger numbers than
+reduce in META-LEVEL :
+  metaUnify(['NAT],
+            '_+_['X:Nat, 'Y:Nat] =? '_+_['A:Nat, 'B:Nat],
+	    '@, 0) .
+
+*** using variable families other than the one
 *** declared by the the 3rd argument generates a warning and no
 *** reduction.
 reduce in META-LEVEL :
   metaUnify(['NAT],
             '_+_['X:Nat, 'Y:Nat] =? '_+_['#1:Nat, 'Y:Nat],
-	    0, 0) .
+	    '%, 0) .
 
 *** simultaneous unification
 fmod BAZ is
@@ -64,16 +69,16 @@ fmod BAZ is
 endfm
 
 red in META-LEVEL :
-metaDisjointUnify(['BAZ], 'f['X:Foo] =? 'f['Y:Foo] /\ 'f['X:Foo] =? 'f['Z:Foo], 0, 0) .
+metaDisjointUnify(['BAZ], 'f['X:Foo] =? 'f['Y:Foo] /\ 'f['X:Foo] =? 'f['Z:Foo], '#, 0) .
 
 red in META-LEVEL :
-metaDisjointUnify(['BAZ], 'f['Y:Foo] =? 'f['X:Foo] /\ 'f['Z:Foo] =? 'f['X:Foo], 0, 0) .
+metaDisjointUnify(['BAZ], 'f['Y:Foo] =? 'f['X:Foo] /\ 'f['Z:Foo] =? 'f['X:Foo], '#, 0) .
 
 red in META-LEVEL :
-metaDisjointUnify(['BAZ], 'f['X:Foo] =? 'f['Y:Foo] /\ 'f['Y:Foo] =? 'f['X:Foo], 0, 0) .
+metaDisjointUnify(['BAZ], 'f['X:Foo] =? 'f['Y:Foo] /\ 'f['Y:Foo] =? 'f['X:Foo], '#, 0) .
 
 red in META-LEVEL :
-metaDisjointUnify(['BAZ], 'f['X:Foo] =? 'f['a.Foo] /\ 'f['X:Foo] =? 'f['b.Foo], 0, 0) .
+metaDisjointUnify(['BAZ], 'f['X:Foo] =? 'f['a.Foo] /\ 'f['X:Foo] =? 'f['b.Foo], '#, 0) .
 
 red in META-LEVEL :
-metaDisjointUnify(['BAZ], 'f['a.Foo] =? 'f['X:Foo] /\ 'f['b.Foo] =? 'f['X:Foo], 0, 0) .
+metaDisjointUnify(['BAZ], 'f['a.Foo] =? 'f['X:Foo] /\ 'f['b.Foo] =? 'f['X:Foo], '#, 0) .

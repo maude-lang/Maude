@@ -132,6 +132,18 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
 			    interpreter.sRewrite(lexerBubble, number, $1);
 			}
+		|	optDebug KW_DSREWRITE
+			{
+			  lexerCmdMode();
+			  moduleExpr.contractTo(0);
+			  number = NONE;
+			}
+			numberModuleTerm
+			{
+			  lexerInitialMode();
+			  if (interpreter.setCurrentModule(moduleExpr, 1))
+			    interpreter.sRewrite(lexerBubble, number, $1, true);
+			}
 
 		|	KW_CHECK
 			{
@@ -145,7 +157,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			    interpreter.check(lexerBubble);
 			}
 
-		|	search
+		|	optDebug search
 			{
 			  lexerCmdMode();
 			  moduleExpr.contractTo(0);
@@ -156,7 +168,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.search(lexerBubble, number, number2, $1);
+			    interpreter.search(lexerBubble, number, number2, $2, $1);
 			}
 		|	match
 			{
@@ -224,6 +236,8 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
 			    interpreter.test(lexerBubble);
+			    //interpreter.newNarrow(lexerBubble);
+
 			}
 		|	KW_LOOP
 			{
@@ -304,7 +318,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			}
 		|	KW_SHOW KW_VIEWS '.'
 			{
-			  interpreter.showNamedViews();
+			  interpreter.showViews(true);
 			}
 		|	KW_SHOW KW_SORTS	{ lexBubble(END_COMMAND, 0); }
 			endBubble
@@ -341,6 +355,18 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showRls();
+			}
+		|	KW_SHOW KW_STRATS	{ lexBubble(END_COMMAND, 0); }
+			endBubble
+			{
+			  if (interpreter.setCurrentModule(lexerBubble))
+			    interpreter.showStrats();
+			}
+		|	KW_SHOW KW_SDS		{ lexBubble(END_COMMAND, 0); }
+			endBubble
+			{
+			  if (interpreter.setCurrentModule(lexerBubble))
+			    interpreter.showSds();
 			}
 		|	KW_SHOW KW_SUMMARY	{ lexBubble(END_COMMAND, 0); }
 			endBubble
@@ -513,6 +539,7 @@ printOption	:	KW_MIXFIX		{ $$ = Interpreter::PRINT_MIXFIX; }
 		|	KW_RAT			{ $$ = Interpreter::PRINT_RAT; }
 		|	KW_COLOR		{ $$ = Interpreter::PRINT_COLOR; }
 		|	KW_FORMAT		{ $$ = Interpreter::PRINT_FORMAT; }
+		|	KW_CONST KW_WITH KW_SORTS	{ $$ = Interpreter::PRINT_DISAMBIG_CONST; }
 		;
 
 traceOption	:				{ $$ = Interpreter::TRACE; }
@@ -523,6 +550,7 @@ traceOption	:				{ $$ = Interpreter::TRACE; }
 		|	KW_MBS			{ $$ = Interpreter::TRACE_MB; }
 		|	KW_EQS			{ $$ = Interpreter::TRACE_EQ; }
 		|	KW_RLS			{ $$ = Interpreter::TRACE_RL; }
+		|	KW_SDS			{ $$ = Interpreter::TRACE_SD; }
 		|	KW_REWRITE		{ $$ = Interpreter::TRACE_REWRITE; }
 		|	KW_BODY			{ $$ = Interpreter::TRACE_BODY; }
 		|	KW_BUILTIN		{ $$ = Interpreter::TRACE_BUILTIN; }
@@ -550,6 +578,8 @@ search		:	KW_NARROW		{ $$ = Interpreter::NARROW; }
 		|	KW_XG_NARROW		{ $$ = Interpreter::XG_NARROW; }
 		|	KW_SEARCH		{ $$ = Interpreter::SEARCH; }
 		|	KW_SMT_SEARCH		{ $$ = Interpreter::SMT_SEARCH; }
+		|	KW_VU_NARROW		{ $$ = Interpreter::VU_NARROW; }
+		|	KW_FVU_NARROW		{ $$ = Interpreter::FVU_NARROW; }
 		;
 
 match		:	KW_XMATCH		{ $$ = true; }

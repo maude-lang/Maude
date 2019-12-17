@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -175,6 +175,22 @@ FreeDagNode::copyEagerUptoReduced2()
   return n;
 }
 
+DagNode*
+FreeDagNode::copyAll2()
+{
+  FreeSymbol* s = symbol();
+  FreeDagNode* n = new FreeDagNode(s);
+  int nrArgs = s->arity();
+  if (nrArgs != 0)
+    {
+      DagNode** p = argArray();
+      DagNode** q = n->argArray();
+      for (int i = nrArgs; i > 0; i--, p++, q++)
+	*q = (*p)->copyAll();
+    }
+  return n;
+}
+
 void
 FreeDagNode::clearCopyPointers2()
 {
@@ -262,58 +278,29 @@ FreeDagNode::copyWithReplacement(Vector<RedexPosition>& redexStack,
   return d;
 }
 
-void
-FreeDagNode::stackArguments(Vector<RedexPosition>& stack,
-			    int parentIndex,
-			    bool respectFrozen)
-{
-  int nrArgs = symbol()->arity();
-  if (nrArgs != 0)
-    {
-      const NatSet& frozen = symbol()->getFrozen();
-      DagNode** args = argArray();
-      for (int i = 0; i < nrArgs; i++)
-	{
-	  DagNode* d = args[i];
-	  if (!(respectFrozen && frozen.contains(i)) && !(d->isUnstackable()))
-	    stack.append(RedexPosition(d, parentIndex, i));
-	}
-    }
-}
-
 //
 //	Unification code.
 //
 
 DagNode::ReturnResult
-FreeDagNode::computeBaseSortForGroundSubterms()
+FreeDagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 {
-  bool ground = true;
+  ReturnResult result = GROUND;
   Symbol* s = symbol();
   int nrArgs = s->arity();
   DagNode** args = argArray();
   for (int i = 0; i < nrArgs; ++i)
     {
-      switch (args[i]->computeBaseSortForGroundSubterms())
-	{
-	case NONGROUND:
-	  {
-	    ground = false;
-	    break;
-	  }
-	case UNIMPLEMENTED:
-	  return UNIMPLEMENTED;
-	default:
-	  ;  // to avoid compiler warning
-	}
+      ReturnResult r = args[i]->computeBaseSortForGroundSubterms(warnAboutUnimplemented);
+      if (r > result)
+	result = r;  // NONGROUND dominates GROUND, UNIMPLEMENTED dominates NONGROUND
     }
-  if (ground)
+  if (result == GROUND)
     {
       s->computeBaseSort(this);
       setGround();
-      return GROUND;
     }
-  return NONGROUND;
+  return result;
 }
 
 bool
@@ -580,7 +567,10 @@ FreeDagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 }
 
 DagNode*
-FreeDagNode::instantiateWithReplacement(const Substitution& substitution, const Vector<DagNode*>& eagerCopies, int argIndex, DagNode* newDag)
+FreeDagNode::instantiateWithReplacement(const Substitution& substitution,
+					const Vector<DagNode*>* eagerCopies,
+					int argIndex,
+					DagNode* newDag)
 {
   FreeSymbol* s = symbol();
   FreeDagNode* d = new FreeDagNode(s);
@@ -596,9 +586,9 @@ FreeDagNode::instantiateWithReplacement(const Substitution& substitution, const 
       else
 	{
 	  n = p[i];
-	  DagNode* c = s->eagerArgument(i) ?
-	    n->instantiateWithCopies(substitution, eagerCopies) :
-	    n->instantiate(substitution);  // lazy case - ok to use original unifier bindings since we won't evaluate them
+	  DagNode* c = (eagerCopies != 0) && s->eagerArgument(i) ?
+	    n->instantiateWithCopies(substitution, *eagerCopies) :  // eager case - use copies of bindings
+	    n->instantiate(substitution);  // lazy case - ok to use original unifier bindings
 	  if (c != 0)  // changed under substitutition
 	    n = c;
 	}
@@ -628,7 +618,7 @@ FreeDagNode::instantiateWithCopies2(const Substitution& substitution, const Vect
 	  //	Argument changed under instantiation - need to make a new
 	  //	dagnode.
 	  //
-	  bool ground = true;
+	  //bool ground = true;
 	  FreeDagNode* d = new FreeDagNode(s);
 	  DagNode** args2 = d->argArray();
 	  //
@@ -637,16 +627,16 @@ FreeDagNode::instantiateWithCopies2(const Substitution& substitution, const Vect
 	  for (int j = 0; j < i; ++j)
 	    {
 	      DagNode* a = args[j];
-	      if (!(a->isGround()))
-		ground = false;
+	      //if (!(a->isGround()))
+	      //	ground = false;
 	      args2[j] = a;
 	    }
 	  //
 	  //	Handle current argument.
 	  //
 	  args2[i] = n;
-	  if (!(n->isGround()))
-	    ground = false;
+	  //if (!(n->isGround()))
+	  //  ground = false;
 	  //
 	  //	Handle remaining arguments.
 	  //
@@ -658,19 +648,28 @@ FreeDagNode::instantiateWithCopies2(const Substitution& substitution, const Vect
 		a->instantiate(substitution);  // lazy case - ok to use original unifier bindings since we won't evaluate them
 	      if (n != 0)
 		a = n;
-	      if (!(a->isGround()))
-		ground = false;
+	      //if (!(a->isGround()))
+	      //	ground = false;
 	      args2[i] = a;
 	    }
 	  //
-	  //	Now if all the arguments of the new dagnode are ground
-	  //	we compute its base sort.
+	  //	Currently the only user of this function is PositionState::rebuildAndInstantiateDag()
+	  //	via instantiateWithCopies(), SAFE_INSTANTIATE() and instantiateWithReplacement(),
+	  //	and this is only used for various kinds of narrowing steps. These are followed
+	  //	by reduction so we don't need to worry about:
+	  //	  normal forms
+	  //	  sort computations
+	  //	  ground flags
 	  //
+	  //	If this changes in the future the following will be needed:
+	  //
+#if 0
 	  if (ground)
 	    {
 	      s->computeBaseSort(d);
 	      d->setGround();
 	    }
+#endif
 	  return d;	
 	}
     }

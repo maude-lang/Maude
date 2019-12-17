@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -38,7 +38,7 @@
 #include "decompositionProcess.hh"
 #include "strategicSearch.hh"
 
-ConcatenationStrategy::ConcatenationStrategy(const Vector<StrategyExpression*> strategies)
+ConcatenationStrategy::ConcatenationStrategy(const Vector<StrategyExpression*>& strategies)
   : strategies(strategies)
 {
   Assert(!strategies.empty(), "no strategies");
@@ -49,6 +49,25 @@ ConcatenationStrategy::~ConcatenationStrategy()
   int nrStrategies = strategies.size();
   for (int i = 0; i < nrStrategies; ++i)
     delete strategies[i];
+}
+
+bool
+ConcatenationStrategy::check(VariableInfo& indices, const TermSet& boundVars)
+{
+  int nrStrategies = strategies.length();
+  for (int i = 0; i < nrStrategies; i++)
+    if (!strategies[i]->check(indices, boundVars))
+      return false;
+
+  return true;
+}
+
+void
+ConcatenationStrategy::process()
+{
+  int nrStrategies = strategies.length();
+  for (int i = 0; i < nrStrategies; i++)
+    strategies[i]->process();
 }
 
 StrategicExecution::Survival

@@ -1,0 +1,75 @@
+set show timing off .
+set show advisories off .
+
+
+*** polymorphic overloading from two parameter theories (now illegal)
+fmod COMMON is
+  sort Common .
+endfm
+
+fth T1 is
+  inc COMMON .
+  op g : Universal Common -> Universal [poly (1 0)] .
+endfth
+
+fth T2 is
+  inc COMMON .
+  op g : Universal -> Common [poly (1)] .
+endfth
+
+fmod M{X :: T1, Y :: T2} is
+  sort Dummy{X,Y} .
+  eq g(A:Dummy{X,Y}) = g(A:Dummy{X,Y}) .  *** just to track g
+endfm
+
+fmod M2 is
+  inc COMMON .
+  op h : Universal Common -> Universal [poly (1 0)] .
+endfm
+
+view V2 from T1 to M2 is
+  op g to h .
+endv
+
+fmod M3 is
+  inc COMMON .
+  op not-h : Universal -> Common [poly (1)] .
+endfm
+
+view V3 from T2 to M3 is
+  op g to not-h .
+endv
+
+fmod TEST is
+  inc M{V2,V3} .
+endfm
+
+show all .
+
+
+*** polymorphic overloading between parameter theory and parameterized module (now illegal)
+fth T1 is
+  sort Common .
+  op g : Universal Common -> Universal [poly (1 0)] .
+endfth
+
+fmod M{X :: T1} is
+  op g : Universal -> X$Common [poly (1)] .
+  eq g(A:X$Common) = g(A:X$Common) .  *** just to track g
+endfm
+
+fmod M2 is
+  sort Real .
+  op h : Universal Real -> Universal [poly (1 0)] .
+endfm
+
+view V2 from T1 to M2 is
+  sort Common to Real .
+  op g to h .
+endv
+
+fmod TEST is
+  inc M{V2} .
+endfm
+
+show all .

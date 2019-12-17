@@ -1,0 +1,130 @@
+set show timing off .
+set show advisories off .
+
+sth BT-ELEMS is
+  protecting BOOL .
+  sort State .
+  op isOk : State -> Bool .
+  op isSolution : State -> Bool .
+  strat expand @ State .
+endsth
+
+smod BT-STRAT{X :: BT-ELEMS} is
+  var S : X$State .
+  strat solve @ X$State .
+  sd solve := (match S s.t. isSolution(S)) ? idle
+    : (expand ;
+      match S s.t. isOk(S) ;
+      solve) .
+endsm
+
+mod QUEENS is
+  protecting LIST{Nat} .
+  protecting SET{Nat} .
+
+  op isOk : List{Nat} -> Bool .
+  op ok : List{Nat} Nat Nat -> Bool .
+  op isSolution : List{Nat} -> Bool .
+
+  vars N M Diff : Nat .
+  var L : List{Nat} .
+  var S : Set{Nat} .
+
+  eq isOk(L N) = ok(L, N, 1) .
+  eq ok(nil, M, Diff) = true .
+  ceq ok(L N, M, Diff) = ok(L, M, Diff + 1) if N =/= M /\ N =/= M + Diff /\ M =/= N + Diff .
+  eq isSolution(L) = size(L) == 8 .
+
+  crl [next] : L => L N if N,S := 1, 2, 3, 4, 5, 6, 7, 8 .
+endm
+
+view QueensBT from BT-ELEMS to QUEENS is
+  sort State to List{Nat} .
+  strat expand to expr top(next) .
+endv
+
+smod QUEENS-BT is
+  including BT-STRAT{QueensBT} .
+endsm
+
+dsrew [1] nil using solve .
+srew [1] nil using solve .
+continue 2 .
+
+fmod GRAPHS is
+  pr NAT .
+
+  sort Edge .
+  op p : Nat Nat -> Edge [ctor comm] .
+
+  sort Adjacency .
+  subsort Edge < Adjacency .
+  op nil : -> Adjacency [ctor] .
+  op __ : Adjacency Adjacency -> Adjacency [ctor assoc comm id: nil] .
+
+  var E : Edge .
+  var As : Adjacency .
+  var K L : Nat .
+
+  eq E E = E .
+
+  op neighbor : Nat Nat Adjacency -> Bool .
+  eq neighbor(K, L, p(K, L) As) = true .
+  eq neighbor(K, L, As) = false [owise] .
+endfm
+
+mod COLORING is
+  pr GRAPHS .
+  pr NAT-LIST .
+  pr EXT-BOOL .
+
+  sort Graph .
+
+  op graph : Nat Nat Adjacency NatList -> Graph [ctor] .
+  op numColors : Graph -> Nat .
+  op alreadyColored : Graph -> Nat .
+
+  eq numColors(graph(N, M, As, Cs)) = M .
+  eq alreadyColored(graph(N, M, As, Cs)) = size(Cs) .
+
+  var N M K K' C C' : Nat .
+  var As : Adjacency .
+  var Cs : NatList .
+
+  op isSolution : Graph -> Bool .
+  op isOk : Graph -> Bool .
+  op admissibleColor : Nat Nat Graph -> Bool .
+  op admissibleColor : Nat Nat Adjacency Nat NatList -> Bool .
+  eq isSolution(graph(N, M, As, Cs)) = N == size(Cs) .
+  eq isOk(G:Graph) = true .
+  eq admissibleColor(C, K, graph(N, M, As, Cs)) = admissibleColor(C, K, As, 0, Cs) .
+  eq admissibleColor(C, K, As, K', nil) = true .
+  eq admissibleColor(C, K, As, K', C' Cs) = (C =/= C' or not neighbor(K, K', As))
+    and-then admissibleColor(C, K, As, s(K'), Cs) .
+  rl [next] : graph(N, M, As, Cs) => graph(N, M, As, Cs C) [nonexec] .
+endm
+
+smod COLORING-STRAT is
+  protecting COLORING .
+  strat expand @ Graph .
+  strat expand : Nat @ Graph .
+  sd expand := expand(0) .
+  var C : Nat .
+  var G : Graph .
+  sd expand(C) :=
+    match G s.t. admissibleColor(C, alreadyColored(G), G) ; next[C <- C]
+    | match G s.t. s(C) < numColors(G) ; expand(s(C)) .
+endsm
+
+view ColoringBT from BT-ELEMS to COLORING-STRAT is
+  sort State to Graph .
+  strat expand to expand .
+endv
+
+smod COLORING-BT is
+  including BT-STRAT{ColoringBT} .
+endsm
+
+srew [4] graph(10, 3, p(0, 1) p(0, 4) p(0, 5) p(1, 2) p(1, 6)
+  p(2, 3) p(2, 7) p(3, 4) p(3, 8) p(4, 9)
+  p(5, 7) p(5, 8) p(6, 8) p(6, 9) p(7, 9), nil) using solve .

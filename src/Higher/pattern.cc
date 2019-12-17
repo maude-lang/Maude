@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -43,8 +43,11 @@
 
 Pattern::Pattern(Term* patternTerm,
 		 bool withExtension,
-		 const Vector<ConditionFragment*>& condition)
-  : PreEquation(NONE, patternTerm, condition)
+		 const Vector<ConditionFragment*>& condition,
+		 bool lazy)
+  : PreEquation(NONE, patternTerm, condition),
+    withExtension(withExtension),
+    prepared(false)
 {
   //
   //	Patterns belong to commands and descent function invocations; they
@@ -56,13 +59,22 @@ Pattern::Pattern(Term* patternTerm,
 
   NatSet boundVariables;  // variables bound by matching
   check(boundVariables);
-  if (!(isBad()))
+
+  if (!lazy) prepare();
+}
+
+void
+Pattern::prepare()
+{
+  if (!isBad() && !prepared)
     {
       preprocess();
       addConditionVariables(getLhs()->occursBelow());
       TermBag availableTerms;  // terms available for reuse
       compileBuild(availableTerms, false);
       compileMatch(true, withExtension);
+
+      prepared = true;
     }
 }
 
@@ -75,5 +87,6 @@ Pattern::traceBeginTrial(DagNode* subject, RewritingContext& context) const
 void
 Pattern::print(ostream& s) const
 {
+  // FIXME This is an infinite loop
   s << this;
 }

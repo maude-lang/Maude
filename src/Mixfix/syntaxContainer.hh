@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -30,7 +30,16 @@
 class SyntaxContainer
 {
 public:
+  //
+  //	Subclasses SyntacticPreModule and SyntacticView recieve parameters and
+  //	variable declarations.
+  //
+  virtual void addParameter2(Token name, ModuleExpression* theory) = 0;
   virtual void addVarDecl(Token varName) = 0;
+  //
+  //	Subclasses SyntacticPreModule, SyntacticView and Renaming receive
+  //	types.
+  //
   virtual void addType(bool kind, const Vector<Token>& tokens) = 0;
 
 protected:

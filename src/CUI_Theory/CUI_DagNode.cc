@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -102,6 +102,16 @@ CUI_DagNode::copyEagerUptoReduced2()
   return n;
 }
 
+DagNode*
+CUI_DagNode::copyAll2()
+{
+  CUI_Symbol* s = symbol();
+  CUI_DagNode* n = new CUI_DagNode(s);
+  n->argArray[0] = argArray[0]->copyAll();
+  n->argArray[1] = argArray[1]->copyAll();
+  return n;
+}
+
 void
 CUI_DagNode::clearCopyPointers2()
 {
@@ -164,26 +174,6 @@ CUI_DagNode::copyWithReplacement(Vector<RedexPosition>& redexStack,
 }
 
 void
-CUI_DagNode::stackArguments(Vector<RedexPosition>& stack,
-			    int parentIndex,
-			    bool respectFrozen)
-{
-  /*
-  DebugAdvisory("CUI_DagNode::stackArguments() " << this <<
-		" left = " << argArray[0]->isUnstackable() <<
-		" right = " << argArray[1]->isUnstackable());
-  */
-  const NatSet& frozen = symbol()->getFrozen();
-  DagNode* d = argArray[0];
-  if (!(respectFrozen && frozen.contains(0)) && !(d->isUnstackable()))
-    stack.append(RedexPosition(d, parentIndex, 0));
-  DagNode* d2 = argArray[1];
-  if (!(respectFrozen && frozen.contains(1)) && !(d2->isUnstackable()) &&
-      !(symbol()->comm() && d->equal(d2)))  // don't stack equal args in the comm case
-    stack.append(RedexPosition(d2, parentIndex, 1));
-}
-
-void
 CUI_DagNode::collapseTo(int argNr)
 {
   DagNode* remaining = (symbol()->eagerArgument(argNr)) ?
@@ -232,30 +222,31 @@ CUI_DagNode::normalizeAtTop()
 //
 
 DagNode::ReturnResult
-CUI_DagNode::computeBaseSortForGroundSubterms()
+CUI_DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 {
   CUI_Symbol* s = symbol();
-  if (/* s->leftId() || s->rightId() ||*/ s->idem())
+  if (s->idem())
     {
       //
-      //	We only support unification for commutativity at the moment
+      //	We don't support idempotence at the moment
       //	so let the backstop version handle it.
       //
-      return DagNode::computeBaseSortForGroundSubterms();
+      return DagNode::computeBaseSortForGroundSubterms(warnAboutUnimplemented);
     }
-  ReturnResult r0 = argArray[0]->computeBaseSortForGroundSubterms();
-  if (r0 == UNIMPLEMENTED)
-    return UNIMPLEMENTED;
-  ReturnResult r1 = argArray[1]->computeBaseSortForGroundSubterms();
-  if (r1 == UNIMPLEMENTED)
-    return UNIMPLEMENTED;
-  if (r0 == GROUND && r1 == GROUND)
+
+  ReturnResult result = GROUND;
+  ReturnResult r0 = argArray[0]->computeBaseSortForGroundSubterms(warnAboutUnimplemented);
+  if (r0 > result)
+    result = r0;
+  ReturnResult r1 = argArray[1]->computeBaseSortForGroundSubterms(warnAboutUnimplemented);
+  if (r1 > result)
+    result = r1;
+  if (result == GROUND)
     {
       s->computeBaseSort(this);
       setGround();
-      return GROUND;
     }
-  return NONGROUND;
+  return result;
 }
 
 bool
@@ -551,15 +542,18 @@ CUI_DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 }
 
 DagNode*
-CUI_DagNode::instantiateWithReplacement(const Substitution& substitution, const Vector<DagNode*>& eagerCopies, int argIndex, DagNode* replacement)
+CUI_DagNode::instantiateWithReplacement(const Substitution& substitution,
+					const Vector<DagNode*>* eagerCopies,
+					int argIndex,
+					DagNode* replacement)
 {
   CUI_DagNode* d = new CUI_DagNode(symbol());
   int other = 1 - argIndex;
   d->argArray[argIndex] = replacement;
 
   DagNode* n = argArray[other];
-  DagNode* c = symbol()->eagerArgument(other) ?
-    n->instantiateWithCopies(substitution, eagerCopies) :
+  DagNode* c = (eagerCopies != 0) && symbol()->eagerArgument(other) ?
+    n->instantiateWithCopies(substitution, *eagerCopies) :
     n->instantiate(substitution);  // lazy case - ok to use original unifier bindings since we won't evaluate them
   if (c != 0)  // changed under substitutition
     n = c;
@@ -601,11 +595,24 @@ CUI_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vect
       CUI_DagNode* d = new CUI_DagNode(s);
       d->argArray[0] = a0;
       d->argArray[1] = a1;
+      //
+      //	Currently the only user of this function is PositionState::rebuildAndInstantiateDag()
+      //	via instantiateWithCopies(), SAFE_INSTANTIATE() and instantiateWithReplacement(),
+      //	and this is only used for various kinds of narrowing steps. These are followed
+      //	by reduction so we don't need to worry about:
+      //	  normal forms
+      //	  sort computations
+      //	  ground flags
+      //
+      //	If this changes in the future the following will be needed:
+      //
+#if 0
       if(!(d->normalizeAtTop()) && a0->isGround() && a1->isGround())
 	{
 	  s->computeBaseSort(d);
 	  d->setGround();
 	}
+#endif
       return d;
     }
   return 0;

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -36,6 +36,9 @@
 
 //      interface class definitions
 #include "term.hh"
+
+//		core class definitions
+#include "rewriteStrategy.hh"
 
 //	front end class definitions
 #include "token.hh"
@@ -187,6 +190,41 @@ Renaming::makeCanonicalName() const
 	  }
       }
     }
+  int nrStratMappings = stratMap.size();
+  if (nrStratMappings > 0)
+    {
+      Vector<Rope> stratRopes(nrStratMappings);
+      {
+	Vector<Rope>::iterator j = stratRopes.begin();
+	for (const auto& mapping : stratMap)
+	  {
+	    *j = "strat ";
+	    *j += Token::name(mapping.first);
+	    if (!mapping.second.types.empty())
+	      {
+		*j += " :";
+		int nrArgs = mapping.second.types.size() - 1;
+		for (int k = 0; k < nrArgs; k++)
+		  {
+		    *j += " ";
+		    *j += makeTypeName(mapping.second.types[k]);
+		  }
+	      }
+	    *j += " to ";
+	    *j += Token::name(mapping.second.name);
+	    ++j;
+	  }
+      }
+      sort(stratRopes.begin(), stratRopes.end());
+      {
+	for (const Rope& rope : stratRopes)
+	  {
+	    if (!name.empty())
+	      name += ", ";
+	    name += rope;
+	  }
+      }
+    }
   return name;
 }
 
@@ -203,6 +241,7 @@ Renaming::makeCanonicalVersion(ImportModule* module) const
     FOR_EACH_CONST(i, IdMap, sortMap)
       {
 	Sort* s = module->findSort(i->first);
+	DebugAdvisory("looking for sort " << s << " in module to be renamed " << module);
 	if (s != 0)
 	  {
 	    if (module->parameterDeclared(s))
@@ -212,6 +251,7 @@ Renaming::makeCanonicalVersion(ImportModule* module) const
 	      }
 	    else
 	      {
+		DebugAdvisory("added sort mapping " << s << " to " << Token::name(i->second));
 		pair<IdMap::iterator, bool> p = canonical->sortMap.insert(*i);
 		Assert(p.second, "dup sort mapping");
 		canonical->sortMapIndex.append(p.first);
@@ -347,9 +387,100 @@ Renaming::makeCanonicalVersion(ImportModule* module) const
 	}
     }
   }
+  if (module->isStrategic())
+    {
+      IdSet genericsToConsider;	// generics that affect an strategy
+      IdSet genericsToAvoid;	// subset that affect an strategy from a parameter
+      {
+	//
+	//	Strategies mappings are filtered as the operators.
+	//
+	const Vector<RewriteStrategy*> &strategies = module->getStrategies();
+	int nrStrategies = strategies.length();
+	for (int i = 0; i < nrStrategies; i++)
+	  {
+	    RewriteStrategy* strat = strategies[i];
+	    int id = strat->id();
+	    const StratMap::const_iterator e = stratMap.upper_bound(id);
+	    for (StratMap::const_iterator j = stratMap.lower_bound(id); j != e; ++j)
+	      {
+		const Vector<IdSet>& types = j->second.types;
+		if (module->parameterDeclared(strat))
+		  {
+		    if (types.empty())
+		      {
+			genericsToConsider.insert(id);
+			genericsToAvoid.insert(id);
+		      }
+		    else
+		      {
+			IssueAdvisory("Ignoring a specific strat mapping because strategy " <<
+				      QUOTE(0) << " comes from a parameter.");
+		      }
+		  }
+		else
+		  {
+		    if (types.empty())
+		      genericsToConsider.insert(id);
+		    else
+		      {
+			//
+			//	arity specific case
+			//
+			if (typeMatch(types, strat))
+			  {
+			    StratMap::iterator n =
+			      canonical->stratMap.insert(StratMap::value_type(id, StratMapping()));
+			    int nrTypes = types.size();
+			    n->second.types.resize(nrTypes);
+			    --nrTypes;
+			    for (int i = 0; i < nrTypes; i++)
+			      setType(n->second.types[i], strat->getDomain()[i]->component());
+			    setType(n->second.types[nrTypes], strat->getSubjectSort()->component());
+			    n->second.expr = 0;
+			    n->second.index = canonical->stratMapIndex.size();
+			    canonical->stratMapIndex.append(n);
+			  }
+		      }
+		  }
+	      }
+	  }
+
+
+      }
+      {
+	//
+	// 	Finally we add the generics which affect an strategy and which
+	//	which we did not decide to avoid.
+	//
+	FOR_EACH_CONST(i, IdSet, genericsToConsider)
+	  {
+	    int id = *i;
+	    const StratMap::const_iterator e = stratMap.upper_bound(id);
+	    for (StratMap::const_iterator j = stratMap.lower_bound(id); j != e; ++j)
+	      {
+		if (j->second.types.empty())
+		  {
+		    if (genericsToAvoid.find(id) != genericsToAvoid.end())
+		      {
+			IssueAdvisory("Ignoring a generic strat mapping because strategy " <<
+				      QUOTE(Token::name(id)) << " comes from a parameter.");
+		      }
+		    else
+		      {
+			StratMap::iterator n = canonical->stratMap.insert(*j);
+			n->second.index = canonical->stratMapIndex.size();
+			canonical->stratMapIndex.append(n);
+		      }
+		  }
+	      }
+	  }
+      }
+    }
   if (canonical->sortMap.empty() &&
       canonical->opMap.empty() &&
-      canonical->labelMap.empty())
+      canonical->labelMap.empty() &&
+      canonical->stratMap.empty())
     {
       delete canonical;
       DebugAdvisory("renaming " << this << " on " << module << " resulted in empty canonical renaming");
@@ -375,6 +506,10 @@ Renaming::renameLabel(int oldId) const
 bool
 Renaming::typeMatch(const set<int>& type, const ConnectedComponent* component)
 {
+  //
+  //	Check that a type matches a connected component; i.e. at least
+  //	on sort in the connect component appears in the type.
+  //
   set<int>::const_iterator e = type.end();
   int nrSorts = component->nrSorts();
   for (int i = 1; i < nrSorts; i++)
@@ -388,6 +523,10 @@ Renaming::typeMatch(const set<int>& type, const ConnectedComponent* component)
 bool
 Renaming::typeMatch(const Vector<set<int> >& types, Symbol* oldSymbol)
 {
+  //
+  //	Check that each connected component in the symbol arity/co-arity
+  //	matches the corresponding type in the Vector of types.
+  //
   int nrArgs = types.size() - 1;
   if (oldSymbol->arity() != nrArgs)
     return false;
@@ -399,17 +538,39 @@ Renaming::typeMatch(const Vector<set<int> >& types, Symbol* oldSymbol)
   return typeMatch(types[nrArgs], oldSymbol->rangeComponent());
 }
 
+bool
+Renaming::typeMatch(const Vector<set<int> >& types, RewriteStrategy* oldStrat)
+{
+  int nrArgs = types.size();
+  if (oldStrat->arity() != nrArgs)
+    return false;
+
+  const Vector<Sort*> &domain = oldStrat->getDomain();
+  for (int i = 0; i < nrArgs; i++)
+  {
+    if (!typeMatch(types[i], domain[i]->component()))
+      return false;
+    }
+  return true;
+}
+
 int
 Renaming::renameOp(Symbol* oldSymbol) const
 {
+  //
+  //	Rename a concrete symbol.
+  //
+  //cerr << "renaming << " << oldSymbol << endl;
   int oldId = oldSymbol->id();
   int index = NONE;
   const OpMap::const_iterator e = opMap.end();
   for (OpMap::const_iterator i = opMap.find(oldId); i != e && i->first == oldId; ++i)
     {
+      //cerr << "considering " << Token::name( i->first) << " to " <<  Token::name(i->second.name) << endl;
       const Vector<set<int> >& types = i->second.types;
       if (types.empty() || typeMatch(types, oldSymbol))
 	{
+	  //cerr << "success" << endl;
 	  if (index == NONE)
 	    index = i->second.index;
 	  else
@@ -425,9 +586,14 @@ Renaming::renameOp(Symbol* oldSymbol) const
 bool
 Renaming::typeMatch(const Vector<set<int> >& types, const Vector<int>& sortNames)
 {
+  //
+  //	Check that each sort name in sortNames appears in the corresponding type
+  //	in types.
+  //
   int nrTypes = types.size();
   for (int i = 0; i < nrTypes; ++i)
     {
+      //cerr << "looking for a match at arg " << i << " for sort " << Token::name(sortNames[i]) << endl;
       const set<int>& type = types[i];
       if (type.find(sortNames[i]) == type.end())
 	return false;
@@ -438,13 +604,20 @@ Renaming::typeMatch(const Vector<set<int> >& types, const Vector<int>& sortNames
 int
 Renaming::renameOp(int id, const Vector<int>& sortNames) const
 {
+  //
+  //	Rename an abstract operation arising from module expression evaluation.
+  //	This is needed because a concrete symbol might be pushed through a sequence
+  //	of renamings.
+  //
   int index = NONE;
   const OpMap::const_iterator e = opMap.end();
   for (OpMap::const_iterator i = opMap.find(id); i != e && i->first == id; ++i)
     {
+      //cerr << "considering " << Token::name( i->first) << " to " <<  Token::name(i->second.name) << endl;
       const Vector<set<int> >& types = i->second.types;
       if (types.empty() || typeMatch(types, sortNames))
 	{
+	  //cerr << "success" << endl;
 	  if (index == NONE)
 	    index = i->second.index;
 	  else
@@ -467,6 +640,51 @@ Renaming::renamePolymorph(int oldId) const
 	return i->second.index;  // check for multiple renamings?
     }
   return NONE;
+}
+
+int
+Renaming::renameStrat(RewriteStrategy* oldStrat) const
+{
+  int oldId = oldStrat->id();
+  int index = NONE;
+  const StratMap::const_iterator e = stratMap.end();
+  for (StratMap::const_iterator i = stratMap.find(oldId); i != e && i->first == oldId; ++i)
+  {
+    const Vector<set<int> >& types = i->second.types;
+    if (types.empty() || typeMatch(types, oldStrat))
+    {
+      if (index == NONE)
+        index = i->second.index;
+      else
+      {
+        IssueWarning("multiple renamings apply to strategy " << QUOTE(oldStrat));
+        break;
+      }
+    }
+  }
+  return index;
+}
+
+int
+Renaming::renameStrat(int id, const Vector<int>& sortNames) const
+{
+  int index = NONE;
+  const StratMap::const_iterator e = stratMap.end();
+  for (StratMap::const_iterator i = stratMap.find(id); i != e && i->first == id; ++i)
+    {
+      const Vector<set<int> >& types = i->second.types;
+      if (types.empty() || typeMatch(types, sortNames))
+	{
+	  if (index == NONE)
+	    index = i->second.index;
+	  else
+	    {
+	      IssueWarning("multiple renamings apply to strategy " << QUOTE(Token::name(id)));
+	      break;
+	    }
+	}
+    }
+  return index;
 }
 
 void
@@ -506,6 +724,42 @@ Renaming::addOpMappingPartialCopy(const Renaming* original, int index)
   lastOpMapping->second.latexMacro = from->second.latexMacro;
   lastOpMapping->second.index = opMapIndex.size();
   opMapIndex.append(lastOpMapping);
+  lastSeenWasStrategy = false;
+}
+
+/*
+void
+Renaming::addOpMappingSimpleCopy(const Renaming* original, int index)
+{
+  //
+  //	Add a copy of a given op mapping, not dealing with op->term mappings.
+  //
+  OpMap::const_iterator from = original->opMapIndex[index];
+  lastOpMapping = opMap.insert(OpMap::value_type(from->first, OpMapping()));
+  lastOpMapping->second.types = from->second.types;  // deep copy of a Vector of sets
+  lastOpMapping->second.name = from->second.name;
+  lastOpMapping->second.term = 0;
+  lastOpMapping->second.prec = from->second.prec;
+  lastOpMapping->second.gather = from->second.gather;
+  lastOpMapping->second.format = from->second.format;
+  lastOpMapping->second.latexMacro = from->second.latexMacro;
+  lastOpMapping->second.index = opMapIndex.size();
+  opMapIndex.append(lastOpMapping);
+}
+*/
+
+void
+Renaming::addStratMappingPartialCopy(const Renaming* original, int index)
+{
+  //
+  //	Add a copy of a given strat mapping, leaving out any type info.
+  //
+  StratMap::const_iterator from = original->stratMapIndex[index];
+  lastStratMapping = stratMap.insert(StratMap::value_type(from->first, StratMapping()));
+  lastStratMapping->second.name = from->second.name;
+  lastStratMapping->second.expr = 0;
+  lastStratMapping->second.index = stratMapIndex.size();
+  lastSeenWasStrategy = true;
 }
 
 void
@@ -561,6 +815,7 @@ Renaming::addOpMapping(const Vector<Token>& tokens)
   lastOpMapping->second.name = name;  // map op to itself
   lastOpMapping->second.term = 0;
   opMapIndex.append(lastOpMapping);
+  lastSeenWasStrategy = false;
 }
 
 void
@@ -570,6 +825,34 @@ Renaming::addOpMapping(int code)
   lastOpMapping->second.prec = MixfixModule::MIN_PREC - 1;  // initialize to invalid value
   lastOpMapping->second.index = opMapIndex.size();
   opMapIndex.append(lastOpMapping);
+  lastSeenWasStrategy = false;
+}
+
+void
+Renaming::addStratMapping(Token from)
+{
+  addStratMapping(from.code());
+}
+
+void
+Renaming::addStratMapping(int code)
+{
+  lastStratMapping = stratMap.insert(StratMap::value_type(code, StratMapping()));
+  lastStratMapping->second.index = stratMapIndex.size();
+  stratMapIndex.append(lastStratMapping);
+  lastSeenWasStrategy = true;
+}
+
+void
+Renaming::addStratMappingVarIndices(const Vector<int> &indexMap)
+{
+  lastStratMapping->second.varsMap = indexMap; // copy
+}
+
+void
+Renaming::addParameter2(Token /* name */, ModuleExpression* /* theory */)
+{
+  CantHappen("renamings don't take parameters");
 }
 
 void
@@ -581,7 +864,8 @@ Renaming::addVarDecl(Token /* varName */)
 void
 Renaming::addType(bool /* kind */, const Vector<Token>& tokens)
 {
-  Vector<set<int> >& types = lastOpMapping->second.types;
+  Vector<set<int> >& types = lastSeenWasStrategy ?
+		lastStratMapping->second.types : lastOpMapping->second.types;
   int nrTypes = types.length();
   types.resize(nrTypes + 1);
   set<int>& type = types[nrTypes];
@@ -589,11 +873,11 @@ Renaming::addType(bool /* kind */, const Vector<Token>& tokens)
     type.insert(i->code());
 }
 
-
 void
 Renaming::addType(const ConnectedComponent* component)
 {
-  Vector<set<int> >& types = lastOpMapping->second.types;
+  Vector<set<int> >& types = lastSeenWasStrategy ?
+		lastStratMapping->second.types : lastOpMapping->second.types;
   int nrTypes = types.length();
   types.resize(nrTypes + 1);
   setType(types[nrTypes], component);
@@ -603,6 +887,7 @@ void
 Renaming::addOpTarget(const Vector<Token>& tokens)
 {
   lastOpMapping->second.name = Token::bubbleToPrefixNameCode(tokens);
+  lastOpMapping->second.fromTerm = 0;
   lastOpMapping->second.term = 0;
 }
 
@@ -610,14 +895,45 @@ void
 Renaming::addOpTarget(int code)
 {
   lastOpMapping->second.name = code;
+  lastOpMapping->second.fromTerm = 0;
   lastOpMapping->second.term = 0;
 }
 
 void
-Renaming::addOpTargetTerm(Term* term)
+Renaming::addOpTargetTerm(Term* fromTerm, Term* targetTerm)
 {
+  
   lastOpMapping->second.name = NONE;
-  lastOpMapping->second.term = term;
+  lastOpMapping->second.fromTerm = fromTerm;
+  lastOpMapping->second.term = targetTerm;
+}
+
+void
+Renaming::addStratTarget(Token to)
+{
+  addStratTarget(to.code());
+
+  // Removes the last type (the subject type) because it is not relevant
+  // for strategy resolution
+  // TODO The subject type should also be checked
+  Vector<Renaming::IdSet> &types = lastStratMapping->second.types;
+  if (!types.empty())
+    types.contractTo(types.length() - 1);
+}
+
+void
+Renaming::addStratTarget(int code)
+{
+  lastStratMapping->second.name = code;
+  lastStratMapping->second.expr = (StrategyExpression*) 0;
+}
+
+void
+Renaming::addStratTargetExpr(CallStrategy* fromCall, StrategyExpression* expr)
+{
+  lastStratMapping->second.name = NONE;
+  lastStratMapping->second.fromCall = fromCall;
+  lastStratMapping->second.expr = expr;
 }
 
 void
@@ -698,10 +1014,9 @@ Renaming::setLatexMacro(const string& latexMacro)
 }
 
 void
-Renaming::printRenamingType(ostream& s, int opMappingNr, int typeNr) const
+Renaming::printRenamingType(ostream& s, const set<int>& sorts) const
 {
   char sep = '[';
-  const set<int>& sorts = getTypeSorts(opMappingNr, typeNr);
   FOR_EACH_CONST(i, set<int>, sorts)
     {
       s << sep << Token::sortName(*i);
@@ -735,13 +1050,25 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2) const
 	    for (int j = 0; j < nrTypes; j++)
 	      {
 		s << ' ';
-		printRenamingType(s, i, j);
+		printRenamingType(s, getTypeSorts(i, j));
 	      }
 	    s << " -> ";
-	    printRenamingType(s, i, nrTypes);
+	    printRenamingType(s, getTypeSorts(i, nrTypes));
 	  }
-	Assert(getOpTo(i) != NONE && getOpTargetTerm(i) == 0,
-	       "renamings with op->term mappings are not printable");
+#ifndef NO_ASSERT
+	//
+	//	op->term mappings only occur in generated
+	//	canonicalRenamings which are only printed out
+	//	during debugging. We print them using illegal
+	//	syntax because there isn't enough information
+	//	retained to use legal syntax.
+	//
+	if (Term* t = getOpTargetTerm(i))
+	  {
+	    s << " to term " << t << " .";
+	    continue;
+	  }
+#endif
 	s << " to " << Token::name(getOpTo(i));
 	int prec = getPrec(i);
 	const Vector<int>& gather = getGather(i);
@@ -778,6 +1105,27 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2) const
 	s << sep << "label " << Token::name(getLabelFrom(i)) <<
 	  " to " << Token::name(getLabelTo(i));
 	sep = sep2;
+      }
+  }
+  {
+    int nrStratMappings = getNrStratMappings();
+    for (int i = 0; i < nrStratMappings; i++)
+      {
+        s << sep << "strat " << Token::name(getStratFrom(i));
+        int nrTypes = getNrStratTypes(i);
+        if (nrTypes > 0)
+          {
+            s << " :";
+            for (int j = 0; j < nrTypes; j++)
+              {
+                s << ' ';
+                printRenamingType(s, stratMapIndex[i]->second.types[j]);
+              }
+          }
+         Assert(getStratTo(i) != NONE && getStratTargetExpr(i) == 0,
+           "renamings with strat->expr mappings are not printable");
+        s << " to " << Token::name(getStratTo(i));
+        sep = sep2;
       }
   }
 }

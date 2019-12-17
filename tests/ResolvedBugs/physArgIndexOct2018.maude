@@ -1,0 +1,40 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that we are not confusing nominal and physical
+***	argument indices for AC(U) terms with arguments having
+***	multiplicity > 1.
+***
+
+mod VENDING-MACHINE is
+  sorts Coin Item Place Marking .
+  subsorts Coin Item < Place < Marking .
+  op __ : Marking Marking -> Marking [ctor assoc comm id: null] .
+  op null : -> Marking [ctor] .
+  op $ : -> Coin [ctor format (r! o)] .
+  op q : -> Coin [ctor format (r! o)] .
+  op a : -> Item [ctor format (b! o)] .
+  op c : -> Item [ctor format (b! o)] .
+
+  rl [buy-c] : $ => c .
+  rl [buy-a] : $ => a  q .
+  rl [change]: q  q  q  q => $ .
+endm
+
+*** bad extra results
+srewrite in VENDING-MACHINE : $ $ $ using all .
+
+*** runaway execution
+search $ $ $ =>! a a M:Marking .
+
+mod FOO is
+  sort Foo .
+  op __ : Foo Foo -> Foo [assoc comm] .
+  ops a b c : -> Foo .
+
+  rl b => c .
+endm
+
+*** runaway execution
+rew a a b .

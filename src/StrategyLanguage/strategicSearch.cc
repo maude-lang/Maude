@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for abstract class StrategicTask.
+//      Implementation for class StrategicSearch.
 //
 
 //	utility stuff
@@ -43,65 +43,22 @@
 #include "decompositionProcess.hh"
 
 StrategicSearch::StrategicSearch(RewritingContext* initial, StrategyExpression* strategy)
-  : StrategicTask(static_cast<StrategicTask*>(0)),
+  : VariableBindingsManager(initial->root()->symbol()->getModule()->getMinimumSubstitutionSize()),
+    StrategicTask(static_cast<StrategicTask*>(0)),
+    strategy(strategy),
     initial(initial),
-    strategy(strategy)
+    exhausted(false),
+    solutionIndex(NONE)
 {
   Assert(initial != 0, "null context");
   Assert(initial->root() != 0, "null root");
   Assert(strategy != 0, "null strategy");
-  nextToRun = new DecompositionProcess(insert(initial->root()),
-				       push(EMPTY_STACK, strategy),
-				       getDummyExecution(),
-				       0);
-  exhausted = false;
 }
 
 StrategicSearch::~StrategicSearch()
 {
   delete initial;
   delete strategy;
-}
-
-DagNode*
-StrategicSearch::findNextSolution()
-{
-  solutionIndex = NONE;
-  while (!exhausted)
-    {
-      //
-      //	Run can delete any process except nextToRun, which must
-      //	request deletion by returning DIE.
-      //
-      Survival s = nextToRun->run(*this);
-      //
-      //	t will always be a valid process, but might be equal to
-      //	nextToRun in the degenerate case.
-      //
-      StrategicProcess* t = nextToRun->getNextProcess();
-      Assert(s == SURVIVE || t != nextToRun || exhausted, "ran out of processes without exhausted being set");
-      //
-      //	Now safe to delete nextToRun if it requested deletion.
-      //
-      if (s == DIE)
-	delete nextToRun;
-      //
-      //	Now safe to abort.
-      //
-      if (RewritingContext::getTraceStatus() && initial->traceAbort())
-	break;
-      //
-      //	t may not be valid anymore, but in this case we should be
-      //	exhausted.
-      //
-      nextToRun = t;
-      //
-      //	If the run triggered a solution we're done.
-      //
-      if (solutionIndex != NONE)
-	return getCanonical(solutionIndex);
-    }
-  return 0;
 }
 
 StrategicExecution::Survival

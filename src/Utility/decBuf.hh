@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -53,7 +53,7 @@ DecBuf::zero()
 inline void
 DecBuf::insertDigit(int d)
 {
-  Assert(d >= 0 && d <= 9, cerr << "bad digit");
+  Assert(d >= 0 && d <= 9, "bad digit");
   buf.push_front(d);
 }
 

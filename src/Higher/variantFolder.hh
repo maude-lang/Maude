@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2012 SRI International, Menlo Park, CA 94025, USA.
 
@@ -45,13 +45,14 @@ public:
   VariantFolder();
   ~VariantFolder();
 
-  bool insertVariant(const Vector<DagNode*>& variant, int index, int parentIndex);
+  bool insertVariant(const Vector<DagNode*>& variant, int index, int parentIndex, int variableFamily);
   //
   //	Returns 0 if variant wasn't retained or was later purged.
   //
   const Vector<DagNode*>* getVariant(int index) const;
 
   const Vector<DagNode*>* getNextSurvivingVariant(int& nrFreeVariables,
+						  int& variableFamily,
 						  int* variantNumber = 0,
 						  int* parentNumber = 0,
 						  bool* moreInLayer = 0);
@@ -60,6 +61,7 @@ public:
   //	no intervening call to insertVariant() has taken place (which could purge it).
   //
   const Vector<DagNode*>* getLastReturnedVariant(int& nrFreeVariables,
+						 int& variableFamily,
 						 int* parentNumber = 0,
 						 bool* moreInLayer = 0);
 
@@ -72,6 +74,7 @@ private:
   
     int nrVariables;  // number of variables needed for matching; includes any abstraction variables
     int nrFreeVariables;  // number of variables occuring in variant
+    int variableFamily;
     int parentIndex;
     Vector<DagNode*> variant;
     Vector<Term*> terms;

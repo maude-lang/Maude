@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -38,6 +38,7 @@ class SyntacticPreModule
     public LineNumber,
     public SyntaxContainer,
     private SharedTokens
+    
 {
   NO_COPYING(SyntacticPreModule);
 
@@ -49,19 +50,21 @@ public:
     TERM_HOOK
   };
 
-  SyntacticPreModule(Token startToken, Token moduleName);
+  SyntacticPreModule(Token startToken, Token moduleName, Interpreter* owner);
   ~SyntacticPreModule();
 
   void loseFocus();
   void finishModule(Token endToken);
   bool isComplete();
 
-  void addParameter(Token name, ModuleExpression*  theory);
-  void addImport(Token mode, ModuleExpression* expr);
+  void addParameter2(Token name, ModuleExpression* theory);
+  void addImport(Token modeToken, ModuleExpression* expr);
+
   void addSortDecl(const Vector<Token>& sortDecl);
   void addSubsortDecl(const Vector<Token>& subsortDecl);
   void addOpDecl(const Vector<Token>& opName);
-  void makeOpDeclsConsistent();
+  void addStratDecl(Token opName);
+  void makeDeclsConsistent();
 
   void addType(bool kind, const Vector<Token>& tokens);
   void convertSortsToKinds();
@@ -81,14 +84,7 @@ public:
   VisibleModule* getFlatSignature();
   VisibleModule* getFlatModule();
 
-  const ModuleDatabase::ImportMap& getAutoImports() const;
-  int getNrImports() const;
-  int getImportMode(int index) const;
-  const ModuleExpression* getImport(int index) const;
-  int getNrParameters() const;
-  int getParameterName(int index) const;
-  const ModuleExpression* getParameter(int index) const;
-
+  const ModuleDatabase::ImportMap* getAutoImports() const;
 
   void dump();
   void showModule(ostream& s = cout);
@@ -142,28 +138,31 @@ private:
     Vector<Sort*> domainAndRange;
   };
 
-  struct Parameter
+  struct StratDecl
   {
-    Token name;
-    ModuleExpression* theory;
-  };
+    StratDecl() : metadata(NONE) {}
 
-  struct Import
-  {
-    Token mode;
-    ModuleExpression* expr;
+    Vector<Token> names;
+    Vector<Type> types;
+    int metadata;
+    //
+    // Filled out from types after connected components are determined.
+    //
+    Vector<Sort*> domainAndSubject;
   };
 
   void process();
 
   static void printAttributes(ostream& s, const OpDef& opDef);
+  static void printAttributes(ostream& s, const StratDecl& stratDecl);
   static void printSortTokenVector(ostream& s, const Vector<Token>& sorts);
 
   void regretToInform(Entity* doomedEntity);
   int findHook(const Vector<Hook>& hookList, HookType type, int name);
 
   Symbol* findHookSymbol(const Vector<Token>& fullName);
-  void printOpDef(ostream&s, int defIndex);
+  void printOpDef(ostream& s, int defIndex);
+  void printStratDecl(ostream& s, const StratDecl& decl);
   bool defaultFixUp(OpDef& opDef, Symbol* symbol);
   bool defaultFixUp(OpDef& opDef, int index);
   void extractSpecialTerms(const Vector<Token>& bubble,
@@ -177,23 +176,26 @@ private:
   void checkOpTypes();
   void checkType(const Type& type);
   void computeOpTypes();
+  void computeStrategyTypes();
   Sort* computeType(const Type& type);
   void processOps();
   void fixUpSymbols();
+  void processStrategies();
   void processStatements();
   bool compatible(int endTokenCode);
 
   int startTokenCode;
   Bool lastSawOpDecl;
+  Bool isStrategy;
   Bool isCompleteFlag;
-  Vector<Parameter> parameters;
-  Vector<Import> imports;
   Vector<Vector<Token> > sortDecls;
   Vector<Vector<Token> > subsortDecls;
   Vector<OpDecl> opDecls;
   Vector<OpDef> opDefs;
+  Vector<StratDecl> stratDecls;
   Vector<Vector<Token> > statements;
   set<int> potentialLabels;
+  set<int> potentialRuleLabels;
   ModuleDatabase::ImportMap autoImports;
   VisibleModule* flatModule;
 };
@@ -219,46 +221,10 @@ SyntacticPreModule::addSubsortDecl(const Vector<Token>& subsortDecl)
   subsortDecls.append(subsortDecl);
 }
 
-inline const ModuleDatabase::ImportMap&
+inline const ModuleDatabase::ImportMap*
 SyntacticPreModule::getAutoImports() const
 {
-  return autoImports;
-}
-
-inline int
-SyntacticPreModule::getNrImports() const
-{
-  return imports.length();
-}
-
-inline int
-SyntacticPreModule::getImportMode(int index) const
-{
-  return imports[index].mode.code();
-}
-
-inline const ModuleExpression*
-SyntacticPreModule::getImport(int index) const
-{
-  return imports[index].expr;
-}
-
-inline int
-SyntacticPreModule::getNrParameters() const
-{
-  return parameters.length();
-}
-
-inline int
-SyntacticPreModule::getParameterName(int index) const
-{
-  return parameters[index].name.code();
-}
-
-inline const ModuleExpression*
-SyntacticPreModule::getParameter(int index) const
-{
-  return parameters[index].theory;
+  return &autoImports;
 }
 
 #endif

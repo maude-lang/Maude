@@ -1,8 +1,8 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2016 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,13 +30,18 @@ class FreshVariableGenerator
 {
 public:
   virtual ~FreshVariableGenerator() {}
-  virtual int getFreshVariableName(int index, bool odd = false) = 0;
+  virtual int getFreshVariableName(int index, int family) = 0;
   virtual Symbol* getBaseVariableSymbol(Sort* sort) = 0;
   //
   //	The following member function checks if a given variable name could conflict
   //	with a future fresh variable that it might generate.
   //
-  virtual bool variableNameConflict(int id) = 0;
+  virtual bool variableNameConflict(int id, int okFamily = NONE) = 0;
+  //
+  //	The following member function checks if a given variable name belongs to
+  //	the given family.
+  //
+  virtual bool belongsToFamily(int id, int family) = 0;
 };
 
 #endif

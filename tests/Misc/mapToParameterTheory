@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/mapToParameterTheory.maude -no-banner -no-advise \
+  > mapToParameterTheory.out 2>&1
+
+diff $srcdir/mapToParameterTheory.expected mapToParameterTheory.out > /dev/null 2>&1

@@ -25,7 +25,30 @@ TESTS = \
 	metaPrintAttr \
 	metaMetadata \
 	metaVariantUnify \
-	metaGetVariant
+	metaGetVariant \
+	metaNarrow \
+	metaIntPrelude \
+	metaIntReplace \
+	metaIntReplace2 \
+	russianDollsFlat \
+	russianDollsNonFlat \
+	russianDollsNonFlat2 \
+	russianDollsNonFlat3 \
+	metaIntMatch \
+	metaIntSearch \
+	metaIntSort \
+	metaIntUnify \
+	metaIntVariant \
+	metaIntVariantUnify \
+	metaIntPrint \
+	metaIntParse \
+	metaIntApply \
+	metaIntNewNarrow \
+	metaIntNewNarrowSearch \
+	legacyMetaUnify \
+	legacyMetaVariantUnify \
+	legacyMetaGetVariant \
+	metaIntStrategy
 
 MAUDE_FILES = \
 	metaApply.maude \
@@ -54,7 +77,30 @@ MAUDE_FILES = \
 	metaPrintAttr.maude \
 	metaMetadata.maude \
 	metaVariantUnify.maude \
-	metaGetVariant.maude
+	metaGetVariant.maude \
+	metaNarrow.maude \
+	metaIntPrelude.maude \
+	metaIntReplace.maude \
+	metaIntReplace2.maude \
+	russianDollsFlat.maude \
+	russianDollsNonFlat.maude \
+	russianDollsNonFlat2.maude \
+	russianDollsNonFlat3.maude \
+	metaIntMatch.maude \
+	metaIntSearch.maude \
+	metaIntSort.maude \
+	metaIntUnify.maude \
+	metaIntVariant.maude \
+	metaIntVariantUnify.maude \
+	metaIntPrint.maude \
+	metaIntParse.maude \
+	metaIntApply.maude \
+	metaIntNewNarrow.maude \
+	metaIntNewNarrowSearch.maude \
+	legacyMetaUnify.maude \
+	legacyMetaVariantUnify.maude \
+	legacyMetaGetVariant.maude \
+	metaIntStrategy.maude
 
 RESULT_FILES = \
 	metaApply.expected \
@@ -85,6 +131,29 @@ RESULT_FILES = \
 	metaPrintAttr.expected \
 	metaMetadata.expected \
 	metaVariantUnify.expected \
-	metaGetVariant.expected
+	metaGetVariant.expected \
+	metaNarrow.expected \
+	metaIntPrelude.expected \
+	metaIntReplace.expected \
+	metaIntReplace2.expected \
+	russianDollsFlat.expected \
+	russianDollsNonFlat.expected \
+	russianDollsNonFlat2.expected \
+	russianDollsNonFlat3.expected \
+	metaIntMatch.expected \
+	metaIntSearch.expected \
+	metaIntSort.expected \
+	metaIntUnify.expected \
+	metaIntVariant.expected \
+	metaIntVariantUnify.expected \
+	metaIntPrint.expected \
+	metaIntParse.expected \
+	metaIntApply.expected \
+	metaIntNewNarrow.expected \
+	metaIntNewNarrowSearch.expected \
+	legacyMetaUnify.expected \
+	legacyMetaVariantUnify.expected \
+	legacyMetaGetVariant.expected \
+	metaIntStrategy.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

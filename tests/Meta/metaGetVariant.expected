@@ -1,59 +1,71 @@
-Maude> ==========================================
-reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 0, 0) .
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), (
+    empty).GroundTermList, '#, (0).Zero) .
+rewrites: 3
+result Variant: {'_+_['cst1.Elem,'%1:XOR],
+  'X:XOR <- '%1:XOR,'%,(none).Parent,false}
+==========================================
+reduce in TEST : metaGetVariant(upModule('XOR, false), upTerm(cst1 + X:XOR), (
+    empty).GroundTermList, '#, (0).Zero) .
+rewrites: 3
+result Variant: {'_+_['cst1.Elem,'%1:XOR],
+  'X:XOR <- '%1:XOR,'%,(none).Parent,false}
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), (
+    empty).GroundTermList, '@, (0).Zero) .
 rewrites: 3
 result Variant: {'_+_['cst1.Elem,'#1:XOR],
-	'X:XOR <- '#1:XOR,1,none,false}
+  'X:XOR <- '#1:XOR,'#,(none).Parent,false}
 ==========================================
-reduce in TEST : metaGetVariant(upModule('XOR, false), upTerm(cst1 + X:XOR),
-    empty, 0, 0) .
-rewrites: 3
-result Variant: {'_+_['cst1.Elem,'#1:XOR],
-	'X:XOR <- '#1:XOR,1,none,false}
-==========================================
-reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 10, 0) .
-rewrites: 3
-result Variant: {'_+_['cst1.Elem,'#11:XOR],
-	'X:XOR <- '#11:XOR,11,none,false}
-==========================================
-reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 0, 1) .
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), (
+    empty).GroundTermList, '#, 1) .
 rewrites: 6
 result Variant: {'cst1.Elem,
-	'X:XOR <- '0.XOR,0,0,true}
+  'X:XOR <- '0.XOR,'@,(0).Zero,true}
 ==========================================
-reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 0, 2) .
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), (
+    empty).GroundTermList, '#, 2) .
 rewrites: 3
 result Variant: {'0.XOR,
-	'X:XOR <- 'cst1.Elem,0,0,true}
+  'X:XOR <- 'cst1.Elem,'@,(0).Zero,true}
 ==========================================
-reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 0, 3) .
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), (
+    empty).GroundTermList, '#, 3) .
 rewrites: 3
-result Variant: {'%1:XOR,
-	'X:XOR <- '_+_['cst1.Elem,'%1:XOR],1,0,false}
+result Variant: {'@1:XOR,
+  'X:XOR <- '_+_['cst1.Elem,'@1:XOR],'@,(0).Zero,false}
 ==========================================
-reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), empty, 0, 4) .
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + X:XOR), (
+    empty).GroundTermList, '#, 4) .
 rewrites: 3
 result Variant?: noVariant
 ==========================================
 reduce in TEST : metaGetVariant(['XOR], upTerm(cst2 + X:XOR), upTerm(a +
-    X:XOR), 0, 0) .
+    X:XOR), '#, (0).Zero) .
 rewrites: 4
-result Variant: {'_+_['cst2.Elem,'#1:XOR],
-	'X:XOR <- '#1:XOR,1,none,false}
+result Variant: {'_+_['cst2.Elem,'%1:XOR],
+  'X:XOR <- '%1:XOR,'%,(none).Parent,false}
 ==========================================
 reduce in TEST : metaGetVariant(['XOR], upTerm(cst2 + X:XOR), upTerm(a +
-    X:XOR), 0, 1) .
+    X:XOR), '#, 1) .
 rewrites: 6
 result Variant: {'0.XOR,
-	'X:XOR <- 'cst2.Elem,0,0,true}
+  'X:XOR <- 'cst2.Elem,'@,(0).Zero,true}
 ==========================================
 reduce in TEST : metaGetVariant(['XOR], upTerm(cst2 + X:XOR), upTerm(a +
-    X:XOR), 0, 2) .
+    X:XOR), '#, 2) .
 rewrites: 4
-result Variant: {'%1:XOR,
-	'X:XOR <- '_+_['cst2.Elem,'%1:XOR],1,0,false}
+result Variant: {'@1:XOR,
+  'X:XOR <- '_+_['cst2.Elem,'@1:XOR],'@,(0).Zero,false}
 ==========================================
 reduce in TEST : metaGetVariant(['XOR], upTerm(cst2 + X:XOR), upTerm(a +
-    X:XOR), 0, 3) .
+    X:XOR), '#, 3) .
 rewrites: 4
 result Variant?: noVariant
-Maude> Bye.
+==========================================
+reduce in TEST : metaGetVariant(['XOR], upTerm(cst1 + %1:XOR), (
+    empty).GroundTermList, '#, (0).Zero) .
+Warning: unsafe variable name %1:XOR in variant narrowing problem.
+rewrites: 3
+result Variant?: noVariant
+Bye.

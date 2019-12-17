@@ -1,0 +1,59 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that the meta-interpreter gets imports from itself and not the object level interpreter.
+***
+
+fmod FOO is
+  sort Foo .
+  ops a b : -> Foo .
+  eq a = b .
+endfm
+
+load metaInterpreter 
+
+mod TEST is
+  pr META-INTERPRETER .
+  op me : -> Oid .
+  op User : -> Cid .
+  op state:_ : Nat -> Attribute .
+
+  vars X Y Z : Oid .
+
+  rl < X : User | state: 0 > createdInterpreter(X, Y, Z) =>
+     < X : User | state: 1 > insertModule(Z, X, foo) .
+
+  rl < X : User | state: 1 > insertedModule(X, Y) =>
+     < X : User | state: 2 > insertModule(Y, X, upModule('META-LEVEL, true)) .
+
+  rl < X : User | state: 2 > insertedModule(X, Y) =>
+     < X : User | state: 3 > reduceTerm(Y, X, 'META-LEVEL,
+        'metaReduce[upTerm(bar) , upTerm('a.Foo)]) .
+
+  op foo : -> Module .
+  eq foo = (
+fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  none
+  eq 'a.Foo = 'c.Foo [none] .
+endfm ) .
+
+  op bar : -> Module .
+  eq bar = (
+fmod 'BAR is
+  protecting 'FOO .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm ) .
+endm
+
+*** expecting ''c.Foo.Constant but get ''b.Foo.Constant
+erew  <> < me : User | state: 0 > createInterpreter(interpreterManager, me, none) .

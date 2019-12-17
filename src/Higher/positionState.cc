@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -48,7 +48,7 @@ PositionState::PositionState(DagNode* top, int flags, int minDepth, int maxDepth
 {
   Assert(!(flags & SET_UNSTACKABLE) || (flags & RESPECT_FROZEN),
 	 "can't set unstackable if not respecting frozen");
-  positionQueue.append(RedexPosition(top, UNDEFINED, UNDEFINED));
+  positionQueue.append(RedexPosition(top, UNDEFINED, UNDEFINED, true));
   depth.append(0);
   extensionInfo = 0;
   extensionInfoValid = true;  // in case maxDepth = -1 for no extension
@@ -72,8 +72,13 @@ PositionState::exploreNextPosition()
       int ourDepth = depth[nextToExplore];
       if (ourDepth >= maxDepth)
 	return false;
-      DagNode* d = positionQueue[nextToExplore].node();
-      d->stackArguments(positionQueue, nextToExplore, flags & RESPECT_FROZEN);
+      const RedexPosition& rp = positionQueue[nextToExplore];
+      DagNode* d = rp.node();
+      //
+      //	We only consider repeated arguments once, where supported by
+      //	theory.
+      //
+      d->symbol()->stackPhysicalArguments(d, positionQueue, nextToExplore, flags & RESPECT_FROZEN, rp.isEager());
       int newFinish = positionQueue.length();
       if (finish < newFinish)
 	{
@@ -178,7 +183,8 @@ PositionState::rebuildAndInstantiateDag(DagNode* replacement,
        while (i != UNDEFINED)
 	 {
 	   const RedexPosition& rp = positionQueue[i];
-	   newDag = rp.node()->instantiateWithReplacement(substitution, eagerCopies, argIndex, newDag);
+	   const Vector<DagNode*>* bindings = rp.isEager() ? &eagerCopies : 0;
+	   newDag = rp.node()->instantiateWithReplacement(substitution, bindings, argIndex, newDag);
 	   argIndex = rp.argIndex();
 	   i = rp.parentIndex();
 	 }

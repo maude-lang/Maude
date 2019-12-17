@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/viewRecursionMay2019.maude -no-banner -no-advise \
+  > viewRecursionMay2019.out 2>&1
+
+diff $srcdir/viewRecursionMay2019.expected viewRecursionMay2019.out > /dev/null 2>&1

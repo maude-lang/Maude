@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 get variants in BOOL-FVP : X /\ Y .
 
 Variant #1
@@ -247,7 +247,6 @@ rewrites: 10
 i --> %1:Int
 j --> %2:Int
 l --> %2:Int
-
 ==========================================
 variant unify in INT-ACU : j =? l  .
 
@@ -485,7 +484,7 @@ y --> #2:Int
 
 No more unifiers.
 rewrites: 11
-Maude> ==========================================
+==========================================
 variant unify [23] in INT-OFFSET-SET : {M} =? {M'}  .
 
 Unifier #1
@@ -602,7 +601,6 @@ Unifier #23
 rewrites: 248
 M --> %1:NeMSet,%2:NeMSet
 M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet
-
 ==========================================
 get variants in HF-SETS-CONJ : M,M' .
 
@@ -918,4 +916,4 @@ variant unify in INT-PRESS-BOOL : i > j =? true /\ j > k =? true /\ i > k =?
 
 No unifiers.
 rewrites: 123
-Maude> Bye.
+Bye.

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -65,10 +65,16 @@ ApplicationProcess::ApplicationProcess(StrategicSearch& searchObject,
 
 
   : StrategicProcess(taskSibling, insertionPoint),
-    rewriteState(searchObject.getContext(),
-		 searchObject.getCanonical(startIndex),
-		 strategy->getLabel(),
-		 strategy->getTop() ? NONE : UNBOUNDED),
+    rewriteState(new RewriteSearchState(searchObject.getContext()->makeSubcontext(
+					  searchObject.getCanonical(startIndex)
+					),
+					strategy->getLabel(),
+					SearchState::GC_CONTEXT
+					| (strategy->getLabel() != UNDEFINED ?
+					    SearchState::IGNORE_CONDITION
+					    | RewriteSearchState::ALLOW_NONEXEC : 0),
+					0,
+					strategy->getTop() ? NONE : UNBOUNDED)),
     pending(pending),
     strategy(strategy)
 {
@@ -76,12 +82,50 @@ ApplicationProcess::ApplicationProcess(StrategicSearch& searchObject,
   int nrValues = values.size();
   if (nrValues > 0)
     {
-      Vector<Term*> tmpVariables(strategy->getVariables());
-      Vector<DagRoot*> tmpValues(nrValues);
+      VariableBindingsManager::ContextId ctx = getOwner()->getVarsContext();
+      instedSubstitution.resize(nrValues);
+
+      RewritingContext* context = searchObject.getContext();
+
       for (int i = 0; i < nrValues; ++i)
-	tmpValues[i] = values[i].getDagRoot();
+	{
+	  DagNode* value = values[i].getDag();
+
+	  // We reduce the substitution value
+	  RewritingContext* instanceContext = context->makeSubcontext(
+	    values[i].getTerm()->ground() ? value : searchObject.instantiate(ctx, value)
+	  );
+	  instanceContext->reduce();
+	  context->transferCountFrom(*instanceContext);
+	  instedSubstitution[i] = new DagRoot(instanceContext->root());
+	  delete instanceContext;
+	}
+
+      //
+      // Due to sharing, the reduction of the instantiated substitution values
+      // may have reduced some ground subdags of the original values, which
+      // would have lost their ground flags. Hence, we have to recalculate
+      // these flags again, but only once, because the second time they are
+      // already reduced.
+      //
+      if (strategy->areSubsDagsReduced())
+	{
+	  for (int i = 0; i < nrValues; ++i)
+	    values[i].getDag()->computeBaseSortForGroundSubterms(false);
+	  strategy->setSubsDagsReduced();
+	}
+
+      Vector<Term*> tmpVariables(strategy->getVariables());
+      Vector<DagRoot*> tmpValues(instedSubstitution);
       rewriteState->setInitialSubstitution(tmpVariables, tmpValues);
     }
+}
+
+ApplicationProcess::~ApplicationProcess()
+{
+  int nrValues = instedSubstitution.size();
+  for (int i = 0; i < nrValues; i++)
+    delete instedSubstitution[i];
 }
 
 StrategicExecution::Survival
@@ -90,7 +134,7 @@ ApplicationProcess::run(StrategicSearch& searchObject)
   if (rewriteState->findNextRewrite())
     {
       Rule* rule = rewriteState->getRule();
-      if (rule->hasCondition())
+      if (strategy->getLabel() != UNDEFINED && rule->hasCondition())
 	{
 	  //
 	  //	Need to check that we have the correct number of substrategies for our rule.
@@ -98,9 +142,9 @@ ApplicationProcess::run(StrategicSearch& searchObject)
 	  int nrStrategies = strategy->getStrategies().size();
 	  int nrRewriteFragments = 0;
 	  const Vector<ConditionFragment*>& condition = rule->getCondition();
-	  FOR_EACH_CONST(i, Vector<ConditionFragment*>, condition)
+	  for (ConditionFragment* cf : condition)
 	    {
-	      if (dynamic_cast<RewriteConditionFragment*>(*i))
+	      if (dynamic_cast<RewriteConditionFragment*>(cf))
 		++nrRewriteFragments;
 	    }
 	  if (nrStrategies != nrRewriteFragments)
@@ -149,7 +193,7 @@ ApplicationProcess::run(StrategicSearch& searchObject)
 
 int
 ApplicationProcess::doRewrite(StrategicSearch& searchObject,
-			      SharedRewriteSearchState::Ptr rewriteState,
+			      SharedValue<RewriteSearchState> rewriteState,
 			      PositionState::PositionIndex redexIndex,
 			      ExtensionInfo* extensionInfo,
 			      Substitution* substitution,
@@ -224,7 +268,7 @@ ApplicationProcess::doRewrite(StrategicSearch& searchObject,
 
 StrategicExecution::Survival
 ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchObject,
-						       SharedRewriteSearchState::Ptr rewriteState,
+						       SharedValue<RewriteSearchState> rewriteState,
 						       PositionState::PositionIndex redexIndex,
 						       ExtensionInfo* extensionInfo,
 						       Substitution* substitutionSoFar,
@@ -269,7 +313,7 @@ ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchOb
 	  //	We transfer, rather than simply add in the rewrite count because MatchProcess may do
 	  //	some more rewriting with newContext.
 	  //
-	  searchObject.getContext()->transferCount(*newContext);
+	  searchObject.getContext()->transferCountFrom(*newContext);
 	  //
 	  //	We use clone() rather than copy() because newContext will have the wrong copy size.
 	  //
@@ -308,7 +352,7 @@ ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchOb
       //	We use clone() rather than copy() because newContext will have copy size 0.
       //
       solveContext->clone(*substitutionSoFar);
-      stack<ConditionState*> dummy;
+      Stack<ConditionState*> dummy;
       bool success = fragment->solve(true, *solveContext, dummy);
       searchObject.getContext()->addInCount(*solveContext);
       if (!success)

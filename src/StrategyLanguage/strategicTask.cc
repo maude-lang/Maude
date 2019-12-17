@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -38,13 +38,24 @@
 
 StrategicTask::StrategicTask(StrategicTask* master)
   : StrategicExecution(master),
-    slaveList(this)
+    slaveList(this),
+    varsContext(master ? master->getVarsContext()
+		       : VariableBindingsManager::EMPTY_CONTEXT)
 {
 }
 
 StrategicTask::StrategicTask(StrategicExecution* sibling)
   : StrategicExecution(sibling),
-    slaveList(this)
+    slaveList(this),
+    varsContext(sibling->getOwner()->getVarsContext())
+{
+}
+
+
+StrategicTask::StrategicTask(StrategicExecution* sibling, VariableBindingsManager::ContextId ctx)
+  : StrategicExecution(sibling),
+    slaveList(this),
+    varsContext(ctx)
 {
 }
 

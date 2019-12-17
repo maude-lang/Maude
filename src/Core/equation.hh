@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
@@ -48,6 +48,7 @@ public:
 
   bool isOwise() const;
   void setVariant();
+  void clearVariant();
   bool isVariant() const;
 
   void stackMachineCompile();
@@ -94,6 +95,12 @@ inline void
 Equation::setVariant()
 {
   setFlags(VARIANT);
+}
+
+inline void
+Equation::clearVariant()
+{
+  clearFlags(VARIANT);
 }
 
 inline long

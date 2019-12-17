@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -90,12 +90,11 @@ private:
   bool isMarked() const;
   void setSortIndex(int sortIndex);
   AU_StackNode* partialClone(int f);
-
   //
-  //	Nasty cross casting stuff.
+  //    Get pointer to MemoryInfo object associated with us.
   //
-  MemoryCell* getMemoryCell();
-  const MemoryCell* getMemoryCell() const;
+  MemoryInfo* getMemoryInfo();
+  const MemoryInfo* getMemoryInfo() const;
 
   DagNode* args[ELEMENTS_PER_NODE];
   AU_StackNode* next;
@@ -107,54 +106,54 @@ inline void*
 AU_StackNode::operator new(size_t size)
 {
   Assert(size <= sizeof(MemoryCell), "stack node too big");
-  MemoryCell* m = MemoryCell::allocateMemoryCell();
+  void* m = MemoryCell::allocateMemoryCell();
   //
   //	MemoryCell::allocateMemoryCell() no longer sets the half word to
   //	Sort::SORT_UNKNOWN. This responsibility is shifted to us.
   //
-  m->setHalfWord(Sort::SORT_UNKNOWN);
+  MemoryCell::getMemoryInfo(m)->setHalfWord(Sort::SORT_UNKNOWN);
   //
   //	MemoryCell::allocateMemoryCell() no longer clears the memory
   //	cell flags. This responsibility is shifted to us.
   //
-  m->clearAllFlags();
+  MemoryCell::getMemoryInfo(m)->clearAllFlags();
   return m;
 }
 
-inline MemoryCell*
-AU_StackNode::getMemoryCell()
+inline MemoryInfo*
+AU_StackNode::getMemoryInfo()
 {
-  return static_cast<MemoryCell*>(static_cast<void*>(this));
+  return MemoryCell::getMemoryInfo(this);
 }
 
-inline const MemoryCell*
-AU_StackNode::getMemoryCell() const
+inline const MemoryInfo*
+AU_StackNode::getMemoryInfo() const
 {
-  return static_cast<const MemoryCell*>(static_cast<const void*>(this));
+  return MemoryCell::getMemoryInfo(this);
 }
 
 inline void
 AU_StackNode::setMarked()
 {
-  getMemoryCell()->setMarked();
+  getMemoryInfo()->setMarked();
 }
 
 inline bool
 AU_StackNode::isMarked() const
 {
-  return getMemoryCell()->isMarked();
+  return getMemoryInfo()->isMarked();
 }
 
 inline void 
 AU_StackNode::setSortIndex(int sortIndex)
 {
-  getMemoryCell()->setHalfWord(sortIndex);
+  getMemoryInfo()->setHalfWord(sortIndex);
 }
 
 inline int
 AU_StackNode::getSortIndex() const
 {
-  return getMemoryCell()->getHalfWord();
+  return getMemoryInfo()->getHalfWord();
 }
 
 inline DagNode*

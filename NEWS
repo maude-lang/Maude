@@ -1,5 +1,220 @@
-Overview of Changes in alpha110b
+Overview of Changes in  Maude 3.0 (alpha127a)
+=============================================
+* commented out unused code/data structures
+* increase default number of BDD variables to 100
+* updated comments
+
+Overview of Changes in  Maude 3.0 beta 1 (alpha127)
+===================================================
+* fixed memory leak in file writing code
+* support ll as alias for ls -l
+* many compiler warnings fixed
+
+Overview of Changes in alpha126
+===============================
+* fixed memory leak in failed view instantiation
+* fixed bug in profiling of condition fragments
+* fixed bug when comment ended by EOF
+* Rubén Rafael Rubio Cuéllar's extensions to the strategy
+  language and fuctional reflection of the strategy language
+  integrated
+* Stragtegy language supported by meta-interpreter
+* -erewrite-loop-mode command line option
+* set print constants with sorts option
+* bubbles only disallow excluded tokens outside of parens
+* new variable family based descent functions
+* metaParse()/metaPretty() support variable aliases
+* symmetric change in meta-interpreter
+
+Overview of Changes in alpha123
+===============================
+* fixed a bug in module instantiation introduced by the
+  redesigned module system
+* kludged around a bug in BuDDy
+
+Overview of Changes in alpha121
+===============================
+* fixed a bug where module sums were commuted
+* fixed a memory leak with module expression syntax errors
+* fixed a bug where number of sorts from a parameter theory
+  was incorrectly recorded if the module had no regular imports
+* fixed symmetric bug with operators from a parameter theory
+* fixed symmetric bug with polymorphic operators from a parameter theory
+* fixed bug where user declared sort with parameter sort name
+could confuse module system
+* summing modules with bound parameters is now supported
+* parameterization of views is now supported
+* weird situation with overloaded polymorphic operators that
+  could cause crash now disallowed
+* fixed recursive view bug
+
+Overview of Changes in alpha120
+===============================
+* fixed memory leak in normalizeTerm() message
+* fixed double counting of initial eq rewrites and mb
+  application in metaApply()/metaXapply()
+* added rule application to the meta-interpreter
+* added single step narrowing with variant unification
+  to the meta-interpreter
+* added narrowing search with variant unification, with
+  and without path, to the meta-interpreter
+
+* Overview of Changes in alpha119
 ================================
+* smart load "sload" directive
+* more sort computation messages added to the meta-interpreter
+* unification and disjoint unification added to the meta-interpreter
+* fixed fake rewrites from object-message rewriting that
+  were visible in trace/break/profile
+* variant generation added to the meta-interpreter
+* fixed mb/eq double counting bugs in metaMatch()/metaXmatch()
+  and getMatch()/getXmatch()
+* variant unifier generation added to the meta-interpreter
+* fixed memory leak in metaGetVariant()
+* pretty printing added to the meta-interpreter
+* parsing added to the meta-interpreter
+* fixed physical vs nominal argument index stacking bugs
+
+Overview of Changes in alpha118
+===============================
+* getSearchResult()/getSearchResultAndPath() messages added to
+  meta-interpreter
+* -show-pid command line option
+* SIGINFO (SIGUSR1 on Linux) now works immediately when blocked
+  on sockets rather then waiting for next rewrite
+* fixed memory leaks in metaXmatch()
+* getMatch()/getXmatch() messages added to meta-interpreter
+* upperCase()/lowerCase()  functions added to fmod STRING
+* sort computation messages added to the meta-interpreter
+
+Overview of Changes in alpha117
+===============================
+* fixed syntax error location bug in new parser
+* fixed show view bug
+* fixed symmetric upView() bug
+* fixed showModule bug in the meta-interpreter where imports
+  and parameters were omitted
+* fixed hang when doing an abort from erewrite
+* fixed crash caused by object-message rewriting with the
+  set clear rules off command
+* fixed bug where rewriteTerm()/frewriteTerm() in the
+  meta-interpreter did not reset next rule pointers
+* fixed a bug where modules cached by the metalevel functional
+  metalevel would be incorrectly used by by the meta-interpreter
+* fixed bug where using the functional metalevel from within
+  the meta-interpreter would pull imports from object level
+  interpreter
+* fixed bug where using the ascent functions from within
+  the meta-interpreter would pull modules from object level
+  interpreter
+* added insertView and showView messages to meta-interpreter
+* meta-interpreter now supports erewriteTerm message
+* erewrite will check for external events even when internal
+  rewrites are possible
+* fixed memory leak triggered by bad unify command
+* loop-mode/pipe edge case reverted to old behavior for IOP
+* status report in response to SIGINFO (SIGUSR1 on Linux)
+
+Overview of Changes in alpha116
+===============================
+* fixed bug in ctor calculations for associative operators;
+  enforce new ctor consistancy for such operators
+* fixed related bugs in unifier filtering, variant folding
+  and narrowing folding wrt the handing of abstraction
+  variables
+* new mixfix parser based on Leo's algorithm fixes many
+  bubble related bugs
+
+Overview of Changes in alpha115
+===============================
+* fixed bug where show mod command output empty parentheses
+* fixed bug where maude wouldn't compile without SMT support
+* support for file i/o
+* support for standard streams
+* support for lexical level QidList <-> String conversion
+* no prompting when stdin redirect to read from file
+* sort Bound and op unbounded have their own fmod
+
+Overview of Changes in alpha114
+===============================
+* more sanity checks at object level and meta level
+* pretty printer smarter about iterated operator disambiguation
+* fixed bug where narrowing attribute was not being printed
+  if it was a rule's only attribute
+* support for Yices2 as the SMT solver backend
+* fixed bug in CVC4 bindings where passing something other than
+  a positive integer constant for the second argument to divisible
+  produced a crash
+* asserting nonlinear stuff in CVC4 now produces unknown rather
+  that a crash
+
+Overview of Changes in alpha113
+===============================
+* redesigned/extended vu narrowing functionality
+
+Overview of Changes in alpha112b
+================================
+* fixed bug in AU instantiation code introduced by
+  optimizations in alpha111b
+* fixed memory corruption bug in class VariantUnificationProblem
+  where the garbage collector runs before object fully initialized
+
+Overview of Changes in alpha112a
+================================
+* support for debug, cont, debug cont in vu-narrow
+* support for debug, cont, debug cont, incompleteness and
+  printing state and timing information in narrow
+* support for cont/debug cont in variant unify
+* support for cont/debug cont in get variants
+* support for debug and debug cont in srewite
+* support for debug, cont, debug cont and printing
+  printing state and timing information in smt-search
+* support for debug and debug cont in search
+* fixed longstanding family of related performance bugs
+  in the ACU matchers
+* added bound element variable ACU stripper-collector automaton
+* added early failure optimization for ACU_LazySubproblem
+
+Overview of Changes in alpha112
+===============================
+* fixed a longstanding bug in the comparison of NatSets that
+  amongst other things broke the LTL -> VWAA conversion in the
+  model checker
+
+Overview of Changes in alpha111b
+================================
+* optimized handling of stacks of states in conditions
+* optimized construction of free right hand sides
+* fixed bug where 0 step rewrites module SMT could return
+  unsatisfiable constraints
+* fixed bug where bindings were being shared between eager and
+  lazy places in both regular narrowing and variant narrowing
+* fixed bug where narrowing steps and equational rewrites
+  weren't being counted in metaNarrow()
+* vu-narrow command added
+* metaNarrowingSearch() descent function added
+* fixed bug where illegally parameterizing a module by a
+  parameterized module caused a crash
+
+Overview of Changes in alpha111a
+================================
+* fixed bug where variables occuring only in a irreducibility
+  constraint could cause a crash
+* fixed bug where irreducibility constraint could be ignored
+* better handled of contexts for metaNarrowingApply()
+* require that variables that only occur in irreducibility
+  constraint meet safety criteria
+
+Overview of Changes in alpha111
+===============================
+* fixed bug where an ambiguity in a term-hook caused crash in
+  sort computation because module isn't semi-compiled at this point
+* new narrowing descent function
+* one of the old narrowing descent functions now supports
+  incompleteness
+
+Overview of Changes in Maude 2.7.1 (alpha110b)
+==============================================
 * fixed typos and copyright date
 * minor configuation fixes
 

@@ -1,3 +1,375 @@
+2019-11-20  Rubén Rubio  <rubenrub@ucm.es>
+
+	* tests/Meta/metaIntStrategy.maude: added
+
+	* tests/StrategyLanguage/metalevel.maude: adapted to the new
+	interface and syntax of the strategy language at the metalevel
+
+	* tests/StrategyLanguage/parameterization.maude: added
+
+2019-11-11  Steven Eker  <eker@mu>
+
+	* tests/Meta/metaIntParse.maude: parseQidList() ->
+	parseTerm()
+
+2019-11-08  Steven Eker  <eker@mu>
+
+	* tests/Meta/metaIntParse.maude: use variable alias feature
+
+	* tests/Meta/metaIntPrint.maude: use variable alias feature
+
+2019-11-05  Steven Eker  <eker@mu>
+
+	* tests/Meta/metaPrettyPrint.maude: added tests for variable
+	alias feature
+
+2019-11-04  Steven Eker  <eker@mu>
+
+	* tests/Meta/metaParse.maude: added tests for variable alias
+	feature
+
+2019-10-22  Steven Eker  <eker@mu>
+
+	* tests/Meta/metaGetVariant.maude: use new variable
+	family based metaGetVariant()
+
+	* tests/Meta/metaVariantUnify.maude: use new variable
+	family based metaVariantUnify()/metaVariantDisjointUnify()
+
+	* tests/Meta/legacyMetaGetVariant.maude: created
+
+2019-10-21  Steven Eker  <eker@mu>
+
+	* tests/Meta/legacyMetaVariantUnify.maude: created
+
+2019-10-18  Steven Eker  <eker@mu>
+
+	* tests/Meta/metaUnify.maude: use new variable family based
+	metaUnify()/metaDisjointUnify()
+
+	* tests/Meta/legacyMetaUnify.maude: created
+
+===================================Maude125===========================================
+
+2019-07-31  Steven Eker  <eker@mu>
+
+	* tests/ResolvedBugs/instantiationJuly2019.maude: added
+
+2019-05-29  Steven Eker  <eker@mu.csl.sri.com>
+
+	* tests/Misc/parameterizedView.maude: added
+
+	* tests/Misc/badView.maude: added
+
+	* tests/ResolvedBugs/viewRecursionMay2019.maude: added
+
+	* tests/ResolvedBugs/polymorphicOverloadMay2019.maude: added
+
+	* tests/ResolvedBugs/parameterTheoryCopyMay2019.maude: added
+
+	* tests/ResolvedBugs/parameterTheoryMay2019.maude: added
+
+	* tests/ResolvedBugs/moduleSumMay2019.maude: added
+
+2019-05-28  Steven Eker  <eker@mu.csl.sri.com>
+
+	* tests/Meta/russianDollsNonFlat2.maude: added
+
+2019-05-24  Steven Eker  <eker@mu.csl.sri.com>
+
+	* tests/Misc/mapToParameterTheory.maude: added
+
+2019-05-03  Steven Eker  <eker@mu.csl.sri.com>
+
+	* tests/Misc/parameterization.maude: summing modules with
+	bound parameters is now legal
+
+===================================Maude121===========================================
+
+2018-12-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntNewNarrowSearch.maude: added
+
+2018-12-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntNewNarrow.maude: added
+
+2018-11-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntApply.maude: added
+
+2018-11-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/ResolvedBugs/metaApplyNov2018.maude: added
+
+===================================Maude120===========================================
+
+2018-10-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/ResolvedBugs/physArgIndexOct2018.maude: added
+
+	* tests/Meta/metaIntParse.maude: added
+
+2018-10-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntPrint.maude: added
+
+2018-10-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntVariantUnify.maude: added
+
+2018-10-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/ResolvedBugs/metaIntMatchOct2018.maude: added
+
+2018-10-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntVariant.maude: added
+
+2018-10-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/ResolvedBugs/objectMessageOct2018.maude: added
+
+2018-09-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntUnify.maude: added
+
+2018-09-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntSort.maude: added tests for
+	getMaximalAritySet(); added tests for normalizeTerm()
+
+===================================Maude119===========================================
+
+2018-08-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntSort.maude: added
+
+2018-08-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/BuiltIn/string.maude: added tests for upperCase(),
+	lowerCase()
+
+2018-08-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/ResolvedBugs/metaIntAscentJune2018.maude: updated
+	to new createInterpreter() convention
+
+	* tests/ResolvedBugs/metaIntImportJune2018.maude: updated
+	to new createInterpreter() convention
+
+	* tests/ResolvedBugs/metaModuleCacheJune2018.maude: updated
+	to new createInterpreter() convention
+
+	* tests/ResolvedBugs/metaIntRewriteJune2018.maude: updated
+	to new createInterpreter() convention
+
+	* tests/ResolvedBugs/showModuleJune2018.maude: updated
+	to new createInterpreter() convention
+
+	* tests/Meta/metaIntPrelude.maude: updated to new
+	createInterpreter() convention
+
+	* tests/Meta/metaIntReplace.maude: updated to new
+	createInterpreter() convention
+
+	* tests/Meta/russianDollsFlat.maude: updated to new
+	createInterpreter() convention
+
+	* tests/Meta/metaIntReplace2.maude: updated to new
+	createInterpreter() convention
+
+	* tests/Meta/russianDollsNonFlat.maude: updated to new
+	createInterpreter() convention
+
+	* tests/Meta/metaIntSearch.maude: updated to new
+	createInterpreter() convention
+
+	* tests/Meta/metaIntMatch.maude: updated to new
+	createInterpreter() convention
+
+2018-08-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntMatch.maude: added
+
+	* tests/Meta/metaIntSearch.maude: added
+
+===================================Maude118===========================================
+
+2018-07-20  Rubén Rubio  <rubenrub@ucm.es>
+
+	* test/StrategyLanguage/metalevel.maude: added
+
+	* test/StrategyLanguage/modules.maude: added
+
+	* test/StrategyLanguage/srewrite.maude: added
+
+2018-07-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Misc/rot13.maude: added
+
+2018-06-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/ResolvedBugs/metaIntRewriteJune2018.maude: added
+
+2018-06-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/ResolvedBugs/clearRulesJune2018.maude: added
+
+	* tests/ResolvedBugs/metaIntAscentJune2018.maude: added
+
+	* tests/ResolvedBugs/metaIntImportJune2018.maude: added
+
+2018-06-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/ResolvedBugs/metaModuleCacheJune2018.maude: added
+
+	* tests/ResolvedBugs/showModuleJune2018.maude: added
+
+2018-06-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/ResolvedBugs/staleViewJune2018.maude: added
+
+	* tests/ResolvedBugs/parserJune2018.maude: added
+
+2018-06-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/russianDollsFlat.maude: added
+
+	* tests/Meta/russianDollsNonFlat.maude: added
+
+2018-05-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntReplace2.maude: added
+
+	* tests/Meta/metaIntReplace.maude: added
+
+	* tests/Meta/metaIntPrelude.maude: added example to test upModule()
+	running in meta-interpreter
+
+2018-05-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaIntPrelude.maude: added
+
+2018-05-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Misc/view.maude: added
+
+2018-03-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* configure.ac: removed references to MSCP10
+
+	* AUTHORS: removed reference to MSCP10
+
+	* tests/Misc/bubble.maude: added two more examples
+
+===================================Maude117===========================================
+
+2018-03-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* configure.ac: remove ref to MSCP10
+
+2018-03-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* src/Makefile.am (SUBDIRS): remove MSCP10
+
+	* tests/Misc/Makefile.am: added parse and bubble tests
+
+	* tests/Misc/bubble (MAUDE_LIB): created
+
+	* tests/Misc/parse.maude: created
+
+	* tests/Misc/parse (MAUDE_LIB): created
+
+2018-02-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Misc/bubble.maude: created
+
+2017-12-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaWellFormed.maude: fix issue where none is ambiguous;
+	it can be (none).EmptyTypeSet or (none).Substitution
+
+===================================Maude116===========================================
+
+2017-07-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Misc/smtTest.maude: added tests for violations
+	of SMT restrictions
+
+2017-06-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* INSTALL: add Yices2 info
+
+2017-06-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Misc/smtTest (MAUDE_LIB): check for USE_YICES2
+
+2017-06-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* configure.ac (GMP_LIBS): add configuration for Yices2
+
+2017-05-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Misc/smtTest.maude: move smt continue tests here
+	from continue.maude since they shouldn't be run if we don't
+	have CVC4 linked
+
+===================================Maude114===========================================
+
+2017-05-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaNarrow.maude: added tests for metaNarrowingSearchPath()
+
+	* tests/Misc/narrow.maude: added tests for fvu-narrow
+
+2017-05-02  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaNarrow.maude: metaNarrowingApply() no longer
+	takes label argument
+
+	* tests/Misc/continue.maude: use narrowing attribute
+
+2017-05-01  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Misc/narrow.maude: use narrowing attribute
+
+	* tests/Meta/metaNarrow.maude: use narrowing attribute
+
+===================================Maude113===========================================
+
+2017-04-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Misc/continue.maude: created
+
+===================================Maude112a===========================================
+
+2017-03-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaNarrow.maude: added metaNarrowingSearch() examples
+
+	* tests/Misc/narrow.maude: created
+
+===================================Maude111b===========================================
+
+2017-01-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaNarrow.maude: added examples
+
+2017-01-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaVariantUnify.maude: fix typo in metaVariantDisjointUnify()
+
+===================================Maude111a===========================================
+
+2016-12-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* tests/Meta/metaNarrow.maude: created
+
+	* tests/Meta/metaNarrow (MAUDE_LIB): created
+
+===================================Maude111===========================================
+
 2016-06-27  Steven Eker  <eker@install.csl.sri.com>
 
 	* tests/Misc/smtTest (MAUDE_LIB): skip test if we don't define USE_CVC4

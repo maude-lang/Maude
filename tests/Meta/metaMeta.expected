@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : metaRewrite(['FOO], 'a.Foo, 10) .
 rewrites: 3
 result ResultPair: {'b.Foo,'Foo}
@@ -7,4 +7,4 @@ reduce in META-LEVEL : metaRewrite(['SELF-REFLECTION], 'r[''a.Foo.Constant],
     10) .
 rewrites: 7
 result ResultPair: {''b.Foo.Constant,'Constant}
-Maude> Bye.
+Bye.

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2012 SRI International, Menlo Park, CA 94025, USA.
 
@@ -71,7 +71,7 @@ VariantFolder::markReachableNodes()
 }
 
 bool
-VariantFolder::insertVariant(const Vector<DagNode*>& variant, int index, int parentIndex)
+VariantFolder::insertVariant(const Vector<DagNode*>& variant, int index, int parentIndex, int variableFamily)
 {
   //cerr << " i" << index << "p" << parentIndex;
   //
@@ -159,6 +159,7 @@ VariantFolder::insertVariant(const Vector<DagNode*>& variant, int index, int par
   //
   //cerr << "*";
   newVariant->parentIndex = parentIndex;
+  newVariant->variableFamily = variableFamily;
   newVariant->layerNumber = 0;
   if (parentIndex != NONE)
     {
@@ -171,65 +172,12 @@ VariantFolder::insertVariant(const Vector<DagNode*>& variant, int index, int par
   return true;
 }
 
-/*
-const Vector<DagNode*>* 
-VariantFolder::getNextSurvivingVariant(int& nrFreeVariables, bool& moreInLayer)
-{
-  //
-  //	We allow variants to be extracted, even though we may not be finished inserting new variants.
-  //	This means that some of the variants we return may later be evicted by a subsequent insert().
-  //
-  //	Between calls we keep track of current and next variant by their internal index numbers rather
-  //	than iterators into mostGeneralSoFar. This is because in prinicple, the element pointed to by
-  //	an iterator might vanish due to subsumption.
-  //	Though even here we have a problem since we do expect to be able to access the variant at
-  //	nextVariantIndex.
-  //
-  RetainedVariantMap::const_iterator currentVariant;
-  
-  if (currentVariantIndex == NONE)
-    {
-      //
-      //	Starting so need to find the first variant.
-      //
-      RetainedVariantMap::const_iterator currentVariant = mostGeneralSoFar.upper_bound(currentVariantIndex);  // might simplify this
-      if (currentVariant == mostGeneralSoFar.end())
-	return 0;  // no variants available so change nothing
-      currentVariantIndex = currentVariant->first;
-    }
-  else
-    {
-      //
-      //	If there is a next variant, we already found it.
-      //
-      if (nextVariantIndex == NONE)
-	return 0; // no next variant
-      currentVariantIndex = nextVariantIndex;
-      RetainedVariantMap::const_iterator currentVariant = mostGeneralSoFar.find(currentVariantIndex);  // extra lookup
-    }
-  //
-  //	Now we need to find the next variant if there is one, so we know if there is moreInLayer.
-  //
-  RetainedVariantMap::const_iterator nextVariant = mostGeneralSoFar.upper_bound(currentVariantIndex);  // look ahead
-  if (nextVariant == mostGeneralSoFar.end())
-    {
-      nextVariantIndex = NONE;
-      moreInLayer = false;
-    }
-  else
-    {
-      nextVariantIndex = nextVariant->first;
-      moreInLayer = true;
-    }
-  
-  nrFreeVariables = currentVariant->second->nrFreeVariables;
-  return &(currentVariant->second->variant);
-}
-*/
-
-
 const Vector<DagNode*>*
-VariantFolder::getNextSurvivingVariant(int& nrFreeVariables, int* variantNumber, int* parentNumber, bool* moreInLayer)
+VariantFolder::getNextSurvivingVariant(int& nrFreeVariables,
+				       int& variableFamily,
+				       int* variantNumber,
+				       int* parentNumber,
+				       bool* moreInLayer)
 {
   RetainedVariantMap::const_iterator nextVariant = mostGeneralSoFar.upper_bound(currentVariantIndex);
   if (nextVariant == mostGeneralSoFar.end())
@@ -237,6 +185,7 @@ VariantFolder::getNextSurvivingVariant(int& nrFreeVariables, int* variantNumber,
 
   currentVariantIndex = nextVariant->first;
   nrFreeVariables = nextVariant->second->nrFreeVariables;
+  variableFamily = nextVariant->second->variableFamily;
   //
   //	Optional information - non-null pointers means caller wants this information
   //	returned.
@@ -262,11 +211,15 @@ VariantFolder::getNextSurvivingVariant(int& nrFreeVariables, int* variantNumber,
 }
 
 const Vector<DagNode*>*
-VariantFolder::getLastReturnedVariant(int& nrFreeVariables, int* parentNumber, bool* moreInLayer)
+VariantFolder::getLastReturnedVariant(int& nrFreeVariables,
+				      int& variableFamily,
+				      int* parentNumber,
+				      bool* moreInLayer)
 {
   RetainedVariantMap::const_iterator currentVariant = mostGeneralSoFar.find(currentVariantIndex);
   Assert(currentVariant != mostGeneralSoFar.end(), "current variant purged");
   nrFreeVariables = currentVariant->second->nrFreeVariables;
+  variableFamily = currentVariant->second->variableFamily;
   //
   //	Optional information - non-null pointers means caller wants this information
   //	returned.
@@ -383,7 +336,7 @@ VariantFolder::RetainedVariant::RetainedVariant(const Vector<DagNode*> original)
       //matchingAutomata[i]->dump(cerr, variableInfo);
     }
 
-  nrVariables = variableInfo.getNrRealVariables();  // may also have some abstraction variables
+  nrVariables = variableInfo.getNrProtectedVariables();  // may also have some abstraction variables
 }
 
 VariantFolder::RetainedVariant::~RetainedVariant()

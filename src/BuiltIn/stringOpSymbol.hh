@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -72,6 +72,8 @@ private:
   static Rope substring(const Rope& subject, Rope::size_type index, Rope::size_type length);
   static int fwdFind(const Rope& subject, const Rope& pattern, Rope::size_type start);
   static int revFind(const Rope& subject, const Rope& pattern, Rope::size_type start);
+  static Rope upperCase(const Rope& subject);
+  static Rope lowerCase(const Rope& subject);
 
   int op;
   StringSymbol* stringSymbol;

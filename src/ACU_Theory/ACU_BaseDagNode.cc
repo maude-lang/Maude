@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -46,9 +46,8 @@ int
 ACU_BaseDagNode::getSize() const
 {
   return isTree() ?
-    safeCast(const ACU_TreeDagNode*, this)->getTree().getSize() :
-    safeCast(const ACU_DagNode*, this)->argArray.length();
-
+    safeCastNonNull<const ACU_TreeDagNode*>(this)->getTree().getSize() :
+    safeCastNonNull<const ACU_DagNode*>(this)->argArray.length();
 }
 
 ExtensionInfo*

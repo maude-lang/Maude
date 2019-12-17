@@ -1,0 +1,577 @@
+***
+*** 	Examples to exercise the weird case where a parameterized view explicitly
+***	or implicitly maps sorts or operators from its fromTheory into one of its
+***	parameters rather than its toModule.
+***
+
+set show timing off .
+
+*** don't pull in BOOL so we have simple modules to look at
+set include BOOL off .
+
+**************************************
+*** explicit-explicit sort mapping ***
+**************************************
+
+fth T is
+  sort Elt .
+endfth
+
+fth T2 is
+  sort Elt2 .
+endfth
+
+fmod M{X :: T} is
+  sort Foo{X} .
+  op f : X$Elt -> Foo{X} .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  sort Elt2 to A$Elt .   *** mapping fromTheory sort to parameterTheory sort
+endv
+
+fmod C is
+  sort Bar .
+  op a : -> Bar .
+endfm
+
+view V2 from T to C is
+  sort Elt to Bar .
+endv
+
+fmod M2{Y :: T2} is
+  sort Baz{Y} .
+  op g : Y$Elt2 -> Baz{Y} .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+*** Now Y$Elt2 which is mapped by Elt2 to A$Elt in V
+*** which in turn is mapped by Elt to Bar in V2
+*** should end up at Bar and thus g which maps from Y$Elt2
+*** should now map from Bar
+***     op g : Bar -> Baz{V{V2}} .
+
+
+**************************************
+*** implicit-explicit sort mapping ***
+**************************************
+
+fth T is
+  sort Elt .
+endfth
+
+fth T2 is
+  sort A$Elt .   *** highly dubious name
+endfth
+
+fmod M{X :: T} is
+  sort Foo{X} .
+  op f : X$Elt -> Foo{X} .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  *** A$Elt in fromTheory is implicitly mapped to A$Elt in parameterTheory
+endv
+
+fmod C is
+  sort Bar .
+  op a : -> Bar .
+endfm
+
+view V2 from T to C is
+  sort Elt to Bar .
+endv
+
+fmod M2{Y :: T2} is
+  sort Baz{Y} .
+  op g : Y$A$Elt -> Baz{Y} .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+*** Now Y$A$Elt which is implicitly mapped to A$Elt by V
+*** which in turn is mapped by Elt to Bar in V2
+*** should end up at Bar and thus g which maps from Y$A$Elt2
+*** should now map from Bar
+***     op g : Bar -> Baz{V{V2}} .
+
+
+**************************************
+*** explicit-implicit sort mapping ***
+**************************************
+
+fth T is
+  sort Elt .
+endfth
+
+fth T2 is
+  sort Elt2 .
+endfth
+
+fmod M{X :: T} is
+  sort Foo{X} .
+  op f : X$Elt -> Foo{X} .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  sort Elt2 to A$Elt .   *** mapping fromTheory sort to parameterTheory sort
+endv
+
+fmod C is
+  sort Elt .
+  op a : -> Elt .
+endfm
+
+view V2 from T to C is
+   *** Elt is implicitly mapped from T to C
+endv
+
+fmod M2{Y :: T2} is
+  sort Baz{Y} .
+  op g : Y$Elt2 -> Baz{Y} .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+*** Now Y$Elt2 which is mapped by Elt2 to A$Elt in V
+*** which in turn is mapped by to Elt in C by V2
+*** Thus thus g which maps from Y$Elt2
+*** should now map from Elt
+***     op g : Elt -> Baz{V{V2}} .
+
+
+**************************************
+*** implicit-implicit sort mapping ***
+**************************************
+
+fth T is
+  sort Elt .
+endfth
+
+fth T2 is
+  sort A$Elt .   *** highly dubious name
+endfth
+
+fmod M{X :: T} is
+  sort Foo{X} .
+  op f : X$Elt -> Foo{X} .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  *** A$Elt in fromTheory is implicitly mapped to A$Elt in parameterTheory
+endv
+
+fmod C is
+  sort Elt .
+  op a : -> Elt .
+endfm
+
+view V2 from T to C is
+  *** Elt is implicitly mapped from T to C
+endv
+
+fmod M2{Y :: T2} is
+  sort Baz{Y} .
+  op g : Y$A$Elt -> Baz{Y} .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+*** Now Y$A$Elt which is implicitly mapped to A$Elt by V
+*** which in turn is mapped by Elt in C by V2
+*** Thus g which maps from Y$A$Elt2
+*** should now map from Elt
+***     op g : Elt -> Baz{V{V2}} .
+
+
+******************************************
+*** explicit-explicit operator mapping ***
+******************************************
+
+fth T is
+  sort Elt .
+  op _+_ : Elt Elt -> Elt .
+endfth
+
+fth T2 is
+  sort Elt2 .
+  op sum : Elt2 Elt2 -> Elt2 .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt -> X$Elt .
+var X : X$Elt .
+  eq g(X) = X + X .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  sort Elt2 to A$Elt .   *** mapping fromTheory sort to parameterTheory sort
+  op sum to _+_ .   *** mapping fromTheory operator to parameterTheory operator
+endv
+
+fmod C is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+endfm
+
+view V2 from T to C is
+  sort Elt to Bar .
+  op _+_ to summation .
+endv
+
+fmod M2{Y :: T2} is
+  op h : Y$Elt2 Y$Elt2 -> Y$Elt2 .
+vars X Y : Y$Elt2 .
+  eq h(X, Y) = sum(X, Y) .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+*** sum in eq h(X, Y) = sum(X, Y) should be mapped to _+_ by V, but then
+*** V2 instantiates the operator from the parameter theory to summation so we get
+***   eq h(X:Bar, Y:Bar) = summation(X:Bar, Y:Bar) .
+
+
+******************************************
+*** implicit-explicit operator mapping ***
+******************************************
+
+fth T is
+  sort Elt .
+  op _+_ : Elt Elt -> Elt .
+endfth
+
+fth T2 is
+  sort Elt2 .
+  op _+_ : Elt2 Elt2 -> Elt2 .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt -> X$Elt .
+var X : X$Elt .
+  eq g(X) = X + X .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  sort Elt2 to A$Elt .   *** mapping fromTheory sort to parameterTheory sort
+  *** _+_ in fromTheory is implicitly mapped to _+_ in parameterTheory
+endv
+
+fmod C is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+endfm
+
+view V2 from T to C is
+  sort Elt to Bar .
+  op _+_ to summation .
+endv
+
+fmod M2{Y :: T2} is
+  op h : Y$Elt2 Y$Elt2 -> Y$Elt2 .
+vars X Y : Y$Elt2 .
+  eq h(X, Y) = X + Y .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+*** _+_ in eq h(X, Y) = X + Y should be mapped to _+_ in T by V, but then
+*** V2 instantiates the operator from the parameter theory to summation so we get
+***   eq h(X:Bar, Y:Bar) = summation(X:Bar, Y:Bar) .
+
+
+******************************************
+*** op->term-explicit operator mapping ***
+******************************************
+
+fth T is
+  sort Elt .
+  op _+_ : Elt Elt -> Elt .
+endfth
+
+fth T2 is
+  sort Elt2 .
+  op sum : Elt2 Elt2 -> Elt2 .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt -> X$Elt .
+var X : X$Elt .
+  eq g(X) = X + X .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  sort Elt2 to A$Elt .   *** mapping fromTheory sort to parameterTheory sort
+vars X Y : Elt2 .
+  op sum(X, Y) to term X + g(Y) .   *** mapping fromTheory operator to parameterTheory operator
+endv
+
+fmod C is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+endfm
+
+view V2 from T to C is
+  sort Elt to Bar .
+  op _+_ to summation .
+endv
+
+fmod M2{Y :: T2} is
+  op h : Y$Elt2 Y$Elt2 -> Y$Elt2 .
+vars X Y : Y$Elt2 .
+  eq h(X, Y) = sum(X, Y) .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+*** sum in eq h(X, Y) = sum(X, Y) should be mapped to X + g(Y) by V, but then
+*** V2 instantiates the operator _+_ from the parameter theory to summation so we get
+***   eq h(X:Bar, Y:Bar) = summation(X:Bar, g(Y:Bar)) .
+
+
+******************************************
+*** explicit-op->term operator mapping ***
+******************************************
+
+fth T is
+  sort Elt .
+  op _+_ : Elt Elt -> Elt .
+endfth
+
+fth T2 is
+  sort Elt2 .
+  op sum : Elt2 Elt2 -> Elt2 .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt -> X$Elt .
+var X : X$Elt .
+  eq g(X) = X + X .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  sort Elt2 to A$Elt .   *** mapping fromTheory sort to parameterTheory sort
+  op sum to _+_ .   *** mapping fromTheory operator to parameterTheory operator
+endv
+
+fmod C is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+  op inv : Bar -> Bar .
+endfm
+
+view V2 from T to C is
+  sort Elt to Bar .
+vars X Y : Elt .
+  op X + Y to term summation(inv(Y), inv(X)) .
+endv
+
+fmod M2{Y :: T2} is
+  op h : Y$Elt2 Y$Elt2 -> Y$Elt2 .
+vars X Y : Y$Elt2 .
+  eq h(X, Y) = sum(X, Y) .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+*** sum in eq h(X, Y) = sum(X, Y) should be mapped to _+_ by V, but then
+*** V2 instantiates the operator from the parameter theory to summation
+*** summation(inv(Y), inv(X)) so we get
+***   eq h(X:Bar, Y:Bar) = summation(inv(Y:Bar), inv(X:Bar)) .
+
+
+*************************************************************
+*** explicit-op->term operator mapping with lost variable ***
+*************************************************************
+
+fth T is
+  sort Elt .
+  op + : Elt Elt Elt -> Elt .
+endfth
+
+fth T2 is
+  sort Elt2 .
+  op sum : Elt2 Elt2 Elt2 -> Elt2 .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt -> X$Elt .
+var X : X$Elt .
+  eq g(X) = +(X, X, X) .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  sort Elt2 to A$Elt .   *** mapping fromTheory sort to parameterTheory sort
+  op sum to + .   *** mapping fromTheory operator to parameterTheory operator
+endv
+
+fmod C is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+  op inv : Bar -> Bar .
+endfm
+
+view V2 from T to C is
+  sort Elt to Bar .
+vars X Y Z : Elt .
+  op +(X, Y, Z) to term summation(inv(X), inv(Z)) .  *** Y is lost
+endv
+
+fmod M2{Y :: T2} is
+  op h : Y$Elt2 Y$Elt2 Y$Elt2 -> Y$Elt2 .
+vars X Y Z : Y$Elt2 .
+  eq h(X, Y, Z) = sum(X, Y, Z) .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+***   eq h(X:Bar, Y:Bar, Z:Bar) = summation(inv(X:Bar), inv(Z:Bar)) .
+
+
+******************************************************************
+*** explicit-op->term operator mapping with two lost variables ***
+******************************************************************
+
+fth T is
+  sort Elt .
+  op + : Elt Elt Elt Elt -> Elt .
+endfth
+
+fth T2 is
+  sort Elt2 .
+  op sum : Elt2 Elt2 Elt2 Elt2 -> Elt2 .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt -> X$Elt .
+var X : X$Elt .
+  eq g(X) = +(X, X, X, X) .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  sort Elt2 to A$Elt .   *** mapping fromTheory sort to parameterTheory sort
+  op sum to + .   *** mapping fromTheory operator to parameterTheory operator
+endv
+
+fmod C is
+  sort Bar .
+  op summation : Bar Bar -> Bar .
+  op inv : Bar -> Bar .
+endfm
+
+view V2 from T to C is
+  sort Elt to Bar .
+vars W, X Y Z : Elt .
+  op +(W, X, Y, Z) to term summation(inv(X), inv(Z)) .  *** W, Y is lost
+endv
+
+fmod M2{Y :: T2} is
+  op h : Y$Elt2 Y$Elt2 Y$Elt2 Y$Elt2 -> Y$Elt2 .
+vars W, X Y Z : Y$Elt2 .
+  eq h(W, X, Y, Z) = sum(W, X, Y, Z) .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+***   eq h(W:Bar, X:Bar, Y:Bar, Z:Bar) = summation(inv(X:Bar), inv(Z:Bar)) .
+
+
+******************************************************
+*** explicit-explicit polymorphic operator mapping ***
+******************************************************
+
+fth T is
+  sort Elt .
+  op f : Elt Universal -> Universal [poly(2 0)] .
+  ops a b : -> Elt .
+endfth
+
+fth T2 is
+  sort Elt2 .
+  op f2 : Elt2 Universal -> Universal [poly(2 0)] .
+endfth
+
+fmod M{X :: T} is
+  sort One{X} Two{X} .
+  op g1 : One{X} -> One{X} .
+  op g2 : Two{X} -> Two{X} .
+var X : One{X} .
+var Y : Two{X} .
+  eq g1(X) = f(a, X) .
+  eq g2(Y) = f(b, Y) .
+endfm
+
+view V{A :: T} from T2 to M{A} is
+  sort Elt2 to A$Elt .
+  op f2 to f .  *** map polymorphic operator f2 to polymorphic operator f in parameter theory
+endv
+
+fmod C is
+  sort Bar .
+  op h : Bar Universal -> Universal [poly(2 0)] .
+  ops 1 2 : -> Bar .
+endfm
+
+view V2 from T to C is
+  sort Elt to Bar .
+  op f to h .
+  op a to 1 .
+  op b to 2 .
+endv
+
+fmod M2{Y :: T2} is
+  sort MySort .
+  op p : Y$Elt2 MySort -> MySort .
+var X : Y$Elt2 .
+var Y : MySort .
+  eq p(X, Y) = f2(X, Y) .
+endfm
+
+fmod TEST is
+  inc M2{V{V2}} .
+endfm
+
+show all .
+
+red p(1, A:MySort) .

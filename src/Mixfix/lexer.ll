@@ -1,3 +1,4 @@
+
 /*
 
     This file is part of the Maude 2 interpreter.
@@ -139,15 +140,17 @@ in					RETURN(KW_IN)
 }
 
 <INITIAL>{
-th|fth|mod|fmod|smod|obj		RETURN(KW_MOD)  // need to know which one we saw
+th|fth|sth|mod|fmod|smod|obj		RETURN(KW_MOD)  // need to know which one we saw
 omod					RETURN(KW_OMOD)
 view					RETURN(KW_VIEW);
 load					return KW_LOAD;
+sload					return KW_SLOAD;
 pwd					return KW_PWD;
 cd					return KW_CD;
 pushd					return KW_PUSHD;
 popd					return KW_POPD;
 ls					return KW_LS;
+ll					return KW_LL;
 quit|q					return KW_QUIT;
 eof					return KW_EOF;
 parse					return KW_PARSE;
@@ -159,6 +162,7 @@ rew|rewrite				return KW_REWRITE;
 erew|erewrite				return KW_EREWRITE;
 frew|frewrite				return KW_FREWRITE;
 srew|srewrite				return KW_SREWRITE;
+dsrew|dsrewrite				return KW_DSREWRITE;
 check					return KW_CHECK;
 loop					return KW_LOOP;
 cont|continue				return KW_CONTINUE;
@@ -199,6 +203,7 @@ flat|flattened				return KW_FLAT;
 with					return KW_WITH;
 paren|parens|parentheses		return KW_PARENS;
 alias|aliases				return KW_ALIASES;
+const|constant|constants		return KW_CONST;
 gc					return KW_GC;
 time					return KW_TIME;
 stats					return KW_STATS;
@@ -214,6 +219,8 @@ var|vars				return KW_VARS;
 mb|mbs					return KW_MBS;
 eq|eqs					return KW_EQS;
 rl|rls|rule|rules			return KW_RLS;
+strat|strats				return KW_STRATS;
+sd|sds					return KW_SDS;
 summary					return KW_SUMMARY;
 kinds|components			return KW_KINDS;
 compile|compiler			return KW_COMPILE;
@@ -238,6 +245,8 @@ number					return KW_NUMBER;
 rat|rational				return KW_RAT;
 test					return KW_TEST;
 smt-search				return KW_SMT_SEARCH;
+vu-narrow				return KW_VU_NARROW;
+fvu-narrow				return KW_FVU_NARROW;
 [.\[\]()]				return *yytext;
 0|([1-9][0-9]*)				{
 					  bool dummy;
@@ -303,7 +312,9 @@ right					RETURN(KW_RIGHT)
 prec|precedence				RETURN(KW_PREC)
 gather					RETURN(KW_GATHER)
 metadata				RETURN(KW_METADATA)
-strat|strategy				RETURN(KW_STRAT)
+strat					RETURN(KW_STRAT)		// both strategy attribute and declaration
+strategy				RETURN(KW_ASTRAT)		// strategy attribute only
+strats					RETURN(KW_DSTRAT)		// declaration of a strategy only
 frozen					RETURN(KW_FROZEN)
 poly|polymorphic			RETURN(KW_POLY)
 ctor|constructor			RETURN(KW_CTOR)
@@ -333,13 +344,16 @@ eq					RETURN(KW_EQ)
 ceq|cq					RETURN(KW_CEQ)
 rl					RETURN(KW_RL)
 crl					RETURN(KW_CRL)
-end(th|fth|m|fm|sm|om|o)|jbo		RETURN(KW_ENDM)
+sd					RETURN(KW_SD)
+csd					RETURN(KW_CSD)
+end(th|fth|sth|m|fm|sm|om|o)|jbo	RETURN(KW_ENDM)
 endv					RETURN(KW_ENDV)
 "->"					RETURN(KW_ARROW)
 "=>"					RETURN(KW_ARROW2)
 "~>"					RETURN(KW_PARTIAL)
 "::"					RETURN(KW_COLON2)
-[:()\[\]{}.,<=|+*]			RETURN(*yytext)
+":="					RETURN(KW_ASSIGN)
+[:()\[\]{}.,<=|+*@]			RETURN(*yytext)
 {maudeId}"."				RETURN_FIX_UP(ENDS_IN_DOT)
 {maudeId}				RETURN_FIX_UP(IDENTIFIER)
 }
@@ -381,6 +395,12 @@ endv					RETURN(KW_ENDV)
 =>					{
 					  if (parenCount == 0 && (terminationSet & BAR_ARROW2) && lexerBubble.length() >= minLength)
 					    EXIT(KW_ARROW2)
+					  else
+					    STORE
+					}
+:=					{
+					  if (parenCount == 0 && (terminationSet & BAR_ASSIGN) && lexerBubble.length() >= minLength)
+					    EXIT(KW_ASSIGN)
 					  else
 					    STORE
 					}
@@ -452,7 +472,7 @@ assoc|associative|comm|commutative|id:|identity:|idem|idempotent|iter|iterated|l
   *	on to the input stream to be re-lexed in a new mode.
   */
 <END_STATEMENT_MODE>{
-pr|protecting|ex|extending|us|using|inc|including|sort|sorts|subsort|subsorts|op|ops|var|vars|mb|cmb|eq|cq|ceq|rl|crl|end(th|fth|m|fm|sm|om|o|v)|jbo|msg|msgs|class|classes|subclass|subclasses		{
+pr|protecting|ex|extending|us|using|inc|including|sort|sorts|subsort|subsorts|op|ops|var|vars|mb|cmb|eq|cq|ceq|rl|crl|sd|csd|strat|strats|end(th|fth|sth|m|fm|sm|om|o|v|sv)|jbo|msg|msgs|class|classes|subclass|subclasses		{
 					  yyless(0);  // BUG - need to deal with white space and comments after the .
 					  yy_pop_state();
 					  RETURN_SAVED(savedReturn)

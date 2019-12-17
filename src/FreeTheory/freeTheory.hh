@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -37,7 +37,15 @@ class FreeArgumentIterator;
 class FreeDagNode;
 class FreeDagArgumentIterator;
 class FreeLhsAutomaton;
+
 class FreeRhsAutomaton;
+class FreeNullaryRhsAutomaton;
+class FreeUnaryRhsAutomaton;
+class FreeBinaryRhsAutomaton;
+class FreeTernaryRhsAutomaton;
+class FreeFast2RhsAutomaton;
+class FreeFast3RhsAutomaton;
+
 class FreeOccurrence;
 class FreeNet;
 class FreeRemainder;

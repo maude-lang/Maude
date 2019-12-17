@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -79,6 +79,8 @@ public:
     INTERPRETER_MANAGER_SYMBOL,
     SMT_SYMBOL,
     SMT_NUMBER_SYMBOL,
+    FILE_MANAGER_SYMBOL,
+    STREAM_MANAGER_SYMBOL,
 
     END_OF_SYMBOLS_WITH_ATTACHMENTS
   };
@@ -123,6 +125,7 @@ public:
     //	Conjunctions.
     //
     AXIOMS = ASSOC | COMM | LEFT_ID | RIGHT_ID | IDEM,
+    COLLAPSE = LEFT_ID | RIGHT_ID | IDEM,
     SIMPLE_ATTRIBUTES = ASSOC | COMM | IDEM | MEMO | CTOR | CONFIG | OBJECT | MESSAGE,
     ATTRIBUTES = PREC | GATHER | FORMAT | LATEX | STRAT | MEMO | FROZEN |
     CONFIG | OBJECT | MESSAGE | AXIOMS | ITER
@@ -140,6 +143,7 @@ public:
 
   bool hasFlag(int flag) const;
   bool hasAllFlags(int flags) const;
+  bool hasAtLeastOneFlag(int flags) const;
   //  bool hasAxioms() const;
   bool hasAttachments() const;
   bool hasSpecial() const;
@@ -216,6 +220,12 @@ inline bool
 SymbolType::hasAllFlags(int flags) const
 {
   return (getFlags() & flags) == flags;
+}
+
+inline bool
+SymbolType::hasAtLeastOneFlag(int flags) const
+{
+  return (getFlags() & flags);
 }
 
 inline bool

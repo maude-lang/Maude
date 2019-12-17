@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 rewrite in COUNTER-TEST : counter .
 rewrites: 1
 result Zero: 0
@@ -193,4 +193,4 @@ reduce in META-LEVEL : metaRewrite(['COUNTER-TEST4], '__['counter.Nat,
     'counter.Nat], 2) .
 rewrites: 4
 result ResultPair: {'__['0.Zero,'s_['0.Zero]],'List}
-Maude> Bye.
+Bye.

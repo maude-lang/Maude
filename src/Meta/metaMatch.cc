@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -24,37 +24,7 @@
 //	Code for metaMatch() and metaXmatch() descent functions.
 //
 
-local_inline bool
-MetaLevelOpSymbol::getCachedMatchSearchState(MetaModule* m,
-					     FreeDagNode* subject,
-					     RewritingContext& context,
-					     Int64 solutionNr,
-					     MatchSearchState*& state,
-					     Int64& lastSolutionNr)
-{
-  if (solutionNr > 0)
-    {
-      CacheableState* cachedState;
-      if (m->remove(subject, cachedState, lastSolutionNr))
-	{
-	  if (lastSolutionNr <= solutionNr)
-	    {
-	      state = safeCast(MatchSearchState*, cachedState);
-	      //
-	      //	The parent context pointer of the root context in the
-	      //	MatchSearchState object is possibly stale.
-	      //
-	      safeCast(UserLevelRewritingContext*, state->getContext())->
-		beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
-	      return true;
-	    }
-	  delete cachedState;
-	}
-    }
-  return false;
-}
-
-local_inline MatchSearchState* 
+local_inline MatchSearchState*
 MetaLevelOpSymbol::makeMatchSearchState(MetaModule* m,
 					FreeDagNode* subject,
 					RewritingContext& context) const
@@ -71,7 +41,6 @@ MetaLevelOpSymbol::makeMatchSearchState(MetaModule* m,
 	  Pattern* pattern = new Pattern(p, false, condition);
 	  RewritingContext* subjectContext = term2RewritingContext(s, context);
 	  subjectContext->root()->computeTrueSort(*subjectContext);
-	  context.addInCount(*subjectContext);
 	  return new MatchSearchState(subjectContext,
 				      pattern,
 				      MatchSearchState::GC_PATTERN |
@@ -97,7 +66,7 @@ MetaLevelOpSymbol::metaMatch(FreeDagNode* subject, RewritingContext& context)
 	{
 	  MatchSearchState* state;
 	  Int64 lastSolutionNr;
-	  if (getCachedMatchSearchState(m, subject, context, solutionNr, state, lastSolutionNr))
+	  if (m->getCachedStateObject(subject, context, solutionNr, state, lastSolutionNr))
 	    m->protect();  // Use cached state
 	  else if ((state = makeMatchSearchState(m, subject, context)))
 	    lastSolutionNr = -1;
@@ -108,7 +77,7 @@ MetaLevelOpSymbol::metaMatch(FreeDagNode* subject, RewritingContext& context)
 	  while (lastSolutionNr < solutionNr)
 	    {
 	      bool success = state->findNextMatch();
-	      state->transferCount(context);
+	      state->transferCountTo(context);
 	      if (!success)
 		{
 		  delete state;
@@ -160,7 +129,6 @@ MetaLevelOpSymbol::makeMatchSearchState2(MetaModule* m,
 		  Pattern* pattern = new Pattern(p, true, condition);
 		  RewritingContext* subjectContext = term2RewritingContext(s, context);
 		  subjectContext->root()->computeTrueSort(*subjectContext);
-		  context.addInCount(*subjectContext);
 		  return new MatchSearchState(subjectContext,
 					      pattern,
 					      MatchSearchState::GC_PATTERN |
@@ -169,7 +137,9 @@ MetaLevelOpSymbol::makeMatchSearchState2(MetaModule* m,
 					      minDepth,
 					      maxDepth);
 		}
+	      s->deepSelfDestruct();
 	    }
+	  p->deepSelfDestruct();
 	}
     }
   return 0;
@@ -188,7 +158,7 @@ MetaLevelOpSymbol::metaXmatch(FreeDagNode* subject, RewritingContext& context)
 	{
 	  MatchSearchState* state;
 	  Int64 lastSolutionNr;
-	  if (getCachedMatchSearchState(m, subject, context, solutionNr, state, lastSolutionNr))
+	  if (m->getCachedStateObject(subject, context, solutionNr, state, lastSolutionNr))
 	    m->protect();  // Use cached state
 	  else if ((state = makeMatchSearchState2(m, subject, context)))
 	    lastSolutionNr = -1;
@@ -199,7 +169,7 @@ MetaLevelOpSymbol::metaXmatch(FreeDagNode* subject, RewritingContext& context)
 	  while (lastSolutionNr < solutionNr)
 	    {
 	      bool success = state->findNextMatch();
-	      state->transferCount(context);
+	      state->transferCountTo(context);
 	      if (!success)
 		{
 		  delete state;
@@ -215,7 +185,7 @@ MetaLevelOpSymbol::metaXmatch(FreeDagNode* subject, RewritingContext& context)
 	    Sort* sort = pattern->getLhs()->getSort();  // HACK
 	    VariableSymbol* vs = safeCast(VariableSymbol*, m->instantiateVariable(sort));
 	    DagNode* hole = new VariableDagNode(vs, 0, UNDEFINED);
-	    RewriteSearchState::DagPair top = state->rebuildDag(hole);
+	    PositionState::DagPair top = state->rebuildDag(hole);
 	    result = metaLevel->upMatchPair(*substitution,
 					    *pattern,
 					    top.first,

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,7 +21,7 @@
 */
 
 //
-//	Code for unify and xunify commands.
+//	Code for unify command.
 //
 
 void
@@ -57,11 +57,13 @@ Interpreter::unify(const Vector<Token>& bubble, Int64 limit)
   if (problem->problemOK())
     doUnification(timer, fm, problem, 0, limit);
   else
-    delete problem;
+    {
+      delete problem;
+      fm->unprotect();
 #ifdef QUANTIFY_REWRITING
-  else
-    quantify_stop_recording_data();
+      quantify_stop_recording_data();
 #endif
+    }
 }
 
 void
@@ -102,7 +104,7 @@ Interpreter::doUnification(Timer& timer,
   clearContinueInfo();  // just in case debugger left info
   if (i == limit)  // possible to continue
     {
-      savedUnificationProblem = problem;
+      savedState = problem;
       savedSolutionCount = solutionCount;
       savedModule = module;
       continueFunc = &Interpreter::unifyCont;
@@ -119,9 +121,9 @@ Interpreter::doUnification(Timer& timer,
 void
 Interpreter::unifyCont(Int64 limit, bool /* debug */)
 {
-  UnificationProblem* problem = savedUnificationProblem;
+  UnificationProblem* problem = safeCast(UnificationProblem*, savedState);
   VisibleModule* fm = savedModule;
-  savedUnificationProblem = 0;
+  savedState = 0;
   savedModule = 0;
   continueFunc = 0;
 

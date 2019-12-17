@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -59,6 +59,12 @@ NA_DagNode::copyEagerUptoReduced2()
   return makeClone();
 }
 
+DagNode*
+NA_DagNode::copyAll2()
+{
+  return makeClone();
+}
+
 void
 NA_DagNode::clearCopyPointers2()
 {
@@ -78,11 +84,4 @@ NA_DagNode::copyWithReplacement(Vector<RedexPosition>& /* redexStack  */,
 {
   CantHappen("should never be called");
   return 0;
-}
-
-void
-NA_DagNode::stackArguments(Vector<RedexPosition>& /* stack */,
-			   int /* parentIndex */,
-			   bool /* respectFrozen */)
-{
 }

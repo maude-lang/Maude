@@ -1,3 +1,124 @@
+2019-12-16  Steven Eker  <eker@mu>
+
+	* bddUser.hh (B): reverted to DEFAULT_NR_VARIABLES = 100 after
+	a report of a problem under Linux (though not Darwin)
+
+===================================Maude127a===========================================
+
+2019-12-05  Steven Eker  <eker@mu>
+
+	* macros.hh: added extern decl for returnValueDump
+
+	* macros.cc: added returnValueDump global variable
+
+2019-12-04  Steven Eker  <eker@mu>
+
+	* rope.cc (+): use DebugSave() to avoid warning about unused variable
+
+	* macros.hh (DebugSave): added
+
+2019-12-03  Steven Eker  <eker@mu>
+
+	* macros.hh (safeCastNonNull): added
+
+===================================Maude127===========================================
+
+2019-07-23  Steven Eker  <eker@mu>
+
+	* rope.cc (rebuildStack): Assert() that we're not an iterator to an empty
+	Rope and not out of range; don't try to fix out of range error
+
+	* bddUser.cc (~BddUser): deleted; we no longer tear down and reinitialize
+	BuDDy to avoid a memory corruption bug
+	(BddUser): update buddyInitialized rather than nrUsers
+
+	* bddUser.hh (B): delete decl for ~BddUser()
+	(B): deleted static data member nrUsers
+	(B): added static data member buddyInitialized
+	(B): change DEFAULT_NR_VARIABLES = 10 since we seem to have avoided
+	the BuDDy bug
+
+2019-07-17  Steven Eker  <eker@mu>
+
+	* bddUser.hh (B): change DEFAULT_NR_VARIABLES = 100 since it appears
+	that increasing the number of variable mid-computation may be breaking
+	BuDDy
+
+2019-07-12  Steven Eker  <eker@mu>
+
+	* macros.hh: added macro AlwaysAssert()
+
+	* macros.cc: deleted stuff related to old STL extension
+	template rope<>
+
+===================================Maude123===========================================
+
+2019-05-24  Steven Eker  <eker@mu.csl.sri.com>
+
+	* rope.cc (+): reverted change so as not to break Assert()
+
+2019-05-23  Steven Eker  <eker@mu.csl.sri.com>
+
+	* rope.cc (+): remove unused variable len
+
+2019-05-22  Steven Eker  <eker@mu.csl.sri.com>
+
+	* macros.hh (DebugExit, DebugEnter, DebugInfo, DebugNew): define
+	NO_ASSERT versions
+
+2019-05-06  Steven Eker  <eker@mu.csl.sri.com>
+
+	* macros.hh: use Tty::REVERSE rather than Tty::BLINK for DebugNew()
+
+2019-05-03  Steven Eker  <eker@mu.csl.sri.com>
+
+	* macros.hh: added DebugNew()
+
+2019-04-10  Steven Eker  <eker@mu.csl.sri.com>
+
+	* macros.hh: added DebugEnter(), DebugExit() and DebugInfo() macros
+
+===================================Maude121===========================================
+
+2017-07-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* macros.hh: forward decl for class Rope
+
+===================================Maude115===========================================
+
+2017-06-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* macros.cc (doubleToString): use isinf() rather than deprecated finite()
+
+===================================Maude114===========================================
+
+2017-04-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* decBuf.hh (insertDigit): fixed bug where Assert() was printing
+	the address of cerr
+
+===================================Maude112a===========================================
+
+2017-03-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* natSet.cc (<): fix critical bug where we were putting Words from
+	the arrays into ints and losing the top 32 bits on a 64-bit machine
+
+===================================Maude112===========================================
+
+2017-01-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* stack.hh: created
+
+===================================Maude111b===========================================
+
+2016-10-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* intSystem.cc (initializeUpperBounds): fix warning about
+	signed/unsigned comparison in Assert()
+
+===================================Maude111===========================================
+
 2016-06-27  Steven Eker  <eker@install.csl.sri.com>
 
 	* pigPug-cycleDetection.cc (arrive): fixed type
@@ -31,7 +152,7 @@
 
 	* wordDigraph.hh: deleted
 
-	* pigPug-cycleDetection.cc (arrive, depart, confirmedLive): 
+	* pigPug-cycleDetection.cc (arrive, depart, confirmedLive):
 	moved here from wordDiagraph.cc
 
 	* macros.hh: Verbose now prints its output in cyan
@@ -880,7 +1001,7 @@
 2005-01-11  Steven Eker  <eker@goo.csl.sri.com>
 
 	* macros.hh (ComplexWarning): added
-	
+
 ===================================Maude86===========================================
 
 2004-12-15  Steven Eker  <eker@goo.csl.sri.com>
@@ -1030,7 +1151,7 @@
 
 2004-10-08  Steven Eker  <eker@goo.csl.sri.com>
 
-	* checkedConstIterator.hh (operator++, operator--, operator+) 
+	* checkedConstIterator.hh (operator++, operator--, operator+)
 	(operator-): added typename to pacify g++ 2.4.2
 
 	* checkedIterator.hh (operator++): added typename to pacify g++ 2.4.2
@@ -1116,7 +1237,7 @@
 2004-08-26  Steven Eker  <eker@goo.csl.sri.com>
 
 	* diophantineSystem2.hh: created
-	
+
 ===================================Maude85===========================================
 
 2004-03-16  Steven Eker  <eker@goo.csl.sri.com>
@@ -1131,7 +1252,7 @@
 
 	* macros.cc (stringToDouble): work around for versions of atof()
 	that don't handle Infinity
-	
+
 ===================================Maude82===========================================
 
 2003-07-29  Steven Eker  <eker@goo.csl.sri.com>
@@ -1167,7 +1288,7 @@
 2003-07-16  Steven Eker  <eker@goo.csl.sri.com>
 
 	* ropeStuff.hh: created
-	
+
 ===================================Maude81===========================================
 
 2003-07-15  Steven Eker  <eker@goo.csl.sri.com>
@@ -1185,7 +1306,7 @@
 2003-05-19  Steven Eker  <eker@goo.csl.sri.com>
 
 	* macros.hh (FOR_EACH_CONST): added parens around container
-	
+
 ===================================Maude80a===========================================
 
 2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
@@ -1199,7 +1320,7 @@
 
 	* checkedIterator.hh (operator*): made const
 	(operator->): made const
-	
+
 ===================================Maude80===========================================
 
 2003-03-11  Steven Eker  <eker@goo.csl.sri.com>
@@ -1371,9 +1492,9 @@
 2003-02-12  Steven Eker  <eker@goo.csl.sri.com>
 
 	* macros.hh (safeCast): handle null pointers in the assert case
-	
+
 ===================================Maude78===========================================
-	
+
 2003-01-06  Steven Eker  <eker@goo.csl.sri.com>
 
 	* macros.cc (doubleToString): special case for 0.0
@@ -1400,9 +1521,9 @@
 	* macros.cc (doubleToString): rewritten using correctEcvt() since
 	ostrstreams don't get precision right with version 3 of stdc++
 	library
-	
+
 ===================================Maude77============================================
-	
+
 2002-11-26  Steven Eker  <eker@goo.csl.sri.com>
 
 	* macros.hh (union MachineWord): added

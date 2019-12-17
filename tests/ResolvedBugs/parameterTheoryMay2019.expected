@@ -1,0 +1,18 @@
+fmod BAR{Q :: TRIV} is
+  sort Q$Elt .
+  op a : -> Q$Elt .
+endfm
+fmod BAR{Q :: T} is
+  sort Q$Elt .
+  op 0 : -> Q$Elt .
+  op a : -> Q$Elt .
+  eq a = 0 .
+endfm
+fmod BAR{Q :: T} is
+  sort Q$Elt .
+  op f : Universal -> Q$Elt [poly (1)] .
+  op a : -> Q$Elt .
+  op b : -> Q$Elt .
+  eq f(a) = b .
+endfm
+Bye.

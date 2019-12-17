@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -98,6 +98,14 @@ MetaLevel::downOpDecl(DagNode* metaOpDecl, MetaModule* m)
 	    {
 	      if (!downPolymorphTypeList(f->getArgument(1), m, ai.polyArgs, domainAndRange))
 		goto fail;
+	      int nrArgs = domainAndRange.size();
+	      if (ai.polyArgs.max() > nrArgs)
+		goto fail;
+	      if (!(ai.frozen.empty()) && ai.frozen.max() >= nrArgs)
+		goto fail;
+	      if (ai.symbolType.hasFlag(SymbolType::GATHER) && ai.gather.length() != nrArgs)
+		goto fail;
+
 	      if (ai.polyArgs.contains(0))
 		domainAndRange.append(0);
 	      else
@@ -123,6 +131,12 @@ MetaLevel::downOpDecl(DagNode* metaOpDecl, MetaModule* m)
 	      if (downTypeList(f->getArgument(1), m, domainAndRange) &&
 		  downType(f->getArgument(2), m, range))
 		{
+		  int nrArgs = domainAndRange.size();
+		  if (!(ai.frozen.empty()) && ai.frozen.max() >= nrArgs)
+		    goto fail;
+		  if (ai.symbolType.hasFlag(SymbolType::GATHER) && ai.gather.length() != nrArgs)
+		    goto fail;
+
 		  domainAndRange.append(range);
 		  bool originator;
 		  Symbol* symbol = m->addOpDeclaration(prefixName,
@@ -263,28 +277,55 @@ MetaLevel::downAttr(DagNode* metaAttr, AttributeInfo& ai)
 {
   Symbol* ma = metaAttr->symbol();
   if (ma == assocSymbol)
-    ai.symbolType.setFlags(SymbolType::ASSOC);
+    {
+      if (ai.symbolType.hasFlag(SymbolType::ASSOC))
+	return false;
+      ai.symbolType.setFlags(SymbolType::ASSOC);
+    }
   else if (ma == commSymbol)
-    ai.symbolType.setFlags(SymbolType::COMM);
+    {
+      if (ai.symbolType.hasFlag(SymbolType::COMM))
+	return false;
+      ai.symbolType.setFlags(SymbolType::COMM);
+    }
   else if (ma == idemSymbol)
-    ai.symbolType.setFlags(SymbolType::IDEM);
+    {
+      if (ai.symbolType.hasFlag(SymbolType::IDEM))
+	return false;
+      ai.symbolType.setFlags(SymbolType::IDEM);
+    }
   else if (ma == iterSymbol)
-    ai.symbolType.setFlags(SymbolType::ITER);
+    {
+      if (ai.symbolType.hasFlag(SymbolType::ITER))
+	return false;
+      ai.symbolType.setFlags(SymbolType::ITER);
+    }
   else if (ma == stratSymbol)
     {
+      if (ai.symbolType.hasFlag(SymbolType::STRAT))
+	return false;
       if (!downNatList(safeCast(FreeDagNode*, metaAttr)->getArgument(0), ai.strategy))
 	return false;
+      ai.symbolType.setFlags(SymbolType::STRAT);
     }
   else if (ma == memoSymbol)
-    ai.symbolType.setFlags(SymbolType::MEMO);
+    {
+      if (ai.symbolType.hasFlag(SymbolType::MEMO))
+	return false;
+      ai.symbolType.setFlags(SymbolType::MEMO);
+    }
   else if (ma == precSymbol)
     {
+      if (ai.symbolType.hasFlag(SymbolType::PREC))
+	return false;
       if (!(succSymbol->getSignedInt(safeCast(FreeDagNode*, metaAttr)->getArgument(0), ai.prec)))
 	return false;
       ai.symbolType.setFlags(SymbolType::PREC);
     }
   else if (ma == gatherSymbol)
     {
+      if (ai.symbolType.hasFlag(SymbolType::GATHER))
+	return false;
       if (!downQidList(safeCast(FreeDagNode*, metaAttr)->getArgument(0), ai.gather))
 	return false;
       int gatherLength = ai.gather.length();
@@ -314,6 +355,8 @@ MetaLevel::downAttr(DagNode* metaAttr, AttributeInfo& ai)
     }
   else if (ma == formatSymbol)
     {
+      if (ai.symbolType.hasFlag(SymbolType::FORMAT))
+	return false;
       if (!downQidList(safeCast(FreeDagNode*, metaAttr)->getArgument(0), ai.format))
 	return false;
       int formatLength = ai.format.length();
@@ -330,41 +373,77 @@ MetaLevel::downAttr(DagNode* metaAttr, AttributeInfo& ai)
       ai.symbolType.setFlags(SymbolType::FORMAT);
     }
   else if (ma == ctorSymbol)
-    ai.symbolType.setFlags(SymbolType::CTOR);
+    {
+      if (ai.symbolType.hasFlag(SymbolType::CTOR))
+	return false;
+      ai.symbolType.setFlags(SymbolType::CTOR);
+    }
   else if (ma == configSymbol)
-    ai.symbolType.setFlags(SymbolType::CONFIG);
+    {
+      if (ai.symbolType.hasFlag(SymbolType::CONFIG))
+	return false;
+      ai.symbolType.setFlags(SymbolType::CONFIG);
+    }
   else if (ma == objectSymbol)
-    ai.symbolType.setFlags(SymbolType::OBJECT);
+    {
+      if (ai.symbolType.hasFlag(SymbolType::OBJECT))
+	return false;
+      ai.symbolType.setFlags(SymbolType::OBJECT);
+    }
   else if (ma == msgSymbol)
-    ai.symbolType.setFlags(SymbolType::MESSAGE);
+    {
+      if (ai.symbolType.hasFlag(SymbolType::MESSAGE))
+	return false;
+      ai.symbolType.setFlags(SymbolType::MESSAGE);
+    }
   else if (ma == frozenSymbol)
     {
+      if (ai.symbolType.hasFlag(SymbolType::FROZEN))
+	return false;
+
       Vector<int> frozenList;
       if (!downNatList(safeCast(FreeDagNode*, metaAttr)->getArgument(0), frozenList))
 	return false;
       ai.symbolType.setFlags(SymbolType::FROZEN);
       int nrFrozenArgs = frozenList.length();
       for (int i = 0; i < nrFrozenArgs; i++)
-	ai.frozen.insert(frozenList[i] - 1);  // FIX: NEED TO VALIDATE
+	{
+	  int argPos = frozenList[i] - 1;
+	  WarningCheck(!(ai.frozen.contains(argPos)),
+		       "argument " << QUOTE(argPos + 1) <<
+		       " mentioned twice in frozen attribute at metalevel.");
+	  ai.frozen.insert(argPos);
+	}
     }
   else if (ma == polySymbol)
     {
+      if (ai.symbolType.hasFlag(SymbolType::POLY))
+	return false;
+
       Vector<int> polyList;
       if (!downNatList(safeCast(FreeDagNode*, metaAttr)->getArgument(0), polyList))
 	return false;
       ai.symbolType.setFlags(SymbolType::POLY);
       int nrPolyArgs = polyList.length();
       for (int i = 0; i < nrPolyArgs; i++)
-	ai.polyArgs.insert(polyList[i]);  // FIX: NEED TO VALIDATE; maybe downNatSet?
+	{
+	  int argPos = polyList[i];
+	  WarningCheck(!(ai.polyArgs.contains(argPos)),
+		       "argument " << QUOTE(argPos) <<
+		       " mentioned twice in poly attribute at metalevel.");
+	  ai.polyArgs.insert(argPos);
+	}
     }
   else if (ma == metadataSymbol)
     {
-       DagNode* metaStr = safeCast(FreeDagNode*, metaAttr)->getArgument(0);
-       if (metaStr->symbol() != stringSymbol)
-	 return false;
-       string str;
-       Token::ropeToString(safeCast(StringDagNode*, metaStr)->getValue(), str);
-       ai.metadata = Token::encode(str.c_str());
+      if (ai.metadata != NONE)
+	return false;
+      DagNode* metaStr = safeCast(FreeDagNode*, metaAttr)->getArgument(0);
+      if (metaStr->symbol() != stringSymbol)
+	return false;
+      string str;
+      Token::ropeToString(safeCast(StringDagNode*, metaStr)->getValue(), str);
+      ai.metadata = Token::encode(str.c_str());
     }
   else if (ma == specialSymbol)
     {
@@ -374,11 +453,23 @@ MetaLevel::downAttr(DagNode* metaAttr, AttributeInfo& ai)
   else
     {
       if (ma == leftIdSymbol)
-	ai.symbolType.setFlags(SymbolType::LEFT_ID);
+	{
+	  if (ai.symbolType.hasAtLeastOneFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
+	    return false;
+	  ai.symbolType.setFlags(SymbolType::LEFT_ID);
+	}
       else if (ma == rightIdSymbol)
-	ai.symbolType.setFlags(SymbolType::RIGHT_ID);
+	{
+	  if (ai.symbolType.hasAtLeastOneFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
+	    return false;
+	  ai.symbolType.setFlags(SymbolType::RIGHT_ID);
+	}
       else if (ma == idSymbol)
-	ai.symbolType.setFlags(SymbolType::LEFT_ID | SymbolType::RIGHT_ID);
+	{
+	  if (ai.symbolType.hasAtLeastOneFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
+	    return false;
+	  ai.symbolType.setFlags(SymbolType::LEFT_ID | SymbolType::RIGHT_ID);
+	}
       else
 	return false;
       ai.identity = safeCast(FreeDagNode*, metaAttr)->getArgument(0);

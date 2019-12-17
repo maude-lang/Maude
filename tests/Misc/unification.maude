@@ -1,3 +1,4 @@
+set show advise off .
 set show timing off .
 
 *** order sorted free theory unification is not unitary
@@ -142,6 +143,4 @@ unify g(X:Foo) =? Y:Foo /\ h(X:Foo) =? h(Y:Foo) .
 unify g(X:Foo) =? Y:Foo /\ X:Foo =? h(Y:Foo) .
 
 unify [1] in SIMULT : g(X:Foo) =? Y:Foo /\ h(X:Foo) =? h(Z:Foo) .
-
-
 

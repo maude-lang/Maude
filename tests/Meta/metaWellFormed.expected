@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : wellFormed(fmod 'FOO is
   protecting 'FLOAT .
   sorts 'Bar ; 'Foo .
@@ -65,7 +65,7 @@ reduce in META-LEVEL : wellFormed(fmod 'FOO is
   mb 'a.Foo : 'Bar [none] .
   none
 endfm, 
-	'X:Foo <- 'a.Foo) .
+  'X:Foo <- 'a.Foo) .
 rewrites: 2
 result Bool: true
 ==========================================
@@ -77,8 +77,8 @@ reduce in META-LEVEL : wellFormed(fmod 'FOO is
   mb 'a.Foo : 'Bar [none] .
   none
 endfm, 
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'a.Foo) .
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'a.Foo) .
 rewrites: 3
 result Bool: true
 ==========================================
@@ -90,30 +90,10 @@ reduce in META-LEVEL : wellFormed(fmod 'FOO is
   mb 'a.Foo : 'Bar [none] .
   none
 endfm, 
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'b.Foo) .
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo) .
 rewrites: 1
 result Bool: false
-Warning: <standard input>, line 79: ambiguous term, two parses are:
-wellFormed(fmod 'FOO is
-  protecting 'FLOAT .
-  sorts 'Foo ; 'Bar .
-  subsort 'Bar < 'Foo .
-  op 'a : nil -> 'Foo [none] .
-  mb 'a.Foo : 'Bar [none] .
-  none
-endfm, (none).Substitution)
--versus-
-wellFormed(fmod 'FOO is
-  protecting 'FLOAT .
-  sorts 'Foo ; 'Bar .
-  subsort 'Bar < 'Foo .
-  op 'a : nil -> 'Foo [none] .
-  mb 'a.Foo : 'Bar [none] .
-  none
-endfm, (none).EmptyTypeSet)
-
-Arbitrarily taking the first as correct.
 ==========================================
 reduce in META-LEVEL : wellFormed(fmod 'FOO is
   protecting 'FLOAT .
@@ -135,8 +115,8 @@ reduce in META-LEVEL : wellFormed(fmod 'FOO is
   mb 'a.Foo : 'Bar [none] .
   none
 endfm, 
-	'X:Foo <- 'a.Foo ; 
-	'X:Foo <- 'b.Foo) .
+  'X:Foo <- 'a.Foo ; 
+  'X:Foo <- 'b.Foo) .
 rewrites: 1
 result Bool: false
 ==========================================
@@ -149,7 +129,7 @@ reduce in META-LEVEL : wellFormed(fmod 'FOO is
   none
   none
 endfm, 
-	'X:Bar <- 'a.Foo) .
+  'X:Bar <- 'a.Foo) .
 rewrites: 1
 result Bool: false
 ==========================================
@@ -162,7 +142,7 @@ reduce in META-LEVEL : wellFormed(fmod 'FOO is
   mb 'a.Foo : 'Bar [none] .
   none
 endfm, 
-	'X:Bar <- 'true.Bool) .
+  'X:Bar <- 'true.Bool) .
 rewrites: 1
 result Bool: false
 ==========================================
@@ -175,7 +155,7 @@ reduce in META-LEVEL : wellFormed(fmod 'FOO is
   mb 'a.Foo : 'Bar [none] .
   none
 endfm, 
-	'X:Bool <- 'true.Bool) .
+  'X:Bool <- 'true.Bool) .
 rewrites: 1
 result Bool: true
 ==========================================
@@ -189,7 +169,7 @@ reduce in META-LEVEL : wellFormed(mod 'FOO is
   none
   rl 'a.Foo => 'b.Foo [label('k)] .
 endm, 
-	'X:Bar <- 'true.Bool) .
+  'X:Bar <- 'true.Bool) .
 rewrites: 1
 result Bool: false
-Maude> Bye.
+Bye.

@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 unify in TEST : f(X:Nat, Y:Nat) ^ B:NzNat =? A:NzNat ^ f(Y:Nat, Z:Nat) .
 
 Solution 1
@@ -4922,4 +4922,4 @@ Solution 1
 X:Foo --> #1:Foo
 Y:Foo --> g(#1:Foo)
 Z:Foo --> #1:Foo
-Maude> Bye.
+Bye.

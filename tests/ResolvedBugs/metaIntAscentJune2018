@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metaIntAscentJune2018.maude -no-banner -no-advise \
+  > metaIntAscentJune2018.out 2>&1
+
+diff $srcdir/metaIntAscentJune2018.expected metaIntAscentJune2018.out > /dev/null 2>&1

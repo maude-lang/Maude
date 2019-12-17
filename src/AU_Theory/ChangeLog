@@ -1,3 +1,71 @@
+2019-11-11  Steven Eker  <eker@mu>
+
+	* AU_DagNode.cc (computeBaseSortForGroundSubterms): take and pass
+	warnAboutUnimplemented; simplified
+	(computeBaseSortForGroundSubterms): no early termination in UNIMPLEMENTED case
+
+	* AU_DagNode.hh (AU_BaseDagNode): updated decl for
+	computeBaseSortForGroundSubterms()
+
+===================================Maude125===========================================
+
+2017-04-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* AU_DagNode.cc (instantiateWithCopies2): fixed bug where return d was
+	inside the ifdef'd code
+
+===================================Maude112b===========================================
+
+2017-04-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* AU_Matcher.cc (forcedLoneVariableCase): added comments
+
+===================================Maude112a===========================================
+
+2017-02-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* AU_DagNode.cc (instantiateWithCopies2): ifdef'd out normal form, sort and
+	ground flag computation and added comment to explain why
+
+2017-02-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* AU_DagNode.hh (AU_BaseDagNode): updated decl for
+	instantiateWithReplacement()
+
+	* AU_DagNode.cc (instantiateWithReplacement): handle lazy contexts
+
+2017-02-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* AU_DequeDagNode.cc (stackArguments): deleted
+
+	* AU_DequeDagNode.hh (AU_BaseDagNode): deleted decl for stackArguments()
+
+	* AU_DagNode.hh (AU_BaseDagNode): deleted decl for stackArguments()
+
+	* AU_DagNode.cc (stackArguments): deleted
+
+	* AU_Symbol.hh (AssociativeSymbol): updated decl for stackArguments()
+
+	* AU_Symbol.cc (stackArguments): support respectFrozen and
+	eagerContext flags
+
+===================================Maude111b===========================================
+
+2016-11-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* AU_DequeDagNode.cc (copyEagerUptoReduced2): added commment
+	to explain why we don't bother trying to preserve deque form
+
+	* AU_DequeDagNode.hh (AU_BaseDagNode): added decl for copyAll2()
+
+	* AU_DequeDagNode.cc (copyAll2): added
+
+	* AU_DagNode.hh (AU_BaseDagNode): added decl for copyAll2()
+
+	* AU_DagNode.cc (copyAll2): added
+
+===================================Maude111===========================================
+
 2016-03-24  Steven Eker  <eker@install.csl.sri.com>
 
 	* AU_Symbol.cc (computeGeneralizedSort2): code cleaning

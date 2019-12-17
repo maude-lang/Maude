@@ -1,0 +1,107 @@
+***
+*** 	Examples to exercise error detection and recovering in views.
+***
+
+set show timing off .
+
+fth MONOID is
+  sort Elt .
+  op 0 : -> Elt .
+  op _._ : Elt Elt -> Elt [assoc] .
+endfth
+
+view GOOD from MONOID to NAT is
+  sort Elt to Nat .
+vars X Y : Elt .
+  op X . Y to term X + Y .
+endv
+
+*** rhs variable of op->term mapping not in lhs
+view BAD1 from MONOID to NAT is
+  sort Elt to Nat .
+vars X Y Z : Elt .
+  op X . Y to term X + Y + Z .
+endv
+
+*** non-variable argument in lhs of op->term mapping
+view BAD2 from MONOID to NAT is
+  sort Elt to Nat .
+var X : Elt .
+  op X . 0 to term X + X .
+endv
+
+*** nonlinear lhs of op->term mapping
+view BAD3 from MONOID to NAT is
+  sort Elt to Nat .
+var X : Elt .
+  op X . X to term X + X .
+endv
+
+fth MONOID2 is
+  sort Elt .
+  op 0 : -> Elt .
+  op f : Elt Elt -> Elt [assoc] .
+endfth
+
+*** wrong number of lhs args; parses due to flattening
+view BAD4 from MONOID2 to NAT is
+  sort Elt to Nat .
+vars X Y Z : Elt .
+  op f(X, Y, Z) to term X + Y + Z .
+endv
+
+***
+***	Interaction between parameterized views and theory views.
+***
+
+*** conflict
+***   created by view instantiation
+***   propagation view->module via instantiation by module-view argument
+***   propagation module->module via module importation
+***   trigged by module instantiation
+fmod WRAPPER{U :: TRIV} is
+  sort Wrapper{U} .
+endfm
+
+view MapToList{A :: TRIV, B :: TRIV} from TRIV to MAP{List{A}, List{B}} is
+  sort Elt to Map{List{A}, List{B}} .
+endv
+
+fmod MAP-TO-LIST-WRAP{C :: TRIV, D :: TRIV} is
+  inc WRAPPER{MapToList{C, Set{D}}} .
+endfm
+*** MapToList{C, Set{D}} creates a conflict between C and D
+*** propagates into WRAPPER{MapToList{C, Set{D}}} by instantiation
+*** propagates into MAP-TO-LIST-WRAP by importation
+
+fmod TEST{E :: TRIV, F :: TRIV} is
+  inc MAP-TO-LIST-WRAP{TRIV, TRIV}{E, F} .
+endfm
+*** should trigger conflict between C and D
+
+
+*** conflict
+***   created by module instantiation,
+***   propagation module->view via toModule
+***   triggered by view instantiation
+
+fmod WRAPPER{U :: TRIV} is
+  sort Wrapper{U} .
+endfm
+
+view V{A :: TRIV, B :: TRIV} from TRIV to MAP{A, Set{B}} is
+  sort Elt to Map{A, Set{B}} .
+endv
+*** MAP{A, Set{B}} creates a conflict between A and B
+*** popagates into V via toModule
+
+fmod TEST{P :: TRIV, Q :: TRIV} is
+  inc WRAPPER{V{TRIV,TRIV}{P, Q}} .
+endfm
+*** should trigger conflict between A and B
+
+
+*** Parameter not appearing in toModule.
+view Wrapper{V :: TRIV} from TRIV to NAT is
+  sort Elt to Nat .
+endv

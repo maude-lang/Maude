@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -298,11 +298,13 @@ S_Symbol::normalizeAndComputeTrueSort(DagNode* subject, RewritingContext& contex
 void
 S_Symbol::stackArguments(DagNode* subject,
 			 Vector<RedexPosition>& stack,
-			 int parentIndex)
+			 int parentIndex,
+			 bool respectFrozen,
+			 bool eagerContext)
 {
   DagNode* arg = safeCast(S_DagNode*, subject)->arg;
-  if (!(getFrozen().contains(0)) && !(arg->isUnstackable()))
-    stack.append(RedexPosition(arg, parentIndex, 0, eagerArgument(0)));
+  if (!(respectFrozen && getFrozen().contains(0)) && !(arg->isUnstackable()))
+    stack.append(RedexPosition(arg, parentIndex, 0, eagerContext && eagerArgument(0)));
 }
 
 bool

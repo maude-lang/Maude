@@ -1,3 +1,29 @@
+/*
+
+    This file is part of the Maude 3 interpreter.
+
+    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+*/
+
+//
+//      Code for handling auxiliary properties of Tokens.
+//
+
 const char*
 Token::skipSortName(const char* tokenString, bool& parameterized)
 {
@@ -192,7 +218,13 @@ void
 Token::splitParameterizedSort(int code, Vector<int>& codes)
 {
   Assert(auxProperty(code) == AUX_STRUCTURED_SORT, "called on " << stringTable.name(code));
-
+  //
+  //	Breaks a structured sort such as:
+  //	  Foo{TRIV,TRIV}{Bar{X,Baz},Z}
+  //	in to lexical pieces:
+  //	  Foo { TRIV , TRIV } { Bar { X , Baz } , Z }
+  //	for grammar construction and meta-pretty-printing.
+  //
   codes.clear();
   const char* name = stringTable.name(code);
   char* t = new char[strlen(name) + 1];
@@ -248,7 +280,15 @@ void
 Token::splitParameterList(int code, int& header, Vector<int>& parameters)
 {
   Assert(auxProperty(code) == AUX_STRUCTURED_SORT, "called on " << stringTable.name(code));
-
+  //
+  //	Breaks the structured sort such as:
+  //	  Foo{TRIV,TRIV}{Bar{X,Baz},Z}
+  //	in to a header:
+  //	  Foo{TRIV,TRIV}
+  //	and final parameter list:
+  //	  Bar{X,Baz} Z
+  //	for the instantiation of parameterized sorts.
+  //
   parameters.clear();
   const char* n = name(code);
   int len = strlen(n);
@@ -307,6 +347,15 @@ Token::splitParameterList(int code, int& header, Vector<int>& parameters)
 int
 Token::joinParameterList(int header, const Vector<int>& parameters)
 {
+  //
+  //	Joins a header such as:
+  //	  Foo{TRIV,TRIV}
+  //	and a parameter list:
+  //	  Bar{X,Baz} Z
+  //	to make a new parameterized sort
+  //	  Foo{TRIV,TRIV}{Bar{X,Baz},Z}
+  //	for the instantiation of parameterized sorts.
+  //
   Rope n(name(header));
   const char* sep = "`{";
   FOR_EACH_CONST(i, Vector<int>, parameters)
@@ -316,5 +365,9 @@ Token::joinParameterList(int header, const Vector<int>& parameters)
       n += name(*i);
     }
   n += "`}";
+  //
+  //	If it's the first time we've seen this token, ropeToCode() will
+  //	check for special properties.
+  //
   return ropeToCode(n);
 }

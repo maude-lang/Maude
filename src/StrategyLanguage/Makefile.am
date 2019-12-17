@@ -9,6 +9,7 @@ libstrategyLanguage_a_CPPFLAGS = \
 	-I$(top_srcdir)/src/FullCompiler
 
 libstrategyLanguage_a_SOURCES = \
+	strategyExpression.cc \
 	trivialStrategy.cc \
 	applicationStrategy.cc \
 	concatenationStrategy.cc \
@@ -16,6 +17,8 @@ libstrategyLanguage_a_SOURCES = \
 	branchStrategy.cc \
 	unionStrategy.cc \
 	testStrategy.cc \
+	subtermStrategy.cc \
+	callStrategy.cc \
 	strategicExecution.cc \
 	strategicTask.cc \
 	branchTask.cc \
@@ -23,10 +26,18 @@ libstrategyLanguage_a_SOURCES = \
 	decompositionProcess.cc \
 	applicationProcess.cc \
 	strategicSearch.cc \
-	sharedRewriteSearchState.cc \
+	depthFirstStrategicSearch.cc \
+	fairStrategicSearch.cc \
 	matchProcess.cc \
+	subtermProcess.cc \
 	rewriteTask.cc \
-	strategyStackManager.cc
+	subtermTask.cc \
+	callTask.cc \
+	callProcess.cc \
+	strategyStackManager.cc \
+	variableBindingsManager.cc \
+	oneStrategy.cc \
+	oneTask.cc
 
 noinst_HEADERS = \
 	strategyLanguage.hh \
@@ -38,6 +49,8 @@ noinst_HEADERS = \
 	branchStrategy.hh \
 	unionStrategy.hh \
 	testStrategy.hh \
+	subtermStrategy.hh \
+	callStrategy.hh \
 	strategicExecution.hh \
 	strategicTask.hh \
 	branchTask.hh \
@@ -45,7 +58,16 @@ noinst_HEADERS = \
 	decompositionProcess.hh \
 	applicationProcess.hh \
 	strategicSearch.hh \
-	sharedRewriteSearchState.hh \
+	depthFirstStrategicSearch.hh \
+	fairStrategicSearch.hh \
+	sharedValue.hh \
 	matchProcess.hh \
+	subtermProcess.hh \
 	rewriteTask.hh \
-	strategyStackManager.hh
+	subtermTask.hh \
+	callTask.hh \
+	callProcess.hh \
+	strategyStackManager.hh \
+	variableBindingsManager.hh \
+	oneStrategy.hh \
+	oneTask.hh

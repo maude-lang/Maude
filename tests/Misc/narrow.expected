@@ -1,0 +1,931 @@
+==========================================
+vu-narrow in BAZ : g(j(A, B)) =>* C .
+
+Solution 1
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(j(@1:Foo, @2:Foo))
+#1:Foo --> @1:Foo
+#2:Foo --> @2:Foo
+
+Solution 2
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(i(f(%1:Foo), %2:Foo))
+#1:Foo --> f(%2:Foo)
+#2:Foo --> %1:Foo
+
+Solution 3
+rewrites: 3
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 2  narrowing steps: 1
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+Solution 4
+rewrites: 7
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 2
+state: h(f(@1:Foo))
+accumulated substitution:
+A --> f(k(@2:Foo, f(@1:Foo)))
+B --> @1:Foo
+variant unifier:
+C --> h(f(%1:Foo))
+@1:Foo --> %1:Foo
+
+Solution 5
+rewrites: 8
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 3
+state: f(k(@2:Foo, h(@1:Foo)))
+accumulated substitution:
+A --> f(k(@3:Foo, @2:Foo))
+B --> k(@1:Foo, @1:Foo)
+variant unifier:
+C --> f(k(%1:Foo, h(%2:Foo)))
+@2:Foo --> %1:Foo
+@1:Foo --> %2:Foo
+
+Solution 6
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 4
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+Solution 7
+rewrites: 10
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, h(%1:Foo)))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 10
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 5
+==========================================
+vu-narrow in BAZ : g(j(A, B)) =>+ C .
+
+Solution 1
+rewrites: 2
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 1
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+Solution 2
+rewrites: 6
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 2
+state: h(f(@1:Foo))
+accumulated substitution:
+A --> f(k(@2:Foo, f(@1:Foo)))
+B --> @1:Foo
+variant unifier:
+C --> h(f(%1:Foo))
+@1:Foo --> %1:Foo
+
+Solution 3
+rewrites: 7
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 3
+state: f(k(@2:Foo, h(@1:Foo)))
+accumulated substitution:
+A --> f(k(@3:Foo, @2:Foo))
+B --> k(@1:Foo, @1:Foo)
+variant unifier:
+C --> f(k(%1:Foo, h(%2:Foo)))
+@2:Foo --> %1:Foo
+@1:Foo --> %2:Foo
+
+Solution 4
+rewrites: 8
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 4
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+Solution 5
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, h(%1:Foo)))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+==========================================
+vu-narrow in BAZ : g(j(A, B)) =>! C .
+
+Solution 1
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+Solution 2
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, h(%1:Foo)))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+==========================================
+vu-narrow [, 1] in BAZ : g(j(A, B)) =>! C .
+
+No solution.
+rewrites: 5
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 1
+==========================================
+vu-narrow [, 2] in BAZ : g(j(A, B)) =>! C .
+
+No solution.
+rewrites: 7
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 3
+==========================================
+vu-narrow [, 3] in BAZ : g(j(A, B)) =>! C .
+
+Solution 1
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+Solution 2
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, h(%1:Foo)))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+==========================================
+vu-narrow [, 4] in BAZ : g(j(A, B)) =>! C .
+
+Solution 1
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+Solution 2
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, h(%1:Foo)))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+==========================================
+vu-narrow [, 1] in BAZ : g(j(A, B)) =>* C .
+
+Solution 1
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(j(@1:Foo, @2:Foo))
+#1:Foo --> @1:Foo
+#2:Foo --> @2:Foo
+
+Solution 2
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(i(f(%1:Foo), %2:Foo))
+#1:Foo --> f(%2:Foo)
+#2:Foo --> %1:Foo
+
+Solution 3
+rewrites: 3
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 2  narrowing steps: 1
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+No more solutions.
+rewrites: 6
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 1
+==========================================
+vu-narrow [, 2] in BAZ : g(j(A, B)) =>* C .
+
+Solution 1
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(j(@1:Foo, @2:Foo))
+#1:Foo --> @1:Foo
+#2:Foo --> @2:Foo
+
+Solution 2
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(i(f(%1:Foo), %2:Foo))
+#1:Foo --> f(%2:Foo)
+#2:Foo --> %1:Foo
+
+Solution 3
+rewrites: 3
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 2  narrowing steps: 1
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+Solution 4
+rewrites: 7
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 2
+state: h(f(@1:Foo))
+accumulated substitution:
+A --> f(k(@2:Foo, f(@1:Foo)))
+B --> @1:Foo
+variant unifier:
+C --> h(f(%1:Foo))
+@1:Foo --> %1:Foo
+
+Solution 5
+rewrites: 8
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 3
+state: f(k(@2:Foo, h(@1:Foo)))
+accumulated substitution:
+A --> f(k(@3:Foo, @2:Foo))
+B --> k(@1:Foo, @1:Foo)
+variant unifier:
+C --> f(k(%1:Foo, h(%2:Foo)))
+@2:Foo --> %1:Foo
+@1:Foo --> %2:Foo
+
+No more solutions.
+rewrites: 8
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 3
+==========================================
+vu-narrow [, 3] in BAZ : g(j(A, B)) =>* C .
+
+Solution 1
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(j(@1:Foo, @2:Foo))
+#1:Foo --> @1:Foo
+#2:Foo --> @2:Foo
+
+Solution 2
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(i(f(%1:Foo), %2:Foo))
+#1:Foo --> f(%2:Foo)
+#2:Foo --> %1:Foo
+
+Solution 3
+rewrites: 3
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 2  narrowing steps: 1
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+Solution 4
+rewrites: 7
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 2
+state: h(f(@1:Foo))
+accumulated substitution:
+A --> f(k(@2:Foo, f(@1:Foo)))
+B --> @1:Foo
+variant unifier:
+C --> h(f(%1:Foo))
+@1:Foo --> %1:Foo
+
+Solution 5
+rewrites: 8
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 3
+state: f(k(@2:Foo, h(@1:Foo)))
+accumulated substitution:
+A --> f(k(@3:Foo, @2:Foo))
+B --> k(@1:Foo, @1:Foo)
+variant unifier:
+C --> f(k(%1:Foo, h(%2:Foo)))
+@2:Foo --> %1:Foo
+@1:Foo --> %2:Foo
+
+Solution 6
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 4
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+Solution 7
+rewrites: 10
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, h(%1:Foo)))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 10
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 5
+==========================================
+fvu-narrow in BAZ : g(j(A, B)) =>* C .
+
+Solution 1
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(j(@1:Foo, @2:Foo))
+#1:Foo --> @1:Foo
+#2:Foo --> @2:Foo
+
+Solution 2
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(i(f(%1:Foo), %2:Foo))
+#1:Foo --> f(%2:Foo)
+#2:Foo --> %1:Foo
+
+Solution 3
+rewrites: 3
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 2  narrowing steps: 1
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+Solution 4
+rewrites: 7
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 2
+state: h(f(@1:Foo))
+accumulated substitution:
+A --> f(k(@2:Foo, f(@1:Foo)))
+B --> @1:Foo
+variant unifier:
+C --> h(f(%1:Foo))
+@1:Foo --> %1:Foo
+
+Solution 5
+rewrites: 8
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 3
+state: f(k(@2:Foo, h(@1:Foo)))
+accumulated substitution:
+A --> f(k(@3:Foo, @2:Foo))
+B --> k(@1:Foo, @1:Foo)
+variant unifier:
+C --> f(k(%1:Foo, h(%2:Foo)))
+@2:Foo --> %1:Foo
+@1:Foo --> %2:Foo
+
+Solution 6
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 4
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 10
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 5
+==========================================
+fvu-narrow in BAZ : g(j(A, B)) =>+ C .
+
+Solution 1
+rewrites: 2
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 1
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+Solution 2
+rewrites: 6
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 2
+state: h(f(@1:Foo))
+accumulated substitution:
+A --> f(k(@2:Foo, f(@1:Foo)))
+B --> @1:Foo
+variant unifier:
+C --> h(f(%1:Foo))
+@1:Foo --> %1:Foo
+
+Solution 3
+rewrites: 7
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 3
+state: f(k(@2:Foo, h(@1:Foo)))
+accumulated substitution:
+A --> f(k(@3:Foo, @2:Foo))
+B --> k(@1:Foo, @1:Foo)
+variant unifier:
+C --> f(k(%1:Foo, h(%2:Foo)))
+@2:Foo --> %1:Foo
+@1:Foo --> %2:Foo
+
+Solution 4
+rewrites: 8
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 4
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+==========================================
+fvu-narrow in BAZ : g(j(A, B)) =>! C .
+
+Solution 1
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+==========================================
+fvu-narrow [, 1] in BAZ : g(j(A, B)) =>! C .
+
+No solution.
+rewrites: 5
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 1
+==========================================
+fvu-narrow [, 2] in BAZ : g(j(A, B)) =>! C .
+
+No solution.
+rewrites: 7
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 3
+==========================================
+fvu-narrow [, 3] in BAZ : g(j(A, B)) =>! C .
+
+Solution 1
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+==========================================
+fvu-narrow [, 4] in BAZ : g(j(A, B)) =>! C .
+
+Solution 1
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 4  narrowing steps: 5
+==========================================
+fvu-narrow [, 1] in BAZ : g(j(A, B)) =>* C .
+
+Solution 1
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(j(@1:Foo, @2:Foo))
+#1:Foo --> @1:Foo
+#2:Foo --> @2:Foo
+
+Solution 2
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(i(f(%1:Foo), %2:Foo))
+#1:Foo --> f(%2:Foo)
+#2:Foo --> %1:Foo
+
+Solution 3
+rewrites: 3
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 2  narrowing steps: 1
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+No more solutions.
+rewrites: 6
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 1
+==========================================
+fvu-narrow [, 2] in BAZ : g(j(A, B)) =>* C .
+
+Solution 1
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(j(@1:Foo, @2:Foo))
+#1:Foo --> @1:Foo
+#2:Foo --> @2:Foo
+
+Solution 2
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(i(f(%1:Foo), %2:Foo))
+#1:Foo --> f(%2:Foo)
+#2:Foo --> %1:Foo
+
+Solution 3
+rewrites: 3
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 2  narrowing steps: 1
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+Solution 4
+rewrites: 7
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 2
+state: h(f(@1:Foo))
+accumulated substitution:
+A --> f(k(@2:Foo, f(@1:Foo)))
+B --> @1:Foo
+variant unifier:
+C --> h(f(%1:Foo))
+@1:Foo --> %1:Foo
+
+Solution 5
+rewrites: 8
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 3
+state: f(k(@2:Foo, h(@1:Foo)))
+accumulated substitution:
+A --> f(k(@3:Foo, @2:Foo))
+B --> k(@1:Foo, @1:Foo)
+variant unifier:
+C --> f(k(%1:Foo, h(%2:Foo)))
+@2:Foo --> %1:Foo
+@1:Foo --> %2:Foo
+
+No more solutions.
+rewrites: 8
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 3
+==========================================
+fvu-narrow [, 3] in BAZ : g(j(A, B)) =>* C .
+
+Solution 1
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(j(@1:Foo, @2:Foo))
+#1:Foo --> @1:Foo
+#2:Foo --> @2:Foo
+
+Solution 2
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 1  narrowing steps: 0
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(i(f(%1:Foo), %2:Foo))
+#1:Foo --> f(%2:Foo)
+#2:Foo --> %1:Foo
+
+Solution 3
+rewrites: 3
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 2  narrowing steps: 1
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+Solution 4
+rewrites: 7
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 2
+state: h(f(@1:Foo))
+accumulated substitution:
+A --> f(k(@2:Foo, f(@1:Foo)))
+B --> @1:Foo
+variant unifier:
+C --> h(f(%1:Foo))
+@1:Foo --> %1:Foo
+
+Solution 5
+rewrites: 8
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 3
+state: f(k(@2:Foo, h(@1:Foo)))
+accumulated substitution:
+A --> f(k(@3:Foo, @2:Foo))
+B --> k(@1:Foo, @1:Foo)
+variant unifier:
+C --> f(k(%1:Foo, h(%2:Foo)))
+@2:Foo --> %1:Foo
+@1:Foo --> %2:Foo
+
+Solution 6
+rewrites: 9
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 4
+state: h(h(%1:Foo))
+accumulated substitution:
+A --> f(k(%2:Foo, f(k(%1:Foo, %1:Foo))))
+B --> k(%1:Foo, %1:Foo)
+variant unifier:
+C --> h(h(@1:Foo))
+%1:Foo --> @1:Foo
+
+No more solutions.
+rewrites: 10
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 5  narrowing steps: 5
+==========================================
+vu-narrow in FOO : i(A, B) =>+ g(A) .
+
+Solution 1
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 0  narrowing steps: 1
+state: g(f(@1:Foo))
+accumulated substitution:
+A --> f(@1:Foo)
+B --> h(@2:Foo)
+variant unifier:
+@1:Foo --> #1:Foo
+
+No more solutions.
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 0  narrowing steps: 1
+==========================================
+fvu-narrow in FOO : i(A, B) =>+ g(A) .
+
+Solution 1
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 0  narrowing steps: 1
+state: g(f(@1:Foo))
+accumulated substitution:
+A --> f(@1:Foo)
+B --> h(@2:Foo)
+variant unifier:
+@1:Foo --> #1:Foo
+
+No more solutions.
+rewrites: 1
+mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
+    steps: 0  narrowing steps: 1
+Bye.

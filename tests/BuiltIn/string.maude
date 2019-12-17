@@ -91,3 +91,37 @@ red char(65) .
 red ascii(" ") .
 red ascii("aa") .
 red char(1000) .
+
+red lowerCase("a") .
+red lowerCase("A") .
+
+red lowerCase("123AAAaaa123aaaAAA123") .
+
+red lowerCase("AAAaaa123AAAaaa123aaaAAA123") .
+
+red lowerCase("abcdef") .
+
+red lowerCase("abcdeF") .
+
+red lowerCase("AbCdEf") .
+
+red lowerCase("aBcDeF") .
+
+red lowerCase("ABCDEF") .
+
+red upperCase("a") .
+red upperCase("A") .
+
+red upperCase("123AAAaaa123aaaAAA123") .
+
+red upperCase("AAAaaa123AAAaaa123aaaAAA123") .
+
+red upperCase("abcdef") .
+
+red upperCase("abcdeF") .
+
+red upperCase("AbCdEf") .
+
+red upperCase("aBcDeF") .
+
+red upperCase("ABCDEF") .

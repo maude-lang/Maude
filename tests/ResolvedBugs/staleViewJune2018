@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/staleViewJune2018.maude -no-banner -no-advise \
+  > staleViewJune2018.out 2>&1
+
+diff $srcdir/staleViewJune2018.expected staleViewJune2018.out > /dev/null 2>&1

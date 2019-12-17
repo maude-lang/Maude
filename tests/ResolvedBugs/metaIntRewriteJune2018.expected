@@ -1,0 +1,7 @@
+==========================================
+erewrite in TEST : <> < me : User | none > createInterpreter(
+    interpreterManager, me, none) .
+rewrites: 6
+result Configuration: <> < me : User | prev: 'b.Foo > rewroteTerm(me,
+    interpreter(0), 1, 'b.Foo, 'Foo)
+Bye.

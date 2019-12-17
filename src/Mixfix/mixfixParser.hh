@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -26,11 +26,7 @@
 #ifndef _mixfixParser_hh_
 #define _mixfixParser_hh_
 #include <map>
-#ifdef SCP
-#include "scp_parser.hh"
-#else
 #include "parser.hh"
-#endif
 #include "intSet.hh"
 #include "token.hh"
 
@@ -91,6 +87,7 @@ public:
     MAKE_NONEXEC_ATTRIBUTE,
     MAKE_OWISE_ATTRIBUTE,
     MAKE_VARIANT_ATTRIBUTE,
+    MAKE_NARROWING_ATTRIBUTE,
     MAKE_PRINT_ATTRIBUTE,
     MAKE_ATTRIBUTE_LIST,
     //
@@ -105,15 +102,25 @@ public:
     MAKE_TRIVIAL,
     MAKE_ALL,
     MAKE_APPLICATION,
+    MAKE_CALL,
     MAKE_TOP,
     MAKE_CONCATENATION,
     MAKE_UNION,
     MAKE_ITERATION,
     MAKE_BRANCH,
     MAKE_TEST,
+    MAKE_REW,
+    MAKE_ONE,
     MAKE_STRATEGY_LIST,
 
     MAKE_SUBSTITUTION,
+    MAKE_USING_PAIR,
+    MAKE_USING_LIST,
+    //
+    // Strategy module actions
+    //
+    MAKE_SD,
+    MAKE_CSD,
 
     MAKE_PRINT_LIST
   };
@@ -151,6 +158,7 @@ public:
   //	Functions that analyse the parse tree.
   //
   void makeTerms(Term*& first, Term*& second);
+  void makeStrategyExprs(StrategyExpression*& first, StrategyExpression*& second);
   void insertStatement();
   void makeMatchCommand(Term*& pattern,
 			Term*& subject,
@@ -183,7 +191,8 @@ private:
     NONEXEC = 1,
     OWISE = 2,
     PRINT = 4,
-    VARIANT = 8
+    VARIANT = 8,
+    NARROWING = 16
   };
 
   struct Action
@@ -196,6 +205,7 @@ private:
   Sort* getSort(int node);
   Term* makeTerm(int node);
   StrategyExpression* makeStrategy(int node);
+  std::pair<RewriteStrategy*, Term*> makeStrategyCall(int node);
   ConditionFragment* makeConditionFragment(int node);
   void makeCondition(int node, Vector<ConditionFragment*>& condition);
   void makeStatement(int node);
@@ -214,11 +224,14 @@ private:
 			 const Vector<Sort*>& printSorts);
   void makeTermList(int node, Vector<Term*>& termList);
   void makeStrategyList(int node, Vector<StrategyExpression*>& strategies);
+  void appendUsingPair(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies);
+  void makeUsingList(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies);
 
   int translateSpecialToken(int code);
 
   MixfixModule& client;
   Parser parser;			// CFG parser
+  Vector<int> productionRhs;		// to avoid creating a new Vector for each production insertion
   IntSet tokens;			// mapping between token codes and terminal numbers
   Vector<Action> actions;		// action associated with each production
   Vector<int> specialTerminals;		// special terminals for tokens with special properties

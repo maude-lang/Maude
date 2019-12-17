@@ -1,0 +1,7 @@
+==========================================
+erewrite in TEST : <> < me : User | state: 0 > createInterpreter(
+    interpreterManager, me, none) .
+rewrites: 11
+result Configuration: <> < me : User | state: 3 > reducedTerm(me, interpreter(
+    0), 2, '`{_`,_`}[''c.Foo.Constant,''Foo.Sort], 'ResultPair)
+Bye.

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -25,7 +25,7 @@
 //
 #ifndef _SearchState_hh_
 #define _SearchState_hh_
-#include <stack>
+#include "stack.hh"
 #include "cacheableState.hh"
 #include "positionState.hh"
 #include "rewritingContext.hh"
@@ -56,8 +56,12 @@ public:
   bool findNextSolution();
 
   RewritingContext* getContext() const;
-  void transferCount(RewritingContext& recipient);
+  void transferCountTo(RewritingContext& recipient);
 
+  //
+  //	Takes responsibility for deleting the Term and DagRoot objects,
+  //	if instance was created with GC_SUBSTITUTION flag.
+  //
   void setInitialSubstitution(Vector<Term*>& variables, Vector<DagRoot*>& values);
 
 private:
@@ -79,7 +83,7 @@ private:
   //	For backtracking of solutions to a rule condition.
   //
   int trialRef;
-  stack<ConditionState*> conditionStack;
+  Stack<ConditionState*> conditionStack;
 };
 
 inline RewritingContext*
@@ -89,10 +93,9 @@ SearchState::getContext() const
 }
 
 inline void
-SearchState::transferCount(RewritingContext& recipient)
+SearchState::transferCountTo(RewritingContext& recipient)
 {
-  recipient.addInCount(*context);
-  context->clearCount();
+  recipient.transferCountFrom(*context);
 }
 
 inline void

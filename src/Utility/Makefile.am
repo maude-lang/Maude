@@ -66,7 +66,8 @@ noinst_HEADERS = \
 	pigPug.hh \
 	wordLevel.hh \
 	wordSystem.hh \
-	rope.hh
+	rope.hh \
+	stack.hh
 
 EXTRA_DIST = \
 	intContejeanDevie.cc \

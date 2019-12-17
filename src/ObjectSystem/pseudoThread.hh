@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -45,6 +45,10 @@ public:
   enum ReturnStatus
   {
     //
+    //	Clients are waiting for events but nothing happened.
+    //
+    NOTHING_HAPPENED = 0,
+    //
     //	No clients are waiting for events.
     //
     NOTHING_PENDING = 1,
@@ -63,7 +67,7 @@ public:
   //	If a call back was made or we were interrupted by a signal or there are no pending call backs, return appropriate code.
   //	Otherwise sleep until interrupted or a call back happens.
   //
-  static int eventLoop();
+  static int eventLoop(bool block = true);
   //
   //	Clear any requests for call backs on a given fd.
   //

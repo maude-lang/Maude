@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in COND : f(a, b) .
 rewrites: 1
 result Foo: g(a, h(b))
@@ -61,4 +61,4 @@ endfm, 'f['a.Foo,'b.Foo]) .
 
 rewrites: 2
 result ResultPair: {'g['a.Foo,'h['b.Foo]],'Foo}
-Maude> Bye.
+Bye.

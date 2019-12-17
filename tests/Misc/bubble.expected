@@ -1,0 +1,110 @@
+Foo: start tokens(nil) tokens(nil) tokens(nil)
+Foo: start tokens(nil) tokens(nil)
+Warning: <standard input>, line 43: ambiguous term, two parses are:
+Foo : start tokens(nil) tokens('a)
+-versus-
+Foo : start tokens('a) tokens(nil)
+
+Arbitrarily taking the first as correct.
+Foo: start tokens(nil) tokens('a)
+Warning: <standard input>, line 46: ambiguous term, two parses are:
+Foo : start tokens(nil) tokens('< 'a '>)
+-versus-
+Foo : start tokens('< 'a '>) tokens(nil)
+
+Arbitrarily taking the first as correct.
+Foo: start tokens(nil) tokens('< 'a '>)
+Foo: [tokens(nil) tokens2(nil) tokens(nil)]
+Warning: <standard input>, line 92: ambiguous term, two parses are:
+Foo : tokens(nil) tokens('a)
+-versus-
+Foo : tokens('a) tokens(nil)
+
+Arbitrarily taking the first as correct.
+Foo: tokens(nil) tokens('a)
+Foo: tokens('a) tokens2(nil)
+Warning: <standard input>, line 147: ambiguous term, two parses are:
+Bar : tokens(nil) tokens2('start)
+-versus-
+Foo : start tokens(nil) tokens(nil) tokens2(nil)
+
+Arbitrarily taking the first as correct.
+Bar: tokens(nil) tokens2('start)
+Warning: <standard input>, line 167: didn't expect token >:
+start a b > <---*HERE*
+Warning: <standard input>, line 167: no parse for term.
+Warning: <standard input>, line 170 : unexpected end of tokens.
+Warning: <standard input>, line 170: no parse for term.
+Warning: <standard input>, line 173: didn't expect token g:
+start < a < b > c d e f g <---*HERE*
+Warning: <standard input>, line 173: no parse for term.
+Foo: start tokens('a ; '<)
+Foo: start tokens('a '<|)
+Warning: <standard input>, line 209: ambiguous term, two parses are:
+Foo : start tokens('a ; 'b)
+-versus-
+Foo : start tokens('a 'b)
+
+Arbitrarily taking the first as correct.
+Foo: start tokens('a ; 'b)
+Foo: start tokens('a ; 'b)
+Foo: start tokens('a 'b 'c '< 'e '> 'f)
+Warning: <standard input>, line 243: ambiguous term, two parses are:
+Foo : start tokens('a ; 'b ; 'c)
+-versus-
+Foo : start tokens('a 'b 'c)
+
+Arbitrarily taking the first as correct.
+Foo: start tokens('a ; 'b ; 'c)
+Foo: start tokens('a) tokens('b)
+Warning: <standard input>, line 266: ambiguous term, two parses are:
+Foo : start tokens('a) tokens('b 'c 'd 'e 'f 'g)
+-versus-
+Foo : start tokens('a 'b) tokens('c 'd 'e 'f 'g)
+
+Arbitrarily taking the first as correct.
+Foo: start tokens('a) tokens('b 'c 'd 'e 'f 'g)
+Foo: start tokens('< 'b '>) tokens('< 'd 'e 'f 'g '>)
+Warning: <standard input>, line 272 : unexpected end of tokens.
+Warning: <standard input>, line 272: no parse for term.
+Warning: <standard input>, line 275: didn't expect token >:
+start < b > > <---*HERE*
+Warning: <standard input>, line 275: no parse for term.
+Warning: <standard input>, line 293 : unexpected end of tokens.
+Warning: <standard input>, line 293: no parse for term.
+Foo: start tokens('a 'b 'c) tokens('d 'e 'f)
+Warning: <standard input>, line 299: ambiguous term, two parses are:
+Foo : start tokens('a 'b 'c) tokens('d 'e 'f 'g)
+-versus-
+Foo : start tokens('a 'b 'c 'd) tokens('e 'f 'g)
+
+Arbitrarily taking the first as correct.
+Foo: start tokens('a 'b 'c) tokens('d 'e 'f 'g)
+Foo: start tokens('< 'a 'b 'c 'd '>) tokens('< 'e 'f 'g '>)
+Warning: <standard input>, line 320: ambiguous term, two parses are:
+Foo : start tokens('a 'b) tokens('c 'd 'e)
+-versus-
+Foo : start tokens('a 'b 'c) tokens('d 'e)
+
+Arbitrarily taking the first as correct.
+Foo: start tokens('a 'b) tokens('c 'd 'e)
+Foo: start tokens('< 'a '>) tokens('b 'c)
+Foo: start tokens('a 'b 'c) tokens('d 'e 'f)
+Warning: <standard input>, line 329: didn't expect token g:
+start a b c d e f g <---*HERE*
+Warning: <standard input>, line 329: no parse for term.
+Warning: <standard input>, line 352: ambiguous term, two parses are:
+Foo : end
+-versus-
+Foo : tokens(nil) end
+
+Arbitrarily taking the first as correct.
+Foo: end
+Warning: <standard input>, line 375: ambiguous term, two parses are:
+Bar : start tokens(nil) e n d
+-versus-
+Bar : start tokens(nil) tokens(nil) e n d
+
+Arbitrarily taking the first as correct.
+Bar: start tokens(nil) e n d
+Bye.

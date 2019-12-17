@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -34,6 +34,8 @@ class IterationStrategy;
 class BranchStrategy;
 class UnionStrategy;
 class TestStrategy;
+class SubtermStrategy;
+class CallStrategy;
 
 class StrategicExecution;
 
@@ -41,13 +43,18 @@ class StrategicProcess;
 class DecompositionProcess;
 class ApplicationProcess;
 class MatchProcess;
+class SubtermProcess;
+class CallProcess;
 
 class StrategicTask;
 class StrategicSearch;
 class BranchTask;
 class RewriteTask;
+class SubtermTask;
+class CallTask;
 
 class SharedRewriteSearchState;
 class StrategyStackManager;
+class VariableBindingsManager;
 
 #endif

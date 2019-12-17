@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -44,7 +44,7 @@ public:
 			    Vector<Symbol*>& symbols);
 
   bool extractOutput(DagNode* loopNode, Vector<int>& bubble);
-  DagNode* injectInput(DagNode* loopNode, const Vector<Token>& bubble);
+  void injectInput(DagNode* loopNode, const Vector<Token>& bubble);
 
 private:
   NO_COPYING(LoopSymbol);

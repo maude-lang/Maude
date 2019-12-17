@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for abstract class Strategy.
+//      Implementation for the union strategy.
 //
 
 //	utility stuff
@@ -49,6 +49,25 @@ UnionStrategy::~UnionStrategy()
   int nrStrategies = strategies.size();
   for (int i = 0; i < nrStrategies; ++i)
     delete strategies[i];
+}
+
+bool
+UnionStrategy::check(VariableInfo& indices, const TermSet& boundVars)
+{
+  size_t nrStrategies = strategies.size();
+  for (size_t i = 0; i < nrStrategies; i++)
+    if (!strategies[i]->check(indices, boundVars))
+      return false;
+
+  return true;
+}
+
+void
+UnionStrategy::process()
+{
+  size_t nrStrategies = strategies.size();
+  for (size_t i = 0; i < nrStrategies; i++)
+    strategies[i]->process();
 }
 
 StrategicExecution::Survival

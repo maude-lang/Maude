@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -37,6 +37,10 @@
 #include "substitution.hh"
 #include "variableInfo.hh"
 
+//      variable class definitions
+#include "variableDagNode.hh"
+#include "freshVariableGenerator.hh"
+
 VariableInfo::VariableInfo()
 {
   nrProtectedVariables = 0;
@@ -58,6 +62,19 @@ VariableInfo::variable2Index(VariableTerm* variable)
   variables.append(variable);
   ++nrProtectedVariables;
   return nrRealVariables;
+}
+
+int
+VariableInfo::variable2Index(VariableDagNode* variable) const
+{
+  Assert(variable != 0, "null dag");
+  int nrRealVariables = variables.length();
+  for (int i = 0; i < nrRealVariables; i++)
+    {
+      if (variables[i]->equal(variable))
+	return i;
+    }
+  return NONE;
 }
 
 int
@@ -146,4 +163,16 @@ VariableInfo::computeIndexRemapping()
   DebugAdvisory("nrProtectedVariables = " << nrProtectedVariables <<
 		"\tnrColors = " << nrColors);
   */
+}
+
+Term*
+VariableInfo::variableNameConflict(FreshVariableGenerator& variableSource)
+{
+  FOR_EACH_CONST(i, Vector<Term*>, variables)
+    {
+      VariableTerm* v = safeCastNonNull<VariableTerm*>(*i);
+      if (variableSource.variableNameConflict(v->id()))
+	return v;
+    }
+  return 0;
 }

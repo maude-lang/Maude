@@ -1,0 +1,52 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Run nested meta-interpreters with flat meta-modules.
+***
+
+load metaInterpreter
+
+mod RUSSIAN-DOLLS is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op level:_ : Nat -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+
+  op problem : Nat -> Term .
+  eq problem(s N) =
+  '__['<>.Portal,'createInterpreter['interpreterManager.Oid,'me.Oid,'none.InterpreterOptionSet],
+    '<_:_|_>['me.Oid, 'User.Cid, 'level:_[upTerm(N)]]] .
+  eq problem(0) = '_+_['s_^2['0.Zero], 's_^2['0.Zero]] .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('RUSSIAN-DOLLS, true)) .
+
+  rl < X : User | level: N, AS > insertedModule(X, Y) =>
+     < X : User | AS > erewriteTerm(Y, X, unbounded, 1, 'RUSSIAN-DOLLS, problem(N)) .
+endm
+
+erew in RUSSIAN-DOLLS : <> 
+< me : User | level: 0 > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUSSIAN-DOLLS : <> 
+< me : User | level: 1 > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUSSIAN-DOLLS : <> 
+< me : User | level: 2 > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUSSIAN-DOLLS : <> 
+< me : User | level: 3 > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUSSIAN-DOLLS : <> 
+< me : User | level: 4 > 
+createInterpreter(interpreterManager, me, none) .

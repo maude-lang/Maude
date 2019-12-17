@@ -1,0 +1,7 @@
+set show timing off .
+set show advisories off .
+
+*** Infinite recursion
+view NatSet from TRIV to SET{NatSet} is
+  sort Elt to Set{NatSet} .
+endv

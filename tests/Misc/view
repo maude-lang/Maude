@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/view.maude -no-banner -no-advise \
+  > view.out 2>&1
+
+diff $srcdir/view.expected view.out > /dev/null 2>&1

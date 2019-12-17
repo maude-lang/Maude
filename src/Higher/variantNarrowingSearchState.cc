@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2012 SRI International, Menlo Park, CA 94025, USA.
 
@@ -58,7 +58,7 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 							 const Vector<DagNode*>& variantSubstitution,
 							 const Vector<DagNode*>& blockerDags,
 							 FreshVariableGenerator* freshVariableGenerator,
-							 bool odd,
+							 int variableFamily,
 							 const NarrowingVariableInfo& originalVariables,
 							 bool unificationMode)
 
@@ -77,8 +77,11 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
     blockerSubstitution.clear(originalVariables.getNrVariables());  // this ensures that any variables peculiar to blockerDags are cleared
   //
   //	Index all variables occuring in the variant term and the variant substitution.
-  //	These VariableDagNodes are coming from dags that are assumed to be protected by the caller and thus we assume
-  //	are safe from garbage collection.
+  //	These VariableDagNodes are coming from dags that are assumed to be protected by the
+  //	caller and thus we assume are safe from garbage collection.
+  //
+  //	Indexing the variables will convert any persistent representations into
+  //	regular representations suitable for unification and instantiation.
   //
   int firstTargetSlot = module->getMinimumSubstitutionSize();
   context->root()->indexVariables(variableInfo, firstTargetSlot);
@@ -113,7 +116,7 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 											a.argument(),
 											variableInfo,
 											freshVariableGenerator,
-											odd);
+											variableFamily);
       collectUnifiers(unificationProblem, 0, NONE);
       incompleteFlag |= unificationProblem->isIncomplete();
       delete unificationProblem;
@@ -129,7 +132,8 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 	  int positionIndex = getPositionIndex();
 	  //cout << "has position " << positionIndex << endl;
 	  //
-	  //	If the top symbol is unstable, we need to consider all the equations, rather than just the ones indexed under the top symbol.
+	  //	If the top symbol is unstable, we need to consider all the equations,
+	  //	rather than just the ones indexed under the top symbol.
 	  //
 	  Symbol* s = d->symbol();
 	  const Vector<Equation*>& equations = s->isStable() ? s->getEquations() : module->getEquations();
@@ -145,7 +149,7 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 												    d,
 												    variableInfo,
 												    freshVariableGenerator,
-												    odd);
+												    variableFamily);
 		  collectUnifiers(unificationProblem, positionIndex, eq->getIndexWithinModule());
 		  incompleteFlag |= unificationProblem->isIncomplete();
 		  delete unificationProblem;
@@ -246,6 +250,7 @@ VariantNarrowingSearchState::findNextVariant(DagNode*& newVariantTerm, Vector<Da
 		// cout << "instantiated to " << d << endl;
 		d->computeTrueSort(*context);  // also handles theory normalization
 		if (d->reducibleByVariantEquation(*context))
+		  //{cout << "blocked " << endl ; goto nextUnifier;}
 		  goto nextUnifier;
 	      }
 	    //cout << "irreducible\n";
@@ -261,6 +266,9 @@ VariantNarrowingSearchState::findNextVariant(DagNode*& newVariantTerm, Vector<Da
 	}
       {
 	Equation* eq = module->getEquations()[equationIndex];
+	//
+	//	Variant equations are compiled in such a way that all variable bindings are copied upto eager.
+	//
 	DagNode* replacement = eq->getRhsBuilder().construct(*survivor);
 	//
 	//	Any slots we touched while building at right hand instance we don't care about; they occur after the binding to
@@ -268,6 +276,9 @@ VariantNarrowingSearchState::findNextVariant(DagNode*& newVariantTerm, Vector<Da
 	//
 	int firstVariantVariable = module->getMinimumSubstitutionSize();
 	int lastVariantVariable = firstVariantVariable + variableInfo.getNrVariables() - 1;
+	//
+	//	rebuildAndInstantiateDag() will copy upto eager the unifier bindings.
+	//
 	newVariantTerm = rebuildAndInstantiateDag(replacement, *survivor, firstVariantVariable, lastVariantVariable, positionIndex);
 	//
 	//	However we still need to clear those slots because the unifier belongs to the UnifierFilter that will do GC protection on it.

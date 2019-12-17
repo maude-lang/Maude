@@ -154,3 +154,23 @@ fmod 'FOO is
   none
   none
 endfm, '_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]], mixfix rat) .
+
+red metaPrettyPrint(
+fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'X:Float ; 'Y:Float, 'X:Float, mixfix) .
+
+red metaPrettyPrint(
+fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'X:Float ; 'Y:Float, '_/_['X:Float,'Y:Float], mixfix) .

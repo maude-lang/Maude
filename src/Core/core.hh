@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -26,6 +26,8 @@
 #ifndef _core_hh_
 #define _core_hh_
 
+class MemoryBlock;
+class MemoryInfo;
 class MemoryCell;
 class NamedEntity;
 class ModuleItem;
@@ -46,6 +48,8 @@ class ExtensionMatchSubproblem;
 class EqualitySubproblem;
 class PreEquation;
 class Equation;
+class StrategyDefinition;
+class RewriteStrategy;
 class Rule;
 class Label;
 class SortConstraint;

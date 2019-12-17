@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -41,6 +41,10 @@ DirectoryManager::checkAccess(const string& directory,
 			      int mode,
 			      char const* const ext[])
 {
+  //
+  //	See if directory/fileName is accessible, and if not
+  //	try added extensions to see if the fixes the problem.
+  //
   string full(directory + '/' + fileName);
   if (access(full.c_str(), mode) == 0)
     return true;
@@ -51,8 +55,7 @@ DirectoryManager::checkAccess(const string& directory,
 	{
 	  for (char const* const* p = ext; *p; p++)
 	    {
-	      //	      if (fileName.compare(d, string::npos, *p) == 0)
-	      if (fileName.substr(d).compare(*p) == 0)  // HACK
+	      if (fileName.compare(d, string::npos, *p) == 0)
 		return false;  // already ends in one of our extensions
 	    }
 	}
@@ -108,7 +111,7 @@ DirectoryManager::realPath(const string& path, string& resolvedPath)
     }
   //  cout << "in " << path << '\n';
   resolvedPath.erase();
-  string::size_type p = 0;
+  string::size_type p = 0;  // p will index the first path component for standard processing
   switch (path[0])
     {
     case '/':  // absolute path name
@@ -223,8 +226,8 @@ DirectoryManager::pushd(const string& directory)
     {
       //
       //	If we didn't use a temporary we would have a really subtle
-      //	memory problem since both directoryStack[] returns a 
-      //	references which are might be invalidated by the append() call
+      //	memory problem since directoryStack[] returns a 
+      //	reference which might be invalidated by the append() call
       //	before it is dereferenced.
       //
       int cwd = directoryStack[oldLength - 1];
@@ -241,20 +244,38 @@ DirectoryManager::pushd(const string& directory)
 }
 
 const char*
-DirectoryManager::popd(int prevLength)
+DirectoryManager::popd(int indexOfDirectoryToPop)
 {
+  //
+  //	We pop the directory indexed by indexOfDirectoryToPop; or the directory
+  //	currently on the top of the stack, if indexOfDirectoryToPop = UNDEFINED
+  //	
   int top = directoryStack.length() - 1;
-  if (prevLength > top)  // HACK for safety
+  //
+  //	Check that indexOfDirectoryToPop isn't greater than index of the
+  //	directory currently on the top of the stack.
+  //
+  if (indexOfDirectoryToPop > top)
     return 0;
-  if (prevLength == UNDEFINED)
-    prevLength = top;
-  if (prevLength > 0)
+  //
+  //	The usual case is indexOfDirectoryToPop == UNDEFINED which is take to mean
+  //	indexOfDirectoryToPop = "index of current top directory".
+  //
+  if (indexOfDirectoryToPop == UNDEFINED)
+    indexOfDirectoryToPop = top;
+  //
+  //	If we have something on the stack we can popd to.
+  //
+  if (indexOfDirectoryToPop > 0)
     {
-      int code = directoryStack[prevLength - 1];
+      int code = directoryStack[indexOfDirectoryToPop - 1];  // previous directory
       const char* dirName = directoryNames.name(code);
-      if (code != directoryStack[top])
-	chdir(dirName);
-      directoryStack.contractTo(prevLength);
+      if (code != directoryStack[top])  // only change directory if actually different
+	{
+	  if (chdir(dirName) != 0)  // failed
+	    return 0;
+	}
+      directoryStack.contractTo(indexOfDirectoryToPop);
       return dirName;
     }
   return 0;
@@ -264,4 +285,39 @@ const char*
 DirectoryManager::getCwd()
 {
   return directoryNames.name(directoryStack[directoryStack.length() - 1]);
+}
+
+void
+DirectoryManager::visitFile(const string& fileName)
+{
+  //
+  //	Record a visit to a file, with the file's modification time.
+  //
+  struct stat buf;
+  if (stat(fileName.c_str(), &buf) == 0)
+    {
+      pair<int, ino_t> id(directoryStack[directoryStack.length() - 1], buf.st_ino);
+      visitedMap[id] = buf.st_mtime;
+    }
+}
+
+bool
+DirectoryManager::alreadySeen(const string& directory, const string& fileName)
+{
+  //
+  //	Check if we previous visited a file, and the file is unchanged.
+  //
+  string full(directory + '/' + fileName);
+  struct stat buf;
+  if (stat(full.c_str(), &buf) == 0)
+    {
+      pair<int, ino_t> id(directoryNames.encode(directory.c_str()), buf.st_ino);
+      VisitedMap::const_iterator i = visitedMap.find(id);
+      if (i != visitedMap.end() && i->second == buf.st_mtime)
+	{
+	  DebugAdvisory("already seen " << full);
+	  return true;
+	}
+    }
+  return false;
 }

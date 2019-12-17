@@ -1,4 +1,4 @@
-Maude> fmod FOO is
+fmod FOO is
   sorts Foo .
   ops a b : -> Foo [metadata "bla bla"] .
   eq a = b [metadata "hmm"] .
@@ -136,4 +136,4 @@ result FModule: fmod 'BAR is
   none
   none
 endfm
-Maude> Bye.
+Bye.

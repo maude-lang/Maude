@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 2004 SRI International, Menlo Park, CA 94025, USA.
 
@@ -82,6 +82,7 @@ CounterSymbol::resetRules()
   NumberOpSymbol::resetRules();
 }
 
+/*
 void
 CounterSymbol::saveHiddenState()
 {
@@ -96,6 +97,7 @@ CounterSymbol::restoreHiddenState()
   currentValueStack.pop();
   NumberOpSymbol::restoreHiddenState();
 }
+*/
 
 bool
 CounterSymbol::eqRewrite(DagNode* subject, RewritingContext& context)

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -41,8 +41,13 @@
 
 //      core class definitions
 #include "argumentIterator.hh"
+#include "dagArgumentIterator.hh"
 #include "sortConstraint.hh"
 
+//
+//	This can't be local to a function because we're not allowed to
+//	instantiate template classes on local types.
+//
 struct AssociativeSymbol::Inv
 {
   int sortIndex;
@@ -68,6 +73,7 @@ AssociativeSymbol::finalizeSortInfo()
   //	have been determined.
   //
   associativeSortCheck();
+  associativeCtorCheck();
   associativeSortBoundsAnalysis();
   associativeSortStructureAnalysis();
 }
@@ -219,6 +225,152 @@ AssociativeSymbol::associativeSortCheck()
 	       QUOTE(component->sort(bad2)) << ", " << 
 	       QUOTE(component->sort(bad3)) << ").");
 }
+
+#if 0
+
+void
+AssociativeSymbol::associativeCtorCheck()
+{
+  if (getCtorStatus() != SortTable::IS_COMPLEX)
+    return;  // trivial case - either all constructors or all non-constructors
+  //
+  //	In order for all members of a congruence class to have the same ctor it is necessary and
+  //	sufficient (as long as s_f is associative) that:
+  //
+  //	(for all sorts x, y, z).[c_f(s_f(x, y), z) /\ c_f(x, y)) <=> c_f(x, s_f(y, z)) /\ c_f(y, z))]
+  //
+  //	where s_f is the sorting function and c_f is the constructor function.
+  //
+  const ConnectedComponent* component = rangeComponent();
+  int nrSorts = component->nrSorts();
+  for (int x = 0; x < nrSorts; ++x)
+    {
+      int sx = traverse(0, x);
+      int cx = ctorTraverse(0, x);
+      for (int y = 0; y < nrSorts; ++y)
+	{
+	  int sy = traverse(0, y);
+	  int cy = ctorTraverse(0, y);
+	  int sxy = traverse(sx, y);
+	  int cxy = ctorTraverse(cx, y);
+	  int csxy = ctorTraverse(0, sxy);
+
+	  for (int z = 0; z < nrSorts; ++z)
+	    {
+	      int syz = traverse(sy, z);
+	      int cyz = ctorTraverse(cy, z);
+	      int csxy_z = ctorTraverse(csxy, z);
+	      int cx_syz = ctorTraverse(cx, syz);
+
+	      bool ok = (csxy_z && cxy) == (cx_syz && cyz);
+	      WarningCheck(ok,
+			   "constructor declaration associative operator " << QUOTE(this) <<
+			   " don't agree on the triple (" <<
+			   QUOTE(component->sort(x)) << ", " << 
+			   QUOTE(component->sort(y)) << ", " << 
+			   QUOTE(component->sort(z)) << ").");
+	    }
+	}
+    }
+}
+
+#else
+
+void
+AssociativeSymbol::associativeCtorCheck()
+{
+  if (getCtorStatus() != SortTable::IS_COMPLEX)
+    return;  // trivial case - either all constructors or all non-constructors
+  //
+  //	In order for all members of a congruence class to have the same ctor it is necessary and
+  //	sufficient (as long as s_f is associative) that:
+  //
+  //	(for all sorts x, y, z).[c_f(s_f(x, y), z) /\ c_f(x, y)) <=> c_f(x, s_f(y, z)) /\ c_f(y, z))]
+  //
+  //	where s_f is the sorting function and c_f is the constructor function.
+  //
+  const ConnectedComponent* component = rangeComponent();
+  int nrSorts = component->nrSorts();
+
+
+  int nrBadTriples = 0;
+  int bad1 = 0;
+  int bad2 = 0;
+  int bad3 = 0;
+  //
+  //	We hope that the number of first steps in the sort diagram times the number
+  //	of first steps in the ctor diagram is less than the number of sorts, so we
+  //	win by inverting the product of the first steps in both diagrams.
+  //
+  {
+    typedef pair<int, int> IntPair;  // (sortStep, ctorStep)
+    typedef map<IntPair, Inv> InvMap;
+    InvMap invMap;
+    //
+    //	First invert the first step of the sort and ctor diagrams.
+    //
+    for (int x = 0; x < nrSorts; x++)
+      {
+	int sortStep = traverse(0, x);
+	int ctorStep = ctorTraverse(0, x);
+
+	pair<InvMap::iterator, bool> p = invMap.insert(InvMap::value_type(IntPair(sortStep, ctorStep), Inv()));
+	if  (p.second)
+	  {
+	    p.first->second.sortIndex = x;
+	    p.first->second.count = 1;
+	  }
+	else
+	  ++(p.first->second.count);
+      }
+
+    const InvMap::const_iterator e = invMap.end();
+    for (InvMap::const_iterator i = invMap.begin(); i != e; ++i)
+      {
+	int sx = i->first.first;
+	int cx = i->first.second;
+	for (int y = 0; y < nrSorts; ++y)
+	  {
+	    int sy = traverse(0, y);
+	    int cy = ctorTraverse(0, y);
+	    int sxy = traverse(sx, y);
+	    int cxy = ctorTraverse(cx, y);
+	    int csxy = ctorTraverse(0, sxy);
+
+	    for (int z = 0; z < nrSorts; ++z)
+	      {
+		int syz = traverse(sy, z);
+		int cyz = ctorTraverse(cy, z);
+		int csxy_z = ctorTraverse(csxy, z);
+		int cx_syz = ctorTraverse(cx, syz);
+
+		bool ok = (csxy_z && cxy) == (cx_syz && cyz);
+
+		if (!ok)
+		  {
+		    if (nrBadTriples == 0)
+		      {
+			bad1 = i->second.sortIndex;
+			bad2 = y;
+			bad3 = z;
+		      }		
+		    nrBadTriples += i->second.count;
+		  }
+	      }
+	  }
+      }
+  }
+  WarningCheck(nrBadTriples == 0,
+	       "ctor declarations for associative operator " << QUOTE(this) <<
+	       " are conflict on " << nrBadTriples <<
+	       " out of " << nrSorts * nrSorts *  nrSorts << 
+	       " sort triples. First such triple is (" <<
+	       QUOTE(component->sort(bad1)) << ", " << 
+	       QUOTE(component->sort(bad2)) << ", " << 
+	       QUOTE(component->sort(bad3)) << ").");
+}
+
+#endif
 
 void
 AssociativeSymbol::insertGreaterOrEqualSorts(const Sort* sort, NatSet& set)
@@ -390,10 +542,38 @@ AssociativeSymbol::fillInSortInfo(Term* subject)
   subject->setSortInfo(component, si);
 }
 
+
 bool
 AssociativeSymbol::isConstructor(DagNode* subject)
 {
-  return getCtorStatus() == SortTable::IS_CTOR;  // HACK
+  if (specialSortHandling())
+    return false;  // HACK
+  
+  switch (getCtorStatus())
+    {
+    case SortTable::IS_CTOR:
+      return true;
+    case SortTable::IS_COMPLEX:
+      {
+	DagArgumentIterator a(*subject);
+	int sortIndex = a.argument()->getSortIndex();
+	Assert(sortIndex != Sort::SORT_UNKNOWN, "Unknown sort");
+
+	for (a.next(); a.valid(); a.next())
+	  {
+	    int t = a.argument()->getSortIndex();
+	    Assert(t != Sort::SORT_UNKNOWN, "Unknown sort");
+	    int ctorStatus = ctorTraverse(ctorTraverse(0, sortIndex), t);
+	    if (!ctorStatus)
+	      return false;  // one non-ctor subterm make us non-ctor
+	    sortIndex = traverse(traverse(0, sortIndex), t);
+	  }
+	return true;
+      }
+    default:
+      break;
+    }
+  return false;
 }
 
 void

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -28,6 +28,7 @@
 #include "macros.hh"
 #include "vector.hh"
 #include "pointerMap.hh"
+#include "meta.hh"
  
 //      forward declarations
 #include "interface.hh"
@@ -35,6 +36,7 @@
 #include "variable.hh"
 #include "higher.hh"
 #include "freeTheory.hh"
+#include "AU_Theory.hh"
 #include "NA_Theory.hh"
 #include "builtIn.hh"
 #include "strategyLanguage.hh"
@@ -68,6 +70,8 @@
 #include "narrowingSequenceSearch.hh"
 #include "unificationProblem.hh"
 #include "variantSearch.hh"
+#include "narrowingSearchState2.hh"
+#include "narrowingSequenceSearch3.hh"
 
 //      free theory class definitions
 #include "freeNet.hh"
@@ -93,8 +97,13 @@
 #include "syntacticPreModule.hh"
 #include "interpreter.hh"
 #include "visibleModule.hh"
-#include "global.hh"  // HACK: shouldn't access global variables
 #include "freshVariableSource.hh"
+#include "mixfixParser.hh"
+
+//	strategy language definitions
+#include "strategyExpression.hh"
+#include "depthFirstStrategicSearch.hh"
+#include "fairStrategicSearch.hh"
 
 //	our stuff
 #include "descentFunctions.cc"
@@ -102,9 +111,16 @@
 #include "metaApply.cc"
 #include "metaMatch.cc"
 #include "metaSearch.cc"
+#include "metaSrewrite.cc"
 #include "metaUnify.cc"
 #include "metaVariant.cc"
+#include "metaVariantUnify.cc"
 #include "metaNarrow.cc"
+#include "metaNewNarrow.cc"
+#include "metaNewNarrow2.cc"
+#include "legacyMetaUnify.cc"
+#include "legacyMetaVariant.cc"
+#include "legacyMetaVariantUnify.cc"
 
 MetaLevelOpSymbol::MetaLevelOpSymbol(int id, int nrArgs, const Vector<int>& strategy)
   : FreeSymbol(id, nrArgs, strategy)
@@ -117,6 +133,11 @@ MetaLevelOpSymbol::~MetaLevelOpSymbol()
 {
   if (shareWith == 0)
     delete metaLevel;
+}
+
+MetaLevelOpSymbol::AliasMapParserPair::~AliasMapParserPair()
+{
+  delete parser;
 }
 
 bool
@@ -243,16 +264,6 @@ MetaLevelOpSymbol::reset()
 {
   if (shareWith == 0 && metaLevel != 0)
     metaLevel->reset();
-}
-
-DagNode*
-MetaLevelOpSymbol::term2Dag(Term* t)
-{
-  NatSet eagerVariables;
-  Vector<int> problemVariables;
-  t->markEager(0, eagerVariables, problemVariables);
-  DagNode* r = t->term2Dag();
-  return r;
 }
 
 bool

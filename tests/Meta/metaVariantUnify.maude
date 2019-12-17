@@ -28,155 +28,161 @@ endfm
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     empty,
-    0, 0) .
+    '#, 0) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     empty,
-    10, 0) .
+    '%, 0) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     empty,
-    0, 1) .
+    '#, 1) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     empty,
-    0, 2) .
+    '#, 2) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     empty,
-    0, 3) .
+    '#, 3) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     empty,
-    0, 4) .
+    '#, 4) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     empty,
-    0, 5) .
+    '#, 5) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     empty,
-    0, 6) .
+    '#, 6) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     empty,
-    0, 7) .
+    '#, 7) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     empty,
-    0, 8) .
+    '#, 8) .
 
 *** disjoint
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     empty,
-    0, 0) .
+    '#, 0) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     empty,
-    10, 0) .
+    '%, 0) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     empty,
-    0, 1) .
+    '#, 1) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     empty,
-    0, 2) .
+    '#, 2) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     empty,
-    0, 3) .
+    '#, 3) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     empty,
-    0, 4) .
+    '#, 4) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     empty,
-    0, 5) .
+    '#, 5) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     empty,
-    0, 6) .
+    '#, 6) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     empty,
-    0, 7) .
+    '#, 7) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     empty,
-    0, 8) .
+    '#, 8) .
 
 *** regular with irreducibility constraint
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     upTerm(X:XOR + cst1),
-    0, 0) .
+    '#, 0) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     upTerm(X:XOR + cst1),
-    10, 0) .
+    '%, 0) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     upTerm(X:XOR + cst1),
-    0, 1) .
+    '#, 1) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     upTerm(X:XOR + cst1),
-    0, 2) .
+    '#, 2) .
 
 red metaVariantUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(Y:XOR + cst2),
     upTerm(X:XOR + cst1),
-    0, 3) .
+    '#, 3) .
 
 *** disjoint with irreducibility constraint
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     upTerm(X:XOR + cst1),
-    0, 0) .
+    '#, 0) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     upTerm(X:XOR + cst1),
-    10, 0) .
-
-red metaVariantUDisjointnify(['XOR],
-    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
-    upTerm(X:XOR + cst1),
-    0, 1) .
+    '%, 0) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     upTerm(X:XOR + cst1),
-    0, 2) .
+    '#, 1) .
 
 red metaVariantDisjointUnify(['XOR],
     upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
     upTerm(X:XOR + cst1),
-    0, 3) .
+    '#, 2) .
+
+red metaVariantDisjointUnify(['XOR],
+    upTerm(X:XOR + cst1) =? upTerm(X:XOR + cst2),
+    upTerm(X:XOR + cst1),
+    '#, 3) .
+
+*** illegal variable name
+red metaVariantUnify(['XOR],
+    upTerm(%1:XOR + cst1) =? upTerm(Y:XOR + cst2),
+    empty,
+    '#, 0) .

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metaIntPrint.maude -no-banner -no-advise \
+  > metaIntPrint.out 2>&1
+
+diff $srcdir/metaIntPrint.expected metaIntPrint.out > /dev/null 2>&1

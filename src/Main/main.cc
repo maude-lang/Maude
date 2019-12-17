@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
@@ -134,6 +134,10 @@ main(int argc, char* argv[])
 	    forceInteractive = true;
 	  else if (strcmp(arg, "-print-to-stderr") == 0)
 	    UserLevelRewritingContext::setPrintAttributeStream(&cerr);
+	  else if (strcmp(arg, "-show-pid") == 0)
+	    cerr << getpid() << endl;
+	  else if (strcmp(arg, "-erewrite-loop-mode") == 0)
+	    interpreter.setFlag(Interpreter::EREWRITE_LOOP_MODE, true);
 	  else
 	    {
 	      IssueWarning(LineNumber(FileTable::COMMAND_LINE) <<
@@ -162,6 +166,7 @@ main(int argc, char* argv[])
     }
   Tty::setEscapeSequencesAllowed(ansiColor);
 
+  bool inputIsTerminal = (isatty(STDIN_FILENO) == 1);
   if (useTecla == UNDECIDED)
     {
       //
@@ -173,10 +178,9 @@ main(int argc, char* argv[])
       const char* term = getenv("TERM");
       if ((term != 0 && (strcmp("emacs", term) == 0 ||
 			 strcmp("dumb", term) == 0)) ||
-	  isatty(STDIN_FILENO) == 0)
+	  !inputIsTerminal)
 	useTecla = false;
     }
-
   //
   //	Make sure we flush cout before we output any error messages so things hit the tty in a consistent order.
   //
@@ -188,6 +192,13 @@ main(int argc, char* argv[])
   UserLevelRewritingContext::setHandlers(handleCtrlC);
   if (useTecla)
     ioManager.setCommandLineEditing();
+  if (inputIsTerminal || forceInteractive)
+    {
+      //
+      //	Prompt for input from stdio, even if useTecla == false, or Tecla is not linked
+      //
+      ioManager.setUsePromptsAnyway();
+    }
   directoryManager.initialize();
   string executable(argv[0]);
   findExecutableDirectory(executableDirectory, executable);
@@ -248,6 +259,8 @@ printHelp(const char* name)
     "  -print-to-stderr\tPrint attribute should use stderr rather than stdout\n" <<
     "  -random-seed=<int>\tSet seed for random number generator\n" <<
     "  -xml-log=<filename>\tSet file in which to produce an xml log\n" <<
+    "  -get-pid\t\tPrint process id to stderr before printing banner\n" <<
+    "  -erewrite-loop-mode\tUse external object rewriting for loop mode\n" <<
     "\n" <<
     "Send bug reports to: " << PACKAGE_BUGREPORT << endl;
   exit(0);

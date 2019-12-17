@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   including 'QID .
   sorts 'Foo ; 'Token .
@@ -10,7 +10,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
   none
 endfm, '`[ 'unseen '`], anyType) .
-rewrites: 1
+rewrites: 2
 result ResultPair: {'`[_`]['token[''unseen.Qid]],'Foo}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
@@ -26,7 +26,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
   none
 endfm, '`[ '`], anyType) .
-rewrites: 1
+rewrites: 2
 result ResultPair: {'`[_`]['token['nil.QidList]],'`[Foo`]}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
@@ -43,7 +43,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
   none
 endfm, '`[ 'a 'b 'c '`], anyType) .
-rewrites: 1
+rewrites: 2
 result ResultPair: {'`[_`]['tokens['__[''a.Qid,''b.Qid,''c.Qid]]],'`[Foo`]}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
@@ -213,4 +213,4 @@ result [ResultPair?]: metaReduce(fmod 'FOO is
   none
   none
 endfm, '=['a.Foo,'b.Foo])
-Maude> Bye.
+Bye.

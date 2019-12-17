@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
 
@@ -45,11 +45,13 @@
 //	variable class definitions
 #include "variableDagNode.hh"
 
-UnificationContext::UnificationContext(FreshVariableGenerator* freshVariableGenerator, int nrOriginalVariables, bool odd)
+UnificationContext::UnificationContext(FreshVariableGenerator* freshVariableGenerator,
+				       int nrOriginalVariables,
+				       int variableFamily)
   : Substitution(nrOriginalVariables),
     freshVariableGenerator(freshVariableGenerator),
     nrOriginalVariables(nrOriginalVariables),
-    odd(odd)
+    variableFamily(variableFamily)
 {
 }
 
@@ -85,10 +87,9 @@ UnificationContext::makeFreshVariable(const ConnectedComponent* component)
   int freshVariableNr = index - nrOriginalVariables;
   freshVariableSorts.resize(freshVariableNr + 1);
   freshVariableSorts[freshVariableNr] = s;
-  int name = freshVariableGenerator->getFreshVariableName(freshVariableNr, odd);
+  int name = freshVariableGenerator->getFreshVariableName(freshVariableNr, variableFamily);
   VariableDagNode* v = new VariableDagNode(vs, name, index);
-  DebugAdvisory("created " << safeCast(DagNode*, v) << " with index = " << index);
-  //cout << "created " << safeCast(DagNode*, v) << " with index = " << index << endl;
+  DebugAdvisory("created " << safeCastNonNull<DagNode*>(v) << " with index = " << index);
   return v;
 }
 
@@ -119,7 +120,8 @@ UnificationContext::unificationBind(VariableDagNode* variable, DagNode* value)
   Assert(variable != value, "variable " << value << " being bound to itself");
 
   int index = variable->getIndex();
-  DebugAdvisory("unificationBind() index = " << index << '\t' << safeCast(DagNode*, variable) << " <- " << value);
+  DebugAdvisory("unificationBind() index = " << index << '\t' <<
+		safeCastNonNull<DagNode*>(variable) << " <- " << value);
   bind(index, value);
 
   int nrVariableDagNodes = variableDagNodes.size();
@@ -133,7 +135,8 @@ UnificationContext::unificationBind(VariableDagNode* variable, DagNode* value)
     {
       Assert(variableDagNodes[index] == 0 || variableDagNodes[index]->equal(variable),
 	     "inconsistancy for index " << index << ' ' <<
-	     safeCast(DagNode*, variableDagNodes[index]) << " vs " << safeCast(DagNode*, variable));
+	     safeCastNonNull<DagNode*>(variableDagNodes[index]) << " vs " <<
+	     safeCastNonNull<DagNode*>(variable));
     }
   variableDagNodes[index] = variable;
 }

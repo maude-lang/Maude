@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -33,7 +33,6 @@ public:
   typedef void ErrorHandler(int errorNr);
 
   BddUser();
-  ~BddUser();
 
   static bdd ithvar(int i);
   static bdd nithvar(int i);
@@ -48,14 +47,13 @@ private:
   {
     DEFAULT_NODE_SIZE = 1000,
     DEFAULT_CACHE_SIZE = 100,
-    DEFAULT_NR_VARIABLES = 10
+    DEFAULT_NR_VARIABLES = 100
   };
 
   static void gc_handler(int pre, bddGbcStat* stat);
   static void err_handler(int errcode);
 
-  static int nrUsers;
-
+  static bool buddyInitialized;
   static ErrorHandler* errorHandler;
   //
   //	These structures are expensive to create and destroy so we keep

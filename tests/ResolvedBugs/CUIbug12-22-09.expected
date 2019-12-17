@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 rewrite in CUI-BUG : f(a, g(b)) .
 rewrites: 2
 result Foo: f(a, g(d))
@@ -6,4 +6,4 @@ result Foo: f(a, g(d))
 rewrite in CUI-BUG2 : f(a, g(b)) .
 rewrites: 2
 result Foo: f(a, d)
-Maude> Bye.
+Bye.

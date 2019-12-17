@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : metaRewrite(mod 'FOO is
   nil
   sorts 'Foo .
@@ -122,4 +122,4 @@ result [ResultPair?]: metaRewrite(mod 'FOO is
   rl 'a.Foo => 'b.Foo [none] .
   rl 'b.Foo => 'c.Foo [none] .
 endm, 'a.Foo, 0)
-Maude> Bye.
+Bye.

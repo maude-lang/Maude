@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 2014 SRI International, Menlo Park, CA 94025, USA.
 
@@ -54,6 +54,7 @@ public:
   DagNode* getNewConstraint() const;
   const mpz_class& getMaxVariableNumber() const;  // max variable number in new pair
   RewritingContext* getContext() const;
+  Rule* getRule() const;
 
 private:
   void markReachableNodes();
@@ -110,6 +111,12 @@ inline const mpz_class&
 SMT_RewriteSearchState::getMaxVariableNumber() const
 {
   return newVariableNumber;
+}
+
+inline Rule*
+SMT_RewriteSearchState::getRule() const
+{
+  return currentRule;
 }
 
 #endif

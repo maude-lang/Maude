@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -85,6 +85,17 @@
     { \
       if (name != 0) \
 	return name == symbol; \
+      name = dynamic_cast<type>(symbol); \
+      return name != 0; \
+    }
+
+#define BIND_SYMBOL2(purpose, symbol, name, type, nrArgs)	\
+  if (strcmp(purpose, #name) == 0) \
+    { \
+      if (name != 0) \
+	return name == symbol; \
+      if (symbol->arity() != nrArgs) \
+	return false; \
       name = dynamic_cast<type>(symbol); \
       return name != 0; \
     }

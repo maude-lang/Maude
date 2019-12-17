@@ -1,4 +1,4 @@
-Maude> mod ATTRIBUTES is
+mod ATTRIBUTES is
   sorts Bool Foo Bar .
   subsort Foo < Bar .
   op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
@@ -81,4 +81,4 @@ rewrite in ATTRIBUTES : h(h(b)) .
 step X = b
 rewrites: 1
 result Foo: f(c, b)
-Maude> Bye.
+Bye.

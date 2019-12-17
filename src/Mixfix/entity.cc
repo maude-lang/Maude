@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -106,15 +106,15 @@ Entity::informUsers()
   User* last = 0;
   for (;;)
     {
-      UserSet::iterator i = users.begin();
+      UserSet::iterator i = users.begin();  // first surviving user
       if (i == e)
-	break;
+	break;  // no more users
       User* user = *i;
       if (user == last)
-	users.erase(i);
+	users.erase(i);  // remove user from set - we normally expect a user to remove itself
       else
 	{
-	  user->regretToInform(this);  // invalidates i
+	  user->regretToInform(this);  // invalidates i since user may remove itself from set
 	  last = user;
 	}
     }

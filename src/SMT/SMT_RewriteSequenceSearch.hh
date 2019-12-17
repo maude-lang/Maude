@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 2014 SRI International, Menlo Park, CA 94025, USA.
 
@@ -40,6 +40,13 @@ class SMT_RewriteSequenceSearch :
   private SimpleRootContainer
 {
 public:
+  //
+  //	Takes responsibility for deleting:
+  //	  inital
+  //	  target
+  //	  condition fragments in condition
+  //	  engine
+  //
   SMT_RewriteSequenceSearch(RewritingContext* initial,
 			    SearchType searchType,
 			    Term* target,
@@ -59,7 +66,7 @@ public:
   const mpz_class& getMaxVariableNumber() const;  // largest fresh variable appearing in substitution or constraint
 
   const NatSet& getSMT_VarIndices() const;
-  RewritingContext* getRootContext() const;
+  RewritingContext* getContext() const;
 
   int findNextState();  // returns NONE or state number
 
@@ -94,7 +101,6 @@ private:
   //
   //	Data passed at initialization.
   //
-  const SearchType searchType;
   const SMT_Info& smtInfo;  // information about SMT sort; might get folded into wrapper
   SMT_EngineWrapper* const engine;  // wrapper to call the SMT engine
   const int maxDepth;
@@ -141,7 +147,7 @@ SMT_RewriteSequenceSearch::getSMT_VarIndices() const
 }
 
 inline RewritingContext*
-SMT_RewriteSequenceSearch::getRootContext() const
+SMT_RewriteSequenceSearch::getContext() const
 {
   return states[0]->context;
 }
@@ -170,5 +176,10 @@ SMT_RewriteSequenceSearch::getStateParent(int stateNr) const
   return states[stateNr]->parent;
 }
 
+inline Rule*
+SMT_RewriteSequenceSearch::getStateRule(int stateNr) const
+{
+  return states[stateNr]->rule;
+}
 
 #endif

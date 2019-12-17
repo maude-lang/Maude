@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -31,7 +31,8 @@
 #include "vector.hh"
 #include "pointerSet.hh"
 #include "bddUser.hh"
- 
+#include "timeStuff.hh"
+
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
@@ -43,6 +44,7 @@
 #include "symbol.hh"
 #include "dagNode.hh"
 #include "higher.hh"
+#include "rawDagArgumentIterator.hh"
  
 //      core class definitions
 #include "redexPosition.hh"
@@ -53,6 +55,7 @@
 #include "equation.hh"
 #include "rule.hh"
 #include "narrowingVariableInfo.hh"
+#include "strategyDefinition.hh"
 
 //      variable class definitions
 #include "variableTerm.hh"
@@ -66,6 +69,7 @@
 
 #include "interpreter.hh"  // HACK
 #include "global.hh"  // HACK shouldn't be accessing global variables
+
 
 //	our stuff
 #include "interact.cc"
@@ -203,6 +207,17 @@ UserLevelRewritingContext::tracePostEqRewrite(DagNode* replacement)
 void
 UserLevelRewritingContext::tracePreRuleRewrite(DagNode* redex, const Rule* rule)
 {
+  if (redex == 0)
+    {
+      //
+      //	Dummy rewrite; need to ignore the following
+      //	tracePostRuleRewrite() call.
+      //	This capability is used by ConfigSymbol.
+      //
+      tracePostFlag = false;
+      return;
+    }
+
   if (interpreter.getFlag(Interpreter::PROFILE))
     {
       safeCast(ProfileModule*, root()->symbol()->getModule())->
@@ -365,13 +380,7 @@ UserLevelRewritingContext::traceVariantNarrowingStep(Equation* equation,
   if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
     {
       cout << "\nOld variant: " << root() << '\n';
-      int nrBindings = oldVariantSubstitution.size();
-      for (int i = 0; i < nrBindings; ++i)
-	{
-	  DagNode* v = originalVariables.index2Variable(i);
-	  DagNode* d = oldVariantSubstitution[i];
-	  cout << v << " --> " << d << '\n';
-	}
+      printSubstitution(oldVariantSubstitution, originalVariables);
       cout << '\n';
     }
   if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
@@ -379,14 +388,62 @@ UserLevelRewritingContext::traceVariantNarrowingStep(Equation* equation,
   if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
     {
       cout << "\nNew variant: " << newState << '\n';
-      int nrBindings = newVariantSubstitution.size();
-      for (int i = 0; i < nrBindings; ++i)
-	{
-	  DagNode* v = originalVariables.index2Variable(i);
-	  DagNode* d = newVariantSubstitution[i];
-	  cout << v << " --> " << d << '\n';
-	}
+      printSubstitution(newVariantSubstitution, originalVariables);
       cout << '\n';
+    }
+}
+
+void
+UserLevelRewritingContext::traceStrategyCall(StrategyDefinition* sdef,
+					     DagNode* callDag,
+					     DagNode* subject,
+					     const Substitution* substitution)
+{
+  if (interpreter.getFlag(Interpreter::PROFILE))
+    {
+      safeCast(ProfileModule*, root()->symbol()->getModule())->profileSdRewrite(subject, sdef);
+    }
+  if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE))
+    checkForPrintAttribute(MetadataStore::STRAT_DEF, sdef);
+
+  if (handleDebug(callDag, sdef) ||
+      !localTraceFlag ||
+      !(interpreter.getFlag(Interpreter::TRACE_SD)) ||
+      dontTrace(callDag, sdef))
+    return;
+
+  if (interpreter.getFlag(Interpreter::TRACE_BODY))
+    {
+      cout << header << "strategy call\n";
+      cout << sdef << '\n';
+      // callDags uses the auxiliary symbol we should print it readable
+      if (callDag->symbol()->arity() > 0)
+	{
+	  cout << "call term --> " << Token::name(sdef->getStrategy()->id()) << "(";
+	  RawDagArgumentIterator* arg = callDag->arguments();
+	  while (arg->valid())
+	    {
+	      cout << arg->argument();
+	      arg->next();
+
+	      if (arg->valid()) cout << ", ";
+	    }
+	  cout << ")" << endl;
+	  delete arg;
+	}
+      if (interpreter.getFlag(Interpreter::TRACE_WHOLE))
+	cout << "subject --> " << subject << endl;
+      if (interpreter.getFlag(Interpreter::TRACE_SUBSTITUTION))
+	printSubstitution(*substitution, *sdef);
+    }
+  else
+    {
+      const Label& label = sdef->getLabel();
+      int stratId = sdef->getStrategy()->id();
+      if (label.id() == NONE)
+	cout << Token::name(stratId) << " (unlabeled definition)\n";
+      else
+	cout << &label << '\n';
     }
 }
 
@@ -434,6 +491,32 @@ UserLevelRewritingContext::tracePreScApplication(DagNode* subject, const SortCon
   //
   if (interpreter.getFlag(Interpreter::TRACE_REWRITE))
     cout << subject->getSort() << ": " << subject << " becomes " << sc->getSort() << '\n';  // BUG
+}
+
+void
+UserLevelRewritingContext::printSubstitution(const Vector<DagNode*>& substitution,
+					     const NarrowingVariableInfo& variableInfo)
+{
+  int nrVariables = substitution.size();
+  for (int i = 0; i < nrVariables; ++i)
+    {
+      DagNode* v = variableInfo.index2Variable(i);
+      DagNode* b = substitution[i];
+      cout << v << " --> " << b << '\n';
+    }
+}
+
+void
+UserLevelRewritingContext::printSubstitution(const Substitution& substitution,
+					     const NarrowingVariableInfo& variableInfo)
+{
+  int nrVariables = substitution.nrFragileBindings();
+  for (int i = 0; i < nrVariables; ++i)
+    {
+      DagNode* v = variableInfo.index2Variable(i);
+      DagNode* b = substitution.value(i);
+      cout << v << " --> " << b << '\n';
+    }
 }
 
 void

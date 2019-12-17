@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -45,6 +45,8 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
 
   if (TrivialStrategy* t = dynamic_cast<TrivialStrategy*>(strategy))
     s << (t->getResult() ? "idle" : "fail");
+  else if (OneStrategy* o = dynamic_cast<OneStrategy*>(strategy))
+    s << "one(" << o->getStrategy() << ")";
   else if (ApplicationStrategy* a = dynamic_cast<ApplicationStrategy*>(strategy))
     {
       bool top = a->getTop();
@@ -195,6 +197,9 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
     }
   else if (TestStrategy* t = dynamic_cast<TestStrategy*>(strategy))
     {
+      needParen = requiredPrec < STRAT_TEST_PREC;
+      if (needParen)
+	s << '(';
       int depth = t->getDepth();
       if (depth >= 0)
 	s << (depth == 0 ? 'x' : 'a');
@@ -206,7 +211,36 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
 	  printCondition(s, condition);
 	}
     }
-
+  else if (SubtermStrategy* t = dynamic_cast<SubtermStrategy*>(strategy))
+    {
+      needParen = requiredPrec < STRAT_REW_PREC;
+      if (needParen)
+	s << '(';
+      int depth = t->getDepth();
+      if (depth >= 0)
+	s << (depth == 0 ? 'x' : 'a');
+      s << "matchrew " << t->getPatternTerm();
+      const Vector<ConditionFragment*>& condition = t->getCondition();
+      if (!condition.empty())
+	{
+	  s << " such that ";
+	  printCondition(s, condition);
+	}
+      const Vector<Term*>& subterms = t->getSubterms();
+      const Vector<StrategyExpression*>& strategies = t->getStrategies();
+      int nrSubterms = subterms.size();
+      for (int i = 0; i < nrSubterms; ++i)
+	{
+	  s << ((i == 0) ? " by " : ", ");
+	  s << subterms[i] << " using ";
+	  (void) prettyPrint(s, strategies[i], STRAT_USING_PREC - 1);
+	}
+    }
+  else if (CallStrategy* t = dynamic_cast<CallStrategy*>(strategy))
+    {
+      MixfixModule* m = safeCast(MixfixModule*, t->getStrategy()->getModule());
+      m->printStrategyTerm(s, t->getStrategy(), t->getTerm());
+    }
   if (needParen)
     {
       s << ')';

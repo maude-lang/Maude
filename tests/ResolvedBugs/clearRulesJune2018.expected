@@ -1,0 +1,5 @@
+==========================================
+frewrite [1] in TEST : m(1, 2) < 1 : User | none > .
+rewrites: 1
+result Configuration: m(2, 1) < 1 : User | none >
+Bye.

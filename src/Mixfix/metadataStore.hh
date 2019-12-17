@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -35,7 +35,9 @@ public:
   {
     MEMB_AX = 0x10000000,
     EQUATION = 0x20000000,
-    RULE = 0x30000000
+    RULE = 0x30000000,
+    STRAT_DECL = 0x40000000,
+    STRAT_DEF = 0x50000000
   };
 
   void insertMetadata(ItemType itemType, const ModuleItem* item, int metadata);

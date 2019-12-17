@@ -1,3 +1,493 @@
+2019-12-03  Steven Eker  <eker@mu>
+
+	* rewriteTask.cc: use safeCastNonNull<>()
+
+===================================Maude127===========================================
+
+2019-12-02  Rubén Rubio  <rubenrub@ucm.es>
+
+	* depthFirstStrategicSearch.cc: added
+
+	* depthFirstStrategicSearch.hh: added
+
+	* fairStrategicSearch.cc: added
+
+	* fairStrategicSearch.hh: added
+
+	* strategicSearch.cc (StrategicSearch): removed inDepth and nextToRun
+	attributes
+	(~StrategicSearch): removed nextToRun deletion
+	(findNextSolution): removed (now pure virtual, moved to FairStrategicSearch)
+	(findNextSolutionInDepth): removed (moved to DepthFirstStrategicSearch)
+
+	* strategicSearch.hh: corrected header guard, removed list import,
+	protected inheritance for StrategicTask, and some private attributes
+	made protected
+	(findNextSolution): made pure virtual
+	(findNextSolutionInDepth): removed
+
+2019-11-14  Rubén Rubio  <rubenrub@ucm.es>
+
+	* applicationProcess.cc (ApplicationProcess): changed computeGroundFlags call to
+	computeBaseSort, after generalization by Steven
+
+	* applicationStrategy.cc (process): changed computeGroundFlags call to
+	computeBaseSort, after generalization by Steven
+
+	* callStrategy.cc (process, decompose): changed computeGroundFlags call to
+	computeBaseSort, after generalization by Steven
+
+	* variableBindingsManager.cc (computeGroundFlags): removed
+
+	* variableBindingsManager.hh (computeGroundFlags): removed
+
+2019-10-23  Rubén Rubio  <rubenrub@ucm.es>
+
+	* applicationProcess.cc (ApplicationProcess): bugfix: only ALLOW_NONEXEC if
+	there is a defined strategy label, since the all strategy should not apply
+	nonexec rules
+
+2019-09-19  Rubén Rubio  <rubenrub@ucm.es>
+
+	* applicationProcess.cc (process): changed computeBaseSorts call to
+	computeGroundFlags
+
+	* applicationStrategy.cc (check, prepare): moved valueDags[i].prepare()
+	from check to prepare to check variables before the eager flags are set
+
+	* callStrategy.cc (decompose): changed computeBaseSorts call to
+	computeGroundFlags
+	(tailCall): become method of CallStrategy
+
+	* callStrategy.hh (tailCall): added
+
+	* variableBindingsManager.cc (computeGroundFlags): added
+
+	* variableBindingsManager.hh (computeGroundFlags): added
+
+2019-05-25  Rubén Rubio  <rubenrub@ucm.es>
+
+	* callProcess.cc (run): create a tracing context. Commented
+	warning about non-matching strategy calls
+
+	* strategicSearch.cc (StrategicSearch): added attribute inDepth
+	(findNextSolution): handle depth-first search
+	(findNextSolutionInDepth): used a ghost node to make
+	the process list behave like a stack
+
+	* strategicSearch.hh: added attribute inDepth
+	(lastSolution): added
+
+	* subtermStrategy.cc (check): now variables preserve their values in
+	match/matchrew
+
+	* subtermTask.cc (SubtermTask): ground flags are correctly set, so the
+	result of instantiate is assumed to be non-null
+
+	* testStrategy.cc (check): now variables preserve their values in
+	match/matchrew
+
+2018-12-20  Rubén Rubio  <rubenrub@ucm.es>
+
+	* applicationProcess.cc (ApplicationProcess): do not ignore condition
+	when executing the 'all' strategy
+	(run): check condition explicitely only if not 'all'
+	(process): call to computeBaseSortForGroundSubterms on the
+	substitution values
+
+	* callProcess.cc (callProcess, run): updated comments and spacing
+
+	* callStrategy.cc (process): call to computeBaseSortForGroundSubterms
+	on the call term
+	(decompose): updated comments and style
+	(equal): a finer equality relation
+
+	* strategicSearch.cc (findNextSolutionInDepth): added
+
+	* strategicSearch.hh (findNextSolutionInDepth): added
+
+	* variableBindingsManager.cc (instantiate): removed call to
+	computeBaseSortForGroundSubterms on the term to be instantiated
+
+2018-10-09  Rubén Rubio  <rubenrub@ucm.es>
+
+	* callStrategy.cc (equal): added
+
+	* callStrategy.hh (equal): added
+
+	* concatenationStrategy.cc (Concatenation): missing & in constructor
+	argument
+
+	* concatenationStrategy.hh (Concatenation): missing & in constructor
+	argument
+
+	* Makefile.am: add strategyExpression.cc
+
+	* matchProcess.cc (MatchProcess): pass rewriteState by const-reference
+
+	* strategyExpression.cc: added
+
+	* strategyExpression.hh (equal): added
+
+	* strategyStackManager.cc (push): use StrategyExpression::equal
+
+
+2018-09-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* testStrategy.cc (decompose): transferCount() -> transferCountTo()
+
+	* matchProcess.cc (run): transferCount() -> transferCountFrom()
+
+	* applicationProcess.cc (resolveRemainingConditionFragments):+
+	transferCount() -> transferCountFrom()
+
+===================================Maude119===========================================
+
+2018-09-17  Rubén Rubio  <rubenrub@ucm.es>
+
+	* applicationProcess.cc (ApplicationProcess): instantiate only if not ground
+	and corrected the call to transferCount
+
+	* applicationStrategy.cc (ApplicationStrategy): do not normalize and
+	prepare value DAGs yet
+	(check): changed input arguments and normalize and prepare DAGS
+
+	* applicationStrategy.hh (check): changed input arguments
+	(getVariableInfo): removed
+
+	* branchStrategy.cc (check): changed input arguments
+
+	* branchStrategy.hh (check): changed input arguments
+
+	* callProcess.cc (run): use context shape when opening context
+
+	* callStrategy.cc (check): changed input arguments and added variable
+	indexation
+	(decompose): instantiate only if not ground and transfer count
+
+	* callStrategy.hh: removed varInfo field and inheritance from BadFlag
+	(check): changed input arguments
+	(getVariableInfo): removed
+
+	* concatenationStrategy.cc (check): changed input arguments
+
+	* concatenationStrategy.hh (check): changed input arguments
+
+	* iterationStrategy.cc (check): changed input arguments
+
+	* iterationStrategy.hh (check): changed input arguments
+
+	* oneStrategy.cc (check): changed input arguments
+
+	* oneStrategy.hh (check): changed input arguments
+
+	* strategicSearch.cc (StrategicSearch): init VariableBindingsManager
+
+	* strategyExpression.hh (check): changed input arguments
+
+	* subtermProcess.cc (run): open context with the context specification
+	and only if not empty
+
+	* subtermStrategy.cc (SubtermStrategy): move most checks to check
+	(check): call checkSubterms and build context specification and index
+	translation
+	(checkSubterms): code from the constructor
+	(rebuild): adjust to new meaning of indices
+	(decompose): remove BadFlag and use index translation
+
+	* subtermStrategy.hh: do not inherit from BadFlag and added fields
+	contextSpec and indexTranslation
+	(getContextSpec, checkSubterms): added
+	(check): changed input arguments
+
+	* subtermTask.cc (SubtermTask): init match substitution
+
+	* testStrategy.cc (check): changed input arguments and build index
+	translation
+
+	* testStrategy.hh: removed inheritance from BadFlag and added field
+	inputTranslation
+	(check): changed input arguments
+
+	* trivialStrategy.cc (check): changed input arguments
+
+	* trivialStrategy.hh (check): changed input arguments
+
+	* unionStrategy.cc (check): changed input arguments
+
+	* unionStrategy.hh (check): changed input arguments
+
+	* variableBindingsManager.cc (VariableBindingsManager): added argument
+	for the substitution size
+	(~VariableBindingsManager): added
+	(openContext): added a context specification as an argument
+	and it is used
+	(instantiate): removed variable info argument and usage
+	(buildInitialSubstitution): added index translation as input argument
+
+	* variableBindingsManager.hh: new data field like a queue of free
+	cells, a cached substitution and a static empty vector of DAG nodes
+	(VariableBindingsManager, ~VariableBindingsManager): added
+	(openContext): added overload and context specification as arguments
+	(instantiate): changed input arguments
+	(buildInitialSubstitution): changed input arguments
+	(TermCompare): removed
+	(Entry): inherit from RootContainer instead of SimpleRootContainer
+	and change content to a vector of DAG nodes
+	(closeContext): modified to use the new entries and the queue
+	(parentContext): removed
+	(init, free): added
+
+2018-09-11  Rubén Rubio  <rubenrub@ucm.es>
+
+	* callProcess.cc (CallProcess): added parameter tailCall
+	(run): task are created one level up for tail calls
+
+	* callProcess.hh: added attribute tailCall
+	(CallProcess): added parameter tailCall
+
+	* callStrategy.cc (decompose): non-tail simple calls are handled with
+	a call task
+	(tailCall): added
+
+	* variableBindingsManager.hh (closeContext): ensure context is not
+	empty before deleting
+
+2018-07-18  Rubén Rubio  <rubenrub@ucm.es>
+
+	* subtermTask.cc (subtermTask): fixed a memory leak,
+	the extension info was not deleted
+
+2018-04-18  Rubén Rubio  <rubenrub@ucm.es>
+
+	* applicationProcess.cc (ApplicationProcess): added reduction of
+	the substitution values
+	(~ApplicationProcess): added
+	(run): removed warning about wrong number of substrategies in
+	conditional rules
+
+	* applicationProcess.hh: new data member instedSubstitution
+	(~ApplicationProcess): added
+
+	* applicationStrategy.cc (process): removed filling sort info
+
+	* applicationStrategy.hh (getValues): added
+
+	* callProcess.cc (CallProcess): receives a RewritingContext instead of
+	a DagNode
+	(run): added tracing of strategy calls
+
+	* callProcess.hh: callContext is now a pointer
+	(CallProcess): receives a RewritingContext instead of a DagNode
+
+	* callStrategy.cc (CallStrategy, check): callTerm is now a CachedDag
+	(~CallStrategy): removed
+	(process): removed filling sort information
+	(decompose): added tracing of simple strategy calls, and call arguments
+	are reduced
+
+	* callStrategy.hh: call term is now a CachedDag
+	(~CallStrategy): removed
+
+	* subtermStrategy.cc (rebuild): receives DagRoots instead of DagNodes
+	(decompose): added GC_SUBSTITUTION in MatchSearchState construction
+
+	* subtermStrategy.hh (rebuild): receives DagRoots instead of DagNodes
+
+	* subtermTask.cc (pushSolution): fixed a memory leak
+
+	* testStrategy.cc (decompose): added GC_SUBSTITUTION in
+	MatchSearchState construction
+
+	* variableBindingsManager.cc (openContext): removed creation of DagRoots
+	(getValue): changed return type to DagNode
+	(instantiate): receives a Term instead of a DagNode, and computes the
+	base sort
+	(buildInitialSubstitution): creates DagRoots for the initial substitution
+	(markReachableNodes): added
+
+	* variableBindingsManager.hh: Bindings is a map to DagNodes instead
+	of DagRoots, and Entry subclasses SimpleRootContainer
+	(getValue): changed return type to DagNode
+	(getValues): changed return type to a vector of DagNodes
+	(instantiate): receives a DagNode instead of a Term
+	(markReachableNodes): added
+
+2018-04-11  Rubén Rubio  <rubenrub@ucm.es>
+
+	* oneStrategy.cc: added
+
+	* oneStrategy.hh: added
+
+	* oneTask.cc: added
+
+	* oneTask.hh: added
+
+2018-04-06  Rubén Rubio  <rubenrub@ucm.es>
+
+	* callStrategy.cc (decompose): call arguments are reduced
+
+	* callStrategy.hh (getVariableInfo): added getter for variable information
+
+	* subtermStrategy.cc (decompose): set initial search substitution
+
+	* testStrategy.cc (getPattern): added getter for the pattern
+	(decompose): set initial search substitution
+
+	* variableBindingsManager.cc (openContext): using tables for storing
+	bindings and deleted importation of bindings from its parents.
+	(TermCompare): added
+	(getValue): added
+	(instantiate): use getValue and call computeBaseSortForGroundTerm to
+	have isGround flags properly set
+	(buildInitialSubstitution): added
+
+	* variableBindingsManager.hh: using tables for storing bindings.
+	(TermCompare): struct to give a sorting function for map.
+	(getValue): added
+	(buildInitialSubstituion): added
+	(getVariables): deleted
+
+2018-03-23  Rubén Rubio  <rubenrub@ucm.es>
+
+	* applicationProcess.cc (ApplicationProcess): instantiation of
+	the substitution according to the context
+	(run): two -questionable- warnings are issued when the given strategies
+	number differ from the number of rewriting conditions
+
+	* applicationStrategy.cc (ApplicationStrategy): variable in the substitution
+	values are indexed (to be instantiated) and other minor changes
+	(check, process): added
+
+	* applicationStrategy.hh: added variableInfo data member 
+	(getVariableInfo, check, process): add
+	(getValues): changed to be a const function
+
+	* branchStrategy.cc (check, process): added
+
+	* branchStrategy.hh (check, process): added
+
+	* callProcess.cc: added
+
+	* callProcess.hh: added
+
+	* callStrategy.cc: added
+
+	* callStrategy.hh: added
+
+	* callTask.cc: added
+
+	* callTask.hh: added
+
+	* concatenationStrategy.cc (check, process): added
+
+	* concatenationStrategy.hh (check, process): added
+
+	* decompositionProcess.cc: the file comment was out of place (copied-pasted)
+
+	* iterationStrategy.cc (check, process): added
+
+	* iterationStrategy.hh (check, process): added
+
+	* matchProcess.cc: using SharedPointer instead of
+	SharedRewriteSearchState
+
+	* matchProcess.hh: using SharedPointer instead of
+	SharedRewriteSearchState
+
+	* rewriteTask.cc (~RewriteTask): the extension info copy is freed
+	(executionsExhausted): removed argument name to avoid a compiler warning
+	(RewriteTask): using SharedPointer instead of SharedRewriteSearchState
+
+	* rewriteTask.hh: using SharedPointer instead of
+	SharedRewriteSearchState
+
+	* sharedRewriteSearchState.cc: deleted. A shared match search state was
+	also required so this has been replaced by a generic shared pointers.
+
+	* sharedRewriteSearchState.hh: renamed to sharedValue.hh
+
+	* sharedValue.hh: shared pointer adapted from SharedRewriteSearchState code
+
+	* strategicSearch.hh: inheritance from VariableBindingManager
+
+	* strategicTask.cc (StrategicTask): added ContextId constructor and changed the
+	other to take their context from the task's parent
+
+	* strategicTask.hh: added varsContext data member
+	(StrategicTask): added ContextId constructor
+	(getVarsContext): added
+
+	* strategyExpression.hh (check, process): added
+
+	* strategyLanguage.hh: added CallProcess, CallTask, SubtermProcess, SubtermTask and
+	VariableBindingsManager
+
+	* subtermProcess.cc: added
+
+	* subtermProcess.hh: added
+
+	* subtermStrategy.cc: added
+
+	* subtermStrategy.hh: added
+
+	* subtermTask.cc: added
+
+	* subtermTask.hh: added
+
+	* testStrategy.cc (check, process): added
+	(TestStrategy): use lazy pattern
+	(decompose): bad flag checking and initial substitution
+
+	* testStrategy.hh: inheritance from BadFlag
+	(getCondition): is now a const function
+	(check, process): added
+
+	* trivialStrategy.cc (check, process): added
+
+	* trivialStrategy.cc (check, process): added
+
+	* unionStrategy.cc (check, process): added
+
+	* unionStrategy.hh (check, process): added
+
+	* variableBindingsManager.cc: added
+
+	* variableBindingsManager.hh: added
+
+2017-09-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* strategyLanguage.hh: added class SubtermStrategy
+
+	* subtermStrategy.cc: created
+
+	* subtermStrategy.hh: created
+
+2017-09-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* testStrategy.hh: fix comment
+
+===================================Maude116===========================================
+
+2017-03-31  Steven Eker  <eker@install.csl.sri.com>
+
+	* strategicSearch.hh (StrategicTask): derive from CacheableState
+
+===================================Maude112a===========================================
+
+2017-01-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* applicationProcess.cc (resolveRemainingConditionFragments): stack<> -> Stack<>
+
+===================================Maude111b===========================================
+
+2016-10-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* applicationStrategy.cc (ApplicationStrategy): fix
+	signed/unsigned comparison warning in Assert()
+
+===================================Maude111===========================================
+
 2010-09-22  Steven Eker  <eker@rho>
 
 	* applicationProcess.hh (class ApplicationProcess): updated decl
@@ -1058,9 +1548,9 @@
 	SequenceSetGenerator
 
 	* strategySequence.hh: deleted
-	
+
 	* sequenceSetGenerator.hh: deleted
-	
+
 	* strategySequence.cc: deleted
 
 	* sequenceSetGenerator.cc: deleted

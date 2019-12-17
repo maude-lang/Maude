@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -42,6 +42,7 @@
 #include "equation.hh"
 #include "rule.hh"
 #include "rewritingContext.hh"
+#include "strategyDefinition.hh"
 
 //      front end class definitions
 #include "profileModule.hh"
@@ -89,6 +90,7 @@ ProfileModule::clearProfile()
   mbInfo.clear();
   eqInfo.clear();
   rlInfo.clear();
+  sdInfo.clear();
 }
 
 void
@@ -160,6 +162,16 @@ ProfileModule::profileRlRewrite(DagNode* redex, const Rule* rl)
     }
 }
 
+void
+ProfileModule::profileSdRewrite(DagNode*, const StrategyDefinition* sd)
+{
+  // There are no built-in strategy definitions
+  int index = sd->getIndexWithinModule();
+  if (index >= sdInfo.length())
+    sdInfo.resize(index + 1);
+  ++(sdInfo[index].nrRewrites);
+}
+
 //////////////////////
 
 void
@@ -187,6 +199,15 @@ ProfileModule::profileRlConditionStart(const Rule* rl)
   if (index >= rlInfo.length())
     rlInfo.resize(index + 1);
   ++(rlInfo[index].nrConditionStarts);
+}
+
+void
+ProfileModule::profileSdConditionStart(const StrategyDefinition* sdef)
+{
+  int index = sdef->getIndexWithinModule();
+  if (index >= sdInfo.length())
+    sdInfo.resize(index + 1);
+  ++(sdInfo[index].nrConditionStarts);
 }
 
 ////////////////////////
@@ -225,6 +246,14 @@ ProfileModule::profileFragment(const PreEquation* preEquation,
 	return;
       }
   }
+  {
+    const Vector<StrategyDefinition*>& sdefs = getStrategyDefinitions();
+    if (index < sdefs.length() && sdefs[index] == preEquation)
+      {
+	sdInfo[index].updateFragmentInfo(fragmentIndex, success);
+	return;
+      }
+  }
   // must be a top level pattern fragment
 }
 
@@ -257,6 +286,9 @@ ProfileModule::showProfile(ostream& s) const
     int nrRls = rlInfo.length();
     for (int i = 0; i < nrRls; i++)
       total += rlInfo[i].nrRewrites;
+    int nrSds = sdInfo.length();
+    for (int i = 0; i < nrSds; i++)
+      total += sdInfo[i].nrRewrites;
     floatTotal = total;
   }
   {
@@ -350,6 +382,27 @@ ProfileModule::showProfile(ostream& s) const
 	else if (p.nrRewrites > 0)
 	  {
 	    s << rls[i] << '\n';
+	    s << "rewrites: " << PC(p.nrRewrites) << "\n\n";
+	  }
+      }
+  }
+  {
+    const Vector<StrategyDefinition*>& sdefs = getStrategyDefinitions();
+    int nrSdefs = sdInfo.length();
+    for (int i = 0; i < nrSdefs; i++)
+      {
+	const StatementProfile& p = sdInfo[i];
+	if (p.nrConditionStarts > 0)
+	  {
+	    s << sdefs[i] << '\n';
+	    s << "lhs matches: " << p.nrConditionStarts <<
+	      "\trewrites: " << PC(p.nrRewrites) << '\n';
+	    showFragmentProfile(s, p.fragmentInfo, p.nrConditionStarts);
+	    s << '\n';
+	  }
+	else if (p.nrRewrites > 0)
+	  {
+	    s << sdefs[i] << '\n';
 	    s << "rewrites: " << PC(p.nrRewrites) << "\n\n";
 	  }
       }

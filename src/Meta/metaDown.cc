@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -25,7 +25,7 @@
 //
 
 bool
-MetaLevel::downQid(DagNode* metaQid, int& id)
+MetaLevel::downQid(DagNode* metaQid, int& id) const
 {
   if (metaQid->symbol() == qidSymbol)
     {
@@ -36,7 +36,19 @@ MetaLevel::downQid(DagNode* metaQid, int& id)
 }
 
 bool
-MetaLevel::downOpName(DagNode* metaQid, int& id)
+MetaLevel::downToken(DagNode* metaQid, Token& token) const
+{
+  if (metaQid->symbol() == qidSymbol)
+    {
+      token.tokenize(Token::unBackQuoteSpecials(static_cast<QuotedIdentifierDagNode*>(metaQid)->getIdIndex()),
+		     FileTable::META_LEVEL_CREATED);
+      return true;
+    }
+  return false;
+}
+
+bool
+MetaLevel::downOpName(DagNode* metaQid, int& id) const
 {
   //
   //	Like downQid() but we convert things like '`, to `, rather than ,
@@ -131,7 +143,7 @@ MetaLevel::downHeader(DagNode* metaHeader, int& id, DagNode*& metaParameterDeclL
 }
 
 bool
-MetaLevel::downParameterDeclList(DagNode* metaParameterDeclList, ImportModule* m)
+MetaLevel::downParameterDeclList(DagNode* metaParameterDeclList, MetaModule* m)
 {
   if (metaParameterDeclList == 0)
     return true;
@@ -150,7 +162,7 @@ MetaLevel::downParameterDeclList(DagNode* metaParameterDeclList, ImportModule* m
 }
 
 bool
-MetaLevel::downParameterDecl(DagNode* metaParameterDecl, ImportModule* m)
+MetaLevel::downParameterDecl(DagNode* metaParameterDecl, MetaModule* m)
 {
   if (metaParameterDecl->symbol() == parameterDeclSymbol)
     {
@@ -158,38 +170,53 @@ MetaLevel::downParameterDecl(DagNode* metaParameterDecl, ImportModule* m)
       int name;
       ImportModule* theory;
       if (downQid(f->getArgument(0), name) &&
-	  downModuleExpression(f->getArgument(1), m, theory) &&
-	  theory->isTheory())
+	  downModuleExpression(f->getArgument(1), m, theory))
 	{
-	  Token t;
-	  t.tokenize(name, FileTable::META_LEVEL_CREATED);
-	  Interpreter* owner = safeCast(MetaModule*, m)->getOwner();  // HACK - probably all modules should have owners
-	  m->addParameter(t, owner->makeParameterCopy(name, theory));
-	  return true;
+	  if (MixfixModule::canHaveAsParameter(m->getModuleType(), theory->getModuleType()))
+	    {
+	      Token t;
+	      t.tokenize(name, FileTable::META_LEVEL_CREATED);
+	      Interpreter* owner = m->getOwner();
+	      m->addParameter(t, owner->makeParameterCopy(name, theory));
+	      return true;
+	    }
+	  else
+	    {
+	      IssueAdvisory(LineNumber(FileTable::META_LEVEL_CREATED) <<
+			    ": parameterization of " << 
+			    QUOTE(MixfixModule::moduleTypeString(m->getModuleType())) <<
+			    " " << m << " by " <<
+			    QUOTE(MixfixModule::moduleTypeString(theory->getModuleType())) <<
+			    " " << theory << " is not allowed.");
+	    }
 	}
     }
   return false;
 }
 
 MetaModule*
-MetaLevel::downModule(DagNode* metaModule, bool cacheMetaModule, Interpreter* owner)
+MetaLevel::downModule(DagNode* metaModule)
 {
-  if (owner == 0)
-    owner = &interpreter;  // NASTY HACK - should get default owner from metaModule rather than global variable
-  /*
-    Ideally we should get a symbol from metaModule, a module from symbol, and an owner from that module,
-    so that if an interpreter is not given we use the one containing the metaModule's, top symbol's module.
-    Currently we can't do this because only the MetaModule class supports ownership.
-  */
+  //
+  //	This function is only usable from the functional metalevel because it
+  //	makes use of the MetaModuleCache in MetaLevel, which may contain modules
+  //	that imported modules from the current interpreter.
+  //
 
-  MetaModule* cm = cache.find(metaModule);  // BUG - could be in another interpreter
-  /*
-    Currently we side step this bug by not caching metaModules belonging to metaIntepreters.
-   */
-  if (cm != 0)
-    return cm;
+  //
+  //	Caching downed modules is critically important for efficiency
+  //	in the functional metalevel.
+  //
+  if (MetaModule* cm = cache.find(metaModule))
+    {
+      DebugAdvisory("metaLevel cache hit for " << metaModule);
+      return cm;
+    }
+  //
+  //	Cache miss - we need to actually down the module so find
+  //	out what kind of module it is.
+  //
   Symbol* ms = metaModule->symbol();
-
   MixfixModule::ModuleType mt;
   if (ms == fmodSymbol)
     mt = MixfixModule::FUNCTIONAL_MODULE;
@@ -199,15 +226,29 @@ MetaLevel::downModule(DagNode* metaModule, bool cacheMetaModule, Interpreter* ow
     mt = MixfixModule::SYSTEM_MODULE;
   else if (ms == thSymbol)
     mt = MixfixModule::SYSTEM_THEORY;
+  else if (ms == smodSymbol)
+    mt = MixfixModule::STRATEGY_MODULE;
+  else if (ms == sthSymbol)
+    mt = MixfixModule::STRATEGY_THEORY;
   else
     return 0;
+  //
+  //	Find current interpreter. This is the interpreter where the module we are
+  //	working in resides. The module itself is either a VisibleModule that
+  //	was entered into the object level interpreter or it is a MetaModule.
+  //	Either way it is safe to downcast it to VisibleModule so we can extract
+  //	a pointer to the Interpreter where it resides.
+  //
+  Module* activeModule = ms->getModule();
+  Interpreter* owner = safeCast(VisibleModule*, activeModule)->getOwner();
 
   FreeDagNode* f = safeCast(FreeDagNode*, metaModule);
   int id;
   DagNode* metaParameterDeclList;
   if (downHeader(f->getArgument(0), id, metaParameterDeclList))
     {
-      MetaModule* m = new MetaModule(id, mt, cacheMetaModule ? &cache : 0, owner);
+      MetaModule* m = new MetaModule(id, mt, owner);
+      m->addUser(&cache);
       if (downParameterDeclList(metaParameterDeclList, m) &&
 	  downImports(f->getArgument(1), m))
 	{
@@ -222,32 +263,40 @@ MetaLevel::downModule(DagNode* metaModule, bool cacheMetaModule, Interpreter* ow
 		  if (downOpDecls(f->getArgument(4), m))
 		    {
 		      m->closeSignature();
-		      m->fixUpImportedOps();
-		      if (downFixUps(m) && !(m->isBad()))
+		      m->importStrategies();
+		      m->importRuleLabels();
+		      if (!m->isStrategic() ||
+			  downStratDecls(f->getArgument(8), m))
 			{
-			  m->closeFixUps();
-			  if (downMembAxs(f->getArgument(5), m) &&
-			      downEquations(f->getArgument(6), m) &&
-			      (mt == MixfixModule::FUNCTIONAL_MODULE ||
-			       mt == MixfixModule::FUNCTIONAL_THEORY ||
-			       downRules(f->getArgument(7), m)))
+			  m->fixUpImportedOps();
+			  if (downFixUps(m) && !(m->isBad()))
 			    {
-			      m->localStatementsComplete();
-			      m->importStatements();
-			      m->closeTheory();
-			      m->resetImports();
-			      if (cacheMetaModule)  // HACK: this should probably be done elsewhere
-				cache.insert(metaModule, m);
-			      //
-			      //	We may have displace a module from the 
-			      //	metamodule cache generating garbage in
-			      //	the expression. Also there may be an
-			      //	accumulation of garbage anyway from meta-meta
-			      //	processing so we should tidy the (expression)
-			      //	module cache regularly.
-			      //
-			      interpreter.destructUnusedModules();
-			      return m;
+			      m->closeFixUps();
+			      if (downMembAxs(f->getArgument(5), m) &&
+				  downEquations(f->getArgument(6), m) &&
+				  (mt == MixfixModule::FUNCTIONAL_MODULE ||
+				   mt == MixfixModule::FUNCTIONAL_THEORY ||
+				   downRules(f->getArgument(7), m)) &&
+				  (!m->isStrategic() ||
+				   downStratDefs(f->getArgument(9), m)))
+				{
+				  m->registerRuleLabels();
+				  m->localStatementsComplete();
+				  m->importStatements();
+				  m->closeTheory();
+				  m->resetImports();
+				  cache.insert(metaModule, m);
+				  //
+				  //	We may have displace a module from the
+				  //	metamodule cache generating garbage in
+				  //	the expression. Also there may be an
+				  //	accumulation of garbage anyway from meta-meta
+				  //	processing so we should tidy the (expression)
+				  //	module cache regularly.
+				  //
+				  owner->destructUnusedModules();
+				  return m;
+				}
 			    }
 			}
 		    }
@@ -270,7 +319,7 @@ MetaLevel::downModule(DagNode* metaModule, bool cacheMetaModule, Interpreter* ow
       //	dependents now that we failed to build the metamodule.
       //	Thus we now need to tidy the module cache.
       //	
-      interpreter.destructUnusedModules();
+      owner->destructUnusedModules();
     }
   return 0;
 }
@@ -308,8 +357,7 @@ MetaLevel::downImport(DagNode* metaImport, MetaModule* m)
   
   FreeDagNode* f = safeCast(FreeDagNode*, metaImport);
   ImportModule* im;
-  if (downModuleExpression(f->getArgument(0), m, im) &&
-      (im->getNrParameters() == 0 || im->parametersBound()))
+  if (downModuleExpression(f->getArgument(0), m, im) && !(im->hasFreeParameters()))
     {
       m->addImport(im, mode, LineNumber(FileTable::META_LEVEL_CREATED));
       return true;
@@ -403,6 +451,30 @@ MetaLevel::downQidList(DagNode* metaQidList, Vector<int>& ids)
 }
 
 bool
+MetaLevel::downQidSet(DagNode* metaQidSet, Vector<int>& ids)
+{
+  ids.clear();
+  Symbol* mq =  metaQidSet->symbol();
+  int id;
+  if (mq == qidSetSymbol)
+    {
+      for (DagArgumentIterator i(metaQidSet); i.valid(); i.next())
+	{
+	  if (!downQid(i.argument(), id))
+	    return false;
+	  ids.append(id);
+	}
+    }
+  else if (mq == emptyQidSetSymbol)
+    ;
+  else if (downQid(metaQidSet, id))
+    ids.append(id);
+  else
+    return false;
+  return true;
+}
+
+bool
 MetaLevel::downTypeList(DagNode* metaTypeList, MixfixModule* m, Vector<Sort*>& typeList)
 {
   typeList.clear();
@@ -427,7 +499,32 @@ MetaLevel::downTypeList(DagNode* metaTypeList, MixfixModule* m, Vector<Sort*>& t
 }
 
 bool
-MetaLevel::downType2(int id, MixfixModule* m, Sort*& type)
+MetaLevel::downTypeSet(DagNode* metaTypeSet, MixfixModule* m, Vector<Sort*>& typeSet)
+{
+  typeSet.clear();
+  Symbol* mt = metaTypeSet->symbol();
+  Sort* t;
+  if (mt == sortSetSymbol)
+    {
+      for (DagArgumentIterator i(metaTypeSet); i.valid(); i.next())
+	{
+	  if (!downType(i.argument(), m, t))
+	    return false;
+	  typeSet.append(t);
+	}
+    }
+  else if (mt == emptySortSetSymbol)
+    ;
+  else if (downType(metaTypeSet, m, t))
+    typeSet.append(t);
+  else
+    return false;
+  return true;
+}
+
+
+bool
+MetaLevel::downType2(int id, MixfixModule* m, Sort*& type) const
 {
   switch (Token::auxProperty(id))
     {
@@ -695,12 +792,12 @@ MetaLevel::downStatementAttr(DagNode* metaAttr, MixfixModule* m, StatementAttrib
     }
   else if (ma == metadataSymbol)
     {
-       DagNode* metaStr = safeCast(FreeDagNode*, metaAttr)->getArgument(0);
-       if (metaStr->symbol() != stringSymbol)
-	 return false;
-       string str;
-       Token::ropeToString(safeCast(StringDagNode*, metaStr)->getValue(), str);
-       ai.metadata = Token::encode(str.c_str());
+      DagNode* metaStr = safeCast(FreeDagNode*, metaAttr)->getArgument(0);
+      if (metaStr->symbol() != stringSymbol)
+	return false;
+      string str;
+      Token::ropeToString(safeCast(StringDagNode*, metaStr)->getValue(), str);
+      ai.metadata = Token::encode(str.c_str());
     }
   else if (ma == owiseSymbol)
     ai.flags.setFlags(OWISE);
@@ -708,6 +805,10 @@ MetaLevel::downStatementAttr(DagNode* metaAttr, MixfixModule* m, StatementAttrib
     ai.flags.setFlags(VARIANT);
   else if (ma == nonexecSymbol)
     ai.flags.setFlags(NONEXEC);
+  else if (ma == nonexecSymbol)
+    ai.flags.setFlags(NONEXEC);
+  else if (ma == narrowingSymbol)
+    ai.flags.setFlags(NARROWING);
   else if (ma == printSymbol && !ai.flags.getFlag(PRINT))
     {
       ai.flags.setFlags(PRINT);
@@ -919,6 +1020,13 @@ MetaLevel::downRule(DagNode* metaRule, MixfixModule* m)
 		  Rule* rl = new Rule(ai.label, l, r, condition);
 		  if (ai.flags.getFlag(NONEXEC))
 		    rl->setNonexec();
+		  if (ai.flags.getFlag(NARROWING))
+		    {
+		      if (condition.empty())
+			rl->setNarrowing();
+		      else
+			IssueAdvisory("narrowing attribute not allowed for conditional rule in meta-module " << QUOTE(m) << '.');
+		    }
 		  m->insertRule(rl);
 		  if (ai.metadata != NONE)
 		    m->insertMetadata(MixfixModule::RULE, rl, ai.metadata);
@@ -1174,6 +1282,7 @@ MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
 		      if (s != 0)
 			{
 			  mpq_class q(Token::name(cName));
+			  q.canonicalize();
 			  return new SMT_NumberTerm(s, q);
 			}
 		      break;
@@ -1245,6 +1354,11 @@ MetaLevel::downSubstitution(DagNode* metaSubstitution,
 			    Vector<Term*>& variables,
 			    Vector<Term*>& values)
 {
+  //
+  //	We now enforce no duplicate variables, rather than check this elsewhere
+  //	since there is no point is a substitution with two assignments to the
+  //	same variable.
+  //
   variables.clear();
   values.clear();
   Symbol* ms = metaSubstitution->symbol();
@@ -1269,6 +1383,17 @@ MetaLevel::downSubstitution(DagNode* metaSubstitution,
 }
 
 bool
+MetaLevel::duplicate(Term* variable, const Vector<Term*>& variables)
+{
+  FOR_EACH_CONST(i, Vector<Term*>, variables)
+    {
+      if (variable->equal(*i))
+	return true;
+    }
+  return false;
+}
+
+bool
 MetaLevel::downAssignment(DagNode* metaAssignment,
 			  MixfixModule* m,
 			  Vector<Term*>& variables,
@@ -1281,7 +1406,8 @@ MetaLevel::downAssignment(DagNode* metaAssignment,
       Term* value;
       if (downTermPair(f->getArgument(0), f->getArgument(1), variable, value, m))
 	{
-	  if (dynamic_cast<VariableTerm*>(variable))
+	  if (dynamic_cast<VariableTerm*>(variable) &&
+	      !duplicate(variable, variables))
 	    {
 	      variables.append(variable);
 	      values.append(value);
@@ -1330,5 +1456,84 @@ MetaLevel::downPrintOption(DagNode* metaPrintOption, int& printFlags) const
     printFlags |= Interpreter::PRINT_RAT;
   else
     return false;
+  return true;
+}
+
+bool
+MetaLevel::downSrewriteOption(DagNode* metaSrewriteOption, bool& depthFirst) const
+{
+  Symbol* ms = metaSrewriteOption->symbol();
+  if (ms == breadthFirstSymbol)
+    depthFirst = false;
+  else if (ms == depthFirstSymbol)
+    depthFirst = true;
+  else
+    return false;
+  return true;
+}
+
+bool
+MetaLevel::downVariableDeclSet(DagNode* metaVariableDeclSet, MixfixModule::AliasMap& aliasMap, MixfixModule* m) const
+{
+  Symbol* mv =  metaVariableDeclSet->symbol();
+  if (mv == qidSetSymbol)
+    {
+      for (DagArgumentIterator i(metaVariableDeclSet); i.valid(); i.next())
+	{
+	  if (!downVariableDecl(i.argument(), aliasMap, m))
+	    return false;
+	}
+    }
+  else if (mv != emptyQidSetSymbol)
+    return downVariableDecl(metaVariableDeclSet, aliasMap, m);
+  return true;
+}
+
+bool
+MetaLevel::downVariableDecl(DagNode* metaVariableDecl, MixfixModule::AliasMap& aliasMap, MixfixModule* m) const
+{
+  int fullVarName;
+  if(downQid(metaVariableDecl, fullVarName))
+    {
+      int varName;
+      int varSort;
+      Sort* sort;
+      if (Token::split(fullVarName, varName, varSort) && downType2(varSort, m, sort))
+	{
+	  pair<MixfixModule::AliasMap::iterator, bool> r =
+	    aliasMap.insert(MixfixModule::AliasMap::value_type(varName, sort));
+	  return r.second;  // false if duplicate
+	}
+    }
+  return false;
+}
+
+//
+//	Utility function needed by various metalevel code.
+//	Should probably live elsewhere.
+//
+
+bool
+MetaLevel::dagifySubstitution(const Vector<Term*>& variables,
+			      Vector<Term*>& values,
+			      Vector<DagRoot*>& dags,
+			      RewritingContext& context)
+{
+  int nrVars = variables.length();
+  dags.resize(nrVars);
+  for (int i = 0; i < nrVars; i++)
+    {
+      values[i] = values[i]->normalize(false);
+      DagNode* d = values[i]->term2DagEagerLazyAware();
+      dags[i] = new DagRoot(d);
+      d->computeTrueSort(context);
+      VariableTerm* v = static_cast<VariableTerm*>(variables[i]);
+      if (!(leq(d->getSortIndex(), v->getSort())))
+	{
+	  for (int j = 0; j <= i ; j++)
+	    delete dags[j];
+	  return false;
+	}
+    }
   return true;
 }

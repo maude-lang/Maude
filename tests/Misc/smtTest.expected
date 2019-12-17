@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 check in TEST-B : W =/== X and Y .
 Result from sat solver is: sat
 ==========================================
@@ -185,7 +185,7 @@ Result from sat solver is: unsat
 reduce in META-LEVEL : metaCheck(['REAL-INTEGER], '_=_['_+_['1.Integer,
     '1.Integer],'2.Integer]) .
 rewrites: 1
-result [Bool]: metaCheck(th 'REAL-INTEGER is
+result [Bool]: metaCheck(sth 'REAL-INTEGER is
   including 'REAL-INTEGER .
   sorts none .
   none
@@ -193,12 +193,14 @@ result [Bool]: metaCheck(th 'REAL-INTEGER is
   none
   none
   none
-endth, '_=_['_+_['1.Integer,'1.Integer],'2.Integer])
+  none
+  none
+endsth, '_=_['_+_['1.Integer,'1.Integer],'2.Integer])
 ==========================================
 reduce in META-LEVEL : metaCheck(['REAL-INTEGER], '_=_['_+_['1.Integer,
     '1.Integer],'3.Integer]) .
 rewrites: 1
-result [Bool]: metaCheck(th 'REAL-INTEGER is
+result [Bool]: metaCheck(sth 'REAL-INTEGER is
   including 'REAL-INTEGER .
   sorts none .
   none
@@ -206,7 +208,9 @@ result [Bool]: metaCheck(th 'REAL-INTEGER is
   none
   none
   none
-endth, '_=_['_+_['1.Integer,'1.Integer],'3.Integer])
+  none
+  none
+endsth, '_=_['_+_['1.Integer,'1.Integer],'3.Integer])
 ==========================================
 reduce in META-CHECK : metaCheck(['META-CHECK], upTerm((I > J ? I : J) < I)) .
 rewrites: 3
@@ -239,25 +243,32 @@ result Bool: (true).Bool
 smt-search [10] in MULTI : f(-2, X) =>* Z:State .
 
 Solution 1
+rewrites: 0
+state: f(-2, X)
 Z:State --> f(-2, X)
 where true
 
 Solution 2
+rewrites: 1
+state: g(-2 + 1, #1-Y:Foo)
 Z:State --> g(-2 + 1, #1-Y:Foo)
 where -2 < 0
+
+No more solutions.
+rewrites: 1
 ==========================================
 reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '*,
     1, 1, 0) .
 rewrites: 4
 result SmtResult: {'f['-2.Integer,'X:Foo],
-	'Z:State <- 'f['-2.Integer,'X:Foo],'true.Boolean,(1).NzNat}
+  'Z:State <- 'f['-2.Integer,'X:Foo],'true.Boolean,(1).NzNat}
 ==========================================
 reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '*,
     1, 1, 1) .
 rewrites: 4
 result SmtResult: {'g['_+_['-2.Integer,'1.Integer],'#2-Y:Foo],
-	'Z:State <- 'g['_+_['-2.Integer,'1.Integer],'#2-Y:Foo],'_<_[
-    '-2.Integer,'0.Integer],(2).NzNat}
+  'Z:State <- 'g['_+_['-2.Integer,'1.Integer],'#2-Y:Foo],'_<_['-2.Integer,
+    '0.Integer],(2).NzNat}
 ==========================================
 reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '*,
     1, 1, 2) .
@@ -268,8 +279,8 @@ reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '+,
     200, 1, 0) .
 rewrites: 4
 result SmtResult: {'g['_+_['-2.Integer,'1.Integer],'#201-Y:Foo],
-	'Z:State <- 'g['_+_['-2.Integer,'1.Integer],'#201-Y:Foo],'_<_[
-    '-2.Integer,'0.Integer],(201).NzNat}
+  'Z:State <- 'g['_+_['-2.Integer,'1.Integer],'#201-Y:Foo],'_<_['-2.Integer,
+    '0.Integer],(201).NzNat}
 ==========================================
 reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '+,
     200, 1, 1) .
@@ -279,74 +290,112 @@ result SmtResult?: (failure).SmtResult?
 smt-search [4] in ITEST : f(11) =>1 X .
 
 Solution 1
+rewrites: 1
+state: f(11 + 1)
 X --> f(11 + 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 2
+rewrites: 2
+state: f(11 - 1)
 X --> f(11 - 1)
 where 11 >= 10 and 11 <= 12
+
+No more solutions.
+rewrites: 2
 ==========================================
 smt-search [4] in ITEST : f(11) =>* X .
 
 Solution 1
+rewrites: 0
+state: f(11)
 X --> f(11)
 where true
 
 Solution 2
+rewrites: 1
+state: f(11 + 1)
 X --> f(11 + 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 3
+rewrites: 2
+state: f(11 - 1)
 X --> f(11 - 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 4
+rewrites: 3
+state: f(11 + 1 + 1)
 X --> f(11 + 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
 ==========================================
 smt-search [4] in ITEST : f(11) =>+ X .
 
 Solution 1
+rewrites: 1
+state: f(11 + 1)
 X --> f(11 + 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 2
+rewrites: 2
+state: f(11 - 1)
 X --> f(11 - 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 3
+rewrites: 3
+state: f(11 + 1 + 1)
 X --> f(11 + 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
 
 Solution 4
+rewrites: 4
+state: f(11 + 1 - 1)
 X --> f(11 + 1 - 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
 ==========================================
 smt-search [4, 1] in ITEST : f(11) =>+ X .
 
 Solution 1
+rewrites: 1
+state: f(11 + 1)
 X --> f(11 + 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 2
+rewrites: 2
+state: f(11 - 1)
 X --> f(11 - 1)
 where 11 >= 10 and 11 <= 12
+
+No more solutions.
+rewrites: 2
 ==========================================
 smt-search [4, 2] in ITEST : f(11) =>+ X .
 
 Solution 1
+rewrites: 1
+state: f(11 + 1)
 X --> f(11 + 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 2
+rewrites: 2
+state: f(11 - 1)
 X --> f(11 - 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 3
+rewrites: 3
+state: f(11 + 1 + 1)
 X --> f(11 + 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
 
 Solution 4
+rewrites: 4
+state: f(11 + 1 - 1)
 X --> f(11 + 1 - 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
 Warning: <standard input>, line 208: didn't expect token [:
@@ -356,134 +405,191 @@ Warning: <standard input>, line 208: no parse for command.
 smt-search [4, 1] in ITEST : f(11) =>* X .
 
 Solution 1
+rewrites: 0
+state: f(11)
 X --> f(11)
 where true
 
 Solution 2
+rewrites: 1
+state: f(11 + 1)
 X --> f(11 + 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 3
+rewrites: 2
+state: f(11 - 1)
 X --> f(11 - 1)
 where 11 >= 10 and 11 <= 12
+
+No more solutions.
+rewrites: 2
 ==========================================
 smt-search [4, 2] in ITEST : f(11) =>* X .
 
 Solution 1
+rewrites: 0
+state: f(11)
 X --> f(11)
 where true
 
 Solution 2
+rewrites: 1
+state: f(11 + 1)
 X --> f(11 + 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 3
+rewrites: 2
+state: f(11 - 1)
 X --> f(11 - 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 4
+rewrites: 3
+state: f(11 + 1 + 1)
 X --> f(11 + 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
 ==========================================
 smt-search [20] in ITEST : f(11) =>* X .
 
 Solution 1
+rewrites: 0
+state: f(11)
 X --> f(11)
 where true
 
 Solution 2
+rewrites: 1
+state: f(11 + 1)
 X --> f(11 + 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 3
+rewrites: 2
+state: f(11 - 1)
 X --> f(11 - 1)
 where 11 >= 10 and 11 <= 12
 
 Solution 4
+rewrites: 3
+state: f(11 + 1 + 1)
 X --> f(11 + 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
 
 Solution 5
+rewrites: 4
+state: f(11 + 1 - 1)
 X --> f(11 + 1 - 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
 
 Solution 6
+rewrites: 5
+state: f(11 - 1 + 1)
 X --> f(11 - 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12)
 
 Solution 7
+rewrites: 6
+state: f(11 - 1 - 1)
 X --> f(11 - 1 - 1)
 where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12)
 
 Solution 8
+rewrites: 7
+state: f(11 + 1 - 1 + 1)
 X --> f(11 + 1 - 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
     >= 10 and 11 + 1 - 1 <= 12)
 
 Solution 9
+rewrites: 8
+state: f(11 + 1 - 1 - 1)
 X --> f(11 + 1 - 1 - 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
     >= 10 and 11 + 1 - 1 <= 12)
 
 Solution 10
+rewrites: 9
+state: f(11 - 1 + 1 + 1)
 X --> f(11 - 1 + 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
     >= 10 and 11 - 1 + 1 <= 12)
 
 Solution 11
+rewrites: 10
+state: f(11 - 1 + 1 - 1)
 X --> f(11 - 1 + 1 - 1)
 where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
     >= 10 and 11 - 1 + 1 <= 12)
 
 Solution 12
+rewrites: 11
+state: f(11 + 1 - 1 + 1 + 1)
 X --> f(11 + 1 - 1 + 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
     >= 10 and 11 + 1 - 1 <= 12) and (11 + 1 - 1 + 1 >= 10 and 11 + 1 - 1 + 1 <=
     12)
 
 Solution 13
+rewrites: 12
+state: f(11 + 1 - 1 + 1 - 1)
 X --> f(11 + 1 - 1 + 1 - 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
     >= 10 and 11 + 1 - 1 <= 12) and (11 + 1 - 1 + 1 >= 10 and 11 + 1 - 1 + 1 <=
     12)
 
 Solution 14
+rewrites: 13
+state: f(11 + 1 - 1 - 1 + 1)
 X --> f(11 + 1 - 1 - 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
     >= 10 and 11 + 1 - 1 <= 12) and (11 + 1 - 1 - 1 >= 10 and 11 + 1 - 1 - 1 <=
     12)
 
 Solution 15
+rewrites: 14
+state: f(11 + 1 - 1 - 1 - 1)
 X --> f(11 + 1 - 1 - 1 - 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
     >= 10 and 11 + 1 - 1 <= 12) and (11 + 1 - 1 - 1 >= 10 and 11 + 1 - 1 - 1 <=
     12)
 
 Solution 16
+rewrites: 15
+state: f(11 - 1 + 1 + 1 + 1)
 X --> f(11 - 1 + 1 + 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
     >= 10 and 11 - 1 + 1 <= 12) and (11 - 1 + 1 + 1 >= 10 and 11 - 1 + 1 + 1 <=
     12)
 
 Solution 17
+rewrites: 16
+state: f(11 - 1 + 1 + 1 - 1)
 X --> f(11 - 1 + 1 + 1 - 1)
 where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
     >= 10 and 11 - 1 + 1 <= 12) and (11 - 1 + 1 + 1 >= 10 and 11 - 1 + 1 + 1 <=
     12)
 
 Solution 18
+rewrites: 17
+state: f(11 - 1 + 1 - 1 + 1)
 X --> f(11 - 1 + 1 - 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
     >= 10 and 11 - 1 + 1 <= 12) and (11 - 1 + 1 - 1 >= 10 and 11 - 1 + 1 - 1 <=
     12)
 
 Solution 19
+rewrites: 18
+state: f(11 - 1 + 1 - 1 - 1)
 X --> f(11 - 1 + 1 - 1 - 1)
 where 11 >= 10 and 11 <= 12 and (11 - 1 >= 10 and 11 - 1 <= 12) and (11 - 1 + 1
     >= 10 and 11 - 1 + 1 <= 12) and (11 - 1 + 1 - 1 >= 10 and 11 - 1 + 1 - 1 <=
     12)
 
 Solution 20
+rewrites: 19
+state: f(11 + 1 - 1 + 1 - 1 + 1)
 X --> f(11 + 1 - 1 + 1 - 1 + 1)
 where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
     >= 10 and 11 + 1 - 1 <= 12) and (11 + 1 - 1 + 1 >= 10 and 11 + 1 - 1 + 1 <=
@@ -492,36 +598,52 @@ where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12) and (11 + 1 - 1
 smt-search [4] in ITEST : f(J) =>* X .
 
 Solution 1
+rewrites: 0
+state: f(J)
 X --> f(J)
 where true
 
 Solution 2
+rewrites: 1
+state: f(J + 1)
 X --> f(J + 1)
 where J >= 10 and J <= 12
 
 Solution 3
+rewrites: 2
+state: f(J - 1)
 X --> f(J - 1)
 where J >= 10 and J <= 12
 
 Solution 4
+rewrites: 3
+state: f(J + 1 + 1)
 X --> f(J + 1 + 1)
 where J >= 10 and J <= 12 and (J + 1 >= 10 and J + 1 <= 12)
 ==========================================
 smt-search [4] in ITEST : f(J) =>* f(J) .
 
 Solution 1
+rewrites: 0
+state: f(J)
 empty substitution
 where true and J === J
 
 Solution 2
+rewrites: 4
+state: f(J + 1 - 1)
 empty substitution
 where J >= 10 and J <= 12 and (J + 1 >= 10 and J + 1 <= 12) and J === J + 1 - 1
 
 Solution 3
+rewrites: 5
+state: f(J - 1 + 1)
 empty substitution
 where J >= 10 and J <= 12 and (J - 1 >= 10 and J - 1 <= 12) and J === J - 1 + 1
 
 Solution 4
+rewrites: 16
+state: f(J + 1 + 1 - 1 - 1)
 empty substitution
 where J >= 10 and J <= 12 and (J + 1 >= 10 and J + 1 <= 12) and (J + 1 + 1 >=
     10 and J + 1 + 1 <= 12) and (J + 1 + 1 - 1 >= 10 and J + 1 + 1 - 1 <= 12)
@@ -530,24 +652,169 @@ where J >= 10 and J <= 12 and (J + 1 >= 10 and J + 1 <= 12) and (J + 1 + 1 >=
 smt-search [4] in ITEST : f(J) =>* f(K) such that J = K .
 
 Solution 1
+rewrites: 0
+state: f(J)
 empty substitution
 where J === K and K === J
 
 Solution 2
+rewrites: 4
+state: f(J + 1 - 1)
 empty substitution
 where J === K and (J >= 10 and J <= 12) and (J + 1 >= 10 and J + 1 <= 12) and K
     === J + 1 - 1
 
 Solution 3
+rewrites: 5
+state: f(J - 1 + 1)
 empty substitution
 where J === K and (J >= 10 and J <= 12) and (J - 1 >= 10 and J - 1 <= 12) and K
     === J - 1 + 1
 
 Solution 4
+rewrites: 16
+state: f(J + 1 + 1 - 1 - 1)
 empty substitution
 where J === K and (J >= 10 and J <= 12) and (J + 1 >= 10 and J + 1 <= 12) and (
     J + 1 + 1 >= 10 and J + 1 + 1 <= 12) and (J + 1 + 1 - 1 >= 10 and J + 1 + 1
     - 1 <= 12) and K === J + 1 + 1 - 1 - 1
+==========================================
+smt-search [1] in ITEST : f(11) =>1 X .
+
+Solution 1
+rewrites: 1
+state: f(11 + 1)
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 2
+rewrites: 1
+state: f(11 - 1)
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+
+No more solutions.
+rewrites: 1
+==========================================
+smt-search [1] in ITEST : f(11) =>* X .
+
+Solution 1
+rewrites: 0
+state: f(11)
+X --> f(11)
+where true
+
+Solution 2
+rewrites: 1
+state: f(11 + 1)
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 3
+rewrites: 2
+state: f(11 - 1)
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+
+Solution 4
+rewrites: 1
+state: f(11 + 1 + 1)
+X --> f(11 + 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+
+Solution 5
+rewrites: 1
+state: f(11 + 1 - 1)
+X --> f(11 + 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+==========================================
+debug smt-search [4] in ITEST : f(11) =>+ X .
+*********** rule
+crl f(I) => f(I + 1) if I >= 10 = true /\ I <= 12 = true .
+I --> 11
+f(11)
+--->
+f(11 + 1)
+
+Solution 1
+rewrites: 1
+state: f(11 + 1)
+X --> f(11 + 1)
+where 11 >= 10 and 11 <= 12
+*********** rule
+crl f(I) => f(I - 1) if I >= 10 = true /\ I <= 12 = true .
+I --> 11
+f(11)
+--->
+f(11 - 1)
+
+Solution 2
+rewrites: 2
+state: f(11 - 1)
+X --> f(11 - 1)
+where 11 >= 10 and 11 <= 12
+*********** rule
+crl f(I) => f(I + 1) if I >= 10 = true /\ I <= 12 = true .
+I --> 11 + 1
+f(11 + 1)
+--->
+f(11 + 1 + 1)
+
+Solution 3
+rewrites: 3
+state: f(11 + 1 + 1)
+X --> f(11 + 1 + 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+
+Solution 4
+rewrites: 4
+state: f(11 + 1 - 1)
+X --> f(11 + 1 - 1)
+where 11 >= 10 and 11 <= 12 and (11 + 1 >= 10 and 11 + 1 <= 12)
+==========================================
+smt-search [4] in ITEST : f(J) =>* f(K) such that J = K .
+
+Solution 1
+rewrites: 0
+state: f(J)
+empty substitution
+where J === K and K === J
+
+Solution 2
+rewrites: 4
+state: f(J + 1 - 1)
+empty substitution
+where J === K and (J >= 10 and J <= 12) and (J + 1 >= 10 and J + 1 <= 12) and K
+    === J + 1 - 1
+
+Solution 3
+rewrites: 5
+state: f(J - 1 + 1)
+empty substitution
+where J === K and (J >= 10 and J <= 12) and (J - 1 >= 10 and J - 1 <= 12) and K
+    === J - 1 + 1
+
+Solution 4
+rewrites: 16
+state: f(J + 1 + 1 - 1 - 1)
+empty substitution
+where J === K and (J >= 10 and J <= 12) and (J + 1 >= 10 and J + 1 <= 12) and (
+    J + 1 + 1 >= 10 and J + 1 + 1 <= 12) and (J + 1 + 1 - 1 >= 10 and J + 1 + 1
+    - 1 <= 12) and K === J + 1 + 1 - 1 - 1
+*********** rule
+crl f(I) => f(I + 1) if I >= 10 = true /\ I <= 12 = true .
+I --> J + 1 - 1 + 1
+f(J + 1 - 1 + 1)
+--->
+f(J + 1 - 1 + 1 + 1)
+
+Solution 5
+rewrites: 2
+state: f(J + 1 - 1 + 1 - 1)
+empty substitution
+where J === K and (J >= 10 and J <= 12) and (J + 1 >= 10 and J + 1 <= 12) and (
+    J + 1 - 1 >= 10 and J + 1 - 1 <= 12) and (J + 1 - 1 + 1 >= 10 and J + 1 - 1
+    + 1 <= 12) and K === J + 1 - 1 + 1 - 1
 ==========================================
 reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
     'J:Integer = 'K:Integer, '*, 42, 2, 0) .
@@ -594,4 +861,34 @@ result SmtResult: {'f['_-_['_-_['_+_['_+_['J:Integer,'1.Integer],'1.Integer],
     '_-_['_+_['_+_['J:Integer,'1.Integer],'1.Integer],'1.Integer],
     '12.Integer]]],'_===_['K:Integer,'_-_['_-_['_+_['_+_['J:Integer,
     '1.Integer],'1.Integer],'1.Integer],'1.Integer]]],(42).NzNat}
-Maude> Bye.
+Warning: <standard input>, line 282 (mod COLLAPSE-AXIOM): operator bad has a
+    collapse axiom.
+Warning: <standard input>, line 280 (mod COLLAPSE-AXIOM): module COLLAPSE-AXIOM
+    does not satisfy restrictions for rewriting modulo SMT.
+Warning: <standard input>, line 297 (mod COLLAPSE-AXIOM2): polymorphic operator
+    bad has a collapse axiom.
+Warning: <standard input>, line 295 (mod COLLAPSE-AXIOM2): module
+    COLLAPSE-AXIOM2 does not satisfy restrictions for rewriting modulo SMT.
+Warning: <standard input>, line 319 (mod SMT-OP-IN-LHS): left-hand side of rule
+  crl f(h(X), h(Y + 1)) => g(h(X)) if X = Y .
+contains SMT symbol _+_.
+Warning: <standard input>, line 310 (mod SMT-OP-IN-LHS): module SMT-OP-IN-LHS
+    does not satisfy restrictions for rewriting modulo SMT.
+Warning: <standard input>, line 333 (mod NONLINEAR-VAR-IN-LHS): left-hand side
+    of rule
+  crl f(h(X), h(X)) => g(h(X)) if X = 1 .
+contains a nonlinear variable X.
+Warning: <standard input>, line 324 (mod NONLINEAR-VAR-IN-LHS): module
+    NONLINEAR-VAR-IN-LHS does not satisfy restrictions for rewriting modulo
+    SMT.
+Warning: <standard input>, line 338 (mod EQ-AND-MB-NO_RULES): module
+    EQ-AND-MB-NO_RULES has equations.
+Warning: <standard input>, line 338 (mod EQ-AND-MB-NO_RULES): module
+    EQ-AND-MB-NO_RULES has membership axioms.
+Warning: <standard input>, line 338 (mod EQ-AND-MB-NO_RULES): module
+    EQ-AND-MB-NO_RULES has no rules.
+Warning: <standard input>, line 338 (mod EQ-AND-MB-NO_RULES): module
+    EQ-AND-MB-NO_RULES does not satisfy restrictions for rewriting modulo SMT.
+Warning: <standard input>, line 368: pattern contains a nonlinear variable C.
+Warning: <standard input>, line 371: pattern contains SMT symbol _+_.
+Bye.

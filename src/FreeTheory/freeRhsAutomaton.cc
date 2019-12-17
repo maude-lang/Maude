@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -78,9 +78,15 @@ FreeRhsAutomaton::remapIndices(VariableInfo& variableInfo)
       Instruction& instr = instructions[i];
       instr.destination = variableInfo.remapIndex(instr.destination);
       int nrArgs = instr.sources.length();
+      //cout << "  " << nrArgs;
       for (int j = 0; j < nrArgs; j++)
-	instr.sources[j] = variableInfo.remapIndex(instr.sources[j]);
+	{
+	  instr.sources[j] = variableInfo.remapIndex(instr.sources[j]);
+	  //cout << "  " << instr.sources[j];
+	}
+      //cout << endl;
     }
+  //cout << endl;
 }
 
 local_inline void

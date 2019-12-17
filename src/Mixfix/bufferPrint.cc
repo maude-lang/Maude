@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
 
@@ -32,6 +32,13 @@ MixfixModule::bufferPrint(Vector<int>& buffer, Term* term, int printFlags)
 }
 
 void
+MixfixModule::bufferPrint(Vector<int>& buffer, StrategyExpression* expr, int printFlags)
+{
+  globalIndent = 0;  // HACK
+  prettyPrint(buffer, expr, UNBOUNDED, printFlags);
+}
+
+void
 MixfixModule::prefix(Vector<int>& buffer, bool needDisambig)
 {
   if (needDisambig)
@@ -59,9 +66,23 @@ void
 MixfixModule::handleVariable(Vector<int>& buffer, Term* term, int printFlags)
 {
   VariableTerm* v = safeCast(VariableTerm*, term);
-  string fullName(Token::name(v->id()));
-  fullName += ':';
+  int id = v->id();
   Sort* sort = v->getSort();
+  
+  AliasMap::const_iterator i = variableAliases.find(id);
+  if (i != variableAliases.end() && (*i).second == sort)
+    {
+      //
+      //	Use just the base name alone.
+      //
+      buffer.append(id);
+      return;
+    }
+  //
+  //	Construct the full name.
+  //
+  string fullName(Token::name(id));
+  fullName += ':';
   if (sort->index() == Sort::KIND)
     {
       buffer.append(Token::encode(fullName.c_str()));
@@ -97,13 +118,18 @@ MixfixModule::handleIter(Vector<int>& buffer, Term* term, SymbolInfo& si, bool r
   if (number == 1)
     return false;  // do default thing
 
-  // NEED TO FIX: disambig; i.e. we might have a regular operator called f^2
+  bool needToDisambiguate;
+  bool argumentRangeKnown;
+  decideIteratedAmbiguity(rangeKnown, term->symbol(), number, needToDisambiguate, argumentRangeKnown);
+  prefix(buffer, needToDisambiguate);
+
   string prefixName;
   makeIterName(prefixName, term->symbol()->id(), number);
   printPrefixName(buffer, Token::encode(prefixName.c_str()), si, printFlags);
   buffer.append(leftParen);
-  prettyPrint(buffer, st->getArgument(), PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown, printFlags);
+  prettyPrint(buffer, st->getArgument(), PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argumentRangeKnown, printFlags);
   buffer.append(rightParen);
+  suffix(buffer, term, needToDisambiguate, printFlags);
   return true;
 }
 
@@ -211,7 +237,7 @@ MixfixModule::handleSMT_NumberSymbol(Vector<int>& buffer, Term* term, bool range
   SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
   Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
   if (t == SMT_Info::INTEGER)
-   {
+    {
       const mpz_class& integer = value.get_num();
       needDisambig = !rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer));
     }
@@ -573,4 +599,309 @@ MixfixModule::handleFormat(Vector<int>& buffer, int spaceToken)
 	  }
 	}
     }
+}
+
+void
+MixfixModule::prettyPrint(Vector<int>& buffer,
+			  StrategyExpression* expr,
+			  int requiredPrec,
+			  int printFlags)
+{
+  bool needParen = false;
+
+  if (TrivialStrategy* t = dynamic_cast<TrivialStrategy*>(expr))
+    buffer.append(t->getResult() ? idle : fail);
+  else if (OneStrategy* o = dynamic_cast<OneStrategy*>(expr))
+    {
+      buffer.append(one);
+      buffer.append(leftParen);
+      prettyPrint(buffer, o->getStrategy(), UNBOUNDED, printFlags);
+      buffer.append(rightParen);
+    }
+  else if (ApplicationStrategy* a = dynamic_cast<ApplicationStrategy*>(expr))
+    {
+      bool topFlag = a->getTop();
+      if (topFlag)
+	{
+	  buffer.append(top);
+	  buffer.append(leftParen);
+	}
+      int label = a->getLabel();
+      if (label == NONE)
+	buffer.append(all);
+      else
+	{
+	  buffer.append(label);
+	  const Vector<Term*>& variables = a->getVariables();
+	  if (!variables.empty())
+	    {
+	      const Vector<CachedDag>& values = a->getValues();
+	      buffer.append(leftBracket);
+	      int nrAssignements = variables.size();
+	      for (int i = 0;;)
+		{
+		  prettyPrint(buffer, variables[i], UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+		  buffer.append(assignment);
+		  prettyPrint(buffer, values[i].getTerm(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+		  if (++i == nrAssignements)
+		    break;
+		  buffer.append(comma);
+		}
+	      buffer.append(rightBracket);
+	    }
+	  const Vector<StrategyExpression*>& strategies = a->getStrategies();
+	  if (!strategies.empty())
+	    {
+	      buffer.append(leftBrace);
+	      int nrStrategies = strategies.size();
+	      for (int i = 0;;)
+		{
+		  prettyPrint(buffer, strategies[i], UNBOUNDED, printFlags);
+		  if (++i == nrStrategies)
+		    break;
+		  buffer.append(comma);
+		}
+	      buffer.append(rightBrace);
+	    }
+	}
+      if (topFlag)
+	buffer.append(rightParen);
+    }
+  else if (ConcatenationStrategy* c = dynamic_cast<ConcatenationStrategy*>(expr))
+    {
+      needParen = requiredPrec < STRAT_SEQ_PREC;
+      if (needParen)
+	buffer.append(leftParen);
+      const Vector<StrategyExpression*>& strategies = c->getStrategies();
+      int nrStrategies = strategies.size();
+      for (int i = 0;;)
+	{
+	  prettyPrint(buffer, strategies[i], STRAT_SEQ_PREC, printFlags);
+	  if (++i == nrStrategies)
+	    break;
+	  buffer.append(semicolon);
+	}
+    }
+  else if (UnionStrategy* u = dynamic_cast<UnionStrategy*>(expr))
+    {
+      needParen = requiredPrec < STRAT_UNION_PREC;
+      if (needParen)
+	buffer.append(leftBrace);
+      const Vector<StrategyExpression*>& strategies = u->getStrategies();
+      int nrStrategies = strategies.size();
+      for (int i = 0;;)
+	{
+	  prettyPrint(buffer, strategies[i], STRAT_UNION_PREC, printFlags);
+	  if (++i == nrStrategies)
+	    break;
+	  buffer.append(pipe);
+	}
+    }
+  else if (IterationStrategy* i = dynamic_cast<IterationStrategy*>(expr))
+    {
+      prettyPrint(buffer, i->getStrategy(), 0, printFlags);
+      buffer.append(i->getZeroAllowed() ? star : plus);
+    }
+  else if (BranchStrategy* b = dynamic_cast<BranchStrategy*>(expr))
+    {
+      switch (b->getSuccessAction())
+	{
+	case BranchStrategy::FAIL:
+	  {
+	    Assert(b->getFailureAction() == BranchStrategy::IDLE &&
+		    b->getSuccessStrategy() == 0 &&
+		    b->getFailureStrategy() == 0, "unknown branch strategy");
+	    buffer.append(notToken);
+	    buffer.append(leftParen);
+	    prettyPrint(buffer, b->getInitialStrategy(), UNBOUNDED, printFlags);
+	    buffer.append(rightParen);
+	    break;
+	  }
+	case BranchStrategy::IDLE:
+	  {
+	    Assert(b->getFailureAction() == BranchStrategy::FAIL &&
+		   b->getSuccessStrategy() == 0 &&
+		   b->getFailureStrategy() == 0, "unknown branch strategy");
+	    buffer.append(test);
+	    buffer.append(leftParen);
+	    prettyPrint(buffer, b->getInitialStrategy(), UNBOUNDED, printFlags);
+	    buffer.append(rightParen);
+	    break;
+	  }
+	case BranchStrategy::PASS_THRU:
+	  {
+	    if (b->getFailureAction() == BranchStrategy::IDLE)
+	      {
+		Assert(b->getSuccessStrategy() == 0 &&
+		       b->getFailureStrategy() == 0, "unknown branch strategy");
+		buffer.append(tryToken);
+		buffer.append(leftParen);
+		prettyPrint(buffer, b->getInitialStrategy(), UNBOUNDED, printFlags);
+		buffer.append(rightParen);
+	      }
+	    else
+	      {
+		Assert(b->getFailureAction() == BranchStrategy::NEW_STRATEGY &&
+		       b->getSuccessStrategy() == 0, "unknown branch strategy");
+		needParen = requiredPrec < STRAT_ORELSE_PREC;
+		if (needParen)
+		  buffer.append(leftParen);
+		prettyPrint(buffer, b->getInitialStrategy(), STRAT_ORELSE_PREC, printFlags);
+		buffer.append(orelse);
+		prettyPrint(buffer, b->getFailureStrategy(), STRAT_ORELSE_PREC, printFlags);
+	      }
+	    break;
+	  }
+	case BranchStrategy::NEW_STRATEGY:
+	  {
+	    Assert(b->getFailureAction() == BranchStrategy::NEW_STRATEGY, "unknown branch strategy");
+	    needParen = requiredPrec < STRAT_BRANCH_PREC;
+	    if (needParen)
+	      buffer.append(leftParen);
+	    prettyPrint(buffer, b->getInitialStrategy(), STRAT_BRANCH_PREC, printFlags);
+	    buffer.append(query);
+	    prettyPrint(buffer, b->getSuccessStrategy(), STRAT_BRANCH_PREC, printFlags);
+	    buffer.append(colon);
+	    prettyPrint(buffer, b->getFailureStrategy(), STRAT_BRANCH_PREC, printFlags);
+	    break;
+	  }
+	case BranchStrategy::ITERATE:
+	  {
+	    Assert(b->getFailureAction() == BranchStrategy::IDLE &&
+		   b->getSuccessStrategy() == 0 &&
+		   b->getFailureStrategy() == 0, "unknown branch strategy");
+	    prettyPrint(buffer, b->getInitialStrategy(), 0, printFlags);
+	    buffer.append(bang);
+	    break;
+	  }
+	default:
+	  CantHappen("bad success action");
+	}
+    }
+  else if (TestStrategy* t = dynamic_cast<TestStrategy*>(expr))
+    {
+      needParen = requiredPrec < STRAT_TEST_PREC;
+      if (needParen)
+	buffer.append(leftParen);
+      switch (t->getDepth())
+	{
+	  case -1: buffer.append(match); break;
+	  case  0: buffer.append(xmatch); break;
+	  default: buffer.append(amatch);
+	}
+      prettyPrint(buffer, t->getPatternTerm(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      const Vector<ConditionFragment*>& condition = t->getCondition();
+      if (!condition.empty())
+	{
+	  buffer.append(suchThat);
+	  prettyPrint(buffer, condition, printFlags);
+	}
+    }
+  else if (SubtermStrategy* s = dynamic_cast<SubtermStrategy*>(expr))
+    {
+      needParen = requiredPrec < STRAT_REW_PREC;
+      if (needParen)
+	buffer.append(leftParen);
+      switch (s->getDepth())
+	{
+	  case -1: buffer.append(matchrew); break;
+	  case  0: buffer.append(xmatchrew); break;
+	  default: buffer.append(amatchrew);
+	}
+      prettyPrint(buffer, s->getPatternTerm(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      const Vector<ConditionFragment*>& condition = s->getCondition();
+      if (!condition.empty())
+	{
+	  buffer.append(suchThat);
+	  prettyPrint(buffer, condition, printFlags);
+	}
+      const Vector<Term*>& subterms = s->getSubterms();
+      const Vector<StrategyExpression*>& strategies = s->getStrategies();
+
+      size_t nrSubterms = subterms.size();
+
+      for (size_t i = 0; i < nrSubterms; ++i)
+	{
+	  buffer.append(i == 0 ? by : comma);
+	  prettyPrint(buffer, subterms[i], UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+	  buffer.append(usingToken);
+	  prettyPrint(buffer, strategies[i], STRAT_USING_PREC - 1, printFlags);
+	}
+    }
+  else if (CallStrategy* c = dynamic_cast<CallStrategy*>(expr))
+    {
+      RewriteStrategy* strategy = c->getStrategy();
+      Term* callTerm = c->getTerm();
+      buffer.append(strategy->id());
+      // Empty parenthesis are printed if there is a rule
+      // with that name in the module
+      if (strategy->arity() > 0
+	  || ruleLabels.find(strategy->id()) != ruleLabels.end())
+	{
+	  buffer.append(leftParen);
+	  bool first = true;
+	  for (ArgumentIterator it(*callTerm); it.valid(); it.next())
+	    {
+	      if (first)
+		first = false;
+	      else
+		buffer.append(comma);
+	      prettyPrint(buffer, it.argument(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+	    }
+	  buffer.append(rightParen);
+	}
+    }
+  if (needParen)
+    buffer.append(rightParen);
+}
+
+void
+MixfixModule::prettyPrint(Vector<int>& buffer,
+			  const Vector<ConditionFragment*>& condition,
+			  int printFlags)
+{
+  int nrFragments = condition.length();
+  for (int i = 0; i < nrFragments;)
+    {
+      prettyPrint(buffer, condition[i], printFlags);
+      if (++i < nrFragments)
+	buffer.append(wedge);
+    }
+}
+
+void
+MixfixModule::prettyPrint(Vector<int>& buffer,
+			  const ConditionFragment* c,
+			  int printFlags)
+{
+  if (const EqualityConditionFragment* e =
+      dynamic_cast<const EqualityConditionFragment*>(c))
+    {
+      prettyPrint(buffer, e->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      buffer.append(equals);
+      prettyPrint(buffer, e->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+    }
+  else if (const SortTestConditionFragment* t =
+	   dynamic_cast<const SortTestConditionFragment*>(c))
+    {
+      prettyPrint(buffer, t->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      buffer.append(colon);
+      printSort(buffer, t->getSort(), printFlags);
+    }
+  else if (const AssignmentConditionFragment* a =
+	   dynamic_cast<const AssignmentConditionFragment*>(c))
+   {
+      prettyPrint(buffer, a->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      buffer.append(assign);
+      prettyPrint(buffer, a->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+    }
+  else if (const RewriteConditionFragment* r =
+	   dynamic_cast<const RewriteConditionFragment*>(c))
+    {
+      prettyPrint(buffer, r->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      buffer.append(arrow);
+      prettyPrint(buffer, r->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+    }
+  else
+    CantHappen("bad condition fragment");
 }

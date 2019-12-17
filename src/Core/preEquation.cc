@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -134,7 +134,7 @@ PreEquation::checkCondition(DagNode* subject,
 			    Subproblem* subproblem) const
 {
   int trialRef =  UNDEFINED;
-  stack<ConditionState*> state;
+  Stack<ConditionState*> state;
   bool result = checkCondition(true, subject, context, subproblem, trialRef, state);
   Assert(result || state.empty(), "non-empty condition state stack");
   while (!state.empty())
@@ -151,7 +151,7 @@ PreEquation::checkCondition(bool findFirst,
 			    RewritingContext& context,
 			    Subproblem* subproblem,
 			    int& trialRef,
-			    stack<ConditionState*>& state) const
+			    Stack<ConditionState*>& state) const
 {
   Assert(condition.length() != 0, "no condition");
   Assert(!findFirst || state.empty(), "non-empty condition state stack");
@@ -200,7 +200,7 @@ bool
 PreEquation::solveCondition(bool findFirst,
 			    int trialRef,
 			    RewritingContext& solution,
-			    stack<ConditionState*>& state) const
+			    Stack<ConditionState*>& state) const
 {
   int nrFragments = condition.length();
   int i = findFirst ? 0 : nrFragments - 1;
@@ -234,7 +234,7 @@ PreEquation::solveCondition(bool findFirst,
 }
 
 void
-PreEquation::cleanStack(stack<ConditionState*>& conditionStack)
+PreEquation::cleanStack(Stack<ConditionState*>& conditionStack)
 {
   DebugAdvisoryCheck(conditionStack.empty(),
 		     "cleaning condition stack because of abort");
@@ -252,7 +252,7 @@ PreEquation::getLhsDag()
   if (d == 0)
     {
       d = getLhs()->term2Dag();
-      if (d->computeBaseSortForGroundSubterms() == DagNode::UNIMPLEMENTED)
+      if (d->computeBaseSortForGroundSubterms(true) == DagNode::UNIMPLEMENTED)
 	{
 	  IssueWarning(*this << ": lefthand side of " << this <<
 		       " contains function symbols with nonvariable arguments that are not supported by unification.");

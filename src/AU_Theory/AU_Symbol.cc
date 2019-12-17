@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -447,24 +447,26 @@ AU_Symbol::calculateNrSubjectsMatched(DagNode* d,
 void
 AU_Symbol::stackArguments(DagNode* subject,
 			  Vector<RedexPosition>& stack,
-			  int parentIndex)
+			  int parentIndex,
+			  bool respectFrozen,
+			  bool eagerContext)
 {
-  if (!(getFrozen().empty()))
+  if (respectFrozen && !(getFrozen().empty()))  // under A, any frozen argument affects all
     return;
-
+  bool eager = eagerContext && (getPermuteStrategy() == EAGER);
   if (safeCast(AU_BaseDagNode*, subject)->isDeque())
     {
       //
       //	Deque case.
       //
-      Assert(getPermuteStrategy() == EAGER, "non eager strategy with deque");
+      //Assert(getPermuteStrategy() == EAGER, "non eager strategy with deque");
       int j = 0;
       for (AU_DequeIter i(safeCast(AU_DequeDagNode*, subject)->getDeque());
 	   i.valid(); i.next(), ++j)
 	{
 	  DagNode* d = i.getDagNode();
 	  if (!(d->isUnstackable()))
-	    stack.append(RedexPosition(d, parentIndex, j, true));
+	    stack.append(RedexPosition(d, parentIndex, j, eager));
 	}
     }
   else
@@ -472,7 +474,6 @@ AU_Symbol::stackArguments(DagNode* subject,
       //
       //	ArgVec case.
       //
-      bool eager = (getPermuteStrategy() == EAGER);
       ArgVec<DagNode*>& args = safeCast(AU_DagNode*, subject)->argArray;
       int nrArgs = args.length();
       for (int i = 0; i < nrArgs; i++)

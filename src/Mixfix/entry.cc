@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -71,6 +71,106 @@ MixfixModule::hasSameDomain(const Vector<Sort*>& domainAndRange1,
 	}
     }
   return true;
+}
+
+int
+MixfixModule::checkPseudoIterated(Symbol* symbol, const Vector<Sort*>& domainAndRange)
+{
+  //
+  //	A symbol with a prefix name that looks like f^n can be confused with
+  //	an iterated symbol f when parsing and pretty printing.
+  //	We keep track of this extra overloading here.
+  //
+  int baseName;
+  mpz_class number;
+  Token::split(symbol->id(), baseName, number);
+  pseudoIteratedMap[baseName].insert(NumberToSymbolMap::value_type(number, symbol));
+  int overloadType = 0;
+  //
+  //	Now can we find an iterated symbol with baseName?
+  //
+  for (IteratedMap::const_iterator i = iteratedMap.lower_bound(baseName);
+       i != iteratedMap.end() && i->first == baseName; ++i)
+    {
+      Symbol* iSymbol = i->second;
+      const Vector<Sort*>& iDomainAndRange = iSymbol->getOpDeclarations()[0].getDomainAndRange();
+      overloadType |= ADHOC_OVERLOADED;
+
+      bool sameRange = (domainAndRange[1]->component() == iDomainAndRange[1]->component());
+      if (sameRange)
+	overloadType |= RANGE_OVERLOADED;
+
+      bool sameDomain (domainAndRange[0]->component() == iDomainAndRange[0]->component());
+      if (sameDomain)
+	{
+	  overloadType |= DOMAIN_OVERLOADED;
+	  if (sameRange)
+	    {
+	      IssueWarning(*symbol << ": declaration for operator " << QUOTE(symbol) <<
+			   " clashes with declaration for iterated operator " << QUOTE(iSymbol) <<
+			   " on " << *iSymbol <<
+			   " because of iterated notation.");
+	    }
+	  else
+	    {
+	      IssueWarning(*symbol << ": declaration for operator " << QUOTE(symbol) <<
+			   " clashes with declaration for iterated operator " << QUOTE(iSymbol) <<
+			   " on " << *iSymbol <<
+			   ", which has a different range kind, because of iterated notation.");
+	    }
+	}
+    }
+  return overloadType;
+}
+
+void
+MixfixModule::checkIterated(Symbol* symbol, const Vector<Sort*>& domainAndRange)
+{
+  int name = symbol->id();
+  iteratedMap.insert(IteratedMap::value_type(name, symbol));
+  //
+  //	An iterated symbol f can be confused with a pseudo iterated symbol
+  //	with name f^n when parsing and pretty printing.
+  //	We keep track of this extra overloading here.
+  //
+  PseudoIteratedMap::const_iterator i = pseudoIteratedMap.find(name);
+  if (i != pseudoIteratedMap.end())
+    {
+      //
+      //	At least one symbol aliasing the iterated forms of symbol.
+      //
+      FOR_EACH_CONST(j, NumberToSymbolMap, i->second)
+	{
+	  int overloadType = ADHOC_OVERLOADED;
+	  Symbol* pSymbol = j->second;
+	  const Vector<Sort*>& pDomainAndRange = pSymbol->getOpDeclarations()[0].getDomainAndRange();
+
+	  bool sameRange = (domainAndRange[1]->component() == pDomainAndRange[1]->component());
+	  if (sameRange)
+	    overloadType |= RANGE_OVERLOADED;
+
+	  bool sameDomain (domainAndRange[0]->component() == pDomainAndRange[0]->component());
+	  if (sameDomain)
+	    {
+	      overloadType |= DOMAIN_OVERLOADED;
+	      if (sameRange)
+		{
+		  IssueWarning(*symbol << ": declaration for operator " << QUOTE(symbol) <<
+			       " clashes with declaration for iterated operator " << QUOTE(pSymbol) <<
+			       " on " << *pSymbol <<
+			       " because of iterated notation.");
+		}
+	      else
+		{
+		  IssueWarning(*symbol << ": declaration for operator " << QUOTE(symbol) <<
+			       " clashes with declaration for iterated " << QUOTE(pSymbol) <<
+			       " on " << *pSymbol <<
+			       ", which has a different range kind, because of iterated notation.");
+		}
+	    }
+	  symbolInfo[pSymbol->getIndexWithinModule()].iflags |= overloadType;
+	}
+    }
 }
 
 Symbol*
@@ -299,6 +399,17 @@ MixfixModule::addOpDeclaration(Token prefixName,
 	  iflags |= PSEUDO_RAT;
 	}
     }
+  //
+  //	Need to worry about unary operators whose prefix name looks like f^2; i.e.
+  //	iterated notation.
+  //
+  if (nrArgs == 1 && prefixName.specialProperty() == Token::ITER_SYMBOL)
+    iflags |= checkPseudoIterated(symbol, domainAndRange);
+  //
+  //	We also need the check iterated symbols against any symbols with prefix
+  //	names like f^n.
+  if (symbolType.hasFlag(SymbolType::ITER))
+    checkIterated(symbol, domainAndRange);
 
   int nrSymbols = symbolInfo.length();
   symbolInfo.expandBy(1);
@@ -579,6 +690,10 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new SMT_Symbol(name, nrArgs);
     case SymbolType::SMT_NUMBER_SYMBOL:
       return new SMT_NumberSymbol(name);
+    case SymbolType::FILE_MANAGER_SYMBOL:
+      return new FileManagerSymbol(name);
+    case SymbolType::STREAM_MANAGER_SYMBOL:
+      return new StreamManagerSymbol(name);
     }
 
   int lineNr = prefixName.lineNumber();
@@ -823,6 +938,48 @@ MixfixModule::addPolymorph(Token prefixName,
       p.symbolInfo.iflags |= RANGE_OVERLOADED;
   }
   return nrPolymorphs;
+}
+
+int
+MixfixModule::addStrategy(Token name,
+			  const Vector<Sort*>& domainSorts,
+			  Sort* subjectSort,
+			  int metadata,
+			  bool imported)
+{
+  // Prepares a domain components vector to create an internal tuple symbol
+  // as the auxiliary symbol for matching strategy calls in definitions
+  int nrArgs = domainSorts.length();
+  Vector<ConnectedComponent*> domainComponents(nrArgs);
+  for (int i = 0; i < nrArgs; i++)
+    domainComponents[i] = domainSorts[i]->component();
+
+  Symbol* auxSymbol = createInternalTupleSymbol(domainComponents, strategyRangeSort->component());
+  RewriteStrategy* strat = new RewriteStrategy(name.code(), domainSorts, subjectSort, auxSymbol);
+  strat->setLineNumber(name.lineNumber());
+
+  // Checks if there is already an strategy with the same name
+  // and connected components in the module
+  RewriteStrategy* other = findStrategy(name.code(), domainComponents);
+
+  insertStrategy(strat);
+
+  if (other != 0)
+    {
+      if (imported)
+	IssueWarning(*this <<
+	  ": strategy declaration " << QUOTE(strat) << " from " << *strat <<
+	  " conflicts with " << QUOTE(other) << " from " << *other << ".");
+      else
+	IssueWarning(LineNumber(name.lineNumber()) <<
+	  ": strategy declaration " << QUOTE(strat) << " conflicts with " <<
+	  QUOTE(other) << " from " << *other << ".");
+    }
+
+  if (metadata != NONE)
+    insertMetadata(STRAT_DECL, strat, metadata);
+
+  return getStrategies().size() - 1;
 }
 
 int

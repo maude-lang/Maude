@@ -1,0 +1,57 @@
+set show timing off .
+set show advisories off .
+
+
+*** check number of sorts from parameter theory
+set include BOOL off .
+
+fmod FOO{P :: TRIV} is
+  op a : -> P$Elt .
+endfm
+
+fmod BAR{Q :: TRIV} is
+  inc FOO{Q} * (sort Q$Elt to Bad{Q}) .
+endfm
+
+show all .
+
+
+*** check number of operators from parameter theory
+set include BOOL off .
+
+fth T is
+  sort Elt .
+  op 0 : -> Elt .
+endfth
+
+fmod FOO{P :: T} is
+  op a : -> P$Elt .
+  eq a = 0 .
+endfm
+
+fmod BAR{Q :: T} is
+  inc FOO{Q} * (op 0 to 1) .
+endfm
+
+show all .
+
+
+*** check number of polymorphic operators from parameter theory
+set include BOOL off .
+
+fth T is
+  sort Elt .
+  op f : Poly -> Elt [poly (1)] .
+endfth
+
+fmod FOO{P :: T} is
+  op a : -> P$Elt .
+  op b : -> P$Elt .
+  eq f(a) = b .
+endfm
+
+fmod BAR{Q :: T} is
+  inc FOO{Q} * (op f to g) .
+endfm
+
+show all .

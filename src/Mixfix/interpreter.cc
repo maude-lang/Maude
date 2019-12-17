@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -62,17 +62,19 @@
 
 //	strategy languages definitions
 #include "strategyExpression.hh"
-#include "strategicSearch.hh"
+#include "depthFirstStrategicSearch.hh"
+#include "fairStrategicSearch.hh"
 
 //	front end class definitions
 #include "timer.hh"
-#include "userLevelRewritingContext.hh"
+#include "cacheableRewritingContext.hh"
 #include "maudemlBuffer.hh"
 #include "syntacticPreModule.hh"
-#include "view.hh"
+#include "syntacticView.hh"
 #include "visibleModule.hh"
 #include "loopSymbol.hh"
 #include "freshVariableSource.hh"
+#include "viewExpression.hh"
 #include "moduleExpression.hh"
 #include "interpreter.hh"
 
@@ -80,6 +82,8 @@
 #include "execute.cc"
 #include "match.cc"
 #include "unify.cc"
+#include "variantUnify.cc"
+#include "getVariants.cc"
 #include "search.cc"
 #include "loopMode.cc"
 #include "erewrite.cc"
@@ -95,11 +99,7 @@ Interpreter::Interpreter()
   currentModule = 0;
   currentView = 0;
 
-  savedContext = 0;
-  savedMatchSearchState = 0;
-  savedUnificationProblem = 0;
-  savedRewriteSequenceSearch = 0;
-  savedStrategicSearch = 0;
+  savedState = 0;
   savedModule = 0;
   continueFunc = 0;
 }
@@ -111,6 +111,7 @@ Interpreter::~Interpreter()
   //	accessing free'd stuff.
   //
   deleteNamedModules();
+  clearContinueInfo();
   delete xmlBuffer;
   delete xmlLog;
 }
@@ -213,7 +214,7 @@ Interpreter::setCurrentModule(SyntacticPreModule* module)
 	  clearContinueInfo();
 	  currentModule->loseFocus();
 	}
-      currentModule  = module;
+      currentModule = module;
     }
 }
 
@@ -235,7 +236,7 @@ Interpreter::setCurrentView(const Vector<Token>& viewExpr)
       {
 	if (View* v = getView(viewExpr[0].code()))
 	  {
-	    setCurrentView(v);
+	    setCurrentView(safeCast(SyntacticView*, v));
 	    return true;
 	  }
 	// fall thru
@@ -300,7 +301,7 @@ Interpreter::parse(const Vector<Token>& subject)
   //	We need can't use getFlatSignature() since sort info
   //	is not computed until module is flattened.
   //
-  Term *s = currentModule->getFlatModule()->parseTerm(subject);
+  Term* s = currentModule->getFlatModule()->parseTerm(subject);
   if (s != 0)
     {
       if (s->getSortIndex() == Sort::SORT_UNKNOWN)
@@ -325,7 +326,10 @@ Interpreter::showModule(bool all) const
 void
 Interpreter::showView() const
 {
-  currentView->showView(cout);
+  if (currentView->evaluate())  // in case it became stale
+    currentView->showView(cout);
+  else
+    IssueWarning("view " << QUOTE(currentView) << " cannot be used due to earlier errors.");
 }
 
 void
@@ -334,6 +338,14 @@ Interpreter::showModules(bool all) const
   showNamedModules(cout);
   if (all)
     showCreatedModules(cout);
+}
+
+void
+Interpreter::showViews(bool all) const
+{
+  showNamedViews(cout);
+  if (all)
+    showCreatedViews(cout);
 }
 
 void
@@ -368,6 +380,18 @@ Interpreter::showRls(bool all) const
 }
 
 void
+Interpreter::showStrats(bool all) const
+{
+  currentModule->getFlatModule()->showStrats(cout, false, all);
+}
+
+void
+Interpreter::showSds(bool all) const
+{
+  currentModule->getFlatModule()->showSds(cout, false, all);
+}
+
+void
 Interpreter::showKinds() const
 {
   currentModule->getFlatModule()->showKinds(cout);
@@ -378,7 +402,6 @@ Interpreter::showSummary() const
 {
   currentModule->getFlatModule()->showSummary(cout);
 }
-
 
 ImportModule*
 Interpreter::getModuleOrIssueWarning(int name, const LineNumber& lineNumber)
@@ -419,8 +442,157 @@ Interpreter::getModuleOrIssueWarning(int name, const LineNumber& lineNumber)
   return 0;
 }
 
+Argument*
+Interpreter::handleArgument(const ViewExpression* expr,
+			    EnclosingObject* enclosingObject,
+			    ImportModule* requiredParameterTheory,
+			    int argNr)
+{
+  //
+  //	An argument must be the name of a parameter from an enclosing object or the name of
+  //	a view or an instantiation of a view.
+  //	In all cases the fromTheory of the view or the theory of the parameter must match
+  //	requiredParameterTheory.
+  //
+  if (expr->isInstantiation())
+    {
+      //IssueAdvisory("evaluation of view instantiation " << expr << " is experimental");
+      //
+      //	We have the instantiation of a parameterized view.
+      //
+      ViewExpression* baseViewExpr = expr->getView();
+      //
+      //	Base view must be a named view or a view expression - cannot be a parameter.
+      //
+      Argument* baseArg = handleArgument(baseViewExpr, enclosingObject, requiredParameterTheory, NONE);
+      if (baseArg == 0)
+	return 0;
+      View* baseView = safeCast(View*, baseArg);
+      //
+      //	Number of parameters in base view must match number of arguments passed
+      //	in instantiation.
+      //
+      int nrParameters = baseView->getNrParameters();
+      const Vector<ViewExpression*>& argumentExpressions = expr->getArguments();
+      int nrArguments = argumentExpressions.size();
+      if (nrArguments != nrParameters)
+	{
+	  IssueWarning(nrArguments << (nrArguments == 1 ? " argument" : " arguments") <<
+		       " passed in view instantiation " << QUOTE(expr) << " whereas " <<
+		       nrParameters << " expected.");
+	  return 0;
+	}
+      //
+      //	We now construct an argument list of Parameters and Views.
+      //
+      Vector<Argument*> arguments(nrParameters);
+      bool hasTheoryView = false;  // theory-view maintain free parameters
+      bool hasPEO = false;  // parameters from an enclosing object (PEO) create bound parameters
+      bool hasViewWithBoundParameters = false;
+      for (int i = 0; i < nrParameters; ++i)
+	{
+	  DebugInfo("----- looking argument " << i << " which is " << argumentExpressions[i] << " --------");
+	  Argument* a = handleArgument(argumentExpressions[i], enclosingObject, baseView->getParameterTheory(i), i);
+	  if (a == 0)
+	    return 0;
+
+	  if (View* v = dynamic_cast<View*>(a))
+	    {
+	      if (v->hasFreeParameters())
+		{
+		  IssueWarning("view " << QUOTE(v) << " has free parameter " <<
+			       QUOTE(Token::name(v->getParameterName(0))) <<
+			       " and cannot be used in view instantiation " <<
+			       QUOTE(expr) << ".");
+		  return 0;
+		}
+	      if (v->hasBoundParameters())
+		hasViewWithBoundParameters = true;
+	      if (v->getToModule()->isTheory())
+		hasTheoryView = true;
+	    }
+	  else
+	    hasPEO = true;
+	  arguments[i] = a;
+	}
+      if (hasTheoryView && hasPEO)
+	{
+	  IssueWarning("Instantiation " << QUOTE(expr) <<
+		       " uses both a theory-view and a parameter from enclosing " <<
+		       enclosingObject->getObjectType() << " " <<
+		       QUOTE(enclosingObject->getObjectName()) << '.');
+	  return 0;
+	}
+      if (hasTheoryView && hasViewWithBoundParameters)
+	{
+	  IssueWarning("Nonfinal instantiation " << QUOTE(expr) <<
+		       " uses both a theory-view and a view with bound parameters from enclosing " <<
+		       enclosingObject->getObjectType() << " " <<
+		       QUOTE(enclosingObject->getObjectName()) << '.');
+	}
+      return makeViewInstantiation(baseView, arguments);
+    }
+  //
+  //	Base case: parameter name or view name.
+  //
+  Token name = expr->getName();
+  int code  = name.code();
+  if (enclosingObject != 0 && argNr != NONE)
+    {
+      //
+      //	Because we have an enclosing object and we're in an argument list we
+      //	check for a parameter from the enclosing object.
+      //
+      int index = enclosingObject->findParameterIndex(code);
+      if (index != NONE)
+	{
+	  //
+	  //	Parameters from an enclosing object occlude views.
+	  //
+	  ImportModule* enclosingObjectParameterTheory = enclosingObject->getParameterTheory(index);
+	  if (enclosingObjectParameterTheory != requiredParameterTheory)
+	    {
+	      IssueWarning(LineNumber(name.lineNumber()) << ": parameter " << QUOTE(name) <<
+			   " from enclosing " << enclosingObject->getObjectType() <<
+			   ' ' << QUOTE(enclosingObject->getObjectName()) <<
+			   " is of theory " << QUOTE(enclosingObjectParameterTheory) <<
+			   " whereas theory " <<  QUOTE(requiredParameterTheory) <<
+			   " is required.");
+	      return 0;
+	    }
+	  return getParameter(code);
+	}
+    }
+  //
+  //	Must be a view
+  //
+  if (View* v = getView(code))
+    {
+      //
+      //	Instantiation argument is a view.
+      //
+      if (!(v->evaluate()))
+	{
+	  IssueWarning(LineNumber(name.lineNumber()) << ": unusable view " << QUOTE(v) << '.');
+	  return 0;
+	}
+      ImportModule* fromTheory = v->getFromTheory();
+      if (fromTheory != requiredParameterTheory)
+	{
+	  IssueWarning(LineNumber(name.lineNumber()) << ": view " << QUOTE(name) <<
+		       " is from theory " << QUOTE(fromTheory) <<
+		       " whereas theory " << QUOTE(requiredParameterTheory) <<
+		       " is required.");
+	  return 0;
+	}
+      return v;
+    }
+  IssueWarning(LineNumber(name.lineNumber()) << ": could not find a parameter or view " << QUOTE(name) << ".");
+  return 0;
+}
+
 ImportModule*
-Interpreter::makeModule(const ModuleExpression* expr, ImportModule* enclosingModule)
+Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosingObject)
 {
   switch (expr->getType())
     {
@@ -433,15 +605,21 @@ Interpreter::makeModule(const ModuleExpression* expr, ImportModule* enclosingMod
       }
     case ModuleExpression::RENAMING:
       {
-	if (ImportModule* fm = makeModule(expr->getModule(), enclosingModule))
+	if (ImportModule* fm = makeModule(expr->getModule(), enclosingObject))
 	  {
-	    /*
-	    if (fm->parametersBound())  // NEED TO FIX
+	    if (fm->hasBoundParameters())
 	      {
-		IssueWarning("renamed module " << fm << " has bound parameters.");
-		return 0;
+		//
+		//	We allow this because we have to deal with this case when
+		//	a module with free parameters whose imports have bound parameters
+		//	is renamed, but it is discourage because of arugment capture issues.
+		//
+		//	Might be necessary anyway so don't both user for the moment.
+		//
+		//IssueAdvisory("Renaming module " << QUOTE(fm) <<
+		//	      " which has bound parameters to evaluate module expression " <<
+		//	      QUOTE(expr) << ".");
 	      }
-	    */
 	    return makeRenamedCopy(fm, expr->getRenaming());
 	  }
 	break;
@@ -452,11 +630,11 @@ Interpreter::makeModule(const ModuleExpression* expr, ImportModule* enclosingMod
 	Vector<ImportModule*> fms;
 	FOR_EACH_CONST(i, list<ModuleExpression*>, modules)
 	  {
-	    if (ImportModule* fm = makeModule(*i, enclosingModule))
+	    if (ImportModule* fm = makeModule(*i, enclosingObject))
 	      {
-		if (fm->getNrParameters() > 0)
+		if (fm->hasFreeParameters())
 		  {
-		    IssueWarning("summand module " << fm << " has parameters.");
+		    IssueWarning("summand module " << fm << " has free parameters.");
 		    return 0;
 		  }
 		fms.append(fm);
@@ -468,91 +646,65 @@ Interpreter::makeModule(const ModuleExpression* expr, ImportModule* enclosingMod
       }
     case ModuleExpression::INSTANTIATION:
       {
-	if (ImportModule* fm = makeModule(expr->getModule(), enclosingModule))
+	if (ImportModule* fm = makeModule(expr->getModule(), enclosingObject))
 	  {
 	    int nrParameters = fm->getNrParameters();
-	    const Vector<Token>& arguments = expr->getArguments();
-	    int nrArguments = arguments.size();
+	    const Vector<ViewExpression*>& argumentExpressions = expr->getArguments();
+	    int nrArguments = argumentExpressions.size();
 	    if (nrArguments != nrParameters)
 	      {
 		IssueWarning("wrong number of parameters in module instantiation " << QUOTE(expr) << "; " <<
 			     nrParameters << " expected.");
 		break;
 	      }
-	    Vector<View*> views(nrParameters);
-	    Vector<int> names(nrParameters);
+	    Vector<Argument*> arguments(nrParameters);
 	    bool hasTheoryView = false;
-	    bool hasPEM = false;
+	    bool hasPEO = false;
+	    bool hasViewWithBoundParameters = false;
 	    for (int i = 0; i < nrParameters; ++i)
 	      {
-		Token name = arguments[i];
-		int code  = name.code();
-		if (enclosingModule != 0)
+		Argument* a = handleArgument(argumentExpressions[i], enclosingObject, fm->getParameterTheory(i), i);
+		if (a != 0)
 		  {
-		    int index = enclosingModule->findParameterIndex(code);
-		    if (index != NONE)
+		    if (View* v = dynamic_cast<View*>(a))
 		      {
-			//
-			//	Parameters from an enclosing module occlude views.
-			//
-			ImportModule* enclosingModuleParameterTheory = enclosingModule->getParameterTheory(index);
-			ImportModule* requiredParameterTheory = fm->getParameterTheory(i);
-			if (enclosingModuleParameterTheory != requiredParameterTheory)
+			if (v->hasFreeParameters())
 			  {
-			    IssueWarning("In argument " << i + 1 << " of module instantiation " << QUOTE(expr) <<
-					 ", parameter " << QUOTE(name) << " from enclosing module " <<
-					 QUOTE(enclosingModule) << " has theory " <<
-					 QUOTE(enclosingModuleParameterTheory) <<
-					 " whereas theory " <<  QUOTE(requiredParameterTheory) << " is required.");
+			    IssueWarning("view " << QUOTE(v) << " has free parameter " <<
+					 QUOTE(Token::name(v->getParameterName(0))) <<
+					 " and cannot be used in module instantiation " <<
+					 QUOTE(expr) << ".");
 			    return 0;
 			  }
-			views[i] = 0;
-			names[i] = code;
-			hasPEM = true;
-			continue;
+			if (v->hasBoundParameters())
+			  hasViewWithBoundParameters = true;
+			if (v->getToModule()->isTheory())
+			  hasTheoryView = true;
 		      }
-		  }
-		if (View* v = getView(code))
-		  {
-		    //
-		    //	Instantiation argument is a view.
-		    //
-		    if (!(v->evaluate()))
-		      {
-			IssueWarning("unusable view " << QUOTE(name) << " while evaluating module instantiation " <<
-				     QUOTE(expr) << '.');
-			return 0;
-		      }
-		    ImportModule* fromTheory = v->getFromTheory();
-		    ImportModule* requiredParameterTheory = fm->getParameterTheory(i);
-		    if (fromTheory != requiredParameterTheory)
-		      {
-			IssueWarning("In argument " << i + 1 << " of module instantiation " << QUOTE(expr) <<
-				     ", view " << QUOTE(static_cast<NamedEntity*>(v)) << " is from theory " <<
-				     QUOTE(fromTheory) << " whereas theory " <<  QUOTE(requiredParameterTheory) <<
-				     " is required.");
-			return 0;
-		      }
-		    views[i] = v;
-		    names[i] = 0;
-		    if (v->getToModule()->isTheory())
-		      hasTheoryView = true;
+		    else
+		      hasPEO = true;
 		  }
 		else
-		  {
-		    IssueWarning("In argument " << i + 1 << " of module instantiation " << QUOTE(expr) <<
-				 " could not find a parameter or view " << QUOTE(name) << ".");
-		    return 0;
-		  }
+		  return 0;
+		arguments[i] = a;
 	      }
-	    if (hasTheoryView && hasPEM)
+	    if (hasTheoryView && hasPEO)
 	      {
 		IssueWarning("Instantiation " << QUOTE(expr) <<
-			     " uses both a theory-view and a parameter from enclosing module " <<
-			     QUOTE(enclosingModule) << '.');
+			     " uses both a theory-view and a parameter from enclosing " <<
+			     enclosingObject->getObjectType() << " " <<
+			     QUOTE(enclosingObject->getObjectName()) << '.');
 		return 0;
 	      }
-	    return makeInstatiation(fm, views, names);  // may return null but never has bad flag set
+	    if (hasTheoryView && hasViewWithBoundParameters)
+	      {
+		IssueWarning("Nonfinal instantiation " << QUOTE(expr) <<
+			     " uses both a theory-view and a view with bound parameters from enclosing " <<
+			     enclosingObject->getObjectType() << " " <<
+			     QUOTE(enclosingObject->getObjectName()) << '.');
+		return 0;
+	      }
+	    return makeModuleInstantiation(fm, arguments);  // may return null but never has bad flag set
 	  }
 	break;
       }

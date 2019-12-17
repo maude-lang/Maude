@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -65,6 +65,7 @@ RuleTable::resetRules()
   nextRule = 0;
 }
 
+/*
 void
 RuleTable::saveHiddenState()
 {
@@ -77,6 +78,7 @@ RuleTable::restoreHiddenState()
   nextRule = nextRuleStack.top();
   nextRuleStack.pop();
 }
+*/
 
 DagNode*
 RuleTable::ruleRewrite(DagNode* subject, RewritingContext& context)

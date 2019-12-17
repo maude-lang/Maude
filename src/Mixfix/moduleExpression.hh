@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -42,14 +42,14 @@ public:
   ModuleExpression(Token moduleName);
   ModuleExpression(ModuleExpression* left, ModuleExpression* right);
   ModuleExpression(ModuleExpression* module, Renaming* renaming);
-  ModuleExpression(ModuleExpression* module, const Vector<Token>& arguments);
-
+  ModuleExpression(ModuleExpression* module, const Vector<ViewExpression*>& arguments);
+  
   Type getType() const;
   Token getModuleName() const;
   const list<ModuleExpression*>& getModules() const;
   ModuleExpression* getModule() const;
   Renaming* getRenaming() const;
-  const Vector<Token>& getArguments() const;
+  const Vector<ViewExpression*>& getArguments() const;
   void deepSelfDestruct();
 
 private:
@@ -73,7 +73,7 @@ private:
   //
   //	For instantiation.
   //
-  Vector<Token> arguments;
+  Vector<ViewExpression*> arguments;
 };
 
 ostream& operator<<(ostream& s, const ModuleExpression* expr);
@@ -112,7 +112,7 @@ ModuleExpression::getRenaming() const
   return renaming;
 }
 
-inline const Vector<Token>&
+inline const Vector<ViewExpression*>&
 ModuleExpression::getArguments() const
 {
   Assert(type == INSTANTIATION, "not instantiation");

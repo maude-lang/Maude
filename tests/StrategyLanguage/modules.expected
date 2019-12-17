@@ -1,0 +1,355 @@
+smod BAR is
+  sorts Bool Zero NzNat Nat String Char FindResult Qid .
+  subsorts Zero NzNat < Nat .
+  subsort Char < String .
+  subsort Nat < FindResult .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op 0 : -> Zero [ctor] .
+  op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op sd : Nat Nat -> Nat [comm special (
+    id-hook CUI_NumberOpSymbol (sd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _quo_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _rem_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _^_ : Nat Nat -> Nat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _^_ : NzNat Nat -> NzNat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op modExp : [FindResult] [FindResult] [FindResult] -> [FindResult] [special (
+    id-hook NumberOpSymbol (modExp)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op lcm : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op lcm : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op min : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op min : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op max : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op max : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _xor_ : Nat Nat -> Nat [assoc comm prec 55 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _&_ : Nat Nat -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _|_ : NzNat Nat -> NzNat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _|_ : Nat Nat -> Nat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _>>_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _<<_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _<_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzNat Nat -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op <Strings> : -> Char [special (
+    id-hook StringSymbol)] .
+  op <Strings> : -> String [special (
+    id-hook StringSymbol)] .
+  op notFound : -> FindResult [ctor] .
+  op ascii : Char -> Nat [special (
+    id-hook StringOpSymbol (ascii)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op char : [FindResult] -> [String] [special (
+    id-hook StringOpSymbol (char)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _+_ : String String -> String [prec 33 gather (E e) special (
+    id-hook StringOpSymbol (+)
+    op-hook stringSymbol (<Strings> : ~> Char))] .
+  op length : String -> Nat [special (
+    id-hook StringOpSymbol (length)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op substr : String Nat Nat -> String [special (
+    id-hook StringOpSymbol (substr)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op find : String String Nat -> FindResult [special (
+    id-hook StringOpSymbol (find)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook notFoundTerm (notFound))] .
+  op rfind : String String Nat -> FindResult [special (
+    id-hook StringOpSymbol (rfind)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook notFoundTerm (notFound))] .
+  op _<_ : String String -> Bool [prec 37 gather (E E) special (
+    id-hook StringOpSymbol (<)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : String String -> Bool [prec 37 gather (E E) special (
+    id-hook StringOpSymbol (<=)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : String String -> Bool [prec 37 gather (E E) special (
+    id-hook StringOpSymbol (>)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : String String -> Bool [prec 37 gather (E E) special (
+    id-hook StringOpSymbol (>=)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op upperCase : String -> String [special (
+    id-hook StringOpSymbol (upperCase)
+    op-hook stringSymbol (<Strings> : ~> Char))] .
+  op lowerCase : String -> String [special (
+    id-hook StringOpSymbol (lowerCase)
+    op-hook stringSymbol (<Strings> : ~> Char))] .
+  op <Qids> : -> Qid [special (
+    id-hook QuotedIdentifierSymbol)] .
+  op string : Qid -> String [special (
+    id-hook QuotedIdentifierOpSymbol (string)
+    op-hook quotedIdentifierSymbol (<Qids> : ~> Qid)
+    op-hook stringSymbol (<Strings> : ~> Char))] .
+  op qid : [String] -> [Qid] [special (
+    id-hook QuotedIdentifierOpSymbol (qid)
+    op-hook quotedIdentifierSymbol (<Qids> : ~> Qid)
+    op-hook stringSymbol (<Strings> : ~> Char))] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  rl X:Qid => qid("h" + string(X:Qid)) [label rh] .
+  strat puths : Nat @ Qid .
+  sd puths(0) := idle .
+  sd puths(s N:Nat) := rh ; puths(N:Nat) .
+endsm
+==========================================
+srewrite in BAR : 'a using puths(8) .
+
+Solution 1
+rewrites: 32
+result Qid: 'hhhhhhhha
+
+No more solutions.
+rewrites: 32
+==========================================
+reduce in PROMOTED : 'a 'b 'c .
+rewrites: 0
+result NeList{STriv}{Foo}: 'a 'b 'c
+==========================================
+srewrite in CALLS : 'c using cond .
+*********** trial #1
+csd cond := rh[X <- X] if X, S := 'a, 'b, 'c .
+X --> (unbound)
+S --> (unbound)
+*********** solving condition fragment
+X, S := 'a, 'b, 'c
+*********** success for condition fragment
+X, S := 'a, 'b, 'c
+X --> 'a
+S --> 'b, 'c
+*********** success #1
+*********** strategy call
+csd cond := rh[X <- X] if X, S := 'a, 'b, 'c .
+subject --> 'c
+X --> 'a
+S --> 'b, 'c
+*********** re-solving condition fragment
+X, S := 'a, 'b, 'c
+*********** success for condition fragment
+X, S := 'a, 'b, 'c
+X --> 'b
+S --> 'a, 'c
+*********** success #1
+*********** strategy call
+csd cond := rh[X <- X] if X, S := 'a, 'b, 'c .
+subject --> 'c
+X --> 'b
+S --> 'a, 'c
+*********** re-solving condition fragment
+X, S := 'a, 'b, 'c
+*********** success for condition fragment
+X, S := 'a, 'b, 'c
+X --> 'c
+S --> 'a, 'b
+*********** success #1
+*********** strategy call
+csd cond := rh[X <- X] if X, S := 'a, 'b, 'c .
+subject --> 'c
+X --> 'c
+S --> 'a, 'b
+*********** re-solving condition fragment
+X, S := 'a, 'b, 'c
+*********** failure for condition fragment
+X, S := 'a, 'b, 'c
+*********** failure #1
+
+Solution 1
+rewrites: 4
+result Qid: 'hc
+
+No more solutions.
+rewrites: 4
+==========================================
+srewrite in CALLS : 'b using defs .
+*********** strategy call
+sd defs := fail .
+subject --> 'b
+empty substitution
+*********** strategy call
+sd defs := rh .
+subject --> 'b
+empty substitution
+*********** strategy call
+sd defs := idle .
+subject --> 'b
+empty substitution
+
+Solution 1
+rewrites: 4
+result Qid: 'hb
+
+Solution 2
+rewrites: 4
+result Qid: 'b
+
+No more solutions.
+rewrites: 4
+==========================================
+srewrite in CALLS : 'a using args('a, 'z) .
+*********** strategy call
+sd args(X, S) := rh[X <- X] .
+call term --> args('a, 'z)
+subject --> 'a
+X --> 'a
+S --> 'z
+*********** strategy call
+sd args(X, S) := rh[X <- X] .
+call term --> args('a, 'z)
+subject --> 'a
+X --> 'z
+S --> 'a
+
+Solution 1
+rewrites: 4
+result Qid: 'ha
+
+No more solutions.
+rewrites: 4
+Warning: <standard input>, line 101 (smod BAD): variable Q is used before it is
+    bound in strategy equation:
+csd st := idle if Q = 'a .
+Warning: <standard input>, line 102 (smod BAD): unbound variable Q in
+    application strategy substitution for Q.
+Warning: <standard input>, line 103 (smod BAD): variable Q is used before it is
+    bound in condition of test strategy.
+Warning: <standard input>, line 104 (smod BAD): unbound variable Q in strategy
+    call argument.
+==========================================
+srewrite in ALLINSMOD : a using next .
+
+Solution 1
+rewrites: 2
+result Letter: b
+
+No more solutions.
+rewrites: 2
+==========================================
+srewrite in ALLINSMOD : a using next() .
+
+Solution 1
+rewrites: 4
+result Letter: c
+
+No more solutions.
+rewrites: 4
+Bye.

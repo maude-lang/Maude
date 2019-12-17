@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -68,6 +68,10 @@ PseudoThread::processFds(long wait)
   int nfds = 0;
   //	cerr << "firstActive is " << firstActive << endl;
 
+  //
+  //	Construct array of active file descriptors and see if
+  //	wait is reduced by a time out.
+  //
   long now = getTime();
   for (int i = firstActive; i != NONE; i = fdInfo[i].nextActive)
     {
@@ -85,7 +89,10 @@ PseudoThread::processFds(long wait)
 	}
       ++nfds;
     }
-  int milliseconds = -1;
+  //
+  //	Turn seconds into milliseconds for poll() call.
+  //
+  int milliseconds = -1;  // forever
   if (wait >= 0)
     {
       if (wait <= (INT_MAX / 1000))
@@ -93,88 +100,28 @@ PseudoThread::processFds(long wait)
       else
 	milliseconds = INT_MAX;
     }
-  //cout << "----calling poll with nfds = " << nfds << endl;
-  int n = poll(ufds, nfds, milliseconds);
-  now = getTime();  // a significant amount of time may have passed while we were in poll() call
-
-  //cout << "poll returns " << n << endl;
-  if (n <= 0)
+  //
+  //	Call poll() and check for interrupts and errors.
+  //
+  int nrEvents = poll(ufds, nfds, milliseconds);
+  if (nrEvents < 0)
     {
       Assert(errno == EINTR, "poll() failed with " << errno);
       return INTERRUPTED;  // treat all errors as interrupts
     }
-  //
-  //	Dispatch pending events.
-  //
-  int returnValue = 0;
-  for (int i = 0; i < nfds; i++)
+
+  now = getTime();  // a significant amount of time may have passed while we were in poll() call
+  int returnValue = NOTHING_HAPPENED;
+  if (nrEvents == 0)
     {
-      //cout << "fd = " << ufds[i].fd << "  revents = " << ufds[i].revents << endl;
-      int fd = ufds[i].fd;
-      FD_Info& info = fdInfo[fd];
-      short t = ufds[i].revents;
-      if (t != 0)
+      //
+      //	No events but still need to check for time outs on
+      //	active file descriptors.
+      //
+      for (int i = 0; i < nfds; i++)
 	{
-	  Assert(!(t & POLLNVAL), "invalid fd " << fd);
-	  //
-	  //	When we have an error we need to removed fd from
-	  //	active list to avoid going into a spin.
-	  //
-	  if (t & POLLERR)
-	    {
-	      info.flags = 0;
-	      unlink(fd);
-	      info.owner->doError(fd);
-	      returnValue = EVENT_HANDLED;
-	      continue;
-	    }
-	  //
-	  //	This is tricky. If we are wanting to read but
-	  //	get disconnected:
-	  //	Linux sets POLLHUP but not POLLIN;
-	  //	BSD & Solaris set POLLIN but not POLLHUP;
-	  //	DEC UNIX sets both flags even if there are still
-	  //	  chars to read.
-	  //
-	  if (t & POLLIN)
-	    {
-	      info.flags &= ~POLLIN;  // clear POLLIN flag
-	      //info.flags = t & ~POLLIN;  // reproduce bug;
-	      if (info.flags == 0)
-		unlink(fd);
-	      info.timeOutAt = NONE;
-	      info.owner->doRead(fd);
-	      returnValue = EVENT_HANDLED;
-	    }
-	  else if (t & POLLHUP)
-	    {
-	      //
-	      //	Need to removed fd from active list to avoid going
-	      //	into a spin. But we don't want to do this until all
-	      //	available chars have been read.
-	      //
-	      info.flags = 0;
-	      unlink(fd);
-	      info.owner->doHungUp(fd);
-	      returnValue = EVENT_HANDLED;
-	      continue;
-	    }
-	  if (t & POLLOUT)
-	    {
-	      info.flags &= ~POLLOUT;  // clear POLLOUT flag
-	      //info.flags = t & ~POLLOUT;  // reproduce bug;
-	      if (info.flags == 0)
-		unlink(fd);
-	      info.timeOutAt = NONE;
-	      info.owner->doWrite(fd);
-	      returnValue = EVENT_HANDLED;
-	    }
-	}
-      else
-	{
-	  //
-	  //	Check for time out.
-	  //
+	  int fd = ufds[i].fd;
+	  FD_Info& info = fdInfo[fd];
 	  if (info.timeOutAt != NONE && info.timeOutAt < now)
 	    {
 	      info.flags = 0;
@@ -184,11 +131,95 @@ PseudoThread::processFds(long wait)
 	    }
 	}
     }
+  else
+    {
+      //
+      //	Dispatch pending events.
+      //
+      for (int i = 0; i < nfds; i++)
+	{
+	  //cout << "fd = " << ufds[i].fd << "  revents = " << ufds[i].revents << endl;
+	  int fd = ufds[i].fd;
+	  FD_Info& info = fdInfo[fd];
+	  short t = ufds[i].revents;
+	  if (t != 0)
+	    {
+	      Assert(!(t & POLLNVAL), "invalid fd " << fd);
+	      //
+	      //	When we have an error we need to removed fd from
+	      //	active list to avoid going into a spin.
+	      //
+	      if (t & POLLERR)
+		{
+		  info.flags = 0;
+		  unlink(fd);
+		  info.owner->doError(fd);
+		  returnValue = EVENT_HANDLED;
+		  continue;
+		}
+	      //
+	      //	This is tricky. If we are wanting to read but
+	      //	get disconnected:
+	      //	Linux sets POLLHUP but not POLLIN;
+	      //	BSD & Solaris set POLLIN but not POLLHUP;
+	      //	DEC UNIX sets both flags even if there are still
+	      //	  chars to read.
+	      //
+	      if (t & POLLIN)
+		{
+		  info.flags &= ~POLLIN;  // clear POLLIN flag
+		  //info.flags = t & ~POLLIN;  // reproduce bug;
+		  if (info.flags == 0)
+		    unlink(fd);
+		  info.timeOutAt = NONE;
+		  info.owner->doRead(fd);
+		  returnValue = EVENT_HANDLED;
+		}
+	      else if (t & POLLHUP)
+		{
+		  //
+		  //	Need to removed fd from active list to avoid going
+		  //	into a spin. But we don't want to do this until all
+		  //	available chars have been read.
+		  //
+		  info.flags = 0;
+		  unlink(fd);
+		  info.owner->doHungUp(fd);
+		  returnValue = EVENT_HANDLED;
+		  continue;
+		}
+	      if (t & POLLOUT)
+		{
+		  info.flags &= ~POLLOUT;  // clear POLLOUT flag
+		  //info.flags = t & ~POLLOUT;  // reproduce bug;
+		  if (info.flags == 0)
+		    unlink(fd);
+		  info.timeOutAt = NONE;
+		  info.owner->doWrite(fd);
+		  returnValue = EVENT_HANDLED;
+		}
+	    }
+	  else
+	    {
+	      //
+	      //	Check for time out.
+	      //
+	      if (info.timeOutAt != NONE && info.timeOutAt < now)
+		{
+		  info.flags = 0;
+		  unlink(fd);
+		  info.owner->doTimeOut(fd);
+		  returnValue = EVENT_HANDLED;
+		}
+	    }
+	}
+      Assert(returnValue == EVENT_HANDLED, "poll() saw " << nrEvents << " events but we didn't handle any");
+    }
   return returnValue;
 }
 
 int
-PseudoThread::eventLoop()
+PseudoThread::eventLoop(bool block)
 {
   //
   //	We return for one or more of 3 reasons:
@@ -196,7 +227,7 @@ PseudoThread::eventLoop()
   //	INTERRUPTED: a non-ignored signal arrived
   //	EVENT_HANDLED: at least one callback was made
   //
-  int returnValue = 0;
+  int returnValue = NOTHING_HAPPENED;
   for(;;)
     {
       //
@@ -211,16 +242,28 @@ PseudoThread::eventLoop()
       //
       if (firstActive != NONE)
 	{
-	  returnValue |= processFds(wait);
-	  if (returnValue != 0)
+	  //
+	  //	Check for active file descriptors and suspend in poll()
+	  //	if we are blocking.
+	  //
+	  returnValue |= processFds(block ? wait : 0);
+	  if (!block || returnValue != NOTHING_HAPPENED)
 	    break;
+	  //
+	  //	To get here we must be blocking and have reached the end of our
+	  //	wait with nothing happening - we loop round and check call backs again.
+	  //
 	}
       else
 	{
-	  if (returnValue != 0)
+	  //
+	  //	No active file descriptors. If we are blocking, and nothing happened
+	  //	but there is something to wait for we suspend in sleep().
+	  //
+	  if (!block || returnValue != NOTHING_HAPPENED)
 	    break;
 	  if (wait == NONE)
-	    return NOTHING_PENDING;
+	    return NOTHING_PENDING;  // nothing to wait for
 	  if (sleep(wait) != 0)
 	    return INTERRUPTED;
 	}

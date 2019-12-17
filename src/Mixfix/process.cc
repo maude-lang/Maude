@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -27,7 +27,8 @@
 void
 SyntacticPreModule::process()
 {
-  flatModule = new VisibleModule(id(), getModuleType(), this);
+  flatModule = new VisibleModule(id(), getModuleType(), getOwner());
+  flatModule->addUser(this);
   flatModule->setLineNumber(getLineNumber());
 #ifdef QUANTIFY_PROCESSING
   quantify_start_recording_data();
@@ -36,6 +37,22 @@ SyntacticPreModule::process()
   //	Handle import declarations.
   //
   processImports();
+  if (flatModule->isBad())
+    {
+      IssueWarning(*flatModule <<
+		   ": this module contains one or more errors that could not \
+be patched up and thus it cannot be used or imported.");
+      flatModule->resetImports();
+      //
+      //	This is a bit of a hack; getFlatSignature() uses Module::getStatus() != Module::OPEN
+      //	as a proxy for all imports done, to avoid cyclic importation. Closing the sort set
+      //	moves us from Module::OPEN to Module::SORT_SET_CLOSED, avoiding the confusion.
+      //	This module is toast so we don't worry about closing the sort set before we insert
+      //	its sorts.
+      //	
+      flatModule->closeSortSet();
+      return;
+    }
   //
   //	Hande sorts and subsorts.
   //
@@ -66,7 +83,12 @@ be patched up and thus it cannot be used or imported.");
       return;
     }
   flatModule->closeSignature();
+  computeStrategyTypes();
+  flatModule->importStrategies();
+  processStrategies();
   flatModule->insertPotentialLabels(potentialLabels);
+  flatModule->insertPotentialRuleLabels(potentialRuleLabels);
+  flatModule->importRuleLabels();
   flatModule->fixUpImportedOps();
   fixUpSymbols();  // this set bad flag for some reason
   if (flatModule->isBad())
@@ -79,7 +101,7 @@ be patched up and thus it cannot be used or imported.");
     }
   flatModule->closeFixUps();
   //
-  //	Handle mbs, eqs and rls.
+  //	Handle mbs, eqs, rls and sds.
   //
   processStatements();
   flatModule->localStatementsComplete();
@@ -197,6 +219,11 @@ SyntacticPreModule::checkOpTypes()
 	    checkType(def.types[j]);
 	}
     }
+
+  // Also checks strategy types
+  for (const StratDecl& decl : stratDecls)
+    for (const Type& type : decl.types)
+      checkType(type);
 }
 
 void
@@ -210,7 +237,7 @@ SyntacticPreModule::checkType(const Type& type)
 void
 SyntacticPreModule::computeOpTypes()
 {
- int nrOpDefs = opDefs.length();
+  int nrOpDefs = opDefs.length();
   for (int i = 0; i < nrOpDefs; i++)
     {
       OpDef& def = opDefs[i];
@@ -224,6 +251,19 @@ SyntacticPreModule::computeOpTypes()
 	  def.domainAndRange[j] = def.polyArgs.contains(k) ? 0 :
 	    computeType(def.types[j]);
 	}
+    }
+}
+
+void
+SyntacticPreModule::computeStrategyTypes()
+{
+  for (StratDecl& decl : stratDecls)
+    {
+      int nrTypes = decl.types.length();
+      decl.domainAndSubject.expandTo(nrTypes);
+
+      for (int i = 0; i < nrTypes; i++)
+	decl.domainAndSubject[i] = computeType(decl.types[i]);
     }
 }
 
@@ -348,6 +388,31 @@ SyntacticPreModule::processOps()
 }
 
 void
+SyntacticPreModule::processStrategies()
+{
+  // The user may have written strategy declarations in a non-strategy module,
+  // we already warned about this but we explicitely ignore them
+  if (!MixfixModule::isStrategic(getModuleType()))
+    return;
+
+  for (StratDecl& decl : stratDecls)
+    {
+      int nrNames = decl.names.length();
+      int nrArgs = decl.domainAndSubject.length() - 1;
+
+      Assert(nrNames > 0, "strategy declaration without label");
+
+      // The subject sort is removed from the domain vector
+      Sort* subjectSort = decl.domainAndSubject[nrArgs];
+      decl.domainAndSubject.contractTo(nrArgs);
+
+      // Inserts the strategies in the module
+      for (int j = 0; j < nrNames; j++)
+	flatModule->addStrategy(decl.names[j], decl.domainAndSubject, subjectSort, decl.metadata);
+    }
+}
+
+void
 SyntacticPreModule::processStatements()
 {
   int nrStatements = statements.length();
@@ -358,16 +423,9 @@ SyntacticPreModule::processStatements()
 void
 SyntacticPreModule::processImports()
 {
-  //
-  //	Parameters.
-  //
-  {
-    FOR_EACH_CONST(i, Vector<Parameter>, parameters)
-      {
-	if (ImportModule* fm = interpreter.makeModule(i->theory))
-	  flatModule->addParameter(i->name, interpreter.makeParameterCopy(i->name.code(), fm));  // HACK maybe pass Token
-      }
-  }
+  processParameters(flatModule);
+  if (flatModule->isBad())
+    return;  // avoid spurious warnings about missing parameters
   //
   //	Automatic imports (not for theories).
   //
@@ -375,44 +433,11 @@ SyntacticPreModule::processImports()
     {
       FOR_EACH_CONST(i, ModuleDatabase::ImportMap, autoImports)
 	{
-	  if (ImportModule* fm = interpreter.getModuleOrIssueWarning(i->first, *this))
+	  if (ImportModule* fm = getOwner()->getModuleOrIssueWarning(i->first, *this))
 	    flatModule->addImport(fm, i->second, *this);
+	  else
+	    flatModule->markAsBad();
 	}
     }
-  //
-  //	Explicit imports.
-  //
-  {
-    FOR_EACH_CONST(i, Vector<Import>, imports)
-      {
-	if (ImportModule* fm = interpreter.makeModule(i->expr, flatModule))
-	  {
-	    ImportModule::ImportMode mode;
-	    int code = i->mode.code();
-	    LineNumber lineNumber(i->mode.lineNumber());
-	    if (code == pr || code == protecting)
-	      mode = ImportModule::PROTECTING;
-	    else if (code == ex || code == extending)
-	      mode = ImportModule::EXTENDING;
-	    else if (code == inc || code == including)
-	      mode = ImportModule::INCLUDING;
-	    else
-	      {
-		Assert(code == us || code == usingToken, "unknown importation mode");
-		IssueWarning(lineNumber <<
-			     ": importation mode " << QUOTE("using") <<
-			     " not supported - treating it like " <<
-			     QUOTE("including") << '.');
-		mode = ImportModule::INCLUDING;
-	      }
-	    if (fm->getNrParameters() != 0 && !(fm->parametersBound()))
-	      {
-		IssueWarning(lineNumber << ": cannot import module " << fm <<
-			     " because it has free parameters.");
-	      }
-	    else
-	      flatModule->addImport(fm, mode, lineNumber);
-	  }
-      }
-  }
+  processExplicitImports(flatModule);
 }

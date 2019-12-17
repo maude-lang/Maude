@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
 
@@ -33,15 +33,26 @@ class FreshVariableSource : public FreshVariableGenerator
 public:
   FreshVariableSource(MixfixModule* module);
   FreshVariableSource(MixfixModule* module, const mpz_class& baseNumber);
-  int getFreshVariableName(int index, bool odd);
+
+  int getFreshVariableName(int index, int family);
   Symbol* getBaseVariableSymbol(Sort* sort);
-  bool variableNameConflict(int id);
+  bool variableNameConflict(int id, int okFamily);
+  bool belongsToFamily(int id, int family);
+
+  static int getBaseName(int index);
+  static int getFamily(int id);
 
 private:
+  enum Special
+    {
+      NR_FAMILIES = 3
+    };
+
+  typedef Vector<int> Cache;
+
   MixfixModule* const module;
   mpz_class baseNumber;
-  Vector<int> cache;
-  Vector<int> oddCache;
+  Cache caches[NR_FAMILIES];
 };
 
 #endif

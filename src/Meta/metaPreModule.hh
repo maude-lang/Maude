@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2009 SRI International, Menlo Park, CA 94025, USA.
 
@@ -29,7 +29,6 @@
 #include "dagRoot.hh"
 #include "moduleDatabase.hh"
 
-
 class MetaPreModule : public PreModule
 {
   NO_COPYING(MetaPreModule);
@@ -40,17 +39,13 @@ public:
   //
   //	Virtual functions we need to define.
   //
-  int getNrParameters() const {return 0;}
-  int getParameterName(int index) const {return 0;}
-  const ModuleExpression* getParameter(int index) const {return 0;}
-
-  const ModuleDatabase::ImportMap& getAutoImports() const {return *(new ModuleDatabase::ImportMap());}
-  int getNrImports() const {return 0;}
-  int getImportMode(int index) const {return 0;}
-  const ModuleExpression* getImport(int index) const {return 0;}
-
-  VisibleModule* getFlatSignature() {return getFlatModule();}
+  const ModuleDatabase::ImportMap* getAutoImports() const;
+  VisibleModule* getFlatSignature();
   VisibleModule* getFlatModule();
+  //
+  //	Specific to MetaPreModule.
+  //
+  DagNode* getMetaRepresentation() const;
 
 private:
   void regretToInform(Entity* doomedEntity);
@@ -59,5 +54,11 @@ private:
   MetaLevel* const metaLevel;
   MetaModule* flatModule;
 };
+
+inline DagNode*
+MetaPreModule::getMetaRepresentation() const
+{
+  return moduleDag.getNode();
+}
 
 #endif

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -78,15 +78,10 @@ Interpreter::match(const Vector<Token>& bubble, bool withExtension, Int64 limit)
       cout << " ." << endl;
     }
 
-  // pattern->getLhsAutomaton()->dump(cerr, *pattern, 0);
-
   startUsingModule(fm);
   UserLevelRewritingContext* context = new UserLevelRewritingContext(subjectDag);
 
-#ifdef QUANTIFY_REWRITING
-  quantify_start_recording_data();
-#endif
-
+  QUANTIFY_START();
   Timer timer(getFlag(SHOW_TIMING));
   subjectDag->computeTrueSort(*context);
   if (UserLevelRewritingContext::aborted())
@@ -146,25 +141,37 @@ Interpreter::doMatching(Timer& timer,
 	    cout << extensionInfo->buildMatchedPortion() << '\n';
 	}
       UserLevelRewritingContext::printSubstitution(*context, *variableInfo);
+      //
+      //	There might not be any rewriting happening to catch a
+      //	^C so we check here for safety, though if it does
+      //	happen, we can't drop into the debugger and have to
+      //	treat it as an abort.
+      //
       if (UserLevelRewritingContext::interrupted())
 	break;
     }
-
-#ifdef QUANTIFY_REWRITING
-  quantify_stop_recording_data();
-#endif
+  QUANTIFY_STOP();
 
   clearContinueInfo();  // just in case debugger left info
   state->getContext()->clearCount();
-  if (i == limit)  // possible to continue
+  if (i == limit)
     {
-      savedMatchSearchState = state;
+      //
+      //	The loop terminated because we hit user's limit so 
+      //	continuation is still possible. We save the state,
+      //	solutionCount and module, and set a continutation function.
+      //
+      savedState = state;
       savedSolutionCount = solutionCount;
       savedModule = module;
       continueFunc = &Interpreter::matchCont;
     }
-  else  // tidy up
+  else
     {
+      //
+      //	Either user aborted or interrupted or we ran out of solutions;
+      //	either way we need to tidy up.
+      //
       delete state;
       module->unprotect();
     }
@@ -175,16 +182,13 @@ Interpreter::doMatching(Timer& timer,
 void
 Interpreter::matchCont(Int64 limit, bool /* debug */)
 {
-  MatchSearchState* state = savedMatchSearchState;
+  MatchSearchState* state = safeCast(MatchSearchState*, savedState); 
   VisibleModule* fm = savedModule;
-  savedMatchSearchState = 0;
+  savedState = 0;
   savedModule = 0;
   continueFunc = 0;
 
-#ifdef QUANTIFY_REWRITING
-  quantify_start_recording_data();
-#endif
-
+  QUANTIFY_START();
   Timer timer(getFlag(SHOW_TIMING));
   doMatching(timer, fm, state, savedSolutionCount, limit);
 }

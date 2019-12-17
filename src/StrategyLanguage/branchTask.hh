@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -28,7 +28,6 @@
 #define _branchTask_hh_
 #include "strategicTask.hh"
 #include "branchStrategy.hh"
-#include "strategyStackManager.hh"
 
 class BranchTask : public StrategicTask
 {

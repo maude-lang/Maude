@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -58,6 +58,12 @@
 #include "freeArgumentIterator.hh"
 #include "freeLhsAutomaton.hh"
 #include "freeRhsAutomaton.hh"
+#include "freeFast3RhsAutomaton.hh"
+#include "freeFast2RhsAutomaton.hh"
+#include "freeNullaryRhsAutomaton.hh"
+#include "freeUnaryRhsAutomaton.hh"
+#include "freeBinaryRhsAutomaton.hh"
+#include "freeTernaryRhsAutomaton.hh"
 #include "freeRemainder.hh"
 #include "freeTerm.hh"
 
@@ -208,7 +214,7 @@ FreeTerm::partialCompareArguments(const Substitution& partialSubstitution,
 	  ++da;
 	}
     }
-  return 0;
+  return EQUAL;
 }
 
 void
@@ -396,8 +402,60 @@ FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
 		      TermBag& availableTerms,
 		      bool eagerContext)
 {
-  compileRhsAliens(rhsBuilder, variableInfo, availableTerms, eagerContext);
-  FreeRhsAutomaton* automaton = new FreeRhsAutomaton();
+  //cout << "compiling " << this << endl;
+  int maxArity = 0;
+  int nrFree = 1;
+  compileRhsAliens(rhsBuilder, variableInfo, availableTerms, eagerContext, maxArity, nrFree);
+  /*
+  FreeRhsAutomaton* automaton = (maxArity > 3) ? new FreeRhsAutomaton() :
+    ((nrFree > 1) ?
+     ((maxArity == 3) ? new FreeFast3RhsAutomaton() : new FreeFast2RhsAutomaton()) :
+     ((maxArity == 3) ? new FreeTernaryRhsAutomaton() :
+      ((maxArity == 2) ? new FreeBinaryRhsAutomaton() :
+       ((maxArity == 1) ? new FreeBinaryRhsAutomaton() : new FreeNullaryRhsAutomaton()))));
+  */
+
+  //cout << "maxArity = " << maxArity << "  nrFree = " << nrFree << endl;
+  FreeRhsAutomaton* automaton;
+  if (maxArity > 3)
+    automaton = new FreeRhsAutomaton();  // general case
+  else
+    {
+      //
+      //	We have 6 faster rhs automata for low arity cases.
+      //
+      if (nrFree > 1)
+	{
+	  //
+	  //	Multiple low arity symbol cases.
+	  //
+	  if (maxArity == 3)
+	    automaton = new FreeFast3RhsAutomaton();  // all dag nodes padded to 3 args
+	  else
+	    automaton = new FreeFast2RhsAutomaton();  // all dag nodes padded to 2 args
+	}
+      else
+	{
+	  //
+	  //	Single low arity symbol cases.
+	  //
+	  if (maxArity > 1)
+	    {
+	      if (maxArity == 3)
+		automaton = new FreeTernaryRhsAutomaton();
+	      else
+		automaton = new FreeBinaryRhsAutomaton();
+	    }
+	  else
+	    {
+	      if (maxArity == 1)
+		automaton = new FreeUnaryRhsAutomaton();
+	      else
+		automaton = new FreeNullaryRhsAutomaton();
+	    }
+	}
+    }
+
   int index = compileRhs3(automaton, rhsBuilder, variableInfo, availableTerms, eagerContext);
   rhsBuilder.addRhsAutomaton(automaton);
   return index;
@@ -407,12 +465,16 @@ void
 FreeTerm::compileRhsAliens(RhsBuilder& rhsBuilder,
 			   VariableInfo& variableInfo,
 			   TermBag& availableTerms,
-			   bool eagerContext)
+			   bool eagerContext,
+			   int& maxArity,
+			   int& nrFree)
 {
   //
   //	Traverse the free skeleton, calling compileRhs() on all non-free subterms.
   //
   int nrArgs = argArray.length();
+  if (nrArgs > maxArity)
+    maxArity = nrArgs;
   FreeSymbol* s = symbol();
   for (int i = 0; i < nrArgs; i++)
     {
@@ -420,8 +482,9 @@ FreeTerm::compileRhsAliens(RhsBuilder& rhsBuilder,
       Term* t = argArray[i];
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(t))
 	{
+	  ++nrFree;
 	  if (!(availableTerms.findTerm(f, argEager)))
-	    f->compileRhsAliens(rhsBuilder, variableInfo, availableTerms, argEager);
+	    f->compileRhsAliens(rhsBuilder, variableInfo, availableTerms, argEager, maxArity, nrFree);
 	}
       else
 	(void) t->compileRhs(rhsBuilder, variableInfo, availableTerms, argEager);

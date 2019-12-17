@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -46,22 +46,21 @@ ApplicationStrategy::ApplicationStrategy(int label,
 					 const Vector<Term*>& variables,
 					 const Vector<Term*>& values,
 					 const Vector<StrategyExpression*>& strategies)
-  : label(label),
+  : top(false),
+    label(label),
     variables(variables),
     valueDags(values.size()),
-    strategies(strategies)
+    strategies(strategies),
+    subsDagsAreReduced(false)
 {
   Assert(label != NONE || (variables.empty() && strategies.empty()),
 	 "substitutions and condition strategies aren't allowed without a label");
-  top = false;
-  int nrValues = values.size();
+
+  size_t nrValues = values.size();
   Assert(variables.size() == nrValues, "bad substitution");
-  for (int i = 0; i < nrValues; ++i)
-    {
-      valueDags[i].setTerm(values[i]);
-      valueDags[i].normalize();
-      valueDags[i].prepare();
-    }
+
+  for (size_t i = 0; i < nrValues; ++i)
+    valueDags[i].setTerm(values[i]);
 }
 
 ApplicationStrategy::~ApplicationStrategy()
@@ -72,6 +71,65 @@ ApplicationStrategy::~ApplicationStrategy()
   int nrStrategies = strategies.size();
   for (int i = 0; i < nrStrategies; ++i)
     delete strategies[i];
+}
+
+bool
+ApplicationStrategy::check(VariableInfo& indices, const TermSet& boundVars)
+{
+  // Index and check variables in the substitution
+
+  int subsSize = valueDags.length();
+  for (int i = 0; i < subsSize; i++)
+    {
+      valueDags[i].getTerm()->indexVariables(indices);
+      valueDags[i].normalize();
+
+      const NatSet& occurSet = valueDags[i].getTerm()->occursBelow();
+
+      // NOTE Free variables can be used in substitutions?
+      // It may have some sense.
+
+      for (int index : occurSet)
+        {
+	  Term* var = indices.index2Variable(index);
+
+	  if (boundVars.term2Index(var) == NONE)
+            {
+	      IssueWarning(*var << ": unbound variable " << QUOTE(var) <<
+			   " in application strategy substitution for " <<
+			   QUOTE(variables[i]) << ".");
+	      return false;
+            }
+        }
+    }
+
+  // Index and check variables in the rewriting condition strategies
+
+  size_t nrStrategies = strategies.length();
+  for (size_t i = 0; i < nrStrategies; i++)
+    if (!strategies[i]->check(indices, boundVars))
+      return false;
+
+  return true;
+}
+
+void
+ApplicationStrategy::process()
+{
+  // Fills in sort info for variables, and prepare values
+  int subsSize = variables.length();
+
+  for (int i = 0; i < subsSize; i++)
+    {
+      valueDags[i].prepare();
+      variables[i]->symbol()->fillInSortInfo(variables[i]);
+      valueDags[i].getDag()->computeBaseSortForGroundSubterms(false);
+    }
+
+  // And follows recusively
+  int nrStrategies = strategies.length();
+  for (int i = 0; i < nrStrategies; i++)
+    strategies[i]->process();
 }
 
 StrategicExecution::Survival

@@ -1,3 +1,474 @@
+2019-11-22  Steven Eker  <eker@mu>
+
+	* prelude.maude: revert to Qid < Header pending further
+	discussion of the metasyntax
+
+===================================Maude126===========================================
+
+2019-11-21  Steven Eker  <eker@mu>
+
+	* main.cc (printHelp): added -erewrite-loop-mode
+	(main): handle -erewrite-loop-mode
+
+2019-11-14  Rubén Rubio  <rubenrub@ucm.es>
+
+	* prelude.maude: metaSrewrite takes a SrewriteOption and
+	metaDsrewrite is removed. metaParseStrategy and
+	and metaPrettyPrintStrategy receive a VariableSet.
+
+2019-11-12  Rubén Rubio  <rubenrub@ucm.es>
+
+	* prelude.maude: renaming from VarStratPair to UsingPair,
+	VarStratList to UsingPairSet (and added equation), BasicStrategy
+	to RuleApplication, _(_) to _[[_]], metaSRewrite to metaSrewrite,
+	metaDSRewrite to metaDsrewrite, metaStratParse to metaParseStrategy,
+	and metaStratPrettyPrint to metaPrettyPrintStrategy. Added precedence
+	21 to rule application symbol. Changed equation for [_] : Qid -> Module
+	operator to support strategy modules. Added upStratDecls and upSds.
+
+2019-11-11  Steven Eker  <eker@mu>
+
+	* metaInterpreter.maude: parsedQidList()/parsedQidList() ->
+	parseTerm()/parsedTerm()
+
+2019-11-08  Steven Eker  <eker@mu>
+
+	* metaInterpreter.maude: printTerm()/parseQidList() now take
+	VariableSet arg for variables that can be abbreviated
+
+2019-11-06  Steven Eker  <eker@mu>
+
+	* prelude.maude: added sort SrewriteOption and ops breadthFirst,
+	depthFirst
+
+	* metaInterpreter.maude: srewriteTerm now takes an SrewriteOption
+	argument
+
+2019-11-05  Steven Eker  <eker@mu>
+
+	* metaInterpreter.maude: added decls for srewriteTerm/srewroteTerm
+
+2019-11-04  Steven Eker  <eker@mu>
+
+	* prelude.maude:  metaPrettyPrint() now takes 4 arguments; added
+	backward compatibility version
+
+2019-11-01  Steven Eker  <eker@mu>
+
+	* prelude.maude: changed emptyQidSetSymbol from empty to
+	none; fixed qidSetSymbol hook symbol and range
+
+2019-10-31  Steven Eker  <eker@mu>
+
+	* prelude.maude: rearrange subsort declarations to avoid
+	a redundant NeQidSet < QidSet
+
+2019-10-30  Steven Eker  <eker@mu>
+
+	* prelude.maude: EmptyTypeSet -> EmptyQidSet
+	Added decls for variable sets
+
+2019-10-18  Steven Eker  <eker@mu>
+
+	* prelude.maude: get rid of unificationPairSymbol hook; we're
+	going to merge the operator with matchPairSymbol because they
+	are subsort overloaded; fix new unificaton pair op so that Qid
+	is second argument; add sort MatchOrUnificationPair and
+	subsort MatchPair UnificationPair < MatchOrUnificationPair
+
+2019-10-17  Steven Eker  <eker@mu>
+
+	* prelude.maude: use legacyMetaUnify, legacyMetaDisjointUnify
+	for deprecated versions
+
+2019-10-16  Steven Eker  <eker@mu>
+
+	* prelude.maude: added op-hooks legacyUnificationPairSymbol,
+	legacyUnificationTripleSymbol, legacyVariantSymbol
+
+2019-10-15  Steven Eker  <eker@mu>
+
+	* prelude.maude: new variable family based ctors for
+	UnificationPair, UnificationTriple, Variant and descent
+	functions metaUnify(), metaDisjointUnify(), metaGetVariant(),
+	metaGetIrredundantVariant(), metaVariantUnify(),
+	metaVariantDisjointUnify()
+
+===================================Maude125===========================================
+
+2019-10-10  Rubén Rubio  <rubenrub@ucm.es>
+
+	* prelude.maude: conditions of tests and matchrews are now
+	EqCondition instead of Condition. Added a new parameter to
+	metaStratParse. to-expr changed to to expr (without hyphen).
+
+2019-09-19  Rubén Rubio  <rubenrub@ucm.es>
+
+	* prelude.maude: getStratDefs renamed to getSds,
+	make matchrew's using pair list associative and commutative
+
+2019-05-24  Steven Eker  <eker@mu.csl.sri.com>
+
+	* prelude.maude: revert to renaming after instantiating
+	after parameter for WEAKLY-SORTABLE-LIST, SORTABLE-LIST
+	WEAKLY-SORTABLE-LIST', SORTABLE-LIST', SORTABLE-LIST-AND-SET,
+	SORTABLE-LIST-AND-SET'
+
+2019-04-11  Steven Eker  <eker@mu.csl.sri.com>
+
+	* prelude.maude: added parameterized views: List,
+	WeaklySortableList, SortableList, WeaklySortableList',
+	SortableList', Set, List*, Set*, Map, Array
+
+2019-03-28  Steven Eker  <eker@mu.csl.sri.com>
+
+	* prelude.maude: rename before instantiating by parameter
+	in fmod WEAKLY-SORTABLE-LIST, fmod SORTABLE-LIST,
+	fmod WEAKLY-SORTABLE-LIST', fmod SORTABLE-LIST',
+	fmod SORTABLE-LIST-AND-SET, fmod SORTABLE-LIST-AND-SET'
+
+2019-02-15  Steven Eker  <eker@mu.csl.sri.com>
+
+	* prelude.maude: reorganized view and module expressions
+	to fix pre-regularity issues
+	deleted viewInstantiationSymbol
+	require NeParameterList for view and module instantiations
+
+2019-02-14  Steven Eker  <eker@mu.csl.sri.com>
+
+	* prelude.maude: added sort ViewExpression and operator
+	 _{_} : ViewExpression ParameterList -> ViewExpression
+	handle view with parameter decl lists in getName()
+	projection function
+
+===================================Maude121===========================================
+
+2018-20-12  Rubén Rubio  <rubenrub@ucm.es>
+
+	* prelude.maude: added 'all' strategy to META-STRATEGY, and
+	metaStratParse, metaStratPrettyPrint, and metaDSRewrite to
+	META-LEVEL. metaSRewrite signature has changed to match similar
+	functions. Now, it receives a solution index instead of returning
+	a set. Removed sort ResultSet.
+
+2018-12-05  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added
+	getNarrowingSearchResult/gotNarrowingSearchResult,
+	getNarrowingSearchResultAndPath/gotNarrowingSearchResultAndPath
+
+2018-11-29  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: getOneStepNarrow/gotOneStepNarrow ->
+	getOneStepNarrowing/gotOneStepNarrowing
+
+2018-11-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: changed narrowWithRule/narrowedWithRule
+	to getOneStepNarrow/gotOneStepNarrow since we're not passing
+	the label of a specific rule
+
+2018-11-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added narrowWithRule, narrowedWithRule
+
+2018-11-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: make interpreter a ctor
+
+2018-11-02  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added applyRule/appliedRule (2
+	overloaded versions)
+
+===================================Maude120===========================================
+
+2018-10-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added parseQidList/parsedQidList
+
+2018-10-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added printTerm/printedTerm
+
+2018-10-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added gotVariantUnifier,
+	gotDisjointVariantUnifier
+
+2018-10-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added getDisjointVariantUnifier,
+	getVariantUnifier
+
+2018-10-03  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added RewriteCount to gotVariant
+
+2018-09-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added getVariant/gotVariant,
+	noSuchResult (4 arg version)
+
+2018-09-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added getUnifier/gotUnifier,
+	getDisjointUnifier/gotDisjointUnifier, noSuchResult (Bool version)
+
+2018-09-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added normlizeTerm/normalizedTerm
+
+2018-09-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added getMaximalAritySet/gotMaximalAritySet
+
+===================================Maude119===========================================
+
+2018-08-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added getKind/gotKind,
+	getKinds/gotKinds
+	added getGlbTypes/gotGlbTypes
+
+2018-08-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added compareTypes/comparedTypes
+	deleted op-hook succSymbol
+
+2018-08-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added getLesserSorts/gotLesserSorts,
+	getMaximalSorts/gotMaximalSorts, getMinimalSorts/gotMinimalSorts
+
+2018-08-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: added upperCase(), lowerCase()
+
+2018-08-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added sorts InterpreterOption
+	InterpreterOptionSet, and constant none; createInterpreter()
+	now takes InterpreterOptionSet argument
+
+2018-08-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added getXmatch/gotXmatch
+
+2018-08-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added getMatch/gotMatch
+
+2018-08-02  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added getSearchResultAndPathMsg,
+	gotSearchResultAndPathMsg
+
+2018-07-31  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: updated decl for gotSearchResult()
+
+2018-07-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* main.cc (printHelp): add -show-pid
+	(main): add -show-pid
+
+2018-07-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added getSearchResult() and
+	gotSearchResult() messages
+	added noSuchResultMsg() message
+
+2018-07-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: use Type rather than Sort for return
+	messages
+
+===================================Maude118===========================================
+
+2018-05-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added messages erewriteTerm()
+	and erewroteTerm()
+
+2018-05-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added messages showView() and
+	showingView()
+
+2018-05-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* metaInterpreter.maude: added messages insertView() and
+	insertedView()
+
+===================================Maude117===========================================
+
+2018-04-29  Rubén Rubio  <rubenrub@ucm.es>
+
+	* prelude.maude: added strategy renamings for module expressions
+	and strategy mappings to metaviews. Changed -> to ~> in metaSRewrite
+
+2018-04-10  Rubén Rubio  <rubenrub@ucm.es>
+
+	* prelude.maude: added 'one' strategy to META-STRATEGY
+
+2018-03-23  Rubén Rubio  <rubenrub@ucm.es>
+
+	* prelude.maude: added fmod META-STRATEGY, moved metaconditions to
+	META-CONDITION. Added strategy modules syntax and hooks, and metaSRewrite
+	operator to META-LEVEL.
+
+2018-03-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* Makefile.am (maude_LDADD): remove refs to MSCP10
+
+2017-12-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* main.cc (main): call setUsePromptsAnyway() in
+	forceInteractive case
+
+===================================Maude116===========================================
+
+2017-08-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: fmod LEXICAL: print -> printTokens to
+	avoid confusion with print attribute in META-LEVEL
+
+2017-08-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: added fmod LEXICAL
+
+2017-08-01  Steven Eker  <eker@install.csl.sri.com>
+
+	* main.cc (main): call setUsePromptsAnyway() if our input
+	is from a terminal
+
+	* file.maude: deleted stdin, stdout, stderr from mod FILE
+
+2017-07-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* file.maude: don't use BOUND, added mod COMMON-MESSAGES
+	added mod STD-STREAM
+
+2017-07-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* file.maude: added op-hooks for stdin, stdout, stderr
+
+2017-07-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* file.maude: added op-hooks for start, current, end,
+	minusSymbol
+
+2017-07-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* file.maude: created
+
+2017-07-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: added fmod BOUND; use it in fmod META-LEVEL
+
+===================================Maude115===========================================
+
+2017-06-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* smt.maude: removed comment about _divisible_ breaking CVC4
+	now we've made it bulletproof
+
+2017-06-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* Makefile.am (maude_LDADD): move $(YICES2_LIB) before tecla in
+	the hope that tecla won't be able to access its symbols
+
+2017-06-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* Makefile.am (maude_LDADD): delete $(DLMALLOC_LIB) form link line;
+	move $(YICES2_LIB) to the end
+
+2017-06-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* Makefile.am (maude_LDADD): added YICE2_LIB
+
+===================================Maude114===========================================
+
+2017-05-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: update syntax for metaNarrowingApply() return values;
+	reverted to {} for results; updated formatting; added projection
+	functions for new constructors
+
+2017-05-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: updated format attribute for assignment, and narrowing
+	results
+
+2017-05-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: added 6 operators and 4 sorts to support narrowing
+	search path results; added metaNarrowingSearchPath() descent function
+
+2017-05-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: updated decl for metaNarrowingSearch(),
+	NarrowingSearchResult ctor
+
+2017-05-02  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: remove the 1st Qid argument from metaNarrowingApply()
+
+2017-04-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: added narrowing attribute to META-LEVEL
+
+===================================Maude113===========================================
+
+2017-03-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: changed order of parameters in NarrowingSearchResult
+	ctor to avoid ambiguity
+
+2017-03-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: added projection functions for NarrowingSearchResult
+
+2017-02-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: revert to NarrowingSearchResult, but this time use a
+	5 tuple to avoid a kind clash
+
+2017-02-03  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: added sorts NarrowingSearchResult, NarrowingSearchResult?;
+	ctors {_,_,_,_}, failure, failureIncomplete, descent function
+	metaNarrowingSearch()
+	Use Result4Tuple in place of NarrowingSearchResult
+
+===================================Maude111b===========================================
+
+2016-12-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: added projection functions for NarrowingResult
+
+2016-12-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: added failureIncomplete for ResultTriple?
+
+2016-12-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: switched args for NarrowingResult ctor
+	added format for {_,_,_,_,_,_}
+
+2016-11-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* prelude.maude: added decls for metaNarrowingApply(); sorts NarrowingResult
+	and NarrowingResult?, ctors failure, failureIncomplete and {_,_,_,_,_,_}
+
+2016-10-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* smt.maude: don't set include BOOLEAN on because it
+	causes problems for modules that aren't expecting it.
+
+===================================Maude111===========================================
+
 2016-04-27  Steven Eker  <eker@install.csl.sri.com>
 
 	* main.cc (main): added -print-to-stderr flag

@@ -1,15 +1,15 @@
-Maude> ==========================================
+==========================================
 reduce in TEST : metaXapply(m, 'f['a.Foo,'b.Foo], 'k, none, 0, 100, 0) .
 rewrites: 3
 result Result4Tuple: {'a.Foo,'Foo,
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'b.Foo,[]}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo,[]}
 ==========================================
 reduce in TEST : metaXapply(m, 'f['a.Foo,'b.Foo], 'k, none, 0, 100, 1) .
 rewrites: 3
 result Result4Tuple: {'b.Foo,'Foo,
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'a.Foo,[]}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'a.Foo,[]}
 ==========================================
 reduce in TEST : metaXapply(m, 'f['a.Foo,'b.Foo], 'k, none, 0, 100, 2) .
 rewrites: 3
@@ -22,14 +22,14 @@ result Result4Tuple?: (failure).Result4Tuple?
 reduce in TEST : metaXapply(m, 'f['a.Foo,'b.Foo], 'k, none, 0, unbounded, 0) .
 rewrites: 3
 result Result4Tuple: {'a.Foo,'Foo,
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'b.Foo,[]}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo,[]}
 ==========================================
 reduce in TEST : metaXapply(m, 'f['a.Foo,'b.Foo], 'k, none, 0, unbounded, 1) .
 rewrites: 3
 result Result4Tuple: {'b.Foo,'Foo,
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'a.Foo,[]}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'a.Foo,[]}
 ==========================================
 reduce in TEST : metaXapply(m, 'f['a.Foo,'b.Foo], 'k, none, 0, unbounded, 2) .
 rewrites: 3
@@ -49,15 +49,15 @@ reduce in TEST2 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'k, none, 0, 100,
     1) .
 rewrites: 3
 result Result4Tuple: {'g['a.Foo,'a.Foo],'Foo,
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'b.Foo,'g['a.Foo,[]]}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo,'g['a.Foo,[]]}
 ==========================================
 reduce in TEST2 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'k, none, 0, 100,
     2) .
 rewrites: 3
 result Result4Tuple: {'g['a.Foo,'b.Foo],'Foo,
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'a.Foo,'g['a.Foo,[]]}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'a.Foo,'g['a.Foo,[]]}
 ==========================================
 reduce in TEST2 : metaXapply(m, 'g['f['a.Foo,'b.Foo],'a.Foo], 'k, none, 0, 100,
     3) .
@@ -102,4 +102,4 @@ result Result4Tuple: {'g['f['c.Foo,'c.Foo],'f['a.Foo,'b.Foo]],'Foo,(
 reduce in ALL-ONE-STEP-REWRITES : findAllRews(m, 'f['a.Foo,'b.Foo], 'k) .
 rewrites: 27
 result TermSet: 'a.Foo | 'b.Foo | ('f['b.Foo,'c.Foo])
-Maude> Bye.
+Bye.

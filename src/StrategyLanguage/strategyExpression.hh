@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -27,11 +27,42 @@
 #define _strategyExpression_hh_
 #include "strategicExecution.hh"
 
+#include "term.hh"
+#include "termSet.hh"
+
 class StrategyExpression
 {
 public:
   virtual ~StrategyExpression() {}
+
+  //
+  // Recursively check that the variables in the expression are bound.
+  //
+  // NOTE A common VariableInfo has not been used because some expressions have
+  // patterns which have their own variable account. We pass variable terms and
+  // as const-reference because the set only change in one case.
+  //
+  virtual bool check(VariableInfo& vars, const TermSet& boundVars) = 0;
+
+  //
+  // Process the strategy expression when the module type information is closed.
+  // Patterns are compiled, and terms are filled with type information.
+  //
+  // check must have been called before.
+  //
+  virtual void process() = 0;
+
+  //
+  // When calling decompose, process must have been called before.
+  //
   virtual StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder) = 0;
+
+  //
+  // Compare two strategy expressions with an incomplete equality relation.
+  //
+  // By default, memory positions are compared.
+  //
+  virtual bool equal(const StrategyExpression& other) const;
 };
 
 ostream& operator<<(ostream& s, StrategyExpression* strategy);

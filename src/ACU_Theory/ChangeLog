@@ -1,3 +1,150 @@
+2019-12-03  Steven Eker  <eker@mu>
+
+	* ACU_BaseDagNode.cc (getSize): use safeCastNonNull<>() (2 places)
+
+===================================Maude127===========================================
+
+2019-11-11  Steven Eker  <eker@mu>
+
+	* ACU_DagNode.cc (computeBaseSortForGroundSubterms): no early termination
+	in UNIMPLEMENTED case
+
+	* ACU_UnificationSubproblem2.cc (buildSolution): pass false to
+	warnAboutUnimplemented arg
+
+	* ACU_DagNode.hh (ACU_BaseDagNode): updated decl for
+	computeBaseSortForGroundSubterms()
+
+	* ACU_DagNode.cc (computeBaseSortForGroundSubterms): take and pass
+	warnAboutUnimplemented flag; simplified
+
+===================================Maude125===========================================
+
+2019-07-24  Steven Eker  <eker@mu>
+
+	* ACU_Term.cc (compareArguments): added comment about static analyzer
+	warning
+
+	* ACU_DagNode.cc (compareArguments): added comment about static analyzer
+	warning
+
+===================================Maude123===========================================
+
+2019-05-23  Steven Eker  <eker@mu.csl.sri.com>
+
+	* ACU_UnificationSubproblem2.cc (buildSolution): fix compiler warnings
+
+===================================Maude121===========================================
+
+2018-10-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_Symbol.hh (AssociativeSymbol): added decl for
+	stackPhysicalArguments()
+
+	* ACU_Symbol.cc (stackPhysicalArguments): added
+
+2018-10-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_DagNode.cc (copyWithReplacement): added Assert() on
+	argIndex
+
+===================================Maude119===========================================
+
+2017-04-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_Matcher.cc (buildBipartiteGraph): fixed symmetric bug
+	(eliminateGroundedOutAliens): fixed symmetric bug
+	(aliensOnlyMatch): fixed symmetric bug
+
+	* ACU_GreedyMatcher.cc (greedyMatch): fixed symmetric bug
+
+	* ACU_NGA_LhsAutomaton.cc (match): fixed two symmetric bugs
+
+	* ACU_TreeMatcher.cc (eliminateGroundedOutAliens): fixed bug where we had
+	the test for going past the last potential match the wrong way around
+	(greedyMatch): fixed symmetric bug
+
+	* ACU_DagOperations.cc (findFirstPotentialMatch): added comments
+
+	* ACU_LazySubproblem.cc (solve): fix bug where we had the test for going
+	pass last potential match the wrong way around
+
+2017-04-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_LazySubproblem.cc (solve): added comments; end search early, as soon
+	as stripperTerm is definitely greater than subject on current path
+
+	* ACU_TreeMatcher.cc (treeMatch): added comment
+	(treeMatch): changed comments "could be smarter" to explanations
+	of why it's not worth being smarter (3 places)
+
+	* ACU_CollectorLhsAutomaton.cc (collect): added comments
+
+2017-04-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_LhsCompiler0.cc (tryToMakeCollectorLhsAutomaton): added support
+	for ACU_BndVarLhsAutomaton
+
+	* ACU_DagNode.hh (ACU_BaseDagNode): added friend class
+	ACU_BndVarLhsAutomaton
+
+	* ACU_Theory.hh: added class ACU_BndVarLhsAutomaton
+
+	* ACU_BndVarLhsAutomaton.cc: created
+
+	* ACU_BndVarLhsAutomaton.hh: created
+
+2017-04-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_VarLhsAutomaton.cc (match): updated comments
+
+===================================Maude112a===========================================
+
+2017-02-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_DagNode.cc (instantiateWithCopies2): ifdef'd out normal form, sort and
+	ground flag computation and added comment to explain why
+
+2017-02-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_DagNode.hh (ACU_BaseDagNode): updated decl for
+	instantiateWithReplacement()
+
+	* ACU_DagNode.cc (instantiateWithReplacement): handle lazy contexts
+
+2017-02-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_TreeDagNode.hh (ACU_BaseDagNode): deleted decl for stackArguments()
+
+	* ACU_TreeDagNode.cc (stackArguments): deleted
+
+	* ACU_DagNode.cc (stackArguments): deleted
+
+	* ACU_DagNode.hh (ACU_BaseDagNode): deleted decl for stackArguments()
+
+	* ACU_Symbol.hh (AssociativeSymbol): updated decl for stackArguments()
+
+	* ACU_Symbol.cc (stackArguments): handle respectFrozen and
+	eagerContext arguments
+
+===================================Maude111b===========================================
+
+2016-12-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_TreeDagNode.cc (copyAll2): added missing return statement
+
+2016-11-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* ACU_TreeDagNode.hh (ACU_BaseDagNode): added decl for copyAll2()
+
+	* ACU_TreeDagNode.cc (copyAll2): added
+
+	* ACU_DagNode.hh (ACU_BaseDagNode): added decl for copyAll2()
+
+	* ACU_DagNode.cc (copyAll2): added
+
+===================================Maude111===========================================
+
 2016-05-18  Steven Eker  <eker@install.csl.sri.com>
 
 	* ACU_UnificationSubproblem2.cc (addUnification): check for subtermIndex
@@ -22,7 +169,7 @@
 
 	* ACU_Symbol.cc (computeGeneralizedSort2): added
 
-===================================Maude110===========================================
+===================================Maude109===========================================
 
 2015-08-07  Steven Eker  <eker@ape.csl.sri.com>
 

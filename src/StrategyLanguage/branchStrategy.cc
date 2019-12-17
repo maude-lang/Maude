@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -62,6 +62,22 @@ BranchStrategy::~BranchStrategy()
   delete initialStrategy;
   delete successStrategy;
   delete failureStrategy;
+}
+
+bool
+BranchStrategy::check(VariableInfo& indices, const TermSet& boundVars)
+{
+  return initialStrategy->check(indices, boundVars)
+    && (!successStrategy || successStrategy->check(indices, boundVars))
+    && (!failureStrategy || failureStrategy->check(indices, boundVars));
+}
+
+void
+BranchStrategy::process()
+{
+  initialStrategy->process();
+  if (successStrategy) successStrategy->process();
+  if (failureStrategy) failureStrategy->process();
 }
 
 StrategicExecution::Survival

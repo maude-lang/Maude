@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/objectMessageOct2018.maude -no-banner -no-advise \
+  > objectMessageOct2018.out 2>&1
+
+diff $srcdir/objectMessageOct2018.expected objectMessageOct2018.out > /dev/null 2>&1

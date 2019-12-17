@@ -1,0 +1,127 @@
+***(
+
+    This file is part of the Maude 3 interpreter.
+
+    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+)
+
+***
+***	Maude file and standard stream external objects.
+***	Version 3.0.
+***
+
+mod COMMON-MESSAGES is
+  protecting STRING .
+  including  CONFIGURATION .
+
+  op gotLine : Oid Oid String -> Msg [ctor msg format (m o)] .
+  op write : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op wrote : Oid Oid -> Msg [ctor msg format (m o)] .
+endm
+
+mod FILE is
+  including COMMON-MESSAGES .
+  protecting INT .
+
+  sort Base .
+  ops start current end : -> Base [ctor] .
+
+  op file : Nat -> Oid [ctor] .
+
+  op openFile : Oid Oid String String -> Msg [ctor msg format (b o)] .
+  op openedFile : Oid Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op getLine : Oid Oid -> Msg [ctor msg format (b o)] .
+
+  op getChars : Oid Oid Nat -> Msg [ctor msg format (b o)] .
+  op gotChars : Oid Oid String -> Msg [ctor msg format (m o)] .
+
+  op flush : Oid Oid -> Msg [ctor msg format (b o)] .
+  op flushed : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op setPosition : Oid Oid Int Base -> Msg [ctor msg format (b o)] .
+  op positionSet : Oid Oid -> Msg [ctor msg format (m o)] .
+  op getPosition : Oid Oid -> Msg [ctor msg format (b o)] .
+  op positionGot : Oid Oid Nat -> Msg [ctor msg format (m o)] .
+
+  op closeFile : Oid Oid -> Msg [ctor msg format (b o)] .
+  op closedFile : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op fileError : Oid Oid String -> Msg [ctor msg format (m o)] .
+
+  op fileManager : -> Oid
+       [special (
+         id-hook FileManagerSymbol
+
+	 op-hook succSymbol			(s_ : Nat ~> NzNat)
+	 op-hook minusSymbol 			(-_ : NzNat ~> Int)
+	 op-hook stringSymbol			(<Strings> : ~> String)
+	 op-hook fileOidSymbol			(file : Nat ~> Oid)
+
+	 op-hook currentSymbol			(current : ~> Base)
+	 op-hook endSymbol			(end : ~> Base)
+
+	 op-hook openFileMsg			(openFile : Oid Oid String String ~> Msg)
+	 op-hook openedFileMsg			(openedFile : Oid Oid Oid ~> Msg)
+
+	 op-hook getLineMsg			(getLine : Oid Oid ~> Msg)
+	 op-hook gotLineMsg			(gotLine : Oid Oid String ~> Msg)
+	 op-hook getCharsMsg			(getChars : Oid Oid Nat ~> Msg)
+	 op-hook gotCharsMsg			(gotChars : Oid Oid String ~> Msg)
+
+	 op-hook writeMsg			(write : Oid Oid String ~> Msg)
+	 op-hook wroteMsg			(wrote : Oid Oid ~> Msg)
+	 op-hook flushMsg			(flush : Oid Oid ~> Msg)
+	 op-hook flushedMsg			(flushed : Oid Oid ~> Msg)
+
+	 op-hook setPositionMsg			(setPosition : Oid Oid Int Base ~> Msg)
+	 op-hook positionSetMsg			(positionSet : Oid Oid ~> Msg)
+	 op-hook getPositionMsg			(getPosition : Oid Oid ~> Msg)
+	 op-hook positionGotMsg			(positionGot : Oid Oid Nat ~> Msg)
+
+	 op-hook closeFileMsg			(closeFile : Oid Oid ~> Msg)
+	 op-hook closedFileMsg			(closedFile : Oid Oid ~> Msg)
+	 op-hook fileErrorMsg			(fileError : Oid Oid String ~> Msg))] .
+endm
+
+mod STD-STREAM is
+  including COMMON-MESSAGES .
+
+  op getLine : Oid Oid String -> Msg [ctor msg format (b o)] .
+
+  op stdin : -> Oid
+       [special (
+         id-hook StreamManagerSymbol		(stdin)
+	 op-hook stringSymbol			(<Strings> : ~> String)
+	 op-hook getLineMsg			(getLine : Oid Oid String ~> Msg)
+	 op-hook gotLineMsg			(gotLine : Oid Oid String ~> Msg))] .
+
+  op stdout : -> Oid
+       [special (
+         id-hook StreamManagerSymbol		(stdout)
+	 op-hook stringSymbol			(<Strings> : ~> String)
+	 op-hook writeMsg			(write : Oid Oid String ~> Msg)
+	 op-hook wroteMsg			(wrote : Oid Oid ~> Msg))] .
+
+  op stderr : -> Oid
+       [special (
+         id-hook StreamManagerSymbol		(stderr)
+	 op-hook stringSymbol			(<Strings> : ~> String)
+	 op-hook writeMsg			(write : Oid Oid String ~> Msg)
+	 op-hook wroteMsg			(wrote : Oid Oid ~> Msg))] .
+endm

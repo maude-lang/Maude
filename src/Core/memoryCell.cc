@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -38,25 +38,21 @@
 
 #include "memoryCell.hh"
 
-const int
-MemoryCell::dagNodeSize =
-sizeof(MemoryCell::FullSizeMemoryCell) / sizeof(MachineWord);
-
 struct MemoryCell::Arena
 {
   union
   {
     Arena* nextArena;
-    Int64 alignmentDummy;  // force 8 byte alignment for FullSizeMemoryCell objects
+    Int64 alignmentDummy;  // force 8 byte alignment for MemoryCell objects
   };
-  MachineWord storage[ARENA_SIZE * dagNodeSize];
-  FullSizeMemoryCell* firstNode();
+  MemoryCell storage[ARENA_SIZE];
+  MemoryCell* firstNode();
 };
 
-inline MemoryCell::FullSizeMemoryCell*
+inline MemoryCell*
 MemoryCell::Arena::firstNode()
 {
-  return reinterpret_cast<FullSizeMemoryCell*>(storage);
+  return storage;
 }
 
 bool MemoryCell::showGC = false;
@@ -64,16 +60,16 @@ bool MemoryCell::showGC = false;
 //	Arena management variables.
 //
 int MemoryCell::nrArenas = 0;
-int MemoryCell::nrNodesInUse = 0;
+int nrNodesInUse = 0;  // FIX ME
 bool MemoryCell::currentArenaPastActiveArena = true;
 bool MemoryCell::needToCollectGarbage = false;
 MemoryCell::Arena* MemoryCell::firstArena = 0;
 MemoryCell::Arena* MemoryCell::lastArena = 0;
 MemoryCell::Arena* MemoryCell::currentArena = 0;
-MemoryCell::FullSizeMemoryCell* MemoryCell::nextNode = 0;
-MemoryCell::FullSizeMemoryCell* MemoryCell::endPointer = 0;
+MemoryCell* MemoryCell::nextNode = 0;
+MemoryCell* MemoryCell::endPointer = 0;
 MemoryCell::Arena* MemoryCell::lastActiveArena = 0;
-MemoryCell::FullSizeMemoryCell* MemoryCell::lastActiveNode = 0;
+MemoryCell* MemoryCell::lastActiveNode = 0;
 //
 //	Bucket management variables.
 //
@@ -98,9 +94,9 @@ MemoryCell::allocateNewArena()
   else
     lastArena->nextArena = a;
   lastArena = a;
-  FullSizeMemoryCell* d = a->firstNode();
+  MemoryCell* d = a->firstNode();
   for (int i = 0; i < ARENA_SIZE; i++, d++)
-    d->h.flags = 0;
+    d->clearAllFlags();
   ++nrArenas;
   return a;
 }
@@ -120,17 +116,16 @@ MemoryCell::slowNew()
 	  //	Allocate first arena.
 	  //
 	  currentArena = allocateNewArena();
-	  FullSizeMemoryCell* d = currentArena->firstNode();
+	  MemoryCell* d = currentArena->firstNode();
 	  endPointer = d + ARENA_SIZE - RESERVE_SIZE;
-	  nextNode = d + 1;
-	  Assert(d->h.flags == 0, "flags not cleared");
+	  //Assert(d->h.flags == 0, "flags not cleared");
 	  return d;
 	}
       Arena* a = currentArena->nextArena;
       if (a == 0)
 	{
 	  needToCollectGarbage = true;
-	  FullSizeMemoryCell* e = currentArena->firstNode() + ARENA_SIZE;
+	 MemoryCell* e = currentArena->firstNode() + ARENA_SIZE;
 	  if (endPointer != e)
 	    {
 	      //
@@ -147,10 +142,9 @@ MemoryCell::slowNew()
 	      if (currentArena == lastActiveArena)
 		currentArenaPastActiveArena = true;
 	      currentArena = allocateNewArena();
-	      FullSizeMemoryCell* d = currentArena->firstNode();
+	      MemoryCell* d = currentArena->firstNode();
 	      endPointer = d + ARENA_SIZE;
-	      nextNode = d + 1;
-	      Assert(d->h.flags == 0, "flags not cleared");
+	      //Assert(d->h.flags == 0, "flags not cleared");
 	      return d;
 	    }
 	}
@@ -172,21 +166,19 @@ MemoryCell::slowNew()
 #ifdef GC_DEBUG
       checkInvariant();
 #endif
-      FullSizeMemoryCell* e = endPointer;
-      for (FullSizeMemoryCell* d = nextNode; d != e; d++)
+      MemoryCell* e = endPointer;
+      for (MemoryCell* d = nextNode; d != e; d++)
 	{
-	  if ((d->h.flags & (MARKED | CALL_DTOR)) == 0)
+	  if (d->simpleReuse())
 	    {
-	      nextNode = d + 1;
 	      return d;
 	    }
-	  if ((d->h.flags & MARKED) == 0)
+	  if (!(d->isMarked()))
 	    {
 	      d->callDtor();
-	      nextNode = d + 1;
 	      return d;
 	    }
-	  d->h.flags &= ~MARKED;
+	  d->clearFlag(MARKED);
 	}
     }
 }
@@ -249,55 +241,54 @@ MemoryCell::tidyArenas()
   //	where necessary.
   //
   Arena* newLastActiveArena = currentArena;
-  FullSizeMemoryCell* newLastActiveNode = nextNode - 1;  // nextNode never points to first node
+  MemoryCell* newLastActiveNode = nextNode - 1;  // nextNode never points to first node
 
   if (!currentArenaPastActiveArena)
     {
       //
       //	First tidy arenas from current up to lastActive.
       //
-    FullSizeMemoryCell* d = nextNode;
-    Arena* c = currentArena;
-    for (; c != lastActiveArena; c = c->nextArena, d = c->firstNode())
-      {
-	FullSizeMemoryCell* e = c->firstNode() + ARENA_SIZE;
-	for (; d != e; d++)
-	  {
-	    if (d->h.flags & MARKED)
-	      {
-		newLastActiveArena = c;
-		newLastActiveNode = d;
-		d->h.flags &= ~MARKED;
-	      }
-	    else
-	      {
-		if (d->h.flags & CALL_DTOR)
-		  d->callDtor();
-		d->h.flags = 0;
-	      }
-	  }
-      }
-    //
-    //	Now tidy lastActiveArena from d upto and including lastActiveNode.
-    //
-    FullSizeMemoryCell* e = lastActiveNode;
-    for(; d <= e; d++)
-      {
-	if (d->h.flags & MARKED)
-	  {
-	    newLastActiveArena = c;
-	    newLastActiveNode = d;
-	    d->h.flags &= ~MARKED;
-	  }
-	else
-	  {
-	    if (d->h.flags & CALL_DTOR)
-	      d->callDtor();
-	    d->h.flags = 0;
-	  }
-      }
+      MemoryCell* d = nextNode;
+      Arena* c = currentArena;
+      for (; c != lastActiveArena; c = c->nextArena, d = c->firstNode())
+	{
+	  MemoryCell* e = c->firstNode() + ARENA_SIZE;
+	  for (; d != e; d++)
+	    {
+	      if (d->isMarked())
+		{
+		  newLastActiveArena = c;
+		  newLastActiveNode = d;
+		  d->clearFlag(MARKED);
+		}
+	      else
+		{
+		  if (d->needToCallDtor())
+		    d->callDtor();
+		  d->clearAllFlags();
+		}
+	    }
+	}
+      //
+      //	Now tidy lastActiveArena from d upto and including lastActiveNode.
+      //
+      MemoryCell* e = lastActiveNode;
+      for(; d <= e; d++)
+	{
+	  if (d->isMarked())
+	    {
+	      newLastActiveArena = c;
+	      newLastActiveNode = d;
+	      d->clearFlag(MARKED);
+	    }
+	  else
+	    {
+	      if (d->needToCallDtor())
+		d->callDtor();
+	      d->clearAllFlags();
+	    }
+	}
     }
-
   lastActiveArena = newLastActiveArena;
   lastActiveNode = newLastActiveNode;
 }
@@ -377,7 +368,7 @@ MemoryCell::stompArenas()
 {
   for (Arena* a = firstArena; a != 0; a = a->nextArena)
     {
-      FullSizeMemoryCell* d = a->firstNode();
+      MemoryCell* d = a->firstNode();
       for (int i = 0; i < ARENA_SIZE; i++, d++)
 	{
 	  if (!(d->h.flags & MARKED) && !(d->h.flags & CALL_DTOR))
@@ -392,7 +383,7 @@ MemoryCell::checkArenas()
   int n = 0;
   for (Arena* a = firstArena; a != 0; a = a->nextArena, n++)
     {
-      FullSizeMemoryCell* d = a->firstNode();
+      MemoryCell* d = a->firstNode();
       for (int i = 0; i < ARENA_SIZE; i++, d++)
 	{
 	  if (d->h.flags & MARKED)
@@ -410,7 +401,7 @@ MemoryCell::checkInvariant()
   int n = 0;
   for (Arena* a = firstArena;; a = a->nextArena, n++)
     {
-      FullSizeMemoryCell* d = a->firstNode();
+      MemoryCell* d = a->firstNode();
       int bound = (a == currentArena) ? nextNode - d : ARENA_SIZE;
       for (int i = 0; i < bound; i++, d++)
 	{

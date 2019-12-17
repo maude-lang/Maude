@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -26,6 +26,7 @@
 //	where we can try a fast heuristic.
 //
 #include "ACU_VarLhsAutomaton.hh"
+#include "ACU_BndVarLhsAutomaton.hh"
 #include "ACU_NGA_LhsAutomaton.hh"
 #include "ACU_GndLhsAutomaton.hh"
 #include "ACU_NonLinearLhsAutomaton.hh"
@@ -155,32 +156,53 @@ ACU_Term::tryToMakeCollectorLhsAutomaton(bool matchAtTop,
 				     t,
 				     c);
     }
-  if (needAllCollectorSolutions)
-    return 0;
-
   VariableTerm* v = dynamic_cast<VariableTerm*>(t);
   if (v != 0)
     {
-      //
-      //	Stripper variable should:
-      //	(1) be unbound at match time (can't guarantee this of course);
-      //	(2) not occur in condition;
-      //	(3) not occur elsewhere in lhs; and
-      //	(4) not be able to take identity.
-      //
       int vi = v->getIndex();
-      if (boundUniquely.contains(vi) ||
-	  variableInfo.getConditionVariables().contains(vi) ||
-	  v->occursInContext().contains(vi) ||
-	  symbol()->takeIdentity(v->getSort()))
-	return 0;
-      return new ACU_VarLhsAutomaton(symbol(),
-				     matchAtTop,
-				     !(collapseSymbols().empty()),
-				     variableInfo.getNrProtectedVariables(),
-				     v,
-				     c);
+      if (boundUniquely.contains(vi))
+	{
+	  //
+	  //	Bound stripper variable should:
+	  //	(1) have an element sort; and
+	  //	(2) not be able to take the identity
+	  //
+	  Sort* stripperSort = v->getSort();
+	  if (symbol()->sortBound(stripperSort) != 1 ||
+	      symbol()->takeIdentity(stripperSort))
+	    return 0;
+	  return new ACU_BndVarLhsAutomaton(symbol(),
+					    matchAtTop,
+					    !(collapseSymbols().empty()),
+					    variableInfo.getNrProtectedVariables(),
+					    v,
+					    c);
+	}
+      else
+	{
+	  if (needAllCollectorSolutions)
+	    return 0;
+	  //
+	  //	Unbound stripper variable should:
+	  //	(1) not occur in condition;
+	  //	(2) not occur elsewhere in lhs; and
+	  //	(3) not be able to take identity.
+	  //
+	  int vi = v->getIndex();
+	  if (variableInfo.getConditionVariables().contains(vi) ||
+	      v->occursInContext().contains(vi) ||
+	      symbol()->takeIdentity(v->getSort()))
+	    return 0;
+	  return new ACU_VarLhsAutomaton(symbol(),
+					 matchAtTop,
+					 !(collapseSymbols().empty()),
+					 variableInfo.getNrProtectedVariables(),
+					 v,
+					 c);
+	}
     }
+  if (needAllCollectorSolutions)
+    return 0;
   //
   //	Non ground stripper term should:
   //	(1) be stable;

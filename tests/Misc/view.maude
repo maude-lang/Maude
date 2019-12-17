@@ -1,0 +1,77 @@
+set include BOOL off .
+
+fth T is
+  sort Elt .
+  op f : Elt -> Elt .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt -> X$Elt .
+var X : X$Elt .
+  eq g(X) = f(f(X)) .
+endfm
+
+fmod FOO is
+  sort Foo .
+endfm
+
+view V from T to FOO is
+  sort Elt to Foo .
+var X : Elt .
+  op f(X) to term X .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all TEST .
+
+*** now invalidate view V by replacing FOO and recheck TEST
+
+fmod FOO is
+  sort Foo .
+  op c : -> Foo .
+endfm
+
+show all TEST .
+
+*** now replace view V altogether
+
+view V from T to FOO is
+  sort Elt to Foo .
+var X : Elt .
+  op f(X) to term c .
+endv
+
+show all TEST .
+
+*** now replace T with incompatible theory and redefine everything
+
+fth T is
+  sort Elt .
+  op f : Elt Elt -> Elt .
+endfth
+
+fmod M{X :: T} is
+  op g : X$Elt -> X$Elt .
+var X : X$Elt .
+  eq g(X) = f(X, f(X, X)) .
+endfm
+
+fmod FOO is
+  sort Foo .
+  op h : Foo -> Foo .
+endfm
+
+view V from T to FOO is
+  sort Elt to Foo .
+vars X Y : Elt .
+  op f(X, Y) to term h(Y) .
+endv
+
+fmod TEST is
+  inc M{V} .
+endfm
+
+show all TEST .

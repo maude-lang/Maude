@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -142,6 +142,17 @@ AU_DagNode::copyEagerUptoReduced2()
   return n;
 }
 
+DagNode*
+AU_DagNode::copyAll2()
+{
+  int nrArgs = argArray.length();
+  AU_Symbol* s = symbol();
+  AU_DagNode* n = new AU_DagNode(s, nrArgs);
+  for (int i = 0; i < nrArgs; i++)
+    n->argArray[i] = argArray[i]->copyAll();
+  return n;
+}
+
 void
 AU_DagNode::clearCopyPointers2()
 {
@@ -204,22 +215,6 @@ AU_DagNode::copyWithReplacement(Vector<RedexPosition>& redexStack,
 	args[i] = argArray[i];
     }
   return n;
-}
-
-void
-AU_DagNode::stackArguments(Vector<RedexPosition>& stack,
-			   int parentIndex,
-			   bool respectFrozen)
-{
-  if (respectFrozen && !(symbol()->getFrozen().empty()))
-    return;
-  int nrArgs = argArray.length();
-  for (int i = 0; i < nrArgs; i++)
-    {
-      DagNode* d = argArray[i];
-      if (!(d->isUnstackable()))
-	stack.append(RedexPosition(d, parentIndex, i));
-    }
 }
 
 void
@@ -292,7 +287,7 @@ AU_DagNode::matchVariableWithExtension(int index,
 //
 
 DagNode::ReturnResult
-AU_DagNode::computeBaseSortForGroundSubterms()
+AU_DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 {
   AU_Symbol* s = symbol();
   //
@@ -300,32 +295,22 @@ AU_DagNode::computeBaseSortForGroundSubterms()
   //	currently supported for unification.
   //
   if (s->hasIdentity())
-    return DagNode::computeBaseSortForGroundSubterms();
+    return DagNode::computeBaseSortForGroundSubterms(warnAboutUnimplemented);
 
-  bool ground = true;
+  ReturnResult result = GROUND;
   int nrArgs = argArray.length();
   for (int i = 0; i < nrArgs; ++i)
     {
-      switch (argArray[i]->computeBaseSortForGroundSubterms())
-	{
-	case NONGROUND:
-	  {
-	    ground = false;
-	    break;
-	  }
-	case UNIMPLEMENTED:
-	  return UNIMPLEMENTED;
-	default:
-	  ;  // to avoid compiler warning
-	}
+      ReturnResult r = argArray[i]->computeBaseSortForGroundSubterms(warnAboutUnimplemented);
+      if (r > result)
+	result = r;  // NONGROUND dominates GROUND, UNIMPLEMENTED dominates NONGROUND
     }
-  if (ground)
+  if (result == GROUND)
     {
       s->computeBaseSort(this);
       setGround();
-      return GROUND;
     }
-  return NONGROUND;
+  return result;
 }
 
 bool
@@ -452,12 +437,15 @@ AU_DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 }
 
 DagNode*
-AU_DagNode::instantiateWithReplacement(const Substitution& substitution, const Vector<DagNode*>& eagerCopies, int argIndex, DagNode* newDag)
+AU_DagNode::instantiateWithReplacement(const Substitution& substitution,
+				       const Vector<DagNode*>* eagerCopies,
+				       int argIndex,
+				       DagNode* newDag)
 {
   int nrArgs = argArray.length();
   AU_DagNode* n = new AU_DagNode(symbol(), nrArgs);
   ArgVec<DagNode*>& args2 = n->argArray;
-  bool eager = symbol()->getPermuteStrategy() == BinarySymbol::EAGER;
+  bool eager = (eagerCopies != 0) && symbol()->getPermuteStrategy() == BinarySymbol::EAGER;
   for (int i = 0; i < nrArgs; i++)
     {
       DagNode* d;
@@ -466,7 +454,7 @@ AU_DagNode::instantiateWithReplacement(const Substitution& substitution, const V
       else
 	{
 	  d = argArray[i];
-	  SAFE_INSTANTIATE(d, eager, substitution, eagerCopies);
+	  SAFE_INSTANTIATE(d, eager, substitution, *eagerCopies);
 	}
       args2[i] = d;
     }
@@ -478,7 +466,6 @@ AU_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vecto
 {
   AU_Symbol* s = symbol();
   bool eager = s->getPermuteStrategy() == BinarySymbol::EAGER;
-
   int nrArgs = argArray.length();
   for (int i = 0; i < nrArgs; ++i)
     {
@@ -486,30 +473,29 @@ AU_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vecto
       DagNode* n = eager ?
 	a->instantiateWithCopies(substitution, eagerCopies) :
 	a->instantiate(substitution);
-
       if (n != 0)
 	{
 	  //
 	  //	Argument changed under instantiation - need to make a new
 	  //	dagnode.
 	  //
-	  bool ground = true;
+	  //bool ground = true;
 	  AU_DagNode* d = new AU_DagNode(s, nrArgs);
 	  //
 	  //	Copy the arguments we already looked at.
 	  //
 	  for (int j = 0; j < i; ++j)
 	    {
-	      if (!(argArray[j]->isGround()))
-		ground = false;
+	      //if (!(argArray[j]->isGround()))
+	      //	ground = false;
 	      d->argArray[j] = argArray[j];	
 	    }
 	  //
 	  //	Handle current argument.
 	  //
 	  d->argArray[i] = n;
-	  if (!(n->isGround()))
-	    ground = false;
+	  //if (!(n->isGround()))
+	  //  ground = false;
 	  //
 	  //	Handle remaining arguments.
 	  //
@@ -517,10 +503,22 @@ AU_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vecto
 	    {
 	      DagNode* a = argArray[i];
 	      SAFE_INSTANTIATE(a, eager, substitution, eagerCopies);
-	      if (!(a->isGround()))
-		ground = false;
+	      //if (!(a->isGround()))
+	      //	ground = false;
 	      d->argArray[i] = a;
 	    }
+	  //
+	  //	Currently the only user of this function is PositionState::rebuildAndInstantiateDag()
+	  //	via instantiateWithCopies(), SAFE_INSTANTIATE() and instantiateWithReplacement(),
+	  //	and this is only used for various kinds of narrowing steps. These are followed
+	  //	by reduction so we don't need to worry about:
+	  //	  normal forms
+	  //	  sort computations
+	  //	  ground flags
+	  //
+	  //	If this changes in the future the following will be needed:
+	  //
+#if 0
 	  //
 	  //	Normalize the new dagnode. We pass the dumb flag as true to prevent deque
 	  //	formation. If it doesn't collapse and all its arguments are ground we
@@ -532,7 +530,8 @@ AU_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vecto
 	      d->setGround();
 	    }
 	  Assert(d->isDeque() == false, "Oops we got a deque! " << d);
-	  return d;	
+#endif	
+	  return d;
 	}
     }
   return 0;  // unchanged

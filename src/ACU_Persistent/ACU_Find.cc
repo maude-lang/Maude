@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -64,6 +64,13 @@ ACU_RedBlackNode::findFirstPotentialMatch(ACU_RedBlackNode* root,
 					  const Substitution& partial,
 					  ACU_Stack& path)
 {
+  //
+  //	Return true if the red-black tree contains a potential
+  //	match for key, given a partial substitution for key's
+  //	variables, or false otherwise.
+  //	In the true case, path holds the path to the left most
+  //	potential match.
+  //
   int explore = 0;
   do
     {

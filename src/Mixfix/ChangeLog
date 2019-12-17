@@ -1,3 +1,3477 @@
+2019-12-16  Steven Eker  <eker@mu>
+
+	* auxProperty.cc: added missing copyright notice
+
+===================================Maude127a===========================================
+
+2019-12-05  Steven Eker  <eker@mu>
+
+	* compiler.cc (runExecutable): use returnValueDump to avoid
+	unused result warning in GCC
+
+	* interact.cc (internalErrorHandler): use returnValueDump
+	to avoid unused result warning in GCC (3 places)
+	(stackOverflowHandler): ditto
+
+	* top.yy (directive): use returnValueDump rather than (void) to
+	avoid GCC's unused result warning (2 places)
+
+	* lexer.ll: added KW_LL
+
+	* top.yy: added KW_LL; semantics for KW_LL
+
+2019-12-04  Steven Eker  <eker@mu>
+
+	* yices2_Bindings.cc (pop): use DebugSave() to avoid unused variable
+	warnings
+	(makeVariable): add default: to case SMT_Info::REAL: to avoid
+	spurious uninitialized variable warning
+
+	* mixfixParser.cc (makeTerms, makeStrategyExprs): use DebugSave()
+	to avoid unused variable warnings
+
+	* interact.cc (sigsegvHandler): commented out fault_address to
+	indicate we don't use it
+
+2019-12-03  Steven Eker  <eker@mu>
+
+	* mixfixParser.cc (insertProduction): fix comparison between signed
+	and unsigned integer expressions warning
+
+===================================Maude127===========================================
+
+2019-12-02  Rubén Rubio  <rubenrub@ucm.es>
+
+	* interpreter.cc: included (fair/depthFirst)FirstStrategicSearch.hh
+
+	* srewrite.cc (sRewrite): constructs FairStrategicSearch or
+	DepthFirstStrategicSearch depending on the depthFirst parameter
+	(doStategicSearch): removed call to findNextSolutionInDepth
+
+
+2019-11-22  Steven Eker  <eker@mu>
+
+	* lexerAux.cc (eatComment): treat NUL as EOF to patch around
+	what appears to be a flex bug
+
+	* dagNodePrint.cc (handleDivision): respect PRINT_DISAMBIG_CONST
+	(handleFloat): ditto
+	(handleString): ditto
+	(handleIter): ditto
+	(handleSMT_Number): ditto
+	(handleQuotedIdentifier): ditto
+	(handleMinus): ditto
+
+	* top.yy: added KW_CONST
+
+	* lexer.ll: added  KW_CONST
+
+	* commands.yy (printOption): added syntax for disambig const
+
+	* dagNodePrint.cc (prettyPrint): respect PRINT_DISAMBIG_CONST for
+	regular constants
+
+	* termPrint.cc (prettyPrint): respect PRINT_DISAMBIG_CONST for
+	regular constants
+
+	* interpreter.hh (ParameterDatabase): added PRINT_DISAMBIG_CONST
+	to enum PrintFlags
+
+2019-11-21  Steven Eker  <eker@mu>
+
+	* interpreter.hh (ParameterDatabase): updated decl for doLoop()
+
+	* loopMode.cc (loop): create context here rather than in doLoop(); set
+	object mode if EREWRITE_LOOP_MODE flag set
+	(contLoop2): reuse savedState in order to keep external objects; delete
+	savedState on failure
+	(contLoop): create context and possibly with object mode set
+	if we reinitialize loop
+	(doLoop): take context; don't make context
+	(doLoop): use chosen rewrite algorithm; set appropriate continuation
+	function
+
+	* loopSymbol.hh (FreeSymbol): updated decl for injectInput()
+
+	* loopSymbol.cc (injectInput): do in-place replacement of
+	original node rather than returning a pointer to a new one
+
+	* mixfixModule.hh (SharedTokens): deleted decl for 1 arg version
+	of swapVariableAliasMap()
+
+	* mixfixModule.cc (swapVariableAliasMap): deleted less general
+	1 arg version
+
+	* interpreter.hh (ParameterDatabase): deleted decl for
+	doExternalRewriting()
+
+	* erewrite.cc (doExternalRewriting): deleted
+
+	* interpreter.hh (ParameterDatabase): added EREWRITE_LOOP_MODE
+	to enum Flags
+
+===================================Maude126===========================================
+
+2019-11-14  Rubén Rubio  <rubenrub@ucm.es>
+
+	* bufferPrint.cc (prettyPrint): solved bug when printing the top
+	combinator, reported by Paco
+
+2019-11-05  Rubén Rubio  <rubenrub@ucm.es>
+
+	* syntacticPreModule.cc (addStatement): allow mb/eq/rl in smod/sth
+
+	* syntacticPreModule.hh (addSortDecl, addSubsortDecl): allow
+	sorts/subsorts in smod/sth
+
+	* ops.cc (addOpDecl): allow op in smod/sth
+	(addStratDecl): warning message rewritten
+
+	* mixfixModule.hh (insertPotentialRuleLabels): bugfix: insert() rather
+	than assignment
+
+	* makeGrammar.cc (makeGrammar): bugfix: call to makeLabelProductions
+	unconditionally since now makeStrategyLanguageProductions only generate
+	RULE_LABEL
+
+2019-11-05  Steven Eker  <eker@mu>
+
+	* mixfixModule.hh (SharedTokens): made buffer version of handleVariable()
+	non-static
+
+	* bufferPrint.cc (handleVariable): handle variable aliases
+
+2019-11-01  Steven Eker  <eker@mu>
+
+	* syntacticView.cc (handleTermAndExprMappings): save and restore original
+	parsers; delete any newly created parsers when we're done
+	(showView): save and restore original parsers; check for unexpected
+	parser creation
+
+	* mixfixModule.cc (swapVariableAliasMap): added two arg version
+
+	* mixfixModule.hh (SharedTokens): added decl for two arg version
+	of swapVariableAliasMap()
+
+2019-10-29  Steven Eker  <eker@mu>
+
+	* mixfixParser.hh (CacheableState): undid derivation from CacheableState
+
+2019-10-28  Steven Eker  <eker@mu>
+
+	* mixfixParser.hh (CacheableState): derive from CacheableState
+
+===================================Maude125===========================================
+
+2019-10-10  Rubén Rubio  <rubenrub@ucm.es>
+
+	* bufferPrint.cc (prettyPrint): use ruleLabels instead of potentialLabels
+	to decide whether there is a homonym rule in the module. The loop did not
+	work when the arity was zero.
+
+	* doParse.cc (parseStrategyExpr): now receives the beginning and end of
+	the tokens to be parsed
+
+	* importModule.cc (closeSortSet): set nrUserComponents
+	(importRuleLabels): renamed from importLabels and range-based loops
+
+	* importModule.hh: added attribute nrUserComponents
+	(getNrUserComponents): added
+	(importRuleLabels): renamed from importLabels
+
+	* lexer.ll: "to-expr" changed to "to expr"
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): use RULE_LABEL instead
+	of LABEL for rule application labels.
+
+	* maudemlBuffer.cc (branchAction): removed
+	(generate): calculate the type of the strategy according to its actions
+
+	* mixfixModule.cc (MixfixModule): set strategyRangeSort to null
+
+	* mixfixModule.hh (parseStrategyExpr): now receives the beginning and end of
+	the tokens to be parsed
+	(insertPotentialRuleLabels): added
+	(NonTerminal): added RULE_LABEL
+
+	* modules.yy (viewStratMap): "to-expr" changed to "to expr"
+	(inert): removed "to-expr"
+
+	* parameterization.cc (makeSummation): importLabels renamed to
+	importRuleLabels
+
+	* prettyPrint.cc (printStrategyTerm): become method of MixfixModule,
+	parentheses are printed in calls to strategies with homonym rule.
+	(operator<<): call printStrategyTerm as a method
+
+	* process.cc (process): importLabels renamed to importRuleLabels,
+	call to insertPotentialRuleLabels
+
+	* profileModule.cc (profileSdRewrite): added
+
+	* profileModule.hh (profileSdRewrite): added
+
+	* renameModule.cc (finishCopy): importLabels renamed to importRuleLabels
+
+	* srewrite.cc (sRewrite): removed argument to TermSet, free subject term
+	when the strategy expression is wrong, print "No solutions" instead of
+	"No more solutions" if there are no solutions at all.
+
+	* syntacticView.cc (handleTermAndExprMappings): call parseStrategyExpr
+	withe begin=1 to skip the expr keyword
+
+	* strategyPrint.cc (prettyPrint): call printStrategyTerm as a method
+
+	* syntacticPreModule.cc (addStatement): insert to potentialRuleLabels
+
+	* syntacticPreModule.hh (potentialRuleLabels): added
+
+	* top.yy: removed "to-expr" token declaration
+
+	* userLevelRewritingContext.cc (traceStrategyCall): call profileSdRewrite
+
+	* view.cc (insertStratToExprMapping): removed argument to TermSet
+
+	* viewCache.cc (viewCompare): become method of ViewCache
+
+	* visibleModule.cc (showKinds): call getNrUserKinds
+
+2019-10-08  Steven Eker  <eker@mu>
+
+	* trial.cc (traceEndFragment): reverted change from Alpha95b
+	that broke fragment profiling
+	(traceEndFragment): added comment to explain why we can't
+	rely on trialRef to decide if this fragment is profileable
+	(traceEndFragment): do a getModule() on the preEquation to
+	decide if a fragment is profileable
+
+===================================Maude124===========================================
+
+2019-09-19  Rubén Rubio  <rubenrub@ucm.es>
+
+	* bufferPrint.cc (prettyPrint): solved a bug in the matchrew case
+
+2019-07-15  Rubén Rubio  <rubenrub@ucm.es>
+
+	* modules.yy: renamed makeOpDeclsConsistent to makeDeclsConsistent
+
+	* ops.cc (makeDeclsConsistent): renamed from makeOpDeclsConsistent
+	and handle strategy declarations
+
+	* strategyTranslation.cc (getStratToExprMapping, getStratToExprMapping):
+	label renamings were not applied to rule application strategies
+
+	* syntacticPreModule.hh (makeDeclsConsistent): renamed from
+	makeOpDeclsConsistent
+
+2019-07-12  Steven Eker  <eker@mu>
+
+	* importTranslation.cc (translateRegularSymbol): use AlwaysAssert()
+
+2019-07-11  Steven Eker  <eker@mu>
+
+	* parameterization.cc (addOpMappingsFromView): pass parameterCopyUser to
+	addFromPartOfRenaming()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByModuleView): pass
+	extra arument to addOpMappingsFromView()
+	(handleInstantiationByTheoryView): pass extra argument to addOpMappingsFromView()
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByTheoryView): pass
+	extra arument to addOpMappingsFromView()
+	(handleInstantiationByModuleView): pass extra argument to addOpMappingsFromView()
+
+	* importModule.hh (EnclosingObject): updated decls for
+	translateComponent() and addFromPartOfRenaming()
+
+	* parameterization.cc (addFromPartOfRenaming)
+	(translateComponent): take parameterCopyUser argument
+
+	* importModule.hh (EnclosingObject): updated decl for
+	addOpMappingsFromView()
+
+	* parameterization.cc (addOpMappingsFromView): take parameterCopyUser
+	argument; use it to ensure op mapping get added with the potentially
+	larger components belonging to the user of the parameterCopy
+
+2019-06-03  Rubén Rubio  <rubenrub@ucm.es>
+
+	* importModule.cc (importLabels): use importedRuleLabels set
+	(donateStrategies): adapted to changes in alpha121.
+
+	* instantiateModuleWithBoundParameters.cc (instatiateRenaming):
+	handle strategy mappings
+
+	* instantiateModuleWithFreeParameteres.cc
+	(handleInstantiationByModuleView): call to addStratMappings
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation):
+	call to handleStratMappings and handleStratToExprMappings
+	(handleInstantiationByTheoryView): call to addStratMappingsFromView
+	(handleInstantiationByModuleView): call to addStratMappingsFromView
+	(handleStratMappings, handleStratAkwardCase): added
+	(handleStratToExprMappings): added
+
+	* parameterization.cc (addStratMappingsFromView): used
+	getStratToExprMappings
+
+	* renaming.cc (addStratMappingPartialCopy): added
+	(addStratTargetExpr): now receives and stores the left-hand side
+	expression
+
+	* renaming.hh (addStratMappingPartialCopy): added
+	(addStratTargetExpr): now receives the left-hand side expression
+	(getStratFromCall): added
+	(StratMapping): added fromCall attribute
+
+	* syntacticView.cc (handleTermAndExprMappings): adapted
+	insertStratToExprMapping to the changes of alpha121
+	(getTargetExprModule): removed
+
+	* view.cc (insertStratToExprMapping): adapted to the changes
+	of alpha121
+	(getStratMapExpr, getStratMapVarIndices): removed
+	(getStratToExprMapping): added
+	(checkStrats): call to getStratToExprMapping
+
+	* view.hh (insertStratToExprMapping): adapted to the changes
+	of alpha121
+	(handleStratMappings, handleStratAkwardCase): added
+	(handleStratToExprMappings, getStratToExprMapping): added
+	(getTargetExprModule): removed
+
+2019-05-28  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): use new
+	makeToModule() semantics
+
+	* view.hh (EnclosingObject): updated decl for makeToModule()
+
+	* instantiateViewWithFreeParameters.cc (makeToModule): return targetInstance
+	rather than insert it
+
+	* instantiateModuleWithBoundParameters.cc (handleFinalInstantiation): added
+	defensive code in case v->instantiateBoundParameters() returns null
+
+2019-05-25  Rubén Rubio  <rubenrub@ucm.es>
+
+	* command.cc (printStratDecl): call to printAttributes
+	(printAttributes): added for strategy declarations
+
+	* commands.yy: added show sds and show strats commands
+
+	* entry.cc (addStrategy): added metadata parameter. Call
+	findStrategy and insertMetadata
+
+	* importModule.cc (donateStrategies2): donate metadata
+	(donateStatements2): donate attributes of strategy definitions
+
+	* interpreter.cc (showStrats, showSds): added
+
+	* interpreter.hh (showStrats, showSds): added
+
+	* lexer.ll: added lexemes for show sds/strats commands
+
+	* metadataStore.hh (ItemType): added STRAT_DECL and STRAT_DEF
+
+	* mixfixModule.hh (addStrategy): added metadata parameter
+
+	* mixfixParser.cc (makeStatementPart): handle metadata and print
+	attribute in strategy definitions
+
+	* modules.yy: added strategy declaration attributes syntax
+
+	* prettyPrint.cc (operator<<): print metadata in strategy declarations
+
+	* process.cc (processStrategies): handle metadata
+
+	* syntacticPreModule.hh (printAttributes): added for strategy decls
+
+	* top.yy: added KW_STRATS
+
+	* userLevelRewritingContext.cc (traceStrategyCall): handle print
+	attribute and corrected an erratum in traces (too many line breaks)
+
+	* view.cc (evaluate): moved a check about strategy mappings in views
+	(insertStratToExprMapping): solved some memory leaks
+
+	* visibleModule.cc (showSummary): added strategy declarations and
+	definitions to the summary
+	(showModule): call to showSds
+	(showStrats): moved code showing strategy definitions to showSds
+	(showSds): added from showStrats
+
+	* visibleModule.hh (showSds): added
+
+2019-05-24  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.hh (EnclosingObject): added decl for makeToModule()
+
+	* instantiateViewWithFreeParameters.cc (makeToModule): added
+	(makeInstantiation): use makeToModule() but make sure this happens
+	after parameters instantiated by theory-views have been checked for
+	conflicts
+
+	* syntacticView.hh (_syntacticView_hh_): fix header guard
+
+	* interpreter.cc (makeModule): commented out advisory about renaming
+	module with bound parameters
+
+2019-05-23  Steven Eker  <eker@mu.csl.sri.com>
+
+	* quotedIdentifierOpSymbol.cc (eqRewrite): use new tokenizeRope()
+	convention
+
+	* tokenizer.ll (Rope): pass back pointer than reference from
+	tokenizeRope() to avoid an issue with yyterminate()/YY_NULL
+
+	* mixfixParser.cc (insertProduction): made check for bad gather
+	size #ifndef NO_ASSERT
+
+	* view.cc (insertOpToTermMapping): deleted unused variable i
+
+2019-05-22  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.hh (operator<<): needed in the  NO_ASSERT case also
+
+	* token.cc (splitParameterInstanceName): commented out
+
+	* renaming.hh (SyntaxContainer): commented out decl for
+	addOpMappingSimpleCopy()
+
+	* renaming.cc (addOpMappingSimpleCopy): commented out
+
+	* token.hh (T): commented out decl for splitParameterInstanceName()
+
+	* syntacticView.cc (addParameter2): comment out experimental advisory
+	for parameterized views
+
+	* interpreter.cc (handleArgument): comment out experimental advisory
+	for view instantiation
+
+	* modules.yy (view): don't hand responsibility for deleted
+	fromTheory/toModule expressions until the production has succeed and
+	their no longer on the bision stack
+	(instantExpr): delete vector after passing its contents to ModuleExpression()
+
+2019-05-21  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation): DebugAdvisory()
+	-> DebugInfo()
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): set copy
+	status to BAD rather than using markAsBad()
+
+	* view.hh (isBad): added
+	(EnclosingObject): don't derive from BadFlag
+
+	* view.cc (evaluate): check for recursive use; set status
+	to PROCESSING
+
+	* process.cc (process): added closeSortSet() hack to that
+	SyntacticPreModule::getFlatSignature() won't get confused
+
+	* syntacticPreModule.cc (getFlatSignature): added DebugNew()
+
+2019-05-20  Steven Eker  <eker@mu.csl.sri.com>
+
+	* importModule.hh (EnclosingObject): added decl for
+	checkForPolymorphOperatorClash()
+
+	* importModule.cc (checkForPolymorphOperatorClash): added
+
+	* moduleCache.cc (makeSummation): deleted commented out code
+
+2019-05-16  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.hh (EnclosingObject): deleted decl for recoverVariableNames()
+
+	* instantiateViewWithFreeParameters.cc (handleOpMappings): pass
+	fromTerm to handleAwkwardCase()
+	(handleAwkwardCase): simplified using fromTerm argument
+	(recoverVariableNames): deleted
+
+	* view.cc (checkOps): getOpMapTerm() -> getOpToTermMapping()
+	(2 places)
+
+	* instantiateViewWithFreeParameters.cc (handleOpMappings):
+	getOpMapTerm() -> getOpToTermMapping()
+
+	* parameterization.cc (addOpMappingsFromView): getOpMapTerm()
+	-> getOpToTermMapping()
+
+	* view.hh (EnclosingObject): getOpMapTerm() -> getOpToTermMapping()
+
+	* view.cc (getOpMapTerm): becomes getOpToTermMapping()
+
+	* view.hh (EnclosingObject): updated decl for getOpMapTerm()
+
+	* view.cc (getOpMapTerm): new semantics
+
+	* parameterization.cc (addOpMappingsFromView):  propagate fromTerm
+	for op->term mappings
+
+	* renaming.cc (addOpTargetTerm): store fromTerm
+	(addOpTarget): zero fromTerm (both versions)
+
+	* renaming.hh (SyntaxContainer): updated decl for addOpTargetTerm()
+	(SyntaxContainer): added fromTerm field to struct OpMapping
+	(getFromTerm): added
+
+2019-05-15  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): use
+	handlePolymorphMappings()
+
+	* view.hh (EnclosingObject): deleted decl for old handleOpMappings();
+	added decl for handlePolymorphMappings()
+
+	* instantiateViewWithFreeParameters.cc (handleOpMappings): deleted
+	old version
+	(handlePolymorphMappings): added
+
+	* view.hh (EnclosingObject): added decls for handleAwkwardCase(),
+	recoverVariableNames()
+
+	* instantiateViewWithFreeParameters.cc (recoverVariableNames)
+	(handleAwkwardCase): added
+	(handleOpMappings): use handleAwkwardCase()
+
+	* renaming.cc (printRenaming): replaced Assert() that op->term
+	mappings aren't printable with debug code that prints a
+	syntactically illegal representation
+
+2019-05-14  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): use new
+	version of handleOpMappings()
+	(handleOpMappings): check for the existence of an op->term mapping
+	and don't general mapping for such operators
+
+	* view.hh (EnclosingObject): delete decl for old handleSortMappings();
+	add decl for new handleOpMappings()
+
+	* instantiateViewWithFreeParameters.cc (handleOpMappings): added
+	canonicalRenaming base version
+
+2019-05-13  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.cc (checkSorts): check for case where module declared sort is
+	implicitly mapped to a sort derived from a parameter theory
+	(checkSorts): added check for sort mapping from nonexistent sort
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): delete
+	canonicaRenaming once we are done with it; use new handleSortMappings()
+	(handleSortMappings): handle pathological case
+	(handleSortMappings): deleted old version
+
+	* view.hh (EnclosingObject): added decl for new version of handleSortMappings()
+
+	* renaming.hh (SyntaxContainer): added comment to explain that terms are never
+	owned nor deleted and the semantics of using Renaming means that dangling Term*
+	pointers are never dereferenced
+
+	* parameterization.cc (addOpMappingsFromView): added comment to the effect that
+	the renaming borrows toTerm
+
+	* instantiateViewWithFreeParameters.cc (handleOpToTermMappings): fixed comments
+	(handleSortMappings): added simpler version base on canonicalRenaming
+
+2019-05-10  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.hh (EnclosingObject): deleted decl for old version of
+	handleOpToTermMappings()
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByParameter): use
+	addSortRenamingsForParameterChange() to update canonical if the parameter
+	name changes
+	(handleInstantiationByModuleView): use addSortMappingsFromModuleView(),
+	addOpMappingsFromView()
+	(makeInstantiation): use handleParameterizedSorts()
+	(makeInstantiation): use new handleOpToTermMappings()
+	(handleOpMappings): adde new version
+	(handleOpMappings): deleted old version
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByModuleView): use
+	addSortMappingsFromModuleView()
+
+	* importModule.hh (EnclosingObject): added decl for addSortMappingsFromModuleView()
+
+	* parameterization.cc (addSortMappingsFromModuleView): added
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByParameter): use
+	addSortRenamingsForParameterChange()
+
+	* importModule.hh (EnclosingObject): added decl for
+	addSortRenamingsForParameterChange()
+
+	* parameterization.cc (addSortRenamingsForParameterChange): added
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByTheoryView): use
+	new addOpMappingsFromView()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByTheoryView): use
+	new addOpMappingsFromView()
+	(handleInstantiationByModuleView): use new addOpMappingsFromView()
+	(addOpMappingsFromView, translateComponent): deleted
+
+	* importModule.hh (EnclosingObject): added decls for new versions of
+	addOpMappingsFromView(), translateComponent(); deleted decls for old
+	verions of addOpMappingsFromView(), translateComponent(); adde decl
+	for addFromPartOfRenaming()
+
+	* parameterization.cc (translateComponent): added
+	(translateComponent, addFromPartOfRenaming)
+	(addOpMappingsFromView): added
+
+	* importModule.hh (EnclosingObject): deleted decl for old version of
+	addSortMappingsFromTheoryView()
+
+	* instantiateModuleWithFreeParameters.cc (addSortMappingsFromTheoryView): deleted
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByTheoryView): use
+	new version of addSortMappingsFromTheoryView()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByTheoryView): use
+	new version of addSortMappingsFromTheoryView()
+
+	* importModule.hh (EnclosingObject): added decl for new
+	addSortMappingsFromTheoryView()
+
+	* parameterization.cc (addSortMappingsFromTheoryView): added version that
+	takes parameterCopyOfTheory as object
+
+2019-05-09  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByTheoryView): use
+	ImportModule::addSortMappingsFromTheoryView()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByTheoryView): use
+	addSortMappingsFromTheoryView()
+
+	* importModule.hh (EnclosingObject): added decl for addSortMappingsFromTheoryView()
+
+	* instantiateModuleWithFreeParameters.cc (addSortMappingsFromTheoryView): added
+
+2019-05-08  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.hh (EnclosingObject): updated decls for handleInstantiationByTheoryView(),
+	handleInstantiationByParameter(), handleInstantiationByModuleView()
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByTheoryView): made const
+	(handleInstantiationByParameter): made const
+	(handleInstantiationByModuleView): made const
+
+	* importModule.hh (EnclosingObject): make addOpMappingsFromView() public
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): no longer
+	deal with the case that our toModule has no parameters since
+	each of our free parameters is required to be bound in toModule
+	(makeInstantiation): make toModule instantiation before worrying about
+	the rest of the view
+	(handleInstantiationByTheoryView): call addOpMappingsFromView()
+
+	* view.cc (evaluate): make having parameters that are not bound
+	in the toModule illegal - this greatly simplifies handling parameters
+	since now we can rely on the toModule machinery for much of the heavy lifting
+	(regretToInform): don't do the pretend self-destruct now that we
+	rely on our toModule to trigger the invalidation cascade
+
+2019-05-07  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByTheoryView): added
+	some of the code to make a canonical renaming
+
+	* importModule.hh (getCanonicalRenaming): added
+
+	* view.hh (EnclosingObject): updated decls for handleInstantiationByTheoryView()
+	handleInstantiationByParameter(), handleInstantiationByModuleView()
+
+2019-05-06  Steven Eker  <eker@mu.csl.sri.com>
+
+	* importModule.hh (EnclosingObject): added decls for handleSummation(),
+	handleRenaming(), handleFinalInstantiation()
+	(EnclosingObject): updated comment on parameter theories and imports
+	now that this are kept in separate data structures
+
+	* instantiateModuleWithBoundParameters.cc (instantiateRenaming): use
+	DebugEnter()/DebugExit()
+	(handleSummation, handleRenaming, handleFinalInstantiation): addes
+	(instantiateBoundParameters): rewritten using handleSummation(),
+	handleRenaming(), handleFinalInstantiation()
+
+2019-05-03  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateModuleWithBoundParameters.cc (instantiateBoundParameters): handle
+	summation
+
+	* importModule.hh (EnclosingObject): deleted VIEW_LOCAL from enum Origin
+
+	* interpreter.cc (makeModule): check for free parameters in sum
+	rather than any parameters
+
+	* parameterization.cc (makeSummation): handle bound parameters
+
+	* instantiateModuleWithFreeParameters.cc (handleBoundParameters): updated
+	comment about the existence of parameter theory copies
+
+	* moduleCache.cc (makeSummation): use ImportModule::makeSummation()
+
+	* importModule.hh (EnclosingObject): added decl for makeSummation()
+
+	* parameterization.cc (makeParameterCopy): use DebugEnter()/DebugExit()
+	(makeSummation): added
+
+	* instantiateModuleWithFreeParameters.cc (handleRegularImports): use
+	DebugInfo()
+	(makeInstantiation): use DebugEnter()
+	(makeInstantiation): use DebugExit()
+
+	* view.hh (EnclosingObject): added comments for enum Status
+
+	* interpreter.cc (showView): don't call SyntacticView::showView() unless
+	the view is in a GOOD state
+
+	* importModule.hh (EnclosingObject): updated decls for
+	handleInstantiationByModuleView(), handleBoundParameters()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByParameter): code
+	cleaning
+	(handleBoundParameters): check for null from makeParameterCopy()
+	(handleInstantiationByModuleView): check for failure from handleBoundParameters()
+	(makeInstantiation): check for failure from handleInstantiationByModuleView()
+
+	* process.cc (processImports): check bad flag after processing parameters
+	and quit if bad so we don't get spurious warnings about missing parameters
+
+	* renameModule.cc (donateSorts2): complain about the renamed sort rather
+	than the original name since that's where the clash occurs; this should
+	only affect parameter theory copies since in other cases we form the
+	renamed theory or module first
+
+	* process.cc (process): check for badness after doing parameters/imports
+
+	* preModule.cc (processExplicitImports): mark import as bad if import
+	couldn't be constructed or had free parameters
+	(processParameters): mark flat module as bad if parameter couldn't be
+	constructed or parameter was illegal
+
+	* process.cc (processImports): mark importer as bad if import failed
+
+2019-05-02  Steven Eker  <eker@mu.csl.sri.com>
+
+	* importModule.hh (EnclosingObject): updated decl for handleInstantiationByModuleView();
+	added decl for handleBoundParameters()
+
+	* instantiateModuleWithFreeParameters.cc (handleBoundParameters): added
+	(handleInstantiationByModuleView): use handleBoundParameters()
+	(handleInstantiationByModuleView): don't keep track of bound parameters
+	or return a bool
+
+	* view.hh (EnclosingObject): added decl for handleOpToTermMappings()
+
+	* instantiateViewWithFreeParameters.cc (handleOpToTermMappings): added
+	(makeInstantiation): use handleOpToTermMappings()
+
+	* view.hh (EnclosingObject): added decl for handleOpMappings()
+
+	* instantiateViewWithFreeParameters.cc (handleSortMappings): rewritten
+	to check for sorts from parameter theory that actually came from a
+	module originally
+	(handleOpMappings): added
+	(makeInstantiation): use handleOpMappings()
+
+	* preModule.cc (processParameters): handle makeParameterCopy() returning
+	null
+
+	* parameterization.cc (makeParameterCopy): check for makeParameterCopy()
+	returning null
+
+	* importModule.hh (EnclosingObject): updated decl for
+	handleInstantiationByParameter()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByTheoryView): check
+	for makeParameterCopy() returning null
+	(handleInstantiationByParameter): check for makeParameterCopy() returning null
+	(makeInstantiation): handle return value from handleInstantiationByParameter()
+
+	* moduleCache.cc (makeParameterCopy): handle the possibility of a
+	bad parameter copy under weird circumstances
+
+	* renameModule.cc (donateSorts2): set sortDeclaredInModule even for
+	module->module importations
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByModuleView): added
+	comment to explain why copying conflicts from argument is currently needed
+	(handleInstantiationByParameter): added comment to explain why propagating
+	conflicts on bare parameters is unnecessary
+	(makeInstantiation): use handleSortMappings()
+
+2019-05-01  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByModuleView): add
+	conflicts between bare parameters and bound parameters in module-view
+	(handleInstantiationByModuleView): copy in conflicts from argument - but need
+	to check if this is really needed
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByModuleView): fix
+	bug where we were doing conflict generation and propagation even for theory-view
+	because we had if-nesting wrong
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByParameter): record
+	positionsInstantiatedParameter
+
+	* view.cc (evaluate): use setToModule()
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): use setToModule()
+
+	* view.hh (setToModule): added
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): add in conflicts
+	from targetInstance
+
+	* viewCache.cc (makeViewInstantiation): check for bad view returned from
+	makeInstantiation()
+
+	* view.hh (EnclosingObject): updated decl for handleInstantiationByTheoryView()
+	(BadFlag): add BadFlag as a public base
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): use
+	handleInstantiationByTheoryView(), handleInstantiationByParameter(),
+	handleInstantiationByModuleView()
+	(handleInstantiationByTheoryView): check for conflict
+	(makeInstantiation): check for failure from handleInstantiationByTheoryView()
+
+	* view.hh (EnclosingObject): added decls for handleInstantiationByTheoryView(),
+	handleInstantiationByParameter(), handleInstantiationByModuleView()
+
+	* instantiateViewWithFreeParameters.cc (handleInstantiationByTheoryView)
+	(handleInstantiationByParameter)
+	(handleInstantiationByModuleView): added
+
+2019-04-30  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): handle the case
+	where a sort is mapped to a sort from a parameter theory
+	(makeInstantiation): fix bug where we were using the wrong iterator variable for
+	bound parameters in a module-view arugment
+
+	* token.hh (T): decl for parameterRename() becomes makeParameterInstanceName()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByTheoryView):
+	parameterRename() -> makeParameterInstanceName()
+	(handleInstantiationByParameter): parameterRename() -> makeParameterInstanceName()
+
+	* parameterization.cc (makeParameterCopy): parameterRename() ->
+	makeParameterInstanceName() (2 places)
+
+	* token.cc (splitParameterInstanceName): added
+	(parameterRename): becomes makeParameterInstanceName()
+
+	* token.hh (T): added decl for splitParameterInstanceName()
+
+	* auxProperty.cc (splitParameterizedSort): added comment to explain
+	what it does
+	(splitParameterList): added comment to explain what it does
+	(joinParameterList): added comment to explain what it does
+
+2019-04-29  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateViewWithFreeParameters.cc (makeInstantiation): moved here
+
+	* instantiateViewWithBoundParameters.cc (instantiateBoundParameters): moved
+	here
+
+2019-04-26  Steven Eker  <eker@mu.csl.sri.com>
+
+	* interpreter.cc (makeModule): check for theory-view and view with
+	bound parameters in the same instantiation
+	(handleArgument): check for theory-view and view with bound
+	parameters in the same instantiation
+
+	* importModule.cc (addImport): propagate conflicts here
+
+	* instantiateModuleWithFreeParameters.cc (handleRegularImports): don't
+	propagate conflicts here
+
+	* enclosingObject.cc (addConflict, addInAllConflicts)
+	(hasConflict, findFirstClash): added
+
+	* instantiateModuleWithFreeParameters.cc (handleRegularImports): add in
+	conflicts from imports
+
+	* importModule.hh (EnclosingObject): update decl for
+	handleInstantiationByModuleView()
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation): pass
+	positionsInstantiatedParameter to handleInstantiationByModuleView()
+
+	* enclosingObject.hh (E): added decl for hasConflict()
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation): handle new
+	handleInstantiationByParameter() semantics
+
+	* importModule.hh (EnclosingObject): updated decl for
+	handleInstantiationByParameter()
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation): handle
+	failure from handleInstantiationByTheoryView()
+	(handleInstantiationByParameter): propagate conflicts from us
+	to our instantiation at positions instantiated by parameter
+	(handleInstantiationByParameter): take positionsInstantiatedParameter as
+	an argmuent
+
+	* enclosingObject.hh (E): added decls for  addInAllConflicts() and
+	makeConflictsWithBoundParameters()
+
+	* importModule.hh (EnclosingObject): updated decl for
+	handleInstantiationByTheoryView()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByTheoryView): check
+	for conflicts between parameters and return bool
+
+	* enclosingObject.hh (E): added decls for addConflict() and
+	firstClash()
+
+2019-04-23  Steven Eker  <eker@mu.csl.sri.com>
+
+	* importModule.cc (donateSorts): don't make recursive call on
+	parameterTheories - the importer will alrady have these
+	(donateOps): symmetric change
+	(fixUpDonatedOps): symmetric change
+	(donateStatements): symmetric change
+	(resetImportPhase): call self rather than resetImports() because
+	there is no need to reset parameterTheories because we won't have
+	imported from them.
+
+2019-04-22  Steven Eker  <eker@mu.csl.sri.com>
+
+	* renameModule.cc (makeRenamedCopy): rewritten for
+	parameterTheories/importedModules split
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByParameter): use
+	parameterTheories
+	(handleInstantiationByTheoryView): use parameterTheories
+	(handleInstantiationByModuleView): use parameterTheories
+	(handleRegularImports): don't skip first entries as they are no longer
+	parameter theories
+
+	* importModule.cc (deepSelfDestruct): remove ourself as user of parameter
+	theories
+	(importSorts): rewritten for parameterTheories/importedModules split
+	(donateSorts): rewritten for parameterTheories/importedModules split
+	(importOps): rewritten for parameterTheories/importedModules split
+	(donateOps): rewritten for parameterTheories/importedModules split
+	(fixUpImportedOps): rewritten for parameterTheories/importedModules split
+	(importStatements): rewritten for parameterTheories/importedModules split
+	(fixUpDonatedOps): rewritten for parameterTheories/importedModules split
+	(addParameter): use parameterTheories
+	(resetImports): rewritten for parameterTheories/importedModules split
+	(dumpImports): rewritten for parameterTheories/importedModules split
+	(donateStatements): rewritten for parameterTheories/importedModules split
+
+	* importModule.hh (EnclosingObject): added data member parameterTheories
+
+	* importModule.cc (addParameter): more detailed warning message
+	(addImport): more detailed warning message
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation): do parameters
+	from enclosing objects last
+	(handleInstantiationByTheoryView): code cleaning
+	(handleInstantiationByParameter): code cleaning
+
+	* instantiateView.cc (makeInstantiation): toModule -> viewToModule
+	in view arugment code to avoid confusing overloading
+
+2019-04-19  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateView.cc (makeInstantiation): make parameterizedSortRenaming
+
+	* importModule.hh (EnclosingObject): make handleParameterizedSorts()
+	public so we can call it from View
+
+	* instantiateModuleWithFreeParameters.cc (handleParameterizedSorts): don't
+	sorts from parameter theories
+
+2019-04-18  Steven Eker  <eker@mu.csl.sri.com>
+
+	* importTranslation.cc (translateTerm): added comment to explain
+	why skipping translation of toTerm during instantiation is a fail
+
+2019-04-17  Steven Eker  <eker@mu.csl.sri.com>
+
+	* importTranslation.cc (translateTerm): added comments to explain
+	how it works
+
+	* syntacticView.cc (handleOpTermMappings): take responsibility
+	for deepSelfDestruct()ing fromTerm and toTerm if
+	insertOpToTermMapping() fails
+
+	* view.cc (insertOpToTermMapping): make caller responsible for
+	deepSelfDestruct()ing term on error
+
+	* syntacticView.cc (handleOpTermMappings): don't pass line numbers
+	to insertOpToTermMapping()
+	(handleOpTermMappings): propagate errors from insertOpToTermMapping()
+
+	* view.hh (EnclosingObject): updated decl for insertOpToTermMapping()
+
+	* view.cc (insertOpToTermMapping): use line number from term for
+	warning about too many arguments in lhs; improve warning message
+	(insertOpToTermMapping): use line number from term for warning about
+	non-variable arugments in lhs; improve the warning message
+	(insertOpToTermMapping): use line number from term for warning
+	about repeated use of variable in lhs; improve warning message
+	(insertOpToTermMapping): don't take line number arguments
+
+	* view.hh (EnclosingObject): updated decl for indexRhsVariables()
+
+	* view.cc (indexRhsVariables): don't take lineNr; use *term instead;
+	better warning message
+	(insertOpToTermMapping): don't pass lineNumber to indexRhsVariables()
+
+	* view.hh (EnclosingObject): updated decl for insertOpToTermMapping()
+
+	* view.cc (insertOpToTermMapping): don't take targetModule; don't
+	pass module to mapSort()
+
+	* syntacticView.cc (handleOpTermMappings): don't pass toModule
+	to insertOpToTermMapping()
+
+	* view.hh (EnclosingObject): updated decl for mapSort()
+
+	* view.cc (mapComponent): don't take module argument
+	(checkOps): don't pass module argument to mapComponent()
+	(mapSort): don't take or pass module argument
+
+	* view.hh (EnclosingObject): updated decl for mapComponent()
+
+	* syntacticView.cc (handleOpTermMappings): don't pass toModule
+	to mapComponent()
+
+	* view.hh (EnclosingObject): LocalParameter->ParameterDecl
+
+	* view.cc: LocalParameter->ParameterDecl
+
+	* view.hh (EnclosingObject): updated comments
+
+2019-04-16  Steven Eker  <eker@mu.csl.sri.com>
+
+	* syntacticView.cc (handleOpTermMappings): code cleaning
+
+	* mixfixModule.hh (SharedTokens): deleted decls for
+	pushVariableAliases(), popVariableAliases()
+	(SharedTokens): deleted data member savedVariableAliases
+
+	* mixfixModule.cc (pushVariableAliases, popVariableAliases): deleted
+
+	* syntacticView.cc (handleVarDecls): put alias info in
+	fromTheoryVariableAliases and toModuleVariableAliases
+	(handleOpTermMappings): rewritten to use fromTheoryVariableAliases
+	and toModuleVariableAliases
+	(showView): swap variable aliases before and after printing out
+	op->term mappings
+	(handleVarDecls): clear fromTheoryVariableAliases and
+	toModuleVariableAliases in case we are reexamining this view
+
+	* syntacticView.hh (View): added data members toModuleVariableAliases,
+	fromModuleVariableAliases
+
+	* mixfixModule.hh (SharedTokens): added decl for swapVariableAliasMap()
+
+	* mixfixModule.cc (swapVariableAliasMap): added
+
+	* syntacticView.hh (View): deleted data members newFromTheory,
+	newToModule; deleted decls for ~SyntacticView(), regretToInform(),
+	finishModule()
+
+	* syntacticView.cc (handleOpTermMappings): simplified using
+	pushVariableAliases()/popVariableAliases()
+	(SyntacticView): don't init newFromTheory, newToModule
+	(~SyntacticView): deleted
+	(regretToInform): deleted
+	(finishModule): deleted
+	(handleVarDecls): use original fromTheory/toModule rather than
+	newFromTheory/newToModule
+
+	* mixfixModule.hh (SharedTokens): added data member savedVariableAliases;
+	added decls for pushVariableAliases(), popVariableAliases()
+
+	* mixfixModule.cc (pushVariableAliases): added
+	(popVariableAliases): added
+
+2019-04-15  Steven Eker  <eker@mu.csl.sri.com>
+
+	* moduleExpression.cc (deepSelfDestruct): get rid of RENAMING fall thru
+	now that INSTANTIATION has to deepSelfDestruct() ViewExpressions
+
+	* viewExpression.cc (deepSelfDestruct): delete self
+
+	* interpreter.cc (handleArgument): fixed warning so they don't refer
+	to enclosing expressions (which is unavailable)
+
+2019-04-12  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.cc: struct Parameter -> struct LocalParameter throughout
+	file
+
+	* view.hh (EnclosingObject): updated decl for 2nd ctor
+	(EnclosingObject): struct Parameter -> struct LocalParameter
+
+	* viewCache.hh (User): updated decl for makeViewInstantiation()
+
+	* viewCache.cc (makeViewInstantiation): use Argument*
+
+	* view.hh (EnclosingObject): updated decls for makeInstantiation()
+	and instantiateBoundParameters()
+
+	* instantiateView.cc (makeInstantiation): use Argument*
+	(instantiateBoundParameters): rewritten to use Argumetn*
+
+	* view.cc (View): use Argument*
+	(~View): use savedArguments
+
+	* view.hh (EnclosingObject): deleted data members savedViewArgs,
+	savedParameterArgs; added data member savedArguments
+
+	* importModule.cc (deepSelfDestruct): need to check savedArguments for
+	views that we're no longer a user of
+
+	* importModule.hh (EnclosingObject): updated decl for instantiateBoundParameters()
+
+	* instantiateModuleWithBoundParameters.cc (instantiateBoundParameters): rewritten
+	to handle Argument*
+
+	* importModule.hh (EnclosingObject): updated decls for makeInstantiation(),
+	handleInstantiationByParameter(), handleInstantiationByTheoryView(),
+	handleInstantiationByModuleView(), handleRegularImports()
+	(EnclosingObject): deleted data members savedViewArgs, savedParameterArgs;
+	added data member savedArguments
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation): don't pass
+	parameterArgs to handleInstantiationByParameter()
+	(handleInstantiationByParameter): handle Argument*
+	(handleInstantiationByTheoryView): handle Argument*
+	(handleInstantiationByModuleView): handle Argument*
+	(makeInstantiation): don't pass parameterArgs to handleRegularImports()
+	(handleRegularImports): handle Argument*
+
+	* moduleCache.hh (User): added decl for makeModuleInstatiation()
+
+	* moduleCache.cc (makeModuleInstatiation): added
+
+	* interpreter.hh (ParameterDatabase): updated decl for handleArgument
+
+	* interpreter.cc (handleArgument): rewritten to use Argument*
+	(makeModule): use makeModuleInstantiation
+
+	* parameterDatabase.cc (getParameter): added
+
+	* interpreter.cc (makeModule): use Argument* for passing arguments
+	rather that View* and parameter names
+
+	* interpreter.hh: inherit from ParameterDatabase
+
+	* mixfix.hh: added class ParameterDatabase
+
+	* parameterDatabase.cc: created
+
+	* parameterDatabase.hh: created
+
+	* interpreter.cc (makeModule): arguments -> argumentExpressions
+	(handleArgument): arguments -> argumentExpressions
+
+	* enclosingObject.hh (E): make hasBoundParameters() public
+
+	* importModule.hh (hasBoundParameters): deleted
+
+	* renameModule.cc (makeRenamedCopy): use copyBoundParameters()
+
+	* enclosingObject.hh (copyBoundParameters): added
+
+	* importModule.hh (hasBoundParameters): use
+	EnclosingObject::hasBoundParameters()
+
+	* view.hh (hasBoundParameters): deleted
+
+	* enclosingObject.hh (hasBoundParameters): added
+
+	* instantiateView.cc (makeInstantiation): call addBoundParameter() (2 places)
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByParameter):
+	call addBoundParameter()
+	(handleInstantiationByModuleView): call addBoundParameter()
+
+	* enclosingObject.hh (E): added data member boundParameters
+	(addBoundParameter): added
+
+	* view.cc (View): pass name to Argument ctor rather than
+	NamedEntity ctor
+
+	* view.hh (EnclosingObject): derive from Argument rather
+	than NamedEntity
+
+	* mixfix.hh: added class Argument and class Parameter
+
+	* argument.hh: created
+
+	* parameter.hh: created
+
+2019-04-10  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateView.cc (makeInstantiation): use DebugEnter() and
+	DebugExit()
+	(instantiateBoundParameters): use DebugEnter() and DebugExit()
+	(makeInstantiation): use DebugInfo()
+
+2019-04-09  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateView.cc (makeInstantiation): handle general
+	and specific op->op mappings
+	(instantiateBoundParameters): remove FIXME because we are handling
+	the case where the are bound parameters in a savedViewArgument
+
+	* renaming.hh (SyntaxContainer): added decl for
+	addOpMappingSimpleCopy()
+
+	* renaming.cc (addOpMappingSimpleCopy): added
+
+	* instantiateView.cc (makeInstantiation): handle the dubious
+	case where the toModule has no parameters
+
+	* view.hh (setCleanName): deleted
+	(EnclosingObject): updated decls for ctor and
+	makeInstantiation()
+
+	* view.cc (View): take and set cleanName
+
+	* instantiateView.cc (makeInstantiation): take cleanName
+	argument and pass it to View ctor
+
+	* viewCache.cc (makeViewInstantiation): pass cleanName to
+	makeInstantiation rather than using setCleanName()
+
+	* view.hh (EnclosingObject): updated decl for instantiation
+	version of ctor
+
+	* instantiateView.cc (makeInstantiation): pass viewArgs to ctor
+	(makeInstantiation): don't add copy as a user since this
+	is already done in the ctor for view instantiations
+
+	* view.cc (View): (instantiation version) take and save view
+	arguments; add ourselves as a user of each such argument
+	(~View): remove ourselves as a user of each view argument
+
+	* view.hh (EnclosingObject): updated comments
+
+2019-04-08  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateView.cc (makeInstantiation): get nrBoundParameters
+	from argumentView rather than toModule to handle the case
+	where not all of the parameters appear in toModule
+
+	* view.hh (EnclosingObject): make baseView const so it can
+	only be set in the ctor
+
+	* instantiateView.cc (makeInstantiation): updated comment
+	(makeInstantiation): clean up instantiation by parameter from
+	an enclosing object case
+	(makeInstantiation): don't set pointer to baseView in bound
+	argument case since this is already done in the View() ctor
+	that is used for instantiations
+
+2019-04-05  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.cc (regretToInform): call informUsers() if we become
+	stale to catch an edge case
+	(evaluate): issue an advisory for view parameters that are
+	not bound in the target module
+
+	* interpreter.cc (handleArgument): check for free parameters
+	in view argument
+
+	* view.hh (hasBoundParameters, hasFreeParameters): added
+
+	* interpreter.cc (makeModule): check for free parameters in
+	view argument
+
+2019-04-03  Steven Eker  <eker@mu.csl.sri.com>
+
+	* interpreter.cc (handleArgument): warning should refer to view
+	instantiation rather than module instantiation (2 places)
+	(handleArgument): more detailed warning
+	(makeModule): allow renaming of modules with bound parameters
+	but issue an advisory
+
+2019-04-02  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.cc (View): add self as user of baseView
+	(~View): remove self as user of baseView
+	(View): add our interpreters viewCache as a user
+
+	* view.hh (EnclosingObject): added decl for new ctor
+
+	* view.cc (View): added version of instantiations
+
+2019-03-29  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateView.cc (makeInstantiation): use hasFreeParameters()
+
+	* instantiateModuleWithFreeParameters.cc (handleRegularImports): use
+	hasFreeParameters()
+
+	* view.cc (evaluate): use hasFreeParameters()
+
+	* preModule.cc (processExplicitImports): use hasFreeParameters()
+
+	* importModule.hh (parametersBound): deleted
+	(hasFreeParameters): added
+
+	* interpreter.cc (makeModule): use hadBoundParameters(); remove
+	NEED TO FIX comment
+
+	* preModule.cc (processExplicitImports): use hasBoundParameters()
+
+	* instantiateView.cc (makeInstantiation): use hasBoundParameters()
+
+	* view.cc (evaluate): use hasBoundParameters()
+
+	* instantiateModuleWithBoundParameters.cc (instantiateBoundParameters): use
+	hasBoundParameters()
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation): use
+	hasBoundParameters()
+	(handleRegularImports): use hasBoundParameters() (2 places)
+
+	* importModule.hh (hasBoundParameters):  added
+	(EnclosingObject): deleted commented out ParameterMap, ParameterSet
+
+	* view.cc (addParameter): call addUser() to add self to theories
+	users
+	(View): init fromExpr, toExpr
+	(~View): check for non-null before deepSelfDestruct()ing module
+	expressions
+
+	* importModule.cc (deepSelfDestruct): viewArgs -> savedViewArgs
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation): paramArgs ->
+	savedParameterArgs
+	(makeInstantiation): viewArgs -> savedViewArgs
+
+	* instantiateModuleWithBoundParameters.cc (instantiateBoundParameters): viewArgs
+	-> savedViewArgs
+	(instantiateBoundParameters): paramArgs -> savedParameterArgs
+
+	* importModule.hh (EnclosingObject): viewArgs -> savedViewArgs; paramArgs ->
+	savedParameterArgs
+	(parametersBound): paramArgs -> savedParameterArgs
+	(parametersBound): viewArgs -> savedViewArgs
+
+2019-03-28  Steven Eker  <eker@mu.csl.sri.com>
+
+	* importModule.hh (parametersBound): moved here; make OK to call on
+	all modules, even ones without parameters
+
+	* interpreter.cc (makeModule): don't allow renaming of modules with bound
+	parameters
+
+2019-03-27  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateView.cc (makeInstantiation): use boundParameter flag
+	to insure we keep baseView, savedViewArgs, savedParameterArgs,
+	even if bound parameters come from our arguments
+
+	* view.hh (EnclosingObject): added comments
+
+2019-03-26  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateView.cc (makeInstantiation): use cleanName() for view
+	arguments; first attempt at handling arguments that are view instantiations
+	with bound parameters
+
+	* syntacticView.cc (addParameter2): changed advisory message
+
+	* instantiateView.cc (instantiateBoundParameters): moved here
+	(makeInstantiation): moved here
+
+2019-03-25  Steven Eker  <eker@mu.csl.sri.com>
+
+	* importModule.cc (importSorts): fix longstanding bug where we didn't set
+	nrSortsFromParameters unless we had at least one regular importation of
+	a module
+	(importOps): fix symmetric bugs with nrSymbolsFromParameters and
+	nrPolymorphsFromParameters
+
+	* renameModule.cc (makeRenamedCopy): added comment; deleted commented out
+	Assert() because we do allow the renaming of modules with bound parameters
+
+	* renaming.cc (makeCanonicalVersion): added DebugAdvisory()s
+
+	* renameModule.cc (localSort2): turn Assert() into a DebugAdvisoryCheck()
+	(localSort2): reverted
+
+2019-03-22  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation): pass moduleCache
+	to handleInstantiationByModuleView()
+
+	* importModule.hh (EnclosingObject): updated decl for handleInstantiationByModuleView()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByModuleView): take
+	moduleCache argument
+
+	* importModule.cc (getParameterTheory): moved here because it is virtual in
+	base class EnclosingObject
+
+	* importModule.hh (EnclosingObject): added more explanation of how parameter theories
+	are stored
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByParameter): toModule ->
+	baseParameterTheory
+
+	* importModule.hh (getParameterTheory): added comment to explain why
+	it works the way it does
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByParameter): added
+	DebugAdvisory() to check change in parameter theory name
+
+	* moduleCache.cc (showCreatedModules): call dumpImports()
+
+	* importModule.cc (dumpImports): added
+
+	* importModule.hh (EnclosingObject): added decl for dumpImports()
+
+	* moduleCache.cc (showCreatedModules): dump sorts if we are in debug mode
+
+2019-03-21  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateModuleWithBoundParameters.cc (instantiateBoundParameters): views ->
+	viewArgumentsForView, names -> parameterArgumentsForView
+	(instantiateBoundParameters): added and rewrote many comments
+
+	* importModule.hh (EnclosingObject): update decl for instantiateBoundParameters()
+
+	* instantiateModuleWithBoundParameters.cc (instantiateBoundParameters): arguments ->
+	viewArguments
+	(instantiateBoundParameters): parameterArgs -> parameterArguments
+
+2019-03-20  Steven Eker  <eker@mu.csl.sri.com>
+
+	* parameterization.cc (makeParameterCopy): added DebugAdvisory()s
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation): added DebugAdvisory()
+
+	* instantiateModuleWithBoundParameters.cc (instantiateBoundParameters): added
+	DebugAdvisory()s
+
+2019-03-14  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.cc (View): initialize cleanName rather than cacheName
+
+	* viewCache.cc (makeViewInstantiation): cacheName -> name, name -> cleanName
+
+	* importModule.hh (EnclosingObject): deleted commented out decl for
+	instantiateSortName()
+
+	* view.hh (setCacheName): becomes setCleanName()
+	(getCacheName): becomes getCleanName()
+
+	* instantiateModuleWithBoundParameters.cc (instantiateBoundParameters): use
+	getCleanName() for the view name
+
+	* moduleCache.cc (makeInstatiation): use id() rather than getCacheName()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByTheoryView): use
+	getCleanName() for the view name
+	(handleInstantiationByModuleView): use getCleanName() for the view name
+
+	* viewCache.cc (makeViewInstantiation): don't put spaces in trueNames
+
+2019-03-13  Steven Eker  <eker@mu.csl.sri.com>
+
+	* moduleCache.cc (makeInstatiation): use cacheName for views as
+	arguments in new module name
+
+2019-03-12  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.cc (makeInstantiation): save arguments for views with bound
+	parameters
+	(instantiateBoundParameters): handle the case where the baseView
+	had a parameter that was bound to a view that had a bound parameter
+
+	* view.hh (EnclosingObject): added decl for instantiateBoundParameters()
+	(EnclosingObject): added data members savedViewArgs, savedParameterArgs
+
+	* instantiateModuleWithBoundParameters.cc (instantiateBoundParameters): handle
+	views with bound parameters found in instantiation of baseModule
+
+	* view.cc (View): initialize baseView and cacheName
+	(makeInstantiation): set baseView if we create a bound parameter
+
+	* viewCache.cc (makeViewInstatiation): handle cacheNames
+	(showCreatedViews): display cacheNames
+
+	* view.hh (EnclosingObject): added data member cacheName
+	(setCacheName): added
+	(getCacheName): added
+
+2019-03-11  Steven Eker  <eker@mu.csl.sri.com>
+
+	* importModule.hh (EnclosingObject): updated decl for
+	handleInstantiationByModuleView()
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByModuleView): check
+	module view to see if it has bound parameters that need be become bound
+	parameters in the module instantiation
+	(makeInstantiation): handle case where parameters are bound by
+	module-view
+	(handleInstantiationByModuleView): return bound parameters flag
+
+	* view.cc (makeInstantiation): handle binding of a free parameter
+	by a PEM
+	(makeInstantiation): add bound parameter to copy
+
+	* importModule.hh (EnclosingObject): deleted decl for
+	mapSortFromBaseModule()
+
+	* importModule.cc (mapSortFromBaseModule): deleted
+
+	* view.hh (EnclosingObject): deleted decl for instantiateSortName()
+
+	* view.cc (makeInstantiation): use instantiateSortName()
+	rather than mapSortFromBaseModule()
+	(instantiateSortName): deleted
+
+2019-03-08  Steven Eker  <eker@mu.csl.sri.com>
+
+	* viewDatabase.hh (V): updated decl for showNamedViews()
+
+	* viewDatabase.cc (showNamedViews): take ostream& argument
+
+	* commands.yy (command): call showViews()
+
+	* interpreter.hh (ViewCache): added decl for showViews()
+
+	* interpreter.cc (showViews): added
+
+2019-03-06  Steven Eker  <eker@mu.csl.sri.com>
+
+	* instantiateModuleWithFreeParameters.cc (handleParameterizedSorts): moved
+	here
+
+	* instantiateModuleWithBoundParameters.cc (instantiateBoundParameters)
+	(instantiateRenaming): moved here
+
+	* instantiateModuleWithFreeParameters.cc (makeInstantiation)
+	(handleInstantiationByParameter)
+	(handleInstantiationByTheoryView)
+	(handleInstantiationByModuleView, translateComponent)
+	(addOpMappingsFromView, handleRegularImports): moved here
+
+	* parameterization.cc (handleParameterizedSorts): rewritten using
+	instantiateSortName()
+
+	* enclosingObject.cc (instantiateSortName): reimplemented and
+	moved here
+
+	* enclosingObject.hh (E): added decl for instantiateSortName()
+	(E): moved typedefs for ParameterMap and ParameterSet here
+
+2019-03-05  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.cc (makeInstantiation): handle parameters caused
+	by instantiation by theory-views
+
+	* view.hh (EnclosingObject): added decl for ImportModule*
+	version of addParameter()
+
+	* view.cc (makeInstantiation): use mapSortFromBaseModule()
+	(addParameter): added ImportModule* version
+
+	* importModule.cc (mapSortFromBaseModule): added
+
+	* importModule.hh (EnclosingObject): added decl for
+	mapSortFromBaseModule()
+
+2019-03-04  Steven Eker  <eker@mu.csl.sri.com>
+
+	* parameterization.cc (handleInstantiationByParameter): added
+	comments to explain sort mapping
+	(handleInstantiationByTheoryView): added comments to
+	explain sort mapping
+	(handleParameterizedSorts): added comments to explain how
+	sort mapping works
+
+2019-03-01  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.cc (handleOpTermMappings): added
+	(instantiateSortName): added
+
+	* view.hh (EnclosingObject): added decl for makeInstantiation()
+
+	* viewCache.cc (makeViewInstantiation): implemented
+
+	* view.cc (makeInstantiation): added
+
+	* importModule.hh (EnclosingObject): made
+	instantiateBoundParameters() public
+
+	* interpreter.hh (ViewCache): added decl for handleArgument()
+
+	* interpreter.cc (handleArgument): added
+	(makeModule): use handleArgument()
+
+2019-02-28  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.cc (findParameterIndex, getParameterTheory)
+	(getObjectType, getObjectName): added
+	(evaluate): check for bound parameters in toModule
+	(regretToInform): handle calls from parameter theories and
+	clean out parameter theories
+
+	* view.hh: derive from EnclosingObject
+	(EnclosingObject): added decls for findParameterIndex(),
+	getParameterTheory(), getObjectType(), getObjectName()
+
+	* view.cc (evaluate): pass ourself as an EnclosingObject to
+	makeModule() for fromTheory and toModule
+
+	* importModule.hh (EnclosingObject): added decls for
+	getObjectType(), getObjectName()
+
+	* importModule.cc (getObjectType, getObjectName): added
+
+	* interpreter.hh (ViewCache): updated decl for makeModule()
+
+	* interpreter.cc (makeModule): use EnclosingObject throughout
+
+	* mixfix.hh: added class EnclosingObject
+
+	* importModule.hh (EnclosingObject): derive from EnclosingObject
+
+	* enclosingObject.hh: created
+
+	* view.cc (~View): remove self from users of our parameters;
+	deepSelfDestruct() parameter module expressions
+	(evaluate): evalutate parameter theories
+
+2019-02-26  Steven Eker  <eker@mu.csl.sri.com>
+
+	* syntacticView.cc (showView): handle parameters
+
+	* view.hh (getNrParameters, getParameterName)
+	(getParameterTheoryExpression): added
+
+	* syntacticView.cc (addParameter2): call addParameter()
+
+2019-02-25  Steven Eker  <eker@mu.csl.sri.com>
+
+	* interpreter.hh (ViewCache): derive from ViewCache
+
+	* mixfix.hh: added class ViewCache
+
+	* viewCache.cc: created
+
+2019-02-22  Steven Eker  <eker@mu.csl.sri.com>
+
+	* viewCache.hh: created
+
+2019-02-21  Steven Eker  <eker@mu.csl.sri.com>
+
+	* view.hh (Renaming): added decl for addParameter()
+
+	* view.cc (addParameter): added
+
+	* view.hh (Renaming): added data member parameters
+	(Renaming): added struct Parameter
+
+2019-02-13  Steven Eker  <eker@mu.csl.sri.com>
+
+	* bottom.yy: added deepSelfDestructViewExpressionVector()
+
+	* top.yy: added destructor decls for <yyViewExpression>,
+	<yyViewExpressionVector>
+	adde decl for deepSelfDestructViewExpressionVector()
+
+	* interpreter.cc (makeModule): added check for view instantiation
+
+	* moduleExpression.cc (deepSelfDestruct): deepSelfDestruct()
+	view expressions
+
+	* interpreter.cc (makeModule): deal with ViewExpression*
+
+	* moduleExpression.cc (<<): handle instantiation arguments
+	of type Vector<ViewExpression*>
+
+	* moduleExpression.hh (getArguments): now return
+	const Vector<ViewExpression*>&
+
+2019-02-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* moduleExpression.hh (M): data member arguments becomes
+	Vector<ViewExpression*>
+
+	* moduleExpression.cc (ModuleExpression): now take
+	Vector<ViewExpression*>&
+
+	* moduleExpression.hh (M): updated decl for instantiation ctor
+
+	* modules.yy (viewExpr, instantArgs): added
+	(argList): deleted
+	(instantExpr): use instantArgs
+
+	* top.yy: added yyViewExpression to union
+	added types for viewExpr, instantArgs
+
+2019-02-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* top.yy: deleted stack<ModuleExpression*> moduleExpressions
+
+	* bottom.yy: (cleanUpModuleExpression): don't handle
+	moduleExpressions here - just currentRenaming
+
+	* modules.yy (view): use new moduleExpr return value
+	(parameter): use new moduleExpr return value
+	(declaration): use moduleExprDot return value
+
+	* top.yy: define return type for changed nonterminals
+
+	* modules.yy (moduleExprDot): use parser stack for passsing
+	ModuleExpression*
+	(parenExpr, instantExpr, renameExpr, moduleExpr): symmetric
+	changes
+
+	* top.yy: added comment to explain the existence of
+	stack<ModuleExpression*> moduleExpressions
+	deleted a number of commented out declarations
+	added yyModuleExpression to %union
+
+	* mixfix.hh: added class ViewExpression
+
+2019-02-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* viewExpression.cc: created
+
+	* viewExpression.hh: created
+
+2019-02-05  Steven Eker  <eker@install.csl.sri.com>
+
+	* cvc4_Bindings.cc (dagToCVC4): Kind::IFF -> Kind::EQUAL to compile
+	with latest version of CVC4
+	(dagToCVC4): remove special casing for BOOLEAN EQUAL
+
+===================================Maude121===========================================
+
+2018-12-20  Rubén Rubio <rubenrub@ucm.es>
+
+	* commands.yy: added dsrewrite production
+
+	* doParse.cc (parseStrategyExpr2): added
+
+	* interpreter.hh (sRewrite, doStrategicSearch): added parameter
+	(dsRewriteCont): added
+
+	* lexer.ll: added dsrew/dsrewrite lexemes
+
+	* maudemlBuffer.cc (generateSRewrite): added parameter srew/dsrew
+
+	* maudemlBuffer.cc (generateSRewrite): added parameter srew/dsrew
+
+	* mixfixModule.hh (parseStrategyExpr2): added
+	(bufferPrint, prettyPrint): added overloads for strategy expressions,
+	condition fragments, and vector of these
+
+	* prettyPrint.cc (printStrategyTerm): replaced RawArgumentIterator by
+	ArgumentIterator
+
+	* srewrite.cc (sRewrite, doStrategicSearch): added parameter srew/dsrew
+	(dsRewriteCont): added
+
+	* syntacticView.cc (handleTermAndExprMappings): solved memory leak
+
+	* top.yy: added KW_DSREWRITE token
+
+	* view.cc (~View): call to clearStratExprMap
+	(clearStratExprMap): added
+
+	* view.hh (clearStratExprMap): added
+
+2018-11-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* modules.yy (parameter): use currentSyntaxContainer->addParameter2()
+	(view): added syntax for parameterized views
+
+	* renaming.hh (SyntaxContainer): added decl for addParameter2()
+
+	* renaming.cc (addParameter2): added
+
+	* syntacticView.hh (View): added decl for addParameter2()
+
+	* syntacticView.cc (addParameter2): added
+
+	* syntacticPreModule.hh (SharedTokens): added decl for addParameter2()
+
+	* syntacticPreModule.cc (addParameter2): added
+
+	* syntaxContainer.hh (S): added decl for addParameter2()
+
+===================================Maude120===========================================
+
+2018-10-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* userLevelRewritingContext.cc (tracePreRuleRewrite): add
+	handling for dummy rewrites
+
+2018-09-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* getVariants.cc (doGetVariants): pass variableFamily argument
+	to getNextVariant()
+	(doGetVariants): change unused arguments to getNextVariant()
+	into dummies to indicate we don't use these values
+
+2018-09-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* importModule.hh (User): added comment to explain why
+	protectCount exists
+
+	* importModule.cc (unprotect): add Assert() for decrementing
+	non-positive protectCount
+
+2018-09-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* freshVariableSource.hh (FreshVariableGenerator): updated
+	decl for variableNameConflict()
+
+	* freshVariableSource.cc (variableNameConflict): take
+	okFamily argument and don't report conflicts for
+	variables from this family
+
+2018-09-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* freshVariableSource.cc (getFamily): don't need to
+	call Token::unflaggedCode() since single characters
+	will not be variable names and therefore cannot be
+	flagged
+
+2018-09-17  Rubén Rubio <rubenrub@ucm.es>
+
+	* metaSrewrite.cc (metaSRewrite): calling check properly
+
+	* importModule.hh: replaced GlobalSubstitution by a vector of terms
+
+	* importTranslation.cc (translateExpr): changed getStratVar by
+	getStratVarIndices
+
+	* parameterization.cc (addStratMappingFromView): changed
+	addStratMappingVars by addStratMappingVarIndices
+
+	* renaming.cc (addStratMappingVarIndices): renamed from
+	addStratMappingVars
+
+	* renaming.hh: attribute vars replaced by varsMap, a vector of indices
+	(getStratVarIndices): renamed from getStratVars
+	(addStratMappingVarIndices): renamed from addStratMappingVars
+
+	* srewrite.cc (sRewrite): abort if check fails on the strategy
+
+	* strategyTranslation.cc (instantiateExpression, instantiateCall): use
+	variable indices instead of variable terms
+	(instantiateCondition): use variable indices instead of terms
+	(instantiateTerm): removed
+	(TermCompare): removed
+
+	* syntacticView.cc (handleTermAndExprMappings): solved a bug caused by
+	a wrong literal index in an array access
+
+	* view.cc (getStratMapVarIndices): renamed from getStratMapVars
+	(insertStratToExprMapping): added a call to check on the strategy and
+	creation of the context shape
+
+	* view.hh (StratExprInfo): changed vars by contextShape
+	(getStratMapVarIndices): renamed from getStratMapVars
+
+2018-09-14  Rubén Rubio  <rubenrub@ucm.es>
+
+	* maudemlBuffer.cc (generateSRewrite): added
+	(branchAction): added
+	(generate): added for StrategyExpression
+
+	* maudemlBuffer.hh (generateSRewrite, generate): added for
+	StrategyExpression
+
+	* srewrite.cc (doStrategicSearch, sRewriteCont): add XML output
+	generation
+
+2018-09-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* top.yy (directive): added KW_SLOAD; implmented sload
+
+	* lexer.ll: added sload
+
+	* lexerAux.cc (includeFile): pass const string& rhat than char* to
+	DirectoryMangager::pushd()
+	(includeFile): call visitFile()
+
+	* global.cc (findFile): use directoryManager.getCwd() rather than
+	"." so we always have an absolute directory path
+
+2018-09-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* lexerAux.cc (MAX_IN_DEPTH): changed to 100
+
+===================================Maude119===========================================
+
+2018-08-18  Rubén Rubio  <rubenrub@ucm.es>
+
+	* userLevelRewritingContext.cc (traceStrategyCall): show strategy name
+	and subject term only if trace whole is on
+
+2018-07-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* interact.cc (where): save, clear and restore ctrlC_Flag so
+	to hande siginfo/ctrl-C interactions safely
+
+2018-07-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext): added
+	decl for printStatusReportCommon()
+
+	* interact.cc (printStatusReportCommon): added
+	(printStatusReport): use printStatusReportCommon()
+	(handleInterrupt): check for infoFlag and produce a status report
+	if set
+
+===================================Maude118===========================================
+
+2018-07-18  Rubén Rubio  <rubenrub@ucm.es>
+
+	* renaming.cc (addOpMappingPartialCopy): fixed a bug,
+	lastSeenWasStrategy was not set
+
+2018-07-17  Rubén Rubio  <rubenrub@ucm.es>
+
+	* syntacticView.cc: when merging alpha117, changes for strategy
+	mappings were copied from view.cc
+
+	* syntacticView.hh: when merging alpha117, changes for strategy
+	mappings were copied from view.hh
+
+2018-07-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* interpreter.hh (ViewDatabase): made beginRewriting non-static
+
+	* execute.cc (beginRewriting): call setTraceStatus() if we
+	don't call setDebug() so that we don't start with spurious
+	traceFlag caused by SIGINFO
+
+	* userLevelRewritingContext.hh (clearInfo): added
+
+	* execute.cc (beginRewriting): call clearInfo() to dispose
+	of any pending info requests
+
+	* interact.cc (handleDebug): make sure we switch trace flag off
+	if we are only here because of SIGINFO
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext): updated
+	decl for handleDebug()
+
+	* interact.cc (handleDebug): removed constness from subject
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext): updated
+	decl for where(); added decl for printStatusReport()
+
+	* interact.cc (printStatusReport): take ostream&
+	(printStatusReport): added
+	(handleDebug): call printStatusReport(); pass cout to
+	where()
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext): added
+	decl for handleInterrupt()
+
+	* interact.cc (handleInterrupt): added
+
+2018-07-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* interact.cc: add data member UserLevelRewritingContext::infoFlag
+	(handleDebug): check and reset infoFlag
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext): add
+	static data member infoFlag; add decl for infoHandler()
+
+	* interact.cc (infoHandler): added
+	(setHandlers): install infoHandler
+
+2018-07-03  Steven Eker  <eker@install.csl.sri.com>
+
+	* unify.cc (unify): fix a suble memory leak where
+	we were failing to unprotect() module if the unification
+	problem was bad
+
+2018-06-29  Steven Eker  <eker@install.csl.sri.com>
+
+	* syntacticPreModule.hh (SharedTokens): updated decl for
+	getAutoImports()
+	(getAutoImports): use new convention
+
+	* preModule.hh (User): updated decl for getAutoImports()
+
+2018-06-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* visibleModule.cc (VisibleModule): use new ImportModule()
+
+	* importModule.hh (User): added decl for 2nd ctor
+
+	* importModule.cc (ImportModule): added new version for use
+	by VisibleModule
+
+	* preModule.cc (processExplicitImports): deleted commented
+	out code
+
+	* syntacticPreModule.hh (SharedTokens): derive from
+	SharedTokens
+
+	* preModule.hh (User): don't derive from SharedTokens
+
+	* mixfixModule.hh (SharedTokens): made data member moduleType
+	const
+
+2018-06-22  Rubén Rubio  <rubenrub@ucm.es>
+
+	* commands.yy: added KW_SDS to traceOption
+
+	* entry.cc (addStrategy): receives a Token instead of a label name
+	and warns about redefinitions
+
+	* importModule.cc (ImportModule): initialize nrStrategyFromParameters
+	(fixUpDonatedOps): assert on the new import phase STRATS_IMPORTED
+	(importStrategies): set nrStrategiesFromParameters
+	(donateRuleLabels): do nothing if in STRATS_IMPORTED
+	(donateStrategies2): consider if module is donating to theory, and
+	addStrategy is always used instead of insertStrategy
+	(donateStatements2): fixed an erratum
+
+	* importModule.hh: new phase STRATS_IMPORTED, new data members
+	nrStrategiesFromParameters and stratDeclaredInModule
+	(moduleDeclared, parameterDeclared): added for RewriteStrategy
+	(instantiateCall): added
+
+	* importTranslation.cc (translateStrategy): removed const from variable
+	type
+
+	* interact.cc (handleDebug): added strategy call trace support
+
+	* interpreter.hh: added TRACE_SD (for StrategyDefinition)
+
+	* lexer.ll: removed sview/endsv keywords, added synonyms for enabling
+	or disabling strategy call traces
+
+	* mixfixModule.cc (closeSortSet): using isStrategic to be more succinct
+	(findStrategy): removed const from the parameter type
+
+	* mixfixModule.hh (addStrategy): receives a Token instead of a label name
+	(findStrategy): removed const from the parameter type
+	(isStrategic): added
+	(canHaveAsParameter): taking strategy modules into account
+
+	* modules.yy: added strategy mappings in module expressions
+
+	* moduleCache.cc (makeSummation): add strategy importation
+
+	* ops.cc (addOpDecl): warning about op declarations in strategy mods
+	(addStratDecl): warning about strategy declarations in fmod/mod
+
+	* parameterization.cc (addStratMappingsFromView): used moduleDeclared
+	(makeInstantiation): changed when to promote a module to strategy module
+
+	* process.cc (processStrategies): do nothing when fmod or mod, and
+	always use addStrategy
+
+	* profileModule.cc (clearProfile): clear sdInfo
+	(profileSdConditionStart): added
+	(profileFragment): added strategy definition case
+	(showProfile): added strategy definition case
+
+	* profileModule.hh: added data member sdInfo
+	(profileSdConditionStart): added
+
+	* renameModule.cc (finishCopy): removed unneeded curly brackets
+
+	* renaming.cc (makeCanonicalName): taking strategy renamings into account
+	(makeCanonicalVersion): taking strategy renamings into account
+
+	* renaming.hh (getStratTypeSorts, discardStratMappings): added
+
+	* strategyTranslation.cc (deepCopyStrategyExpression): fixed two bugs,
+	top and the one strategy were not copied
+	(instantiateCall): added
+	(instantiateExpression): using instantiateCall and fixed two bugs,
+	top and the one strategy were not instantiated
+
+	* syntacticPreModule.cc (addStatement): warnings about strategy
+	definitions in fmod/mod, and statements other than sd is smod
+
+	* syntacticPreModule.hh (addSortDecl, addSubsortDecl): warning in smod
+
+	* top.yy: added KW_SDS
+
+	* trial.cc (traceBeginSdTrial): added
+
+	* userLevelRewritingContext.cc (traceStrategyCall): added
+
+	* userLevelRewritingContext.hh (traceStrategyCall, traceBeginSdTrial): added
+
+	* view.cc (view, finishView): removed code for distinguishing sview
+	(finishModule2): added label importation
+	(checkSorts): omit strategy auxiliary symbols range sort
+	(checkStrats): use moduleDeclared
+	(evaluate): removed warnings about sview/endsv and added warnings and
+	discarded strategy mappings in functional views
+	(showView): removed sview/endsv distinction
+
+	* view.hh: removed isSView data member
+	(view, finishView): removed initial/closing keyword parameter
+	(getStratExprMap, getNewToModule): added
+
+2018-06-22  Steven Eker  <eker@install.csl.sri.com>
+
+	* syntacticPreModule.hh (SyntaxContainer): deleted data member
+	owner
+
+	* process.cc (processImports): use getOwner()
+
+	* syntacticPreModule.cc (regretToInform): use getOwner()
+	(finishModule): use getOwner() (3 places)
+	(SyntacticPreModule): don't initialize owner
+
+2018-06-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* syntacticPreModule.cc (addImport): pass lineNumber to
+	PreModule::addImport()
+
+	* preModule.cc (addImport): handle lineNumber argument
+
+	* preModule.hh (SharedTokens): added lineNumber field to
+	struct Import
+	(SharedTokens): updated decl for addImport()
+
+	* command.cc (showModule): use modeStrings
+
+	* syntacticPreModule.hh (SyntaxContainer): added decl for addImport
+
+	* syntacticPreModule.cc (addImport): added to do Token
+	to import mode conversion
+
+	* preModule.hh (getImportMode): return ImportModule::ImportMode
+
+	* preModule.cc (addImport): take mode as an
+	ImportModule::ImportMode
+	(processExplicitImports): don't do Token to mode conversion
+	here
+
+	* preModule.hh (SharedTokens): store import mode as a
+	ImportModule::ImportMode rather than a token.
+
+	* command.cc (showModule): use PreModule parameter and
+	import functionality
+
+	* syntacticPreModule.cc (SyntacticPreModule): don't
+	deepSelfDestruct() module expressions
+
+	* syntacticPreModule.hh (getNrImports, getImportMode, getImport)
+	(getNrParameters, getParameterName, getParameter): deleted
+	(SharedTokens): deleted structs Parameter, Import
+	(SharedTokens): deleted data members parameters, imports
+	(SharedTokens): deleted decls for addParameter(), addImport()
+
+	* syntacticPreModule.cc (addParameter, addImport): deleted
+
+	* process.cc (processImports): use processParameters(),
+	processExplicitImports();
+
+	* preModule.hh (User): added decls for processParameters(),
+	processExplicitImports()
+
+	* preModule.cc (~PreModule): call deepSelfDestruct() on
+	ModuleExpressions
+	(addParameter, addImport): added
+	(processParameters): added
+	(processExplicitImports): added
+
+	* preModule.hh (User): added struct members Parameter, Import
+	(User): add data members parameters parameters, imports
+	(getNrImports, getImportMode, getImport, getNrParameters)
+	(getParameterName, getParameter): added
+	(User): added decls for addParameter(), addImport()
+
+2018-06-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixModule.hh (getSymbolType): more detailed message in Assert()
+
+2018-06-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* process.cc (process): pass owner to VisibleModule()
+
+	* visibleModule.cc (VisibleModule): handle owner argument
+
+	* visibleModule.hh (ImportModule): take owner rather than parent
+	argument to ctor
+	(ImportModule): added data member owner
+	(getOwner): added
+
+2018-06-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* process.cc (process): pass parent as null to VisibleModule()
+
+	* process.cc (process): call addUser() here
+
+2018-05-29  Steven Eker  <eker@install.csl.sri.com>
+
+	* erewrite.cc (eRewrite, eRewriteCont): use externalRewrite()
+
+2018-05-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* interpreter.hh (ViewDatabase): updated decl for
+	doExternalRewriting()
+
+	* erewrite.cc (doExternalRewriting): only call nonblocking
+	eventLoop() if fairTraversal() makes progress
+	(doExternalRewriting): use new fairTranversal() convention;
+	use getProgress()
+	(eRewriteCont): use fairRestart()
+	(eRewriteCont): don't pass limit to doExternalRewriting()
+	(eRewrite): don't pass limit to doExternalRewriting(); pass limit
+	to fairStart()
+	(doExternalRewriting): don't take or pass limit argument
+
+2018-05-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* erewrite.cc (doExternalRewriting): interleave nonblocking calls
+	to eventLoop() with fairTraversal()
+
+2018-05-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* view.hh (Renaming): deleted struct VarDecl, struct BubblePair
+
+	* view.cc (insertOpToTermMapping): added missing return true
+
+	* view.hh (Renaming): added NO_COPYING macro
+
+2018-05-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* syntacticView.cc (regretToInform): deepSelfDestruct() other
+	local module to avoid bug where the old local module
+	eventually sends us a unexpected regretToInform()
+
+2018-05-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* syntacticView.hh (View): deleted typedef VarMap
+	(View): deleted decls for mapSort(), indexRhsVariables()
+
+	* syntacticView.cc (indexRhsVariables): deleted
+	(handleOpTermMappings): reimplemented
+	(mapSort): deleted
+
+	* view.hh (insertOpToTermPair): deleted
+
+	* syntacticView.hh (View): deleted decl for mapComponent()
+
+	* syntacticView.cc (mapComponent): deleted
+
+	* view.hh (Renaming): added decls for mapSort(),
+	indexRhsVariables(), insertOpToTermMapping(); added back
+	typedef VarMap
+
+	* view.cc (mapSort, indexRhsVariables): moved back to
+	class View
+
+2018-05-03  Steven Eker  <eker@install.csl.sri.com>
+
+	* view.hh (Renaming): delete typedefs for VarDeclList,
+	TypeList, OpTermList, VarMap
+
+	* syntacticView.cc (regretToInform): dont deepSelfDestruct()
+	anything
+
+	* view.cc (View): don't clear newFromTheory, newFromModule
+	(regretToInform): don't delete newFromTheory, newFromModule
+	(View): don't delete newFromTheory, newFromModule
+	(evaluate): set status to GOOD before calling
+	handleOpTermMappings()
+
+	* view.hh (Renaming): make mapComponent() protected
+	(Renaming): deleted decls for handleVarDecls(),
+	indexRhsVariables(), mapSort()
+	(Renaming): deleted data members varDecls, varDefs, opTermList,
+	newFromTheory, newFromModule
+
+	* interpreter.cc (setCurrentView): downcast to SyntacticView*
+
+	* mixfix.hh: added class SyntacticView
+
+	* interpreter.hh (ViewDatabase): use SyntacticView
+
+	* modules.yy (view): use SyntacticView
+
+	* view.cc (addVarDecl): deleted
+	(addType): deleted
+	(addOpTermMapping): deleted
+	(mapSort): deleted
+	(finishModule): deleted
+	(handleVarDecls): deleted
+	(indexRhsVariables): deleted
+	(handleOpTermMappings): deleted
+	(showView): deleted
+
+	* view.hh (Renaming): made regretToInform() protected
+	rather than private
+	(Renaming): make handleOpTermMappings virtual and protected
+	(Renaming): deleted decls for addOpTermMapping(), addVarDecl(),
+	addType()
+
+	* syntacticView.cc (handleOpTermMappings): use insertOpToTermPair()
+
+	* view.hh (insertOpToTermPair): added
+
+2018-05-02  Steven Eker  <eker@install.csl.sri.com>
+
+	* syntacticView.hh: created
+
+	* syntacticView.cc: created
+
+	* renaming.cc (renameOp): added comments to distinguish
+	the two versions of this member function
+
+2018-05-01  Steven Eker  <eker@install.csl.sri.com>
+
+	* view.hh (Renaming): added comment about the metalevel
+
+2018-04-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* interpreter.cc (showView): call View::evaluate()
+
+	* view.hh (Renaming): delete decls for finishModule1(),
+	finishModule2(); add decl for finishModule()
+	(finishView): moved here
+
+	* view.cc (finishModule1, finishModule2): merged into
+	finishModule()
+	(handleOpTermMappings): use finishModule()
+
+2018-04-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* view.cc (handleOpTermMappings): finish processing
+	newFromTheory before we start processing newToModule to
+	avoid messing up the import phase counter on common imports
+	(handleVarDecls): added comment
+
+	* renameModule.cc (localStatementsComplete): added comments
+	to explain obscure code
+
+	* entity.cc (informUsers): added comments to explain obscure
+	code
+
+2018-04-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* process.cc (processImports):  use owner rather than
+	global interpreter
+
+	* modules.yy (module): pass interpreter to SyntacticModule
+	ctor
+
+	* syntacticPreModule.hh (SharedTokens): updated decl
+	for ctor
+	(SharedTokens): added owner data member
+
+	* syntacticPreModule.cc (SyntacticPreModule): take owner
+	argument and remove hack
+	(regretToInform, finishModule): use owner rather than
+	global interpreter
+
+	* modules.yy (view): pass interpreter to View ctor
+
+	* view.cc (View): take owner argument
+	(evaluate): use owner rather than global interpreter
+
+	* view.hh (Renaming): updated decl for ctor; added data member
+	owner
+
+2018-04-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* renameModule.cc (donateOps2): added Asserts() to see if
+	bug mentioned in comment actually happens
+
+2018-04-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* modules.yy (viewDecList, skipStrayArrow, parameters, decList)
+	(skipStrayColon, typeList, attributes, identity, sortNameList):
+	provide empty action for empty rhs syntax to avoid default
+	action generating an uninitialized memory read
+	(hookList): provide empty actions
+
+2018-04-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* banner.cc (printBanner): update copyright year
+
+2018-04-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixParser.cc (insertProduction): use productionRhs
+	in place of static rhs2
+
+	* mixfixParser.hh (M): added data member productionRhs
+
+2018-03-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixParser.cc (ROOT_NODE): removed MSCP10 #define
+	(parseSentence): removed MSCP10 specific code
+	(makeTerms): removed MSCP10 specific code
+
+	* mixfixParser.hh: removed include for MSCP10
+
+===================================Maude117===========================================
+
+2018-04-10  Rubén Rubio  <rubenrub@ucm.es>
+
+	* makeGrammar.cc (makeStrategyProduction): added production for one
+
+	* mixfixParser.cc (makeStrategy): added MAKE_ONE case
+
+	* mixfixParser.hh: added MAKE_ONE to SemanticActions
+
+	* specialTokens.cc: added one token
+
+	* strategyPrint.cc: added 'one' strategy printing
+
+2018-04-06  Rubén Rubio  <rubenrub@ucm.es>
+
+	* doParser.cc (parseStrategyExpr): added
+
+	* importModule.cc (importStrategies, donateStrategies)
+	(donateStrategies2): use Renaming instead of ImportTranslation
+
+	* importModule.hh: new types GlobalSubstitution (and TermCompare as
+	its comparator)
+	(deepCopyStrategyExpression): now is public
+	(addStratMappingsFromView, instantiateCondition, instantiateExpression)
+	(instantiateTerm, donateRuleLabels): added
+	(donateStrategies2): use Renaming instead of ImportTranslation
+
+	* importTranslation.cc (translate): for RewriteStrategy, use
+	translateStrategy
+	(translateStrategy): added, taking renamings into account
+	(translateExpr, donateRuleLabels): added
+
+	* importTranslation.hh (translateExpr, translateStrategy): added
+
+	* lexer.ll: added KW_EXPR for strat->expr mapping in views.
+
+	* mixfixModule.hh (parseStrategyExpr): added
+
+	* mixfixParser.cc (makeStrategyExprs): added
+
+	* mixfixParser.hh (makeStrategyExprs): added
+
+	* modules.yy: added syntax for strategy views, using identifier instead
+	of IDENTIFIER for strategy identifiers.
+
+	* parameterization.cc (addStratMappingsFromView): added
+	(handleInstantiationByModuleView)
+	(handleInstantiationByTheoryView): call addStratMappingsFromView
+
+	* renameModule.cc (finishCopy): call donateStrategies2 with the Renaming
+
+	* renaming.cc (typeMatch): added for RewriteStrategy
+	(renameStrat, addStratMapping, addStratTarget, addStratMappingVArs)
+	(addOpMapping): update lastSeenWasStrategy
+	(addStratTargetExpr): added
+	(addType): use lastSeenWasStrategy to know where to add the type
+	(printRenamingType): print strategy renamings types also
+	(printRenaming): print strategy renamings also
+
+	* renaming.hh: added data members to store strategy renamings and
+	lastSeenWasStrategy
+	(addStratMapping, addStratMappingVars, addStratTarget)
+	(addStratTargetExpr, getNrStratMappings, getStratFrom, getNrStratTypes)
+	(getStratTo, getStratTargetExpr, getStratVars, renameStrat)
+	(typeMatch): added
+	(printRenamingType): receives the sort set directly
+
+	* strategyTranslation.cc (deepCopyStrategyExpression): support for
+	strat->expr mappings
+	(instantiateExpression, instantiateTerm, instantiateCondition): added
+	(TermCompare::operator()): added
+
+	* top.yy: added vector strategyCall for strategy call parsing in views and
+	KW_EXPR as token
+
+	* view.cc: (addStratExprMapping, checkStrats, getStratMapExpr)
+	(getStratMapVars, typeMatch): added
+	(checkSort): skip strategy range sort check
+	(evaluate): in case of a strategy view, check if from is of strategy
+	(finishView): added end token as parameter
+	(handleOpTermMappings): renamed to handleTermAndExprMappings
+	(handleTermAndExprMappings): completion of handleOpTermMappings with
+	support for strat->expr mappings
+	(showView): print strategy views
+	(View): added start token as parameter to decide if it is a sview
+
+	* view.hh: added support for strategy views. New types StratExprInfo,
+	StratExprMap, StratExprList and data members stratExprList,
+	stratExprMap and isSView.
+	(addStratExprMapping, checkStrats, getStratMapExpr, getStratMapVars)
+	(typeMatch): added
+	(finishView): added end token as parameter
+	(handleOpTermMappings): renamed to handleTermAndExprMappings
+	(handleTermAndExprMappings): added
+	(View): added start token as parameter to decide if it is a sview
+
+2018-03-23  Rubén Rubio  <rubenrub@ucm.es>
+
+	* command.cc (printStratDecl): added
+	(showModule): added strategy declaration printing
+
+	* cvc4_Bindings.cc (dagToCVC4): deleted the distinction in the
+	SMT_Symbol::EQUALS case as not needed
+
+	* doParse.cc (parseStatement): include strategy productions when
+	parsing strategy definitions
+	(parseStrategyExpr): added
+
+	* entry.cc (addStrategy): added
+
+	* importModule.cc: included strategy language headers
+	(importStrategies, importLabels, donateStrategies, donateStrategies2):
+	added
+	(donateStatements2): import strategy definitions
+
+	* importModule.hh: added new data members nrImportedStrategies and
+	nrOriginalStrategyDefinitions
+	(importStrategies, importLabels, getNrImportedStrategies)
+	(getNrOriginalStrategyDefinitions, deepCopyStrategyExpression)
+	(donateStrategies, donateStrategies2): added
+
+	* importTranslation.cc (translate): added for RewriteStrategy
+	(splitTranslation, translateExpr, translateStrategy): added
+	(translateTerm): common code with translateExpr moved to
+	splitTranslation
+
+	* importTranslation.hh (translate): added for RewriteStrategy
+	(splitTranslation, translateExpr, translateStrategy): added
+
+	* interpreter.cc (~Interpreter): clear continue info no avoid memory leak
+
+	* lexerAux.cc: added BAR_ASSIGN to TERMINATION_TOKENS (for strategy definitions)
+
+	* lexer.ll: added sth/sview/endsth/endsv and sd/csd keywords. KW_STRAT is split in
+	3 variants: KW_STRAT is "strat" and can be either an attribute name or a strategy
+	declaration keyword. KW_DSTRAT is "strats" only for declaration and KW_ASTRAT is
+	"strategy" only for the attribute. Added := as KW_ASSIGN.
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): changes in how rule
+	productions are generated (see TODO), a grammar production is added 
+	for each strategy declaration. New grammar rules for calls and matchrew
+	(makeStatementProductions): new grammar rules for strategy definitions
+
+	* metadataStore.hh: added STRAT_DEFINITION to ItemType enumeration
+
+	* mixfixModule.cc (moduleTypeString, moduleEndString): added strategy module types
+	(closeSortSet): added. Creates a universal type for strategies' auxiliary symbol range
+	when in a strategy module
+	(findStrategy): added
+
+	* mixfixModule.hh: added strategy ModuleTypes and STRATEGY in Bits
+	(closeSortSet, addStrategy, findStrategy, parseStrategyExpr): added
+	(ruleLabels): new data member for early rule label importation
+	(insertPotentialLabels): ruleLabels are added
+	(addImport): comment on strategy modules importation
+
+	* mixfixParser.cc (makeStrategy): added MAKE_CALL and MAKE_REW cases
+	(makeStrategyCall): added
+	(makeStatementPart): added MAKE_CS and MAKE_CSD cases
+
+	* mixfixParser.hh: added MAKE_ enumerators for new strategy syntax
+	(makeStrategyCall): added
+
+	* modules.yy: added syntax for strategy definitions
+
+	* ops.cc (addStratDecl): added
+	(addVarDecl, addOpDecl): set isStrategy to false
+	(addType, setMetadata): changes so that they also work for strategies
+
+	* prettyPrint.cc: operator<< for RewriteStrategy and StrategyDefinition
+	(printStrategyTerm): added
+
+	* process.cc (process): strategy importation and processing
+	(checkOpTypes): check strategy types also
+	(computeStrategyTypes, processStrategies): added
+
+	* renameModule.cc (finishCopy): copy strategies and rule labels
+	(localStatementsComplete): set nrOriginalStrategyDefinitions
+
+	* specialTokens.cc: added sd, csd, sth and endsth
+
+	* srewrite.cc (sRewrite): the strategy expression is checked and processed
+
+	* strategyPrint.cc (prettyPrint): call strategy printing
+
+	* strategyTranslation.cc: added
+
+	* syntacticPreModule.cc (SyntacticPreModule, compatible): consider
+	strategy module and theory types
+	(addParameter): an erratum was corrected
+	(addStatement): do not allow neither rules in strategy modules nor
+	strategy definition in other modules
+
+	* syntacticPreModule.hh: added data members isStrategy, stratDecls
+	and StratDecl type
+	(addStratDecl, printStratDecl, computeStrategyTypes)
+	(processStrategies): added
+
+	* top.yy: added keyword KW_ASTRAT, KW_DSTRAT (see lexer.ll).
+	Added KW_ASSIGN for strategy definitions.
+
+	* visibleModule.cc (showStrats): added
+	(showModule): added showStrats call
+
+	* visibleModule.hh (showStrats): added
+
+2018-03-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixParser.cc (makeTerms): Assert() that we actually found a
+	second parse
+
+2018-03-02  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixParser.cc (makeTerm): fix pathological case where pos ends up
+	outside of the sentence
+
+2018-02-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* makeGrammar.cc (makeComponentProductions): don't make COLON2_PAIR
+	productions for bubble components
+
+2017-12-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixParser.cc (parseSentence): use getErrorPosition()
+
+2017-10-05  Steven Eker  <eker@install.csl.sri.com>
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): give ?:
+	the gather (e & E)
+
+	* mixfixModule.hh (SharedTokens): STRAT_BRANCH_PREC from 101
+	to 55
+
+2017-10-03  Steven Eker  <eker@install.csl.sri.com>
+
+	* strategyPrint.cc (prettyPrint): pass STRAT_USING_PREC - 1
+	for substrategies
+	(prettyPrint): add () around test and subterm cases if needed
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): require
+	strategy argument of using in matchrew be tightly bound
+
+	* mixfixModule.hh (SharedTokens): STRAT_USING_PREC from
+	105 to 21, STRAT_USING_LIST_PREC from 105 to 61,
+	STRAT_REW_PREC from 93 to 21
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): use
+	gatherAny4 for subterm strategy syntax
+
+	* mixfixModule.cc: added gatherAny4
+	(MixfixModule): initialize gatherAny4
+
+	* mixfixModule.hh (SharedTokens): added static date member
+	gatherAny4
+
+2017-10-02  Steven Eker  <eker@install.csl.sri.com>
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): make all
+	test strategy nonterminals have gather ANY
+
+	* mixfixModule.hh (SharedTokens): STRAT_SEQ_PREC from 95 to 39,
+	STRAT_UNION_PREC form 97 to 41, STRAT_ORELSE_PREC from 99 to 43
+	(SharedTokens): STRAT_TEST_PREC from 93 to 21
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): use
+	INFIX_PREC, gatherAnyAny for strategy lists
+
+	* mixfixModule.hh (SharedTokens): added STRAT_BASIC_PREC
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): use
+	STRAT_BASIC_PREC for basic strategies
+
+2017-09-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* strategyPrint.cc (prettyPrint): hanlde SubtermStrategy case
+
+	* mixfixParser.cc (makeStrategy): use SubtermStrategy()
+
+2017-09-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): use MAKE_USING_PAIR
+	and MAKE_USING_LIST actions
+	(makeStrategyLanguageProductions): use PASS_THRU for USING_LIST
+
+	* mixfixParser.hh (M): added MAKE_USING_PAIR, MAKE_USING_LIST
+	to enum SemanticActions
+	(M): added decls for appendUsingPair(), makeUsingList()
+
+	* mixfixParser.cc (appendUsingPair, makeUsingList): added
+	(makeStrategy): added dummy MAKE_REW case
+
+	* mixfixParser.hh (M): added MAKE_REW to enum SemanticActions
+
+2017-09-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixModule.hh (SharedTokens): added nonterminal USING_PAIR
+	(SharedTokens): added STRAT_REW_PREC
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added
+	syntax for using pairs and lists
+
+	* specialTokens.cc: added by
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): added
+	syntax for matchrew/xmatchrew/amatchrew strategies
+
+	* mixfixModule.hh (SharedTokens): added STRAT_USING_LIST_PREC,
+	STRAT_USING_PREC
+	(SharedTokens): added USING_LIST nonterminal
+
+2017-09-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* specialTokens.cc: added matchrew, xmatchrew, amatchrew
+
+	* makeGrammar.cc (makeStrategyLanguageProductions): remove
+	the #if 1 / #endif around the match/xmatch/amatch productions
+
+===================================Maude116===========================================
+
+2017-08-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* tokenizer.ll (Rope): use fixUp()
+	(Rope): don't allow \t in strings
+
+	* token.hh (T): added decl for static version of fixUp()
+
+	* token.cc (fixUp): added static version
+
+	* tokenizer.ll (Rope): use endOfRope flag
+	(Rope): use EOT character to indicate endOfRope and avoid
+	flex EOF handling
+
+	* quotedIdentifierOpSymbol.cc (eqRewrite): use builtInReplace()
+	in the empty and singleton tokenize() cases
+
+2017-08-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* tokenizer.ll: created
+
+	* quotedIdentifierOpSymbol.hh (FreeSymbol): added decl for
+	makeQid()
+
+	* quotedIdentifierOpSymbol.cc (eqRewrite): implement tokenize()
+	(makeQid): added
+
+2017-08-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* quotedIdentifierOpSymbol.cc (printQid): new needSpace
+	rule
+	(printQid): handle '\c Qids specially
+
+2017-08-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* quotedIdentifierOpSymbol.cc (eqRewrite): implemented print()
+	case
+
+	* quotedIdentifierOpSymbol.hh (FreeSymbol): added decl for
+	printQidList(), printQid()
+
+	* quotedIdentifierOpSymbol.cc (printQid): added
+	(printQidList): added
+
+2017-08-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* quotedIdentifierOpSymbol.hh (FreeSymbol): use
+	quotedIdentifierOpSignature.cc
+
+	* quotedIdentifierOpSymbol.cc (QuotedIdentifierOpSymbol)
+	(copyAttachments, getSymbolAttachments, attachSymbol): use
+	quotedIdentifierOpSignature.cc
+	(getDataAttachments): added cases for print and tokenize
+
+	* quotedIdentifierOpSignature.cc: created
+
+2017-07-31  Steven Eker  <eker@install.csl.sri.com>
+
+	* lexerAux.cc (getInput): added comments
+
+2017-07-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* entry.cc (newFancySymbol): added
+	SymbolType::STREAM_MANAGER_SYMBOL case
+
+	* symbolType.hh (S): added STREAM_MANAGER_SYMBOL
+
+	* specialSymbolTypes.cc: added streamManagerSymbol
+
+2017-07-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* variableGenerator.cc (push, pop, clearAssertions): added
+	stub versions to allow linking without SMT support
+
+2017-07-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* symbolType.hh (S): added FILE_MANAGER_SYMBOL
+
+	* entry.cc (newFancySymbol): add
+	SymbolType::FILE_MANAGER_SYMBOL case
+
+	* specialSymbolTypes.cc: added fileManagerSymbol
+
+	* command.cc (printAttributes): only print hook details
+	if nonempty
+
+===================================Maude115===========================================
+
+2017-07-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* search.cc (checkSearchRestrictions): check for SMT
+	operators in pattern
+
+	* mixfixModule.hh (SharedTokens): added decl for new
+	findNonlinearVariable()
+	(SharedTokens): made findSMT_Symbol() public
+
+	* search.cc (search): don't make Pattern for smt-search
+	(checkSearchRestrictions): moved nonlinear variable check here
+
+	* mixfixModule.cc (findNonlinearVariable): added variableInfo
+	version
+
+	* search.cc (search): check for nonlinear variables in pattern
+	in smt-search case
+
+	* mixfixModule.cc (validForSMT_Rewriting): added line number info
+	to warnings
+
+2017-07-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixModule.cc (MixfixModule): initialize smtStatus
+	(validForSMT_Rewriting): check and set smtStatus
+
+	* mixfixModule.hh (SharedTokens): added enum SMT_Status and
+	data member smtStatus
+
+2017-07-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* search.cc (checkSearchRestrictions): issue warning if
+	validForSMT_Rewriting() returns false
+
+	* mixfixModule.cc (validForSMT_Rewriting): add line number to
+	error messages
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	findNonlinearVariable()
+
+	* mixfixModule.cc (findNonlinearVariable): added
+	(validForSMT_Rewriting): check for nonlinear variables in lhs
+
+	* mixfixModule.hh (SharedTokens): containsSMT_Symbol()
+	-> findSMT_Symbol()
+
+	* mixfixModule.cc (containsSMT_Symbol): becomes
+	findSMT_Symbol()
+	(validForSMT_Rewriting): use findSMT_Symbol()
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	containsSMT_Symbol()
+
+	* mixfixModule.cc (containsSMT_Symbol): added
+	(validForSMT_Rewriting): check for SMT symbols occurring
+	in the lhs of a rule
+
+2017-07-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixModule.cc (validForSMT_Rewriting): added check for
+	non-SMT operators have SMT sorts as their range
+
+2017-06-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixModule.cc (validForSMT_Rewriting): check for regular
+	symbols and polymorphic operators that have a collapse
+	axiom
+
+	* symbolType.hh (S): added COLLAPSE
+
+2017-06-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* yices2_Bindings.cc (checkDag): check for error from
+	yices_assert_formula()
+	(checkDag): treat all return values other than STATUS_SAT
+	and STATUS_UNSAT as SAT_UNKNOWN
+	(assertDag): symmetric changes
+	(dagToYices2): enforce 2nd argument of divisible to be
+	positive constant
+
+2017-06-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* cvc4_Bindings.cc (dagToCVC4): check for non-positive
+	2nd arguments to divisible
+	(checkDag): catch CVC4::LogicException
+	(assertDag): catch CVC4::LogicException
+	(assertDag): don't both passing an argument to checkSat()
+
+2017-06-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* cvc4_Bindings.cc (dagToCVC4): fix bug where DIVISIBLE
+	case could fall through
+
+	* yices2_Bindings.cc (dagToYices2): flipped argument order
+	to yices_divides_atom()
+
+2017-06-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* yices2_Bindings.hh (SMT_EngineWrapper): delet decl for
+	makeRationalConstant()
+
+	* yices2_Bindings.cc (makeRationalConstant): fold into
+	dagToYices2()
+
+2017-06-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* yices2_Bindings.cc (dagToYices2): implemented
+
+2017-06-16  Steven Eker  <eker@install.csl.sri.com>
+
+	* yices2_Bindings.cc (makeVariable): implemented
+	(makeBooleanExpr): implemented
+
+2017-06-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* yices2_Bindings.cc: created
+
+	* yices2_Bindings.hh: created
+
+2017-06-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* cvc4_Bindings.hh: created to hold CVC4 specific code
+
+	* variableGenerator.hh (SMT_EngineWrapper): stripped out
+	all CVC4 specific code
+
+	* cvc4_Bindings.cc: created to hold CVC4 specific code
+
+	* variableGenerator.cc: stripped out all CVC4 specific code
+
+2017-06-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* prettyPrint.cc (printAttributes): fix bug where we weren't
+	printing the narrowing attribute if it was the only attribute
+
+2017-06-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixModule.cc (checkFreshVariableNames): implemented
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	checkFreshVariableNames()
+
+	* syntacticPreModule.cc (getFlatModule): call
+	checkFreshVariableNames()
+
+	* mixfixModule.cc (checkFreshVariableNames): added stub
+
+	* freshVariableSource.cc (variableNameConflict): need to consider
+	@ variables
+
+2017-06-09  Steven Eker  <eker@install.csl.sri.com>
+
+	* bufferPrint.cc (handleIter): use decideIteratedAmbiguity()
+	to decide needToDisambiguate and argumentRangeKnown
+
+	* dagNodePrint.cc (handleIter): use decideIteratedAmbiguity()
+	to decide needToDisambiguate and argumentRangeKnown
+
+	* entry.cc (checkPseudoIterated): rewritten using
+	iteratedMap
+
+	* termPrint.cc (handleIter): don't pass iflags argument to
+	decideIteratedAmbiguity()
+
+	* mixfixModule.hh (SharedTokens): updated decl for
+	decideIteratedAmbiguity()
+
+	* sharedPrint.cc (decideIteratedAmbiguity): use iteratedMap
+	(decideIteratedAmbiguity): delete iflags argument
+
+	* entry.cc (checkIterated): fill out iteratedMap
+
+	* mixfixModule.hh (SharedTokens): added typedef IteratedMap
+	and data member iteratedMap
+
+2017-06-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* termPrint.cc (handleIter): use decideIteratedAmbiguity()
+	to do disambiguation properly
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	decideIteratedAmbiguity()
+
+	* sharedPrint.cc (decideIteratedAmbiguity): added
+
+	* entry.cc (checkPseudoIterated, checkIterated): more detailed
+	warnings
+
+2017-06-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* entry.cc (checkIterated): implemented
+	(addOpDeclaration): call checkIterated()
+
+	* mixfixModule.hh (SharedTokens): added decl for
+	checkIterated()
+
+	* entry.cc (checkPseudoIterated): fill out pseudoIteratedMap
+	(checkIterated): added stub
+
+	* mixfixModule.hh (SharedTokens): checkPseudoIterator() ->
+	checkPseudoIterated()
+	(SharedTokens): added typedefs NumberToSymbolMap,
+	PseudoIteratedMap and data member pseudoIteratedMap
+
+	* entry.cc (addOpDeclaration): updated calling convention
+	for checkPseudoIterator() again
+	(checkPseudoIterator): becomes checkPseudoIterated()
+	(addOpDeclaration): use checkPseudoIterated()
+
+	* mixfixModule.hh (SharedTokens): updated decl for
+	checkPseudoIterator()
+
+	* entry.cc (addOpDeclaration): updated calling convention
+	for checkPseudoIterator()
+	(checkPseudoIterator): replace with Symbol* base version
+
+	* token.hh (T): updated decl for checkPseudoIterator()
+
+	* entry.cc (checkPseudoIterator): implemented
+
+2017-06-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* mixfixModule.hh (SharedTokens): added decl for checkPseudoIterator()
+
+	* entry.cc (addOpDeclaration): added call to checkPseudoIterator()
+	(checkPseudoIterator): added stub
+
+2017-06-05  Steven Eker  <eker@install.csl.sri.com>
+
+	* symbolType.hh (hasAtLeastOneFlag): added
+
+2017-05-31  Steven Eker  <eker@install.csl.sri.com>
+
+	* ops.cc (setPoly): check for duplicate arg numbers in
+	poly attribute
+
+===================================Maude114===========================================
+
+
+2017-05-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* execute.cc (clearContinueInfo): deleted commented out code
+
+2017-05-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowing.cc (doVuNarrowing): reorganize printing
+	(doVuNarrowing): fix double delete bug
+
+	* search.cc (search): combine vu-narrow and fvu-narrow code
+
+	* interpreter.hh (ViewDatabase): deleted decl for doFvuNarrowing();
+	updated decl for doVuNarrowing()
+
+	* narrowing.cc (doFvuNarrowing): support continuation
+	(doVuNarrowing): deleted
+	(doFvuNarrowing): becomes doVuNarrow()
+	(vuNarrowingCont): use NarrowingSequenceSearch3
+
+2017-05-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowing.cc (doFvuNarrowing): print accumulated substitution
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext): added
+	decl for new printSubstitution()
+
+	* userLevelRewritingContext.cc (printSubstitution): added
+	Substitution&/VariableInfo& version
+
+	* lexer.ll: added fvu-narrow
+
+	* top.yy: added KW_FVU_NARROW
+
+	* commands.yy (search): added fvu-narrow support
+
+	* interpreter.hh (ViewDatabase): added decl for doFvuNarrowing()
+
+	* narrowing.cc (doFvuNarrowing): added
+
+	* search.cc (checkSearchRestrictions): support fvu-narrow
+	(search): fvu-narrow
+
+	* interpreter.hh (ViewDatabase): added FVU_NARROW to SearchKind
+
+2017-04-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* specialTokens.cc: added narrowing
+
+	* makeGrammar.cc (makeAttributeProductions): added narrowing
+	attribute
+
+	* mixfixParser.hh (M): added MAKE_NARROWING_ATTRIBUTE to
+	enum SemanticActions
+
+	* mixfixParser.cc (makeAttributePart): added case for
+	MAKE_NARROWING_ATTRIBUTE
+
+	* mixfixParser.hh (M): added NARROWING to enum Flags
+
+	* prettyPrint.cc (printAttributes): support narrowing attribute
+
+	* mixfixParser.cc (makeStatementPart): handle narrowing flag
+
+	* importModule.cc (donateStatements2): copy narrowing flag
+
+===================================Maude113===========================================
+
+2017-04-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* interpreter.cc (Interpreter): don't initialize savedContext
+
+	* loopMode.cc (doLoop): use CacheableRewritingContext and
+	savedState
+	(contLoop2): use CacheableRewritingContext and savedState
+
+	* interpreter.hh (ViewDatabase): deleted data member
+	savedContext
+	(ViewDatabase): updated decl for endRewriting()
+
+	* erewrite.cc (eRewrite): use CacheableRewritingContext
+	(eRewriteCont): use CacheableRewritingContext and savedState
+
+	* execute.cc (endRewriting): make context argument
+	CacheableRewritingContext; use savedState
+	(reduce): use CacheableRewritingContext
+	(rewrite, fRewrite): use CacheableRewritingContext
+	(fRewriteCont, rewriteCont): use CacheableRewritingContext,
+	savedState
+	(clearContinueInfo): don't delete or clear savedContext
+
+	* mixfix.hh: added class CacheableRewritingContext
+
+2017-04-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* search.cc (search): deleted #if 0'd out code
+
+2017-04-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowing.cc (vuNarrowingCont, narrowingCont): support debug
+
+2017-04-04  Steven Eker  <eker@install.csl.sri.com>
+
+	* smtSearch.cc (doSmtSearch): print state and timing info; print
+	no more solutions message
+
+2017-04-03  Steven Eker  <eker@install.csl.sri.com>
+
+	* search.cc (search): use doSmtSearch()
+
+	* interpreter.hh (ViewDatabase): added decls for doSmtSearch(),
+	smtSearchCont()
+
+	* smtSearch.cc: created
+
+	* interpreter.hh (ViewDatabase): deleted data member
+	savedRewriteSequenceSearch
+
+	* execute.cc (clearContinueInfo): don't delete or clear
+	savedRewriteSequenceSearch
+
+	* interpreter.cc (Interpreter): don't clear savedRewriteSequenceSearch
+
+	* search.cc (showSearchGraph): use dynmaic_cast on savedState
+	(showSearchPath, showSearchPathLabels): use dynmaic_cast on savedState
+	(doSearching): use savedState
+	(searchCont): use savedState
+
+2017-03-31  Steven Eker  <eker@install.csl.sri.com>
+
+	* search.cc (searchCont): support debug
+
+	* interpreter.hh (ViewDatabase): updated decl for doSearching()
+
+	* search.cc (search): use QUANTIFY_START()
+	(doSearching): make solutionCount and limit 64-bit; use QUANTIFY_STOP()
+	(doSearching): restructured
+	(doSearching): don't call interrupted()
+	(searchCont): use QUANTIFY_START()
+
+	* interpreter.hh (ViewDatabase): added decl for checkSearchRestrictions()
+
+	* search.cc (search): destruct initial term and condition if we
+	are asked to narrow with a non-empty condition
+	(checkSearchRestrictions): added
+	(search): use checkSearchRestrictions()
+	(search): deepSelfDestruct() target if we fail checks
+
+	* interpreter.hh (ViewDatabase): updatede decl for search()
+
+	* search.cc (search): take debug argument
+
+	* commands.yy (command): added optDebug to search
+
+	* execute.cc (clearContinueInfo): don't delete and clear
+	savedStrategicSearch
+
+	* interpreter.cc (Interpreter): don't clear savedStrategicSearch
+
+	* interpreter.hh (ViewDatabase): updated decl for
+	doStrategicSearch(); deleted data member savedStrategicSearch
+
+	* srewrite.cc (sRewrite): support debug flag
+	(doStrategicSearch): make solutionCount and limit 64-bit;
+	restructured; use savedState
+	(sRewriteCont): use savedState; support debug flag
+
+	* getVariants.cc (doGetVariants): check interrupted() in the
+	irredundant case
+	(getVariants): QUANTIFY_START()
+	(getVariantsCont): QUANTIFY_START()
+	(doGetVariants): use QUANTIFY_STOP();
+
+	* narrowing.cc (doNarrowing): use QUANTIFY_STOP()
+	(narrowingCont): use QUANTIFY_START()
+	(doVuNarrowing): use QUANTIFY_STOP()
+	(vuNarrowingCont): use QUANTIFY_START()
+
+	* match.cc (match): use QUANTIFY_START()
+	(doMatching): use QUANTIFY_STOP()
+	(matchCont): use use QUANTIFY_START()
+	(doMatching): updated comments
+
+	* mixfix.hh: added QUANTIFY_START(), QUANTIFY_STOP()
+
+2017-03-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* interpreter.hh (ViewDatabase): make savedSolutionCount an Int64
+
+	* getVariants.cc (doGetVariants): make solutionCount and limit
+	64-bit
+
+	* interpreter.hh (ViewDatabase): update decls for doNarrowing(),
+	doVuNarrowing(), doGetVariants(), doVariantUnification()
+
+	* narrowing.cc (doNarrowing, doVuNarrowing): make solutionCount
+	and limit 64-bit
+
+	* variantUnify.cc (variantUnify): echo debug flag
+	(doVariantUnification): make solutionCount and limit 64-bit
+
+	* getVariants.cc (getVariants): echo debug flag
+
+	* interpreter.hh (ViewDatabase): added decls for getVariantsCont()
+	and doGetVariants()
+
+	* getVariants.cc (doGetVariants): added
+	(getVariantsCont): added
+	(getVariants): use doGetVariants()
+
+	* variantUnify.cc (doVariantUnification): restructured;
+	use aborted()
+	(variantUnifyCont): handle debug flag
+
+2017-03-29  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowing.cc (doNarrowing): don't call interrupted(); tidy up
+	after abort or solution exhaustion
+	(doVuNarrowing): don't call interrupted(); tidy up
+	after abort or solution exhaustion
+
+	* getVariants.cc: renamed from variants.cc
+
+	* variantUnify.cc (variantUnify, doVariantUnification)
+	(variantUnifyCont): moved here
+
+	* interpreter.hh (ViewDatabase): added decls for doVariantUnification()
+	and variantUnifyCont()
+	(ViewDatabase): deleted decl for newNarrow()
+
+	* variants.cc (doVariantUnification): added
+	(variantUnifyCont): added
+
+	* search.cc (newNarrow): deleted
+
+	* variants.cc (getVariants, variantUnify): moved here
+
+	* narrowing.cc (doNarrowing): check for incompleteness
+	(doNarrowing): call printStats()
+
+2017-03-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* userLevelRewritingContext.cc (traceVariantNarrowingStep): use
+	narrowing version of printSubstitution()
+
+	* interpreter.hh (ViewDatabase): added decl for narrowingCont()
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext): added
+	decl for narrowing version of printSubstitution()
+
+	* narrowing.cc (doVuNarrowing): use narrowing version of
+	printSubstitution()
+
+	* userLevelRewritingContext.cc (printSubstitution): added narrowing
+	version
+
+	* unify.cc: fixed comment since we not longer support xunify
+
+	* narrowing.cc (narrowingCont): added
+	(doNarrowing): added continue support
+
+	* cacheableRewritingContext.hh: created
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext): made
+	complex ctor private
+
+2017-03-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* execute.cc (clearContinueInfo): don't delete and clear
+	savedUnificationProblem
+
+	* interpreter.cc (Interpreter): don't clear
+	savedUnificationProblem
+
+	* interpreter.hh (ViewDatabase): delete data member
+	savedUnificationProblem
+
+	* unify.cc (unifyCont): use savedState
+	(doUnification): use savedState
+
+	* execute.cc (clearContinueInfo): don't delete and clear
+	savedMatchSearchState
+
+	* interpreter.cc (Interpreter): don't clear savedMatchSearchState
+
+	* interpreter.hh (ViewDatabase): delete data member
+	savedMatchSearchState
+
+	* match.cc (matchCont): use savedState
+	(doMatching): use savedState
+
+	* execute.cc (clearContinueInfo): delete and clear savedState
+
+	* interpreter.cc (Interpreter): clear savedState
+
+	* interpreter.hh (ViewDatabase): added data member savedState
+
+	* narrowing.cc (vuNarrowingCont): use savedState
+	(doVuNarrowing): use savedState
+
+2017-03-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* narrowing.cc (vuNarrowingCont): added
+	(doVuNarrowing): support continuation
+
+	* interpreter.hh (ViewDatabase): added decl for vuNarrowingCont()
+
+	* search.cc (search): doNarrowing2() -> doVuNarrowing()
+
+	* interpreter.hh (ViewDatabase): doNarrowing2() ->
+	doVuNarrowing()
+
+	* narrowing.cc: created
+	(doNarrowing2): moved here
+	(doNarrowing): moved here
+	(doNarrowing2): becomes doVuNarrowing()
+
+===================================Maude112a===========================================
+
+2017-03-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* process.cc (processImports): don't add illegal parameters, since
+	even the creation of the illegal parameter copies can cause issues
+
+2017-03-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* search.cc (doNarrowing2): added incompleteness warning; took out
+	extra newline print
+
+2017-02-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* search.cc (doNarrowing2): added
+	(search): use doNarrowing2() to implement vu-narrow
+
+	* interpreter.hh (ViewDatabase): added decl for doNarrowing2()
+
+2017-02-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* search.cc (search): added stub code for vu-narrow
+
+2017-02-24  Steven Eker  <eker@install.csl.sri.com>
+
+	* interpreter.hh (ViewDatabase): added VU_NARROW to enum SearchKind
+
+	* commands.yy (search): added KW_VU_NARROW to search
+
+	* lexer.ll: added keyword vu-narrow
+
+	* top.yy: added token KW_VU_NARROW
+
+===================================Maude111b===========================================
+
+2017-01-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* banner.cc (printBanner): fix copyright year
+
+===================================Maude111a===========================================
+
+2016-12-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* freshVariableSource.hh (FreshVariableGenerator): added decl for
+	belongsToFamily()
+
+	* freshVariableSource.cc (belongsToFamily): added
+
+2016-12-08  Steven Eker  <eker@install.csl.sri.com>
+
+	* freshVariableSource.hh (FreshVariableGenerator): added decl
+	for getFamily()
+
+	* freshVariableSource.cc (getFamily): added
+
+2016-12-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* freshVariableSource.cc (getBaseName): added
+
+	* freshVariableSource.hh (FreshVariableGenerator): added decl for
+	getBaseName()
+
+2016-11-01  Steven Eker  <eker@install.csl.sri.com>
+
+	* search.cc (variantUnify): pass dummy argument to getNextUnifier()
+
+2016-10-28  Steven Eker  <eker@install.csl.sri.com>
+
+	* doParse.cc (parseTerm): fix bug where we were calling fillInSortInfo()
+	before the module was semi-compiled and sort diagrams had been generated
+
+2016-10-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* freshVariableSource.cc (getFreshVariableName): rewritten to handle
+	multiple families of fresh variables
+
+	* freshVariableSource.hh (FreshVariableGenerator): updated decl for
+	getFreshVariableName()
+	(FreshVariableGenerator): deleted data members cache, oddCache; added
+	data member caches
+
+===================================Maude111===========================================
+
 2016-06-27  Steven Eker  <eker@install.csl.sri.com>
 
 	* banner.cc (printBanner): update copyright year
@@ -2224,7 +5698,7 @@
 2006-10-09  Steven Eker  <eker@goo.csl.sri.com>
 
 	* banner.cc (printBanner): update copyright notice
-	
+
 ===================================Maude88b===========================================
 
 	* modules.yy (domainRangeAttr): fix type clash
@@ -2692,7 +6166,7 @@
 
 	* visibleModule.cc (showSortsAndSubsorts): for each line of
 	output, show main sort in color
-	
+
 ===================================Maude87===========================================
 
 2005-11-28  Steven Eker  <eker@goo.csl.sri.com>
@@ -3166,7 +6640,7 @@
 	* preModule.hh (getNrParameters, getParameterName, getParameter):
 	added
 
-	* parameterization.cc (handleInstantiationByTheoryView) 
+	* parameterization.cc (handleInstantiationByTheoryView)
 	(handleInstantiationByModuleView, instantiateBoundParameters): use
 	new version of isTheory()
 	(makeParameterCopy): use new version of isTheory()
@@ -3286,7 +6760,7 @@
 	parameter; deepCopy() term part of op->term mappings into instance
 	rather than using the original
 	(handleInstantiationByTheoryView): pass instance parameter to
-	addOpMappingsFromView() 
+	addOpMappingsFromView()
 	(handleInstantiationByModuleView): pass instance parameter to
 	addOpMappingsFromView()
 
@@ -3707,7 +7181,7 @@
 	makeTranslatedTerm()
 
 	* importTranslation.cc (makeTranslatedTerm): added stub
-	
+
 ===================================Maude86b===========================================
 
 2005-04-29  Steven Eker  <eker@goo.csl.sri.com>
@@ -3817,7 +7291,7 @@
 	* moduleDatabase.cc (setOmodInclude): substract() -> erase()
 
 	* moduleDatabase.hh (class ModuleDatabase): added typedef
-	ImportSet 
+	ImportSet
 	(class ModuleDatabase): defaultOmodIncludes becomes an ImportSet
 
 	* bufferPrint.cc (printDotSort, printVarSort, printSort):
@@ -3829,7 +7303,7 @@
 	* quotedIdentifierSymbol.cc (determineSort):
 	AUX_PARAMETERIZED_SORT -> AUX_STRUCTURED_SORT
 
-	* makeGrammar.cc (makeComponentProductions) 
+	* makeGrammar.cc (makeComponentProductions)
 	(makeParameterizedSortProductions): AUX_PARAMETERIZED_SORT ->
 	AUX_STRUCTURED_SORT
 
@@ -3839,7 +7313,7 @@
 	* token.hh (class Token): AUX_PARAMETERIZED_SORT ->
 	AUX_STRUCTURED_SORT
 
-	* auxProperty.cc (computeAuxProperty, sortName) 
+	* auxProperty.cc (computeAuxProperty, sortName)
 	(splitParameterizedSort, splitParameterList):
 	AUX_PARAMETERIZED_SORT -> AUX_STRUCTURED_SORT
 
@@ -4023,7 +7497,7 @@
 
 	* preModule.hh (User): updated decl for makeModule()
 
-	* import.cc (processImports): pass flatModule to makeModule() 
+	* import.cc (processImports): pass flatModule to makeModule()
 	(makeModule): take and pass enclosingModule
 
 	* renameModule.cc (makeInstantiation): don't replace parameter in
@@ -4139,7 +7613,7 @@
 	* interpreter.cc (makeClean): discard incomplete view
 
 	* interpreter.hh (endif): added decls for getCurrentView(),
-	setCurrentView() (*2) 
+	setCurrentView() (*2)
 	(getCurrentView): added
 	(endif): added data member currentView
 
@@ -4294,7 +7768,7 @@
 	(regretToInform): need to cast doomedEntity
 
 	* importModule.cc (addImport): addUser() in place of
-	dependentModules.append() 
+	dependentModules.append()
 	(addParameter): addUser() in place of dependentModules.append()
 	(deepSelfDestruct): removeUser() in place of removeDependent()
 	(deepSelfDestruct): use informUsers() in place of much special
@@ -4523,7 +7997,7 @@
 
 	* top.yy: added fragClear(), fragStore(), fragments
 
-	* modules.yy (sortNameFrags): added 
+	* modules.yy (sortNameFrags): added
 	(sortNameFrag): added
 	(sortName): rewritten
 
@@ -4541,7 +8015,7 @@
 	* modules.yy (startKeyword): added KW_ENDV
 	(inert): added KW_FROM
 	(midKeyword): moved KW_IS to inert
-	(endToken, tokenBarEqual, tokenBarIf, tokenBarColon) 
+	(endToken, tokenBarEqual, tokenBarIf, tokenBarColon)
 	(tokenBarColonTo): removed KW_IS
 
 	* lexer.ll: added KW_VIEW, KW_FROM, KW_ENDV
@@ -4691,7 +8165,7 @@
 	* interact.cc (selectBreakSymbols): deleted
 	(handleDebug): use breakId() instead of breakSymbols
 
-	* interpreter.hh (printConceal, traceExclude, breakSelect) 
+	* interpreter.hh (printConceal, traceExclude, breakSelect)
 	(traceSelect): rewritten, moved here
 	(endif): added decl for updateSet()
 
@@ -4718,22 +8192,22 @@
 	(class UserLevelRewritingContext): updated decls for
 	selectSymbols(), excludeModules(), selectBreakSymbols()
 
-	* interpreter.cc (printConceal, traceExclude, breakSelect) 
+	* interpreter.cc (printConceal, traceExclude, breakSelect)
 	(traceSelect): clear() replaces makeEmpty()
 
 	* interpreter.hh (endif): selected changed from IntSet to set<int>
 
 2005-01-18  Steven Eker  <eker@goo.csl.sri.com>
 
-	* userLevelRewritingContext.cc (tracePreScApplication) 
+	* userLevelRewritingContext.cc (tracePreScApplication)
 	(tracePreRuleRewrite, tracePreEqRewrite): support TRACE_BODY
 	option
 
 	* interpreter.hh (endif): added TRACE_REWRITE and TRACE_BODY to
 	DEFAULT_FLAGS
 
-	* userLevelRewritingContext.cc (tracePreScApplication) 
-	(tracePostRuleRewrite, tracePreRuleRewrite, tracePostEqRewrite) 
+	* userLevelRewritingContext.cc (tracePreScApplication)
+	(tracePostRuleRewrite, tracePreRuleRewrite, tracePostEqRewrite)
 	(tracePreEqRewrite): implement TRACE_REWRITE option
 
 	* trial.cc (traceBeginRuleTrial): use getFlag() rather than
@@ -4743,7 +8217,7 @@
 	(traceEndFragment): use getFlag() rather than
 	traceSubstitutionFlag
 
-	* userLevelRewritingContext.cc (tracePreRuleRewrite) 
+	* userLevelRewritingContext.cc (tracePreRuleRewrite)
 	(tracePreScApplication): use getFlag() rather than
 	traceSubstitutionFlag
 
@@ -4758,8 +8232,8 @@
 	deleted static members traceConditionFlag, traceWholeFlag,
 	traceSubstitutionFlag, traceSelectFlag, traceScFlag, traceEqFlag,
 	traceRuleFlag
-	(setTraceConditionFlag, setTraceWholeFlag) 
-	(setTraceSubstitutionFlag, setTraceSelectFlag, setTraceScFlag) 
+	(setTraceConditionFlag, setTraceWholeFlag)
+	(setTraceSubstitutionFlag, setTraceSelectFlag, setTraceScFlag)
 	(setTraceEqFlag, setTraceRuleFlag): deleted
 
 	* userLevelRewritingContext.cc (dontTrace): use getFlag() rather
@@ -4805,7 +8279,6 @@
 
 	* prelude.maude: added PrintOptions; metaPrettyPrint() now takes
 	PrintOptionSet arg; backward compatibility metaPrettyPrint() added
-	
 
 	* interpreter.hh (endif): renumbered enum PrintFlags
 
@@ -4831,8 +8304,8 @@
 	* bufferPrint.cc (prettyPrint): use printFlags instead of
 	printMixfix, printWithParens, printFlat
 
-	* mixfixModule.hh (setPrintMixfix, setPrintWithParens) 
-	(setPrintWithAliases, setPrintFlat, setPrintGraph) 
+	* mixfixModule.hh (setPrintMixfix, setPrintWithParens)
+	(setPrintWithAliases, setPrintFlat, setPrintGraph)
 	(setPrintConceal, setPrintFormat): deleted
 
 	* prettyPrint.cc: deleted static print* variables
@@ -4870,10 +8343,10 @@
 	handleDivision()
 	(prettyPrint): take printFlags arg
 
-	* dagNodePrint.cc (computeColor, handleIter, handleMinus) 
+	* dagNodePrint.cc (computeColor, handleIter, handleMinus)
 	(handleDivision, prettyPrint): use getPrintFlag()
 
-	* termPrint.cc (computeColor, handleIter, handleMinus) 
+	* termPrint.cc (computeColor, handleIter, handleMinus)
 	(handleDivision): use getPrintFlag()
 
 	* interpreter.hh (getPrintFlag): added
@@ -4896,7 +8369,7 @@
 	* loopMode.cc (printBubble): print unknown tokens of the form \c
 	with naively rather than skipping them altogther - this at least
 	handles _\/_ pretty printed in mixfix mode correctly
-	
+
 ===================================Maude86===========================================
 
 2004-12-23  Steven Eker  <eker@goo.csl.sri.com>
@@ -5121,7 +8594,7 @@
 2004-08-24  Steven Eker  <eker@goo.csl.sri.com>
 
 	* prelude.maude: added min and max to NAT, INT and RAT
-	
+
 ===================================Maude85===========================================
 
 2004-08-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -5161,7 +8634,7 @@
 2004-06-29  Steven Eker  <eker@goo.csl.sri.com>
 
 	* prelude.maude: make module selectors work on theories
-	
+
 ===================================Maude84d===========================================
 
 2004-06-15  Steven Eker  <eker@goo.csl.sri.com>
@@ -5191,7 +8664,7 @@
 2004-06-01  Steven Eker  <eker@goo.csl.sri.com>
 
 	* prelude.maude: added fmod RANDOM
-	
+
 ===================================Maude84c===========================================
 
 2004-05-25  Steven Eker  <eker@goo.csl.sri.com>
@@ -5234,7 +8707,7 @@
 	* prelude.maude: changed definition of ['FOO] so that it works
 	with theories
 
-	* importModule.hh (class ImportModule): updated decl for 
+	* importModule.hh (class ImportModule): updated decl for
 
 	* importModule.cc (addImport): pass lineNumber by value
 	addImport()
@@ -5362,20 +8835,20 @@
 	(fDecList): deleted
 	(declaration): merged with fDeclaration and oDeclaration
 
-	* top.yy: deleted nonterminals notEndfm notEndm notEndom 
+	* top.yy: deleted nonterminals notEndfm notEndm notEndom
 
 	* modules.yy (startKeyword2): added KW_ENDTH KW_ENDFTH
 
 	* top.yy: added KW_TH KW_FTH KW_ENDTH KW_ENDFTH
 
 	* lexer.ll (id): added keywords th fth endth endfth
-	
+
 2004-05-07  Steven Eker  <eker@goo.csl.sri.com>
 
 	* ops.cc (setIdentity): added check for empty identity; didn't
 	fix our proble though since we never get here with an empy
 	identity; reverted change
-	
+
 ===================================Maude84b===========================================
 
 2004-04-27  Steven Eker  <eker@goo.csl.sri.com>
@@ -5435,7 +8908,7 @@
 	* top.yy: added tokens KW_PROTECT and KW_EXTEND
 
 	* lexer.ll: added keywords protect and extend
-	
+
 ===================================Maude84a===========================================
 
 2004-03-10  Steven Eker  <eker@goo.csl.sri.com>
@@ -5473,7 +8946,7 @@
 
 	* mixfixModule.hh (CommonTokens): deleted commented out decl for
 	copyPolymorph()
-	
+
 ===================================Maude84===========================================
 
 2004-02-25  Steven Eker  <eker@goo.csl.sri.com>
@@ -5756,7 +9229,7 @@
 
 	* importModule.hh (class ImportModule): repaced decl for
 	findSort()
-	donateRenamedSorts() with donateSorts2(); added decl for 
+	donateRenamedSorts() with donateSorts2(); added decl for
 	(class ImportModule): deleted decl for donateRenamedStatements()
 
 	* renameModule.cc (makeRenamedCopy): use donateSorts2()
@@ -6079,7 +9552,7 @@
 	* renaming.cc: created
 
 	* renaming.hh: created
-	
+
 ===================================Maude83a===========================================
 
 2003-11-12  Steven Eker  <eker@goo.csl.sri.com>
@@ -6427,7 +9900,7 @@
 	* top.yy: added decl for KW_POLY
 
 	* lexer.ll (id): added keywords poly, polymorphic
-	
+
 ===================================Maude83===========================================
 
 2003-10-09  Steven Eker  <eker@goo.csl.sri.com>
@@ -6560,7 +10033,7 @@
 	(operator<<): decided to make sort print function bullet proof
 	instead; it can now be called before connnected components are
 	calculated and sort indices are assigned
-	
+
 ===================================Maude82===========================================
 
 2003-07-22  Steven Eker  <eker@goo.csl.sri.com>
@@ -6671,7 +10144,7 @@
 2003-05-05  Steven Eker  <eker@goo.csl.sri.com>
 
 	* banner.cc: removed SUNOS and LIBv3 #ifdefs
-	
+
 ===================================Maude80a===========================================
 
 2003-05-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -6710,7 +10183,7 @@
 2003-04-07  Steven Eker  <eker@goo.csl.sri.com>
 
 	* model-checker.maude: added => and <=> LTL operators
-	
+
 ===================================Maude80===========================================
 
 2003-03-21  Steven Eker  <eker@goo.csl.sri.com>
@@ -6858,7 +10331,7 @@
 	* commonTokens.cc: removed #pragma
 
 	* commonTokens.hh: removed #pragma
-	
+
 ===================================Maude79===========================================
 
 2003-02-20  Steven Eker  <eker@goo.csl.sri.com>
@@ -6883,7 +10356,7 @@
 	* commonTokens.cc (CommonTokens): addedarrowOne
 
 	* search.cc (search): use =>1 instead of => for one step rewriting
-	
+
 ===================================Maude78===========================================
 
 2003-01-06  Steven Eker  <eker@goo.csl.sri.com>
@@ -7375,7 +10848,6 @@
 	* prelude.maude: made QID-LIST ops ctors; use ditto for
 	op __ : TypeList TypeList
 	in fmod META-MODULE; made true and false ctors
-	
 
 	* modules.y: use setFlag(SymbolType::CTOR)
 
@@ -7552,7 +11024,7 @@
 	findMachineIntegerSymbol(); deleted PSEUDO_MACHINE_INTEGER from
 	enum InternalFlags; deleted data members overloadedMachineIntegers
 	and machineIntegerSymbols
-	
+
 ===================================Maude74==================================================
 
 2002-06-17  Steven Eker  <eker@goo.csl.sri.com>
@@ -7860,7 +11332,7 @@
 
 	* mixfixParser.cc (makeTerm): added MAKE_INTEGER case
 
-	* mixfixParser.hh (class MixfixParser): added MAKE_INTEGER to 
+	* mixfixParser.hh (class MixfixParser): added MAKE_INTEGER to
 
 	* makeGrammar.cc (makeSymbolProductions): added negative integer
 	syntax for MINUS_SYMBOL case
@@ -8117,7 +11589,7 @@
 
 	* commands.y: use interpreter.showModule(true) for show all
 	command; use interpreter.showVars() for show vars
-	
+
 	* visibleModule.cc (showVars): added
 
 	* mixfixModule.hh (class MixfixModule): deletd decl for
@@ -8370,7 +11842,7 @@
 	* import.cc (findModule): deleted
 
 	* preModule.hh (PreModule): deleted decl for findModule()
-	
+
 ===================================Maude72==================================================
 
 2002-04-08  Steven Eker  <eker@goo.csl.sri.com>
@@ -8521,7 +11993,7 @@
 
 	* commands.y: use setFlag(Interpreter::TRACE, ) in place of
 	setTraceFlag(); use setFlag(Interpreter::BREAK, ) in place of
-	setBreakFlag(); 
+	setBreakFlag();
 
 	* interpreter.cc (setFlag): moved here, support EXCEPTION_FLAGS
 
@@ -8680,7 +12152,6 @@
 	* interpreter.hh (class Interpreter): added data member selected;
 	added decls for addSelected(), traceSelect(), breakSelect(),
 	traceExclude(), printConceal()
-	
 
 	* interpreter.cc (addSelected): moved here from command.cc
 	(traceSelect): moved here from command.cc
@@ -8875,7 +12346,7 @@
 	* mixfixModule.cc: deleted explicit template instantiations
 
 	* main.cc: deleted explicit template instantiations
-	
+
 ===================================Maude71==================================================
 
 2002-03-08  Steven Eker  <eker@goo.csl.sri.com>
@@ -8976,7 +12447,6 @@
 
 	* prelude.maude: metaMatch now takes a condition; added format
 	attributes
-	
 
 2002-02-11  Steven Eker  <eker@goo.csl.sri.com>
 
@@ -9175,7 +12645,7 @@
 	* token.hh: ifdef LIBv3 for libstdc++-v3
 
 	* autoWrapBuffer.cc (sync): ifdef LIBv3 for libstdc++-v3
-	
+
 ===================================Maude70==================================================
 
 2002-01-24  Steven Eker  <eker@goo.csl.sri.com>
@@ -9233,7 +12703,7 @@
 	if-then-else to avoid problem with distinct pointers
 
 	* token.hh: #include <rope> -> #include <ext/rope>
-	
+
 ===================================Maude69==================================================
 
 2001-10-23  Steven Eker  <eker@goo.csl.sri.com>
@@ -9679,7 +13149,7 @@
 	* trial.cc (traceBeginEqTrial): pass subject to handleDebug()
 	(traceBeginRuleTrial): pass subject to handleDebug()
 	(traceBeginScTrial): pass subject to handleDebug()
-	
+
 ===================================Engine65==================================================
 
 2001-03-30  Steven Eker  <eker@goo.csl.sri.com>
@@ -9858,7 +13328,7 @@
 	* importModule.cc (ImportModule): removed unneeded #includes
 
 	* preModule.cc: removed unneeded #includes
-	
+
 ===================================Engine65==================================================
 
 2001-02-21  Steven Eker  <eker@goo.csl.sri.com>
@@ -10492,7 +13962,7 @@
 	abortFlag before printing message
 	(traceEndFragment): take trialRef argument and test it and
 	abortFlag before printing message
-	
+
 ===================================Engine64==================================================
 
 2000-11-08  Steven Eker  <eker@goo.csl.sri.com>
@@ -10598,7 +14068,7 @@
 
 	* token.cc (checkForSpecialProperty): handle null strings rather
 	than asserting that they don't arise
-	
+
 ===================================Engine63==================================================
 
 2000-09-14  Steven Eker  <eker@goo.csl.sri.com>
@@ -10632,7 +14102,7 @@
 
 	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol):
 	META_SAME_COMPONENT -> META_SAME_KIND; metaSameComponent() ->
-	metaSameKind() 
+	metaSameKind()
 
 	* metaLevelOpSymbol.cc (metaLeastSort): rewritten
 	(metaSameComponent): becomes metaSameKind()
@@ -10910,7 +14380,7 @@
 
 	* fixUp.cc (findHookSymbol): look for ~> rather than -> in
 	op-hooks
-	
+
 ===================================Engine62==================================================
 
 2000-08-29  Steven Eker  <eker@goo.csl.sri.com>
@@ -10956,7 +14426,6 @@
 
 	* top.y: deleted tokenBarArrow; arrow declared type <yyBool>;
 	sortToken declared type <yyToken>
-	
 
 	* preModule.hh (Parent): added decls for addSortSpec() and
 	convertSortsToKinds(); deleted decl for setDomainAndRange()
@@ -11000,7 +14469,7 @@
 
 	* metaFastUp.cc (fastUpSort): removed hack for handling union
 	sorts since they should no longer exist
-	
+
 ===================================Engine61==================================================
 
 2000-07-28  Steven Eker  <eker@goo.csl.sri.com>
@@ -11135,7 +14604,7 @@
 2000-06-28  Steven Eker  <eker@goo.csl.sri.com>
 
 	* mixfixModule.hh (class MixfixModule): changed
-	overloadedMachineFloats from set<Int64> to set<double> 
+	overloadedMachineFloats from set<Int64> to set<double>
 
 	* prettyPrint.cc (prettyPrint): handle pseudo variables (both
 	versions)
@@ -11693,7 +15162,7 @@
 	(class MixfixModule): added PSEUDO_STRING to InternalFlags
 	(class MixfixModule): added STRING and STRING_OP to SymbolFlags
 	(class MixfixModule): rearranged SymbolInfo and added iflags
-	
+
 ===================================Maude 1.0.5 finished=======================================
 
 2000-04-05  Steven Eker  <eker@goo.csl.sri.com>
@@ -11899,7 +15368,7 @@
 	C strings
 
 	* metaFastUp.cc (fastUpTerm): (both versions) simplified using
-	quoteNameCode() 
+	quoteNameCode()
 
 	* bufferPrint.cc (prettyPrint): use quoteNameCode()
 
@@ -12202,7 +15671,7 @@
 
 	* execute.cc (printBubble): fixed bug where we weren't passing
 	Vector arg by ref
-	
+
 ===================================Engine56==================================================
 
 2000-02-24  Steven Eker  <eker@goo.csl.sri.com>
@@ -12757,7 +16226,7 @@
 
 	* compiler.cc (fullCompile): call generateSortVector() on each
 	sort
-	
+
 ===================================Engine55==================================================
 
 1999-12-20  Steven Eker  <eker@goo.csl.sri.com>
@@ -12897,7 +16366,7 @@
 	* lexerAux.cc (includeFile): rindex() -> strrchr()
 
 	* directoryManager.cc (realPath): index() -> strchr() (*2)
-	
+
 ===================================Engine53==================================================
 
 1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
@@ -12934,7 +16403,7 @@
 	* top.y: added tokens KW_DO KW_CLEAR
 
 	* commands.y: added do clear memo command
-	added syntax for 
+	added syntax for
 
 	* entry.cc (addOpDeclaration): support memo for free symbols
 
@@ -12967,7 +16436,7 @@
 
 	* prettyPrint.cc (operator<<): (Term* and DagNode* versions); call
 	makeGrammar() as a HACK to set up gather info
-	
+
 ===================================Engine52==================================================
 
 1999-10-07  Steven Eker  <eker@goo.csl.sri.com>
@@ -13085,7 +16554,7 @@
 
 	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): added decl for
 	~MetaLevelOpSymbol()
-	
+
 ===================================Engine51==================================================
 
 1999-07-21  Steven Eker  <eker@goo.csl.sri.com>
@@ -13170,7 +16639,7 @@
 1999-06-10  Steven Eker  <eker@goo.csl.sri.com>
 
 	* main.cc: added #include <sys/ioctl.h> in LINUX case
-	
+
 ===================================Engine50==================================================
 
 1999-06-09  Steven Eker  <eker@goo.csl.sri.com>
@@ -13198,7 +16667,7 @@
 	print conceal foo .
 	print reveal foo .
 	set print conceal on/off .
-	
+
 ===================================Maude 1.0.3 released=======================================
 
 	* autoWrapBuffer.cc (sync): handle tabs
@@ -13421,7 +16890,7 @@
 
 	* entry.cc (addOpDeclaration): use FreeSymbol::newFreeSymbol() (2
 	places)
-	
+
 ===================================Engine49==================================================
 
 1999-04-30  Steven Eker  <eker@goo.csl.sri.com>
@@ -13539,7 +17008,7 @@
 1999-04-18  Steven Eker  <eker@goo.csl.sri.com>
 
 	* lexerAux.cc (eatComment): try to handle the EOF in comment case
-	
+
 ===================================Engine48==================================================
 ===================================Maude 1.0.2 released=======================================
 
@@ -13547,7 +17016,7 @@
 
 	* prettyPrint.cc (prettyPrint): (Term* and DagNode* versions)
 	fixed bug: ` instead of ' for quoted identifier
-	
+
 ===================================Maude 1.0.1 released=======================================
 
 1999-03-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -13591,8 +17060,8 @@
 	SymbolFlags
 	(class MixfixModule): added data members machineIntegerComponents,
 	quotedIdentifierComponents, overloadedMachineIntegers,
-	overloadedQuotedIdentifiers 
-	
+	overloadedQuotedIdentifiers
+
 	* entry.cc (addOpDeclaration): fill out machineIntegerComponents
 	and quotedIdentifierComponents; set PSEUDO_MACHINE_INTEGER and
 	PSEUDO_QUOTED_IDENTIFIER flags; fill out overloadedMachineIntegers
@@ -13611,7 +17080,7 @@
 	variable
 	(pushd): Actually it's not a compiler bug but a subtle reference
 	bug; added comment in code to this effect
-	
+
 ===================================VectorExperiment==========================================
 
 1999-02-09  Steven Eker  <eker@goo.csl.sri.com>
@@ -13666,7 +17135,7 @@
 1999-01-28  Steven Eker  <eker@goo.csl.sri.com>
 
 	* directoryManager.cc (realPath): added
-	
+
 ===================================Engine47==================================================
 ===================================Maude 1.00 released=======================================
 
@@ -13858,7 +17327,7 @@
 	(match): call UserLevelRewritingContext::beginCommand()
 
 	* modules.y: use UserLevelRewritingContext::beginModule() (2
-	places) 
+	places)
 
 	* fileTable.cc (beginModule): no longer print ====== and module
 	name here
@@ -13884,7 +17353,7 @@
 	* interact.cc (commandLoop): when recovering from a control-C,
 	don't call displayPrompt() since setInteractive() will doe this
 	if needed when called from cleanUpLexer();
-	
+
 ===================================Engine46==================================================
 
 1999-01-11  Steven Eker  <eker@goo.csl.sri.com>
@@ -14090,7 +17559,6 @@
 	* command.cc (showModule): deleted old stub
 
 Fri Dec 18 18:50:43 1998  Steven Eker  <eker@goo.csl.sri.com>
-	
 
 	* preModule.hh (class PreModule): added decl for showModule()
 
@@ -14119,7 +17587,7 @@ Thu Dec 17 15:16:50 1998  Steven Eker  <eker@goo.csl.sri.com>
 
 	* mixfixModule.cc (mayAssoc): put leq() test arround the correct
 	way
-	
+
 ===================================Engine45==================================================
 
 Wed Dec 16 10:26:10 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -14272,7 +17740,7 @@ Fri Dec 11 10:08:33 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* mixfixModule.hh (class MixfixModule): CREATE_SORT_TEST ->
 	MAKE_SORT_TEST in enum Actions
-	(class MixfixModule): deleted decl for 
+	(class MixfixModule): deleted decl for
 
 	* mixfixModule.cc (makeBoolProductions): CREATE_SORT_TEST ->
 	MAKE_SORT_TEST (2 places)
@@ -14295,10 +17763,10 @@ Fri Dec 11 10:08:33 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* entry.cc (addOpDeclaration): changed test for different flags so
 	we ignore overloaded flags
-	
+
 	* import.cc (fixUpDonatedOps): remember to translate sort as well
 	as sort test symbol!
-	
+
 	* mixfixModule.hh (class MixfixModule): added decl for instantiateSortTest()
 
 	* entry.cc (addOpDeclaration): added more detailed error meesage
@@ -14623,7 +18091,7 @@ Tue Dec  1 12:07:34 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	added select non-terminal
 	opNamesList2 -> cOpNameList
 	simpleNameList2 -> cSimpleNameList
-	
+
 ===================================Engine44==================================================
 
 Mon Nov 30 16:52:02 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -14736,7 +18204,7 @@ Mon Nov 23 11:08:39 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* command.cc (reduce): call UserLevelRewritingContext::setDebug()
 	if debug arg true and UserLevelRewritingContext::clearDebug() at
 	the end anyway
-	
+
 	* lexer.flex: added keyword debug
 
 	* top.y: added debug non terminal decl and token KW_DEBUG
@@ -14783,7 +18251,7 @@ Fri Nov 20 11:44:35 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* lexer.flex: use UserLevelRewritingContext::interrupted(), QUIT
 	-> KW_QUIT
-	
+
 	* bottom.y (yyerror): use UserLevelRewritingContext::interrupted()
 
 	* commands.y (command): debugging commands rewritten using
@@ -14916,7 +18384,7 @@ Mon Nov 16 10:39:06 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	(errorRewrite): use RewritingContext::builtInReplace()
 	(errorRewrite2): use RewritingContext::builtInReplace()
 
-	* quotedIdentifierOpSymbol.cc (eqRewrite): traceStatus() -> getTraceStatus() 
+	* quotedIdentifierOpSymbol.cc (eqRewrite): traceStatus() -> getTraceStatus()
 
 	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
 	updated complex ctor decl
@@ -15050,7 +18518,6 @@ Tue Nov 10 11:53:24 1998  Steven Eker  <eker@lilac.csl.sri.com>
 Mon Nov  9 11:40:20 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* modules.y: opNameList2 and simpleOpName2 moved to command.y
-	
 
 	* parser.bison: split into top.y, modules.y, commands.y, bottom.y
 
@@ -15415,7 +18882,7 @@ Mon Sep 21 10:32:40 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* prettyPrint.cc (showSorts): use leq(Sort*, int)
 	(showSorts): use leq(int, Sort*)
 	(showSorts): use leq(Sort*, Sort*) (2 places)
-	
+
 ===================================Engine40==================================================
 
 Thu Aug 27 13:47:16 1998  Steven Eker  <eker@lilac.csl.sri.com>

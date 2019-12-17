@@ -1,19 +1,19 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     'c.Nat]], 'X:Nat, '_*_['Y:Nat,'Z:Nat] := 'X:Nat, '*, 100, 0) .
 rewrites: 2
 result ResultTriple: {'_*_['a.Nat,'_+_['b.Nat,'c.Nat]],'Nat,
-	'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]] ; 
-	'Y:Nat <- '_+_['b.Nat,'c.Nat] ; 
-	'Z:Nat <- 'a.Nat}
+  'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]] ; 
+  'Y:Nat <- '_+_['b.Nat,'c.Nat] ; 
+  'Z:Nat <- 'a.Nat}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     'c.Nat]], 'X:Nat, '_*_['Y:Nat,'Z:Nat] := 'X:Nat, '*, 100, 1) .
 rewrites: 2
 result ResultTriple: {'_*_['a.Nat,'_+_['b.Nat,'c.Nat]],'Nat,
-	'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]] ; 
-	'Y:Nat <- 'a.Nat ; 
-	'Z:Nat <- '_+_['b.Nat,'c.Nat]}
+  'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]] ; 
+  'Y:Nat <- 'a.Nat ; 
+  'Z:Nat <- '_+_['b.Nat,'c.Nat]}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     'c.Nat]], 'X:Nat, '_*_['Y:Nat,'Z:Nat] := 'X:Nat, '*, 100, 2) .
@@ -25,9 +25,9 @@ reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     100, 0) .
 rewrites: 2
 result ResultTriple: {'_*_['a.Nat,'_+_['b.Nat,'c.Nat]],'Nat,
-	'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]] ; 
-	'Y:Nat <- 'a.Nat ; 
-	'Z:Nat <- '_+_['b.Nat,'c.Nat]}
+  'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]] ; 
+  'Y:Nat <- 'a.Nat ; 
+  'Z:Nat <- '_+_['b.Nat,'c.Nat]}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     'c.Nat]], 'X:Nat, '_*_['Y:Nat,'Z:Nat] := 'X:Nat /\ 'Y:Nat = 'a.Nat, '*,
@@ -39,13 +39,13 @@ reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     'c.Nat]], 'X:Nat, nil, '*, 100, 0) .
 rewrites: 2
 result ResultTriple: {'_*_['a.Nat,'_+_['b.Nat,'c.Nat]],'Nat,
-	'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]]}
+  'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]]}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     'c.Nat]], 'X:Nat, nil, '*, 100, 1) .
 rewrites: 3
 result ResultTriple: {'_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat]],'Nat,
-	'X:Nat <- '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat]]}
+  'X:Nat <- '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat]]}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     'c.Nat]], 'X:Nat, nil, '*, 100, 2) .
@@ -61,27 +61,27 @@ reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     'c.Nat]], 'X:Nat, nil, '+, 100, 0) .
 rewrites: 3
 result ResultTriple: {'_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat]],'Nat,
-	'X:Nat <- '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat]]}
+  'X:Nat <- '_+_['_*_['a.Nat,'b.Nat],'_*_['a.Nat,'c.Nat]]}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_*_['a.Nat,'_+_['b.Nat,
     'c.Nat]], 'X:Nat, nil, '+, 100, 1) .
 rewrites: 4
 result ResultTriple: {'_*_['a.Nat,'_+_['b.Nat,'c.Nat]],'Nat,
-	'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]]}
+  'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]]}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_+_['_*_['a.Nat,'b.Nat],
     '_*_['a.Nat,'c.Nat]], '_*_['X:Nat,'Y:Nat], nil, '*, 100, 0) .
 rewrites: 3
 result ResultTriple: {'_*_['a.Nat,'_+_['b.Nat,'c.Nat]],'Nat,
-	'X:Nat <- 'a.Nat ; 
-	'Y:Nat <- '_+_['b.Nat,'c.Nat]}
+  'X:Nat <- 'a.Nat ; 
+  'Y:Nat <- '_+_['b.Nat,'c.Nat]}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_+_['_*_['a.Nat,'b.Nat],
     '_*_['a.Nat,'c.Nat]], '_*_['X:Nat,'Y:Nat], nil, '*, 100, 1) .
 rewrites: 2
 result ResultTriple: {'_*_['a.Nat,'_+_['b.Nat,'c.Nat]],'Nat,
-	'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
-	'Y:Nat <- 'a.Nat}
+  'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
+  'Y:Nat <- 'a.Nat}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_+_['_*_['a.Nat,'b.Nat],
     '_*_['a.Nat,'c.Nat]], '_*_['X:Nat,'Y:Nat], nil, '*, 0, 0) .
@@ -93,16 +93,16 @@ reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_+_['_*_['a.Nat,'b.Nat],
     100, 0) .
 rewrites: 9
 result ResultTriple: {'_*_['a.Nat,'_+_['b.Nat,'c.Nat,'d.Nat]],'Nat,
-	'X:Nat <- 'a.Nat ; 
-	'Y:Nat <- '_+_['b.Nat,'c.Nat,'d.Nat]}
+  'X:Nat <- 'a.Nat ; 
+  'Y:Nat <- '_+_['b.Nat,'c.Nat,'d.Nat]}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_+_['_*_['a.Nat,'b.Nat],
     '_*_['a.Nat,'c.Nat],'_*_['a.Nat,'d.Nat]], '_*_['X:Nat,'Y:Nat], nil, '*,
     100, 1) .
 rewrites: 2
 result ResultTriple: {'_*_['a.Nat,'_+_['b.Nat,'c.Nat,'d.Nat]],'Nat,
-	'X:Nat <- '_+_['b.Nat,'c.Nat,'d.Nat] ; 
-	'Y:Nat <- 'a.Nat}
+  'X:Nat <- '_+_['b.Nat,'c.Nat,'d.Nat] ; 
+  'Y:Nat <- 'a.Nat}
 ==========================================
 reduce in META-LEVEL : metaSearch(['SEARCH-TEST], '_+_['_*_['a.Nat,'b.Nat],
     '_*_['a.Nat,'c.Nat],'_*_['a.Nat,'d.Nat]], '_*_['X:Nat,'Y:Nat], nil, '*, 1,
@@ -150,4 +150,4 @@ result Trace: {'_*_['_+_['a.Int,'b.Int],'_+_['c.Int,'d.Int]],'Int,rl '_*_[
 {'_+_['_*_['a.Int,'c.Int],'_*_['a.Int,'d.Int],'_*_['b.Int,'_+_['c.Int,
     'd.Int]]],'Int,rl '_*_['I:Int,'_+_['J:Int,'K:Int]] => '_+_['_*_['I:Int,
     'J:Int],'_*_['I:Int,'K:Int]] [none] .}
-Maude> Bye.
+Bye.

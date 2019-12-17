@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/parse.maude -no-banner -no-advise \
+  > parse.out 2>&1
+
+diff $srcdir/parse.expected parse.out > /dev/null 2>&1

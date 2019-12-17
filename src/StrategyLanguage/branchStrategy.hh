@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -51,6 +51,9 @@ public:
   StrategyExpression* getFailureStrategy() const;
   Action getSuccessAction() const;
   Action getFailureAction() const;
+
+  bool check(VariableInfo& indices, const TermSet& boundVars);
+  void process();
 
   StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder);
 

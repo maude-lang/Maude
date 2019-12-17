@@ -1,0 +1,126 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Test getNarrowingSearchResult()/getNarrowingSearchResultAndPath() in the meta-interpreter.
+***
+
+load metaInterpreter
+
+mod NARROW is
+  sort Foo .
+  ops f g h : Foo -> Foo .
+  ops i j k : Foo Foo -> Foo .
+
+vars X Y Z W A B C D : Foo .
+  eq j(f(X), Y) = i(f(Y), X) [variant] .
+  rl g(i(X, k(Y, Z))) => f(k(Z, X)) [narrowing] .
+endm
+
+mod NARROW-TEST is
+  pr META-INTERPRETER .
+  sort MsgList .
+  subsort Msg < MsgList .
+  op empty : -> MsgList .
+  op _;_ : MsgList MsgList -> MsgList [assoc id: empty] .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op soln:_ : Nat -> Attribute .
+  op got:_  : MsgList -> Attribute .
+  op start:_ : Term -> Attribute .
+  op goal:_ : Term -> Attribute .
+  op fold:_ : Qid -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  vars N M : Nat .
+  vars S S' : Substitution .
+  var ST T G : Term .
+  var TY : Type .
+  var C : Context .
+  var Q Q' L : Qid .
+  var ML : MsgList .
+  var TL : TermList .
+  var F : Qid .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('NARROW, true)) .
+
+  rl < X : User | AS, start: ST, goal: G, fold: F > insertedModule(X, Y) =>
+     < X : User | AS, soln: 1, start: ST, goal: G, fold: F, got: empty >
+     getNarrowingSearchResult(Y, X, 'NARROW, ST, G, '*, unbounded, F, 0) .
+
+  rl < X : User | AS, soln: N, start: ST, goal: G, fold: F, got: ML >
+     gotNarrowingSearchResult(X, Y, M, T, TY, S, Q, S', Q') =>
+     < X : User | AS, soln: (N + 1),  start: ST, goal: G, fold: F,
+     got: (ML ; gotNarrowingSearchResult(X, Y, M, T, TY, S, Q, S', Q')) >
+     getNarrowingSearchResult(Y, X, 'NARROW, ST, G, '*, unbounded, F, N) .
+endm
+
+set show breakdown on .
+
+erew in NARROW-TEST : <> 
+< me : User | start: ('g['j['A:Foo, 'B:Foo]]),
+goal: 'C:Foo,
+fold: 'none >
+createInterpreter(interpreterManager, me, none) .
+
+erew in NARROW-TEST : <> 
+< me : User | start: ('g['j['A:Foo, 'B:Foo]]),
+goal: 'C:Foo,
+fold: 'match >
+createInterpreter(interpreterManager, me, none) .
+
+mod NARROW-TEST is
+  pr META-INTERPRETER .
+  sort MsgList .
+  subsort Msg < MsgList .
+  op empty : -> MsgList .
+  op _;_ : MsgList MsgList -> MsgList [assoc id: empty] .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op soln:_ : Nat -> Attribute .
+  op got:_  : MsgList -> Attribute .
+  op start:_ : Term -> Attribute .
+  op goal:_ : Term -> Attribute .
+  op fold:_ : Qid -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  vars N M : Nat .
+  vars S S' : Substitution .
+  var ST T G : Term .
+  var TY : Type .
+  var C : Context .
+  var Q Q' L : Qid .
+  var ML : MsgList .
+  var TL : TermList .
+  var F : Qid .
+  var TR : NarrowingTrace .
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('NARROW, true)) .
+
+  rl < X : User | AS, start: ST, goal: G, fold: F > insertedModule(X, Y) =>
+     < X : User | AS, soln: 1, start: ST, goal: G, fold: F, got: empty >
+     getNarrowingSearchResultAndPath(Y, X, 'NARROW, ST, G, '*, unbounded, F, 0) .
+
+  rl < X : User | AS, soln: N, start: ST, goal: G, fold: F, got: ML >
+     gotNarrowingSearchResultAndPath(X, Y, M, T, TY, S, TR, S', Q') =>
+     < X : User | AS, soln: (N + 1),  start: ST, goal: G, fold: F,
+     got: (ML ; gotNarrowingSearchResultAndPath(X, Y, M, T, TY, S, TR, S', Q')) >
+     getNarrowingSearchResultAndPath(Y, X, 'NARROW, ST, G, '*, unbounded, F, N) .
+endm
+
+erew in NARROW-TEST : <> 
+< me : User | start: ('g['j['A:Foo, 'B:Foo]]),
+goal: 'C:Foo,
+fold: 'none >
+createInterpreter(interpreterManager, me, none) .
+
+erew in NARROW-TEST : <> 
+< me : User | start: ('g['j['A:Foo, 'B:Foo]]),
+goal: 'C:Foo,
+fold: 'match >
+createInterpreter(interpreterManager, me, none) .

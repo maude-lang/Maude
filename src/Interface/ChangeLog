@@ -1,3 +1,102 @@
+2019-11-11  Steven Eker  <eker@mu>
+
+	* dagNode.cc (computeSolvedForm2): slightly more detailed CantHappen()
+	(computeBaseSortForGroundSubterms): no early termination in UNIMPLEMENTED
+	case
+
+	* dagNode.hh (D): updated decl for computeBaseSortForGroundSubterms()
+
+	* dagNode.cc (computeBaseSortForGroundSubterms): take warnAboutUnimplemented
+	flag
+
+===================================Maude125==========================================
+
+2019-07-01  Steven Eker  <eker@mu>
+
+	* dagNode.hh: rewritten using new MemoryCell definition
+
+===================================Maude123==========================================
+
+2019-04-18  Steven Eker  <eker@mu.csl.sri.com>
+
+	* term.cc (instantiate2): use instantiate() rather than instantiate2()
+	in recursive call
+
+===================================Maude121==========================================
+
+2018-11-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* term.hh (LineNumber): added decl for term2DagEagerLazyAware()
+
+	* term.cc (term2DagEagerLazyAware): added
+
+===================================Maude120==========================================
+
+2018-10-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* symbol.hh (MemoTable): added decl for stackPhysicalArguments()
+
+	* symbol.cc (stackPhysicalArguments): added
+
+===================================Maude119==========================================
+
+2017-10-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* associativeSymbol.hh (BinarySymbol): added decl for
+	isConstructor()
+
+	* associativeSymbol.cc (associativeCtorCheck): pull code into
+	outer loops
+	(associativeCtorCheck): invert first step; summarize conflicts
+	(isConstructor): implemented - we need this after all
+
+2017-10-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* associativeSymbol.cc (isConstructor): deleted
+
+	* associativeSymbol.hh (BinarySymbol): added associativeCtorCheck()
+	(BinarySymbol): deleted decl for isConstructor()
+
+	* associativeSymbol.cc (associativeCtorCheck): added
+	(finalizeSortInfo): call associativeCtorCheck()
+
+===================================Maude116==========================================
+
+2017-04-14  Steven Eker  <eker@install.csl.sri.com>
+
+	* associativeSymbol.hh (BinarySymbol): added a comment explaining the
+	intuitions behind LIMIT_SORT and PURE_SORT.
+
+===================================Maude112a===========================================
+
+2017-02-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* dagNode.hh (D): updated decl for instantiateWithReplacement()
+
+2017-02-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* dagNode.hh (D): deleted virtual function stackArguments()
+
+	* symbol.cc (stackArguments): added
+	(termify): deleted commented out function
+
+	* symbol.hh (MemoTable): added respectFrozen and eagerContext flags to
+	stackArguments()
+
+===================================Maude111b===========================================
+
+2017-02-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* dagNode.hh (indexVariables): don't trust ground flag because reduction
+	may have gone on below.
+
+2016-11-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* dagNode.hh (D): added decl for copyAll2()
+	(copyAll): added
+
+===================================Maude111===========================================
+
 2016-03-25  Steven Eker  <eker@install.csl.sri.com>
 
 	* dagNode.cc (computeGeneralizedSort2): use theory specific

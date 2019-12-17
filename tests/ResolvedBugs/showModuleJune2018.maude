@@ -1,0 +1,60 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that showModule message returns imports of non-flattened modules.
+***
+
+load metaInterpreter
+
+mod TEST is
+  pr META-INTERPRETER .
+
+  op FOO : -> Module .
+  eq FOO = (
+    fmod 'FOO is
+      nil
+      sorts 'Foo .
+      none
+      op 'a : nil -> 'Foo [none] .
+      op 'b : nil -> 'Foo [none] .
+      none
+      eq 'a.Foo = 'b.Foo [none] .
+    endfm ).
+
+  op BAR : -> Module .
+  eq BAR = (
+    fmod 'BAR is
+      including 'FOO .
+      sorts none .
+      none
+      none
+      none
+      none
+    endfm ).
+
+  op me : -> Oid .
+  op User : -> Cid .
+
+  var X Y Z : Oid .
+  var N : Nat .
+  var T : Term .
+  var S : Sort .
+
+  sort State .
+  ops 1 2 3 4 : -> State [ctor] .
+  op state:_ : State -> Attribute [ctor] .
+
+  rl < X : User | state: 1 > createdInterpreter(X, Y, Z) => < X : User | state: 2 >
+       insertModule(Z, X, FOO) .
+
+  rl < X : User | state: 2 > insertedModule(X, Y) => < X : User | state: 3 >
+       insertModule(Y, X, BAR) .
+
+  rl < X : User | state: 3 > insertedModule(X, Y) => < X : User | state: 4 > 
+       showModule(Y, X, 'BAR, false) .
+endm
+
+erew  <> 
+< me : User | state: 1 > 
+createInterpreter(interpreterManager, me, none) .

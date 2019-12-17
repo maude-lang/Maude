@@ -1,8 +1,8 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2019 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -90,29 +90,59 @@ ConfigSymbol::addMessages(NatSet& msgSymbols)
 bool
 ConfigSymbol::checkArgs(Term* pattern, Term*& object, Term*& message)
 {
+  //
+  //	Make sure pattern actually has our symbol on top and didn't
+  //	just get indexed under our symbol by collapse or being a variable.
+  //
   if (pattern->symbol() != this)
     return false;
+  //
+  //	We're checking for an object-message pattern.
+  //	We can't have fewer than two arguments, though they could be identical.
+  //
   object = 0;
   message = 0;
   Term* name = 0;
   for (ArgumentIterator a(*pattern); a.valid(); a.next())
     {
+      //
+      //	Get argument; get its symbol and check whether symbol was declared
+      //	to be an object or message constructor.
+      //
       Term* arg = a.argument();
       int si = arg->symbol()->getIndexWithinModule();
       if (objectSymbols.contains(si))
 	{
+	  //
+	  //	If we've already found an object, or the argument is unstable
+	  //	we don't have an object-message pattern.
+	  //
 	  if (object != 0 || !(arg->stable()))
 	    return false;
 	  object = arg;
 	}
       else if (messageSymbols.contains(si))
 	{
+	  //
+	  //	If we've already found a message or the argument is unstable
+	  //	we don't ahve an object-message pattern.
+	  //
 	  if (message != 0 || !(arg->stable()))
 	    return false;
 	  message = arg;
 	}
       else
-	return false;
+	{
+	  //
+	  //	Something that isn't an object or message constructor; hence
+	  //	we don't have an object message pattern.
+	  //
+	  return false;
+	}
+      //
+      //	Argument is an object or message constructor; check that it
+      //	has a valid first argument which must be the name expression.
+      //
       ArgumentIterator n(*arg);
       if (!(n.valid()))
 	return false;
@@ -120,10 +150,19 @@ ConfigSymbol::checkArgs(Term* pattern, Term*& object, Term*& message)
 	name = n.argument();
       else
 	{
+	  //
+	  //	Object and message constructors have different name expressions;
+	  //	hence we don't have an object-message pattern.
+	  //
 	  if (!(name->equal(n.argument())))
 	    return false;
 	}
     }
+  //
+  //	If we processed two arguments without returning false, we must
+  //	have filled out a compatible object-message pair, though static
+  //	analyzer can't know this.
+  //
   Assert(object != 0 && message != 0, "object-message check error");
   return true;
 }
@@ -131,8 +170,14 @@ ConfigSymbol::checkArgs(Term* pattern, Term*& object, Term*& message)
 void
 ConfigSymbol::compileRules()
 {
+  //
+  //	Call the member function in our base class to do the work.
+  //
   ACU_Symbol::compileRules();
-
+  //
+  //	We're actually interested in identifying object-message rules that
+  //	will get special object-message rewriting operational semantics.
+  //
   const Vector<Rule*>& rules = getRules();
   int nrRules = rules.length();
   for (int i = 0; i < nrRules; i++)
@@ -151,6 +196,10 @@ ConfigSymbol::compileRules()
 	    leftOver.rules.append(rl);
 	}
     }
+  //
+  //	Just in case resetRules() is not called before first rewriting happens.
+  //
+  resetRules();
 }
 
 void
@@ -169,14 +218,14 @@ ConfigSymbol::resetRules()
 DagNode*
 ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 {
-  //cerr << "ruleRewrite() " << subject << endl;
-  ObjectSystemRewritingContext* rc = safeCast(ObjectSystemRewritingContext*, &context);
+  DebugAdvisory("ConfigSymbol::ruleRewrite() " << subject);
+  ObjectSystemRewritingContext* rc = safeCastNonNull<ObjectSystemRewritingContext*>(&context);
   ObjectSystemRewritingContext::Mode mode = rc->getObjectMode();
   if (mode == ObjectSystemRewritingContext::STANDARD)
     return ACU_Symbol::ruleRewrite(subject, context);
   bool external = (mode == ObjectSystemRewritingContext::EXTERNAL);
 
-  ACU_DagNode* s = safeCast(ACU_DagNode*, subject);
+  ACU_DagNode* s = safeCastNonNull<ACU_DagNode*>(subject);
   int nrArgs = s->nrArgs();
   ObjectMap objectMap;
   Remainder remainder;
@@ -227,8 +276,15 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
   //objectMap.dump(cerr);
   //remainder.dump(cerr);
 
+
   if (objectMap.empty())
-    return ACU_Symbol::ruleRewrite(subject, context);
+    {
+      //
+      //	No objects or messages in the configuration so
+      //	do a plain ACU rewrite.
+      //
+      return ACU_Symbol::ruleRewrite(subject, context);
+    }
 
   Vector<DagNode*> dagNodes(2);
   Vector<int> multiplicities(2);
@@ -237,6 +293,10 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
   for (ObjectMap::iterator i = objectMap.begin(); i != e; ++i)
     {
       list<DagNode*>& messages = i->second.messages;
+      //
+      //	If we're doing erewriting, check for external messages
+      //	aimed at our object.
+      //
       if (external && rc->getExternalMessages(i->first, messages))
 	delivered = true;  // make sure we do a rewrite
 
@@ -263,6 +323,8 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 		      delivered = true;
 		      //cerr << "delivered " << *j << endl;
 		      t = context.makeSubcontext(r);
+		      if (RewritingContext::getTraceStatus())
+			t->tracePostRuleRewrite(r);
 		      t->reduce();
 		      i->second.object =
 			retrieveObject(t->root(), i->first, remainder);
@@ -279,8 +341,7 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 	    }
 	  else
 	    {
-	      //cerr << "unresolved message " << *j << endl;
-	      //  cerr << "external = " << external << endl;
+	      DebugAdvisory("unresolved message " << *j <<  "  external = " << external);
 	      if (external && rc->offerMessageExternally(i->first, *j))
 		{
 		  delivered = true;  // make sure we do a rewrite
@@ -309,15 +370,30 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
     {
       if (leftOver.rules.empty())
 	return 0;
-      ACU_ExtensionInfo extensionInfo(safeCast(ACU_DagNode*, subject));
+      ACU_ExtensionInfo extensionInfo(safeCastNonNull<ACU_DagNode*>(subject));
       return leftOverRewrite(subject, context, &extensionInfo);
     }
   //
   //	Now deal with remainder.
   //
+  //	Because we will be returning a new state, if we are tracing,
+  //	caller will do the post part of the trace so we need
+  //	to do the pre part of a trace, by doing non-object message
+  //	rewrite on the remainder if possible or faking a built-in
+  //	rewrite otherwise.
+  //
   if (remainder.multiplicities.length() == 1 &&
       remainder.multiplicities[0] == 1)
-    return remainder.dagNodes[0];
+    {
+      //
+      //	No left over rewrite, so if we're tracing we
+      //	need to warn the trace system to ignore a fake rewrite.
+      //
+      if (RewritingContext::getTraceStatus())
+	context.tracePreRuleRewrite(0, 0);
+      return remainder.dagNodes[0];
+    }
+
   DagNode* r = makeDagNode(remainder.dagNodes, remainder.multiplicities);
   //cerr << "remainder = " << r << endl;
   RewritingContext* t = context.makeSubcontext(r);
@@ -325,15 +401,28 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
   r = t->root();
   if (r->symbol() == this && !(leftOver.rules.empty()))
     {
-      ACU_ExtensionInfo extensionInfo(safeCast(ACU_DagNode*, r));
+      ACU_ExtensionInfo extensionInfo(safeCastNonNull<ACU_DagNode*>(r));
       DagNode* d = leftOverRewrite(r, context, &extensionInfo);
       if (d == 0)
 	{
+	  //
+	  //	No left over rewrite, so if we're tracing we
+	  //	need to warn the trace system to ignore a fake rewrite.
+	  //
 	  if (RewritingContext::getTraceStatus())
-	    context.tracePreRuleRewrite(subject, 0);  // HACK
+	    context.tracePreRuleRewrite(0, 0);
 	}
       else
 	r = d;
+    }
+  else
+    {
+      //
+      //	No left over rewrite, so if we're tracing we
+      //	need to warn the trace system to ignore a fake rewrite.
+      //
+      if (RewritingContext::getTraceStatus())
+	context.tracePreRuleRewrite(0, 0);
     }
   context.addInCount(*t);
   delete t;
@@ -372,8 +461,6 @@ ConfigSymbol::objMsgRewrite(Symbol* messageSymbol,
 		    }
 		}
 	      DagNode* r =  rl->getRhsBuilder().construct(context);
-	      if (RewritingContext::getTraceStatus())
-		context.tracePostRuleRewrite(r);
 	      context.incrementRlCount();
 	      delete sp;
 	      context.finished();
@@ -440,7 +527,7 @@ ConfigSymbol::retrieveObject(DagNode* rhs, DagNode* name, Remainder& remainder)
   Symbol* s = rhs->symbol();
   if (s == this)
     {
-      ACU_DagNode* r = safeCast(ACU_DagNode*, rhs);
+      ACU_DagNode* r = safeCastNonNull<ACU_DagNode*>(rhs);
       int nrArgs = r->nrArgs();
       for (int i = 0; i < nrArgs; ++i)
 	{

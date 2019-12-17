@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -32,18 +32,13 @@
 #include "binBuf.hh"
 #include "flagSet.hh"
 
-#if defined(__GNUC__) && __GNUC__ < 3
-//
-//	Some old versions of g++ on some platforms (2.95.3 on AIX for example)
-//	need to have crope explicitly instantiated to avoid link errors.
-//
-#include "ropeStuff.hh"
-template class rope<char>;
-#endif
-
-
 bool globalAdvisoryFlag = true;
 bool globalVerboseFlag = false;
+//
+//	We use this to dump return values that the compiler
+//	thinks should not be discarded and would otherwise warn about.
+//
+int returnValueDump;
 
 const char*
 int64ToString(Int64 i, int base)
@@ -178,15 +173,13 @@ looksLikeFloat(const char* s)
 const char*
 doubleToString(double d)
 {
-  if (!finite(d))
-    {
-      if (isnan(d))
-	return "NaN";
-      else
-	return (d < 0) ? "-Infinity" : "Infinity";
-    }
+  if (isnan(d))
+    return "NaN";
+  if (isinf(d))
+    return (d < 0) ? "-Infinity" : "Infinity";
   if (d == 0.0)
     return "0.0";
+
   static char buffer[DOUBLE_TEXT_SIZE + 1] = "-";
   int decPt;
   int sign;

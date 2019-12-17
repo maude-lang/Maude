@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -125,22 +125,6 @@ ACU_TreeDagNode::copyWithReplacement(Vector<RedexPosition>& redexStack,
   return treeToArgVec(this)->copyWithReplacement(redexStack, first, last);
 }
 
-void
-ACU_TreeDagNode::stackArguments(Vector<RedexPosition>& stack,
-				int parentIndex,
-				bool respectFrozen)
-{
-  if (respectFrozen && !(symbol()->getFrozen().empty()))
-    return;
-  int j = 0;
-  for (ACU_FastIter i(tree); i.valid(); i.next(), ++j)
-    {
-      DagNode* d = i.getDagNode();
-      if (!(d->isUnstackable()))
-	stack.append(RedexPosition(d, parentIndex, j));
-    }
-}
-
 bool
 ACU_TreeDagNode::matchVariableWithExtension(int index,
 				const Sort* sort,
@@ -191,6 +175,15 @@ ACU_TreeDagNode::copyEagerUptoReduced2()
   return (s->getPermuteStrategy() == BinarySymbol::EAGER) ?
     treeToArgVec(this)->copyEagerUptoReduced2() :
     new ACU_TreeDagNode(s, tree);
+}
+
+DagNode*
+ACU_TreeDagNode::copyAll2()
+{
+  //
+  //	Don't try to do this copy on tree form.
+  //
+  return treeToArgVec(this)->copyAll2();
 }
 
 void

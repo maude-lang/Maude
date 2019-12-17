@@ -1,19 +1,19 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
     'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, 2, 0) .
 rewrites: 2
 result MatchPair: {
-	'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
-	'Y:Nat <- 'c.Nat ; 
-	'Z:Nat <- 'b.Nat,'_*_['a.Nat,[]]}
+  'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
+  'Y:Nat <- 'c.Nat ; 
+  'Z:Nat <- 'b.Nat,'_*_['a.Nat,[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
     'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, 2, 1) .
 rewrites: 2
 result MatchPair: {
-	'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
-	'Y:Nat <- 'b.Nat ; 
-	'Z:Nat <- 'c.Nat,'_*_['a.Nat,[]]}
+  'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
+  'Y:Nat <- 'b.Nat ; 
+  'Z:Nat <- 'c.Nat,'_*_['a.Nat,[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
     'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, 2, 2) .
@@ -24,17 +24,17 @@ reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
     'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, unbounded, 0) .
 rewrites: 2
 result MatchPair: {
-	'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
-	'Y:Nat <- 'c.Nat ; 
-	'Z:Nat <- 'b.Nat,'_*_['a.Nat,[]]}
+  'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
+  'Y:Nat <- 'c.Nat ; 
+  'Z:Nat <- 'b.Nat,'_*_['a.Nat,[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
     'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, unbounded, 1) .
 rewrites: 2
 result MatchPair: {
-	'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
-	'Y:Nat <- 'b.Nat ; 
-	'Z:Nat <- 'c.Nat,'_*_['a.Nat,[]]}
+  'X:Nat <- '_+_['b.Nat,'c.Nat] ; 
+  'Y:Nat <- 'b.Nat ; 
+  'Z:Nat <- 'c.Nat,'_*_['a.Nat,[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
     'b.Nat,'c.Nat]], '_+_['Y:Nat,'Z:Nat] := 'X:Nat, 1, unbounded, 2) .
@@ -56,9 +56,9 @@ endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
     nil, 0, 100, 0) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'b.Foo ; 
-	'Z:Foo <- 'f['c.Foo,'c.Foo],[]}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo ; 
+  'Z:Foo <- 'f['c.Foo,'c.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -75,9 +75,9 @@ endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
     nil, 0, unbounded, 0) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'b.Foo ; 
-	'Z:Foo <- 'f['c.Foo,'c.Foo],[]}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo ; 
+  'Z:Foo <- 'f['c.Foo,'c.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -94,9 +94,9 @@ endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
     nil, 0, unbounded, 1) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'a.Foo ; 
-	'Z:Foo <- 'f['c.Foo,'c.Foo],[]}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'a.Foo ; 
+  'Z:Foo <- 'f['c.Foo,'c.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -113,9 +113,9 @@ endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
     nil, 0, unbounded, 2) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'c.Foo ; 
-	'Y:Foo <- 'c.Foo ; 
-	'Z:Foo <- 'f['a.Foo,'b.Foo],[]}
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'c.Foo ; 
+  'Z:Foo <- 'f['a.Foo,'b.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -148,8 +148,8 @@ endfm, 'f['X:Foo,'Y:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]], nil, 0, 100,
     0) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'b.Foo,'g['f['c.Foo,'c.Foo],[]]}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'b.Foo,'g['f['c.Foo,'c.Foo],[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -166,8 +166,8 @@ endfm, 'f['X:Foo,'Y:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]], nil, 0, 100,
     1) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'a.Foo,'g['f['c.Foo,'c.Foo],[]]}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'a.Foo,'g['f['c.Foo,'c.Foo],[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -184,8 +184,8 @@ endfm, 'f['X:Foo,'Y:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]], nil, 0, 100,
     2) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'c.Foo ; 
-	'Y:Foo <- 'c.Foo,'g['f['a.Foo,'b.Foo],[]]}
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'c.Foo,'g['f['a.Foo,'b.Foo],[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -216,8 +216,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 0) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'f['b.Foo,'c.Foo,'c.Foo],[]}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'f['b.Foo,'c.Foo,'c.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -232,8 +232,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 1) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'f['a.Foo,'c.Foo,'c.Foo],[]}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'f['a.Foo,'c.Foo,'c.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -248,8 +248,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 2) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'c.Foo ; 
-	'Y:Foo <- 'f['a.Foo,'b.Foo,'c.Foo],[]}
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'f['a.Foo,'b.Foo,'c.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -264,8 +264,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 3) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'f['a.Foo,'b.Foo] ; 
-	'Y:Foo <- 'f['c.Foo,'c.Foo],[]}
+  'X:Foo <- 'f['a.Foo,'b.Foo] ; 
+  'Y:Foo <- 'f['c.Foo,'c.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -280,8 +280,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 4) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'f['a.Foo,'c.Foo] ; 
-	'Y:Foo <- 'f['b.Foo,'c.Foo],[]}
+  'X:Foo <- 'f['a.Foo,'c.Foo] ; 
+  'Y:Foo <- 'f['b.Foo,'c.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -296,8 +296,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 5) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'f['b.Foo,'c.Foo] ; 
-	'Y:Foo <- 'f['a.Foo,'c.Foo],[]}
+  'X:Foo <- 'f['b.Foo,'c.Foo] ; 
+  'Y:Foo <- 'f['a.Foo,'c.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -312,8 +312,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 4) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'f['a.Foo,'c.Foo] ; 
-	'Y:Foo <- 'f['b.Foo,'c.Foo],[]}
+  'X:Foo <- 'f['a.Foo,'c.Foo] ; 
+  'Y:Foo <- 'f['b.Foo,'c.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -328,8 +328,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 6) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'f['c.Foo,'c.Foo] ; 
-	'Y:Foo <- 'f['a.Foo,'b.Foo],[]}
+  'X:Foo <- 'f['c.Foo,'c.Foo] ; 
+  'Y:Foo <- 'f['a.Foo,'b.Foo],[]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -344,9 +344,9 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 7) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'f['a.Foo,'b.Foo,'c.Foo] ; 
-	'Y:Foo <- 'c.Foo,[]}
-Maude> ==========================================
+  'X:Foo <- 'f['a.Foo,'b.Foo,'c.Foo] ; 
+  'Y:Foo <- 'c.Foo,[]}
+==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
   sorts 'Bar ; 'Foo .
@@ -360,8 +360,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 10) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'f['c.Foo,'c.Foo],'f['a.Foo,[]]}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'f['c.Foo,'c.Foo],'f['a.Foo,[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -376,8 +376,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 14) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'a.Foo ; 
-	'Y:Foo <- 'f['c.Foo,'c.Foo],'f['b.Foo,[]]}
+  'X:Foo <- 'a.Foo ; 
+  'Y:Foo <- 'f['c.Foo,'c.Foo],'f['b.Foo,[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -392,8 +392,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 17) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'f['c.Foo,'c.Foo] ; 
-	'Y:Foo <- 'a.Foo,'f['b.Foo,[]]}
+  'X:Foo <- 'f['c.Foo,'c.Foo] ; 
+  'Y:Foo <- 'a.Foo,'f['b.Foo,[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -408,8 +408,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 20) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'c.Foo ; 
-	'Y:Foo <- 'f['a.Foo,'b.Foo],'f['c.Foo,[]]}
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'f['a.Foo,'b.Foo],'f['c.Foo,[]]}
 ==========================================
 reduce in META-LEVEL : metaXmatch(fmod 'FOO is
   protecting 'BOOL .
@@ -438,8 +438,8 @@ reduce in META-LEVEL : metaXmatch(fmod 'FOO is
 endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo,'c.Foo,'c.Foo], nil, 0, 100, 30) .
 rewrites: 1
 result MatchPair: {
-	'X:Foo <- 'b.Foo ; 
-	'Y:Foo <- 'a.Foo,'f['f['c.Foo,'c.Foo],[]]}
+  'X:Foo <- 'b.Foo ; 
+  'Y:Foo <- 'a.Foo,'f['f['c.Foo,'c.Foo],[]]}
 ==========================================
 xmatch in FOO : f(X:Foo, Y:Foo) <=? f(a, b, c, c) .
 
@@ -597,4 +597,4 @@ Solution 31
 Matched portion = f(a, b)
 X:Foo --> b
 Y:Foo --> a
-Maude> Bye.
+Bye.

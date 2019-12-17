@@ -23,19 +23,21 @@ fmod TEST is
   inc META-LEVEL .
 endfm
 
-red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 0, 0) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, '#, 0) .
 
-red metaGetVariant(upModule('XOR, false), upTerm(X:XOR + cst1), empty, 0, 0) .
+red metaGetVariant(upModule('XOR, false), upTerm(X:XOR + cst1), empty, '#, 0) .
 
-red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 10, 0) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, '@, 0) .
 
-red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 0, 1) .
-red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 0, 2) .
-red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 0, 3) .
-red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, 0, 4) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, '#, 1) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, '#, 2) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, '#, 3) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst1), empty, '#, 4) .
 
-red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), 0, 0) .
-red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), 0, 1) .
-red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), 0, 2) .
-red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), 0, 3) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), '#, 0) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), '#, 1) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), '#, 2) .
+red metaGetVariant(['XOR], upTerm(X:XOR + cst2), upTerm(X:XOR + a), '#, 3) .
 
+*** illegal variable name
+red metaGetVariant(['XOR], upTerm(%1:XOR + cst1), empty, '#, 0) .

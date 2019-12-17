@@ -1,0 +1,171 @@
+set show timing off .
+set show advisories off .
+
+mod DATA is
+  protecting SET{Qid} .
+
+  sort Pair .
+
+  op <_|_> : Set{Qid} Set{Qid} -> Pair [ctor] .
+
+  vars Q Q1 Q2 : Qid .
+
+  rl [concat] : Q1, Q2 => qid(string(Q1) + string(Q2)) .
+  rl [rh] : Q => qid("h" + string(Q)) .
+
+  rl [rm] : Q => empty .
+endm
+
+
+smod STRATEGIES is
+  protecting DATA .
+
+  var Q      : Qid .
+  var S S1 S2   : Set{Qid} .
+
+  strat filter : Set{Qid} @ Set{Qid} .
+
+  sd filter(S1) := match empty .
+  sd filter(S1) := try(matchrew Q, S s.t. Q in S1 by Q using rm[Q <- Q], S using filter(S1)) .
+endsm
+
+srew < 'a, 'b | 'c, 'd, 'e > using matchrew < S1 | S2 > by S1 using rh , S2 using concat ! .
+srew < 'a, 'b | 'a, 'd > using matchrew < S1 | S2 > by S1 using one(concat) , S2 using filter(S1) .
+
+srew [2] < 'a | 'c > using matchrew < S1 | S2 > by S1 using rh * , S2 using rh * .
+continue 1 .
+
+***
+*** Testing all the combinators
+***
+
+fmod 15PUZZLE-BOARD is
+  protecting NAT .
+
+  sorts Tile Row Puzzle .
+  subsorts Nat < Tile < Row < Puzzle .
+
+  op b : -> Tile [ctor] .
+  op nil : -> Row [ctor] .
+  op __  : Row Row -> Row [ctor assoc id: nil prec 25] .
+  op _;_ : Puzzle Puzzle -> Puzzle [ctor assoc] .
+
+  var T : Tile .
+  var R : Row .
+
+  op size : Row -> Nat .
+  eq size(nil) = 0 .
+  eq size(T R) = size(R) + 1 .
+endfm
+
+mod 15PUZZLE is
+  protecting 15PUZZLE-BOARD .
+  var T : Tile .
+  vars LU RU LD RD : Row .
+  var P : Puzzle .
+   rl [left]  : T b => b T .
+   rl [right] : b T => T b .
+  crl [down]  : (LU b RU) ; (LD T RD)
+             => (LU T RU) ; (LD b RD) if size(LU) = size(LD) .
+  crl [up]    : (LU T RU) ; (LD b RD)
+             => (LU b RU) ; (LD T RD) if size(LU) = size(LD) .
+endm
+
+srewrite 1 b 2 using idle .
+srewrite 1 b 2 using fail .
+srewrite 1 b 2 ; 3 b 4 using right .
+srewrite 1 b 2 ; 3 b 4 using left[T <- 1] .
+
+mod 15PUZZLE-LOG is
+  protecting 15PUZZLE .
+  protecting LIST{Qid} .
+  sort PuzzleLog .
+  op <_|_> : List{Qid} Puzzle -> PuzzleLog [ctor] .
+  var M : Qid .
+  var L : List{Qid} .
+  vars P P' : Puzzle .
+  crl [move] : < L | P > => < L M | P' > if P => P' [nonexec] .
+endm
+
+srewrite < nil | 1 b 2 > using move[M <- 'left]{left} .
+srewrite < nil | 1 b 2 > using all .
+srewrite 1 b 2 using xmatch b N:Nat s.t. N:Nat =/= 1 .
+srewrite 1 2 ; 3 b using left ; up | up ; left .
+srewrite 1 b 2 3 using right * .
+srewrite 1 b 2 3 4 using right * ; (right ? fail : idle) .
+srewrite 1 b 2 ; 3 b 4 using matchrew RU:Row ; RD:Row by RU:Row using left, RD:Row using right .
+srewrite 1 b 2 3 using one(right +) .
+srew [2] b 1 2 ; b 3 using right + .
+dsrew [2] b 1 2 ; b 3 using right + .
+srew 1 b using (left | right) * .
+
+smod 15PUZZLE-STRATS is
+  protecting 15PUZZLE .
+  protecting INT .
+  strat loop           @ Puzzle .
+  strat move : Int Int @ Puzzle .
+  var N : Nat .
+  var M : Int .
+  sd loop := left ; up ; right ; down .
+  sd move(0, 0)      := idle .
+  sd move(s(N), M)   := right ; move(N, M) .
+  sd move(- s(N), M) := left  ; move(- N, M) .
+  sd move(0, s(N))   := down  ; move(0, N) .
+  sd move(0, - s(N)) := up    ; move(0, - N) .
+endsm
+
+srewrite 1 2 3 ; 4 5 6 ; 7 b 8 using move(1, -2) .
+
+***
+*** Testing more complex strategy definitions
+***
+
+mod SWAPPING{X :: DEFAULT} is
+  protecting ARRAY{Nat, X} .
+  vars I J : Nat .
+  vars V W : X$Elt .
+  var AR : Array{Nat, X} .
+  rl [swap] : J |-> V ; I |-> W => J |-> W ; I |-> V .
+
+  op maxIndex : Array{Nat, X} ~> Nat .
+  eq maxIndex(empty) = 0 .
+  eq maxIndex(I |-> V ; AR) = if maxIndex(AR) < I then I else maxIndex(AR) fi .
+endm
+
+view DEFAULT+ from DEFAULT to STRICT-TOTAL-ORDER + DEFAULT is
+endv
+
+smod INSERTION-SORT{X :: STRICT-TOTAL-ORDER + DEFAULT} is
+  protecting SWAPPING{DEFAULT+}{X} * (
+    sort Array{Nat, DEFAULT+}{X} to NatArray{X}
+  ) .
+
+  strat  swap : Nat Nat @ NatArray{X} .
+  strats insert insort : Nat @ NatArray{X} .
+
+  vars X Y J I : Nat .
+  vars V W : X$Elt .
+  var AR : NatArray{X} .
+
+  sd insort(Y) := try(match AR s.t. Y <= maxIndex(AR) ;
+                      insert(Y) ;
+                      insort(Y + 1)) .
+
+  sd insert(1) := idle [label base-case] .
+ csd insert(s(X)) := try(xmatch X |-> V ; s(X) |-> W s.t. W < V ;
+                         swap(X, s(X)) ;
+                         insert(X))
+                      if X > 0 [label recursive-case] .
+
+  sd swap(X, Y) := swap[J <- X, I <- Y] .
+endsm
+
+view Int<0 from STRICT-TOTAL-ORDER + DEFAULT to INT is
+  sort Elt to Int .
+endv
+
+smod INSERTION-SORT-INT is
+  protecting INSERTION-SORT{Int<0} .
+endsm
+
+srewrite 1 |-> 8 ; 2 |-> 3 ; 3 |-> 15 ; 4 |-> 5 ; 5 |-> 2 using insort(2) .

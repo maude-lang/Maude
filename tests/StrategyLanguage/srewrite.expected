@@ -1,0 +1,258 @@
+==========================================
+srewrite in STRATEGIES : < 'a, 'b | 'c, 'd, 'e > using matchrew < S1 | S2 > by
+    S1 using rh, S2 using concat ! .
+
+Solution 1
+rewrites: 93
+result Pair: < 'b, 'ha | 'cde >
+
+Solution 2
+rewrites: 98
+result Pair: < 'a, 'hb | 'cde >
+
+Solution 3
+rewrites: 98
+result Pair: < 'b, 'ha | 'ecd >
+
+Solution 4
+rewrites: 98
+result Pair: < 'b, 'ha | 'ced >
+
+Solution 5
+rewrites: 98
+result Pair: < 'a, 'hb | 'ecd >
+
+Solution 6
+rewrites: 98
+result Pair: < 'a, 'hb | 'ced >
+
+Solution 7
+rewrites: 98
+result Pair: < 'b, 'ha | 'dce >
+
+Solution 8
+rewrites: 98
+result Pair: < 'a, 'hb | 'dce >
+
+Solution 9
+rewrites: 98
+result Pair: < 'b, 'ha | 'edc >
+
+Solution 10
+rewrites: 98
+result Pair: < 'a, 'hb | 'edc >
+
+Solution 11
+rewrites: 98
+result Pair: < 'b, 'ha | 'dec >
+
+Solution 12
+rewrites: 98
+result Pair: < 'a, 'hb | 'dec >
+
+No more solutions.
+rewrites: 98
+==========================================
+srewrite in STRATEGIES : < 'a, 'b | 'a, 'd > using matchrew < S1 | S2 > by S1
+    using one(concat), S2 using filter(S1) .
+
+Solution 1
+rewrites: 9
+result Pair: < 'ab | 'd >
+
+No more solutions.
+rewrites: 9
+==========================================
+srewrite [2] in STRATEGIES : < 'a | 'c > using matchrew < S1 | S2 > by S1 using
+    rh *, S2 using rh * .
+
+Solution 1
+rewrites: 8
+result Pair: < 'a | 'c >
+
+Solution 2
+rewrites: 16
+result Pair: < 'ha | 'c >
+
+Solution 3
+rewrites: 0
+result Pair: < 'a | 'hc >
+==========================================
+srewrite in 15PUZZLE : 1 b 2 using idle .
+
+Solution 1
+rewrites: 0
+result Row: 1 b 2
+
+No more solutions.
+rewrites: 0
+==========================================
+srewrite in 15PUZZLE : 1 b 2 using fail .
+
+No solution.
+rewrites: 0
+==========================================
+srewrite in 15PUZZLE : 1 b 2 ; 3 b 4 using right .
+
+Solution 1
+rewrites: 1
+result Puzzle: 1 2 b ; 3 b 4
+
+Solution 2
+rewrites: 2
+result Puzzle: 1 b 2 ; 3 4 b
+
+No more solutions.
+rewrites: 2
+==========================================
+srewrite in 15PUZZLE : 1 b 2 ; 3 b 4 using left[T <- 1] .
+
+Solution 1
+rewrites: 1
+result Puzzle: b 1 2 ; 3 b 4
+
+No more solutions.
+rewrites: 1
+==========================================
+srewrite in 15PUZZLE-LOG : < nil | 1 b 2 > using move[M <- 'left]{left} .
+
+Solution 1
+rewrites: 2
+result PuzzleLog: < 'left | b 1 2 >
+
+No more solutions.
+rewrites: 2
+==========================================
+srewrite in 15PUZZLE-LOG : < nil | 1 b 2 > using all .
+
+Solution 1
+rewrites: 1
+result PuzzleLog: < nil | b 1 2 >
+
+Solution 2
+rewrites: 2
+result PuzzleLog: < nil | 1 2 b >
+
+No more solutions.
+rewrites: 2
+==========================================
+srewrite in 15PUZZLE-LOG : 1 b 2 using xmatch b N:Nat such that N:Nat =/= 1 =
+    true .
+
+Solution 1
+rewrites: 1
+result Row: 1 b 2
+
+No more solutions.
+rewrites: 1
+==========================================
+srewrite in 15PUZZLE-LOG : 1 2 ; 3 b using left ; up | up ; left .
+
+Solution 1
+rewrites: 15
+result Puzzle: b 2 ; 1 3
+
+Solution 2
+rewrites: 20
+result Puzzle: b 1 ; 3 2
+
+No more solutions.
+rewrites: 20
+==========================================
+srewrite in 15PUZZLE-LOG : 1 b 2 3 using right * .
+
+Solution 1
+rewrites: 0
+result Row: 1 b 2 3
+
+Solution 2
+rewrites: 1
+result Row: 1 2 b 3
+
+Solution 3
+rewrites: 2
+result Row: 1 2 3 b
+
+No more solutions.
+rewrites: 2
+==========================================
+srewrite in 15PUZZLE-LOG : 1 b 2 3 4 using right * ; (right ? fail : idle) .
+
+Solution 1
+rewrites: 6
+result Row: 1 2 3 4 b
+
+No more solutions.
+rewrites: 6
+==========================================
+srewrite in 15PUZZLE-LOG : 1 b 2 ; 3 b 4 using matchrew RU:Row ; RD:Row by
+    RU:Row using left, RD:Row using right .
+
+Solution 1
+rewrites: 2
+result Puzzle: b 1 2 ; 3 4 b
+
+No more solutions.
+rewrites: 2
+==========================================
+srewrite in 15PUZZLE-LOG : 1 b 2 3 using one(right +) .
+
+Solution 1
+rewrites: 1
+result Row: 1 2 b 3
+
+No more solutions.
+rewrites: 1
+==========================================
+srewrite [2] in 15PUZZLE-LOG : b 1 2 ; b 3 using right + .
+
+Solution 1
+rewrites: 2
+result Puzzle: 1 b 2 ; b 3
+
+Solution 2
+rewrites: 3
+result Puzzle: b 1 2 ; 3 b
+==========================================
+dsrewrite [2] in 15PUZZLE-LOG : b 1 2 ; b 3 using right + .
+
+Solution 1
+rewrites: 1
+result Puzzle: 1 b 2 ; b 3
+
+Solution 2
+rewrites: 2
+result Puzzle: 1 2 b ; b 3
+==========================================
+srewrite in 15PUZZLE-LOG : 1 b using (left | right)* .
+
+Solution 1
+rewrites: 0
+result Row: 1 b
+
+Solution 2
+rewrites: 1
+result Row: b 1
+
+No more solutions.
+rewrites: 2
+==========================================
+srewrite in 15PUZZLE-STRATS : 1 2 3 ; 4 5 6 ; 7 b 8 using move(1, -2) .
+
+Solution 1
+rewrites: 52
+result Puzzle: 1 2 b ; 4 5 3 ; 7 8 6
+
+No more solutions.
+rewrites: 52
+==========================================
+srewrite in INSERTION-SORT-INT : 1 |-> 8 ; 2 |-> 3 ; 3 |-> 15 ; 4 |-> 5 ; 5 |->
+    2 using insort(2) .
+
+Solution 1
+rewrites: 116
+result NatArray{Int<0}: 1 |-> 2 ; 2 |-> 3 ; 3 |-> 5 ; 4 |-> 8 ; 5 |-> 15
+
+No more solutions.
+rewrites: 116
+Bye.

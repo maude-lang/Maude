@@ -1,0 +1,44 @@
+set show timing off .
+set show advisories off .
+
+*** Check that we don't look the mapping for _<_
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [prec 10] .
+  op p_ : Bool -> Bool [prec 20] .
+endfm
+
+view V from STRICT-TOTAL-ORDER to FOO is
+  sort Elt to Bool .
+  op X:Elt < Y:Elt to term p X:Bool + Y:Bool .
+endv
+
+show view V .
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [prec 20] .
+  op p_ : Bool -> Bool [prec 10] .
+endfm
+
+show view V .
+
+*** Check the same issue at the metalevel.
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [prec 10] .
+  op p_ : Bool -> Bool [prec 20] .
+endfm
+
+view V from STRICT-TOTAL-ORDER to FOO is
+  sort Elt to Bool .
+  op X:Elt < Y:Elt to term p X:Bool + Y:Bool .
+endv
+
+red in META-LEVEL : upView('V) .
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [prec 20] .
+  op p_ : Bool -> Bool [prec 10] .
+endfm
+
+red in META-LEVEL : upView('V) .

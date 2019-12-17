@@ -19,7 +19,7 @@ libmixfix_a_CPPFLAGS = \
 	-I$(top_srcdir)/src/ObjectSystem \
 	-I$(top_srcdir)/src/Mixfix \
 	-I$(top_srcdir)/src/BuiltIn \
-	-I$(top_srcdir)/src/MSCP10 \
+	-I$(top_srcdir)/src/Parser \
 	-I$(top_srcdir)/src/IO_Stuff \
 	-I$(top_srcdir)/src/ACU_Persistent \
 	-I$(top_srcdir)/src/ACU_Theory \
@@ -32,14 +32,20 @@ libmixfix_a_CPPFLAGS = \
 	-I$(top_srcdir)/src/SMT
 
 libmixfix_a_SOURCES = \
+	parameterDatabase.cc \
 	syntaxContainer.cc \
 	renaming.cc \
 	view.cc \
+	syntacticView.cc \
 	entity.cc \
 	moduleCache.cc \
 	moduleExpression.cc \
+	viewExpression.cc \
+	viewCache.cc \
+	enclosingObject.cc \
 	importModule.cc \
 	importTranslation.cc \
+	strategyTranslation.cc \
 	fileTable.cc \
 	loopSymbol.cc \
 	quotedIdentifierSymbol.cc \
@@ -66,16 +72,18 @@ libmixfix_a_SOURCES = \
 	printAttribute.cc \
 	banner.cc \
 	lexer.cc \
+	tokenizer.cc \
 	surface.cc \
 	freshVariableSource.cc \
 	variableGenerator.cc \
+	tokenizer.cc \
 	$(COMPILER_SRC)
 
 EXTRA_libmixfix_a_SOURCES = \
 	compiler.cc
 
-BUILT_SOURCES = surface.yy surface.cc surface.h lexer.cc
-CLEANFILES = surface.yy surface.cc surface.h lexer.cc
+BUILT_SOURCES = surface.yy surface.cc surface.h lexer.cc tokenizer.cc
+CLEANFILES = surface.yy surface.cc surface.h lexer.cc tokenizer.cc
 
 surface.yy: \
 	$(srcdir)/top.yy \
@@ -100,9 +108,17 @@ lexer.cc: \
 	$(srcdir)/lexer.ll surface.h
 	$(FLEX) -t -p -p $(srcdir)/lexer.ll > lexer.cc
 
+tokenizer.cc: \
+	$(srcdir)/tokenizer.ll
+	$(FLEX) -Pzz -t -p -p $(srcdir)/tokenizer.ll > tokenizer.cc
+
 EXTRA_DIST = \
 	renameModule.cc \
 	parameterization.cc \
+	instantiateModuleWithFreeParameters.cc \
+	instantiateModuleWithBoundParameters.cc \
+	instantiateViewWithFreeParameters.cc \
+	instantiateViewWithBoundParameters.cc \
 	lexerAux.cc \
 	process.cc \
 	fixUp.cc \
@@ -134,15 +150,27 @@ EXTRA_DIST = \
 	commands.yy \
 	bottom.yy \
 	lexer.ll \
+	tokenizer.ll \
 	graphPrint.cc \
-	ansiEscapeSequences.cc
+	ansiEscapeSequences.cc \
+	narrowing.cc \
+	variantUnify.cc \
+	getVariants.cc \
+	smtSearch.cc \
+	cvc4_Bindings.cc \
+	yices2_Bindings.cc \
+	quotedIdentifierOpSignature.cc \
+	tokenizer.ll
 
 noinst_HEADERS = \
 	renaming.hh \
 	view.hh \
+	syntacticView.hh \
 	entity.hh \
 	moduleCache.hh \
 	moduleExpression.hh \
+	viewCache.hh \
+	viewExpression.hh \
 	sharedTokens.hh \
 	compiler.hh \
 	fileTable.hh \
@@ -174,4 +202,11 @@ noinst_HEADERS = \
 	xmlBuffer.hh \
 	syntaxContainer.hh \
 	freshVariableSource.hh \
-	variableGenerator.hh
+	variableGenerator.hh \
+	cacheableRewritingContext.hh \
+	cvc4_Bindings.hh \
+	yices2_Bindings.hh \
+	enclosingObject.hh \
+	argument.hh \
+	parameter.hh \
+	parameterDatabase.hh

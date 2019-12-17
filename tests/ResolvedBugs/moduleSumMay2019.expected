@@ -1,0 +1,6 @@
+fmod FOO is
+  protecting NAT + QID .
+endfm
+Warning: <standard input>, line 14 (fmod FOO): syntax error
+
+Bye.

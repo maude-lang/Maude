@@ -1,0 +1,102 @@
+set show timing off .
+set show advisories off .
+
+load metaInterpreter
+
+fmod ROMAN-NUMERALS is
+  sort RomanSymbol GenRomanNumeral .
+  subsort RomanSymbol < GenRomanNumeral .
+  ops M D C L X V I : -> RomanSymbol .
+  op __ : GenRomanNumeral GenRomanNumeral -> GenRomanNumeral [ctor assoc] .
+  var S : RomanSymbol .
+  op _>_ : RomanSymbol RomanSymbol -> Bool .
+  eq M > S = S =/= M .
+  eq D > S = S =/= M and S =/= D .
+  eq C > S = S == L or L > S .
+  eq L > S = S == X or X > S .
+  eq X > S = S == V or S == I .
+  eq V > S = S == I .
+  eq I > S = false .
+endfm
+
+mod RN-SIMPL-RULES is
+  protecting ROMAN-NUMERALS .
+
+  vars S1 S2 : RomanSymbol .
+
+  rl [simp] : I I I I I => V .
+  rl [simp] : V V => X .
+  rl [simp] : X X X X X => L .
+  rl [simp] : L L => C .
+  rl [simp] : C C C C C => D .
+  rl [simp] : D D => M .
+
+  rl [add] : I X => V I I I I .
+  rl [add] : I V => I I I I .
+  rl [add] : X L => X X X X .
+  rl [add] : X C => L X X X X .
+  rl [add] : C D => C C C C .
+  rl [add] : C M => D X X X X .
+
+  crl [sort] : S1 S2 => S2 S1 if S2 > S1 .
+endm
+
+smod RN-SIMP is
+  protecting RN-SIMPL-RULES .
+
+  strats simplify additive-normal-form @ GenRomanNumeral .
+
+  sd simplify := simp ? simplify : idle .
+  sd additive-normal-form := simplify ; add ! ; sort ! ; simplify .
+endsm
+
+mod RUN is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+
+  op option:_ : SrewriteOption -> Attribute .
+  op input:_@_ : Term Strategy -> Attribute .
+  op output:_ : TermList -> Attribute .
+  op solcount:_ : Nat -> Attribute .
+
+  op n1999 : -> Term .
+  eq n1999 = '__['M.RomanSymbol, 'C.RomanSymbol, 'M.RomanSymbol,
+                 'X.RomanSymbol, 'C.RomanSymbol, 'I.RomanSymbol, 'X.RomanSymbol] .
+
+  vars X Y Z : Oid .
+  var C : RewriteCount .
+  var O : SrewriteOption .
+  vars T R : Term .
+  var Ty : Type .
+  var S : Strategy .
+  var TL : TermList .
+  var N : Nat .
+  var Attrs : AttributeSet .
+
+  rl < X : User | Attrs > createdInterpreter(X, Y, Z) =>
+     < X : User | Attrs > insertModule(Z, X, upModule('RN-SIMP, true)) .
+
+  rl < X : User | option: O, (input: T @ S), Attrs > insertedModule(X, Y) =>
+     < X : User | option: O, (input: T @ S), solcount: 0, Attrs > srewriteTerm(Y, X, 'RN-SIMP, T, S, O, 0) .
+
+  rl < X : User | option: O, (input: T @ S), solcount: N, output: TL, Attrs > srewroteTerm(X, Y, C, R, Ty) =>
+     < X : User | option: O, (input: T @ S), solcount: s(N), output: (TL , R), Attrs > srewriteTerm(Y, X, 'RN-SIMP, T, S, O, s(N)) .
+endm
+
+erew in RUN : <>
+< me : User | option: breadthFirst, output: empty, input: n1999 @ 'additive-normal-form[[empty]] >
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUN : <>
+< me : User | option: depthFirst, output: empty, input: n1999 @ 'additive-normal-form[[empty]] >
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUN : <>
+< me : User | option: depthFirst, output: empty, input: n1999 @ 'add[none]{empty} >
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUN : <>
+< me : User | option: depthFirst, output: empty, input: n1999 @ 'sort[none]{empty} ; 'add[none]{empty} >
+createInterpreter(interpreterManager, me, none) .

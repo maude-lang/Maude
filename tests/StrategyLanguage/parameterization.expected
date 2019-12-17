@@ -1,0 +1,49 @@
+==========================================
+dsrewrite [1] in QUEENS-BT : nil using solve .
+
+Solution 1
+rewrites: 15602
+result NeList{Nat}: 1 5 8 6 3 7 2 4
+==========================================
+srewrite [1] in QUEENS-BT : nil using solve .
+
+Solution 1
+rewrites: 285296
+result NeList{Nat}: 1 5 8 6 3 7 2 4
+
+Solution 2
+rewrites: 0
+result NeList{Nat}: 1 6 8 3 7 4 2 5
+
+Solution 3
+rewrites: 0
+result NeList{Nat}: 1 7 4 6 8 2 5 3
+==========================================
+srewrite [4] in COLORING-BT : graph(10, 3, p(0, 1) p(0, 4) p(0, 5) p(1, 2) p(1,
+    6) p(2, 3) p(2, 7) p(3, 4) p(3, 8) p(4, 9) p(5, 7) p(5, 8) p(6, 8) p(6, 9)
+    p(7, 9), nil) using solve .
+
+Solution 1
+rewrites: 130137
+result Graph: graph(10, 3, p(0, 1) p(0, 4) p(0, 5) p(1, 2) p(1, 6) p(2, 3) p(2,
+    7) p(3, 4) p(3, 8) p(4, 9) p(5, 7) p(5, 8) p(6, 8) p(6, 9) p(7, 9), 0 1 0 1
+    2 1 2 2 0 0)
+
+Solution 2
+rewrites: 130137
+result Graph: graph(10, 3, p(0, 1) p(0, 4) p(0, 5) p(1, 2) p(1, 6) p(2, 3) p(2,
+    7) p(3, 4) p(3, 8) p(4, 9) p(5, 7) p(5, 8) p(6, 8) p(6, 9) p(7, 9), 0 1 0 1
+    2 2 2 1 0 0)
+
+Solution 3
+rewrites: 130137
+result Graph: graph(10, 3, p(0, 1) p(0, 4) p(0, 5) p(1, 2) p(1, 6) p(2, 3) p(2,
+    7) p(3, 4) p(3, 8) p(4, 9) p(5, 7) p(5, 8) p(6, 8) p(6, 9) p(7, 9), 0 1 0 2
+    1 1 2 2 0 0)
+
+Solution 4
+rewrites: 130137
+result Graph: graph(10, 3, p(0, 1) p(0, 4) p(0, 5) p(1, 2) p(1, 6) p(2, 3) p(2,
+    7) p(3, 4) p(3, 8) p(4, 9) p(5, 7) p(5, 8) p(6, 8) p(6, 9) p(7, 9), 0 1 0 2
+    1 2 2 1 0 0)
+Bye.

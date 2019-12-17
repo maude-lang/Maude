@@ -1,0 +1,44 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that the meta-interpreter resets the next rule to try at each rewriteTerm() message.
+***
+
+load metaInterpreter
+
+mod FOO is
+  sort Foo .
+  ops a b c : -> Foo .
+  rl a => b .
+  rl a => c .
+endm
+
+mod TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+
+  vars X Y Z : Oid .
+  var T : Term .
+  var S : Sort .
+  var A : AttributeSet .
+  var N : Nat .
+
+  op prev:_ : Term -> Attribute [ctor] .
+
+  rl < X : User | A > createdInterpreter(X, Y, Z) => < X : User | A >
+       insertModule(Z, X, upModule('FOO, true)) .
+
+  rl < X : User | A > insertedModule(X, Y) => < X : User | A >
+       rewriteTerm(Y, X, unbounded, 'FOO, 'a.Foo) .
+
+  rl  < X : User | none > rewroteTerm(X, Y, N, T, S) => < X : User | prev: T >
+       rewriteTerm(Y, X, unbounded, 'FOO, 'a.Foo) .
+endm
+
+*** second rewriteTerm returns different result from first.
+erew  <> 
+< me : User | none > 
+createInterpreter(interpreterManager, me, none) .

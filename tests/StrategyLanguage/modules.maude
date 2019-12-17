@@ -1,0 +1,129 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Strategy modules, theories and views
+***
+
+sth STRIV is
+  including TRIV .
+
+  strat stt @ Elt .
+endsth
+
+mod FOO is
+  protecting QID .
+
+  var X : Qid .
+
+  rl [rh] : X => qid("h" + string(X)) .
+endm
+
+view Foo from STRIV to FOO is
+  sort Elt to Qid .
+  strat stt to expr rh .
+endv
+
+smod REPEAT{X :: STRIV} is
+  protecting NAT .
+
+  var N : Nat .
+
+  strat repeat : Nat @ X$Elt .
+  sd repeat(0) := idle .
+  sd repeat(s(N)) := stt ; repeat(N) .
+endsm
+
+smod BAR is
+  protecting REPEAT{Foo} * (strat repeat to puths) .
+endsm
+
+show all .
+srew 'a using puths(8) .
+
+view STriv from TRIV to STRIV is
+endv
+
+smod PROMOTED is
+  protecting LIST{STriv}{Foo} .
+endsm
+
+red 'a 'b 'c .
+
+***
+*** Strategy calls and traces
+***
+
+smod CALLS is
+  protecting FOO .
+  protecting SET{Qid} .
+
+  strat cond @ Qid .    *** different matches from the assignement condition
+  strat defs @ Qid .    *** different matches from different definitions
+  strat args : Set{Qid} @ Qid .  *** different matches from the argument
+
+  var X : Qid .
+  var S : Set{Qid} .
+
+  csd cond := rh[X <- X] if X, S := 'a, 'b, 'c .
+
+  sd defs := fail .
+  sd defs := rh .
+  sd defs := idle .
+
+  sd args((X, S)) := rh[X <- X] .
+endsm
+
+set trace eq off .
+set trace rl off .
+set trace whole on .
+set trace on .
+
+srew 'c using cond .
+srew 'b using defs .
+srew 'a using args(('a, 'z)) .
+
+set trace sd off .
+set trace off .
+
+***
+*** Detection of some bad strategy terms
+***
+
+smod BAD is
+  protecting FOO .
+
+  var Q R : Qid .
+
+  strat st @ Qid .
+  strat st : Qid @ Qid .
+
+  csd st := idle if Q = 'a .
+  sd st := rh[Q <- Q] .
+  sd st := match R s.t. Q == R .
+  sd st := st(Q) .
+endsm
+
+***
+*** Strategy modules containing rules and equations
+***
+
+smod ALLINSMOD is
+  sorts Letter Vowel .
+  subsort Vowel < Letter .
+  ops b c d : -> Letter .
+  ops a e i o u : -> Vowel .
+
+  op next : Letter -> Letter .
+  eq next(a) = b .
+  eq next(b) = c .
+
+  var L : Letter .
+  rl [next] : L => next(L) .
+
+  strat next @ Letter .
+  sd next() := next ; next .
+endsm
+
+srew a using next .
+srew a using next() .

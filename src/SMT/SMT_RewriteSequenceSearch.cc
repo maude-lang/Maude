@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 2014 SRI International, Menlo Park, CA 94025, USA.
 
@@ -44,7 +44,6 @@
 //      core class definitions
 #include "rewritingContext.hh"
 #include "symbolMap.hh"
-#include "rule.hh"
 
 //      variable class definitions
 #include "variableSymbol.hh"
@@ -70,7 +69,6 @@ SMT_RewriteSequenceSearch::SMT_RewriteSequenceSearch(RewritingContext* initial,
 						     int maxDepth,
 						     const mpz_class& avoidVariableNumber)
   : Pattern(target, false),
-    searchType(searchType),
     smtInfo(smtInfo),
     engine(engine),
     maxDepth((searchType == ONE_STEP) ? 1 : maxDepth),
@@ -91,21 +89,15 @@ SMT_RewriteSequenceSearch::SMT_RewriteSequenceSearch(RewritingContext* initial,
   s->avoidVariableNumber = avoidVariableNumber;
   s->context = initial;
   s->constraint = makeConstraintFromCondition(target, condition);
-  s->search = (maxDepth == 0) ? 0 : 
-    new SMT_RewriteSearchState(initial,
-			       s->constraint,
-			       smtInfo,
-			       engine,
-			       avoidVariableNumber);
-
-  s->parent = NONE;
+  s->search = 0;
   s->rule = 0;
+  s->parent = NONE;
   s->depth = 0;
   //
   //	Misc initialization.
   //
   states[0] = s;
-  stateToExplore = 0;
+  stateToExplore = -1 /*0*/;
   matchState = 0;
   finalConstraint = 0;
   findSMT_Variables();
@@ -308,12 +300,17 @@ SMT_RewriteSequenceSearch::checkMatchConstraint()
 	  args[1] = equalityConstraint;
 	  matchConstraint = smtInfo.getConjunctionOperator()->makeDagNode(args);
 	}
+      DebugAdvisory("matchConstraint: " << matchConstraint);
     }
 
   finalConstraint = states[newStateNr]->constraint;  // accumulated constraint in current state
   if (matchConstraint != 0)
     {
-      if (engine->checkDag(matchConstraint) != SMT_EngineWrapper::SAT)  // engine already has constraint associated with current state asserted
+      //
+      //	We assume that the accumulated constraints associated with the current state
+      //	are already asserted in engine.
+      //
+      if (engine->checkDag(matchConstraint) != SMT_EngineWrapper::SAT) 
 	return false;
       args[0] = finalConstraint;
       args[1] = matchConstraint;
@@ -331,29 +328,32 @@ SMT_RewriteSequenceSearch::findNextState()
       //	Special case: return the initial state.
       //
       needToTryInitialState = false;  // don't do this again
-      if (engine->checkDag(states[0]->constraint) == SMT_EngineWrapper::SAT)
+      if (engine->assertDag(states[0]->constraint) == SMT_EngineWrapper::SAT)
 	return 0;
     }
   //
-  //	First we look for a new rewrite from the state we are exploring.
+  //	First we look for a new rewrite from the state we are already exploring.
   //
-  {
-    State* s = states[stateToExplore];
-    if (s->search != 0 && s->search->findNextRewrite())
-      {
-	//
-	//	Found a rewrite. Now create a new state based on the pair.
-	//
-	return makeNewState();
-      }
-    //
-    //	Search object exhausted so clean up.
-    //
-    delete s->search;
-    s->search = 0;
-  }
+  if (stateToExplore >= 0)
+    {
+      State* s = states[stateToExplore];
+      if (s->search != 0 && s->search->findNextRewrite())
+	{
+	  //
+	  //	Found a rewrite. Now create a new state based on the pair.
+	  //
+	  getContext()->incrementRlCount();
+	  return makeNewState();
+	}
+      //
+      //	Search object exhausted so clean up.
+      //
+      delete s->search;
+      s->search = 0;
+    }
   //
-  //	Now we need to start exploring the next unexplored state.
+  //	Now we need to start expanding the next unexplored state (the initial
+  //	state if stateToExplore == -1).
   //
   int nrStates = states.size();
   for (++stateToExplore; stateToExplore < nrStates; ++stateToExplore)
@@ -366,12 +366,14 @@ SMT_RewriteSequenceSearch::findNextState()
 					     n->constraint,
 					     smtInfo,
 					     engine,
-					     n->avoidVariableNumber);			     
+					     n->avoidVariableNumber);
+      DebugAdvisory("---> Made SMT_RewriteSearchState to explore state " << stateToExplore);
       if (n->search->findNextRewrite())
 	{
 	  //
 	  //	Found a rewrite. Now create a new state based on the pair.
 	  //
+	  getContext()->incrementRlCount();
 	  return makeNewState();
 	}
       //
@@ -398,10 +400,9 @@ SMT_RewriteSequenceSearch::makeNewState()
   n->avoidVariableNumber = pr->getMaxVariableNumber();
   DebugAdvisory("assigned " << pr->getMaxVariableNumber() << " to state " << nrStates);
   n->parent = stateToExplore;
-  n->rule = 0;  // FIXME
   n->depth = parent->depth + 1;
   n->search = 0;
-
+  n->rule = parent->search->getRule();
   states.append(n);
   DebugAdvisory("checking value " << states[nrStates]->avoidVariableNumber);
   return nrStates;

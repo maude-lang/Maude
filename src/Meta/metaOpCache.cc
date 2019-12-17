@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -57,7 +57,6 @@
 //      metalevel class definitions
 #include "metaOpCache.hh"
 
-
 local_inline void
 MetaOpCache::Item::clear()
 {
@@ -77,17 +76,20 @@ MetaOpCache::~MetaOpCache()
 }
 
 bool
-MetaOpCache::sameProblem(FreeDagNode* m1, DagNode* m2)
+MetaOpCache::sameProblem(FreeDagNode* m1, DagNode* m2, int nrArgumentsToIgnore)
 {
   Symbol* s = m1->symbol();
   if (s == m2->symbol())
     {
       //
       //	We don't look at the first argument since that's our module which
-      //	must be equal, and we don't look at the last argument since that's
-      //	the solution number which will usually be different.
+      //	must be equal, and we don't look at the last nrArgumentsToIgnore
+      //	arguments from the tail of the arguments list because the user
+      //	decided not to care about those for deciding if a cached state
+      //	is interesting. Often the last argument holds a solution number
+      //	but that is not required for insert() and remove().
       //
-      int nrUsefulArgs = s->arity() - 1;
+      int nrUsefulArgs = s->arity() - nrArgumentsToIgnore;
       FreeDagNode* m3 = static_cast<FreeDagNode*>(m2);
       for (int i = 1; i < nrUsefulArgs; i++)
 	{
@@ -116,12 +118,15 @@ MetaOpCache::insert(FreeDagNode* metaOp, CacheableState* state, Int64 lastSoluti
 }
 
 bool
-MetaOpCache::remove(FreeDagNode* metaOp, CacheableState*& state, Int64& lastSolutionNr)
+MetaOpCache::remove(FreeDagNode* metaOp,
+		    CacheableState*& state,
+		    Int64& lastSolutionNr,
+		    int nrArgumentsToIgnore)
 {
   int nrEntries = cache.length();
   for (int i = 0; i < nrEntries; i++)
     {
-      if (sameProblem(metaOp, cache[i].metaOp->getNode()))
+      if (sameProblem(metaOp, cache[i].metaOp->getNode(), nrArgumentsToIgnore))
 	{
 	  delete cache[i].metaOp;
 	  state = cache[i].state;

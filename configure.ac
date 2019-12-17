@@ -3,7 +3,7 @@
 #
 #	Initialize autoconf stuff.
 #
-AC_INIT(Maude, 2.7.1, [maude-bugs@lists.cs.illinois.edu])
+AC_INIT(Maude, 3.0, [maude-bugs@lists.cs.illinois.edu])
 #
 #	Allow directory names that look like macros.
 #
@@ -62,7 +62,7 @@ AC_SUBST(FLEX)
 #
 #	Figure out what libraries need to be linked in to use sockets.
 #
-AC_CHECK_LIB(nsl, inet_addr)
+#AC_CHECK_LIB(nsl, inet_addr)	# Adds unnecessary dependencies to the binaries in Linux
 AC_CHECK_LIB(socket, socket)
 #
 #	Check if user set particular Buddy library to use and if
@@ -73,13 +73,34 @@ if (test -z "$BUDDY_LIB") then
 fi
 AC_SUBST(BUDDY_LIB)
 #
+#	Check to see if we should use Yices2 for SMT solving.
+#
+AC_ARG_WITH(yices2,
+	    AC_HELP_STRING([--with-yices2],
+                           [use Yices2 SMT solver library [default=yes]]),
+			   [WITH_YICES2=$withval],
+			   [WITH_YICES2=yes])
+if (test $WITH_YICES2 = yes) then
+#
+#	Check if user set a particular Yices2 library to use and if
+#	not set default.
+#
+  AC_DEFINE([USE_YICES2], [], [use Yices2 SMT solver library])
+  if (test -z "$YICES2_LIB") then
+    YICES2_LIB="-lyices"
+  fi
+  AC_SUBST(YICES2_LIB)
+else
+  YICES2_LIB=""
+fi
+#
 #	Check to see if we should use CVC4 for SMT solving.
 #
 AC_ARG_WITH(cvc4,
 	    AC_HELP_STRING([--with-cvc4],
-                           [use CVC4 SMT solver library [default=yes]]),
+                           [use CVC4 SMT solver library [default=no]]),
 			   [WITH_CVC4=$withval],
-			   [WITH_CVC4=yes])
+			   [WITH_CVC4=no])
 if (test $WITH_CVC4 = yes) then
 #
 #	Check if user set a particular CVC4 library to use and if
@@ -90,6 +111,7 @@ if (test $WITH_CVC4 = yes) then
     CVC4_LIB="-lcvc4"
   fi
   AC_SUBST(CVC4_LIB)
+
 #
 #	CVC4 needs the clock_gettime() function from the POSIX Realtime Extensions library.
 #
@@ -327,9 +349,6 @@ fi
 #
 #	Needed defines.
 #
-AC_DEFINE([SCP], [], [use MSCP10 calling conventions])
-AC_DEFINE([BUBBLES], [], [support bubbles when parsing])
-#
 #	Check to see if we should build the compiler.
 #
 AC_ARG_ENABLE(compiler,
@@ -361,6 +380,7 @@ AC_CONFIG_FILES([Makefile
 	         src/Makefile
 		 src/3rdParty/Makefile
 		 src/Utility/Makefile
+		 src/Parser/Makefile
 		 src/Temporal/Makefile
 		 src/Interface/Makefile
 		 src/Core/Makefile
@@ -379,7 +399,6 @@ AC_CONFIG_FILES([Makefile
 		 src/ObjectSystem/Makefile
 		 src/Meta/Makefile
 		 src/FullCompiler/Makefile
-		 src/MSCP10/Makefile
 		 src/StrategyLanguage/Makefile
 		 src/Mixfix/Makefile
 		 src/SMT/Makefile
@@ -389,6 +408,7 @@ AC_CONFIG_FILES([Makefile
 		 tests/Meta/Makefile
 		 tests/Misc/Makefile
 		 tests/ResolvedBugs/Makefile
+		 tests/StrategyLanguage/Makefile
 ])
 
 AC_OUTPUT

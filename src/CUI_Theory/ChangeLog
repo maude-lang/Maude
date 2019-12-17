@@ -1,3 +1,51 @@
+2019-11-11  Steven Eker  <eker@mu>
+
+	* CUI_DagNode.cc (computeBaseSortForGroundSubterms): no early termination
+	in UNIMPLEMENTED case
+
+	* CUI_UnificationSubproblem2.cc (tryAlternative): pass false to
+	warnAboutUnimplemented arg (4 places)
+
+	* CUI_DagNode.cc (computeBaseSortForGroundSubterms): take and pass
+	warnAboutUnimplemented
+
+	* CUI_DagNode.hh (DagNode): updated decl for
+	computeBaseSortForGroundSubterms()
+
+===================================Maude125===========================================
+
+2017-02-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* CUI_DagNode.cc (instantiateWithCopies2): ifdef'd out ground flag and
+	sort computation code
+
+2017-02-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* CUI_DagNode.hh (DagNode): updated decl for instantiateWithReplacement()
+
+	* CUI_DagNode.cc (instantiateWithReplacement): support lazy contexts
+
+2017-02-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* CUI_DagNode.hh (DagNode): deleted decl for stackArguments()
+
+	* CUI_DagNode.cc (stackArguments): deleted
+
+	* CUI_Symbol.hh (BinarySymbol): updated decl for stackArguments()
+
+	* CUI_Symbol.cc (stackArguments): support respectFrozen and eagerContext
+	arguments
+
+===================================Maude111b===========================================
+
+2016-11-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* CUI_DagNode.hh (DagNode): added decl for copyAll2()
+
+	* CUI_DagNode.cc (copyAll2): added
+
+===================================Maude111===========================================
+
 2016-03-24  Steven Eker  <eker@install.csl.sri.com>
 
 	* CUI_Symbol.hh (BinarySymbol): added decl for computeGeneralizedSort2()

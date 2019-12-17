@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -40,11 +40,13 @@
 #include "freeTheory.hh"
 #include "S_Theory.hh"
 #include "CUI_Theory.hh"
+#include "AU_Theory.hh"
 #include "NA_Theory.hh"
 #include "builtIn.hh"
 #include "strategyLanguage.hh"
 #include "SMT.hh"
 #include "mixfix.hh"
+#include "meta.hh"
 
 //      interface class definitions
 #include "symbol.hh"
@@ -62,6 +64,8 @@
 #include "symbolMap.hh"
 #include "freshVariableGenerator.hh"
 #include "narrowingVariableInfo.hh"
+#include "rewriteStrategy.hh"
+#include "strategyDefinition.hh"
 
 //      variable class definitions
 #include "variableDagNode.hh"
@@ -91,7 +95,6 @@
 #include "succSymbol.hh"
 
 //	SMT class definitions
-//#include "SMT_Symbol.hh"
 #include "SMT_NumberSymbol.hh"
 #include "SMT_NumberTerm.hh"
 #include "SMT_NumberDagNode.hh"
@@ -110,23 +113,44 @@
 #include "quotedIdentifierTerm.hh"
 #include "quotedIdentifierDagNode.hh"
 #include "syntacticPreModule.hh"
-#include "metaModule.hh"
-#include "metaLevel.hh"
 #include "interpreter.hh"
 #include "visibleModule.hh"
+#include "viewExpression.hh"
 #include "moduleExpression.hh"
 #include "renaming.hh"
-#include "view.hh"
-#include "global.hh"  // HACK to access global module database
+#include "metaView.hh"
+
+//	metalevel class definitions
+#include "metaLevel.hh"
+#include "metaModule.hh"
+#include "metaPreModule.hh"
+#include "metaView.hh"
+
+// strategy language class definitions
+#include "strategyExpression.hh"
+#include "trivialStrategy.hh"
+#include "unionStrategy.hh"
+#include "concatenationStrategy.hh"
+#include "iterationStrategy.hh"
+#include "testStrategy.hh"
+#include "branchStrategy.hh"
+#include "applicationStrategy.hh"
+#include "subtermStrategy.hh"
+#include "callStrategy.hh"
+#include "oneStrategy.hh"
 
 //	our stuff
 #include "metaDown.cc"
 #include "metaDownRenamings.cc"
 #include "metaDownOps.cc"
+#include "metaDownStrats.cc"
 #include "metaDownFixUps.cc"
 #include "metaUp.cc"
 #include "metaUpModule.cc"
 #include "metaUpView.cc"
+#include "metaDownView.cc"
+#include "metaDownSignature.cc"
+#include "legacyMetaUp.cc"
 
 MetaLevel::MetaLevel()
 {

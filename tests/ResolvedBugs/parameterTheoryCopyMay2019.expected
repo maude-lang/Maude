@@ -1,0 +1,9 @@
+Warning: <automatic>: sort Z$Elt has been imported from both <standard input>,
+    line 12 (fth TRIV') and <standard input>, line 7 (fmod FOO). Since it is
+    imported from both a module and a theory, this renders theory Z :: TRIV'
+    unusable.
+Warning: <standard input>, line 19 (fmod BAZ): this module contains one or more
+    errors that could not be patched up and thus it cannot be used or imported.
+Warning: <standard input>, line 19 (fmod BAZ): module BAZ is unusable due to
+    unpatchable errors.
+Bye.

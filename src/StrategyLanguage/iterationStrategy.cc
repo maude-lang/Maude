@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
 
@@ -47,6 +47,18 @@ IterationStrategy::IterationStrategy(StrategyExpression* child, bool zeroAllowed
 IterationStrategy::~IterationStrategy()
 {
   delete (star != 0 ? star : child);
+}
+
+bool
+IterationStrategy::check(VariableInfo& indices, const TermSet& boundVars)
+{
+  return child->check(indices, boundVars);
+}
+
+void
+IterationStrategy::process()
+{
+  child->process();
 }
 
 StrategicExecution::Survival

@@ -1,4 +1,4 @@
-Maude> fmod BAZ is
+fmod BAZ is
   sorts Bool Zero NzNat Nat NzInt Int PosRat NzRat Rat Foo{Rat,Nat} .
   subsorts Zero NzNat NzNat < Nat .
   subsort NzNat < NzInt .
@@ -559,6 +559,7 @@ fmod FLOAT
 fmod STRING
 fmod CONVERSION
 fmod RANDOM
+fmod BOUND
 fmod QID
 fth TRIV
 fth STRICT-WEAK-ORDER
@@ -583,9 +584,12 @@ fmod NAT-LIST
 fmod QID-LIST
 fmod QID-SET
 fmod META-TERM
+fmod META-CONDITION
+fmod META-STRATEGY
 fmod META-MODULE
 fmod META-VIEW
 fmod META-LEVEL
+fmod LEXICAL
 mod COUNTER
 mod LOOP-MODE
 mod CONFIGURATION
@@ -593,11 +597,13 @@ fmod FOO
 fmod BAR
 fmod BAZ
 fth X :: TRIV
+fmod LIST{[X]}
 fth X :: STRICT-WEAK-ORDER
 fmod LIST{STRICT-WEAK-ORDER}
 fmod LIST{STRICT-WEAK-ORDER}{[X]}
 fmod LIST{STRICT-WEAK-ORDER}{[X]} * (sort NeList{STRICT-WEAK-ORDER}{X} to
     NeList{X}, sort List{STRICT-WEAK-ORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST{[X]}
 fth X :: STRICT-TOTAL-ORDER
 fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}
 fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
@@ -615,11 +621,13 @@ fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
     sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
     STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
     sort List{STRICT-TOTAL-ORDER}{X} to List{X})
+fmod SORTABLE-LIST{[X]}
 fth X :: TOTAL-PREORDER
 fmod LIST{TOTAL-PREORDER}
 fmod LIST{TOTAL-PREORDER}{[X]}
 fmod LIST{TOTAL-PREORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
     sort List{TOTAL-PREORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST'{[X]}
 fth X :: TOTAL-ORDER
 fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}
 fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}
@@ -634,9 +642,8 @@ fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{TOTAL-ORDER}{X} to
     NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
-fmod LIST{[X]}
+fmod SORTABLE-LIST'{[X]}
 fmod SET{[X]}
-fmod SORTABLE-LIST{[X]}
 fmod LIST-AND-SET{STRICT-WEAK-ORDER}
 fmod SET{STRICT-WEAK-ORDER}
 fmod SET{STRICT-WEAK-ORDER}{[X]}
@@ -658,7 +665,6 @@ fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
 fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeSet{
     STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{
     STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X})
-fmod SORTABLE-LIST'{[X]}
 fmod LIST-AND-SET{TOTAL-PREORDER}
 fmod SET{TOTAL-PREORDER}
 fmod SET{TOTAL-PREORDER}{[X]}
@@ -678,8 +684,12 @@ fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
 fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeSet{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to NeSet{X}, sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to
     Set{X})
+fmod LIST*{[X]}
+fmod SET*{[X]}
 fth Y :: TRIV
+fmod MAP{[X], [Y]}
 fth Y :: DEFAULT
+fmod ARRAY{[X], [Y]}
 fmod LIST{Nat}
 fmod LIST{Nat} * (sort NeList{Nat} to NeNatList, sort List{Nat} to NatList)
 fmod LIST{Qid}
@@ -1257,6 +1267,7 @@ fmod FLOAT
 fmod STRING
 fmod CONVERSION
 fmod RANDOM
+fmod BOUND
 fmod QID
 fth TRIV
 fth STRICT-WEAK-ORDER
@@ -1281,9 +1292,12 @@ fmod NAT-LIST
 fmod QID-LIST
 fmod QID-SET
 fmod META-TERM
+fmod META-CONDITION
+fmod META-STRATEGY
 fmod META-MODULE
 fmod META-VIEW
 fmod META-LEVEL
+fmod LEXICAL
 mod COUNTER
 mod LOOP-MODE
 mod CONFIGURATION
@@ -1291,11 +1305,13 @@ fmod FOO
 fmod BAR
 fmod BAZ
 fth X :: TRIV
+fmod LIST{[X]}
 fth X :: STRICT-WEAK-ORDER
 fmod LIST{STRICT-WEAK-ORDER}
 fmod LIST{STRICT-WEAK-ORDER}{[X]}
 fmod LIST{STRICT-WEAK-ORDER}{[X]} * (sort NeList{STRICT-WEAK-ORDER}{X} to
     NeList{X}, sort List{STRICT-WEAK-ORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST{[X]}
 fth X :: STRICT-TOTAL-ORDER
 fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}
 fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
@@ -1313,11 +1329,13 @@ fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
     sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
     STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
     sort List{STRICT-TOTAL-ORDER}{X} to List{X})
+fmod SORTABLE-LIST{[X]}
 fth X :: TOTAL-PREORDER
 fmod LIST{TOTAL-PREORDER}
 fmod LIST{TOTAL-PREORDER}{[X]}
 fmod LIST{TOTAL-PREORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
     sort List{TOTAL-PREORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST'{[X]}
 fth X :: TOTAL-ORDER
 fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}
 fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}
@@ -1332,9 +1350,8 @@ fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{TOTAL-ORDER}{X} to
     NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
-fmod LIST{[X]}
+fmod SORTABLE-LIST'{[X]}
 fmod SET{[X]}
-fmod SORTABLE-LIST{[X]}
 fmod LIST-AND-SET{STRICT-WEAK-ORDER}
 fmod SET{STRICT-WEAK-ORDER}
 fmod SET{STRICT-WEAK-ORDER}{[X]}
@@ -1356,7 +1373,6 @@ fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
 fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeSet{
     STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{
     STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X})
-fmod SORTABLE-LIST'{[X]}
 fmod LIST-AND-SET{TOTAL-PREORDER}
 fmod SET{TOTAL-PREORDER}
 fmod SET{TOTAL-PREORDER}{[X]}
@@ -1376,8 +1392,12 @@ fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
 fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeSet{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to NeSet{X}, sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to
     Set{X})
+fmod LIST*{[X]}
+fmod SET*{[X]}
 fth Y :: TRIV
+fmod MAP{[X], [Y]}
 fth Y :: DEFAULT
+fmod ARRAY{[X], [Y]}
 fmod LIST{Nat}
 fmod LIST{Nat} * (sort NeList{Nat} to NeNatList, sort List{Nat} to NatList)
 fmod LIST{Qid}
@@ -1959,6 +1979,7 @@ fmod FLOAT
 fmod STRING
 fmod CONVERSION
 fmod RANDOM
+fmod BOUND
 fmod QID
 fth TRIV
 fth STRICT-WEAK-ORDER
@@ -1983,9 +2004,12 @@ fmod NAT-LIST
 fmod QID-LIST
 fmod QID-SET
 fmod META-TERM
+fmod META-CONDITION
+fmod META-STRATEGY
 fmod META-MODULE
 fmod META-VIEW
 fmod META-LEVEL
+fmod LEXICAL
 mod COUNTER
 mod LOOP-MODE
 mod CONFIGURATION
@@ -1993,11 +2017,13 @@ fmod FOO
 fmod BAR
 fmod BAZ
 fth X :: TRIV
+fmod LIST{[X]}
 fth X :: STRICT-WEAK-ORDER
 fmod LIST{STRICT-WEAK-ORDER}
 fmod LIST{STRICT-WEAK-ORDER}{[X]}
 fmod LIST{STRICT-WEAK-ORDER}{[X]} * (sort NeList{STRICT-WEAK-ORDER}{X} to
     NeList{X}, sort List{STRICT-WEAK-ORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST{[X]}
 fth X :: STRICT-TOTAL-ORDER
 fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}
 fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
@@ -2015,11 +2041,13 @@ fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
     sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
     STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
     sort List{STRICT-TOTAL-ORDER}{X} to List{X})
+fmod SORTABLE-LIST{[X]}
 fth X :: TOTAL-PREORDER
 fmod LIST{TOTAL-PREORDER}
 fmod LIST{TOTAL-PREORDER}{[X]}
 fmod LIST{TOTAL-PREORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
     sort List{TOTAL-PREORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST'{[X]}
 fth X :: TOTAL-ORDER
 fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}
 fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}
@@ -2034,9 +2062,8 @@ fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{TOTAL-ORDER}{X} to
     NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
-fmod LIST{[X]}
+fmod SORTABLE-LIST'{[X]}
 fmod SET{[X]}
-fmod SORTABLE-LIST{[X]}
 fmod LIST-AND-SET{STRICT-WEAK-ORDER}
 fmod SET{STRICT-WEAK-ORDER}
 fmod SET{STRICT-WEAK-ORDER}{[X]}
@@ -2058,7 +2085,6 @@ fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
 fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeSet{
     STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{
     STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X})
-fmod SORTABLE-LIST'{[X]}
 fmod LIST-AND-SET{TOTAL-PREORDER}
 fmod SET{TOTAL-PREORDER}
 fmod SET{TOTAL-PREORDER}{[X]}
@@ -2078,8 +2104,12 @@ fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
 fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeSet{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to NeSet{X}, sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to
     Set{X})
+fmod LIST*{[X]}
+fmod SET*{[X]}
 fth Y :: TRIV
+fmod MAP{[X], [Y]}
 fth Y :: DEFAULT
+fmod ARRAY{[X], [Y]}
 fmod LIST{Nat}
 fmod LIST{Nat} * (sort NeList{Nat} to NeNatList, sort List{Nat} to NatList)
 fmod LIST{Qid}
@@ -2254,6 +2284,7 @@ fmod FLOAT
 fmod STRING
 fmod CONVERSION
 fmod RANDOM
+fmod BOUND
 fmod QID
 fth TRIV
 fth STRICT-WEAK-ORDER
@@ -2278,9 +2309,12 @@ fmod NAT-LIST
 fmod QID-LIST
 fmod QID-SET
 fmod META-TERM
+fmod META-CONDITION
+fmod META-STRATEGY
 fmod META-MODULE
 fmod META-VIEW
 fmod META-LEVEL
+fmod LEXICAL
 mod COUNTER
 mod LOOP-MODE
 mod CONFIGURATION
@@ -2288,11 +2322,13 @@ fmod FOO
 fmod BAR
 fmod BAZ
 fth X :: TRIV
+fmod LIST{[X]}
 fth X :: STRICT-WEAK-ORDER
 fmod LIST{STRICT-WEAK-ORDER}
 fmod LIST{STRICT-WEAK-ORDER}{[X]}
 fmod LIST{STRICT-WEAK-ORDER}{[X]} * (sort NeList{STRICT-WEAK-ORDER}{X} to
     NeList{X}, sort List{STRICT-WEAK-ORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST{[X]}
 fth X :: STRICT-TOTAL-ORDER
 fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}
 fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
@@ -2310,11 +2346,13 @@ fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
     sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
     STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
     sort List{STRICT-TOTAL-ORDER}{X} to List{X})
+fmod SORTABLE-LIST{[X]}
 fth X :: TOTAL-PREORDER
 fmod LIST{TOTAL-PREORDER}
 fmod LIST{TOTAL-PREORDER}{[X]}
 fmod LIST{TOTAL-PREORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
     sort List{TOTAL-PREORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST'{[X]}
 fth X :: TOTAL-ORDER
 fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}
 fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}
@@ -2329,9 +2367,8 @@ fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{TOTAL-ORDER}{X} to
     NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
-fmod LIST{[X]}
+fmod SORTABLE-LIST'{[X]}
 fmod SET{[X]}
-fmod SORTABLE-LIST{[X]}
 fmod LIST-AND-SET{STRICT-WEAK-ORDER}
 fmod SET{STRICT-WEAK-ORDER}
 fmod SET{STRICT-WEAK-ORDER}{[X]}
@@ -2353,7 +2390,6 @@ fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
 fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeSet{
     STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{
     STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X})
-fmod SORTABLE-LIST'{[X]}
 fmod LIST-AND-SET{TOTAL-PREORDER}
 fmod SET{TOTAL-PREORDER}
 fmod SET{TOTAL-PREORDER}{[X]}
@@ -2373,8 +2409,12 @@ fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
 fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeSet{TOTAL-PREORDER}{
     TOTAL-ORDER}{X} to NeSet{X}, sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to
     Set{X})
+fmod LIST*{[X]}
+fmod SET*{[X]}
 fth Y :: TRIV
+fmod MAP{[X], [Y]}
 fth Y :: DEFAULT
+fmod ARRAY{[X], [Y]}
 fmod LIST{Nat}
 fmod LIST{Nat} * (sort NeList{Nat} to NeNatList, sort List{Nat} to NatList)
 fmod LIST{Qid}
@@ -5482,16 +5522,24 @@ endfm
 reduce in TEST : g(5, 4) .
 rewrites: 7
 result NzNat: 5
-Warning: summand module SET has parameters.
-Warning: summand module SET{[X]} has parameters.
-Warning: Instantiation MAP{STRICT-WEAK-ORDER, Y} uses both a theory-view and a
-    parameter from enclosing module FOO.
-Warning: <standard input>, line 355 (fmod MOD): operator declaration for
-    operation f subsort overloads an operator of the same name from a
-    parameter.
-Warning: <standard input>, line 354 (fmod MOD): this module contains one or
+Warning: summand module LIST has free parameters.
+Warning: <standard input>, line 326 (fmod FOO): this module contains one or
     more errors that could not be patched up and thus it cannot be used or
     imported.
-Warning: <standard input>, line 359 (fmod TEST): unable to use module MOD due
+Warning: Instantiation MAP{STRICT-WEAK-ORDER, Y} uses both a theory-view and a
+    parameter from enclosing module FOO.
+Warning: <standard input>, line 339 (fmod FOO): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 356 (fmod MOD): operator declaration for
+    operation f subsort overloads an operator of the same name from a
+    parameter.
+Warning: <standard input>, line 355 (fmod MOD): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 360 (fmod TEST): unable to use module MOD due
     to unpatchable errors.
-Maude> Bye.
+Warning: <standard input>, line 359 (fmod TEST): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Bye.

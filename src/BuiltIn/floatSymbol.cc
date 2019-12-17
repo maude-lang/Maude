@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -57,14 +57,14 @@ FloatSymbol::FloatSymbol(int id)
 void
 FloatSymbol::fillInSortInfo(Term* subject)
 {
-  Sort* s = finite(static_cast<FloatTerm*>(subject)->getValue()) ? finiteSort : sort;
+  Sort* s = isfinite(static_cast<FloatTerm*>(subject)->getValue()) ? finiteSort : sort;
   subject->setSortInfo(s->component(), s->index());
 }
 
 void
 FloatSymbol::computeBaseSort(DagNode* subject)
 {
-  Sort* s = finite(static_cast<FloatDagNode*>(subject)->getValue()) ? finiteSort : sort;
+  Sort* s = isfinite(static_cast<FloatDagNode*>(subject)->getValue()) ? finiteSort : sort;
   subject->setSortIndex(s->index());
 }
 

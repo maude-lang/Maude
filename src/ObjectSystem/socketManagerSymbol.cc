@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for class SocketOidSymbol.
+//      Implementation for class SocketManagerSymbol.
 //
 
 //      utility stuff
@@ -43,18 +43,15 @@
 #include "term.hh"
 
 //      core class definitions
-//#include "rewritingContext.hh"
 #include "symbolMap.hh"
 
 //      free theory class definitions
-//#include "freeNet.hh"
 #include "freeDagNode.hh"
 
 //      built in class definitions
 #include "succSymbol.hh"
 #include "stringSymbol.hh"
 #include "stringDagNode.hh"
-//#include "stringOpSymbol.hh"
 #include "bindingMacros.hh"
 
 //	object system class definitions
@@ -144,7 +141,7 @@ SocketManagerSymbol::getSymbolAttachments(Vector<const char*>& purposes,
 bool
 SocketManagerSymbol::handleManagerMessage(DagNode* message, ObjectSystemRewritingContext& context)
 {
-  //cerr << "SocketManagerSymbol::handleManagerMessage(): saw " << message << endl;
+  DebugAdvisory("SocketManagerSymbol::handleManagerMessage(): saw " << message);
   Symbol* s = message->symbol();
   if (s == createClientTcpSocketMsg)
     return createClientTcpSocket(safeCast(FreeDagNode*, message), context);
@@ -156,7 +153,7 @@ SocketManagerSymbol::handleManagerMessage(DagNode* message, ObjectSystemRewritin
 bool
 SocketManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingContext& context)
 {
-  //cerr << "SocketManagerSymbol::handleMessage(): saw " << message << endl;
+  DebugAdvisory("SocketManagerSymbol::handleMessage(): saw " << message);
   Symbol* s = message->symbol();
   if (s == acceptClientMsg)
     return acceptClient(safeCast(FreeDagNode*, message), context);

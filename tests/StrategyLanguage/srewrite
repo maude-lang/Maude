@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/srewrite.maude -no-banner -no-advise \
+  > srewrite.out 2>&1
+
+diff $srcdir/srewrite.expected srewrite.out > /dev/null 2>&1

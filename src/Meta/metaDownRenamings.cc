@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -37,141 +37,20 @@ MetaLevel::convertToTokens(const Vector<int>& ids, Vector<Token>& tokens)
 }
 
 bool
-MetaLevel::downModuleExpression(DagNode* metaExpr, ImportModule* enclosingModule, ImportModule*& m)
+MetaLevel::downModuleExpression(DagNode* metaExpr, MetaModule* enclosingModule, ImportModule*& m)
 {
-  Interpreter* owner = safeCast(MetaModule*, enclosingModule)->getOwner();  // HACK - probably all modules should have owners
-
-  int moduleName;
-  if (downQid(metaExpr, moduleName))
+  if (ModuleExpression* modExpr = downModuleExpression(metaExpr))
     {
-      if (PreModule* pm = owner->getModule(moduleName))
+      Interpreter* owner = enclosingModule->getOwner();
+      ImportModule* module = owner->makeModule(modExpr, enclosingModule);
+      modExpr->deepSelfDestruct();
+      if (module != 0)
 	{
-	  m = pm->getFlatSignature();
-	  if (!(m->isBad()))
-	    return true;
-	  IssueAdvisory(LineNumber(FileTable::META_LEVEL_CREATED) << ": unable to use module " <<
-			QUOTE(pm) << " due to unpatchable errors.");
-	}
-      IssueAdvisory(LineNumber(FileTable::META_LEVEL_CREATED) << ": module " <<
-		    QUOTE(Token::name(moduleName)) << " does not exist.");
-    }
-  else
-    {
-      Symbol* me = metaExpr->symbol();
-      if (me == sumSymbol)
-	{
-	  Vector<ImportModule*> fms;
-	  for (DagArgumentIterator i(metaExpr); i.valid(); i.next())
-	    {
-	      if (!downModuleExpression(i.argument(), enclosingModule, m) || m->getNrParameters() > 0)
-		return false;
-	      fms.append(m);
-	    }
-	  m = owner->makeSummation(fms);
-	  if (m == 0)
-	    return false;
+	  m = module;
 	  return true;
-	}
-      else if (me == renamingSymbol)
-	{
-	  FreeDagNode* f = safeCast(FreeDagNode*, metaExpr);
-	  Renaming renaming;  // object level renaming is ephemeral
-	  if (downRenamings(f->getArgument(1), &renaming) &&
-	      downModuleExpression(f->getArgument(0), enclosingModule, m))
-	    {
-	      m = owner->makeRenamedCopy(m, &renaming);
-	      if (m == 0)
-		return false;
-	      return true;
-	    }
-	}
-      else if (me == instantiationSymbol)
-	{
-	  FreeDagNode* f = safeCast(FreeDagNode*, metaExpr);
-	  Vector<int> names;
-	  if (downInstantiationArguments(f->getArgument(1), names) &&
-	      downModuleExpression(f->getArgument(0), enclosingModule, m))
-	    {
-	      int nrParameters = m->getNrParameters();
-	      int nrNames = names.size();
-	      if (nrParameters != nrNames)
-		return false;  // wrong number of arguments
-
-	      Vector<View*> views(nrParameters);
-	      bool hasTheoryView = false;
-	      bool hasPEM = false;
-	      for (int i = 0; i < nrParameters; ++i)
-		{
-		  int code  = names[i];
-		  if (enclosingModule != 0)
-		    {
-		      int index = enclosingModule->findParameterIndex(code);
-		      if (index != NONE)
-			{
-			  //
-			  //	Parameters from an enclosing module occlude views.
-			  //
-			  ImportModule* enclosingModuleParameterTheory = enclosingModule->getParameterTheory(index);
-			  ImportModule* requiredParameterTheory = m->getParameterTheory(i);
-			  if (enclosingModuleParameterTheory != requiredParameterTheory)
-			    return false;  // theory mismatch
-			  views[i] = 0;
-			  hasPEM = true;
-			  continue;
-			}
-		    }
-		  if (View* v = owner->getView(code))
-		    {
-		      //
-		      //	Instantiation is a view.
-		      //
-		      if (!(v->evaluate()))
-			return false;  // bad view
-		      ImportModule* fromTheory = v->getFromTheory();
-		      ImportModule* requiredParameterTheory = m->getParameterTheory(i);
-		      if (fromTheory != requiredParameterTheory)
-			return false;  // theory mismatch
-		      views[i] = v;
-		      if (v->getToModule()->isTheory())
-			hasTheoryView = true;
-		    }
-		  else
-		    return false;  // nonexistent view
-		}
-	      if (hasTheoryView && hasPEM)
-		return false;
-	      m = owner->makeInstatiation(m, views, names);
-	      if (m == 0)
-		return false;  // cache now does not cache bad modules
-	      return true;
-	    }
 	}
     }
   return false;
-}
-
-bool
-MetaLevel::downInstantiationArguments(DagNode* metaArguments, Vector<int>& arguments)
-{
-  Assert(arguments.empty(), "nonempty arg list");
-  if (metaArguments->symbol() == metaArgSymbol)
-    {
-      for (DagArgumentIterator i(metaArguments); i.valid(); i.next())
-	{
-	  int id;
-	  if (!downQid(i.argument(), id))
-	    return false;
-	  arguments.append(id);
-	}
-    }
-  else
-    {
-      int id;
-      if (!downQid(metaArguments, id))
-	return false;
-      arguments.append(id);
-    }
-  return true;
 }
 
 bool
@@ -255,6 +134,31 @@ MetaLevel::downRenaming(DagNode* metaRenaming, Renaming* renaming)
 	  toTok.tokenize(to, FileTable::META_LEVEL_CREATED);
 	  renaming->addLabelMapping(fromTok, toTok);
 	  return true;
+	}
+    }
+  else if (mr == stratRenamingSymbol)
+    {
+      FreeDagNode* f = safeCast(FreeDagNode*, metaRenaming);
+      Token from;
+      Token to;
+      if (downToken(f->getArgument(0), from) && downToken(f->getArgument(1), to))
+	{
+	  renaming->addStratMapping(from);
+	  renaming->addStratTarget(to);
+	  return true;
+	}
+    }
+  else if (mr == stratRenamingSymbol2)
+    {
+      FreeDagNode* f = safeCast(FreeDagNode*, metaRenaming);
+      Token from;
+      Token to;
+      if (downToken(f->getArgument(0), from) && downToken(f->getArgument(3), to))
+	{
+	  renaming->addStratMapping(from);
+	  renaming->addStratTarget(to);
+	  return downRenamingTypes(f->getArgument(1), renaming) &&
+	    downRenamingType(f->getArgument(2), renaming);
 	}
     }
   return false;

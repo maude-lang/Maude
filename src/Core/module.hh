@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -55,6 +55,11 @@ public:
   virtual void closeFixUps();
   virtual void closeTheory();
   virtual void stackMachineCompile();
+  //
+  //	Abstract member function to create new internal symbols.
+  //
+  virtual Symbol* createInternalTupleSymbol(const Vector<ConnectedComponent*>& domain, ConnectedComponent* range) = 0;
+
   Environment* getEnvironment();
   Status getStatus() const;
   const Vector<Sort*>& getSorts() const;
@@ -63,13 +68,17 @@ public:
   const Vector<SortConstraint*>& getSortConstraints() const;
   const Vector<Equation*>& getEquations() const;
   const Vector<Rule*>& getRules() const;
+  const Vector<StrategyDefinition*>& getStrategyDefinitions() const;
+  const Vector<RewriteStrategy*>& getStrategies() const;
   const SortBdds* getSortBdds();
   void insertSort(Sort* sort);
   void insertSymbol(Symbol* symbol);
   void insertSortConstraint(SortConstraint* sortConstraint);
   void insertEquation(Equation* equation);
   void insertRule(Rule* rule);
-  void insertLateSymbol(Symbol*s);
+  void insertStrategy(RewriteStrategy* strategy);
+  void insertStrategyDefinition(StrategyDefinition* sdef);
+  void insertLateSymbol(Symbol* s);
   int getMinimumSubstitutionSize() const;
   void notifySubstitutionSize(int minimumSize);
   //
@@ -77,8 +86,8 @@ public:
   //
   virtual void reset();  // clear misc caches for each symbol
   void resetRules();  // clear rule hidden state
-  void saveHiddenState();  // save rule hidden state
-  void restoreHiddenState();  // restore rule hidden state
+  //void saveHiddenState();  // save rule hidden state
+  //void restoreHiddenState();  // restore rule hidden state
   //
   //	Memoization stuff.
   //
@@ -103,6 +112,8 @@ private:
   Vector<SortConstraint*> sortConstraints;
   Vector<Equation*> equations;
   Vector<Rule*> rules;
+  Vector<RewriteStrategy*> strategies;
+  Vector<StrategyDefinition*> strategyDefinitions;
   SortBdds* sortBdds;
   int minimumSubstitutionSize;
   MemoMap* memoMap;  // global memeo map for all symbols in module
@@ -156,6 +167,18 @@ Module::getRules() const
   return rules;
 }
 
+inline const Vector<RewriteStrategy*>&
+Module::getStrategies() const
+{
+  return strategies;
+}
+
+inline const Vector<StrategyDefinition*>&
+Module::getStrategyDefinitions() const
+{
+  return strategyDefinitions;
+}
+
 inline void
 Module::insertSort(Sort* sort)
 {
@@ -167,7 +190,7 @@ Module::insertSort(Sort* sort)
 inline void
 Module::insertSymbol(Symbol* symbol)
 {
-  Assert(status < SIGNATURE_CLOSED, cerr << "bad status");
+  Assert(status < SIGNATURE_CLOSED, "bad status");
   symbol->setModuleInfo(this, symbols.length());
   symbols.append(symbol);
 }

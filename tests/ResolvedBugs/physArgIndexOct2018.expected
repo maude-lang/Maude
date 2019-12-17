@@ -1,0 +1,31 @@
+==========================================
+srewrite in VENDING-MACHINE : $ $ $ using all .
+
+Solution 1
+rewrites: 1
+result Marking: $ $ c
+
+Solution 2
+rewrites: 2
+result Marking: $ $ q a
+
+No more solutions.
+rewrites: 2
+==========================================
+search in VENDING-MACHINE : $ $ $ =>! a a M:Marking .
+
+Solution 1 (state 8)
+states: 10  rewrites: 12
+M:Marking --> q q c
+
+Solution 2 (state 9)
+states: 10  rewrites: 12
+M:Marking --> q q q a
+
+No more solutions.
+states: 10  rewrites: 12
+==========================================
+rewrite in FOO : a a b .
+rewrites: 1
+result Foo: a a c
+Bye.

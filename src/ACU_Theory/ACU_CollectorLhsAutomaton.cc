@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -186,6 +186,10 @@ ACU_CollectorLhsAutomaton::collect(ACU_Stack& stripped,  // destroyed
       ACU_Symbol* topSymbol = subject->symbol();
       if (cs == 0)
 	{
+	  //
+	  //	The collector sort is maximal (error-free kind) or
+	  //	the error sort. Either way sort checks are disabled.
+	  //
 	  d = new ACU_TreeDagNode(topSymbol, t);
 	  if (subject->isReduced())
 	    {
@@ -199,6 +203,10 @@ ACU_CollectorLhsAutomaton::collect(ACU_Stack& stripped,  // destroyed
 	}
       else
 	{
+	  //
+	  //	Need to check sort of the dag we are going to
+	  //	bind to the collector variable.
+	  //
 	  int index = t.computeBaseSort(topSymbol);
 	  if (!leq(index, cs))
 	    return false;

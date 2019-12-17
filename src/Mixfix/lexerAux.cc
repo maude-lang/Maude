@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -23,7 +23,7 @@
 //
 //	Auxiliary functions and data needed by lexical analyzer.
 //
-#define MAX_IN_DEPTH	10
+#define MAX_IN_DEPTH	100
 
 int inStackPtr = 0;
 YY_BUFFER_STATE inStack[MAX_IN_DEPTH];
@@ -37,7 +37,7 @@ bool fakeNewlineStack[MAX_IN_DEPTH];
 void
 getInput(char* buf, yy_size_t& result, yy_size_t max_size)
 {
-  result = YY_NULL;
+  result = YY_NULL;  // if we don't update result, YY_NULL will indicate an EOF condition
   if (UserLevelRewritingContext::interrupted())
     fakeNewline = false;
   else
@@ -50,10 +50,17 @@ getInput(char* buf, yy_size_t& result, yy_size_t max_size)
 	  if (n > 0)
 	    {
 	      result = n;
+	      //
+	      //	If the last character we saw wasn't a newline then if we
+	      //	hit EOF next getInput() call we will need to fake one.
+	      //
 	      fakeNewline = (buf[n - 1] != '\n');
 	    }
 	  else
 	    {
+	      //
+	      //	Saw EOF so fake a newline if needed.
+	      //
 	      if (fakeNewline && max_size > 0)
 		{
 		  buf[0] = '\n';
@@ -189,7 +196,7 @@ includeFile(const string& directory, const string& fileName, bool silent, int li
 		   QUOTE(fileName));
       return false;
     }
-  int dirMarker = directoryManager.pushd(directory.c_str());
+  int dirMarker = directoryManager.pushd(directory);
   if (dirMarker == UNDEFINED)
     {
       IssueWarning(LineNumber(lineNr) << ": couldn't chdir to " <<
@@ -211,6 +218,7 @@ includeFile(const string& directory, const string& fileName, bool silent, int li
   ++inStackPtr;
   yyin = fp;
   fileTable.openFile(lineNumber, fileName.c_str(), silent);
+  directoryManager.visitFile(fileName);
   yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
   UserLevelRewritingContext::setInteractive(false);
   return true;
@@ -269,10 +277,6 @@ eatComment(bool firstNonWhite)
       int c = yyinput();
       switch(c)
 	{
-	case 0:
-	  {
-	    IssueAdvisory(LineNumber(lineNumber) << "Saw null character in comment.");
-	  }
 	case ' ':
 	case '\t':
 	case '\r':
@@ -314,6 +318,7 @@ eatComment(bool firstNonWhite)
 	      }
 	    break;
 	  }
+	case 0:  // HACK to deal with flex returning NUL rather than EOF at end-of-file
 	case EOF:
 	  {
 	    return;

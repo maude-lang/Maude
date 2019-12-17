@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -261,7 +261,7 @@ SortTable::buildSortDiagram()
       sortDiagram.expandTo(1);
       bool unique;
       int sortIndex = findMinSortIndex(all, unique);
-      WarningCheck(unique, "sort declarations for constant " << QUOTE(safeCast(Symbol*, this)) <<
+      WarningCheck(unique, "sort declarations for constant " << QUOTE(safeCastNonNull<Symbol*>(this)) <<
 		   " do not have an unique least sort.");
       sortDiagram[0] = sortIndex;
       singleNonErrorSort = componentVector[0]->sort(sortIndex);

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -92,4 +92,70 @@ MixfixModule::prefix(ostream& s, bool needDisambig, const char* color)
     s << '(';
   if (color != 0)
     s << color;
+}
+
+void
+MixfixModule::decideIteratedAmbiguity(bool rangeKnown,
+				      Symbol* symbol,
+				      const mpz_class& number,
+				      bool& needToDisambiguate,
+				      bool& argumentRangeKnown)
+ 
+{
+  needToDisambiguate = false;
+  argumentRangeKnown = true;
+  int name = symbol->id();
+  const Vector<Sort*>& domainAndRange = symbol->getOpDeclarations()[0].getDomainAndRange();
+  int overloadType = 0;
+  //
+  //	Need to look at other iterated symbols.
+  //
+  for (IteratedMap::const_iterator i = iteratedMap.lower_bound(name);
+       i != iteratedMap.end() && i->first == name; ++i)
+    {
+      Symbol* iSymbol = i->second;
+      if (iSymbol == symbol)
+	continue;  // found ourself
+
+      overloadType |= ADHOC_OVERLOADED;
+      const Vector<Sort*>& iDomainAndRange = iSymbol->getOpDeclarations()[0].getDomainAndRange();
+      if (domainAndRange[0]->component() == iDomainAndRange[0]->component())
+	overloadType |= DOMAIN_OVERLOADED;
+      if (domainAndRange[1]->component() == iDomainAndRange[1]->component())
+	overloadType |= RANGE_OVERLOADED;
+    }
+  //
+  //	Need to look at pseudo iterated symbols of the form name^number.
+  //
+  PseudoIteratedMap::const_iterator i = pseudoIteratedMap.find(name);
+  if (i != pseudoIteratedMap.end())
+    {
+      const NumberToSymbolMap& numberToSymbolMap = i->second;
+      //
+      //	Now look at all pseudos that alias the correct number, and compute an overload type.
+      //
+      for (NumberToSymbolMap::const_iterator j = numberToSymbolMap.lower_bound(number);
+	   j != numberToSymbolMap.end() && j->first == number; ++j)
+	{
+	  Symbol* pSymbol = j->second;
+	  overloadType |= ADHOC_OVERLOADED;
+	  const Vector<Sort*>& pDomainAndRange = pSymbol->getOpDeclarations()[0].getDomainAndRange();
+	  if (domainAndRange[0]->component() == pDomainAndRange[0]->component())
+	    overloadType |= DOMAIN_OVERLOADED;
+	  if (domainAndRange[1]->component() == pDomainAndRange[1]->component())
+	    overloadType |= RANGE_OVERLOADED;
+	}
+    }
+  if (!(overloadType & ADHOC_OVERLOADED))
+    return;  // no overloading
+  //
+  //	We only disambiguate at current level if we don't already known the range kind
+  //	and there is domain overloading (i.e. knowning our domain kind won't uniquely
+  //	select the operator.
+  //
+  if (!rangeKnown)
+    needToDisambiguate = (overloadType & DOMAIN_OVERLOADED);
+
+  if ((overloadType & RANGE_OVERLOADED) || (!rangeKnown && !needToDisambiguate))
+    argumentRangeKnown = false;
 }

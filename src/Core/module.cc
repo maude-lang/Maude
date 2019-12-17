@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -43,6 +43,8 @@
 #include "sortBdds.hh"
 #include "memoMap.hh"
 #include "module.hh"
+#include "strategyDefinition.hh"
+#include "rewriteStrategy.hh"
 
 //	variable class definitions
 #include "variableTerm.hh"
@@ -84,6 +86,12 @@ Module::~Module()
   int nrRules = rules.length();
   for (int i = 0; i < nrRules; i++)
     delete rules[i];
+  int nrStrategyDefinitions = strategyDefinitions.length();
+  for (int i = 0; i < nrStrategyDefinitions; i++)
+    delete strategyDefinitions[i];
+  int nrStrategies = strategies.length();
+  for (int i = 0; i < nrStrategies; i++)
+    delete strategies[i];
   //
   //	And finally it is safe to delete our symbols.
   //
@@ -134,6 +142,23 @@ Module::insertRule(Rule* rule)
   rule->setModuleInfo(this, rules.length());
   rules.append(rule);
   rule->check();
+}
+
+void
+Module::insertStrategy(RewriteStrategy* strategy)
+{
+  Assert(status < THEORY_CLOSED, "bad status");
+  strategy->setModuleInfo(this, strategies.length());
+  strategies.append(strategy);
+}
+
+void
+Module::insertStrategyDefinition(StrategyDefinition* sdef)
+{
+  Assert(status < THEORY_CLOSED, "bad status");
+  sdef->setModuleInfo(this, strategyDefinitions.length());
+  strategyDefinitions.append(sdef);
+  sdef->check();
 }
 
 void
@@ -230,7 +255,7 @@ Module::closeTheory()
 	      {
 		c->errorSortSeen();
 		changed = true;
-		//	      cout << c->sort(0) << " corrupted by " << s << '\n';
+		DebugAdvisory("sort " << c->sort(0) << " corrupted by " << s);
 	      }
 	  }
       }
@@ -268,7 +293,13 @@ Module::closeTheory()
       s->compileSortConstraints();
       s->compileEquations();
       s->compileRules();
-      // s->finalizeSymbol();
+    }
+  // Compile strategy definitions
+  int nrStratDefs = strategyDefinitions.length();
+  for (int i = 0; i < nrStratDefs; i++)
+    {
+      strategyDefinitions[i]->preprocess();
+      strategyDefinitions[i]->compile();
     }
 }
 
@@ -479,7 +510,6 @@ Module::insertLateSymbol(Symbol*s)
   s->compileSortConstraints();
   s->compileEquations();
   s->compileRules();
-  // s->finalizeSymbol();
 }
 
 void
@@ -512,6 +542,7 @@ Module::resetRules()
     (*i)->resetRules();
 }
 
+/*
 void
 Module::saveHiddenState()
 {
@@ -525,6 +556,7 @@ Module::restoreHiddenState()
   FOR_EACH_CONST(i, Vector<Symbol*>, symbols)
     (*i)->restoreHiddenState();
 }
+*/
 
 #ifdef DUMP
 void

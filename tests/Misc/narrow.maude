@@ -1,0 +1,54 @@
+set show timing off .
+
+mod BAZ is
+  sort Foo .
+  ops f g h : Foo -> Foo .
+  ops i j k : Foo Foo -> Foo .
+
+vars X Y Z W A B C D : Foo .
+  eq j(f(X), Y) = i(f(Y), X) [variant] .
+  rl g(i(X, k(Y, Z))) => f(k(Z, X)) [narrowing] .
+  rl f(k(X, X)) => h(X) [narrowing] .
+endm
+
+set show breakdown on .
+
+vu-narrow in BAZ : g(j(A, B)) =>* C .
+vu-narrow in BAZ : g(j(A, B)) =>+ C .
+vu-narrow in BAZ : g(j(A, B)) =>! C .
+
+vu-narrow [,1] in BAZ : g(j(A, B)) =>! C .
+vu-narrow [,2] in BAZ : g(j(A, B)) =>! C .
+vu-narrow [,3] in BAZ : g(j(A, B)) =>! C .
+vu-narrow [,4] in BAZ : g(j(A, B)) =>! C .
+
+vu-narrow [,1] in BAZ : g(j(A, B)) =>* C .
+vu-narrow [,2] in BAZ : g(j(A, B)) =>* C .
+vu-narrow [,3] in BAZ : g(j(A, B)) =>* C .
+
+
+fvu-narrow in BAZ : g(j(A, B)) =>* C .
+fvu-narrow in BAZ : g(j(A, B)) =>+ C .
+fvu-narrow in BAZ : g(j(A, B)) =>! C .
+
+fvu-narrow [,1] in BAZ : g(j(A, B)) =>! C .
+fvu-narrow [,2] in BAZ : g(j(A, B)) =>! C .
+fvu-narrow [,3] in BAZ : g(j(A, B)) =>! C .
+fvu-narrow [,4] in BAZ : g(j(A, B)) =>! C .
+
+fvu-narrow [,1] in BAZ : g(j(A, B)) =>* C .
+fvu-narrow [,2] in BAZ : g(j(A, B)) =>* C .
+fvu-narrow [,3] in BAZ : g(j(A, B)) =>* C .
+
+
+mod FOO is
+  sort Foo .
+  ops f g h : Foo -> Foo .
+  op i : Foo Foo -> Foo .
+
+vars X Y Z W A B C D : Foo .
+  rl i(f(X), h(Y)) => g(f(X)) [narrowing] .
+endm
+
+vu-narrow i(A, B) =>+ g(A) .
+fvu-narrow i(A, B) =>+ g(A) .

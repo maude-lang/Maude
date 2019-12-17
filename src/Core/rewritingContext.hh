@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -69,7 +69,7 @@ public:
 
   void clearCount();
   void addInCount(const RewritingContext& other);
-  void transferCount(RewritingContext& other);
+  void transferCountFrom(RewritingContext& other);
   Int64 getTotalCount() const;
   Int64 getMbCount() const;
   Int64 getEqCount() const;
@@ -80,14 +80,19 @@ public:
   void ruleRewrite(Int64 limit = NONE);
   void fairRewrite(Int64 limit = NONE, Int64 gas = 1);
   void fairContinue(Int64 limit = NONE);
-  void fairStart(Int64 gas);
-  bool fairTraversal(Int64& limit);
+
+  void fairStart(Int64 limit, Int64 gas);
+  void fairRestart(Int64 limit);
+  bool fairTraversal();
+  bool getProgress();
+
   bool builtInReplace(DagNode* old, DagNode* replacement);
 
   virtual RewritingContext* makeSubcontext(DagNode* root, int purpose = OTHER);
   virtual int traceBeginEqTrial(DagNode* subject, const Equation* equation);
   virtual int traceBeginRuleTrial(DagNode* subject, const Rule* rule);
   virtual int traceBeginScTrial(DagNode* subject, const SortConstraint* sc);
+  virtual int traceBeginSdTrial(DagNode* subject, const StrategyDefinition* sc);
   virtual void traceEndTrial(int trialRef, bool success);
   virtual void traceExhausted(int trialRef);
 
@@ -124,6 +129,16 @@ public:
 					 DagNode* newState,
 					 const Vector<DagNode*>& newVariantSubstitution,
 					 const NarrowingVariableInfo& originalVariables);
+  //
+  //	This exists so we can handle an interrupt that causes a blocking call to return early.
+  //	If it returns true, the caller assumes it can continue; otherwise the caller should return.
+  //
+  virtual bool handleInterrupt();
+
+  virtual void traceStrategyCall(StrategyDefinition* sdef,
+				 DagNode* callDag,
+				 DagNode* subject,
+				 const Substitution* substitution);
 
 #ifdef DUMP
   static void dumpStack(ostream& s, const Vector<RedexPosition>& stack);
@@ -147,7 +162,6 @@ private:
   bool ascend();
   void descend();
   bool doRewriting(bool argsUnstackable);
-  bool fairTraversal();
 
   static bool traceFlag;
 
@@ -182,7 +196,7 @@ RewritingContext::RewritingContext(DagNode* root)
   mbCount = 0;
   eqCount = 0;
   rlCount = 0;
-  
+
   narrowingCount = 0;
   variantNarrowingCount = 0;
   staleMarker = ROOT_OK;
@@ -194,14 +208,20 @@ RewritingContext::RewritingContext(int substitutionSize)
     rootNode(0)
 {
   //
-  //	This constructor exists so we can build RewritingContexts for use in the solve() phase of matching where
-  //	we don't otherwise have a RewritingContext to hand.
+  //	This constructor exists so we can build RewritingContexts for use in the solve()
+  //	phase of matching where we don't otherwise have a RewritingContext to hand.
   //
 }
 
 inline
 RewritingContext::~RewritingContext()
 {
+}
+
+inline void
+RewritingContext::reduce()
+{
+  rootNode->reduce(*this);
 }
 
 inline DagNode*
@@ -295,6 +315,9 @@ RewritingContext::clearCount()
   mbCount = 0;
   eqCount = 0;
   rlCount = 0;
+
+  narrowingCount = 0;
+  variantNarrowingCount = 0;
 }
 
 inline void
@@ -309,7 +332,7 @@ RewritingContext::addInCount(const RewritingContext& other)
 }
 
 inline void
-RewritingContext::transferCount(RewritingContext& other)
+RewritingContext::transferCountFrom(RewritingContext& other)
 {
   mbCount += other.mbCount;
   other.mbCount = 0;
@@ -339,6 +362,18 @@ RewritingContext::builtInReplace(DagNode* old, DagNode* replacement)
    if (trace)
      tracePostEqRewrite(old);
    return true;
+}
+
+inline bool
+RewritingContext::getProgress()
+{
+  return progress;
+}
+
+inline void
+RewritingContext::fairRestart(Int64 limit)
+{
+  rewriteLimit = limit;
 }
 
 #endif

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
 
@@ -38,7 +38,8 @@ class UnificationProblem : public CacheableState, private SimpleRootContainer
 public:
   UnificationProblem(Vector<Term*>& lhs,
 		     Vector<Term*>& rhs,
-		     FreshVariableGenerator* freshVariableGenerator);
+		     FreshVariableGenerator* freshVariableGenerator,
+		     int incomingVariableFamily = NONE);
   ~UnificationProblem();
 
   bool problemOK() const;
@@ -46,6 +47,7 @@ public:
   const Substitution& getSolution() const;
   int getNrFreeVariables() const;
   const VariableInfo& getVariableInfo() const;
+  int getVariableFamily() const;
   bool isIncomplete() const;
 
 private:
@@ -55,7 +57,8 @@ private:
 
   Vector<Term*> leftHandSides;
   Vector<Term*> rightHandSides;
-  FreshVariableGenerator* freshVariableGenerator;
+  FreshVariableGenerator* const freshVariableGenerator;
+  const int variableFamilyToUse;
 
   VariableInfo variableInfo;
 
@@ -100,6 +103,12 @@ inline bool
 UnificationProblem::isIncomplete() const
 {
   return pendingStack.isIncomplete();
+}
+
+inline int
+UnificationProblem::getVariableFamily() const
+{
+  return variableFamilyToUse;
 }
 
 #endif

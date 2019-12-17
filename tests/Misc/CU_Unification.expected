@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 unify in FOO : f(X, Y) =? f(U, V) .
 
 Solution 1
@@ -511,4 +511,4 @@ Y --> %1:Foo
 
 No more unifiers.
 rewrites: 0
-Maude> Bye.
+Bye.

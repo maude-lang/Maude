@@ -1,0 +1,32 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that object-message rewriting fake rewrites are ignored
+***	by trace/break/profile code.
+***
+
+mod FOO is
+  inc CONFIGURATION .
+  op User : -> Cid .
+  ops me other : -> Oid .
+  op no-op : Oid Oid -> Msg [msg] .
+
+vars X Y : Oid .
+var AS : AttributeSet .
+  rl < X : User | AS >  no-op(X, Y) => < X : User | AS > .
+endm
+
+set break on .
+break select __ .
+
+set trace on .
+set trace whole on .
+set profile on .
+
+frew < me : User | none > no-op(me, other) .
+
+*** we expect a single break to debugger
+resume .
+
+show profile .

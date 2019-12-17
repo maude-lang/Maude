@@ -1,3 +1,48 @@
+2019-12-03  Steven Eker  <eker@mu>
+
+	* variableTerm.cc (deepCopy2): use safeCastNonNull<>()
+	(compareArguments): use safeCastNonNull<>() (both versions)
+	(subsumes): use safeCastNonNull<>()
+
+	* variableSymbol.cc (termify): use safeCastNonNull<>()
+	(computeGeneralizedSort): use safeCastNonNull<>()
+	(computeGeneralizedSort2): use safeCastNonNull<>()
+	(makeCanonicalCopy): use safeCastNonNull<>()
+
+	* variableDagNode.cc (compareArguments): use safeCastNonNull<>()
+
+	* variableTerm.hh (getSort): use safeCastNonNull<>()
+
+2019-11-11  Steven Eker  <eker@mu>
+
+	* variableDagNode.cc (computeBaseSortForGroundSubterms): take
+	warnAboutUnimplemented arg
+
+	* variableDagNode.hh (NamedEntity): updated decl for
+	computeBaseSortForGroundSubterms()
+
+===================================Maude125===========================================
+
+2017-02-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* variableDagNode.cc (stackArguments): deleted
+
+	* variableDagNode.hh (NamedEntity): deleted decl for stackArguments()
+
+	* variableSymbol.hh (Symbol): deleted decl for stackArguments()
+
+	* variableSymbol.cc (stackArguments): deleted
+
+===================================Maude111b===========================================
+
+2016-11-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* variableDagNode.hh (NamedEntity): added decl for copyAll2()
+
+	* variableDagNode.cc (copyAll2): added
+
+===================================Maude111===========================================
+
 2016-03-24  Steven Eker  <eker@install.csl.sri.com>
 
 	* variableSymbol.hh (Symbol): added decl for computeGeneralizedSort2()

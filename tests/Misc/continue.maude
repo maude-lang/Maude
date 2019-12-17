@@ -1,0 +1,138 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test continue and debug options with various commands.
+***
+
+***
+***	rewriting search
+***
+
+mod COLLATZ is
+  pr RAT .
+  sort Foo .
+  op f : Nat -> Foo .
+
+var N : Nat .
+  crl f(N) => f(N / 2) if N rem 2 = 0 .
+  crl f(N) => f(3 * N + 1) if N rem 2 = 1 .
+endm
+
+debug search [10] f(27) =>+ f(N) .
+step .
+step .
+resume .
+debug cont 10 .
+step .
+resume .
+cont .
+
+***
+***	variant generation
+***
+
+fmod XOR is
+  sort XOR .
+
+  sort Elem .
+  ops cst1 cst2 cst3 cst4 : -> Elem .
+
+  subsort Elem < XOR .
+  op _+_ : XOR XOR -> XOR [ctor assoc comm] .
+  op 0 : -> XOR .
+  op a : -> XOR .
+
+  vars X Y : XOR .
+
+  eq Y + 0 = Y [variant] .
+  eq X + X = 0 [variant] .
+  eq X + X + Y = Y [variant] .
+endfm
+
+get variants [1] in XOR : X:XOR + cst1 .
+debug cont 1 .
+step .
+resume .
+cont .
+
+***
+***	variant unification
+***
+
+variant unify [2] X:XOR + cst1 =? Y:XOR + cst2 .
+debug cont 3 .
+step .
+step .
+resume .
+cont .
+
+variant unify [1] X:XOR + cst1 =? Y:XOR + cst2 such that X:XOR + cst1 irreducible .
+cont 1 .
+cont 1 .
+cont 1 .
+
+***
+***	regular narrowing
+***
+
+mod FOO is
+  sort Foo .
+  op f : Foo Foo -> Foo [assoc] .
+
+var X Y Z W A B C D : Foo .
+  rl f(X, Y, Y, Z) => f(X, Y, Z) [narrowing] .
+endm
+
+debug narrow [5, 1] f(A, A) =>+ C .
+step .
+resume .
+debug cont 5 .
+resume .
+cont 5 .
+
+***
+***	narrowing with variant unification.
+***
+
+mod BAZ is
+  sort Foo .
+  ops f g h : Foo -> Foo .
+  ops i j k : Foo Foo -> Foo .
+
+vars X Y Z W A B C D : Foo .
+  eq j(f(X), Y) = i(f(Y), X) [variant] .
+  rl g(i(X, k(Y, Z))) => f(k(Z, X)) [narrowing] .
+  rl f(k(X, X)) => h(X) [narrowing] .
+endm
+
+debug vu-narrow [2] in BAZ : g(j(A, B)) =>* C .
+resume .
+debug cont 1 .
+step .
+resume .
+cont 2 .
+cont .
+
+***
+***	rewriting with strategies
+***
+
+mod FOO3 is
+  sort Foo .
+  ops a b c d e : -> Foo .
+  ops f g : Foo Foo -> Foo [comm].
+  ops h i : Foo -> Bool .
+
+vars X Y Z : Foo .
+  crl f(X, Y) => g(X, Z) if h(X) => i(Z) [label 1] .
+  eq h(a) = i(d) .
+  eq h(b) = i(e) .
+endm
+
+debug srew [1] f(a, b) using 1{all *} .
+step .
+resume .
+debug cont 1 .
+step .
+cont .

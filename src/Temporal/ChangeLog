@@ -1,3 +1,9 @@
+2017-03-15  Steven Eker  <eker@install.csl.sri.com>
+
+	* transitionSet.cc (insert): added comments to explain subtle code
+
+===================================Maude112===========================================
+
 2003-07-14  Steven Eker  <eker@goo.csl.sri.com>
 
 	* veryWeakAlternatingAutomaton.cc (computeTransitionSet): TRUE ->
@@ -8,7 +14,7 @@
 	* logicFormula.hh (class LogicFormula): TRUE -> LTL_TRUE,
 	FALSE -> LTL_FALSE because TRUE and FALSE are #defined on some
 	platforms
-	
+
 ===================================Maude81===========================================
 
 2003-02-25  Steven Eker  <eker@goo.csl.sri.com>

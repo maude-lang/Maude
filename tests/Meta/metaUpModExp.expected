@@ -1,7 +1,8 @@
-Maude> ==========================================
+==========================================
 reduce in META-LEVEL : upImports('META-LEVEL) .
 rewrites: 1
-result Import: protecting 'META-VIEW .
+result ImportList: protecting 'META-VIEW .
+protecting 'BOUND .
 ==========================================
 reduce in META-LEVEL : upImports('BAR) .
 rewrites: 1
@@ -195,4 +196,4 @@ result FModule: fmod 'BAZ is
   eq '_xor_['false.Bool,'A:Bool] = 'A:Bool [none] .
   eq 'not_['A:Bool] = '_xor_['true.Bool,'A:Bool] [none] .
 endfm
-Maude> Bye.
+Bye.

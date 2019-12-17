@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -158,10 +158,10 @@ private:
   static bool isRed(const ACU_RedBlackNode* mightBeNull);
   void makeRedIfRed(const ACU_RedBlackNode* other);
   //
-  //	Nasty cross casting stuff.
+  //    Get pointer to MemoryInfo object associated with us.
   //
-  MemoryCell* getMemoryCell();
-  const MemoryCell* getMemoryCell() const;
+  MemoryInfo* getMemoryInfo();
+  const MemoryInfo* getMemoryInfo() const;
 
   DagNode* const dagNode;
   int const multiplicity;
@@ -169,46 +169,46 @@ private:
   int maxMult;
 };
 
-inline MemoryCell*
-ACU_RedBlackNode::getMemoryCell()
+inline MemoryInfo*
+ACU_RedBlackNode::getMemoryInfo()
 {
-  return static_cast<MemoryCell*>(static_cast<void*>(this));
+  return MemoryCell::getMemoryInfo(this);
 }
 
-inline const MemoryCell*
-ACU_RedBlackNode::getMemoryCell() const
+inline const MemoryInfo*
+ACU_RedBlackNode::getMemoryInfo() const
 {
-  return static_cast<const MemoryCell*>(static_cast<const void*>(this));
+  return MemoryCell::getMemoryInfo(this);
 }
 
 inline void*
 ACU_RedBlackNode::operator new(size_t size)
 {
   Assert(size <= sizeof(MemoryCell), "red-black node too big");
-  MemoryCell* m = MemoryCell::allocateMemoryCell();
+  void* m = MemoryCell::allocateMemoryCell();
   //
   //	MemoryCell::allocateMemoryCell() no longer sets the half word to
   //	Sort::SORT_UNKNOWN. This responsibility is shifted to us.
   //
-  m->setHalfWord(Sort::SORT_UNKNOWN);
+  MemoryCell::getMemoryInfo(m)->setHalfWord(Sort::SORT_UNKNOWN);
   //
   //	MemoryCell::allocateMemoryCell() no longer clears the memory
   //	cell flags. This responsibility is shifted to us.
   //
-  m->clearAllFlags();
+  MemoryCell::getMemoryInfo(m)->clearAllFlags();
   return m;
 }
 
 inline void
 ACU_RedBlackNode::setMarked()
 {
-  getMemoryCell()->setMarked();
+  getMemoryInfo()->setMarked();
 }
 
 inline bool
 ACU_RedBlackNode::isMarked()
 {
-  return getMemoryCell()->isMarked();
+  return getMemoryInfo()->isMarked();
 }
 
 inline int
@@ -295,37 +295,37 @@ ACU_RedBlackNode::getChild(int sign) const
 inline void
 ACU_RedBlackNode::setSortIndex(int index)
 {
-  getMemoryCell()->setHalfWord(index);
+  getMemoryInfo()->setHalfWord(index);
 }
 
 inline int
 ACU_RedBlackNode::getSortIndex() const
 {
-  return getMemoryCell()->getHalfWord();
+  return getMemoryInfo()->getHalfWord();
 }
 
 inline bool
 ACU_RedBlackNode::isRed() const
 {
-  return getMemoryCell()->getFlag(RED);
+  return getMemoryInfo()->getFlag(RED);
 }
 
 inline bool
 ACU_RedBlackNode::isRed(const ACU_RedBlackNode* mightBeNull)
 {
-  return mightBeNull != 0 && mightBeNull->getMemoryCell()->getFlag(RED);
+  return mightBeNull != 0 && mightBeNull->getMemoryInfo()->getFlag(RED);
 }
 
 inline void
 ACU_RedBlackNode::makeRed()
 {
-  getMemoryCell()->setFlag(RED);
+  getMemoryInfo()->setFlag(RED);
 }
 
 inline void
 ACU_RedBlackNode::makeRedIfRed(const ACU_RedBlackNode* other)
 {
-  getMemoryCell()->copySetFlags(RED, other->getMemoryCell());
+  getMemoryInfo()->copySetFlags(RED, other->getMemoryInfo());
 }
 
 inline ACU_RedBlackNode*

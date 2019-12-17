@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -51,11 +51,11 @@ SyntacticPreModule::findHookSymbol(const Vector<Token>& fullName)
 	  for (pos++; pos < len; pos++)
 	    {
 	      int code = fullName[pos].code();
-	      if (code == partial)
+	      if (code == partial)  // ~> token
 		{
-		  if (++pos < len)
+		  if (++pos < len)  // range sort given
 		    {
-		      if (Sort* s = flatModule->findSort(fullName[pos].code()))
+		      if (Sort* s = flatModule->findSort(fullName[pos].code()))  // range sort found
 			return flatModule->findSymbol(prefixName, domain, s->component());
 		    }
 		  break;

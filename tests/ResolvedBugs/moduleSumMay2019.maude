@@ -1,0 +1,16 @@
+set show timing off .
+set show advisories off .
+
+*** check for summand commutation
+fmod FOO is
+  pr NAT + QID .
+endfm
+
+show mod .
+
+*** check for memory leak
+fmod FOO is
+  pr NAT + FLOAT + .
+endfm
+
+show mod .

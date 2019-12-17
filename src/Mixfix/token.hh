@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -62,7 +62,8 @@ public:
 
   void tokenize(const char* tokenString, int lineNumber);
   void tokenize(int code, int lineNumber);
-  static int parameterRename(int parameterCode, int originalCode);
+  static int makeParameterInstanceName(int parameterCode, int originalCode);
+  //static bool splitParameterInstanceName(int code, int& parameterName, int& baseName);
   void fixUp(const char* tokenString, int& lineNumber);
   void dropChar(const Token& original);
 
@@ -117,6 +118,7 @@ public:
   static int flaggedCode(int code);
   static bool isFlagged(int code);
   static int unflaggedCode(int code);
+  static int fixUp(const char* tokenString);
 
 private:
   enum SpecialValues

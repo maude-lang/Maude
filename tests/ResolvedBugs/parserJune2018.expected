@@ -1,0 +1,4 @@
+Warning: <standard input>, line 12: didn't expect token b:
+a b <---*HERE*
+Warning: <standard input>, line 12: no parse for term.
+Bye.

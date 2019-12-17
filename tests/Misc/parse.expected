@@ -1,0 +1,29 @@
+Warning: <standard input>, line 17: ambiguous term, two parses are:
+A : a_(b_(c`d`e))
+-versus-
+A : a_(b_(c_(d`e)))
+
+Arbitrarily taking the first as correct.
+A: a_(b_(c`d`e))
+Warning: <standard input>, line 31: ambiguous term, two parses are:
+A : a_(b_(c`d`e))
+-versus-
+A : a_(b_(c_e(d)))
+
+Arbitrarily taking the first as correct.
+A: a_(b_(c`d`e))
+Warning: <standard input>, line 51: ambiguous term, two parses are:
+A : a_(b_(c_(d`e)))
+-versus-
+A : a_(b_(c_(_e(d))))
+
+Arbitrarily taking the first as correct.
+A: a_(b_(c_(d`e)))
+Warning: <standard input>, line 72: ambiguous term, two parses are:
+A : a_(b_(c_(d_(e))))
+-versus-
+A : a_(b_(c_(_e(d))))
+
+Arbitrarily taking the first as correct.
+A: a_(b_(c_(d_(e))))
+Bye.

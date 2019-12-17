@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -181,6 +181,31 @@ Symbol::fillInSortInfo(Term* subject)
   subject->setSortInfo(component, step);
 }
 
+void
+Symbol::stackArguments(DagNode* /* subject */,
+		       Vector<RedexPosition>& /* stack */,
+		       int /* parentIndex */,
+		       bool /* respectFrozen */,
+		       bool /* eagerContext */)
+{
+  //
+  //	Default version does nothing and can be used for symbols that have no arguments.
+  //
+}
+
+void
+Symbol::stackPhysicalArguments(DagNode* subject,
+			       Vector<RedexPosition>& stack,
+			       int parentIndex,
+			       bool respectFrozen,
+			       bool eagerContext)
+{
+  //
+  //	Default version assumes that physical arguments correspond to notional arguments.
+  //
+  stackArguments(subject, stack, parentIndex, respectFrozen, eagerContext);
+}
+
 bool
 Symbol::interSymbolPass()
 {
@@ -196,21 +221,6 @@ void
 Symbol::postOpDeclarationPass()
 {
 }
-
-/*
-Term*
-Symbol::termify(DagNode* dagNode)
-{
-  Vector<Term*> args;
-
-  for (DagArgumentIterator a(*dagNode); a.valid(); a.next())
-    {
-      DagNode* d = a.argument();
-      args.append(d->symbol()->termify(d));
-    }
-  return makeTerm(args);
-}
-*/
 
 void
 Symbol::finalizeSortInfo()

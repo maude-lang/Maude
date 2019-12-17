@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/moduleSumMay2019.maude -no-banner -no-advise \
+  > moduleSumMay2019.out 2>&1
+
+diff $srcdir/moduleSumMay2019.expected moduleSumMay2019.out > /dev/null 2>&1

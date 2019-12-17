@@ -1,3 +1,69 @@
+2019-12-06  Steven Eker  <eker@mu>
+
+	* counterSymbol.hh (NumberOpSymbol): commented out declarations for
+	saveHiddenState(), restoreHiddenState()
+	(NumberOpSymbol): commented out typedef MpzStack, data member
+	currentValueStack
+
+	* counterSymbol.cc (saveHiddenState, restoreHiddenState): commented out
+
+===================================Maude127===========================================
+
+2019-05-24  Steven Eker  <eker@mu.csl.sri.com>
+
+	* floatOpSymbol.cc (eqRewrite, safePow): finite() -> isfinite()
+
+	* floatSymbol.cc (fillInSortInfo, computeBaseSort): finite() -> isfinite()
+
+2019-01-30  Steven Eker  <eker@install.csl.sri.com>
+
+	* stringDagNode.cc (StringDagNode): fix bad Assert() caught by
+	new compiler
+
+===================================Maude121===========================================
+
+2018-08-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* stringOpSymbol.hh (FreeSymbol): added decls for upperCase(),
+	lowerCase()
+
+	* stringOpSymbol.cc (eqRewrite, getDataAttachments): added support
+	for upperCase() and lowerCase()
+	(upperCase, lowerCase): added
+
+===================================Maude118===========================================
+
+2018-08-03  Steven Eker  <eker@install.csl.sri.com>
+
+	* bindingMacros.hh (BIND_SYMBOL2): added; this version
+	checks nrArgs
+
+2018-03-26  Steven Eker  <eker@install.csl.sri.com>
+
+	* floatOpSymbol.cc (safePow, eqRewrite):  use isNaN() macro to
+	avoid ambiguity between C and C++ definitions of isnan() that
+	appear with -std=gnu++11
+
+===================================Maude115===========================================
+
+2017-07-25  Steven Eker  <eker@install.csl.sri.com>
+
+	* minusSymbol.hh (NumberOpSymbol): added decl for
+	getSignedInt64()
+
+	* minusSymbol.cc (getSignedInt64): added
+
+===================================Maude115===========================================
+
+2017-03-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* branchSymbol.hh (FreeSymbol): updated decl for stackArguments()
+
+	* branchSymbol.cc (stackArguments): handle respectFrozen and
+	eagerContext arguments
+
+===================================Maude111b===========================================
+
 2015-12-18  Steven Eker  <eker@ape.csl.sri.com>
 
 	* matrixOpSymbol.cc (downAlgorithm): use Rope

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -39,7 +39,6 @@
 //      interface class definitions
 #include "associativeSymbol.hh"
 #include "dagNode.hh"
-//#include "term.hh"
 #include "extensionInfo.hh"
 
 //      core class definitions
@@ -56,8 +55,8 @@
 //	ACU theory class definitions
 #include "ACU_Symbol.hh"
 #include "ACU_DagNode.hh"
-#include "ACU_VarLhsAutomaton.hh"
 #include "ACU_TreeDagNode.hh"
+#include "ACU_VarLhsAutomaton.hh"
 
 ACU_VarLhsAutomaton::ACU_VarLhsAutomaton(ACU_Symbol* symbol,
 					 bool matchAtTop,
@@ -94,6 +93,10 @@ ACU_VarLhsAutomaton::match(DagNode* subject,
 	  //
 	  if (solution.value(stripperVarIndex) == 0)
 	    {
+	      //
+	      //	Stripper variable is unbound so find the
+	      //	first subterm it can take.
+	      //
 	      if (safeCast(ACU_BaseDagNode*, subject)->isTree())
 		{
 		  //
@@ -149,6 +152,13 @@ ACU_VarLhsAutomaton::match(DagNode* subject,
 		    }
 		  while (i != nrArgs);
 		}
+	      //
+	      //	We didn't find any single subterm that the
+	      //	stripper variable could be bound to.
+	      //	If stripper variable had an element sort or a
+	      //	pure sort, we can rule out multiple subterms being
+	      //	bound to the stripper variable and declare failure.
+	      //
 	      if (trueFailure)
 		return false;
 	    }

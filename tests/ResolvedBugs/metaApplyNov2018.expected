@@ -1,0 +1,141 @@
+==========================================
+reduce in META-LEVEL : metaApply(['APPLY], 'f['a.Foo,'b.Foo], 'k, 
+  'Y:Foo <- 'b.Foo, 0) .
+*********** equation
+eq [Q:Qid] = sth Q:Qid is
+  including Q:Qid .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+  none
+  none
+endsth .
+Q:Qid --> 'APPLY
+['APPLY]
+--->
+sth 'APPLY is
+  including 'APPLY .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+  none
+  none
+endsth
+*********** equation
+eq a = c .
+empty substitution
+a
+--->
+c
+*********** membership axiom
+mb c : Foo .
+empty substitution
+Bar: c becomes Foo
+*********** rule
+rl f(X:Foo, Y:Foo) => X:Foo [label k] .
+X:Foo --> c
+Y:Foo --> b
+f(c, b)
+--->
+c
+*********** equation
+(built-in equation for symbol metaApply)
+metaApply(sth 'APPLY is
+  including 'APPLY .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+  none
+  none
+endsth, 'f['a.Foo,'b.Foo], 'k, 
+  'Y:Foo <- 'b.Foo, 0)
+--->
+{'c.Foo,'Foo,
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'b.Foo}
+rewrites: 5
+mb applications: 1  equational rewrites: 3  rule rewrites: 1  variant narrowing
+    steps: 0  narrowing steps: 0
+result ResultTriple: {'c.Foo,'Foo,
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'b.Foo}
+==========================================
+reduce in META-LEVEL : metaXapply(['APPLY], 'f['a.Foo,'b.Foo], 'k, 
+  'Y:Foo <- 'b.Foo, 0, 0, 0) .
+*********** equation
+eq [Q:Qid] = sth Q:Qid is
+  including Q:Qid .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+  none
+  none
+endsth .
+Q:Qid --> 'APPLY
+['APPLY]
+--->
+sth 'APPLY is
+  including 'APPLY .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+  none
+  none
+endsth
+*********** equation
+eq a = c .
+empty substitution
+a
+--->
+c
+*********** membership axiom
+mb c : Foo .
+empty substitution
+Bar: c becomes Foo
+*********** rule
+rl f(X:Foo, Y:Foo) => X:Foo [label k] .
+X:Foo --> c
+Y:Foo --> b
+f(c, b)
+--->
+c
+*********** equation
+(built-in equation for symbol metaXapply)
+metaXapply(sth 'APPLY is
+  including 'APPLY .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+  none
+  none
+endsth, 'f['a.Foo,'b.Foo], 'k, 
+  'Y:Foo <- 'b.Foo, 0, 0, 0)
+--->
+{'c.Foo,'Foo,
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'b.Foo,[]}
+rewrites: 5
+mb applications: 1  equational rewrites: 3  rule rewrites: 1  variant narrowing
+    steps: 0  narrowing steps: 0
+result Result4Tuple: {'c.Foo,'Foo,
+  'X:Foo <- 'c.Foo ; 
+  'Y:Foo <- 'b.Foo,[]}
+Bye.

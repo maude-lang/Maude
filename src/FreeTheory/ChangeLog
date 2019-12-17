@@ -1,3 +1,174 @@
+2019-11-11  Steven Eker  <eker@mu>
+
+	* freeDagNode.cc (computeBaseSortForGroundSubterms): take
+	 warnAboutUnimplemented flag; simplified
+	(computeBaseSortForGroundSubterms): no early termination in
+	UNIMPLEMENTED case
+
+	* freeDagNode.hh (DagNode): updated decl for
+	computeBaseSortForGroundSubterms()
+
+===================================Maude125===========================================
+
+2017-04-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeTerm.cc (partialCompareArguments): use EQUAL rather 0
+	as return value (EQUAL has value 0)
+
+2017-02-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeDagNode.cc (instantiateWithCopies2): ifdef'd and commented out
+	code for ground flag and sort computation
+
+2017-02-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeDagNode.hh (DagNode): updated decl for instantiateWithReplacement()
+
+	* freeDagNode.cc (instantiateWithReplacement): support passing null
+	eagerCopies to indicate lazyContext
+
+2017-02-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeDagNode.cc (stackArguments): deleted
+
+	* freeDagNode.hh (DagNode): delete decl for stackArguments()
+
+	* freeSymbol.hh (Symbol): updated decl for stackArguments()
+
+	* freeSymbol.cc (stackArguments): support respectFrozen and eagerContext
+	flags
+
+2017-01-20  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeFast3RhsAutomaton.cc (replace): unmade change - assumption not
+	valid with left->right sharing
+
+	* freeFast2RhsAutomaton.cc (replace): unmade change - assumption not
+	valid with left->right sharing
+
+	* freeFastRhsAutomaton.cc: deleted
+
+	* freeFastRhsAutomaton.hh: deleted
+
+	* freeFast3RhsAutomaton.cc (replace): assume at least two instructions
+	and do test in loop
+
+	* freeFast2RhsAutomaton.cc (replace): assume at least two instructions
+	and do test in loop
+
+	* freeTerm.cc (compileRhs2): use nest if to decide on automaton
+
+	* freeTheory.hh: added decls for classes FreeNullaryRhsAutomaton,
+	FreeUnaryRhsAutomaton, FreeBinaryRhsAutomaton,
+	FreeTernaryRhsAutomaton, FreeFast2RhsAutomaton,
+	FreeFast3RhsAutomaton
+
+	* freeNullaryRhsAutomaton.cc (construct, replace): simplified
+	(remapIndices): added
+
+	* freeNullaryRhsAutomaton.hh (FreeRhsAutomaton): added decl for
+	remapIndices()
+	(FreeRhsAutomaton): added data members symbol and destination
+
+	* freeTerm.hh (Term): update decl for compileRhsAliens()
+
+	* freeTerm.cc (compileRhsAliens): handle nrFree argument
+	(compileRhs2): pass nrFree argument
+	(compileRhs2): use FreeTernaryRhsAutomaton(), FreeBinaryRhsAutomaton(),
+	FreeBinaryRhsAutomaton()
+
+	* freeDagNode.hh (DagNode): added classes FreeUnaryRhsAutomaton,
+	FreeBinaryRhsAutomaton, FreeTernaryRhsAutomaton as friends
+
+	* freeUnaryRhsAutomaton.hh: created
+
+	* freeUnaryRhsAutomaton.cc: created
+
+	* freeBinaryRhsAutomaton.cc: created
+
+	* freeBinaryRhsAutomaton.hh: created
+
+	* freeTernaryRhsAutomaton.hh: created
+
+	* freeTernaryRhsAutomaton.cc: created
+
+	* freeDagNode.hh (DagNode): class FreeFast2RhsAutomaton is a
+	friend
+
+	* freeTerm.cc (compileRhs2): use FreeFast2RhsAutomaton
+
+	* freeFast2RhsAutomaton.cc: created
+
+	* freeFast2RhsAutomaton.hh: created
+
+2017-01-19  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeDagNode.hh (DagNode): class FreeFast3RhsAutomaton is a
+	friend
+
+	* freeTerm.cc (compileRhs2): use FreeFast3RhsAutomaton()
+
+	* freeRhsAutomaton.hh (RhsAutomaton): deleted data member
+	instructionCount
+
+	* freeFast3RhsAutomaton.hh: created
+
+	* freeFast3RhsAutomaton.cc: created
+
+2017-01-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeFastRhsAutomaton.cc (remapIndices): fill out instructionCount
+	(construct, replace): use instructionCount
+
+	* freeRhsAutomaton.hh (RhsAutomaton): added data member
+	instructionCount
+
+	* freeFastRhsAutomaton.cc (construct, replace): use minimalist
+	ctor
+
+	* freeNullaryRhsAutomaton.cc (construct, replace): use minimalist
+	ctor
+
+	* freeDagNode.hh (FreeDagNode): added minimalist ctor
+
+	* freeTerm.cc (compileRhs2): use FreeNullaryRhsAutomaton()
+
+	* freeNullaryRhsAutomaton.hh: created
+
+	* freeNullaryRhsAutomaton.cc: created
+
+2017-01-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeFastRhsAutomaton.hh (FreeRhsAutomaton): added decl for
+	remapIndices()
+
+	* freeFastRhsAutomaton.cc (remapIndices): added
+
+2017-01-12  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeTerm.cc (compileRhs2): use FreeFastRhsAutomaton()
+
+	* freeFastRhsAutomaton.cc: created
+
+	* freeFastRhsAutomaton.hh: created
+
+	* freeDagNode.hh (DagNode): added FreeFastRhsAutomaton as a friend
+
+	* freeTerm.hh (Term): updated decl for compileRhsAliens()
+
+	* freeTerm.cc (compileRhsAliens): handle maxArity argument
+	(compileRhs2): pass maxArity argument
+
+===================================Maude111b===========================================
+
+2016-11-10  Steven Eker  <eker@install.csl.sri.com>
+
+	* freeDagNode.hh (DagNode): added decl for copyAll2()
+
+	* freeDagNode.cc (copyAll2): added
+
+===================================Maude111===========================================
+
 2016-03-17  Steven Eker  <eker@install.csl.sri.com>
 
 	* freeSymbol.hh (Symbol): added decl for computeGeneralizedSort2()
@@ -17,7 +188,7 @@
 	* freeDagArgumentIterator.hh (_freeDagArgumentIterator_hh_): fixed
 	type in guard #define
 
-===================================Maude108===========================================
+===================================Maude108a===========================================
 
 2015-09-18  Steven Eker  <eker@ape.csl.sri.com>
 
@@ -150,7 +321,7 @@
 
 	* freeSymbol.cc (generateFinalInstruction): use
 	FreeGeneralCtorFinal
-	(generateInstruction): use FreeGeneralCtor 
+	(generateInstruction): use FreeGeneralCtor
 
 	* freeGeneralCtorFinal.cc: created
 
@@ -1030,7 +1201,7 @@
 2013-06-07  Steven Eker  <eker@ape.csl.sri.com>
 
 	* freeNet.hh (F): made class FreeBinaryFastExtorFinal a friend
- 
+
 	* freeTheory.hh: added class FreeBinaryFastExtorFinal
 
 	* freeBinaryFastExtorFinal.hh: created
@@ -1325,7 +1496,7 @@
 
 2010-02-10  Steven Eker  <eker@goo.csl.sri.com>
 
-	* freeNetExec.cc (applyReplace2, applyReplaceFast2) 
+	* freeNetExec.cc (applyReplace2, applyReplaceFast2)
 	(applyReplaceNoOwise2): made p long to avoid extension on 64 bit
 	machines
 	(applyReplace2): use ~i
@@ -1354,7 +1525,7 @@
 	* freeNet.hh (class FreeNet): fix longstanding TestNode
 	optimization bug on 64-bit machines
 
-	* freeNetExec.cc (applyReplaceFast2, applyReplace2) 
+	* freeNetExec.cc (applyReplaceFast2, applyReplace2)
 	(applyReplaceNoOwise2): use diff < 0 rather than getSignBit(diff)
 	to let g++ do the logical shift trick
 
@@ -1481,7 +1652,7 @@
 	* freeDagNode.hh (class FreeDagNode): removed commented out
 	declaration for old version of computeSolvedForm2()
 
-	* freePreNetFullCompiler.cc (allocateVariables, slotMapUnion) 
+	* freePreNetFullCompiler.cc (allocateVariables, slotMapUnion)
 	(generateNode): use NetMap
 	(generateCode): use net.empty()
 
@@ -1529,10 +1700,10 @@
 	* freePreNet.hh (class FreePreNet): pattternsUsed becomes a
 	LiveSet
 
-	* freePreNetSemiCompiler.cc (semiCompileNode, setVisitedFlags) 
+	* freePreNetSemiCompiler.cc (semiCompileNode, setVisitedFlags)
 	(allocateSlot): update with new LiveSet data structure
 
-	* freePreNet.cc (buildNet, makeNode, reduceFringe, findLiveSet) 
+	* freePreNet.cc (buildNet, makeNode, reduceFringe, findLiveSet)
 	(partiallySubsumed, findBestPosition): update with new LiveSet
 	data structure
 	(dumpLiveSet): added
@@ -1797,7 +1968,7 @@
 	(dump): removed SPEED_HACKS #ifndefs and the non-SPEED_HACKS code
 
 	* freeNet.hh (class FreeNet): removed SPEED_HACKS #ifdef
-	
+
 ===================================Maude82===========================================
 
 2003-07-14  Steven Eker  <eker@goo.csl.sri.com>
@@ -1814,7 +1985,7 @@
 
 	* freeRemainder.cc (slowMatchReplace): use
 	MemoryCell::okToCollectGarbage()
-	
+
 ===================================Maude80b===========================================
 
 2003-05-06  Steven Eker  <eker@goo.csl.sri.com>
@@ -1826,7 +1997,7 @@
 
 	* freeDagNode.cc (overwriteWithClone): use copySetRewritingFlags()
 	(makeClone): use copySetRewritingFlags()
-	
+
 ===================================Maude79===========================================
 
 2003-03-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -1948,7 +2119,7 @@
 	(next): updated Assert()
 
 	* freeArgumentIterator.hh: removed #pragma
-	
+
 ===================================Maude79===========================================
 
 2003-01-07  Steven Eker  <eker@goo.csl.sri.com>
@@ -1957,7 +2128,7 @@
 	partialCompareArguments()
 
 	* freeTerm.cc (partialCompareArguments): added
-	
+
 ===================================Maude78==================================================
 
 2002-11-25  Steven Eker  <eker@goo.csl.sri.com>
@@ -1974,7 +2145,7 @@
 	const_iterators
 	(applyReplace2): reordering the initial assignments restored
 	performance accounding to quantify
-	
+
 ===================================Maude77==================================================
 
 2002-11-13  Steven Eker  <eker@goo.csl.sri.com>
@@ -2018,7 +2189,7 @@
 
 	* freeDagNode.cc (stackArguments): take and handle respectFrozen
 	flag
-	
+
 ===================================Maude76==================================================
 
 2002-08-02  Steven Eker  <eker@goo.csl.sri.com>
@@ -2213,7 +2384,7 @@
 
 	* freePreNet.cc (partiallySubsumed): fixed bug where we we
 	iterating off the end of liveSet
-	
+
 ===================================Maude74==================================================
 
 2002-05-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -2229,7 +2400,7 @@
 
 	* freeUnarySymbol.hh (class FreeUnarySymbol): deleted static data
 	member eagerStrategy
-	
+
 ===================================Maude72==================================================
 
 2002-03-21  Steven Eker  <eker@goo.csl.sri.com>
@@ -2379,14 +2550,14 @@
 
 	* freeSymbol.hh (class FreeSymbol): added strategy = standard
 	default argument to both ctor and newFreeSymbol()
-	
+
 ===================================Maude70==================================================
 
 2001-12-10  Steven Eker  <eker@goo.csl.sri.com>
 
 	* freeSymbol.cc (newFreeSymbol): replaced ?: with if-then-else to
 	avoid g++ 3.0 complaints abount distinct pointer types
-	
+
 ===================================Maude69==================================================
 
 2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -2396,7 +2567,7 @@
 
 	* freeDagNode.cc (copyWithReplacement): added
 	(Vector<RedexPosition> verison)
-	
+
 ===================================Engine66==================================================
 
 2001-03-16  Steven Eker  <eker@goo.csl.sri.com>
@@ -2413,7 +2584,7 @@
 
 	* freeSymbol.hh (class FreeSymbol): added decl for
 	stackArguments()
-	
+
 ===================================Engine65==================================================
 
 2001-01-26  Steven Eker  <eker@goo.csl.sri.com>
@@ -2441,7 +2612,7 @@
 	(gatherAlternatives): deleted
 	(gatherAlternatives2): deleted
 	(generateBranch): deleted
-	
+
 ===================================Engine64==================================================
 
 2000-10-20  Steven Eker  <eker@goo.csl.sri.com>
@@ -2464,7 +2635,7 @@
 	* freeTerm.hh (class FreeTerm): added decl for compileRhsAliens()
 
 	* freeTerm.cc (compileRhsAliens): added
-	
+
 ===================================Engine63==================================================
 
 2000-08-02  Steven Eker  <eker@goo.csl.sri.com>
@@ -2481,7 +2652,7 @@
 2000-07-31  Steven Eker  <eker@goo.csl.sri.com>
 
 	* freeSymbol.cc (computeBaseSort): don't handle union sorts
-	
+
 ===================================Engine61==================================================
 
 2000-07-28  Steven Eker  <eker@goo.csl.sri.com>
@@ -2514,7 +2685,7 @@
 	* freeTerm.hh (class FreeTerm): deleted decl for compileRhs()
 
 	* freeTerm.cc (compileRhs): deleted
-	
+
 ===================================Engine60==================================================
 
 2000-07-19  Steven Eker  <eker@goo.csl.sri.com>
@@ -2591,7 +2762,7 @@
 
 	* freeNet.cc: removed old commented out conservative partial
 	suubsumption code
-	
+
 ===================================Engine58==================================================
 
 2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
@@ -2606,7 +2777,7 @@
 	* freeLhsCompiler.cc (compileLhs): becomes compileLhs2()
 
 	* freeTerm.hh (class FreeTerm): compileLhs() -> compileLhs2()
-	
+
 2000-06-23  Steven Eker  <eker@goo.csl.sri.com>
 
 	* freeRemainder.cc (FreeRemainder): lookupSort() -> getSort()
@@ -2641,7 +2812,7 @@
 
 	* freeLhsAutomaton.cc (freeSubterms): use safeCast() macro in
 	place of VariableTerm::downCast() (2 places)
-	
+
 ===================================Engine58==================================================
 
 2000-03-30  Steven Eker  <eker@goo.csl.sri.com>
@@ -2713,7 +2884,7 @@
 
 	* freeDagNode.cc (FreeDagNode): delete Assert() since we are now
 	forbidden to access symbol and hence cannot find our arity
-	
+
 ===================================Engine55==================================================
 
 2000-01-31  Steven Eker  <eker@goo.csl.sri.com>
@@ -2722,7 +2893,7 @@
 	all flags including sort index in one step
 
 	* freePreNetFullCompiler.cc (generateNode): use struct Flags
-	
+
 ===================================Engine54==================================================
 
 2000-01-28  Steven Eker  <eker@goo.csl.sri.com>
@@ -3136,13 +3307,13 @@
 
 1999-10-19  Steven Eker  <eker@goo.csl.sri.com>
 
-	* freeDagNode.cc (getHashValue): 
+	* freeDagNode.cc (getHashValue):
 
 1999-10-18  Steven Eker  <eker@goo.csl.sri.com>
 
 	* freeDagNode.hh (class FreeDagNode): added hashCache array to
 	data member union
-	
+
 ===================================Engine52==================================================
 
 1999-08-26  Steven Eker  <eker@goo.csl.sri.com>
@@ -3175,7 +3346,7 @@
 
 	* freeDagNode.hh (class FreeDagNode): made FreeUnarySymbol and
 	FreeBinarySymbol friends
-	
+
 ===================================Engine51==================================================
 
 1999-07-19  Steven Eker  <eker@goo.csl.sri.com>
@@ -3247,7 +3418,7 @@
 	* freeNet.cc (generateBody): use generateRemainder()
 
 	* freeRemainder.hh (class FreeRemainder): added decl for
-	generateRemainder() 
+	generateRemainder()
 
 1999-06-15  Steven Eker  <eker@goo.csl.sri.com>
 
@@ -3281,7 +3452,7 @@
 	* freeSymbol.hh (class FreeSymbol): added decl for generateBody()
 
 	* freeSymbol.cc (generateBody): added
-	
+
 ===================================Maude 1.0.3 released=======================================
 
 1999-06-01  Steven Eker  <eker@goo.csl.sri.com>
@@ -3404,7 +3575,7 @@
 	"at least one pattern has free symbols" to simplify control flow
 	(applyReplace): unmade change as quantify shows that it loses ever
 	so slightly
-	
+
 ===================================Engine48==================================================
 ===================================Maude 1.0.2 released=======================================
 ===================================Maude 1.0.1 released=======================================
@@ -3464,14 +3635,14 @@
 	* freeLhsAutomaton.cc (match): use isNull() (5 places)
 
 	* freeRemainder.cc (slowMatchReplace2): use isNull() (4 places)
-	
+
 ===================================VectorExperiment==========================================
 
 1999-01-16  Steven Eker  <eker@goo.csl.sri.com>
 
 	* freeTerm.hh (class FreeTerm): made slotIndex a short and
 	visitedFlag a Bool to save memory
-	
+
 ===========================Engine46===========================================================
 
 Wed Nov 25 10:59:26 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3507,7 +3678,7 @@ Fri Nov  6 15:13:05 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* freeTerm.hh (class FreeTerm): deepCopy() decl -> deepCopy2()
 
 	* freeTerm.cc (deepCopy): -> deepCopy2()
-	
+
 ===========================Engine43===========================================================
 
 Thu Oct  8 11:08:18 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3526,7 +3697,7 @@ Thu Oct  8 11:08:18 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* freeSymbol.cc: deleted sortIndexBuffer
 	(FreeSymbol): don't expand sortIndexBuffer
-	
+
 ===========================Engine41===========================================================
 
 Fri Sep 25 10:30:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3626,7 +3797,7 @@ Fri Sep 11 16:35:41 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* freeLhsAutomaton.hh (class FreeLhsAutomaton):
 	FreeVariable::sortCode becomes FreeVariable::sort
-	
+
 ===========================Engine40===========================================================
 
 Mon Jul 20 19:16:50 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3652,7 +3823,7 @@ Wed Jun 10 11:24:06 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* freeDagNode.cc: deleted #include "intSet.hh"
 
 	* freeTerm.hh: IntSet -> NatSet
-	
+
 ===========================Engine38===========================================================
 
 Fri Feb 20 16:18:38 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3711,7 +3882,7 @@ Wed Feb 11 17:07:55 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* freeRemainder.cc (slowMatchReplace2): use delete rather than
 	calling deepSelfDestruct() (4 places)
-	
+
 ===========================Engine35===========================================================
 
 Thu Dec  4 12:50:37 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3770,7 +3941,7 @@ Sun Nov 23 16:47:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* freeLhsAutomaton.hh (class FreeLhsAutomaton): updated dump()
 	decl
-	
+
 ===========================Engine33===========================================================
 
 Tue Oct 21 11:56:14 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3843,7 +4014,7 @@ Fri Oct 10 18:22:39 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* freeLhsAutomaton.hh (class FreeLhsAutomaton): VariableIndex ->
 	VariableInfo
-	
+
 ===========================Engine30===========================================================
 
 Thu Oct  9 11:48:31 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3889,7 +4060,7 @@ Fri Oct  3 19:13:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	(dagify2): DataSet -> TermSet
 
 	* freeTerm.hh (class FreeTerm): DataSet -> TermSet
-	
+
 ===========================Engine29===========================================================
 
 Thu Oct  2 17:02:57 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3914,14 +4085,14 @@ Tue Sep 30 11:03:03 1997  Steven Eker  <eker@lilac.csl.sri.com>
 Thu Sep 25 16:29:56 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* freeNet.cc (compileEquations): use getEquations()
-	
+
 ===========================Engine28===========================================================
 
 Sat Aug 30 15:10:32 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* freeSymbol.cc (computeBaseSort): rewrote union case to use
 	Vector<SortCode> version of lookupUnionSort()
-	
+
 ===========================Engine27===========================================================
 
 Tue Aug  5 14:06:08 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3960,7 +4131,7 @@ Mon Jul 21 19:15:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	(copyWithReplacement): don't call normalizeEagerUptoReduced()
 
 ===========================Engine26b===========================================================
-	
+
 Fri Jul 18 15:59:29 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* freeDagNode.cc (normalizeEagerUpToReduced2): added
@@ -3989,7 +4160,6 @@ Fri Jun 27 16:18:03 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* freeDagNode.hh (class FreeDagNode): clearCopyPointers2() and
 	DagNode* copyEagerUptoReduced2() made private
-  
 
 	* freeSymbol.cc (eqRewrite): copyEagerUptoReduced() and
 	clearCopyPointers() replaced by copyReducible() (twice)
@@ -4101,7 +4271,7 @@ Thu Jun  5 11:34:41 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	(copyEagerUptoReduced2): adapted from old copyEagerUptoReduced()
 
 	* freeSymbol.cc (FreeSymbol): don't pass stable arg to Symbol
-	
+
 ==============================Engine24====================================
 
 Fri May 16 10:58:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -4430,7 +4600,7 @@ Wed Mar 27 11:28:10 1996  Steven Eker  <eker@ponder.csl.sri.com>
 	* freeNet.hh: data members slots and conflicts removed; function
 	declarations updated; many functions that don't need to access
 	class data members declared static
-	
+
 	* freeNet.cc (buildPatternVector): greatly simplified by removing
 	slot handling code
 	(allocateSlot): created
@@ -4764,7 +4934,6 @@ Thu Jan 11 18:09:02 1996  Steven Eker  <eker@ponder.csl.sri.com>
 
 	* freeSymbol.cc (computeSort): DagNode::SORT_UNKOWN ->
 	Sort::SORT_UNKOWN, DagNode::MULTISORT -> Sort UNION_SORT
-	
 
 Wed Jan 10 16:53:36 1996  Steven Eker  <eker@ponder.csl.sri.com>
 

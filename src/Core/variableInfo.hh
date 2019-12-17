@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -27,6 +27,7 @@
 #ifndef _variableInfo_hh_
 #define _variableInfo_hh_
 #include "natSet.hh"
+#include "variable.hh"
 #include "variableTerm.hh"
 
 class VariableInfo
@@ -37,9 +38,10 @@ public:
   int getNrRealVariables() const;
   int getNrProtectedVariables() const;
   //
-  //	These two functions map between indexes and real variables.
+  //	These three functions map between indexes and real variables.
   //
   int variable2Index(VariableTerm* variableTerm);
+  int variable2Index(VariableDagNode* variable) const;
   Term* index2Variable(int index) const;
   //
   //	The following function makes a new variable which will be
@@ -70,11 +72,15 @@ public:
   void addUnboundVariables(const NatSet& vars);
   const NatSet& getConditionVariables() const;
   const NatSet& getUnboundVariables() const;
-
   //
   //	Decide if an index is read or virtual.
   //
   static bool isReal(int index);
+  //
+  //	Check to see if we have a variable that conflicts with those
+  //	of a fresh variable source.
+  //
+  Term* variableNameConflict(FreshVariableGenerator& variableSource);
 
 private:
   enum Values

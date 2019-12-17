@@ -1,0 +1,19 @@
+==========================================
+frewrite in FOO : no-op(me, other) < me : User | none > .
+break on symbol: __
+*********** rule
+rl no-op(X, Y) < X : User | AS > => < X : User | AS > .
+X --> me
+Y --> other
+AS --> (none).AttributeSet
+Old: no-op(me, other) < me : User | none >
+no-op(me, other) < me : User | none >
+--->
+< me : User | none >
+New: < me : User | none >
+rewrites: 1
+result Object: < me : User | none >
+rl no-op(X, Y) < X : User | AS > => < X : User | AS > .
+rewrites: 1 (100%)
+
+Bye.

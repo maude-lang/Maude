@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -39,6 +39,7 @@
 #include "view.hh"
 #include "moduleCache.hh"
 #include "fileTable.hh"
+#include "parameter.hh"
 
 ModuleCache::ModuleCache()
 {
@@ -76,7 +77,6 @@ ModuleCache::makeRenamedCopy(ImportModule* module, Renaming* renaming)
     name += ')';
   name += " * (";
   name += canonical->makeCanonicalName() + ")";
-  //int t = Token::encode(name.c_str());
   int t = Token::ropeToCode(name);
   //
   //	Check if we already have a renamed copy in cache.
@@ -122,7 +122,6 @@ ModuleCache::makeParameterCopy(int parameterName, ImportModule* module)
   Rope name(Token::name(parameterName));
   name += " :: ";
   name += Token::name(module->id());
-  //int t = Token::encode(name.c_str());
   int t = Token::ropeToCode(name);
   //
   //	Check if we already have a parameter copy in cache.
@@ -141,13 +140,24 @@ ModuleCache::makeParameterCopy(int parameterName, ImportModule* module)
   ImportModule* copy = module->makeParameterCopy(t, parameterName, this);
   DebugAdvisory("finished parameter copy " << name);
 
-  Assert(!(copy->isBad()), "bad parameter copy");
+  if (copy->isBad())
+    {
+      //
+      //	It is possible for a parameter copy of a good theory
+      //	to be bad, for example if a parameter copy of a sort
+      //	clashed with a weirdly named sort imported from a module
+      //	by the base theory.
+      //
+      copy->removeUser(this);  // since we are not adding a bad parameter copy to the cache
+      copy->deepSelfDestruct();
+      return 0;
+    }
   moduleMap[t] = copy;
   return copy;
 }
 
 ImportModule*
-ModuleCache::makeInstatiation(ImportModule* module, const Vector<View*>& views, const Vector<int>& parameterArgs)
+ModuleCache::makeModuleInstantiation(ImportModule* module, const Vector<Argument*>& arguments)
 {
   //
   //	Make the name of the module we want.
@@ -160,27 +170,26 @@ ModuleCache::makeInstatiation(ImportModule* module, const Vector<View*>& views, 
     name += ')';
 
   const char* sep = "{";
-  int nrParameters = views.size();
+  int nrParameters = arguments.size();
   for (int i = 0; i < nrParameters; ++i)
     {
       name += sep;
       sep = ", ";
-      View* v = views[i];
-      if (v == 0)
+      Argument* a = arguments[i];
+      if (dynamic_cast<Parameter*>(a))
 	{
 	  //
 	  //	Place brackets around parameter arguments so that we don't confuse
 	  //	them with views having the same name.
 	  //
 	  name += '[';
-	  name += Token::name(parameterArgs[i]);
+	  name += Token::name(a->id());
 	  name += ']';
 	}
       else
-	name += Token::name(v->id());
+	name += Token::name(a->id());
     }
   name += "}";
-  //int t = Token::encode(name.c_str());
   int t = Token::ropeToCode(name);
   //
   //	Check if we already have an instantiation in cache.
@@ -189,15 +198,15 @@ ModuleCache::makeInstatiation(ImportModule* module, const Vector<View*>& views, 
   ModuleMap::const_iterator c = moduleMap.find(t);
   if (c != moduleMap.end())
     {
-      DebugAdvisory("using existing copy of " << name);
+      DebugAdvisory("using existing copy of module " << name);
       return c->second;
     }
   //
   //	Create new module; and insert it in cache.
   //
-  DebugAdvisory("making instantiation " << name);
-  ImportModule* copy = module->makeInstantiation(t, views, parameterArgs, this);
-  DebugAdvisory("finished instantiation " << name);
+  DebugInfo("making instantiation " << name);
+  ImportModule* copy = module->makeInstantiation(t, arguments, this);
+  DebugInfo("finished instantiation " << name);
 
   if (copy->isBad())
     {
@@ -246,7 +255,6 @@ ModuleCache::makeSummation(const Vector<ImportModule*>& modules)
 	name += " + ";
       name += Token::name((*i)->id());
     }
-  //int t = Token::encode(name.c_str());
   int t = Token::ropeToCode(name);
   //
   //	Check if it is already in cache.
@@ -261,39 +269,7 @@ ModuleCache::makeSummation(const Vector<ImportModule*>& modules)
   //	Otherwise build it.
   //
   DebugAdvisory("making summation " << name);
-
-  Vector<ImportModule*>::const_iterator i = local.begin();
-  MixfixModule::ModuleType moduleType = (*i)->getModuleType();
-  for (++i; i != e; ++i)
-    moduleType = MixfixModule::join(moduleType, (*i)->getModuleType());
-  ImportModule* sum = new ImportModule(t, moduleType, ImportModule::SUMMATION, this);
-  LineNumber lineNumber(FileTable::AUTOMATIC);
-  for (Vector<ImportModule*>::const_iterator i = local.begin(); i != e; i++)
-    sum->addImport(*i, ImportModule::INCLUDING, lineNumber);
-
-  sum->importSorts();
-  sum->closeSortSet();
-  if (!(sum->isBad()))
-    {
-      sum->importOps();
-      if (!(sum->isBad()))
-	{
-	  sum->closeSignature();
-	  sum->fixUpImportedOps();
-	  if (!(sum->isBad()))
-	    { 
-	      sum->closeFixUps();
-	      //
-	      //	We have no local statements.
-	      //
-	      sum->localStatementsComplete();
-	    }
-	}
-    }
-  //
-  //	Reset phase counter in each imported module.
-  //
-  sum->resetImports();
+  ImportModule* sum = ImportModule::makeSummation(t, local, this);
   DebugAdvisory("finished summation " << name);
 
   if (sum->isBad())
@@ -344,7 +320,20 @@ ModuleCache::showCreatedModules(ostream& s) const
 {
   FOR_EACH_CONST(i, ModuleMap, moduleMap)
     {
-      MixfixModule* m = i->second;
+      ImportModule* m = i->second;
       s << MixfixModule::moduleTypeString(m->getModuleType()) << ' ' << m << '\n';
+#if 0
+      if (globalAdvisoryFlag)  //HACK
+	{
+	  cout << Tty(Tty::RED);
+	  m->dumpImports(s);
+	  cout << Tty(Tty::GREEN);
+	  const Vector<Sort*>& sorts = m->getSorts();
+	  FOR_EACH_CONST(j, Vector<Sort*>, sorts)
+	    s << " " << *j;
+	  cout << Tty(Tty::RESET);
+	  s << endl;
+	}
+#endif
     }
 }

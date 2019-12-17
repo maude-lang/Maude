@@ -1,0 +1,203 @@
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, (0).Zero, (0).Zero) .
+rewrites: 10
+result UnificationPair: {
+  'X:XOR <- '_+_['cst2.Elem,'%1:XOR] ; 
+  'Y:XOR <- '_+_['cst1.Elem,'%1:XOR],1}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, 10, (0).Zero) .
+rewrites: 10
+result UnificationPair: {
+  'X:XOR <- '_+_['cst2.Elem,'%11:XOR] ; 
+  'Y:XOR <- '_+_['cst1.Elem,'%11:XOR],11}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, (0).Zero, 1) .
+rewrites: 4
+result UnificationPair: {
+  'X:XOR <- 'cst2.Elem ; 
+  'Y:XOR <- 'cst1.Elem,(0).Zero}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, (0).Zero, 2) .
+rewrites: 22
+result UnificationPair: {
+  'X:XOR <- '_+_['cst1.Elem,'cst2.Elem,'#1:XOR] ; 
+  'Y:XOR <- '#1:XOR,1}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, (0).Zero, 3) .
+rewrites: 4
+result UnificationPair: {
+  'X:XOR <- '#1:XOR ; 
+  'Y:XOR <- '_+_['cst1.Elem,'cst2.Elem,'#1:XOR],1}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, (0).Zero, 4) .
+rewrites: 4
+result UnificationPair: {
+  'X:XOR <- '0.XOR ; 
+  'Y:XOR <- '_+_['cst1.Elem,'cst2.Elem],(0).Zero}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, (0).Zero, 5) .
+rewrites: 4
+result UnificationPair: {
+  'X:XOR <- 'cst1.Elem ; 
+  'Y:XOR <- 'cst2.Elem,(0).Zero}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, (0).Zero, 6) .
+rewrites: 4
+result UnificationPair: {
+  'X:XOR <- '_+_['cst1.Elem,'cst2.Elem] ; 
+  'Y:XOR <- '0.XOR,(0).Zero}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, (0).Zero, 7) .
+rewrites: 4
+result UnificationPair: {
+  'X:XOR <- '_+_['cst1.Elem,'%1:XOR] ; 
+  'Y:XOR <- '_+_['cst2.Elem,'%1:XOR],1}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, (0).Zero, 8) .
+rewrites: 4
+result UnificationPair?: (noUnifier).UnificationPair?
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), (empty).GroundTermList, (0).Zero, (0).Zero) .
+rewrites: 10
+result UnificationTriple: {
+  'X:XOR <- '_+_['cst2.Elem,'%1:XOR],
+  'X:XOR <- '_+_['cst1.Elem,'%1:XOR],1}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), (empty).GroundTermList, 10, (0).Zero) .
+rewrites: 10
+result UnificationTriple: {
+  'X:XOR <- '_+_['cst2.Elem,'%11:XOR],
+  'X:XOR <- '_+_['cst1.Elem,'%11:XOR],11}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), (empty).GroundTermList, (0).Zero, 1) .
+rewrites: 4
+result UnificationTriple: {
+  'X:XOR <- 'cst2.Elem,
+  'X:XOR <- 'cst1.Elem,(0).Zero}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), (empty).GroundTermList, (0).Zero, 2) .
+rewrites: 22
+result UnificationTriple: {
+  'X:XOR <- '_+_['cst1.Elem,'cst2.Elem,'#1:XOR],
+  'X:XOR <- '#1:XOR,1}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), (empty).GroundTermList, (0).Zero, 3) .
+rewrites: 4
+result UnificationTriple: {
+  'X:XOR <- '#1:XOR,
+  'X:XOR <- '_+_['cst1.Elem,'cst2.Elem,'#1:XOR],1}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), (empty).GroundTermList, (0).Zero, 4) .
+rewrites: 4
+result UnificationTriple: {
+  'X:XOR <- '0.XOR,
+  'X:XOR <- '_+_['cst1.Elem,'cst2.Elem],(0).Zero}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), (empty).GroundTermList, (0).Zero, 5) .
+rewrites: 4
+result UnificationTriple: {
+  'X:XOR <- 'cst1.Elem,
+  'X:XOR <- 'cst2.Elem,(0).Zero}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), (empty).GroundTermList, (0).Zero, 6) .
+rewrites: 4
+result UnificationTriple: {
+  'X:XOR <- '_+_['cst1.Elem,'cst2.Elem],
+  'X:XOR <- '0.XOR,(0).Zero}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), (empty).GroundTermList, (0).Zero, 7) .
+rewrites: 4
+result UnificationTriple: {
+  'X:XOR <- '_+_['cst1.Elem,'%1:XOR],
+  'X:XOR <- '_+_['cst2.Elem,'%1:XOR],1}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), (empty).GroundTermList, (0).Zero, 8) .
+rewrites: 4
+result UnificationTriple?: (noUnifier).UnificationTriple?
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), upTerm(cst1 + X:XOR), (0).Zero, (0).Zero) .
+rewrites: 7
+result UnificationPair: {
+  'X:XOR <- '_+_['cst2.Elem,'%1:XOR] ; 
+  'Y:XOR <- '_+_['cst1.Elem,'%1:XOR],1}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), upTerm(cst1 + X:XOR), 10, (0).Zero) .
+rewrites: 7
+result UnificationPair: {
+  'X:XOR <- '_+_['cst2.Elem,'%11:XOR] ; 
+  'Y:XOR <- '_+_['cst1.Elem,'%11:XOR],11}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), upTerm(cst1 + X:XOR), (0).Zero, 1) .
+rewrites: 4
+result UnificationPair: {
+  'X:XOR <- 'cst2.Elem ; 
+  'Y:XOR <- 'cst1.Elem,(0).Zero}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), upTerm(cst1 + X:XOR), (0).Zero, 2) .
+rewrites: 4
+result UnificationPair: {
+  'X:XOR <- '#1:XOR ; 
+  'Y:XOR <- '_+_['cst1.Elem,'cst2.Elem,'#1:XOR],1}
+==========================================
+reduce in META-TEST : metaVariantUnify(['XOR], upTerm(cst1 + X:XOR) =? upTerm(
+    cst2 + Y:XOR), upTerm(cst1 + X:XOR), (0).Zero, 3) .
+rewrites: 4
+result UnificationPair?: (noUnifier).UnificationPair?
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), upTerm(cst1 + X:XOR), (0).Zero, (0).Zero) .
+rewrites: 7
+result UnificationTriple: {
+  'X:XOR <- '_+_['cst2.Elem,'%1:XOR],
+  'X:XOR <- '_+_['cst1.Elem,'%1:XOR],1}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), upTerm(cst1 + X:XOR), 10, (0).Zero) .
+rewrites: 7
+result UnificationTriple: {
+  'X:XOR <- '_+_['cst2.Elem,'%11:XOR],
+  'X:XOR <- '_+_['cst1.Elem,'%11:XOR],11}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), upTerm(cst1 + X:XOR), (0).Zero, 1) .
+rewrites: 4
+result UnificationTriple: {
+  'X:XOR <- 'cst2.Elem,
+  'X:XOR <- 'cst1.Elem,(0).Zero}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), upTerm(cst1 + X:XOR), (0).Zero, 2) .
+rewrites: 4
+result UnificationTriple: {
+  'X:XOR <- '#1:XOR,
+  'X:XOR <- '_+_['cst1.Elem,'cst2.Elem,'#1:XOR],1}
+==========================================
+reduce in META-TEST : metaVariantDisjointUnify(['XOR], upTerm(cst1 + X:XOR) =?
+    upTerm(cst2 + X:XOR), upTerm(cst1 + X:XOR), (0).Zero, 3) .
+rewrites: 4
+result UnificationTriple?: (noUnifier).UnificationTriple?
+Bye.

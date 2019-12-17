@@ -1,3 +1,98 @@
+2019-12-04  Steven Eker  <eker@mu>
+
+	* directoryManager.cc (popd): prevLength becomes indexOfDirectoryToPop
+	(popd): added comments to explain what is going on
+
+2019-12-03  Steven Eker  <eker@mu>
+
+	* directoryManager.cc (popd): check return value of chdir() call
+
+===================================Maude127===========================================
+
+2018-09-13  Steven Eker  <eker@install.csl.sri.com>
+
+	* directoryManager.hh (D): added typedef VisitedMap
+
+	* directoryManager.cc (alreadySeen): added
+
+	* directoryManager.hh (D): added data member visitedMap
+
+	* directoryManager.cc (visitFile): added
+
+===================================Maude116===========================================
+
+2018-07-06  Steven Eker  <eker@install.csl.sri.com>
+
+	* IO_Manager.hh (I): boundedGetLineFromStdin() -> readFromStdin();
+	deleted decls for getLine(), boundedGetLine(); make
+	readFromStdin() private
+
+	* IO_Manager.cc (getLineFromStdin): use BUFFER_SIZE
+	(boundedGetLine, getLine): deleted
+	(boundedGetLineFromStdin): becomes readFromStdin()
+	(getLineFromStdin, getInput): use readFromStdin()
+
+	* IO_Manager.hh (I): added decls for boundedGetLineFromStdin(),
+	getLineFromStdin()
+	(I): added enum Sizes
+
+	* IO_Manager.cc (getInput): use boundedGetLineFromStdin()
+
+	* IO_Manager.hh (I): added data members firstUnused, bufferEnd,
+	bufferSize, buffer
+
+	* IO_Manager.cc (IO_Manager): initialize firstUnused, bufferEnd,
+	bufferSize, buffer
+	(boundedGetLineFromStdin, getLineFromStdin): added
+
+2017-12-07  Steven Eker  <eker@install.csl.sri.com>
+
+	* IO_Manager.cc (getInput): don't generate continuation
+	prompts in the usePromptsAnyway case
+
+===================================Maude116===========================================
+
+2017-08-01  Steven Eker  <eker@install.csl.sri.com>
+
+	* IO_Manager.cc (IO_Manager): clear usePromptsAynway flag
+	(getInput): repect usePromptsAnyway flag
+	(getInput): make n a size_t
+
+	* IO_Manager.hh (setUsePromptsAnyway): added
+
+	* IO_Manager.cc (getInput): support contPrompt in non-Tecla
+	case
+
+	* IO_Manager.hh (I): added decl for boundedGetLine()
+
+	* IO_Manager.cc (boundedGetLine): added
+	(getInput): use boundedGetLine()
+
+	* IO_Manager.hh (I): upated decl for getInput()
+
+	* IO_Manager.cc (getLine): check and free memory even in
+	the EOF/error case
+	(getInput): pass maxSize as size_t
+
+2017-07-31  Steven Eker  <eker@install.csl.sri.com>
+
+	* IO_Manager.hh (I): updated decl for getLine()
+
+	* IO_Manager.cc (getLine): take a prompt argument
+
+2017-07-27  Steven Eker  <eker@install.csl.sri.com>
+
+	* IO_Manager.hh (I): adde decl for getLine()
+
+	* IO_Manager.cc (getLine): added
+
+2017-07-18  Steven Eker  <eker@install.csl.sri.com>
+
+	* directoryManager.cc (checkAccess): removed hack since compare() for
+	substring vs C-string seems to work; added comment
+
+===================================Maude115===========================================
+
 2008-09-04  Steven Eker  <eker@goo.csl.sri.com>
 
 	* directoryManager.cc (initialize): fix char constness
@@ -15,7 +110,7 @@
 
 	* IO_Manager.cc (getInput): rewritten to allow building without
 	Tecla
-	
+
 ===================================Maude82===========================================
 
 2003-07-28  Steven Eker  <eker@goo.csl.sri.com>
@@ -50,7 +145,7 @@
 	* IO_Manager.cc: removed #pragma
 
 	* IO_Manager.hh: removed #pragma
-	
+
 ===================================Maude79===========================================
 
 2002-11-19  Steven Eker  <eker@goo.csl.sri.com>

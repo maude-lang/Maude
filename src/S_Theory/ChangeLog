@@ -1,3 +1,45 @@
+2019-11-11  Steven Eker  <eker@mu>
+
+	* S_DagNode.cc (computeBaseSortForGroundSubterms): take and pass
+	warnAboutUnimplemented; fix bug where we weren't setting ground flag
+
+	* S_DagNode.hh (DagNode): updated decl for
+	computeBaseSortForGroundSubterms()
+
+===================================Maude125===========================================
+
+2017-02-23  Steven Eker  <eker@install.csl.sri.com>
+
+	* S_DagNode.cc (instantiateWithCopies2): ifdef'd out ground flag and
+	sort computations
+
+2017-02-21  Steven Eker  <eker@install.csl.sri.com>
+
+	* S_DagNode.hh (DagNode): updated decl for instantiateWithReplacement()
+
+	* S_DagNode.cc (instantiateWithReplacement): updated eagerCopies decl
+
+2017-02-17  Steven Eker  <eker@install.csl.sri.com>
+
+	* S_DagNode.cc (stackArguments): deleted
+
+	* S_DagNode.hh (DagNode): deleted decl for stackArguments()
+
+	* S_Symbol.hh (Symbol): updated decl for stackArguments()
+
+	* S_Symbol.cc (stackArguments): support respectFrozen and eagerContext
+	arguments
+
+===================================Maude111b===========================================
+
+2016-11-11  Steven Eker  <eker@install.csl.sri.com>
+
+	* S_DagNode.hh (DagNode): added decl for copyAll2()
+
+	* S_DagNode.cc (copyAll2): added
+
+===================================Maude111===========================================
+
 2016-03-25  Steven Eker  <eker@install.csl.sri.com>
 
 	* S_Symbol.hh (Symbol): added decl for computeGeneralizedSort2()

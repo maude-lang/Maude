@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -74,13 +74,6 @@ void
 NA_Symbol::normalizeAndComputeTrueSort(DagNode* subject, RewritingContext& context)
 {
   fastComputeTrueSort(subject, context);
-}
-
-void
-NA_Symbol::stackArguments(DagNode* /* subject */,
-			  Vector<RedexPosition>& /* stack */,
-			  int /* parentIndex */)
-{
 }
 
 bool

@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -89,8 +89,16 @@ ACU_LazySubproblem::solve(bool findFirst, RewritingContext& solution)
 {
   if (findFirst)
     {
+      //
+      //	We're asked to find the first match with current global solution.
+      //	This doens't mean that we haven't found and saved local matches
+      //	before, on behalf of a previous global solution.
+      //
       if (previousIndex == NONE)
 	{
+	  //
+	  //	This really is the first time, so initialize path to subject to strip.
+	  //
 	  previousIndex = 0;
 	  if (!remaining.findFirstPotentialMatch(stripperTerm,
 						 matchTime,
@@ -99,6 +107,9 @@ ACU_LazySubproblem::solve(bool findFirst, RewritingContext& solution)
 	}
       else
 	{
+	  //
+	  //	This isn't the first time, so look at saved local solutions.
+	  //
 	  if (previous.empty())
 	    return false;
 	  previousIndex = 0;
@@ -130,13 +141,31 @@ ACU_LazySubproblem::solve(bool findFirst, RewritingContext& solution)
 	}
     }
   //
-  //	Try to generate new matches.
+  //	Try to generate new matches; this will usually be on behalf of the
+  //	first global solution, but it is legal to start with findFirst = true
+  //	with a new global solution, even if the we didn't exhaust matches
+  //	for the previous global solution.
   //
   for (; currentPath.valid(); currentPath.next())
     {
-      Subproblem* sp;
+      //
+      //	In order for saved local matches to be valid wrt any global
+      //	solution we may be given, we can only use bindings that were
+      //	available at match time.
+      //
       local.copy(matchTime);
-      if (stripperAutomaton->match(currentPath.getDagNode(), local, sp) &&
+      DagNode* d = currentPath.getDagNode();
+      if (stripperTerm->partialCompare(local, d) == Term::LESS)
+	{
+	  //
+	  //	All instantiations of stripperTerm consistent with local are
+	  //	less than d, and therefore will be less than nodes further to the right.
+	  //	Thus we have gone pass the last potential match and can give up.
+	  //
+	  break;
+	}
+      Subproblem* sp;
+      if (stripperAutomaton->match(d, local, sp) &&
 	  bindCollector(solution))
 	{
 	  previousIndex = previous.length();

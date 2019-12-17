@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -24,33 +24,6 @@
 //	Code for metaApply and metaXapply descent functions.
 //
 
-local_inline bool
-MetaLevelOpSymbol::getCachedRewriteSearchState(MetaModule* m,
-					       FreeDagNode* subject,
-					       RewritingContext& context,
-					       Int64 solutionNr,
-					       RewriteSearchState*& state,
-					       Int64& lastSolutionNr)
-{
-  CacheableState* cachedState;
-  if (m->remove(subject, cachedState, lastSolutionNr))
-    {
-      if (lastSolutionNr <= solutionNr)
-	{
-	  state = safeCast(RewriteSearchState*, cachedState);
-	  //
-	  //	The parent context pointer of the root context in the
-	  //	RewriteSearchState object is possibly stale.
-	  //
-	  safeCast(UserLevelRewritingContext*, state->getContext())->
-	    beAdoptedBy(safeCast(UserLevelRewritingContext*, &context));
-	  return true;
-	}
-      delete cachedState;
-    }
-  return false;
-}
-
 bool
 MetaLevelOpSymbol::metaApply(FreeDagNode* subject, RewritingContext& context)
 {
@@ -65,7 +38,7 @@ MetaLevelOpSymbol::metaApply(FreeDagNode* subject, RewritingContext& context)
 	{
 	  RewriteSearchState* state;
 	  Int64 lastSolutionNr;
-	  if (getCachedRewriteSearchState(m, subject, context, solutionNr, state, lastSolutionNr))
+	  if (m->getCachedStateObject(subject, context, solutionNr, state, lastSolutionNr))
 	    m->protect();  // Use cached state
 	  else
 	    {
@@ -80,14 +53,12 @@ MetaLevelOpSymbol::metaApply(FreeDagNode* subject, RewritingContext& context)
 		{
 		  Vector<DagRoot*> dags;
 		  m->protect();
-		  if (noDuplicates(variables) &&
-		      dagifySubstitution(variables, values, dags, context))
+		  if (MetaLevel::dagifySubstitution(variables, values, dags, context))
 		    {
 		      if (Term* t = metaLevel->downTerm(subject->getArgument(1), m))
 			{
 			  RewritingContext* subjectContext = term2RewritingContext(t, context);
 			  subjectContext->reduce();
-			  context.addInCount(*subjectContext);
 			  state = new RewriteSearchState(subjectContext,
 							 label,
 							 RewriteSearchState::GC_CONTEXT |
@@ -117,9 +88,9 @@ MetaLevelOpSymbol::metaApply(FreeDagNode* subject, RewritingContext& context)
 	  while (lastSolutionNr < solutionNr)
 	    {
 	      bool success = state->findNextRewrite();
-	      state->transferCount(context);
 	      if (!success)
 		{
+		  state->transferCountTo(context);  // account for any remaining rewrites
 		  delete state;
 		  result = metaLevel->upFailureTriple();
 		  goto fail;
@@ -150,6 +121,7 @@ MetaLevelOpSymbol::metaApply(FreeDagNode* subject, RewritingContext& context)
 	    resultContext->reduce();
 	    context.addInCount(*resultContext);
 	    context.incrementRlCount();
+	    state->transferCountTo(context); 
 	    result = metaLevel->upResultTriple(resultContext->root(),
 					       *substitution,
 					       *rule,
@@ -178,7 +150,7 @@ MetaLevelOpSymbol::metaXapply(FreeDagNode* subject, RewritingContext& context)
 	{
 	  RewriteSearchState* state;
 	  Int64 lastSolutionNr;
-	  if (getCachedRewriteSearchState(m, subject, context, solutionNr, state, lastSolutionNr))
+	  if (m->getCachedStateObject(subject, context, solutionNr, state, lastSolutionNr))
 	    m->protect();  // Use cached state
 	  else
 	    {
@@ -199,14 +171,12 @@ MetaLevelOpSymbol::metaXapply(FreeDagNode* subject, RewritingContext& context)
 		    maxDepth = UNBOUNDED;  // NONE means no extension for RewriteSearchState
 		  Vector<DagRoot*> dags;
 		  m->protect();
-		  if (noDuplicates(variables) &&
-		      dagifySubstitution(variables, values, dags, context))
+		  if (MetaLevel::dagifySubstitution(variables, values, dags, context))
 		    {
 		      if (Term* t = metaLevel->downTerm(subject->getArgument(1), m))
 			{
 			  RewritingContext* subjectContext = term2RewritingContext(t, context);
 			  subjectContext->reduce();
-			  context.addInCount(*subjectContext);
 			  state = new RewriteSearchState(subjectContext,
 							 label,
 							 RewriteSearchState::GC_CONTEXT |
@@ -238,9 +208,9 @@ MetaLevelOpSymbol::metaXapply(FreeDagNode* subject, RewritingContext& context)
 	  while (lastSolutionNr < solutionNr)
 	    {
 	      bool success = state->findNextRewrite();
-	      state->transferCount(context);
 	      if (!success)
 		{
+		  state->transferCountTo(context);  // account for any remaining rewrites
 		  delete state;
 		  result = metaLevel->upFailure4Tuple();
 		  goto fail;
@@ -264,9 +234,14 @@ MetaLevelOpSymbol::metaXapply(FreeDagNode* subject, RewritingContext& context)
 	    DagNode* replacement = state->getReplacement()->makeClone();  // for unique ptr
 	    Substitution* substitution = state->getContext();
 	    RewriteSearchState::DagPair top = state->rebuildDag(replacement);
+	    //
+	    //	Can't use dagNodeMap after reduce since the from dagNodes might
+	    //	garbage collected or even rewritten in place.
+	    //
 	    PointerMap qidMap;
 	    PointerMap dagNodeMap;
 	    DagRoot metaContext(metaLevel->upContext(top.first, m, replacement, qidMap, dagNodeMap));
+
 	    RewritingContext* resultContext =
 	      context.makeSubcontext(top.first, UserLevelRewritingContext::META_EVAL);
 	    if (trace)
@@ -274,6 +249,7 @@ MetaLevelOpSymbol::metaXapply(FreeDagNode* subject, RewritingContext& context)
 	    resultContext->reduce();
 	    context.addInCount(*resultContext);
 	    context.incrementRlCount();
+	    state->transferCountTo(context);
 	    result = metaLevel->upResult4Tuple(resultContext->root(),
 					       *substitution,
 					       *rule,

@@ -1,8 +1,8 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2018 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,19 @@
 DagNode*
 MetaLevel::upModule(bool flat, PreModule* pm, PointerMap& qidMap)
 {
+  /*
+  if (!flat)
+    {
+      //
+      //	If we have a MetaPreModule then we won't have ModuleExpresssion 
+      //	representations of parameters and imports but we will have a checked
+      //	meta-representation of the whole unflattened module.
+      //
+      if (MetaPreModule* mpm = dynamic_cast<MetaPreModule*>(pm))
+	return mpm->getMetaRepresentation();
+    }
+  */
+
   static Vector<DagNode*> args;
   args.clear();
 
@@ -40,7 +53,13 @@ MetaLevel::upModule(bool flat, PreModule* pm, PointerMap& qidMap)
   else if (mt == MixfixModule::FUNCTIONAL_THEORY)
     return fthSymbol->makeDagNode(args);
   args.append(upRls(flat, m, qidMap));
-  return ((mt == MixfixModule::SYSTEM_MODULE) ? modSymbol : thSymbol)->makeDagNode(args);
+  if (mt == MixfixModule::SYSTEM_MODULE)
+    return modSymbol->makeDagNode(args);
+  else if (mt == MixfixModule::SYSTEM_THEORY)
+    return thSymbol->makeDagNode(args);
+  args.append(upStratDecls(flat, m, qidMap));
+  args.append(upSds(flat, m, qidMap));
+  return ((mt == MixfixModule::STRATEGY_MODULE) ? smodSymbol : sthSymbol)->makeDagNode(args);
 }
 
 DagNode*
@@ -85,19 +104,19 @@ MetaLevel::upImports(PreModule* pm, PointerMap& qidMap)
   //
   //	Handle automatic imports.
   //
-  {
-    const ModuleDatabase::ImportMap& autoImports = pm->getAutoImports();
-    FOR_EACH_CONST(i, ModuleDatabase::ImportMap, autoImports)
-      {
-	args2[0] = upQid(i->first, qidMap);
-	Symbol* s = includingSymbol;
-	if (i->second == ImportModule::PROTECTING)
-	  s = protectingSymbol;
-	else if (i->second == ImportModule::EXTENDING)
-	  s = extendingSymbol;
-	args.append(s->makeDagNode(args2));
-      }
-  }
+  if (const ModuleDatabase::ImportMap* autoImports = pm->getAutoImports())
+    {
+      FOR_EACH_CONST(i, ModuleDatabase::ImportMap, *autoImports)
+	{
+	  args2[0] = upQid(i->first, qidMap);
+	  Symbol* s = includingSymbol;
+	  if (i->second == ImportModule::PROTECTING)
+	    s = protectingSymbol;
+	  else if (i->second == ImportModule::EXTENDING)
+	    s = extendingSymbol;
+	  args.append(s->makeDagNode(args2));
+	}
+    }
   //
   //	Handle explicit imports.
   //
@@ -106,11 +125,11 @@ MetaLevel::upImports(PreModule* pm, PointerMap& qidMap)
     for (int i = 0; i < nrImports; i++)
       {
 	args2[0] = upModuleExpression(pm->getImport(i), qidMap);
-	int mode = pm->getImportMode(i);
+	ImportModule::ImportMode mode = pm->getImportMode(i);
 	Symbol* s = includingSymbol;
-	if ((mode == Token::encode("pr")) || (mode == Token::encode("protecting")))
+	if (mode == ImportModule::PROTECTING)
 	  s = protectingSymbol;
-	else if ((mode == Token::encode("ex")) || (mode == Token::encode("extending")))
+	else if (mode == ImportModule::EXTENDING)
 	  s = extendingSymbol;
 	args.append(s->makeDagNode(args2));
       }
@@ -160,16 +179,30 @@ MetaLevel::upModuleExpression(const ModuleExpression* e, PointerMap& qidMap)
 }
 
 DagNode*
-MetaLevel::upArguments(const Vector<Token>& arguments, PointerMap& qidMap)
+MetaLevel::upArguments(const Vector<ViewExpression*>& arguments, PointerMap& qidMap)
 {
   int nrArguments = arguments.size();
   Assert(nrArguments >= 1, "no arguments");
   if (nrArguments == 1)
-    return upQid(arguments[0].code(), qidMap);
+    return upArgument(arguments[0], qidMap);
   Vector<DagNode*> args(nrArguments);
   for (int i = 0; i < nrArguments; ++i)
-    args[i] = upQid(arguments[i].code(), qidMap);
+    args[i] = upArgument(arguments[i], qidMap);
   return metaArgSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upArgument(const ViewExpression* argument, PointerMap& qidMap)
+{
+  if (argument->isInstantiation())
+    {
+      Vector<DagNode*> args(2);
+      args[0] = upArgument(argument->getView(), qidMap);
+      args[1] = upArguments(argument->getArguments(), qidMap);
+      return instantiationSymbol->makeDagNode(args);
+    }
+  DagNode* name = upQid(argument->getName().code(), qidMap);  // view or parameter name
+  return name;
 }
 
 DagNode*
@@ -227,6 +260,38 @@ MetaLevel::upRenaming(const Renaming* r, PointerMap& qidMap)
 	    args2[3] = upQid(r->getOpTo(i), qidMap);
 	    args2[4] = upRenamingAttributeSet(r, i, qidMap);
 	    args.append(opRenamingSymbol2->makeDagNode(args2));
+	  }
+      }
+  }
+  {
+    int nrStratMappings = r->getNrStratMappings();
+    for (int i = 0; i < nrStratMappings; i++)
+      {
+	int nrTypes = r->getNrStratTypes(i);
+	if (nrTypes == 0)
+	  {
+	    args2.resize(2);
+	    args2[0] = upQid(r->getStratFrom(i), qidMap);
+	    args2[1] = upQid(r->getStratTo(i), qidMap);
+	    args.append(stratRenamingSymbol->makeDagNode(args2));
+	  }
+	else
+	  {
+	    args2.resize(4);
+	    args2[0] = upQid(r->getStratFrom(i), qidMap);
+	    --nrTypes;
+	    if (nrTypes == 0)
+	      args2[1] = nilQidListSymbol->makeDagNode();
+	    else
+	      {
+		args3.resize(nrTypes);
+		for (int j = 0; j < nrTypes; j++)
+		  args3[j] = upTypeSorts(r->getStratTypeSorts(i, j), qidMap);
+		args2[1] = (nrTypes == 1) ? args3[0] : qidListSymbol->makeDagNode(args3);
+	      }
+	    args2[2] = upTypeSorts(r->getStratTypeSorts(i, nrTypes), qidMap);
+	    args2[3] = upQid(r->getStratTo(i), qidMap);
+	    args.append(stratRenamingSymbol2->makeDagNode(args2));
 	  }
       }
   }
@@ -520,7 +585,7 @@ MetaLevel::upOpDecl(ImportModule* m, int symbolNr, int declNr, PointerMap& qidMa
   int nrArgs = domainAndRange.length() - 1;
   {
     if (nrArgs == 0)
-      args[1] = args[1] = nilQidListSymbol->makeDagNode();
+      args[1] = nilQidListSymbol->makeDagNode();
     else
       {
 	static Vector<DagNode*> args2;
@@ -845,9 +910,102 @@ MetaLevel::upRl(const Rule* rule, MixfixModule* m, PointerMap& qidMap)
 }
 
 DagNode*
+MetaLevel::upStratDecls(bool flat, ImportModule* m, PointerMap& qidMap)
+{
+  const Vector<RewriteStrategy*>& strats = m->getStrategies();
+  int start = flat ? 0 : m->getNrImportedStrategies();
+  int nrStrats = strats.length();
+
+  static Vector<DagNode*> args;
+  args.clear();
+  for (int i = start; i < nrStrats; i++)
+    {
+      const RewriteStrategy* strat = strats[i];
+      args.append(upStratDecl(strat, m, qidMap));
+    }
+  return upGroup(args, emptyStratDeclSetSymbol, stratDeclSetSymbol);
+}
+
+DagNode*
+MetaLevel::upStratDecl(const RewriteStrategy* strat, MixfixModule* m, PointerMap& qidMap)
+{
+  static Vector<DagNode*> args(4);
+
+  args[0] = upQid(strat->id(), qidMap);
+
+  int nrArgs = strat->arity();
+
+  if (nrArgs == 0)
+    args[1] = nilQidListSymbol->makeDagNode();
+  else
+    {
+      static Vector<DagNode*> args2;
+      args2.resize(nrArgs);
+
+      const Vector<Sort*>& domain = strat->getDomain();
+
+      for (int i = 0; i < nrArgs; i++)
+	args2[i] = upType(domain[i], qidMap);
+      args[1] = (nrArgs == 1) ? args2[0] : qidListSymbol->makeDagNode(args2);
+    }
+
+  args[2] = upType(strat->getSubjectSort(), qidMap);
+
+  // The only attribute considered is metadata
+  int metadata = m->getMetadata(MixfixModule::STRAT_DECL, strat);
+  if (metadata != NONE)
+    {
+      Vector<DagNode*> args2(1);
+      args2[0] = new StringDagNode(stringSymbol, Token::codeToRope(metadata));
+      args[3] = metadataSymbol->makeDagNode(args2);
+    }
+  else
+    args[3] = emptyAttrSetSymbol->makeDagNode();
+
+  return stratDeclSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upSds(bool flat, ImportModule* m, PointerMap& qidMap)
+{
+  const Vector<StrategyDefinition*>& stratDefs = m->getStrategyDefinitions();
+  int nrDefs = flat ? stratDefs.length() : m->getNrOriginalStrategyDefinitions();
+
+  static Vector<DagNode*> args;
+  args.clear();
+  for (int i = 0; i < nrDefs; i++)
+    {
+      const StrategyDefinition* sd = stratDefs[i];
+      if (!(sd->isBad()))
+	args.append(upSd(sd, m, qidMap));
+    }
+  return upGroup(args, emptyStratDefSetSymbol, stratDefSetSymbol);
+}
+
+DagNode*
+MetaLevel::upSd(const StrategyDefinition* sdef, MixfixModule* m, PointerMap& qidMap)
+{
+  static Vector<DagNode*> args(4);
+
+  args[0] = upCallStrat(sdef->getStrategy()->id(), sdef->getLhs(), m, qidMap);
+  args[1] = upStratExpr(sdef->getRhs(), m, qidMap);
+  const Vector<ConditionFragment*>& condition = sdef->getCondition();
+  if (condition.empty())
+    {
+      args.resize(3);
+      args[2] = upStatementAttributes(m, MixfixModule::STRAT_DEF, sdef, qidMap);
+      return sdSymbol->makeDagNode(args);
+    }
+  args.resize(4);
+  args[2] = upCondition(condition, m, qidMap);
+  args[3] = upStatementAttributes(m, MixfixModule::STRAT_DEF, sdef, qidMap);
+  return csdSymbol->makeDagNode(args);
+}
+
+DagNode*
 MetaLevel::upStatementAttributes(MixfixModule* m,
 				 MixfixModule::ItemType type,
-				 const PreEquation *pe,
+				 const PreEquation* pe,
 				 PointerMap& qidMap)
 {
   Vector<DagNode*> args;
@@ -897,6 +1055,12 @@ MetaLevel::upStatementAttributes(MixfixModule* m,
       if (eq->isVariant())
 	args.append(variantAttrSymbol->makeDagNode());
     }
+  const Rule* rl = dynamic_cast<const Rule*>(pe);
+  if (rl != 0)
+    {
+      if (rl->isNarrowing())
+	args.append(narrowingSymbol->makeDagNode());
+    }
   return upGroup(args, emptyAttrSetSymbol, attrSetSymbol);
 }
 
@@ -919,6 +1083,8 @@ MetaLevel::upCondition(const Vector<ConditionFragment*>& condition,
   static Vector<DagNode*> args;
  
   int nrFragments = condition.length();
+  if (nrFragments == 0)
+    return noConditionSymbol->makeDagNode(args);
   if (nrFragments == 1)
     return upConditionFragment(condition[0], m, qidMap);
 
@@ -950,15 +1116,15 @@ MetaLevel::upConditionFragment(const ConditionFragment* fragment,
       args[1] = upType(t->getSort(), qidMap);
       s = sortTestConditionSymbol;
     }
-  else if(const AssignmentConditionFragment* a =
-	  dynamic_cast<const AssignmentConditionFragment*>(fragment))
+  else if (const AssignmentConditionFragment* a =
+	   dynamic_cast<const AssignmentConditionFragment*>(fragment))
     {
       args[0] = upTerm(a->getLhs(), m, qidMap);
       args[1] = upTerm(a->getRhs(), m, qidMap);
       s = matchConditionSymbol;
     }
-  else if(const RewriteConditionFragment* r =
-	  dynamic_cast<const RewriteConditionFragment*>(fragment))
+  else if (const RewriteConditionFragment* r =
+	   dynamic_cast<const RewriteConditionFragment*>(fragment))
     {
       args[0] = upTerm(r->getLhs(), m, qidMap);
       args[1] = upTerm(r->getRhs(), m, qidMap);

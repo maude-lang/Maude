@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metalevel.maude -no-banner -no-advise \
+  > metalevel.out 2>&1
+
+diff $srcdir/metalevel.expected metalevel.out > /dev/null 2>&1

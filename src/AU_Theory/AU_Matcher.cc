@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -358,13 +358,19 @@ AU_LhsAutomaton::forcedLoneVariableCase(AU_DagNode* subject,
   else if (nrSubjectsRemaining == 1)
     {
       DagNode* d = args[leftPos];
-      solution.bind(loneVariable.index, d);
+      solution.bind(loneVariable.index, d);  // presuming we succeed
       return (loneVariable.abstracted == 0) ?
 	(d->leq(loneVariable.sort)) :
 	loneVariable.abstracted->match(d, solution, returnedSubproblem);
     }
   else if (matchStrategy != FAST_LONE_VARIABLE)
     {
+      //
+      //	General lone variable case.
+      //
+      //	We construct the binding for the lone variable and then
+      //	check its sort, possibly creating a sort check subproblem.
+      //
       AU_DagNode* d = new AU_DagNode(topSymbol, nrSubjectsRemaining);
       int pos = 0;
       for (int i = leftPos; i <= rightPos; i++)
@@ -383,8 +389,16 @@ AU_LhsAutomaton::forcedLoneVariableCase(AU_DagNode* subject,
     }
   else
     {
+      //
+      //	Fast lone variable case.
+      //
+      //	We know the sort of binding will <= that of that lone
+      //	variable, iff each of the subterm sorts are <= that
+      //	of the lone variable, so we only need look at the sorts
+      //	of the subterms.
+      //
       AU_DagNode* d = new AU_DagNode(topSymbol, nrSubjectsRemaining);
-       int lastIndex = Sort::SORT_UNKNOWN;
+      int lastIndex = Sort::SORT_UNKNOWN;
       const Sort* cs = loneVariable.sort;
       ArgVec<DagNode*>::iterator j = d->argArray.begin();
       const ArgVec<DagNode*>::const_iterator e = args.begin() + rightPos + 1;

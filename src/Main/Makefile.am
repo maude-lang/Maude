@@ -20,7 +20,6 @@ maude_CPPFLAGS = \
 	-I$(top_srcdir)/src/Mixfix \
 	-I$(top_srcdir)/src/BuiltIn \
 	-I$(top_srcdir)/src/SMT \
-	-I$(top_srcdir)/src/MSCP10 \
 	-I$(top_srcdir)/src/IO_Stuff \
 	-I$(top_srcdir)/src/ACU_Persistent \
 	-I$(top_srcdir)/src/ACU_Theory \
@@ -51,17 +50,17 @@ maude_LDADD = \
 	../Variable/libvariable.a \
 	../Interface/libinterface.a \
 	../Core/libcore.a \
-	../MSCP10/libmscp10.a \
+	../Parser/libparser.a \
 	../Temporal/libtemporal.a \
 	../IO_Stuff/libIO_Stuff.a \
 	$(FULL_COMPILER_LIB) \
 	../Utility/libutility.a \
-	$(BUDDY_LIB) \
 	$(CVC4_LIB) \
-	$(TECLA_LIBS) \
-	$(LIBSIGSEGV_LIB) \
+	$(YICES2_LIB) \
 	$(GMP_LIBS) \
-	$(DLMALLOC_LIB)
+	$(BUDDY_LIB) \
+	$(TECLA_LIBS) \
+	$(LIBSIGSEGV_LIB)
 
 maude_SOURCES = \
 	main.cc
@@ -74,7 +73,8 @@ data_DATA = \
 	machine-int.maude \
 	term-order.maude \
 	metaInterpreter.maude \
-	smt.maude
+	smt.maude \
+	file.maude
 
 EXTRA_DIST = \
 	prelude.maude \
@@ -84,4 +84,5 @@ EXTRA_DIST = \
 	machine-int.maude \
 	term-order.maude \
 	metaInterpreter.maude \
-	smt.maude
+	smt.maude \
+	file.maude

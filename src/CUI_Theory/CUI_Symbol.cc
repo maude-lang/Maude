@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
 
@@ -280,18 +280,20 @@ CUI_Symbol::normalizeAndComputeTrueSort(DagNode* subject, RewritingContext& cont
 void
 CUI_Symbol::stackArguments(DagNode* subject,
 			   Vector<RedexPosition>& stack,
-			   int parentIndex)
+			   int parentIndex,
+			   bool respectFrozen,
+			   bool eagerContext)
 {
   DagNode** args = safeCast(CUI_DagNode*, subject)->argArray;
   const NatSet& frozen = getFrozen();
 
   DagNode* d = args[0];
-  if (!(frozen.contains(0)) && !(d->isUnstackable()))
-    stack.append(RedexPosition(args[0], parentIndex, 0, eagerArgument(0)));
+  if (!(respectFrozen && frozen.contains(0)) && !(d->isUnstackable()))
+    stack.append(RedexPosition(args[0], parentIndex, 0, eagerContext && eagerArgument(0)));
 
   d = args[1];
-  if (!(frozen.contains(1)) && !(d->isUnstackable()))
-    stack.append(RedexPosition(args[1], parentIndex, 1, eagerArgument(1)));
+  if (!(respectFrozen && frozen.contains(1)) && !(d->isUnstackable()))
+    stack.append(RedexPosition(args[1], parentIndex, 1, eagerContext && eagerArgument(1)));
 }
 
 void

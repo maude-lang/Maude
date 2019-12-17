@@ -1,0 +1,100 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Run nested meta-interpreters with structured meta-modules.
+***	This version tests parameterized views.
+***
+
+load metaInterpreter
+
+view ListOfSets{X :: TRIV} from TRIV to LIST{Set*{X}} is
+  sort Elt to List{Set*{X}} .
+endv
+
+mod RUSSIAN-DOLLS is
+  pr META-INTERPRETER .
+  pr MAP{Nat, ListOfSets{String}} .
+
+  sort ViewCmd ModuleCmd Seq .
+  subsort ViewCmd ModuleCmd < Seq .
+  op v : Qid -> ViewCmd .
+  op m : Qid -> ModuleCmd .
+  op __  : Seq Seq -> Seq [assoc id: nil] .
+  op nil : -> Seq .
+
+  op predef : -> Seq .
+  eq predef = m('TRUTH-VALUE) m('BOOL-OPS) m('TRUTH) m('BOOL) m('EXT-BOOL)
+              m('NAT)  m('STRING) m('BOUND) m('QID) m('TRIV) 
+              v('Bool) v('Nat) v('String) v('Qid)
+              m('LIST) v('List) m('SET) v('Set) m('MAP) v('Map) m('SET*) v('Set*)
+	      m('NAT-LIST) m('QID-LIST) m('QID-SET)
+              m('META-TERM) m('META-CONDITION) m('META-STRATEGY)
+	      m('META-MODULE) m('META-VIEW) m('META-LEVEL)
+              m('CONFIGURATION) m('META-INTERPRETER)
+	      v('ListOfSets) m('RUSSIAN-DOLLS) .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op pending:_ : Seq -> Attribute .
+  op level:_ : Nat -> Attribute .
+
+  vars X Y Z : Oid .
+  var Q : Qid .
+  var Rest : Seq .
+  var AS : AttributeSet .
+  var N : Nat .
+
+  op problem : Nat -> Term .
+  eq problem(s N) =
+  '__['<>.Portal,'createInterpreter['interpreterManager.Oid,'me.Oid,'none.InterpreterOptionSet],
+    '<_:_|_>['me.Oid,'User.Cid, '_`,_[
+                                      'pending:_['predef.Seq],
+                                      'level:_[upTerm(N)]
+                                     ]
+            ]
+     ] .
+
+  eq problem(0) = 'reverse[
+       '__['`{_`}['_`,_['"a".Char,'"e".Char]],'`{_`}['_`,_['"i".Char,'"y".Char]],'`{_`}['_`,_['"b".Char,'"c".Char]]]
+     ] .
+
+  rl < X : User | pending: (m(Q) Rest), AS > createdInterpreter(X, Y, Z) =>
+     < X : User | pending: Rest, AS  > insertModule(Z, X, upModule(Q, false)) .
+
+  rl < X : User | pending: (m(Q) Rest), AS > insertedModule(X, Y) =>
+     < X : User | pending: Rest, AS > insertModule(Y, X, upModule(Q, false)) .
+
+  rl < X : User | pending: (m(Q) Rest), AS > insertedView(X, Y) =>
+     < X : User | pending: Rest, AS > insertModule(Y, X, upModule(Q, false)) .
+
+  rl < X : User | pending: (v(Q) Rest), AS > insertedModule(X, Y) =>
+     < X : User | pending: Rest, AS > insertView(Y, X, upView(Q)) .
+
+  rl < X : User | pending: (v(Q) Rest), AS > insertedView(X, Y) =>
+     < X : User | pending: Rest, AS > insertView(Y, X, upView(Q)) .
+
+  rl < X : User | pending: nil, level: N > insertedModule(X, Y) =>
+     < X : User | pending: nil, level: N >
+     erewriteTerm(Y, X, unbounded, 1, 'RUSSIAN-DOLLS, problem(N)) .
+endm
+
+erew in RUSSIAN-DOLLS : <> 
+< me : User | pending: predef, level: 0 > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUSSIAN-DOLLS : <> 
+< me : User | pending: predef, level: 1 > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUSSIAN-DOLLS : <> 
+< me : User | pending: predef, level: 2 > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUSSIAN-DOLLS : <> 
+< me : User | pending: predef, level: 3 > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in RUSSIAN-DOLLS : <> 
+< me : User | pending: predef, level: 4 > 
+createInterpreter(interpreterManager, me, none) .

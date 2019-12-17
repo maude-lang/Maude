@@ -72,3 +72,46 @@ fmod 'FOO is
   none
   none
 endfm, 's^1234 '`( 'true '`), anyType) .
+
+*** test new variable alias feature
+
+red metaParse(
+fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'X:Float, 'X '+ '1.0, anyType) .
+
+red metaParse(
+fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'X:Float ; 'Y:Float, 'X '+ '1.0, anyType) .
+
+red metaParse(
+fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'X:Float ; 'Y:Float, 'X '+ 'Y, anyType) .
+
+*** should fail
+red metaParse(
+fmod 'FOO is
+  protecting 'FLOAT .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm, 'X:Float, 'X '+ 'Y, anyType) .

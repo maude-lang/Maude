@@ -1,4 +1,4 @@
-Maude> ==========================================
+==========================================
 reduce in NAT : 1 + 2 .
 rewrites: 1
 result NzNat: 3
@@ -227,4 +227,4 @@ result NzNat: Begin{Graph Representation}
 #0 = s_^9(#1)
 #1 = 0
 End{Graph Representation}
-Maude> Bye.
+Bye.

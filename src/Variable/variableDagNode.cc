@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
 
@@ -61,7 +61,7 @@ VariableDagNode::getHashValue()
 int
 VariableDagNode::compareArguments(const DagNode* other) const
 {
-  return id() - safeCast(const VariableDagNode*, other)->id();
+  return id() - safeCastNonNull<const VariableDagNode*>(other)->id();
 }
 
 DagNode*
@@ -72,6 +72,12 @@ VariableDagNode::markArguments()
 
 DagNode*
 VariableDagNode::copyEagerUptoReduced2()
+{
+  return new VariableDagNode(symbol(), id(), index);
+}
+
+DagNode*
+VariableDagNode::copyAll2()
 {
   return new VariableDagNode(symbol(), id(), index);
 }
@@ -115,19 +121,12 @@ VariableDagNode::copyWithReplacement(Vector<RedexPosition>& /* redexStack  */,
   return 0;
 }
 
-void
-VariableDagNode::stackArguments(Vector<RedexPosition>& /* stack */,
-				int /* parentIndex */,
-				bool /* respectFrozen */)
-{
-}
-
 //
 //	Unification code.
 //
 
 DagNode::ReturnResult
-VariableDagNode::computeBaseSortForGroundSubterms()
+VariableDagNode::computeBaseSortForGroundSubterms(bool /* warnAboutUnimplemented */)
 {
   return NONGROUND;
 }

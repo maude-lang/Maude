@@ -1,0 +1,375 @@
+*** check bubble corner cases
+
+fmod HANG is
+  including QID-LIST .
+  sorts Tokens Foo Bar .
+  op start__ : Tokens Bar -> Foo .
+  op __ : Tokens Tokens -> Bar .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (0 -1 < >) 
+    id-hook Exclude (start)
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** MSCP10 hangs
+parse start .
+
+
+**** adjacent possibly empty bubbles ****
+
+fmod EMPTY-ADJACENT is
+  including QID-LIST .
+  sorts Tokens Foo .
+  op start__ : Tokens Tokens -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (0 -1 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** both empty (MSCP10 finds no parse)
+parse start .
+
+*** ambiguous (MSCP10 finds no parse)
+parse start a .
+
+*** ambiguous (MSCP10 finds no parse)
+parse start < a > .
+
+
+fmod TRIPLE-EMPTY is
+  including QID-LIST .
+  sorts Foo Tokens Tokens2 .
+
+  op [___] : Tokens Tokens2 Tokens -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (0 -1 < >) 
+    id-hook Exclude (a)
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+
+  op tokens2 : QidList -> Tokens2 [special(
+    id-hook Bubble (0 -1 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+
+endfm
+
+*** all empty (MSCP10 finds no parse)
+parse [ ] .
+
+
+fmod EMPTY-ADJACENT2 is
+  including QID-LIST .
+  sorts Tokens Foo .
+  op __ : Tokens Tokens -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (0 -1 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** ambiguous (MSCP10 finds no parse)
+parse a .
+
+
+fmod EMPTY-ADJACENT3 is
+  including QID-LIST .
+  sorts Tokens Tokens2 Foo .
+  op __ : Tokens Tokens2 -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (0 -1 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+  op tokens2 : QidList -> Tokens2 [special(
+    id-hook Bubble (0 -1 < >) 
+    id-hook Exclude (a)
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** only first bubble can take a (MSCP10 finds no parse)
+parse a .
+
+
+fmod EMPTY-ADJACENT4 is
+  including QID-LIST .
+  sorts Tokens Tokens2 Foo Bar .
+  op start__ : Tokens Bar -> Foo [prec 15] .
+  op __ : Tokens Tokens2 -> Bar [prec 10] .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (0 -1 < >) 
+    id-hook Exclude (start)
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+
+
+  op tokens2 : QidList -> Tokens2 [special(
+    id-hook Bubble (0 -1 < >) 
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+
+endfm
+
+*** ambiguous
+parse start .
+
+
+**** error position ***
+
+fmod ERROR-POSITION is
+  including QID-LIST .
+  sorts Tokens Foo .
+  op start_ :  Tokens -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (1 10 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+***  bad close
+parse start a b > c < .
+
+*** missing close (MSCP10 reports error in wrong position)
+parse start a b < c d .
+
+*** close not encountered in time; g needs to be > (MSCP10 reports error in wrong position)
+parse start < a < b > c d e f g > .
+
+
+**** competing bubble definitions ****
+
+fmod PAREN-DIFF is
+  including QID-LIST .
+  sorts Tokens Foo .
+  op start_ :  Tokens -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (1 -1 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+
+  op _;_ : QidList QidList -> QidList [assoc] .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (1 -1 <| |>) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (_;_ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** 2nd bubble def
+parse start a < .
+
+*** 1st bubble def
+parse start a <| .
+
+*** ambiguous (MSCP10 doesn't see this)
+parse start a b .
+
+
+fmod BOUND-DIFF is
+  including QID-LIST .
+  sorts Tokens Foo .
+  op start_ :  Tokens -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (3 -1 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+
+  op _;_ : QidList QidList -> QidList [assoc] .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (1 5 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (_;_ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** 2nd bubble def
+parse start a b .
+
+*** 1st bubble def
+parse start a b c < e > f .
+
+*** ambiguous (MSCP10 doesn't see this)
+parse start a b c .
+
+
+**** adjacent nonempty bubbles ****
+
+fmod NON-EMPTY-ADJACENT is
+  including QID-LIST .
+  sorts Tokens Foo .
+  op start__ : Tokens Tokens -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (1 -1 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** one token each
+parse start a b .
+
+*** ambiguous (MSCP10 finds no parse)
+parse start a b c d e f g .
+
+*** parens force split
+parse start < b > < d e f g > .
+
+*** unmatched close - unexpected end of tokens (MSCP10 reports wrong error position)
+parse start < b > < d e f g .
+
+*** unexpected close
+parse start < b > > d e f g .
+
+
+fmod LOWER-BOUND-ADJACENT is
+  including QID-LIST .
+  sorts Tokens Foo .
+  op start__ : Tokens Tokens -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (3 -1 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** insufficient tokens
+parse start a b c d e .
+
+*** three tokens each
+parse start a b c d e f .
+
+*** ambiguous (MSCP10 finds no parse)
+parse start a b c d e f g .
+
+*** parens force split
+parse start < a b c d > < e f g > .
+
+
+fmod UPPER-BOUND-NON-EMPTY-ADJACENT is
+  including QID-LIST .
+  sorts Tokens Foo .
+  op start__ : Tokens Tokens -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (1 3 < >) 
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** ambiguous (MSCP10 finds no parse)
+parse start a b c d e .
+
+*** parens force split (MSCP10 finds no parse)
+parse start < a > b c .
+
+*** three tokens each (MSCP10 finds no parse)
+parse start a b c d e f .
+
+*** too many tokens (MSCP10 reports wrong error position)
+parse start a b c d e f g .
+
+
+**** unbound tree of empty bubbles possible ****
+
+fmod INFINITE-EMPTY-BUBBLES is
+  including QID-LIST .
+  sorts Tokens Foo .
+
+  op __ : Tokens Foo -> Foo .
+  op end : -> Foo .
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (0 -1 < >) 
+    id-hook Exclude (start)
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** ambiguous (MSCP10 only finds one parse)
+parse end .
+
+*** force at least one empty bubble
+
+fmod EMPTY-BUBBLE is
+  including QID-LIST .
+  sorts Tokens Foo Bar .
+
+  op start_ : Foo -> Bar [prec 0 gather (E)] .
+  op __ : Tokens Foo -> Foo [prec 0 gather (& &)].
+  op e n d : -> Foo [prec 10].
+
+  op tokens : QidList -> Tokens [special(
+    id-hook Bubble (0 -1 < >) 
+    id-hook Exclude (start)
+
+    op-hook qidSymbol (<Qids> : ~> Qid)
+    op-hook nilQidListSymbol (nil : ~> QidList)
+    op-hook qidListSymbol (__ : QidList QidList ~> QidList)
+  )] .
+endfm
+
+*** ambiguous (MSCP10 infinite recursion in ScpParser::setAmbNode())
+parse start e n d .
