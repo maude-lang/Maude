@@ -1,3 +1,480 @@
+2020-10-12  Steven Eker  <eker2@eker10>
+
+	* entity.hh (class Entity): made UserLt::operator() const to fix
+	clang warning
+
+2020-10-09  Steven Eker  <eker2@eker10>
+
+	* interact.cc (UserLevelRewritingContext::handleInterrupt): more
+	detail messages
+
+===================================Maude130a===========================================
+
+2020-10-05  Steven Eker  <eker2@eker10>
+
+	* variantMatch.cc (Interpreter::variantMatch): check problemOK()
+	before proceeding
+
+	* getVariants.cc (Interpreter::getVariants): check problemOK()
+	before proceeding
+
+	* variantUnify.cc (Interpreter::variantUnify): check problemOK()
+	before proceeding
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added static data member rewriteCountAtLastInterrupt
+
+	* interact.cc (UserLevelRewritingContext::beginCommand):
+	initialize  rewriteCountAtLastInterrupt to -1
+	(UserLevelRewritingContext::handleInterrupt): two ctrl-C events
+	without intervening rewrite to abort
+
+2020-09-17  Steven Eker  <eker2@eker10>
+
+	* variantMatch.cc (Interpreter::variantMatchCont): ignore debug
+	flag and added comment to explain why we do so
+
+2020-09-15  Steven Eker  <eker2@eker10>
+
+	* search.cc (Interpreter::search): new calling convention for
+	NarrowingSequenceSearch3()
+
+2020-09-11  Steven Eker  <eker2@eker10>
+
+	* getVariants.cc (Interpreter::doGetVariants): rewritten to use
+	findNextVariant() and getCurrentVariant()
+
+2020-09-10  Steven Eker  <eker2@eker10>
+
+	* variantUnify.cc (Interpreter::variantUnify): fix memory leak and
+	bug where we were not checking variables names by passing
+	DELETE_FRESH_VARIABLE_GENERATOR and CHECK_VARIABLE_NAMES to
+	FilteredVariantUnifierSearch
+
+2020-09-09  Rubén Rubio  <rubenrub@ucm.es>
+
+	* bufferPrint.cc (prettyPrint): fixed erratum, leftBrace was used
+	when leftParen was required
+
+===================================Maude130===========================================
+
+2020-09-08  Steven Eker  <eker2@eker10>
+
+	* variantUnify.cc (Interpreter::variantUnify): print timing here
+	in filtered case because all the reducing and variant narrowing is
+	done upfront
+	(Interpreter::doVariantUnification): computed filteredState; only
+	print stats if !filteredState (2 places)
+
+2020-09-04  Steven Eker  <eker2@eker10>
+
+	* variantMatch.cc (Interpreter::doVariantMatching): added Advisory
+	if fresh variable(s) introduced
+	(Interpreter::variantMatch): printStats() here
+	(Interpreter::doVariantMatching): deleted 2 calls to printStats()
+	(Interpreter::variantMatch): addInCount() from subjectContext
+	(Interpreter::variantMatch): subjectContext to
+	makeVariantMatchingProblem()
+
+2020-09-01  Steven Eker  <eker2@eker10>
+
+	* variantUnify.cc (Interpreter::variantUnify): pass IRREDUNDANT
+	flag to FilteredVariantUnifierSearch() in preparation for a change
+	in semantics
+
+2020-08-28  Steven Eker  <eker2@eker10>
+
+	* variantUnify.cc (Interpreter::doVariantUnification): warn user
+	about incomplete filtering and advise user of complete filtering
+
+	* freshVariableSource.cc
+	(FreshVariableSource::isFreshVariableName): added
+
+2020-08-25  Steven Eker  <eker2@eker10>
+
+	* variantMatch.cc (Interpreter::variantMatch): reduce subject dag
+	before using it
+
+2020-08-21  Steven Eker  <eker2@eker10>
+
+	* interpreter.hh (class Interpreter): added decls for
+	doVariantMatching(), variantMatchCont()
+
+	* variantMatch.cc (Interpreter::doVariantMatching)
+	(Interpreter::variantMatchCont): added
+
+	* variantUnify.cc (Interpreter::variantUnify): fix stray space in
+	echoing variant unify commands
+
+	* variantMatch.cc (Interpreter::variantMatch): use
+	parseVariantMatchCommand()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	parseVariantMatchCommand()
+
+	* doParse.cc (MixfixModule::parseVariantMatchCommand): added
+
+	* mixfixParser.cc (MixfixParser::makeUnifyCommand): UNIFY_LIST ->
+	PAIR_LIST
+
+	* makeGrammar.cc (MixfixModule::makeComplexProductions):
+	UNIFY_LIST -> PAIR_LIST
+
+	* mixfixParser.cc (MixfixParser::makeVariantUnifyOrMatchCommand):
+	UNIFY_LIST -> PAIR_LIST
+
+	* mixfixParser.hh (class MixfixParser): UNIFY_LIST -> PAIR_LIST
+
+	* doParse.cc (MixfixModule::parseVariantUnifyCommand): use
+	makeVariantUnifyOrMatchCommand()
+
+	* mixfixParser.hh (class MixfixParser): makeVariantUnifyCommand()
+	becomes makeVariantUnifyOrMatchCommand()
+
+	* mixfixParser.cc (MixfixParser::makeVariantUnifyCommand): becomes
+	makeVariantUnifyOrMatchCommand()
+
+	* makeGrammar.cc (MixfixModule::makeComplexProductions): use
+	MAKE_TERM_LIST for irreducible case of get variants/variant
+	unify/variant match
+
+	* mixfixParser.cc (MixfixParser::makeGetVariantsCommand)
+	(MixfixParser::makeVariantUnifyCommand): use MAKE_TERM_LIST for
+	irreducible case
+
+	* makeGrammar.cc (MixfixModule::makeComplexProductions): added two
+	rules VARIANT_MATCH_COMMAND
+
+	* mixfixModule.hh (class MixfixModule): added
+	MULTI_MATCH_COMMAND to enum NonTerminal
+
+	* makeGrammar.cc (MixfixModule::makeComplexProductions): added two
+	ruls for MULT_MATCH_COMMAND
+
+	* mixfixModule.hh (class MixfixModule): added
+	VARIANT_MATCH_COMMAND to enum NonTerminal
+
+2020-08-20  Steven Eker  <eker2@eker10>
+
+	* variantMatch.cc: created
+
+	* top.yy: deleted optFiltered
+
+	* commands.yy (command): split variant unify into two rules and
+	removed optFiltered to avoid a shift/reduce conflict
+
+	* interpreter.hh (class Interpreter): added decl for
+	variantMatch()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	makeMatchProblemDags()
+
+	* mixfixModule.cc (MixfixModule::makeMatchProblemDags): added
+
+	* commands.yy (command): added variant match
+
+2020-08-06  Steven Eker  <eker2@eker10>
+
+	* variantUnify.cc (Interpreter::variantUnify): create timer before
+	creating FilteredVariantUnifierSearch object because the latter
+	does almost all of its work at creation
+
+	* commands.yy (command): use filtered rather than irredundant for
+	variant unify because we may not generate irredundant unifiers
+	(command): removed the duplicated coded need to fix the
+	shift/reduce conflict now that we are using filtered rather than
+	irredundant
+
+	* top.yy: added optFiltered
+
+	* commands.yy (optFiltered): added
+
+	* top.yy: added KW_FILTERED
+
+	* lexer.ll: added KW_FILTERED
+
+2020-08-05  Steven Eker  <eker2@eker10>
+
+	* variantUnify.cc (Interpreter::variantUnify): use
+	FilteredVariantUnifierSearch()
+
+2020-08-04  Steven Eker  <eker2@eker10>
+
+	* variantUnify.cc (Interpreter::doVariantUnification): rewritten
+	to use findNextUnifier(), getCurrentUnifier() rather than
+	getNextUnifier()
+
+2020-07-24  Steven Eker  <eker2@eker10>
+
+	* mixfixModule.cc (MixfixModule::createInternalTupleSymbol): use
+	range-based for loop
+
+2020-07-22  Steven Eker  <eker2@eker10>
+
+	* variantUnify.cc (Interpreter::variantUnify):  use new
+	VariantSearch calling conventions
+
+	* getVariants.cc (Interpreter::getVariants): use new VariantSearch
+	calling conventions
+
+2020-07-17  Steven Eker  <eker2@eker10>
+
+	* commands.yy (command): separate dubug variant unify rule to
+	resolve a shift reduce conflict - when parser sees irredundant
+	it doesn't know whether it is about to see regular unification
+	or whether is should do an empty reduce for optDebug in
+	preparation for variant unification
+
+2020-07-16  Steven Eker  <eker2@eker10>
+
+	* lexer.ll: add irred as an abbreviation for irredundant
+
+	* interpreter.hh (class Interpreter): updated decl for
+	variantUnify()
+
+	* variantUnify.cc (Interpreter::variantUnify): take irredundant
+	flag
+	(Interpreter::variantUnify): pass irredundant flag to
+	VariantSearch() to see why this isn't good enough
+
+	* commands.yy (command): added optIrredundant to variant unify
+
+2020-07-15  Steven Eker  <eker2@eker10>
+
+	* variantUnify.cc (Interpreter::doVariantUnification): Unifier #n
+	-> Unifier n
+
+	* getVariants.cc (Interpreter::doGetVariants): Variant #n ->
+	Variant n
+
+	* unify.cc (Interpreter::doUnification): Solution n -> Unifier n
+
+	* match.cc (Interpreter::doMatching): Solution n -> Matcher n
+
+2020-07-10  Steven Eker  <eker2@eker10>
+
+	* interpreter.hh (class Interpreter): updated decl for unify()
+
+	* commands.yy (command): allow irredundant prefix; pass flag to
+	Intepreter::Unify()
+
+	* unify.cc (Interpreter::unify): take irredundant and use
+	IrredundantUnificationProblem
+
+===================================Maude129===========================================
+
+2020-06-09  Steven Eker  <eker2@eker10>
+
+	* renameModule.cc (ImportModule::donateOps2): DebugNew() ->
+	DebugOld() (2 places)
+
+2020-05-28  Steven Eker  <eker2@eker10>
+
+	* mixfixModule.cc (MixfixModule::nonTerminal): comment out
+	DebugInfo() because it producing voluminous output
+
+2020-05-05  Steven Eker  <eker2@eker10>
+
+	* interact.cc (UserLevelRewritingContext::setHandlers): ignore
+	SIGPIPE
+
+2020-04-14  Steven Eker  <eker2@eker9>
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added decl for blockAndHandleInterrupts()
+
+2020-04-08  Steven Eker  <eker2@eker9>
+
+	* makeGrammar.cc (MixfixModule::makeParameterizedSortProductions):
+	use MixfixParser::newNonTerminal()
+	(MixfixModule::makeSymbolProductions): use
+	MixfixParser::newNonTerminal()
+
+	* mixfixModule.hh (class MixfixModule): deleted decl for
+	newNonTerminal()
+
+	* mixfixModule.cc (MixfixModule::newNonTerminal): deleted
+
+	* mixfixParser.hh (MixfixParser::newNonTerminal): added
+
+	* doParse.cc (MixfixModule::getParserStats): use getNrTerminals(),
+	getNrNonTerminals()
+
+	* mixfixParser.hh (MixfixParser::getComponentNonTerminalBase):
+	added
+	(MixfixParser::getNrNonTerminals) added
+	(MixfixParser::getNrTerminals) added
+
+	* mixfixModule.cc (MixfixModule::nonTerminal): use
+	getComponentNonTerminalBase()
+
+	* mixfixModule.hh (class MixfixModule): deleted data members
+	complexParser, componentNonTerminalBase, nextNonTerminal
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): use
+	isComplex()
+	(MixfixModule::makeGrammar): use isComplex()
+
+	* mixfixParser.hh (class MixfixParser): updated decl
+	for MixfixParser()
+	(MixfixParser::isComplex): added
+	(MixfixParser::getNrProductions): made const
+
+	* mixfixParser.cc (MixfixParser::MixfixParser): take
+	complexFlag, componentNonTerminalBase, nextNonTerminalCode
+
+	* mixfixParser.hh (class MixfixParser): added data
+	members complexParser, componentNonTerminalBase,
+	nextNonTerminal
+
+	* makeGrammar.cc (MixfixModule::makeGrammar): pass
+	complexFlag, componentNonTerminalBase and
+	nextNonTerminal to MixfixParser() rather than storing
+	them locally.
+
+	* mixfixModule.hh (class MixfixModule): added comment
+	about transitory nature of iterSymbols, leadTokens
+
+	* mixfixParser.cc (MixfixParser): added for debugging
+	purposes
+
+	* mixfixParser.hh (class MixfixParser): added decl
+	for ~MixfixParser()
+
+2020-04-07  Steven Eker  <eker2@eker9>
+
+	* mixfixModule.cc (MixfixModule::economize): change
+	to DebugInfo()
+
+	* makeGrammar.cc (MixfixModule::makeGrammar): added
+	DebugInfo()s
+
+	* mixfixModule.cc (MixfixModule::economize): added
+	DebugAdvisory()
+	(MixfixModule::nonTerminal): added DebugAdvisory()
+
+	* doParse.cc (MixfixModule::parseStatement): changed
+	local variable from complexParser to complexFlag to
+	avoid confusion with object member
+
+2020-03-31  Steven Eker  <eker2@eker9>
+
+	* symbolType.hh (class SymbolType): added
+	PROCESS_MANAGER_SYMBOL
+
+	* entry.cc (MixfixModule::newFancySymbol): add
+	ProcessMangagerSymbol
+
+	* specialSymbolTypes.cc: added ProcessMangagerSymbol
+
+2020-03-10  Rubén Rubio  <rubenrub@ucm.es>
+
+       * mixfixModule.cc (donateStatements2): copy nonexec attribute
+
+       * mixfixParser.cc (makeStatementPart): handle nonexec attribute
+
+===================================Maude128a===========================================
+
+2020-02-19  Steven Eker  <eker@mu>
+
+	* variantUnify.cc (doVariantUnification): test for interrupted
+	before checking for no result
+
+	* unify.cc (doUnification): test for interrupted before
+	checking for no result
+
+	* interact.cc (infoHandler): added comments; deleted commented
+	out code
+	(interruptHandler): added comments
+
+	* userLevelRewritingContext.hh (ObjectSystemRewritingContext):
+	commented out declaration for clearInterrupt()
+
+	* interact.cc (clearInterrupt): commented out
+
+	* userLevelRewritingContext.cc (tracePreEqRewrite): added comments
+	to explain what situations are handled
+
+	* interact.cc (handleInterrupt): move comment to head of function
+	and deleted commented out code
+
+	* match.cc (doMatching): rearrange statements so that we abort
+	before trying to print a matcher
+
+	* unify.cc (doUnification): added comment to explain rearranged
+	statement order
+
+2020-02-18  Steven Eker  <eker@mu>
+
+	* unify.cc (doUnification): check for ^C interrupt before printing
+	solution number to avoid garbage solutions being printed
+
+2020-02-13  Steven Eker  <eker@mu>
+
+	* syntacticPreModule.cc (getFlatModule): rewritten; we no longer
+	expect importStatements() to be able to set the bad flag
+
+	* importModule.cc (resetImportPhase): use range-based for loop;
+	deleted commented out call to resetImports()
+	(dumpImports): use range-based for loops
+	(deepSelfDestruct): range-based for loops
+
+	* syntacticPreModule.cc (getFlatModule): added comment to explain
+	checkFreshVariableNames(); deleted commented out IssueWarning()s
+
+2020-02-12  Steven Eker  <eker@mu>
+
+	* interpreter.cc (setCurrentModule): updated comment
+	(makeModule): deleted commented out IssueAdvisory() for renaming
+	of modules with bound parameters since it will never be a cause
+	for concern as prelude makes heavy use of this feature; updated
+	comment
+
+2020-02-11  Steven Eker  <eker@mu>
+
+	* interpreter.cc (~Interpreter): updated comment
+
+	* viewDatabase.cc (~ViewDatabase): updated comment
+
+	* moduleCache.cc (~ModuleCache): moved here
+
+	* viewCache.hh (User): added decl for ~ViewCache()
+
+	* viewCache.cc (ViewCache): added
+
+	* moduleCache.hh (~ModuleCache): added
+
+2020-02-07  Steven Eker  <eker@mu>
+
+	* commands.yy (command): allow module name in do clear memo and make
+	use of setCurrentModule() to check validity of the module
+
+	* interpreter.cc (setCurrentModule): code cleaning; added comments
+	(parse): fixed comment
+
+2020-02-05  Steven Eker  <eker@mu>
+
+	* syntacticPreModule.cc (getFlatModule): partially fix bug where we
+	importStatements() into a bad module (moves breakage elsewhere)
+
+2020-02-04  Steven Eker  <eker@mu>
+
+	* importModule.cc (importStatements, donateStatements): added DebugEnter()
+
+	* process.cc (process): do closeSortSet() early in the hope of unifying
+	common code
+	(checkOpTypes): added comment to explain what it does
+	(checkType): added comment to explain what it does
+	(getSort): added comment to explain what it does
+
+	* preModule.cc (processExplicitImports): added comments to explain
+	why we don't bail on first error
+
+	* process.cc (processImports): added comment to explain why we don't
+	bail on first error
+
+===================================Maude128===========================================
+
 2019-12-16  Steven Eker  <eker@mu>
 
 	* auxProperty.cc: added missing copyright notice

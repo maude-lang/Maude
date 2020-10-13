@@ -64,8 +64,12 @@ public:
   bool indexVariables2(NarrowingVariableInfo& indicies, int baseIndex);
   DagNode* instantiateWithCopies2(const Substitution& substitution, const Vector<DagNode*>& eagerCopies);
   //
-  //	Functions specific to VariableDagNode.
+  //	Function needed for variant matching.
   //
+  void indexVariables(VariableInfo& indicies);
+  //
+  //	Functions specific to VariableDagNode.
+  //  
   int getIndex() const;
   VariableDagNode* lastVariableInChain(Substitution& solution);
 
@@ -75,7 +79,10 @@ private:
   DagNode* copyAll2();
   void clearCopyPointers2();
 
-  bool safeVirtualReplacement(VariableDagNode* oldVar, VariableDagNode* newVar, UnificationContext& solution, PendingUnificationStack& pending);
+  bool safeVirtualReplacement(VariableDagNode* oldVar,
+			      VariableDagNode* newVar,
+			      UnificationContext& solution,
+			      PendingUnificationStack& pending);
 
   int index;
 };

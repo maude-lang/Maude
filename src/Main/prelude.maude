@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version 3.0.
+***	Version 3.1.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -1671,7 +1671,8 @@ fmod META-STRATEGY is
   subsort RuleApplication CallStrategy < Strategy < StrategyList .
 
 *** basic operators
-  ops fail idle all : -> Strategy [ctor] .
+  ops fail idle : -> Strategy [ctor] .
+  op all : -> RuleApplication [ctor] .
   op _[_]{_} : Qid Substitution StrategyList -> RuleApplication [ctor prec 21] .
   op top : RuleApplication -> Strategy [ctor] .
   op match_s.t._ : Term EqCondition -> Strategy [ctor prec 21] .
@@ -2154,6 +2155,13 @@ fmod META-LEVEL is
   op none : -> PrintOptionSet [ctor] .
   op __ : PrintOptionSet PrintOptionSet -> PrintOptionSet [ctor assoc comm id: none] .
 
+*** options for various variant based functionality
+  sorts VariantOption VariantOptionSet .
+  subsort VariantOption < VariantOptionSet .
+  ops delay filter : -> VariantOption [ctor] .
+  op none : -> VariantOptionSet [ctor] .
+  op __ : VariantOptionSet VariantOptionSet -> VariantOptionSet [ctor assoc comm id: none] .
+
 *** options for metaSrewrite()
   sort SrewriteOption .
   ops breadthFirst depthFirst : -> SrewriteOption [ctor] .
@@ -2163,6 +2171,12 @@ fmod META-LEVEL is
   subsort UnificandPair < UnificationProblem .
   op _=?_ : Term Term -> UnificandPair [ctor prec 71] .
   op _/\_ : UnificationProblem UnificationProblem -> UnificationProblem [ctor assoc comm prec 73] .
+
+*** matching problems
+  sorts PatternSubjectPair MatchingProblem .
+  subsort PatternSubjectPair < MatchingProblem .
+  op _<=?_ : Term Term -> PatternSubjectPair [ctor prec 71] .
+  op _/\_ : MatchingProblem MatchingProblem -> MatchingProblem [ctor assoc comm prec 73] .
 
 *** success results
   sorts ResultPair ResultTriple Result4Tuple MatchPair TraceStep Trace
@@ -2239,6 +2253,7 @@ fmod META-LEVEL is
   op failure : -> NarrowingSearchPathResult? [ctor] .
   op failureIncomplete : -> NarrowingSearchPathResult? [ctor] .
   op noMatch : -> Substitution? [ctor] .
+  op noMatchIncomplete : -> Substitution? [ctor] .
   op noMatch : -> MatchPair? [ctor] .
   op failure : -> Trace? [ctor] .
   op failure : -> SmtResult? [ctor] .
@@ -2272,6 +2287,37 @@ fmod META-LEVEL is
   eq getSubstitution({S:Substitution, C:Context}) = S:Substitution .
   op getContext : MatchPair -> Context .
   eq getContext({S:Substitution, C:Context}) = C:Context .
+
+  op getSubstitution : UnificationPair -> Substitution .
+  eq getSubstitution({S:Substitution, V:Qid}) = S:Substitution .
+  op getVariableFamily : UnificationPair -> Qid .
+  eq getVariableFamily({S:Substitution, V:Qid}) = V:Qid .
+
+  op getLhsSubstitution : UnificationTriple -> Substitution .
+  eq getLhsSubstitution({LS:Substitution, RS:Substitution, V:Qid}) = LS:Substitution .
+  op getRhsSubstitution : UnificationTriple -> Substitution .
+  eq getRhsSubstitution({LS:Substitution, RS:Substitution, V:Qid}) = RS:Substitution .
+  op getVariableFamily : UnificationTriple -> Qid .
+  eq getVariableFamily({LS:Substitution, RS:Substitution, V:Qid}) = V:Qid .
+
+  op getTerm : Variant -> Term .
+  eq getTerm({T:Term, S:Substitution, Q:Qid, P:Parent, B:Bool}) = T:Term .
+  op getSubstitution : Variant -> Substitution .
+  eq getSubstitution({T:Term, S:Substitution, Q:Qid, P:Parent, B:Bool}) = S:Substitution .
+
+  op getVariableFamily : Variant -> Qid .
+  eq getVariableFamily({T:Term, S:Substitution, Q:Qid, P:Parent, B:Bool}) = Q:Qid .
+  op getParent : Variant -> Parent .
+  eq getParent({T:Term, S:Substitution, Q:Qid, P:Parent, B:Bool}) = P:Parent .
+  op getMoreVariantsInLayerFlag : Variant -> Bool .
+  eq getMoreVariantsInLayerFlag({T:Term, S:Substitution, Q:Qid, P:Parent, B:Bool}) = B:Bool .
+
+  op getTerm : TraceStep -> Term .
+  eq getTerm({T:Term, T:Type, R:Rule}) = T:Term .
+  op getType : TraceStep -> Type .
+  eq getType({T:Term, T:Type, R:Rule}) = T:Type .
+  op getRule : TraceStep -> Rule .
+  eq getRule({T:Term, T:Type, R:Rule}) = R:Rule .
 
   op getTerm : NarrowingApplyResult -> Term .
   eq getTerm({T:Term, T:Type, C:Context, L:Qid, TS:Substitution, RS:Substitution, V:Qid}) = T:Term .
@@ -2337,7 +2383,20 @@ fmod META-LEVEL is
   eq getType({C:Context, L:Qid, U:Substitution, UV:Qid, T:Term, T:Type, A:Substitution}) = T:Type .
   op getAccumulatedSubstitution : NarrowingStep -> Substitution .
   eq getAccumulatedSubstitution({C:Context, L:Qid, U:Substitution, UV:Qid, T:Term, T:Type, A:Substitution}) = A:Substitution .
- 
+
+*** utility function
+  op applySubstitution : Module Term Substitution -> Term .
+  eq applySubstitution(M:Module, T:Term, S:Substitution) =
+    getTerm(metaNormalize(M:Module, $applySubstitution(T:Term, S:Substitution))) .
+
+  op $applySubstitution : NeTermList Substitution -> Term .
+  eq $applySubstitution(V:Variable, (V:Variable <- T:Term ; S:Substitution)) = T:Term .
+  eq $applySubstitution(Q:Qid[TL:NeTermList], S:Substitution) =
+    Q:Qid[$applySubstitution(TL:NeTermList, S:Substitution)] .
+  eq $applySubstitution((T:Term, TL:NeTermList), S:Substitution) =
+    $applySubstitution(T:Term, S:Substitution), $applySubstitution(TL:NeTermList, S:Substitution) .
+  eq $applySubstitution(Q:Qid, S:Substitution) = Q:Qid [owise] .
+
 *** descent functions
   op metaReduce : Module Term ~> ResultPair
      [special (
@@ -2551,6 +2610,10 @@ fmod META-LEVEL is
         op-hook unificationConjunctionSymbol
                 (_/\_ : UnificationProblem UnificationProblem ~> UnificationProblem)
 
+	op-hook patternSubjectPairSymbol	(_<=?_ : Term Term ~> PatternSubjectPair)
+        op-hook matchingConjunctionSymbol
+                (_/\_ : MatchingProblem MatchingProblem ~> MatchingProblem)
+
         op-hook resultPairSymbol	({_,_} : Term Type ~> ResultPair)
         op-hook resultTripleSymbol	({_,_,_} : Term Type Substitution ~> ResultTriple)
         op-hook result4TupleSymbol	({_,_,_,_} : Term Type Substitution Context ~> Result4Tuple)
@@ -2594,6 +2657,7 @@ fmod META-LEVEL is
         op-hook narrowingSearchPathFailureSymbol		(failure : ~> NarrowingSearchPathResult?)
         op-hook narrowingSearchPathFailureIncompleteSymbol	(failureIncomplete : ~> NarrowingSearchPathResult?)
         op-hook noMatchSubstSymbol	(noMatch : ~> Substitution?)
+        op-hook noMatchIncompleteSubstSymbol	(noMatchIncomplete : ~> Substitution?)
         op-hook noMatchPairSymbol	(noMatch : ~> MatchPair?)
         op-hook failureTraceSymbol	(failure : ~> Trace?)
         op-hook smtFailureSymbol	(failure : ~> SmtResult?)
@@ -2608,6 +2672,11 @@ fmod META-LEVEL is
         op-hook ratSymbol		(rat : ~> PrintOption)
         op-hook emptyPrintOptionSetSymbol	(none : ~> PrintOptionSet)
         op-hook printOptionSetSymbol	(__ : PrintOptionSet PrintOptionSet ~> PrintOptionSet)
+
+        op-hook delaySymbol		(delay : ~> VariantOption)
+        op-hook filterSymbol		(filter : ~> VariantOption)
+        op-hook emptyVariantOptionSetSymbol	(none : ~> VariantOptionSet)
+        op-hook variantOptionSetSymbol	(__ : VariantOptionSet VariantOptionSet ~> VariantOptionSet)
 
 	op-hook breadthFirstSymbol	(breadthFirst : ~>  SrewriteOption)
 	op-hook depthFirstSymbol	(depthFirst : ~>  SrewriteOption)
@@ -2664,6 +2733,16 @@ fmod META-LEVEL is
            id-hook MetaLevelOpSymbol	(metaDisjointUnify)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
+  op metaIrredundantUnify : Module UnificationProblem Qid Nat ~> UnificationPair?
+        [special (
+           id-hook MetaLevelOpSymbol	(metaIrredundantUnify)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaIrredundantDisjointUnify : Module UnificationProblem Qid Nat ~> UnificationTriple?
+        [special (
+           id-hook MetaLevelOpSymbol	(metaIrredundantDisjointUnify)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
   op metaSearch : Module Term Term Condition Qid Bound Nat ~> ResultTriple?
         [special (
            id-hook MetaLevelOpSymbol	(metaSearch)
@@ -2694,27 +2773,35 @@ fmod META-LEVEL is
            id-hook MetaLevelOpSymbol	(metaGetIrredundantVariant)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
-  op metaVariantUnify : Module UnificationProblem TermList Qid Nat ~> UnificationPair?
+  op metaVariantUnify : Module UnificationProblem TermList Qid VariantOptionSet Nat ~> UnificationPair?
         [special (
            id-hook MetaLevelOpSymbol	(metaVariantUnify)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
-  op metaVariantDisjointUnify : Module UnificationProblem TermList Qid Nat ~> UnificationTriple?
+  op metaVariantDisjointUnify : Module UnificationProblem TermList Qid
+                                VariantOptionSet Nat ~> UnificationTriple?
         [special (
            id-hook MetaLevelOpSymbol	(metaVariantDisjointUnify)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
-  op metaNarrowingApply : Module Term TermList Qid Nat -> NarrowingApplyResult?
+  op metaVariantMatch : Module MatchingProblem TermList Qid VariantOptionSet Nat ~> Substitution?
+        [special (
+           id-hook MetaLevelOpSymbol	(metaVariantMatch)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaNarrowingApply : Module Term TermList Qid VariantOptionSet Nat -> NarrowingApplyResult?
 	[special (
 	   id-hook MetaLevelOpSymbol	(metaNarrowingApply)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
-  op metaNarrowingSearch : Module Term Term Qid Bound Qid Nat -> NarrowingSearchResult?
+  op metaNarrowingSearch : Module Term Term Qid Bound Qid VariantOptionSet Nat ->
+                           NarrowingSearchResult?
 	[special (
 	   id-hook MetaLevelOpSymbol	(metaNarrowingSearch)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
-  op metaNarrowingSearchPath : Module Term Term Qid Bound Qid Nat -> NarrowingSearchPathResult?
+  op metaNarrowingSearchPath : Module Term Term Qid Bound Qid VariantOptionSet Nat ->
+                               NarrowingSearchPathResult?
 	[special (
 	   id-hook MetaLevelOpSymbol	(metaNarrowingSearchPath)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
@@ -2901,13 +2988,36 @@ fmod META-LEVEL is
   op {_,_,_,_,_} : Term Substitution Nat Parent Bool -> Variant [ctor] .
 
   op metaParse : Module QidList Type? ~> ResultPair? .
-  eq metaParse(M:Module, Q:QidList, T:Type?) = metaParse(M:Module, none, Q:QidList, T:Type?) .
+  eq metaParse(M:Module, Q:QidList, T:Type?) =
+     metaParse(M:Module, none, Q:QidList, T:Type?) .
 
   op metaPrettyPrint : Module Term PrintOptionSet ~> QidList .
-  eq metaPrettyPrint(M:Module, T:Term, P:PrintOptionSet) = metaPrettyPrint(M:Module, none, T:Term, P:PrintOptionSet) .
+  eq metaPrettyPrint(M:Module, T:Term, P:PrintOptionSet) =
+     metaPrettyPrint(M:Module, none, T:Term, P:PrintOptionSet) .
 
   op metaPrettyPrint : Module Term ~> QidList .
-  eq metaPrettyPrint(M:Module, T:Term) = metaPrettyPrint(M:Module, none, T:Term, mixfix flat format number rat) .
+  eq metaPrettyPrint(M:Module, T:Term) =
+     metaPrettyPrint(M:Module, none, T:Term, mixfix flat format number rat) .
+
+  op metaVariantUnify : Module UnificationProblem TermList Qid Nat ~> UnificationPair? .
+  eq metaVariantUnify(M:Module, U:UnificationProblem, TL:TermList, Q:Qid, N:Nat) =
+     metaVariantUnify(M:Module, U:UnificationProblem, TL:TermList, Q:Qid, none, N:Nat) .
+
+  op metaVariantDisjointUnify : Module UnificationProblem TermList Qid Nat ~> UnificationTriple? .
+  eq metaVariantDisjointUnify(M:Module, U:UnificationProblem, TL:TermList, Q:Qid, N:Nat) =
+     metaVariantDisjointUnify(M:Module, U:UnificationProblem, TL:TermList, Q:Qid, none, N:Nat) .
+
+  op metaNarrowingApply : Module Term TermList Qid Nat -> NarrowingApplyResult? .
+  eq metaNarrowingApply(M:Module, T:Term, TL:TermList, Q:Qid, N:Nat) =
+     metaNarrowingApply(M:Module, T:Term, TL:TermList, Q:Qid, none, N:Nat) .
+
+  op metaNarrowingSearch : Module Term Term Qid Bound Qid Nat -> NarrowingSearchResult? .
+  eq metaNarrowingSearch(M:Module, T:Term, T2:Term, S:Qid, B:Bound, F:Qid, N:Nat) =
+     metaNarrowingSearch(M:Module, T:Term, T2:Term, S:Qid, B:Bound, F:Qid, none, N:Nat) .
+
+  op metaNarrowingSearchPath : Module Term Term Qid Bound Qid Nat -> NarrowingSearchPathResult? .
+  eq metaNarrowingSearchPath(M:Module, T:Term, T2:Term, S:Qid, B:Bound, F:Qid, N:Nat) =
+     metaNarrowingSearchPath(M:Module, T:Term, T2:Term, S:Qid, B:Bound, F:Qid, none, N:Nat) .
 
   op metaUnify : Module UnificationProblem Nat Nat ~> UnificationPair?
         [special (

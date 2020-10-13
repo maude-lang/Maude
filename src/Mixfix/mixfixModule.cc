@@ -133,6 +133,7 @@
 #include "socketManagerSymbol.hh"
 #include "fileManagerSymbol.hh"
 #include "streamManagerSymbol.hh"
+#include "processManagerSymbol.hh"
 
 //	strategy language class definitions
 #include "trivialStrategy.hh"
@@ -174,12 +175,6 @@ Vector<int> MixfixModule::gatherPrefixPrefix(2);
 Vector<int> MixfixModule::gatherAny0(2);
 
 inline int
-MixfixModule::newNonTerminal()
-{
-  return --nextNonTerminal;
-}
-
-inline int
 MixfixModule::domainComponentIndex(const Symbol* symbol, int argNr)
 {
   return symbol->domainComponent(argNr)->getIndexWithinModule();
@@ -188,7 +183,12 @@ MixfixModule::domainComponentIndex(const Symbol* symbol, int argNr)
 inline int
 MixfixModule::nonTerminal(int componentIndex, NonTerminalType type)
 {
-  return componentNonTerminalBase - componentIndex * NUMBER_OF_TYPES - type;
+  /*
+  DebugInfo("parser = " << parser <<
+	    "  parser->isComplex() = " << parser->isComplex() <<
+	    "  parser->getComponentNonTerminalBase() = " << parser->getComponentNonTerminalBase());
+  */
+  return parser->getComponentNonTerminalBase() - componentIndex * NUMBER_OF_TYPES - type;
 }
 
 inline int
@@ -212,6 +212,7 @@ MixfixModule::nonTerminal(const Sort* sort, NonTerminalType type)
 void
 MixfixModule::checkFreshVariableNames()
 {
+  DebugNew("checking module " << this);
   FreshVariableSource varSource(this);
   {
     const Vector<Rule*>& rules = getRules();
@@ -378,10 +379,10 @@ MixfixModule::closeSignature()
 void
 MixfixModule::economize()
 {
+  DebugInfo(" this = " << this << "  parser = " << parser);
   delete parser;
   parser = 0;
 }
-
 
 void
 MixfixModule::swapVariableAliasMap(AliasMap& other, MixfixParser*& otherParser)
@@ -594,7 +595,6 @@ MixfixModule::makeUnificationProblemDag(Vector<Term*>& lhs, Vector<Term*>& rhs)
   Vector<DagNode*> rhsDags(nrPairs);
   for (int i = 0; i < nrPairs; ++i)
     {
-
       Term* l = lhs[i];
       domain[i] = l->symbol()->rangeComponent();
       l = l->normalize(true);  // we don't really need to normalize but we do need to set hash values
@@ -628,15 +628,48 @@ MixfixModule::makeUnificationProblemDag(Vector<Term*>& lhs, Vector<Term*>& rhs)
   return tupleSymbol->makeDagNode(args);
 }
 
+pair<DagNode*, DagNode*>
+MixfixModule::makeMatchProblemDags(Vector<Term*>& lhs, Vector<Term*>& rhs)
+{
+  Assert(lhs.size() == rhs.size(), "size mismatch");
+  int nrPairs = lhs.size();
+  Vector<ConnectedComponent*> domain(nrPairs);
+  Vector<DagNode*> lhsDags(nrPairs);
+  Vector<DagNode*> rhsDags(nrPairs);
+  for (int i = 0; i < nrPairs; ++i)
+    {
+      Term* l = lhs[i];
+      domain[i] = l->symbol()->rangeComponent();
+      l = l->normalize(true);  // we don't really need to normalize but we do need to set hash values
+      lhsDags[i] = l->term2Dag();
+      l->deepSelfDestruct();
+
+      Term* r = rhs[i];
+      Assert(domain[i] == r->symbol()->rangeComponent(), "domain mismatch");
+      r = r->normalize(true);  // we don't really need to normalize but we do need to set hash values
+      rhsDags[i] = r->term2Dag();
+      r->deepSelfDestruct();
+    }
+  if (nrPairs == 1)
+    return pair<DagNode*, DagNode*>(lhsDags[0], rhsDags[0]);
+
+  Symbol* tupleSymbol = createInternalTupleSymbol(domain, domain[0]);
+  DagNode* pattern = tupleSymbol->makeDagNode(lhsDags);
+  DagNode* subject = tupleSymbol->makeDagNode(rhsDags);
+  return pair<DagNode*, DagNode*>(pattern, subject);
+}
+				   
 Symbol*
-MixfixModule::createInternalTupleSymbol(const Vector<ConnectedComponent*>& domain, ConnectedComponent* range)
+MixfixModule::createInternalTupleSymbol(const Vector<ConnectedComponent*>& domain,
+					ConnectedComponent* range)
 {
   //
-  //	Internal tuple symbols are made on-the-fly and are not intended to be seen by the user except perhaps during tracing.
+  //	Internal tuple symbols are made on-the-fly and are not intended to be seen by the
+  //	user except perhaps during tracing.
   //
   IntList key;
-  FOR_EACH_CONST(i, Vector<ConnectedComponent*>, domain)
-    key.push_back((*i)->getIndexWithinModule());
+  for (ConnectedComponent* c : domain)
+    key.push_back(c->getIndexWithinModule());
   key.push_back(range->getIndexWithinModule());
 
   InternalTupleMap::iterator i = tupleSymbols.find(key);

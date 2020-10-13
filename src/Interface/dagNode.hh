@@ -171,7 +171,10 @@ public:
   //	Utility function for variant narrowing.
   //
   bool reducibleByVariantEquation(RewritingContext& context);
-
+  //
+  //	Utility function for variant matching.
+  //
+  virtual void indexVariables(VariableInfo& indicies);
 #ifdef DUMP
   //
   //	dump() routine is optional; Default will dump common stuff togther with args
@@ -373,12 +376,14 @@ DagNode::operator new(size_t size, int)
 inline void*
 DagNode::operator new(size_t /* size */, DagNode* old)
 {
+  //
+  //	Version for in-place replacement of DagNodes; this is used
+  //	for fast equational rewriting so that the replacement appears
+  //	on all paths in the Directed Acyclic Graph.
+  //
   if (old->getMemoryInfo()->needToCallDtor())
-    old->~DagNode();	// explicitly call virtual destructor
+    old->~DagNode();  // explicitly call virtual destructor on replaced DagNode
   old->getMemoryInfo()->clearAllExceptMarked();
-  // old->repudiateSortInfo();  // shouldn't be needed now that sort info setting has been shifted to DagNode::DagNode()
-  //DebugAdvisory("in place new called, old = " << (void*)(old));
-  //Assert(old->getSortIndex() == Sort::SORT_UNKNOWN, "bad sort init");
   return old;
 }
 

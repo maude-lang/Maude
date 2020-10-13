@@ -42,6 +42,11 @@ public:
   //	the given family.
   //
   virtual bool belongsToFamily(int id, int family) = 0;
+  //
+  //	Checks if the variable has a name we could generate, and if so
+  //	returns the index and family that will generate it.
+  //
+  virtual bool isFreshVariableName(int id, int& index, int& family) = 0;
 };
 
 #endif

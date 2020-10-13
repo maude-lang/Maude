@@ -613,9 +613,30 @@ AU_Symbol::computeGeneralizedSort2(const SortBdds& sortBdds,
     }
 }
 
+bool
+AU_Symbol::canResolveTheoryClash()
+{
+  //
+  //	We don't put this in parent class because returning true has
+  //	the obligation to handle clashing in our unification subproblems.
+  //
+  return getIdentity() != 0;
+}
+
 UnificationSubproblem*
 AU_Symbol::makeUnificationSubproblem()
 {
+  if (getIdentity() != 0)
+    {
+      //
+      //	Because AU_UnificationSubproblem2 may introduce the
+      //	identity element we make sure it had its sort computed
+      //	and its ground flag set.
+      //
+      DagNode* id = getIdentityDag();
+      if (!(id->isGround()))
+	id->computeBaseSortForGroundSubterms(false);
+    }
   return new AU_UnificationSubproblem2(this);
 }
 

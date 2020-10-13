@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2016 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -70,13 +70,16 @@ NarrowingSearchState2::NarrowingSearchState2(RewritingContext* context,
 					     int incomingVariableFamily,
 					     int flags,
 					     int minDepth,
-					     int maxDepth)
+					     int maxDepth,
+					     int variantFlags)
   : context(context),
     blockerDags(blockerDagsArg),  // shallow copy
     freshVariableGenerator(freshVariableGenerator),
     incomingVariableFamily(incomingVariableFamily),
+    variantFlags(variantFlags),
     module(context->root()->symbol()->getModule())
 {
+  //DebugAlways("variantFlags = " << variantFlags);
   ruleIndex = -1;  // not yet started
   incompleteFlag = false;
   unificationProblem = 0;
@@ -133,10 +136,9 @@ NarrowingSearchState2::NarrowingSearchState2(RewritingContext* context,
       for (int i = 0; i < nrVariables; ++i)
 	{
 	  int slotNr = firstTargetSlot + i;
-	  Sort* sort = safeCast(VariableSymbol*, variableInfo.index2Variable(i)->symbol())->getSort();
-	  VariableDagNode* v = new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(sort),
-						   freshVariableGenerator->getFreshVariableName(i, incomingVariableFamily),
-						   slotNr);
+	  Symbol* baseSymbol = variableInfo.index2Variable(i)->symbol();
+	  int name = freshVariableGenerator->getFreshVariableName(i, incomingVariableFamily);
+	  VariableDagNode* v = new VariableDagNode(baseSymbol, name, slotNr);
 	  s.bind(slotNr, v);
 	  if (i < nrVariablesInDagToNarrow)
 	    {
@@ -202,11 +204,11 @@ void
 NarrowingSearchState2::markReachableNodes()
 {
   //
-  //	Protect blocker dags; don't relying on VariantSearch object within
+  //	Protect blocker dags; don't rely on VariantSearch object within
   //	any particular VariantUnificationProblem.
   //
-  FOR_EACH_CONST(i, Vector<DagNode*>, blockerDags)
-    (*i)->mark();
+  for (DagNode* d : blockerDags)
+    d->mark();
 }
 
 bool
@@ -247,9 +249,11 @@ NarrowingSearchState2::findNextNarrowing()
   //	Check whether we should use the original variableInfo or the congruent one
   //	we created with fresh variables.
   //
-  const NarrowingVariableInfo& varInfo = (freshVariableInfo.getNrVariables() == 0) ? variableInfo : freshVariableInfo;
+  const NarrowingVariableInfo& varInfo =
+    (freshVariableInfo.getNrVariables() == 0) ? variableInfo : freshVariableInfo;
   //
-  //	Look at all positions (respecting depth bounds and, depending on flags, frozenness) in state dag.
+  //	Look at all positions (respecting depth bounds and, depending on flags, frozenness)
+  //	in state dag.
   //
   do
     {
@@ -259,8 +263,8 @@ NarrowingSearchState2::findNextNarrowing()
 	{
 	  ConnectedComponent* kind = d->symbol()->rangeComponent();
 	  //
-	  //	Look at all rules with the correct kind; since we are using variant unification, we can't
-	  //	easily know in advance which rule lhs might unify.
+	  //	Look at all rules with the correct kind; since we are using variant
+	  //	unification, we can't easily know in advance which rule lhs might unify.
 	  //
 	  const Vector<Rule*>& rules = module->getRules();
 	  for (int nrRules = rules.length(); ruleIndex < nrRules; ruleIndex++)
@@ -278,7 +282,8 @@ NarrowingSearchState2::findNextNarrowing()
 								     d,
 								     varInfo,
 								     freshVariableGenerator,
-								     incomingVariableFamily);
+								     incomingVariableFamily,
+								     variantFlags);
 		  bool nextUnifier = unificationProblem->findNextUnifier();
 		  if (context != newContext)
 		    context->transferCountFrom(*newContext);
@@ -327,11 +332,17 @@ NarrowingSearchState2::getNarrowedDag(DagNode*& replacement, DagNode*& replaceme
   //	to renaming them back when we rebuild the context.
   //
   replacementContext = reverseMapping ?
-    positionState->rebuildAndInstantiateDag(replacement, *reverseMapping, nrSlots, nrSlots + variableInfo.getNrVariables() - 1) :
+    positionState->rebuildAndInstantiateDag(replacement,
+					    *reverseMapping,
+					    nrSlots,
+					    nrSlots + variableInfo.getNrVariables() - 1) :
     positionState->rebuildDag(replacement).first;
   //
   //	Finally we compute the actual dag created by the narrowing step by rebuilding
   //	using the unifier.
   //
-  return positionState->rebuildAndInstantiateDag(replacement, s, nrSlots, nrSlots + variableInfo.getNrVariables() - 1);
+  return positionState->rebuildAndInstantiateDag(replacement,
+						 s,
+						 nrSlots,
+						 nrSlots + variableInfo.getNrVariables() - 1);
 }

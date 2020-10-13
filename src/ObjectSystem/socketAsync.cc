@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,46 +27,66 @@
 void
 SocketManagerSymbol::doRead(int fd)
 {
-  //cerr << "SocketManagerSymbol::doRead()" << endl;
+  DebugInfo(" on " << fd);
   SocketMap::iterator i = activeSockets.find(fd);
   Assert(i != activeSockets.end(), "read callback for nonexistent socket " << fd);
   ActiveSocket& as = i->second;
   if (as.state & WAITING_TO_READ)
     {
-      FreeDagNode* message = safeCast(FreeDagNode*, as.lastMessage.getNode());
-      ObjectSystemRewritingContext& context = *(as.originalContext);
+      FreeDagNode* message = safeCast(FreeDagNode*, as.lastReadMessage.getNode());
+      ObjectSystemRewritingContext& context = *(as.objectContext);
 
       char buffer[READ_BUFFER_SIZE];
       ssize_t n;
       do
 	n = read(fd, buffer, READ_BUFFER_SIZE);
       while (n == -1 && errno == EINTR);
-      //cerr << "n = " << n << endl;
+      DebugInfo("n = " << n);
 
-      if (n > 0)
+      if (n >= 0)
 	{
-	  as.state = NOMINAL;
+	  //
+	  //	We also deal with the n == 0 case here. This happens when
+	  //	the far end of the socket is closed for writing; this
+	  //	could be because the socket has be closed or because the
+	  //	other end has shutdown() the write half of the connection.
+	  //	Because the latter is sometimes used to indicate an EOF
+	  //	condition while still allowing data to be returned, we
+	  //	return 0 bytes to the user rather than closing the socket.
+	  //
+	  if (n == 0)
+	    {
+	      if (as.seenEOF)
+		{
+		  //
+		  //	If we've already returned 0 characters once
+		  //	we close the socket this time to minimize
+		  //	incompatibility with legacy behavior.
+		  //
+		  closedSocketReply(fd, "", message, context);
+		  return;
+		}
+	      as.seenEOF = true;
+	    }
+	  as.state &= ~WAITING_TO_READ;
 	  receivedMsgReply(buffer, n, message, context);
-	  as.lastMessage.setNode(0);  // allow GC of last message
+	  as.lastReadMessage.setNode(0);  // allow GC of last read message
 	}
       else
 	{
-	  if (n < 0)
-	    {
-	      const char* errText = strerror(errno);
-	      DebugAdvisory("unexpected read() error in callback: " << errText);
-	      closedSocketReply(fd, errText, message, context);
-	    }
-	  else
-	    {
-	      DebugAdvisory("read 0 bytes in callback");
-	      closedSocketReply(fd, "", message, context);
-	    }
+	  //
+	  //	An error on the socket. We expect that this is due to the
+	  //	connection being broken, so we close the socket. No need
+	  //	to clear the WAITING_TO_READ or the lastReadMessage
+	  //	because closedSocketReply() will delete the whole object.
+	  //
+	  const char* errText = strerror(errno);
+	  DebugInfo("unexpected read() error in callback: " << errText);
+	  closedSocketReply(fd, errText, message, context);
 	}
     }
   else if (as.state & WAITING_TO_ACCEPT)
     {
-      //ActiveSocket& as = activeSockets[fd];
       sockaddr_in sockName;
       socklen_t addrLen = sizeof(sockName);
       int r;
@@ -74,8 +94,8 @@ SocketManagerSymbol::doRead(int fd)
 	r = accept(fd, reinterpret_cast<sockaddr*>(&sockName), &addrLen);
       while (r == -1 && errno == EINTR);
 
-      FreeDagNode* message = safeCast(FreeDagNode*, as.lastMessage.getNode());
-      ObjectSystemRewritingContext& context = *(as.originalContext);
+      FreeDagNode* message = safeCast(FreeDagNode*, as.lastReadMessage.getNode());
+      ObjectSystemRewritingContext& context = *(as.objectContext);
 
       as.state = LISTENING;
       if (r >= 0)
@@ -89,24 +109,24 @@ SocketManagerSymbol::doRead(int fd)
       else
 	{
 	  //
-	  //	What should we do with a socket that we failed to accept on?
+	  //	We just clear our bit, return an error reply and
+	  //	leave the socket intact so user can try a further acceptClient()
 	  //
-	  const char* errText = strerror(errno);
-	  DebugAdvisory("unexpected accept() error: " << errText);
-	  errorReply(errText, message, context);
+	  as.state &= ~WAITING_TO_ACCEPT;
+	  const char* errorText = strerror(errno);
+	  DebugAdvisory("unexpected accept() error: " << errorText);
+	  errorReply(errorText, message, context);
 	}
-      as.lastMessage.setNode(0);  // allow GC of last message
+      as.lastReadMessage.setNode(0);  // allow GC of last message
     }
   else
-    {
-      Assert(false, "unwanted read callback for socket " << fd);
-    }
+    CantHappen("unwanted read callback for socket " << fd);
 }
 
 void
 SocketManagerSymbol::doWrite(int fd)
 {
-  //cerr << "SocketManagerSymbol::doWrite()" << endl;
+  DebugInfo(" on " << fd);
   SocketMap::iterator i = activeSockets.find(fd);
   Assert(i != activeSockets.end(), "write callback for nonexistent socket " << fd);
   ActiveSocket& as = i->second;
@@ -121,13 +141,13 @@ SocketManagerSymbol::doWrite(int fd)
       Assert(r == 0 && errorSize == sizeof(errorCode), "getsockopt() problem");
 #endif
 
-      FreeDagNode* message = safeCast(FreeDagNode*, as.lastMessage.getNode());
-      ObjectSystemRewritingContext& context = *(as.originalContext);
+      FreeDagNode* message = safeCast(FreeDagNode*, as.lastWriteMessage.getNode());
+      ObjectSystemRewritingContext& context = *(as.objectContext);
       if (errorCode == 0)
 	{
 	  createdSocketReply(fd, message, context);
 	  as.state = NOMINAL;
-	  as.lastMessage.setNode(0);  // allow GC of last message
+	  as.lastWriteMessage.setNode(0);  // allow GC of last message
 	}
       else
 	{
@@ -138,115 +158,148 @@ SocketManagerSymbol::doWrite(int fd)
     }
   else if (as.state & WAITING_TO_WRITE)
     {
-      FreeDagNode* message = safeCast(FreeDagNode*, as.lastMessage.getNode());
-      ObjectSystemRewritingContext& context = *(as.originalContext);
+      FreeDagNode* message = safeCast(FreeDagNode*, as.lastWriteMessage.getNode());
+      ObjectSystemRewritingContext& context = *(as.objectContext);
 
       ssize_t n;
       do
 	n = write(fd, as.unsent, as.nrUnsent);
       while (n == -1 && errno == EINTR);
-      //cerr << "n = " << n << endl;
-
-      if (n > 0)
+      Assert(n != 0, "unexpected zero characters written");
+      Assert(!(n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)),
+	     "unexpected would block in doWrite() callback");
+      
+      if (n >= 0)  // include 0 case here for safety, though it should not arise
 	{
 	  as.nrUnsent -= n;
-	  //cerr << "as.nrUnsent = " << as.nrUnsent << endl;
 	  if (as.nrUnsent == 0)
 	    {
-	      as.state = NOMINAL;
-	      // clear  as.text
+	      as.state &= ~WAITING_TO_WRITE;
 	      delete [] as.textArray;
 	      as.textArray = 0;
 	      sentMsgReply(message, context);
-	      as.lastMessage.setNode(0);  // allow GC of last message
 	    }
 	  else
 	    {
-	      as.unsent += n;
+	      as.unsent += n;  // move the pointer to the unsent characters
 	      wantTo(WRITE, fd);
 	    }
 	}
       else
 	{
-	  if (n < 0)
-	    {
-	      const char* errText = strerror(errno);
-	      DebugAdvisory("unexpected write() error in callback: " << errText);
-	      closedSocketReply(fd, errText, message, context);
-	    }
-	  else
-	    {
-	      DebugAdvisory("wrote 0 bytes in callback");
-	      closedSocketReply(fd, "", message, context);
-	    }
+	  //
+	  //	We had an error that was not due to an interrupt
+	  //	or no characters available. We assume that this
+	  //	means a broken connection. However we don't want
+	  //	to close the socket as it may still be possible
+	  //	to read characters. Instead we just inform the
+	  //	requesting object of the error.
+	  //
+	  const char* errorText = strerror(errno);
+	  DebugInfo("unexpected write() error : " << errorText);
+	  errorReply(errorText, message, context);
+	  as.state &= ~WAITING_TO_WRITE;
+ 	  as.lastWriteMessage.setNode(0);  // allow GC of last message
+	  //
+	  //	Delete character array here so we don't lose
+	  //	the pointer in a future send().
+	  //
+	  delete [] as.textArray;
+	  as.textArray = 0;
 	}
     }
   else
-    {
-      Assert(false, "unwanted write callback for socket " << fd);
-    }
+    CantHappen("unwanted write callback for socket " << fd);
 }
 
 void
 SocketManagerSymbol::doError(int fd)
 {
-  //cerr << "SocketManagerSymbol::doError()" << endl;
-  SocketMap::iterator i = activeSockets.find(fd);
-  if (i == activeSockets.end())  // handle gracefully - may have already been closed
-    {
-      DebugAdvisory("error callback for nonexistent socket " << fd);
-    }
-  else
-    {
-      //cerr << "valid socket\n";
-      ActiveSocket& as = i->second;
-      //cerr << "state = " << as.state << endl;
-      if (as.state & (WAITING_TO_CONNECT | WAITING_TO_WRITE | WAITING_TO_READ))
-	{
-	  int errorCode;
-	  socklen_t errorSize = sizeof(errorCode);
+  DebugInfo(" on " << fd);
+  //
+  //	Get error message.
+  //
+  int errorCode;
+  socklen_t errorSize = sizeof(errorCode);
 #ifdef NO_ASSERT
-	  getsockopt(fd, SOL_SOCKET, SO_ERROR, &errorCode, &errorSize);
+  getsockopt(fd, SOL_SOCKET, SO_ERROR, &errorCode, &errorSize);
 #else
-	  int r = getsockopt(fd, SOL_SOCKET, SO_ERROR, &errorCode, &errorSize);
-	  Assert(r == 0 && errorSize == sizeof(errorCode), "getsockopt() problem");
+  int r = getsockopt(fd, SOL_SOCKET, SO_ERROR, &errorCode, &errorSize);
+  Assert(r == 0 && errorSize == sizeof(errorCode), "getsockopt() problem");
 #endif
-	  //cerr << "injecting closed message\n";
-	  FreeDagNode* message = safeCast(FreeDagNode*, as.lastMessage.getNode());
-	  ObjectSystemRewritingContext& context = *(as.originalContext);
-	  closedSocketReply(fd, strerror(errorCode), message, context);
-	}
-      else
-	{
-	  Assert(false, "unwanted error callback for socket " << fd);
-	}
-    }
+  const char* errorMessage = strerror(errorCode);
+  //
+  //	We use the same code for errors and hangups.
+  //
+  handleException(fd, errorMessage);
 }
 
 void
 SocketManagerSymbol::doHungUp(int fd)
 {
-  //cerr << "SocketManagerSymbol::doHungUp()" << endl;
+  DebugInfo(" on " << fd);
+  handleException(fd, "Hung up");
+}
+
+void
+SocketManagerSymbol::handleException(int fd, const char* errorText)
+{
   SocketMap::iterator i = activeSockets.find(fd);
-  if (i == activeSockets.end())  // handle gracefully - may have already been closed
+  if (i == activeSockets.end()) 
     {
-      DebugAdvisory("hung up callback for nonexistent socket " << fd);
+      //
+      //	Handle gracefully - socket may already have been closed.
+      //
+      DebugAdvisory("error callback for nonexistent socket " << fd);
+      return;
+    }
+  ActiveSocket& as = i->second;
+  ObjectSystemRewritingContext& context = *(as.objectContext);
+  if (as.state & (WAITING_TO_ACCEPT))
+    {
+      FreeDagNode* message = safeCast(FreeDagNode*, as.lastReadMessage.getNode());
+      errorReply(errorText, message, context);
+      //
+      //	We cleanup rather than delete socket object so its still
+      //	nominally usable.
+      //
+      as.state &= ~WAITING_TO_ACCEPT;
+      as.lastReadMessage.setNode(0);  // allow GC of last read message
+    }
+  else if (as.state & (WAITING_TO_CONNECT))
+    {
+      //
+      //	A failed connect means we've never actually returned
+      //	a socket object to the user.
+      //
+      FreeDagNode* message = safeCast(FreeDagNode*, as.lastWriteMessage.getNode());
+      close(fd);
+      errorReply(errorText, message, context);
+      activeSockets.erase(i);
     }
   else
     {
-      //cerr << "valid socket\n";
-      ActiveSocket& as = i->second;
-      //cerr << "state = " << as.state << endl;
-      if (as.state & (WAITING_TO_CONNECT | WAITING_TO_WRITE | WAITING_TO_READ))
+      //
+      //	Could have both a read and a write pending. We need to
+      //	handle write first because read will destroy the socket object.
+      //
+      if (as.state & (WAITING_TO_WRITE))
 	{
-	  //cerr << "injecting closed message\n";
-	  FreeDagNode* message = safeCast(FreeDagNode*, as.lastMessage.getNode());
-	  ObjectSystemRewritingContext& context = *(as.originalContext);
-	  closedSocketReply(fd, "hung up callback", message, context);
+	  FreeDagNode* message = safeCast(FreeDagNode*, as.lastWriteMessage.getNode());
+	  errorReply(errorText, message, context);
+	  //
+	  //	We cleanup rather than delete the socket object so its still
+	  //	nominally usable.
+	  //
+	  as.state &= ~WAITING_TO_WRITE;
+ 	  as.lastWriteMessage.setNode(0);  // allow GC of last message
+	  delete [] as.textArray;
+	  as.textArray = 0;
 	}
-      else
+      if (as.state & (WAITING_TO_READ))
 	{
-	  Assert(false, "unwanted hung up callback for socket " << fd);
+	  FreeDagNode* message = safeCast(FreeDagNode*, as.lastReadMessage.getNode());
+	  closedSocketReply(fd, errorText, message, context);
 	}
     }
 }

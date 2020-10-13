@@ -1,0 +1,85 @@
+***(
+
+    This file is part of the Maude 3 interpreter.
+
+    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+)
+
+***
+***	Maude process creation and control.
+***	Version 3.1.
+***
+
+sload socket
+
+fmod STRING-LIST is
+  protecting LIST{String} *
+    (sort NeList{String} to NeStringList, sort List{String} to StringList) .
+endfm
+
+mod PROCESS is
+  including SOCKET .
+  protecting STRING-LIST .
+
+  sorts ProcessOption ProcessOptionSet .
+  subsort ProcessOption < ProcessOptionSet .
+  op none : -> ProcessOptionSet [ctor] .
+
+  sort ExitStatus .
+  op normalExit : Nat -> ExitStatus [ctor] .
+  op terminatedBySignal : String -> ExitStatus [ctor] .
+
+  op process : Nat -> Oid [ctor] .
+
+  op createProcess : Oid Oid String StringList ProcessOptionSet -> Msg [ctor msg format (b o)] .
+  op createdProcess : Oid Oid Oid Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op signalProcess : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op signaledProcess : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op waitForExit : Oid Oid -> Msg [ctor msg format (b o)] .
+  op exited : Oid Oid ExitStatus -> Msg [ctor msg format (m o)] .
+
+  op processError : Oid Oid String -> Msg [ctor msg format (r o)] .
+
+  op processManager : -> Oid
+       [special (
+         id-hook ProcessManagerSymbol
+
+	 op-hook socketManagerSymbol		(socketManager : ~> Oid)
+	 op-hook succSymbol			(s_ : Nat ~> NzNat)
+	 op-hook stringSymbol			(<Strings> : ~> String)
+	 op-hook nilStringListSymbol		(nil : ~> StringList)
+	 op-hook stringListSymbol		(__ : StringList StringList ~> StringList)
+	 op-hook emptyProcessOptionSetSymbol	(none : ~> ProcessOptionSet)
+	 op-hook normalExitSymbol		(normalExit : Nat ~> ExitStatus) 
+	 op-hook terminatedBySignalSymbol	(terminatedBySignal : String ~> ExitStatus)
+
+	 op-hook processOidSymbol		(process : Nat ~> Oid)
+
+	 op-hook createProcessMsg
+	   (createProcess : Oid Oid String StringList ProcessOptionSet ~> Msg)
+	 op-hook createdProcessMsg
+	   (createdProcess : Oid Oid Oid Oid Oid ~> Msg)
+
+	 op-hook signalProcessMsg		(signalProcess : Oid Oid String ~> Msg)
+	 op-hook signaledProcessMsg		(signaledProcess : Oid Oid ~> Msg)
+	 op-hook waitForExitMsg			(waitForExit : Oid Oid ~> Msg)
+	 op-hook exitedMsg			(exited : Oid Oid ExitStatus ~> Msg)
+	 op-hook processErrorMsg		(processError : Oid Oid String ~> Msg))] .
+endm

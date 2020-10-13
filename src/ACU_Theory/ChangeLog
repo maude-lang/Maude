@@ -1,3 +1,49 @@
+2020-06-18  Steven Eker  <eker2@eker10>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildSolution): turn cerr into
+	DebugInfo()
+
+2020-06-06  Steven Eker  <eker2@eker10>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem):
+	DebugAdvisory() -> DebugInfo()
+
+2020-06-05  Steven Eker  <eker2@eker10>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildSolution): don't
+	computeBaseSortForGroundSubterms for identity here
+
+	* ACU_Symbol.cc (ACU_Symbol::makeUnificationSubproblem): call
+	computeBaseSortForGroundSubterms for identity here
+
+	* ACU_UnificationSubproblem2.hh (class
+	ACU_UnificationSubproblem2): added decl for reuseVariable()
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::setMultiplicity): replace variables
+	bound to aliens by their bindings
+	(ACU_UnificationSubproblem2::setMultiplicity): unmade above change
+	and added detail comment with example to explain why eager
+	replacement fails
+	(ACU_UnificationSubproblem2::reuseVariable): added
+	(ACU_UnificationSubproblem2::buildSolution): added optional code
+	to use reuseVariable() optimization
+
+2020-06-02  Steven Eker  <eker2@eker10>
+
+	* ACU_DagNode.cc (ACU_DagNode::computeSolvedForm2): added DebugEnter()
+
+2020-05-27  Steven Eker  <eker2@eker10>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::solve): added DebugInfo()s for branch
+	on hasUnequalLeftIdentityCollapse()
+
+===================================Maude128a===========================================
+
 2019-12-03  Steven Eker  <eker@mu>
 
 	* ACU_BaseDagNode.cc (getSize): use safeCastNonNull<>() (2 places)

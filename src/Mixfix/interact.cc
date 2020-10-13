@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ bool UserLevelRewritingContext::infoFlag = false;
 bool UserLevelRewritingContext::stepFlag = false;
 bool UserLevelRewritingContext::abortFlag = false;
 int UserLevelRewritingContext::debugLevel = 0;
+Int64 UserLevelRewritingContext::rewriteCountAtLastInterrupt = -1;
 
 int yyparse(UserLevelRewritingContext::ParseResult*);
 void cleanUpParser();
@@ -39,17 +40,23 @@ void cleanUpLexer();
 void
 UserLevelRewritingContext::clearDebug()
 {
+  //
+  //	We clear the global traceFlag unless any exeception
+  //	situations are still active.
+  //
   setTraceStatus(interpreter.getFlag(Interpreter::EXCEPTION_FLAGS));
   stepFlag = false;
   abortFlag = false;
 }
 
+/*
 void
 UserLevelRewritingContext::clearInterrupt()
 {
   setTraceStatus(interpreter.getFlag(Interpreter::EXCEPTION_FLAGS));
   ctrlC_Flag =  false;
 }
+*/
 
 void
 UserLevelRewritingContext::setHandlers(bool handleCtrlC)
@@ -83,6 +90,8 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
 #ifdef NO_ASSERT
   //
   //	If we're not debugging we handle internal errors and stack overflows.
+  //	Since these signals will be caught at most once, we can live with the
+  //	non-portable semantics of signal().
   //
   BddUser::setErrorHandler(internalErrorHandler);  // BuDDy detects misuse of BDDs
   signal(SIGBUS, internalErrorHandler);  // misaligned memory access or nonexistent real memeory
@@ -105,6 +114,14 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
   signal(SIGSEGV, internalErrorHandler);
 #endif
 #endif
+  //
+  //	Because we can't ensure that when we write to a pipe or socket
+  //	that the other end hasn't been closed, we need to do something
+  //	about SIGPIPE. It doesn't make much sense to catch it since the
+  //	code that made system call that generated the SIGPIPE should
+  //	check for EPIPE and is best placed to handle it.
+  //
+  signal(SIGPIPE, SIG_IGN);
   //
   //	HACK: this should go somewhere else.
   //
@@ -165,16 +182,29 @@ runtime to the bug being visible is greater than 10 seconds.\n\n";
 void
 UserLevelRewritingContext::interruptHandler(int)
 {
+  //
+  //	Note that a ^C situation is present.
+  //
   ctrlC_Flag = true;
+  //
+  //	Set global trace flag to indicate an exception condition
+  //	is present and slow route all execution.
+  //
   setTraceStatus(true);
 }
 
 void
 UserLevelRewritingContext::infoHandler(int)
 {
+  //
+  //	Note that an info situation is present.
+  //
   infoFlag = true;
+  //
+  //	Set global trace flag to indicate an exception condition
+  //	is present and slow route all execution.
+  //
   setTraceStatus(true);
-  // write(STDERR_FILENO, "info handler called\n", sizeof("info handler called\n") - 1);
 }
 
 void
@@ -186,6 +216,18 @@ UserLevelRewritingContext::interruptHandler2(...)
 bool
 UserLevelRewritingContext::handleInterrupt()
 {
+  //
+  //	This is called because a slow/blocked system call was interrupted
+  //	by a signal. We return true if we dealt with the issue and want
+  //	to restart the system call and false to quit.
+  //
+  //	If ctrl-C has been pressed we want to quit the system call so Maude
+  //	can respond to the user - might cause issues with files and sockets
+  //	but we prefer Maude to be responsive.
+  //
+  //	If it was cause by an info request we want to continue as normal. If
+  //	there are both ctrl-C and info events we treat it as a ctrl-C.
+  //
   if (infoFlag)
     {
       //
@@ -202,20 +244,66 @@ UserLevelRewritingContext::handleInterrupt()
       if (!ctrlC_Flag)
         setTraceStatus(interpreter.getFlag(Interpreter::EXCEPTION_FLAGS));
     }
+  if (ctrlC_Flag)
+    {
+      //
+      //	We treat doing an rewrite as restarting the two ctrl-C
+      //	events to abort count.
+      //
+      Int64 currentRewriteCount = getTotalCount();
+      if (rewriteCountAtLastInterrupt == currentRewriteCount)
+	{
+	  cerr << "\nSecond control-C while suspended on external event(s)." << endl;
+	  cerr << "Aborting execution and returning to command line." << endl;
+	  abortFlag = true;  // treat this as an abort
+	  return false;
+	}
+      else
+	{
+	  cerr << "\nControl-C while suspended on external event(s)." << endl;
+	  if (rewriteCountAtLastInterrupt != -1)
+	    {
+	      Int64 diff = currentRewriteCount - rewriteCountAtLastInterrupt;
+	      cerr << "Note that this is a" << Tty(Tty::RED) << " different " << Tty(Tty::RESET) <<
+		"suspension than the one that received a control-C " <<
+		diff << " rewrite" << pluralize(diff) << " ago." << Tty(Tty::RESET) << endl;
+	    }
+	  cerr << "A second control-C" << Tty(Tty::RED) << " on the same suspension " <<
+	    Tty(Tty::RESET) << "will abort execution and return to command line." << endl;
+	  rewriteCountAtLastInterrupt = currentRewriteCount;
+	  ctrlC_Flag = false;  // cancel ctrlC
+	  return true;
+	}
+    }
+  return true;
+}
+
+bool
+UserLevelRewritingContext::blockAndHandleInterrupts(sigset_t* normalSet)
+{
   //
-  //	This is called because a slow/blocked system call was interrupted
-  //	by a signal. We return true if we dealt with the issue and want
-  //	to restart the system call and false to quit.
+  //	This is called because we are about to make a blocking system
+  //	call and could miss signals that are delivered before the call
+  //	happens. We need to block those signals and then handle any
+  //	that have already been delivered.
   //
-  //	If ctrl-C has been pressed we want to quit the system call so Maude
-  //	can respond to the user - might cause issues with files and sockets
-  //	but we prefer Maude to be responsive.
+  //	We first block ^C and info signals.
   //
-  //	If it was cause by an info request we want to continue as normal. If
-  //	there are both ctrl-C and info events we treat it as a ctrl-C.
+  sigset_t blockSet;
+  sigemptyset(&blockSet);
+  sigaddset(&blockSet, SIGINT);
+#ifdef SIGINFO
+  sigaddset(&blockSet, SIGINFO);
+#else
+  sigaddset(&blockSet, SIGUSR1);
+#endif
+  sigprocmask(SIG_BLOCK, &blockSet, normalSet);
   //
-  //cerr << "ctrlC_Flag = " << ctrlC_Flag << endl;
-  return !ctrlC_Flag;
+  //	We now handle any that have already been delivered as usual.
+  //	We rely on the caller to reset the signal mask to normalSet once
+  //	it is done with its blocking call.
+  //
+  return handleInterrupt();
 }
 
 void
@@ -306,6 +394,7 @@ UserLevelRewritingContext::beginCommand()
 {
   if (!interactiveFlag)
     cout << "==========================================\n";
+  rewriteCountAtLastInterrupt = -1;
 }
 
 void
@@ -359,6 +448,15 @@ UserLevelRewritingContext::printStatusReport(DagNode* subject, const PreEquation
 bool
 UserLevelRewritingContext::handleDebug(DagNode* subject, const PreEquation* pe)
 {
+  //
+  //	Handle unusual situations that are common to all rewrite types:
+  //	(a) Abort
+  //	(b) Info interrupt
+  //	(c) Breakpoints
+  //	(d) ^C interrupt
+  //	(e) Single stepping
+  //	In the latter 3 cases we drop into the debugger.
+  //
   if (abortFlag)
     return true;
   if (infoFlag)

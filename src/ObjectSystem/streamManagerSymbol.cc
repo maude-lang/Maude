@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for class FileManagerSymbol.
+//      Implementation for class StreamManagerSymbol.
 //
 
 //      utility stuff

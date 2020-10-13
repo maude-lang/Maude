@@ -1,0 +1,1965 @@
+==========================================
+unify in AU-TEST : X =? Y X /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo #3:Foo
+A --> #2:Foo
+B --> #3:Foo
+
+Unifier 2
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+A --> 1
+B --> #2:Foo
+
+Unifier 3
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+A --> #2:Foo
+B --> 1
+
+Unifier 4
+X --> #1:Foo
+Y --> 1
+Z --> 1
+A --> 1
+B --> 1
+
+Unifier 5
+X --> 1
+Y --> 1
+Z --> #1:Foo #2:Foo
+A --> #1:Foo
+B --> #2:Foo
+
+Unifier 6
+X --> 1
+Y --> 1
+Z --> #1:Foo
+A --> 1
+B --> #1:Foo
+
+Unifier 7
+X --> 1
+Y --> 1
+Z --> #1:Foo
+A --> #1:Foo
+B --> 1
+
+Unifier 8
+X --> 1
+Y --> 1
+Z --> 1
+A --> 1
+B --> 1
+==========================================
+variant unify in AU-TEST : X =? Y X /\ Z Y =? A B .
+
+Unifier 1
+rewrites: 0
+X --> %1:Foo
+Z --> %2:Foo %3:Foo
+Y --> 1
+A --> %2:Foo
+B --> %3:Foo
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : X =? Y X /\ Z C =? C /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+Z --> 1
+C --> #2:Foo
+A --> 1
+B --> 1
+
+Unifier 2
+X --> #1:Foo
+Y --> 1
+Z --> 1
+C --> 1
+A --> 1
+B --> 1
+
+Unifier 3
+X --> 1
+Y --> 1
+Z --> 1
+C --> #1:Foo
+A --> 1
+B --> 1
+
+Unifier 4
+X --> 1
+Y --> 1
+Z --> 1
+C --> 1
+A --> 1
+B --> 1
+==========================================
+variant unify in AU-TEST : X =? Y X /\ Z C =? C /\ Z Y =? A B .
+
+Unifier 1
+rewrites: 0
+X --> %1:Foo
+Z --> 1
+C --> %2:Foo
+Y --> 1
+A --> 1
+B --> 1
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : X =? Y X /\ A C =? C /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+A --> 1
+C --> #2:Foo
+Z --> #3:Foo
+B --> #3:Foo
+
+Unifier 2
+X --> #1:Foo
+Y --> 1
+A --> 1
+C --> #2:Foo
+Z --> 1
+B --> 1
+
+Unifier 3
+X --> #1:Foo
+Y --> 1
+A --> 1
+C --> 1
+Z --> #2:Foo
+B --> #2:Foo
+
+Unifier 4
+X --> #1:Foo
+Y --> 1
+A --> 1
+C --> 1
+Z --> 1
+B --> 1
+
+Unifier 5
+X --> 1
+Y --> 1
+A --> 1
+C --> #1:Foo
+Z --> #2:Foo
+B --> #2:Foo
+
+Unifier 6
+X --> 1
+Y --> 1
+A --> 1
+C --> #1:Foo
+Z --> 1
+B --> 1
+
+Unifier 7
+X --> 1
+Y --> 1
+A --> 1
+C --> 1
+Z --> #1:Foo
+B --> #1:Foo
+
+Unifier 8
+X --> 1
+Y --> 1
+A --> 1
+C --> 1
+Z --> 1
+B --> 1
+==========================================
+variant unify in AU-TEST : X =? Y X /\ A C =? C /\ Z Y =? A B .
+
+Unifier 1
+rewrites: 0
+X --> %1:Foo
+A --> 1
+C --> %2:Foo
+Z --> %3:Foo
+Y --> 1
+B --> %3:Foo
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : X =? Y X /\ Y =? A B Z /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+A --> 1
+B --> 1
+Z --> 1
+
+Unifier 2
+X --> 1
+Y --> 1
+A --> 1
+B --> 1
+Z --> 1
+==========================================
+variant unify in AU-TEST : X =? Y X /\ Y =? A B Z /\ Z Y =? A B .
+
+Unifier 1
+rewrites: 0
+X --> %1:Foo
+Y --> 1
+Z --> 1
+A --> 1
+B --> 1
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : X =? 1 /\ Y =? 1 /\ Z =? 1 /\ X =? Y Z .
+
+Unifier 1
+X --> 1
+Y --> 1
+Z --> 1
+==========================================
+variant unify in AU-TEST : X =? 1 /\ Y =? 1 /\ Z =? 1 /\ X =? Y Z .
+
+Unifier 1
+rewrites: 0
+X --> 1
+Y --> 1
+Z --> 1
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : X =? 1 /\ Y =? 1 /\ Z =? 1 /\ X Y =? Y Z .
+
+Unifier 1
+X --> 1
+Y --> 1
+Z --> 1
+==========================================
+variant unify in AU-TEST : X =? 1 /\ Y =? 1 /\ Z =? 1 /\ X Y =? Y Z .
+
+Unifier 1
+rewrites: 0
+X --> 1
+Y --> 1
+Z --> 1
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : X =? Y X /\ 1 =? A B Z /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+A --> 1
+B --> 1
+Z --> 1
+
+Unifier 2
+X --> 1
+Y --> 1
+A --> 1
+B --> 1
+Z --> 1
+==========================================
+variant unify in AU-TEST : X =? Y X /\ 1 =? A B Z /\ Z Y =? A B .
+
+Unifier 1
+rewrites: 0
+X --> %1:Foo
+Z --> 1
+Y --> 1
+A --> 1
+B --> 1
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : X =? Y X /\ C =? 1 /\ C =? A B Z /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+C --> 1
+A --> 1
+B --> 1
+Z --> 1
+
+Unifier 2
+X --> 1
+Y --> 1
+C --> 1
+A --> 1
+B --> 1
+Z --> 1
+==========================================
+variant unify in AU-TEST : X =? Y X /\ C =? 1 /\ C =? A B Z /\ Z Y =? A B .
+
+Unifier 1
+rewrites: 0
+X --> %1:Foo
+C --> 1
+Z --> 1
+Y --> 1
+A --> 1
+B --> 1
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : A B C =? a .
+
+Unifier 1
+A --> 1
+B --> 1
+C --> a
+
+Unifier 2
+A --> 1
+B --> a
+C --> 1
+
+Unifier 3
+A --> a
+B --> 1
+C --> 1
+==========================================
+variant unify in AU-TEST : A B C =? a .
+
+Unifier 1
+rewrites: 0
+A --> 1
+B --> 1
+C --> a
+
+Unifier 2
+rewrites: 0
+A --> 1
+B --> a
+C --> 1
+
+Unifier 3
+rewrites: 0
+A --> a
+B --> 1
+C --> 1
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : Y =? 1 /\ X =? Y Z .
+
+Unifier 1
+Y --> 1
+X --> #1:Foo
+Z --> #1:Foo
+
+Unifier 2
+Y --> 1
+X --> 1
+Z --> 1
+==========================================
+variant unify in AU-TEST : Y =? 1 /\ X =? Y Z .
+
+Unifier 1
+rewrites: 0
+Y --> 1
+X --> %1:Foo
+Z --> %1:Foo
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : A B =? X Y .
+
+Unifier 1
+A --> #2:Foo #3:Foo
+B --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo #1:Foo
+
+Unifier 2
+A --> #1:Foo
+B --> #3:Foo #2:Foo
+X --> #1:Foo #3:Foo
+Y --> #2:Foo
+
+Unifier 3
+A --> #1:Foo
+B --> #2:Foo
+X --> #1:Foo
+Y --> #2:Foo
+
+Unifier 4
+A --> 1
+B --> #1:Foo #2:Foo
+X --> #1:Foo
+Y --> #2:Foo
+
+Unifier 5
+A --> #1:Foo #2:Foo
+B --> 1
+X --> #1:Foo
+Y --> #2:Foo
+
+Unifier 6
+A --> 1
+B --> 1
+X --> 1
+Y --> 1
+
+Unifier 7
+A --> #1:Foo
+B --> #2:Foo
+X --> 1
+Y --> #1:Foo #2:Foo
+
+Unifier 8
+A --> 1
+B --> #1:Foo
+X --> 1
+Y --> #1:Foo
+
+Unifier 9
+A --> #1:Foo
+B --> 1
+X --> 1
+Y --> #1:Foo
+
+Unifier 10
+A --> #1:Foo
+B --> #2:Foo
+X --> #1:Foo #2:Foo
+Y --> 1
+
+Unifier 11
+A --> 1
+B --> #1:Foo
+X --> #1:Foo
+Y --> 1
+
+Unifier 12
+A --> #1:Foo
+B --> 1
+X --> #1:Foo
+Y --> 1
+==========================================
+variant unify in AU-TEST : A B =? X Y .
+
+Unifier 1
+rewrites: 0
+A --> %2:Foo %3:Foo
+B --> %1:Foo
+X --> %2:Foo
+Y --> %3:Foo %1:Foo
+
+Unifier 2
+rewrites: 0
+A --> %1:Foo
+B --> %3:Foo %2:Foo
+X --> %1:Foo %3:Foo
+Y --> %2:Foo
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : A B =? X Y Z .
+
+Unifier 1
+A --> #2:Foo #3:Foo #4:Foo
+B --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo
+Z --> #4:Foo #1:Foo
+
+Unifier 2
+A --> #1:Foo #3:Foo
+B --> #4:Foo #2:Foo
+X --> #1:Foo
+Y --> #3:Foo #4:Foo
+Z --> #2:Foo
+
+Unifier 3
+A --> #2:Foo #3:Foo
+B --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo
+Z --> #1:Foo
+
+Unifier 4
+A --> #1:Foo
+B --> #4:Foo #2:Foo #3:Foo
+X --> #1:Foo #4:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 5
+A --> #1:Foo
+B --> #2:Foo #3:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 6
+A --> 1
+B --> #1:Foo #2:Foo #3:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 7
+A --> #1:Foo #2:Foo #3:Foo
+B --> 1
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 8
+A --> 1
+B --> 1
+X --> 1
+Y --> 1
+Z --> 1
+
+Unifier 9
+A --> #2:Foo #3:Foo
+B --> #1:Foo
+X --> 1
+Y --> #2:Foo
+Z --> #3:Foo #1:Foo
+
+Unifier 10
+A --> #1:Foo
+B --> #3:Foo #2:Foo
+X --> 1
+Y --> #1:Foo #3:Foo
+Z --> #2:Foo
+
+Unifier 11
+A --> #1:Foo
+B --> #2:Foo
+X --> 1
+Y --> #1:Foo
+Z --> #2:Foo
+
+Unifier 12
+A --> 1
+B --> #1:Foo #2:Foo
+X --> 1
+Y --> #1:Foo
+Z --> #2:Foo
+
+Unifier 13
+A --> #1:Foo #2:Foo
+B --> 1
+X --> 1
+Y --> #1:Foo
+Z --> #2:Foo
+
+Unifier 14
+A --> #2:Foo #3:Foo
+B --> #1:Foo
+X --> #2:Foo
+Y --> 1
+Z --> #3:Foo #1:Foo
+
+Unifier 15
+A --> #1:Foo
+B --> #3:Foo #2:Foo
+X --> #1:Foo #3:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 16
+A --> #1:Foo
+B --> #2:Foo
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 17
+A --> 1
+B --> #1:Foo #2:Foo
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 18
+A --> #1:Foo #2:Foo
+B --> 1
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 19
+A --> #1:Foo
+B --> #2:Foo
+X --> 1
+Y --> 1
+Z --> #1:Foo #2:Foo
+
+Unifier 20
+A --> 1
+B --> #1:Foo
+X --> 1
+Y --> 1
+Z --> #1:Foo
+
+Unifier 21
+A --> #1:Foo
+B --> 1
+X --> 1
+Y --> 1
+Z --> #1:Foo
+
+Unifier 22
+A --> #2:Foo #3:Foo
+B --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo #1:Foo
+Z --> 1
+
+Unifier 23
+A --> #1:Foo
+B --> #3:Foo #2:Foo
+X --> #1:Foo #3:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 24
+A --> #1:Foo
+B --> #2:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 25
+A --> 1
+B --> #1:Foo #2:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 26
+A --> #1:Foo #2:Foo
+B --> 1
+X --> #1:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 27
+A --> #1:Foo
+B --> #2:Foo
+X --> 1
+Y --> #1:Foo #2:Foo
+Z --> 1
+
+Unifier 28
+A --> 1
+B --> #1:Foo
+X --> 1
+Y --> #1:Foo
+Z --> 1
+
+Unifier 29
+A --> #1:Foo
+B --> 1
+X --> 1
+Y --> #1:Foo
+Z --> 1
+
+Unifier 30
+A --> #1:Foo
+B --> #2:Foo
+X --> #1:Foo #2:Foo
+Y --> 1
+Z --> 1
+
+Unifier 31
+A --> 1
+B --> #1:Foo
+X --> #1:Foo
+Y --> 1
+Z --> 1
+
+Unifier 32
+A --> #1:Foo
+B --> 1
+X --> #1:Foo
+Y --> 1
+Z --> 1
+==========================================
+variant unify in AU-TEST : A B =? X Y Z .
+
+Unifier 1
+rewrites: 0
+A --> %2:Foo %3:Foo %4:Foo
+B --> %1:Foo
+X --> %2:Foo
+Y --> %3:Foo
+Z --> %4:Foo %1:Foo
+
+Unifier 2
+rewrites: 0
+A --> %1:Foo %3:Foo
+B --> %4:Foo %2:Foo
+X --> %1:Foo
+Y --> %3:Foo %4:Foo
+Z --> %2:Foo
+
+Unifier 3
+rewrites: 0
+A --> %1:Foo
+B --> %4:Foo %2:Foo %3:Foo
+X --> %1:Foo %4:Foo
+Y --> %2:Foo
+Z --> %3:Foo
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-TEST : A B C =? X Y Z .
+
+Unifier 1
+A --> #3:Foo #4:Foo #5:Foo
+B --> #1:Foo
+C --> #2:Foo
+X --> #3:Foo
+Y --> #4:Foo
+Z --> #5:Foo #1:Foo #2:Foo
+
+Unifier 2
+A --> #2:Foo #3:Foo
+B --> #4:Foo #5:Foo
+C --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo #4:Foo
+Z --> #5:Foo #1:Foo
+
+Unifier 3
+A --> #2:Foo #4:Foo
+B --> #1:Foo
+C --> #5:Foo #3:Foo
+X --> #2:Foo
+Y --> #4:Foo #1:Foo #5:Foo
+Z --> #3:Foo
+
+Unifier 4
+A --> #3:Foo #4:Foo
+B --> #1:Foo
+C --> #2:Foo
+X --> #3:Foo
+Y --> #4:Foo #1:Foo
+Z --> #2:Foo
+
+Unifier 5
+A --> #3:Foo #4:Foo
+B --> #1:Foo
+C --> #2:Foo
+X --> #3:Foo
+Y --> #4:Foo
+Z --> #1:Foo #2:Foo
+
+Unifier 6
+A --> #1:Foo
+B --> #4:Foo #3:Foo #5:Foo
+C --> #2:Foo
+X --> #1:Foo #4:Foo
+Y --> #3:Foo
+Z --> #5:Foo #2:Foo
+
+Unifier 7
+A --> #1:Foo
+B --> #3:Foo #4:Foo
+C --> #5:Foo #2:Foo
+X --> #1:Foo #3:Foo
+Y --> #4:Foo #5:Foo
+Z --> #2:Foo
+
+Unifier 8
+A --> #1:Foo
+B --> #4:Foo #3:Foo
+C --> #2:Foo
+X --> #1:Foo #4:Foo
+Y --> #3:Foo
+Z --> #2:Foo
+
+Unifier 9
+A --> #1:Foo
+B --> #2:Foo
+C --> #5:Foo #3:Foo #4:Foo
+X --> #1:Foo #2:Foo #5:Foo
+Y --> #3:Foo
+Z --> #4:Foo
+
+Unifier 10
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo #4:Foo
+X --> #1:Foo #2:Foo
+Y --> #3:Foo
+Z --> #4:Foo
+
+Unifier 11
+A --> #1:Foo
+B --> #3:Foo #4:Foo
+C --> #2:Foo
+X --> #1:Foo
+Y --> #3:Foo
+Z --> #4:Foo #2:Foo
+
+Unifier 12
+A --> #1:Foo
+B --> #2:Foo
+C --> #4:Foo #3:Foo
+X --> #1:Foo
+Y --> #2:Foo #4:Foo
+Z --> #3:Foo
+
+Unifier 13
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 14
+A --> 1
+B --> #2:Foo #3:Foo #4:Foo
+C --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo
+Z --> #4:Foo #1:Foo
+
+Unifier 15
+A --> 1
+B --> #1:Foo #3:Foo
+C --> #4:Foo #2:Foo
+X --> #1:Foo
+Y --> #3:Foo #4:Foo
+Z --> #2:Foo
+
+Unifier 16
+A --> 1
+B --> #2:Foo #3:Foo
+C --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo
+Z --> #1:Foo
+
+Unifier 17
+A --> 1
+B --> #1:Foo
+C --> #4:Foo #2:Foo #3:Foo
+X --> #1:Foo #4:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 18
+A --> 1
+B --> #1:Foo
+C --> #2:Foo #3:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 19
+A --> #2:Foo #3:Foo #4:Foo
+B --> 1
+C --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo
+Z --> #4:Foo #1:Foo
+
+Unifier 20
+A --> #1:Foo #3:Foo
+B --> 1
+C --> #4:Foo #2:Foo
+X --> #1:Foo
+Y --> #3:Foo #4:Foo
+Z --> #2:Foo
+
+Unifier 21
+A --> #2:Foo #3:Foo
+B --> 1
+C --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo
+Z --> #1:Foo
+
+Unifier 22
+A --> #1:Foo
+B --> 1
+C --> #4:Foo #2:Foo #3:Foo
+X --> #1:Foo #4:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 23
+A --> #1:Foo
+B --> 1
+C --> #2:Foo #3:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 24
+A --> 1
+B --> 1
+C --> #1:Foo #2:Foo #3:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 25
+A --> #2:Foo #3:Foo #4:Foo
+B --> #1:Foo
+C --> 1
+X --> #2:Foo
+Y --> #3:Foo
+Z --> #4:Foo #1:Foo
+
+Unifier 26
+A --> #1:Foo #3:Foo
+B --> #4:Foo #2:Foo
+C --> 1
+X --> #1:Foo
+Y --> #3:Foo #4:Foo
+Z --> #2:Foo
+
+Unifier 27
+A --> #2:Foo #3:Foo
+B --> #1:Foo
+C --> 1
+X --> #2:Foo
+Y --> #3:Foo
+Z --> #1:Foo
+
+Unifier 28
+A --> #1:Foo
+B --> #4:Foo #2:Foo #3:Foo
+C --> 1
+X --> #1:Foo #4:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 29
+A --> #1:Foo
+B --> #2:Foo #3:Foo
+C --> 1
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 30
+A --> 1
+B --> #1:Foo #2:Foo #3:Foo
+C --> 1
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 31
+A --> #1:Foo #2:Foo #3:Foo
+B --> 1
+C --> 1
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+
+Unifier 32
+A --> 1
+B --> 1
+C --> 1
+X --> 1
+Y --> 1
+Z --> 1
+
+Unifier 33
+A --> #3:Foo #4:Foo
+B --> #1:Foo
+C --> #2:Foo
+X --> 1
+Y --> #3:Foo
+Z --> #4:Foo #1:Foo #2:Foo
+
+Unifier 34
+A --> #1:Foo
+B --> #3:Foo #4:Foo
+C --> #2:Foo
+X --> 1
+Y --> #1:Foo #3:Foo
+Z --> #4:Foo #2:Foo
+
+Unifier 35
+A --> #1:Foo
+B --> #2:Foo
+C --> #4:Foo #3:Foo
+X --> 1
+Y --> #1:Foo #2:Foo #4:Foo
+Z --> #3:Foo
+
+Unifier 36
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo
+X --> 1
+Y --> #1:Foo #2:Foo
+Z --> #3:Foo
+
+Unifier 37
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo
+X --> 1
+Y --> #1:Foo
+Z --> #2:Foo #3:Foo
+
+Unifier 38
+A --> 1
+B --> #2:Foo #3:Foo
+C --> #1:Foo
+X --> 1
+Y --> #2:Foo
+Z --> #3:Foo #1:Foo
+
+Unifier 39
+A --> 1
+B --> #1:Foo
+C --> #3:Foo #2:Foo
+X --> 1
+Y --> #1:Foo #3:Foo
+Z --> #2:Foo
+
+Unifier 40
+A --> 1
+B --> #1:Foo
+C --> #2:Foo
+X --> 1
+Y --> #1:Foo
+Z --> #2:Foo
+
+Unifier 41
+A --> #2:Foo #3:Foo
+B --> 1
+C --> #1:Foo
+X --> 1
+Y --> #2:Foo
+Z --> #3:Foo #1:Foo
+
+Unifier 42
+A --> #1:Foo
+B --> 1
+C --> #3:Foo #2:Foo
+X --> 1
+Y --> #1:Foo #3:Foo
+Z --> #2:Foo
+
+Unifier 43
+A --> #1:Foo
+B --> 1
+C --> #2:Foo
+X --> 1
+Y --> #1:Foo
+Z --> #2:Foo
+
+Unifier 44
+A --> 1
+B --> 1
+C --> #1:Foo #2:Foo
+X --> 1
+Y --> #1:Foo
+Z --> #2:Foo
+
+Unifier 45
+A --> #2:Foo #3:Foo
+B --> #1:Foo
+C --> 1
+X --> 1
+Y --> #2:Foo
+Z --> #3:Foo #1:Foo
+
+Unifier 46
+A --> #1:Foo
+B --> #3:Foo #2:Foo
+C --> 1
+X --> 1
+Y --> #1:Foo #3:Foo
+Z --> #2:Foo
+
+Unifier 47
+A --> #1:Foo
+B --> #2:Foo
+C --> 1
+X --> 1
+Y --> #1:Foo
+Z --> #2:Foo
+
+Unifier 48
+A --> 1
+B --> #1:Foo #2:Foo
+C --> 1
+X --> 1
+Y --> #1:Foo
+Z --> #2:Foo
+
+Unifier 49
+A --> #1:Foo #2:Foo
+B --> 1
+C --> 1
+X --> 1
+Y --> #1:Foo
+Z --> #2:Foo
+
+Unifier 50
+A --> #3:Foo #4:Foo
+B --> #1:Foo
+C --> #2:Foo
+X --> #3:Foo
+Y --> 1
+Z --> #4:Foo #1:Foo #2:Foo
+
+Unifier 51
+A --> #1:Foo
+B --> #3:Foo #4:Foo
+C --> #2:Foo
+X --> #1:Foo #3:Foo
+Y --> 1
+Z --> #4:Foo #2:Foo
+
+Unifier 52
+A --> #1:Foo
+B --> #2:Foo
+C --> #4:Foo #3:Foo
+X --> #1:Foo #2:Foo #4:Foo
+Y --> 1
+Z --> #3:Foo
+
+Unifier 53
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo
+X --> #1:Foo #2:Foo
+Y --> 1
+Z --> #3:Foo
+
+Unifier 54
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo #3:Foo
+
+Unifier 55
+A --> 1
+B --> #2:Foo #3:Foo
+C --> #1:Foo
+X --> #2:Foo
+Y --> 1
+Z --> #3:Foo #1:Foo
+
+Unifier 56
+A --> 1
+B --> #1:Foo
+C --> #3:Foo #2:Foo
+X --> #1:Foo #3:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 57
+A --> 1
+B --> #1:Foo
+C --> #2:Foo
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 58
+A --> #2:Foo #3:Foo
+B --> 1
+C --> #1:Foo
+X --> #2:Foo
+Y --> 1
+Z --> #3:Foo #1:Foo
+
+Unifier 59
+A --> #1:Foo
+B --> 1
+C --> #3:Foo #2:Foo
+X --> #1:Foo #3:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 60
+A --> #1:Foo
+B --> 1
+C --> #2:Foo
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 61
+A --> 1
+B --> 1
+C --> #1:Foo #2:Foo
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 62
+A --> #2:Foo #3:Foo
+B --> #1:Foo
+C --> 1
+X --> #2:Foo
+Y --> 1
+Z --> #3:Foo #1:Foo
+
+Unifier 63
+A --> #1:Foo
+B --> #3:Foo #2:Foo
+C --> 1
+X --> #1:Foo #3:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 64
+A --> #1:Foo
+B --> #2:Foo
+C --> 1
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 65
+A --> 1
+B --> #1:Foo #2:Foo
+C --> 1
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 66
+A --> #1:Foo #2:Foo
+B --> 1
+C --> 1
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo
+
+Unifier 67
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo
+X --> 1
+Y --> 1
+Z --> #1:Foo #2:Foo #3:Foo
+
+Unifier 68
+A --> 1
+B --> #1:Foo
+C --> #2:Foo
+X --> 1
+Y --> 1
+Z --> #1:Foo #2:Foo
+
+Unifier 69
+A --> #1:Foo
+B --> 1
+C --> #2:Foo
+X --> 1
+Y --> 1
+Z --> #1:Foo #2:Foo
+
+Unifier 70
+A --> 1
+B --> 1
+C --> #1:Foo
+X --> 1
+Y --> 1
+Z --> #1:Foo
+
+Unifier 71
+A --> #1:Foo
+B --> #2:Foo
+C --> 1
+X --> 1
+Y --> 1
+Z --> #1:Foo #2:Foo
+
+Unifier 72
+A --> 1
+B --> #1:Foo
+C --> 1
+X --> 1
+Y --> 1
+Z --> #1:Foo
+
+Unifier 73
+A --> #1:Foo
+B --> 1
+C --> 1
+X --> 1
+Y --> 1
+Z --> #1:Foo
+
+Unifier 74
+A --> #3:Foo #4:Foo
+B --> #1:Foo
+C --> #2:Foo
+X --> #3:Foo
+Y --> #4:Foo #1:Foo #2:Foo
+Z --> 1
+
+Unifier 75
+A --> #1:Foo
+B --> #3:Foo #4:Foo
+C --> #2:Foo
+X --> #1:Foo #3:Foo
+Y --> #4:Foo #2:Foo
+Z --> 1
+
+Unifier 76
+A --> #1:Foo
+B --> #2:Foo
+C --> #4:Foo #3:Foo
+X --> #1:Foo #2:Foo #4:Foo
+Y --> #3:Foo
+Z --> 1
+
+Unifier 77
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo
+X --> #1:Foo #2:Foo
+Y --> #3:Foo
+Z --> 1
+
+Unifier 78
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo
+X --> #1:Foo
+Y --> #2:Foo #3:Foo
+Z --> 1
+
+Unifier 79
+A --> 1
+B --> #2:Foo #3:Foo
+C --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo #1:Foo
+Z --> 1
+
+Unifier 80
+A --> 1
+B --> #1:Foo
+C --> #3:Foo #2:Foo
+X --> #1:Foo #3:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 81
+A --> 1
+B --> #1:Foo
+C --> #2:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 82
+A --> #2:Foo #3:Foo
+B --> 1
+C --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo #1:Foo
+Z --> 1
+
+Unifier 83
+A --> #1:Foo
+B --> 1
+C --> #3:Foo #2:Foo
+X --> #1:Foo #3:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 84
+A --> #1:Foo
+B --> 1
+C --> #2:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 85
+A --> 1
+B --> 1
+C --> #1:Foo #2:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 86
+A --> #2:Foo #3:Foo
+B --> #1:Foo
+C --> 1
+X --> #2:Foo
+Y --> #3:Foo #1:Foo
+Z --> 1
+
+Unifier 87
+A --> #1:Foo
+B --> #3:Foo #2:Foo
+C --> 1
+X --> #1:Foo #3:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 88
+A --> #1:Foo
+B --> #2:Foo
+C --> 1
+X --> #1:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 89
+A --> 1
+B --> #1:Foo #2:Foo
+C --> 1
+X --> #1:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 90
+A --> #1:Foo #2:Foo
+B --> 1
+C --> 1
+X --> #1:Foo
+Y --> #2:Foo
+Z --> 1
+
+Unifier 91
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo
+X --> 1
+Y --> #1:Foo #2:Foo #3:Foo
+Z --> 1
+
+Unifier 92
+A --> 1
+B --> #1:Foo
+C --> #2:Foo
+X --> 1
+Y --> #1:Foo #2:Foo
+Z --> 1
+
+Unifier 93
+A --> #1:Foo
+B --> 1
+C --> #2:Foo
+X --> 1
+Y --> #1:Foo #2:Foo
+Z --> 1
+
+Unifier 94
+A --> 1
+B --> 1
+C --> #1:Foo
+X --> 1
+Y --> #1:Foo
+Z --> 1
+
+Unifier 95
+A --> #1:Foo
+B --> #2:Foo
+C --> 1
+X --> 1
+Y --> #1:Foo #2:Foo
+Z --> 1
+
+Unifier 96
+A --> 1
+B --> #1:Foo
+C --> 1
+X --> 1
+Y --> #1:Foo
+Z --> 1
+
+Unifier 97
+A --> #1:Foo
+B --> 1
+C --> 1
+X --> 1
+Y --> #1:Foo
+Z --> 1
+
+Unifier 98
+A --> #1:Foo
+B --> #2:Foo
+C --> #3:Foo
+X --> #1:Foo #2:Foo #3:Foo
+Y --> 1
+Z --> 1
+
+Unifier 99
+A --> 1
+B --> #1:Foo
+C --> #2:Foo
+X --> #1:Foo #2:Foo
+Y --> 1
+Z --> 1
+
+Unifier 100
+A --> #1:Foo
+B --> 1
+C --> #2:Foo
+X --> #1:Foo #2:Foo
+Y --> 1
+Z --> 1
+
+Unifier 101
+A --> 1
+B --> 1
+C --> #1:Foo
+X --> #1:Foo
+Y --> 1
+Z --> 1
+
+Unifier 102
+A --> #1:Foo
+B --> #2:Foo
+C --> 1
+X --> #1:Foo #2:Foo
+Y --> 1
+Z --> 1
+
+Unifier 103
+A --> 1
+B --> #1:Foo
+C --> 1
+X --> #1:Foo
+Y --> 1
+Z --> 1
+
+Unifier 104
+A --> #1:Foo
+B --> 1
+C --> 1
+X --> #1:Foo
+Y --> 1
+Z --> 1
+==========================================
+variant unify in AU-TEST : A B C =? X Y Z .
+
+Unifier 1
+rewrites: 0
+A --> %3:Foo %4:Foo %5:Foo
+B --> %1:Foo
+C --> %2:Foo
+X --> %3:Foo
+Y --> %4:Foo
+Z --> %5:Foo %1:Foo %2:Foo
+
+Unifier 2
+rewrites: 0
+A --> %2:Foo %3:Foo
+B --> %4:Foo %5:Foo
+C --> %1:Foo
+X --> %2:Foo
+Y --> %3:Foo %4:Foo
+Z --> %5:Foo %1:Foo
+
+Unifier 3
+rewrites: 0
+A --> %2:Foo %4:Foo
+B --> %1:Foo
+C --> %5:Foo %3:Foo
+X --> %2:Foo
+Y --> %4:Foo %1:Foo %5:Foo
+Z --> %3:Foo
+
+Unifier 4
+rewrites: 0
+A --> %1:Foo
+B --> %4:Foo %3:Foo %5:Foo
+C --> %2:Foo
+X --> %1:Foo %4:Foo
+Y --> %3:Foo
+Z --> %5:Foo %2:Foo
+
+Unifier 5
+rewrites: 0
+A --> %1:Foo
+B --> %3:Foo %4:Foo
+C --> %5:Foo %2:Foo
+X --> %1:Foo %3:Foo
+Y --> %4:Foo %5:Foo
+Z --> %2:Foo
+
+Unifier 6
+rewrites: 0
+A --> %1:Foo
+B --> %2:Foo
+C --> %5:Foo %3:Foo %4:Foo
+X --> %1:Foo %2:Foo %5:Foo
+Y --> %3:Foo
+Z --> %4:Foo
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in LIST : E =? L M N .
+
+Unifier 1
+E --> #1:Elt
+L --> nil
+M --> nil
+N --> #1:Elt
+
+Unifier 2
+E --> #1:Elt
+L --> nil
+M --> #1:Elt
+N --> nil
+
+Unifier 3
+E --> #1:Elt
+L --> #1:Elt
+M --> nil
+N --> nil
+==========================================
+variant unify in LIST : E =? L M N .
+
+Unifier 1
+rewrites: 0
+E --> %1:Elt
+L --> nil
+M --> nil
+N --> %1:Elt
+
+Unifier 2
+rewrites: 0
+E --> %1:Elt
+L --> nil
+M --> %1:Elt
+N --> nil
+
+Unifier 3
+rewrites: 0
+E --> %1:Elt
+L --> %1:Elt
+M --> nil
+N --> nil
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in LIST : E L E M =? E N F N .
+
+Unifier 1
+E --> #1:Elt
+L --> #4:List #1:Elt #2:List #3:Elt #4:List
+M --> #2:List
+N --> #4:List #1:Elt #2:List
+F --> #3:Elt
+
+Unifier 2
+E --> #1:Elt
+L --> #1:Elt #2:List #3:Elt
+M --> #2:List
+N --> #1:Elt #2:List
+F --> #3:Elt
+
+Unifier 3
+E --> #1:Elt
+L --> #2:List
+M --> #4:List #3:Elt #2:List #1:Elt #4:List
+N --> #2:List #1:Elt #4:List
+F --> #3:Elt
+
+Unifier 4
+E --> #1:Elt
+L --> #2:List
+M --> #3:Elt #2:List #1:Elt
+N --> #2:List #1:Elt
+F --> #3:Elt
+
+Unifier 5
+E --> #1:Elt
+L --> #2:List
+M --> #2:List
+N --> #2:List
+F --> #1:Elt
+
+Unifier 6
+E --> #1:Elt
+L --> nil
+M --> #3:List #2:Elt #1:Elt #3:List
+N --> #1:Elt #3:List
+F --> #2:Elt
+
+Unifier 7
+E --> #1:Elt
+L --> nil
+M --> #2:Elt #1:Elt
+N --> #1:Elt
+F --> #2:Elt
+
+Unifier 8
+E --> #1:Elt
+L --> #3:List #1:Elt #2:Elt #3:List
+M --> nil
+N --> #3:List #1:Elt
+F --> #2:Elt
+
+Unifier 9
+E --> #1:Elt
+L --> #1:Elt #2:Elt
+M --> nil
+N --> #1:Elt
+F --> #2:Elt
+
+Unifier 10
+E --> #1:Elt
+L --> nil
+M --> nil
+N --> nil
+F --> #1:Elt
+==========================================
+variant unify in LIST : E L E M =? E N F N .
+
+Unifier 1
+rewrites: 0
+E --> %1:Elt
+L --> %4:List %1:Elt %2:List %3:Elt %4:List
+M --> %2:List
+N --> %4:List %1:Elt %2:List
+F --> %3:Elt
+
+Unifier 2
+rewrites: 0
+E --> %1:Elt
+L --> %2:List
+M --> %4:List %3:Elt %2:List %1:Elt %4:List
+N --> %2:List %1:Elt %4:List
+F --> %3:Elt
+
+Unifier 3
+rewrites: 0
+E --> %1:Elt
+L --> %2:List
+M --> %2:List
+N --> %2:List
+F --> %1:Elt
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in NAT' : X =? s (X * Y) .
+
+Unifier 1
+X --> s 0
+Y --> 0
+
+Unifier 2
+X --> s 0
+Y --> 0
+==========================================
+unify in NAT' : X =? s X * Y .
+
+Unifier 1
+X --> 0
+Y --> 0
+
+Unifier 2
+X --> 0
+Y --> 0
+==========================================
+unify in NAT' : s X =? s X * Y .
+
+Unifier 1
+X --> #1:Nat
+Y --> s 0
+
+Unifier 2
+X --> 0
+Y --> s 0
+==========================================
+unify in NAT' : s X =? X * Y .
+
+Unifier 1
+X --> s 0
+Y --> s_^2(0)
+==========================================
+unify in COMM : X =? c(f(X, Y), Z) .
+
+Unifier 1
+X --> c(a, b)
+Z --> a
+Y --> b
+
+Unifier 2
+X --> c(a, b)
+Z --> b
+Y --> a
+
+Unifier 3
+X --> c(a, b)
+Z --> a
+Y --> b
+
+Unifier 4
+X --> c(a, b)
+Z --> b
+Y --> a
+==========================================
+unify in FOO2 : X =? f(Y, a, b) /\ Y =? g(X, c, d) .
+
+Unifier 1
+X --> f(a, b)
+Y --> g(c, d)
+
+Unifier 2
+X --> f(a, b)
+Y --> g(c, d)
+
+Unifier 3
+X --> f(a, b)
+Y --> g(c, d)
+
+Unifier 4
+X --> f(a, b)
+Y --> g(c, d)
+==========================================
+unify in FOO3 : X =? f(Y, a, b) /\ Y =? h(X) .
+
+Unifier 1
+X --> f(a, b)
+Y --> h(f(a, b))
+
+Unifier 2
+X --> f(a, b)
+Y --> h(f(a, b))
+==========================================
+unify in AU-UNSORTED : X:Foo =? f(Y:Foo, Z:Foo) .
+
+Unifier 1
+X:Foo --> f(#1:Foo, #2:Foo)
+Y:Foo --> #1:Foo
+Z:Foo --> #2:Foo
+
+Unifier 2
+X:Foo --> #1:Foo
+Y:Foo --> 1
+Z:Foo --> #1:Foo
+
+Unifier 3
+X:Foo --> #1:Foo
+Y:Foo --> #1:Foo
+Z:Foo --> 1
+
+Unifier 4
+X:Foo --> 1
+Y:Foo --> 1
+Z:Foo --> 1
+==========================================
+variant unify in AU-UNSORTED : X:Foo =? f(Y:Foo, Z:Foo) .
+
+Unifier 1
+rewrites: 0
+X:Foo --> f(%1:Foo, %2:Foo)
+Y:Foo --> %1:Foo
+Z:Foo --> %2:Foo
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-SORTED1 : X:Lo =? f(Y:Hi, Z:Hi) .
+
+Unifier 1
+X:Lo --> #1:Lo
+Y:Hi --> 1
+Z:Hi --> #1:Lo
+
+Unifier 2
+X:Lo --> #1:Lo
+Y:Hi --> #1:Lo
+Z:Hi --> 1
+==========================================
+variant unify in AU-SORTED1 : X:Lo =? f(Y:Hi, Z:Hi) .
+
+Unifier 1
+rewrites: 0
+X:Lo --> %1:Lo
+Y:Hi --> 1
+Z:Hi --> %1:Lo
+
+Unifier 2
+rewrites: 0
+X:Lo --> %1:Lo
+Y:Hi --> %1:Lo
+Z:Hi --> 1
+
+No more unifiers.
+rewrites: 0
+==========================================
+unify in AU-SORTED2 : X:Lo =? f(Y:Hi, Z:Hi) .
+
+Unifier 1
+X:Lo --> f(#1:Lo, #2:Lo)
+Y:Hi --> #1:Lo
+Z:Hi --> #2:Lo
+
+Unifier 2
+X:Lo --> #1:Lo
+Y:Hi --> 1
+Z:Hi --> #1:Lo
+
+Unifier 3
+X:Lo --> #1:Lo
+Y:Hi --> #1:Lo
+Z:Hi --> 1
+==========================================
+variant unify in AU-SORTED2 : X:Lo =? f(Y:Hi, Z:Hi) .
+
+Unifier 1
+rewrites: 0
+X:Lo --> f(%1:Lo, %2:Lo)
+Y:Hi --> %1:Lo
+Z:Hi --> %2:Lo
+
+Unifier 2
+rewrites: 0
+X:Lo --> %1:Lo
+Y:Hi --> 1
+Z:Hi --> %1:Lo
+
+Unifier 3
+rewrites: 0
+X:Lo --> %1:Lo
+Y:Hi --> %1:Lo
+Z:Hi --> 1
+
+No more unifiers.
+rewrites: 0
+Bye.

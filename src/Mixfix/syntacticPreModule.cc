@@ -126,26 +126,28 @@ VisibleModule*
 SyntacticPreModule::getFlatModule()
 {
   VisibleModule* m = getFlatSignature();
-  if (m->getStatus() < Module::THEORY_CLOSED)
+  //
+  //	getFlatSignature() returns a module with its bad flag
+  //	set if anything went wrong.
+  //
+  if (!(m->isBad()) && m->getStatus() < Module::THEORY_CLOSED)
     {
-      //IssueWarning("module " << *m << " with status " << m->getStatus() << " being flattened and compiled");  //HACK
       //
       //	Need to flatten in statements and compile.
       //
       m->importStatements();
-      if (m->isBad())
-	{
-	  IssueWarning(*m <<
-		       ": this module contains one or more errors that \
-could not be patched up and thus it cannot be used or imported.");
-	}
-      else
-	{
-	  //IssueWarning("calling closeTheory on  " << *m);  // HACK
-	  m->closeTheory();
-	  m->checkFreshVariableNames();
-	}
+      Assert(!(m->isBad()), "importStatements() unexpectedly set bad flag in " << *m);
       m->resetImports();
+      //
+      //	Compile  module.
+      //
+      m->closeTheory();
+      //
+      //	We don't allow reserved fresh variable names in variant
+      //	equations or narrowing rules. We can't do this until statements
+      //	have been compiled since it relied on VariableInfo being filled out.
+      //
+      m->checkFreshVariableNames();
     }
   return m;
 }

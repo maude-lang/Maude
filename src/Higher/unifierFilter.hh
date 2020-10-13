@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2016 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2016-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,13 +20,15 @@
 
 */
 //
-//	Class for filtering unifiers, keeping a minimal set that are most general on a range of variables:
+//	Class for filtering unifiers, keeping a minimal set that are most general on a range
+//	of variables:
 //	  firstInterestingVariable,..., firstInterestingVariable + nrInterestingVariables -1
 //
 #ifndef _unifierFilter_hh_
 #define _unifierFilter_hh_
 #include <list>
 #include "simpleRootContainer.hh"
+#include "substitution.hh"
 
 class UnifierFilter : private SimpleRootContainer
 {
@@ -35,8 +37,13 @@ class UnifierFilter : private SimpleRootContainer
 public:
   UnifierFilter(int firstInterestingVariable, int nrInterestingVariables);
   ~UnifierFilter();
-
-  void insertUnifier(const Substitution& unifier, int positionIndex, int equationIndex);
+  //
+  //	posistionIndex and equationIndex are just opaque integers that are
+  //	stored along side the unifier. The names suggest the way they are used
+  //	during variantNarrowing but the caller can use them to store other
+  //	information if desired.
+  //
+  void insertUnifier(const Substitution& unifier, int positionIndex = 0, int equationIndex = 0);
   bool getNextSurvivingUnifier(Substitution*& unifier, int& positionIndex, int& equationIndex);
 
 private:
@@ -60,7 +67,6 @@ private:
   void markReachableNodes();
   bool subsumes(const RetainedUnifier* retainedUnifier, const Substitution& unifier);
 
-
   const int firstInterestingVariable;
   const int nrInterestingVariables;
   RetainedUnifierList mostGeneralSoFar;   // on interestingVariables;
@@ -68,6 +74,5 @@ private:
   bool startedExtractingUnifiers;
   RetainedUnifierList::const_iterator nextUnifier;
 };
-
 
 #endif

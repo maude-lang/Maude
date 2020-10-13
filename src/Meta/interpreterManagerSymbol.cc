@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2009 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -53,9 +53,10 @@
 #include "rewriteSearchState.hh"
 #include "matchSearchState.hh"
 #include "rewriteSequenceSearch.hh"
-//#include "narrowingSequenceSearch.hh"
 #include "unificationProblem.hh"
+#include "irredundantUnificationProblem.hh"
 #include "variantSearch.hh"
+#include "filteredVariantUnifierSearch.hh"
 #include "narrowingSearchState2.hh"
 #include "narrowingSequenceSearch3.hh"
 
@@ -99,6 +100,7 @@
 #include "interpreterUnify.cc"
 #include "interpreterVariant.cc"
 #include "interpreterVariantUnify.cc"
+#include "interpreterVariantMatch.cc"
 #include "interpreterSort.cc"
 #include "interpreterNewNarrow.cc"
 #include "interpreterNewNarrowSearch.cc"
@@ -288,15 +290,22 @@ InterpreterManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingC
     return getSearchResult(safeCast(FreeDagNode*, message), context);
 
   else if (s == getUnifierMsg)
-    return getUnifier(safeCast(FreeDagNode*, message), context, false);
+    return getUnifier(safeCast(FreeDagNode*, message), context, false, false);
   else if (s == getDisjointUnifierMsg)
-    return getUnifier(safeCast(FreeDagNode*, message), context, true);
+    return getUnifier(safeCast(FreeDagNode*, message), context, true, false);
+  else if (s == getIrredundantUnifierMsg)
+    return getUnifier(safeCast(FreeDagNode*, message), context, false, true);
+  else if (s == getIrredundantDisjointUnifierMsg)
+    return getUnifier(safeCast(FreeDagNode*, message), context, true, true);
+
   else if (s == getVariantMsg)
     return getVariant(safeCast(FreeDagNode*, message), context);
   else if (s == getVariantUnifierMsg)
     return getVariantUnifier(safeCast(FreeDagNode*, message), context, false);
   else if (s == getDisjointVariantUnifierMsg)
     return getVariantUnifier(safeCast(FreeDagNode*, message), context, true);
+  else if (s == getVariantMatcherMsg)
+    return getVariantMatcher(safeCast(FreeDagNode*, message), context);
   else if (s == getMatchMsg)
     return getMatch(safeCast(FreeDagNode*, message), context);
   else if (s == getXmatchMsg)

@@ -1,0 +1,130 @@
+==========================================
+reduce in CHECK : check(['A-UNIF], "A:List B:List", "X:List") .
+rewrites: 58
+result ResultList: unifierCount(1) unifierCount(1)
+==========================================
+reduce in CHECK : check(['A-UNIF], "A:List B:List", "X:List Y:List") .
+rewrites: 156
+result ResultList: unifierCount(3) unifierCount(3)
+==========================================
+reduce in CHECK : check(['A-UNIF], "A:List B:List C:List", "X:List Y:List") .
+rewrites: 278
+result ResultList: unifierCount(5) unifierCount(5)
+==========================================
+reduce in CHECK : check(['A-UNIF], "A:List B:List C:List",
+    "X:List Y:List Z:List") .
+rewrites: 772
+result ResultList: unifierCount(13) unifierCount(13)
+==========================================
+reduce in CHECK : check(['A-UNIF], "A:List B:List C:List G:List",
+    "X:List Y:List Z:List") .
+rewrites: 1618
+result ResultList: unifierCount(25) unifierCount(25)
+==========================================
+reduce in CHECK : check(['A-UNIF], "A:List B:List C:List D:List G:List",
+    "X:List Y:List Z:List") .
+rewrites: 2888
+result ResultList: unifierCount(41) unifierCount(41)
+==========================================
+reduce in CHECK : check(['A-UNIF], "A:List B:List", "B:List C:List") .
+Warning: Unification modulo the theory of operator __ has encountered an
+    instance for which it may not be complete.
+Warning: Unification modulo the theory of operator __ has encountered an
+    instance for which it may not be complete.
+rewrites: 114
+result ResultList: unifierCountIncomplete(2) unifierCountIncomplete(2)
+==========================================
+reduce in CHECK : check(['A-UNIF], "a A:List a", "B:List a C:List") .
+rewrites: 250
+result ResultList: unifierCount(4) unifierCount(4)
+==========================================
+reduce in CHECK : check(['A-UNIF], "a A:List b", "B:List c C:List") .
+rewrites: 250
+result ResultList: unifierCount(4) unifierCount(4)
+==========================================
+reduce in CHECK : check(['A-UNIF], "a A:List a", "B:List a C:List a D:List") .
+rewrites: 298
+result ResultList: unifierCount(4) unifierCount(4)
+==========================================
+reduce in CHECK : check(['A-UNIF], "a A:List b", "B:List c C:List d D:List") .
+rewrites: 298
+result ResultList: unifierCount(4) unifierCount(4)
+==========================================
+reduce in CHECK : check(['A-UNIF],
+    "h(A:List, B:List, B:List) C:List h(G:List, H:List)",
+    "I:List h(J:List, i(K:List)) L:List") .
+rewrites: 346
+result ResultList: unifierCount(4) unifierCount(4)
+==========================================
+reduce in CHECK : check(['A-UNIF],
+    "h(A:List, B:List) C:List h(G:List, H:List)",
+    "I:List h(J:List, J:List) L:List h(M:List, M:List) N:List") .
+rewrites: 394
+result ResultList: unifierCount(4) unifierCount(4)
+==========================================
+reduce in CHECK : check(['A-UNIF], "A:List h(X:List, Y:List) B:List",
+    "C:List h(U:List, V:List) D:List h(U:List, U:List) G:List") .
+rewrites: 1778
+result ResultList: unifierCount(20) unifierCount(20)
+==========================================
+reduce in CHECK : check(['A-UNIF], "h(h(A:List, B:List, B:List) C:List h(G:List, H:List), X:List Y:List a Z:List)",
+    "h(I:List h(J:List, i(K:List)) L:List, U:List b V:List W:List)") .
+rewrites: 16658
+result ResultList: unifierCount(128) unifierCount(128)
+==========================================
+reduce in CHECK : check(['A-UNIF], "h(A:List, A:List)",
+    "h(f(B:List, C:List), f(I:List, J:List))") .
+rewrites: 192
+result ResultList: unifierCount(3) unifierCount(3)
+==========================================
+reduce in CHECK : check(['A-UNIF], "h(A:List, A:List, A:List)",
+    "h(f(B:List, C:List), f(I:List, J:List), f(X:List, Y:List))") .
+rewrites: 954
+result ResultList: unifierCount(13) unifierCount(13)
+==========================================
+reduce in CHECK : check(['A-UNIF], "h(f(a, b), f(a, b), f(a, b))",
+    "h(f(B:List, C:List), f(I:List, J:List), f(X:List, Y:List))") .
+rewrites: 108
+result ResultList: unifierCount(1) unifierCount(1)
+==========================================
+reduce in CHECK : check(['A-UNIF],
+    "A:List E:Elt B:List F:Elt C:List E:Elt D:List",
+    "W:List F:Elt X:List E:Elt Y:List F:Elt Z:List") .
+rewrites: 35740
+result ResultList: unifierCount(337) unifierCount(337)
+==========================================
+reduce in CHECK : check(['A-UNIF], "j(A:List, f(B:List, E:Elt, C:List), f(D:List, E:Elt, j(G:List, H:List), I:List))",
+    "j(U:List, f(V:List, W:List), f(X:List, j(Y:List, Z:List), S:List))") .
+rewrites: 213767
+result ResultList: unifierCount(3740) unifierCount(293)
+==========================================
+reduce in CHECK : check(['AC+C], "f(g(X:Set, Y:Set), g(X:Set, Z:Set), U:Set)",
+    "f(g(Y:Set, Z:Set), V:Set)") .
+rewrites: 290
+result ResultList: unifierCount(4) unifierCount(4)
+==========================================
+reduce in CHECK : check(['AC+C], "g(f(X:Set, Y:Set), f(X:Set, U:Set, Z:Set))",
+    "g(f(U:Set, V:Set), f(W:Set, A:Elt))") .
+rewrites: 3570
+result ResultList: unifierCount(48) unifierCount(48)
+==========================================
+reduce in CHECK : check(['NAT'], "X:Nat", "s (X:Nat * Y:Nat)") .
+rewrites: 81
+result ResultList: unifierCount(2) unifierCount(1)
+==========================================
+reduce in CHECK : check(['NAT'], "X:Nat", "s X:Nat * Y:Nat") .
+rewrites: 81
+result ResultList: unifierCount(2) unifierCount(1)
+==========================================
+reduce in CHECK : check(['NAT'], "s X:Nat", "s X:Nat * Y:Nat") .
+rewrites: 62
+result ResultList: unifierCount(1) unifierCount(1)
+==========================================
+reduce in CHECK : check(['NAT'], "s X:Nat", "X:Nat * Y:Nat") .
+rewrites: 60
+result ResultList: unifierCount(1) unifierCount(1)
+==========================================
+reduce in CHECK : check(['COMM], "X:Foo", "c(f(X:Foo, Y:Foo), Z:Foo)") .
+rewrites: 110
+result ResultList: unifierCount(2) unifierCount(2)
+Bye.

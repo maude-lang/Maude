@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2012 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
 //	forward declarations
 #include "interface.hh"
 #include "core.hh"
-//#include "variable.hh"
 
 //	interface class definitions
 #include "symbol.hh"
@@ -55,36 +54,45 @@ VariantFolder::VariantFolder()
 
 VariantFolder::~VariantFolder()
 {
-  FOR_EACH_CONST(i, RetainedVariantMap, mostGeneralSoFar)
-    delete i->second;
+  for (auto& i : mostGeneralSoFar)
+    delete i.second;
 }
 
 void
 VariantFolder::markReachableNodes()
 {
-  FOR_EACH_CONST(i, RetainedVariantMap, mostGeneralSoFar)
+  for (auto& i : mostGeneralSoFar)
     {
-      Vector<DagNode*>& variant = i->second->variant;
-      FOR_EACH_CONST(j, Vector<DagNode*>, variant)
-	(*j)->mark();
+      for (auto& j : i.second->variant)
+	j->mark();
     }
 }
 
 bool
-VariantFolder::insertVariant(const Vector<DagNode*>& variant, int index, int parentIndex, int variableFamily)
+VariantFolder::isSubsumed(const Vector<DagNode*>& variant) const
+{
+  for (auto& i : mostGeneralSoFar)
+    {
+      if (subsumes(i.second, variant))
+	return true;  
+    }
+  return false;
+}
+
+bool
+VariantFolder::insertVariant(const Vector<DagNode*>& variant,
+			     int index,
+			     int parentIndex,
+			     int variableFamily)
 {
   //cerr << " i" << index << "p" << parentIndex;
   //
   //	First we check if it is subsumed by one of the existing variants.
   //
-  FOR_EACH_CONST(i, RetainedVariantMap, mostGeneralSoFar)
+  if (isSubsumed(variant))
     {
-      if (subsumes(i->second, variant))
-	{
-	  DebugAdvisory("new variant subsumed");
-	  //cout << "!!!!!!!" << index << "subsumed by " << i->first << endl;
-	  return false;
-	}
+      DebugAdvisory("new variant subsumed");
+      return false;
     }
   DebugAdvisory("new variant added");
   //
@@ -115,20 +123,13 @@ VariantFolder::insertVariant(const Vector<DagNode*>& variant, int index, int par
       if (ancestors.find(i->first) == ancestors.end())  // can't mess with ancestors of new variant
 	{
 	  RetainedVariant* potentialVictim = i->second;
-	  if (existingVariantsSubsumed.find(potentialVictim->parentIndex) != existingVariantsSubsumed.end())
+	  if (existingVariantsSubsumed.find(potentialVictim->parentIndex) !=
+	      existingVariantsSubsumed.end())
 	    {
 	      //
 	      //	Our parent was subsumed so we are also subsumed.
 	      //
 	      DebugAdvisory("new variant evicted descendent of an older variant " << i->first);
-	      /*
-	      cerr << "!!!!!!! new variant " << index << endl;
-	      FOR_EACH_CONST(k, Vector<DagNode*>, variant)
-		cerr << *k << endl;
-	      cerr << " evicted " << i->first << endl;
-	      potentialVictim->dump();
-	      cerr << " via parent " << potentialVictim->parentIndex << endl;
-	      */
 	      existingVariantsSubsumed.insert(i->first);
 	      delete potentialVictim;
 	      mostGeneralSoFar.erase(i);
@@ -139,13 +140,6 @@ VariantFolder::insertVariant(const Vector<DagNode*>& variant, int index, int par
 	      //	Direct subsumption by new variant.
 	      //
 	      DebugAdvisory("new variant evicted an older variant " << i->first);
-	      /*
-	      cerr << "!!!!!!! new variant " << index << endl;
-	      FOR_EACH_CONST(k, Vector<DagNode*>, variant)
-		cerr << *k << endl;
-	      cerr << " evicted " << i->first << endl;
-	      potentialVictim->dump();
-	      */
 	      existingVariantsSubsumed.insert(i->first);
 	      delete potentialVictim;
 	      mostGeneralSoFar.erase(i);
@@ -157,14 +151,14 @@ VariantFolder::insertVariant(const Vector<DagNode*>& variant, int index, int par
   //
   //	Add to the mostGeneralSoFar collection of variants.
   //
-  //cerr << "*";
   newVariant->parentIndex = parentIndex;
   newVariant->variableFamily = variableFamily;
   newVariant->layerNumber = 0;
   if (parentIndex != NONE)
     {
       RetainedVariantMap::iterator parentVariant = mostGeneralSoFar.find(parentIndex);
-      Assert(parentVariant != mostGeneralSoFar.end(), "parent " << parentIndex << " of variant " << index << " has been deleted");
+      Assert(parentVariant != mostGeneralSoFar.end(), "parent " << parentIndex <<
+	     " of variant " << index << " has been deleted");
       newVariant->layerNumber = parentVariant->second->layerNumber + 1;
     }
 
@@ -172,77 +166,8 @@ VariantFolder::insertVariant(const Vector<DagNode*>& variant, int index, int par
   return true;
 }
 
-const Vector<DagNode*>*
-VariantFolder::getNextSurvivingVariant(int& nrFreeVariables,
-				       int& variableFamily,
-				       int* variantNumber,
-				       int* parentNumber,
-				       bool* moreInLayer)
-{
-  RetainedVariantMap::const_iterator nextVariant = mostGeneralSoFar.upper_bound(currentVariantIndex);
-  if (nextVariant == mostGeneralSoFar.end())
-    return 0;  // no variants available so change nothing
-
-  currentVariantIndex = nextVariant->first;
-  nrFreeVariables = nextVariant->second->nrFreeVariables;
-  variableFamily = nextVariant->second->variableFamily;
-  //
-  //	Optional information - non-null pointers means caller wants this information
-  //	returned.
-  //
-  if (variantNumber)
-    *variantNumber = currentVariantIndex;  // internal number for current variant
-  if (parentNumber)
-    *parentNumber = nextVariant->second->parentIndex;  // internal number for variant's parent (or NONE if root)
-  if (moreInLayer)
-    {
-      //
-      //	Flag to indicate whether next call to getNextSurvivingVariant()
-      //	will return another variant in the same layer.
-      //
-      *moreInLayer = false;
-      RetainedVariantMap::const_iterator nextNextVariant = mostGeneralSoFar.upper_bound(currentVariantIndex);
-      if (nextNextVariant != mostGeneralSoFar.end() &&
-	  nextNextVariant->second->layerNumber == nextVariant->second->layerNumber)
-	*moreInLayer = true;
-    }
-
-  return &(nextVariant->second->variant);
-}
-
-const Vector<DagNode*>*
-VariantFolder::getLastReturnedVariant(int& nrFreeVariables,
-				      int& variableFamily,
-				      int* parentNumber,
-				      bool* moreInLayer)
-{
-  RetainedVariantMap::const_iterator currentVariant = mostGeneralSoFar.find(currentVariantIndex);
-  Assert(currentVariant != mostGeneralSoFar.end(), "current variant purged");
-  nrFreeVariables = currentVariant->second->nrFreeVariables;
-  variableFamily = currentVariant->second->variableFamily;
-  //
-  //	Optional information - non-null pointers means caller wants this information
-  //	returned.
-  //
-  if (parentNumber)
-    *parentNumber = currentVariant->second->parentIndex;  // internal number for variant's parent (or NONE if root)
-  if (moreInLayer)
-    {
-      //
-      //	Flag to indicate whether next call to getNextSurvivingVariant()
-      //	will return another variant in the same layer.
-      //
-      *moreInLayer = false;
-      RetainedVariantMap::const_iterator nextVariant = mostGeneralSoFar.upper_bound(currentVariantIndex);
-      if (nextVariant != mostGeneralSoFar.end() &&
-	  nextVariant->second->layerNumber == currentVariant->second->layerNumber)
-	*moreInLayer = true;
-    }
-  return &(currentVariant->second->variant);
-}
-
 bool
-VariantFolder::subsumes(const RetainedVariant* retainedVariant, const Vector<DagNode*>& variant)
+VariantFolder::subsumes(const RetainedVariant* retainedVariant, const Vector<DagNode*>& variant) const
 {
   int nrDagsToCheck = variant.size();
   int nrDagsInRetainedVariant = retainedVariant->matchingAutomata.size();
@@ -289,14 +214,123 @@ VariantFolder::subsumes(const RetainedVariant* retainedVariant, const Vector<Dag
   delete final;
   return result;
 }
+int
+VariantFolder::findNextSurvivingVariant()
+{
+  //
+  //	Look for the next variant that has an index larger than the current varaint index.
+  //
+  currentVariant = mostGeneralSoFar.upper_bound(currentVariantIndex);
+  if (currentVariant == mostGeneralSoFar.end())
+    return NONE;  // no variants available so change nothing
+  currentVariantIndex = currentVariant->first;
+  return currentVariantIndex;
+}
+
+const Vector<DagNode*>&
+VariantFolder::getCurrentVariant(int& nrFreeVariables,
+				 int& variableFamily,
+				 int* parentNumber,
+				 bool* moreInLayer)
+{
+  Assert(mostGeneralSoFar.find(currentVariantIndex) == currentVariant, "current variant purged");
+
+  nrFreeVariables = currentVariant->second->nrFreeVariables;
+  variableFamily = currentVariant->second->variableFamily;
+  //
+  //    Optional information - non-null pointers means caller wants this information
+  //    returned.
+  //
+  if (parentNumber)
+    *parentNumber = currentVariant->second->parentIndex;  // variant's parent (or NONE if root)
+  if (moreInLayer)
+    {
+      //
+      //        Flag to indicate whether next call to findNextSurvivingVariant()
+      //        will find another variant in the same layer.
+      //
+      RetainedVariantMap::const_iterator nextVariant =
+	mostGeneralSoFar.upper_bound(currentVariantIndex);
+      *moreInLayer = (nextVariant != mostGeneralSoFar.end() &&
+		      nextVariant->second->layerNumber == currentVariant->second->layerNumber);
+    }
+  return currentVariant->second->variant;
+}
+
+void
+VariantFolder::prepareForVariantMatching()
+{
+  //
+  //	The VariableDagNodes in RetainedVariant::variant should have been indexed
+  //	when we were looking for unifiers to do variant narrowing steps. But now we
+  //	want to reindex them using the scheme that was used during the generation of
+  //	RetainedVariant::matchingAutomata so that we can compute instantiations
+  //	of them by matchers. Because the indexing schemes depend on the order the
+  //	variant term and variant substitution were indexed as well as any peculiarities
+  //	of indexing dags with NarrowingVariableInfo vs indexing terms with VariableInfo,
+  //	we can't rely on the indexing schemes being identical.
+  //
+  for (auto& i : mostGeneralSoFar)
+    {
+      //
+      //	We don't bother reindexing the term part of the variant,
+      //	just the substitution.
+      //
+      int nrBindings = i.second->variant.size() - 1;
+      for (int j = 0; j < nrBindings; ++j)
+	i.second->variant[j]->indexVariables(i.second->variableInfo);
+    }
+}
+
+const Vector<DagNode*>*
+VariantFolder::findNextVariantThatMatches(int& indexOfLastUsedVariant,
+					  DagNode* subject,
+					  const VariableInfo*& variableInfo,
+					  RewritingContext*& matcher,
+					  Subproblem*& subproblem)
+{
+  for (RetainedVariantMap::const_iterator i =
+	 mostGeneralSoFar.upper_bound(indexOfLastUsedVariant); i != mostGeneralSoFar.end(); ++i)
+    {
+      const RetainedVariant* retainedVariant = i->second;
+      int termPartIndex = retainedVariant->matchingAutomata.size() - 1;
+      //
+      //	We use the number of variables in the whole variant, even
+      //	though we're only going to match the term part. In particular there
+      //	may exist variables in the bindings of the substitution part that
+      //	don't appear in the term part (because of nonregular equations) and
+      //	that won't be bound by this matchings.
+      //
+      int nrVariablesToUse = retainedVariant->nrVariables;
+      int nrSlotsToAllocate = nrVariablesToUse;
+      if (nrSlotsToAllocate == 0)
+	nrSlotsToAllocate = 1;  // substitutions subject to clear() must always have at least one slot
+      matcher = new RewritingContext(nrSlotsToAllocate);
+      matcher->clear(nrVariablesToUse);
+      //
+      //
+      //
+      if (retainedVariant->matchingAutomata[termPartIndex]->match(subject, *matcher, subproblem))
+	{
+	  indexOfLastUsedVariant = i->first;
+	  variableInfo = &(retainedVariant->variableInfo);
+	  //
+	  //	Responsibility for deleting matcher and any subproblem generated
+	  //	is passed to caller.
+	  //
+	  return &(retainedVariant->variant);
+	}
+      delete matcher;
+      matcher = 0;
+    }
+  return 0;
+}
 
 VariantFolder::RetainedVariant::RetainedVariant(const Vector<DagNode*> original)
   : variant(original),
     terms(original.size()),
     matchingAutomata(original.size())
 {
-  VariableInfo variableInfo;  // does this need to be retained?
-  
   int nrDags = original.size();
   for (int i = 0; i < nrDags; ++i)
     {
@@ -311,8 +345,6 @@ VariantFolder::RetainedVariant::RetainedVariant(const Vector<DagNode*> original)
 
   nrFreeVariables = variableInfo.getNrRealVariables();
 
-  NatSet boundUniquely;
-  bool subproblemLikely;
   //
   //	Variant dags are compiled and matched in reverse order because the term part of the variant
   //	will be at the end, and it is most likely to cause early match failure.
@@ -326,17 +358,45 @@ VariantFolder::RetainedVariant::RetainedVariant(const Vector<DagNode*> original)
       for (int j = 0; j < nrDags; ++j)
 	{
 	  if (j != i)
-	    t->addContextVariables(terms[j]->occursBelow());  // variables from other terms are in our context
+	    {
+	      //
+	      //	Variables from other terms are in our context
+	      //
+	      t->addContextVariables(terms[j]->occursBelow());
+	    }
 	}
+      //
+      //	Recursively compute the context variables for each subterm.
+      //
       t->determineContextVariables();
+      //
+      //	Insert abstraction variables for subterms that could collapse into
+      //	their enclosing theory; such subterms will need to be treated like
+      //	variables and then their binding subject to an extra match.
+      //
       t->insertAbstractionVariables(variableInfo);
-      
+    }
+  //
+  //	This may also include some abstraction variables.
+  //
+  nrVariables = variableInfo.getNrProtectedVariables();
+  //
+  //	Now we know how many variables we will need to save in branching, we
+  //	can safely compile.
+  //
+  NatSet boundUniquely;
+  bool subproblemLikely;
+  for (int i = nrDags - 1; i >= 0; --i)
+    {
+      Term* t = terms[i];
       DebugAdvisory("Compiling " << t);
       matchingAutomata[i] = t->compileLhs(false, variableInfo, boundUniquely, subproblemLikely);
       //matchingAutomata[i]->dump(cerr, variableInfo);
     }
-
-  nrVariables = variableInfo.getNrProtectedVariables();  // may also have some abstraction variables
+  DebugInfo("compiled retained variant has " << variableInfo.getNrRealVariables() <<
+	    " real variables");
+  DebugInfo("compiled retained variant has " << variableInfo.getNrProtectedVariables() <<
+	    " protected variables");
 }
 
 VariantFolder::RetainedVariant::~RetainedVariant()

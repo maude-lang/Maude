@@ -1,0 +1,56 @@
+set show timing off .
+
+fmod XOR is
+  sort XOR .
+
+  sort Elem .
+  ops cst1 cst2 cst3 cst4 : -> Elem .
+
+  subsort Elem < XOR .
+  op _+_ : XOR XOR -> XOR [ctor assoc comm] .
+  op 0 : -> XOR .
+
+  vars X Y : XOR .
+
+  eq Y + 0 = Y [variant] .
+  eq X + X = 0 [variant] .
+  eq X + X + Y = Y [variant] .
+endfm
+
+fmod META-TEST is
+  inc XOR .
+  inc META-LEVEL .
+endfm
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(cst1 + X:XOR) <=? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, '#, none, (0).Zero) .
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(cst1 + X:XOR) <=? upTerm(
+    cst2 + Y:XOR), (empty).GroundTermList, '#, none, (1).Zero) .
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=? upTerm(
+    cst1 + cst2), (empty).GroundTermList, '#, none, (0).Zero) .
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=? upTerm(
+    cst1 + cst2), (empty).GroundTermList, '#, none, (1).Zero) .
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=? upTerm(
+    cst1 + cst2), (empty).GroundTermList, '#, none, (2).Zero) .
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=? upTerm(
+    cst1 + cst2), (empty).GroundTermList, '#, none, (3).Zero) .
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=? upTerm(
+    cst1 + cst2), (empty).GroundTermList, '#, none, (4).Zero) .
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=? upTerm(
+    cst1 + cst2), (empty).GroundTermList, '#, none, (5).Zero) .
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=? upTerm(
+    cst1 + cst2), (empty).GroundTermList, '#, none, (6).Zero) .
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=? upTerm(
+    cst1 + cst2), (empty).GroundTermList, '#, none, (7).Zero) .
+
+reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=? upTerm(
+    cst1 + cst2), (empty).GroundTermList, '#, none, (8).Zero) .

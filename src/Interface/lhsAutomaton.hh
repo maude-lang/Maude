@@ -31,6 +31,11 @@ class LhsAutomaton
 public:
   virtual ~LhsAutomaton() {}
 
+  //
+  //	If match() returns true, returnedSubproblem is set to remaining subproblem
+  //	to be solved or 0 if matching is complete.
+  //	If match() returns false, returnedSubproblem is not touched.
+  //
   virtual bool match(DagNode* subject,
 		     Substitution& solution,
 		     Subproblem*& returnedSubproblem,

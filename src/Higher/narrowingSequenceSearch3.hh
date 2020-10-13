@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,15 +36,23 @@ class NarrowingSequenceSearch3 : public SequenceSearch
 
 public:
   //
+  //	This extends VariantSearch::Flags and VariantUnificationProblem::Flags.
+  //
+  enum Flags
+    {
+     FOLD = 0x2000,
+     KEEP_HISTORY = 0x4000,
+    };
+
+  //
   //	We take responsibility for protecting goal and deleting initial and freshVariableGenerator.
   //
   NarrowingSequenceSearch3(RewritingContext* initial,
 			   SearchType searchType,
 			   DagNode* goal,
 			   int maxDepth,
-			   bool fold,
-			   bool keepHistory,
-			   FreshVariableGenerator* freshVariableGenerator);
+			   FreshVariableGenerator* freshVariableGenerator,
+			   int variantFlags);
   ~NarrowingSequenceSearch3();
 
   bool findNextUnifier();
@@ -93,6 +101,7 @@ private:
   bool needToTryInitialState;
   const bool normalFormNeeded;
   FreshVariableGenerator* freshVariableGenerator;
+  const int variantFlags;
   NarrowingFolder stateCollection;
   //
   //	Maps variables occurring in initial state which will be the

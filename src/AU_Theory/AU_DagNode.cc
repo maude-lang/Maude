@@ -283,7 +283,7 @@ AU_DagNode::matchVariableWithExtension(int index,
 }
 
 //
-//	Supported for A only.
+//	Unification code.
 //
 
 DagNode::ReturnResult
@@ -294,9 +294,11 @@ AU_DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
   //	If we have an identity we bail to backstop version since AU/AUl/AUr is not
   //	currently supported for unification.
   //
-  if (s->hasIdentity())
+  
+  if (s->oneSidedId())
     return DagNode::computeBaseSortForGroundSubterms(warnAboutUnimplemented);
-
+  
+  
   ReturnResult result = GROUND;
   int nrArgs = argArray.length();
   for (int i = 0; i < nrArgs; ++i)
@@ -314,14 +316,18 @@ AU_DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 }
 
 bool
-AU_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
+AU_DagNode::computeSolvedForm2(DagNode* rhs,
+			       UnificationContext& solution,
+			       PendingUnificationStack& pending)
 {
+  DebugEnter(this << " =? " << rhs);
   //
-  //	If we have an identity we bail.
+  //	If we have a one-sided identity we bail.
   //
-  if (symbol()->hasIdentity())
+  
+  if (symbol()->oneSidedId())
     return DagNode::computeSolvedForm2(rhs, solution, pending);
-
+  
   if (symbol() == rhs->symbol())
     {
       //
@@ -355,10 +361,6 @@ AU_DagNode::insertVariables2(NatSet& occurs)
   for (int i = 0; i < nrArgs; i++)
     argArray[i]->insertVariables(occurs);
 }
-
-//
-//	Unification code.
-//
 
 DagNode*
 AU_DagNode::instantiate2(const Substitution& substitution)

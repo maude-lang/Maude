@@ -1,0 +1,147 @@
+set show timing off .
+
+***
+*** 	We test the effect of delay and filter flags.
+***
+
+fmod EXCLUSIVE-OR is
+  sorts Elem ElemXor .
+  subsort Elem < ElemXor .
+  ops a b c : -> Elem .
+  op mt : -> ElemXor .
+  op _*_ : ElemXor ElemXor -> ElemXor [assoc comm] .
+
+  vars X Y Z U V : [ElemXor] .
+  vars V1 V2 V3 V4 V5 V6 V7 V8 V9 : [ElemXor] .
+  eq [idem] :     X * X = mt    [variant] .
+  eq [idem-Coh] : X * X * Z = Z [variant] .
+  eq [id] :       X * mt = X    [variant] .
+
+  op f1 : [ElemXor] -> [ElemXor] .
+  op f2 : [ElemXor] [ElemXor] -> [ElemXor] .
+  op f3 : [ElemXor] [ElemXor] [ElemXor] -> [ElemXor] .
+endfm
+
+fmod META-VARIANT-TEST is
+  pr EXCLUSIVE-OR .
+  inc META-LEVEL .
+  sort UnifierList .
+  subsorts UnificationPair < UnifierList .
+  op _;_ : UnifierList UnifierList -> UnifierList [assoc id: nil] .
+  op nil : -> UnifierList .
+  op getUnifiers : Module UnificationProblem VariantOptionSet Nat -> UnifierList .
+
+var M : Module .
+var U : UnificationProblem .
+var V : VariantOptionSet .
+var N : Nat .
+
+  eq getUnifiers(M, U, V, N) =
+   if metaVariantUnify(M, U, empty, '#, V, N) == noUnifier or
+      metaVariantUnify(M, U, empty, '#, V, N) == noUnifierIncomplete then nil
+  else
+      metaVariantUnify(M, U, empty, '#, V, N) ; getUnifiers(M, U, V, N + 1)
+  fi .
+
+vars V1 V2 V3 V4 V5 V6 V7 V8 V9 : [ElemXor] .
+endfm
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+                                 upTerm(f1(V3 * V3 * f1(V4))), none, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+                                 upTerm(f1(V3 * V3 * f1(V4))), delay, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+                                 upTerm(f1(V3 * V3 * f1(V4))), filter, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+                                 upTerm(f1(V3 * V3 * f1(V4))), delay filter, 0) .
+
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(V2)) =?
+                                 upTerm(f1(V3) * f1(V3 * V4)), none, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(V2)) =?
+                                 upTerm(f1(V3) * f1(V3 * V4)), delay, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(V2)) =?
+                                 upTerm(f1(V3) * f1(V3 * V4)), filter, 0) .
+				 
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(V2)) =?
+                                 upTerm(f1(V3) * f1(V3 * V4)), delay filter, 0) .
+
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(V1)) =?
+                                 upTerm(f1(V2 * b) * f1(V3 * c)), none, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(V1)) =?
+                                 upTerm(f1(V2 * b) * f1(V3 * c)), delay, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(V1)) =?
+                                 upTerm(f1(V2 * b) * f1(V3 * c)), filter, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(V1)) =?
+                                 upTerm(f1(V2 * b) * f1(V3 * c)), delay filter, 0) .
+
+fmod META-VARIANT-TEST is
+  pr EXCLUSIVE-OR .
+  inc META-LEVEL .
+  sort UnifierList .
+  subsorts UnificationTriple < UnifierList .
+  op _;_ : UnifierList UnifierList -> UnifierList [assoc id: nil] .
+  op nil : -> UnifierList .
+  op getUnifiers : Module UnificationProblem VariantOptionSet Nat -> UnifierList .
+
+var M : Module .
+var U : UnificationProblem .
+var V : VariantOptionSet .
+var N : Nat .
+
+  eq getUnifiers(M, U, V, N) =
+   if metaVariantDisjointUnify(M, U, empty, '#, V, N) == noUnifier or
+      metaVariantDisjointUnify(M, U, empty, '#, V, N) == noUnifierIncomplete then nil
+  else
+      metaVariantDisjointUnify(M, U, empty, '#, V, N) ; getUnifiers(M, U, V, N + 1)
+  fi .
+
+vars V1 V2 V3 V4 V5 V6 V7 V8 V9 : [ElemXor] .
+endfm
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+                                 upTerm(f1(V3 * V3 * f1(V4))), none, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+                                 upTerm(f1(V3 * V3 * f1(V4))), delay, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+                                 upTerm(f1(V3 * V3 * f1(V4))), filter, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+                                 upTerm(f1(V3 * V3 * f1(V4))), delay filter, 0) .
+
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(V2)) =?
+                                 upTerm(f1(V3) * f1(V3 * V4)), none, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(V2)) =?
+                                 upTerm(f1(V3) * f1(V3 * V4)), delay, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(V2)) =?
+                                 upTerm(f1(V3) * f1(V3 * V4)), filter, 0) .
+				 
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(V2)) =?
+                                 upTerm(f1(V3) * f1(V3 * V4)), delay filter, 0) .
+
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(V1)) =?
+                                 upTerm(f1(V2 * b) * f1(V3 * c)), none, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(V1)) =?
+                                 upTerm(f1(V2 * b) * f1(V3 * c)), delay, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(V1)) =?
+                                 upTerm(f1(V2 * b) * f1(V3 * c)), filter, 0) .
+
+red getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(V1)) =?
+                                 upTerm(f1(V2 * b) * f1(V3 * c)), delay filter, 0) .

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,9 +25,13 @@
 //
 
 bool
-MetaLevelOpSymbol::metaUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint)
+MetaLevelOpSymbol::metaUnify2(FreeDagNode* subject,
+			      RewritingContext& context,
+			      bool disjoint,
+			      bool irredundant)
 {
-  DebugAdvisory(Tty(Tty::CYAN) << "meta unfication call: " << Tty(Tty::GREEN) << (DagNode*) subject << Tty(Tty::RESET));
+  DebugAdvisory(Tty(Tty::CYAN) << "meta unfication call: " << Tty(Tty::GREEN) <<
+		(DagNode*) subject << Tty(Tty::RESET));
   //
   //	We handle both metaUnify() and metaDisjointUnify().
   //
@@ -50,10 +54,10 @@ MetaLevelOpSymbol::metaUnify2(FreeDagNode* subject, RewritingContext& context, b
 	      if (!metaLevel->downUnificationProblem(subject->getArgument(1), lhs, rhs, m, disjoint))
 		return false;
 	      DebugAdvisory("metaUnify2() - making unification problem for " << subject);
-	      unification = new UnificationProblem(lhs,
-						   rhs,
-						   new FreshVariableSource(m),
-						   variableFamily);
+	      FreshVariableSource* freshVariableSource = new FreshVariableSource(m);
+	      unification = irredundant ?
+		new IrredundantUnificationProblem(lhs, rhs, freshVariableSource, variableFamily) :
+		new UnificationProblem(lhs, rhs, freshVariableSource, variableFamily);
 	      if (!(unification->problemOK()))
 		{
 		  delete unification;
@@ -74,7 +78,8 @@ MetaLevelOpSymbol::metaUnify2(FreeDagNode* subject, RewritingContext& context, b
 		{
 		  bool incomplete = unification->isIncomplete();
 		  delete unification;
-		  result = disjoint ? metaLevel->upNoUnifierTriple(incomplete) : metaLevel->upNoUnifierPair(incomplete);
+		  result = disjoint ? metaLevel->upNoUnifierTriple(incomplete) :
+		    metaLevel->upNoUnifierPair(incomplete);
 		  goto fail;
 		}
 	    }
@@ -101,7 +106,7 @@ MetaLevelOpSymbol::metaUnify(FreeDagNode* subject, RewritingContext& context)
   //
   //	op metaUnify : Module UnificationProblem Qid Nat ~> UnificationPair? .
   //
-  return metaUnify2(subject, context, false);
+  return metaUnify2(subject, context, false, false);
 }
 
 bool
@@ -110,5 +115,23 @@ MetaLevelOpSymbol::metaDisjointUnify(FreeDagNode* subject, RewritingContext& con
   //
   //	op metaDisjointUnify : Module UnificationProblem Qid Nat ~> UnificationTriple? .
   //
-  return metaUnify2(subject, context, true);
+  return metaUnify2(subject, context, true, false);
+}
+
+bool
+MetaLevelOpSymbol::metaIrredundantUnify(FreeDagNode* subject, RewritingContext& context)
+{
+  //
+  //	op metaIrredundantUnify : Module UnificationProblem Qid Nat ~> UnificationPair? .
+  //
+  return metaUnify2(subject, context, false, true);
+}
+
+bool
+MetaLevelOpSymbol::metaIrredundantDisjointUnify(FreeDagNode* subject, RewritingContext& context)
+{
+  //
+  //	op metaIrredundantDisjointUnify : Module UnificationProblem Qid Nat ~> UnificationTriple? .
+  //
+  return metaUnify2(subject, context, true, true);
 }

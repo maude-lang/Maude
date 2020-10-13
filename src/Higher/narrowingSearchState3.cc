@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -53,16 +53,18 @@
 
 NarrowingSearchState3::NarrowingSearchState3(RewritingContext* context,
 					     Substitution* accumulatedSubstitution,
-					     int incomingVariableFamily,
 					     FreshVariableGenerator* freshVariableGenerator,
+					     int incomingVariableFamily,
 					     int flags,
 					     int minDepth,
-					     int maxDepth)
+					     int maxDepth,
+					     int variantFlags)
   : PositionState(context->root(), flags, minDepth, maxDepth),
     context(context),
     accumulatedSubstitution(accumulatedSubstitution),
-    incomingVariableFamily(incomingVariableFamily),
     freshVariableGenerator(freshVariableGenerator),
+    incomingVariableFamily(incomingVariableFamily),
+    variantFlags(variantFlags),
     module(context->root()->symbol()->getModule())
 {
   ruleIndex = -1;  // not yet started
@@ -88,17 +90,6 @@ NarrowingSearchState3:: ~NarrowingSearchState3()
   if (getFlags() & GC_VAR_GEN)
     delete freshVariableGenerator;
   delete context;
-}
-
-void
-NarrowingSearchState3::markReachableNodes()
-{
-  //
-  //	Protect blocker dags; don't relying on VariantSearch object within
-  //	any particular VariantUnificationProblem.
-  //
-  FOR_EACH_CONST(i, Vector<DagNode*>, blockerDags)
-    (*i)->mark();
 }
 
 bool
@@ -164,7 +155,8 @@ NarrowingSearchState3::findNextNarrowing()
 								     d,
 								     variableInfo,
 								     freshVariableGenerator,
-								     incomingVariableFamily);
+								     incomingVariableFamily,
+								     variantFlags);
 		  bool nextUnifier = unificationProblem->findNextUnifier();
 		  if (nextUnifier)
 		    return true;

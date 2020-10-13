@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metaIntVariantMatch.maude -no-banner -no-advise \
+  > metaIntVariantMatch.out 2>&1
+
+diff $srcdir/metaIntVariantMatch.expected metaIntVariantMatch.out > /dev/null 2>&1

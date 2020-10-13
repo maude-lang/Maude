@@ -113,6 +113,13 @@ MinusSymbol::getNeg(const DagNode* dagNode, mpz_class& result) const
   return result;
 }
 
+DagNode*
+MinusSymbol::makeIntDag(const mpz_class& integer)
+{
+  return (integer >= 0) ? getSuccSymbol()->makeNatDag(integer) :
+    makeNegDag(integer);
+}
+
 Term*
 MinusSymbol::makeIntTerm(const mpz_class& integer)
 {

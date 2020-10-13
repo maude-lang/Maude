@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -113,7 +113,11 @@ Interpreter::checkSearchRestrictions(SearchKind searchKind,
 }
   
 void
-Interpreter::search(const Vector<Token>& bubble, Int64 limit, Int64 depth, SearchKind searchKind, bool debug)
+Interpreter::search(const Vector<Token>& bubble,
+		    Int64 limit,
+		    Int64 depth,
+		    SearchKind searchKind,
+		    bool debug)
 {
   VisibleModule* fm = currentModule->getFlatModule();
   Term* initial;
@@ -217,9 +221,9 @@ Interpreter::search(const Vector<Token>& bubble, Int64 limit, Int64 depth, Searc
 				     static_cast<NarrowingSequenceSearch::SearchType>(searchType),  // HACK
 				     goal,
 				     depth,
-				     searchKind == FVU_NARROW,
-				     false,
-				     new FreshVariableSource(fm));
+				     new FreshVariableSource(fm),
+				     (searchKind == FVU_NARROW) ?
+				     NarrowingSequenceSearch3::FOLD : 0);
       Timer timer(getFlag(SHOW_TIMING));
       doVuNarrowing(timer, fm, state, 0, limit);
     }
@@ -232,7 +236,8 @@ Interpreter::search(const Vector<Token>& bubble, Int64 limit, Int64 depth, Searc
 				    pattern,
 				    depth,
 				    (searchKind == XG_NARROW ?
-				     NarrowingSearchState::ALLOW_NONEXEC | NarrowingSearchState::SINGLE_POSITION :
+				     (NarrowingSearchState::ALLOW_NONEXEC |
+				      NarrowingSearchState::SINGLE_POSITION) :
 				     NarrowingSearchState::ALLOW_NONEXEC),
 				    new FreshVariableSource(fm));
       Timer timer(getFlag(SHOW_TIMING));

@@ -1,0 +1,22 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check for substitution size bug that affected both UnifierFilter
+***	and VariantFolder, because subpatterns were being compiled before
+***	all abstraction variables were added.
+***
+
+fmod A-UNIF is
+  sorts List Elt .
+  subsort Elt < List .
+  op f : List List -> List [assoc] .
+  op j : List List -> List [assoc comm id: 1] .
+  op 1 : -> List .
+  vars A B C D G H I 
+       S U V W X Y Z : List .
+  var E  : Elt .
+endfm
+
+variant unify j(A, f(B, E, C), f(D, E, j(G, H), I)) =?
+  j(U, f(V, W), f(X, j(Y, Z), S)) .

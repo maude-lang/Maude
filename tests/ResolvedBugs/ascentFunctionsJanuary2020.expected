@@ -1,0 +1,46 @@
+Warning: <standard input>, line 11 (smod BAD): module NON-EXISTENT does not
+    exist.
+Warning: <standard input>, line 10 (smod BAD): this module contains one or more
+    errors that could not be patched up and thus it cannot be used or imported.
+==========================================
+reduce in META-LEVEL : upModule('BAD, false) .
+rewrites: 0
+result [Module]: upModule('BAD, false)
+==========================================
+reduce in META-LEVEL : upImports('BAD) .
+rewrites: 0
+result [ImportList]: upImports('BAD)
+==========================================
+reduce in META-LEVEL : upSorts('BAD, false) .
+rewrites: 0
+result [ModuleExpression,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header]: upSorts('BAD, false)
+==========================================
+reduce in META-LEVEL : upSubsortDecls('BAD, false) .
+rewrites: 0
+result [SubsortDeclSet]: upSubsortDecls('BAD, false)
+==========================================
+reduce in META-LEVEL : upOpDecls('BAD, false) .
+rewrites: 0
+result [OpDeclSet]: upOpDecls('BAD, false)
+==========================================
+reduce in META-LEVEL : upMbs('BAD, false) .
+rewrites: 0
+result [MembAxSet]: upMbs('BAD, false)
+==========================================
+reduce in META-LEVEL : upEqs('BAD, false) .
+rewrites: 0
+result [EquationSet]: upEqs('BAD, false)
+==========================================
+reduce in META-LEVEL : upRls('BAD, false) .
+rewrites: 0
+result [RuleSet]: upRls('BAD, false)
+==========================================
+reduce in META-LEVEL : upStratDecls('BAD, false) .
+rewrites: 0
+result [StratDeclSet]: upStratDecls('BAD, false)
+==========================================
+reduce in META-LEVEL : upSds('BAD, false) .
+rewrites: 0
+result [StratDefSet]: upSds('BAD, false)
+Bye.

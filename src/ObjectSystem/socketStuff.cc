@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 bool
 SocketManagerSymbol::getPort(DagNode* portArg, int& port)
 {
-  return succSymbol->getSignedInt(portArg, port) && port <= 65535;  // HACK
+  return succSymbol->getSignedInt(portArg, port) && port <= MAX_PORT_NUMBER;
 }
 
 bool
@@ -69,30 +69,30 @@ SocketManagerSymbol::getText(DagNode* textArg, Rope& text)
 }
 
 bool
-SocketManagerSymbol::setNonblockingFlag(int fd, FreeDagNode* message, ObjectSystemRewritingContext& context)
+SocketManagerSymbol::setNonblockingFlag(int fd,
+					FreeDagNode* message,
+					ObjectSystemRewritingContext& context)
 {
   //
-  //	Set nonblocking flag for a nascent socket; since it is not yet an external object we
-  //	can just close it and generate an error reply if things don't work out.
+  //	Set nonblocking flag for a nascent socket; since it is not yet an external
+  //	object we can just close it and generate an error reply if things don't work out.
+  //
+  //	We also set the close-on-execute file descriptor flag so this file
+  //	descriptor is not leaked after a fork() and exec family call.
   //
   int flags = fcntl(fd, F_GETFL);
-  if (flags == -1)
+  if (flags != 1 && fcntl(fd, F_SETFL, flags | O_NONBLOCK) != -1)
     {
-      const char* errText = strerror(errno);
-      DebugAdvisory("unexpected fcntl() GETFL: " << errText);
-      close(fd);
-      errorReply(errText, message, context);
-      return false;
+      int flags2 = fcntl(fd, F_GETFD);
+      if (flags2 != -1 && fcntl(fd, F_SETFD, flags2 | FD_CLOEXEC) != -1)
+	return true;
     }
-  if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1)
-    {
-      const char* errText = strerror(errno);
-      DebugAdvisory("unexpected fcntl() GETFL: " << errText);
-      close(fd);
-      errorReply(errText, message, context);
-      return false;
-    }
-  return true;
+
+  const char* errText = strerror(errno);
+  DebugAdvisory("unexpected fcntl() error " << errText);
+  close(fd);
+  errorReply(errText, message, context);
+  return false;
 }
 
 bool
@@ -133,7 +133,10 @@ SocketManagerSymbol::createClientTcpSocket(FreeDagNode* message, ObjectSystemRew
 	  return true;
 	}
       //
-      //	Make it non-blocking.
+      //	Make it nonblocking. This is important because
+      //	a write may be too big for the output buffer and
+      //	a read could fail to get characters in certain edge
+      //	cases such as a bad packet.
       //
       if (!setNonblockingFlag(fd, message, context))
 	return true;
@@ -157,8 +160,8 @@ SocketManagerSymbol::createClientTcpSocket(FreeDagNode* message, ObjectSystemRew
 	  //
 	  ActiveSocket& as = activeSockets[fd];  // this creates the ActiveSocket object
 	  as.state = WAITING_TO_CONNECT;
-	  as.lastMessage.setNode(message);
-	  as.originalContext = &context;
+	  as.lastWriteMessage.setNode(message);
+	  as.objectContext = &context;
 	  //
 	  //	Completion (could be success or failure) is indicated by the operation system
 	  //	making the socket writable.
@@ -230,7 +233,10 @@ SocketManagerSymbol::createServerTcpSocket(FreeDagNode* message, ObjectSystemRew
 	sockName.sin_family = AF_INET;
 	sockName.sin_port = htons(port);
 	sockName.sin_addr.s_addr = htonl(INADDR_ANY);  // HACK - what is the portable way to set this?
-	if (bind(fd, reinterpret_cast<sockaddr*>(&sockName), sizeof(sockName)) == -1)
+	//
+	//	Make sure we use the OS call and not std::bind() from C++1x
+	//
+	if (::bind(fd, reinterpret_cast<sockaddr*>(&sockName), sizeof(sockName)) == -1)
 	  {
 	    const char* errText = strerror(errno);
 	    DebugAdvisory("unexpected bind() error with fd " << fd << ": " << errText);
@@ -289,14 +295,15 @@ SocketManagerSymbol::acceptClient(FreeDagNode* message, ObjectSystemRewritingCon
 	  else if (errno == EAGAIN)
 	    {
 	      as.state = WAITING_TO_ACCEPT;
-	      as.lastMessage.setNode(message);
-	      as.originalContext = &context;
+	      as.lastReadMessage.setNode(message);
+	      as.objectContext = &context;
 	      wantTo(READ, socketId);
 	    }
 	  else
 	    {
 	      //
-	      //	What should we do with a socket that we failed to accept on?
+	      //	We just return an error reply and leave the socket
+	      //	intact so that the user can try a further acceptClient()
 	      //
 	      const char* errText = strerror(errno);
 	      DebugAdvisory("unexpected accept() error: " << errText);
@@ -319,52 +326,101 @@ SocketManagerSymbol::send(FreeDagNode* message, ObjectSystemRewritingContext& co
   Rope text;
   DagNode* socketName = message->getArgument(0);
   if (getActiveSocket(socketName, socketId, asp) &&
-      getText(message->getArgument(2), text) &&
-      !(text.empty()))
+      !(asp->readOnly) &&
+      getText(message->getArgument(2), text))
     {
-      //ActiveSocket& as = activeSockets[socketId];
       ActiveSocket& as = *asp;
-      if ((as.state & ~WAITING_TO_READ) == 0)  // check that all the state bits other than WAITING_TO_READ are clear
+      //
+      //	Check that all the state bits other than WAITING_TO_READ are clear.
+      //
+      if ((as.state & ~WAITING_TO_READ) == 0)
 	{
-	  //as.text = text;
+	  if (text.empty())
+	    {
+	      //
+	      //	We treat sending the empty string as a request
+	      //	to close the write side of the socket and cause
+	      //	an EOF condition for the reader.
+	      //
+	      if (shutdown(socketId, SHUT_WR) == 0)
+		{
+		  DebugInfo("shutdown() succeeded for " << socketId);
+		  asp->readOnly = true;
+		  sentMsgReply(message, context);
+		}
+	      else
+		{
+		  const char* errorText = strerror(errno);
+		  DebugInfo("shutdown() error for " << socketId <<
+			      " : " << errorText);
+		  errorReply(errorText, message, context);
+		}
+	      return true;
+	    }
 	  as.textArray = text.makeZeroTerminatedString();
-	  //as.unsent = as.text.c_str();
 	  as.unsent = as.textArray;
-	  as.nrUnsent = text.length();  // how to deal with empty message?
+	  as.nrUnsent = text.length();
+	  Assert(as.nrUnsent > 0, "no characters to send");
 	  //
-	  //	Write some characters to the socket; we might get interrupted and have to restart.
+	  //	Write some characters to the socket; we might get interrupted
+	  //	and have to restart.
 	  //
 	  ssize_t n;
 	  do
 	    n = write(socketId, as.unsent, as.nrUnsent);
 	  while (n == -1 && errno == EINTR);
-
-	  if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))  // treat blocking situation as zero chars send
+	  //
+	  //	We treat a blocking situation as zero characters sent.
+	  //
+	  if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
 	    n = 0;
 	  if (n >= 0)
 	    {
 	      as.nrUnsent -= n;
-	      if (as.nrUnsent == 0)  // done
+	      if (as.nrUnsent == 0)
 		{
+		  //
+		  //	All characters sent.
+		  //
 		  sentMsgReply(message, context);
-		  // clear  as.text
+		  //
+		  //	We have responsibility for deleting the char array
+		  //	we got from Rope::makeZeroTerminatedString()
+		  //
 		  delete [] as.textArray;
 		  as.textArray = 0;
 		}
-	      else  // at least some characters pending
+	      else
 		{
+		  //
+		  //	At least some characters not yet sent.
+		  //
 		  as.state |= WAITING_TO_WRITE;
-		  as.lastMessage.setNode(message);
-		  as.originalContext = &context;
+		  as.lastWriteMessage.setNode(message);
+		  as.objectContext = &context;
 		  as.unsent += n;
 		  wantTo(WRITE, socketId);
 		}
 	    }
 	  else
 	    {
-	      const char* errText = strerror(errno);
-	      DebugAdvisory("unexpected write() error : " << errText);
-	      closedSocketReply(socketId, errText, message, context);
+	      //
+	      //	We had an error that was not due to an interrupt
+	      //	or no characters available. We assume that this
+	      //	means a broken connection. However we don't want
+	      //	to close the socket as it may still be possible
+	      //	to read characters. Instead we just inform the
+	      //	requesting object of the error.
+	      //
+	      const char* errorText = strerror(errno);
+	      DebugInfo("unexpected write() error : " << errorText);
+	      errorReply(errorText, message, context);
+	      //
+	      //	Delete character array here so we don't lose
+	      //	the pointer in a future send().
+	      //
+	      delete [] as.textArray;
+	      as.textArray = 0;
 	    }
 	  return true;
 	}
@@ -383,9 +439,11 @@ SocketManagerSymbol::receive(FreeDagNode* message, ObjectSystemRewritingContext&
   DagNode* socketName = message->getArgument(0);
   if (getActiveSocket(socketName, socketId, asp))
     {
-      //ActiveSocket& as = activeSockets[socketId];
       ActiveSocket& as = *asp;
-      if ((as.state & ~WAITING_TO_WRITE) == 0)  // check that all the state bits other than WAITING_TO_WRITE are clear
+      //
+      //	Check that all the state bits other than WAITING_TO_WRITE are clear.
+      //
+      if ((as.state & ~WAITING_TO_WRITE) == 0)
 	{
 	  char buffer[READ_BUFFER_SIZE];
 	  ssize_t n;
@@ -393,30 +451,55 @@ SocketManagerSymbol::receive(FreeDagNode* message, ObjectSystemRewritingContext&
 	    n = read(socketId, buffer, READ_BUFFER_SIZE);
 	  while (n == -1 && errno == EINTR);
 
-	  if (n > 0)
-	    receivedMsgReply(buffer, n, message, context);
+	  if (n >= 0)
+	    {
+	      //
+	      //	We also deal with the n == 0 case here. This happens when
+	      //	the far end of the socket is closed for writing; this
+	      //	could be because the socket has be closed or because the
+	      //	other end has shutdown() the write half of the connection.
+	      //	Because the latter is sometimes used to indicate an EOF
+	      //	condition while still allowing data to be returned, we
+	      //	return 0 bytes to the user rather than closing the socket.
+	      //
+	      if (n == 0)
+		{
+		  if (as.seenEOF)
+		    {
+		      //
+		      //	If we've already returned 0 characters once
+		      //	we close the socket this time to minimize
+		      //	incompatibility with legacy behavior.
+		      //
+		      closedSocketReply(socketId, "", message, context);
+		      return true;
+		    }
+		  as.seenEOF = true;
+		}
+	      receivedMsgReply(buffer, n, message, context);
+	    }
 	  else
 	    {
-	      if (n == -1)
+	      if (errno == EAGAIN || errno == EWOULDBLOCK)
 		{
-		  if (errno == EAGAIN)
-		    {
-		      as.state |= WAITING_TO_READ;
-		      as.lastMessage.setNode(message);
-		      as.originalContext = &context;
-		      wantTo(READ, socketId);
-		    }
-		  else
-		    {
-		      const char* errText = strerror(errno);
-		      DebugAdvisory("unexpected read() error: " << errText);
-		      closedSocketReply(socketId, errText, message, context);
-		    }
+		  //
+		  //	No characters available to read so wait for them.
+		  //
+		  as.state |= WAITING_TO_READ;
+		  as.lastReadMessage.setNode(message);
+		  as.objectContext = &context;
+		  wantTo(READ, socketId);
 		}
 	      else
 		{
-		  DebugAdvisory("read 0 bytes");
-		  closedSocketReply(socketId, "", message, context);
+		  //
+		  //	An error on the socket. We expect that this
+		  //	is due to the connection being broken, so we
+		  //	close the socket.
+		  //
+		  const char* errText = strerror(errno);
+		  DebugInfo("unexpected read() error: " << errText);
+		  closedSocketReply(socketId, errText, message, context);
 		}
 	    }
 	  return true;
@@ -436,7 +519,7 @@ SocketManagerSymbol::closeSocket(FreeDagNode* message, ObjectSystemRewritingCont
   int socketId;
   ActiveSocket* asp;
   DagNode* socketName = message->getArgument(0);
-  if (getActiveSocket(socketName, socketId, asp))
+  if (getActiveSocket(socketName, socketId, asp) && !(asp->disallowClose))
     {
       closedSocketReply(socketId, "", message, context);
       return true;
@@ -448,14 +531,29 @@ SocketManagerSymbol::closeSocket(FreeDagNode* message, ObjectSystemRewritingCont
 void
 SocketManagerSymbol::cleanUp(DagNode* objectId)
 {
+  //
+  //	This function belongs to the ExternalObjectManagerSymbol
+  //	interface and is called by the object system code when a Maude
+  //	object goes away so that the corresponded lower level entitie(s)
+  //	can be made to go away.
+  //
   int socketId;
   ActiveSocket* asp;
   if (getActiveSocket(objectId, socketId, asp))
     {
-      DebugAdvisory("cleaning up " << objectId);
+      DebugInfo("cleaning up " << objectId);
+      //
+      //	In case we were had a pending write.
+      //
+      delete [] asp->textArray;
+      asp->textArray = 0;
       close(socketId);
       activeSockets.erase(socketId);
-      PseudoThread::clearFlags(socketId);  // to avoid eventLoop() testing an invalid fd
+      //
+      //	If the fd was registered as active with PseudoThread it needs
+      //	go away to avoid trying to poll() a nonexistent fd.
+      //
+      PseudoThread::clearFlags(socketId);
     }
   else
     CantHappen("no socket for " << objectId);

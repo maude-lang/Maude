@@ -155,6 +155,7 @@ EXTRA_DIST = \
 	ansiEscapeSequences.cc \
 	narrowing.cc \
 	variantUnify.cc \
+	variantMatch.cc \
 	getVariants.cc \
 	smtSearch.cc \
 	cvc4_Bindings.cc \

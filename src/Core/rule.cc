@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,8 +34,6 @@
 #include "variable.hh"
 
 //	interface class definitions
-//#include "symbol.hh"
-//#include "dagNode.hh"
 #include "term.hh"
 #include "extensionInfo.hh"
 #include "lhsAutomaton.hh"
@@ -79,7 +77,11 @@ Rule::check()
 		   QUOTE(index2Variable(getUnboundVariables().min())) <<
 		   " is used before it is bound in rule:\n" <<
 		   this);
-      //markAsBad();
+      //
+      //	Rules with variables used before they are bound have a legitimate
+      //	purpose - they can be used with metaApply() and a substitution. So
+      //	we just make the rule nonexec rather than marking it as bad.
+      //
       setNonexec();
     }
 }

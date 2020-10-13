@@ -1,3 +1,10 @@
+2020-09-28  Steven Eker  <eker2@eker10>
+
+	* S_Symbol.cc (S_Symbol::computeGeneralizedSort2): use range-based
+	for loop
+
+===================================Maude131===========================================
+
 2019-11-11  Steven Eker  <eker@mu>
 
 	* S_DagNode.cc (computeBaseSortForGroundSubterms): take and pass

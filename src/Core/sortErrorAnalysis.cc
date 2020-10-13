@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -59,19 +59,17 @@ SortTable::sortErrorAnalysis(bool preregProblem,
   set<int> currentNodes;
   currentNodes.insert(0);
 
-  for (int i = 0; i < nrArgs; i++)
+  for (int i = 0; i < nrArgs; ++i)
     {
       set<int> nextNodes;
       const ConnectedComponent* component = componentVector[i];
       int nrSorts = component->nrSorts();
       product *= nrSorts;
-
-      FOR_EACH_CONST(j, set<int>, currentNodes)
+      
+      for (int parent : currentNodes)
 	{
-	  int parent = *j;
 	  mpz_class& pathCount = spanningTree[parent].pathCount;
-
-	  for (int k = 0; k < nrSorts; k++)
+	  for (int k = 0; k < nrSorts; ++k)
 	    {
 	      int index = parent + k;
 	      if (i == nrArgs - 1)
@@ -131,7 +129,7 @@ SortTable::sortErrorAnalysis(bool preregProblem,
 	       (preregProblem ? "preregularity" : "constructor consistency") <<
 	       " check on " << badCount << " out of " << product <<
 	       " sort tuples. First such tuple is (");
-  for (int i = 0; i < nrArgs; i++)
+  for (int i = 0; i < nrArgs; ++i)
     {
       cerr << QUOTE(componentVector[i]->sort(firstBad[i]));
       if (i != nrArgs - 1)

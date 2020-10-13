@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2018-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ NarrowingSequenceSearch3*
 InterpreterManagerSymbol::makeNarrowingSequenceSearch3(ImportModule* m,
 						       FreeDagNode* message,
 						       RewritingContext& context,
-						       bool keepHistory) const
+						       int variantFlags) const
 {
   RewriteSequenceSearch::SearchType searchType;
   bool fold;
@@ -48,31 +48,39 @@ InterpreterManagerSymbol::makeNarrowingSequenceSearch3(ImportModule* m,
 	  DagNode* goal = g->term2Dag();
 	  g->deepSelfDestruct();
 
+	  if (fold)
+	    variantFlags |= NarrowingSequenceSearch3::FOLD;
 	  return new NarrowingSequenceSearch3(subjectContext,
 					      searchType,
 					      goal,
 					      maxDepth,
-					      fold,
-					      keepHistory,
-					      new FreshVariableSource(m, 0));
+					      new FreshVariableSource(m, 0),
+					      variantFlags);
 	}
     }
   return 0;
 }
 
 bool
-InterpreterManagerSymbol::getNarrowingSearchResult(FreeDagNode* message, ObjectSystemRewritingContext& context, bool returnPath)
+InterpreterManagerSymbol::getNarrowingSearchResult(FreeDagNode* message,
+						   ObjectSystemRewritingContext& context,
+						   bool returnPath)
 {
   //
-  //	op getNarrowingSearchResult :        Oid Oid Qid Term Term Qid Bound Qid Nat -> Msg .
-  //	op getNarrowingSearchResultAndPath : Oid Oid Qid Term Term Qid Bound Qid Nat -> Msg .
-  //	                                      0   1   2   3    4    5    6    7   8
+  //	op getNarrowingSearchResult :        Oid Oid Qid Term Term Qid Bound Qid VariantOptionSet Nat
+  //	                                     -> Msg .
+  //	op getNarrowingSearchResultAndPath : Oid Oid Qid Term Term Qid Bound Qid VariantOptionSet Nat
+  //	                                     -> Msg .
+  //	                                      0   1   2   3    4    5    6    7         8          9
   //
   Interpreter* interpreter;
   if (getInterpreter(message->getArgument(0), interpreter))
     {
+      int variantFlags;
       Int64 solutionNr;
-      if (metaLevel->downSaturate64(message->getArgument(8), solutionNr) &&
+      if (metaLevel->downVariantOptionSet(message->getArgument(8), variantFlags) &&
+	  (variantFlags & ~(MetaLevel::DELAY | MetaLevel::FILTER)) == 0 &&
+	  metaLevel->downSaturate64(message->getArgument(9), solutionNr) &&
 	  solutionNr >= 0)
 	{
 	  int id;
@@ -88,10 +96,15 @@ InterpreterManagerSymbol::getNarrowingSearchResult(FreeDagNode* message, ObjectS
 
 		      if (mm->getCachedStateObject(message, solutionNr, state, lastSolutionNr))
 			m->protect();  // Use cached state
-		      else if ((state = makeNarrowingSequenceSearch3(m, message, context, returnPath)))
-			lastSolutionNr = -1;
 		      else
-			return false;
+			{
+			  if (returnPath)
+			    variantFlags |= NarrowingSequenceSearch3::KEEP_HISTORY;
+			  state = makeNarrowingSequenceSearch3(m, message, context, variantFlags);
+			  if (state == 0)
+			    return false;
+			  lastSolutionNr = -1;
+			}
 
 		      DagNode* target = message->getArgument(1);
 		      DagNode* reply;

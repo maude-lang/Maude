@@ -146,7 +146,6 @@ RuleTable::applyRules(DagNode* subject,
 void
 RuleTable::resetEachRule()
 {
-  FOR_EACH_CONST(r, Vector<Rule*>, rules)
-    (*r)->reset();
+  for (Rule* r : rules)
+    r->reset();
 }
-

@@ -129,28 +129,37 @@ FileManagerSymbol::openFile(FreeDagNode* message, ObjectSystemRewritingContext& 
       //
       //	We accept the message.
       //
-      const Rope& path = safeCast(StringDagNode*, pathArg)->getValue();
-      char* pathStr = path.makeZeroTerminatedString();
-
-      FILE* fp = fopen(pathStr, modeStr);
-      delete [] modeStr;
-      delete [] pathStr;
-
-      if (fp)
+      if (allowFiles)
 	{
-	  int fd = fileno(fp);
-	  openedFileReply(fd, message, context);
-	  OpenFile& of = openFiles[fd];
-	  of.fp = fp;
-	  of.okToRead = okToRead;
-	  of.okToWrite = okToWrite;
-	  of.lastOpWasWrite = false;
+	  const Rope& path = safeCast(StringDagNode*, pathArg)->getValue();
+	  char* pathStr = path.makeZeroTerminatedString();
+
+	  FILE* fp = fopen(pathStr, modeStr);
+	  delete [] modeStr;
+	  delete [] pathStr;
+
+	  if (fp)
+	    {
+	      int fd = fileno(fp);
+	      openedFileReply(fd, message, context);
+	      OpenFile& of = openFiles[fd];
+	      of.fp = fp;
+	      of.okToRead = okToRead;
+	      of.okToWrite = okToWrite;
+	      of.lastOpWasWrite = false;
+	    }
+	  else
+	    {
+	      const char* errText = strerror(errno);
+	      DebugAdvisory("unexpected fopen() error: " << errText);
+	      errorReply(errText, message, context);
+	    }
 	}
       else
 	{
-	  const char* errText = strerror(errno);
-	  DebugAdvisory("unexpected fopen() error: " << errText);
-	  errorReply(errText, message, context);
+	  delete [] modeStr;
+	  IssueAdvisory("operations on file system disabled.");
+	  errorReply("file operations disabled", message, context);
 	}
       return true;
     }

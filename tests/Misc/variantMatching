@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/variantMatching.maude -no-banner -no-advise \
+  > variantMatching.out 2>&1
+
+diff $srcdir/variantMatching.expected variantMatching.out > /dev/null 2>&1

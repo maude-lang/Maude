@@ -304,8 +304,11 @@ FreeDagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 }
 
 bool
-FreeDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
+FreeDagNode::computeSolvedForm2(DagNode* rhs,
+				UnificationContext& solution,
+				PendingUnificationStack& pending)
 {
+  DebugEnter(this << " vs " << rhs);
   Symbol* s = symbol();
   if (s == rhs->symbol())
     {
@@ -340,6 +343,7 @@ FreeDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, Pend
 	  break;
 	}
       solution.unificationBind(r, purified);
+      DebugInfo("bound " << (DagNode*) r << " to " << purified);
       return true;
     }
   return pending.resolveTheoryClash(this, rhs);
@@ -351,6 +355,7 @@ FreeDagNode::purifyAndOccurCheck(DagNode* repVar,
 				 PendingUnificationStack& pending,
 				 FreeDagNode*& purified)
 {
+  DebugEnter("this = " << this << "  representative variable = " << repVar);
   //
   //	For the moment we allow ground terms to be impure since they can't take part in cycles.
   //

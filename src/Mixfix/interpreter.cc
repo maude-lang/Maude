@@ -43,16 +43,15 @@
 #include "term.hh"
 #include "extensionInfo.hh"
 
-//      core class definitions
-#include "unificationProblem.hh"
-
 //	higher class definitions
 #include "pattern.hh"
 #include "matchSearchState.hh"
 #include "rewriteSequenceSearch.hh"
 #include "unificationProblem.hh"
+#include "irredundantUnificationProblem.hh"
 #include "narrowingSequenceSearch.hh"
 #include "variantSearch.hh"
+#include "filteredVariantUnifierSearch.hh"
 
 //	variable class definitions
 #include "variableDagNode.hh"
@@ -83,6 +82,7 @@
 #include "match.cc"
 #include "unify.cc"
 #include "variantUnify.cc"
+#include "variantMatch.cc"
 #include "getVariants.cc"
 #include "search.cc"
 #include "loopMode.cc"
@@ -108,7 +108,11 @@ Interpreter::~Interpreter()
 {
   //
   //	Must delete modules before other destruction takes place to avoid
-  //	accessing free'd stuff.
+  //	accessing free'd stuff. Deletion of named modules implicitly forces
+  //	deletion of cached modules since cached modules must be derived from
+  //	and hence dependent on named modules. It also implicitly forces the
+  //	deletion of cached views since such views must have a named or cached
+  //	module as their from-theory.
   //
   deleteNamedModules();
   clearContinueInfo();
@@ -162,22 +166,36 @@ Interpreter::endXmlLog()
 bool
 Interpreter::setCurrentModule(const Vector<Token>& moduleExpr, int start)
 {
+  //
+  //	Commands use this to set the current module to moduleExpr, which could
+  //	be empty if no module was specified in the command.
+  //
+  //	This also serves as the gatekeeper, to prevent commands executing in
+  //	a module on which markAsBad() has been called.
+  //
   SyntacticPreModule* m;
-  int nrTokens = moduleExpr.length() - start;
-  if (moduleExpr.length() == 0)
+  if (moduleExpr.empty())
     {
+      //
+      //	No module specified. See if there is a usable currentModule.
+      //
       if (currentModule == 0)
 	{
 	  IssueWarning("no module expression provided and no last module.");
 	  return false;
 	}
       else if (currentModule->getFlatSignature()->isBad())
-	m = currentModule;
+	m = currentModule;  // fall into bad case below
       else
-	return true;
+	return true;  // we have a good current module
     }
   else
     {
+      //
+      //	We have a module specified by the tokens, however we may
+      //	need to skip start tokens, typically "in".
+      //
+      int nrTokens = moduleExpr.length() - start;
       if (nrTokens == 1)
 	{
 	  m = safeCast(SyntacticPreModule*, getModule(moduleExpr[start].code()));  // HACK
@@ -199,8 +217,7 @@ Interpreter::setCurrentModule(const Vector<Token>& moduleExpr, int start)
       return false;
     }
  bad:
-  IssueWarning(*m << ": module " << QUOTE(m) <<
-	       " is unusable due to unpatchable errors.");
+  IssueWarning(*m << ": module " << QUOTE(m) << " is unusable due to unpatchable errors.");
   return false;
 }
 
@@ -298,8 +315,9 @@ void
 Interpreter::parse(const Vector<Token>& subject)
 {
   //
-  //	We need can't use getFlatSignature() since sort info
-  //	is not computed until module is flattened.
+  //	We need to use getFlatModule() rather than getFlatSignature()
+  //	since operator sort info is not computed until the statements are
+  //	flattened in and the theory is closed.
   //
   Term* s = currentModule->getFlatModule()->parseTerm(subject);
   if (s != 0)
@@ -612,13 +630,8 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		//
 		//	We allow this because we have to deal with this case when
 		//	a module with free parameters whose imports have bound parameters
-		//	is renamed, but it is discourage because of arugment capture issues.
+		//	is renamed, and we make use of it in the prelude.
 		//
-		//	Might be necessary anyway so don't both user for the moment.
-		//
-		//IssueAdvisory("Renaming module " << QUOTE(fm) <<
-		//	      " which has bound parameters to evaluate module expression " <<
-		//	      QUOTE(expr) << ".");
 	      }
 	    return makeRenamedCopy(fm, expr->getRenaming());
 	  }

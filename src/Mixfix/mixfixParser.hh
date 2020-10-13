@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ public:
     //	Command construction actions.
     //
     CONDITIONAL_COMMAND,
-    UNIFY_LIST,
+    PAIR_LIST,
     MAKE_TERM_LIST,
     //
     //	Strategy expression construction actions
@@ -125,7 +125,11 @@ public:
     MAKE_PRINT_LIST
   };
 
-  MixfixParser(MixfixModule& client);
+  MixfixParser(MixfixModule& client,
+	       bool complexFlag,
+	       int componentNonTerminalBase,
+	       int nextNonTerminalCode);
+  ~MixfixParser();
   //
   //	Functions to construct parser.
   //
@@ -169,19 +173,23 @@ public:
 			 Term*& target,
 			 Vector<ConditionFragment*>& condition);
   void makeGetVariantsCommand(Term*& initial, Vector<Term*>& constraint);
-  void makeVariantUnifyCommand(Vector<Term*>& lhs,
-			       Vector<Term*>& rhs,
-			       Vector<Term*>& constraint);
+  void makeVariantUnifyOrMatchCommand(Vector<Term*>& lhs,
+				      Vector<Term*>& rhs,
+				      Vector<Term*>& constraint);
   void makeStrategyCommand(Term*& subject, StrategyExpression*& strategy);
 
   void makeAssignment(int node, Vector<Term*>& variables, Vector<Term*>& values);
   void makeSubstitution(int node, Vector<Term*>& variables, Vector<Term*>& values);
-
-  //
+  int newNonTerminal();
+   //
   //	Functions to get info about the parser.
   //
   const IntSet& getTokenSet();  // HACK
-  int getNrProductions();
+  bool isComplex() const;
+  int getComponentNonTerminalBase() const;
+  int getNrProductions() const;
+  int getNrNonTerminals() const;
+  int getNrTerminals() const;
 
 private:
   typedef map<int,int> IntMap;
@@ -230,6 +238,9 @@ private:
   int translateSpecialToken(int code);
 
   MixfixModule& client;
+  const bool complexParser;
+  const int componentNonTerminalBase;
+  int nextNonTerminal;
   Parser parser;			// CFG parser
   Vector<int> productionRhs;		// to avoid creating a new Vector for each production insertion
   IntSet tokens;			// mapping between token codes and terminal numbers
@@ -249,9 +260,39 @@ private:
 };
 
 inline int
-MixfixParser::getNrProductions()
+MixfixParser::getNrProductions() const
 {
   return actions.length();
+}
+
+inline bool
+MixfixParser::isComplex() const
+{
+  return complexParser;
+}
+
+inline int
+MixfixParser::getComponentNonTerminalBase() const
+{
+  return componentNonTerminalBase;
+}
+
+inline int
+MixfixParser::getNrNonTerminals() const
+{
+  return -nextNonTerminal;
+}
+
+inline int
+MixfixParser::getNrTerminals() const
+{
+  return tokens.cardinality();
+}
+
+inline int
+MixfixParser::newNonTerminal()
+{
+  return --nextNonTerminal;
 }
 
 #endif

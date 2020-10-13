@@ -1,8 +1,8 @@
 /*
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
 			    interpreter.match(lexerBubble, $1, number);
 			}
-		|	KW_UNIFY
+		|	optIrredundant KW_UNIFY
 			{
 			  lexerCmdMode();
 			  moduleExpr.contractTo(0);
@@ -192,7 +192,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.unify(lexerBubble, number);
+			    interpreter.unify(lexerBubble, number, $1);
 			}
 		|	optDebug KW_VARIANT KW_UNIFY
 			{
@@ -204,7 +204,31 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    interpreter.variantUnify(lexerBubble, number, $1);
+			    interpreter.variantUnify(lexerBubble, number, false, $1);
+			}
+		|	optDebug KW_FILTERED KW_VARIANT KW_UNIFY
+			{
+			  lexerCmdMode();
+			  moduleExpr.contractTo(0);
+			  number = NONE;
+			}
+			numberModuleTerm
+			{
+			  lexerInitialMode();
+			  if (interpreter.setCurrentModule(moduleExpr, 1))
+			    interpreter.variantUnify(lexerBubble, number, true, $1);
+			}
+		|	optDebug KW_VARIANT KW_MATCH
+			{
+			  lexerCmdMode();
+			  moduleExpr.contractTo(0);
+			  number = NONE;
+			}
+			numberModuleTerm
+			{
+			  lexerInitialMode();
+			  if (interpreter.setCurrentModule(moduleExpr, 1))
+			    interpreter.variantMatch(lexerBubble, number, $1);
 			}
 
 		|	optDebug KW_GET optIrredundant KW_VARIANTS
@@ -280,9 +304,10 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			  lexerInitialMode();
 			  interpreter.printConceal($2);
 			}
-		|	KW_DO KW_CLEAR KW_MEMO '.'
+		|	KW_DO KW_CLEAR KW_MEMO	{ lexBubble(END_COMMAND, 0); }
+			endBubble
 			{
-			  if (CM != 0)  // HACK
+			  if (interpreter.setCurrentModule(lexerBubble))
 			    CM->getFlatSignature()->clearMemo();
 			}
 /*

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,10 +38,13 @@
   MACRO(metaXmatch, 7)
   MACRO(metaUnify, 4)
   MACRO(metaDisjointUnify, 4)
+  MACRO(metaIrredundantUnify, 4)
+  MACRO(metaIrredundantDisjointUnify, 4)
   MACRO(metaGetVariant, 5)
   MACRO(metaGetIrredundantVariant, 5)
-  MACRO(metaVariantUnify, 5)
-  MACRO(metaVariantDisjointUnify, 5)
+  MACRO(metaVariantUnify, 6)
+  MACRO(metaVariantDisjointUnify, 6)
+  MACRO(metaVariantMatch, 6)
   MACRO(metaSearch, 7)
   MACRO(metaSearchPath, 7)
   MACRO(metaNarrow, 6)
@@ -77,9 +80,9 @@
   MACRO(metaDownTerm, 2)
   MACRO(metaCheck, 2)
   MACRO(metaSmtSearch, 8)
-  MACRO(metaNarrowingApply, 5)
-  MACRO(metaNarrowingSearch, 7)
-  MACRO(metaNarrowingSearchPath, 7)
+  MACRO(metaNarrowingApply, 6)
+  MACRO(metaNarrowingSearch, 8)
+  MACRO(metaNarrowingSearchPath, 8)
   MACRO(metaSrewrite, 5)
   MACRO(metaParseStrategy, 3)
   MACRO(metaPrettyPrintStrategy, 4)

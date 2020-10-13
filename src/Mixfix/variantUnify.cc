@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 */
 
 void
-Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool debug)
+Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool filtered, bool debug)
 {
   VisibleModule* fm = currentModule->getFlatModule();
   Vector<Term*> lhs;
@@ -36,6 +36,8 @@ Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool debug)
       UserLevelRewritingContext::beginCommand();
       if (debug)
 	cout << "debug ";
+      if (filtered)
+	cout << "filtered ";
       cout << "variant unify ";
       if (limit != NONE)
 	cout << '[' << limit << "] ";
@@ -44,10 +46,10 @@ Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool debug)
       for (int i = 0; i < nrPairs; ++i)
 	cout << lhs[i] << " =? " << rhs[i] << ((i == nrPairs - 1) ? " " : " /\\ ");
       if (constraint.empty())
-	cout << " ." << endl;
+	cout << "." << endl;
       else
 	{
-	  cout << " such that ";
+	  cout << "such that ";
 	  const char* sep = "";
 	  FOR_EACH_CONST(i, Vector<Term*>, constraint)
 	    {
@@ -77,9 +79,36 @@ Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool debug)
   //
   //	Responsibility for deleting context and freshVariableGenerator is passed to ~VariantSearch().
   //
-  VariantSearch* vs = new VariantSearch(context, blockerDags, freshVariableGenerator, true, false);
   Timer timer(getFlag(SHOW_TIMING));
-  doVariantUnification(timer, fm, vs, 0, limit);
+  VariantSearch* vs = filtered ?
+    new FilteredVariantUnifierSearch(context,
+				     blockerDags,
+				     freshVariableGenerator,
+				     VariantSearch::IRREDUNDANT_MODE |
+				     VariantSearch::DELETE_FRESH_VARIABLE_GENERATOR |
+				     VariantSearch::CHECK_VARIABLE_NAMES) :
+    new VariantSearch(context,
+		      blockerDags,
+		      freshVariableGenerator,
+		      VariantSearch::UNIFICATION_MODE |
+		      VariantSearch::DELETE_FRESH_VARIABLE_GENERATOR |
+		      VariantSearch::CHECK_VARIABLE_NAMES);
+  if (vs->problemOK())
+    {
+      if (filtered)
+	{
+	  //
+	  //	All computation is done up-front so there is only one time value.
+	  //
+	  printStats(timer, *context, getFlag(SHOW_TIMING));
+	}
+      doVariantUnification(timer, fm, vs, 0, limit);
+    }
+  else
+    {
+      delete vs;
+      fm->unprotect();
+    }
 }
 
 void
@@ -91,28 +120,56 @@ Interpreter::doVariantUnification(Timer& timer,
 {
   RewritingContext* context = state->getContext();
   const NarrowingVariableInfo& variableInfo = state->getVariableInfo();
+  FilteredVariantUnifierSearch* filteredState = dynamic_cast<FilteredVariantUnifierSearch*>(state);
 
   Int64 i = 0;
   for (; i != limit; i++)
     {
-      int nrFreeVariables;
-      int dummy;
-      const Vector<DagNode*>* unifier = state->getNextUnifier(nrFreeVariables, dummy);
+      bool moreUnifiers = state->findNextUnifier();
       if (UserLevelRewritingContext::aborted())
 	break;
-      if (unifier == 0)
+      //
+      //	There might not be any narrowing happening to catch a
+      //	^C so we check here for safety, though if it does
+      //	happen, we can't drop into the debugger and have to
+      //	treat it as an abort. We need to bail before outputing
+      //	a unifier.
+      //
+      //	If there is narrowing happening (because there are variant
+      //	equations) then we have a race condition and whether we drop
+      //	into the debugger or just abort depends on the instant the ^C
+      //	interrupt arrives. We tolerate this uncertainty because
+      //	having Maude ignore ^C while spewing thousands of
+      //	variant unifiers that won't print correctly would be worse.
+      //
+      if (UserLevelRewritingContext::interrupted())
+	break;
+
+      if (!moreUnifiers)
 	{
 	  cout << ((solutionCount == 0) ? "\nNo unifiers.\n" : "\nNo more unifiers.\n");
-	  printStats(timer, *context, getFlag(SHOW_TIMING));
+	  if (!filteredState)
+	    printStats(timer, *context, getFlag(SHOW_TIMING));
 	  if (state->isIncomplete())
 	    IssueWarning("Some unifiers may have been missed due to incomplete unification algorithm(s).");
+	  if (filteredState)
+	    {
+	      if (filteredState->filteringIncomplete())
+		IssueWarning("Filtering was incomplete due to incomplete unification algorithm(s).");
+	      else
+		IssueAdvisory("Filtering was complete.");
+	    }
 	  break;
 	}
 
+      int nrFreeVariables;
+      int variableFamily;
+      const Vector<DagNode*>& unifier = state->getCurrentUnifier(nrFreeVariables, variableFamily);
       ++solutionCount;
-      cout << "\nUnifier #" << solutionCount << endl;
-      printStats(timer, *context, getFlag(SHOW_TIMING));
-      UserLevelRewritingContext::printSubstitution(*unifier, variableInfo);
+      cout << "\nUnifier " << solutionCount << endl;
+      if (!filteredState)
+	printStats(timer, *context, getFlag(SHOW_TIMING));
+      UserLevelRewritingContext::printSubstitution(unifier, variableInfo);
     }
  
   clearContinueInfo();  // just in case debugger left info

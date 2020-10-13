@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -71,36 +71,33 @@ Module::~Module()
   //
   //	Then we delete everything except for the symbols.
   //
-  int nrSorts = sorts.length();
-  for (int i = 0; i < nrSorts; i++)
-    delete sorts[i];
-  int nrComponents = connectedComponents.length();
-  for (int i = 0; i < nrComponents; i++)
-    delete connectedComponents[i];
-  int nrSortConstraints = sortConstraints.length();
-  for (int i = 0; i < nrSortConstraints; i++)
-    delete sortConstraints[i];
-  int nrEquations = equations.length();
-  for (int i = 0; i < nrEquations; i++)
-    delete equations[i];
-  int nrRules = rules.length();
-  for (int i = 0; i < nrRules; i++)
-    delete rules[i];
-  int nrStrategyDefinitions = strategyDefinitions.length();
-  for (int i = 0; i < nrStrategyDefinitions; i++)
-    delete strategyDefinitions[i];
-  int nrStrategies = strategies.length();
-  for (int i = 0; i < nrStrategies; i++)
-    delete strategies[i];
+  for (Sort* s : sorts)
+    delete s;
+  for (ConnectedComponent* c : connectedComponents)
+    delete c;
+  for (SortConstraint* sc : sortConstraints)
+    delete sc;
+  for (Equation* eq : equations)
+    delete eq;
+  for (Rule* rl : rules)
+    delete rl;
+  for (StrategyDefinition* sd : strategyDefinitions)
+    delete sd;
+  for (RewriteStrategy* rs : strategies)
+    delete rs;
   //
   //	And finally it is safe to delete our symbols.
   //
-  int nrSymbols = symbols.length();
 #if 1
-  for (int i = 0; i < nrSymbols; i++)
-    delete symbols[i];
+  for (Symbol* s : symbols)
+    delete s;
 #else
-  for (int i = 0; i < nrSymbols; i++)
+  //
+  //	Trample over Symbols rather than deleting them, in order
+  //	to look for bugs.
+  //
+  int nrSymbols = symbols.length();
+  for (int i = 0; i < nrSymbols; ++i)
     {
       void* p = symbols[i];
       cerr << "deleting " << symbols[i] << " at "<< p << endl;
@@ -108,6 +105,7 @@ Module::~Module()
     }
 #endif
 }
+
 
 const SortBdds*
 Module::getSortBdds()
@@ -165,16 +163,20 @@ void
 Module::closeSortSet()
 {
   Assert(status == OPEN, "bad status");
+  //
+  //	We can't use a range-based for loop here because the number
+  //	of sorts will grow as we add error sorts, invalidating iterators.
+  //	
   int nrSorts = sorts.length();
-  for (int i = 0; i < nrSorts; i++)
+  for (int i = 0; i < nrSorts; ++i)
     {
       Sort* s = sorts[i];
       if (s->component() == 0)
-	{
-	  ConnectedComponent* c = new ConnectedComponent(s);
-	  c->setModuleInfo(this, connectedComponents.length());
-	  connectedComponents.append(c);
-	}
+        {
+          ConnectedComponent* c = new ConnectedComponent(s);
+          c->setModuleInfo(this, connectedComponents.length());
+          connectedComponents.append(c);
+        }
     }
   status = SORT_SET_CLOSED;
 }
@@ -191,7 +193,6 @@ Module::closeFixUps()
 {
   Assert(status == SIGNATURE_CLOSED, "bad status");
   status = FIX_UPS_CLOSED;
-  int nrSymbols = symbols.length();
   //
   //	First deal with any inter-symbol dependences until
   //	we hit stability.
@@ -201,9 +202,9 @@ Module::closeFixUps()
   do
     {
       somethingChanged = false;
-      for (int i = 0; i < nrSymbols; i++)
+      for (Symbol* s : symbols)
 	{
-	  if (symbols[i]->interSymbolPass())
+	  if (s->interSymbolPass())
 	    somethingChanged = true;
 	}
     }
@@ -214,8 +215,8 @@ Module::closeFixUps()
   //	This is currently used to normalize other terms
   //	that get attached to symbols.
   //
-  for (int i = 0; i < nrSymbols; i++)
-    symbols[i]->postInterSymbolPass();
+  for (Symbol* s : symbols)
+    s->postInterSymbolPass();
 }
 
 void
@@ -227,7 +228,6 @@ Module::closeTheory()
   //
   Assert(status == FIX_UPS_CLOSED, "bad status");
   status = THEORY_CLOSED;
-  int nrSymbols = symbols.length();
   //
   //	First compile the sort declarations for each operator.
   //	We could have done this much earlier but since it is often
@@ -235,8 +235,8 @@ Module::closeTheory()
   //	voluminous sort tables we postpone it we are actually going to
   //	do some useful work in the module.
   //
-  for (int i = 0; i < nrSymbols; i++)
-    symbols[i]->compileOpDeclarations();
+  for (Symbol* s : symbols)
+    s->compileOpDeclarations();
   //
   //	Then decide in which components the error sort can actually be
   //	produced. This is needed for efficient compilation of sort tests
@@ -247,9 +247,8 @@ Module::closeTheory()
     do
       {
 	changed = false;
-	for (int i = 0; i < nrSymbols; i++)
+	for (Symbol* s : symbols)
 	  {
-	    Symbol* s = symbols[i];
 	    ConnectedComponent* c = s->rangeComponent();
 	    if (c->errorFree() && s->canProduceErrorSort())
 	      {
@@ -266,40 +265,44 @@ Module::closeTheory()
   //	that depend on the sort tables.
   //	This is currently used for identity sort computation.
   //
-  for (int i = 0; i < nrSymbols; i++)
-    symbols[i]->postOpDeclarationPass();
+  for (Symbol* s : symbols)
+    s->postOpDeclarationPass();
   //
   //	Deal with any sort constraints.
   //	We need to have computed to sort of each identity at this point
   //	so that we can analyseCollapses() on sort contraint patterns.
   //
   indexSortConstraints();
-  for (int i = 0; i < nrSymbols; i++)
-    symbols[i]->orderSortConstraints();
+  for (Symbol* s : symbols)
+    s->orderSortConstraints();
   //
   //	Certain sort properties relative to a symbol can only be determined after 
   //	the existance of sort constraints applicable to that symbol are known.
   //
-  for (int i = 0; i < nrSymbols; i++)
-    symbols[i]->finalizeSortInfo();
+  for (Symbol* s : symbols)
+    s->finalizeSortInfo();
   //
   //	Now index equations and rules and compile statements.
   //
   indexEquations();
   indexRules();
-  for (int i = 0; i < nrSymbols; i++)
+  for (Symbol* s : symbols)
     {
-      Symbol* s = symbols[i];
       s->compileSortConstraints();
       s->compileEquations();
       s->compileRules();
     }
-  // Compile strategy definitions
-  int nrStratDefs = strategyDefinitions.length();
-  for (int i = 0; i < nrStratDefs; i++)
+  //
+  //	Index and compile strategy definitions.
+  //
+  for (StrategyDefinition* sd : strategyDefinitions)
     {
-      strategyDefinitions[i]->preprocess();
-      strategyDefinitions[i]->compile();
+      if (!(sd->isBad() || sd->isNonexec()))
+	{
+	  sd->getStrategy()->addDefinition(sd);
+	  sd->preprocess();
+	  sd->compile();
+	}
     }
 }
 
@@ -310,23 +313,15 @@ Module::stackMachineCompile()
   if (status == STACK_MACHINE_COMPILED)
     return;
   status = STACK_MACHINE_COMPILED;
-  {
-    const Vector<Equation*>& equations = getEquations();
-    FOR_EACH_CONST(i, Vector<Equation*>, equations)
-      {
-	(*i)->stackMachineCompile();
-      }
-  }
+  for (Equation* e : equations)
+    e->stackMachineCompile();
 }
 
 void
 Module::indexSortConstraints()
 {
-  int nrSortConstraints = sortConstraints.length();
-  int nrSymbols = symbols.length();
-  for (int i = 0; i < nrSortConstraints; i++)
+  for (SortConstraint* sc : sortConstraints)
     {
-      SortConstraint* sc = sortConstraints[i];
       if (!(sc->isBad()))
 	{
 	  sc->preprocess();  // nonexec mbs need to be preprocessed
@@ -341,8 +336,8 @@ Module::indexSortConstraints()
 		lhs->symbol()->offerSortConstraint(sc);
 	      else
 		{
-		  for(int j = 0; j < nrSymbols; j++)
-		    symbols[j]->offerSortConstraint(sc);
+		  for (Symbol* s : symbols)
+		    s->offerSortConstraint(sc);
 		}
 	    }
 	}
@@ -365,9 +360,8 @@ Module::indexEquation(Equation* eq)
 	lhs->symbol()->offerEquation(eq);
       else
 	{
-	  int nrSymbols = symbols.length();
-	  for(int i = 0; i < nrSymbols; i++)
-	    symbols[i]->offerEquation(eq);
+	  for (Symbol* s : symbols)
+	    s->offerEquation(eq);
 	}
     }
 }
@@ -375,22 +369,19 @@ Module::indexEquation(Equation* eq)
 void
 Module::indexEquations()
 {
-  int nrEquations = equations.length();
   //
   //	First index non-owise equations.
   //
-  for (int i = 0; i < nrEquations; i++)
+  for (Equation* eq : equations)
     {
-      Equation* eq = equations[i];
       if (!(eq->isBad()) && !(eq->isOwise()))
 	indexEquation(eq);
     }
   //
   //	Then index owise equations.
   //
-  for (int i = 0; i < nrEquations; i++)
+  for (Equation* eq : equations)
     {
-      Equation* eq = equations[i];
       if (!(eq->isBad()) && eq->isOwise())
 	indexEquation(eq);
     }
@@ -399,11 +390,8 @@ Module::indexEquations()
 void
 Module::indexRules()
 {
-  int nrRules = rules.length();
-  int nrSymbols = symbols.length();
-  for (int i = 0; i < nrRules; i++)
+  for (Rule* rl : rules)
     {
-      Rule* rl = rules[i];
       if (!(rl->isBad()))
 	{
 	  rl->preprocess();
@@ -416,8 +404,8 @@ Module::indexRules()
 	    lhs->symbol()->offerRule(rl);
 	  else
 	    {
-	      for(int j = 0; j < nrSymbols; j++)
-		symbols[j]->offerRule(rl);
+	      for (Symbol* s : symbols)
+		s->offerRule(rl);
 	    }
 	}
     }
@@ -453,10 +441,8 @@ Module::insertLateSymbol(Symbol*s)
   //
   //	See if any existing sort constraint could apply to late symbol.
   //
-  int nrSortConstraints = sortConstraints.length();
-  for (int i = 0; i < nrSortConstraints; i++)
+  for (SortConstraint* sc : sortConstraints)
     {
-      SortConstraint* sc = sortConstraints[i];
       if (!(sc->isBad() || sc->isNonexec()))
 	{
 	  Term* lhs = sc->getLhs();
@@ -469,20 +455,17 @@ Module::insertLateSymbol(Symbol*s)
   //
   //	See if any existing equations could apply to late symbol.
   //
-  int nrEquations = equations.length();
-  for (int i = 0; i < nrEquations; i++)
+  for (Equation* eq : equations)
     {
-      Equation* eq = equations[i];
       if (!(eq->isBad() || eq->isNonexec()) && !(eq->isOwise()))
 	{
 	  Term* lhs = eq->getLhs();
 	  if (dynamic_cast<VariableTerm*>(lhs) != 0 || !(lhs->collapseSymbols().empty()))
 	    s->offerEquation(eq);
 	}
-    } 
-  for (int i = 0; i < nrEquations; i++)
+    }
+  for (Equation* eq : equations)
     {
-      Equation* eq = equations[i];
       if (!(eq->isBad() || eq->isNonexec()) && eq->isOwise())
 	{
 	  Term* lhs = eq->getLhs();
@@ -493,10 +476,8 @@ Module::insertLateSymbol(Symbol*s)
   //
   //	See if any existing rules could apply to late symbol.
   //
-  int nrRules = rules.length();
-  for (int i = 0; i < nrRules; i++)
+  for (Rule* rl : rules)
     {
-      Rule* rl = rules[i];
       if (!(rl->isBad()))
 	{
 	  Term* lhs = rl->getLhs();
@@ -530,16 +511,15 @@ Module::getMemoMap()
 void
 Module::reset()
 {
-  int nrSymbols = symbols.length();
-  for (int i = 0; i < nrSymbols; i++)
-    symbols[i]->reset();
+  for (Symbol* s : symbols)
+    s->reset();
 }
 
 void
 Module::resetRules()
 {
-  FOR_EACH_CONST(i, Vector<Symbol*>, symbols)
-    (*i)->resetRules();
+  for (Symbol* s : symbols)
+    s->resetRules();
 }
 
 /*

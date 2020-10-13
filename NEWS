@@ -1,11 +1,95 @@
-Overview of Changes in  Maude 3.0 (alpha127a)
+Overview of Changes in Maude 3.1 (alpha131a) (2020-10-12)
+=========================================================
+* changed messages for ^C seen during suspension
+* some clang warnings fixed
+
+Overview of Changes in Maude 3.1 beta (alpha131) (2020-10-05)
+=============================================================
+* fixed occurs-check bug in unification modulo U and CU
+* optimizations for unification modulo U and CU
+* fixed memory leak when trying to use file handle while
+file handling is disabled
+* optimization for merging variables during unification which
+merges towards the smaller sort
+* two control-C events without intervening rewrites to abort
+while suspended on external event
+* variant narrowing based commands no longer report number of
+rewrites and no unifiers/variants/matchers if there is a problem
+
+Overview of Changes in alpha130 (2020-09-22)
+============================================
+* fixed memory leak in filtered variant unify
+* fixed variable check bug in filtered variant unify
+* fixed bug in the meta-printing of strategies
+* support VariantOptionsSet for descent functions and
+meta-interpreter messages that use variant unification
+* fixed a bug in unification modulo identity where the theory
+purification code assumed the operator was also commutative
+
+Overview of Changes in alpha129 (2020-09-09)
+============================================
+* verbose mode now flags sort decreasing axioms
+* command line options for enabling dangerous feautures
+* added irredundant unification
+* receiving on a socket which closed for writing at the other
+end returns the empty string the first time rather than closing
+the socket
+* irred is an abreviation for irredundant on the command line
+* fixed stray space when echoing variant unify command
+* fixed memory leak affecting erroneous case of unification
+descent functions
+* added filtered variant unification
+* added variant matching
+
+Overview of Changes in alpha128a (2020-07-06)
 =============================================
+* strategy definitions now support nonexec attribute
+* fixed bug in metaParseStrategy() and all operator declaration
+* fixed bug where simple and complex parsers could get
+out of sync with the auxiliary information leading to crashes
+* experimental support for processes as external objects
+* fixed bug where signals such as ^C could be ignored when sockets
+were used due to a race condition
+* fixed bug where sockets only supported half duplex operation
+* fixed bug where Maude could be terminated by SIGPIPE
+* -no-execute command line option
+* write half of a socket can now be shutdown
+* fixed error in -help message
+* fixed bug in C/U/Ul/Ur unification code that overwrote
+previous variable -> variable binds and produced non-unifiers
+* fixed bug where a collapse-up situation was not being
+warned about because the declaration used a kind
+* fixed bug in the sort analysis phase which could cause lost
+ACU unifiers
+* fixed bug in unifier subsumption check that causes silent
+memory corruption
+* fixed symmetric bug in variant subsumption check
+* handling of order-sorting in elementary A unification now
+takes systems of equations into account
+* experimental support for associative-identity unification
+
+Overview of Changes in alpha128 (2020-03-09)
+============================================
+* fixed bug where ascent functions were allowed to proceed
+on bad modules, resulting in an internal error
+* fixed bug where illegal use of built-in variable names
+in variant equations and narrowing rules wasn't being
+detecting in the functional metalevel
+* more sophisticated handling of order-sorting in
+elementary A unification
+* cleaner handling of ^C in unify and match commands
+* do clear memo command now takes an optional module
+* extra functions defined in META-LEVEL
+* fixed socket close bug
+
+Overview of Changes in Maude 3.0 (alpha127a)
+============================================
 * commented out unused code/data structures
 * increase default number of BDD variables to 100
 * updated comments
 
-Overview of Changes in  Maude 3.0 beta 1 (alpha127)
-===================================================
+Overview of Changes in Maude 3.0 beta 1 (alpha127)
+==================================================
 * fixed memory leak in file writing code
 * support ll as alias for ls -l
 * many compiler warnings fixed
@@ -18,7 +102,7 @@ Overview of Changes in alpha126
 * Rubén Rafael Rubio Cuéllar's extensions to the strategy
   language and fuctional reflection of the strategy language
   integrated
-* Stragtegy language supported by meta-interpreter
+* Strategy language supported by meta-interpreter
 * -erewrite-loop-mode command line option
 * set print constants with sorts option
 * bubbles only disallow excluded tokens outside of parens
@@ -27,7 +111,10 @@ Overview of Changes in alpha126
 * symmetric change in meta-interpreter
 
 Overview of Changes in alpha123
-===============================
+===============================erew <>
+< me : User | state: 1 > 
+createProcess(processManager, me, "dc", nil, none) .
+
 * fixed a bug in module instantiation introduced by the
   redesigned module system
 * kludged around a bug in BuDDy

@@ -618,9 +618,9 @@ MetaLevel::upNoUnifierTriple(bool incomplete)
 }
 
 DagNode*
-MetaLevel::upNoMatchSubst()
+MetaLevel::upNoMatchSubst(bool incomplete)
 {
-  return noMatchSubstSymbol->makeDagNode();
+  return (incomplete ? noMatchIncompleteSubstSymbol : noMatchSubstSymbol)->makeDagNode();
 }
 
 DagNode*
@@ -1230,45 +1230,49 @@ MetaLevel::upStratExpr(const StrategyExpression* expr,
     }
   else if (const ApplicationStrategy* e = dynamic_cast<const ApplicationStrategy*>(expr))
     {
+      DagNode* metaApp;
+
       if (e->getLabel() == UNDEFINED)
-	return allStratSymbol->makeDagNode(empty);
+	metaApp = allStratSymbol->makeDagNode(empty);
+      else
+	{
+	  Vector<DagNode*> args2;
 
-      Vector<DagNode*> args2;
+	  args.resize(3);
+	  args[0] = upQid(e->getLabel(), qidMap);
 
-      args.resize(3);
-      args[0] = upQid(e->getLabel(), qidMap);
-
-      {
-	Vector<DagNode*> args3(2);
-
-	const Vector<Term*>& variables = e->getVariables();
-	const Vector<CachedDag>& values = e->getValues();
-
-	int subsSize = e->getVariables().size();
-	args2.resize(subsSize);
-
-	for (int i = 0; i < subsSize; i++)
 	  {
-	    args3[0] = upTerm(variables[i], m, qidMap);
-	    args3[1] = upTerm(values[i].getTerm(), m, qidMap);
+	    Vector<DagNode*> args3(2);
 
-	    args2[i] = assignmentSymbol->makeDagNode(args3);
+	    const Vector<Term*>& variables = e->getVariables();
+	    const Vector<CachedDag>& values = e->getValues();
+
+	    int subsSize = e->getVariables().size();
+	    args2.resize(subsSize);
+
+	    for (int i = 0; i < subsSize; i++)
+	      {
+		args3[0] = upTerm(variables[i], m, qidMap);
+		args3[1] = upTerm(values[i].getTerm(), m, qidMap);
+
+		args2[i] = assignmentSymbol->makeDagNode(args3);
+	      }
+
+	    args[1] = upGroup(args2, emptySubstitutionSymbol, substitutionSymbol);
+	  }
+	  {
+	    const Vector<StrategyExpression*>& strategies = e->getStrategies();
+
+	    int nrStrats = strategies.size();
+	    args2.resize(nrStrats);
+	    for (int i = 0; i < nrStrats; i++)
+	      args2[i] = upStratExpr(strategies[i], m, qidMap);
+
+	    args[2] = upGroup(args2, emptyStratListSymbol, stratListSymbol);
 	  }
 
-	args[1] = upGroup(args2, emptySubstitutionSymbol, substitutionSymbol);
-      }
-      {
-	const Vector<StrategyExpression*>& strategies = e->getStrategies();
-
-	int nrStrats = strategies.size();
-	args2.resize(nrStrats);
-	for (int i = 0; i < nrStrats; i++)
-	  args2[i] = upStratExpr(strategies[i], m, qidMap);
-
-	args[2] = upGroup(args2, emptyStratListSymbol, stratListSymbol);
-      }
-
-      DagNode* metaApp = applicationStratSymbol->makeDagNode(args);
+	  metaApp = applicationStratSymbol->makeDagNode(args);
+	}
 
       if (!e->getTop())
 	return metaApp;

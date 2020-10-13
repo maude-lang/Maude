@@ -29,12 +29,20 @@
 #include "metaModuleCache.hh"
 #include "succSymbol.hh"
 #include "sequenceSearch.hh"
+#include "variantSearch.hh"
+#include "variantUnificationProblem.hh"
 
 class MetaLevel
 {
   NO_COPYING(MetaLevel);
 
 public:
+  enum VariantFlags
+    {
+     DELAY = VariantSearch::IRREDUNDANT_MODE,
+     FILTER = VariantUnificationProblem::FILTER_VARIANT_UNIFIERS,
+    };
+  
   MetaLevel();
   MetaLevel(const MetaLevel* original, SymbolMap* map);
   ~MetaLevel();
@@ -136,7 +144,7 @@ public:
 
   DagNode* upNoUnifierPair(bool incomplete);
   DagNode* upNoUnifierTriple(bool incomplete);
-  DagNode* upNoMatchSubst();
+  DagNode* upNoMatchSubst(bool incomplete = false);
   DagNode* upNoMatchPair();
   DagNode* upMatchPair(const Substitution& substitution,
 		       const VariableInfo& variableInfo,
@@ -262,6 +270,7 @@ public:
   bool downBound64(DagNode* metaBound, Int64& bound) const;
   bool downSaturate64(DagNode* metaBound, Int64& bound) const;
   bool downPrintOptionSet(DagNode* metaPrintOptionSet, int& printFlags) const;
+  bool downVariantOptionSet(DagNode* metaVariantOptionSet, int& variantFlags) const;
   bool downSrewriteOption(DagNode* metaSrewriteOption, bool& depthFirst) const;
   bool downBool(DagNode* metaBool, bool& value);
   bool downQid(DagNode* metaQid, int& id) const;
@@ -293,6 +302,14 @@ public:
 			 Term*& rhs,
 			 MixfixModule* m,
 			 bool makeDisjoint);
+  bool downMatchingProblem(DagNode* metaMatchingProblem,
+			   Vector<Term*>& patterns,
+			   Vector<Term*>& subjects,
+			   MixfixModule* m);
+  bool downPatternSubjectPair(DagNode* metaPatternSubjectPair,
+			      Term*& pattern,
+			      Term*& subject,
+			      MixfixModule* m);
   bool downTermPair(DagNode* metaTerm1,
 		    DagNode* metaTerm2, 
 		    Term*& term1,
@@ -559,7 +576,7 @@ private:
 		      int& bubbleSpecIndex);
 
   bool downPrintOption(DagNode* metaPrintOption, int& printFlags) const;
-
+  bool downVariantOption(DagNode* metaVariantOption, int& variantFlags) const;
   bool downVariableDecl(DagNode* metaVariableDecl, MixfixModule::AliasMap& aliasMap, MixfixModule* m) const;
 
   void checkHookList(DagNode* metaHookList, SymbolType& symbolType);

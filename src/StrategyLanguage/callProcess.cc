@@ -85,7 +85,7 @@ CallProcess::run(StrategicSearch& searchObject)
   //
   // Using defIndex, we recover the strategy definition where we left
   // the exploration before. It may be the first trial for it or we may
-  // have found a matching before.
+  // have found a match before.
   //
   StrategyDefinition* sdef = strategy->getDefinitions()[defIndex];
 

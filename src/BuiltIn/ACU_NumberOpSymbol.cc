@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -258,10 +258,10 @@ ACU_NumberOpSymbol::eqRewrite2(DagNode* subject, RewritingContext& context)
           Vector<DagNode*> dagNodes(nrNewArgs);
           Vector<int> multiplicities(nrNewArgs);
           int j = 0;
-	  FOR_EACH_CONST(i, NatSet, unused)
+	  for (int index : unused)
             {
-              dagNodes[j] = d->getArgument(*i);
-              multiplicities[j] = d->getMultiplicity(*i);
+              dagNodes[j] = d->getArgument(index);
+              multiplicities[j] = d->getMultiplicity(index);
               ++j;
             }
           dagNodes[j] = (accumulator >= 0) ? succSymbol->makeNatDag(accumulator) :

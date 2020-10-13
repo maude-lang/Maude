@@ -335,6 +335,8 @@ MetaLevel::downStratDef(DagNode* metaStratDef, MixfixModule* m)
 	      if (mse == sdSymbol || downCondition(f->getArgument(2), m, condition))
 		{
 		  StrategyDefinition* sdef = new StrategyDefinition(ai.label, strat, callTerm, r, condition);
+		  if (ai.flags.getFlag(NONEXEC))
+		    sdef->setNonexec();
 		  m->insertStrategyDefinition(sdef);
 		  if (ai.metadata != NONE)
 		    m->insertMetadata(MixfixModule::STRAT_DEF, sdef, ai.metadata);

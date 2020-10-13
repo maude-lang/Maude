@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2012 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU General Public License for subproblemsmore details.
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
@@ -57,16 +57,16 @@ UnifierFilter::UnifierFilter(int firstInterestingVariable, int nrInterestingVari
 
 UnifierFilter::~UnifierFilter()
 {
-  FOR_EACH_CONST(i, RetainedUnifierList, mostGeneralSoFar)
-    delete *i;
+  for (RetainedUnifier* r : mostGeneralSoFar)
+    delete r;
 }
 
 void
 UnifierFilter::markReachableNodes()
 {
-  FOR_EACH_CONST(i, RetainedUnifierList, mostGeneralSoFar)
+  for (RetainedUnifier* r : mostGeneralSoFar)
     {
-      const Substitution& unifier = (*i)->unifier;
+      const Substitution& unifier = r->unifier;
       int nrFragile = unifier.nrFragileBindings();
       for (int j = 0; j < nrFragile; ++j)
 	{
@@ -83,9 +83,9 @@ UnifierFilter::insertUnifier(const Substitution& unifier, int positionIndex, int
   //
   //	First we check if it is subsumed by one of the existing unifiers.
   //
-  FOR_EACH_CONST(i, RetainedUnifierList, mostGeneralSoFar)
+  for (RetainedUnifier* r : mostGeneralSoFar)
     {
-      if (subsumes(*i, unifier))
+      if (subsumes(r, unifier))
 	{
 	  DebugAdvisory("new unifier subsumed");
 	  return;
@@ -164,12 +164,14 @@ UnifierFilter::subsumes(const RetainedUnifier* retainedUnifier, const Substituti
     {
       Subproblem* subproblem;
 
-      DebugAdvisory("Considering interesting variable " << i);
-      DebugAdvisory("Pattern has " << retainedUnifier->unifier.value(firstInterestingVariable + i));
-      DebugAdvisory("Pattern term is " << retainedUnifier->interestingBindings[i]);
-      DebugAdvisory("Subject has " << unifier.value(firstInterestingVariable + i));
+      DebugInfo("Considering interesting variable " << i);
+      DebugInfo("Pattern has " << retainedUnifier->unifier.value(firstInterestingVariable + i));
+      DebugInfo("Pattern term is " << retainedUnifier->interestingBindings[i]);
+      DebugInfo("Subject has " << unifier.value(firstInterestingVariable + i));
 
-      if (retainedUnifier->matchingAutomata[i]->match(unifier.value(firstInterestingVariable + i), matcher, subproblem))
+      if (retainedUnifier->matchingAutomata[i]->match(unifier.value(firstInterestingVariable + i),
+						      matcher,
+						      subproblem))
 	subproblems.add(subproblem);
       else
 	{
@@ -198,8 +200,8 @@ UnifierFilter::RetainedUnifier::RetainedUnifier(const Substitution& original,
 {
   unifier.clone(original);
   //
-  //	Convert bindings of interesting variables to terms, index their variables, fill in sort information and look for
-  //	potential collapses.
+  //	Convert bindings of interesting variables to terms, index their variables, fill in
+  //	sort information and look for potential collapses.
   //
   VariableInfo variableInfo;  // does this need to be retained?
   for (int i = 0; i < nrInterestingVariables; ++i)
@@ -214,30 +216,54 @@ UnifierFilter::RetainedUnifier::RetainedUnifier(const Substitution& original,
       interestingBindings[i] = t;
     }
   //
-  //	Now go through them again, inserting context variable information, inserting abstraction variables where needed to
-  //	handle potential collapses and compiling.
+  //	Now go through them again, inserting context variable information, inserting abstraction
+  //	variables where needed to handle potential collapses.
   //
-  NatSet boundUniquely;
-  bool subproblemLikely;
   for (int i = 0; i < nrInterestingVariables; ++i)
     {
       Term* t = interestingBindings[i];
       for (int j = 0; j < nrInterestingVariables; ++j)
 	{
 	  if (j != i)
-	    t->addContextVariables(interestingBindings[j]->occursBelow());  // variables from other bindings are in our context
+	    {
+	      //
+	      //	Variables from other bindings are in our context.
+	      //
+	      t->addContextVariables(interestingBindings[j]->occursBelow());
+	    }
 	}
+      //
+      //	Recursively compute the context variables for each subterm.
+      //
       t->determineContextVariables();
+      //
+      //	Insert abstraction variables for subterms that could collapse into
+      //	their enclosing theory; such subterms will need to be treated like
+      //	variables and then their binding subject to an extra match.
+      //
       t->insertAbstractionVariables(variableInfo);
-      
-      DebugAdvisory("Compiling " << t);
+    }
+  //
+  //	This may also include some abstraction variables.
+  //
+  nrVariablesInBindings = variableInfo.getNrProtectedVariables();
+  //
+  //	Now we know how many variables we will need to save in branching, we
+  //	can safely compile.
+  //
+  NatSet boundUniquely;
+  bool subproblemLikely;
+  for (int i = 0; i < nrInterestingVariables; ++i)
+    {
+      Term* t = interestingBindings[i];
+      DebugInfo("Compiling " << t);
       matchingAutomata[i] = t->compileLhs(false, variableInfo, boundUniquely, subproblemLikely);
       //matchingAutomata[i]->dump(cerr, variableInfo);
     }
-
-  nrVariablesInBindings = variableInfo.getNrProtectedVariables();  // may also have some abstraction variables
-  DebugAdvisory("compiled retained unifier has  " << variableInfo.getNrRealVariables() << " real variables");
-  DebugAdvisory("compiled retained unifier has  " << variableInfo.getNrProtectedVariables() << " protected variables");
+  DebugInfo("compiled retained unifier has " << variableInfo.getNrRealVariables() <<
+	    " real variables");
+  DebugInfo("compiled retained unifier has " << variableInfo.getNrProtectedVariables() <<
+	    " protected variables");
 }
 
 UnifierFilter::RetainedUnifier::~RetainedUnifier()

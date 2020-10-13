@@ -326,7 +326,7 @@ result Qid: 'ha
 No more solutions.
 rewrites: 4
 Warning: <standard input>, line 101 (smod BAD): variable Q is used before it is
-    bound in strategy equation:
+    bound in strategy definition:
 csd st := idle if Q = 'a .
 Warning: <standard input>, line 102 (smod BAD): unbound variable Q in
     application strategy substitution for Q.

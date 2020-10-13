@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,9 +25,11 @@
 //
 #ifndef _pseudoThread_hh_
 #define _pseudoThread_hh_
-#include <sys/poll.h>
+#include <poll.h>
+#include <signal.h>
 #include <queue>
 #include "timeStuff.hh"
+#include "vector.hh"
 
 class PseudoThread
 {
@@ -64,25 +66,35 @@ public:
 
   //
   //	Make any pending call backs.
-  //	If a call back was made or we were interrupted by a signal or there are no pending call backs, return appropriate code.
+  //	If a call back was made or we were interrupted by a signal or
+  //	there are no pending call backs, return appropriate code.
   //	Otherwise sleep until interrupted or a call back happens.
   //
-  static int eventLoop(bool block = true);
+  //	If we are in blocking mode, normalSet can be passed to indicate
+  //	that some signals were blocked to avoid them being missed before
+  //	a blocking system call. normalSet will be installed during
+  //	the blocking system call.
+  //
+  static int eventLoop(bool block = true, sigset_t* normalSet = 0);
   //
   //	Clear any requests for call backs on a given fd.
   //
   static void clearFlags(int fd);
   //
   //	Request a call back when reading or writing on a given fd is possible.
-  //	timeOutAt is specified as an absolute number of seconds since the Unix Epoch, or NONE for never.
   //	Only one object can wait on a given fd.
   //
-  void wantTo(int flags, int fd, long timeOutAt = NONE);
+  void wantTo(int flags, int fd);
   //
   //	Request a call back at or after a given time.
-  //	notBefore is specified as an absolute number of seconds since the Unix Epoch.
+  //	notBefore is specified as an absolute timespec since the Unix Epoch.
   //
-  void requestCallBack(long notBefore);
+  void requestCallback(const timespec* notBefore);
+  //
+  //	Request a call back when a child exits and cancel a previous request.
+  //
+  void requestChildExitCallback(pid_t childPid);
+  void cancelChildExitCallback(pid_t childPid);
   //
   //	Call back functions.
   //
@@ -90,8 +102,8 @@ public:
   virtual void doWrite(int fd);  // a write is possible
   virtual void doError(int fd);   // a error happened
   virtual void doHungUp(int fd);  // the other end of a socket was closed when wanting to do a write (for some OS, when wanting to do a read)
-  virtual void doTimeOut(int fd);  // timeOutAt time reached on an fd
-  virtual void doCallBack();  // notBefore time reached for a requested call back
+  virtual void doCallback();  // notBefore time reached for a requested call back
+  virtual void doChildExit(pid_t childPid);
 
 private:
   enum Values
@@ -105,53 +117,72 @@ private:
     short flags;
     short nextActive;  // maintain a linked list of active fds (those with non-zero flags)
     short prevActive;
-    long timeOutAt;
   };
 
-  struct CallBackRequest
+  struct CallbackRequest
   {
-    CallBackRequest(PseudoThread* client, long notBefore);
+    CallbackRequest(PseudoThread* client, const timespec* notBefore);
 
-    bool operator<(const CallBackRequest& c) const;
+    bool operator<(const CallbackRequest& c) const;
 
     PseudoThread* client;
-    long notBefore;
+    timespec notBefore;
   };
 
-  typedef priority_queue<CallBackRequest> CallBackQueue;
+  struct ChildRequest
+  {
+    ChildRequest() {} // need for Vector template
+    ChildRequest(PseudoThread* client, pid_t childPid);
+    
+    PseudoThread* client;
+    pid_t pid;
+    bool exited;
+  };
 
-  static long getTime();
-  static long processCallBacks(int& returnValue);
-  static int processFds(long wait);
+  typedef priority_queue<CallbackRequest> CallbackQueue;
+
+  static bool processCallbacks(int& returnValue, timespec* wait);
+  static int processFds(const timespec* waitPointer, sigset_t* normalSet);
   static void link(int fd);
   static void unlink(int fd);
+
+  static void sigchldHandler(int signalNr, siginfo_t* info, void* context);
+  static bool dispatchChildRequests();
   //
-  //	All data is shared between PseudoThread objects since it refers to a common set of fds and a global call back queue.
+  //	All data is shared between PseudoThread objects since it refers to
+  //	a common set of fds and a global call back queue.
   //
+  static const timespec zeroTime;
   static FD_Info fdInfo[MAX_NR_FDS];
   static int firstActive;
-  static CallBackQueue callBackQueue;
+  static CallbackQueue callBackQueue;
+  //
+  //	Data for handling SIGCHLD.
+  //
+  static Vector<ChildRequest> childRequests;
+  static bool installedSigchldHandler;
+  static bool exitedFlag;
 };
 
 inline
-PseudoThread::CallBackRequest::CallBackRequest(PseudoThread* client, long notBefore)
+PseudoThread::CallbackRequest::CallbackRequest(PseudoThread* client, const timespec* notBefore)
   : client(client),
-    notBefore(notBefore)
+    notBefore(*notBefore)
 {
+}
+
+inline
+PseudoThread::ChildRequest::ChildRequest(PseudoThread* client, pid_t pid)
+  : client(client),
+    pid(pid)
+{
+  exited = false;
 }
 
 inline bool
-PseudoThread::CallBackRequest::operator<(const CallBackRequest& c) const
+PseudoThread::CallbackRequest::operator<(const CallbackRequest& c) const
 {
-  return notBefore > c.notBefore;  // reversed!
-}
-
-inline long
-PseudoThread::getTime()
-{
-  timeval time;
-  gettimeofday(&time, 0);
-  return time.tv_sec;
+  return timespecCompare(&notBefore, &(c.notBefore)) > 0;  // reversed!
 }
 
 #endif

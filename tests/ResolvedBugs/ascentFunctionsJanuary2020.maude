@@ -1,0 +1,23 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that contects of bad module cannot be pulled up
+***	to the metalevel.
+***
+
+
+smod BAD is
+  pr NON-EXISTENT .
+endsm
+
+red in META-LEVEL : upModule('BAD, false) .
+red in META-LEVEL : upImports('BAD) .
+red in META-LEVEL : upSorts('BAD, false) .
+red in META-LEVEL : upSubsortDecls('BAD, false) .
+red in META-LEVEL : upOpDecls('BAD, false) .
+red in META-LEVEL : upMbs('BAD, false) .
+red in META-LEVEL : upEqs('BAD, false) .
+red in META-LEVEL : upRls('BAD, false) .
+red in META-LEVEL : upStratDecls('BAD, false) .
+red in META-LEVEL : upSds('BAD, false) .

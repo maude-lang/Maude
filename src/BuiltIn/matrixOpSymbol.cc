@@ -318,8 +318,8 @@ MatrixOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	    goto fail;
 
 	  row[0] = -v;
-	  FOR_EACH_CONST(j, SparseVector, r)
-	    row[j->first + 1] = j->second;
+	  for (auto& j : r)
+	    row[j.first + 1] = j.second;
 	  ds.insertEqn(row);
 	}
       for (int j = 1; j < rowSize; j++)

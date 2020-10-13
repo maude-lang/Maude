@@ -1,0 +1,17 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug in U/Ul/Ur unification where theory purification code
+***	assumed the operator was commutative.
+***
+
+fmod U-TEST is
+  sort Foo .
+  op 1 : -> Foo .
+  op f : Foo Foo -> Foo [id: 1] .
+  op g : Foo -> Foo .
+vars X Y Z : Foo .
+endfm
+
+unify X =? f(g(Z), Y) .

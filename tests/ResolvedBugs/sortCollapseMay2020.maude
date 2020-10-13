@@ -1,0 +1,16 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug that we weren't warning about a collapse
+***	up the sort hierarchy for declarations at the kind level.
+***
+
+fmod FOO is
+  sort Foo .
+  op f : Foo [Foo] -> Foo [id: e] .
+  op e : -> Foo .
+endfm
+
+parse f(e, X:[Foo]) .
+red f(e, X:[Foo]) .

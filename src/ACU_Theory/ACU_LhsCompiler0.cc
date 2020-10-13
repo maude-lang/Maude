@@ -46,6 +46,7 @@ ACU_Term::compileLhs2(bool matchAtTop,
 			       matchAtTop,
 			       !(collapseSymbols().empty()),
 			       variableInfo.getNrProtectedVariables());
+      DebugInfo("this = " << this << "local size = " << variableInfo.getNrProtectedVariables());
     }
   compileLhs3(matchAtTop, variableInfo, boundUniquely, subproblemLikely, a);
   return a;

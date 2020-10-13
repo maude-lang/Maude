@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -69,7 +69,9 @@
 #include "rewriteSequenceSearch.hh"
 #include "narrowingSequenceSearch.hh"
 #include "unificationProblem.hh"
+#include "irredundantUnificationProblem.hh"
 #include "variantSearch.hh"
+#include "filteredVariantUnifierSearch.hh"
 #include "narrowingSearchState2.hh"
 #include "narrowingSequenceSearch3.hh"
 
@@ -115,6 +117,7 @@
 #include "metaUnify.cc"
 #include "metaVariant.cc"
 #include "metaVariantUnify.cc"
+#include "metaVariantMatch.cc"
 #include "metaNarrow.cc"
 #include "metaNewNarrow.cc"
 #include "metaNewNarrow2.cc"

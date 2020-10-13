@@ -231,7 +231,8 @@ Symbol::getMatchIndex() const
 inline void
 Symbol::setMatchIndex(int index)
 {
-  Assert(matchIndex == 0, "trying to set match index of " << this << " to " << index << " when it is already " << matchIndex);
+  Assert(matchIndex == 0, "trying to set match index of " << this << " to " <<
+	 index << " when it is already " << matchIndex);
   matchIndex = index;
 }
 

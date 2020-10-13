@@ -53,6 +53,8 @@ public:
   bool handleManagerMessage(DagNode* message, ObjectSystemRewritingContext& context);
   bool handleMessage(DagNode* message, ObjectSystemRewritingContext& context);
   void cleanUp(DagNode* objectId);
+  
+  static void setAllowFiles(bool flag);
 
 private:
   enum Special
@@ -104,6 +106,10 @@ private:
   void positionGotReply(Int64 position,
 			FreeDagNode* originalMessage,
 			ObjectSystemRewritingContext& context);
+  //
+  //	Shared flag to disable the functionality of this class.
+  //
+  static bool allowFiles;
 
 #define MACRO(SymbolName, SymbolClass, NrArgs) \
   SymbolClass* SymbolName;
@@ -112,5 +118,11 @@ private:
 
   FileMap openFiles;
 };
+
+inline void
+FileManagerSymbol::setAllowFiles(bool flag)
+{
+  allowFiles = flag;
+}
 
 #endif

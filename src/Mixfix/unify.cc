@@ -25,7 +25,7 @@
 //
 
 void
-Interpreter::unify(const Vector<Token>& bubble, Int64 limit)
+Interpreter::unify(const Vector<Token>& bubble, Int64 limit, bool irredundant)
 {
   VisibleModule* fm = currentModule->getFlatModule();
   Vector<Term*> lhs;
@@ -53,7 +53,10 @@ Interpreter::unify(const Vector<Token>& bubble, Int64 limit)
 #endif
 
   Timer timer(getFlag(SHOW_TIMING));
-  UnificationProblem* problem = new UnificationProblem(lhs, rhs, new FreshVariableSource(fm));
+  FreshVariableSource* freshVariableSource = new FreshVariableSource(fm);
+  UnificationProblem* problem = irredundant ?
+    new IrredundantUnificationProblem(lhs, rhs, freshVariableSource) :
+    new UnificationProblem(lhs, rhs, freshVariableSource);
   if (problem->problemOK())
     doUnification(timer, fm, problem, 0, limit);
   else
@@ -76,7 +79,15 @@ Interpreter::doUnification(Timer& timer,
   int i = 0;
   for (; i != limit; i++)
     {
-      if (!problem->findNextUnifier())
+      bool result = problem->findNextUnifier();
+      //
+      //	If the user interrupted, we need to bail before outputing a unifier
+      //	(which won't display correctly anyway).
+      //
+      if (UserLevelRewritingContext::interrupted())
+	break;
+ 
+      if (!result)
 	{
 	  if (solutionCount == 0)
 	    {
@@ -91,10 +102,8 @@ Interpreter::doUnification(Timer& timer,
       ++solutionCount;
       if (solutionCount == 1)
 	printDecisionTime(timer);
-      cout << "\nSolution " << solutionCount << '\n';
+      cout << "\nUnifier " << solutionCount << '\n';
       UserLevelRewritingContext::printSubstitution(problem->getSolution(), problem->getVariableInfo());
-      if (UserLevelRewritingContext::interrupted())
-	break;
     }
 
 #ifdef QUANTIFY_REWRITING

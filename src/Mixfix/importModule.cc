@@ -287,21 +287,15 @@ ImportModule::deepSelfDestruct()
   // 	view arguments and base module. This is so we will not receive a regretToInform()
   //	message after we delete ourself.
   //
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, parameterTheories)
-      (*i)->removeUser(this);
-  }
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-      (*i)->removeUser(this);
-  }
-  {
-    FOR_EACH_CONST(i, Vector<Argument*>, savedArguments)
-      {
-	if (View* v = dynamic_cast<View*>(*i))
-	  v->removeUser(this);
-      }
-  }
+  for (ImportModule* m : parameterTheories)
+    m->removeUser(this);
+  for (ImportModule* m : importedModules)
+    m->removeUser(this);
+  for (Argument* arg : savedArguments)
+    {
+      if (View* v = dynamic_cast<View*>(arg))
+	v->removeUser(this);
+    }
   if (baseModule != 0)
     baseModule->removeUser(this);
   //
@@ -536,6 +530,7 @@ ImportModule::importStrategies()
 void
 ImportModule::importStatements()
 {
+  DebugEnter("for module " << this);
   //
   //	We first go through our parameter theories and ask them
   //	to donate their statements.
@@ -557,6 +552,7 @@ ImportModule::importStatements()
 void
 ImportModule::donateStatements(ImportModule* importer)
 {
+  DebugEnter("from module " << this);
   if (importPhase == STATEMENTS_IMPORTED)
     return;
   //
@@ -583,8 +579,8 @@ ImportModule::donateStatements(ImportModule* importer)
 void ImportModule::importRuleLabels()
 {
   //
-  // We assume parent modules have already imported labels
-  // from their own imported modules and have included theirs
+  //	We assume parent modules have already imported labels
+  //	from their own imported modules and have included theirs
   //
   for (ImportModule* m : parameterTheories)
       ruleLabels.insert(m->ruleLabels.begin(), m->ruleLabels.end());
@@ -829,6 +825,8 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	  Vector<ConditionFragment*> condition;
 	  deepCopyCondition(&importTranslation, sdef->getCondition(), condition);
 	  StrategyDefinition* copy = new StrategyDefinition(label, strategy, lhs, rhs, condition);
+	  if (sdef->isNonexec())
+	    copy->setNonexec();
 	  copy->setLineNumber(sdef->getLineNumber());
 	  importer->insertStrategyDefinition(copy);
 	  copyMetadata(importer, importTranslation, STRAT_DEF, sdef, copy);
@@ -853,24 +851,19 @@ ImportModule::resetImportPhase()
   importPhase = UNVISITED;
   //
   //	No need to reset parameter theories because we won't
-  //	have visited them.
-  FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-    (*i)->resetImportPhase();
-
-  //resetImports();  // should we just reset our regular imports?
+  //	have visited them. We just reset our importedModules.
+  //
+  for (ImportModule* m : importedModules)
+    m->resetImportPhase();
 }
 
 #ifndef NO_ASSERT
 void
 ImportModule::dumpImports(ostream& s) const
 {
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, parameterTheories)
-      s << "    " << *i << '\n';
-  }
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-      s << "    " << *i << '\n';
-  }
+  for (ImportModule* m : parameterTheories)
+    s << "    " << m << '\n';
+  for (ImportModule* m : importedModules)
+    s << "    " << m << '\n';
 }
 #endif

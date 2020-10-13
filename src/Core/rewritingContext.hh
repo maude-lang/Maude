@@ -31,6 +31,7 @@
 //
 #ifndef _rewritingContext_hh_
 #define _rewritingContext_hh_
+//#include <signal.h>
 #include "substitution.hh"
 #include "simpleRootContainer.hh"
 #include "dagNode.hh"
@@ -54,13 +55,25 @@ public:
   };
 
   RewritingContext(DagNode* root);
-  RewritingContext(int substitutionSize);  // limited use RewritingContext for matching
+  //
+  //	Sometimes we need a rewriting context to do sort computations or matching
+  //	and don't have one to hand; for example in UnifierFilter, VariantFolder and
+  //	IrredundantUnificationProblem. For these use cases we have a special ctor
+  //	for limited use rewriting contexts that don't have a root dag.
+  //
+  //	With a substitution size of 0, a RewritingContext is just a dummy that allows
+  //	functions that take a RewritingContext& argument to be called as long as they
+  //	don't need to use it. This hints that we might have been better passing
+  //	pointers rather than references so we could use a null pointer instead.
+  //
+  RewritingContext(int substitutionSize = 0);
   virtual ~RewritingContext();
 
   static bool getTraceStatus();
   static void setTraceStatus(bool state);
 
   DagNode* root();
+  bool isLimited() const;
   void incrementMbCount(Int64 i = 1);
   void incrementEqCount(Int64 i = 1);
   void incrementRlCount(Int64 i = 1);
@@ -134,6 +147,17 @@ public:
   //	If it returns true, the caller assumes it can continue; otherwise the caller should return.
   //
   virtual bool handleInterrupt();
+  //
+  //	This exists so we block signals we are interested in, handle any that have already
+  //	been delivered and let the caller know what the normal signal set looks like.
+  //	The reason for blocking signals is if they are delivered after we last checked
+  //	for them but before the blocking call they could get lost since they won't cause
+  //	the blocking call to return early. If it returns true, the call assumes it can
+  //	continue with the blocking call, using the normalSet as signals that should abort
+  //	the blocking call. If it returns false, the caller returns without making the blocking
+  //	call.
+  //
+  virtual bool blockAndHandleInterrupts(sigset_t *normalSet);
 
   virtual void traceStrategyCall(StrategyDefinition* sdef,
 				 DagNode* callDag,
@@ -208,8 +232,9 @@ RewritingContext::RewritingContext(int substitutionSize)
     rootNode(0)
 {
   //
-  //	This constructor exists so we can build RewritingContexts for use in the solve()
-  //	phase of matching where we don't otherwise have a RewritingContext to hand.
+  //	This constructor exists so we can build RewritingContexts for use sort computations
+  //	and in the solve() phase of matching where we don't otherwise have a RewritingContext
+  //	to hand.
   //
 }
 
@@ -230,6 +255,24 @@ RewritingContext::root()
   if (staleMarker != ROOT_OK)
     rebuildUptoRoot();
   return rootNode;
+}
+
+inline bool
+RewritingContext::isLimited() const
+{
+  //
+  //	A limited RewritingContext:
+  //	(1) Does not have a rootNode.
+  //	(2) Need not have a substitution large enough to apply sort constraints.
+  //	(3) Does not protect its substitution from garbage collection.
+  //	(4) Does not protect its redex stack from garbage collection.
+  //	It exists so that certain functions that expect a RewritingContext,
+  //	ultimately to compute true sorts by applying sort constraints can be
+  //	called by unification code when a general purpose RewritingContext
+  //	not available. Sort constraints are not supported by unification and
+  //	are thus ignored if the supplied RewritingContext is limited.
+  //
+  return rootNode == 0;
 }
 
 inline bool

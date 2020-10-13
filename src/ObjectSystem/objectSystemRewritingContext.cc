@@ -23,6 +23,7 @@
 //
 //      Implementation for class ObjectSystemRewritingContext.
 //
+#include <signal.h>
 
 //      utility stuff
 #include "macros.hh"
@@ -115,58 +116,116 @@ ObjectSystemRewritingContext::markReachableNodes()
   RewritingContext::markReachableNodes();
 }
 
+bool
+ObjectSystemRewritingContext::interleave()
+{
+  //
+  //	Interleave fair rewriting with handling of external events.
+  //	We return false if rewriting needs to end because it hit limit
+  //	or user aborted and true if we just ran out of rewrites to do.
+  //
+  for (;;)
+    {
+      DebugAdvisory("calling fairTraversal()");
+      if (fairTraversal())
+	return false;  // hit limit or abort
+      if (!getProgress())
+	break;  // no progress made on last traversal
+      //
+      //	Check for external events. We made progress with local rewrites so
+      //	we can't block on pending external events.
+      //
+      //	We don't bother checking whether we had an interrupt or handled
+      //	external events - we're going to try more rewriting anyway
+      //	and we prefer to handle interrupts mid-rewrite.
+      //
+      (void) PseudoThread::eventLoop(false);
+    }
+  return true;
+}
+
 void
 ObjectSystemRewritingContext::externalRewrite()
 {
-  // HACK for experiments
-  const char* extBiasString = getenv("EXT_BIAS");
-  int extBias = extBiasString ? atoi(extBiasString) : 1;
   //
   //	We assume caller has already set up limit and gas for fair rewriting.
   //	We interleave fair rewriting with calls to PseudoThread::eventLoop() to
   //	handle external events.
   //
+  //
+  //	Interleave fair rewriting and external events.
+  //
+  if (!interleave())
+    return;
+
   for (;;)
     {
-      //
-      //	Fair rewrite until we can make no further progress.
-      //	We now interleave nonblocking calls to handle external events.
-      //
-      for (;;)
-	{
-	  DebugAdvisory("calling fairTraversal()");
-	  if (fairTraversal())
-	    return;  // hit limit or abort
-	  if (!getProgress())
-	    break;  // no progress made on last traversal
-	  //
-	  //	Check for external events. We made progress with local rewrites so
-	  //	we can't block on pending external events.
-	  //
-	  //	We don't bother checking whether we had an interrupt or handled
-	  //	external events - we're going to try more rewriting anyway
-	  //	and we prefer to handle interrupts mid-rewrite.
-	  //
-	  for (int i = 0; i < extBias; ++i) // HACK for experiments
-	    (void) PseudoThread::eventLoop(false);
-	}
       //
       //	If we get here, we cannot do any more local rewrites in our
       //	current state, so if there are external events pending we
       //	block on them.
       //
-      int r = PseudoThread::eventLoop(true);
+      //	But first we need to deal with any signals that have
+      //	been delivered and then block them so we don't miss them by their
+      //	being delivered before we make our blocking system call.
+      //
+      sigset_t normalSet;
+      if (!blockAndHandleInterrupts(&normalSet))
+	{
+	  //
+	  //	Need to quit externalRewrite() because of an interrupt, but
+	  //	first we need to restore normal signals.
+	  //
+	  sigprocmask(SIG_SETMASK, &normalSet, 0);
+	  break;
+	}
+      //
+      //	Now we can safely block on external events.
+      //
+      int r = PseudoThread::eventLoop(true, &normalSet);
+      //
+      //	Restore normal signals.
+      //
+      sigprocmask(SIG_SETMASK, &normalSet, 0);
+      //
+      //	eventLoop() will have restored signal mask to normalSet.
+      //
       if (r & PseudoThread::NOTHING_PENDING)
-	break;  // nothing to wait for
+	{
+	  //
+	  //	There were no external events pending and therefore no
+	  //	callbacks were made. Since there are no local rewrites
+	  //	available, we're done.
+	  //
+	  break;
+	}
       if (r & PseudoThread::INTERRUPTED)
 	{
-	  //cerr << "eventLoop() interrupted" << endl;
 	  //
-	  //	Blocking call returned because of interrupt.
+	  //	Blocking call returned because of interrupt(s) which may
+	  //	include one that our subclass knows how to handle.
+	  //	PseudoThread::eventLoop() can't know which signals were delivered
+	  //	other than any it is managing, so for safety, it exits.
 	  //
 	  if (!handleInterrupt())
-	    break;  // assume we abort
-	  //cerr << "appears to have been handled" << endl;
+	    {
+	      //
+	      //	We handled an interrupt that required us to abort.
+	      //
+	      break;
+	    }
+	  //
+	  //	Didn't need to abort - may not have handled an interrupt.
+	  //
+	}
+      if (r & PseudoThread::EVENT_HANDLED)
+	{
+	  //
+	  //	We handled an event that may have changed our context
+	  //	by enabling external rewrites; need to try rewriting again.
+	  //
+	  if (!interleave())
+	    break;
 	}
     }
 }

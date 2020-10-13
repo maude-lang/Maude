@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,9 +25,12 @@
 //
 
 bool
-MetaLevelOpSymbol::legacyMetaGetVariant2(FreeDagNode* subject, RewritingContext& context, bool irredundant)
+MetaLevelOpSymbol::legacyMetaGetVariant2(FreeDagNode* subject,
+					 RewritingContext& context,
+					 bool irredundant)
 {
-  DebugAdvisory(Tty(Tty::CYAN) << "meta variant call: " << Tty(Tty::GREEN) << (DagNode*) subject << Tty(Tty::RESET));
+  DebugAdvisory(Tty(Tty::CYAN) << "meta variant call: " << Tty(Tty::GREEN) <<
+		(DagNode*) subject << Tty(Tty::RESET));
   //
   //	We handle both metaGenerateVariant() and metaGenerateIrredundantVariant().
   //
@@ -53,15 +56,22 @@ MetaLevelOpSymbol::legacyMetaGetVariant2(FreeDagNode* subject, RewritingContext&
 		      m->protect();
 		      RewritingContext* startContext = term2RewritingContext(start, context);
 
-		      Vector<DagNode*> blockerDags; 
-		      FOR_EACH_CONST(i, Vector<Term*>, blockerTerms)
+		      Vector<DagNode*> blockerDags;
+		      for (Term* t : blockerTerms)
 			{
-			  Term* t = *i;
-			  t = t->normalize(true);  // we don't really need to normalize but we do need to set hash values
+			  //
+			  //	We don't really need to normalize but we do need to set hash values.
+			  //
+			  t = t->normalize(true);
 			  blockerDags.append(t->term2Dag());
 			  t->deepSelfDestruct();
 			}
-		      vs = new VariantSearch(startContext, blockerDags, new FreshVariableSource(m, varIndex), false, irredundant);
+		      vs = new VariantSearch(startContext,
+					     blockerDags,
+					     new FreshVariableSource(m, varIndex),
+					     VariantSearch::DELETE_FRESH_VARIABLE_GENERATOR |
+					     VariantSearch::CHECK_VARIABLE_NAMES |
+					     (irredundant ? VariantSearch::IRREDUNDANT_MODE : 0));
 		      lastSolutionNr = -1;
 		    }
 		  else
@@ -75,43 +85,38 @@ MetaLevelOpSymbol::legacyMetaGetVariant2(FreeDagNode* subject, RewritingContext&
 	    }
 
 	  DagNode* result;
-	  const Vector<DagNode*>* variant = 0;  // just to avoid compiler warning
-	  int nrFreeVariables;
-	  int parentIndex = -1;  // dummy
-	  bool moreInLayer = false;  // dummy
-
-	  if (lastSolutionNr == solutionNr)
+	  while (lastSolutionNr < solutionNr)
 	    {
-	      //
-	      //	So the user can ask for the same variant over and over again without
-	      //	a horrible loss of performance.
-	      //
-	      int dummy;
-	      variant = vs->getLastReturnedVariant(nrFreeVariables, dummy, parentIndex, moreInLayer);
-	    }
-	  else
-	    {
-	      while (lastSolutionNr < solutionNr)
+	      
+	      if (!(vs->findNextVariant()))
 		{
-		  int dummy;
-		  variant = vs->getNextVariant(nrFreeVariables, dummy, parentIndex, moreInLayer);
-		  if (variant == 0)
-		    {
-		      bool incomplete = vs->isIncomplete();
-		      delete vs;
-		      result = metaLevel->upNoVariant(incomplete);
-		      goto fail;
-		    }
-		  
-		  context.transferCountFrom(*(vs->getContext()));
-		  ++lastSolutionNr;
+		  bool incomplete = vs->isIncomplete();
+		  delete vs;
+		  result = metaLevel->upNoVariant(incomplete);
+		  goto fail;
 		}
+	      context.transferCountFrom(*(vs->getContext()));
+	      ++lastSolutionNr;
 	    }
+	  m->insert(subject, vs, solutionNr);
 	  {
-	    m->insert(subject, vs, solutionNr);
+	    int nrFreeVariables;
+	    int resultVariableFamily;
+	    int parentIndex;
+	    bool moreInLayer;
+	    const Vector<DagNode*>& variant = vs->getCurrentVariant(nrFreeVariables,
+								    resultVariableFamily,
+								    &parentIndex,
+								    &moreInLayer);
+
 	    mpz_class lastVarIndex = varIndex + nrFreeVariables;
 	    mpz_class parentIndexBig(parentIndex);
-	    result = metaLevel->upVariant(*variant, vs->getVariableInfo(), lastVarIndex, parentIndexBig, moreInLayer, m); // dummy args
+	    result = metaLevel->upVariant(variant,
+					  vs->getVariableInfo(),
+					  lastVarIndex,
+					  parentIndexBig,
+					  moreInLayer,
+					  m);
 	  }
 	fail:
 	  (void) m->unprotect();

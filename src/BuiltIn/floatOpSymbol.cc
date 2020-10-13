@@ -58,7 +58,7 @@
 #include "floatOpSymbol.hh"
 #include "bindingMacros.hh"
 
-#define isNaN(f) isnan(f)
+#define isNaN(f) ::isnan(f)
 
 FloatOpSymbol::FloatOpSymbol(int id, int arity)
   : FreeSymbol(id, arity)

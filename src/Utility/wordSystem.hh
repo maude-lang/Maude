@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 3 interpreter.
+    This file is part of the Maude 2 interpreter.
 
     Copyright 1997-2015 SRI International, Menlo Park, CA 94025, USA.
 
@@ -50,13 +50,16 @@ public:
   typedef PigPug::Word Word;
   typedef PigPug::Subst Subst;
 
-  WordSystem(int nrVariables, int nrEquations);
+  WordSystem(int nrVariables, int nrEquations, bool identityOptimizations = false);
   ~WordSystem();
 
-  void addConstraint(int variable, int constraint);
+  void setTheoryConstraint(int variable, int theoryIndex);
+  void setUpperBound(int variable, int upperBound);
+  void setTakeEmpty(int variable);
   void addAssignment(int variable, const Word& value);
   void addEquation(int index, const Word& lhs, const Word& rhs);
-
+  void addNullEquation(const Word& word);
+  
   int findNextSolution();
   const Word& getAssignment(int variable) const;
   int getNrVariables() const;
@@ -70,9 +73,21 @@ private:
 };
 
 inline void
-WordSystem::addConstraint(int variable, int constraint)
+WordSystem::setTheoryConstraint(int variable, int theoryIndex)
 {
-  current->addConstraint(variable, constraint);
+  current->setTheoryConstraint(variable, theoryIndex);
+}
+
+inline void
+WordSystem::setUpperBound(int variable, int upperBound)
+{
+  current->setUpperBound(variable, upperBound);
+}
+
+inline void
+WordSystem::setTakeEmpty(int variable)
+{
+  current->setTakeEmpty(variable);
 }
 
 inline void
@@ -85,6 +100,12 @@ inline void
 WordSystem::addEquation(int index, const Word& lhs, const Word& rhs)
 {
   current->addEquation(index, lhs, rhs);
+}
+
+inline void
+WordSystem::addNullEquation(const Word& word)
+{
+  current->addNullEquation(word);
 }
 
 inline const WordSystem::Word&

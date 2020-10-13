@@ -47,7 +47,7 @@ private:
   {
     DEFAULT_NODE_SIZE = 1000,
     DEFAULT_CACHE_SIZE = 100,
-    DEFAULT_NR_VARIABLES = 100
+    DEFAULT_NR_VARIABLES = 10
   };
 
   static void gc_handler(int pre, bddGbcStat* stat);
@@ -89,6 +89,7 @@ BddUser::setNrVariables(int nrVariables)
 {
   if (nrVariables > bdd_varnum())
     {
+      //cout << "Increase # variables from " << bdd_varnum() << " to " << nrVariables << endl;
       if (cachedPairing != 0)
 	{
 	  //

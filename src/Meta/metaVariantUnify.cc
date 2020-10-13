@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,102 +23,109 @@
 bool
 MetaLevelOpSymbol::metaVariantUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint)
 {
-  DebugAdvisory(Tty(Tty::CYAN) << "meta variant unify call: " << Tty(Tty::GREEN) << (DagNode*) subject << Tty(Tty::RESET));
+  DebugAdvisory(Tty(Tty::CYAN) << "meta variant unify call: " << Tty(Tty::GREEN) <<
+		(DagNode*) subject << Tty(Tty::RESET));
   //
   //	We handle both metaVariantUnify() and metaVariantDisjointUnify().
   //
-  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
+  int variantFlags;
+  if (metaLevel->downVariantOptionSet(subject->getArgument(4), variantFlags) &&
+      (variantFlags & ~(MetaLevel::DELAY | MetaLevel::FILTER)) == 0)
     {
-      Int64 solutionNr;
-      int variableFamilyName;
-      int variableFamily;
-      if (metaLevel->downQid(subject->getArgument(3), variableFamilyName) &&
-	  (variableFamily = FreshVariableSource::getFamily(variableFamilyName)) != NONE &&
-	  metaLevel->downSaturate64(subject->getArgument(4), solutionNr) && solutionNr >= 0)
+      if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
 	{
-	  VariantSearch* vs;
-	  Int64 lastSolutionNr;
-	  if (m->getCachedStateObject(subject, context, solutionNr, vs, lastSolutionNr))
-	    m->protect();  // Use cached state
-	  else
+	  Int64 solutionNr;
+	  int variableFamilyName;
+	  int variableFamily;
+	  if (metaLevel->downQid(subject->getArgument(3), variableFamilyName) &&
+	      (variableFamily = FreshVariableSource::getFamily(variableFamilyName)) != NONE &&
+	      metaLevel->downSaturate64(subject->getArgument(5), solutionNr) && solutionNr >= 0)
 	    {
-	      Vector<Term*> lhs;
-	      Vector<Term*> rhs;
-	      if (!metaLevel->downUnificationProblem(subject->getArgument(1), lhs, rhs, m, disjoint))
-		return false;
-
-	      Vector<Term*> blockerTerms;
-	      if (!metaLevel->downTermList(subject->getArgument(2), m, blockerTerms))
+	      VariantSearch* vs;
+	      Int64 lastSolutionNr;
+	      if (m->getCachedStateObject(subject, context, solutionNr, vs, lastSolutionNr))
+		m->protect();  // Use cached state
+	      else
 		{
-		  FOR_EACH_CONST(i, Vector<Term*>, lhs)
-		    (*i)->deepSelfDestruct();
-		  FOR_EACH_CONST(j, Vector<Term*>, rhs)
-		    (*j)->deepSelfDestruct();
-		  return false;
+		  Vector<Term*> lhs;
+		  Vector<Term*> rhs;
+		  if (!metaLevel->downUnificationProblem(subject->getArgument(1), lhs, rhs, m, disjoint))
+		    return false;
+		  
+		  Vector<Term*> blockerTerms;
+		  if (!metaLevel->downTermList(subject->getArgument(2), m, blockerTerms))
+		    {
+		      for (Term* t : lhs)
+			t->deepSelfDestruct();
+		      for (Term* t : rhs)
+			t->deepSelfDestruct();
+		      return false;
+		    }
+
+		  m->protect();
+		  DagNode* d = m->makeUnificationProblemDag(lhs, rhs);
+		  RewritingContext* startContext =
+		    context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
+
+		  Vector<DagNode*> blockerDags;
+		  for (Term* t : blockerTerms)
+		    {
+		      //
+		      //	We don't really need to normalize but we do need to set hash values.
+		      //
+		      t = t->normalize(true);
+		      blockerDags.append(t->term2Dag());
+		      t->deepSelfDestruct();
+		    }
+		  FreshVariableGenerator* freshVariableGenerator = new FreshVariableSource(m);
+		  vs = (variantFlags & MetaLevel::FILTER) ?
+		    new FilteredVariantUnifierSearch(startContext,
+						     blockerDags,
+						     freshVariableGenerator,
+						     variantFlags |
+						     VariantSearch::DELETE_FRESH_VARIABLE_GENERATOR |
+						     VariantSearch::CHECK_VARIABLE_NAMES,
+						     variableFamily) :
+		    new VariantSearch(startContext,
+				      blockerDags,
+				      freshVariableGenerator,
+				      variantFlags |
+				      VariantSearch::UNIFICATION_MODE |
+				      VariantSearch::DELETE_FRESH_VARIABLE_GENERATOR |
+				      VariantSearch::CHECK_VARIABLE_NAMES,
+				      variableFamily);
+		  lastSolutionNr = -1;
 		}
 
-	      m->protect();
-	      DagNode* d = m->makeUnificationProblemDag(lhs, rhs);
-	      RewritingContext* startContext = context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
-
-	      Vector<DagNode*> blockerDags; 
-	      FOR_EACH_CONST(i, Vector<Term*>, blockerTerms)
+	      DagNode* result;
+	      for (; lastSolutionNr < solutionNr; ++lastSolutionNr)
 		{
-		  Term* t = *i;
-		  t = t->normalize(true);  // we don't really need to normalize but we do need to set hash values
-		  blockerDags.append(t->term2Dag());
-		  t->deepSelfDestruct();
-		}
-	      vs = new VariantSearch(startContext,
-				     blockerDags,
-				     new FreshVariableSource(m),
-				     true,	// unification mode
-				     false,	// not irredundant
-				     true,	// delete fresh variable generator on destruction
-				     variableFamily,
-				     true);	// check variable names
-	      lastSolutionNr = -1;
-	    }
-
-	  DagNode* result;
-	  const Vector<DagNode*>* unifier = 0;  // initialization is just to avoid compiler warning
-	  int nrFreeVariables;
-	  int resultVariableFamily;
-	  if (lastSolutionNr == solutionNr)
-	    {
-	      //
-	      //	So the user can ask for the same unifier over and over again without
-	      //	a horrible loss of performance.
-	      //
-	      unifier = vs->getLastReturnedUnifier(nrFreeVariables, resultVariableFamily);
-	    }
-	  else
-	    {
-	      while (lastSolutionNr < solutionNr)
-		{
-		  unifier = vs->getNextUnifier(nrFreeVariables, resultVariableFamily);
-		  if (unifier == 0)
+		  if (!(vs->findNextUnifier()))
 		    {
 		      bool incomplete = vs->isIncomplete();
 		      delete vs;
-		      result = disjoint ? metaLevel->upNoUnifierTriple(incomplete) : metaLevel->upNoUnifierPair(incomplete);
+		      result = disjoint ? metaLevel->upNoUnifierTriple(incomplete) :
+			metaLevel->upNoUnifierPair(incomplete);
 		      goto fail;
 		    }
-
 		  context.transferCountFrom(*(vs->getContext()));
-		  ++lastSolutionNr;
 		}
+	      m->insert(subject, vs, solutionNr);
+	      {
+		int nrFreeVariables;
+		int resultVariableFamily;
+		const Vector<DagNode*>& unifier = vs->getCurrentUnifier(nrFreeVariables,
+									resultVariableFamily);
+		int variableNameId = FreshVariableSource::getBaseName(resultVariableFamily);
+		result = disjoint ?
+		  metaLevel->upUnificationTriple(unifier, vs->getVariableInfo(), variableNameId, m) :
+		  metaLevel->upUnificationPair(unifier, vs->getVariableInfo(), variableNameId, m);
+	      }
+
+	    fail:
+	      (void) m->unprotect();
+	      return context.builtInReplace(subject, result);
 	    }
-	  {
-	    m->insert(subject, vs, solutionNr);
-	    int variableNameId = FreshVariableSource::getBaseName(resultVariableFamily);
-	    result = disjoint ?
-	      metaLevel->upUnificationTriple(*unifier, vs->getVariableInfo(), variableNameId, m) :
-	      metaLevel->upUnificationPair(*unifier, vs->getVariableInfo(), variableNameId, m);
-	  }
-	fail:
-	  (void) m->unprotect();
-	  return context.builtInReplace(subject, result);
 	}
     }
   return false;
@@ -128,7 +135,8 @@ bool
 MetaLevelOpSymbol::metaVariantUnify(FreeDagNode* subject, RewritingContext& context)
 {
   //
-  //	op metaVariantUnify : Module UnificationProblem TermList Qid Nat ~> UnificationPair? .
+  //	op metaVariantUnify : Module UnificationProblem TermList Qid
+  //	                      VariantOptionSet Nat ~> UnificationPair? .
   //
   return metaVariantUnify2(subject, context, false);
 }
@@ -137,7 +145,8 @@ bool
 MetaLevelOpSymbol::metaVariantDisjointUnify(FreeDagNode* subject, RewritingContext& context)
 {
   //
-  //	op metaVariantDisjointUnify : Module UnificationProblem TermList Qid Nat ~> UnificationTriple? .
+  //	op metaVariantDisjointUnify : Module UnificationProblem TermList Qid
+  //	                              VariantOptionSet Nat ~> UnificationTriple? .
   //
   return metaVariantUnify2(subject, context, true);
 }

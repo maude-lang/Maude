@@ -1,0 +1,87 @@
+set show timing off .
+
+***
+*** 	We variant matching against equivalent variant unification problems.
+***
+
+fmod FOO is
+  sort Foo .
+  ops f g h : Foo Foo -> Foo .
+  op 1f : -> Foo .
+
+ vars W X Y Z A B C D E : Foo .
+  ops w x y z a b c d e : -> Foo .
+
+  eq f(X, 1f) = X [variant] .
+  eq f(1f, X) = X [variant] .
+endfm
+
+variant unify f(X, g(Y, Z)) =? f(x, g(y, z)) .
+variant match f(X, g(Y, Z)) <=? f(X, g(Y, Z)) .
+
+variant unify g(f(X, Y), Z) =? g(a, g(a, b)) .
+variant match g(f(X, Y), Z) <=? g(a, g(A, B)) .
+
+variant unify f(1f, g(Y, Z)) =? g(y, z) .
+variant match f(1f, g(Y, Z)) <=? g(Y, Z) .
+
+variant unify g(f(X, Y), Z) =? g(a, f(b, c)) .
+variant match g(f(X, Y), Z) <=? g(A, f(B, C)) .
+
+
+fmod LEFT-ID is
+  sorts Elt Magma .
+  subsort Elt < Magma .
+  op __ : Magma Magma -> Magma [gather(E e)] .
+  ops a b c d e x y z : -> Elt .
+var X : [Magma] .
+  eq e X = X [variant] .
+endfm
+
+variant unify X:Magma a =? y a a .
+variant match X:Magma a <=? Y:Magma a a .
+
+variant unify a X:Magma =? a a y .
+variant match a X:Magma <=? a a Y:Magma .
+
+
+fmod RIGHT-ID is
+  sorts Elt Magma .
+  subsort Elt < Magma .
+  op __ : Magma Magma -> Magma [gather(e E)] .
+  ops a b c d e x y z : -> Elt .
+var X : [Magma] .
+  eq X e = X [variant] .
+endfm
+
+variant unify X:Magma a =? y a a .
+variant match X:Magma a <=? Y:Magma a a .
+
+variant unify a X:Magma =? a a y .
+variant match a X:Magma <=? a a Y:Magma .
+
+
+fmod XOR is
+  sort XOR .
+
+  sort Elem .
+  ops a b c d w x y z : -> Elem .
+
+  subsort Elem < XOR .
+  op _+_ : XOR XOR -> XOR [ctor assoc comm] .
+  op 0 : -> XOR .
+
+  vars X Y : XOR .
+
+  eq Y + 0 = Y [variant] .
+  eq X + X = 0 [variant] .
+  eq X + X + Y = Y [variant] .
+endfm
+
+variant unify X + Y =? c .
+variant match X + Y <=? c .
+
+variant unify X + Y =? c + d .
+variant match X + Y <=? c + d .
+variant match X + Y <=? #1:Elem + d .
+variant match X + Y <=? #1:Elem + #2:Elem .

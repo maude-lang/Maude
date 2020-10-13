@@ -109,6 +109,14 @@ SocketManagerSymbol::closedSocketReply(int socketId,
   DagNode* socketName = originalMessage->getArgument(0);
   context.deleteExternalObject(socketName);
   activeSockets.erase(socketId);
+  //
+  //	If the fd was registered as active with PseudoThread it needs
+  //	go away to avoid trying to poll() a nonexistent fd.
+  //
+  PseudoThread::clearFlags(socketId);
+  //
+  //	Inject a closedSocket() message into the configuration.
+  //
   Vector<DagNode*> reply(3);
   reply[1] = socketName;
   reply[2] = new StringDagNode(stringSymbol, errorMessage);

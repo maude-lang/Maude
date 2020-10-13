@@ -205,7 +205,8 @@ DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 bool
 DagNode::computeSolvedForm(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
 {
-  DebugAdvisory("computeSolvedForm() lhs = " << this << " rhs = " << rhs);
+  DebugInfo("\nlhs = " << this << " rhs = " << rhs);
+  //cout << this << " =? " << rhs << endl;
   //
   //	If we are nonground we dispatch the theory specific algorithm.
   //
@@ -344,9 +345,8 @@ DagNode::reducibleByVariantEquation(RewritingContext& context)
   ExtensionInfo* extensionInfo = makeExtensionInfo();
 
   const Vector<Equation*>& equations = symbol()->getEquations();
-  FOR_EACH_CONST(i, Vector<Equation*>, equations)
+  for (Equation* eq : equations)
     {
-      Equation* eq = *i;
       if (eq->isVariant())
 	{
 	  int nrVariables = eq->getNrProtectedVariables();
@@ -366,6 +366,24 @@ DagNode::reducibleByVariantEquation(RewritingContext& context)
   setIrreducibleByVariantEquations();
   delete extensionInfo;
   return false;
+}
+
+//
+//	Variant matching code.
+//
+
+void
+DagNode::indexVariables(VariableInfo& indicies)
+{
+  //
+  //	Backstop version works for all nonvariable dag nodes; faster
+  //	versions could be written for specific theories.
+  //
+  for (DagArgumentIterator a(*this); a.valid(); a.next())
+    {
+      DagNode* d = a.argument();
+      d->indexVariables(indicies);
+    }
 }
 
 #ifdef DUMP

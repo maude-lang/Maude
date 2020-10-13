@@ -53,7 +53,7 @@ public:
 private:
   struct UserLt
   {
-    bool operator()(const User* user1, const User* user2)
+    bool operator()(const User* user1, const User* user2) const
     {
       //
       //	Direct < comparison of unrelated pointers is undefined. But since the casting

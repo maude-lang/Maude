@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2012 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,14 +54,13 @@
 #include "narrowingUnificationProblem.hh"
 #include "variantNarrowingSearchState.hh"
 
-VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* context,  // contains the variant term
+VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* context,
 							 const Vector<DagNode*>& variantSubstitution,
 							 const Vector<DagNode*>& blockerDags,
 							 FreshVariableGenerator* freshVariableGenerator,
 							 int variableFamily,
 							 const NarrowingVariableInfo& originalVariables,
 							 bool unificationMode)
-
   :  PositionState(context->root(), 0, 0, UNBOUNDED),
      context(context),
      variantSubstitution(variantSubstitution),
@@ -69,12 +68,23 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
      freshVariableGenerator(freshVariableGenerator),
      originalVariables(originalVariables),
      module(context->root()->symbol()->getModule()),
-     blockerSubstitution(originalVariables.getNrVariables())  // could be larger than variant substitution because of variables peculiar to blockerDags
+     blockerSubstitution(originalVariables.getNrVariables())
 {
+  DebugEnter("variant term = " << context->root());
+  //
+  //	The variant term is contained in the context.
+  //	The variant substitution could be empty vector if we don't care about it.
+  //	The blocker substitution can have entries for variables that are peculiar to the blocker dags.
+  //
   incompleteFlag = false;
-  //cout << "VariantNarrowingSearchState() on " << context->root() << endl;
   if (originalVariables.getNrVariables() > 0)
-    blockerSubstitution.clear(originalVariables.getNrVariables());  // this ensures that any variables peculiar to blockerDags are cleared
+    {
+      //
+      //	Make sure that all variables that appeared in the original problem, including
+      //	those that only appear in blocker dags are cleared.
+      //
+      blockerSubstitution.clear(originalVariables.getNrVariables());
+    }
   //
   //	Index all variables occuring in the variant term and the variant substitution.
   //	These VariableDagNodes are coming from dags that are assumed to be protected by the
@@ -83,26 +93,32 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
   //	Indexing the variables will convert any persistent representations into
   //	regular representations suitable for unification and instantiation.
   //
+  //	We allocate indices above any that may be used by variant equations in the module.
+  //
   int firstTargetSlot = module->getMinimumSubstitutionSize();
   context->root()->indexVariables(variableInfo, firstTargetSlot);
   //
   //	Only variables that occur in the term part of the variant are considered interesting.
   //
   int nrInterestingVariables = variableInfo.getNrVariables();
-  FOR_EACH_CONST(i, Vector<DagNode*>, variantSubstitution)
-    (*i)->indexVariables(variableInfo, firstTargetSlot);
+  //
+  //	Now we can index the variant substitution.
+  //
+  for (DagNode* d : variantSubstitution)
+    d->indexVariables(variableInfo, firstTargetSlot);
   //
   //	We filter unifiers by subsumption on interesting variables.
   //
   unifiers = new UnifierFilter(firstTargetSlot, nrInterestingVariables);
   //
-  //	Generate all unifiers between non-variable subterms in our variant term and variant equations in our module
-  //	and insert them in our unifier filter.
+  //	Generate all unifiers between non-variable subterms in our variant term and variant
+  //	equations in our module and insert them in our unifier filter.
   //
   if (unificationMode)
     {
       //
-      //	If we are in unification mode, get the lhs and rhs from under the pairing symbol and try to unify them.
+      //	If we are in unification mode, get the lhs and rhs from under the pairing
+      //	symbol and try to unify them.
       //
       DagArgumentIterator a(context->root());
       Assert(a.valid(), "bad 1st argument in unification mode");
@@ -112,11 +128,12 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 
       //for (int i = 0; i < variableInfo.getNrVariables(); ++i)
       //  cout << "var index " << i << " is " << (DagNode*) variableInfo.index2Variable(i) << endl;
-      NarrowingUnificationProblem* unificationProblem = new NarrowingUnificationProblem(lhs,
-											a.argument(),
-											variableInfo,
-											freshVariableGenerator,
-											variableFamily);
+      NarrowingUnificationProblem* unificationProblem =
+	new NarrowingUnificationProblem(lhs,
+					a.argument(),
+					variableInfo,
+					freshVariableGenerator,
+					variableFamily);
       collectUnifiers(unificationProblem, 0, NONE);
       incompleteFlag |= unificationProblem->isIncomplete();
       delete unificationProblem;
@@ -136,20 +153,22 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 	  //	rather than just the ones indexed under the top symbol.
 	  //
 	  Symbol* s = d->symbol();
-	  const Vector<Equation*>& equations = s->isStable() ? s->getEquations() : module->getEquations();
+	  const Vector<Equation*>& equations = s->isStable() ?
+	    s->getEquations() :
+	    module->getEquations();
 	  const ConnectedComponent* topComponent = s->rangeComponent();
 
-	  FOR_EACH_CONST(i, Vector<Equation*>, equations)
+	  for (Equation* eq : equations)
 	    {
-	      Equation* eq = *i;
 	      if (eq->isVariant() &&  // only consider equations with the variant attribute
 		  eq->getLhs()->getComponent() == topComponent)  // and with lhs in the correct component
 		{
-		  NarrowingUnificationProblem* unificationProblem = new NarrowingUnificationProblem(eq,
-												    d,
-												    variableInfo,
-												    freshVariableGenerator,
-												    variableFamily);
+		  NarrowingUnificationProblem* unificationProblem =
+		    new NarrowingUnificationProblem(eq,
+						    d,
+						    variableInfo,
+						    freshVariableGenerator,
+						    variableFamily);
 		  collectUnifiers(unificationProblem, positionIndex, eq->getIndexWithinModule());
 		  incompleteFlag |= unificationProblem->isIncomplete();
 		  delete unificationProblem;
@@ -160,7 +179,9 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 }
 
 void
-VariantNarrowingSearchState::collectUnifiers(NarrowingUnificationProblem* unificationProblem, int positionIndex, int equationIndex)
+VariantNarrowingSearchState::collectUnifiers(NarrowingUnificationProblem* unificationProblem,
+					     int positionIndex,
+					     int equationIndex)
 {
   int firstTargetSlot = module->getMinimumSubstitutionSize();
   int nrInterestingVariables = variableInfo.getNrVariables();
@@ -168,24 +189,25 @@ VariantNarrowingSearchState::collectUnifiers(NarrowingUnificationProblem* unific
   while (unificationProblem->findNextUnifier())
     {
       ++nrUnifiersFound;
-
-#ifndef NO_ASSERT
-
-      if (nrUnifiersFound >= 1000 && (nrUnifiersFound % 1000) == 0)
+      if (globalVerboseFlag)
 	{
 	  //
-	  //	Let us known that something is happening.
+	  //	Because this can take a very long time, if the user
+	  //	has switch on the verbose flag, we print a message
+	  //	every thousand unifiers we look at, so they know something
+	  //	is happening.
 	  //
-	  cout << "Variant Narrowing, term = " << context->root();
-	  if (equationIndex == NONE)
-	    cout << "(unifying of subterms) for variant unfication\n";
-	  else
-	    cout << ", subterm = " <<  getDagNode() << " equation = " << module->getEquations()[equationIndex] << '\n';
-	  cout << "number of unifiers seen = " << nrUnifiersFound << endl;
+	  if (nrUnifiersFound >= 1000 && (nrUnifiersFound % 1000) == 0)
+	    {
+	      cout << "Variant Narrowing, term = " << context->root();
+	      if (equationIndex == NONE)
+		cout << "(unifying of subterms) for variant unfication\n";
+	      else
+		cout << ", subterm = " <<  getDagNode() <<
+		  " equation = " << module->getEquations()[equationIndex] << '\n';
+	      cout << "number of unifiers seen = " << nrUnifiersFound << endl;
+	    }
 	}
-
-#endif
-
       const Substitution& solution = unificationProblem->getSolution();
       //
       //	Check for reducibility on interesting variables.
@@ -195,8 +217,8 @@ VariantNarrowingSearchState::collectUnifiers(NarrowingUnificationProblem* unific
 	  DagNode* d = solution.value(firstTargetSlot + j);
 	  d->computeTrueSort(*context);  // needed for matching
 	  //
-	  //	If a unifier fails this check, since anything it might have subsumed will be an instance
-	  //	of it and also fail the check, we lose nothing by tossing it now.
+	  //	If a unifier fails this check, since anything it might have subsumed will be
+	  //	an instance of it and also fail the check, we lose nothing by tossing it now.
 	  //
 	  if (d->reducibleByVariantEquation(*context))
 	    goto nextUnifier;
@@ -241,25 +263,28 @@ VariantNarrowingSearchState::findNextVariant(DagNode*& newVariantTerm, Vector<Da
       //	Check if this variant causes any of the blocker dags to become reducible.
       //
       {
-	FOR_EACH_CONST(i, Vector<DagNode*>, blockerDags)
+	for (DagNode* b : blockerDags)
 	  {
-	    // cout << "checking blocker dag " << *i << endl;
-	    DagNode* d = (*i)->instantiate(blockerSubstitution);
+	    DebugInfo("checking blocker dag " << b);
+	    DagNode* d = b->instantiate(blockerSubstitution);
 	    if (d != 0)
 	      {
-		// cout << "instantiated to " << d << endl;
+		DebugInfo("instantiated to " << d);
 		d->computeTrueSort(*context);  // also handles theory normalization
 		if (d->reducibleByVariantEquation(*context))
-		  //{cout << "blocked " << endl ; goto nextUnifier;}
-		  goto nextUnifier;
+		  {
+		    DebugInfo("blocked");
+		    goto nextUnifier;
+		  }
 	      }
-	    //cout << "irreducible\n";
+	    DebugInfo("irreducible");
 	  }
       }
       if (equationIndex == NONE)
 	{
 	  //
-	  //	Virtual rewrite; this means we're in unificationMode and just found a solution to the variant unification problem.
+	  //	Virtual rewrite; this means we're in unificationMode and just found a
+	  //	solution to the variant unification problem.
 	  //
 	  newVariantTerm = 0;
 	  return true;
@@ -267,25 +292,35 @@ VariantNarrowingSearchState::findNextVariant(DagNode*& newVariantTerm, Vector<Da
       {
 	Equation* eq = module->getEquations()[equationIndex];
 	//
-	//	Variant equations are compiled in such a way that all variable bindings are copied upto eager.
+	//	Variant equations are compiled in such a way that all variable bindings
+	//	are copied upto eager.
 	//
 	DagNode* replacement = eq->getRhsBuilder().construct(*survivor);
 	//
-	//	Any slots we touched while building at right hand instance we don't care about; they occur after the binding to
-	//	the variables in the equation and before the bindings to the variables in the original variant.
+	//	Any slots we touched while building at right hand instance we don't care
+	//	about; they occur after the binding to the variables in the equation and
+	//	before the bindings to the variables in the original variant.
 	//
 	int firstVariantVariable = module->getMinimumSubstitutionSize();
 	int lastVariantVariable = firstVariantVariable + variableInfo.getNrVariables() - 1;
 	//
 	//	rebuildAndInstantiateDag() will copy upto eager the unifier bindings.
 	//
-	newVariantTerm = rebuildAndInstantiateDag(replacement, *survivor, firstVariantVariable, lastVariantVariable, positionIndex);
+	newVariantTerm = rebuildAndInstantiateDag(replacement,
+						  *survivor,
+						  firstVariantVariable,
+						  lastVariantVariable,
+						  positionIndex);
 	//
-	//	However we still need to clear those slots because the unifier belongs to the UnifierFilter that will do GC protection on it.
+	//	However we still need to clear those slots because the unifier belongs to
+	//	the UnifierFilter that will do GC protection on it.
 	//
-	//	The variables belonging to the equation are in slots 0,..., eq->getNrRealVariables() - 1
-	//	Protected variables needed for matching are in slots eq->getNrRealVariables(),..., eq->getNrProtectedVariables() - 1
-	//	Construction slots start from eq->getNrProtectedVariables() and must end by firstVariantVariable - 1
+	//	The variables belonging to the equation are in slots
+	//	  0,..., eq->getNrRealVariables() - 1
+	//	Protected variables needed for matching are in slots
+	//	  eq->getNrRealVariables(),..., eq->getNrProtectedVariables() - 1
+	//	Construction slots start from eq->getNrProtectedVariables() and must end
+	//	by firstVariantVariable - 1
 	//
 	for (int i = eq->getNrProtectedVariables(); i < firstVariantVariable; ++i)
 	  survivor->bind(i, 0);

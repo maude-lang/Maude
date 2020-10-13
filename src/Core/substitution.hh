@@ -23,7 +23,7 @@
 //
 //	Class for substitutions.
 //
-//	Substitutions are used to hold partly built dags as well as variable
+//	Substitutions are used to hold partly built dags as well as
 //	variable bindings so that the same dag construction code can handle
 //	variable and non-variable operator arguments without branching.
 //

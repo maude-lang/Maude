@@ -1,79 +1,79 @@
 ==========================================
 unify in FOO : X:Big =? h(f(Y:Big, Z:Big)) .
 
-Solution 1
+Unifier 1
 X:Big --> h(1f)
 Z:Big --> 1f
 Y:Big --> 1f
 
-Solution 2
+Unifier 2
 X:Big --> h(#1:Small)
 Z:Big --> #1:Small
 Y:Big --> 1f
 
-Solution 3
+Unifier 3
 X:Big --> h(#1:Small)
 Z:Big --> 1f
 Y:Big --> #1:Small
 ==========================================
 unify in FOO1 : X:Small =? f(Y:Big, Z:Big) .
 
-Solution 1
+Unifier 1
 X:Small --> #1:Small
 Z:Big --> #1:Small
 Y:Big --> 1f
 
-Solution 2
+Unifier 2
 X:Small --> #1:Small
 Z:Big --> 1f
 Y:Big --> #1:Small
 
-Solution 3
+Unifier 3
 X:Small --> f(#1:Small, #2:Small)
 Z:Big --> #1:Small
 Y:Big --> #2:Small
 ==========================================
 unify in FOO2 : X:Small =? f(g(Y:Small), Z:Small) .
 
-Solution 1
+Unifier 1
 X:Small --> #1:Small
 Z:Small --> #1:Small
 Y:Small --> a
 ==========================================
 unify in FOO3 : X:Small =? f(g(Y:Big), Z:Small) .
 
-Solution 1
+Unifier 1
 X:Small --> #1:Small
 Z:Small --> #1:Small
 Y:Big --> a
 
-Solution 2
-X:Small --> f(#2:Small, g(#1:Small))
-Z:Small --> #2:Small
-Y:Big --> #1:Small
+Unifier 2
+X:Small --> f(#1:Small, g(#2:Small))
+Z:Small --> #1:Small
+Y:Big --> #2:Small
 ==========================================
 unify in FOO4 : X:Small =? f(g(Y:Big), Z:Small) .
 
-Solution 1
+Unifier 1
 X:Small --> #1:Small
 Z:Small --> #1:Small
 Y:Big --> g^999999(a)
 ==========================================
 unify in FOO5 : X:Small =? f(g(Y:Big), Z:Small) .
 
-Solution 1
+Unifier 1
 X:Small --> #1:Small
 Z:Small --> #1:Small
 Y:Big --> g^999999(a)
 
-Solution 2
-X:Small --> f(#2:Small, g(#1:Small))
-Z:Small --> #2:Small
-Y:Big --> #1:Small
+Unifier 2
+X:Small --> f(#1:Small, g(#2:Small))
+Z:Small --> #1:Small
+Y:Big --> #2:Small
 ==========================================
 unify in FOO6 : X:Big =? h(f(Y:Big, Y:Big)) .
 
-Solution 1
+Unifier 1
 X:Big --> h(1f)
 Y:Big --> 1f
 Bye.

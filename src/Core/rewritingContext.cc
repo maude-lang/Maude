@@ -46,9 +46,8 @@ bool RewritingContext::traceFlag = false;
 void
 RewritingContext::markReachableNodes()
 {
-  if (rootNode == 0)
-    return;  // limited use RewritingContext
-  rootNode->mark();
+  if (!isLimited())
+    rootNode->mark();
   int nrFragile = nrFragileBindings();
   for (int i = 0; i < nrFragile; i++)
     {
@@ -56,9 +55,8 @@ RewritingContext::markReachableNodes()
       if (d != 0)
 	d->mark();     
     }
-  int stackLength = redexStack.length();
-  for (int i = 0; i < stackLength; i++)
-    redexStack[i].node()->mark();
+  for (RedexPosition& p : redexStack)
+    p.node()->mark();
 }
 
 RewritingContext*
@@ -73,6 +71,16 @@ RewritingContext::handleInterrupt()
   //
   //	By default we don't know how to handle an interrupt.
   //
+  return false;
+}
+
+bool
+RewritingContext::blockAndHandleInterrupts(sigset_t *normalSet)
+{
+  //
+  //	Hard to do anything sensible here.
+  //
+  CantHappen("base class version shouldn't be called");
   return false;
 }
 

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -90,7 +90,8 @@ NarrowingUnificationProblem::NarrowingUnificationProblem(PreEquation* preEquatio
       sortedSolution->bind(i, 0);  // so GC doesn't barf
       //
       //	At very least the gap between the preEquation variables and the target variables
-      //	must be zero'd out so that PendingUnificationStack cycle detection doesn't look at garbage.
+      //	must be zero'd out so that PendingUnificationStack cycle detection doesn't look
+      //	at garbage.
       //	Also UnificationContext protects its slots from GC so they need to be safe values.
       //
       unsortedSolution->bind(i, 0);
@@ -232,7 +233,8 @@ NarrowingUnificationProblem::variableIndexToSort(int index)
       //
       //	Original dag variable.
       //
-      return safeCast(VariableSymbol*, variableInfo.index2Variable(index - firstTargetSlot)->symbol())->getSort();
+      return safeCast(VariableSymbol*,
+		      variableInfo.index2Variable(index - firstTargetSlot)->symbol())->getSort();
     }
   //
   //	Fresh variable introduced by unification.
@@ -244,19 +246,20 @@ void
 NarrowingUnificationProblem::bindFreeVariables()
 {
   //
-  //	We go through the variables that were free in the unsorted unifier and bind each to a fresh variable, whose sort is either that
-  //	calculated by the BDDs for a constrained variables, or the sort of the original variable for an unconstrained variable.
+  //	We go through the variables that were free in the unsorted unifier and bind
+  //	each to a fresh variable, whose sort is either that calculated by the BDDs
+  //	for a constrained variables, or the sort of the original variable for an
+  //	unconstrained variable.
   //
   const Vector<Byte>& assignment = orderSortedUnifiers->getCurrentAssignment();
   int bddVar = sortBdds->getFirstAvailableVariable();
   int freshVariableCount = 0;
 
-  FOR_EACH_CONST(i, NatSet, freeVariables)
+  for (int fv : freeVariables)
     {
       //
       //	Get original sort of variable and its connected component.
       //
-      int fv = *i;
       Sort* sort = variableIndexToSort(fv);
       ConnectedComponent* component = sort->component();
 
@@ -264,7 +267,8 @@ NarrowingUnificationProblem::bindFreeVariables()
       if (sortConstrainedVariables.contains(fv))
 	{
 	  //
-	  //	The index of the new sort is binary encoded by the assignments to the BDD variables for this free variable.
+	  //	The index of the new sort is binary encoded by the assignments to the
+	  //	BDD variables for this free variable.
 	  //
 	  int nrBddVariables = sortBdds->getNrVariables(component->getIndexWithinModule());
 	  int newSortIndex = 0;
@@ -280,20 +284,21 @@ NarrowingUnificationProblem::bindFreeVariables()
       else
 	{
 	  //
-	  //	We have a free variable that didn't occur in any other variables binding; therefore its sort
-	  //	isn't constrained and remains the same.
+	  //	We have a free variable that didn't occur in any other variables binding;
+	  //	therefore its sort isn't constrained and remains the same.
 	  //
 	  newSort = sort;
 	}
       //
       //	Make a new fresh variable with correct sort and name.
       //
-      //	By giving fv as the slot, we ensure that we can reinstantiate users of this variable for second
-      //	and subsequent sorted solutions corresponding to our unsorted solution.
+      //	By giving fv as the slot, we ensure that we can reinstantiate users of this variable
+      //	for second and subsequent sorted solutions corresponding to our unsorted solution.
       //
-      DagNode* newVariable = new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(newSort),
-						 freshVariableGenerator->getFreshVariableName(freshVariableCount, variableFamily),
-						 fv);
+      DagNode* newVariable =
+	new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(newSort),
+			    freshVariableGenerator->getFreshVariableName(freshVariableCount, variableFamily),
+			    fv);
       //
       //	Bind slot to new variable.
       //
@@ -301,8 +306,8 @@ NarrowingUnificationProblem::bindFreeVariables()
       ++freshVariableCount;
     }
   //
-  //	Now go through the substitution, instantiating anything that is bound to something other than a free variable
-  //	on the new free variables.
+  //	Now go through the substitution, instantiating anything that is bound to something
+  //	other than a free variable on the new free variables.
   //
   for (int i = 0; i < substitutionSize; ++i)
     {
@@ -344,9 +349,8 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
     //	unifier was extract now gets allocated a vector of BDD variables to encode its
     //	sort.
     //
-    FOR_EACH_CONST(i, NatSet, sortConstrainedVariables)
+    for (int scv : sortConstrainedVariables)
       {
-	int scv = *i;
 	realToBdd[scv] = nextBddVariable;
 	Sort* sort = variableIndexToSort(scv);
 	nextBddVariable += sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
@@ -363,9 +367,8 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
   //
   Bdd unifier = bddtrue;
   {
-    FOR_EACH_CONST(i, NatSet, sortConstrainedVariables)
+    for (int fv : sortConstrainedVariables)
       {
-	int fv = *i;
 	if (fv >= substitutionSize)
 	  {
 	    Sort* sort = unsortedSolution->getFreshVariableSort(fv);
@@ -386,14 +389,18 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
   for (int i = 0; i < substitutionSize; ++i)  // consider original variables only
     {
       //
-      //	We don't even look at fresh variables - they are not subject to original constraints - they get implicity constrained
-      //	by where they show up if they are free. Therefore each slot we examine corresponds to:
+      //	We don't even look at fresh variables - they are not subject to original
+      //	constraints - they get implicitly constrained by where they show up if
+      //	they are free. Therefore each slot we examine corresponds to:
       //	(1) an original variable that was bound;
-      //	(2) an original variable that is free but sort constrained by its occurrence in bindings to other variables;
-      //	(3) an original variable that is free and doesn't occur in bindings to other variables; or
-      //	(4) an unused slot lying between the preEquation variables and the dag variables (no man's land).
+      //	(2) an original variable that is free but sort constrained by its occurrence
+      //	    in bindings to other variables;
+      //	(3) an original variable that is free and doesn't occur in bindings to other
+      //	    variables; or
+      //	(4) an unused slot lying between the preEquation variables and the dag
+      //	    variables (no man's land).
       //
-      //	Cases (3) and (4) place no role in the BDD based sort computations.
+      //	Cases (3) and (4) play no role in the BDD based sort computations.
       //
       DagNode* d = sortedSolution->value(i);
       if (d != 0 || sortConstrainedVariables.contains(i))
@@ -414,7 +421,8 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
 	  else
 	    {
 	      //
-	      //	(2) Free, sort constrained variable: sort assigned to free variable must be <= variables original sort.
+	      //	(2) Free, sort constrained variable: sort assigned to free variable
+	      //	must be <= variables original sort.
 	      //
 	      leqRelation = sortBdds->getRemappedLeqRelation(sort, realToBdd[i]);
 	      DebugAdvisory("free variable induces leqRelation " << leqRelation);
@@ -435,15 +443,15 @@ NarrowingUnificationProblem::findOrderSortedUnifiers()
   //
   Bdd maximal = unifier;
   int secondBase = sortBdds->getFirstAvailableVariable();
-  FOR_EACH_CONST(i, NatSet, sortConstrainedVariables)
+  for (int fv : sortConstrainedVariables)
     {
-      int fv = *i;
       Sort* sort = variableIndexToSort(fv);
       int nrBddVariables = sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
       //
-      //	Replace the bdd variables allocated to the real variable in unifier with 0...nrBddVariables-1.
-      //	Replace the bdd variables firstAvail,..., firstAvail+nrBddVariables-1 in gtRelation with the
-      //	variables allocated to real variable.
+      //	Replace the bdd variables allocated to the real variable in unifier with
+      //	0...nrBddVariables-1.
+      //	Replace the bdd variables firstAvail,..., firstAvail+nrBddVariables-1 in
+      //	gtRelation with the variables allocated to real variable.
       //
       bddPair* realTofirstArg = bdd_newpair();
       bddPair* secondArgToReal = BddUser::getCachedPairing();
@@ -484,11 +492,10 @@ NarrowingUnificationProblem::classifyVariables()
   //	  Those for which a sort must be calculated based on the their occurances in bindings.
   //	The former is a superset of the latter.
   //
-
-  //
   //	Look at original variables. We compute two sets:
   //	freeVariables is intially the set of unbound original variables.
-  //	sortConstrainedVariables is the set of variables appearing in a binding to an original variable.
+  //	sortConstrainedVariables is the set of variables appearing in a binding
+  //	to an original variable.
   //
   freeVariables.clear();
   sortConstrainedVariables.clear();

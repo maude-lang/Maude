@@ -45,6 +45,9 @@
 /* Define to 1 if you have the <ostream.h> header file. */
 #undef HAVE_OSTREAM_H
 
+/* use ppoll() */
+#undef HAVE_PPOLL
+
 /* Define to 1 if you have the <stddef.h> header file. */
 #undef HAVE_STDDEF_H
 

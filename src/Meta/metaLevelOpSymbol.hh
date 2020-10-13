@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -95,14 +95,18 @@ private:
 							   RewritingContext& context) const;
   NarrowingSearchState2* makeNarrowingSearchState2(MetaModule* m,
 						   FreeDagNode* subject,
-						   RewritingContext& context) const;
+						   RewritingContext& context,
+						   int variantFlags) const;
 
   StrategicSearch* makeStrategicSearch(MetaModule* m,
 				       FreeDagNode* subject,
 				       RewritingContext& context,
 				       bool depthSearch) const;
 
-  bool metaUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint);
+  bool metaUnify2(FreeDagNode* subject,
+		  RewritingContext& context,
+		  bool disjoint,
+		  bool irredundant);
   bool metaGetVariant2(FreeDagNode* subject, RewritingContext& context, bool irredundant);
   bool metaVariantUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint);
   bool okToBind();
@@ -118,7 +122,7 @@ private:
   NarrowingSequenceSearch3* makeNarrowingSequenceSearch3(MetaModule* m,
 							 FreeDagNode* subject,
 							 RewritingContext& context,
-							 bool keepHistory) const;
+							 int variantFlags) const;
   DagNode* makeNarrowingSearchPathResult(MetaModule* m, NarrowingSequenceSearch3* state) const;
 
   bool complexStrategy(DagNode* subject, RewritingContext& context);

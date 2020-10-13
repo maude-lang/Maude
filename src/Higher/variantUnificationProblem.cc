@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2016 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
 #include "interface.hh"
 #include "core.hh"
 #include "variable.hh"
+#include "higher.hh"
 
 //	interface class definitions
 #include "symbol.hh"
@@ -55,6 +56,7 @@
 
 //	higher class definitions
 #include "variantSearch.hh"
+#include "filteredVariantUnifierSearch.hh"
 #include "variantUnificationProblem.hh"
 
 VariantUnificationProblem::VariantUnificationProblem(RewritingContext* context,
@@ -63,12 +65,14 @@ VariantUnificationProblem::VariantUnificationProblem(RewritingContext* context,
 						     DagNode* target,
 						     const NarrowingVariableInfo& variableInfo,
 						     FreshVariableGenerator* freshVariableGenerator,
-						     int disallowedVariableFamily)
+						     int disallowedVariableFamily,
+						     int variantFlags)
   : context(context),
     preEquation(preEquation),
     variableInfo(variableInfo),
     freshVariableGenerator(freshVariableGenerator)
 {
+  //DebugAlways("variantFlags = " << variantFlags);
   DebugAdvisory(Tty(Tty::RED) <<
 		"VariantUnificationProblem(): lhsDag = " << preEquation->getLhsDag() <<
 		"  target = " << target << Tty(Tty::RESET));
@@ -104,14 +108,17 @@ VariantUnificationProblem::VariantUnificationProblem(RewritingContext* context,
   //	be read.
   //
   substitutionSize = 0;
-  variantSearch = new VariantSearch(newContext,
-				    blockerDags,
-				    freshVariableGenerator,
-				    true,
-				    false,
-				    false,
-				    disallowedVariableFamily,
-				    false);
+  variantSearch = (variantFlags & FILTER_VARIANT_UNIFIERS) ?
+    new FilteredVariantUnifierSearch(newContext,
+				     blockerDags,
+				     freshVariableGenerator,
+				     variantFlags,
+				     disallowedVariableFamily) :
+    new VariantSearch(newContext,
+		      blockerDags,
+		      freshVariableGenerator,
+		      variantFlags | VariantSearch::UNIFICATION_MODE,
+		      disallowedVariableFamily);
 
   firstTargetSlot = module->getMinimumSubstitutionSize();  // first slot after variables reserved for preEquation
   substitutionSize = firstTargetSlot + variableInfo.getNrVariables();  // add the number of variables in target
@@ -144,16 +151,17 @@ VariantUnificationProblem::markReachableNodes()
 bool
 VariantUnificationProblem::findNextUnifier()
 {
-  const Vector<DagNode*>* unifier = variantSearch->getNextUnifier(nrFreeVariables, variableFamily);
+  bool moreUnifiers = variantSearch->findNextUnifier();
   context->transferCountFrom(*newContext);
-  if (unifier == 0)
+  if (!moreUnifiers)
     return false;
   //
-  //	We got a unifier; we need to translate it into the indices used in preEquations and variableInfo.
-  //	Also we generate fresh variables from the appropriate family with suitable variable indices for
-  //	any variables mentioned in preEquation or variableInfo but not mentioned in the unifier.
+  //	We got a unifier; we need to translate it into the indices used in preEquations and
+  //	variableInfo. Also we generate fresh variables from the appropriate family with
+  //	suitable variable indices for any variables mentioned in preEquation or variableInfo
+  //	but not mentioned in the unifier.
   //
-
+  const Vector<DagNode*>& unifier = variantSearch->getCurrentUnifier(nrFreeVariables, variableFamily);
   //
   //	Start by zeroing out any old substitution.
   //
@@ -166,7 +174,7 @@ VariantUnificationProblem::findNextUnifier()
   //	We can't take the number of unifier variables from unifierVariableInfo because
   //	this also includes variables from blocker terms that may not have bindings.
   //
-  int nrUnifierVariables = unifier->size();
+  int nrUnifierVariables = unifier.size();
   DebugAdvisory("variant unifier:\n");
 
   for (int i = 0; i < nrUnifierVariables; ++i)
@@ -183,10 +191,10 @@ VariantUnificationProblem::findNextUnifier()
 	indexInOriginalProblem = preEquation->variable2Index(variable);  // from preEquation
       else
 	indexInOriginalProblem += firstTargetSlot;  // from target; move to post preEquation indices
-      solution->bind(indexInOriginalProblem, (*unifier)[i]);
+      solution->bind(indexInOriginalProblem, unifier[i]);
 
       DebugAdvisory("  " << (DagNode*) variable <<
-		    " |-> " << (*unifier)[i] <<
+		    " |-> " << unifier[i] <<
 		    "   using index " << indexInOriginalProblem);
     }
   //
@@ -211,10 +219,9 @@ VariantUnificationProblem::findNextUnifier()
 	      //	Not bound by VariantSearch so it must be a preEquation variable
 	      //	that doesn't occur in the lhs.
 	      //
-	      Sort* sort = safeCast(VariableSymbol*, preEquation->index2Variable(i)->symbol())->getSort();
-	      VariableDagNode* v = new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(sort),
-						       freshVariableGenerator->getFreshVariableName(nrFreeVariables, variableFamily),
-						       nrFreeVariables);
+	      Symbol* baseSymbol = preEquation->index2Variable(i)->symbol();
+	      int name = freshVariableGenerator->getFreshVariableName(nrFreeVariables, variableFamily);
+	      VariableDagNode* v = new VariableDagNode(baseSymbol, name, nrFreeVariables);
 	      solution->bind(i, v);
 	      ++nrFreeVariables;
 
@@ -225,17 +232,16 @@ VariantUnificationProblem::findNextUnifier()
 	  //
 	  //	Variable belongs to dag being narrowed.
 	  //
-	  int indexInTarget = i - firstTargetSlot;
 	  if (solution->value(i) == 0)
 	    {
 	      //
-	      //	Not bound by VariantSearch so it must exist only in a larger dag being narrowed and
-	      //	not in the subdag being unified.
+	      //	Not bound by VariantSearch so it must exist only in a larger dag being
+	      //	narrowed and not in the subdag being unified.
 	      //
-	      Sort* sort = safeCast(VariableSymbol*, variableInfo.index2Variable(indexInTarget)->symbol())->getSort();
-	      VariableDagNode* v = new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(sort),
-						       freshVariableGenerator->getFreshVariableName(nrFreeVariables, variableFamily),
-						       nrFreeVariables);
+	      int indexInTarget = i - firstTargetSlot;
+	      Symbol* baseSymbol = variableInfo.index2Variable(indexInTarget)->symbol();
+	      int name = freshVariableGenerator->getFreshVariableName(nrFreeVariables, variableFamily);
+	      VariableDagNode* v = new VariableDagNode(baseSymbol, name, nrFreeVariables);
 	      solution->bind(i, v);
 	      ++nrFreeVariables;
 	    }

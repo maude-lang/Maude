@@ -418,6 +418,15 @@ ACU_LhsAutomaton::fullMatch(ACU_DagNode* subject,
 			    Subproblem*& returnedSubproblem,
 			    ACU_ExtensionInfo* extensionInfo)
 {
+  DebugEnter("topSymbol=" << topSymbol <<
+	     "  totalLowerBound=" << totalLowerBound <<
+	     "  totalUpperBound=" << totalUpperBound <<
+	     "  nrTopVariables=" << topVariables.size() <<
+	     "  nrGroundAliens=" << groundAliens.size() <<
+	     "  nrGroundedOutAliens=" << groundedOutAliens.size() <<
+	     "  nrNonGroundAliens=" << nonGroundAliens.size() <<
+	     "  subject" << subject);
+  
   SubproblemAccumulator subproblems;
   ACU_Subproblem* subproblem = buildBipartiteGraph(subject,
 						   solution,

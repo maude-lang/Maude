@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ VariableInfo::variable2Index(VariableTerm* variable)
   int nrRealVariables = variables.length();
   Assert(nrRealVariables == nrProtectedVariables,
 	 "can't add new real variables at this stage");
-  for (int i = 0; i < nrRealVariables; i++)
+  for (int i = 0; i < nrRealVariables; ++i)
     {
       if (variable->equal(variables[i]))
 	return i;
@@ -69,7 +69,7 @@ VariableInfo::variable2Index(VariableDagNode* variable) const
 {
   Assert(variable != 0, "null dag");
   int nrRealVariables = variables.length();
-  for (int i = 0; i < nrRealVariables; i++)
+  for (int i = 0; i < nrRealVariables; ++i)
     {
       if (variables[i]->equal(variable))
 	return i;
@@ -93,7 +93,7 @@ VariableInfo::computeIndexRemapping()
   int nrConstructionIndices = constructionIndices.length();
   /*
   cerr << "dumping constructionIndices\n";
-  for (int i = 0; i < nrConstructionIndices; i++)
+  for (int i = 0; i < nrConstructionIndices; ++i)
     {
       cerr << i << '\t' <<
 	constructionIndices[i].assignedFragment << '\t' <<
@@ -106,7 +106,7 @@ VariableInfo::computeIndexRemapping()
   //	All construction indices that need to be protected between different fragments
   //	get remapped to a new protected variable.
   //
-  for (int i = 0; i < nrConstructionIndices; i++)
+  for (int i = 0; i < nrConstructionIndices; ++i)
     {
       if (constructionIndices[i].assignedFragment != constructionIndices[i].lastUseFragment)
 	constructionIndices[i].newIndex = makeProtectedVariable();
@@ -118,7 +118,7 @@ VariableInfo::computeIndexRemapping()
   Graph conflicts(nrConstructionIndices);
   Vector<int> conflictCandidates;
   Vector<int> nextConflictCandidates;
-  for (int i = 0; i < nrConstructionIndices; i++)
+  for (int i = 0; i < nrConstructionIndices; ++i)
     {
       if (constructionIndices[i].assignedFragment ==
 	  constructionIndices[i].lastUseFragment)
@@ -131,9 +131,8 @@ VariableInfo::computeIndexRemapping()
 	  //	a smaller pool of candidates.
 	  //
 	  nextConflictCandidates.clear();
-	  FOR_EACH_CONST(j, Vector<int>, conflictCandidates)
+	  for (int c : conflictCandidates)
 	    {
-	      int c = *j;
 	      if (constructionIndices[c].lastUseTime > i)
 		{
 		  conflicts.insertEdge(i, c);
@@ -149,7 +148,7 @@ VariableInfo::computeIndexRemapping()
   //
   Vector<int> coloring;
   int nrColors = conflicts.color(coloring);
-  for (int i = 0; i < nrConstructionIndices; i++)
+  for (int i = 0; i < nrConstructionIndices; ++i)
     {
       if (constructionIndices[i].assignedFragment ==
 	  constructionIndices[i].lastUseFragment)
@@ -168,9 +167,9 @@ VariableInfo::computeIndexRemapping()
 Term*
 VariableInfo::variableNameConflict(FreshVariableGenerator& variableSource)
 {
-  FOR_EACH_CONST(i, Vector<Term*>, variables)
+  for (Term* t : variables)
     {
-      VariableTerm* v = safeCastNonNull<VariableTerm*>(*i);
+      VariableTerm* v = safeCastNonNull<VariableTerm*>(t);
       if (variableSource.variableNameConflict(v->id()))
 	return v;
     }

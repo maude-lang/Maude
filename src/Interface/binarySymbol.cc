@@ -51,6 +51,8 @@ BinarySymbol::BinarySymbol(int id, bool memoFlag, Term* identity)
     identityTerm(identity)
 {
   cyclicIdentity = (identity == 0) ? 0 : UNDECIDED;
+  unequalLeftIdCollapse = false;
+  unequalRightIdCollapse = false;
 }
 
 bool
@@ -228,10 +230,19 @@ BinarySymbol::leftIdentitySortCheck()
   //	Check that all collapses are to less or equal sorts.
   //
   int step = traverse(0, id->getSortIndex());
-  for (int i = 1; i < nrSorts; i++)
+  for (int i = 0; i < nrSorts; i++)
     {
       const Sort* resultSort = component->sort(traverse(step, i));
-      unequalLeftIdCollapse = (resultSort->index() != i);
+      if (resultSort->index() != i && !unequalLeftIdCollapse)
+	{
+	  Verbose("op " << this << " left-identity collapse from " <<
+		  resultSort << " to " << component->sort(i) <<
+		  " is unequal.");
+	  unequalLeftIdCollapse = true;
+	}
+      DebugInfo("op " << this << " sort " << resultSort <<
+		  " collapse to " << component->sort(i) <<
+		  " unequalLeftIdCollapse = " << unequalLeftIdCollapse);
       WarningCheck(leq(i, resultSort),
 		   "sort declarations for operator " << QUOTE(this) <<
 		   " with left identity " << QUOTE(id) <<
@@ -257,10 +268,19 @@ BinarySymbol::rightIdentitySortCheck()
   //	Check all collapses are to less or equal sorts.
   //
   int idIndex = id->getSortIndex();
-  for (int i = 1; i < nrSorts; i++)
+  for (int i = 0; i < nrSorts; i++)
     {
       const Sort* resultSort = component->sort(traverse(traverse(0, i), idIndex));
-      unequalRightIdCollapse = (resultSort->index() != i);
+      if (resultSort->index() != i && !unequalRightIdCollapse)
+	{
+	  Verbose("op " << this << " right-identity collapse from " <<
+		  resultSort << " to " << component->sort(i) <<
+		  " is unequal .");
+	  unequalRightIdCollapse = true;
+	}   
+      DebugInfo("op " << this << " sort " << resultSort <<
+		  " collapse to " << component->sort(i) <<
+		  " unequalRightIdCollapse = " << unequalRightIdCollapse);
       WarningCheck(leq(i, resultSort),
 		   "sort declarations for operator " << QUOTE(this) <<
 		   " with right identity " << QUOTE(id) <<
@@ -299,7 +319,6 @@ BinarySymbol::lookForCycle(Term* term, NatSet& examinedIds) const
   Symbol* s = term->symbol();
   if (s == this)
     return true;
-
   //
   //	If we've reached symbol which has an identity we haven't explored, see
   //	if we can reach a cycle through it.

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2018-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@
 NarrowingSearchState2* 
 InterpreterManagerSymbol::makeNarrowingSearchState2(ImportModule* m,
 						    FreeDagNode* message,
-						    RewritingContext& context) const
+						    RewritingContext& context,
+						    int variantFlags) const
 {
   int variableFamilyName;
   if (metaLevel->downQid(message->getArgument(5), variableFamilyName))
@@ -49,36 +50,47 @@ InterpreterManagerSymbol::makeNarrowingSearchState2(ImportModule* m,
 	  RewritingContext* subjectContext = term2RewritingContext(t, context);
 	  subjectContext->reduce();
 
-	  Vector<DagNode*> blockerDags; 
-	  FOR_EACH_CONST(i, Vector<Term*>, blockerTerms)
+	  Vector<DagNode*> blockerDags;
+	  for (Term* t : blockerTerms)
 	    {
-	      Term* t = *i;
-	      t = t->normalize(true);  // we don't really need to normalize but we do need to set hash values
+	      //
+	      //	We don't really need to normalize but we do need to set hash values.
+	      //
+	      t = t->normalize(true);
 	      blockerDags.append(t->term2Dag());
 	      t->deepSelfDestruct();
 	    }
-
 	  return new NarrowingSearchState2(subjectContext,
 					   blockerDags,
 					   new FreshVariableSource(m, 0),
-					   variableFamily);
+					   variableFamily,
+					   (NarrowingSearchState2::ALLOW_NONEXEC |
+					   NarrowingSearchState2::GC_VAR_GEN |
+					    PositionState::RESPECT_FROZEN),
+					   0,
+					   UNBOUNDED,
+					   variantFlags);
 	}
     }
   return 0;
 }
 
 bool
-InterpreterManagerSymbol::getOneStepNarrowing(FreeDagNode* message, ObjectSystemRewritingContext& context)
+InterpreterManagerSymbol::getOneStepNarrowing(FreeDagNode* message,
+					      ObjectSystemRewritingContext& context)
 {
   //
-  //	op getOneStepNarrowing : Oid Oid Qid Term TermList Qid Nat -> Msg .
-  //                              0   1   2   3      4      5   6  
+  //	op getOneStepNarrowing : Oid Oid Qid Term TermList Qid VariantOptionSet Nat -> Msg .
+  //                              0   1   2   3      4      5         6          7
   //
   Interpreter* interpreter;
   if (getInterpreter(message->getArgument(0), interpreter))
     {
+      int variantFlags;
       Int64 solutionNr;
-      if (metaLevel->downSaturate64(message->getArgument(6), solutionNr) &&
+      if (metaLevel->downVariantOptionSet(message->getArgument(6), variantFlags) &&
+	  (variantFlags & ~(MetaLevel::DELAY | MetaLevel::FILTER)) == 0 &&
+	  metaLevel->downSaturate64(message->getArgument(7), solutionNr) &&
 	  solutionNr >= 0)
 	{
 	  int id;
@@ -94,7 +106,7 @@ InterpreterManagerSymbol::getOneStepNarrowing(FreeDagNode* message, ObjectSystem
 
 		      if (mm->getCachedStateObject(message, solutionNr, state, lastSolutionNr))
 			m->protect();  // Use cached state
-		      else if ((state = makeNarrowingSearchState2(m, message, context)))
+		      else if ((state = makeNarrowingSearchState2(m, message, context, variantFlags)))
 			lastSolutionNr = -1;
 		      else
 			return false;
@@ -144,9 +156,9 @@ InterpreterManagerSymbol::getOneStepNarrowing(FreeDagNode* message, ObjectSystem
 			      {
 				//
 				//	We pass the active term and variable info. This means
-				//	the version with (potentially) renamed variables. We do this for
-				//	consistancy since the replaced dag will be expressed in those
-				//	same variables.
+				//	the version with (potentially) renamed variables. We do
+				//	this for consistancy since the replaced dag will be
+				//	expressed in those same variables.
 				//
 				RewritingContext* subjectContext = state->getActiveContext();
 				const NarrowingVariableInfo& narrowingVariableInfo = state->getActiveVariableInfo();
@@ -164,8 +176,8 @@ InterpreterManagerSymbol::getOneStepNarrowing(FreeDagNode* message, ObjectSystem
 			      }
 			  }
 			//
-			//	Can't use dagNodeMapForContext after reduce since the from dagNodes might be
-			//	garbage collected or even rewritten in place.
+			//	Can't use dagNodeMapForContext after reduce since the from
+			//	dagNodes might be garbage collected or even rewritten in place.
 			//
 			PointerMap qidMap;
 			PointerMap dagNodeMapForContext;
@@ -198,7 +210,11 @@ InterpreterManagerSymbol::getOneStepNarrowing(FreeDagNode* message, ObjectSystem
 			  label = Token::encode("");
 			args[6] = metaLevel->upQid(label, qidMap);
 
-			args[7] = metaLevel->upPartialSubstitution(unifier, state->getVariableInfo(), m, qidMap, dagNodeMap);
+			args[7] = metaLevel->upPartialSubstitution(unifier,
+								   state->getVariableInfo(),
+								   m,
+								   qidMap,
+								   dagNodeMap);
 			args[8] = metaLevel->upSubstitution(unifier, *rule, m, qidMap, dagNodeMap);
 			args[9] = metaLevel->upQid(FreshVariableSource::getBaseName(state->getVariableFamily()), qidMap);
 

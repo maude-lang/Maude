@@ -3,7 +3,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2016 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ PigPug::firstMoveWithCycleDetection()
   //
   //	Now we check feasibility of remaining equation.
   //
-  if (!(feasibleGeneralCase()))
+  if (!(feasible()))
     return NOT_ENTERED;
   //
   //	Check to see if we've reached this state before.
@@ -76,10 +76,10 @@ PigPug::firstMoveWithCycleDetection()
   //	This is because cancellation generates the equivalent of equate moves and
   //	we do not want these to have successors.
   //
-  int result = rhsPeelGeneralCase();
+  int result = rhsPeel();
   if (result != FAIL)
     return result;
-  result = lhsPeelGeneralCase();
+  result = lhsPeel();
   if (result != FAIL)
     return result;
   return equate();
@@ -89,7 +89,8 @@ int
 PigPug::nextMoveWithCycleDetection()
 {
   int previousMove = undoMove();
-  if ((previousMove & BOTH) == BOTH)
+  int basicMove = previousMove & BASIC_MOVES;
+  if (basicMove == EQUATE)
     {
       //
       //	Last move was cancel or equate - no more moves possible.
@@ -102,12 +103,12 @@ PigPug::nextMoveWithCycleDetection()
   //
   //	Try the one or two remaining moves.
   //
-  if ((previousMove & BOTH) == INC_RHS)
+  if (basicMove == RHS_PEEL)
     {
       //
       //	Last move was rhs peel so we can try lhs peel.
       //
-      int result = lhsPeelGeneralCase();
+      int result = lhsPeel();
       if (result != FAIL)
 	return result;
     }
@@ -147,7 +148,7 @@ PigPug::runWithCycleDetection(int result)
 	    }
 	}
       //
-      //	Either the last setp was a failure, or we failed to complete.
+      //	Either the last step was a failure, or we failed to complete.
       //
       if (path.empty())
 	break;  // nothing to undo so we're done
@@ -235,7 +236,10 @@ PigPug::confirmedLive()
       return;
     }
   //
-  //	All those states that are currently on the state have a path to a unifier.
+  //	All those states that are currently on the stack have a path to a unifier,
+  //	so mark them as live. If there is a state on a cycle then we have a infinite
+  //	family of unifiers corresponding to n times around the cycle and then exiting
+  //	via the path to the unifier.
   //
   int stackSize = traversalStack.size();
   for (int i = 0; i < stackSize; ++i)

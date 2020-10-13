@@ -39,10 +39,9 @@ SyntacticPreModule::process()
   processImports();
   if (flatModule->isBad())
     {
-      IssueWarning(*flatModule <<
-		   ": this module contains one or more errors that could not \
-be patched up and thus it cannot be used or imported.");
-      flatModule->resetImports();
+      //
+      //	At least one of our imports failed in someway so we're going bail to avoid 
+      //	cascading warnings.
       //
       //	This is a bit of a hack; getFlatSignature() uses Module::getStatus() != Module::OPEN
       //	as a proxy for all imports done, to avoid cyclic importation. Closing the sort set
@@ -51,15 +50,20 @@ be patched up and thus it cannot be used or imported.");
       //	its sorts.
       //	
       flatModule->closeSortSet();
+
+      IssueWarning(*flatModule <<
+		   ": this module contains one or more errors that could not \
+be patched up and thus it cannot be used or imported.");
+      flatModule->resetImports();
       return;
     }
   //
   //	Hande sorts and subsorts.
   //
-  flatModule->importSorts();
-  processSorts();
-  checkOpTypes();
-  flatModule->closeSortSet();
+  flatModule->importSorts();  // could markAsBad()
+  processSorts();  // might add missing sorts
+  checkOpTypes();  // might add missing sorts
+  flatModule->closeSortSet();  // computes connectedComponents; could markAsBad()
   if (flatModule->isBad())
     {
       IssueWarning(*flatModule <<
@@ -190,10 +194,16 @@ SyntacticPreModule::processSorts()
 Sort*
 SyntacticPreModule::getSort(Token token)
 {
+  //
+  //	Check that token corresponds to an actual sort.
+  //	If it doesn't, we assume the user just forgot to declare it,
+  //	and add it so we can press on.
+  //
   int code = token.code();
   Sort* sort = flatModule->findSort(code);
   if (sort == 0)
     {
+      //
       sort = flatModule->addSort(code);
       sort->setLineNumber(FileTable::SYSTEM_CREATED);
       IssueWarning(LineNumber(token.lineNumber()) <<
@@ -203,8 +213,26 @@ SyntacticPreModule::getSort(Token token)
 }
 
 void
+SyntacticPreModule::checkType(const Type& type)
+{
+  //
+  //	Check that all the tokens appearing in a type name correspond
+  //	to actual sorts.
+  //
+  int nrTokens = type.tokens.length();
+  for (int i = 0; i < nrTokens; i++)
+    (void) getSort(type.tokens[i]);
+}
+
+void
 SyntacticPreModule::checkOpTypes()
 {
+  //
+  //	Check that all the Tokens in the types of operator definitions
+  //	correspond to actually sorts. This is a sanity check for undeclared
+  //	sort names; we don't have the notion of connected components at
+  //	this points.
+  //
   int nrOpDefs = opDefs.length();
   for (int i = 0; i < nrOpDefs; i++)
     {
@@ -224,14 +252,6 @@ SyntacticPreModule::checkOpTypes()
   for (const StratDecl& decl : stratDecls)
     for (const Type& type : decl.types)
       checkType(type);
-}
-
-void
-SyntacticPreModule::checkType(const Type& type)
-{
-  int nrTokens = type.tokens.length();
-  for (int i = 0; i < nrTokens; i++)
-    (void) getSort(type.tokens[i]);
 }
 
 void
@@ -425,7 +445,12 @@ SyntacticPreModule::processImports()
 {
   processParameters(flatModule);
   if (flatModule->isBad())
-    return;  // avoid spurious warnings about missing parameters
+    {
+      //
+      //	We give up early to avoid cascading warnings about missing parameters.
+      //
+      return;
+    }
   //
   //	Automatic imports (not for theories).
   //
@@ -436,7 +461,14 @@ SyntacticPreModule::processImports()
 	  if (ImportModule* fm = getOwner()->getModuleOrIssueWarning(i->first, *this))
 	    flatModule->addImport(fm, i->second, *this);
 	  else
-	    flatModule->markAsBad();
+	    {
+	      //
+	      //	Mark the module as bad to avoid cascading warnings and potential
+	      //	internal errors. But press ahead with imports since they should
+	      //	be independent and we might find other errors.
+	      //
+	      flatModule->markAsBad();
+	    }
 	}
     }
   processExplicitImports(flatModule);

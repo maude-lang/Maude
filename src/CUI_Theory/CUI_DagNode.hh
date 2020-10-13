@@ -26,6 +26,7 @@
 #ifndef _CUI_DagNode_hh_
 #define _CUI_DagNode_hh_
 #include "dagNode.hh"
+#include "variable.hh"
 
 class CUI_DagNode : public DagNode
 {
@@ -65,6 +66,7 @@ public:
   CUI_Symbol* symbol() const;
   DagNode* getArgument(int i) const;
 
+  bool indirectOccursCheck(VariableDagNode* repVar, UnificationContext& solution);
   CUI_DagNode* makePurifiedVersion(UnificationContext& solution, PendingUnificationStack& pending);
 
 private:
@@ -83,7 +85,9 @@ private:
   //
   //	Private unification stuff.
   //
-  bool computeSolvedFormCommutativeCase(CUI_DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
+  bool computeSolvedFormCommutativeCase(CUI_DagNode* rhs,
+					UnificationContext& solution,
+					PendingUnificationStack& pending);
   //
   //	Arguments under CUI symbol.
   //

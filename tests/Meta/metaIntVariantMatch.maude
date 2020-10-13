@@ -1,0 +1,73 @@
+set show timing off .
+
+***
+*** Test variant unification in the meta-interpreter.
+***
+
+load metaInterpreter
+
+fmod XOR is
+  sort XOR .
+
+  sort Elem .
+  ops c1 c2 c3 c4 : -> Elem .
+
+  subsort Elem < XOR .
+  op _+_ : XOR XOR -> XOR [ctor assoc comm] .
+  op 0 : -> XOR .
+  op a : -> XOR .
+
+  vars X Y : XOR .
+
+  eq Y + 0 = Y [variant] .
+  eq X + X = 0 [variant] .
+  eq X + X + Y = Y [variant] .
+endfm
+
+mod VARIANT-MATCH-TEST is
+  pr META-INTERPRETER .
+  sort MsgList .
+  subsort Msg < MsgList .
+  op me : -> Oid .
+  op User : -> Cid .
+  op problem:(_,_) : MatchingProblem TermList -> Attribute .
+  op soln:_ : Nat -> Attribute .
+  op result : MsgList -> Attribute .
+  op _,_ : MsgList MsgList -> MsgList [assoc id: nil] .
+  op nil : -> MsgList .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var V : Term .
+  var TL : TermList .
+  var S : Substitution .
+  var Q : Qid .
+  var B : Bool .
+  var P : Parent .
+  var R : RewriteCount .
+  var ML : MsgList .
+  var MP : MatchingProblem .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('XOR, true)) .
+
+  rl < X : User | AS, problem:(MP, TL) > insertedModule(X, Y) =>
+     < X : User | AS, problem:(MP, TL), soln: 1, result(nil) > getVariantMatcher(Y, X, 'XOR, MP, TL, '#, none, 0) .
+
+  rl < X : User | AS, problem:(MP, TL), soln: N, result(ML) > gotVariantMatcher(X, Y, R, S) =>
+     < X : User | AS,  problem:(MP, TL), soln: (N + 1), result(ML, gotVariantMatcher(X, Y, R, S)) >
+     getVariantMatcher(Y, X, 'XOR, MP, TL, '#, none, N) .
+endm
+
+erew in VARIANT-MATCH-TEST : <> 
+< me : User | problem: ('_+_['X:XOR, 'c1.Elem] <=? '_+_['Y:XOR, 'c2.Elem], empty) > 
+createInterpreter(interpreterManager, me, none) .
+
+variant match in XOR : X:XOR + c1 <=? Y:XOR + c2 .
+
+erew in VARIANT-MATCH-TEST : <> 
+< me : User | problem: ('_+_['X:XOR, 'Y:XOR] <=? '_+_['c1.Elem, 'c2.Elem], empty) > 
+createInterpreter(interpreterManager, me, none) .
+
+variant match in XOR : X:XOR + Y:XOR  <=? c1 + c2 .

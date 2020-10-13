@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,17 @@
 //
 //      Class for breaking compound cycles arising during unification.
 //
+//	A cycle is a vector of variables in the solved form with the structure
+//	  X1 |-> t1[..., X2,...]
+//	  X2 |-> t2[..., X3,...]
+//	      :
+//	  Xn |-> tn[..., X1,...]
+//	where ti is pure in theory Ti.
+//
+//	Such a situation would normally be considered an occurs-check failure
+//	but in the presence of collapse or nonregular theories may have one
+//	or more resolutions.
+//
 #ifndef _compoundCycleSubproblem_hh_
 #define _compoundCycleSubproblem_hh_
 #include "unificationSubproblem.hh"
@@ -34,7 +45,6 @@ class CompoundCycleSubproblem : public UnificationSubproblem, private SimpleRoot
 public:
   CompoundCycleSubproblem();
 
-  void addUnification(DagNode* lhs, DagNode* rhs);
   void addComponent(int variableIndex);
   bool solve(bool findFirst, UnificationContext& solution, PendingUnificationStack& pending);
 

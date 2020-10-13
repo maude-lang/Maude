@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -68,6 +68,12 @@
 SocketManagerSymbol::ActiveSocket::ActiveSocket()
 {
   textArray = 0;  // make it safe for deletion
+  //
+  //	Usual case; special cases might want to set these.
+  //
+  disallowClose = false;
+  readOnly = false;
+  seenEOF = false;
 }
 
 SocketManagerSymbol::ActiveSocket::~ActiveSocket()
@@ -164,4 +170,32 @@ SocketManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingContex
   if (s == closeSocketMsg)
     return closeSocket(safeCast(FreeDagNode*, message), context);
   return false;
+}
+
+DagNode*
+SocketManagerSymbol::manageSocket(int fd,
+				  bool disallowClose,
+				  bool readOnly,
+				  ObjectSystemRewritingContext& context)
+{
+  //
+  //	Make new ActiveSocket record.
+  //
+  activeSockets[fd].state = NOMINAL;
+  activeSockets[fd].disallowClose = disallowClose;
+  activeSockets[fd].readOnly = readOnly;
+  //
+  //	Make a dag to name this socket.
+  //
+  Vector<DagNode*> reply(1);
+  reply[0] = succSymbol->makeNatDag(fd);
+  DagNode* socketName = socketOidSymbol->makeDagNode(reply);
+  //
+  //	Register the socket as an external object with us as its manager.
+  //
+  context.addExternalObject(socketName, this);
+  //
+  //	Return the name to the caller.
+  //
+  return socketName;
 }

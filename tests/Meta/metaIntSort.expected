@@ -107,18 +107,17 @@ rewrites: 4
 result Configuration: <> < me : User | none > gotKinds(me, interpreter(0),
     '`[AttrSet`] ; '`[Bool`] ; '`[Condition`] ; '`[EquationSet`] ;
     '`[FindResult`,NatList`,Parent`,Bound`] ; '`[HookList`] ; '`[ImportList`] ;
-    '`[MatchPair?`,UnificationPair?`,MatchOrUnificationPair`] ; '`[MembAxSet`]
-    ; '`[Module`] ; '`[NarrowingApplyResult?`] ;
-    '`[NarrowingSearchPathResult?`] ; '`[NarrowingSearchResult?`] ;
-    '`[NarrowingTrace`] ; '`[OpDeclSet`] ; '`[OpMappingSet`] ;
-    '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[QidList`,TypeListSet`,QidSet`,GTermList`,Header`,Type?`,ModuleExpression`,ParameterList`] ;
-    '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
+    '`[MatchPair?`,UnificationPair?`,MatchOrUnificationPair`] ;
+    '`[MatchingProblem`] ; '`[MembAxSet`] ; '`[Module`] ;
+    '`[NarrowingApplyResult?`] ; '`[NarrowingSearchPathResult?`] ;
+    '`[NarrowingSearchResult?`] ; '`[NarrowingTrace`] ; '`[OpDeclSet`] ;
+    '`[OpMappingSet`] ; '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[QidList`,TypeListSet`,QidSet`,GTermList`,Header`,Type?`,ModuleExpression`,ParameterList`] ; '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
     '`[ResultTriple?`] ; '`[RuleSet`] ; '`[SmtResult?`] ; '`[SortMappingSet`] ;
     '`[SrewriteOption`] ; '`[StratDeclSet`] ; '`[StratDefSet`] ;
     '`[StratMappingSet`] ; '`[Strategy?`,StrategyList`] ; '`[String`] ;
     '`[SubsortDeclSet`] ; '`[Substitution?`] ; '`[Trace?`] ;
     '`[UnificationProblem`] ; '`[UnificationTriple?`] ; '`[UsingPairSet`] ;
-    '`[Variant?`] ; '`[View`])
+    '`[Variant?`] ; '`[VariantOptionSet`] ; '`[View`])
 ==========================================
 erewrite in SORT-TEST6 : <> < me : User | module: 'META-INTERPRETER >
     createInterpreter(interpreterManager, me, none) .
@@ -128,18 +127,18 @@ result Configuration: <> < me : User | none > gotKinds(me, interpreter(0),
     '`[Configuration`] ; '`[EquationSet`] ;
     '`[FindResult`,NatList`,Parent`,RewriteCount`,Bound`] ; '`[HookList`] ;
     '`[ImportList`] ; '`[InterpreterOptionSet`] ;
-    '`[MatchPair?`,UnificationPair?`,MatchOrUnificationPair`] ; '`[MembAxSet`]
-    ; '`[Module`] ; '`[NarrowingApplyResult?`] ;
-    '`[NarrowingSearchPathResult?`] ; '`[NarrowingSearchResult?`] ;
-    '`[NarrowingTrace`] ; '`[Oid`] ; '`[OpDeclSet`] ; '`[OpMappingSet`] ;
-    '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[QidList`,TypeListSet`,QidSet`,GTermList`,Header`,Type?`,ModuleExpression`,ParameterList`] ;
-    '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
-    '`[ResultTriple?`] ; '`[RuleSet`] ; '`[SmtResult?`] ; '`[SortMappingSet`] ;
-    '`[SrewriteOption`] ; '`[StratDeclSet`] ; '`[StratDefSet`] ;
-    '`[StratMappingSet`] ; '`[Strategy?`,StrategyList`] ; '`[String`] ;
-    '`[SubsortDeclSet`] ; '`[Substitution?`] ; '`[Trace?`] ;
+    '`[MatchPair?`,UnificationPair?`,MatchOrUnificationPair`] ;
+    '`[MatchingProblem`] ; '`[MembAxSet`] ; '`[Module`] ;
+    '`[NarrowingApplyResult?`] ; '`[NarrowingSearchPathResult?`] ;
+    '`[NarrowingSearchResult?`] ; '`[NarrowingTrace`] ; '`[Oid`] ;
+    '`[OpDeclSet`] ; '`[OpMappingSet`] ; '`[ParameterDeclList`] ;
+    '`[PrintOptionSet`] ; '`[QidList`,TypeListSet`,QidSet`,GTermList`,Header`,Type?`,ModuleExpression`,ParameterList`] ; '`[RenamingSet`] ; '`[Result4Tuple?`]
+    ; '`[ResultPair?`] ; '`[ResultTriple?`] ; '`[RuleSet`] ; '`[SmtResult?`] ;
+    '`[SortMappingSet`] ; '`[SrewriteOption`] ; '`[StratDeclSet`] ;
+    '`[StratDefSet`] ; '`[StratMappingSet`] ; '`[Strategy?`,StrategyList`] ;
+    '`[String`] ; '`[SubsortDeclSet`] ; '`[Substitution?`] ; '`[Trace?`] ;
     '`[UnificationProblem`] ; '`[UnificationTriple?`] ; '`[UsingPairSet`] ;
-    '`[Variant?`] ; '`[View`])
+    '`[Variant?`] ; '`[VariantOptionSet`] ; '`[View`])
 ==========================================
 erewrite in SORT-TEST7 : <> < me : User | types: ('Nat ; 'NzRat) >
     createInterpreter(interpreterManager, me, none) .

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ public:
   static void beginCommand();
   static void setDebug();
   static void clearDebug();
-  static void clearInterrupt();
+  //static void clearInterrupt();
   static void clearTrialCount();
   static void clearInfo();
 
@@ -147,6 +147,8 @@ private:
   static bool dontTrace(const DagNode* redex, const PreEquation* pe);
 
   bool handleInterrupt();
+  bool blockAndHandleInterrupts(sigset_t *normalSet);
+  
   void checkForPrintAttribute(MetadataStore::ItemType itemType, const PreEquation* item);
   bool handleDebug(DagNode* subject, const PreEquation* pe);
   void where(ostream& s);
@@ -158,11 +160,12 @@ private:
   static const char header[];
 
   static bool interactiveFlag;
-  static bool ctrlC_Flag;
-  static bool infoFlag;
+  static bool ctrlC_Flag;	// set in ^C signal handler
+  static bool infoFlag;		// set in info signal handler
   static bool stepFlag;
   static bool abortFlag;
   static int debugLevel;
+  static Int64 rewriteCountAtLastInterrupt;
 
   static AutoWrapBuffer* wrapOut;
   static AutoWrapBuffer* wrapErr;

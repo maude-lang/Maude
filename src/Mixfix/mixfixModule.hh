@@ -133,7 +133,8 @@ public:
   Term* makeTrueTerm();
   Term* makeBubble(int bubbleSpecIndex, const Vector<Token>& tokens, int first, int last);
   DagNode* makeUnificationProblemDag(Vector<Term*>& lhs, Vector<Term*>& rhs);
-
+  pair<DagNode*, DagNode*> makeMatchProblemDags(Vector<Term*>& lhs, Vector<Term*>& rhs);
+  
   static void printCondition(ostream& s, const Vector<ConditionFragment*>& condition);
   static void printCondition(ostream& s, const PreEquation* pe);
   void printAttributes(ostream& s, const PreEquation* pe, ItemType itemType);
@@ -177,6 +178,10 @@ public:
 			       Term*& initial,
 			       Vector<Term*>& constraints);
   bool parseVariantUnifyCommand(const Vector<Token>& bubble,
+				Vector<Term*>& lhs,
+				Vector<Term*>& rhs,
+				Vector<Term*>& constraints);
+  bool parseVariantMatchCommand(const Vector<Token>& bubble,
 				Vector<Term*>& lhs,
 				Vector<Term*>& rhs,
 				Vector<Term*>& constraints);
@@ -407,14 +412,16 @@ private:
     TERM_LIST = SIMPLE_BASE - 15,  // for command separated list of hetrogeneous terms
 
     VARIANT_UNIFY_COMMAND = SIMPLE_BASE - 16,
+    VARIANT_MATCH_COMMAND = SIMPLE_BASE - 17,
+    MULTI_MATCH_COMMAND = SIMPLE_BASE - 18,
 
-    USING_PAIR = SIMPLE_BASE - 17,
-    USING_LIST = SIMPLE_BASE - 18,
+    USING_PAIR = SIMPLE_BASE - 19,
+    USING_LIST = SIMPLE_BASE - 20,
 
-    SD_BODY = SIMPLE_BASE - 19,
-    STRATEGY_PAIR = SIMPLE_BASE - 20,
+    SD_BODY = SIMPLE_BASE - 21,
+    STRATEGY_PAIR = SIMPLE_BASE - 22,
 
-    COMPLEX_BASE = SIMPLE_BASE - 21
+    COMPLEX_BASE = SIMPLE_BASE - 23
   };
 
   enum NonTerminalType
@@ -499,7 +506,6 @@ private:
 
   int nonTerminal(int componentIndex, NonTerminalType type);
   int nonTerminal(const Sort* sort, NonTerminalType type);
-  int newNonTerminal();
 
   static int domainComponentIndex(const Symbol* symbol, int argNr);
   static int mayAssoc(Symbol* symbol, int argNr);
@@ -646,10 +652,11 @@ private:
   ConditionFragment* makeConditionFragment(int node);
   void makeCommand(int node, Vector<Term*>& terms);
   MixfixParser* parser;
-  bool complexParser;
-  int componentNonTerminalBase;
-  int nextNonTerminal;
-
+ //
+  //	These two data structures are filled out during the construction
+  //	of a grammar and cleared immediately after. Thus they need not
+  //	be preserved during parser swapping.
+  //
   typedef map<int, int> IntMap;
   IntMap iterSymbols;  // maps from name code to unique nonterminals
   IntMap leadTokens;  // maps from lead tokens of structured sort to unique nonterminals

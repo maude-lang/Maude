@@ -43,7 +43,6 @@
 #include "rewritingContext.hh"
 #include "lhsAutomaton.hh"
 #include "rhsAutomaton.hh"
-//#include "variableInfo.hh"
 #include "equation.hh"
 #include "equationTable.hh"
 
@@ -60,10 +59,9 @@ EquationTable::applyReplace(DagNode* subject,
 			    RewritingContext& context,
 			    ExtensionInfo* extensionInfo)
 {
-  FOR_EACH_CONST(i, Vector<Equation*>, equations)
+  for (Equation* eq : equations)
     {
       Subproblem* sp;
-      Equation* eq = *i;
       long nrVariables = eq->fastNrVariables();
       if (nrVariables >= 0)
 	{
@@ -145,10 +143,9 @@ EquationTable::applyReplaceNoOwise(DagNode* subject,
 				   RewritingContext& context,
 				   ExtensionInfo* extensionInfo)
 {
-  FOR_EACH_CONST(i, Vector<Equation*>, equations)
+  for (Equation* eq : equations)
     {
       Subproblem* sp;
-      Equation* eq = *i;
       //
       //	Except for this one if statement, this fuction is identical
       //	to the previous one.
@@ -232,19 +229,20 @@ EquationTable::applyReplaceNoOwise(DagNode* subject,
 void
 EquationTable::resetEachEquation()
 {
-  FOR_EACH_CONST(e, Vector<Equation*>, equations)
-    (*e)->reset();
+  for (Equation* eq : equations)
+    eq->reset();
 }
 
 #ifdef DUMP
 void
 EquationTable::dumpEquationTable(ostream& s, int indentLevel)
 {
+  for (Equation* eq : equations)
   for (int i = 0; i < equations.length(); i++)
     {
-      LhsAutomaton* a = equations[i]->getLhsAutomaton();
+      LhsAutomaton* a = eq->getLhsAutomaton();
       if (a != 0)
-	a->dump(s, *(equations[i]), indentLevel);
+	a->dump(s, *eq, indentLevel);
     }
 }
 #endif

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2013 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2013-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,8 +42,8 @@ void
 RegularInstruction::setActiveSlots(const NatSet& slots)
 {
   activeSlots = 0;
-  FOR_EACH_CONST(i, NatSet, slots)
-    activeSlots |= (1 << *i);
+  for (int index : slots)
+    activeSlots |= (1 << index);
 }
 
 void

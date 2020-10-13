@@ -1,0 +1,34 @@
+==========================================
+unify in FOO : Z =? f(X, Y) /\ g(Z) =? g(S) .
+
+Unifier 1
+Z --> #1:Small
+X --> 1
+Y --> #1:Small
+S --> #1:Small
+
+Unifier 2
+Z --> #1:Small
+X --> #1:Small
+Y --> 1
+S --> #1:Small
+==========================================
+variant unify in FOO : Z =? f(X, Y) /\ g(Z) =? g(S) .
+
+Unifier 1
+rewrites: 0
+Z --> %1:Small
+X --> 1
+Y --> %1:Small
+S --> %1:Small
+
+Unifier 2
+rewrites: 0
+Z --> %1:Small
+X --> %1:Small
+Y --> 1
+S --> %1:Small
+
+No more unifiers.
+rewrites: 0
+Bye.

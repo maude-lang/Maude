@@ -1,0 +1,36 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for nontermination in U and CU unification due to
+***	not doing an indirect occurs check. We use irred because
+***	we might reduce the number of redundant unifiers in the
+***	future.
+***
+
+fmod U-TEST is
+  sort Foo .
+  ops 1 a : -> Foo .
+  op f : Foo Foo -> Foo [id: 1] .
+vars A B C X Y Z : Foo .
+endfm
+
+irred unify X =? f(Z, Y) /\ Z =? f(X, Y) /\ f(X, Y) =? f(A, B) .
+irred unify f(X, Y) =? a /\ Z =? f(X, Y) /\ X =? f(Z, Y)  .
+irred unify X =? f(f(f(X, Y), X), Y) .
+irred unify X =? f(f(f(X, X), Z), Y) .
+irred unify X =? f(f(X, Y), f(Y, X)) .
+irred unify X =? f(f(f(f(Y, X), Y), X), Z) .
+
+fmod CU-TEST is
+  sort Foo .
+  ops 1 a : -> Foo .
+  op f : Foo Foo -> Foo [comm id: 1] .
+vars A B C X Y Z : Foo .
+endfm
+
+irred unify X =? f(Z, Y) /\ Z =? f(X, Y) /\ f(X, Y) =? f(A, B) .
+irred unify f(X, Y) =? a /\ Z =? f(X, Y) /\ X =? f(Z, Y)  .
+irred unify X =? f(f(f(X, Y), X), Y) .
+irred unify X =? f(f(f(X, X), Z), Y) .
+irred unify X =? f(f(f(f(Y, X), Y), X), Z) .

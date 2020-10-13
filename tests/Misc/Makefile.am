@@ -15,10 +15,13 @@ TESTS = \
 	attributes \
 	diophantine \
 	variantUnification \
+	filteredVariantUnification \
 	variantNarrowing \
 	meseguerFiniteVariant \
+	variantMatching \
 	CU_Unification \
 	assocUnification \
+	AU_Unification \
 	sreduce \
 	smtTest \
 	narrow \
@@ -44,10 +47,13 @@ MAUDE_FILES = \
 	attributes.maude \
 	diophantine.maude \
 	variantUnification.maude \
+	filteredVariantUnification.maude \
 	variantNarrowing.maude \
 	meseguerFiniteVariant.maude \
+	variantMatching.maude \
 	CU_Unification.maude \
 	assocUnification.maude \
+	AU_Unification.maude \
 	sreduce.maude \
 	smtTest.maude \
 	narrow.maude \
@@ -73,10 +79,13 @@ RESULT_FILES = \
 	attributes.expected \
 	diophantine.expected \
 	variantUnification.expected \
+	filteredVariantUnification.expected \
 	variantNarrowing.expected \
 	meseguerFiniteVariant.expected \
+	variantMatching.expected \
 	CU_Unification.expected \
 	assocUnification.expected \
+	AU_Unification.expected \
 	sreduce.expected \
 	smtTest.expected \
 	narrow.expected \

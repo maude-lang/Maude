@@ -39,6 +39,7 @@
 
 //      core class definitions
 #include "substitution.hh"
+#include "variableInfo.hh"
 #include "narrowingVariableInfo.hh"
 #include "unificationContext.hh"
 
@@ -132,8 +133,11 @@ VariableDagNode::computeBaseSortForGroundSubterms(bool /* warnAboutUnimplemented
 }
 
 bool
-VariableDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
+VariableDagNode::computeSolvedForm2(DagNode* rhs,
+				    UnificationContext& solution,
+				    PendingUnificationStack& pending)
 {
+  DebugEnter((DagNode*) this << " vs " << rhs);
   //
   //	In this version we only handle variable vs variable unfication and
   //	punt on everything else.
@@ -144,6 +148,15 @@ VariableDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, 
       VariableDagNode* rv = v->lastVariableInChain(solution);
       if (lv->equal(rv))
 	return true;
+      //
+      //	We are preferentially going to bind lv |-> rv
+      //	In order to maximally constrain the seach we want rv to
+      //	have the lowest sort if they are comparable and unequal.
+      //	We do this by ensuring rv has the largest sort index.
+      //
+      if (safeCast(VariableSymbol*, lv->symbol())->getSort()->index() >
+	  safeCast(VariableSymbol*, rv->symbol())->getSort()->index())
+	swap(lv, rv);
       //
       //	Need to replace one variable by the other throughout the problem. We do this
       //	virtually and must check for implicit occurs check problems.
@@ -160,7 +173,8 @@ VariableDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, 
       //
       //	Both variables are bound.
       //
-      return safeVirtualReplacement(lv, rv, solution, pending) && lt->computeSolvedForm(rt, solution, pending);
+      return safeVirtualReplacement(lv, rv, solution, pending) &&
+	lt->computeSolvedForm(rt, solution, pending);
     }
   //
   //	Calling computeSolvedForm() would just kick the problem back to us if
@@ -170,7 +184,10 @@ VariableDagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, 
 }
 
 bool
-VariableDagNode::safeVirtualReplacement(VariableDagNode* oldVar, VariableDagNode* newVar, UnificationContext& solution, PendingUnificationStack& pending)
+VariableDagNode::safeVirtualReplacement(VariableDagNode* oldVar,
+					VariableDagNode* newVar,
+					UnificationContext& solution,
+					PendingUnificationStack& pending)
 {
   //
   //	We want to replace all occurrences of oldVar by newVar. We assume oldVar is the last
@@ -195,9 +212,9 @@ VariableDagNode::safeVirtualReplacement(VariableDagNode* oldVar, VariableDagNode
   
   NatSet occurs;
   newBinding->insertVariables(occurs);
-  FOR_EACH_CONST(i, NatSet, occurs)
+  for (int index : occurs)
     {
-      if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(solution.value(*i)))
+      if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(solution.value(index)))
 	{
 	  if (v->lastVariableInChain(solution)->equal(newVar))
 	    {
@@ -245,11 +262,8 @@ VariableDagNode::lastVariableInChain(Substitution& solution)
       VariableDagNode* n = dynamic_cast<VariableDagNode*>(d);
       if (n == 0)
 	break;
-      if (v == n)
-	{
-	  cerr << "variable " << (DagNode*) v << " is bound to itself in a chain starting at " << (DagNode*) this << endl;
-	  abort();
-	}
+      Assert(v != n, "variable " << (DagNode*) v <<
+	     " is bound to itself in a chain starting at " << (DagNode*) this);
       v = n;
     }
   return v;
@@ -267,10 +281,21 @@ VariableDagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 }
 
 DagNode*
-VariableDagNode::instantiateWithCopies2(const Substitution& /* substitution */, const Vector<DagNode*>& eagerCopies)
+VariableDagNode::instantiateWithCopies2(const Substitution& /* substitution */,
+					const Vector<DagNode*>& eagerCopies)
 {
   //
   //	We must be in an eager position so use the eager copy.
   //
   return eagerCopies[index];
+}
+
+//
+//	Variant match code.
+//
+
+void
+VariableDagNode::indexVariables(VariableInfo& indicies)
+{
+  index = indicies.variable2Index(this);
 }

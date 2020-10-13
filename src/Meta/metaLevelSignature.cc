@@ -283,6 +283,11 @@
      MACRO(unificandPairSymbol, FreeSymbol, 0, 2)
      MACRO(unificationConjunctionSymbol, Symbol, SymbolType::ASSOC | SymbolType::COMM, 2)
      //
+     //	Matching problem constructors
+     //
+     MACRO(patternSubjectPairSymbol, FreeSymbol, 0, 2)
+     MACRO(matchingConjunctionSymbol, Symbol, SymbolType::ASSOC | SymbolType::COMM, 2)
+     //
      //	Success constructors.
      //
      MACRO(resultPairSymbol, FreeSymbol, 0, 2)
@@ -323,6 +328,7 @@
      MACRO(narrowingSearchPathFailureSymbol, Symbol, 0, 0)
      MACRO(narrowingSearchPathFailureIncompleteSymbol, Symbol, 0, 0)
      MACRO(noMatchSubstSymbol, Symbol, 0, 0)
+     MACRO(noMatchIncompleteSubstSymbol, Symbol, 0, 0)
      MACRO(noMatchPairSymbol, Symbol, 0, 0)
      MACRO(failureTraceSymbol, Symbol, 0, 0)
      MACRO(smtFailureSymbol, Symbol, 0, 0)
@@ -339,6 +345,13 @@
      MACRO(ratSymbol, Symbol, 0, 0)
      MACRO(emptyPrintOptionSetSymbol, Symbol, 0, 0)
      MACRO(printOptionSetSymbol, Symbol, SymbolType::ASSOC | SymbolType::COMM, 2)
+     //
+     //	Variant option constructors.
+     //
+     MACRO(delaySymbol, Symbol, 0, 0)
+     MACRO(filterSymbol, Symbol, 0, 0)
+     MACRO(emptyVariantOptionSetSymbol, Symbol, 0, 0)
+     MACRO(variantOptionSetSymbol, Symbol, SymbolType::ASSOC | SymbolType::COMM, 2)
      //
      //	srewrite option constructors.
      //

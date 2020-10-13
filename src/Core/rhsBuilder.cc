@@ -57,9 +57,9 @@ RhsBuilder::remapIndices(VariableInfo& variableInfo)
 bool
 RhsBuilder::recordInfo(StackMachineRhsCompiler& compiler)
 {
-  FOR_EACH_CONST(i, Vector<RhsAutomaton*>, automata)
+  for (RhsAutomaton* ra : automata)
     {
-      if (!((*i)->recordInfo(compiler)))
+      if (!(ra->recordInfo(compiler)))
 	return false;
     }
   return (lastAutomaton == 0) ? true : lastAutomaton->recordInfo(compiler);

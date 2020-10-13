@@ -45,6 +45,16 @@ ModuleCache::ModuleCache()
 {
 }
 
+ModuleCache::~ModuleCache()
+{
+  //
+  //	We expect that all cached modules will have been destructed when the
+  //	modules they depend on are destructed - ahead of the deletion of the
+  //	ModuleCache object. We check this in debug mode.
+  //
+  Assert(moduleMap.empty(), "moduleMap not empty");
+}
+
 void
 ModuleCache::regretToInform(Entity* doomedEntity)
 {

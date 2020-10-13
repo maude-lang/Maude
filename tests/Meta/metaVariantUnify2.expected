@@ -1,0 +1,665 @@
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+    upTerm(f1(V3 * V3 * f1(V4))), none, 0) .
+rewrites: 64
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- 'f1['f1['%1:`[ElemXor`]]] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'f1['f1['%1:`[ElemXor`]]] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+    upTerm(f1(V3 * V3 * f1(V4))), delay, 0) .
+rewrites: 64
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- 'f1['f1['%1:`[ElemXor`]]] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'f1['f1['%1:`[ElemXor`]]] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+    upTerm(f1(V3 * V3 * f1(V4))), filter, 0) .
+rewrites: 40
+result UnificationPair: {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+    upTerm(f1(V3 * V3 * f1(V4))), delay filter, 0) .
+rewrites: 40
+result UnificationPair: {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
+    V2)) =? upTerm(f1(V3) * f1(V3 * V4)), none, 0) .
+rewrites: 175
+result UnifierList: {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'%3:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%3:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'%3:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%3:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '%2:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '%2:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '@2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- 'mt.ElemXor,'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
+    V2)) =? upTerm(f1(V3) * f1(V3 * V4)), delay, 0) .
+rewrites: 175
+result UnifierList: {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'%3:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%3:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'%3:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%3:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '%2:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '%2:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '@2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- 'mt.ElemXor,'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
+    V2)) =? upTerm(f1(V3) * f1(V3 * V4)), filter, 0) .
+rewrites: 183
+result UnifierList: {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '@2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- 'mt.ElemXor,'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
+    V2)) =? upTerm(f1(V3) * f1(V3 * V4)), delay filter, 0) .
+rewrites: 183
+result UnifierList: {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '@2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- 'mt.ElemXor,'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
+    V1)) =? upTerm(f1(b * V2) * f1(c * V3)), none, 0) .
+rewrites: 261
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['b.Elem,'%1:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- 'c.Elem ; 
+  'V3:`[ElemXor`] <- 'b.Elem,'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- 'b.Elem ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- 'c.Elem,'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'c.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor,'@} ; {
+  'V1:`[ElemXor`] <- 'b.Elem ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- 'b.Elem ; 
+  'V3:`[ElemXor`] <- 'c.Elem,'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'c.Elem,'%1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'c.Elem,'%1:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'c.Elem] ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor,'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'c.Elem],'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
+    V1)) =? upTerm(f1(b * V2) * f1(c * V3)), delay, 0) .
+rewrites: 261
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['b.Elem,'%1:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- 'c.Elem ; 
+  'V3:`[ElemXor`] <- 'b.Elem,'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- 'b.Elem ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- 'c.Elem,'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'c.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor,'@} ; {
+  'V1:`[ElemXor`] <- 'b.Elem ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- 'b.Elem ; 
+  'V3:`[ElemXor`] <- 'c.Elem,'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'c.Elem,'%1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'c.Elem,'%1:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'c.Elem] ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor,'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'c.Elem],'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
+    V1)) =? upTerm(f1(b * V2) * f1(c * V3)), filter, 0) .
+rewrites: 159
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['b.Elem,'%1:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]],'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
+    V1)) =? upTerm(f1(b * V2) * f1(c * V3)), delay filter, 0) .
+rewrites: 165
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['b.Elem,'%1:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem ; 
+  'V2:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]],'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+    upTerm(f1(V3 * V3 * f1(V4))), none, 0) .
+rewrites: 64
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`],
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]],
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- 'f1['f1['%1:`[ElemXor`]]],
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'f1['f1['%1:`[ElemXor`]]] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor,
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+    upTerm(f1(V3 * V3 * f1(V4))), delay, 0) .
+rewrites: 64
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`],
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]],
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- 'f1['f1['%1:`[ElemXor`]]],
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'f1['f1['%1:`[ElemXor`]]] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor,
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+    upTerm(f1(V3 * V3 * f1(V4))), filter, 0) .
+rewrites: 40
+result UnificationTriple: {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`],
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
+    upTerm(f1(V3 * V3 * f1(V4))), delay filter, 0) .
+rewrites: 40
+result UnificationTriple: {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`],
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
+    V2)) =? upTerm(f1(V3) * f1(V3 * V4)), none, 0) .
+rewrites: 175
+result UnifierList: {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]],
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor,
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'%3:`[ElemXor`]],
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%3:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'%3:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%3:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '%2:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '%2:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`],
+  'V3:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`],
+  'V3:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor,
+  'V3:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '@2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- 'mt.ElemXor,'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
+    V2)) =? upTerm(f1(V3) * f1(V3 * V4)), delay, 0) .
+rewrites: 175
+result UnifierList: {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]],
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor,
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'%3:`[ElemXor`]],
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%3:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'%3:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%3:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '%2:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]] ; 
+  'V4:`[ElemXor`] <- '%2:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '%2:`[ElemXor`],
+  'V3:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '%2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`],
+  'V3:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- 'mt.ElemXor,
+  'V3:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V4:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '@2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- 'mt.ElemXor,'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
+    V2)) =? upTerm(f1(V3) * f1(V3 * V4)), filter, 0) .
+rewrites: 183
+result UnifierList: {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]],
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '@2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- 'mt.ElemXor,'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
+    V2)) =? upTerm(f1(V3) * f1(V3 * V4)), delay filter, 0) .
+rewrites: 183
+result UnifierList: {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]],
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- '@2:`[ElemXor`],'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
+  'V2:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V3:`[ElemXor`] <- '@2:`[ElemXor`] ; 
+  'V4:`[ElemXor`] <- 'mt.ElemXor,'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
+    V1)) =? upTerm(f1(b * V2) * f1(c * V3)), none, 0) .
+rewrites: 261
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]],
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['b.Elem,'%1:`[ElemXor`]],
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- 'c.Elem ; 
+  'V3:`[ElemXor`] <- 'b.Elem,'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor,
+  'V2:`[ElemXor`] <- 'b.Elem ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor,
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- 'c.Elem,'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'c.Elem,
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor,'@} ; {
+  'V1:`[ElemXor`] <- 'b.Elem,
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- 'b.Elem ; 
+  'V3:`[ElemXor`] <- 'c.Elem,'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'c.Elem,'%1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'c.Elem,'%1:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'c.Elem] ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor,'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'c.Elem],'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
+    V1)) =? upTerm(f1(b * V2) * f1(c * V3)), delay, 0) .
+rewrites: 261
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]],
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['b.Elem,'%1:`[ElemXor`]],
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- 'c.Elem ; 
+  'V3:`[ElemXor`] <- 'b.Elem,'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor,
+  'V2:`[ElemXor`] <- 'b.Elem ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- 'mt.ElemXor,
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- 'c.Elem,'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- '@1:`[ElemXor`],
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'c.Elem,
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor,'@} ; {
+  'V1:`[ElemXor`] <- 'b.Elem,
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- 'b.Elem ; 
+  'V3:`[ElemXor`] <- 'c.Elem,'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'c.Elem,'%1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'c.Elem,'%1:`[ElemXor`]],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]],'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '_*_['b.Elem,'c.Elem] ; 
+  'V3:`[ElemXor`] <- 'mt.ElemXor,'@} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- 'mt.ElemXor ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'c.Elem],'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
+    V1)) =? upTerm(f1(b * V2) * f1(c * V3)), filter, 0) .
+rewrites: 159
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]],
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['b.Elem,'%1:`[ElemXor`]],
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]],'@}
+==========================================
+reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
+    V1)) =? upTerm(f1(b * V2) * f1(c * V3)), delay filter, 0) .
+rewrites: 165
+result UnifierList: {
+  'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]],
+  'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
+  'V3:`[ElemXor`] <- '%1:`[ElemXor`],'%} ; {
+  'V1:`[ElemXor`] <- '_*_['b.Elem,'%1:`[ElemXor`]],
+  'V2:`[ElemXor`] <- '%1:`[ElemXor`] ; 
+  'V3:`[ElemXor`] <- '_*_['a.Elem,'c.Elem],'%} ; {
+  'V1:`[ElemXor`] <- 'a.Elem,
+  'V2:`[ElemXor`] <- '_*_['c.Elem,'@1:`[ElemXor`]] ; 
+  'V3:`[ElemXor`] <- '_*_['b.Elem,'@1:`[ElemXor`]],'@}
+Bye.

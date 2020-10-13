@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2018-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,20 +25,25 @@
 //
 
 bool
-InterpreterManagerSymbol::getVariantUnifier(FreeDagNode* message, ObjectSystemRewritingContext& context, bool disjoint)
+InterpreterManagerSymbol::getVariantUnifier(FreeDagNode* message,
+					    ObjectSystemRewritingContext& context,
+					    bool disjoint)
 {
   //
-  //	op getVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid Nat -> Msg .
-  //                            0   1   2          3             4      5  6
+  //	op getVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid VariantOptionSet Nat -> Msg .
+  //                            0   1   2          3             4      5         6          7
   //
-  //	op getDisjointVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid Nat -> Msg .
-  //                                    0   1   2          3             4      5  6
+  //	op getDisjointVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid VariantOptionSet Nat -> Msg .
+  //                                    0   1   2          3             4      5         6          7
   //
   Interpreter* interpreter;
   if (getInterpreter(message->getArgument(0), interpreter))
     {
+      int variantFlags;
       Int64 solutionNr;
-      if (metaLevel->downSaturate64(message->getArgument(6), solutionNr) &&
+      if (metaLevel->downVariantOptionSet(message->getArgument(6), variantFlags) &&
+	  (variantFlags & ~(MetaLevel::DELAY | MetaLevel::FILTER)) == 0 &&
+	  metaLevel->downSaturate64(message->getArgument(7), solutionNr) &&
 	  solutionNr >= 0)
 	{
 	  int id;
@@ -77,7 +82,11 @@ InterpreterManagerSymbol::getVariantUnifier(FreeDagNode* message, ObjectSystemRe
 			  FOR_EACH_CONST(i, Vector<Term*>, blockerTerms)
 			    {
 			      Term* t = *i;
-			      t = t->normalize(true);  // we don't really need to normalize but we do need to set hash values
+			      //
+			      //	We don't really need to normalize but we do need to
+			      //	set hash values.
+			      //
+			      t = t->normalize(true);
 			      blockerDags.append(t->term2Dag());
 			      t->deepSelfDestruct();
 			    }
@@ -90,20 +99,30 @@ InterpreterManagerSymbol::getVariantUnifier(FreeDagNode* message, ObjectSystemRe
 			  if (!(metaLevel->downUnificationProblem(message->getArgument(3), lhs, rhs, m, disjoint)))
 			    return false;
 			  DagNode* d = m->makeUnificationProblemDag(lhs, rhs);
-			  RewritingContext* startContext = context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
+			  RewritingContext* startContext =
+			    context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
 			  //
 			  //	VariantSearch() will do rewriting so we need to protect
 			  //	the module from being overwritten in the debugger.
 			  //
 			  m->protect();
-			  vs = new VariantSearch(startContext,
-						 blockerDags,
-						 new FreshVariableSource(m),
-						 true,    // unification mode
-						 false,   // not irredundant
-						 true,    // delete fresh variable generator
-						 variableFamily,
-						 true);   // check variable names
+			  FreshVariableGenerator* freshVariableGenerator = new FreshVariableSource(m);
+			  vs =  (variantFlags & MetaLevel::FILTER) ?
+			    new FilteredVariantUnifierSearch(startContext,
+							     blockerDags,
+							     freshVariableGenerator,
+							     variantFlags |
+							     VariantSearch::DELETE_FRESH_VARIABLE_GENERATOR |
+							     VariantSearch::CHECK_VARIABLE_NAMES,
+					      variableFamily) :
+			    new VariantSearch(startContext,
+					      blockerDags,
+					      freshVariableGenerator,
+					      variantFlags |
+					      VariantSearch::UNIFICATION_MODE |
+					      VariantSearch::DELETE_FRESH_VARIABLE_GENERATOR |
+					      VariantSearch::CHECK_VARIABLE_NAMES,
+					      variableFamily);
 			  lastSolutionNr = -1;
 			}
 
@@ -112,39 +131,19 @@ InterpreterManagerSymbol::getVariantUnifier(FreeDagNode* message, ObjectSystemRe
 		      //
 		      //	Now we compute the requested variant unifier.
 		      //
-		      const Vector<DagNode*>* unifier = 0;  // substitution with variant dag at the end
-		      int nrFreeVariables;              // number of free variables used to express the variant
-		      int variableFamily;	        // family of fresh variables used to express the variant
-
-		      if (lastSolutionNr == solutionNr)
+		      for (; lastSolutionNr < solutionNr; ++lastSolutionNr)
 			{
-			  //
-			  //	So the user can ask for the same variant unifier over and over
-			  //	again without a horrible loss of performance.
-			  //
-			  unifier = vs->getLastReturnedUnifier(nrFreeVariables, variableFamily);
-			}
-		      else
-			{
-			  //
-			  //	Keep extracting unifiers until we find the one we want or run out.
-			  //
-			  while (lastSolutionNr < solutionNr)
+			  if (!(vs->findNextUnifier()))
 			    {
-			      unifier = vs->getNextUnifier(nrFreeVariables, variableFamily);
-			      if (unifier == 0)
-				{
-				  Vector<DagNode*> args(4);
-				  args[0] = target;
-				  args[1] = message->getArgument(0);
-				  args[2] = upRewriteCount(vs->getContext());
-				  args[3] = metaLevel->upBool(!(vs->isIncomplete()));
-				  reply = noSuchResult3Msg->makeDagNode(args);
-				  context.addInCount(*(vs->getContext()));
-				  delete vs;
-				  goto done;
-				}
-			      ++lastSolutionNr;
+			      Vector<DagNode*> args(4);
+			      args[0] = target;
+			      args[1] = message->getArgument(0);
+			      args[2] = upRewriteCount(vs->getContext());
+			      args[3] = metaLevel->upBool(!(vs->isIncomplete()));
+			      reply = noSuchResult3Msg->makeDagNode(args);
+			      context.addInCount(*(vs->getContext()));
+			      delete vs;
+			      goto done;
 			    }
 			}
 		      //
@@ -152,6 +151,10 @@ InterpreterManagerSymbol::getVariantUnifier(FreeDagNode* message, ObjectSystemRe
 		      //
 		      mm->insert(message, vs, solutionNr);
 		      {
+			int nrFreeVariables;
+			int resultVariableFamily;
+			const Vector<DagNode*>& unifier = vs->getCurrentUnifier(nrFreeVariables,
+										resultVariableFamily);
 			Vector<DagNode*> args(5 + disjoint);
 			args[0] = target;
 			args[1] = message->getArgument(0);
@@ -159,11 +162,11 @@ InterpreterManagerSymbol::getVariantUnifier(FreeDagNode* message, ObjectSystemRe
 			PointerMap qidMap;
 			PointerMap dagNodeMap;
 			const NarrowingVariableInfo& variableInfo = vs->getVariableInfo();
-			int variableNameId = FreshVariableSource::getBaseName(variableFamily);
+			int variableNameId = FreshVariableSource::getBaseName(resultVariableFamily);
 			DagNode* variableNameQid = metaLevel->upQid(variableNameId, qidMap);
 			if (disjoint)
 			  {
-			    metaLevel->upDisjointSubstitutions(*unifier,
+			    metaLevel->upDisjointSubstitutions(unifier,
 							       variableInfo,
 							       m,
 							       qidMap,
@@ -175,7 +178,12 @@ InterpreterManagerSymbol::getVariantUnifier(FreeDagNode* message, ObjectSystemRe
 			  }
 			else
 			  {
-			    args[3] = metaLevel->upSubstitution(*unifier, variableInfo, unifier->size(), m, qidMap, dagNodeMap);
+			    args[3] = metaLevel->upSubstitution(unifier,
+								variableInfo,
+								unifier.size(),
+								m,
+								qidMap,
+								dagNodeMap);
 			    args[4] = variableNameQid;
 			    reply = gotVariantUnifierMsg->makeDagNode(args);
 			  }

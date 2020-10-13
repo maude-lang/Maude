@@ -88,7 +88,17 @@ rl 'rules.RuleSet => 'upRls[''INTROSPECTION.Sort,'false.Bool] [none] .
 ==========================================
 reduce in META-LEVEL : upEqs('META-LEVEL, true) .
 rewrites: 1
-result EquationSet: eq '$card['none.EmptyQidSet,'C:Nat] = 'C:Nat [none] .
+result EquationSet: eq '$applySubstitution['Q:Qid,'S:Substitution] = 'Q:Qid [
+    owise] .
+eq '$applySubstitution['V:Variable,'_;_['S:Substitution,'_<-_['V:Variable,
+    'T:Term]]] = 'T:Term [none] .
+eq '$applySubstitution['_`,_['T:Term,'TL:NeTermList],'S:Substitution] = '_`,_[
+    '$applySubstitution['T:Term,'S:Substitution],'$applySubstitution[
+    'TL:NeTermList,'S:Substitution]] [none] .
+eq '$applySubstitution['_`[_`]['Q:Qid,'TL:NeTermList],'S:Substitution] =
+    '_`[_`]['Q:Qid,'$applySubstitution['TL:NeTermList,'S:Substitution]] [none]
+    .
+eq '$card['none.EmptyQidSet,'C:Nat] = 'C:Nat [none] .
 eq '$card['_;_['E:Qid,'S:QidSet],'C:Nat] = '$card['S:QidSet,'_+_['C:Nat,'s_[
     '0.Zero]]] [owise] .
 eq '$card['_;_['N:NeQidSet,'N:NeQidSet,'S:QidSet],'C:Nat] = '$card['_;_[
@@ -159,6 +169,9 @@ eq '`[_`]['Q:Qid] = 'sth_is_sorts_._______endsth['Q:Qid,'including_.['Q:Qid],
     none] .
 eq 'append['A:NatList,'L:NatList] = '__['A:NatList,'L:NatList] [none] .
 eq 'append['A:QidList,'L:QidList] = '__['A:QidList,'L:QidList] [none] .
+eq 'applySubstitution['M:Module,'T:Term,'S:Substitution] = 'getTerm[
+    'metaNormalize['M:Module,'$applySubstitution['T:Term,'S:Substitution]]] [
+    none] .
 eq 'delete['E:Qid,'S:QidSet] = 'S:QidSet [owise] .
 eq 'delete['E:Qid,'_;_['E:Qid,'S:QidSet]] = 'delete['E:Qid,'S:QidSet] [none] .
 eq 'front['__['L:NatList,'E:Nat]] = 'L:NatList [none] .
@@ -230,6 +243,8 @@ eq 'getLabel['`{_`,_`,_`,_`,_`,_`,_`}['C:Context,'L:Qid,'U:Substitution,
     'UV:Qid,'T:Term,'T:Type,'A:Substitution]] = 'L:Qid [none] .
 eq 'getLabel['`{_`,_`,_`,_`,_`,_`,_`}['T:Term,'T:Type,'C:Context,'L:Qid,
     'TS:Substitution,'RS:Substitution,'V:Qid]] = 'L:Qid [none] .
+eq 'getLhsSubstitution['`{_`,_`,_`}['LS:Substitution,'RS:Substitution,'V:Qid]]
+    = 'LS:Substitution [none] .
 eq 'getMbs['fmod_is_sorts_.____endfm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
     'MAS:MembAxSet [none] .
@@ -250,6 +265,8 @@ eq 'getMbs['sth_is_sorts_._______endsth['Q:Qid,'IL:ImportList,'SS:SortSet,
 eq 'getMbs['th_is_sorts_._____endth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'MAS:MembAxSet [none] .
+eq 'getMoreVariantsInLayerFlag['`{_`,_`,_`,_`,_`}['T:Term,'S:Substitution,
+    'Q:Qid,'P:Parent,'B:Bool]] = 'B:Bool [none] .
 eq 'getName['C:Constant] = 'qid['substr['string['C:Constant],'0.Zero,'rfind[
     'string['C:Constant],'".".Char,'length['string['C:Constant]]]]] [none] .
 eq 'getName['V:Variable] = 'qid['substr['string['V:Variable],'0.Zero,'rfind[
@@ -311,6 +328,10 @@ eq 'getOps['sth_is_sorts_._______endsth['Q:Qid,'IL:ImportList,'SS:SortSet,
 eq 'getOps['th_is_sorts_._____endth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'OPDS:OpDeclSet [none] .
+eq 'getParent['`{_`,_`,_`,_`,_`}['T:Term,'S:Substitution,'Q:Qid,'P:Parent,
+    'B:Bool]] = 'P:Parent [none] .
+eq 'getRhsSubstitution['`{_`,_`,_`}['LS:Substitution,'RS:Substitution,'V:Qid]]
+    = 'RS:Substitution [none] .
 eq 'getRls['fmod_is_sorts_.____endfm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet]] =
     'none.RuleSet [none] .
@@ -331,6 +352,7 @@ eq 'getRls['sth_is_sorts_._______endsth['Q:Qid,'IL:ImportList,'SS:SortSet,
 eq 'getRls['th_is_sorts_._____endth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'RLS:RuleSet [none] .
+eq 'getRule['`{_`,_`,_`}['T:Term,'T:Type,'R:Rule]] = 'R:Rule [none] .
 eq 'getRuleSubstitution['`{_`,_`,_`,_`,_`,_`,_`}['T:Term,'T:Type,'C:Context,
     'L:Qid,'TS:Substitution,'RS:Substitution,'V:Qid]] = 'RS:Substitution [none]
     .
@@ -420,20 +442,27 @@ eq 'getSubsorts['sth_is_sorts_._______endsth['Q:Qid,'IL:ImportList,'SS:SortSet,
 eq 'getSubsorts['th_is_sorts_._____endth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'SSDS:SubsortDeclSet [none] .
+eq 'getSubstitution['`{_`,_`,_`,_`,_`}['T:Term,'S:Substitution,'Q:Qid,
+    'P:Parent,'B:Bool]] = 'S:Substitution [none] .
 eq 'getSubstitution['`{_`,_`,_`,_`}['T:Term,'T:Type,'S:Substitution,
     'C:Context]] = 'S:Substitution [none] .
 eq 'getSubstitution['`{_`,_`,_`}['T:Term,'T:Type,'S:Substitution]] =
     'S:Substitution [none] .
 eq 'getSubstitution['`{_`,_`}['S:Substitution,'C:Context]] = 'S:Substitution [
     none] .
+eq 'getSubstitution['`{_`,_`}['S:Substitution,'V:Qid]] = 'S:Substitution [none]
+    .
 eq 'getTerm['`{_`,_`,_`,_`,_`,_`,_`}['C:Context,'L:Qid,'U:Substitution,'UV:Qid,
     'T:Term,'T:Type,'A:Substitution]] = 'T:Term [none] .
 eq 'getTerm['`{_`,_`,_`,_`,_`,_`,_`}['T:Term,'T:Type,'C:Context,'L:Qid,
     'TS:Substitution,'RS:Substitution,'V:Qid]] = 'T:Term [none] .
 eq 'getTerm['`{_`,_`,_`,_`,_`,_`}['T:Term,'T:Type,'A:Substitution,'SV:Qid,
     'U:Substitution,'UV:Qid]] = 'T:Term [none] .
+eq 'getTerm['`{_`,_`,_`,_`,_`}['T:Term,'S:Substitution,'Q:Qid,'P:Parent,
+    'B:Bool]] = 'T:Term [none] .
 eq 'getTerm['`{_`,_`,_`,_`}['T:Term,'T:Type,'S:Substitution,'C:Context]] =
     'T:Term [none] .
+eq 'getTerm['`{_`,_`,_`}['T:Term,'T:Type,'R:Rule]] = 'T:Term [none] .
 eq 'getTerm['`{_`,_`,_`}['T:Term,'T:Type,'S:Substitution]] = 'T:Term [none] .
 eq 'getTerm['`{_`,_`}['T:Term,'T:Type]] = 'T:Term [none] .
 eq 'getTermSubstitution['`{_`,_`,_`,_`,_`,_`,_`}['T:Term,'T:Type,'C:Context,
@@ -458,6 +487,7 @@ eq 'getType['`{_`,_`,_`,_`,_`,_`}['T:Term,'T:Type,'A:Substitution,'SV:Qid,
     'U:Substitution,'UV:Qid]] = 'T:Type [none] .
 eq 'getType['`{_`,_`,_`,_`}['T:Term,'T:Type,'S:Substitution,'C:Context]] =
     'T:Type [none] .
+eq 'getType['`{_`,_`,_`}['T:Term,'T:Type,'R:Rule]] = 'T:Type [none] .
 eq 'getType['`{_`,_`,_`}['T:Term,'T:Type,'S:Substitution]] = 'T:Type [none] .
 eq 'getType['`{_`,_`}['T:Term,'T:Type]] = 'T:Type [none] .
 eq 'getUnifier['`{_`,_`,_`,_`,_`,_`,_`}['C:Context,'L:Qid,'U:Substitution,
@@ -476,6 +506,11 @@ eq 'getUnifierVariableFamily['`{_`,_`,_`,_`,_`,_`}['T:Term,'T:Type,
     none] .
 eq 'getVariableFamily['`{_`,_`,_`,_`,_`,_`,_`}['T:Term,'T:Type,'C:Context,
     'L:Qid,'TS:Substitution,'RS:Substitution,'V:Qid]] = 'V:Qid [none] .
+eq 'getVariableFamily['`{_`,_`,_`,_`,_`}['T:Term,'S:Substitution,'Q:Qid,
+    'P:Parent,'B:Bool]] = 'Q:Qid [none] .
+eq 'getVariableFamily['`{_`,_`,_`}['LS:Substitution,'RS:Substitution,'V:Qid]] =
+    'V:Qid [none] .
+eq 'getVariableFamily['`{_`,_`}['S:Substitution,'V:Qid]] = 'V:Qid [none] .
 eq 'head['__['E:Nat,'L:NatList]] = 'E:Nat [none] .
 eq 'head['__['E:Qid,'L:QidList]] = 'E:Qid [none] .
 eq 'insert['E:Qid,'S:QidSet] = '_;_['E:Qid,'S:QidSet] [none] .
@@ -484,6 +519,15 @@ eq 'intersection['S:QidSet,'N:NeQidSet] = '$intersect['S:QidSet,'N:NeQidSet,
 eq 'intersection['S:QidSet,'none.EmptyQidSet] = 'none.EmptyQidSet [none] .
 eq 'last['__['L:NatList,'E:Nat]] = 'E:Nat [none] .
 eq 'last['__['L:QidList,'E:Qid]] = 'E:Qid [none] .
+eq 'metaNarrowingApply['M:Module,'T:Term,'TL:TermList,'Q:Qid,'N:Nat] =
+    'metaNarrowingApply['M:Module,'T:Term,'TL:TermList,'Q:Qid,
+    'none.VariantOptionSet,'N:Nat] [none] .
+eq 'metaNarrowingSearch['M:Module,'T:Term,'T2:Term,'S:Qid,'B:Bound,'F:Qid,
+    'N:Nat] = 'metaNarrowingSearch['M:Module,'T:Term,'T2:Term,'S:Qid,'B:Bound,
+    'F:Qid,'none.VariantOptionSet,'N:Nat] [none] .
+eq 'metaNarrowingSearchPath['M:Module,'T:Term,'T2:Term,'S:Qid,'B:Bound,'F:Qid,
+    'N:Nat] = 'metaNarrowingSearchPath['M:Module,'T:Term,'T2:Term,'S:Qid,
+    'B:Bound,'F:Qid,'none.VariantOptionSet,'N:Nat] [none] .
 eq 'metaParse['M:Module,'Q:QidList,'T:Type?] = 'metaParse['M:Module,
     'none.EmptyQidSet,'Q:QidList,'T:Type?] [none] .
 eq 'metaPrettyPrint['M:Module,'T:Term] = 'metaPrettyPrint['M:Module,
@@ -492,6 +536,12 @@ eq 'metaPrettyPrint['M:Module,'T:Term] = 'metaPrettyPrint['M:Module,
     none] .
 eq 'metaPrettyPrint['M:Module,'T:Term,'P:PrintOptionSet] = 'metaPrettyPrint[
     'M:Module,'none.EmptyQidSet,'T:Term,'P:PrintOptionSet] [none] .
+eq 'metaVariantDisjointUnify['M:Module,'U:UnificationProblem,'TL:TermList,
+    'Q:Qid,'N:Nat] = 'metaVariantDisjointUnify['M:Module,'U:UnificationProblem,
+    'TL:TermList,'Q:Qid,'none.VariantOptionSet,'N:Nat] [none] .
+eq 'metaVariantUnify['M:Module,'U:UnificationProblem,'TL:TermList,'Q:Qid,
+    'N:Nat] = 'metaVariantUnify['M:Module,'U:UnificationProblem,'TL:TermList,
+    'Q:Qid,'none.VariantOptionSet,'N:Nat] [none] .
 eq 'not_['A:Bool] = '_xor_['true.Bool,'A:Bool] [none] .
 eq 'occurs['E:Nat,'nil.NatList] = 'false.Bool [none] .
 eq 'occurs['E:Nat,'__['E':Nat,'L:NatList]] = 'if_then_else_fi['_==_['E:Nat,

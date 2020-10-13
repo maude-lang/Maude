@@ -117,6 +117,23 @@ Interpreter::doMatching(Timer& timer,
       bool result = state->findNextMatch();
       if (UserLevelRewritingContext::aborted())
 	break;
+      //
+      //	There might not be any rewriting happening to catch a
+      //	^C so we check here for safety, though if it does
+      //	happen, we can't drop into the debugger and have to
+      //	treat it as an abort. We need to bail before outputing
+      //	a matcher.
+      //
+      //	If there is rewriting happening to resolve a condition
+      //	then we have a race condition and whether we drop into
+      //	the debugger or just abort depends on the instant the ^C
+      //	interrupt arrives. We tolerate this uncertainty because
+      //	having Maude ignore ^C while spewing thousands of
+      //	matchers that won't print correctly would be worse.
+      //
+      if (UserLevelRewritingContext::interrupted())
+	break;
+
       if (!result)
 	{
 	  if (solutionCount == 0)
@@ -130,7 +147,7 @@ Interpreter::doMatching(Timer& timer,
       ++solutionCount;
       if (solutionCount == 1)
 	printDecisionTime(timer);
-      cout << "\nSolution " << solutionCount << '\n';
+      cout << "\nMatcher " << solutionCount << '\n';
       ExtensionInfo* extensionInfo = state->getExtensionInfo();
       if (extensionInfo != 0)
 	{
@@ -141,14 +158,6 @@ Interpreter::doMatching(Timer& timer,
 	    cout << extensionInfo->buildMatchedPortion() << '\n';
 	}
       UserLevelRewritingContext::printSubstitution(*context, *variableInfo);
-      //
-      //	There might not be any rewriting happening to catch a
-      //	^C so we check here for safety, though if it does
-      //	happen, we can't drop into the debugger and have to
-      //	treat it as an abort.
-      //
-      if (UserLevelRewritingContext::interrupted())
-	break;
     }
   QUANTIFY_STOP();
 

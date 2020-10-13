@@ -686,7 +686,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
     {
       needParen = requiredPrec < STRAT_UNION_PREC;
       if (needParen)
-	buffer.append(leftBrace);
+	buffer.append(leftParen);
       const Vector<StrategyExpression*>& strategies = u->getStrategies();
       int nrStrategies = strategies.size();
       for (int i = 0;;)

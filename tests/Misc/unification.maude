@@ -27,7 +27,7 @@ unify in NAT : X:Nat ^ #1:Nat =? #2:Nat .
 
 fmod TEST2 is
   pr NAT .
-  op f : Nat Nat -> Nat [assoc id: 0] .
+  op f : Nat Nat -> Nat [assoc left id: 0] .
 endfm
 
 *** using of a symbol from an unsupported theory above a non-gound
@@ -125,7 +125,7 @@ endfm
 
 unify f(g(X, Y), g(X, Z), U) =? f(g(Y, Z), V) .
 
-unify  g(f(X, Y), f(X, U, Z)) =? g(f(U, V), f(W, A)) .
+unify g(f(X, Y), f(X, U, Z)) =? g(f(U, V), f(W, A)) .
 
 *** simultaneous unification
 

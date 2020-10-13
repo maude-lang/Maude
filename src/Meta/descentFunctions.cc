@@ -457,7 +457,7 @@ MetaLevelOpSymbol::metaParse(FreeDagNode* subject, RewritingContext& context)
 	  Int64 dummy;
 	  if (m->remove(subject, cachedPair, dummy, 2 /* ignore last two arguments */))
 	    {
-	      DebugInfo("cache hit for " << subject);
+	      DebugInfo("alias-map/parser cache hit for " << subject);
 	      pair = safeCast(AliasMapParserPair*, cachedPair);
 	    }
 	  else

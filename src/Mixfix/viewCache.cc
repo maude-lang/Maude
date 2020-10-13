@@ -40,9 +40,19 @@
 #include "viewCache.hh"
 #include "fileTable.hh"
 
-
 ViewCache::ViewCache()
 {
+}
+
+ViewCache::~ViewCache()
+{
+  //
+  //	Cached views must have named or cached modules as their
+  //	from-theory so we expect them to have been destructed and
+  //	removed when the modules are destructed, ahead of the
+  //	destruction of the ViewCache object.
+  //
+  Assert(viewMap.empty(), "viewMap not empty");
 }
 
 void

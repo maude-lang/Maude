@@ -82,3 +82,31 @@ metaDisjointUnify(['BAZ], 'f['X:Foo] =? 'f['a.Foo] /\ 'f['X:Foo] =? 'f['b.Foo], 
 
 red in META-LEVEL :
 metaDisjointUnify(['BAZ], 'f['a.Foo] =? 'f['X:Foo] /\ 'f['b.Foo] =? 'f['X:Foo], '#, 0) .
+
+*** irredundant unification
+fmod BAG is
+  sorts Elt Bag .
+  subsort Elt < Bag .
+  op empty : -> Bag .
+  op __ : Bag Bag -> Bag [assoc comm id: empty] .
+endfm
+
+reduce in META-LEVEL :
+  metaIrredundantUnify(['BAG],
+            '__['L:Bag, 'M:Bag] =? '__['P:Bag, 'Q:Bag],
+	    '#, 0) .
+
+reduce in META-LEVEL :
+  metaIrredundantUnify(['BAG],
+            '__['L:Bag, 'M:Bag] =? '__['P:Bag, 'Q:Bag],
+	    '#, 1) .
+
+reduce in META-LEVEL :
+  metaIrredundantDisjointUnify(['BAG],
+            '__['L:Bag, 'M:Bag] =? '__['P:Bag, 'Q:Bag],
+	    '#, 0) .
+
+reduce in META-LEVEL :
+  metaIrredundantDisjointUnify(['BAG],
+            '__['L:Bag, 'M:Bag] =? '__['P:Bag, 'Q:Bag],
+	    '#, 1) .

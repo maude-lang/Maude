@@ -1,0 +1,13 @@
+==========================================
+reduce in META-LEVEL : metaParse(upModule('NAT, false), none, '0, 'Nat) .
+rewrites: 2
+result ResultPair: {'0.Zero,'Zero}
+==========================================
+reduce in META-LEVEL : metaParseStrategy(upModule('NAT, false), none, 'idle) .
+rewrites: 2
+result Strategy: idle
+==========================================
+reduce in META-LEVEL : metaParse(upModule('NAT, false), none, '0, 'Nat) .
+rewrites: 2
+result ResultPair: {'0.Zero,'Zero}
+Bye.

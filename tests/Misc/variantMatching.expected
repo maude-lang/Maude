@@ -1,0 +1,361 @@
+==========================================
+variant unify in FOO : f(X, g(Y, Z)) =? f(x, g(y, z)) .
+
+Unifier 1
+rewrites: 1
+X --> x
+Y --> y
+Z --> z
+
+No more unifiers.
+rewrites: 1
+==========================================
+variant match in FOO : f(X, g(Y, Z)) <=? f(X, g(Y, Z)) .
+rewrites: 1
+
+Matcher 1
+X --> X
+Y --> Y
+Z --> Z
+
+No more matchers.
+==========================================
+variant unify in FOO : g(f(X, Y), Z) =? g(a, g(a, b)) .
+
+Unifier 1
+rewrites: 2
+X --> a
+Y --> 1f
+Z --> g(a, b)
+
+Unifier 2
+rewrites: 2
+X --> 1f
+Y --> a
+Z --> g(a, b)
+
+No more unifiers.
+rewrites: 2
+==========================================
+variant match in FOO : g(f(X, Y), Z) <=? g(a, g(A, B)) .
+rewrites: 2
+
+Matcher 1
+X --> a
+Y --> 1f
+Z --> g(A, B)
+
+Matcher 2
+X --> 1f
+Y --> a
+Z --> g(A, B)
+
+No more matchers.
+==========================================
+variant unify in FOO : f(1f, g(Y, Z)) =? g(y, z) .
+
+Unifier 1
+rewrites: 1
+Y --> y
+Z --> z
+
+No more unifiers.
+rewrites: 1
+==========================================
+variant match in FOO : f(1f, g(Y, Z)) <=? g(Y, Z) .
+rewrites: 1
+
+Matcher 1
+Y --> Y
+Z --> Z
+
+No more matchers.
+==========================================
+variant unify in FOO : g(f(X, Y), Z) =? g(a, f(b, c)) .
+
+Unifier 1
+rewrites: 2
+X --> a
+Y --> 1f
+Z --> f(b, c)
+
+Unifier 2
+rewrites: 2
+X --> 1f
+Y --> a
+Z --> f(b, c)
+
+No more unifiers.
+rewrites: 2
+==========================================
+variant match in FOO : g(f(X, Y), Z) <=? g(A, f(B, C)) .
+rewrites: 2
+
+Matcher 1
+X --> A
+Y --> 1f
+Z --> f(B, C)
+
+Matcher 2
+X --> 1f
+Y --> A
+Z --> f(B, C)
+
+No more matchers.
+==========================================
+variant unify in LEFT-ID : X:Magma a =? y a a .
+
+Unifier 1
+rewrites: 1
+X:Magma --> y a
+
+No more unifiers.
+rewrites: 1
+==========================================
+variant match in LEFT-ID : X:Magma a <=? Y:Magma a a .
+rewrites: 1
+
+Matcher 1
+X:Magma --> Y:Magma a
+
+No more matchers.
+==========================================
+variant unify in LEFT-ID : a X:Magma =? a a y .
+
+No unifiers.
+rewrites: 0
+==========================================
+variant match in LEFT-ID : a X:Magma <=? a a Y:Magma .
+rewrites: 0
+
+No matchers.
+==========================================
+variant unify in RIGHT-ID : X:Magma a =? y a a .
+
+No unifiers.
+rewrites: 0
+==========================================
+variant match in RIGHT-ID : X:Magma a <=? Y:Magma a a .
+rewrites: 0
+
+No matchers.
+==========================================
+variant unify in RIGHT-ID : a X:Magma =? a a y .
+
+Unifier 1
+rewrites: 1
+X:Magma --> a y
+
+No more unifiers.
+rewrites: 1
+==========================================
+variant match in RIGHT-ID : a X:Magma <=? a a Y:Magma .
+rewrites: 1
+
+Matcher 1
+X:Magma --> a Y:Magma
+
+No more matchers.
+==========================================
+variant unify in XOR : X + Y =? c .
+
+Unifier 1
+rewrites: 10
+X --> 0
+Y --> c
+
+Unifier 2
+rewrites: 10
+X --> c
+Y --> 0
+
+Unifier 3
+rewrites: 10
+X --> c + #1:XOR
+Y --> #1:XOR
+
+Unifier 4
+rewrites: 10
+X --> #1:XOR
+Y --> c + #1:XOR
+
+No more unifiers.
+rewrites: 10
+==========================================
+variant match in XOR : X + Y <=? c .
+rewrites: 10
+
+Matcher 1
+X --> 0
+Y --> c
+
+Matcher 2
+X --> c
+Y --> 0
+
+Matcher 3
+X --> c + #1:XOR
+Y --> #1:XOR
+
+Matcher 4
+X --> #1:XOR
+Y --> c + #1:XOR
+
+No more matchers.
+==========================================
+variant unify in XOR : X + Y =? c + d .
+
+Unifier 1
+rewrites: 6
+X --> c
+Y --> d
+
+Unifier 2
+rewrites: 6
+X --> d
+Y --> c
+
+Unifier 3
+rewrites: 10
+X --> 0
+Y --> c + d
+
+Unifier 4
+rewrites: 10
+X --> c + d
+Y --> 0
+
+Unifier 5
+rewrites: 10
+X --> c + #1:XOR
+Y --> d + #1:XOR
+
+Unifier 6
+rewrites: 10
+X --> d + #1:XOR
+Y --> c + #1:XOR
+
+Unifier 7
+rewrites: 10
+X --> c + d + #1:XOR
+Y --> #1:XOR
+
+Unifier 8
+rewrites: 10
+X --> #1:XOR
+Y --> c + d + #1:XOR
+
+No more unifiers.
+rewrites: 10
+==========================================
+variant match in XOR : X + Y <=? c + d .
+rewrites: 10
+
+Matcher 1
+X --> c
+Y --> d
+
+Matcher 2
+X --> d
+Y --> c
+
+Matcher 3
+X --> 0
+Y --> c + d
+
+Matcher 4
+X --> c + d
+Y --> 0
+
+Matcher 5
+X --> c + #1:XOR
+Y --> d + #1:XOR
+
+Matcher 6
+X --> d + #1:XOR
+Y --> c + #1:XOR
+
+Matcher 7
+X --> c + d + #1:XOR
+Y --> #1:XOR
+
+Matcher 8
+X --> #1:XOR
+Y --> c + d + #1:XOR
+
+No more matchers.
+==========================================
+variant match in XOR : X + Y <=? #1:Elem + d .
+rewrites: 10
+
+Matcher 1
+X --> d
+Y --> #1:Elem
+
+Matcher 2
+X --> #1:Elem
+Y --> d
+
+Matcher 3
+X --> 0
+Y --> d + #1:Elem
+
+Matcher 4
+X --> d + #1:Elem
+Y --> 0
+
+Matcher 5
+X --> d + #2:XOR
+Y --> #2:XOR + #1:Elem
+
+Matcher 6
+X --> #2:XOR + #1:Elem
+Y --> d + #2:XOR
+
+Matcher 7
+X --> d + #2:XOR + #1:Elem
+Y --> #2:XOR
+
+Matcher 8
+X --> #2:XOR
+Y --> d + #2:XOR + #1:Elem
+
+No more matchers.
+==========================================
+variant match in XOR : X + Y <=? #1:Elem + #2:Elem .
+rewrites: 10
+
+Matcher 1
+X --> #1:Elem
+Y --> #2:Elem
+
+Matcher 2
+X --> #2:Elem
+Y --> #1:Elem
+
+Matcher 3
+X --> 0
+Y --> #1:Elem + #2:Elem
+
+Matcher 4
+X --> #1:Elem + #2:Elem
+Y --> 0
+
+Matcher 5
+X --> #3:XOR + #1:Elem
+Y --> #3:XOR + #2:Elem
+
+Matcher 6
+X --> #3:XOR + #2:Elem
+Y --> #3:XOR + #1:Elem
+
+Matcher 7
+X --> #3:XOR + #1:Elem + #2:Elem
+Y --> #3:XOR
+
+Matcher 8
+X --> #3:XOR
+Y --> #3:XOR + #1:Elem + #2:Elem
+
+No more matchers.
+Bye.

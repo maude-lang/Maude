@@ -1,3 +1,74 @@
+2020-09-28  Steven Eker  <eker2@eker10>
+
+	* regularInstruction.cc (RegularInstruction::setActiveSlots): use
+	range-based for loop
+
+2020-09-22  Steven Eker  <eker2@eker10>
+
+	* dagNode.cc (DagNode::computeSolvedForm): DebugAdvisory() ->
+	DebugInfo()
+
+2020-09-04  Steven Eker  <eker2@eker10>
+
+	* lhsAutomaton.hh (class LhsAutomaton): added comment explaining
+	semantics of returnedSubproblem
+
+2020-08-18  Steven Eker  <eker2@eker10>
+
+	* dagNode.cc (DagNode::indexVariables): added VariableInfo& version
+	(DagNode::reducibleByVariantEquation): use range based for loop
+
+	* dagNode.hh (class DagNode): added decl for VariableInfo& version
+	of indexVariables()
+
+2020-07-23  Steven Eker  <eker2@eker10>
+
+	* dagNode.hh (DagNode::operator new): added comment and removed
+	commented out code for placement version
+
+2020-07-14  Steven Eker  <eker2@eker10>
+
+	* binarySymbol.cc (BinarySymbol::rightIdentitySortCheck): only do
+	Verbose() for the first collapse down
+	(BinarySymbol::leftIdentitySortCheck): ditto
+
+2020-07-08  Steven Eker  <eker2@eker10>
+
+	* binarySymbol.cc (BinarySymbol::leftIdentitySortCheck): added
+	Verbose() for unequal collapse
+	(BinarySymbol::rightIdentitySortCheck): ditto
+
+===================================Maude129=========================================
+
+2020-05-28  Steven Eker  <eker2@eker10>
+
+	* binarySymbol.cc (BinarySymbol::rightIdentitySortCheck): print
+	out the correct variable in DebugInfo()
+	(BinarySymbol::BinarySymbol): initialize unequalLeftIdCollapse,
+	unequalRightIdCollapse to avoid having uninitialized variables,
+	even if they are never used
+
+2020-05-27  Steven Eker  <eker2@eker10>
+
+	* binarySymbol.cc (BinarySymbol::leftIdentitySortCheck)
+	(BinarySymbol::rightIdentitySortCheck): DebugAlways() ->
+	DebugInfo(); check error sort as well
+	(BinarySymbol::leftIdentitySortCheck)
+	(BinarySymbol::rightIdentitySortCheck): fix symmetric bugs where
+	were were overwriting unequalLeftIdCollapse,
+	unequalRightIdCollapse rather than ORing in the next result
+	(BinarySymbol::leftIdentitySortCheck)
+	(BinarySymbol::rightIdentitySortCheck): need to set the flags to
+	false to begin with
+
+2020-05-26  Steven Eker  <eker2@eker10>
+
+	* binarySymbol.cc (BinarySymbol::leftIdentitySortCheck)
+	(BinarySymbol::rightIdentitySortCheck): added DebugAlways() to
+	check for suspected bug
+
+===================================Maude128a==========================================
+
 2019-11-11  Steven Eker  <eker@mu>
 
 	* dagNode.cc (computeSolvedForm2): slightly more detailed CantHappen()

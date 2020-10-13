@@ -66,17 +66,17 @@ PendingUnificationStack::~PendingUnificationStack()
   //
   //	Necessary to avoid memory leaks, and more importantly stale root pointers.
   //
-  FOR_EACH_CONST(i, Vector<ActiveSubproblem>, subproblemStack)
-    delete i->subproblem;
+  for (const ActiveSubproblem& as : subproblemStack)
+    delete as.subproblem;
 }
 
 void
 PendingUnificationStack::markReachableNodes()
 {
-  FOR_EACH_CONST(i, Vector<PendingUnification>, unificationStack)
+  for (const PendingUnification& pu : unificationStack)
     {
-      i->lhs->mark();
-      i->rhs->mark();
+      pu.lhs->mark();
+      pu.rhs->mark();
     }
 }
 
@@ -119,6 +119,7 @@ PendingUnificationStack::push(Symbol* controllingSymbol, DagNode* lhs, DagNode* 
 bool
 PendingUnificationStack::resolveTheoryClash(DagNode* lhs, DagNode* rhs)
 {
+  DebugEnter(lhs << " =? " << rhs);
   Symbol* controllingSymbol = lhs->symbol();
   if (controllingSymbol->canResolveTheoryClash())
     {
@@ -271,10 +272,10 @@ PendingUnificationStack::makeNewSubproblem(UnificationContext& solution)
       //
       //	We're done so instantatiate bound variables.
       //
-      FOR_EACH_CONST(i, Vector<int>, variableOrder)
+      for (int index : variableOrder)
 	{
-	  if (DagNode* d = solution.value(*i)->instantiate(solution))
-	    solution.bind(*i, d);
+	  if (DagNode* d = solution.value(index)->instantiate(solution))
+	    solution.bind(index, d);
 	}
       return false;  // no more subproblems to be solved
     }
@@ -370,10 +371,10 @@ PendingUnificationStack::findCycleFrom(int index, UnificationContext& solution)
 	}
       NatSet occurs;
       d->insertVariables(occurs);
-      FOR_EACH_CONST(i, NatSet, occurs)
+      for (int vi : occurs)
 	{
-	  variableStatus[index] = *i;
-	  int cycleStart = findCycleFrom(*i, solution);
+	  variableStatus[index] = vi;
+	  int cycleStart = findCycleFrom(vi, solution);
 	  if (cycleStart != NONE)
 	    return cycleStart;
 	}

@@ -41,8 +41,8 @@
 ViewDatabase::~ViewDatabase()
 {
   //
-  //	Cleaning up makes for a slow exit, but it helps catch
-  //	dangling pointers and leaked memory when debugging.
+  //	Cleaning up makes for a slow exit, but is essential now that
+  //	interpreters can be created and destroyed on-the-fly.
   //
   const ViewMap::const_iterator e = viewMap.end();
   for (ViewMap::const_iterator i = viewMap.begin(); i != e; ++i)

@@ -1,3 +1,34 @@
+2020-09-30  Steven Eker  <eker2@eker10>
+
+	* variableDagNode.cc (VariableDagNode::computeSolvedForm2): prefer
+	to bind from variables of small sort index (large sort) to
+	variables of large sort index (small sort) in order to maximally
+	constraint search
+
+2020-09-28  Steven Eker  <eker2@eker10>
+
+	* variableDagNode.cc (VariableDagNode::safeVirtualReplacement):
+	use range-based for loop
+
+===================================Maude131===========================================
+
+2020-08-18  Steven Eker  <eker2@eker10>
+
+	* variableDagNode.cc (VariableDagNode::indexVariables): added
+	VariableInfo version
+
+	* variableDagNode.hh (class VariableDagNode): added decl for
+	VariableInfo version of indexVariables()
+
+===================================Maude129===========================================
+
+2020-05-13  Steven Eker  <eker2@eker10>
+
+	* variableDagNode.cc (VariableDagNode::lastVariableInChain): use
+	Assert() rather that hardcoded check for a variable bound to itself
+
+===================================Maude128a===========================================
+
 2019-12-03  Steven Eker  <eker@mu>
 
 	* variableTerm.cc (deepCopy2): use safeCastNonNull<>()
@@ -375,7 +406,7 @@
 	* variableDagNode.cc (overwriteWithClone): use
 	copySetRewritingFlags()
 	(makeClone): use copySetRewritingFlags()
-	
+
 ===================================Maude80===========================================
 
 2003-02-24  Steven Eker  <eker@goo.csl.sri.com>
@@ -400,7 +431,7 @@
 	* variableDagNode.cc: removed #pragma
 
 	* variableDagNode.hh: removed #pragma
-	
+
 ===================================Maude79===========================================
 
 2003-01-07  Steven Eker  <eker@goo.csl.sri.com>
@@ -409,9 +440,9 @@
 
 	* variableTerm.hh (class VariableTerm): added decl for
 	partialCompareUnstable()
-	
+
 ===================================Engine78===========================================
-	
+
 2002-10-08  Steven Eker  <eker@goo.csl.sri.com>
 
 	* variableDagNode.cc (copyWithReplacement): (both versions) use
@@ -431,7 +462,7 @@
 	stackArguments()
 
 	* variableDagNode.cc (stackArguments): take respectFrozen flag
-	
+
 ===================================Engine76==================================================
 
 2002-08-26  Steven Eker  <eker@goo.csl.sri.com>
@@ -447,7 +478,7 @@
 2002-08-21  Steven Eker  <eker@goo.csl.sri.com>
 
 	* variableTerm.cc (compileRhs2): CantHappen() replaces Assert()
-	
+
 ===================================Engine75==================================================
 
 2002-07-24  Steven Eker  <eker@goo.csl.sri.com>
@@ -457,7 +488,7 @@
 
 	* variableTerm.hh (class VariableTerm): updated decl for
 	subsumes()
-	
+
 ===================================Engine74==================================================
 
 2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -467,7 +498,7 @@
 
 	* variableDagNode.cc (copyWithReplacement): added
 	(Vector<RedexPosition> version)
-	
+
 ===================================Engine66==================================================
 
 2001-03-07  Steven Eker  <eker@goo.csl.sri.com>
@@ -476,7 +507,7 @@
 	stackArguments()
 
 	* variableSymbol.cc (stackArguments): added
-	
+
 ===================================Engine65==================================================
 
 2001-01-26  Steven Eker  <eker@goo.csl.sri.com>
@@ -485,7 +516,7 @@
 	markArguments() decl and made it private
 
 	* variableDagNode.cc (markArguments): return 0
-	
+
 ===================================Engine64==================================================
 
 2000-07-25  Steven Eker  <eker@goo.csl.sri.com>
@@ -507,7 +538,7 @@
 	* variableRhsAutomaton.cc: deleted
 
 	* variableRhsAutomaton.hh: deleted
-	
+
 ===================================Engine60==================================================
 
 2000-07-18  Steven Eker  <eker@goo.csl.sri.com>
@@ -524,7 +555,7 @@
 
 	* variableTerm.cc (findAvailableTerms): added
 	(compileRhs2): added
-	
+
 ===================================Engine59==================================================
 
 2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
@@ -601,7 +632,7 @@
 
 	* variableSymbol.cc (makeTerm): now a dummy function
 	(makeDagNode): now a dummy function
-	
+
 ===================================Engine58==================================================
 
 2000-03-17  Steven Eker  <eker@goo.csl.sri.com>
@@ -623,7 +654,7 @@
 	(VariableSymbol): don't pass memoFlag arg to Symbol
 
 	* variableSymbol.hh: deleted static data member variableString
-	
+
 ===================================Engine53==================================================
 
 1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
@@ -642,7 +673,7 @@
 
 	* variableDagNode.hh (class VariableDagNode): added decl for
 	getHashValue()
-	
+
 ===================================Engine52==================================================
 
 1999-05-12  Steven Eker  <eker@goo.csl.sri.com>
@@ -660,7 +691,7 @@
 
 	* variableTerm.hh (class VariableTerm): made varIndex and
 	modifiedVarIndex shorts to save memory
-	
+
 ===================================Engine46==================================================
 
 Fri Nov  6 16:26:56 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -668,7 +699,7 @@ Fri Nov  6 16:26:56 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* variableTerm.cc (deepCopy): -> deepCopy2()
 
 	* variableTerm.hh (class VariableTerm): deepCopy() -> deepCopy2()
-	
+
 ===================================Engine43==================================================
 
 Thu Sep 17 17:27:06 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -680,7 +711,7 @@ Thu Sep 17 17:27:06 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* variableDagNode.cc (overwriteWithClone): setSortInfo() ->
 	setSortIndex()
 	(makeClone): setSortInfo() -> setSortIndex()
-	
+
 ===================================Engine40==================================================
 
 Tue Jul 21 10:42:34 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -688,7 +719,7 @@ Tue Jul 21 10:42:34 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* variableTerm.hh (class VariableTerm): aded decl for deepCopy()
 
 	* variableTerm.cc (deepCopy): added
-	
+
 ===================================Engine39==================================================
 
 Wed Jun 10 18:21:38 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -702,7 +733,7 @@ Tue Jun  9 18:13:41 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* variableTerm.cc: IntSet -> NatSet
 
 	* variableTerm.hh: IntSet -> NatSet
-	
+
 ===================================Engine38==================================================
 
 Thu Dec  4 13:13:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -721,7 +752,7 @@ Sun Nov 23 16:15:06 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* variableLhsAutomaton.hh (class VariableLhsAutomaton): rearranged
 	dump() args
-	
+
 ===================================Engine33==================================================
 
 Tue Oct 21 11:48:48 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -766,7 +797,7 @@ Fri Oct 10 17:52:59 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* variableLhsAutomaton.hh (class VariableLhsAutomaton):
 	VariableIndex -> VariableInfo
-	
+
 ===================================Engine30==================================================
 
 Tue Oct  7 15:47:52 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -781,7 +812,7 @@ Fri Oct  3 18:58:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	(dagify2): DataSet -> TermSet
 
 	* variableTerm.hh (class VariableTerm): DataSet -> TermSet
-	
+
 ===================================Engine29==================================================
 
 Thu Oct  2 18:31:02 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -802,7 +833,7 @@ Thu Sep 25 16:32:49 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* variableTerm.cc (lookupSort): use getOpDeclarations()
 
 	* variableSymbol.cc (computeBaseSort): use getOpDeclarations()
-	
+
 ===================================Engine28==================================================
 
 Wed Jul 23 11:36:19 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -817,7 +848,7 @@ Mon Jul 21 19:17:26 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* variableDagNode.hh (class VariableDagNode): deleted
 	normalizeEagerUptoReduced2() decl
-	
+
 ===================================Engine26b==================================================
 
 Fri Jul 18 15:55:29 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -832,7 +863,7 @@ Tue Jul 15 15:26:54 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* variableSymbol.cc (VariableSymbol): pass inert = true to Symbol()
 
 ===================================Engine26==================================================
-	
+
 Mon Jun 30 11:09:58 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* variableTerm.cc (markEagerArguments): handle case where varIndex

@@ -41,7 +41,11 @@ libhigher_a_SOURCES = \
 	narrowingSearchState2.cc \
 	narrowingFolder.cc \
 	narrowingSearchState3.cc \
-	narrowingSequenceSearch3.cc
+	narrowingSequenceSearch3.cc \
+	irredundantUnificationProblem.cc \
+	variantUnifierFilter.cc \
+	filteredVariantUnifierSearch.cc \
+	variantMatchingProblem.cc
 
 noinst_HEADERS = \
 	assignmentConditionFragment.hh \
@@ -75,4 +79,8 @@ noinst_HEADERS = \
 	narrowingSearchState2.hh \
 	narrowingFolder.hh \
 	narrowingSearchState3.hh \
-	narrowingSequenceSearch3.hh
+	narrowingSequenceSearch3.hh \
+	irredundantUnificationProblem.hh \
+	variantUnifierFilter.hh \
+	filteredVariantUnifierSearch.hh \
+	variantMatchingProblem.hh

@@ -1,3 +1,316 @@
+2020-09-16  Steven Eker  <eker2@eker10>
+
+	* interpreterSignature.cc: getNarrowingSearchResultMsg and
+	getNarrowingSearchResultAndPathMsg now take 10 arguments
+
+	* interpreterNewNarrowSearch.cc
+	(InterpreterManagerSymbol::getNarrowingSearchResult): handle
+	VariantOptionSet argument and OR KEEP_HISTORY into variantFlags if
+	needed
+
+	* metaNewNarrow2.cc (MetaLevelOpSymbol::metaNarrowingSearch):
+	handle VariantOptionSet argument; pass variantFlags to
+	makeNarrowingSequenceSearch3()
+	(MetaLevelOpSymbol::metaNarrowingSearchPath): handle
+	VariantOptionSet argument; OR variantFlags into the value passed
+	to makeNarrowingSequenceSearch3()
+	(MetaLevelOpSymbol::metaNarrowingSearchPath): pull down solutionNr
+	before module
+	(MetaLevelOpSymbol::metaNarrowingSearch): pull down solutionNr
+	before module
+
+	* descentSignature.cc: metaNarrowingSearch and
+	metaNarrowingSearchPath now take 8 arguments
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): updated decl for
+	makeNarrowingSearchState2()
+
+	* metaNewNarrow.cc (MetaLevelOpSymbol::metaNarrowingApply): handle
+	VariantOptionSet argument and pass variantFlags to
+	makeNarrowingSearchState2()
+	(MetaLevelOpSymbol::makeNarrowingSearchState2): take variantFlags
+	argument and pass it to NarrowingSearchState2()
+
+	* descentSignature.cc: metaNarrowingApply now takes 6 arguments
+
+2020-09-15  Steven Eker  <eker2@eker10>
+
+	* interpreterVariantUnify.cc
+	(InterpreterManagerSymbol::getVariantUnifier): make use of DELAY =
+	VariantSearch::IRREDUNDANT_MODE to directly OR in variantFlags
+
+	* metaVariantUnify.cc (MetaLevelOpSymbol::metaVariantUnify2): make
+	use of DELAY = VariantSearch::IRREDUNDANT_MODE to directly OR in
+	variantFlags
+
+	* metaLevel.hh (class MetaLevel): make DELAY =
+	VariantSearch::IRREDUNDANT_MODE and FILTER =
+	VariantUnificationProblem::FILTER_VARIANT_UNIFIERS
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	updated decl for makeNarrowingSearchState2()
+
+	* interpreterNewNarrow.cc
+	(InterpreterManagerSymbol::getOneStepNarrowing): handle
+	VariantOptionSet argument and pass variantFlags to
+	makeNarrowingSearchState2()
+	(InterpreterManagerSymbol::makeNarrowingSearchState2): take
+	variantFlags and pass it through to NarrowingSearchState2()
+
+	* interpreterSignature.cc: getOneStepNarrowingMsg now takes 8
+	arguments
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	updated decl for makeNarrowingSequenceSearch3()
+
+	* interpreterNewNarrowSearch.cc
+	(InterpreterManagerSymbol::makeNarrowingSequenceSearch3): take
+	variantFlags rather than keepHistory;  pass variantFlags rather
+	than fold and keepHistory to NarrowingSequenceSearch3()
+	(InterpreterManagerSymbol::getNarrowingSearchResult): pass
+	variantFlags rather than returnPath to
+	makeNarrowingSequenceSearch3()
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): updated decl for
+	makeNarrowingSequenceSearch3()
+
+	* metaNewNarrow2.cc
+	(MetaLevelOpSymbol::makeNarrowingSequenceSearch3): take
+	variantFlags rather than keepHistory;  pass variantFlags rather
+	than fold and keepHistory to NarrowingSequenceSearch3()
+	(MetaLevelOpSymbol::metaNarrowingSearch): pass variantFlags = 0
+	to makeNarrowingSequenceSearch3()
+	(MetaLevelOpSymbol::metaNarrowingSearchPath): pass variantFlags =
+	NarrowingSequenceSearch3::KEEP_HISTORY to
+	makeNarrowingSequenceSearch3()
+
+2020-09-11  Steven Eker  <eker2@eker10>
+
+	* interpreterVariant.cc (InterpreterManagerSymbol::getVariant):
+	rewritten use to findNextVariant(), getCurrentVariant()
+
+	* legacyMetaVariant.cc (MetaLevelOpSymbol::legacyMetaGetVariant2):
+	rewritten use to findNextVariant(), getCurrentVariant()
+
+	* metaVariant.cc (MetaLevelOpSymbol::metaGetVariant2): use
+	range-based for loop; rewritten use to findNextVariant(),
+	getCurrentVariant()
+
+	* legacyMetaVariant.cc (MetaLevelOpSymbol::legacyMetaGetVariant2):
+	use range-based for loop
+
+	* interpreterVariant.cc (InterpreterManagerSymbol::getVariant):
+	use range-based for loop
+
+	* interpreterNewNarrow.cc
+	(InterpreterManagerSymbol::makeNarrowingSearchState2): use
+	range-based for loop
+
+2020-09-08  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::handleMessage): handle
+	getVariantMatcherMsg
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for getVariantMatcher()
+
+	* interpreterVariantMatch.cc: created
+
+	* metaVariantMatch.cc (MetaLevelOpSymbol::metaVariantMatch):
+	reorganized tests to we don't pull down stuff until we're sure we
+	need it
+	(MetaLevelOpSymbol::metaVariantMatch): add in rewrites from
+	subjectContext
+
+	* interpreterSignature.cc: added getVariantMatcherMsg,
+	gotVariantMatcherMsg
+
+2020-09-04  Steven Eker  <eker2@eker10>
+
+	* metaVariantMatch.cc (MetaLevelOpSymbol::metaVariantMatch): pass
+	subjectContext to makeVariantMatchingProblem()
+
+2020-09-03  Steven Eker  <eker2@eker10>
+
+	* metaLevel.hh (class MetaLevel): updated decl for
+	upNoMatchSubst()
+
+	* metaUp.cc (MetaLevel::upNoMatchSubst): take incomplete flag
+
+	* metaVariantMatch.cc: created
+
+	* metaLevel.hh (class MetaLevel): added decls for
+	downMatchingProblem(), downPatternSubjectPair()
+
+	* metaDown.cc (MetaLevel::downPatternSubjectPair): added
+	(MetaLevel::downUnificationProblem): fix memory leak where we were
+	using delete rather that deepSelfDestuct() to dispose of Terms
+	after error; use range-based for loops
+	(MetaLevel::downMatchingProblem): added
+
+	* descentSignature.cc: added metaVariantMatch
+
+	* metaLevelSignature.cc: added patternSubjectPairSymbol,
+	matchingConjunctionSymbol, noMatchIncompleteSubstSymbol
+
+2020-09-02  Steven Eker  <eker2@eker10>
+
+	* interpreterVariantUnify.cc
+	(InterpreterManagerSymbol::getVariantUnifier): call
+	downVariantOptionSet()
+	(InterpreterManagerSymbol::getVariantUnifier): support delay and
+	filter options
+
+	* interpreterSignature.cc: getVariantUnifierMsg,
+	getDisjointVariantUnifierMsg now take 8 arguments each
+
+2020-09-01  Steven Eker  <eker2@eker10>
+
+	* metaVariantUnify.cc (MetaLevelOpSymbol::metaVariantUnify2): pass
+	IRREDUNDANT_MODE flag based on DELAY flag to
+	FilteredVariantUnifierSearch() and VariantSearch()
+
+	* metaDown.cc (MetaLevel::downVariantOptionSet): fixed bug where
+	we were calling downPrintOption()
+	(MetaLevel::downVariantOption): fixed bug where we were checking
+	the wrong symbol
+
+	* metaVariantUnify.cc (MetaLevelOpSymbol::metaVariantUnify2): use
+	FilteredVariantUnifierSearch()
+
+2020-08-31  Steven Eker  <eker2@eker10>
+
+	* metaDown.cc (MetaLevel::downVariantOptionSet): added
+	(MetaLevel::downVariantOption): added
+
+	* metaLevel.hh (class MetaLevel): added enum VariantFlags; added
+	decls for downVariantOption(), downVariantOptionSet()
+
+	* metaVariantUnify.cc (MetaLevelOpSymbol::metaVariantUnify2):
+	handle VariantOptionSet argument
+	(MetaLevelOpSymbol::metaVariantUnify2): use range-base for loops
+	(3 places)
+
+	* metaLevelSignature.cc: added delaySymbol, filterSymbol,
+	emptyVariantOptionSetSymbol, variantOptionSetSymbol
+
+	* descentSignature.cc: metaVariantUnify() and
+	metaVariantDisjointUnify() now take 6 arguments each
+
+2020-08-04  Steven Eker  <eker2@eker10>
+
+	* interpreterVariantUnify.cc
+	(InterpreterManagerSymbol::getVariantUnifier): rewritten to use
+	findNextUnifier()/getCurrentUnifier() rather than
+	getNextUnifier()/getLastReturnedUnifier()
+
+	* legacyMetaVariantUnify.cc
+	(MetaLevelOpSymbol::legacyMetaVariantUnify2): rewritten to use
+	findNextUnifier()/getCurrentUnifier() rather than
+	getNextUnifier()/getLastReturnedUnifier()
+
+	* metaVariantUnify.cc (MetaLevelOpSymbol::metaVariantUnify2):
+	rewritten to use findNextUnifier()/getCurrentUnifier() rather than
+	getNextUnifier()/getLastReturnedUnifier()
+
+	* metaUnify.cc (MetaLevelOpSymbol::metaUnify2): formatting
+
+2020-07-22  Steven Eker  <eker2@eker10>
+
+	* legacyMetaVariantUnify.cc
+	(MetaLevelOpSymbol::legacyMetaVariantUnify2): use new
+	VariantSearch conventions
+
+	* legacyMetaVariant.cc (MetaLevelOpSymbol::legacyMetaGetVariant2):
+	use new VariantSearch conventions
+
+	* metaVariant.cc (MetaLevelOpSymbol::metaGetVariant2): use new
+	VariantSearch conventions
+
+	* metaVariantUnify.cc (MetaLevelOpSymbol::metaVariantUnify2): use
+	new VariantSearch conventions
+
+	* interpreterVariantUnify.cc
+	(InterpreterManagerSymbol::getVariantUnifier): use new
+	VariantSearch conventions
+
+	* interpreterVariant.cc (InterpreterManagerSymbol::getVariant):
+	use new VariantSearch conventions
+
+2020-07-15  Steven Eker  <eker2@eker10>
+
+	* interpreterUnify.cc (InterpreterManagerSymbol::getUnifier): fix
+	bug where we were using the wrong message cto in the irredundant,
+	disjoint case
+
+2020-07-14  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	updated decl for  getUnifier()
+
+	* interpreterSignature.cc: added getIrredundantUnifierMsg,
+	gotIrredundantUnifierMsg, getIrredundantDisjointUnifierMsg,
+	gotIrredundantDisjointUnifierMsg
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::handleMessage): handle
+	getIrredundantUnifierMsg, getIrredundantDisjointUnifierMsg; pass
+	irredundant argument to getUnifier()
+
+	* interpreterUnify.cc (InterpreterManagerSymbol::getUnifier): take
+	irredundant argument
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): updated decl for
+	metaUnify2()
+
+	* descentSignature.cc: added metaIrredundantUnify,
+	metaIrredundantDisjointUnify
+
+	* metaUnify.cc (MetaLevelOpSymbol::metaUnify2): handle irredundant
+	argument
+	(MetaLevelOpSymbol::metaUnify)
+	(MetaLevelOpSymbol::metaDisjointUnify): pass irredundant argument
+	(MetaLevelOpSymbol::metaIrredundantUnify)
+	(MetaLevelOpSymbol::metaIrredundantDisjointUnify): added
+
+===================================Maude129===========================================
+
+2020-04-08  Steven Eker  <eker2@eker9>
+
+	* descentFunctions.cc (MetaLevelOpSymbol::metaParse): updated
+	DebugInfo to make it clear what the cach hit is for
+
+2020-03-10  Rubén Rubio  <rubenrub@ucm.es>
+
+       * metaDownStrats.cc (downStratDef): handle nonexec attribute
+       * metaUp.cc (upStratExpr): fix bug that ignored top(all)
+
+===================================Maude128a===========================================
+
+2020-02-13  Steven Eker  <eker@mu>
+
+	* metaDown.cc (downModule): do resetImports() before closeTheory();
+	call checkFreshVariableNames()
+
+	* metaPreModule.cc (getFlatModule): replaced isBad() check
+	with an Assert() - we don't expect the importation of statements
+	to set the global bad flag for the module
+
+2020-02-06  Steven Eker  <eker@mu>
+
+	* ascentFunctions.cc (metaUpStratDecls, metaUpSds): symmetric
+	fixes
+
+2020-02-05  Steven Eker  <eker@mu>
+
+	* ascentFunctions.cc (metaUpSorts): check that flat module is
+	good before trying to use it
+	(metaUpOpDecls, metaUpMbs, metaUpEqs, metaUpRls): ditto
+	(metaUpModule): check flat module even though we pass PreModule
+
+===================================Maude128===========================================
+
 2019-12-04  Steven Eker  <eker@mu>
 
 	* metaVariant.cc (metaGetVariant2): initialize variant to avoid

@@ -28,9 +28,8 @@ void
 MixfixModule::getParserStats(int& nrNonterminals, int& nrTerminals, int& nrProductions)
 {
   makeGrammar();
-  //int nrKinds = getConnectedComponents().length();
-  nrNonterminals = - nextNonTerminal;
-  nrTerminals = parser->getTokenSet().cardinality();
+  nrNonterminals = parser->getNrNonTerminals();
+  nrTerminals = parser->getNrTerminals();
   nrProductions = parser->getNrProductions();
 }
 
@@ -149,8 +148,8 @@ void
 MixfixModule::parseStatement(const Vector<Token>& bubble)
 {
   // Activate strategy language productions only in strategy definitions
-  bool complexParser = bubble[0].code() == sd || bubble[0].code() == csd;
-  makeGrammar(complexParser);
+  bool complexFlag = bubble[0].code() == sd || bubble[0].code() == csd;
+  makeGrammar(complexFlag);
 
   int r = parseSentence(bubble, STATEMENT);
   if (r <= 0)
@@ -277,7 +276,30 @@ MixfixModule::parseVariantUnifyCommand(const Vector<Token>& bubble,
       IssueWarning(LineNumber(bubble[0].lineNumber()) <<
 		   ": multiple distinct parses for command.");
     }
-  parser->makeVariantUnifyCommand(lhs, rhs, constraints);
+  parser->makeVariantUnifyOrMatchCommand(lhs, rhs, constraints);
+  return true;
+}
+
+bool
+MixfixModule::parseVariantMatchCommand(const Vector<Token>& bubble,
+				       Vector<Term*>& lhs,
+				       Vector<Term*>& rhs,
+				       Vector<Term*>& constraints)
+{
+  makeGrammar(true);
+  int r = parseSentence(bubble, VARIANT_MATCH_COMMAND);
+  if (r <= 0)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": no parse for command.");
+      return false;
+    }
+  if (r > 1)
+    {
+      IssueWarning(LineNumber(bubble[0].lineNumber()) <<
+		   ": multiple distinct parses for command.");
+    }
+  parser->makeVariantUnifyOrMatchCommand(lhs, rhs, constraints);
   return true;
 }
 

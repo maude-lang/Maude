@@ -1,3 +1,114 @@
+2020-09-24  Steven Eker  <eker2@eker10>
+
+	* tests/ResolvedBugs/CUI_OccursCheckSeptember2020.maude: created
+
+===================================Maude131===========================================
+
+2020-09-21  Steven Eker  <eker2@eker10>
+
+	* tests/ResolvedBugs/indentityUnificationSeptember2020.maude:
+	added
+
+2020-09-17  Steven Eker  <eker2@eker10>
+
+	* tests/Misc/continue.maude: added test for variant matching
+
+2020-09-16  Steven Eker  <eker2@eker10>
+
+	* tests/Meta/metaNarrow.maude: added delay, filter examples
+
+	* tests/Meta/metaIntNewNarrow.maude: added delay, filter examples
+
+===================================Maude130===========================================
+
+2020-09-09  Steven Eker  <eker2@eker10>
+
+	* tests/Meta/metaVariantMatch.maude: added
+
+2020-09-08  Steven Eker  <eker2@eker10>
+
+	* tests/Meta/metaIntVariantMatch.maude: added
+
+2020-09-04  Steven Eker  <eker2@eker10>
+
+	* tests/Misc/variantMatching.maude: added
+
+2020-09-03  Steven Eker  <eker2@eker10>
+
+	* tests/Meta/metaIntVariantUnify2.maude: added
+
+2020-09-02  Steven Eker  <eker2@eker10>
+
+	* tests/Meta/metaVariantUnify2.maude: added
+
+	* tests/Meta/checkUnifiers.maude: use new version of metaVariantUnify()
+
+2020-09-01  Steven Eker  <eker2@eker10>
+
+	* tests/Misc/filteredVariantUnification.maude: added
+
+2020-07-15  Steven Eker  <eker2@eker10>
+
+	* tests/Meta/metaIntUnify.maude: added examples for
+	getIrredundantUnifier(), getIrredundantDisjointUnifier()
+
+	* tests/Meta/metaUnify.maude: added examples for
+	metaIrredundantUnify(), metaIrredundantDisjointUnify()
+
+===================================Maude129===========================================
+
+2020-07-01  Steven Eker  <eker2@eker10>
+
+	* tests/Misc/AU_Unification.maude: added
+
+2020-06-24  Steven Eker  <eker2@eker10>
+
+	* tests/Misc/unification.maude: change the theory in the
+	unsupported theory example to AUl since AU is now partly supported
+
+2020-06-11  Steven Eker  <eker2@eker10>
+
+	* tests/ResolvedBugs/variantUnifyJune2020.maude: added
+
+	* tests/Meta/checkUnifiers.maude: added
+
+2020-05-28  Steven Eker  <eker2@eker10>
+
+	* tests/ResolvedBugs/ACU_MissingUnifiersMay2020.maude: added
+
+	* tests/ResolvedBugs/sortCollapseMay2020.maude: added
+
+2020-05-19  Steven Eker  <eker2@eker10>
+
+	* tests/ResolvedBugs/identityUnificationMay2020.maude: added
+
+2020-05-05  Steven Eker  <eker2@eker10>
+
+	* tests/ResolvedBugs/complexParserSyncApril2020.maude: removed
+	line left from metaParseStrategy() test
+
+2020-04-28  Steven Eker  <eker2@eker10>
+
+	* configure.ac: added test for ppoll() existence
+
+2020-04-13  Steven Eker  <eker2@eker9>
+
+	* tests/ResolvedBugs/complexParserSyncApril2020.maude: added
+
+	* tests/ResolvedBugs/metaParseStrategyApril2020.maude: added
+
+===================================Maude128a===========================================
+
+2020-03-06  Steven Eker  <eker2@eker9>
+
+	* tests/ResolvedBugs/closeSocketFeb2020.maude: added
+
+2020-02-06  Steven Eker  <eker@mu>
+
+	* tests/ResolvedBugs/ascentFunctionsJanuary2020.maude: added
+
+===================================Maude128===========================================
+
 2019-11-20  Rubén Rubio  <rubenrub@ucm.es>
 
 	* tests/Meta/metaIntStrategy.maude: added

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
 //	forward declarations
 #include "interface.hh"
 #include "core.hh"
-//#include "variable.hh"
 
 //	interface class definitions
 #include "symbol.hh"
@@ -57,25 +56,25 @@ NarrowingFolder::NarrowingFolder(bool fold, bool keepHistory)
 
 NarrowingFolder::~NarrowingFolder()
 {
-  FOR_EACH_CONST(i, RetainedStateMap, mostGeneralSoFar)
-    delete i->second;
+  for (auto& i : mostGeneralSoFar)
+    delete i.second;
 }
 
 void
 NarrowingFolder::markReachableNodes()
 {
-  FOR_EACH_CONST(i, RetainedStateMap, mostGeneralSoFar)
+  for (auto& i : mostGeneralSoFar)
     {
-      i->second->state->mark();
-      if (DagNode* d = i->second->narrowingContext)
+      i.second->state->mark();
+      if (DagNode* d = i.second->narrowingContext)
 	d->mark();
-      if (Substitution* subst = i->second->accumulatedSubstitution)
+      if (Substitution* subst = i.second->accumulatedSubstitution)
 	{
 	  int nrBindings = subst->nrFragileBindings();
 	  for (int j = 0; j < nrBindings; ++j)
 	    subst->value(j)->mark();
 	}
-      if (Substitution* subst = i->second->unifier)
+      if (Substitution* subst = i.second->unifier)
 	{
 	  int nrBindings = subst->nrFragileBindings();
 	  for (int j = 0; j < nrBindings; ++j)
@@ -99,11 +98,11 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
       //
       //	See if state is subsumed by an existing state.
       //
-      FOR_EACH_CONST(i, RetainedStateMap, mostGeneralSoFar)
+      for (auto& i : mostGeneralSoFar)
 	{
-	  if (i->second->subsumes(state))
+	  if (i.second->subsumes(state))
 	    {
-	      DebugAdvisory("new state " << index << " subsumed by " << i->first);
+	      DebugAdvisory("new state " << index << " subsumed by " << i.first);
 	      return false;
 	    }
 	}
@@ -123,7 +122,7 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
       //
       //	Compute ancestor set.
       //
-      set<int> ancestors;
+      StateSet ancestors;
       for (int i = parentIndex; i != NONE; )
 	{
 	  ancestors.insert(i);
@@ -134,7 +133,7 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
       //
       //	See if newState can evict an existing state.
       //
-      set<int> existingStatesSubsumed;
+      StateSet existingStatesSubsumed;
       RetainedStateMap::iterator i = mostGeneralSoFar.begin();
       while (i != mostGeneralSoFar.end())
 	{
@@ -143,7 +142,8 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 	  if (ancestors.find(i->first) == ancestors.end())  // can't mess with ancestors of new state
 	    {
 	      RetainedState* potentialVictim = i->second;
-	      if (existingStatesSubsumed.find(potentialVictim->parentIndex) != existingStatesSubsumed.end())
+	      if (existingStatesSubsumed.find(potentialVictim->parentIndex) !=
+		  existingStatesSubsumed.end())
 		{
 		  //
 		  //	Our parent was subsumed so we are also subsumed.
@@ -217,7 +217,8 @@ NarrowingFolder::getNextSurvivingState(DagNode*& nextState,
 				       int& nextStateDepth)
 {
   cleanGraph();
-  RetainedStateMap::const_iterator nextStateIterator = mostGeneralSoFar.upper_bound(currentStateIndex);
+  RetainedStateMap::const_iterator nextStateIterator =
+    mostGeneralSoFar.upper_bound(currentStateIndex);
   if (nextStateIterator == mostGeneralSoFar.end())
     return NONE;
 
@@ -303,7 +304,8 @@ NarrowingFolder::RetainedState::RetainedState(DagNode* state, int parentIndex, b
 
       matchingAutomaton = t->compileLhs(false, variableInfo, boundUniquely, subproblemLikely);
       stateTerm = t;
-      nrMatchingVariables = variableInfo.getNrProtectedVariables();  // may also have some abstraction variables
+      nrMatchingVariables = variableInfo.getNrProtectedVariables();  // may also have some
+      								     // abstraction variables
     }
   else
     {

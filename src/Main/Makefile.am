@@ -85,4 +85,5 @@ EXTRA_DIST = \
 	term-order.maude \
 	metaInterpreter.maude \
 	smt.maude \
-	file.maude
+	file.maude \
+	process.maude

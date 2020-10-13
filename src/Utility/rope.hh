@@ -1,3 +1,34 @@
+/*
+
+    This file is part of the Maude 3 interpreter.
+
+    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+*/
+
+//
+//	Class for rope (functional string) data structure.
+//
+//	This is based on:
+//	  Hans-J. Boehm, Russ Atkinson, and Michael Plass, 
+//	  "Ropes: an Alternative to Strings", 
+//	  Software—Practice & Experience. New York, NY, USA: John Wiley & Sons, Inc.
+//	  25(12):1315–1330, December 1995.
+//
 #ifndef _rope_hh_
 #define _rope_hh_
 

@@ -1,3 +1,11 @@
+2020-05-19  Steven Eker  <eker2@eker10>
+
+	* freeDagNode.cc (FreeDagNode::computeSolvedForm2): added
+	DebugEnter() and DebugInfo()
+	(FreeDagNode::purifyAndOccurCheck): added DebugEnter()
+
+===================================Maude128a===========================================
+
 2019-11-11  Steven Eker  <eker@mu>
 
 	* freeDagNode.cc (computeBaseSortForGroundSubterms): take

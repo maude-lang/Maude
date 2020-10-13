@@ -1,0 +1,9 @@
+Warning: sort declarations for operator f with left identity e can cause
+    collapse from sort Foo to [Foo] (collapsing to a larger or incomparable
+    sort is illegal).
+Foo: f(e, X:[Foo])
+==========================================
+reduce in FOO : X:[Foo] .
+rewrites: 0
+result [Foo]: X:[Foo]
+Bye.

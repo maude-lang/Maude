@@ -36,4 +36,38 @@
 #  include <time.h>
 # endif
 #endif
+
+inline long
+timespecCompare(const timespec* first, const timespec* second)
+{
+  //
+  //	Compare two timespec structs
+  //
+  //	Return < 0 if first < second
+  //	       = 0 if first = second
+  //	       > 0 if first > second
+  //
+  long diff = first->tv_sec - second->tv_sec;
+  return (diff == 0) ? (first->tv_nsec - second->tv_nsec) : diff;
+}
+
+inline void
+timespecSubtract(const timespec* first,
+		 const timespec* second,
+		 timespec* result)
+{
+  //
+  //	Subtract two timespec structs, assuming first >= second
+  //
+  long diff = first->tv_sec - second->tv_sec;
+  long ndiff = first->tv_nsec - second->tv_nsec;
+  if (ndiff < 0)
+    {
+      ndiff += 1000000000L;
+      diff -= 1;
+    }
+  result->tv_sec = diff;
+  result->tv_nsec = ndiff;
+}
+
 #endif

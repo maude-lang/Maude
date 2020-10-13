@@ -443,157 +443,157 @@ result MatchPair: {
 ==========================================
 xmatch in FOO : f(X:Foo, Y:Foo) <=? f(a, b, c, c) .
 
-Solution 1
+Matcher 1
 Matched portion = (whole)
 X:Foo --> a
 Y:Foo --> f(b, c, c)
 
-Solution 2
+Matcher 2
 Matched portion = (whole)
 X:Foo --> b
 Y:Foo --> f(a, c, c)
 
-Solution 3
+Matcher 3
 Matched portion = (whole)
 X:Foo --> c
 Y:Foo --> f(a, b, c)
 
-Solution 4
+Matcher 4
 Matched portion = (whole)
 X:Foo --> f(a, b)
 Y:Foo --> f(c, c)
 
-Solution 5
+Matcher 5
 Matched portion = (whole)
 X:Foo --> f(a, c)
 Y:Foo --> f(b, c)
 
-Solution 6
+Matcher 6
 Matched portion = (whole)
 X:Foo --> f(b, c)
 Y:Foo --> f(a, c)
 
-Solution 7
+Matcher 7
 Matched portion = (whole)
 X:Foo --> f(c, c)
 Y:Foo --> f(a, b)
 
-Solution 8
+Matcher 8
 Matched portion = (whole)
 X:Foo --> f(a, b, c)
 Y:Foo --> c
 
-Solution 9
+Matcher 9
 Matched portion = (whole)
 X:Foo --> f(a, c, c)
 Y:Foo --> b
 
-Solution 10
+Matcher 10
 Matched portion = (whole)
 X:Foo --> f(b, c, c)
 Y:Foo --> a
 
-Solution 11
+Matcher 11
 Matched portion = f(b, c, c)
 X:Foo --> b
 Y:Foo --> f(c, c)
 
-Solution 12
+Matcher 12
 Matched portion = f(b, c, c)
 X:Foo --> c
 Y:Foo --> f(b, c)
 
-Solution 13
+Matcher 13
 Matched portion = f(b, c, c)
 X:Foo --> f(b, c)
 Y:Foo --> c
 
-Solution 14
+Matcher 14
 Matched portion = f(b, c, c)
 X:Foo --> f(c, c)
 Y:Foo --> b
 
-Solution 15
+Matcher 15
 Matched portion = f(a, c, c)
 X:Foo --> a
 Y:Foo --> f(c, c)
 
-Solution 16
+Matcher 16
 Matched portion = f(a, c, c)
 X:Foo --> c
 Y:Foo --> f(a, c)
 
-Solution 17
+Matcher 17
 Matched portion = f(a, c, c)
 X:Foo --> f(a, c)
 Y:Foo --> c
 
-Solution 18
+Matcher 18
 Matched portion = f(a, c, c)
 X:Foo --> f(c, c)
 Y:Foo --> a
 
-Solution 19
+Matcher 19
 Matched portion = f(a, b, c)
 X:Foo --> a
 Y:Foo --> f(b, c)
 
-Solution 20
+Matcher 20
 Matched portion = f(a, b, c)
 X:Foo --> b
 Y:Foo --> f(a, c)
 
-Solution 21
+Matcher 21
 Matched portion = f(a, b, c)
 X:Foo --> c
 Y:Foo --> f(a, b)
 
-Solution 22
+Matcher 22
 Matched portion = f(a, b, c)
 X:Foo --> f(a, b)
 Y:Foo --> c
 
-Solution 23
+Matcher 23
 Matched portion = f(a, b, c)
 X:Foo --> f(a, c)
 Y:Foo --> b
 
-Solution 24
+Matcher 24
 Matched portion = f(a, b, c)
 X:Foo --> f(b, c)
 Y:Foo --> a
 
-Solution 25
+Matcher 25
 Matched portion = f(c, c)
 X:Foo --> c
 Y:Foo --> c
 
-Solution 26
+Matcher 26
 Matched portion = f(b, c)
 X:Foo --> b
 Y:Foo --> c
 
-Solution 27
+Matcher 27
 Matched portion = f(b, c)
 X:Foo --> c
 Y:Foo --> b
 
-Solution 28
+Matcher 28
 Matched portion = f(a, c)
 X:Foo --> a
 Y:Foo --> c
 
-Solution 29
+Matcher 29
 Matched portion = f(a, c)
 X:Foo --> c
 Y:Foo --> a
 
-Solution 30
+Matcher 30
 Matched portion = f(a, b)
 X:Foo --> a
 Y:Foo --> b
 
-Solution 31
+Matcher 31
 Matched portion = f(a, b)
 X:Foo --> b
 Y:Foo --> a

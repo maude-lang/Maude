@@ -264,6 +264,28 @@ red in META-LEVEL :
     3) .
 
 ***
+***	Check delay and filter options.
+***
+
+red in META-LEVEL :
+  metaNarrowingApply(
+    ['XOR-TEST],
+    'f['g['_+_['W:Expr, 'b.Elt]], 'Z:Expr],
+    '_+_['W:Expr, 'b.Elt],
+    '#,
+    delay filter,
+    0) .
+
+red in META-LEVEL :
+  metaNarrowingApply(
+    ['XOR-TEST],
+    'f['g['_+_['W:Expr, 'b.Elt]], 'Z:Expr],
+    '_+_['W:Expr, 'b.Elt],
+    '#,
+    delay filter,
+    1) .
+
+***
 ***	Now with unbound variable in irreducibility constraint; 'X:Expr should not be
 ***	mentioned in any substitution.
 ***

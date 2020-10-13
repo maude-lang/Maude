@@ -468,7 +468,7 @@ states: 112  rewrites: 401
 ==========================================
 get variants [1] in XOR : cst1 + X .
 
-Variant #1
+Variant 1
 rewrites: 0
 XOR: cst1 + #1:XOR
 X --> #1:XOR
@@ -482,17 +482,17 @@ cst1 + #1:XOR
 --->
 cst1
 
-Variant #2
+Variant 2
 rewrites: 3
 Elem: cst1
 X --> 0
 
-Variant #3
+Variant 3
 rewrites: 0
 XOR: 0
 X --> cst1
 
-Variant #4
+Variant 4
 rewrites: 0
 XOR: %1:XOR
 X --> cst1 + %1:XOR
@@ -500,14 +500,14 @@ X --> cst1 + %1:XOR
 No more variants.
 rewrites: 0
 ==========================================
-variant unify [2] in XOR : X + cst1 =? Y + cst2  .
+variant unify [2] in XOR : X + cst1 =? Y + cst2 .
 
-Unifier #1
+Unifier 1
 rewrites: 6
 X --> cst2 + %1:XOR
 Y --> cst1 + %1:XOR
 
-Unifier #2
+Unifier 2
 rewrites: 6
 X --> cst2
 Y --> cst1
@@ -530,32 +530,32 @@ cst2 + %1:XOR
 --->
 0
 
-Unifier #3
+Unifier 3
 rewrites: 18
 X --> cst1 + cst2 + #1:XOR
 Y --> #1:XOR
 
-Unifier #4
+Unifier 4
 rewrites: 18
 X --> #1:XOR
 Y --> cst1 + cst2 + #1:XOR
 
-Unifier #5
+Unifier 5
 rewrites: 18
 X --> 0
 Y --> cst1 + cst2
 
-Unifier #6
+Unifier 6
 rewrites: 0
 X --> cst1
 Y --> cst2
 
-Unifier #7
+Unifier 7
 rewrites: 0
 X --> cst1 + cst2
 Y --> 0
 
-Unifier #8
+Unifier 8
 rewrites: 0
 X --> cst1 + %1:XOR
 Y --> cst2 + %1:XOR
@@ -563,20 +563,20 @@ Y --> cst2 + %1:XOR
 No more unifiers.
 rewrites: 0
 ==========================================
-variant unify [1] in XOR : X + cst1 =? Y + cst2  such that X + cst1 irreducible
+variant unify [1] in XOR : X + cst1 =? Y + cst2 such that X + cst1 irreducible
     .
 
-Unifier #1
+Unifier 1
 rewrites: 3
 X --> cst2 + %1:XOR
 Y --> cst1 + %1:XOR
 
-Unifier #2
+Unifier 2
 rewrites: 0
 X --> cst2
 Y --> cst1
 
-Unifier #3
+Unifier 3
 rewrites: 0
 X --> #1:XOR
 Y --> cst1 + cst2 + #1:XOR
@@ -588,28 +588,28 @@ debug narrow [5, 1] in FOO : f(A, A) =>+ C .
 *********** narrowing step
 rl f(X, Y, Y, Z) => f(X, Y, Z) [narrowing] .
 Rule variable bindings:
-X --> f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo)
-Y --> %2:Foo
-Z --> %3:Foo
+X --> f(%3:Foo, %1:Foo, %1:Foo, %2:Foo, %3:Foo)
+Y --> %1:Foo
+Z --> %2:Foo
 Subject variable bindings:
-#1:Foo --> f(%1:Foo, %2:Foo, %2:Foo, %3:Foo)
+#1:Foo --> f(%3:Foo, %1:Foo, %1:Foo, %2:Foo)
 f(#1:Foo, #1:Foo)
 --->
-f(f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo), %2:Foo, %3:Foo)
+f(f(%3:Foo, %1:Foo, %1:Foo, %2:Foo, %3:Foo), %1:Foo, %2:Foo)
 
 Solution 1
 rewrites: 1
-state: f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo)
-C --> f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo)
+state: f(%3:Foo, %1:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo)
+C --> f(%3:Foo, %1:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo)
 Warning: Unification modulo the theory of operator f has encountered an
     instance for which it may not be complete.
 
 Solution 2
 rewrites: 2
-state: f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo,
-    %2:Foo, %3:Foo)
-C --> f(%1:Foo, %2:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo,
-    %3:Foo)
+state: f(%2:Foo, %3:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo,
+    %3:Foo, %1:Foo)
+C --> f(%2:Foo, %3:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo,
+    %1:Foo)
 
 Solution 3
 rewrites: 3
@@ -618,13 +618,13 @@ C --> f(%1:Foo, %2:Foo, %1:Foo, %3:Foo, %2:Foo, %1:Foo, %3:Foo, %2:Foo)
 
 Solution 4
 rewrites: 4
-state: f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
-C --> f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
+state: f(%2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo)
+C --> f(%2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo)
 
 Solution 5
 rewrites: 5
-state: f(%1:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
-C --> f(%1:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
+state: f(%2:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo)
+C --> f(%2:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo)
 
 Solution 6
 rewrites: 1
@@ -632,32 +632,37 @@ state: f(%1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo, %3:Foo)
 C --> f(%1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %3:Foo, %1:Foo, %3:Foo)
 
 Solution 7
+rewrites: 2
+state: f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
+C --> f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
+
+Solution 8
 rewrites: 3
 state: f(%1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %2:Foo, %3:Foo)
 C --> f(%1:Foo, %2:Foo, %3:Foo, %1:Foo, %2:Foo, %2:Foo, %3:Foo)
 
-Solution 8
+Solution 9
 rewrites: 4
 state: f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %2:Foo)
 C --> f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %2:Foo)
 
-Solution 9
+Solution 10
 rewrites: 5
 state: f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo)
 C --> f(%1:Foo, %2:Foo, %1:Foo, %2:Foo, %1:Foo)
 
-Solution 10
-rewrites: 6
+Solution 11
+rewrites: 1
 state: f(%1:Foo, %1:Foo, %1:Foo)
 C --> f(%1:Foo, %1:Foo, %1:Foo)
 
-Solution 11
-rewrites: 1
+Solution 12
+rewrites: 2
 state: f(%1:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
 C --> f(%1:Foo, %1:Foo, %2:Foo, %1:Foo, %2:Foo)
 
 No more solutions.
-rewrites: 1
+rewrites: 2
 Warning: Some solutions may have been missed due to incomplete unification
     algorithm(s).
 ==========================================
@@ -780,4 +785,51 @@ result Foo: g(b, e)
 
 No more solutions.
 rewrites: 0
+==========================================
+debug variant match [1] in XOR : X + Y <=? c + d .
+*********** variant narrowing step
+eq 0 + Y = Y [variant] .
+Equation variable bindings:
+Y --> %1:XOR
+Old variant variable bindings:
+#1:XOR --> 0
+#2:XOR --> %1:XOR
+#1:XOR + #2:XOR
+--->
+%1:XOR
+rewrites: 10
+
+Matcher 1
+X --> c
+Y --> d
+
+Matcher 2
+X --> d
+Y --> c
+
+Matcher 3
+X --> 0
+Y --> c + d
+
+Matcher 4
+X --> c + d
+Y --> 0
+
+Matcher 5
+X --> c + #1:XOR
+Y --> d + #1:XOR
+
+Matcher 6
+X --> d + #1:XOR
+Y --> c + #1:XOR
+
+Matcher 7
+X --> c + d + #1:XOR
+Y --> #1:XOR
+
+Matcher 8
+X --> #1:XOR
+Y --> c + d + #1:XOR
+
+No more matchers.
 Bye.

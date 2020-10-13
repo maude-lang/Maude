@@ -47,6 +47,7 @@ public:
   VariableDagNode* getVariableDagNode(int index);
 
   void restoreFromClone(const Substitution& substitutionClone);
+  void dump(ostream& s);
 
 protected:
   //
@@ -60,7 +61,7 @@ private:
   const int nrOriginalVariables;  // actually some the the slots could be unused
   const int variableFamily;  // what family of fresh variable names to use
   //
-  //	Fresh variables are always create at the kind level. We keep track of this kind sort
+  //	Fresh variables are always created at the kind level. We keep track of this kind sort
   //	for each fresh variable we create.
   //
   Vector<Sort*> freshVariableSorts;

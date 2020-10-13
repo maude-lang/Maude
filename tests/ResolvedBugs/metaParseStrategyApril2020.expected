@@ -1,0 +1,5 @@
+==========================================
+reduce in META-LEVEL : metaParseStrategy(['NAT], none, 'top '`( 'all '`)) .
+rewrites: 2
+result Strategy: top(all)
+Bye.

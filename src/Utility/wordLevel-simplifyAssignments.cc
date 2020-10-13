@@ -1,6 +1,60 @@
+/*
+
+    This file is part of the Maude 3 interpreter.
+
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+*/
+
 //
 //	Code for expanding the assignments in a level.
 //
+
+bool
+WordLevel::handleInitialOccursCheckFailure()
+{
+  //
+  //	We never create assignments that look like
+  //	  X |-> ... X ...
+  //	other than X |-> X which indicates X is unbound.
+  //
+  //	However it is possible for a user to pass in such an
+  //	assignment so we need to resolve those up front.
+  //
+  int nrAssignments = partialSolution.size();
+  for (int i = 0; i < nrAssignments; ++i)
+    {
+      Word& word = partialSolution[i];
+      if (word.size() > 1)
+	{
+	  for (int j : word)
+	    {
+	      if (i == j)
+		{
+		  if (resolveOccursCheckFailure(i, word))
+		    break;
+		  else
+		    return false;
+		}
+	    }
+	}
+    }
+  return true;  
+}
 
 bool
 WordLevel::fullyExpandAssignments()
@@ -10,21 +64,33 @@ WordLevel::fullyExpandAssignments()
   //
   for (;;)
     {
+      //
+      //	First we handle any null equations.
+      //	We only check for null equations if we're not a PIGPUG
+      //	level because PigPug does not make null equations. This may make
+      //	some assignments that can be propagated into expansion.
+      //
+      if (levelType != PIGPUG && !handleNullEquations())
+	return false;
+      //
+      //	Now we exand all assignments. This can make some null
+      //	equations but only if CHANGED.
+      //
       Result result = expandAssignments();
       if (result == FAIL)
 	return false;
       if (result == DONE)
 	break;
     }
+  //
+  //	All null equations resolved and all assignments fully inter-reduced.
+  //
   return true;
 }
 
 WordLevel::Result
 WordLevel::expandAssignments()
 {
-  //
-  //	Expand each assignment.
-  //
   bool changed = false;
   int nrAssignments = partialSolution.size();
   for (int i = 0; i < nrAssignments; ++i)
@@ -41,78 +107,95 @@ WordLevel::expandAssignments()
 WordLevel::Result
 WordLevel::expandAssignment(int var, Word& word)
 {
+  DebugEnter("x" << var << " |-> " << word);
   //
   //	Check if assignment needs expansion, i.e. that a variable in
-  //	range has an assignment different from itself.
+  //	rhs has an assignment different from itself.
   //
-  FOR_EACH_CONST(i, Word, word)
+  for (int i : word)
     {
-      int var2 = *i;
-      if (var2 == var)
-	return word.size() == 1 ? DONE : FAIL;  // either identity mapping or occur-check failure
-
-      Word& assigned = partialSolution[var2];
-      if (!(assigned.size() == 1 && assigned[0] == var2))
-	return reallyExpandAssignment(var, word, i, assigned) ? CHANGED : FAIL;
+      if (i == var)
+	{
+	  Assert(word.size() == 1, "already dealt with occurs-check failure");
+	  return DONE;
+	}
+      Word& assigned = partialSolution[i];
+      if (!(assigned.size() == 1 && assigned[0] == i))
+	return reallyExpandAssignment(var, word) ? CHANGED : FAIL;
     }
   return DONE;
 }
 
 bool
-WordLevel::reallyExpandAssignment(int var,
-				  Word& word,
-				  Word::const_iterator firstToExpand,
-				  const Word& expansion)
+WordLevel::reallyExpandAssignment(int var, Word& word)
 {
+  DebugEnter("x" << var << " |-> " << word);
   //
-  //	Do the actual expansion; return false if there was an occur-check failure.
+  //	Do the actual expansion; return false if there was an occur-check failure
+  //	or constraint failure.
   //
   Word newWord;
-  //
-  //	Copy in any variables that didn't need expansion.
-  //
-  for (Word::const_iterator i = word.begin(); i != firstToExpand; ++i)
-    newWord.append(*i);
-  //
-  //	Copy in the assignment of the first variable that needed expansion.
-  //
-  if (!append(newWord, expansion, var))
-    return false;
-  //
-  //	Got through remaining variables, expanding those that are assigned non-identity values.
-  //
-  const Word::const_iterator e = word.end();
-  for (++firstToExpand; firstToExpand != e; ++firstToExpand)
+  bool occursCheckFail = false;
+  for (int i : word)
     {
-      int var2 = *firstToExpand;
-      if (var2 == var)
-	return false;  // occur-check failure
-
-      Word& assigned = partialSolution[var2];
-      if (assigned.size() == 1 && assigned[0] == var2)
-	newWord.append(var2);
+      Assert(i != var, "occurs-check issue for assignment variable x"
+	     << var << " |-> " << word);
+      Word& assigned = partialSolution[i];
+      if (assigned.size() == 1 && assigned[0] == i)
+	newWord.append(i);
       else
+	occursCheckFail |= append(newWord, assigned, var);
+    }
+  if (occursCheckFail)
+    {
+      //
+      //	We only allow resolution of an occurs-check failure
+      //	by making empty assignments in INITIAL and SELECTION layers.
+      //
+      return levelType != PIGPUG && resolveOccursCheckFailure(var, newWord);
+    }
+  int length = newWord.size();
+  VariableConstraint& lhsConstraint = constraintMap[var];
+  if (length == 1)
+    {
+      //
+      //	Variable to variable assignment; compute meet
+      //	of constraints.
+      //
+      VariableConstraint& rhsConstraint = constraintMap[newWord[0]];
+      if (!(rhsConstraint.intersect(lhsConstraint)))
+	return false;  // incompatible constraints
+      //
+      //	The lhs variable will disappear from the system so
+      //	there's no need to update its constraint.
+      //
+    }
+  else
+    {
+      if (levelType == PIGPUG)
 	{
-	  if (!(append(newWord, assigned, var)))
+	  //
+	  //	INITIAL and SELECTION layers can make empty assignments.
+	  //	But if this is a PIGPUG layer we check for bounds violations.
+	  //
+	  if (!(lhsConstraint.isUnbounded()) && lhsConstraint.getUpperBound() < length)
 	    return false;
 	}
     }
-  //
-  //	Replace the range with its expansion.
-  //
   word.swap(newWord);
+  DebugExit("x" << var << " |-> " << word);
   return true;
 }
 
 bool
 WordLevel::append(Word& newWord, const Word& word, int var)
 {
-  FOR_EACH_CONST(i, Word, word)
+  bool occursCheckFail = false;
+  for (int i : word)
     {
-      int var2 = *i;
-      if (var2 == var)
-	return false;  // occur-check failure
-      newWord.append(var2);
+      newWord.append(i);
+      if (i == var)
+	occursCheckFail = true;
     }
-  return true;
+  return occursCheckFail;
 }

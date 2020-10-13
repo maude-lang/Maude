@@ -47,6 +47,7 @@ EXTRA_DIST = \
 	metaUnify.cc \
 	metaVariant.cc \
 	metaVariantUnify.cc \
+	metaVariantMatch.cc \
 	metaSearch.cc \
 	metaSrewrite.cc \
 	metaNarrow.cc \
@@ -64,6 +65,7 @@ EXTRA_DIST = \
 	interpreterUnify.cc \
 	interpreterVariant.cc \
 	interpreterVariantUnify.cc \
+	interpreterVariantMatch.cc \
 	interpreterSort.cc \
 	interpreterPrint.cc \
 	interpreterApply.cc \

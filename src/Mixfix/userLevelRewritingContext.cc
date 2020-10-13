@@ -139,6 +139,22 @@ UserLevelRewritingContext::tracePreEqRewrite(DagNode* redex,
 					     const Equation* equation,
 					     int type)
 {
+  //
+  //	All unusual situations during an equational rewrite are funneled
+  //	through this function, by setting the traceFlag in class Module.
+  //	This is so that rewriting only has to test a single flag
+  //	to get off the fast case, and into the (slow) exception case.
+  //
+  //	Possible unusual situations:
+  //	(1) Profiling is enabled
+  //	(2) Statement print attributes are enabled
+  //	(3) Aborting the computation
+  //	(4) Single stepping in debugger
+  //	(5) Breakpoints are enabled
+  //	(6) ^C interrupt
+  //	(7) Info interrupt
+  //	(8) Tracing is enabled
+  //
   if (interpreter.getFlag(Interpreter::PROFILE))
     {
       safeCast(ProfileModule*, root()->symbol()->getModule())->
@@ -146,7 +162,11 @@ UserLevelRewritingContext::tracePreEqRewrite(DagNode* redex,
     }
   if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE))
     checkForPrintAttribute(MetadataStore::EQUATION, equation);
-
+  //
+  //	handeDebug() takes care of abort, single stepping, breakpoints,
+  //	^C interrupts and info interrupts, single these are common to
+  //	all rewrite types.
+  //
   if (handleDebug(redex, equation) ||
       !localTraceFlag ||
       !(interpreter.getFlag(Interpreter::TRACE_EQ)) ||

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2015 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2019 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -94,8 +94,12 @@ AU_UnificationSubproblem2::markReachableNodes()
 }
 
 void
-AU_UnificationSubproblem2::addUnification(DagNode* lhs, DagNode* rhs, bool marked, UnificationContext& solution)
+AU_UnificationSubproblem2::addUnification(DagNode* lhs,
+					  DagNode* rhs,
+					  bool marked,
+					  UnificationContext& solution)
 {
+  DebugEnter(lhs << " =? " << rhs << "  marked = " << marked);
   Assert(lhs->symbol() == topSymbol, "bad lhs dag " << lhs);
   Assert(topSymbol->hasIdentity() ||
 	 rhs->symbol() == topSymbol ||
@@ -104,20 +108,66 @@ AU_UnificationSubproblem2::addUnification(DagNode* lhs, DagNode* rhs, bool marke
   //
   //	Store unification problem as an abstract equation or assignment.
   //
+  WordSystem::Word lhsAbstract;
+  assocToAbstract(lhs, lhsAbstract, solution);
   if (rhs->symbol() == topSymbol)
     {
-      unifications.push_back(Unification());
-      Unification& u = unifications.back();
-      assocToAbstract(lhs, u.lhs, solution);
-      assocToAbstract(rhs, u.rhs, solution);
-
+      WordSystem::Word rhsAbstract;
+      assocToAbstract(rhs, rhsAbstract, solution);
+      if (lhsAbstract.empty())
+	{
+	  if (rhsAbstract.empty())
+	    ;  // ignore unification
+	  else
+	    nullEquations.push_back(rhsAbstract);
+	}
+      else
+	{
+	  if (rhsAbstract.empty())
+	    nullEquations.push_back(lhsAbstract);
+	  else
+	    {
+	      unifications.push_back(Unification());
+	      Unification& u = unifications.back();
+	      u.lhs.swap(lhsAbstract);
+	      u.rhs.swap(rhsAbstract);
+	    }
+	}
     }
   else
     {
-      assignments.push_back(Assignment());
-      Assignment& a = assignments.back();
-      a.variable = dagToAbstract(rhs, solution);
-      assocToAbstract(lhs, a.value, solution);
+      Term* identity = topSymbol->getIdentity();
+      int rhsIndex = (identity != 0 && identity->equal(rhs)) ? NONE : dagToAbstract(rhs, solution);
+      if (lhsAbstract.empty())
+	{
+	  if (rhsIndex == NONE)
+	    ;  // ignore unification of identity with identity
+	  else
+	    {
+	      //
+	      //	We don't bother recording rhsIndex as marked because it's
+	      //	going to be forced to identity, so the issue of it taking
+	      //	more than one lhs subterm is moot.
+	      //
+	      WordSystem::Word rhsAbstract(1);
+	      rhsAbstract[0] = rhsIndex;
+	      nullEquations.push_back(rhsAbstract);
+	    }
+	}
+      else
+	{
+	  if (rhsIndex == NONE)
+	    nullEquations.push_back(lhsAbstract);
+	  else
+	    {
+	      assignments.push_back(Assignment());
+	      Assignment& a = assignments.back();
+	      a.variable = rhsIndex;
+	      a.value.swap(lhsAbstract);
+	      if (marked)
+		markedSubterms.insert(rhsIndex);
+	    }
+	}
     }
 }
 
@@ -128,9 +178,39 @@ AU_UnificationSubproblem2::dagToAbstract(DagNode* dagNode, UnificationContext& s
   //	First we replace a variable with its current representative. Really we should also
   //	do this for variables within aliens as well.
   //
+  //	It is very tempting to replace variables by what they are bound to, but
+  //	this fails. If we have a binding X |-> f(...) then the f-theory has already
+  //	been solved. Thowing f(...) back into the mix means we will need to solve
+  //	it again, and if there is a cycle between two or more theories that are
+  //	doing eager replacement we won't terminate. Such cycles need to be handled
+  //	by the cycle breaking code after the solved form has been computed.
+  //
+  //	Of course new f-theory terms could be exposed by delayering, resulting in
+  //	the f-theory being solved again, but because terms have finite depth this
+  //	can only happen a finite number of times.
+  //
   if (VariableDagNode* varDagNode = dynamic_cast<VariableDagNode*>(dagNode))
-    dagNode = varDagNode->lastVariableInChain(solution);
-    //
+    {
+      varDagNode = varDagNode->lastVariableInChain(solution);
+      //
+      //	Normally we don't care about variables bound into our theory since they
+      //	will be unsolved as part of the A/AU unification procedure to ensure
+      //	termination. The exception is variables bound to our identity.
+      //
+      if (Term* identity = topSymbol->getIdentity())
+	{
+	  if (DagNode* subject = solution.value(varDagNode->getIndex()))
+	    {
+	      if (identity->equal(subject))
+		return NONE;  // identity elements are just eliminated
+	    }
+	}
+      //
+      //	Otherwise we work with the representative variable.
+      //
+      dagNode = varDagNode;
+    }
+  //
   //	Now look for dag in list of nominally abstracted dags.
   //
   int nrSubterms = subterms.size();
@@ -147,13 +227,18 @@ AU_UnificationSubproblem2::dagToAbstract(DagNode* dagNode, UnificationContext& s
 }
 
 void
-AU_UnificationSubproblem2::assocToAbstract(DagNode* dagNode, WordSystem::Word& word, UnificationContext& solution)
+AU_UnificationSubproblem2::assocToAbstract(DagNode* dagNode,
+					   WordSystem::Word& word,
+					   UnificationContext& solution)
 {
   AU_DagNode* a = safeCast(AU_DagNode*, dagNode);
   int nrArgs = a->argArray.length();
-  word.resize(nrArgs);
   for (int i = 0; i < nrArgs; ++i)
-    word[i] = dagToAbstract(a->argArray[i], solution);
+    {
+      int index = dagToAbstract(a->argArray[i], solution);
+      if (index != NONE)
+	word.append(index);
+    }
 }
 
 void
@@ -161,11 +246,27 @@ AU_UnificationSubproblem2::makeWordSystem(UnificationContext& solution)
 {
   int nrVariables = subterms.size();
   int nrEquations = unifications.size();
-  wordSystem = new WordSystem(nrVariables, nrEquations);
   //
-  //	Insert constraints for variables abstracting element variables, stable aliens and variables
-  //   	with stable aliens assigned to them.
+  //	If we have an identity and the sort structure is such that
+  //	it won't prevent fresh variables from taking identity or fail
+  //	solutions that include extra variables that could take identity
+  //	we can attempt to reduce the number of redundant unifiers found.
   //
+  bool identityOptimizations = topSymbol->hasIdentity() &&
+    !(topSymbol->hasUnequalLeftIdentityCollapse()) &&
+    !(topSymbol->hasUnequalRightIdentityCollapse());
+  wordSystem = new WordSystem(nrVariables, nrEquations, identityOptimizations);
+  //
+  //	Insert constraints for:
+  //	* variables with a sort derived upper-bound
+  //	* variables abstracting stable aliens
+  //	* variables bound to stable aliens
+  //
+  //	The satisfaction of these constraints avoids some trivial
+  //	failures do to order-sorted considerations or theory
+  //	clashes that would otherwise be discovered later.
+  //
+  Term* identity = topSymbol->getIdentity();
   for (int i = 0; i < nrVariables; ++i)
     {
       DagNode* dagNode = subterms[i];
@@ -175,45 +276,124 @@ AU_UnificationSubproblem2::makeWordSystem(UnificationContext& solution)
 	  DagNode* value = solution.value(varDagNode->getIndex());
 	  if (value != 0)
 	    {
+	      //
+	      //	Variable is bound; see if it bound to a ground alien.
+	      //
 	      Symbol* symbol = value->symbol();
-	      if (symbol->isStable() || value->isGround())
+	      if (value->isGround())
 		{
-		  wordSystem->addConstraint(i, symbol->getIndexWithinModule());
+		  // FIXME: in one-side identity case, we could have the identity
+		  //	itself as a ground alien; need to decide how we pass
+		  //	uncanceled identity elements into WordSystem
+		  wordSystem->setTheoryConstraint(i, symbol->getIndexWithinModule());
 		  continue;
 		}
+	      //
+	      //	Otherwise see if it bound to a stable alien.
+	      //
+	      if (symbol->isStable())
+		{
+		  wordSystem->setTheoryConstraint(i, symbol->getIndexWithinModule());
+		  if (identity != 0 && symbol == identity->symbol())
+		    {
+		      //
+		      //	We are bound to a stable alien that has the same
+		      //	top symbol as our identity. We need to check
+		      //	the sort of the variable.
+		      //
+		      VariableSymbol* variableSymbol = safeCast(VariableSymbol*, varDagNode->symbol());
+		      Sort* variableSort = variableSymbol->getSort();
+		      if (topSymbol->takeIdentity(variableSort))
+			wordSystem->setTakeEmpty(i);
+		    }
+		  continue;
+		}
+	      // fall into unbound variable case
 	    }
+	  //
+	  //	See if the variable has an upper-bound on the number
+	  //	of subterms under our symbol that it can take, derived
+	  //	from its sort. The classic case is a variable of an
+	  //	element sort that cannot take our symbol.
+	  //
 	  VariableSymbol* variableSymbol = safeCast(VariableSymbol*, varDagNode->symbol());
 	  Sort* variableSort = variableSymbol->getSort();
-	  int variableSortBound = topSymbol->sortBound(variableSort);
-	  if (variableSortBound == 1)
-	    wordSystem->addConstraint(i, PigPug::ELEMENT);
+	  if (markedSubterms.contains(i))
+	    wordSystem->setUpperBound(i, 1);  // must collapse to avoid nontermination
+	  else
+	    {
+	      int variableSortBound = topSymbol->sortBound(variableSort);
+	      if (variableSortBound != UNBOUNDED)
+		wordSystem->setUpperBound(i, variableSortBound);
+	    }
+	  if (identity != 0 && topSymbol->takeIdentity(variableSort))
+	    wordSystem->setTakeEmpty(i);
 	}
       else
 	{
 	  Symbol* symbol = dagNode->symbol();
-	  if (symbol->isStable() || dagNode->isGround())
+	  if (dagNode->isGround())
 	    {
-	      wordSystem->addConstraint(i, symbol->getIndexWithinModule());
-	      //cout << "constrained to " << symbol << endl;
+	      // FIXME: in one-side identity case, we could have the identity
+	      //	itself as a ground alien; need to decide how we pass
+	      //	uncanceled identity elements into WordSystem
+	      wordSystem->setTheoryConstraint(i, symbol->getIndexWithinModule());
+	      continue;
 	    }
+	  if (symbol->isStable())
+	    {
+	      wordSystem->setTheoryConstraint(i, symbol->getIndexWithinModule());
+	      if (identity != 0 && symbol == identity->symbol())
+		{
+		  //
+		  //	We are have a stable alien that has the same
+		  //	top symbol as our identity. We must assume it could unify
+		  //	with our identity.
+		  //
+		  wordSystem->setTakeEmpty(i);
+		}
+	      continue;
+	    }
+	  //
+	  //	Unstable alien; if we have an identity we must assume it could
+	  //	unify with the identity.
+	  //
+	  if (markedSubterms.contains(i))
+	    wordSystem->setUpperBound(i, 1);  // must collapse to avoid nontermination
+	  if (identity != 0)
+	    wordSystem->setTakeEmpty(i);
 	}
     }
+  //
+  //	Insert null equations
+  //
+  {
+    for (const Word& w : nullEquations)
+      {
+	wordSystem->addNullEquation(w);
+	DebugInfo("added null equation for " << w);
+      }
+  }
   //
   //	Insert abstract assignments.
   //
   {
-    FOR_EACH_CONST(i, list<Assignment>, assignments)
-      wordSystem->addAssignment(i->variable, i->value);
+    for (Assignment& a : assignments)
+      {
+	wordSystem->addAssignment(a.variable, a.value);
+	DebugInfo("added assignment x" << a.variable << " |-> " << a.value);
+      }
   }
   //
   //	Insert abstract equations.
   //
   {
     int counter = 0;
-    FOR_EACH_CONST(i, list<Unification>, unifications)
+    for (Unification& u : unifications)
       {
-	wordSystem->addEquation(counter, i->lhs, i->rhs);
+	wordSystem->addEquation(counter, u.lhs, u.rhs);
 	++counter;
+	DebugInfo("added equation " << u.lhs << " =? " << u.rhs);
       }
   }
 }
@@ -222,7 +402,7 @@ void
 AU_UnificationSubproblem2::unsolve(int index, UnificationContext& solution)
 {
   //
-  //	We take a solved form X = f(...), turn it into abstract assignment and
+  //	We take a solved form X |-> f(...), turn it into abstract assignment and
   //	remove it from the current solution.
   //
   DagNode* variable = solution.getVariableDagNode(index);
@@ -239,7 +419,9 @@ AU_UnificationSubproblem2::unsolve(int index, UnificationContext& solution)
 }
 
 bool
-AU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, PendingUnificationStack& pending)
+AU_UnificationSubproblem2::solve(bool findFirst,
+				 UnificationContext& solution,
+				 PendingUnificationStack& pending)
 {
   if (findFirst)
     {
@@ -320,7 +502,8 @@ AU_UnificationSubproblem2::abstractToFreshVariable(int variableIndex, Unificatio
 }
 
 bool
-AU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingUnificationStack& pending)
+AU_UnificationSubproblem2::buildSolution(UnificationContext& solution,
+					 PendingUnificationStack& pending)
 {
   //
   //	Not all fresh variables created by the word system need appear in the final solution; some
@@ -331,49 +514,88 @@ AU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingUn
   freshVariables.resize(nrFreshVariables);
   for (int i = 0; i < nrFreshVariables; ++i)
     freshVariables[i] = 0;
+  NatSet reusedVariables;
+  int nrVariables = subterms.size();
+#define REUSE_VARIABLES
+#ifdef REUSE_VARIABLES
+  for (int i = 0; i < nrVariables; ++i)
+    {
+      //
+      //	Look for abstracted variables whose abstract variable is assigned
+      //	exactly one thing. The abstracted variable can be used in place
+      //	of the fresh variable we would otherwise create for the abstract
+      //	variable.
+      //
+      const WordSystem::Word& value = wordSystem->getAssignment(i);
+      if (value.size() == 1)
+	{
+	  if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(subterms[i]))
+	    {
+	      int abstractVariable = value[0];
+	      if (freshVariables[abstractVariable] == 0)
+		{
+		  freshVariables[abstractVariable] = v;
+		  reusedVariables.insert(i);
+		  DebugInfo("using original variable index " << i << ", " << subterms[i] <<
+			    " instead of a fresh variable for abstract variable " <<
+			    abstractVariable);
+		}
+	    }
+	}
+    }
+#endif
   //
   //	We then go through each original variable and unify its subterm against the associative
   //	term with fresh variable arguments corresponding to the word system solution.
   //
-  int nrVariables = subterms.size();
   for (int i = 0; i < nrVariables; ++i)
     {
-      DagNode* subterm = subterms[i];
-      //
+      if (reusedVariables.contains(i))
+	continue;  // no point unifying a variable with itself
+      bool inTheory = true;
+       //
       //	Convert abstract assignment to Maude dag.
       //
       DagNode* d;
       const WordSystem::Word& value = wordSystem->getAssignment(i);
       int nrArgs = value.size();
-      if (nrArgs == 1)
-	d = abstractToFreshVariable(value[0], solution);
+      if (nrArgs == 0)
+	d = topSymbol->getIdentityDag();
+      else if (nrArgs == 1)
+	{
+	  d = abstractToFreshVariable(value[0], solution);
+	  inTheory = false;  // we are assigning an alien term
+	}
       else
 	{
 	  AU_DagNode* a = new AU_DagNode(topSymbol, nrArgs);
 	  for (int j = 0; j < nrArgs; ++j)
 	    a->argArray[j] = abstractToFreshVariable(value[j], solution);
 	  d = a;
-	  if (VariableDagNode* varSubterm = dynamic_cast<VariableDagNode*>(subterm))
+	}
+      
+      DagNode* subterm = subterms[i];
+      if (VariableDagNode* varSubterm = dynamic_cast<VariableDagNode*>(subterm))
+	{
+	  //
+	  //	We need to handle unbound variable subterms that we unify with something in our 
+	  //	theory ourself to avoid generating another problem in our theory.
+	  //
+	  //	It is possible that other unifications generated by earlier iterations of this
+	  //	loop merged another variable with our varSubterm so that it is no longer at the
+	  //	end of its chain.
+	  //
+	  VariableDagNode* repVar = varSubterm->lastVariableInChain(solution);
+	  if (solution.value(repVar->getIndex()) == 0 && inTheory)
 	    {
-	      //
-	      //	We need to handle unbound variable subterms that we unify with something in our 
-	      //	theory ourself to avoid generating another problem in our theory.
-	      //
-	      //	It is possible that other unifications generated by earlier iterations of this loop
-	      //	merged another variable with our varSubterm so that it is no longer at the
-	      //	end of its chain.
-	      //
-	      VariableDagNode* repVar = varSubterm->lastVariableInChain(solution);
-	      if (solution.value(repVar->getIndex()) == 0)
-		{
-		  solution.unificationBind(repVar, d);
-		  continue;
-		}
+	      solution.unificationBind(repVar, d);
+	      continue;
 	    }
 	}
       //
       //	Now unify with abstracted subterm.
       //
+      DebugInfo("unifying " << subterm << " =? " << d);
       if (!(subterm->computeSolvedForm(d, solution, pending)))
 	return false;
     }

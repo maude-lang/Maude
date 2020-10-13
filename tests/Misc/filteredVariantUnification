@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/filteredVariantUnification.maude -no-banner -no-advise \
+  > filteredVariantUnification.out 2>&1
+
+diff $srcdir/filteredVariantUnification.expected filteredVariantUnification.out > /dev/null 2>&1

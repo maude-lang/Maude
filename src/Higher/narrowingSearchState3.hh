@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,26 +26,22 @@
 //
 #ifndef _narrowingSearchState3_hh_
 #define _narrowingSearchState3_hh_
-#include "cacheableState.hh"
 #include "positionState.hh"
 #include "simpleRootContainer.hh"
 #include "narrowingVariableInfo.hh"
 #include "variantUnificationProblem.hh"
 
-class NarrowingSearchState3
-  : public PositionState,
-    public CacheableState,
-    private SimpleRootContainer
+class NarrowingSearchState3 : public PositionState
 {
   NO_COPYING(NarrowingSearchState3);
 
 public:
   enum Flags
   {
-    ALLOW_NONEXEC = 32,		// allow narrowing with nonexecutable rules, unbound variables being treated as fresh
+    ALLOW_NONEXEC = 32,		// allow narrowing with nonexecutable rules, unbound
+    				// variables being treated as fresh
     GC_VAR_GEN = 64,		// delete freshVariableGenerator in dtor
   };
-
   //
   //	Narrowing is done without extension and maxDepth may be
   //	UNBOUNDED to indicate no bound.
@@ -55,18 +51,19 @@ public:
   //
   NarrowingSearchState3(RewritingContext* context,
 			Substitution* accumulatedSubstitution,
-			int incomingVariableFamily,
 			FreshVariableGenerator* freshVariableGenerator,
+			int incomingVariableFamily,
 			int flags,
 			int minDepth = 0,
-			int maxDepth = UNBOUNDED);
-
-
+			int maxDepth = UNBOUNDED,
+			int variantFlags = 0);
   ~NarrowingSearchState3();
 
   bool findNextNarrowing();
-
   RewritingContext* getContext() const;
+  //
+  //	Get information about last narrowing step.
+  //
   Rule* getRule() const;
   DagNode* getNarrowedDag(DagNode*& replacement, DagNode*& replacementContext) const;
   const Substitution& getUnifier() const;
@@ -77,13 +74,12 @@ public:
   bool isIncomplete() const;
 
 private:
-  void markReachableNodes();
-
   RewritingContext* const context;
   Substitution* const accumulatedSubstitution;
-  Vector<DagNode*> blockerDags;
-  const int incomingVariableFamily;
+  const Vector<DagNode*> blockerDags;  // always an empty vector
   FreshVariableGenerator* const freshVariableGenerator;
+  const int incomingVariableFamily;
+  const int variantFlags;
   Module* const module;
 
   NarrowingVariableInfo variableInfo;

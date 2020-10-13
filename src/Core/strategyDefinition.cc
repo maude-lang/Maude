@@ -55,9 +55,6 @@ StrategyDefinition::StrategyDefinition(int label,
     rhs(rhs)
 {
   Assert(rhs, "null rhs");
-
-  // Adds itself to its strategy table
-  strategy->addDefinition(this);
 }
 
 StrategyDefinition::~StrategyDefinition()
@@ -71,6 +68,10 @@ StrategyDefinition::check()
   NatSet boundVariables;
   PreEquation::check(boundVariables);
 
+  // Non-executable strategy definitions are not processed
+  if (isNonexec())
+    return;
+
   // First, check unbound variables in the condition
 
   const NatSet& unboundVariables = getUnboundVariables();
@@ -79,9 +80,10 @@ StrategyDefinition::check()
     {
       IssueWarning(*this << ": variable " <<
 		   QUOTE(index2Variable(getUnboundVariables().min())) <<
-		   " is used before it is bound in strategy equation:\n" <<
+		   " is used before it is bound in strategy definition:\n" <<
 		   this);
       markAsBad();
+      return;
     }
 
   // The RHS expression is not indexed with a single VariableInfo because

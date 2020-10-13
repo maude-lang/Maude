@@ -1,0 +1,20 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug where we were losing ACU unifiers because
+***	they were subsumed by an mgu that failed to sort and code
+***	intended to detect this situation failed because of a mis-set
+***	flag.
+***
+
+fmod FOO is
+  sorts Zero NzNat Nat .
+  subsorts Zero NzNat < Nat .
+  op _+_ : Nat NzNat -> NzNat [assoc comm id: 0] .
+  op _+_ : Nat Nat -> Nat [ditto] .
+  op 0 : -> Zero .
+  op g : Zero -> Nat .
+endfm
+
+unify N:Nat =? g(M:Nat + Z:Zero) .

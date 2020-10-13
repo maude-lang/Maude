@@ -1,0 +1,21 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug in C/U/Ul/Ur unification where original
+***	rather than representative variable was used.
+***
+
+fmod FOO is
+  sort Small Foo .
+  subsort Small < Foo .
+  op 1 : -> Foo .
+  op f : Foo Foo -> Foo [id: 1] .
+  op g : Foo -> Foo .
+vars X Y Z : Foo .
+var S : Small .
+endfm
+
+unify Z =? f(X, Y) /\ g(Z) =? g(S) .
+
+variant unify Z =? f(X, Y) /\ g(Z) =? g(S) .

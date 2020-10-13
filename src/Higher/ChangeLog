@@ -1,3 +1,718 @@
+2020-10-05  Steven Eker  <eker2@eker10>
+
+	* variantSearch.cc: fill out problemOkay
+
+	* variantSearch.hh (class VariantSearch): added decl for problemOK()
+	(VariantSearch::problemOK):added
+	(class VariantSearch): added data member problemOkay
+
+2020-09-28  Steven Eker  <eker2@eker10>
+
+	* variantFolder.cc (VariantFolder::insertVariant): deleted
+	commented out code (3 places)
+
+2020-09-18  Steven Eker  <eker2@eker10>
+
+	* variantSearch.cc: removed BUG comment from reduce() call and
+	added a detailed explanation of why the potential bug is in fact
+	avoided by DagNode::indexVariables(NarrowingVariableInfo& indices,
+	int baseIndex)
+
+2020-09-15  Steven Eker  <eker2@eker10>
+
+	* narrowingSequenceSearch3.cc (NarrowingSequenceSearch3): deleted
+	fold and keepHistory arguments; take and store variantFlags
+	argument
+	(NarrowingSequenceSearch3::findNextInterestingState): pass
+	variantFlags to NarrowingSearchState3
+
+	* narrowingSequenceSearch3.hh (class NarrowingSequenceSearch3):
+	added enum flags; delete ctor fold and keepHistory arguments;
+	added variantFlags argument
+	(class NarrowingSequenceSearch3): added variantFlags data member
+
+	* narrowingSearchState3.cc
+	(NarrowingSearchState3::markReachableNodes): deleted because
+	blockerDags vector is always empty
+
+	* narrowingSearchState3.hh (class NarrowingSearchState3): make
+	blockerDags const since it will always be empty; delete
+	SimpleRootContainer private base class; delete decl for
+	markReachableNodes()
+
+	* narrowingSearchState3.cc (NarrowingSearchState2): take and store
+	variantFlags
+	(NarrowingSearchState3::findNextNarrowing): pass variantFlags to
+	VariantUnificationProblem()
+
+	* narrowingSearchState3.hh (class NarrowingSearchState3): added
+	variantFlags argument to ctor; added data member variantFlags
+
+	* narrowingSearchState2.hh (class NarrowingSearchState2): added
+	data member variantFlags
+
+	* narrowingSearchState2.cc (NarrowingSearchState2): take and store
+	variantFlags argument
+	(NarrowingSearchState2::findNextNarrowing): pass variantFlags to
+	VariantUnificationProblem()
+
+	* narrowingSearchState2.hh (class NarrowingSearchState2): added
+	variantFlags argument to ctor
+
+	* variantUnificationProblem.cc: take variantFlags and use them to
+	decide between FilteredVariantUnifierSearch() and VariantSearch();
+	pass them on to the chosen constructor
+
+	* variantUnificationProblem.hh (class VariantUnificationProblem):
+	added variantFlags argument to ctor; added enum Flags
+
+2020-09-14  Steven Eker  <eker2@eker10>
+
+	* filteredVariantUnifierSearch.cc: updated comments
+
+2020-09-11  Steven Eker  <eker2@eker10>
+
+	* variantFolder.hh (class VariantFolder): deleted decls for
+	getNextSurvivingVariant(), getLastReturnedVariant()
+
+	* variantFolder.cc (VariantFolder::getNextSurvivingVariant):
+	deleted
+	(VariantFolder::getLastReturnedVariant): deleted
+
+	* variantSearch.hh (class VariantSearch): deleted decls for
+	getNextVariant(), getLastReturnedVariant()
+
+	* variantSearch.cc (VariantSearch::getNextVariant): deleted
+	(VariantSearch::getLastReturnedVariant): deleted
+
+	* variantSearch.hh (VariantSearch::getCurrentVariant): translate
+	parentNumber to external numbering scheme
+	(class VariantSearch): data member nrVariantsReturned becomes
+	nrVariantsFound
+
+	* variantSearch.cc (VariantSearch::getNextVariant): deleted
+	(VariantSearch::findNextVariant): increment nrVariantsFound
+	(VariantSearch): initialize nrVariantsFound rather than
+	nrVariantsReturned
+	(VariantSearch::findNextVariant): build internal to external
+	variant numbering map
+
+	* variantSearch.hh (class VariantSearch): added decl for
+	findNextVariant()
+
+	* variantSearch.cc (VariantSearch::findNextVariant): added
+
+	* variantSearch.hh (VariantSearch::getCurrentVariant): added
+
+2020-09-10  Steven Eker  <eker2@eker10>
+
+	* narrowingUnificationProblem.cc
+	(NarrowingUnificationProblem::bindFreeVariables): use range-based
+	for loop
+	(NarrowingUnificationProblem::findOrderSortedUnifiers): use
+	range-based loop (3 places)
+
+	* unificationProblem.cc (UnificationProblem::bindFreeVariables):
+	use range-based for loop
+
+	* narrowingSearchState3.cc
+	(NarrowingSearchState3::markReachableNodes): use range-based for
+	loop
+
+	* narrowingSearchState2.hh (class NarrowingSearchState2):
+	rearrange data members for more compact layout
+
+	* narrowingSearchState2.cc
+	(NarrowingSearchState2::markReachableNodes): use range-based for
+	loop
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::findNextInterestingState): updated call
+	to NarrowingSearchState3()
+
+	* narrowingSearchState3.hh (class NarrowingSearchState3): updated
+	decl for ctor
+
+	* narrowingSearchState3.cc: switch order of freshVariableGenerator
+	and incomingVariableFamily for consistancy with other classes
+
+	* narrowingSearchState3.hh (class NarrowingSearchState3): don't
+	derive from CacheableState since we're not caching these
+
+	* narrowingFolder.cc (NarrowingFolder::insertState): use StateSet
+
+	* narrowingFolder.hh (class NarrowingFolder): added typedef
+	StateSet
+
+	* narrowingFolder.cc (~NarrowingFolder): use range-based for loop
+	(NarrowingFolder::markReachableNodes): use range-based for loop
+	(NarrowingFolder::insertState): use range-based for loop
+
+===================================Maude130===========================================
+
+2020-09-04  Steven Eker  <eker2@eker10>
+
+	* variantSearch.hh (VariantSearch::makeVariantMatchingProblem):
+	take subject as a RewritingContext
+
+	* variantMatchingProblem.cc (VariantMatchingProblem): take subject
+	as a RewritingContext; don't index subject variables here
+	(~VariantMatchingProblem): delete subject
+	(VariantMatchingProblem::checkVariablesInSubject): access subject
+	as a RewritingContext
+	(VariantMatchingProblem::markReachableNodes): don't mark subject
+	(VariantMatchingProblem::findNextMatcher): access subject as a
+	RewritingContext
+
+	* variantMatchingProblem.hh
+	(VariantMatchingProblem::freshVariablesNeeded): added
+	(class VariantMatchingProblem): take and store subject as a
+	RewritingContext
+
+	* variantFolder.hh (class VariantFolder): better explained the
+	semantics of findNextVariantThatMatches()
+
+	* variantFolder.cc (VariantFolder::findNextVariantThatMatches):
+	need to clear matcher on failure so caller doesn't try to double
+	delete it
+
+2020-09-02  Steven Eker  <eker2@eker10>
+
+	* variantUnifierFilter.cc
+	(VariantUnifierFilter::markReachableNodes): deleted
+	(VariantUnifierFilter::insertUnifier): use setNode()/getNode() for
+	encodedUnifier
+	(VariantUnifierFilter): don't initialize encodedUnifier
+
+	* variantUnifierFilter.hh (class VariantUnifierFilter): remove
+	SimpleRootContainer as a base class
+	(class VariantUnifierFilter): deleted decl for
+	markReachableNodes(); make encodedUnifier a DagRoot
+
+	* variantUnifierFilter.cc
+	(VariantUnifierFilter::findNextSurvivingUnifier): moved here; no
+	longer inline
+	(VariantUnifierFilter): initialize currentUnifierSubsumed;
+	currentUnifier
+	(VariantUnifierFilter::findNextSurvivingUnifier): delete
+	currentUnifier if it was subsumed and we move the iterator past it
+	(VariantUnifierFilter::insertUnifier): don't waste time trying to
+	subsume new unifier with current unifier if the
+	currentUnifierSubsumed flag is set; set flag rather the deleting
+	the currentUnifier if new unifier subsumes it
+
+	* variantUnifierFilter.hh (class VariantUnifierFilter): added data
+	member currentUnifierSubsumed
+
+2020-09-01  Steven Eker  <eker2@eker10>
+
+	* variantUnifierFilter.hh
+	(VariantUnifierFilter::findNextSurvivingUnifier): support
+	extraction even as new unifiers may be added
+
+	* filteredVariantUnifierSearch.cc
+	(FilteredVariantUnifierSearch::findNextUnifier): support
+	incremental extraction
+
+	* variantUnifierFilter.cc (VariantUnifierFilter::insertUnifier):
+	allow unifiers to be added after extraction started
+
+	* filteredVariantUnifierSearch.cc (FilteredVariantUnifierSearch):
+	init flags; don't pass IRREDUNDANT_MODE by default
+
+	* filteredVariantUnifierSearch.hh (class
+	FilteredVariantUnifierSearch): added data member flags
+
+2020-08-28  Steven Eker  <eker2@eker10>
+
+	* filteredVariantUnifierSearch.hh
+	(FilteredVariantUnifierSearch::filteringIncomplete()): added
+
+	* variantUnifierFilter.cc: initialize filteringIncompleteFlag
+	(VariantUnifierFilter::insertUnifier): check for incompleteness of
+	subsumption variant set
+
+	* variantUnifierFilter.hh
+	(VariantUnifierFilter::filteringIncomplete): added
+	(class VariantUnifierFilter): added data member
+	filteringIncompleteFlag
+
+	* variantMatchingProblem.cc
+	(VariantMatchingProblem::checkVariablesInSubject): added
+	(VariantMatchingProblem::findNextMatcher): call
+	checkVariablesInSubject() and avoid used variables
+
+	* variantMatchingProblem.hh (class VariantMatchingProblem): added
+	decl for checkVariablesInSubject()
+	(class VariantMatchingProblem): added decl for data member
+	indicesToAvoid, checkedVariablesInSubject
+
+2020-08-27  Steven Eker  <eker2@eker10>
+
+	* variantSearch.cc (VariantSearch): use range-based for loop
+	(VariantSearch::markReachableNodes): use range-based for loop
+	(VariantSearch::expandLayer): use range-based for loop
+
+	* unifierFilter.cc (~UnifierFilter): use range-based for loop
+	(UnifierFilter::markReachableNodes): use range-based for loop
+	(UnifierFilter::insertUnifier): use range-based for loop
+
+	* variantFolder.cc (VariantFolder::insertVariant): deleted
+	commented out code
+
+	* narrowingSequenceSearch.cc (~NarrowingSequenceSearch): use range
+	based for loop
+
+	* narrowingSequenceSearch3.cc (NarrowingSequenceSearch3):
+	simplified and eliminated call to getBaseVariableSymbol(); deleted
+	commented out code
+
+	* narrowingSequenceSearch.cc (NarrowingSequenceSearch): simplified
+	and eliminated call to getBaseVariableSymbol()
+
+	* narrowingSearchState2.cc (NarrowingSearchState2): simplified and
+	eliminated call to getBaseVariableSymbol()
+
+	* variantUnificationProblem.cc
+	(VariantUnificationProblem::findNextUnifier): simplified and
+	eliminated calls to getBaseVariableSymbol()
+
+	* unificationProblem.cc
+	(UnificationProblem::findOrderSortedUnifiers): only use
+	getBaseVariableSymbol() for fresh variables
+
+2020-08-26  Steven Eker  <eker2@eker10>
+
+	* variantMatchingProblem.cc
+	(VariantMatchingProblem::findNextMatcher): handle null returned by
+	instantiate()
+
+	* variantSearch.cc (VariantSearch): use original variable symbol
+	directly rather than getting sort and using getBaseVariableSymbol()
+
+	* variantMatchingProblem.cc
+	(VariantMatchingProblem::findNextMatcher): pass variableInfo
+	rather than nrFreeVariables to findNextVariantThatMatches()
+	(VariantMatchingProblem::findNextMatcher): bind unbound variables
+	to fresh variables
+
+	* variantFolder.hh (class VariantFolder): updated decl for
+	findNextVariantThatMatches()
+
+	* variantFolder.cc (VariantFolder::findNextVariantThatMatches):
+	pass back variableInfo rather than nrFreeVariables
+
+	* variantSearch.hh (VariantSearch::makeVariantMatchingProblem):
+	pass freshVariableGenerator to VariantMatchingProblem()
+
+	* variantMatchingProblem.hh (class VariantMatchingProblem):
+	updated decl for ctor; added data member freshVariableGenerator
+
+	* variantMatchingProblem.cc (VariantMatchingProblem): take
+	freshVariableGenerator
+
+	* variantFolder.cc (VariantFolder::findNextVariantThatMatches):
+	take and fill out nrFreeVaraibles
+
+	* variantFolder.hh (class VariantFolder): updated decl for
+	findNextVariantThatMatches()
+
+	* variantMatchingProblem.cc
+	(VariantMatchingProblem::findNextMatcher): pass nrFreeVariables to
+	findNextVariantThatMatches()
+
+	* variantSearch.cc (VariantSearch): warning for MATCH_MODE
+	problems with unsafe variable names
+
+2020-08-25  Steven Eker  <eker2@eker10>
+
+	* variantMatchingProblem.cc
+	(VariantMatchingProblem::findNextMatcher): apply matcher to
+	current variant substitution to get variant matcher
+	(VariantMatchingProblem::findNextMatcher): null out matcher and
+	subprobem after we delete them
+
+	* variantFolder.hh (class VariantFolder): updated decl for
+	findNextVariantThatMatches()
+
+	* variantFolder.cc (VariantFolder::findNextVariantThatMatches):
+	pass indexOfLastUsedVariant by reference so we can update it
+
+	* variantMatchingProblem.cc
+	(VariantMatchingProblem::markReachableNodes): don't use auto&
+	since a reference is the same size as the thing refered to
+
+2020-08-21  Steven Eker  <eker2@eker10>
+
+	* variantSearch.hh (class VariantSearch): added
+	DELETE_LAST_VARIANT_MATCHING_PROBLEM to enum Flags
+	(VariantSearch::getLastVariantMatchingProblem): added
+	(VariantSearch::makeVariantMatchingProblem): moved here
+
+	* variantSearch.cc (VariantSearch): initialize
+	lastVariantMatchingProblem
+	(~VariantSearch): delete lastVariantMatchingProblem if requested
+
+	* variantSearch.hh (class VariantSearch): added data member
+	lastVariantMatchingProblem
+	(class VariantSearch): added decl for makeVariantMatchingProblem()
+
+	* variantSearch.cc (VariantSearch::makeVariantMatchingProblem):
+	added
+
+2020-08-19  Steven Eker  <eker2@eker10>
+
+	* variantFolder.hh (class VariantFolder): added decl for
+	prepareForVariantMatching()
+
+	* variantFolder.cc: use data member variableInfo rather than a
+	local variable
+	(VariantFolder::prepareForVariantMatching): added
+
+	* variantFolder.hh (class VariantFolder): added data member
+	variableInfo to struct RetainedVariant
+
+	* variantSearch.cc: hande MATCH_MODE; call
+	VariantFolder::prepareForVariantMatching()
+
+	* variantSearch.hh (class VariantSearch): added MATCH_MODE to enum
+	Flags
+
+	* variantFolder.hh (class VariantFolder): added decl for
+	findNextVariantThatMatches()
+
+	* variantFolder.cc (VariantFolder::findNextVariantThatMatches):
+	added
+
+2020-08-14  Steven Eker  <eker2@eker10>
+
+	* higher.hh: added class VariantMatchingProblem
+
+	* variantMatchingProblem.cc
+	(VariantMatchingProblem::VariantMatchingProblem): init matcher,
+	currentVariant
+	(~VariantMatchingProblem): delete matcher, subproblem
+
+	* variantMatchingProblem.hh (class VariantMatchingProblem): added
+	data members matcher, currentVariant
+
+	* variantMatchingProblem.cc
+	(VariantMatchingProblem::VariantMatchingProblem): init
+	indexOfLastUsedVariant, subproblem
+
+	* variantMatchingProblem.hh (class VariantMatchingProblem): added
+	data members indexOfLastUsedVariant, subproblem
+
+2020-08-13  Steven Eker  <eker2@eker10>
+
+	* variantFolder.cc (VariantFolder::markReachableNodes): use range
+	based for loop (2 places)
+	(~VariantFolder): use range based for loop
+
+	* variantMatchingProblem.cc: created
+
+	* variantMatchingProblem.hh: created
+
+2020-08-06  Steven Eker  <eker2@eker10>
+
+	* variantUnifierFilter.cc: initialize encodedUnifier
+	(VariantUnifierFilter::insertUnifier): use object data member
+	encodedUnifier rather than local pointer
+	(VariantUnifierFilter::insertUnifier): add in the rewrite counts
+	from the variant searchs done for subsumption
+
+	* variantUnifierFilter.hh (class VariantUnifierFilter): added data
+	member encodedUnifier
+
+	* variantUnifierFilter.cc
+	(VariantUnifierFilter::markReachableNodes): implemented
+
+2020-08-05  Steven Eker  <eker2@eker10>
+
+	* variantUnifierFilter.cc
+	(VariantUnifierFilter::getNextSurvivingUnifier): deleted stub
+	(VariantUnifierFilter::insertUnifier): added Assert()
+	(VariantUnifierFilter::~VariantUnifierFilter): implemented
+
+	* variantUnifierFilter.hh (class VariantUnifierFilter): data
+	member nextUnifer becomes currentUnifier
+	(VariantUnifierFilter::findNextSurvivingUnifier): added
+	(VariantUnifierFilter::getCurrentSurvivingUnifier): added
+	(class VariantUnifierFilter): deleted decl for
+	getNextSurvivingUnifier()
+
+	* filteredVariantUnifierSearch.cc
+	(FilteredVariantUnifierSearch::findNextUnifier): implemented
+	(FilteredVariantUnifierSearch::getCurrentUnifier): implemented
+
+2020-08-04  Steven Eker  <eker2@eker10>
+
+	* filteredVariantUnifierSearch.cc
+	(FilteredVariantUnifierSearch::findNextUnifier): added stub
+	(FilteredVariantUnifierSearch::getCurrentUnifier): added stub
+
+	* filteredVariantUnifierSearch.hh (class
+	FilteredVariantUnifierSearch): added decls for findNextUnifier(),
+	getCurrentUnifier()
+
+	* variantSearch.cc (VariantSearch::getNextUnifier): deleted
+
+	* variantSearch.hh (VariantSearch::getLastReturnedUnifier): deleted
+	(class VariantSearch): deleted decls for getNextUnifier(),
+	getLastReturnedUnifier()
+
+	* filteredVariantUnifierSearch.hh (class
+	FilteredVariantUnifierSearch): deleted decls for getNextUnifier(),
+	getLastReturnedUnifier()
+
+	* filteredVariantUnifierSearch.cc: rewritten to use
+	findNextUnifier()/getCurrentUnifier() rather than getNextUnifier()
+	(FilteredVariantUnifierSearch::getNextUnifier): deleted
+	(FilteredVariantUnifierSearch::getLastReturnedUnifier): deleted
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::findNextUnifier): use
+	findNextUnifier()/getCurrentUnifier() rather than getNextUnifier()
+
+	* variantUnificationProblem.cc
+	(VariantUnificationProblem::findNextUnifier): use
+	findNextUnifier()/getCurrentUnifier() rather than getNextUnifier()
+
+	* variantFolder.hh (VariantFolder::getCurrentVariantSize): added
+
+	* variantSearch.hh (class VariantSearch): added decls for
+	findNextUnifier(), getCurrentUnifier()
+
+	* variantSearch.cc (VariantSearch::findNextUnifier): added
+	(VariantSearch::getCurrentUnifier): added
+
+	* variantFolder.hh (class VariantFolder): added decls for
+	findNextSurvivingVariant() and getCurrentVariant()
+
+	* variantFolder.cc (VariantFolder::findNextSurvivingVariant):
+	added
+	(VariantFolder::getCurrentVariant()): added
+
+	* variantFolder.hh (class VariantFolder): added data member
+	currentVariant
+
+2020-08-03  Steven Eker  <eker2@eker10>
+
+	* higher.hh: added class FilteredVariantUnifierSearch
+
+	* filteredVariantUnifierSearch.cc: created
+
+	* filteredVariantUnifierSearch.hh: created
+
+	* variantUnifierFilter.cc (VariantUnifierFilter::insertUnifier):
+	handle nrFreeVariables argument
+	(VariantUnifierFilter::getNextSurvivingUnifier): take
+	nrFreeVariables argument
+
+	* variantUnifierFilter.hh (class VariantUnifierFilter): added
+	nrFreeVariables data member to struct RetainedUnifier
+	(VariantUnifierFilter::RetainedUnifier::RetainedUnifier): take and
+	store nrFreeVariables
+	(class VariantUnifierFilter): updated decl for insertUnifier() and
+	getNextSurvivingUnifier()
+
+	* variantSearch.hh (class VariantSearch): reorganized member
+	functions and comments; made getNextUnifier(),
+	getLastReturnedUnifier() virtual
+
+	* variantUnifierFilter.hh (class VariantUnifierFilter): updated
+	decl for ctor; deleted data member blockerDags
+
+	* variantUnifierFilter.cc (VariantUnifierFilter::insertUnifier):
+	pass dummy vector instead of blockerDags
+	(VariantUnifierFilter::VariantUnifierFilter): don't take
+	blockerDags argument
+
+
+2020-07-29  Steven Eker  <eker2@eker10>
+
+	* irredundantUnificationProblem.hh (class
+	IrredundantUnificationProblem): commented out decl for
+	markReachableNodes()
+
+	* irredundantUnificationProblem.cc
+	(IrredundantUnificationProblem::markReachableNodes): commented out
+	- UnifierFilter protects the unifiers it returns
+
+2020-07-28  Steven Eker  <eker2@eker10>
+
+	* higher.hh: added class VariantUnifierFilter
+
+	* variantUnifierFilter.hh (class VariantUnifierFilter): updated
+	decl for ctor
+
+	* variantUnifierFilter.cc (VariantUnifierFilter::insertUnifier):
+	finished
+
+	* variantUnifierFilter.hh
+	(VariantUnifierFilter::RetainedUnifier::RetainedUnifier): added
+	(VariantUnifierFilter::RetainedUnifier::~RetainedUnifier): added
+
+	* variantUnifierFilter.cc
+	(VariantUnifierFilter::VariantUnifierFilter): take and initialize
+	freshVariableGenerator
+
+	* variantUnifierFilter.hh
+	(VariantUnifierFilter::RetainedUnifier::subsumes): added
+
+2020-07-24  Steven Eker  <eker2@eker10>
+
+	* variantUnifierFilter.hh: created
+
+	* variantUnifierFilter.cc: created
+
+	* variantNarrowingSearchState.cc
+	(VariantNarrowingSearchState::VariantNarrowingSearchState):
+	updated comments; use range-based for loop for indexing variant
+	substitution; use range-based for loop for iterating over
+	equations
+	(VariantNarrowingSearchState::findNextVariant): use range-based
+	for loop for iterating over blocker dags
+	(VariantNarrowingSearchState::findNextVariant): replaced commned
+	out print statements with DebugInfo()s
+	(VariantNarrowingSearchState::VariantNarrowingSearchState):
+	replaced commented out print statement with DebugEnter()
+
+2020-07-23  Steven Eker  <eker2@eker10>
+
+	* variantFolder.hh (class VariantFolder): updated decl for
+	subsumes()
+
+	* variantFolder.cc (VariantFolder::subsumes): made const
+
+	* variantSearch.hh (class VariantSearch): added decl for
+	isSubsumed()
+
+	* variantSearch.cc: added
+
+	* variantFolder.hh (class VariantFolder): added decl for
+	isSubsumed(
+
+	* variantFolder.cc (VariantFolder::isSubsumed): added
+	(VariantFolder::insertVariant): use isSubsumed()
+
+	* variantSearch.cc (VariantSearch::VariantSearch): in
+	SUBSUMPTION_MODE we don't keep the variant substitution and we
+	generate a minimal complete set of variants upfront so we can be
+	done with blockerDags which some other subsumption search may
+	neeed to use
+
+2020-07-22  Steven Eker  <eker2@eker10>
+
+	* variantSearch.hh (class VariantSearch): added SUBSUMPTION_MODE
+	to Flags
+
+	* variantUnificationProblem.cc: use new VariantSearch calling
+	conventions
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::findNextUnifier): use new VariantSearch
+	calling conventions
+
+	* variantSearch.cc (VariantSearch::VariantSearch): added argument
+	flags; deleted arguments unificationMode, irredundantMode,
+	deleteFreshVariableGenerator, checkVariableNames; use flags rather
+	than unificationMode (2 places)
+	(VariantSearch::expandVariant): use flags rather that
+	unificationMode (2 places)
+	(VariantSearch::VariantSearch): use flags instead of
+	checkVariableNames (2 places); use flags instead of
+	irredundantMode; updated comment to explain why we expect to get
+	redundant unifiers even with irredundant variants
+	(VariantSearch::~VariantSearch): use flags instead of
+	deleteFreshVariableGenerator
+
+	* variantSearch.hh (class VariantSearch): added enum Flags
+	(class VariantSearch): updated ctor decl
+	(class VariantSearch): added data member flags; deleted data
+	members unificationMode, irredundantMode,
+	deleteFreshVariableGenerator
+	(VariantSearch::getIrredundantMode): use flags
+
+2020-07-15  Steven Eker  <eker2@eker10>
+
+	* irredundantUnificationProblem.cc
+	(IrredundantUnificationProblem::findNextUnifier): don't pass
+	argument to RewritingContext ctor
+
+2020-07-14  Steven Eker  <eker2@eker10>
+
+	* higher.hh: added forward decl for class
+	IrredundantUnificationProblem
+
+2020-07-10  Steven Eker  <eker2@eker10>
+
+	(IrredundantUnificationProblem::findNextUnifier): fill out sorts
+	of each binding using dummy RewritingContext
+
+	* irredundantUnificationProblem.hh: created
+
+	* irredundantUnificationProblem.cc: created
+
+	* unificationProblem.cc (UnificationProblem::getSolution): moved
+	here because it can no longer be inline, having become virtual
+	(getNrFreeVariables): ditto
+
+	* unificationProblem.hh (class UnificationProblem): make
+	markReachableNodes() protected so derived class can override it
+
+	* unifierFilter.hh (class UnifierFilter): provide default values
+	for postionIndex, equationIndex
+
+	* unificationProblem.hh (class UnificationProblem): made dtor,
+	findNextUnifier(), getSolution(), getNrFreeVariables() virtual
+
+	* unifierFilter.hh (class UnifierFilter): added comment to explain
+	that posistionIndex and equationIndex are opaque and can be use to
+	store whatever integers the caller finds useful to maintain along
+	side a unifier
+
+===================================Maude129===========================================
+
+2020-06-11  Steven Eker  <eker2@eker10>
+
+	* variantNarrowingSearchState.cc
+	(VariantNarrowingSearchState::collectUnifiers): make message
+	printed out every thousand unifier depend on globalVerboseFlag
+	rather than on DEBUG mode so we can get the same result in test
+	suite whether we are debugging or not
+
+2020-06-10  Steven Eker  <eker2@eker10>
+
+	* variantFolder.cc
+	(VariantFolder::RetainedVariant::RetainedVariant) fixed symmetric
+	bug
+
+	* unifierFilter.cc
+	(UnifierFilter::RetainedUnifier::RetainedUnifier): fix bug where
+	we were compiling matching using one variable count and then
+	running matching with a higher variable count because we added
+	abstraction variables for a later binding. Compilation has to be a
+	separate pass after all abstraction variables have been added
+
+2020-06-09  Steven Eker  <eker2@eker10>
+
+	* narrowingSequenceSearch.cc
+	(NarrowingSequenceSearch::findNextNormalForm): added DebugInfo()
+	for duplicate states
+	(NarrowingSequenceSearch::findNextInterestingState)
+	(NarrowingSequenceSearch::findNextNormalForm): added DebugInfo()
+	for replacement and narrowedDag
+	(NarrowingSequenceSearch::findNextNormalForm)
+	(NarrowingSequenceSearch::findNextInterestingState): make dup
+	state DebugInfo() more prominent
+
+2020-04-15  Steven Eker  <eker2@eker9>
+
+	* cacheableState.hh (class CacheableState): delete stray ;
+
+===================================Maude128a===========================================
+
 2019-11-11  Steven Eker  <eker@mu>
 
 	* unificationProblem.cc (UnificationProblem): pass true to

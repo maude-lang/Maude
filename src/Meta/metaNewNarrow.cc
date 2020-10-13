@@ -27,7 +27,8 @@
 NarrowingSearchState2*
 MetaLevelOpSymbol::makeNarrowingSearchState2(MetaModule* m,
 					     FreeDagNode* subject,
-					     RewritingContext& context) const
+					     RewritingContext& context,
+					     int variantFlags) const
 {
   int variableFamilyName;
   if (metaLevel->downQid(subject->getArgument(3), variableFamilyName))
@@ -58,11 +59,16 @@ MetaLevelOpSymbol::makeNarrowingSearchState2(MetaModule* m,
 	      blockerDags.append(t->term2Dag());
 	      t->deepSelfDestruct();
 	    }
-
 	  return new NarrowingSearchState2(subjectContext,
 					   blockerDags,
 					   new FreshVariableSource(m, 0),
-					   variableFamily);
+					   variableFamily,
+					   (NarrowingSearchState2::ALLOW_NONEXEC |
+					   NarrowingSearchState2::GC_VAR_GEN |
+					    PositionState::RESPECT_FROZEN),
+					   0,
+					   UNBOUNDED,
+					   variantFlags);
 	}
     }
   return 0;
@@ -72,17 +78,21 @@ bool
 MetaLevelOpSymbol::metaNarrowingApply(FreeDagNode* subject, RewritingContext& context)
 {
   //
-  //	op metaNarrowingApply : Module Term TermList Qid Nat -> NarrowingResult?
+  //	op metaNarrowingApply : Module Term TermList Qid VariantOptionSet Nat -> NarrowingResult?
+  //				  0     1    2        3         4          5
   //
   //	Arguments:
   //	  Module to work in
   //	  Term to narrow (after reducing)
   //	  TermList of blocker terms for variant unification
-  //	  Qid giving fresh variable family that might appear in Term (and which will be avoided for result)
+  //	  Qid giving fresh variable family that might appear in Term (and which will be avoided
+  //	      for result)
+  //	  VariantOptionSet giving options to be used for variant unification
   //	  Nat giving which of many solutions is wanted
   //
   //	A successful narrowing application yields a 7-tuple:
-  //	  op {_,_,_,_,_,_,_} : Term Type Context Qid Substitution Substitution Qid -> NarrowingResult [ctor] .
+  //	  op {_,_,_,_,_,_,_} : Term Type Context Qid Substitution Substitution Qid ->
+  //	                       NarrowingResult [ctor] .
   //	where the arguments are:
   //	  Term after narrowing and reducing
   //	  Type of Term
@@ -92,104 +102,114 @@ MetaLevelOpSymbol::metaNarrowingApply(FreeDagNode* subject, RewritingContext& co
   //	  Substitution into the rule used for narrowing
   //	  Qid giving fresh variable family used to express result Term and Substitutions
   //
-  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
+  int variantFlags;
+  if (metaLevel->downVariantOptionSet(subject->getArgument(4), variantFlags) &&
+      (variantFlags & ~(MetaLevel::DELAY | MetaLevel::FILTER)) == 0)
     {
-      Int64 solutionNr;
-      if (metaLevel->downSaturate64(subject->getArgument(4), solutionNr) &&
-	  solutionNr >= 0)
+      if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
 	{
-	  NarrowingSearchState2 *state;
-	  Int64 lastSolutionNr;
-	  if (m->getCachedStateObject(subject, context, solutionNr, state, lastSolutionNr))
-	    m->protect(); 
-	  else if ((state = makeNarrowingSearchState2(m, subject, context)))
-	    lastSolutionNr = -1;
-	  else
-	    return false;
-
-	  DagNode* result;
-	  bool actualStep = lastSolutionNr < solutionNr;
-	  while (lastSolutionNr < solutionNr)
+	  Int64 solutionNr;
+	  if (metaLevel->downSaturate64(subject->getArgument(5), solutionNr) &&
+	      solutionNr >= 0)
 	    {
-	      bool success = state->findNextNarrowing();
-	      context.transferCountFrom(*(state->getContext()));
-	      if (!success)
+	      NarrowingSearchState2 *state;
+	      Int64 lastSolutionNr;
+	      if (m->getCachedStateObject(subject, context, solutionNr, state, lastSolutionNr))
+		m->protect(); 
+	      else if ((state = makeNarrowingSearchState2(m, subject, context, variantFlags)))
+		lastSolutionNr = -1;
+	      else
+		return false;
+
+	      DagNode* result;
+	      bool actualStep = lastSolutionNr < solutionNr;
+	      while (lastSolutionNr < solutionNr)
 		{
-		  result = metaLevel->upNarrowingApplyFailure(state->isIncomplete());
-		  delete state;
-		  goto fail;
+		  bool success = state->findNextNarrowing();
+		  context.transferCountFrom(*(state->getContext()));
+		  if (!success)
+		    {
+		      result = metaLevel->upNarrowingApplyFailure(state->isIncomplete());
+		      delete state;
+		      goto fail;
+		    }
+		  ++lastSolutionNr;
 		}
-	      ++lastSolutionNr;
-	    }
-	  m->insert(subject, state, solutionNr);
-	  {
-	    const Substitution& unifier = state->getSubstitution();
-	    //
-	    //	getNarrowedDag() guarantees that hole appears exactly once
-	    //	in the returned dag, even if the rule used had a bare variable
-	    //	for its rhs, and that bare variable could share its binding
-	    //	with other variables in the dag being narrowed.
-	    //
-	    DagNode* hole;
-	    DagNode* replacementContext;
-	    DagNode* narrowedDag = state->getNarrowedDag(hole, replacementContext);
-	    //
-	    //	If we're going to trace, we show the trace of the narrowing
-	    //	step before any reductions we do on it.
-	    //
-	    if (actualStep)
+	      m->insert(subject, state, solutionNr);
 	      {
-		context.incrementNarrowingCount();
-		if (RewritingContext::getTraceStatus())
+		const Substitution& unifier = state->getSubstitution();
+		//
+		//	getNarrowedDag() guarantees that hole appears exactly once
+		//	in the returned dag, even if the rule used had a bare variable
+		//	for its rhs, and that bare variable could share its binding
+		//	with other variables in the dag being narrowed.
+		//
+		DagNode* hole;
+		DagNode* replacementContext;
+		DagNode* narrowedDag = state->getNarrowedDag(hole, replacementContext);
+		//
+		//	If we're going to trace, we show the trace of the narrowing
+		//	step before any reductions we do on it.
+		//
+		if (actualStep)
 		  {
-		    //
-		    //	We pass the active term and variable info. This means
-		    //	the version with (potentially) renamed variables. We do this for
-		    //	consistancy since the replaced dag will be expressed in those
-		    //	same variables.
-		    //
-		    RewritingContext* subjectContext = state->getActiveContext();
-		    const NarrowingVariableInfo& narrowingVariableInfo = state->getActiveVariableInfo();
-		    subjectContext->traceNarrowingStep(state->getRule(),
-						       state->getReplacedDag(),
-						       hole,  // replacement
-						       &narrowingVariableInfo,  // original variable names
-						       &unifier,
-						       narrowedDag);
-		    if (subjectContext->traceAbort())
+		    context.incrementNarrowingCount();
+		    if (RewritingContext::getTraceStatus())
 		      {
-			(void) m->unprotect();
-			return false;
+			//
+			//	We pass the active term and variable info. This means
+			//	the version with (potentially) renamed variables. We do this for
+			//	consistancy since the replaced dag will be expressed in those
+			//	same variables.
+			//
+			RewritingContext* subjectContext = state->getActiveContext();
+			const NarrowingVariableInfo& narrowingVariableInfo =
+			  state->getActiveVariableInfo();
+			subjectContext->traceNarrowingStep(state->getRule(),
+							   state->getReplacedDag(),
+							   hole,  // replacement
+							   &narrowingVariableInfo,  // original variable names
+							   &unifier,
+							   narrowedDag);
+			if (subjectContext->traceAbort())
+			  {
+			    (void) m->unprotect();
+			    return false;
+			  }
 		      }
 		  }
-	      }
-	    //
-	    //	Can't use dagNodeMap after reduce since the from dagNodes might be
-	    //	garbage collected or even rewritten in place.
-	    //
-	    PointerMap qidMap;
-	    PointerMap dagNodeMap;
-	    DagRoot metaContext(metaLevel->upContext(replacementContext, m, hole, qidMap, dagNodeMap));
-	    //
-	    //	Need to reduce narrowedDag.
-	    //
-	    RewritingContext* resultContext =
-	      context.makeSubcontext(narrowedDag, UserLevelRewritingContext::META_EVAL);
-	    resultContext->reduce();
-	    context.addInCount(*resultContext);
+		//
+		//	Can't use dagNodeMap after reduce since the from dagNodes might be
+		//	garbage collected or even rewritten in place.
+		//
+		PointerMap qidMap;
+		PointerMap dagNodeMap;
+		DagRoot metaContext(metaLevel->upContext(replacementContext,
+							 m,
+							 hole,
+							 qidMap,
+							 dagNodeMap));
+		//
+		//	Need to reduce narrowedDag.
+		//
+		RewritingContext* resultContext =
+		  context.makeSubcontext(narrowedDag, UserLevelRewritingContext::META_EVAL);
+		resultContext->reduce();
+		context.addInCount(*resultContext);
 
-	    result = metaLevel->upNarrowingApplyResult(resultContext->root(),
-						       metaContext.getNode(),
-						       unifier,
-						       state->getRule(),
-						       state->getVariableInfo(),
-						       FreshVariableSource::getBaseName(state->getVariableFamily()),
-						       m);
-	    delete resultContext;
-	  }
-	fail:
-	  (void) m->unprotect();
-	  return context.builtInReplace(subject, result);
+		result = metaLevel->upNarrowingApplyResult(resultContext->root(),
+							   metaContext.getNode(),
+							   unifier,
+							   state->getRule(),
+							   state->getVariableInfo(),
+							   FreshVariableSource::getBaseName(state->getVariableFamily()),
+							   m);
+		delete resultContext;
+	      }
+	    fail:
+	      (void) m->unprotect();
+	      return context.builtInReplace(subject, result);
+	    }
 	}
     }
   return false;

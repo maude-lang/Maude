@@ -43,8 +43,6 @@
 
 //	core class definitions
 #include "rewritingContext.hh"
-#include "subproblemAccumulator.hh"
-#include "variableInfo.hh"
 #include "freshVariableGenerator.hh"
 #include "dagArgumentIterator.hh"
 
@@ -54,26 +52,86 @@
 //	higher class definitions
 #include "variantSearch.hh"
 #include "variantNarrowingSearchState.hh"
+#include "variantMatchingProblem.hh"
+
+bool
+VariantSearch::findNextUnifier()
+{
+  //
+  //	We need to find a surviving variant that is the right length.
+  //
+  while (!(context->traceAbort()))
+    {
+      if (variantCollection.findNextSurvivingVariant() == NONE)
+	{
+	  if (frontier.empty())
+	    break;
+	  //
+	  //	Must be in incremental mode - try exanding current frontier.
+	  //
+	  expandLayer();
+	  if (variantCollection.findNextSurvivingVariant() == NONE)
+	    break;  // no new variants immediately following a expandLayer() means we're done
+	}
+      if (variantCollection.getCurrentVariantSize() == nrVariantVariables)
+	return true;
+    }
+  return false;
+}
+
+const Vector<DagNode*>&
+VariantSearch::getCurrentUnifier(int& nrFreeVariables, int& variableFamily)
+{
+  return variantCollection.getCurrentVariant(nrFreeVariables, variableFamily);
+}
+
+bool
+VariantSearch::findNextVariant()
+{
+  //
+  //	We need to find a surviving variant.
+  //
+  if (context->traceAbort())
+    return false;
+  int variantNumber = variantCollection.findNextSurvivingVariant();
+  if (variantNumber == NONE)
+    {
+      if (frontier.empty())
+	return false;
+      //
+      //	Must be in incremental mode - try exanding current frontier.
+      //
+      expandLayer();
+      variantNumber = variantCollection.findNextSurvivingVariant();
+      if (variantNumber == NONE)
+	return false;  // no new variants immediately following a expandLayer() means we're done
+    }
+  //
+  //	We build a mapping from internal variant indices to the indices of surviving
+  //	variants so we can translate parent indices from the internal numbering used for
+  //	folding variants to the external numbering used at the metalevel.
+  //
+  internalIndexToExternalIndex.insert(IntMap::value_type(variantNumber, nrVariantsFound));
+  ++nrVariantsFound;
+  return true;
+}
 
 VariantSearch::VariantSearch(RewritingContext* context,
 			     const Vector<DagNode*>& blockerDags,
 			     FreshVariableGenerator* freshVariableGenerator,
-			     bool unificationMode,
-			     bool irredundantMode,
-			     bool deleteFreshVariableGenerator,
-			     int incomingVariableFamily,
-			     bool checkVariableNames)
+			     int flags,
+			     int incomingVariableFamily)
   : context(context),
     blockerDags(blockerDags),  // shallow copy
     freshVariableGenerator(freshVariableGenerator),
-    unificationMode(unificationMode),
-    irredundantMode(irredundantMode),
-    deleteFreshVariableGenerator(deleteFreshVariableGenerator),
+    flags(flags),
     firstVariableFamily((incomingVariableFamily == 0) ? 1 : 0),
     secondVariableFamily((incomingVariableFamily == 2 || incomingVariableFamily == NONE) ? 1 : 2)
 {
+  problemOkay = false;  // until we have verified it is ok
   incompleteFlag = false;
-  nrVariantsReturned = 0;  // we only track this in variant mode
+  nrVariantsFound = 0;  // we only track this in variant mode
+  lastVariantMatchingProblem = 0;  // we only use this in matching mode
   //
   //	We make a clean copy of the initial dag for several reasons:
   //	(1) If the variables have aready been indexed by a parent computation, we don't
@@ -85,17 +143,19 @@ VariantSearch::VariantSearch(RewritingContext* context,
   //
   //	Index variables in target dag. We don't want to do reduction on target dag for two reasons:
   //	(1) We rely on variable dags not going away to protect variable dags in variableInfo from GC.
-  //	(2) Rewriting could introduce new ground terms that don't have their ground flag set, breaking instantiation.
+  //	(2) Rewriting could introduce new ground terms that don't have their ground flag set,
+  //	breaking instantiation.
   //
   targetCopy->indexVariables(variableInfo, 0);
   nrVariantVariables = variableInfo.getNrVariables();
-  if (checkVariableNames)
+  if (flags & CHECK_VARIABLE_NAMES)
     {
       //
-      //	Check that variable names don't clash with the range we're going to use for fresh variables.
-      //	If we are being called under system controlled circumstances to do variant unfication,
-      //	variable clashes are avoided using multiple variable families and this check could cause false
-      //	errors if the number of variables in place gets larger that freshVariableGenerator base.
+      //	Check that variable names don't clash with the range we're going to use for
+      //	fresh variables. If we are being called under system controlled circumstances
+      //	to do variant unfication, variable clashes are avoided using multiple variable
+      //	families and this check could cause false errors if the number of variables in
+      //	place gets larger that freshVariableGenerator base.
       //
       for (int i = 0; i < nrVariantVariables; ++i)
 	{
@@ -104,30 +164,32 @@ VariantSearch::VariantSearch(RewritingContext* context,
 	    {
 	      DagNode* d = v;
 	      IssueWarning("unsafe variable name " << QUOTE(d) << " in variant " <<
-			   (unificationMode ? "unification" : "narrowing") << " problem.");
+			   ((flags & UNIFICATION_MODE) ? "unification" :
+			    ((flags & MATCH_MODE) ? "matching" : "narrowing")) << " problem.");
 	      return;
 	    }
 	}
     }
   {
     //
-    //	Index and normalize and compute sorts for blocker dags. They could conceivable have previously unseen variables,
-    //	but we don't care about the actual names of such variables since they will only be used in the subject side of
-    //	matching and will behave as fresh constants.
-    //	If one of the blocker dags is already reducible, we count that as an immediate fail.
+    //	Index and normalize and compute sorts for blocker dags. They could conceivable have
+    //	previously unseen variables, but we don't care about the actual names of such variables
+    //	since they will only be used in the subject side of matching and will behave as fresh
+    //	constants. If one of the blocker dags is already reducible, we count that as an
+    //	immediate fail.
     //
-    FOR_EACH_CONST(i, Vector<DagNode*>, blockerDags)
+    for (DagNode* d : blockerDags)
       {
-	DagNode* d = *i;
 	d->indexVariables(variableInfo, 0);
 	d->computeTrueSort(*context);  // also handles theory normalization
 	if (d->reducibleByVariantEquation(*context))
 	  {
-	    IssueAdvisory("Irreducibility constraint " << d << " is itself reducible by a variant equation.");
+	    IssueAdvisory("Irreducibility constraint " << d <<
+			  " is itself reducible by a variant equation.");
 	    return;
 	  }
       }
-    if (checkVariableNames)
+    if (flags & CHECK_VARIABLE_NAMES)
       {
 	int nrVariables = variableInfo.getNrVariables();
 	for (int i = nrVariantVariables; i < nrVariables; ++i)
@@ -142,17 +204,19 @@ VariantSearch::VariantSearch(RewritingContext* context,
 	  }
       }
   }
+  problemOkay = true;
   //
-  //	Allocate a fresh even variable for each original variable.
+  //	Allocate a fresh firstVariableFamily variable for each original variable.
   //
   protectedVariant.resize(nrVariantVariables);
   Substitution s(nrVariantVariables);
   for (int i = 0; i < nrVariantVariables; ++i)
     {
-      Sort* sort = safeCast(VariableSymbol*, variableInfo.index2Variable(i)->symbol())->getSort();
-      VariableDagNode* v = new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(sort),
-					       freshVariableGenerator->getFreshVariableName(i, firstVariableFamily),
-					       i);
+      Symbol* vs = variableInfo.index2Variable(i)->symbol();
+      VariableDagNode* v =
+	new VariableDagNode(vs,
+			    freshVariableGenerator->getFreshVariableName(i, firstVariableFamily),
+			    i);
       protectedVariant[i] = v;
       s.bind(i, v);
     }
@@ -167,10 +231,18 @@ VariantSearch::VariantSearch(RewritingContext* context,
   //	we no longer care about in place rewriting on ground terms.
   //
   RewritingContext* redContext = context->makeSubcontext(newDag);
-  redContext->reduce();  // BUG - this can replace subterms of ground terms that will no longer be flagged as such
+  //
+  //	Note that reduce() does in-place replacement so subterms marked as ground
+  //	could potentially have their own subterms replaced with subterms containing
+  //	variables. Thus we can no longer trust the ground flags and indeed
+  //	  DagNode::indexVariables(NarrowingVariableInfo& indices, int baseIndex)
+  //	which reindexes and sets ground flags prior to narrowing steps makes
+  //	a point of distrusting existing ground flags.
+  //
+  redContext->reduce();
 
   DagNode* r = redContext->root();
-  if (unificationMode)
+  if (flags & UNIFICATION_MODE)
     {
       //
       //	Check for the identity unification problem, t =? t
@@ -194,6 +266,16 @@ VariantSearch::VariantSearch(RewritingContext* context,
 	  return;  // no point in looking for other unifiers
 	}
     }
+  if (flags & SUBSUMPTION_MODE)
+    {
+      //
+      //	In subsumption mode we only care about the variant term; we don't
+      //	need to drag the variant substitution around, especially since
+      //	distinct variants could have the same variant term but different
+      //	variants substitutions.
+      //
+      protectedVariant.clear();
+    }
   protectedVariant.append(r);
   context->addInCount(*redContext);
   delete redContext;
@@ -205,28 +287,47 @@ VariantSearch::VariantSearch(RewritingContext* context,
   frontier.append(0);
   currentIndex = 1;
   //
-  //	Breadthfirst search for new variants. Variants indexed by the frontier can disappear if they become covered by
-  //	later variants, or were descendents of variants that became covered.
+  //	Breadthfirst search for new variants. Variants indexed by the frontier can
+  //	disappear if they become covered by later variants, or were descendents of
+  //	variants that became covered.
   //
   useFirstVariableFamily = false;
-  if (irredundantMode)
+  if (flags & (IRREDUNDANT_MODE | SUBSUMPTION_MODE | MATCH_MODE))
     {
       //
-      //	Since later variants can cover earlier variants on different branches (not ancestors)
-      //	if we want to avoid returning redundant variants, we have to generate them all up front.
-      //	This is less useful for variant unification, because even without redundant variants
-      //	we still expect redundant unifiers.
+      //	Since later variants can cover earlier variants on different branches
+      //	(not ancestors) if we want to avoid returning redundant variants, we
+      //	have to generate them all up front. This is less useful for variant
+      //	unification, because even without redundant variants we still expect
+      //	redundant unifiers, because variant subsumption is modulo axioms not
+      //	axioms plus variant equations.
+      //
+      //	If we're in subsumption mode, then we are using variant narrowing to
+      //	compute subsumption modulo axioms plus variants for some larger
+      //	problem. In this case we only have temporary use of blocker dags
+      //	since they may be needed for some other subsumption problem so we
+      //	want to compute a minimal complete set of variants upfront, and
+      //	then we're done variant narrowing.
+      //
+      //	If we're in match mode we want a minimal complete set of variants and
+      //	then we will use the matching automata in VariantFolder to do the
+      //	matching.
       //
       do
 	expandLayer();
       while (!(frontier.empty()));
+
+      if (flags & MATCH_MODE)
+	variantCollection.prepareForVariantMatching();
     }
 }
 
 VariantSearch::~VariantSearch()
 {
-  if (deleteFreshVariableGenerator)
+  if (flags & DELETE_FRESH_VARIABLE_GENERATOR)
     delete freshVariableGenerator;
+  if (flags & DELETE_LAST_VARIANT_MATCHING_PROBLEM)
+    delete lastVariantMatchingProblem;
   delete context;
 }
 
@@ -240,81 +341,18 @@ VariantSearch::markReachableNodes()
   int substSize = protectedVariant.size();
   for (int i = 0; i < substSize; ++i)
     protectedVariant[i]->mark();
-  FOR_EACH_CONST(i, Vector<DagNode*>, blockerDags)
-    (*i)->mark();
+  for (DagNode* d : blockerDags)
+    d->mark();
   targetCopy->mark();
 }
 
-const Vector<DagNode*>*
-VariantSearch::getNextVariant(int& nrFreeVariables,  int& variableFamily, int& parentIndex, bool& moreInLayer)
+bool
+VariantSearch::isSubsumed(DagNode* target) const
 {
-  if (context->traceAbort())
-    return 0;
-
-  int variantNumber;
-  int parentNumber;
-
-  const Vector<DagNode*>* v =
-    variantCollection.getNextSurvivingVariant(nrFreeVariables, variableFamily, &variantNumber, &parentNumber, &moreInLayer);
-  if (v == 0 && !(frontier.empty()))
-    {
-      //
-      //	Must be in incremental mode - try expanding current frontier.
-      //
-      expandLayer();
-      v = variantCollection.getNextSurvivingVariant(nrFreeVariables, variableFamily, &variantNumber, &parentNumber, &moreInLayer);
-    }
-  if (v != 0)
-    {
-      //
-      //	We found a variant - need to keep track a mapping from its internal index
-      //	to its external index to we can convert the internal parent index of
-      //	its future children.
-      //
-      internalIndexToExternalIndex.insert(IntMap::value_type(variantNumber, nrVariantsReturned));
-      ++nrVariantsReturned;
-      parentIndex = (parentNumber == NONE) ? NONE : internalIndexToExternalIndex[parentNumber];
-    }
-  return v;
-}
-
-const Vector<DagNode*>*
-VariantSearch::getLastReturnedVariant(int& nrFreeVariables, int& variableFamily, int& parentIndex, bool& moreInLayer)
-{
-  int parentNumber;
-  const Vector<DagNode*>* v = variantCollection.getLastReturnedVariant(nrFreeVariables,
-								       variableFamily,
-								       &parentNumber,
-								       &moreInLayer);
-  Assert(v != 0, "shouldn't be asked for last returned variant, if last call didn't return a variant");
-  parentIndex = (parentNumber == NONE) ? NONE : internalIndexToExternalIndex[parentNumber];
-  return v;
-}
-
-const Vector<DagNode*>*
-VariantSearch::getNextUnifier(int& nrFreeVariables, int& variableFamily)
-{
-  while (!(context->traceAbort()))
-    {
-      const Vector<DagNode*>* v = variantCollection.getNextSurvivingVariant(nrFreeVariables, variableFamily);
-      if (v == 0)
-	{
-	  if (frontier.empty())
-	    break;
-	  //
-	  //	Must be in incremental mode - try exanding current frontier.
-	  //
-	  expandLayer();
-	  v = variantCollection.getNextSurvivingVariant(nrFreeVariables, variableFamily);
-	  if (v == 0)
-	    break;  // no new variants immediately following a expandLayer() means we're done
-	}
-      int variantSize = v->size();
-      if (variantSize == nrVariantVariables)
-	return v;
-      Assert(variantSize == nrVariantVariables + 1, "non unifier variant should have an extra dag");
-    }
-  return 0;
+  Assert(flags & SUBSUMPTION_MODE, "not in SUBSUMPTION_MODE");
+  Vector<DagNode*> variant(1);
+  variant[0] = target;
+  return variantCollection.isSubsumed(variant);
 }
 
 void
@@ -324,9 +362,8 @@ VariantSearch::expandLayer()
   //	Look at each variant in the current frontier, and if it
   //	still exists, expand it by one step variant narrowing.
   //
-  FOR_EACH_CONST(i, VariantIndexVec, frontier)
+  for (int index : frontier)
     {
-      int index = *i;
       const Vector<DagNode*>* variant = variantCollection.getVariant(index);
       if (variant != 0)
 	{
@@ -360,8 +397,9 @@ VariantSearch::expandVariant(const Vector<DagNode*>& variant, int index)
   for (int i = 0; i < substSize; ++i)
     variantSubstitution[i] = variant[i];
   //
-  //	Create a search state for one step variant narrowings. We pass variableInfo because original
-  //	variable names are needed for tracing, and total number of variables is needed for unification.
+  //	Create a search state for one step variant narrowings. We pass variableInfo because
+  //	original variable names are needed for tracing, and total number of variables is
+  //	needed for unification.
   //
   int variableFamily = useFirstVariableFamily ? firstVariableFamily : secondVariableFamily;
   VariantNarrowingSearchState vnss(newContext,
@@ -370,7 +408,7 @@ VariantSearch::expandVariant(const Vector<DagNode*>& variant, int index)
 				   freshVariableGenerator,
 				   variableFamily,
 				   variableInfo,
-				   unificationMode);
+				   (flags & UNIFICATION_MODE));
   //
   //	Extract each new variant.
   //
@@ -392,7 +430,7 @@ VariantSearch::expandVariant(const Vector<DagNode*>& variant, int index)
       //
       if (variantTerm == 0)
 	{
-	  Assert(unificationMode, "null variant term and we're not in unification mode");
+	  Assert((flags & UNIFICATION_MODE), "null variant term and we're not in unification mode");
 	  variantCollection.insertVariant(protectedVariant, newIndex, index, variableFamily);
 	}
       else
@@ -404,7 +442,8 @@ VariantSearch::expandVariant(const Vector<DagNode*>& variant, int index)
 	  redContext->reduce();
 	  protectedVariant.append(redContext->root());
 	  //
-	  //	Insert new variant in to collection and if it sticks, insert its index into the new frontier.
+	  //	Insert new variant in to collection and if it sticks, insert its index
+	  //	into the new frontier.
 	  //
 	  if (variantCollection.insertVariant(protectedVariant, newIndex, index, variableFamily))
 	    newFrontier.append(newIndex);

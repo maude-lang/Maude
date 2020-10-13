@@ -134,7 +134,7 @@ SortTable::compileOpDeclarations()
 #endif
 
   componentVector.expandTo(nrArgs + 1);
-  for (int i = 0; i <= nrArgs; i++)
+  for (int i = 0; i <= nrArgs; ++i)
     {
       ConnectedComponent* c = (opDeclarations[0].getDomainAndRange()[i])->component();
 #ifndef NO_ASSERT
@@ -163,9 +163,9 @@ SortTable::compileOpDeclarations()
 bool
 SortTable::kindLevelDeclarationsOnly() const
 {
-  FOR_EACH_CONST(i, Vector<OpDeclaration>, opDeclarations)
+  for (const OpDeclaration& i : opDeclarations)
     {
-      if (i->getDomainAndRange()[nrArgs]->index() != Sort::KIND)
+      if (i.getDomainAndRange()[nrArgs]->index() != Sort::KIND)
 	return false;
     }
   return true;
@@ -371,9 +371,9 @@ SortTable::findMinSortIndex(const NatSet& state, bool& unique)
 {
   Sort* minSort = componentVector[nrArgs]->sort(Sort::ERROR_SORT);  // start with error sort
   NatSet infSoFar(minSort->getLeqSorts());
-  FOR_EACH_CONST(i, NatSet, state)
+  for (int i : state)
     {
-      Sort* rangeSort = opDeclarations[*i].getDomainAndRange()[nrArgs];
+      Sort* rangeSort = opDeclarations[i].getDomainAndRange()[nrArgs];
       const NatSet& rangeLeqSorts = rangeSort->getLeqSorts();
       infSoFar.intersect(rangeLeqSorts);
       //
@@ -548,9 +548,9 @@ SortTable::computeBddVector(const SortBdds& sortBdds,
   //  DebugAdvisory("starting OR of ANDs phase");
   int nrBdds = sortBdds.getNrVariables(componentVector[nrArgs]->getIndexWithinModule());
   vec.resize(nrBdds);  // default construct sets all the elements to false
-  FOR_EACH_CONST(i, BddMap, disjuncts)
+  for (const auto& i : disjuncts)
     {
-      int target = i->first;
+      int target = i.first;
       if (argNr + 1 == nrArgs)
 	{
 	  //
@@ -562,7 +562,7 @@ SortTable::computeBddVector(const SortBdds& sortBdds,
 	    {
 	      //DebugAdvisory("vec[j] " << vec[j].id());
 	      //DebugAdvisory("t[j] " << t[j].id());
-	      vec[j] = bdd_or(vec[j], bdd_and(i->second, t[j]));
+	      vec[j] = bdd_or(vec[j], bdd_and(i.second, t[j]));
 	    }
 	}
       else
@@ -573,7 +573,7 @@ SortTable::computeBddVector(const SortBdds& sortBdds,
 	    {
 	      //DebugAdvisory("vec[j] " << vec[j].id());
 	      //DebugAdvisory("targetVec[j] " << targetVec[j].id());
-	      vec[j] = bdd_or(vec[j], bdd_and(i->second, targetVec[j]));
+	      vec[j] = bdd_or(vec[j], bdd_and(i.second, targetVec[j]));
 	    }
 	}
     }
@@ -660,12 +660,11 @@ SortTable::dumpSortDiagram(ostream& s, int indentLevel)
       ConnectedComponent* component = componentVector[i];
       int nrSorts = component->nrSorts();
       set<int>  nextNodes;
-      FOR_EACH_CONST(j, set<int>, nodes)
+      for (int n : nodes)
 	{
-	  int n = *j;
 	  s << '\n' << Indent(indentLevel - 1) << "Node " << n <<
 	    " (testing argument " << i << ")\n";
-	  for (int k = 0; k < nrSorts; k++)
+	  for (int k = 0; k < nrSorts; ++k)
 	    {
 	      int target = sortDiagram[n + k];
 	      s << Indent(indentLevel) << "sort " << k << " (" <<

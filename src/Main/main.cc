@@ -40,6 +40,7 @@
 #include "higher.hh"
 #include "freeTheory.hh"
 #include "builtIn.hh"
+#include "objectSystem.hh"
 #include "strategyLanguage.hh"
 #include "mixfix.hh"
  
@@ -49,8 +50,12 @@
 //      core class definitions
 #include "lineNumber.hh"
 
-//      built in stuff
+//      built class definitions
 #include "randomOpSymbol.hh"
+
+//      object system class definitions
+#include "processManagerSymbol.hh"
+#include "fileManagerSymbol.hh"
 
 //      system class definitions
 #include "IO_Manager.hh"
@@ -88,7 +93,7 @@ main(int argc, char* argv[])
   bool outputBanner = true;
   int ansiColor = UNDECIDED;
   int useTecla = UNDECIDED;
-
+ 
   for (int i = 1; i < argc; i++)
     {
       char* arg = argv[i];
@@ -138,6 +143,15 @@ main(int argc, char* argv[])
 	    cerr << getpid() << endl;
 	  else if (strcmp(arg, "-erewrite-loop-mode") == 0)
 	    interpreter.setFlag(Interpreter::EREWRITE_LOOP_MODE, true);
+	  else if (strcmp(arg, "-allow-processes") == 0)
+	    ProcessManagerSymbol::setAllowProcesses(true);
+	  else if (strcmp(arg, "-allow-files") == 0)
+	    FileManagerSymbol::setAllowFiles(true);
+	  else if (strcmp(arg, "-trust") == 0)
+	    {
+	      FileManagerSymbol::setAllowFiles(true);
+	      ProcessManagerSymbol::setAllowProcesses(true);
+	    }
 	  else
 	    {
 	      IssueWarning(LineNumber(FileTable::COMMAND_LINE) <<
@@ -259,8 +273,11 @@ printHelp(const char* name)
     "  -print-to-stderr\tPrint attribute should use stderr rather than stdout\n" <<
     "  -random-seed=<int>\tSet seed for random number generator\n" <<
     "  -xml-log=<filename>\tSet file in which to produce an xml log\n" <<
-    "  -get-pid\t\tPrint process id to stderr before printing banner\n" <<
+    "  -show-pid\t\tPrint process id to stderr before printing banner\n" <<
     "  -erewrite-loop-mode\tUse external object rewriting for loop mode\n" <<
+    "  -allow-processes\tAllow running arbitrary executables\n" <<
+    "  -allow-files\t\tAllow operations on files\n" <<
+    "  -trust\t\tAllow all potentially risky capabilities\n" <<
     "\n" <<
     "Send bug reports to: " << PACKAGE_BUGREPORT << endl;
   exit(0);

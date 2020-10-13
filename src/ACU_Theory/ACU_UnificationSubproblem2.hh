@@ -21,9 +21,9 @@
 */
 
 //
-//      Class for unification subproblems in the AC theory.
-//	It consists of the AC symbol, a vector of abstracted subterms and a basis for the
-//	Diophantine system corresponding the purified AC unification problem.
+//      Class for unification subproblems in the AC and ACU theories.
+//	It consists of the AC(U) symbol, a vector of abstracted subterms and a basis for the
+//	Diophantine system corresponding the purified AC(U) unification problem.
 //
 #ifndef _ACU_UnificationSubproblem2_hh_
 #define _ACU_UnificationSubproblem2_hh_
@@ -83,6 +83,7 @@ private:
   bool includable(Basis::const_iterator potential);
   bdd computeLegalSelections();
   bool buildSolution(UnificationContext& solution, PendingUnificationStack& pending);
+  int reuseVariable(int selectionIndex);
 
   ACU_Symbol* topSymbol;
   Vector<DagNode*> subterms;

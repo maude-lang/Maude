@@ -594,6 +594,17 @@ ACU_Symbol::canResolveTheoryClash()
 UnificationSubproblem*
 ACU_Symbol::makeUnificationSubproblem()
 {
+  if (getIdentity() != 0)
+    {
+      //
+      //	Because ACU_UnificationSubproblem2 may introduce the
+      //	identity element we make sure it had its sort computed
+      //	and its ground flag set.
+      //
+      DagNode* id = getIdentityDag();
+      if (!(id->isGround()))
+	id->computeBaseSortForGroundSubterms(false);
+    }
   return new ACU_UnificationSubproblem2(this);
 }
 

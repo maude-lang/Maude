@@ -3,12 +3,16 @@
 #
 #	Initialize autoconf stuff.
 #
-AC_INIT(Maude, 3.0, [maude-bugs@lists.cs.illinois.edu])
+AC_INIT(Maude, 3.1, [maude-bugs@lists.cs.illinois.edu])
 #
 #	Allow directory names that look like macros.
 #
 m4_pattern_allow([AU_Persistent])
 m4_pattern_allow([AU_Theory])
+#
+#	Local macros.
+#
+AC_CONFIG_MACRO_DIRS([m4])
 #
 #	Figure out system we are building for and set $host shell variable.
 #
@@ -56,6 +60,10 @@ if (test -z "$FLEX") then
   FLEX="flex"
 fi
 AC_SUBST(FLEX)
+#
+#	*** SYSTEM CALLS ***
+#
+AX_HAVE_PPOLL(AC_DEFINE([HAVE_PPOLL], [], [use ppoll()]))
 #
 #	*** LIBRARIES ***
 #

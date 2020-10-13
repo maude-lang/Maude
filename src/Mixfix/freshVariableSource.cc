@@ -187,3 +187,34 @@ FreshVariableSource::belongsToFamily(int id, int family)
     }
   return true;
 }
+
+bool
+FreshVariableSource::isFreshVariableName(int id, int& index, int& family)
+{
+  const char* name = Token::name(id);
+  char firstChar = name[0];
+  if (firstChar == '#')
+    family = 0;
+  else if (firstChar == '%')
+    family = 1;
+  else if (firstChar == '@')
+    family = 2;
+  else
+    return false;
+  char secondChar = name[1];
+  if (!isdigit(secondChar) || secondChar == '0')
+    return false;  // index must start with 1 thru 9
+  mpz_class fullIndex;
+  mpz_set_str(fullIndex.get_mpz_t(), name + 1, 10);
+  --fullIndex;
+  if (fullIndex > INT_MAX)
+    {
+      //
+      //	We don't care about indices > INT_MAX because
+      //	we never generate such names ourselves.
+      //
+      return false;
+    }
+  index = fullIndex.get_si();
+  return true;
+}

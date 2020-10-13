@@ -1,19 +1,19 @@
 ==========================================
 get variants in BOOL-FVP : X /\ Y .
 
-Variant #1
+Variant 1
 rewrites: 0
 Boolean: #1:Boolean /\ #2:Boolean
 X --> #1:Boolean
 Y --> #2:Boolean
 
-Variant #2
+Variant 2
 rewrites: 2
 Boolean: %1:Boolean
 X --> %1:Boolean
 Y --> tt
 
-Variant #3
+Variant 3
 rewrites: 2
 Boolean: ff
 X --> %1:Boolean
@@ -24,19 +24,19 @@ rewrites: 2
 ==========================================
 get variants in BOOL-FVP : X \/ Y .
 
-Variant #1
+Variant 1
 rewrites: 0
 Boolean: #1:Boolean \/ #2:Boolean
 X --> #1:Boolean
 Y --> #2:Boolean
 
-Variant #2
+Variant 2
 rewrites: 2
 Boolean: %1:Boolean
 X --> %1:Boolean
 Y --> ff
 
-Variant #3
+Variant 3
 rewrites: 2
 Boolean: tt
 X --> %1:Boolean
@@ -47,17 +47,17 @@ rewrites: 2
 ==========================================
 get variants in BOOL-FVP : ~(X) .
 
-Variant #1
+Variant 1
 rewrites: 0
 Boolean: ~(#1:Boolean)
 X --> #1:Boolean
 
-Variant #2
+Variant 2
 rewrites: 2
 Boolean: ff
 X --> tt
 
-Variant #3
+Variant 3
 rewrites: 2
 Boolean: tt
 X --> ff
@@ -67,19 +67,19 @@ rewrites: 2
 ==========================================
 get variants in NAT-AC-MONUS : n + m .
 
-Variant #1
+Variant 1
 rewrites: 0
 Nat: #1:Nat + #2:Nat
 n --> #1:Nat
 m --> #2:Nat
 
-Variant #2
+Variant 2
 rewrites: 2
 Nat: %1:Nat
 n --> 0
 m --> %1:Nat
 
-Variant #3
+Variant 3
 rewrites: 2
 Nat: %1:Nat
 n --> %1:Nat
@@ -90,25 +90,25 @@ rewrites: 2
 ==========================================
 get variants in NAT-AC-MONUS : n - m .
 
-Variant #1
+Variant 1
 rewrites: 0
 Nat: #1:Nat - #2:Nat
 n --> #1:Nat
 m --> #2:Nat
 
-Variant #2
+Variant 2
 rewrites: 3
 Nat: 0
-n --> %1:Nat
-m --> %1:Nat + %2:NzNat
+n --> %2:Nat
+m --> %2:Nat + %1:NzNat
 
-Variant #3
+Variant 3
 rewrites: 3
-NzNat: %2:NzNat
-n --> %1:Nat + %2:NzNat
-m --> %1:Nat
+NzNat: %1:NzNat
+n --> %2:Nat + %1:NzNat
+m --> %2:Nat
 
-Variant #4
+Variant 4
 rewrites: 3
 Nat: 0
 n --> %1:Nat
@@ -119,138 +119,138 @@ rewrites: 3
 ==========================================
 get variants in NAT-ACU-MONUS : n - m .
 
-Variant #1
+Variant 1
 rewrites: 0
 Nat: #1:Nat - #2:Nat
 n --> #1:Nat
 m --> #2:Nat
 
-Variant #2
+Variant 2
 rewrites: 2
 Nat: 0
-n --> %1:Nat
+n --> %2:Nat
 m --> %1:Nat + %2:Nat
 
-Variant #3
+Variant 3
 rewrites: 2
-Nat: %2:Nat
+Nat: %1:Nat
 n --> %1:Nat + %2:Nat
-m --> %1:Nat
+m --> %2:Nat
 
 No more variants.
 rewrites: 2
 ==========================================
 get variants in NAT-ACU-MONUS-CONJ : ((n - m) =/= 0) /\ (m - n) =/= 0 .
 
-Variant #1
+Variant 1
 rewrites: 0
 Conj: ((#1:Nat - #2:Nat) =/= 0) /\ (#2:Nat - #1:Nat) =/= 0
 n --> #1:Nat
 m --> #2:Nat
 
-Variant #2
+Variant 2
 rewrites: 4
-Conj: (0 =/= 0) /\ %2:Nat =/= 0
-n --> %1:Nat
+Conj: (0 =/= 0) /\ %1:Nat =/= 0
+n --> %2:Nat
 m --> %1:Nat + %2:Nat
 
-Variant #3
+Variant 3
 rewrites: 4
-Conj: (0 =/= 0) /\ %2:Nat =/= 0
+Conj: (0 =/= 0) /\ %1:Nat =/= 0
 n --> %1:Nat + %2:Nat
-m --> %1:Nat
+m --> %2:Nat
 
 No more variants.
 rewrites: 4
 ==========================================
 get variants in INT-ACU : i + j .
 
-Variant #1
+Variant 1
 rewrites: 0
 Int: #1:Int + #2:Int
 i --> #1:Int
 j --> #2:Int
 
-Variant #2
+Variant 2
 rewrites: 5
 Int: %3:Int + %4:Int + -(%1:NzNat + %2:NzNat)
 i --> %3:Int + -(%2:NzNat)
 j --> %4:Int + -(%1:NzNat)
 
-Variant #3
+Variant 3
 rewrites: 5
-Int: %1:Int + %2:Int
-i --> %1:Int + -(%3:NzNat)
-j --> %2:Int + %3:NzNat
+Int: %2:Int + %3:Int
+i --> %2:Int + -(%1:NzNat)
+j --> %3:Int + %1:NzNat
 
-Variant #4
+Variant 4
 rewrites: 5
-Int: %1:Int + %3:Int
-i --> %1:Int + %2:NzNat
-j --> %3:Int + -(%2:NzNat)
+Int: %2:Int + %3:Int
+i --> %2:Int + %1:NzNat
+j --> %3:Int + -(%1:NzNat)
 
-Variant #5
+Variant 5
 rewrites: 5
 Int: %3:Int + %4:Int + -(%2:NzNat)
 i --> %3:Int + -(%1:NzNat + %2:NzNat)
 j --> %4:Int + %1:NzNat
 
-Variant #6
+Variant 6
 rewrites: 5
 Int: %3:Int + %4:Int + -(%2:NzNat)
 i --> %3:Int + %1:NzNat
 j --> %4:Int + -(%1:NzNat + %2:NzNat)
 
-Variant #7
+Variant 7
 rewrites: 19
-Int: #4:Int + #5:Int + -(#2:NzNat + #3:NzNat)
+Int: #2:Int + #4:Int + -(#3:NzNat + #5:NzNat)
 i --> #4:Int + #1:NzNat + -(#3:NzNat)
-j --> #5:Int + -(#1:NzNat + #2:NzNat)
+j --> #2:Int + -(#1:NzNat + #5:NzNat)
 
-Variant #8
+Variant 8
 rewrites: 19
-Int: #4:Int + #5:Int + -(#2:NzNat + #3:NzNat)
-i --> #4:Int + -(#1:NzNat + #3:NzNat)
-j --> #5:Int + #1:NzNat + -(#2:NzNat)
-
-Variant #9
-rewrites: 19
-Int: #2:Int + #4:Int
-i --> #2:Int + #3:NzNat + -(#1:NzNat)
+Int: #2:Int + #4:Int + -(#3:NzNat + #5:NzNat)
+i --> #2:Int + -(#1:NzNat + #5:NzNat)
 j --> #4:Int + #1:NzNat + -(#3:NzNat)
 
-Variant #10
+Variant 9
 rewrites: 19
-Int: #4:Int + #5:Int + -(#3:NzNat)
-i --> #4:Int + #2:NzNat + -(#1:NzNat)
-j --> #5:Int + #1:NzNat + -(#2:NzNat + #3:NzNat)
+Int: #3:Int + #4:Int
+i --> #3:Int + #1:NzNat + -(#2:NzNat)
+j --> #4:Int + #2:NzNat + -(#1:NzNat)
 
-Variant #11
+Variant 10
 rewrites: 19
-Int: #4:Int + #5:Int + -(#3:NzNat)
-i --> #4:Int + #1:NzNat + -(#2:NzNat + #3:NzNat)
-j --> #5:Int + #2:NzNat + -(#1:NzNat)
+Int: #4:Int + #5:Int + -(#2:NzNat)
+i --> #4:Int + #1:NzNat + -(#3:NzNat)
+j --> #5:Int + #3:NzNat + -(#1:NzNat + #2:NzNat)
 
-Variant #12
+Variant 11
+rewrites: 19
+Int: #4:Int + #5:Int + -(#2:NzNat)
+i --> #4:Int + #3:NzNat + -(#1:NzNat + #2:NzNat)
+j --> #5:Int + #1:NzNat + -(#3:NzNat)
+
+Variant 12
 rewrites: 31
-Int: %5:Int + %6:Int + -(%3:NzNat + %4:NzNat)
-i --> %5:Int + %1:NzNat + -(%2:NzNat + %4:NzNat)
-j --> %6:Int + %2:NzNat + -(%1:NzNat + %3:NzNat)
+Int: %2:Int + %5:Int + -(%3:NzNat + %6:NzNat)
+i --> %2:Int + %4:NzNat + -(%1:NzNat + %6:NzNat)
+j --> %5:Int + %1:NzNat + -(%3:NzNat + %4:NzNat)
 
 No more variants.
 rewrites: 35
 ==========================================
-variant unify [1] in INT-ACU : i + j =? i + l  .
+variant unify [1] in INT-ACU : i + j =? i + l .
 
-Unifier #1
+Unifier 1
 rewrites: 10
 i --> %1:Int
 j --> %2:Int
 l --> %2:Int
 ==========================================
-variant unify in INT-ACU : j =? l  .
+variant unify in INT-ACU : j =? l .
 
-Unifier #1
+Unifier 1
 rewrites: 0
 j --> %1:Int
 l --> %1:Int
@@ -260,12 +260,12 @@ rewrites: 0
 ==========================================
 get variants in INT-OFFSET-COMP-LIST : head(Q) .
 
-Variant #1
+Variant 1
 rewrites: 0
 Int: head(#1:NeList)
 Q --> #1:NeList
 
-Variant #2
+Variant 2
 rewrites: 1
 Int: %1:Int
 Q --> %1:Int ; %2:List
@@ -275,13 +275,13 @@ rewrites: 1
 ==========================================
 get variants in INT-OFFSET-COMP-LIST : I ; L .
 
-Variant #1
+Variant 1
 rewrites: 0
 NeList: #1:Int ; #2:List
 I --> #1:Int
 L --> #2:List
 
-Variant #2
+Variant 2
 rewrites: 1
 NeList: %2:Int ; %1:List
 I --> %2:Int
@@ -292,12 +292,12 @@ rewrites: 1
 ==========================================
 get variants in INT-OFFSET-CONJ : s(I) .
 
-Variant #1
+Variant 1
 rewrites: 0
 Int: s(#1:Int)
 I --> #1:Int
 
-Variant #2
+Variant 2
 rewrites: 1
 Neg: %1:Neg
 I --> p(%1:Neg)
@@ -307,12 +307,12 @@ rewrites: 1
 ==========================================
 get variants in INT-OFFSET-CONJ : p(I) .
 
-Variant #1
+Variant 1
 rewrites: 0
 Int: p(#1:Int)
 I --> #1:Int
 
-Variant #2
+Variant 2
 rewrites: 1
 Nat: %1:Nat
 I --> s(%1:Nat)
@@ -322,19 +322,19 @@ rewrites: 1
 ==========================================
 get variants in INT-OFFSET-MSET : Q,Q' .
 
-Variant #1
+Variant 1
 rewrites: 0
 MSet: #1:MSet,#2:MSet
 Q --> #1:MSet
 Q' --> #2:MSet
 
-Variant #2
+Variant 2
 rewrites: 2
 MSet: %1:MSet
 Q --> mt
 Q' --> %1:MSet
 
-Variant #3
+Variant 3
 rewrites: 2
 MSet: %1:MSet
 Q --> %1:MSet
@@ -345,40 +345,40 @@ rewrites: 2
 ==========================================
 get variants in INT-OFFSET-MSET : x in Q .
 
-Variant #1
+Variant 1
 rewrites: 0
 Pred: #1:Int in #2:MSet
 x --> #1:Int
 Q --> #2:MSet
 
-Variant #2
+Variant 2
 rewrites: 2
 Pred: tt
 x --> %1:Int
 Q --> %1:Int
 
-Variant #3
+Variant 3
 rewrites: 2
 Pred: tt
-x --> %1:Int
-Q --> %1:Int,%2:NeMSet
+x --> %2:Int
+Q --> %2:Int,%1:NeMSet
 
 No more variants.
 rewrites: 2
 ==========================================
 get variants in INT-OFFSET-MSET : dupl(Q) .
 
-Variant #1
+Variant 1
 rewrites: 0
 Pred: dupl(#1:MSet)
 Q --> #1:MSet
 
-Variant #2
+Variant 2
 rewrites: 2
 Pred: tt
 Q --> %1:NeMSet,%1:NeMSet
 
-Variant #3
+Variant 3
 rewrites: 2
 Pred: tt
 Q --> %1:NeMSet,%1:NeMSet,%2:NeMSet
@@ -388,43 +388,43 @@ rewrites: 2
 ==========================================
 get variants in INT-OFFSET-SET : V,U .
 
-Variant #1
+Variant 1
 rewrites: 0
 Set: #1:Set,#2:Set
 V --> #1:Set
 U --> #2:Set
 
-Variant #2
+Variant 2
 rewrites: 6
 NeSet: %1:NeSet
 V --> %1:NeSet
 U --> %1:NeSet
 
-Variant #3
+Variant 3
 rewrites: 6
 NeSet: %1:NeSet,%2:NeSet,%3:NeSet
 V --> %1:NeSet,%2:NeSet
 U --> %1:NeSet,%3:NeSet
 
-Variant #4
+Variant 4
 rewrites: 6
 NeSet: %1:NeSet,%2:NeSet
 V --> %1:NeSet,%2:NeSet
 U --> %1:NeSet
 
-Variant #5
+Variant 5
 rewrites: 6
 NeSet: %1:NeSet,%2:NeSet
 V --> %1:NeSet
 U --> %1:NeSet,%2:NeSet
 
-Variant #6
+Variant 6
 rewrites: 6
 Set: %1:Set
 V --> mt
 U --> %1:Set
 
-Variant #7
+Variant 7
 rewrites: 6
 Set: %1:Set
 V --> %1:Set
@@ -435,25 +435,25 @@ rewrites: 10
 ==========================================
 get variants in INT-OFFSET-SET : U =< V .
 
-Variant #1
+Variant 1
 rewrites: 0
 Pred: #1:Set =< #2:Set
 U --> #1:Set
 V --> #2:Set
 
-Variant #2
+Variant 2
 rewrites: 3
 Pred: tt
 U --> mt
 V --> %1:Set
 
-Variant #3
+Variant 3
 rewrites: 3
 Pred: tt
 U --> %1:Set
 V --> %1:Set
 
-Variant #4
+Variant 4
 rewrites: 3
 Pred: tt
 U --> %2:Set
@@ -462,21 +462,21 @@ V --> %1:Set,%2:Set
 No more variants.
 rewrites: 3
 ==========================================
-variant unify in INT-OFFSET-SET : x,y,S =? y,S  .
+variant unify in INT-OFFSET-SET : x,y,S =? y,S .
 
-Unifier #1
+Unifier 1
 rewrites: 11
 S --> #1:NeSet,#2:Int
 x --> #2:Int
 y --> #3:Int
 
-Unifier #2
+Unifier 2
 rewrites: 11
 S --> #1:Int
 x --> #1:Int
 y --> #2:Int
 
-Unifier #3
+Unifier 3
 rewrites: 11
 S --> #1:NeSet
 x --> #2:Int
@@ -485,153 +485,153 @@ y --> #2:Int
 No more unifiers.
 rewrites: 11
 ==========================================
-variant unify [23] in INT-OFFSET-SET : {M} =? {M'}  .
+variant unify [23] in INT-OFFSET-SET : {M} =? {M'} .
 
-Unifier #1
+Unifier 1
 rewrites: 4
 M --> %1:NeMSet
 M' --> %1:NeMSet
 
-Unifier #2
+Unifier 2
 rewrites: 32
 M --> #1:NeMSet,#1:NeMSet
 M' --> #1:NeMSet
 
-Unifier #3
+Unifier 3
 rewrites: 32
 M --> #1:NeMSet,#1:NeMSet,#2:NeMSet
 M' --> #1:NeMSet,#2:NeMSet
 
-Unifier #4
+Unifier 4
 rewrites: 32
 M --> #1:NeMSet
 M' --> #1:NeMSet,#1:NeMSet
 
-Unifier #5
+Unifier 5
 rewrites: 32
 M --> #1:NeMSet,#2:NeMSet
 M' --> #1:NeMSet,#1:NeMSet,#2:NeMSet
 
-Unifier #6
+Unifier 6
 rewrites: 248
 M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet
 M' --> %1:NeMSet
 
-Unifier #7
+Unifier 7
 rewrites: 248
 M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet
 M' --> %1:NeMSet,%2:NeMSet
 
-Unifier #8
+Unifier 8
 rewrites: 248
 M --> %1:NeMSet,%1:NeMSet,%1:NeMSet
 M' --> %1:NeMSet
 
-Unifier #9
+Unifier 9
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet,%3:NeMSet
+M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%3:NeMSet,%3:NeMSet
 M' --> %1:NeMSet,%2:NeMSet,%3:NeMSet
 
-Unifier #10
+Unifier 10
 rewrites: 248
 M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet
 M' --> %1:NeMSet,%2:NeMSet
 
-Unifier #11
+Unifier 11
 rewrites: 248
 M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet,%3:NeMSet
 M' --> %1:NeMSet,%2:NeMSet,%3:NeMSet
 
-Unifier #12
+Unifier 12
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet
+M --> %1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet,%2:NeMSet
 M' --> %1:NeMSet,%2:NeMSet
 
-Unifier #13
+Unifier 13
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet
+M --> %1:NeMSet,%2:NeMSet,%2:NeMSet,%2:NeMSet
 M' --> %1:NeMSet,%2:NeMSet
 
-Unifier #14
+Unifier 14
 rewrites: 248
-M --> %1:NeMSet,%2:NeMSet,%2:NeMSet,%3:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%2:NeMSet,%3:NeMSet
+M --> %1:NeMSet,%1:NeMSet,%2:NeMSet,%3:NeMSet
+M' --> %1:NeMSet,%2:NeMSet,%2:NeMSet,%3:NeMSet
 
-Unifier #15
+Unifier 15
 rewrites: 248
 M --> %1:NeMSet,%2:NeMSet,%2:NeMSet
 M' --> %1:NeMSet,%1:NeMSet,%2:NeMSet
 
-Unifier #16
+Unifier 16
 rewrites: 248
 M --> %1:NeMSet
 M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet
 
-Unifier #17
+Unifier 17
 rewrites: 248
 M --> %1:NeMSet,%2:NeMSet
 M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet
 
-Unifier #18
+Unifier 18
 rewrites: 248
 M --> %1:NeMSet
 M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet
 
-Unifier #19
+Unifier 19
 rewrites: 248
 M --> %1:NeMSet,%2:NeMSet,%3:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet,%3:NeMSet
+M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%3:NeMSet,%3:NeMSet
 
-Unifier #20
+Unifier 20
 rewrites: 248
 M --> %1:NeMSet,%2:NeMSet
 M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet
 
-Unifier #21
+Unifier 21
 rewrites: 248
 M --> %1:NeMSet,%2:NeMSet,%3:NeMSet
 M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet,%3:NeMSet
 
-Unifier #22
+Unifier 22
 rewrites: 248
 M --> %1:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet
+M' --> %1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet,%2:NeMSet
 
-Unifier #23
+Unifier 23
 rewrites: 248
 M --> %1:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet
+M' --> %1:NeMSet,%2:NeMSet,%2:NeMSet,%2:NeMSet
 ==========================================
 get variants in HF-SETS-CONJ : M,M' .
 
-Variant #1
+Variant 1
 rewrites: 0
 Magma: #1:Magma,#2:Magma
 M --> #1:Magma
 M' --> #2:Magma
 
-Variant #2
+Variant 2
 rewrites: 4
 Magma: %1:Magma
 M --> %1:Magma
 M' --> %1:Magma
 
-Variant #3
+Variant 3
 rewrites: 4
 Magma: %1:Magma,%2:Magma,%3:Magma
 M --> %1:Magma,%2:Magma
 M' --> %1:Magma,%3:Magma
 
-Variant #4
+Variant 4
 rewrites: 4
 Magma: %1:Magma,%2:Magma
 M --> %1:Magma,%2:Magma
-M' --> %1:Magma
+M' --> %2:Magma
 
-Variant #5
+Variant 5
 rewrites: 4
 Magma: %1:Magma,%2:Magma
-M --> %1:Magma
+M --> %2:Magma
 M' --> %1:Magma,%2:Magma
 
 No more variants.
@@ -639,25 +639,25 @@ rewrites: 8
 ==========================================
 get variants in HF-SETS-CONJ : S <= S' .
 
-Variant #1
+Variant 1
 rewrites: 0
 Pred: #1:Set <= #2:Set
 S --> #1:Set
 S' --> #2:Set
 
-Variant #2
+Variant 2
 rewrites: 3
 Pred: tt
 S --> 0
 S' --> %1:Set
 
-Variant #3
+Variant 3
 rewrites: 3
 Pred: tt
 S --> {%1:Magma}
 S' --> {%1:Magma}
 
-Variant #4
+Variant 4
 rewrites: 3
 Pred: tt
 S --> {%1:Magma}
@@ -668,52 +668,52 @@ rewrites: 3
 ==========================================
 get variants in HF-SETS-CONJ : S U S' .
 
-Variant #1
+Variant 1
 rewrites: 0
 Set: #1:Set U #2:Set
 S --> #1:Set
 S' --> #2:Set
 
-Variant #2
+Variant 2
 rewrites: 3
 Set: %1:Set
 S --> %1:Set
 S' --> 0
 
-Variant #3
+Variant 3
 rewrites: 3
 Set: %1:Set
 S --> 0
 S' --> %1:Set
 
-Variant #4
+Variant 4
 rewrites: 3
 Set: {%1:Magma,%2:Magma}
 S --> {%1:Magma}
 S' --> {%2:Magma}
 
-Variant #5
+Variant 5
 rewrites: 7
 Set: {#1:Magma}
 S --> {#1:Magma}
 S' --> {#1:Magma}
 
-Variant #6
+Variant 6
 rewrites: 7
 Set: {#1:Magma,#2:Magma,#3:Magma}
 S --> {#1:Magma,#2:Magma}
 S' --> {#1:Magma,#3:Magma}
 
-Variant #7
+Variant 7
 rewrites: 7
 Set: {#1:Magma,#2:Magma}
 S --> {#1:Magma,#2:Magma}
-S' --> {#1:Magma}
+S' --> {#2:Magma}
 
-Variant #8
+Variant 8
 rewrites: 7
 Set: {#1:Magma,#2:Magma}
-S --> {#1:Magma}
+S --> {#2:Magma}
 S' --> {#1:Magma,#2:Magma}
 
 No more variants.
@@ -721,13 +721,13 @@ rewrites: 11
 ==========================================
 get variants in NAT-PRES : n > m .
 
-Variant #1
+Variant 1
 rewrites: 0
 Pred: #1:Nat > #2:Nat
 n --> #1:Nat
 m --> #2:Nat
 
-Variant #2
+Variant 2
 rewrites: 1
 Pred: tt
 n --> %1:NzNat + %2:Nat
@@ -738,20 +738,20 @@ rewrites: 1
 ==========================================
 get variants in NAT-PRES : ((n =~= m) /\ m > n =~= tt) /\ n > m =~= tt .
 
-Variant #1
+Variant 1
 rewrites: 0
 Conj: (#1:Nat =~= #2:Nat) /\ (#1:Nat > #2:Nat =~= tt) /\ #2:Nat > #1:Nat =~= tt
 n --> #1:Nat
 m --> #2:Nat
 
-Variant #2
+Variant 2
 rewrites: 2
 Conj: ((%1:NzNat + %2:Nat) =~= %2:Nat) /\ (tt =~= tt) /\ %2:Nat > %1:NzNat +
     %2:Nat =~= tt
 n --> %1:NzNat + %2:Nat
 m --> %2:Nat
 
-Variant #3
+Variant 3
 rewrites: 2
 Conj: (%2:Nat =~= %1:NzNat + %2:Nat) /\ (tt =~= tt) /\ %2:Nat > %1:NzNat +
     %2:Nat =~= tt
@@ -763,51 +763,51 @@ rewrites: 2
 ==========================================
 get variants in NAT-PRES-BOOL : n > m .
 
-Variant #1
+Variant 1
 rewrites: 0
 Truth: #1:Nat > #2:Nat
 n --> #1:Nat
 m --> #2:Nat
 
-Variant #2
+Variant 2
 rewrites: 2
 Truth: true
 n --> %1:NzNat + %2:Nat
 m --> %2:Nat
 
-Variant #3
+Variant 3
 rewrites: 2
 Truth: false
-n --> %1:Nat
+n --> %2:Nat
 m --> %1:Nat + %2:Nat
 
 No more variants.
 rewrites: 2
 ==========================================
 variant unify in NAT-PRES-BOOL : n > m =? true /\ m > n' =? true /\ n > n' =?
-    false  .
+    false .
 
 No unifiers.
 rewrites: 56
 ==========================================
 get variants in NATU-PRES-BOOL : n > m .
 
-Variant #1
+Variant 1
 rewrites: 0
 Truth: #1:Nat > #2:Nat
 n --> #1:Nat
 m --> #2:Nat
 
-Variant #2
+Variant 2
 rewrites: 2
 Truth: true
 n --> 1 + %1:Nat + %2:Nat
-m --> %1:Nat
+m --> %2:Nat
 
-Variant #3
+Variant 3
 rewrites: 2
 Truth: false
-n --> %1:Nat
+n --> %2:Nat
 m --> %1:Nat + %2:Nat
 
 No more variants.
@@ -815,59 +815,59 @@ rewrites: 2
 ==========================================
 get variants in NATU-PRES-BOOL : n >= m .
 
-Variant #1
+Variant 1
 rewrites: 0
 Truth: #1:Nat >= #2:Nat
 n --> #1:Nat
 m --> #2:Nat
 
-Variant #2
+Variant 2
 rewrites: 2
 Truth: true
 n --> %1:Nat + %2:Nat
-m --> %1:Nat
+m --> %2:Nat
 
-Variant #3
+Variant 3
 rewrites: 2
 Truth: false
-n --> %1:Nat
+n --> %2:Nat
 m --> 1 + %1:Nat + %2:Nat
 
 No more variants.
 rewrites: 2
 ==========================================
 variant unify in NATU-PRES-BOOL : n > m =? true /\ m > n' =? true /\ n > n' =?
-    false  .
+    false .
 
 No unifiers.
 rewrites: 34
 ==========================================
-variant unify in NATU-PRES-BOOL : n >= m =? false /\ m >= n =? false  .
+variant unify in NATU-PRES-BOOL : n >= m =? false /\ m >= n =? false .
 
 No unifiers.
 rewrites: 6
 ==========================================
 get variants in INT-PRES : i > j .
 
-Variant #1
+Variant 1
 rewrites: 0
 Pred: #1:Int > #2:Int
 i --> #1:Int
 j --> #2:Int
 
-Variant #2
+Variant 2
 rewrites: 3
 Pred: tt
-i --> %2:Nat
-j --> -(%1:NzNat)
+i --> %1:Nat
+j --> -(%2:NzNat)
 
-Variant #3
+Variant 3
 rewrites: 3
 Pred: tt
 i --> -(%1:NzNat)
 j --> -(%1:NzNat + %2:NzNat)
 
-Variant #4
+Variant 4
 rewrites: 3
 Pred: tt
 i --> %1:Nat + %2:NzNat
@@ -878,31 +878,31 @@ rewrites: 3
 ==========================================
 get variants in INT-PRESS-BOOL : i > j .
 
-Variant #1
+Variant 1
 rewrites: 0
 Truth: #1:Int > #2:Int
 i --> #1:Int
 j --> #2:Int
 
-Variant #2
+Variant 2
 rewrites: 4
 Truth: true
 i --> %1:NzNat + %2:Nat
 j --> %2:Nat
 
-Variant #3
+Variant 3
 rewrites: 4
 Truth: true
-i --> %2:Nat
-j --> -(%1:NzNat)
+i --> %1:Nat
+j --> -(%2:NzNat)
 
-Variant #4
+Variant 4
 rewrites: 4
 Truth: true
 i --> -(%1:NzNat)
 j --> -(%1:NzNat + %2:NzNat)
 
-Variant #5
+Variant 5
 rewrites: 4
 Truth: false
 i --> %2:Int
@@ -912,7 +912,7 @@ No more variants.
 rewrites: 4
 ==========================================
 variant unify in INT-PRESS-BOOL : i > j =? true /\ j > k =? true /\ i > k =?
-    false  .
+    false .
 
 No unifiers.
 rewrites: 123

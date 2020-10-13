@@ -25,6 +25,8 @@ TESTS = \
 	metaPrintAttr \
 	metaMetadata \
 	metaVariantUnify \
+	metaVariantUnify2 \
+	metaVariantMatch \
 	metaGetVariant \
 	metaNarrow \
 	metaIntPrelude \
@@ -40,6 +42,8 @@ TESTS = \
 	metaIntUnify \
 	metaIntVariant \
 	metaIntVariantUnify \
+	metaIntVariantUnify2 \
+	metaIntVariantMatch \
 	metaIntPrint \
 	metaIntParse \
 	metaIntApply \
@@ -48,7 +52,8 @@ TESTS = \
 	legacyMetaUnify \
 	legacyMetaVariantUnify \
 	legacyMetaGetVariant \
-	metaIntStrategy
+	metaIntStrategy \
+	checkUnifiers
 
 MAUDE_FILES = \
 	metaApply.maude \
@@ -77,6 +82,8 @@ MAUDE_FILES = \
 	metaPrintAttr.maude \
 	metaMetadata.maude \
 	metaVariantUnify.maude \
+	metaVariantUnify2.maude \
+	metaVariantMatch.maude \
 	metaGetVariant.maude \
 	metaNarrow.maude \
 	metaIntPrelude.maude \
@@ -92,6 +99,8 @@ MAUDE_FILES = \
 	metaIntUnify.maude \
 	metaIntVariant.maude \
 	metaIntVariantUnify.maude \
+	metaIntVariantUnify2.maude \
+	metaIntVariantMatch.maude \
 	metaIntPrint.maude \
 	metaIntParse.maude \
 	metaIntApply.maude \
@@ -100,7 +109,8 @@ MAUDE_FILES = \
 	legacyMetaUnify.maude \
 	legacyMetaVariantUnify.maude \
 	legacyMetaGetVariant.maude \
-	metaIntStrategy.maude
+	metaIntStrategy.maude \
+	checkUnifiers.maude
 
 RESULT_FILES = \
 	metaApply.expected \
@@ -131,6 +141,8 @@ RESULT_FILES = \
 	metaPrintAttr.expected \
 	metaMetadata.expected \
 	metaVariantUnify.expected \
+	metaVariantUnify2.expected \
+	metaVariantMatch.expected \
 	metaGetVariant.expected \
 	metaNarrow.expected \
 	metaIntPrelude.expected \
@@ -146,6 +158,8 @@ RESULT_FILES = \
 	metaIntUnify.expected \
 	metaIntVariant.expected \
 	metaIntVariantUnify.expected \
+	metaIntVariantUnify2.expected \
+	metaIntVariantMatch.expected \
 	metaIntPrint.expected \
 	metaIntParse.expected \
 	metaIntApply.expected \
@@ -154,6 +168,7 @@ RESULT_FILES = \
 	legacyMetaUnify.expected \
 	legacyMetaVariantUnify.expected \
 	legacyMetaGetVariant.expected \
-	metaIntStrategy.expected
+	metaIntStrategy.expected \
+	checkUnifiers.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

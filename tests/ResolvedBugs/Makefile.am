@@ -18,8 +18,17 @@ TESTS = \
 	parameterTheoryCopyMay2019 \
 	polymorphicOverloadMay2019 \
 	viewRecursionMay2019 \
-	instantiationJuly2019
-
+	instantiationJuly2019 \
+	ascentFunctionsJanuary2020 \
+	closeSocketFeb2020 \
+	metaParseStrategyApril2020 \
+	complexParserSyncApril2020 \
+	identityUnificationMay2020 \
+	sortCollapseMay2020 \
+	ACU_MissingUnifiersMay2020 \
+	variantUnifyJune2020 \
+        identityUnificationSeptember2020 \
+        CUI_OccursCheckSeptember2020
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -41,7 +50,17 @@ MAUDE_FILES = \
 	parameterTheoryCopyMay2019.maude \
 	polymorphicOverloadMay2019.maude \
 	viewRecursionMay2019.maude \
-	instantiationJuly2019.maude
+	instantiationJuly2019.maude \
+	ascentFunctionsJanuary2020.maude \
+	closeSocketFeb2020.maude \
+	metaParseStrategyApril2020.maude \
+	complexParserSyncApril2020.maude \
+	identityUnificationMay2020.maude \
+	sortCollapseMay2020.maude \
+	ACU_MissingUnifiersMay2020.maude \
+	variantUnifyJune2020.maude \
+        identityUnificationSeptember2020.maude \
+        CUI_OccursCheckSeptember2020.maude
 
 
 RESULT_FILES = \
@@ -64,7 +83,17 @@ RESULT_FILES = \
 	parameterTheoryCopyMay2019.expected \
 	polymorphicOverloadMay2019.expected \
 	viewRecursionMay2019.expected \
-	instantiationJuly2019.expected
+	instantiationJuly2019.expected \
+	ascentFunctionsJanuary2020.expected \
+	closeSocketFeb2020.expected \
+	metaParseStrategyApril2020.expected \
+	complexParserSyncApril2020.expected \
+	identityUnificationMay2020.expected \
+	sortCollapseMay2020.expected \
+	ACU_MissingUnifiersMay2020.expected \
+	variantUnifyJune2020.expected \
+        identityUnificationSeptember2020.expected \
+        CUI_OccursCheckSeptember2020.expected
 
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

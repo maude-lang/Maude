@@ -283,8 +283,9 @@ MetaLevel::downModule(DagNode* metaModule)
 				  m->registerRuleLabels();
 				  m->localStatementsComplete();
 				  m->importStatements();
-				  m->closeTheory();
 				  m->resetImports();
+				  m->closeTheory();
+				  m->checkFreshVariableNames();
 				  cache.insert(metaModule, m);
 				  //
 				  //	We may have displace a module from the
@@ -1083,14 +1084,10 @@ MetaLevel::downUnificationProblem(DagNode* metaUnificationProblem,
 	{
 	  if (!downUnificandPair(i.argument(), lhs, rhs, m, makeDisjoint))
 	    {
-	      {
-		FOR_EACH_CONST(j, Vector<Term*>, leftHandSides)
-		  delete *j;
-	      }
-	      {
-		FOR_EACH_CONST(j, Vector<Term*>, rightHandSides)
-		  delete *j;
-	      }
+	      for (Term* t : leftHandSides)
+		t->deepSelfDestruct();
+	      for (Term* t : rightHandSides)
+		t->deepSelfDestruct();
 	      return false;
 	    }
 	  leftHandSides.append(lhs);
@@ -1134,6 +1131,73 @@ MetaLevel::downUnificandPair(DagNode* metaUnificandPair,
 	      rhs->deepSelfDestruct();
 	    }
 	  lhs->deepSelfDestruct();
+	}
+    }
+  return false;
+}
+
+
+bool
+MetaLevel::downMatchingProblem(DagNode* metaMatchingProblem,
+			       Vector<Term*>& patterns,
+			       Vector<Term*>& subjects,
+			       MixfixModule* m)
+{
+  patterns.clear();
+  subjects.clear();
+  Symbol* mu = metaMatchingProblem->symbol();
+  Term* pattern;
+  Term* subject;
+  if (mu == matchingConjunctionSymbol)
+    {
+      for (DagArgumentIterator i(metaMatchingProblem); i.valid(); i.next())
+	{
+	  if (!downPatternSubjectPair(i.argument(), pattern, subject, m))
+	    {
+	      for (Term* t : patterns)
+		t->deepSelfDestruct();
+	      for (Term* t : subjects)
+		t->deepSelfDestruct();
+	      return false;
+	    }
+	  patterns.append(pattern);
+	  subjects.append(subject);
+	}
+    }
+  else if (downPatternSubjectPair(metaMatchingProblem, pattern, subject, m))
+    {
+      patterns.append(pattern);
+      subjects.append(subject);
+    }
+  else
+    return false;
+  return true;
+}
+
+bool
+MetaLevel::downPatternSubjectPair(DagNode* metaPatternSubjectPair,
+				  Term*& pattern,
+				  Term*& subject,
+				  MixfixModule* m)
+{
+  Symbol* mu = metaPatternSubjectPair->symbol();
+  if (mu == patternSubjectPairSymbol)
+    {
+      FreeDagNode* f = safeCast(FreeDagNode*, metaPatternSubjectPair);
+      pattern = downTerm(f->getArgument(0), m);
+      if (pattern != 0)
+	{
+	  subject = downTerm(f->getArgument(1), m);
+	  if (subject != 0)
+	    {
+	      if (pattern->symbol()->rangeComponent() ==
+		  subject->symbol()->rangeComponent())
+		return true;
+	      IssueAdvisory("kind clash for term subject pair" << QUOTE(metaPatternSubjectPair) <<
+			    " in meta-module " << QUOTE(m) << '.');
+	      subject->deepSelfDestruct();
+	    }
+	  pattern->deepSelfDestruct();
 	}
     }
   return false;
@@ -1454,6 +1518,37 @@ MetaLevel::downPrintOption(DagNode* metaPrintOption, int& printFlags) const
     printFlags |= Interpreter::PRINT_NUMBER;
   else if (mp == ratSymbol)
     printFlags |= Interpreter::PRINT_RAT;
+  else
+    return false;
+  return true;
+}
+
+bool
+MetaLevel::downVariantOptionSet(DagNode* metaVariantOptionSet, int& variantFlags) const
+{
+  variantFlags = 0;
+  Symbol* mp = metaVariantOptionSet->symbol();
+  if (mp == variantOptionSetSymbol)
+    {
+      for (DagArgumentIterator i(metaVariantOptionSet); i.valid(); i.next())
+	{
+	  if (!downVariantOption(i.argument(), variantFlags))
+	    return false;
+	}
+    }
+  else if (mp != emptyVariantOptionSetSymbol)
+    return downVariantOption(metaVariantOptionSet, variantFlags);
+  return true;
+}
+
+bool
+MetaLevel::downVariantOption(DagNode* metaVariantOption, int& variantFlags) const
+{
+  Symbol* mp = metaVariantOption->symbol();
+  if (mp == delaySymbol)
+    variantFlags |= DELAY;
+  else if (mp == filterSymbol)
+    variantFlags |= FILTER;
   else
     return false;
   return true;

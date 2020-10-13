@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,11 +32,8 @@
 //	forward declarations
 #include "interface.hh"
 #include "core.hh"
-//#include "variable.hh"
 
 //	interface class definitions
-//#include "symbol.hh"
-//#include "dagNode.hh"
 #include "term.hh"
 #include "lhsAutomaton.hh"
 #include "rhsAutomaton.hh"
@@ -56,7 +53,12 @@ PreEquation::PreEquation(int label, Term* lhs, const Vector<ConditionFragment*>&
 {
   Assert(lhs != 0, "null lhs");
   lhsAutomaton = 0;
-  if (cond.length() > 0)  // insure that isNull() is true for empty condition
+  //
+  //	We want to ensure that isNull() is true for an empty condition -
+  //	i.e. the Vector of ConditionFragments has never be touched. So
+  //	we only do a copy for if cond is non-empty()
+  //
+  if (!(cond.empty()))
     condition = cond;  // semi-deep copy
 }
 
@@ -87,11 +89,6 @@ void
 PreEquation::preprocess()
 {
   lhs->symbol()->fillInSortInfo(lhs);
-  /*
-  AdvisoryCheck(lhs->getSortIndex() != Sort::ERROR_SORT,
-		"lhs pattern " << lhs <<
-		" has different operational semantics in Maude 2.0.");
-  */
   lhs->analyseCollapses();
   int nrFragments = condition.length();
   for (int i = 0; i < nrFragments; i++)

@@ -1,0 +1,162 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Compute unifiers and variant unifiers (without equations
+***	to minimize unifier set) and test them.
+***
+
+fmod CHECK is
+  inc LEXICAL .
+  inc META-LEVEL .
+
+  sort Result ResultList .
+  subsort Result < ResultList .
+  op __ : ResultList ResultList -> ResultList [assoc id: ok] .
+  op ok : -> Result .
+  op badUnifier : Substitution -> Result [format (r o)].
+  op unifierCount : Nat -> Result .
+  op unifierCountIncomplete : Nat -> Result .
+
+vars T T' : Term .
+var N : Nat .
+var S : Substitution .
+var Q : Qid .
+var M : Module .
+vars SS ST : String .
+
+  op check : Module String String -> ResultList .
+  eq check(M, SS, ST) = check(M, convert(M, SS), convert(M, ST), 0)
+     	      	      	check2(M, convert(M, SS), convert(M, ST), 0) .
+
+  op convert : Module String -> Term .
+  eq convert(M, SS) =  getTerm(metaParse(M, none, tokenize(SS), anyType)) .
+
+  op check : Module Term Term Nat -> ResultList .
+  eq check(M, T, T', N) =
+    if (metaUnify(M, T =? T', '%, N) == noUnifier) then
+      unifierCount(N)
+    else
+      if (metaUnify(M, T =? T', '%, N) == noUnifierIncomplete) then
+        unifierCountIncomplete(N)
+      else
+        verify(M, T, T', metaUnify(M, T =? T', '%, N)) check(M, T, T', s N)
+      fi
+    fi .
+
+  op check2 : Module Term Term Nat -> ResultList .
+  eq check2(M, T, T', N) =
+    if (metaVariantUnify(M, T =? T', empty, '%, none, N) == noUnifier) then
+      unifierCount(N)
+    else
+      if (metaVariantUnify(M, T =? T', empty, '%, none, N) == noUnifierIncomplete) then
+        unifierCountIncomplete(N)
+      else
+        verify(M, T, T', metaVariantUnify(M, T =? T', empty, '%, none, N)) check2(M, T, T', s N)
+      fi
+    fi .
+
+
+  op verify : Module Term Term UnificationPair -> Result .
+  eq verify(M, T, T', {S, Q}) =
+    if (applySubstitution(M, T, S) == applySubstitution(M, T', S)) then
+      ok
+    else
+      badUnifier(S)
+    fi .
+endfm
+
+fmod A-UNIF is
+  sorts List Elt .
+  subsort Elt < List .
+  op __ : List List -> List [assoc] .
+  op f : List List -> List [assoc] .
+  op g : List List -> List .
+  op h : List List -> List [assoc comm] .
+  op i : List -> List .
+  op j : List List -> List [assoc comm id: 1] .
+  op 1 : -> List .
+  ops a b c d e : -> Elt .
+  vars A B C D
+       G H I J K L M N
+       P Q R S T U V W X Y Z : List .
+  vars E F : Elt .
+endfm
+
+red in CHECK : check(['A-UNIF], "A:List B:List", "X:List") .
+red in CHECK : check(['A-UNIF], "A:List B:List", "X:List Y:List") .
+red in CHECK : check(['A-UNIF], "A:List B:List C:List", "X:List Y:List") .
+red in CHECK : check(['A-UNIF], "A:List B:List C:List", "X:List Y:List Z:List") .
+red in CHECK : check(['A-UNIF], "A:List B:List C:List G:List", "X:List Y:List Z:List") .
+red in CHECK : check(['A-UNIF], "A:List B:List C:List D:List G:List", "X:List Y:List Z:List") .
+
+red in CHECK : check(['A-UNIF], "A:List B:List", "B:List C:List") .
+
+red in CHECK : check(['A-UNIF], "a A:List a", "B:List a C:List") .
+red in CHECK : check(['A-UNIF], "a A:List b", "B:List c C:List") .
+red in CHECK : check(['A-UNIF], "a A:List a", "B:List a C:List a D:List") .
+red in CHECK : check(['A-UNIF], "a A:List b", "B:List c C:List d D:List") .
+
+red in CHECK : check(['A-UNIF], "h(A:List, B:List, B:List) C:List h(G:List, H:List)",
+  "I:List h(J:List, i(K:List)) L:List") .
+red in CHECK : check(['A-UNIF], "h(A:List, B:List) C:List h(G:List, H:List)",
+  "I:List h(J:List, J:List) L:List h(M:List, M:List) N:List") .
+red in CHECK : check(['A-UNIF], "A:List h(X:List, Y:List) B:List",
+  "C:List h(U:List, V:List) D:List h(U:List, U:List) G:List") .
+
+red in CHECK : check(['A-UNIF], "h(h(A:List, B:List, B:List) C:List h(G:List, H:List), X:List Y:List a Z:List)",
+  "h(I:List h(J:List, i(K:List)) L:List, U:List b V:List W:List)") .
+
+red in CHECK : check(['A-UNIF], "h(A:List, A:List)",
+  "h(f(B:List, C:List), f(I:List, J:List))") .
+red in CHECK : check(['A-UNIF], "h(A:List, A:List, A:List)",
+  "h(f(B:List, C:List), f(I:List, J:List), f(X:List, Y:List))") .
+red in CHECK : check(['A-UNIF], "h(f(a, b), f(a, b), f(a, b))",
+  "h(f(B:List, C:List), f(I:List, J:List), f(X:List, Y:List))") .
+red in CHECK : check(['A-UNIF], "A:List E:Elt B:List F:Elt C:List E:Elt D:List",
+  "W:List F:Elt X:List E:Elt Y:List F:Elt Z:List") .
+red in CHECK : check(['A-UNIF], "j(A:List, f(B:List, E:Elt, C:List), f(D:List, E:Elt, j(G:List, H:List), I:List))",
+  "j(U:List, f(V:List, W:List), f(X:List, j(Y:List, Z:List), S:List))") .
+
+fmod AC+C is
+  sort Elt Set .
+  subsort Elt < Set .
+  ops a b c d e z : -> Elt .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Set Set -> Set [comm] .
+  vars U V W X Y Z : Set .
+  vars A B C D E F : Elt .
+endfm
+
+red in CHECK : check(['AC+C], "f(g(X:Set, Y:Set), g(X:Set, Z:Set), U:Set)",
+  "f(g(Y:Set, Z:Set), V:Set)") .
+
+red in CHECK : check(['AC+C], "g(f(X:Set, Y:Set), f(X:Set, U:Set, Z:Set))",
+"g(f(U:Set, V:Set), f(W:Set, A:Elt))") .
+
+fmod NAT' is
+  protecting BOOL .
+  sorts Zero NzNat Nat .
+  subsort Zero NzNat < Nat .
+  op 0 : -> Zero .
+  op s_ : Nat -> NzNat [iter] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm id: s(0) prec 31] .
+  op _*_ : Nat Nat -> Nat [ditto] .
+
+  vars W X Y Z A B C D : Nat .
+endfm
+
+red in CHECK : check(['NAT'], "X:Nat", "s (X:Nat * Y:Nat)") .
+red in CHECK : check(['NAT'], "X:Nat", "s X:Nat * Y:Nat") .
+red in CHECK : check(['NAT'], "s X:Nat", "s X:Nat * Y:Nat") .
+red in CHECK : check(['NAT'], "s X:Nat", "X:Nat * Y:Nat") .
+
+fmod COMM is
+  sort Foo .
+  ops a b c d : -> Foo .
+  op f : Foo Foo -> Foo [assoc comm id: c(a, b)] .
+  op c : Foo Foo -> Foo [comm] .
+  vars W X Y Z A B C D : Foo .
+endfm
+
+red in CHECK : check(['COMM], "X:Foo", "c(f(X:Foo, Y:Foo), Z:Foo)") .

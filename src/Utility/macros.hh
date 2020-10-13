@@ -286,6 +286,13 @@ DebugInfo(message) \
 if (globalAdvisoryFlag) \
 (cerr << Tty(Tty::BLUE) << "DEBUG INFO: " << __PRETTY_FUNCTION__ << ": " << Tty(Tty::RESET) << message << endl)
 
+//
+//	Can't be turned off - for debugging temporary use only
+//
+#define \
+DebugAlways(message) \
+(cerr << Tty(Tty::RED) << "DEBUG ALWAYS: " << __PRETTY_FUNCTION__ << ": " << Tty(Tty::RESET) << message << endl)
+
 #define \
 DebugNew(message) \
 if (globalAdvisoryFlag) \
@@ -314,6 +321,7 @@ if (globalAdvisoryFlag) \
 #define DebugEnter(message)
 #define DebugExit(message)
 #define DebugInfo(message)
+#define DebugAlways(message)
 #define DebugNew(message)
 #define DebugPrint(v)
 #define DebugPrintNL(v)
@@ -324,6 +332,10 @@ if (globalAdvisoryFlag) \
 #define DebugSave(v, e) (void) (e)
 
 #endif
+
+//	To quiten old debug messages instead of commenting them out
+#define DebugOld(message)
+
 
 #include "tty.hh"
 #define WARNING_HEADER	Tty(Tty::RED) << "Warning: " << Tty(Tty::RESET)
@@ -429,7 +441,13 @@ ceilingDivision(int dividend, int divisor)
 }
 
 inline const char*
-pluralize(int quantity)
+pluralize(Int32 quantity)
+{
+  return (quantity == 1) ? "" : "s";
+}
+
+inline const char*
+pluralize(Int64 quantity)
 {
   return (quantity == 1) ? "" : "s";
 }

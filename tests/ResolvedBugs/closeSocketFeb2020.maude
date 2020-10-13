@@ -1,0 +1,47 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check that closing a server TCP socket that is waiting
+***	to accept connections doesn't cause Maude to spin its wheels
+***	waiting for events on the closed socket.
+***
+load socket
+
+mod SERVER-SHUTDOWN is
+        protecting SOCKET .
+        op Server : -> Cid [ctor] .
+        op server : -> Oid [ctor] .
+        op state:_ : ServerState -> Attribute [ctor] .
+
+        sort ServerState .
+        ops init closing : -> ServerState [ctor] .
+        op  accepting    : Oid -> ServerState [ctor] .
+
+    var SSkt   : Oid .
+    var Reason : String .
+        rl [createdSocket] :
+                < server : Server | state: init >
+                createdSocket(server, socketManager, SSkt)
+        =>
+                < server : Server | state: accepting(SSkt) >
+                acceptClient(SSkt, server)
+        .
+        rl [close] :
+                < server : Server | state: accepting(SSkt) >
+        =>
+                < server : Server | state: closing >
+                closeSocket(SSkt, server)
+        .
+        rl [close] :
+                < server : Server | state: closing >
+                closedSocket(server, SSkt, Reason)
+        =>
+                none
+        .
+        op initial : -> Configuration .
+        eq initial = <> < server : Server | state: init >
+                     createServerTcpSocket(socketManager, server, 1234, 5) .
+endm
+
+erew initial .

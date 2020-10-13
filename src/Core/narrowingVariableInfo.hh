@@ -25,6 +25,7 @@
 //
 #ifndef _narrowingVariableInfo_hh_
 #define _narrowingVariableInfo_hh_
+#include "variable.hh"
 
 class NarrowingVariableInfo
 {

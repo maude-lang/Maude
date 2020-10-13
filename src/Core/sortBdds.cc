@@ -106,8 +106,8 @@ SortBdds::SortBdds(Module* module)
       Sort* s = sorts[i];
       int nrVariables = getNrVariables(s->component()->getIndexWithinModule());
       const NatSet& leqSorts = s->getLeqSorts();
-      FOR_EACH_CONST(j, NatSet, leqSorts)
-	disjunct = bdd_or(disjunct, makeIndexBdd(0, nrVariables, *j));
+      for (int j : leqSorts)
+	disjunct = bdd_or(disjunct, makeIndexBdd(0, nrVariables, j));
       leqRelations[i] = disjunct;
       DebugAdvisory("leq BDD for sort " << s << " is " << disjunct << " using " << nrVariables << " variables");
     }
@@ -308,8 +308,8 @@ SortBdds::operatorCompose(Symbol* op, const Vector<Bdd>& inputBdds, Vector<Bdd>&
   //	Apply compose with each of BDDs representing the sort function
   //	and append the result to the output BDDs.
   //
-  FOR_EACH_CONST(i, Vector<Bdd>, sortFunction)
-    outputBdds.append(bdd_veccompose(*i, cachedPairing));
+  for (Bdd b : sortFunction)
+    outputBdds.append(bdd_veccompose(b, cachedPairing));
   //
   //	Clean up the cached pairing by setting all the used slots
   //	to bdd_false(). This avoids the cached pairing containing pointers

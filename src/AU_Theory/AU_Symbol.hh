@@ -82,7 +82,7 @@ public:
 
   UnificationSubproblem* makeUnificationSubproblem();
   // int unificationPriority() const;  // happy with default for the moment
-  //bool canResolveTheoryClash();  // default is false anyway
+  bool canResolveTheoryClash();
 
   //
   //	Hash cons stuff.

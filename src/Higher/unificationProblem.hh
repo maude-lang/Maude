@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,18 +40,28 @@ public:
 		     Vector<Term*>& rhs,
 		     FreshVariableGenerator* freshVariableGenerator,
 		     int incomingVariableFamily = NONE);
-  ~UnificationProblem();
+  virtual ~UnificationProblem();
 
   bool problemOK() const;
-  bool findNextUnifier();
-  const Substitution& getSolution() const;
-  int getNrFreeVariables() const;
   const VariableInfo& getVariableInfo() const;
   int getVariableFamily() const;
   bool isIncomplete() const;
+  //
+  //	These are specific to unifiers and can be overriden by a derived class.
+  //
+  virtual bool findNextUnifier();
+  virtual const Substitution& getSolution() const;
+  virtual int getNrFreeVariables() const;
+
+protected:
+  //
+  //	Derived class can override this function if it needs to mark nodes during
+  //	the mark phase of garbage collection, but in this case the overriding
+  //	function must also call this version.
+  //
+  void markReachableNodes();
 
 private:
-  void markReachableNodes();
   void findOrderSortedUnifiers();
   void bindFreeVariables();
 
@@ -81,22 +91,10 @@ UnificationProblem::problemOK() const
   return problemOkay;
 }
 
-inline const Substitution&
-UnificationProblem::getSolution() const
-{
-  return *sortedSolution;
-}
-
 inline const VariableInfo&
 UnificationProblem::getVariableInfo() const
 {
   return variableInfo;
-}
-
-inline int
-UnificationProblem::getNrFreeVariables() const
-{
-  return freeVariables.size();
 }
 
 inline bool

@@ -1,3 +1,139 @@
+2020-09-28  Steven Eker  <eker2@eker10>
+
+	* main.cc (printHelp): fix alignment of -allow-processes
+
+===================================Maude131===========================================
+
+2020-09-16  Steven Eker  <eker2@eker10>
+
+	* metaInterpreter.maude: getNarrowingSearchResult() and
+	getNarrowingSearchResultAndPath() now take VariantOptionSet
+	arguments, with a backward compatibility declarations and
+	equations
+
+	* prelude.maude: metaNarrowingApply() now takes VariantOptionSet
+	argument, with a backward compatibility declaration and equation;
+	metaNarrowingSearch() and metaNarrowingSearchPath() now take
+	VariantOptionSet arguments, with a backward compatibility
+	declarations and equations
+
+2020-09-15  Steven Eker  <eker2@eker10>
+
+	* metaInterpreter.maude: getOneStepNarrowing() now takes a
+	VariantOptionSet argument, with a backward compatibility
+	declaration and equation
+
+===================================Maude130===========================================
+
+2020-09-08  Steven Eker  <eker2@eker10>
+
+	* metaInterpreter.maude: added
+	getVariantMatcher()/gotVariantMatcher() messages
+
+2020-09-03  Steven Eker  <eker2@eker10>
+
+	* prelude.maude: added matching problem ctors, noMatchIncomplete,
+	metaVariantMatch()
+
+2020-09-02  Steven Eker  <eker2@eker10>
+
+	* metaInterpreter.maude: getVariantUnifier() and
+	getDisjointVariantUnifier() now take VariantOptionSet as their 7th
+	argument; added declarations and equations for backwards compatibility
+
+2020-08-31  Steven Eker  <eker2@eker10>
+
+	* prelude.maude: added backward compatibility declarations and
+	equations for metaVariantUnify(), metaVariantDisjointUnify();
+	added signature for variant options; updated decls for
+	metaVariantUnify(), metaVariantDisjointUnify() to take
+	VariantOptionSet argument
+
+2020-07-14  Steven Eker  <eker2@eker10>
+
+	* metaInterpreter.maude: added getIrredundantUnifier(),
+	gotIrredundantUnifier(), getIrredundantDisjointUnifier(),
+	gotIrredundantDisjointUnifier()
+
+	* prelude.maude: added metaIrredundantUnify(),
+	metaIrredundantDisjointUnify()
+
+===================================Maude129===========================================
+
+2020-07-09  Steven Eker  <eker2@eker10>
+
+	* main.cc (main): -no-execute becomes -allow-processes
+	(main): added flags -allow-files, -trust
+	(printHelp): updated with new flags
+
+2020-06-04  Steven Eker  <eker2@eker10>
+
+	* main.cc (printHelp): fix tabbing on -no-execute
+
+2020-05-19  Steven Eker  <eker2@eker10>
+
+	* main.cc (printHelp): -get-pid -> -show-pid
+
+2020-04-24  Steven Eker  <eker2@eker9>
+
+	* process.maude: added sort ExitStatus, ops normalExit,
+	terminatedBySignal; use ExitStatus for exited message; don't
+	protect INT, don't have hook for minusSymbol
+
+	* main.cc (main): added -no-execute flag
+	(printHelp): added -no-execute flag
+
+2020-04-22  Steven Eker  <eker2@eker9>
+
+	* process.maude: added op-hook for minusSymbol; protecting INT
+
+2020-04-16  Steven Eker  <eker2@eker9>
+
+	* process.maude: added signaledProcess() and waitForExit()
+	messages
+
+2020-03-30  Steven Eker  <eker2@eker9>
+
+	* process.maude: added sorts ProcessOption, ProcessOptionSet;
+	createProcess now takes ProcessOptionSet rather than 2nd
+	StringList for environment; added none
+
+2020-03-26  Steven Eker  <eker2@eker9>
+
+	* process.maude: added fmod STRING-LIST; use STRING-LIST in
+	PROCESS; added nilStringListSymbol and stringListSymbol hooks
+
+2020-03-24  Steven Eker  <eker2@eker9>
+
+	* process.maude: added hook for socketManagerSymbol
+
+2020-03-19  Steven Eker  <eker2@eker9>
+
+	* process.maude: updated to reflect move to sockets for
+	communication
+
+2020-03-18  Steven Eker  <eker2@eker9>
+
+	* process.maude: created
+
+2020-03-10  Rubén Rubio  <rubenrub@ucm.es>
+
+       * prelude.maude: changed sort of the strategy all to RuleApplication
+
+===================================Maude128a===========================================
+
+2020-02-28  Steven Eker  <eker@mu>
+
+	* prelude.maude: added projection functions for UnificationTriple,
+	Variant and TraceStep
+
+2020-02-27  Steven Eker  <eker@mu>
+
+	* prelude.maude: added projection functions for UnificationPair;
+	added applySubstitution()
+
+===================================Maude128===========================================
+
 2019-11-22  Steven Eker  <eker@mu>
 
 	* prelude.maude: revert to Qid < Header pending further

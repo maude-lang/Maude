@@ -136,3 +136,32 @@ resume .
 debug cont 1 .
 step .
 cont .
+
+***
+***	variant matching.
+***
+
+fmod XOR is
+  sort XOR .
+
+  sort Elem .
+  ops a b c d w x y z : -> Elem .
+
+  subsort Elem < XOR .
+  op _+_ : XOR XOR -> XOR [ctor assoc comm] .
+  op 0 : -> XOR .
+
+  vars X Y : XOR .
+
+  eq Y + 0 = Y [variant] .
+  eq X + X = 0 [variant] .
+  eq X + X + Y = Y [variant] .
+endfm
+
+debug variant match [1] in XOR : X + Y <=? c + d .
+step .
+resume .
+*** No point in trying "debug cont" because all rewriting/narrowing
+*** has be done at this stage.
+cont 2 .
+cont .

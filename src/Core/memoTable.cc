@@ -86,6 +86,6 @@ MemoTable::memoEnter(SourceSet& sourceSet, DagNode* destination)
 		" has sort index " << destination->getSortIndex());
 #endif
   MemoMap* memoMap = getModule()->getMemoMap();
-  FOR_EACH_CONST(i, SourceSet, sourceSet)
-    memoMap->assignToDag(*i, destination);
+  for (int index : sourceSet)
+    memoMap->assignToDag(index, destination);
 }

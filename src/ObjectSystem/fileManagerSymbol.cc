@@ -63,6 +63,8 @@
 #include "fileActions.cc"
 #include "fileOutcomes.cc"
 
+bool FileManagerSymbol::allowFiles = false;
+
 FileManagerSymbol::FileManagerSymbol(int id)
   : ExternalObjectManagerSymbol(id)
 {

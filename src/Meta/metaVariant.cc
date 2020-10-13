@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2012 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,22 +54,23 @@ MetaLevelOpSymbol::metaGetVariant2(FreeDagNode* subject, RewritingContext& conte
 		      m->protect();
 		      RewritingContext* startContext = term2RewritingContext(start, context);
 
-		      Vector<DagNode*> blockerDags; 
-		      FOR_EACH_CONST(i, Vector<Term*>, blockerTerms)
+		      Vector<DagNode*> blockerDags;
+		      for (Term* t : blockerTerms)
 			{
-			  Term* t = *i;
-			  t = t->normalize(true);  // we don't really need to normalize but we do need to set hash values
+			  //
+			  //	We don't really need to normalize but we do need to set hash values.
+			  //
+			  t = t->normalize(true);
 			  blockerDags.append(t->term2Dag());
 			  t->deepSelfDestruct();
 			}
 		      vs = new VariantSearch(startContext,
 					     blockerDags,
 					     new FreshVariableSource(m),
-					     false,	// not unification mode
-					     irredundant,
-					     true,	// delete fresh variable generator on destruction
-					     variableFamily,
-					     true);	// check variable names
+					     VariantSearch::DELETE_FRESH_VARIABLE_GENERATOR |
+					     VariantSearch::CHECK_VARIABLE_NAMES |
+					     (irredundant ? VariantSearch::IRREDUNDANT_MODE : 0),
+					     variableFamily);
 		      lastSolutionNr = -1;
 		    }
 		  else
@@ -83,40 +84,36 @@ MetaLevelOpSymbol::metaGetVariant2(FreeDagNode* subject, RewritingContext& conte
 	    }
 
 	  DagNode* result;
-	  const Vector<DagNode*>* variant = 0;  // just to avoid compiler warning
-	  int nrFreeVariables;
-	  int parentIndex = -1;  // dummy initialization to prevent compiler warning
-	  bool moreInLayer = false;  // dummy initialization to prevent compiler warning
-	  int resultVariableFamily;
-	  if (lastSolutionNr == solutionNr)
+	  for (; lastSolutionNr < solutionNr; ++lastSolutionNr)
 	    {
-	      //
-	      //	So the user can ask for the same variant over and over again without
-	      //	a horrible loss of performance.
-	      //
-	      variant = vs->getLastReturnedVariant(nrFreeVariables, resultVariableFamily, parentIndex, moreInLayer);
-	    }
-	  else
-	    {
-	      while (lastSolutionNr < solutionNr)
+	      if (!(vs->findNextVariant()))
 		{
-		  variant = vs->getNextVariant(nrFreeVariables, resultVariableFamily, parentIndex, moreInLayer);
-		  if (variant == 0)
-		    {
-		      bool incomplete = vs->isIncomplete();
-		      delete vs;
-		      result = metaLevel->upNoVariant(incomplete);
-		      goto fail;
-		    }
-		  context.transferCountFrom(*(vs->getContext()));
-		  ++lastSolutionNr;
+		  bool incomplete = vs->isIncomplete();
+		  delete vs;
+		  result = metaLevel->upNoVariant(incomplete);
+		  goto fail;
 		}
+	      context.transferCountFrom(*(vs->getContext()));
 	    }
+	  m->insert(subject, vs, solutionNr);
 	  {
-	    m->insert(subject, vs, solutionNr);
+	    int nrFreeVariables;
+	    int resultVariableFamily;
+	    int parentIndex;
+	    bool moreInLayer;
+	    const Vector<DagNode*>& variant = vs->getCurrentVariant(nrFreeVariables,
+								    resultVariableFamily,
+								    &parentIndex,
+								    &moreInLayer);
+
 	    int variableNameId = FreshVariableSource::getBaseName(resultVariableFamily);
 	    mpz_class parentIndexBig(parentIndex);
-	    result = metaLevel->upVariant(*variant, vs->getVariableInfo(), variableNameId, parentIndexBig, moreInLayer, m);
+	    result = metaLevel->upVariant(variant,
+					  vs->getVariableInfo(),
+					  variableNameId,
+					  parentIndexBig,
+					  moreInLayer,
+					  m);
 	  }
 	fail:
 	  (void) m->unprotect();

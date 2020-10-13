@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,250 +30,125 @@
 #include "macros.hh"
 #include "pseudoThread.hh"
 
+//	our stuff
+#include "pseudoThreadSignal.cc"
+#ifdef HAVE_PPOLL
+#include "pseudoThread-ppoll.cc"
+#else
+#include "pseudoThread-pselect.cc"
+#endif
+
+const timespec PseudoThread::zeroTime = {0, 0};
 PseudoThread::FD_Info PseudoThread::fdInfo[MAX_NR_FDS];
 int PseudoThread::firstActive = NONE;
-PseudoThread::CallBackQueue PseudoThread::callBackQueue;
+PseudoThread::CallbackQueue PseudoThread::callBackQueue;
 
 void
-PseudoThread::requestCallBack(long notBefore)
+PseudoThread::requestCallback(const timespec* notBefore)
 {
-  callBackQueue.push(CallBackRequest(this, notBefore));
+  callBackQueue.push(CallbackRequest(this, notBefore));
 }
 
-long
-PseudoThread::processCallBacks(int& returnValue)
+bool
+PseudoThread::processCallbacks(int& returnValue, timespec* wait)
 {
-  long now = getTime();
+  //
+  //	We handle any callbacks that are due.
+  //	If there are more callbacks pending we put the relative
+  //	time from now to the earliest of these in wait and return true.
+  //	If there are no callbacks pending we return false.
+  //
+  timespec now;
+  clock_gettime(CLOCK_REALTIME, &now);
   do
     {
-      CallBackRequest c = callBackQueue.top();  // deep copy
-      long wait = c.notBefore - now;
-      if (wait > 0)
-	return wait;  // because call-backs are on in a priority queue, the first one with a positive wait determines the wait period
+      CallbackRequest c = callBackQueue.top();  // deep copy
+      if (timespecCompare(&(c.notBefore), &now) > 0)
+	{
+	  //
+	  //	Earliest event has time greater than now.
+	  //	Compute the time to wait as a timespec.
+	  //
+	  timespecSubtract(&(c.notBefore), &now, wait);
+	  return true;
+	}
       //
-      //	Need to pop current request before dispatching call back because call back may request a new one.
+      //	Need to pop current request before dispatching call back
+      //	because call back may request a new one.
       //
       callBackQueue.pop();
-      c.client->doCallBack();
+      c.client->doCallback();
       returnValue |= EVENT_HANDLED;
     }
   while (!(callBackQueue.empty()));
-  return NONE;
+  return false;
 }
 
 int
-PseudoThread::processFds(long wait)
-{
-  static pollfd ufds[MAX_NR_FDS];
-  int nfds = 0;
-  //	cerr << "firstActive is " << firstActive << endl;
-
-  //
-  //	Construct array of active file descriptors and see if
-  //	wait is reduced by a time out.
-  //
-  long now = getTime();
-  for (int i = firstActive; i != NONE; i = fdInfo[i].nextActive)
-    {
-      Assert(fdInfo[i].flags != 0, "zero flags for " << i);
-      ufds[nfds].fd = i;
-      //cout << "polling fd " << i << " for " << fdInfo[i].flags << endl;
-      ufds[nfds].events = fdInfo[i].flags;
-      if (fdInfo[i].timeOutAt != NONE)
-	{
-	  long delay = fdInfo[i].timeOutAt - now;
-	  if (delay < 0)
-	    delay = 0;
-	  if (wait < 0 || delay < wait)
-	    wait = delay;
-	}
-      ++nfds;
-    }
-  //
-  //	Turn seconds into milliseconds for poll() call.
-  //
-  int milliseconds = -1;  // forever
-  if (wait >= 0)
-    {
-      if (wait <= (INT_MAX / 1000))
-	milliseconds = 1000 * wait;
-      else
-	milliseconds = INT_MAX;
-    }
-  //
-  //	Call poll() and check for interrupts and errors.
-  //
-  int nrEvents = poll(ufds, nfds, milliseconds);
-  if (nrEvents < 0)
-    {
-      Assert(errno == EINTR, "poll() failed with " << errno);
-      return INTERRUPTED;  // treat all errors as interrupts
-    }
-
-  now = getTime();  // a significant amount of time may have passed while we were in poll() call
-  int returnValue = NOTHING_HAPPENED;
-  if (nrEvents == 0)
-    {
-      //
-      //	No events but still need to check for time outs on
-      //	active file descriptors.
-      //
-      for (int i = 0; i < nfds; i++)
-	{
-	  int fd = ufds[i].fd;
-	  FD_Info& info = fdInfo[fd];
-	  if (info.timeOutAt != NONE && info.timeOutAt < now)
-	    {
-	      info.flags = 0;
-	      unlink(fd);
-	      info.owner->doTimeOut(fd);
-	      returnValue = EVENT_HANDLED;
-	    }
-	}
-    }
-  else
-    {
-      //
-      //	Dispatch pending events.
-      //
-      for (int i = 0; i < nfds; i++)
-	{
-	  //cout << "fd = " << ufds[i].fd << "  revents = " << ufds[i].revents << endl;
-	  int fd = ufds[i].fd;
-	  FD_Info& info = fdInfo[fd];
-	  short t = ufds[i].revents;
-	  if (t != 0)
-	    {
-	      Assert(!(t & POLLNVAL), "invalid fd " << fd);
-	      //
-	      //	When we have an error we need to removed fd from
-	      //	active list to avoid going into a spin.
-	      //
-	      if (t & POLLERR)
-		{
-		  info.flags = 0;
-		  unlink(fd);
-		  info.owner->doError(fd);
-		  returnValue = EVENT_HANDLED;
-		  continue;
-		}
-	      //
-	      //	This is tricky. If we are wanting to read but
-	      //	get disconnected:
-	      //	Linux sets POLLHUP but not POLLIN;
-	      //	BSD & Solaris set POLLIN but not POLLHUP;
-	      //	DEC UNIX sets both flags even if there are still
-	      //	  chars to read.
-	      //
-	      if (t & POLLIN)
-		{
-		  info.flags &= ~POLLIN;  // clear POLLIN flag
-		  //info.flags = t & ~POLLIN;  // reproduce bug;
-		  if (info.flags == 0)
-		    unlink(fd);
-		  info.timeOutAt = NONE;
-		  info.owner->doRead(fd);
-		  returnValue = EVENT_HANDLED;
-		}
-	      else if (t & POLLHUP)
-		{
-		  //
-		  //	Need to removed fd from active list to avoid going
-		  //	into a spin. But we don't want to do this until all
-		  //	available chars have been read.
-		  //
-		  info.flags = 0;
-		  unlink(fd);
-		  info.owner->doHungUp(fd);
-		  returnValue = EVENT_HANDLED;
-		  continue;
-		}
-	      if (t & POLLOUT)
-		{
-		  info.flags &= ~POLLOUT;  // clear POLLOUT flag
-		  //info.flags = t & ~POLLOUT;  // reproduce bug;
-		  if (info.flags == 0)
-		    unlink(fd);
-		  info.timeOutAt = NONE;
-		  info.owner->doWrite(fd);
-		  returnValue = EVENT_HANDLED;
-		}
-	    }
-	  else
-	    {
-	      //
-	      //	Check for time out.
-	      //
-	      if (info.timeOutAt != NONE && info.timeOutAt < now)
-		{
-		  info.flags = 0;
-		  unlink(fd);
-		  info.owner->doTimeOut(fd);
-		  returnValue = EVENT_HANDLED;
-		}
-	    }
-	}
-      Assert(returnValue == EVENT_HANDLED, "poll() saw " << nrEvents << " events but we didn't handle any");
-    }
-  return returnValue;
-}
-
-int
-PseudoThread::eventLoop(bool block)
+PseudoThread::eventLoop(bool block, sigset_t* normalSet)
 {
   //
-  //	We return for one or more of 3 reasons:
-  //	NOTHING_PENDING: no clients waiting for callbacks
-  //	INTERRUPTED: a non-ignored signal arrived
-  //	EVENT_HANDLED: at least one callback was made
+  //	If block is true we make use of normalSet and
+  //	return for one or more of 3 reasons:
+  //	  NOTHING_PENDING: no clients waiting for callbacks
+  //	  INTERRUPTED: a non-ignored signal arrived
+  //	  EVENT_HANDLED: at least one callback was made
+  //	If block is false, we ignore normalSet and can also
+  //	return:
+  //	  NOTHING_HAPPENED: events pending but nothing ready
   //
   int returnValue = NOTHING_HAPPENED;
-  for(;;)
+  do
     {
       //
       //	If we have timed call backs, dispatch any that are due, and
-      //	compute how many seconds until the next is ready to go.
+      //	compute how long until the next is ready to go.
       //
-      long wait = NONE;
-      if (!callBackQueue.empty())
-	wait = processCallBacks(returnValue);
+      timespec wait;
+      bool callbacksPending = callBackQueue.empty() ? false :
+	processCallbacks(returnValue, &wait);
       //
-      //	If we have fd call backs pending, process them.
+      //	If there are events still to happen, proccess them.
       //
-      if (firstActive != NONE)
+      if (firstActive != NONE ||  // file descriptor events
+	  !(childRequests.empty()) ||  // child exit callbacks
+	  (callbacksPending & block))  // timed callbacks AND we're blocking
 	{
 	  //
-	  //	Check for active file descriptors and suspend in poll()
-	  //	if we are blocking.
+	  //	Calculate how long to wait for an fd or interrupt event.
 	  //
-	  returnValue |= processFds(block ? wait : 0);
-	  if (!block || returnValue != NOTHING_HAPPENED)
-	    break;
+	  const timespec* waitPointer = 0;  // infinite wait
+	  if (block)
+	    {
+	      if (callbacksPending)
+		waitPointer = &wait;  // determined by earliest timed callback
+	    }
+	  else
+	    waitPointer = &zeroTime;  // don't block
 	  //
-	  //	To get here we must be blocking and have reached the end of our
-	  //	wait with nothing happening - we loop round and check call backs again.
+	  //	Process fd and interrupt events.
 	  //
+	  returnValue |= processFds(waitPointer, normalSet);
 	}
       else
 	{
 	  //
-	  //	No active file descriptors. If we are blocking, and nothing happened
-	  //	but there is something to wait for we suspend in sleep().
+	  //	We could have time callbacks pending but are non-blocking.
 	  //
-	  if (!block || returnValue != NOTHING_HAPPENED)
-	    break;
-	  if (wait == NONE)
-	    return NOTHING_PENDING;  // nothing to wait for
-	  if (sleep(wait) != 0)
-	    return INTERRUPTED;
+	  if (!callbacksPending)
+	    returnValue |= NOTHING_PENDING;
 	}
     }
+  while (block && returnValue == NOTHING_HAPPENED);
   return returnValue;
 }
 
 void
 PseudoThread::clearFlags(int fd)
 {
+  //
+  //	Forget about this file descriptor.
+  //
   if (fdInfo[fd].flags != 0)
     {
       fdInfo[fd].flags = 0;
@@ -282,7 +157,7 @@ PseudoThread::clearFlags(int fd)
 }
 
 void
-PseudoThread::wantTo(int flags, int fd, long timeOutAt)
+PseudoThread::wantTo(int flags, int fd)
 {
   Assert(flags != 0, "empty flags for " << fd);
   int t = fdInfo[fd].flags;
@@ -294,43 +169,36 @@ PseudoThread::wantTo(int flags, int fd, long timeOutAt)
   else
     Assert(fdInfo[fd].owner == this, "owner mismatch for " << fd);
   fdInfo[fd].flags = t | flags;
-  fdInfo[fd].timeOutAt = timeOutAt;
 }
 
 void
 PseudoThread::doRead(int fd)
 {
-  Assert(false, "failed to do read on " << fd);
+  CantHappen("failed to do read on " << fd);
 }
 
 void
 PseudoThread::doWrite(int fd)
 {
-  Assert(false, "failed to do write on " << fd);
+  CantHappen("failed to do write on " << fd);
 }
 
 void
 PseudoThread::doError(int fd)
 {
-  Assert(false, "failed to do error on " << fd);
+  CantHappen("failed to do error on " << fd);
 }
 
 void
 PseudoThread::doHungUp(int fd)
 {
-  Assert(false, "failed to do hung up on " << fd);
+  CantHappen("failed to do hung up on " << fd);
 }
 
 void
-PseudoThread::doTimeOut(int fd)
+PseudoThread::doCallback()
 {
-  Assert(false, "failed to do time out on " << fd);
-}
-
-void
-PseudoThread::doCallBack()
-{
-  Assert(false, "failed to do call back");
+  CantHappen("failed to do call back");
 }
 
 void

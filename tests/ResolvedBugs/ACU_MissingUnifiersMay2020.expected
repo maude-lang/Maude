@@ -1,0 +1,18 @@
+==========================================
+unify in FOO : N:Nat =? g(M:Nat + Z:Zero) .
+
+Unifier 1
+N:Nat --> g(0)
+M:Nat --> 0
+Z:Zero --> 0
+
+Unifier 2
+N:Nat --> g(#1:Zero)
+M:Nat --> #1:Zero
+Z:Zero --> 0
+
+Unifier 3
+N:Nat --> g(#1:Zero)
+M:Nat --> 0
+Z:Zero --> #1:Zero
+Bye.

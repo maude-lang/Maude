@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -72,46 +72,38 @@ MetaLevelOpSymbol::legacyMetaVariantUnify2(FreeDagNode* subject, RewritingContex
 		  blockerDags.append(t->term2Dag());
 		  t->deepSelfDestruct();
 		}
-	      vs = new VariantSearch(startContext, blockerDags, new FreshVariableSource(m, varIndex), true, false);
+	      vs = new VariantSearch(startContext,
+				     blockerDags,
+				     new FreshVariableSource(m, varIndex),
+				     VariantSearch::UNIFICATION_MODE |
+				     VariantSearch::DELETE_FRESH_VARIABLE_GENERATOR |
+				     VariantSearch::CHECK_VARIABLE_NAMES);
 	      lastSolutionNr = -1;
 	    }
 
 	  DagNode* result;
-	  const Vector<DagNode*>* unifier = 0;  // just to avoid compiler warning
-	  int nrFreeVariables;
-	  if (lastSolutionNr == solutionNr)
+	  for (; lastSolutionNr < solutionNr; ++lastSolutionNr)
 	    {
-	      //
-	      //	So the user can ask for the same unifier over and over again without
-	      //	a horrible loss of performance.
-	      //
-	      int dummy;
-	      unifier = vs->getLastReturnedUnifier(nrFreeVariables, dummy);
-	    }
-	  else
-	    {
-	      while (lastSolutionNr < solutionNr)
+	      if (!(vs->findNextUnifier()))
 		{
-		  int dummy;
-		  unifier = vs->getNextUnifier(nrFreeVariables, dummy);
-		  if (unifier == 0)
-		    {
-		      bool incomplete = vs->isIncomplete();
-		      delete vs;
-		      result = disjoint ? metaLevel->upNoUnifierTriple(incomplete) : metaLevel->upNoUnifierPair(incomplete);
-		      goto fail;
-		    }
-
-		  context.transferCountFrom(*(vs->getContext()));
-		  ++lastSolutionNr;
+		  bool incomplete = vs->isIncomplete();
+		  delete vs;
+		  result = disjoint ? metaLevel->upNoUnifierTriple(incomplete) :
+		    metaLevel->upNoUnifierPair(incomplete);
+		  goto fail;
 		}
+	      context.transferCountFrom(*(vs->getContext()));
 	    }
+	  m->insert(subject, vs, solutionNr);
 	  {
-	    m->insert(subject, vs, solutionNr);
+	    int nrFreeVariables;
+	    int resultVariableFamily;
+	    const Vector<DagNode*>& unifier = vs->getCurrentUnifier(nrFreeVariables,
+								    resultVariableFamily);
 	    mpz_class lastVarIndex = varIndex + nrFreeVariables;
 	    result = disjoint ?
-	      metaLevel->upUnificationTriple(*unifier, vs->getVariableInfo(), lastVarIndex, m) :
-	      metaLevel->upUnificationPair(*unifier, vs->getVariableInfo(), lastVarIndex, m);
+	      metaLevel->upUnificationTriple(unifier, vs->getVariableInfo(), lastVarIndex, m) :
+	      metaLevel->upUnificationPair(unifier, vs->getVariableInfo(), lastVarIndex, m);
 	  }
 	fail:
 	  (void) m->unprotect();

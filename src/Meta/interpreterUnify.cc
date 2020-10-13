@@ -25,7 +25,10 @@
 //
 
 bool
-InterpreterManagerSymbol::getUnifier(FreeDagNode* message, ObjectSystemRewritingContext& context, bool disjoint)
+InterpreterManagerSymbol::getUnifier(FreeDagNode* message,
+				     ObjectSystemRewritingContext& context,
+				     bool disjoint,
+				     bool irredundant)
 {
   //
   //	op getUnifier : Oid Oid Qid UnificationProblem Qid Nat -> Msg .
@@ -33,6 +36,12 @@ InterpreterManagerSymbol::getUnifier(FreeDagNode* message, ObjectSystemRewriting
   //
   //	op getDisjointUnifier : Oid Oid Qid UnificationProblem Qid Nat -> Msg .
   //                             0   1   2          3           4   5
+  //
+  //	op getIrredundantUnifier : Oid Oid Qid UnificationProblem Qid Nat -> Msg .
+  //                                0   1   2          3           4   5
+  //
+  //	op getIrredundantDisjointUnifier : Oid Oid Qid UnificationProblem Qid Nat -> Msg .
+  //                                        0   1   2          3           4   5
   //
   Interpreter* interpreter;
   if (getInterpreter(message->getArgument(0), interpreter))
@@ -65,12 +74,20 @@ InterpreterManagerSymbol::getUnifier(FreeDagNode* message, ObjectSystemRewriting
 
 			  Vector<Term*> lhs;
 			  Vector<Term*> rhs;
-			  if (!metaLevel->downUnificationProblem(message->getArgument(3), lhs, rhs, m, disjoint))
+			  if (!metaLevel->downUnificationProblem(message->getArgument(3),
+								 lhs,
+								 rhs,
+								 m,
+								 disjoint))
 			    return false;
-			  unification = new UnificationProblem(lhs,
-							       rhs,
-							       new FreshVariableSource(m),
-							       variableFamily);
+			  
+			  FreshVariableSource* freshVariableSource = new FreshVariableSource(m);
+			  unification = irredundant ?
+			    new IrredundantUnificationProblem(lhs,
+							      rhs,
+							      freshVariableSource,
+							      variableFamily) :
+			    new UnificationProblem(lhs, rhs, freshVariableSource, variableFamily);
 			  if (!(unification->problemOK()))
 			    {
 			      delete unification;
@@ -115,7 +132,8 @@ InterpreterManagerSymbol::getUnifier(FreeDagNode* message, ObjectSystemRewriting
 			PointerMap dagNodeMap;
 			const Substitution& solution = unification->getSolution();
 			const VariableInfo& variableInfo = unification->getVariableInfo();
-			int variableNameId = FreshVariableSource::getBaseName(unification->getVariableFamily());
+			int variableNameId =
+			  FreshVariableSource::getBaseName(unification->getVariableFamily());
 			DagNode* variableNameQid = metaLevel->upQid(variableNameId, qidMap);
 
 			if (disjoint)
@@ -128,13 +146,19 @@ InterpreterManagerSymbol::getUnifier(FreeDagNode* message, ObjectSystemRewriting
 							       args[2],
 							       args[3]);
 			    args[4] = variableNameQid;
-			    reply = gotDisjointUnifierMsg->makeDagNode(args);
+			    reply = (irredundant ? gotIrredundantDisjointUnifierMsg :
+				     gotDisjointUnifierMsg)->makeDagNode(args);
 			  }
 			else
 			  {
-			    args[2] = metaLevel->upSubstitution(solution, variableInfo, m, qidMap, dagNodeMap);
+			    args[2] = metaLevel->upSubstitution(solution,
+								variableInfo,
+								m,
+								qidMap,
+								dagNodeMap);
 			    args[3] = variableNameQid;
-			    reply = gotUnifierMsg->makeDagNode(args);
+			    reply = (irredundant ? gotIrredundantUnifierMsg :
+				     gotUnifierMsg)->makeDagNode(args);
 			  }
 		      }
 		    done:

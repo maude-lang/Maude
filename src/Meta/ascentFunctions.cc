@@ -40,8 +40,15 @@ MetaLevelOpSymbol::metaUpModule(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  PointerMap qidMap;
-	  return context.builtInReplace(subject, metaLevel->upModule(flat, pm, qidMap));
+	  //
+	  //	We check the status of the flattened module before proceeding
+	  //	since we don't have an easy way to back out if it is bad.
+	  //
+	  if (!(pm->getFlatModule()->isBad()))
+	    {
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject, metaLevel->upModule(flat, pm, qidMap));
+	    }
 	}
     }
   return false;
@@ -55,8 +62,15 @@ MetaLevelOpSymbol::metaUpImports(FreeDagNode* subject, RewritingContext& context
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  PointerMap qidMap;
-	  return context.builtInReplace(subject, metaLevel->upImports(pm, qidMap));
+	  //
+	  //	We check the status of the flattened module before proceeding
+	  //	since we don't have an easy way to back out if it is bad.
+	  //
+	  if (!(pm->getFlatModule()->isBad()))
+	    {
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject, metaLevel->upImports(pm, qidMap));
+	    }
 	}
     }
   return false;
@@ -72,9 +86,12 @@ MetaLevelOpSymbol::metaUpSorts(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  PointerMap qidMap;
-	  return context.builtInReplace(subject,
-					metaLevel->upSorts(flat, pm->getFlatModule(), qidMap));
+	  VisibleModule* vm = pm->getFlatModule();
+	  if (!(vm->isBad()))
+	    { 
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject, metaLevel->upSorts(flat, vm, qidMap));
+	    }
 	}
     }
   return false;
@@ -90,9 +107,12 @@ MetaLevelOpSymbol::metaUpSubsortDecls(FreeDagNode* subject, RewritingContext& co
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  PointerMap qidMap;
-	  return context.builtInReplace(subject,
-					metaLevel->upSubsortDecls(flat, pm->getFlatModule(), qidMap));
+	  VisibleModule* vm = pm->getFlatModule();
+	  if (!(vm->isBad()))
+	    { 
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject, metaLevel->upSubsortDecls(flat, vm, qidMap));
+	    }
 	}
     }
   return false;
@@ -108,9 +128,12 @@ MetaLevelOpSymbol::metaUpOpDecls(FreeDagNode* subject, RewritingContext& context
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  PointerMap qidMap;
-	  return context.builtInReplace(subject,
-					metaLevel->upOpDecls(flat, pm->getFlatModule(), qidMap));
+	  VisibleModule* vm = pm->getFlatModule();
+	  if (!(vm->isBad()))
+	    { 
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject, metaLevel->upOpDecls(flat, vm, qidMap));
+	    }
 	}
     }
   return false;
@@ -126,9 +149,12 @@ MetaLevelOpSymbol::metaUpMbs(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  PointerMap qidMap;
-	  return context.builtInReplace(subject,
-					metaLevel->upMbs(flat, pm->getFlatModule(), qidMap));
+	  VisibleModule* vm = pm->getFlatModule();
+	  if (!(vm->isBad()))
+	    { 
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject, metaLevel->upMbs(flat, vm, qidMap));
+	    }
 	}
     }
   return false;
@@ -144,9 +170,12 @@ MetaLevelOpSymbol::metaUpEqs(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  PointerMap qidMap;
-	  return context.builtInReplace(subject,
-					metaLevel->upEqs(flat, pm->getFlatModule(), qidMap));
+	  VisibleModule* vm = pm->getFlatModule();
+	  if (!(vm->isBad()))
+	    { 
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject, metaLevel->upEqs(flat, vm, qidMap));
+	    }
 	}
     }
   return false;
@@ -162,9 +191,12 @@ MetaLevelOpSymbol::metaUpRls(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  PointerMap qidMap;
-	  return context.builtInReplace(subject,
-					metaLevel->upRls(flat, pm->getFlatModule(), qidMap));
+	  VisibleModule* vm = pm->getFlatModule();
+	  if (!(vm->isBad()))
+	    {
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject, metaLevel->upRls(flat, vm, qidMap));
+	    }
 	}
     }
   return false;
@@ -180,9 +212,12 @@ MetaLevelOpSymbol::metaUpStratDecls(FreeDagNode* subject, RewritingContext& cont
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  PointerMap qidMap;
-	  return context.builtInReplace(subject,
-					metaLevel->upStratDecls(flat, pm->getFlatModule(), qidMap));
+	  VisibleModule* vm = pm->getFlatModule();
+	  if (!(vm->isBad()))
+	    {
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject, metaLevel->upStratDecls(flat, vm, qidMap));
+	    }
 	}
     }
   return false;
@@ -198,9 +233,12 @@ MetaLevelOpSymbol::metaUpSds(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  PointerMap qidMap;
-	  return context.builtInReplace(subject,
-					metaLevel->upSds(flat, pm->getFlatModule(), qidMap));
+	  VisibleModule* vm = pm->getFlatModule();
+	  if (!(vm->isBad()))
+	    {
+	      PointerMap qidMap;
+	      return context.builtInReplace(subject, metaLevel->upSds(flat, vm, qidMap));
+	    }
 	}
     }
   return false;

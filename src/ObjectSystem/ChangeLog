@@ -1,3 +1,863 @@
+2020-10-05  Steven Eker  <eker2@eker10>
+
+	* processOutcomes.cc (ProcessManagerSymbol::exitedReply): don't do
+	a find() unless we need it for the Assert() to avoid compiler
+	warning
+
+	* processStuff.cc (ProcessManagerSymbol::doChildExit): use
+	DebugSave for exitPid to avoid compiler warning
+
+===================================Maude131===========================================
+
+2020-07-13  Steven Eker  <eker2@eker10>
+
+	* socketAsync.cc (SocketManagerSymbol::doRead): ditto
+
+	* socketStuff.cc (SocketManagerSymbol::receive): only return 0
+	characters once; on a second receive() we revert to legacy
+	behavior and close the socket to minimize backwards
+	incompatibility
+
+	* socketManagerSymbol.cc
+	(SocketManagerSymbol::ActiveSocket::ActiveSocket): clear seenEOF
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): added data
+	member seenEOF to struct ActiveSocket
+
+	* socketAsync.cc (SocketManagerSymbol::doRead): ditto
+
+	* socketStuff.cc (SocketManagerSymbol::receive): handle 0
+	characters read(), i.e. EOF, by returning 0 characters rather
+	than closing the socket
+
+2020-07-09  Steven Eker  <eker2@eker10>
+
+	* fileActions.cc (FileManagerSymbol::openFile): check allowFiles
+	flag before opening file
+
+	* fileManagerSymbol.cc: init allowFiles
+
+	* processActions.cc (ProcessManagerSymbol::createProcess):
+	noExecute -> allowProcesses
+
+	* processManagerSymbol.cc: noExecute -> allowProcesses
+
+	* processManagerSymbol.hh (ProcessManagerSymbol::setNoExecute):
+	becomes setAllowProcesses
+	(class ProcessManagerSymbol): noExecute -> allowProcesses
+
+	* fileManagerSymbol.hh (FileManagerSymbol::setAllowFiles): added
+	(class FileManagerSymbol): added data member allowFiles
+
+===================================Maude129===========================================
+
+2020-05-19  Steven Eker  <eker2@eker10>
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): updated
+	decl for makeNonblockingSocketPair(); remove unused #defines
+
+	* processActions.cc
+	(ProcessManagerSymbol::makeNonblockingSocketPair): handle readOnly
+	flag
+	(ProcessManagerSymbol::createProcess): pass readOnly flag (2
+	places)
+
+	* socketStuff.cc (SocketManagerSymbol::send): do a shutdown() when
+	asked to send empty string
+	(SocketManagerSymbol::send): make shutdown socket readOnly; check
+	for shutdown() error
+
+2020-05-08  Steven Eker  <eker2@eker10>
+
+	* socketStuff.cc (SocketManagerSymbol::getPort): replace magic
+	number with MAX_PORT_NUMBER
+	(SocketManagerSymbol::createServerTcpSocket): use ::bind() to
+	avoid std::bind() in C++1x
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): added
+	MAX_PORT_NUMBER
+
+	* processActions.cc (ProcessManagerSymbol::createProcess): added
+	IssueAdvisory()s in the return false cases
+	(ProcessManagerSymbol::waitForExit): added IssueAdvisory() for
+	extra waitForExit() message
+	(ProcessManagerSymbol::waitForExit): added IssueAdvisory() for
+	missing process
+	(ProcessManagerSymbol::signalProcess): added IssueAdvisory()s for
+	missing process and malformed message
+
+	* pseudoThread.cc (PseudoThread::doRead, PseudoThread::doWrite)
+	(PseudoThread::doError, PseudoThread::doCallback)
+	(PseudoThread::doHungUp): Assert() -> CantHappen()
+
+	* socketAsync.cc (SocketManagerSymbol::doRead): only clear
+	WAITING_TO_READ flag in normal case
+	(SocketManagerSymbol::doRead): clear WAITING_TO_ACCEPT flag;
+	updated comment; use CantHappen() rather than Assert()
+
+	* socketStuff.cc (SocketManagerSymbol::acceptClient): updated
+	comment
+	(SocketManagerSymbol::send): added Assert() that we actually have
+	characters to send
+
+	* pseudoThread-pselect.cc (PseudoThread::processFds): split off
+	record of child events into childEvent; added Assert()
+
+	* pseudoThread-ppoll.cc (PseudoThread::processFds): split off
+	record of child events into childEvent so that Assert() is correct
+
+2020-05-07  Steven Eker  <eker2@eker10>
+
+	* processActions.cc (ProcessManagerSymbol::createProcess): don't
+	disallow close on sockets
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): deleted
+	decl for managedSocketDisconnected()
+
+	* processStuff.cc
+	(ProcessManagerSymbol::managedSocketDisconnected): deleted
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): updated decl
+	for manageSocket()
+
+	* socketManagerSymbol.cc
+	(SocketManagerSymbol::ActiveSocket::ActiveSocket): don't clear
+	client member
+
+	* socketManagerClient.hh: deleted
+
+	* processManagerSymbol.hh: don't derive from SocketManagerClient
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): deleted decl
+	for closeManagedSocket(); made closedSocketReply() private again
+	(class SocketManagerSymbol): delete client member from
+	ActiveSocket
+
+	* processActions.cc (ProcessManagerSymbol::createProcess): don't
+	pass this to manageSocket() (2 places)
+
+	* socketManagerSymbol.cc
+	(SocketManagerSymbol::closeManagedSocket): deleted
+	(SocketManagerSymbol::manageSocket): don't take client since we're
+	no longer going to make callbacks
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): added decl
+	for handleException()
+
+	* socketAsync.cc (SocketManagerSymbol::handleException): added
+	(SocketManagerSymbol::doHungUp, SocketManagerSymbol::doError):
+	reimplemented using handleException
+
+	* socketStuff.cc (SocketManagerSymbol::receive): don't bother
+	with client->managedSocketDisconnected()
+
+	* socketAsync.cc (SocketManagerSymbol::doRead): don't bother
+	with client->managedSocketDisconnected()
+	(SocketManagerSymbol::doRead): deleted commented out code
+
+	* socketStuff.cc (SocketManagerSymbol::cleanUp): always close
+	socket here
+
+	* processStuff.cc (ProcessManagerSymbol::cleanUp): don't close
+	sockets here
+
+	* processOutcomes.cc (ProcessManagerSymbol::exitedReply): don't
+	close sockets because there could still be characters to read
+
+	* socketStuff.cc (SocketManagerSymbol::cleanUp): delete textArray
+	just in case we had a pending write
+
+	* socketAsync.cc (SocketManagerSymbol::doWrite):  clear
+	WAITING_TO_WRITE, send socketError() and delete textArray in error
+	case
+	(SocketManagerSymbol::doWrite): Assert() that we don't get a would
+	block error; Assert() that we didn't send 0 characters
+	(SocketManagerSymbol::doWrite): changed Assert() to CantHappen()
+
+	* socketStuff.cc (SocketManagerSymbol::send): delete textArray in
+	error case
+
+	* socketAsync.cc (SocketManagerSymbol::doWrite): only clear
+	WAITING_TO_WRITE flag rather than all flags if last character sent
+
+	* socketStuff.cc (SocketManagerSymbol::send): generate
+	socketError() message on a write() error rather than closing the
+	socket or passing the problem to
+	client->managedSocketDisconnected()
+
+2020-05-06  Steven Eker  <eker2@eker10>
+
+	* socketManagerSymbol.cc
+	(SocketManagerSymbol::closeManagedSocket): DebugAlways() ->
+	DebugEnter()
+
+	* processStuff.cc
+	(ProcessManagerSymbol::managedSocketDisconnected): DebugAlways()
+	-> DebugEnter()
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol):
+	disconnected() -> managedSocketDisconnected()
+
+	* socketAsync.cc (SocketManagerSymbol::doHungUp): use
+	managedSocketDisconnected()
+
+	* socketManagerSymbol.cc
+	(SocketManagerSymbol::closeManagedSocket): don't bother with
+	clearFlags() if nothing is pending
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): deleted decl
+	for unmanageSocket()
+
+	* socketManagerSymbol.cc (SocketManagerSymbol::unmanageSocket):
+	deleted
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): make
+	closedSocketReply() public
+
+	* processStuff.cc
+	(ProcessManagerSymbol::managedSocketDisconnected): was
+	disconnected(); use closedSocketReply() instead of
+	closedManagedSocket() (2 places)
+
+	* processManagerSymbol.hh: added #defines IO_SOCKET_CLOSE_MSG,
+	ERR_SOCKET_CLOSE_MSG
+
+	* socketAsync.cc (SocketManagerSymbol::doRead): use
+	managedSocketDisconnected()
+	(SocketManagerSymbol::doWrite): use managedSocketDisconnected()
+	(SocketManagerSymbol::doError): use managedSocketDisconnected()
+
+	* socketStuff.cc (SocketManagerSymbol::send): use
+	managedSocketDisconnected()
+	(SocketManagerSymbol::receive): use managedSocketDisconnected() (2
+	places)
+
+	* socketManagerClient.hh (class SocketManagerClient):
+	disconnected() becomes managedSocketDisconnected() and gets a
+	message argument
+
+2020-05-05  Steven Eker  <eker2@eker10>
+
+	* socketManagerSymbol.cc
+	(SocketManagerSymbol::closeManagedSocket): added Assert()
+
+	* socketOutcomes.cc (SocketManagerSymbol::closedSocketReply):
+	removed commented out disconnect() code
+
+	* socketManagerClient.hh (class SocketManagerClient): updated decl
+	for disconnected()
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): updated
+	decl for disconnected()
+
+	* processStuff.cc (ProcessManagerSymbol::cleanUp): check for the
+	case that one or both sockets make already have been closed by the
+	disconnected() callback
+
+	* processOutcomes.cc (ProcessManagerSymbol::exitedReply): check
+	for the case that one or both sockets make already have been
+	closed by the disconnected() callback
+
+	* processStuff.cc (ProcessManagerSymbol::disconnected): take
+	context argument and just close the socket gracefully
+
+	* socketStuff.cc (SocketManagerSymbol::send): call disconnected()
+	rather than closeSocketReply() if managing the socket on behalf of
+	a client
+	(SocketManagerSymbol::receive): fixed incorrect comment
+	(SocketManagerSymbol::receive): call disconnected() rather than
+	closeSocketReply() if managing the socket on behalf of a client
+
+	* socketAsync.cc (SocketManagerSymbol::doRead)
+	(SocketManagerSymbol::doWrite): call disconnected() rather than
+	closeSocketReply() if managing the socket on behalf of a client
+	(SocketManagerSymbol::doError, SocketManagerSymbol::doHungUp):
+	call disconnected() rather than closeSocketReply() if managing the
+	socket on behalf of a client
+
+	* pseudoThread.cc (PseudoThread::clearFlags): added comment
+
+	* pseudoThread-pselect.cc (PseudoThread::processFds): symmetric
+	change
+
+	* pseudoThread-ppoll.cc (PseudoThread::processFds): check
+	info.flags before each callback because an earlier callback might
+	have cleared them
+
+2020-05-04  Steven Eker  <eker2@eker10>
+
+	* processActions.cc (ProcessManagerSymbol::makeCloseOnExitPipe):
+	simplified
+	(ProcessManagerSymbol::makeNonblockingSocketPair): set the
+	close-on-execute flag on the parent file descriptor so it isn't
+	leaked into future children
+
+	* socketStuff.cc (SocketManagerSymbol::createClientTcpSocket):
+	lastMessage -> lastWriteMessage; originalContext -> objectContext
+	(SocketManagerSymbol::acceptClient): lastMessage ->
+	lastReadMessage; originalContext -> objectContext
+	(SocketManagerSymbol::send): lastMessage -> lastWriteMessage;
+	originalContext -> objectContext
+	(SocketManagerSymbol::receive): lastMessage -> lastReadMessage;
+	originalContext -> objectContext
+	(SocketManagerSymbol::setNonblockingFlag): also set the
+	close-on-execute flag to avoid leaking file descriptor into child
+
+	* socketManagerSymbol.cc
+	(SocketManagerSymbol::closeManagedSocket): use lastWriteMessage or
+	lastReadMessage depending on state;
+
+	* socketAsync.cc (SocketManagerSymbol::doRead): lastMessage ->
+	lastReadMessage; originalContext -> objectContext
+	(SocketManagerSymbol::doWrite): lastMessage -> lastWriteMessage;
+	originalContext -> objectContext
+	(SocketManagerSymbol::doError, SocketManagerSymbol::doError): use
+	lastWriteMessage or lastReadMessage depending on state;
+	originalContext -> objectContext
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol):
+	originalContext -> objectContext; lastMessage split into
+	lastReadMessage and lastWriteMessage so we can wait both
+	to read and to write for duplex operation of socket
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added decl
+	for makeCloseOnExitPipe(); added
+	(class ProcessManagerSymbol): added enum SpecialValues
+
+	* processActions.cc (ProcessManagerSymbol::createProcess): use
+	makeCloseOnExitPipe() to detect child failure
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): updated
+	decl for errorReply()
+
+	* processOutcomes.cc (ProcessManagerSymbol::errorReply): take
+	Rope&
+
+	* processActions.cc (ProcessManagerSymbol::makeCloseOnExitPipe):
+	added
+
+2020-05-01  Steven Eker  <eker2@eker10>
+
+	* processOutcomes.cc (ProcessManagerSymbol::exitedReply): use
+	closeManagedSocket() rather then unmanageSocket()
+
+	* socketAsync.cc (SocketManagerSymbol::doError)
+	(SocketManagerSymbol::doHungUp): use DebugInfo()
+
+	* socketAsync.cc (SocketManagerSymbol::doRead)
+	(SocketManagerSymbol::doWrite): use DebugInfo()
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): added decl
+	for closeManagedSocket()
+
+	* socketManagerSymbol.cc
+	(SocketManagerSymbol::closeManagedSocket): added
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): added FIXME
+	notices since it looks like sharing lastMessage and
+	originalContext between waits for send and receive is a bug
+
+	* pseudoThread-ppoll.cc (PseudoThread::processFds): do
+	dispatchChildRequests() first because this can change the active
+	file descriptors
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added decl
+	for makeNonblockingSocketPair()
+
+	* processActions.cc
+	(ProcessManagerSymbol::makeNonblockingSocketPair): added
+	(ProcessManagerSymbol::createProcess): use
+	makeNonblockingSocketPair() (2 places)
+
+2020-04-30  Steven Eker  <eker2@eker10>
+
+	* pseudoThread-pselect.cc: created
+
+	* processActions.cc (ProcessManagerSymbol::createProcess):
+	generate errorReply() if socketpair() or fcntl() calls fail
+	(ProcessManagerSymbol::createProcess): check that request is well
+	formed before checking if process creation is allowed; handle
+	disallowed case with errorReply(); downgrade warning to an
+	advisory
+	(ProcessManagerSymbol::createProcess): handle failed fork() with
+	errorReply()
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added decl
+	for errorReply()
+
+	* processOutcomes.cc (ProcessManagerSymbol::errorReply): added
+
+2020-04-29  Steven Eker  <eker2@eker10>
+
+	* pseudoThread-ppoll.cc (PseudoThread::processFds): avoid race
+	condition by just restoring SIGCHLD and not callers normalSet
+
+	* pseudoThread.hh (class PseudoThread): updated decl for
+	processFds()
+	(class PseudoThread): updated decl for processCallbacks()
+
+	* pseudoThread-ppoll.cc (PseudoThread::processFds): take const
+	timespec*
+
+	* pseudoThread.hh (class PseudoThread): added static data member
+	zeroTime
+
+	* pseudoThread.cc (PseudoThread::eventLoop): rewritten
+
+	* pseudoThread.hh (PseudoThread::getTime): deleted
+	(PseudoThread::CallbackRequest::CallbackRequest): take const timespec*
+
+	* pseudoThread.cc (PseudoThread::processCallbacks): use
+	clock_gettime() rather than getTime()
+	(PseudoThread::processCallbacks): new semantics
+
+	* pseudoThread.hh (PseudoThread::CallbackRequest::operator<): use
+	timespec
+
+	* pseudoThread.cc (PseudoThread::requestCallback): take const
+	timespec*
+
+	* pseudoThread.hh (class PseudoThread): requestCallback now uses
+	timespec*
+	(class PseudoThread): CallbackRequest notBefore field is now a
+	timespec
+
+	* processOutcomes.cc (ProcessManagerSymbol::exitedReply): added
+	Assert()
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): made
+	getSignalNumber() and getSignalName() static
+
+	* processActions.cc (ProcessManagerSymbol::getChildProcess)
+	(ProcessManagerSymbol::createProcess)
+	(ProcessManagerSymbol::checkStringList)
+	(ProcessManagerSymbol::makeStringArray)
+	(ProcessManagerSymbol::waitForExit, MACRO)
+	(ProcessManagerSymbol::signalProcess): moved here
+
+	* processStuff.cc (ProcessManagerSymbol::cleanUp): be robust
+	against waitpid() exiting due to a signal
+	(ProcessManagerSymbol::cleanUp): erase the ChildProcess from
+	childProcesses
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): cleaned up
+	struct ChildProcess
+
+	* processStuff.cc: originalContext -> waitContext
+
+	* processManagerSymbol.hh: originalContext -> waitContext
+
+	* processStuff.cc (ProcessManagerSymbol::cleanUp): make sure
+	to cancel any child exit callback request
+
+2020-04-28  Steven Eker  <eker2@eker10>
+
+	* pseudoThread-ppoll.cc (PseudoThread::processFds): don't write
+	into timeOutAt
+
+	* pseudoThread.cc (PseudoThread::doTimeOut): deleted
+	(PseudoThread::wantTo): don't take timeOutAt arg
+
+	* pseudoThread.hh (class PseudoThread): updated decl for wantTo()
+	(class PseudoThread): deleted timeOutAt from struct FD_Info
+	(class PseudoThread): deleted decl for doTimeOut()
+
+	* pseudoThread-ppoll.cc (PseudoThread::processFds): moved here
+	(PseudoThread::processFds): don't handle timeouts on fds; don't
+	need them for Maude
+
+2020-04-27  Steven Eker  <eker2@eker10>
+
+	* processStuff.cc (ProcessManagerSymbol::waitForExit): check for
+	second waitForExit() for the same process
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): updated comment
+	(ProcessManagerSymbol::ChildProcess::ChildProcess): added in order
+	to ensure originalContext is zero'd
+
+2020-04-24  Steven Eker  <eker2@eker9>
+
+	* supportedSignals.cc: added many more signals
+
+	* processOutcomes.cc (ProcessManagerSymbol::getSignalName): added
+
+	* processStuff.cc (ProcessManagerSymbol::waitForExit): pass
+	terminatingSignal by 1's complement
+	(ProcessManagerSymbol::doChildExit): pass terminatingSignal by 1's
+	complement
+
+	* processOutcomes.cc (ProcessManagerSymbol::exitedReply): moved
+	here
+
+	* processStuff.cc (ProcessManagerSymbol::exitedReply): use
+	normalExitSymbol, terminatedBySignal
+
+	* processSignature.cc: added normalExitSymbol and
+	terminatedBySignalSymbol; deleted minusSymbol
+
+	* processStuff.cc (ProcessManagerSymbol::createProcess): respect
+	noExecute flag
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): static
+	data member noExecute
+
+2020-04-23  Steven Eker  <eker2@eker9>
+
+	* processStuff.cc (ProcessManagerSymbol::doChildExit): don't need
+	to cancelChildExitCallback() since these are automatically removed
+	on delivery
+	(ProcessManagerSymbol::waitForExit): pass - terminating signal to
+	exitedReply()
+	(ProcessManagerSymbol::doChildExit): ditto
+
+	* pseudoThreadSignal.cc (PseudoThread::sigchldHandler): handle
+	CLD_KILLED and CLD_DUMPED cases
+
+	* pseudoThread.hh (class PseudoThread): updated decl for
+	processFds()
+
+	* pseudoThread.cc (PseudoThread::processFds): take and use
+	normalSet in the blocking case
+	(PseudoThread::eventLoop): pass normalSet to processFds()
+
+	* processManagerSymbol.cc (ProcessManagerSymbol::handleMessage):
+	call signalProcess()
+
+	* supportedSignals.cc: created
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added decls
+	for signalProcess(), getSignalNumber()
+
+	* processStuff.cc (ProcessManagerSymbol::getSignalNumber): added
+	(ProcessManagerSymbol::signalProcess): added
+	(ProcessManagerSymbol::createProcess): added comment
+
+2020-04-22  Steven Eker  <eker2@eker9>
+
+	* objectSystemRewritingContext.cc
+	(ObjectSystemRewritingContext::externalRewrite): restructured loop
+
+	* pseudoThread.hh (class PseudoThread): updated decl for
+	eventLoop()
+
+	* objectSystemRewritingContext.hh (class
+	ObjectSystemRewritingContext): added decl for interleave()
+
+	* objectSystemRewritingContext.cc
+	(ObjectSystemRewritingContext::externalRewrite): remove EXT_BIAS
+	hack since it looks like we never used it for anything
+	(ObjectSystemRewritingContext::externalRewrite): call
+	blockAndHandleInterrupts(); restore normal interrupt mask before
+	bailing; pass normal interrupt mask to eventLoop()
+	(ObjectSystemRewritingContext::interleave): added to hold inner
+	loop
+	(ObjectSystemRewritingContext::externalRewrite): rewritten using
+	interleave()
+
+	* processSignature.cc: added minusSymbol
+
+2020-04-21  Steven Eker  <eker2@eker9>
+
+	* pseudoThread.cc (PseudoThread::processFds): use ppoll() to avoid
+	occasional race condition.
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added decl
+	for doChildExit()
+
+	* processStuff.cc (ProcessManagerSymbol::doChildExit): added
+	(ProcessManagerSymbol::waitForExit): save context if we are
+	waiting for a callback
+
+	* pseudoThread.cc (PseudoThread::eventLoop): call processFds()
+	if there are pending childRequests
+
+	* pseudoThread.hh (class PseudoThread): updated decl for
+	dispatchChildRequests()
+
+	* pseudoThreadSignal.cc (PseudoThread::dispatchChildRequests):
+	return a flag to say if we did a callback
+
+	* pseudoThread.cc (PseudoThread::processFds): call
+	dispatchChildRequests()
+
+	* pseudoThreadSignal.cc (PseudoThread::dispatchChildRequests):
+	clear exitedFlag
+
+2020-04-20  Steven Eker  <eker2@eker9>
+
+	* pseudoThreadSignal.cc (PseudoThread::cancelChildExitCallback):
+	fix bug where we we're incrementing i
+
+	* processStuff.cc (ProcessManagerSymbol::exitedReply): clean up
+	sockets
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): added decl
+	for unmanageSocket()
+
+	* socketManagerSymbol.cc (SocketManagerSymbol::unmanageSocket):
+	added
+
+	* processStuff.cc (ProcessManagerSymbol::exitedReply): close
+	sockets and remove external object for process
+
+	* processManagerSymbol.cc (ProcessManagerSymbol::handleMessage):
+	need to return the value from waitForExit()
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added decl
+	for exitedReply()
+
+	* processStuff.cc (ProcessManagerSymbol::exitedReply): added
+	(ProcessManagerSymbol::waitForExit): call exitedReply() (2 places)
+
+2020-04-17  Steven Eker  <eker2@eker9>
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): derive
+	from PseudoThread, added decl for waitForExit()
+
+	* processStuff.cc (ProcessManagerSymbol::waitForExit): added
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added
+	member waitMessage to struct ChildProcess
+
+	* processManagerSymbol.cc (ProcessManagerSymbol::handleMessage):
+	handle waitForExit()
+
+	* pseudoThread.hh (class PseudoThread): added decl for
+	cancelChildExitCallback()
+
+	* pseudoThreadSignal.cc (PseudoThread::monitorChild): becomes
+	requestChildExitCallback()
+	(PseudoThread::dispatchChildRequests): need to contract
+	childRequests Vector
+	(PseudoThread::cancelChildExitCallback): added
+
+	* pseudoThread.hh: CallBack -> Callback everywhere
+	(class PseudoThread): monitorChild() -> requestChildExitCallback()
+
+	* pseudoThread.cc: CallBack -> Callback everywhere
+
+2020-04-16  Steven Eker  <eker2@eker9>
+
+	* pseudoThread.hh (class PseudoThread): added struct ChildRequest
+	(class PseudoThread): added data members childRequests,
+	installedSigchldHandler, exitedFlag
+	(class PseudoThread): added decls for doChildExited(),
+	monitorChild(), dispatchChildRequests()
+
+	* pseudoThreadSignal.cc: created
+
+	* processSignature.cc: added signaledProcessMsg, waitForExitMsg
+
+2020-04-15  Steven Eker  <eker2@eker9>
+
+	* socketOutcomes.cc (SocketManagerSymbol::closedSocketReply): call
+	disconnected() for sockets we're managing on behalf of a client
+
+	* processStuff.cc (ProcessManagerSymbol::createProcess): pass
+	this to manageSocket() (2 places)
+	(ProcessManagerSymbol::disconnected): added
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): derive
+	from SocketManagerClient
+	(class ProcessManagerSymbol): added decl for disconnected()
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): updated
+	decl for manageSocket()
+
+	* socketManagerSymbol.cc
+	(SocketManagerSymbol::ActiveSocket::ActiveSocket): initialize
+	client field
+	(SocketManagerSymbol::manageSocket): handle client argument
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): added
+	client member to struct ActiveSocket
+
+	* socketManagerClient.hh (class SocketManagerClient): created
+
+2020-04-10  Steven Eker  <eker2@eker9>
+
+	* processStuff.cc (ProcessManagerSymbol::cleanUp): kill() and
+	waitpid() to make sure the child is dead and remove it's zombie
+
+	* objectSystem.hh: added classes SocketManagerSymbol,
+	FileManagerSymbol, StreamManagerSymbol, ProcessManagerSymbol
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): use pid_t
+	rather than int for ProcessMap
+
+2020-04-09  Steven Eker  <eker2@eker9>
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added decl
+	for getChildProcess()
+
+	* processStuff.cc (ProcessManagerSymbol::cleanUp): partly
+	implemented
+	(ProcessManagerSymbol::createProcess): make ChildProcess
+	record
+	(ProcessManagerSymbol::createProcess): pass disallowClose=true to
+	manageSocket() calls
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added
+	ioSocket, errSocket members to struct ChildProcess
+
+	* processStuff.cc (ProcessManagerSymbol::getChildProcess): added
+
+	* socketStuff.cc (SocketManagerSymbol::cleanUp): don't close
+	sockets with disallowClose flag set
+	(SocketManagerSymbol::closeSocket): don't accept closeSocket()
+	message if disallowClose flag is set
+	(SocketManagerSymbol::send): dont accept send() message if
+	readOnly flag is set
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): added
+	disallowClose, readOnly flags to ActiveSocket
+
+	* socketManagerSymbol.cc
+	(SocketManagerSymbol::ActiveSocket::ActiveSocket): initialize
+	disallowClose, readOnly flags
+	(SocketManagerSymbol::manageSocket): set out disallowClose,
+	readOnly flags
+
+2020-04-02  Steven Eker  <eker2@eker9>
+
+	* socketStuff.cc (SocketManagerSymbol::receive): added check
+	for EWOULDBLOCK and comment explaining why we do this
+	(SocketManagerSymbol::createClientTcpSocket): added comment
+	to explain why nonblocking is critical for input as well as
+	output
+
+2020-04-01  Steven Eker  <eker2@eker9>
+
+	* processStuff.cc (ProcessManagerSymbol::createProcess): pass
+	context to manageSocket()
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): updated
+	decl for manageSocket()
+
+	* socketManagerSymbol.cc (SocketManagerSymbol::manageSocket):
+	implemented
+	(SocketManagerSymbol::manageSocket): need to register socket
+	as an external object
+	(SocketManagerSymbol::manageSocket): need to take context
+	argument
+
+	* processStuff.cc (ProcessManagerSymbol::createProcess): added
+	DebugAdvisory() for replyMsg
+
+2020-03-31  Steven Eker  <eker2@eker9>
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): updated
+	decl for makeStringArray()
+
+	* processStuff.cc (ProcessManagerSymbol::makeStringArray):
+	revert to making a separate string for array[0] due to
+	const correctness
+	(ProcessManagerSymbol::createProcess): pass executableArg
+	to makeStringArray()
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): added
+	decl for manageSocket()
+
+	* processStuff.cc (ProcessManagerSymbol::makeStringArray):
+	don't both with constness for allocating array
+
+	* socketManagerSymbol.cc (SocketManagerSymbol::manageSocket):
+	added stub
+
+2020-03-30  Steven Eker  <eker2@eker9>
+
+	* processStuff.cc (ProcessManagerSymbol::createProcess): use
+	makeStringArray()
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added
+	decl for makeStringArray()
+
+	* processStuff.cc (ProcessManagerSymbol::createProcess):
+	check options arg
+	(makeStringArray): added
+
+	* processSignature.cc: added emptyProcessOptionSetSymbol
+
+2020-03-27  Steven Eker  <eker2@eker9>
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol):
+	adde decl for checkStringList()
+
+	* processStuff.cc (ProcessManagerSymbol::checkStringList):
+	added
+	(ProcessManagerSymbol::createProcess): use checkStringList()
+
+2020-03-26  Steven Eker  <eker2@eker9>
+
+	* processStuff.cc (ProcessManagerSymbol::createProcess): check
+	that the executable arg is actually a string
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): added
+	decl for createProcess()
+
+	* processManagerSymbol.cc
+	(ProcessManagerSymbol::handleManagerMessage): call createProcess()
+
+	* processSignature.cc: added nilStringListSymbol,
+	stringListSymbol
+
+2020-03-25  Steven Eker  <eker2@eker9>
+
+	* processStuff.cc (ProcessManagerSymbol::cleanUp): added stub
+
+	* processManagerSymbol.cc:
+	(ProcessManagerSymbol::attachData)
+	(ProcessManagerSymbol::attachSymbol)
+	(ProcessManagerSymbol::copyAttachments)
+	(ProcessManagerSymbol::getDataAttachments)
+	(ProcessManagerSymbol::getSymbolAttachments)
+	(ProcessManagerSymbol::handleManagerMessage)
+	(ProcessManagerSymbol::handleMessage): added
+
+	* processStuff.cc (ProcessManagerSymbol::createProcess): moved
+	here
+
+	* processManagerSymbol.cc (ProcessManagerSymbol::createProcess):
+	parent side of ioSocket must be nonblocking
+
+	* socketStuff.cc (SocketManagerSymbol::setNonblockingFlag):
+	simplified
+
+2020-03-24  Steven Eker  <eker2@eker9>
+
+	* processManagerSymbol.cc: created
+
+	* processSignature.cc: created
+
+2020-03-20  Steven Eker  <eker2@eker9>
+
+	* processManagerSymbol.hh: created
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): deleted
+	commented out crope text
+
+===================================Maude128a===========================================
+
+2020-03-05  Steven Eker  <eker2@eker9>
+
+	* socketOutcomes.cc (SocketManagerSymbol::closedSocketReply): fix
+	bug where closing a socket that was waiting for something
+	leaves a dead active fd in PseudoThread
+
+	* socketStuff.cc (SocketManagerSymbol::cleanUp): added
+	and clarified comments
+	(SocketManagerSymbol::send): deleted commented out code
+	(SocketManagerSymbol::receive): deleted commneted out code
+	(SocketManagerSymbol::send): cleaned up comments
+
+	* pseudoThread.cc (PseudoThread::processFds): update Assert()
+	message with something more explanatory.
+	(PseudoThread::processFds): deleted commented out code
+	(PseudoThread::processCallBacks): cleaned up comments
+	(PseudoThread::processFds): cleaned up comments
+
+===================================Maude128===========================================
+
 2019-12-04  Steven Eker  <eker@mu>
 
 	* fileActions.cc (getOpenFile): use DebugSave() to avoid unused variable

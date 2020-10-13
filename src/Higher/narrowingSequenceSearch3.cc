@@ -21,7 +21,7 @@
 */
 
 //
-//	Implementation for class NarrowingSequenceSearch2.
+//	Implementation for class NarrowingSequenceSearch3.
 //
 
 //	utility stuff
@@ -55,16 +55,16 @@ NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
 						   SearchType searchType,
 						   DagNode* goal,
 						   int maxDepth,
-						   bool fold,
-						   bool keepHistory,
-						   FreshVariableGenerator* freshVariableGenerator)
+						   FreshVariableGenerator* freshVariableGenerator,
+						   int variantFlags)
   : initial(initial),
     goal(goal),
     maxDepth((searchType == ONE_STEP) ? 1 : maxDepth),
     needToTryInitialState(searchType == ANY_STEPS),
     normalFormNeeded(searchType == NORMAL_FORM),
     freshVariableGenerator(freshVariableGenerator),
-    stateCollection(fold, keepHistory)
+    variantFlags(variantFlags),
+    stateCollection(variantFlags & FOLD, variantFlags & KEEP_HISTORY)
 {
   incompleteFlag = false;
   unificationProblem = 0;
@@ -85,14 +85,11 @@ NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
   Substitution* accumulatedSubstitution = new Substitution(nrInitialVariables);
   for (int i = 0; i < nrInitialVariables; ++i)
     {
-      Sort* sort = safeCast(VariableSymbol*, initialVariableInfo.index2Variable(i)->symbol())->getSort();
-      VariableDagNode* v = new VariableDagNode(freshVariableGenerator->getBaseVariableSymbol(sort),
-					       freshVariableGenerator->getFreshVariableName(i, 0),
-					       i);
+      Symbol* baseSymbol = initialVariableInfo.index2Variable(i)->symbol();
+      int name = freshVariableGenerator->getFreshVariableName(i, 0);
+      VariableDagNode* v = new VariableDagNode(baseSymbol, name, i);
       accumulatedSubstitution->bind(i, v);
     }
-  //for (int i = 0; i < nrInitialVariables; ++i)
-  //  accumulatedSubstitution->bind(i, initialVariableInfo.index2Variable(i));
   //
   //	We also want to index goal variables so we can apply the accumulated
   //	substitution, but we do not want to carry around the extra variables
@@ -144,13 +141,16 @@ NarrowingSequenceSearch3::findNextUnifier()
     {
       if (unificationProblem != 0)
 	{
-	  currentUnifier = unificationProblem->getNextUnifier(nrFreeVariablesInUnifier, variableFamilyInUnifier);
+	  bool moreUnifiers = unificationProblem->findNextUnifier();
 	  initial->transferCountFrom(*(unificationProblem->getContext()));
 	  if (unificationProblem->isIncomplete())
 	    incompleteFlag = true;
-
-	  if (currentUnifier != 0)
-	    return true;
+	  if (moreUnifiers)
+	    {
+	      currentUnifier = &(unificationProblem->getCurrentUnifier(nrFreeVariablesInUnifier,
+								       variableFamilyInUnifier));
+	      return true;
+	    }	  
 	  delete unificationProblem;
 	  unificationProblem = 0;
 	}
@@ -198,11 +198,8 @@ NarrowingSequenceSearch3::findNextUnifier()
       unificationProblem = new VariantSearch(pairContext,  // will be deleted by VariantSearch
 					     dummy,
 					     freshVariableGenerator,
-					     true,
-					     false,
-					     false,
-					     variableFamily,
-					     false);
+					     VariantSearch::UNIFICATION_MODE,
+					     variableFamily);
     }
   return false;
 }
@@ -290,7 +287,9 @@ NarrowingSequenceSearch3::findNextInterestingState()
 	  //	Does new state survive folding?
 	  //
 	  int newStateIndex = ++counter;
-	  bool survived = stateCollection.insertState(newStateIndex, reduceContext->root(), stateBeingExpandedIndex);
+	  bool survived = stateCollection.insertState(newStateIndex,
+						      reduceContext->root(),
+						      stateBeingExpandedIndex);
 	  delete reduceContext;
 	  if (survived)
 	    {
@@ -348,9 +347,13 @@ NarrowingSequenceSearch3::findNextInterestingState()
 	  RewritingContext* narrowingContext = initial->makeSubcontext(nextState);
 	  stateBeingExpanded = new NarrowingSearchState3(narrowingContext,
 							 nextStateAccumulatedSubstitution,
-							 nextStateVariableFamily,
 							 freshVariableGenerator,
-							 NarrowingSearchState3::ALLOW_NONEXEC | PositionState::RESPECT_FROZEN);
+							 nextStateVariableFamily,
+							 NarrowingSearchState3::ALLOW_NONEXEC |
+							 PositionState::RESPECT_FROZEN,
+							 0,
+							 UNBOUNDED,
+							 variantFlags);
 	  expansionSuccessful = false;
 	  goto tryToExpand;
 	}

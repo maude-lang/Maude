@@ -1,8 +1,8 @@
 ==========================================
 erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),goal:
     'C:Foo,fold: 'none > createInterpreter(interpreterManager, me, none) .
-rewrites: 13
-mb applications: 0  equational rewrites: 4  rule rewrites: 5  variant narrowing
+rewrites: 17
+mb applications: 0  equational rewrites: 8  rule rewrites: 5  variant narrowing
     steps: 3  narrowing steps: 1
 result Configuration: <> < me : User | soln: 4,got: (gotNarrowingSearchResult(
     me, interpreter(0), 1, 'g['j['#1:Foo,'#2:Foo]], 'Foo, 
@@ -27,8 +27,8 @@ result Configuration: <> < me : User | soln: 4,got: (gotNarrowingSearchResult(
 ==========================================
 erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),goal:
     'C:Foo,fold: 'match > createInterpreter(interpreterManager, me, none) .
-rewrites: 13
-mb applications: 0  equational rewrites: 4  rule rewrites: 5  variant narrowing
+rewrites: 17
+mb applications: 0  equational rewrites: 8  rule rewrites: 5  variant narrowing
     steps: 3  narrowing steps: 1
 result Configuration: <> < me : User | soln: 4,got: (gotNarrowingSearchResult(
     me, interpreter(0), 1, 'g['j['#1:Foo,'#2:Foo]], 'Foo, 
@@ -53,8 +53,8 @@ result Configuration: <> < me : User | soln: 4,got: (gotNarrowingSearchResult(
 ==========================================
 erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),goal:
     'C:Foo,fold: 'none > createInterpreter(interpreterManager, me, none) .
-rewrites: 13
-mb applications: 0  equational rewrites: 4  rule rewrites: 5  variant narrowing
+rewrites: 17
+mb applications: 0  equational rewrites: 8  rule rewrites: 5  variant narrowing
     steps: 3  narrowing steps: 1
 result Configuration: <> < me : User | soln: 4,got: (
     gotNarrowingSearchResultAndPath(me, interpreter(0), 1, 'g['j['#1:Foo,
@@ -93,8 +93,8 @@ result Configuration: <> < me : User | soln: 4,got: (
 ==========================================
 erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),goal:
     'C:Foo,fold: 'match > createInterpreter(interpreterManager, me, none) .
-rewrites: 13
-mb applications: 0  equational rewrites: 4  rule rewrites: 5  variant narrowing
+rewrites: 17
+mb applications: 0  equational rewrites: 8  rule rewrites: 5  variant narrowing
     steps: 3  narrowing steps: 1
 result Configuration: <> < me : User | soln: 4,got: (
     gotNarrowingSearchResultAndPath(me, interpreter(0), 1, 'g['j['#1:Foo,

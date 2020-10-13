@@ -49,7 +49,8 @@ public:
   friend class const_iterator;
 #endif
 
-  Vector(size_type length = 0);
+  Vector();
+  Vector(size_type length);
   Vector(size_type length, size_type preallocate);
   Vector(const Vector& original);
   ~Vector();
@@ -172,6 +173,13 @@ inline size_t
 Vector<T>::bytesAllocated() const
 {
   return pv.getAllocatedBytes();
+}
+
+template<class T>
+inline
+Vector<T>::Vector()
+{
+  pv.initEmpty();
 }
 
 template<class T>

@@ -27,23 +27,35 @@
 void
 MixfixModule::makeGrammar(bool complexFlag)
 {
+  DebugInfo("module = " << this << " (" << ((void*) this) << ")" <<
+	      "  complexFlag = " << complexFlag << "  parser = " << parser);
   if (parser != 0)
     {
-      if (!complexFlag || complexParser)
-	return;
+      if (!complexFlag || parser->isComplex())
+	{
+	  DebugInfo("reusing parser; parser->isComplex() = " << parser->isComplex() <<
+		    "  complexFlag = " << complexFlag);
+	  return;
+	}
+      DebugInfo("deleting old parser; parser->isComplex() = " << parser->isComplex() <<
+		 "  complexFlag = " << complexFlag);
       delete parser;
     }
-
-  parser = new MixfixParser(*this);
-  complexParser = complexFlag;
+  else
+    DebugInfo("no existing parser");
   //
   //	NonTerminals are allocated as follows:
   //	  fixed one-off:	-1,..., componentNonTerminalBase + 1
   //	  per component:	componentNonTerminalBase,..., componentNonTerminalBase - NUMBER_OF_TYPES * #components + 1
   //	  on demand:		componentNonTerminalBase - NUMBER_OF_TYPES * #components,... downwards
   //
-  componentNonTerminalBase = complexParser ? COMPLEX_BASE : SIMPLE_BASE;
-  nextNonTerminal = componentNonTerminalBase - NUMBER_OF_TYPES * getConnectedComponents().length() + 1;
+  int componentNonTerminalBase = complexFlag ? COMPLEX_BASE : SIMPLE_BASE;
+  int nextNonTerminal = componentNonTerminalBase - NUMBER_OF_TYPES * getConnectedComponents().length() + 1;
+  parser = new MixfixParser(*this, complexFlag, componentNonTerminalBase, nextNonTerminal);
+  DebugInfo("new parser = " << parser << "  complexFlag = " << complexFlag <<
+	    "  componentNonTerminalBase = " << componentNonTerminalBase <<
+	    "  nextNonTerminal = " << nextNonTerminal);
+
   if (complexFlag)
     {
       makeComplexProductions();
@@ -93,7 +105,7 @@ MixfixModule::makeParameterizedSortProductions()
 	      //	terminal and production for it so we can parse on-the-fly variables for
 	      //	for parameterized sorts starting with this token.
 	      //
-	      int nt = newNonTerminal();
+	      int nt = parser->newNonTerminal();
 	      string leadString(Token::name(lead));
 	      int t = Token::encode((leadString + " variable").c_str());
 
@@ -133,6 +145,11 @@ MixfixModule::makeComplexProductions()
 
   rhs[0] = MATCH_PAIR;
   parser->insertProduction(MATCH_COMMAND, rhs, 0, gatherAny);
+  //
+  //	<multi-match command> ::= <match pair>
+  //
+  parser->insertProduction(MULTI_MATCH_COMMAND, rhs, 0, gatherAny);
+
   rhs[0] = UNIFY_PAIR;
   parser->insertProduction(UNIFY_COMMAND, rhs, 0, gatherAny);
   rhs[0] = SEARCH_PAIR;
@@ -141,6 +158,11 @@ MixfixModule::makeComplexProductions()
   parser->insertProduction(GET_VARIANTS_COMMAND, rhs, 0, gatherAny);
   rhs[0] = UNIFY_COMMAND;
   parser->insertProduction(VARIANT_UNIFY_COMMAND, rhs, 0, gatherAny);
+  //
+  //	<variant match command> ::= <multi-match command>
+  //
+  rhs[0] = MULTI_MATCH_COMMAND;
+  parser->insertProduction(VARIANT_MATCH_COMMAND, rhs, 0, gatherAny);
 
   rhs[0] = suchThat;
   parser->insertProduction(SUCH_THAT, rhs, 0, emptyGather);
@@ -161,11 +183,20 @@ MixfixModule::makeComplexProductions()
   rhs[2] = RULE_CONDITION;
   parser->insertProduction(SEARCH_COMMAND, rhs, 0, gatherAnyAnyAny,
 			   MixfixParser::CONDITIONAL_COMMAND);
-
+  //
+  //	<unify command> ::= <unify pair> /\ <unify command>
+  //
   rhs[0] = UNIFY_PAIR;
   rhs[1] = wedge;
   rhs[2] = UNIFY_COMMAND;
-  parser->insertProduction(UNIFY_COMMAND, rhs, 0, gatherAnyAny, MixfixParser::UNIFY_LIST);
+  parser->insertProduction(UNIFY_COMMAND, rhs, 0, gatherAnyAny, MixfixParser::PAIR_LIST);
+  //
+  //	<multi-match command> ::= <match pair> /\ <multi-match command>
+  //
+  rhs[0] = MATCH_PAIR;
+  rhs[1] = wedge;
+  rhs[2] = MULTI_MATCH_COMMAND;
+  parser->insertProduction(MULTI_MATCH_COMMAND, rhs, 0, gatherAnyAny, MixfixParser::PAIR_LIST);
 
   rhs.resize(4);
   rhs[0] = TERM;
@@ -173,15 +204,27 @@ MixfixModule::makeComplexProductions()
   rhs[2] = TERM_LIST;
   rhs[3] = irreducible;
   parser->insertProduction(GET_VARIANTS_COMMAND, rhs, 0, gatherAnyAnyAny,
-			   MixfixParser::CONDITIONAL_COMMAND);
-
+			   MixfixParser::MAKE_TERM_LIST);
+  //
+  //	<variant unify command> ::= <unify command> <such that> <term list> irreducible
+  //
   rhs.resize(4);
   rhs[0] = UNIFY_COMMAND;
   rhs[1] = SUCH_THAT;
   rhs[2] = TERM_LIST;
   rhs[3] = irreducible;
   parser->insertProduction(VARIANT_UNIFY_COMMAND, rhs, 0, gatherAnyAnyAny,
-			   MixfixParser::CONDITIONAL_COMMAND);
+			   MixfixParser::MAKE_TERM_LIST);
+  //
+  //	<variant match command> ::= <multi-match command> <such that> <term list> irreducible
+  //
+  rhs.resize(4);
+  rhs[0] = MULTI_MATCH_COMMAND;
+  rhs[1] = SUCH_THAT;
+  rhs[2] = TERM_LIST;
+  rhs[3] = irreducible;
+  parser->insertProduction(VARIANT_MATCH_COMMAND, rhs, 0, gatherAnyAnyAny,
+			   MixfixParser::MAKE_TERM_LIST);
   //
   //	Hetrogeneous term lists.
   //
@@ -904,7 +947,7 @@ MixfixModule::makeComponentProductions()
       parser->insertProduction(ASSIGN_PAIR, rhsPair, 0, gatherAnyAny);
       rhsPair[1] = arrow;
       parser->insertProduction(ARROW_PAIR, rhsPair, 0, gatherAnyAny);
-      if (complexParser)
+      if (parser->isComplex())
 	{
 	  //
 	  //	Syntax for match and search pairs, assignments:
@@ -1095,7 +1138,7 @@ MixfixModule::makeSymbolProductions()
 	      //
 	      pair<IntMap::iterator, bool> p = iterSymbols.insert(IntMap::value_type(symbol->id(), GARBAGE));
 	      if (p.second)
-		p.first->second = newNonTerminal();
+		p.first->second = parser->newNonTerminal();
 	      rhs.clear();
 	      rhs.append(p.first->second);
 	      rhs.append(leftParen);

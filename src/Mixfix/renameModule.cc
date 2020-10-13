@@ -206,7 +206,7 @@ ImportModule::donateSorts2(ImportModule* copy, Renaming* renaming)
 void
 ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 {
-  DebugNew("donateOps2(), from " << this << " to " << copy);
+  DebugOld("donateOps2(), from " << this << " to " << copy);
   Assert(!isBad(), "original module bad " << this);
 
   bool moduleDonatingToTheory = copy->isTheory() && !isTheory();
@@ -237,7 +237,7 @@ ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
 	  const Vector<int>* format;
 
 	  int index = (renaming == 0) ? NONE : renaming->renameOp(symbol);  // index of renaming that applies to symbol
-	  DebugNew("index = " << index);
+	  DebugOld("index = " << index);
 	  if (index == NONE)
 	    {
 	      name.tokenize(symbol->id(), symbol->getLineNumber());

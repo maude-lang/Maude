@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@
 
 //      core class definitions
 #include "variableInfo.hh"
-//#include "subproblemAccumulator.hh"
 #include "unificationContext.hh"
 #include "localBinding.hh"
 
@@ -66,29 +65,32 @@ CUI_UnificationSubproblem::~CUI_UnificationSubproblem()
 void
 CUI_UnificationSubproblem::markReachableNodes()
 {
-  // maybe we only need to mark one of these?
-
-  FOR_EACH_CONST(i, Vector<Problem>, problems)
+  for (const Problem& p : problems)
     {
-      int nrFragile = i->savedSubstitution.nrFragileBindings();
+      int nrFragile = p.savedSubstitution.nrFragileBindings();
       for (int j = 0; j < nrFragile; j++)
 	{
-	  if (DagNode* d = i->savedSubstitution.value(j))
+	  if (DagNode* d = p.savedSubstitution.value(j))
 	    d->mark();
 	}
     }
 }
 
 void
-CUI_UnificationSubproblem::addUnification(DagNode* lhs, DagNode* rhs, bool marked, UnificationContext& /* solution */)
+CUI_UnificationSubproblem::addUnification(DagNode* lhs,
+					  DagNode* rhs,
+					  bool marked,
+					  UnificationContext& /* solution */)
 {
-  //cout << "CUI_UnificationSubproblem::addUnification() " << lhs << " vs " << rhs << endl;
-  Assert(marked == false, "we don't handle collapse yet");
+  DebugEnter(lhs << " vs " << rhs);
+  Assert(marked == false, "this class shouldn't get collapse problems");
   problems.append(Problem(safeCast(CUI_DagNode*, lhs), safeCast(CUI_DagNode*, rhs)));
 }
 
 bool
-CUI_UnificationSubproblem::solve(bool findFirst, UnificationContext& solution, PendingUnificationStack& pending)
+CUI_UnificationSubproblem::solve(bool findFirst,
+				 UnificationContext& solution,
+				 PendingUnificationStack& pending)
 {
   int nrProblems = problems.size();
   int i;
@@ -106,7 +108,7 @@ CUI_UnificationSubproblem::solve(bool findFirst, UnificationContext& solution, P
 	  p.savedSubstitution.clone(solution);
 	  p.savedPendingState = pending.checkPoint();
 	  p.reverseTried = false;
-	  //cout << "CUI_UnificationSubproblem::solve() trying " << (DagNode*) p.lhs << " vs " << (DagNode*) p.rhs << " forwards" << endl;
+	  DebugInfo("trying " << (DagNode*) p.lhs << " vs " << (DagNode*) p.rhs << " forwards");
 	  if (!(p.lhs->getArgument(0)->computeSolvedForm(p.rhs->getArgument(0), solution, pending) &&
 		p.lhs->getArgument(1)->computeSolvedForm(p.rhs->getArgument(1), solution, pending)))
 	    goto backtrack;
@@ -127,7 +129,7 @@ CUI_UnificationSubproblem::solve(bool findFirst, UnificationContext& solution, P
 	      //
 	      solution.restoreFromClone(p.savedSubstitution);
 	      pending.restore(p.savedPendingState);
-	      //cout << "CUI_UnificationSubproblem::solve() trying " << (DagNode*) p.lhs << " vs " << (DagNode*) p.rhs << " backwards" << endl;
+	      DebugInfo("trying " << (DagNode*) p.lhs << " vs " << (DagNode*) p.rhs << " backwards");
 	      if (p.lhs->getArgument(0)->computeSolvedForm(p.rhs->getArgument(1), solution, pending) &&
 		  p.lhs->getArgument(1)->computeSolvedForm(p.rhs->getArgument(0), solution, pending))
 		{

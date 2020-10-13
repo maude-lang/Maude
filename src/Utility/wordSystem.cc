@@ -1,6 +1,6 @@
 /*
 
-    This file is part of the Maude 3 interpreter.
+    This file is part of the Maude 2 interpreter.
 
     Copyright 1997-2015 SRI International, Menlo Park, CA 94025, USA.
 
@@ -27,9 +27,9 @@
 #include "vector.hh"
 #include "wordSystem.hh"
 
-WordSystem::WordSystem(int nrVariables, int nrEquations)
+WordSystem::WordSystem(int nrVariables, int nrEquations, bool identityOptimizations)
 {
-  current = new WordLevel(nrVariables, nrEquations);
+  current = new WordLevel(WordLevel::INITIAL, nrVariables, nrEquations, identityOptimizations);
   incompletenessFlag = 0;
 }
 
@@ -45,9 +45,9 @@ WordSystem::findNextSolution()
     {
       //cout << "Solving level " << levelStack.size() << endl;
       WordLevel::ResultPair result = current->findNextPartialSolution();
-      if (result.first & WordLevel::INCOMPLETE)
+      if (result.first & INCOMPLETE)
 	incompletenessFlag = INCOMPLETE;
-      if (result.first & WordLevel::SUCCESS)
+      if (result.first & SUCCESS)
 	{
 	  if (result.second == 0)
 	    return SUCCESS | incompletenessFlag;  // current holds a complete solution
@@ -63,7 +63,8 @@ WordSystem::findNextSolution()
 	  if (levelStack.empty())
 	    break;
 	  //
-	  //	Need to discard unsolvable current problem and look for another solution to the previous residual problem.
+	  //	Need to discard unsolvable current problem and look for another solution
+	  //	to the previous residual problem.
 	  //
 	  delete current;
 	  int top = levelStack.size() - 1;

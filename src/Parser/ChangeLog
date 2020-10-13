@@ -1,3 +1,10 @@
+2020-04-07  Steven Eker  <eker2@eker9>
+
+	* parser.cc (Parser::parseSentence): added Assert()
+	for bad root nonterminal
+
+===================================Maude128a===========================================
+
 2019-11-07  Steven Eker  <eker@mu>
 
 	* parser.hh: fix typo in reference

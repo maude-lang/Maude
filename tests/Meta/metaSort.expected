@@ -238,18 +238,18 @@ endfm) .
 rewrites: 1
 result NeKindSet: '`[AttrSet`] ; '`[Bool`] ; '`[Condition`] ; '`[EquationSet`]
     ; '`[FindResult`,NatList`,Bound`,Parent`] ; '`[HookList`] ; '`[ImportList`]
-    ; '`[MembAxSet`] ; '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] ; '`[Module`] ; '`[NarrowingApplyResult?`]
-    ; '`[NarrowingSearchPathResult?`] ; '`[NarrowingSearchResult?`] ;
-    '`[NarrowingTrace`] ; '`[OpDeclSet`] ; '`[OpMappingSet`] ;
-    '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[RenamingSet`] ;
-    '`[Result4Tuple?`] ; '`[ResultPair?`] ; '`[ResultTriple?`] ; '`[RuleSet`] ;
-    '`[SmtResult?`] ; '`[SortMappingSet`] ; '`[SrewriteOption`] ;
-    '`[StratDeclSet`] ; '`[StratDefSet`] ; '`[StratMappingSet`] ;
-    '`[StrategyList`,Strategy?`] ; '`[String`] ; '`[SubsortDeclSet`] ;
-    '`[Substitution?`] ; '`[Trace?`] ;
+    ; '`[MatchingProblem`] ; '`[MembAxSet`] ; '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] ; '`[Module`] ;
+    '`[NarrowingApplyResult?`] ; '`[NarrowingSearchPathResult?`] ;
+    '`[NarrowingSearchResult?`] ; '`[NarrowingTrace`] ; '`[OpDeclSet`] ;
+    '`[OpMappingSet`] ; '`[ParameterDeclList`] ; '`[PrintOptionSet`] ;
+    '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
+    '`[ResultTriple?`] ; '`[RuleSet`] ; '`[SmtResult?`] ; '`[SortMappingSet`] ;
+    '`[SrewriteOption`] ; '`[StratDeclSet`] ; '`[StratDefSet`] ;
+    '`[StratMappingSet`] ; '`[StrategyList`,Strategy?`] ; '`[String`] ;
+    '`[SubsortDeclSet`] ; '`[Substitution?`] ; '`[Trace?`] ;
     '`[UnificationPair?`,MatchOrUnificationPair`,MatchPair?`] ;
     '`[UnificationProblem`] ; '`[UnificationTriple?`] ; '`[UsingPairSet`] ;
-    '`[Variant?`] ; '`[View`]
+    '`[Variant?`] ; '`[VariantOptionSet`] ; '`[View`]
 ==========================================
 reduce in META-LEVEL : maximalSorts(fmod 'FOO is
   protecting 'META-LEVEL .

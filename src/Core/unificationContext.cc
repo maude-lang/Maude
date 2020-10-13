@@ -140,3 +140,11 @@ UnificationContext::unificationBind(VariableDagNode* variable, DagNode* value)
     }
   variableDagNodes[index] = variable;
 }
+
+void
+UnificationContext::dump(ostream& s)
+{
+  int nrFragile = nrFragileBindings(); 
+  for (int i = 0; i < nrFragile; ++i)
+    s << (DagNode*) getVariableDagNode(i) << " |-> " << value(i) << endl;
+}

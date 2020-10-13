@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -76,11 +76,12 @@ private:
 					     bool atTop) const;
   NarrowingSearchState2* makeNarrowingSearchState2(ImportModule* m,
 						   FreeDagNode* message,
-						   RewritingContext& context) const;
+						   RewritingContext& context,
+						   int variantFlags) const;
   NarrowingSequenceSearch3* makeNarrowingSequenceSearch3(ImportModule* m,
 							 FreeDagNode* message,
 							 RewritingContext& context,
-							 bool keepHistory) const;
+							 int variantFlags) const;
   StrategicSearch* makeStrategicSearch(MetaModule* m,
 				       FreeDagNode* message,
 				       RewritingContext& context,
@@ -106,9 +107,13 @@ private:
   bool getSearchResult(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool getMatch(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool getXmatch(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getUnifier(FreeDagNode* message, ObjectSystemRewritingContext& context, bool disjoint);
+  bool getUnifier(FreeDagNode* message,
+		  ObjectSystemRewritingContext& context,
+		  bool disjoint,
+		  bool irredundant);
   bool getVariant(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool getVariantUnifier(FreeDagNode* message, ObjectSystemRewritingContext& context, bool disjoint);
+  bool getVariantMatcher(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool getLesserSorts(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool getMaximalSorts(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool getMinimalSorts(FreeDagNode* message, ObjectSystemRewritingContext& context);

@@ -1,7 +1,7 @@
 ==========================================
-variant unify in FOO : f(X, g(Y, Z)) =? f(X, g(Y, Z))  .
+variant unify in FOO : f(X, g(Y, Z)) =? f(X, g(Y, Z)) .
 
-Unifier #1
+Unifier 1
 rewrites: 0
 X --> #1:Foo
 Y --> #2:Foo
@@ -10,9 +10,9 @@ Z --> #3:Foo
 No more unifiers.
 rewrites: 0
 ==========================================
-variant unify in FOO : g(f(X, Y), Z) =? g(a, g(A, B))  .
+variant unify in FOO : g(f(X, Y), Z) =? g(a, g(A, B)) .
 
-Unifier #1
+Unifier 1
 rewrites: 2
 X --> a
 Y --> 1f
@@ -20,7 +20,7 @@ Z --> g(#1:Foo, #2:Foo)
 A --> #1:Foo
 B --> #2:Foo
 
-Unifier #2
+Unifier 2
 rewrites: 2
 X --> 1f
 Y --> a
@@ -31,9 +31,9 @@ B --> #2:Foo
 No more unifiers.
 rewrites: 2
 ==========================================
-variant unify in FOO : f(1f, g(Y, Z)) =? g(Y, Z)  .
+variant unify in FOO : f(1f, g(Y, Z)) =? g(Y, Z) .
 
-Unifier #1
+Unifier 1
 rewrites: 1
 Y --> #1:Foo
 Z --> #2:Foo
@@ -41,9 +41,9 @@ Z --> #2:Foo
 No more unifiers.
 rewrites: 1
 ==========================================
-variant unify in FOO : g(f(X, Y), Z) =? g(A, f(B, C))  .
+variant unify in FOO : g(f(X, Y), Z) =? g(A, f(B, C)) .
 
-Unifier #1
+Unifier 1
 rewrites: 4
 X --> %1:Foo
 Y --> %2:Foo
@@ -52,7 +52,7 @@ A --> f(%1:Foo, %2:Foo)
 B --> %3:Foo
 C --> %4:Foo
 
-Unifier #2
+Unifier 2
 rewrites: 12
 X --> #1:Foo
 Y --> 1f
@@ -61,7 +61,7 @@ A --> #1:Foo
 B --> #2:Foo
 C --> #3:Foo
 
-Unifier #3
+Unifier 3
 rewrites: 12
 X --> 1f
 Y --> #1:Foo
@@ -70,7 +70,7 @@ A --> #1:Foo
 B --> #2:Foo
 C --> #3:Foo
 
-Unifier #4
+Unifier 4
 rewrites: 12
 X --> #1:Foo
 Y --> #2:Foo
@@ -79,7 +79,7 @@ A --> f(#1:Foo, #2:Foo)
 B --> #3:Foo
 C --> 1f
 
-Unifier #5
+Unifier 5
 rewrites: 12
 X --> #1:Foo
 Y --> #2:Foo
@@ -88,7 +88,7 @@ A --> f(#1:Foo, #2:Foo)
 B --> 1f
 C --> #3:Foo
 
-Unifier #6
+Unifier 6
 rewrites: 12
 X --> %1:Foo
 Y --> 1f
@@ -97,7 +97,7 @@ A --> %1:Foo
 B --> %2:Foo
 C --> 1f
 
-Unifier #7
+Unifier 7
 rewrites: 12
 X --> %1:Foo
 Y --> 1f
@@ -106,7 +106,7 @@ A --> %1:Foo
 B --> 1f
 C --> %2:Foo
 
-Unifier #8
+Unifier 8
 rewrites: 12
 X --> 1f
 Y --> %1:Foo
@@ -115,7 +115,7 @@ A --> %1:Foo
 B --> %2:Foo
 C --> 1f
 
-Unifier #9
+Unifier 9
 rewrites: 12
 X --> 1f
 Y --> %1:Foo
@@ -127,14 +127,14 @@ C --> %2:Foo
 No more unifiers.
 rewrites: 12
 ==========================================
-variant unify in LEFT-ID : X:Magma a =? Y:Magma a a  .
+variant unify in LEFT-ID : X:Magma a =? Y:Magma a a .
 
-Unifier #1
+Unifier 1
 rewrites: 2
 X:Magma --> %1:Magma a
 Y:Magma --> %1:Magma
 
-Unifier #2
+Unifier 2
 rewrites: 4
 X:Magma --> a
 Y:Magma --> e
@@ -142,24 +142,24 @@ Y:Magma --> e
 No more unifiers.
 rewrites: 4
 ==========================================
-variant unify in LEFT-ID : a X:Magma =? a a Y:Magma  .
+variant unify in LEFT-ID : a X:Magma =? a a Y:Magma .
 
 No unifiers.
 rewrites: 0
 ==========================================
-variant unify in RIGHT-ID : X:Magma a =? Y:Magma a a  .
+variant unify in RIGHT-ID : X:Magma a =? Y:Magma a a .
 
 No unifiers.
 rewrites: 0
 ==========================================
-variant unify in RIGHT-ID : a X:Magma =? a a Y:Magma  .
+variant unify in RIGHT-ID : a X:Magma =? a a Y:Magma .
 
-Unifier #1
+Unifier 1
 rewrites: 2
 X:Magma --> a %1:Magma
 Y:Magma --> %1:Magma
 
-Unifier #2
+Unifier 2
 rewrites: 4
 X:Magma --> a
 Y:Magma --> e
@@ -167,44 +167,44 @@ Y:Magma --> e
 No more unifiers.
 rewrites: 4
 ==========================================
-variant unify in XOR : X + cst1 =? Y + cst2  .
+variant unify in XOR : X + cst1 =? Y + cst2 .
 
-Unifier #1
+Unifier 1
 rewrites: 6
 X --> cst2 + %1:XOR
 Y --> cst1 + %1:XOR
 
-Unifier #2
+Unifier 2
 rewrites: 6
 X --> cst2
 Y --> cst1
 
-Unifier #3
+Unifier 3
 rewrites: 24
 X --> cst1 + cst2 + #1:XOR
 Y --> #1:XOR
 
-Unifier #4
+Unifier 4
 rewrites: 24
 X --> #1:XOR
 Y --> cst1 + cst2 + #1:XOR
 
-Unifier #5
+Unifier 5
 rewrites: 24
 X --> 0
 Y --> cst1 + cst2
 
-Unifier #6
+Unifier 6
 rewrites: 24
 X --> cst1
 Y --> cst2
 
-Unifier #7
+Unifier 7
 rewrites: 24
 X --> cst1 + cst2
 Y --> 0
 
-Unifier #8
+Unifier 8
 rewrites: 24
 X --> cst1 + %1:XOR
 Y --> cst2 + %1:XOR
@@ -212,19 +212,19 @@ Y --> cst2 + %1:XOR
 No more unifiers.
 rewrites: 24
 ==========================================
-variant unify in XOR : X + cst1 =? Y + cst2  such that X + cst1 irreducible .
+variant unify in XOR : X + cst1 =? Y + cst2 such that X + cst1 irreducible .
 
-Unifier #1
+Unifier 1
 rewrites: 3
 X --> cst2 + %1:XOR
 Y --> cst1 + %1:XOR
 
-Unifier #2
+Unifier 2
 rewrites: 3
 X --> cst2
 Y --> cst1
 
-Unifier #3
+Unifier 3
 rewrites: 3
 X --> #1:XOR
 Y --> cst1 + cst2 + #1:XOR

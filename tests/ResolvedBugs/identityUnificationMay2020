@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/identityUnificationMay2020.maude -no-banner -no-advise \
+  > identityUnificationMay2020.out 2>&1
+
+diff $srcdir/identityUnificationMay2020.expected identityUnificationMay2020.out > /dev/null 2>&1

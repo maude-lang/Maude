@@ -45,9 +45,9 @@ public:
   void addUnification(DagNode* lhs, DagNode* rhs, bool marked, UnificationContext& solution);
   bool solve(bool findFirst, UnificationContext& solution, PendingUnificationStack& pending);
 
-
-
 private:
+  typedef WordSystem::Word Word;
+
   struct Assignment
   {
     int variable;
@@ -73,6 +73,7 @@ private:
   Vector<DagNode*> subterms;
   list<Assignment> assignments;
   list<Unification> unifications;
+
   WordSystem* wordSystem;
   Vector<DagNode*> freshVariables;
   //
@@ -82,6 +83,11 @@ private:
   Substitution savedSubstitution;
   PendingUnificationStack::Marker preSolveState;
   PendingUnificationStack::Marker savedPendingState;
+  //
+  //	Needed for identity case.
+  //
+  list<WordSystem::Word> nullEquations;
+  NatSet markedSubterms;  // indices of subterms that have been marked
 };
 
 #endif

@@ -173,9 +173,9 @@ looksLikeFloat(const char* s)
 const char*
 doubleToString(double d)
 {
-  if (isnan(d))
+  if (::isnan(d))
     return "NaN";
-  if (isinf(d))
+  if (::isinf(d))
     return (d < 0) ? "-Infinity" : "Infinity";
   if (d == 0.0)
     return "0.0";

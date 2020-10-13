@@ -502,8 +502,11 @@ ACU_DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 }
 
 bool
-ACU_DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
+ACU_DagNode::computeSolvedForm2(DagNode* rhs,
+				UnificationContext& solution,
+				PendingUnificationStack& pending)
 {
+  DebugEnter(this << " =? " << rhs);
   if (symbol() == rhs->symbol())
     {
       //

@@ -1,0 +1,13 @@
+==========================================
+unify in U-TEST : X =? f(g(Z), Y) .
+
+Unifier 1
+X --> g(#1:Foo)
+Z --> #1:Foo
+Y --> 1
+
+Unifier 2
+X --> f(g(#1:Foo), #2:Foo)
+Z --> #1:Foo
+Y --> #2:Foo
+Bye.

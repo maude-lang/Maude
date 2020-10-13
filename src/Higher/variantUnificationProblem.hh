@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2016 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,6 +40,14 @@ class VariantUnificationProblem : private SimpleRootContainer
 
 public:
   //
+  //	This extends VariantSearch::Flags and one day maybe merged into
+  //	such if FilteredVariantUnifierSearch is merged into VariantSearch.
+  //
+  enum Flags
+    {
+     FILTER_VARIANT_UNIFIERS = 0x1000,
+    };
+  //
   //	context is just used to create a new context to work in.
   //
   //	blockerDags are indirectly protected from GC by internal VariantSearch object.
@@ -64,14 +72,18 @@ public:
 			    DagNode* target,
 			    const NarrowingVariableInfo& variableInfo,
 			    FreshVariableGenerator* freshVariableGenerator,
-			    int disallowedVariableFamily);
+			    int disallowedVariableFamily,
+			    int variantFlags);
   ~VariantUnificationProblem();
 
+  bool isIncomplete() const;
+  //
+  //	These are specific to unifiers and can be overriden by a derived class.
+  //
   bool findNextUnifier();
   Substitution& getSolution() const;
   int getNrFreeVariables() const;
   int getVariableFamily() const;
-  bool isIncomplete() const;
 
 private:
   void markReachableNodes();

@@ -1,3 +1,28 @@
+2020-09-28  Steven Eker  <eker2@eker10>
+
+	* matrixOpSymbol.cc (MatrixOpSymbol::eqRewrite): use range-based
+	for loop
+
+	* ACU_NumberOpSymbol.cc (ACU_NumberOpSymbol::eqRewrite2): use
+	range-based for loop
+
+===================================Maude131===========================================
+
+2020-04-22  Steven Eker  <eker2@eker9>
+
+	* minusSymbol.hh (class MinusSymbol): added decl for makeIntDag()
+
+	* minusSymbol.cc (MinusSymbol::makeIntDag): added
+
+===================================Maude128a===========================================
+
+2019-12-17  Steven Eker  <eker@mu>
+
+	* floatOpSymbol.cc (isNaN): use ::isnan() to avoid ambiguity with
+	older compilers
+
+===================================Maude128===========================================
+
 2019-12-06  Steven Eker  <eker@mu>
 
 	* counterSymbol.hh (NumberOpSymbol): commented out declarations for

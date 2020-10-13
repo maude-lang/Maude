@@ -79,8 +79,8 @@ StackMachineRhsCompiler::compileInstructionSequence()
       Assert(f.symbol != 0, "null f.symbol when nrFunctionEvaluations = " << nrFunctionEvaluations);
 
       activeSlots.subtract(f.destination);
-      FOR_EACH_CONST(i, Vector<int>, f.argumentSlots)
-	activeSlots.insert(*i);
+      for (int i : f.argumentSlots)
+	activeSlots.insert(i);
 	    
       Instruction* newInstruction = (nextInstruction == 0) ? 
 	f.symbol->generateFinalInstruction(f.argumentSlots) :
@@ -106,16 +106,16 @@ void
 StackMachineRhsCompiler::dump(ostream& s, const VariableInfo& variableInfo, int indentLevel)
 {
   s << Indent(indentLevel) << "Begin{StackMachineRhsCompiler}\n";
-  FOR_EACH_CONST(i, Vector<FunctionEval>, functionEvaluations)
+  for (FunctionEval& i : functionEvaluations)
     {
       s << Indent(indentLevel + 1);
-      if (i->symbol == 0)
+      if (i.symbol == 0)
 	s << "(return)\t";
       else
-	s << i->symbol << "\t";
-      s << "destination = " << i->destination << "\targs = ";
-      FOR_EACH_CONST(k, Vector<int>, i->argumentSlots)
-	s << *k << ' ';
+	s << i.symbol << "\t";
+      s << "destination = " << i.destination << "\targs = ";
+      for (int k : i.argumentSlots)
+	s << k << ' ';
     }
   s << Indent(indentLevel) << "End{StackMachineRhsCompiler}\n";
 }

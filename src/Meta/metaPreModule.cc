@@ -72,33 +72,30 @@ MetaPreModule::getFlatModule()
   DebugAdvisory("MetaPreModule::getFlatModule() called on " << this);
 
   VisibleModule* m = getFlatSignature();
+  //
+  //	getFlatSignature() returns null pointer rather than calling
+  //	markAsBad() if anything went wrong.
+  //
   if (m != 0 && m->getStatus() < Module::THEORY_CLOSED)
     {
       //
       //	We didn't import statements or compile module yet.
       //
       m->importStatements();
-      if (m->isBad())
-	{
-	  IssueWarning(*m <<
-		       ": this module contains one or more errors that \
-could not be patched up and thus it cannot be used or imported.");
-	}
-      else
-	{
-	  //
-	  //	Compile  module.
-	  //
-	  m->closeTheory();
-	  //
-	  //	We don't allow reserved fresh variable names in variant
-	  //	equations or narrowing rules.
-	  //
-	  m->checkFreshVariableNames();
-	}
+      Assert(!(m->isBad()), "importStatements() unexpectedly set bad flag in " << *m);
       m->resetImports();
+      //
+      //	Compile  module.
+      //
+      m->closeTheory();
+      //
+      //	We don't allow reserved fresh variable names in variant
+      //	equations or narrowing rules. We can't do this until statements
+      //	have been compiled since it relied on VariableInfo being filled out.
+      //
+      m->checkFreshVariableNames();
     }
-  return m;
+  return m;  // could be null pointer
 }
 
 VisibleModule*

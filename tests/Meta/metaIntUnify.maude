@@ -167,3 +167,74 @@ createInterpreter(interpreterManager, me, none) .
 erew in DISJOINT-UNIFY-TEST2 : <> 
 < me : User | problem: ('__['X:Foo, 'Y:Foo, 'X:Foo] =? '__['X:Foo, 'X:Foo]) > 
 createInterpreter(interpreterManager, me, none) .
+
+
+*** irredundant unifiers
+fmod BAG is
+  sorts Elt Bag .
+  subsort Elt < Bag .
+  op empty : -> Bag .
+  op __ : Bag Bag -> Bag [assoc comm id: empty] .
+endfm
+
+mod IRRED-UNIFY-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op problem:_ : UnificationProblem -> Attribute .
+  op soln:_ : Nat -> Attribute .
+  op result:_ : Msg -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var U : UnificationProblem .
+  var S : Substitution .
+  var Q : Qid .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('BAG, true)) .
+
+  rl < X : User | AS, problem: U > insertedModule(X, Y) =>
+     < X : User | AS, problem: U, soln: 1 > getIrredundantUnifier(Y, X, 'BAG, U, '#, 0) .
+
+  rl < X : User | AS, problem: U, soln: N > gotIrredundantUnifier(X, Y, S, Q) =>
+     < X : User | AS,  problem: U, soln: (N + 1), result: gotIrredundantUnifier(X, Y, S, Q) >
+     getIrredundantUnifier(Y, X, 'BAG, U, '#, N) .
+endm
+
+erew in IRRED-UNIFY-TEST : <> 
+< me : User | problem: ('__['L:Bag, 'M:Bag] =? '__['P:Bag, 'Q:Bag]) > 
+createInterpreter(interpreterManager, me, none) .
+
+mod IRRED-DISJOINT-UNIFY-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op problem:_ : UnificationProblem -> Attribute .
+  op soln:_ : Nat -> Attribute .
+  op result:_ : Msg -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var U : UnificationProblem .
+  var S S' : Substitution .
+  var Q : Qid .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('BAG, true)) .
+
+  rl < X : User | AS, problem: U > insertedModule(X, Y) =>
+     < X : User | AS, problem: U, soln: 1 > getIrredundantDisjointUnifier(Y, X, 'BAG, U, '@, 0) .
+
+  rl < X : User | AS, problem: U, soln: N > gotIrredundantDisjointUnifier(X, Y, S, S', Q) =>
+     < X : User | AS,  problem: U, soln: (N + 1), result: gotIrredundantDisjointUnifier(X, Y, S, S', Q) >
+     getIrredundantDisjointUnifier(Y, X, 'BAG, U, '@, N) .
+endm
+
+erew in IRRED-DISJOINT-UNIFY-TEST : <> 
+< me : User | problem: ('__['L:Bag, 'M:Bag] =? '__['P:Bag, 'Q:Bag]) > 
+createInterpreter(interpreterManager, me, none) .

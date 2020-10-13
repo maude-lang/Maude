@@ -1,0 +1,8 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test metaParseStrategy() on top(all).
+***
+
+red in META-LEVEL : metaParseStrategy(['NAT], none, 'top '`( 'all '`)) .

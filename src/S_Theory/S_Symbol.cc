@@ -499,8 +499,8 @@ S_Symbol::computeGeneralizedSort2(const SortBdds& sortBdds,
   //
   //	Finally we append our result BDDs to the output BDDs.
   //
-  FOR_EACH_CONST(i, Vector<Bdd>, resultBdds)
-    outputBdds.append(*i);
+  for (const Bdd& b : resultBdds)
+    outputBdds.append(b);
 }
 
 bool

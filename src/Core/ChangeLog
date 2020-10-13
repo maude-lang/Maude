@@ -1,3 +1,174 @@
+2020-09-22  Steven Eker  <eker2@eker10>
+
+	* unificationContext.cc (UnificationContext::dump): added
+
+	* unificationContext.hh (class UnificationContext): added decl for
+	dump()
+
+2020-09-21  Steven Eker  <eker2@eker10>
+
+	* compoundCycleSubproblem.cc (CompoundCycleSubproblem::solve):
+	added a comment to explain why resolving a single arc can be
+	sufficient
+	(CompoundCycleSubproblem::solve): added explanation and examples
+	to show why cyclic identities must be considered
+
+	* compoundCycleSubproblem.hh (class CompoundCycleSubproblem):
+	deleted decl for addUnification()
+
+	* compoundCycleSubproblem.cc
+	(CompoundCycleSubproblem::addUnification): deleted
+
+===================================Maude130===========================================
+
+2020-08-28  Steven Eker  <eker2@eker10>
+
+	* freshVariableGenerator.hh (class FreshVariableGenerator): added
+	decl for isFreshVariableName()
+
+2020-07-29  Steven Eker  <eker2@eker10>
+
+	* rewritingContext.cc (RewritingContext::markReachableNodes):
+	limited contexts exist across garbage collects after all because
+	UnifierFilter periodically needs to allow garbage collection to
+	avoid a huge accumulation of matching garbage
+	(RewritingContext::markReachableNodes): use range-based for loop
+	to traverse redexStack
+
+2020-07-15  Steven Eker  <eker2@eker10>
+
+	* rewritingContext.hh (class RewritingContext): set a default
+	substitutionSize of 0 for the limited context ctor
+
+	* rewritingContext.cc (RewritingContext::markReachableNodes): use
+	isLimited()
+	(RewritingContext::markReachableNodes): added CantHappen() for
+	limited contexts
+
+	* sortConstraintTable.cc
+	(SortConstraintTable::constrainToSmallerSort2): check isLimited()
+	before proceeding
+
+	* rewritingContext.hh (class RewritingContext): added a more
+	detail comment to explain the need for limited use rewriting
+	contexts
+	(RewritingContext::RewritingContext): updated comment
+	(RewritingContext::isLimited): added
+
+===================================Maude129===========================================
+
+2020-06-23  Steven Eker  <eker2@eker10>
+
+	* pendingUnificationStack.cc
+	(PendingUnificationStack::resolveTheoryClash): added DebugEnter()
+
+2020-04-14  Steven Eker  <eker2@eker9>
+
+	* rewritingContext.cc
+	(RewritingContext::blockAndHandleInterrupts): added
+
+	* rewritingContext.hh (class RewritingContext): added decl
+	for blockAndHandleInterrupts()
+
+2020-03-17  Steven Eker  <eker2@eker9>
+
+	* module.cc (Module): clean for loop
+	(Module::closeSortSet): clean for loop
+
+	* variableInfo.cc (VariableInfo::variable2Index): clean up
+	for loop (both versions)
+	(VariableInfo::computeIndexRemapping): clean up for loops;
+	use range-based for loop
+	(VariableInfo::variableNameConflict): use range-based for loop
+
+	* stackMachineRhsCompiler.cc
+	(StackMachineRhsCompiler::compileInstructionSequence):
+	use range based for loop
+	(StackMachineRhsCompiler::dump): use range based for loops
+
+	* sortTable.cc: (SortTable::kindLevelDeclarationsOnly):
+	use range based for loop
+	(SortTable::findMinSortIndex): use range based for loop
+	(SortTable::dumpSortDiagram): clean loops
+	(SortTable::compileOpDeclarations): tidy loop
+	(SortTable::computeBddVector): use range based for loop
+
+	* sortErrorAnalysis.cc (SortTable::sortErrorAnalysis):
+	clean up for loops
+
+	* sortBdds.cc (SortBdds::SortBdds): use range based
+	for loop
+	(SortBdds::operatorCompose): use range based for loop
+	* ruleTable.cc (RuleTable::resetEachRule): use range
+	based for loop
+
+	* rhsBuilder.cc (RhsBuilder::recordInfo): use range
+	based for loop
+
+2020-03-16  Steven Eker  <eker2@eker9>
+
+	* pendingUnificationStack.cc (PendingUnificationStack):
+	use range based for loop
+	(PendingUnificationStack::markReachableNodes): use
+	range based for loop
+	(PendingUnificationStack::makeNewSubproblem): use
+	range based for loop
+	(PendingUnificationStack::findCycleFrom): use range based
+	for loop
+
+	* memoTable.cc (MemoTable::memoEnter): use range based
+	for loop
+
+	* equationTable.cc (EquationTable::applyReplace): use
+	range based for loop
+	(EquationTable::applyReplaceNoOwise): use range based
+	for loop
+	(EquationTable::resetEachEquation): use range based
+	for loop
+	(EquationTable::dumpEquationTable): use range based
+	for loop
+
+2020-03-10  Rubén Rubio  <rubenrub@ucm.es>
+
+       * module.cc (closeTheory): do strategy definitions indexing here
+
+       * strategyDefinition (StrategyDefinition): strategy definition
+       indexing has been moved to Module::closeTheory not to index bad
+       definitions, since they are checked later
+       (check): ignore nonexec definitions and fixed typo
+
+===================================Maude128a===========================================
+
+2020-02-10  Steven Eker  <eker@mu>
+
+	* module.cc (indexEquations): use range-based for loops
+	(indexEquation): use range-based for loop
+	(indexSortConstraints): use use range-based for loops
+	(stackMachineCompile): use range-based for loop
+	(insertLateSymbol): use use range-based for loops
+	(closeFixUps): use use range-based for loops
+	(closeSortSet): added comment as to why using a range-based
+	for loop will fail
+	(resetRules): use range-based for loop
+	(reset): use range-based for loop
+	(Module): use range-based for loops
+
+	* preEquation.cc (preprocess): remove commented out AdvisoryCheck()
+	warning about change of operational semantics between Maude 1.0 and
+	Maude 2.0 (Maude 1.0 did not allow rewriting of terms at the error sort)
+	(PreEquation): code cleaning and more detailed comment
+
+	* sortConstraint.cc (check): added comment to exlain why we use markAsBad()
+	here
+
+	* equation.cc (compile): deleted commented out old stackMachine code
+	(check): added comment to exlain why we use markAsBad() here
+
+	* rule.cc (check): deleted commented out markAsBad() call; added
+	comment to explain why we don't call markAsBad() anymore
+
+===================================Maude128===========================================
+
 2019-12-06  Steven Eker  <eker@mu>
 
 	* ruleTable.cc (saveHiddenState, restoreHiddenState): commented out

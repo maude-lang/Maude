@@ -22,16 +22,19 @@
 
 //
 //	Class for folding and maintaining the history of a narrowing search.
-//	Both folding and keeping the history are optional. If neither are used, we simply keep
-//	track of unexplored states.
+//	Both folding and keeping the history are optional. If neither are used,
+//	we simply keep track of unexplored states.
 //
-//	The caller gives each state an index, and for each new state, holds the index of the parent state or NONE if
-//	it is the initial state of the narrowing search. A states index is required to be larger than that of its parent.
-//	When an existing state is ejected by the arrival of a new state that is more general, all of its descendents are
-//	likewise ejected, just as if the search that has already taken place had been pruned.
+//	The caller gives each state an index, and for each new state, holds the
+//	index of the parent state or NONE if it is the initial state of the narrowing
+//	search. A states index is required to be larger than that of its parent.
+//	When an existing state is ejected by the arrival of a new state that is more
+//	general, all of its descendents are likewise ejected, just as if the search
+//	that has already taken place had been pruned.
 //
 #ifndef _narrowingFolder_hh_
 #define _narrowingFolder_hh_
+#include <set>
 #include <map>
 #include "simpleRootContainer.hh"
 #include "narrowingVariableInfo.hh"
@@ -45,16 +48,16 @@ public:
   ~NarrowingFolder();
 
   bool insertState(int index, DagNode* state, int parentIndex);
-  void addAccumulatedSubstitution(int index, int variableFamily, Substitution* accumulatedSubstitution);
+  void addAccumulatedSubstitution(int index,
+				  int variableFamily,
+				  Substitution* accumulatedSubstitution);
   void addHistory(int index,
 		  Rule* rule,
 		  DagNode* narrowingContext,
 		  DagNode* narrowingPosition,
 		  const Substitution& unifier,
 		  const NarrowingVariableInfo& variableInfo);
-
   bool keepingHistory() const;
-
   void getState(int index,
 		DagNode*& state,
 		int& variableFamily,
@@ -71,7 +74,7 @@ public:
 		  const Substitution*& accumulatedSubstitution,
 		  int& parentIndex) const;
   //
-  //	Returns NONE if there is not next surviving state.
+  //	Returns NONE if there is no next surviving state.
   //
   int getNextSurvivingState(DagNode*& nextState,
 			    Substitution*& nextStateAccumulatedSubstitution,
@@ -95,7 +98,8 @@ private:
     //
     Term* stateTerm;
     LhsAutomaton* matchingAutomaton;
-    int nrMatchingVariables;  // number of variables needed for matching; includes any abstraction variables
+    int nrMatchingVariables;  // number of variables needed for matching; includes
+    			      // any abstraction variables
     //
     //	Only used for history.
     //
@@ -111,6 +115,7 @@ private:
   };
 
   typedef map<int, RetainedState*> RetainedStateMap;
+  typedef set<int> StateSet;
 
   void markReachableNodes();
   void cleanGraph();
@@ -122,7 +127,9 @@ private:
 };
 
 inline void
-NarrowingFolder::addAccumulatedSubstitution(int index, int variableFamily, Substitution* accumulatedSubstitution)
+NarrowingFolder::addAccumulatedSubstitution(int index,
+					    int variableFamily,
+					    Substitution* accumulatedSubstitution)
 {
   RetainedStateMap::iterator i = mostGeneralSoFar.find(index);
   Assert(i != mostGeneralSoFar.end(), "couldn't find state with index " << index);

@@ -164,12 +164,24 @@ PreModule::processExplicitImports(ImportModule* flatModule)
 	    {
 	      IssueWarning(i->lineNumber << ": cannot import module " << fm <<
 			   " because it has free parameters.");
+	      //
+	      //	Mark the module as bad to avoid cascading warnings and potential
+	      //	internal errors. But press ahead with remaining imports since
+	      //	they should be independent and we might find other errors.
+	      //
 	      flatModule->markAsBad();
 	    }
 	  else
 	    flatModule->addImport(fm, i->mode, i->lineNumber);
 	}
       else
-	flatModule->markAsBad();
+	{
+	  //
+	  //	Mark the module as bad to avoid cascading warnings and potential
+	  //	internal errors. But press ahead with remaining imports since
+	  //	they should be independent and we might find other errors.
+	  //
+	  flatModule->markAsBad();
+	}
     }
 }

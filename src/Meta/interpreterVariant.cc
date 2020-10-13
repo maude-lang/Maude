@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2018-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -66,11 +66,14 @@ InterpreterManagerSymbol::getVariant(FreeDagNode* message, ObjectSystemRewriting
 			{
 			  if (metaLevel->downTermList(message->getArgument(4), m, blockerTerms))
 			    {
-			      Vector<DagNode*> blockerDags; 
-			      FOR_EACH_CONST(i, Vector<Term*>, blockerTerms)
+			      Vector<DagNode*> blockerDags;
+			      for (Term* t : blockerTerms)
 				{
-				  Term* t = *i;
-				  t = t->normalize(true);  // we don't really need to normalize but we do need to set hash values
+				  //
+				  //	We don't really need to normalize but we do need
+				  //	to set hash values.
+				  //
+				  t = t->normalize(true);
 				  blockerDags.append(t->term2Dag());
 				  t->deepSelfDestruct();
 				}
@@ -82,11 +85,10 @@ InterpreterManagerSymbol::getVariant(FreeDagNode* message, ObjectSystemRewriting
 			      vs = new VariantSearch(term2RewritingContext(start, context),
 						     blockerDags,
 						     new FreshVariableSource(m),
-						     false,  // not doing unification
-						     irredundant,
-						     true,  // delete fresh variable source in dtor
-						     variableFamily,
-						     true  /* check variable in start term */);
+						     VariantSearch::DELETE_FRESH_VARIABLE_GENERATOR |
+						     VariantSearch::CHECK_VARIABLE_NAMES |
+						     (irredundant ? VariantSearch::IRREDUNDANT_MODE : 0),
+						     variableFamily);
 			      lastSolutionNr = -1;
 			    }
 			  else
@@ -107,45 +109,35 @@ InterpreterManagerSymbol::getVariant(FreeDagNode* message, ObjectSystemRewriting
 		  //
 		  //	Now we compute the requested variant.
 		  //
-		  const Vector<DagNode*>* variant = 0;  // substitution with variant dag at the end
-		  int nrFreeVariables;              // number of free variables used to express the variant
-		  int variableFamily;	            // family of fresh variables used to express the variant
-		  int parentIndex;                  // index of parent variant
-		  bool moreInLayer;                 // more variants in current layer?
-
-		  if (lastSolutionNr == solutionNr)
+		  for (; lastSolutionNr < solutionNr; ++lastSolutionNr)
 		    {
-		      //
-		      //	So the user can ask for the same variant over and over again without
-		      //	a horrible loss of performance.
-		      //
-		      variant = vs->getLastReturnedVariant(nrFreeVariables, variableFamily, parentIndex, moreInLayer);
-		    }
-		  else
-		    {
-		      while (lastSolutionNr < solutionNr)
+		      if (!(vs->findNextVariant()))
 			{
-			  variant = vs->getNextVariant(nrFreeVariables, variableFamily, parentIndex, moreInLayer);
-			  if (variant == 0)
-			    {
-			      Vector<DagNode*> args(4);
-			      args[0] = target;
-			      args[1] = message->getArgument(0);
-			      args[2] = upRewriteCount(vs->getContext());
-			      args[3] = metaLevel->upBool(!(vs->isIncomplete()));
-			      reply = noSuchResult3Msg->makeDagNode(args);
-			      context.addInCount(*(vs->getContext()));
-			      delete vs;
-			      goto done;
-			    }
-			  ++lastSolutionNr;
+			  Vector<DagNode*> args(4);
+			  args[0] = target;
+			  args[1] = message->getArgument(0);
+			  args[2] = upRewriteCount(vs->getContext());
+			  args[3] = metaLevel->upBool(!(vs->isIncomplete()));
+			  reply = noSuchResult3Msg->makeDagNode(args);
+			  context.addInCount(*(vs->getContext()));
+			  delete vs;
+			  goto done;
 			}
+		      //context.transferCountFrom(*(vs->getContext()));
 		    }
 		  //
 		  //	Got the solution we wanted so cache the state.
 		  //
 		  mm->insert(message, vs, solutionNr);
 		  {
+		    int nrFreeVariables;
+		    int resultVariableFamily;
+		    int parentIndex;
+		    bool moreInLayer;
+		    const Vector<DagNode*>& variant = vs->getCurrentVariant(nrFreeVariables,
+									    resultVariableFamily,
+									    &parentIndex,
+									    &moreInLayer);
 		    //
 		    //	op gotVariant : Oid Oid RewriteCount Term Substitution Qid Parent Bool-> Msg .
 		    //                   0   1       2        3        4        5    6     7
@@ -158,13 +150,19 @@ InterpreterManagerSymbol::getVariant(FreeDagNode* message, ObjectSystemRewriting
 		    PointerMap dagNodeMap;
 
 		    const NarrowingVariableInfo& variableInfo = vs->getVariableInfo();
-		    int nrVariables = variant->size() - 1;
-		    int variableNameId = FreshVariableSource::getBaseName(variableFamily);
+		    int nrVariables = variant.size() - 1;
+		    int variableNameId = FreshVariableSource::getBaseName(resultVariableFamily);
 
-		    args[3] = metaLevel->upDagNode((*variant)[nrVariables], m, qidMap, dagNodeMap);
-		    args[4] = metaLevel->upSubstitution(*variant, variableInfo, nrVariables, m, qidMap, dagNodeMap);
+		    args[3] = metaLevel->upDagNode(variant[nrVariables], m, qidMap, dagNodeMap);
+		    args[4] = metaLevel->upSubstitution(variant,
+							variableInfo,
+							nrVariables,
+							m,
+							qidMap,
+							dagNodeMap);
 		    args[5] = metaLevel->upQid(variableNameId, qidMap);
-		    args[6] = (parentIndex >= 0) ? metaLevel->upNat(parentIndex) : metaLevel->upNoParent();
+		    args[6] = (parentIndex >= 0) ? metaLevel->upNat(parentIndex) :
+		      metaLevel->upNoParent();
 		    args[7] = metaLevel->upBool(moreInLayer);
 
 		    reply = gotVariantMsg->makeDagNode(args);

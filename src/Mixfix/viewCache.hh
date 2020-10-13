@@ -34,6 +34,8 @@ class ViewCache : public Entity::User
 
 public:
   ViewCache();
+  ~ViewCache();
+
   View* makeViewInstantiation(View* view, const Vector<Argument*>& arguments);
 
   void destructUnusedViews();

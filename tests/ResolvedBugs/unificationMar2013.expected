@@ -8,7 +8,7 @@ No unifier.
 unify in FOO2 : f(a, A) =? f(a, X) /\ f(a, Y) =? f(a, X) /\ f(a, g(A)) =? f(a,
     g(X)) /\ f(a, g(Y)) =? f(a, g(X)) .
 
-Solution 1
+Unifier 1
 A --> #1:Foo
 X --> #1:Foo
 Y --> #1:Foo
@@ -16,7 +16,7 @@ Y --> #1:Foo
 unify in FOO2 : f(a, Y) =? f(a, X) /\ f(a, g(A)) =? f(a, g(X)) /\ f(a, g(Y)) =?
     f(a, g(X)) .
 
-Solution 1
+Unifier 1
 Y --> #1:Foo
 X --> #1:Foo
 A --> #1:Foo
@@ -29,23 +29,23 @@ No unifier.
 ==========================================
 unify in FOO4 : f(a, Y) =? f(a, X) .
 
-Solution 1
+Unifier 1
 Y --> #1:Foo
 X --> #1:Foo
 ==========================================
 unify in FOO4 : f(X, a) =? f(X, a) .
 
-Solution 1
+Unifier 1
 X --> #1:Foo
 ==========================================
 unify in FOO4 : f(a, b) =? f(a, b) .
 
-Solution 1
+Unifier 1
 empty substitution
 ==========================================
 unify in FOO4 : f(X, Y) =? f(X, Y) .
 
-Solution 1
+Unifier 1
 X --> #1:Foo
 Y --> #2:Foo
 Bye.

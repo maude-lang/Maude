@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -107,11 +107,22 @@ MixfixParser::getTokenSet()  // HACK
   return tokens;
 }
 
-MixfixParser::MixfixParser(MixfixModule& client)
+MixfixParser::MixfixParser(MixfixModule& client,
+			   bool complexFlag,
+			   int componentNonTerminalBase,
+			   int nextNonTerminalCode)
   : client(client),
+    complexParser(complexFlag),
+    componentNonTerminalBase(componentNonTerminalBase),
     specialTerminals(Token::LAST_PROPERTY)
 {
+  nextNonTerminal = nextNonTerminalCode;
   bubblesAllowed = false;
+}
+
+MixfixParser::~MixfixParser()
+{
+  DebugInfo("this = " << this);
 }
 
 void
@@ -346,7 +357,7 @@ MixfixParser::makeUnifyCommand(Vector<Term*>& lhs, Vector<Term*>& rhs)
       int unifyPair = parser.getChild(node, 0);
       lhs.append(makeTerm(parser.getChild(unifyPair, 0)));
       rhs.append(makeTerm(parser.getChild(unifyPair, 1)));
-      if (actions[parser.getProductionNumber(node)].action != UNIFY_LIST)
+      if (actions[parser.getProductionNumber(node)].action != PAIR_LIST)
 	break;
     }
 }
@@ -375,15 +386,18 @@ MixfixParser::makeGetVariantsCommand(Term*& initial, Vector<Term*>& constraint)
   Assert(nrParses > 0, "no parses");
   int node = ROOT_NODE;
   initial = makeTerm(parser.getChild(node, 0));
-  if (actions[parser.getProductionNumber(node)].action == CONDITIONAL_COMMAND)
+  if (actions[parser.getProductionNumber(node)].action == MAKE_TERM_LIST)
     makeTermList(parser.getChild(node, 2), constraint);
 }
 
 void
-MixfixParser::makeVariantUnifyCommand(Vector<Term*>& lhs,
-				      Vector<Term*>& rhs,
-				      Vector<Term*>& constraint)
+MixfixParser::makeVariantUnifyOrMatchCommand(Vector<Term*>& lhs,
+					     Vector<Term*>& rhs,
+					     Vector<Term*>& constraint)
 {
+  //
+  //	This also handles variant match commands which have the same form.
+  //
   Assert(nrParses > 0, "no parses");
   Assert(lhs.empty() && rhs.empty() && constraint.empty(), "return vectors should be empty");
 
@@ -392,11 +406,11 @@ MixfixParser::makeVariantUnifyCommand(Vector<Term*>& lhs,
       int unifyPair = parser.getChild(node, 0);
       lhs.append(makeTerm(parser.getChild(unifyPair, 0)));
       rhs.append(makeTerm(parser.getChild(unifyPair, 1)));
-      if (actions[parser.getProductionNumber(node)].action != UNIFY_LIST)
+      if (actions[parser.getProductionNumber(node)].action != PAIR_LIST)
 	break;
     }
 
-  if (actions[parser.getProductionNumber(ROOT_NODE)].action == CONDITIONAL_COMMAND)
+  if (actions[parser.getProductionNumber(ROOT_NODE)].action == MAKE_TERM_LIST)
     makeTermList(parser.getChild(ROOT_NODE, 2), constraint);
 }
 
@@ -1167,6 +1181,8 @@ MixfixParser::makeStatementPart(int node,
 	pair<RewriteStrategy*, Term*> call = makeStrategyCall(parser.getChild(pairNode, 0));
 	StrategyExpression* rhs = makeStrategy(parser.getChild(pairNode, 1));
 	StrategyDefinition* sdef = new StrategyDefinition(label, call.first, call.second, rhs, condition);
+	if (flags.getFlag(NONEXEC))
+	  sdef->setNonexec();
 	sdef->setLineNumber(lineNumber);
 	client.insertStrategyDefinition(sdef);
 	if (metadata != NONE)

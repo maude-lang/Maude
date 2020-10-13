@@ -1,3 +1,114 @@
+2020-07-01  Steven Eker  <eker2@eker10>
+
+	* AU_UnificationSubproblem2.cc
+	(AU_UnificationSubproblem2::addUnification): fix bug where
+	inserting into markedSubterms wasn't conditional on the equation
+	being marked
+
+2020-06-30  Steven Eker  <eker2@eker10>
+
+	* AU_UnificationSubproblem2.cc
+	(AU_UnificationSubproblem2::addUnification): record marked
+	subterms
+	(AU_UnificationSubproblem2::makeWordSystem): require marked
+	subterms to take at most one thing
+
+	* AU_UnificationSubproblem2.hh (class AU_UnificationSubproblem2):
+	added data member markedSubterms
+
+2020-06-23  Steven Eker  <eker2@eker10>
+
+	* AU_UnificationSubproblem2.cc
+	(AU_UnificationSubproblem2::addUnification): check rhs alien in
+	case it our identity
+	(AU_UnificationSubproblem2::makeWordSystem): use range-base for
+	loops for inserting assignments and equations; added DebugInfo()s
+
+	* AU_UnificationSubproblem2.hh (class AU_UnificationSubproblem2):
+	added typedef for Word
+
+	* AU_UnificationSubproblem2.cc
+	(AU_UnificationSubproblem2::makeWordSystem): insert null equation
+
+	* AU_Symbol.cc (AU_Symbol::canResolveTheoryClash): added
+
+	* AU_Symbol.hh (class AU_Symbol): uncomment
+	canResolveTheoryClash() decl
+
+	* AU_DagNode.cc (AU_DagNode::computeSolvedForm2): added
+	DebugEnter()
+
+	* AU_UnificationSubproblem2.hh (class AU_UnificationSubproblem2):
+	added data member nullEquations
+
+	* AU_UnificationSubproblem2.cc
+	(AU_UnificationSubproblem2::dagToAbstract): return NONE for
+	variables bound to our identity
+	(AU_UnificationSubproblem2::assocToAbstract): handle NONE as
+	an index
+	(AU_UnificationSubproblem2::addUnification): rewritten to handle
+	empty abstract words and NULL abstract rhs
+
+2020-06-19  Steven Eker  <eker2@eker10>
+
+	* AU_Symbol.cc (AU_Symbol::makeUnificationSubproblem): call
+	computeBaseSortForGroundSubterms() for identity if it exists and
+	it hasn't been done yet
+
+2020-06-18  Steven Eker  <eker2@eker10>
+
+	* AU_UnificationSubproblem2.cc
+	(AU_UnificationSubproblem2::buildSolution): if we have the empty
+	word, don't fall into the general case
+	(AU_UnificationSubproblem2::buildSolution): restructure to
+	resemble ACU version; use unificationBind() for binding unbound
+	variables to identity
+
+	* AU_DagNode.cc (AU_DagNode::computeBaseSortForGroundSubterms):
+	warn about unimplemented for one-sided identity
+	(AU_DagNode::computeSolvedForm2): bail on the one-sided identity
+	case
+
+	* AU_UnificationSubproblem2.cc
+	(AU_UnificationSubproblem2::buildSolution): deal with empty
+	assignment in solution by assigning identity dag
+
+2020-06-12  Steven Eker  <eker2@eker10>
+
+	* AU_UnificationSubproblem2.cc
+	(AU_UnificationSubproblem2::makeWordSystem): call setTakeEmpty()
+	for subterms that could possibly unify with our identity
+
+2020-06-08  Steven Eker  <eker2@eker10>
+
+	* AU_UnificationSubproblem2.cc
+	(AU_UnificationSubproblem2::buildSolution): added code to reuse
+	variables that would otherwise get assigned a single fresh variable
+
+2020-06-06  Steven Eker  <eker2@eker10>
+
+	* AU_UnificationSubproblem2.cc
+	(AU_UnificationSubproblem2::dagToAbstract): added comment to
+	explain why we can't use a variables binding because it would
+	amount to eager replacement and potentially cause nontermination
+
+2020-05-29  Steven Eker  <eker2@eker10>
+
+	* AU_DagNode.cc (AU_DagNode::computeBaseSortForGroundSubterms):
+	commented out the code warning about AU unimplemented
+	(AU_DagNode::computeSolvedForm2): comment out code that bails on
+	AU case
+
+===================================Maude128a===========================================
+
+2019-09-11  Steven Eker  <eker@mu>
+
+	* AU_UnificationSubproblem2.cc (makeWordSystem): use
+	setUpperBound() and setTheoryConstraint() rather than
+	addConstraint()
+
+===================Maude124 (integrated with Maude128 on 2019-12-18)==================
+
 2019-11-11  Steven Eker  <eker@mu>
 
 	* AU_DagNode.cc (computeBaseSortForGroundSubterms): take and pass

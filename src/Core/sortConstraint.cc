@@ -63,6 +63,9 @@ SortConstraint::check()
                    QUOTE(index2Variable(getUnboundVariables().min())) <<
                    " is used before it is bound in membership axiom:\n" <<
                    this);
+      //
+      //	No legitimate use for such sort constraints so mark it as bad.
+      //
       markAsBad();
     }
 }

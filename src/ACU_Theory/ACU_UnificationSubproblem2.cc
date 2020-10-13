@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -93,7 +93,10 @@ ACU_UnificationSubproblem2::markReachableNodes()
 }
 
 void
-ACU_UnificationSubproblem2::addUnification(DagNode* lhs, DagNode* rhs, bool marked, UnificationContext& solution)
+ACU_UnificationSubproblem2::addUnification(DagNode* lhs,
+					   DagNode* rhs,
+					   bool marked,
+					   UnificationContext& solution)
 {
   Assert(lhs->symbol() == topSymbol, "bad lhs dag " << lhs);
   Assert(topSymbol->hasIdentity() ||
@@ -169,11 +172,30 @@ ACU_UnificationSubproblem2::addUnification(DagNode* lhs, DagNode* rhs, bool mark
 }
 
 int
-ACU_UnificationSubproblem2::setMultiplicity(DagNode* dagNode, int multiplicity, UnificationContext& solution)
+ACU_UnificationSubproblem2::setMultiplicity(DagNode* dagNode,
+					    int multiplicity,
+					    UnificationContext& solution)
 {
   //
-  //	First we replace a variable with its current representative. Really we should also
-  //	do this for variables within aliens as well.
+  //	First we replace a variable with its current representative. Really we
+  //	should also do this for variables within aliens as well.
+  //
+  //	While it is tempting to replace variables by whatever they are bound
+  //	to, this eager replacement will often create a problem as hard as the
+  //	one that produced the binding, leading to nontermination. For example:
+  //
+  //	fmod FOO is
+  //	  sort Foo .
+  //	  ops a b c d : -> Foo .
+  //	  op f : Foo Foo -> Foo [assoc comm] .
+  //	  op g : Foo Foo -> Foo [assoc comm] .
+  //	  vars X Y : Foo .
+  //	endfm
+  //
+  //	unify X =? f(Y, a) /\ Y =? g(X, c) .
+  //
+  //	By delaying variable replacement, we will reach a solved form with
+  //	a theory cycle which is then resolved by our cycle breaking code.
   //
   if (VariableDagNode* varDagNode = dynamic_cast<VariableDagNode*>(dagNode))
     {
@@ -310,7 +332,7 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
       //	has to be done in order to avoid nontermination.
       //
       //	The idea is that solved forms X = f(...) in our theory were created by us at some
-      //	earlier invokation and represent decisions made about the solution on the current
+      //	earlier invocation and represent decisions made about the solution on the current
       //	path. They must therefore be considered simultaneously with current unification
       //	subproblems otherwise we might generate an additional binding for X which is
       //	then resolved by creating yet another f-theory subproblem.
@@ -346,9 +368,11 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
 	      //	(1) Maximal solution may not have a sorting while a non-maximal solution may have.
 	      //	(2) The sorting of a maximal solution may exclude a non-maximal solution it was covering.
 	      //
+	      DebugInfo("hasUnequalLeftIdentityCollapse() true so considering non-maximal selections");
 	    }
 	  else
 	    {
+	      DebugInfo("hasUnequalLeftIdentityCollapse() false so considering only maximal selections");
 	      //
 	      //	Assume that each variable introduced for a Diophantine basis element will
 	      //	be able to disappear by taking the basis element. Thus we only want maximal
@@ -517,10 +541,8 @@ ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem(UnificationContext& s
       bool canTakeIdentity;
       int upperBound;
       classify(i, solution, canTakeIdentity, upperBound, stableSymbols[i]);
-      DebugAdvisory("ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem() i = " << i <<
-		    " subterms[i] = " << subterms[i] <<
-		    " canTakeIdentity = " << canTakeIdentity <<
-		    " upperBound = " << upperBound);
+      DebugInfo("i = " << i << " subterms[i] = " << subterms[i] <<
+		" canTakeIdentity = " << canTakeIdentity << " upperBound = " << upperBound);
 		    
       if (!canTakeIdentity)
 	needToCover.insert(i);  // can't take identity so mark as uncovered and be sure to cover
@@ -756,8 +778,51 @@ ACU_UnificationSubproblem2::computeLegalSelections()
   return conjunction;
 }
 
+
+int
+ACU_UnificationSubproblem2::reuseVariable(int selectionIndex)
+{
+  //
+  //	Check to see if one the existing variables can be reused
+  //	as the variable for basisElement.
+  //
+  Basis::const_iterator b = selection[selectionIndex];
+  int selectionSize = selection.size();
+  int nrSubterms = subterms.size();
+  for (int i = 0; i < nrSubterms; ++i)
+    {
+      if (b->element[i] == 1)
+	{
+	 if (dynamic_cast<VariableDagNode*>(subterms[i]) != 0)
+	   {
+	     //
+	     //	Candidate variable; see if variable gets anything else
+	     //
+	     for (int j = 0; j < selectionSize; ++j)
+	       {
+		 if (j != selectionIndex && selection[j]->element[i] != 0)
+		   goto fail;
+	       }
+	     //
+	     //	So subterm i is a variable that is assigned exactly the
+	     //	variable that we are planning to create for basisElement.
+	     // We use it instead.
+	     //
+	     return i;
+	   }
+	}
+    fail:
+      //
+      //	Try next subterm.
+      //
+      ;
+    }
+  return NONE;
+}
+
 bool
-ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingUnificationStack& pending)
+ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution,
+					  PendingUnificationStack& pending)
 {
 #ifndef NO_ASSERT
   DebugAdvisory("buildSolution() using basis elements:");
@@ -779,8 +844,23 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
   ConnectedComponent* component = topSymbol->rangeComponent();
   int selectionSize = selection.size();
   Vector<DagNode*> freshVariables(selectionSize);
+  NatSet reusedVariables;
   for (int i = 0; i < selectionSize; ++i)
-    freshVariables[i] = solution.makeFreshVariable(component);
+    {
+#define REUSE_VARIABLES
+#ifdef REUSE_VARIABLES
+      int subtermIndex = reuseVariable(i);
+      if (subtermIndex == NONE)
+	freshVariables[i] = solution.makeFreshVariable(component);
+      else
+	{
+	  freshVariables[i] = subterms[subtermIndex];
+	  reusedVariables.insert(subtermIndex);
+	}
+#else
+      freshVariables[i] = solution.makeFreshVariable(component);
+#endif
+    }
   //
   //	Now for each abstracted subterm we compute a solution in
   //	the purified problem.
@@ -788,6 +868,8 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
   int nrSubterms = subterms.size();
   for (int i = 0; i < nrSubterms; ++i)
     {
+      if (reusedVariables.contains(i))
+	continue;  // no point unifying a variable with itself
       bool inTheory = true;
       int nrElements = 0;
       int lastElement = NONE;
@@ -804,15 +886,7 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
 	     " for subterm " << subterms[i]);
       DagNode* d;
       if (nrElements == 0)
-	{
-	  d = topSymbol->getIdentityDag();
-	  //
-	  //	If this is the first time we use the identity element it is possible
-	  //	that it will not have its sort computed or ground flag set.
-	  //
-	  if (!(d->isGround()))
-	    d->computeBaseSortForGroundSubterms(false);
-	}
+	d = topSymbol->getIdentityDag();
       else if (nrElements == 1 && selection[lastElement]->element[i] == 1)
 	{
 	  d = freshVariables[lastElement];
@@ -846,8 +920,9 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
       if (VariableDagNode* varSubterm = dynamic_cast<VariableDagNode*>(subterm))
 	{
 	  //
-	  //	We need to handle unbound variable subterms that we unify with something in our 
-	  //	theory ourself to avoid generating another problem in our theory.
+	  //	We need to handle unbound variable subterms that we unify with
+	  //	something in our theory ourself to avoid generating another
+	  //	problem in our theory.
 	  //
 	  VariableDagNode* repVar = varSubterm->lastVariableInChain(solution);
 	  if (solution.value(repVar->getIndex()) == 0 && inTheory)
@@ -856,7 +931,7 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution, PendingU
 	      continue;
 	    }
 	}
-      //  cerr << "solving " << subterms[i] << " vs " << d << endl;
+      DebugInfo("solving " << subterms[i] << " =? " << d);
       if (!(subterms[i]->computeSolvedForm(d, solution, pending)))
 	return false;
     }

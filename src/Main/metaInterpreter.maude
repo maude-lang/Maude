@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2009-2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2009-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 ***
 ***	Maude meta-interpreters.
-***	Version alpha 3.0.
+***	Version 3.1.
 ***
 
 mod META-INTERPRETER is
@@ -121,20 +121,37 @@ mod META-INTERPRETER is
   op getDisjointUnifier : Oid Oid Qid UnificationProblem Qid Nat -> Msg [ctor msg format (b o)] .
   op gotDisjointUnifier : Oid Oid Substitution Substitution Qid -> Msg [ctor msg format (m o)] .
 
+  op getIrredundantUnifier : Oid Oid Qid UnificationProblem Qid Nat -> Msg [ctor msg format (b o)] .
+  op gotIrredundantUnifier : Oid Oid Substitution Qid -> Msg [ctor msg format (m o)] .
+  op getIrredundantDisjointUnifier : Oid Oid Qid UnificationProblem Qid Nat -> Msg [ctor msg format (b o)] .
+  op gotIrredundantDisjointUnifier : Oid Oid Substitution Substitution Qid -> Msg [ctor msg format (m o)] .
+
   op getVariant : Oid Oid Qid Term TermList Bool Qid Nat -> Msg [ctor msg format (b o)] .
   op gotVariant : Oid Oid RewriteCount Term Substitution Qid Parent Bool -> Msg [ctor msg format (m o)] .
 
-  op getVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid Nat -> Msg [ctor msg format (b o)] .
+  op getVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid
+                         VariantOptionSet Nat -> Msg [ctor msg format (b o)] .
   op gotVariantUnifier : Oid Oid RewriteCount Substitution Qid -> Msg [ctor msg format (m o)] .
-  op getDisjointVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid Nat -> Msg [ctor msg format (b o)] .
-  op gotDisjointVariantUnifier : Oid Oid RewriteCount Substitution Substitution Qid -> Msg [ctor msg format (m o)] .
+  
+  op getDisjointVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid
+                                 VariantOptionSet Nat -> Msg [ctor msg format (b o)] .
+  op gotDisjointVariantUnifier : Oid Oid RewriteCount Substitution
+                                 Substitution Qid -> Msg [ctor msg format (m o)] .
 
-  op getOneStepNarrowing : Oid Oid Qid Term TermList Qid Nat -> Msg [ctor msg format (b o)] .
-  op gotOneStepNarrowing : Oid Oid RewriteCount Term Type Context Qid Substitution Substitution Qid -> Msg [ctor msg format (m o)] .
+  op getVariantMatcher : Oid Oid Qid MatchingProblem TermList Qid
+                         VariantOptionSet Nat -> Msg [ctor msg format (b o)] .
+  op gotVariantMatcher : Oid Oid RewriteCount Substitution -> Msg [ctor msg format (m o)] .
 
-  op getNarrowingSearchResult : Oid Oid Qid Term Term Qid Bound Qid Nat -> Msg [ctor msg format (b o)] .
+  op getOneStepNarrowing : Oid Oid Qid Term TermList Qid
+     			   VariantOptionSet Nat -> Msg [ctor msg format (b o)] .
+  op gotOneStepNarrowing : Oid Oid RewriteCount Term Type Context Qid
+     			   Substitution Substitution Qid -> Msg [ctor msg format (m o)] .
+
+  op getNarrowingSearchResult : Oid Oid Qid Term Term Qid Bound Qid
+     			      	VariantOptionSet Nat -> Msg [ctor msg format (b o)] .
   op gotNarrowingSearchResult : Oid Oid RewriteCount Term Type Substitution Qid Substitution Qid -> Msg [ctor msg format (m o)] .
-  op getNarrowingSearchResultAndPath : Oid Oid Qid Term Term Qid Bound Qid Nat -> Msg [ctor msg format (b o)] .
+  op getNarrowingSearchResultAndPath : Oid Oid Qid Term Term Qid Bound Qid
+     				       VariantOptionSet Nat -> Msg [ctor msg format (b o)] .
   op gotNarrowingSearchResultAndPath : Oid Oid RewriteCount Term Type Substitution NarrowingTrace Substitution Qid -> Msg [ctor msg format (m o)] .
 
   op noSuchResult : Oid Oid RewriteCount -> Msg [ctor msg format (m o)] .
@@ -214,22 +231,29 @@ mod META-INTERPRETER is
            op-hook getUnifierMsg		(getUnifier : Oid Oid Qid UnificationProblem Qid Nat ~> Msg)
            op-hook gotUnifierMsg		(gotUnifier : Oid Oid Substitution Qid ~> Msg)
            op-hook getDisjointUnifierMsg	(getDisjointUnifier : Oid Oid Qid UnificationProblem Qid Nat ~> Msg)
-           op-hook getDisjointVariantUnifierMsg	(getDisjointVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid Nat ~> Msg)
            op-hook gotDisjointUnifierMsg	(gotDisjointUnifier : Oid Oid Substitution Substitution Qid ~> Msg)
+
+           op-hook getIrredundantUnifierMsg		(getIrredundantUnifier : Oid Oid Qid UnificationProblem Qid Nat ~> Msg)
+           op-hook gotIrredundantUnifierMsg		(gotIrredundantUnifier : Oid Oid Substitution Qid ~> Msg)
+           op-hook getIrredundantDisjointUnifierMsg	(getIrredundantDisjointUnifier : Oid Oid Qid UnificationProblem Qid Nat ~> Msg)
+           op-hook gotIrredundantDisjointUnifierMsg	(gotIrredundantDisjointUnifier : Oid Oid Substitution Substitution Qid ~> Msg)
 
            op-hook getVariantMsg		(getVariant : Oid Oid Qid Term TermList Bool Qid Nat ~> Msg)
            op-hook gotVariantMsg		(gotVariant : Oid Oid RewriteCount Term Substitution Qid Parent Bool ~> Msg)
 
-           op-hook getVariantUnifierMsg		(getVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid Nat ~> Msg)
+           op-hook getVariantUnifierMsg		(getVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid VariantOptionSet Nat ~> Msg)
            op-hook gotVariantUnifierMsg		(gotVariantUnifier : Oid Oid RewriteCount Substitution Qid ~> Msg)
-           op-hook getDisjointVariantUnifierMsg	(getDisjointVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid Nat ~> Msg)
+           op-hook getDisjointVariantUnifierMsg	(getDisjointVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid VariantOptionSet Nat ~> Msg)
            op-hook gotDisjointVariantUnifierMsg	(gotDisjointVariantUnifier : Oid Oid RewriteCount Substitution Substitution Qid ~> Msg)
 
-	   op-hook getOneStepNarrowingMsg	(getOneStepNarrowing : Oid Oid Qid Term TermList Qid Nat ~> Msg)
+           op-hook getVariantMatcherMsg		(getVariantMatcher : Oid Oid Qid MatchingProblem TermList Qid VariantOptionSet Nat ~> Msg)
+           op-hook gotVariantMatcherMsg		(gotVariantMatcher : Oid Oid RewriteCount Substitution ~> Msg)
+
+	   op-hook getOneStepNarrowingMsg	(getOneStepNarrowing : Oid Oid Qid Term TermList Qid VariantOptionSet Nat ~> Msg)
 	   op-hook gotOneStepNarrowingMsg	(gotOneStepNarrowing : Oid Oid RewriteCount Term Type Context Qid Substitution Substitution Qid ~> Msg)
-  	   op-hook getNarrowingSearchResultMsg	(getNarrowingSearchResult : Oid Oid Qid Term Term Qid Bound Qid Nat ~> Msg)
+  	   op-hook getNarrowingSearchResultMsg	(getNarrowingSearchResult : Oid Oid Qid Term Term Qid Bound Qid VariantOptionSet Nat ~> Msg)
   	   op-hook gotNarrowingSearchResultMsg	(gotNarrowingSearchResult : Oid Oid RewriteCount Term Type Substitution Qid Substitution Qid ~> Msg)
-  	   op-hook getNarrowingSearchResultAndPathMsg	(getNarrowingSearchResultAndPath : Oid Oid Qid Term Term Qid Bound Qid Nat ~> Msg)
+  	   op-hook getNarrowingSearchResultAndPathMsg	(getNarrowingSearchResultAndPath : Oid Oid Qid Term Term Qid Bound Qid VariantOptionSet Nat ~> Msg)
   	   op-hook gotNarrowingSearchResultAndPathMsg	(gotNarrowingSearchResultAndPath : Oid Oid RewriteCount Term Type Substitution NarrowingTrace Substitution Qid ~> Msg)
 
 	   op-hook noSuchResultMsg		(noSuchResult : Oid Oid RewriteCount ~> Msg)
@@ -239,4 +263,31 @@ mod META-INTERPRETER is
            op-hook byeMsg			(bye : Oid Oid ~> Msg)
            op-hook shareWith			(metaReduce : Module Term ~> ResultPair)
         )] .
+
+***
+***	For backward compatibility only.
+***	These operators are deprecated - do not use in new code.
+***
+  op getVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid
+                         Nat -> Msg [ctor msg format (b o)] .
+  eq getVariantUnifier(T:Oid, M:Oid, Q:Qid, U:UnificationProblem, TL:TermList, F:Qid, N:Nat) =
+     getVariantUnifier(T:Oid, M:Oid, Q:Qid, U:UnificationProblem, TL:TermList, F:Qid, none, N:Nat) .
+
+  op getDisjointVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid
+                                 Nat -> Msg [ctor msg format (b o)] .
+  eq getDisjointVariantUnifier(T:Oid, M:Oid, Q:Qid, U:UnificationProblem, TL:TermList, F:Qid, N:Nat) =
+     getDisjointVariantUnifier(T:Oid, M:Oid, Q:Qid, U:UnificationProblem, TL:TermList, F:Qid,
+                               none, N:Nat) .
+
+  op getOneStepNarrowing : Oid Oid Qid Term TermList Qid Nat -> Msg [ctor msg format (b o)] .
+  eq getOneStepNarrowing(T:Oid, M:Oid, Q:Qid, T:Term, TL:TermList, F:Qid, N:Nat) =
+     getOneStepNarrowing(T:Oid, M:Oid, Q:Qid, T:Term, TL:TermList, F:Qid, none, N:Nat) .
+
+  op getNarrowingSearchResult : Oid Oid Qid Term Term Qid Bound Qid Nat -> Msg .
+  eq getNarrowingSearchResult(T:Oid, M:Oid, Q:Qid, T:Term, T2:Term, S:Qid, B:Bound, F:Qid, N:Nat) =
+     getNarrowingSearchResult(T:Oid, M:Oid, Q:Qid, T:Term, T2:Term, S:Qid, B:Bound, F:Qid, none, N:Nat) .
+
+  op getNarrowingSearchResultAndPath : Oid Oid Qid Term Term Qid Bound Qid Nat -> Msg .
+  eq getNarrowingSearchResultAndPath(T:Oid, M:Oid, Q:Qid, T:Term, T2:Term, S:Qid, B:Bound, F:Qid, N:Nat) =
+     getNarrowingSearchResultAndPath(T:Oid, M:Oid, Q:Qid, T:Term, T2:Term, S:Qid, B:Bound, F:Qid, none, N:Nat) .
 endm

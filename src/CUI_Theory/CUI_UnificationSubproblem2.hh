@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,18 +22,19 @@
 
 //
 //      Class for unification subproblems in the CU, U, Ul and Ur theories.
-//	It consists of a vector of subproblem of the forms f(u, v) =? f(s, t) or
+//	It consists of a vector of subproblems of the forms f(u, v) =? f(s, t) or
 //	f(u, v) =? X or f(u, v) = g(...) where f is a CUI symbol and X is a variable and
 //	g is an alien symbol.
 //
 #ifndef _CUI_UnificationSubproblem2_hh_
 #define _CUI_UnificationSubproblem2_hh_
-
 #include "unificationSubproblem.hh"
 #include "simpleRootContainer.hh"
 #include "substitution.hh"
 #include "pendingUnificationStack.hh"
 #include "natSet.hh"
+#include "variableDagNode.hh"
+#include "unificationContext.hh"
 
 class CUI_UnificationSubproblem2 : public UnificationSubproblem, private SimpleRootContainer
 {
@@ -66,7 +67,6 @@ private:
   struct Problem
   {
     Problem(CUI_DagNode* lhs, DagNode* rhs, const NatSet& legalAlternatives);
-    Problem();
     Problem(const Problem& original);
 
     bool findAlternative(bool first, UnificationContext& solution, PendingUnificationStack& pending);
@@ -82,37 +82,62 @@ private:
   };
 
   void markReachableNodes();
-
-
-
-
+  static bool leftCollapse(DagNode* leftArg,
+			   CUI_Symbol* topSymbol,
+			   UnificationContext& solution);
+  static bool rightCollapse(DagNode* rightArg,
+			    CUI_Symbol* topSymbol,
+			    UnificationContext& solution);
+  static bool equivalent(DagNode* first,
+			 DagNode* second,
+			 UnificationContext& solution);
+  static bool equivalentToGroundDag(DagNode* dag,
+				    DagNode* groundDag,
+				    UnificationContext& solution);
   Vector<Problem> problems;
 };
 
-inline
-CUI_UnificationSubproblem2::Problem::Problem()  // HACK
-  : lhs(0),
-  rhs(0),
-  savedSubstitution(0)
+inline bool
+CUI_UnificationSubproblem2::equivalentToGroundDag(DagNode* dag,
+						  DagNode* groundDag,
+						  UnificationContext& solution)
 {
+  if (dag->equal(groundDag))
+    return true;
+  if (VariableDagNode* var = dynamic_cast<VariableDagNode*>(dag))
+    {
+      VariableDagNode* rep = var->lastVariableInChain(solution);
+      DagNode* binding = solution.value(rep->getIndex());
+      if (binding != 0 && binding->equal(groundDag))
+	return true;
+    }
+  return false;
 }
 
 inline
-CUI_UnificationSubproblem2::Problem::Problem(CUI_DagNode* lhs, DagNode* rhs, const NatSet& legalAlternatives)
+CUI_UnificationSubproblem2::Problem::Problem(CUI_DagNode* lhs,
+					     DagNode* rhs,
+					     const NatSet& legalAlternatives)
   : lhs(lhs),
-  rhs(rhs),
-  legalAlternatives(legalAlternatives),
-  savedSubstitution(0)
+    rhs(rhs),
+    legalAlternatives(legalAlternatives),
+    savedSubstitution(0)
 {
 }
 
 inline
 CUI_UnificationSubproblem2::Problem::Problem(const Problem& original)
   : lhs(original.lhs),
-  rhs(original.rhs),
-  legalAlternatives(original.legalAlternatives),
-  savedSubstitution(0)  // HACK
+    rhs(original.rhs),
+    legalAlternatives(original.legalAlternatives),
+    savedSubstitution(0)
 {
+  //
+  //	This is only a partial copy constructor - it copies the first three
+  //	data members, which is what is needed for addUnification(). We also
+  //	need to initialize saveSubstitution because Substitution has no
+  //	default constructor.
+  //
 }
 
 #endif

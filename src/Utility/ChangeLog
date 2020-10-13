@@ -1,3 +1,748 @@
+2020-10-10  Steven Eker  <eker2@eker10>
+
+	* pigPug-stack.cc (PigPug::checkConstraintMap): updated comment to
+	explain why theory constraints don't get messed up
+
+2020-10-09  Steven Eker  <eker2@eker10>
+
+	* macros.hh (pluralize): added Int64 version
+
+===================================Maude131a===================================
+
+2020-10-02  Steven Eker  <eker2@eker10>
+
+	* pigPug-cycleDetection.cc (PigPug::confirmedLive): updated
+	comment
+
+	* pigPug-search.cc (PigPug::lhsPeel): check STRICT_RIGHT_LINEAR
+	(PigPug::lhsPeel): rearrange if statements
+
+	* pigPug.cc: Assert() for STRICT_RIGHT_LINEAR
+
+	* wordLevel.cc (WordLevel::makePigPug): new calling convention for
+	PigPug
+
+	* pigPug.hh (class PigPug): updated decl for ctor
+	(class PigPug): added enum Linearity
+	(class PigPug): data member linearity replaces strictLeftLinear
+
+	* pigPug-search.cc (PigPug::rhsPeel): use linearity rather than
+	strictLeftLinear
+	(PigPug::lhsPeel): use linearity rather than strictLeftLinear
+	(PigPug::equate): use linearity rather than strictLeftLinear (4
+	places)
+
+	* pigPug.cc (PigPug): take linearity rather than strictLeftLinear
+
+	* pigPug.hh (class PigPug): deleted decls for dumpWord(), dump()
+
+	* pigPug.cc (PigPug::variableOccurrencesBoundedBy2): rearranged
+	(PigPug::getNextUnifier): updated comment
+	(PigPug::dump): deleted
+	(PigPug::dumpWord): deleted
+
+2020-09-28  Steven Eker  <eker2@eker10>
+
+	* rope.cc: added missing copyright notice
+	(Rope::const_iterator::operator==): deleted commented out code
+	(Rope::addFragment): turned commented out code into #ifdef'd code
+	(Rope::operator+): turned commented out code into #ifdef'd code
+	(Rope::rebalance): turned commented out code into #ifdef'd code
+
+	* rope.hh: added reference to orginal ropes paper
+
+===================================Maude131===================================
+
+2020-08-03  Steven Eker  <eker2@eker10>
+
+	* wordLevel.cc (WordLevel::makePigPug): temporarily disable PigPug
+	equateOptimization until more consideration
+
+2020-07-31  Steven Eker  <eker2@eker10>
+
+	* wordSystem.cc (WordSystem::WordSystem): take
+	identityOptimizations flag and pass it to WordLevel()
+
+	* wordLevel.cc (WordLevel::makeNewLevel): pass
+	identityOptimizations flag to WordLevel()
+
+	* wordLevel-selections.cc (WordLevel::exploreSelections): pass
+	identityOptimizations flag to WordLevel()
+
+	* wordLevel.cc: take and init identityOptimizations
+	(WordLevel::makePigPug): pass equateOptimization flag to PigPug
+
+	* wordLevel.hh (class WordLevel): updated decl for makePigPug()
+	(class WordLevel): added data member identityOptimizations;
+	updated decl for ctor; made levelType const
+
+	* wordLevel.cc (WordLevel::chooseEquation): new semantics
+	(WordLevel::findNextPartialSolution): new chooseEquation() and
+	makePigPug() semantics
+
+	* wordLevel.hh (class WordLevel): added enum Linearity
+	(class WordLevel): updated decl for chooseEquation()
+
+	* pigPug.hh (class PigPug): added data member equateOptimization;
+	added decl for doublePeelPossible(); updated decl for ctor
+
+	* pigPug.cc: take an init equateOptimization flag
+
+	* pigPug-search.cc (PigPug::doublePeelPossible): added
+
+2020-07-02  Steven Eker  <eker2@eker10>
+
+	* wordLevel-selections.cc (WordLevel::exploreSelections): pass
+	this to WordLevel ctor
+
+	* wordLevel.hh (WordLevel::setTheoryConstraint): added decl for
+	insertCombination()
+
+	* wordLevel-selections.cc (WordLevel::insertCombination): added
+
+	* wordLevel.cc (WordLevel::WordLevel) : take parent argument
+	(WordLevel::findNextPartialSolution): call insertCombination() to
+	see if we've already tried this combination of variables set to
+	empty
+
+	* wordLevel.hh (class WordLevel): added data members
+	finalCombinations, parent
+	(class WordLevel): updated decl for ctor
+
+2020-07-01  Steven Eker  <eker2@eker10>
+
+	* wordLevel.cc (WordLevel::findNextPartialSolution): call
+	levelFeasibleWithoutCollapse() for INITIAL and SELECTION levels
+
+	* wordLevel-feasible.cc (WordLevel::levelFeasibleWithoutCollapse):
+	added
+
+	* wordLevel.hh (class WordLevel): added decl for
+	feasibleWithoutCollapse()
+	(WordLevel::legalWithoutCollapse): added
+	(class WordLevel): added decl for levelFeasibleWithoutCollapse();
+
+	* wordLevel-feasible.cc: created
+
+	* wordLevel-simplifyEquations.cc (WordLevel::simplifyEquation):
+	call feasibleWithoutCollapse() for PIGPUG levels
+
+	* wordLevel.cc (WordLevel::makeNewLevel): deleted old commented
+	out code for copying constraintMap into new level
+	(WordLevel::findNextPartialSolution): expanded comments
+
+	* wordLevel.hh (class WordLevel): updated decl for trySelection()
+
+	* wordLevel.cc (WordLevel::findNextPartialSolution): handle
+	preservation of incompleteness flag from final PigPug result
+	ourselves; don't pass it to trySelection()
+
+	* wordLevel-selections.cc (WordLevel::trySelection): don't take
+	result argument; simplfied return value
+
+2020-06-30  Steven Eker  <eker2@eker10>
+
+	* wordLevel-simplifyEquations.cc (WordLevel::makeAssignment):
+	don't check for bounds violations in INITIAL and SELECTION levels;
+	don't call resolveOccursCheckFailure() in PIGPUG levels
+	(WordLevel::cancel): don't consider canTakeEmpty() in PIGPUG levels
+	(WordLevel::makeAssignment): don't bother with checking
+	canTakeEmpty() before incrementing needed since we only use needed
+	in PIGPUG levels
+
+	* wordLevel-null.cc (WordLevel::handleNullEquations)
+	(WordLevel::resolveOccursCheckFailure): Assert() that they are not
+	called in PIGPUG level
+
+	* wordLevel-simplifyAssignments.cc
+	(WordLevel::reallyExpandAssignment): use isUnbounded() rather than
+	checking getUpperBound() against 0
+
+	* wordLevel-simplifyEquations.cc (WordLevel::simplifyEquation):
+	don't check for null equations after expansion in PIGPUG levels
+
+	* wordLevel-simplifyAssignments.cc
+	(WordLevel::reallyExpandAssignment): allow
+	resolveOccursCheckFailure() to be called in SELECTION level
+
+	* wordLevel-selections.cc (WordLevel::trySelection): implemented
+	(WordLevel::exploreSelections): implemented
+
+2020-06-29  Steven Eker  <eker2@eker10>
+
+	* wordLevel.hh (class WordLevel): added decls for trySelection(),
+	exploreSelections()
+
+	* wordLevel.cc (WordLevel::WordLevel): clear selection
+	(WordLevel::findNextPartialSolution): check for active selection;
+	try to set up selections if we're INITIAL and we run out of
+	solutions
+
+	* wordSystem.cc (WordSystem::findNextSolution): don't qualify
+	OutcomeFlags
+
+	* wordLevel.hh (class WordLevel): added date members idVariables,
+	selection
+
+2020-06-26  Steven Eker  <eker2@eker10>
+
+	* wordLevel-simplifyAssignments.cc
+	(WordLevel::fullyExpandAssignments): don't both with
+	handleNullEquations() if levelType is PIGPUG
+	(WordLevel::reallyExpandAssignment): only call
+	resolveOccursCheckFailure() if levelType is INITIAL
+	(WordLevel::reallyExpandAssignment): if we end up mapping a
+	variable to another variable, intersect their constraints;
+	otherwise check the length of the word against the variables
+	upperBound.
+
+	* wordLevel.cc (WordLevel::simplify): only call
+	handleInitialOccursCheckFailure() for INITIAL WordLevel
+
+	* wordSystem.cc (WordSystem::WordSystem): pass INTIAL as levelType
+
+	* wordLevel.cc: take levelType
+	(WordLevel::makeNewLevel): pass PIGPUG as levelType
+
+	* wordLevel.hh (class WordLevel): added enum LevelType
+	(class WordLevel): added data member levelType
+	(class WordLevel): updated decl for ctor
+
+	* pigPug-checks.cc (PigPug::feasible): don't check canTakeEmpty()
+	- we won't try to deal with identity in PigPug after all
+	(PigPug::completed): remove comment about identity case since now
+	this will be dealt with outside of PigPug
+
+2020-06-25  Steven Eker  <eker2@eker10>
+
+	* pigPug-extract.cc (PigPug::extractUnifier): handle EQUATE |
+	FINAL case
+
+	* pigPug-checks.cc (PigPug::completed): treat variable =? variable
+	as an EQUATE move for efficiency
+	(PigPug::completed): actually need to use EQUATE | FINAL to avoid
+	trying to undo a notional final move during backtracking
+
+	* pigPug.hh (class PigPug): updated decl for composeFinal()
+
+	* pigPug-extract.cc (PigPug::compose): 4 arg version renamed to
+	composeFinal()
+	(PigPug::extractUnifier): compose() -> composeFinal()
+
+2020-06-24  Steven Eker  <eker2@eker10>
+
+	* wordLevel-simplifyEquations.cc (WordLevel::makeAssignment):
+	rewritten to take account of variables in subword being able to
+	take identity and therefore not counting against upper sort bound
+	and occurs-check failure being resolvable.
+
+2020-06-23  Steven Eker  <eker2@eker10>
+
+	* wordSystem.hh (WordSystem::addNullEquation): added
+
+	* wordLevel.hh (WordLevel::addNullEquation): added
+
+2020-06-22  Steven Eker  <eker2@eker10>
+
+	* wordLevel-simplifyEquations.cc (WordLevel::simplifyEquation):
+	check for singleton case after expanding each side
+
+	* wordLevel-simplifyAssignments.cc (WordLevel::expandAssignment):
+	remove occurs-check code; Assert() that it doesn't happen
+
+	* wordLevel.cc (WordLevel::simplify): call
+	handleInitialOccursCheckFailure()
+
+	* wordLevel.hh (class WordLevel): added decl for
+	handleInitialOccursCheckFailure()
+
+	* wordLevel-simplifyAssignments.cc (WordLevel::expandAssignment)
+	(WordLevel::reallyExpandAssignment): added DebugEnter()
+	(WordLevel::handleInitialOccursCheckFailure): added
+
+	* wordLevel-simplifyEquations.cc (WordLevel::simplifyEquation):
+	added DebugEnter()
+	(WordLevel::simplifyEquation): added DebugInfo() for after
+	expansion
+	(WordLevel::checkForNull): added
+	(WordLevel::simplifyEquation): call checkForNull() after expansion
+
+	* pigPug.cc: Assert() that lhs and rhs are larger than one
+	variable each
+
+2020-06-18  Steven Eker  <eker2@eker10>
+
+	* wordLevel-null.cc (WordLevel::resolveOccursCheckFailure): added
+	DebugInfo()s when we bind a variable to empty
+	(WordLevel::handleNullEquations): added DebugInfo() when we bind a
+	variable to empty
+	(WordLevel::resolveOccursCheckFailure): need to deal with the case
+	that a variable other than index appears multiple times in
+	newValue
+
+	* wordLevel-simplifyAssignments.cc (WordLevel::expandAssignment):
+	added DebugInfo() for occur-check failure case
+
+	* wordLevel.hh (class WordLevel): added typedef for
+	NullEquationQueue, nullEquations data member
+
+	* wordLevel-simplifyAssignments.cc (WordLevel::expandAssignment):
+	call resolveOccursCheckFailure()
+	(WordLevel::append): do the append even if there is an
+	occurs-check failure
+	(WordLevel::fullyExpandAssignments): call handleNullEquations()
+	(WordLevel::reallyExpandAssignment): track occurs-check failure
+	and call resolveOccursCheckFailure()
+
+	* wordLevel.hh (class WordLevel): added decls for
+	handleNullEquations(), resolveOccursCheckFailure()
+
+	* wordLevel-null.cc: created
+
+2020-06-17  Steven Eker  <eker2@eker10>
+
+	* wordLevel-simplifyAssignments.cc (WordLevel::expandAssignment):
+	we need to deal with occurs-check failure here after all because
+	bad assignments could come in from outside of WordSystem and we
+	need the WordLevel complete with constraints to resolve these
+	properly
+
+	* wordLevel.cc (WordLevel::findNextPartialSolution): added FIXME
+	about adding a Diophantine check - this is a low priority
+	enhancement we might add in the future
+
+	* pigPug-checks.cc (PigPug::completed): handle constraints in the
+	optimal way using the meet for lastLhsVar =? lastRhsVar case
+	(PigPug::completed): replaced FIXME comment for the equal variable
+	case with an explanation of why nothing needs to be done
+
+2020-06-16  Steven Eker  <eker2@eker10>
+
+	* pigPug.hh (class PigPug): added decl for unificand version of
+	checkConstraintMap()
+
+	* pigPug-search.cc (PigPug::undoMove): handle the case where a
+	FINAL move pushed the constraintStack
+
+	* pigPug-checks.cc (PigPug::completed): call checkConstraintMap()
+	for variable |-> unificand cases
+
+	* pigPug-stack.cc (PigPug::checkConstraintMap): added version for
+	variable vs unificand
+
+	* pigPug.cc: added
+
+	* pigPug.hh: added decl for operator<<()
+
+	* wordLevel.hh (class WordLevel): updated decl for makeNewLevel()
+
+	* pigPug.hh (class PigPug): updated decls for extractUnifier() and
+	getNextUnifier()
+
+	* wordLevel.cc (WordLevel::findNextPartialSolution): pass
+	constraintMap to getNextUnifier() and makeNewLevel
+	(WordLevel::makeNewLevel): take constraintMap; use it to
+	initialize next level
+
+	* pigPug-extract.cc (PigPug::extractUnifier): take and fillout
+	constraintMap argument
+
+	* pigPug.cc (PigPug::getNextUnifier): take constraintMap argument
+
+2020-06-15  Steven Eker  <eker2@eker10>
+
+	* wordLevel.hh (class WordLevel): updated decl for
+	reallyExpandAssignment()
+
+	* wordLevel-simplifyAssignments.cc (WordLevel::expandAssignment):
+	added Assert() that we don't have occurs-check issue in assignment
+	(WordLevel::expandAssignment): don't handle occurs-check here
+	(WordLevel::append): use range-based for loop
+	(WordLevel::expandAssignment): use range-based for loop
+	(WordLevel::reallyExpandAssignment): simplified by not trying to
+	be clever about avoiding repetition of initial scan - the saving
+	was neglible in most cases and not worth passing two extra
+	arguments
+
+2020-06-09  Steven Eker  <eker2@eker10>
+
+	* macros.hh (DebugOld): added
+
+2020-05-29  Steven Eker  <eker2@eker10>
+
+	* wordSystem.hh (WordSystem::setTakeEmpty): added
+
+	* wordLevel.hh (WordLevel::setTakeEmpty): added
+
+2020-05-20  Steven Eker  <eker2@eker10>
+
+	* vector.hh (Vector): added default ctor without default
+	arguments so we can initialize without have a default ctor
+	for our elements
+
+2020-04-29  Steven Eker  <eker2@eker10>
+
+	* timeStuff.hh (timespecCompare): added
+	(timespecSubtract): added
+
+2020-04-08  Steven Eker  <eker2@eker9>
+
+	* macros.hh: added DebugAlways()
+
+===================================Maude128a===================================
+
+2020-02-28  Steven Eker  <eker@mu>
+
+	* variableConstraint.hh (none): deleted
+
+	* pigPug.cc (variableOccurrencesBoundedBy2): use isUnbounded() rather
+	than none()
+
+	* variableConstraint.hh (V): commented out decl for absorb()
+
+	* variableConstraint.cc (absorb): commented out for the
+	moment
+
+	* variableConstraint.hh (notNone): deleted
+	(element): deleted
+
+2020-02-27  Steven Eker  <eker@mu>
+
+	* pigPug-search.cc (rhsPeel): restructured replacement
+	code; added Assert()s
+	(lhsPeel): restructured replacement code; added Assert()s
+
+2020-02-26  Steven Eker  <eker@mu>
+
+	* pigPug-search.cc (equate): restructured and simplified
+
+2020-02-25  Steven Eker  <eker@mu>
+
+	* pigPug-search.cc (equate): complete rewrite to fix several
+	bugs introduced by using VariableConstraint
+
+2020-02-24  Steven Eker  <eker@mu>
+
+	* pigPug-stack.cc (checkConstraintMap): fix bug where we weren't
+	reducing the bound of otherVariable if it was unbounded and
+	knownBigVariable had a finite bound
+
+2020-02-18  Steven Eker  <eker@mu>
+
+	* pigPug.cc (getNextUnifier): replace goto with do-while loop
+
+	* pigPug.hh (P): updated decls for compose2()/compose()
+
+	* pigPug-extract.cc (compose): check for upperBound
+	being exceeded
+	(compose2): return false if upperBound exceeded
+	(compose): return false if upperBound exceeded
+	(extractUnifier): check for compose2()/compose() returnin
+	false
+
+	* pigPug.cc (getNextUnifier): check for extractUnifier()
+	returning NONE
+
+	* pigPug-extract.cc (compose2): added test for upperBound
+	being exceeded
+
+2020-02-14  Steven Eker  <eker@mu>
+
+	* pigPug-extract.cc (compose): use range-based
+	for loop
+	(renameVariables): use range-based for loop
+
+2020-02-03  Steven Eker  <eker@mu>
+
+	* pigPug.hh (P): added dummy field to StateInfo
+
+2020-01-31  Steven Eker  <eker@mu>
+
+	* pigPug-search.cc (nextMove): ALL_MOVES -> BASIC_MOVES
+
+	* pigPug.hh (P): deleted BOTH and MOVES from enum Moves
+	(P): re-number enum Moves
+
+	* pigPug-cycleDetection.cc (nextMoveWithCycleDetection):
+	BOTH -> BASIC_MOVES or EQUATE depending on context
+
+	* pigPug-search.cc (nextMove): MOVES -> ALL_MOVES;
+
+	* pigPug-extract.cc (extractUnifier): MOVES -> ALL_MOVES;
+	RHS_PEEL | LHS_PEEL -> EQUATE
+
+	* pigPug.hh (P): added ALL_MOVES to enum Moves
+
+	* pigPug-search.cc (cancel): RHS_PEEL | LHS_PEEL -> EQUATE
+
+	* pigPug.hh (P): added BASIC_MOVES to enum Moves
+
+	* pigPug-search.cc (nextMove): BOTH -> EQUATE
+	(equate): RHS_PEEL | LHS_PEEL -> EQUATE
+
+	* pigPug.hh (P): added EQUATE to enum Moves
+
+	* pigPug-cycleDetection.cc (nextMoveWithCycleDetection):
+	INC_RHS -> RHS_PEEL
+
+	* pigPug-extract.cc: INC_LHS -> LHS_PEEL, INC_RHS -> RHS_PEEL
+
+	* pigPug-search.cc: INC_LHS -> LHS_PEEL, INC_RHS -> RHS_PEEL
+
+	* pigPug.hh: INC_LHS -> LHS_PEEL, INC_RHS -> RHS_PEEL
+
+2020-01-30  Steven Eker  <eker@mu>
+
+	* pigPug.hh (P): rhsPeelGeneralCase() decl -> rhsPeel();
+	lhsPeelGeneralCase() decl -> lhsPeel()
+
+	* pigPug-cycleDetection.cc (firstMoveWithCycleDetection):
+	rhsPeelGeneralCase() -> rhsPeel();
+	lhsPeelGeneralCase() -> lhsPeel()
+	(nextMoveWithCycleDetection): lhsPeelGeneralCase() -> lhsPeel()
+
+	* pigPug-search.cc (rhsPeelGeneralCase): becomes rhsPeel()
+	(lhsPeelGeneralCase): becomes lhsPeel()
+	(firstMove): rhsPeelGeneralCase() -> rhsPeel();
+	lhsPeelGeneralCase() -> lhsPeel()
+	(nextMove): lhsPeelGeneralCase() -> lhsPeel()
+
+2020-01-24  Steven Eker  <eker@mu>
+
+	* pigPug-extract.cc (extractUnifier): use range based for loop
+	(collectRangeVariables): use range based for loops
+
+	* pigPug.cc (variableOccurrencesBoundedBy2): use range based
+	for loops
+	(dumpWord): use range based for loop
+
+	* wordLevel.cc (checkUnconstrainedVariables): use range based
+	for loop
+	(dumpWord): use range based for loop
+	(makeNewLevel): use range based for loop
+
+2020-01-23  Steven Eker  <eker@mu>
+
+	* pigPug-extract.cc (extractUnifier): added comments
+
+2020-01-22  Steven Eker  <eker@mu>
+
+	* pigPug.hh (P): deleted declaration for occurs()
+
+	* pigPug-checks.cc (if): deleted
+	(completed): rewritten to use feasible()
+
+	* pigPug.hh (P): delete decls for canCancelUnconstrained(),
+	feasibleGeneralCase(), fullyConstrained()
+
+	* pigPug-checks.cc (feasible, fullyConstrained)
+	(feasibleGeneralCase, canCancelUnconstrained): deleted old code
+
+2020-01-21  Steven Eker  <eker@mu>
+
+	* pigPug-cycleDetection.cc (firstMoveWithCycleDetection): use
+	new feasible()
+
+	* pigPug-search.cc (firstMove): use new feasible()
+
+	* pigPug-checks.cc (feasible): added upperbounds > 1 and
+	identity aware version
+
+2020-01-17  Steven Eker  <eker@mu>
+
+	* pigPug.hh (P): deleted decls for lhsPeel(), rhsPeel()
+
+	* pigPug-search.cc (rhsPeelGeneralCase, lhsPeelGeneralCase): use
+	checkConstraintMap()
+
+	* pigPug.hh (P): added decl for checkConstraintMap()
+
+	* pigPug-stack.cc (checkConstraintMap): added
+
+	* pigPug-search.cc (firstMove): always use rhsPeelGeneralCase(),
+	lhsPeelGeneralCase(), now that we can be strictLeftLinear with variables
+	shared between lhs and rhs having upperbound > 1
+	(nextMove): always use lhsPeelGeneralCase() for same reason
+	(rhsPeel, lhsPeel): deleted
+	(rhsPeelGeneralCase): use getUpperBound() rather than notNone(); check
+	for unbounded lhs variable and non-strictLeftLinear before looking
+	for expansions
+	(lhsPeelGeneralCase): use getUpperBound rather than notNone(); check
+	for unbounded rhs variable and non-strictLeftLinear befor trying to
+	expand lhs
+	(undoMove): pop constraint map if move contained PUSH_CONSTRAINT_MAP
+
+2020-01-16  Steven Eker  <eker@mu>
+
+	* pigPug.cc (PigPug): added DebugEnter()
+
+	* variableConstraint.hh (V): made canTakeEmpty() public
+
+	* wordLevel-simplifyEquations.cc (cancel): use getUpperBound(); account
+	for the possibility of variables that can take identity
+
+	* variableConstraint.hh (V): make hasTheoryConstraint() and
+	 getTheoryConstraint() public
+
+	* wordLevel-simplifyEquations.cc (unifyVariables): rewritten to consider
+	upperbounds other than 1
+
+2020-01-14  Steven Eker  <eker@mu>
+
+	* variableConstraint.hh (V): make isUnbounded() and getUpperBound() public
+
+	* wordLevel-simplifyEquations.cc (makeAssignment): use getUpperBound()
+	rather than notNone() for a precise check of whether the assignment
+	is allowed
+
+	* wordLevel.cc (checkUnconstrainedVariables): use isUnbounded()
+	rather than none() since we are only worried about nonlinearity
+	in variables that don't have any upper-bound; having an upper-bound
+	>1 is no longer a concern
+
+2020-01-09  Steven Eker  <eker@mu>
+
+	* pigPug-stack.cc (checkUnificand2): updated comment
+
+2020-01-08  Steven Eker  <eker@mu>
+
+	* pigPug.hh: deleted commented out constraintMap decl.
+
+===================================Maude128 resumed===================================
+
+2019-09-20  Steven Eker  <eker@mu>
+
+	* pigPug-checks.cc (completed): append LHS_TAKES_ALL,
+	RHS_TAKES_ALL on path unless we have equal variables or
+	incompatible constraints
+
+	* pigPug-extract.cc (extractUnifier): use LHS_TAKES_ALL,
+	RHS_TAKES_ALL to do final composition
+
+	* pigPug.hh (P): added FINAL, LHS_TAKES_ALL, RHS_TAKES_ALL
+	to enum Moves
+
+	* pigPug-search.cc (undoMove): check for FINAL moves
+
+2019-09-19  Steven Eker  <eker@mu>
+
+	* pigPug.hh (P): added PUSH_CONSTRAINT_MAP to enum Moves
+
+	* variableConstraint.hh (V): added decl for absorb()
+
+	* variableConstraint.cc (absorb): added
+
+2019-09-18  Steven Eker  <eker@mu>
+
+	* variableConstraint.hh (V): added decl for intersect()
+
+	* variableConstraint.cc: added
+
+2019-09-16  Steven Eker  <eker@mu>
+
+	* pigPug.hh (P): deleted data member constraintMap
+
+	* pigPug.cc (PigPug): don't init constraintMap
+
+	* pigPug-search.cc (lhsPeel, lhsPeelGeneralCase, equate):
+	use constraintStack
+
+	* pigPug-checks.cc (fullyConstrained, canCancelUnconstrained)
+	(completed): use constraintStack
+
+	* pigPug-extract.cc (extractUnifier): use constraintStack
+
+2019-09-13  Steven Eker  <eker@mu>
+
+	* pigPug-search.cc (rhsPeel): use constraintStack
+	(rhsPeelGeneralCase): use constraintStack; update comments
+
+	* pigPug.cc (PigPug): initialize constraintStack
+	(variableOccurrencesBoundedBy2): use constraintStack
+
+	* pigPug.hh (P): added typedef ConstraintStack
+	(P): added data member constraintStack
+
+	* pigPug-stack.cc (checkUnificand, checkUnificand2): moved here
+
+	* pigPug-checks.cc (feasible, fullyConstrained)
+	(feasibleGeneralCase, canCancelUnconstrained, completed, occurs):
+	moved here
+
+	* pigPug-search.cc (run, firstMove, nextMove, cancel, rhsPeel)
+	(rhsPeelGeneralCase, lhsPeelGeneralCase, lhsPeel): moved here
+	(cancel): comments and code cleaning
+	(run): comments
+	(feasible): moved here
+	(equate): moved here
+	(undoMove): moved here
+	(fullyConstrained): moved here
+	(feasibleGeneralCase, canCancelUnconstrained): moved here
+
+	* wordLevel-simplifyEquations.cc (cancel): use
+	notNone()
+	(unifyVariables): use none(), notNone(), element(),
+	==
+	(makeAssignment): use notNone()
+
+	* wordLevel.cc (checkUnconstrainedVariables): use
+	none()
+
+	* pigPug.cc: replace all changes with simpler
+	calls to fix mysterious bug
+
+2019-09-11  Steven Eker  <eker@mu>
+
+	* wordLevel-simplifyEquations.cc (cancel): use new
+	constraintMap semantics
+	(unifyVariables): use new constraintMap semantics
+	(makeAssignment): use new constraintMap semantics
+
+	* wordSystem.hh (addConstraint): deleted
+	(setUpperBound): added
+	(setTheoryConstraint): added
+
+	* pigPug.hh (P): deleted enum Constraints
+
+	* wordLevel.hh (addConstraint): deleted
+	(setTheoryConstraint): added
+	(setUpperBound): added
+
+	* variableConstraint.cc: created
+
+2019-09-10  Steven Eker  <eker@mu>
+
+	* wordLevel.cc (WordLevel): no need to initialize
+	constraintMap
+	(makeNewLevel): don't use addConstraint()
+	(checkUnconstrainedVariables): use new constraintMap semantics
+	(dump): use new constraintMap semantics
+
+	* pigPug.hh (P): ConstraintMap is now Vector<VariableConstraint>
+
+	* pigPug.cc (variableOccurrencesBoundedBy2): use new constraintMap
+	semantics
+	(rhsPeel): use new constraintMap semantics
+	(equate): use new constraintMap semantics
+	(lhsPeel): use new constraintMap semantics
+	(lhsPeelGeneralCase): use new constraintMap semantics
+	(rhsPeelGeneralCase): use new constraintMap semantics
+	(fullyConstrained): use new constraintMap semantics
+	(canCancelUnconstrained): use new constraintMap semantics
+	(extractUnifier): use new constraintMap semantics
+	(completed): use new constraintMap semantics
+
+	* variableConstraint.hh: created
+
+===================Maude124 (integrated with Maude128 on 2019-12-18)==================
+
+2019-12-17  Steven Eker  <eker@mu>
+
+	* macros.cc (doubleToString): use ::isnan() and ::isinf() to avoid
+	ambiguity with older compilers
+
+===================================Maude128===========================================
+
 2019-12-16  Steven Eker  <eker@mu>
 
 	* bddUser.hh (B): reverted to DEFAULT_NR_VARIABLES = 100 after
@@ -50,6 +795,7 @@
 
 	* macros.cc: deleted stuff related to old STL extension
 	template rope<>
+
 
 ===================================Maude123===========================================
 

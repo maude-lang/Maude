@@ -34,6 +34,8 @@ class ModuleCache : public Entity::User
 
 public:
   ModuleCache();
+  ~ModuleCache();
+
   ImportModule* makeRenamedCopy(ImportModule* module, Renaming* renaming);
   ImportModule* makeSummation(const Vector<ImportModule*>& modules);
   ImportModule* makeParameterCopy(int parameterName, ImportModule* module);

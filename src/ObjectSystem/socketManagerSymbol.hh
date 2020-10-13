@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "externalObjectManagerSymbol.hh"
 #include "pseudoThread.hh"
 #include "dagRoot.hh"
+#include "rope.hh"
 
 class SocketManagerSymbol
   : public ExternalObjectManagerSymbol,
@@ -62,8 +63,20 @@ public:
   void doWrite(int fd);
   void doError(int fd);
   void doHungUp(int fd);
+  //
+  //	For other socket creators (our clients).
+  //
+  DagNode* manageSocket(int fd,
+			bool disallowClose,
+			bool readOnly,
+			ObjectSystemRewritingContext& context);
 
 private:
+  enum Values
+    {
+      MAX_PORT_NUMBER = 0xFFFF
+    };
+  
   enum Sizes
     {
       READ_BUFFER_SIZE = 208 * 1024  // based on Linux default
@@ -85,21 +98,28 @@ private:
     ~ActiveSocket();
 
     int state;
+    bool disallowClose;
+    bool readOnly;
+    bool seenEOF;
     //
-    //	If we are in a waiting state, we need to keep pointers to the last message
-    //	and the original rewriting context so that we can handle an asynchronous response from
-    //	the operating system.
+    //	If we are waiting to read, we keep a pointer to the message
+    //	that prompted that wait, so that we can generate a response.
     //
-    DagRoot lastMessage;  // must be protected from GC
+    DagRoot lastReadMessage;  // must be protected from GC
     //
-    //	Since destruction of the context causes a cleanUp() call for each registered external
-    //	object, this should not become a dangling pointer.
+    //	If we are waiting to write, we keep a pointer to the message
+    //	that prompted that wait so we can generate a response.
     //
-    ObjectSystemRewritingContext* originalContext;
+    DagRoot lastWriteMessage;  // must be protected from GC
+    //
+    //	If we are waiting to read and/or write, we keep a pointer to
+    //	the context in which the socket is represented as an external
+    //	object so we can inject messages from the outside.
+    //
+    ObjectSystemRewritingContext* objectContext;
     //
     //	Outgoing text.
     //
-    //crope text;
     char* textArray;
     const char* unsent;
     Rope::size_type nrUnsent;
@@ -132,6 +152,8 @@ private:
 			 const char* errorMessage,
 			 FreeDagNode* originalMessage,
 			 ObjectSystemRewritingContext& context);
+
+  void handleException(int fd, const char* errorText);
 
   bool createClientTcpSocket(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool createServerTcpSocket(FreeDagNode* message, ObjectSystemRewritingContext& context);

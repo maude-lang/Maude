@@ -2,7 +2,7 @@
 unify in TEST : g(f(X, X, Y, Y, h(Z)), f(X, Y, Y, Z, Z)) =? g(f(A, A, A, B, C),
     f(A, B, B, h(C))) .
 
-Solution 1
+Unifier 1
 X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo,
     #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo,
     #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
@@ -31,7 +31,7 @@ B --> f(#1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo,
 C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo,
     #13:Foo, #13:Foo, #14:Foo)
 
-Solution 2
+Unifier 2
 X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo,
     #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo,
     #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
@@ -57,7 +57,7 @@ B --> f(#1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo,
 C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo,
     #13:Foo, #13:Foo, #14:Foo)
 
-Solution 3
+Unifier 3
 X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo,
     #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo,
     #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
@@ -105,7 +105,7 @@ B --> f(#1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo,
 C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo,
     #13:Foo, #13:Foo, #14:Foo)
 
-Solution 4
+Unifier 4
 X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo,
     #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo,
     #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
@@ -141,7 +141,7 @@ B --> f(#1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo,
 C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo,
     #13:Foo, #13:Foo, #14:Foo)
 
-Solution 5
+Unifier 5
 X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo,
     #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo,
     #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
@@ -166,7 +166,7 @@ B --> f(#1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo,
 C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo,
     #13:Foo, #13:Foo, #14:Foo)
 
-Solution 6
+Unifier 6
 X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo,
     #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo,
     #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
@@ -200,227 +200,227 @@ B --> f(#1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo,
 C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo,
     #13:Foo, #13:Foo, #14:Foo)
 
-Solution 7
-X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo,
-    #2:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo,
-    #2:Foo, #3:Foo, #3:Foo, #3:Foo, #3:Foo, #3:Foo, #3:Foo, #3:Foo, #3:Foo,
-    #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo,
-    #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo, #5:Foo, #5:Foo,
-    #5:Foo, #5:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo,
-    #6:Foo, #6:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo,
-    #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #8:Foo, #8:Foo,
-    #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo,
-    #8:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo,
+Unifier 7
+X --> f(#1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo,
+    #5:Foo, #5:Foo, #5:Foo, #5:Foo, #5:Foo, #5:Foo, #5:Foo, #5:Foo, #6:Foo,
+    #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo,
+    #6:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo,
+    #7:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo,
+    #8:Foo, #8:Foo, #8:Foo, #8:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo,
     #9:Foo, #9:Foo, #10:Foo, #10:Foo, #10:Foo, #10:Foo, #10:Foo, #10:Foo,
-    #10:Foo, #10:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo,
-    #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo,
-    #12:Foo, #12:Foo, #13:Foo, #13:Foo, #13:Foo, #13:Foo, #14:Foo, #14:Foo,
-    #14:Foo, #14:Foo, #14:Foo, #14:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo,
-    #15:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo,
-    #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo,
-    #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #17:Foo, #17:Foo, #17:Foo,
-    #17:Foo, #17:Foo, #17:Foo, #17:Foo, #17:Foo, #18:Foo, #18:Foo, #18:Foo,
-    #18:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo, #19:Foo,
-    #19:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo, #20:Foo, #20:Foo,
-    #20:Foo, #20:Foo, #20:Foo, #21:Foo, #21:Foo, #21:Foo, #21:Foo, #21:Foo,
-    #21:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo,
+    #10:Foo, #10:Foo, #10:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo,
+    #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo,
+    #11:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo,
+    #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #13:Foo, #13:Foo, #13:Foo,
+    #13:Foo, #13:Foo, #13:Foo, #13:Foo, #13:Foo, #13:Foo, #13:Foo, #14:Foo,
+    #14:Foo, #14:Foo, #14:Foo, #14:Foo, #14:Foo, #14:Foo, #14:Foo, #15:Foo,
+    #15:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #16:Foo, #16:Foo, #16:Foo,
+    #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #17:Foo,
+    #17:Foo, #17:Foo, #17:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo,
+    #18:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo,
+    #19:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo, #20:Foo, #20:Foo, #20:Foo,
+    #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo,
+    #20:Foo, #20:Foo, #21:Foo, #21:Foo, #21:Foo, #21:Foo, #21:Foo, #21:Foo,
+    #21:Foo, #21:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo,
     #22:Foo, #22:Foo, #22:Foo, #22:Foo, #23:Foo, #23:Foo, #23:Foo, #23:Foo,
     #23:Foo, #23:Foo, #23:Foo, #24:Foo, #24:Foo, #24:Foo, #24:Foo, #24:Foo,
-    #24:Foo, #24:Foo, #24:Foo, #24:Foo, #25:Foo, #25:Foo, #25:Foo, #26:Foo,
-    #26:Foo, #26:Foo, #26:Foo, #26:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo,
-    #27:Foo, #27:Foo, #27:Foo, #28:Foo, #28:Foo, #28:Foo, #28:Foo, #29:Foo,
-    #29:Foo, #29:Foo, #29:Foo, #29:Foo, #29:Foo, #29:Foo, #30:Foo, #30:Foo,
-    #30:Foo, #30:Foo, #30:Foo, #30:Foo, #30:Foo, #30:Foo, #30:Foo, #30:Foo,
-    #30:Foo, #30:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo,
-    #31:Foo, #31:Foo, #32:Foo, #32:Foo, #32:Foo, #32:Foo, #32:Foo, #32:Foo,
+    #25:Foo, #25:Foo, #25:Foo, #25:Foo, #25:Foo, #25:Foo, #26:Foo, #26:Foo,
+    #26:Foo, #26:Foo, #26:Foo, #26:Foo, #26:Foo, #26:Foo, #26:Foo, #26:Foo,
+    #26:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo,
+    #28:Foo, #28:Foo, #28:Foo, #28:Foo, #28:Foo, #28:Foo, #28:Foo, #28:Foo,
+    #28:Foo, #29:Foo, #29:Foo, #29:Foo, #30:Foo, #30:Foo, #30:Foo, #30:Foo,
+    #30:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo,
     #32:Foo, #32:Foo, #32:Foo, #32:Foo, #33:Foo, #33:Foo, #33:Foo, #33:Foo,
-    #34:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo, #35:Foo,
-    #35:Foo, #35:Foo, #35:Foo, #35:Foo, #35:Foo, #35:Foo, #36:Foo, #36:Foo,
-    #37:Foo, #37:Foo, #37:Foo, #37:Foo, #37:Foo, #37:Foo, #38:Foo, #38:Foo,
-    #38:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo, #39:Foo, #39:Foo, #39:Foo,
-    #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #40:Foo,
-    #40:Foo, #40:Foo, #40:Foo, #40:Foo, #41:Foo, #41:Foo, #41:Foo, #41:Foo,
-    #41:Foo, #41:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #43:Foo, #43:Foo,
-    #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #44:Foo, #44:Foo,
-    #45:Foo, #45:Foo, #45:Foo, #45:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo,
-    #46:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo,
-    #47:Foo, #47:Foo, #47:Foo, #48:Foo, #48:Foo, #48:Foo, #48:Foo, #48:Foo,
-    #48:Foo, #49:Foo, #49:Foo, #50:Foo, #50:Foo, #50:Foo, #50:Foo, #50:Foo,
-    #50:Foo, #50:Foo, #50:Foo, #50:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo,
-    #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo,
-    #51:Foo, #51:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo,
-    #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #53:Foo,
-    #53:Foo, #53:Foo, #53:Foo, #53:Foo, #53:Foo, #53:Foo, #53:Foo, #54:Foo,
-    #54:Foo, #54:Foo, #54:Foo, #55:Foo, #55:Foo, #55:Foo, #56:Foo, #56:Foo,
-    #58:Foo, #58:Foo, #58:Foo, #59:Foo, #59:Foo, #59:Foo, #59:Foo, #59:Foo,
-    #60:Foo)
-Y --> f(#5:Foo, #9:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo, #17:Foo, #20:Foo,
-    #23:Foo, #25:Foo, #25:Foo, #26:Foo, #31:Foo, #33:Foo, #33:Foo, #34:Foo,
-    #36:Foo, #40:Foo, #41:Foo, #42:Foo, #42:Foo, #44:Foo, #46:Foo, #47:Foo,
-    #48:Foo, #48:Foo, #49:Foo, #49:Foo, #49:Foo, #53:Foo, #54:Foo, #55:Foo,
-    #55:Foo, #56:Foo, #56:Foo, #56:Foo, #57:Foo, #57:Foo, #60:Foo, #61:Foo,
-    #61:Foo, #61:Foo, #61:Foo, #61:Foo, h(f(#1:Foo, #2:Foo, #2:Foo, #3:Foo,
-    #3:Foo, #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #6:Foo,
-    #6:Foo, #6:Foo, #7:Foo, #7:Foo, #7:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo,
-    #9:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo, #10:Foo, #10:Foo, #11:Foo,
-    #11:Foo, #11:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #13:Foo,
-    #14:Foo, #14:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #16:Foo, #16:Foo,
-    #16:Foo, #16:Foo, #16:Foo, #16:Foo, #17:Foo, #17:Foo, #17:Foo, #17:Foo,
-    #18:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo, #19:Foo, #19:Foo, #19:Foo,
-    #19:Foo, #20:Foo, #20:Foo, #20:Foo, #21:Foo, #21:Foo, #22:Foo, #22:Foo,
-    #23:Foo, #23:Foo, #24:Foo, #24:Foo, #24:Foo, #25:Foo, #25:Foo, #26:Foo,
-    #26:Foo, #26:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo, #28:Foo, #28:Foo,
-    #28:Foo, #29:Foo, #29:Foo, #29:Foo, #29:Foo, #30:Foo, #30:Foo, #30:Foo,
-    #30:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo, #32:Foo, #32:Foo, #32:Foo,
-    #32:Foo, #32:Foo, #33:Foo, #33:Foo, #33:Foo, #33:Foo, #34:Foo, #34:Foo,
-    #34:Foo, #34:Foo, #34:Foo, #35:Foo, #35:Foo, #35:Foo, #35:Foo, #35:Foo,
-    #35:Foo, #36:Foo, #36:Foo, #37:Foo, #37:Foo, #38:Foo, #38:Foo, #38:Foo,
-    #38:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #40:Foo, #40:Foo,
-    #40:Foo, #41:Foo, #41:Foo, #41:Foo, #41:Foo, #41:Foo, #42:Foo, #42:Foo,
-    #42:Foo, #42:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo,
-    #44:Foo, #44:Foo, #45:Foo, #45:Foo, #45:Foo, #46:Foo, #46:Foo, #46:Foo,
-    #47:Foo, #47:Foo, #47:Foo, #48:Foo, #48:Foo, #48:Foo, #49:Foo, #49:Foo,
-    #49:Foo, #50:Foo, #50:Foo, #50:Foo, #51:Foo, #51:Foo, #51:Foo, #52:Foo,
-    #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #53:Foo, #53:Foo, #53:Foo,
-    #53:Foo, #54:Foo, #55:Foo, #55:Foo, #56:Foo, #56:Foo, #56:Foo, #57:Foo,
-    #58:Foo)))
-Z --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo, #3:Foo, #4:Foo, #4:Foo, #4:Foo,
-    #4:Foo, #5:Foo, #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #7:Foo, #7:Foo,
-    #8:Foo, #8:Foo, #8:Foo, #8:Foo, #9:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
-    #10:Foo, #10:Foo, #11:Foo, #11:Foo, #11:Foo, #12:Foo, #12:Foo, #12:Foo,
-    #12:Foo, #12:Foo, #13:Foo, #14:Foo, #14:Foo, #15:Foo, #15:Foo, #15:Foo,
-    #15:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #17:Foo,
-    #17:Foo, #17:Foo, #17:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo,
-    #19:Foo, #19:Foo, #19:Foo, #19:Foo, #20:Foo, #20:Foo, #20:Foo, #21:Foo,
-    #21:Foo, #22:Foo, #22:Foo, #23:Foo, #23:Foo, #24:Foo, #24:Foo, #24:Foo,
-    #25:Foo, #25:Foo, #26:Foo, #26:Foo, #26:Foo, #27:Foo, #27:Foo, #27:Foo,
-    #27:Foo, #28:Foo, #28:Foo, #28:Foo, #29:Foo, #29:Foo, #29:Foo, #29:Foo,
-    #30:Foo, #30:Foo, #30:Foo, #30:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo,
-    #32:Foo, #32:Foo, #32:Foo, #32:Foo, #32:Foo, #33:Foo, #33:Foo, #33:Foo,
-    #33:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo, #35:Foo,
-    #35:Foo, #35:Foo, #35:Foo, #35:Foo, #36:Foo, #36:Foo, #37:Foo, #37:Foo,
-    #38:Foo, #38:Foo, #38:Foo, #38:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo,
-    #39:Foo, #40:Foo, #40:Foo, #40:Foo, #41:Foo, #41:Foo, #41:Foo, #41:Foo,
-    #41:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #43:Foo, #43:Foo, #43:Foo,
-    #43:Foo, #43:Foo, #43:Foo, #44:Foo, #44:Foo, #45:Foo, #45:Foo, #45:Foo,
-    #46:Foo, #46:Foo, #46:Foo, #47:Foo, #47:Foo, #47:Foo, #48:Foo, #48:Foo,
-    #48:Foo, #49:Foo, #49:Foo, #49:Foo, #50:Foo, #50:Foo, #50:Foo, #51:Foo,
-    #51:Foo, #51:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo,
-    #53:Foo, #53:Foo, #53:Foo, #53:Foo, #54:Foo, #55:Foo, #55:Foo, #56:Foo,
-    #56:Foo, #56:Foo, #57:Foo, #58:Foo)
-A --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo,
-    #3:Foo, #3:Foo, #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo,
-    #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo, #7:Foo,
-    #7:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo,
-    #10:Foo, #10:Foo, #11:Foo, #11:Foo, #12:Foo, #12:Foo, #13:Foo, #13:Foo,
-    #14:Foo, #14:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #16:Foo, #16:Foo,
-    #16:Foo, #17:Foo, #17:Foo, #18:Foo, #18:Foo, #19:Foo, #20:Foo, #21:Foo,
-    #21:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #23:Foo, #23:Foo,
-    #23:Foo, #24:Foo, #24:Foo, #24:Foo, #25:Foo, #26:Foo, #27:Foo, #29:Foo,
-    #30:Foo, #30:Foo, #30:Foo, #30:Foo, #31:Foo, #31:Foo, #32:Foo, #32:Foo,
-    #37:Foo, #37:Foo, #38:Foo, #39:Foo, #39:Foo, #40:Foo, #46:Foo, #47:Foo,
-    #47:Foo, #47:Foo, #47:Foo, #48:Foo, #48:Foo, #50:Foo, #50:Foo, #50:Foo,
-    #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #52:Foo, #52:Foo,
-    #52:Foo, #53:Foo, #53:Foo, #54:Foo, #54:Foo, #55:Foo, #58:Foo, #59:Foo,
-    #59:Foo, #59:Foo, #60:Foo, #61:Foo, #61:Foo, h(f(#1:Foo, #2:Foo, #2:Foo,
-    #3:Foo, #3:Foo, #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo,
-    #6:Foo, #6:Foo, #6:Foo, #7:Foo, #7:Foo, #7:Foo, #8:Foo, #8:Foo, #8:Foo,
-    #8:Foo, #9:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo, #10:Foo, #10:Foo,
-    #11:Foo, #11:Foo, #11:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo,
-    #13:Foo, #14:Foo, #14:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #16:Foo,
-    #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #17:Foo, #17:Foo, #17:Foo,
-    #17:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo, #19:Foo, #19:Foo,
-    #19:Foo, #19:Foo, #20:Foo, #20:Foo, #20:Foo, #21:Foo, #21:Foo, #22:Foo,
-    #22:Foo, #23:Foo, #23:Foo, #24:Foo, #24:Foo, #24:Foo, #25:Foo, #25:Foo,
-    #26:Foo, #26:Foo, #26:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo, #28:Foo,
-    #28:Foo, #28:Foo, #29:Foo, #29:Foo, #29:Foo, #29:Foo, #30:Foo, #30:Foo,
-    #30:Foo, #30:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo, #32:Foo, #32:Foo,
-    #32:Foo, #32:Foo, #32:Foo, #33:Foo, #33:Foo, #33:Foo, #33:Foo, #34:Foo,
-    #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo, #35:Foo, #35:Foo, #35:Foo,
-    #35:Foo, #35:Foo, #36:Foo, #36:Foo, #37:Foo, #37:Foo, #38:Foo, #38:Foo,
-    #38:Foo, #38:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #40:Foo,
-    #40:Foo, #40:Foo, #41:Foo, #41:Foo, #41:Foo, #41:Foo, #41:Foo, #42:Foo,
-    #42:Foo, #42:Foo, #42:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo,
-    #43:Foo, #44:Foo, #44:Foo, #45:Foo, #45:Foo, #45:Foo, #46:Foo, #46:Foo,
-    #46:Foo, #47:Foo, #47:Foo, #47:Foo, #48:Foo, #48:Foo, #48:Foo, #49:Foo,
-    #49:Foo, #49:Foo, #50:Foo, #50:Foo, #50:Foo, #51:Foo, #51:Foo, #51:Foo,
-    #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #53:Foo, #53:Foo,
-    #53:Foo, #53:Foo, #54:Foo, #55:Foo, #55:Foo, #56:Foo, #56:Foo, #56:Foo,
-    #57:Foo, #58:Foo)))
-B --> f(#1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo,
-    #3:Foo, #3:Foo, #3:Foo, #3:Foo, #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo,
-    #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo, #5:Foo, #5:Foo,
-    #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #7:Foo, #7:Foo,
-    #7:Foo, #7:Foo, #7:Foo, #7:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo,
-    #8:Foo, #8:Foo, #8:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo,
-    #9:Foo, #10:Foo, #10:Foo, #10:Foo, #10:Foo, #10:Foo, #10:Foo, #10:Foo,
-    #10:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo,
-    #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo,
-    #12:Foo, #13:Foo, #13:Foo, #13:Foo, #14:Foo, #14:Foo, #14:Foo, #14:Foo,
-    #15:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo,
-    #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo,
-    #16:Foo, #16:Foo, #16:Foo, #17:Foo, #17:Foo, #17:Foo, #17:Foo, #17:Foo,
-    #17:Foo, #17:Foo, #17:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo,
-    #18:Foo, #18:Foo, #18:Foo, #18:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo,
-    #19:Foo, #19:Foo, #19:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo,
-    #20:Foo, #21:Foo, #21:Foo, #21:Foo, #21:Foo, #22:Foo, #22:Foo, #22:Foo,
-    #22:Foo, #22:Foo, #23:Foo, #23:Foo, #23:Foo, #23:Foo, #23:Foo, #24:Foo,
-    #24:Foo, #24:Foo, #24:Foo, #24:Foo, #24:Foo, #25:Foo, #25:Foo, #25:Foo,
-    #25:Foo, #25:Foo, #26:Foo, #26:Foo, #26:Foo, #26:Foo, #26:Foo, #26:Foo,
-    #27:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo, #28:Foo,
-    #28:Foo, #28:Foo, #28:Foo, #28:Foo, #29:Foo, #29:Foo, #29:Foo, #29:Foo,
-    #29:Foo, #29:Foo, #29:Foo, #30:Foo, #30:Foo, #30:Foo, #30:Foo, #30:Foo,
-    #30:Foo, #30:Foo, #30:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo,
-    #31:Foo, #31:Foo, #31:Foo, #32:Foo, #32:Foo, #32:Foo, #32:Foo, #32:Foo,
-    #32:Foo, #32:Foo, #32:Foo, #32:Foo, #33:Foo, #33:Foo, #33:Foo, #33:Foo,
-    #33:Foo, #33:Foo, #33:Foo, #33:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo,
-    #34:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo, #35:Foo, #35:Foo,
+    #33:Foo, #33:Foo, #33:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo,
+    #34:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo,
     #35:Foo, #35:Foo, #35:Foo, #35:Foo, #35:Foo, #35:Foo, #35:Foo, #36:Foo,
-    #36:Foo, #36:Foo, #36:Foo, #37:Foo, #37:Foo, #37:Foo, #37:Foo, #38:Foo,
-    #38:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo, #39:Foo, #39:Foo,
-    #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #40:Foo,
-    #40:Foo, #40:Foo, #40:Foo, #40:Foo, #40:Foo, #41:Foo, #41:Foo, #41:Foo,
-    #41:Foo, #41:Foo, #41:Foo, #41:Foo, #41:Foo, #41:Foo, #42:Foo, #42:Foo,
-    #42:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #43:Foo, #43:Foo,
-    #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo,
-    #44:Foo, #44:Foo, #44:Foo, #44:Foo, #45:Foo, #45:Foo, #45:Foo, #45:Foo,
-    #45:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo, #47:Foo,
+    #36:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo,
+    #36:Foo, #37:Foo, #37:Foo, #37:Foo, #37:Foo, #38:Foo, #38:Foo, #38:Foo,
+    #38:Foo, #38:Foo, #38:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo,
+    #39:Foo, #39:Foo, #39:Foo, #40:Foo, #40:Foo, #41:Foo, #41:Foo, #41:Foo,
+    #41:Foo, #41:Foo, #41:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo,
+    #42:Foo, #42:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo,
+    #43:Foo, #43:Foo, #43:Foo, #43:Foo, #44:Foo, #44:Foo, #44:Foo, #44:Foo,
+    #44:Foo, #45:Foo, #45:Foo, #45:Foo, #45:Foo, #45:Foo, #45:Foo, #46:Foo,
+    #46:Foo, #46:Foo, #46:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo,
+    #47:Foo, #47:Foo, #47:Foo, #48:Foo, #48:Foo, #49:Foo, #49:Foo, #49:Foo,
+    #49:Foo, #50:Foo, #50:Foo, #50:Foo, #50:Foo, #50:Foo, #51:Foo, #51:Foo,
+    #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo,
+    #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #53:Foo, #53:Foo,
+    #54:Foo, #54:Foo, #54:Foo, #54:Foo, #54:Foo, #54:Foo, #54:Foo, #54:Foo,
+    #54:Foo, #55:Foo, #55:Foo, #55:Foo, #55:Foo, #55:Foo, #55:Foo, #55:Foo,
+    #55:Foo, #55:Foo, #55:Foo, #55:Foo, #55:Foo, #55:Foo, #55:Foo, #56:Foo,
+    #56:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo,
+    #56:Foo, #56:Foo, #56:Foo, #56:Foo, #57:Foo, #57:Foo, #57:Foo, #57:Foo,
+    #57:Foo, #57:Foo, #57:Foo, #57:Foo, #58:Foo, #58:Foo, #58:Foo, #58:Foo,
+    #59:Foo, #59:Foo, #59:Foo, #60:Foo, #60:Foo)
+Y --> f(#3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #9:Foo, #13:Foo,
+    #14:Foo, #15:Foo, #15:Foo, #17:Foo, #21:Foo, #24:Foo, #27:Foo, #29:Foo,
+    #29:Foo, #30:Foo, #35:Foo, #37:Foo, #37:Foo, #38:Foo, #40:Foo, #44:Foo,
+    #45:Foo, #46:Foo, #46:Foo, #48:Foo, #50:Foo, #51:Foo, #52:Foo, #52:Foo,
+    #53:Foo, #53:Foo, #53:Foo, #57:Foo, #58:Foo, #59:Foo, #59:Foo, #60:Foo,
+    #60:Foo, #60:Foo, #61:Foo, #61:Foo, h(f(#1:Foo, #5:Foo, #6:Foo, #6:Foo,
+    #7:Foo, #7:Foo, #7:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #9:Foo, #9:Foo,
+    #10:Foo, #10:Foo, #10:Foo, #11:Foo, #11:Foo, #11:Foo, #12:Foo, #12:Foo,
+    #12:Foo, #12:Foo, #13:Foo, #13:Foo, #13:Foo, #14:Foo, #14:Foo, #14:Foo,
+    #14:Foo, #15:Foo, #15:Foo, #15:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo,
+    #16:Foo, #17:Foo, #18:Foo, #18:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo,
+    #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #21:Foo, #21:Foo,
+    #21:Foo, #21:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #23:Foo,
+    #23:Foo, #23:Foo, #23:Foo, #24:Foo, #24:Foo, #24:Foo, #25:Foo, #25:Foo,
+    #26:Foo, #26:Foo, #27:Foo, #27:Foo, #28:Foo, #28:Foo, #28:Foo, #29:Foo,
+    #29:Foo, #30:Foo, #30:Foo, #30:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo,
+    #32:Foo, #32:Foo, #32:Foo, #33:Foo, #33:Foo, #33:Foo, #33:Foo, #34:Foo,
+    #34:Foo, #34:Foo, #34:Foo, #35:Foo, #35:Foo, #35:Foo, #35:Foo, #36:Foo,
+    #36:Foo, #36:Foo, #36:Foo, #36:Foo, #37:Foo, #37:Foo, #37:Foo, #37:Foo,
+    #38:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo, #39:Foo, #39:Foo, #39:Foo,
+    #39:Foo, #39:Foo, #39:Foo, #40:Foo, #40:Foo, #41:Foo, #41:Foo, #42:Foo,
+    #42:Foo, #42:Foo, #42:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo,
+    #44:Foo, #44:Foo, #44:Foo, #45:Foo, #45:Foo, #45:Foo, #45:Foo, #45:Foo,
+    #46:Foo, #46:Foo, #46:Foo, #46:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo,
+    #47:Foo, #47:Foo, #48:Foo, #48:Foo, #49:Foo, #49:Foo, #49:Foo, #50:Foo,
+    #50:Foo, #50:Foo, #51:Foo, #51:Foo, #51:Foo, #52:Foo, #52:Foo, #52:Foo,
+    #53:Foo, #53:Foo, #53:Foo, #54:Foo, #54:Foo, #54:Foo, #55:Foo, #55:Foo,
+    #55:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo, #57:Foo,
+    #57:Foo, #57:Foo, #57:Foo, #58:Foo, #59:Foo, #59:Foo, #60:Foo, #60:Foo,
+    #60:Foo, #61:Foo)))
+Z --> f(#1:Foo, #5:Foo, #6:Foo, #6:Foo, #7:Foo, #7:Foo, #7:Foo, #8:Foo, #8:Foo,
+    #8:Foo, #8:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo, #10:Foo, #11:Foo,
+    #11:Foo, #11:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #13:Foo, #13:Foo,
+    #13:Foo, #14:Foo, #14:Foo, #14:Foo, #14:Foo, #15:Foo, #15:Foo, #15:Foo,
+    #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #17:Foo, #18:Foo, #18:Foo,
+    #19:Foo, #19:Foo, #19:Foo, #19:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo,
+    #20:Foo, #20:Foo, #21:Foo, #21:Foo, #21:Foo, #21:Foo, #22:Foo, #22:Foo,
+    #22:Foo, #22:Foo, #22:Foo, #23:Foo, #23:Foo, #23:Foo, #23:Foo, #24:Foo,
+    #24:Foo, #24:Foo, #25:Foo, #25:Foo, #26:Foo, #26:Foo, #27:Foo, #27:Foo,
+    #28:Foo, #28:Foo, #28:Foo, #29:Foo, #29:Foo, #30:Foo, #30:Foo, #30:Foo,
+    #31:Foo, #31:Foo, #31:Foo, #31:Foo, #32:Foo, #32:Foo, #32:Foo, #33:Foo,
+    #33:Foo, #33:Foo, #33:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo,
+    #35:Foo, #35:Foo, #35:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo,
+    #37:Foo, #37:Foo, #37:Foo, #37:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo,
+    #38:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #40:Foo,
+    #40:Foo, #41:Foo, #41:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #43:Foo,
+    #43:Foo, #43:Foo, #43:Foo, #43:Foo, #44:Foo, #44:Foo, #44:Foo, #45:Foo,
+    #45:Foo, #45:Foo, #45:Foo, #45:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo,
     #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #48:Foo, #48:Foo,
-    #48:Foo, #48:Foo, #48:Foo, #48:Foo, #48:Foo, #49:Foo, #49:Foo, #49:Foo,
-    #49:Foo, #49:Foo, #49:Foo, #49:Foo, #50:Foo, #50:Foo, #50:Foo, #50:Foo,
-    #50:Foo, #50:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo,
-    #51:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo,
-    #52:Foo, #52:Foo, #52:Foo, #52:Foo, #53:Foo, #53:Foo, #53:Foo, #53:Foo,
-    #53:Foo, #53:Foo, #53:Foo, #53:Foo, #54:Foo, #54:Foo, #54:Foo, #55:Foo,
-    #55:Foo, #55:Foo, #55:Foo, #55:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo,
-    #56:Foo, #56:Foo, #56:Foo, #57:Foo, #57:Foo, #57:Foo, #58:Foo, #58:Foo,
-    #59:Foo, #60:Foo, #61:Foo, #61:Foo, #61:Foo, #61:Foo)
-C --> f(#1:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo, #3:Foo, #4:Foo, #4:Foo, #4:Foo,
-    #4:Foo, #5:Foo, #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #7:Foo, #7:Foo,
-    #8:Foo, #8:Foo, #8:Foo, #8:Foo, #9:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
-    #10:Foo, #10:Foo, #11:Foo, #11:Foo, #11:Foo, #12:Foo, #12:Foo, #12:Foo,
-    #12:Foo, #12:Foo, #13:Foo, #14:Foo, #14:Foo, #15:Foo, #15:Foo, #15:Foo,
-    #15:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #17:Foo,
-    #17:Foo, #17:Foo, #17:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo, #18:Foo,
-    #19:Foo, #19:Foo, #19:Foo, #19:Foo, #20:Foo, #20:Foo, #20:Foo, #21:Foo,
-    #21:Foo, #22:Foo, #22:Foo, #23:Foo, #23:Foo, #24:Foo, #24:Foo, #24:Foo,
-    #25:Foo, #25:Foo, #26:Foo, #26:Foo, #26:Foo, #27:Foo, #27:Foo, #27:Foo,
-    #27:Foo, #28:Foo, #28:Foo, #28:Foo, #29:Foo, #29:Foo, #29:Foo, #29:Foo,
-    #30:Foo, #30:Foo, #30:Foo, #30:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo,
-    #32:Foo, #32:Foo, #32:Foo, #32:Foo, #32:Foo, #33:Foo, #33:Foo, #33:Foo,
-    #33:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo, #35:Foo,
-    #35:Foo, #35:Foo, #35:Foo, #35:Foo, #36:Foo, #36:Foo, #37:Foo, #37:Foo,
-    #38:Foo, #38:Foo, #38:Foo, #38:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo,
-    #39:Foo, #40:Foo, #40:Foo, #40:Foo, #41:Foo, #41:Foo, #41:Foo, #41:Foo,
+    #49:Foo, #49:Foo, #49:Foo, #50:Foo, #50:Foo, #50:Foo, #51:Foo, #51:Foo,
+    #51:Foo, #52:Foo, #52:Foo, #52:Foo, #53:Foo, #53:Foo, #53:Foo, #54:Foo,
+    #54:Foo, #54:Foo, #55:Foo, #55:Foo, #55:Foo, #56:Foo, #56:Foo, #56:Foo,
+    #56:Foo, #56:Foo, #56:Foo, #57:Foo, #57:Foo, #57:Foo, #57:Foo, #58:Foo,
+    #59:Foo, #59:Foo, #60:Foo, #60:Foo, #60:Foo, #61:Foo)
+A --> f(#1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo,
+    #5:Foo, #5:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #7:Foo,
+    #7:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #9:Foo, #9:Foo, #9:Foo, #10:Foo,
+    #10:Foo, #10:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo, #11:Foo,
+    #12:Foo, #12:Foo, #12:Foo, #12:Foo, #13:Foo, #13:Foo, #13:Foo, #13:Foo,
+    #14:Foo, #14:Foo, #15:Foo, #15:Foo, #16:Foo, #16:Foo, #17:Foo, #17:Foo,
+    #18:Foo, #18:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo, #20:Foo, #20:Foo,
+    #20:Foo, #21:Foo, #21:Foo, #22:Foo, #22:Foo, #23:Foo, #24:Foo, #25:Foo,
+    #25:Foo, #26:Foo, #26:Foo, #26:Foo, #26:Foo, #26:Foo, #27:Foo, #27:Foo,
+    #27:Foo, #28:Foo, #28:Foo, #28:Foo, #29:Foo, #30:Foo, #31:Foo, #33:Foo,
+    #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo, #35:Foo, #36:Foo, #36:Foo,
+    #41:Foo, #41:Foo, #42:Foo, #43:Foo, #43:Foo, #44:Foo, #50:Foo, #51:Foo,
+    #51:Foo, #51:Foo, #51:Foo, #52:Foo, #52:Foo, #54:Foo, #54:Foo, #54:Foo,
+    #55:Foo, #55:Foo, #55:Foo, #55:Foo, #55:Foo, #55:Foo, #56:Foo, #56:Foo,
+    #56:Foo, #57:Foo, #57:Foo, #58:Foo, #58:Foo, #59:Foo, h(f(#1:Foo, #5:Foo,
+    #6:Foo, #6:Foo, #7:Foo, #7:Foo, #7:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo,
+    #9:Foo, #9:Foo, #10:Foo, #10:Foo, #10:Foo, #11:Foo, #11:Foo, #11:Foo,
+    #12:Foo, #12:Foo, #12:Foo, #12:Foo, #13:Foo, #13:Foo, #13:Foo, #14:Foo,
+    #14:Foo, #14:Foo, #14:Foo, #15:Foo, #15:Foo, #15:Foo, #16:Foo, #16:Foo,
+    #16:Foo, #16:Foo, #16:Foo, #17:Foo, #18:Foo, #18:Foo, #19:Foo, #19:Foo,
+    #19:Foo, #19:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo,
+    #21:Foo, #21:Foo, #21:Foo, #21:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo,
+    #22:Foo, #23:Foo, #23:Foo, #23:Foo, #23:Foo, #24:Foo, #24:Foo, #24:Foo,
+    #25:Foo, #25:Foo, #26:Foo, #26:Foo, #27:Foo, #27:Foo, #28:Foo, #28:Foo,
+    #28:Foo, #29:Foo, #29:Foo, #30:Foo, #30:Foo, #30:Foo, #31:Foo, #31:Foo,
+    #31:Foo, #31:Foo, #32:Foo, #32:Foo, #32:Foo, #33:Foo, #33:Foo, #33:Foo,
+    #33:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo, #35:Foo, #35:Foo,
+    #35:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo, #37:Foo, #37:Foo,
+    #37:Foo, #37:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo, #39:Foo,
+    #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #40:Foo, #40:Foo, #41:Foo,
     #41:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #43:Foo, #43:Foo, #43:Foo,
-    #43:Foo, #43:Foo, #43:Foo, #44:Foo, #44:Foo, #45:Foo, #45:Foo, #45:Foo,
-    #46:Foo, #46:Foo, #46:Foo, #47:Foo, #47:Foo, #47:Foo, #48:Foo, #48:Foo,
-    #48:Foo, #49:Foo, #49:Foo, #49:Foo, #50:Foo, #50:Foo, #50:Foo, #51:Foo,
-    #51:Foo, #51:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo,
-    #53:Foo, #53:Foo, #53:Foo, #53:Foo, #54:Foo, #55:Foo, #55:Foo, #56:Foo,
-    #56:Foo, #56:Foo, #57:Foo, #58:Foo)
+    #43:Foo, #43:Foo, #44:Foo, #44:Foo, #44:Foo, #45:Foo, #45:Foo, #45:Foo,
+    #45:Foo, #45:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo, #47:Foo, #47:Foo,
+    #47:Foo, #47:Foo, #47:Foo, #47:Foo, #48:Foo, #48:Foo, #49:Foo, #49:Foo,
+    #49:Foo, #50:Foo, #50:Foo, #50:Foo, #51:Foo, #51:Foo, #51:Foo, #52:Foo,
+    #52:Foo, #52:Foo, #53:Foo, #53:Foo, #53:Foo, #54:Foo, #54:Foo, #54:Foo,
+    #55:Foo, #55:Foo, #55:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo,
+    #56:Foo, #57:Foo, #57:Foo, #57:Foo, #57:Foo, #58:Foo, #59:Foo, #59:Foo,
+    #60:Foo, #60:Foo, #60:Foo, #61:Foo)))
+B --> f(#1:Foo, #1:Foo, #2:Foo, #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo,
+    #5:Foo, #5:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #7:Foo,
+    #7:Foo, #7:Foo, #7:Foo, #7:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo, #8:Foo,
+    #8:Foo, #8:Foo, #8:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo, #9:Foo, #10:Foo,
+    #10:Foo, #10:Foo, #10:Foo, #10:Foo, #10:Foo, #11:Foo, #11:Foo, #11:Foo,
+    #11:Foo, #11:Foo, #11:Foo, #11:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo,
+    #12:Foo, #12:Foo, #12:Foo, #12:Foo, #13:Foo, #13:Foo, #13:Foo, #13:Foo,
+    #13:Foo, #13:Foo, #13:Foo, #14:Foo, #14:Foo, #14:Foo, #14:Foo, #14:Foo,
+    #14:Foo, #14:Foo, #14:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo, #15:Foo,
+    #15:Foo, #15:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo,
+    #16:Foo, #16:Foo, #16:Foo, #17:Foo, #17:Foo, #17:Foo, #18:Foo, #18:Foo,
+    #18:Foo, #18:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo, #19:Foo,
+    #19:Foo, #19:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo,
+    #20:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo, #21:Foo, #21:Foo, #21:Foo,
+    #21:Foo, #21:Foo, #21:Foo, #21:Foo, #21:Foo, #22:Foo, #22:Foo, #22:Foo,
+    #22:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #22:Foo, #23:Foo, #23:Foo,
+    #23:Foo, #23:Foo, #23:Foo, #23:Foo, #23:Foo, #24:Foo, #24:Foo, #24:Foo,
+    #24:Foo, #24:Foo, #24:Foo, #25:Foo, #25:Foo, #25:Foo, #25:Foo, #26:Foo,
+    #26:Foo, #26:Foo, #26:Foo, #26:Foo, #27:Foo, #27:Foo, #27:Foo, #27:Foo,
+    #27:Foo, #28:Foo, #28:Foo, #28:Foo, #28:Foo, #28:Foo, #28:Foo, #29:Foo,
+    #29:Foo, #29:Foo, #29:Foo, #29:Foo, #30:Foo, #30:Foo, #30:Foo, #30:Foo,
+    #30:Foo, #30:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo, #31:Foo,
+    #31:Foo, #32:Foo, #32:Foo, #32:Foo, #32:Foo, #32:Foo, #33:Foo, #33:Foo,
+    #33:Foo, #33:Foo, #33:Foo, #33:Foo, #33:Foo, #34:Foo, #34:Foo, #34:Foo,
+    #34:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo, #35:Foo, #35:Foo,
+    #35:Foo, #35:Foo, #35:Foo, #35:Foo, #35:Foo, #36:Foo, #36:Foo, #36:Foo,
+    #36:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo, #37:Foo, #37:Foo,
+    #37:Foo, #37:Foo, #37:Foo, #37:Foo, #37:Foo, #37:Foo, #38:Foo, #38:Foo,
+    #38:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo, #39:Foo,
+    #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo,
+    #39:Foo, #40:Foo, #40:Foo, #40:Foo, #40:Foo, #41:Foo, #41:Foo, #41:Foo,
+    #41:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo,
+    #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo, #43:Foo,
+    #43:Foo, #44:Foo, #44:Foo, #44:Foo, #44:Foo, #44:Foo, #44:Foo, #45:Foo,
+    #45:Foo, #45:Foo, #45:Foo, #45:Foo, #45:Foo, #45:Foo, #45:Foo, #45:Foo,
+    #46:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo,
+    #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo,
+    #47:Foo, #47:Foo, #48:Foo, #48:Foo, #48:Foo, #48:Foo, #49:Foo, #49:Foo,
+    #49:Foo, #49:Foo, #49:Foo, #50:Foo, #50:Foo, #50:Foo, #50:Foo, #50:Foo,
+    #50:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo, #51:Foo,
+    #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #52:Foo, #53:Foo,
+    #53:Foo, #53:Foo, #53:Foo, #53:Foo, #53:Foo, #53:Foo, #54:Foo, #54:Foo,
+    #54:Foo, #54:Foo, #54:Foo, #54:Foo, #55:Foo, #55:Foo, #55:Foo, #55:Foo,
+    #55:Foo, #55:Foo, #55:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo,
+    #56:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo, #56:Foo, #57:Foo, #57:Foo,
+    #57:Foo, #57:Foo, #57:Foo, #57:Foo, #57:Foo, #57:Foo, #58:Foo, #58:Foo,
+    #58:Foo, #59:Foo, #59:Foo, #59:Foo, #59:Foo, #59:Foo, #60:Foo, #60:Foo,
+    #60:Foo, #60:Foo, #60:Foo, #60:Foo, #60:Foo, #61:Foo, #61:Foo, #61:Foo)
+C --> f(#1:Foo, #5:Foo, #6:Foo, #6:Foo, #7:Foo, #7:Foo, #7:Foo, #8:Foo, #8:Foo,
+    #8:Foo, #8:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo, #10:Foo, #11:Foo,
+    #11:Foo, #11:Foo, #12:Foo, #12:Foo, #12:Foo, #12:Foo, #13:Foo, #13:Foo,
+    #13:Foo, #14:Foo, #14:Foo, #14:Foo, #14:Foo, #15:Foo, #15:Foo, #15:Foo,
+    #16:Foo, #16:Foo, #16:Foo, #16:Foo, #16:Foo, #17:Foo, #18:Foo, #18:Foo,
+    #19:Foo, #19:Foo, #19:Foo, #19:Foo, #20:Foo, #20:Foo, #20:Foo, #20:Foo,
+    #20:Foo, #20:Foo, #21:Foo, #21:Foo, #21:Foo, #21:Foo, #22:Foo, #22:Foo,
+    #22:Foo, #22:Foo, #22:Foo, #23:Foo, #23:Foo, #23:Foo, #23:Foo, #24:Foo,
+    #24:Foo, #24:Foo, #25:Foo, #25:Foo, #26:Foo, #26:Foo, #27:Foo, #27:Foo,
+    #28:Foo, #28:Foo, #28:Foo, #29:Foo, #29:Foo, #30:Foo, #30:Foo, #30:Foo,
+    #31:Foo, #31:Foo, #31:Foo, #31:Foo, #32:Foo, #32:Foo, #32:Foo, #33:Foo,
+    #33:Foo, #33:Foo, #33:Foo, #34:Foo, #34:Foo, #34:Foo, #34:Foo, #35:Foo,
+    #35:Foo, #35:Foo, #35:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo, #36:Foo,
+    #37:Foo, #37:Foo, #37:Foo, #37:Foo, #38:Foo, #38:Foo, #38:Foo, #38:Foo,
+    #38:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #39:Foo, #40:Foo,
+    #40:Foo, #41:Foo, #41:Foo, #42:Foo, #42:Foo, #42:Foo, #42:Foo, #43:Foo,
+    #43:Foo, #43:Foo, #43:Foo, #43:Foo, #44:Foo, #44:Foo, #44:Foo, #45:Foo,
+    #45:Foo, #45:Foo, #45:Foo, #45:Foo, #46:Foo, #46:Foo, #46:Foo, #46:Foo,
+    #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #47:Foo, #48:Foo, #48:Foo,
+    #49:Foo, #49:Foo, #49:Foo, #50:Foo, #50:Foo, #50:Foo, #51:Foo, #51:Foo,
+    #51:Foo, #52:Foo, #52:Foo, #52:Foo, #53:Foo, #53:Foo, #53:Foo, #54:Foo,
+    #54:Foo, #54:Foo, #55:Foo, #55:Foo, #55:Foo, #56:Foo, #56:Foo, #56:Foo,
+    #56:Foo, #56:Foo, #56:Foo, #57:Foo, #57:Foo, #57:Foo, #57:Foo, #58:Foo,
+    #59:Foo, #59:Foo, #60:Foo, #60:Foo, #60:Foo, #61:Foo)
 
-Solution 8
+Unifier 8
 X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo,
     #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo,
     #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
@@ -451,7 +451,7 @@ B --> f(#1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo,
 C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo,
     #13:Foo, #13:Foo, #14:Foo)
 
-Solution 9
+Unifier 9
 X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo,
     #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo,
     #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
@@ -512,7 +512,7 @@ B --> f(#1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo, #4:Foo, #5:Foo,
 C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo,
     #13:Foo, #13:Foo, #14:Foo)
 
-Solution 10
+Unifier 10
 X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo,
     #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo,
     #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
@@ -543,7 +543,7 @@ C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo,
     #13:Foo, #13:Foo, #14:Foo, h(f(#1:Foo, #2:Foo, #2:Foo, #3:Foo, #9:Foo,
     #9:Foo, #9:Foo, #10:Foo, #10:Foo, #11:Foo, #12:Foo)))
 
-Solution 11
+Unifier 11
 X --> f(#1:Foo, #1:Foo, #1:Foo, #1:Foo, #2:Foo, #2:Foo, #2:Foo, #3:Foo, #3:Foo,
     #3:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #4:Foo, #5:Foo, #5:Foo, #5:Foo,
     #5:Foo, #6:Foo, #6:Foo, #6:Foo, #7:Foo, #9:Foo, #9:Foo, #10:Foo, #10:Foo,
@@ -574,7 +574,7 @@ C --> f(#3:Foo, #5:Foo, #6:Foo, #6:Foo, #10:Foo, #11:Foo, #11:Foo, #13:Foo,
 ==========================================
 unify in FOO : X =? W /\ f(X, Y) =? f(W, Z) .
 
-Solution 1
+Unifier 1
 X --> #1:Foo
 W --> #1:Foo
 Y --> #2:Foo
@@ -582,53 +582,61 @@ Z --> #2:Foo
 ==========================================
 unify in NAT' : X =? s (X * Y) .
 
-Solution 1
+Unifier 1
+X --> s 0
+Y --> 0
+
+Unifier 2
 X --> s 0
 Y --> 0
 ==========================================
 unify in NAT' : X =? s X * Y .
 
-Solution 1
+Unifier 1
+X --> 0
+Y --> 0
+
+Unifier 2
 X --> 0
 Y --> 0
 ==========================================
 unify in NAT' : s X =? s X * Y .
 
-Solution 1
+Unifier 1
 X --> #1:Nat
 Y --> s 0
 ==========================================
 unify in NAT' : s X =? X * Y .
 
-Solution 1
+Unifier 1
 X --> s 0
 Y --> s_^2(0)
 ==========================================
 unify in COMM : X =? c(f(X, Y), Z) .
 
-Solution 1
+Unifier 1
 X --> c(a, b)
 Z --> a
 Y --> b
 
-Solution 2
+Unifier 2
 X --> c(a, b)
 Z --> b
 Y --> a
 ==========================================
 unify in FOO2 : X =? f(Y, a, b) /\ Y =? g(X, c, d) .
 
-Solution 1
+Unifier 1
 X --> f(a, b)
 Y --> g(c, d)
 
-Solution 2
+Unifier 2
 X --> f(a, b)
 Y --> g(c, d)
 ==========================================
 unify in FOO3 : X =? f(Y, a, b) /\ Y =? h(X) .
 
-Solution 1
+Unifier 1
 X --> f(a, b)
 Y --> h(f(a, b))
 Bye.

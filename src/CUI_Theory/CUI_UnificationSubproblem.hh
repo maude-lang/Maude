@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,16 +22,13 @@
 
 //
 //      Class for unification subproblems in the C theory.
-//	It consists of a vector of unification problems of the form f(u, v) =? f(s, t) where f is a C symbol.
+//	It consists of a vector of unification problems of the form
+//	f(u, v) =? f(s, t) where f is a C symbol.
 //
 #ifndef _CUI_UnificationSubproblem_hh_
 #define _CUI_UnificationSubproblem_hh_
-//#include <list>
 #include "unificationSubproblem.hh"
 #include "simpleRootContainer.hh"
-//#include "natSet.hh"
-//#include "dagNode.hh"
-//#include "dagNodeSet.hh"
 #include "substitution.hh"
 #include "pendingUnificationStack.hh"
 
@@ -54,7 +51,6 @@ private:
   struct Problem
   {
     Problem(CUI_DagNode* lhs, CUI_DagNode* rhs);
-    Problem();
     Problem(const Problem& original);
 
     CUI_DagNode* const lhs;
@@ -70,14 +66,6 @@ private:
 };
 
 inline
-CUI_UnificationSubproblem::Problem::Problem()  // HACK
-  : lhs(0),
-    rhs(0),
-    savedSubstitution(0)
-{
-}
-
-inline
 CUI_UnificationSubproblem::Problem::Problem(CUI_DagNode* lhs, CUI_DagNode* rhs)
   : lhs(lhs),
     rhs(rhs),
@@ -91,6 +79,12 @@ CUI_UnificationSubproblem::Problem::Problem(const Problem& original)
     rhs(original.rhs),
     savedSubstitution(0)  // HACK
 {
+  //
+  //	This is only a partial copy constructor - it copies the first two
+  //	data members, which is what is needed for addUnification(). We also
+  //	need to initialize saveSubstitution because Substitution has no
+  //	default constructor.
+  //
 }
 
 #endif

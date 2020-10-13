@@ -195,10 +195,11 @@ public:
   void test(const Vector<Token>& subject);
 
   void match(const Vector<Token>& bubble, bool withExtension, Int64 limit);
-  void unify(const Vector<Token>& bubble, Int64 limit);
+  void unify(const Vector<Token>& bubble, Int64 limit, bool irredundant);
   void search(const Vector<Token>& bubble, Int64 limit, Int64 depth, SearchKind searchKind, bool debug);
   void getVariants(const Vector<Token>& bubble, Int64 limit, bool irredundant, bool debug);
-  void variantUnify(const Vector<Token>& bubble, Int64 limit, bool debug);
+  void variantUnify(const Vector<Token>& bubble, Int64 limit, bool filtered, bool debug);
+  void variantMatch(const Vector<Token>& bubble, Int64 limit, bool debug);
   void smtSearch(const Vector<Token>& subject, int limit, int depth);
 
   void showSearchPath(int stateNr);
@@ -303,6 +304,12 @@ private:
 			    Int64 solutionCount,
 			    Int64 limit);
   void variantUnifyCont(Int64 limit, bool debug);
+  void doVariantMatching(Timer& timer,
+			 VisibleModule* module,
+			 VariantSearch* state,
+			 Int64 solutionCount,
+			 Int64 limit);
+  void variantMatchCont(Int64 limit, bool debug);
   void doSmtSearch(Timer& timer,
 		   VisibleModule* module,
 		   SMT_RewriteSequenceSearch* state,

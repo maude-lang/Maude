@@ -62,6 +62,7 @@ protected:
   void markReachableNodes();
 
 private:
+  
   struct dagNodeLt
   {
     bool operator()(const DagNode* d1, const DagNode* d2) const
@@ -72,7 +73,9 @@ private:
 
   typedef map<DagNode*, ExternalObjectManagerSymbol*, dagNodeLt> ObjectMap;
   typedef map<DagNode*, list<DagNode*>, dagNodeLt> MessageMap;
-  
+
+  bool interleave();
+
   Mode mode;
   ObjectMap externalObjects;
   MessageMap incomingMessages;

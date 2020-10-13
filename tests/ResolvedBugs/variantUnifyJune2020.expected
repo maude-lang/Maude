@@ -1,0 +1,5283 @@
+==========================================
+variant unify in A-UNIF : j(A, f(B, E, C), f(D, E, j(G, H), I)) =? j(U, f(V,
+    W), f(X, j(Y, Z), S)) .
+
+Unifier 1
+rewrites: 0
+A --> j(%14:List, f(%8:List, %9:List), f(%10:List, j(%11:List, %12:List),
+    %13:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%14:List, f(%1:List, %2:Elt, %3:List), f(%4:List, %2:Elt, j(%5:List,
+    %6:List), %7:List))
+V --> %8:List
+W --> %9:List
+X --> %10:List
+Z --> %11:List
+Y --> %12:List
+S --> %13:List
+
+Unifier 2
+rewrites: 0
+A --> j(%12:List, f(%8:List, j(%9:List, %10:List), %11:List))
+B --> %1:List
+E --> %2:Elt
+C --> f(%13:List, %7:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%12:List, f(%3:List, %2:Elt, j(%4:List, %5:List), %6:List))
+V --> f(%1:List, %2:Elt, %13:List)
+W --> %7:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 3
+rewrites: 0
+A --> j(%12:List, f(%8:List, j(%9:List, %10:List), %11:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%12:List, f(%4:List, %2:Elt, j(%5:List, %6:List), %7:List))
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 4
+rewrites: 0
+A --> j(%12:List, f(%8:List, j(%9:List, %10:List), %11:List))
+B --> f(%7:List, %13:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%12:List, f(%3:List, %1:Elt, j(%4:List, %5:List), %6:List))
+V --> %7:List
+W --> f(%13:List, %1:Elt, %2:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 5
+rewrites: 0
+A --> j(%12:List, f(%8:List, j(%9:List, %10:List), %11:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%12:List, f(%4:List, %2:Elt, j(%5:List, %6:List), %7:List))
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 6
+rewrites: 0
+A --> j(%12:List, f(%8:List, j(%9:List, %10:List), %11:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%13:List, %7:List)
+U --> j(%12:List, f(%1:List, %2:Elt, %3:List))
+V --> f(%4:List, %2:Elt, j(%5:List, %6:List), %13:List)
+W --> %7:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 7
+rewrites: 0
+A --> j(%10:List, f(%6:List, j(%7:List, %8:List), %9:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%11:List, %12:List)
+G --> 1
+I --> %5:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> f(%4:List, %2:Elt, %11:List)
+W --> f(%12:List, %5:List)
+X --> %6:List
+Z --> %7:List
+Y --> %8:List
+S --> %9:List
+
+Unifier 8
+rewrites: 0
+A --> j(%10:List, f(%6:List, j(%7:List, %8:List), %9:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%11:List, %12:List)
+I --> %5:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> f(%4:List, %2:Elt, %11:List)
+W --> f(%12:List, %5:List)
+X --> %6:List
+Z --> %7:List
+Y --> %8:List
+S --> %9:List
+
+Unifier 9
+rewrites: 0
+A --> j(%12:List, f(%8:List, j(%9:List, %10:List), %11:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%12:List, f(%1:List, %2:Elt, %3:List))
+V --> f(%4:List, %2:Elt, j(%5:List, %6:List))
+W --> %7:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 10
+rewrites: 0
+A --> j(%12:List, f(%8:List, j(%9:List, %10:List), %11:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%12:List, f(%1:List, %2:Elt, %3:List))
+V --> f(%4:List, %2:Elt)
+W --> f(j(%5:List, %6:List), %7:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 11
+rewrites: 0
+A --> j(%12:List, f(%8:List, j(%9:List, %10:List), %11:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%7:List, %13:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%12:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> f(%13:List, %2:Elt, j(%4:List, %5:List), %6:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 12
+rewrites: 0
+A --> j(%12:List, f(%8:List, j(%9:List, %10:List), %11:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%12:List, f(%1:List, %2:Elt, %3:List))
+V --> %4:List
+W --> f(%2:Elt, j(%5:List, %6:List), %7:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 13
+rewrites: 0
+A --> j(%12:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> f(%13:List, j(%9:List, %10:List), %11:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%12:List, f(%3:List, %2:Elt, j(%4:List, %5:List), %6:List))
+V --> %7:List
+W --> %8:List
+X --> f(%1:List, %2:Elt, %13:List)
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 14
+rewrites: 0
+A --> j(%12:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> f(j(%9:List, %10:List), %11:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%12:List, f(%3:List, %2:Elt, j(%4:List, %5:List), %6:List))
+V --> %7:List
+W --> %8:List
+X --> f(%1:List, %2:Elt)
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 15
+rewrites: 0
+A --> j(%10:List, f(%6:List, %7:List))
+B --> f(%8:List, %11:List)
+E --> %1:Elt
+C --> f(%12:List, %9:List)
+D --> %2:List
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> j(%10:List, f(%2:List, %1:Elt, j(%3:List, %4:List), %5:List))
+V --> %6:List
+W --> %7:List
+X --> %8:List
+Z --> f(%11:List, %1:Elt, %12:List)
+Y --> 1
+S --> %9:List
+
+Unifier 16
+rewrites: 0
+A --> j(%10:List, f(%6:List, %7:List))
+B --> f(%8:List, %11:List)
+E --> %1:Elt
+C --> f(%12:List, %9:List)
+D --> %2:List
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> j(%10:List, f(%2:List, %1:Elt, j(%3:List, %4:List), %5:List))
+V --> %6:List
+W --> %7:List
+X --> %8:List
+Z --> 1
+Y --> f(%11:List, %1:Elt, %12:List)
+S --> %9:List
+
+Unifier 17
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> f(%9:List, %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%10:List, f(%3:List, %1:Elt, j(%4:List, %5:List), %6:List))
+V --> %7:List
+W --> %8:List
+X --> %9:List
+Z --> f(%11:List, %1:Elt)
+Y --> 1
+S --> %2:List
+
+Unifier 18
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> f(%9:List, %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%10:List, f(%3:List, %1:Elt, j(%4:List, %5:List), %6:List))
+V --> %7:List
+W --> %8:List
+X --> %9:List
+Z --> 1
+Y --> f(%11:List, %1:Elt)
+S --> %2:List
+
+Unifier 19
+rewrites: 0
+A --> j(%12:List, f(%7:List, %8:List))
+B --> f(%9:List, j(%10:List, %11:List), %13:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%12:List, f(%3:List, %1:Elt, j(%4:List, %5:List), %6:List))
+V --> %7:List
+W --> %8:List
+X --> %9:List
+Z --> %10:List
+Y --> %11:List
+S --> f(%13:List, %1:Elt, %2:List)
+
+Unifier 20
+rewrites: 0
+A --> j(%12:List, f(%7:List, %8:List))
+B --> f(%9:List, j(%10:List, %11:List))
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%12:List, f(%3:List, %1:Elt, j(%4:List, %5:List), %6:List))
+V --> %7:List
+W --> %8:List
+X --> %9:List
+Z --> %10:List
+Y --> %11:List
+S --> f(%1:Elt, %2:List)
+
+Unifier 21
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, %9:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%10:List, f(%3:List, %2:Elt, j(%4:List, %5:List), %6:List))
+V --> %7:List
+W --> %8:List
+X --> %1:List
+Z --> f(%2:Elt, %11:List)
+Y --> 1
+S --> %9:List
+
+Unifier 22
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, %9:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%10:List, f(%3:List, %2:Elt, j(%4:List, %5:List), %6:List))
+V --> %7:List
+W --> %8:List
+X --> %1:List
+Z --> 1
+Y --> f(%2:Elt, %11:List)
+S --> %9:List
+
+Unifier 23
+rewrites: 0
+A --> j(%10:List, f(%8:List, %9:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%10:List, f(%4:List, %2:Elt, j(%5:List, %6:List), %7:List))
+V --> %8:List
+W --> %9:List
+X --> %1:List
+Z --> %2:Elt
+Y --> 1
+S --> %3:List
+
+Unifier 24
+rewrites: 0
+A --> j(%10:List, f(%8:List, %9:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%10:List, f(%4:List, %2:Elt, j(%5:List, %6:List), %7:List))
+V --> %8:List
+W --> %9:List
+X --> %1:List
+Z --> 1
+Y --> %2:Elt
+S --> %3:List
+
+Unifier 25
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%12:List, j(%8:List, %9:List), %10:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%11:List, %7:List)
+U --> %6:List
+V --> f(%3:List, %2:Elt, j(%4:List, %5:List), %11:List)
+W --> %7:List
+X --> f(%1:List, %2:Elt, %12:List)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 26
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, j(%6:List, %7:List), %8:List)
+D --> %3:List
+H --> f(%9:List, %10:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %2:Elt, %9:List)
+W --> f(%10:List, %4:List)
+X --> f(%1:List, %2:Elt, %11:List)
+Z --> %6:List
+Y --> %7:List
+S --> %8:List
+
+Unifier 27
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, j(%6:List, %7:List), %8:List)
+D --> %3:List
+H --> 1
+G --> f(%9:List, %10:List)
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %2:Elt, %9:List)
+W --> f(%10:List, %4:List)
+X --> f(%1:List, %2:Elt, %11:List)
+Z --> %6:List
+Y --> %7:List
+S --> %8:List
+
+Unifier 28
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, j(%8:List, %9:List), %10:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %2:Elt, j(%4:List, %5:List))
+W --> %6:List
+X --> f(%1:List, %2:Elt, %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 29
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, j(%8:List, %9:List), %10:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %2:Elt)
+W --> f(j(%4:List, %5:List), %6:List)
+X --> f(%1:List, %2:Elt, %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 30
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%12:List, j(%8:List, %9:List), %10:List)
+D --> f(%7:List, %11:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%11:List, %2:Elt, j(%3:List, %4:List), %5:List)
+X --> f(%1:List, %2:Elt, %12:List)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 31
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, j(%8:List, %9:List), %10:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %3:List
+W --> f(%2:Elt, j(%4:List, %5:List), %6:List)
+X --> f(%1:List, %2:Elt, %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 32
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(j(%8:List, %9:List), %10:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%11:List, %7:List)
+U --> %6:List
+V --> f(%3:List, %2:Elt, j(%4:List, %5:List), %11:List)
+W --> %7:List
+X --> f(%1:List, %2:Elt)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 33
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(j(%6:List, %7:List), %8:List)
+D --> %3:List
+H --> f(%9:List, %10:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %2:Elt, %9:List)
+W --> f(%10:List, %4:List)
+X --> f(%1:List, %2:Elt)
+Z --> %6:List
+Y --> %7:List
+S --> %8:List
+
+Unifier 34
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(j(%6:List, %7:List), %8:List)
+D --> %3:List
+H --> 1
+G --> f(%9:List, %10:List)
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %2:Elt, %9:List)
+W --> f(%10:List, %4:List)
+X --> f(%1:List, %2:Elt)
+Z --> %6:List
+Y --> %7:List
+S --> %8:List
+
+Unifier 35
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(j(%8:List, %9:List), %10:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %2:Elt, j(%4:List, %5:List))
+W --> %6:List
+X --> f(%1:List, %2:Elt)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 36
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(j(%8:List, %9:List), %10:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %2:Elt)
+W --> f(j(%4:List, %5:List), %6:List)
+X --> f(%1:List, %2:Elt)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 37
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(j(%8:List, %9:List), %10:List)
+D --> f(%7:List, %11:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%11:List, %2:Elt, j(%3:List, %4:List), %5:List)
+X --> f(%1:List, %2:Elt)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 38
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(j(%8:List, %9:List), %10:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %3:List
+W --> f(%2:Elt, j(%4:List, %5:List), %6:List)
+X --> f(%1:List, %2:Elt)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 39
+rewrites: 0
+A --> %5:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> f(%11:List, %8:List)
+D --> %2:List
+H --> %3:List
+G --> %4:List
+I --> f(%9:List, %6:List)
+U --> %5:List
+V --> f(%2:List, %1:Elt, j(%3:List, %4:List), %9:List)
+W --> %6:List
+X --> %7:List
+Z --> f(%10:List, %1:Elt, %11:List)
+Y --> 1
+S --> %8:List
+
+Unifier 40
+rewrites: 0
+A --> %5:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> f(%11:List, %8:List)
+D --> %2:List
+H --> %3:List
+G --> %4:List
+I --> f(%9:List, %6:List)
+U --> %5:List
+V --> f(%2:List, %1:Elt, j(%3:List, %4:List), %9:List)
+W --> %6:List
+X --> %7:List
+Z --> 1
+Y --> f(%10:List, %1:Elt, %11:List)
+S --> %8:List
+
+Unifier 41
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %9:List)
+E --> %1:Elt
+C --> f(%10:List, %6:List)
+D --> %2:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %3:List
+U --> %4:List
+V --> f(%2:List, %1:Elt, %7:List)
+W --> f(%8:List, %3:List)
+X --> %5:List
+Z --> f(%9:List, %1:Elt, %10:List)
+Y --> 1
+S --> %6:List
+
+Unifier 42
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %9:List)
+E --> %1:Elt
+C --> f(%10:List, %6:List)
+D --> %2:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %3:List
+U --> %4:List
+V --> f(%2:List, %1:Elt, %7:List)
+W --> f(%8:List, %3:List)
+X --> %5:List
+Z --> 1
+Y --> f(%9:List, %1:Elt, %10:List)
+S --> %6:List
+
+Unifier 43
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %9:List)
+E --> %1:Elt
+C --> f(%10:List, %6:List)
+D --> %2:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %3:List
+U --> %4:List
+V --> f(%2:List, %1:Elt, %7:List)
+W --> f(%8:List, %3:List)
+X --> %5:List
+Z --> f(%9:List, %1:Elt, %10:List)
+Y --> 1
+S --> %6:List
+
+Unifier 44
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %9:List)
+E --> %1:Elt
+C --> f(%10:List, %6:List)
+D --> %2:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %3:List
+U --> %4:List
+V --> f(%2:List, %1:Elt, %7:List)
+W --> f(%8:List, %3:List)
+X --> %5:List
+Z --> 1
+Y --> f(%9:List, %1:Elt, %10:List)
+S --> %6:List
+
+Unifier 45
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %9:List)
+E --> %1:Elt
+C --> f(%10:List, %8:List)
+D --> %2:List
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> f(%2:List, %1:Elt, j(%3:List, %4:List))
+W --> %5:List
+X --> %7:List
+Z --> f(%9:List, %1:Elt, %10:List)
+Y --> 1
+S --> %8:List
+
+Unifier 46
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %9:List)
+E --> %1:Elt
+C --> f(%10:List, %8:List)
+D --> %2:List
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> f(%2:List, %1:Elt, j(%3:List, %4:List))
+W --> %5:List
+X --> %7:List
+Z --> 1
+Y --> f(%9:List, %1:Elt, %10:List)
+S --> %8:List
+
+Unifier 47
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %9:List)
+E --> %1:Elt
+C --> f(%10:List, %8:List)
+D --> %2:List
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> f(%2:List, %1:Elt)
+W --> f(j(%3:List, %4:List), %5:List)
+X --> %7:List
+Z --> f(%9:List, %1:Elt, %10:List)
+Y --> 1
+S --> %8:List
+
+Unifier 48
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %9:List)
+E --> %1:Elt
+C --> f(%10:List, %8:List)
+D --> %2:List
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> f(%2:List, %1:Elt)
+W --> f(j(%3:List, %4:List), %5:List)
+X --> %7:List
+Z --> 1
+Y --> f(%9:List, %1:Elt, %10:List)
+S --> %8:List
+
+Unifier 49
+rewrites: 0
+A --> %5:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> f(%11:List, %8:List)
+D --> f(%6:List, %9:List)
+H --> %2:List
+G --> %3:List
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%9:List, %1:Elt, j(%2:List, %3:List), %4:List)
+X --> %7:List
+Z --> f(%10:List, %1:Elt, %11:List)
+Y --> 1
+S --> %8:List
+
+Unifier 50
+rewrites: 0
+A --> %5:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> f(%11:List, %8:List)
+D --> f(%6:List, %9:List)
+H --> %2:List
+G --> %3:List
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%9:List, %1:Elt, j(%2:List, %3:List), %4:List)
+X --> %7:List
+Z --> 1
+Y --> f(%10:List, %1:Elt, %11:List)
+S --> %8:List
+
+Unifier 51
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %9:List)
+E --> %1:Elt
+C --> f(%10:List, %8:List)
+D --> %2:List
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %2:List
+W --> f(%1:Elt, j(%3:List, %4:List), %5:List)
+X --> %7:List
+Z --> f(%9:List, %1:Elt, %10:List)
+Y --> 1
+S --> %8:List
+
+Unifier 52
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %9:List)
+E --> %1:Elt
+C --> f(%10:List, %8:List)
+D --> %2:List
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %2:List
+W --> f(%1:Elt, j(%3:List, %4:List), %5:List)
+X --> %7:List
+Z --> 1
+Y --> f(%9:List, %1:Elt, %10:List)
+S --> %8:List
+
+Unifier 53
+rewrites: 0
+A --> %6:List
+B --> f(%8:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %7:List)
+U --> %6:List
+V --> f(%3:List, %1:Elt, j(%4:List, %5:List), %9:List)
+W --> %7:List
+X --> %8:List
+Z --> f(%10:List, %1:Elt)
+Y --> 1
+S --> %2:List
+
+Unifier 54
+rewrites: 0
+A --> %6:List
+B --> f(%8:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %7:List)
+U --> %6:List
+V --> f(%3:List, %1:Elt, j(%4:List, %5:List), %9:List)
+W --> %7:List
+X --> %8:List
+Z --> 1
+Y --> f(%10:List, %1:Elt)
+S --> %2:List
+
+Unifier 55
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %1:Elt, %7:List)
+W --> f(%8:List, %4:List)
+X --> %6:List
+Z --> f(%9:List, %1:Elt)
+Y --> 1
+S --> %2:List
+
+Unifier 56
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %1:Elt, %7:List)
+W --> f(%8:List, %4:List)
+X --> %6:List
+Z --> 1
+Y --> f(%9:List, %1:Elt)
+S --> %2:List
+
+Unifier 57
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %1:Elt, %7:List)
+W --> f(%8:List, %4:List)
+X --> %6:List
+Z --> f(%9:List, %1:Elt)
+Y --> 1
+S --> %2:List
+
+Unifier 58
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %1:Elt, %7:List)
+W --> f(%8:List, %4:List)
+X --> %6:List
+Z --> 1
+Y --> f(%9:List, %1:Elt)
+S --> %2:List
+
+Unifier 59
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %1:Elt, j(%4:List, %5:List))
+W --> %6:List
+X --> %8:List
+Z --> f(%9:List, %1:Elt)
+Y --> 1
+S --> %2:List
+
+Unifier 60
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %1:Elt, j(%4:List, %5:List))
+W --> %6:List
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %1:Elt)
+S --> %2:List
+
+Unifier 61
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %1:Elt)
+W --> f(j(%4:List, %5:List), %6:List)
+X --> %8:List
+Z --> f(%9:List, %1:Elt)
+Y --> 1
+S --> %2:List
+
+Unifier 62
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %1:Elt)
+W --> f(j(%4:List, %5:List), %6:List)
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %1:Elt)
+S --> %2:List
+
+Unifier 63
+rewrites: 0
+A --> %6:List
+B --> f(%8:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%7:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%9:List, %1:Elt, j(%3:List, %4:List), %5:List)
+X --> %8:List
+Z --> f(%10:List, %1:Elt)
+Y --> 1
+S --> %2:List
+
+Unifier 64
+rewrites: 0
+A --> %6:List
+B --> f(%8:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%7:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%9:List, %1:Elt, j(%3:List, %4:List), %5:List)
+X --> %8:List
+Z --> 1
+Y --> f(%10:List, %1:Elt)
+S --> %2:List
+
+Unifier 65
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %3:List
+W --> f(%1:Elt, j(%4:List, %5:List), %6:List)
+X --> %8:List
+Z --> f(%9:List, %1:Elt)
+Y --> 1
+S --> %2:List
+
+Unifier 66
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %3:List
+W --> f(%1:Elt, j(%4:List, %5:List), %6:List)
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %1:Elt)
+S --> %2:List
+
+Unifier 67
+rewrites: 0
+A --> %6:List
+B --> f(%8:List, j(%9:List, %10:List), %12:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%11:List, %7:List)
+U --> %6:List
+V --> f(%3:List, %1:Elt, j(%4:List, %5:List), %11:List)
+W --> %7:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%12:List, %1:Elt, %2:List)
+
+Unifier 68
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, j(%7:List, %8:List), %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(%9:List, %10:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %1:Elt, %9:List)
+W --> f(%10:List, %4:List)
+X --> %6:List
+Z --> %7:List
+Y --> %8:List
+S --> f(%11:List, %1:Elt, %2:List)
+
+Unifier 69
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, j(%7:List, %8:List), %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(%9:List, %10:List)
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %1:Elt, %9:List)
+W --> f(%10:List, %4:List)
+X --> %6:List
+Z --> %7:List
+Y --> %8:List
+S --> f(%11:List, %1:Elt, %2:List)
+
+Unifier 70
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, j(%9:List, %10:List), %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %1:Elt, j(%4:List, %5:List))
+W --> %6:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%11:List, %1:Elt, %2:List)
+
+Unifier 71
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, j(%9:List, %10:List), %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %1:Elt)
+W --> f(j(%4:List, %5:List), %6:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%11:List, %1:Elt, %2:List)
+
+Unifier 72
+rewrites: 0
+A --> %6:List
+B --> f(%8:List, j(%9:List, %10:List), %12:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%7:List, %11:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%11:List, %1:Elt, j(%3:List, %4:List), %5:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%12:List, %1:Elt, %2:List)
+
+Unifier 73
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, j(%9:List, %10:List), %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %3:List
+W --> f(%1:Elt, j(%4:List, %5:List), %6:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%11:List, %1:Elt, %2:List)
+
+Unifier 74
+rewrites: 0
+A --> %6:List
+B --> f(%8:List, j(%9:List, %10:List))
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%11:List, %7:List)
+U --> %6:List
+V --> f(%3:List, %1:Elt, j(%4:List, %5:List), %11:List)
+W --> %7:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%1:Elt, %2:List)
+
+Unifier 75
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, j(%7:List, %8:List))
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(%9:List, %10:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %1:Elt, %9:List)
+W --> f(%10:List, %4:List)
+X --> %6:List
+Z --> %7:List
+Y --> %8:List
+S --> f(%1:Elt, %2:List)
+
+Unifier 76
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, j(%7:List, %8:List))
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(%9:List, %10:List)
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %1:Elt, %9:List)
+W --> f(%10:List, %4:List)
+X --> %6:List
+Z --> %7:List
+Y --> %8:List
+S --> f(%1:Elt, %2:List)
+
+Unifier 77
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, j(%9:List, %10:List))
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %1:Elt, j(%4:List, %5:List))
+W --> %6:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%1:Elt, %2:List)
+
+Unifier 78
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, j(%9:List, %10:List))
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %1:Elt)
+W --> f(j(%4:List, %5:List), %6:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%1:Elt, %2:List)
+
+Unifier 79
+rewrites: 0
+A --> %6:List
+B --> f(%8:List, j(%9:List, %10:List))
+E --> %1:Elt
+C --> %2:List
+D --> f(%7:List, %11:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%11:List, %1:Elt, j(%3:List, %4:List), %5:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%1:Elt, %2:List)
+
+Unifier 80
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, j(%9:List, %10:List))
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %3:List
+W --> f(%1:Elt, j(%4:List, %5:List), %6:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%1:Elt, %2:List)
+
+Unifier 81
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %7:List)
+U --> %6:List
+V --> f(%3:List, %2:Elt, j(%4:List, %5:List), %9:List)
+W --> %7:List
+X --> %1:List
+Z --> f(%2:Elt, %10:List)
+Y --> 1
+S --> %8:List
+
+Unifier 82
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %7:List)
+U --> %6:List
+V --> f(%3:List, %2:Elt, j(%4:List, %5:List), %9:List)
+W --> %7:List
+X --> %1:List
+Z --> 1
+Y --> f(%2:Elt, %10:List)
+S --> %8:List
+
+Unifier 83
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %6:List)
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %2:Elt, %7:List)
+W --> f(%8:List, %4:List)
+X --> %1:List
+Z --> f(%2:Elt, %9:List)
+Y --> 1
+S --> %6:List
+
+Unifier 84
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %6:List)
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %2:Elt, %7:List)
+W --> f(%8:List, %4:List)
+X --> %1:List
+Z --> 1
+Y --> f(%2:Elt, %9:List)
+S --> %6:List
+
+Unifier 85
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %6:List)
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %2:Elt, %7:List)
+W --> f(%8:List, %4:List)
+X --> %1:List
+Z --> f(%2:Elt, %9:List)
+Y --> 1
+S --> %6:List
+
+Unifier 86
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %6:List)
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %4:List
+U --> %5:List
+V --> f(%3:List, %2:Elt, %7:List)
+W --> f(%8:List, %4:List)
+X --> %1:List
+Z --> 1
+Y --> f(%2:Elt, %9:List)
+S --> %6:List
+
+Unifier 87
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %2:Elt, j(%4:List, %5:List))
+W --> %6:List
+X --> %1:List
+Z --> f(%2:Elt, %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 88
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %2:Elt, j(%4:List, %5:List))
+W --> %6:List
+X --> %1:List
+Z --> 1
+Y --> f(%2:Elt, %9:List)
+S --> %8:List
+
+Unifier 89
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %2:Elt)
+W --> f(j(%4:List, %5:List), %6:List)
+X --> %1:List
+Z --> f(%2:Elt, %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 90
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%3:List, %2:Elt)
+W --> f(j(%4:List, %5:List), %6:List)
+X --> %1:List
+Z --> 1
+Y --> f(%2:Elt, %9:List)
+S --> %8:List
+
+Unifier 91
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %8:List)
+D --> f(%7:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%9:List, %2:Elt, j(%3:List, %4:List), %5:List)
+X --> %1:List
+Z --> f(%2:Elt, %10:List)
+Y --> 1
+S --> %8:List
+
+Unifier 92
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %8:List)
+D --> f(%7:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%9:List, %2:Elt, j(%3:List, %4:List), %5:List)
+X --> %1:List
+Z --> 1
+Y --> f(%2:Elt, %10:List)
+S --> %8:List
+
+Unifier 93
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %3:List
+W --> f(%2:Elt, j(%4:List, %5:List), %6:List)
+X --> %1:List
+Z --> f(%2:Elt, %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 94
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %3:List
+W --> f(%2:Elt, j(%4:List, %5:List), %6:List)
+X --> %1:List
+Z --> 1
+Y --> f(%2:Elt, %9:List)
+S --> %8:List
+
+Unifier 95
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%9:List, %8:List)
+U --> %7:List
+V --> f(%4:List, %2:Elt, j(%5:List, %6:List), %9:List)
+W --> %8:List
+X --> %1:List
+Z --> %2:Elt
+Y --> 1
+S --> %3:List
+
+Unifier 96
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%9:List, %8:List)
+U --> %7:List
+V --> f(%4:List, %2:Elt, j(%5:List, %6:List), %9:List)
+W --> %8:List
+X --> %1:List
+Z --> 1
+Y --> %2:Elt
+S --> %3:List
+
+Unifier 97
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> f(%4:List, %2:Elt, %7:List)
+W --> f(%8:List, %5:List)
+X --> %1:List
+Z --> %2:Elt
+Y --> 1
+S --> %3:List
+
+Unifier 98
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> f(%4:List, %2:Elt, %7:List)
+W --> f(%8:List, %5:List)
+X --> %1:List
+Z --> 1
+Y --> %2:Elt
+S --> %3:List
+
+Unifier 99
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %5:List
+U --> %6:List
+V --> f(%4:List, %2:Elt, %7:List)
+W --> f(%8:List, %5:List)
+X --> %1:List
+Z --> %2:Elt
+Y --> 1
+S --> %3:List
+
+Unifier 100
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %5:List
+U --> %6:List
+V --> f(%4:List, %2:Elt, %7:List)
+W --> f(%8:List, %5:List)
+X --> %1:List
+Z --> 1
+Y --> %2:Elt
+S --> %3:List
+
+Unifier 101
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> f(%4:List, %2:Elt, j(%5:List, %6:List))
+W --> %7:List
+X --> %1:List
+Z --> %2:Elt
+Y --> 1
+S --> %3:List
+
+Unifier 102
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> f(%4:List, %2:Elt, j(%5:List, %6:List))
+W --> %7:List
+X --> %1:List
+Z --> 1
+Y --> %2:Elt
+S --> %3:List
+
+Unifier 103
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> f(%4:List, %2:Elt)
+W --> f(j(%5:List, %6:List), %7:List)
+X --> %1:List
+Z --> %2:Elt
+Y --> 1
+S --> %3:List
+
+Unifier 104
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> f(%4:List, %2:Elt)
+W --> f(j(%5:List, %6:List), %7:List)
+X --> %1:List
+Z --> 1
+Y --> %2:Elt
+S --> %3:List
+
+Unifier 105
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %8:List
+W --> f(%9:List, %2:Elt, j(%4:List, %5:List), %6:List)
+X --> %1:List
+Z --> %2:Elt
+Y --> 1
+S --> %3:List
+
+Unifier 106
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %8:List
+W --> f(%9:List, %2:Elt, j(%4:List, %5:List), %6:List)
+X --> %1:List
+Z --> 1
+Y --> %2:Elt
+S --> %3:List
+
+Unifier 107
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> %4:List
+W --> f(%2:Elt, j(%5:List, %6:List), %7:List)
+X --> %1:List
+Z --> %2:Elt
+Y --> 1
+S --> %3:List
+
+Unifier 108
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> %4:List
+W --> f(%2:Elt, j(%5:List, %6:List), %7:List)
+X --> %1:List
+Z --> 1
+Y --> %2:Elt
+S --> %3:List
+
+Unifier 109
+rewrites: 0
+A --> j(%12:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%13:List, j(%9:List, %10:List), %11:List)
+U --> j(%12:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> f(%4:List, %2:Elt, j(%5:List, %6:List), %13:List)
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 110
+rewrites: 0
+A --> j(%8:List, f(%5:List, %6:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%9:List, %10:List)
+G --> 1
+I --> f(%11:List, %7:List)
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %5:List
+W --> %6:List
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> f(%10:List, %11:List)
+Y --> 1
+S --> %7:List
+
+Unifier 111
+rewrites: 0
+A --> j(%8:List, f(%5:List, %6:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%9:List, %10:List)
+G --> 1
+I --> f(%11:List, %7:List)
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %5:List
+W --> %6:List
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> 1
+Y --> f(%10:List, %11:List)
+S --> %7:List
+
+Unifier 112
+rewrites: 0
+A --> j(%8:List, f(%5:List, %6:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%9:List, %10:List)
+I --> f(%11:List, %7:List)
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %5:List
+W --> %6:List
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> f(%10:List, %11:List)
+Y --> 1
+S --> %7:List
+
+Unifier 113
+rewrites: 0
+A --> j(%8:List, f(%5:List, %6:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%9:List, %10:List)
+I --> f(%11:List, %7:List)
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %5:List
+W --> %6:List
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> 1
+Y --> f(%10:List, %11:List)
+S --> %7:List
+
+Unifier 114
+rewrites: 0
+A --> j(%10:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%11:List, j(%8:List, %9:List), %12:List)
+G --> 1
+I --> %5:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> f(%4:List, %2:Elt, %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> f(%12:List, %5:List)
+
+Unifier 115
+rewrites: 0
+A --> j(%10:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%11:List, j(%8:List, %9:List), %12:List)
+I --> %5:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> f(%4:List, %2:Elt, %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> f(%12:List, %5:List)
+
+Unifier 116
+rewrites: 0
+A --> j(%10:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%11:List, j(%8:List, %9:List))
+G --> 1
+I --> %5:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> f(%4:List, %2:Elt, %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> %5:List
+
+Unifier 117
+rewrites: 0
+A --> j(%10:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%11:List, j(%8:List, %9:List))
+I --> %5:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> f(%4:List, %2:Elt, %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> %5:List
+
+Unifier 118
+rewrites: 0
+A --> j(%12:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(j(%9:List, %10:List), %11:List)
+U --> j(%12:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> f(%4:List, %2:Elt, j(%5:List, %6:List))
+Z --> %9:List
+Y --> %10:List
+S --> %11:List
+
+Unifier 119
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%11:List, %9:List)
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> f(%4:List, %2:Elt)
+Z --> f(j(%5:List, %6:List), %11:List)
+Y --> 1
+S --> %9:List
+
+Unifier 120
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%11:List, %9:List)
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> f(%4:List, %2:Elt)
+Z --> 1
+Y --> f(j(%5:List, %6:List), %11:List)
+S --> %9:List
+
+Unifier 121
+rewrites: 0
+A --> j(%10:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(j(%8:List, %9:List), %11:List)
+G --> 1
+I --> %5:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> f(%4:List, %2:Elt)
+Z --> %8:List
+Y --> %9:List
+S --> f(%11:List, %5:List)
+
+Unifier 122
+rewrites: 0
+A --> j(%10:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(j(%8:List, %9:List), %11:List)
+I --> %5:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> f(%4:List, %2:Elt)
+Z --> %8:List
+Y --> %9:List
+S --> f(%11:List, %5:List)
+
+Unifier 123
+rewrites: 0
+A --> j(%8:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> j(%9:List, %11:List)
+G --> j(%10:List, %12:List)
+I --> %5:List
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> f(%4:List, %2:Elt)
+Z --> j(%9:List, %10:List)
+Y --> j(%11:List, %12:List)
+S --> %5:List
+
+Unifier 124
+rewrites: 0
+A --> j(%10:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %11:List)
+H --> %4:List
+G --> %5:List
+I --> f(%12:List, %9:List)
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> %8:List
+Z --> f(%11:List, %2:Elt, j(%4:List, %5:List), %12:List)
+Y --> 1
+S --> %9:List
+
+Unifier 125
+rewrites: 0
+A --> j(%10:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %11:List)
+H --> %4:List
+G --> %5:List
+I --> f(%12:List, %9:List)
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> %8:List
+Z --> 1
+Y --> f(%11:List, %2:Elt, j(%4:List, %5:List), %12:List)
+S --> %9:List
+
+Unifier 126
+rewrites: 0
+A --> j(%8:List, f(%5:List, %6:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%7:List, %9:List)
+H --> f(%10:List, %11:List)
+G --> 1
+I --> %4:List
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %5:List
+W --> %6:List
+X --> %7:List
+Z --> f(%9:List, %2:Elt, %10:List)
+Y --> 1
+S --> f(%11:List, %4:List)
+
+Unifier 127
+rewrites: 0
+A --> j(%8:List, f(%5:List, %6:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%7:List, %9:List)
+H --> f(%10:List, %11:List)
+G --> 1
+I --> %4:List
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %5:List
+W --> %6:List
+X --> %7:List
+Z --> 1
+Y --> f(%9:List, %2:Elt, %10:List)
+S --> f(%11:List, %4:List)
+
+Unifier 128
+rewrites: 0
+A --> j(%8:List, f(%5:List, %6:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%7:List, %9:List)
+H --> 1
+G --> f(%10:List, %11:List)
+I --> %4:List
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %5:List
+W --> %6:List
+X --> %7:List
+Z --> f(%9:List, %2:Elt, %10:List)
+Y --> 1
+S --> f(%11:List, %4:List)
+
+Unifier 129
+rewrites: 0
+A --> j(%8:List, f(%5:List, %6:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%7:List, %9:List)
+H --> 1
+G --> f(%10:List, %11:List)
+I --> %4:List
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %5:List
+W --> %6:List
+X --> %7:List
+Z --> 1
+Y --> f(%9:List, %2:Elt, %10:List)
+S --> f(%11:List, %4:List)
+
+Unifier 130
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%9:List, %11:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> %9:List
+Z --> f(%11:List, %2:Elt, j(%4:List, %5:List))
+Y --> 1
+S --> %6:List
+
+Unifier 131
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%9:List, %11:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> %9:List
+Z --> 1
+Y --> f(%11:List, %2:Elt, j(%4:List, %5:List))
+S --> %6:List
+
+Unifier 132
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%9:List, %11:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> %9:List
+Z --> f(%11:List, %2:Elt)
+Y --> 1
+S --> f(j(%4:List, %5:List), %6:List)
+
+Unifier 133
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%9:List, %11:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> %9:List
+Z --> 1
+Y --> f(%11:List, %2:Elt)
+S --> f(j(%4:List, %5:List), %6:List)
+
+Unifier 134
+rewrites: 0
+A --> j(%12:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%9:List, j(%10:List, %11:List), %13:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%12:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> %9:List
+Z --> %10:List
+Y --> %11:List
+S --> f(%13:List, %2:Elt, j(%4:List, %5:List), %6:List)
+
+Unifier 135
+rewrites: 0
+A --> j(%12:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%9:List, j(%10:List, %11:List))
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> j(%12:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> %9:List
+Z --> %10:List
+Y --> %11:List
+S --> f(%2:Elt, j(%4:List, %5:List), %6:List)
+
+Unifier 136
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%11:List, %9:List)
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> %4:List
+Z --> f(%2:Elt, j(%5:List, %6:List), %11:List)
+Y --> 1
+S --> %9:List
+
+Unifier 137
+rewrites: 0
+A --> j(%10:List, f(%7:List, %8:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%11:List, %9:List)
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %7:List
+W --> %8:List
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, j(%5:List, %6:List), %11:List)
+S --> %9:List
+
+Unifier 138
+rewrites: 0
+A --> j(%8:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%9:List, %10:List)
+G --> 1
+I --> %5:List
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> %4:List
+Z --> f(%2:Elt, %9:List)
+Y --> 1
+S --> f(%10:List, %5:List)
+
+Unifier 139
+rewrites: 0
+A --> j(%8:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%9:List, %10:List)
+G --> 1
+I --> %5:List
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, %9:List)
+S --> f(%10:List, %5:List)
+
+Unifier 140
+rewrites: 0
+A --> j(%8:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%9:List, %10:List)
+I --> %5:List
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> %4:List
+Z --> f(%2:Elt, %9:List)
+Y --> 1
+S --> f(%10:List, %5:List)
+
+Unifier 141
+rewrites: 0
+A --> j(%8:List, f(%6:List, %7:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%9:List, %10:List)
+I --> %5:List
+U --> j(%8:List, f(%1:List, %2:Elt, %3:List))
+V --> %6:List
+W --> %7:List
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, %9:List)
+S --> f(%10:List, %5:List)
+
+Unifier 142
+rewrites: 0
+A --> j(%10:List, f(%8:List, %9:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %8:List
+W --> %9:List
+X --> %4:List
+Z --> f(%2:Elt, j(%5:List, %6:List))
+Y --> 1
+S --> %7:List
+
+Unifier 143
+rewrites: 0
+A --> j(%10:List, f(%8:List, %9:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %8:List
+W --> %9:List
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, j(%5:List, %6:List))
+S --> %7:List
+
+Unifier 144
+rewrites: 0
+A --> j(%10:List, f(%8:List, %9:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %8:List
+W --> %9:List
+X --> %4:List
+Z --> %2:Elt
+Y --> 1
+S --> f(j(%5:List, %6:List), %7:List)
+
+Unifier 145
+rewrites: 0
+A --> j(%10:List, f(%8:List, %9:List))
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> j(%10:List, f(%1:List, %2:Elt, %3:List))
+V --> %8:List
+W --> %9:List
+X --> %4:List
+Z --> 1
+Y --> %2:Elt
+S --> f(j(%5:List, %6:List), %7:List)
+
+Unifier 146
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%12:List, %7:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%11:List, j(%8:List, %9:List), %10:List)
+U --> %6:List
+V --> f(%1:List, %2:Elt, %12:List)
+W --> %7:List
+X --> f(%3:List, %2:Elt, j(%4:List, %5:List), %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 147
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%11:List, j(%8:List, %9:List), %10:List)
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt, j(%5:List, %6:List), %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 148
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %12:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%11:List, j(%8:List, %9:List), %10:List)
+U --> %6:List
+V --> %7:List
+W --> f(%12:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt, j(%4:List, %5:List), %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 149
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%11:List, j(%8:List, %9:List), %10:List)
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt, j(%5:List, %6:List), %11:List)
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 150
+rewrites: 0
+A --> %4:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %5:List)
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> f(%9:List, %6:List)
+U --> %4:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %5:List
+X --> f(%3:List, %2:Elt, %7:List)
+Z --> f(%8:List, %9:List)
+Y --> 1
+S --> %6:List
+
+Unifier 151
+rewrites: 0
+A --> %4:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %5:List)
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> f(%9:List, %6:List)
+U --> %4:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %5:List
+X --> f(%3:List, %2:Elt, %7:List)
+Z --> 1
+Y --> f(%8:List, %9:List)
+S --> %6:List
+
+Unifier 152
+rewrites: 0
+A --> %4:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %5:List)
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> f(%9:List, %6:List)
+U --> %4:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %5:List
+X --> f(%3:List, %2:Elt, %7:List)
+Z --> f(%8:List, %9:List)
+Y --> 1
+S --> %6:List
+
+Unifier 153
+rewrites: 0
+A --> %4:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %5:List)
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> f(%9:List, %6:List)
+U --> %4:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %5:List
+X --> f(%3:List, %2:Elt, %7:List)
+Z --> 1
+Y --> f(%8:List, %9:List)
+S --> %6:List
+
+Unifier 154
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> f(%9:List, %6:List)
+U --> %5:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt, %7:List)
+Z --> f(%8:List, %9:List)
+Y --> 1
+S --> %6:List
+
+Unifier 155
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> f(%9:List, %6:List)
+U --> %5:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt, %7:List)
+Z --> 1
+Y --> f(%8:List, %9:List)
+S --> %6:List
+
+Unifier 156
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> f(%9:List, %6:List)
+U --> %5:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt, %7:List)
+Z --> f(%8:List, %9:List)
+Y --> 1
+S --> %6:List
+
+Unifier 157
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> f(%9:List, %6:List)
+U --> %5:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt, %7:List)
+Z --> 1
+Y --> f(%8:List, %9:List)
+S --> %6:List
+
+Unifier 158
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> f(%9:List, %6:List)
+U --> %4:List
+V --> %5:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt, %7:List)
+Z --> f(%8:List, %9:List)
+Y --> 1
+S --> %6:List
+
+Unifier 159
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> f(%9:List, %6:List)
+U --> %4:List
+V --> %5:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt, %7:List)
+Z --> 1
+Y --> f(%8:List, %9:List)
+S --> %6:List
+
+Unifier 160
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> f(%9:List, %6:List)
+U --> %4:List
+V --> %5:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt, %7:List)
+Z --> f(%8:List, %9:List)
+Y --> 1
+S --> %6:List
+
+Unifier 161
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> f(%9:List, %6:List)
+U --> %4:List
+V --> %5:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt, %7:List)
+Z --> 1
+Y --> f(%8:List, %9:List)
+S --> %6:List
+
+Unifier 162
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> f(%9:List, %6:List)
+U --> %5:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt, %7:List)
+Z --> f(%8:List, %9:List)
+Y --> 1
+S --> %6:List
+
+Unifier 163
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> f(%9:List, %6:List)
+U --> %5:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt, %7:List)
+Z --> 1
+Y --> f(%8:List, %9:List)
+S --> %6:List
+
+Unifier 164
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> f(%9:List, %6:List)
+U --> %5:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt, %7:List)
+Z --> f(%8:List, %9:List)
+Y --> 1
+S --> %6:List
+
+Unifier 165
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> f(%9:List, %6:List)
+U --> %5:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt, %7:List)
+Z --> 1
+Y --> f(%8:List, %9:List)
+S --> %6:List
+
+Unifier 166
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, %6:List)
+D --> %3:List
+H --> f(%9:List, j(%7:List, %8:List), %10:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %11:List)
+W --> %6:List
+X --> f(%3:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> f(%10:List, %4:List)
+
+Unifier 167
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, %6:List)
+D --> %3:List
+H --> 1
+G --> f(%9:List, j(%7:List, %8:List), %10:List)
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %11:List)
+W --> %6:List
+X --> f(%3:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> f(%10:List, %4:List)
+
+Unifier 168
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%9:List, j(%7:List, %8:List), %10:List)
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> f(%10:List, %5:List)
+
+Unifier 169
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%9:List, j(%7:List, %8:List), %10:List)
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> f(%10:List, %5:List)
+
+Unifier 170
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(%9:List, j(%7:List, %8:List), %10:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%11:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> f(%10:List, %4:List)
+
+Unifier 171
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(%9:List, j(%7:List, %8:List), %10:List)
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%11:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> f(%10:List, %4:List)
+
+Unifier 172
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%9:List, j(%7:List, %8:List), %10:List)
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> f(%10:List, %5:List)
+
+Unifier 173
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%9:List, j(%7:List, %8:List), %10:List)
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> f(%10:List, %5:List)
+
+Unifier 174
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %6:List)
+D --> %3:List
+H --> f(%9:List, j(%7:List, %8:List))
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %6:List
+X --> f(%3:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> %4:List
+
+Unifier 175
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %6:List)
+D --> %3:List
+H --> 1
+G --> f(%9:List, j(%7:List, %8:List))
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %6:List
+X --> f(%3:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> %4:List
+
+Unifier 176
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%9:List, j(%7:List, %8:List))
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> %5:List
+
+Unifier 177
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%9:List, j(%7:List, %8:List))
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> %5:List
+
+Unifier 178
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(%9:List, j(%7:List, %8:List))
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> %4:List
+
+Unifier 179
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(%9:List, j(%7:List, %8:List))
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> %4:List
+
+Unifier 180
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%9:List, j(%7:List, %8:List))
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> %5:List
+
+Unifier 181
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%9:List, j(%7:List, %8:List))
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt, %9:List)
+Z --> %7:List
+Y --> %8:List
+S --> %5:List
+
+Unifier 182
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, %7:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(j(%8:List, %9:List), %10:List)
+U --> %6:List
+V --> f(%1:List, %2:Elt, %11:List)
+W --> %7:List
+X --> f(%3:List, %2:Elt, j(%4:List, %5:List))
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 183
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(j(%8:List, %9:List), %10:List)
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt, j(%5:List, %6:List))
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 184
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(j(%8:List, %9:List), %10:List)
+U --> %6:List
+V --> %7:List
+W --> f(%11:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt, j(%4:List, %5:List))
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 185
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(j(%8:List, %9:List), %10:List)
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt, j(%5:List, %6:List))
+Z --> %8:List
+Y --> %9:List
+S --> %10:List
+
+Unifier 186
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %7:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %8:List)
+U --> %6:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %7:List
+X --> f(%3:List, %2:Elt)
+Z --> f(j(%4:List, %5:List), %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 187
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %7:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %8:List)
+U --> %6:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %7:List
+X --> f(%3:List, %2:Elt)
+Z --> 1
+Y --> f(j(%4:List, %5:List), %9:List)
+S --> %8:List
+
+Unifier 188
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%9:List, %8:List)
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt)
+Z --> f(j(%5:List, %6:List), %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 189
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%9:List, %8:List)
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt)
+Z --> 1
+Y --> f(j(%5:List, %6:List), %9:List)
+S --> %8:List
+
+Unifier 190
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %8:List)
+U --> %6:List
+V --> %7:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt)
+Z --> f(j(%4:List, %5:List), %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 191
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %8:List)
+U --> %6:List
+V --> %7:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt)
+Z --> 1
+Y --> f(j(%4:List, %5:List), %9:List)
+S --> %8:List
+
+Unifier 192
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%9:List, %8:List)
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt)
+Z --> f(j(%5:List, %6:List), %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 193
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%9:List, %8:List)
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt)
+Z --> 1
+Y --> f(j(%5:List, %6:List), %9:List)
+S --> %8:List
+
+Unifier 194
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %6:List)
+D --> %3:List
+H --> f(j(%7:List, %8:List), %9:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %6:List
+X --> f(%3:List, %2:Elt)
+Z --> %7:List
+Y --> %8:List
+S --> f(%9:List, %4:List)
+
+Unifier 195
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %6:List)
+D --> %3:List
+H --> 1
+G --> f(j(%7:List, %8:List), %9:List)
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %6:List
+X --> f(%3:List, %2:Elt)
+Z --> %7:List
+Y --> %8:List
+S --> f(%9:List, %4:List)
+
+Unifier 196
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(j(%7:List, %8:List), %9:List)
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt)
+Z --> %7:List
+Y --> %8:List
+S --> f(%9:List, %5:List)
+
+Unifier 197
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(j(%7:List, %8:List), %9:List)
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt)
+Z --> %7:List
+Y --> %8:List
+S --> f(%9:List, %5:List)
+
+Unifier 198
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(j(%7:List, %8:List), %9:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt)
+Z --> %7:List
+Y --> %8:List
+S --> f(%9:List, %4:List)
+
+Unifier 199
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(j(%7:List, %8:List), %9:List)
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt)
+Z --> %7:List
+Y --> %8:List
+S --> f(%9:List, %4:List)
+
+Unifier 200
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(j(%7:List, %8:List), %9:List)
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt)
+Z --> %7:List
+Y --> %8:List
+S --> f(%9:List, %5:List)
+
+Unifier 201
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(j(%7:List, %8:List), %9:List)
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt)
+Z --> %7:List
+Y --> %8:List
+S --> f(%9:List, %5:List)
+
+Unifier 202
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%7:List, %6:List)
+D --> %3:List
+H --> j(%8:List, %10:List)
+G --> j(%9:List, %11:List)
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %7:List)
+W --> %6:List
+X --> f(%3:List, %2:Elt)
+Z --> j(%8:List, %9:List)
+Y --> j(%10:List, %11:List)
+S --> %4:List
+
+Unifier 203
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> j(%7:List, %9:List)
+G --> j(%8:List, %10:List)
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> f(%4:List, %2:Elt)
+Z --> j(%7:List, %8:List)
+Y --> j(%9:List, %10:List)
+S --> %5:List
+
+Unifier 204
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %7:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> j(%8:List, %10:List)
+G --> j(%9:List, %11:List)
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%7:List, %1:Elt, %2:List)
+X --> f(%3:List, %1:Elt)
+Z --> j(%8:List, %9:List)
+Y --> j(%10:List, %11:List)
+S --> %4:List
+
+Unifier 205
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> j(%7:List, %9:List)
+G --> j(%8:List, %10:List)
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> f(%4:List, %2:Elt)
+Z --> j(%7:List, %8:List)
+Y --> j(%9:List, %10:List)
+S --> %5:List
+
+Unifier 206
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, %6:List)
+D --> f(%7:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> f(%10:List, %8:List)
+U --> %5:List
+V --> f(%1:List, %2:Elt, %11:List)
+W --> %6:List
+X --> %7:List
+Z --> f(%9:List, %2:Elt, j(%3:List, %4:List), %10:List)
+Y --> 1
+S --> %8:List
+
+Unifier 207
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, %6:List)
+D --> f(%7:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> f(%10:List, %8:List)
+U --> %5:List
+V --> f(%1:List, %2:Elt, %11:List)
+W --> %6:List
+X --> %7:List
+Z --> 1
+Y --> f(%9:List, %2:Elt, j(%3:List, %4:List), %10:List)
+S --> %8:List
+
+Unifier 208
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%7:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> f(%10:List, %8:List)
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %7:List
+Z --> f(%9:List, %2:Elt, j(%4:List, %5:List), %10:List)
+Y --> 1
+S --> %8:List
+
+Unifier 209
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%7:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> f(%10:List, %8:List)
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %7:List
+Z --> 1
+Y --> f(%9:List, %2:Elt, j(%4:List, %5:List), %10:List)
+S --> %8:List
+
+Unifier 210
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%7:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> f(%10:List, %8:List)
+U --> %5:List
+V --> %6:List
+W --> f(%11:List, %1:Elt, %2:List)
+X --> %7:List
+Z --> f(%9:List, %1:Elt, j(%3:List, %4:List), %10:List)
+Y --> 1
+S --> %8:List
+
+Unifier 211
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%7:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> f(%10:List, %8:List)
+U --> %5:List
+V --> %6:List
+W --> f(%11:List, %1:Elt, %2:List)
+X --> %7:List
+Z --> 1
+Y --> f(%9:List, %1:Elt, j(%3:List, %4:List), %10:List)
+S --> %8:List
+
+Unifier 212
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%7:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> f(%10:List, %8:List)
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %7:List
+Z --> f(%9:List, %2:Elt, j(%4:List, %5:List), %10:List)
+Y --> 1
+S --> %8:List
+
+Unifier 213
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%7:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> f(%10:List, %8:List)
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %7:List
+Z --> 1
+Y --> f(%9:List, %2:Elt, j(%4:List, %5:List), %10:List)
+S --> %8:List
+
+Unifier 214
+rewrites: 0
+A --> %4:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %5:List)
+D --> f(%6:List, %7:List)
+H --> f(%8:List, %9:List)
+G --> 1
+I --> %3:List
+U --> %4:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %5:List
+X --> %6:List
+Z --> f(%7:List, %2:Elt, %8:List)
+Y --> 1
+S --> f(%9:List, %3:List)
+
+Unifier 215
+rewrites: 0
+A --> %4:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %5:List)
+D --> f(%6:List, %7:List)
+H --> f(%8:List, %9:List)
+G --> 1
+I --> %3:List
+U --> %4:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %5:List
+X --> %6:List
+Z --> 1
+Y --> f(%7:List, %2:Elt, %8:List)
+S --> f(%9:List, %3:List)
+
+Unifier 216
+rewrites: 0
+A --> %4:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %5:List)
+D --> f(%6:List, %7:List)
+H --> 1
+G --> f(%8:List, %9:List)
+I --> %3:List
+U --> %4:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %5:List
+X --> %6:List
+Z --> f(%7:List, %2:Elt, %8:List)
+Y --> 1
+S --> f(%9:List, %3:List)
+
+Unifier 217
+rewrites: 0
+A --> %4:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %5:List)
+D --> f(%6:List, %7:List)
+H --> 1
+G --> f(%8:List, %9:List)
+I --> %3:List
+U --> %4:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %5:List
+X --> %6:List
+Z --> 1
+Y --> f(%7:List, %2:Elt, %8:List)
+S --> f(%9:List, %3:List)
+
+Unifier 218
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%6:List, %7:List)
+H --> f(%8:List, %9:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %6:List
+Z --> f(%7:List, %2:Elt, %8:List)
+Y --> 1
+S --> f(%9:List, %4:List)
+
+Unifier 219
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%6:List, %7:List)
+H --> f(%8:List, %9:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %6:List
+Z --> 1
+Y --> f(%7:List, %2:Elt, %8:List)
+S --> f(%9:List, %4:List)
+
+Unifier 220
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%6:List, %7:List)
+H --> 1
+G --> f(%8:List, %9:List)
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %6:List
+Z --> f(%7:List, %2:Elt, %8:List)
+Y --> 1
+S --> f(%9:List, %4:List)
+
+Unifier 221
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%6:List, %7:List)
+H --> 1
+G --> f(%8:List, %9:List)
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %6:List
+Z --> 1
+Y --> f(%7:List, %2:Elt, %8:List)
+S --> f(%9:List, %4:List)
+
+Unifier 222
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%6:List, %7:List)
+H --> f(%8:List, %9:List)
+G --> 1
+I --> %3:List
+U --> %4:List
+V --> %5:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> %6:List
+Z --> f(%7:List, %1:Elt, %8:List)
+Y --> 1
+S --> f(%9:List, %3:List)
+
+Unifier 223
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%6:List, %7:List)
+H --> f(%8:List, %9:List)
+G --> 1
+I --> %3:List
+U --> %4:List
+V --> %5:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> %6:List
+Z --> 1
+Y --> f(%7:List, %1:Elt, %8:List)
+S --> f(%9:List, %3:List)
+
+Unifier 224
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%6:List, %7:List)
+H --> 1
+G --> f(%8:List, %9:List)
+I --> %3:List
+U --> %4:List
+V --> %5:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> %6:List
+Z --> f(%7:List, %1:Elt, %8:List)
+Y --> 1
+S --> f(%9:List, %3:List)
+
+Unifier 225
+rewrites: 0
+A --> %4:List
+B --> f(%5:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%6:List, %7:List)
+H --> 1
+G --> f(%8:List, %9:List)
+I --> %3:List
+U --> %4:List
+V --> %5:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> %6:List
+Z --> 1
+Y --> f(%7:List, %1:Elt, %8:List)
+S --> f(%9:List, %3:List)
+
+Unifier 226
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%6:List, %7:List)
+H --> f(%8:List, %9:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %6:List
+Z --> f(%7:List, %2:Elt, %8:List)
+Y --> 1
+S --> f(%9:List, %4:List)
+
+Unifier 227
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%6:List, %7:List)
+H --> f(%8:List, %9:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %6:List
+Z --> 1
+Y --> f(%7:List, %2:Elt, %8:List)
+S --> f(%9:List, %4:List)
+
+Unifier 228
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%6:List, %7:List)
+H --> 1
+G --> f(%8:List, %9:List)
+I --> %4:List
+U --> %5:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %6:List
+Z --> f(%7:List, %2:Elt, %8:List)
+Y --> 1
+S --> f(%9:List, %4:List)
+
+Unifier 229
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%6:List, %7:List)
+H --> 1
+G --> f(%8:List, %9:List)
+I --> %4:List
+U --> %5:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %6:List
+Z --> 1
+Y --> f(%7:List, %2:Elt, %8:List)
+S --> f(%9:List, %4:List)
+
+Unifier 230
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %7:List)
+D --> f(%8:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %7:List
+X --> %8:List
+Z --> f(%9:List, %2:Elt, j(%3:List, %4:List))
+Y --> 1
+S --> %5:List
+
+Unifier 231
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %7:List)
+D --> f(%8:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %7:List
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %2:Elt, j(%3:List, %4:List))
+S --> %5:List
+
+Unifier 232
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %8:List
+Z --> f(%9:List, %2:Elt, j(%4:List, %5:List))
+Y --> 1
+S --> %6:List
+
+Unifier 233
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %2:Elt, j(%4:List, %5:List))
+S --> %6:List
+
+Unifier 234
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%8:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> %8:List
+Z --> f(%9:List, %1:Elt, j(%3:List, %4:List))
+Y --> 1
+S --> %5:List
+
+Unifier 235
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%8:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %1:Elt, j(%3:List, %4:List))
+S --> %5:List
+
+Unifier 236
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %8:List
+Z --> f(%9:List, %2:Elt, j(%4:List, %5:List))
+Y --> 1
+S --> %6:List
+
+Unifier 237
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %2:Elt, j(%4:List, %5:List))
+S --> %6:List
+
+Unifier 238
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %7:List)
+D --> f(%8:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %7:List
+X --> %8:List
+Z --> f(%9:List, %2:Elt)
+Y --> 1
+S --> f(j(%3:List, %4:List), %5:List)
+
+Unifier 239
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %7:List)
+D --> f(%8:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %7:List
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %2:Elt)
+S --> f(j(%3:List, %4:List), %5:List)
+
+Unifier 240
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %8:List
+Z --> f(%9:List, %2:Elt)
+Y --> 1
+S --> f(j(%4:List, %5:List), %6:List)
+
+Unifier 241
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %2:Elt)
+S --> f(j(%4:List, %5:List), %6:List)
+
+Unifier 242
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%8:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> %8:List
+Z --> f(%9:List, %1:Elt)
+Y --> 1
+S --> f(j(%3:List, %4:List), %5:List)
+
+Unifier 243
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%8:List, %9:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %1:Elt)
+S --> f(j(%3:List, %4:List), %5:List)
+
+Unifier 244
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %8:List
+Z --> f(%9:List, %2:Elt)
+Y --> 1
+S --> f(j(%4:List, %5:List), %6:List)
+
+Unifier 245
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, %9:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %8:List
+Z --> 1
+Y --> f(%9:List, %2:Elt)
+S --> f(j(%4:List, %5:List), %6:List)
+
+Unifier 246
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%12:List, %7:List)
+D --> f(%8:List, j(%9:List, %10:List), %11:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt, %12:List)
+W --> %7:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%11:List, %2:Elt, j(%3:List, %4:List), %5:List)
+
+Unifier 247
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, j(%9:List, %10:List), %11:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%11:List, %2:Elt, j(%4:List, %5:List), %6:List)
+
+Unifier 248
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %12:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%8:List, j(%9:List, %10:List), %11:List)
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%12:List, %1:Elt, %2:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%11:List, %1:Elt, j(%3:List, %4:List), %5:List)
+
+Unifier 249
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, j(%9:List, %10:List), %11:List)
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%11:List, %2:Elt, j(%4:List, %5:List), %6:List)
+
+Unifier 250
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%11:List, %7:List)
+D --> f(%8:List, j(%9:List, %10:List))
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt, %11:List)
+W --> %7:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%2:Elt, j(%3:List, %4:List), %5:List)
+
+Unifier 251
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, j(%9:List, %10:List))
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%2:Elt, j(%4:List, %5:List), %6:List)
+
+Unifier 252
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %11:List)
+E --> %1:Elt
+C --> %2:List
+D --> f(%8:List, j(%9:List, %10:List))
+H --> %3:List
+G --> %4:List
+I --> %5:List
+U --> %6:List
+V --> %7:List
+W --> f(%11:List, %1:Elt, %2:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%1:Elt, j(%3:List, %4:List), %5:List)
+
+Unifier 253
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> f(%8:List, j(%9:List, %10:List))
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %8:List
+Z --> %9:List
+Y --> %10:List
+S --> f(%2:Elt, j(%4:List, %5:List), %6:List)
+
+Unifier 254
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %7:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %8:List)
+U --> %6:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %7:List
+X --> %3:List
+Z --> f(%2:Elt, j(%4:List, %5:List), %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 255
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%10:List, %7:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %8:List)
+U --> %6:List
+V --> f(%1:List, %2:Elt, %10:List)
+W --> %7:List
+X --> %3:List
+Z --> 1
+Y --> f(%2:Elt, j(%4:List, %5:List), %9:List)
+S --> %8:List
+
+Unifier 256
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%9:List, %8:List)
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %4:List
+Z --> f(%2:Elt, j(%5:List, %6:List), %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 257
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%9:List, %8:List)
+U --> %7:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, j(%5:List, %6:List), %9:List)
+S --> %8:List
+
+Unifier 258
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %8:List)
+U --> %6:List
+V --> %7:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> %3:List
+Z --> f(%1:Elt, j(%4:List, %5:List), %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 259
+rewrites: 0
+A --> %6:List
+B --> f(%7:List, %10:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> f(%9:List, %8:List)
+U --> %6:List
+V --> %7:List
+W --> f(%10:List, %1:Elt, %2:List)
+X --> %3:List
+Z --> 1
+Y --> f(%1:Elt, j(%4:List, %5:List), %9:List)
+S --> %8:List
+
+Unifier 260
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%9:List, %8:List)
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %4:List
+Z --> f(%2:Elt, j(%5:List, %6:List), %9:List)
+Y --> 1
+S --> %8:List
+
+Unifier 261
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> f(%9:List, %8:List)
+U --> %7:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, j(%5:List, %6:List), %9:List)
+S --> %8:List
+
+Unifier 262
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %6:List)
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %9:List)
+W --> %6:List
+X --> %3:List
+Z --> f(%2:Elt, %7:List)
+Y --> 1
+S --> f(%8:List, %4:List)
+
+Unifier 263
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %6:List)
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %9:List)
+W --> %6:List
+X --> %3:List
+Z --> 1
+Y --> f(%2:Elt, %7:List)
+S --> f(%8:List, %4:List)
+
+Unifier 264
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %6:List)
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %9:List)
+W --> %6:List
+X --> %3:List
+Z --> f(%2:Elt, %7:List)
+Y --> 1
+S --> f(%8:List, %4:List)
+
+Unifier 265
+rewrites: 0
+A --> %5:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %6:List)
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %4:List
+U --> %5:List
+V --> f(%1:List, %2:Elt, %9:List)
+W --> %6:List
+X --> %3:List
+Z --> 1
+Y --> f(%2:Elt, %7:List)
+S --> f(%8:List, %4:List)
+
+Unifier 266
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %4:List
+Z --> f(%2:Elt, %7:List)
+Y --> 1
+S --> f(%8:List, %5:List)
+
+Unifier 267
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, %7:List)
+S --> f(%8:List, %5:List)
+
+Unifier 268
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %4:List
+Z --> f(%2:Elt, %7:List)
+Y --> 1
+S --> f(%8:List, %5:List)
+
+Unifier 269
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %5:List
+U --> %6:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, %7:List)
+S --> f(%8:List, %5:List)
+
+Unifier 270
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%9:List, %1:Elt, %2:List)
+X --> %3:List
+Z --> f(%1:Elt, %7:List)
+Y --> 1
+S --> f(%8:List, %4:List)
+
+Unifier 271
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%9:List, %1:Elt, %2:List)
+X --> %3:List
+Z --> 1
+Y --> f(%1:Elt, %7:List)
+S --> f(%8:List, %4:List)
+
+Unifier 272
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%9:List, %1:Elt, %2:List)
+X --> %3:List
+Z --> f(%1:Elt, %7:List)
+Y --> 1
+S --> f(%8:List, %4:List)
+
+Unifier 273
+rewrites: 0
+A --> %5:List
+B --> f(%6:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %4:List
+U --> %5:List
+V --> %6:List
+W --> f(%9:List, %1:Elt, %2:List)
+X --> %3:List
+Z --> 1
+Y --> f(%1:Elt, %7:List)
+S --> f(%8:List, %4:List)
+
+Unifier 274
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %4:List
+Z --> f(%2:Elt, %7:List)
+Y --> 1
+S --> f(%8:List, %5:List)
+
+Unifier 275
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> f(%7:List, %8:List)
+G --> 1
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, %7:List)
+S --> f(%8:List, %5:List)
+
+Unifier 276
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %4:List
+Z --> f(%2:Elt, %7:List)
+Y --> 1
+S --> f(%8:List, %5:List)
+
+Unifier 277
+rewrites: 0
+A --> %6:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> 1
+G --> f(%7:List, %8:List)
+I --> %5:List
+U --> %6:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, %7:List)
+S --> f(%8:List, %5:List)
+
+Unifier 278
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%1:List, %2:Elt, %9:List)
+W --> %8:List
+X --> %3:List
+Z --> f(%2:Elt, j(%4:List, %5:List))
+Y --> 1
+S --> %6:List
+
+Unifier 279
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%1:List, %2:Elt, %9:List)
+W --> %8:List
+X --> %3:List
+Z --> 1
+Y --> f(%2:Elt, j(%4:List, %5:List))
+S --> %6:List
+
+Unifier 280
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %4:List
+Z --> f(%2:Elt, j(%5:List, %6:List))
+Y --> 1
+S --> %7:List
+
+Unifier 281
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, j(%5:List, %6:List))
+S --> %7:List
+
+Unifier 282
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %8:List
+W --> f(%9:List, %1:Elt, %2:List)
+X --> %3:List
+Z --> f(%1:Elt, j(%4:List, %5:List))
+Y --> 1
+S --> %6:List
+
+Unifier 283
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %8:List
+W --> f(%9:List, %1:Elt, %2:List)
+X --> %3:List
+Z --> 1
+Y --> f(%1:Elt, j(%4:List, %5:List))
+S --> %6:List
+
+Unifier 284
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %4:List
+Z --> f(%2:Elt, j(%5:List, %6:List))
+Y --> 1
+S --> %7:List
+
+Unifier 285
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %4:List
+Z --> 1
+Y --> f(%2:Elt, j(%5:List, %6:List))
+S --> %7:List
+
+Unifier 286
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%1:List, %2:Elt, %9:List)
+W --> %8:List
+X --> %3:List
+Z --> %2:Elt
+Y --> 1
+S --> f(j(%4:List, %5:List), %6:List)
+
+Unifier 287
+rewrites: 0
+A --> %7:List
+B --> %1:List
+E --> %2:Elt
+C --> f(%9:List, %8:List)
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> f(%1:List, %2:Elt, %9:List)
+W --> %8:List
+X --> %3:List
+Z --> 1
+Y --> %2:Elt
+S --> f(j(%4:List, %5:List), %6:List)
+
+Unifier 288
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %4:List
+Z --> %2:Elt
+Y --> 1
+S --> f(j(%5:List, %6:List), %7:List)
+
+Unifier 289
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> f(%1:List, %2:Elt)
+W --> %3:List
+X --> %4:List
+Z --> 1
+Y --> %2:Elt
+S --> f(j(%5:List, %6:List), %7:List)
+
+Unifier 290
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %8:List
+W --> f(%9:List, %1:Elt, %2:List)
+X --> %3:List
+Z --> %1:Elt
+Y --> 1
+S --> f(j(%4:List, %5:List), %6:List)
+
+Unifier 291
+rewrites: 0
+A --> %7:List
+B --> f(%8:List, %9:List)
+E --> %1:Elt
+C --> %2:List
+D --> %3:List
+H --> %4:List
+G --> %5:List
+I --> %6:List
+U --> %7:List
+V --> %8:List
+W --> f(%9:List, %1:Elt, %2:List)
+X --> %3:List
+Z --> 1
+Y --> %1:Elt
+S --> f(j(%4:List, %5:List), %6:List)
+
+Unifier 292
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %4:List
+Z --> %2:Elt
+Y --> 1
+S --> f(j(%5:List, %6:List), %7:List)
+
+Unifier 293
+rewrites: 0
+A --> %8:List
+B --> %1:List
+E --> %2:Elt
+C --> %3:List
+D --> %4:List
+H --> %5:List
+G --> %6:List
+I --> %7:List
+U --> %8:List
+V --> %1:List
+W --> f(%2:Elt, %3:List)
+X --> %4:List
+Z --> 1
+Y --> %2:Elt
+S --> f(j(%5:List, %6:List), %7:List)
+
+No more unifiers.
+rewrites: 0
+Bye.

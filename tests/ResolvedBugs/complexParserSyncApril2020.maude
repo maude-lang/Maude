@@ -1,0 +1,13 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Check bug where cached simple parser was getting used
+***	with complex parser auxiliary information leading to crash.
+***
+
+select META-LEVEL .
+
+red metaParse(upModule('NAT, false), none, '0, 'Nat) .
+red metaParseStrategy(upModule('NAT, false), none, 'idle) .
+red metaParse(upModule('NAT, false), none, '0, 'Nat) .

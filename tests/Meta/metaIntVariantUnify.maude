@@ -1,5 +1,4 @@
 set show timing off .
-set show advisories off .
 
 ***
 *** Test variant unification in the meta-interpreter.

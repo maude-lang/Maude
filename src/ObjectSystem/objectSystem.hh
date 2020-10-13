@@ -29,5 +29,10 @@
 class ObjectSystemRewritingContext;
 class ConfigSymbol;
 class ExternalObjectManagerSymbol;
+class SocketManagerSymbol;
+class FileManagerSymbol;
+class StreamManagerSymbol;
+class ProcessManagerSymbol;
+class SocketManagerClient;
 
 #endif

@@ -1,0 +1,94 @@
+set show timing off .
+
+***(
+From:
+Santiago Escobar, Julia Sapiña:
+Most General Variant Unifiers. 
+International Conference on Logic Programming (ICLP 2019)
+Technical Communications, EPTCS 306, pp.154-167
+)
+
+fmod EXCLUSIVE-OR is
+  sorts Elem ElemXor .
+  subsort Elem < ElemXor .
+  ops a b c : -> Elem .
+  op mt : -> ElemXor .
+  op _*_ : ElemXor ElemXor -> ElemXor [assoc comm] .
+
+  vars X Y Z U V : [ElemXor] .
+  vars V1 V2 V3 V4 V5 V6 V7 V8 V9 : [ElemXor] .
+  eq [idem] :     X * X = mt    [variant] .
+  eq [idem-Coh] : X * X * Z = Z [variant] .
+  eq [id] :       X * mt = X    [variant] .
+
+  op f1 : [ElemXor] -> [ElemXor] .
+  op f2 : [ElemXor] [ElemXor] -> [ElemXor] .
+  op f3 : [ElemXor] [ElemXor] [ElemXor] -> [ElemXor] .
+
+endfm
+
+*** P1
+filtered variant unify V1 =? V2 * V3 .
+
+*** P2
+filtered variant unify V1 =? V2 * V3 * V4 .
+
+*** P3
+filtered variant unify V1 =? f1(V2 * V3 * f1(V4)) .
+
+*** P4
+filtered variant unify V1 =? f2(V2 * V3, f1(V2 * V4)) .
+
+*** P5
+filtered variant unify V1 =? f3(V2 * V3, f1(V3 * V4), f2(V2, f1(V4))) .
+
+---------------------------------------------------------------
+
+*** P6
+filtered variant unify V1 * V2 =? V3 * V4 .
+
+*** P7
+filtered variant unify V1 * V2 =? f1(V3 * V4) .
+
+*** P8
+filtered variant unify V1 * V2 =? f1(V3 * V3 * f1(V4)) .
+
+*** P9 - too slow for test suite
+*** filtered variant unify V1 * V2 =? f2(V3 * V4, f1(V3 * V5)) .
+
+*** P10 - too slow for test suite
+*** filtered variant unify V1 * V2 =? f3(V3 * V4, f1(V4 * V5), f2(V3, f1(V5))) .
+
+---------------------------------------------------------------
+
+*** P11
+filtered variant unify f1(V1) =? f1(V2 * V3) .
+
+*** P12 - 3 mgus
+filtered variant unify f1(V1) * f1(V2) =? f1(V3) * f1(V3 * V4) .
+
+*** P13 - too slow for test suite
+*** filtered variant unify f1(V1 * V2) =? f1(V3 * V4 * V5) .
+
+*** P14
+filtered variant unify f2(V1 * V2, V2 * V3) =? f2(V4, V5) .
+
+*** P15
+filtered variant unify f3(V1 * V2, V3 * V4, V5 * V6) =? f3(V7, V8, V9) .
+
+---------------------------------------------------------------
+
+*** P16
+filtered variant unify V1 =? a * b * V2 .
+
+*** P17
+filtered variant unify V1 * V2 =? a * b * V3 .
+
+*** P18
+filtered variant unify V1 * a =? V2 * b .
+
+*** P19 - 3 mgus
+filtered variant unify f1(a) * f1(V1) =? f1(V2 * b) * f1(V3 * c) .
+
+*** P20
+filtered variant unify f2(a, V1) =? f2(V2 * V3, f1(a * b)) .
