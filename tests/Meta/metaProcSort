@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metaProcSort.maude -no-banner -no-advise \
+  > metaProcSort.out 2>&1
+
+diff $srcdir/metaProcSort.expected metaProcSort.out > /dev/null 2>&1

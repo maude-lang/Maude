@@ -165,8 +165,6 @@ SyntacticPreModule::defaultFixUp(OpDef& opDef, int index)
   return true;
 }
 
-#define FIX_UP_FAILED	{flatModule->markAsBad(); continue;}
-
 void
 SyntacticPreModule::fixUpSymbols()
 {
@@ -175,121 +173,132 @@ SyntacticPreModule::fixUpSymbols()
     {
       OpDecl& opDecl = opDecls[i];
       OpDef& opDef = opDefs[opDecl.defIndex];
-      //
-      //	Handle identities.
-      //
-      if (opDef.identity.length() != 0)
-	{
-	  if (opDef.symbolType.hasFlag(SymbolType::POLY))
-	    {
-	      int nonPolyIndex = opDef.symbolType.hasFlag(SymbolType::LEFT_ID) ? 0 : 1;
-	      Sort* wanted = opDef.domainAndRange[nonPolyIndex];
-	      if (wanted == 0)
-		{
-		  static const char* lr[] = {"left", "right"};
-		  IssueWarning(LineNumber(opDecl.prefixName.lineNumber()) <<
-			       ": polymorphic operator " << QUOTE(opDecl.prefixName) <<
-			       " cannot have a " << lr[nonPolyIndex] << " identity.");
-		  FIX_UP_FAILED;
-		}
-	      Term* id = flatModule->parseTerm(opDef.identity, wanted->component());
-	      if (id == 0)
-		FIX_UP_FAILED;
-	      int index = opDecl.polymorphIndex;
-	      if (Term* oldId = flatModule->getPolymorphIdentity(index))
-		{
-		  WarningCheck(id->equal(oldId), *id <<
-			       ": declaration of identity " << QUOTE(id) <<
-			       " for polymorphic operator " << QUOTE(opDecl.prefixName) <<
-			       " clashes with previously declared identity " <<
-			       QUOTE(oldId) << " in " << *oldId << '.');
-		  id->deepSelfDestruct();
-		}
-	      else
-		flatModule->addIdentityToPolymorph(opDecl.polymorphIndex, id);
-	    }
-	  else
-	    {
-	      //
-	      //	Might not be a binary symbol if it got converted to
-	      //	a free symbol during error recovery.
-	      //
-	      if (BinarySymbol* s = dynamic_cast<BinarySymbol*>(opDecl.symbol))
-		{
-		  Sort* wanted =
-		    opDef.domainAndRange[opDef.symbolType.hasFlag(SymbolType::LEFT_ID) ? 0 : 1];
-		  Term* id = flatModule->parseTerm(opDef.identity, wanted->component());
-		  if (id == 0)
-		    FIX_UP_FAILED;
-		  if (Term* oldId = s->getIdentity())
-		    {
-		      WarningCheck(id->equal(oldId), *id <<
-				   ": declaration of identity " << QUOTE(id) <<
-				   " for operator " << QUOTE(s) <<
-				   " clashes with previously declared identity " <<
-				   QUOTE(oldId) << " in " << *oldId << '.');
-		      id->deepSelfDestruct();
-		    }
-		  else
-		    s->setIdentity(id);
-		}
-	      
-	    }
-	}
+      if (opDef.symbolType.hasFlag(SymbolType::POLY))
+	fixUpPolymorph(opDecl);
       else
-	{
-	  if (opDef.symbolType.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
-	    {
-	      IssueWarning(LineNumber(opDecl.prefixName.lineNumber()) <<
-			   ": missing identity for operator " <<
-			   QUOTE(opDecl.prefixName) << '.');
-	      FIX_UP_FAILED;
-	    }      
-	}
+	fixUpSymbol(opDecl);
+    }
+}
+
+#define FIX_UP_FAILED	{flatModule->markAsBad(); return;}
+
+void
+SyntacticPreModule::fixUpSymbol(const OpDecl& opDecl)
+{
+  OpDef& opDef = opDefs[opDecl.defIndex];
+  //
+  //	Might not have an identity to parse if it is a ditto declaration.
+  //
+  if (opDef.identity.length() != 0)
+    {
       //
-      //	Handle specials.
+      //	The validation of attributes in the flattened module may have
+      //	removed the identity attributes.
       //
-      if (opDef.symbolType.hasAttachments())
+      Symbol* symbol = opDecl.symbol;
+      SymbolType symbolType = flatModule->getSymbolType(symbol);
+      if (symbolType.hasAtLeastOneFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
 	{
-	  if (opDef.symbolType.hasFlag(SymbolType::POLY))
+	  //
+	  //	Might not be a binary symbol if it got converted to
+	  //	a free symbol during error recovery.
+	  //
+	  BinarySymbol* s = safeCast(BinarySymbol*, symbol);
+	  Sort* wanted = opDef.domainAndRange[symbolType.hasFlag(SymbolType::LEFT_ID) ? 0 : 1];
+	  Term* id = flatModule->parseTerm(opDef.identity, wanted->component());
+	  if (id == 0)
+	    FIX_UP_FAILED;
+	  if (Term* oldId = s->getIdentity())
 	    {
-	      if (!defaultFixUp(opDef, opDecl.polymorphIndex))
-		{
-		  IssueWarning(LineNumber(opDecl.prefixName.lineNumber()) <<
-			       ": bad special for polymorphic operator " <<
-			       QUOTE(opDecl.prefixName) << '.');
-		  FIX_UP_FAILED;
-		}
+	      WarningCheck(id->equal(oldId), *id <<
+			   ": declaration of identity " << QUOTE(id) <<
+			   " for operator " << QUOTE(s) <<
+			   " clashes with previously declared identity " <<
+			   QUOTE(oldId) << " in " << *oldId << '.');
+	      id->deepSelfDestruct();
 	    }
 	  else
-	    {
-	      if (!defaultFixUp(opDef, opDecl.symbol))
-		{
-		  IssueWarning(LineNumber(opDecl.prefixName.lineNumber()) <<
-			       ": bad special for operator " <<
-			       QUOTE(opDecl.prefixName) << '.');
-		  FIX_UP_FAILED;
-		}
-	    }
+	    s->setIdentity(id);
 	}
-      else if (opDef.symbolType.getBasicType() == SymbolType::BUBBLE)
+    }
+  //
+  //	Handle specials.
+  //
+  if (opDef.symbolType.hasAttachments())
+    {
+      if (!defaultFixUp(opDef, opDecl.symbol))
 	{
-	  Symbol* quotedIdentifierSymbol = 0;
-	  Symbol* nilQidListSymbol = 0;
-	  Symbol* qidListSymbol = 0;
-	  int h = findHook(opDef.special, OP_HOOK, qidSymbolToken);
-	  if (h != NONE)
-	    quotedIdentifierSymbol = findHookSymbol(opDef.special[h].details);
-	  h = findHook(opDef.special, OP_HOOK, nilQidListSymbolToken);
-	  if (h != NONE)
-	    nilQidListSymbol = findHookSymbol(opDef.special[h].details);
-	  h = findHook(opDef.special, OP_HOOK, qidListSymbolToken);
-	  if (h != NONE)
-	    qidListSymbol = findHookSymbol(opDef.special[h].details);
-	  flatModule->fixUpBubbleSpec(opDecl.bubbleSpecIndex,
-				      quotedIdentifierSymbol,
-				      nilQidListSymbol,
-				      qidListSymbol);
+	  IssueWarning(LineNumber(opDecl.prefixName.lineNumber()) <<
+		       ": bad special for operator " <<
+		       QUOTE(opDecl.prefixName) << '.');
+	  FIX_UP_FAILED;
+	}
+    }
+  else if (opDef.symbolType.getBasicType() == SymbolType::BUBBLE)
+    {
+      Symbol* quotedIdentifierSymbol = 0;
+      Symbol* nilQidListSymbol = 0;
+      Symbol* qidListSymbol = 0;
+      int h = findHook(opDef.special, OP_HOOK, qidSymbolToken);
+      if (h != NONE)
+	quotedIdentifierSymbol = findHookSymbol(opDef.special[h].details);
+      h = findHook(opDef.special, OP_HOOK, nilQidListSymbolToken);
+      if (h != NONE)
+	nilQidListSymbol = findHookSymbol(opDef.special[h].details);
+      h = findHook(opDef.special, OP_HOOK, qidListSymbolToken);
+      if (h != NONE)
+	qidListSymbol = findHookSymbol(opDef.special[h].details);
+      flatModule->fixUpBubbleSpec(opDecl.bubbleSpecIndex,
+				  quotedIdentifierSymbol,
+				  nilQidListSymbol,
+				  qidListSymbol);
+    }
+}
+
+void
+SyntacticPreModule::fixUpPolymorph(const OpDecl& opDecl)
+{
+  OpDef& opDef = opDefs[opDecl.defIndex];
+  int index = opDecl.polymorphIndex;
+  //
+  //	Might not have an identity to parse if it is a ditto declaration.
+  //
+  if (opDef.identity.length() != 0)
+    {
+      //
+      //	The validation of attributes in the flattened module may have
+      //	removed some.
+      //
+      SymbolType polymorphType = flatModule->getPolymorphType(index);
+      if (polymorphType.hasAtLeastOneFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
+	{
+	  int nonPolyIndex = polymorphType.hasFlag(SymbolType::LEFT_ID) ? 0 : 1;
+	  Sort* wanted = opDef.domainAndRange[nonPolyIndex];
+	  Assert(wanted != 0, "illegal polymophic arg - should have be fixed by validation");
+	  Term* id = flatModule->parseTerm(opDef.identity, wanted->component());
+	  if (id == 0)
+	    FIX_UP_FAILED;
+	  if (Term* oldId = flatModule->getPolymorphIdentity(index))
+	    {
+	      WarningCheck(id->equal(oldId), *id <<
+			   ": declaration of identity " << QUOTE(id) <<
+			   " for polymorphic operator " << QUOTE(opDecl.prefixName) <<
+			   " clashes with previously declared identity " <<
+			   QUOTE(oldId) << " in " << *oldId << '.');
+	      id->deepSelfDestruct();
+	    }
+	  else
+	    flatModule->addIdentityToPolymorph(index, id);
+	}
+    }
+  if (opDef.symbolType.hasAttachments())
+    {
+      if (!defaultFixUp(opDef, index))
+	{
+	  IssueWarning(LineNumber(opDecl.prefixName.lineNumber()) <<
+		       ": bad special for polymorphic operator " <<
+		       QUOTE(opDecl.prefixName) << '.');
+	  FIX_UP_FAILED;
 	}
     }
 }

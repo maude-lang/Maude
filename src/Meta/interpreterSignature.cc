@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,7 +28,9 @@
 //	The format is:
 //		MACRO(symbols name, symbols C++ class, number of args)
 //
+  MACRO(stringSymbol, StringSymbol, 0)
   MACRO(emptyInterpereterOptionSetSymbol, FreeSymbol, 0)
+  MACRO(newProcessSymbol, FreeSymbol, 0)
   MACRO(interpreterOidSymbol, FreeSymbol, 1)
   MACRO(createInterpreterMsg, FreeSymbol, 3)
   MACRO(createdInterpreterMsg, FreeSymbol, 3)
@@ -111,3 +113,5 @@
   MACRO(noSuchResult3Msg, FreeSymbol, 4)
   MACRO(quitMsg, FreeSymbol, 2)
   MACRO(byeMsg, FreeSymbol, 2)
+  MACRO(interpreterErrorMsg, FreeSymbol, 3)
+  MACRO(interpreterExitMsg, FreeSymbol, 3)

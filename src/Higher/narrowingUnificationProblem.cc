@@ -315,7 +315,7 @@ NarrowingUnificationProblem::bindFreeVariables()
 	{
 	  if (!(freeVariables.contains(i)))  // not a free variable
 	    {
-	      if (DagNode* d2 = d->instantiate(*sortedSolution))
+	      if (DagNode* d2 = d->instantiate(*sortedSolution, true))
 		sortedSolution->bind(i, d2);
 	    }
 	}

@@ -154,6 +154,20 @@ Interpreter::endRewriting(Timer& timer,
 	printStats(timer, *context, getFlag(SHOW_TIMING));
       DagNode* r = context->root();
       cout << "result " << r->getSort() << ": " << r << '\n';
+      // SERIALIZATION
+      // TEST
+      // CODE
+      /*
+      Rope ser = module->serialize(r);
+      cout << module->serialize(r) << endl;
+      string mess;
+      Token::ropeToString(ser, mess);
+      cout << "string: " << mess << endl;
+
+      DagNode* d = module->deserialize(ser);
+      cout << "read back: " << d << endl;
+            */
+
       cout.flush();
       if (xmlBuffer != 0)
 	{

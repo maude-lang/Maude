@@ -1,3 +1,18 @@
+2020-12-11  Steven Eker  <eker2@eker10>
+
+	* CUI_DagNode.cc (CUI_DagNode::instantiate2): take and pass
+	maintainInvariants flag; only normalize and compute sort for
+	ground dag if maintainInvariants == true
+	(CUI_DagNode::instantiateWithReplacement): pass maintainInvariants
+	= false to instantiate()
+	(CUI_DagNode::instantiateWithCopies2): pass maintainInvariants =
+	false to instantiate()
+
+	* CUI_DagNode.hh (class CUI_DagNode): updated decl for
+	instantiate2()
+
+===================================Maude132===========================================
+
 2020-09-28  Steven Eker  <eker2@eker10>
 
 	* CUI_UnificationSubproblem.cc

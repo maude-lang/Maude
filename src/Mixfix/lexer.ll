@@ -248,13 +248,14 @@ test					return KW_TEST;
 smt-search				return KW_SMT_SEARCH;
 vu-narrow				return KW_VU_NARROW;
 fvu-narrow				return KW_FVU_NARROW;
-[.\[\]()]				return *yytext;
+fold					return KW_FOLD;
+[.\[\](){}]				return *yytext;
 0|([1-9][0-9]*)				{
 					  bool dummy;
 					  lvalp->yyInt64 = stringToInt64(yytext, dummy, 10);
 					  return SIMPLE_NUMBER;
 					}
-{maudeId}|[{},]				{
+{maudeId}|,				{
 					  IssueWarning(LineNumber(lineNumber) <<
 					    ": skipped unexpected token: " <<
 					    QUOTE(yytext));
@@ -263,7 +264,7 @@ fvu-narrow				return KW_FVU_NARROW;
 
  /*
   *	In command mode we only recognize special tokens
-  *	"in" "(" ")" "[" "]" ":" "." "," and non-negative numbers.
+  *	"in" "{" "}" "(" ")" "[" "]" ":" "." "," and non-negative numbers.
   *	Everything else is an identifier. Furthermore "." is only recognized
   *	at the end of a line or before a comment (ignoring white space).
   */
@@ -272,7 +273,9 @@ fvu-narrow				return KW_FVU_NARROW;
                                           yyless(1);
                                           RETURN('.')
                                         }
-[:,()\[\]]				RETURN(*yytext)
+[:,()\[\]{}]				RETURN(*yytext)
+filter					RETURN(KW_FILTER)
+delay					RETURN(KW_DELAY)
 [1-9][0-9]*				RETURN(NUMERIC_ID)
 [.{}]					RETURN(IDENTIFIER)
 {maudeId}"."				{

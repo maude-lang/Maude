@@ -180,6 +180,8 @@ private:
   Sort* computeType(const Type& type);
   void processOps();
   void fixUpSymbols();
+  void fixUpSymbol(const OpDecl& opDecl);
+  void fixUpPolymorph(const OpDecl& opDecl);
   void processStrategies();
   void processStatements();
   bool compatible(int endTokenCode);

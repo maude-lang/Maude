@@ -621,12 +621,110 @@ Token::doubleToCode(double d)
   return code;
 }
 
+/*
 Rope
 Token::codeToRope(int code)
 {
   Rope result;
   bool seenBackslash = false;
   for (const char* p = stringTable.name(code) + 1; *p; p++)
+    {
+      char c = *p;
+      switch (c)
+	{
+	case '\\':
+	  {
+	    if (!seenBackslash)
+	      {
+		seenBackslash = true;
+		continue;
+	      }
+	    break;
+	  }
+	case '"':
+	  {
+	    if (!seenBackslash)
+	      return result;
+	    break;
+	  }
+	case 'a':
+	  {
+	    if (seenBackslash)
+	      c = '\a';
+	    break;
+	  }
+	case 'b':
+	  {
+	    if (seenBackslash)
+	      c = '\b';
+	    break;
+	  }
+	case 'f':
+	  {
+	    if (seenBackslash)
+	      c = '\f';
+	    break;
+	  }
+	case 'n':
+	  {
+	    if (seenBackslash)
+	      c = '\n';
+	    break;
+	  }
+	case 'r':
+	  {
+	    if (seenBackslash)
+	      c = '\r';
+	    break;
+	  }
+	case 't':
+	  {
+	    if (seenBackslash)
+	      c = '\t';
+	    break;
+	  }
+	case 'v':
+	  {
+	    if (seenBackslash)
+	      c = '\v';
+	    break;
+	  }
+	default:
+	  {
+	    if (seenBackslash && isdigit(c) && c != '8' && c != '9')
+	      {
+		int i = c - '0';
+	        c = *(p + 1);
+		if (isdigit(c) && c != '8' && c != '9')
+		  {
+		    ++p;
+		    i = 8 * i + c - '0';
+		    c = *(p + 1);
+		    if (isdigit(c) && c != '8' && c != '9')
+		      {
+			++p;
+			i = 8 * i + c - '0';
+		      }
+		  }
+		c = i;
+	      }
+	  }
+	}
+      result += c;
+      seenBackslash = false;
+    }
+  CantHappen("bad end to string");
+  return result;
+}
+*/
+
+Rope
+Token::stringToRope(const char* string)
+{
+  Assert(*string == '"', "string must start with \"");
+  Rope result;
+  bool seenBackslash = false;
+  for (const char* p = string + 1; *p; p++)
     {
       char c = *p;
       switch (c)

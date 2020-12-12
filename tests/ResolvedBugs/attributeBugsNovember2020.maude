@@ -1,0 +1,83 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for mishandling of bad combinations of attributes
+***	and sort/polymorphism declarations.
+***
+
+fmod ITER-ARITY is
+  sorts Foo  .
+  op f : Foo Foo -> Foo [iter] .
+  op g : -> Foo [iter] .
+  ops a b c : -> Foo .
+endfm
+
+red f(a, b) .
+red g .
+
+fmod ITER-ASSOC is
+  sorts Foo  .
+  op f : Foo Foo -> Foo [assoc iter] .
+  ops a b c : -> Foo .
+endfm
+
+red f(a, b) .
+
+
+fmod POLY-ITER-ARITY is
+  sorts Foo Foo2 Foo3 Foo4 Bar .
+  subsorts Foo < Foo2 < Foo3 < Foo4 .
+  op f : Universal Universal -> Universal [poly (0 1 2) iter] .
+  op g : -> Universal [poly (0) iter] .
+  ops a b c : -> Foo .
+endfm
+
+red f(a, b) .
+red g .
+
+fmod POLY-ITER-ASSOC is
+  sorts Foo Foo2 Foo3 Foo4 Bar .
+  subsorts Foo < Foo2 < Foo3 < Foo4 .
+  op f : Universal Universal -> Universal [poly (0 1 2) assoc iter] .
+  ops a b c : -> Foo .
+endfm
+
+red f(a, b) .
+
+
+fmod ITER-KINDS is
+  sorts Foo Foo2 Foo3 Foo4 Bar .
+  subsorts Foo < Foo2 < Foo3 < Foo4 .
+   op f : Foo -> Bar [iter] .
+   op g : Bar -> Foo [iter] .
+  ops a b c : -> Foo .
+  ops x y z : -> Bar .
+endfm
+
+red f(a) .
+red g(x) .
+
+
+fmod POLY-ITER-KINDS is
+  sorts Foo Foo2 Foo3 Foo4 Bar .
+  subsorts Foo < Foo2 < Foo3 < Foo4 .
+  op f : Universal -> Foo [poly (1) iter] .
+  op g : Foo -> Universal [poly (0) iter] .
+
+  ops a b c : -> Foo .
+  ops x y z : -> Bar .
+endfm
+
+red f(x) .
+red g(a) .
+
+
+fmod COMM-ID-IDEM-IGNORED is
+  sort Foo .
+  op f : Foo -> Foo [iter comm id: a idem] .
+  ops a b c : -> Foo .
+endfm
+
+red f(a) .
+red f(f(a)) .

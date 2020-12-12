@@ -2,24 +2,24 @@
 erewrite in RUN : <> < me : User | option: breadthFirst,output: empty,input:
     n1999 @ 'additive-normal-form[[empty]] > createInterpreter(
     interpreterManager, me, none) .
-rewrites: 120
+rewrites: 110
 result Configuration: <> < me : User | option: breadthFirst,output: ('__[
     'M.RomanSymbol,'D.RomanSymbol,'C.RomanSymbol,'X.RomanSymbol,'V.RomanSymbol,
     'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol]),solcount: 1,
     input: '__['M.RomanSymbol,'C.RomanSymbol,'M.RomanSymbol,'X.RomanSymbol,
     'C.RomanSymbol,'I.RomanSymbol,'X.RomanSymbol] @ 'additive-normal-form[[
-    empty]] > noSuchResult(me, interpreter(0), 115)
+    empty]] > noSuchResult(me, interpreter(0), 105)
 ==========================================
 erewrite in RUN : <> < me : User | option: depthFirst,output: empty,input:
     n1999 @ 'additive-normal-form[[empty]] > createInterpreter(
     interpreterManager, me, none) .
-rewrites: 120
+rewrites: 110
 result Configuration: <> < me : User | option: depthFirst,output: ('__[
     'M.RomanSymbol,'D.RomanSymbol,'C.RomanSymbol,'X.RomanSymbol,'V.RomanSymbol,
     'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol]),solcount: 1,
     input: '__['M.RomanSymbol,'C.RomanSymbol,'M.RomanSymbol,'X.RomanSymbol,
     'C.RomanSymbol,'I.RomanSymbol,'X.RomanSymbol] @ 'additive-normal-form[[
-    empty]] > noSuchResult(me, interpreter(0), 115)
+    empty]] > noSuchResult(me, interpreter(0), 105)
 ==========================================
 erewrite in RUN : <> < me : User | option: depthFirst,output: empty,input:
     n1999 @ 'add[none]{empty} > createInterpreter(interpreterManager, me, none)

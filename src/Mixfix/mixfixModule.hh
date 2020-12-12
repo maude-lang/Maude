@@ -283,6 +283,9 @@ public:
   static Term* findNonlinearVariable(Term* term, VariableInfo& variableInfo);
   Symbol* findSMT_Symbol(Term* term);
 
+  Rope serialize(DagNode* dagNode);
+  DagNode* deserialize(const Rope& encoding);
+
 protected:
   static int findMatchingParen(const Vector<Token>& tokens, int pos);
 
@@ -448,9 +451,10 @@ private:
     Vector<int> mixfixSyntax;
     Vector<int> gather;
     Vector<int> format;
-    int prec;
+    short prec;
+    short polymorphIndex;  // for polymorphs and polymorph instances only
     SymbolType symbolType;
-    int iflags;
+    int iflags;  // internal flags; mostly information about potential overloading
     int next;
   };
 
@@ -514,6 +518,17 @@ private:
 			 const Vector<Sort*>& domainAndRange,
 			 SymbolType symbolType,
 			 const Vector<int>& strategy);
+  Symbol* newAssociativeSymbol(int name,
+			       const Vector<Sort*>& domainAndRange,
+			       SymbolType symbolType,
+			       const Vector<int>& strategy);
+  Symbol* newAxiomSymbol(int name,
+			 const Vector<Sort*>& domainAndRange,
+			 SymbolType symbolType,
+			 const Vector<int>& strategy);
+  void validateAttributes(Token prefixName,
+			  const Vector<Sort*>& domainAndRange,
+			  SymbolType& symbolType);
 
   void makeGrammar(bool complexFlag = false);
   void makeComplexProductions();
@@ -733,6 +748,8 @@ private:
 			    bool assoc2);
   static bool domainAndRangeMatch(const Vector<Sort*>& domainAndRange1,
 				  const Vector<Sort*>& domainAndRange2);
+
+  int visit(DagNode* dagNode, PointerSet& visited, Rope& accumulator);
 
   bool ambiguous(int iflags);
   static bool rangeOfArgumentsKnown(int iflags, bool rangeKnown, bool rangeDisambiguated);
@@ -1037,6 +1054,14 @@ MixfixModule::canHaveAsParameter(ModuleType t1, ModuleType t2)
   //	Only theories can be parameters.
   //
   return isTheory(t2) && (((t1 | t2) & (SYSTEM | STRATEGY)) == (t1 & (SYSTEM | STRATEGY)));
+}
+
+inline DagNode*
+MixfixModule::deserialize(const Rope& encoding)
+{
+  extern DagNode* deserializeRope(MixfixModule*, const Rope&);
+  
+  return deserializeRope(this, encoding);
 }
 
 #endif

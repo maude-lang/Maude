@@ -155,7 +155,7 @@ NarrowingSearchState2::NarrowingSearchState2(RewritingContext* context,
       //	Make a copy of the dag we want to narrow, with variable replacements.
       //
       DebugAdvisory("old dagToNarrow = " << dagToNarrow);
-      if (DagNode* renamedDagToNarrow = dagToNarrow->instantiate(s))  // just in case dagToNarrow was ground
+      if (DagNode* renamedDagToNarrow = dagToNarrow->instantiate(s, false))  // just in case dagToNarrow was ground
 	dagToNarrow = renamedDagToNarrow;
       DebugAdvisory("new dagToNarrow = " << dagToNarrow);
       newContext = context->makeSubcontext(dagToNarrow);
@@ -164,7 +164,7 @@ NarrowingSearchState2::NarrowingSearchState2(RewritingContext* context,
       //
       for (int i = 0; i < nrBlockerDags; ++i)
 	{
-	  if (DagNode* b = blockerDags[i]->instantiate(s))
+	  if (DagNode* b = blockerDags[i]->instantiate(s, false))
 	    blockerDags[i] = b;
 	}
     }

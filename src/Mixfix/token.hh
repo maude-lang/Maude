@@ -105,6 +105,7 @@ public:
   static double codeToDouble(int code);
   static int doubleToCode(double d);
   static Rope codeToRope(int code);
+  static Rope stringToRope(const char* string);
   static void ropeToString(const Rope& rope, string& result);
   static int ropeToCode(const Rope& r);
   static int ropeToPrefixNameCode(const Rope& r);
@@ -275,6 +276,12 @@ inline int
 Token::unflaggedCode(int code)
 {
   return code & ~FLAG_BIT;
+}
+
+inline Rope
+Token::codeToRope(int code)
+{
+  return stringToRope(stringTable.name(code));
 }
 
 ostream& operator<<(ostream& s, const Token& token);

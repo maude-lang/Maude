@@ -39,8 +39,15 @@
 #include "strategyLanguage.hh"
 #include "mixfix.hh"
 
+//	interface class definitions
+#include "dagNode.hh"
+
 //	core class definitions
 #include "lineNumber.hh"
+#include "module.hh"
+
+//	higher class definitions
+#include "narrowingSequenceSearch3.hh"
 
 //	front end class definitions
 #include "token.hh"
@@ -83,6 +90,7 @@ SyntaxContainer* oldSyntaxContainer = 0;
 
 Int64 number;
 Int64 number2;
+int variantOptions;
 
 static void yyerror(UserLevelRewritingContext::ParseResult* parseResult, char *s);
 
@@ -140,7 +148,7 @@ int yylex(YYSTYPE* lvalp);
 %token KW_NUMBER KW_RAT KW_COLOR
 %token <yyInt64> SIMPLE_NUMBER
 %token KW_PWD KW_CD KW_PUSHD KW_POPD KW_LS KW_LL KW_LOAD KW_SLOAD KW_QUIT
-%token KW_EOF KW_TEST KW_SMT_SEARCH KW_VU_NARROW KW_FVU_NARROW
+%token KW_EOF KW_TEST KW_SMT_SEARCH KW_VU_NARROW KW_FVU_NARROW KW_FOLD
 
 /*
  *	Start keywords: signal end of mixfix statement if following '.'.
@@ -176,7 +184,7 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Command keywords need to be recognized when parsing commands.
  */
-%token <yyToken> KW_IN
+%token <yyToken> KW_IN KW_FILTER KW_DELAY
 
 /*
  *	Special tokens.
@@ -201,6 +209,7 @@ int yylex(YYSTYPE* lvalp);
 %type <yyToken> cTokenBarLeftIn cTokenBarDotNumber cTokenBarDotRight
 %type <yyToken> cSimpleTokenBarDot
 %type <yyToken> cTokenBarDotCommaRight cTokenBarDotCommaNumber
+%type <yyToken> cTokenBarOpenLeftIn cTokenBarDotCommaClose cOptionToken cTokenBarDotOptionToken
 %type <yyToken> sortName sortToken startModule sortDot
 
 /*
@@ -214,7 +223,7 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Nonterminals that return int.
  */
-%type <yyInt64> optNumber
+%type <yyInt64> optNumber optOptions optionsList option
 /*
  *	Nonterminals that return ImportMode.
  */

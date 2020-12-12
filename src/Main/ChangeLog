@@ -1,3 +1,16 @@
+2020-12-02  Steven Eker  <eker2@eker10>
+
+	* metaInterpreter.maude: added interpreterExit()
+
+2020-11-12  Steven Eker  <eker2@eker10>
+
+	* metaInterpreter.maude: added interpreterError message; added
+	hook for stringSymbol
+
+2020-11-11  Steven Eker  <eker2@eker10>
+
+	* metaInterpreter.maude: added newProcess ctor
+
 2020-09-28  Steven Eker  <eker2@eker10>
 
 	* main.cc (printHelp): fix alignment of -allow-processes

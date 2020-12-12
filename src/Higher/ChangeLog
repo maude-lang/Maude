@@ -1,3 +1,74 @@
+2020-12-11  Steven Eker  <eker2@eker10>
+
+	* narrowingSearchState2.cc
+	(NarrowingSearchState2::NarrowingSearchState2): pass
+	maintainInvariants = false to instantiate()
+
+	* narrowingSearchState3.cc
+	(NarrowingSearchState3::makeAccumulatedSubstitution): pass
+	maintainInvariants = true to instantiate()
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::NarrowingSequenceSearch3): pass
+	maintainInvariants = false to instantiate(); comment out hack to
+	compute sorts
+	(NarrowingSequenceSearch3::findNextUnifier): pass
+	maintainInvariants = false to instantiate() (2 places)
+
+	* narrowingSequenceSearch.cc
+	(NarrowingSequenceSearch::NarrowingSequenceSearch): pass
+	maintainInvariants = false to instantiate()
+
+	* narrowingUnificationProblem.cc
+	(NarrowingUnificationProblem::bindFreeVariables): pass
+	maintainInvariants = true to instantiate()
+
+	* unificationProblem.cc
+	(UnificationProblem::findOrderSortedUnifiers): pass
+	maintainInvariants = true to instantiate()
+
+	* variantMatchingProblem.cc
+	(VariantMatchingProblem::findNextMatcher): pass maintainInvariants
+	= true to instantiate()
+
+	* variantNarrowingSearchState.cc
+	(VariantNarrowingSearchState::findNextVariant): pass
+	maintainInvariants = false to instantiate() (2 places)
+
+	* variantSearch.cc: pass maintainInvariants = false to
+	instantiate()
+
+2020-12-10  Steven Eker  <eker2@eker10>
+
+	* narrowingSequenceSearch3.hh (class NarrowingSequenceSearch3):
+	added data member nrStatesExpanded
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::NarrowingSequenceSearch3): initialize
+	nrStatesExpanded
+	(NarrowingSequenceSearch3::findNextInterestingState): increment
+	nrStatesExpanded everytime we try to expand a state; output this
+	number in a Verbose() message
+
+	* narrowingFolder.cc (NarrowingFolder::getNextSurvivingState):
+	removed Verbose() since we can't be sure of number of surviving
+	state - this is because cleanGraph() will erase states that
+	have been expanded if we're not keeping a history
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::findNextInterestingState): fix
+	Verbose() for total number of states seen so that it executes if
+	we stop because of depth; include initial state in count
+
+2020-12-03  Steven Eker  <eker2@eker10>
+
+	* narrowingSequenceSearch3.cc: added hack to compute sorts in
+	goal; probably we should fix this by having a flag to
+	instantiate() to say whether sorts are expected and should be
+	maintained for ground dags
+
+===================================Maude132===========================================
+
 2020-10-05  Steven Eker  <eker2@eker10>
 
 	* variantSearch.cc: fill out problemOkay

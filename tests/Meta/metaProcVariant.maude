@@ -1,0 +1,146 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Test variant generation in the meta-interpreter.
+***
+
+load metaInterpreter
+
+fmod XOR is
+  sort XOR .
+
+  sort Elem .
+  ops c1 c2 c3 c4 : -> Elem .
+
+  subsort Elem < XOR .
+  op _+_ : XOR XOR -> XOR [ctor assoc comm] .
+  op 0 : -> XOR .
+  op a : -> XOR .
+
+  vars X Y : XOR .
+
+  eq Y + 0 = Y [variant] .
+  eq X + X = 0 [variant] .
+  eq X + X + Y = Y [variant] .
+endfm
+
+mod VARIANT-TEST is
+  pr META-INTERPRETER .
+  sort MsgList .
+  subsort Msg < MsgList .
+  op me : -> Oid .
+  op User : -> Cid .
+  op problem:(_,_) : Term TermList -> Attribute .
+  op soln:_ : Nat -> Attribute .
+  op result : MsgList -> Attribute .
+  op _,_ : MsgList MsgList -> MsgList [assoc id: nil] .
+  op nil : -> MsgList .
+
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  vars T V : Term .
+  var TL : TermList .
+  var S : Substitution .
+  var Q : Qid .
+  var B : Bool .
+  var P : Parent .
+  var R : RewriteCount .
+  var ML : MsgList .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('XOR, true)) .
+
+  rl < X : User | AS, problem:(T, TL) > insertedModule(X, Y) =>
+     < X : User | AS, problem:(T, TL), soln: 1, result(nil) > getVariant(Y, X, 'XOR, T, TL, false, '#, 0) .
+
+  rl < X : User | AS, problem:(T, TL), soln: N, result(ML) > gotVariant(X, Y, R, V, S, Q, P, B) =>
+     < X : User | AS,  problem:(T, TL), soln: (N + 1), result(ML, gotVariant(X, Y, R, V, S, Q, P, B)) >
+     getVariant(Y, X, 'XOR, T, TL, false, '#, N) .
+endm
+
+erew in VARIANT-TEST : <> 
+< me : User | problem: ('_+_['X:XOR, 'c1.Elem], empty) > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+get variants in XOR : X:XOR + c1 .
+
+erew in VARIANT-TEST : <> 
+< me : User | problem: ('_+_['X:XOR, 'c1.Elem], '_+_['X:XOR, 'a.Elem]) > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+get variants in XOR : X:XOR + c1 such that X:XOR + a irreducible .
+
+erew in VARIANT-TEST : <> 
+< me : User | problem: ('_+_['X:XOR, 'Y:XOR, 'c1.Elem], empty) > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+get variants in XOR : X:XOR + Y:XOR + c1 .
+
+erew in VARIANT-TEST : <> 
+< me : User | problem: ('_+_['X:XOR, 'Y:XOR, 'c1.Elem], ('_+_['X:XOR, 'c1.Elem], '_+_['X:XOR, 'c2.Elem])) > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+get variants in XOR : X:XOR + Y:XOR + c1 such that X:XOR + c1, X:XOR + c2 irreducible .
+
+mod VARIANT-TEST2 is
+  pr META-INTERPRETER .
+  sort MsgList .
+  subsort Msg < MsgList .
+  op me : -> Oid .
+  op User : -> Cid .
+  op problem:(_,_) : Term TermList -> Attribute .
+  op soln:_ : Nat -> Attribute .
+  op result : MsgList -> Attribute .
+  op _,_ : MsgList MsgList -> MsgList [assoc id: nil] .
+  op nil : -> MsgList .
+
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  vars T V : Term .
+  var TL : TermList .
+  var S : Substitution .
+  var Q : Qid .
+  var B : Bool .
+  var P : Parent .
+  var R : RewriteCount .
+  var ML : MsgList .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('XOR, true)) .
+
+  rl < X : User | AS, problem:(T, TL) > insertedModule(X, Y) =>
+     < X : User | AS, problem:(T, TL), soln: 1, result(nil) > getVariant(Y, X, 'XOR, T, TL, true, '#, 0) .
+
+  rl < X : User | AS, problem:(T, TL), soln: N, result(ML) > gotVariant(X, Y, R, V, S, Q, P, B) =>
+     < X : User | AS,  problem:(T, TL), soln: (N + 1), result(ML, gotVariant(X, Y, R, V, S, Q, P, B)) >
+     getVariant(Y, X, 'XOR, T, TL, true, '#, N) .
+endm
+
+erew in VARIANT-TEST2 : <> 
+< me : User | problem: ('_+_['X:XOR, 'c1.Elem], empty) > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+get irredundant variants in XOR : X:XOR + c1 .
+
+erew in VARIANT-TEST2 : <> 
+< me : User | problem: ('_+_['X:XOR, 'c1.Elem], '_+_['X:XOR, 'a.Elem]) > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+get irredundant variants in XOR : X:XOR + c1 such that X:XOR + a irreducible .
+
+erew in VARIANT-TEST2 : <> 
+< me : User | problem: ('_+_['X:XOR, 'Y:XOR, 'c1.Elem], empty) > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+get irredundant variants in XOR : X:XOR + Y:XOR + c1 .
+
+erew in VARIANT-TEST2 : <> 
+< me : User | problem: ('_+_['X:XOR, 'Y:XOR, 'c1.Elem], ('_+_['X:XOR, 'c1.Elem], '_+_['X:XOR, 'c2.Elem])) > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+get irredundant variants in XOR : X:XOR + Y:XOR + c1 such that X:XOR + c1, X:XOR + c2 irreducible .

@@ -23,7 +23,10 @@
 //
 //      Implementation for class InterpreterManagerSymbol.
 //
- //      utility stuff
+#include <sys/types.h>
+#include <sys/wait.h>
+
+//      utility stuff
 #include "macros.hh"
 #include "vector.hh"
 #include "pointerMap.hh"
@@ -47,6 +50,7 @@
 
 //      core class definitions
 #include "symbolMap.hh"
+#include "dagRoot.hh"
 
 //	higher class definitions
 #include "pattern.hh"
@@ -68,6 +72,8 @@
 
 //      built in class definitions
 #include "bindingMacros.hh"
+#include "stringSymbol.hh"
+#include "stringDagNode.hh"
 
 //	object system definitions
 #include "objectSystemRewritingContext.hh"
@@ -84,6 +90,9 @@
 #include "freshVariableSource.hh"
 #include "mixfixModule.hh"
 
+//	I/O class definitions
+#include "IO_Manager.hh"  // HACK
+
 //	metalevel class definitions
 #include "metaModule.hh"
 #include "metaLevel.hh"
@@ -92,6 +101,22 @@
 #include "interpreterManagerSymbol.hh"
 
 //	our stuff
+#include "remoteInterpreter.cc"
+#include "remoteInterpreter2.cc"
+#include "remoteInterpreterNonblocking.cc"
+#include "miModule.cc"
+#include "miSort.cc"
+#include "miRewrite.cc"
+#include "miSearch.cc"
+#include "miUnify.cc"
+#include "miVariant.cc"
+#include "miVariantUnify.cc"
+#include "miVariantMatch.cc"
+#include "miSyntax.cc"
+#include "miMatch.cc"
+#include "miApply.cc"
+#include "miNarrow.cc"
+#include "miNarrowSearch.cc"
 #include "interpreterApply.cc"
 #include "interpreterPrint.cc"
 #include "interpreterRewrite.cc"
@@ -266,7 +291,19 @@ InterpreterManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingC
 {
   DebugAdvisory("handleMessage(): saw " << message);
 
+  //HACK: we can't be sure we have a FreeDagNode*
+  FreeDagNode* f = safeCast(FreeDagNode*, message);
+  //
+  //	quit is always handled locally.
+  //
   Symbol* s = message->symbol();
+  if (s == quitMsg)
+    return quit(f, context);
+  
+  RemoteInterpreter* r = getRemoteInterpreter(f->getArgument(0));
+  if (r != 0)
+    return remoteHandleMessage(f, context, r);
+
   if (s == insertModuleMsg)
     return insertModule(safeCast(FreeDagNode*, message), context);
   else if (s == showModuleMsg)
@@ -346,8 +383,7 @@ InterpreterManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingC
     return getMaximalAritySet(safeCast(FreeDagNode*, message), context);
   else if (s == normalizeTermMsg)
     return normalizeTerm(safeCast(FreeDagNode*, message), context);
-  else if (s == quitMsg)
-    return quit(safeCast(FreeDagNode*, message), context);
+
   return false;
 }
 
@@ -519,6 +555,23 @@ InterpreterManagerSymbol::getInterpreter(DagNode* interpreterArg, Interpreter*& 
   return false;
 }
 
+InterpreterManagerSymbol::RemoteInterpreter*
+InterpreterManagerSymbol::getRemoteInterpreter(DagNode* interpreterArg)
+{
+    if (interpreterArg->symbol() == interpreterOidSymbol)
+    {
+      DagNode* idArg = safeCast(FreeDagNode*, interpreterArg)->getArgument(0);
+      int interpreterId;
+      if (metaLevel->downSignedInt(idArg, interpreterId))
+	{
+	  RemoteInterpreterMap::iterator i = remoteInterpreters.find(interpreterId);
+	  if (i != remoteInterpreters.end())
+	    return &(i->second);
+	}
+    }
+  return 0;
+}
+
 bool
 InterpreterManagerSymbol::getInterpreterAndModule(FreeDagNode* message,
 						  Interpreter*& interpreter,
@@ -542,6 +595,7 @@ InterpreterManagerSymbol::getInterpreterAndModule(FreeDagNode* message,
 bool
 InterpreterManagerSymbol::deleteInterpreter(DagNode* interpreterArg)
 {
+  IssueAdvisory("deleting " << interpreterArg);
   if (interpreterArg->symbol() == interpreterOidSymbol)
     {
       DagNode* idArg = safeCast(FreeDagNode*, interpreterArg)->getArgument(0);
@@ -558,6 +612,38 @@ InterpreterManagerSymbol::deleteInterpreter(DagNode* interpreterArg)
 		  delete interpreter;
 		  return true;
 		}
+	      else
+		{
+		  IssueAdvisory("its a remote interpreter " << interpreterArg);
+		  RemoteInterpreterMap::iterator i = remoteInterpreters.find(interpreterId);
+		  if (i != remoteInterpreters.end())
+		    {
+		      DebugInfo("deleted remote interpreter " << interpreterArg);
+		      {
+			int fd = i->second.ioSocket;
+			DebugInfo("closing i/o socket " << fd);
+			close(fd);
+			clearFlags(fd);
+		      }
+		      {
+			int fd = i->second.errSocket;
+			DebugInfo("closing error socket " << fd);
+			close(fd);
+			clearFlags(fd);
+		      }
+		      int childPid = i->second.processId;
+		      cancelChildExitCallback(childPid);
+		      DebugInfo("terminating process " << i->second.processId);
+		      kill(childPid, SIGTERM);
+		      //
+		      //	Wait for child we just terminated to avoid a zombie.
+		      //
+		      waitpid(i->second.processId, 0, 0);
+		      delete i->second.charArray;
+		      remoteInterpreters.erase(i);
+		      return true;
+		    }
+		}
 	    }
 	}
     }
@@ -565,20 +651,37 @@ InterpreterManagerSymbol::deleteInterpreter(DagNode* interpreterArg)
 }
 
 bool
-InterpreterManagerSymbol::createInterpreter(FreeDagNode* originalMessage, ObjectSystemRewritingContext& context)
+InterpreterManagerSymbol::createInterpreter(FreeDagNode* originalMessage,
+					    ObjectSystemRewritingContext& context)
 {
-  if (originalMessage->getArgument(2)->symbol() != emptyInterpereterOptionSetSymbol)
-    return false;  // we don't currently support options
+  Symbol* optionSymbol = originalMessage->getArgument(2)->symbol();
+  bool remoteFlag = false;
+  if (optionSymbol == newProcessSymbol)
+    remoteFlag = true;
+  else if (optionSymbol != emptyInterpereterOptionSetSymbol)
+    return false;
 
   int nrIds = interpreters.size();
   int id = 0;
   for (; id < nrIds; ++id)
     {
-      if (interpreters[id] == 0)
+      if (interpreters[id] == 0 && remoteInterpreters.find(id) == remoteInterpreters.end())
 	goto foundSlot;
     }
   interpreters.resize(nrIds + 1);
  foundSlot:
+  if (remoteFlag)
+    {
+      //
+      //	We mark the slot as free unless we successfully create
+      //	a remoteIntepreter with that index.
+      //
+      interpreters[id] = 0;
+      return createRemoteInterpreter(originalMessage, context, id);
+    }
+  //
+  //	Regular metaInterpreter.
+  //
   interpreters[id] = new Interpreter;
 
   Vector<DagNode*> reply(1, 3);

@@ -22,7 +22,7 @@
 
 ***
 ***	Maude meta-interpreters.
-***	Version 3.1.
+***	Version alpha132
 ***
 
 mod META-INTERPRETER is
@@ -35,6 +35,7 @@ mod META-INTERPRETER is
   subsort InterpreterOption < InterpreterOptionSet .
 
   op none : -> InterpreterOptionSet [ctor] .
+  op newProcess : -> InterpreterOption [ctor] .
 
   op interpreter : Nat -> Oid [ctor] .
 
@@ -161,10 +162,16 @@ mod META-INTERPRETER is
   op quit : Oid Oid -> Msg [ctor msg format (b o)] .
   op bye : Oid Oid -> Msg [ctor msg format (m o)] .
 
+  op interpreterError : Oid Oid String -> Msg [ctor msg format (r o)] .
+  op interpreterExit : Oid Oid String -> Msg [ctor msg format (r o)] .
+
   op interpreterManager : -> Oid
         [special (
            id-hook InterpreterManagerSymbol
+	   op-hook stringSymbol			(<Strings> : ~> String)
+
            op-hook emptyInterpereterOptionSetSymbol	(none : ~> InterpreterOptionSet)
+	   op-hook newProcessSymbol		(newProcess : ~> InterpreterOption)
            op-hook interpreterOidSymbol		(interpreter : Nat ~> Oid)
            op-hook createInterpreterMsg		(createInterpreter : Oid Oid InterpreterOptionSet ~> Msg)
            op-hook createdInterpreterMsg	(createdInterpreter : Oid Oid Oid ~> Msg)
@@ -261,6 +268,9 @@ mod META-INTERPRETER is
 	   op-hook noSuchResult3Msg		(noSuchResult : Oid Oid RewriteCount Bool ~> Msg)
            op-hook quitMsg			(quit : Oid Oid ~> Msg)
            op-hook byeMsg			(bye : Oid Oid ~> Msg)
+	   op-hook interpreterErrorMsg		(interpreterError : Oid Oid String ~> Msg)
+	   op-hook interpreterExitMsg		(interpreterExit : Oid Oid String ~> Msg)
+
            op-hook shareWith			(metaReduce : Module Term ~> ResultPair)
         )] .
 

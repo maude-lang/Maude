@@ -215,7 +215,7 @@ NarrowingSearchState3::makeAccumulatedSubstitution()
   for (int i = 0; i < nrBindings; ++i)
     {
       DagNode* oldBinding = accumulatedSubstitution->value(i);
-      DagNode* newBinding = oldBinding->instantiate(s);
+      DagNode* newBinding = oldBinding->instantiate(s, true);  // do we need to maintainInvariants?
       newAccumulatedSubstitution->bind(i, (newBinding == 0) ? oldBinding : newBinding);
     }
   return newAccumulatedSubstitution;

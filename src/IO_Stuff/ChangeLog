@@ -1,3 +1,23 @@
+2020-11-24  Steven Eker  <eker2@eker10>
+
+	* IO_Manager.cc (IO_Manager::setAutoWrap): code cleanning
+	(IO_Manager::unsetAutoWrap): fixed bug where we're replacing cout
+	twice rather than cerr
+
+2020-11-23  Steven Eker  <eker2@eker10>
+
+	* IO_Manager.hh (class IO_Manager): added decl for unsetAutoWrap()
+
+	* IO_Manager.cc (IO_Manager::setAutoWrap): save pointers to
+	original streambuf objects
+	(IO_Manager::IO_Manager): init savedOut, savedErr
+	(IO_Manager::unsetAutoWrap): added
+
+	* IO_Manager.hh (class IO_Manager): added data members savedOut,
+	savedErr
+
+===================================Maude132===========================================
+
 2019-12-04  Steven Eker  <eker@mu>
 
 	* directoryManager.cc (popd): prevLength becomes indexOfDirectoryToPop

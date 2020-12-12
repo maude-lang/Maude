@@ -44,6 +44,7 @@ public:
 	     BranchStrategy::Action failureAction,
 	     StrategyExpression* failureStrategy,
 	     StrategyStackManager::StackId pending,
+	     StrategyStackManager::StackId iterationCheckPoint,
 	     StrategicProcess* insertionPoint);
   //
   //	Call-backs for interesting events.
@@ -54,6 +55,7 @@ public:
 private:
   StrategyStackManager& strategyStackManager;
   const int startIndex;
+  StrategyStackManager::StackId iterationCheckpoint;
   StrategyExpression* const initialStrategy;
   BranchStrategy::Action successAction;
   StrategyExpression* const successStrategy;

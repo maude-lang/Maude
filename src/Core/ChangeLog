@@ -1,3 +1,11 @@
+2020-12-11  Steven Eker  <eker2@eker10>
+
+	* pendingUnificationStack.cc
+	(PendingUnificationStack::makeNewSubproblem): pass
+	maintainInvariants = true to instantiate()
+
+===================================Maude132===========================================
+
 2020-09-22  Steven Eker  <eker2@eker10>
 
 	* unificationContext.cc (UnificationContext::dump): added

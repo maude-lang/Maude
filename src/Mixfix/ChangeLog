@@ -1,3 +1,357 @@
+2020-12-10  Steven Eker  <eker2@eker10>
+
+	* top.yy: optOptions, optionsList, option now have type yyInt64
+
+	* commands.yy (optOptions, optionsList, option): pass flag(s) back
+	via $$ rather than variantOptions variable
+
+	* search.cc (Interpreter::checkSearchRestrictions): deleted
+	VU_NARROW_WITH_FILTERED_VU, FVU_NARROW_WITH_FILTERED_VU cases
+	(Interpreter::search): deleted VU_NARROW_WITH_FILTERED_VU,
+	FVU_NARROW_WITH_FILTERED_VU cases
+
+	* interpreter.hh (class Interpreter): deleted
+	VU_NARROW_WITH_FILTERED_VU and FVU_NARROW_WITH_FILTERED_VU from
+	enum SearchKind
+
+	* commands.yy (search): delete filtered vu-narrow and filtered
+	fvu-narrow commands
+
+	* top.yy: added KW_FOLD
+
+	* commands.yy (command): use optOptions for vu-narrow
+
+	* lexer.ll: added KW_FOLD
+
+	* commands.yy (optOptions, optionsList, option): added
+
+	* lexer.ll: return { } in INTIAL mode
+
+2020-12-09  Steven Eker  <eker2@eker10>
+
+	* search.cc (Interpreter::search): take variantFlags argument;
+	handle printing of variantFlags
+
+	* interpreter.hh (class Interpreter): updated decl for search()
+
+	* commands.yy (command): pass variantOptions to search()
+
+	* top.yy: added type decl for cTokenBarDotOptionToken
+
+	* commands.yy (cTokenBarDotOptionToken): added
+	(optionsNumbersModuleTerm1): use cTokenBarDotOptionToken
+
+	* top.yy: added variable variantOptions
+
+	* commands.yy (optionsNumbersModuleTerm2): handle ,
+	(optionsNumbersModuleTerm1): hande cOptionsToken
+
+	* top.yy: added type for cOptionToken
+
+	* commands.yy (cOptionToken): added; use whereever IDENTIFIER is used
+
+	* top.yy: added KW_FILTER and KW_DELAY
+
+	* lexer.ll: added filter and delay to CMD_MODE
+
+	* commands.yy (search): remove VU_NARROW
+	(command): addd VU_NARROW as a separate command
+	(command): use optionsNumbersModuleTerm for VU_NARROW
+
+	* top.yy: added types for cTokenBarOpenLeftIn,
+	cTokenBarDotCommaClose
+
+	* commands.yy: added '{' | '}' to all existing
+	cToken nonterminals
+	(cTokenBarOpenLeftIn): added
+	(cTokenBarDotCommaClose): added
+
+	* lexer.ll: return { and } as characters rather than identifiers
+	in CMD_MODE
+
+2020-12-08  Steven Eker  <eker2@eker10>
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added SOCKET_CLOSED to enum ExitCodes
+
+2020-12-04  Steven Eker  <eker2@eker10>
+
+	* deserializer.ll: allow null Qid
+
+2020-12-03  Steven Eker  <eker2@eker10>
+
+	* commands.yy (search): support support VU_NARROW_WITH_FILTERED_VU and
+	FVU_NARROW_WITH_FILTERED_VU
+
+	* search.cc (Interpreter::checkSearchRestrictions)
+	(Interpreter::search): support VU_NARROW_WITH_FILTERED_VU and
+	FVU_NARROW_WITH_FILTERED_VU
+
+	* interpreter.hh (class Interpreter): added
+	VU_NARROW_WITH_FILTERED_VU and FVU_NARROW_WITH_FILTERED_VU to enum
+	SearchKind
+
+	* search.cc (Interpreter::search): put variantFlags in an explicit
+	variable
+
+2020-12-02  Steven Eker  <eker2@eker10>
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added decl for ignoreCtrlC()
+
+	* interact.cc (UserLevelRewritingContext::internalErrorHandler):
+	exit with INTERNAL_ERROR
+	(UserLevelRewritingContext::stackOverflowHandler): exit with
+	STACK_OVERFLOW
+	(UserLevelRewritingContext::commandLoop): exit with NORMAL_EXIT
+	(UserLevelRewritingContext::ignoreCtrlC): added
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added enum ExitCodes
+
+2020-11-13  Steven Eker  <eker2@eker10>
+
+	* deserializer.ll: absorb trailing \n from previous line in
+	INITIAL
+
+2020-11-10  Steven Eker  <eker2@eker10>
+
+	* mixfixModule.hh (class MixfixModule): made vists() private
+
+	* serialize.cc (MixfixModule::visit): use get_str() for getting
+	string representation of GMP integers and rationals to avoid
+	explicit calls to free()
+
+	* deserializer.ll: added decl for makeSMT_NumberDagNode()
+
+	* deserializerAux.cc (makeSMT_NumberDagNode): added
+
+	* deserializer.ll: recognize SMT numbers
+
+	* serialize.cc (MixfixModule::visit): handle polymorph instances
+	(MixfixModule::visit): handle SymbolType::SMT_NUMBER_SYMBOL
+
+	* mixfixModule.cc (MixfixModule::createInternalTupleSymbol): set
+	si.polymorphIndex to NONE
+	(MixfixModule::instantiateVariable): set si.polymorphIndex to NONE
+	(MixfixModule::instantiateSortTest): set si.polymorphIndex to NONE
+
+	* entry.cc (MixfixModule::addOpDeclaration): set si.polymorphIndex
+	to NONE
+	(MixfixModule::addPolymorph): set polymorphIndex to our own index
+
+	* mixfixModule.hh (class MixfixModule): made SymbolInfo::prec and
+	short and added SymbolInfo::polymorphInstance
+
+2020-11-09  Steven Eker  <eker2@eker10>
+
+	* mixfixModule.hh (deserialize): added
+
+	* deserializerAux.cc (makeDagNode): don't handle string case here
+	anymore
+
+	* deserializer.ll: added decl for makeStringDagNode(); use
+	makeStringDagNode(); deleted static data member savedRope
+
+	* deserializerAux.cc (makeDagNode): handle polymorphs
+	(makeStringDagNode): added
+
+	* deserializer.ll: added syntax for polymorphs; added static data
+	member savedKindIndex
+
+2020-11-06  Steven Eker  <eker2@eker10>
+
+	* makeGrammar.cc (MixfixModule::makePolymorphProductions): use
+	MAKE_POLYMORPH_ITER
+	(MixfixModule::makeSymbolProductions): use gatherPrefixPrefix for
+	the iter case
+
+	* mixfixParser.cc (MixfixParser::makeTerm): added semantics for
+	MAKE_POLYMORPH_ITER
+
+	* mixfixParser.hh (class MixfixParser): added MAKE_POLYMORPH_ITER
+	to enum SemanticActions
+
+	* makeGrammar.cc (MixfixModule::makePolymorphProductions): added
+	syntax for iter polymorphs
+	(MixfixModule::makeGrammar): switch order of
+	makePolymorphProductions() and makeSpecialProductions();
+
+2020-11-05  Steven Eker  <eker2@eker10>
+
+	* fixUp.cc (SyntacticPreModule::fixUpSymbol): don't deal with
+	empty identity case since this doesn't even parse at the surface
+	syntax level.
+	(SyntacticPreModule::fixUpSymbol): pull symbolType from flatModule
+	because validateAttributes may have cleared some attribute flags
+	(SyntacticPreModule::fixUpSymbol): need to check for empty
+	identity after all, because of ditto attributes
+	(SyntacticPreModule::fixUpPolymorph): similar check for empty
+	identity needed
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	fixUpSymbol()
+
+	* fixUp.cc (SyntacticPreModule::fixUpSymbol): added
+	(SyntacticPreModule::fixUpSymbols): use fixUpSymbol()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	fixUpPolymorph()
+
+	* fixUp.cc (SyntacticPreModule::fixUpSymbols): replace check that
+	identity exists with check of SymbolType::LEFT_ID |
+	SymbolType::RIGHT_ID; change check for illegal polymorphic arg to
+	an Assert() since we should have removed the offending attribute
+	in validateAttributes() and we don't want to generatl a second
+	warning
+	(SyntacticPreModule::fixUpSymbols): use safeCast() as we still
+	have an id flag, we assume we made a BinarySymbol()
+	(SyntacticPreModule::fixUpPolymorph): added
+	(SyntacticPreModule::fixUpSymbols): use fixUpPolymorph() to handle
+	polymorphs
+
+	* validateAttributes.cc (MixfixModule::validateAttributes): don't
+	allow left id with left arg polymorphic or right id with right arg
+	polymorphic because we don't have polymorphic terms and we're not
+	going to delay the parsing of identity terms until polymorphic
+	operator instantiation; updated comments
+
+2020-11-03  Steven Eker  <eker2@eker10>
+
+	* mixfixModule.hh (class MixfixModule): updated decls for
+	newAssociativeSymbol(), newAxiomSymbol()
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): use
+	newAxiomSymbol()
+	(MixfixModule::newAssociativeSymbol): take int rather than Token
+	for name
+	(MixfixModule::newAxiomSymbol): take int rather than Token for
+	name
+	(MixfixModule::newFancySymbol): new newAssociativeSymbol(),
+	newAxiomSymbol() calling conventions; reorganize if statements
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	newAxiomSymbol()
+
+	* fancySymbols.cc (MixfixModule::newAxiomSymbol): added
+
+	* validateAttributes.cc (MixfixModule::validateAttributes):
+	validate left and right identity axioms
+
+	* mixfixModule.hh (class MixfixModule): deleted decl for
+	newIterSymbol()
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): moved here
+	(MixfixModule::newAssociativeSymbol): rewrite to Assert()
+	requirements rather than warn about them not beeing satisfied
+	(MixfixModule::newFancySymbol): don't use newIterSymbol()
+	(MixfixModule::newIterSymbol): deleted
+
+2020-11-02  Steven Eker  <eker2@eker10>
+
+	* entry.cc (MixfixModule::addOpDeclaration): call
+	validateAttributes()
+	(MixfixModule::addPolymorph): call validateAttributes()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	validateAttributes()
+
+	* validateAttributes.cc: created
+
+2020-10-29  Steven Eker  <eker2@eker10>
+
+	* entry.cc (MixfixModule::newFancySymbol): use newIterSymbol()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	newIterSymbol()
+
+	* fancySymbols.cc (MixfixModule::newIterSymbol): added
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	newAssociativeSymbol()
+
+	* entry.cc (MixfixModule::newFancySymbol): use
+	newAssociativeSymbol()
+
+	* fancySymbols.cc (MixfixModule::newAssociativeSymbol): code for
+	assoc symbols from newFancySymbol() moved here; handle the case
+	where iter flag is given as well
+
+	* mixfixModule.cc (MixfixModule::instantiatePolymorph): clear
+	SymbolType::ITER flag if newFancySymbol() fails
+	(MixfixModule::instantiatePolymorph): use reference so actual
+	stored flags are cleared
+
+	* entry.cc (MixfixModule::addOpDeclaration): clear
+	SymbolType::ITER flag if newFancySymbol() fails
+
+2020-10-27  Steven Eker  <eker2@eker10>
+
+	* mixfixParser.cc (MixfixParser::makeTerm): use makeAssocList()
+	both for regular MAKE_TERM and MAKE_POLYMORPH
+
+	* mixfixParser.hh (class MixfixParser): added decl for
+	makeAssocList()
+
+	* mixfixParser.cc (MixfixParser::makeAssocList): added
+
+	* makeGrammar.cc (MixfixModule::makePolymorphProductions): support
+	polymorphs with associative flattening for prefix syntax
+
+2020-10-26  Steven Eker  <eker2@eker10>
+
+	* deserializerAux.cc (makeDagNode): handle sort tests
+
+	* deserializer.ll: support sort tests
+
+	* serialize.cc (MixfixModule::visit): support floats; updated
+	encoding of sort tests
+
+	* deserializer.ll:  support floats
+
+	* deserializerAux.cc (makeFloatDagNode): added
+
+2020-10-23  Steven Eker  <eker2@eker10>
+
+	* deserializer.ll: handle qids
+
+	* deserializerAux.cc (makeQuotedIdentifierDagNode): added
+
+	* serialize.cc (MixfixModule::visit): new encoding for variables
+	because we can't assume that the base symbol nor the name token
+	exist in the other process
+
+	* deserializerAux.cc (makeDagNode): support strings
+	(makeVariableDagNode): added
+
+	* token.hh (Token::codeToRope): moved here and implemented by call
+	to stringToRope()
+	(class Token): added decl for stringToRope()
+
+	* token.cc (Token::stringToRope): added
+
+	* deserializerAux.cc: created
+
+	* deserializer.ll: support iterated function symbols
+
+2020-10-22  Steven Eker  <eker2@eker10>
+
+	* deserializer.ll: created
+
+2020-10-21  Steven Eker  <eker2@eker10>
+
+	* serialize.cc (MixfixModule::visit): added support for sort test
+	operators
+
+2020-10-20  Steven Eker  <eker2@eker10>
+
+	* mixfixModule.hh (class MixfixModule): added decls for
+	serialize(), visit()
+
+	* serialize.cc: created
+
+===================================Maude132===========================================
+
 2020-10-12  Steven Eker  <eker2@eker10>
 
 	* entity.hh (class Entity): made UserLt::operator() const to fix

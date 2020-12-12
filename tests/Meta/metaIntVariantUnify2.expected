@@ -2,7 +2,6 @@
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: none,problem:('_+_[
     'X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) > createInterpreter(
     interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 43
 result Configuration: <> < me : User | options: none,soln: 9,result(
     gotVariantUnifier(me, interpreter(0), 6, 
@@ -30,7 +29,6 @@ result Configuration: <> < me : User | options: none,soln: 9,result(
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: delay,problem:('_+_[
     'X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) > createInterpreter(
     interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 43
 result Configuration: <> < me : User | options: delay,soln: 9,result(
     gotVariantUnifier(me, interpreter(0), 24, 
@@ -58,7 +56,6 @@ result Configuration: <> < me : User | options: delay,soln: 9,result(
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: filter,problem:(
     '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) > createInterpreter(
     interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 51
 result Configuration: <> < me : User | options: filter,soln: 2,result(
     gotVariantUnifier(me, interpreter(0), 28, 
@@ -69,7 +66,6 @@ result Configuration: <> < me : User | options: filter,soln: 2,result(
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: (delay filter),
     problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) >
     createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 51
 result Configuration: <> < me : User | options: (delay filter),soln: 2,result(
     gotVariantUnifier(me, interpreter(0), 46, 
@@ -89,7 +85,6 @@ No more unifiers.
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: none,problem:('_+_[
     'X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) >
     createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 12
 result Configuration: <> < me : User | options: none,soln: 4,result(
     gotVariantUnifier(me, interpreter(0), 3, 
@@ -106,7 +101,6 @@ result Configuration: <> < me : User | options: none,soln: 4,result(
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: delay,problem:('_+_[
     'X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) >
     createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 12
 result Configuration: <> < me : User | options: delay,soln: 4,result(
     gotVariantUnifier(me, interpreter(0), 3, 
@@ -123,7 +117,6 @@ result Configuration: <> < me : User | options: delay,soln: 4,result(
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: filter,problem:(
     '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) >
     createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 30
 result Configuration: <> < me : User | options: filter,soln: 2,result(
     gotVariantUnifier(me, interpreter(0), 25, 
@@ -135,7 +128,6 @@ result Configuration: <> < me : User | options: filter,soln: 2,result(
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: (delay filter),
     problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,
     'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 30
 result Configuration: <> < me : User | options: (delay filter),soln: 2,result(
     gotVariantUnifier(me, interpreter(0), 25, 
@@ -156,7 +148,6 @@ No more unifiers.
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: none,
     problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) >
     createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 43
 result Configuration: <> < me : User | options: none,soln: 9,result(
     gotDisjointVariantUnifier(me, interpreter(0), 6, 
@@ -184,7 +175,6 @@ result Configuration: <> < me : User | options: none,soln: 9,result(
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: delay,
     problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) >
     createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 43
 result Configuration: <> < me : User | options: delay,soln: 9,result(
     gotDisjointVariantUnifier(me, interpreter(0), 24, 
@@ -212,7 +202,6 @@ result Configuration: <> < me : User | options: delay,soln: 9,result(
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: filter,
     problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) >
     createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 51
 result Configuration: <> < me : User | options: filter,soln: 2,result(
     gotDisjointVariantUnifier(me, interpreter(0), 28, 
@@ -223,7 +212,6 @@ result Configuration: <> < me : User | options: filter,soln: 2,result(
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: (delay
     filter),problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) >
     createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 51
 result Configuration: <> < me : User | options: (delay filter),soln: 2,result(
     gotDisjointVariantUnifier(me, interpreter(0), 46, 
@@ -234,7 +222,6 @@ result Configuration: <> < me : User | options: (delay filter),soln: 2,result(
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: none,
     problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,
     'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 12
 result Configuration: <> < me : User | options: none,soln: 4,result(
     gotDisjointVariantUnifier(me, interpreter(0), 3, 
@@ -251,7 +238,6 @@ result Configuration: <> < me : User | options: none,soln: 4,result(
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: delay,
     problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,
     'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 12
 result Configuration: <> < me : User | options: delay,soln: 4,result(
     gotDisjointVariantUnifier(me, interpreter(0), 3, 
@@ -268,7 +254,6 @@ result Configuration: <> < me : User | options: delay,soln: 4,result(
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: filter,
     problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,
     'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 30
 result Configuration: <> < me : User | options: filter,soln: 2,result(
     gotDisjointVariantUnifier(me, interpreter(0), 25, 
@@ -280,7 +265,6 @@ result Configuration: <> < me : User | options: filter,soln: 2,result(
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: (delay
     filter),problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_[
     'X:XOR,'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 30
 result Configuration: <> < me : User | options: (delay filter),soln: 2,result(
     gotDisjointVariantUnifier(me, interpreter(0), 25, 

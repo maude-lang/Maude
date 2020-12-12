@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,6 +74,7 @@ NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
   expansionSuccessful = false;
   nextInterestingState = NONE;
   counter = 0;
+  nrStatesExpanded = 0;
   //
   //	Index variables occurring in the initial term and create a fresh
   //	#variable for each original variable and an accumulated substitution
@@ -91,6 +92,11 @@ NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
       accumulatedSubstitution->bind(i, v);
     }
   //
+  //	HACK: this is so we can use instantiate which expects ground terms
+  //	to have sorts. FIXME
+  //
+  //goal->computeTrueSort(*initial); 
+  //
   //	We also want to index goal variables so we can apply the accumulated
   //	substitution, but we do not want to carry around the extra variables
   //	since they cannot play a role in narrowing, as they don't occur in
@@ -102,7 +108,7 @@ NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
   //	from garbage collection by initial RewritingContext, and goal only
   //	variables will be protected by goal.
   //
-  if (DagNode* renamedDagToNarrow = dagToNarrow->instantiate(*accumulatedSubstitution))
+  if (DagNode* renamedDagToNarrow = dagToNarrow->instantiate(*accumulatedSubstitution, false))
     dagToNarrow = renamedDagToNarrow;
   RewritingContext* reduceContext = initial->makeSubcontext(dagToNarrow);
   reduceContext->reduce();
@@ -179,10 +185,10 @@ NarrowingSequenceSearch3::findNextUnifier()
 	    bigger.bind(i, accumulatedSubstitution->value(i));
 	  for (int i = nrInitialVariables; i < totalNrVariables; ++i)
 	    bigger.bind(i, 0);
-	  instantiatedGoal = goal.getNode()->instantiate(bigger);
+	  instantiatedGoal = goal.getNode()->instantiate(bigger, false);
 	}
       else
-	instantiatedGoal = goal.getNode()->instantiate(*accumulatedSubstitution);
+	instantiatedGoal = goal.getNode()->instantiate(*accumulatedSubstitution, false);
       if (instantiatedGoal == 0)
 	instantiatedGoal = goal.getNode();  // no change under instantiation
       //
@@ -354,9 +360,20 @@ NarrowingSequenceSearch3::findNextInterestingState()
 							 0,
 							 UNBOUNDED,
 							 variantFlags);
+	  //
+	  //	Initialize flag to false, since have yet to see an expansion.
+	  //	We use this to detect normal form.
+	  //
 	  expansionSuccessful = false;
+	  ++nrStatesExpanded;
 	  goto tryToExpand;
 	}
     }
+  //
+  //	We're done expanding, so we've seen all the states we'll ever see.
+  //	States were numbered 0 (initial), ..., counter (last added to stateCollection).
+  //
+  Verbose("Total number of states seen = " << counter + 1);
+  Verbose("Of which " << nrStatesExpanded << " were considered for further narrowing.");
   return NONE;
 }

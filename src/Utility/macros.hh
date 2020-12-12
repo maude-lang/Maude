@@ -370,7 +370,7 @@ if (globalAdvisoryFlag) \
 #define \
 Verbose(output) \
 if (globalVerboseFlag) \
-  (cout << Tty(Tty::CYAN) << output << Tty(Tty::RESET) << '\n')
+  (cerr << Tty(Tty::CYAN) << output << Tty(Tty::RESET) << '\n')
 
 extern bool globalAdvisoryFlag;
 extern bool globalVerboseFlag;

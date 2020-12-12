@@ -454,7 +454,7 @@ UnificationProblem::findOrderSortedUnifiers()
 	}
       for (int i = 0; i < nrOriginalVariables; ++i)
 	{
-	  if (DagNode* d = sortedSolution->value(i)->instantiate(*sortedSolution))
+	  if (DagNode* d = sortedSolution->value(i)->instantiate(*sortedSolution, true))
 	    sortedSolution->bind(i, d);
 	}
     }

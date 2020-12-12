@@ -45,9 +45,9 @@ public:
 private:
   enum Constants
   {
-    DEFAULT_NODE_SIZE = 1000,
-    DEFAULT_CACHE_SIZE = 100,
-    DEFAULT_NR_VARIABLES = 10
+    DEFAULT_NODE_SIZE = 10000,
+    DEFAULT_CACHE_SIZE = 1000,
+    DEFAULT_NR_VARIABLES = 100
   };
 
   static void gc_handler(int pre, bddGbcStat* stat);

@@ -45,6 +45,7 @@ public:
   IO_Manager();
 
   void setAutoWrap();
+  void unsetAutoWrap();
   void setCommandLineEditing(size_t maxLineLength = MAX_LINE_LENGTH,
 			     size_t maxHistoryLength = MAX_HISTORY_LENGTH);
   void setUsePromptsAnyway();
@@ -68,8 +69,11 @@ private:
   bool contFlag;
   string prompt;
   string contPrompt;
+  
   AutoWrapBuffer* wrapOut;
   AutoWrapBuffer* wrapErr;
+  streambuf* savedOut;
+  streambuf* savedErr;
 
   ssize_t firstUnused;
   ssize_t bufferEnd;

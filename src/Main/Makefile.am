@@ -35,6 +35,7 @@ maude_LDADD = \
 	../Mixfix/libmixfix.a \
 	../StrategyLanguage/libstrategyLanguage.a \
 	../Meta/libmeta.a \
+	../Mixfix/libmixfix.a \
 	../ObjectSystem/libobjectSystem.a \
 	../BuiltIn/libbuiltIn.a \
 	../SMT/libSMT.a \

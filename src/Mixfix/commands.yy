@@ -170,6 +170,23 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
 			    interpreter.search(lexerBubble, number, number2, $2, $1);
 			}
+		|	optDebug optOptions KW_VU_NARROW
+			{
+			  variantOptions = $2;
+			  lexerCmdMode();
+			  moduleExpr.contractTo(0);
+			  number = NONE;
+			  number2 = NONE;			  
+			}
+			optionsNumbersModuleTerm
+			{
+			  lexerInitialMode();
+			  if (interpreter.setCurrentModule(moduleExpr, 1))
+			    {
+			      interpreter.search(lexerBubble, number, number2,
+			                         Interpreter::VU_NARROW, $1, variantOptions);
+			    }
+			}
 		|	match
 			{
 			  lexerCmdMode();
@@ -603,7 +620,6 @@ search		:	KW_NARROW		{ $$ = Interpreter::NARROW; }
 		|	KW_XG_NARROW		{ $$ = Interpreter::XG_NARROW; }
 		|	KW_SEARCH		{ $$ = Interpreter::SEARCH; }
 		|	KW_SMT_SEARCH		{ $$ = Interpreter::SMT_SEARCH; }
-		|	KW_VU_NARROW		{ $$ = Interpreter::VU_NARROW; }
 		|	KW_FVU_NARROW		{ $$ = Interpreter::FVU_NARROW; }
 		;
 
@@ -621,6 +637,17 @@ optIrredundant	:	KW_IRREDUNDANT		{ $$ = true; }
 
 optNumber	:	SIMPLE_NUMBER	        { $$ = $1; }
 		|				{ $$ = NONE; }
+		;
+
+optOptions	:	'{' optionsList '}'	{ $$ = $2; }
+		|	    			{ $$ = 0; }
+		;
+
+optionsList	:	option			{ $$ = $1; }
+		|	optionsList ',' option  { $$ = $1 | $3; }
+		;
+
+option		:	KW_FOLD			{ $$ = NarrowingSequenceSearch3::FOLD; }
 		;
 
 importMode	:	KW_PROTECT		{ $$ = ImportModule::PROTECTING; }
@@ -679,6 +706,48 @@ numberModuleTerm2
  *	module expression, followed by term, followed by dot.
  *	{"[" { {<number>} , } <number> "]"} {"in" <module expression> ":"} <term> "."
  */
+
+
+/*
+ *	Seen <command>; looking for "{", "[", "in", or start of term.
+ */
+optionsNumbersModuleTerm
+		:	'{'			{ lexSave($1); }
+			optionsNumbersModuleTerm1
+		|	'['			{ lexSave($1); }
+			numbersModuleTerm1
+		|	initialEndBubble
+		|	cTokenBarOpenLeftIn	{ lexBubble($1, END_COMMAND, 0); }
+			endBubble
+		;
+
+optionsNumbersModuleTerm1
+		:	KW_FILTER
+			{
+			  lexContinueSave($1);
+			  variantOptions |= VariantUnificationProblem::FILTER_VARIANT_UNIFIERS;
+			}
+			optionsNumbersModuleTerm2
+		|	KW_DELAY
+			{
+			  lexContinueSave($1);
+			  variantOptions |= VariantSearch::IRREDUNDANT_MODE;
+			}
+			optionsNumbersModuleTerm2
+		|	cTokenBarDotOptionToken	{ lexContinueBubble($1, END_COMMAND, 0); }
+			endBubble
+		|	miscEndBubble
+		;
+		
+optionsNumbersModuleTerm2
+		:	'}'
+			numbersModuleTerm
+		|	','			{ lexContinueSave($1); }
+			optionsNumbersModuleTerm1
+		|	cTokenBarDotCommaClose	{ lexContinueBubble($1, END_COMMAND, 0); }
+			endBubble
+		|	miscEndBubble
+		;
 
 /*
  *	Seen <command>; looking for "[", "in", or start of term.
@@ -777,6 +846,11 @@ miscEndBubble	:	'('			{ lexContinueBubble($1, END_COMMAND, 0, 1); }
 		|	endBubble
 		;
 
+/*
+ *	Handles ( <bubble> )
+ *	        in <bubble> :
+ *		foo.
+ */
 initialEndBubble
 		:	'('			{ lexBubble($1, END_COMMAND, 1, 1); }
 			endBubble
@@ -793,26 +867,38 @@ initialEndBubble
 /*
  *	Command mode token types.
  */
-cTokenBarIn	:	IDENTIFIER | NUMERIC_ID | '[' | ']' | ':' | '.' | ','
+cTokenBarIn	:	cOptionToken | IDENTIFIER | NUMERIC_ID | '{' | '}' | '[' | ']' | ':' | '.' | ','
 		;
 
-cTokenBarLeftIn	:	IDENTIFIER | NUMERIC_ID | ']' | ':' | '.' | ','
+cTokenBarLeftIn	:	cOptionToken | IDENTIFIER | NUMERIC_ID | '{' | '}' | ']' | ':' | '.' | ','
+		;
+
+cTokenBarOpenLeftIn
+		:	cOptionToken | IDENTIFIER | NUMERIC_ID | '}' | ']' | ':' | '.' | ','
 		;
 
 cTokenBarDotNumber
-		:	IDENTIFIER | '[' | ']' | KW_IN | ':' | ','
+		:	cOptionToken | IDENTIFIER | '{' | '}' | '[' | ']' | KW_IN | ':' | ','
 		;
 
 cTokenBarDotRight
-		:	IDENTIFIER | NUMERIC_ID | '[' | KW_IN | ':' | ','
+		:	cOptionToken | IDENTIFIER | NUMERIC_ID | '{' | '}' | '[' | KW_IN | ':' | ','
 		;
 
 cTokenBarDotCommaNumber
-		:	IDENTIFIER | '[' | ']' | KW_IN | ':'
+		:	cOptionToken | IDENTIFIER | '{' | '}' | '[' | ']' | KW_IN | ':'
 		;
 
 cTokenBarDotCommaRight
-		:	IDENTIFIER | NUMERIC_ID | '[' | KW_IN | ':'
+		:	cOptionToken | IDENTIFIER | NUMERIC_ID | '{' | '}' | '[' | KW_IN | ':'
+		;
+
+cTokenBarDotCommaClose
+		:	cOptionToken | IDENTIFIER | NUMERIC_ID | '{' | '[' | ']' | KW_IN | ':'
+		;
+
+cTokenBarDotOptionToken
+		:	IDENTIFIER | NUMERIC_ID | '{' | '}' | '[' | ']' | KW_IN | ':' | ','
 		;
 
 /*
@@ -849,5 +935,9 @@ cSimpleOpName	:	cSimpleTokenBarDot
 		;
 
 cSimpleTokenBarDot
-		:	IDENTIFIER | NUMERIC_ID | '[' | ']' | KW_IN | ':' | ','
+		:	cOptionToken | IDENTIFIER | NUMERIC_ID | '{' | '}' | '[' | ']' | KW_IN | ':' | ','
+		;
+
+cOptionToken	:	KW_FILTER
+		|	KW_DELAY
 		;

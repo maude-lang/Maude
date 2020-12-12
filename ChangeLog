@@ -1,3 +1,57 @@
+2020-12-08  Steven Eker  <eker2@eker10>
+
+	* tests/Meta/metaProcStrategy.maude: added
+
+	* tests/Meta/metaProcNarrowSearch.maude: added
+
+	* tests/Meta/metaProcNarrow.maude: added
+
+	* tests/Meta/metaProcApply.maude: added
+
+	* tests/Meta/metaProcParse.maude: added
+
+	* tests/Meta/metaProcPrint.maude: added
+
+	* tests/Meta/metaProcVariantMatch.maude: added
+
+	* tests/Meta/metaProcVariantUnify2.maude: added
+
+	* tests/Meta/metaProcVariantUnify.maude: added
+
+	* tests/Meta/metaProcVariant.maude: added
+
+	* tests/Meta/metaProcUnify.maude: added
+
+	* tests/Meta/metaProcMatch.maude: added
+
+	* tests/Meta/metaProcSearch.maude: added
+
+	* tests/Meta/metaProcPrelude.maude: added
+
+	* tests/Meta/metaProcReplace.maude: added
+
+	* tests/Meta/metaProcReplace2.maude: added
+
+2020-12-07  Steven Eker  <eker2@eker10>
+
+	* tests/Meta/metaProcSort.maude: added
+
+	* tests/Meta/russianDollsNonFlatProc3.maude: added
+
+	* tests/Meta/russianDollsNonFlatProc2.maude: added
+
+	* tests/Meta/russianDollsNonFlatProc.maude: added
+
+	* tests/Meta/russianDollsFlatProc.maude: added
+
+2020-11-09  Steven Eker  <eker2@eker10>
+
+	* tests/ResolvedBugs/attributeBugsNovember2020.maude: added
+
+	* tests/ResolvedBugs/polymorphicParsingBugsNovember2020.maude: added
+
+===================================Maude132===========================================
+
 2020-09-24  Steven Eker  <eker2@eker10>
 
 	* tests/ResolvedBugs/CUI_OccursCheckSeptember2020.maude: created

@@ -39,24 +39,33 @@ class UserLevelRewritingContext : public ObjectSystemRewritingContext
   NO_COPYING(UserLevelRewritingContext);
 
 public:
+  enum ExitCodes
+    {
+     NORMAL_EXIT = 0,
+     STACK_OVERFLOW = 1,
+     INTERNAL_ERROR = 2,
+     SOCKET_CLOSED = 3
+    };
+
   enum OtherPurpose
-  {
-    TOP_LEVEL_EVAL = OTHER + 1,
-    META_EVAL
-  };
+    {
+     TOP_LEVEL_EVAL = OTHER + 1,
+     META_EVAL
+    };
 
   enum ParseResult
-  {
-    NORMAL,
-    QUIT,
-    RESUME,
-    ABORT,
-    STEP,
-    WHERE
-  };
+    {
+     NORMAL,
+     QUIT,
+     RESUME,
+     ABORT,
+     STEP,
+     WHERE
+    };
 
   UserLevelRewritingContext(DagNode* root);
 
+  static void ignoreCtrlC();
   static void setHandlers(bool handleCtrlC);
   static ParseResult commandLoop();
   static bool interrupted();

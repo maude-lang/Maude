@@ -556,17 +556,17 @@ CUI_DagNode::insertVariables2(NatSet& occurs)
 }
 
 DagNode*
-CUI_DagNode::instantiate2(const Substitution& substitution)
+CUI_DagNode::instantiate2(const Substitution& substitution, bool maintainInvariants)
 {
   bool changed = false;
   DagNode* a0 = argArray[0];
-  if (DagNode* n = a0->instantiate(substitution))
+  if (DagNode* n = a0->instantiate(substitution, maintainInvariants))
     {
       a0 = n;
       changed = true;
     }
   DagNode* a1 = argArray[1];
-  if (DagNode* n = a1->instantiate(substitution))
+  if (DagNode* n = a1->instantiate(substitution, maintainInvariants))
     {
       a1 = n;
       changed = true;
@@ -577,10 +577,22 @@ CUI_DagNode::instantiate2(const Substitution& substitution)
       CUI_DagNode* d = new CUI_DagNode(s);
       d->argArray[0] = a0;
       d->argArray[1] = a1;
-      if(!(d->normalizeAtTop()) && a0->isGround() && a1->isGround())
+      if (maintainInvariants)
 	{
-	  s->computeBaseSort(d);
-	  d->setGround();
+	  //
+	  //	Need to normalize and if it didn't collapse and is
+	  //	ground, compute the sort.
+	  //
+	  if(!(d->normalizeAtTop()) && a0->isGround() && a1->isGround())
+	    {
+	      s->computeBaseSort(d);
+	      d->setGround();
+	    }
+	}
+      else
+	{
+	  if (a0->isGround() && a1->isGround())
+	    d->setGround();
 	}
       return d;
     }
@@ -611,7 +623,7 @@ CUI_DagNode::instantiateWithReplacement(const Substitution& substitution,
   DagNode* n = argArray[other];
   DagNode* c = (eagerCopies != 0) && symbol()->eagerArgument(other) ?
     n->instantiateWithCopies(substitution, *eagerCopies) :
-    n->instantiate(substitution);  // lazy case - ok to use original unifier bindings since we won't evaluate them
+    n->instantiate(substitution, false);  // lazy case - ok to use original unifier bindings since we won't evaluate them
   if (c != 0)  // changed under substitutition
     n = c;
 
@@ -627,7 +639,7 @@ CUI_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vect
   {
     DagNode* n = symbol()->eagerArgument(0) ?
       a0->instantiateWithCopies(substitution, eagerCopies) :
-      a0->instantiate(substitution);
+      a0->instantiate(substitution, false);
     if (n != 0)
       {
 	a0 = n;
@@ -638,7 +650,7 @@ CUI_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vect
   {
     DagNode* n = symbol()->eagerArgument(1) ?
       a1->instantiateWithCopies(substitution, eagerCopies) :
-      a1->instantiate(substitution);
+      a1->instantiate(substitution, false);
     if (n != 0)
       {
 	a1 = n;

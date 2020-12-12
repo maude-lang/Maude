@@ -28,7 +28,9 @@ TESTS = \
 	ACU_MissingUnifiersMay2020 \
 	variantUnifyJune2020 \
         identityUnificationSeptember2020 \
-        CUI_OccursCheckSeptember2020
+        CUI_OccursCheckSeptember2020 \
+	attributeBugsNovember2020 \
+	polymorphicParsingBugsNovember2020
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -60,8 +62,9 @@ MAUDE_FILES = \
 	ACU_MissingUnifiersMay2020.maude \
 	variantUnifyJune2020.maude \
         identityUnificationSeptember2020.maude \
-        CUI_OccursCheckSeptember2020.maude
-
+        CUI_OccursCheckSeptember2020.maude \
+	attributeBugsNovember2020.maude \
+	polymorphicParsingBugsNovember2020.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -93,7 +96,8 @@ RESULT_FILES = \
 	ACU_MissingUnifiersMay2020.expected \
 	variantUnifyJune2020.expected \
         identityUnificationSeptember2020.expected \
-        CUI_OccursCheckSeptember2020.expected
-
+        CUI_OccursCheckSeptember2020.expected \
+	attributeBugsNovember2020.expected \
+	polymorphicParsingBugsNovember2020.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

@@ -2,7 +2,6 @@
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | problem:('_+_['X:XOR,
     'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) > createInterpreter(
     interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 52
 result Configuration: <> < me : User | soln: 9,result(gotVariantUnifier(me,
     interpreter(0), 6, 
@@ -75,7 +74,6 @@ rewrites: 24
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | problem:('_+_['X:XOR,
     'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) >
     createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 16
 result Configuration: <> < me : User | soln: 4,result(gotVariantUnifier(me,
     interpreter(0), 3, 
@@ -112,7 +110,6 @@ rewrites: 3
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | problem:('_+_[
     'X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) > createInterpreter(
     interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 52
 result Configuration: <> < me : User | soln: 9,result(
     gotDisjointVariantUnifier(me, interpreter(0), 6, 
@@ -140,7 +137,6 @@ result Configuration: <> < me : User | soln: 9,result(
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | problem:('_+_[
     'X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) >
     createInterpreter(interpreterManager, me, none) .
-saw '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem]
 rewrites: 16
 result Configuration: <> < me : User | soln: 4,result(
     gotDisjointVariantUnifier(me, interpreter(0), 3, 

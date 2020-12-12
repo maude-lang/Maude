@@ -1,3 +1,509 @@
+2020-12-11  Steven Eker  <eker2@eker10>
+
+	* remoteInterpreter.cc (makeNonblockingSocketPair): don't
+	shutdown(pair[1], SHUT_RD) because this causes a "socket not
+	connected" error on Mac, even though pair[1] is open for writing
+	and is never going to be read
+
+2020-12-08  Steven Eker  <eker2@eker10>
+
+	* remoteInterpreter.cc (InterpreterManagerSymbol::doChildExit):
+	added SOCKET_CLOSED case
+	(InterpreterManagerSymbol::createRemoteInterpreter):
+	setTraceStatus(false) to disable tracing, break points, profiling
+	and the print attribute
+
+	* remoteInterpreter2.cc
+	(InterpreterManagerSymbol::receiveMessage): detect EOF on socket
+	and exit with SOCKET_CLOSED code
+
+2020-12-07  Steven Eker  <eker2@eker10>
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	added support for getNarrowingSearchResult(),
+	getNarrowingSearchResultAndPath()
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for getNarrowingSearchResult()
+
+	* miNarrowSearch.cc: created
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decls for Interpreter* versions of getLesserSorts(),
+	getMaximalSorts(), getMinimalSorts(), compareTypes(), getKind(),
+	getKinds(), getGlbTypes(), getMaximalAritySet(), normalizeTerm()
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	support getLesserSortsMsg, getMaximalSortsMsg, getMinimalSortsMsg,
+	compareTypesMsg, getKindMsg, getKindsMsg, getGlbTypesMsg,
+	getMaximalAritySetMsg, normalizeTermMsg
+
+	* miSort.cc: created
+
+2020-12-04  Steven Eker  <eker2@eker10>
+
+	* remoteInterpreter.cc (InterpreterManagerSymbol::doChildExit):
+	delete interpeter as an external object in configuration
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for Interpreter* version of getOneStepNarrowing()
+
+	* miNarrow.cc: created
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	added support for narrowing with variant unification
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::remoteHandleMessage): call
+	requestChildExitCallback()
+	(InterpreterManagerSymbol::remoteHandleReply): call
+	cancelChildExitCallback()
+	(InterpreterManagerSymbol::createRemoteInterpreter): don't call
+	requestChildExitCallback(pid)
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::outputWholeErrorLines): code cleaning
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decls for Interpreter* versions of printTerm(), parseTerm()
+
+	* miSyntax.cc: created
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	added support for printTermMsg and parseTermMsg
+
+2020-12-02  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::handleMessage): handle quit locally
+	even for remote interpreter
+
+	* remoteInterpreter.cc (InterpreterManagerSymbol::doChildExit):
+	use interpreterExitMsg
+	(InterpreterManagerSymbol::createRemoteInterpreter): call
+	UserLevelRewritingContext::ignoreCtrlC() if we're the child
+
+	* interpreterSignature.cc: added interpreterExitMsg
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::outputWholeErrorLines): look for EOF
+	condition rather than reading at least one character
+	(InterpreterManagerSymbol::doRead): only request callbacks on
+	sockets where we haven't detected an EOF condition; clear flags
+	on sockets where we have seen EOF
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	updated decl for outputWholeErrorLines()
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::outputWholeErrorLines): return flag as
+	to whether we read at least one character
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::deleteInterpreter): delete charArray
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for doChildExit()
+
+	* remoteInterpreter.cc (InterpreterManagerSymbol::doChildExit):
+	added
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::deleteInterpreter):
+	cancelChildExitCallback() before terminating child; close error
+	socket
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): close child
+	end of error socket; request child exit callback
+
+2020-12-01  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::deleteInterpreter): call waitpid() for
+	the process we just terminated
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for Interpreter* version of applyRule()
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	added support for applyRuleMsg, applyRule2Msg
+
+	* miApply.cc: created
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decls for getMatch(), getXmatch()
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	handle getMatchMsg, getXmatchMsg
+
+	* miMatch.cc: created
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	handle getVariantMatcherMsg; no need to cast to FreeDagNode* for
+	unsupported message
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for Interpreter* version of getVariantMatcher()
+
+	* miVariantMatch.cc: created
+
+	* miVariantUnify.cc (InterpreterManagerSymbol::getVariantUnifier):
+	down variable family name before variant flags
+
+	* miVariant.cc (InterpreterManagerSymbol::getVariant): get test
+	for good Bool the right way around
+
+2020-11-30  Steven Eker  <eker2@eker10>
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	added support for getVariantMsg
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for Interpreter* version of getVariant()
+
+	* miVariant.cc: created
+
+	* miVariantUnify.cc (InterpreterManagerSymbol::getVariantUnifier):
+	restructured if statements
+	(InterpreterManagerSymbol::getVariantUnifier): replace
+	FOR_EACH_CONST with range based for loop
+
+	* interpreterVariantUnify.cc
+	(InterpreterManagerSymbol::getVariantUnifier): delete stray cerr
+	debugging message
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	handle getVariantUnifierMsg and getDisjointVariantUnifierMsg
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for Interpreter* version of getVariantUnifier()
+
+	* miVariantUnify.cc: created
+
+	* miUnify.cc (InterpreterManagerSymbol::getUnifier): rewritten
+	using getMetaModule()
+
+	* miSearch.cc (InterpreterManagerSymbol::getSearchResult):
+	rewritten using getMetaModule()
+
+	* miRewrite.cc (InterpreterManagerSymbol::reduceTerm): rewritten
+	to use getMetaModule()
+	(InterpreterManagerSymbol::rewriteTerm): rewritten using
+	getMetaModule()
+	(InterpreterManagerSymbol::frewriteTerm): rewritten using
+	getMetaModule()
+	(InterpreterManagerSymbol::erewriteTerm): rewritten using
+	getMetaModule()
+	(InterpreterManagerSymbol::srewriteTerm): rewritten using
+	getMetaModule()
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	updated decl for getMetaModule()
+
+	* miModule.cc (InterpreterManagerSymbol::getMetaModule): return
+	MetaModule* rather than error message
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	added support for getUnifierMsg, getDisjointUnifierMsg,
+	getIrredundantUnifierMsg, getIrredundantDisjointUnifierMsg
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decls for getMetaModule(), Interpreter* version of
+	getUnifier()
+
+	* miUnify.cc: created
+
+	* miModule.cc (InterpreterManagerSymbol::getMetaModule): added
+
+2020-11-25  Steven Eker  <eker2@eker10>
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	add support for getSearchResult()/getSearchResultPath() messages
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for Interpreter* version of getSearchResult()
+
+	* miSearch.cc: created
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	added support for insertView() and showView() messages
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decls for Interpreter* versions of insertView(), showView()
+
+	* miModule.cc (InterpreterManagerSymbol::insertView)
+	(InterpreterManagerSymbol::showView): added Interpreter* versions
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for Interpreter* version of showModule()
+
+	* miModule.cc (InterpreterManagerSymbol::insertModule): moved here
+	(InterpreterManagerSymbol::showModule): added Interpreter* version
+
+	* remoteInterpreter2.cc
+	(InterpreterManagerSymbol::becomeRemoteInterpreter): new
+	handleMessage() calling convention
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	updated decl for remote version of handleMessage()
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	support srewrite
+	(InterpreterManagerSymbol::handleMessage): take message as
+	FreeDagNode*; support showModule
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for Interpreter* version of srewriteTerm()
+
+	* miRewrite.cc (InterpreterManagerSymbol::srewriteTerm): added
+	Interpreter* version
+
+2020-11-24  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decls for Interpreter* versions of frewriteTerm(),
+	erewriteTerm()
+
+	* miRewrite.cc (InterpreterManagerSymbol::frewriteTerm): added
+	Interpreter* version
+	(InterpreterManagerSymbol::erewriteTerm): added Interpreter*
+	version
+
+	* remoteRewrite.cc: renamed to miRewrite.cc
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::doRead): rewritten to do multiple reads
+	per call in case there is a huge DAG coming through
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::remoteHandleMessage): removed commented
+	out code
+
+2020-11-23  Steven Eker  <eker2@eker10>
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::doRead): don't check against errSocket
+	if we already saw ioSocket
+	(InterpreterManagerSymbol::doRead): break loop as soon as we see
+	ioSocket
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): call
+	unsetAutoWrap()
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::handleMessage):
+	added DebugInfo()
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::doRead): check for fd being an
+	errSocket
+	(InterpreterManagerSymbol::doRead): clearFlags() on error socket
+	if we have no more pending replies
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::remoteHandleMessage): request a
+	callback on errSocket
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for outputWholeErrorLines()
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::outputWholeErrorLines): added
+	(InterpreterManagerSymbol::doRead): call outputWholeErrorLines()
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): create error
+	sockets; save socket in parent and connect socket to stderr in
+	child
+
+2020-11-20  Steven Eker  <eker2@eker10>
+
+	* remoteInterpreter2.cc
+	(InterpreterManagerSymbol::receiveMessage): account for multiple
+	messages being left over from last read
+	(InterpreterManagerSymbol::receiveMessage): select correct piece
+	of buffer in multiple messages case
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::deleteInterpreter): clear and
+	PseudoThread flags on socket so we don't get a future conflict
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::remoteHandleReply): must decrement
+	nrPendingReplies
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for remoteHandleReply()
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): init module
+	field for new RemoteInterpreter
+	(InterpreterManagerSymbol::createRemoteInterpreter): init owner;
+	don't init lastRequest
+	(InterpreterManagerSymbol::remoteHandleMessage): use module field
+	of RemoteInterpreter
+	(InterpreterManagerSymbol::remoteHandleReply): added
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added module field to struct RemoteInterpreter
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::doRead): added
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added incomingMessage field to struct RemoteInterpreter
+	(class InterpreterManagerSymbol): added decl for doRead();
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): init
+	nrPendingReplies for new RemoteInterpreter
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added nrPendingReplies field to struct RemoteInterpreter
+
+2020-11-19  Steven Eker  <eker2@eker10>
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::remoteHandleMessage): use
+	nonBlockingSend()
+
+	* remoteInterpreterNonblocking.cc: created
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added charArray, unsent and nrUnsent fields to struct
+	RemoteInterpreter
+	(class InterpreterManagerSymbol): added decls for doWrite() and
+	nonblockingSendMessage()
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): init
+	charArray, unsent, nrUnsent fields in new RemoteInterpreter
+
+2020-11-16  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for remote version of handleMessage()
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::insertModule):
+	return error message if module bad
+	(InterpreterManagerSymbol::handleMessage): added remote version
+	(InterpreterManagerSymbol::becomeRemoteInterpreter): use
+	handleMessage()
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for remote version of rewriteTerm()
+
+	* remoteRewrite.cc (InterpreterManagerSymbol::reduceTerm): moved
+	here; return error message for each failure mode
+	(InterpreterManagerSymbol::rewriteTerm): added
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for makeErrorReply()
+	(InterpreterManagerSymbol::errorReply): moved here and
+	reimplemented using makeErrorReply()
+
+	* remoteInterpreter.cc (InterpreterManagerSymbol::makeErrorReply):
+	added
+
+2020-11-13  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	updated decl for becomeRemoteInterpreter()
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): pass context
+	arg to becomeRemoteInterpreter()
+
+	* remoteInterpreter2.cc
+	(InterpreterManagerSymbol::becomeRemoteInterpreter): take context
+	arg
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::handleMessage): new
+	remoteHandleMessage() convention
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::remoteHandleMessage): rewritten
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decls for receiveMessage(), sendMessage(), and remote
+	versions of insertModule(), reduceTerm(); delete decl for
+	getNextCommand()
+	(class InterpreterManagerSymbol): updated decl for
+	remoteHandleMessage()
+
+	* remoteInterpreter2.cc: created
+
+	* remoteInterpreter.cc (InterpreterManagerSymbol::getNextCommand):
+	fixed off-by-1 error
+
+2020-11-12  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for remoteHandleMessage()
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::remoteHandleMessage): added
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::handleMessage): hack using
+	getRemoteInterpreter() to divert messages for remote interpreters
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for getRemoteInterpreter()
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::deleteInterpreter): handle deletion of
+	remote interpreter
+	(InterpreterManagerSymbol::getRemoteInterpreter): added
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for becomeRemoteInterpreter()
+
+	* remoteInterpreter.cc (InterpreterManagerSymbol::getNextCommand):
+	added
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for becomeRemoteInterpreter()
+	(class InterpreterManagerSymbol): added enum Sizes
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): fork new
+	process
+	(InterpreterManagerSymbol::becomeRemoteInterpreter): added stub
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for errorReply()
+
+	* remoteInterpreter.cc (ProcessManagerSymbol::errorReply): added
+
+	* interpreterSignature.cc: added interpreterErrorMsg, stringSymbol
+
+2020-11-11  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::createInterpreter): call
+	createRemoteInterpreter()
+
+	* remoteInterpreter.cc: created
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	added decl for createRemoteInterpreter()
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::createInterpreter): check for
+	newProcess argument and slot being used by a remoteInterpreter
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	derive from PseudoThread
+	(class InterpreterManagerSymbol): added struct RemoteInterpreter,
+	typedef RemoteInterpreterMap, data member remoteInterpreters
+
+	* interpreterSignature.cc: added newProcessSymbol
+
+===================================Maude132===========================================
+
 2020-09-16  Steven Eker  <eker2@eker10>
 
 	* interpreterSignature.cc: getNarrowingSearchResultMsg and

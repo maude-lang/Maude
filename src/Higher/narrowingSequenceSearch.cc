@@ -76,7 +76,7 @@ NarrowingSequenceSearch::NarrowingSequenceSearch(RewritingContext* initial,
       VariableDagNode* v = new VariableDagNode(baseSymbol, name, i);
       s.bind(i, v);
     }
-  DagNode* newDag = initial->root()->instantiate(s);  // not safe if we haven't determined ground terms in context->root()
+  DagNode* newDag = initial->root()->instantiate(s, false);  // not safe if we haven't determined ground terms in context->root()
   if (newDag == 0)
     newDag = initial->root();
 

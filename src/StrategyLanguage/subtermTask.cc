@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -239,7 +239,7 @@ SubtermTask::SubtermTask(StrategicSearch& searchObject,
       ChildTask* child = new ChildTask(this, subtermIndex);
 
       DagNode* subtermVariable = subterms[subtermIndex]->term2Dag(true);
-      DagNode* subterm = subtermVariable->instantiate(subst);
+      DagNode* subterm = subtermVariable->instantiate(subst, true);  // passing true for safety
 
       (void) new DecompositionProcess(searchObject.insert(subterm),
 				      searchObject.push(StrategyStackManager::EMPTY_STACK,

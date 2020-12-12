@@ -1,4 +1,25 @@
 TESTS = \
+	metaProcPrelude \
+	metaProcReplace \
+	metaProcReplace2 \
+	russianDollsFlatProc \
+	russianDollsNonFlatProc \
+	russianDollsNonFlatProc2 \
+	russianDollsNonFlatProc3 \
+	metaProcMatch \
+	metaProcSearch \
+	metaProcSort \
+	metaProcUnify \
+	metaProcVariant \
+	metaProcVariantUnify \
+	metaProcVariantUnify2 \
+	metaProcVariantMatch \
+	metaProcPrint \
+	metaProcParse \
+	metaProcApply \
+	metaProcNarrow \
+	metaProcNarrowSearch \
+	metaProcStrategy \
 	metaApply \
 	metaUnify \
 	metaFrewrite \
@@ -56,6 +77,27 @@ TESTS = \
 	checkUnifiers
 
 MAUDE_FILES = \
+	metaProcPrelude.maude \
+	metaProcReplace.maude \
+	metaProcReplace2.maude \
+	russianDollsFlatProc.maude \
+	russianDollsNonFlatProc.maude \
+	russianDollsNonFlatProc2.maude \
+	russianDollsNonFlatProc3.maude \
+	metaProcMatch.maude \
+	metaProcSearch.maude \
+	metaProcSort.maude \
+	metaProcUnify.maude \
+	metaProcVariant.maude \
+	metaProcVariantUnify.maude \
+	metaProcVariantUnify2.maude \
+	metaProcVariantMatch.maude \
+	metaProcPrint.maude \
+	metaProcParse.maude \
+	metaProcApply.maude \
+	metaProcNarrow.maude \
+	metaProcNarrowSearch.maude \
+	metaProcStrategy.maude \
 	metaApply.maude \
 	metaUnify.maude \
 	metaFrewrite.maude \
@@ -113,6 +155,27 @@ MAUDE_FILES = \
 	checkUnifiers.maude
 
 RESULT_FILES = \
+	metaProcPrelude.expected \
+	metaProcReplace.expected \
+	metaProcReplace2.expected \
+	russianDollsFlatProc.expected \
+	russianDollsNonFlatProc.expected \
+	russianDollsNonFlatProc2.expected \
+	russianDollsNonFlatProc3.expected \
+	metaProcMatch.expected \
+	metaProcSearch.expected \
+	metaProcSort.expected \
+	metaProcUnify.expected \
+	metaProcVariant.expected \
+	metaProcVariantUnify.expected \
+	metaProcVariantUnify2.expected \
+	metaProcVariantMatch.expected \
+	metaProcPrint.expected \
+	metaProcParse.expected \
+	metaProcApply.expected \
+	metaProcNarrow.expected \
+	metaProcNarrowSearch.expected \
+	metaProcStrategy.expected \
 	metaApply.expected \
 	metaUnify.expected \
 	metaFrewrite.expected \

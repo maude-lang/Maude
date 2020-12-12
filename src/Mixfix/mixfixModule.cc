@@ -201,6 +201,8 @@ MixfixModule::nonTerminal(const Sort* sort, NonTerminalType type)
 #include "makeGrammar.cc"
 #include "doParse.cc"
 #include "entry.cc"
+#include "validateAttributes.cc"
+#include "fancySymbols.cc"
 #include "prettyPrint.cc"
 #include "sharedPrint.cc"
 #include "termPrint.cc"
@@ -208,6 +210,7 @@ MixfixModule::nonTerminal(const Sort* sort, NonTerminalType type)
 #include "bufferPrint.cc"
 #include "graphPrint.cc"
 #include "strategyPrint.cc"
+#include "serialize.cc"
 
 void
 MixfixModule::checkFreshVariableNames()
@@ -694,6 +697,7 @@ MixfixModule::createInternalTupleSymbol(const Vector<ConnectedComponent*>& domai
   SymbolInfo& si = symbolInfo[nrSymbols];
 
   si.prec = 0;
+  si.polymorphIndex = NONE;
   si.symbolType.setBasicType(SymbolType::INTERNAL_TUPLE);
   si.iflags = 0;
   si.next = NONE;
@@ -724,6 +728,7 @@ MixfixModule::instantiateVariable(Sort* sort)
       symbolInfo.expandBy(1);
       SymbolInfo& si = symbolInfo[nrSymbols];
       si.prec = 0;
+      si.polymorphIndex = NONE;
       si.symbolType.setBasicType(SymbolType::VARIABLE);
       si.iflags = 0;
       si.next = NONE;
@@ -761,6 +766,7 @@ MixfixModule::instantiateSortTest(Sort* sort, bool eager)
       SymbolInfo& si = symbolInfo[nrSymbols];
       (void) Token::extractMixfix(prefixCode, si.mixfixSyntax);
       si.prec = 0;
+      si.polymorphIndex = NONE;
       si.gather.append(ANY);
       si.symbolType.setBasicType(SymbolType::SORT_TEST);
       si.iflags = LEFT_BARE;
@@ -864,7 +870,7 @@ MixfixModule::instantiatePolymorph(int polymorphIndex, int kindIndex)
   Symbol* symbol = p.instantiations[kindIndex];
   if (symbol == 0)
     {
-      SymbolType symbolType = p.symbolInfo.symbolType;
+      SymbolType& symbolType = p.symbolInfo.symbolType;
       Vector<Sort*> domainAndRange(p.domainAndRange);
       {
 	Sort* s = getConnectedComponents()[kindIndex]->sort(Sort::KIND);
@@ -883,7 +889,7 @@ MixfixModule::instantiatePolymorph(int polymorphIndex, int kindIndex)
 					     domainAndRange.length() - 1,
 					     p.strategy,
 					     symbolType.hasFlag(SymbolType::MEMO));
-	  symbolType.clearFlags(SymbolType::AXIOMS);
+	  symbolType.clearFlags(SymbolType::AXIOMS | SymbolType::ITER);
 	}
       symbol->setLineNumber(p.name.lineNumber());
       symbol->addOpDeclaration(domainAndRange, symbolType.hasFlag(SymbolType::CTOR));
@@ -934,7 +940,7 @@ MixfixModule::instantiatePolymorph(int polymorphIndex, int kindIndex)
       
       int nrSymbols = symbolInfo.length();
       symbolInfo.expandBy(1);
-      symbolInfo[nrSymbols] = p.symbolInfo;  // deep copy
+      symbolInfo[nrSymbols] = p.symbolInfo;  // deep copy, including polymorphIndex
       insertLateSymbol(symbol);
       p.instantiations[kindIndex] = symbol;
     }

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/russianDollsNonFlatProc2.maude -no-banner -no-advise \
+  > russianDollsNonFlatProc2.out 2>&1
+
+diff $srcdir/russianDollsNonFlatProc2.expected russianDollsNonFlatProc2.out > /dev/null 2>&1

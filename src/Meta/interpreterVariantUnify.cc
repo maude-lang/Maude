@@ -95,7 +95,6 @@ InterpreterManagerSymbol::getVariantUnifier(FreeDagNode* message,
 			  //
 			  Vector<Term*> lhs;
 			  Vector<Term*> rhs;
-			  cerr << "saw " << message->getArgument(3) << endl;
 			  if (!(metaLevel->downUnificationProblem(message->getArgument(3), lhs, rhs, m, disjoint)))
 			    return false;
 			  DagNode* d = m->makeUnificationProblemDag(lhs, rhs);

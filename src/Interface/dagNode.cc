@@ -171,6 +171,13 @@ DagNode::partialConstruct(DagNode* /* replacement */, ExtensionInfo* /* extensio
 //	Unification code.
 //
 
+DagNode*
+DagNode::instantiate2(const Substitution& /* substitution */, bool /* maintainInvariants */)
+{
+  CantHappen("Called on subject " << this);
+  return 0;
+}
+
 DagNode::ReturnResult
 DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 {

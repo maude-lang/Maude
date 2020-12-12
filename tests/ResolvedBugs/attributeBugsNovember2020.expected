@@ -1,0 +1,87 @@
+Warning: <standard input>, line 11 (fmod ITER-ARITY): iter operator f has 2
+    domain sorts rather than 1.
+Warning: <standard input>, line 12 (fmod ITER-ARITY): iter operator g has 0
+    domain sorts rather than 1.
+==========================================
+reduce in ITER-ARITY : f(a, b) .
+rewrites: 0
+result Foo: f(a, b)
+==========================================
+reduce in ITER-ARITY : g .
+rewrites: 0
+result Foo: g
+Warning: <standard input>, line 21 (fmod ITER-ASSOC): iter operator f has 2
+    domain sorts rather than 1.
+==========================================
+reduce in ITER-ASSOC : f(a, b) .
+rewrites: 0
+result Foo: f(a, b)
+Warning: <standard input>, line 31 (fmod POLY-ITER-ARITY): iter operator f has
+    2 domain sorts rather than 1.
+Warning: <standard input>, line 32 (fmod POLY-ITER-ARITY): iter operator g has
+    0 domain sorts rather than 1.
+==========================================
+reduce in POLY-ITER-ARITY : f(a, b) .
+rewrites: 0
+result [Foo4]: f(a, b)
+Warning: <standard input>, line 37: ambiguous term, two parses are:
+[Bar] : (g).Bar
+-versus-
+[Foo4] : (g).Foo4
+
+Arbitrarily taking the first as correct.
+==========================================
+reduce in POLY-ITER-ARITY : (g).Bar .
+rewrites: 0
+result [Bar]: (g).Bar
+Warning: <standard input>, line 42 (fmod POLY-ITER-ASSOC): iter operator f has
+    2 domain sorts rather than 1.
+==========================================
+reduce in POLY-ITER-ASSOC : f(a, b) .
+rewrites: 0
+result [Foo4]: f(a, b)
+Warning: <standard input>, line 52 (fmod ITER-KINDS): iter operator f has a
+    domain sort Foo in a different connected component from its range sort Bar.
+Warning: <standard input>, line 53 (fmod ITER-KINDS): iter operator g has a
+    domain sort Bar in a different connected component from its range sort Foo.
+==========================================
+reduce in ITER-KINDS : f(a) .
+rewrites: 0
+result Bar: f(a)
+==========================================
+reduce in ITER-KINDS : g(x) .
+rewrites: 0
+result Foo: g(x)
+Warning: <standard input>, line 65 (fmod POLY-ITER-KINDS): iter operator f has
+    a polymorphic domain sort  but a range sort Foo.
+Warning: <standard input>, line 66 (fmod POLY-ITER-KINDS): iter operator g has
+    a domain sort Foo but a polymorphic range sort.
+==========================================
+reduce in POLY-ITER-KINDS : f(x) .
+rewrites: 0
+result Foo: f(x)
+Warning: <standard input>, line 73: ambiguous term, two parses are:
+[Bool] : (g(a)).Bool
+-versus-
+[Foo4] : (g(a)).Foo4
+
+Arbitrarily taking the first as correct.
+==========================================
+reduce in POLY-ITER-KINDS : (g(a)).Bool .
+rewrites: 0
+result [Bool]: (g(a)).Bool
+Warning: <standard input>, line 78 (fmod COMM-ID-IDEM-IGNORED): comm operator f
+    has 1 rather than 2 domain sorts.
+Warning: <standard input>, line 78 (fmod COMM-ID-IDEM-IGNORED): id operator f
+    has 1 rather than 2 domain sorts.
+Warning: <standard input>, line 78 (fmod COMM-ID-IDEM-IGNORED): idem operator f
+    has 1 rather than 2 domain sorts.
+==========================================
+reduce in COMM-ID-IDEM-IGNORED : f(a) .
+rewrites: 0
+result Foo: f(a)
+==========================================
+reduce in COMM-ID-IDEM-IGNORED : f^2(a) .
+rewrites: 0
+result Foo: f^2(a)
+Bye.

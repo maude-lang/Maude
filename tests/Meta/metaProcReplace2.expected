@@ -1,0 +1,82 @@
+==========================================
+reduce in TEST : g(X:Foo) .
+rewrites: 1
+result Foo: h(h(X:Foo, c), c)
+==========================================
+reduce in META1 : T .
+rewrites: 2
+result FTheory: fth 'T is
+  nil
+  sorts 'Elt .
+  none
+  op 'f : 'Elt -> 'Elt [none] .
+  none
+  none
+endfth
+==========================================
+reduce in META1 : M .
+rewrites: 2
+result FModule: fmod 'M{'X :: 'T} is
+  nil
+  sorts none .
+  none
+  op 'g : 'X$Elt -> 'X$Elt [none] .
+  none
+  eq 'g['X:X$Elt] = 'f['f['X:X$Elt]] [none] .
+endfm
+==========================================
+reduce in META1 : FOO .
+rewrites: 2
+result FModule: fmod 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  op 'c : nil -> 'Foo [none] .
+  op 'h : 'Foo 'Foo -> 'Foo [none] .
+  none
+  none
+endfm
+==========================================
+reduce in META1 : V .
+rewrites: 2
+result View: view 'V from 'T to 'FOO is
+  sort 'Elt to 'Foo .
+  op 'f['X:Elt] to term 'h['X:Foo,'c.Foo] .
+  none
+endv
+==========================================
+reduce in META1 : TEST .
+rewrites: 2
+result FModule: fmod 'TEST is
+  including 'M{'V} .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm
+==========================================
+erewrite in META2 : <> < me : User | state: 1 > createInterpreter(
+    interpreterManager, me, newProcess) .
+rewrites: 16
+result Configuration: <> < me : User | state: 7 > reducedTerm(me, interpreter(
+    0), 1, 'h['h['X:Foo,'c.Foo],'c.Foo], 'Foo)
+==========================================
+erewrite in META3 : <> < me : User | state: 1 > createInterpreter(
+    interpreterManager, me, newProcess) .
+rewrites: 19
+result Configuration: <> < me : User | state: 9 > reducedTerm(me, interpreter(
+    0), 1, 'h['h['h['X:Foo,'c.Foo],'c.Foo],'c.Foo], 'Foo)
+==========================================
+erewrite in META4 : <> < me : User | state: 1 > createInterpreter(
+    interpreterManager, me, newProcess) .
+rewrites: 19
+result Configuration: <> < me : User | state: 9 > reducedTerm(me, interpreter(
+    0), 1, 'h['c.Foo,'h['c.Foo,'X:Foo]], 'Foo)
+==========================================
+erewrite in META5 : <> < me : User | state: 1 > createInterpreter(
+    interpreterManager, me, newProcess) .
+rewrites: 21
+result Configuration: <> < me : User | state: 10 > reducedTerm(me, interpreter(
+    0), 1, 'k['k['X:Foo,'d.Foo],'d.Foo], 'Foo)
+Bye.

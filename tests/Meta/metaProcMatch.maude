@@ -1,0 +1,147 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Test matching in the meta-interpreter without and with extension.
+***
+
+load metaInterpreter
+
+fmod MATCH is
+  sort Foo .
+  op f : Foo Foo -> Foo [assoc] .
+  ops a b : -> Foo .
+endfm
+
+mod MATCH-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op soln:_ : Nat -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('MATCH, true)) .
+
+  rl < X : User | soln: N, AS > insertedModule(X, Y) =>
+     < X : User | AS > getMatch(Y, X, 'MATCH, 'f['X:Foo, 'Y:Foo], 'f['a.Foo, 'b.Foo, 'a.Foo], nil, N) .
+endm
+
+erew in MATCH-TEST : <> 
+< me : User | soln: 0 > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+erew in MATCH-TEST : <> 
+< me : User | soln: 1 > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+erew in MATCH-TEST : <> 
+< me : User | soln: 2 > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+mod MATCH-CACHE-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op soln:_ : Nat -> Attribute .
+  op got:_  : Msg -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  vars N M : Nat .
+  var S : Substitution .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('MATCH, true)) .
+
+  rl < X : User | AS > insertedModule(X, Y) =>
+     < X : User | AS, soln: 1 > getMatch(Y, X, 'MATCH, 'f['X:Foo, 'Y:Foo], 'f['a.Foo, 'b.Foo, 'a.Foo], nil, 0) .
+
+  rl < X : User | soln: N, AS > gotMatch(X, Y, M, S) =>
+     < X : User | AS, soln: (N + 1), got: gotMatch(X, Y, M, S) >
+     getMatch(Y, X, 'MATCH, 'f['X:Foo, 'Y:Foo], 'f['a.Foo, 'b.Foo, 'a.Foo], nil, N) .
+endm
+
+erew in MATCH-CACHE-TEST : <> 
+< me : User | none > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+
+fmod XMATCH is
+  sorts Foo Bar .
+  op f : Foo Foo -> Foo [assoc] .
+  op g : Foo -> Bar .
+  ops a b : -> Foo .
+endfm
+
+mod XMATCH-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op soln:_ : Nat -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('XMATCH, true)) .
+
+  rl < X : User | soln: N, AS > insertedModule(X, Y) =>
+     < X : User | AS > getXmatch(Y, X, 'XMATCH, 'f['X:Foo, 'Y:Foo], 'g['f['a.Foo, 'b.Foo, 'a.Foo]], nil, 0, unbounded, N) .
+endm
+
+erew in XMATCH-TEST : <> 
+< me : User | soln: 0 > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+erew in XMATCH-TEST : <> 
+< me : User | soln: 1 > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+erew in XMATCH-TEST : <> 
+< me : User | soln: 2 > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+erew in XMATCH-TEST : <> 
+< me : User | soln: 3 > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+erew in XMATCH-TEST : <> 
+< me : User | soln: 4 > 
+createInterpreter(interpreterManager, me, newProcess) .
+
+mod XMATCH-CACHE-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op soln:_ : Nat -> Attribute .
+  op got:_  : Msg -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  vars N M : Nat .
+  var S : Substitution .
+  var C : Context .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('XMATCH, true)) .
+
+  rl < X : User | AS > insertedModule(X, Y) =>
+     < X : User | AS, soln: 1 > getXmatch(Y, X, 'XMATCH, 'f['X:Foo, 'Y:Foo], 'g['f['a.Foo, 'b.Foo, 'a.Foo]], nil, 0, unbounded, 0) .
+
+  rl < X : User | soln: N, AS > gotXmatch(X, Y, M, S, C) =>
+     < X : User | AS, soln: (N + 1), got: gotXmatch(X, Y, M, S, C) >
+     getXmatch(Y, X, 'XMATCH, 'f['X:Foo, 'Y:Foo], 'g['f['a.Foo, 'b.Foo, 'a.Foo]], nil, 0, unbounded, N) .
+endm
+
+erew in XMATCH-CACHE-TEST : <> 
+< me : User | none > 
+createInterpreter(interpreterManager, me, newProcess) .

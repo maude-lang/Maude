@@ -1,3 +1,14 @@
+2020-12-10  Steven Eker  <eker2@eker10>
+
+	* bddUser.hh (class BddUser): multiplied all the default sizes by 10
+
+2020-12-07  Steven Eker  <eker2@eker10>
+
+	* macros.hh: send Verbose() messages to cerr rather than cout so
+	all out-of-band notifications go to stderr
+
+===================================Maude132===================================
+
 2020-10-10  Steven Eker  <eker2@eker10>
 
 	* pigPug-stack.cc (PigPug::checkConstraintMap): updated comment to

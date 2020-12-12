@@ -1,3 +1,19 @@
+Overview of Changes in alpha132
+===============================
+* fixed bugs where non-unary iter symbols caused breakage
+in regular and polymorphic cases
+* fixed bugs where bad sorts for iter symbols caused breakage
+in regular and polymorphics cases
+* fixed bug where comm, idem and id: attributes were ignored
+if iter attribute seen
+* fixed bug where flattened prefix syntax wasn't accepted
+for polymorphic associative operators
+* fixed bug where f^n(...) syntax wasn't accepted for
+polymorphic iter operators
+* fixed bug for ! strategy
+* support meta-interpreters in separate processes
+* new options for vu-narrow
+
 Overview of Changes in Maude 3.1 (alpha131a) (2020-10-12)
 =========================================================
 * changed messages for ^C seen during suspension

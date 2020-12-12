@@ -1,0 +1,732 @@
+==========================================
+erewrite in VARIANT-TEST : <> < me : User | problem:('_+_['X:XOR,'c1.Elem],
+    empty) > createInterpreter(interpreterManager, me, newProcess) .
+rewrites: 11
+result Configuration: <> < me : User | soln: 5,result(gotVariant(me,
+    interpreter(0), 0, '_+_['c1.Elem,'%1:XOR], 
+  'X:XOR <- '%1:XOR, '%, none, false),gotVariant(me, interpreter(0), 3,
+    'c1.Elem, 
+  'X:XOR <- '0.XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '0.XOR, 
+  'X:XOR <- 'c1.Elem, '@, 0, true),gotVariant(me, interpreter(0), 0, '@1:XOR, 
+  'X:XOR <- '_+_['c1.Elem,'@1:XOR], '@, 0, false)),problem:('_+_['X:XOR,
+    'c1.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+==========================================
+get variants in XOR : c1 + X .
+
+Variant 1
+rewrites: 0
+XOR: c1 + #1:XOR
+X --> #1:XOR
+
+Variant 2
+rewrites: 3
+Elem: c1
+X --> 0
+
+Variant 3
+rewrites: 3
+XOR: 0
+X --> c1
+
+Variant 4
+rewrites: 3
+XOR: %1:XOR
+X --> c1 + %1:XOR
+
+No more variants.
+rewrites: 3
+==========================================
+erewrite in VARIANT-TEST : <> < me : User | problem:('_+_['X:XOR,'c1.Elem],
+    '_+_['X:XOR,'a.Elem]) > createInterpreter(interpreterManager, me,
+    newProcess) .
+rewrites: 9
+result Configuration: <> < me : User | soln: 4,result(gotVariant(me,
+    interpreter(0), 0, '_+_['c1.Elem,'%1:XOR], 
+  'X:XOR <- '%1:XOR, '%, none, false),gotVariant(me, interpreter(0), 2, '0.XOR,
+    
+  'X:XOR <- 'c1.Elem, '@, 0, true),gotVariant(me, interpreter(0), 0, '@1:XOR, 
+  'X:XOR <- '_+_['c1.Elem,'@1:XOR], '@, 0, false)),problem:('_+_['X:XOR,
+    'c1.Elem],'_+_['X:XOR,'a.Elem]) > noSuchResult(me, interpreter(0), 0, true)
+==========================================
+get variants in XOR : c1 + X such that X + a irreducible .
+
+Variant 1
+rewrites: 0
+XOR: c1 + #1:XOR
+X --> #1:XOR
+
+Variant 2
+rewrites: 2
+XOR: 0
+X --> c1
+
+Variant 3
+rewrites: 2
+XOR: %1:XOR
+X --> c1 + %1:XOR
+
+No more variants.
+rewrites: 2
+==========================================
+erewrite in VARIANT-TEST : <> < me : User | problem:('_+_['X:XOR,'Y:XOR,
+    'c1.Elem],empty) > createInterpreter(interpreterManager, me, newProcess) .
+rewrites: 45
+result Configuration: <> < me : User | soln: 22,result(gotVariant(me,
+    interpreter(0), 0, '_+_['c1.Elem,'%1:XOR,'%2:XOR], 
+  'X:XOR <- '%1:XOR ; 
+  'Y:XOR <- '%2:XOR, '%, none, false),gotVariant(me, interpreter(0), 10, '_+_[
+    'c1.Elem,'@1:XOR], 
+  'X:XOR <- '0.XOR ; 
+  'Y:XOR <- '@1:XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@1:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '0.XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    '@1:XOR,'@2:XOR], 
+  'X:XOR <- '_+_['c1.Elem,'@2:XOR] ; 
+  'Y:XOR <- '@1:XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '@1:XOR, 
+  'X:XOR <- 'c1.Elem ; 
+  'Y:XOR <- '@1:XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    '@1:XOR,'@2:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'@2:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, '@1:XOR, 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- 'c1.Elem, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@2:XOR,'@3:XOR], 
+  'X:XOR <- '_+_['@1:XOR,'@2:XOR] ; 
+  'Y:XOR <- '_+_['@1:XOR,'@3:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, '_+_['c1.Elem,'@2:XOR], 
+  'X:XOR <- '_+_['@1:XOR,'@2:XOR] ; 
+  'Y:XOR <- '@1:XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@2:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '_+_['@1:XOR,'@2:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, 'c1.Elem, 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '@1:XOR, '@, 0, false),gotVariant(me, interpreter(0), 28, '%1:XOR, 
+  'X:XOR <- '0.XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR], '%, 1, true),gotVariant(me, interpreter(0),
+    0, '%1:XOR, 
+  'X:XOR <- '_+_['c1.Elem,'%1:XOR] ; 
+  'Y:XOR <- '0.XOR, '%, 2, true),gotVariant(me, interpreter(0), 0, '0.XOR, 
+  'X:XOR <- '_+_['c1.Elem,'%1:XOR] ; 
+  'Y:XOR <- '%1:XOR, '%, 3, true),gotVariant(me, interpreter(0), 0, '_+_[
+    '%2:XOR,'%3:XOR], 
+  'X:XOR <- '_+_['c1.Elem,'%1:XOR,'%3:XOR] ; 
+  'Y:XOR <- '_+_['%1:XOR,'%2:XOR], '%, 3, true),gotVariant(me, interpreter(0),
+    0, '%1:XOR, 
+  'X:XOR <- '_+_['c1.Elem,'%2:XOR] ; 
+  'Y:XOR <- '_+_['%1:XOR,'%2:XOR], '%, 3, true),gotVariant(me, interpreter(0),
+    0, '%1:XOR, 
+  'X:XOR <- '_+_['c1.Elem,'%1:XOR,'%2:XOR] ; 
+  'Y:XOR <- '%2:XOR, '%, 3, true),gotVariant(me, interpreter(0), 0, '0.XOR, 
+  'X:XOR <- '%1:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR], '%, 5, true),gotVariant(me, interpreter(0),
+    0, '_+_['%2:XOR,'%3:XOR], 
+  'X:XOR <- '_+_['%1:XOR,'%2:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR,'%3:XOR], '%, 5, true),gotVariant(me,
+    interpreter(0), 0, '%1:XOR, 
+  'X:XOR <- '_+_['%1:XOR,'%2:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem,'%2:XOR], '%, 5, true),gotVariant(me, interpreter(0),
+    0, '%1:XOR, 
+  'X:XOR <- '%2:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR,'%2:XOR], '%, 5, false)),problem:('_+_[
+    'X:XOR,'Y:XOR,'c1.Elem],empty) > noSuchResult(me, interpreter(0), 8, true)
+==========================================
+get variants in XOR : X + c1 + Y .
+
+Variant 1
+rewrites: 0
+XOR: c1 + #1:XOR + #2:XOR
+X --> #1:XOR
+Y --> #2:XOR
+
+Variant 2
+rewrites: 10
+XOR: c1 + %1:XOR
+X --> 0
+Y --> %1:XOR
+
+Variant 3
+rewrites: 10
+XOR: c1 + %1:XOR
+X --> %1:XOR
+Y --> 0
+
+Variant 4
+rewrites: 10
+XOR: %1:XOR + %2:XOR
+X --> c1 + %2:XOR
+Y --> %1:XOR
+
+Variant 5
+rewrites: 10
+XOR: %1:XOR
+X --> c1
+Y --> %1:XOR
+
+Variant 6
+rewrites: 10
+XOR: %1:XOR + %2:XOR
+X --> %1:XOR
+Y --> c1 + %2:XOR
+
+Variant 7
+rewrites: 10
+XOR: %1:XOR
+X --> %1:XOR
+Y --> c1
+
+Variant 8
+rewrites: 10
+XOR: c1 + %2:XOR + %3:XOR
+X --> %1:XOR + %2:XOR
+Y --> %1:XOR + %3:XOR
+
+Variant 9
+rewrites: 10
+XOR: c1 + %2:XOR
+X --> %1:XOR + %2:XOR
+Y --> %1:XOR
+
+Variant 10
+rewrites: 10
+XOR: c1 + %2:XOR
+X --> %1:XOR
+Y --> %1:XOR + %2:XOR
+
+Variant 11
+rewrites: 10
+Elem: c1
+X --> %1:XOR
+Y --> %1:XOR
+
+Variant 12
+rewrites: 38
+XOR: #1:XOR
+X --> 0
+Y --> c1 + #1:XOR
+
+Variant 13
+rewrites: 38
+XOR: #1:XOR
+X --> c1 + #1:XOR
+Y --> 0
+
+Variant 14
+rewrites: 38
+XOR: 0
+X --> c1 + #1:XOR
+Y --> #1:XOR
+
+Variant 15
+rewrites: 38
+XOR: #2:XOR + #3:XOR
+X --> c1 + #1:XOR + #3:XOR
+Y --> #1:XOR + #2:XOR
+
+Variant 16
+rewrites: 38
+XOR: #1:XOR
+X --> c1 + #2:XOR
+Y --> #1:XOR + #2:XOR
+
+Variant 17
+rewrites: 38
+XOR: #1:XOR
+X --> c1 + #1:XOR + #2:XOR
+Y --> #2:XOR
+
+Variant 18
+rewrites: 38
+XOR: 0
+X --> #1:XOR
+Y --> c1 + #1:XOR
+
+Variant 19
+rewrites: 38
+XOR: #2:XOR + #3:XOR
+X --> #1:XOR + #2:XOR
+Y --> c1 + #1:XOR + #3:XOR
+
+Variant 20
+rewrites: 38
+XOR: #1:XOR
+X --> #1:XOR + #2:XOR
+Y --> c1 + #2:XOR
+
+Variant 21
+rewrites: 38
+XOR: #1:XOR
+X --> #2:XOR
+Y --> c1 + #1:XOR + #2:XOR
+
+No more variants.
+rewrites: 46
+==========================================
+erewrite in VARIANT-TEST : <> < me : User | problem:('_+_['X:XOR,'Y:XOR,
+    'c1.Elem],'_+_['X:XOR,'c1.Elem],'_+_['X:XOR,'c2.Elem]) > createInterpreter(
+    interpreterManager, me, newProcess) .
+rewrites: 27
+result Configuration: <> < me : User | soln: 13,result(gotVariant(me,
+    interpreter(0), 0, '_+_['c1.Elem,'%1:XOR,'%2:XOR], 
+  'X:XOR <- '%1:XOR ; 
+  'Y:XOR <- '%2:XOR, '%, none, false),gotVariant(me, interpreter(0), 7, '_+_[
+    'c1.Elem,'@1:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '0.XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    '@1:XOR,'@2:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'@2:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, '@1:XOR, 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- 'c1.Elem, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@2:XOR,'@3:XOR], 
+  'X:XOR <- '_+_['@1:XOR,'@2:XOR] ; 
+  'Y:XOR <- '_+_['@1:XOR,'@3:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, '_+_['c1.Elem,'@2:XOR], 
+  'X:XOR <- '_+_['@1:XOR,'@2:XOR] ; 
+  'Y:XOR <- '@1:XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@2:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '_+_['@1:XOR,'@2:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, 'c1.Elem, 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '@1:XOR, '@, 0, false),gotVariant(me, interpreter(0), 12, '0.XOR, 
+  'X:XOR <- '%1:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR], '%, 2, true),gotVariant(me, interpreter(0),
+    0, '_+_['%2:XOR,'%3:XOR], 
+  'X:XOR <- '_+_['%1:XOR,'%2:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR,'%3:XOR], '%, 2, true),gotVariant(me,
+    interpreter(0), 0, '%1:XOR, 
+  'X:XOR <- '_+_['%1:XOR,'%2:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem,'%2:XOR], '%, 2, true),gotVariant(me, interpreter(0),
+    0, '%1:XOR, 
+  'X:XOR <- '%2:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR,'%2:XOR], '%, 2, false)),problem:('_+_[
+    'X:XOR,'Y:XOR,'c1.Elem],'_+_['X:XOR,'c1.Elem],'_+_['X:XOR,'c2.Elem]) >
+    noSuchResult(me, interpreter(0), 4, true)
+==========================================
+get variants in XOR : X + c1 + Y such that X + c1, X + c2 irreducible .
+
+Variant 1
+rewrites: 0
+XOR: c1 + #1:XOR + #2:XOR
+X --> #1:XOR
+Y --> #2:XOR
+
+Variant 2
+rewrites: 7
+XOR: c1 + %1:XOR
+X --> %1:XOR
+Y --> 0
+
+Variant 3
+rewrites: 7
+XOR: %1:XOR + %2:XOR
+X --> %1:XOR
+Y --> c1 + %2:XOR
+
+Variant 4
+rewrites: 7
+XOR: %1:XOR
+X --> %1:XOR
+Y --> c1
+
+Variant 5
+rewrites: 7
+XOR: c1 + %2:XOR + %3:XOR
+X --> %1:XOR + %2:XOR
+Y --> %1:XOR + %3:XOR
+
+Variant 6
+rewrites: 7
+XOR: c1 + %2:XOR
+X --> %1:XOR + %2:XOR
+Y --> %1:XOR
+
+Variant 7
+rewrites: 7
+XOR: c1 + %2:XOR
+X --> %1:XOR
+Y --> %1:XOR + %2:XOR
+
+Variant 8
+rewrites: 7
+Elem: c1
+X --> %1:XOR
+Y --> %1:XOR
+
+Variant 9
+rewrites: 19
+XOR: 0
+X --> #1:XOR
+Y --> c1 + #1:XOR
+
+Variant 10
+rewrites: 19
+XOR: #2:XOR + #3:XOR
+X --> #1:XOR + #2:XOR
+Y --> c1 + #1:XOR + #3:XOR
+
+Variant 11
+rewrites: 19
+XOR: #1:XOR
+X --> #1:XOR + #2:XOR
+Y --> c1 + #2:XOR
+
+Variant 12
+rewrites: 19
+XOR: #1:XOR
+X --> #2:XOR
+Y --> c1 + #1:XOR + #2:XOR
+
+No more variants.
+rewrites: 23
+==========================================
+erewrite in VARIANT-TEST2 : <> < me : User | problem:('_+_['X:XOR,'c1.Elem],
+    empty) > createInterpreter(interpreterManager, me, newProcess) .
+rewrites: 11
+result Configuration: <> < me : User | soln: 5,result(gotVariant(me,
+    interpreter(0), 3, '_+_['c1.Elem,'%1:XOR], 
+  'X:XOR <- '%1:XOR, '%, none, false),gotVariant(me, interpreter(0), 0,
+    'c1.Elem, 
+  'X:XOR <- '0.XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '0.XOR, 
+  'X:XOR <- 'c1.Elem, '@, 0, true),gotVariant(me, interpreter(0), 0, '@1:XOR, 
+  'X:XOR <- '_+_['c1.Elem,'@1:XOR], '@, 0, false)),problem:('_+_['X:XOR,
+    'c1.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+==========================================
+get irredundant variants in XOR : c1 + X .
+rewrites: 3
+
+Variant 1
+XOR: c1 + #1:XOR
+X --> #1:XOR
+
+Variant 2
+Elem: c1
+X --> 0
+
+Variant 3
+XOR: 0
+X --> c1
+
+Variant 4
+XOR: %1:XOR
+X --> c1 + %1:XOR
+
+No more variants.
+==========================================
+erewrite in VARIANT-TEST2 : <> < me : User | problem:('_+_['X:XOR,'c1.Elem],
+    '_+_['X:XOR,'a.Elem]) > createInterpreter(interpreterManager, me,
+    newProcess) .
+rewrites: 9
+result Configuration: <> < me : User | soln: 4,result(gotVariant(me,
+    interpreter(0), 2, '_+_['c1.Elem,'%1:XOR], 
+  'X:XOR <- '%1:XOR, '%, none, false),gotVariant(me, interpreter(0), 0, '0.XOR,
+    
+  'X:XOR <- 'c1.Elem, '@, 0, true),gotVariant(me, interpreter(0), 0, '@1:XOR, 
+  'X:XOR <- '_+_['c1.Elem,'@1:XOR], '@, 0, false)),problem:('_+_['X:XOR,
+    'c1.Elem],'_+_['X:XOR,'a.Elem]) > noSuchResult(me, interpreter(0), 0, true)
+==========================================
+get irredundant variants in XOR : c1 + X such that X + a irreducible .
+rewrites: 2
+
+Variant 1
+XOR: c1 + #1:XOR
+X --> #1:XOR
+
+Variant 2
+XOR: 0
+X --> c1
+
+Variant 3
+XOR: %1:XOR
+X --> c1 + %1:XOR
+
+No more variants.
+==========================================
+erewrite in VARIANT-TEST2 : <> < me : User | problem:('_+_['X:XOR,'Y:XOR,
+    'c1.Elem],empty) > createInterpreter(interpreterManager, me, newProcess) .
+rewrites: 45
+result Configuration: <> < me : User | soln: 22,result(gotVariant(me,
+    interpreter(0), 46, '_+_['c1.Elem,'%1:XOR,'%2:XOR], 
+  'X:XOR <- '%1:XOR ; 
+  'Y:XOR <- '%2:XOR, '%, none, false),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@1:XOR], 
+  'X:XOR <- '0.XOR ; 
+  'Y:XOR <- '@1:XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@1:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '0.XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    '@1:XOR,'@2:XOR], 
+  'X:XOR <- '_+_['c1.Elem,'@2:XOR] ; 
+  'Y:XOR <- '@1:XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '@1:XOR, 
+  'X:XOR <- 'c1.Elem ; 
+  'Y:XOR <- '@1:XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    '@1:XOR,'@2:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'@2:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, '@1:XOR, 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- 'c1.Elem, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@2:XOR,'@3:XOR], 
+  'X:XOR <- '_+_['@1:XOR,'@2:XOR] ; 
+  'Y:XOR <- '_+_['@1:XOR,'@3:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, '_+_['c1.Elem,'@2:XOR], 
+  'X:XOR <- '_+_['@1:XOR,'@2:XOR] ; 
+  'Y:XOR <- '@1:XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@2:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '_+_['@1:XOR,'@2:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, 'c1.Elem, 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '@1:XOR, '@, 0, false),gotVariant(me, interpreter(0), 0, '%1:XOR, 
+  'X:XOR <- '0.XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR], '%, 1, true),gotVariant(me, interpreter(0),
+    0, '%1:XOR, 
+  'X:XOR <- '_+_['c1.Elem,'%1:XOR] ; 
+  'Y:XOR <- '0.XOR, '%, 2, true),gotVariant(me, interpreter(0), 0, '0.XOR, 
+  'X:XOR <- '_+_['c1.Elem,'%1:XOR] ; 
+  'Y:XOR <- '%1:XOR, '%, 3, true),gotVariant(me, interpreter(0), 0, '_+_[
+    '%2:XOR,'%3:XOR], 
+  'X:XOR <- '_+_['c1.Elem,'%1:XOR,'%3:XOR] ; 
+  'Y:XOR <- '_+_['%1:XOR,'%2:XOR], '%, 3, true),gotVariant(me, interpreter(0),
+    0, '%1:XOR, 
+  'X:XOR <- '_+_['c1.Elem,'%2:XOR] ; 
+  'Y:XOR <- '_+_['%1:XOR,'%2:XOR], '%, 3, true),gotVariant(me, interpreter(0),
+    0, '%1:XOR, 
+  'X:XOR <- '_+_['c1.Elem,'%1:XOR,'%2:XOR] ; 
+  'Y:XOR <- '%2:XOR, '%, 3, true),gotVariant(me, interpreter(0), 0, '0.XOR, 
+  'X:XOR <- '%1:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR], '%, 5, true),gotVariant(me, interpreter(0),
+    0, '_+_['%2:XOR,'%3:XOR], 
+  'X:XOR <- '_+_['%1:XOR,'%2:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR,'%3:XOR], '%, 5, true),gotVariant(me,
+    interpreter(0), 0, '%1:XOR, 
+  'X:XOR <- '_+_['%1:XOR,'%2:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem,'%2:XOR], '%, 5, true),gotVariant(me, interpreter(0),
+    0, '%1:XOR, 
+  'X:XOR <- '%2:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR,'%2:XOR], '%, 5, false)),problem:('_+_[
+    'X:XOR,'Y:XOR,'c1.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+==========================================
+get irredundant variants in XOR : X + c1 + Y .
+rewrites: 46
+
+Variant 1
+XOR: c1 + #1:XOR + #2:XOR
+X --> #1:XOR
+Y --> #2:XOR
+
+Variant 2
+XOR: c1 + %1:XOR
+X --> 0
+Y --> %1:XOR
+
+Variant 3
+XOR: c1 + %1:XOR
+X --> %1:XOR
+Y --> 0
+
+Variant 4
+XOR: %1:XOR + %2:XOR
+X --> c1 + %2:XOR
+Y --> %1:XOR
+
+Variant 5
+XOR: %1:XOR
+X --> c1
+Y --> %1:XOR
+
+Variant 6
+XOR: %1:XOR + %2:XOR
+X --> %1:XOR
+Y --> c1 + %2:XOR
+
+Variant 7
+XOR: %1:XOR
+X --> %1:XOR
+Y --> c1
+
+Variant 8
+XOR: c1 + %2:XOR + %3:XOR
+X --> %1:XOR + %2:XOR
+Y --> %1:XOR + %3:XOR
+
+Variant 9
+XOR: c1 + %2:XOR
+X --> %1:XOR + %2:XOR
+Y --> %1:XOR
+
+Variant 10
+XOR: c1 + %2:XOR
+X --> %1:XOR
+Y --> %1:XOR + %2:XOR
+
+Variant 11
+Elem: c1
+X --> %1:XOR
+Y --> %1:XOR
+
+Variant 12
+XOR: #1:XOR
+X --> 0
+Y --> c1 + #1:XOR
+
+Variant 13
+XOR: #1:XOR
+X --> c1 + #1:XOR
+Y --> 0
+
+Variant 14
+XOR: 0
+X --> c1 + #1:XOR
+Y --> #1:XOR
+
+Variant 15
+XOR: #2:XOR + #3:XOR
+X --> c1 + #1:XOR + #3:XOR
+Y --> #1:XOR + #2:XOR
+
+Variant 16
+XOR: #1:XOR
+X --> c1 + #2:XOR
+Y --> #1:XOR + #2:XOR
+
+Variant 17
+XOR: #1:XOR
+X --> c1 + #1:XOR + #2:XOR
+Y --> #2:XOR
+
+Variant 18
+XOR: 0
+X --> #1:XOR
+Y --> c1 + #1:XOR
+
+Variant 19
+XOR: #2:XOR + #3:XOR
+X --> #1:XOR + #2:XOR
+Y --> c1 + #1:XOR + #3:XOR
+
+Variant 20
+XOR: #1:XOR
+X --> #1:XOR + #2:XOR
+Y --> c1 + #2:XOR
+
+Variant 21
+XOR: #1:XOR
+X --> #2:XOR
+Y --> c1 + #1:XOR + #2:XOR
+
+No more variants.
+==========================================
+erewrite in VARIANT-TEST2 : <> < me : User | problem:('_+_['X:XOR,'Y:XOR,
+    'c1.Elem],'_+_['X:XOR,'c1.Elem],'_+_['X:XOR,'c2.Elem]) > createInterpreter(
+    interpreterManager, me, newProcess) .
+rewrites: 27
+result Configuration: <> < me : User | soln: 13,result(gotVariant(me,
+    interpreter(0), 23, '_+_['c1.Elem,'%1:XOR,'%2:XOR], 
+  'X:XOR <- '%1:XOR ; 
+  'Y:XOR <- '%2:XOR, '%, none, false),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@1:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '0.XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    '@1:XOR,'@2:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'@2:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, '@1:XOR, 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- 'c1.Elem, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@2:XOR,'@3:XOR], 
+  'X:XOR <- '_+_['@1:XOR,'@2:XOR] ; 
+  'Y:XOR <- '_+_['@1:XOR,'@3:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, '_+_['c1.Elem,'@2:XOR], 
+  'X:XOR <- '_+_['@1:XOR,'@2:XOR] ; 
+  'Y:XOR <- '@1:XOR, '@, 0, true),gotVariant(me, interpreter(0), 0, '_+_[
+    'c1.Elem,'@2:XOR], 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '_+_['@1:XOR,'@2:XOR], '@, 0, true),gotVariant(me, interpreter(0),
+    0, 'c1.Elem, 
+  'X:XOR <- '@1:XOR ; 
+  'Y:XOR <- '@1:XOR, '@, 0, false),gotVariant(me, interpreter(0), 0, '0.XOR, 
+  'X:XOR <- '%1:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR], '%, 2, true),gotVariant(me, interpreter(0),
+    0, '_+_['%2:XOR,'%3:XOR], 
+  'X:XOR <- '_+_['%1:XOR,'%2:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR,'%3:XOR], '%, 2, true),gotVariant(me,
+    interpreter(0), 0, '%1:XOR, 
+  'X:XOR <- '_+_['%1:XOR,'%2:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem,'%2:XOR], '%, 2, true),gotVariant(me, interpreter(0),
+    0, '%1:XOR, 
+  'X:XOR <- '%2:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'%1:XOR,'%2:XOR], '%, 2, false)),problem:('_+_[
+    'X:XOR,'Y:XOR,'c1.Elem],'_+_['X:XOR,'c1.Elem],'_+_['X:XOR,'c2.Elem]) >
+    noSuchResult(me, interpreter(0), 0, true)
+==========================================
+get irredundant variants in XOR : X + c1 + Y such that X + c1, X + c2
+    irreducible .
+rewrites: 23
+
+Variant 1
+XOR: c1 + #1:XOR + #2:XOR
+X --> #1:XOR
+Y --> #2:XOR
+
+Variant 2
+XOR: c1 + %1:XOR
+X --> %1:XOR
+Y --> 0
+
+Variant 3
+XOR: %1:XOR + %2:XOR
+X --> %1:XOR
+Y --> c1 + %2:XOR
+
+Variant 4
+XOR: %1:XOR
+X --> %1:XOR
+Y --> c1
+
+Variant 5
+XOR: c1 + %2:XOR + %3:XOR
+X --> %1:XOR + %2:XOR
+Y --> %1:XOR + %3:XOR
+
+Variant 6
+XOR: c1 + %2:XOR
+X --> %1:XOR + %2:XOR
+Y --> %1:XOR
+
+Variant 7
+XOR: c1 + %2:XOR
+X --> %1:XOR
+Y --> %1:XOR + %2:XOR
+
+Variant 8
+Elem: c1
+X --> %1:XOR
+Y --> %1:XOR
+
+Variant 9
+XOR: 0
+X --> #1:XOR
+Y --> c1 + #1:XOR
+
+Variant 10
+XOR: #2:XOR + #3:XOR
+X --> #1:XOR + #2:XOR
+Y --> c1 + #1:XOR + #3:XOR
+
+Variant 11
+XOR: #1:XOR
+X --> #1:XOR + #2:XOR
+Y --> c1 + #2:XOR
+
+Variant 12
+XOR: #1:XOR
+X --> #2:XOR
+Y --> c1 + #1:XOR + #2:XOR
+
+No more variants.
+Bye.

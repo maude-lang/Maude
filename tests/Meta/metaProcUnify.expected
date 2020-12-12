@@ -1,0 +1,354 @@
+==========================================
+erewrite in UNIFY-TEST : <> < me : User | problem: ('_+_['X:Nat,'Y:Nat] =?
+    '_+_['Z:Nat,'W:Nat]) > createInterpreter(interpreterManager, me,
+    newProcess) .
+rewrites: 19
+result Configuration: <> < me : User | problem: ('_+_['X:Nat,'Y:Nat] =? '_+_[
+    'Z:Nat,'W:Nat]),soln: 8,result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '%2:Nat ; 
+  'X:Nat <- '%1:Nat ; 
+  'Y:Nat <- '%2:Nat ; 
+  'Z:Nat <- '%1:Nat, '%),result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '%2:Nat ; 
+  'X:Nat <- '%1:Nat ; 
+  'Y:Nat <- '_+_['%2:Nat,'%3:Nat] ; 
+  'Z:Nat <- '_+_['%1:Nat,'%3:Nat], '%),result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '%2:Nat ; 
+  'X:Nat <- '%2:Nat ; 
+  'Y:Nat <- '%1:Nat ; 
+  'Z:Nat <- '%1:Nat, '%),result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '%2:Nat ; 
+  'X:Nat <- '_+_['%2:Nat,'%3:Nat] ; 
+  'Y:Nat <- '%1:Nat ; 
+  'Z:Nat <- '_+_['%1:Nat,'%3:Nat], '%),result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '_+_['%1:Nat,'%3:Nat] ; 
+  'X:Nat <- '%1:Nat ; 
+  'Y:Nat <- '_+_['%2:Nat,'%3:Nat] ; 
+  'Z:Nat <- '%2:Nat, '%),result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '_+_['%1:Nat,'%3:Nat] ; 
+  'X:Nat <- '_+_['%2:Nat,'%3:Nat] ; 
+  'Y:Nat <- '%1:Nat ; 
+  'Z:Nat <- '%2:Nat, '%),result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '_+_['%3:Nat,'%4:Nat] ; 
+  'X:Nat <- '_+_['%1:Nat,'%3:Nat] ; 
+  'Y:Nat <- '_+_['%2:Nat,'%4:Nat] ; 
+  'Z:Nat <- '_+_['%1:Nat,'%2:Nat], '%) > noSuchResult(me, interpreter(0), true)
+==========================================
+unify in RAT : X:Nat + Y:Nat =? W:Nat + Z .
+
+Unifier 1
+X:Nat --> #1:Nat + #3:Nat
+Y:Nat --> #2:Nat + #4:Nat
+Z --> #1:Nat + #2:Nat
+W:Nat --> #3:Nat + #4:Nat
+
+Unifier 2
+X:Nat --> #2:Nat + #3:Nat
+Y:Nat --> #1:Nat
+Z --> #1:Nat + #3:Nat
+W:Nat --> #2:Nat
+
+Unifier 3
+X:Nat --> #1:Nat
+Y:Nat --> #2:Nat + #3:Nat
+Z --> #1:Nat + #3:Nat
+W:Nat --> #2:Nat
+
+Unifier 4
+X:Nat --> #2:Nat + #3:Nat
+Y:Nat --> #1:Nat
+Z --> #2:Nat
+W:Nat --> #1:Nat + #3:Nat
+
+Unifier 5
+X:Nat --> #1:Nat
+Y:Nat --> #2:Nat
+Z --> #1:Nat
+W:Nat --> #2:Nat
+
+Unifier 6
+X:Nat --> #1:Nat
+Y:Nat --> #2:Nat + #3:Nat
+Z --> #2:Nat
+W:Nat --> #1:Nat + #3:Nat
+
+Unifier 7
+X:Nat --> #2:Nat
+Y:Nat --> #1:Nat
+Z --> #1:Nat
+W:Nat --> #2:Nat
+==========================================
+erewrite in UNIFY-TEST : <> < me : User | problem: ('_+_['X:Nat,'X:Nat] =?
+    '_+_['Z:Nat,'W:Nat]) > createInterpreter(interpreterManager, me,
+    newProcess) .
+rewrites: 15
+result Configuration: <> < me : User | problem: ('_+_['X:Nat,'X:Nat] =? '_+_[
+    'Z:Nat,'W:Nat]),soln: 6,result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '%1:Nat ; 
+  'X:Nat <- '%1:Nat ; 
+  'Z:Nat <- '%1:Nat, '%),result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '%1:Nat ; 
+  'X:Nat <- '_+_['%1:Nat,'%2:Nat] ; 
+  'Z:Nat <- '_+_['%1:Nat,'%2:Nat,'%2:Nat], '%),result: gotUnifier(me,
+    interpreter(0), 
+  'W:Nat <- '_+_['%2:Nat,'%2:Nat] ; 
+  'X:Nat <- '_+_['%1:Nat,'%2:Nat] ; 
+  'Z:Nat <- '_+_['%1:Nat,'%1:Nat], '%),result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '_+_['%1:Nat,'%2:Nat,'%2:Nat] ; 
+  'X:Nat <- '_+_['%1:Nat,'%2:Nat] ; 
+  'Z:Nat <- '%1:Nat, '%),result: gotUnifier(me, interpreter(0), 
+  'W:Nat <- '_+_['%2:Nat,'%3:Nat,'%3:Nat] ; 
+  'X:Nat <- '_+_['%1:Nat,'%2:Nat,'%3:Nat] ; 
+  'Z:Nat <- '_+_['%1:Nat,'%1:Nat,'%2:Nat], '%) > noSuchResult(me, interpreter(
+    0), true)
+==========================================
+unify in RAT : X:Nat + X:Nat =? W:Nat + Z .
+
+Unifier 1
+X:Nat --> #1:Nat + #2:Nat + #3:Nat
+Z --> #1:Nat + #1:Nat + #2:Nat
+W:Nat --> #2:Nat + #3:Nat + #3:Nat
+
+Unifier 2
+X:Nat --> #1:Nat + #2:Nat
+Z --> #1:Nat + #2:Nat + #2:Nat
+W:Nat --> #1:Nat
+
+Unifier 3
+X:Nat --> #1:Nat + #2:Nat
+Z --> #1:Nat + #1:Nat
+W:Nat --> #2:Nat + #2:Nat
+
+Unifier 4
+X:Nat --> #1:Nat + #2:Nat
+Z --> #1:Nat
+W:Nat --> #1:Nat + #2:Nat + #2:Nat
+
+Unifier 5
+X:Nat --> #1:Nat
+Z --> #1:Nat
+W:Nat --> #1:Nat
+==========================================
+erewrite in UNIFY-TEST2 : <> < me : User | problem: ('__['X:Foo,'Y:Foo] =? '__[
+    'Z:Foo,'W:Foo]) > createInterpreter(interpreterManager, me, newProcess) .
+rewrites: 9
+result Configuration: <> < me : User | problem: ('__['X:Foo,'Y:Foo] =? '__[
+    'Z:Foo,'W:Foo]),soln: 4,result: gotUnifier(me, interpreter(0), 
+  'W:Foo <- '#2:Foo ; 
+  'X:Foo <- '#1:Foo ; 
+  'Y:Foo <- '#2:Foo ; 
+  'Z:Foo <- '#1:Foo, '#),result: gotUnifier(me, interpreter(0), 
+  'W:Foo <- '#2:Foo ; 
+  'X:Foo <- '#1:Foo ; 
+  'Y:Foo <- '__['#3:Foo,'#2:Foo] ; 
+  'Z:Foo <- '__['#1:Foo,'#3:Foo], '#),result: gotUnifier(me, interpreter(0), 
+  'W:Foo <- '__['#3:Foo,'#1:Foo] ; 
+  'X:Foo <- '__['#2:Foo,'#3:Foo] ; 
+  'Y:Foo <- '#1:Foo ; 
+  'Z:Foo <- '#2:Foo, '#) > noSuchResult(me, interpreter(0), true)
+==========================================
+unify in FOO : X:Foo Y:Foo =? W:Foo Z:Foo .
+
+Unifier 1
+X:Foo --> #2:Foo #3:Foo
+Y:Foo --> #1:Foo
+W:Foo --> #2:Foo
+Z:Foo --> #3:Foo #1:Foo
+
+Unifier 2
+X:Foo --> #1:Foo
+Y:Foo --> #3:Foo #2:Foo
+W:Foo --> #1:Foo #3:Foo
+Z:Foo --> #2:Foo
+
+Unifier 3
+X:Foo --> #1:Foo
+Y:Foo --> #2:Foo
+W:Foo --> #1:Foo
+Z:Foo --> #2:Foo
+==========================================
+erewrite in UNIFY-TEST2 : <> < me : User | problem: ('__['X:Foo,'X:Foo] =? '__[
+    'Z:Foo,'W:Foo]) > createInterpreter(interpreterManager, me, newProcess) .
+rewrites: 9
+result Configuration: <> < me : User | problem: ('__['X:Foo,'X:Foo] =? '__[
+    'Z:Foo,'W:Foo]),soln: 4,result: gotUnifier(me, interpreter(0), 
+  'W:Foo <- '#1:Foo ; 
+  'X:Foo <- '#1:Foo ; 
+  'Z:Foo <- '#1:Foo, '#),result: gotUnifier(me, interpreter(0), 
+  'W:Foo <- '#1:Foo ; 
+  'X:Foo <- '__['#2:Foo,'#1:Foo] ; 
+  'Z:Foo <- '__['#2:Foo,'#1:Foo,'#2:Foo], '#),result: gotUnifier(me,
+    interpreter(0), 
+  'W:Foo <- '__['#2:Foo,'#1:Foo,'#2:Foo] ; 
+  'X:Foo <- '__['#1:Foo,'#2:Foo] ; 
+  'Z:Foo <- '#1:Foo, '#) > noSuchResult(me, interpreter(0), true)
+==========================================
+unify in FOO : X:Foo X:Foo =? W:Foo Z:Foo .
+
+Unifier 1
+X:Foo --> #2:Foo #1:Foo
+W:Foo --> #2:Foo #1:Foo #2:Foo
+Z:Foo --> #1:Foo
+
+Unifier 2
+X:Foo --> #1:Foo #2:Foo
+W:Foo --> #1:Foo
+Z:Foo --> #2:Foo #1:Foo #2:Foo
+
+Unifier 3
+X:Foo --> #1:Foo
+W:Foo --> #1:Foo
+Z:Foo --> #1:Foo
+==========================================
+erewrite in UNIFY-TEST2 : <> < me : User | problem: ('__['X:Foo,'Y:Foo] =? '__[
+    'Z:Foo,'X:Foo]) > createInterpreter(interpreterManager, me, newProcess) .
+Warning: Unification modulo the theory of operator __ has encountered an
+    instance for which it may not be complete.
+rewrites: 7
+result Configuration: <> < me : User | problem: ('__['X:Foo,'Y:Foo] =? '__[
+    'Z:Foo,'X:Foo]),soln: 3,result: gotUnifier(me, interpreter(0), 
+  'X:Foo <- '#1:Foo ; 
+  'Y:Foo <- '#1:Foo ; 
+  'Z:Foo <- '#1:Foo, '#),result: gotUnifier(me, interpreter(0), 
+  'X:Foo <- '#1:Foo ; 
+  'Y:Foo <- '__['#2:Foo,'#1:Foo] ; 
+  'Z:Foo <- '__['#1:Foo,'#2:Foo], '#) > noSuchResult(me, interpreter(0), false)
+==========================================
+unify in FOO : X:Foo Y:Foo =? W:Foo X:Foo .
+Warning: Unification modulo the theory of operator __ has encountered an
+    instance for which it may not be complete.
+
+Unifier 1
+X:Foo --> #1:Foo
+Y:Foo --> #2:Foo #1:Foo
+W:Foo --> #1:Foo #2:Foo
+
+Unifier 2
+X:Foo --> #1:Foo
+Y:Foo --> #1:Foo
+W:Foo --> #1:Foo
+Warning: Some unifiers may have been missed due to incomplete unification
+    algorithm(s).
+==========================================
+erewrite in DISJOINT-UNIFY-TEST : <> < me : User | problem: ('_+_['X:Nat,
+    'Y:Nat] =? '_+_['X:Nat,'Y:Nat]) > createInterpreter(interpreterManager, me,
+    newProcess) .
+rewrites: 19
+result Configuration: <> < me : User | problem: ('_+_['X:Nat,'Y:Nat] =? '_+_[
+    'X:Nat,'Y:Nat]),soln: 8,result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Nat <- '#1:Nat ; 
+  'Y:Nat <- '#2:Nat, 
+  'X:Nat <- '#1:Nat ; 
+  'Y:Nat <- '#2:Nat, '#),result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Nat <- '#1:Nat ; 
+  'Y:Nat <- '_+_['#2:Nat,'#3:Nat], 
+  'X:Nat <- '#2:Nat ; 
+  'Y:Nat <- '_+_['#1:Nat,'#3:Nat], '#),result: gotDisjointUnifier(me,
+    interpreter(0), 
+  'X:Nat <- '#1:Nat ; 
+  'Y:Nat <- '_+_['#2:Nat,'#3:Nat], 
+  'X:Nat <- '_+_['#1:Nat,'#3:Nat] ; 
+  'Y:Nat <- '#2:Nat, '#),result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Nat <- '#2:Nat ; 
+  'Y:Nat <- '#1:Nat, 
+  'X:Nat <- '#1:Nat ; 
+  'Y:Nat <- '#2:Nat, '#),result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Nat <- '_+_['#1:Nat,'#3:Nat] ; 
+  'Y:Nat <- '_+_['#2:Nat,'#4:Nat], 
+  'X:Nat <- '_+_['#1:Nat,'#2:Nat] ; 
+  'Y:Nat <- '_+_['#3:Nat,'#4:Nat], '#),result: gotDisjointUnifier(me,
+    interpreter(0), 
+  'X:Nat <- '_+_['#2:Nat,'#3:Nat] ; 
+  'Y:Nat <- '#1:Nat, 
+  'X:Nat <- '#2:Nat ; 
+  'Y:Nat <- '_+_['#1:Nat,'#3:Nat], '#),result: gotDisjointUnifier(me,
+    interpreter(0), 
+  'X:Nat <- '_+_['#2:Nat,'#3:Nat] ; 
+  'Y:Nat <- '#1:Nat, 
+  'X:Nat <- '_+_['#1:Nat,'#3:Nat] ; 
+  'Y:Nat <- '#2:Nat, '#) > noSuchResult(me, interpreter(0), true)
+==========================================
+erewrite in DISJOINT-UNIFY-TEST : <> < me : User | problem: ('_+_['X:Nat,
+    'X:Nat] =? '_+_['X:Nat,'Y:Nat]) > createInterpreter(interpreterManager, me,
+    newProcess) .
+rewrites: 15
+result Configuration: <> < me : User | problem: ('_+_['X:Nat,'X:Nat] =? '_+_[
+    'X:Nat,'Y:Nat]),soln: 6,result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Nat <- '#1:Nat, 
+  'X:Nat <- '#1:Nat ; 
+  'Y:Nat <- '#1:Nat, '#),result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Nat <- '_+_['#1:Nat,'#2:Nat], 
+  'X:Nat <- '#1:Nat ; 
+  'Y:Nat <- '_+_['#1:Nat,'#2:Nat,'#2:Nat], '#),result: gotDisjointUnifier(me,
+    interpreter(0), 
+  'X:Nat <- '_+_['#1:Nat,'#2:Nat], 
+  'X:Nat <- '_+_['#1:Nat,'#1:Nat] ; 
+  'Y:Nat <- '_+_['#2:Nat,'#2:Nat], '#),result: gotDisjointUnifier(me,
+    interpreter(0), 
+  'X:Nat <- '_+_['#1:Nat,'#2:Nat], 
+  'X:Nat <- '_+_['#1:Nat,'#2:Nat,'#2:Nat] ; 
+  'Y:Nat <- '#1:Nat, '#),result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Nat <- '_+_['#1:Nat,'#2:Nat,'#3:Nat], 
+  'X:Nat <- '_+_['#1:Nat,'#1:Nat,'#2:Nat] ; 
+  'Y:Nat <- '_+_['#2:Nat,'#3:Nat,'#3:Nat], '#) > noSuchResult(me, interpreter(
+    0), true)
+==========================================
+erewrite in DISJOINT-UNIFY-TEST2 : <> < me : User | problem: ('__['X:Foo,
+    'Y:Foo] =? '__['X:Foo,'Y:Foo]) > createInterpreter(interpreterManager, me,
+    newProcess) .
+rewrites: 9
+result Configuration: <> < me : User | problem: ('__['X:Foo,'Y:Foo] =? '__[
+    'X:Foo,'Y:Foo]),soln: 4,result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Foo <- '%1:Foo ; 
+  'Y:Foo <- '%2:Foo, 
+  'X:Foo <- '%1:Foo ; 
+  'Y:Foo <- '%2:Foo, '%),result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Foo <- '%1:Foo ; 
+  'Y:Foo <- '__['%3:Foo,'%2:Foo], 
+  'X:Foo <- '__['%1:Foo,'%3:Foo] ; 
+  'Y:Foo <- '%2:Foo, '%),result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Foo <- '__['%2:Foo,'%3:Foo] ; 
+  'Y:Foo <- '%1:Foo, 
+  'X:Foo <- '%2:Foo ; 
+  'Y:Foo <- '__['%3:Foo,'%1:Foo], '%) > noSuchResult(me, interpreter(0), true)
+==========================================
+erewrite in DISJOINT-UNIFY-TEST2 : <> < me : User | problem: ('__['X:Foo,
+    'Y:Foo,'X:Foo] =? '__['X:Foo,'X:Foo]) > createInterpreter(
+    interpreterManager, me, newProcess) .
+Warning: Unification modulo the theory of operator __ has encountered an
+    instance for which it may not be complete.
+rewrites: 7
+result Configuration: <> < me : User | problem: ('__['X:Foo,'Y:Foo,'X:Foo] =?
+    '__['X:Foo,'X:Foo]),soln: 3,result: gotDisjointUnifier(me, interpreter(0), 
+  'X:Foo <- '%1:Foo ; 
+  'Y:Foo <- '__['%1:Foo,'%1:Foo], 
+  'X:Foo <- '__['%1:Foo,'%1:Foo], '%),result: gotDisjointUnifier(me,
+    interpreter(0), 
+  'X:Foo <- '%1:Foo ; 
+  'Y:Foo <- '__['%2:Foo,'%1:Foo,'%1:Foo,'%2:Foo], 
+  'X:Foo <- '__['%1:Foo,'%2:Foo,'%1:Foo], '%) > noSuchResult(me, interpreter(
+    0), false)
+==========================================
+erewrite in IRRED-UNIFY-TEST : <> < me : User | problem: ('__['L:Bag,'M:Bag] =?
+    '__['P:Bag,'Q:Bag]) > createInterpreter(interpreterManager, me, newProcess)
+    .
+rewrites: 5
+result Configuration: <> < me : User | problem: ('__['L:Bag,'M:Bag] =? '__[
+    'P:Bag,'Q:Bag]),soln: 2,result: gotIrredundantUnifier(me, interpreter(0), 
+  'L:Bag <- '__['%2:Bag,'%4:Bag] ; 
+  'M:Bag <- '__['%1:Bag,'%3:Bag] ; 
+  'P:Bag <- '__['%3:Bag,'%4:Bag] ; 
+  'Q:Bag <- '__['%1:Bag,'%2:Bag], '%) > noSuchResult(me, interpreter(0), true)
+==========================================
+erewrite in IRRED-DISJOINT-UNIFY-TEST : <> < me : User | problem: ('__['L:Bag,
+    'M:Bag] =? '__['P:Bag,'Q:Bag]) > createInterpreter(interpreterManager, me,
+    newProcess) .
+rewrites: 5
+result Configuration: <> < me : User | problem: ('__['L:Bag,'M:Bag] =? '__[
+    'P:Bag,'Q:Bag]),soln: 2,result: gotIrredundantDisjointUnifier(me,
+    interpreter(0), 
+  'L:Bag <- '__['#2:Bag,'#4:Bag] ; 
+  'M:Bag <- '__['#1:Bag,'#3:Bag], 
+  'P:Bag <- '__['#3:Bag,'#4:Bag] ; 
+  'Q:Bag <- '__['#1:Bag,'#2:Bag], '#) > noSuchResult(me, interpreter(0), true)
+Bye.

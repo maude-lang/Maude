@@ -53,11 +53,13 @@ IO_Manager::IO_Manager()
   contFlag = false;
   wrapOut = 0;
   wrapErr = 0;
-
+  savedOut = 0;
+  savedErr = 0;
   firstUnused = 0;
   bufferEnd = 0;
   bufferSize = 0;
   buffer = 0;
+
 }
 
 void
@@ -72,24 +74,48 @@ IO_Manager::setCommandLineEditing(size_t lineLength, size_t historyLength)
 void
 IO_Manager::setAutoWrap()
 {
+  Assert(wrapOut == 0 && wrapErr == 0 && savedOut == 0 && savedErr == 0, "already set");
   //
   //	Set up autowrapping of standard output and standard error.
   //
   winsize w;
+  {
+    int columns = DEFAULT_COLUMNS;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == 0 && w.ws_col > 0)
+      columns = w.ws_col;
+    wrapOut = new AutoWrapBuffer(cout.rdbuf(), columns);
+    savedOut = cout.rdbuf(wrapOut);
+  }
+  {
+    int columns = DEFAULT_COLUMNS;
+    if (ioctl(STDERR_FILENO, TIOCGWINSZ, &w) == 0 && w.ws_col > 0)
+      columns = w.ws_col;
+    wrapErr = new AutoWrapBuffer (cerr.rdbuf(), columns);
+    savedErr = cerr.rdbuf(wrapErr);
+  }
+}
 
-  int columns = DEFAULT_COLUMNS;
-  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == 0 && w.ws_col > 0)
-    columns = w.ws_col;
-  // cout << "out columns " << columns << '\n';
-  wrapOut = new AutoWrapBuffer(cout.rdbuf(), columns);
-  (void) cout.rdbuf(wrapOut);
-
-  columns = DEFAULT_COLUMNS;
-  if (ioctl(STDERR_FILENO, TIOCGWINSZ, &w) == 0 && w.ws_col > 0)
-    columns = w.ws_col;
-  // cout << "err columns " << columns << '\n';
-  wrapErr = new AutoWrapBuffer (cerr.rdbuf(), columns);
-  (void) cerr.rdbuf(wrapErr);
+void
+IO_Manager::unsetAutoWrap()
+{
+  //
+  //	Undo autowrapping of standard output and standard error if we
+  //	originally wrapped them.
+  //
+  if (wrapOut != 0 && savedOut != 0)
+    {
+      (void) cout.rdbuf(savedOut);
+      delete wrapOut;
+      wrapOut = 0;
+      savedOut = 0;
+    }
+  if (wrapErr != 0 && savedErr != 0)
+    {
+      (void) cerr.rdbuf(savedErr);
+      delete wrapErr;
+      wrapErr = 0;
+      savedErr = 0;
+    }
 }
 
 ssize_t

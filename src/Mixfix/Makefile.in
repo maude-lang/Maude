@@ -123,8 +123,9 @@ am__libmixfix_a_SOURCES_DIST = parameterDatabase.cc syntaxContainer.cc \
 	maudemlBuffer.cc interpreter.cc moduleDatabase.cc \
 	viewDatabase.cc profileModule.cc mixfixParser.cc \
 	visibleModule.cc sharedTokens.cc metadataStore.cc \
-	printAttribute.cc banner.cc lexer.cc tokenizer.cc surface.cc \
-	freshVariableSource.cc variableGenerator.cc compiler.cc
+	printAttribute.cc banner.cc lexer.cc tokenizer.cc \
+	deserializer.cc surface.cc freshVariableSource.cc \
+	variableGenerator.cc compiler.cc
 @BUILD_COMPILER_TRUE@am__objects_1 = libmixfix_a-compiler.$(OBJEXT)
 am_libmixfix_a_OBJECTS = libmixfix_a-parameterDatabase.$(OBJEXT) \
 	libmixfix_a-syntaxContainer.$(OBJEXT) \
@@ -162,10 +163,11 @@ am_libmixfix_a_OBJECTS = libmixfix_a-parameterDatabase.$(OBJEXT) \
 	libmixfix_a-metadataStore.$(OBJEXT) \
 	libmixfix_a-printAttribute.$(OBJEXT) \
 	libmixfix_a-banner.$(OBJEXT) libmixfix_a-lexer.$(OBJEXT) \
-	libmixfix_a-tokenizer.$(OBJEXT) libmixfix_a-surface.$(OBJEXT) \
+	libmixfix_a-tokenizer.$(OBJEXT) \
+	libmixfix_a-deserializer.$(OBJEXT) \
+	libmixfix_a-surface.$(OBJEXT) \
 	libmixfix_a-freshVariableSource.$(OBJEXT) \
-	libmixfix_a-variableGenerator.$(OBJEXT) \
-	libmixfix_a-tokenizer.$(OBJEXT) $(am__objects_1)
+	libmixfix_a-variableGenerator.$(OBJEXT) $(am__objects_1)
 libmixfix_a_OBJECTS = $(am_libmixfix_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -184,6 +186,7 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/libmixfix_a-banner.Po \
 	./$(DEPDIR)/libmixfix_a-compiler.Po \
+	./$(DEPDIR)/libmixfix_a-deserializer.Po \
 	./$(DEPDIR)/libmixfix_a-enclosingObject.Po \
 	./$(DEPDIR)/libmixfix_a-entity.Po \
 	./$(DEPDIR)/libmixfix_a-fileTable.Po \
@@ -457,17 +460,17 @@ libmixfix_a_SOURCES = \
 	banner.cc \
 	lexer.cc \
 	tokenizer.cc \
+	deserializer.cc \
 	surface.cc \
 	freshVariableSource.cc \
 	variableGenerator.cc \
-	tokenizer.cc \
 	$(COMPILER_SRC)
 
 EXTRA_libmixfix_a_SOURCES = \
 	compiler.cc
 
-BUILT_SOURCES = surface.yy surface.cc surface.h lexer.cc tokenizer.cc
-CLEANFILES = surface.yy surface.cc surface.h lexer.cc tokenizer.cc
+BUILT_SOURCES = surface.yy surface.cc surface.h lexer.cc tokenizer.cc deserializer.cc
+CLEANFILES = surface.yy surface.cc surface.h lexer.cc tokenizer.cc deserializer.cc
 EXTRA_DIST = \
 	renameModule.cc \
 	parameterization.cc \
@@ -476,11 +479,14 @@ EXTRA_DIST = \
 	instantiateViewWithFreeParameters.cc \
 	instantiateViewWithBoundParameters.cc \
 	lexerAux.cc \
+	deserializerAux.cc \
 	process.cc \
 	fixUp.cc \
 	ops.cc \
 	command.cc \
 	entry.cc \
+	fancySymbols.cc \
+	validateAttributes.cc \
 	prettyPrint.cc \
 	bufferPrint.cc \
 	specialSymbolTypes.cc \
@@ -507,6 +513,7 @@ EXTRA_DIST = \
 	bottom.yy \
 	lexer.ll \
 	tokenizer.ll \
+	deserializer.ll \
 	graphPrint.cc \
 	ansiEscapeSequences.cc \
 	narrowing.cc \
@@ -517,7 +524,7 @@ EXTRA_DIST = \
 	cvc4_Bindings.cc \
 	yices2_Bindings.cc \
 	quotedIdentifierOpSignature.cc \
-	tokenizer.ll
+	serialize.cc
 
 noinst_HEADERS = \
 	renaming.hh \
@@ -619,6 +626,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-banner.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-compiler.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-deserializer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-enclosingObject.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-entity.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-fileTable.Po@am__quote@ # am--include-marker
@@ -1257,6 +1265,20 @@ libmixfix_a-tokenizer.obj: tokenizer.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmixfix_a-tokenizer.obj `if test -f 'tokenizer.cc'; then $(CYGPATH_W) 'tokenizer.cc'; else $(CYGPATH_W) '$(srcdir)/tokenizer.cc'; fi`
 
+libmixfix_a-deserializer.o: deserializer.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmixfix_a-deserializer.o -MD -MP -MF $(DEPDIR)/libmixfix_a-deserializer.Tpo -c -o libmixfix_a-deserializer.o `test -f 'deserializer.cc' || echo '$(srcdir)/'`deserializer.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmixfix_a-deserializer.Tpo $(DEPDIR)/libmixfix_a-deserializer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='deserializer.cc' object='libmixfix_a-deserializer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmixfix_a-deserializer.o `test -f 'deserializer.cc' || echo '$(srcdir)/'`deserializer.cc
+
+libmixfix_a-deserializer.obj: deserializer.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmixfix_a-deserializer.obj -MD -MP -MF $(DEPDIR)/libmixfix_a-deserializer.Tpo -c -o libmixfix_a-deserializer.obj `if test -f 'deserializer.cc'; then $(CYGPATH_W) 'deserializer.cc'; else $(CYGPATH_W) '$(srcdir)/deserializer.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmixfix_a-deserializer.Tpo $(DEPDIR)/libmixfix_a-deserializer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='deserializer.cc' object='libmixfix_a-deserializer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmixfix_a-deserializer.obj `if test -f 'deserializer.cc'; then $(CYGPATH_W) 'deserializer.cc'; else $(CYGPATH_W) '$(srcdir)/deserializer.cc'; fi`
+
 libmixfix_a-surface.o: surface.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmixfix_a-surface.o -MD -MP -MF $(DEPDIR)/libmixfix_a-surface.Tpo -c -o libmixfix_a-surface.o `test -f 'surface.cc' || echo '$(srcdir)/'`surface.cc
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmixfix_a-surface.Tpo $(DEPDIR)/libmixfix_a-surface.Po
@@ -1443,6 +1465,7 @@ clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/libmixfix_a-banner.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-compiler.Po
+	-rm -f ./$(DEPDIR)/libmixfix_a-deserializer.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-enclosingObject.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-entity.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-fileTable.Po
@@ -1533,6 +1556,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/libmixfix_a-banner.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-compiler.Po
+	-rm -f ./$(DEPDIR)/libmixfix_a-deserializer.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-enclosingObject.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-entity.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-fileTable.Po
@@ -1637,6 +1661,10 @@ lexer.cc: \
 tokenizer.cc: \
 	$(srcdir)/tokenizer.ll
 	$(FLEX) -Pzz -t -p -p $(srcdir)/tokenizer.ll > tokenizer.cc
+
+deserializer.cc: \
+	$(srcdir)/deserializer.ll
+	$(FLEX) -Pxx -t -p -p $(srcdir)/deserializer.ll > deserializer.cc
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -188,7 +188,7 @@ VariantMatchingProblem::findNextMatcher()
   for (int i = 0; i < nrPatternVariables; ++i)
     {
       DagNode* d = (*currentVariant)[i];
-      DagNode* inst = d->instantiate(*matcher);
+      DagNode* inst = d->instantiate(*matcher, true);  // do we really need to maintainInvariants?
       currentMatcher[i] = (inst == 0) ? d : inst;
     }
 

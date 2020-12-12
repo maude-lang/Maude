@@ -1,3 +1,13 @@
+2020-12-11  Steven Eker  <eker2@eker10>
+
+	* variableDagNode.cc (VariableDagNode::instantiate2): take
+	maintainInvariants argument
+
+	* variableDagNode.hh (class VariableDagNode): updated decl for
+	instantiate2()
+
+===================================Maude132===========================================
+
 2020-09-30  Steven Eker  <eker2@eker10>
 
 	* variableDagNode.cc (VariableDagNode::computeSolvedForm2): prefer

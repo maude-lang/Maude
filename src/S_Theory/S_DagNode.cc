@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -290,13 +290,13 @@ S_DagNode::insertVariables2(NatSet& occurs)
 }
 
 DagNode*
-S_DagNode::instantiate2(const Substitution& substitution)
+S_DagNode::instantiate2(const Substitution& substitution, bool maintainInvariants)
 {
-  if (DagNode* n = arg->instantiate(substitution))
+  if (DagNode* n = arg->instantiate(substitution, maintainInvariants))
     {
       mpz_class num = *number;
       S_Symbol* s = symbol();
-      if (s == n->symbol())
+      if (maintainInvariants && s == n->symbol())
 	{
 	  //
 	  //	Our argument instantiated into our theory so we need
@@ -309,8 +309,9 @@ S_DagNode::instantiate2(const Substitution& substitution)
       DagNode* d =  new S_DagNode(s, num, n);
       if (n->isGround())
 	{
-	  s->computeBaseSort(d);
 	  d->setGround();
+	  if (maintainInvariants)
+	    s->computeBaseSort(d);
 	}
       return d;
     }
@@ -336,8 +337,8 @@ S_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vector
 {
   S_Symbol* s = symbol();
   DagNode* n = s->eagerArgument(0) ?
-	arg->instantiateWithCopies(substitution, eagerCopies) :
-	arg->instantiate(substitution); 
+    arg->instantiateWithCopies(substitution, eagerCopies) :
+    arg->instantiate(substitution, false); 
   if (n != 0)
     {
       mpz_class num = *number;

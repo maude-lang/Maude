@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -542,13 +542,13 @@ ACU_DagNode::insertVariables2(NatSet& occurs)
 }
 
 DagNode*
-ACU_DagNode::instantiate2(const Substitution& substitution)
+ACU_DagNode::instantiate2(const Substitution& substitution, bool maintainInvariants)
 {
   ACU_Symbol* s = symbol();
   int nrArgs = argArray.length();
   for (int i = 0; i < nrArgs; ++i)
     {
-      if (DagNode* n = argArray[i].dagNode->instantiate(substitution))
+      if (DagNode* n = argArray[i].dagNode->instantiate(substitution, maintainInvariants))
 	{
 	  //
 	  //	Argument changed under instantiation - need to make a new
@@ -578,23 +578,31 @@ ACU_DagNode::instantiate2(const Substitution& substitution)
 	  for (++i; i < nrArgs; ++i)
 	    {
 	      DagNode* a = argArray[i].dagNode;
-	      if (DagNode* n = a->instantiate(substitution))
+	      if (DagNode* n = a->instantiate(substitution, maintainInvariants))
 		a = n;
 	      if (!(a->isGround()))
 		ground = false;
 	      d->argArray[i].dagNode = a;
 	      d->argArray[i].multiplicity = argArray[i].multiplicity;
 	    }
-	  //
-	  //	Normalize the new dagnode; if it doesn't collapse and
-	  //	all its arguments are ground we compute its base sort.
-	  //
-	  if (!(d->dumbNormalizeAtTop()) && ground)
+	  if (maintainInvariants)
 	    {
-	      s->computeBaseSort(d);  // FIXME: is this a good idea in the narrowing sense?
-	      d->setGround();
+	      //
+	      //	Normalize the new dagnode; if it doesn't collapse and
+	      //	all its arguments are ground we compute its base sort.
+	      //
+	      if (!(d->dumbNormalizeAtTop()) && ground)
+		{
+		  s->computeBaseSort(d);
+		  d->setGround();
+		}
+	      Assert(d->isTree() == false, "Oops we got a tree! " << d);
 	    }
-	  Assert(d->isTree() == false, "Oops we got a tree! " << d);
+	  else
+	    {
+	      if (ground)
+		d->setGround();
+	    }
 	  return d;	
 	}
     }
@@ -665,7 +673,7 @@ ACU_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vect
       DagNode* a = argArray[i].dagNode;
       DagNode* n = eager ?
 	a->instantiateWithCopies(substitution, eagerCopies) :
-	a->instantiate(substitution);
+	a->instantiate(substitution, false);
       if (n != 0)
 	{
 	  //

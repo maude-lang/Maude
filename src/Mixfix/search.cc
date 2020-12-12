@@ -75,7 +75,8 @@ Interpreter::checkSearchRestrictions(SearchKind searchKind,
 	     return false;
 	  }
 	//
-	//	Only equational condition fragments are supported since they need to pushed in to the SMT solver.
+	//	Only equational condition fragments are supported since they need to
+	//	pushed in to the SMT solver.
 	//
 
 	//
@@ -117,7 +118,8 @@ Interpreter::search(const Vector<Token>& bubble,
 		    Int64 limit,
 		    Int64 depth,
 		    SearchKind searchKind,
-		    bool debug)
+		    bool debug,
+		    int variantFlags)
 {
   VisibleModule* fm = currentModule->getFlatModule();
   Term* initial;
@@ -135,7 +137,9 @@ Interpreter::search(const Vector<Token>& bubble,
 	delete *i;
       return;
     }
-  Pattern* pattern = (searchKind == VU_NARROW || searchKind == FVU_NARROW || searchKind == SMT_SEARCH) ? 0 :
+  Pattern* pattern = (searchKind == VU_NARROW ||
+		      searchKind == FVU_NARROW ||
+		      searchKind == SMT_SEARCH) ? 0 :
     new Pattern(target, false, condition);
   //
   //	Regular seach cannot have unbound variables.
@@ -155,12 +159,30 @@ Interpreter::search(const Vector<Token>& bubble,
   static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!" };
   if (getFlag(SHOW_COMMAND))
     {
-      static const char* searchKindName[] = { "search", "narrow", "xg-narrow", "smt-search", "vu-narrow",  "fvu-narrow"};
+      static const char* searchKindName[] =
+	{ "search", "narrow", "xg-narrow",
+	  "smt-search", "vu-narrow", "fvu-narrow"};
 
       UserLevelRewritingContext::beginCommand();
       if (debug)
 	cout << "debug ";
+      if (variantFlags & NarrowingSequenceSearch3::FOLD)
+	cout << "{fold} ";
       cout << searchKindName[searchKind] << ' ';
+      if (variantFlags &
+	  (VariantSearch::IRREDUNDANT_MODE | VariantUnificationProblem::FILTER_VARIANT_UNIFIERS))
+	{
+	  cout << '{';
+	  const char* sep = "";
+	  if (variantFlags & VariantSearch::IRREDUNDANT_MODE)
+	    {
+	      cout << "delay";
+	      sep = ", ";
+	    }
+	  if (variantFlags & VariantUnificationProblem::FILTER_VARIANT_UNIFIERS)
+	    cout << sep << "filter";
+	  cout << "} ";
+	}
       printModifiers(limit, depth);
       cout << subjectDag << ' ' << searchTypeSymbol[searchType] << ' ' << target;
       if (!condition.empty())
@@ -212,24 +234,27 @@ Interpreter::search(const Vector<Token>& bubble,
     }
   else if (searchKind == VU_NARROW || searchKind == FVU_NARROW)
     {
-      target = target->normalize(true);  // we don't really need to normalize but we do need to set hash values
+      //
+      //	We don't really need to normalize but we do need to set hash values.
+      //
+      target = target->normalize(true);
       DagNode* goal = target->term2Dag();
       target->deepSelfDestruct();
 
+      if (searchKind == FVU_NARROW)
+	variantFlags |= NarrowingSequenceSearch3::FOLD;
       NarrowingSequenceSearch3* state =
 	new NarrowingSequenceSearch3(new UserLevelRewritingContext(subjectDag),
 				     static_cast<NarrowingSequenceSearch::SearchType>(searchType),  // HACK
 				     goal,
 				     depth,
 				     new FreshVariableSource(fm),
-				     (searchKind == FVU_NARROW) ?
-				     NarrowingSequenceSearch3::FOLD : 0);
+				     variantFlags);
       Timer timer(getFlag(SHOW_TIMING));
       doVuNarrowing(timer, fm, state, 0, limit);
     }
   else
     {
-
       NarrowingSequenceSearch* state =
 	new NarrowingSequenceSearch(new UserLevelRewritingContext(subjectDag),
 				    static_cast<NarrowingSequenceSearch::SearchType>(searchType),  // HACK

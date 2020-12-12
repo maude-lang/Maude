@@ -1,3 +1,18 @@
+2020-12-11  Steven Eker  <eker2@eker10>
+
+	* ACU_DagNode.cc (ACU_DagNode::instantiate2): take and pass
+	maintainInvariants arg; only normalize and compute sort for ground
+	dag if true
+	(ACU_DagNode::instantiate2): remove comment about computing sorts
+	in the narrowing case since now maintainInvariants will be false
+	(ACU_DagNode::instantiateWithCopies2): pass maintainInvariants =
+	false to instantiate()
+
+	* ACU_DagNode.hh (class ACU_DagNode): updated decl for
+	instantiate2()
+
+===================================Maude132===========================================
+
 2020-06-18  Steven Eker  <eker2@eker10>
 
 	* ACU_UnificationSubproblem2.cc

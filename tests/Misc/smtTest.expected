@@ -865,10 +865,19 @@ Warning: <standard input>, line 282 (mod COLLAPSE-AXIOM): operator bad has a
     collapse axiom.
 Warning: <standard input>, line 280 (mod COLLAPSE-AXIOM): module COLLAPSE-AXIOM
     does not satisfy restrictions for rewriting modulo SMT.
-Warning: <standard input>, line 297 (mod COLLAPSE-AXIOM2): polymorphic operator
-    bad has a collapse axiom.
-Warning: <standard input>, line 295 (mod COLLAPSE-AXIOM2): module
-    COLLAPSE-AXIOM2 does not satisfy restrictions for rewriting modulo SMT.
+Warning: <standard input>, line 297 (mod COLLAPSE-AXIOM2): idem operator bad
+    must either have all sorts polymorphic or none.
+==========================================
+smt-search in COLLAPSE-AXIOM2 : f(h(X), h(Y)) =>+ g(C) .
+
+Solution 1
+rewrites: 1
+state: g(h(X))
+C --> h(X)
+where X === Y
+
+No more solutions.
+rewrites: 1
 Warning: <standard input>, line 319 (mod SMT-OP-IN-LHS): left-hand side of rule
   crl f(h(X), h(Y + 1)) => g(h(X)) if X = Y .
 contains SMT symbol _+_.

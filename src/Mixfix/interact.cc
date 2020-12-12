@@ -59,6 +59,14 @@ UserLevelRewritingContext::clearInterrupt()
 */
 
 void
+UserLevelRewritingContext::ignoreCtrlC()
+{
+  static struct sigaction ctrlC_Handler;
+  ctrlC_Handler.sa_handler = SIG_IGN;
+  sigaction(SIGINT, &ctrlC_Handler, 0);
+}
+
+void
 UserLevelRewritingContext::setHandlers(bool handleCtrlC)
 {
   if (interactiveFlag && handleCtrlC)
@@ -148,7 +156,7 @@ Depending on your operating system configuration you may be able to\n\
 increase your stacksize with the tcsh command 'unlimit stacksize'\n\
 or the bash command 'ulimit -s unlimited'.\n\n";
   returnValueDump = write(STDERR_FILENO, message, sizeof(message) - 1);
-  _exit(1);  // don't call atexit() functions with a bad machine state
+  _exit(STACK_OVERFLOW);  // don't call atexit() functions with a bad machine state
 }
 
 int
@@ -176,7 +184,7 @@ runtime to the bug being visible is greater than 10 seconds.\n\n";
   returnValueDump = write(STDERR_FILENO, message1, sizeof(message1) - 1);
   returnValueDump = write(STDERR_FILENO, message2, sizeof(message2) - 1);
   returnValueDump = write(STDERR_FILENO, message3, sizeof(message3) - 1);
-  _exit(1);  // don't call atexit() functions with a bad machine state
+  _exit(INTERNAL_ERROR);  // don't call atexit() functions with a bad machine state
 }
 
 void
@@ -376,7 +384,7 @@ UserLevelRewritingContext::commandLoop()
 		//
 		interpreter.endXmlLog();
 #endif
-		exit(0);
+		exit(NORMAL_EXIT);
 	      }
 	    }
 	}

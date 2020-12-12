@@ -108,8 +108,8 @@ maude_OBJECTS = $(am_maude_OBJECTS)
 am__DEPENDENCIES_1 =
 maude_DEPENDENCIES = ../Mixfix/libmixfix.a \
 	../StrategyLanguage/libstrategyLanguage.a ../Meta/libmeta.a \
-	../ObjectSystem/libobjectSystem.a ../BuiltIn/libbuiltIn.a \
-	../SMT/libSMT.a ../Higher/libhigher.a \
+	../Mixfix/libmixfix.a ../ObjectSystem/libobjectSystem.a \
+	../BuiltIn/libbuiltIn.a ../SMT/libSMT.a ../Higher/libhigher.a \
 	../FreeTheory/libfreeTheory.a ../AU_Theory/libAU_Theory.a \
 	../AU_Persistent/libAU_Persistent.a \
 	../ACU_Theory/libACU_Theory.a \
@@ -356,6 +356,7 @@ maude_LDADD = \
 	../Mixfix/libmixfix.a \
 	../StrategyLanguage/libstrategyLanguage.a \
 	../Meta/libmeta.a \
+	../Mixfix/libmixfix.a \
 	../ObjectSystem/libobjectSystem.a \
 	../BuiltIn/libbuiltIn.a \
 	../SMT/libSMT.a \

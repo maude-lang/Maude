@@ -670,6 +670,37 @@ MixfixParser::getSort(int node)
   return client.getSorts()[actions[parser.getProductionNumber(node)].data];
 }
 
+void
+MixfixParser::makeAssocList(int node, Vector<Term*>& args)
+{
+  /*
+    do
+    {
+    args.append(makeTerm(parser.getChild(t, 0)));
+    t = parser.getChild(t, 1);
+    }
+    while (actions[parser.getProductionNumber(t)] == ASSOC_LIST);
+    args.append(makeTerm(t));
+  */
+  do
+    {
+      args.append(makeTerm(parser.getChild(node, 1)));
+      node = parser.getChild(node, 0);
+    }
+  while (actions[parser.getProductionNumber(node)].action == ASSOC_LIST);
+  args.append(makeTerm(node));
+  //
+  //	Reverse order of args.
+  //
+  int n = args.length() - 1;
+  for (int i = n / 2; i >= 0; i--)
+    {
+      Term* t = args[i];
+      args[i] = args[n - i];
+      args[n - i] = t;
+    }
+}
+
 Term*
 MixfixParser::makeTerm(int node)
 {
@@ -693,31 +724,7 @@ MixfixParser::makeTerm(int node)
 	  {
 	    int t = parser.getChild(node, 0);
 	    if (actions[parser.getProductionNumber(t)].action == ASSOC_LIST)
-	      {
-		/*
-		  do
-		  {
-		  args.append(makeTerm(parser.getChild(t, 0)));
-		  t = parser.getChild(t, 1);
-		  }
-		  while (actions[parser.getProductionNumber(t)] == ASSOC_LIST);
-		  args.append(makeTerm(t));
-		  */
-		do
-		  {
-		    args.append(makeTerm(parser.getChild(t, 1)));
-		    t = parser.getChild(t, 0);
-		  }
-		while (actions[parser.getProductionNumber(t)].action == ASSOC_LIST);
-		args.append(makeTerm(t));
-		int n = args.length() - 1;
-		for (int i = n / 2; i >= 0; i--)
-		  {
-		    Term* t = args[i];
-		    args[i] = args[n - i];
-		    args[n - i] = t;
-		  }
-	      }
+	      makeAssocList(t, args);
 	    else
 	      {  
 		for (int i = 0; i < nrArgs; i++)
@@ -811,14 +818,34 @@ MixfixParser::makeTerm(int node)
       {
 	Symbol* symbol = client.instantiatePolymorph(a.data2, a.data);
 	int nrArgs = symbol->arity();
-	for (int i = 0; i < nrArgs; i++)
-	  args.append(makeTerm(parser.getChild(node, i)));
+	if (nrArgs > 0)
+	  {
+	    int t = parser.getChild(node, 0);
+	    if (actions[parser.getProductionNumber(t)].action == ASSOC_LIST)
+	      makeAssocList(t, args);
+	    else
+	      {  
+		for (int i = 0; i < nrArgs; i++)
+		  args.append(makeTerm(parser.getChild(node, i)));
+	      }
+	  }
 	t = symbol->makeTerm(args);
 	break;
       }
     case MAKE_ITER:
       {
 	S_Symbol* symbol = safeCast(S_Symbol*, client.getSymbols()[a.data]);
+	int opName;
+	mpz_class number;
+	Token::split((*currentSentence)[pos].code(), opName, number);
+	Assert(opName == symbol->id(), "iter symbol name clash");
+	Term* arg = makeTerm(parser.getChild(node, 1));
+	t = new S_Term(symbol, number, arg);
+	break;
+      }
+    case MAKE_POLYMORPH_ITER:
+      {
+	S_Symbol* symbol = safeCast(S_Symbol*, client.instantiatePolymorph(a.data2, a.data));
 	int opName;
 	mpz_class number;
 	Token::split((*currentSentence)[pos].code(), opName, number);

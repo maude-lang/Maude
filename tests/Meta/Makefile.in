@@ -436,6 +436,27 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 TESTS = \
+	metaProcPrelude \
+	metaProcReplace \
+	metaProcReplace2 \
+	russianDollsFlatProc \
+	russianDollsNonFlatProc \
+	russianDollsNonFlatProc2 \
+	russianDollsNonFlatProc3 \
+	metaProcMatch \
+	metaProcSearch \
+	metaProcSort \
+	metaProcUnify \
+	metaProcVariant \
+	metaProcVariantUnify \
+	metaProcVariantUnify2 \
+	metaProcVariantMatch \
+	metaProcPrint \
+	metaProcParse \
+	metaProcApply \
+	metaProcNarrow \
+	metaProcNarrowSearch \
+	metaProcStrategy \
 	metaApply \
 	metaUnify \
 	metaFrewrite \
@@ -493,6 +514,27 @@ TESTS = \
 	checkUnifiers
 
 MAUDE_FILES = \
+	metaProcPrelude.maude \
+	metaProcReplace.maude \
+	metaProcReplace2.maude \
+	russianDollsFlatProc.maude \
+	russianDollsNonFlatProc.maude \
+	russianDollsNonFlatProc2.maude \
+	russianDollsNonFlatProc3.maude \
+	metaProcMatch.maude \
+	metaProcSearch.maude \
+	metaProcSort.maude \
+	metaProcUnify.maude \
+	metaProcVariant.maude \
+	metaProcVariantUnify.maude \
+	metaProcVariantUnify2.maude \
+	metaProcVariantMatch.maude \
+	metaProcPrint.maude \
+	metaProcParse.maude \
+	metaProcApply.maude \
+	metaProcNarrow.maude \
+	metaProcNarrowSearch.maude \
+	metaProcStrategy.maude \
 	metaApply.maude \
 	metaUnify.maude \
 	metaFrewrite.maude \
@@ -550,6 +592,27 @@ MAUDE_FILES = \
 	checkUnifiers.maude
 
 RESULT_FILES = \
+	metaProcPrelude.expected \
+	metaProcReplace.expected \
+	metaProcReplace2.expected \
+	russianDollsFlatProc.expected \
+	russianDollsNonFlatProc.expected \
+	russianDollsNonFlatProc2.expected \
+	russianDollsNonFlatProc3.expected \
+	metaProcMatch.expected \
+	metaProcSearch.expected \
+	metaProcSort.expected \
+	metaProcUnify.expected \
+	metaProcVariant.expected \
+	metaProcVariantUnify.expected \
+	metaProcVariantUnify2.expected \
+	metaProcVariantMatch.expected \
+	metaProcPrint.expected \
+	metaProcParse.expected \
+	metaProcApply.expected \
+	metaProcNarrow.expected \
+	metaProcNarrowSearch.expected \
+	metaProcStrategy.expected \
 	metaApply.expected \
 	metaUnify.expected \
 	metaFrewrite.expected \
@@ -790,6 +853,153 @@ recheck: all
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
+metaProcPrelude.log: metaProcPrelude
+	@p='metaProcPrelude'; \
+	b='metaProcPrelude'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcReplace.log: metaProcReplace
+	@p='metaProcReplace'; \
+	b='metaProcReplace'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcReplace2.log: metaProcReplace2
+	@p='metaProcReplace2'; \
+	b='metaProcReplace2'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+russianDollsFlatProc.log: russianDollsFlatProc
+	@p='russianDollsFlatProc'; \
+	b='russianDollsFlatProc'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+russianDollsNonFlatProc.log: russianDollsNonFlatProc
+	@p='russianDollsNonFlatProc'; \
+	b='russianDollsNonFlatProc'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+russianDollsNonFlatProc2.log: russianDollsNonFlatProc2
+	@p='russianDollsNonFlatProc2'; \
+	b='russianDollsNonFlatProc2'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+russianDollsNonFlatProc3.log: russianDollsNonFlatProc3
+	@p='russianDollsNonFlatProc3'; \
+	b='russianDollsNonFlatProc3'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcMatch.log: metaProcMatch
+	@p='metaProcMatch'; \
+	b='metaProcMatch'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcSearch.log: metaProcSearch
+	@p='metaProcSearch'; \
+	b='metaProcSearch'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcSort.log: metaProcSort
+	@p='metaProcSort'; \
+	b='metaProcSort'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcUnify.log: metaProcUnify
+	@p='metaProcUnify'; \
+	b='metaProcUnify'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcVariant.log: metaProcVariant
+	@p='metaProcVariant'; \
+	b='metaProcVariant'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcVariantUnify.log: metaProcVariantUnify
+	@p='metaProcVariantUnify'; \
+	b='metaProcVariantUnify'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcVariantUnify2.log: metaProcVariantUnify2
+	@p='metaProcVariantUnify2'; \
+	b='metaProcVariantUnify2'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcVariantMatch.log: metaProcVariantMatch
+	@p='metaProcVariantMatch'; \
+	b='metaProcVariantMatch'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcPrint.log: metaProcPrint
+	@p='metaProcPrint'; \
+	b='metaProcPrint'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcParse.log: metaProcParse
+	@p='metaProcParse'; \
+	b='metaProcParse'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcApply.log: metaProcApply
+	@p='metaProcApply'; \
+	b='metaProcApply'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcNarrow.log: metaProcNarrow
+	@p='metaProcNarrow'; \
+	b='metaProcNarrow'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcNarrowSearch.log: metaProcNarrowSearch
+	@p='metaProcNarrowSearch'; \
+	b='metaProcNarrowSearch'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaProcStrategy.log: metaProcStrategy
+	@p='metaProcStrategy'; \
+	b='metaProcStrategy'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 metaApply.log: metaApply
 	@p='metaApply'; \
 	b='metaApply'; \

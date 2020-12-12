@@ -1,3 +1,16 @@
+2020-12-11  Steven Eker  <eker2@eker10>
+
+	* freeDagNode.cc (FreeDagNode::instantiate2): handle
+	maintainInvariants arg
+	(FreeDagNode::instantiateWithReplacement): pass maintainInvariants
+	= false to instantiate()
+	(FreeDagNode::instantiateWithCopies2): pass maintainInvariants =
+	false to instantiate()
+
+	* freeDagNode.hh (class FreeDagNode): updated decl for instantiate2()
+
+===================================Maude132===========================================
+
 2020-05-19  Steven Eker  <eker2@eker10>
 
 	* freeDagNode.cc (FreeDagNode::computeSolvedForm2): added

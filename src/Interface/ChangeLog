@@ -1,3 +1,16 @@
+2020-12-11  Steven Eker  <eker2@eker10>
+
+	* dagNode.hh (DagNode::instantiate): handle maintainInvariants
+	argument
+	(SAFE_INSTANTIATE): pass maintainInvariants = false to
+	instantiate()
+
+	* dagNode.cc (DagNode::instantiate2): move default implementation
+	here
+
+	* dagNode.hh (class DagNode): added bool maintainInvariants
+	argument to instantiate() and instantiate2()
+
 2020-09-28  Steven Eker  <eker2@eker10>
 
 	* regularInstruction.cc (RegularInstruction::setActiveSlots): use

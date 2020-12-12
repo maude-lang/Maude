@@ -73,17 +73,17 @@ libmixfix_a_SOURCES = \
 	banner.cc \
 	lexer.cc \
 	tokenizer.cc \
+	deserializer.cc \
 	surface.cc \
 	freshVariableSource.cc \
 	variableGenerator.cc \
-	tokenizer.cc \
 	$(COMPILER_SRC)
 
 EXTRA_libmixfix_a_SOURCES = \
 	compiler.cc
 
-BUILT_SOURCES = surface.yy surface.cc surface.h lexer.cc tokenizer.cc
-CLEANFILES = surface.yy surface.cc surface.h lexer.cc tokenizer.cc
+BUILT_SOURCES = surface.yy surface.cc surface.h lexer.cc tokenizer.cc deserializer.cc
+CLEANFILES = surface.yy surface.cc surface.h lexer.cc tokenizer.cc deserializer.cc
 
 surface.yy: \
 	$(srcdir)/top.yy \
@@ -112,6 +112,10 @@ tokenizer.cc: \
 	$(srcdir)/tokenizer.ll
 	$(FLEX) -Pzz -t -p -p $(srcdir)/tokenizer.ll > tokenizer.cc
 
+deserializer.cc: \
+	$(srcdir)/deserializer.ll
+	$(FLEX) -Pxx -t -p -p $(srcdir)/deserializer.ll > deserializer.cc
+
 EXTRA_DIST = \
 	renameModule.cc \
 	parameterization.cc \
@@ -120,11 +124,14 @@ EXTRA_DIST = \
 	instantiateViewWithFreeParameters.cc \
 	instantiateViewWithBoundParameters.cc \
 	lexerAux.cc \
+	deserializerAux.cc \
 	process.cc \
 	fixUp.cc \
 	ops.cc \
 	command.cc \
 	entry.cc \
+	fancySymbols.cc \
+	validateAttributes.cc \
 	prettyPrint.cc \
 	bufferPrint.cc \
 	specialSymbolTypes.cc \
@@ -151,6 +158,7 @@ EXTRA_DIST = \
 	bottom.yy \
 	lexer.ll \
 	tokenizer.ll \
+	deserializer.ll \
 	graphPrint.cc \
 	ansiEscapeSequences.cc \
 	narrowing.cc \
@@ -161,7 +169,7 @@ EXTRA_DIST = \
 	cvc4_Bindings.cc \
 	yices2_Bindings.cc \
 	quotedIdentifierOpSignature.cc \
-	tokenizer.ll
+	serialize.cc
 
 noinst_HEADERS = \
 	renaming.hh \

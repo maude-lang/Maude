@@ -58,6 +58,7 @@ public:
     MAKE_SORT_TEST,  // HACK used for condition fragment as well
     MAKE_POLYMORPH,
     MAKE_ITER,
+    MAKE_POLYMORPH_ITER,
     MAKE_SMT_NUMBER,
     MAKE_BUBBLE,
     //
@@ -212,6 +213,7 @@ private:
 
   Sort* getSort(int node);
   Term* makeTerm(int node);
+  void makeAssocList(int node, Vector<Term*>& args);
   StrategyExpression* makeStrategy(int node);
   std::pair<RewriteStrategy*, Term*> makeStrategyCall(int node);
   ConditionFragment* makeConditionFragment(int node);
@@ -234,7 +236,6 @@ private:
   void makeStrategyList(int node, Vector<StrategyExpression*>& strategies);
   void appendUsingPair(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies);
   void makeUsingList(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies);
-
   int translateSpecialToken(int code);
 
   MixfixModule& client;

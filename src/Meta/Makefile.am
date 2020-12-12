@@ -74,7 +74,23 @@ EXTRA_DIST = \
 	legacyMetaUp.cc \
 	legacyMetaUnify.cc \
 	legacyMetaVariant.cc \
-	legacyMetaVariantUnify.cc
+	legacyMetaVariantUnify.cc \
+	remoteInterpreter.cc \
+	remoteInterpreter2.cc \
+	miModule.cc \
+	miSort.cc \
+	miRewrite.cc \
+	miSearch.cc \
+	miUnify.cc \
+	miVariant.cc \
+	miVariantUnify.cc \
+	miVariantMatch.cc \
+	miSyntax.cc \
+	miMatch.cc \
+	miApply.cc \
+	miNarrow.cc \
+	miNarrowSearch.cc \
+	remoteInterpreterNonblocking.cc
 
 noinst_HEADERS = \
 	meta.hh \

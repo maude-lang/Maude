@@ -1,0 +1,79 @@
+==========================================
+erewrite in VARIANT-MATCH-TEST : <> < me : User | problem:('_+_['X:XOR,
+    'c1.Elem] <=? '_+_['Y:XOR,'c2.Elem],empty) > createInterpreter(
+    interpreterManager, me, newProcess) .
+rewrites: 5
+result Configuration: <> < me : User | soln: 2,result(gotVariantMatcher(me,
+    interpreter(0), 3, 
+  'X:XOR <- '_+_['c1.Elem,'c2.Elem,'Y:XOR])),problem:('_+_['X:XOR,'c1.Elem] <=?
+    '_+_['Y:XOR,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+==========================================
+variant match in XOR : X + c1 <=? Y + c2 .
+rewrites: 3
+
+Matcher 1
+X --> c1 + c2 + Y
+
+No more matchers.
+==========================================
+erewrite in VARIANT-MATCH-TEST : <> < me : User | problem:('_+_['X:XOR,'Y:XOR]
+    <=? '_+_['c1.Elem,'c2.Elem],empty) > createInterpreter(interpreterManager,
+    me, newProcess) .
+rewrites: 19
+result Configuration: <> < me : User | soln: 9,result(gotVariantMatcher(me,
+    interpreter(0), 10, 
+  'X:XOR <- 'c1.Elem ; 
+  'Y:XOR <- 'c2.Elem),gotVariantMatcher(me, interpreter(0), 0, 
+  'X:XOR <- 'c2.Elem ; 
+  'Y:XOR <- 'c1.Elem),gotVariantMatcher(me, interpreter(0), 0, 
+  'X:XOR <- '0.XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'c2.Elem]),gotVariantMatcher(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem,'c2.Elem] ; 
+  'Y:XOR <- '0.XOR),gotVariantMatcher(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem,'#1:XOR] ; 
+  'Y:XOR <- '_+_['c2.Elem,'#1:XOR]),gotVariantMatcher(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c2.Elem,'#1:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem,'#1:XOR]),gotVariantMatcher(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem,'c2.Elem,'#1:XOR] ; 
+  'Y:XOR <- '#1:XOR),gotVariantMatcher(me, interpreter(0), 0, 
+  'X:XOR <- '#1:XOR ; 
+  'Y:XOR <- '_+_['c1.Elem,'c2.Elem,'#1:XOR])),problem:('_+_['X:XOR,'Y:XOR] <=?
+    '_+_['c1.Elem,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+==========================================
+variant match in XOR : X + Y <=? c1 + c2 .
+rewrites: 10
+
+Matcher 1
+X --> c1
+Y --> c2
+
+Matcher 2
+X --> c2
+Y --> c1
+
+Matcher 3
+X --> 0
+Y --> c1 + c2
+
+Matcher 4
+X --> c1 + c2
+Y --> 0
+
+Matcher 5
+X --> c1 + #1:XOR
+Y --> c2 + #1:XOR
+
+Matcher 6
+X --> c2 + #1:XOR
+Y --> c1 + #1:XOR
+
+Matcher 7
+X --> c1 + c2 + #1:XOR
+Y --> #1:XOR
+
+Matcher 8
+X --> #1:XOR
+Y --> c1 + c2 + #1:XOR
+
+No more matchers.
+Bye.

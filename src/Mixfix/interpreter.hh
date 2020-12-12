@@ -57,7 +57,7 @@ public:
       XG_NARROW,
       SMT_SEARCH,
       VU_NARROW,
-      FVU_NARROW,
+      FVU_NARROW
     };
 
   enum Flags
@@ -196,7 +196,12 @@ public:
 
   void match(const Vector<Token>& bubble, bool withExtension, Int64 limit);
   void unify(const Vector<Token>& bubble, Int64 limit, bool irredundant);
-  void search(const Vector<Token>& bubble, Int64 limit, Int64 depth, SearchKind searchKind, bool debug);
+  void search(const Vector<Token>& bubble,
+	      Int64 limit,
+	      Int64 depth,
+	      SearchKind searchKind,
+	      bool debug,
+	      int variantFlags = 0);
   void getVariants(const Vector<Token>& bubble, Int64 limit, bool irredundant, bool debug);
   void variantUnify(const Vector<Token>& bubble, Int64 limit, bool filtered, bool debug);
   void variantMatch(const Vector<Token>& bubble, Int64 limit, bool debug);

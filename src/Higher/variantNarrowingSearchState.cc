@@ -250,7 +250,7 @@ VariantNarrowingSearchState::findNextVariant(DagNode*& newVariantTerm, Vector<Da
       //
       for (int i = 0; i < variantSubstitutionSize; ++i)
 	{
-	  DagNode* d = variantSubstitution[i]->instantiate(*survivor);
+	  DagNode* d = variantSubstitution[i]->instantiate(*survivor, false);
 	  if (d == 0)
 	    d = variantSubstitution[i];  // no change
 	  d->computeTrueSort(*context);  // also handles theory normalization
@@ -266,7 +266,7 @@ VariantNarrowingSearchState::findNextVariant(DagNode*& newVariantTerm, Vector<Da
 	for (DagNode* b : blockerDags)
 	  {
 	    DebugInfo("checking blocker dag " << b);
-	    DagNode* d = b->instantiate(blockerSubstitution);
+	    DagNode* d = b->instantiate(blockerSubstitution, false);
 	    if (d != 0)
 	      {
 		DebugInfo("instantiated to " << d);

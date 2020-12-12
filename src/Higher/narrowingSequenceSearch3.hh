@@ -121,6 +121,7 @@ private:
   bool expansionSuccessful;
   int nextInterestingState;
   int counter;
+  int nrStatesExpanded;
   DagRoot replacementContextProtector;  // to protect replacementContext during reduce()
   //
   //	Final variant unification between goal and state.

@@ -1,3 +1,13 @@
+2020-12-11  Steven Eker  <eker2@eker10>
+
+	* S_DagNode.cc (S_DagNode::instantiate2): take and pass
+	maintainInvariants flag; only do theory normalization and sort
+	computation for ground dags if maintainInvariants = true
+	(S_DagNode::instantiateWithCopies2): pass maintainInvariants =
+	false to instantiate()
+
+	* S_DagNode.hh (class S_DagNode): updated decl for instantiate2()
+
 2020-09-28  Steven Eker  <eker2@eker10>
 
 	* S_Symbol.cc (S_Symbol::computeGeneralizedSort2): use range-based

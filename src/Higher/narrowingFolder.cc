@@ -103,6 +103,7 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 	  if (i.second->subsumes(state))
 	    {
 	      DebugAdvisory("new state " << index << " subsumed by " << i.first);
+	      Verbose("New state " << state << " subsumed by " << i.second->state);
 	      return false;
 	    }
 	}
@@ -149,6 +150,9 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 		  //	Our parent was subsumed so we are also subsumed.
 		  //
 		  DebugAdvisory("new state evicted descendent of an older state " << i->first);
+		  Verbose("New state " << state <<
+			  " evicted descendent of an older state " << i->second->state <<
+			  " by subsuming an ancestor.");
 		  existingStatesSubsumed.insert(i->first);
 		  delete potentialVictim;
 		  mostGeneralSoFar.erase(i);
@@ -159,6 +163,8 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 		  //	Direct subsumption by new state.
 		  //
 		  DebugAdvisory("new state evicted an older state " << i->first);
+		  Verbose("New state " << state << " subsumed older state " <<
+			  i->second->state);
 		  existingStatesSubsumed.insert(i->first);
 		  delete potentialVictim;
 		  mostGeneralSoFar.erase(i);

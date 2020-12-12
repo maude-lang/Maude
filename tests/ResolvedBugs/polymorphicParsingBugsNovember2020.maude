@@ -1,0 +1,20 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for failure to parse polymorphic operators using
+***	flattened assoc or iter syntax.
+***
+
+fmod POLY-ASSOC is
+  op f : Poly Poly -> Poly [assoc poly (1 2 0)] .
+endfm
+
+red f(X:Bool, Y:Bool, Z:Bool) .
+
+
+fmod POLY-ITER is
+  op f : Poly -> Poly [iter poly (1 0) ] .
+endfm
+
+red f^12345(X:Bool) .

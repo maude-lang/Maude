@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -296,7 +296,8 @@ MixfixModule::addOpDeclaration(Token prefixName,
 	}
     }
   //
-  //	Need to create a new symbol.
+  //	We didn't find an existing symbol to add this declaration to so
+  //	we need to create a new symbol.
   //
   if (symbolType.hasFlag(SymbolType::DITTO))
     {
@@ -305,13 +306,18 @@ MixfixModule::addOpDeclaration(Token prefixName,
 		   " uses ditto without a previous declaration to refer to.");
       symbolType.clearFlags(SymbolType::DITTO);
     }	   
-
+  //
+  //	Make sure that domainAndRange supports attributes and
+  //	clear any unsupported flags.
+  //
+  validateAttributes(prefixName, domainAndRange, symbolType);
+  
   Symbol* symbol = newFancySymbol(prefixName, domainAndRange, symbolType, strategy);
   if (symbol == 0)
     {
       symbol = FreeSymbol::newFreeSymbol(name, nrArgs, strategy,
 					 symbolType.hasFlag(SymbolType::MEMO));
-      symbolType.clearFlags(SymbolType::AXIOMS);
+      symbolType.clearFlags(SymbolType::AXIOMS | SymbolType::ITER);
     }
   if (symbolType.hasFlag(SymbolType::FROZEN))
     symbol->setFrozen(frozen);
@@ -379,7 +385,7 @@ MixfixModule::addOpDeclaration(Token prefixName,
 	  overloadedIntegers.insert(0);
 	  //
 	  //	Also when we print this constant we need to force a check of kindsWithZero
-	  //	when we decide whether disambiguation is needed. In the case of build-in
+	  //	when we decide whether disambiguation is needed. In the case of built-in
 	  //	Nats, the Nat constant zero will already set the abiguity flag, but
 	  //	in the case of SMT Integers, the constant zero is implicit.
 	  //
@@ -481,6 +487,7 @@ MixfixModule::addOpDeclaration(Token prefixName,
 	    }
 	}
     }
+  si.polymorphIndex = NONE;
   si.symbolType = symbolType;
   si.symbolType.clearFlags(SymbolType::CTOR);  // don't store ctor flag in per-symbol struct
   si.iflags = iflags;
@@ -607,232 +614,6 @@ MixfixModule::addVariableAlias(Token name, Sort* sort)
 	       ": redeclaration of variable alias " << QUOTE(name) << '.');
 }
 
-Symbol*
-MixfixModule::newFancySymbol(Token prefixName,
-			     const Vector<Sort*>& domainAndRange,
-			     SymbolType symbolType,
-			     const Vector<int>& strategy)
-{
-  int name = prefixName.code();
-  int nrArgs = domainAndRange.length() - 1;
-  int kindIndex = domainAndRange[nrArgs]->component()->getIndexWithinModule();
-  switch (symbolType.getBasicType())
-    {
-    case SymbolType::BRANCH_SYMBOL:
-      return new BranchSymbol(name, nrArgs);
-    case SymbolType::EQUALITY_SYMBOL:
-      return new EqualitySymbol(name, strategy);
-    case SymbolType::FLOAT:
-      return new FloatSymbol(name);
-    case SymbolType::STRING:
-      return new StringSymbol(name);
-    case SymbolType::QUOTED_IDENTIFIER:
-      return new QuotedIdentifierSymbol(name);
-    case SymbolType::LOOP_SYMBOL:
-      return new LoopSymbol(name);
-    case SymbolType::FLOAT_OP:
-      return new FloatOpSymbol(name, nrArgs);
-    case SymbolType::STRING_OP:
-      return new StringOpSymbol(name, nrArgs);
-    case SymbolType::QUOTED_IDENTIFIER_OP:
-      return new QuotedIdentifierOpSymbol(name, nrArgs);
-    case SymbolType::META_LEVEL_OP_SYMBOL:
-      return new MetaLevelOpSymbol(name, nrArgs, strategy);
-    case SymbolType::MODEL_CHECKER_SYMBOL:
-      return new ModelCheckerSymbol(name);
-    case SymbolType::SAT_SOLVER_SYMBOL:
-      return new SatSolverSymbol(name);
-    case SymbolType::SUCC_SYMBOL:
-      {
-	pair<set<int>::iterator, bool> p = kindsWithSucc.insert(kindIndex);
-	if (!(p.second))
-	  {
-	    IssueWarning(LineNumber(prefixName.lineNumber()) <<
-	      ": multiple SuccSymbols in same kind will cause pretty printing problems.");
-	  }
-	return new SuccSymbol(name);
-      }
-    case SymbolType::MINUS_SYMBOL:
-      {
-	pair<set<int>::iterator, bool> p = kindsWithMinus.insert(kindIndex);
-	if (!(p.second))
-	  {
-	    IssueWarning(LineNumber(prefixName.lineNumber()) <<
-	      ": multiple MinusSymbols in same kind will cause pretty printing problems.");
-	  }
-	return new MinusSymbol(name);
-      }
-    case SymbolType::NUMBER_OP_SYMBOL:
-      return new NumberOpSymbol(name, nrArgs);
-    case SymbolType::ACU_NUMBER_OP_SYMBOL:
-      return new ACU_NumberOpSymbol(name);
-    case SymbolType::DIVISION_SYMBOL:
-      {
-	pair<set<int>::iterator, bool> p = kindsWithDivision.insert(kindIndex);
-	if (!(p.second))
-	  {
-	    IssueWarning(LineNumber(prefixName.lineNumber()) <<
-	    ": multiple DivisionSymbols in same kind will cause pretty printing problems.");
-	  }
-	return new DivisionSymbol(name);
-      }
-    case SymbolType::RANDOM_OP_SYMBOL:
-      return new RandomOpSymbol(name);
-    case SymbolType::MATRIX_OP_SYMBOL:
-      return new MatrixOpSymbol(name, nrArgs);
-    case SymbolType::COUNTER_SYMBOL:
-      return new CounterSymbol(name);
-    case SymbolType::SOCKET_MANAGER_SYMBOL:
-      return new SocketManagerSymbol(name);
-    case SymbolType::INTERPRETER_MANAGER_SYMBOL:
-      return new InterpreterManagerSymbol(name);
-    case SymbolType::SMT_SYMBOL:
-      return new SMT_Symbol(name, nrArgs);
-    case SymbolType::SMT_NUMBER_SYMBOL:
-      return new SMT_NumberSymbol(name);
-    case SymbolType::FILE_MANAGER_SYMBOL:
-      return new FileManagerSymbol(name);
-    case SymbolType::STREAM_MANAGER_SYMBOL:
-      return new StreamManagerSymbol(name);
-    case SymbolType::PROCESS_MANAGER_SYMBOL:
-      return new ProcessManagerSymbol(name);
-    }
-
-  int lineNr = prefixName.lineNumber();
-  if (symbolType.hasFlag(SymbolType::ASSOC))
-    {
-      if (nrArgs == 2)
-	{
-	  bool leftOK = domainAndRange[0]->component() == domainAndRange[2]->component();
-	  if (leftOK && domainAndRange[1]->component() == domainAndRange[2]->component())
-	    {
-	      if (symbolType.hasFlag(SymbolType::COMM))
-		{
-		  if (symbolType.hasFlag(SymbolType::CONFIG))
-		    return new ConfigSymbol(name, strategy, symbolType.hasFlag(SymbolType::MEMO));
-		  else
-		    return new ACU_Symbol(name, strategy, symbolType.hasFlag(SymbolType::MEMO));
-		}
-	      else
-		{
-		  return new AU_Symbol(name,
-				       strategy,
-				       symbolType.hasFlag(SymbolType::MEMO),
-				       symbolType.hasFlag(SymbolType::LEFT_ID),
-				       symbolType.hasFlag(SymbolType::RIGHT_ID));
-		}
-	    }
-	  else
-	    {
-	      IssueWarning(LineNumber(lineNr) <<
-			   ": assoc operator " << QUOTE(prefixName) <<
-			   " has a domain sort " <<
-			   QUOTE((leftOK ? domainAndRange[1] : domainAndRange[0])) <<
-			   " in a different connected component from its range sort " <<
-			   QUOTE(domainAndRange[2]) << '.');
-	    }     
-	}
-      else
-	{
-	  IssueWarning(LineNumber(lineNr) <<
-		       ": assoc operator " << QUOTE(prefixName) <<
-		       " has " << nrArgs << " rather than 2 domain sorts.");
-
-	}
-    }
-  else if (symbolType.hasFlag(SymbolType::ITER))
-    {
-      if (nrArgs == 1)
-	return new S_Symbol(name, strategy, symbolType.hasFlag(SymbolType::MEMO));
-      else
-	{
-	  IssueWarning(LineNumber(lineNr) <<
-		       ": iter operator " << QUOTE(prefixName) <<
-		       " has " << QUOTE(nrArgs) << " domain sorts rather than 1.");
-	}
-    }
-  else if (symbolType.hasFlag(SymbolType::AXIOMS))
-    {
-      if (nrArgs == 2)
-	{
-	  int axioms = 0;
-	  if (symbolType.hasFlag(SymbolType::COMM))
-	    {
-	      if (domainAndRange[0]->component() == domainAndRange[1]->component())
-		axioms |= CUI_Symbol::COMM;
-	      else
-		{
-		  IssueWarning(LineNumber(lineNr) <<
-			       ": comm operator " << QUOTE(prefixName) <<
-			       " has a domain sorts " << QUOTE(domainAndRange[0]) <<
-			       " and " << QUOTE(domainAndRange[1]) << 
-			       " in different connected components.");
-		  return 0;
-		}
-	    }
-	  if (symbolType.hasFlag(SymbolType::IDEM))
-	    {
-	      bool leftOK = domainAndRange[0]->component() == domainAndRange[2]->component();
-	      if (leftOK && domainAndRange[1]->component() == domainAndRange[2]->component())
-		axioms |= CUI_Symbol::IDEM;
-	      else
-		{
-		  IssueWarning(LineNumber(lineNr) <<
-			       ": idem operator " << QUOTE(prefixName) <<
-			       " has a domain sort " <<
-			       QUOTE((leftOK ? domainAndRange[1] : domainAndRange[0])) <<
-			       " in a different connected component from its range sort " <<
-			       QUOTE(domainAndRange[2]) << '.');
-		  return 0;
-		}  
-	    }
-	  if (symbolType.hasFlag(SymbolType::LEFT_ID) ||
-	      (symbolType.hasAllFlags(SymbolType::RIGHT_ID | SymbolType::COMM)))
-	    {
-	      if (domainAndRange[1]->component() == domainAndRange[2]->component())
-		axioms |= CUI_Symbol::LEFT_ID;
-	      else
-		{
-		  IssueWarning(LineNumber(lineNr) <<
-			       ": id operator " << QUOTE(prefixName) <<
-			       " has a domain sort " << QUOTE(domainAndRange[1]) <<
-			       " in a different connected component from its range sort " <<
-			       QUOTE(domainAndRange[2]) << '.');
-		  return 0;
-		}
-	    }
-	  if (symbolType.hasFlag(SymbolType::RIGHT_ID) ||
-	      (symbolType.hasAllFlags(SymbolType::LEFT_ID | SymbolType::COMM)))
-	    {
-	      if (domainAndRange[0]->component() == domainAndRange[2]->component())
-		axioms |= CUI_Symbol::RIGHT_ID;
-	      else
-		{
-		  IssueWarning(LineNumber(lineNr) <<
-			       ": id operator " << QUOTE(prefixName) <<
-			       " has a domain sort " << QUOTE(domainAndRange[0]) <<
-			       " in a different connected component from its range sort " <<
-			       domainAndRange[2] << '.');
-		  return 0;
-		}
-	    }
-	  return (symbolType.getBasicType() == SymbolType::CUI_NUMBER_OP_SYMBOL) ?
-	    new CUI_NumberOpSymbol(name, static_cast<CUI_Symbol::Axioms>(axioms)) :
-	    new CUI_Symbol(name,
-			   strategy,
-			   symbolType.hasFlag(SymbolType::MEMO),
-			   static_cast<CUI_Symbol::Axioms>(axioms));
-	}
-      else
-	IssueWarning(LineNumber(lineNr) << ": " <<
-		     (symbolType.hasFlag(SymbolType::COMM) ? "comm" :
-		     (symbolType.hasFlag(SymbolType::IDEM) ? "idem" : "id")) <<
-		     " operator " << QUOTE(prefixName) <<
-		     " has " << nrArgs << " rather than 2 domain sorts.");
-    }
-  return 0;
-}
-
 int
 MixfixModule::addPolymorph(Token prefixName,
 			   const Vector<Sort*>& domainAndRange,
@@ -853,7 +634,23 @@ MixfixModule::addPolymorph(Token prefixName,
 		   LineNumber(polymorphs[index].name.lineNumber()) << '.');
       return index;
     }
-
+  validateAttributes(prefixName, domainAndRange, symbolType);
+  int nrArgs = domainAndRange.size() - 1;
+  if (symbolType.hasFlag(SymbolType::ITER))
+    {
+      if (nrArgs != 1)
+	{
+	  IssueWarning(LineNumber(prefixName.lineNumber()) <<
+		       ": declaration for polymorphic operator " << QUOTE(prefixName) <<
+		       " has iter attribute but " << nrArgs << " arguments.");
+	}
+      else if (!(domainAndRange[0] == 0 && domainAndRange[0] == 0))
+	{
+	  IssueWarning(LineNumber(prefixName.lineNumber()) <<
+		       ": declaration for polymorphic operator " << QUOTE(prefixName) <<
+		       " doesn't have both domain and range as polymorphic.");
+	}
+    }
   int nrPolymorphs = polymorphs.length();
   polymorphs.expandBy(1);
   Polymorph& p = polymorphs[nrPolymorphs];
@@ -923,7 +720,9 @@ MixfixModule::addPolymorph(Token prefixName,
 	    }
 	}
     }
+  p.symbolInfo.polymorphIndex = nrPolymorphs;  // our own index
   p.symbolInfo.symbolType = symbolType;
+  //cout << "symbolType for "<< prefixName << " is " << symbolType << endl;
   p.symbolInfo.next = NONE;
   {
     p.symbolInfo.iflags = ADHOC_OVERLOADED | DOMAIN_OVERLOADED;

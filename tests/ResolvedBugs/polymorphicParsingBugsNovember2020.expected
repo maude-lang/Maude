@@ -1,0 +1,9 @@
+==========================================
+reduce in POLY-ASSOC : f(X:Bool, Y:Bool, Z:Bool) .
+rewrites: 0
+result [Bool]: f(X:Bool, Y:Bool, Z:Bool)
+==========================================
+reduce in POLY-ITER : f^12345(X:Bool) .
+rewrites: 0
+result [Bool]: f^12345(X:Bool)
+Bye.

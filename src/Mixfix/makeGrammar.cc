@@ -45,9 +45,12 @@ MixfixModule::makeGrammar(bool complexFlag)
     DebugInfo("no existing parser");
   //
   //	NonTerminals are allocated as follows:
-  //	  fixed one-off:	-1,..., componentNonTerminalBase + 1
-  //	  per component:	componentNonTerminalBase,..., componentNonTerminalBase - NUMBER_OF_TYPES * #components + 1
-  //	  on demand:		componentNonTerminalBase - NUMBER_OF_TYPES * #components,... downwards
+  //	  fixed one-off:
+  //	    -1,..., componentNonTerminalBase + 1
+  //	  per component:
+  //	    componentNonTerminalBase,..., componentNonTerminalBase - NUMBER_OF_TYPES * #components + 1
+  //	  on demand:
+  //	    componentNonTerminalBase - NUMBER_OF_TYPES * #components,... downwards
   //
   int componentNonTerminalBase = complexFlag ? COMPLEX_BASE : SIMPLE_BASE;
   int nextNonTerminal = componentNonTerminalBase - NUMBER_OF_TYPES * getConnectedComponents().length() + 1;
@@ -70,8 +73,8 @@ MixfixModule::makeGrammar(bool complexFlag)
   makeSymbolProductions();
   makeVariableProductions();
   makeBoolProductions();
-  makeSpecialProductions();
   makePolymorphProductions();
+  makeSpecialProductions();
   makeBubbleProductions();
   //
   //	These two data structures are only used for making the grammar and must be cleared in
@@ -1109,6 +1112,11 @@ MixfixModule::makeSymbolProductions()
 	}
       else if (si.symbolType.hasFlag(SymbolType::ASSOC))
 	{
+	  //
+	  //	Associative prefix syntax.
+	  //
+	  //	<fooTerm> ::= symbolName ( <fooAssocList> )
+	  //
 	  rhs.append(leftParen);
 	  rhs.append(nonTerminal(domainComponentIndex(symbol, 0), ASSOC_LIST_TYPE));
 	  rhs.append(rightParen);
@@ -1116,6 +1124,11 @@ MixfixModule::makeSymbolProductions()
 	}
       else
 	{
+	  //
+	  //	Regular prefix syntax.
+	  //
+	  //	<fooTerm> ::= symbolName ( <barTerm> , <bazTerm> , ... , <quuxTerm> )
+	  //
 	  rhs.append(leftParen);
 	  gather.resize(0);
 	  for (int j = 0; j < nrArgs; j++)
@@ -1136,7 +1149,8 @@ MixfixModule::makeSymbolProductions()
 	      //	An iter symbol with the same name may have already created a nonterminal;
 	      //	otherwise we need to create one.
 	      //
-	      pair<IntMap::iterator, bool> p = iterSymbols.insert(IntMap::value_type(symbol->id(), GARBAGE));
+	      pair<IntMap::iterator, bool> p =
+		iterSymbols.insert(IntMap::value_type(symbol->id(), GARBAGE));
 	      if (p.second)
 		p.first->second = parser->newNonTerminal();
 	      rhs.clear();
@@ -1144,10 +1158,8 @@ MixfixModule::makeSymbolProductions()
 	      rhs.append(leftParen);
 	      rhs.append(rangeNt);
 	      rhs.append(rightParen);
-	      gather.resize(0);
-	      gather.append(PREFIX_GATHER);
-	      gather.append(PREFIX_GATHER);
-	      parser->insertProduction(rangeNt, rhs, 0, gather, MixfixParser::MAKE_ITER, i);
+	      parser->insertProduction(rangeNt, rhs, 0, gatherPrefixPrefix,
+				       MixfixParser::MAKE_ITER, i);
 	      //
 	      //	If symbol is a successor symbol, add the syntax
 	      //	<rangeTerm> ::= SMALL_NAT
@@ -1419,10 +1431,15 @@ MixfixModule::makeSpecialProductions()
   {
     FOR_EACH_CONST(i, IntMap, iterSymbols)
       {
+	//
+	//	For each iter symbol f we create a special terminal
+	//	[ f ] which represents f^n for any positive interger n.
+	//
 	int iterSymbolNameCode = i->first;
 	string str("[ ");
 	str += Token::name(iterSymbolNameCode);
 	str += " ]";
+	//cout << "added terminal " << t << endl;
 	int t = Token::encode(str.c_str());
 	parser->insertIterSymbolTerminal(iterSymbolNameCode, t);
 	rhs[0] = t;
@@ -1438,10 +1455,11 @@ MixfixModule::makePolymorphProductions()
   cout << "<Polymorph productions>\n";
 #endif
 
-  static Vector<int> rhs;
-  static Vector<int> gather;
-  static Vector<int> mixfixRhs;
-  static Vector<int> underscores;
+  static Vector<int> rhs;  // prefix/assoc prefix syntax
+  static Vector<int> gather;  // for regular prefix syntax
+  static Vector<int> mixfixRhs;  // use user supplied gather
+  static Vector<int> underscores;  // keep track of underscores in user syntax
+  static Vector<int> iterRhs(4);  // iter syntax
 
   const Vector<ConnectedComponent*>& components = getConnectedComponents();
   int nrComponents = components.length();
@@ -1449,32 +1467,67 @@ MixfixModule::makePolymorphProductions()
   for (int i = 0; i < nrPolymorphs; i++)
     {
       Polymorph& p = polymorphs[i];
+      SymbolInfo& si = p.symbolInfo;
       //cerr << Token::name(p.name) << ' ' << p.polyArgs << endl;
       int nrArgs = p.domainAndRange.length() - 1;
-      //int type = p.symbolInfo.symbolType.getBasicType();
+      int name = p.name.code();;
       //
       //	Prefix syntax.
       //
       rhs.resize(1);
-      rhs[0] = p.name.code();
+      rhs[0] = name;
       gather.resize(nrArgs);
       if (nrArgs > 0)
 	{
-	  rhs.resize(2 + 2 * nrArgs);
-	  rhs[1] = leftParen;
-	  for (int j = 0; j < nrArgs; j++)
+	  if (si.symbolType.hasFlag(SymbolType::ASSOC))
 	    {
-	      gather[j] = PREFIX_GATHER;
-	      const Sort* s = p.domainAndRange[j];
-	      if (s != 0)
-		rhs[2 + 2 * j] = nonTerminal(s, TERM_TYPE);
-	      rhs[3 + 2 * j] = (j == nrArgs - 1) ? rightParen : comma;
+	      //
+	      //	Flattened associative syntax.
+	      //	This only makes sense if all arguments are poly.
+	      //	rhs[2] will be filled out in instantiation loop.
+	      //
+	      rhs.resize(4);
+	      rhs[1] = leftParen;
+	      rhs[3] = rightParen;
+	    }
+	  else
+	    {
+	      if (si.symbolType.hasFlag(SymbolType::ITER))
+		{
+		  //
+		  //	First we need a nonterminal for f^n if we didn't already make one.
+		  //
+		  pair<IntMap::iterator, bool> q =
+		    iterSymbols.insert(IntMap::value_type(name, GARBAGE));
+		  if (q.second)
+		    q.first->second = parser->newNonTerminal();
+		  //
+		  //	<fooTerm> ::= f^n ( <fooTerm> )
+		  //    rhs[2] will be filled out in instantiation loop.
+		  //
+		  iterRhs[0] = q.first->second;
+		  iterRhs[1] = leftParen;
+		  iterRhs[3] = rightParen;
+		}
+	      //
+	      //	Regular prefix syntax.
+	      //
+	      rhs.resize(2 + 2 * nrArgs);
+	      rhs[1] = leftParen;
+	      for (int j = 0; j < nrArgs; j++)
+		{
+		  gather[j] = PREFIX_GATHER;
+		  const Sort* s = p.domainAndRange[j];
+		  if (s != 0)
+		    rhs[2 + 2 * j] = nonTerminal(s, TERM_TYPE);
+		  rhs[3 + 2 * j] = (j == nrArgs - 1) ? rightParen : comma;
+		}
 	    }
 	}
       //
       //	Mixfix syntax.
       //
-      int nrItems = p.symbolInfo.mixfixSyntax.length();
+      int nrItems = si.mixfixSyntax.length();
       if (nrItems > 0)
 	{
 	  mixfixRhs.resize(nrItems);
@@ -1496,22 +1549,47 @@ MixfixModule::makePolymorphProductions()
       //
       //	Now duplicate syntax in each connected component that does not contain bubbles.
       //
-     for (int j = 0; j < nrComponents; j++)
+      for (int j = 0; j < nrComponents; j++)
 	{
 	  if (bubbleComponents.find(j) == bubbleComponents.end())
 	    {
-	      int termNt = nonTerminal(j, TERM_TYPE);
+	      int termNt = nonTerminal(j, TERM_TYPE);  // nonterminal for instantiation kind
 	      const Sort* s = p.domainAndRange[nrArgs];
 	      int rangeNt = (s == 0) ? termNt : nonTerminal(s, TERM_TYPE);
-	      for (int k = 0; k < nrArgs; k++)
+
+	      if (si.symbolType.hasFlag(SymbolType::ASSOC))
 		{
-		  if (p.domainAndRange[k] == 0)
-		    rhs[2 + 2 * k] = termNt;
+		  //
+		  //	Flattened prefix syntax.
+		  //
+		  rhs[2] = nonTerminal(j, ASSOC_LIST_TYPE);
+		  parser->insertProduction(rangeNt, rhs, 0, gatherPrefix,
+					   MixfixParser::MAKE_POLYMORPH, j, i);
 		}
-	      parser->insertProduction(rangeNt, rhs, 0, gather,
-				       MixfixParser::MAKE_POLYMORPH, j, i);
+	      else
+		{
+		  if (si.symbolType.hasFlag(SymbolType::ITER))
+		    {
+		      iterRhs[2] = rangeNt;
+		      parser->insertProduction(rangeNt, iterRhs, 0, gatherPrefixPrefix,
+					       MixfixParser::MAKE_POLYMORPH_ITER, j, i);
+		    }
+		  //
+		  //	Regular prefix syntax.
+		  //
+		  for (int k = 0; k < nrArgs; k++)
+		    {
+		      if (p.domainAndRange[k] == 0)
+			rhs[2 + 2 * k] = termNt;
+		    }
+		  parser->insertProduction(rangeNt, rhs, 0, gather,
+					   MixfixParser::MAKE_POLYMORPH, j, i);
+		}
 	      if (nrItems > 0)
 		{
+		  //
+		  //	Mixfix syntax.
+		  //
 		  for (int k = 0; k < nrArgs; k++)
 		    {
 		      if (p.domainAndRange[k] == 0)

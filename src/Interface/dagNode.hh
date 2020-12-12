@@ -129,10 +129,20 @@ public:
   void insertVariables(NatSet& occurs);
   virtual void insertVariables2(NatSet& occurs) {}
   //
+  //	instantiate() is used for two distinct purposes:
+  //	(1) To construct finished dags (such as unifiers from solved forms); and
+  //	(2) To patch up dags prior to use (e.g. replace variables with fresh variables
+  //	    prior to narrowing).
+  //
+  //	For (1), we expect that dags are theory normalized and that ground dags have
+  //	their sorts computed - we need these invariants maintained under instatiation.
+  //	For (2) we have no such expectation and trying to compute sorts could cause
+  //	an error.
+  //
   //	instantiate() returns 0 if instantiation does not change term.
   //
-  DagNode* instantiate(const Substitution& substitution);
-  virtual DagNode* instantiate2(const Substitution& substitution) { CantHappen("Not implemented"); return 0; }
+  DagNode* instantiate(const Substitution& substitution, bool maintainInvariants);
+  virtual DagNode* instantiate2(const Substitution& substitution, bool maintainInvariants);
   //
   //	instantiateWithCopies() is similar but uses copies in eager positions.
   //
@@ -249,7 +259,7 @@ private:
 #define SAFE_INSTANTIATE(dagNode, eagerFlag, substitution, eagerCopies) \
   if (DagNode* _t = (eagerFlag ?					\
 		     dagNode->instantiateWithCopies(substitution, eagerCopies) : \
-		     dagNode->instantiate(substitution)))		\
+		     dagNode->instantiate(substitution, false)))		\
   dagNode = _t
 
 //
@@ -643,9 +653,9 @@ DagNode::copyAndReduce(RewritingContext& context)
 }
 
 inline DagNode*
-DagNode::instantiate(const Substitution& substitution)
+DagNode::instantiate(const Substitution& substitution, bool maintainInvariants)
 {
-  return isGround() ? 0 : instantiate2(substitution);
+  return isGround() ? 0 : instantiate2(substitution, maintainInvariants);
 }
 
 inline DagNode*
