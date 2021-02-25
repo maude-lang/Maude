@@ -1,0 +1,310 @@
+***
+***	Test file operations and error handling.
+***
+
+set show timing off .
+
+load file
+
+mod FILE-TEST1 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op badName : -> String .
+endm
+
+erew <> < me : myClass | none > openFile(fileManager, me, badName, "r") .
+erew <> < me : myClass | none > openFile(fileManager, me, "/shouldNotExist", "r") .
+
+
+mod FILE-TEST2 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+  op badNat : -> Nat .
+vars O O2 F : Oid .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "../../../tests/Misc/fileTest.maude", "r") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > getChars(F, O, badNat) .
+endm
+
+erew run .
+
+
+mod FILE-TEST3 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+vars O O2 F : Oid .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "../../../tests/Misc/fileTest.maude", "r") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > getChars(F, O, 1000) .
+endm
+
+erew run .
+
+
+mod FILE-TEST4 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+  op badNat : -> Nat .
+vars O O2 F : Oid .
+var S : String .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "../../../tests/Misc/fileTest.maude", "r") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > getChars(F, O, 1000) .
+
+  rl < O : myClass | none > gotChars(O, F, S) =>
+     < O : myClass | none > setPosition(F, O, badNat, start) .
+endm
+
+erew run .
+
+
+mod FILE-TEST5 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+  op badNat : -> Nat .
+vars O O2 F : Oid .
+var S : String .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "../../../tests/Misc/fileTest.maude", "r") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > getChars(F, O, 1000) .
+
+  rl < O : myClass | none > gotChars(O, F, S) =>
+     < O : myClass | none > setPosition(F, O, badNat, current) .
+endm
+
+erew run .
+
+
+mod FILE-TEST6 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+  op badNat : -> Nat .
+vars O O2 F : Oid .
+var S : String .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "../../../tests/Misc/fileTest.maude", "r") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > getChars(F, O, 1000) .
+
+  rl < O : myClass | none > gotChars(O, F, S) =>
+     < O : myClass | none > setPosition(F, O, badNat, end) .
+endm
+
+erew run .
+
+
+mod FILE-TEST7 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+  op badBase : -> Base .
+vars O O2 F : Oid .
+var S : String .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "../../../tests/Misc/fileTest.maude", "r") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > getChars(F, O, 1000) .
+
+  rl < O : myClass | none > gotChars(O, F, S) =>
+     < O : myClass | none > setPosition(F, O, 100, badBase) .
+endm
+
+erew run .
+
+
+mod FILE-TEST8 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+  op state : Nat -> Attribute .
+vars O O2 F : Oid .
+var S : String .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "../../../tests/Misc/fileTest.maude", "r") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > getChars(F, O, 1000) .
+
+  rl < O : myClass | none > gotChars(O, F, S) =>
+     < O : myClass | none > setPosition(F, O, 100, start) .
+
+  rl < O : myClass | none > positionSet(O, F) =>
+     < O : myClass | state(1) > getChars(F, O, 100) .
+endm
+
+erew run .
+
+
+mod FILE-TEST9 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+  op state : Nat -> Attribute .
+vars O O2 F : Oid .
+var S : String .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "../../../tests/Misc/fileTest.maude", "r") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > getChars(F, O, 1000) .
+
+  rl < O : myClass | none > gotChars(O, F, S) =>
+     < O : myClass | none > setPosition(F, O, 100, start) .
+
+  rl < O : myClass | none > positionSet(O, F) =>
+     < O : myClass | state(1) > getChars(F, O, 100) .
+
+  rl < O : myClass | state(1) > gotChars(O, F, S) =>
+     < O : myClass | state(1) > getPosition(F, O) .
+
+endm
+
+erew run .
+
+
+mod FILE-TEST10 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+vars O O2 F : Oid .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "../../../tests/Misc/fileTest.maude", "r") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > write(F, O, "test") .
+endm
+
+erew run .
+
+
+mod FILE-TEST11 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+vars O O2 F : Oid .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "../../../tests/Misc/fileTest.maude", "r") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > flush(F, O) .
+endm
+
+erew run .
+
+
+mod FILE-TEST12 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+vars O O2 F : Oid .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "fileTest.tmp", "w") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > write(F, O, "testing testing 1 2 3\n") .
+
+  rl < O : myClass | none > wrote(O, F) =>
+     < O : myClass | none > getChars(F, O, 100) .
+endm
+
+erew run .
+
+
+mod FILE-TEST13 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+vars O O2 F : Oid .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "fileTest.tmp", "w") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > write(F, O, "testing testing 1 2 3\n") .
+
+  rl < O : myClass | none > wrote(O, F) =>
+     < O : myClass | none > getLine(F, O) .
+endm
+
+erew run .
+
+
+mod FILE-TEST14 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+vars O O2 F : Oid .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "fileTest.tmp", "w+") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > write(F, O, "testing testing 1 2 3\n") .
+
+  rl < O : myClass | none > wrote(O, F) =>
+     < O : myClass | none > setPosition(F, O, 0, start) .
+
+  rl < O : myClass | none > positionSet(O, F) =>
+     < O : myClass | none > getLine(F, O) .
+endm
+
+erew run .
+
+
+mod FILE-TEST15 is
+  pr FILE .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+  op badName : -> String .
+
+vars O O2 F : Oid .
+var S : String .
+
+  eq run = <> < me : myClass | none > openFile(fileManager, me, "fileTest.tmp", "w+") .
+
+  rl < O : myClass | none > openedFile(O, O2, F) =>
+     < O : myClass | none > write(F, O, "testing testing 1 2 3\n") .
+
+  rl < O : myClass | none > wrote(O, F) =>
+     < O : myClass | none > setPosition(F, O, 0, start) .
+
+  rl < O : myClass | none > positionSet(O, F) =>
+     < O : myClass | none > getLine(F, O) .
+
+  rl < O : myClass | none > gotLine(O, F, S) =>
+     < O : myClass | none > closeFile(F, O) .
+  
+endm
+
+erew run .
+erew <> < me : myClass | none > removeFile(fileManager, me, "fileTest.tmp") .
+erew <> < me : myClass | none > removeFile(fileManager, me, badName) .
+erew <> < me : myClass | none > removeFile(fileManager, me, "fileTest.tmp") .

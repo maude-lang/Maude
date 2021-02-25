@@ -59,18 +59,6 @@ EXTRA_DIST = \
 	metaDownView.cc \
 	metaVariant.cc \
 	metaDownSignature.cc \
-	interpreterRewrite.cc \
-	interpreterSearch.cc \
-	interpreterMatch.cc \
-	interpreterUnify.cc \
-	interpreterVariant.cc \
-	interpreterVariantUnify.cc \
-	interpreterVariantMatch.cc \
-	interpreterSort.cc \
-	interpreterPrint.cc \
-	interpreterApply.cc \
-	interpreterNewNarrow.cc \
-	interpreterNewNarrowSearch.cc \
 	legacyMetaUp.cc \
 	legacyMetaUnify.cc \
 	legacyMetaVariant.cc \

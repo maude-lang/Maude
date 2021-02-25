@@ -77,6 +77,8 @@ EXTRA_DIST = \
 	mpzGcdInit.cc \
 	mpzGcdTrivial.cc \
 	mpzGcdBasedSolver.cc \
+	wordLevel-collapseCase.cc \
+	wordLevel-normalCase.cc \
 	wordLevel-simplifyAssignments.cc \
 	wordLevel-simplifyEquations.cc \
 	wordLevel-null.cc \

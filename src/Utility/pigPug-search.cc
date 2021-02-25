@@ -132,9 +132,10 @@ PigPug::nextMove()
       //	A double peel will get us to the same place as an equate 
       //	move, except we introduce a fresh variable which by taking
       //	identity will recover any equate solution. Such a double
-      //	strip will already have been initiated by a left peel or
+      //	peel will already have been initiated by a left peel or
       //	right peel so we're done. We don't test for this in firstMove()
-      //	because a left peel or right peel must have been possible.
+      //	because for a double peel a left peel or right peel have been
+      //	made as the first move.
       //
       DebugInfo("skipping equate step");
       return false;

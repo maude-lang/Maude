@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/fileTest.maude -no-banner -no-advise -allow-files \
+  > fileTest.out 2>&1
+
+diff $srcdir/fileTest.expected fileTest.out > /dev/null 2>&1

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,57 @@
 //
 //	MetaInterpreters: getOneStepNarrowing() message.
 //
+
+NarrowingSearchState2* 
+InterpreterManagerSymbol::makeNarrowingSearchState2(ImportModule* m,
+						    FreeDagNode* message,
+						    RewritingContext& context,
+						    int variantFlags) const
+{
+  int variableFamilyName;
+  if (metaLevel->downQid(message->getArgument(5), variableFamilyName))
+    {
+      int variableFamily = FreshVariableSource::getFamily(variableFamilyName);
+      if (variableFamily == NONE)
+	return 0;
+
+      if (Term* t = metaLevel->downTerm(message->getArgument(3), m))
+	{
+	  Vector<Term*> blockerTerms;
+	  if (!metaLevel->downTermList(message->getArgument(4), m, blockerTerms))
+	    {
+	      t->deepSelfDestruct();
+	      return 0;
+	    }
+	  m->protect();
+
+	  RewritingContext* subjectContext = term2RewritingContext(t, context);
+	  subjectContext->reduce();
+
+	  Vector<DagNode*> blockerDags;
+	  for (Term* t : blockerTerms)
+	    {
+	      //
+	      //	We don't really need to normalize but we do need to set hash values.
+	      //
+	      t = t->normalize(true);
+	      blockerDags.append(t->term2Dag());
+	      t->deepSelfDestruct();
+	    }
+	  return new NarrowingSearchState2(subjectContext,
+					   blockerDags,
+					   new FreshVariableSource(m, 0),
+					   variableFamily,
+					   (NarrowingSearchState2::ALLOW_NONEXEC |
+					   NarrowingSearchState2::GC_VAR_GEN |
+					    PositionState::RESPECT_FROZEN),
+					   0,
+					   UNBOUNDED,
+					   variantFlags);
+	}
+    }
+  return 0;
+}
 
 DagNode*
 InterpreterManagerSymbol::getOneStepNarrowing(FreeDagNode* message,

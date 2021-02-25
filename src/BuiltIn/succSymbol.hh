@@ -46,6 +46,15 @@ public:
 			  Vector<Term*>& terms);
   void postInterSymbolPass();
   void reset();
+
+#if SIZEOF_LONG < 8
+  DagNode* makeNatDag(Int64 nat)
+  {
+    mpz_class bigNat;
+    mpz_import(bigNat.get_mpz_t(), 1, 1, sizeof(nat), 0, 0, &nat);
+    return makeNatDag(bigNat);
+  }
+#endif
   //
   //	Functions special to SuccSymbol.
   //

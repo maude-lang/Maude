@@ -1,0 +1,65 @@
+==========================================
+unify in ASSOC-LIST : S T =? A B .
+
+Unifier 1
+S --> #2:Elt #3:Pair
+T --> #1:Triple
+A --> #2:Elt
+B --> #3:Pair #1:Triple
+
+Unifier 2
+S --> #2:Pair #3:Elt
+T --> #1:Triple
+A --> #2:Pair
+B --> #3:Elt #1:Triple
+
+Unifier 3
+S --> #1:Triple
+T --> #3:Pair #2:Elt
+A --> #1:Triple #3:Pair
+B --> #2:Elt
+
+Unifier 4
+S --> #1:Triple
+T --> #3:Elt #2:Pair
+A --> #1:Triple #3:Elt
+B --> #2:Pair
+
+Unifier 5
+S --> #1:Triple
+T --> #2:Triple
+A --> #1:Triple
+B --> #2:Triple
+==========================================
+irredundant unify in ASSOC-LIST : S T =? A B .
+
+Unifier 1
+S --> #2:Elt #3:Pair
+T --> #1:Triple
+A --> #2:Elt
+B --> #3:Pair #1:Triple
+
+Unifier 2
+S --> #2:Pair #3:Elt
+T --> #1:Triple
+A --> #2:Pair
+B --> #3:Elt #1:Triple
+
+Unifier 3
+S --> #1:Triple
+T --> #3:Pair #2:Elt
+A --> #1:Triple #3:Pair
+B --> #2:Elt
+
+Unifier 4
+S --> #1:Triple
+T --> #3:Elt #2:Pair
+A --> #1:Triple #3:Elt
+B --> #2:Pair
+
+Unifier 5
+S --> #1:Triple
+T --> #2:Triple
+A --> #1:Triple
+B --> #2:Triple
+Bye.

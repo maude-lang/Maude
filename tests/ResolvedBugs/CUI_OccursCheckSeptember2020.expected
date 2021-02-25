@@ -1,5 +1,6 @@
 ==========================================
-unify in U-TEST : X =? f(Z, Y) /\ Z =? f(X, Y) /\ f(X, Y) =? f(A, B) .
+irredundant unify in U-TEST : X =? f(Z, Y) /\ Z =? f(X, Y) /\ f(X, Y) =? f(A,
+    B) .
 
 Unifier 1
 X --> f(#1:Foo, #2:Foo)
@@ -8,40 +9,41 @@ Y --> 1
 A --> #1:Foo
 B --> #2:Foo
 ==========================================
-unify in U-TEST : f(X, Y) =? a /\ Z =? f(X, Y) /\ X =? f(Z, Y) .
+irredundant unify in U-TEST : f(X, Y) =? a /\ Z =? f(X, Y) /\ X =? f(Z, Y) .
 
 Unifier 1
 X --> a
 Y --> 1
 Z --> a
 ==========================================
-unify in U-TEST : X =? f(f(f(X, Y), X), Y) .
+irredundant unify in U-TEST : X =? f(f(f(X, Y), X), Y) .
 
 Unifier 1
 X --> 1
 Y --> 1
 ==========================================
-unify in U-TEST : X =? f(f(f(X, X), Z), Y) .
+irredundant unify in U-TEST : X =? f(f(f(X, X), Z), Y) .
 
 Unifier 1
 X --> 1
 Z --> 1
 Y --> 1
 ==========================================
-unify in U-TEST : X =? f(f(X, Y), f(Y, X)) .
+irredundant unify in U-TEST : X =? f(f(X, Y), f(Y, X)) .
 
 Unifier 1
 X --> 1
 Y --> 1
 ==========================================
-unify in U-TEST : X =? f(f(f(f(Y, X), Y), X), Z) .
+irredundant unify in U-TEST : X =? f(f(f(f(Y, X), Y), X), Z) .
 
 Unifier 1
 X --> 1
 Y --> 1
 Z --> 1
 ==========================================
-unify in CU-TEST : X =? f(Z, Y) /\ Z =? f(X, Y) /\ f(X, Y) =? f(A, B) .
+irredundant unify in CU-TEST : X =? f(Z, Y) /\ Z =? f(X, Y) /\ f(X, Y) =? f(A,
+    B) .
 
 Unifier 1
 X --> f(#1:Foo, #2:Foo)
@@ -50,27 +52,27 @@ Y --> 1
 A --> #1:Foo
 B --> #2:Foo
 ==========================================
-unify in CU-TEST : f(X, Y) =? a /\ Z =? f(X, Y) /\ X =? f(Z, Y) .
+irredundant unify in CU-TEST : f(X, Y) =? a /\ Z =? f(X, Y) /\ X =? f(Z, Y) .
 
 Unifier 1
 X --> a
 Y --> 1
 Z --> a
 ==========================================
-unify in CU-TEST : X =? f(f(f(X, Y), X), Y) .
+irredundant unify in CU-TEST : X =? f(f(f(X, Y), X), Y) .
 
 Unifier 1
 X --> 1
 Y --> 1
 ==========================================
-unify in CU-TEST : X =? f(f(f(X, X), Z), Y) .
+irredundant unify in CU-TEST : X =? f(f(f(X, X), Z), Y) .
 
 Unifier 1
 X --> 1
 Y --> 1
 Z --> 1
 ==========================================
-unify in CU-TEST : X =? f(f(f(f(Y, X), Y), X), Z) .
+irredundant unify in CU-TEST : X =? f(f(f(f(Y, X), Y), X), Z) .
 
 Unifier 1
 X --> 1

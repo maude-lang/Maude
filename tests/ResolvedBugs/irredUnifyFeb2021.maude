@@ -1,0 +1,27 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug irredundant unification where destructive updating
+***	of unifiers having the same structure but different sorts caused
+***	corruption of unification filter and irredundant unifiers lost
+***	to spurious subsumptions.
+***
+
+fmod ASSOC-LIST is
+  sorts Elt Pair Triple List .
+  subsort Elt Pair Triple < List .
+  op __ : List List -> List [assoc] .
+  op __ : Elt Elt -> Pair [assoc] .
+  op __ : Elt Pair -> Triple [assoc] .
+  op __ : Pair Elt -> Triple [assoc] .
+
+  op rev : List -> List .
+  vars A B C X Y Z : List .
+  vars P Q R : Pair .
+  vars E F G : Elt .
+  vars S T U V : Triple .
+endfm
+
+unify S T =? A B .
+irred unify S T =? A B .

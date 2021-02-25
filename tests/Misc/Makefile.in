@@ -436,6 +436,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 TESTS = \
+	fileTest \
 	view \
 	parameterizedView \
 	mapToParameterTheory \
@@ -459,6 +460,8 @@ TESTS = \
 	CU_Unification \
 	assocUnification \
 	AU_Unification \
+	AU_IrredUnification \
+	AU_and_A_UnificationEdgeCases \
 	sreduce \
 	smtTest \
 	narrow \
@@ -468,6 +471,7 @@ TESTS = \
 	rot13
 
 MAUDE_FILES = \
+	fileTest.maude \
 	view.maude \
 	parameterizedView.maude \
 	mapToParameterTheory.maude \
@@ -491,6 +495,8 @@ MAUDE_FILES = \
 	CU_Unification.maude \
 	assocUnification.maude \
 	AU_Unification.maude \
+	AU_IrredUnification.maude \
+	AU_and_A_UnificationEdgeCases.maude \
 	sreduce.maude \
 	smtTest.maude \
 	narrow.maude \
@@ -500,6 +506,7 @@ MAUDE_FILES = \
 	rot13.maude
 
 RESULT_FILES = \
+	fileTest.expected \
 	view.expected \
 	parameterizedView.expected \
 	mapToParameterTheory.expected \
@@ -523,6 +530,8 @@ RESULT_FILES = \
 	CU_Unification.expected \
 	assocUnification.expected \
 	AU_Unification.expected \
+	AU_IrredUnification.expected \
+	AU_and_A_UnificationEdgeCases.expected \
 	sreduce.expected \
 	smtTest.expected \
 	narrow.expected \
@@ -713,6 +722,13 @@ recheck: all
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
+fileTest.log: fileTest
+	@p='fileTest'; \
+	b='fileTest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 view.log: view
 	@p='view'; \
 	b='view'; \
@@ -870,6 +886,20 @@ assocUnification.log: assocUnification
 AU_Unification.log: AU_Unification
 	@p='AU_Unification'; \
 	b='AU_Unification'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+AU_IrredUnification.log: AU_IrredUnification
+	@p='AU_IrredUnification'; \
+	b='AU_IrredUnification'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+AU_and_A_UnificationEdgeCases.log: AU_and_A_UnificationEdgeCases
+	@p='AU_and_A_UnificationEdgeCases'; \
+	b='AU_and_A_UnificationEdgeCases'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

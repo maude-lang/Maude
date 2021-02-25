@@ -255,9 +255,9 @@ UnificationProblem::bindFreeVariables()
   const Vector<Byte>& assignment = orderSortedUnifiers->getCurrentAssignment();
   int bddVar = sortBdds->getFirstAvailableVariable();
 
-  for (int i : freeVariables)
+  for (int fv : freeVariables)
     {
-      DagNode* variable = sortedSolution->value(i);
+      DagNode* variable = sortedSolution->value(fv);
       DebugAdvisory("findNextUnifier(): finding sort of free variable " << variable);
 
       ConnectedComponent* component = variable->symbol()->rangeComponent();
@@ -266,22 +266,40 @@ UnificationProblem::bindFreeVariables()
       //	value of the BDD variables in the current satisfying assignment.
       //
       int nrBddVariables = sortBdds->getNrVariables(component->getIndexWithinModule());
-      int index = 0;
+      int newSortIndex = 0;
       for (int j = nrBddVariables - 1; j >= 0; --j)
 	{
-	  index <<= 1;
+	  newSortIndex <<= 1;
 	  if (assignment[bddVar + j])
-	    ++index;
+	    ++newSortIndex;
 	}
       bddVar += nrBddVariables;
-      DebugAdvisory("index = " << index);
       //
-      //	Replace each variable symbol in a free variable with the
-      //	variable symbol corresponding to its newly calculated sort.
+      //	We have extracted the index of the new sort for variable
+      //	from a satisfying assignment to the BDD.
       //
-      Assert(index < component->nrSorts(), "bad sort index " << index <<
+      Assert(newSortIndex < component->nrSorts(), "bad sort index " << newSortIndex <<
 	     " computed for free variable" << variable);
-      variable->replaceSymbol(freshVariableGenerator->getBaseVariableSymbol(component->sort(index)));
+      Sort* newSort = component->sort(newSortIndex);
+      DebugInfo("newSortIndex = " << newSortIndex << "  newSort = " << newSort);
+
+      Symbol* baseVariableSymbol = freshVariableGenerator->getBaseVariableSymbol(newSort);
+      int variableName = safeCast(VariableDagNode*, variable)->id();
+      DagNode* newVariable = new VariableDagNode(baseVariableSymbol, variableName, fv);
+      sortedSolution->bind(fv, newVariable);
+    }
+  //
+  //	We now need to instantiate the substitution on the newly
+  //	created variables.
+  //
+  int nrOriginalVariables = variableInfo.getNrRealVariables();
+  for (int i = 0; i < nrOriginalVariables; ++i)
+    {
+      if (!(freeVariables.contains(i)))  // not a free variable
+	{
+	  if (DagNode* d2 = sortedSolution->value(i)->instantiate(*sortedSolution, true))
+	    sortedSolution->bind(i, d2);
+	}
     }
 }
 
@@ -309,7 +327,7 @@ UnificationProblem::findOrderSortedUnifiers()
 	{
 	  DebugAdvisory("allocated BDD variables starting at " << nextBddVariable <<
 			" for variable with slot " << i);
-	  freeVariables.append(i);
+	  freeVariables.insert(i);
 	  realToBdd[i] = nextBddVariable;
 	  Sort* sort = (i < nrOriginalVariables) ?
 	    safeCast(VariableSymbol*, variableInfo.index2Variable(i)->symbol())->getSort() :
@@ -389,11 +407,9 @@ UnificationProblem::findOrderSortedUnifiers()
   //	pushing the not inside the quantifier.
   //
   Bdd maximal = unifier;
-  int nrFreeVariables = freeVariables.size();
   int secondBase = sortBdds->getFirstAvailableVariable();
-  for (int i = 0; i < nrFreeVariables; ++i)
+  for (int fv : freeVariables)
     {
-      int fv = freeVariables[i];
       Sort* sort = (fv < nrOriginalVariables) ?
 	safeCast(VariableSymbol*, variableInfo.index2Variable(fv)->symbol())->getSort() :
 	unsortedSolution->getFreshVariableSort(fv);
@@ -426,7 +442,7 @@ UnificationProblem::findOrderSortedUnifiers()
   DebugAdvisory("findOrderSortedUnifiers(): maximal = " << maximal);
   orderSortedUnifiers = new AllSat(maximal, secondBase, nextBddVariable - 1);
 
-  if (nrFreeVariables > 0)
+  if (!(freeVariables.empty()))
     {
       int freshVariableCount = 0;
       //

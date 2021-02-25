@@ -46,4 +46,13 @@ rewrites: 130137
 result Graph: graph(10, 3, p(0, 1) p(0, 4) p(0, 5) p(1, 2) p(1, 6) p(2, 3) p(2,
     7) p(3, 4) p(3, 8) p(4, 9) p(5, 7) p(5, 8) p(6, 8) p(6, 9) p(7, 9), 0 1 0 2
     1 2 2 1 0 0)
+==========================================
+srewrite in MAIN : true using reduce .
+
+Solution 1
+rewrites: 0
+result Bool: true
+
+No more solutions.
+rewrites: 0
 Bye.

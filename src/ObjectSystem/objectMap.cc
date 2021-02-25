@@ -44,8 +44,8 @@ ConfigSymbol::MessageQueue::markReachableNodes() const
 {
   if (object != 0)
     object->mark();
-  FOR_EACH_CONST(i, list<DagNode*>, messages)
-    (*i)->mark();
+  for (DagNode* d : messages)
+    d->mark();
 }
 
 struct ConfigSymbol::dagNodeLt
@@ -70,23 +70,23 @@ private:
 void
 ConfigSymbol::ObjectMap::markReachableNodes()
 {
-  FOR_EACH_CONST(i, ObjectMap, *this)
-    i->second.markReachableNodes();
+  for (auto& i : *this)
+    i.second.markReachableNodes();
 }
 
 void
 ConfigSymbol::ObjectMap::dump(ostream& s, int indentLevel)
 {
   s << Indent(indentLevel) << "begin{ObjectMap}\n";
-  FOR_EACH_CONST(i, ObjectMap, *this)
+  for (auto& i : *this)
     {
-      s << Indent(indentLevel + 1) << i->first << '\n';
-      if (i->second.object == 0)
+      s << Indent(indentLevel + 1) << i.first << '\n';
+      if (i.second.object == 0)
 	s << Indent(indentLevel + 2) << "*** NO OBJECT ***\n";
       else
-	s << Indent(indentLevel + 2) << i->second.object << '\n';
-      FOR_EACH_CONST(j, list<DagNode*>, i->second.messages)
-	s << Indent(indentLevel + 2) << *j << '\n';
+	s << Indent(indentLevel + 2) << i.second.object << '\n';
+      for (DagNode* d : i.second.messages)
+	s << Indent(indentLevel + 2) << d << '\n';
       s << '\n';
     }
   s << Indent(indentLevel) << "end{ObjectMap}\n";

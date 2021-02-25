@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -114,60 +114,88 @@ FileManagerSymbol::getMode(DagNode* modeDag, char*& modeStr, bool& okToRead, boo
   return false;
 }
 
-bool
+void
+FileManagerSymbol::removeFile(FreeDagNode* message, ObjectSystemRewritingContext& context)
+{
+  Assert(message->getArgument(0)->symbol() == this, "misdirected message");
+
+  if (allowFiles)
+    {
+      DagNode* pathArg = message->getArgument(2);
+      if (pathArg->symbol() == stringSymbol)
+	{
+	  const Rope& path = safeCast(StringDagNode*, pathArg)->getValue();
+	  char* pathStr = path.makeZeroTerminatedString();
+	  if (unlink(pathStr) == 0)
+	    trivialReply(removedFileMsg, message, context);
+	  else
+	    errorReply(strerror(errno), message, context);
+	  delete [] pathStr;
+	}
+      else
+	errorReply("Bad file name.", message, context);
+    }
+  else
+    {
+      IssueAdvisory("operations on file system disabled.");
+      errorReply("File operations disabled.", message, context);
+    }
+}
+
+void
 FileManagerSymbol::openFile(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   Assert(message->getArgument(0)->symbol() == this, "misdirected message");
 
-  DagNode* pathArg = message->getArgument(2);
-  DagNode* modeArg = message->getArgument(3);
-  char* modeStr;
-  bool okToRead;
-  bool okToWrite;
-  if (pathArg->symbol() == stringSymbol && getMode(modeArg, modeStr, okToRead, okToWrite))
+  if (allowFiles)
     {
-      //
-      //	We accept the message.
-      //
-      if (allowFiles)
+      DagNode* pathArg = message->getArgument(2);
+      if (pathArg->symbol() == stringSymbol)
 	{
-	  const Rope& path = safeCast(StringDagNode*, pathArg)->getValue();
-	  char* pathStr = path.makeZeroTerminatedString();
-
-	  FILE* fp = fopen(pathStr, modeStr);
-	  delete [] modeStr;
-	  delete [] pathStr;
-
-	  if (fp)
+	  DagNode* modeArg = message->getArgument(3);
+	  char* modeStr;
+	  bool okToRead;
+	  bool okToWrite;
+	  if (getMode(modeArg, modeStr, okToRead, okToWrite))
 	    {
-	      int fd = fileno(fp);
-	      openedFileReply(fd, message, context);
-	      OpenFile& of = openFiles[fd];
-	      of.fp = fp;
-	      of.okToRead = okToRead;
-	      of.okToWrite = okToWrite;
-	      of.lastOpWasWrite = false;
+	      const Rope& path = safeCast(StringDagNode*, pathArg)->getValue();
+	      char* pathStr = path.makeZeroTerminatedString();
+
+	      FILE* fp = fopen(pathStr, modeStr);
+	      delete [] modeStr;
+	      delete [] pathStr;
+
+	      if (fp)
+		{
+		  int fd = fileno(fp);
+		  openedFileReply(fd, message, context);
+		  OpenFile& of = openFiles[fd];
+		  of.fp = fp;
+		  of.okToRead = okToRead;
+		  of.okToWrite = okToWrite;
+		  of.lastOpWasWrite = false;
+		}
+	      else
+		{
+		  const char* errText = strerror(errno);
+		  DebugAdvisory("unexpected fopen() error: " << errText);
+		  errorReply(errText, message, context);
+		}
 	    }
 	  else
-	    {
-	      const char* errText = strerror(errno);
-	      DebugAdvisory("unexpected fopen() error: " << errText);
-	      errorReply(errText, message, context);
-	    }
+	    errorReply("Bad mode.", message, context);
 	}
       else
-	{
-	  delete [] modeStr;
-	  IssueAdvisory("operations on file system disabled.");
-	  errorReply("file operations disabled", message, context);
-	}
-      return true;
+	errorReply("Bad file name.", message, context);
     }
-  IssueAdvisory("file manager declined malformed message " << QUOTE(message) << '.');
-  return false;
+  else
+    {
+      IssueAdvisory("operations on file system disabled.");
+      errorReply("File operations disabled.", message, context);
+    }
 }
 
-bool
+void
 FileManagerSymbol::write(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   int fd;
@@ -179,32 +207,34 @@ FileManagerSymbol::write(FreeDagNode* message, ObjectSystemRewritingContext& con
   //	or the text is not text or it is empty.
   //
   Rope text;
-  if (ofp->okToWrite && 
-      getText(message->getArgument(2), text) &&
-      !(text.empty()))
+  if (ofp->okToWrite)
     {
-      char* textArray = text.makeZeroTerminatedString();
-      size_t charsToWrite = text.length();
-      size_t charsWritten = fwrite(textArray, 1, text.length(), ofp->fp);
-      ofp->lastOpWasWrite = true;
-      delete [] textArray;
-
-      if (charsWritten == charsToWrite)
-	trivialReply(wroteMsg, message, context);
-      else
+      if (getText(message->getArgument(2), text) && !(text.empty()))
 	{
-	  const char* errText = strerror(errno);
-	  DebugAdvisory("unexpected fwrite() error " << charsToWrite <<
-			" vs " << charsWritten << " : " << errText);
-	  errorReply(errText, message, context);
+	  char* textArray = text.makeZeroTerminatedString();
+	  size_t charsToWrite = text.length();
+	  size_t charsWritten = fwrite(textArray, 1, text.length(), ofp->fp);
+	  ofp->lastOpWasWrite = true;
+	  delete [] textArray;
+
+	  if (charsWritten == charsToWrite)
+	    trivialReply(wroteMsg, message, context);
+	  else
+	    {
+	      const char* errText = strerror(errno);
+	      DebugAdvisory("unexpected fwrite() error " << charsToWrite <<
+			    " vs " << charsWritten << " : " << errText);
+	      errorReply(errText, message, context);
+	    }
 	}
-      return true;
+      else
+	errorReply("Bad characters.", message, context);
     }
-  IssueAdvisory(fileName << " declined message " << QUOTE(message) << '.');
-  return false;
+  else
+    errorReply("File not open for writing.", message, context);
 }
 
-bool
+void
 FileManagerSymbol::flush(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   int fd;
@@ -215,13 +245,12 @@ FileManagerSymbol::flush(FreeDagNode* message, ObjectSystemRewritingContext& con
     {
       fflush(ofp->fp);
       trivialReply(flushedMsg, message, context);
-      return true;
     }
-  IssueAdvisory(fileName << " declined message " << QUOTE(message) << '.');
-  return false;
+  else
+    errorReply("File not open for writing.", message, context);
 }
 
-bool
+void
 FileManagerSymbol::getLine(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   int fd;
@@ -266,24 +295,24 @@ FileManagerSymbol::getLine(FreeDagNode* message, ObjectSystemRewritingContext& c
       //
       if (line != 0)
 	free(line);
-      return true;
     }
-  IssueAdvisory(fileName << " declined message " << QUOTE(message) << '.');
-  return false;
+  else
+    errorReply("File not open for reading.", message, context);
 }
 
-bool
+void
 FileManagerSymbol::getChars(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   int fd;
   OpenFile* ofp;
   DagNode* fileName = message->getArgument(0);
   getOpenFile(fileName, fd, ofp);
+
+  if (ofp->okToRead)
     {
       DagNode* nrArg = message->getArgument(2);
       Int64 nrCharsToRead;
-      if (ofp->okToRead &&
-	  succSymbol->getSignedInt64(nrArg, nrCharsToRead)) // need to deal with unbounded
+      if (succSymbol->getSignedInt64(nrArg, nrCharsToRead)) // need to deal with unbounded
 	{
 	  if (ofp->lastOpWasWrite)
 	    {
@@ -308,14 +337,15 @@ FileManagerSymbol::getChars(FreeDagNode* message, ObjectSystemRewritingContext& 
 	    }
 	  while (nrCharsToRead > 0);
 	  gotCharsReply(text, message, context);
-	  return true;
 	}
-      IssueAdvisory(fileName << " declined message " << QUOTE(message) << '.');
+      else
+	errorReply("Bad size.", message, context);
     }
-  return false;
+  else
+    errorReply("File not open for reading.", message, context);
 }
 
-bool
+void
 FileManagerSymbol::getPosition(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   int fd;
@@ -331,7 +361,6 @@ FileManagerSymbol::getPosition(FreeDagNode* message, ObjectSystemRewritingContex
     }
   else
     positionGotReply(position, message, context);
-  return true;
 }
 
 bool
@@ -349,7 +378,7 @@ FileManagerSymbol::getBase(DagNode* baseDag, int& base)
   return true;
 }
 
-bool
+void
 FileManagerSymbol::setPosition(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   int fd;
@@ -357,27 +386,30 @@ FileManagerSymbol::setPosition(FreeDagNode* message, ObjectSystemRewritingContex
   DagNode* fileName = message->getArgument(0);
   getOpenFile(fileName, fd, ofp);
   int base;
-  Int64 offset;
-  if (getBase(message->getArgument(3), base) &&
-      minusSymbol->getSignedInt64(message->getArgument(2), offset))
+  if (getBase(message->getArgument(3), base))
     {
-      ofp->lastOpWasWrite = false;
-      int ok = fseek(ofp->fp, offset, base);
-      if (ok == 0)
-	trivialReply(positionSetMsg, message, context);
-      else
+      Int64 offset;
+      if (minusSymbol->getSignedInt64(message->getArgument(2), offset))
 	{
-	  const char* errText = strerror(errno);
-	  DebugAdvisory("unexpected fseek() error : " << errText);
-	  errorReply(errText, message, context);
+	  ofp->lastOpWasWrite = false;
+	  int ok = fseek(ofp->fp, offset, base);
+	  if (ok == 0)
+	    trivialReply(positionSetMsg, message, context);
+	  else
+	    {
+	      const char* errText = strerror(errno);
+	      DebugAdvisory("unexpected fseek() error : " << errText);
+	      errorReply(errText, message, context);
+	    }
 	}
-      return true;
+      else
+	errorReply("Bad offset.", message, context);
     }
-  IssueAdvisory(fileName << " declined message " << QUOTE(message) << '.');
-  return false;
+  else
+    errorReply("Bad base.", message, context);
 }
 
-bool
+void
 FileManagerSymbol::closeFile(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   int fd;
@@ -388,7 +420,6 @@ FileManagerSymbol::closeFile(FreeDagNode* message, ObjectSystemRewritingContext&
   openFiles.erase(fd);
   context.deleteExternalObject(fileName);
   trivialReply(closedFileMsg, message, context);
-  return true;
 }
 
 void

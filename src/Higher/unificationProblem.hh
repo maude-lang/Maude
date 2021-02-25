@@ -25,6 +25,7 @@
 //
 #ifndef _unificationProblem_hh_
 #define _unificationProblem_hh_
+#include "natSet.hh"
 #include "cacheableState.hh"
 #include "simpleRootContainer.hh"
 #include "variableInfo.hh"
@@ -80,7 +81,7 @@ private:
   PendingUnificationStack pendingStack;
   bool problemOkay;			// true if problem didn't violate ctor invariants
   bool viable;				// true if problem didn't fail computeSolvedForm() pass
-  Vector<int> freeVariables;	     	// indices (slots) of unbound variables in unsorted unifier
+  NatSet freeVariables;	       		// indices (slots) of unbound variables in unsorted unifier
   AllSat* orderSortedUnifiers;		// satisfiability problem encoding sorts for order-sorted unifiers
   Substitution* sortedSolution;		// for construction order-sorted unifiers
 };

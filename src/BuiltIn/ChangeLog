@@ -1,3 +1,11 @@
+2020-12-14  Steven Eker  <eker2@eker10>
+
+	* succSymbol.hh (class SuccSymbol): use Ruben's hack to fix the
+	lack of a conversion from long long int to mpz_class on 32-bit
+	machines via a new inline function
+
+===================================Maude132-32===========================================
+
 2020-09-28  Steven Eker  <eker2@eker10>
 
 	* matrixOpSymbol.cc (MatrixOpSymbol::eqRewrite): use range-based

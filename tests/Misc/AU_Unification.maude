@@ -13,7 +13,7 @@ vars A B C X Y Z : Foo .
 endfm
 
 *** one side goes to one variable
-unify X =? Y X /\ Z Y  =? A B .
+unify X =? Y X /\ Z Y =? A B .
 variant unify X =? Y X /\ Z Y  =? A B .
 
 *** one side goes to empty

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,38 @@
 //
 //      MetaInterpreters: search messages.
 //
+
+RewriteSequenceSearch*
+InterpreterManagerSymbol::makeRewriteSequenceSearch(ImportModule* m,
+						    FreeDagNode* message,
+						    RewritingContext& context) const
+{
+  RewriteSequenceSearch::SearchType searchType;
+  int maxDepth;
+  if (metaLevel->downSearchType(message->getArgument(6), searchType) &&
+      metaLevel->downBound(message->getArgument(7), maxDepth))
+    {
+      Term* s;
+      Term* g;
+      if (metaLevel->downTermPair(message->getArgument(3), message->getArgument(4), s, g, m))
+	{
+	  Vector<ConditionFragment*> condition;
+	  if (metaLevel->downCondition(message->getArgument(5), m, condition))
+	    {
+	      m->protect();
+	      Pattern* goal = new Pattern(g, false, condition);
+	      RewritingContext* subContext = term2RewritingContext(s, context);
+	      return new RewriteSequenceSearch(subContext,
+					       searchType,
+					       goal,
+					       maxDepth);
+	    }
+	  g->deepSelfDestruct();
+	  s->deepSelfDestruct();
+	}
+    }
+  return 0;
+}
 
 DagNode*
 InterpreterManagerSymbol::getSearchResult(FreeDagNode* message,

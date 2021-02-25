@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -214,6 +214,52 @@ InterpreterManagerSymbol::erewriteTerm(FreeDagNode* message,
       return makeErrorReply("Bad gas.", message);
     }
   return makeErrorReply("Bad limit.", message);
+}
+
+StrategicSearch*
+InterpreterManagerSymbol::makeStrategicSearch(MetaModule* m,
+					      FreeDagNode* message,
+					      RewritingContext& context,
+					      bool depthFirst) const
+{
+  if (Term* t = metaLevel->downTerm(message->getArgument(3), m))
+    {
+      if (StrategyExpression* s = metaLevel->downStratExpr(message->getArgument(4), m))
+	{
+	  TermSet boundVars;
+	  VariableInfo vinfo;
+	  if (s->check(vinfo, boundVars))
+	    {
+	      // Prepares the strategy
+	      m->protect();
+	      s->process();
+
+	      // Prepares the term
+	      RewritingContext* objectContext = term2RewritingContext(t, context);
+	      objectContext->reduce();
+	      if (depthFirst)
+		return new DepthFirstStrategicSearch(objectContext, s);
+	      else
+		return new FairStrategicSearch(objectContext, s);
+	    }
+	  else
+	    {
+	      DebugAdvisory("bad metastrategy (check)" << QUOTE(s));
+	      delete s;
+	      t->deepSelfDestruct();
+	    }
+	}
+      else
+	{
+	  DebugAdvisory("bad metastrategy " << QUOTE(message->getArgument(4)));
+	  t->deepSelfDestruct();
+	}
+    }
+  else
+    {
+      DebugAdvisory("bad metaterm " << QUOTE(message->getArgument(1)));
+    }
+  return 0;
 }
 
 DagNode*

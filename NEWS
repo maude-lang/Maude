@@ -1,5 +1,28 @@
-Overview of Changes in alpha132
-===============================
+Overview of Changes in alpha133
+============================================
+* fixed bugs in the processing of strategies in parameterized views
+* fixed bug where irredundant prefix was echoed
+* fixed bug where waiting on multiple file descriptors could ignore
+some of them on platforms using pselect() such as Mac
+* constraint propagation gets more A/AU unification cases
+* two optimizations to reduce the number of redundant AU-unifiers
+* meta-interpreters running in the orginal process now have the
+same error semantics as meta-interpreters running in new processes
+* file API has new error semantics
+* missing start op-hook added to file.maude
+* removeFile() message added to file.maude
+* fixed a bug where irredundant unification was ignoring the
+  last variable in each subsumption check
+* removed destructive generation of order-sorted unifiers because
+  it breaks irredundant unification (which assume unifiers can
+  be retained) and generates denormalized unifiers anyway
+
+Overview of Changes in alpha132-32 (2020-12-14)
+===============================================
+* fixed GMP/long long int issue on 32-bit machines
+
+Overview of Changes in alpha132 (2020-12-11)
+============================================
 * fixed bugs where non-unary iter symbols caused breakage
 in regular and polymorphic cases
 * fixed bugs where bad sorts for iter symbols caused breakage

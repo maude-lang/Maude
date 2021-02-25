@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@ class FileManagerSymbol : public ExternalObjectManagerSymbol
 
 public:
   FileManagerSymbol(int id);
-  //~FileManagerSymbol();
 
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
@@ -80,14 +79,15 @@ private:
   //
   //	Actions.
   //
-  bool openFile(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool write(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool flush(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getLine(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getChars(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getPosition(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool setPosition(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool closeFile(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void openFile(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void removeFile(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void write(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void flush(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void getLine(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void getChars(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void getPosition(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void setPosition(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void closeFile(FreeDagNode* message, ObjectSystemRewritingContext& context);
   //
   //	Replies.
   //

@@ -1,0 +1,150 @@
+***
+***	Tests for associative-identity unification.
+***	This version only looks at irredundant unifiers
+***	because the number of irredundant unifiers shouldn't
+***	change as we optimize AU unification to avoid generating
+***	redundant unifiers.
+***
+
+set show timing off .
+
+fmod AU-TEST is
+  sort Foo .
+  op 1 : -> Foo .
+  op __ : Foo Foo -> Foo [assoc id: 1] .
+  ops a b c : -> Foo .
+vars A B C X Y Z : Foo .
+endfm
+
+*** one side goes to one variable
+irred unify X =? Y X /\ Z Y  =? A B .
+
+*** one side goes to empty
+irred unify X =? Y X /\  Z C =? C  /\ Z Y =? A B .
+
+*** both sides go to one variable
+irred unify X =? Y X /\ A C =? C  /\ Z Y =? A B .
+
+*** both side to to empty
+irred unify X =? Y X /\ Y =? A B Z  /\ Z Y =? A B .
+
+*** AU problem completely nulls out
+irred unify X =? 1 /\ Y =? 1 /\ Z =? 1 /\ X =? Y Z .
+irred unify X =? 1 /\ Y =? 1 /\ Z =? 1 /\ X Y =? Y Z .
+
+*** null equation
+irred unify X =? Y X /\ 1 =? A B Z  /\ Z Y =? A B .
+irred unify X =? Y X /\ C =? 1 /\ C =? A B Z  /\ Z Y =? A B .
+
+*** collapse
+irred unify A B C =? a .
+irred unify Y =? 1 /\ X =? Y Z .
+
+*** linear
+irred unify A B =? X Y .
+irred unify A B =? X Y Z .
+irred unify A B C =? X Y Z .
+
+
+*** order-sorted unification
+
+fmod LIST is
+  sorts Elt List .
+  subsort Elt < List .
+  op nil : -> List .
+  op __ : List List -> List [assoc id: nil] .
+vars L M N : List .
+vars E F G : Elt .
+endfm
+
+irred unify E =? L M N .
+irred unify E L E M =? E N F N .
+
+*** cycle breaking
+
+fmod NAT' is
+  protecting BOOL .
+  sorts Zero NzNat Nat .
+  subsort Zero NzNat < Nat .
+  op 0 : -> Zero .
+  op s_ : Nat -> NzNat [iter] .
+  op _*_ : NzNat NzNat -> NzNat [assoc id: s(0) prec 31] .
+  op _*_ : Nat Nat -> Nat [ditto] .
+
+  vars W X Y Z A B C D : Nat .
+endfm
+
+*** cycle breaking through S theory
+irred unify X =? s (X * Y) .
+irred unify X =? s X * Y .
+
+*** theory conflict
+irred unify s X =? s X * Y .
+irred unify s X =? X * Y .
+
+fmod COMM is
+  sort Foo .
+  ops a b c d : -> Foo .
+  op f : Foo Foo -> Foo [assoc id: c(a, b)] .
+  op c : Foo Foo -> Foo [comm] .
+  vars W X Y Z A B C D : Foo .
+endfm
+
+*** cycle breaking through comm theory
+irred unify X =? c(f(X, Y), Z) .
+
+fmod FOO2 is
+  sort Foo .
+  ops a b c d : -> Foo .
+  op f : Foo Foo -> Foo [assoc id: g(c, d)] .
+  op g : Foo Foo -> Foo [assoc id: f(a, b)] .
+
+  vars X Y : Foo .
+endfm
+
+*** cycle breaking with non-disjoint identities
+irred unify X =? f(Y, a, b) /\ Y =? g(X, c, d) .
+
+fmod FOO3 is
+  sort Foo .
+  ops a b : -> Foo .
+  op h : Foo -> Foo .
+  op f : Foo Foo -> Foo [assoc id: h(f(a, b))] .
+
+  vars X Y : Foo .
+endfm
+
+*** cycle breaking with non-disjoint identity
+irred unify X =? f(Y, a, b) /\ Y =? h(X) .
+
+*** order-sorted mgus need not be unsorted mgus
+
+fmod AU-UNSORTED is
+  sort Foo .
+  op 1 : -> Foo .
+  op f : Foo Foo -> Foo [assoc id: 1] .
+endfm
+
+*** 1 mgu
+irred unify X:Foo =? f(Y:Foo, Z:Foo) .
+
+fmod AU-SORTED1 is
+  sorts Lo Hi .
+  subsort Lo < Hi .
+  op 1 : -> Hi .
+  op f : Hi Hi -> Hi [assoc id: 1] .
+endfm
+
+*** unsorted mgu can't be sorted so collapse solutions becomes mgus
+irred unify X:Lo =? f(Y:Hi, Z:Hi) .
+
+fmod AU-SORTED2 is
+  sorts Lo Hi .
+  subsort Lo < Hi .
+  op 1 : -> Hi .
+  op f : Hi Hi -> Hi [assoc id: 1] .
+  op f : Lo Lo -> Lo [assoc id: 1] .
+endfm
+
+*** collapse solutions not subsumed by non-collapse solution after sorting 
+irred unify X:Lo =? f(Y:Hi, Z:Hi) .

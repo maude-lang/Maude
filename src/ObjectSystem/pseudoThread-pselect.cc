@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -70,6 +70,9 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
   int maxFd = -1;
   for (int i = firstActive; i != NONE; i = fdInfo[i].nextActive)
     {
+      //
+      //	We can't assume that fds will be visited in ascending order.
+      //
       short flags = fdInfo[i].flags;
       Assert(flags != 0, "zero flags for " << i);
       //
@@ -79,12 +82,14 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
       if (flags & POLLIN)
 	{
 	  FD_SET(i, &readfds);
-	  maxFd = i;
+	  if (i > maxFd)
+	    maxFd = i;
 	}
       if (flags & POLLOUT)
 	{
 	  FD_SET(i, &writefds);
-	  maxFd = i;
+	  if (i > maxFd)
+	    maxFd = i;
 	}
     }
   //

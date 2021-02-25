@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -131,31 +131,41 @@ FileManagerSymbol::getSymbolAttachments(Vector<const char*>& purposes,
 bool
 FileManagerSymbol::handleManagerMessage(DagNode* message, ObjectSystemRewritingContext& context)
 {
-  //cerr << "FileManagerSymbol::handleManagerMessage(): saw " << message << endl;
+  DebugInfo("FileManagerSymbol::handleManagerMessage(): saw " << message);
   Symbol* s = message->symbol();
   if (s == openFileMsg)
-    return openFile(safeCast(FreeDagNode*, message), context);
+    {
+      openFile(safeCast(FreeDagNode*, message), context);
+      return true;
+    }
+  else if (s == removeFileMsg)
+    {
+      removeFile(safeCast(FreeDagNode*, message), context);
+      return true;
+    }
   return false;
 }
 
 bool
 FileManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingContext& context)
 {
-  //cerr << "FileManagerSymbol::handleMessage(): saw " << message << endl;
+  DebugInfo("FileManagerSymbol::handleMessage(): saw " << message);
   Symbol* s = message->symbol();
   if (s == getLineMsg)
-    return getLine(safeCast(FreeDagNode*, message), context);
-  if (s == getCharsMsg)
-    return getChars(safeCast(FreeDagNode*, message), context);
-  if (s == writeMsg)
-    return write(safeCast(FreeDagNode*, message), context);
-  if (s == flushMsg)
-    return flush(safeCast(FreeDagNode*, message), context);
-  if (s == getPositionMsg)
-    return getPosition(safeCast(FreeDagNode*, message), context);
-  if (s == setPositionMsg)
-    return setPosition(safeCast(FreeDagNode*, message), context);
-  if (s == closeFileMsg)
-    return closeFile(safeCast(FreeDagNode*, message), context);
-  return false;
+    getLine(safeCast(FreeDagNode*, message), context);
+  else if (s == getCharsMsg)
+    getChars(safeCast(FreeDagNode*, message), context);
+  else if (s == writeMsg)
+    write(safeCast(FreeDagNode*, message), context);
+  else if (s == flushMsg)
+    flush(safeCast(FreeDagNode*, message), context);
+  else if (s == getPositionMsg)
+    getPosition(safeCast(FreeDagNode*, message), context);
+  else if (s == setPositionMsg)
+    setPosition(safeCast(FreeDagNode*, message), context);
+  else if (s == closeFileMsg)
+    closeFile(safeCast(FreeDagNode*, message), context);
+  else
+    return false;
+  return true;
 }

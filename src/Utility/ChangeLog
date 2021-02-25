@@ -1,3 +1,235 @@
+2021-02-18  Steven Eker  <eker2@eker10>
+
+	* wordLevel-simplifyEquations.cc (WordLevel::simplifyEquation):
+	added a DebugInfo() for the case where we can't turn an equation
+	into an assignment because the lone variable already has an unsafe
+	assignment
+
+2021-02-09  Steven Eker  <eker2@eker10>
+
+	* wordLevel-selections.cc (WordLevel::systemLinear): compute
+	pseudo-constrained variables and don't count them for the purpose
+	of determining linearity
+
+	* wordLevel.hh (class WordLevel): deleted decl for canPinch();
+	added decl for computePinches()
+
+	* wordLevel-selections.cc (WordLevel::computePinches): added
+	(WordLevel::determinePinchedVariables): use computePinches()
+	(WordLevel::canPinch): deleted
+
+2021-02-05  Steven Eker  <eker2@eker10>
+
+	* wordLevel.hh: deleted
+
+	* wordLevel-feasible.cc: check unsafeAssignments() to determine
+	bounds issues with partial solution
+
+	* wordLevel-simplifyEquations.cc (WordLevel::checkForSingleton):
+	added DebugInfo()s for where we can't bind to a variable that
+	has an unsafe assignment
+	(WordLevel::simplifyEquation): added code to dump partial solution
+	in debug mode
+	(WordLevel::checkForSingleton): added missing return so we don't
+	fall into unsafe assignment case
+
+	* pigPug.cc: output sizes in Assert()s
+
+2021-02-04  Steven Eker  <eker2@eker10>
+
+	* wordLevel-selections.cc (WordLevel::determinePinchedVariables):
+	use unsafeAssignments to determine which assignments pinch
+	variables
+
+2021-02-03  Steven Eker  <eker2@eker10>
+
+	* wordLevel-simplifyEquations.cc (WordLevel::simplifyEquation):
+	call handleNullEquations() if checkForNull() made a null equation
+
+	* wordLevel-simplifyAssignments.cc
+	(WordLevel::fullyExpandAssignments): don't call
+	handleNullEquations() here
+
+	* wordLevel-collapseCase.cc
+	(WordLevel::expandAssignmentsToFixedPointCollapseCase): don't call
+	handleNullEquations() here
+
+	* wordLevel.cc (WordLevel::simplify): call handleNullEquations()
+	here at the beginning of each non-PIGPUG level
+
+	* wordLevel-collapseCase.cc
+	(WordLevel::reallyExpandAssignmentCollapseCase): don't call
+	handleNullEquations() after resolveOccursCheckFailure()
+	(WordLevel::checkAssignmentCollapseCase): call
+	handleNullEquations() after unique collapse.
+	(WordLevel::checkAssignmentsCollapseCase): don't call
+	handleNullEquations() here
+	(WordLevel::reallyExpandAssignmentCollapseCase): don't call
+	handleNullEquations() here
+
+	* wordLevel-null.cc (WordLevel::resolveOccursCheckFailure): call
+	handleNullEquations() instead of returning true
+
+2021-02-02  Steven Eker  <eker2@eker10>
+
+	* wordLevel.hh (class WordLevel): deleted decls for
+	checkAssignment(), checkAssignments(),
+	checkAssignmentsToFixedPoint()
+
+	* wordLevel-simplifyAssignments.cc
+	(WordLevel::fullyExpandAssignments): call handleNullEquations in
+	non-PIGPUG levels
+
+	* wordLevel.hh (class WordLevel): delete decls for old versions of
+	expandAssignments(), expandAssignment(), reallyExpandAssignment()
+
+	* wordLevel-checkAssignments.cc: deleted
+
+	* wordLevel-simplifyAssignments.cc
+	(WordLevel::fullyExpandAssignments): cut out dead code
+	(WordLevel::expandAssignments, WordLevel::expandAssignment)
+	(WordLevel::reallyExpandAssignment): deleted old versions
+
+2021-02-01  Steven Eker  <eker2@eker10>
+
+	* wordLevel-simplifyEquations.cc: rewritten to respect
+	unsafeAssignments and leave constraint checking to the assignment
+	checking code
+	(WordLevel::makeAssignment): handle equal variables case
+	(WordLevel::simplifyEquation): copyBack() the partly simplified
+	equation in UNSAFE cases
+
+	* wordLevel.hh (class WordLevel): added UNSAFE to Result
+
+2021-01-29  Steven Eker  <eker2@eker10>
+
+	* wordLevel-simplifyAssignments.cc
+	(WordLevel::fullyExpandAssignments): use
+	expandAssignmentsToFixedPointNormalCase()
+
+	* wordLevel.hh (class WordLevel): added decls for
+	checkAssignmentNormalCase(), checkAssignmentsNormalCase(),
+	checkAssignmentsToFixedPointNormalCase(),
+	reallyExpandAssignmentNormalCase(),
+	expandAssignmentNormalCase(), expandAssignmentsNormalCase(),
+	expandAssignmentsToFixedPointNormalCase()
+
+	* wordLevel-normalCase.cc: created
+
+	* wordLevel-simplifyAssignments.cc
+	(WordLevel::fullyExpandAssignments): use
+	expandAssignmentsToFixedPointCollapseCase()
+
+	* wordLevel.hh (class WordLevel): added decls for
+	checkAssignmentCollapseCase(), checkAssignmentsCollapseCase(),
+	checkAssignmentsToFixedPointCollapseCase(),
+	reallyExpandAssignmentCollapseCase(),
+	expandAssignmentCollapseCase(), expandAssignmentsCollapseCase(),
+	expandAssignmentsToFixedPointCollapseCase()
+
+	* wordLevel-collapseCase.cc: created
+
+	* wordLevel-null.cc (WordLevel::handleNullEquations): restructured
+	to use makeEmptyAssignment()
+	(WordLevel::resolveOccursCheckFailure): restructured to use
+	makeEmptyAssignment()
+
+	* wordLevel.hh (class WordLevel): added decl for
+	makeEmptyAssignment()
+
+	* wordLevel-null.cc (WordLevel::makeEmptyAssignment): added
+
+2021-01-28  Steven Eker  <eker2@eker10>
+
+	* wordLevel-feasible.cc: added Assert() that if we're legal
+	without collapse we should not have unsafeAssignments
+
+	* wordLevel-simplifyEquations.cc (WordLevel::expandWord): don't
+	substitute in unsafe assignments
+	(WordLevel::append): use range-based for loop
+
+	* wordLevel-simplifyAssignments.cc (WordLevel::expandAssignment):
+	don't substitute in unsafeAssignments
+	(WordLevel::fullyExpandAssignments): call
+	checkAssignmentsToFixedPoint() before each expandAssignments()
+	call
+	(WordLevel::reallyExpandAssignment): don't substitute in
+	unsafeAssignments
+
+	* wordLevel.hh (class WordLevel): added decls for
+	checkAssignment(), checkAssignments(),
+	checkAssignmentsToFixedPoint()
+	(class WordLevel): added data member unsafeAssignments
+
+	* wordLevel-checkAssignments.cc: created
+
+2021-01-27  Steven Eker  <eker2@eker10>
+
+	* pigPug-extract.cc (PigPug::checkInvariant): commented out
+
+	* pigPug.hh (class PigPug): commented out decl for
+	checkInvariant()
+
+	* pigPug-extract.cc (PigPug::extractUnifier): use
+	tightenConstraints()
+
+	* pigPug.hh (class PigPug): added decls for tightenConstraints(),
+	checkInvariant()
+
+	* pigPug-extract.cc (PigPug::extractUnifier): added post variable
+	renaming pass to see if the constraint on any rhs variable can be
+	tightened
+	(PigPug::checkInvariant): added
+	(PigPug::tightenConstraints): added
+
+2021-01-26  Steven Eker  <eker2@eker10>
+
+	* wordLevel-simplifyEquations.cc (WordLevel::simplifyEquation):
+	rearrange if statement and added Assert()s and comments about the
+	impossibility of null unificands arising in a PIGPUG level
+	(WordLevel::simplifyEquation): don't assign to nrLhsVariables,
+	just check for empty()
+	(WordLevel::makeAssignment): refactor code with different loops
+	for PIGPUG and INITIAL/SELECTION levels
+
+2021-01-22  Steven Eker  <eker2@eker10>
+
+	* wordLevel-selections.cc (WordLevel::systemLinear): only consider
+	the linearity of unconstrained variables because these are the
+	ones we are relying on to take an extra fresh variable and subsume
+	a unifier with an identity assignment
+	(WordLevel::determinePinchedVariables): handle the fact that we
+	might have null equations after simplification
+	(WordLevel::systemLinear): handle the fact that we might have null
+	equations after simplification
+
+	* wordLevel.hh (class WordLevel): added decls for systemLinear(),
+	canPinch(), determinePinchedVariables()
+
+	* wordLevel-selections.cc (WordLevel::systemLinear)
+	(WordLevel::canPinch, WordLevel::determinePinchedVariables): added
+	(WordLevel::chooseVariablesToSelectFrom): check for
+	identityOptimizations and systemLinear(), and if so, restrict our
+	attention to potentially pinched variables
+
+	* wordLevel.hh (class WordLevel): added decl for
+	chooseVariablesToSelectFrom()
+
+	* wordLevel-selections.cc
+	(WordLevel::chooseVariablesToSelectFrom): added
+
+2021-01-21  Steven Eker  <eker2@eker10>
+
+	* wordLevel.cc (WordLevel::makePigPug): allow equate optimization
+	for last equation only
+
+2021-01-19  Steven Eker  <eker2@eker10>
+
+	* pigPug-search.cc (PigPug::nextMove): fix comment on
+	equateOptimization
+
+===================================Maude133===================================
+
 2020-12-10  Steven Eker  <eker2@eker10>
 
 	* bddUser.hh (class BddUser): multiplied all the default sizes by 10

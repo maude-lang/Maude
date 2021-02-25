@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,34 @@
 //
 //	MetaInterpreters: getMatch()/getXmatch() message.
 //
+
+MatchSearchState*
+InterpreterManagerSymbol::makeMatchSearchState(ImportModule* m,
+					       FreeDagNode* message,
+					       RewritingContext& context) const
+{
+  Term* p;
+  Term* s;
+  if (metaLevel->downTermPair(message->getArgument(3), message->getArgument(4), p, s, m))
+    {
+      Vector<ConditionFragment*> condition;
+      if (metaLevel->downCondition(message->getArgument(5), m, condition))
+	{
+	  m->protect();
+	  Pattern* pattern = new Pattern(p, false, condition);
+	  RewritingContext* subjectContext = term2RewritingContext(s, context);
+	  subjectContext->root()->computeTrueSort(*subjectContext);
+	  return new MatchSearchState(subjectContext,
+				      pattern,
+				      MatchSearchState::GC_PATTERN |
+				      MatchSearchState::GC_CONTEXT |
+				      MatchSearchState::GC_SUBSTITUTION);
+	}
+      s->deepSelfDestruct();
+      p->deepSelfDestruct();
+    }
+  return 0;
+}
 
 DagNode*
 InterpreterManagerSymbol::getMatch(FreeDagNode* message,
@@ -92,6 +120,49 @@ InterpreterManagerSymbol::getMatch(FreeDagNode* message,
       return errorMessage;
     }
   return makeErrorReply("Bad solution number.", message);
+}
+
+MatchSearchState*
+InterpreterManagerSymbol::makeMatchSearchState2(ImportModule* m,
+                                                FreeDagNode* subject,
+                                                RewritingContext& context) const
+{
+  int minDepth;
+  int maxDepth;
+  if (metaLevel->downSaturate(subject->getArgument(6), minDepth) &&
+      metaLevel->downBound(subject->getArgument(7), maxDepth))
+    {
+      //
+      //        Pattern and subject might be in different kinds because
+      //        we are searching a subject using extension.
+      //
+      if (Term* p = metaLevel->downTerm(subject->getArgument(3), m))
+        {
+          if (Term* s = metaLevel->downTerm(subject->getArgument(4), m))
+            {
+              Vector<ConditionFragment*> condition;
+              if (metaLevel->downCondition(subject->getArgument(5), m, condition))
+                {
+                  if (maxDepth == NONE)
+                    maxDepth = UNBOUNDED;  // NONE means no extension for MatchSearchState; we want unbounded
+                  m->protect();
+                  Pattern* pattern = new Pattern(p, true, condition);
+                  RewritingContext* subjectContext = term2RewritingContext(s, context);
+                  subjectContext->root()->computeTrueSort(*subjectContext);
+                  return new MatchSearchState(subjectContext,
+                                              pattern,
+                                              MatchSearchState::GC_PATTERN |
+                                              MatchSearchState::GC_CONTEXT |
+                                              MatchSearchState::GC_SUBSTITUTION,
+                                              minDepth,
+                                              maxDepth);
+                }
+              s->deepSelfDestruct();
+            }
+          p->deepSelfDestruct();
+        }
+    }
+  return 0;
 }
 
 DagNode*

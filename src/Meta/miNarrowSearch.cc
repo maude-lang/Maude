@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,43 @@
 //
 //	MetaInterpreters: getNarrowingSearchResult() and getNarrowingSearchResultAndPath() messages.
 //
+
+NarrowingSequenceSearch3*
+InterpreterManagerSymbol::makeNarrowingSequenceSearch3(ImportModule* m,
+						       FreeDagNode* message,
+						       RewritingContext& context,
+						       int variantFlags) const
+{
+  RewriteSequenceSearch::SearchType searchType;
+  bool fold;
+  int maxDepth;
+  if (metaLevel->downSearchType(message->getArgument(5), searchType) &&
+      metaLevel->downFoldType(message->getArgument(7), fold) &&
+      metaLevel->downBound(message->getArgument(6), maxDepth))
+    {
+      Term* s;
+      Term* g;
+      if (metaLevel->downTermPair(message->getArgument(3), message->getArgument(4), s, g, m))
+	{
+	  m->protect();
+
+	  RewritingContext* subjectContext = term2RewritingContext(s, context);
+	  g = g->normalize(true);
+	  DagNode* goal = g->term2Dag();
+	  g->deepSelfDestruct();
+
+	  if (fold)
+	    variantFlags |= NarrowingSequenceSearch3::FOLD;
+	  return new NarrowingSequenceSearch3(subjectContext,
+					      searchType,
+					      goal,
+					      maxDepth,
+					      new FreshVariableSource(m, 0),
+					      variantFlags);
+	}
+    }
+  return 0;
+}
 
 DagNode*
 InterpreterManagerSymbol::getNarrowingSearchResult(FreeDagNode* message,
@@ -198,4 +235,55 @@ InterpreterManagerSymbol::getNarrowingSearchResult(FreeDagNode* message,
       return errorMessage;
     }
   return makeErrorReply("Bad solution number.", message);
+}
+
+DagNode*
+InterpreterManagerSymbol::makeNarrowingSearchPath(ImportModule* m, NarrowingSequenceSearch3* state) const
+{
+  const NarrowingVariableInfo& initialVariableInfo = state->getInitialVariableInfo();
+  int index;
+  int depth;
+  state->getExtraStateInfo(index, depth);
+
+  Vector<DagNode*> narrowingTrace(depth);
+  PointerMap qidMap;
+  PointerMap dagNodeMap;
+  for (int i = depth - 1; i >= 0; --i)
+    {
+      DagNode* root;
+      DagNode* hole;
+      Rule* rule;
+      const Substitution* unifier;
+      const NarrowingVariableInfo* unifierVariableInfo;
+      int variableFamily;
+      DagNode* newDag;
+      const Substitution* accumulatedSubstitution;
+      int parentIndex;
+
+      state->getHistory(index,
+			root,
+			hole,
+			rule,
+			unifier,
+			unifierVariableInfo,
+			variableFamily,
+			newDag,
+			accumulatedSubstitution,
+			parentIndex);
+
+      narrowingTrace[i] = metaLevel->upNarrowingStep(root,
+						     hole,
+						     rule,
+						     *unifier,
+						     *unifierVariableInfo,
+						     FreshVariableSource::getBaseName(variableFamily),
+						     newDag,
+						     *accumulatedSubstitution,
+						     initialVariableInfo,
+						     m,
+						     qidMap,
+						     dagNodeMap);
+      index = parentIndex;
+    }
+  return metaLevel->upNarrowingSearchPath(narrowingTrace);
 }

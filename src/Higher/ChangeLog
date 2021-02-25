@@ -1,3 +1,50 @@
+2021-02-19  Steven Eker  <eker2@eker10>
+
+	* unificationProblem.hh (class UnificationProblem): delete
+	destructiveUpdates data member; update decl for ctor
+
+	* unificationProblem.cc (UnificationProblem::UnificationProblem):
+	removed destructiveUpdates argument
+
+	* irredundantUnificationProblem.cc: don't pass a
+	destructiveUpdates argument
+
+	* unificationProblem.cc
+	(UnificationProblem::findOrderSortedUnifiers): use new
+	freeVariables semantics
+	(UnificationProblem::bindFreeVariables): make new variables and do
+	instantiation of orginal bindings if destructiveUpdates == false
+	(UnificationProblem::UnificationProblem): force destructiveUpdates
+	= false because they produce denormalized unifiers
+	(UnificationProblem::bindFreeVariables): get name for new variable
+	from old variable
+	(UnificationProblem::bindFreeVariables): delete the code for the
+	destructiveUpdate case
+
+	* unificationProblem.hh (class UnificationProblem): data member
+	freeVariables becomes a NatSet rather than a Vector<int>
+
+	* irredundantUnificationProblem.cc
+	(IrredundantUnificationProblem::IrredundantUnificationProblem):
+	pass destructiveUpdates = false to UnificationProblem
+
+	* unificationProblem.cc
+	(UnificationProblem::UnificationProblem): take and set
+	destructiveUpdates flag
+
+	* unificationProblem.hh (class UnificationProblem): update ctor
+	decl
+	(class UnificationProblem): added data member destructiveUpdates
+
+	* unificationProblem.cc (UnificationProblem::bindFreeVariables):
+	index -> newSortIndex
+
+2021-02-18  Steven Eker  <eker2@eker10>
+
+	* irredundantUnificationProblem.cc
+	(IrredundantUnificationProblem::findNextUnifier): fix off-by-error
+	in call to UnifierFilter
+
 2020-12-11  Steven Eker  <eker2@eker10>
 
 	* narrowingSearchState2.cc

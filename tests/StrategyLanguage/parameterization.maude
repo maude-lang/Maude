@@ -128,3 +128,40 @@ endsm
 srew [4] graph(10, 3, p(0, 1) p(0, 4) p(0, 5) p(1, 2) p(1, 6)
   p(2, 3) p(2, 7) p(3, 4) p(3, 8) p(4, 9)
   p(5, 7) p(5, 8) p(6, 8) p(6, 9) p(7, 9), nil) using solve .
+
+
+sth STRIV is
+	including TRIV .
+	strat st @ Elt .
+endsth
+
+smod IDLE-STRAT is
+	strats nop @ Bool .
+	sd nop := idle .
+endsm
+
+view Nop from STRIV to IDLE-STRAT is
+	sort Elt to Bool .
+	strat st to nop .
+endv
+
+smod TWICE{X :: STRIV} is
+	strat xst @ X$Elt .
+	sd xst := st ; st .
+endsm
+
+view Twice{X :: STRIV} from STRIV to TWICE{X} is
+	sort Elt to X$Elt .
+	strat st to xst .
+endv
+
+smod REDUCE{X :: STRIV} is
+	strat reduce @ X$Elt .
+	sd reduce := st ? idle : reduce .
+endsm
+
+smod MAIN is
+	protecting REDUCE{Twice{Nop}} .
+endsm
+
+srew true using reduce .

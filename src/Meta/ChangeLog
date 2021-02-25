@@ -1,3 +1,130 @@
+2021-02-19  Steven Eker  <eker2@eker10>
+
+	* metaUnify.cc (MetaLevelOpSymbol::metaUnify2): unmade previous
+	change
+
+	* legacyMetaUnify.cc (MetaLevelOpSymbol::legacyMetaUnify2): unmade
+	previous change
+
+	* miUnify.cc (InterpreterManagerSymbol::getUnifier): unmade
+	previous change
+
+	* legacyMetaUnify.cc (MetaLevelOpSymbol::legacyMetaUnify2): pass
+	destructiveUpdates = true to UnificationProblem()
+
+	* metaUnify.cc (MetaLevelOpSymbol::metaUnify2): pass
+	destructiveUpdates = true to UnificationProblem()
+
+	* miUnify.cc (InterpreterManagerSymbol::getUnifier): pass
+	destructiveUpdates = true to UnificationProblem()
+
+2021-02-11  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	updated decl for getInterpreter()
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::getInterpreter): return Interpreter*
+	rather than bool
+	(InterpreterManagerSymbol::handleMessage): use new
+	getInterpreter() semantics
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	deleted decls for bool versions of getOneStepNarrowing(),
+	getNarrowingSearchResult()
+
+	* interpreterNewNarrowSearch.cc: deleted
+
+	* miNarrowSearch.cc
+	(InterpreterManagerSymbol::makeNarrowingSequenceSearch3): moved
+	here
+	(InterpreterManagerSymbol::makeNarrowingSearchPath): moved here
+
+	* interpreterNewNarrow.cc: deleted
+
+	* miNarrow.cc
+	(InterpreterManagerSymbol::makeNarrowingSearchState2): moved here
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	deleted decls for bool versions of getSearchResult(), getMatch(),
+	getXmatch()
+
+	* interpreterSearch.cc: deleted
+
+	* miSearch.cc
+	(InterpreterManagerSymbol::makeRewriteSequenceSearch): moved here
+
+	* interpreterMatch.cc: deleted
+
+	* miMatch.cc (InterpreterManagerSymbol::makeMatchSearchState):
+	moved here
+	(InterpreterManagerSymbol::makeMatchSearchState2): moved here
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	deleted decls for bool versions of applyRule(), reduceTerm(),
+	rewriteTerm(), frewriteTerm(), erewriteTerm(), srewriteTerm()
+
+	* miRewrite.cc (InterpreterManagerSymbol::makeStrategicSearch):
+	moved here
+
+	* interpreterApply.cc: deleted
+
+	* miApply.cc (InterpreterManagerSymbol::makeRewriteSearchState):
+	moved here
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	deleted decls for bool versions of insertModule(), showModule(),
+	insertView(), showView(), printTerm(), parseTerm(),
+	getLesserSorts(), getMaximalSorts(), getMinimalSorts(),
+	compareTypes(), getKind(), getKinds(), getGlbTypes(),
+	getMaximalAritySet(), normalizeTerm(), getUnifier(), getVariant(),
+	getVariantUnifier(), getVariantMatcher()
+
+	* interpreterVariantMatch.cc: deleted
+
+	* interpreterVariantUnify.cc: deleted
+
+	* interpreterVariant.cc: deleted
+
+	* interpreterUnify.cc: deleted
+
+	* interpreterPrint.cc: deleted
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::handleMessage): don't rely on message
+	being a FreeDagNode*
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	deleted decl for getInterpreterAndModule()
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::handleMessage): rewritten to use remote
+	interpreter code for in-process interpreters
+	(InterpreterManagerSymbol::insertModule)
+	(InterpreterManagerSymbol::showModule)
+	(InterpreterManagerSymbol::insertView)
+	(InterpreterManagerSymbol::showView): deleted
+	(InterpreterManagerSymbol::getInterpreterAndModule): deleted
+
+2021-02-10  Steven Eker  <eker2@eker10>
+
+	* remoteInterpreter2.cc
+	(InterpreterManagerSymbol::becomeRemoteInterpreter): protect
+	deserialized message with DagRoot()
+	(InterpreterManagerSymbol::handleMessage): don't protect message
+	here
+
+===================================Maude133===========================================
+
+2020-12-14  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::upRewriteCount): use Ruben's hack to
+	fix the lack of a conversion from long long int to mpz_class on
+	32-bit machines
+
+===================================Maude132-32===========================================
+
 2020-12-11  Steven Eker  <eker2@eker10>
 
 	* remoteInterpreter.cc (makeNonblockingSocketPair): don't

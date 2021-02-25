@@ -1,4 +1,5 @@
 TESTS = \
+	fileTest \
 	view \
 	parameterizedView \
 	mapToParameterTheory \
@@ -22,6 +23,8 @@ TESTS = \
 	CU_Unification \
 	assocUnification \
 	AU_Unification \
+	AU_IrredUnification \
+	AU_and_A_UnificationEdgeCases \
 	sreduce \
 	smtTest \
 	narrow \
@@ -31,6 +34,7 @@ TESTS = \
 	rot13
 
 MAUDE_FILES = \
+	fileTest.maude \
 	view.maude \
 	parameterizedView.maude \
 	mapToParameterTheory.maude \
@@ -54,6 +58,8 @@ MAUDE_FILES = \
 	CU_Unification.maude \
 	assocUnification.maude \
 	AU_Unification.maude \
+	AU_IrredUnification.maude \
+	AU_and_A_UnificationEdgeCases.maude \
 	sreduce.maude \
 	smtTest.maude \
 	narrow.maude \
@@ -63,6 +69,7 @@ MAUDE_FILES = \
 	rot13.maude
 
 RESULT_FILES = \
+	fileTest.expected \
 	view.expected \
 	parameterizedView.expected \
 	mapToParameterTheory.expected \
@@ -86,6 +93,8 @@ RESULT_FILES = \
 	CU_Unification.expected \
 	assocUnification.expected \
 	AU_Unification.expected \
+	AU_IrredUnification.expected \
+	AU_and_A_UnificationEdgeCases.expected \
 	sreduce.expected \
 	smtTest.expected \
 	narrow.expected \

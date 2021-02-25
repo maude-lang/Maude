@@ -38,8 +38,8 @@ private:
 void
 ConfigSymbol::Remainder::markReachableNodes()
 {
-  FOR_EACH_CONST(i, Vector<DagNode*>, dagNodes)
-    (*i)->mark();
+  for (DagNode* d : dagNodes)
+    d->mark();
 }
 
 void

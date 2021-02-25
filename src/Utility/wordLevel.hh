@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
 //
 #include <list>
 #include <set>
+#include "natSet.hh"
 #include "pigPug.hh"
 
 #ifndef _wordLevel_hh_
@@ -84,21 +85,17 @@ public:
   const Word& getAssignment(int variable) const;
   int getNrVariables() const;
 
-  bool simplify();
-  WordLevel::ResultPair trySelection();
-  WordLevel::ResultPair exploreSelections();
-  
   void dump(ostream& s, int indentLevel = 0);
   void dumpWord(ostream& s, const Word& word);
 
 private:
- 
   enum Result
     {
      FAIL,	// occur-check fail or constraint clash - need to fall back to last decision point
      DONE,	// successful completion, no change to partial solution
      CHANGED,	// successful completion, partial solution changed
-     CONTINUE	// successful step, maybe more work to do
+     CONTINUE,	// successful step, maybe more work to do
+     UNSAFE     // no work done because on unsafeAssignment
     };
 
   enum EquationIndex
@@ -123,6 +120,40 @@ private:
   typedef Vector<Equation> EquationVec;
   typedef list<Word> NullEquationQueue;
 
+  //
+  //	Code for handling assignments in the normal case.
+  //
+  WordLevel::Result checkAssignmentNormalCase(int i);
+  WordLevel::Result checkAssignmentsNormalCase();
+  bool checkAssignmentsToFixedPointNormalCase();
+  
+  bool reallyExpandAssignmentNormalCase(int i);
+  WordLevel::Result expandAssignmentNormalCase(int i);
+  WordLevel::Result expandAssignmentsNormalCase();
+  bool expandAssignmentsToFixedPointNormalCase();
+  //
+  //	Code for handling assignments in the collapse case.
+  //
+  WordLevel::Result checkAssignmentCollapseCase(int i);
+  WordLevel::Result checkAssignmentsCollapseCase();
+  bool checkAssignmentsToFixedPointCollapseCase();
+  
+  bool reallyExpandAssignmentCollapseCase(int i);
+  WordLevel::Result expandAssignmentCollapseCase(int i);
+  WordLevel::Result expandAssignmentsCollapseCase();
+  bool expandAssignmentsToFixedPointCollapseCase();
+  
+  bool simplify();
+  //
+  //	Selection (for identity assignment).
+  //
+  bool systemLinear();
+  void computePinches(const Word& pincher, const Word& pinched, NatSet& pinchedVariables);
+  void determinePinchedVariables(NatSet& pinchedVariables);
+  void chooseVariablesToSelectFrom();
+  WordLevel::ResultPair trySelection();
+  WordLevel::ResultPair exploreSelections();
+  
   WordLevel* makeNewLevel(const Subst& unifier,
 			  const ConstraintMap& newConstraintMap,
 			  int nextFreshVariable);
@@ -134,14 +165,12 @@ private:
   //
   bool handleNullEquations();
   bool resolveOccursCheckFailure(int index, const Word& newValue);
+  bool makeEmptyAssignment(int i);
   //
   //	Functions for simplifying partial solution.
   //
   bool handleInitialOccursCheckFailure();
   bool fullyExpandAssignments();
-  Result expandAssignments();
-  Result expandAssignment(int var, Word& word);
-  bool reallyExpandAssignment(int var, Word& word);
   bool append(Word& newWord, const Word& word, int var);
   //
   //	Functions for simplifying equations.	
@@ -162,7 +191,6 @@ private:
   //	Checks.
   //
   bool feasibleWithoutCollapse(const Word& lhs, const Word& rhs) const;
-  bool legalWithoutCollapse(int varIndex, const Word& word) const;
   bool levelFeasibleWithoutCollapse() const;
   bool insertCombination(const Subst& substitution);
 
@@ -171,6 +199,7 @@ private:
   ConstraintMap constraintMap;
   NullEquationQueue nullEquations;
   Subst partialSolution;
+  NatSet unsafeAssignments;
   EquationVec unsolvedEquations;
   //
   //	If there are unsolved equations we need to pick one and solve it with PigPug.
@@ -254,16 +283,6 @@ inline int
 WordLevel::getNrVariables() const
 {
   return partialSolution.size();
-}
-
-inline bool
-WordLevel::legalWithoutCollapse(int varIndex, const Word& word) const
-{
-  const VariableConstraint& varConstraint = constraintMap[varIndex];
-  if (varConstraint.isUnbounded())
-    return true;
-  int nrVariables = word.size();
-  return nrVariables <= varConstraint.getUpperBound();
 }
 
 #endif

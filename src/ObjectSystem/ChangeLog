@@ -1,7 +1,80 @@
-2020-11-19  Steven Eker  <eker2@eker10>
+2021-02-17  Steven Eker  <eker2@eker10>
 
-	* ../Meta/remoteInterpreterNonblocking.cc
-	(InterpreterManagerSymbol::nonBlockingSendMessage): created
+	* remainder.cc (ConfigSymbol::Remainder::markReachableNodes): use
+	range-based for loop instead of FOR_EACH_CONST()
+
+	* objectSystemRewritingContext.cc (~ObjectSystemRewritingContext):
+	use range-based for loop instead of FOR_EACH_CONST(); get rid of
+	check for empty
+	(ObjectSystemRewritingContext::markReachableNodes): use
+	range-based for loop instead of FOR_EACH_CONST() (3 places)
+
+	* objectMap.cc (ConfigSymbol::MessageQueue::markReachableNodes):
+	use range-based for loop instead of FOR_EACH_CONST()
+	(ConfigSymbol::ObjectMap::markReachableNodes): use range-based for
+	loop instead of FOR_EACH_CONST()
+	(ConfigSymbol::ObjectMap::dump): use range-based for loop instead
+	of FOR_EACH_CONST() (2 places)
+
+	* configSymbol.cc (ConfigSymbol::ruleRewrite): use range-based for
+	loop instead of FOR_EACH_CONST(); turned commented out prints into
+	DebugInfo()s
+	(ConfigSymbol::ConfigSymbol): deleted commented out print
+	statement
+
+2021-02-16  Steven Eker  <eker2@eker10>
+
+	* fileManagerSymbol.hh (class FileManagerSymbol): added decl for
+	removeFile()
+
+	* fileSignature.cc: added removeFileMsg and removedFileMsg
+
+	* fileManagerSymbol.cc (FileManagerSymbol::handleManagerMessage):
+	handle removeFileMsg
+
+	* fileActions.cc (FileManagerSymbol::write): missing else
+	(FileManagerSymbol::removeFile): added
+
+2021-02-15  Steven Eker  <eker2@eker10>
+
+	* fileManagerSymbol.cc (FileManagerSymbol::handleManagerMessage)
+	(FileManagerSymbol::handleMessage): turn commented out cerr <<
+	statements into DebugInfo()s
+
+	* fileManagerSymbol.hh (class FileManagerSymbol): updated decls
+	for openFile(), write(), flush(), getLine(), getChars(),
+	getPosition(), setPosition(), closeFile()
+
+	* fileManagerSymbol.cc (FileManagerSymbol::handleMessage):
+	restructured now that action functions no longer return bool
+	(FileManagerSymbol::handleManagerMessage): restructured now that
+	openFile() no longer returns bool
+
+	* fileActions.cc (FileManagerSymbol::openFile): accept all
+	messages; added error replies for bad file name and bad mode
+	(FileManagerSymbol::write): accept all messages; added error
+	replies for bad characters and file not open for writing
+	(FileManagerSymbol::flush): accept all messages; added error reply
+	for file not open for writing
+	(FileManagerSymbol::getLine): accept all messages; added error
+	reply for file not open for reading
+	(FileManagerSymbol::getChars): accept all messages; added error
+	replies for bad number of chars and file not open for reading
+	(FileManagerSymbol::setPosition): accept all messages; added error
+	replies for bad offset and bad base
+	(FileManagerSymbol::openFile, FileManagerSymbol::write)
+	(FileManagerSymbol::flush, FileManagerSymbol::getLine)
+	(FileManagerSymbol::getChars, FileManagerSymbol::getPosition)
+	(FileManagerSymbol::setPosition, FileManagerSymbol::closeFile):
+	return void rather than bool
+
+===================================Maude133===========================================
+
+2021-02-04  Steven Eker  <eker2@eker10>
+
+	* pseudoThread-pselect.cc (PseudoThread::processFds): fix bug
+	where we were assuming that active fds were linked in ascending
+	order when they are not and so we were computing the wrong maxFd
 
 2020-10-05  Steven Eker  <eker2@eker10>
 

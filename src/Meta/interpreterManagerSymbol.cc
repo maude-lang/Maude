@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -117,18 +117,6 @@
 #include "miApply.cc"
 #include "miNarrow.cc"
 #include "miNarrowSearch.cc"
-#include "interpreterApply.cc"
-#include "interpreterPrint.cc"
-#include "interpreterRewrite.cc"
-#include "interpreterSearch.cc"
-#include "interpreterMatch.cc"
-#include "interpreterUnify.cc"
-#include "interpreterVariant.cc"
-#include "interpreterVariantUnify.cc"
-#include "interpreterVariantMatch.cc"
-#include "interpreterSort.cc"
-#include "interpreterNewNarrow.cc"
-#include "interpreterNewNarrowSearch.cc"
 
 InterpreterManagerSymbol::InterpreterManagerSymbol(int id)
   : ExternalObjectManagerSymbol(id)
@@ -291,217 +279,24 @@ InterpreterManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingC
 {
   DebugAdvisory("handleMessage(): saw " << message);
 
-  //HACK: we can't be sure we have a FreeDagNode*
-  FreeDagNode* f = safeCast(FreeDagNode*, message);
-  //
-  //	quit is always handled locally.
-  //
-  Symbol* s = message->symbol();
-  if (s == quitMsg)
-    return quit(f, context);
-  
-  RemoteInterpreter* r = getRemoteInterpreter(f->getArgument(0));
-  if (r != 0)
-    return remoteHandleMessage(f, context, r);
-
-  if (s == insertModuleMsg)
-    return insertModule(safeCast(FreeDagNode*, message), context);
-  else if (s == showModuleMsg)
-    return showModule(safeCast(FreeDagNode*, message), context);
-  else if (s == insertViewMsg)
-    return insertView(safeCast(FreeDagNode*, message), context);
-  else if (s == showViewMsg)
-    return showView(safeCast(FreeDagNode*, message), context);
-
-  else if (s == reduceTermMsg)
-    return reduceTerm(safeCast(FreeDagNode*, message), context);
-  else if (s == rewriteTermMsg)
-    return rewriteTerm(safeCast(FreeDagNode*, message), context);
-  else if (s == frewriteTermMsg)
-    return frewriteTerm(safeCast(FreeDagNode*, message), context);
-  else if (s == erewriteTermMsg)
-    return erewriteTerm(safeCast(FreeDagNode*, message), context);
-  else if (s == srewriteTermMsg)
-    return srewriteTerm(safeCast(FreeDagNode*, message), context);
-  else if (s == getSearchResultMsg || s == getSearchResultAndPathMsg)
-    return getSearchResult(safeCast(FreeDagNode*, message), context);
-
-  else if (s == getUnifierMsg)
-    return getUnifier(safeCast(FreeDagNode*, message), context, false, false);
-  else if (s == getDisjointUnifierMsg)
-    return getUnifier(safeCast(FreeDagNode*, message), context, true, false);
-  else if (s == getIrredundantUnifierMsg)
-    return getUnifier(safeCast(FreeDagNode*, message), context, false, true);
-  else if (s == getIrredundantDisjointUnifierMsg)
-    return getUnifier(safeCast(FreeDagNode*, message), context, true, true);
-
-  else if (s == getVariantMsg)
-    return getVariant(safeCast(FreeDagNode*, message), context);
-  else if (s == getVariantUnifierMsg)
-    return getVariantUnifier(safeCast(FreeDagNode*, message), context, false);
-  else if (s == getDisjointVariantUnifierMsg)
-    return getVariantUnifier(safeCast(FreeDagNode*, message), context, true);
-  else if (s == getVariantMatcherMsg)
-    return getVariantMatcher(safeCast(FreeDagNode*, message), context);
-  else if (s == getMatchMsg)
-    return getMatch(safeCast(FreeDagNode*, message), context);
-  else if (s == getXmatchMsg)
-    return getXmatch(safeCast(FreeDagNode*, message), context);
-
-  else if (s == printTermMsg)
-    return printTerm(safeCast(FreeDagNode*, message), context);
-  else if (s == parseTermMsg)
-    return parseTerm(safeCast(FreeDagNode*, message), context);
-
-  else if (s == applyRuleMsg)
-    return applyRule(safeCast(FreeDagNode*, message), context, true);
-  else if (s == applyRule2Msg)
-    return applyRule(safeCast(FreeDagNode*, message), context, false);
-
-  else if (s == getOneStepNarrowingMsg)
-    return getOneStepNarrowing(safeCast(FreeDagNode*, message), context);
-  else if (s == getNarrowingSearchResultMsg)
-    return getNarrowingSearchResult(safeCast(FreeDagNode*, message), context, false);
-  else if (s == getNarrowingSearchResultAndPathMsg)
-    return getNarrowingSearchResult(safeCast(FreeDagNode*, message), context, true);
-
-  else if (s == getLesserSortsMsg)
-    return getLesserSorts(safeCast(FreeDagNode*, message), context);
-  else if (s == getMaximalSortsMsg)
-    return getMaximalSorts(safeCast(FreeDagNode*, message), context);
-  else if (s == getMinimalSortsMsg)
-    return getMinimalSorts(safeCast(FreeDagNode*, message), context);
-  else if (s == compareTypesMsg)
-    return compareTypes(safeCast(FreeDagNode*, message), context);
-  else if (s == getKindMsg)
-    return getKind(safeCast(FreeDagNode*, message), context);
-  else if (s == getKindsMsg)
-    return getKinds(safeCast(FreeDagNode*, message), context);
-  else if (s == getGlbTypesMsg)
-    return getGlbTypes(safeCast(FreeDagNode*, message), context);
-  else if (s == getMaximalAritySetMsg)
-    return getMaximalAritySet(safeCast(FreeDagNode*, message), context);
-  else if (s == normalizeTermMsg)
-    return normalizeTerm(safeCast(FreeDagNode*, message), context);
-
-  return false;
-}
-
-bool
-InterpreterManagerSymbol::insertModule(FreeDagNode* message, ObjectSystemRewritingContext& context)
-{
-  Interpreter* interpreter;
-  if (getInterpreter(message->getArgument(0), interpreter))
+  if (FreeDagNode* f = dynamic_cast<FreeDagNode*>(message))
     {
-      DagNode* metaModule = message->getArgument(2);
       //
-      //	We create the flattened module first. Only if it is
-      //	successful do we create the MetaPreModule and insert it in
-      //	the interpreters module database.
+      //	quit is always handled locally.
       //
-      if (MetaModule* m = metaLevel->downSignature(metaModule, interpreter))
+      if (message->symbol() == quitMsg)
+	return quit(f, context);
+
+      DagNode* interpreterName = f->getArgument(0);
+      if (RemoteInterpreter* r = getRemoteInterpreter(interpreterName))
+	return remoteHandleMessage(f, context, r);
+
+      if (Interpreter* interpreter = getInterpreter(interpreterName))
 	{
-	  //
-	  //	We need to get object level versions of header and imports
-	  //	inserted into a MetaPreModule.
-	  //
-	  FreeDagNode* f = safeCast(FreeDagNode*, metaModule);
-	  int id;
-	  DagNode* metaParameterDeclList;
-	  metaLevel->downHeader(f->getArgument(0), id, metaParameterDeclList);
-
-	  MetaPreModule* pm = new MetaPreModule(id,
-						metaModule,
-						metaLevel,
-						m,
-						interpreter);
-
-	  metaLevel->downParameterDeclList2(metaParameterDeclList, pm);
-	  metaLevel->downImports2(f->getArgument(1), pm);
-	  interpreter->insertModule(id, pm); 
-
-	  Vector<DagNode*> reply(2);
-	  DagNode* target = message->getArgument(1);
-	  reply[0] = target;
-	  reply[1] = message->getArgument(0);
-	  context.bufferMessage(target, insertedModuleMsg->makeDagNode(reply));
+	  DagNode* replyDag = handleMessage(f, context, interpreter);
+	  DagNode* target = f->getArgument(1);
+	  context.bufferMessage(target, replyDag);
 	  return true;
-	}
-    }
-  return false;
-}
-
-bool
-InterpreterManagerSymbol::showModule(FreeDagNode* message, ObjectSystemRewritingContext& context)
-{
-  Interpreter* interpreter;
-  if (getInterpreter(message->getArgument(0), interpreter))
-    {
-      int id;
-      if (metaLevel->downQid(message->getArgument(2), id))
-	{
-	  bool flat;
-	  if (metaLevel->downBool(message->getArgument(3), flat))
-	    {
-	      if (PreModule* pm = interpreter->getModule(id))
-		{
-		  Vector<DagNode*> reply(3);
-		  DagNode* target = message->getArgument(1);
-		  reply[0] = target;
-		  reply[1] = message->getArgument(0);
-		  PointerMap qidMap;
-		  reply[2] = metaLevel->upModule(flat, pm, qidMap);
-		  context.bufferMessage(target, showingModuleMsg->makeDagNode(reply));
-		  return true;
-		}
-	    }
-	}
-    }
-  return false;
-}
-
-bool
-InterpreterManagerSymbol::insertView(FreeDagNode* message, ObjectSystemRewritingContext& context)
-{
-  Interpreter* interpreter;
-  if (getInterpreter(message->getArgument(0), interpreter))
-    {
-      if (View* v = metaLevel->downView(message->getArgument(2), interpreter))
-	{
-	  // FIXME: need to sanity check v before inserting it
-	  interpreter->insertView(v->id(), v);
-	  
-	  Vector<DagNode*> reply(2);
-	  DagNode* target = message->getArgument(1);
-	  reply[0] = target;
-	  reply[1] = message->getArgument(0);
-	  context.bufferMessage(target, insertedViewMsg->makeDagNode(reply));
-	  return true;
-	}
-    }
-  return false;
-}
-
-bool
-InterpreterManagerSymbol::showView(FreeDagNode* message, ObjectSystemRewritingContext& context)
-{
-  Interpreter* interpreter;
-  if (getInterpreter(message->getArgument(0), interpreter))
-    {
-      int id;
-      if (metaLevel->downQid(message->getArgument(2), id))
-	{
-	  if (View* v = interpreter->getView(id))
-	    {
-	      Vector<DagNode*> reply(3);
-	      DagNode* target = message->getArgument(1);
-	      reply[0] = target;
-	      reply[1] = message->getArgument(0);
-	      PointerMap qidMap;
-	      reply[2] = metaLevel->upView(v, qidMap);
-	      context.bufferMessage(target, showingViewMsg->makeDagNode(reply));
-	      return true;
-	    }
 	}
     }
   return false;
@@ -534,8 +329,8 @@ InterpreterManagerSymbol::cleanUp(DagNode* objectId)
     CantHappen("Couldn't delete " << objectId);
 }
 
-bool
-InterpreterManagerSymbol::getInterpreter(DagNode* interpreterArg, Interpreter*& interpreter)
+Interpreter*
+InterpreterManagerSymbol::getInterpreter(DagNode* interpreterArg)
 {
   if (interpreterArg->symbol() == interpreterOidSymbol)
     {
@@ -545,14 +340,10 @@ InterpreterManagerSymbol::getInterpreter(DagNode* interpreterArg, Interpreter*& 
 	{
 	  int nrIds = interpreters.size();
 	  if (interpreterId < nrIds)
-	    {
-	      interpreter = interpreters[interpreterId];
-	      if (interpreter != 0)
-		return true;
-	    }
+	    return interpreters[interpreterId];
 	}
     }
-  return false;
+  return 0;
 }
 
 InterpreterManagerSymbol::RemoteInterpreter*
@@ -570,26 +361,6 @@ InterpreterManagerSymbol::getRemoteInterpreter(DagNode* interpreterArg)
 	}
     }
   return 0;
-}
-
-bool
-InterpreterManagerSymbol::getInterpreterAndModule(FreeDagNode* message,
-						  Interpreter*& interpreter,
-						  ImportModule*& module)
-{
-  if (getInterpreter(message->getArgument(0), interpreter))
-    {
-      int id;
-      if (metaLevel->downQid(message->getArgument(2), id))
-	{
-	  if (PreModule* pm = interpreter->getModule(id))
-	    {
-	      if ((module = pm->getFlatModule()))
-		return true;
-	    }
-	}
-    }
-  return false;
 }
 
 bool
@@ -702,6 +473,12 @@ InterpreterManagerSymbol::createInterpreter(FreeDagNode* originalMessage,
 DagNode*
 InterpreterManagerSymbol::upRewriteCount(const RewritingContext* context)
 {
+#if SIZEOF_LONG == 8
   mpz_class totalCount(context->getTotalCount());
+#else
+  Int64 totalCount64 = context->getTotalCount();
+  mpz_class totalCount;
+  mpz_import(totalCount.get_mpz_t(), 1, 1, sizeof(totalCount64), 0, 0, &totalCount64);
+#endif
   return metaLevel->upNat(totalCount);
 }

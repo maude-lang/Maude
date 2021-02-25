@@ -667,24 +667,17 @@ void
 View::handleStratMappings(View* copy, const Renaming* canonicalRenaming) const
 {
   //
-  //	For each operator in fromTheory we first push it through our own
-  //	op->op mappings (our op->term mappings are handled separately)
-  //	and then through the canonical renaming. This catches the
-  //	pathological case where there is an operator in fromTheory
-  //	that is implicitly mapped to an operator in a parameter theory
-  //	when its domain and/or range sorts are mapped (implicitly or
-  //	explicitly) to those from a parameter theory.
+  //	strat->strat mapping are handled similarly to op->op
+  //	(strat->expr mappings are handled separately too)
   //
   DebugNew("canonicalRenaming = " << canonicalRenaming);
-  const Vector<RewriteStrategy*>& symbolVec = fromTheory->getStrategies();
-  int nrUserSymbols = symbolVec.length();
-  for (int i = 0; i < nrUserSymbols; ++i)
+  const Vector<RewriteStrategy*>& strategies = fromTheory->getStrategies();
+  for (RewriteStrategy* s : strategies)
     {
-      RewriteStrategy* s = symbolVec[i];
       if (!(fromTheory->moduleDeclared(s)))
 	{
 	  //
-	  //	Only theory declared operators get mapped.
+	  //	Only theory declared strategies get mapped.
 	  //
 	  CallStrategy* dummy1;
 	  StrategyExpression* dummy2;
@@ -692,7 +685,7 @@ View::handleStratMappings(View* copy, const Renaming* canonicalRenaming) const
 	  if (getStratToExprMapping(s, dummy1, dummy2, dummy3))
 	    {
 	      //
-	      //	This operator is mapped via an strat->expr mapping that
+	      //	This strategy is mapped via an strat->expr mapping that
 	      //	we deal with elsewhere.
 	      //
 	      continue;
@@ -703,7 +696,7 @@ View::handleStratMappings(View* copy, const Renaming* canonicalRenaming) const
 	  int index = renameStrat(s);
 	  if (index != NONE)
 	    {
-	      id = getOpTo(index);
+	      id = getStratTo(index);
 	      DebugNew("first step " << s << " to " << Token::name(id));
 	    }
 
@@ -711,7 +704,7 @@ View::handleStratMappings(View* copy, const Renaming* canonicalRenaming) const
 	  const Vector<Sort*>& domainSorts = s->getDomain();
 	  Vector<ConnectedComponent*> domainComponents(nrArgs);
 	  for (int j = 0; j < nrArgs; ++j)
-	    domainComponents[j] = mapComponent(domainSorts[i]->component());
+	    domainComponents[j] = mapComponent(domainSorts[j]->component());
 	  RewriteStrategy* t = toModule->findStrategy(id, domainComponents);
 
 	  Assert(t != 0, "can't find strategy " << Token::name(id) << " in module " << toModule <<
@@ -728,7 +721,7 @@ View::handleStratMappings(View* copy, const Renaming* canonicalRenaming) const
 					 toExpr, canonicalRenaming->getStratVarIndices(index2));
 		  continue;
 		}
-	      id = canonicalRenaming->getOpTo(index2);
+	      id = canonicalRenaming->getStratTo(index2);
 	      DebugNew("second step " << t << " to " << Token::name(id));
 	    }
 	  if (oldId != id)
@@ -739,7 +732,6 @@ View::handleStratMappings(View* copy, const Renaming* canonicalRenaming) const
 	      copy->addStratMapping(oldId);
 	      for (int i = 0; i < nrArgs; ++i)
 		copy->addType(domainSorts[i]->component());
-	      copy->addType(s->getSubjectSort()->component());
 	      copy->addStratTarget(id);
 	      DebugNew("adding " << s << " to " << Token::name(id) << " for view instantiation " << this);
 	    }

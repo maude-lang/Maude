@@ -153,10 +153,16 @@ InterpreterManagerSymbol::becomeRemoteInterpreter(int socketId,
     {
       Rope request = receiveMessage(socketId);
       //
+      //	Deserialized dag is vulnerable to the garbage collector so
+      //	protect it.
+      //
+      DagRoot requestDag(m->deserialize(request));
+      //
       //	We only support message symbols in the free theory.
       //
-      FreeDagNode* requestDag = safeCast(FreeDagNode*, m->deserialize(request));
-      DagNode* replyDag = handleMessage(requestDag, context, interpreter);
+      DagNode* replyDag = handleMessage(safeCast(FreeDagNode*, requestDag.getNode()),
+					context,
+					interpreter);
       Rope reply = m->serialize(replyDag);
       //cerr << "reply = " << reply << endl;
       sendMessage(socketId, reply);
@@ -169,9 +175,6 @@ InterpreterManagerSymbol::handleMessage(FreeDagNode* message,
 					Interpreter* interpreter)
 {
   DebugInfo("remote interpreter handling " << message);
-  //
-  //	We need to protect message from garbage collector.
-  DagRoot messagerProtection(message);
   Symbol* s = message->symbol();
   //
   //	Modules and views.

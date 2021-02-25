@@ -1,3 +1,10 @@
+2021-02-16  Steven Eker  <eker2@eker10>
+
+	* file.maude: added missing startSymbol op-hook; added
+	removeFile()/removedFile()
+
+===================================Maude133===========================================
+
 2020-12-02  Steven Eker  <eker2@eker10>
 
 	* metaInterpreter.maude: added interpreterExit()

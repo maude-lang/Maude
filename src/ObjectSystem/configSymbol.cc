@@ -45,9 +45,7 @@
 #include "extensionInfo.hh"
 
 //      core class definitions
-//#include "rewritingContext.hh"
 #include "lhsAutomaton.hh"
-//#include "rhsAutomaton.hh"
 #include "argumentIterator.hh"
 #include "dagArgumentIterator.hh"
 #include "rule.hh"
@@ -72,7 +70,6 @@ ConfigSymbol::ConfigSymbol(int id,
 			   Term* identity)
   : ACU_Symbol(id, strategy, memoFlag, identity, false)
 {
-  //cerr << "ConfigSymbol::ConfigSymbol()\n";
 }
 
 void
@@ -300,13 +297,13 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
       if (external && rc->getExternalMessages(i->first, messages))
 	delivered = true;  // make sure we do a rewrite
 
-      FOR_EACH_CONST(j, list<DagNode*>, messages)
+      for (DagNode* d : messages)
 	{
 	  DagNode* object = i->second.object;
 	  if (object != 0)
 	    {
 	      dagNodes[0] = object;
-	      dagNodes[1] = *j;
+	      dagNodes[1] = d;
 	      multiplicities[0] = 1;
 	      multiplicities[1] = 1;
 	      DagNode* r = makeDagNode(dagNodes, multiplicities);
@@ -315,13 +312,13 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 	      r = t->root();
 	      if (r->symbol() == this)
 		{
-		  r = objMsgRewrite((*j)->symbol(), r, *t);
+		  r = objMsgRewrite(d->symbol(), r, *t);
 		  context.addInCount(*t);
 		  delete t;
 		  if (r != 0)
 		    {
 		      delivered = true;
-		      //cerr << "delivered " << *j << endl;
+		      DebugInfo("delivered " << d);
 		      t = context.makeSubcontext(r);
 		      if (RewritingContext::getTraceStatus())
 			t->tracePostRuleRewrite(r);
@@ -341,8 +338,8 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 	    }
 	  else
 	    {
-	      DebugAdvisory("unresolved message " << *j <<  "  external = " << external);
-	      if (external && rc->offerMessageExternally(i->first, *j))
+	      DebugAdvisory("unresolved message " << d <<  "  external = " << external);
+	      if (external && rc->offerMessageExternally(i->first, d))
 		{
 		  delivered = true;  // make sure we do a rewrite
 		  continue;  // next message
@@ -351,8 +348,8 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 	  //
 	  //	Message undelivered; put it into remainder.
 	  //
-	  //cerr << "failed to deliver " << *j << endl;
-	  remainder.dagNodes.append(*j);
+	  DebugInfo("failed to deliver " << d);
+	  remainder.dagNodes.append(d);
 	  remainder.multiplicities.append(1);
 	}
       //
@@ -361,7 +358,7 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
       DagNode* object = i->second.object;
       if (object != 0)
 	{
-	  //cerr << "object still remains " << object << endl;
+	  DebugInfo("object still remains " << object);
 	  remainder.dagNodes.append(object);
 	  remainder.multiplicities.append(1);
 	}
@@ -395,7 +392,7 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
     }
 
   DagNode* r = makeDagNode(remainder.dagNodes, remainder.multiplicities);
-  //cerr << "remainder = " << r << endl;
+  DebugInfo("remainder = " << r);
   RewritingContext* t = context.makeSubcontext(r);
   t->reduce();
   r = t->root();

@@ -1,0 +1,114 @@
+***
+***	Tests for edge cases of associative-identity and
+***	associative unification algorithms.
+***
+
+set show timing off .
+
+***(
+1/26/21
+This example shows that replacing a constrained variable
+P with unconstrained variables A B leads to unnecessary
+incompleteness in versions before Alpha133.
+)
+
+fmod ASSOC-LIST is
+  sorts Elt Pair List .
+  subsort Elt Pair < List .
+  op __ : List List -> List [assoc] .
+  op __ : Elt Elt -> Pair [assoc] .
+  op rev : List -> List .
+  vars A B C X Y Z : List .
+  vars P Q R : Pair .
+  vars E F G : Elt .
+endfm
+
+unify P =? A B /\ X P =? P Y .
+
+
+***(
+1/27/21
+This example show that the imperfect splitting of upperbound on
+T to give upperbounds of 2, 1, 1 on A, B, C is then tightened
+to 1, 1, 1 in the post hoc PigPug::tightenConstraints() pass.
+A corner case that shows that constraint tightening is possible
+and might be useful in a system of equations.
+)
+
+fmod ASSOC-LIST is
+  sorts Elt Pair Triple List .
+  subsort Elt < Pair < Triple < List .
+  op __ : List List -> List [assoc] .
+  op __ : Elt Elt -> Pair [assoc] .
+  op __ : Elt Pair -> Triple [assoc] .
+  op __ : Pair Elt -> Triple [assoc] .
+
+  op rev : List -> List .
+  vars A B C X Y Z : List .
+  vars P Q R : Pair .
+  vars E F G : Elt .
+  vars S T U V : Triple .
+endfm
+
+unify T X =? A B C Y .
+
+
+***(
+2/18/21
+Demonstrate Alpha133 optimization that avoids identity assignments,
+and two cases where a sort-decreasing identity axiom foils the optimization.
+)
+
+fmod FOO is
+  sort Foo .
+  ops 1 a : -> Foo .
+  op __ : Foo Foo -> Foo [assoc id: 1] .
+vars W X Y Z : Foo .
+endfm
+
+unify W =? Y Z .
+irred unify W =? Y Z .
+
+fmod FOO2 is
+  sorts Lo Hi .
+  subsort Lo < Hi .
+  op 1 : -> Lo .
+  op __ : Hi Hi -> Hi [assoc id: 1] .
+vars W X Y Z : Lo .
+endfm
+
+unify W =? Y Z .
+irred unify W =? Y Z .
+
+fmod FOO3 is
+  sorts Lo Hi .
+  subsort Lo < Hi .
+  op 1 : -> Hi .
+  op __ : Hi Hi -> Hi [assoc id: 1] .
+  op __ : Lo Lo -> Lo [ditto] .
+vars W X : Lo .
+vars Y Z : Hi .
+endfm
+
+unify W =? Y Z .
+irred unify W =? Y Z .
+
+
+***(
+2/18/21
+Demonstrate Alpha133 optimization that avoids equality steps in PigPug
+and a case where a following equation foils the optimization.
+)
+
+fmod FOO is
+  sort Foo .
+  ops 1 a : -> Foo .
+  op __ : Foo Foo -> Foo [assoc id: 1] .
+vars W X Y Z : Foo .
+endfm
+
+unify W X =? Y Z .
+irred unify W =? Y Z .
+
+unify W X =? Y Z /\ W X =? a a .
+irred unify W X =? Y Z /\ W X =? a a .

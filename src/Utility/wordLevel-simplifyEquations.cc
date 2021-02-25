@@ -35,10 +35,9 @@ WordLevel::simplifyEquations()
   //	  FAIL : variable constraint clash or occur-check failure
   //
   bool changed = false;
-  int nrEquations = unsolvedEquations.size();
-  for (int i = 0; i < nrEquations; ++i)
+  for (Equation& eq : unsolvedEquations)
     {
-      Result result = simplifyEquation(unsolvedEquations[i]);
+      Result result = simplifyEquation(eq);
       if (result == FAIL)
 	return FAIL;
       if (result == CHANGED)
@@ -54,10 +53,103 @@ WordLevel::simplifyEquations()
   return changed ? CHANGED : DONE;
 }
 
+void
+WordLevel::append(Word& newWord, const Word& word)
+{
+  for (int i : word)
+    newWord.append(i);
+}
+
+void
+WordLevel::expandWord(Word& newWord, const Word& oldWord)
+{
+  //
+  //	We replace each variable in oldWord by its assignment
+  //	unless the assignment is marked as unsafe. This is to
+  //	avoid replacing a constrained variable with a word that
+  //	cannot meet the constraint without collapse and yet does
+  //	not have a unique collapse that could be forced.
+  //	In particular if we have
+  //	  A |-> X Y Z
+  //	where A is theory constrained, we don't want to replace
+  //	a abstraction with a bunch of variables into which we
+  //	cannot propagate the constriant.
+  //	
+  for (int i : oldWord)
+    {
+      if (unsafeAssignments.contains(i))
+	newWord.append(i);
+      else
+	append(newWord, partialSolution[i]);
+    }
+}
+
+void
+WordLevel::updateRemainder(Word& word, int leftCursor, int rightCursor)
+{
+  //
+  //	We update the remainer of the word. Note that we have already
+  //	used all safe substitutions except any we just made; and they
+  //	will be variable for variable.
+  //
+  for (; leftCursor <= rightCursor; ++leftCursor)
+    {
+      int original = word[leftCursor];
+      if (!(unsafeAssignments.contains(original)))
+	word[leftCursor] = partialSolution[original][0];
+    }
+}
+
+void
+WordLevel::copyBack(Word& destination, const Word& source, int leftCursor, int rightCursor)
+{
+  int nrVariables = rightCursor - leftCursor + 1;
+  destination.resize(nrVariables);
+  for (int i = 0; i < nrVariables; ++i, ++leftCursor)
+    destination[i] = source[leftCursor];
+}
+
+WordLevel::Result
+WordLevel::checkForNull(const Word& newLhs, const Word& newRhs)
+{
+  Assert(levelType != PIGPUG, "shouldn't be called for PIGPUG level");
+  DebugEnter(newLhs << " =? " << newRhs);
+  //
+  //	Handle the case where one or both unificands has been expanded to empty.
+  //	Return values:
+  //	  DONE : handled null =? null case
+  //	  CHANGED : handled null case, null equation created
+  //	  CONTINUE : non-null equation
+  //
+  if (newLhs.empty())
+    {
+     if (newRhs.empty())
+	return DONE;  // both sides became null
+      nullEquations.push_back(newRhs);
+      return CHANGED;
+    }
+  if (newRhs.empty())
+    {
+      nullEquations.push_back(newLhs);
+      return CHANGED;
+    }
+  return CONTINUE;
+}
+
 WordLevel::Result
 WordLevel::simplifyEquation(Equation& equation)
 {
   DebugEnter(equation.lhs << " =? " << equation.rhs);
+#if 0
+  int nrVariables = partialSolution.size();
+  for (int i = 0; i < nrVariables; ++i)
+    {
+      cerr << "x" << i << " |-> " << partialSolution[i] << "    " << constraintMap[i];
+      if (unsafeAssignments.contains(i))
+	cerr << "  (UNSAFE)";
+      cerr << endl;
+    }
+#endif
   //
   //	Try to simplify equation by left and right cancellation.
   //	Return values:
@@ -65,10 +157,8 @@ WordLevel::simplifyEquation(Equation& equation)
   //	  CHANGED : cancellation and partial solution or null equations changed
   //	  FAIL : variable constraint clash or occur-check failure
   //
-  int nrLhsVariables = equation.lhs.size();
-  if (nrLhsVariables == 0)
+  if (equation.lhs.empty())
     return DONE;  // equation already simplified away
-
   //
   //	First we substitute in any assignments to the lhs and rhs.
   //
@@ -77,16 +167,32 @@ WordLevel::simplifyEquation(Equation& equation)
   Word newRhs;
   expandWord(newRhs, equation.rhs);
   DebugInfo("after expansion " << newLhs << " =? " << newRhs);
-  if (levelType != PIGPUG)
+  if (levelType == PIGPUG)
+    {
+      //
+      //	We should not have new null assignments in a PIGPUG level
+      //	because PigPug does not make null bindings and simplyEquations()
+      //	isn't allowed to (to avoid duplicating work that will be done
+      //	in a SELECTION level).
+      //	Thus substituting in an equation that didn't previously have
+      //	a null unificand should not produce a null unificand.
+      //
+      Assert(!newLhs.empty() , "lhs of equation exanded to empty in PIGPUG level");
+      Assert(!newRhs.empty() , "rhs of equation exanded to empty in PIGPUG level");
+    }
+  else
     {
       //
       //	Check for the possibility that one or both sides may
-      //	have become null. This should not be possible in PIGPUG
-      //	levels because PigPug never assigns empty and simplification
-      //	isn't allowed to assign empty because this would duplicate
-      //	work in another branch.
+      //	have become null. This can happen in the INITIAL level
+      //	or in a SELECTION level because of null assignments.
       //
       Result result = checkForNull(newLhs, newRhs);
+      if (result == CHANGED)
+	{
+	  if (!handleNullEquations())
+	    return FAIL;
+	}
       if (result != CONTINUE)
 	{
 	  equation.lhs.clear();
@@ -109,6 +215,8 @@ WordLevel::simplifyEquation(Equation& equation)
 				      newRhs, rhsLeftCursor, rhsRightCursor);
     if (result == FAIL)
       return FAIL;
+    if (result == UNSAFE)
+      return DONE;  // give up with this simplification
     if (result != CONTINUE)
       {
 	//
@@ -156,6 +264,21 @@ WordLevel::simplifyEquation(Equation& equation)
 				 newRhs, rhsLeftCursor, rhsRightCursor);
       if (result == FAIL)
 	return FAIL;
+      if (result == UNSAFE)
+	{
+	  //
+	  //	We've gotten the equation simplified to a singleton case
+	  //	but the singleton variable has an unsafe assignment so
+	  //	we have to postpone any further simplification until
+	  //	constraint propagation or selection have resolved the unsafe
+	  //	binding. We just save the work we did back into the equation.
+	  //
+	  copyBack(equation.lhs, newLhs, lhsLeftCursor, lhsRightCursor);
+	  copyBack(equation.rhs, newRhs, rhsLeftCursor, rhsRightCursor);
+	  DebugInfo("Can't turn " << equation.lhs << " =? " << equation.rhs <<
+		    " into an assignment because an unsafe assignment already exists");
+	  return changed ? CHANGED : DONE;
+	}
       if (result != CONTINUE)
 	{
 	  //
@@ -181,7 +304,7 @@ WordLevel::simplifyEquation(Equation& equation)
       //
       --lhsRightCursor;
       --rhsRightCursor;
-      //cout << "cancelled at right end " <<  lhsRightCursor << " ~ " << rhsRightCursor << endl;
+      DebugInfo("cancelled at right end " <<  lhsRightCursor << " ~ " << rhsRightCursor);
 
       if (result == CHANGED)
 	{
@@ -198,6 +321,19 @@ WordLevel::simplifyEquation(Equation& equation)
 				 newRhs, rhsLeftCursor, rhsRightCursor);
       if (result == FAIL)
 	return FAIL;
+      if (result == UNSAFE)
+	{
+	  //
+	  //	We've gotten the equation simplified to a singleton case
+	  //	but the singleton variable has an unsafe assignment so
+	  //	we have to postpone any further simplification until
+	  //	constraint propagation or selection have resolved the unsafe
+	  //	binding. We just save the work we did back into the equation.
+	  //
+	  copyBack(equation.lhs, newLhs, lhsLeftCursor, lhsRightCursor);
+	  copyBack(equation.rhs, newRhs, rhsLeftCursor, rhsRightCursor);
+	  return changed ? CHANGED : DONE;
+	}
       if (result != CONTINUE)
 	{
 	  //
@@ -218,27 +354,6 @@ WordLevel::simplifyEquation(Equation& equation)
   return changed ? CHANGED : DONE;
 }
 
-void
-WordLevel::expandWord(Word& newWord, const Word& oldWord)
-{
-  FOR_EACH_CONST(i, Word, oldWord)
-    append(newWord, partialSolution[*i]);
-}
-
-void
-WordLevel::append(Word& newWord, const Word& word)
-{
-  FOR_EACH_CONST(i, Word, word)
-    newWord.append(*i);
-}
-
-void
-WordLevel::updateRemainder(Word& word, int leftCursor, int rightCursor)
-{
-  for (; leftCursor <= rightCursor; ++leftCursor)
-    word[leftCursor] = partialSolution[word[leftCursor]][0];  // if variable got a binding, it will be another variable
-}
-
 WordLevel::Result
 WordLevel::cancel(int lhsVar, int rhsVar)
 {
@@ -250,7 +365,6 @@ WordLevel::cancel(int lhsVar, int rhsVar)
   //	  CHANGED : cancellation caused change to partial solution
   //	  FAIL : incompatible constrained variables
   //	  CONTINUE : cancellation, no change to partial solution
-  //	
   //
   if (lhsVar == rhsVar)
     return CONTINUE;  // cancel variable
@@ -262,52 +376,38 @@ WordLevel::cancel(int lhsVar, int rhsVar)
       //
       VariableConstraint lhsConstraint = constraintMap[lhsVar];
       VariableConstraint rhsConstraint = constraintMap[rhsVar];
-      if (levelType == PIGPUG)
+      if (lhsConstraint.getUpperBound() == 1 && rhsConstraint.getUpperBound() == 1)
 	{
 	  //
-	  //	In PIGPUG levels we ignore the possibility of taking empty so
-	  //	we can force more things.
+	  //	Forced unification if we in a PIGPUG level or
+	  //	neither variable can take empty nor has an unsafe assignment.
 	  //
-	  if (lhsConstraint.getUpperBound() == 1 && rhsConstraint.getUpperBound() == 1)
-	    return unifyVariables(lhsVar, rhsVar);
-	}
-      else
-	{ 
-	  if (lhsConstraint.getUpperBound() == 1 &&
-	      !(lhsConstraint.canTakeEmpty()) &&
-	      rhsConstraint.getUpperBound() == 1 &&
-	      !(rhsConstraint.canTakeEmpty()))
-	    return unifyVariables(lhsVar, rhsVar);  // we never return DONE since lhsVar != rhsVar in this branch
+	  if (levelType == PIGPUG ||
+	      !(lhsConstraint.canTakeEmpty() ||
+		unsafeAssignments.contains(lhsVar) ||
+		rhsConstraint.canTakeEmpty() ||
+		unsafeAssignments.contains(rhsVar)))
+	    {
+	      //
+	      //	Both variables should be unbound because we already substituted
+	      //	any safe bindings in.
+	      //
+	      Word& assignment = partialSolution[lhsVar];
+	      Assert(assignment.size() == 1 && assignment[0] == lhsVar,
+		     "unexpected bound variable");
+	      //
+	      //	It doesn't matter which way around we may the assigment
+	      //	because we're going to check/propagate constraints
+	      //	afterwards.
+	      //
+	      assignment[0] = rhsVar;
+	      Result result = (levelType == PIGPUG) ?
+		checkAssignmentNormalCase(lhsVar) : checkAssignmentCollapseCase(lhsVar);
+	      return (result == FAIL) ? FAIL : CHANGED;
+	    }
 	}
     }
   return DONE;
-}
-
-WordLevel::Result
-WordLevel::checkForNull(const Word& newLhs, const Word& newRhs)
-{
-  Assert(levelType != PIGPUG, "shouldn't be called for PIGPUG level");
-  DebugEnter(newLhs << " =? " << newRhs);
-  //
-  //	Handle the case where one or both unificands has been expanded to empty.
-  //	Return values:
-  //	  DONE : handled null =? null case
-  //	  CHANGED : handled null case, null equation created
-  //	  CONTINUE : non-null equation
-  //
-  if (newLhs.empty())
-    {
-     if (newRhs.empty())
-	return DONE;  // both sides became null
-      nullEquations.push_back(newRhs);
-      return CHANGED;
-    }
-  if (newRhs.empty())
-    {
-      nullEquations.push_back(newLhs);
-      return CHANGED;
-    }
-  return CONTINUE;
 }
 
 WordLevel::Result
@@ -321,147 +421,72 @@ WordLevel::checkForSingleton(const Word& newLhs, int lhsLeftCursor, int lhsRight
   //	  CHANGED : handled singleton, partial solution changed
   //	  FAIL : handled singleton case, variable constraint clash or occur-check failure
   //	  CONTINUE : non-singleton equation
+  //	  UNSAFE : singleton case that can't be handled because of unsafe assignment(s).
   //
+  bool singleton = false;
   if (lhsLeftCursor == lhsRightCursor)
     {
-      if (rhsLeftCursor == rhsRightCursor)
-	return unifyVariables(newLhs[lhsLeftCursor], newRhs[rhsLeftCursor]);
-      else
-	return makeAssignment(newLhs[lhsLeftCursor], newRhs, rhsLeftCursor, rhsRightCursor);
+      int var = newLhs[lhsLeftCursor];
+      //
+      //	We can't assign to the lhs variable if it has an
+      //	unsafe assignment already.
+      //
+      if (!(unsafeAssignments.contains(var)))
+	return makeAssignment(var, newRhs, rhsLeftCursor, rhsRightCursor);
+      DebugInfo("lhs x" << var << " has an unsafe assignment " <<
+		partialSolution[var]);
+      DebugInfo("unsafeAssignments = " << unsafeAssignments);
+      singleton = true;
     }
-  else if (rhsLeftCursor == rhsRightCursor)
-    return makeAssignment(newRhs[rhsLeftCursor], newLhs, lhsLeftCursor, lhsRightCursor);
-  return CONTINUE;
-}
-
-WordLevel::Result
-WordLevel::unifyVariables(int lhsVar, int rhsVar)
-{
-  DebugEnter("x" << lhsVar << " =? x" << rhsVar);
-  //
-  //	We try to unify two variables by assigning one to the other.
-  //	We always want to assign from the least constrained variable to the most constrained variable.
-  //	Which way around we do this determined by the constraints on the variables and is
-  //	summarized is the following table:
-  //
-  //    lhs \ rhs     |	theory			bounded			unbounded
-  //  ------------------------------------------------------------------------------
-  //  theory	      | lhs |-> rhs or clash	rhs |-> lhs		rhs |-> lhs
-  //  bounded	      |	lhs |-> rhs		bigger |-> smaller	rhs |-> lhs
-  //  unbounded       | lhs |-> rhs		lhs |-> rhs		lhs |-> rhs
-  //
-  //	Return values:
-  //	  DONE : equal variables
-  //	  CHANGED : assignment made
-  //	  FAIL : incompatible constrained variables
-  //
-  if (lhsVar == rhsVar)
-    return DONE;
-
-  VariableConstraint lhsConstraint = constraintMap[lhsVar];
-  VariableConstraint rhsConstraint = constraintMap[rhsVar];
-
-  if (lhsConstraint.isUnbounded() ||  // bottom row
-      (lhsConstraint.hasTheoryConstraint() ?
-       (lhsConstraint.getTheoryConstraint() == rhsConstraint.getTheoryConstraint()) : // top-left corner
-       (!(rhsConstraint.isUnbounded()) &&
-	lhsConstraint.getUpperBound() >= rhsConstraint.getUpperBound()))) // middle row
+  if (rhsLeftCursor == rhsRightCursor)
     {
+      int var = newRhs[rhsLeftCursor];
       //
-      //	lhsVar |-> rhsVar
+      //	We can't assign to the rhs variable if it has an
+      //	unsafe assignment already.
       //
-      Word& assignment = partialSolution[lhsVar];
-      assignment.resize(1);
-      assignment[0] = rhsVar;
-      return CHANGED;
+      if (!(unsafeAssignments.contains(var)))
+	return makeAssignment(var, newLhs, lhsLeftCursor, lhsRightCursor);
+      DebugInfo("rhs x" << var << " has an unsafe assignment " <<
+		partialSolution[var]);
+      DebugInfo("unsafeAssignments = " << unsafeAssignments);
+      return UNSAFE;
     }
-  //
-  //	We dealt with the lhs |-> rhs cases. So if we don't have a theory clash we must
-  //	be in a rhs |-> lhs case.
-  //
-  if (!(rhsConstraint.hasTheoryConstraint()))
-    {
-      //
-      //	rhsVar |-> lhsVar
-      //
-      Word& assignment = partialSolution[rhsVar];
-      assignment.resize(1);
-      assignment[0] = lhsVar;
-      return CHANGED;
-    }
-  //
-  //	Theory clash.
-  //
-  return FAIL;
+  return singleton ? UNSAFE : CONTINUE;
 }
 
 WordLevel::Result
 WordLevel::makeAssignment(int variable, const Word& source, int leftCursor, int rightCursor)
 {
-  //
-  //	Assign
-  //	  variable |-> source[leftCursor]...source[rightCursor]
-  //	We require
-  //	  leftCursor < rightCursor
-  //	This only succeeds if variable is unbounded or has a large enough upperbound.
-  //	Since exactly one non-element variable can be assigned to during an equation
-  //	simplification (this is it), and all bound variables were substituted out
-  //	at the start of simplification, we assumed that variable is unbound (actually
-  //	bound to itself using current Subst representation).
-  //	Return values:
-  //	  CHANGED : assignment made
-  //	  FAIL : variable is constrained, or occur-check failure
-  //
+  Word& destination = partialSolution[variable];
+  Assert(destination.size() == 1 && destination[0] == variable, "should be free");
   int nrVariables = rightCursor - leftCursor + 1;
-  Assert(nrVariables >= 2, "nrVariables = " << nrVariables);
+  if (nrVariables == 1 && source[leftCursor] == variable)
+    return DONE;  // equal variables
+  destination.resize(nrVariables);
+  if (levelType == PIGPUG)
+    {
+      for (int i = 0; i < nrVariables; ++i, ++leftCursor)
+	{
+	  int var = source[leftCursor];
+	  if (var == variable)
+	    return FAIL;  // occurs-check failure
+	  destination[i] = var;
+	}
+      return (checkAssignmentNormalCase(variable) == FAIL) ? FAIL : CHANGED;
+    }
   //
-  //	Extract the subword and determine what minimum it needs
-  //	for upperbound, and where an there is an occurs-check failure.
+  //	In INITIAL and SELECTION levels we try to resolve occurs-checks failure.
   //
-  int needed = 0;
   bool occursCheckFailure = false;
-  Word subword(nrVariables);
   for (int i = 0; i < nrVariables; ++i, ++leftCursor)
     {
       int var = source[leftCursor];
-      ++needed;
       if (var == variable)
 	occursCheckFailure = true;
-      subword[i] = var;
+      destination[i] = var;
     }
-  DebugInfo("Want x" << variable << " |-> " << subword);
-  if (levelType == PIGPUG)
-    {
-      if (occursCheckFailure)
-	return FAIL;
-      const VariableConstraint&  varConstraint = constraintMap[variable];
-      if (!(varConstraint.isUnbounded()) && needed > varConstraint.getUpperBound())
-	return FAIL;  // variable can't take subword
-    }
-  else
-    {
-      //
-      //	We don't enforce upperbounds in INITIAL and SELECTION
-      //	layers until all the simplification has been done because
-      //	the simplification may make empty assignments. We do try
-      //	to use empty assignments to resolve occurs-check failure.
-      //
-      if (occursCheckFailure)
-	return resolveOccursCheckFailure(variable, subword) ? CHANGED : FAIL;
-    }
-
-  Word& destination = partialSolution[variable];
-  Assert(destination.size() == 1 && destination[0] == variable,
-	 "variable " << variable << " not bound to itself");
-  destination.swap(subword);
-  return CHANGED;
-}
-
-void
-WordLevel::copyBack(Word& destination, const Word& source, int leftCursor, int rightCursor)
-{
-  int nrVariables = rightCursor - leftCursor + 1;
-  destination.resize(nrVariables);
-  for (int i = 0; i < nrVariables; ++i, ++leftCursor)
-    destination[i] = source[leftCursor];
+  if (occursCheckFailure)
+    return resolveOccursCheckFailure(variable, destination) ? CHANGED : FAIL;
+  return (checkAssignmentCollapseCase(variable) == FAIL) ? FAIL : CHANGED;
 }

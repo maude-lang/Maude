@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 ***
 ***	Maude file and standard stream external objects.
-***	Version 3.0.
+***	Version alpha133.
 ***
 
 mod COMMON-MESSAGES is
@@ -45,6 +45,8 @@ mod FILE is
 
   op openFile : Oid Oid String String -> Msg [ctor msg format (b o)] .
   op openedFile : Oid Oid Oid -> Msg [ctor msg format (m o)] .
+  op removeFile : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op removedFile : Oid Oid -> Msg [ctor msg format (m o)] .
 
   op getLine : Oid Oid -> Msg [ctor msg format (b o)] .
 
@@ -73,11 +75,14 @@ mod FILE is
 	 op-hook stringSymbol			(<Strings> : ~> String)
 	 op-hook fileOidSymbol			(file : Nat ~> Oid)
 
+	 op-hook startSymbol			(start : ~> Base)
 	 op-hook currentSymbol			(current : ~> Base)
 	 op-hook endSymbol			(end : ~> Base)
 
 	 op-hook openFileMsg			(openFile : Oid Oid String String ~> Msg)
 	 op-hook openedFileMsg			(openedFile : Oid Oid Oid ~> Msg)
+	 op-hook removeFileMsg			(removeFile : Oid Oid String ~> Msg)
+	 op-hook removedFileMsg			(removedFile : Oid Oid ~> Msg)
 
 	 op-hook getLineMsg			(getLine : Oid Oid ~> Msg)
 	 op-hook gotLineMsg			(gotLine : Oid Oid String ~> Msg)

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -136,49 +136,10 @@ private:
   
   DagNode* makeNarrowingSearchPath(ImportModule* m, NarrowingSequenceSearch3* state) const;
 
-  bool insertModule(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool showModule(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool insertView(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool showView(FreeDagNode* message, ObjectSystemRewritingContext& context);
-
-  bool printTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool parseTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);
-
-  bool reduceTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool rewriteTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool frewriteTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool erewriteTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool srewriteTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);
-
-  bool applyRule(FreeDagNode* message, ObjectSystemRewritingContext& context, bool atTop);
-  bool getSearchResult(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getMatch(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getXmatch(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getUnifier(FreeDagNode* message,
-		  ObjectSystemRewritingContext& context,
-		  bool disjoint,
-		  bool irredundant);
-  bool getVariant(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getVariantUnifier(FreeDagNode* message, ObjectSystemRewritingContext& context, bool disjoint);
-  bool getVariantMatcher(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getLesserSorts(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getMaximalSorts(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getMinimalSorts(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool compareTypes(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getKind(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getKinds(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getGlbTypes(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getMaximalAritySet(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool normalizeTerm(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getOneStepNarrowing(FreeDagNode* message, ObjectSystemRewritingContext& context);
-  bool getNarrowingSearchResult(FreeDagNode* message, ObjectSystemRewritingContext& context, bool returnPath);
-
   bool quit(FreeDagNode* message, ObjectSystemRewritingContext& context);
 
-  bool getInterpreter(DagNode* interpreterArg, Interpreter*& interpreter);
-  bool getInterpreterAndModule(FreeDagNode* message,
-			       Interpreter*& interpreter,
-			       ImportModule*& module);
+  Interpreter* getInterpreter(DagNode* interpreterArg);
+
   bool deleteInterpreter(DagNode* interpreterArg);
   bool createInterpreter(FreeDagNode* originalMessage, ObjectSystemRewritingContext& context);
   bool createRemoteInterpreter(FreeDagNode* originalMessage,

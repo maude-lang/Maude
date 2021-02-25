@@ -1,3 +1,34 @@
+2021-02-19  Steven Eker  <eker2@eker10>
+
+	* unify.cc (Interpreter::unify): pass destructiveUpdates = true to
+	UnificationProblem()
+	(Interpreter::unify): unmade previoius change now that we're doing
+	away with destructive updates because they don't normalize bindings
+
+2021-02-10  Steven Eker  <eker2@eker10>
+
+	* top.yy: replaced %pure-parser with %define api.pure
+
+2021-02-09  Steven Eker  <eker2@eker10>
+
+	* Makefile.am (surface.h): now depends on surface.cc rather than
+	surface.yy in order that parallel builds don't run bison twice
+
+2021-02-03  Steven Eker  <eker2@eker10>
+
+	* unify.cc (Interpreter::unify): fix bug where we were not echoing
+	irredundant prefix
+
+2021-01-04  Rubén Rubio  <rubenrub@ucm.es>
+
+	* instantiateViewWithFreeParameters.cc (View::handleStratMappings):
+	fixed some bugs, getOpTo was used instead of getStratTo, etc.
+
+	* parameterization.cc (addStratMappingsFromView): use range-based
+	for loop
+
+===================================Maude133===========================================
+
 2020-12-10  Steven Eker  <eker2@eker10>
 
 	* top.yy: optOptions, optionsList, option now have type yyInt64

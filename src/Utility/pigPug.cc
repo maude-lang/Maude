@@ -56,8 +56,8 @@ PigPug::PigPug(const Word& lhs,
   //	We assume we have a real equation; i.e. both sides have at least
   //	two variable occurrences.
   //
-  Assert(lhs.size() >= 2, "lhs too small");
-  Assert(rhs.size() >= 2, "rhs too small");
+  Assert(lhs.size() >= 2, "lhs too small " << lhs.size());
+  Assert(rhs.size() >= 2, "rhs too small " << rhs.size());
   //
   //	If there is linearity, it must appear on the left, whether or not
   //	it appears in the right.

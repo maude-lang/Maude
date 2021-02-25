@@ -753,7 +753,7 @@ Z:Int --> #2:OddNat
 Y:Int --> #3:EvenNat
 
 Unifier 2
-X:OddNat --> s^99999000001(#1:OddNat + (#2:EvenNat + #3:OddNat))
+X:OddNat --> s^99999000001(#1:OddNat + (#3:OddNat + #2:EvenNat))
 W:Int --> #1:OddNat
 Z:Int --> #2:EvenNat
 Y:Int --> #3:OddNat

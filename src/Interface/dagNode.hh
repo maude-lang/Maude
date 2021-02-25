@@ -99,7 +99,7 @@ public:
   //	Currently only used as an efficiency measure in changing the sorts
   //	of fresh variables introduced by unification.
   //
-  void replaceSymbol(Symbol* newSymbol);
+  //void replaceSymbol(Symbol* newSymbol);
   //
   //	These member functions must be defined for each derived class.
   //
@@ -330,11 +330,13 @@ DagNode::setSortIndex(int index)
   getMemoryInfo()->setHalfWord(index);
 }
 
+/*
 inline void
 DagNode::replaceSymbol(Symbol* newSymbol)
 {
   topSymbol = newSymbol;
 }
+*/
 
 inline void
 DagNode::repudiateSortInfo()

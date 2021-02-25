@@ -1,3 +1,27 @@
+2021-02-22  Steven Eker  <eker2@eker10>
+
+	* tests/ResolvedBugs/irredUnifyFeb2021.maude: added
+
+2021-02-17  Steven Eker  <eker2@eker10>
+
+	* tests/Misc/fileTest.maude: use fileTest.maude itself as file to
+	read from
+
+2021-02-16  Steven Eker  <eker2@eker10>
+
+	* tests/Misc/fileTest.maude: added
+
+2021-01-22  Steven Eker  <eker2@eker10>
+
+	* tests/Misc/AU_IrredUnification.maude: added
+
+2021-01-04  Rubén Rubio  <rubenrub@ucm.es>
+
+	* tests/StrategyLanguage/parameterization.maude: added
+	tests for parameterized views
+
+===================================Maude133===========================================
+
 2020-12-08  Steven Eker  <eker2@eker10>
 
 	* tests/Meta/metaProcStrategy.maude: added

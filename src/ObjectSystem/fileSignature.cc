@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,6 +39,8 @@
 
   MACRO(openFileMsg, FreeSymbol, 4)
   MACRO(openedFileMsg, Symbol, 3)
+  MACRO(removeFileMsg, FreeSymbol, 3)
+  MACRO(removedFileMsg, Symbol, 2)
 
   MACRO(getLineMsg, FreeSymbol, 2)
   MACRO(gotLineMsg, Symbol, 3)

@@ -341,10 +341,8 @@ ImportModule::addStratMappingsFromView(Renaming* canonical,
     //	used in making the parameter copy of the theory.
     //
     const Vector<RewriteStrategy*>& strategies = baseModule->getStrategies();
-    int nrStrats = strategies.length();
-    for (int i = 0; i < nrStrats; ++i)
+    for (RewriteStrategy* s : strategies)
       {
-	RewriteStrategy* s = strategies[i];
 	if (baseModule->moduleDeclared(s))
 	  continue;  // don't map strategies declared in a module
 	int nrArgs = s->arity();

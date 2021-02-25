@@ -83,7 +83,7 @@ IrredundantUnificationProblem::findNextUnifier()
       if (UnificationProblem::findNextUnifier())
 	{
 	  int nrOriginalVariables = getVariableInfo().getNrRealVariables();
-	  unifierFilter = new UnifierFilter(0, nrOriginalVariables - 1);
+	  unifierFilter = new UnifierFilter(0, nrOriginalVariables);
 	  //
 	  //	We need a RewritingContext& to call computeTrueSort() even
 	  //	though we're not able to deal with sort constraints.

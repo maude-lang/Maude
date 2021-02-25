@@ -48,11 +48,8 @@
 ObjectSystemRewritingContext::~ObjectSystemRewritingContext()
 {
   //DebugAdvisory("~ObjectSystemRewritingContext() called; " << externalObjects.size() << " external objects");
-  if (!(externalObjects.empty()))
-    {
-      FOR_EACH_CONST(i, ObjectMap, externalObjects)
-	i->second->cleanUp(i->first);
-    }
+  for (auto& i : externalObjects)
+    i.second->cleanUp(i.first);
 }
 
 void
@@ -102,17 +99,13 @@ ObjectSystemRewritingContext::offerMessageExternally(DagNode* target, DagNode* m
 void
 ObjectSystemRewritingContext::markReachableNodes()
 {
-  {
-    FOR_EACH_CONST(i, ObjectMap, externalObjects)
-      i->first->mark();
-  }
-  { 
-    FOR_EACH_CONST(i, MessageMap, incomingMessages)
-      {
-	FOR_EACH_CONST(j, list<DagNode*>, i->second)
-	  (*j)->mark();
-      }
-  }
+  for (auto& i : externalObjects)
+    i.first->mark();
+  for (auto& i : incomingMessages)
+    {
+      for (DagNode* d : i.second)
+	d->mark();
+    }
   RewritingContext::markReachableNodes();
 }
 

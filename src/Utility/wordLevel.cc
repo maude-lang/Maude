@@ -30,6 +30,9 @@
 #include "natSet.hh"
 
 //	our stuff
+#include "wordLevel-normalCase.cc"
+#include "wordLevel-collapseCase.cc"
+//#include "wordLevel-checkAssignments.cc"
 #include "wordLevel-null.cc"
 #include "wordLevel-simplifyAssignments.cc"
 #include "wordLevel-simplifyEquations.cc"
@@ -140,7 +143,7 @@ WordLevel::findNextPartialSolution()
       //	We didn't make a PigPug; therefore we can't have any
       //	unsolved equations and we must have return the only solution
       //	already. However if we are the INITIAL level we need to try
-      //	selecting varibles to take empty.
+      //	selecting variables to take empty.
       //
       if (levelType == INITIAL)
 	return trySelection();
@@ -159,7 +162,7 @@ WordLevel::findNextPartialSolution()
       //
       //	No more solutions from PigPug. However if we are the INITIAL
       //	level we need to try selecting variables to take empty. PigPug
-      //	maybe have returned an incompleteness flag and we have to keep
+      //	may have returned an incompleteness flag and we have to keep
       //	that to return to the caller.
       //
       if (levelType == INITIAL)
@@ -182,6 +185,8 @@ WordLevel::simplify()
   //	We start by simplifying the partial solution.
   //
   if (levelType == INITIAL && !handleInitialOccursCheckFailure())
+    return false;
+  if (levelType != PIGPUG && !handleNullEquations())
     return false;
   if (!fullyExpandAssignments())
     return false;
@@ -331,13 +336,23 @@ WordLevel::makePigPug(int linearity)
 {
   Equation& e = unsolvedEquations[chosenEquation];
   int nrVariables = partialSolution.size();
+  //
+  //	The PigPug equate optimization produces an incomplete set
+  //	of A-unifiers that is complete with respect to AU-subsumption.
+  //	That case in which I know it doesn't affect overall AU-completeness
+  //	is very restrictive.
+  //
+  bool useEquateOptimization = identityOptimizations &&
+    (linearity == LINEAR) && // maybe more conservative than needed
+    unsolvedEquations.size() == 1;  // maybe more conservative than needed
+
   pigPug = new PigPug(e.lhs,
 		      e.rhs,
 		      constraintMap,
 		      nrVariables - 1,
 		      nrVariables,
 		      linearity,
-		      false /* need to think about this identityOptimizations && (linearity == LINEAR)*/);
+		      useEquateOptimization);
   //dump(cerr, 0);
 }
 

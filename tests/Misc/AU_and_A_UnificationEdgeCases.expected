@@ -1,0 +1,300 @@
+==========================================
+unify in ASSOC-LIST : P =? A B /\ X P =? P Y .
+
+Unifier 1
+P --> #1:Elt #2:Elt
+A --> #1:Elt
+B --> #2:Elt
+X --> #1:Elt #2:Elt #3:List
+Y --> #3:List #1:Elt #2:Elt
+
+Unifier 2
+P --> #1:Elt #2:Elt
+A --> #1:Elt
+B --> #2:Elt
+X --> #1:Elt #2:Elt
+Y --> #1:Elt #2:Elt
+
+Unifier 3
+P --> #1:Elt #1:Elt
+A --> #1:Elt
+B --> #1:Elt
+X --> #1:Elt
+Y --> #1:Elt
+==========================================
+unify in ASSOC-LIST : T X =? A B C Y .
+
+Unifier 1
+T --> #1:Elt #2:Elt #4:Elt
+X --> #5:List #3:List
+A --> #1:Elt
+B --> #2:Elt
+C --> #4:Elt #5:List
+Y --> #3:List
+
+Unifier 2
+T --> #2:Elt #3:Elt #4:Elt
+X --> #1:List
+A --> #2:Elt
+B --> #3:Elt
+C --> #4:Elt
+Y --> #1:List
+
+Unifier 3
+T --> #1:Elt #4:Pair
+X --> #5:List #2:List #3:List
+A --> #1:Elt
+B --> #4:Pair #5:List
+C --> #2:List
+Y --> #3:List
+
+Unifier 4
+T --> #1:Pair #4:Elt
+X --> #5:List #2:List #3:List
+A --> #1:Pair
+B --> #4:Elt #5:List
+C --> #2:List
+Y --> #3:List
+
+Unifier 5
+T --> #1:Elt #2:Pair
+X --> #3:List #4:List
+A --> #1:Elt
+B --> #2:Pair
+C --> #3:List
+Y --> #4:List
+
+Unifier 6
+T --> #1:Pair #2:Elt
+X --> #3:List #4:List
+A --> #1:Pair
+B --> #2:Elt
+C --> #3:List
+Y --> #4:List
+
+Unifier 7
+T --> #1:Triple
+X --> #5:List #2:List #3:List #4:List
+A --> #1:Triple #5:List
+B --> #2:List
+C --> #3:List
+Y --> #4:List
+
+Unifier 8
+T --> #1:Triple
+X --> #2:List #3:List #4:List
+A --> #1:Triple
+B --> #2:List
+C --> #3:List
+Y --> #4:List
+==========================================
+unify in FOO : W =? Y Z .
+
+Unifier 1
+W --> #1:Foo #2:Foo
+Y --> #1:Foo
+Z --> #2:Foo
+==========================================
+irredundant unify in FOO : W =? Y Z .
+
+Unifier 1
+W --> #1:Foo #2:Foo
+Y --> #1:Foo
+Z --> #2:Foo
+==========================================
+unify in FOO2 : W =? Y Z .
+
+Unifier 1
+W --> #1:Lo
+Y --> 1
+Z --> #1:Lo
+
+Unifier 2
+W --> #1:Lo
+Y --> #1:Lo
+Z --> 1
+
+Unifier 3
+W --> 1
+Y --> 1
+Z --> 1
+==========================================
+irredundant unify in FOO2 : W =? Y Z .
+
+Unifier 1
+W --> #1:Lo
+Y --> 1
+Z --> #1:Lo
+
+Unifier 2
+W --> #1:Lo
+Y --> #1:Lo
+Z --> 1
+==========================================
+unify in FOO3 : W =? Y Z .
+
+Unifier 1
+W --> #1:Lo #2:Lo
+Y --> #1:Lo
+Z --> #2:Lo
+
+Unifier 2
+W --> #1:Lo
+Y --> 1
+Z --> #1:Lo
+
+Unifier 3
+W --> #1:Lo
+Y --> #1:Lo
+Z --> 1
+==========================================
+irredundant unify in FOO3 : W =? Y Z .
+
+Unifier 1
+W --> #1:Lo #2:Lo
+Y --> #1:Lo
+Z --> #2:Lo
+
+Unifier 2
+W --> #1:Lo
+Y --> 1
+Z --> #1:Lo
+
+Unifier 3
+W --> #1:Lo
+Y --> #1:Lo
+Z --> 1
+==========================================
+unify in FOO : W X =? Y Z .
+
+Unifier 1
+W --> #2:Foo #3:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo #1:Foo
+
+Unifier 2
+W --> #1:Foo
+X --> #3:Foo #2:Foo
+Y --> #1:Foo #3:Foo
+Z --> #2:Foo
+==========================================
+irredundant unify in FOO : W =? Y Z .
+
+Unifier 1
+W --> #1:Foo #2:Foo
+Y --> #1:Foo
+Z --> #2:Foo
+==========================================
+unify in FOO : W X =? Y Z /\ W X =? a a .
+
+Unifier 1
+W --> a
+X --> a
+Y --> a
+Z --> a
+
+Unifier 2
+W --> 1
+X --> a a
+Y --> a
+Z --> a
+
+Unifier 3
+W --> a a
+X --> 1
+Y --> a
+Z --> a
+
+Unifier 4
+W --> a
+X --> a
+Y --> 1
+Z --> a a
+
+Unifier 5
+W --> 1
+X --> a a
+Y --> 1
+Z --> a a
+
+Unifier 6
+W --> a a
+X --> 1
+Y --> 1
+Z --> a a
+
+Unifier 7
+W --> a
+X --> a
+Y --> a a
+Z --> 1
+
+Unifier 8
+W --> 1
+X --> a a
+Y --> a a
+Z --> 1
+
+Unifier 9
+W --> a a
+X --> 1
+Y --> a a
+Z --> 1
+==========================================
+irredundant unify in FOO : W X =? Y Z /\ W X =? a a .
+
+Unifier 1
+W --> a
+X --> a
+Y --> a
+Z --> a
+
+Unifier 2
+W --> 1
+X --> a a
+Y --> a
+Z --> a
+
+Unifier 3
+W --> a a
+X --> 1
+Y --> a
+Z --> a
+
+Unifier 4
+W --> a
+X --> a
+Y --> 1
+Z --> a a
+
+Unifier 5
+W --> 1
+X --> a a
+Y --> 1
+Z --> a a
+
+Unifier 6
+W --> a a
+X --> 1
+Y --> 1
+Z --> a a
+
+Unifier 7
+W --> a
+X --> a
+Y --> a a
+Z --> 1
+
+Unifier 8
+W --> 1
+X --> a a
+Y --> a a
+Z --> 1
+
+Unifier 9
+W --> a a
+X --> 1
+Y --> a a
+Z --> 1
+Bye.

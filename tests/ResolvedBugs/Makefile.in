@@ -467,7 +467,8 @@ TESTS = \
         identityUnificationSeptember2020 \
         CUI_OccursCheckSeptember2020 \
 	attributeBugsNovember2020 \
-	polymorphicParsingBugsNovember2020
+	polymorphicParsingBugsNovember2020 \
+	irredUnifyFeb2021
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -501,7 +502,8 @@ MAUDE_FILES = \
         identityUnificationSeptember2020.maude \
         CUI_OccursCheckSeptember2020.maude \
 	attributeBugsNovember2020.maude \
-	polymorphicParsingBugsNovember2020.maude
+	polymorphicParsingBugsNovember2020.maude \
+	irredUnifyFeb2021.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -535,7 +537,8 @@ RESULT_FILES = \
         identityUnificationSeptember2020.expected \
         CUI_OccursCheckSeptember2020.expected \
 	attributeBugsNovember2020.expected \
-	polymorphicParsingBugsNovember2020.expected
+	polymorphicParsingBugsNovember2020.expected \
+	irredUnifyFeb2021.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -939,6 +942,13 @@ attributeBugsNovember2020.log: attributeBugsNovember2020
 polymorphicParsingBugsNovember2020.log: polymorphicParsingBugsNovember2020
 	@p='polymorphicParsingBugsNovember2020'; \
 	b='polymorphicParsingBugsNovember2020'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+irredUnifyFeb2021.log: irredUnifyFeb2021
+	@p='irredUnifyFeb2021'; \
+	b='irredUnifyFeb2021'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

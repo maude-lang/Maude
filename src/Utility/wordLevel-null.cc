@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,8 +21,34 @@
 */
 
 //
-//	Code for handling null equations and occurs-check failure.
+//	Code for handling empty assignments, null equations and occurs-check failure.
 //
+
+bool
+WordLevel::makeEmptyAssignment(int i)
+{
+  //
+  //	Assigns the empty word to variable i. Returns true
+  //	if assignment made and false if the i was already assigned
+  //	the empty word.
+  //
+  Word& currentAssignment = partialSolution[i];
+  if (!(currentAssignment.empty()))
+    {
+      if (currentAssignment.size() == 1 && currentAssignment[0] == i)
+	;  // maps to itself so can update without issue
+      else
+	{
+	  //
+	  //	Maps to something else so we need to create a new null equation.
+	  //
+	  nullEquations.push_back(currentAssignment);
+	}
+      currentAssignment.clear();
+      return true;  // assignment made
+    }
+  return false;  // no change
+}
 
 bool
 WordLevel::handleNullEquations()
@@ -38,36 +64,17 @@ WordLevel::handleNullEquations()
     {
       for (int i : nullEquations.front())
 	{
-	  Word& currentAssignment = partialSolution[i];
-	  if (!(currentAssignment.empty()))
+	  if (constraintMap[i].canTakeEmpty())
+	    (void) makeEmptyAssignment(i);
+	  else
 	    {
-	      if (constraintMap[i].canTakeEmpty())
-		{
-		  if (currentAssignment.size() == 1 && currentAssignment[0] == i)
-		    ;  // maps to itself so can update without issue
-		  else
-		    {
-		      //
-		      //	Maps to something else so we need to create a new null equation.
-		      //
-		      nullEquations.push_back(currentAssignment);
-		    }
-		  //
-		  //	Variable x_i is assigned the empty word.
-		  //
-		  DebugInfo("binding x" << i << " to empty to solve null equation");
-		  currentAssignment.clear();
-		}
-	      else
-		{
-		  //
-		  //	We needed x_i to take the empty word but this is
-		  //	forbidden by its constraint so the whole WordLevel
-		  //	will fail so we don't care about leaving it in an
-		  //	inconsistent state.
-		  //
-		  return false;
-		}
+	      //
+	      //	We needed x_i to take the empty word but this is
+	      //	forbidden by its constraint so the whole WordLevel
+	      //	will fail so we don't care about leaving it in an
+	      //	inconsistent state.
+	      //
+	      return false;
 	    }
 	}
       //
@@ -88,7 +95,7 @@ WordLevel::resolveOccursCheckFailure(int index, const Word& newValue)
   //
   //	We want to assign newValue to variable index, but newValue
   //	contains index. We see if this can be resolved via collapse.
-  //	Maybe update assignments and create new null equations.
+  //	May update assignments and create new null equations.
   //
   int nrOccurrences = 0;
   for (int i : newValue)
@@ -97,44 +104,22 @@ WordLevel::resolveOccursCheckFailure(int index, const Word& newValue)
 	++nrOccurrences;
       else
 	{
-	  Word& currentAssignment = partialSolution[i];
-	  //
-	  //	Could appear multiple times in newValue so maybe we already
-	  //	assigned it the empty word.
-	  //
-	  if (!(currentAssignment.empty()))
+	  if (constraintMap[i].canTakeEmpty())
+	    (void) makeEmptyAssignment(i);
+	  else
 	    {
-	      if (constraintMap[i].canTakeEmpty())
-		{
-		  if (currentAssignment.size() == 1 && currentAssignment[0] == i)
-		    ;  // maps to itself so can update without issue
-		  else
-		    {
-		      //
-		      //	Maps to something else so we need to create a new null equation.
-		      //
-		      nullEquations.push_back(currentAssignment);
-		    }
-		  //
-		  //	Variable x_i is assigned the empty word.
-		  //
-		  DebugInfo("binding x" << i << " to empty to solve occurs-check failure");
-		  currentAssignment.clear();
-		}
-	      else
-		{
-		  //
-		  //	We needed x_i to take the empty word but this is
-		  //	forbidden by its constraint so the whole WordLevel
-		  //	will fail so we don't care about leaving it in an
-		  //	inconsistent state.
-		  //
-		  return false;
-		}
+	      //
+	      //	We needed x_i to take the empty word but this is
+	      //	forbidden by its constraint so the whole WordLevel
+	      //	will fail so we don't care about leaving it in an
+	      //	inconsistent state.
+	      //
+	      return false;
 	    }
 	}
     }
-  Assert(nrOccurrences >= 1, "must have occurence for an occur-check failure");
+
+  Assert(nrOccurrences >= 1, "must have occurrence for an occur-check failure");
   if (nrOccurrences > 1)
     {
       //
@@ -152,7 +137,8 @@ WordLevel::resolveOccursCheckFailure(int index, const Word& newValue)
       else
 	{
 	  //
-	  //	As above, we can bail and leave things in an inconsistent state
+	  //	As above, we can bail and leave things in an inconsistent state.
+	  //
 	  return false;
 	}
     }
@@ -165,5 +151,5 @@ WordLevel::resolveOccursCheckFailure(int index, const Word& newValue)
       currentAssignment.resize(1);
       currentAssignment[0] = index;
     }
-  return true;
+  return handleNullEquations();
 }

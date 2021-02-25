@@ -1,0 +1,261 @@
+Alpha 132 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug where Maude warns about non-unary iter symbols but
+doesn't patch up the situation and produces nonsense results
+or crashes:
+
+fmod TEST is
+  sorts Foo  .
+  op f : Foo Foo -> Foo [iter] .
+  op g : -> Foo [iter] .
+  ops a b c : -> Foo .
+endfm
+
+red f(a, b) .
+red g .
+
+If the assoc attribute is given as well, there is no warning,
+just a crash:
+
+fmod TEST is
+  sorts Foo  .
+  op f : Foo Foo -> Foo [assoc iter] .
+  ops a b c : -> Foo .
+endfm
+
+red f(a, b) .
+
+
+(1a) A symmetric bug in the code that handles polymorphic
+operators:
+
+fmod TEST is
+  sorts Foo Foo2 Foo3 Foo4 Bar .
+  subsorts Foo < Foo2 < Foo3 < Foo4 .
+  op f : Universal Universal -> Universal [poly (0 1 2) iter] .
+  op g : -> Universal [poly (0) iter] .
+  ops a b c : -> Foo .
+endfm
+
+red f(a, b) .
+red g .
+
+fmod TEST is
+  sorts Foo Foo2 Foo3 Foo4 Bar .
+  subsorts Foo < Foo2 < Foo3 < Foo4 .
+  op f : Universal Universal -> Universal [poly (0 1 2) assoc iter] .
+  ops a b c : -> Foo .
+endfm
+
+red f(a, b) .
+
+
+(2) A bug where Maude does not check that the domain and range
+kinds of a iter operator are equal resulting in a crash:
+
+fmod TEST is
+  sorts Foo Foo2 Foo3 Foo4 Bar .
+  subsorts Foo < Foo2 < Foo3 < Foo4 .
+   op f : Foo -> Bar [iter] .
+   op g : Bar -> Foo [iter] .
+  ops a b c : -> Foo .
+  ops x y z : -> Bar .
+endfm
+
+red f(a) .
+red g(x) .
+
+
+(2a) A similar bug in the code that handles polymorphic operators:
+
+fmod TEST is
+  sorts Foo Foo2 Foo3 Foo4 Bar .
+  subsorts Foo < Foo2 < Foo3 < Foo4 .
+  op f : Universal -> Foo [poly (1) iter] .
+  op g : Foo -> Universal [poly (0) iter] .
+
+  ops a b c : -> Foo .
+  ops x y z : -> Bar .
+endfm
+
+red f(x) .
+red g(a) .
+
+
+(3) A bug where Maude doesn't look at comm, idem and id:
+attributes if it sees an iter attribute:
+
+fmod TEST is
+  sort Foo .
+  op f : Foo -> Foo [iter comm id: a idem] .
+  ops a b c : -> Foo .
+endfm
+
+red f(a) .
+red f(f(a)) .
+
+
+(4) A bug where Maude doesn't accept flattened prefix syntax
+for polymorphic associative operators:
+
+fmod ASSOC is
+  op f : Poly Poly -> Poly [assoc poly (1 2 0)] .
+endfm
+
+red f(X:Bool, Y:Bool, Z:Bool) .
+
+
+(5) A bug where Maude doesn't accept f^n(...) syntax for
+for polymorphic iter operators:
+
+fmod ITER is
+  op f : Poly -> Poly [iter poly (1 0) ] .
+endfm
+
+red f^12345(X:Bool) .
+
+
+(6) Removed stray debugging output that had the form
+  saw <unification problem>
+from code for getVariantUnifier()/getDisjointVariantUnifier()
+messages in meta-interpreter.
+
+
+(7) A bug the normalization (exclamation mark) operator
+of the strategy language where α ! did not finish if α can be
+executed infinitely many times in a loop, while the equivalent
+expression (according to the manual) α * ; not(α) did.
+Found by Paul M. Krogmeier and fixed by Rubén.
+
+
+New features
+=============
+
+(1) Meta-interpreters can now be run in a separate process. This
+is done by passing the option
+ op newProcess : -> InterpreterOption [ctor] .
+as the last argument to createInterpreter()
+
+Meta-interpreters running in a separate process use the same
+API as meta-interpreters runing in the original process with
+all the necessary IPC being hidden from the user. However
+there are both advantages and limitations:
+
+(a) A meta-interpreter running in a separate process does
+not halt the parent interpreter when a request is sent to it.
+If you have a multi-core processor the OS may schedule the
+new process on a different core for true parallelism. You
+can have many meta-interpreters each in their own process,
+as a way of splitting a computation over multiple cores.
+If the top level interpreter has no local rewrites to do
+while it is waiting for messages, it will suspend to avoid
+busy waiting.
+
+(b) Bad request messages sent to such a meta-interpreter
+are removed from the configuration (since the badness cannot
+be detected in the process where the configuration resides)
+and replaced with an error message when they are detected
+as bad in the new process:
+  op interpreterError : Oid Oid String -> Msg [ctor msg format (r o)] .
+Eventually I plan refactor the code and make all meta-interpreters
+work this way since it seems more informative.
+
+(c) The count of rewrites done in such a meta-interpreter are
+reported in the reply message but not added to the grand total
+in the top level interpreter. I'm not sure this is the best
+solution so it may change in the future.
+
+(d) Debugging, break points and tracing is not supported in
+such a meta-interpreter. Debugging concurrent processes on a
+single terminal is something that even gdb avoids. Control-C
+does not interrupt such a meta-interpreter.
+
+(e) The print attribute is not supported for such a
+meta-interpreter. This may change in the future.
+
+(f) Profiling is not supported for such a meta-interpreter. This
+may change in the future.
+
+(g) Such a meta-interpreter can be sent a quit() message, even
+if it is stuck in a long or infinite computation.
+
+(h) Such a meta-interpreter can run a meta-meta-interpreter in
+a new process. Currently there is a limitation, that if such
+a process gets stuck in a long or infinite computation, it
+can only be made to quit by the meta-interpreter that created it.
+In principle nesting meta^k-interpreters in new processes
+can be done to an arbitrary depth (see russianDollsFlatProc.maude
+in the test suite), with the same limitation on quitting
+long or infinite computations.
+
+(i) If the process of a meta-interpreter unexpectedly exits,
+a message
+  op interpreterExit : Oid Oid String -> Msg [ctor msg format (r o)] .
+is sent to the object that created the meta-interpreter.
+In particular, this allows handling situations such as
+"Stack overflow." and "Internal error." arising in the
+meta-interpreter.
+
+(j) Messages on stderr from such a meta-intepreter are
+interleaved with the stderr output from the top-level interpreter,
+just as if it were actually running in the same process. This
+may change in the future.
+
+(k) Such meta-interpreters support pipelining, in that
+multiple requests can be sent without waiting for a reply.
+However the order in which requests are removed from the
+configuration and the order in which replies arrive in the
+configuration is undefined. So you should not do a reduceTerm()
+until you have seen the insertedModule() reply for the module
+you are working in. Furthermore, deciding which reply corresponds
+to which request is the user's problem. Finally, only the current
+"in flight" message is buffered over and above the buffering
+provided by the OS socket mechanism, so if a socket is busy,
+requests will stay in the configuration until they can be sent.
+
+(2) The vu-narrow command has a new syntax:
+
+debug {<narrowing options>} vu-narrow
+  {<variant unification options>}
+  [<nr-solutions>, <depth-bound>]
+  in <module> :
+  <term> <search-type> <term> .
+
+The debug, {<narrowing options>}, {<variant unification options>},
+[<nr-solutions>, <depth-bound>] and in <module> :
+parts are all optional.
+
+Multiple options inside {}s are separated by commas.
+Currently there is one narrowing option: fold
+which does folded narrowing.
+Currently there are two variant unification options: delay, filter
+where delay doesn't look at any variant unifier
+until all have been generated so any subsumed
+by variant folding are eliminated and filter does
+an extra filtering by variant subsumption step
+on surviving variant unifiers.
+
+
+Other changes
+==============
+
+(1) Extra information occasionally produced when the
+  set verbose on .
+option is used is now sent to stderr rather than stdout.
+The rationale is to have all out-of-band messages go to
+the same place to ease management of such messages in
+meta-interpreters.
+
+(2) For vu-narrow, two pieces of verbose information are
+produced: the total number of states seen and the total
+number of states on which narrowing was attempted.
+The latter can be smaller than the former because states
+were eliminated by folding before they were considered
+for narrowing or because narrowing from them would have
+violated the depth bound. Also as a temporary hack, details
+of when one state subsumes another are printed; this may
+become a tracing option in the future.

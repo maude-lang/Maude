@@ -214,7 +214,11 @@ private:
   bool composeFinal(Subst& subst, int oldVar, const Word& replacement, int index);
   void renameVariables(Subst& subst, const VariableRenaming& variableRenaming);
   void collectRangeVariables(const Subst& subst, NatSet& occursInRange);
+  void tightenConstraints(const Subst& subst, ConstraintMap& constraintMap);
 
+  //void checkInvariant(const ConstraintMap& constraintMap, Subst& subst);
+
+  
   const int lastOriginalVariable;
   const int freshVariableStart;
   const int linearity;

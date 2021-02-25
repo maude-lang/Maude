@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,75 @@
 //
 //	MetaInterpreters: both applyRule() messages.
 //
+
+RewriteSearchState*
+InterpreterManagerSymbol::makeRewriteSearchState(ImportModule* m,
+						 FreeDagNode* message,
+						 RewritingContext& context,
+						 bool atTop) const
+{
+  //
+  //	Get depth bounds if we are in the general case
+  //
+  int minDepth = 0;
+  int maxDepth = NONE;  // no extension
+  if (!atTop)
+    {
+      if (metaLevel->downSaturate(message->getArgument(6), minDepth) &&
+	  metaLevel->downBound(message->getArgument(7), maxDepth))
+	{
+	  if (maxDepth == NONE)
+	    maxDepth = UNBOUNDED;  // NONE means no extension for RewriteSearchState
+	}
+      else
+	return 0;
+    }
+
+  int label;
+  Vector<Term*> variables;
+  Vector<Term*> values;
+  if (metaLevel->downQid(message->getArgument(4), label) &&
+      metaLevel->downSubstitution(message->getArgument(5), m, variables, values))
+    {
+      Vector<DagRoot*> dags;
+      m->protect();  // because dagifySubstitution() could enter the debugger
+      if (MetaLevel::dagifySubstitution(variables, values, dags, context))
+	{
+	  if (Term* t = metaLevel->downTerm(message->getArgument(3), m))
+	    {
+	      RewritingContext* subjectContext = term2RewritingContext(t, context);
+	      subjectContext->reduce();
+	      RewriteSearchState* state = new RewriteSearchState(subjectContext,
+								 label,
+								 RewriteSearchState::GC_CONTEXT |
+								 RewriteSearchState::GC_SUBSTITUTION |
+								 RewriteSearchState::ALLOW_NONEXEC,
+								 minDepth,
+								 maxDepth);
+	      if (variables.length() > 0)
+		state->setInitialSubstitution(variables, dags);
+	      for (int i = values.length() - 1; i >= 0; i--)
+		values[i]->deepSelfDestruct();
+	      return state;
+	    }
+	  //
+	  //	Clean up dag roots before failing.
+	  //
+	  for (int i = dags.length() - 1; i >= 0; i--)
+	    delete dags[i];
+	}
+      //
+      //	Clean up substitution before failing.
+      //
+      for (int i = variables.length() - 1; i >= 0; i--)
+	{
+	  variables[i]->deepSelfDestruct();
+	  values[i]->deepSelfDestruct();
+	}
+      (void) m->unprotect();
+    }
+  return 0;
+}
 
 DagNode*
 InterpreterManagerSymbol::applyRule(FreeDagNode* message,

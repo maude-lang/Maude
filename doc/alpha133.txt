@@ -1,0 +1,344 @@
+Alpha 133 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A GMP/long long int issue that prevented compiling on 32-bit
+platforms.
+
+(2) Bugs in processing of strategies in parameterized views, found and
+fixed by Rubén. See /tests/StrategyLanguage/parameterization.maude
+
+(3) A bug where the irredundant prefix to the unify command was not
+being echoed.
+
+(4) A bug where when Maude suspended waiting for events on multiple
+file descriptors there was a chance that some of the file descriptors
+would be ignored. This only affects builds using the pselect() based
+code which is used on platforms where ppoll() is not available such as
+Mac. Found by Yati Phyo (yatiphyo@jaist.ac.jp).
+
+(5) The hook
+	 op-hook startSymbol			(start : ~> Base)
+was missing from file.maude with the result that setPosition() could
+not use the start of a file as the base for seeking.
+
+(6) A bug in irredundant unifier generation where the last variable
+in each unifier was not checked for subsumption. In principle this
+might lose unifiers that are irredundant but it is hard to find
+a case where it does.
+
+(7) A bug in irredundant unifier generation where the creation of
+multiple order-sorted unifiers from a single unsorted unifier by
+destructively replacing variables conflicted with the retention
+of previous unifiers needed for unifier filtering. This destructive
+update mechanism, while fast, could also occasionally produce
+denormalized bindings because the order of variables under an AC
+symbol for example, depends on the sorts of those variables, and
+so has been removed. Illustrated by the following example where
+irredundant unification prunes two unifiers that are not redundant.
+
+fmod ASSOC-LIST is
+  sorts Elt Pair Triple List .
+  subsort Elt Pair Triple < List .
+  op __ : List List -> List [assoc] .
+  op __ : Elt Elt -> Pair [assoc] .
+  op __ : Elt Pair -> Triple [assoc] .
+  op __ : Pair Elt -> Triple [assoc] .
+
+  op rev : List -> List .
+  vars A B C X Y Z : List .
+  vars P Q R : Pair .
+  vars E F G : Elt .
+  vars S T U V : Triple .
+endfm
+
+unify S T =? A B .
+irred unify S T =? A B .
+
+
+Changes
+========
+
+(1) An optimization for A- and AU-unification where constraints
+on variables are propagated into variables occurring in their
+assignments. This avoids the situation where a finitary problem
+becomes infinitary after substitution. An example of this is:
+
+fmod ASSOC-LIST is
+  sorts Elt Pair List .
+  subsort Elt Pair < List .
+  op __ : List List -> List [assoc] .
+  op __ : Elt Elt -> Pair [assoc] .
+  op rev : List -> List .
+  vars A B C X Y Z : List .
+  vars P Q R : Pair .
+  vars E F G : Elt .
+endfm
+
+unify P =? X Y /\ A P =? P B .
+
+Here both equations have finite solutions but if the first equation
+is solved by putting P |-> X Y and then this is substituted into the
+second equation without propagating the constraint on P into X and Y,
+the second equation now becomes infinitary.
+
+(2) An optimization that attempts to reduce the number of redundant
+AU-unifiers where one or more variables is assigned the identity.
+A-unifiers are necessarily AU-unifiers, and since identity elements
+are removed from words, the only AU-unifiers that are not A-unifiers
+are those where one or more variables is assigned identity. So AU-
+unification is done by nondeterministically deciding which variables
+should take identity, simplifying and solving the A-unification.
+However it may be that assigning identity to some or all variables is
+unnecessary because it can be shown that a more general unifier
+exists. For example:  
+
+fmod FOO is
+  sort Foo .
+  ops 1 a : -> Foo .
+  op __ : Foo Foo -> Foo [assoc id: 1] .
+vars W X Y Z : Foo .
+endfm
+
+unify W =? Y Z .
+
+Previously Maude would generate:
+
+Unifier 1
+W --> #1:Foo #2:Foo
+Y --> #1:Foo
+Z --> #2:Foo
+
+Unifier 2
+W --> #1:Foo
+Y --> 1
+Z --> #1:Foo
+
+Unifier 3
+W --> #1:Foo
+Y --> #1:Foo
+Z --> 1
+
+Unifier 4
+W --> 1
+Y --> 1
+Z --> 1
+
+But only the first unifier is needed, as is shown by:
+
+irred unify W =? Y Z .
+
+Of course sometimes identity assignments are needed so they can't
+always be discarded; for example
+
+irred unify a W =? X Y .
+
+Unifier 1
+W --> #2:Foo #1:Foo
+X --> a #2:Foo
+Y --> #1:Foo
+
+Unifier 2
+W --> #1:Foo
+X --> 1
+Y --> a #1:Foo
+
+Here Unifier 2 shows that an identity assignment to X is needed.
+The new optimization computes an over-approximation of the set
+of variables that need to be considered for identity assignments.
+
+However if the identity axiom is sort decreasing rather than sort
+preserving, this optimization is disabled because some of the unifiers
+that are redundant in the unsorted problem might be needed for
+completeness in the order-sorted problem. This can happen because the
+more general unsorted unifier is unsortable:
+
+fmod FOO2 is
+  sorts Lo Hi .
+  subsort Lo < Hi .
+  op 1 : -> Lo .
+  op __ : Hi Hi -> Hi [assoc id: 1] .
+vars W X Y Z : Lo .
+endfm
+
+unify W =? Y Z .
+
+Here the most general unifier is eliminated and two of the previously
+redundant unifiers are needed:
+
+irred unify W =? Y Z .
+
+Another reason this can happen is because while the more general
+unifier can be sorted, its sorting leaves it unable to subsume
+unifiers that it subsumes in the unsorted problem.
+
+fmod FOO3 is
+  sorts Lo Hi .
+  subsort Lo < Hi .
+  op 1 : -> Hi .
+  op __ : Hi Hi -> Hi [assoc id: 1] .
+  op __ : Lo Lo -> Lo [ditto] .
+vars W X : Lo .
+vars Y Z : Hi .
+endfm
+
+unify W =? Y Z .
+
+Here all three unifers generated by the naive algorithm are needed:
+
+irred unify W =? Y Z .
+
+One might seek to detect these situations by considering the
+constraints on variables generated by the sort structure rather than a
+blanket disabling of the optimization. However the constraints on
+variables are considered advice from the order-sorted analysis to the
+unsorted unification algorithm and need not capture all the possible
+ways failure can happen at the order-sorted level.
+
+This optimization is also disabled if the system, after simplification
+has nonlinear unconstrained variables since the associative
+unification algorithm that we are relying on to generate the more
+general unifiers may be incomplete in this case.
+
+(3) An optimization for AU-unification that attempts to eliminate
+syntactic or equatity steps from the underlying PIG-PUG algorithm to
+avoid generating redundant unifiers. Consider:
+
+fmod FOO is
+  sort Foo .
+  ops 1 a : -> Foo .
+  op __ : Foo Foo -> Foo [assoc id: 1] .
+vars W X Y Z : Foo .
+endfm
+
+unify W X =? Y Z .
+
+While the previous optimization might avoid unnecessary identity
+assignments, the PIG-PUG algorithm will generate the 3 unifiers
+that are needed in the A-unification.
+
+Unifier 1
+W --> #2:Foo #3:Foo
+X --> #1:Foo
+Y --> #2:Foo
+Z --> #3:Foo #1:Foo
+
+Unifier 2
+W --> #1:Foo
+X --> #3:Foo #2:Foo
+Y --> #1:Foo #3:Foo
+Z --> #2:Foo
+
+Unifier 3
+W --> #1:Foo
+X --> #2:Foo
+Y --> #1:Foo
+Z --> #2:Foo
+
+However because we have an identity element, the last unifier is an
+instance of both of the first two unifiers.
+
+In general, during the PIG-PUG algorithm, equality steps are tried
+last, and the optimization checks either of the other moves have
+already made a more general unifier. As with the previous
+optimization, it is only done if the identity axiom is sort
+preserving for much the same reasons. Also it is only done if the
+equation is linear (this might be relaxed somewhat in the
+future).
+
+Finally it is only done for the last equation if a system of equations
+is being solved. The reason is that at the time PIG-PUG is used we
+have dealt with identity once and for all on that branch. So we are
+generating A-unifiers, although we are reducing them to a set that is
+complete wrt AU rather than A. However solving another equation wrt to
+A could fail, because while we are assuming the new variables
+introduced by PigPug can take identity, we are no longer making
+identity assignments on that branch. For example: 
+
+unify W X =? Y Z /\ W X =? a a .
+
+Here neither of the first two unifiers for W X =? Y Z result in an
+A-unifier of the second equations. So with no identity assignments
+there is a irredundant unifier:
+
+irred unify W X =? Y Z /\ W X =? a a .
+
+Unifier 1
+W --> a
+X --> a
+Y --> a
+Z --> a
+
+that we would miss.
+
+(4) The meta-interpreter code has been refactored so that
+meta-interpreters running in the original process have the same error
+behavior as meta-interpreters running in a new process. In
+particular, a message formed from a legal meta-interpreter message
+constructor with the first argument being the name of an existing
+meta-interpreter external object will always be accepted by that
+meta-intepreter even if the other arguments are erroneous in some way,
+rather than leaving the erroneous message in the configuration. In the
+case of an error, the meta-interpreter will reply with an
+interpreterError() message such as:
+  interpreterError(me, interpreter(0), "Bad type.")
+The message strings currently used are:
+  "Bad module."
+  "Bad module name."
+  "Bad view."
+  "Bad view name."
+  "Bad type."
+  "Bad type list."
+  "Bad target sort."
+  "Bad kind.", 
+  "Bad operator name.",
+  "Bad variable declarations.",
+  "Bad term."
+  "Bad limit."
+  "Bad gas."
+  "Bad option."
+  "Bad flag."
+  "Bad rule application."
+  "Bad matching problem."
+  "Bad unification problem."
+  "Bad narrowing problem."
+  "Bad narrowing search problem."
+  "Bad variable family."
+  "Bad reducibility constraint."
+  "Bad search."
+  "Bad strategy."
+  "Bad solution number."
+  "Bad token list."
+These are intended for user information rather than to be used
+programmatically and may change in the future. Note that message
+strings that do not end in a period such as "Too many open files"
+are generated by the operating system and are merely reported by Maude
+when a system call fails which can happen for meta-interpreters
+running in a new process, if for example, file descriptors cannot be
+allocated for the sockets needed communicate with the new process.
+
+(5) The file API error behavior has changed so that correctly
+addressed messages with appropriate message constructors are always
+accepted and if there is a problem with other message arguments an
+fileError() reply is generated. Possible message strings are:
+  "Bad mode."
+  "Bad file name."
+  "File operations disabled."
+  "Bad characters."
+  "File not open for writing."
+  "File not open for reading."
+  "Bad size."
+  "Bad offset."
+  "Bad base."
+As with meta-interpreters, message strings that do not end in a period
+such as "No such file or directory" are generated by the operating
+system.
+
+(6) There is a new message pair in the file API:
+  op removeFile : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op removedFile : Oid Oid -> Msg [ctor msg format (m o)] .
+removeFile() can only be sent to the fileManager object and removes
+the named file. It uses the unlink() system call that can fail for a
+variety of reasons with failures returned as fileError() messages.

@@ -1,0 +1,310 @@
+==========================================
+irredundant unify in AU-TEST : X =? Y X /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+Z --> #2:Foo #3:Foo
+A --> #2:Foo
+B --> #3:Foo
+==========================================
+irredundant unify in AU-TEST : X =? Y X /\ Z C =? C /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+Z --> 1
+C --> #2:Foo
+A --> 1
+B --> 1
+==========================================
+irredundant unify in AU-TEST : X =? Y X /\ A C =? C /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+A --> 1
+C --> #2:Foo
+Z --> #3:Foo
+B --> #3:Foo
+==========================================
+irredundant unify in AU-TEST : X =? Y X /\ Y =? A B Z /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+A --> 1
+B --> 1
+Z --> 1
+==========================================
+irredundant unify in AU-TEST : X =? 1 /\ Y =? 1 /\ Z =? 1 /\ X =? Y Z .
+
+Unifier 1
+X --> 1
+Y --> 1
+Z --> 1
+==========================================
+irredundant unify in AU-TEST : X =? 1 /\ Y =? 1 /\ Z =? 1 /\ X Y =? Y Z .
+
+Unifier 1
+X --> 1
+Y --> 1
+Z --> 1
+==========================================
+irredundant unify in AU-TEST : X =? Y X /\ 1 =? A B Z /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+A --> 1
+B --> 1
+Z --> 1
+==========================================
+irredundant unify in AU-TEST : X =? Y X /\ C =? 1 /\ C =? A B Z /\ Z Y =? A B .
+
+Unifier 1
+X --> #1:Foo
+Y --> 1
+C --> 1
+A --> 1
+B --> 1
+Z --> 1
+==========================================
+irredundant unify in AU-TEST : A B C =? a .
+
+Unifier 1
+A --> 1
+B --> 1
+C --> a
+
+Unifier 2
+A --> 1
+B --> a
+C --> 1
+
+Unifier 3
+A --> a
+B --> 1
+C --> 1
+==========================================
+irredundant unify in AU-TEST : Y =? 1 /\ X =? Y Z .
+
+Unifier 1
+Y --> 1
+X --> #1:Foo
+Z --> #1:Foo
+==========================================
+irredundant unify in AU-TEST : A B =? X Y .
+
+Unifier 1
+A --> #2:Foo #3:Foo
+B --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo #1:Foo
+
+Unifier 2
+A --> #1:Foo
+B --> #3:Foo #2:Foo
+X --> #1:Foo #3:Foo
+Y --> #2:Foo
+==========================================
+irredundant unify in AU-TEST : A B =? X Y Z .
+
+Unifier 1
+A --> #2:Foo #3:Foo #4:Foo
+B --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo
+Z --> #4:Foo #1:Foo
+
+Unifier 2
+A --> #1:Foo #3:Foo
+B --> #4:Foo #2:Foo
+X --> #1:Foo
+Y --> #3:Foo #4:Foo
+Z --> #2:Foo
+
+Unifier 3
+A --> #1:Foo
+B --> #4:Foo #2:Foo #3:Foo
+X --> #1:Foo #4:Foo
+Y --> #2:Foo
+Z --> #3:Foo
+==========================================
+irredundant unify in AU-TEST : A B C =? X Y Z .
+
+Unifier 1
+A --> #3:Foo #4:Foo #5:Foo
+B --> #1:Foo
+C --> #2:Foo
+X --> #3:Foo
+Y --> #4:Foo
+Z --> #5:Foo #1:Foo #2:Foo
+
+Unifier 2
+A --> #2:Foo #3:Foo
+B --> #4:Foo #5:Foo
+C --> #1:Foo
+X --> #2:Foo
+Y --> #3:Foo #4:Foo
+Z --> #5:Foo #1:Foo
+
+Unifier 3
+A --> #2:Foo #4:Foo
+B --> #1:Foo
+C --> #5:Foo #3:Foo
+X --> #2:Foo
+Y --> #4:Foo #1:Foo #5:Foo
+Z --> #3:Foo
+
+Unifier 4
+A --> #1:Foo
+B --> #4:Foo #3:Foo #5:Foo
+C --> #2:Foo
+X --> #1:Foo #4:Foo
+Y --> #3:Foo
+Z --> #5:Foo #2:Foo
+
+Unifier 5
+A --> #1:Foo
+B --> #3:Foo #4:Foo
+C --> #5:Foo #2:Foo
+X --> #1:Foo #3:Foo
+Y --> #4:Foo #5:Foo
+Z --> #2:Foo
+
+Unifier 6
+A --> #1:Foo
+B --> #2:Foo
+C --> #5:Foo #3:Foo #4:Foo
+X --> #1:Foo #2:Foo #5:Foo
+Y --> #3:Foo
+Z --> #4:Foo
+==========================================
+irredundant unify in LIST : E =? L M N .
+
+Unifier 1
+E --> #1:Elt
+L --> nil
+M --> nil
+N --> #1:Elt
+
+Unifier 2
+E --> #1:Elt
+L --> nil
+M --> #1:Elt
+N --> nil
+
+Unifier 3
+E --> #1:Elt
+L --> #1:Elt
+M --> nil
+N --> nil
+==========================================
+irredundant unify in LIST : E L E M =? E N F N .
+
+Unifier 1
+E --> #1:Elt
+L --> #4:List #1:Elt #2:List #3:Elt #4:List
+M --> #2:List
+N --> #4:List #1:Elt #2:List
+F --> #3:Elt
+
+Unifier 2
+E --> #1:Elt
+L --> #2:List
+M --> #4:List #3:Elt #2:List #1:Elt #4:List
+N --> #2:List #1:Elt #4:List
+F --> #3:Elt
+
+Unifier 3
+E --> #1:Elt
+L --> #2:List
+M --> #2:List
+N --> #2:List
+F --> #1:Elt
+==========================================
+irredundant unify in NAT' : X =? s (X * Y) .
+
+Unifier 1
+X --> s 0
+Y --> 0
+==========================================
+irredundant unify in NAT' : X =? s X * Y .
+
+Unifier 1
+X --> 0
+Y --> 0
+==========================================
+irredundant unify in NAT' : s X =? s X * Y .
+
+Unifier 1
+X --> #1:Nat
+Y --> s 0
+==========================================
+irredundant unify in NAT' : s X =? X * Y .
+
+Unifier 1
+X --> s 0
+Y --> s_^2(0)
+==========================================
+irredundant unify in COMM : X =? c(f(X, Y), Z) .
+
+Unifier 1
+X --> c(a, b)
+Z --> a
+Y --> b
+
+Unifier 2
+X --> c(a, b)
+Z --> b
+Y --> a
+==========================================
+irredundant unify in FOO2 : X =? f(Y, a, b) /\ Y =? g(X, c, d) .
+
+Unifier 1
+X --> f(a, b)
+Y --> g(c, d)
+==========================================
+irredundant unify in FOO3 : X =? f(Y, a, b) /\ Y =? h(X) .
+
+Unifier 1
+X --> f(a, b)
+Y --> h(f(a, b))
+==========================================
+irredundant unify in AU-UNSORTED : X:Foo =? f(Y:Foo, Z:Foo) .
+
+Unifier 1
+X:Foo --> f(#1:Foo, #2:Foo)
+Y:Foo --> #1:Foo
+Z:Foo --> #2:Foo
+==========================================
+irredundant unify in AU-SORTED1 : X:Lo =? f(Y:Hi, Z:Hi) .
+
+Unifier 1
+X:Lo --> #1:Lo
+Y:Hi --> 1
+Z:Hi --> #1:Lo
+
+Unifier 2
+X:Lo --> #1:Lo
+Y:Hi --> #1:Lo
+Z:Hi --> 1
+==========================================
+irredundant unify in AU-SORTED2 : X:Lo =? f(Y:Hi, Z:Hi) .
+
+Unifier 1
+X:Lo --> f(#1:Lo, #2:Lo)
+Y:Hi --> #1:Lo
+Z:Hi --> #2:Lo
+
+Unifier 2
+X:Lo --> #1:Lo
+Y:Hi --> 1
+Z:Hi --> #1:Lo
+
+Unifier 3
+X:Lo --> #1:Lo
+Y:Hi --> #1:Lo
+Z:Hi --> 1
+Bye.

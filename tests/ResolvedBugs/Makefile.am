@@ -30,7 +30,8 @@ TESTS = \
         identityUnificationSeptember2020 \
         CUI_OccursCheckSeptember2020 \
 	attributeBugsNovember2020 \
-	polymorphicParsingBugsNovember2020
+	polymorphicParsingBugsNovember2020 \
+	irredUnifyFeb2021
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -64,7 +65,8 @@ MAUDE_FILES = \
         identityUnificationSeptember2020.maude \
         CUI_OccursCheckSeptember2020.maude \
 	attributeBugsNovember2020.maude \
-	polymorphicParsingBugsNovember2020.maude
+	polymorphicParsingBugsNovember2020.maude \
+	irredUnifyFeb2021.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -98,6 +100,7 @@ RESULT_FILES = \
         identityUnificationSeptember2020.expected \
         CUI_OccursCheckSeptember2020.expected \
 	attributeBugsNovember2020.expected \
-	polymorphicParsingBugsNovember2020.expected
+	polymorphicParsingBugsNovember2020.expected \
+	irredUnifyFeb2021.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
