@@ -437,6 +437,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 TESTS = \
 	fileTest \
+	timeTest \
 	view \
 	parameterizedView \
 	mapToParameterTheory \
@@ -472,6 +473,7 @@ TESTS = \
 
 MAUDE_FILES = \
 	fileTest.maude \
+	timeTest.maude \
 	view.maude \
 	parameterizedView.maude \
 	mapToParameterTheory.maude \
@@ -507,6 +509,7 @@ MAUDE_FILES = \
 
 RESULT_FILES = \
 	fileTest.expected \
+	timeTest.expected \
 	view.expected \
 	parameterizedView.expected \
 	mapToParameterTheory.expected \
@@ -725,6 +728,13 @@ recheck: all
 fileTest.log: fileTest
 	@p='fileTest'; \
 	b='fileTest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+timeTest.log: timeTest
+	@p='timeTest'; \
+	b='timeTest'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

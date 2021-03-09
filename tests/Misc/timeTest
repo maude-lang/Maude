@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/timeTest.maude -no-banner -no-advise -allow-files \
+  > timeTest.out 2>&1
+
+diff $srcdir/timeTest.expected timeTest.out > /dev/null 2>&1

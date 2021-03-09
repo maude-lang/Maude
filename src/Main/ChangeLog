@@ -1,3 +1,13 @@
+2021-03-05  Steven Eker  <eker2@eker10>
+
+	* time.maude: changed startTimer() time from Nat to NzNat
+
+2021-03-01  Steven Eker  <eker2@eker10>
+
+	* time.maude: created
+
+===================================Maude134===========================================
+
 2021-02-16  Steven Eker  <eker2@eker10>
 
 	* file.maude: added missing startSymbol op-hook; added

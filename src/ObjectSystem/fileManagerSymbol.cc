@@ -134,16 +134,12 @@ FileManagerSymbol::handleManagerMessage(DagNode* message, ObjectSystemRewritingC
   DebugInfo("FileManagerSymbol::handleManagerMessage(): saw " << message);
   Symbol* s = message->symbol();
   if (s == openFileMsg)
-    {
-      openFile(safeCast(FreeDagNode*, message), context);
-      return true;
-    }
+    openFile(safeCast(FreeDagNode*, message), context);
   else if (s == removeFileMsg)
-    {
-      removeFile(safeCast(FreeDagNode*, message), context);
-      return true;
-    }
-  return false;
+    removeFile(safeCast(FreeDagNode*, message), context);
+  else
+    return false;
+  return true;
 }
 
 bool

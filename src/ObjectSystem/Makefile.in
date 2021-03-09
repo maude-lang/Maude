@@ -118,7 +118,8 @@ am_libobjectSystem_a_OBJECTS =  \
 	libobjectSystem_a-pseudoThread.$(OBJEXT) \
 	libobjectSystem_a-fileManagerSymbol.$(OBJEXT) \
 	libobjectSystem_a-streamManagerSymbol.$(OBJEXT) \
-	libobjectSystem_a-processManagerSymbol.$(OBJEXT)
+	libobjectSystem_a-processManagerSymbol.$(OBJEXT) \
+	libobjectSystem_a-timeManagerSymbol.$(OBJEXT)
 libobjectSystem_a_OBJECTS = $(am_libobjectSystem_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -142,7 +143,8 @@ am__depfiles_remade = ./$(DEPDIR)/libobjectSystem_a-configSymbol.Po \
 	./$(DEPDIR)/libobjectSystem_a-processManagerSymbol.Po \
 	./$(DEPDIR)/libobjectSystem_a-pseudoThread.Po \
 	./$(DEPDIR)/libobjectSystem_a-socketManagerSymbol.Po \
-	./$(DEPDIR)/libobjectSystem_a-streamManagerSymbol.Po
+	./$(DEPDIR)/libobjectSystem_a-streamManagerSymbol.Po \
+	./$(DEPDIR)/libobjectSystem_a-timeManagerSymbol.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -326,7 +328,8 @@ libobjectSystem_a_SOURCES = \
 	pseudoThread.cc \
 	fileManagerSymbol.cc \
 	streamManagerSymbol.cc \
-	processManagerSymbol.cc
+	processManagerSymbol.cc \
+	timeManagerSymbol.cc
 
 EXTRA_DIST = \
 	objectMap.cc \
@@ -346,7 +349,9 @@ EXTRA_DIST = \
 	processActions.cc \
 	pseudoThreadSignal.cc \
 	pseudoThread-ppoll.cc \
-	pseudoThread-pselect.cc
+	pseudoThread-pselect.cc \
+	timeSignature.cc \
+	timeActions.cc
 
 noinst_HEADERS = \
 	configSymbol.hh \
@@ -357,7 +362,8 @@ noinst_HEADERS = \
 	pseudoThread.hh \
 	fileManagerSymbol.hh \
 	streamManagerSymbol.hh \
-	processManagerSymbol.hh
+	processManagerSymbol.hh \
+	timeManagerSymbol.hh
 
 all: all-am
 
@@ -415,6 +421,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-pseudoThread.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-socketManagerSymbol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-streamManagerSymbol.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-timeManagerSymbol.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -548,6 +555,20 @@ libobjectSystem_a-processManagerSymbol.obj: processManagerSymbol.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libobjectSystem_a-processManagerSymbol.obj `if test -f 'processManagerSymbol.cc'; then $(CYGPATH_W) 'processManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/processManagerSymbol.cc'; fi`
 
+libobjectSystem_a-timeManagerSymbol.o: timeManagerSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libobjectSystem_a-timeManagerSymbol.o -MD -MP -MF $(DEPDIR)/libobjectSystem_a-timeManagerSymbol.Tpo -c -o libobjectSystem_a-timeManagerSymbol.o `test -f 'timeManagerSymbol.cc' || echo '$(srcdir)/'`timeManagerSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjectSystem_a-timeManagerSymbol.Tpo $(DEPDIR)/libobjectSystem_a-timeManagerSymbol.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='timeManagerSymbol.cc' object='libobjectSystem_a-timeManagerSymbol.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libobjectSystem_a-timeManagerSymbol.o `test -f 'timeManagerSymbol.cc' || echo '$(srcdir)/'`timeManagerSymbol.cc
+
+libobjectSystem_a-timeManagerSymbol.obj: timeManagerSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libobjectSystem_a-timeManagerSymbol.obj -MD -MP -MF $(DEPDIR)/libobjectSystem_a-timeManagerSymbol.Tpo -c -o libobjectSystem_a-timeManagerSymbol.obj `if test -f 'timeManagerSymbol.cc'; then $(CYGPATH_W) 'timeManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/timeManagerSymbol.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjectSystem_a-timeManagerSymbol.Tpo $(DEPDIR)/libobjectSystem_a-timeManagerSymbol.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='timeManagerSymbol.cc' object='libobjectSystem_a-timeManagerSymbol.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libobjectSystem_a-timeManagerSymbol.obj `if test -f 'timeManagerSymbol.cc'; then $(CYGPATH_W) 'timeManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/timeManagerSymbol.cc'; fi`
+
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
 tags: tags-am
@@ -680,6 +701,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-pseudoThread.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-socketManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-streamManagerSymbol.Po
+	-rm -f ./$(DEPDIR)/libobjectSystem_a-timeManagerSymbol.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -733,6 +755,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-pseudoThread.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-socketManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-streamManagerSymbol.Po
+	-rm -f ./$(DEPDIR)/libobjectSystem_a-timeManagerSymbol.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

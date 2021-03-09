@@ -1,0 +1,313 @@
+Alpha 134 release notes
+========================
+
+New feature
+============
+
+The is a initial attempt an a API for time:
+
+mod TIME is
+  protecting INT .
+  protecting STRING .
+  including CONFIGURATION .
+
+  sorts TimerMode Date Time TimeZoneInfo .
+  ops oneShot periodic : -> TimerMode [ctor] .
+  op _\_\_ : NzNat NzNat NzNat -> Date [ctor] .
+  op _:_:_ : Nat Nat Nat -> Time [ctor] .
+  op [_,_,_,_] : String String Int Int -> TimeZoneInfo [ctor] .
+  op timer : Nat -> Oid [ctor] .
+
+  op getTimeSinceEpoch : Oid Oid -> Msg [ctor msg format (b o)] .
+  op gotTimeSinceEpoch : Oid Oid Nat -> Msg [ctor msg format (m o)] .
+
+  op getDateAndTime : Oid Oid Nat -> Msg [ctor msg format (b o)] .
+  op gotDateAndTime : Oid Oid Date Time NzNat NzNat -> Msg [ctor msg format (m o)] .
+
+  op getLocalDateAndTime : Oid Oid Nat -> Msg [ctor msg format (b o)] .
+  op gotLocalDateAndTime : Oid Oid Date Time NzNat NzNat TimeZoneInfo -> Msg [ctor msg format (m o)] .
+
+  op createTimer : Oid Oid -> Msg [ctor msg format (b o)] .
+  op createdTimer : Oid Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op startTimer : Oid Oid TimerMode NzNat -> Msg [ctor msg format (b o)] .
+  op startedTimer : Oid Oid -> Msg [ctor msg format (m o)] .
+  op timeOut : Oid Oid -> Msg [ctor msg format (r o)] .
+
+  op stopTimer : Oid Oid -> Msg [ctor msg format (b o)] .
+  op stoppedTimer : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op deleteTimer : Oid Oid -> Msg [ctor msg format (b o)] .
+  op deletedTimer : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op timeError : Oid Oid String -> Msg [ctor msg format (r o)] .
+  op timeManager : -> Oid [special (...)] .
+***
+***	Time unit conversion.
+***
+var N : Nat .
+  op _us : Nat -> Nat .
+  eq N us = 1000 * N .
+
+  op _ms : Nat -> Nat .
+  eq N ms = 1000000 * N .
+
+  op _seconds : Nat -> Nat .
+  eq N seconds = 1000000000 * N .
+endm
+
+While the underlying system calls use a variety of time units, all
+time values are in nanoseconds except for time zones which by
+convention are specified in seconds from the Prime Meridian.
+The rationale for using nanoseconds is to have a single consistent
+unit, and for future proofing since machines will get faster and newer
+system calls will likely have improved resolution. Newer system calls
+such as pselect(), ppoll() and clock_gettime() already use nanoseconds.
+
+The is an external object timeManger. Sending it the message
+getTimeSinceEpoch() results in a reply gotTimeSinceEpoch() where the
+last argument is the number of nanoseconds since the Unix Epoch
+(00:00:00 UTC on 1 January 1970). Realistically, computers
+synchronizing their time via ntp will only be accurate to a few tens
+of milliseconds. However for measuring the time difference
+between two such message exchanges, say for timing an interval,
+significantly higher accuracy is expected.
+
+Conversion from nanoseconds since the Unix Epoch to more conventional
+date and time representations is handled by the message pairs:
+  op getDateAndTime : Oid Oid Nat -> Msg [ctor msg format (b o)] .
+  op gotDateAndTime : Oid Oid Date Time NzNat NzNat -> Msg [ctor msg format (m o)] .
+and
+  op getLocalDateAndTime : Oid Oid Nat -> Msg [ctor msg format (b o)] .
+  op gotLocalDateAndTime : Oid Oid Date Time NzNat NzNat TimeZoneInfo -> Msg [ctor msg format (m o)] .
+
+The former convert to Coordinated Universal Time (UTC) while the
+latter convert to the local time zone.
+
+Dates are represented using:
+  op _\_\_ : NzNat NzNat NzNat -> Date [ctor] .
+where the arguments are year (1969,...), month (1 - 12) and
+day (1 - 31).
+
+It would have been nicer to use the ISO convention of - as the
+separator but that runs into ambiguity with subtraction. Likewise
+using | would run into ambiguity with the OR operator and / would run
+into ambiguity with the divison operator from fmod RAT.
+
+Times are represented using:
+  op _:_:_ : Nat Nat Nat -> Time [ctor] .
+where the arguments are hour (0 - 23), minute (0 - 59), and
+second (0 - 60). The value of 60 for the second only arises with
+leap-seconds.
+
+The next two arguments in both gotDateAndTime() and
+gotLocalDateAndTime() are NzNats representing day-of-the-year
+(1 - 366) with 366 only arising in leap-years and day-of-the-week
+(1 = Sunday,..., 7 = Saturday).
+
+gotLocalDateAndTime() also returns TimeZoneInfo:
+  op [_,_,_,_] : String String Int Int -> TimeZoneInfo [ctor] .
+Here the first two arguments are the abbreviations for the names of
+the standard time and daylight saving time for the time zone. The
+second of these can be the empty string if there is no daylight saving
+time for the time zone. The next argument is the time zone specified
+specified as an offset in seconds from UTC. This number is negative
+for time zones west of the Prime Meridian to the International Date
+Line and positive for time zones east of the Prime Meridian to the
+International Date Line. Note that this number of seconds does not
+take daylight saving into account. The final Int argument is the value
+returned by the POSIX library call localtime() to indicate whether
+daylight savings time is in effect. Accord to POSIX, +ve indicates in
+effect, 0 indicates not in effect and -ve indicates the information is
+not available. However the MacOS manual does not mention the
+possibility of a -ve value and from the source code for the GNU
+Standard C Library I see that the only possible values are 0 or 1 on
+Linux.
+
+Note that both message pairs only handle a non-negative number of
+nanoseconds since the Unix Epoch because POSIX does not require the
+underlying library functions to do anything sensible with negative
+values. The upper bound on the number of nanoseconds that can be
+converted depends on the platform. For platforms where the time_t data
+type is a signed 32-bit number, the Year 2038 problem comes into play.
+For platforms where the time_t data is a signed 64-bit number, other
+limits such as the maximum representable year (1900 + 2^32 - 1) come
+into play. Since the rules regarding daylight savings time may change
+in the future for a given locale, doing local date and time conversions
+for dates far into the future is uncertain at best.
+
+Possible timeError() messages are:
+  "Time out-of-range."
+  "Bad time."
+It is also possible to get an error message from the C library if the
+year cannot be represented.
+
+Here is an example that gets the nanoseconds since the Unix Epoch and
+converts it into both UTC and local time:
+
+load time
+
+mod TEST is
+  inc TIME .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+  eq run = <> < me : myClass | none > getTimeSinceEpoch(timeManager, me) .
+vars O O2 : Oid .
+var N : Nat .
+  rl < O : myClass | none > gotTimeSinceEpoch(O, O2, N) =>
+     < O : myClass | none > getDateAndTime(O2, O, N) getLocalDateAndTime(O2, O, N).
+endm
+
+erew run .
+
+Here is an example that sends the getTimeSinceEpoch() twice in
+succession to measure the time between fair rewriting traversals:
+
+load time
+
+mod TEST2 is
+  inc TIME .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op prevTime:_ : Nat -> Attribute .
+  op interval:_ : Nat -> Attribute .
+  op run : -> Configuration .
+  eq run = <> < me : myClass | none > getTimeSinceEpoch(timeManager, me) .
+vars O O2 : Oid .
+var N N2 : Nat .
+  rl < O : myClass | none > gotTimeSinceEpoch(O, O2, N) =>
+     < O : myClass | prevTime: N > getTimeSinceEpoch(timeManager, me) .
+
+  rl < O : myClass | prevTime: N > gotTimeSinceEpoch(O, O2, N2) =>
+     < O : myClass | interval: (N2 - N) > .
+endm
+
+erew run .
+
+On my machine I usually get at number between 10,000 and 20,000 or
+10-20 microseconds.
+
+As well as timeManger, there are more ephemeral external objects
+called timers that can be used to generate timeOut() messages at
+a given future time. Timer objects are created by communicating with
+timeManager using the message pair:
+
+  op createTimer : Oid Oid -> Msg [ctor msg format (b o)] .
+  op createdTimer : Oid Oid Oid -> Msg [ctor msg format (m o)] .
+
+The final argument of createdTimer() is a the Oid of a timer object
+which looks like timer(n). A timer is started using the message pair:
+
+  op startTimer : Oid Oid TimerMode NzNat -> Msg [ctor msg format (b o)] .
+  op startedTimer : Oid Oid -> Msg [ctor msg format (m o)] .
+
+
+Here TimerMode is either oneShot for a single timeOut() message after
+which the timer enters a quiescent state, from which it may be
+restarted at a later time or periodic in which case the timer sends a
+series of timeOut() messages until it is stopped, deleted or
+restarted. The NzNat argument specifies the time to count down from,
+and which, in periodic mode is reset after it reaches zero.
+
+In periodic mode, if a given timeOut() message is delayed for some
+reason, it does not impact the time at which future timeOut() messages
+will be delivered. Note that periodic mode is somewhat dangerous since
+the configuration can quickly fill with timeOut messages and if the
+count down start time is too short (say < 500 ms) it can be hard to
+enter two control-C interrupts on the same suspension to cause Maude
+to stop.
+
+If a startTimer() message is sent to a running timer, its current
+count down time and mode are forgotten and it restarts fresh with the
+new parameters.
+
+A running timer can be returned to quiescent state with the message
+pair:
+
+  op stopTimer : Oid Oid -> Msg [ctor msg format (b o)] .
+  op stoppedTimer : Oid Oid -> Msg [ctor msg format (m o)] .
+
+Finally a timer (running or quiescent) can be deleted with the message
+pair:
+
+  op deleteTimer : Oid Oid -> Msg [ctor msg format (b o)] .
+  op deletedTimer : Oid Oid -> Msg [ctor msg format (m o)] .
+
+Note that there is necessarily a race condition when sending a message
+to a running timer, since the timeOut() message may be emitted
+before the incoming message is received. For this reason it is legal
+to send a stopTimer() message to a quiescent timer since it may have
+been running in oneShot mode and may have just timed out.
+
+The shortest allowed start time is 1 nanosecond. The longest allowed
+start time is 2^63 - 1 nanoseconds or about 292 years. Note that
+internally, times are converted into wall clock times so on 32-bit
+systems subject to the Year 2038 problem, timers (along with many
+other things!) will stop working in the year 2038.
+
+As with other external objects, Maude only returns to the command line
+after all pending external messages have arrived and there are no
+local rewrites available.
+
+Possible timeError() messages are:
+  "Bad timer start value."
+  "Bad timer mode."
+
+Here is an example that creates and starts 3 timers. The first is
+periodic, the second is oneShot that has a timeOut() after two
+timeOuts() from the first timer. The third timer is also oneShot and
+stops the first time after 4 further timeOut()s.
+
+load time
+load file
+
+mod TEST is
+  inc TIME .
+  inc STD-STREAM .
+
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op firstTimer : Oid -> Attribute .
+  op secondTimer : Oid -> Attribute .
+  op thirdTimer : Oid -> Attribute .
+  op run : -> Configuration .
+  eq run = <> < me : myClass | none > createTimer(timeManager, me) .
+
+vars O O2 O3 O4 O5 : Oid .
+var N : Nat .
+  rl < O : myClass | none > createdTimer(O, O2, O3) =>
+     < O : myClass | firstTimer(O3) > createTimer(timeManager, me) .
+     
+  rl < O : myClass | firstTimer(O3) > createdTimer(O, O2, O4) =>
+     < O : myClass | firstTimer(O3), secondTimer(O4) > createTimer(timeManager, me) .
+
+  rl < O : myClass | firstTimer(O3), secondTimer(O4) > createdTimer(O, O2, O5) =>
+     < O : myClass | firstTimer(O3), secondTimer(O4), thirdTimer(O5) >
+     startTimer(O3, me, periodic, 500 ms)
+     startTimer(O4, me, oneShot, 1250 ms)
+     startTimer(O5, me, oneShot, 3250 ms).
+
+  rl < O : myClass | firstTimer(O3), secondTimer(O4), thirdTimer(O5) >
+     timeOut(O, O3) =>
+     < O : myClass | firstTimer(O3), secondTimer(O4), thirdTimer(O5) >
+     write(stdout, O, "time out for first timer\n") .
+
+  rl < O : myClass | firstTimer(O3), secondTimer(O4), thirdTimer(O5) >
+     timeOut(O, O4) =>
+     < O : myClass | firstTimer(O3), secondTimer(O4), thirdTimer(O5) >
+     write(stdout, O, "time out for second timer\n") .
+
+  rl < O : myClass | firstTimer(O3), secondTimer(O4), thirdTimer(O5) >
+     timeOut(O, O5) =>
+     < O : myClass | firstTimer(O3), secondTimer(O4), thirdTimer(O5) >
+     write(stdout, O, "time out for third timer\n")
+     stopTimer(O3, O) .
+
+  rl < O : myClass | firstTimer(O3), secondTimer(O4), thirdTimer(O5) >
+     stoppedTimer(O, O3) =>
+     < O : myClass | none >
+     deleteTimer(O3, O) deleteTimer(O4, O) deleteTimer(O5, O) .
+endm
+
+erew run .

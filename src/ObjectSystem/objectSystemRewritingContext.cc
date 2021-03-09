@@ -183,15 +183,6 @@ ObjectSystemRewritingContext::externalRewrite()
       //
       //	eventLoop() will have restored signal mask to normalSet.
       //
-      if (r & PseudoThread::NOTHING_PENDING)
-	{
-	  //
-	  //	There were no external events pending and therefore no
-	  //	callbacks were made. Since there are no local rewrites
-	  //	available, we're done.
-	  //
-	  break;
-	}
       if (r & PseudoThread::INTERRUPTED)
 	{
 	  //
@@ -219,6 +210,14 @@ ObjectSystemRewritingContext::externalRewrite()
 	  //
 	  if (!interleave())
 	    break;
+	}
+      else if (r & PseudoThread::NOTHING_PENDING)
+	{
+	  //
+	  //	There were no external events pending and no events were
+	  //	handles. Since there are no local rewrites available, we're done.
+	  //
+	  break;
 	}
     }
 }

@@ -1,0 +1,17 @@
+==========================================
+erewrite in TEST : run .
+time out for first timer
+time out for first timer
+time out for second timer
+time out for first timer
+time out for first timer
+time out for first timer
+time out for first timer
+time out for third timer
+rewrites: 19
+result Configuration: <> startedTimer(me, timer(0)) startedTimer(me, timer(1))
+    startedTimer(me, timer(2)) deletedTimer(me, timer(0)) deletedTimer(me,
+    timer(1)) deletedTimer(me, timer(2)) wrote(me, stdout) wrote(me, stdout)
+    wrote(me, stdout) wrote(me, stdout) wrote(me, stdout) wrote(me, stdout)
+    wrote(me, stdout) wrote(me, stdout) < me : myClass | none >
+Bye.

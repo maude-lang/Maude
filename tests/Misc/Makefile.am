@@ -1,5 +1,6 @@
 TESTS = \
 	fileTest \
+	timeTest \
 	view \
 	parameterizedView \
 	mapToParameterTheory \
@@ -35,6 +36,7 @@ TESTS = \
 
 MAUDE_FILES = \
 	fileTest.maude \
+	timeTest.maude \
 	view.maude \
 	parameterizedView.maude \
 	mapToParameterTheory.maude \
@@ -70,6 +72,7 @@ MAUDE_FILES = \
 
 RESULT_FILES = \
 	fileTest.expected \
+	timeTest.expected \
 	view.expected \
 	parameterizedView.expected \
 	mapToParameterTheory.expected \

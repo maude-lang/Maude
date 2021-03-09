@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,16 +41,23 @@
 const timespec PseudoThread::zeroTime = {0, 0};
 PseudoThread::FD_Info PseudoThread::fdInfo[MAX_NR_FDS];
 int PseudoThread::firstActive = NONE;
-PseudoThread::CallbackQueue PseudoThread::callBackQueue;
+PseudoThread::CallbackMap PseudoThread::callbackMap;
+
+PseudoThread::CallbackHandle
+PseudoThread::requestCallback(const timespec& notBefore, long clientData)
+{
+  return callbackMap.insert(CallbackMap::value_type(notBefore, CallbackRequest(this, clientData)));
+}
 
 void
-PseudoThread::requestCallback(const timespec* notBefore)
+PseudoThread::cancelCallback(const CallbackHandle& handle)
 {
-  callBackQueue.push(CallbackRequest(this, notBefore));
+  Assert(handle->second.client == this, "client mismatch");
+  callbackMap.erase(handle);
 }
 
 bool
-PseudoThread::processCallbacks(int& returnValue, timespec* wait)
+PseudoThread::processCallbacks(int& returnValue, timespec& wait)
 {
   //
   //	We handle any callbacks that are due.
@@ -62,25 +69,23 @@ PseudoThread::processCallbacks(int& returnValue, timespec* wait)
   clock_gettime(CLOCK_REALTIME, &now);
   do
     {
-      CallbackRequest c = callBackQueue.top();  // deep copy
-      if (timespecCompare(&(c.notBefore), &now) > 0)
+      CallbackMap::iterator firstEvent = callbackMap.begin();
+      if (now < firstEvent->first)
 	{
 	  //
 	  //	Earliest event has time greater than now.
 	  //	Compute the time to wait as a timespec.
 	  //
-	  timespecSubtract(&(c.notBefore), &now, wait);
+	  timespecSubtract(firstEvent->first, now, wait);
 	  return true;
 	}
-      //
-      //	Need to pop current request before dispatching call back
-      //	because call back may request a new one.
-      //
-      callBackQueue.pop();
-      c.client->doCallback();
+      PseudoThread* client = firstEvent->second.client;
+      long clientData = firstEvent->second.clientData;
+      callbackMap.erase(firstEvent);
+      client->doCallback(clientData);
       returnValue |= EVENT_HANDLED;
     }
-  while (!(callBackQueue.empty()));
+  while (!(callbackMap.empty()));
   return false;
 }
 
@@ -105,39 +110,80 @@ PseudoThread::eventLoop(bool block, sigset_t* normalSet)
       //	compute how long until the next is ready to go.
       //
       timespec wait;
-      bool callbacksPending = callBackQueue.empty() ? false :
-	processCallbacks(returnValue, &wait);
+      bool callbacksPending = false;
+      if (!(callbackMap.empty()))
+	{
+	  //
+	  //	See if any timed callbacks can be handled and
+	  //	find out if there are any still pending.
+	  //
+	  callbacksPending = processCallbacks(returnValue, wait);
+	  //
+	  //	If we handled a timed callback, we shouldn't block
+	  //	so that we return and let caller deal with any changes.
+	  //
+	  if (returnValue != NOTHING_HAPPENED)
+	    block = false;
+	}
       //
-      //	If there are events still to happen, proccess them.
+      //	If there are events still to happen, proccess them,
+      //	suspending until they happen if we are in blocking mode.
+      //
+      //	Events can be:
+      //	(1) File descriptor events
+      //	(2) Child exits
+      //
+      //	We also do a suspend if there are timed callbacks and
+      //	we're in blocking mode.
       //
       if (firstActive != NONE ||  // file descriptor events
 	  !(childRequests.empty()) ||  // child exit callbacks
-	  (callbacksPending & block))  // timed callbacks AND we're blocking
+	  (callbacksPending && block))  // timed callbacks AND we're blocking
 	{
 	  //
 	  //	Calculate how long to wait for an fd or interrupt event.
 	  //
-	  const timespec* waitPointer = 0;  // infinite wait
+	  const timespec* waitPointer = 0;  // block with infinite wait
 	  if (block)
 	    {
 	      if (callbacksPending)
-		waitPointer = &wait;  // determined by earliest timed callback
+		waitPointer = &wait;  // block until earliest timed callback
+	      DebugInfo("wait = " << wait.tv_sec << " returnValue = " << returnValue);
 	    }
 	  else
 	    waitPointer = &zeroTime;  // don't block
 	  //
 	  //	Process fd and interrupt events.
 	  //
+	  //	processFds() can return NOTHING_HAPPENED if
+	  //	we're not blocking (zero wait time) or we timed out.
+	  //
 	  returnValue |= processFds(waitPointer, normalSet);
+	  //
+	  //	Do we still have events pending?
+	  //
+	  if (firstActive == NONE &&  // no file descriptor events
+	      childRequests.empty() &&  // no child exit events
+	      !callbacksPending)  // no timed callbacks
+	    returnValue |= NOTHING_PENDING;
 	}
       else
 	{
 	  //
-	  //	We could have time callbacks pending but are non-blocking.
+	  //	We aren't waiting for file descriptor events or child exits.
+	  //	We could have timed callbacks pending if we are not in block mode.
 	  //
 	  if (!callbacksPending)
 	    returnValue |= NOTHING_PENDING;
 	}
+      DebugInfo("returnValue = " << returnValue);
+      //
+      //	It's possible we have events pending (say a timed callback)
+      //	and we got here without handling any events (processFds() timed out).
+      //	If this case, if we're still blocking, we loop to handle the events
+      //	since we don't want to return until we handle an event, get interrupted
+      //	or have no pending events.
+      //
     }
   while (block && returnValue == NOTHING_HAPPENED);
   return returnValue;
@@ -196,7 +242,7 @@ PseudoThread::doHungUp(int fd)
 }
 
 void
-PseudoThread::doCallback()
+PseudoThread::doCallback(long /* clientData */)
 {
   CantHappen("failed to do call back");
 }

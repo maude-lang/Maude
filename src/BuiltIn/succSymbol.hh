@@ -67,6 +67,13 @@ public:
   bool getSignedInt(const DagNode* dagNode, int& value) const;
   bool getSignedInt64(const DagNode* dagNode, Int64& value) const;
   bool rewriteToNat(DagNode* subject, RewritingContext& context, const mpz_class& result);
+  //
+  //	In case the number won't fill in an Int64 but a scaled version will
+  //	so we do the scaling before converting. Scaling always rounds down.
+  //
+  bool getScaledSignedInt64(const DagNode* dagNode,
+			    const mpz_class& scaleFactor,
+			    Int64& value) const;
 
 private:
   CachedDag zeroTerm;

@@ -210,6 +210,27 @@ SuccSymbol::getSignedInt64(const DagNode* dagNode, Int64& value) const
 }
 
 bool
+SuccSymbol::getScaledSignedInt64(const DagNode* dagNode,
+				 const mpz_class& scaleFactor,
+				 Int64& value) const
+{
+  if (isNat(dagNode))
+    {
+      mpz_class n(getNat(dagNode));
+      n /= scaleFactor;  // round down
+      mpz_class u = n >> BITS_PER_UINT;
+      if (u.fits_sint_p())
+	{
+	  value = u.get_si();
+	  value <<= BITS_PER_UINT;
+	  value |= n.get_ui();
+	  return true;
+	}
+    }
+  return false;
+}
+
+bool
 SuccSymbol::rewriteToNat(DagNode* subject, RewritingContext& context, const mpz_class& result)
 {
   Assert(result >= 0, "-ve");

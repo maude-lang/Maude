@@ -1,3 +1,166 @@
+2021-03-08  Steven Eker  <eker2@eker10>
+
+	* timeActions.cc (TimeManagerSymbol::makeDate): fix off-by-one in
+	day of the month
+
+2021-03-05  Steven Eker  <eker2@eker10>
+
+	* timeActions.cc (TimeManagerSymbol::startTimer): insist that
+	nanoseconds > 0
+	(TimeManagerSymbol::deleteTimer): added DebugInfo()
+
+2021-03-04  Steven Eker  <eker2@eker10>
+
+	* timeManagerSymbol.hh (class TimeManagerSymbol): added decls for
+	stopTimer(), deleteTimer()
+
+	* timeActions.cc (TimeManagerSymbol::stopTimer): added
+	(TimeManagerSymbol::deleteTimer): added
+
+	* timeManagerSymbol.cc (TimeManagerSymbol::handleMessage): handle
+	stopTimerMsg and deleteTimerMsg
+
+	* timeActions.cc (TimeManagerSymbol::createTimer): clear
+	callbackRequestTime
+
+	* timeManagerSymbol.cc (TimeManagerSymbol::doCallback): handle
+	periodic mode
+
+	* timeActions.cc (TimeManagerSymbol::startTimer): use
+	callbackRequestTime rather than callbackTime
+
+	* timeManagerSymbol.hh (class TimeManagerSymbol): replace
+	callbackTime with callbackRequestTime in struct Timer
+
+	* timeManagerSymbol.cc (TimeManagerSymbol::cleanUp): implemented
+
+	* timeManagerSymbol.hh (class TimeManagerSymbol): added decl for
+	getTimer()
+
+	* timeActions.cc (TimeManagerSymbol::getTimer): added
+
+	* pseudoThread.cc (PseudoThread::eventLoop): clear block flag if
+	we handled an event to ensure we exit
+	(PseudoThread::eventLoop): restructured
+	(PseudoThread::eventLoop): added DebugInfo()s
+
+	* objectSystemRewritingContext.cc
+	(ObjectSystemRewritingContext::externalRewrite): only break on
+	NOTHING_PENDING if not EVENT_HANDLED
+
+	* pseudoThread.cc (PseudoThread::eventLoop): && not & for
+	callbacksPending && block
+
+2021-03-03  Steven Eker  <eker2@eker10>
+
+	* timeManagerSymbol.hh (class TimeManagerSymbol): added decl for
+	doCallback()
+
+	* timeManagerSymbol.cc (TimeManagerSymbol::handleMessage): handle
+	startTimerMsg
+	(TimeManagerSymbol::doCallback): added
+
+	* timeManagerSymbol.hh (class TimeManagerSymbol): added decls for
+	getMode(), startTimer()
+
+	* timeActions.cc (TimeManagerSymbol::startTimer): added
+	(TimeManagerSymbol::getMode): added
+
+	* timeManagerSymbol.hh (class TimeManagerSymbol): added decls for
+	findUnusedId(), createdTimerReply(), createTimer()
+
+	* timeActions.cc (TimeManagerSymbol::findUnusedId)
+	(TimeManagerSymbol::createdTimerReply)
+	(TimeManagerSymbol::createTimer): added
+
+	* timeManagerSymbol.cc (TimeManagerSymbol::handleManagerMessage):
+	handle createTimerMsg
+
+	* timeManagerSymbol.hh (class TimeManagerSymbol): added struct
+	Timer, typedef TimerMap, data member timerMap
+
+	* pseudoThread.hh (class PseudoThread): added decl for
+	cancelCallback()
+
+	* pseudoThread.cc (PseudoThread::eventLoop): check callbackMap and
+	use new processCallbacks() semantics
+	(PseudoThread::cancelCallback): added
+
+	* pseudoThread.hh (class PseudoThread): new struct
+	CallbackRequest; added typedef CallbackMap; deleted typedef
+	CallbackQueue; added typedef CallbackHandle
+	(class PseudoThread): updated decl for requestCallback()
+	(class PseudoThread): updated decl for processCallbacks()
+	(class PseudoThread): added static data member callbackMap;
+	deleted static data member callBackQueue
+	(class PseudoThread): updated decl for doCallback()
+	(PseudoThread::CallbackRequest::CallbackRequest): rewritten
+	(PseudoThread::CallbackRequest::operator): deleted
+
+	* pseudoThread.cc (PseudoThread::requestCallback): rewritten
+	(PseudoThread::processCallbacks): rewritten
+	(PseudoThread::doCallback): now takes clientData argument
+
+2021-03-02  Steven Eker  <eker2@eker10>
+
+	* timeActions.cc (TimeManagerSymbol::getTimeSinceEpoch): use
+	clock_gettime() rather then gettimeofday()
+
+	* timeSignature.cc: added createTimerMsg, createdTimerMsg,
+	startTimerMsg, startedTimerMsg, timeOutMsg, deleteTimerMsg,
+	deletedTimerMsg, stopTimerMsg, stoppedTimerMsg
+
+	* timeActions.cc (TimeManagerSymbol::getDateAndTime): use
+	getScaledSignedInt64() to avoid wrap-around of nanoseconds in
+	extreme situations
+	(TimeManagerSymbol::getLocalDateAndTime): ditto
+	(TimeManagerSymbol::makeDate): do the year addition on bignums to
+	avoid wrapping in edge cases
+
+	* timeManagerSymbol.hh (class TimeManagerSymbol): added BILLION to
+	enum Special
+
+	* timeActions.cc (TimeManagerSymbol::getLocalDateAndTime): added
+	(TimeManagerSymbol::makeTimeZoneInfo): added
+
+	* timeManagerSymbol.cc (TimeManagerSymbol::handleManagerMessage):
+	handle getDateAndTimeMsg
+
+	* timeSignature.cc: added getLocalDateAndTimeMsg,
+	gotLocalDateAndTimeMsg
+
+	* timeManagerSymbol.hh (class TimeManagerSymbol): deleted decl for
+	getTimeZone(); added decls for makeDate(), makeTime()
+
+	* timeActions.cc (TimeManagerSymbol::makeTime): added
+	(TimeManagerSymbol::makeDate): added
+
+	* timeManagerSymbol.hh (class TimeManagerSymbol): added enum
+	Special
+
+	* timeActions.cc (TimeManagerSymbol::getDateAndTime): rewritten
+	for new convention
+	(TimeManagerSymbol::getTimeZone): deleted
+
+	* timeSignature.cc: added dateSymbol, timeSymbol,
+	timeZoneInfoSymbol; deleted dateAndTimeSymbol, utcSymbol,
+	localSymbol
+
+2021-03-01  Steven Eker  <eker2@eker10>
+
+	* timeSignature.cc: created
+
+	* timeManagerSymbol.cc: created
+
+	* timeManagerSymbol.hh: created
+
+	* timeActions.cc: created
+
+	* fileManagerSymbol.cc (FileManagerSymbol::handleManagerMessage):
+	restrutured if statement
+
+===================================Maude134===========================================
+
 2021-02-17  Steven Eker  <eker2@eker10>
 
 	* remainder.cc (ConfigSymbol::Remainder::markReachableNodes): use

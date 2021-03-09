@@ -1,3 +1,14 @@
+2021-03-01  Steven Eker  <eker2@eker10>
+
+	* symbolType.hh (class SymbolType): added TIME_MANAGER_SYMBOL
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): handle
+	TimeManagerSymbol
+
+	* specialSymbolTypes.cc: added TimeManagerSymbol
+
+===================================Maude134===========================================
+
 2021-02-19  Steven Eker  <eker2@eker10>
 
 	* unify.cc (Interpreter::unify): pass destructiveUpdates = true to

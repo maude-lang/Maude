@@ -134,6 +134,7 @@
 #include "fileManagerSymbol.hh"
 #include "streamManagerSymbol.hh"
 #include "processManagerSymbol.hh"
+#include "timeManagerSymbol.hh"
 
 //	strategy language class definitions
 #include "trivialStrategy.hh"

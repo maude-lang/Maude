@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,37 +37,33 @@
 # endif
 #endif
 
-inline long
-timespecCompare(const timespec* first, const timespec* second)
+inline bool
+operator<(const timespec& first, const timespec& second)
 {
-  //
-  //	Compare two timespec structs
-  //
-  //	Return < 0 if first < second
-  //	       = 0 if first = second
-  //	       > 0 if first > second
-  //
-  long diff = first->tv_sec - second->tv_sec;
-  return (diff == 0) ? (first->tv_nsec - second->tv_nsec) : diff;
+  if (first.tv_sec < second.tv_sec)
+    return true;
+  if (first.tv_sec > second.tv_sec)
+    return false;
+  return first.tv_nsec < second.tv_nsec;
 }
 
 inline void
-timespecSubtract(const timespec* first,
-		 const timespec* second,
-		 timespec* result)
+timespecSubtract(const timespec& first,
+		 const timespec& second,
+		 timespec& result)
 {
   //
   //	Subtract two timespec structs, assuming first >= second
   //
-  long diff = first->tv_sec - second->tv_sec;
-  long ndiff = first->tv_nsec - second->tv_nsec;
+  time_t diff = first.tv_sec - second.tv_sec;
+  long ndiff = first.tv_nsec - second.tv_nsec;
   if (ndiff < 0)
     {
       ndiff += 1000000000L;
       diff -= 1;
     }
-  result->tv_sec = diff;
-  result->tv_nsec = ndiff;
+  result.tv_sec = diff;
+  result.tv_nsec = ndiff;
 }
 
 #endif

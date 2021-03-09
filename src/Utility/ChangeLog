@@ -1,3 +1,12 @@
+2021-03-03  Steven Eker  <eker2@eker10>
+
+	* timeStuff.hh: added operator<()
+	(timespecSubtract): added reference based version
+	(timespecCompare): deleted
+	(timespecSubtract): deleted pointer based version
+
+===================================Maude133===================================
+
 2021-02-18  Steven Eker  <eker2@eker10>
 
 	* wordLevel-simplifyEquations.cc (WordLevel::simplifyEquation):

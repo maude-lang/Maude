@@ -183,6 +183,8 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new StreamManagerSymbol(name);
     case SymbolType::PROCESS_MANAGER_SYMBOL:
       return new ProcessManagerSymbol(name);
+    case SymbolType::TIME_MANAGER_SYMBOL:
+      return new TimeManagerSymbol(name);
     }
   //
   //	Handle regular symbols that have semantic attributes.

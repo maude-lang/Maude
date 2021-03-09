@@ -59,3 +59,4 @@
   MACRO(FileManagerSymbol, SymbolType::FILE_MANAGER_SYMBOL)
   MACRO(StreamManagerSymbol, SymbolType::STREAM_MANAGER_SYMBOL)
   MACRO(ProcessManagerSymbol, SymbolType::PROCESS_MANAGER_SYMBOL)
+  MACRO(TimeManagerSymbol, SymbolType::TIME_MANAGER_SYMBOL)

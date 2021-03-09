@@ -1,0 +1,112 @@
+***(
+
+    This file is part of the Maude 3 interpreter.
+
+    Copyright 2021 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+)
+
+***
+***	Maude time API. 
+***	Version alpha134.
+***
+
+mod TIME is
+  protecting INT .
+  protecting STRING .
+  including CONFIGURATION .
+
+  sorts TimerMode Date Time TimeZoneInfo .
+  ops oneShot periodic : -> TimerMode [ctor] .
+  op _\_\_ : NzNat NzNat NzNat -> Date [ctor] .
+  op _:_:_ : Nat Nat Nat -> Time [ctor] .
+  op [_,_,_,_] : String String Int Int -> TimeZoneInfo [ctor] .
+  op timer : Nat -> Oid [ctor] .
+
+  op getTimeSinceEpoch : Oid Oid -> Msg [ctor msg format (b o)] .
+  op gotTimeSinceEpoch : Oid Oid Nat -> Msg [ctor msg format (m o)] .
+
+  op getDateAndTime : Oid Oid Nat -> Msg [ctor msg format (b o)] .
+  op gotDateAndTime : Oid Oid Date Time NzNat NzNat -> Msg [ctor msg format (m o)] .
+
+  op getLocalDateAndTime : Oid Oid Nat -> Msg [ctor msg format (b o)] .
+  op gotLocalDateAndTime : Oid Oid Date Time NzNat NzNat TimeZoneInfo -> Msg [ctor msg format (m o)] .
+
+  op createTimer : Oid Oid -> Msg [ctor msg format (b o)] .
+  op createdTimer : Oid Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op startTimer : Oid Oid TimerMode NzNat -> Msg [ctor msg format (b o)] .
+  op startedTimer : Oid Oid -> Msg [ctor msg format (m o)] .
+  op timeOut : Oid Oid -> Msg [ctor msg format (r o)] .
+
+  op stopTimer : Oid Oid -> Msg [ctor msg format (b o)] .
+  op stoppedTimer : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op deleteTimer : Oid Oid -> Msg [ctor msg format (b o)] .
+  op deletedTimer : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op timeError : Oid Oid String -> Msg [ctor msg format (r o)] .
+  op timeManager : -> Oid
+	[special (
+          id-hook TimeManagerSymbol
+
+	  op-hook succSymbol			(s_ : Nat ~> NzNat)
+	  op-hook minusSymbol 			(-_ : NzNat ~> Int)
+	  op-hook stringSymbol			(<Strings> : ~> String)
+	  op-hook timerOidSymbol		(timer : Nat ~> Oid)
+
+	  op-hook oneShotSymbol			(oneShot : ~> TimerMode)
+	  op-hook periodicSymbol		(periodic : ~> TimerMode)
+	  op-hook dateSymbol			(_\_\_ : NzNat NzNat NzNat ~> Date)
+	  op-hook timeSymbol			(_:_:_ : Nat Nat Nat ~> Time)
+	  op-hook timeZoneInfoSymbol		([_,_,_,_] : String String Int Int ~> TimeZoneInfo)
+
+	  op-hook getTimeSinceEpochMsg		(getTimeSinceEpoch : Oid Oid ~> Msg)
+	  op-hook gotTimeSinceEpochMsg		(gotTimeSinceEpoch : Oid Oid Nat ~> Msg)
+	  op-hook getDateAndTimeMsg		(getDateAndTime : Oid Oid Nat ~> Msg)
+	  op-hook gotDateAndTimeMsg		(gotDateAndTime : Oid Oid Date Time NzNat NzNat ~> Msg)
+	  op-hook getLocalDateAndTimeMsg	(getLocalDateAndTime : Oid Oid Nat ~> Msg)
+	  op-hook gotLocalDateAndTimeMsg
+	    (gotLocalDateAndTime : Oid Oid Date Time NzNat NzNat TimeZoneInfo ~> Msg)
+
+	  op-hook createTimerMsg		(createTimer : Oid Oid ~> Msg)
+	  op-hook createdTimerMsg		(createdTimer : Oid Oid Oid ~> Msg)
+
+	  op-hook startTimerMsg			(startTimer : Oid Oid TimerMode NzNat ~> Msg)
+	  op-hook startedTimerMsg		(startedTimer : Oid Oid ~> Msg)
+	  op-hook timeOutMsg			(timeOut : Oid Oid ~> Msg)
+
+	  op-hook stopTimerMsg			(stopTimer : Oid Oid ~> Msg)
+	  op-hook stoppedTimerMsg		(stoppedTimer : Oid Oid ~> Msg)
+
+	  op-hook deleteTimerMsg		(deleteTimer : Oid Oid ~> Msg)
+	  op-hook deletedTimerMsg		(deletedTimer : Oid Oid ~> Msg)
+
+	  op-hook timeErrorMsg			(timeError : Oid Oid String ~> Msg))] .
+***
+***	Time unit conversion.
+***
+var N : Nat .
+  op _us : Nat -> Nat .
+  eq N us = 1000 * N .
+
+  op _ms : Nat -> Nat .
+  eq N ms = 1000000 * N .
+
+  op _seconds : Nat -> Nat .
+  eq N seconds = 1000000000 * N .
+endm
