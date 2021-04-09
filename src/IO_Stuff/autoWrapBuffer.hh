@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +33,10 @@
 //	Decisions on whether we need to insert a \n depend on width
 //	calculations which are complicated by tabs and ESC ... m sequences.
 //
+//	This class now has a second function: to block using waitFunction
+//	to avoid writing to a terminal that is being used by a child for
+//	a nonblocking getLine.
+//
 #ifndef _autoWrapBuf_hh_
 #define _autoWrapBuf_hh_
 #include <string>
@@ -42,9 +46,15 @@ class AutoWrapBuffer : public std::streambuf
   NO_COPYING(AutoWrapBuffer);
 
 public:
-  AutoWrapBuffer(streambuf* outputBuffer, int lineWidth);
+  typedef void (*WaitFunction)();
+
+  AutoWrapBuffer(streambuf* outputBuffer,
+		 int lineWidth,
+		 bool respectFlush,
+		 WaitFunction waitFunction);
 
   void setLineWidth(int lineWidth);
+  void resetCursorPosition();
   //
   //	Member functions we need to override from streambuf to get
   //	hold of raw characters.
@@ -68,6 +78,9 @@ private:
 
   streambuf* outputBuffer;
   int lineWidth;		// width of output device
+  bool respectFlush;
+  WaitFunction waitFunction;
+
   int cursorPosition;		// cursor position if we were to print pendingBuffer
   Bool seenBackQuote;		// last char was a `
   Bool seenBackSlash;		// inside a "string" and last char was an unescaped
@@ -88,6 +101,15 @@ inline int
 AutoWrapBuffer::nextTabPosition(int pos)
 {
   return (pos + 8) & ~7;
+}
+
+inline void
+AutoWrapBuffer::resetCursorPosition()
+{
+  //
+  //	We need this to account for newline characters implicit in user input.
+  //
+  cursorPosition = 0;
 }
 
 #endif

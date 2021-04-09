@@ -1,3 +1,21 @@
+2021-03-09  Steven Eker  <eker2@eker10>
+
+	* parser.cc (~Parser): use range-based for loop
+
+	* pass2.cc (Parser::extractFirstSubparse): use range-based for
+	loop
+	(Parser::extractNextSubparse): use range-based for loop
+
+	* compile2.cc (Parser::mergeInMap): use range-based for loop
+	(Parser::makeExpansionList): use range-based for loop
+	(Parser::buildExpansionTables): use range-based for loop (2
+	places)
+	(Parser::dumpMap): use range-based for loop (2 places)
+
+	* bubble.cc (Parser::processBubble): use range-based for loop
+
+===================================Maude135===========================================
+
 2020-04-07  Steven Eker  <eker2@eker9>
 
 	* parser.cc (Parser::parseSentence): added Assert()

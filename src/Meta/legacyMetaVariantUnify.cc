@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@
 bool
 MetaLevelOpSymbol::legacyMetaVariantUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint)
 {
-  DebugAdvisory(Tty(Tty::CYAN) << "meta variant unify call: " << Tty(Tty::GREEN) << (DagNode*) subject << Tty(Tty::RESET));
+  DebugAdvisory(Tty(Tty::CYAN) << "meta variant unify call: " << Tty(Tty::GREEN) <<
+		(DagNode*) subject << Tty(Tty::RESET));
   //
   //	We handle both metaVariantUnify() and metaVariantDisjointUnify().
   //
@@ -53,10 +54,10 @@ MetaLevelOpSymbol::legacyMetaVariantUnify2(FreeDagNode* subject, RewritingContex
 	      Vector<Term*> blockerTerms;
 	      if (!metaLevel->downTermList(subject->getArgument(2), m, blockerTerms))
 		{
-		  FOR_EACH_CONST(i, Vector<Term*>, lhs)
-		    (*i)->deepSelfDestruct();
-		  FOR_EACH_CONST(j, Vector<Term*>, rhs)
-		    (*j)->deepSelfDestruct();
+		  for (Term* t : lhs)
+		    t->deepSelfDestruct();
+		  for (Term* t : rhs)
+		    t->deepSelfDestruct();
 		  return false;
 		}
 	      
@@ -64,10 +65,9 @@ MetaLevelOpSymbol::legacyMetaVariantUnify2(FreeDagNode* subject, RewritingContex
 	      DagNode* d = m->makeUnificationProblemDag(lhs, rhs);
 	      RewritingContext* startContext = context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
 
-	      Vector<DagNode*> blockerDags; 
-	      FOR_EACH_CONST(i, Vector<Term*>, blockerTerms)
+	      Vector<DagNode*> blockerDags;
+	      for (Term* t : blockerTerms)
 		{
-		  Term* t = *i;
 		  t = t->normalize(true);  // we don't really need to normalize but we do need to set hash values
 		  blockerDags.append(t->term2Dag());
 		  t->deepSelfDestruct();

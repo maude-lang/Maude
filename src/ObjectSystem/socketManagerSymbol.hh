@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -77,11 +77,6 @@ private:
       MAX_PORT_NUMBER = 0xFFFF
     };
   
-  enum Sizes
-    {
-      READ_BUFFER_SIZE = 208 * 1024  // based on Linux default
-    };
- 
   enum SocketState
     {
       NOMINAL = 0,

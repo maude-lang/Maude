@@ -260,6 +260,12 @@ fold					return KW_FOLD;
 					    ": skipped unexpected token: " <<
 					    QUOTE(yytext));
 					}
+\n\n					{
+					  ++lineNumber;
+					  yyless(1);  // only absorb one newline
+					  if (generateImpliedStep())
+					    return KW_IMPLIED_STEP;
+					}
 }
 
  /*

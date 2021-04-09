@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,8 +30,14 @@
 //	system class definitions
 #include "autoWrapBuffer.hh"
 
-AutoWrapBuffer::AutoWrapBuffer(streambuf* outputBuffer, int lineWidth)
-  : outputBuffer(outputBuffer), lineWidth(lineWidth)
+AutoWrapBuffer::AutoWrapBuffer(streambuf* outputBuffer,
+			       int lineWidth,
+			       bool respectFlush,
+			       WaitFunction waitFunction)
+  : outputBuffer(outputBuffer),
+    lineWidth(lineWidth),
+    respectFlush(respectFlush),
+    waitFunction(waitFunction)
 {
   pendingWidth = UNDEFINED;
   cursorPosition = 0;
@@ -44,23 +50,15 @@ AutoWrapBuffer::AutoWrapBuffer(streambuf* outputBuffer, int lineWidth)
 int
 AutoWrapBuffer::sync()
 {
+  if (waitFunction)
+    (*waitFunction)();
   Assert(pptr() - pbase() == 0, "not supposed to have a buffer");
+  if (respectFlush)
+    decideOnBreak();
   //
-  //	We don't dump the pending buffer here because stderr sync()s all
-  //	the time and we would lose our opportunities for inserting a \n.
-  //
-#if defined(__GNUC__) && __GNUC__ < 3
-  //
-  //	For the old version of the GNU Standard C++ library,
-  //	use the old sync function.
-  //
-  return outputBuffer->sync();
-#else
-  //
-  //	Otherwise use the new ANSI one.
+  //	Call the ANSI sync function.
   //
   return outputBuffer->pubsync();
-#endif
 }
 
 void
@@ -108,11 +106,31 @@ AutoWrapBuffer::decideOnBreak()
 {
   if (pendingWidth != UNDEFINED)
     {
+      //
+      //	We're buffering because we have a place before the
+      //	characters in the buffer that it's ok to insert a \n
+      //
+      //	We've now come to another place where we can insert \n
+      //	We need to decide on whether to insert \n before the buffer
+      //	or just dump the buffer and stop buffering.
+      //
       if (cursorPosition > lineWidth - RIGHT_MARGIN)
 	{
+	  //
+	  //	Dumping the buffer without inserting a \n would
+	  //	cause us to enter the right margin.
+	  //
 	  outputBuffer->sputc('\n');
+	  //
+	  //	Create left wrapped line margin.
+	  //
 	  for (int i = 0; i < LEFT_MARGIN; i++)
 	    outputBuffer->sputc(' ');
+	  //
+	  //	Now we do a modified dump of the buffer that is smart
+	  //	about the first character in the buffer being a space
+	  //	a tab, and which takes the left margin into account.
+	  //
 	  int nrPending = pendingBuffer.size();
 	  cursorPosition = LEFT_MARGIN;
 	  if (nrPending > 0)
@@ -131,7 +149,12 @@ AutoWrapBuffer::decideOnBreak()
 	}
       else
 	dumpBuffer();
-      pendingWidth = UNDEFINED;  // disable buffering
+      //
+      //	The buffer has now been dumped. We stop buffering
+      //	for the moment, though is most but not all cases we will
+      //	restart it with legalPositionToBreak().
+      //
+      pendingWidth = UNDEFINED;
     }
 }
 
@@ -144,15 +167,25 @@ AutoWrapBuffer::legalPositionToBreak()
   //	position is in range.
   //
   pendingWidth = 0;
-  cursorPosition %= lineWidth;
+  cursorPosition %= lineWidth;  // where is the cursor on the current line
 }
 
 int
 AutoWrapBuffer::overflow(int ch)
 {
+  if (waitFunction)
+    (*waitFunction)();
   Assert(pptr() - pbase() == 0, "not supposed to have a buffer");
   if (ch == EOF)
     return EOF;
+  if (lineWidth == NONE)
+    {
+      //
+      //	We're not wrapping lines.
+      //
+      outputBuffer->sputc(ch);
+      return 0;
+    }
   if (inEscape)
     {
       handleEscapeSequenceChar(ch);

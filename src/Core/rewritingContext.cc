@@ -84,6 +84,16 @@ RewritingContext::blockAndHandleInterrupts(sigset_t *normalSet)
   return false;
 }
 
+bool
+RewritingContext::interruptSeen()
+{
+  //
+  //	Hard to do anything sensible here.
+  //
+  CantHappen("base class version shouldn't be called");
+  return false;
+}
+
 int
 RewritingContext::traceBeginEqTrial(DagNode* /* subject */, const Equation* /* equation */)
 {

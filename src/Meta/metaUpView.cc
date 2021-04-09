@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2009 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -117,10 +117,10 @@ MetaLevel::upOpMappings(View* view, PointerMap& qidMap)
       }
 
   const View::OpTermMap& opTermMap = view->getOpTermMap();
-  FOR_EACH_CONST(i, View::OpTermMap, opTermMap)
+  for (auto& i : opTermMap)
     {
-      Term* fromTerm = i->second.first;
-      Term* toTerm = i->second.second;
+      Term* fromTerm = i.second.first;
+      Term* toTerm = i.second.second;
       //
       //	Note that fromTerm and toTerm were parsed in special modules
       //	belonging to the view and we need to use those modules

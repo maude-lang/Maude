@@ -54,6 +54,17 @@ ExternalObjectManagerSymbol::ExternalObjectManagerSymbol(int id)
 }
 
 void
+ExternalObjectManagerSymbol::cleanUpManager(ObjectSystemRewritingContext& /* context */)
+{
+  //
+  //	Most derived classes won't need this functionality so we provide
+  //	a default function.
+  //
+  CantHappen("Shouldn't be called for this ExternalObjectManagerSymbol " << this);
+}
+
+
+void
 ExternalObjectManagerSymbol::trivialReply(Symbol* replySymbol, 
 					  FreeDagNode* originalMessage,
 					  ObjectSystemRewritingContext& context)

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -555,9 +555,8 @@ Rope::operator[](size_type n) const
 ostream&
 operator<<(ostream& s, const Rope& r)
 {
-  Rope::const_iterator e = r.end();
-  for (Rope::const_iterator i = r.begin(); i != e; ++i)
-    s << *i;
+  for (char c : r)
+    s << c;
   return s;
 }
 
@@ -673,16 +672,18 @@ Rope::const_iterator::operator++()
   if (index >= f->length)
     {
       //
-      //	We exhausted this leaf node; now need to find the next leaf in sequence, by stacking until we find a node
-      //	that is a left child. Such a node must have a corresponding right child and the left most descendant of the right child
-      //	is the leaf we seek.
+      //	We exhausted this leaf node; now need to find the next leaf in sequence,
+      //	by stacking until we find a node that is a left child.
+      //	Such a node must have a corresponding right child and the left most
+      //	descendant of the right child is the leaf we seek.
       //
       for (;;)
 	{
 	  if (stackPtr == ptrStack)
 	    {
 	      //
-	      //	The end iterator is a pointer to the root of the DAG and in index of END_MARKER
+	      //	The end iterator is a pointer to the root of the DAG and in
+	      //	index of END_MARKER
 	      //
 	      index = END_MARKER;
 	      return *this;

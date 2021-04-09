@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@ bool UserLevelRewritingContext::infoFlag = false;
 bool UserLevelRewritingContext::stepFlag = false;
 bool UserLevelRewritingContext::abortFlag = false;
 int UserLevelRewritingContext::debugLevel = 0;
-Int64 UserLevelRewritingContext::rewriteCountAtLastInterrupt = -1;
+Int64 UserLevelRewritingContext::rewriteCountAtLastInterrupt = 0;
+timespec UserLevelRewritingContext::timeAtLastInterrupt = {0, 0};
 
 int yyparse(UserLevelRewritingContext::ParseResult*);
 void cleanUpParser();
@@ -57,6 +58,12 @@ UserLevelRewritingContext::clearInterrupt()
   ctrlC_Flag =  false;
 }
 */
+
+bool
+UserLevelRewritingContext::interruptSeen()
+{
+  return interrupted();
+}
 
 void
 UserLevelRewritingContext::ignoreCtrlC()
@@ -261,27 +268,43 @@ UserLevelRewritingContext::handleInterrupt()
       Int64 currentRewriteCount = getTotalCount();
       if (rewriteCountAtLastInterrupt == currentRewriteCount)
 	{
-	  cerr << "\nSecond control-C while suspended on external event(s)." << endl;
+	  cerr << "\nSecond control-C on the same suspension." << endl;
 	  cerr << "Aborting execution and returning to command line." << endl;
 	  abortFlag = true;  // treat this as an abort
 	  return false;
 	}
-      else
+      //
+      //	Check if two ctrl-C events happened within a second.
+      //
+      timespec timeValue;
+      DebugSave(r, clock_gettime(CLOCK_REALTIME, &timeValue));
+      Assert(r == 0, "clock_gettime() failed: " << strerror(errno));
+      time_t seconds = timeValue.tv_sec - timeAtLastInterrupt.tv_sec;
+      if (seconds == 0 || (seconds == 1 && timeValue.tv_nsec < timeAtLastInterrupt.tv_nsec))
 	{
-	  cerr << "\nControl-C while suspended on external event(s)." << endl;
-	  if (rewriteCountAtLastInterrupt != -1)
-	    {
-	      Int64 diff = currentRewriteCount - rewriteCountAtLastInterrupt;
-	      cerr << "Note that this is a" << Tty(Tty::RED) << " different " << Tty(Tty::RESET) <<
-		"suspension than the one that received a control-C " <<
-		diff << " rewrite" << pluralize(diff) << " ago." << Tty(Tty::RESET) << endl;
-	    }
-	  cerr << "A second control-C" << Tty(Tty::RED) << " on the same suspension " <<
-	    Tty(Tty::RESET) << "will abort execution and return to command line." << endl;
-	  rewriteCountAtLastInterrupt = currentRewriteCount;
-	  ctrlC_Flag = false;  // cancel ctrlC
-	  return true;
+	  cerr << "\nSecond control-C within a second." << endl;
+      	  cerr << "Aborting execution and returning to command line." << endl;
+	  abortFlag = true;  // treat this as an abort
+	  return false;
 	}
+      timeAtLastInterrupt = timeValue;
+      //
+      //	Doesn't meet either criteria for returning to command line.
+      //
+      cerr << "\nControl-C while suspended on external event(s)." << endl;
+      if (rewriteCountAtLastInterrupt != -1)
+	{
+	  Int64 diff = currentRewriteCount - rewriteCountAtLastInterrupt;
+	  cerr << "Note that this is a" << Tty(Tty::RED) << " different " << Tty(Tty::RESET) <<
+	    "suspension than the one that received a control-C " <<
+	    diff << " rewrite" << pluralize(diff) << " ago." << Tty(Tty::RESET) << endl;
+	}
+      cerr << "A second control-C" << Tty(Tty::RED) <<
+	" on the same suspension or within a second " <<
+	Tty(Tty::RESET) << "will abort execution and return to command line." << endl;
+      rewriteCountAtLastInterrupt = currentRewriteCount;
+      ctrlC_Flag = false;  // cancel ctrlC
+      return true;
     }
   return true;
 }
@@ -318,13 +341,17 @@ void
 UserLevelRewritingContext::changePrompt()
 {
   if (debugLevel == 0)
-    ioManager.setPrompt("Maude> ");
+    {
+      ioManager.setPrompt("Maude> ");
+      setDebugMode(false);
+    }
   else
     {
       string prompt = "Debug(";
       prompt += int64ToString(debugLevel);  // HACK: fix when we have decent stdc++ lib
       prompt += ")> ";
       ioManager.setPrompt(prompt);
+      setDebugMode(true);
     }
 }
 

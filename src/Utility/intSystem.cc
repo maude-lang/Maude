@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -73,9 +73,8 @@ IntSystem::initializeUpperBounds()
   if (upperBounds.empty())
     {
       upperBounds.resize(nrVariables);
-      IntVec::iterator e = upperBounds.end();
-      for (IntVec::iterator i = upperBounds.begin(); i != e; ++i)
-	*i = UNBOUNDED;
+      for (int& i : upperBounds)
+	i = UNBOUNDED;
     }
   else
     Assert(static_cast<size_t>(nrVariables) == upperBounds.size(), "row size differs");
@@ -85,9 +84,9 @@ bool
 IntSystem::greaterEqual(const IntVec& arg1, const IntVec& arg2)
 {
   IntVec::const_iterator j = arg2.begin();
-  FOR_EACH_CONST(i, IntVec, arg1)
+  for (int i : arg1)
     {
-      if (*i < *j)
+      if (i < *j)
 	return false;
       ++j;
     }
@@ -100,9 +99,9 @@ IntSystem::minimal(const IntVec& arg)
   //
   //	A vector is minimal if it is not greater or equal to an existing solution.
   //
-  FOR_EACH_CONST(i, VecList, solutions)
+  for (const IntVec& v : solutions)
     {
-      if (greaterEqual(arg, *i))
+      if (greaterEqual(arg, v))
 	return false;
     }
   return true;
@@ -113,10 +112,10 @@ IntSystem::minimal(const IntVec& arg)
 void
 IntSystem::dumpEqns()
 {
-  FOR_EACH_CONST(i, VecList, eqns)
+  for (const IntVec& v : eqns)
     {
-      FOR_EACH_CONST(j, IntVec, *i)
-	cout << *j << '\t';
+      for (int j : v)
+	cout << j << '\t';
       cout << endl;
     }
   cout << endl;

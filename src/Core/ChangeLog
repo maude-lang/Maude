@@ -1,3 +1,10 @@
+2021-03-24  Steven Eker  <eker2@eker10>
+
+	* rewritingContext.cc (RewritingContext::interruptSeen): added
+
+	* rewritingContext.hh (class RewritingContext): added decl for
+	interruptSeen()
+
 2020-12-11  Steven Eker  <eker2@eker10>
 
 	* pendingUnificationStack.cc

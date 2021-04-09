@@ -45,3 +45,5 @@ bool
 findFile(const string& userFileName, string& directory, string& fileName, int lineNr);
 
 bool findExecutableDirectory(string& directory, string& executable);
+
+void setDebugMode(bool polarity);

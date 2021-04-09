@@ -82,7 +82,18 @@ public:
     //
     EVENT_HANDLED = 4
   };
-  
+
+  //
+  //	We put these useful magic numbers here because derived
+  //	classes will probably do raw, async I/O.
+  //
+  enum Communications
+    {
+     READ_BUFFER_SIZE = 208 * 1024,  // based on Linux default
+     READ_END = 0,
+     WRITE_END = 1
+    };
+
   //
   //	Make any pending call backs.
   //	If a call back was made or we were interrupted by a signal or

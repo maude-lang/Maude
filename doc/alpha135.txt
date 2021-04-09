@@ -1,0 +1,250 @@
+Alpha 135 release notes
+========================
+
+Bug fix
+========
+
+A bug in deleteTimer() that caused the interpreter to be left in
+an inconsistent state resulting in a crash on the next rewrite
+command. Triggered by:
+
+load time
+
+mod TEST is
+  inc TIME .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+
+vars O O2 O3 : Oid .
+  rl < O : myClass | none > createdTimer(O, O2, O3) =>
+     < O : myClass | none > deleteTimer(O3, me) .
+endm
+
+erew <> < me : myClass | none > createTimer(timeManager, me) .
+red 0 .
+
+
+New feature
+============
+
+The getLine() message for the external object stdin is now (mostly)
+nonblocking. Thus other computations can take place while Maude is
+waiting for the user's response. This is achieved by using a child
+process to read from terminal (if stdin not a terminal, the behavior
+is unchanged from earlier versions).
+
+It is possible for the running program to cancel a getLine()
+currently in progress using the message pair:
+
+  op cancelGetLine : Oid Oid -> Msg [ctor msg format (b o)] .
+  op canceledGetLine : Oid Oid -> Msg [ctor msg format (b o)] .
+
+If there is no getLine() currently in progress, cancelGetLine() is
+quietly discarded otherwise there is a race between cancelGetLine()
+and the user entering a line.
+
+cancelGetLine() is deemed to have won if it manages to kill the child
+process before it exits normally, and a canceledGetLine() message is
+returned. In this case the original getLine() will never receive a
+response.
+
+Otherwise if the child process exits normally, a gotLine() message
+is returned as normal and the cancelGetLine() never receives a
+response.
+
+Having only the winner of the race receive a reply is a little at
+odds with Maude's normal convention, but it seems both easier to
+implement and easier to program with - the reply from the winner
+is matched to determine the future execution of the program and the
+user doesn't have to bother matching and discarding a reply from the
+loser - recall that object-message rewriting requires lhs patterns to
+consist one object and one message.
+
+In this case getLine() and cancelGetLine() are closely related
+and are in direct opposition, so an exception seems reasonable.
+
+Here is an example that illustrates the race between getLine() and
+cancelGetLine() and also the race between timeOut() and
+stopTimer(). Note that it relies on the new semantics of stopTimer() -
+see below.
+
+load file
+load time
+
+mod TEST is
+  pr CONVERSION .
+  pr RANDOM .
+  inc STD-STREAM .
+  inc TIME .
+
+  ops #questions timeLimit upperBound : -> Nat .
+  eq #questions = 5 .
+  eq timeLimit = 3 seconds .
+  eq upperBound = 100 .
+
+  op myClass : -> Cid .
+  ops me : -> Oid .
+
+  ops stop next : -> Attribute .
+  op timer : Oid -> Attribute .
+  ops asked score answer : Nat -> Attribute .
+
+  vars O O2 O3 : Oid .
+  var A : AttributeSet .
+  var S : String .
+  vars N M X Y : Nat .
+
+  op run : -> Configuration .
+  eq run = <> < me : myClass | asked(0), score(0) >
+     write(stdout, me, "\nAddition Test\n-------------\n") .
+
+  op number : Nat -> Nat .
+  eq number(N) = 1 + (random(N) rem upperBound) .
+
+  op conv : String -> Nat .
+  eq conv(S) = rat(substr(S, 0, length(S) - 1), 10) .
+
+  rl < O : myClass | A, asked(0) > wrote(O, O2) =>
+     < O : myClass | A, asked(0) > createTimer(timeManager, O) .
+
+  rl < O : myClass | A > createdTimer(O, O2, O3) =>
+     < O : myClass | A, timer(O3) > startTimer(O3, O, oneShot, timeLimit) .
+
+*** cycle starts here when a startedTimer() message is received
+  crl < O : myClass | A, asked(N) > startedTimer(O, O2) =>
+      < O : myClass | A, asked(N + 1), answer(X + Y) >
+      getLine(stdin, O, "What is " + string(X, 10) + " + " + string(Y, 10) + " ? ")
+  if X := number(2 * N) /\ Y := number(2 * N + 1) .
+
+*** if timeOut() while we were waiting for an answer we try to cancelGetLine()
+  rl < O : myClass | A, answer(X) > timeOut(O, O2) =>
+     < O : myClass | A, answer(X) > cancelGetLine(stdin, O) .
+
+*** cancelGetLine() won
+  rl < O : myClass | A, answer(X) > canceledGetLine(O, O2) =>
+     < O : myClass | A, next >
+     write(stdout, O, "Too slow! The answer is " + string(X, 10) + ".\n") .
+
+*** getLine() won; need to stop timer and check answer
+  rl < O : myClass | A, score(N), answer(X), timer(O3) > gotLine(O, O2, S) =>
+     stopTimer(O3, O)
+     if conv(S) == X then
+       write(stdout, O, "Correct.\n")
+       < O : myClass | A, stop, score(N + 1), timer(O3) >
+     else
+       write(stdout, O, "Wrong. The answer is " + string(X, 10) + ".\n")
+       < O : myClass | A, stop, score(N), timer(O3) >
+     fi .
+
+*** timer stopped before timeOut() arrived
+  rl < O : myClass | A, stop > stoppedTimer(O, O2) => < O : myClass | A, next > .
+
+*** timeOut() arrived after we tried to stop timer
+  rl < O : myClass | A, stop > timeOut(O, O2) => < O : myClass | A, next > .
+
+*** if done print score otherwise restart timer
+  rl < O : myClass | A, next, timer(O3), asked(N), score(M) > wrote(O, O2) =>
+     if N == #questions then
+       write(stdout, O,
+         "Finished. Your score is " + string(M, 10) + " out of " + string(N, 10) + ".\n")
+       deleteTimer(O3, O)
+       < O : myClass | A >
+     else
+       startTimer(O3, O, oneShot, timeLimit)
+       < O : myClass | A, timer(O3), asked(N), score(M) >
+     fi .
+endm
+
+erew run .
+
+Stream I/O is only mostly nonblocking. The terminal is considered to
+be a critical resource and if a getLine() is pending, other attempts
+to access it, say to write out advisories or messages from the
+debugger, will cause the parent process to suspend until the getLine()
+has completed. Attempts to use the terminal by sending messages to
+stdin/stdout/stderr will not block but the messages will be left in
+the configuration until the terminal is available.
+
+Typing control-C (interrupt) into a getLine() returns the empty string
+as does control-D (EOF), though the former also interrupts the parent
+process and may enter the debugger or print a message about being
+suspended, depending on whether the parent process is running (doing
+rewrites) or suspended (awaiting external events) at that instant.
+
+The nonblocking feature can be used without Tecla (either not building
+with Tecla or using the command line flag -no-tecla) though the
+default read() from a terminal does not reprint prompt after a
+control-Z (stop process) and fg. Maude can still end up suspended if
+terminal output is paused (control-S/control-Q).
+
+
+Other changes
+==============
+
+(1) When Maude receives control-C interrupts while suspended waiting
+for external events, previously two such interrupts on the same
+suspension were required to abort and return to the command
+line. However if Maude is alternating between doing a few rewrites and
+suspending many times a second, it becomes physically impossible to
+generate two interrupts on the same suspension and unless one was
+lucky enough to generate an interrupt during the few microsecond
+window when a rewrite is happening (and thus enter the debugger) it
+was impossible to stop the execution. In this version, receiving two
+interrupts on different suspensions but within a one second window is
+an alternative criteria to abort execution and return to the command
+line.
+
+(2) An empty line is treated as an implicit "step ." command if the
+all of the following are true:
+(a) In debugger.
+(b) In interactive mode (stdin is a terminal or -interactive command
+line option).
+(c) Not in the middle of an incomplete command or module.
+(d) Not reading from an included file (i.e. via in/load/sload or
+command line file name).
+This allows single stepping by just tapping the return key for each
+step.
+
+(3) The stream API error behavior has changed so that correctly
+addressed messages with appropriate message constructors are always
+accepted (although this can be delayed if the terminal is busy as
+mentioned above). There is now a
+  op streamError : Oid Oid String -> Msg [ctor msg format (m o)] .
+that returns a
+  "Bad string."
+error if the last argument of getLine() and write() is not a valid
+string. This message constructor is also used if there is an error
+reported  from the operating system when setting up a child to do a
+nonblocking getLine().
+
+(4) There is a small but important change in the semantics of the
+stopTimer() message: Previously a stoppedTimer() reply would be
+generated whether or not the timer was currently running. Now the
+reply is only produced if the timer was indeed running at the instant
+the message was acted on. Otherwise if the timer is stopped, perhaps
+because it is in one shot mode and has already generated its timeOut()
+messages, the stopTimer() message is quietly consumed without
+producing reply.
+
+The rationale for this change is that with the original semantics it
+is difficult to reliably reuse a timer if we decide we're not
+interested in its pending timeOut(). Suppose we send a running timer
+a stopTimer() message. Now there is a race between the timer and the
+message. If we produced a stoppedTimer() message after the the timer
+had already sent it timeOut() and stopped, then because Maude does
+not guarentee the order in which messages-objects pairs are rewritten
+in a configuration, we might be tempted to reuse the timer after
+matching the stoppedTimer() message, only to be confused by the
+timeOut() message which referred to the previous use and not our
+reuse. Now when a stopTimer() message is sent to a running timer,
+either a stoppedTimer() message will be produced or a timeOut()
+message will be produced, _but not both_, depending on the outcome of
+the race. So we need merely wait to see one of these two messaes and
+then we know the timer is in a stopped state, ready for reuse and any
+timeOut() we see in the future will be due to our reuse of the timer.
+
+Of course this does nothing to help reuse timers that are running in
+periodic mode, but because depending on the period and the speed at
+which timeOut() messages are matched and dealt with, there could
+be an arbitrary build up of timeOut() messages in the configuration,
+so reusing such timers is always going to be problematic.

@@ -1,3 +1,39 @@
+2021-03-24  Steven Eker  <eker2@eker10>
+
+	* interact.cc (UserLevelRewritingContext::interruptSeen): added
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added decl for interruptSeen()
+
+2021-03-10  Steven Eker  <eker2@eker10>
+
+	* global.hh: added decl for setDebugMode()
+
+	* interact.cc (UserLevelRewritingContext::changePrompt): call
+	setDebugMode()
+
+	* commands.yy: handle KW_IMPLIED_STEP
+
+	* top.yy: added KW_IMPLIED_STEP
+
+	* lexer.ll: handle implied step commands
+
+	* lexerAux.hh: added decl for generateImpliedStep()
+
+	* lexerAux.cc: added variable debugMode
+	(setDebugMode): added
+	(generateImpliedStep): added
+
+2021-03-09  Steven Eker  <eker2@eker10>
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	added static data member timeAtLastInterrupt
+
+	* interact.cc (UserLevelRewritingContext::handleInterrupt): check
+	for two interrupts happening in the space of a second
+
+===================================Maude135===========================================
+
 2021-03-01  Steven Eker  <eker2@eker10>
 
 	* symbolType.hh (class SymbolType): added TIME_MANAGER_SYMBOL

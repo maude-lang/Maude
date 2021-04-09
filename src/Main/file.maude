@@ -108,25 +108,33 @@ mod STD-STREAM is
   including COMMON-MESSAGES .
 
   op getLine : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op cancelGetLine : Oid Oid -> Msg [ctor msg format (b o)] .
+  op canceledGetLine : Oid Oid -> Msg [ctor msg format (b o)] .
+  op streamError : Oid Oid String -> Msg [ctor msg format (m o)] .
 
   op stdin : -> Oid
        [special (
          id-hook StreamManagerSymbol		(stdin)
 	 op-hook stringSymbol			(<Strings> : ~> String)
 	 op-hook getLineMsg			(getLine : Oid Oid String ~> Msg)
-	 op-hook gotLineMsg			(gotLine : Oid Oid String ~> Msg))] .
+	 op-hook gotLineMsg			(gotLine : Oid Oid String ~> Msg)
+	 op-hook cancelGetLineMsg		(cancelGetLine : Oid Oid ~> Msg)
+	 op-hook canceledGetLineMsg		(canceledGetLine : Oid Oid ~> Msg)
+	 op-hook streamErrorMsg			(streamError : Oid Oid String ~> Msg))] .
 
   op stdout : -> Oid
        [special (
          id-hook StreamManagerSymbol		(stdout)
 	 op-hook stringSymbol			(<Strings> : ~> String)
 	 op-hook writeMsg			(write : Oid Oid String ~> Msg)
-	 op-hook wroteMsg			(wrote : Oid Oid ~> Msg))] .
+	 op-hook wroteMsg			(wrote : Oid Oid ~> Msg)
+	 op-hook streamErrorMsg			(streamError : Oid Oid String ~> Msg))] .
 
   op stderr : -> Oid
        [special (
          id-hook StreamManagerSymbol		(stderr)
 	 op-hook stringSymbol			(<Strings> : ~> String)
 	 op-hook writeMsg			(write : Oid Oid String ~> Msg)
-	 op-hook wroteMsg			(wrote : Oid Oid ~> Msg))] .
+	 op-hook wroteMsg			(wrote : Oid Oid ~> Msg)
+	 op-hook streamErrorMsg			(streamError : Oid Oid String ~> Msg))] .
 endm

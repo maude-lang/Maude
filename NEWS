@@ -1,4 +1,10 @@
-Overview of Changes in alpha134
+Overview of Changes in alpha135
+============================================
+* second control-C within a second now returns to command line
+* fixed bug in deleteTimer() which would cause a later crash
+* empty line is treated as implicit step command in debuggger
+
+Overview of Changes in alpha134 (2021-02-08)
 ============================================
 * experimental time API
 

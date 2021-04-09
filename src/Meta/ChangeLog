@@ -1,3 +1,41 @@
+2021-03-23  Steven Eker  <eker2@eker10>
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	delete enum Sizes now that we get READ_BUFFER_SIZE from
+	PseudoThread
+
+2021-03-16  Steven Eker  <eker2@eker10>
+
+	* metaUpView.cc (MetaLevel::upOpMappings): use range-based for
+	loop
+
+	* metaUpModule.cc (MetaLevel::upImports): use range-based for loop
+	(MetaLevel::upModuleExpression): use range-based for loop
+	(MetaLevel::upTypeSorts): use range-based for loop
+	(MetaLevel::upStrat): use range-based for loop
+	(MetaLevel::upFrozen): use range-based for loop
+
+	* metaUp.cc (MetaLevel::upTypeListSet): use range-based for loop
+
+	* metaNewNarrow.cc (MetaLevelOpSymbol::makeNarrowingSearchState2):
+	use range-based for loop
+
+	* metaDownView.cc (MetaLevel::downInstantiationArguments): use
+	range-based for loop
+
+	* metaDownRenamings.cc (MetaLevel::convertToTokens): use
+	range-based for loop
+
+	* metaDown.cc (MetaLevel::downCondition): use range-based for loop
+	(MetaLevel::downTermList): use range-based for loop
+	(MetaLevel::duplicate): use range-based for loop
+
+	* legacyMetaVariantUnify.cc
+	(MetaLevelOpSymbol::legacyMetaVariantUnify2): use range-based for
+	loop (3 places)
+
+===================================Maude135===========================================
+
 2021-02-19  Steven Eker  <eker2@eker10>
 
 	* metaUnify.cc (MetaLevelOpSymbol::metaUnify2): unmade previous

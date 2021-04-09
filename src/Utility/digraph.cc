@@ -72,8 +72,3 @@ Digraph::extendPath(int i, Vector<int>& current, Vector<int>& longest)
     }
   current.contractTo(pathLength - 1);
 }
-
-
- 
-
-

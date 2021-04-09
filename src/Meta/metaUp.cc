@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -787,8 +787,8 @@ MetaLevel::upTypeListSet(const Vector<OpDeclaration>& opDecls,
 			 PointerMap& qidMap)
 {
   Vector<DagNode*> args;
-  FOR_EACH_CONST(i, NatSet, chosenDecls)
-    args.append(upTypeList(opDecls[*i].getDomainAndRange(), true, qidMap));
+  for (int i : chosenDecls)
+    args.append(upTypeList(opDecls[i].getDomainAndRange(), true, qidMap));
   int nrArgs = args.size();
   if (nrArgs == 0)
     return new FreeDagNode(emptySortSetSymbol);

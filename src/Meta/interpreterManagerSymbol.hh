@@ -62,11 +62,6 @@ public:
   void cleanUp(DagNode* objectId);
 
 private:
-  enum Sizes
-    {
-     READ_BUFFER_SIZE = 208 * 1024  // based on Linux default
-    };
-
   struct RemoteInterpreter
   {
     pid_t processId;

@@ -1,3 +1,244 @@
+2021-04-08  Steven Eker  <eker2@eker10>
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::nonblockingGetLine): use interrupt Hander
+	for SIGINT and SIGTERM in the non-tecla case
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): added decl
+	for interruptHandler()
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::nonblockingGetLine): restore default SIGINT
+	handling if tecla is not being used
+	(StreamManagerSymbol::interruptHandler): added
+
+2021-04-07  Steven Eker  <eker2@eker10>
+
+	* streamManagerSymbol.cc (StreamManagerSymbol::cleanUpManager):
+	added
+	(StreamManagerSymbol::nonblockingGetLine): call
+	requestCleanUpOnDestruction(
+	(StreamManagerSymbol::cleanUpManager): replace DebugAlways() with
+	DebugInfo()
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): added decl
+	for cleanUpManager()
+
+	* objectSystemRewritingContext.hh
+	(ObjectSystemRewritingContext::requestCleanUpOnDestruction): added
+
+	* objectSystemRewritingContext.cc (~ObjectSystemRewritingContext):
+	call cleanUpManager() on each ExternalObjectManagerSymbol that has
+	requested a clean up callback
+
+	* objectSystemRewritingContext.hh (class
+	ObjectSystemRewritingContext): added typedef ManagerSet and data
+	member managersNeedingCleanUp
+
+	* externalObjectManagerSymbol.cc
+	(ExternalObjectManagerSymbol::cleanUpManager): added
+
+	* externalObjectManagerSymbol.hh (class
+	ExternalObjectManagerSymbol): added decl for cleanUpManager()
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::handleManagerMessage): added DebugEnter()
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): updated decl
+	for finishUp()
+	(class StreamManagerSymbol): deleted data members
+	lastGetLineMessage, objectContext, incomingText, childPid, pipeFd
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::StreamManagerSymbol): don't init
+	objectContext, childPid, pipeFd
+
+	* objectSystemRewritingContext.cc (ObjectSystemRewritingContext):
+	changed DebugEntry() to DebugEnter()
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): deleted decl
+	for clearVariables(); added decl for findPendingGetLine()
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::nonblockingGetLine): fill out entry in
+	pendingGetLines()
+	(StreamManagerSymbol::doHungUp): check pendingGetLines rather than
+	objectContext
+	(StreamManagerSymbol::doHungUp): pass PendingGetLineMap::iterator
+	rather than in to finishUp()
+	(StreamManagerSymbol::clearVariables): deleted
+	(StreamManagerSymbol::doRead): use pendingGetLines; pass
+	PendingGetLineMap::iterator to finishUp()
+	(StreamManagerSymbol::findPendingGetLine): added
+	(StreamManagerSymbol::cancelGetLine): rewritten to use
+	pendingGetLines
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): added struct
+	PendingGetLine, typedef PendingGetLineMap and data member
+	pendingGetLines
+
+2021-04-06  Steven Eker  <eker2@eker10>
+
+	* objectSystemRewritingContext.cc (ObjectSystemRewritingContext):
+	replaced commented out DebugAdvisory() with DebugEntry()
+
+2021-04-05  Steven Eker  <eker2@eker10>
+
+	* timeActions.cc (TimeManagerSymbol::stopTimer): don't produce a
+	reply if the timer is already stopped
+
+2021-04-02  Steven Eker  <eker2@eker10>
+
+	* streamManagerSymbol.cc (StreamManagerSymbol::getLine): check
+	IO_Manager::safeToAccessStdin() before accessing stdin
+	(StreamManagerSymbol::write): check
+	IO_Manager::safeToAccessStdout()/IO_Manager::safeToAccessStderr()
+
+2021-03-31  Steven Eker  <eker2@eker10>
+
+	* streamManagerSymbol.cc (StreamManagerSymbol::clearVariables):
+	added
+	(StreamManagerSymbol::finishUp): use clearVariables()
+	(StreamManagerSymbol::cancelGetLine): added
+	(StreamManagerSymbol::StreamManagerSymbol): initialize
+	objectContext, childPid, pipeFd
+	(StreamManagerSymbol::handleManagerMessage): handle
+	cancelGetLineMsg
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): added data
+	members childPid and pipeFd
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::nonblockingGetLine): use errorReply()
+	(StreamManagerSymbol::makeNonblockingPipe): use errorReply()
+	(StreamManagerSymbol::getLine): use errorReply()
+	(StreamManagerSymbol::write): use use errorReply() (2 places)
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): added decl
+	for errorReply()
+
+	* streamManagerSymbol.cc (StreamManagerSymbol::errorReply): added
+
+	* streamSignature.cc: added cancelGetLineMsg, canceledGetLineMsg,
+	streamErrorMsg
+
+2021-03-30  Steven Eker  <eker2@eker10>
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::nonblockingGetLine): call
+	resetStdoutWrapping()
+
+2021-03-29  Steven Eker  <eker2@eker10>
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::nonblockingGetLine): use usingTecla()
+	(StreamManagerSymbol::nonblockingGetLine): call setStdinOwner() as
+	a static function
+	(StreamManagerSymbol::nonblockingGetLine): call setStdinOwner() as
+	a static function
+
+2021-03-26  Steven Eker  <eker2@eker10>
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::nonblockingGetLine): block SIGINT before
+	testing interruptSeen() so we don't miss one
+
+2021-03-24  Steven Eker  <eker2@eker10>
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): deleted data
+	member childPid
+
+	* streamManagerSymbol.cc (StreamManagerSymbol::doRead):
+	reorganized nested if statements
+	(StreamManagerSymbol::nonblockingGetLine): handle the case that a
+	control-C arrives before tecla installs its own handler
+	(StreamManagerSymbol::nonblockingGetLine): call setStdinOwner()
+	(StreamManagerSymbol::finishUp): use waitUntilSafeToAccessStdin()
+	to wait for child to exit
+	(StreamManagerSymbol::nonblockingGetLine): use while() loop so we
+	don't end up write()ing 0 characters
+	(StreamManagerSymbol::nonblockingGetLine): don't record childPid
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): deleted data
+	member readEnd
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::nonblockingGetLine): no need to save readEnd
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): updated decl
+	for finishUp()
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::nonblockingGetLine): use
+	makeNonblockingPipe(); check for fork() failure
+	(StreamManagerSymbol::nonblockingGetLine): rearrange the outer
+	loop so we don't write() 0 characters
+	(StreamManagerSymbol::finishUp): added
+	(StreamManagerSymbol::doHungUp): added
+	(StreamManagerSymbol::doHungUp, StreamManagerSymbol::doRead): pass
+	fd to finishUp
+	(StreamManagerSymbol::finishUp): take fd argument
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): added decl
+	for makeNonblockingPipe()
+
+	* streamManagerSymbol.cc
+	(ProcessManagerSymbol::makeNonblockingPipe): added
+
+	* processActions.cc (ProcessManagerSymbol::makeCloseOnExitPipe):
+	use WRITE_END
+	(ProcessManagerSymbol::makeCloseOnExitPipe)
+	(ProcessManagerSymbol::makeNonblockingSocketPair): added comments
+	about which set of flags is being modified
+
+	* streamManagerSymbol.cc (StreamManagerSymbol::doRead): use
+	childPid
+	(StreamManagerSymbol::nonblockingGetLine): set up asynchronous
+	read of pipe
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): pid data
+	member renamed to childPid
+
+2021-03-23  Steven Eker  <eker2@eker10>
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): added decl
+	for doRead()
+
+	* streamManagerSymbol.cc (StreamManagerSymbol::getLine): use
+	nonblockingGetLine()
+	(StreamManagerSymbol::doRead): added
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): added decl
+	for nonblockingGetLine()
+
+	* streamManagerSymbol.cc
+	(StreamManagerSymbol::nonblockingGetLine): added
+
+	* processActions.cc (ProcessManagerSymbol::makeCloseOnExitPipe):
+	use READ_END, WRITE_END
+	(ProcessManagerSymbol::createProcess): use READ_END, WRITE_END
+
+	* socketManagerSymbol.hh (class SocketManagerSymbol): delete enum
+	Sizes now that we get READ_BUFFER_SIZE from PseudoThread
+
+	* streamManagerSymbol.hh (class StreamManagerSymbol): derive from
+	PseudoThread
+
+	* pseudoThread.hh (class PseudoThread): moved enum Communications
+	here
+
+2021-03-22  Steven Eker  <eker2@eker10>
+
+	* streamManagerSymbol.cc (StreamManagerSymbol::getLine): rewritten
+	to do getLineFromStdin() in a separate process if stdin is a
+	terminal
+
+2021-03-09  Steven Eker  <eker2@eker10>
+
+	* timeActions.cc (TimeManagerSymbol::deleteTimer): fix bug where
+	we were not deleting the timer from the context which would cause
+	a subsequent crash when the context was deleted
+
 2021-03-08  Steven Eker  <eker2@eker10>
 
 	* timeActions.cc (TimeManagerSymbol::makeDate): fix off-by-one in

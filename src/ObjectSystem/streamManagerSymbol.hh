@@ -26,8 +26,11 @@
 #ifndef _streamManagerSymbol_hh_
 #define _streamManagerSymbol_hh_
 #include "externalObjectManagerSymbol.hh"
+#include "pseudoThread.hh"
 
-class StreamManagerSymbol : public ExternalObjectManagerSymbol
+class StreamManagerSymbol
+  : public ExternalObjectManagerSymbol,
+    public PseudoThread
 {
   NO_COPYING(StreamManagerSymbol);
 
@@ -52,25 +55,67 @@ public:
   bool handleManagerMessage(DagNode* message, ObjectSystemRewritingContext& context);
   bool handleMessage(DagNode* message, ObjectSystemRewritingContext& context);
   void cleanUp(DagNode* objectId);
+  void cleanUpManager(ObjectSystemRewritingContext& context);
+  //
+  //	Overridden methods from PseudoThread.
+  //
+  void doRead(int fd);
+  void doHungUp(int fd);
 
 private:
+  //
+  //	In principle it is possible to have multiple incomplete nonblocking
+  //	getLine() transactions if we stop in the debugger at the right moment
+  //	and the user does another erew.
+  //
+  //	For safety we keep the details of each getLine() transaction in a map
+  //	indexed by the file descriptor of read on of the pipe used to read
+  //	the result back from the child.
+  //
+  struct PendingGetLine
+  {
+    DagRoot lastGetLineMessage;
+    ObjectSystemRewritingContext* objectContext;
+    Rope incomingText;
+    pid_t childPid;
+  };
+
+  typedef map<int, PendingGetLine> PendingGetLineMap;
+
+  bool makeNonblockingPipe(int pair[2],
+			   FreeDagNode* message,
+			   ObjectSystemRewritingContext& context);
+  void nonblockingGetLine(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void finishUp(PendingGetLineMap::iterator p);
+  bool findPendingGetLine(ObjectSystemRewritingContext& context,
+			  PendingGetLineMap::iterator& ref);
   //
   //	Actions.
   //
   bool write(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool getLine(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  bool cancelGetLine(FreeDagNode* message, ObjectSystemRewritingContext& context);
   //
   //	Reply.
   //
   void gotLineReply(const Rope& line,
 		    FreeDagNode* originalMessage,
 		    ObjectSystemRewritingContext& context);
+  void errorReply(const char* errorMessage,
+		  FreeDagNode* originalMessage,
+		  ObjectSystemRewritingContext& context);
+
+  static void interruptHandler(int);
 
 #define MACRO(SymbolName, SymbolClass, NrArgs) \
   SymbolClass* SymbolName;
 #include "streamSignature.cc"
 #undef MACRO
   int streamNr;
+  //
+  //	This stuff is just for nonblocking getLines on stdin.
+  //
+  PendingGetLineMap pendingGetLines;
 };
 
 #endif

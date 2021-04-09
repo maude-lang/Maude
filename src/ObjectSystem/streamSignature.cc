@@ -33,3 +33,6 @@
   MACRO(gotLineMsg, Symbol, 3)
   MACRO(writeMsg, FreeSymbol, 3)
   MACRO(wroteMsg, Symbol, 2)
+  MACRO(cancelGetLineMsg, FreeSymbol, 2)
+  MACRO(canceledGetLineMsg, Symbol, 2)
+  MACRO(streamErrorMsg, Symbol, 3)

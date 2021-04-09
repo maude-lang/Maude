@@ -47,9 +47,11 @@
 
 ObjectSystemRewritingContext::~ObjectSystemRewritingContext()
 {
-  //DebugAdvisory("~ObjectSystemRewritingContext() called; " << externalObjects.size() << " external objects");
+  DebugEnter(externalObjects.size() << " external objects");
   for (auto& i : externalObjects)
     i.second->cleanUp(i.first);
+  for (auto& i : managersNeedingCleanUp)
+    i->cleanUpManager(*this);
 }
 
 void

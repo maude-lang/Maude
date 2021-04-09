@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -106,13 +106,13 @@ MetaLevel::upImports(PreModule* pm, PointerMap& qidMap)
   //
   if (const ModuleDatabase::ImportMap* autoImports = pm->getAutoImports())
     {
-      FOR_EACH_CONST(i, ModuleDatabase::ImportMap, *autoImports)
+      for (auto& i : *autoImports)
 	{
-	  args2[0] = upQid(i->first, qidMap);
+	  args2[0] = upQid(i.first, qidMap);
 	  Symbol* s = includingSymbol;
-	  if (i->second == ImportModule::PROTECTING)
+	  if (i.second == ImportModule::PROTECTING)
 	    s = protectingSymbol;
-	  else if (i->second == ImportModule::EXTENDING)
+	  else if (i.second == ImportModule::EXTENDING)
 	    s = extendingSymbol;
 	  args.append(s->makeDagNode(args2));
 	}
@@ -151,9 +151,9 @@ MetaLevel::upModuleExpression(const ModuleExpression* e, PointerMap& qidMap)
 	const list<ModuleExpression*>& modules = e->getModules();
 	Vector<DagNode*> args(modules.size());
 	Vector<DagNode*>::iterator j = args.begin();
-	FOR_EACH_CONST(i, list<ModuleExpression*>, modules)
+	for (ModuleExpression* i : modules)
 	  {
-	    *j = upModuleExpression(*i, qidMap);
+	    *j = upModuleExpression(i, qidMap);
 	    ++j;
 	  }
 	return sumSymbol->makeDagNode(args);
@@ -309,11 +309,11 @@ MetaLevel::upTypeSorts(const set<int>& sorts, PointerMap& qidMap)
     {
       string fullName;
       const char* sep = "`[";
-      FOR_EACH_CONST(i, set<int>, sorts)
+      for (int i : sorts)
 	{
 	  fullName += sep;
 	  sep = "`,";
-	  fullName += Token::name(*i);
+	  fullName += Token::name(i);
 	}
       fullName += "`]";
       id = Token::encode(fullName.c_str());
@@ -746,8 +746,8 @@ MetaLevel::upStrat(const Vector<int>& strategy)
 {
   static Vector<DagNode*> args;
   args.clear();
-  FOR_EACH_CONST(i, Vector<int>, strategy)
-    args.append(succSymbol->makeNatDag(*i));
+  for (int i : strategy)
+    args.append(succSymbol->makeNatDag(i));
   Assert(args.length() > 0, "empty strat");
   if (args.length() > 1)
     {
@@ -762,8 +762,8 @@ MetaLevel::upFrozen(const NatSet& frozen)
 {
   static Vector<DagNode*> args;
   args.clear();
-  FOR_EACH_CONST(i, NatSet, frozen)
-    args.append(succSymbol->makeNatDag(*i + 1));
+  for (int i : frozen)
+    args.append(succSymbol->makeNatDag(i + 1));
   Assert(args.length() > 0, "empty frozen");
   if (args.length() > 1)
     {

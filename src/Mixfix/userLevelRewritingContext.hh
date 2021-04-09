@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #ifndef _userLevelRewritingContext_hh_
 #define _userLevelRewritingContext_hh_
 #include <signal.h>
+#include "timeStuff.hh"
 #ifdef USE_LIBSIGSEGV
 #include "sigsegv.h"
 #endif
@@ -135,7 +136,8 @@ public:
   static void printSubstitution(const Substitution& substitution,
 				const NarrowingVariableInfo& variableInfo);
 
-
+  bool interruptSeen();
+  
 private:
   UserLevelRewritingContext(DagNode* root,
 			    UserLevelRewritingContext* parent,
@@ -174,7 +176,12 @@ private:
   static bool stepFlag;
   static bool abortFlag;
   static int debugLevel;
+  //
+  //	This are used to decide how to respond to two interrupts
+  //	in succession.
+  //
   static Int64 rewriteCountAtLastInterrupt;
+  static timespec timeAtLastInterrupt;
 
   static AutoWrapBuffer* wrapOut;
   static AutoWrapBuffer* wrapErr;

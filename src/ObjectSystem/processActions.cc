@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -66,9 +66,15 @@ ProcessManagerSymbol::makeNonblockingSocketPair(int pair[2],
   const char* errText;
   if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) != -1)
     {
+      //
+      //	Nonblocking is done by modifying the file status flags.
+      //
       int flags = fcntl(pair[0], F_GETFL);
       if (flags != -1 && fcntl(pair[0], F_SETFL, flags | O_NONBLOCK) != -1)
 	{
+	  //
+	  //	Close on execute is done by modifying the file descriptor flags.
+	  //
 	  int flags2 = fcntl(pair[0], F_GETFD);
 	  if (flags2 != -1 && fcntl(pair[0], F_SETFD, flags2 | FD_CLOEXEC) != -1)
 	    {
@@ -104,15 +110,18 @@ ProcessManagerSymbol::makeCloseOnExitPipe(int pair[2],
   const char* errText;
   if (pipe(pair) != -1)
     {
-      int flags = fcntl(pair[1], F_GETFD);
-      if (flags != -1 && fcntl(pair[1], F_SETFD, flags | FD_CLOEXEC) != -1)
+      //
+      //	Close on execute is done by modifying the file descriptor flags.
+      //
+      int flags = fcntl(pair[WRITE_END], F_GETFD);
+      if (flags != -1 && fcntl(pair[WRITE_END], F_SETFD, flags | FD_CLOEXEC) != -1)
 	return true;
       errText = strerror(errno);  // close() is allowed to change errno
       //
       //	Must not leak file descriptors.
       //
-      close(pair[0]);
-      close(pair[1]);
+      close(pair[READ_END]);
+      close(pair[WRITE_END]);
     }
   else
     errText = strerror(errno);
@@ -210,8 +219,8 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
       //
       //	Must not leak file descriptors.
       //
-      close(failureReturnPipe[0]);
-      close(failureReturnPipe[1]);
+      close(failureReturnPipe[READ_END]);
+      close(failureReturnPipe[WRITE_END]);
       close(errSockets[0]);
       close(errSockets[1]);
       close(ioSockets[0]);
@@ -225,7 +234,7 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
       //	We are the child.
       //
       close(ioSockets[0]);  // close parent end
-      close(failureReturnPipe[0]);  // close read end
+      close(failureReturnPipe[READ_END]);  // close read end
       dup2(ioSockets[1], STDIN_FILENO);  // replace stdin with ioSockets[1]
       dup2(ioSockets[1], STDOUT_FILENO);  // replace stdout with ioSockets[1]
       close(errSockets[0]);  // close parent end
@@ -240,7 +249,7 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
       const char* file = rope.makeZeroTerminatedString();
       char* const* argv = makeStringArray(executableArg, argumentsArg, nrArgs);
       //
-      //	Replace Maude binary with file; on success failureReturnPipe[1]
+      //	Replace Maude binary with file; on success failureReturnPipe[WRITE_END]
       //	will be closed, enabling the parent to see our success.
       //
       (void) execvp(file, argv);
@@ -252,19 +261,19 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
       size_t length = strlen(errText);
       while (length > 0)
 	{
-	  ssize_t nrChars = write(failureReturnPipe[1], errText, length);
+	  ssize_t nrChars = write(failureReturnPipe[WRITE_END], errText, length);
 	  if (nrChars < 0)
 	    break;
 	  length -= nrChars;
 	  errText += nrChars;
 	}
-      close(failureReturnPipe[1]);  // just to be sure characters are in pipe
+      close(failureReturnPipe[WRITE_END]);  // just to be sure characters are in pipe
       exit(1);
     }
   //
   //	We are the parent.
   //
-  close(failureReturnPipe[1]);  // close write end
+  close(failureReturnPipe[WRITE_END]);  // close write end
   close(errSockets[1]);  // close child end
   close(ioSockets[1]);  // close child end
   //
@@ -275,7 +284,7 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
   char buffer[ERROR_BUFFER_SIZE];
   for (;;)
     {
-      int nrChar = read(failureReturnPipe[0], buffer, ERROR_BUFFER_SIZE);
+      int nrChar = read(failureReturnPipe[READ_END], buffer, ERROR_BUFFER_SIZE);
       if (nrChar <= 0)
 	break;
       errorMessage += Rope(buffer, nrChar);
@@ -286,7 +295,7 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
       //	Non-empty error message means execvp() failed in the child.
       //	Close file descriptors and inject a processError() reply.
       //
-      close(failureReturnPipe[0]);
+      close(failureReturnPipe[READ_END]);
       close(errSockets[0]);
       close(ioSockets[0]);
       errorReply(errorMessage, message, context);

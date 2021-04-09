@@ -158,6 +158,11 @@ public:
   //	call.
   //
   virtual bool blockAndHandleInterrupts(sigset_t *normalSet);
+  //
+  //	This exists so that we can find out if an interrupt has been recorded
+  //	but not yet processed (we haven't reached a suitable point in the code).
+  //
+  virtual bool interruptSeen();
 
   virtual void traceStrategyCall(StrategyDefinition* sdef,
 				 DagNode* callDag,

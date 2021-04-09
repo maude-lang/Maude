@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2005 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@
 bool
 MpzSystem::isZero(const IntVec& arg)
 {
-  FOR_EACH_CONST(i, IntVec, arg)
+  for (const mpz_class& i : arg)
     {
-      if (*i != 0)
+      if (i != 0)
 	return false;
     }
   return true;
@@ -50,9 +50,9 @@ MpzSystem::scalerProduct(const IntVec& arg, int varNr)
   Assert(arg.size() == eqns.size(), "size clash");
   mpz_class sum = 0;
   IntVec::const_iterator j = arg.begin();
-  FOR_EACH_CONST(i, VecList, eqns)
+  for (const IntVec& v : eqns)
     {
-      sum += (*i)[varNr] * *j;
+      sum += v[varNr] * *j;
       ++j;
     }
   return sum;
@@ -70,17 +70,16 @@ MpzSystem::initialize()
       State& s = states[i];
       {
 	s.assignment.resize(nrVariables);
-	IntVec::iterator e = s.assignment.end();
-	for (IntVec::iterator j = s.assignment.begin(); j != e; ++j)
-	  *j = 0;
+	for (mpz_class& j : s.assignment)
+	  j = 0;
 	s.assignment[i] = 1;
       }
       {
 	s.residue.resize(nrEquations);
 	IntVec::iterator k = s.residue.begin();
-	FOR_EACH_CONST(j, VecList, eqns)
+	for (const IntVec& v : eqns)
 	  {
-	    *k = (*j)[i];
+	    *k = v[i];
 	    ++k;
 	  }
       }
@@ -121,7 +120,7 @@ MpzSystem::findNextMinimalSolution(IntVec& solution)
 	  //
 	retry:
 	  IntVec::const_iterator res = s.residue.begin();
-	  FOR_EACH_CONST(j, VecList, eqns)
+	  for (const IntVec& v : eqns)
 	    {
 	      const mpz_class& d = *res;
 	      ++res;
@@ -132,7 +131,7 @@ MpzSystem::findNextMinimalSolution(IntVec& solution)
 		{
 		  if (!(s.frozen.contains(i)))
 		    {
-		      const mpz_class& c = (*j)[i] ;
+		      const mpz_class& c = v[i];
 		      if (c != 0)
 			{
 			  ++nfnzCount;
@@ -161,14 +160,15 @@ MpzSystem::findNextMinimalSolution(IntVec& solution)
 		  //	We can force variable j.
 		  //
 		  //cout << "one var " << lastNfnz << endl;
-		  const mpz_class& c = (*j)[lastNfnz];
+		  const mpz_class& c = v[lastNfnz];
 		  if (d % c == 0)
 		    {
 		      mpz_class delta = -d / c;
 		      //cout << "div ok delta = " << delta << endl;
 		      Assert(delta > 0, "delta = " << delta);
 		      s.assignment[lastNfnz] += delta;
-		      if ((upperBounds[lastNfnz] == NONE || s.assignment[lastNfnz] <= upperBounds[lastNfnz]) &&
+		      if ((upperBounds[lastNfnz] == NONE ||
+			   s.assignment[lastNfnz] <= upperBounds[lastNfnz]) &&
 			  minimal(s.assignment))
 			{
 			  //
@@ -176,9 +176,9 @@ MpzSystem::findNextMinimalSolution(IntVec& solution)
 			  //	and is minimal so it replaces the old state.
 			  //
 			  IntVec::iterator res2 = s.residue.begin();
-			  FOR_EACH_CONST(k, VecList, eqns)
+			  for (const IntVec& k : eqns)
 			    {
-			      *res2 += delta * (*k)[lastNfnz];
+			      *res2 += delta * k[lastNfnz];
 			      ++res2;
 			    }
 			  //cout << "forced " << lastNfnz << " by " << delta << endl;
@@ -219,9 +219,9 @@ MpzSystem::findNextMinimalSolution(IntVec& solution)
 		      n.residue = current.residue;
 		      IntVec::const_iterator from = current.residue.begin();
 		      IntVec::iterator to = n.residue.begin();
-		      FOR_EACH_CONST(j, VecList, eqns)
+		      for (const IntVec& v : eqns)
 			{
-			  *to = *from + (*j)[i];
+			  *to = *from + v[i];
 			  ++from;
 			  ++to;
 			}

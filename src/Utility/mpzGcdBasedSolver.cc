@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2005 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ void
 MpzSystem::updateResidues(int varNr, const mpz_class& delta)
 {
   int eqnNr = 0;
-  FOR_EACH_CONST(i, VecList, eqns)
+  for (const IntVec& v : eqns)
     {
-      residues[eqnNr] += (*i)[varNr] * delta;
+      residues[eqnNr] += v[varNr] * delta;
       ++eqnNr;
     }
 }
@@ -123,9 +123,9 @@ MpzSystem::fillOutStackEntry(int varNr)
   bool first = true;
   int row = 0;
   VecList::const_iterator j = gcds.begin();
-  FOR_EACH_CONST(i, VecList, eqns)
+  for (const IntVec& v : eqns)
     {
-      const mpz_class& a = (*i)[varNr];
+      const mpz_class& a = v[varNr];
       if (a != 0)
 	{
 	  const mpz_class& residue = residues[row];
@@ -258,13 +258,13 @@ MpzSystem::fillOutLastEntry()
   //
   bool first = true;
   int row = 0;
-  FOR_EACH_CONST(i, VecList, eqns)
+  for (const IntVec& v : eqns)
     {
       const mpz_class& residue = residues[row];
       ++row;
-      const mpz_class& a = (*i)[prediag];
+      const mpz_class& a = v[prediag];
       int diag = nrVariables - row;
-      const mpz_class& b = (*i)[diag];
+      const mpz_class& b = v[diag];
       if (a != 0)
 	{
 	  mpz_class x_base;
@@ -369,14 +369,14 @@ MpzSystem::solveDiagonal()
   {
     int eqnNr = 0;
     int varNr = nrVariables;
-    FOR_EACH_CONST(i, VecList, eqns)
+    for (const IntVec& v : eqns)
       {
 	--varNr;
 	mpz_class q;
 	mpz_class r;
 	mpz_class res = - residues[eqnNr];
-	mpz_fdiv_qr(q.get_mpz_t(), r.get_mpz_t(), res.get_mpz_t(), (*i)[varNr].get_mpz_t());
-	Assert(r == 0, "divisability error " << res << ' ' << (*i)[varNr]);
+	mpz_fdiv_qr(q.get_mpz_t(), r.get_mpz_t(), res.get_mpz_t(), v[varNr].get_mpz_t());
+	Assert(r == 0, "divisability error " << res << ' ' << v[varNr]);
 	Assert(upperBounds[varNr] < 0 || q <= upperBounds[varNr],
 	       "bounds error" << upperBounds[varNr] << ' ' << q);
 	Assert(q >= 0, "sign error " << q);
@@ -392,8 +392,8 @@ MpzSystem::solveDiagonal()
     {
 #if ANALYZE_GCD
       cout << "*** Solution " << solutions.size() + 1 << " ***\n";
-      FOR_EACH_CONST(j, IntVec, solution)
-	cout << *j << '\t';
+      for (const mpz_class& j : solution)
+	cout << j << '\t';
       cout << endl;
 #endif
       solutions.push_back(solution);

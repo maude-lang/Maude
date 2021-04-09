@@ -1,3 +1,18 @@
+2021-03-31  Steven Eker  <eker2@eker10>
+
+	* file.maude: added cancelGetLine(), canceledGetLine(),
+	streamError()
+
+2021-03-29  Steven Eker  <eker2@eker10>
+
+	* main.cc (main): always call setAutoWrap() and pass flag
+
+===================================Maude135===========================================
+
+2021-03-10  Steven Eker  <eker2@eker10>
+
+	* main.cc (printHelp): fixed typo
+
 2021-03-05  Steven Eker  <eker2@eker10>
 
 	* time.maude: changed startTimer() time from Nat to NzNat

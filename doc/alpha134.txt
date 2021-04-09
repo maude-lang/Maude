@@ -4,7 +4,7 @@ Alpha 134 release notes
 New feature
 ============
 
-The is a initial attempt an a API for time:
+There is a initial attempt an a API for time:
 
 mod TIME is
   protecting INT .
@@ -43,7 +43,7 @@ mod TIME is
   op timeError : Oid Oid String -> Msg [ctor msg format (r o)] .
   op timeManager : -> Oid [special (...)] .
 ***
-***	Time unit conversion.
+*** Time unit conversion.
 ***
 var N : Nat .
   op _us : Nat -> Nat .
@@ -81,8 +81,8 @@ and
   op getLocalDateAndTime : Oid Oid Nat -> Msg [ctor msg format (b o)] .
   op gotLocalDateAndTime : Oid Oid Date Time NzNat NzNat TimeZoneInfo -> Msg [ctor msg format (m o)] .
 
-The former convert to Coordinated Universal Time (UTC) while the
-latter convert to the local time zone.
+The former converts to Coordinated Universal Time (UTC) while the
+latter converts to the local time zone.
 
 Dates are represented using:
   op _\_\_ : NzNat NzNat NzNat -> Date [ctor] .
@@ -117,7 +117,7 @@ Line and positive for time zones east of the Prime Meridian to the
 International Date Line. Note that this number of seconds does not
 take daylight saving into account. The final Int argument is the value
 returned by the POSIX library call localtime() to indicate whether
-daylight savings time is in effect. Accord to POSIX, +ve indicates in
+daylight savings time is in effect. According to POSIX, +ve indicates in
 effect, 0 indicates not in effect and -ve indicates the information is
 not available. However the MacOS manual does not mention the
 possibility of a -ve value and from the source code for the GNU
@@ -196,7 +196,7 @@ timeManager using the message pair:
   op createTimer : Oid Oid -> Msg [ctor msg format (b o)] .
   op createdTimer : Oid Oid Oid -> Msg [ctor msg format (m o)] .
 
-The final argument of createdTimer() is a the Oid of a timer object
+The final argument of createdTimer() is the Oid of a timer object
 which looks like timer(n). A timer is started using the message pair:
 
   op startTimer : Oid Oid TimerMode NzNat -> Msg [ctor msg format (b o)] .
@@ -214,12 +214,12 @@ In periodic mode, if a given timeOut() message is delayed for some
 reason, it does not impact the time at which future timeOut() messages
 will be delivered. Note that periodic mode is somewhat dangerous since
 the configuration can quickly fill with timeOut messages and if the
-count down start time is too short (say < 500 ms) it can be hard to
+countdown start time is too short (say < 500 ms) it can be hard to
 enter two control-C interrupts on the same suspension to cause Maude
 to stop.
 
 If a startTimer() message is sent to a running timer, its current
-count down time and mode are forgotten and it restarts fresh with the
+countdown time and mode are forgotten and it restarts fresh with the
 new parameters.
 
 A running timer can be returned to quiescent state with the message
@@ -311,3 +311,5 @@ var N : Nat .
 endm
 
 erew run .
+
+Steven

@@ -1,0 +1,23 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug where deleteTimer() left the interpreter in an
+***	inconsistent state and caused a crash on the next rewrite
+***	command.
+***
+
+load time
+
+mod TEST is
+  inc TIME .
+  op myClass : -> Cid .
+  ops me : -> Oid .
+
+vars O O2 O3 : Oid .
+  rl < O : myClass | none > createdTimer(O, O2, O3) =>
+     < O : myClass | none > deleteTimer(O3, me) .
+endm
+
+erew <> < me : myClass | none > createTimer(timeManager, me) .
+red 0 .

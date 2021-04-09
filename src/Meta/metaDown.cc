@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -696,8 +696,8 @@ MetaLevel::downCondition(DagNode* metaCondition,
 	{
 	  if (!downConditionFragment(i.argument(), m, cf))
 	    {
-	      FOR_EACH_CONST(j, Vector<ConditionFragment*>, condition)
-		delete *j;
+	      for (ConditionFragment* cf : condition)
+		delete cf;
 	      return false;
 	    }
 	  condition.append(cf);
@@ -1393,8 +1393,8 @@ MetaLevel::downTermList(DagNode* metaTermList, MixfixModule* m, Vector<Term*>& t
 	  Term* t = downTerm(i.argument(), m);
 	  if (t == 0)
 	    {
-	      FOR_EACH_CONST(j, Vector<Term*>, termList)
-		(*j)->deepSelfDestruct();
+	      for (Term* j : termList)
+		j->deepSelfDestruct();
 	      return false;
 	    }
 	  termList.append(t);
@@ -1449,9 +1449,9 @@ MetaLevel::downSubstitution(DagNode* metaSubstitution,
 bool
 MetaLevel::duplicate(Term* variable, const Vector<Term*>& variables)
 {
-  FOR_EACH_CONST(i, Vector<Term*>, variables)
+  for (Term* v : variables)
     {
-      if (variable->equal(*i))
+      if (variable->equal(v))
 	return true;
     }
   return false;

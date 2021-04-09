@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,6 +36,10 @@ bool handleEof();
 void eatComment(bool firstNonWhite);
 void cleanUpLexer();
 void checkForPending();
+
+void setDebugMode(bool polarity);
+bool generateImpliedStep();
+
 
 void lexBubble(int termination, int minLen);
 void lexBubble(const Token& first, int termination, int minLen, int pCount = 0);

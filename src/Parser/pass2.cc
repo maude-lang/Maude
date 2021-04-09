@@ -1,3 +1,25 @@
+/*
+
+    This file is part of the Maude 3 interpreter.
+
+    Copyright 2017-2021 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+*/
+
 //
 //	Second pass: extract parses from compact representation as needed.
 //
@@ -199,8 +221,8 @@ Parser::extractFirstSubparse(int nodeNr)
 	      //	right-recursive) return for the parse node we are currently expanding.
 	      //
 #ifdef PARSER_DEBUG
-	      FOR_EACH_CONST(k, Vector<DeferredReturn>, drp)
-		    cout << "DRP link (" << k->ruleNr << ", " << k->startTokenNr << ")" << endl;
+	      for (auto& k : DeferredReturn)
+		    cout << "DRP link (" << k.ruleNr << ", " << k.startTokenNr << ")" << endl;
 #endif
 	      int drpSize = drp.size();
 	      int oneFromTop = drpSize - 2;  // -1 means we have a trivial DRP with just a top and a bottom
@@ -355,8 +377,8 @@ Parser::extractNextSubparse(int nodeNr)
 	      //	right-recursive) return for the parse node we are currently expanding.
 	      //
 #ifdef PARSER_DEBUG
-	      FOR_EACH_CONST(k, Vector<DeferredReturn>, drp)
-		cout << "DRP link (" << k->ruleNr << ", " << k->startTokenNr << ")" << endl;
+	      for (auto& k : drp)
+		cout << "DRP link (" << k.ruleNr << ", " << k.startTokenNr << ")" << endl;
 #endif
 	      int drpSize = drp.size();
 	      int oneFromTop = drpSize - 2;  // -1 means we have a trivial DRP with just a top and a bottom

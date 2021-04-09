@@ -546,6 +546,10 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  PARSE_RESULT = UserLevelRewritingContext::STEP;
 			}
+		|	KW_IMPLIED_STEP
+			{
+			  PARSE_RESULT = UserLevelRewritingContext::STEP;
+			}
 		|	KW_WHERE '.'
 			{
 			  PARSE_RESULT = UserLevelRewritingContext::WHERE;

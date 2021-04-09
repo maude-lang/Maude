@@ -24,42 +24,128 @@ Yices2 (optional) https://github.com/SRI-CSL/yices2
 
 Configuring the 3rd party packages
 ==================================
-Because of C++ ABI incompatibilities, GNU gmp, BuDDy and CVC4 must be
+It is recommended that GNU gmp, BuDDy and CVC4 be
 compiled with the same compiler you will use for Maude.
 
+
+GMP
+---
 GNU gmp	must be configured with --enable-cxx to generate the C++
-bindings. The option --disable-shared is recommended to avoid linking
-issues on various platforms.
+bindings. I also recommend --enable-fat to allow the code to
+run on CPUs older than the one you build on.
+In order to build Yices you will need both static and dynamic
+GMP libraries - you can discard the dynamic ones once Yices is
+built. I use the following configure arguments for Linux64 and
+Darwin64:
 
-It is recommended that Tecla be configured with CFLAGS set to
-"-O2 -D_POSIX_C_SOURCE=1". This has the effect of using the thread
-unsafe library calls which avoids binary compatibility issues on
-various platforms. It is recommended that Tecla is built and installed
-with the command:
+../configure \
+CFLAGS="-O3 -pedantic -fno-stack-protector" \
+CXXFLAGS="-O3 -pedantic -fno-stack-protector" \
+--prefix=/home/Linux64 \
+--enable-cxx \
+--enable-fat
 
- make TARGETS=normal TARGET_LIBS=static install
+../configure \
+--prefix="/Users/Darwin64" \
+--enable-cxx \
+--enable-fat
 
-to avoid linking issues on various platforms.
 
+libsigsegv
+----------
+Your Linux distribution may come with a suitable libsigsegv.
+On Mac I configure it with:
+
+../configure \
+--prefix=/Users/Darwin64 \
+CFLAGS="-Wall -O3 -fno-stack-protector -fstrict-aliasing"
+
+
+Tecla
+-----
+Tecla does not support separate build directories. I use
+the following configure arguments for Linux64 and Darwin64:
+
+./configure \
+CFLAGS="-g -fno-stack-protector -O3" \
+-host=x86-linux-gnu \
+--prefix=/home/Linux64
+
+./configure \
+CFLAGS="-g -fno-stack-protector -O3" \
+--prefix=/Users/Darwin64
+
+
+BuDDy
+-----
 As of 2.4 BuDDy has moved to autoconf. The option --disable-shared is
-recommended to avoid linking issues on various platforms.
+recommended to avoid linking issues on various platforms. I use
+the following configure arguments for Linux64 and Darwin64:
 
-Yices2 must be built from source, and does not support building
-in an architecture specific subdirectory. It is recommend that the
-latest release be used as some ealier releases export a function,
-tputs(), that conflicts with the function of the same name in
-the curses/ncurses system library that is needed by Tecla.
+../configure LDFLAGS=-lm \
+CFLAGS="-g -fno-stack-protector -O3" \
+CXXFLAGS="-g -fno-stack-protector -O3" \
+--prefix=/home/Linux64 \
+--disable-shared
+
+../configure LDFLAGS=-lm \
+CFLAGS="-g -fno-stack-protector -O3" \
+CXXFLAGS="-g -fno-stack-protector -O3" \
+--prefix=/Users/Darwin64 \
+--disable-shared
+
+
+Yices
+-----
+Yices2 must be built from source, and does not support separate
+build directories. It is very finicky about GMP. I use
+the following configure arguments for Linux64 and Darwin64:
+
+./configure \
+--prefix=/home/Linux64 \
+--with-static-gmp=/home/Linux64/lib/libgmp.a \
+--with-static-gmp-include-dir=/home/Linux64/include \
+CFLAGS="-fno-stack-protector -O3" \
+LDFLAGS="-L/home/Linux64/lib" \
+CPPFLAGS="-I/home/Linux64/include"
+
+./configure \
+--prefix=/Users/Darwin64 \
+--with-static-gmp=/Users/Darwin64/lib/libgmp.a \
+--with-static-gmp-include-dir=/Users/Darwin64/include \
+CFLAGS="-fno-stack-protector -O3" \
+LDFLAGS="-L/Users/Darwin64/lib" \
+CPPFLAGS="-I/Users/Darwin64/include"
+
 
 Building Maude
 ==============
 Only one of CVC4 and Yices2 should be linked to provide an SMT backend.
-By default, Maude is configured to use Yices2.
+By default, Maude is configured to use Yices2, which is significantly
+easier to build. I use the following configure arguments for Linux64
+and Darwin64:
 
-If everything is installed in standard places you can configure and
-build Maude with the commands:
+../configure \
+--with-yices2=yes \
+--with-cvc4=no \
+--enable-compiler \
+-host=x86-linux-gnu \
+CFLAGS="-Wall -O3 -fno-crossjumping -fno-stack-protector -finline-limit=10000" \
+CXXFLAGS="-Wall -O3 -fno-crossjumping -fno-stack-protector -finline-limit=10000" \
+CPPFLAGS="-I/home/Linux64/include" \
+LDFLAGS="-L/home/Linux64/lib" \
+GMP_LIBS="/home/Linux64/lib/libgmpxx.a /home/Linux64/lib/libgmp.a"
 
-./configure
-make
+../configure \
+--with-yices2=yes \
+--with-cvc4=no \
+FLEX=/Users/Darwin64/bin/flex \
+BISON=/Users/Darwin64/bin/bison \
+CFLAGS="-Wall -O3 -fno-stack-protector -fstrict-aliasing" \
+CXXFLAGS="-Wall -O3 -fno-stack-protector -fstrict-aliasing -std=c++11" \
+CPPFLAGS="-I/Users/Darwin64/include" \
+LDFLAGS="-L/Users/Darwin64/lib" \
+GMP_LIBS="/Users/Darwin64/lib/libgmpxx.a /Users/Darwin64/lib/libgmp.a"
 
 Passing --with-yices2=no --with-cvc4=yes to configure will use CVC4
 instead of Yices2. Passing both options as no will build Maude without
@@ -68,34 +154,6 @@ SMT support.
 A very basic test suite can be run using the command:
 
 make check
-
-If you installed any of the 3rd party packages in non-standard places
-you can indicate where the header files are by setting CPPFLAGS and
-where the library files by setting LDFLAGS. If you have multiple
-versions of any these libraries in your environment you can select
-particular versions explicitly by setting:
-
-GMP_LIBS	(defaults to -lgmpxx -lgmp)
-LIBSIGSEGV_LIB	(defaults to -lsigsegv)
-TECLA_LIBS	(defaults to -ltecla -lcurses)
-BUDDY_LIB	(defaults to -lbuddy)
-CVC4_LIB	(defaults to -lcvc4)
-YICES2_LIB	(defaults to -lyices)
-
-A more realistic configure to make, check and install a static binary
-using a separate build tree might look something like:
-
-mkdir Build
-cd Build
-
-../configure \
-CPPFLAGS="-I/home/me/include" \
-LDFLAGS="-static -L/home/me/lib" \
-GMP_LIBS="/home/me/lib/libgmpxx.a /home/me/lib/libgmp.a"
-
-make
-make check
-make install
 
 The maude binary is installed in $(bindir) and the .maude files are
 installed in $(datadir). In order for the Maude binary to find the
@@ -106,26 +164,12 @@ $(bindir).
 Note that if your CVC4 library is built using CLN then you must
 also link this library (-lcln).
 
+
 Note for Mac users
 ==================
 
 As of Mavericks, Apple no longer supports gcc so Maude must be compiled
-with clang. The easiest way is to install the Mac Ports version of each of
-the needed tools and libraries (except Yices2 and CVC4 which must built
-from source - the Mac Ports version of CVC4 is too old and will cause
-runtime failures). With Mac Ports installed in /opt/local
-to build a version without SMT support, I use the configuration line:
-
-../configure \
---with-yices2=no \
---with-cvc4=no \
-CC=cc \
-CXX=c++ \
-FLEX=/opt/local/bin/flex \
-BISON=/opt/local/bin/bison \
-CFLAGS="-Wall -O2 -I/opt/local/include -fno-stack-protector -fstrict-aliasing" \
-CXXFLAGS="-Wall -O2 -I/opt/local/include -fno-stack-protector -fstrict-aliasing" \
-BUDDY_LIB="/opt/local/lib/libbdd.a" \
-TECLA_LIBS="/opt/local/lib/libtecla.a /usr/lib/libncurses.dylib" \
-LIBSIGSEGV_LIB="/opt/local/lib/libsigsegv.a" \
-GMP_LIBS="/opt/local/lib/libgmp.a /opt/local/lib/libgmpxx.a"
+with clang, which you can get by installing Apple's Xcode. Note that
+Xcode comes with ancient versions of flex and bison so you should
+install the latest versions from source or a package manager such
+as Mac Ports or Homebrew.

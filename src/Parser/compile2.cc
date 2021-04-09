@@ -1,19 +1,44 @@
+/*
+
+    This file is part of the Maude 3 interpreter.
+
+    Copyright 2018-2021 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+*/
+
 //
 //	Compile productions rules into expansion lists for left recursion.
 //
 
 bool
-Parser::mergeInMap(SymbolToPrecMap& target, const SymbolToPrecMap& donor, int targetNonterminal, int targetPrec)
+Parser::mergeInMap(SymbolToPrecMap& target,
+		   const SymbolToPrecMap& donor,
+		   int targetNonterminal,
+		   int targetPrec)
 {
   //
   //	We merge the expansions from donor into target, skipped any
   //	expansions that are worse equal to (targetNonterminal, targetPrec).
   //
   bool changed = false;
-  FOR_EACH_CONST(i, SymbolToPrecMap, donor)
+  for (auto& i : donor)
     {
-      int nonterminal = i->first;
-      int prec = i->second;
+      int nonterminal = i.first;
+      int prec = i.second;
       if (nonterminal == targetNonterminal && prec <= targetPrec)
 	continue;  // donor mapping provides no broadening
       //
@@ -22,7 +47,7 @@ Parser::mergeInMap(SymbolToPrecMap& target, const SymbolToPrecMap& donor, int ta
       SymbolToPrecMap::iterator j = target.find(nonterminal);
       if (j == target.end())
 	{
-	  target.insert(*i);
+	  target.insert(i);
 	  changed = true;
 	}
       else
@@ -61,14 +86,14 @@ Parser::makeExpansionList(const SymbolToPrecMap mapForm, int nonterminal)
       call.nextCall = nextCall;
     }
 
-  FOR_EACH_CONST(i, SymbolToPrecMap, mapForm)
+  for (auto& i : mapForm)
     {
-      if (i->first != nonterminal)
+      if (i.first != nonterminal)
 	{
 	  Call& call = calls[nextCall];
 	  ++nextCall;
-	  call.nonTerminal = i->first;
-	  call.maxPrec = i->second;
+	  call.nonTerminal = i.first;
+	  call.maxPrec = i.second;
 	  call.firstContinuation = NONE;
 	  call.nextCall = nextCall;
 	}
@@ -176,10 +201,10 @@ Parser::buildExpansionTables()
 	      //	worry that we are merging entries into the map we
 	      //	are iterating over.
 	      //
-	      FOR_EACH_CONST(k, SymbolToPrecMap, m2)
+	      for (auto& k : m2)
 		{
-		  int nonterminal2 = k->first;
-		  int prec2 = k->second;
+		  int nonterminal2 = k.first;
+		  int prec2 = k.second;
 		  PrecToExpansionMap& m3 = expansionMaps[flip(nonterminal2)];
 		  if (!(m3.empty()))
 		    {
@@ -221,19 +246,19 @@ Parser::buildExpansionTables()
       int nonterminal = flip(i);
 
       const SymbolToPrecMap* last = 0;
-      FOR_EACH_CONST(j, PrecToExpansionMap, m)
+      for (auto& j : m)
 	{
-	  if (last != 0 && j->second == *last)
+	  if (last != 0 && j.second == *last)
 	    continue;
-	  last = &(j->second);
+	  last = &(j.second);
 	  //
 	  //	Add expansion list.
 	  //
 	  int nrExpansions = expansionVector.size();
 	  expansionVector.resize(nrExpansions + 1);
 	  Expansion& expansion = expansionVector[nrExpansions];
-	  expansion.prec = j->first;
-	  expansion.firstExpansionCall = makeExpansionList(j->second, nonterminal);
+	  expansion.prec = j.first;
+	  expansion.firstExpansionCall = makeExpansionList(j.second, nonterminal);
 	}
     }
 }
@@ -241,12 +266,12 @@ Parser::buildExpansionTables()
 void
 Parser::dumpMap(PrecToExpansionMap& m, int nonterminal)
 {
-  FOR_EACH_CONST(i, PrecToExpansionMap, m)
+  for (auto& i : m)
     {
-      cout << nonterminal << "/" << i->first << " -> ";
-      FOR_EACH_CONST(j, SymbolToPrecMap, i->second)
+      cout << nonterminal << "/" << i.first << " -> ";
+      for (auto& j : i.second)
 	{
-	  cout << "  " << j->first << "/" << j->second;
+	  cout << "  " << j.first << "/" << j.second;
 	}
       cout << endl;
     }

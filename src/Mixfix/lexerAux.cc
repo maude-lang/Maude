@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ int nrPendingRead = 0;
 bool rootInteractive = false;
 bool fakeNewline = false;  // fake \n for files that don't end with \n
 bool fakeNewlineStack[MAX_IN_DEPTH];
+bool debugMode = false;
 
 void
 getInput(char* buf, yy_size_t& result, yy_size_t max_size)
@@ -92,6 +93,24 @@ cleanUpLexer()
   fileTable.abortEverything(lineNumber);
   nrPendingRead = pendingFiles.length();  // avoid any further reading of pending files
   BEGIN(INITIAL);
+}
+
+void
+setDebugMode(bool polarity)
+{
+  debugMode = polarity;
+}
+
+bool
+generateImpliedStep()
+{
+  //
+  //	We treat empty lines as an implied step command if
+  //	(1) We are in the debugger; and
+  //	(2) The root buffer is interactive; and
+  //	(3) We are reading from the root buffer rather than a file.
+  //
+  return debugMode && rootInteractive && inStackPtr == 0;
 }
 
 void

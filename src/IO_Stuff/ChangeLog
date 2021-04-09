@@ -1,3 +1,105 @@
+2021-04-02  Steven Eker  <eker2@eker10>
+
+	* IO_Manager.hh (IO_Manager::safeToAccessStdin)
+	(IO_Manager::safeToAccessStdout, IO_Manager::safeToAccessStderr):
+	added
+
+2021-03-30  Steven Eker  <eker2@eker10>
+
+	* autoWrapBuffer.cc (AutoWrapBuffer::sync): use decideOnBreak() to
+	implement flush
+
+	* IO_Manager.cc (IO_Manager::readFromStdin): don't call
+	resetCursorPosition() after all since we could be in a child
+	process
+
+	* IO_Manager.hh (IO_Manager::resetStdoutWrapping): added
+
+	* autoWrapBuffer.cc (AutoWrapBuffer::sync): set pendingWidth to
+	UNDEFINED after we dumpBuffer()
+
+	* IO_Manager.cc (IO_Manager::readFromStdin): call
+	resetCursorPosition() to account for user typed \n
+
+	* autoWrapBuffer.hh (AutoWrapBuffer::resetCursorPosition): added
+
+	* IO_Manager.cc (IO_Manager::setAutoWrap): pass respectFlush as
+	true for cout and false for cerr
+	(IO_Manager::readFromStdin): use cout rather than fputc()
+	(IO_Manager::getInput): use cout rather than fputs()
+	(IO_Manager::getLineFromStdin): use cout rather than fputs()
+
+	* autoWrapBuffer.hh (class AutoWrapBuffer): updated decl for ctor;
+	added data member respectFlush
+
+	* autoWrapBuffer.cc (AutoWrapBuffer::sync): removed support for
+	gcc versions < 3.0 because we already need >= 5.2 for range-based
+	for loops
+	(AutoWrapBuffer::AutoWrapBuffer): take and init respectFlush flag
+	(AutoWrapBuffer::sync): use repectFlush flag
+
+2021-03-29  Steven Eker  <eker2@eker10>
+
+	* IO_Manager.cc (IO_Manager::readFromStdin): move to new line
+	after ^C interrupt or ^D end-of-file
+	(IO_Manager::readFromStdin): only move to new line if stdin
+	isatty()
+
+	* IO_Manager.hh (class IO_Manager): updated decl for setAutoWrap()
+
+	* autoWrapBuffer.cc (AutoWrapBuffer::overflow): handle lineWidth
+	== NONE
+
+	* IO_Manager.cc (IO_Manager::setAutoWrap): take flag
+	(IO_Manager::setAutoWrap): pass columns = NONE to AutoWrapBuffer()
+	if we don't want line wrapping
+
+	* autoWrapBuffer.hh (class AutoWrapBuffer): added data member
+	waitFunction
+
+	* autoWrapBuffer.cc (AutoWrapBuffer::overflow): use waitFunction
+	(AutoWrapBuffer::sync): use waitFunction
+	(AutoWrapBuffer::AutoWrapBuffer): save waitFunction
+
+	* IO_Manager.cc: define and init stdinOwner here
+	(IO_Manager::IO_Manager): don't init stdinOwner
+	(IO_Manager::setAutoWrap): pass waitUntilSafeToAccessStdin to
+	AutoWrapBuffer() (2 places)
+
+	* IO_Manager.hh (class IO_Manager): make
+	waitUntilSafeToAccessStdin(), setStdinOwner() static
+	(class IO_Manager): make stdinOwner static
+
+	* autoWrapBuffer.hh (class AutoWrapBuffer): added typedef for
+	WaitFunction
+
+	* IO_Manager.cc (IO_Manager::getInput): use usingTecla()
+	(IO_Manager::getLineFromStdin): use usingTecla()
+
+2021-03-26  Steven Eker  <eker2@eker10>
+
+	* IO_Manager.cc (IO_Manager::setCommandLineEditing): pass
+	GLS_UNBLOCK_SIG to gl_trap_signal() to ensure tecla responds to ^C
+	even if we blocked it to avoid losing a ^C just before calling
+	tecla
+
+2021-03-24  Steven Eker  <eker2@eker10>
+
+	* IO_Manager.cc (IO_Manager::IO_Manager): init stdinOwner to 0
+
+	* IO_Manager.hh (class IO_Manager): make
+	waitUntilSafeToAccessStdin() public
+
+	* IO_Manager.cc (IO_Manager::waitUntilSafeToAccessStdin): added
+	(IO_Manager::getLineFromStdin, IO_Manager::getInput): call
+	waitUntilSafeToAccessStdin() before we access stdin
+
+	* IO_Manager.hh (class IO_Manager): added data member stdinOwner
+	(IO_Manager::setStdinOwner): added
+	(class IO_Manager): added decl for waitUntilSafeToAccessStdin()
+
+===================================Maude135===========================================
+
 2020-11-24  Steven Eker  <eker2@eker10>
 
 	* IO_Manager.cc (IO_Manager::setAutoWrap): code cleanning

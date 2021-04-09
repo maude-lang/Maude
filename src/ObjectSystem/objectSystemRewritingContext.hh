@@ -27,6 +27,7 @@
 #define _objectSystemRewritingContext_hh_
 #include <map>
 #include <list>
+#include <set>
 #include "rewritingContext.hh"
 #include "simpleRootContainer.hh"
 #include "objectSystem.hh"
@@ -49,6 +50,12 @@ public:
   void addExternalObject(DagNode* name, ExternalObjectManagerSymbol* manager);
   void deleteExternalObject(DagNode* name);
   void bufferMessage(DagNode* target, DagNode* message);
+  //
+  //	A manager can make this request multiple times so it doen't need
+  //	to explicitly track which contexts it has already requested a
+  //	clean up callback from.
+  //
+  void requestCleanUpOnDestruction(ExternalObjectManagerSymbol* manager);
 
   bool getExternalMessages(DagNode* target, list<DagNode*>& messages);
   bool offerMessageExternally(DagNode* target, DagNode* message);
@@ -73,12 +80,19 @@ private:
 
   typedef map<DagNode*, ExternalObjectManagerSymbol*, dagNodeLt> ObjectMap;
   typedef map<DagNode*, list<DagNode*>, dagNodeLt> MessageMap;
+  //
+  //	A set of pointers looks a bit dubious but implementations
+  //	that don't provide a total ordering on pointers have to specialize
+  //	std::less so that associative containers work.
+  //
+  typedef set<ExternalObjectManagerSymbol*> ManagerSet;
 
   bool interleave();
 
   Mode mode;
   ObjectMap externalObjects;
   MessageMap incomingMessages;
+  ManagerSet managersNeedingCleanUp;
 };
 
 inline
@@ -98,6 +112,12 @@ inline ObjectSystemRewritingContext::Mode
 ObjectSystemRewritingContext::getObjectMode() const
 {
   return mode;
+}
+
+inline void
+ObjectSystemRewritingContext::requestCleanUpOnDestruction(ExternalObjectManagerSymbol* manager)
+{
+  managersNeedingCleanUp.insert(manager);
 }
 
 #endif

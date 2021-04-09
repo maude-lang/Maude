@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -162,8 +162,11 @@ main(int argc, char* argv[])
 	pendingFiles.append(arg);
     }
 
-  if (lineWrapping)
-    ioManager.setAutoWrap();
+  //
+  //	We pass all output to terminal through wrapping code to
+  //	avoid writing while a nonblocking getLine is in progress.
+  //
+  ioManager.setAutoWrap(lineWrapping);
 
   if (ansiColor == UNDECIDED)
     {
@@ -196,7 +199,8 @@ main(int argc, char* argv[])
 	useTecla = false;
     }
   //
-  //	Make sure we flush cout before we output any error messages so things hit the tty in a consistent order.
+  //	Make sure we flush cout before we output any error messages so things
+  //	hit the tty in a consistent order.
   //
   (void) cerr.tie(&cout);
 
@@ -263,7 +267,7 @@ printHelp(const char* name)
     "  -no-advise\t\tNo advisories on startup\n" <<
     "  -always-advise\tAlways show advisories regardless\n" <<
     "  -no-mixfix\t\tDo not use mixfix notation for output\n" <<
-    "  -no-wrap\t\tDo not automatic line wrapping for output\n" <<
+    "  -no-wrap\t\tDo not use automatic line wrapping for output\n" <<
     "  -ansi-color\t\tUse ANSI control sequences\n" <<
     "  -no-ansi-color\tDo not use ANSI control sequences\n" <<
     "  -tecla\t\tUse tecla command line editing\n" <<

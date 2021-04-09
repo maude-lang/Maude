@@ -1,0 +1,9 @@
+==========================================
+erewrite in TEST : <> createTimer(timeManager, me) < me : myClass | none > .
+rewrites: 1
+result Configuration: <> deletedTimer(me, timer(0)) < me : myClass | none >
+==========================================
+reduce in TEST : 0 .
+rewrites: 0
+result Zero: 0
+Bye.

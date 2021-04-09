@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2014 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2014-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -174,8 +174,8 @@ SMT_RewriteSearchState::nextSolution()
   //
   //	Clear bindings of variables that were bound to fresh variables.
   //
-  FOR_EACH_CONST(i, NatSet, boundToFresh)
-    context->bind(*i, 0);
+  for (int i : boundToFresh)
+    context->bind(i, 0);
   boundToFresh.clear();
   //
   //	If we had a matching problem we may be able to solve it in a new way.
@@ -190,8 +190,8 @@ SMT_RewriteSearchState::nextSolution()
 	  //
 	  //	Clear bindings of variables that were bound to fresh variables.
 	  //
-	  FOR_EACH_CONST(i, NatSet, boundToFresh)
-	    context->bind(*i, 0);
+	  for (int i : boundToFresh)
+	    context->bind(i, 0);
 	  boundToFresh.clear();
 	}
       delete matchingSubproblem;
@@ -215,18 +215,23 @@ SMT_RewriteSearchState::checkConsistancy()
       if (binding == 0)
 	{
 	  ++newVariableNumber;
-	  DagNode* newVariable = engine->makeFreshVariable(currentRule->index2Variable(i), newVariableNumber);
+	  DagNode* newVariable = engine->makeFreshVariable(currentRule->index2Variable(i),
+							   newVariableNumber);
 	  context->bind(i, newVariable);
-	  DebugAdvisory("variable " << currentRule->index2Variable(i) << " is unbound and so is bound to fresh variable " << newVariable);
+	  DebugAdvisory("variable " << currentRule->index2Variable(i) <<
+			" is unbound and so is bound to fresh variable " << newVariable);
 	  boundToFresh.insert(i);
 	}
       else
-	DebugAdvisory("variable " << currentRule->index2Variable(i) << " is bound to " << binding);
+	{
+	  DebugAdvisory("variable " << currentRule->index2Variable(i) <<
+			" is bound to " << binding);
+	}
     }
   engine->push();
   //
-  //	There is no requirement that a rule has a condition. But if it has we need to instantiate it
-  //	and check it.
+  //	There is no requirement that a rule has a condition. But if it has
+  //	we need to instantiate it and check it.
   //
   DagNode* condition = 0;
   if (currentRule->hasCondition())
@@ -246,8 +251,9 @@ SMT_RewriteSearchState::checkConsistancy()
 	}
     }
   //
-  //	Either there was no condition or the new constraint which it generated was satisfiable in the presence
-  //	of the accumulated constraints to date. We need to generate a new state and a new constraint.
+  //	Either there was no condition or the new constraint which it generated was
+  //	satisfiable in the presence of the accumulated constraints to date. We need
+  //	to generate a new state and a new constraint.
   //
   newState = currentRule->getRhsBuilder().construct(*context);
   if (condition == 0)
@@ -297,17 +303,19 @@ SMT_RewriteSearchState::checkAndConvertState()
 }
 
 bool
-SMT_RewriteSearchState::instantiateCondition(const Vector<ConditionFragment*>& condition, DagNode*& instantiation)
+SMT_RewriteSearchState::instantiateCondition(const Vector<ConditionFragment*>& condition,
+					     DagNode*& instantiation)
 {
   //
-  //	Build a dag that representing the SMT conjunction of the instantiated condition fragments.
+  //	Build a dag that representing the SMT conjunction of the instantiated
+  //	condition fragments.
   //	Null dag pointer represents trivially true condition.
   //	Return true on success and false if there was a problem.
   //
   instantiation = 0;
-  FOR_EACH_CONST(i, Vector<ConditionFragment*>, condition)
+  for (ConditionFragment* i : condition)
     {
-      EqualityConditionFragment* cf = dynamic_cast<EqualityConditionFragment*>(*i);
+      EqualityConditionFragment* cf = dynamic_cast<EqualityConditionFragment*>(i);
       if (cf == 0)
 	{
 	  IssueWarning("non-equality condition fragment");

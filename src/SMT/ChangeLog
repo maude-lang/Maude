@@ -1,3 +1,25 @@
+2021-03-10  Steven Eker  <eker2@eker10>
+
+	* SMT_RewriteSequenceSearch.cc
+	(SMT_RewriteSequenceSearch::SMT_RewriteSequenceSearch): use
+	range-based for loop
+	(SMT_RewriteSequenceSearch::markReachableNodes): use range-based
+	for loop (2 places)
+	(SMT_RewriteSequenceSearch::~SMT_RewriteSequenceSearch): use
+	range-based for loop
+	(SMT_RewriteSequenceSearch::checkMatchConstraint): use range-based
+	for loop
+	(SMT_RewriteSequenceSearch::makeConstraintFromCondition): use
+	range-based for loop
+
+	* SMT_RewriteSearchState.cc
+	(SMT_RewriteSearchState::nextSolution): use range-based for loop
+	(2 places)
+	(SMT_RewriteSearchState::instantiateCondition): use range-based
+	for loop
+
+===================================Maude135===========================================
+
 2017-06-23  Steven Eker  <eker@install.csl.sri.com>
 
 	* SMT_RewriteSequenceSearch.cc (SMT_RewriteSequenceSearch): don't

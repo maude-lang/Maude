@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2005 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,7 +45,8 @@ MpzSystem::insertEqn(const IntVec& eqn)
   if (eqns.empty())
     nrVariables = eqn.size();
   else
-    Assert(nrVariables == static_cast<int>(eqn.size()), "eqn size differs: " << nrVariables << " vs " << eqn.size());
+    Assert(nrVariables == static_cast<int>(eqn.size()),
+	   "eqn size differs: " << nrVariables << " vs " << eqn.size());
   eqns.push_back(eqn);  // deep copy
 }
 
@@ -61,9 +62,8 @@ MpzSystem::initializeUpperBounds()
   if (upperBounds.empty())
     {
       upperBounds.resize(nrVariables);
-      IntVec::iterator e = upperBounds.end();
-      for (IntVec::iterator i = upperBounds.begin(); i != e; ++i)
-	*i = NONE;
+      for (mpz_class& i : upperBounds)
+	i = NONE;
     }
   else
     Assert(nrVariables == static_cast<int>(upperBounds.size()), "row size differs");
@@ -73,9 +73,9 @@ bool
 MpzSystem::greaterEqual(const IntVec& arg1, const IntVec& arg2)
 {
   IntVec::const_iterator j = arg2.begin();
-  FOR_EACH_CONST(i, IntVec, arg1)
+  for (const mpz_class& i : arg1)
     {
-      if (*i < *j)
+      if (i < *j)
 	return false;
       ++j;
     }
@@ -88,9 +88,9 @@ MpzSystem::minimal(const IntVec& arg)
   //
   //	A vector is minimal if it is not greater or equal to an existing solution.
   //
-  FOR_EACH_CONST(i, VecList, solutions)
+  for (const IntVec& v : solutions)
     {
-      if (greaterEqual(arg, *i))
+      if (greaterEqual(arg, v))
 	return false;
     }
   return true;
@@ -101,10 +101,10 @@ MpzSystem::minimal(const IntVec& arg)
 void
 MpzSystem::dumpEqns()
 {
-  FOR_EACH_CONST(i, VecList, eqns)
+  for (const IntVec& v : eqns)
     {
-      FOR_EACH_CONST(j, IntVec, *i)
-	cout << *j << '\t';
+      for (const mpz_class& j : v)
+	cout << j << '\t';
       cout << endl;
     }
   cout << endl;

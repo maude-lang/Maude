@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -57,13 +57,12 @@ Graph::colorNode(int i, int& maxColor, Vector<int>& coloring)
     //
     //	Find colors already used by neighbours.
     //
-    FOR_EACH_CONST(j, AdjSet, adjSet)
+    for (int j : adjSet)
       {
-	int c = coloring[*j];
+	int c = coloring[j];
 	if (c != UNDEFINED)
 	  used.insert(c);
       }
-    
   }
   //
   //	Find first unused color.
@@ -74,13 +73,11 @@ Graph::colorNode(int i, int& maxColor, Vector<int>& coloring)
   coloring[i] = color;
   if (color > maxColor)
     maxColor = color;
-  {
-    //
-    //	Color neighbours.
-    //
-    FOR_EACH_CONST(j, AdjSet, adjSet)
-      colorNode(*j, maxColor, coloring);
-  }
+  //
+  //	Color neighbours.
+  //
+  for (int j : adjSet)
+    colorNode(j, maxColor, coloring);
 }
 
 void
@@ -105,10 +102,9 @@ Graph::visit(int i, Vector<int>& component, NatSet& visited)
   visited.insert(i);
   component.append(i);
   AdjSet adjSet = adjSets[i];
-  FOR_EACH_CONST(j, AdjSet, adjSet)
+  for (int j : adjSet)
     {
-      int n = *j;
-      if (!visited.contains(n))
-	visit(n, component, visited);
+      if (!visited.contains(j))
+	visit(j, component, visited);
     }
 }

@@ -312,8 +312,8 @@ TimeManagerSymbol::stopTimer(FreeDagNode* message, ObjectSystemRewritingContext&
       timer->callbackRequestTime.tv_sec = 0;
       timer->callbackRequestTime.tv_nsec = 0;
       timer->lastStartMessage.setNode(0);
+      trivialReply(stoppedTimerMsg, message, context);
     }
-  trivialReply(stoppedTimerMsg, message, context);
 }
   
 void
@@ -330,5 +330,6 @@ TimeManagerSymbol::deleteTimer(FreeDagNode* message, ObjectSystemRewritingContex
     }
   DebugInfo("deleting " << timerArg);
   timerMap.erase(id);
+  context.deleteExternalObject(timerArg);
   trivialReply(deletedTimerMsg, message, context);
 }

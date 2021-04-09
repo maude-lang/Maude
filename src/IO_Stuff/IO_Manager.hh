@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ public:
 
   IO_Manager();
 
-  void setAutoWrap();
+  void setAutoWrap(bool lineWrapping);
   void unsetAutoWrap();
   void setCommandLineEditing(size_t maxLineLength = MAX_LINE_LENGTH,
 			     size_t maxHistoryLength = MAX_HISTORY_LENGTH);
@@ -54,6 +54,25 @@ public:
   void startCommand();
   ssize_t getInput(char* buf, size_t maxSize, FILE* stream);
   Rope getLineFromStdin(const Rope& prompt);
+  void resetStdoutWrapping();
+  //
+  //	In order to share stdin with a child, we allow the child
+  //	to be recorded as the owner.
+  //
+  static void setStdinOwner(pid_t owner);
+  //
+  //	Then we can wait until the child has exited, which also
+  //	clears the ownership record.
+  //
+  static void waitUntilSafeToAccessStdin();
+  static bool safeToAccessStdin();
+  static bool safeToAccessStdout();
+  static bool safeToAccessStderr();
+  //
+  //	So caller of getLineFromStdin() will know if tecla is being used
+  //	and can be relied to unblock SIGINT.
+  //
+  bool usingTecla();
 
 private:
   enum Sizes
@@ -79,6 +98,10 @@ private:
   ssize_t bufferEnd;
   size_t bufferSize;
   char* buffer;
+  //
+  //	To manage multiple processes trying to access stdin.
+  //
+  static pid_t stdinOwner;  // if not 0 then it is the pid of a child that is reading stdin
 };
 
 inline void
@@ -103,6 +126,54 @@ inline void
 IO_Manager::startCommand()
 {
   contFlag = false;
+}
+
+inline void
+IO_Manager::setStdinOwner(pid_t owner)
+{
+  stdinOwner = owner;
+}
+
+inline bool
+IO_Manager::usingTecla()
+{
+  return gl != 0;
+}
+
+inline void
+IO_Manager::resetStdoutWrapping()
+{
+  wrapOut->resetCursorPosition();
+}
+
+inline bool
+IO_Manager::safeToAccessStdin()
+{
+  //
+  //	We don't want to access stdin while another process is accessing.
+  //
+  return stdinOwner == 0;
+}
+
+inline bool
+IO_Manager::safeToAccessStdout()
+{
+  //
+  //	Assumes stdout is connected to terminal and another process is
+  //	reading from terminal.
+  //
+  return stdinOwner == 0;
+}
+
+inline bool
+IO_Manager::safeToAccessStderr()
+{
+  //
+  //	We might try to be smarter but Linux seems to suspend processes that
+  //	write to stderr while another process is reading from the controlling
+  //	terminal, even if stderr has been redirected somewhere else.
+  //
+  return stdinOwner == 0;
 }
 
 #endif

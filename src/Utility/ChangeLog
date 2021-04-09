@@ -1,3 +1,84 @@
+2021-03-16  Steven Eker  <eker2@eker10>
+
+	* rope.cc: use use range-based for loop
+
+2021-03-15  Steven Eker  <eker2@eker10>
+
+	* mpzGcdInit.cc (MpzSystem::swapVariables): use range-based for
+	loop
+	(MpzSystem::initializeGcd): use range-based for loop
+
+	* intContejeanDevie.cc (IntSystem::scalerProduct): made loop ref
+	const
+	(IntSystem::initialize): made loop ref const
+	(IntSystem::findNextMinimalSolution): made loop ref const (3
+	places)
+
+	* mpzContejeanDevie.cc (MpzSystem::scalerProduct): made loop ref
+	const
+	(MpzSystem::initialize): made loop ref const
+	(MpzSystem::findNextMinimalSolution): made loop ref const (3
+	places)
+
+	* intSystem.cc (IntSystem::initializeUpperBounds): use range-based
+	for loop
+
+	* mpzSystem.cc (MpzSystem::initializeUpperBounds): use range-based
+	for loop
+
+	* mpzGcdBasedSolver.cc (MpzSystem::updateResidues): use
+	range-based for loop
+	(MpzSystem::fillOutStackEntry): use range-based for loop
+	(MpzSystem::fillOutLastEntry): use range-based for loop
+	(MpzSystem::solveDiagonal): use range-based for loop (2 places)
+
+	* mpzGcdInit.cc (MpzSystem::computeSumBound): use range-based for
+	loop (2 places)
+	(MpzSystem::initializeGcd): use range-based for loop (2 places)
+
+	* mpzSystem.cc (MpzSystem::dumpEqns): use range-based for loop (2
+	places)
+	(MpzSystem::minimal): use range-based for loop
+
+	* intSystem.cc (IntSystem::minimal): make iterator variable ref
+	const
+	(IntSystem::dumpEqns): make iterator ref const
+
+	* mpzSystem.cc (MpzSystem::greaterEqual): use range-based for loop
+	(MpzSystem::minimal): use range-based for loop
+
+	* mpzContejeanDevie.cc (MpzSystem::initialize): use range-based
+	for loop (2 places)
+	(MpzSystem::findNextMinimalSolution): use range-based for loop (3
+	places)
+
+	* intContejeanDevie.cc (IntSystem::initialize): use range-based
+	for loop
+
+	* mpzContejeanDevie.cc (MpzSystem::scalerProduct): use range-based
+	for loop
+
+	* intContejeanDevie.cc (IntSystem::findNextMinimalSolution): use
+	range-based for loop (additional place)
+
+2021-03-11  Steven Eker  <eker2@eker10>
+
+	* intContejeanDevie.cc (IntSystem::isZero): use range-based for
+	loop
+	(IntSystem::scalerProduct): use range-based for loop
+	(IntSystem::initialize): use range-based for loop
+	(IntSystem::findNextMinimalSolution): use range-based for loop (2
+	places)
+
+	* intSystem.cc (IntSystem::greaterEqual): use range-based for loop
+	(IntSystem::dumpEqns): use range-based for loop (2 places)
+	(IntSystem::minimal): use range-based for loop
+
+	* graph.cc (Graph::colorNode): use range-based for loop (2 places)
+	(Graph::visit): use range-based for loop
+
+===================================Maude135===================================
+
 2021-03-03  Steven Eker  <eker2@eker10>
 
 	* timeStuff.hh: added operator<()

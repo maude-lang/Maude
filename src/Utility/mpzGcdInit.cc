@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2005 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,9 +27,8 @@
 void
 MpzSystem::swapVariables(int u, int v)
 {
-  const VecList::iterator e = eqns.end();
-  for (VecList::iterator i = eqns.begin(); i != e; ++i)
-    swap((*i)[u], (*i)[v]);
+  for (IntVec& iv : eqns)
+    swap(iv[u], iv[v]);
   swap(upperBounds[u], upperBounds[v]);
   swap(permutation[u], permutation[v]);
 }
@@ -131,11 +130,11 @@ MpzSystem::computeSumBound()
   //	  Proceedings of RTA '91, pages 162-173.
   //
   mpz_class bound = 1;
-  FOR_EACH_CONST(i, VecList, eqns)
+  for (const IntVec& v : eqns)
     {
       mpz_class sum = 1;
-      FOR_EACH_CONST(j, IntVec, *i)
-	sum += abs(*j);
+      for (const mpz_class& j : v)
+	sum += abs(j);
       bound *= sum;
     }
   return bound;
@@ -177,37 +176,36 @@ MpzSystem::initializeGcd()
     int varNr = nrVariables - 1;
     int nrGcds = nrFreeVariables - 1;
     int eqnNr = 0;
-    const VecList::iterator e = eqns.end();
-    for (VecList::iterator i = eqns.begin(); i != e; ++i)
+    for (IntVec& iv : eqns)
       {
 	gcds.push_back(IntVec());
 	if (nrGcds > 0)
 	  {
 	    IntVec& v = gcds.back();
 	    v.resize(nrGcds);
-	    mpz_gcd(v[nrGcds - 1].get_mpz_t(), (*i)[nrGcds].get_mpz_t(), (*i)[varNr].get_mpz_t());
+	    mpz_gcd(v[nrGcds - 1].get_mpz_t(), iv[nrGcds].get_mpz_t(), iv[varNr].get_mpz_t());
 	    for (int j = nrGcds - 1; j > 0; --j)
-	      mpz_gcd(v[j - 1].get_mpz_t(), (*i)[j].get_mpz_t(), v[j].get_mpz_t());
+	      mpz_gcd(v[j - 1].get_mpz_t(), iv[j].get_mpz_t(), v[j].get_mpz_t());
 	    mpz_class final;
-	    mpz_gcd(final.get_mpz_t(), (*i)[0].get_mpz_t(), v[0].get_mpz_t());
+	    mpz_gcd(final.get_mpz_t(), iv[0].get_mpz_t(), v[0].get_mpz_t());
 	    if (final > 1)
 	      {
 		DebugAdvisory("dividing equation by " << final);
 		for (int j = 0; j < nrVariables; ++j)
-		  (*i)[j] /= final;
+		  iv[j] /= final;
 		for (int j = nrGcds - 1; j >= 0; --j)
 		  v[j] /= final;
 	      }
 #if ANALYZE_GCD
-	    FOR_EACH_CONST(j, IntVec, v)
-	      cout << *j << '\t';
+	    for (const mpz_class& j : v)
+	      cout << j << '\t';
 	    cout << endl;
 #endif
 	  }
 
 	for (int j = nrGcds; j >= 0; --j)
 	  {
-	    if ((*i)[j] < 0)
+	    if (iv[j] < 0)
 	      {
 		lastPrediagNeg[eqnNr] = j;
 		goto ok;
@@ -241,11 +239,11 @@ MpzSystem::initializeGcd()
     for (int i = nrFreeVariables - 1; i >= 0; i--)
       {
 	int eqnNr = 0;
-	FOR_EACH_CONST(j, VecList, eqns)
+	for (const IntVec& v : eqns)
 	  {
-	    if ((*j)[i] > 0)
+	    if (v[i] > 0)
 	      goto done;
-	    if ((*j)[i] < 0)
+	    if (v[i] < 0)
 	      {
 		if (used.contains(eqnNr))
 		  goto done;

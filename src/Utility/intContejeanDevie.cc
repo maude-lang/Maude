@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@
 bool
 IntSystem::isZero(const IntVec& arg)
 {
-  FOR_EACH_CONST(i, IntVec, arg)
+  for (int i : arg)
     {
-      if (*i != 0)
+      if (i != 0)
 	return false;
     }
   return true;
@@ -50,9 +50,9 @@ IntSystem::scalerProduct(const IntVec& arg, int varNr)
   Assert(arg.size() == eqns.size(), "size clash");
   int sum = 0;
   IntVec::const_iterator j = arg.begin();
-  FOR_EACH_CONST(i, VecList, eqns)
+  for (const IntVec& v : eqns)
     {
-      sum += (*i)[varNr] * *j;
+      sum += v[varNr] * *j;
       ++j;
     }
   return sum;
@@ -70,17 +70,16 @@ IntSystem::initialize()
       State& s = states[i];
       {
 	s.assignment.resize(nrVariables);
-	IntVec::iterator e = s.assignment.end();
-	for (IntVec::iterator j = s.assignment.begin(); j != e; ++j)
-	  *j = 0;
+	for (int& j : s.assignment)
+	  j = 0;
 	s.assignment[i] = 1;
       }
       {
 	s.residue.resize(nrEquations);
 	IntVec::iterator k = s.residue.begin();
-	FOR_EACH_CONST(j, VecList, eqns)
+	for (const IntVec& v : eqns)
 	  {
-	    *k = (*j)[i];
+	    *k = v[i];
 	    ++k;
 	  }
       }
@@ -121,7 +120,7 @@ IntSystem::findNextMinimalSolution(IntVec& solution)
 	  //
 	retry:
 	  IntVec::const_iterator res = s.residue.begin();
-	  FOR_EACH_CONST(j, VecList, eqns)
+	  for (const IntVec& v : eqns)
 	    {
 	      int d = *res;
 	      ++res;
@@ -132,7 +131,7 @@ IntSystem::findNextMinimalSolution(IntVec& solution)
 		{
 		  if (!(s.frozen.contains(i)))
 		    {
-		      int c = (*j)[i] ;
+		      int c = v[i];
 		      if (c != 0)
 			{
 			  ++nfnzCount;
@@ -146,7 +145,7 @@ IntSystem::findNextMinimalSolution(IntVec& solution)
 	      if (nfnzCount == 1)
 		{
 		  //
-		  //	Equation j has only a single nonzero, non-frozen coefficent left.
+		  //	Equation v has only a single nonzero, non-frozen coefficent left.
 		  //	If residue is 0 we can freeze it; if residue is nonzero, it must
 		  //	move us in the right direction and we have a forced assignment (or
 		  //	faliure) for the corresponding variable.
@@ -158,10 +157,10 @@ IntSystem::findNextMinimalSolution(IntVec& solution)
                       goto retry;
                     }
 		  //
-		  //	We can force variable j.
+		  //	We can force variable v.
 		  //
 		  //cout << "one var " << lastNfnz << endl;
-		  int c = (*j)[lastNfnz];
+		  int c = v[lastNfnz];
 		  if (d % c == 0)
 		    {
 		      int delta = -d / c;
@@ -175,9 +174,9 @@ IntSystem::findNextMinimalSolution(IntVec& solution)
 			  //	and is minimal so it replaces the old state.
 			  //
 			  IntVec::iterator res2 = s.residue.begin();
-			  FOR_EACH_CONST(k, VecList, eqns)
+			  for (const IntVec& k : eqns)
 			    {
-			      *res2 += delta * (*k)[lastNfnz];
+			      *res2 += delta * k[lastNfnz];
 			      ++res2;
 			    }
 			  //cout << "forced " << lastNfnz << " by " << delta << endl;
@@ -218,9 +217,9 @@ IntSystem::findNextMinimalSolution(IntVec& solution)
 		      n.residue = current.residue;
 		      IntVec::const_iterator from = current.residue.begin();
 		      IntVec::iterator to = n.residue.begin();
-		      FOR_EACH_CONST(j, VecList, eqns)
+		      for (const IntVec& v : eqns)
 			{
-			  *to = *from + (*j)[i];
+			  *to = *from + v[i];
 			  ++from;
 			  ++to;
 			}

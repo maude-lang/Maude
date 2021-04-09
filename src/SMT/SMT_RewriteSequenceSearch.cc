@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2014 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2014-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -105,8 +105,8 @@ SMT_RewriteSequenceSearch::SMT_RewriteSequenceSearch(RewritingContext* initial,
   //
   //	Delete condition now since we are done with it.
   //
-  FOR_EACH_CONST(i, Vector<ConditionFragment*>, condition)
-    delete *i;
+  for (ConditionFragment* cf : condition)
+    delete cf;
 }
 
 SMT_RewriteSequenceSearch::~SMT_RewriteSequenceSearch()
@@ -114,11 +114,11 @@ SMT_RewriteSequenceSearch::~SMT_RewriteSequenceSearch()
   //
   //	FIXME: Need to deal with contexts in some way
   //
-  FOR_EACH_CONST(i, StateVec, states)
+  for (State* s : states)
     {
-      delete (*i)->search;
-      delete (*i)->context;
-      delete *i;
+      delete s->search;
+      delete s->context;
+      delete s;
     }
   delete matchState;
   delete engine;
@@ -130,17 +130,14 @@ SMT_RewriteSequenceSearch::markReachableNodes()
   //
   //	Protect dagnode versions of any SMT variables in the pattern.
   //
-  {
-    FOR_EACH_CONST(i, SMT_VarDags, smtVarDags)
-      i->second->mark();
-  }
+  for (auto& i : smtVarDags)
+    i.second->mark();
   //
-  //	Constraints aren't otherwise protected once the search object they were passed to is deleted.
+  //	Constraints aren't otherwise protected once the search object
+  //	they were passed to is deleted.
   //
-  {
-    FOR_EACH_CONST(i, StateVec, states)
-      (*i)->constraint->mark();
-  }
+  for (State* s : states)
+    s->constraint->mark();
   //
   //	Need to protect any final constraint we made.
   //
@@ -149,20 +146,22 @@ SMT_RewriteSequenceSearch::markReachableNodes()
 }
 
 DagNode*
-SMT_RewriteSequenceSearch::makeConstraintFromCondition(Term* target, const Vector<ConditionFragment*>& condition)
+SMT_RewriteSequenceSearch::makeConstraintFromCondition(Term* target,
+						       const Vector<ConditionFragment*>& condition)
 {
   Vector<DagNode*> args(2);
   DagNode* constraint = 0;
 
-  FOR_EACH_CONST(i, Vector<ConditionFragment*>, condition)
+  for (ConditionFragment* cf : condition)
     {
       //
       //	Check to see that condition fragment is of the form t1 = t2.
       //
-      EqualityConditionFragment* fragment = dynamic_cast<EqualityConditionFragment*>(*i);
+      EqualityConditionFragment* fragment = dynamic_cast<EqualityConditionFragment*>(cf);
       if (fragment == 0)
 	{
-	  IssueWarning(*target << ": condition fragment " << *i << " not supported for searching modulo SMT.");
+	  IssueWarning(*target << ": condition fragment " << cf <<
+		       " not supported for searching modulo SMT.");
 	  continue;
 	}
       //
@@ -186,7 +185,8 @@ SMT_RewriteSequenceSearch::makeConstraintFromCondition(Term* target, const Vecto
 	  Symbol* eqOp = smtInfo.getEqualityOperator(lhs, rhs);
 	  if (eqOp == 0)
 	    {
-	      IssueWarning(*(fragment->getLhs()) << ": no SMT equality operator available for condition fragment " << *i);
+	      IssueWarning(*(fragment->getLhs()) <<
+			   ": no SMT equality operator available for condition fragment " << cf);
 	      continue;
 	    }
 	  args[0] = lhs;
@@ -278,10 +278,10 @@ SMT_RewriteSequenceSearch::checkMatchConstraint()
   const Substitution* substitution = matchState->getContext();
   DagNode* matchConstraint = 0;
 
-  FOR_EACH_CONST(i, SMT_VarDags, smtVarDags)
+  for (auto& i : smtVarDags)
     {
-      DagNode* lhs = i->second;
-      DagNode* rhs = substitution->value(i->first); 
+      DagNode* lhs = i.second;
+      DagNode* rhs = substitution->value(i.first); 
       //
       //	Make equality constraint.
       //
