@@ -1,8 +1,11 @@
-Overview of Changes in alpha135
+Overview of Changes in alpha135 (2021-04-09)
 ============================================
 * second control-C within a second now returns to command line
 * fixed bug in deleteTimer() which would cause a later crash
 * empty line is treated as implicit step command in debuggger
+* getLine() is now nonblocking
+* changed semantics of stopTimer()
+* standard streams now accept bad messages and return streamError()
 
 Overview of Changes in alpha134 (2021-02-08)
 ============================================
