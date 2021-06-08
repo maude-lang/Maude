@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -157,6 +157,10 @@ AU_Symbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	  AU_DagNode* s = safeCast(AU_DagNode*, subject);
 	  if (s->isFresh())
 	    {
+	      //
+	      //	Not safe to use iterator because reduce() can
+	      //	call garbage collector which can relocate argArray.
+	      //
 	      int nrArgs = s->argArray.length();
 	      for (int i = 0; i < nrArgs; i++)
 		s->argArray[i]->reduce(context);
@@ -338,9 +342,9 @@ AU_Symbol::computeBaseSort(DagNode* subject)
 	  //	Check we're not in the error sort.
 	  //
 	  int lastIndex = Sort::SORT_UNKNOWN;
-	  FOR_EACH_CONST(i, ArgVec<DagNode*>, args)
+	  for (DagNode* d : args)
 	    {
-	      int index = (*i)->getSortIndex();
+	      int index = d->getSortIndex();
 	      if (index != lastIndex)
 		{
 		  if (!(leq(index, uniSort)))
@@ -359,9 +363,9 @@ AU_Symbol::computeBaseSort(DagNode* subject)
   //	Standard sort calculation.
   //
   int sortIndex = Sort::SORT_UNKNOWN;
-  FOR_EACH_CONST(i, ArgVec<DagNode*>, args)
+  for (DagNode* d : args)
     {
-      int t = (*i)->getSortIndex();
+      int t = d->getSortIndex();
       Assert(t != Sort::SORT_UNKNOWN, "bad sort index");
       sortIndex = (sortIndex == Sort::SORT_UNKNOWN) ? t :
 	traverse(traverse(0, sortIndex), t);
@@ -502,11 +506,8 @@ AU_Symbol::termify(DagNode* dagNode)
   else
     {
       const ArgVec<DagNode*>& argArray = safeCast(const AU_DagNode*, dagNode)->argArray;
-      FOR_EACH_CONST(i, ArgVec<DagNode*>, argArray)
-	{
-	  DagNode* a = *i;
-	  arguments.append(a->symbol()->termify(a));
-	}
+      for (DagNode* a : argArray)
+	arguments.append(a->symbol()->termify(a));
     }
   return new AU_Term(this, arguments);
 }
@@ -532,13 +533,13 @@ AU_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
   ArgVec<DagNode*>& args = safeCast(AU_DagNode*, subject)->argArray;
   bool firstArg = true;
   bddPair* argMap = bdd_newpair();
-  FOR_EACH_CONST(i, ArgVec<DagNode*>, args)
+  for (DagNode* d : args)
     {
       //
       //	Get generalized sort of argument.
       //
       Vector<Bdd> argGenSort;
-      (*i)->computeGeneralizedSort(sortBdds, realToBdd, argGenSort);
+      d->computeGeneralizedSort(sortBdds, realToBdd, argGenSort);
       Assert((int) argGenSort.size() == nrBdds, "nrBdds clash");
 
       if (firstArg)

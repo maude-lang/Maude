@@ -1,3 +1,14 @@
+2021-06-08  Steven Eker  <eker2@eker10>
+
+	* tests/Misc/directoryTest.maude: added
+
+2021-05-26  Steven Eker  <eker2@eker10>
+
+	* tests/Misc/AU_and_A_UnificationEdgeCases.maude: updated comment
+	now that PigPug::tightenConstraints() has been deleted
+
+===================================Maude136===========================================
+
 2021-03-10  Steven Eker  <eker2@eker10>
 
 	* tests/ResolvedBugs/deleteTimerMarch2021.maude: added

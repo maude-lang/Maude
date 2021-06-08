@@ -126,7 +126,8 @@ NarrowingSequenceSearch::findNextMatch()
 	  //	No pattern case: we do some extra accounting needed by metalevel.
 	  //
 	  variableTotalForPreviouslyReturnedStates = variableTotalForAllReturnedStates;
-	  variableTotalForAllReturnedStates += stateStack[stateStack.size() - 1]->getNrOfVariablesInSubject();
+	  variableTotalForAllReturnedStates +=
+	    stateStack[stateStack.size() - 1]->getVariableInfo().getNrVariables();
 	  /*
 	  cout << variableTotalForPreviouslyReturnedStates << '\n' <<
 	    variableTotalForAllReturnedStates << '\n' <<

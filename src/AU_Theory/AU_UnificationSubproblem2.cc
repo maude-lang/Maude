@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,10 +55,6 @@
 #include "AU_Symbol.hh"
 #include "AU_DagNode.hh"
 #include "AU_UnificationSubproblem2.hh"
-
-#define FOR_EACH(var, conType, container) \
-const conType::iterator var##_end = (container).end(); \
-for (conType::iterator var = (container).begin(); var != var##_end; ++var)
 
 AU_UnificationSubproblem2::AU_UnificationSubproblem2(AU_Symbol* topSymbol)
   : topSymbol(topSymbol),

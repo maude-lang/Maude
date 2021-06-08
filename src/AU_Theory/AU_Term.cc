@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -89,8 +89,8 @@ AU_Term::arguments()
 void
 AU_Term::deepSelfDestruct()
 {
-  FOR_EACH_CONST(i, Vector<Tuple>, argArray)
-    i->term->deepSelfDestruct();
+  for (const Tuple& t : argArray)
+    t.term->deepSelfDestruct();
   delete this;
 }
 
@@ -243,8 +243,8 @@ AU_Term::normalize(bool full, bool& changed)
   //	Pass 4: compute hash value.
   //
   unsigned int hashValue = s->getHashValue();
-  FOR_EACH_CONST(i, Vector<Tuple>, argArray)
-    hashValue = hash(hashValue, i->term->getHashValue());
+  for (const Tuple& t : argArray)
+    hashValue = hash(hashValue, t.term->getHashValue());
   setHashValue(hashValue);
   return this;
 }
@@ -326,8 +326,8 @@ AU_Term::findEagerVariables(bool atTop, NatSet& eagerVariables) const
   if (strat == BinarySymbol::EAGER ||
       (strat == BinarySymbol::SEMI_EAGER && !atTop))
     {
-      FOR_EACH_CONST(i, Vector<Tuple>, argArray)
-	i->term->findEagerVariables(false, eagerVariables);
+      for (const Tuple& t : argArray)
+	t.term->findEagerVariables(false, eagerVariables);
     }
 }
 
@@ -338,8 +338,8 @@ AU_Term::markEagerArguments(int nrVariables,
 {
   if (symbol()->getPermuteStrategy() == BinarySymbol::EAGER)
     {
-      FOR_EACH_CONST(i, Vector<Tuple>, argArray)
-	i->term->markEager(nrVariables, eagerVariables, problemVariables);
+      for (const Tuple& t : argArray)
+	t.term->markEager(nrVariables, eagerVariables, problemVariables);
     }
 }
 
@@ -360,11 +360,8 @@ AU_Term::analyseCollapses2()
   //
   //	(1) Analyse our subterms.
   //
-  int nrArgs = argArray.length();
-  {
-    FOR_EACH_CONST(i, Vector<Tuple>, argArray)
-      i->term->analyseCollapses();
-  }
+  for (const Tuple& t : argArray)
+    t.term->analyseCollapses();
   //
   //	(2) Does our top symbol have an identity?
   //
@@ -375,6 +372,7 @@ AU_Term::analyseCollapses2()
   //
   //	(3) Can we collapse?
   //
+  int nrArgs = argArray.length();
   int firstNonIdArg = NONE;
   for (int i = 0; i < nrArgs; i++)    
     {
@@ -402,9 +400,9 @@ AU_Term::analyseCollapses2()
       //
       //        Can collapse to any of our arguments.
       //
-      FOR_EACH_CONST(i, Vector<Tuple>, argArray)
+      for (const Tuple& i : argArray)
         {
-	  Term* t = i->term;
+	  Term* t = i.term;
 	  addCollapseSymbol(t->symbol());
 	  addCollapseSymbols(t->collapseSymbols());
 	}
@@ -457,8 +455,8 @@ AU_Term::findAvailableTerms(TermBag& availableTerms, bool eagerContext, bool atT
   BinarySymbol::PermuteStrategy strat = symbol()->getPermuteStrategy();
   bool argEager = eagerContext && (strat == BinarySymbol::EAGER ||
 				   (strat == BinarySymbol::SEMI_EAGER && !atTop));
-  FOR_EACH_CONST(i, Vector<Tuple>, argArray)
-    i->term->findAvailableTerms(availableTerms, argEager);
+  for (const Tuple& t : argArray)
+    t.term->findAvailableTerms(availableTerms, argEager);
 }
 
 int
@@ -474,7 +472,8 @@ AU_Term::compileRhs2(RhsBuilder& rhsBuilder,
   //	we sort in order of arguments by number of symbol occurences, and build
   //	largest first.
   //
-  typedef Vector<pair<int, int> > PairVec;
+  typedef pair<int, int> IntPair;
+  typedef Vector<IntPair > PairVec;
   PairVec order(nrArgs);
   for (int i = 0; i < nrArgs; i++)
     {
@@ -487,9 +486,9 @@ AU_Term::compileRhs2(RhsBuilder& rhsBuilder,
   //
   bool argEager = eagerContext && symbol()->getPermuteStrategy() == BinarySymbol::EAGER;
   Vector<int> sources(nrArgs);
-  FOR_EACH_CONST(i, PairVec, order)
+  for (const IntPair& p : order)
     {
-      int j = i->second;
+      int j = p.second;
       sources[j] = argArray[j].term->compileRhs(rhsBuilder,
 						variableInfo,
 						availableTerms,
@@ -525,9 +524,8 @@ AU_Term::dump(ostream& s, const VariableInfo& variableInfo, int indentLevel)
   dumpCommon(s, variableInfo, indentLevel);
   s << Indent(indentLevel) << "arguments:\n";
   ++indentLevel;
-  FOR_EACH_CONST(i, Vector<Tuple>, argArray)
+  for (const Tuple& p : argArray)
     {
-      const Tuple& p = *i;
       s << Indent(indentLevel) << "collapseToOurSymbol = " <<
 	bool(p.collapseToOurSymbol) <<
         "\tmatchOurIdentity = " << bool(p.matchOurIdentity);

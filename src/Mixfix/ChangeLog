@@ -1,3 +1,15 @@
+2021-04-27  Steven Eker  <eker2@eker10>
+
+	* specialSymbolTypes.cc: added DirectoryManagerSymbol
+
+	* symbolType.hh (class SymbolType): added STREAM_MANAGER_SYMBOL to
+	enum BasicTypes
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): handle case
+	DIRECTORY_MANAGER_SYMBOL
+
+===================================Maude136===========================================
+
 2021-03-24  Steven Eker  <eker2@eker10>
 
 	* interact.cc (UserLevelRewritingContext::interruptSeen): added

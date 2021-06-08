@@ -1,0 +1,73 @@
+***
+***	Test directory operations and error handling.
+***
+
+set show timing off .
+set show stats off .
+
+load file
+
+view Message from TRIV to CONFIGURATION is
+  sort Elt to Msg .
+endv
+
+mod DIR-TEST is
+  inc DIRECTORY .
+  pr (LIST * (op __ to _;_)){Message} .
+
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+  op [_] : List{Message} -> Attribute .
+vars O O2 D : Oid .
+var S : String .
+var T : EntryType .
+var L : List{Message} .
+
+  eq run = <> < me : myClass | none > openDirectory(directoryManager, me, "/dev") .
+
+  rl < O : myClass | none > openedDirectory(O, O2, D) =>
+     < O : myClass | [nil] > getDirectoryEntry(D, O) .
+
+  rl < O : myClass | [L] > gotDirectoryEntry(O, D, S, T) =>
+     < O : myClass | [L ; gotDirectoryEntry(D, O, S, T)] > getDirectoryEntry(D, O) .
+
+*** need to return none for reproducable results in test suite
+  rl < O : myClass | [L] > gotDirectoryEntry(O, D, "", endOfDirectory) =>
+     < O : myClass | none > .
+
+endm
+
+erew run .
+
+
+set show stats on .
+
+mod DIR-TEST2 is
+  inc DIRECTORY .
+
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+
+  eq run = <> < me : myClass | none > makeDirectory(directoryManager, me, "testDirectory") .
+
+endm
+
+erew run .
+erew run .
+
+
+mod DIR-TEST3 is
+  inc DIRECTORY .
+
+  op myClass : -> Cid .
+  ops me : -> Oid .
+  op run : -> Configuration .
+
+  eq run = <> < me : myClass | none > removeDirectory(directoryManager, me, "testDirectory") .
+
+endm
+
+erew run .
+erew run .

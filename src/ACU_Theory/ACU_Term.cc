@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ ACU_Term::ACU_Term(ACU_Symbol* symbol, const Vector<Term*>& arguments)
 {
   int nrArgs = arguments.length();
   Assert(nrArgs >= 2, "insufficient arguments for operator " << symbol);
-  for (int i = 0; i < nrArgs; i++)
+  for (int i = 0; i < nrArgs; ++i)
     {
       argArray[i].term = arguments[i];
       argArray[i].multiplicity = 1;
@@ -95,9 +95,10 @@ ACU_Term::ACU_Term(ACU_Symbol* symbol, const Vector<Term*>& arguments, const Vec
   Assert(arguments.size() == multiplicities.size(), "vector size disagreement");
 
   int nrArgs = arguments.size();
-  Assert(nrArgs >= 2 || (nrArgs == 1 && multiplicities[0] >= 2), "insufficient arguments for operator " << symbol);
+  Assert(nrArgs >= 2 || (nrArgs == 1 && multiplicities[0] >= 2),
+	 "insufficient arguments for operator " << symbol);
 
-  for (int i = 0; i < nrArgs; i++)
+  for (int i = 0; i < nrArgs; ++i)
     {
       argArray[i].term = arguments[i];
       argArray[i].multiplicity = multiplicities[i];
@@ -109,7 +110,7 @@ ACU_Term::ACU_Term(const ACU_Term& original, ACU_Symbol* symbol, SymbolMap* tran
     argArray(original.argArray.length())
 {
   int nrArgs = original.argArray.length();
-  for (int i = 0; i < nrArgs; i++)
+  for (int i = 0; i < nrArgs; ++i)
     {
       argArray[i].term = original.argArray[i].term->deepCopy(translator);
       argArray[i].multiplicity = original.argArray[i].multiplicity;
@@ -125,9 +126,8 @@ ACU_Term::arguments()
 void
 ACU_Term::deepSelfDestruct()
 {
-  int nrArgs = argArray.length();
-  for (int i = 0; i < nrArgs; i++)
-    argArray[i].term->deepSelfDestruct();
+  for (const Pair& p : argArray)
+    p.term->deepSelfDestruct();
   delete this;
 }
 
@@ -223,7 +223,7 @@ ACU_Term::normalizeAliensAndFlatten()
   //
   bool needToFlatten = false;
   int expansion = 0;
-  for (int i = 0; i < nrArgs; i++)
+  for (int i = 0; i < nrArgs; ++i)
     {
       Term* t = argArray[i].term;
       if (t->symbol() == s)
@@ -257,7 +257,7 @@ ACU_Term::normalizeAliensAndFlatten()
     {
       argArray.expandBy(expansion);
       int p = nrArgs + expansion - 1;
-      for (int i = nrArgs - 1; i >= 0; i--)
+      for (int i = nrArgs - 1; i >= 0; --i)
 	{
 	  Assert(p >= i, "loop invariant broken");
 	  Term* t = argArray[i].term;
@@ -265,7 +265,7 @@ ACU_Term::normalizeAliensAndFlatten()
 	    {
 	      int m = argArray[i].multiplicity;
 	      Vector<Pair>& argArray2 = safeCast(ACU_Term*, t)->argArray;
-	      for (int j = argArray2.length() - 1; j >= 0; j--)
+	      for (int j = argArray2.length() - 1; j >= 0; --j)
 		{
 		  argArray[p].term = argArray2[j].term;
 		  argArray[p].multiplicity = m * argArray2[j].multiplicity;
@@ -294,7 +294,7 @@ ACU_Term::normalize(bool full, bool& changed)
   else
     {
       changed = false;
-      for (int i = argArray.length() - 1; i >= 0; i--)
+      for (int i = argArray.length() - 1; i >= 0; --i)
 	{
 	  bool subtermChanged;
 	  argArray[i].term = argArray[i].term->normalize(false, subtermChanged);
@@ -303,7 +303,7 @@ ACU_Term::normalize(bool full, bool& changed)
 	}
     }
   int nrArgs = argArray.length();
-  for (int i = 1; i < nrArgs; i++)
+  for (int i = 1; i < nrArgs; ++i)
     {
       if (argArray[i - 1].term->compare(argArray[i].term) > 0)
 	{
@@ -312,7 +312,7 @@ ACU_Term::normalize(bool full, bool& changed)
 	}
     }
   int d = 0;
-  for (int i = 1; i < nrArgs; i++)
+  for (int i = 1; i < nrArgs; ++i)
     {
       if (argArray[i].term->equal(argArray[d].term))
 	{
@@ -330,7 +330,7 @@ ACU_Term::normalize(bool full, bool& changed)
       //
       //	Need to eliminate any identity elements (maybe we should use binary search).
       //
-      for (int i = 0; i < d; i++)
+      for (int i = 0; i < d; ++i)
 	{
 	  if (id->equal(argArray[i].term))
 	    {
@@ -361,7 +361,7 @@ ACU_Term::normalize(bool full, bool& changed)
 		  //
 		  argArray[i].term->deepSelfDestruct();
 		  --d;
-		  for (; i < d; i++)
+		  for (; i < d; ++i)
 		    argArray[i] = argArray[i + 1];
 		  break;
 		}
@@ -370,7 +370,7 @@ ACU_Term::normalize(bool full, bool& changed)
     }
   argArray.contractTo(d);
   unsigned int hashValue = symbol()->getHashValue();
-  for (int i = 0; i < d; i++)
+  for (int i = 0; i < d; ++i)
     hashValue = hash(hashValue, argArray[i].term->getHashValue(), argArray[i].multiplicity);
   setHashValue(hashValue);
   return this;
@@ -653,9 +653,9 @@ ACU_Term::compileRhs2(RhsBuilder& rhsBuilder,
   //
   bool argEager = eagerContext && symbol()->getPermuteStrategy() == BinarySymbol::EAGER;
   Vector<int> sources(nrArgs);
-  FOR_EACH_CONST(i, PairVec, order)
+  for (const pair<int, int>& i : order)
     {
-      int j = i->second;
+      int j = i.second;
       sources[j] = argArray[j].term->compileRhs(rhsBuilder,
 						variableInfo,
 						availableTerms,

@@ -1,0 +1,24 @@
+==========================================
+erewrite in DIR-TEST : run .
+result Configuration: <> < me : myClass | none >
+==========================================
+erewrite in DIR-TEST2 : run .
+rewrites: 1
+result Configuration: <> madeDirectory(me, directoryManager) < me : myClass |
+    none >
+==========================================
+erewrite in DIR-TEST2 : run .
+rewrites: 1
+result Configuration: <> < me : myClass | none > directoryError(me,
+    directoryManager, "File exists")
+==========================================
+erewrite in DIR-TEST3 : run .
+rewrites: 1
+result Configuration: <> removedDirectory(me, directoryManager) < me : myClass
+    | none >
+==========================================
+erewrite in DIR-TEST3 : run .
+rewrites: 1
+result Configuration: <> < me : myClass | none > directoryError(me,
+    directoryManager, "No such file or directory")
+Bye.

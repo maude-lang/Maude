@@ -124,8 +124,7 @@ private:
   //	Code for handling assignments in the normal case.
   //
   WordLevel::Result checkAssignmentNormalCase(int i);
-  WordLevel::Result checkAssignmentsNormalCase();
-  bool checkAssignmentsToFixedPointNormalCase();
+  bool checkAssignmentsNormalCase();
   
   bool reallyExpandAssignmentNormalCase(int i);
   WordLevel::Result expandAssignmentNormalCase(int i);

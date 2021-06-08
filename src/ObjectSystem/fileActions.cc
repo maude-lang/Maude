@@ -118,7 +118,6 @@ void
 FileManagerSymbol::removeFile(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   Assert(message->getArgument(0)->symbol() == this, "misdirected message");
-
   if (allowFiles)
     {
       DagNode* pathArg = message->getArgument(2);
@@ -143,10 +142,56 @@ FileManagerSymbol::removeFile(FreeDagNode* message, ObjectSystemRewritingContext
 }
 
 void
+FileManagerSymbol::makeLink(FreeDagNode* message, ObjectSystemRewritingContext& context)
+{
+  Assert(message->getArgument(0)->symbol() == this, "misdirected message");
+  if (allowFiles)
+    {
+      Symbol* linkTypeSymbol = message->getArgument(4)->symbol();
+      bool symbolic = false;
+      if (linkTypeSymbol == symbolicSymbol)
+	symbolic = true;
+      else if (linkTypeSymbol != hardSymbol)
+	{
+	  errorReply("Bad link type.", message, context);
+	  return;
+	}
+
+      DagNode* targetArg = message->getArgument(2);
+      if (targetArg->symbol() == stringSymbol)
+	{
+	  DagNode* linkNameArg = message->getArgument(3);
+	  if (linkNameArg->symbol() == stringSymbol)
+	    {
+	      const Rope& target = safeCast(StringDagNode*, targetArg)->getValue();
+	      char* targetStr = target.makeZeroTerminatedString();
+	      const Rope& linkName = safeCast(StringDagNode*, linkNameArg)->getValue();
+	      char* linkNameStr = linkName.makeZeroTerminatedString();
+
+	      int result = symbolic ? link(targetStr, linkNameStr) :
+		symlink(targetStr, linkNameStr);
+	      if (result == 0)
+		trivialReply(madeLinkMsg, message, context);
+	      else
+		errorReply(strerror(errno), message, context);
+	    }
+	  else
+	    errorReply("Bad link name.", message, context);
+	}
+      else
+	errorReply("Bad target file name.", message, context);
+    }
+  else
+    {
+      IssueAdvisory("operations on file system disabled.");
+      errorReply("File operations disabled.", message, context);
+    }
+}
+
+void
 FileManagerSymbol::openFile(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   Assert(message->getArgument(0)->symbol() == this, "misdirected message");
-
   if (allowFiles)
     {
       DagNode* pathArg = message->getArgument(2);

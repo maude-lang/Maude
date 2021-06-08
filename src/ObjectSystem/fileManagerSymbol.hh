@@ -79,8 +79,9 @@ private:
   //
   //	Actions.
   //
-  void openFile(FreeDagNode* message, ObjectSystemRewritingContext& context);
   void removeFile(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void makeLink(FreeDagNode* message, ObjectSystemRewritingContext& context);
+  void openFile(FreeDagNode* message, ObjectSystemRewritingContext& context);
   void write(FreeDagNode* message, ObjectSystemRewritingContext& context);
   void flush(FreeDagNode* message, ObjectSystemRewritingContext& context);
   void getLine(FreeDagNode* message, ObjectSystemRewritingContext& context);

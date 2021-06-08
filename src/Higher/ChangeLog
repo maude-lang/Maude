@@ -1,3 +1,13 @@
+2021-05-04  Steven Eker  <eker2@eker10>
+
+	* narrowingSequenceSearch.cc
+	(NarrowingSequenceSearch::findNextMatch): use
+	getVariableInfo().getNrVariables() in place of getNrOfVariablesInSubject()
+
+	* narrowingSearchState.hh: deleted getNrOfVariablesInSubject()
+
+===================================Maude136===========================================
+
 2021-02-19  Steven Eker  <eker2@eker10>
 
 	* unificationProblem.hh (class UnificationProblem): delete
@@ -44,6 +54,8 @@
 	* irredundantUnificationProblem.cc
 	(IrredundantUnificationProblem::findNextUnifier): fix off-by-error
 	in call to UnifierFilter
+
+===================================Maude133===========================================
 
 2020-12-11  Steven Eker  <eker2@eker10>
 

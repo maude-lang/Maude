@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ ACU_UnificationSubproblem2::markReachableNodes()
   //	Protect dags in preSolveSubstitution.
   //
   int nrFragile = preSolveSubstitution.nrFragileBindings();
-  for (int i = 0; i < nrFragile; i++)
+  for (int i = 0; i < nrFragile; ++i)
     {
       DagNode* d = preSolveSubstitution.value(i);
       if (d != 0)
@@ -105,13 +105,11 @@ ACU_UnificationSubproblem2::addUnification(DagNode* lhs,
   Assert(topSymbol->hasIdentity() || !marked, "bad mark for non-collapse theory");
 
   int nrSubterms = subterms.size();
-  {
-    //
-    //	We start with all multiplicities as zero and increment or decrement them as we find subterms.
-    //
-    for (int i = 0; i < nrSubterms; ++i)
-      multiplicities[i] = 0;
-  }
+  //
+  //	We start with all multiplicities as zero and increment or decrement them as we find subterms.
+  //
+  for (int& m : multiplicities)
+    m = 0;
   //
   //	We are guaranteed that the lhs has the form f(...) where f is our top symbol.
   //	We first deal with the rhs.
@@ -123,8 +121,8 @@ ACU_UnificationSubproblem2::addUnification(DagNode* lhs,
       //	We just insert the multiplicities into our table.
       //
       ArgVec<ACU_DagNode::Pair> rhsArgs = safeCast(ACU_DagNode*, rhs)->argArray;
-      FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, rhsArgs)
-	setMultiplicity(i->dagNode, - i->multiplicity, solution);
+      for (const ACU_Pair& i : rhsArgs)
+	setMultiplicity(i.dagNode, - i.multiplicity, solution);
     }
   else
     {
@@ -147,8 +145,8 @@ ACU_UnificationSubproblem2::addUnification(DagNode* lhs,
   //
   {
     ArgVec<ACU_DagNode::Pair> lhsArgs = safeCast(ACU_DagNode*, lhs)->argArray;
-    FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, lhsArgs)
-      setMultiplicity(i->dagNode, i->multiplicity, solution);
+    for (const ACU_Pair& i : lhsArgs)
+      setMultiplicity(i.dagNode, i.multiplicity, solution);
   }
   //
   //	Some of the subterms might have cancelled - if they were newly introduced they are not needed.
@@ -158,9 +156,9 @@ ACU_UnificationSubproblem2::addUnification(DagNode* lhs,
   //	Check to see if everything cancelled. If something did not there we need
   //	to record the Diophantine equation corresponding to this unification problem.
   //
-  FOR_EACH_CONST(i, Vector<int>, multiplicities)
+  for (int m : multiplicities)
     {
-      if (*i != 0)
+      if (m != 0)
 	{
 	  unifications.push_back(multiplicities);
 	  return;
@@ -291,17 +289,14 @@ ACU_UnificationSubproblem2::unsolve(int index, UnificationContext& solution)
   //
   //	Start with all multiplicities zero.
   //
-  {
-    int nrSubterms = subterms.size();
-    for (int i = 0; i < nrSubterms; ++i)
-      multiplicities[i] = 0;
-  }
+  for (int& m : multiplicities)
+    m = 0;
   //
   //	Increment multiplicities for subterms of f(...)
   //
   ArgVec<ACU_DagNode::Pair> args = safeCast(ACU_DagNode*, value)->argArray;
-  FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, args)
-    setMultiplicity(i->dagNode, i->multiplicity, solution);
+  for (const ACU_Pair& i : args)
+    setMultiplicity(i.dagNode, i.multiplicity, solution);
   //
   //	Decrement multiplicity for X
   //
@@ -355,6 +350,13 @@ ACU_UnificationSubproblem2::solve(bool findFirst, UnificationContext& solution, 
 	}
       if (topSymbol->hasIdentity())
 	{
+	  //
+	  //	If we have an identity we use a more complex BDD based
+	  //	approach to choosing selection from the Diophantine basis.
+	  //	In the case that the identity axiom is sort preserving we
+	  //	can restrict our attention to maximal vectors to avoid
+	  //	a lot of redundant unifiers.
+	  //
 	  bdd legal = computeLegalSelections();
 	  DebugAdvisory("legal = " << legal <<
 			" node count = " << bdd_nodecount(legal) <<
@@ -528,8 +530,8 @@ ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem(UnificationContext& s
   //	Create the Diophantine system.
   //
   IntSystem system(nrDioVars);
-  FOR_EACH_CONST(i, list<Vector<int> >, unifications)
-    system.insertEqn(*i);
+  for (const Vector<int>& i : unifications)
+    system.insertEqn(i);
   //
   //	Compute an upperbound on the assignment to each Diophantine variable.
   //
@@ -736,17 +738,17 @@ ACU_UnificationSubproblem2::computeLegalSelections()
 	  bounds.resize(upperBound + 1);
 	  for (int j = 0; j <= upperBound; ++j)
 	    bounds[j] = bddtrue;
-	  FOR_EACH_CONST(k, Basis, basis)
+	  for (const Entry& k : basis)
 	    {
-	      int value = k->element[i];
+	      int value = k.element[i];
 	      if (value != 0)
 		{
 		  for (int j = upperBound; j >= 0; --j)
 		    {
 		      if (j - value >= 0)
-			bounds[j] = bdd_ite(bdd_ithvar(k->index), bounds[j - value], bounds[j]);
+			bounds[j] = bdd_ite(bdd_ithvar(k.index), bounds[j - value], bounds[j]);
 		      else
-			bounds[j] = bdd_ite(bdd_ithvar(k->index), bddfalse, bounds[j]);
+			bounds[j] = bdd_ite(bdd_ithvar(k.index), bddfalse, bounds[j]);
 		    }
 		}
 	    }
@@ -763,10 +765,10 @@ ACU_UnificationSubproblem2::computeLegalSelections()
 	  //	assigns at least one thing to the subterm.
 	  //
 	  bdd disjunction = bddfalse;
-	  FOR_EACH_CONST(k, Basis, basis)
+	  for (const Entry& k : basis)
 	    {
-	      if (k->element[i] != 0)
-		disjunction = bdd_or(disjunction, bdd_ithvar(k->index));
+	      if (k.element[i] != 0)
+		disjunction = bdd_or(disjunction, bdd_ithvar(k.index));
 	    }
 	  DebugAdvisory("need to cover " << i <<
 			" disjunction = " << disjunction <<
@@ -777,7 +779,6 @@ ACU_UnificationSubproblem2::computeLegalSelections()
     }
   return conjunction;
 }
-
 
 int
 ACU_UnificationSubproblem2::reuseVariable(int selectionIndex)

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@
 //	our stuff
 #include "wordLevel-normalCase.cc"
 #include "wordLevel-collapseCase.cc"
-//#include "wordLevel-checkAssignments.cc"
 #include "wordLevel-null.cc"
 #include "wordLevel-simplifyAssignments.cc"
 #include "wordLevel-simplifyEquations.cc"
@@ -82,7 +81,7 @@ WordLevel::findNextPartialSolution()
   if (chosenEquation == NOT_YET_CHOSEN)
     {
       //
-      //	Must be first call.
+      //	Must be first call for the level.
       //
       if (!simplify())
 	{
@@ -141,7 +140,7 @@ WordLevel::findNextPartialSolution()
     {
       //
       //	We didn't make a PigPug; therefore we can't have any
-      //	unsolved equations and we must have return the only solution
+      //	unsolved equations and we must have returned the only solution
       //	already. However if we are the INITIAL level we need to try
       //	selecting variables to take empty.
       //
@@ -213,6 +212,8 @@ WordLevel::makeNewLevel(const Subst& unifier,
   //	We have a PigPug solution - need to copy old stuff and new solution
   //	into a new WordLevel object.
   //
+  //	First we count how many unsolved equations are left.
+  //
   int equationCount = 0;
   for (const Equation& i : unsolvedEquations)
     {
@@ -224,7 +225,7 @@ WordLevel::makeNewLevel(const Subst& unifier,
 				      equationCount - 1,
 				      identityOptimizations);
   //
-  //	Copy in old information and unifier.
+  //	Copy in partial substitution and unifier.
   //
   newLevel->constraintMap = newConstraintMap;  // deep copy
   int nrVariables = partialSolution.size();
@@ -232,11 +233,14 @@ WordLevel::makeNewLevel(const Subst& unifier,
     {
       DebugInfo("x" << i << " = " << unifier[i] << " newConstraint = " << newConstraintMap[i]);
       const Word& u = unifier[i];
-      if (u.size() != 1 || u[0] != i)
-	newLevel->addAssignment(i, u);
-      else
+      if (u.size() == 1 && u[0] == i)  // didn't get an assignment in unifier
 	newLevel->addAssignment(i, partialSolution[i]);
+      else  // did get an assignment in unifier
+	newLevel->addAssignment(i, u);
     }
+  //
+  //	Copy in the equations we haven't solved yet.
+  //
   int equationIndex = 0;
   int nrEquations = unsolvedEquations.size();
   for (int i = 0; i < nrEquations; ++i)
@@ -258,7 +262,7 @@ int
 WordLevel::chooseEquation()
 {
   //
-  //	Chosen an unsolved equation and set chosenEquation to it true.
+  //	Chosen an unsolved equation and set chosenEquation to it.
   //	If there are no unsolved equations set chosenEquation to NONE.
   //	Returns NONLINEAR, STRICT_LEFT_LINEAR, or LINEAR depending on the
   //	chosen equation.
@@ -338,7 +342,8 @@ WordLevel::makePigPug(int linearity)
   int nrVariables = partialSolution.size();
   //
   //	The PigPug equate optimization produces an incomplete set
-  //	of A-unifiers that is complete with respect to AU-subsumption.
+  //	of A-unifiers that is complete with respect to AU-subsumption
+  //	(rather than A-subsumption which corresponds to normal completeness).
   //	That case in which I know it doesn't affect overall AU-completeness
   //	is very restrictive.
   //

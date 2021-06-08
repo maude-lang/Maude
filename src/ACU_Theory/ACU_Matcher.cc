@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -65,10 +65,10 @@ okay:
 local_inline bool
 ACU_LhsAutomaton::eliminateGroundAliens(ACU_DagNode* subject)
 {
-  FOR_EACH_CONST(i, Vector<GroundAlien>, groundAliens)
+  for (const GroundAlien& i : groundAliens)
     {
-      int pos = subject->binarySearch(i->term);
-      if (pos < 0 || (currentMultiplicity[pos] -= i->multiplicity) < 0)
+      int pos = subject->binarySearch(i.term);
+      if (pos < 0 || (currentMultiplicity[pos] -= i.multiplicity) < 0)
 	return false;
     }
   return true;
@@ -108,13 +108,13 @@ ACU_LhsAutomaton::eliminateGroundedOutAliens(ACU_DagNode* subject,
 {
   ArgVec<ACU_DagNode::Pair>& args = subject->argArray;
   int nrArgs = args.length();
-  FOR_EACH_CONST(i, Vector<NonGroundAlien>, groundedOutAliens)
+  for (const NonGroundAlien& i : groundedOutAliens)
     {
-      Term* t = i->term;
+      Term* t = i.term;
       int j = (t == 0) ? 0 : subject->findFirstPotentialMatch(t, solution);
       if (j < nrArgs)
 	{
-	  LhsAutomaton* a = i->automaton;
+	  LhsAutomaton* a = i.automaton;
 	  DagNode* d = args[j].dagNode;
 	  do
 	    {
@@ -122,7 +122,7 @@ ACU_LhsAutomaton::eliminateGroundedOutAliens(ACU_DagNode* subject,
 	      if (a->match(d, solution, sp))
 		{
 		  Assert(sp == 0, "grounded out alien gave rise to subproblem!");
-		  if ((currentMultiplicity[j] -= i->multiplicity) < 0)
+		  if ((currentMultiplicity[j] -= i.multiplicity) < 0)
 		    return false;
 		  goto nextGroundedOutAlien;
 		}
@@ -298,8 +298,8 @@ local_inline int
 ACU_LhsAutomaton::computeTotalMultiplicity()
 {
   int totalSubjectMultiplicity = 0;
-  FOR_EACH_CONST(i, Vector<int>, currentMultiplicity)
-    totalSubjectMultiplicity += *i;
+  for (int i : currentMultiplicity)
+    totalSubjectMultiplicity += i;
   return totalSubjectMultiplicity;
 }
 
@@ -396,9 +396,9 @@ ACU_LhsAutomaton::match(DagNode* subject,
       //
       subjects.resize(currentMultiplicity.length());
       Vector<Subject>::iterator dest = subjects.begin();
-      FOR_EACH_CONST(i, Vector<int>, currentMultiplicity)
+      for (int i : currentMultiplicity)
 	{
-	  dest->multiplicity = *i;
+	  dest->multiplicity = i;
 	  ++dest;
 	}
       int r = (totalNonGroundAliensMultiplicity != 0) ?
@@ -446,9 +446,9 @@ ACU_LhsAutomaton::fullMatch(ACU_DagNode* subject,
 	  if (lastUnboundVariable == NONE)
 	    {
 	      delete subproblem;
-	      FOR_EACH_CONST(i, Vector<int>, currentMultiplicity)
+	      for (int i : currentMultiplicity)
 		{
-		  if (*i > 0)
+		  if (i > 0)
 		    return false;
 		}
 	      goto succeed;
@@ -545,20 +545,20 @@ ACU_LhsAutomaton::fullMatch(ACU_DagNode* subject,
   subproblem->addSubjects(currentMultiplicity);
   subproblems.add(subproblem);
   {
-    FOR_EACH_CONST(i, Vector<TopVariable>, topVariables)
+    for (const TopVariable& i : topVariables)
       {
-	if ((i->upperBound != 1 || i->takeIdentity) && solution.value(i->index) == 0)
+	if ((i.upperBound != 1 || i.takeIdentity) && solution.value(i.index) == 0)
 	  {
-	    subproblem->addTopVariable(i->index,
-				       i->multiplicity,
-				       i->takeIdentity ? 0 : 1,
-				       i->upperBound,
-				       i->sort);
-	    if (i->abstracted != 0)
+	    subproblem->addTopVariable(i.index,
+				       i.multiplicity,
+				       i.takeIdentity ? 0 : 1,
+				       i.upperBound,
+				       i.sort);
+	    if (i.abstracted != 0)
 	      {
 		subproblems.add
-		  (new VariableAbstractionSubproblem(i->abstracted,
-						     i->index,
+		  (new VariableAbstractionSubproblem(i.abstracted,
+						     i.index,
 						     solution.nrFragileBindings()));
 	      }
 	  }
@@ -575,8 +575,6 @@ ACU_LhsAutomaton::fullMatch(ACU_DagNode* subject,
   returnedSubproblem = subproblems.extractSubproblem();
   return true;
 }
-
-//#include "tty.hh"
 
 ACU_Subproblem*
 ACU_LhsAutomaton::buildBipartiteGraph(ACU_DagNode* subject,
@@ -687,22 +685,22 @@ ACU_LhsAutomaton::handleElementVariables(ACU_DagNode* subject,
   //
   //	Treat unbound variables that take exactly 1 subject like non-ground aliens.
   //
-  FOR_EACH_CONST(i, Vector<TopVariable>, topVariables)
+  for (const TopVariable& i : topVariables)
     {
-      if (i->upperBound == 1 && !(i->takeIdentity) && solution.value(i->index) == 0)
+      if (i.upperBound == 1 && !(i.takeIdentity) && solution.value(i.index) == 0)
 	{
 	  bool matchable = false;
-	  int m = i->multiplicity;
+	  int m = i.multiplicity;
 	  int pn = subproblem->addPatternNode(m); 
 	  for (int j = 0; j < nrArgs; j++)
 	    {
 	      if (currentMultiplicity[j] >= m)
 		{
 		  DagNode* d = args[j].dagNode;
-		  if(d->leq(i->sort))
+		  if(d->leq(i.sort))
 		    {
 		      LocalBinding* b = new LocalBinding(1);
-		      b->addBinding(i->index, d);
+		      b->addBinding(i.index, d);
 		      subproblem->addEdge(pn, j, b, 0);
 		      matchable = true;
 		    }

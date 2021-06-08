@@ -36,6 +36,8 @@
   MACRO(startSymbol, Symbol, 0)
   MACRO(currentSymbol, Symbol, 0)
   MACRO(endSymbol, Symbol, 0)
+  MACRO(hardSymbol, Symbol, 0)
+  MACRO(symbolicSymbol, Symbol, 0)
 
   MACRO(openFileMsg, FreeSymbol, 4)
   MACRO(openedFileMsg, Symbol, 3)
@@ -58,5 +60,8 @@
   MACRO(positionGotMsg, Symbol, 3)
 
   MACRO(closeFileMsg, FreeSymbol, 2)
-  MACRO(closedFileMsg, Symbol, 3)
+  MACRO(closedFileMsg, Symbol, 2)
+
+  MACRO(makeLinkMsg, FreeSymbol, 2)
+  MACRO(madeLinkMsg, Symbol, 2)
   MACRO(fileErrorMsg, Symbol, 3)

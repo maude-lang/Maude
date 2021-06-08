@@ -91,7 +91,7 @@ PigPug::firstMove()
     }
   //
   //	Try all three moves until we get success.
-  //	It is critcal that equate comes last; i.e. that it has no successor moves.
+  //	It is critical that equate comes last; i.e. that it has no successor moves.
   //	This is because cancellation generates the equivalent of equate moves and
   //	we do not want these to have successors.
   //

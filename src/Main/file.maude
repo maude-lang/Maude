@@ -21,8 +21,8 @@
 )
 
 ***
-***	Maude file and standard stream external objects.
-***	Version alpha133.
+***	Maude file, standard stream and directory external objects.
+***	Version alpha136.
 ***
 
 mod COMMON-MESSAGES is
@@ -38,8 +38,9 @@ mod FILE is
   including COMMON-MESSAGES .
   protecting INT .
 
-  sort Base .
+  sorts Base LinkType .
   ops start current end : -> Base [ctor] .
+  ops hard symbolic : -> LinkType [ctor] .
 
   op file : Nat -> Oid [ctor] .
 
@@ -64,6 +65,9 @@ mod FILE is
   op closeFile : Oid Oid -> Msg [ctor msg format (b o)] .
   op closedFile : Oid Oid -> Msg [ctor msg format (m o)] .
 
+  op makeLink : Oid Oid String String LinkType -> Msg [ctor msg format (b o)] .
+  op madeLink : Oid Oid  -> Msg [ctor msg format (m o)] .
+
   op fileError : Oid Oid String -> Msg [ctor msg format (m o)] .
 
   op fileManager : -> Oid
@@ -78,6 +82,8 @@ mod FILE is
 	 op-hook startSymbol			(start : ~> Base)
 	 op-hook currentSymbol			(current : ~> Base)
 	 op-hook endSymbol			(end : ~> Base)
+	 op-hook hardSymbol			(hard : ~> LinkType)
+	 op-hook symbolicSymbol			(symbolic : ~> LinkType)
 
 	 op-hook openFileMsg			(openFile : Oid Oid String String ~> Msg)
 	 op-hook openedFileMsg			(openedFile : Oid Oid Oid ~> Msg)
@@ -101,6 +107,9 @@ mod FILE is
 
 	 op-hook closeFileMsg			(closeFile : Oid Oid ~> Msg)
 	 op-hook closedFileMsg			(closedFile : Oid Oid ~> Msg)
+	 
+	 op-hook makeLinkMsg			(makeLink : Oid Oid String String LinkType ~> Msg)
+	 op-hook madeLinkMsg			(madeLink : Oid Oid ~> Msg)
 	 op-hook fileErrorMsg			(fileError : Oid Oid String ~> Msg))] .
 endm
 
@@ -137,4 +146,61 @@ mod STD-STREAM is
 	 op-hook writeMsg			(write : Oid Oid String ~> Msg)
 	 op-hook wroteMsg			(wrote : Oid Oid ~> Msg)
 	 op-hook streamErrorMsg			(streamError : Oid Oid String ~> Msg))] .
+endm
+
+mod DIRECTORY is
+  including  CONFIGURATION .
+  protecting NAT .
+  protecting STRING .
+
+  sort EntryType EntryType? .
+  subsort EntryType < EntryType? .
+  op directory : Nat -> Oid [ctor] .
+  ops file directory socket pipe charDevice blockDevice : -> EntryType [ctor] .
+  op symbolicLink : String -> EntryType [ctor] .
+  op endOfDirectory : -> EntryType? [ctor] .
+
+  op openDirectory : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op openedDirectory : Oid Oid Oid -> Msg [ctor msg format (m o)] .
+  op closeDirectory : Oid Oid -> Msg [ctor msg format (b o)] .
+  op closedDirectory : Oid Oid -> Msg [ctor msg format (m o)] .
+  op getDirectoryEntry : Oid Oid -> Msg [ctor msg format (b o)] .
+  op gotDirectoryEntry : Oid Oid String EntryType? -> Msg [ctor msg format (m o)] .
+
+  op makeDirectory : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op madeDirectory : Oid Oid -> Msg [ctor msg format (m o)] .
+  op removeDirectory : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op removedDirectory : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op directoryError : Oid Oid String -> Msg [ctor msg format (m o)] .
+
+  op directoryManager : -> Oid
+       [special (
+         id-hook DirectoryManagerSymbol
+
+	 op-hook succSymbol			(s_ : Nat ~> NzNat)
+	 op-hook stringSymbol			(<Strings> : ~> String)
+	 op-hook directoryOidSymbol		(directory : Nat ~> Oid)
+
+	 op-hook fileEntrySymbol		(file : ~> EntryType)
+	 op-hook directoryEntrySymbol		(directory : ~> EntryType)
+	 op-hook socketEntrySymbol		(socket : ~> EntryType)
+	 op-hook pipeEntrySymbol		(pipe : ~> EntryType)
+	 op-hook charDeviceEntrySymbol		(charDevice : ~> EntryType)
+	 op-hook blockDeviceEntrySymbol		(blockDevice : ~> EntryType)
+	 op-hook symbolicLinkEntrySymbol	(symbolicLink : String ~> EntryType)
+	 op-hook endOfDirectorySymbol		(endOfDirectory : ~> EntryType?)
+
+	 op-hook openDirectoryMsg		(openDirectory : Oid Oid String ~> Msg)
+	 op-hook openedDirectoryMsg		(openedDirectory : Oid Oid Oid ~> Msg)
+	 op-hook closeDirectoryMsg		(closeDirectory : Oid Oid ~> Msg)
+	 op-hook closedDirectoryMsg		(closedDirectory : Oid Oid ~> Msg)
+	 op-hook getDirectoryEntryMsg		(getDirectoryEntry : Oid Oid ~> Msg)
+	 op-hook gotDirectoryEntryMsg		(gotDirectoryEntry : Oid Oid String EntryType? ~> Msg)
+
+	 op-hook makeDirectoryMsg		(makeDirectory : Oid Oid String ~> Msg)
+	 op-hook madeDirectoryMsg		(madeDirectory : Oid Oid ~> Msg)
+	 op-hook removeDirectoryMsg		(removeDirectory : Oid Oid String ~> Msg)
+	 op-hook removedDirectoryMsg		(removedDirectory : Oid Oid ~> Msg)
+	 op-hook directoryErrorMsg		(directoryError : Oid Oid String ~> Msg))] .
 endm

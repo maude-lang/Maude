@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -59,7 +59,6 @@ ACU_Subproblem::ACU_Subproblem(ACU_DagNode* subject,
   : subject(subject),
     extensionInfo(extensionInfo)
 {
-  //cout << "ACU_Subproblem " << ((void*) this) << " created" << endl;
   system = 0;
 }
 
@@ -71,13 +70,12 @@ ACU_Subproblem::addSubjects(Vector<int>& multiplicity)
 
 ACU_Subproblem::~ACU_Subproblem()
 {
-  //cout << "ACU_Subproblem " << ((void*) this) << " destroyed" << endl;
-  FOR_EACH_CONST(i, Vector<PatternNode>, patternNodes)
+  for (const PatternNode& i : patternNodes)
     {
-      FOR_EACH_CONST(j, Vector<Edge>, i->edges)
+      for (const Edge& j : i.edges)
 	{
-	  delete j->difference;
-	  delete j->subproblem;
+	  delete j.difference;
+	  delete j.subproblem;
 	}
     }
   delete system;
@@ -238,7 +236,7 @@ ACU_Subproblem::solveVariables(bool findFirst, RewritingContext& solution)
       bool buildReducedNodes = subject->isReduced();
       while (system->solve())
 	{
-	  for (int i = 0; i < nrVars; i++)
+	  for (int i = 0; i < nrVars; ++i)
 	    {
 	      TopVariable& tv = topVariables[variableMap[i]];
 	      DagNode *d = computeAssignment(i);
@@ -269,8 +267,8 @@ ACU_Subproblem::solveVariables(bool findFirst, RewritingContext& solution)
   //	also reuse variableMap?); Subjects (even number of subjects) will
   //	certainly change for each system.
   //
-  FOR_EACH_CONST(i, Vector<int>, variableMap)
-    solution.bind(topVariables[*i].index, 0);
+  for (int i : variableMap)
+    solution.bind(topVariables[i].index, 0);
   return false;
 }
 
@@ -280,7 +278,7 @@ ACU_Subproblem::noVariableCase(const Vector<int>& multVec)
   int nrSubjects = multVec.length();
   if (extensionInfo == 0)
     {
-      for (int i = 0; i < nrSubjects; i++)
+      for (int i = 0; i < nrSubjects; ++i)
 	{
 	  if (multVec[i] > 0)
 	    return false;
@@ -292,7 +290,7 @@ ACU_Subproblem::noVariableCase(const Vector<int>& multVec)
   //
   extensionInfo->clear();
   int total = 0;
-  for (int i = 0; i < nrSubjects; i++)
+  for (int i = 0; i < nrSubjects; ++i)
     {
       int t = multVec[i];
       if (t > 0)
@@ -319,7 +317,7 @@ ACU_Subproblem::oneVariableCase(const Vector<int>& multVec, RewritingContext& so
   int nrSubjects = multVec.length();
   int nrSubterms = 0;
   int last = NONE;
-  for (int i = 0; i < nrSubjects; i++)
+  for (int i = 0; i < nrSubjects; ++i)
     {
       if (multVec[i] > 0)
 	{
@@ -347,7 +345,7 @@ ACU_Subproblem::oneVariableCase(const Vector<int>& multVec, RewritingContext& so
       ACU_DagNode* a = new ACU_DagNode(subject->symbol(), nrSubterms, ACU_DagNode::ASSIGNMENT);
       ArgVec<ACU_DagNode::Pair>::const_iterator source = subject->argArray.begin();
       ArgVec<ACU_DagNode::Pair>::iterator dest = a->argArray.begin();
-      for (int i = 0; i <= last; i++, ++source)
+      for (int i = 0; i <= last; ++i, ++source)
 	{
 	  int m = multVec[i];
 	  if (m > 0)
@@ -404,7 +402,7 @@ ACU_Subproblem::extractDiophantineSystem(RewritingContext& solution)
   //	Find unbound variables (= rows in Diophantine system)
   //
   int nrNonIdentityVariables = 0;
-  for (int i = 0; i < nrTopVariables; i++)
+  for (int i = 0; i < nrTopVariables; ++i)
     {
       TopVariable& tv = topVariables[i];
       DagNode* d = solution.value(tv.index);
@@ -444,7 +442,7 @@ ACU_Subproblem::extractDiophantineSystem(RewritingContext& solution)
   //	Find unused subjects (= columns in Diophantine system)
   //
   subjectMap.clear();
-  for (int i = 0; i < nrSubjects; i++)
+  for (int i = 0; i < nrSubjects; ++i)
     {
       int t = afterMultiplicity[i];
       if (t > 0)
@@ -475,7 +473,7 @@ ACU_Subproblem::extractDiophantineSystem(RewritingContext& solution)
       if (nrVars > 0)
 	{
 	  DagNode* identityDag = subject->symbol()->getIdentityDag();
-	  for (int i = 0; i < nrVars; i++)
+	  for (int i = 0; i < nrVars; ++i)
 	    solution.bind(topVariables[variableMap[i]].index, identityDag);
 	}
       return true;
@@ -495,7 +493,7 @@ ACU_Subproblem::computeAssignment(int row)
   int nrSubterms = 0;
   int totalMultiplicity = 0;
   int col = UNDEFINED;
-  for (int i = 0; i < nrColumns; i++)
+  for (int i = 0; i < nrColumns; ++i)
     {
       int t = system->solution(row, i);
       if (t > 0)
@@ -516,7 +514,7 @@ ACU_Subproblem::computeAssignment(int row)
   //	Because subject is in normal form and subjectMap is monotonic, we will
   //	construct new ACU_DagNode in normal form.
   //
-  for (int i = 0; i <= col; i++)
+  for (int i = 0; i <= col; ++i)
     {
       int t = system->solution(row, i);
       if (t > 0)
@@ -536,7 +534,7 @@ ACU_Subproblem::fillOutExtensionInfo()
   int nrColumns = system->columnCount();
   int extensionRow = system->rowCount() - 1;
   bool partial = false;
-  for (int i = 0; i < nrColumns; i++)
+  for (int i = 0; i < nrColumns; ++i)
     {
       int t = system->solution(extensionRow, i);
       if (t > 0)

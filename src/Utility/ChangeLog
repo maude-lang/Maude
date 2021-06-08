@@ -1,3 +1,80 @@
+2021-06-08  Steven Eker  <eker2@eker10>
+
+	* wordLevel-normalCase.cc
+	(WordLevel::expandAssignmentsToFixedPointNormalCase): added
+	comment explained why expanding to fixed point is needed
+
+2021-06-01  Steven Eker  <eker2@eker10>
+
+	* pigPug.hh (class PigPug): changed depthBoundMultiplier from int
+	to double
+	(PigPug::setDepthBoundMultiplier): take double
+
+2021-05-26  Steven Eker  <eker2@eker10>
+
+	* pigPug.hh (class PigPug): deleted decl for tightenConstraints()
+
+	* pigPug-extract.cc (PigPug::extractUnifier): don't call
+	tightenConstraints() since duplicates work that will be done by
+	WordLevel::checkAssignmentNormalCase() in the next WordLevel for
+	variables that are not eliminated
+	(PigPug::tightenConstraints): deleted
+
+2021-05-25  Steven Eker  <eker2@eker10>
+
+	* wordLevel.hh (class WordLevel): deleted decl for
+	checkAssignmentsToFixedPointNormalCase(); updated decl for
+	checkAssignmentsNormalCase()
+
+	* wordLevel-normalCase.cc (WordLevel::checkAssignmentsNormalCase):
+	return true or false because we're no longer iterating to fixed
+	point
+	(WordLevel::checkAssignmentsToFixedPointNormalCase): deleted
+	(WordLevel::expandAssignmentsToFixedPointNormalCase): use
+	checkAssignmentsNormalCase() rather than
+	checkAssignmentsToFixedPointNormalCase()
+
+2021-05-21  Steven Eker  <eker2@eker10>
+
+	* wordLevel-normalCase.cc
+	(WordLevel::expandAssignmentsToFixedPointNormalCase): call
+	checkAssignmentsToFixedPointNormalCase() after expansion rather
+	than before expansion to make sure any rhs variables assigned
+	empty have been removed before we check assignments against
+	constraints
+	(WordLevel::reallyExpandAssignmentNormalCase): don't call
+	checkAssignmentNormalCase() or
+	checkAssignmentsToFixedPointNormalCase() - we wait until partial
+	solution is fully exanded before we consider constraint
+	propagation
+
+2021-05-19  Steven Eker  <eker2@eker10>
+
+	* wordLevel-normalCase.cc (WordLevel::expandAssignmentNormalCase):
+	fix bug where we were calling reallyExpandAssignmentCollapseCase()
+	rather than reallyExpandAssignmentNormalCase()
+	(WordLevel::checkAssignmentNormalCase): add comment to explain why
+	we need to handle empty assignment
+
+2021-05-18  Steven Eker  <eker2@eker10>
+
+	* pigPug.hh (class PigPug): added DEFAULT_DEPTH_BOUND_MULTIPLIER =
+	1 to enum SpecialValues
+	(PigPug::setDepthBoundMultiplier): added
+
+	* pigPug.cc: added def for depthBoundMultiplier
+	(PigPug::PigPug): use depthBoundMultiplier
+
+	* pigPug.hh (class PigPug): added static data member
+	depthBoundMultiplier
+
+2021-05-13  Steven Eker  <eker2@eker10>
+
+	* wordLevel.cc (WordLevel::makeNewLevel): restructured if
+	statement
+
+===================================Maude136===================================
+
 2021-03-16  Steven Eker  <eker2@eker10>
 
 	* rope.cc: use use range-based for loop

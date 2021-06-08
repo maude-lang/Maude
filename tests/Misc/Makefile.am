@@ -1,4 +1,5 @@
 TESTS = \
+	directoryTest \
 	fileTest \
 	timeTest \
 	view \
@@ -35,6 +36,7 @@ TESTS = \
 	rot13
 
 MAUDE_FILES = \
+	directoryTest.maude \
 	fileTest.maude \
 	timeTest.maude \
 	view.maude \
@@ -71,6 +73,7 @@ MAUDE_FILES = \
 	rot13.maude
 
 RESULT_FILES = \
+	directoryTest.expected \
 	fileTest.expected \
 	timeTest.expected \
 	view.expected \

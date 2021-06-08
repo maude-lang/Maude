@@ -33,6 +33,11 @@ T to give upperbounds of 2, 1, 1 on A, B, C is then tightened
 to 1, 1, 1 in the post hoc PigPug::tightenConstraints() pass.
 A corner case that shows that constraint tightening is possible
 and might be useful in a system of equations.
+
+5/26/21
+We now rely on WordLevel::checkAssignmentNormalCase() in the
+next WordLevel to do the same tightening on variables that
+haven't been eliminated.
 )
 
 fmod ASSOC-LIST is

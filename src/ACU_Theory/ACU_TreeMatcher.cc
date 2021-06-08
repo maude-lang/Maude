@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ ACU_LhsAutomaton::eliminateBoundVariables(Substitution& solution)
 {
   nrUnboundVariables = 0;
   Term* identity = topSymbol->getIdentity();
-  FOR_EACH_CONST(i, Vector<TopVariable>, topVariables)
+  for (const TopVariable& i : topVariables)
     {
-      DagNode* d = solution.value(i->index);
+      DagNode* d = solution.value(i.index);
       if (d != 0)
 	{
 	  if (d->symbol() == topSymbol)
@@ -41,7 +41,7 @@ ACU_LhsAutomaton::eliminateBoundVariables(Substitution& solution)
 	      ACU_SlowIter j;
 	      if (current.getSize() == 0 || !(current.find(d, j)))
 		return false;
-	      int multiplicity = i->multiplicity;
+	      int multiplicity = i.multiplicity;
 	      if (j.getMultiplicity() < multiplicity)
 		return false;
 	      current.deleteMult(j, multiplicity);
@@ -57,12 +57,12 @@ ACU_LhsAutomaton::eliminateBoundVariables(Substitution& solution)
 local_inline bool
 ACU_LhsAutomaton::eliminateGroundAliens()
 {
-  FOR_EACH_CONST(i, Vector<GroundAlien>, groundAliens)
+  for (const GroundAlien& i : groundAliens)
     {
       ACU_SlowIter j;
-      if (current.getSize() == 0 || !(current.find(i->term, j)))
+      if (current.getSize() == 0 || !(current.find(i.term, j)))
 	return false;
-      int multiplicity = i->multiplicity;
+      int multiplicity = i.multiplicity;
       if (j.getMultiplicity() < multiplicity)
 	return false;
       current.deleteMult(j, multiplicity);
@@ -74,15 +74,15 @@ ACU_LhsAutomaton::eliminateGroundAliens()
 local_inline bool
 ACU_LhsAutomaton::eliminateGroundedOutAliens(Substitution& solution)
 {
-  FOR_EACH_CONST(i, Vector<NonGroundAlien>, groundedOutAliens)
+  for (const NonGroundAlien& i : groundedOutAliens)
     {
-      Term* t = i->term;
+      Term* t = i.term;
       Assert(t != 0, "shouldn't be running on unstable terms");
       ACU_SlowIter j;
       if (current.getSize() != 0 &&
 	  current.findFirstPotentialMatch(t, solution, j))
 	{
-	  LhsAutomaton* a = i->automaton;
+	  LhsAutomaton* a = i.automaton;
 	  DagNode* d = j.getDagNode();
 	  for (;;)
 	    {
@@ -90,7 +90,7 @@ ACU_LhsAutomaton::eliminateGroundedOutAliens(Substitution& solution)
 	      if (a->match(d, solution, sp))
 		{
 		  Assert(sp == 0, "grounded out alien gave rise to subproblem!");
-		  int multiplicity = i->multiplicity;
+		  int multiplicity = i.multiplicity;
 		  if (j.getMultiplicity() < multiplicity)
 		    return false;
 		  current.deleteMult(j, multiplicity);
@@ -306,8 +306,8 @@ ACU_LhsAutomaton::makeHighMultiplicityAssignment(int multiplicity,
 
   ACU_DagNode* d2 = new ACU_DagNode(topSymbol, nrMatched, ACU_DagNode::ASSIGNMENT);
   ArgVec<ACU_DagNode::Pair>::iterator dest = d2->argArray.begin();
-  FOR_EACH_CONST(i, Vector<ACU_DagNode::Pair>, matched)
-    *dest++ = *i;
+  for (const ACU_Pair& i : matched)
+    *dest++ = i;
   return d2;
 }
 
@@ -456,16 +456,16 @@ ACU_LhsAutomaton::greedyPureMatch(ACU_TreeDagNode* subject,
   //	in the red-black case, we don't bother trying to
   //	detect true failure: false always means UNDECIDED.
   //
-  FOR_EACH_CONST(i, Vector<TopVariable>, topVariables)
+  for (const TopVariable& i : topVariables)
     {
-      if (solution.value(i->index) == 0)
+      if (solution.value(i.index) == 0)
 	{
 	  --nrUnboundVariables;
 	  if (current.getSize() == 0)
 	    {
-	      if (!(i->takeIdentity))
+	      if (!(i.takeIdentity))
 		return false;
-	      solution.bind(i->index, topSymbol->getIdentityDag());
+	      solution.bind(i.index, topSymbol->getIdentityDag());
 	      if (nrUnboundVariables == 0)
 		break;
 	    }
@@ -473,13 +473,13 @@ ACU_LhsAutomaton::greedyPureMatch(ACU_TreeDagNode* subject,
 	    {
 	      if (nrUnboundVariables == 0)
 		{
-		  if (!tryToBindLastVariable(subject, *i, solution))
+		  if (!tryToBindLastVariable(subject, i, solution))
 		    return false;
 		  break;
 		}
 	      else
 		{
-		  if (!tryToBindVariable(*i, solution))
+		  if (!tryToBindVariable(i, solution))
 		    return false;
 		}
 	    }
@@ -541,10 +541,10 @@ ACU_LhsAutomaton::treeMatch(ACU_TreeDagNode* subject,
       //
       //	Forced lone variable case.
       //
-      FOR_EACH_CONST(i, Vector<TopVariable>, topVariables)
+      for (const TopVariable& i : topVariables)
 	{
-	  if (solution.value(i->index) == 0)
-	    return forcedLoneVariableCase(subject, *i, solution, returnedSubproblem);
+	  if (solution.value(i.index) == 0)
+	    return forcedLoneVariableCase(subject, i, solution, returnedSubproblem);
 	}
       CantHappen("didn't find unbound variable");
     }
@@ -595,19 +595,19 @@ ACU_LhsAutomaton::treeMatch(ACU_TreeDagNode* subject,
 	     "wrong number of nonGroundAliens" << nonGroundAliens.length());
       Assert(extensionInfo == 0, "should not have extension");
 
-      FOR_EACH_CONST(i, Vector<TopVariable>, topVariables)
+      for (const TopVariable& i : topVariables)
 	{
-	  if (solution.value(i->index) == 0)
+	  if (solution.value(i.index) == 0)
 	    {
-	      Assert(i->multiplicity == 1, "collector multiplicity = " << i->multiplicity);
+	      Assert(i.multiplicity == 1, "collector multiplicity = " << i.multiplicity);
 	      returnedSubproblem =
 		new ACU_LazySubproblem(subject,
 				       current,
 				       solution,
 				       nonGroundAliens[0].automaton,
 				       nonGroundAliens[0].term,
-				       i->index,
-				       i->sort);
+				       i.index,
+				       i.sort);
 	      return true;
 	    }
 	}

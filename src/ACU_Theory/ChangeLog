@@ -1,3 +1,129 @@
+2021-06-02  Steven Eker  <eker2@eker10>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::solve): added comment to explain why
+	we need a separate branch for the identity case
+
+2021-05-11  Steven Eker  <eker2@eker10>
+
+	* ACU_Subproblem.cc (ACU_Subproblem::ACU_Subproblem): deleted
+	commented out print statement
+	(ACU_Symbol::~ACU_Subproblem): deleted commented out print
+	statement
+
+	* ACU_Symbol.cc (ACU_Symbol::normalize): undid previous
+	range-based for loop because iterators aren't safe here due to
+	garbage collector
+	(ACU_Symbol::copyReduceSubtermsAndNormalize): ditto
+	(ACU_Symbol::reduceArgumentsAndNormalize): ditto
+	(ACU_Symbol::eqRewrite): ditto
+	(ACU_Symbol::memoStrategy): ditto
+
+2021-04-14  Steven Eker  <eker2@eker10>
+
+	* ACU_TreeMatcher.cc (ACU_LhsAutomaton::eliminateBoundVariables):
+	use range-based for loop
+	(ACU_LhsAutomaton::eliminateGroundAliens): use range-based for
+	loop
+	(ACU_LhsAutomaton::eliminateGroundedOutAliens): use range-based
+	for loop
+	(ACU_LhsAutomaton::makeHighMultiplicityAssignment): use
+	range-based for loop
+	(ACU_LhsAutomaton::greedyPureMatch): use range-based for loop
+	(ACU_LhsAutomaton::treeMatch): use range-based for loop (2 places)
+
+	* ACU_Term.cc (ACU_Term::compileRhs2): use range-based for loop
+	(ACU_Term::ACU_Term): pre-increment (three versions)
+	(ACU_Term::deepSelfDestruct): use range-based for loop
+	(ACU_Term::normalizeAliensAndFlatten): pre-increment; pre-decrement
+	(ACU_Term::normalize): pre-increment; pre-decrement
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::addUnification): use range-based for
+	loop (3 places)
+	(ACU_UnificationSubproblem2::unsolve): use range-based for loop
+	(ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem): use
+	range-based for loop
+	(ACU_UnificationSubproblem2::markReachableNodes): pre-increment
+	(ACU_UnificationSubproblem2::addUnification): use range-based for
+	loop to clear multiplicities
+	(ACU_UnificationSubproblem2::unsolve): use range-based for loop to
+	clear multiplicities
+	(ACU_UnificationSubproblem2::computeLegalSelections): use
+	range-based for loop (2 places)
+
+2021-04-13  Steven Eker  <eker2@eker10>
+
+	* ACU_Matcher.cc (ACU_LhsAutomaton::handleElementVariables):
+	insert missing & in range-based for loop
+
+	* ACU_Symbol.cc (ACU_Symbol::stackArguments): use range-based for
+	loop
+	(ACU_Symbol::termify): use range-based for loop
+	(ACU_Symbol::computeGeneralizedSort): use range-based for loop
+	(ACU_Symbol::computeGeneralizedSort2): use range-based for loop
+	(ACU_Symbol::normalize): use range-based for loop
+	(ACU_Symbol::copyReduceSubtermsAndNormalize): use range-based for
+	loop
+	(ACU_Symbol::makeDagNode): pre-increment (both versions)
+	(ACU_Symbol::reduceArgumentsAndNormalize): use range-based for
+	loop
+	(ACU_Symbol::eqRewrite): use range-based for loop
+	(ACU_Symbol::memoStrategy): use range-based for loop
+	(ACU_Symbol::stackArguments): pre-decrement (2 places)
+	(ACU_Symbol::makeCanonical): pre-increment
+	(ACU_Symbol::makeCanonicalCopy): pre-increment
+	(ACU_Symbol::makeDagNode): replace ACU_DagNode::Pair with ACU_Pair
+	(2 places, both versions)
+	(ACU_Symbol::termify): replace ACU_DagNode::Pair with ACU_Pair (2
+	places)
+	(ACU_Symbol::makeCanonicalCopy): replace ACU_DagNode::Pair with
+	ACU_Pair
+
+	* ACU_Subproblem.cc (ACU_Subproblem): use range-based for loop (2
+	places)
+	(ACU_Subproblem::solveVariables): use range-based for loop
+	(ACU_Subproblem::solveVariables): pre-increment
+	(ACU_Subproblem::noVariableCase): pre-increment (4 places)
+	(ACU_Subproblem::extractDiophantineSystem): pre-increment (3
+	places)
+	(ACU_Subproblem::computeAssignment): pre-increment (2 places)
+	(ACU_Subproblem::fillOutExtensionInfo): pre-increment
+
+	* ACU_Matcher.cc (ACU_LhsAutomaton::eliminateGroundAliens): use
+	range-based for loop
+	(ACU_LhsAutomaton::eliminateGroundedOutAliens): use range-based
+	for loop
+	(ACU_LhsAutomaton::computeTotalMultiplicity): use range-based for
+	loop
+	(ACU_LhsAutomaton::match): use range-based for loop
+	(ACU_LhsAutomaton::fullMatch): use range-based for loop (2 places)
+	(ACU_LhsAutomaton::handleElementVariables): use range-based for
+	loop
+
+2021-04-12  Steven Eker  <eker2@eker10>
+
+	* ACU_LazySubproblem.cc (~ACU_LazySubproblem): use range-based for
+	loop
+
+	* ACU_ExtensionInfo.cc (ACU_ExtensionInfo::buildMatchedPortion):
+	use range-based for loop (3 places)
+	(ACU_ExtensionInfo::buildUnmatchedPortion): use range-based for
+	loop; rewrote excessively complicated first loop
+
+	* ACU_DagNode.cc (ACU_DagNode::markArguments): use range-based for
+	loop
+	(ACU_DagNode::getHashValue): use range-based for loop
+	(ACU_DagNode::clearCopyPointers2): use range-based for loop
+	(ACU_DagNode::argVecComputeBaseSort): use range-based for loop
+	(ACU_DagNode::computeBaseSortForGroundSubterms): use range-based
+	for loop
+	(ACU_DagNode::insertVariables2): use range-based for loop
+	(ACU_DagNode::indexVariables2): use range-based for loop
+	(ACU_DagNode::matchVariableWithExtension): post increment
+
+===================================Maude136===========================================
+
 2020-12-11  Steven Eker  <eker2@eker10>
 
 	* ACU_DagNode.cc (ACU_DagNode::instantiate2): take and pass

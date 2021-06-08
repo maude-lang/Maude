@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -59,13 +59,13 @@ ACU_ExtensionInfo::buildMatchedPortion() const
       //	Unmatched stuff is given by a multiplicity vector.
       //
       Vector<int>::const_iterator i = unmatchedMultiplicity.begin();
-      FOR_EACH_CONST(source, ArgVec<ACU_Pair>, s->argArray)
+      for (const ACU_Pair& source : s->argArray)
 	{
-	  int m = source->multiplicity - *i;
+	  int m = source.multiplicity - *i;
 	  Assert(m >= 0, "bad unmatchedMultiplicity");
 	  if (m > 0)
 	    {
-	      dest->set(source->dagNode, m);
+	      dest->set(source.dagNode, m);
 	      ++dest;
 	    }
 	  ++i;
@@ -78,10 +78,10 @@ ACU_ExtensionInfo::buildMatchedPortion() const
       //
       ACU_DagNode* u = getACU_DagNode(d);
       ArgVec<ACU_Pair>::const_iterator i = u->argArray.begin();
-      FOR_EACH_CONST(source, ArgVec<ACU_Pair>, s->argArray)
+      for (const ACU_Pair& source : s->argArray)
 	{
-	  int m = source->multiplicity;
-	  if (i->dagNode == source->dagNode)
+	  int m = source.multiplicity;
+	  if (i->dagNode == source.dagNode)
 	    {
 	      m -= i->multiplicity;
 	      Assert(m >= 0, "bad unmatched");
@@ -89,7 +89,7 @@ ACU_ExtensionInfo::buildMatchedPortion() const
 	      if (m == 0)
 		continue;
 	    }
-	  dest->set(source->dagNode, m);
+	  dest->set(source.dagNode, m);
 	  ++dest;
 	}
     }
@@ -98,16 +98,16 @@ ACU_ExtensionInfo::buildMatchedPortion() const
       //
       //	Unmatched stuff is given an alien dag node.
       //
-      FOR_EACH_CONST(source, ArgVec<ACU_Pair>, s->argArray)
+      for (const ACU_Pair& source : s->argArray)
 	{
-	  int m = source->multiplicity;
-	  if (d == source->dagNode)
+	  int m = source.multiplicity;
+	  if (d == source.dagNode)
 	    {
 	      --m;
 	      if (m == 0)
 		continue;
 	    }
-	  dest->set(source->dagNode, m);
+	  dest->set(source.dagNode, m);
 	  ++dest;
 	}
     }
@@ -124,40 +124,36 @@ ACU_ExtensionInfo::buildUnmatchedPortion() const
   if (DagNode* d = unmatched.getNode())
     return d;
   Assert(!(subject->isTree()), "tree form!");
-  
+
   int size = 0;
-  Vector<int>::const_iterator last;  // gcc gives uninitialized warning
-  {
-    FOR_EACH_CONST(i, Vector<int>, unmatchedMultiplicity)
-      {
-	if (*i > 0)
-	  {
-	    ++size;
-	    last = i;
-	  }
-      }
-  }
+  int lastNonZero;
+  int nrArgs = unmatchedMultiplicity.size();
+  for (int i = 0; i < nrArgs; ++i)
+    {
+      if (unmatchedMultiplicity[i] > 0)
+	{
+	  ++size;
+	  lastNonZero = i;
+	}
+    }
   Assert(size >= 1, "no unmatched portion");
   
   ACU_DagNode* s = safeCast(ACU_DagNode*, subject);
-  if (size == 1 && *last == 1)
-    return s->argArray[last - unmatchedMultiplicity.begin()].dagNode;
+  if (size == 1 && unmatchedMultiplicity[lastNonZero] == 1)
+    return s->argArray[lastNonZero].dagNode;
   
   ACU_DagNode* n = new ACU_DagNode(s->symbol(), size, ACU_DagNode::ASSIGNMENT);
   ArgVec<ACU_Pair>::const_iterator source = s->argArray.begin();
   ArgVec<ACU_Pair>::iterator dest = n->argArray.begin();
-  {
-    FOR_EACH_CONST(i, Vector<int>, unmatchedMultiplicity)
-      {
-	int t = *i;
-	if (t > 0)
-	  {
-	    dest->set(source->dagNode, t);
-	    ++dest;
-	  }
-	++source;
-      }
-  }
+  for (int t : unmatchedMultiplicity)
+    {
+      if (t > 0)
+	{
+	  dest->set(source->dagNode, t);
+	  ++dest;
+	}
+      ++source;
+    }
   return n;
 }
 

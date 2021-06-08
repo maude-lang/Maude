@@ -279,7 +279,7 @@ WordLevel::exploreSelections()
 		//	our selection.
 		//
 		DebugInfo("setting x" << i << " to null");
-		newLevel->addAssignment(i,emptyWord);
+		newLevel->addAssignment(i, emptyWord);
 		continue;
 	      }
 	  }

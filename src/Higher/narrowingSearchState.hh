@@ -63,7 +63,6 @@ public:
   DagNode* getNarrowedDag(DagNode*& replacement) const;
   bool findNextNarrowing();
   const Substitution& getSubstitution() const;
-  int getNrOfVariablesInSubject() const;
   const NarrowingVariableInfo& getVariableInfo() const;
   bool isOdd() const;
   bool isIncomplete() const;
@@ -92,12 +91,6 @@ inline RewritingContext*
 NarrowingSearchState::getContext() const
 {
   return context;
-}
-
-inline int
-NarrowingSearchState::getNrOfVariablesInSubject() const
-{
-  return variableInfo.getNrVariables();
 }
 
 inline const NarrowingVariableInfo&

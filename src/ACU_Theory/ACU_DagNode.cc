@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -86,9 +86,8 @@ size_t
 ACU_DagNode::getHashValue()
 {
   size_t hashValue = symbol()->getHashValue();
-  int nrArgs = argArray.length();
-  for (int i = 0; i < nrArgs; i++)  // user iterators?
-    hashValue = hash(hashValue, argArray[i].dagNode->getHashValue(), argArray[i].multiplicity);
+  for (const Pair& p : argArray)
+    hashValue = hash(hashValue, p.dagNode->getHashValue(), p.multiplicity);
   return hashValue;
 }
 
@@ -163,9 +162,9 @@ ACU_DagNode::markArguments()
   //
   Symbol* s = symbol();
   DagNode* r = 0;
-  FOR_EACH_CONST(i, ArgVec<Pair>, argArray)
+  for (const Pair& p : argArray)
     {
-      DagNode* d = i->dagNode;
+      DagNode* d = p.dagNode;
       if (r == 0 && d->symbol() == s)
 	r = d;
       else
@@ -216,9 +215,8 @@ ACU_DagNode::clearCopyPointers2()
 {
   if (symbol()->getPermuteStrategy() == BinarySymbol::EAGER)
     {
-      int nrArgs = argArray.length();
-      for (int i = 0; i < nrArgs; i++)
-	argArray[i].dagNode->clearCopyPointers();
+      for (const Pair& p : argArray)
+	p.dagNode->clearCopyPointers();
     }
 }
 
@@ -415,7 +413,7 @@ ACU_DagNode::matchVariableWithExtension(int index,
   int totalSubjectMultiplicity = 0;
   int nrArgs = argArray.length();
   Vector<int> currentMultiplicity(nrArgs);
-  for (int i = 0; i < nrArgs; i++)
+  for (int i = 0; i < nrArgs; ++i)
     {
       int m = argArray[i].multiplicity;
       currentMultiplicity[i] = m;
@@ -443,10 +441,9 @@ ACU_DagNode::argVecComputeBaseSort() const
       if (!(uniSort->component()->errorFree()))
 	{
 	  int lastIndex = Sort::SORT_UNKNOWN;
-	  const ArgVec<Pair>::const_iterator e = argArray.end();
-	  for (ArgVec<Pair>::const_iterator i = argArray.begin(); i != e; ++i)
+	  for (const Pair& p : argArray)
 	    {
-	      int index = i->dagNode->getSortIndex();
+	      int index = p.dagNode->getSortIndex();
 	      Assert(index >= Sort::ERROR_SORT, "bad sort index");
 	      if (index != lastIndex)
 		{
@@ -486,10 +483,9 @@ DagNode::ReturnResult
 ACU_DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 {
   ReturnResult result = GROUND;
-  int nrArgs = argArray.length();
-  for (int i = 0; i < nrArgs; ++i)
+  for (const Pair& p : argArray)
     {
-      ReturnResult r = argArray[i].dagNode->computeBaseSortForGroundSubterms(warnAboutUnimplemented);
+      ReturnResult r = p.dagNode->computeBaseSortForGroundSubterms(warnAboutUnimplemented);
       if (r > result)
 	result = r;  // NONGROUND dominates GROUND, UNIMPLEMENTED dominates NONGROUND
     }
@@ -536,9 +532,8 @@ ACU_DagNode::computeSolvedForm2(DagNode* rhs,
 void
 ACU_DagNode::insertVariables2(NatSet& occurs)
 {
-  int nrArgs = argArray.length();
-  for (int i = 0; i < nrArgs; i++)
-    argArray[i].dagNode->insertVariables(occurs);
+  for (const Pair& p : argArray)
+    p.dagNode->insertVariables(occurs);
 }
 
 DagNode*
@@ -616,11 +611,10 @@ ACU_DagNode::instantiate2(const Substitution& substitution, bool maintainInvaria
 bool
 ACU_DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 {
-  int nrArgs = argArray.length();
   bool ground = true;
-  for (int i = 0; i < nrArgs; i++)
+  for (const Pair& p : argArray)
     {   
-      if (!(argArray[i].dagNode->indexVariables(indices, baseIndex)))
+      if (!(p.dagNode->indexVariables(indices, baseIndex)))
 	ground = false;
     }
   return ground;

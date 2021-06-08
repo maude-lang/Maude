@@ -77,10 +77,10 @@ ACU_LazySubproblem::ACU_LazySubproblem(ACU_BaseDagNode* subject,
 
 ACU_LazySubproblem::~ACU_LazySubproblem()
 {
-  FOR_EACH_CONST(i, Vector<Alternative>, previous)
+  for (const Alternative& i : previous)
     {
-      delete i->difference;
-      delete i->subproblem;
+      delete i.difference;
+      delete i.subproblem;
     }
 }
 

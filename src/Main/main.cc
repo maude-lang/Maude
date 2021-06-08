@@ -32,6 +32,7 @@
 #include "macros.hh"
 #include "vector.hh"
 #include "tty.hh"
+#include "pigPug.hh"
 
 
 //      forward declarations
@@ -56,6 +57,7 @@
 //      object system class definitions
 #include "processManagerSymbol.hh"
 #include "fileManagerSymbol.hh"
+#include "directoryManagerSymbol.hh"
 
 //      system class definitions
 #include "IO_Manager.hh"
@@ -103,6 +105,18 @@ main(int argc, char* argv[])
 	    interpreter.beginXmlLog(s);
 	  else if (const char* s = isFlag(arg, "-random-seed="))
 	    RandomOpSymbol::setGlobalSeed(strtoul(s, 0, 0));
+	  else if (const char* s = isFlag(arg, "-assoc-unif-depth="))
+	    {
+	      char *endptr;
+	      double m = strtod(s, &endptr);
+	      if (endptr > s && isfinite(m) && m >= 0.0 && m <= 1e6)
+		PigPug::setDepthBoundMultiplier(m);
+	      else
+		{
+		  IssueWarning(LineNumber(FileTable::COMMAND_LINE) <<
+			       ": bad associative unification depth value: " << QUOTE(s));
+		}
+	    }
 	  else if (strcmp(arg, "--help") == 0)
 	    printHelp(argv[0]);
 	  else if (strcmp(arg, "--version") == 0)
@@ -147,9 +161,12 @@ main(int argc, char* argv[])
 	    ProcessManagerSymbol::setAllowProcesses(true);
 	  else if (strcmp(arg, "-allow-files") == 0)
 	    FileManagerSymbol::setAllowFiles(true);
+	  else if (strcmp(arg, "-allow-dir") == 0)
+	    DirectoryManagerSymbol::setAllowDir(true);
 	  else if (strcmp(arg, "-trust") == 0)
 	    {
 	      FileManagerSymbol::setAllowFiles(true);
+	      DirectoryManagerSymbol::setAllowDir(true);
 	      ProcessManagerSymbol::setAllowProcesses(true);
 	    }
 	  else
@@ -281,7 +298,9 @@ printHelp(const char* name)
     "  -erewrite-loop-mode\tUse external object rewriting for loop mode\n" <<
     "  -allow-processes\tAllow running arbitrary executables\n" <<
     "  -allow-files\t\tAllow operations on files\n" <<
+    "  -allow-dir\t\tAllow operations on directories\n" <<
     "  -trust\t\tAllow all potentially risky capabilities\n" <<
+    "  -assoc-unif-depth=<float>\tSet depth bound multiplier for associative unification\n"
     "\n" <<
     "Send bug reports to: " << PACKAGE_BUGREPORT << endl;
   exit(0);

@@ -181,6 +181,8 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new FileManagerSymbol(name);
     case SymbolType::STREAM_MANAGER_SYMBOL:
       return new StreamManagerSymbol(name);
+    case SymbolType::DIRECTORY_MANAGER_SYMBOL:
+      return new DirectoryManagerSymbol(name);
     case SymbolType::PROCESS_MANAGER_SYMBOL:
       return new ProcessManagerSymbol(name);
     case SymbolType::TIME_MANAGER_SYMBOL:

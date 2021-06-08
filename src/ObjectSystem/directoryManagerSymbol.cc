@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,8 +21,11 @@
 */
 
 //
-//      Implementation for class FileManagerSymbol.
+//      Implementation for class DirectoryManagerSymbol.
 //
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 //      utility stuff
 #include "macros.hh"
@@ -50,119 +53,109 @@
 
 //      built in class definitions
 #include "succSymbol.hh"
-#include "minusSymbol.hh"
 #include "stringSymbol.hh"
 #include "stringDagNode.hh"
 #include "bindingMacros.hh"
 
 //	object system class definitions
 #include "objectSystemRewritingContext.hh"
-#include "fileManagerSymbol.hh"
+#include "directoryManagerSymbol.hh"
 
 //	our stuff
-#include "fileActions.cc"
-#include "fileOutcomes.cc"
+#include "directoryActions.cc"
+#include "directoryOutcomes.cc"
 
-bool FileManagerSymbol::allowFiles = false;
+bool DirectoryManagerSymbol::allowDir = false;
 
-FileManagerSymbol::FileManagerSymbol(int id)
+DirectoryManagerSymbol::DirectoryManagerSymbol(int id)
   : ExternalObjectManagerSymbol(id)
 {
 #define MACRO(SymbolName, SymbolClass, NrArgs) \
   SymbolName = 0;
-#include "fileSignature.cc"
+#include "directorySignature.cc"
 #undef MACRO
 }
 
 bool
-FileManagerSymbol::attachData(const Vector<Sort*>& opDeclaration,
+DirectoryManagerSymbol::attachData(const Vector<Sort*>& opDeclaration,
 				const char* purpose,
 				const Vector<const char*>& data)
 {
-  NULL_DATA(purpose, FileManagerSymbol, data);
+  NULL_DATA(purpose, DirectoryManagerSymbol, data);
   return ExternalObjectManagerSymbol::attachData(opDeclaration, purpose, data);
 }
 
 bool
-FileManagerSymbol::attachSymbol(const char* purpose, Symbol* symbol)
+DirectoryManagerSymbol::attachSymbol(const char* purpose, Symbol* symbol)
 {
   Assert(symbol != 0, "null symbol for " << purpose);
 #define MACRO(SymbolName, SymbolClass, NrArgs) \
   BIND_SYMBOL(purpose, symbol, SymbolName, SymbolClass*)
-#include "fileSignature.cc"
+#include "directorySignature.cc"
 #undef MACRO
   return ExternalObjectManagerSymbol::attachSymbol(purpose, symbol);
 }
 
 void
-FileManagerSymbol::copyAttachments(Symbol* original, SymbolMap* map)
+DirectoryManagerSymbol::copyAttachments(Symbol* original, SymbolMap* map)
 {
-  FileManagerSymbol* orig = safeCast(FileManagerSymbol*, original);
+  DirectoryManagerSymbol* orig = safeCast(DirectoryManagerSymbol*, original);
 #define MACRO(SymbolName, SymbolClass, NrArgs) \
   COPY_SYMBOL(orig, SymbolName, map, SymbolClass*)
-#include "fileSignature.cc"
+#include "directorySignature.cc"
 #undef MACRO
   ExternalObjectManagerSymbol::copyAttachments(original, map);
 }
 
 void
-FileManagerSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
+DirectoryManagerSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
 				      Vector<const char*>& purposes,
 				      Vector<Vector<const char*> >& data)
 {
   int nrDataAttachments = purposes.length();
   purposes.resize(nrDataAttachments + 1);
-  purposes[nrDataAttachments] = "FileManagerSymbol";
+  purposes[nrDataAttachments] = "DirectoryManagerSymbol";
   data.resize(nrDataAttachments + 1);
   ExternalObjectManagerSymbol::getDataAttachments(opDeclaration, purposes, data);
 }
 
 void
-FileManagerSymbol::getSymbolAttachments(Vector<const char*>& purposes,
-					  Vector<Symbol*>& symbols)
+DirectoryManagerSymbol::getSymbolAttachments(Vector<const char*>& purposes,
+					     Vector<Symbol*>& symbols)
 {
 #define MACRO(SymbolName, SymbolClass, NrArgs) \
   APPEND_SYMBOL(purposes, symbols, SymbolName)
-#include "fileSignature.cc"
+#include "directorySignature.cc"
 #undef MACRO
   ExternalObjectManagerSymbol::getSymbolAttachments(purposes, symbols);
 }
 
 bool
-FileManagerSymbol::handleManagerMessage(DagNode* message, ObjectSystemRewritingContext& context)
+DirectoryManagerSymbol::handleManagerMessage(DagNode* message,
+					     ObjectSystemRewritingContext& context)
 {
-  DebugInfo("FileManagerSymbol::handleManagerMessage(): saw " << message);
+  DebugInfo("DirectoryManagerSymbol::handleManagerMessage(): saw " << message);
   Symbol* s = message->symbol();
-  if (s == openFileMsg)
-    openFile(safeCast(FreeDagNode*, message), context);
-  else if (s == removeFileMsg)
-    removeFile(safeCast(FreeDagNode*, message), context);
-  else if (s == makeLinkMsg)
-    makeLink(safeCast(FreeDagNode*, message), context);
+  if (s == openDirectoryMsg)
+    openDirectory(safeCast(FreeDagNode*, message), context);
+  else if (s == makeDirectoryMsg)
+    makeDirectory(safeCast(FreeDagNode*, message), context);
+  else if (s == removeDirectoryMsg)
+    removeDirectory(safeCast(FreeDagNode*, message), context);
   else
     return false;
   return true;
 }
 
 bool
-FileManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingContext& context)
+DirectoryManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingContext& context)
 {
-  DebugInfo("FileManagerSymbol::handleMessage(): saw " << message);
+  DebugInfo("DirectoryManagerSymbol::handleMessage(): saw " << message);
   Symbol* s = message->symbol();
-  if (s == getLineMsg)
-    getLine(safeCast(FreeDagNode*, message), context);
-  else if (s == getCharsMsg)
-    getChars(safeCast(FreeDagNode*, message), context);
-  else if (s == writeMsg)
-    write(safeCast(FreeDagNode*, message), context);
-  else if (s == flushMsg)
-    flush(safeCast(FreeDagNode*, message), context);
-  else if (s == getPositionMsg)
-    getPosition(safeCast(FreeDagNode*, message), context);
-  else if (s == setPositionMsg)
-    setPosition(safeCast(FreeDagNode*, message), context);
-  else if (s == closeFileMsg)
-    closeFile(safeCast(FreeDagNode*, message), context);
+  if (s == getDirectoryEntryMsg)
+    getDirectoryEntry(safeCast(FreeDagNode*, message), context);
+  else if (s == closeDirectoryMsg)
+    closeDirectory(safeCast(FreeDagNode*, message), context);
   else
     return false;
   return true;

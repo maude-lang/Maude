@@ -1,3 +1,110 @@
+2021-06-08  Steven Eker  <eker2@eker10>
+
+	* directoryOutcomes.cc
+	(DirectoryManagerSymbol::gotDirectoryEntryReply): fix bug where
+	reply was length 3 rather than 4
+
+2021-04-28  Steven Eker  <eker2@eker10>
+
+	* directoryManagerSymbol.hh (class DirectoryManagerSymbol): added
+	decl for removeDirectory()
+
+	* directoryManagerSymbol.cc
+	(DirectoryManagerSymbol::handleManagerMessage): use
+	removeDirectory()
+
+	* directoryActions.cc (DirectoryManagerSymbol::removeDirectory):
+	added
+
+	* directoryManagerSymbol.hh (class DirectoryManagerSymbol): added
+	decl for makeDirectory()
+
+	* directoryActions.cc (DirectoryManagerSymbol::makeDirectory):
+	added
+
+	* directoryManagerSymbol.cc
+	(DirectoryManagerSymbol::handleManagerMessage): use makeDirectory()
+
+	* directoryManagerSymbol.hh (class DirectoryManagerSymbol): remove
+	dummy cleanUp() implementation
+
+	* directoryActions.cc (DirectoryManagerSymbol::getDirectoryEntry):
+	handle other cases
+	(DirectoryManagerSymbol::handleSymbolicLink): added
+	(DirectoryManagerSymbol::cleanUp): added
+
+	* directoryManagerSymbol.hh (class DirectoryManagerSymbol):
+	updated decl for getOpenDirectory()
+
+	* directoryActions.cc (DirectoryManagerSymbol::getOpenDirectory):
+	pass back OpenDirectory* rather than DIR*
+	(DirectoryManagerSymbol::getDirectoryEntry): use new
+	getOpenDirectory() semantics
+	(DirectoryManagerSymbol::closeDirectory): use new
+	getOpenDirectory() semantics
+	(DirectoryManagerSymbol::openDirectory): store path with trailing
+	/ so we can get path to whatever we find in directory
+
+	* directoryManagerSymbol.hh (class DirectoryManagerSymbol): added
+	struct OpenDirectory; DirectoryMap now maps to OpenDirectory
+	rather than DIR*
+
+2021-04-27  Steven Eker  <eker2@eker10>
+
+	* objectSystem.hh: added DirectoryManagerSymbol and
+	TimeManagerSymbol
+
+	* directoryManagerSymbol.cc
+	(DirectoryManagerSymbol::handleMessage): use getDirectoryEntry()
+	and closeDirectory()
+	(DirectoryManagerSymbol::handleManagerMessage): use
+	openDirectory()
+
+	* directoryManagerSymbol.hh (class DirectoryManagerSymbol): added
+	decls for getOpenDirectory(), openDirectory(),
+	getDirectoryEntry(), closeDirectory(), errorReply(),
+	openedDirectoryReply(), gotDirectoryEntryReply()
+
+	* directoryOutcomes.cc: created
+
+	* directoryActions.cc: created
+
+	* directorySignature.cc: endOfDirectoryEntrySymbol ->
+	endOfDirectorySymbol; getDirectoryEntryMsg needs to be a
+	FreeSymbol
+
+	* directoryManagerSymbol.cc: created
+
+2021-04-26  Steven Eker  <eker2@eker10>
+
+	* directorySignature.cc: created
+
+	* directoryManagerSymbol.hh: created
+
+2021-04-21  Steven Eker  <eker2@eker10>
+
+	* fileActions.cc (FileManagerSymbol::makeLink): get Bad link name
+	and Bad target file name error replies the right way around
+
+2021-04-20  Steven Eker  <eker2@eker10>
+
+	* fileActions.cc (FileManagerSymbol::makeLink): implmented
+
+	* fileSignature.cc: added hardSymbol, symbolicSymbol
+
+	* fileManagerSymbol.hh (class FileManagerSymbol): added decl for
+	makeLink()
+
+	* fileActions.cc (FileManagerSymbol::makeLink): added stub
+
+	* fileManagerSymbol.cc (FileManagerSymbol::handleManagerMessage):
+	handle makeLinkMsg
+
+	* fileSignature.cc: fix bug where closedFileMsg was specified as
+	having 3 arguments; added makeLinkMsg/madeLinkMsg
+
+===================================Maude136===========================================
+
 2021-04-08  Steven Eker  <eker2@eker10>
 
 	* streamManagerSymbol.cc
@@ -238,6 +345,8 @@
 	* timeActions.cc (TimeManagerSymbol::deleteTimer): fix bug where
 	we were not deleting the timer from the context which would cause
 	a subsequent crash when the context was deleted
+
+===================================Maude135===========================================
 
 2021-03-08  Steven Eker  <eker2@eker10>
 

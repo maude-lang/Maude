@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -119,20 +119,20 @@ AU_LhsAutomaton::matchRigidPart(AU_DagNode* subject,
 				SubproblemAccumulator& subproblems)
 {
   ArgVec<DagNode*>& args = subject->argArray;
-  FOR_EACH_CONST(i, Vector<Subterm>, rigidPart)
+  for (const Subterm& i : rigidPart)
     {
-      switch (i->type)
+      switch (i.type)
 	{
 	case VARIABLE:
 	  {
-	    const TopVariable& tv = i->variable;
+	    const TopVariable& tv = i.variable;
 	    DagNode* b = solution.value(tv.index);
 	    if (b != 0)
 	      {
 		//
 		//	Bound variable case.
 		//
-		if (i->leftEnd)
+		if (i.leftEnd)
 		  {
 		    if (!(subject->eliminateForward(b, leftPos, rightPos - flexLowerBound)))
 		      return false;
@@ -154,7 +154,7 @@ AU_LhsAutomaton::matchRigidPart(AU_DagNode* subject,
 		       "unbound variable which can take identity in rigid part");
 		if (rightPos - leftPos < flexLowerBound)
 		  return false;
-		DagNode* d = args[i->leftEnd ? leftPos++ : rightPos--];
+		DagNode* d = args[i.leftEnd ? leftPos++ : rightPos--];
 		if (!(d->leq(tv.sort)))
 		  return false;
 		solution.bind(tv.index, d);
@@ -164,7 +164,7 @@ AU_LhsAutomaton::matchRigidPart(AU_DagNode* subject,
 	case GROUND_ALIEN:
 	  {
 	    if (rightPos - leftPos < flexLowerBound ||
-		!(i->groundAlien->equal(args[i->leftEnd ? leftPos++ : rightPos--])))
+		!(i.groundAlien->equal(args[i.leftEnd ? leftPos++ : rightPos--])))
 	      return false;
 	    break;
 	  }
@@ -172,8 +172,8 @@ AU_LhsAutomaton::matchRigidPart(AU_DagNode* subject,
 	  {
 	    Subproblem* sp;
 	    if (rightPos - leftPos < flexLowerBound ||
-		!(i->alienAutomaton->
-		  match(args[i->leftEnd ? leftPos++ : rightPos--], solution, sp)))
+		!(i.alienAutomaton->
+		  match(args[i.leftEnd ? leftPos++ : rightPos--], solution, sp)))
 	      return false;
 	    subproblems.add(sp);
 	    break;

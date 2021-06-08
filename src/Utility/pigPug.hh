@@ -79,6 +79,8 @@ public:
   //
   ResultPair getNextUnifier(Subst& unifier, ConstraintMap& constraintMap);
 
+  static void setDepthBoundMultiplier(double m);
+
 private:
   enum Moves
     {
@@ -137,16 +139,17 @@ private:
 
   enum SpecialValues
     {
-      DELIMITER = -1  // no variable can have this value
+     DELIMITER = -1,  // no variable can have this value
+     DEFAULT_DEPTH_BOUND_MULTIPLIER = 1
     };
 
   enum Result
     {
-      NOT_ENTERED = -1,	// for cycle detection version only, we didn't enter the state
-      FAIL = 0,		// move failed
-      LHS_DONE = 1,	// move reduced lhs (and possibly rhs) to a single variable
-      RHS_DONE = 2,	// move reduced rhs (but not lhs) to a single variable
-      OK = 4		// move succeeded without hitting an end case
+     NOT_ENTERED = -1,	// for cycle detection version only, we didn't enter the state
+     FAIL = 0,		// move failed
+     LHS_DONE = 1,	// move reduced lhs (and possibly rhs) to a single variable
+     RHS_DONE = 2,	// move reduced rhs (but not lhs) to a single variable
+     OK = 4		// move succeeded without hitting an end case
     };
 
   struct Unificand
@@ -214,7 +217,6 @@ private:
   bool composeFinal(Subst& subst, int oldVar, const Word& replacement, int index);
   void renameVariables(Subst& subst, const VariableRenaming& variableRenaming);
   void collectRangeVariables(const Subst& subst, NatSet& occursInRange);
-  void tightenConstraints(const Subst& subst, ConstraintMap& constraintMap);
 
   //void checkInvariant(const ConstraintMap& constraintMap, Subst& subst);
 
@@ -237,8 +239,18 @@ private:
   WordMap wordMap;
   Vector<StateInfo> stateInfo;
   StateStack traversalStack;
+  //
+  //	Static configuration data.
+  //
+  static double depthBoundMultiplier;
 };
 
 ostream& operator<<(ostream& s, const PigPug::Word& word);
+
+inline void
+PigPug::setDepthBoundMultiplier(double m)
+{
+  depthBoundMultiplier = m;
+}
 
 #endif

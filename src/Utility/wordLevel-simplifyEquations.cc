@@ -72,9 +72,9 @@ WordLevel::expandWord(Word& newWord, const Word& oldWord)
   //	In particular if we have
   //	  A |-> X Y Z
   //	where A is theory constrained, we don't want to replace
-  //	a abstraction with a bunch of variables into which we
-  //	cannot propagate the constriant.
-  //	
+  //	an abstraction (say of an alien)  with a bunch of variables
+  //	into which we cannot propagate the constriant.
+  //
   for (int i : oldWord)
     {
       if (unsafeAssignments.contains(i))

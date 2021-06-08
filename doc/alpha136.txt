@@ -1,0 +1,110 @@
+Alpha 136 release notes
+========================
+
+New features
+=============
+
+(1) The file API now had a message pair for making hard or symbolic
+links:
+
+  ops hard symbolic : -> LinkType [ctor] .
+  op makeLink : Oid Oid String String LinkType -> Msg [ctor msg format (b o)] .
+  op madeLink : Oid Oid  -> Msg [ctor msg format (m o)] .
+
+The first string argument is the target of the link. The second string
+argument is the name of the link. Possible fileError() messages
+include:
+  "Bad target file name."
+  "Bad link name."
+  "Bad link type."
+As usual, messages that don't end in a period come from the operating
+system. There is no need for a removeLink() message since both hard
+and symbolic links can be removed as regular files.
+
+(2) There is now an API for manipulating directories, in file.maude:
+
+mod DIRECTORY is
+  including  CONFIGURATION .
+  protecting NAT .
+  protecting STRING .
+
+  sort EntryType EntryType? .
+  subsort EntryType < EntryType? .
+  op directory : Nat -> Oid [ctor] .
+  ops file directory socket pipe charDevice blockDevice : -> EntryType [ctor] .
+  op symbolicLink : String -> EntryType [ctor] .
+  op endOfDirectory : -> EntryType? [ctor] .
+
+  op openDirectory : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op openedDirectory : Oid Oid Oid -> Msg [ctor msg format (m o)] .
+  op closeDirectory : Oid Oid -> Msg [ctor msg format (b o)] .
+  op closedDirectory : Oid Oid -> Msg [ctor msg format (m o)] .
+  op getDirectoryEntry : Oid Oid -> Msg [ctor msg format (b o)] .
+  op gotDirectoryEntry : Oid Oid String EntryType? -> Msg [ctor msg format (m o)] .
+
+  op makeDirectory : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op madeDirectory : Oid Oid -> Msg [ctor msg format (m o)] .
+  op removeDirectory : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op removedDirectory : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op directoryError : Oid Oid String -> Msg [ctor msg format (m o)] .
+
+  op directoryManager : -> Oid [special (...)] .
+endm
+
+Directory operations are considered dangerous, but less so than file
+operations, since only empty directories can be created and destroyed,
+and only information about the contents of a directory can be leaked
+to an external server (via sockets). They need to be explicitly
+enabled via -trust or -allow-dir command line flags.
+
+The message openDirectory() can only be sent to directoryManager
+and if successful opens the named directory and the reply message,
+openedDirectory contains an external object identifier of the form
+directory(N) for natural number N. Such objects accept two kinds of
+messages: 
+
+closeDirectory() which deletes the external object, frees any
+resources associated with it and produces a closedDirectory() reply.
+
+getDirectoryEntry() which tries to read the next entry in the
+directory. If an entry is successfully read, a gotDirectoryEntry()
+reply is produced where the String argument is the name of the
+directory entry and the EntryType? argument gives its type:
+  file : regular file
+  directory : directory
+  socket : Unix domain socket
+  pipe : named pipe (aka FIFO)
+  charDevice : character device (e.g. a terminal)
+  blockDevice : block device (e.g. a hard drive)
+  symbolLink(T) : a symbolic link pointing at T
+If there are no more entries in the directory, a gotDirectoryEntry()
+reply is produced where the String argument is "" and the EntryType?
+argument is endOfDirectory
+
+Note that endOfDirectory resides in a larger type, EntryType? than
+the actual entry types, EntryType, to facilitate writing patterns that
+only match the latter.
+
+The message makeDirectory() can only be sent to directoryManager and
+if successful makes an empty directory at the given path and returns
+a madeDirectory() message.
+
+The message removeDirectory() can only be sent to directoryManager and
+if successful removes an empty directory at the given path and returns
+a removedDirectory() message. Note that nonempty directories cannot be
+removed.
+
+(3) There is a command line flag
+  -assoc-unif-depth=<float>
+which controls how depth the PIG-PUG algorithm searches for A/AU unifiers
+in the case it can't assure termination. This value is multiplied by
+the number of arguments in the lhs and rhs unificands and rounded down
+to determine how many steps to take. If after this number of moves,
+both neither unificand has been reduced to a lone variable, the branch
+is cut and the solution to the overall problem is marked as
+incomplete. Cancel steps, where the left end variables in each
+unificand are identical are not counted towards this depth. The
+default value is 1.0. It is a float because there is typically a huge
+difference the search space between 1.0 and 2.0 so values like 1.25
+and 1.5 make sense.

@@ -119,7 +119,8 @@ am_libobjectSystem_a_OBJECTS =  \
 	libobjectSystem_a-fileManagerSymbol.$(OBJEXT) \
 	libobjectSystem_a-streamManagerSymbol.$(OBJEXT) \
 	libobjectSystem_a-processManagerSymbol.$(OBJEXT) \
-	libobjectSystem_a-timeManagerSymbol.$(OBJEXT)
+	libobjectSystem_a-timeManagerSymbol.$(OBJEXT) \
+	libobjectSystem_a-directoryManagerSymbol.$(OBJEXT)
 libobjectSystem_a_OBJECTS = $(am_libobjectSystem_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -137,6 +138,7 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/libobjectSystem_a-configSymbol.Po \
+	./$(DEPDIR)/libobjectSystem_a-directoryManagerSymbol.Po \
 	./$(DEPDIR)/libobjectSystem_a-externalObjectManagerSymbol.Po \
 	./$(DEPDIR)/libobjectSystem_a-fileManagerSymbol.Po \
 	./$(DEPDIR)/libobjectSystem_a-objectSystemRewritingContext.Po \
@@ -329,7 +331,8 @@ libobjectSystem_a_SOURCES = \
 	fileManagerSymbol.cc \
 	streamManagerSymbol.cc \
 	processManagerSymbol.cc \
-	timeManagerSymbol.cc
+	timeManagerSymbol.cc \
+	directoryManagerSymbol.cc
 
 EXTRA_DIST = \
 	objectMap.cc \
@@ -351,7 +354,10 @@ EXTRA_DIST = \
 	pseudoThread-ppoll.cc \
 	pseudoThread-pselect.cc \
 	timeSignature.cc \
-	timeActions.cc
+	timeActions.cc \
+	directorySignature.cc \
+	directoryActions.cc \
+	directoryOutcomes.cc
 
 noinst_HEADERS = \
 	configSymbol.hh \
@@ -363,7 +369,8 @@ noinst_HEADERS = \
 	fileManagerSymbol.hh \
 	streamManagerSymbol.hh \
 	processManagerSymbol.hh \
-	timeManagerSymbol.hh
+	timeManagerSymbol.hh \
+	directoryManagerSymbol.hh
 
 all: all-am
 
@@ -414,6 +421,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-configSymbol.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-directoryManagerSymbol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-externalObjectManagerSymbol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-fileManagerSymbol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-objectSystemRewritingContext.Po@am__quote@ # am--include-marker
@@ -569,6 +577,20 @@ libobjectSystem_a-timeManagerSymbol.obj: timeManagerSymbol.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libobjectSystem_a-timeManagerSymbol.obj `if test -f 'timeManagerSymbol.cc'; then $(CYGPATH_W) 'timeManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/timeManagerSymbol.cc'; fi`
 
+libobjectSystem_a-directoryManagerSymbol.o: directoryManagerSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libobjectSystem_a-directoryManagerSymbol.o -MD -MP -MF $(DEPDIR)/libobjectSystem_a-directoryManagerSymbol.Tpo -c -o libobjectSystem_a-directoryManagerSymbol.o `test -f 'directoryManagerSymbol.cc' || echo '$(srcdir)/'`directoryManagerSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjectSystem_a-directoryManagerSymbol.Tpo $(DEPDIR)/libobjectSystem_a-directoryManagerSymbol.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='directoryManagerSymbol.cc' object='libobjectSystem_a-directoryManagerSymbol.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libobjectSystem_a-directoryManagerSymbol.o `test -f 'directoryManagerSymbol.cc' || echo '$(srcdir)/'`directoryManagerSymbol.cc
+
+libobjectSystem_a-directoryManagerSymbol.obj: directoryManagerSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libobjectSystem_a-directoryManagerSymbol.obj -MD -MP -MF $(DEPDIR)/libobjectSystem_a-directoryManagerSymbol.Tpo -c -o libobjectSystem_a-directoryManagerSymbol.obj `if test -f 'directoryManagerSymbol.cc'; then $(CYGPATH_W) 'directoryManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/directoryManagerSymbol.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjectSystem_a-directoryManagerSymbol.Tpo $(DEPDIR)/libobjectSystem_a-directoryManagerSymbol.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='directoryManagerSymbol.cc' object='libobjectSystem_a-directoryManagerSymbol.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libobjectSystem_a-directoryManagerSymbol.obj `if test -f 'directoryManagerSymbol.cc'; then $(CYGPATH_W) 'directoryManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/directoryManagerSymbol.cc'; fi`
+
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
 tags: tags-am
@@ -694,6 +716,7 @@ clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/libobjectSystem_a-configSymbol.Po
+	-rm -f ./$(DEPDIR)/libobjectSystem_a-directoryManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-externalObjectManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-fileManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-objectSystemRewritingContext.Po
@@ -748,6 +771,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/libobjectSystem_a-configSymbol.Po
+	-rm -f ./$(DEPDIR)/libobjectSystem_a-directoryManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-externalObjectManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-fileManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-objectSystemRewritingContext.Po

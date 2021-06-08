@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,13 +45,13 @@ AU_LhsAutomaton::dequeMatch(AU_DequeDagNode* subject,
   SubproblemAccumulator subproblems;
   Term* identity = topSymbol->getIdentity();
 
-  FOR_EACH_CONST(i, Vector<Subterm>, rigidPart)
+  for (const Subterm& i : rigidPart)
     {
-      switch (i->type)
+      switch (i.type)
 	{
 	case VARIABLE:
 	  {
-	    const TopVariable& tv = i->variable;
+	    const TopVariable& tv = i.variable;
 	    DagNode* b = solution.value(tv.index);
 	    if (b != 0)
 	      {
@@ -72,7 +72,7 @@ AU_LhsAutomaton::dequeMatch(AU_DequeDagNode* subject,
 			if (nrArgs < wholeLowerBound)
 			  return false;
 		      }
-		    if (i->leftEnd)
+		    if (i.leftEnd)
 		      {
 			if (b->equal(remainder.topLeft()))
 			  remainder.popLeft();
@@ -98,7 +98,7 @@ AU_LhsAutomaton::dequeMatch(AU_DequeDagNode* subject,
 		Assert(!(tv.takeIdentity),
 		       "unbound variable which can take identity in rigid part");
 		DagNode* d;
-		if (i->leftEnd)
+		if (i.leftEnd)
 		  {
 		    d = remainder.topLeft();
 		    if (!(d->leq(tv.sort)))
@@ -118,16 +118,16 @@ AU_LhsAutomaton::dequeMatch(AU_DequeDagNode* subject,
 	  }
 	case GROUND_ALIEN:
 	  {
-	    if (i->leftEnd)
+	    if (i.leftEnd)
 	      {
-		if (i->groundAlien->equal(remainder.topLeft()))
+		if (i.groundAlien->equal(remainder.topLeft()))
 		  remainder.popLeft();
 		else
 		  return false;
 	      }
 	    else
 	      {
-		if (i->groundAlien->equal(remainder.topRight()))
+		if (i.groundAlien->equal(remainder.topRight()))
 		  remainder.popRight();
 		else
 		  return false;
@@ -137,16 +137,16 @@ AU_LhsAutomaton::dequeMatch(AU_DequeDagNode* subject,
 	case NON_GROUND_ALIEN:
 	  {
 	    Subproblem* sp;
-	    if (i->leftEnd)
+	    if (i.leftEnd)
 	      {
-		if (i->alienAutomaton->match(remainder.topLeft(), solution, sp))
+		if (i.alienAutomaton->match(remainder.topLeft(), solution, sp))
 		  remainder.popLeft();
 		else
 		  return false;
 	      }
 	    else
 	      {
-		if (i->alienAutomaton->match(remainder.topRight(), solution, sp))
+		if (i.alienAutomaton->match(remainder.topRight(), solution, sp))
 		  remainder.popRight();
 		else
 		  return false;

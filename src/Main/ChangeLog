@@ -1,3 +1,34 @@
+2021-06-01  Steven Eker  <eker2@eker10>
+
+	* main.cc (printHelp): updated line for -assoc-unif-depth=
+	(main): new setDepthBoundMultiplier() convention
+	(main): use strtod() rather than stringToDouble()
+
+2021-05-18  Steven Eker  <eker2@eker10>
+
+	* main.cc (main): support -assoc-unif-depth=
+	(printHelp): added -assoc-unif-depth=
+
+2021-04-28  Steven Eker  <eker2@eker10>
+
+	* main.cc (main): added -allow-dir flag
+	(printHelp): added -allow-dir flag
+
+2021-04-27  Steven Eker  <eker2@eker10>
+
+	* main.cc (main): call setAllowDir() in -trust case
+
+===================================Maude136===========================================
+
+2021-04-26  Steven Eker  <eker2@eker10>
+
+	* file.maude: added mod DIRECTORY
+
+2021-04-20  Steven Eker  <eker2@eker10>
+
+	* file.maude: added makeLink()/madeLink() messages; hard, symbolic
+	constants, LinkType sort
+
 2021-03-31  Steven Eker  <eker2@eker10>
 
 	* file.maude: added cancelGetLine(), canceledGetLine(),

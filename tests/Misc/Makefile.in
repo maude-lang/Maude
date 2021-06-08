@@ -436,6 +436,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 TESTS = \
+	directoryTest \
 	fileTest \
 	timeTest \
 	view \
@@ -472,6 +473,7 @@ TESTS = \
 	rot13
 
 MAUDE_FILES = \
+	directoryTest.maude \
 	fileTest.maude \
 	timeTest.maude \
 	view.maude \
@@ -508,6 +510,7 @@ MAUDE_FILES = \
 	rot13.maude
 
 RESULT_FILES = \
+	directoryTest.expected \
 	fileTest.expected \
 	timeTest.expected \
 	view.expected \
@@ -725,6 +728,13 @@ recheck: all
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
+directoryTest.log: directoryTest
+	@p='directoryTest'; \
+	b='directoryTest'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 fileTest.log: fileTest
 	@p='fileTest'; \
 	b='fileTest'; \

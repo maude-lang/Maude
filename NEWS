@@ -1,13 +1,19 @@
+Overview of Changes in alpha136
+============================================
+* file API supports makeLink() message
+* experimental directory API
+* -assoc-unif-depth= to control A/AU unification search
+
 Overview of Changes in alpha135 (2021-04-09)
 ============================================
 * second control-C within a second now returns to command line
 * fixed bug in deleteTimer() which would cause a later crash
-* empty line is treated as implicit step command in debuggger
+* empty line is treated as implicit step command in debugger
 * getLine() is now nonblocking
 * changed semantics of stopTimer()
 * standard streams now accept bad messages and return streamError()
 
-Overview of Changes in alpha134 (2021-02-08)
+Overview of Changes in alpha134 (2021-03-08)
 ============================================
 * experimental time API
 

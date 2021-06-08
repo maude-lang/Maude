@@ -34,6 +34,8 @@
 #include "pigPug-stack.cc"
 #include "pigPug-extract.cc"
 
+double PigPug::depthBoundMultiplier = DEFAULT_DEPTH_BOUND_MULTIPLIER;
+
 PigPug::PigPug(const Word& lhs,
 	       const Word& rhs,
 	       const ConstraintMap& constraintMap,
@@ -90,7 +92,7 @@ PigPug::PigPug(const Word& lhs,
 	}
       else
 	{
-	  depthBound =  lhs.size() + rhs.size();
+	  depthBound = depthBoundMultiplier * (lhs.size() + rhs.size());
 	  Verbose("Associative unification using depth bound of " << depthBound << ".");
 	}
     }

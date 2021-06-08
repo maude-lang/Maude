@@ -1,3 +1,53 @@
+2021-05-11  Steven Eker  <eker2@eker10>
+
+	* AU_Term.cc (AU_Term::deepSelfDestruct): use range-based for loop
+	(AU_Term::normalize): use range-based for loop
+	(AU_Term::findEagerVariables): use range-based for loop
+	(AU_Term::markEagerArguments): use range-based for loop
+	(AU_Term::analyseCollapses2): use range-based for loop (2 places)
+	(AU_Term::findAvailableTerms): use range-based for loop
+	(AU_Term::compileRhs2): added typedef IntPair; use range-based for
+	loop
+	(AU_Term::dump): use range-based for loop
+
+	* AU_UnificationSubproblem2.cc: deleted FOR_EACH() macro
+
+	* AU_Normalize.cc (AU_DagNode::normalizeAtTop): use range-based
+	for loop
+
+2021-05-10  Steven Eker  <eker2@eker10>
+
+	* AU_Symbol.cc (AU_Symbol::computeBaseSort): use range-based for
+	loop (2 places)
+	(AU_Symbol::termify): use range-based for loop
+	(AU_Symbol::computeGeneralizedSort): use range-based for loop
+
+	* AU_Matcher.cc (AU_LhsAutomaton::matchRigidPart): use range-based
+	for loop
+
+	* AU_DagNode.cc (AU_DagNode::copyEagerUptoReduced2): pre-increment
+	(AU_DagNode::copyAll2): pre-increment
+	(AU_DagNode::copyWithReplacement): pre-increment
+	(AU_DagNode::copyWithReplacement): pre-increment
+	(AU_DagNode::partialReplace): pre-increment (2 places)
+	(AU_DagNode::partialConstruct): pre-increment (3 places)
+	(AU_DagNode::computeBaseSortForGroundSubterms): use range-based
+	for loop
+	(AU_DagNode::insertVariables2): use range-based for loop
+	(AU_DagNode::indexVariables2): use range-based for loop
+	(AU_DagNode::instantiateWithReplacement): pre-increment
+
+	* AU_DequeMatcher.cc (AU_LhsAutomaton::dequeMatch): use
+	range-based for loop
+
+	* AU_DagNode.cc (AU_DagNode::getHashValue): use range-based for
+	loop
+	(AU_DagNode::compareArguments): use range-based for loop
+	(AU_DagNode::markArguments): use range-based for loop
+	(AU_DagNode::clearCopyPointers2): use range-based for loop
+
+===================================Maude136===========================================
+
 2020-12-11  Steven Eker  <eker2@eker10>
 
 	* AU_DagNode.cc (AU_DagNode::instantiate2): take and pass

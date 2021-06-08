@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 //
 //      Implementation for class ACU_Symbol.
 //
- 
+
 //	utility stuff
 #include "macros.hh"
 #include "vector.hh"
@@ -118,7 +118,7 @@ ACU_Symbol::normalize(DagNode* subject, RewritingContext& context)
       ACU_DagNode* s = safeCast(ACU_DagNode*, subject);
       int nrArgs = s->argArray.length();
       for (int i = 0; i < nrArgs; i++)
-	s->argArray[i].dagNode->computeTrueSort(context);
+        s->argArray[i].dagNode->computeTrueSort(context);
       return s->normalizeAtTop();
     }
   return false;
@@ -145,10 +145,10 @@ ACU_Symbol::makeDagNode(const Vector<DagNode*>& args)
 {
   int nrArgs = args.length();
   ACU_DagNode* a = new ACU_DagNode(this, nrArgs);
-  ArgVec<ACU_DagNode::Pair>& args2 = a->argArray;
-  for (int i = 0; i < nrArgs; i++)
+  ArgVec<ACU_Pair>& args2 = a->argArray;
+  for (int i = 0; i < nrArgs; ++i)
     {
-      ACU_DagNode::Pair& p = args2[i];
+      ACU_Pair& p = args2[i];
       p.dagNode = args[i];
       p.multiplicity = 1;
     }
@@ -162,10 +162,10 @@ ACU_Symbol::makeDagNode(const Vector<DagNode*>& args,
   int nrArgs = args.length();
   Assert(multiplicities.length() == nrArgs, "length mismatch");
   ACU_DagNode* a = new ACU_DagNode(this, nrArgs);
-  ArgVec<ACU_DagNode::Pair>& args2 = a->argArray;
-  for (int i = 0; i < nrArgs; i++)
+  ArgVec<ACU_Pair>& args2 = a->argArray;
+  for (int i = 0; i < nrArgs; ++i)
     {
-      ACU_DagNode::Pair& p = args2[i];
+      ACU_Pair& p = args2[i];
       p.dagNode = args[i];
       p.multiplicity = multiplicities[i];
     }
@@ -180,7 +180,7 @@ ACU_Symbol::reduceArgumentsAndNormalize(DagNode* subject, RewritingContext& cont
       ACU_DagNode* s = safeCast(ACU_DagNode*, subject);
       int nrArgs = s->argArray.length();
       for (int i = 0; i < nrArgs; i++)
-	s->argArray[i].dagNode->reduce(context);
+        s->argArray[i].dagNode->reduce(context);
       //
       //	We always need to renormalize at the top because
       //	shared subterms may have rewritten.
@@ -200,8 +200,8 @@ ACU_Symbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	{
 	  ACU_DagNode* s = safeCast(ACU_DagNode*, subject);
 	  int nrArgs = s->argArray.length();
-	  for (int i = 0; i < nrArgs; i++)
-	    s->argArray[i].dagNode->reduce(context);
+          for (int i = 0; i < nrArgs; i++)
+            s->argArray[i].dagNode->reduce(context);
 	  //
 	  //	We always need to renormalize at the top because
 	  //	shared subterms may have rewritten.
@@ -266,8 +266,8 @@ ACU_Symbol::memoStrategy(MemoTable::SourceSet& from,
 	{
 	  ACU_DagNode* s = safeCast(ACU_DagNode*, subject);
 	  int nrArgs = s->argArray.length();
-	  for (int i = 0; i < nrArgs; i++)
-	    s->argArray[i].dagNode->reduce(context);
+          for (int i = 0; i < nrArgs; i++)
+            s->argArray[i].dagNode->reduce(context);
 	  //
 	  //	We always need to renormalize at the top because
 	  //	shared subterms may have rewritten.
@@ -353,7 +353,7 @@ ACU_Symbol::stackArguments(DagNode* subject,
 	    argNr += m;
 	  else
 	    {
-	      for (int j = m; j > 0; j--)
+	      for (int j = m; j > 0; --j)
 		{
 		  stack.append(RedexPosition(d, parentIndex, argNr, eager));
 		  ++argNr;
@@ -364,15 +364,15 @@ ACU_Symbol::stackArguments(DagNode* subject,
   else
     {
       ArgVec<ACU_Pair>& args = safeCast(ACU_DagNode*, subject)->argArray;
-      FOR_EACH_CONST(i, ArgVec<ACU_Pair>, args)
+      for (const ACU_Pair& i : args)
 	{
-	  DagNode* d = i->dagNode;
-	  int m = i->multiplicity;
+	  DagNode* d = i.dagNode;
+	  int m = i.multiplicity;
 	  if (d->isUnstackable())
 	    argNr += m;
 	  else
 	    {
-	      for (int j = m; j > 0; j--)
+	      for (int j = m; j > 0; --j)
 		{
 		  stack.append(RedexPosition(d, parentIndex, argNr, eager));
 		  ++argNr;
@@ -435,12 +435,12 @@ ACU_Symbol::termify(DagNode* dagNode)
     }
   else
     {
-      const ArgVec<ACU_DagNode::Pair>& argArray = safeCast(const ACU_DagNode*, dagNode)->argArray;
-      FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, argArray)
+      const ArgVec<ACU_Pair>& argArray = safeCast(const ACU_DagNode*, dagNode)->argArray;
+      for (const ACU_Pair& i : argArray)
 	{
-	  DagNode* a = i->dagNode;
+	  DagNode* a = i.dagNode;
 	  arguments.append(a->symbol()->termify(a));
-	  multiplicities.append(i->multiplicity);
+	  multiplicities.append(i.multiplicity);
 	}
     }
   return new ACU_Term(this, arguments, multiplicities);
@@ -467,12 +467,12 @@ ACU_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
   ArgVec<ACU_Pair>& args = safeCast(ACU_DagNode*, subject)->argArray;
   bool firstArg = true;
   bddPair* argMap = bdd_newpair();
-  FOR_EACH_CONST(i, ArgVec<ACU_Pair>, args)
+  for (const ACU_Pair& i : args)
     {
       Vector<Bdd> argGenSort;
-      i->dagNode->computeGeneralizedSort(sortBdds, realToBdd, argGenSort);
+      i.dagNode->computeGeneralizedSort(sortBdds, realToBdd, argGenSort);
       Assert((int) argGenSort.size() == nrBdds, "nrBdds clash");
-      int multiplicity = i->multiplicity;
+      int multiplicity = i.multiplicity;
 
       if (firstArg)
 	{
@@ -481,7 +481,7 @@ ACU_Symbol::computeGeneralizedSort(const SortBdds& sortBdds,
 	  --multiplicity;
 	}
 
-      for(; multiplicity != 0; --multiplicity)
+      for (; multiplicity != 0; --multiplicity)
 	{
 	  //
 	  //	Do a sort function application step.
@@ -550,9 +550,9 @@ ACU_Symbol::computeGeneralizedSort2(const SortBdds& sortBdds,
           //    Copy middleBdds over first half of inputBdds.
           //
           Vector<Bdd>::iterator input = inputBdds.begin();
-          FOR_EACH_CONST(j, Vector<Bdd>, middleBdds)
+	  for (const Bdd& j : middleBdds)
             {
-              *input = *j;
+              *input = j;
               ++input;
             }
 	}
@@ -642,7 +642,7 @@ ACU_Symbol::makeCanonical(DagNode* original, HashConsSet* hcs)
 	    n->argArray[j] = d->argArray[j];
 	  n->argArray[i].dagNode = c;
 	  n->argArray[i].multiplicity = d->argArray[i].multiplicity;
-	  for (++i; i < nrArgs; i++)
+	  for (++i; i < nrArgs; ++i)
 	    {
 	      n->argArray[i].dagNode = hcs->getCanonical(hcs->insert(d->argArray[i].dagNode));
 	      n->argArray[i].multiplicity = d->argArray[i].multiplicity;
@@ -668,7 +668,7 @@ ACU_Symbol::makeCanonicalCopy(DagNode* original, HashConsSet* hcs)
       ACU_DagNode* n = new ACU_DagNode(this, d->tree.getSize(), ACU_BaseDagNode::ASSIGNMENT);
       n->copySetRewritingFlags(original);
       n->setSortIndex(original->getSortIndex());
-      ArgVec<ACU_DagNode::Pair>::iterator j = n->argArray.begin();
+      ArgVec<ACU_Pair>::iterator j = n->argArray.begin();
       for (ACU_FastIter i(d->tree); i.valid(); i.next(), ++j)
 	{
 	  j->dagNode = hcs->getCanonical(hcs->insert(i.getDagNode()));
@@ -682,7 +682,7 @@ ACU_Symbol::makeCanonicalCopy(DagNode* original, HashConsSet* hcs)
   ACU_DagNode* n = new ACU_DagNode(this, nrArgs, ACU_BaseDagNode::ASSIGNMENT);
   n->copySetRewritingFlags(original);
   n->setSortIndex(original->getSortIndex());
-  for (int i = 0; i < nrArgs; i++)
+  for (int i = 0; i < nrArgs; ++i)
     {
       n->argArray[i].dagNode = hcs->getCanonical(hcs->insert(d->argArray[i].dagNode));
       n->argArray[i].multiplicity = d->argArray[i].multiplicity;

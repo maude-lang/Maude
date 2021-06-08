@@ -49,9 +49,16 @@ WordLevel::checkAssignmentNormalCase(int i)
   //
   Word& word = partialSolution[i];
   int wordSize = word.size();
-  
+
   if (wordSize == 0)
-    return DONE;
+    {
+      //
+      //	This can happen if the variable got an empty assignment
+      //	during simplification in the INITIAL level, during selection
+      //	or during simplification in the SELECTION level.
+      //
+      return DONE;
+    }
 
   if (wordSize == 1)
     {
@@ -86,6 +93,7 @@ WordLevel::checkAssignmentNormalCase(int i)
       int rhsBound = rhsConstraint.getUpperBound();
       if (rhsBound == 0 || newBound < rhsBound)
 	{
+	  //cout << "lowered bound from " << rhsBound << " to " << newBound << endl;
 	  rhsConstraint.setUpperBound(newBound);
 	  result = CHANGED;
 	}
@@ -93,38 +101,20 @@ WordLevel::checkAssignmentNormalCase(int i)
   return result;
 }
 
-WordLevel::Result
+bool
 WordLevel::checkAssignmentsNormalCase()
 {
   //
-  //	Check all assignments once.
+  //	Check all assignments once. Because all assignments
+  //	are fully interreduced, all rhs variables are free and
+  //	thus any constrains propagated from lhs to rhs cannot
+  //	propagate any further, so once is enough.
   //
-  bool changed = false;
   int nrAssignments = partialSolution.size();
   for (int i = 0; i < nrAssignments; ++i)
     {
-      Result result = checkAssignmentNormalCase(i);
-      if (result == FAIL)
-	return FAIL;
-      if (result == CHANGED)
-	changed = true;
-    }
-  return changed ? CHANGED : DONE;
-}
-
-bool
-WordLevel::checkAssignmentsToFixedPointNormalCase()
-{
-  //
-  //	Keep propagating constraints to fixed point.
-  //
-  for (;;)
-    {
-      Result result = checkAssignmentsNormalCase();
-      if (result == FAIL)
+      if (checkAssignmentNormalCase(i) == FAIL)
 	return false;
-      if (result == DONE)
-	break;
     }
   return true;
 }
@@ -151,10 +141,7 @@ WordLevel::reallyExpandAssignmentNormalCase(int i)
   //	Replace old assignment with new assignment.
   //
   word.swap(newWord);
-  Result result = checkAssignmentNormalCase(i);
-  if (result == FAIL)
-    return false;
-  return result == DONE || checkAssignmentsToFixedPointNormalCase();
+  return true;
 }
 
 WordLevel::Result
@@ -174,7 +161,7 @@ WordLevel::expandAssignmentNormalCase(int i)
 	}
       Word& assigned = partialSolution[j];
       if (!(assigned.size() == 1 && assigned[0] == j))
-	return reallyExpandAssignmentCollapseCase(i) ? CHANGED : FAIL;
+	return reallyExpandAssignmentNormalCase(i) ? CHANGED : FAIL;
     }
   return DONE;
 }
@@ -199,14 +186,15 @@ bool
 WordLevel::expandAssignmentsToFixedPointNormalCase()
 {
   //
-  //	Check and maximally propagate constraints.
-  //
-  if (!checkAssignmentsToFixedPointNormalCase())
-    return false;
-  //
-  //	Then we keep expanding assignments until fixed point. Any
-  //	time we change an assignment, we will check it and if
-  //	might affect constraints we maximally propagate them again.
+  //	We keep expanding assignments until fixed point.
+  //	This is needed beause we could have something like
+  //	  X |-> Y a
+  //	  Y |-> Z b
+  //	  Z |-> c
+  //	and after one pass through we would still have
+  //	  X |-> Z b a
+  //	where Z appears in the range but is bound to something
+  //	other than itself.
   //
   for (;;)
     {
@@ -216,5 +204,8 @@ WordLevel::expandAssignmentsToFixedPointNormalCase()
       if (result == DONE)
 	break;
     }
-  return true;
+  //
+  //	Check and propagate constraints.
+  //
+  return checkAssignmentsNormalCase();
 }
