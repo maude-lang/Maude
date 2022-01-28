@@ -48,7 +48,8 @@ class MixfixModule : public ProfileModule, public MetadataStore, protected Share
   {
     SYSTEM = 1,
     THEORY = 2,
-    STRATEGY = 4
+    STRATEGY = 4,
+    OBJECT_ORIENTED = 8  // a fiction for SyntacticPreModule
   };
 
 public:
@@ -59,7 +60,12 @@ public:
     STRATEGY_MODULE = SYSTEM | STRATEGY,
     FUNCTIONAL_THEORY = THEORY,
     SYSTEM_THEORY = SYSTEM | THEORY,
-    STRATEGY_THEORY = SYSTEM | STRATEGY | THEORY
+    STRATEGY_THEORY = SYSTEM | STRATEGY | THEORY,
+    //
+    //	These only exist for SyntacticPreModule.
+    //
+    OBJECT_ORIENTED_MODULE = SYSTEM | OBJECT_ORIENTED,
+    OBJECT_ORIENTED_THEORY = SYSTEM | OBJECT_ORIENTED | THEORY
   };
 
   enum GatherSymbols
@@ -272,6 +278,7 @@ public:
   static Sort* hookSort(Sort* sort);
   static ModuleType join(ModuleType t1, ModuleType t2);
   static bool isTheory(ModuleType t);
+  static bool isObjectOriented(ModuleType t);
   bool isTheory() const;
   static bool isStrategic(ModuleType t);
   bool isStrategic() const;
@@ -1015,6 +1022,12 @@ inline bool
 MixfixModule::isTheory(ModuleType t)
 {
   return t & THEORY;
+}
+
+inline bool
+MixfixModule::isObjectOriented(ModuleType t)
+{
+  return t & OBJECT_ORIENTED;
 }
 
 inline bool

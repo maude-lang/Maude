@@ -1,3 +1,136 @@
+2022-01-25  Steven Eker  <eker@pup>
+
+	* banner.cc (printBanner): updated copyright year
+
+2021-10-01  Steven Eker  <eker@pup>
+
+	* loopMode.cc (Interpreter::contLoop2): fix bug where we were not checking
+	that savedState was actually a CacheableRewritingContext
+
+2021-09-09  Steven Eker  <eker@pup>
+
+	* yices2_Bindings.cc (VariableGenerator::assertDag): fix bug where
+	we were calling yices_assert_formula(smtContext, t) twice
+
+2021-07-20  Steven Eker  <eker2@eker10>
+
+	* process.cc (SyntacticPreModule::processImports): removed
+	unnecessary if statement
+
+	* syntacticPreModule.cc (SyntacticPreModule::finishModule): make
+	deep copies for autoImports and ooIncludes conditional
+	(SyntacticPreModule::finishModule): reverted change for
+	autoImports because it is breaking strategies
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added data
+	member ooIncludes
+
+	* syntacticPreModule.cc (SyntacticPreModule::finishModule): copy
+	object-oriented includes
+
+	* process.cc (SyntacticPreModule::processImports): handle default
+	object-oriented includes
+
+	* mixfixModule.hh (MixfixModule::isObjectOriented): added
+
+	* moduleDatabase.hh (class ModuleDatabase): setOmodInclude() ->
+	setOoInclude()
+
+	* commands.yy: use setOoInclude()
+
+	* moduleDatabase.cc (ModuleDatabase::setOmodInclude): becomes
+	setOoInclude(); use defaultOpIncludes
+
+	* moduleDatabase.hh (getOmodIncludes): becomes getOoIncludes();
+	use defaultOoIncludes
+	(class ModuleDatabase): data member defaultOmodIncludes becomes
+	defaultOoIncludes
+
+	* process.cc (SyntacticPreModule::processImports): use range-based
+	for loop instead of FOR_EACH_CONST
+
+	* syntacticPreModule.cc (SyntacticPreModule::compatible): added
+	oth/endoth
+
+	* specialTokens.cc: added oth and endoth
+
+	* syntacticPreModule.cc (SyntacticPreModule::SyntacticPreModule):
+	support OBJECT_ORIENTED_THEORY, OBJECT_ORIENTED_MODULE
+
+	* top.yy: delete startModule
+
+	* modules.yy (startModule): deleted
+	(module): use KW_MOD rather than startModule
+
+	* top.yy: KW_OMOD changed to KW_OO
+
+	* commands.yy: use KW_OO rather than KW_OMOD
+
+	* lexer.ll: make omod return KW_MOD and add oo
+
+2021-07-19  Steven Eker  <eker2@eker10>
+
+	* lexer.ll (id): recognise oth and endoth
+
+	* mixfixModule.cc (MixfixModule::moduleTypeString): handle oth and
+	omod
+	(MixfixModule::moduleEndString): handle endoth and endom
+
+	* mixfixModule.hh (class MixfixModule): added OBJECT_ORIENTED to
+	enum Bits, and OBJECT_ORIENTED_MODULE, OBJECT_ORIENTED_THEORY to
+	enum ModuleType
+
+	* lexer.ll: added comment to explain why omod is separated out
+
+2021-07-16  Steven Eker  <eker2@eker10>
+
+	* command.cc (SyntacticPreModule::showModule): use
+	importModeString()
+
+	* mixfixModule.cc (MixfixModule::moduleTypeString): made
+	typeStrings const
+	(MixfixModule::moduleEndString): made typeStrings const
+
+	* visibleModule.cc: use importModeString() and getImportMode()
+
+	* importModule.hh (class ImportModule): added decl for
+	importModeString()
+
+	* importModule.cc (ImportModule::importModeString): added
+
+	* importModule.hh (class ImportModule): added data member
+	importModes
+	(ImportModule::getImportMode): added
+
+	* importModule.cc (ImportModule::addImport): set mode to INCLUDING
+	for theories imported by other modes; store imporation mode
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	showImports()
+
+	* visibleModule.cc: added
+
+	* importModule.hh (ImportModule::getNrImports): added
+	(ImportModule::getImportedModule): added
+
+2021-07-15  Steven Eker  <eker2@eker10>
+
+	* commands.yy (command): added show desugared <identifier> .
+
+	* top.yy: added KW_DESUGARED
+
+	* lexer.ll: added desuguared to INITIAL
+
+2021-06-29  Steven Eker  <eker2@eker10>
+
+	* modules.yy (declaration): use addSubclassDecl()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added data
+	member subclassDecls
+	(SyntacticPreModule::addSubclassDecl): added
+
+===================================Maude137===========================================
+
 2021-04-27  Steven Eker  <eker2@eker10>
 
 	* specialSymbolTypes.cc: added DirectoryManagerSymbol

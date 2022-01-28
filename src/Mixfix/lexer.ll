@@ -3,7 +3,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -140,8 +140,8 @@ in					RETURN(KW_IN)
 }
 
 <INITIAL>{
-th|fth|sth|mod|fmod|smod|obj		RETURN(KW_MOD)  // need to know which one we saw
-omod					RETURN(KW_OMOD)
+th|fth|sth|oth|mod|fmod|smod|omod|obj	RETURN(KW_MOD)  // need to know which one we saw
+oo					RETURN(KW_OO)
 view					RETURN(KW_VIEW);
 load					return KW_LOAD;
 sload					return KW_SLOAD;
@@ -249,6 +249,7 @@ smt-search				return KW_SMT_SEARCH;
 vu-narrow				return KW_VU_NARROW;
 fvu-narrow				return KW_FVU_NARROW;
 fold					return KW_FOLD;
+desugared				return KW_DESUGARED;
 [.\[\](){}]				return *yytext;
 0|([1-9][0-9]*)				{
 					  bool dummy;
@@ -356,7 +357,7 @@ rl					RETURN(KW_RL)
 crl					RETURN(KW_CRL)
 sd					RETURN(KW_SD)
 csd					RETURN(KW_CSD)
-end(th|fth|sth|m|fm|sm|om|o)|jbo	RETURN(KW_ENDM)
+end(th|fth|sth|m|fm|sm|om|o|oth)|jbo	RETURN(KW_ENDM)
 endv					RETURN(KW_ENDV)
 "->"					RETURN(KW_ARROW)
 "=>"					RETURN(KW_ARROW2)

@@ -1,0 +1,34 @@
+Alpha 137 release notes
+========================
+
+Bug fixes
+==========
+(1) A bug in the Yices bindings where constraints were being asserted twice.
+
+(2) A bug in the prelude where projection functions didn't work for
+parameterized meta-modules - found and fixed by Rubén.
+
+(3) A bug in the handling of extension information for iter symbols; illustrated
+by this example from Rubén:
+
+mod UNINITIALIZED-BUG is
+  protecting NAT .
+  vars N M : Nat .
+  crl [rwc] : s N => M if N => M [nonexec] .
+endm
+
+srew 3 using rwc{idle} .
+
+Here two solutions are produced but only one is valid.
+
+(4) A bug in loop mode where it would try to continue using state left
+over from some incompatible command. Reported by Rubén and provoked by:
+
+search 0 =>* 0 .
+(restart loop mode)
+
+
+Other changes
+==============
+(1) std::mt19937 is used instead of having 3rdParty/MersenneTwister.h in
+the source tree.

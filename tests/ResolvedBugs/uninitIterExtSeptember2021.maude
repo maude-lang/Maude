@@ -1,0 +1,14 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug in handling of extension information for iter symbols.
+***
+
+mod UNINITIALIZED-BUG is
+  protecting NAT .
+  vars N M : Nat .
+  crl [rwc] : s N => M if N => M [nonexec] .
+endm
+
+srew 3 using rwc{idle} .

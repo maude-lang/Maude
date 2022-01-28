@@ -65,9 +65,9 @@ AU_ExtensionInfo::makeClone() const
 }
 
 void
-AU_ExtensionInfo::copy(ExtensionInfo* extensionInfo)
+AU_ExtensionInfo::copy(const ExtensionInfo* extensionInfo)
 {
-  AU_ExtensionInfo* e = safeCast(AU_ExtensionInfo*, extensionInfo);
+  const AU_ExtensionInfo* e = safeCast(const AU_ExtensionInfo*, extensionInfo);
   setValidAfterMatch(e->validAfterMatch());
   bool whole = e->matchedWhole();
   setMatchedWhole(whole);

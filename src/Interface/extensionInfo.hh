@@ -39,7 +39,7 @@ public:
 
   virtual DagNode* buildMatchedPortion() const = 0;
   virtual ExtensionInfo* makeClone() const = 0;		// for saving extension info
-  virtual void copy(ExtensionInfo* extensionInfo) = 0;	// for restoring extension info
+  virtual void copy(const ExtensionInfo* extensionInfo) = 0;	// for restoring extension info
 
 private:
   //

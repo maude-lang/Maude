@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -312,10 +312,12 @@ MixfixModule::~MixfixModule()
 const char*
 MixfixModule::moduleTypeString(ModuleType type)
 {
-  static const char* typeStrings[] = {"fmod", "mod", "fth", "th"};
+  static const char* const typeStrings[] = {"fmod", "mod", "fth", "th"};
 
   if (type & STRATEGY)
     return type & THEORY ? "sth" : "smod";
+  if (type & OBJECT_ORIENTED)
+    return type & THEORY ? "oth" : "omod";
 
   return typeStrings[type];
 }
@@ -323,10 +325,12 @@ MixfixModule::moduleTypeString(ModuleType type)
 const char*
 MixfixModule::moduleEndString(ModuleType type)
 {
-  static const char* typeStrings[] = {"endfm", "endm", "endfth", "endth"};
+  static const char* const typeStrings[] = {"endfm", "endm", "endfth", "endth"};
 
   if (type & STRATEGY)
     return type & THEORY ? "endsth" : "endsm";
+  if (type & OBJECT_ORIENTED)
+    return type & THEORY ? "endoth" : "endom";
 
   return typeStrings[type];
 }

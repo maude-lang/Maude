@@ -94,10 +94,14 @@ SyntacticPreModule::SyntacticPreModule(Token startToken, Token moduleName, Inter
     moduleType = MixfixModule::FUNCTIONAL_THEORY;
   else if (startTokenCode == sth)
     moduleType = MixfixModule::STRATEGY_THEORY;
-  else if (startTokenCode == mod || startTokenCode == omod)
+  else if (startTokenCode == oth)
+    moduleType = MixfixModule::OBJECT_ORIENTED_THEORY;
+  else if (startTokenCode == mod)
     moduleType = MixfixModule::SYSTEM_MODULE;
   else if (startTokenCode == smod)
     moduleType = MixfixModule::STRATEGY_MODULE;
+  else if (startTokenCode == omod)
+    moduleType = MixfixModule::OBJECT_ORIENTED_MODULE;
   setModuleType(moduleType);
 
   lastSawOpDecl = false;
@@ -178,6 +182,8 @@ SyntacticPreModule::compatible(int endTokenCode)
     return endTokenCode == endfth;
   if (startTokenCode == sth)
     return endTokenCode == endsth;
+  if (startTokenCode == oth)
+    return endTokenCode == endoth;
   if (startTokenCode == mod)
     return endTokenCode == endm;
   if (startTokenCode == fmod)
@@ -201,7 +207,10 @@ SyntacticPreModule::finishModule(Token endToken)
 		   QUOTE(Token::name(startTokenCode)) << " ends with "
 		   << QUOTE(endToken) << '.');
     }
-  autoImports = getOwner()->getAutoImports(); // deep copy
+  //if (!(MixfixModule::isTheory(getModuleType())))
+    autoImports = getOwner()->getAutoImports(); // deep copy
+  if (MixfixModule::isObjectOriented(getModuleType()))
+    ooIncludes = getOwner()->getOoIncludes(); // deep copy
   isCompleteFlag = true;
   getOwner()->insertModule(id(), this);
   process();

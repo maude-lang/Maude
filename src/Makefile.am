@@ -1,5 +1,4 @@
 SUBDIRS = \
-	3rdParty \
 	Utility \
 	Parser \
 	Temporal \

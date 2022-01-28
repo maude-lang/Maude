@@ -55,14 +55,18 @@ ExtensionInfo*
 S_ExtensionInfo::makeClone() const
 {
   S_ExtensionInfo* n = new S_ExtensionInfo(subject);
+  n->setValidAfterMatch(validAfterMatch());
+  n->setMatchedWhole(matchedWhole());
   n->unmatched = unmatched;
   return n;
 }
 
 void
-S_ExtensionInfo::copy(ExtensionInfo* extensionInfo)
+S_ExtensionInfo::copy(const ExtensionInfo* extensionInfo)
 {
-  S_ExtensionInfo* e = safeCast(S_ExtensionInfo*, extensionInfo);
+  const S_ExtensionInfo* e = safeCast(const S_ExtensionInfo*, extensionInfo);
+  setValidAfterMatch(e->validAfterMatch());
+  setMatchedWhole(e->matchedWhole());
   subject = e->subject;
   unmatched = e->unmatched;
 }

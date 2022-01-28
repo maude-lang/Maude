@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -166,6 +166,19 @@ VisibleModule::showSortsAndSubsorts(ostream& s) const
 }
 
 void
+VisibleModule::showImports(ostream& s) const
+{
+  int nrImports = getNrImports();
+  for (int i = 0; i < nrImports; i++)
+    {
+      if (UserLevelRewritingContext::interrupted())
+	return;
+      s << "  " << importModeString(getImportMode(i)) <<
+	' ' << getImportedModule(i) << " .\n";
+    }
+}
+
+void
 VisibleModule::showModule(ostream& s, bool all) const
 {
   s << moduleTypeString(getModuleType()) << ' ' << this;
@@ -178,6 +191,8 @@ VisibleModule::showModule(ostream& s, bool all) const
       s << '}';
     }
   s << " is\n";
+  if (!all)
+    showImports(s);
 
   showSorts1(s, true, all);
   showSubsorts(s, true, all);

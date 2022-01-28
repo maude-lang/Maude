@@ -272,15 +272,13 @@ MetaLevelOpSymbol::reset()
 bool
 MetaLevelOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
-  Assert(this == subject->symbol(), "Bad symbol");
-  Assert(metaLevel != 0, "metaLevel not set for " << this);
-  //if (metaLevel == 0)
-  //  metaLevel = shareWith->metaLevel;
+  Assert(this == subject->symbol(), "bad symbol");
+  Assert(metaLevel != 0, "metaLevel not set for " << this << " during postInterSymbolPass()");
   FreeDagNode* d = safeCast(FreeDagNode*, subject);
-  int nrArgs = arity();
   if (standardStrategy())
     {
-      for (int i = 0; i < nrArgs; i++)
+      const int nrArgs = arity();
+      for (int i = 0; i < nrArgs; ++i)
 	d->getArgument(i)->reduce(context);
       return (this->*descentFunction)(d, context) || FreeSymbol::eqRewrite(subject, context);
     }
@@ -299,10 +297,10 @@ MetaLevelOpSymbol::complexStrategy(DagNode* subject, RewritingContext& context)
   //	(2) we have no way to replace semi-eager arguments so that they can be evaluated.
   //
   const Vector<int>& userStrategy = getStrategy();
-  int stratLen = userStrategy.length();
-  for (int i = 0; i < stratLen - 1; i++)
+  const int stratLen = userStrategy.length() - 1;
+  for (int i = 0; i < stratLen; ++i)
     {
-      int a = userStrategy[i];
+      const int a = userStrategy[i];
       if(a == 0)
 	{
 	  //

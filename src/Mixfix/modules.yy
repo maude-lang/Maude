@@ -361,7 +361,7 @@ parenBubble	:	'(' 			{ lexBubble(BAR_RIGHT_PAREN, 1); }
 /*
  *	Modules and theories.
  */
-module		:	startModule		{ lexerIdMode(); }
+module		:	KW_MOD		{ lexerIdMode(); }
 			token
 			{
 			  interpreter.setCurrentModule(new SyntacticPreModule($1, $3, &interpreter));
@@ -420,9 +420,6 @@ badType		:	ENDS_IN_DOT
 
 typeDot		:	typeName expectedDot
 		|	badType {}
-		;
-
-startModule	:	KW_MOD | KW_OMOD
 		;
 
 decList		:	decList declaration
@@ -507,7 +504,7 @@ declaration	:	KW_IMPORT moduleExprDot
 			}
 
 		|	KW_SUBCLASS		{ clear(); }
-			subsortList dot		{ CM->addSubsortDecl(tokenSequence); }
+			subsortList dot		{ CM->addSubclassDecl(tokenSequence); }
 
 		|	error '.'
 		        {

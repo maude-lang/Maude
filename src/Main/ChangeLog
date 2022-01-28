@@ -1,3 +1,14 @@
+2021-09-21  Steven Eker  <eker@pup>
+
+	* prelude.maude: applied Rubén's patch to make projection functions work for
+	parameterized meta-modules 
+
+2021-07-20  Steven Eker  <eker2@eker10>
+
+	* prelude.maude: use oo rather than omod
+
+===================================Maude137===========================================
+
 2021-06-01  Steven Eker  <eker2@eker10>
 
 	* main.cc (printHelp): updated line for -assoc-unif-depth=

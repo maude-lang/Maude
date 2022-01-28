@@ -1,3 +1,10 @@
+2021-08-26  Steven Eker  <eker@pup>
+
+	* metaLevelOpSymbol.cc (MetaLevelOpSymbol::eqRewrite): code cleaning
+	(MetaLevelOpSymbol::complexStrategy): code cleaning
+
+===================================Maude137===========================================
+
 2021-03-23  Steven Eker  <eker2@eker10>
 
 	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):

@@ -3,7 +3,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,18 +28,27 @@
 void
 PigPug::makeStateKey(CombinedWord& stateKey)
 {
+  const ConstraintMap& constraintMap = constraintStack.back();
   {
-    Unificand& lhs = lhsStack.back();
-    int len = lhs.word.size();
+    const Unificand& lhs = lhsStack.back();
+    const int len = lhs.word.size();
     for (int i = lhs.index; i < len; ++i)
-      stateKey.push_back(lhs.word[i]);
+      {
+	const int v = lhs.word[i];
+	stateKey.push_back(v);
+	stateKey.push_back(constraintMap[v].getUpperBound());
+      }
   }
   stateKey.push_back(DELIMITER);
   {
-    Unificand& rhs = rhsStack.back();
-    int len = rhs.word.size();
+    const Unificand& rhs = rhsStack.back();
+    const int len = rhs.word.size();
     for (int i = rhs.index; i < len; ++i)
-      stateKey.push_back(rhs.word[i]);
+      {
+	const int v = rhs.word[i];
+	stateKey.push_back(v);
+	stateKey.push_back(constraintMap[v].getUpperBound());
+      }
   }
 }
 
@@ -67,8 +76,7 @@ PigPug::firstMoveWithCycleDetection()
   //
   CombinedWord stateKey;
   makeStateKey(stateKey);
-  int safe = arrive(stateKey);
-  if (!safe)
+  if (onCycle(stateKey))
     return NOT_ENTERED;  // already been here
   //
   //	Try all three moves until we get success.
@@ -160,10 +168,13 @@ PigPug::runWithCycleDetection(int result)
 }
 
 bool
-PigPug::arrive(const CombinedWord& word)
+PigPug::onCycle(const CombinedWord& key)
 {
+  //
+  //	Returns true if we're not on a cycle and false if we're on a cycle.
+  //
   int stateNr = stateInfo.size();
-  pair<WordMap::iterator, bool> p = wordMap.insert(WordMap::value_type(word, stateNr));
+  pair<WordMap::iterator, bool> p = wordMap.insert(WordMap::value_type(key, stateNr));
   if (p.second)
     {
       //
@@ -175,7 +186,7 @@ PigPug::arrive(const CombinedWord& word)
       s.onCycle = false;
       s.onLivePath = false;
       traversalStack.append(stateNr);
-      return true;
+      return false;
     }
   //
   //	Saw an previous state.
@@ -200,14 +211,14 @@ PigPug::arrive(const CombinedWord& word)
 	  if (stateNr == index)
 	    break;
 	}
-      return false;
+      return true;
     }
   //
   //	We reach the previous state via a parallel path, so we push it on the stack.
   //
   stateInfo[index].onStack = true;
   traversalStack.append(index);
-  return true;
+  return false;
 }
 
 void

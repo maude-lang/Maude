@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ public:
   void showSds(ostream& s, bool indent, bool all) const;
 
 private:
+  void showImports(ostream& s) const;
   void showSorts1(ostream& s, bool indent, bool all) const;
   void showSubsorts(ostream& s, bool indent, bool all) const;
   void showPolymorphDecl(ostream& s, bool indent, int index) const;

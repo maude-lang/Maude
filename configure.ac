@@ -3,7 +3,7 @@
 #
 #	Initialize autoconf stuff.
 #
-AC_INIT(Maude, alpha136, [maude-bugs@lists.cs.illinois.edu])
+AC_INIT(Maude, 3.2 beta, [maude-bugs@lists.cs.illinois.edu])
 #
 #	Allow directory names that look like macros.
 #
@@ -386,7 +386,6 @@ AM_CONDITIONAL(BUILD_COMPILER, test $COMPILER = yes)
 
 AC_CONFIG_FILES([Makefile
 	         src/Makefile
-		 src/3rdParty/Makefile
 		 src/Utility/Makefile
 		 src/Parser/Makefile
 		 src/Temporal/Makefile

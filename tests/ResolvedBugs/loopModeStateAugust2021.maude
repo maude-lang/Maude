@@ -1,0 +1,9 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug where we tried to restart loop mode with state left over from some other command.
+***
+
+search 0 =>* 0 .
+(restart loop mode)

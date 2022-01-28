@@ -1,0 +1,10 @@
+==========================================
+srewrite in UNINITIALIZED-BUG : 3 using rwc{idle} .
+
+Solution 1
+rewrites: 1
+result NzNat: 2
+
+No more solutions.
+rewrites: 3
+Bye.

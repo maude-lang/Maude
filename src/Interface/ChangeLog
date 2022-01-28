@@ -1,3 +1,7 @@
+2021-09-21  Steven Eker  <eker@pup>
+
+	* extensionInfo.hh (class ExtensionInfo): make argument for copy() const
+
 2021-02-19  Steven Eker  <eker2@eker10>
 
 	* dagNode.hh (DagNode::replaceSymbol): commented out

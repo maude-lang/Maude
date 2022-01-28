@@ -42,7 +42,11 @@ Interpreter::loop(const Vector<Token>& subject)
 bool
 Interpreter::contLoop2(const Vector<Token>& input)
 {
-  CacheableRewritingContext* savedContext = safeCast(CacheableRewritingContext*, savedState);
+  //
+  //	We have no idea what if anything is left in savedState - could be
+  //	from a previous non loop command.
+  //
+  CacheableRewritingContext* savedContext = dynamic_cast<CacheableRewritingContext*>(savedState);
   if (savedContext != 0)
     {
       DagNode* d = savedContext->root();
@@ -58,11 +62,13 @@ Interpreter::contLoop2(const Vector<Token>& input)
 	}
       else
 	IssueWarning("bad loop state.");
-      delete savedState;  // loses any external objects
-      savedState = 0;
     }
   else
     IssueWarning("no loop state.");
+  //
+  //	Clean up anything left in savedState that was unsuitable.
+  //
+  clearContinueInfo();
   return false;
 }
 

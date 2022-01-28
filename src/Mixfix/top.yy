@@ -127,7 +127,7 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Inert keywords: these are only recognized by lexer when in initial mode.
  */
-%token <yyToken> KW_MOD KW_OMOD KW_VIEW
+%token <yyToken> KW_MOD KW_OO KW_VIEW
 %token KW_PARSE KW_NORMALIZE KW_REDUCE KW_REWRITE
 %token KW_LOOP KW_NARROW KW_XG_NARROW KW_MATCH KW_XMATCH KW_UNIFY KW_CHECK
 %token KW_GET KW_VARIANTS KW_VARIANT
@@ -148,7 +148,7 @@ int yylex(YYSTYPE* lvalp);
 %token KW_NUMBER KW_RAT KW_COLOR KW_IMPLIED_STEP
 %token <yyInt64> SIMPLE_NUMBER
 %token KW_PWD KW_CD KW_PUSHD KW_POPD KW_LS KW_LL KW_LOAD KW_SLOAD KW_QUIT
-%token KW_EOF KW_TEST KW_SMT_SEARCH KW_VU_NARROW KW_FVU_NARROW KW_FOLD
+%token KW_EOF KW_TEST KW_SMT_SEARCH KW_VU_NARROW KW_FVU_NARROW KW_FOLD KW_DESUGARED
 
 /*
  *	Start keywords: signal end of mixfix statement if following '.'.
@@ -210,7 +210,7 @@ int yylex(YYSTYPE* lvalp);
 %type <yyToken> cSimpleTokenBarDot
 %type <yyToken> cTokenBarDotCommaRight cTokenBarDotCommaNumber
 %type <yyToken> cTokenBarOpenLeftIn cTokenBarDotCommaClose cOptionToken cTokenBarDotOptionToken
-%type <yyToken> sortName sortToken startModule sortDot
+%type <yyToken> sortName sortToken sortDot
 
 /*
  *	Nonterminals that return Interpreter::SearchKind.

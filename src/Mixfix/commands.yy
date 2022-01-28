@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -348,6 +348,12 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showModule(true);
 			}
+		|	KW_SHOW KW_DESUGARED	{ lexBubble(END_COMMAND, 0); }
+			endBubble
+			{
+			  if (interpreter.setCurrentModule(lexerBubble))
+			    interpreter.showModule(false);
+			}
 		|	KW_SHOW KW_VIEW		{ lexBubble(END_COMMAND, 0); }
 			endBubble
 			{
@@ -501,11 +507,11 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  interpreter.setAutoImport($2, $4, $6);
 			}
-		|	KW_SET KW_OMOD KW_INCLUDE	{ lexerCmdMode(); }
+		|	KW_SET KW_OO KW_INCLUDE		{ lexerCmdMode(); }
 			cSimpleTokenBarDot		{ lexerInitialMode(); }
 			polarity '.'
 			{
-			  interpreter.setOmodInclude($5, $7);
+			  interpreter.setOoInclude($5, $7);
 			}
 		|	KW_SET KW_VERBOSE polarity '.'
 			{

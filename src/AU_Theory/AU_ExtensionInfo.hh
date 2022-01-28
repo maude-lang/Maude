@@ -33,7 +33,7 @@ public:
   AU_ExtensionInfo(AU_DagNode* subject);
   DagNode* buildMatchedPortion() const;
   ExtensionInfo* makeClone() const;
-  void copy(ExtensionInfo* extensionInfo);
+  void copy(const ExtensionInfo* extensionInfo);
 
   void setFirstMatched(int firstMatched);
   void setLastMatched(int lastMatched);

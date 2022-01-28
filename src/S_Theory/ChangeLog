@@ -1,3 +1,13 @@
+2021-09-21  Steven Eker  <eker@pup>
+
+	* S_ExtensionInfo.cc (S_ExtensionInfo::copy): take const arg
+	(S_ExtensionInfo::copy): copy validAfterMatch and matchedWhole to fix bugs
+	(makeClone): copy validAfterMatch and matchedWhole to fix bugs
+
+	* S_ExtensionInfo.hh (class S_ExtensionInfo): updated decl for copy()
+
+===================================Maude137===========================================
+
 2020-12-11  Steven Eker  <eker2@eker10>
 
 	* S_DagNode.cc (S_DagNode::instantiate2): take and pass

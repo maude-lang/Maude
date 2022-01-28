@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2004 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #ifndef _randomOpSymbol_hh_
 #define _randomOpSymbol_hh_
 #include "numberOpSymbol.hh"
-#include "MersenneTwister.h"
+#include <random>
 
 class RandomOpSymbol : public NumberOpSymbol
 {
@@ -41,18 +41,18 @@ public:
 			  Vector<Vector<const char*> >& data);
   bool eqRewrite(DagNode* subject, RewritingContext& context);
 
-  static void setGlobalSeed(MTRand::uint32 value);
+  static void setGlobalSeed(mt19937::result_type value);
 
 private:
-  static MTRand::uint32 globalSeed;
+  static mt19937::result_type globalSeed;
 
   mpz_class currentIndex;
-  MTRand currentState;
-  MTRand::uint32 randomNumber;
+  mt19937 currentState;
+  mt19937::result_type randomNumber;
 };
 
 inline void
-RandomOpSymbol::setGlobalSeed(MTRand::uint32 value)
+RandomOpSymbol::setGlobalSeed(mt19937::result_type value)
 {
   globalSeed = value;
 }

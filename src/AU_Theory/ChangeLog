@@ -1,3 +1,9 @@
+2021-09-21  Steven Eker  <eker@pup>
+
+	* AU_ExtensionInfo.cc (AU_ExtensionInfo::copy): take const arg
+
+	* AU_ExtensionInfo.hh (class AU_ExtensionInfo): updated decl for copy()
+
 2021-05-11  Steven Eker  <eker2@eker10>
 
 	* AU_Term.cc (AU_Term::deepSelfDestruct): use range-based for loop

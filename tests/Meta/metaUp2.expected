@@ -122,7 +122,9 @@ subsort 'ResultTriple < 'ResultTriple? .
 subsort 'Rule < 'RuleSet .
 subsort 'RuleApplication < 'Strategy .
 subsort 'SModule < 'Module .
+subsort 'SModule < 'StratModule .
 subsort 'STheory < 'Module .
+subsort 'STheory < 'StratTheory .
 subsort 'SmtResult < 'SmtResult? .
 subsort 'Sort < 'Expression .
 subsort 'Sort < 'NeSortSet .
@@ -2388,7 +2390,9 @@ result FModule: fmod 'META-LEVEL is
   subsort 'Rule < 'RuleSet .
   subsort 'RuleApplication < 'Strategy .
   subsort 'SModule < 'Module .
+  subsort 'SModule < 'StratModule .
   subsort 'STheory < 'Module .
+  subsort 'STheory < 'StratTheory .
   subsort 'SmtResult < 'SmtResult? .
   subsort 'Sort < 'Expression .
   subsort 'Sort < 'NeSortSet .
@@ -3842,7 +3846,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getEqs['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'EQS:EquationSet [none] .
-  eq 'getEqs['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
+  eq 'getEqs['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'EQS:EquationSet [
     none] .
@@ -3865,7 +3869,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getImports['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'IL:ImportList [none] .
-  eq 'getImports['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,
+  eq 'getImports['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,
     'SS:SortSet,'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,
     'EQS:EquationSet,'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] =
     'IL:ImportList [none] .
@@ -3898,7 +3902,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getMbs['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'MAS:MembAxSet [none] .
-  eq 'getMbs['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
+  eq 'getMbs['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'MAS:MembAxSet [
     none] .
@@ -3961,7 +3965,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getOps['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'OPDS:OpDeclSet [none] .
-  eq 'getOps['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
+  eq 'getOps['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'OPDS:OpDeclSet [
     none] .
@@ -3985,7 +3989,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getRls['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'RLS:RuleSet [none] .
-  eq 'getRls['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
+  eq 'getRls['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'RLS:RuleSet [none]
     .
@@ -4009,7 +4013,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getSds['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'none.StratDefSet [none] .
-  eq 'getSds['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
+  eq 'getSds['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'STDFS:StratDefSet [
     none] .
@@ -4032,9 +4036,10 @@ result FModule: fmod 'META-LEVEL is
   eq 'getSorts['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'SS:SortSet [none] .
-  eq 'getSorts['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
-    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
-    'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'SS:SortSet [none] .
+  eq 'getSorts['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,
+    'SS:SortSet,'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,
+    'EQS:EquationSet,'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] =
+    'SS:SortSet [none] .
   eq 'getSorts['sth_is_sorts_._______endsth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'SS:SortSet [none] .
@@ -4055,10 +4060,10 @@ result FModule: fmod 'META-LEVEL is
   eq 'getStrats['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'none.StratDeclSet [none] .
-  eq 'getStrats['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
-    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
-    'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'STDS:StratDeclSet [
-    none] .
+  eq 'getStrats['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,
+    'SS:SortSet,'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,
+    'EQS:EquationSet,'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] =
+    'STDS:StratDeclSet [none] .
   eq 'getStrats['sth_is_sorts_._______endsth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'STDS:StratDeclSet [
@@ -4075,7 +4080,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getSubsorts['mod_is_sorts_._____endm['H:Header,'IL:ImportList,
     'SS:SortSet,'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,
     'EQS:EquationSet,'RLS:RuleSet]] = 'SSDS:SubsortDeclSet [none] .
-  eq 'getSubsorts['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,
+  eq 'getSubsorts['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,
     'SS:SortSet,'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,
     'EQS:EquationSet,'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] =
     'SSDS:SubsortDeclSet [none] .
@@ -5606,7 +5611,9 @@ result FModule: fmod 'META-LEVEL is
   subsort 'Rule < 'RuleSet .
   subsort 'RuleApplication < 'Strategy .
   subsort 'SModule < 'Module .
+  subsort 'SModule < 'StratModule .
   subsort 'STheory < 'Module .
+  subsort 'STheory < 'StratTheory .
   subsort 'SmtResult < 'SmtResult? .
   subsort 'Sort < 'Expression .
   subsort 'Sort < 'NeSortSet .
@@ -7060,7 +7067,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getEqs['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'EQS:EquationSet [none] .
-  eq 'getEqs['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
+  eq 'getEqs['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'EQS:EquationSet [
     none] .
@@ -7083,7 +7090,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getImports['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'IL:ImportList [none] .
-  eq 'getImports['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,
+  eq 'getImports['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,
     'SS:SortSet,'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,
     'EQS:EquationSet,'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] =
     'IL:ImportList [none] .
@@ -7116,7 +7123,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getMbs['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'MAS:MembAxSet [none] .
-  eq 'getMbs['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
+  eq 'getMbs['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'MAS:MembAxSet [
     none] .
@@ -7179,7 +7186,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getOps['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'OPDS:OpDeclSet [none] .
-  eq 'getOps['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
+  eq 'getOps['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'OPDS:OpDeclSet [
     none] .
@@ -7203,7 +7210,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getRls['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'RLS:RuleSet [none] .
-  eq 'getRls['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
+  eq 'getRls['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'RLS:RuleSet [none]
     .
@@ -7227,7 +7234,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getSds['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'none.StratDefSet [none] .
-  eq 'getSds['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
+  eq 'getSds['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'STDFS:StratDefSet [
     none] .
@@ -7250,9 +7257,10 @@ result FModule: fmod 'META-LEVEL is
   eq 'getSorts['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'SS:SortSet [none] .
-  eq 'getSorts['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
-    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
-    'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'SS:SortSet [none] .
+  eq 'getSorts['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,
+    'SS:SortSet,'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,
+    'EQS:EquationSet,'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] =
+    'SS:SortSet [none] .
   eq 'getSorts['sth_is_sorts_._______endsth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'SS:SortSet [none] .
@@ -7273,10 +7281,10 @@ result FModule: fmod 'META-LEVEL is
   eq 'getStrats['mod_is_sorts_._____endm['H:Header,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet]] = 'none.StratDeclSet [none] .
-  eq 'getStrats['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,'SS:SortSet,
-    'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
-    'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'STDS:StratDeclSet [
-    none] .
+  eq 'getStrats['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,
+    'SS:SortSet,'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,
+    'EQS:EquationSet,'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] =
+    'STDS:StratDeclSet [none] .
   eq 'getStrats['sth_is_sorts_._______endsth['Q:Qid,'IL:ImportList,'SS:SortSet,
     'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,'EQS:EquationSet,
     'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] = 'STDS:StratDeclSet [
@@ -7293,7 +7301,7 @@ result FModule: fmod 'META-LEVEL is
   eq 'getSubsorts['mod_is_sorts_._____endm['H:Header,'IL:ImportList,
     'SS:SortSet,'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,
     'EQS:EquationSet,'RLS:RuleSet]] = 'SSDS:SubsortDeclSet [none] .
-  eq 'getSubsorts['smod_is_sorts_._______endsm['Q:Qid,'IL:ImportList,
+  eq 'getSubsorts['smod_is_sorts_._______endsm['H:Header,'IL:ImportList,
     'SS:SortSet,'SSDS:SubsortDeclSet,'OPDS:OpDeclSet,'MAS:MembAxSet,
     'EQS:EquationSet,'RLS:RuleSet,'STDS:StratDeclSet,'STDFS:StratDefSet]] =
     'SSDS:SubsortDeclSet [none] .
@@ -7737,13 +7745,14 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''ResultPair?.Sort],'subsort_<_.[''ResultTriple.Sort,''ResultTriple?.Sort],
     'subsort_<_.[''Rule.Sort,''RuleSet.Sort],'subsort_<_.[
     ''RuleApplication.Sort,''Strategy.Sort],'subsort_<_.[''SModule.Sort,
-    ''Module.Sort],'subsort_<_.[''STheory.Sort,''Module.Sort],'subsort_<_.[
-    ''SmtResult.Sort,''SmtResult?.Sort],'subsort_<_.[''Sort.Sort,
-    ''Expression.Sort],'subsort_<_.[''Sort.Sort,''NeSortSet.Sort],'subsort_<_.[
-    ''Sort.Sort,''Type.Sort],'subsort_<_.[''SortMapping.Sort,
-    ''SortMappingSet.Sort],'subsort_<_.[''SortSet.Sort,''TypeSet.Sort],
-    'subsort_<_.[''StratDecl.Sort,''StratDeclSet.Sort],'subsort_<_.[
-    ''StratDefinition.Sort,''StratDefSet.Sort],'subsort_<_.[
+    ''Module.Sort],'subsort_<_.[''SModule.Sort,''StratModule.Sort],
+    'subsort_<_.[''STheory.Sort,''Module.Sort],'subsort_<_.[''STheory.Sort,
+    ''StratTheory.Sort],'subsort_<_.[''SmtResult.Sort,''SmtResult?.Sort],
+    'subsort_<_.[''Sort.Sort,''Expression.Sort],'subsort_<_.[''Sort.Sort,
+    ''NeSortSet.Sort],'subsort_<_.[''Sort.Sort,''Type.Sort],'subsort_<_.[
+    ''SortMapping.Sort,''SortMappingSet.Sort],'subsort_<_.[''SortSet.Sort,
+    ''TypeSet.Sort],'subsort_<_.[''StratDecl.Sort,''StratDeclSet.Sort],
+    'subsort_<_.[''StratDefinition.Sort,''StratDefSet.Sort],'subsort_<_.[
     ''StratMapping.Sort,''StratMappingSet.Sort],'subsort_<_.[
     ''StratModule.Sort,''Module.Sort],'subsort_<_.[''StratTheory.Sort,
     ''Module.Sort],'subsort_<_.[''Strategy.Sort,''Strategy?.Sort],'subsort_<_.[
@@ -9501,7 +9510,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''EQS:EquationSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getEqs.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -9539,7 +9548,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''IL:ImportList.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getImports.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -9596,7 +9605,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''MAS:MembAxSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getMbs.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -9711,7 +9720,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''OPDS:OpDeclSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getOps.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -9751,7 +9760,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''RLS:RuleSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getRls.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -9791,7 +9800,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''none.StratDefSet.Constant,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getSds.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -9830,7 +9839,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''SS:SortSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getSorts.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -9872,7 +9881,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''none.StratDeclSet.Constant,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getStrats.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -9906,7 +9915,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''SSDS:SubsortDeclSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getSubsorts.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -10233,13 +10242,14 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,'nil.ImportList,
     ''ResultPair?.Sort],'subsort_<_.[''ResultTriple.Sort,''ResultTriple?.Sort],
     'subsort_<_.[''Rule.Sort,''RuleSet.Sort],'subsort_<_.[
     ''RuleApplication.Sort,''Strategy.Sort],'subsort_<_.[''SModule.Sort,
-    ''Module.Sort],'subsort_<_.[''STheory.Sort,''Module.Sort],'subsort_<_.[
-    ''SmtResult.Sort,''SmtResult?.Sort],'subsort_<_.[''Sort.Sort,
-    ''Expression.Sort],'subsort_<_.[''Sort.Sort,''NeSortSet.Sort],'subsort_<_.[
-    ''Sort.Sort,''Type.Sort],'subsort_<_.[''SortMapping.Sort,
-    ''SortMappingSet.Sort],'subsort_<_.[''SortSet.Sort,''TypeSet.Sort],
-    'subsort_<_.[''StratDecl.Sort,''StratDeclSet.Sort],'subsort_<_.[
-    ''StratDefinition.Sort,''StratDefSet.Sort],'subsort_<_.[
+    ''Module.Sort],'subsort_<_.[''SModule.Sort,''StratModule.Sort],
+    'subsort_<_.[''STheory.Sort,''Module.Sort],'subsort_<_.[''STheory.Sort,
+    ''StratTheory.Sort],'subsort_<_.[''SmtResult.Sort,''SmtResult?.Sort],
+    'subsort_<_.[''Sort.Sort,''Expression.Sort],'subsort_<_.[''Sort.Sort,
+    ''NeSortSet.Sort],'subsort_<_.[''Sort.Sort,''Type.Sort],'subsort_<_.[
+    ''SortMapping.Sort,''SortMappingSet.Sort],'subsort_<_.[''SortSet.Sort,
+    ''TypeSet.Sort],'subsort_<_.[''StratDecl.Sort,''StratDeclSet.Sort],
+    'subsort_<_.[''StratDefinition.Sort,''StratDefSet.Sort],'subsort_<_.[
     ''StratMapping.Sort,''StratMappingSet.Sort],'subsort_<_.[
     ''StratModule.Sort,''Module.Sort],'subsort_<_.[''StratTheory.Sort,
     ''Module.Sort],'subsort_<_.[''Strategy.Sort,''Strategy?.Sort],'subsort_<_.[
@@ -12001,7 +12011,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,'nil.ImportList,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''EQS:EquationSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getEqs.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -12039,7 +12049,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,'nil.ImportList,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''IL:ImportList.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getImports.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -12096,7 +12106,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,'nil.ImportList,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''MAS:MembAxSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getMbs.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -12211,7 +12221,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,'nil.ImportList,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''OPDS:OpDeclSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getOps.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -12251,7 +12261,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,'nil.ImportList,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''RLS:RuleSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getRls.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -12291,7 +12301,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,'nil.ImportList,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''none.StratDefSet.Constant,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getSds.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -12330,7 +12340,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,'nil.ImportList,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''SS:SortSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getSorts.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -12372,7 +12382,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,'nil.ImportList,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''none.StratDeclSet.Constant,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getStrats.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -12406,7 +12416,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,'nil.ImportList,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''SSDS:SubsortDeclSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getSubsorts.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -12733,13 +12743,14 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''ResultPair?.Sort],'subsort_<_.[''ResultTriple.Sort,''ResultTriple?.Sort],
     'subsort_<_.[''Rule.Sort,''RuleSet.Sort],'subsort_<_.[
     ''RuleApplication.Sort,''Strategy.Sort],'subsort_<_.[''SModule.Sort,
-    ''Module.Sort],'subsort_<_.[''STheory.Sort,''Module.Sort],'subsort_<_.[
-    ''SmtResult.Sort,''SmtResult?.Sort],'subsort_<_.[''Sort.Sort,
-    ''Expression.Sort],'subsort_<_.[''Sort.Sort,''NeSortSet.Sort],'subsort_<_.[
-    ''Sort.Sort,''Type.Sort],'subsort_<_.[''SortMapping.Sort,
-    ''SortMappingSet.Sort],'subsort_<_.[''SortSet.Sort,''TypeSet.Sort],
-    'subsort_<_.[''StratDecl.Sort,''StratDeclSet.Sort],'subsort_<_.[
-    ''StratDefinition.Sort,''StratDefSet.Sort],'subsort_<_.[
+    ''Module.Sort],'subsort_<_.[''SModule.Sort,''StratModule.Sort],
+    'subsort_<_.[''STheory.Sort,''Module.Sort],'subsort_<_.[''STheory.Sort,
+    ''StratTheory.Sort],'subsort_<_.[''SmtResult.Sort,''SmtResult?.Sort],
+    'subsort_<_.[''Sort.Sort,''Expression.Sort],'subsort_<_.[''Sort.Sort,
+    ''NeSortSet.Sort],'subsort_<_.[''Sort.Sort,''Type.Sort],'subsort_<_.[
+    ''SortMapping.Sort,''SortMappingSet.Sort],'subsort_<_.[''SortSet.Sort,
+    ''TypeSet.Sort],'subsort_<_.[''StratDecl.Sort,''StratDeclSet.Sort],
+    'subsort_<_.[''StratDefinition.Sort,''StratDefSet.Sort],'subsort_<_.[
     ''StratMapping.Sort,''StratMappingSet.Sort],'subsort_<_.[
     ''StratModule.Sort,''Module.Sort],'subsort_<_.[''StratTheory.Sort,
     ''Module.Sort],'subsort_<_.[''Strategy.Sort,''Strategy?.Sort],'subsort_<_.[
@@ -14501,7 +14512,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''EQS:EquationSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getEqs.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -14539,7 +14550,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''IL:ImportList.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getImports.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -14596,7 +14607,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''MAS:MembAxSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getMbs.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -14711,7 +14722,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''OPDS:OpDeclSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getOps.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -14751,7 +14762,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''RLS:RuleSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getRls.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -14791,7 +14802,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''none.StratDefSet.Constant,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getSds.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -14830,7 +14841,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''SS:SortSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getSorts.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -14872,7 +14883,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''none.StratDeclSet.Constant,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getStrats.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,
@@ -14906,7 +14917,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,
     ''RLS:RuleSet.Variable]]],''SSDS:SubsortDeclSet.Variable,'none.AttrSet],
     'eq_=_`[_`].['_`[_`][''getSubsorts.Sort,'_`[_`][
-    ''smod_is_sorts_._______endsm.Constant,'_`,_[''Q:Qid.Variable,
+    ''smod_is_sorts_._______endsm.Constant,'_`,_[''H:Header.Variable,
     ''IL:ImportList.Variable,''SS:SortSet.Variable,
     ''SSDS:SubsortDeclSet.Variable,''OPDS:OpDeclSet.Variable,
     ''MAS:MembAxSet.Variable,''EQS:EquationSet.Variable,''RLS:RuleSet.Variable,

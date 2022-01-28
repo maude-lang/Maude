@@ -32,7 +32,9 @@ TESTS = \
 	attributeBugsNovember2020 \
 	polymorphicParsingBugsNovember2020 \
 	irredUnifyFeb2021 \
-	deleteTimerMarch2021
+	deleteTimerMarch2021 \
+	uninitIterExtSeptember2021 \
+	loopModeStateAugust2021
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -68,7 +70,9 @@ MAUDE_FILES = \
 	attributeBugsNovember2020.maude \
 	polymorphicParsingBugsNovember2020.maude \
 	irredUnifyFeb2021.maude \
-	deleteTimerMarch2021.maude
+	deleteTimerMarch2021.maude \
+	uninitIterExtSeptember2021.maude \
+	loopModeStateAugust2021.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -104,6 +108,8 @@ RESULT_FILES = \
 	attributeBugsNovember2020.expected \
 	polymorphicParsingBugsNovember2020.expected \
 	irredUnifyFeb2021.expected \
-	deleteTimerMarch2021.expected
+	deleteTimerMarch2021.expected \
+	uninitIterExtSeptember2021.expected \
+	loopModeStateAugust2021.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

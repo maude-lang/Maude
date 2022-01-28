@@ -1,3 +1,14 @@
+2021-09-07  Steven Eker  <eker@pup>
+
+	* randomOpSymbol.cc: use mt19937::result_type for RandomOpSymbol::globalSeed
+
+	* randomOpSymbol.hh (class RandomOpSymbol): use std::mt19937 in place of MTRand
+
+	* randomOpSymbol.cc (RandomOpSymbol::eqRewrite): use std::mt19937 in place of MTRand
+	(RandomOpSymbol::RandomOpSymbol): use std::mt19937 in place of MTRand
+
+===================================Maude137===========================================
+
 2021-03-02  Steven Eker  <eker2@eker10>
 
 	* succSymbol.hh (class SuccSymbol): added decl for

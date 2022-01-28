@@ -1,3 +1,11 @@
+2021-09-21  Steven Eker  <eker@pup>
+
+	* ACU_ExtensionInfo.cc (ACU_ExtensionInfo::copy): take const arg
+
+	* ACU_ExtensionInfo.hh (class ACU_ExtensionInfo): updated decl for copy()
+
+===================================Maude137===========================================
+
 2021-06-02  Steven Eker  <eker2@eker10>
 
 	* ACU_UnificationSubproblem2.cc

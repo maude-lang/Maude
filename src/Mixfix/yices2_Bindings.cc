@@ -80,7 +80,6 @@ VariableGenerator::assertDag(DagNode* dag)
   if (t == NULL_TERM)
     return BAD_DAG;
 
-  yices_assert_formula(smtContext, t);
   int code = yices_assert_formula(smtContext, t);
   if (code < 0)
     {

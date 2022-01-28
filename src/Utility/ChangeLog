@@ -1,3 +1,14 @@
+2021-07-12  Steven Eker  <eker2@eker10>
+
+	* pigPug-cycleDetection.cc (PigPug::firstMoveWithCycleDetection):
+	use onCycle() rather than arrive()
+
+	* pigPug.hh (class PigPug): arrive() becomes onCycle()
+
+	* pigPug-cycleDetection.cc (PigPug::makeStateKey): try pushing
+	upper bounds on stack as well
+	(PigPug::arrive): becomes onCycle()
+
 2021-06-08  Steven Eker  <eker2@eker10>
 
 	* wordLevel-normalCase.cc

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version 3.1.
+***	Version 3.2 beta.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -1946,7 +1946,8 @@ fmod META-MODULE is
 
 *** strategy modules
   sorts StratModule StratTheory .
-  subsort StratModule StratTheory < Module .
+  subsorts SModule < StratModule < Module .
+  subsorts STheory < StratTheory < Module .
   op smod_is_sorts_._______endsm : Header ImportList SortSet SubsortDeclSet
     OpDeclSet MembAxSet EquationSet RuleSet StratDeclSet StratDefSet -> StratModule
     [ctor gather (& & & & & & & & & &)
@@ -1987,7 +1988,7 @@ fmod META-MODULE is
   eq getImports(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = IL .
   eq getImports(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = IL .
   eq getImports(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = IL .
-  eq getImports(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = IL .
+  eq getImports(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = IL .
   eq getImports(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = IL .
 
   op getSorts : Module -> SortSet .
@@ -1995,7 +1996,7 @@ fmod META-MODULE is
   eq getSorts(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = SS .
   eq getSorts(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = SS .
   eq getSorts(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = SS .
-  eq getSorts(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = SS .
+  eq getSorts(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = SS .
   eq getSorts(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = SS .
 
   op getSubsorts : Module -> SubsortDeclSet .
@@ -2003,7 +2004,7 @@ fmod META-MODULE is
   eq getSubsorts(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = SSDS .
   eq getSubsorts(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = SSDS .
   eq getSubsorts(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = SSDS .
-  eq getSubsorts(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = SSDS .
+  eq getSubsorts(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = SSDS .
   eq getSubsorts(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = SSDS .
 
   op getOps : Module -> OpDeclSet .
@@ -2011,7 +2012,7 @@ fmod META-MODULE is
   eq getOps(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = OPDS .
   eq getOps(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = OPDS .
   eq getOps(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = OPDS .
-  eq getOps(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = OPDS .
+  eq getOps(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = OPDS .
   eq getOps(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = OPDS .
 
   op getMbs : Module -> MembAxSet .
@@ -2019,7 +2020,7 @@ fmod META-MODULE is
   eq getMbs(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = MAS .
   eq getMbs(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = MAS .
   eq getMbs(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = MAS .
-  eq getMbs(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = MAS .
+  eq getMbs(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = MAS .
   eq getMbs(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = MAS .
 
   op getEqs : Module -> EquationSet .
@@ -2027,7 +2028,7 @@ fmod META-MODULE is
   eq getEqs(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = EQS .
   eq getEqs(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = EQS .
   eq getEqs(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = EQS .
-  eq getEqs(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = EQS .
+  eq getEqs(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = EQS .
   eq getEqs(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = EQS .
 
   op getRls : Module -> RuleSet .
@@ -2035,7 +2036,7 @@ fmod META-MODULE is
   eq getRls(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = RLS .
   eq getRls(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = none .
   eq getRls(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = RLS .
-  eq getRls(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = RLS .
+  eq getRls(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = RLS .
   eq getRls(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = RLS .
 
   op getStrats : Module -> StratDeclSet .
@@ -2043,7 +2044,7 @@ fmod META-MODULE is
   eq getStrats(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = none .
   eq getStrats(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = none .
   eq getStrats(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = none .
-  eq getStrats(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = STDS .
+  eq getStrats(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = STDS .
   eq getStrats(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = STDS .
 
   op getSds : Module -> StratDefSet .
@@ -2051,7 +2052,7 @@ fmod META-MODULE is
   eq getSds(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = none .
   eq getSds(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = none .
   eq getSds(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = none .
-  eq getSds(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = STDFS .
+  eq getSds(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = STDFS .
   eq getSds(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = STDFS .
 endfm
 
@@ -3108,6 +3109,6 @@ mod CONFIGURATION is
 endm
 
 set include BOOL on .
-set omod include CONFIGURATION on .
+set oo include CONFIGURATION on .
 
 select CONVERSION .

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/loopModeStateAugust2021.maude -no-banner -no-advise \
+  > loopModeStateAugust2021.out 2>&1
+
+diff $srcdir/loopModeStateAugust2021.expected loopModeStateAugust2021.out > /dev/null 2>&1

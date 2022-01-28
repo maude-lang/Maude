@@ -456,10 +456,10 @@ SyntacticPreModule::processImports()
   //
   if (!(MixfixModule::isTheory(getModuleType())))
     {
-      FOR_EACH_CONST(i, ModuleDatabase::ImportMap, autoImports)
+      for (const auto& i : autoImports)
 	{
-	  if (ImportModule* fm = getOwner()->getModuleOrIssueWarning(i->first, *this))
-	    flatModule->addImport(fm, i->second, *this);
+	  if (ImportModule* fm = getOwner()->getModuleOrIssueWarning(i.first, *this))
+	    flatModule->addImport(fm, i.second, *this);
 	  else
 	    {
 	      //
@@ -471,5 +471,23 @@ SyntacticPreModule::processImports()
 	    }
 	}
     }
+  //
+  //	Defaut includes for object-oriented modules and theories.
+  //
+  for (const int i : ooIncludes)
+    {
+      if (ImportModule* fm = getOwner()->getModuleOrIssueWarning(i, *this))
+	flatModule->addImport(fm, ImportModule::INCLUDING, *this);
+      else
+	{
+	  //
+	  //	Mark the module as bad to avoid cascading warnings and potential
+	  //	internal errors. But press ahead with imports since they should
+	  //	be independent and we might find other errors.
+	  //
+	  flatModule->markAsBad();
+	}
+    }
+
   processExplicitImports(flatModule);
 }

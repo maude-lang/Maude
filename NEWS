@@ -1,4 +1,14 @@
-Overview of Changes in alpha136
+Overview of Changes in Maude 3.2 beta (alpha137)
+================================================
+* fixed bug in the Yices bindings where constraints were being
+  asserted twice
+* fixed bug in the prelude where projection functions didn't work for
+  parameterized meta-modules
+* fixed bug in the handling of extension information for iter symbols
+* fixed bug in loop mode where it would try to continue using state left
+  over from some incompatible command
+
+Overview of Changes in alpha136 (2021-06-08)
 ============================================
 * file API supports makeLink() message
 * experimental directory API

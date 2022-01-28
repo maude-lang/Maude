@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -124,6 +124,13 @@ ImportModule::getObjectName() const
   return this;
 }
 
+const char*
+ImportModule::importModeString(ImportMode mode)
+{
+  static const char* const modeStrings[] = { "protecting", "extending", "including" };
+  return modeStrings[mode];
+}
+
 void
 ImportModule::addImport(ImportModule* importedModule,
 			ImportMode mode,
@@ -132,13 +139,10 @@ ImportModule::addImport(ImportModule* importedModule,
   ModuleType t = importedModule->getModuleType();
   if (isTheory(t) && mode != INCLUDING)
     {
-      //
-      //	Since we don't use or even store the mode we don't need
-      //	to do anything special to recover.
-      //
       IssueWarning(lineNumber << ": theories may only be imported using the " <<
 		   QUOTE("including") <<
 		   " importation mode. Recovering by treating mode as including.");
+      mode = INCLUDING;
     }
   if (!canImport(getModuleType(), t))
     {
@@ -155,6 +159,7 @@ ImportModule::addImport(ImportModule* importedModule,
       return;
     }
   importedModules.append(importedModule);
+  importModes.append(mode);
   importedModule->addUser(this);
   //
   //	The imported module may have conflicts between its bound parameters, which we

@@ -93,13 +93,13 @@ ModuleDatabase::setAutoImport(ImportModule::ImportMode importMode,
 }
 
 void
-ModuleDatabase::setOmodInclude(Token name, bool polarity)
+ModuleDatabase::setOoInclude(Token name, bool polarity)
 {
   int code = name.code();
   if (polarity)
-    defaultOmodIncludes.insert(code);
+    defaultOoIncludes.insert(code);
   else
-    defaultOmodIncludes.erase(code);
+    defaultOoIncludes.erase(code);
 }
 
 void

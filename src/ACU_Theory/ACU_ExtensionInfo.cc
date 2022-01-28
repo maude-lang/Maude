@@ -176,9 +176,9 @@ ACU_ExtensionInfo::makeClone() const
 }
 
 void
-ACU_ExtensionInfo::copy(ExtensionInfo* extensionInfo)
+ACU_ExtensionInfo::copy(const ExtensionInfo* extensionInfo)
 {
-  ACU_ExtensionInfo* e = safeCast(ACU_ExtensionInfo*, extensionInfo);
+  const ACU_ExtensionInfo* e = safeCast(const ACU_ExtensionInfo*, extensionInfo);
   setValidAfterMatch(e->validAfterMatch());
   bool whole = e->matchedWhole();
   setMatchedWhole(whole);

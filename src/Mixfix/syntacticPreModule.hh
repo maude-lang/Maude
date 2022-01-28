@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ public:
 
   void addSortDecl(const Vector<Token>& sortDecl);
   void addSubsortDecl(const Vector<Token>& subsortDecl);
+  void addSubclassDecl(const Vector<Token>& subsortDecl);
   void addOpDecl(const Vector<Token>& opName);
   void addStratDecl(Token opName);
   void makeDeclsConsistent();
@@ -192,6 +193,7 @@ private:
   Bool isCompleteFlag;
   Vector<Vector<Token> > sortDecls;
   Vector<Vector<Token> > subsortDecls;
+  Vector<Vector<Token> > subclassDecls;
   Vector<OpDecl> opDecls;
   Vector<OpDef> opDefs;
   Vector<StratDecl> stratDecls;
@@ -199,6 +201,7 @@ private:
   set<int> potentialLabels;
   set<int> potentialRuleLabels;
   ModuleDatabase::ImportMap autoImports;
+  ModuleDatabase::ImportSet ooIncludes;
   VisibleModule* flatModule;
 };
 
@@ -221,6 +224,12 @@ inline void
 SyntacticPreModule::addSubsortDecl(const Vector<Token>& subsortDecl)
 {
   subsortDecls.append(subsortDecl);
+}
+
+inline void
+SyntacticPreModule::addSubclassDecl(const Vector<Token>& subsortDecl)
+{
+  subclassDecls.append(subsortDecl);
 }
 
 inline const ModuleDatabase::ImportMap*

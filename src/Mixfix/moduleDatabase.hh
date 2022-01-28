@@ -44,9 +44,9 @@ public:
   bool deleteModule(int name);  // true if module deleted
   void deleteNamedModules();
   void setAutoImport(ImportModule::ImportMode importMode, Token name, bool polarity);
-  void setOmodInclude(Token name, bool polarity);
+  void setOoInclude(Token name, bool polarity);
   const ImportMap& getAutoImports() const;
-  const ImportSet& getOmodIncludes() const;
+  const ImportSet& getOoIncludes() const;
   void showNamedModules(ostream& s) const;
 
 private:
@@ -54,7 +54,7 @@ private:
 
   ModuleMap moduleMap;
   ImportMap autoImports;
-  ImportSet defaultOmodIncludes;
+  ImportSet defaultOoIncludes;
 };
 
 inline const ModuleDatabase::ImportMap&
@@ -64,9 +64,9 @@ ModuleDatabase::getAutoImports() const
 }
 
 inline const ModuleDatabase::ImportSet&
-ModuleDatabase::getOmodIncludes() const
+ModuleDatabase::getOoIncludes() const
 {
-  return defaultOmodIncludes;
+  return defaultOoIncludes;
 }
 
 #endif

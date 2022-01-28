@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -60,6 +60,8 @@ public:
   ImportModule(int name, ModuleType moduleType, Origin origin, Entity::User* parent);
   ~ImportModule();
 
+  static const char* importModeString(ImportMode mode);
+
   void addImport(ImportModule* importedModule,
 		 ImportMode mode,
 		 LineNumber lineNumber);
@@ -84,6 +86,9 @@ public:
   int getNrParameters() const;
   bool hasFreeParameters() const;
   int getParameterName(int index) const;
+  int getNrImports() const;
+  ImportModule* getImportedModule(int index) const;
+  ImportMode getImportMode(int index) const;
   int getNrImportedSorts() const;
   int getNrUserSorts() const;
   int getNrImportedSubsorts(int sortIndex) const;
@@ -277,6 +282,7 @@ private:
   //	These are the modules we directly (as opposed to transitively) import.
   //
   Vector<ImportModule*> importedModules;
+  Vector<ImportMode> importModes;
   //
   //	Because for sorts, symbols, and polymorphs, stuff from parameter
   //	theories is inserted first we can keep track of what came from
@@ -369,6 +375,24 @@ inline ImportModule::Origin
 ImportModule::getOrigin() const
 {
   return origin;
+}
+
+inline int
+ImportModule::getNrImports() const
+{
+  return importedModules.size();
+}
+
+inline ImportModule*
+ImportModule::getImportedModule(int index) const
+{
+  return importedModules[index];
+}
+
+inline ImportModule::ImportMode
+ImportModule::getImportMode(int index) const
+{
+  return importModes[index];
 }
 
 inline int

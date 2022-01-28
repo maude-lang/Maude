@@ -37,7 +37,7 @@ public:
   //
   DagNode* buildMatchedPortion() const;
   ExtensionInfo* makeClone() const;
-  void copy(ExtensionInfo* extensionInfo);
+  void copy(const ExtensionInfo* extensionInfo);
   //
   //	S_ExtensionInfo specific member functions.
   //
