@@ -1,5 +1,9 @@
-Overview of Changes in Maude 3.2 beta (alpha137)
-================================================
+Overview of Changes in Maude 3.2 (alpha137a) (2022-02-07)
+=========================================================
+* updated comments to 3.2
+
+Overview of Changes in Maude 3.2 beta (alpha137) (2022-01-28)
+=============================================================
 * fixed bug in the Yices bindings where constraints were being
   asserted twice
 * fixed bug in the prelude where projection functions didn't work for

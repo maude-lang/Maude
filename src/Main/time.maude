@@ -22,7 +22,7 @@
 
 ***
 ***	Maude time API. 
-***	Version 3.2 beta.
+***	Version 3.2.
 ***
 
 mod TIME is

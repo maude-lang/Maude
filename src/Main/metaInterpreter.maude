@@ -22,7 +22,7 @@
 
 ***
 ***	Maude meta-interpreters.
-***	Version 3.2 beta.
+***	Version 3.2.
 ***
 
 mod META-INTERPRETER is

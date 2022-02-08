@@ -22,7 +22,7 @@
 
 ***
 ***	Maude file, standard stream and directory external objects.
-***	Version 3.2 beta.
+***	Version 3.2.
 ***
 
 mod COMMON-MESSAGES is
