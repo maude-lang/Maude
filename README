@@ -8,6 +8,17 @@ Rewriting logic is a logic of concurrent change that can naturally deal with sta
 
 Maude supports in a systematic and efficient way logical reflection. This makes Maude remarkably extensible and powerful, supports an extensible algebra of module composition operations, and allows many advanced metaprogramming and metalanguage applications. Indeed, some of the most interesting applications of Maude are metalanguage applications, in which Maude is used to create executable environments for different logics, theorem provers, languages, and models of computation.
 
+## Maude 3.2
+
+The current version of Maude is 3.2. You can download it directly 
+from the [Releases section](https://github.com/SRI-CSL/Maude/releases/tag/Maude3.2). The new features in this new version are 
+basically around Maude's symbolic capabilities: 
+* Support for filtered variant unification in vu-narrow command,
+* Several improvements in unification modulo several axioms,
+* Several improvements of the external Maude I/O objects,
+* A command flag for the depth of searching for A/AU unifiers, and
+* Some bugs fixed.
+
 ## Documentation
 
 The Maude manual for Maude 3.2 is available in [PDF format](http://maude.cs.illinois.edu/w/images/b/bf/Maude-3.2-manual.pdf) and in [HTML](http://maude.lcc.uma.es/maude32-manual-html/maude-manual.html). 
