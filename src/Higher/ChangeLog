@@ -1,3 +1,10 @@
+2022-02-21  Steven Eker  <eker@pup>
+
+	* narrowingSequenceSearch3.cc (NarrowingSequenceSearch3::findNextUnifier): use FilteredVariantUnifierSearch for
+	unifying with goal if FILTER_VARIANT_UNIFIERS has been passed
+
+===================================Maude137b===========================================
+
 2021-05-04  Steven Eker  <eker2@eker10>
 
 	* narrowingSequenceSearch.cc

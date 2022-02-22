@@ -48,7 +48,7 @@
 #include "freshVariableGenerator.hh"
 #include "narrowingVariableInfo.hh"
 #include "narrowingSearchState3.hh"
-#include "variantSearch.hh"
+#include "filteredVariantUnifierSearch.hh"
 #include "narrowingSequenceSearch3.hh"
 
 NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
@@ -201,11 +201,17 @@ NarrowingSequenceSearch3::findNextUnifier()
       RewritingContext* pairContext = initial->makeSubcontext(pairDag);
 
       const Vector<DagNode*> dummy;
-      unificationProblem = new VariantSearch(pairContext,  // will be deleted by VariantSearch
-					     dummy,
-					     freshVariableGenerator,
-					     VariantSearch::UNIFICATION_MODE,
-					     variableFamily);
+      unificationProblem = (variantFlags & VariantUnificationProblem::FILTER_VARIANT_UNIFIERS) ?
+	new FilteredVariantUnifierSearch(pairContext,  // will be deleted by VariantSearch
+					 dummy,
+					 freshVariableGenerator,
+					 VariantSearch::UNIFICATION_MODE,
+					 variableFamily) :
+	new VariantSearch(pairContext,  // will be deleted by VariantSearch
+			  dummy,
+			  freshVariableGenerator,
+			  VariantSearch::UNIFICATION_MODE,
+			  variableFamily);
     }
   return false;
 }

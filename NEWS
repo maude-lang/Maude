@@ -1,3 +1,8 @@
+Overview of Changes in Maude 3.2.1 (alpha137b) (2022-02-21)
+===========================================================
+* use filtered variant unification for unifying with goal when filter
+  flag is passed to vu-narrow
+
 Overview of Changes in Maude 3.2 (alpha137a) (2022-02-07)
 =========================================================
 * updated comments to 3.2

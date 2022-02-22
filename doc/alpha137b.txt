@@ -1,0 +1,29 @@
+Alpha 137b release notes
+=========================
+
+Change
+=======
+As suggested by Rubén, if filter is passed to vu-narrow, filtered variant narrowing
+is used rather than variant narrowing for the final unification with the goal, rather
+than just the narrowing steps. For example:
+
+mod NARROWING-VENDING-MACHINE is
+   sorts Coin Item Marking Money State .
+   subsort Coin < Money .
+   op empty : -> Money .
+   op __ : Money Money -> Money [assoc comm id: empty] .
+   subsort Money Item < Marking .
+   op __ : Marking Marking -> Marking [assoc comm id: empty] .
+   op <_> : Marking -> State .
+   ops $ q : -> Coin .
+   ops a c : -> Item .
+   var M : Marking .
+   rl [buy-c] : < M $ > => < M c > [narrowing] .
+   rl [buy-a] : < M $ > => < M a q > [narrowing] .
+   eq [change] : q q q q M = $ M [variant] .
+endm
+
+vu-narrow {filter,delay} < X:Money > =>1 S:State .
+
+now only produces two solutions, with what used to be the third solution being
+subsumed by the second solution duing to filtering the variant unifiers.

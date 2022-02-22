@@ -1,3 +1,9 @@
+2022-02-21  Steven Eker  <eker@pup>
+
+	* banner.cc (printBanner): tweak spacing
+
+===================================Maude137b===========================================
+
 2022-01-25  Steven Eker  <eker@pup>
 
 	* banner.cc (printBanner): updated copyright year
