@@ -1,7 +1,17 @@
+2022-12-19  Steven Eker  <eker@pup>
+
+	* variantUnifierFilter.cc (VariantUnifierFilter::insertUnifier): take the range
+	of the internal tuple from the root of the context rather than from the first
+	binding in the unifier, to fix a bug in the case that the unifier is the empty
+	assignment
+
+===================================Maude138===========================================
+
 2022-02-21  Steven Eker  <eker@pup>
 
-	* narrowingSequenceSearch3.cc (NarrowingSequenceSearch3::findNextUnifier): use FilteredVariantUnifierSearch for
-	unifying with goal if FILTER_VARIANT_UNIFIERS has been passed
+	* narrowingSequenceSearch3.cc (NarrowingSequenceSearch3::findNextUnifier): use
+	FilteredVariantUnifierSearch for unifying with goal if FILTER_VARIANT_UNIFIERS
+	has been passed
 
 ===================================Maude137b===========================================
 

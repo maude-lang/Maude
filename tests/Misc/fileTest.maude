@@ -3,6 +3,8 @@
 ***
 
 set show timing off .
+set print conceal on .
+print conceal file .
 
 load file
 

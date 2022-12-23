@@ -1,0 +1,13 @@
+set show advisories off .
+
+***
+***	Test for bug where kinds were printed incorrectly from premodules.
+***
+
+fmod FOO{X :: TRIV} is
+  sorts S{X} T{X} .
+  subsort X$Elt < S{X} T{X} .
+  op f : [S{X},T{X}] -> [S{X},T{X}] .
+endfm
+
+show mod .

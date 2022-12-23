@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/degenerateFilteredVariantUnifyDecember2022.maude -no-banner -no-advise \
+  > degenerateFilteredVariantUnifyDecember2022.out 2>&1
+
+diff $srcdir/degenerateFilteredVariantUnifyDecember2022.expected degenerateFilteredVariantUnifyDecember2022.out > /dev/null 2>&1

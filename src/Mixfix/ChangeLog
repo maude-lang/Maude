@@ -1,3 +1,97 @@
+2022-12-22  Steven Eker  <eker@pup>
+
+	* lexer.ll: %option noyy_top_state
+
+	* deserializer.ll: option noinput
+
+	* tokenizer.ll: option noinput
+
+	* deserializer.ll: %option nounput
+
+	* tokenizer.ll: %option nounput
+
+	* lexer.ll: %option nounput
+
+	* top.yy: fix decl for yyerror()
+
+	* bottom.yy (yyerror): make second argument const
+
+2022-12-21  Steven Eker  <eker@pup>
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext): added OUT_OF_MEMORY
+	to enum ExitCodes
+
+	* interact.cc (UserLevelRewritingContext::setHandlers): malloc() rather than statically
+	allocate alt stack, because SIGSTKSZ may not be known at compile time
+
+2022-12-16  Steven Eker  <eker@pup>
+
+	* syntacticPreModule.hh (SyntacticPreModule::addAttributePair): removed commented
+	out code
+
+	* syntaxContainer.cc (operator<<): fix bug where first token in kind was printed
+	directly rather than with Token::sortName()
+
+	* command.cc (SyntacticPreModule::printAttributes): use range-based for loop rather
+	than FOR_EACH_CONST()
+
+2022-12-15  Steven Eker  <eker@pup>
+
+	* process.cc (SyntacticPreModule::process): convert omods to mods and oths to ths
+
+2022-12-14  Steven Eker  <eker@pup>
+
+	* command.cc (SyntacticPreModule::showModule): print classDecls
+	(SyntacticPreModule::showModule): print subclassDecls
+
+	* modules.yy (declaration): use addClassDecl()
+	(cPair): use addAttributePair()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added structs AttributePair
+	and ClassDecl; added data member classDecls
+	(SyntacticPreModule::addClassDecl): added
+	(SyntacticPreModule::addAttributePair): added
+
+2022-12-13  Steven Eker  <eker@pup>
+
+	* command.cc (SyntacticPreModule::showModule): handle SymbolType::MSG_STATEMENT
+	(SyntacticPreModule::printAttributes): handle SymbolType::MSG_STATEMENT
+
+	* modules.yy (declaration): set SymbolType::MSG_STATEMENT for operators that get their
+	SymbolType::MESSAGE flag from a msg or msgs statement rather than an attribute
+
+	* symbolType.hh (class SymbolType): added MSG_STATEMENT to enum Flags
+
+	* modules.yy (classDef): allow class C . rather than class C | .
+
+2022-12-08  Steven Eker  <eker@pup>
+
+	* viewCache.cc (ViewCache::makeViewInstantiation): DebugAlways() -> DebugInfo() (2 places)
+	(ViewCache::showCreatedViews): DebugAlways() -> DebugInfo()
+
+	* visibleModule.cc: DebugAlways() -> DebugInfo()
+
+	* viewCache.cc (ViewCache::makeViewInstantiation): get the actual characters
+	of cleanName from Token; fixes a longstanding bug where views that were
+	instantiated twice got a bad cleanName
+
+	* moduleCache.cc (ModuleCache::showCreatedModules):  use range-based for loop
+
+	* viewCache.cc (ViewCache::showCreatedViews): use range-based for loop
+
+2022-12-07  Steven Eker  <eker@pup>
+
+	* viewCache.cc: added DebugAlways() so I can see the internal name of
+	instantiated view
+	(ViewCache::makeViewInstantiation): added DebugAlways()s so I can see the
+	name and clean name being built
+	(ViewCache::makeViewInstantiation): start cleanName from view->getCleanName()
+
+	* visibleModule.cc: added DebugAlway()s so I can see the internal name of
+	each sort
+
+===================================Maude138===========================================
+
 2022-02-21  Steven Eker  <eker@pup>
 
 	* banner.cc (printBanner): tweak spacing

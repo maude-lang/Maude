@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,10 +39,12 @@ operator<<(ostream& s, const SyntaxContainer::Type& type)
 {
   if (type.kind)
     {
-      s << '[' << type.tokens[0];
-      int nrTokens = type.tokens.length();
-      for (int i = 1; i < nrTokens; i++)
-	s << ',' << Token::sortName(type.tokens[i].code());
+      char sep = '[';
+      for (auto& t : type.tokens)
+	{
+	  s << sep << Token::sortName(t.code());
+	  sep = ',';
+	}
       s << ']';
     }
   else

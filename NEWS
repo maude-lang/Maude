@@ -1,3 +1,18 @@
+Overview of Changes in 3.2.2 (alpha138) (2022-12-22)
+====================================================
+* fixed bug where multiple instantiations (say via a theory-view)
+was generating bad internal names for sorts
+* fixed bug where the first sort in a kind printed by show mod
+was including backquotes
+* show desugared is now a documented feature
+* desugar omod to mod, oth to th
+* fixed bug where filtered variant unify crashed in the degenerate
+case where there were no variables
+* fixed issue where SIGSTKSZ is no longer guaranteed to be a
+compile-time constant in glibc
+* fixed issue with fileTest failing in environments when first
+user file handle is something other than 3
+
 Overview of Changes in Maude 3.2.1 (alpha137b) (2022-02-21)
 ===========================================================
 * use filtered variant unification for unifying with goal when filter

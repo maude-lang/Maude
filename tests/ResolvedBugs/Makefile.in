@@ -471,7 +471,10 @@ TESTS = \
 	irredUnifyFeb2021 \
 	deleteTimerMarch2021 \
 	uninitIterExtSeptember2021 \
-	loopModeStateAugust2021
+	loopModeStateAugust2021 \
+	instantiatedViewInternalNameOctober2022 \
+	degenerateFilteredVariantUnifyDecember2022 \
+	kindNameDecember2022
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -509,7 +512,10 @@ MAUDE_FILES = \
 	irredUnifyFeb2021.maude \
 	deleteTimerMarch2021.maude \
 	uninitIterExtSeptember2021.maude \
-	loopModeStateAugust2021.maude
+	loopModeStateAugust2021.maude \
+	instantiatedViewInternalNameOctober2022.maude \
+	degenerateFilteredVariantUnifyDecember2022.maude \
+	kindNameDecember2022.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -547,7 +553,10 @@ RESULT_FILES = \
 	irredUnifyFeb2021.expected \
 	deleteTimerMarch2021.expected \
 	uninitIterExtSeptember2021.expected \
-	loopModeStateAugust2021.expected
+	loopModeStateAugust2021.expected \
+	instantiatedViewInternalNameOctober2022.expected \
+	degenerateFilteredVariantUnifyDecember2022.expected \
+	kindNameDecember2022.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -563,9 +572,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu tests/ResolvedBugs/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign tests/ResolvedBugs/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu tests/ResolvedBugs/Makefile
+	  $(AUTOMAKE) --foreign tests/ResolvedBugs/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -979,6 +988,27 @@ uninitIterExtSeptember2021.log: uninitIterExtSeptember2021
 loopModeStateAugust2021.log: loopModeStateAugust2021
 	@p='loopModeStateAugust2021'; \
 	b='loopModeStateAugust2021'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+instantiatedViewInternalNameOctober2022.log: instantiatedViewInternalNameOctober2022
+	@p='instantiatedViewInternalNameOctober2022'; \
+	b='instantiatedViewInternalNameOctober2022'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+degenerateFilteredVariantUnifyDecember2022.log: degenerateFilteredVariantUnifyDecember2022
+	@p='degenerateFilteredVariantUnifyDecember2022'; \
+	b='degenerateFilteredVariantUnifyDecember2022'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+kindNameDecember2022.log: kindNameDecember2022
+	@p='kindNameDecember2022'; \
+	b='kindNameDecember2022'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

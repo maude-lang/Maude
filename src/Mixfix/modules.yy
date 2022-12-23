@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -489,15 +489,20 @@ declaration	:	KW_IMPORT moduleExprDot
 
 		|	KW_MSG			{ lexBubble(BAR_COLON, 1); }
 			':'			{ Token::peelParens(lexerBubble); CM->addOpDecl(lexerBubble); }
-			domainRangeAttr		{ CM->setFlag(SymbolType::MESSAGE); }
+			domainRangeAttr		{
+						  CM->setFlag(SymbolType::MESSAGE);
+						  CM->setFlag(SymbolType::MSG_STATEMENT);
+						}
 
 		|	KW_MSGS opNameList ':' domainRangeAttr
 			{
 			  CM->setFlag(SymbolType::MESSAGE);
+			  CM->setFlag(SymbolType::MSG_STATEMENT);
 			}
 
 		|	KW_CLASS token
 			{
+			  CM->addClassDecl($2);
 			}
 			classDef '.'
 			{
@@ -517,7 +522,7 @@ declaration	:	KW_IMPORT moduleExprDot
 			}
 		;
 
-classDef	:	'|' {}
+classDef	:	{}
 		|	'|' cPairList {}
 		;
 
@@ -527,6 +532,7 @@ cPairList	:	cPair
 
 cPair		:	tokenBarDot ':' token
 			{
+			  CM->addAttributePair($1, $3);
 			}
 		;
 

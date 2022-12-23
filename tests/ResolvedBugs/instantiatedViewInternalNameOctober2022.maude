@@ -1,0 +1,20 @@
+set show advisories off .
+
+***
+***	Test for bug in the internal name of a multiply instantiated view which
+***	becomes visible because parameterized sorts instantiated with this view
+***	appear to be different from the same sorts created by the parser.
+***
+fmod FOO{X :: STRICT-WEAK-ORDER} is
+  protecting LIST{Set{STRICT-WEAK-ORDER}{X}} .
+  op a : -> NeList{Set{STRICT-WEAK-ORDER}{X}} .
+endfm
+
+show kinds .
+
+fmod BAR is
+  protecting LIST{Set{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Int<}} .
+  op a : -> NeList{Set{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Int<}} .
+endfm
+
+show kinds .

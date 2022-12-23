@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -95,6 +95,29 @@ SyntacticPreModule::showModule(ostream& s)
       s << " .\n";
     }
 
+  for (auto& cd : classDecls)
+    {
+      if (UserLevelRewritingContext::interrupted())
+	return;
+      s << "  class " << cd.name;
+      int nrAttributes = cd.attributes.size();
+      for (int i = 0; i < nrAttributes; ++i)
+	{
+	  AttributePair& p = cd.attributes[i];
+	  s << (i == 0 ? " | " : ", ") << p.attributeName << " : " << p.sortName;
+	}
+      s << " .\n";
+    }
+
+  for (auto& sc : subclassDecls)
+    {
+      if (UserLevelRewritingContext::interrupted())
+	return;
+      s << "  subclasses ";
+      printSortTokenVector(s, sc);
+      s << " .\n";
+    }
+
   bool follow = false;
   int nrOpDecls = opDecls.length();
   for (int i = 0; i < nrOpDecls; i++)
@@ -104,9 +127,14 @@ SyntacticPreModule::showModule(ostream& s)
       bool newFollow = (i + 1 < nrOpDecls) && (opDecls[i + 1].defIndex == defIndex);
       if (!follow)
 	{
-	  s << ((opDefs[defIndex].symbolType.getBasicType() == SymbolType::VARIABLE) ?
-		"  var" : "  op") <<
-	    (newFollow ? "s " : " ");
+	  SymbolType st = opDefs[defIndex].symbolType;
+	  if (st.getBasicType() == SymbolType::VARIABLE)
+	    s << "  var";
+	  else if (st.hasFlag(SymbolType::MSG_STATEMENT))
+	    s << "  msg";
+	  else
+	    s << "  op";
+	  s << (newFollow ? "s " : " ");
 	}
       s << opDecls[i].prefixName << ' ';
       follow = newFollow;
@@ -183,7 +211,9 @@ SyntacticPreModule::printStratDecl(ostream& s, const StratDecl& decl)
 void
 SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
 {
-  SymbolType st = opDef.symbolType;
+  SymbolType st = opDef.symbolType;  // copy
+  if (st.hasFlag(SymbolType::MSG_STATEMENT))
+    st.clearFlags(SymbolType::MESSAGE);  // ignore msg attribute because we're a msg statement
   if (!(st.hasFlag(SymbolType::ATTRIBUTES | SymbolType::CTOR |
 		   SymbolType::POLY | SymbolType::DITTO)) &&
       opDef.special.empty() && opDef.metadata == NONE)
@@ -194,11 +224,11 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
   if (st.hasFlag(SymbolType::POLY))
     {
       s << "poly (";
-      FOR_EACH_CONST(i, NatSet, opDef.polyArgs)
+      for (int i : opDef.polyArgs)
 	{
-	  if  (*i != 0)
+	  if  (i != 0)
 	    {
-	      s << space << *i;
+	      s << space << i;
 	      space = " ";
 	    }
 	}

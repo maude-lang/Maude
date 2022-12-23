@@ -116,6 +116,8 @@ maudeId		(({special}|{normalSeq})+)
 %x LATEX_MODE
 %option stack
 %option noyywrap
+%option nounput
+%option noyy_top_state
 
 %%
 	if (UserLevelRewritingContext::interrupted())

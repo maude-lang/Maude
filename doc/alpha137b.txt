@@ -26,4 +26,4 @@ endm
 vu-narrow {filter,delay} < X:Money > =>1 S:State .
 
 now only produces two solutions, with what used to be the third solution being
-subsumed by the second solution duing to filtering the variant unifiers.
+subsumed by the second solution due to filtering the variant unifiers.

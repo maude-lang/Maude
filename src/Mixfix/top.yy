@@ -92,7 +92,7 @@ Int64 number;
 Int64 number2;
 int variantOptions;
 
-static void yyerror(UserLevelRewritingContext::ParseResult* parseResult, char *s);
+static void yyerror(UserLevelRewritingContext::ParseResult* parseResult, const char *s);
 
 void cleanUpModuleExpression();
 void cleanUpParser();

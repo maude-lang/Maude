@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,13 @@
 void
 SyntacticPreModule::process()
 {
-  flatModule = new VisibleModule(id(), getModuleType(), getOwner());
+  MixfixModule::ModuleType mt = getModuleType();
+  if (mt == MixfixModule::OBJECT_ORIENTED_MODULE)
+    mt = MixfixModule::SYSTEM_MODULE;
+  else if (mt == MixfixModule::OBJECT_ORIENTED_THEORY)
+    mt = MixfixModule::SYSTEM_THEORY;
+
+  flatModule = new VisibleModule(id(), mt, getOwner());
   flatModule->addUser(this);
   flatModule->setLineNumber(getLineNumber());
 #ifdef QUANTIFY_PROCESSING

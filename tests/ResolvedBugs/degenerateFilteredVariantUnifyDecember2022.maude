@@ -1,0 +1,9 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug in tuple creation for unifier filtering if the unifiers
+***	are degenerate.
+***
+
+filtered variant unify in NAT : 1 =? 1 .

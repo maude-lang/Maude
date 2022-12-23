@@ -1,3 +1,22 @@
+2022-12-22  Steven Eker  <eker@pup>
+
+	* tests/ResolvedBugs/degenerateFilteredVariantUnifyDecember2022.maude: turn timing off
+
+	* tests/ResolvedBugs/kindNameDecember2022.maude: added
+
+	* configure.ac: use AM_INIT_AUTOMAKE([tar-ustar foreign]) to avoid error now
+	that README has moved to README.md
+
+2022-12-19  Steven Eker  <eker@pup>
+
+	* tests/ResolvedBugs/degenerateFilteredVariantUnifyDecember2022.maude: added
+
+2022-12-08  Steven Eker  <eker@pup>
+
+	* tests/ResolvedBugs/instantiatedViewInternalNameOct2022.maude: added
+
+===================================Maude138===========================================
+
 2022-01-25  Steven Eker  <eker@pup>
 
 	* tests/ResolvedBugs/loopModeStateAugust2021.maude: added

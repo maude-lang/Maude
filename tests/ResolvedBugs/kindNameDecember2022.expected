@@ -1,0 +1,6 @@
+fmod FOO{X :: TRIV} is
+  sorts S{X} T{X} .
+  subsorts X$Elt < S{X} T{X} .
+  op f : [S{X},T{X}] -> [S{X},T{X}] .
+endfm
+Bye.

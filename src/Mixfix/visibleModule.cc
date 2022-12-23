@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -97,7 +97,10 @@ VisibleModule::showKinds(ostream& s) const
       s<< ":\n";
       int nrSorts = c->nrSorts();
       for (int j = 1; j < nrSorts; j++)
-	s << '\t' << j << '\t' << c->sort(j) << '\n';
+	{
+	  s << '\t' << j << '\t' << c->sort(j)  << '\n';
+	  DebugInfo(Token::name(c->sort(j)->id()));
+	}
       if (i + 1 < nrKinds)
 	s << '\n';
       DebugAdvisory("match indices = " << c->getLastAllocatedMatchIndex());

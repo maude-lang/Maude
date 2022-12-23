@@ -88,6 +88,8 @@ OpType opType;
 
 
 %option noyywrap
+%option nounput
+%option noinput
 
 posInt		([1-9][0-9]*)
 natNumber	(0|{posInt})

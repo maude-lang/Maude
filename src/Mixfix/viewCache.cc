@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2022 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -84,7 +84,8 @@ ViewCache::makeViewInstantiation(View* view, const Vector<Argument*>& arguments)
   //	cleanName is intended for forming sort names that contain view names.
   //
   Rope name(Token::name(view->id()));
-  Rope cleanName(name);
+  Rope cleanName(Token::name(view->getCleanName()));
+  DebugInfo("start name = " << name << "   cleanName = " << cleanName);
   
   const char* sep = "{";
   const char* cleanSep = "`{";
@@ -121,6 +122,7 @@ ViewCache::makeViewInstantiation(View* view, const Vector<Argument*>& arguments)
     }
   name += "}";
   cleanName += "`}";
+  DebugInfo("end: name = " << name << "   cleanName = " << cleanName);
   //
   //	Now check if a view having our name is already in cache.
   //
@@ -190,6 +192,9 @@ ViewCache::showCreatedViews(ostream& s) const
   //
   //	We display true name rather than cleanName.
   //
-  FOR_EACH_CONST(i, ViewMap, viewMap)
-    s << "view " << Token::name(i->first) << '\n';
+  for (const auto& i : viewMap)
+    {
+      s << "view " << Token::name(i.first) << '\n';
+      DebugInfo(Token::name(i.second->getCleanName()));
+    }
 }

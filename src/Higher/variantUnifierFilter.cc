@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2022 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -113,11 +113,11 @@ VariantUnifierFilter::insertUnifier(const Vector<DagNode*>& unifier,
 {
   if (tupleSymbol == 0)
     {
-      int nrAssignments = unifier.size();
+      int nrAssignments = unifier.size();  // could be zero!
       Vector<ConnectedComponent*> domain(nrAssignments);
       for (int i = 0; i < nrAssignments; ++i)
 	domain[i] = unifier[i]->symbol()->rangeComponent();
-      ConnectedComponent* range = domain[0];  // really any connected component will do
+      ConnectedComponent* range = context->root()->symbol()->rangeComponent();  // really connected component will do
       Module* module = range->getModule();
       tupleSymbol = module->createInternalTupleSymbol(domain, range);
     }

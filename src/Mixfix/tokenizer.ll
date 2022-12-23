@@ -56,6 +56,8 @@ bool endOfRope;
 %}
 
 %option noyywrap
+%option nounput
+%option noinput
 
 stringContent	([^[:cntrl:]"\\]|("\\"[^[:cntrl:]])|(\\\n))
 string		("\""{stringContent}*"\"")

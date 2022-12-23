@@ -13,70 +13,70 @@ result Configuration: <> < me : myClass | none > fileError(me, fileManager,
 ==========================================
 erewrite in FILE-TEST2 : run .
 rewrites: 2
-result Configuration: <> < me : myClass | none > fileError(me, file(3),
+result Configuration: <> < me : myClass | none > fileError(me, file(...),
     "Bad size.")
 ==========================================
 erewrite in FILE-TEST3 : run .
 rewrites: 2
-result Configuration: <> < me : myClass | none > gotChars(me, file(3), "***\n***\tTest file operations and error handling.\n***\n\nset show timing off .\n\nload file\n\nmod FILE-TEST1 is\n  pr FILE .\n  op myClass : -> Cid .\n  ops me : -> Oid .\n  op badName : -> String .\nendm\n\nerew <> < me : myClass | none > openFile(fileManager, me, badName, \"r\") .\nerew <> < me : myClass | none > openFile(fileManager, me, \"/shouldNotExist\", \"r\") .\n\n\nmod FILE-TEST2 is\n  pr FILE .\n  op myClass : -> Cid .\n  ops me : -> Oid .\n  op run : -> Configuration .\n  op badNat : -> Nat .\nvars O O2 F : Oid .\n\n  eq run = <> < me : myClass | none > openFile(fileManager, me, \"../../../tests/Misc/fileTest.maude\", \"r\") .\n\n  rl < O : myClass | none > openedFile(O, O2, F) =>\n     < O : myClass | none > getChars(F, O, badNat) .\nendm\n\nerew run .\n\n\nmod FILE-TEST3 is\n  pr FILE .\n  op myClass : -> Cid .\n  ops me : -> Oid .\n  op run : -> Configuration .\nvars O O2 F : Oid .\n\n  eq run = <> < me : myClass | none > openFile(fileManager, me, \"../../../tests/Misc/fileTest.maude\", \"r\") .\n\n  rl < O : myClass | none > ")
+result Configuration: <> < me : myClass | none > gotChars(me, file(...), "***\n***\tTest file operations and error handling.\n***\n\nset show timing off .\nset print conceal on .\nprint conceal file .\n\nload file\n\nmod FILE-TEST1 is\n  pr FILE .\n  op myClass : -> Cid .\n  ops me : -> Oid .\n  op badName : -> String .\nendm\n\nerew <> < me : myClass | none > openFile(fileManager, me, badName, \"r\") .\nerew <> < me : myClass | none > openFile(fileManager, me, \"/shouldNotExist\", \"r\") .\n\n\nmod FILE-TEST2 is\n  pr FILE .\n  op myClass : -> Cid .\n  ops me : -> Oid .\n  op run : -> Configuration .\n  op badNat : -> Nat .\nvars O O2 F : Oid .\n\n  eq run = <> < me : myClass | none > openFile(fileManager, me, \"../../../tests/Misc/fileTest.maude\", \"r\") .\n\n  rl < O : myClass | none > openedFile(O, O2, F) =>\n     < O : myClass | none > getChars(F, O, badNat) .\nendm\n\nerew run .\n\n\nmod FILE-TEST3 is\n  pr FILE .\n  op myClass : -> Cid .\n  ops me : -> Oid .\n  op run : -> Configuration .\nvars O O2 F : Oid .\n\n  eq run = <> < me : myClass | none > openFile(fileManager, me, \"../../../tests/Misc/fileTest.")
 ==========================================
 erewrite in FILE-TEST4 : run .
 rewrites: 3
-result Configuration: <> < me : myClass | none > fileError(me, file(3),
+result Configuration: <> < me : myClass | none > fileError(me, file(...),
     "Bad offset.")
 ==========================================
 erewrite in FILE-TEST5 : run .
 rewrites: 3
-result Configuration: <> < me : myClass | none > fileError(me, file(3),
+result Configuration: <> < me : myClass | none > fileError(me, file(...),
     "Bad offset.")
 ==========================================
 erewrite in FILE-TEST6 : run .
 rewrites: 3
-result Configuration: <> < me : myClass | none > fileError(me, file(3),
+result Configuration: <> < me : myClass | none > fileError(me, file(...),
     "Bad offset.")
 ==========================================
 erewrite in FILE-TEST7 : run .
 rewrites: 3
-result Configuration: <> < me : myClass | none > fileError(me, file(3),
+result Configuration: <> < me : myClass | none > fileError(me, file(...),
     "Bad base.")
 ==========================================
 erewrite in FILE-TEST8 : run .
 rewrites: 4
-result Configuration: <> < me : myClass | state(1) > gotChars(me, file(3), "T1 is\n  pr FILE .\n  op myClass : -> Cid .\n  ops me : -> Oid .\n  op badName : -> String .\nendm\n\nerew ")
+result Configuration: <> < me : myClass | state(1) > gotChars(me, file(...), "rint conceal file .\n\nload file\n\nmod FILE-TEST1 is\n  pr FILE .\n  op myClass : -> Cid .\n  ops me : -> ")
 ==========================================
 erewrite in FILE-TEST9 : run .
 rewrites: 5
-result Configuration: <> < me : myClass | state(1) > positionGot(me, file(3),
+result Configuration: <> < me : myClass | state(1) > positionGot(me, file(...),
     200)
 ==========================================
 erewrite in FILE-TEST10 : run .
 rewrites: 2
-result Configuration: <> < me : myClass | none > fileError(me, file(3),
+result Configuration: <> < me : myClass | none > fileError(me, file(...),
     "File not open for writing.")
 ==========================================
 erewrite in FILE-TEST11 : run .
 rewrites: 2
-result Configuration: <> < me : myClass | none > fileError(me, file(3),
+result Configuration: <> < me : myClass | none > fileError(me, file(...),
     "File not open for writing.")
 ==========================================
 erewrite in FILE-TEST12 : run .
 rewrites: 3
-result Configuration: <> < me : myClass | none > fileError(me, file(3),
+result Configuration: <> < me : myClass | none > fileError(me, file(...),
     "File not open for reading.")
 ==========================================
 erewrite in FILE-TEST13 : run .
 rewrites: 3
-result Configuration: <> < me : myClass | none > fileError(me, file(3),
+result Configuration: <> < me : myClass | none > fileError(me, file(...),
     "File not open for reading.")
 ==========================================
 erewrite in FILE-TEST14 : run .
 rewrites: 4
-result Configuration: <> < me : myClass | none > gotLine(me, file(3),
+result Configuration: <> < me : myClass | none > gotLine(me, file(...),
     "testing testing 1 2 3\n")
 ==========================================
 erewrite in FILE-TEST15 : run .
 rewrites: 5
-result Configuration: <> closedFile(me, file(3)) < me : myClass | none >
+result Configuration: <> closedFile(me, file(...)) < me : myClass | none >
 ==========================================
 erewrite in FILE-TEST15 : <> < me : myClass | none > removeFile(fileManager,
     me, "fileTest.tmp") .

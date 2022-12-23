@@ -34,7 +34,10 @@ TESTS = \
 	irredUnifyFeb2021 \
 	deleteTimerMarch2021 \
 	uninitIterExtSeptember2021 \
-	loopModeStateAugust2021
+	loopModeStateAugust2021 \
+	instantiatedViewInternalNameOctober2022 \
+	degenerateFilteredVariantUnifyDecember2022 \
+	kindNameDecember2022
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -72,7 +75,10 @@ MAUDE_FILES = \
 	irredUnifyFeb2021.maude \
 	deleteTimerMarch2021.maude \
 	uninitIterExtSeptember2021.maude \
-	loopModeStateAugust2021.maude
+	loopModeStateAugust2021.maude \
+	instantiatedViewInternalNameOctober2022.maude \
+	degenerateFilteredVariantUnifyDecember2022.maude \
+	kindNameDecember2022.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -110,6 +116,9 @@ RESULT_FILES = \
 	irredUnifyFeb2021.expected \
 	deleteTimerMarch2021.expected \
 	uninitIterExtSeptember2021.expected \
-	loopModeStateAugust2021.expected
+	loopModeStateAugust2021.expected \
+	instantiatedViewInternalNameOctober2022.expected \
+	degenerateFilteredVariantUnifyDecember2022.expected \
+	kindNameDecember2022.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

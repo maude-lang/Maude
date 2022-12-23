@@ -1,0 +1,28 @@
+[Bool]:
+	1	Bool
+
+[List{Set{STRICT-WEAK-ORDER}{X}}]:
+	1	List{Set{STRICT-WEAK-ORDER}{X}}
+	2	NeList{Set{STRICT-WEAK-ORDER}{X}}
+	3	Set{STRICT-WEAK-ORDER}{X}
+	4	NeSet{STRICT-WEAK-ORDER}{X}
+	5	X$Elt
+
+[Nat]:
+	1	Nat
+	2	Zero
+	3	NzNat
+[Bool]:
+	1	Bool
+
+[List{Set{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Int<}}]:
+	1	List{Set{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Int<}}
+	2	NeList{Set{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Int<}}
+	3	Set{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Int<}
+	4	NeSet{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{Int<}
+	5	Int
+	6	NzInt
+	7	Nat
+	8	Zero
+	9	NzNat
+Bye.

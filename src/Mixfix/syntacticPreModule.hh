@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,7 +62,6 @@ public:
 
   void addSortDecl(const Vector<Token>& sortDecl);
   void addSubsortDecl(const Vector<Token>& subsortDecl);
-  void addSubclassDecl(const Vector<Token>& subsortDecl);
   void addOpDecl(const Vector<Token>& opName);
   void addStratDecl(Token opName);
   void makeDeclsConsistent();
@@ -82,6 +81,11 @@ public:
   void addHook(HookType type, Token name, const Vector<Token>& details);
   void addVarDecl(Token varName);
   void addStatement(const Vector<Token>& statement);
+
+  void addClassDecl(Token name);
+  void addAttributePair(Token attributeName, Token sortName);
+  void addSubclassDecl(const Vector<Token>& subclassDecl);
+
   VisibleModule* getFlatSignature();
   VisibleModule* getFlatModule();
 
@@ -152,6 +156,21 @@ private:
     Vector<Sort*> domainAndSubject;
   };
 
+  //
+  //	For omods.
+  //
+  struct AttributePair
+  {
+    Token attributeName;
+    Token sortName;
+  };
+
+  struct ClassDecl
+  {
+    Token name;  // must be a valid sort name; no mixfix
+    Vector<AttributePair> attributes;
+  };
+  
   void process();
 
   static void printAttributes(ostream& s, const OpDef& opDef);
@@ -193,11 +212,14 @@ private:
   Bool isCompleteFlag;
   Vector<Vector<Token> > sortDecls;
   Vector<Vector<Token> > subsortDecls;
-  Vector<Vector<Token> > subclassDecls;
   Vector<OpDecl> opDecls;
   Vector<OpDef> opDefs;
   Vector<StratDecl> stratDecls;
   Vector<Vector<Token> > statements;
+  
+  Vector<ClassDecl> classDecls;
+  Vector<Vector<Token> > subclassDecls;
+
   set<int> potentialLabels;
   set<int> potentialRuleLabels;
   ModuleDatabase::ImportMap autoImports;
@@ -227,15 +249,29 @@ SyntacticPreModule::addSubsortDecl(const Vector<Token>& subsortDecl)
 }
 
 inline void
-SyntacticPreModule::addSubclassDecl(const Vector<Token>& subsortDecl)
+SyntacticPreModule::addSubclassDecl(const Vector<Token>& subclassDecl)
 {
-  subclassDecls.append(subsortDecl);
+  subclassDecls.append(subclassDecl);
 }
 
 inline const ModuleDatabase::ImportMap*
 SyntacticPreModule::getAutoImports() const
 {
   return &autoImports;
+}
+
+inline void
+SyntacticPreModule::addClassDecl(Token name)
+{
+  int nrClassDecls = classDecls.size();
+  classDecls.resize(nrClassDecls + 1);
+  classDecls[nrClassDecls].name = name;
+}
+
+inline void
+SyntacticPreModule::addAttributePair(Token attributeName, Token sortName)
+{
+  classDecls[classDecls.size() - 1].attributes.append({attributeName, sortName});
 }
 
 #endif

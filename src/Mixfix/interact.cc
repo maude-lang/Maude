@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -117,9 +117,15 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
   //	Stack overflows are reported as SIGSEGV signals and so we need to use the
   //	libsigsegv library to heuristically distinguish the two conditions.
   //
-  static char altStack[SIGSTKSZ];
+  size_t altStackSize = SIGSTKSZ;  // might not be a compile time constant
+  void* altStack = malloc(altStackSize);
+  if (altStack == 0)
+    {
+      cerr << "Fatal error: unable to allocate alternative stack." << endl;
+      exit(OUT_OF_MEMORY);
+    }
   sigsegv_install_handler(sigsegvHandler);  // illegal memory access or stack overflow
-  stackoverflow_install_handler(stackOverflowHandler, altStack, sizeof(altStack));
+  stackoverflow_install_handler(stackOverflowHandler, altStack, altStackSize);
 #else
   //
   //	If we can't use the library we will will catch SIGSEGVs but not install
