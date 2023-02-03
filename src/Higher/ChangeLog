@@ -1,3 +1,11 @@
+2023-01-26  Steven Eker  <eker@pup>
+
+	* assignmentConditionFragment.cc (AssignmentConditionFragment::check): added
+	AdvisoryCheck() for the case that all the variables in the pattern are bound
+	before the matching takes place
+
+===================================Maude139===========================================
+
 2022-12-19  Steven Eker  <eker@pup>
 
 	* variantUnifierFilter.cc (VariantUnifierFilter::insertUnifier): take the range

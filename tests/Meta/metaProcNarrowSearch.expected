@@ -1,11 +1,11 @@
 ==========================================
-erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),goal:
-    'C:Foo,fold: 'none > createInterpreter(interpreterManager, me, newProcess)
-    .
+erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),
+    goal: 'C:Foo, fold: 'none > createInterpreter(interpreterManager, me,
+    newProcess) .
 rewrites: 13
 mb applications: 0  equational rewrites: 8  rule rewrites: 5  variant narrowing
     steps: 0  narrowing steps: 0
-result Configuration: <> < me : User | soln: 4,got: (gotNarrowingSearchResult(
+result Configuration: <> < me : User | soln: 4, got: (gotNarrowingSearchResult(
     me, interpreter(0), 1, 'g['j['#1:Foo,'#2:Foo]], 'Foo, 
   'A:Foo <- '#1:Foo ; 
   'B:Foo <- '#2:Foo, '#, 
@@ -23,16 +23,16 @@ result Configuration: <> < me : User | soln: 4,got: (gotNarrowingSearchResult(
   'B:Foo <- '%3:Foo, '%, 
   '%2:Foo <- '@1:Foo ; 
   '%3:Foo <- '@2:Foo ; 
-  'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]], '@)),start: ('g['j['A:Foo,'B:Foo]]),
-    goal: 'C:Foo,fold: 'none > noSuchResult(me, interpreter(0), 4, true)
+  'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]], '@)), start: ('g['j['A:Foo,'B:Foo]]),
+    goal: 'C:Foo, fold: 'none > noSuchResult(me, interpreter(0), 4, true)
 ==========================================
-erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),goal:
-    'C:Foo,fold: 'match > createInterpreter(interpreterManager, me, newProcess)
-    .
+erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),
+    goal: 'C:Foo, fold: 'match > createInterpreter(interpreterManager, me,
+    newProcess) .
 rewrites: 13
 mb applications: 0  equational rewrites: 8  rule rewrites: 5  variant narrowing
     steps: 0  narrowing steps: 0
-result Configuration: <> < me : User | soln: 4,got: (gotNarrowingSearchResult(
+result Configuration: <> < me : User | soln: 4, got: (gotNarrowingSearchResult(
     me, interpreter(0), 1, 'g['j['#1:Foo,'#2:Foo]], 'Foo, 
   'A:Foo <- '#1:Foo ; 
   'B:Foo <- '#2:Foo, '#, 
@@ -50,16 +50,16 @@ result Configuration: <> < me : User | soln: 4,got: (gotNarrowingSearchResult(
   'B:Foo <- '%3:Foo, '%, 
   '%2:Foo <- '@1:Foo ; 
   '%3:Foo <- '@2:Foo ; 
-  'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]], '@)),start: ('g['j['A:Foo,'B:Foo]]),
-    goal: 'C:Foo,fold: 'match > noSuchResult(me, interpreter(0), 4, true)
+  'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]], '@)), start: ('g['j['A:Foo,'B:Foo]]),
+    goal: 'C:Foo, fold: 'match > noSuchResult(me, interpreter(0), 4, true)
 ==========================================
-erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),goal:
-    'C:Foo,fold: 'none > createInterpreter(interpreterManager, me, newProcess)
-    .
+erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),
+    goal: 'C:Foo, fold: 'none > createInterpreter(interpreterManager, me,
+    newProcess) .
 rewrites: 13
 mb applications: 0  equational rewrites: 8  rule rewrites: 5  variant narrowing
     steps: 0  narrowing steps: 0
-result Configuration: <> < me : User | soln: 4,got: (
+result Configuration: <> < me : User | soln: 4, got: (
     gotNarrowingSearchResultAndPath(me, interpreter(0), 1, 'g['j['#1:Foo,
     '#2:Foo]], 'Foo, 
   'A:Foo <- '#1:Foo ; 
@@ -91,16 +91,16 @@ result Configuration: <> < me : User | soln: 4,got: (
 }, 
   '%2:Foo <- '@1:Foo ; 
   '%3:Foo <- '@2:Foo ; 
-  'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]], '@)),start: ('g['j['A:Foo,'B:Foo]]),
-    goal: 'C:Foo,fold: 'none > noSuchResult(me, interpreter(0), 4, true)
+  'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]], '@)), start: ('g['j['A:Foo,'B:Foo]]),
+    goal: 'C:Foo, fold: 'none > noSuchResult(me, interpreter(0), 4, true)
 ==========================================
-erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),goal:
-    'C:Foo,fold: 'match > createInterpreter(interpreterManager, me, newProcess)
-    .
+erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo,'B:Foo]]),
+    goal: 'C:Foo, fold: 'match > createInterpreter(interpreterManager, me,
+    newProcess) .
 rewrites: 13
 mb applications: 0  equational rewrites: 8  rule rewrites: 5  variant narrowing
     steps: 0  narrowing steps: 0
-result Configuration: <> < me : User | soln: 4,got: (
+result Configuration: <> < me : User | soln: 4, got: (
     gotNarrowingSearchResultAndPath(me, interpreter(0), 1, 'g['j['#1:Foo,
     '#2:Foo]], 'Foo, 
   'A:Foo <- '#1:Foo ; 
@@ -132,6 +132,6 @@ result Configuration: <> < me : User | soln: 4,got: (
 }, 
   '%2:Foo <- '@1:Foo ; 
   '%3:Foo <- '@2:Foo ; 
-  'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]], '@)),start: ('g['j['A:Foo,'B:Foo]]),
-    goal: 'C:Foo,fold: 'match > noSuchResult(me, interpreter(0), 4, true)
+  'C:Foo <- 'f['k['@1:Foo,'f['@2:Foo]]], '@)), start: ('g['j['A:Foo,'B:Foo]]),
+    goal: 'C:Foo, fold: 'match > noSuchResult(me, interpreter(0), 4, true)
 Bye.

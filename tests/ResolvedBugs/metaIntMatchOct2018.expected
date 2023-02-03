@@ -225,7 +225,7 @@ fmod 'MATCH is
     'B:Bool]]] [none] .
 endfm
 *********** rule
-rl insertedModule(X, Y) < X : User | AS,soln: N > => < X : User | AS >
+rl insertedModule(X, Y) < X : User | AS, soln: N > => < X : User | AS >
     getMatch(Y, X, 'MATCH, 'Z:Foo, 'f['a.Foo,'c.Foo], nil, N) .
 X --> me
 Y --> interpreter(0)
@@ -340,7 +340,7 @@ fmod 'MATCH is
     'B:Bool]]] [none] .
 endfm
 *********** rule
-rl insertedModule(X, Y) < X : User | AS,soln: N > => < X : User | AS >
+rl insertedModule(X, Y) < X : User | AS, soln: N > => < X : User | AS >
     getXmatch(Y, X, 'MATCH, 'Z:Foo, 'f['a.Foo,'c.Foo], nil, 0, unbounded, N) .
 X --> me
 Y --> interpreter(0)

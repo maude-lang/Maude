@@ -1,7 +1,22 @@
+2023-01-31  Steven Eker  <eker@pup>
+
+	* prelude.maude: added format attribute to print space after comma for
+	_,_ : AttributeSet AttributeSet -> AttributeSet
+
+2023-01-04  Steven Eker  <eker@pup>
+
+	* prelude.maude: added getClass() projection function to mod CONFIGURATION
+
+2023-01-03  Steven Eker  <eker@pup>
+
+	* prelude.maude: added special to op <_:_|_>
+
+===================================Maude139===========================================
+
 2021-09-21  Steven Eker  <eker@pup>
 
 	* prelude.maude: applied Rubén's patch to make projection functions work for
-	parameterized meta-modules 
+	parameterized meta-modules
 
 2021-07-20  Steven Eker  <eker2@eker10>
 

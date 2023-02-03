@@ -1,24 +1,24 @@
 ==========================================
-erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 0 >
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef, level: 0 >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 61
-result Configuration: <> < me : User | pending: nil,level: 0 > erewroteTerm(me,
-    interpreter(0), 1, 's_^4['0.Zero], 'NzNat)
+result Configuration: <> < me : User | pending: nil, level: 0 > erewroteTerm(
+    me, interpreter(0), 1, 's_^4['0.Zero], 'NzNat)
 ==========================================
-erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 1 >
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef, level: 1 >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 121
-result Configuration: <> < me : User | pending: nil,level: 1 > erewroteTerm(me,
-    interpreter(0), 60, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+result Configuration: <> < me : User | pending: nil, level: 1 > erewroteTerm(
+    me, interpreter(0), 60, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
     'level:_['0.Zero],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
     'interpreter['0.Zero],'s_['0.Zero],'_`[_`][''s_^4.Sort,''0.Zero.Constant],
     ''NzNat.Sort]], 'Configuration)
 ==========================================
-erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 2 >
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef, level: 2 >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 181
-result Configuration: <> < me : User | pending: nil,level: 2 > erewroteTerm(me,
-    interpreter(0), 120, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+result Configuration: <> < me : User | pending: nil, level: 2 > erewroteTerm(
+    me, interpreter(0), 120, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
     'level:_['s_['0.Zero]],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
     'interpreter['0.Zero],'s_^60['0.Zero],'_`[_`][''__.Sort,'_`,_[
     ''<>.Portal.Constant,'_`[_`][''<_:_|_>.Variable,'_`,_[''me.Oid.Constant,
@@ -30,11 +30,11 @@ result Configuration: <> < me : User | pending: nil,level: 2 > erewroteTerm(me,
     '''0.Zero.Constant.Constant]],'''NzNat.Sort.Constant]]]],
     ''Configuration.Sort]], 'Configuration)
 ==========================================
-erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 3 >
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef, level: 3 >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 241
-result Configuration: <> < me : User | pending: nil,level: 3 > erewroteTerm(me,
-    interpreter(0), 180, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+result Configuration: <> < me : User | pending: nil, level: 3 > erewroteTerm(
+    me, interpreter(0), 180, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
     'level:_['s_^2['0.Zero]],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
     'interpreter['0.Zero],'s_^120['0.Zero],'_`[_`][''__.Sort,'_`,_[
     ''<>.Portal.Constant,'_`[_`][''<_:_|_>.Variable,'_`,_[''me.Oid.Constant,
@@ -60,11 +60,11 @@ result Configuration: <> < me : User | pending: nil,level: 3 > erewroteTerm(me,
     ''''NzNat.Sort.Constant.Constant]]]]]]]],
     '''Configuration.Sort.Constant]]]],''Configuration.Sort]], 'Configuration)
 ==========================================
-erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 4 >
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef, level: 4 >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 301
-result Configuration: <> < me : User | pending: nil,level: 4 > erewroteTerm(me,
-    interpreter(0), 240, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+result Configuration: <> < me : User | pending: nil, level: 4 > erewroteTerm(
+    me, interpreter(0), 240, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
     'level:_['s_^3['0.Zero]],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
     'interpreter['0.Zero],'s_^180['0.Zero],'_`[_`][''__.Sort,'_`,_[
     ''<>.Portal.Constant,'_`[_`][''<_:_|_>.Variable,'_`,_[''me.Oid.Constant,

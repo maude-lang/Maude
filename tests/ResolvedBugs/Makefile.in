@@ -474,7 +474,10 @@ TESTS = \
 	loopModeStateAugust2021 \
 	instantiatedViewInternalNameOctober2022 \
 	degenerateFilteredVariantUnifyDecember2022 \
-	kindNameDecember2022
+	kindNameDecember2022 \
+	upTheoryJanuary2023 \
+	moduleViewBadWarningFebruary2023 \
+	theoryViewWrongWarningFebruary2023
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -515,7 +518,10 @@ MAUDE_FILES = \
 	loopModeStateAugust2021.maude \
 	instantiatedViewInternalNameOctober2022.maude \
 	degenerateFilteredVariantUnifyDecember2022.maude \
-	kindNameDecember2022.maude
+	kindNameDecember2022.maude \
+	upTheoryJanuary2023.maude \
+	moduleViewBadWarningFebruary2023.maude \
+	theoryViewWrongWarningFebruary2023.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -556,7 +562,10 @@ RESULT_FILES = \
 	loopModeStateAugust2021.expected \
 	instantiatedViewInternalNameOctober2022.expected \
 	degenerateFilteredVariantUnifyDecember2022.expected \
-	kindNameDecember2022.expected
+	kindNameDecember2022.expected \
+	upTheoryJanuary2023.expected \
+	moduleViewBadWarningFebruary2023.expected \
+	theoryViewWrongWarningFebruary2023.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -1009,6 +1018,27 @@ degenerateFilteredVariantUnifyDecember2022.log: degenerateFilteredVariantUnifyDe
 kindNameDecember2022.log: kindNameDecember2022
 	@p='kindNameDecember2022'; \
 	b='kindNameDecember2022'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+upTheoryJanuary2023.log: upTheoryJanuary2023
+	@p='upTheoryJanuary2023'; \
+	b='upTheoryJanuary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+moduleViewBadWarningFebruary2023.log: moduleViewBadWarningFebruary2023
+	@p='moduleViewBadWarningFebruary2023'; \
+	b='moduleViewBadWarningFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+theoryViewWrongWarningFebruary2023.log: theoryViewWrongWarningFebruary2023
+	@p='theoryViewWrongWarningFebruary2023'; \
+	b='theoryViewWrongWarningFebruary2023'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

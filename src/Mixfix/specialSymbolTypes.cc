@@ -61,3 +61,4 @@
   MACRO(DirectoryManagerSymbol, SymbolType::DIRECTORY_MANAGER_SYMBOL)
   MACRO(ProcessManagerSymbol, SymbolType::PROCESS_MANAGER_SYMBOL)
   MACRO(TimeManagerSymbol, SymbolType::TIME_MANAGER_SYMBOL)
+  MACRO(ObjectConstructorSymbol, SymbolType::OBJECT_CONSTRUCTOR_SYMBOL)

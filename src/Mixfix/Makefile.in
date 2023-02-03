@@ -125,7 +125,7 @@ am__libmixfix_a_SOURCES_DIST = parameterDatabase.cc syntaxContainer.cc \
 	visibleModule.cc sharedTokens.cc metadataStore.cc \
 	printAttribute.cc banner.cc lexer.cc tokenizer.cc \
 	deserializer.cc surface.cc freshVariableSource.cc \
-	variableGenerator.cc compiler.cc
+	variableGenerator.cc objectConstructorSymbol.cc compiler.cc
 @BUILD_COMPILER_TRUE@am__objects_1 = libmixfix_a-compiler.$(OBJEXT)
 am_libmixfix_a_OBJECTS = libmixfix_a-parameterDatabase.$(OBJEXT) \
 	libmixfix_a-syntaxContainer.$(OBJEXT) \
@@ -167,7 +167,8 @@ am_libmixfix_a_OBJECTS = libmixfix_a-parameterDatabase.$(OBJEXT) \
 	libmixfix_a-deserializer.$(OBJEXT) \
 	libmixfix_a-surface.$(OBJEXT) \
 	libmixfix_a-freshVariableSource.$(OBJEXT) \
-	libmixfix_a-variableGenerator.$(OBJEXT) $(am__objects_1)
+	libmixfix_a-variableGenerator.$(OBJEXT) \
+	libmixfix_a-objectConstructorSymbol.$(OBJEXT) $(am__objects_1)
 libmixfix_a_OBJECTS = $(am_libmixfix_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -204,6 +205,7 @@ am__depfiles_remade = ./$(DEPDIR)/libmixfix_a-banner.Po \
 	./$(DEPDIR)/libmixfix_a-moduleCache.Po \
 	./$(DEPDIR)/libmixfix_a-moduleDatabase.Po \
 	./$(DEPDIR)/libmixfix_a-moduleExpression.Po \
+	./$(DEPDIR)/libmixfix_a-objectConstructorSymbol.Po \
 	./$(DEPDIR)/libmixfix_a-parameterDatabase.Po \
 	./$(DEPDIR)/libmixfix_a-preModule.Po \
 	./$(DEPDIR)/libmixfix_a-printAttribute.Po \
@@ -464,6 +466,7 @@ libmixfix_a_SOURCES = \
 	surface.cc \
 	freshVariableSource.cc \
 	variableGenerator.cc \
+	objectConstructorSymbol.cc \
 	$(COMPILER_SRC)
 
 EXTRA_libmixfix_a_SOURCES = \
@@ -480,6 +483,9 @@ EXTRA_DIST = \
 	instantiateViewWithBoundParameters.cc \
 	lexerAux.cc \
 	deserializerAux.cc \
+	ooSorts.cc \
+	ooProcess.cc \
+	ooTransform.cc \
 	process.cc \
 	fixUp.cc \
 	ops.cc \
@@ -573,7 +579,9 @@ noinst_HEADERS = \
 	enclosingObject.hh \
 	argument.hh \
 	parameter.hh \
-	parameterDatabase.hh
+	parameterDatabase.hh \
+	objectConstructorSymbol.hh \
+	statementTransformer.hh
 
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -644,6 +652,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-moduleCache.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-moduleDatabase.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-moduleExpression.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-objectConstructorSymbol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-parameterDatabase.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-preModule.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmixfix_a-printAttribute.Po@am__quote@ # am--include-marker
@@ -1321,6 +1330,20 @@ libmixfix_a-variableGenerator.obj: variableGenerator.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmixfix_a-variableGenerator.obj `if test -f 'variableGenerator.cc'; then $(CYGPATH_W) 'variableGenerator.cc'; else $(CYGPATH_W) '$(srcdir)/variableGenerator.cc'; fi`
 
+libmixfix_a-objectConstructorSymbol.o: objectConstructorSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmixfix_a-objectConstructorSymbol.o -MD -MP -MF $(DEPDIR)/libmixfix_a-objectConstructorSymbol.Tpo -c -o libmixfix_a-objectConstructorSymbol.o `test -f 'objectConstructorSymbol.cc' || echo '$(srcdir)/'`objectConstructorSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmixfix_a-objectConstructorSymbol.Tpo $(DEPDIR)/libmixfix_a-objectConstructorSymbol.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='objectConstructorSymbol.cc' object='libmixfix_a-objectConstructorSymbol.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmixfix_a-objectConstructorSymbol.o `test -f 'objectConstructorSymbol.cc' || echo '$(srcdir)/'`objectConstructorSymbol.cc
+
+libmixfix_a-objectConstructorSymbol.obj: objectConstructorSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmixfix_a-objectConstructorSymbol.obj -MD -MP -MF $(DEPDIR)/libmixfix_a-objectConstructorSymbol.Tpo -c -o libmixfix_a-objectConstructorSymbol.obj `if test -f 'objectConstructorSymbol.cc'; then $(CYGPATH_W) 'objectConstructorSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/objectConstructorSymbol.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmixfix_a-objectConstructorSymbol.Tpo $(DEPDIR)/libmixfix_a-objectConstructorSymbol.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='objectConstructorSymbol.cc' object='libmixfix_a-objectConstructorSymbol.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libmixfix_a-objectConstructorSymbol.obj `if test -f 'objectConstructorSymbol.cc'; then $(CYGPATH_W) 'objectConstructorSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/objectConstructorSymbol.cc'; fi`
+
 libmixfix_a-compiler.o: compiler.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmixfix_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libmixfix_a-compiler.o -MD -MP -MF $(DEPDIR)/libmixfix_a-compiler.Tpo -c -o libmixfix_a-compiler.o `test -f 'compiler.cc' || echo '$(srcdir)/'`compiler.cc
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmixfix_a-compiler.Tpo $(DEPDIR)/libmixfix_a-compiler.Po
@@ -1483,6 +1506,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libmixfix_a-moduleCache.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-moduleDatabase.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-moduleExpression.Po
+	-rm -f ./$(DEPDIR)/libmixfix_a-objectConstructorSymbol.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-parameterDatabase.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-preModule.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-printAttribute.Po
@@ -1574,6 +1598,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libmixfix_a-moduleCache.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-moduleDatabase.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-moduleExpression.Po
+	-rm -f ./$(DEPDIR)/libmixfix_a-objectConstructorSymbol.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-parameterDatabase.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-preModule.Po
 	-rm -f ./$(DEPDIR)/libmixfix_a-printAttribute.Po

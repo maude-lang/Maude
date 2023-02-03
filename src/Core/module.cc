@@ -121,6 +121,12 @@ Module::insertSortConstraint(SortConstraint* sortConstraint)
   Assert(status < THEORY_CLOSED, "bad status");
   sortConstraint->setModuleInfo(this, sortConstraints.length());
   sortConstraints.append(sortConstraint);
+}
+
+void
+Module::checkSortConstraint(SortConstraint* sortConstraint)
+{
+  Assert(status < THEORY_CLOSED, "bad status");
   sortConstraint->check();
 }
 
@@ -130,6 +136,12 @@ Module::insertEquation(Equation* equation)
   Assert(status < THEORY_CLOSED, "bad status");
   equation->setModuleInfo(this, equations.length());
   equations.append(equation);
+}
+
+void
+Module::checkEquation(Equation* equation)
+{
+  Assert(status < THEORY_CLOSED, "bad status");
   equation->check();
 }
 
@@ -139,6 +151,12 @@ Module::insertRule(Rule* rule)
   Assert(status < THEORY_CLOSED, "bad status");
   rule->setModuleInfo(this, rules.length());
   rules.append(rule);
+}
+
+void
+Module::checkRule(Rule* rule)
+{
+  Assert(status < THEORY_CLOSED, "bad status");
   rule->check();
 }
 

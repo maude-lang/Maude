@@ -43,15 +43,15 @@ result Configuration: <> < me : User | none > noSuchResult(me, interpreter(0),
 erewrite in SEARCH-CACHE-TEST : <> < me : User | soln: 0 > createInterpreter(
     interpreterManager, me, none) .
 rewrites: 17
-result Configuration: <> < me : User | soln: 6,got: gotSearchResult(me,
+result Configuration: <> < me : User | soln: 6, got: gotSearchResult(me,
     interpreter(0), 0, 'a.State, 'State, 
-  'X:State <- 'a.State),got: gotSearchResult(me, interpreter(0), 1, 'b.State,
+  'X:State <- 'a.State), got: gotSearchResult(me, interpreter(0), 1, 'b.State,
     'State, 
-  'X:State <- 'b.State),got: gotSearchResult(me, interpreter(0), 1, 'c.State,
+  'X:State <- 'b.State), got: gotSearchResult(me, interpreter(0), 1, 'c.State,
     'State, 
-  'X:State <- 'c.State),got: gotSearchResult(me, interpreter(0), 1, 'd.State,
+  'X:State <- 'c.State), got: gotSearchResult(me, interpreter(0), 1, 'd.State,
     'State, 
-  'X:State <- 'd.State),got: gotSearchResult(me, interpreter(0), 1, 'e.State,
+  'X:State <- 'd.State), got: gotSearchResult(me, interpreter(0), 1, 'e.State,
     'State, 
   'X:State <- 'e.State) > noSuchResult(me, interpreter(0), 0)
 ==========================================
@@ -105,19 +105,19 @@ result Configuration: <> < me : User | none > noSuchResult(me, interpreter(0),
 erewrite in SEARCH-PATH-CACHE-TEST : <> < me : User | soln: 0 >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 17
-result Configuration: <> < me : User | soln: 6,got: gotSearchResultAndPath(me,
+result Configuration: <> < me : User | soln: 6, got: gotSearchResultAndPath(me,
     interpreter(0), 0, 'a.State, 'State, 
-  'X:State <- 'a.State, nil),got: gotSearchResultAndPath(me, interpreter(0), 1,
-    'b.State, 'State, 
+  'X:State <- 'a.State, nil), got: gotSearchResultAndPath(me, interpreter(0),
+    1, 'b.State, 'State, 
   'X:State <- 'b.State, {'a.State,'State,rl 'a.State => 'b.State [label(
-    'a-move1)] .}),got: gotSearchResultAndPath(me, interpreter(0), 1, 'c.State,
-    'State, 
+    'a-move1)] .}), got: gotSearchResultAndPath(me, interpreter(0), 1,
+    'c.State, 'State, 
   'X:State <- 'c.State, {'a.State,'State,rl 'a.State => 'c.State [label(
-    'a-move2)] .}),got: gotSearchResultAndPath(me, interpreter(0), 1, 'd.State,
-    'State, 
+    'a-move2)] .}), got: gotSearchResultAndPath(me, interpreter(0), 1,
+    'd.State, 'State, 
   'X:State <- 'd.State, {'a.State,'State,rl 'a.State => 'b.State [label(
     'a-move1)] .}
-{'b.State,'State,rl 'b.State => 'd.State [label('b-move)] .}),got:
+{'b.State,'State,rl 'b.State => 'd.State [label('b-move)] .}), got:
     gotSearchResultAndPath(me, interpreter(0), 1, 'e.State, 'State, 
   'X:State <- 'e.State, {'a.State,'State,rl 'a.State => 'c.State [label(
     'a-move2)] .}

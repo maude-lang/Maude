@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2018-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -67,7 +67,6 @@ void
 SyntacticView::addParameter2(Token name, ModuleExpression* theory)
 {
   addParameter(name.code(), theory);
-  //IssueAdvisory("parameterized view support is experimental");
 }
 
 void
@@ -93,11 +92,9 @@ SyntacticView::addType(bool kind, const Vector<Token>& tokens)
 }
 
 void
-SyntacticView::addOpTermMapping(const Vector<Token>& fromOp, const Vector<Token>& toTerm)
+SyntacticView::addOpTermMapping(const Vector<Token>& fromOp, const Vector<Token>& toTerm, bool msgFlag)
 {
-  opTermList.push_back(BubblePair());
-  opTermList.back().fromBubble = fromOp;  // deep copy
-  opTermList.back().toBubble = toTerm;  // deep copy
+  opTermList.push_back({fromOp, toTerm, msgFlag});
 }
 
 void
@@ -178,6 +175,7 @@ SyntacticView::handleVarDecls()
 bool
 SyntacticView::handleTermAndExprMappings()
 {
+  messages.clear();  // clear out any old messages in case we are reevaluating
   if (opTermList.empty() && stratExprList.empty())
     return true;  // nothing to do
   if (!varDecls.empty() && !handleVarDecls())
@@ -199,9 +197,9 @@ SyntacticView::handleTermAndExprMappings()
   //
   bool result = true;
   {
-    FOR_EACH_CONST(i, OpTermList, opTermList)
+    for (const OpTermMapping& i : opTermList)
       {
-	Term* fromTerm = fromTheory->parseTerm(i->fromBubble);
+	Term* fromTerm = fromTheory->parseTerm(i.fromBubble);
 	if (fromTerm == 0)
 	  {
 	    result = false;
@@ -209,7 +207,7 @@ SyntacticView::handleTermAndExprMappings()
 	  }
 
 	ConnectedComponent* expectedKind = mapComponent(fromTerm->symbol()->rangeComponent());
-	Term* toTerm = toModule->parseTerm(i->toBubble, expectedKind, 1);
+	Term* toTerm = toModule->parseTerm(i.toBubble, expectedKind, 1);
 	if (toTerm == 0)
 	  {
 	    fromTerm->deepSelfDestruct();
@@ -222,6 +220,26 @@ SyntacticView::handleTermAndExprMappings()
 	    toTerm->deepSelfDestruct();
 	    result = false;
 	    break;
+	  }
+	if (i.msg)
+	  {
+	    //
+	    //	Track and check msg->term mappings.
+	    //
+	    messages.insert(fromTerm);
+	    Symbol* fromSymbol = fromTerm->symbol();
+	    {
+	      SymbolType st = fromTheory->getSymbolType(fromSymbol);
+	      AdvisoryCheck(st.hasFlag(SymbolType::MESSAGE), "msg to term mapping for symbol " <<
+			    QUOTE(fromSymbol) << " which does not have the msg attribute.");
+	    }
+	    {
+	      Symbol* toSymbol = toTerm->symbol();
+	      SymbolType st = toModule->getSymbolType(toSymbol);
+	      AdvisoryCheck(st.hasFlag(SymbolType::MESSAGE), "msg to term mapping for symbol " <<
+			    QUOTE(fromSymbol) << " maps it to a term headed by " << QUOTE(toSymbol) <<
+			    " which does not have the msg attribute.");
+	    }
 	  }
       }
   }
@@ -289,23 +307,23 @@ SyntacticView::showView(ostream& s)
     }
   s << " from " << getFrom() << " to " << getTo() << " is\n";
   printRenaming(s, "  ", " .\n  ");
-  if (getNrSortMappings() > 0 || getNrOpMappings() > 0)
+  if (getNrSortMappings() > 0 || getNrOpMappings() > 0 || getNrClassMappings() > 0)
     s << " .\n";
   if (!varDecls.empty())
     {
       bool startNew = true;
       TypeList::const_iterator j = varDefs.begin();
-      FOR_EACH_CONST(i, VarDeclList, varDecls)
+      for (const VarDecl& i : varDecls)
 	{
 	  if (startNew)
 	    {
 	      s << "  var";
-	      if (!(i->lastWithCurrentDef))
+	      if (!(i.lastWithCurrentDef))
 		s << 's';
 	      startNew = false;
 	    }
-	  s << ' ' << i->varName;
-	  if (i->lastWithCurrentDef)
+	  s << ' ' << i.varName;
+	  if (i.lastWithCurrentDef)
 	    {
 	      s << " : " << *j << " .\n";
 	      ++j;
@@ -323,17 +341,19 @@ SyntacticView::showView(ostream& s)
   fromTheory->swapVariableAliasMap(fromTheoryVariableAliases, savedFromTheoryParser);
   MixfixParser* savedToModuleParser = 0;
   toModule->swapVariableAliasMap(toModuleVariableAliases, savedToModuleParser);
-  
-  const OpTermMap& opTermMap = getOpTermMap();
-  FOR_EACH_CONST(i, OpTermMap, opTermMap)
-    s << "  op " << i->second.first << " to term " << i->second.second << " .\n";
-  const StratExprMap& stratExprMap = getStratExprMap();
-  FOR_EACH_CONST(j, StratExprMap, stratExprMap)
-    s << "  strat " << j->second.call << " to expr " << j->second.value << " .\n";
+
+  for (const auto& i : getOpTermMap())
+    {
+      Term* fromTerm = i.second.first;
+      s << ((messages.find(fromTerm) == messages.end()) ? "  op " : "  msg ") <<
+	fromTerm << " to term " << i.second.second << " .\n";
+    }
+
+  for (const auto& j : getStratExprMap())
+    s << "  strat " << j.second.call << " to expr " << j.second.value << " .\n";
   s << "endv\n";
   //
-  //	Restore original variable aliases. We should not have
-  //	generated parsers.
+  //	Restore original variable aliases. Check that we didn't generate parsers.
   //
   fromTheory->swapVariableAliasMap(fromTheoryVariableAliases, savedFromTheoryParser);
   Assert(savedFromTheoryParser == 0, "unexpected new from theory parser");

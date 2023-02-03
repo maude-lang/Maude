@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/theoryViewWrongWarningFebruary2023.maude -no-banner -no-advise \
+  > theoryViewWrongWarningFebruary2023.out 2>&1
+
+diff $srcdir/theoryViewWrongWarningFebruary2023.expected theoryViewWrongWarningFebruary2023.out > /dev/null 2>&1

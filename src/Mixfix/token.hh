@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,6 +74,7 @@ public:
   int specialProperty() const;
   int auxProperty() const;
   bool getInt(int& value) const;
+  bool containsUnderscore() const;
 
   static const char* name(int code);
   static Rope sortName(int code);
@@ -258,6 +259,13 @@ inline const char*
 Token::name(int code)
 {
   return stringTable.name(code);
+}
+
+inline bool
+Token::containsUnderscore() const
+{
+  // might want to cache this as a flag in specialProperties
+  return index(name(), '_') != 0;
 }
 
 inline int

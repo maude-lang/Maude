@@ -1,3 +1,11 @@
+2023-01-03  Steven Eker  <eker@pup>
+
+	* bindingMacros.hh: type -> symbolType to avoid confusion with type keyword
+
+	* divisionSymbol.hh: removed #include "cachedDag.hh"
+
+===================================Maude139===========================================
+
 2021-09-07  Steven Eker  <eker@pup>
 
 	* randomOpSymbol.cc: use mt19937::result_type for RandomOpSymbol::globalSeed

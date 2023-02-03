@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@ public:
     //
     MAKE_VARIABLE,
     MAKE_VARIABLE_FROM_ALIAS,
+    MAKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET,
     MAKE_NATURAL,
     MAKE_INTEGER,
     MAKE_RATIONAL,
@@ -89,6 +90,7 @@ public:
     MAKE_OWISE_ATTRIBUTE,
     MAKE_VARIANT_ATTRIBUTE,
     MAKE_NARROWING_ATTRIBUTE,
+    MAKE_DNT_ATTRIBUTE,
     MAKE_PRINT_ATTRIBUTE,
     MAKE_ATTRIBUTE_LIST,
     //
@@ -201,7 +203,8 @@ private:
     OWISE = 2,
     PRINT = 4,
     VARIANT = 8,
-    NARROWING = 16
+    NARROWING = 16,
+    DNT = 128
   };
 
   struct Action

@@ -1,0 +1,69 @@
+set show timing off .
+set show advisories off .
+set verbose on .
+
+  ---- adapted
+  ---- from the book All About Maude
+  ---- from the Maude Manual
+  ---- by the Maude team
+
+omod ACCOUNT is
+  protecting QID .
+  protecting INT .
+
+  subsort Qid < Oid .
+  class Account | bal : Int .
+  msgs credit debit : Oid Int -> Msg .
+  msg from_to_transfer_ : Oid Oid Int -> Msg .
+
+  vars A B : Oid .
+  var  M : Nat .
+  vars N N' : Int .
+
+  rl [credit] :
+    credit(A, M)
+    < A : Account | bal : N >
+    => < A : Account | bal : N + M > .
+
+  crl [debit] :
+    debit(A, M)
+    < A : Account | bal : N >
+    => < A : Account | bal : N - M >
+    if N >= M .
+
+  crl [transfer] :
+    (from A to B transfer M)
+    < A : Account | bal : N >
+    < B : Account | bal : N' >
+    => < A : Account | bal : N - M >
+        < B : Account | bal : N' + M >
+    if N >= M .
+endom
+
+omod SAVING-ACCOUNT is
+  including ACCOUNT .
+  protecting FLOAT .
+  class SavingAccount | rate : Float .
+  subclass SavingAccount < Account .
+endom
+
+rew < 'A-06238 : Account | bal : 2000 > 
+         debit('A-06238, 1000) .
+
+rew < 'A-73728 : SavingAccount | bal : 5000, rate : 3.0 >
+    < 'A-06238 : Account | bal : 2000 >
+    < 'A-28381 : SavingAccount | bal : 9000, rate : 3.0 >
+    debit('A-06238, 1000)
+    credit('A-73728, 1300)
+    credit('A-28381, 200) .
+
+search in SAVING-ACCOUNT :
+            < 'A-73728 : SavingAccount | bal : 5000, rate : 3.0 >
+            < 'A-06238 : Account | bal : 2000 >
+            < 'A-28381 : SavingAccount | bal : 9000, rate : 3.0 >
+            debit('A-06238, 1000)
+            credit('A-73728, 1300)
+            credit('A-28381, 200)
+          =>! C:Configuration 
+              < O:Oid : Account | bal : N:Nat > 
+          such that N:Nat < 8000 .

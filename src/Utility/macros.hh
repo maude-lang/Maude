@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -94,6 +94,17 @@ class IntSystem;
 class Rope;
 
 //
+//	Type for indexing arrays and vectors.
+//
+//	We want to use a signed type to avoid subtle errors caused by unsigned underflow
+//	such as testing i >= 0 in a loop iterating backwards through a vector.
+//      https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es107-dont-use-unsigned-for-subscripts-prefer-gslindex
+//	ES.107: Don’t use unsigned for subscripts, prefer gsl::index
+//	We want to avoid 32-bit ints on a 64-bit architectures since we don't want to pay for sign-extension in loops.
+//
+typedef ptrdiff_t Index;
+
+//	
 //	Types for storage efficiency.
 //
 typedef char Bool;
@@ -364,8 +375,7 @@ ComplexWarning(message) \
 
 #define \
 IssueAdvisory(message) \
-if (globalAdvisoryFlag) \
-(cerr << ADVISORY_HEADER << message << endl)
+(globalAdvisoryFlag ? (cerr << ADVISORY_HEADER << message << endl) : cerr)
 
 #define \
 Verbose(output) \

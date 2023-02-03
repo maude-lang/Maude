@@ -67,7 +67,6 @@ endsm
 reduce in META-LEVEL : upModule('STRIV, false) .
 rewrites: 1
 result StratTheory: sth 'STRIV is
-  including 'BOOL .
   including 'TRIV .
   sorts none .
   none

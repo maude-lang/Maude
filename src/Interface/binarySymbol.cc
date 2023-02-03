@@ -275,7 +275,7 @@ BinarySymbol::rightIdentitySortCheck()
 	{
 	  Verbose("op " << this << " right-identity collapse from " <<
 		  resultSort << " to " << component->sort(i) <<
-		  " is unequal .");
+		  " is unequal.");
 	  unequalRightIdCollapse = true;
 	}   
       DebugInfo("op " << this << " sort " << resultSort <<

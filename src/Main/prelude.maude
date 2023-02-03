@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version 3.2.
+***	Version alpha139.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -640,28 +640,28 @@ fmod FLOAT is
         [prec 51
          special (id-hook FloatOpSymbol (<)
                   op-hook floatSymbol (<Floats> : ~> Float)
-                   term-hook trueTerm (true)
+                  term-hook trueTerm (true)
                   term-hook falseTerm (false))] .
 
   op _<=_ : Float Float -> Bool
         [prec 51
          special (id-hook FloatOpSymbol (<=)
                   op-hook floatSymbol (<Floats> : ~> Float)
-                    term-hook trueTerm (true)
+                  term-hook trueTerm (true)
                   term-hook falseTerm (false))] .
 
   op _>_ : Float Float -> Bool
         [prec 51
          special (id-hook FloatOpSymbol (>)
                   op-hook floatSymbol (<Floats> : ~> Float)
-                    term-hook trueTerm (true)
+                  term-hook trueTerm (true)
                   term-hook falseTerm (false))] .
 
   op _>=_ : Float Float -> Bool
         [prec 51
          special (id-hook FloatOpSymbol (>=)
                   op-hook floatSymbol (<Floats> : ~> Float)
-                    term-hook trueTerm (true)
+                  term-hook trueTerm (true)
                   term-hook falseTerm (false))] .
 
   op pi : -> FiniteFloat .
@@ -3098,14 +3098,20 @@ mod CONFIGURATION is
   sorts Attribute AttributeSet .
   subsort Attribute < AttributeSet .
   op none : -> AttributeSet  [ctor] .
-  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none] .
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none format (d d s d)] .
 
   sorts Oid Cid Object Msg Portal Configuration .
   subsort Object Msg Portal < Configuration .
-  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor object] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor object
+                                               special (
+                                                 id-hook ObjectConstructorSymbol
+						 op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~> AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor config assoc comm id: none] .
   op <> : -> Portal [ctor] .
+
+  op getClass : Object -> Cid .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid . 
 endm
 
 set include BOOL on .

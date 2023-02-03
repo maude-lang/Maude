@@ -1,3 +1,13 @@
+2023-01-17  Steven Eker  <eker@pup>
+
+	* macros.hh: don't use if in IssueAdvisory() to avoid dangling else
+
+2023-01-09  Steven Eker  <eker@pup>
+
+	* macros.hh: added typedef for Index
+
+===================================Maude139===================================
+
 2021-07-12  Steven Eker  <eker2@eker10>
 
 	* pigPug-cycleDetection.cc (PigPug::firstMoveWithCycleDetection):

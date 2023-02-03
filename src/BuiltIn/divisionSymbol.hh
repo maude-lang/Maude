@@ -26,7 +26,6 @@
 #ifndef _divisionSymbol_hh_
 #define _divisionSymbol_hh_
 #include "freeSymbol.hh"
-#include "cachedDag.hh"
 
 class DivisionSymbol : public FreeSymbol
 {

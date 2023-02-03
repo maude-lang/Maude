@@ -61,7 +61,6 @@
 Vector<DagNode*> Term::subDags;
 TermSet Term::converted;
 bool Term::setSortInfoFlag;
-bool Term::discard;
 
 DagNode*
 Term::term2Dag(bool setSortInfo)

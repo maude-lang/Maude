@@ -1,0 +1,58 @@
+Considering object completion on:
+  rl credit(A, M) < A : Account | bal : N > => < A : Account | bal : (N + M) >
+    [label credit] .
+Transformed rule:
+  rl credit(A, M) < A : V:Account | bal : N, Atts:AttributeSet > => < A :
+    V:Account | bal : (N + M), Atts:AttributeSet > [label credit] .
+
+Considering object completion on:
+  crl debit(A, M) < A : Account | bal : N > => < A : Account | bal : (N - M) >
+    if N >= M = true [label debit] .
+Transformed rule:
+  crl debit(A, M) < A : V:Account | bal : N, Atts:AttributeSet > => < A :
+    V:Account | bal : (N - M), Atts:AttributeSet > if N >= M = true [label
+    debit] .
+
+Considering object completion on:
+  crl (from A to B transfer M) < A : Account | bal : N > < B : Account | bal :
+    N' > => < A : Account | bal : (N - M) > < B : Account | bal : (N' + M) > if
+    N >= M = true [label transfer] .
+Transformed rule:
+  crl (from A to B transfer M) < A : V:Account | bal : N, Atts:AttributeSet > <
+    B : V2:Account | bal : N', Atts2:AttributeSet > => < A : V:Account | bal :
+    (N - M), Atts:AttributeSet > < B : V2:Account | bal : (N' + M),
+    Atts2:AttributeSet > if N >= M = true [label transfer] .
+
+op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
+op __ left-identity collapse from Configuration to Object is unequal.
+==========================================
+rewrite in SAVING-ACCOUNT : debit('A-06238, 1000) < 'A-06238 : Account | bal :
+    2000 > .
+rewrites: 3
+result Object: < 'A-06238 : Account | bal : 1000 >
+==========================================
+rewrite in SAVING-ACCOUNT : ((((credit('A-28381, 200) credit('A-73728, 1300))
+    debit('A-06238, 1000)) < 'A-28381 : SavingAccount | bal : 9000, rate : 3.0
+    >) < 'A-06238 : Account | bal : 2000 >) < 'A-73728 : SavingAccount | bal :
+    5000, rate : 3.0 > .
+rewrites: 7
+result Configuration: < 'A-06238 : Account | bal : 1000 > < 'A-28381 :
+    SavingAccount | bal : 9200, rate : 3.0 > < 'A-73728 : SavingAccount | bal :
+    6300, rate : 3.0 >
+==========================================
+search in SAVING-ACCOUNT : ((((credit('A-28381, 200) credit('A-73728, 1300))
+    debit('A-06238, 1000)) < 'A-28381 : SavingAccount | bal : 9000, rate : 3.0
+    >) < 'A-06238 : Account | bal : 2000 >) < 'A-73728 : SavingAccount | bal :
+    5000, rate : 3.0 > =>! C:Configuration < O:Oid : Account | bal : N:Nat >
+    such that N:Nat < 8000 = true .
+
+Solution 1 (state 7)
+states: 8  rewrites: 29
+C:Configuration --> < 'A-28381 : SavingAccount | bal : 9200, rate : 3.0 > <
+    'A-73728 : SavingAccount | bal : 6300, rate : 3.0 >
+O:Oid --> 'A-06238
+N:Nat --> 1000
+
+No more solutions.
+states: 8  rewrites: 29
+Bye.

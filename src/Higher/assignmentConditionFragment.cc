@@ -67,19 +67,31 @@ AssignmentConditionFragment::~AssignmentConditionFragment()
 void
 AssignmentConditionFragment::check(VariableInfo& variableInfo, NatSet& boundVariables)
 {
-  NatSet unboundVariables;
-
+  //
+  //	Handle variables in the pattern.
+  //
   lhs = lhs->normalize(true);
   lhs->indexVariables(variableInfo);
   variableInfo.addConditionVariables(lhs->occursBelow());
-
+  AdvisoryCheck(!boundVariables.contains(lhs->occursBelow()),
+		*lhs << ": all the variables in the left-hand side of assignment condition fragment " <<
+		QUOTE(this) << " are bound before the matching takes place.");
+  //
+  //	Hndle variables in the subject.
+  //
   rhs = rhs->normalize(false);
   rhs->indexVariables(variableInfo);
   variableInfo.addConditionVariables(rhs->occursBelow());
+  //
+  //	Check for variables that are used before they are bound.
+  //
+  NatSet unboundVariables;
   unboundVariables.insert(rhs->occursBelow());
-
   unboundVariables.subtract(boundVariables);
   variableInfo.addUnboundVariables(unboundVariables);
+  //
+  //	We will bind these variables.
+  //
   boundVariables.insert(lhs->occursBelow());
 }
 

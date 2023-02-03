@@ -1,0 +1,14 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for automatic imports being included in upModule() of theories.
+***
+
+fth FOO is
+  sort Foo .
+endfth
+
+show desugared FOO .
+
+red in META-LEVEL : upModule('FOO, false) .

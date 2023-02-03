@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -806,4 +806,49 @@ MixfixModule::addBubbleSpec(Symbol* topSymbol,
     domainAndRange[domainAndRange.length() - 1]->component()->getIndexWithinModule();
   bubbleComponents.insert(b.componentIndex);
   return nrBubbleSpecs;
+}
+
+void
+MixfixModule::handleSortConstraint(SortConstraint* sortConstraint, bool dnt)
+{
+  if (!dnt && statementTransformer != 0)
+    {
+      StatementTransformer::Outcome result = statementTransformer->transformSortConstraint(sortConstraint);
+      AdvisoryCheck(result != StatementTransformer::Outcome::NOT_TRANSFORMED,
+		    *sortConstraint << ": transformation not performed for:\n  " << sortConstraint);
+    }
+  //
+  //	Any transformation has taken place so its safe to analyze sortConstraint.
+  //
+  checkSortConstraint(sortConstraint);
+}
+
+void
+MixfixModule::handleEquation(Equation* equation, bool dnt)
+{
+  if (!dnt && statementTransformer != 0)
+    {
+      StatementTransformer::Outcome result = statementTransformer->transformEquation(equation);
+      AdvisoryCheck(result != StatementTransformer::Outcome::NOT_TRANSFORMED,
+		    *equation << ": transformation not performed for:\n  " << equation);
+    }
+  //
+  //	Any transformation has taken place so its safe to analyze equation.
+  //
+  checkEquation(equation);
+}
+
+void
+MixfixModule::handleRule(Rule* rule, bool dnt)
+{
+  if (!dnt && statementTransformer != 0)
+    {
+      StatementTransformer::Outcome result = statementTransformer->transformRule(rule);
+      AdvisoryCheck(result != StatementTransformer::Outcome::NOT_TRANSFORMED,
+		    *rule << ": transformation not performed for:\n  " << rule);
+    }
+  //
+  //	Any transformation has taken place so its safe to analyze rule.
+  //
+  checkRule(rule);
 }

@@ -1,0 +1,111 @@
+set show timing off .
+set show advisories off .
+set verbose on .
+
+  ---- adapted
+  ---- from the book All About Maude
+  ---- from the Maude Manual
+  ---- by the Maude team
+
+fth NZNAT# is
+  protecting NAT .
+  op # : -> NzNat .
+endfth
+
+fmod NAT/{N :: NZNAT#} is
+  sort Nat/{N} .
+  op [_] : Nat -> Nat/{N} [ctor] .
+  op _+_ : Nat/{N} Nat/{N} -> Nat/{N} .
+  op _*_ : Nat/{N} Nat/{N} -> Nat/{N} .
+  vars N M : Nat .
+  ceq [N] = [N rem #] if N >= # .
+  eq [N] + [M] = [N + M] .
+  eq [N] * [M] = [N * M] .
+endfm
+
+omod RROBIN{N :: NZNAT#} is
+  protecting NAT/{N} .
+
+  sort Mode .
+  ops wait critical : -> Mode [ctor] .
+
+  subsort Nat/{N} < Oid .
+
+  class Proc | mode : Mode .
+  msg go : Nat/{N} -> Msg .
+
+  var N : Nat .
+
+  rl [enter] :
+    go([N])
+    < [N] : Proc | mode : wait >
+    => < [N] : Proc | mode : critical > .
+
+  rl [exit] :
+    < [N] : Proc | mode : critical >
+    => < [N] : Proc | mode : wait >
+        go([s(N)]) .
+
+  op init : -> Configuration .
+  op make-init : Nat/{N} -> Configuration .
+
+  ceq init = go([0]) make-init([N]) if s(N) := # .
+  ceq make-init([s(N)])
+    = < [s(N)] : Proc | mode : wait > make-init([N])
+    if N < # .
+  eq make-init([0]) = < [0] : Proc | mode : wait > .
+endom
+
+load model-checker.maude
+
+omod CHECK-RROBIN{N :: NZNAT#} is 
+  pr RROBIN{N} . 
+  inc MODEL-CHECKER . 
+  inc SATISFACTION . 
+  ex LTL-SIMPLIFIER . 
+  inc LTL . 
+
+  subsort Configuration < State . 
+
+  op inCrit : Nat/{N} -> Prop . 
+  op twoInCrit : -> Prop . 
+
+  var N : Nat . 
+  vars X Y : Nat/{N} . 
+  var C : Configuration . 
+  var F : Formula . 
+
+  eq < X : Proc | mode : critical > C |= inCrit(X) = true . 
+  eq < X : Proc | mode : critical > < Y : Proc | mode : critical > C 
+    |= twoInCrit = true . 
+
+  op guaranteedReentrance : -> Formula . 
+  op allProcessesReenter : Nat -> Formula . 
+  op nextIter_ : Formula -> Formula . 
+  op nextIterAux : Nat Formula -> Formula . 
+
+  eq guaranteedReentrance = allProcessesReenter(#) . 
+
+  eq allProcessesReenter(s N) 
+    = (inCrit([s N]) -> nextIter inCrit([s N])) /\ allProcessesReenter(N) . 
+  eq allProcessesReenter(0) = inCrit([0]) -> nextIter inCrit([0]) . 
+
+  eq nextIter F = nextIterAux(2 * #, F) . 
+
+  eq nextIterAux(s N, F) = O nextIterAux(N, F) . 
+  eq nextIterAux(0, F) = F . 
+endom
+
+view 5 from NZNAT# to NAT is
+  op # to term 5 .
+endv
+
+omod CHECK-RROBIN-5 is 
+  pr CHECK-RROBIN{5} .
+endom
+
+red modelCheck(init, [] ~ twoInCrit) .
+
+red modelCheck(init, [] guaranteedReentrance) .
+
+red modelCheck(init, [] (inCrit([1]) -> O O O inCrit([1]))) .

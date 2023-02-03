@@ -1,0 +1,19 @@
+***
+***	Test for bad warning for a good module-view.
+***
+
+fmod M is
+  sort Foo .
+  op a : -> Foo .
+endfm
+
+fth T is
+  inc M .
+  op c : -> Foo .
+endfth
+
+view V from T to M is
+  op c to a .
+endv
+
+show view .

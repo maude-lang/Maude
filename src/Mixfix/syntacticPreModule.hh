@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,17 +26,23 @@
 #ifndef _syntacticPreModule_hh_
 #define _syntacticPreModule_hh_
 #include <set>
+#include <map>
+#include <list>
+#include "term.hh"
 #include "preModule.hh"
 #include "lineNumber.hh"
 #include "syntaxContainer.hh"
 #include "sharedTokens.hh"
 #include "importModule.hh"
 #include "moduleDatabase.hh"
+#include "statementTransformer.hh"
+#include "variable.hh"
 
 class SyntacticPreModule
   : public PreModule,
     public LineNumber,
     public SyntaxContainer,
+    public StatementTransformer,
     private SharedTokens
     
 {
@@ -57,7 +63,7 @@ public:
   void finishModule(Token endToken);
   bool isComplete();
 
-  void addParameter2(Token name, ModuleExpression* theory);
+  void addParameter2(Token name, ModuleExpression* theory) override;
   void addImport(Token modeToken, ModuleExpression* expr);
 
   void addSortDecl(const Vector<Token>& sortDecl);
@@ -66,7 +72,7 @@ public:
   void addStratDecl(Token opName);
   void makeDeclsConsistent();
 
-  void addType(bool kind, const Vector<Token>& tokens);
+  void addType(bool kind, const Vector<Token>& tokens) override;
   void convertSortsToKinds();
   void setFlag(int flag);
   void setPrec(Token range);
@@ -79,17 +85,19 @@ public:
   void setPoly(const Vector<Token>& polyArgs);
   void setLatexMacro(const string& latexMacro);
   void addHook(HookType type, Token name, const Vector<Token>& details);
-  void addVarDecl(Token varName);
+  void addVarDecl(Token varName) override;
   void addStatement(const Vector<Token>& statement);
 
   void addClassDecl(Token name);
-  void addAttributePair(Token attributeName, Token sortName);
+  void addAttributePair(Token attributeName, bool kind, const Vector<Token>& tokens);
+  void addAttributePairNoColon(Token attributeName, bool kind, const Vector<Token>& tokens);
   void addSubclassDecl(const Vector<Token>& subclassDecl);
+  void endMsg();
 
-  VisibleModule* getFlatSignature();
-  VisibleModule* getFlatModule();
+  VisibleModule* getFlatSignature() override;
+  VisibleModule* getFlatModule() override;
 
-  const ModuleDatabase::ImportMap* getAutoImports() const;
+  const ModuleDatabase::ImportMap* getAutoImports() const override;
 
   void dump();
   void showModule(ostream& s = cout);
@@ -101,6 +109,14 @@ public:
   static bool checkFormatString(const char* string);
 
 private:
+  //
+  //	Functions to transform statements as soon as they are parsed and
+  //	before they are inserted into the flat module.
+  //
+  Outcome transformSortConstraint(SortConstraint* sortConstraint) override;
+  Outcome transformEquation(Equation* equation) override;
+  Outcome transformRule(Rule* rule) override;
+  
   struct Hook
   {
     HookType type;
@@ -162,22 +178,97 @@ private:
   struct AttributePair
   {
     Token attributeName;
-    Token sortName;
+    Type type;
+    //
+    //	Filled out from type after connected components are determined.
+    //
+    Sort* sort;
   };
 
   struct ClassDecl
   {
     Token name;  // must be a valid sort name; no mixfix
     Vector<AttributePair> attributes;
+    //
+    //	Filled out during processing.
+    //
+    Sort* classSort;
+    Symbol* classSymbol; // do we need to store this?
   };
-  
+  //
+  //	For omod statement transformation.
+  //
+  enum class GatherMode
+    {
+     PATTERN,
+     SUBJECT,
+     CONDITION_PATTERN,
+     CONDITION_SUBJECT,
+    };
+
+  typedef map<Symbol*, Term*> AttributeMap;
+
+  struct ObjectOccurrence
+  {
+    Term* objectTerm = 0;			// the object occurrence
+    VariableTerm* variableTerm = 0;		// if non-null, an AttributeSet variable appearing under the 3rd argument
+    AttributeMap attributeTerms;		// attribute subterms appearing under the 3rd argument, indexed by attribute symbols
+  };
+
+  typedef list<ObjectOccurrence> ObjectOccurrences;
+
+  struct ObjectInfo
+  {
+    //
+    //	The first occurrence in the lhs of the statement.
+    //	A second occurrence will disqualify the statement
+    //	Having no occurrence will disqualify the statement.
+    //
+    ObjectOccurrence patternOccurrence;
+    //
+    //	Having a class argument that is not either a class constant or a
+    //	variable of class sort will disqualify the statement.
+    //
+    Term* classArgument = 0;
+    //
+    //	The name part of the class variable if there is one.
+    //
+    int classVariableName = NONE;
+    //
+    //	The class sort, derived from a class constant or class variable.
+    //
+    Sort* classSort = 0;
+    //
+    //	Non-pattern occurrences.
+    //	Having a different class argument will disqualify the statement.
+    //
+    ObjectOccurrences subjectOccurrences;
+  };
+
+  typedef map<Term*, ObjectInfo, Term::LessThan> ObjectMap;
+  typedef map<pair<int,int>,int> VarCountMap;
+  typedef set<int> IdSet;
+
+  struct StatementInfo
+  {
+    ~StatementInfo();
+    int chooseFreshVariableName(const char* base);
+
+    ObjectMap objectMap;
+    VarCountMap varCountMap;
+    IdSet forbiddenNames;
+    bool ignore = false;
+  };
+
   void process();
 
   static void printAttributes(ostream& s, const OpDef& opDef);
   static void printAttributes(ostream& s, const StratDecl& stratDecl);
   static void printSortTokenVector(ostream& s, const Vector<Token>& sorts);
 
-  void regretToInform(Entity* doomedEntity);
+  static void insertSubsorts(const Vector<Sort*> smaller, Vector<Sort*> bigger);
+
+  void regretToInform(Entity* doomedEntity) override;
   int findHook(const Vector<Hook>& hookList, HookType type, int name);
 
   Symbol* findHookSymbol(const Vector<Token>& fullName);
@@ -192,6 +283,7 @@ private:
   Symbol* extractSpecialSymbol(const Vector<Token>& bubble, int& pos);
   void processImports();
   void processSorts();
+  void processSubsorts();
   Sort* getSort(Token token);
   void checkOpTypes();
   void checkType(const Type& type);
@@ -205,6 +297,32 @@ private:
   void processStrategies();
   void processStatements();
   bool compatible(int endTokenCode);
+  //
+  //	For omods and oths.
+  //
+  void addHonoraryClassNames(set<int>& classNames) const;
+  void addHonoraryAttributeSymbols();
+  void processClassSorts();
+  Sort* findClassIdSortName() const;
+  void checkAttributeTypes();
+  void computeAttributeTypes();
+  void processClassOps();
+  Sort* findAtttributeSetSort() const;
+  Sort* findAtttributeSort() const;
+
+  void gatherObjects(PreEquation* pe, StatementInfo& si);
+  void gatherObjects(GatherMode mode, Term* term, StatementInfo& si);
+  bool checkVariables(StatementInfo& si);
+  bool doTransformation(StatementInfo& si);
+  void transformClassArgument(ObjectOccurrence& oo, VariableSymbol* vs, int varName);
+  bool transformPatternAttributes(ObjectInfo& oi, StatementInfo& si);
+  bool transformSubjectAttributes(ObjectOccurrence& so, ObjectOccurrence& po);
+  
+  bool isClassSort(const Sort *s) const;
+  Sort* findCorrespondingClassSort(const Symbol *s) const;
+  bool recordClassArgument(Term* classArgument, ObjectInfo& oi) const;
+  bool analyzeAttributeSetArgument(Term* attributeSetArgument, ObjectOccurrence& oo) const;
+  void garbageCollectAttributeSet(Term* attributeSet, Symbol* attributeSetSymbol) const;
 
   int startTokenCode;
   Bool lastSawOpDecl;
@@ -225,6 +343,14 @@ private:
   ModuleDatabase::ImportMap autoImports;
   ModuleDatabase::ImportSet ooIncludes;
   VisibleModule* flatModule;
+  //
+  //	Sorts determined for object oriented modules and theories.
+  //
+  Sort* classIdSort = 0;
+  Sort* attributeSetSort = 0;
+  Sort* attributeSort = 0;
+  set<int> classNames;
+  set<Symbol*> attributeSymbols;
 };
 
 inline bool
@@ -236,10 +362,7 @@ SyntacticPreModule::isComplete()
 inline void
 SyntacticPreModule::addSortDecl(const Vector<Token>& sortDecl)
 {
-  if (sortDecl.empty())
-    IssueWarning("skipped empty sort declaration.");  // would be nice to have a line number
-  else
-    sortDecls.append(sortDecl);
+  sortDecls.append(sortDecl);
 }
 
 inline void
@@ -248,30 +371,30 @@ SyntacticPreModule::addSubsortDecl(const Vector<Token>& subsortDecl)
   subsortDecls.append(subsortDecl);
 }
 
-inline void
-SyntacticPreModule::addSubclassDecl(const Vector<Token>& subclassDecl)
-{
-  subclassDecls.append(subclassDecl);
-}
-
 inline const ModuleDatabase::ImportMap*
 SyntacticPreModule::getAutoImports() const
 {
   return &autoImports;
 }
 
-inline void
-SyntacticPreModule::addClassDecl(Token name)
+inline
+SyntacticPreModule::StatementInfo::~StatementInfo()
 {
-  int nrClassDecls = classDecls.size();
-  classDecls.resize(nrClassDecls + 1);
-  classDecls[nrClassDecls].name = name;
+  //
+  //	The key of each objectMap entry is a normalized deep copy of an object name subterm and
+  //	needs to be self destructed separately from the statement it was copied from.
+  //
+  for (auto& i : objectMap)
+    i.first->deepSelfDestruct();
 }
 
-inline void
-SyntacticPreModule::addAttributePair(Token attributeName, Token sortName)
+inline bool
+SyntacticPreModule::isClassSort(const Sort *s) const
 {
-  classDecls[classDecls.size() - 1].attributes.append({attributeName, sortName});
+  //
+  //	Name must be that of an previously identified class.
+  //
+  return classNames.find(s->id()) != classNames.end();
 }
 
 #endif

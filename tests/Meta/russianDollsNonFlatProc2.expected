@@ -1,17 +1,17 @@
 ==========================================
-erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 0 >
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef, level: 0 >
     createInterpreter(interpreterManager, me, newProcess) .
 rewrites: 74
-result Configuration: <> < me : User | pending: nil,level: 0 > erewroteTerm(me,
-    interpreter(0), 5, '__['`{_`}['_`,_['"b".Char,'"c".Char]],'`{_`}['_`,_[
+result Configuration: <> < me : User | pending: nil, level: 0 > erewroteTerm(
+    me, interpreter(0), 5, '__['`{_`}['_`,_['"b".Char,'"c".Char]],'`{_`}['_`,_[
     '"i".Char,'"y".Char]],'`{_`}['_`,_['"a".Char,'"e".Char]]],
     'NeList`{Set*`{String`}`})
 ==========================================
-erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 1 >
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef, level: 1 >
     createInterpreter(interpreterManager, me, newProcess) .
 rewrites: 75
-result Configuration: <> < me : User | pending: nil,level: 1 > erewroteTerm(me,
-    interpreter(0), 73, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+result Configuration: <> < me : User | pending: nil, level: 1 > erewroteTerm(
+    me, interpreter(0), 73, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
     'level:_['0.Zero],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
     'interpreter['0.Zero],'s_^5['0.Zero],'_`[_`][''__.Sort,'_`,_['_`[_`][
     ''`{_`}.Qid,'_`[_`][''_`,_.Qid,'_`,_[''"b".Char.Constant,
@@ -20,11 +20,11 @@ result Configuration: <> < me : User | pending: nil,level: 1 > erewroteTerm(me,
     ''_`,_.Qid,'_`,_[''"a".Char.Constant,''"e".Char.Constant]]]]],
     ''NeList`{Set*`{String`}`}.Sort]], 'Configuration)
 ==========================================
-erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 2 >
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef, level: 2 >
     createInterpreter(interpreterManager, me, newProcess) .
 rewrites: 75
-result Configuration: <> < me : User | pending: nil,level: 2 > erewroteTerm(me,
-    interpreter(0), 74, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+result Configuration: <> < me : User | pending: nil, level: 2 > erewroteTerm(
+    me, interpreter(0), 74, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
     'level:_['s_['0.Zero]],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
     'interpreter['0.Zero],'s_^73['0.Zero],'_`[_`][''__.Sort,'_`,_[
     ''<>.Portal.Constant,'_`[_`][''<_:_|_>.Variable,'_`,_[''me.Oid.Constant,
@@ -45,11 +45,11 @@ result Configuration: <> < me : User | pending: nil,level: 2 > erewroteTerm(me,
     '''NeList`{Set*`{String`}`}.Sort.Constant]]]],''Configuration.Sort]],
     'Configuration)
 ==========================================
-erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 3 >
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef, level: 3 >
     createInterpreter(interpreterManager, me, newProcess) .
 rewrites: 75
-result Configuration: <> < me : User | pending: nil,level: 3 > erewroteTerm(me,
-    interpreter(0), 74, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+result Configuration: <> < me : User | pending: nil, level: 3 > erewroteTerm(
+    me, interpreter(0), 74, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
     'level:_['s_^2['0.Zero]],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
     'interpreter['0.Zero],'s_^74['0.Zero],'_`[_`][''__.Sort,'_`,_[
     ''<>.Portal.Constant,'_`[_`][''<_:_|_>.Variable,'_`,_[''me.Oid.Constant,
@@ -97,11 +97,11 @@ result Configuration: <> < me : User | pending: nil,level: 3 > erewroteTerm(me,
     ''''NeList`{Set*`{String`}`}.Sort.Constant.Constant]]]]]]]],
     '''Configuration.Sort.Constant]]]],''Configuration.Sort]], 'Configuration)
 ==========================================
-erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef,level: 4 >
+erewrite in RUSSIAN-DOLLS : <> < me : User | pending: predef, level: 4 >
     createInterpreter(interpreterManager, me, newProcess) .
 rewrites: 75
-result Configuration: <> < me : User | pending: nil,level: 4 > erewroteTerm(me,
-    interpreter(0), 74, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
+result Configuration: <> < me : User | pending: nil, level: 4 > erewroteTerm(
+    me, interpreter(0), 74, '__['<>.Portal,'<_:_|_>['me.Oid,'User.Cid,'_`,_[
     'level:_['s_^3['0.Zero]],'pending:_['nil.Seq]]],'erewroteTerm['me.Oid,
     'interpreter['0.Zero],'s_^74['0.Zero],'_`[_`][''__.Sort,'_`,_[
     ''<>.Portal.Constant,'_`[_`][''<_:_|_>.Variable,'_`,_[''me.Oid.Constant,

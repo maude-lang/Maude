@@ -1,0 +1,15 @@
+fth FOO is
+  sort Foo .
+endfth
+==========================================
+reduce in META-LEVEL : upModule('FOO, false) .
+rewrites: 1
+result FTheory: fth 'FOO is
+  nil
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfth
+Bye.

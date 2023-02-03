@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include "rope.hh"
 #include "symbolType.hh"
 #include "strategyLanguage.hh"
+#include "mixfixModule.hh"
 
 // Forward declaration
 class RewriteStrategy;
@@ -53,6 +54,11 @@ public:
   void setGather(const Vector<Token>& gather);
   void setFormat(const Vector<Token>& format);
   void setLatexMacro(const string& latexMacro);
+
+  void addClassMapping(const Token& fromClass, const Token& toClass);
+  void addAttrMapping(const Token& token);
+  void addAttrTarget(const Token& token);
+  void markAsMsg();
   //
   //	These versions are intended for internally generated renamings
   //	rather than those produced by parsing.
@@ -77,6 +83,7 @@ public:
   int getNrOpMappings() const;
   int getOpFrom(int index) const;
   int getOpTo(int index) const;
+  bool isMsgMapping(int index) const;
   Term* getFromTerm(int index) const;
   Term* getOpTargetTerm(int index) const;
   int getNrTypes(int index) const;
@@ -92,15 +99,21 @@ public:
   StrategyExpression* getStratTargetExpr(int index) const;
   const Vector<int>& getStratVarIndices(int index) const;
   const set<int>& getStratTypeSorts(int index, int typeNr) const;
+  int getNrClassMappings() const;
 
   void discardStratMappings();
 
+  void convertClassMappings(ImportModule* module, Renaming* canonical) const;
+  void convertAttrMappings(const ImportModule* module, Renaming* canonical) const;
+  void pruneSortMappings(ImportModule* module, Renaming* canonical) const;
+  void pruneLabelMappings(ImportModule* module, Renaming* canonical) const;
+  void canonicalizeOpMappings(ImportModule* module, Renaming* canonical) const;
+  void canonicalizeStrategyMappings(ImportModule* module, Renaming* canonical) const;
   Renaming* makeCanonicalVersion(ImportModule* module) const;
   Rope makeCanonicalName() const;
 
   void addSortAndLabelMappings(const Renaming* original);
   void addOpMappingPartialCopy(const Renaming* original, int index);
-  //void addOpMappingSimpleCopy(const Renaming* original, int index);
   void addStratMappingPartialCopy(const Renaming* original, int index);
 
   int renameSort(int oldId) const;
@@ -113,24 +126,39 @@ public:
   void printRenaming(ostream& s, const char* sep, const char* sep2) const;
 
 private:
+  //
+  //	We use this instead of Type because we don't care about the kind flag and
+  //	we want the set of identifiers sorted in a canonical order.
+  //
   typedef set<int> IdSet;
+  //
+  //	Attribute and message mappings are stored as op mappings in surface renaming and
+  //	transformed away when a canonical renaming is computed with respect to some module.
+  //
+  enum class MappingType : char
+    {
+     OP,	// normal op to op or op to term mapping
+     MSG,	// msg mapping
+     ATTR	// attr mapping - no range type
+    };
 
   struct OpMapping
   {
     Vector<IdSet> types;	// rename operator with specific arity only
     int name;			// new name
+    MappingType mappingType = MappingType::OP;
     //
     //	Renamings only ever borrow terms from a view and hence they never
     //	delete them. The object using the renaming becomes stale as soon
     //	as the view the term came from becomes stale, so dangling pointers
     //	are never dereferenced.
     //
-    Term* fromTerm;		// not used for renaming but useful for view instantiation and debugging
-    Term* term;			// for op->term mappings
+    Term* fromTerm = 0;		// not used for renaming but useful for view instantiation and debugging
+    Term* term = 0;		// for op->term mappings
     //
     //	Can change syntactic attributes only.
     //
-    int prec;			// < MixfixModule::MIN_PREC if not set
+    int prec = MixfixModule::MIN_PREC - 1;	// < MixfixModule::MIN_PREC if not set
     Vector<int> gather;		// empty if not set
     Vector<int> format;		// empty if not set
     string latexMacro;		// empty if not set
@@ -147,10 +175,20 @@ private:
     int index;
   };
 
+  struct ClassMapping
+  {
+    Token fromClass;
+    Token toClass;
+  };
+  
   typedef map<int, int> IdMap;
   typedef multimap<int, OpMapping> OpMap;
   typedef multimap<int, StratMapping> StratMap;
+  typedef Vector<ClassMapping> ClassMap;
 
+  static bool equal(const Vector<int>& left, const Vector<int>& right);
+  static bool isIdentityOpMapping(const ImportModule* module, const OpMapping& om, const Symbol* symbol);
+  static bool isIdentityOpMapping(const ImportModule* module, const OpMapping& om, int index);
   static bool typeMatch(const set<int>& type, const ConnectedComponent* component);
   static bool typeMatch(const Vector<set<int> >& types, Symbol* oldSymbol);
   static bool typeMatch(const Vector<set<int> >& types, RewriteStrategy* oldStrat);
@@ -170,14 +208,20 @@ private:
   StratMap stratMap;
   Vector<StratMap::const_iterator> stratMapIndex;
   StratMap::iterator lastStratMapping;
-
-  bool lastSeenWasStrategy;	// Used to discreminate where to addType
+  ClassMap classMap;
+  bool lastSeenWasStrategy;	// Used to discriminate where to addType
 };
 
 inline int
 Renaming::getNrSortMappings() const
 {
   return sortMapIndex.length();
+}
+
+inline int
+Renaming::getNrClassMappings() const
+{
+  return classMap.size();
 }
 
 inline int
@@ -226,6 +270,12 @@ inline int
 Renaming::getOpTo(int index) const
 {
   return opMapIndex[index]->second.name;
+}
+
+inline bool
+Renaming::isMsgMapping(int index) const
+{
+  return opMapIndex[index]->second.mappingType == MappingType::MSG;
 }
 
 inline Term*
@@ -323,6 +373,18 @@ Renaming::discardStratMappings()
 {
   stratMapIndex.clear();
   stratMap.clear();
+}
+
+inline void
+Renaming::addClassMapping(const Token& fromClass, const Token& toClass)
+{
+  classMap.append({fromClass, toClass});
+}
+
+inline void
+Renaming::markAsMsg()
+{
+  lastOpMapping->second.mappingType = MappingType::MSG;
 }
 
 ostream& operator<<(ostream& s, const Renaming* renaming);

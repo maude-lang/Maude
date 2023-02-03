@@ -1,41 +1,41 @@
 ==========================================
-erewrite in PRINT-TEST : <> < me : User | term: upTerm(1/2),flags: mixfix >
+erewrite in PRINT-TEST : <> < me : User | term: upTerm(1/2), flags: mixfix >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 6
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     's '0 '/ 's_^2 '`( '0 '`))
 ==========================================
-erewrite in PRINT-TEST : <> < me : User | term: upTerm(1/2),flags: number >
+erewrite in PRINT-TEST : <> < me : User | term: upTerm(1/2), flags: number >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 6
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     '_/_ '`( '1 '`, '2 '`))
 ==========================================
-erewrite in PRINT-TEST : <> < me : User | term: upTerm(1/2),flags: rat >
+erewrite in PRINT-TEST : <> < me : User | term: upTerm(1/2), flags: rat >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 6
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     '1/2)
 ==========================================
-erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2),flags: rat
+erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2), flags: rat
     > createInterpreter(interpreterManager, me, none) .
 rewrites: 6
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     '_+_ '`( 'X '`, '1/2 '`))
 ==========================================
-erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2),flags: (
+erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2), flags: (
     mixfix rat) > createInterpreter(interpreterManager, me, none) .
 rewrites: 6
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     'X '+ '1/2)
 ==========================================
-erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2),flags: (
+erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2), flags: (
     mixfix number) > createInterpreter(interpreterManager, me, none) .
 rewrites: 6
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     'X '+ '1 '/ '2)
 ==========================================
-erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2),flags:
+erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2), flags:
     mixfix > createInterpreter(interpreterManager, me, none) .
 rewrites: 6
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),

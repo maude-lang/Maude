@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -58,6 +58,9 @@
 #include "variableSymbol.hh"
 #include "variableTerm.hh"
 
+//	ACU theory class definitions
+#include "ACU_Symbol.hh"
+
 //	S theory class definitions
 #include "S_Symbol.hh"
 #include "S_Term.hh"
@@ -97,6 +100,7 @@
 #include "mixfixModule.hh"
 #include "quotedIdentifierSymbol.hh"
 #include "quotedIdentifierTerm.hh"
+#include "objectConstructorSymbol.hh"
 #include "mixfixParser.hh"
 
 #define ROOT_NODE	(0)
@@ -734,6 +738,42 @@ MixfixParser::makeTerm(int node)
 	t = symbol->makeTerm(args);
 	break;
       }
+    case MAKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET:
+      {
+	ObjectConstructorSymbol* symbol = safeCast(ObjectConstructorSymbol*, client.getSymbols()[a.data]);
+	if (client.getStatus() == Module::SIGNATURE_CLOSED)
+	  {
+	    //
+	    //	We haven't completed fix-ups, so identity need not exist.
+	    //
+	    int pos = currentOffset + parser.getFirstPosition(node);
+	    IssueWarning(LineNumber((*currentSentence)[pos].lineNumber()) <<
+			 ": empty attribute set syntax is not allowed in operator declararions.");
+	    client.markAsBad();
+	    //
+	    //	Because the sentence parsed ok, none of the code that calls makeTerm() is prepared
+	    //	to deal with failure so we need make a fake subterm so that the module can be deleted
+	    //	without dereferencing null.
+	    //
+	    Sort* sort = symbol->getRangeSort();
+	    VariableSymbol* vs = safeCast(VariableSymbol*, client.instantiateVariable(sort));
+	    t = new VariableTerm(vs, Token::encode("error"));
+	  }
+	else
+	  {
+	    //
+	    //	We shouldn't be parsing statements or commands if the identity could not be set.
+	    //
+	    ACU_Symbol* attributeSetSymbol = symbol->getAttributeSetSymbol();
+	    Term* identity = attributeSetSymbol->getIdentity();
+	    Assert(identity != 0, "null identity");
+	    for (int i = 0; i < 2; i++)
+	      args.append(makeTerm(parser.getChild(node, i)));
+	    args.append(identity->deepCopy());
+	    t = symbol->makeTerm(args);
+	  }
+	break;
+      }
     case MAKE_NATURAL:
       {
 	SuccSymbol* symbol = safeCast(SuccSymbol*, client.getSymbols()[a.data]);
@@ -1013,6 +1053,18 @@ MixfixParser::makeAttributePart(int node,
 	    flags.setFlags(NARROWING);
 	    break;
 	  }
+	case MAKE_DNT_ATTRIBUTE:
+	  {
+	    if (client.isObjectOriented())
+	      flags.setFlags(DNT);
+	    else
+	      {
+		int pos = currentOffset + parser.getFirstPosition(node);
+		IssueWarning(LineNumber((*currentSentence)[pos].lineNumber()) <<
+			     ": dnt attribute is only allowed in omods/oths.");
+	      }
+	    break;
+	  }
 	case MAKE_PRINT_ATTRIBUTE:
 	  {
 	    flags.setFlags(PRINT);
@@ -1137,6 +1189,7 @@ MixfixParser::makeStatementPart(int node,
 	client.insertSortConstraint(sc);
 	if (metadata != NONE)
 	  client.insertMetadata(MixfixModule::MEMB_AX, sc, metadata);
+	client.handleSortConstraint(sc, flags.getFlag(DNT));
 	if (flags.getFlag(PRINT))
 	  client.insertPrintAttribute(MixfixModule::MEMB_AX, sc, printNames, printSorts);
 	break;
@@ -1163,6 +1216,7 @@ MixfixParser::makeStatementPart(int node,
 	client.insertEquation(eq);
 	if (metadata != NONE)
 	  client.insertMetadata(MixfixModule::EQUATION, eq, metadata);
+	client.handleEquation(eq, flags.getFlag(DNT));
 	if (flags.getFlag(PRINT))
 	  client.insertPrintAttribute(MixfixModule::EQUATION, eq, printNames, printSorts);
 	break;
@@ -1192,6 +1246,7 @@ MixfixParser::makeStatementPart(int node,
 	client.insertRule(rl);
 	if (metadata != NONE)
 	  client.insertMetadata(MixfixModule::RULE, rl, metadata);
+	client.handleRule(rl, flags.getFlag(DNT));
 	if (flags.getFlag(PRINT))
 	  client.insertPrintAttribute(MixfixModule::RULE, rl, printNames, printSorts);
 	break;

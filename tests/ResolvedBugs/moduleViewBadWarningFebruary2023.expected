@@ -1,0 +1,4 @@
+view V from T to M is
+  op c to a .
+endv
+Bye.

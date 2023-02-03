@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -642,6 +642,9 @@ MixfixModule::makeAttributeProductions()
   rhs[0] = narrowing;
   parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
 			   MixfixParser::MAKE_NARROWING_ATTRIBUTE);
+  rhs[0] = dnt;
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
+			   MixfixParser::MAKE_DNT_ATTRIBUTE);
   //
   //	Print items.
   //
@@ -1206,6 +1209,30 @@ MixfixModule::makeSymbolProductions()
 		rhs[j] = t;
 	    }
 	  parser->insertProduction(rangeNt, rhs, si.prec, si.gather, MixfixParser::MAKE_TERM, i);
+	  //
+	  //	Special syntax for objects with empty attribute set.
+	  //
+	  if (si.symbolType.getBasicType() == SymbolType::OBJECT_CONSTRUCTOR_SYMBOL)  // has the id-hook
+	    {
+	      Symbol* attributeSetSymbol = safeCast(ObjectConstructorSymbol*, symbol)->getAttributeSetSymbol();
+	      if (attributeSetSymbol)  // has the op-hook
+		{
+		  SymbolType st =  getSymbolType(attributeSetSymbol);
+		  if (st.hasAllFlags(SymbolType::ASSOC | SymbolType::COMM | SymbolType::LEFT_ID | SymbolType::RIGHT_ID))  // correct attributes
+		    {
+		      int lastUnderscoreIndex = nrItems - 1;
+		      while (si.mixfixSyntax[lastUnderscoreIndex] != underscore)
+			--lastUnderscoreIndex;
+		      for (int j = lastUnderscoreIndex + 1; j < nrItems; ++j)
+			rhs[j - 1] = si.mixfixSyntax[j];
+		      rhs.resize(nrItems - 1);
+		      Vector<int> gather(2);
+		      gather[0] = si.gather[0];
+		      gather[1] = si.gather[1];
+		      parser->insertProduction(rangeNt, rhs, si.prec, gather, MixfixParser::MAKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET, i);
+		    }
+		}
+	    }
 	}
     }
 }

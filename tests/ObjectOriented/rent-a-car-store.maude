@@ -1,0 +1,110 @@
+set show timing off .
+set show advisories off .
+set verbose on .
+
+  ---- adapted
+  ---- from the book All About Maude
+  ---- from the Maude Manual
+  ---- by the Maude team
+
+omod RENT-A-CAR-STORE is
+  pr INT .
+  pr QID .
+
+  subsort Qid < Oid .
+
+  class Customer | cash : Nat, debt : Nat, suspended : Bool .
+  class Car | available : Bool, rate : Nat .
+  class EconomyCar .
+  class MidSizeCar .
+  class FullSizeCar .
+  subclasses EconomyCar MidSizeCar FullSizeCar < Car .
+
+  class Rental | deposit  : Nat, dueDate : Nat, pickUpDate : Nat,
+                 customer : Oid, car     : Oid .
+
+  class Calendar | date : Nat .
+
+  vars F Today Rt NumDays M N Amnt PDt DDt Dpst : Int .
+  vars O U I C A : Oid .
+
+  rl [new-day] : 
+    < O : Calendar | date : F >
+    => < O : Calendar | date : F + 1 > .
+
+  crl [car-rental] :
+    < U : Customer | cash : M, suspended : false >
+    < I : Car | available : true, rate : Rt >
+    < C : Calendar | date : Today >
+    => < U : Customer | cash : M - Amnt >
+       < I : Car | available : false >
+       < C : Calendar | >
+       < A : Rental | pickUpDate : Today, dueDate : Today + NumDays,
+           car : I, deposit : Amnt, customer : U, rate : Rt >
+    if Amnt := Rt * NumDays /\ M >= Amnt
+    [nonexec] .
+
+  crl [on-date-car-return] :
+    < U : Customer | cash : M >
+    < I : Car | rate : Rt >
+    < A : Rental | customer : U, car : I, pickUpDate : PDt,
+                   dueDate : DDt, deposit : Dpst >
+    < C : Calendar | date : Today >
+    => < U : Customer | cash : (M + Dpst) - Amnt >
+       < I : Car | available : true >
+       < C : Calendar | >
+    if (Today <= DDt) /\ Amnt := Rt * (Today - PDt)
+    [nonexec] .
+
+  crl [late-car-return] :
+    < U : Customer | debt : M >
+    < I : Car | rate : Rt >
+    < A : Rental | customer : U, car : I, pickUpDate : PDt,
+                   dueDate : DDt, deposit : Dpst >
+    < C : Calendar | date : Today >
+    => < U : Customer | debt : (M + Amnt) - Dpst >
+       < I : Car | available : true >
+       < C : Calendar | >
+    if DDt < Today    *** it is returned late
+       /\ Amnt := Rt * (DDt - PDt) 
+                  + ((Rt * (Today - DDt)) * (100 + 20)) quo 100
+    [nonexec] .
+
+  crl [pay-debt] :
+    < U : Customer | debt : M, cash : N >
+    => < U : Customer | debt : M - Amnt, cash : N - Amnt >
+    if 0 < Amnt /\ Amnt <= N /\ Amnt <= M
+    [nonexec] .
+
+  crl [suspend-late-payers] :
+    < U : Customer | debt : M, suspended : false >
+    => < U : Customer | suspended : true >
+    if M > 0 .
+
+  crl [suspend-late-returns] :
+    < U : Customer | suspended : false >
+    < I : Car | >
+    < A : Rental | customer : U, car : I, dueDate : DDt >
+    < C : Calendar | date : Today >
+    => < U : Customer | suspended : true >
+       < I : Car | >
+       < A : Rental | >
+       < C : Calendar | >
+    if DDt < Today .
+endom
+
+
+mod RENT-A-CAR-STORE-TEST is
+    pr RENT-A-CAR-STORE .
+
+    op StoreConf : -> Configuration [memo] .
+    eq StoreConf
+      = < 'C1 : Customer | cash : 5000, debt : 0, suspended : false >
+        < 'C2 : Customer | cash : 5000, debt : 0, suspended : false >
+        < 'A1 : EconomyCar | available : true, rate : 100 >
+        < 'A3 : MidSizeCar | available : true, rate : 150 >
+        < 'A5 : FullSizeCar | available : true, rate : 200 >
+        < 'C : Calendar | date : 0 > .
+endm
+
+rew [100] StoreConf .

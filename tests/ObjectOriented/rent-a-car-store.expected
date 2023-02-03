@@ -1,0 +1,103 @@
+Considering object completion on:
+  rl < O : Calendar | date : F > => < O : Calendar | date : (F + 1) > [label
+    new-day] .
+Transformed rule:
+  rl < O : V:Calendar | date : F, Atts:AttributeSet > => < O : V:Calendar |
+    date : (F + 1), Atts:AttributeSet > [label new-day] .
+
+Considering object completion on:
+  crl < U : Customer | cash : M, suspended : false > < I : Car | available :
+    true, rate : Rt > < C : Calendar | date : Today > => < U : Customer | cash
+    : (M - Amnt) > < I : Car | available : false > < C : Calendar | none > < A
+    : Rental | pickUpDate : Today, dueDate : (Today + NumDays), car : I,
+    deposit : Amnt, customer : U, rate : Rt > if Amnt := Rt * NumDays /\ M >=
+    Amnt = true [nonexec label car-rental] .
+Transformed rule:
+  crl < U : V3:Customer | cash : M, suspended : false, Atts3:AttributeSet > < I
+    : V2:Car | available : true, rate : Rt, Atts2:AttributeSet > < C :
+    V:Calendar | date : Today, Atts:AttributeSet > => < U : V3:Customer |
+    suspended : false, cash : (M - Amnt), Atts3:AttributeSet > < I : V2:Car |
+    rate : Rt, available : false, Atts2:AttributeSet > < C : V:Calendar | date
+    : Today, Atts:AttributeSet > < A : Rental | pickUpDate : Today, dueDate : (
+    Today + NumDays), car : I, deposit : Amnt, customer : U, rate : Rt > if
+    Amnt := Rt * NumDays /\ M >= Amnt = true [nonexec label car-rental] .
+
+Considering object completion on:
+  crl < U : Customer | cash : M > < I : Car | rate : Rt > < A : Rental |
+    customer : U, car : I, pickUpDate : PDt, dueDate : DDt, deposit : Dpst > <
+    C : Calendar | date : Today > => < U : Customer | cash : ((M + Dpst) -
+    Amnt) > < I : Car | available : true > < C : Calendar | none > if Today <=
+    DDt = true /\ Amnt := Rt * (Today - PDt) [nonexec label on-date-car-return]
+    .
+Transformed rule:
+  crl < U : V4:Customer | cash : M, Atts4:AttributeSet > < I : V3:Car |
+    available : A2:[Bool], rate : Rt, Atts3:AttributeSet > < A : V:Rental |
+    deposit : Dpst, dueDate : DDt, pickUpDate : PDt, customer : U, car : I,
+    Atts:AttributeSet > < C : V2:Calendar | date : Today, Atts2:AttributeSet >
+    => < U : V4:Customer | cash : ((M + Dpst) - Amnt), Atts4:AttributeSet > < I
+    : V3:Car | rate : Rt, available : true, Atts3:AttributeSet > < C :
+    V2:Calendar | date : Today, Atts2:AttributeSet > if Today <= DDt = true /\
+    Amnt := Rt * (Today - PDt) [nonexec label on-date-car-return] .
+
+Considering object completion on:
+  crl < U : Customer | debt : M > < I : Car | rate : Rt > < A : Rental |
+    customer : U, car : I, pickUpDate : PDt, dueDate : DDt, deposit : Dpst > <
+    C : Calendar | date : Today > => < U : Customer | debt : ((M + Amnt) -
+    Dpst) > < I : Car | available : true > < C : Calendar | none > if DDt <
+    Today = true /\ Amnt := Rt * (DDt - PDt) + ((Rt * (Today - DDt)) * (100 +
+    20)) quo 100 [nonexec label late-car-return] .
+Transformed rule:
+  crl < U : V4:Customer | debt : M, Atts4:AttributeSet > < I : V3:Car |
+    available : A2:[Bool], rate : Rt, Atts3:AttributeSet > < A : V:Rental |
+    deposit : Dpst, dueDate : DDt, pickUpDate : PDt, customer : U, car : I,
+    Atts:AttributeSet > < C : V2:Calendar | date : Today, Atts2:AttributeSet >
+    => < U : V4:Customer | debt : ((M + Amnt) - Dpst), Atts4:AttributeSet > < I
+    : V3:Car | rate : Rt, available : true, Atts3:AttributeSet > < C :
+    V2:Calendar | date : Today, Atts2:AttributeSet > if DDt < Today = true /\
+    Amnt := Rt * (DDt - PDt) + ((Rt * (Today - DDt)) * (100 + 20)) quo 100 [
+    nonexec label late-car-return] .
+
+Considering object completion on:
+  crl < U : Customer | debt : M, cash : N > => < U : Customer | debt : (M -
+    Amnt), cash : (N - Amnt) > if 0 < Amnt = true /\ Amnt <= N = true /\ Amnt
+    <= M = true [nonexec label pay-debt] .
+Transformed rule:
+  crl < U : V:Customer | cash : N, debt : M, Atts:AttributeSet > => < U :
+    V:Customer | cash : (N - Amnt), debt : (M - Amnt), Atts:AttributeSet > if 0
+    < Amnt = true /\ Amnt <= N = true /\ Amnt <= M = true [nonexec label
+    pay-debt] .
+
+Considering object completion on:
+  crl < U : Customer | debt : M, suspended : false > => < U : Customer |
+    suspended : true > if M > 0 = true [label suspend-late-payers] .
+Transformed rule:
+  crl < U : V:Customer | debt : M, suspended : false, Atts:AttributeSet > => <
+    U : V:Customer | debt : M, suspended : true, Atts:AttributeSet > if M > 0 =
+    true [label suspend-late-payers] .
+
+Considering object completion on:
+  crl < U : Customer | suspended : false > < I : Car | none > < A : Rental |
+    customer : U, car : I, dueDate : DDt > < C : Calendar | date : Today > => <
+    U : Customer | suspended : true > < I : Car | none > < A : Rental | none >
+    < C : Calendar | none > if DDt < Today = true [label suspend-late-returns]
+    .
+Transformed rule:
+  crl < U : V4:Customer | suspended : false, Atts4:AttributeSet > < I : V3:Car
+    | Atts3:AttributeSet > < A : V:Rental | dueDate : DDt, customer : U, car :
+    I, Atts:AttributeSet > < C : V2:Calendar | date : Today, Atts2:AttributeSet
+    > => < U : V4:Customer | suspended : true, Atts4:AttributeSet > < I :
+    V3:Car | Atts3:AttributeSet > < A : V:Rental | dueDate : DDt, customer : U,
+    car : I, Atts:AttributeSet > < C : V2:Calendar | date : Today,
+    Atts2:AttributeSet > if DDt < Today = true [label suspend-late-returns] .
+
+op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
+op __ left-identity collapse from Configuration to Object is unequal.
+==========================================
+rewrite [100] in RENT-A-CAR-STORE-TEST : StoreConf .
+rewrites: 201
+result Configuration: < 'A1 : EconomyCar | available : true, rate : 100 > < 'A3
+    : MidSizeCar | available : true, rate : 150 > < 'A5 : FullSizeCar |
+    available : true, rate : 200 > < 'C : Calendar | date : 100 > < 'C1 :
+    Customer | cash : 5000, debt : 0, suspended : false > < 'C2 : Customer |
+    cash : 5000, debt : 0, suspended : false >
+Bye.

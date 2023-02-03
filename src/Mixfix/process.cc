@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,13 +27,7 @@
 void
 SyntacticPreModule::process()
 {
-  MixfixModule::ModuleType mt = getModuleType();
-  if (mt == MixfixModule::OBJECT_ORIENTED_MODULE)
-    mt = MixfixModule::SYSTEM_MODULE;
-  else if (mt == MixfixModule::OBJECT_ORIENTED_THEORY)
-    mt = MixfixModule::SYSTEM_THEORY;
-
-  flatModule = new VisibleModule(id(), mt, getOwner());
+  flatModule = new VisibleModule(id(), getModuleType(), getOwner());
   flatModule->addUser(this);
   flatModule->setLineNumber(getLineNumber());
 #ifdef QUANTIFY_PROCESSING
@@ -68,7 +62,15 @@ be patched up and thus it cannot be used or imported.");
   //
   flatModule->importSorts();  // could markAsBad()
   processSorts();  // might add missing sorts
+  processSubsorts();  // might add missing sorts
   checkOpTypes();  // might add missing sorts
+
+  if (MixfixModule::isObjectOriented(getModuleType()))
+    {
+      processClassSorts();  // could markAsBad()
+      checkAttributeTypes();  // might add missing sorts
+    }
+
   flatModule->closeSortSet();  // computes connectedComponents; could markAsBad()
   if (flatModule->isBad())
     {
@@ -92,6 +94,12 @@ be patched up and thus it cannot be used or imported.");
       flatModule->resetImports();
       return;
     }
+  if (MixfixModule::isObjectOriented(getModuleType()))
+    {
+      computeAttributeTypes();
+      processClassOps();
+    }
+
   flatModule->closeSignature();
   computeStrategyTypes();
   flatModule->importStrategies();
@@ -113,12 +121,32 @@ be patched up and thus it cannot be used or imported.");
   //
   //	Handle mbs, eqs, rls and sds.
   //
+  if (MixfixModule::isObjectOriented(getModuleType()))
+    {
+      //
+      //	Install ourself as a statement transformer so we get to modify statements
+      //	fresh from the parser, before they are inserted into the module.
+      //
+      flatModule->installStatementTransformer(this);
+    }
   processStatements();
+  flatModule->processingComplete();
   flatModule->localStatementsComplete();
   //
   //	Reset phase counter in each imported module
   //
   flatModule->resetImports();
+  if (MixfixModule::isObjectOriented(getModuleType()))
+    {
+      //
+      //	Clear object-oriented processing data in case we need to re-examine this PreModule.
+      //
+      classIdSort = 0;
+      attributeSetSort = 0;
+      attributeSort = 0;
+      classNames.clear();
+      attributeSymbols.clear();
+    }
 #ifdef QUANTIFY_PROCESSING
   quantify_stop_recording_data();
 #endif
@@ -127,17 +155,10 @@ be patched up and thus it cannot be used or imported.");
 void
 SyntacticPreModule::processSorts()
 {
-  //
-  //	Handle sorts.
-  //
-  int nrSortDecls = sortDecls.length();
-  for (int i = 0; i < nrSortDecls; i++)
+  for (const Vector<Token>& sortDecl : sortDecls)
     {
-      Vector<Token>& sortDecl = sortDecls[i];
-      int nrSorts = sortDecl.length();
-      for (int j = 0; j < nrSorts; j++)
+      for (const Token& token : sortDecl)
 	{
-	  Token& token = sortDecl[j];
 	  int code = token.code();
 	  Sort* sort = flatModule->findSort(code);
 	  if (sort == 0)
@@ -152,48 +173,39 @@ SyntacticPreModule::processSorts()
 	    }
 	}
     }
-  //
-  //	Handle subsorts.
-  //
-  int nrSubsortDecls = subsortDecls.length();
+}
+
+void
+SyntacticPreModule::processSubsorts()
+{
   Vector<Sort*> smaller;
   Vector<Sort*> bigger;
-  for (int i = 0; i < nrSubsortDecls; i++)
+  for (const Vector<Token>& subsortDecl : subsortDecls)
     {
-      Vector<Token>& subsortDecl = subsortDecls[i];
-      int len = subsortDecl.length();
-      int j = 0;
-      do
+      for (const Token& token : subsortDecl)
 	{
-	  for (; j < len; j++)
+	  if (token.code() == lessThan)
 	    {
-	      Token& token = subsortDecl[j];
-	      if (bigger.length() > 0 && token.code() == lessThan)
-		{
-		  ++j;
-		  WarningCheck(j < len,
-			       LineNumber(token.lineNumber()) <<
-			       ": stray < at the end of subsort declaration.");
-		  break;
-		}
-	      bigger.append(getSort(token));
+	      insertSubsorts(smaller, bigger);
+	      smaller.swap(bigger);
+	      bigger.clear();
 	    }
-	  int nrSmaller = smaller.length();
-	  if (nrSmaller > 0)
-	    {
-	      int nrBigger = bigger.length();
-	      for (int k = 0; k < nrBigger; k++)
-		{
-		  Sort* s = bigger[k];
-		  for (int l = 0; l < nrSmaller; l++)
-		    s->insertSubsort(smaller[l]);
-		}
-	    }
-	  smaller.swap(bigger);
-	  bigger.contractTo(0);
+	  else
+	    bigger.append(getSort(token));
 	}
-      while (j < len);
-      smaller.contractTo(0);
+      insertSubsorts(smaller, bigger);
+      smaller.clear();
+      bigger.clear();
+    }
+}
+
+void
+SyntacticPreModule::insertSubsorts(const Vector<Sort*> smaller, Vector<Sort*> bigger)
+{
+  for (Sort* ss : smaller)
+    {
+      for (Sort* bs : bigger)
+	bs->insertSubsort(ss);
     }
 }
 
@@ -225,9 +237,8 @@ SyntacticPreModule::checkType(const Type& type)
   //	Check that all the tokens appearing in a type name correspond
   //	to actual sorts.
   //
-  int nrTokens = type.tokens.length();
-  for (int i = 0; i < nrTokens; i++)
-    (void) getSort(type.tokens[i]);
+  for (const Token& t : type.tokens)
+    (void) getSort(t);
 }
 
 void
@@ -237,20 +248,18 @@ SyntacticPreModule::checkOpTypes()
   //	Check that all the Tokens in the types of operator definitions
   //	correspond to actually sorts. This is a sanity check for undeclared
   //	sort names; we don't have the notion of connected components at
-  //	this points.
+  //	this point.
   //
-  int nrOpDefs = opDefs.length();
-  for (int i = 0; i < nrOpDefs; i++)
+  for (const OpDef& def : opDefs)
     {
-      OpDef& def = opDefs[i];
-      int nrTypes = def.types.length();
-      for (int j = 0; j < nrTypes; j++)
+      Index nrTypes = def.types.size();
+      for (Index i = 0; i < nrTypes; ++i)
 	{
-	  int k = j + 1;
-	  if (k == nrTypes)
-	    k = 0;
-	  if (!(def.polyArgs.contains(k)))
-	    checkType(def.types[j]);
+	  Index argPosition = i + 1;
+	  if (argPosition == nrTypes)  // range is argPosition 0
+	    argPosition = 0;
+	  if (!(def.polyArgs.contains(argPosition)))
+	    checkType(def.types[i]);
 	}
     }
 
@@ -263,19 +272,16 @@ SyntacticPreModule::checkOpTypes()
 void
 SyntacticPreModule::computeOpTypes()
 {
-  int nrOpDefs = opDefs.length();
-  for (int i = 0; i < nrOpDefs; i++)
+  for (OpDef& def : opDefs)
     {
-      OpDef& def = opDefs[i];
-      int nrTypes = def.types.length();
-      def.domainAndRange.expandTo(nrTypes);
-      for (int j = 0; j < nrTypes; j++)
+      Index nrTypes = def.types.size();
+      def.domainAndRange.resize(nrTypes);
+      for (Index i = 0; i < nrTypes; ++i)
 	{
-	  int k = j + 1;
-	  if (k == nrTypes)
-	    k = 0;
-	  def.domainAndRange[j] = def.polyArgs.contains(k) ? 0 :
-	    computeType(def.types[j]);
+	  Index argPosition = i + 1;
+	  if (argPosition == nrTypes)
+	    argPosition = 0;
+	  def.domainAndRange[i] = def.polyArgs.contains(argPosition) ? 0 : computeType(def.types[i]);
 	}
     }
 }
@@ -298,11 +304,11 @@ SyntacticPreModule::computeType(const Type& type)
 {
   if (type.kind)
     {
-      int nrTokens = type.tokens.length();
+      Index nrTokens = type.tokens.length();
       Sort* s = flatModule->findSort(type.tokens[0].code());
       Assert(s != 0, "missing sort");
       ConnectedComponent* c = s->component();
-      for (int i = 1; i < nrTokens; i++)
+      for (Index i = 1; i < nrTokens; ++i)
 	{
 	  Sort* t = flatModule->findSort(type.tokens[i].code());
 	  Assert(t != 0, "missing sort");
@@ -311,12 +317,11 @@ SyntacticPreModule::computeType(const Type& type)
 		       ": sorts " << QUOTE(s) << " and " << QUOTE(t) <<
 		       " are in different components.");
 	}
-      return c->sort(Sort::ERROR_SORT);
+      return c->sort(Sort::KIND);
     }
   else
     {
-      Assert(type.tokens.length() == 1,
-	     "bad number of tokens " << type.tokens.length());
+      Assert(type.tokens.size() == 1, "bad number of tokens " << type.tokens.length());
       Sort* s = flatModule->findSort(type.tokens[0].code());
       Assert(s != 0, "missing sort");
       return s;
@@ -329,16 +334,22 @@ SyntacticPreModule::processOps()
   //
   //	Process opDecls.
   //
-  int nrOpDecls = opDecls.length();
-  for (int i = 0; i < nrOpDecls; i++)
+  for (OpDecl& opDecl : opDecls)
     {
-      OpDecl& opDecl = opDecls[i];
       OpDef& opDef = opDefs[opDecl.defIndex];
-      if (opDef.symbolType.hasFlag(SymbolType::POLY))
+      //
+      //	Must clear MSG_STATEMENT attribute before passing it to flatModule otherwise we
+      //	could have operators that should polymorphic overload but fail because one
+      //	was declared by a message statement while the other was declared with a message
+      //	attribute.
+      //
+      SymbolType symbolType = opDef.symbolType;
+      symbolType.clearFlags(SymbolType::MSG_STATEMENT);
+      if (symbolType.hasFlag(SymbolType::POLY))
 	{
 	  opDecl.polymorphIndex = flatModule->addPolymorph(opDecl.prefixName,
 							   opDef.domainAndRange,
-							   opDef.symbolType,
+							   symbolType,
 							   opDef.strategy,
 							   opDef.frozen,
 							   opDef.prec,
@@ -347,7 +358,7 @@ SyntacticPreModule::processOps()
 							   opDef.metadata);
 	  opDecl.originator = true;  // HACK
 	}
-      else if (opDef.symbolType.getBasicType() == SymbolType::VARIABLE)
+      else if (symbolType.getBasicType() == SymbolType::VARIABLE)
 	{
 	  flatModule->addVariableAlias(opDecl.prefixName, opDef.domainAndRange[0]);
 	  opDecl.symbol = 0;
@@ -357,7 +368,7 @@ SyntacticPreModule::processOps()
 	{
 	  opDecl.symbol = flatModule->addOpDeclaration(opDecl.prefixName,
 						       opDef.domainAndRange,
-						       opDef.symbolType,
+						       symbolType,
 						       opDef.strategy,
 						       opDef.frozen,
 						       opDef.prec,
@@ -374,7 +385,7 @@ SyntacticPreModule::processOps()
 	      return;
 	    }
 
-	  if (opDef.symbolType.getBasicType() == SymbolType::BUBBLE)
+	  if (symbolType.getBasicType() == SymbolType::BUBBLE)
 	    {
 	      int h = findHook(opDef.special, ID_HOOK, bubble);
 	      Vector<Token>& details = opDef.special[h].details;
@@ -441,9 +452,8 @@ SyntacticPreModule::processStrategies()
 void
 SyntacticPreModule::processStatements()
 {
-  int nrStatements = statements.length();
-  for (int i = 0; i < nrStatements; i++)
-    flatModule->parseStatement(statements[i]);
+  for (const Vector<Token>& statement : statements)
+    flatModule->parseStatement(statement);
 }
 
 void
@@ -458,27 +468,24 @@ SyntacticPreModule::processImports()
       return;
     }
   //
-  //	Automatic imports (not for theories).
+  //	Automatic imports (will be empty for theories).
   //
-  if (!(MixfixModule::isTheory(getModuleType())))
+  for (const auto& i : autoImports)
     {
-      for (const auto& i : autoImports)
+      if (ImportModule* fm = getOwner()->getModuleOrIssueWarning(i.first, *this))
+	flatModule->addImport(fm, i.second, *this);
+      else
 	{
-	  if (ImportModule* fm = getOwner()->getModuleOrIssueWarning(i.first, *this))
-	    flatModule->addImport(fm, i.second, *this);
-	  else
-	    {
-	      //
-	      //	Mark the module as bad to avoid cascading warnings and potential
-	      //	internal errors. But press ahead with imports since they should
-	      //	be independent and we might find other errors.
-	      //
-	      flatModule->markAsBad();
-	    }
+	  //
+	  //	Mark the module as bad to avoid cascading warnings and potential
+	  //	internal errors. But press ahead with imports since they should
+	  //	be independent and we might find other errors.
+	  //
+	  flatModule->markAsBad();
 	}
     }
   //
-  //	Defaut includes for object-oriented modules and theories.
+  //	Default includes for object-oriented modules and theories.
   //
   for (const int i : ooIncludes)
     {

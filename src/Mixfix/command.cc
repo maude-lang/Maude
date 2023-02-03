@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -99,12 +99,12 @@ SyntacticPreModule::showModule(ostream& s)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << "  class " << cd.name;
+      s << "  class " << Token::sortName(cd.name.code());
       int nrAttributes = cd.attributes.size();
       for (int i = 0; i < nrAttributes; ++i)
 	{
 	  AttributePair& p = cd.attributes[i];
-	  s << (i == 0 ? " | " : ", ") << p.attributeName << " : " << p.sortName;
+	  s << (i == 0 ? " | " : ", ") << p.attributeName << " : " << p.type;
 	}
       s << " .\n";
     }
@@ -213,7 +213,12 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
 {
   SymbolType st = opDef.symbolType;  // copy
   if (st.hasFlag(SymbolType::MSG_STATEMENT))
-    st.clearFlags(SymbolType::MESSAGE);  // ignore msg attribute because we're a msg statement
+    {
+      //
+      //	msg statement implies msg and ctor so we don't want to print these attributes.
+      //
+      st.clearFlags(SymbolType::MESSAGE | SymbolType::CTOR);
+    }
   if (!(st.hasFlag(SymbolType::ATTRIBUTES | SymbolType::CTOR |
 		   SymbolType::POLY | SymbolType::DITTO)) &&
       opDef.special.empty() && opDef.metadata == NONE)

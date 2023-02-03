@@ -911,6 +911,7 @@ MetaLevel::downMembAx(DagNode* metaMembAx, MixfixModule* m)
 		  if (ai.flags.getFlag(NONEXEC))
 		    mb->setNonexec();
 		  m->insertSortConstraint(mb);
+		  m->checkSortConstraint(mb);
 		  if (ai.metadata != NONE)
 		    m->insertMetadata(MixfixModule::MEMB_AX, mb, ai.metadata);
 		  if (ai.flags.getFlag(PRINT))
@@ -970,6 +971,7 @@ MetaLevel::downEquation(DagNode* metaEquation, MixfixModule* m)
 			IssueAdvisory("variant attribute not allowed for conditional equation in meta-module " << QUOTE(m) << '.');
 		    }
 		  m->insertEquation(eq);
+		  m->checkEquation(eq);
 		  if (ai.metadata != NONE)
 		    m->insertMetadata(MixfixModule::EQUATION, eq, ai.metadata);
 		  if (ai.flags.getFlag(PRINT))
@@ -1029,6 +1031,7 @@ MetaLevel::downRule(DagNode* metaRule, MixfixModule* m)
 			IssueAdvisory("narrowing attribute not allowed for conditional rule in meta-module " << QUOTE(m) << '.');
 		    }
 		  m->insertRule(rl);
+		  m->checkRule(rl);
 		  if (ai.metadata != NONE)
 		    m->insertMetadata(MixfixModule::RULE, rl, ai.metadata);
 		  if (ai.flags.getFlag(PRINT))

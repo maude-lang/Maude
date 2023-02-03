@@ -155,7 +155,7 @@ int yylex(YYSTYPE* lvalp);
  */
 %token <yyToken> KW_ENDM KW_IMPORT KW_ENDV
 %token <yyToken> KW_SORT KW_SUBSORT KW_OP KW_OPS KW_MSGS KW_VAR KW_CLASS KW_SUBCLASS KW_DSTRAT
-%token <yyToken> KW_MB KW_CMB KW_EQ KW_CEQ KW_RL KW_CRL KW_SD KW_CSD
+%token <yyToken> KW_MB KW_CMB KW_EQ KW_CEQ KW_RL KW_CRL KW_SD KW_CSD KW_ATTR
 
 /*
  *	Mid keywords: need to be recognized in the middle of mixfix syntax.
@@ -219,7 +219,7 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Nonterminals that return bool.
  */
-%type <yyBool> polarity select match optDebug optIrredundant conceal exclude arrow
+%type <yyBool> polarity select match optDebug optIrredundant conceal exclude arrow typeName1
 /*
  *	Nonterminals that return int.
  */

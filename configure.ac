@@ -3,7 +3,7 @@
 #
 #	Initialize autoconf stuff.
 #
-AC_INIT(Maude, 3.2.2, [maude-bugs@lists.cs.illinois.edu])
+AC_INIT(Maude, alpha139, [maude-bugs@lists.cs.illinois.edu])
 #
 #	Allow directory names that look like macros.
 #
@@ -416,6 +416,7 @@ AC_CONFIG_FILES([Makefile
 		 tests/Misc/Makefile
 		 tests/ResolvedBugs/Makefile
 		 tests/StrategyLanguage/Makefile
+		 tests/ObjectOriented/Makefile
 ])
 
 AC_OUTPUT

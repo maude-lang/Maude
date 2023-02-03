@@ -1,4 +1,864 @@
+2023-02-02  Steven Eker  <eker@pup>
+
+	* ooTransform.cc (SyntacticPreModule::gatherObjects): give full list intialization
+	in push_back() to appease clang
+	(SyntacticPreModule::gatherObjects): use default ctor and manually assign
+	field to appease clang
+
+	* syntacticPreModule.hh (class SyntacticPreModule): add missing overrides
+
+	* ooTransform.cc (SyntacticPreModule::StatementInfo::chooseFreshVariableName):
+	start numbered variables at 2
+
+	* ooProcess.cc (SyntacticPreModule::processClassOps): use attributeSuffix
+
+	* renaming.cc (Renaming::convertAttrMappings): use attributeSuffix (2 places)
+
+	* syntaxContainer.hh (class SyntaxContainer): added attributeSuffix
+
+	* renaming.cc (Renaming::convertAttrMappings): ":_" -> "`:_" (2 places)
+
+	* ooProcess.cc (SyntacticPreModule::processClassOps): ":_" -> "`:_"
+
+	* ooTransform.cc (SyntacticPreModule::gatherObjects): use CONDITION_SUBJECT
+	and CONDITION_PATTERN
+	(SyntacticPreModule::gatherObjects): quietly ignore new objects in SUBJECT
+	and CONDITION_SUBJECT positions
+
+	* syntacticPreModule.hh (class SyntacticPreModule): remove DISALLOW from
+	enum class GatherMode, add CONDITION_SUBJECT and CONDITION_PATTERN
+
+	* modules.yy (cPair): detect missing colon
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	addAttributePairNoColon()
+
+	* syntacticPreModule.cc (SyntacticPreModule::addAttributePairNoColon): added
+
+2023-02-01  Steven Eker  <eker@pup>
+
+	* view.cc (View::checkSorts): fix warning text in the case a module declared
+	sort in implicitly mapped to a sort declared in the target theory
+
+	* importModule.hh (ImportModule::moduleDeclared): fix bug where we were not
+	considering local declared sorts in a module
+
+	* renameModule.cc (ImportModule::donateSorts2): removed commented out code
+	and added comment about the 5/2/19 change
+
+	* view.cc (View): use range-based for loop
+	(~View): use range-based for loop (2 places)
+	(View::clearOpTermMap): use range-based for loop
+	(View::clearStratExprMap): use range-based for loop
+	(View::insertStratToExprMapping): use range-based for loop (3 places)
+
+2023-01-31  Steven Eker  <eker@pup>
+
+	* ooTransform.cc (SyntacticPreModule::transformEquation): symmetric changes
+	(SyntacticPreModule::transformSortConstraint): symmetric changes
+	(SyntacticPreModule::checkVariables): don't set si.ignore = true after advisory
+	since we're returning false which will stop progress (5 places)
+
+	* syntacticPreModule.hh (class SyntacticPreModule): updated decls for
+	doTransformation(), transformPatternAttributes(), transformSubjectAttributes()
+
+	* ooTransform.cc (SyntacticPreModule::garbageCollectAttributeSet): fixed bug
+	where we were not immediately returning after deleting attributeSet
+	(SyntacticPreModule::transformSubjectAttributes): added DebugInfo()s
+	(SyntacticPreModule::transformRule): call Verbose()
+	(SyntacticPreModule::doTransformation): return bool to indicate if anything
+	was transformed
+	(SyntacticPreModule::transformPatternAttributes): return bool to indicate
+	if transform took place
+	(SyntacticPreModule::transformSubjectAttributes): return bool to indicate
+	if transform took place
+	(SyntacticPreModule::transformRule): use doTransformation() return value
+
+	* syntacticPreModule.hh (class SyntacticPreModule): updated decls for
+	transformSortConstraint(), transformEquation(), transformRule()
+
+	* entry.cc (MixfixModule::handleSortConstraint)
+	(MixfixModule::handleEquation, MixfixModule::handleRule): use new
+	StatementTransformer convention
+
+	* ooTransform.cc (SyntacticPreModule::transformSortConstraint)
+	(SyntacticPreModule::transformEquation)
+	(SyntacticPreModule::transformRule): return StatementTransformer::Outcome
+
+	* statementTransformer.hh (class StatementTransformer): added enum class Outcome
+	(class StatementTransformer): virtual functions now return Outcome
+
+	* mixfixParser.cc (MixfixParser::makeStatementPart): call handleSortConstraint(),
+	handleEquation(), handleRule() before adding print attribute because we need
+	to know what variables are bound
+
+	* entry.cc (MixfixModule::handleSortConstraint): don't call
+	insertSortConstraint()
+	(MixfixModule::handleEquation): don't call insertEquation()
+	(MixfixModule::handleRule): don't call insertRule()
+
+	* mixfixParser.cc (MixfixParser::makeStatementPart): call insertSortConstraint();
+	call handleSortConstraint() after attributes inserted; call insertEquation();
+	call handleEquation() after attributes inserted; call client.insertRule(rl);
+	call handleRule() after attributes inserted
+
+	* importModule.cc (ImportModule::donateStatements2): call checkSortConstraint()
+	(ImportModule::donateStatements2): call checkEquation()
+
+	* entry.cc (MixfixModule::handleSortConstraint): call checkSortConstraint()
+	(MixfixModule::handleEquation): call checkEquation()
+	(MixfixModule::handleRule): call checkRule()
+
+	* ooProcess.cc (SyntacticPreModule::addHonoraryAttributeSymbols): rewritten
+	to allow multiple declarations for an attribute operator
+
+	* syntacticPreModule.hh (class SyntacticPreModule): transformOccurrence()
+	-> transformClassArgument()
+
+	* ooTransform.cc (SyntacticPreModule::transformPatternAttributes): "Attrs"
+	-> "Atts"
+	(SyntacticPreModule::garbageCollectAttributeSet): added
+	(SyntacticPreModule::transformSubjectAttributes): call
+	garbageCollectAttributeSet()
+	(SyntacticPreModule::transformPatternAttributes): call
+	garbageCollectAttributeSet()
+	(SyntacticPreModule::transformOccurrence): DebugAlways() -> DebugAdvisory()
+	(SyntacticPreModule::doTransformation): DebugAlways() -> DebugAdvisory()
+	(SyntacticPreModule::transformEquation): call checkVariables() and
+	doTransformation()
+	(SyntacticPreModule::transformSortConstraint): call checkVariables() and
+	doTransformation()
+	(SyntacticPreModule::gatherObjects): added Assert()s
+	(SyntacticPreModule::transformOccurrence): becomes transformClassArgument()
+	(SyntacticPreModule::doTransformation): transformOccurrence() ->
+	transformClassArgument()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	 transformSubjectAttributes()
+
+	* ooTransform.cc (SyntacticPreModule::analyzeAttributeSetArgument):
+	check for second variable
+	(SyntacticPreModule::transformSubjectAttributes): added
+	(SyntacticPreModule::doTransformation): call transformSubjectAttributes()
+	on each subject occurrence
+
+2023-01-30  Steven Eker  <eker@pup>
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	transformPatternAttributes()
+
+	* ooTransform.cc (analyzeAttributeSetArgument): check for duplicate
+	attributes
+	(SyntacticPreModule::checkVariables): check consistancy of attribute set
+	variables
+	(SyntacticPreModule::gatherObjects): deepSelfDestruct() objectName as
+	soon as we know we don't need it
+	(SyntacticPreModule::transformPatternAttributes): added
+	(SyntacticPreModule::doTransformation): call transformPatternAttributes()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	analyzeAttributeSetArgument()
+
+	* ooTransform.cc (analyzeAttributeSetArgument): added
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added variableTerm
+	data member to struct ObjectOccurrence
+
+	* ooTransform.cc (SyntacticPreModule::transformRule): call checkVariables()
+	(SyntacticPreModule::StatementInfo::chooseFreshVariableName): fix bug
+	where we had + rather that +=
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	transformOccurrence()
+
+	* ooTransform.cc (SyntacticPreModule::transformOccurrence): added
+
+	* syntacticPreModule.hh (class SyntacticPreModule): patternOccurrence data
+	member in struct ObjectInfo is now an ObjectOccurrence
+
+	* ooTransform.cc (SyntacticPreModule::gatherObjects): use new
+	patternOccurrence data type
+	(SyntacticPreModule::checkVariables): use new patternOccurrence data type
+
+	* syntacticPreModule.hh: moved here
+
+	* ooTransform.cc (SyntacticPreModule::gatherObjects): use push_back() for
+	subjectOccurrences
+	(SyntacticPreModule::checkVariables): added
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added struct
+	ObjectOccurrence
+	(class SyntacticPreModule): added typedef ObjectOccurrences
+	(class SyntacticPreModule): use ObjectOccurrences for subjectOccurrences
+	in struct ObjectInfo
+
+	* ooProcess.cc (SyntacticPreModule::processClassOps): call
+	addHonoraryAttributeSymbols(); accumulate attribute symbols we generate
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	addHonoraryAttributeSymbols()
+
+	* ooProcess.cc (SyntacticPreModule::addHonoraryAttributeSymbols): added
+
+	* process.cc (SyntacticPreModule::process): clear object-oriented processing
+	data after we're done
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added data member
+	attributeSymbols
+
+2023-01-27  Steven Eker  <eker@pup>
+
+	* ooTransform.cc (SyntacticPreModule::transformRule): use doTransformation()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): deleted decls for
+	transformStatements(), classComplete(); added decl for doTransformation()
+
+	* ooTransform.cc (SyntacticPreModule::transformStatements): deleted
+	(SyntacticPreModule::classComplete): deleted
+	(SyntacticPreModule::doTransformation): added
+
+	* entry.cc (MixfixModule::handleSortConstraint): moved here
+	(MixfixModule::handleEquation): moved here
+	(MixfixModule::handleRule): moved here
+
+	* mixfixModule.hh (MixfixModule::handleSortConstraint): added AdvisoryCheck()
+	(MixfixModule::handleEquation): added AdvisoryCheck()
+	(MixfixModule::handleEquation): added AdvisoryCheck()
+
+	* process.cc (SyntacticPreModule::process): call installStatementTransformer();
+	don't call transformStatements()
+
+	* ooTransform.cc (SyntacticPreModule::transformSortConstraint): added
+	(SyntacticPreModule::transformEquation): added
+	(SyntacticPreModule::transformRule): added
+
+	* syntacticPreModule.hh (class SyntacticPreModule): derive from
+	StatementTransformer
+	(class SyntacticPreModule): added override declarations for
+	transformSortConstraint(), transformEquation(), transformRule()
+
+	* mixfixParser.hh (class MixfixParser): deleted static constexpr int DNT_FLAG
+
+	* mixfixParser.cc (MixfixParser::makeStatementPart): use
+	handleSortConstraint() don't use DNT_FLAG
+	(MixfixParser::makeStatementPart): use handleEquation(), don't use
+	DNT_FLAG
+	(MixfixParser::makeStatementPart): use handleRule(), don't use DNT_FLAG
+
+	* mixfixModule.hh (class MixfixModule): added data member
+	statementTransformer
+	(MixfixModule::installStatementTransformer): added
+	(MixfixModule::handleRule): added
+	(MixfixModule::handleEquation): added
+	(MixfixModule::handleSortConstraint): added
+
+	* mixfix.hh: added class StatementTransformer
+
+	* statementTransformer.hh (class StatementTransformer): created
+
+	* ooTransform.cc (SyntacticPreModule::gatherObjects): do class argument
+	checking
+	(SyntacticPreModule::recordClassArgument): added
+	(SyntacticPreModule::isClassSort): added
+	(SyntacticPreModule::findCorrespondingClassSort): added
+	(SyntacticPreModule::gatherObjects): fix bug where I was using the Symbol
+	id rather than the VariableTerm id to keep track of variable names
+
+	* renameModule.cc (ImportModule::makeRenamedCopy): use Index, range-based
+	for loop
+	(ImportModule::localStatementsComplete): use range-base for loop (5 places);
+	removed comment abut transitive imports
+	(ImportModule::donateSorts2): use Index (5 places)
+	(ImportModule::localSort2): removed commented out DebugAdvisoryCheck() now
+	it is an Assert()
+	(ImportModule::donateOps2): use Index and size() many places; remove old BUG
+	comment; domainAndRangeLength -> domainAndRangeSize
+	(ImportModule::fixUpDonatedOps2): use Index and size(); domainAndRangeLength
+	-> domainAndRangeSize
+	(ImportModule::localStatementsComplete): use range-based for loop for
+	parameters and removed comment about checking whether collecting parameter
+	labels is necessary
+
+2023-01-26  Steven Eker  <eker@pup>
+
+	* process.cc (SyntacticPreModule::process): call processingComplete()
+	(SyntacticPreModule::process): pass unmodified type to VisibleModule()
+
+	* mixfixModule.hh (MixfixModule::processingComplete): added
+
+	* mixfixParser.cc (MixfixParser::makeAttributePart): use member function
+	verion of isObjectOriented()
+
+	* mixfixModule.hh (class MixfixModule): moduleType is no longer a const
+	(MixfixModule::isObjectOriented): added member function
+
+	* ooTransform.cc (SyntacticPreModule::transformStatements): respect
+	ixfixParser::DNT_FLAG
+
+	* mixfixParser.cc (MixfixParser::makeStatementPart): place DNT_FLAG in
+	statement if DNT set
+
+	* mixfixParser.hh (class MixfixParser): added static constexpr DNT_FLAG
+
+	* lexer.ll (id): remove classes from list of keywords detected as ending
+	current statement
+
+	* mixfixParser.cc (MixfixParser::makeAttributePart): handle dnt attribute
+
+	* mixfixParser.hh (class MixfixParser): added MAKE_DNT_ATTRIBUTE to
+	enum SemanticActions
+	(class MixfixParser): added DNT to enum Flags
+
+	* makeGrammar.cc (MixfixModule::makeAttributeProductions): added dnt
+	attribute
+
+	* specialTokens.cc: added dnt
+
+2023-01-25  Steven Eker  <eker@pup>
+
+	* ooTransform.cc (SyntacticPreModule::classComplete): added
+
+	* syntacticPreModule.hh (class SyntacticPreModule): deleted data member
+	ignore from struct ObjectInfo
+	(class SyntacticPreModule): added classNames data member
+
+	* ooTransform.cc (SyntacticPreModule::gatherObjects): count the number of
+	occurrences of each variable
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	chooseFreshVariableName()
+	(class SyntacticPreModule): added typedef VarCountMap
+	(class SyntacticPreModule): added data member varCountMap to struct
+	StatementInfo
+
+	* ooTransform.cc (SyntacticPreModule::StatementInfo::chooseFreshVariableName):
+	added
+
+2023-01-24  Steven Eker  <eker@pup>
+
+	* ooTransform.cc (SyntacticPreModule::gatherObjects): accumulate forbiddenNames
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added struct
+	StatementInfo
+	(SyntacticPreModule::StatementInfo::~StatementInfo): added
+	(class SyntacticPreModule): added typedef IdSet; added forbiddenNames
+	data member to StatementInfo
+
+	* process.cc (SyntacticPreModule::process): use transformStatements()
+
+	* ooTransform.cc: created
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added typedef ObjectMap
+	(class SyntacticPreModule): added decls for transformStatements(),
+	gatherObjects() (2 versions); added enum class GatherMode
+
+	* view.cc (View::checkPolymorphicOps): check that if a msg mapping is used,
+	both the from and to polymorphic symbols have the msg attribute
+	(View::checkOps): include line number of view in msg advisories
+
+	* renaming.cc (Renaming::renameOp): deleted commented out statements
+	(renamePolymorph): check for multiple applicable mappings
+
+2023-01-23  Steven Eker  <eker@pup>
+
+	* view.cc (View::checkOps): check that if a msg mapping is used, both the from
+	and to symbols have the msg attribute
+
+	* renaming.hh (Renaming::isMsgMapping): added
+
+	* syntacticView.cc (SyntacticView::handleTermAndExprMappings): track messages
+	(SyntacticView::showView): rewrote op->term loop to handle msg->term
+	mappings
+	(SyntacticView::handleTermAndExprMappings): added AdvisoryCheck()s that the
+	from and to symbols have the msg attribute if this is a msg mapping
+
+	* syntacticView.hh (class SyntacticView): added typedef MessageSet and
+	data member messages
+
+	* syntacticView.cc (SyntacticView::handleTermAndExprMappings)
+	(SyntacticView::addOpTermMapping): use OpTermMapping
+	(SyntacticView::handleTermAndExprMappings): use range-based for loop
+
+	* syntacticView.hh (class SyntacticView): added struct OpTermMapping
+	(class SyntacticView): updated typedef OpTermList
+
+	* syntacticView.cc (SyntacticView::showView): use range-based for loop (two
+	places)
+
+	* syntacticView.hh (class SyntacticView): updated decl for addOpTermMapping()
+
+	* syntacticView.cc (SyntacticView::addOpTermMapping): take and store msgFlag
+	argument
+
+	* syntacticView.hh (class SyntacticView): added msg flag to struct
+	BubblePair
+
+	* modules.yy (endMsgMap): added
+	(viewDeclaration): use endMsgMap
+
+	* renaming.cc (Renaming::addOpMapping): rely on default initializer for
+	prec (both versions)
+	(Renaming::addAttrMapping): rely on default initializer for prec
+	(Renaming::addOpTarget): reply on default initializers for fromTerm,
+	toTerm (both versions)
+	(Renaming::addOpTargetTerm): reply on default initializers for fromTerm,
+	toTerm
+	(Renaming::addAttrTarget): reply on default initializers for fromTerm,
+	toTerm
+
+	* modules.yy (viewDeclaration): use viewEndOpMap for msg mapping so
+	that msg->term mapping syntax is supported
+	(viewFromSpec): deleted
+
+2023-01-20  Steven Eker  <eker@pup>
+
+	* modules.yy (viewDeclaration): added syntax for attr mappings
+	(viewDeclaration): added syntax for msg mappings
+
+	* syntacticView.cc (SyntacticView::showView): use getNrClassMappings()
+	to figure out how to end view
+
+	* renaming.hh (Renaming::getNrClassMappings): added
+
+	* modules.yy (mapping): restrict class mappings in renaming to sortName rather
+	than token
+	(viewDeclaration): added syntax for class mappings
+
+2023-01-19  Steven Eker  <eker@pup>
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added struct ObjectInfo
+	stub
+
+	* renaming.hh (class Renaming): deleted commented out declaration for
+	addOpMappingSimpleCopy()
+
+	* renaming.cc (Renaming::canonicalizeOpMappings): check for polymorphs
+	without the attribute being mapped by msg mappin
+	(Renaming::addOpMappingPartialCopy): rely on default initialization of term
+	(Renaming::addOpMapping): rely on default initialization of term
+	(Renaming::addAttrMapping): rely on default initialization of term
+	(Renaming::addOpMappingSimpleCopy): deleted commented out function
+
+	* renaming.hh (class Renaming): added decl for polymorph version of
+	isIdentityOpMapping()
+
+	* renaming.cc (Renaming::isIdentityOpMapping): added polymorph version
+	(Renaming::canonicalizeOpMappings): check for identity mapping on polymorphs
+
+	* mixfixModule.hh (MixfixModule::getPrec): make arg const
+	(MixfixModule::getFormat): make arg const
+	(MixfixModule::getGather): make arg const
+
+	* renaming.cc (Renaming::canonicalizeStrategyMappings): use range-based for
+	loop (2 places); fix missing strategy name in specific advisory
+	(Renaming::isIdentityOpMapping): added
+	(Renaming::canonicalizeOpMappings): use isIdentityOpMapping(); rely on default
+	initializer for term data member
+
+2023-01-18  Steven Eker  <eker@pup>
+
+	* renaming.cc (Renaming::canonicalizeOpMappings): issue advisory if generic or
+	specific msg mapping renames an op without the msg attribute
+
+	* renaming.hh (class Renaming): added decl for equal()
+
+	* renaming.cc (Renaming::convertClassMappings): quietly skip identity mappings
+	(Renaming::convertAttrMappings): quietly skip identity mappings
+	(Renaming::pruneSortMappings): quietly skip identity mappings
+	(Renaming::pruneLabelMappings): quietly skip identity mappings
+	(Renaming::canonicalizeOpMappings): quietly skip identity mappings
+	(Renaming::equal): added
+
+	* renaming.hh (class Renaming): added decl for canonicalizeStrategyMappings()
+
+	* renaming.cc (Renaming::canonicalizeOpMappings): restructured nested ifs
+	to avoid spurious advisory
+	(Renaming::canonicalizeStrategyMappings): added
+	(Renaming::makeCanonicalVersion): use canonicalizeStrategyMappings()
+
+	* modules.yy (sortToken): allow KW_FROM as a sort name/fragment
+
+2023-01-17  Steven Eker  <eker@pup>
+
+	* renaming.cc: use convertAttrMappings()
+
+	* renaming.hh (class Renaming): added decl for convertAttrMappings()
+
+	* renaming.cc (convertAttrMappings): added
+
+	* mixfixModule.hh (class MixfixModule): added decls for findFirstUnarySymbol(),
+	findNextUnarySymbol()
+
+	* mixfixModule.cc (MixfixModule::findFirstUnarySymbol): added
+	(MixfixModule::findNextUnarySymbol): added
+
+	* renaming.cc (Renaming::canonicalizeOpMappings): use Index, ignore attr
+	mapppings, use range-based for loop
+
+	* renaming.hh (class Renaming): added decl for canonicalizeOpMappings()
+
+	* renaming.cc (Renaming::canonicalizeOpMappings): added
+	(Renaming::makeCanonicalVersion): use canonicalizeOpMappings()
+
+	* renaming.hh (class Renaming): added decls for convertClassMappings(),
+	pruneSortMappings()
+
+	* renaming.cc (Renaming::makeCanonicalVersion): check and convert class mappings
+	(Renaming::convertClassMappings): added
+	(Renaming::makeCanonicalVersion): use convertClassMappings()
+	(Renaming::convertClassMappings): make sure sorts are in the same component before
+	we compare them
+	(Renaming::pruneSortMappings): added; changed Assert() to AdvisoryCheck() for the
+	duplicate case
+	(Renaming::pruneLabelMappings): added
+	(Renaming::makeCanonicalVersion): use pruneSortMappings(), pruneLabelMappings()
+
+	* renaming.hh (class Renaming): provide default initializers for fromTerm
+	and term in struct OpMapping
+	(class Renaming): provide default initializer OpMapping::prec
+
+	* importModule.hh (class ImportModule): added decl for findClassIdSort()
+
+	* ooSorts.cc (SyntacticPreModule::findClassIdSort): added
+
+	* renaming.cc (Renaming::addSortAndLabelMappings): use range-based for
+	loop (2 places)
+	(Renaming::makeCanonicalVersion): use range-based for loop (2 places)
+
+	* importModule.hh (class ImportModule): added decl for findAtttributeSort()
+
+	* ooSorts.cc: created
+
+2023-01-13  Steven Eker  <eker@pup>
+
+	* renaming.cc (Renaming::printRenaming): print msg and attr mappings
+
+	* top.yy: moved KW_ATTR to start keywords block
+
+	* modules.yy (startKeyword2): moved  KW_ATTR from inert to startKeyword2
+
+	* renaming.hh (Renaming::markAsMsg): added
+
+	* modules.yy (mapping): added syntax for msg mappings
+
+	* renaming.cc (Renaming::printRenamingType): use range-based for loop
+	(Renaming::setFormat): use range-based for loop
+	(Renaming::setGather): use range-based for loop
+	(Renaming::addType): (const Vector<Token>& tokens version) use range-based for loop
+	(Renaming::setType): added comment to explain why we need to add all sorts
+	to the type and not just the maximal ones.
+	(Renaming::makeTypeName): use range-base for loop
+	(Renaming::makeCanonicalName): use range-base for loop (4 places)
+
+	* syntacticView.cc (SyntacticView::addParameter2): removed commented out
+	IssueAdvisory()
+
+	* renaming.cc (Renaming::printRenaming): print classMap; use range-based for loop
+	to print sortMap, opMap, labelMap
+
+	* renaming.hh (class Renaming): added struct ClassMapping; typedef ClassMap and
+	data member classMap;
+	(Renaming::addClassMapping): added
+
+	* modules.yy (mapping): added class mapping syntax
+
+2023-01-12  Steven Eker  <eker@pup>
+
+	* lexer.ll: added attr as a keyword for scanning modules
+
+	* top.yy: declare KW_ATTR
+
+	* modules.yy (inert): added KW_ATTR
+
+	* renaming.hh (class Renaming): deleted decl for setOpMsgFlag(); added decls for
+	addAttrMapping() and addAttrTarget()
+
+	* renaming.cc (Renaming::setOpMsgFlag): deleted
+	(Renaming::addAttrMapping): added
+	(Renaming::addAttrTarget): added
+
+	* modules.yy (fromAttrSpec): added
+	(mapping): removed opOrMsg; added attr mapping
+
+	* top.yy: deleted opOrMsg
+
+	* modules.yy (opOrMsg): deleted
+
+	* renaming.hh (class Renaming): replaced msgFlag with MappingType; added enum class
+	MappingType
+
+2023-01-11  Steven Eker  <eker@pup>
+
+	* top.yy: added opOrMsg to nonterminals that return yyBool
+
+	* modules.yy (opOrMsg): added
+	(mapping): use opOrMsg and call setOpMsgFlag()
+
+	* renaming.hh (class Renaming): added decl for setOpMsgFlag()
+
+	* renaming.cc (Renaming::setOpMsgFlag): added
+
+	* renaming.hh (class Renaming): added data member msgFlag to struct OpMapping
+
+	* syntacticPreModule.hh (class SyntacticPreModule): processClassSorts() ->
+	processClassTypes(); added decl for computeAttributeTypes()
+
+	* process.cc (SyntacticPreModule::process): call processAttributeTypes()
+
+	* ooProcess.cc (SyntacticPreModule::computeAttributeTypes): added
+	(SyntacticPreModule::processClassOps): use sort data member
+	(SyntacticPreModule::checkAttributeTypes): use checkType()
+
+	* process.cc (SyntacticPreModule::process): call checkAttributeTypes() rather
+	than checkAttributeSorts()
+
+	* syntacticPreModule.cc (SyntacticPreModule::addAttributePair): pass initializer
+	for sort data member
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added sort data member
+	to struct AttributePair
+
+	* ooProcess.cc (SyntacticPreModule::checkAttributeSorts): becomes
+	checkAttributesTypes()
+
+	* modules.yy (cPair): pass kind flag to addAttributePair()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): struct AttributePair
+	now has a Type
+
+	* ooProcess.cc (SyntacticPreModule::checkAttributeSorts): use type
+	(SyntacticPreModule::processClassOps): use type
+
+	* syntacticPreModule.hh (class SyntacticPreModule): updated decl for
+	addAttributePair()
+
+	* syntacticPreModule.cc (SyntacticPreModule::addAttributePair): take kind flag
+
+	* command.cc (SyntacticPreModule::showModule): use type rather than sortName
+
+	* ooProcess.cc (SyntacticPreModule::processClassOps): use attribute typeName
+	(SyntacticPreModule::checkAttributeSorts): moved here; use typeName
+
+	* syntacticPreModule.hh (class SyntacticPreModule): updated decl for
+	addAttributePair()
+	(class SyntacticPreModule): updated struct AttributePair
+
+	* syntacticPreModule.cc (SyntacticPreModule::addAttributePair): take typeName
+	rather than sortName
+
+	* modules.yy (cPair): use typeName1
+
+	* top.yy: added typeName1 to nonterminals that return yyBool
+
+	* modules.yy (typeName1): added
+
+2023-01-10  Steven Eker  <eker@pup>
+
+	* process.cc (SyntacticPreModule::processImports): don't check for theories
+	when handling autoImports since in the theory case this will be empty
+	following the change below
+
+	* syntacticPreModule.cc (SyntacticPreModule::finishModule): don't copy
+	autoImports for theories; we tried this before and it seemed to break
+	strategies, but in fact it fixes a bug in all theories at the metalevel,
+	and the old test output was bad
+
+	* process.cc (SyntacticPreModule::checkType): use range-based for loop
+	(SyntacticPreModule::checkOpTypes): use range-based for loop
+	(SyntacticPreModule::computeOpTypes): use range-based for loop
+	(SyntacticPreModule::processOps): use range-based for loop
+	(SyntacticPreModule::computeType): use Index
+	(SyntacticPreModule::processStatements): use range-based for loop
+
+	* command.cc (SyntacticPreModule::printAttributes): don't print ctor in
+	msg statement
+
+	* ops.cc (SyntacticPreModule::endMsg): messages are automatically ctors
+
+	* ooProcess.cc (SyntacticPreModule::addHonoraryClassNames)
+	(SyntacticPreModule::findClassIdSortName)
+	(SyntacticPreModule::findAtttributeSetSort)
+	(SyntacticPreModule::findAtttributeSort)
+	(SyntacticPreModule::processClassSorts)
+	(SyntacticPreModule::processClassOps): moved here
+
+	* process.cc (SyntacticPreModule::processSubsorts): major simplification now that
+	surface parser enforces good syntax for subsort declarations
+	(SyntacticPreModule::processClassSorts): simplify subclass processing now that
+	surface parser enforces good syntax for subclass declaration
+
+	* syntacticPreModule.hh (SyntacticPreModule::addSortDecl): don't check for empty
+	sortDecl since surface syntax no longer allows this
+
+	* modules.yy (sortNameList): make nonempty
+	(subsortList): enforce sortName+ < sortName+ (< sortName)*
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for processSubsorts()
+
+	* process.cc (SyntacticPreModule::insertSubsorts): switch nesting since smaller is
+	more likely to be empty
+	(SyntacticPreModule::processSubsorts): reimplemented subsort code and moved it here
+
+2023-01-09  Steven Eker  <eker@pup>
+
+	* process.cc (SyntacticPreModule::processClassSorts): don't create class sort
+	for class names that contain an underscore
+	(SyntacticPreModule::processClassOps): don't process classes whose name contains
+	an underscore; don't add ops for attributes whose name contains an underscrore
+	(SyntacticPreModule::processSorts): use range based loop (2 places)
+
+	* token.hh (Token::containsUnderscore): added
+
+	* makeGrammar.cc (MixfixModule::makeSymbolProductions): only make empty
+	attribute set production if attributeSetSymbol has correct attributes
+
+	* mixfixParser.cc (MixfixParser::makeTerm): don't allow empty attribute set
+	syntax in operator declarations and create a fake term in the case it occurs
+
+2023-01-06  Steven Eker  <eker@pup>
+
+	* ops.cc (SyntacticPreModule::endMsg): remove bad msg(s) from opDefs and opDecls
+	(SyntacticPreModule::setMetadata): deleted commented out setting of flag
+	SymbolType::METADATA since this flag no longer exists
+
+	* modules.yy (declaration): call endMsg() at the end of a msg or msgs declaration
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for endMsg()
+
+	* ops.cc (SyntacticPreModule::endMsg): added
+
+2023-01-05  Steven Eker  <eker@pup>
+
+	* syntacticPreModule.cc (SyntacticPreModule::addClassDecl): moved here
+	(SyntacticPreModule::addAttributePair): moved here
+	(SyntacticPreModule::addClassDecl): only allow class declaration in omod or oth
+	(SyntacticPreModule::addAttributePair): ignore attribute pair unless we are an
+	omod or an oth
+	(SyntacticPreModule::addSubclassDecl): moved here; only allow subclass declaration
+	in omod or oth
+
+	* command.cc (SyntacticPreModule::showModule): use Token::sortName() for printing
+	class names and attribute sorts
+
+	* modules.yy (cPair): use sortName rather than token for attribute sorts
+	(declaration): use sortName rather than token for class names
+
+	* makeGrammar.cc (MixfixModule::makeSymbolProductions): added production for
+	AKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET for ObjectConstructorSymbol symbols
+
+	* mixfixParser.cc (MixfixParser::makeTerm): handle
+	MAKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET case
+
+	* objectConstructorSymbol.hh (ObjectConstructorSymbol::getAttributeSetSymbol):
+	added
+
+	* mixfixParser.hh (class MixfixParser): added MAKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET
+	to semantic actions
+
+	* process.cc (SyntacticPreModule::addHonoraryClassNames): only look at system
+	modules and theories; require that sort have a constant of the same name with
+	a single decl that is a ctor
+
+	* mixfixModule.hh (MixfixModule::isSystem): added static and non-static versions
+
+	* banner.cc (printBanner): update year
+
+2023-01-04  Steven Eker  <eker@pup>
+
+	* process.cc (SyntacticPreModule::processClassOps): use findAtttributeSort(); insert
+	attribute operators
+	(SyntacticPreModule::processClassOps): use gather (&) for attribute operators; use
+	ctor for class and attribute operators
+	(SyntacticPreModule::checkAttributeSorts): added
+	(SyntacticPreModule::findClassIdSortName): only consider ops with ctor attribute
+	(SyntacticPreModule::findAtttributeSetSort): only consider ops with ctor attribute
+	(SyntacticPreModule::addHonoraryClassNames): added
+	(SyntacticPreModule::processClassSorts): use addHonoraryClassNames
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for findAtttributeSort()
+
+	* process.cc (SyntacticPreModule::processClassSorts): use classIdSort data member
+	(SyntacticPreModule::processClassOps): use attributeSetSort data member
+	(SyntacticPreModule::findAtttributeSort): added
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added data members classIdSort,
+	attributeSetSort, attributeSort
+
+	* process.cc (SyntacticPreModule::processClassSorts): use new findClassIdSortName()
+	convention
+
+	* syntacticPreModule.hh (class SyntacticPreModule): updated decl for
+	findClassIdSortName()
+
+	* process.cc (SyntacticPreModule::findClassIdSortName): return sort rather
+	than name code
+
+2023-01-03  Steven Eker  <eker@pup>
+
+	* mixfix.hh: added class ObjectConstructorSymbol
+
+	* process.cc (SyntacticPreModule::findClassIdSortName): made const
+	(SyntacticPreModule::processClassOps): call findAtttributeSetSort()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): updated decl for
+	findClassIdSortName()
+
+	* process.cc (SyntacticPreModule::processClassSorts): mark module as bad if we can't
+	find the Cid sort
+	(SyntacticPreModule::findClassIdSortName): only consider symbols with the
+	ObjectConstructorSymbol id-hook
+	(SyntacticPreModule::findAtttributeSetSort): added
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): added ObjectConstructorSymbol
+
+	* specialSymbolTypes.cc: added ObjectConstructorSymbol
+
+	* objectConstructorSymbol.cc: created
+
+	* objectConstructorSymbol.hh: created
+
+	* symbolType.hh (class SymbolType): added OBJECT_CONSTRUCTOR_SYMBOL to enum BasicTypes
+
+2022-12-23  Steven Eker  <eker@pup>
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for processClassOps()
+
+	* process.cc (SyntacticPreModule::processClassOps): added
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added data member classSymbol
+	to struct ClassDecl
+
+	* process.cc (SyntacticPreModule::process): use processClassOps()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added data member classSort to
+	struct ClassDecl
+
+	* process.cc (SyntacticPreModule::processClassSorts): handle subclasses
+	(SyntacticPreModule::insertSubsorts): added
+	(SyntacticPreModule::processClassSorts): use insertSubsorts()
+	(SyntacticPreModule::processClassSorts): save sort for each class
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	processClassSorts()
+
+	* process.cc (SyntacticPreModule::process): use findClassIdSortName();
+	try to add subsorts for class names
+	(SyntacticPreModule::processClassSorts): added
+	(SyntacticPreModule::process): use processClassSorts()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	findClassIdSortName()
+
+	* process.cc (SyntacticPreModule::findClassIdSortName): added
+
+	* mixfixModule.hh (getObjectSymbols): added
+
 2022-12-22  Steven Eker  <eker@pup>
+
+	* process.cc (SyntacticPreModule::processOps): clear SymbolType::MSG_STATEMENT
+	before passing symbolType to flatModule
+
+===================================Maude139===========================================
 
 	* lexer.ll: %option noyy_top_state
 

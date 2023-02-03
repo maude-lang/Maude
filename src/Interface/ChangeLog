@@ -1,3 +1,23 @@
+2023-02-02  Steven Eker  <eker@pup>
+
+	* binarySymbol.cc (BinarySymbol::rightIdentitySortCheck): removed stray
+	space in Verbose() message
+
+2023-01-24  Steven Eker  <eker@pup>
+
+	* term.cc: deleted definition of discard
+
+	* term.hh (Term::normalize): added 1 arg version
+	(class Term): don't use discard static variable
+	(class Term): deleted decl for discard
+
+2023-01-19  Steven Eker  <eker@pup>
+
+	* term.hh (Term::LessThan::operator): added
+	(class Term): added struct LessThan
+
+===================================Maude139=========================================
+
 2021-09-21  Steven Eker  <eker@pup>
 
 	* extensionInfo.hh (class ExtensionInfo): make argument for copy() const
@@ -494,7 +514,7 @@
 	unequalRightIdCollapse
 
 	* binarySymbol.cc (BinarySymbol::leftIdentitySortCheck): set
-	unequalLeftIdCollapse 
+	unequalLeftIdCollapse
 	(BinarySymbol::rightIdentitySortCheck): set
 	unequalRightIdCollapse
 
@@ -747,7 +767,7 @@
 	(computeSolvedForm2): added
 
 ===================================Maude89g==========================================
-	
+
 2007-06-28  Steven Eker  <eker@goo.csl.sri.com>
 
 	* dagNode.hh (class DagNode): added extensionInfo arg to decl for
@@ -862,7 +882,7 @@
 	place transformation on the dag node (say ACU tree -> array rep)
 	that loses the copy pointer an prevents us from replacing the
 	symbol
-	
+
 ===================================Maude83a==========================================
 
 2003-11-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -909,7 +929,7 @@
 	the kind level
 
 	* dagNode.hh (okToCollectGarbage): deleted
-	
+
 ===================================Maude80b===========================================
 
 2003-05-22  Steven Eker  <eker@goo.csl.sri.com>
@@ -930,13 +950,13 @@
 
 	* binarySymbol.hh (computeSortIndex): added
 	(computeMultSortIndex): added
-	
+
 ===================================Maude80a===========================================
 
 2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
 
 	* dagNode.hh (copySetRewritingFlags): added
-	
+
 ===================================Maude80===========================================
 
 2003-03-24  Steven Eker  <eker@goo.csl.sri.com>
@@ -979,7 +999,7 @@
 	* interface.cc: deleted
 
 	* subproblem.hh (class Subproblem): added empty implementation for
-	dump() 
+	dump()
 	removed #pragma
 
 	* heuristicLhsAutomaton.cc: removed #pragma
@@ -1010,7 +1030,7 @@
 	(fillInSortInfo): updated Assert()s
 
 	* associativeSymbol.hh: removed #pragma
-	
+
 ===================================Maude79===========================================
 
 2003-01-31  Steven Eker  <eker@goo.csl.sri.com>
@@ -1040,7 +1060,7 @@
 
 	* extensionInfo.hh (class ExtensionInfo): added comments to
 	explain data members
-	
+
 ===================================Maude78===========================================
 
 2003-01-07  Steven Eker  <eker@goo.csl.sri.com>
@@ -1063,7 +1083,7 @@
 2002-11-26  Steven Eker  <eker@goo.csl.sri.com>
 
 	* dagNode.hh: major rewrite, using new MemoryCell semantics
-	
+
 ===================================Maude77==================================================
 
 2002-11-14  Steven Eker  <eker@goo.csl.sri.com>
@@ -1163,7 +1183,7 @@
 
 	* dagNode.hh (class DagNode): added respectFrozen argument to
 	stackArguments() decl
-	
+
 ===================================Maude76==================================================
 
 2002-09-08  Steven Eker  <eker@goo.csl.sri.com>
@@ -1205,7 +1225,7 @@
 	the callers responsibility, since the actually last use of the
 	index may be later than now
 	(compileTopRhs): call useIndex()
-	
+
 ===================================Maude75==================================================
 
 2002-08-02  Steven Eker  <eker@goo.csl.sri.com>
@@ -1230,7 +1250,7 @@
 
 	* term.cc (subsumes): take sameVariableSet arg; always return
 	false
-	
+
 ===================================Maude74==================================================
 
 2002-05-08  Steven Eker  <eker@goo.csl.sri.com>
@@ -1249,7 +1269,7 @@
 
 	* symbol.hh (fastComputeTrueSort): moved here from symbol2.hh;
 	include dagNode.hh just before
-	
+
 ===================================Maude72==================================================
 
 2002-04-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -1258,7 +1278,7 @@
 	discard as default 2nd arg to normalize
 
 	* symbol.hh (class Symbol): added static const data member noArgs
-	
+
 ===================================Maude71a==================================================
 
 2002-03-15  Steven Eker  <eker@goo.csl.sri.com>
@@ -1279,7 +1299,7 @@
 	* associativeSymbol.cc: deleted explicit template instantiation
 
 	* interface.cc: deleted explicit template instantiations
-	
+
 ===================================Maude71==================================================
 
 2001-12-10  Steven Eker  <eker@goo.csl.sri.com>
@@ -1287,14 +1307,14 @@
 	* dagNode.hh (class DagNode): made dagNodeSize a static member
 	rather than a static non-member so initialization can take the
 	size of private data structures.
-	
+
 ===================================Maude69==================================================
 
 2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
 
 	* dagNode.hh (class DagNode): added decl for Vector<RedexPosition>
 	version of copyWithReplacement()
-	
+
 ===================================Engine66==================================================
 
 2001-03-16  Steven Eker  <eker@goo.csl.sri.com>
@@ -1343,7 +1363,7 @@
 	(attachSymbol): added
 	(attachTerm): added
 	(copyAttachments): added
-	
+
 ===================================Engine64==================================================
 
 2000-12-18  Steven Eker  <eker@goo.csl.sri.com>
@@ -1371,7 +1391,7 @@
 	the index of the copy in the saveIndex of the lazy lhs occurence
 	rather than the eager rhs occurence that was inserted into
 	availableTerms
-	
+
 ===================================Engine63==================================================
 
 2000-08-30  Steven Eker  <eker@goo.csl.sri.com>
@@ -1421,7 +1441,7 @@
 	(buildAliens): deleted
 
 	* term.hh (class Term): deleted decl for old compileRhs()
-	
+
 ===================================Engine60==================================================
 
 2000-07-19  Steven Eker  <eker@goo.csl.sri.com>
@@ -1460,7 +1480,7 @@
 
 	* term.cc (compileRhs): added new version
 	(compileTopRhs): added
-	
+
 ===================================Engine59==================================================
 
 2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
@@ -1482,7 +1502,7 @@
 	* term.cc (indexVariables): use VariableTerm* rather than
 	VariableSymbol*
 	(gatherPartialResults): index() -> getIndex()
-	
+
 ===================================Engine58==================================================
 
 2000-03-17  Steven Eker  <eker@goo.csl.sri.com>
@@ -1555,7 +1575,7 @@
 2000-03-03  Steven Eker  <eker@goo.csl.sri.com>
 
 	* binarySymbol.cc (commutativeSortCompletion): ErrorCheck() ->
-	Assert() 
+	Assert()
 	(leftIdentitySortCheck): ErrorCheck() -> Assert() for domain/range
 	component mismatch
 	(rightIdentitySortCheck): ErrorCheck() -> Assert() for domain/range
@@ -1563,7 +1583,7 @@
 	(idempotentSortCheck): ErrorCheck() -> Assert()
 
 	* associativeSymbol.cc (associativeSortCheck): ErrorCheck() ->
-	Assert() 
+	Assert()
 
 2000-02-25  Steven Eker  <eker@goo.csl.sri.com>
 
@@ -1589,7 +1609,7 @@
 
 	* symbol.cc (fillInSortInfo): message in component error Assert()
 	made more detailed
-	
+
 ===================================Engine55==================================================
 
 1999-12-17  Steven Eker  <eker@goo.csl.sri.com>
@@ -1611,7 +1631,7 @@
 
 	* symbol.hh (class Symbol): removed tailRecursive arg
 	from generateCode() decl
-	
+
 ===================================Engine54==================================================
 
 1999-11-11  Steven Eker  <eker@goo.csl.sri.com>
@@ -1706,7 +1726,7 @@
 	derived from Strategy, take memoFlag arg; data member theoryName
 	deleted; decl for theory() deleted
 	(theory): deleted
-	
+
 ===================================Engine53==================================================
 
 1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
@@ -1762,7 +1782,7 @@
 	(class DagNode): added decls for setHashValid() and isHashValid()
 	(setHashValid): added
 	(isHashValid): added
-	
+
 ===================================Engine52==================================================
 
 1999-08-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -1832,7 +1852,7 @@
 
 	* symbol.hh (class Symbol): added decls for generateCode() and
 	generateBody()
-	
+
 ===================================Engine50==================================================
 
 1999-06-01  Steven Eker  <eker@goo.csl.sri.com>
@@ -1916,7 +1936,7 @@
 
 	* dagNode.hh (markIfNotMarkedAlready): added so that we can try
 	tail recursion elimination in mark phase
-	
+
 ===================================Engine49==================================================
 
 1999-04-22  Steven Eker  <eker@goo.csl.sri.com>
@@ -1967,7 +1987,7 @@
 	(class DagNode): deleted decls for getTheoryBit(), setTheoryBit(),
 	clearTheoryBit()
 	(class DagNode): deleted decl for specialPrint()
-	
+
 ===================================Engine48==================================================
 ===================================Maude 1.0.2 released=======================================
 ===================================Maude 1.0.1 released=======================================
@@ -1975,7 +1995,7 @@
 1999-02-18  Steven Eker  <eker@goo.csl.sri.com>
 
 	* rhsAutomaton.hh (buildAliens): rewritten using isNull()
-	
+
 ===================================VectorExperiment==========================================
 
 1999-02-04  Steven Eker  <eker@goo.csl.sri.com>
@@ -2041,7 +2061,7 @@
 	* associativeSymbol.cc (associativeSortStructureAnalysis): use
 	traverse() rather than lookupSort() for efficiency
 	(associativeSortStructureAnalysis): deleted indicies static vector
-	
+
 ===================================Engine47==================================================
 ===================================Maude 1.00 released=======================================
 
@@ -2054,7 +2074,7 @@
 
 	* term.hh (class Term): make sortIndex a short and changed its
 	position to save a word
-	
+
 ===================================Engine46==================================================
 
 1998-12-23  Steven Eker  <eker@goo.csl.sri.com>
@@ -2082,7 +2102,7 @@ Tue Nov  3 19:20:17 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* term.hh (class Term): derive from LineNumber
 
 	* symbol.hh (class Symbol): derive from LineNumber
-	
+
 ===================================Engine43==================================================
 
 Thu Oct 29 12:10:02 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2131,7 +2151,7 @@ Wed Oct 14 10:14:00 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	seem to be allocated lots of extra arenas on big_sieve example.
 	(class DagNode): reduced ARENA_SIZE to 4 * 1024 - 1 to see what
 	effect that has
-	
+
 ===================================Engine42==================================================
 
 Thu Oct  8 11:54:12 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2242,7 +2262,7 @@ Thu Sep 17 13:22:55 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	places)
 
 	* symbol.cc: (mightMatchSymbol): use leq(Sort*, Sort*) (2 places)
-	
+
 	* dagNode.cc (checkSort): (Subproblem*& version) use leq() (2 places)
 	(checkSort): (RewritingContext& version) use leq() (2 places)
 
@@ -2330,13 +2350,13 @@ Wed Sep  9 11:45:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	pre-regularity problem and anyway it will be hard to implement
 	adjustSort() when we upgrade from sort tables to sort decision
 	diagrams.
-	
+
 ===================================Engine40==================================================
 
 Mon Jul 20 19:14:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* term.hh (class Term): added decl for deepCopy()
-	
+
 ===================================Engine39==================================================
 
 Thu Jun 11 17:42:03 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2387,7 +2407,7 @@ Tue Jun  9 18:01:41 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* associativeSymbol.cc: IntSet -> NatSet
 
 	* term.hh: IntSet -> NatSet
-	
+
 ===================================Engine38==================================================
 
 Thu Jun  4 10:57:22 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2420,7 +2440,7 @@ Wed Jun  3 15:28:50 1998  Steven Eker  <eker@lilac.csl.sri.com>
 Mon Apr 13 10:38:26 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* symbol.hh (class Symbol): inherit from ModuleItem
-	
+
 ===================================Engine37==================================================
 
 Thu Feb 26 12:11:11 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2460,7 +2480,7 @@ Thu Feb 19 17:22:43 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* associativeSymbol.hh (class AssociativeSymbol): added decl for
 	parse()
-	
+
 ===================================Engine36==================================================
 
 Fri Feb 13 13:47:51 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2482,7 +2502,7 @@ Wed Feb 11 15:38:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* subproblem.hh (class Subproblem): abstract function
 	deepSelfDestruct() deleted; standard destructor will now be deep
-	
+
 ===================================Engine35==================================================
 
 Thu Jan  8 15:42:40 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2511,7 +2531,7 @@ Tue Dec 16 16:47:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* heuristicLhsAutomaton.cc: created
 
 	* heuristicLhsAutomaton.hh: created
-	
+
 ===================================Engine34==================================================
 
 Fri Dec  5 11:20:28 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2598,7 +2618,7 @@ Sun Nov 23 16:06:27 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* lhsAutomaton.hh (class LhsAutomaton): rearranged dump();
 	indentLevel is now last and variableInfo is a reference
-	
+
 ===================================Engine33==================================================
 
 Fri Nov 21 14:35:51 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2631,7 +2651,7 @@ Mon Nov 17 10:28:42 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	(getTheoryBit): added
 	(setTheoryBit): added
 	(clearTheoryBit): added
-	
+
 ===================================Engine32==================================================
 
 Wed Nov  5 10:43:36 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2683,7 +2703,7 @@ Wed Nov  5 10:43:36 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	(hasGeqOrIncomparableVariable): added
 
 	* term.hh (class Term): added decl for commonSymbols()
-	
+
 =============================Engine31========================================================
 
 Wed Oct 29 10:20:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2848,7 +2868,7 @@ Fri Oct 10 16:54:44 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* lhsAutomaton.hh (class LhsAutomaton): VariableIndex -> VariableInfo
 
 	* term.hh (class Term): VariableIndex -> VariableInfo
-	
+
 =================================Engine30==================================================
 
 Thu Oct  9 10:27:10 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2917,7 +2937,7 @@ Fri Oct  3 18:49:11 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* term.hh (class Term): no longer derived from DataSet::Data
 	(class Term): TermSet replaces DataSet throughout
 	(dagify): use term2Index() rather than data2Index()
-	
+
 =================================Engine29==================================================
 
 Thu Oct  2 16:52:58 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2998,13 +3018,13 @@ Sat Aug 30 12:52:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* sortHandling.cc (buildSortTable): added
 	(compileOpDeclarations): rewritten using buildSortTable()
-	(adjustSort): call buildSortTable() if sort table is not 
+	(adjustSort): call buildSortTable() if sort table is not
 
 Fri Aug 29 13:31:55 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* ruleHandling.cc (applyRules): ignore rules that are not variable
 	safe.
-	
+
 =================================Engine27==================================================
 
 Mon Aug 25 12:18:01 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3047,7 +3067,7 @@ Wed Jul 23 11:25:10 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* term.hh (class Term): added full arg to normalize
 
 =====================================Engine26b======================================
-	
+
 Fri Jul 18 15:50:17 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* dagNode.hh (class DagNode): added decls for
@@ -4222,7 +4242,7 @@ Tue Jan 30 14:24:15 1996  Steven Eker  <eker@ponder.csl.sri.com>
 	virtual void compileSortConstraints() added
 	const Sequence<Vector<Sort*>*>& opDeclarations() added
 	lookupSort() & lookupUnionSort() now protected
-	
+
 	* symbolWithOD.hh: created using sort computation
 	code from old symbol.hh
 
@@ -4275,7 +4295,7 @@ Thu Dec 14 14:46:34 1995  Steven Eker  <eker@ponder.csl.sri.com>
 
 	* symbol.hh (resultComponent): commented out; replaced by
 	virtual function rangeComponent() that takes the acual instance as a
-	parameter to deal with polymorphic symbols 
+	parameter to deal with polymorphic symbols
 
 Wed Dec 13 15:25:09 1995  Steven Eker  <eker@ponder.csl.sri.com>
 

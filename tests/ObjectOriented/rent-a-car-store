@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/rent-a-car-store.maude -no-banner -no-advise \
+  > rent-a-car-store.out 2>&1
+
+diff $srcdir/rent-a-car-store.expected rent-a-car-store.out > /dev/null 2>&1

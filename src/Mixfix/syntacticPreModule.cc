@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
 #include "builtIn.hh"
 #include "freeTheory.hh"
 #include "AU_Theory.hh"
+#include "ACU_Theory.hh"
 #include "higher.hh"
 #include "strategyLanguage.hh"
 #include "mixfix.hh"
@@ -57,7 +58,19 @@
 #include "argumentIterator.hh"
 #include "dagArgumentIterator.hh"
 #include "rewriteStrategy.hh"
-//#include "dagNodeSet.hh"
+
+//	free theory class definitions
+#include "freeSymbol.hh"
+#include "freeTerm.hh"
+
+//	ACU theory class definitions
+#include "ACU_Symbol.hh"
+
+//	higher class definitions
+#include "equalityConditionFragment.hh"
+#include "sortTestConditionFragment.hh"
+#include "assignmentConditionFragment.hh"
+#include "rewriteConditionFragment.hh"
 
 //	front end class definitions
 #include "moduleExpression.hh"
@@ -71,12 +84,16 @@
 #include "syntacticPreModule.hh"
 #include "interpreter.hh"
 #include "maudemlBuffer.hh"
+#include "mixfixParser.hh"
+#include "objectConstructorSymbol.hh"
 
 #ifdef QUANTIFY_PROCESSING
 #include "quantify.h"
 #endif
 
 //	our stuff
+#include "ooTransform.cc"
+#include "ooProcess.cc"
 #include "process.cc"
 #include "fixUp.cc"
 #include "ops.cc"
@@ -207,7 +224,7 @@ SyntacticPreModule::finishModule(Token endToken)
 		   QUOTE(Token::name(startTokenCode)) << " ends with "
 		   << QUOTE(endToken) << '.');
     }
-  //if (!(MixfixModule::isTheory(getModuleType())))
+  if (!(MixfixModule::isTheory(getModuleType())))
     autoImports = getOwner()->getAutoImports(); // deep copy
   if (MixfixModule::isObjectOriented(getModuleType()))
     ooIncludes = getOwner()->getOoIncludes(); // deep copy
@@ -315,4 +332,76 @@ SyntacticPreModule::addStatement(const Vector<Token>& statement)
 	}
     }
   statements.append(statement);
+}
+
+void
+SyntacticPreModule::addClassDecl(Token name)
+{
+  if (MixfixModule::isObjectOriented(getModuleType()))
+    {
+      int nrClassDecls = classDecls.size();
+      classDecls.resize(nrClassDecls + 1);
+      classDecls[nrClassDecls].name = name;
+    }
+  else
+    {
+      IssueWarning(LineNumber(name.lineNumber()) <<
+		   ": class declaration only allowed in object-oriented modules and theories.");
+    }
+}
+
+void
+SyntacticPreModule::addAttributePair(Token attributeName, bool kind, const Vector<Token>& tokens)
+{
+  //
+  //	If we're not in an omod/oth then we already reported the error and we silently
+  //	ignore the attributes.
+  //
+  if (MixfixModule::isObjectOriented(getModuleType()))
+    {
+      classDecls[classDecls.size() - 1].attributes.append({attributeName, {kind, tokens}, 0});
+    }
+}
+
+void
+SyntacticPreModule::addAttributePairNoColon(Token attributeName, bool kind, const Vector<Token>& tokens)
+{
+  //
+  //	If we're not in an omod/oth then we already reported the error and we silently
+  //	ignore the attributes.
+  //
+  if (MixfixModule::isObjectOriented(getModuleType()))
+    {
+      //
+      //	We didn't see a colon; maybe it is stuck on the end of the attribute name.
+      //
+      const char* name = attributeName.name();
+      Index len = strlen(name);
+      if (name[len - 1] == ':')
+	{
+	  string removeColon(name, len - 1);
+	  int lineNumber = attributeName.lineNumber();
+	  attributeName.tokenize(removeColon.c_str(), lineNumber);
+	  IssueWarning(LineNumber(lineNumber) << ": missing space before " << QUOTE(":") <<
+		       " in declaration of attribute " << QUOTE(attributeName) << ".");
+	}
+      else
+	{
+	  IssueWarning(LineNumber(attributeName.lineNumber()) << ": missing " << QUOTE(":") <<
+		       " in declaration of attribute " << QUOTE(attributeName) << ".");
+	}
+      classDecls[classDecls.size() - 1].attributes.append({attributeName, {kind, tokens}, 0});
+    }
+}
+
+void
+SyntacticPreModule::addSubclassDecl(const Vector<Token>& subclassDecl)
+{
+  if (MixfixModule::isObjectOriented(getModuleType()))
+    subclassDecls.append(subclassDecl);
+  else
+    {
+      IssueWarning(LineNumber(subclassDecl[0].lineNumber()) <<
+		   ": subclass declaration only allowed in object-oriented modules and theories.");
+    }
 }

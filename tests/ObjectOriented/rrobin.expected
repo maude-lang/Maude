@@ -1,0 +1,85 @@
+Considering object completion on:
+  rl go([N]) < [N] : Proc | mode : wait > => < [N] : Proc | mode : critical > [
+    label enter] .
+Transformed rule:
+  rl go([N]) < [N] : V:Proc | mode : wait, Atts:AttributeSet > => < [N] :
+    V:Proc | mode : critical, Atts:AttributeSet > [label enter] .
+
+Considering object completion on:
+  rl < [N] : Proc | mode : critical > => < [N] : Proc | mode : wait > go([s N])
+    [label exit] .
+Transformed rule:
+  rl < [N] : V:Proc | mode : critical, Atts:AttributeSet > => < [N] : V:Proc |
+    mode : wait, Atts:AttributeSet > go([s N]) [label exit] .
+
+Considering object completion on:
+  eq (< X : Proc | mode : critical > C) |= inCrit(X) = true .
+Transformed equation:
+  eq (< X : V:Proc | mode : critical, Atts:AttributeSet > C) |= inCrit(X) =
+    true .
+
+Considering object completion on:
+  eq (< X : Proc | mode : critical > < Y : Proc | mode : critical > C) |=
+    twoInCrit = true .
+Transformed equation:
+  eq (< X : V:Proc | mode : critical, Atts:AttributeSet > < Y : V2:Proc | mode
+    : critical, Atts2:AttributeSet > C) |= twoInCrit = true .
+
+op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
+op __ left-identity collapse from [State] to State is unequal.
+op __ left-identity collapse from TransitionList to Transition is unequal.
+op __ right-identity collapse from TransitionList to Transition is unequal.
+==========================================
+reduce in CHECK-RROBIN-5 : modelCheck(init, []~ twoInCrit) .
+ModelChecker: Property automaton has 2 states.
+ModelCheckerSymbol: Examined 10 system states.
+rewrites: 52
+result Bool: true
+==========================================
+reduce in CHECK-RROBIN-5 : modelCheck(init, []guaranteedReentrance) .
+ModelChecker: Property automaton has 52 states.
+ModelCheckerSymbol: Examined 10 system states.
+rewrites: 2263
+result Bool: true
+==========================================
+reduce in CHECK-RROBIN-5 : modelCheck(init, [](inCrit([1]) -> O O O inCrit([
+    1]))) .
+ModelChecker: Property automaton has 5 states.
+ModelCheckerSymbol: Examined 10 system states.
+rewrites: 67
+result ModelCheckResult: counterexample({go([0]) < [0] : Proc | mode : wait > <
+    [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode
+    : wait > < [4] : Proc | mode : wait >,'enter} {< [0] : Proc | mode :
+    critical > < [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3]
+    : Proc | mode : wait > < [4] : Proc | mode : wait >,'exit} {go([1]) < [0] :
+    Proc | mode : wait > < [1] : Proc | mode : wait > < [2] : Proc | mode :
+    wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait >,'enter} {<
+    [0] : Proc | mode : wait > < [1] : Proc | mode : critical > < [2] : Proc |
+    mode : wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait >,
+    'exit} {go([2]) < [0] : Proc | mode : wait > < [1] : Proc | mode : wait > <
+    [2] : Proc | mode : wait > < [3] : Proc | mode : wait > < [4] : Proc | mode
+    : wait >,'enter} {< [0] : Proc | mode : wait > < [1] : Proc | mode : wait >
+    < [2] : Proc | mode : critical > < [3] : Proc | mode : wait > < [4] : Proc
+    | mode : wait >,'exit}, {go([3]) < [0] : Proc | mode : wait > < [1] : Proc
+    | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode : wait > <
+    [4] : Proc | mode : wait >,'enter} {< [0] : Proc | mode : wait > < [1] :
+    Proc | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode :
+    critical > < [4] : Proc | mode : wait >,'exit} {go([4]) < [0] : Proc | mode
+    : wait > < [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3] :
+    Proc | mode : wait > < [4] : Proc | mode : wait >,'enter} {< [0] : Proc |
+    mode : wait > < [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [
+    3] : Proc | mode : wait > < [4] : Proc | mode : critical >,'exit} {go([0])
+    < [0] : Proc | mode : wait > < [1] : Proc | mode : wait > < [2] : Proc |
+    mode : wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait >,
+    'enter} {< [0] : Proc | mode : critical > < [1] : Proc | mode : wait > < [
+    2] : Proc | mode : wait > < [3] : Proc | mode : wait > < [4] : Proc | mode
+    : wait >,'exit} {go([1]) < [0] : Proc | mode : wait > < [1] : Proc | mode :
+    wait > < [2] : Proc | mode : wait > < [3] : Proc | mode : wait > < [4] :
+    Proc | mode : wait >,'enter} {< [0] : Proc | mode : wait > < [1] : Proc |
+    mode : critical > < [2] : Proc | mode : wait > < [3] : Proc | mode : wait >
+    < [4] : Proc | mode : wait >,'exit} {go([2]) < [0] : Proc | mode : wait > <
+    [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode
+    : wait > < [4] : Proc | mode : wait >,'enter} {< [0] : Proc | mode : wait >
+    < [1] : Proc | mode : wait > < [2] : Proc | mode : critical > < [3] : Proc
+    | mode : wait > < [4] : Proc | mode : wait >,'exit})
+Bye.

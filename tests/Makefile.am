@@ -1,1 +1,1 @@
-SUBDIRS = BuiltIn Misc Meta ResolvedBugs StrategyLanguage
+SUBDIRS = BuiltIn Misc Meta ResolvedBugs StrategyLanguage ObjectOriented

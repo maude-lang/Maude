@@ -1,0 +1,3 @@
+Warning: <standard input>, line 20 (view V): implicit mapping of sort Foo that
+    was declared in a module to sort Foo from the target theory is not allowed.
+Bye.

@@ -74,8 +74,11 @@ public:
   void insertSort(Sort* sort);
   void insertSymbol(Symbol* symbol);
   void insertSortConstraint(SortConstraint* sortConstraint);
+  void checkSortConstraint(SortConstraint* sortConstraint);
   void insertEquation(Equation* equation);
+  void checkEquation(Equation* equation);
   void insertRule(Rule* rule);
+  void checkRule(Rule* rule);
   void insertStrategy(RewriteStrategy* strategy);
   void insertStrategyDefinition(StrategyDefinition* sdef);
   void insertLateSymbol(Symbol* s);
@@ -116,7 +119,7 @@ private:
   Vector<StrategyDefinition*> strategyDefinitions;
   SortBdds* sortBdds;
   int minimumSubstitutionSize;
-  MemoMap* memoMap;  // global memeo map for all symbols in module
+  MemoMap* memoMap;  // global memo map for all symbols in module
 };
 
 inline Environment*

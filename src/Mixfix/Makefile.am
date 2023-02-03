@@ -77,6 +77,7 @@ libmixfix_a_SOURCES = \
 	surface.cc \
 	freshVariableSource.cc \
 	variableGenerator.cc \
+	objectConstructorSymbol.cc \
 	$(COMPILER_SRC)
 
 EXTRA_libmixfix_a_SOURCES = \
@@ -128,6 +129,9 @@ EXTRA_DIST = \
 	instantiateViewWithBoundParameters.cc \
 	lexerAux.cc \
 	deserializerAux.cc \
+	ooSorts.cc \
+	ooProcess.cc \
+	ooTransform.cc \
 	process.cc \
 	fixUp.cc \
 	ops.cc \
@@ -221,4 +225,6 @@ noinst_HEADERS = \
 	enclosingObject.hh \
 	argument.hh \
 	parameter.hh \
-	parameterDatabase.hh
+	parameterDatabase.hh \
+	objectConstructorSymbol.hh \
+	statementTransformer.hh

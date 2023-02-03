@@ -1,3 +1,16 @@
+2023-01-31  Steven Eker  <eker@pup>
+
+	* metaDown.cc (MetaLevel::downRule): call checkRule()
+	(MetaLevel::downEquation): call checkEquation()
+	(MetaLevel::downMembAx): call checkSortConstraint()
+
+2023-01-10  Steven Eker  <eker@pup>
+
+	* metaUpModule.cc (MetaLevel::upImports): added comment to explain why we
+	are dealing with the PreModule rather than the flat module
+
+===================================Maude139===========================================
+
 2021-08-26  Steven Eker  <eker@pup>
 
 	* metaLevelOpSymbol.cc (MetaLevelOpSymbol::eqRewrite): code cleaning

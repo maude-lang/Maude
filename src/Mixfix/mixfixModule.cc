@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -163,6 +163,7 @@
 #include "loopSymbol.hh"
 #include "userLevelRewritingContext.hh"
 #include "freshVariableSource.hh"
+#include "objectConstructorSymbol.hh"
 
 #include "interpreter.hh"
 #include "global.hh"  // HACK shouldn't be accessing global variables
@@ -440,6 +441,34 @@ MixfixModule::findStrategy(int name,
 	}
     }
 
+  return 0;
+}
+
+Symbol*
+MixfixModule::findFirstUnarySymbol(int name, const ConnectedComponent* rangeComponent) const
+{
+  IntMap::const_iterator first = firstSymbols.find(name);
+  if (first != firstSymbols.end())
+    {
+      for (int i = first->second; i != NONE; i = symbolInfo[i].next)
+	{
+	  Symbol* s = getSymbols()[i];
+	  if (s->arity() == 1 && s->rangeComponent() == rangeComponent)
+	    return s;
+	}
+    }
+  return 0;
+}
+
+Symbol*
+MixfixModule::findNextUnarySymbol(Symbol* previous, const ConnectedComponent* rangeComponent) const
+{
+  for (int i = symbolInfo[previous->getIndexWithinModule()].next; i != NONE; i = symbolInfo[i].next)
+    {
+      Symbol* s = getSymbols()[i];
+      if (s->arity() == 1 && s->rangeComponent() == rangeComponent)
+	return s;
+    }
   return 0;
 }
 

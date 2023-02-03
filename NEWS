@@ -1,3 +1,25 @@
+Overview of Changes in alpha139
+============================================
+* syntactic sugar for empty attribute set in object constructor
+* changed reporting of syntax errors in sort and subset declarations
+* fixed bug where automatic imports were included in meta-theories
+* getClass() added to CONFIGURATION
+* allow "from" as a sort name
+* fixed spurious advisory where a specific renaming did not capture
+an operator from a parameter
+* identity sort/op mappings quietly dropped during renaming
+canonicalization
+* advisory if all the variables in the pattern of a := condition
+fragment are bound before matching
+* fixed bug where advisory about a specific strat renaming affecting
+a theory parameter printed 0 rather than the strat name
+* prettier printing of _,_ for attribute sets
+* first attempt at supporting omods and OO mappings in renamings
+* fixed bug where a view from T importing M to M was not allowed
+* fixed a related bug where a misleading warning was given for
+  theory-views that implicitly mapped a sort from module to the
+  target theory
+
 Overview of Changes in 3.2.2 (alpha138) (2022-12-22)
 ====================================================
 * fixed bug where multiple instantiations (say via a theory-view)

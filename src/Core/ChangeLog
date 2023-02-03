@@ -1,3 +1,19 @@
+2023-01-31  Steven Eker  <eker@pup>
+
+	* module.hh (class Module): added decls for checkSortConstraint(),
+	checkEquation(), checkRule()
+
+	* module.cc (Module::checkSortConstraint): added to split off check()
+	(Module::checkEquation): added to split off check()
+	(Module::checkRule): added to split off check()
+
+===================================Maude139===========================================
+
+2023-01-19  Steven Eker  <eker@pup>
+
+	* termBag.hh (class TermBag): use Term::LessThan to define TermSet
+	(class TermBag): deleted struct LtTerm
+
 2021-03-24  Steven Eker  <eker2@eker10>
 
 	* rewritingContext.cc (RewritingContext::interruptSeen): added

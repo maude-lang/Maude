@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -129,6 +129,36 @@ SyntacticPreModule::setFlag(int flag)
 }
 
 void
+SyntacticPreModule::endMsg()
+{
+  if (MixfixModule::isObjectOriented(getModuleType()))
+    {
+      OpDef& opDef = opDefs[opDefs.length() - 1];
+      opDef.symbolType.setFlags(SymbolType::MESSAGE | SymbolType::MSG_STATEMENT | SymbolType::CTOR);
+    }
+  else
+    {
+      //
+      //	We accepted the msg(s) and converted them to op(s). Now we need to
+      //	removed them, since they weren't allowed.
+      //
+      int defIndex = opDefs.size() - 1;
+      opDefs.resize(defIndex);  // delete definition
+      int opIndex = opDecls.size() - 1;
+      int lineNumber;
+      do
+	{
+	  lineNumber = opDecls[opIndex].prefixName.lineNumber();  // want line number of name first declaration
+	  --opIndex;
+	}
+      while (opIndex >= 0 && opDecls[opIndex].defIndex == defIndex);
+      opDecls.resize(opIndex + 1);  // delete declarations that depend on index
+      IssueWarning(LineNumber(lineNumber) <<
+		   ": message declaration only allowed in object-oriented modules and theories.");
+    }
+}
+
+void
 SyntacticPreModule::setPrec(Token precTok)
 {
   int prec;
@@ -210,7 +240,6 @@ SyntacticPreModule::setMetadata(Token metaDataTok)
 
 	  IssueWarning(anchor.tokens[0].lineNumber() << ": multiple metadata attributes.");
 	}
-      //opDef.symbolType.setFlags(SymbolType::METADATA);
     }
   else
     {

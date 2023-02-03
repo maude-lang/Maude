@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -145,19 +145,48 @@ mapping		:	KW_SORT sortName KW_TO sortName
 			{
 			  currentRenaming->addLabelMapping($2, $4);
 			}
-		|	KW_OP 			{ lexBubble(BAR_COLON | BAR_TO, 1); }
+		|	KW_OP			{ lexBubble(BAR_COLON | BAR_TO, 1); }
 			fromSpec KW_TO		{ lexBubble(BAR_COMMA | BAR_LEFT_BRACKET | BAR_RIGHT_PAREN, 1); }
 			toAttributes		{}
 		|	KW_STRAT identifier	{ currentRenaming->addStratMapping($2); }
 			fromStratSpec
 			KW_TO identifier 	{ currentRenaming->addStratTarget($6); }
+		|	KW_CLASS sortName KW_TO sortName
+			{
+			  currentRenaming->addClassMapping($2, $4);
+			}
+		|	KW_ATTR token
+			{
+			  currentRenaming->addAttrMapping($2);
+			}
+			fromAttrSpec KW_TO token
+			{
+			  currentRenaming->addAttrTarget($6);
+			}
+		|	KW_MSG
+			{
+			  lexBubble(BAR_COLON | BAR_TO, 1);
+			}
+			fromSpec KW_TO
+			{
+			  lexBubble(BAR_COMMA | BAR_LEFT_BRACKET | BAR_RIGHT_PAREN, 1);
+			}
+			toAttributes
+			{
+			  currentRenaming->markAsMsg();
+			}
 		;
+
 /*
  *	The ':' alternative forces lookahead which allows the lexer to grab the bubble.
  */
 fromSpec	:	':'			{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
 			typeList arrow typeName {}
 		|				{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
+		;
+
+fromAttrSpec	:	':' typeName
+		|	
 		;
 
 fromStratSpec	:	stratSignature
@@ -186,7 +215,7 @@ toAttribute	:	KW_PREC IDENTIFIER	{ currentRenaming->setPrec($2); }
 		;
 
 /*
- *	Views.
+ *	View(s.
  */
 view		:	KW_VIEW			{ lexerIdMode(); }
 			token
@@ -225,9 +254,29 @@ viewDeclaration	:	KW_SORT sortName KW_TO sortDot
 			  CV->addSortMapping($2, $4);
 			}
 		|	KW_VAR varNameList ':' skipStrayArrow typeDot {}
-		|	KW_OP			{ lexBubble(BAR_COLON | BAR_TO, 1); }
+		|	KW_OP
+			{
+			  lexBubble(BAR_COLON | BAR_TO, 1);
+			}
 			viewEndOpMap
 		|	KW_STRAT viewStratMap
+		|	KW_CLASS sortName KW_TO sortDot
+			{
+			  CV->addClassMapping($2, $4);
+			}
+		|	KW_ATTR token
+			{
+			  CV->addAttrMapping($2);
+			}
+			fromAttrSpec KW_TO token expectedDot
+			{
+			  CV->addAttrTarget($6);
+			}
+		|	KW_MSG
+			{
+			  lexBubble(BAR_COLON | BAR_TO, 1);
+			}
+			endMsgMap
 		|	error '.'
 		;
 
@@ -286,6 +335,57 @@ viewEndOpMap	:	':'
 			      CV->addOpMapping(opDescription);
 			      Token::peelParens(lexerBubble);  // remove any enclosing parens from op name
 			      CV->addOpTarget(lexerBubble);
+			    }
+			}
+		;
+
+endMsgMap	:	':'
+			{
+			  //
+			  //	Specific msg->msg mapping.
+			  //
+			  Token::peelParens(lexerBubble);  // remove any enclosing parens from op name
+			  CV->addOpMapping(lexerBubble);
+			}
+			typeList arrow typeName KW_TO
+			{
+			  lexBubble(END_STATEMENT, 1);
+			}
+			endBubble
+			{
+			  Token::peelParens(lexerBubble);  // remove any enclosing parens from op name
+			  CV->addOpTarget(lexerBubble);
+			  CV->markAsMsg();
+			}
+		|	KW_TO
+			{
+			  //
+			  //	At this point we don't know if we have an msg->term mapping
+			  //	or a generic msg->msg mapping so we save the from description and
+			  //	press on.
+			  //
+			  opDescription = lexerBubble;
+			  lexBubble(END_STATEMENT, 1);
+			}
+			endBubble
+			{
+			  if (lexerBubble[0].code() == Token::encode("term"))
+			    {
+			      //
+			      //	msg->term mapping.
+			      //
+			      CV->addOpTermMapping(opDescription, lexerBubble, true);
+			    }
+			  else
+			    {
+			      //
+			      //	Generic msg->msg mapping.
+			      //
+			      Token::peelParens(opDescription);  // remove any enclosing parens from op name
+			      CV->addOpMapping(opDescription);
+			      Token::peelParens(lexerBubble);  // remove any enclosing parens from op name
+			      CV->addOpTarget(lexerBubble);
+			      CV->markAsMsg();
 			    }
 			}
 		;
@@ -490,17 +590,15 @@ declaration	:	KW_IMPORT moduleExprDot
 		|	KW_MSG			{ lexBubble(BAR_COLON, 1); }
 			':'			{ Token::peelParens(lexerBubble); CM->addOpDecl(lexerBubble); }
 			domainRangeAttr		{
-						  CM->setFlag(SymbolType::MESSAGE);
-						  CM->setFlag(SymbolType::MSG_STATEMENT);
+						  CM->endMsg();
 						}
 
 		|	KW_MSGS opNameList ':' domainRangeAttr
 			{
-			  CM->setFlag(SymbolType::MESSAGE);
-			  CM->setFlag(SymbolType::MSG_STATEMENT);
+			  CM->endMsg();
 			}
 
-		|	KW_CLASS token
+		|	KW_CLASS sortName
 			{
 			  CM->addClassDecl($2);
 			}
@@ -530,9 +628,13 @@ cPairList	:	cPair
 		|	cPairList ',' cPair
 		;
 
-cPair		:	tokenBarDot ':' token
+cPair		:	tokenBarDot ':' typeName1
 			{
-			  CM->addAttributePair($1, $3);
+			  CM->addAttributePair($1, $3, $3 ? tokenSequence : singleton);
+			}
+		|	tokenBarDot typeName1
+			{
+			  CM->addAttributePairNoColon($1, $2, $2 ? tokenSequence : singleton);
 			}
 		;
 
@@ -623,6 +725,18 @@ arrow		:	KW_ARROW      		{ $$ = false; }
 
 typeList	:	typeList typeName
 		|	{}
+		;
+
+typeName1	:	sortName
+			{
+			  singleton[0] = $1;
+			  $$ = false;
+			}
+		|	'['			{ clear(); }
+			sortNames ']'
+			{
+			  $$ = true;
+			}
 		;
 
 typeName	:	sortName
@@ -776,13 +890,14 @@ expectedDot	:	'.' {}
  *	Sort and subsort lists.
  */
 sortNameList	:	sortNameList sortName	{ store($2); }
-		|	{}
+		|	sortName     		{ store($1); }
 		;
 
-subsortList	:	subsortList sortName	{ store($2); }
-		|	subsortList '<'		{ store($2); }
-		|	sortName		{ store($1); }
-			sortNameList '<'	{ store($4); }
+
+subsortList	:	subsortList '<'		{ store($2); }
+			sortNameList
+		|	sortNameList '<'	{ store($2); }
+			sortNameList
 		;
 
 /*
@@ -826,7 +941,7 @@ tokenBarColon	:	identifier | startKeyword | attrKeyword | '.'
 
 sortToken	:	IDENTIFIER | startKeyword | attrKeyword2
 		|	'=' | '|' | '+' | '*'
-		|	KW_ARROW2 | KW_IF | KW_IS | KW_LABEL | KW_TO
+		|	KW_ARROW2 | KW_IF | KW_IS | KW_LABEL | KW_TO | KW_FROM
 		;
 
 endsInDot	:	'.' | ENDS_IN_DOT
@@ -848,7 +963,7 @@ startKeyword	:	KW_MSG | startKeyword2	// TODO if we add KW_STRATS here  => 71 co
 startKeyword2	:	KW_IMPORT | KW_SORT | KW_SUBSORT | KW_OP | KW_OPS | KW_VAR | KW_DSTRAT
 		|	KW_MSGS | KW_CLASS | KW_SUBCLASS
 		|	KW_MB | KW_CMB | KW_EQ | KW_CEQ | KW_RL | KW_CRL | KW_ENDM | KW_ENDV
-		|	KW_SD | KW_CSD
+		|	KW_SD | KW_CSD | KW_ATTR
 		;
 
 midKeyword	:	'<' | ':' | KW_ARROW | KW_PARTIAL | '=' | KW_ARROW2 | KW_IF

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -80,23 +80,23 @@
       return data.length() == 0; \
     } 
 
-#define BIND_SYMBOL(purpose, symbol, name, type) \
+#define BIND_SYMBOL(purpose, symbol, name, symbolType) \
   if (strcmp(purpose, #name) == 0) \
     { \
       if (name != 0) \
 	return name == symbol; \
-      name = dynamic_cast<type>(symbol); \
+      name = dynamic_cast<symbolType>(symbol); \
       return name != 0; \
     }
 
-#define BIND_SYMBOL2(purpose, symbol, name, type, nrArgs)	\
+#define BIND_SYMBOL2(purpose, symbol, name, symbolType, nrArgs)	\
   if (strcmp(purpose, #name) == 0) \
     { \
       if (name != 0) \
 	return name == symbol; \
       if (symbol->arity() != nrArgs) \
 	return false; \
-      name = dynamic_cast<type>(symbol); \
+      name = dynamic_cast<symbolType>(symbol); \
       return name != 0; \
     }
 
@@ -121,11 +121,11 @@
       name.prepare(); \
     }
 
-#define COPY_SYMBOL(original, name, mapping, type) \
+#define COPY_SYMBOL(original, name, mapping, symbolType) \
   if (name == 0) \
     { \
-      if (type s = original->name) \
-	name = (mapping == 0) ? s : safeCast(type, mapping->translate(s)); \
+      if (symbolType s = original->name) \
+	name = (mapping == 0) ? s : safeCast(symbolType, mapping->translate(s)); \
     }
 
 #define COPY_TERM(original, name, mapping) \

@@ -1,0 +1,22 @@
+***
+***	Test for wrong warning for a bad theory-view.
+***
+
+fmod M is
+  sort Foo .
+endfm
+
+fth T is
+  inc M .
+  op a : -> Foo .
+endfth
+
+fth T2 is
+  inc BOOL .
+  sort Foo .
+  op b : -> Foo .
+endfth
+
+view V from T to T2 is
+  op a to b .
+endv

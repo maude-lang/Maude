@@ -144,6 +144,11 @@ public:
   void addStratMappingsFromView(Renaming* underConstruction,
 				const View* view,
 				const ImportModule* parameterCopyUser) const;
+  //
+  //	To support object-oriented syntactic sugar.
+  //
+  Sort* findClassIdSort() const;
+  Sort* findAtttributeSort() const;
 
 #ifndef NO_ASSERT
   void dumpImports(ostream& s) const;
@@ -314,7 +319,7 @@ private:
   //	view.
   //
   //	As of 5/2/19 we keep track of sortDeclaredInModule for all imported
-  //	sorts, even for modules.
+  //	sorts, even if we are a module.
   //
   NatSet sortDeclaredInModule;
   NatSet opDeclaredInModule;
@@ -543,7 +548,12 @@ inline bool
 ImportModule::moduleDeclared(Sort* sort) const
 {
   Assert(sort->getModule() == this, "wrong module");
-  return sortDeclaredInModule.contains(sort->getIndexWithinModule());
+  //
+  //	Because we call this on modules as well as theories, we need to check if the sort is
+  //	local and we are a module.
+  //
+  int index = sort->getIndexWithinModule();
+  return (index < nrImportedSorts) ? sortDeclaredInModule.contains(index) : !isTheory();
 }
 
 inline bool

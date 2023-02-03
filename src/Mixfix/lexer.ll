@@ -315,6 +315,7 @@ delay					RETURN(KW_DELAY)
 to					RETURN(KW_TO)
 from					RETURN(KW_FROM)
 label					RETURN(KW_LABEL)
+attr					RETURN(KW_ATTR)
 assoc|associative			RETURN(KW_ASSOC)
 comm|commutative			RETURN(KW_COMM)
 id:|identity:				RETURN(KW_ID)
@@ -485,7 +486,7 @@ assoc|associative|comm|commutative|id:|identity:|idem|idempotent|iter|iterated|l
   *	on to the input stream to be re-lexed in a new mode.
   */
 <END_STATEMENT_MODE>{
-pr|protecting|ex|extending|us|using|inc|including|sort|sorts|subsort|subsorts|op|ops|var|vars|mb|cmb|eq|cq|ceq|rl|crl|sd|csd|strat|strats|end(th|fth|sth|m|fm|sm|om|o|v|sv)|jbo|msg|msgs|class|classes|subclass|subclasses		{
+pr|protecting|ex|extending|us|using|inc|including|sort|sorts|subsort|subsorts|op|ops|var|vars|mb|cmb|eq|cq|ceq|rl|crl|sd|csd|strat|strats|end(th|fth|sth|m|fm|sm|om|o|v|sv)|jbo|msg|msgs|class|subclass|subclasses		{
 					  yyless(0);  // BUG - need to deal with white space and comments after the .
 					  yy_pop_state();
 					  RETURN_SAVED(savedReturn)

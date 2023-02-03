@@ -65,6 +65,7 @@
 #include "strategyExpression.hh"
 
 //	our stuff
+#include "ooSorts.cc"
 #include "renameModule.cc"
 #include "parameterization.cc"
 #include "instantiateModuleWithFreeParameters.cc"
@@ -760,6 +761,7 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	    copy->setNonexec();
 	  copy->setLineNumber(ma->getLineNumber());
 	  importer->insertSortConstraint(copy);
+	  importer->checkSortConstraint(copy);
 	  copyMetadata(importer, importTranslation, MEMB_AX, ma, copy);
 	  //importer->insertMetadata(MEMB_AX, copy, getMetadata(MEMB_AX, ma));
 	}
@@ -785,6 +787,7 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	    copy->setVariant();
 	  copy->setLineNumber(e->getLineNumber());
 	  importer->insertEquation(copy);
+	  importer->checkEquation(copy);
 	  copyMetadata(importer, importTranslation, EQUATION, e, copy);
 	  //importer->insertMetadata(EQUATION, copy, getMetadata(EQUATION, e));
 	}
@@ -810,6 +813,7 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	    copy->setNarrowing();
 	  copy->setLineNumber(r->getLineNumber());
 	  importer->insertRule(copy);
+	  importer->checkRule(copy);
 	  copyMetadata(importer, importTranslation, RULE, r, copy);
 	  //importer->insertMetadata(RULE, copy, getMetadata(RULE, r));
 	}

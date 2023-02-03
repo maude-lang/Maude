@@ -1,0 +1,541 @@
+Alpha 139 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug where automatic imports were included in the upModule() of
+theories:
+
+fth FOO is
+  sort Foo .
+endfth
+
+Maude> show desugared FOO .
+fth FOO is
+  sort Foo .
+endfth
+
+Maude> red in META-LEVEL : upModule('FOO, false) .
+reduce in META-LEVEL : upModule('FOO, false) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result FTheory: fth 'FOO is
+  including 'BOOL .
+  sorts 'Foo .
+  none
+  none
+  none
+  none
+endfth
+
+Here BOOL should not be included in the meta-module. It also affects
+system theories and strategy theories.
+
+(2) A bug where Maude would output a spurious advisory when a renaming
+does not capture an operator from a parameter; for example:
+
+fth T is
+  sort S .
+  op f : S -> S .
+endfth
+
+fmod M{X :: T} is
+  sort V{X} .
+  op f : V{X} -> V{X} .
+endfm
+
+fmod N{X :: T} is
+  inc M{X} * (op f : V{X} -> V{X} to g) .
+endfm
+
+produced the advisory
+
+Advisory: Ignoring a specific op mapping because operator f comes from a parameter.
+
+even though the renaming did not capture f : X$S -> X$S and f : V{X} -> V{X} was
+renamed correctly.
+
+(3) A bug in smod renaming where a strategy name was printed as 0 in
+an advisory; for example:
+
+sth T is
+  sorts Prop State .
+  strat expand : Prop @ State .
+endsth
+
+smod M{X :: T} is
+endsm
+
+smod TEST{X :: T} is
+  inc M{X} * (strat expand : Prop @ State to expand') .
+endsm
+
+produced the advisory
+
+Advisory: Ignoring a specific strat mapping because strategy 0 comes from a parameter.
+
+(4) A bug where a module-view that maps from a theory importing module M to M itself
+was not allowed because a sort in the target M was mistaken as coming from
+a parameter theory. For example:
+
+fmod M is
+  sort Foo .
+  op a : -> Foo .
+endfm
+
+fth T is
+  inc M .
+  op c : -> Foo .
+endfth
+
+view V from T to M is
+  op c to a .
+endv
+
+Warning: <standard input>, line 11 (view V): implicit mapping of sort Foo that was declared in a module to sort Foo derived from a parameter
+    theory is not allowed.
+
+Reported by Paco.
+
+(5) A related bug where a theory-view that implicitly maps a sort from an imported
+module to a sort in the target theory correctly reports an error but assumes
+the target sort was from a parameter theory rather than the target theory.
+For example:
+
+fmod M is
+  sort Foo .
+endfm
+
+fth T is
+  inc M .
+  op a : -> Foo .
+endfth
+
+fth T2 is
+  inc BOOL .
+  sort Foo .
+  op b : -> Foo .
+endfth
+
+view V from T to T2 is
+  op a to b .
+endv
+
+Warning: <standard input>, line 16 (view V): implicit mapping of sort Foo that was declared in a module to sort Foo derived from a parameter
+    theory is not allowed.
+
+
+New features
+=============
+
+(1) The object constructor symbol <_:_|_> in mod CONFIGURATION now supports
+syntactic sugar where the attribute set identity, none, can be omitted:
+
+red in CONFIGURATION : < O:Oid : C:Cid | > .
+
+reduce in CONFIGURATION : < O:Oid : C:Cid | none > .
+rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+result Object: < O:Oid : C:Cid | none >
+
+This feature was implemented to support object-oriented module and theory
+syntax (see below) but is independent. It works everywhere that mixfix
+syntax is supported except for operator declarations (identities and term-hooks).
+The reason for this exception is that the attribute set identity element needed
+to construct the desugared term may itself not have been parsed yet during
+operator declaration processing. Users should not be writing their own term-hooks
+and the use of objects in identities is unlikely and in any case the desugared
+syntax can be used. The syntactic sugar is also supported in the metalevel:
+
+red in META-LEVEL : metaParse(upModule('CONFIGURATION, false),
+'< 'O:Oid ': 'C:Cid '| '>
+, anyType) .
+
+reduce in META-LEVEL : metaParse(upModule('CONFIGURATION, false), '< 'O:Oid ': 'C:Cid '| '>, anyType) .
+rewrites: 3 in 0ms cpu (0ms real) (~ rewrites/second)
+result ResultPair: {'<_:_|_>['O:Oid,'C:Cid,'none.AttributeSet],'Object}
+
+
+(2) There is initial support for object-oriented syntactic sugar.
+Object-oriented syntactic sugar only exists at the object level and is
+translated to regular declarations when the "pre-module", i.e. the unanaylzed
+module contents, is analyzed and converted module which can be used for
+importation or execution.
+
+The "pre-module" is viewable with
+
+show mod .
+show mod <module name> .
+
+while the importable/executable module is viewable with
+
+show desugared .
+show desugared <module name> .
+
+
+(A) Object-oriented modules
+
+An object-oriented module (omod) is enclosed in the omod ... endom pair. Within
+an omod extra syntactic constructions are permitted, and the omod is
+desugared to a mod.
+
+By default the module CONFIGURATION is automatically included in every omod.
+It is possible to switch this off:
+ set oo include CONFIGURATION off .
+However CONFIGURATION or something similar must be provided since the omod
+desugaring relies on the existence of certain sorts and operators. These sorts
+and operators are identified not by name but semantic attributes and the
+signature structure so for example it would be reasonable to include a renamed
+copy of CONFIGURATION instead and the desugaring process would still work with
+the new names since the semantic attributes and signature structure would be
+unchanged.
+
+In the following exposition the sorts
+  Attribute AttributeSet Cid
+and the operations
+  op none : -> AttributeSet [...] .
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [...] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [...] .
+are assumed to exist, though perhaps under different names.
+
+(i) Class declarations
+
+A class declaration has the syntax:
+  class <class name> .
+or
+  class <class name> | <attribute name> : <type> (, <attribute name> : <type>)* .
+
+A class name can be any legal object level non-parameterized sort name^1
+that does not contain the _ character.
+
+An attribute name is any single token name that does not contain the _ character.
+
+For example
+  class C | foo : [Nat] .
+
+A class C is desugared into a class sort C and a class constant
+  op C : -> C [ctor] .
+
+An attribute foo : T is desugared into an attribute op
+  op foo`:_ : T -> Attribute [ctor] .
+
+Ad hoc overloading of attributes is allowed - internally they are considered
+to be completely different attributes that just happen to share a name.
+There can be subsort polymorphic overloading of attributes from different
+classes.
+
+(ii) Subclass declarations
+
+A subclass declaration has the syntax:
+  subclass <class name>+ ( < <class name>+) +
+For example:
+  subclass BankAccount BrokerageAccount < PersonalAccount < Account .
+  subclass MarginAccount < BrokerageAccount .
+  subclass SavingsAccount CheckingAccount < BankAccount .
+The keyword subclasses can be used in place of subclass to improve readability.
+A subclass declaration is translated to a subsort declaration between the
+corresponding class sorts.
+
+(iii) Message declarations
+
+A message declaration has the syntax:
+  msg <token>+ : <type>* -> <type> { [ <atttribute list> ] } .
+or 
+  msgs <token>+ : <type>* -> <type> { [ <atttribute list> ] } .
+
+A message declaration is entirely analogous to an operator declaration so the first
+form declares a single message which may have complex mixfix syntax while the
+second declares several messages with single token names sharing the same
+domain, range and attributes. Each message declaration is translated to an operator
+declaration with the attributes ctor and msg in addition to any attributes specified
+in message declaration.
+
+(iv) Statement transformation
+
+Statements in omods allow certain shorthands for the second and third
+arguments of the <_:_|_> operator which are fixed by a transformation
+before the statement is put in the system module (and hence before the
+rewrite engine sees it).
+
+The design of the transformation is guided by several principles:
+* Transforming a statement in a way that surprises the user is worse
+than not providing a transformation.
+* Transformations should be all or nothing at the statement level -
+transforming some occurences of an object but not others will likely
+lead to confusion.
+* Transformations should work for non-executable statements -
+it is reasonable to have a nonexec rule transformed and later use it
+at the metalevel or with the strategy language.
+
+A statement (mb/cmb/eq/ceq/rl/crl) that contains at least one occurrence of
+the <_:_|_> operator is a candidate for transformation unless it has the
+dnt (do not transform) attribute. The dnt attribute has no existence outside
+of omods and disappears during translation to a system module - it is simply
+a flag that instructs the desugaring code to pass the statement into the system
+module without further consideration. For example:
+  rl < O : C | > => < O : C' | > [dnt] .  *** change class of object O
+
+Within a candidate statement, two subterms with the object constructor on
+top
+  < t1' : t2' | t3' >
+and
+  < t1'' : t2'' | t3'' >
+are considered to be occurrences of the same object named t1 if t1
+is the theory normal form of both t1' and t1''.
+
+In order for a statement to be transformed, there are a strict requirements
+governing the occurrence of objects. These maybe relaxed in the future.
+If  candidate statement does not meet these requirements, advisories will
+be produced and the statement will be placed in the resulting system module
+untransformed.
+
+The term parts of a statement are of four kinds:
+  * pattern : the left-hand side of the statement
+  * subject : the right-hand side of an equation or rule
+  * condition-pattern : the left-hand side of an assignment condition fragment
+                      or the right-hand side of a rule condition fragment
+  * condition-subject : any other part of a condition fragment
+
+No objects must occur in a condition-pattern.
+
+An object named t must occur zero or one times in the left-hand side
+of a statement. In the first case the t is called a "new object"
+and in the second case t is called an "existing object"
+
+New objects can occur in the subject or condition-subject parts and
+are neither analyzed nor transformed. The rationale is that such occurrences
+might have arbitrary code as second and third arguments to choose
+the class and attributes of a newly created object.
+
+Occurrences of existing objects are checked and may be transformed. The class
+argument of each occurrence of an existing object must be identical and can
+only be either a class constant or a variable of a class sort.
+
+The attribute argument of an existing object can either be
+  a1
+or an attribute set
+  a1, a1, ..., an
+under the _,_ AttributeSet operator. Here each ai must be one of
+  * the constant none
+  * a term headed by an attribute operator
+  * a variable X of sort AttributeSet
+Only one such variable X is allowed in an attribute argument and if such a
+variable appears the attribute argument of some occurrence of an
+existing object E, it must appear in the attribute argument of every
+occurrence of object E. Two terms ai and aj in the same attribute argument
+may not be headed by the same attribute operator.
+
+If a candidate statement is deemed to satisfy all of these requirements
+it is transformed as follows:
+
+If the class argument of an existing object t is a class constant C, it is
+replaced by a fresh variable V:C in all occurrences of t.
+
+If the attribute arguments of the occurrences of an existing object t
+lack an AttributeSet variable, a fresh variable Atts:AttributeSet is added
+to all such attribute arguments.
+
+All occurrences of the constant none are removed from the attribute
+argument of all occurrences of existing objects.
+
+If the attribute argument of the pattern occurrence of some existing object E
+has no term headed by attribute operator foo`:_ while some other occurrence
+of E has such a term in its attribute argument, a term
+  foo : A:[K]
+is added where A:[K] is a fresh variable of the appropriate kind.
+
+If the attribute argument of a subject or condition-subject occurrence of
+some existing object E has no term headed by attribute operator foo`:_ while
+the completed pattern occurrence of object E does have such a term
+  foo : u
+(which may been generated by the previous step) then a copy of foo : u is
+added to its attribute argument.
+
+Note that the transformation on candidate statements is idempotent - a
+fully completed statement meets all the requirements but the transformation
+is the identity/
+
+If a statement is a candidate, and meets all the requirements, no advisories
+are printed and any transformation is done silently. Sometimes you might
+want to see what transformations happened in your omod.
+
+set verbose on.
+
+will cause the transformation process to print a summary for each
+candidate statement meeting the requirements.
+
+(B) Importation of omods
+
+Because omods are transformed to system modules, the class/attribute
+structure is lost. There is no hidden data in the system module.
+
+For the purposes of determining legal subclass declarations and
+transforming statements, class sorts/constants and attribute operators
+in a system module derived from an omod and imported into an omod
+are recovered by duck typing. It is possible to trick this process (for
+example by showing the desugared module and then reentering it, you
+get a system module that is treated as a desugared omod). But this
+is unlikely to happen by accident.
+
+It's also possible to mangle the system module of desugared omod by
+renaming generated sorts and operators or with subsort polymorphic
+overloads of generated operators so that class sorts/constants and
+attribute operators are no longer recognized. Again this is unlikely to
+happen by accident.
+
+(C) Object-oriented mappings in renamings
+
+Renamings may now contain object-oriented mappings. These are converted into
+regular mappings when the renaming is canonicalized against the module being
+renamed.
+
+(i) Class mappings
+A class mapping looks like
+  class C to D
+For a class C in module being renamed (discovered by duck typing), this generates
+a sort renaming
+  sort C to D
+and an operator renaming
+  op C : -> [C] to D
+
+(ii) Attribute mappings
+A generic attribute mapping looks like
+  attr A to B
+For each attribute operator A`:_ in the module being renamed (discovered by duck
+typing) with domain kind [K], this generates a specific op mapping
+  op A`:_ : [K] -> Attribute to B`:_
+A specific attribute mapping looks like
+  attr A : T to B
+If an attribute operator A`:_ with domain kind [K] such that T is [K]
+or a sort in [K], exists in the module being renamed, a specific op mapping
+  op A`:_ : [K] -> Attribute to B`:_
+is generated.
+
+(iii) Message mappings
+These have the syntax:
+  msg ⟨identifier⟩ to ⟨identifier⟩ [<attribute-list>]
+  msg ⟨identifier⟩ : ⟨type-list⟩ -> <type> to ⟨identifier⟩ [<attribute-list>]
+The [<attribute-list>] parts are optional. They are converted to regular op
+mappings during canonicalization. The only difference from regular op mappings
+is that if they will rename an operator that does not have the msg attribute,
+an advisory is issued during canonicalization.
+
+(D) Examples
+
+The directory /tests/ObjectOriented/ in the source distribution contains some
+examples from the Full Maude section of the Maude manual that have been
+slightly modified to run with this alpha release.
+
+(E) Limitations
+
+(i) Not all possible sanity checks are done.
+(ii) While omods may be parameterized, classes may not be parameterized.
+(iii) There are no object-oriented theories (oths).
+(iv) There are no object-oriented mappings in views.
+
+While some of the syntax for these missing features exists, the implementation
+is incomplete and using it will lead to crashes - there's no point in
+bullet-proofing it in an alpha release since full implementation of these
+features is planned for the 3.3 release.
+
+
+Minor changes
+==============
+
+(1) The handling of extra < symbols in a subsort declaration has been made uniform.
+Previously
+  subsort < Foo < Bar .
+was caught by the surface parser and reported as:
+Warning: <standard input>, line 3 (fmod FOO): syntax error
+while
+  subsort Foo < < Bar .
+was allowed by the surface parser and handled as:
+Warning: <standard input>, line 3 (fmod FOO): undeclared sort <.
+and
+  subsort Foo < Bar < .
+was allowed by the surface parser and detected during sort processing:
+Warning: <standard input>, line 3 (fmod FOO): stray < at the end of subsort declaration.
+
+Now the surface parser is stricter about subsort declarations and all
+three of these errors are reported as syntax errors.
+
+(2) An empty sort declaration
+  sort .
+used to be caught by the sort processing, which didn't have a token to obtain
+the line number from:
+Warning: skipped empty sort declaration.
+It is now caught by the surface parser and reported as a syntax error
+Warning: <standard input>, line 2 (fmod FOO): syntax error
+
+(3) mod CONFIGURATION now contains the projection function:
+  op getClass : Object -> Cid .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid . 
+
+(4) The keyword "from" is now a legal sort name; this is mostly for consistancy -
+the other keywords are legal sort names and "from" was left out by mistake.
+
+(5) Identity sort and op mappings are quietly ignored during renaming canonicalization.
+This also includes class, attr and msg mappings. Note that an op mapping that changes
+a syntactic attribute of at least one operator in the module being renamed is not
+considered an identity mapping. So for example:
+
+fmod FOO is
+  sort Foo .
+  op _+_ : Foo Foo -> Foo [gather (e E)] .
+endfm
+
+fmod BAR is
+  inc FOO * (op _+_ : Foo Foo -> Foo to _+_ [gather (e E)]) .
+endfm
+
+fmod BAZ is
+  inc FOO * (op _+_ : Foo Foo -> Foo  to _+_ [gather (E e)]) .
+endfm
+
+Here the mapping on _+_ in BAR is an identity mapping but in BAZ it is not
+an identity mapping because it switches the gather pattern.
+
+(6) There is now a check for assignment conditions fragments. If all of the
+variables in the left-hand side are bound before the matching takes place
+an advisory is issued. For example:
+
+fmod FOO is
+  sort Foo .
+  op k : Foo Foo Foo -> Foo .
+  ops f g h : Foo Foo -> Foo .
+  ops a b c : -> Foo .
+vars W X Y Z : Foo .
+  ceq k(W, X, Y) = Z
+    if g(W, Z) := f(X, Y)
+    /\ h(X, Z) := f(W, Y) .
+endfm
+
+Advisory: <standard input>, line 9 (fmod FOO): all the variables in the left-hand side of assignment condition fragment h(X, Z) := f(W, Y)
+    are bound before the matching takes place.
+
+Requested by Carolyn.
+
+(7) The operator
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [...] .
+in mod CONFIGURATION now has a format attribute to print a space
+after the comma.
+
+------------
+^1 Currently a sort name is any single token name that excludes the characters
+  .  :
+and the backquoted (needed to be part of a single token) characters
+  `[  `]  `{  `}  `,
+with two exceptions:
+
+(a) The backquoted characters
+   `{  `}  `,
+are permitted iff they occur as part of a sort name <ps> constructed by:
+   <ps> ::= <regular sort name> | <ps> `{ <sl> `}
+   <sl> ::= <ps> | <sl> `, <ps>
+In this the backquotes can be omitted and thus the sort name need not be a single token.
+This exception is needed to support parameterized sort names, which as noted
+above are not currectly legal class names.
+
+(b) The tokens
+  <  ->  ~>
+are not allowed as sort names by the object level parser, to avoid ambiguity in
+subsort and operator declarations.

@@ -85,6 +85,13 @@ public:
 			 NatSet& boundVariables,
 			 Vector<FreeSubterm>& subterms);
   void resetSlotIndices();
+  //
+  //	Gross hack to allow surgery on free theory terms from ouside of the theory.
+  //	Only safe if there has been no processing on the term.
+  //	Garbage collection of the old argument (parts of which the caller
+  //	may have reused in newArgument) is the callers responsibility.
+  //
+  Term* replaceArgument(Index index, Term* newArgument);
 
 private:
   FreeTerm(const FreeTerm& original, FreeSymbol* symbol, SymbolMap* translator);
@@ -149,4 +156,15 @@ FreeTerm::setVisitedFlag(bool state)
   visitedFlag = state;
 }
 
+inline Term*
+FreeTerm::replaceArgument(Index index, Term* newArgument)
+{
+  Assert(occursBelow().empty(), "can't do surgery on term after analysis");
+  Assert(occursInContext().empty(), "can't do surgery on term after analysis");
+  Assert(collapseSymbols().empty(), "can't do surgery on term after analysis");
+  Term* oldArgument = argArray[index];
+  argArray[index] = newArgument;
+  return oldArgument;
+}
+  
 #endif
