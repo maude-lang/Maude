@@ -1,0 +1,446 @@
+***
+***	Test use of pconst with parameterized module views.
+***
+
+*** don't pull in BOOL so we have simple modules to look at
+set include BOOL off .
+
+
+*** view maps to stuff in target module
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(X$c) = X$c .
+endfm
+
+view V{X :: T} from T2 to M{X} is
+  sort Bar to Baz{X} .
+  op d to e .
+endv
+
+fmod M2{X :: T2} is
+  op h : X$Bar -> X$Bar .
+  eq h(X$d) = h(X$d) .
+endfm
+
+fmod TEST{X :: T} is
+  inc M2{V{X}} .
+endfm
+
+show all .
+
+
+*** view maps to stuff in target modules parameter theory
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(X$c) = X$c .
+endfm
+
+view V{X :: T} from T2 to M{X} is
+  sort Bar to X$Foo .
+  op d to  X$c .
+endv
+
+fmod M2{X :: T2} is
+  op h : X$Bar -> X$Bar .
+  eq h(X$d) = h(X$d) .
+endfm
+
+fmod TEST{X :: T} is
+  inc M2{V{X}} .
+endfm
+
+show all .
+
+------------------------------------------------------
+
+*** view maps to stuff in target module, only c pconst
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(X$c) = X$c .
+endfm
+
+view V{X :: T} from T2 to M{X} is
+  sort Bar to Baz{X} .
+  op d to e .
+endv
+
+fmod M2{X :: T2} is
+  op h : X$Bar -> X$Bar .
+  eq h(d) = h(d) .
+endfm
+
+fmod TEST{X :: T} is
+  inc M2{V{X}} .
+endfm
+
+show all .
+
+
+*** view maps to stuff in target modules parameter theory, only c pconst
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(X$c) = X$c .
+endfm
+
+view V{X :: T} from T2 to M{X} is
+  sort Bar to X$Foo .
+  op d to  X$c .
+endv
+
+fmod M2{X :: T2} is
+  op h : X$Bar -> X$Bar .
+  eq h(d) = h(d) .
+endfm
+
+fmod TEST{X :: T} is
+  inc M2{V{X}} .
+endfm
+
+show all .
+
+------------------------------------------------------
+
+*** view maps to stuff in target module, only d pconst
+
+fth T is
+  sort Foo .
+  op c : -> Foo .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(c) = c .
+endfm
+
+view V{X :: T} from T2 to M{X} is
+  sort Bar to Baz{X} .
+  op d to e .
+endv
+
+fmod M2{X :: T2} is
+  op h : X$Bar -> X$Bar .
+  eq h(X$d) = h(X$d) .
+endfm
+
+fmod TEST{X :: T} is
+  inc M2{V{X}} .
+endfm
+
+show all .
+
+
+*** view maps to stuff in target modules parameter theory, only d pconst
+
+fth T is
+  sort Foo .
+  op c : -> Foo .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(c) = c .
+endfm
+
+view V{X :: T} from T2 to M{X} is
+  sort Bar to X$Foo .
+  op d to  c .
+endv
+
+fmod M2{X :: T2} is
+  op h : X$Bar -> X$Bar .
+  eq h(X$d) = h(X$d) .
+endfm
+
+fmod TEST{X :: T} is
+  inc M2{V{X}} .
+endfm
+
+show all .
+
+------------------------------------------------------------------------------------------------------------
+
+*** Now repeat changing parameters
+
+*** view maps to stuff in target module
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(X$c) = X$c .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Baz{Y} .
+  op d to e .
+endv
+
+fmod M2{Z :: T2} is
+  op h : Z$Bar -> Z$Bar .
+  eq h(Z$d) = h(Z$d) .
+endfm
+
+fmod TEST{W :: T} is
+  inc M2{V{W}} .
+endfm
+
+show all .
+
+
+*** view maps to stuff in target modules parameter theory
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(X$c) = X$c .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to Y$c .
+endv
+
+fmod M2{Z :: T2} is
+  op h : Z$Bar -> Z$Bar .
+  eq h(Z$d) = h(Z$d) .
+endfm
+
+fmod TEST{W :: T} is
+  inc M2{V{W}} .
+endfm
+
+show all .
+
+
+------------------------------------------------------
+
+*** view maps to stuff in target module, only c pconst
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(X$c) = X$c .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Baz{Y} .
+  op d to e .
+endv
+
+fmod M2{Z :: T2} is
+  op h : Z$Bar -> Z$Bar .
+  eq h(d) = h(d) .
+endfm
+
+fmod TEST{W :: T} is
+  inc M2{V{W}} .
+endfm
+
+show all .
+
+
+*** view maps to stuff in target modules parameter theory, only c pconst
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(X$c) = X$c .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to  Y$c .
+endv
+
+fmod M2{Z :: T2} is
+  op h : Z$Bar -> Z$Bar .
+  eq h(d) = h(d) .
+endfm
+
+fmod TEST{W :: T} is
+  inc M2{V{W}} .
+endfm
+
+show all .
+
+------------------------------------------------------
+
+*** view maps to stuff in target module, only d pconst
+
+fth T is
+  sort Foo .
+  op c : -> Foo .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(c) = c .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Baz{Y} .
+  op d to e .
+endv
+
+fmod M2{Z :: T2} is
+  op h : Z$Bar -> Z$Bar .
+  eq h(Z$d) = h(Z$d) .
+endfm
+
+fmod TEST{W :: T} is
+  inc M2{V{W}} .
+endfm
+
+show all .
+
+
+*** view maps to stuff in target modules parameter theory, only d pconst
+
+fth T is
+  sort Foo .
+  op c : -> Foo .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Baz{X} .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  eq f(c) = c .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to  c .
+endv
+
+fmod M2{Z :: T2} is
+  op h : Z$Bar -> Z$Bar .
+  eq h(Z$d) = h(Z$d) .
+endfm
+
+fmod TEST{W :: T} is
+  inc M2{V{W}} .
+endfm
+
+show all .

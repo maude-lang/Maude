@@ -844,6 +844,10 @@ attribute	:	KW_ASSOC
 			{
 			  CM->setFlag(SymbolType::DITTO);
 			}
+		|	KW_PCONST
+			{
+			  CM->setFlag(SymbolType::PCONST);
+			}
 		;
 
 /*
@@ -976,5 +980,5 @@ attrKeyword2	:	KW_ASSOC | KW_COMM | KW_ID | KW_IDEM | KW_ITER | KW_LEFT | KW_RIG
 		|	KW_PREC | KW_GATHER | KW_STRAT | KW_POLY | KW_MEMO | KW_CTOR
 		|	KW_LATEX | KW_SPECIAL | KW_FROZEN | KW_METADATA
 		|	KW_CONFIG | KW_OBJ | KW_DITTO | KW_FORMAT
-		|	KW_ID_HOOK | KW_OP_HOOK | KW_TERM_HOOK
+		|	KW_ID_HOOK | KW_OP_HOOK | KW_TERM_HOOK | KW_PCONST
 		;

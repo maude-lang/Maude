@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -90,7 +90,12 @@ Token::printTokenVector(ostream& s,
 	    {
 	      if (c == ')' || c == ']' || c == '}' || c == ',')
 		needSpace = false;
-	      else if (c == '(' || c == '[' || c == '{')
+	      else if (c == '(')
+		{
+		  needSpace = false;
+		  nextNeedSpace = false;
+		}
+	      else if (c == '[' || c == '{')
 		nextNeedSpace = false;
 	    }
 	  if (needSpace)
@@ -130,33 +135,6 @@ Token::makeParameterInstanceName(int parameterCode, int originalCode)
   newName += stringTable.name(originalCode);
   return encode(newName.c_str());
 }
-
-/*
-bool
-Token::splitParameterInstanceName(int code, int& parameterName, int& baseName)
-{
-  //
-  //	Checks for a parameter instance name of the form:
-  //	  parameterName$baseName
-  //	and if so, splits it and returns true. Otherwise returns false.
-  //
-  const char* n = name(code);
-  for (const char* p = n; *p; ++p)
-    {
-      if (*p == '$' && p != n && *(p + 1) != 0)  // first $ not at one end
-	{
-	  size_t parameterLength = p - n;
-	  char* t = new char[parameterLength + 1];
-	  strncpy(t, n, parameterLength);
-	  t[parameterLength] = '\0';
-	  parameterName = encode(t);
-	  baseName = encode(p + 1);
-	  return true;
-	}
-    }
-  return false;
-}
-*/
 
 void
 Token::fixUp(const char* tokenString, int& lineNumber)
@@ -621,103 +599,6 @@ Token::doubleToCode(double d)
   return code;
 }
 
-/*
-Rope
-Token::codeToRope(int code)
-{
-  Rope result;
-  bool seenBackslash = false;
-  for (const char* p = stringTable.name(code) + 1; *p; p++)
-    {
-      char c = *p;
-      switch (c)
-	{
-	case '\\':
-	  {
-	    if (!seenBackslash)
-	      {
-		seenBackslash = true;
-		continue;
-	      }
-	    break;
-	  }
-	case '"':
-	  {
-	    if (!seenBackslash)
-	      return result;
-	    break;
-	  }
-	case 'a':
-	  {
-	    if (seenBackslash)
-	      c = '\a';
-	    break;
-	  }
-	case 'b':
-	  {
-	    if (seenBackslash)
-	      c = '\b';
-	    break;
-	  }
-	case 'f':
-	  {
-	    if (seenBackslash)
-	      c = '\f';
-	    break;
-	  }
-	case 'n':
-	  {
-	    if (seenBackslash)
-	      c = '\n';
-	    break;
-	  }
-	case 'r':
-	  {
-	    if (seenBackslash)
-	      c = '\r';
-	    break;
-	  }
-	case 't':
-	  {
-	    if (seenBackslash)
-	      c = '\t';
-	    break;
-	  }
-	case 'v':
-	  {
-	    if (seenBackslash)
-	      c = '\v';
-	    break;
-	  }
-	default:
-	  {
-	    if (seenBackslash && isdigit(c) && c != '8' && c != '9')
-	      {
-		int i = c - '0';
-	        c = *(p + 1);
-		if (isdigit(c) && c != '8' && c != '9')
-		  {
-		    ++p;
-		    i = 8 * i + c - '0';
-		    c = *(p + 1);
-		    if (isdigit(c) && c != '8' && c != '9')
-		      {
-			++p;
-			i = 8 * i + c - '0';
-		      }
-		  }
-		c = i;
-	      }
-	  }
-	}
-      result += c;
-      seenBackslash = false;
-    }
-  CantHappen("bad end to string");
-  return result;
-}
-*/
-
 Rope
 Token::stringToRope(const char* string)
 {
@@ -1022,4 +903,53 @@ Token::peelParens(Vector<Token>& tokens)
   for (int i = 1; i < len - 1; ++i)
     tokens[i - 1] = tokens[i];
   tokens.resize(len - 2);
+}
+
+Rope
+Token::removeBoundParameterBrackets(int code)
+{
+  //
+  //	Because we put []s around bound parameters to distinguish them from views
+  //	in canonical module and view names for caching, we need to undo this for
+  //	printing out module imports and to-modules.
+  //	We remove []s that are inside {} with backquoted characters disregarded.
+  //
+  Rope newName;
+  bool backquoteActive = false;
+  int braceCount = 0;
+  for (const char* p = name(code); *p; ++p)
+    {
+      char c = *p;
+      if (backquoteActive)
+	backquoteActive = false;
+      else
+	{ 
+	  switch (c)
+	    {
+	    case '`':
+	      {
+		backquoteActive = true;
+		break;
+	      }
+	    case '[':
+	    case ']':
+	      {
+		if (braceCount > 0)
+		  continue;  // skip bracket
+	      }
+	    case '{':
+	      {
+		++braceCount;
+		break;
+	      }
+	    case '}':
+	      {
+		--braceCount;
+		break;
+	      }
+	    }
+	}
+      newName += c;
+    }
+  return newName;
 }

@@ -443,11 +443,13 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     ''Import.Sort],'op-hook[''extendingSymbol.Sort,''extending_..Qid,
     ''ModuleExpression.Sort,''Import.Sort],'op-hook[''includingSymbol.Sort,
     ''including_..Qid,''ModuleExpression.Sort,''Import.Sort],'op-hook[
-    ''nilImportListSymbol.Sort,''nil.Sort,'nil.TypeList,''ImportList.Sort],
-    'op-hook[''importListSymbol.Sort,''__.Sort,'__[''ImportList.Sort,
-    ''ImportList.Sort],''ImportList.Sort],'op-hook[''emptySortSetSymbol.Sort,
-    ''none.Sort,'nil.TypeList,''QidSet.Sort],'op-hook[''sortSetSymbol.Sort,
-    ''_;_.Sort,'__[''NeQidSet.Sort,''QidSet.Sort],''NeQidSet.Sort],'op-hook[
+    ''generatedBySymbol.Sort,''generated-by_..Qid,''ModuleExpression.Sort,
+    ''Import.Sort],'op-hook[''nilImportListSymbol.Sort,''nil.Sort,
+    'nil.TypeList,''ImportList.Sort],'op-hook[''importListSymbol.Sort,
+    ''__.Sort,'__[''ImportList.Sort,''ImportList.Sort],''ImportList.Sort],
+    'op-hook[''emptySortSetSymbol.Sort,''none.Sort,'nil.TypeList,
+    ''QidSet.Sort],'op-hook[''sortSetSymbol.Sort,''_;_.Sort,'__[
+    ''NeQidSet.Sort,''QidSet.Sort],''NeQidSet.Sort],'op-hook[
     ''subsortSymbol.Sort,''subsort_<_..Qid,'__[''Sort.Sort,''Sort.Sort],
     ''SubsortDecl.Sort],'op-hook[''emptySubsortDeclSetSymbol.Sort,''none.Sort,
     'nil.TypeList,''SubsortDeclSet.Sort],'op-hook[''subsortDeclSetSymbol.Sort,
@@ -503,6 +505,7 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     ''configSymbol.Sort,''config.Sort,'nil.TypeList,''Attr.Sort],'op-hook[
     ''objectSymbol.Sort,''object.Sort,'nil.TypeList,''Attr.Sort],'op-hook[
     ''msgSymbol.Sort,''msg.Sort,'nil.TypeList,''Attr.Sort],'op-hook[
+    ''pconstSymbol.Sort,''pconst.Sort,'nil.TypeList,''Attr.Sort],'op-hook[
     ''specialSymbol.Sort,''special.Sort,''NeHookList.Sort,''Attr.Sort],
     'op-hook[''labelSymbol.Sort,''label.Sort,''Qid.Sort,''Attr.Sort],'op-hook[
     ''metadataSymbol.Sort,''metadata.Sort,''String.Sort,''Attr.Sort],'op-hook[

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2018-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -147,6 +147,8 @@ MetaLevel::downImport2(DagNode* metaImport, MetaPreModule* pm)
     mode = ImportModule::EXTENDING;
   else if (mi == includingSymbol)
     mode = ImportModule::INCLUDING;
+  else if (mi == generatedBySymbol)
+    mode = ImportModule::GENERATED_BY;
   else
     return false;
   

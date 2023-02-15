@@ -82,6 +82,6 @@ ViewDatabase::deleteView(int name)
 void
 ViewDatabase::showNamedViews(ostream& s) const
 {
-  FOR_EACH_CONST(i, ViewMap, viewMap)
-    s << "view " << static_cast<NamedEntity*>(i->second) << '\n';
+  for (const auto& p : viewMap)
+    s << "view " << static_cast<NamedEntity*>(p.second) << '\n';
 }

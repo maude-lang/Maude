@@ -216,7 +216,7 @@ A class C is desugared into a class sort C and a class constant
   op C : -> C [ctor] .
 
 An attribute foo : T is desugared into an attribute op
-  op foo`:_ : T -> Attribute [ctor] .
+  op foo`:_ : T -> Attribute [ctor gather (&)] .
 
 Ad hoc overloading of attributes is allowed - internally they are considered
 to be completely different attributes that just happen to share a name.
@@ -260,7 +260,7 @@ The design of the transformation is guided by several principles:
 * Transforming a statement in a way that surprises the user is worse
 than not providing a transformation.
 * Transformations should be all or nothing at the statement level -
-transforming some occurences of an object but not others will likely
+transforming some occurrences of an object but not others will likely
 lead to confusion.
 * Transformations should work for non-executable statements -
 it is reasonable to have a nonexec rule transformed and later use it
@@ -352,7 +352,7 @@ added to its attribute argument.
 
 Note that the transformation on candidate statements is idempotent - a
 fully completed statement meets all the requirements but the transformation
-is the identity/
+is the identity.
 
 If a statement is a candidate, and meets all the requirements, no advisories
 are printed and any transformation is done silently. Sometimes you might

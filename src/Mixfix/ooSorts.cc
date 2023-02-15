@@ -62,10 +62,11 @@ ImportModule::findClassIdSort() const
   if (candidates.size() == 1)
     return *(candidates.begin());
   if (candidates.empty())
-    IssueWarning(*this  << ": unable to find a class id sort in " << QUOTE(this) << ".");
+    IssueWarning(*this  << ": unable to find a class id sort (usually " << QUOTE("Cid") << ") in " << QUOTE(this) << ".");
   else
     {
-      ComplexWarning(*this  << ": unable to find a unique class id  sort in " << QUOTE(this) << " . Candidates are:");
+      ComplexWarning(*this  << ": unable to find a unique class id sort (usually " << QUOTE("Cid") <<
+		     ") in " << QUOTE(this) << ". Candidates are:");
       for (Sort* s : candidates)
 	cerr << ' ' << QUOTE(s);
       cerr << endl;
@@ -143,10 +144,11 @@ ImportModule::findAtttributeSort() const
   if (attributeCandidates.size() == 1)
     return *(attributeCandidates.begin());
   if (attributeCandidates.empty())
-    IssueWarning(*this  << ": unable to find an attribute sort in " << QUOTE(this) << ".");
+    IssueWarning(*this  << ": unable to find an attribute sort (usually " << QUOTE("Attribute") << ") in " << QUOTE(this) << ".");
   else
     {
-      ComplexWarning(*this  << ": unable to find a unique attribute sort in " << QUOTE(this) << " . Candidates are:");
+      ComplexWarning(*this  << ": unable to find a unique attribute sort (usually " << QUOTE("Attribute") <<
+		     ") in " << QUOTE(this) << " . Candidates are:");
       for (Sort* s : attributeCandidates)
 	cerr << ' ' << QUOTE(s);
       cerr << endl;

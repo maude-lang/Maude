@@ -1,3 +1,12 @@
+2023-02-09  Steven Eker  <eker@pup>
+
+	* prelude.maude: added constant pconst to fmod META-MODULE and pconstSymbol
+	hook to metaReduce() in fmod META-LEVEL
+	added op generated-by to fmod META-MODULE and generatedBySymbol hood to
+	metaReduce() in fmod META-LEVEL
+
+===================================Maude140===========================================
+
 2023-01-31  Steven Eker  <eker@pup>
 
 	* prelude.maude: added format attribute to print space after comma for

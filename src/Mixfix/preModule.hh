@@ -43,6 +43,7 @@ public:
   Interpreter* getOwner() const;
   void setModuleType(MixfixModule::ModuleType type);
   MixfixModule::ModuleType getModuleType() const;
+  bool isTheory() const;
 
   void addParameter(Token name, ModuleExpression* theory);
   int getNrParameters() const;
@@ -96,6 +97,12 @@ inline MixfixModule::ModuleType
 PreModule::getModuleType() const
 {
   return moduleType;
+}
+
+inline bool
+PreModule::isTheory() const
+{
+  return MixfixModule::isTheory(getModuleType()); 
 }
 
 inline int

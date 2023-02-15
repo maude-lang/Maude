@@ -1,0 +1,63 @@
+set show timing off .
+set show advisories off .
+set verbose on .
+
+***
+***	Test module operations on oths/omods/views.
+***
+
+oth CONTAINER is
+  inc TRIV .
+  class Container | guts : Elt .
+  msg insert : Oid Oid Elt -> Msg .
+endoth
+
+show desugared .
+show all .
+
+omod DO-SOMETHING{Z :: CONTAINER} is
+  inc QID .
+  subsort Qid < Oid .
+  op init : Z$Elt -> Configuration .
+  eq init(X:Z$Elt) = < 'a : Z$Container | guts : X:Z$Elt > .
+  rl insert(R:Oid, S:Oid, D:Z$Elt) < R:Oid : Z$Container | > => < R:Oid : Z$Container | guts : D:Z$Elt > .
+endom
+
+show desugared .
+
+red init(E:Z$Elt) .
+rew init(E:Z$Elt) insert('a, 'b, F:Z$Elt) .
+
+
+omod BAG{X :: TRIV} is
+  class Bag{X} | contents : X$Elt .
+  msg replace : Oid X$Elt -> Msg .
+endom
+
+show desugared .
+show all .
+
+view Bag{Y :: TRIV} from CONTAINER to BAG{Y} is
+  class Container to Bag{Y} .
+  sort Elt to Y$Elt .
+  attr guts to contents .
+vars R S : Oid .
+var D : Elt .
+  msg insert(R, S, D) to term replace(R, D) .
+endv
+
+show view .
+show processed view .
+
+omod TEST{Y :: TRIV} is
+  inc DO-SOMETHING{Bag{Y}} .
+endom
+
+show all .
+
+omod TEST is
+  inc DO-SOMETHING{Bag{Nat}} .
+endom
+
+red init(42) .
+rew init(42) replace('a, 13) .

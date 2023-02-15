@@ -177,7 +177,7 @@ VisibleModule::showImports(ostream& s) const
       if (UserLevelRewritingContext::interrupted())
 	return;
       s << "  " << importModeString(getImportMode(i)) <<
-	' ' << getImportedModule(i) << " .\n";
+	' ' << Token::removeBoundParameterBrackets(getImportedModule(i)->id()) << " .\n";
     }
 }
 
@@ -266,11 +266,11 @@ VisibleModule::showVars(ostream& s, bool indent) const
 {
   const char* ind = indent ? "  " : "";
   const AliasMap& variableAliases = getVariableAliases();
-  FOR_EACH_CONST(i, AliasMap, variableAliases)
+  for (const auto& p : variableAliases)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << ind << "var " << Token::name(i->first) << " : " << i->second << " .\n";
+      s << ind << "var " << Token::name(p.first) << " : " << p.second << " .\n";
     }
 }
 
@@ -367,6 +367,8 @@ VisibleModule::showPolymorphAttributes(ostream& s, int index) const
     s << " idem";
   if (st.hasFlag(SymbolType::ITER))
     s << " iter";
+  if (st.hasFlag(SymbolType::PCONST))
+    s << " pconst";
   //
   //	Object-oriented attributes.
   //
@@ -528,9 +530,15 @@ void
 VisibleModule::showPolymorphDecl(ostream& s, bool indent, int index) const
 {
   const char* ind = indent ? "  " : "";
-  s << ind << "op " << getPolymorphName(index) << " :";
+  s << ind << "op ";
+  
   const Vector<Sort*>& domainAndRange = getPolymorphDomainAndRange(index);
   int nrArgs = domainAndRange.length() - 1;
+  if (nrArgs == 0)
+    s << Token::sortName(getPolymorphName(index).code()) << " :";
+  else
+    s << getPolymorphName(index) << " :";
+
   for (int i = 0; i < nrArgs; i++)
     {
       if (Sort* sort = domainAndRange[i])
@@ -657,6 +665,11 @@ VisibleModule::showAttributes(ostream& s, Symbol* symbol, int opDeclIndex) const
   if (st.hasFlag(SymbolType::IDEM))
     {
       s << space << "idem";
+      space = " ";
+    }
+  if (st.hasFlag(SymbolType::PCONST))
+    {
+      s << space << "pconst";
       space = " ";
     }
   //

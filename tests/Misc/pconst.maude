@@ -1,0 +1,263 @@
+***
+***	Test basic use of pconst attribute
+***
+
+*** don't pull in BOOL so we have simple modules to look at
+set include BOOL off .
+
+
+*** Make sure polymorpic operators are not pconst
+
+fth T is
+  sort Bar .
+  op a : -> Universal [poly (0) pconst] .
+endfth
+
+
+*** Make sure a module declared constant doesn't get mapped even if it is overloaded in a theory.
+
+fmod M is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfm
+
+fth T is
+  inc M .
+  sort Bar .
+  op a : -> [Foo] [pconst] .
+endfth
+
+fmod BAR{X :: T} is
+endfm
+
+show all .
+
+
+*** Make sure a constant imported from a theory is mapped
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  inc T .
+  sort Bar .
+  op b : -> Bar [pconst] .
+endfth
+
+fmod BAR{X :: T2} is
+endfm
+
+show all .
+
+
+*** Make sure constant is mapped out of parameter theory on instantiation
+
+
+fth T2 is
+  sort Bar .
+  op b : -> Bar [pconst] .
+endfth
+
+fmod BAR{X :: T2} is
+  op f : X$Bar -> X$Bar .
+  eq f(X$b) = X$b .
+endfm
+
+show all .
+
+fmod BAZ is
+  sort Quux .
+  op bb : -> Quux .
+endfm
+
+view V from T2 to BAZ is
+  sort Bar to Quux .
+  op b to bb .
+endv
+
+fmod TEST is
+  inc BAR{V} .
+endfm
+
+show all .
+
+
+*** Make sure constant is mapped out of parameter theory on instantiation with a theory import
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  inc T .
+  sort Bar .
+  op b : -> Bar [pconst] .
+endfth
+
+fmod BAR{X :: T2} is
+  op f : X$Foo -> X$Bar .
+  eq f(X$a) = X$b .
+endfm
+
+show all .
+
+fmod BAZ is
+  sort Baz .
+  sort Quux .
+  op aa : -> Baz .
+  op bb : -> Quux .
+endfm
+
+view V from T2 to BAZ is
+  sort Foo to Baz .
+  sort Bar to Quux .
+  op a to aa .
+  op b to bb .
+endv
+
+fmod TEST is
+  inc BAR{V} .
+endfm
+
+show all .
+
+
+*** Make sure constant is mapped out of parameter theory on instantiation without being mentioned in view
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  inc T .
+  sort Bar .
+  op b : -> Bar [pconst] .
+endfth
+
+fmod BAR{X :: T2} is
+  op f : X$Foo -> X$Bar .
+  eq f(X$a) = X$b .
+endfm
+
+show all .
+
+fmod BAZ is
+  sort Baz .
+  sort Quux .
+  op a : -> Baz .
+  op b : -> Quux .
+endfm
+
+view V from T2 to BAZ is
+  sort Foo to Baz .
+  sort Bar to Quux .
+endv
+
+fmod TEST is
+  inc BAR{V} .
+endfm
+
+show all .
+
+
+*** Make sure parameter name change works when sorts come from theory
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  inc T .
+  sort Bar .
+  op b : -> Bar [pconst] .
+endfth
+
+fmod BAR{X :: T2} is
+  op f : X$Foo -> X$Bar .
+  eq f(X$a) = X$b .
+endfm
+
+show all .
+
+fmod BAR2{Y :: T2} is
+  inc BAR{Y} .
+  op g : Y$Foo -> Y$Bar .
+  eq g(Y$a) = f(Y$a) .
+endfm
+
+show all .
+
+fmod BAZ is
+  sort Baz .
+  sort Quux .
+  op a : -> Baz .
+  op b : -> Quux .
+endfm
+
+view V from T2 to BAZ is
+  sort Foo to Baz .
+  sort Bar to Quux .
+endv
+
+fmod TEST is
+  inc BAR2{V} .
+endfm
+
+show all .
+
+
+*** Make sure parameter name change works when one sort comes from module
+
+fmod BASE is
+  sort Foo .
+endfm
+
+fth T is
+  inc BASE .
+  op a : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  inc T .
+  sort Bar .
+  op b : -> Bar [pconst] .
+endfth
+
+fmod BAR{X :: T2} is
+  op f : Foo -> X$Bar .
+  eq f(X$a) = X$b .
+endfm
+
+show all .
+
+fmod BAR2{Y :: T2} is
+  inc BAR{Y} .
+  op g : Foo -> Y$Bar .
+  eq g(Y$a) = f(Y$a) .
+endfm
+
+show all .
+
+fmod BAZ is
+  inc BASE .
+  sort Quux .
+  op aa : -> Foo .
+  op bb : -> Quux .
+endfm
+
+view V from T2 to BAZ is
+  sort Bar to Quux .
+  op a to aa .
+  op b to bb .
+endv
+
+fmod TEST is
+  inc BAR2{V} .
+endfm
+
+show all .

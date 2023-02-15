@@ -119,6 +119,8 @@ MetaLevel::upImports(PreModule* pm, PointerMap& qidMap)
 	    s = protectingSymbol;
 	  else if (i.second == ImportModule::EXTENDING)
 	    s = extendingSymbol;
+	  else if (i.second == ImportModule::GENERATED_BY)
+	  s = generatedBySymbol;
 	  args.append(s->makeDagNode(args2));
 	}
     }
@@ -136,6 +138,8 @@ MetaLevel::upImports(PreModule* pm, PointerMap& qidMap)
 	  s = protectingSymbol;
 	else if (mode == ImportModule::EXTENDING)
 	  s = extendingSymbol;
+	else if (mode == ImportModule::GENERATED_BY)
+	  s = generatedBySymbol;
 	args.append(s->makeDagNode(args2));
       }
   }
@@ -800,6 +804,8 @@ MetaLevel::upAttributeSet(SymbolType st, Vector<DagNode*>& args)
     args.append(msgSymbol->makeDagNode());
   if (st.hasFlag(SymbolType::MEMO))
     args.append(memoSymbol->makeDagNode());
+  if (st.hasFlag(SymbolType::PCONST))
+    args.append(pconstSymbol->makeDagNode());
   return upGroup(args, emptyAttrSetSymbol, attrSetSymbol);
 }
 

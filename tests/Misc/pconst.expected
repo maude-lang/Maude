@@ -1,0 +1,103 @@
+Warning: <standard input>, line 13 (fth T): pconst attribute is not allowed for
+    polymorphic constant a.
+fmod BAR{X :: T} is
+  sorts Foo X$Bar .
+  op a : -> Foo [pconst] .
+  op a : -> [Foo] [pconst] .
+endfm
+fmod BAR{X :: T2} is
+  sorts X$Foo X$Bar .
+  op X$a : -> X$Foo [pconst] .
+  op X$b : -> X$Bar [pconst] .
+endfm
+fmod BAR{X :: T2} is
+  sort X$Bar .
+  op X$b : -> X$Bar [pconst] .
+  op f : X$Bar -> X$Bar .
+  eq f(X$b) = X$b .
+endfm
+fmod TEST is
+  sort Quux .
+  op bb : -> Quux .
+  op f : Quux -> Quux .
+  eq f(bb) = bb .
+endfm
+fmod BAR{X :: T2} is
+  sorts X$Foo X$Bar .
+  op X$a : -> X$Foo [pconst] .
+  op X$b : -> X$Bar [pconst] .
+  op f : X$Foo -> X$Bar .
+  eq f(X$a) = X$b .
+endfm
+fmod TEST is
+  sorts Baz Quux .
+  op aa : -> Baz .
+  op bb : -> Quux .
+  op f : Baz -> Quux .
+  eq f(aa) = bb .
+endfm
+fmod BAR{X :: T2} is
+  sorts X$Foo X$Bar .
+  op X$a : -> X$Foo [pconst] .
+  op X$b : -> X$Bar [pconst] .
+  op f : X$Foo -> X$Bar .
+  eq f(X$a) = X$b .
+endfm
+fmod TEST is
+  sorts Baz Quux .
+  op a : -> Baz .
+  op b : -> Quux .
+  op f : Baz -> Quux .
+  eq f(a) = b .
+endfm
+fmod BAR{X :: T2} is
+  sorts X$Foo X$Bar .
+  op X$a : -> X$Foo [pconst] .
+  op X$b : -> X$Bar [pconst] .
+  op f : X$Foo -> X$Bar .
+  eq f(X$a) = X$b .
+endfm
+fmod BAR2{Y :: T2} is
+  sorts Y$Foo Y$Bar .
+  op Y$a : -> Y$Foo [pconst] .
+  op Y$b : -> Y$Bar [pconst] .
+  op f : Y$Foo -> Y$Bar .
+  op g : Y$Foo -> Y$Bar .
+  eq g(Y$a) = f(Y$a) .
+  eq f(Y$a) = Y$b .
+endfm
+fmod TEST is
+  sorts Baz Quux .
+  op a : -> Baz .
+  op b : -> Quux .
+  op f : Baz -> Quux .
+  op g : Baz -> Quux .
+  eq f(a) = b .
+  eq g(a) = f(a) .
+endfm
+fmod BAR{X :: T2} is
+  sorts Foo X$Bar .
+  op X$a : -> Foo [pconst] .
+  op X$b : -> X$Bar [pconst] .
+  op f : Foo -> X$Bar .
+  eq f(X$a) = X$b .
+endfm
+fmod BAR2{Y :: T2} is
+  sorts Foo Y$Bar .
+  op Y$a : -> Foo [pconst] .
+  op Y$b : -> Y$Bar [pconst] .
+  op f : Foo -> Y$Bar .
+  op g : Foo -> Y$Bar .
+  eq g(Y$a) = f(Y$a) .
+  eq f(Y$a) = Y$b .
+endfm
+fmod TEST is
+  sorts Foo Quux .
+  op aa : -> Foo .
+  op bb : -> Quux .
+  op f : Foo -> Quux .
+  op g : Foo -> Quux .
+  eq f(aa) = bb .
+  eq g(aa) = f(aa) .
+endfm
+Bye.

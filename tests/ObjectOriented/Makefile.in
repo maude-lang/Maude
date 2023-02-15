@@ -438,17 +438,20 @@ top_srcdir = @top_srcdir@
 TESTS = \
 	account \
 	rrobin \
-	rent-a-car-store
+	rent-a-car-store \
+	parameterization
 
 MAUDE_FILES = \
 	account.maude \
 	rrobin.maude \
-	rent-a-car-store.maude
+	rent-a-car-store.maude \
+	parameterization.maude
 
 RESULT_FILES = \
 	account.expected \
 	rrobin.expected \
-	rent-a-car-store.expected
+	rent-a-car-store.expected \
+	parameterization.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -649,6 +652,13 @@ rrobin.log: rrobin
 rent-a-car-store.log: rent-a-car-store
 	@p='rent-a-car-store'; \
 	b='rent-a-car-store'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+parameterization.log: parameterization
+	@p='parameterization'; \
+	b='parameterization'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

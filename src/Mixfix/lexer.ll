@@ -252,6 +252,7 @@ vu-narrow				return KW_VU_NARROW;
 fvu-narrow				return KW_FVU_NARROW;
 fold					return KW_FOLD;
 desugared				return KW_DESUGARED;
+processed				return KW_PROCESSED;
 [.\[\](){}]				return *yytext;
 0|([1-9][0-9]*)				{
 					  bool dummy;
@@ -341,9 +342,10 @@ ditto					RETURN(KW_DITTO)
 id-hook					RETURN(KW_ID_HOOK)
 op-hook					RETURN(KW_OP_HOOK)
 term-hook				RETURN(KW_TERM_HOOK)
+pconst					RETURN(KW_PCONST)
 is					RETURN(KW_IS)
 if					RETURN(KW_IF)
-pr|protecting|ex|extending|us|using|inc|including	RETURN(KW_IMPORT)
+pr|protecting|ex|extending|us|using|inc|including|gb|generated-by	RETURN(KW_IMPORT)
 sort|sorts				RETURN(KW_SORT)
 subsort|subsorts			RETURN(KW_SUBSORT)
 class					RETURN(KW_CLASS)

@@ -1,0 +1,73 @@
+fmod TEST{X :: T2} is
+  sort X$Bar .
+  op X$b : -> X$Bar [pconst] .
+  op f : X$Bar -> X$Bar .
+  eq f(X$b) = X$b .
+endfm
+fmod TEST{X :: T2} is
+  sort X$Bar .
+  op b : -> X$Bar .
+  op f : X$Bar -> X$Bar .
+  eq f(b) = b .
+endfm
+fmod TEST{X :: T2} is
+  sort X$Bar .
+  op X$b : -> X$Bar [pconst] .
+  op f : X$Bar -> X$Bar .
+  eq f(X$b) = X$b .
+endfm
+fmod TEST{Y :: T2} is
+  sort Y$Bar .
+  op Y$b : -> Y$Bar [pconst] .
+  op f : Y$Bar -> Y$Bar .
+  eq f(Y$b) = Y$b .
+endfm
+fmod TEST{Y :: T2} is
+  sort Y$Bar .
+  op b : -> Y$Bar .
+  op f : Y$Bar -> Y$Bar .
+  eq f(b) = b .
+endfm
+fmod TEST{Y :: T2} is
+  sort Y$Bar .
+  op Y$b : -> Y$Bar [pconst] .
+  op f : Y$Bar -> Y$Bar .
+  eq f(Y$b) = Y$b .
+endfm
+fmod TEST{X :: T2} is
+  sort X$Bar .
+  op X$a : -> X$Bar [pconst] .
+  op f : X$Bar -> X$Bar .
+  eq f(X$a) = X$a .
+endfm
+fmod TEST{X :: T2} is
+  sort X$Bar .
+  op a : -> X$Bar .
+  op f : X$Bar -> X$Bar .
+  eq f(a) = a .
+endfm
+fmod TEST{X :: T2} is
+  sort X$Bar .
+  op X$a : -> X$Bar [pconst] .
+  op f : X$Bar -> X$Bar .
+  eq f(X$a) = X$a .
+endfm
+fmod TEST{Y :: T2} is
+  sort Y$Bar .
+  op Y$a : -> Y$Bar [pconst] .
+  op f : Y$Bar -> Y$Bar .
+  eq f(Y$a) = Y$a .
+endfm
+fmod TEST{Y :: T2} is
+  sort Y$Bar .
+  op a : -> Y$Bar .
+  op f : Y$Bar -> Y$Bar .
+  eq f(a) = a .
+endfm
+fmod TEST{Y :: T2} is
+  sort Y$Bar .
+  op Y$a : -> Y$Bar [pconst] .
+  op f : Y$Bar -> Y$Bar .
+  eq f(Y$a) = Y$a .
+endfm
+Bye.

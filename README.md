@@ -8,6 +8,16 @@ Rewriting logic is a logic of concurrent change that can naturally deal with sta
 
 Maude supports in a systematic and efficient way logical reflection. This makes Maude remarkably extensible and powerful, supports an extensible algebra of module composition operations, and allows many advanced metaprogramming and metalanguage applications. Indeed, some of the most interesting applications of Maude are metalanguage applications, in which Maude is used to create executable environments for different logics, theorem provers, languages, and models of computation.
 
+## Maude 3.2.2
+
+* fixed bug where multiple instantiations (say via a theory-view) was generating bad internal names for sorts
+* fixed bug where the first sort in a kind printed by show mod was including backquotes
+* show desugared is now a documented feature
+* desugar omod to mod, oth to th
+* fixed bug where filtered variant unify crashed in the degenerate case where there were no variables
+* fixed issue where SIGSTKSZ is no longer guaranteed to be a compile-time constant in glibc
+* fixed issue with fileTest failing in environments when first user file handle is something other than 3
+
 ## Maude 3.2.1
 
 The current version of Maude is 3.2.1. You can download it directly 

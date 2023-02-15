@@ -1,0 +1,374 @@
+***
+***	Test use of pconst with theory-view arguments to parameterized views
+***
+
+*** don't pull in BOOL so we have simple modules to look at
+set include BOOL off .
+
+*** pconst(d) -> pconst(c) -> pconst(e)
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fth T3 is
+  sort Baz .
+  op e : -> Baz [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Quux{X} .
+  op f : X$Foo -> Quux{X} .
+  eq f(X$c) = f(X$c) .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to Y$c .
+endv
+
+fmod M2{Z :: T2} is
+  sort Fizz{Z} .
+  op g : Z$Bar -> Fizz{Z} .
+  eq g(Z$d) = g(Z$d) .
+endfm
+
+view TV from T to T3 is
+  sort Foo to Baz .
+  op c to e .
+endv
+
+fmod TEST{W :: T3} is
+  inc M2{V{TV}{W}} .
+endfm
+
+show all .
+
+
+*** pconst(d) -> pconst(c) -> non-pconst(e)
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fth T3 is
+  sort Baz .
+  op e : -> Baz .
+endfth
+
+fmod M{X :: T} is
+  sort Quux{X} .
+  op f : X$Foo -> Quux{X} .
+  eq f(X$c) = f(X$c) .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to Y$c .
+endv
+
+fmod M2{Z :: T2} is
+  sort Fizz{Z} .
+  op g : Z$Bar -> Fizz{Z} .
+  eq g(Z$d) = g(Z$d) .
+endfm
+
+view TV from T to T3 is
+  sort Foo to Baz .
+  op c to e .
+endv
+
+fmod TEST{W :: T3} is
+  inc M2{V{TV}{W}} .
+endfm
+
+show all .
+
+
+*** pconst(d) -> non-pconst(c) -> pconst(e)
+
+fth T is
+  sort Foo .
+  op c : -> Foo .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fth T3 is
+  sort Baz .
+  op e : -> Baz [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Quux{X} .
+  op f : X$Foo -> Quux{X} .
+  eq f(c) = f(c) .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to c .
+endv
+
+fmod M2{Z :: T2} is
+  sort Fizz{Z} .
+  op g : Z$Bar -> Fizz{Z} .
+  eq g(Z$d) = g(Z$d) .
+endfm
+
+view TV from T to T3 is
+  sort Foo to Baz .
+  op c to e .
+endv
+
+fmod TEST{W :: T3} is
+  inc M2{V{TV}{W}} .
+endfm
+
+show all .
+
+
+*** pconst(d) -> non-pconst(c) -> non-pconst(e)
+
+fth T is
+  sort Foo .
+  op c : -> Foo .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+fth T3 is
+  sort Baz .
+  op e : -> Baz .
+endfth
+
+fmod M{X :: T} is
+  sort Quux{X} .
+  op f : X$Foo -> Quux{X} .
+  eq f(c) = f(c) .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to c .
+endv
+
+fmod M2{Z :: T2} is
+  sort Fizz{Z} .
+  op g : Z$Bar -> Fizz{Z} .
+  eq g(Z$d) = g(Z$d) .
+endfm
+
+view TV from T to T3 is
+  sort Foo to Baz .
+  op c to e .
+endv
+
+fmod TEST{W :: T3} is
+  inc M2{V{TV}{W}} .
+endfm
+
+show all .
+
+---------------------------------------------------------------------------------------------------------------
+
+*** non-pconst(d) -> pconst(c) -> pconst(e)
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar .
+endfth
+
+fth T3 is
+  sort Baz .
+  op e : -> Baz [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Quux{X} .
+  op f : X$Foo -> Quux{X} .
+  eq f(X$c) = f(X$c) .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to Y$c .
+endv
+
+fmod M2{Z :: T2} is
+  sort Fizz{Z} .
+  op g : Z$Bar -> Fizz{Z} .
+  eq g(d) = g(d) .
+endfm
+
+view TV from T to T3 is
+  sort Foo to Baz .
+  op c to e .
+endv
+
+fmod TEST{W :: T3} is
+  inc M2{V{TV}{W}} .
+endfm
+
+show all .
+
+
+*** non-pconst(d) -> pconst(c) -> non-pconst(e)
+
+fth T is
+  sort Foo .
+  op c : -> Foo [pconst] .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar .
+endfth
+
+fth T3 is
+  sort Baz .
+  op e : -> Baz .
+endfth
+
+fmod M{X :: T} is
+  sort Quux{X} .
+  op f : X$Foo -> Quux{X} .
+  eq f(X$c) = f(X$c) .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to Y$c .
+endv
+
+fmod M2{Z :: T2} is
+  sort Fizz{Z} .
+  op g : Z$Bar -> Fizz{Z} .
+  eq g(d) = g(d) .
+endfm
+
+view TV from T to T3 is
+  sort Foo to Baz .
+  op c to e .
+endv
+
+fmod TEST{W :: T3} is
+  inc M2{V{TV}{W}} .
+endfm
+
+show all .
+
+
+*** non-pconst(d) -> non-pconst(c) -> pconst(e)
+
+fth T is
+  sort Foo .
+  op c : -> Foo .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar .
+endfth
+
+fth T3 is
+  sort Baz .
+  op e : -> Baz [pconst] .
+endfth
+
+fmod M{X :: T} is
+  sort Quux{X} .
+  op f : X$Foo -> Quux{X} .
+  eq f(c) = f(c) .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to c .
+endv
+
+fmod M2{Z :: T2} is
+  sort Fizz{Z} .
+  op g : Z$Bar -> Fizz{Z} .
+  eq g(d) = g(d) .
+endfm
+
+view TV from T to T3 is
+  sort Foo to Baz .
+  op c to e .
+endv
+
+fmod TEST{W :: T3} is
+  inc M2{V{TV}{W}} .
+endfm
+
+show all .
+
+
+*** non-pconst(d) -> non-pconst(c) -> non-pconst(e)
+
+fth T is
+  sort Foo .
+  op c : -> Foo .
+endfth
+
+fth T2 is
+  sort Bar .
+  op d : -> Bar .
+endfth
+
+fth T3 is
+  sort Baz .
+  op e : -> Baz .
+endfth
+
+fmod M{X :: T} is
+  sort Quux{X} .
+  op f : X$Foo -> Quux{X} .
+  eq f(c) = f(c) .
+endfm
+
+view V{Y :: T} from T2 to M{Y} is
+  sort Bar to Y$Foo .
+  op d to c .
+endv
+
+fmod M2{Z :: T2} is
+  sort Fizz{Z} .
+  op g : Z$Bar -> Fizz{Z} .
+  eq g(d) = g(d) .
+endfm
+
+view TV from T to T3 is
+  sort Foo to Baz .
+  op c to e .
+endv
+
+fmod TEST{W :: T3} is
+  inc M2{V{TV}{W}} .
+endfm
+
+show all .

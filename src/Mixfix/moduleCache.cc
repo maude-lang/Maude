@@ -332,18 +332,5 @@ ModuleCache::showCreatedModules(ostream& s) const
     {
       ImportModule* m = i.second;
       s << MixfixModule::moduleTypeString(m->getModuleType()) << ' ' << m << '\n';
-#if 0
-      if (globalAdvisoryFlag)  //HACK
-	{
-	  cout << Tty(Tty::RED);
-	  m->dumpImports(s);
-	  cout << Tty(Tty::GREEN);
-	  const Vector<Sort*>& sorts = m->getSorts();
-	  FOR_EACH_CONST(j, Vector<Sort*>, sorts)
-	    s << " " << *j;
-	  cout << Tty(Tty::RESET);
-	  s << endl;
-	}
-#endif
     }
 }

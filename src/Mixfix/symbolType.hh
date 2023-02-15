@@ -124,6 +124,7 @@ public:
     //
     //	Misc.
     //
+    PCONST = 0x200000,
     POLY = 0x400000,
     DITTO = 0x800000,
     //
@@ -131,9 +132,15 @@ public:
     //
     AXIOMS = ASSOC | COMM | LEFT_ID | RIGHT_ID | IDEM,
     COLLAPSE = LEFT_ID | RIGHT_ID | IDEM,
-    SIMPLE_ATTRIBUTES = ASSOC | COMM | IDEM | MEMO | CTOR | CONFIG | OBJECT | MESSAGE,
+    //
+    //	Simple attributes are just a flag without additional data. They produce a warning if given twice.
+    //
+    SIMPLE_ATTRIBUTES = ASSOC | COMM | IDEM | MEMO | CTOR | CONFIG | OBJECT | MESSAGE | ITER | PCONST,
+    //
+    //  All flagged attributes except ctor, poly, ditto. They need to agree between declarations of an operator.
+    //
     ATTRIBUTES = PREC | GATHER | FORMAT | LATEX | STRAT | MEMO | FROZEN |
-    CONFIG | OBJECT | MESSAGE | AXIOMS | ITER
+    CONFIG | OBJECT | MESSAGE | AXIOMS | ITER | PCONST
   };
 
   SymbolType();

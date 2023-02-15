@@ -470,7 +470,12 @@ TESTS = \
 	continue \
 	parse \
 	bubble \
-	rot13
+	rot13 \
+	pconst \
+	pconst2 \
+	pconst3 \
+	pconst4 \
+	parameterizedConstant
 
 MAUDE_FILES = \
 	directoryTest.maude \
@@ -507,7 +512,12 @@ MAUDE_FILES = \
 	continue.maude \
 	parse.maude \
 	bubble.maude \
-	rot13.maude
+	rot13.maude \
+	pconst.maude \
+	pconst2.maude \
+	pconst3.maude \
+	pconst4.maude \
+	parameterizedConstant.maude
 
 RESULT_FILES = \
 	directoryTest.expected \
@@ -544,7 +554,12 @@ RESULT_FILES = \
 	continue.expected \
 	parse.expected \
 	bubble.expected \
-	rot13.expected
+	rot13.expected \
+	pconst.expected \
+	pconst2.expected \
+	pconst3.expected \
+	pconst4.expected \
+	parameterizedConstant.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -969,6 +984,41 @@ bubble.log: bubble
 rot13.log: rot13
 	@p='rot13'; \
 	b='rot13'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+pconst.log: pconst
+	@p='pconst'; \
+	b='pconst'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+pconst2.log: pconst2
+	@p='pconst2'; \
+	b='pconst2'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+pconst3.log: pconst3
+	@p='pconst3'; \
+	b='pconst3'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+pconst4.log: pconst4
+	@p='pconst4'; \
+	b='pconst4'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+parameterizedConstant.log: parameterizedConstant
+	@p='parameterizedConstant'; \
+	b='parameterizedConstant'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

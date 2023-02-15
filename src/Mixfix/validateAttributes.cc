@@ -321,4 +321,21 @@ MixfixModule::validateAttributes(Token prefixName,
 	    }
 	}
     }
+  //
+  //	Parameter constants must be constants.
+  //
+  if (symbolType.hasFlag(SymbolType::PCONST))
+    {
+      if (nrArgs != 0)
+	{
+	  IssueWarning(LineNumber(lineNr) << ": pconst attribute is only available for constants while operator " <<
+		       QUOTE(prefixName) <<" has " << nrArgs << " domain sort" << pluralize(nrArgs) << "s.");
+	  symbolType.clearFlags(SymbolType::PCONST);
+	}
+      if (symbolType.hasFlag(SymbolType::POLY))
+	{
+	  IssueWarning(LineNumber(lineNr) << ": pconst attribute is not allowed for polymorphic constant " << QUOTE(prefixName) << ".");
+	  symbolType.clearFlags(SymbolType::PCONST);
+	}
+    }
 }

@@ -96,7 +96,7 @@ PreModule::~PreModule()
 void
 PreModule::addParameter(Token name, ModuleExpression* theory)
 {
-  if (MixfixModule::isTheory(getModuleType()))
+  if (isTheory())
     {
       IssueWarning(LineNumber(name.lineNumber()) <<
 		   ": parmaeterized theories are not supported; recovering by ignoring parameter " <<

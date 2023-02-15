@@ -111,6 +111,17 @@ public:
 			  const Vector<Argument*>& arguments);
   View* instantiateBoundParameters(const Vector<Argument*>& arguments);
   //
+  //	OO stuff.
+  //
+  bool getClassSortAndSymbol(Token className,
+			     const char* direction,
+			     Sort* classIdSort,
+			     ImportModule* module,
+			     Sort*& classSort,
+			     Symbol*& classSymbol);
+  bool handleClassMappings();
+  bool handleAttrMappings();
+  //
   //	So ViewCache can tell if the view it just instantiated is bad.
   //
   bool isBad() const;

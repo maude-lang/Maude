@@ -248,8 +248,8 @@ fmod ARRAY{String, SetAsDefault{Nat}}
 fmod LIST{ArrayOfSets{[X], [Y]}}
 fmod LIST-OF-ARRAYS-OF-SETS{String, Nat}
 fmod LIST{ArrayOfSets{String, Nat}}
-fmod SET*{DEFAULT}
 fth X :: DEFAULT
+fmod SET*{DEFAULT}
 fmod SET*{DEFAULT}{[X]}
 fmod SET*{DEFAULT}{Nat0}
 fmod ARRAY{String, SetAsDefault{DEFAULT}{Nat0}}

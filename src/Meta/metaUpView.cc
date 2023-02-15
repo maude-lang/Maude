@@ -93,6 +93,8 @@ MetaLevel::upOpMappings(View* view, PointerMap& qidMap)
   int nrSimpleOpMappings = view->getNrOpMappings();
   for (int i = 0; i < nrSimpleOpMappings; i++)
     {
+      if (view->isAttrMapping(i))
+	continue;  // HACK
       int nrTypes = view->getNrTypes(i);
       if (nrTypes == 0)
 	{

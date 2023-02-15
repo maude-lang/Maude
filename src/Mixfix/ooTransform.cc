@@ -33,7 +33,7 @@ SyntacticPreModule::transformSortConstraint(SortConstraint* sortConstraint)
     return Outcome::NOT_TRANSFORMED;
   if (si.objectMap.empty())
     return Outcome::NOT_APPLICABLE;
-  if (checkVariables(si))
+  if (si.checkVariables())
     {
       Verbose("Considering object completion on:\n  " << sortConstraint);
       if (doTransformation(si))
@@ -60,7 +60,7 @@ SyntacticPreModule::transformEquation(Equation* equation)
     return Outcome::NOT_TRANSFORMED;
   if (si.objectMap.empty())
     return Outcome::NOT_APPLICABLE;
-  if (checkVariables(si))
+  if (si.checkVariables())
     {
       Verbose("Considering object completion on:\n  " << equation);
       if (doTransformation(si))
@@ -87,7 +87,7 @@ SyntacticPreModule::transformRule(Rule* rule)
     return Outcome::NOT_TRANSFORMED;
   if (si.objectMap.empty())
     return Outcome::NOT_APPLICABLE;
-  if (checkVariables(si))
+  if (si.checkVariables())
     {
       Verbose("Considering object completion on:\n  " << rule);
       if (doTransformation(si))
@@ -154,7 +154,7 @@ SyntacticPreModule::findCorrespondingClassSort(const Symbol* s) const
 }
 
 void
-SyntacticPreModule::gatherObjects(PreEquation* pe, StatementInfo& si)
+SyntacticPreModule::gatherObjects(PreEquation* pe, StatementInfo& si) const
 {
   gatherObjects(GatherMode::PATTERN, pe->getLhs(), si);
   for (ConditionFragment* cf : pe->getCondition())
@@ -180,7 +180,7 @@ SyntacticPreModule::gatherObjects(PreEquation* pe, StatementInfo& si)
 }
 
 void
-SyntacticPreModule::gatherObjects(GatherMode mode, Term* term, StatementInfo& si)
+SyntacticPreModule::gatherObjects(GatherMode mode, Term* term, StatementInfo& si) const
 {
   Symbol* s = term->symbol();
   SymbolType st = flatModule->getSymbolType(s);
@@ -398,7 +398,7 @@ SyntacticPreModule::analyzeAttributeSetArgument(Term* attributeSetArgument, Obje
 	  if (oo.variableTerm)
 	    {
 	      IssueAdvisory(*vt << ": multiple variables " << QUOTE(static_cast<Term*>(oo.variableTerm)) <<
-			    " and " << QUOTE(attributeSetArgument) << "in attribute set disables object completion.");
+			    " and " << QUOTE(attributeSetArgument) << " in attribute set disables object completion.");
 	      return false;
 	    }
 	  oo.variableTerm = vt;
@@ -415,13 +415,14 @@ SyntacticPreModule::analyzeAttributeSetArgument(Term* attributeSetArgument, Obje
   return false;
 }
 
+
 bool
-SyntacticPreModule::checkVariables(StatementInfo& si)
+SyntacticPreModule::StatementInfo::checkVariables() const
 {
   //
   //	Look at each object.
   //
-  for (auto& oi : si.objectMap)
+  for (auto& oi : objectMap)
     {
       if (oi.second.classVariableName != NONE)
 	{
@@ -429,8 +430,8 @@ SyntacticPreModule::checkVariables(StatementInfo& si)
 	  //	Object is using a variable as its class name. Check that variable doesn't occur elsewhere.
 	  //
 	  int nrObjectOccurrences = 1 +  oi.second.subjectOccurrences.size();
-	  auto vc = si.varCountMap.find({oi.second.classVariableName, oi.second.classSort->id()});
-	  Assert(vc != si.varCountMap.end(), "missing count for variable " << oi.second.classArgument);
+	  auto vc = varCountMap.find({oi.second.classVariableName, oi.second.classSort->id()});
+	  Assert(vc != varCountMap.end(), "missing count for variable " << oi.second.classArgument);
 	  if (vc->second > nrObjectOccurrences)
 	    {
 	      IssueAdvisory(*(oi.second.classArgument) << ": using class variable " <<  QUOTE(oi.second.classArgument) << " from object instance " << 
@@ -486,8 +487,8 @@ SyntacticPreModule::checkVariables(StatementInfo& si)
 		}
 	    }
 	  int nrObjectOccurrences = 1 +  oi.second.subjectOccurrences.size();
-	  auto vc = si.varCountMap.find({attributeSetVariable->id(), attributeSetVariable->getSort()->id()});
-	  Assert(vc != si.varCountMap.end(), "missing count for variable " << asv);
+	  auto vc = varCountMap.find({attributeSetVariable->id(), attributeSetVariable->getSort()->id()});
+	  Assert(vc != varCountMap.end(), "missing count for variable " << asv);
 	  if (vc->second > nrObjectOccurrences)
 	    {
 	      IssueAdvisory(*(oi.second.classArgument) << ": using attribute set variable " <<  QUOTE(asv) << " from object instance " << 
@@ -680,7 +681,7 @@ SyntacticPreModule::garbageCollectAttributeSet(Term* attributeSet, Symbol* attri
   DebugEnter("attributeSet = " << attributeSet);
   //
   //	We want to delete the parts of the old attribute set that were not reused in the
-  //	new argument set. These should only be attributeSet constructors and identities.
+  //	new attribute set. These should only be attributeSet constructors and identities.
   //
   Symbol* as = attributeSet->symbol();
   if (as == attributeSetSymbol)

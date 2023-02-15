@@ -25,6 +25,59 @@
 //
 
 void
+SyntacticPreModule::addHonoraryClassNames(ImportModule* import, set<int>& classNames) const
+{
+  static const Vector<ConnectedComponent*> dummy;
+
+  if (import->isSystem())
+    {
+      //
+      //	Imported module must have a Cid sort to be considered.
+      //
+      Sort* cid = import->findSort(classIdSort->id());
+      if (cid)
+	{
+	  //
+	  //	We only consider sorts below Cid.
+	  //
+	  ConnectedComponent* c = cid->component();
+	  for (int index : cid->getLeqSorts())
+	    {
+	      Sort* sort = c->sort(index);
+	      int name = sort->id();
+	      //
+	      //	Must have a constant of the same name in the Cid component.
+	      //
+	      Symbol* symbol = import->findSymbol(name, dummy, c);
+	      if (symbol != 0)
+		{
+		  //
+		  //	Symbol must have a single declaration.
+		  //
+		  const Vector<OpDeclaration>& opDecls = symbol->getOpDeclarations();
+		  if (opDecls.size() == 1)
+		    {
+		      //
+		      //	Declaration must be a ctor.
+		      //
+		      const OpDeclaration& opDecl = opDecls[0];
+		      if (opDecl.isConstructor())
+			{
+			  const Vector<Sort*>& domainAndRange = opDecls[0].getDomainAndRange();
+			  //
+			  //	Declaration must put it in the candidate sort.
+			  //
+			  if (domainAndRange[0] == sort)
+			    classNames.insert(name);
+			}
+		    }
+		}
+	    }
+	}
+    }
+}
+
+void
 SyntacticPreModule::addHonoraryClassNames(set<int>& classNames) const
 {
   //
@@ -32,63 +85,15 @@ SyntacticPreModule::addHonoraryClassNames(set<int>& classNames) const
   //	that looks as if it could have been produced from a class.
   //
   //	This information is needed for subclass processing, before operators
-  //	have been imported so we need to examine imported modules.
+  //	have been imported so we need to examine parameter copies and imported modules.
   //
-  Vector<ConnectedComponent*> dummy;
+  int nrParameters = flatModule->getNrParameters();
+  for (int i = 0; i < nrParameters; ++i)
+    addHonoraryClassNames(flatModule->getParameterTheoryCopy(i), classNames);
+
   int nrImports = flatModule->getNrImports();
   for (int i = 0; i < nrImports; ++i)
-    {
-      //
-      //	We only look at system modules and theories.
-      //
-      ImportModule* import = flatModule->getImportedModule(i);
-      if (import->isSystem())
-	{
-	  //
-	  //	Imported module must have a Cid sort to be considered.
-	  //
-	  Sort* cid = import->findSort(classIdSort->id());
-	  if (cid)
-	    {
-	      //
-	      //	We only consider sorts below Cid.
-	      //
-	      ConnectedComponent* c = cid->component();
-	      for (int index : cid->getLeqSorts())
-		{
-		  Sort* sort = c->sort(index);
-		  int name = sort->id();
-		  //
-		  //	Must have a constant of the same name in the Cid component.
-		  //
-		  Symbol* symbol = import->findSymbol(name, dummy, c);
-		  if (symbol != 0)
-		    {
-		      //
-		      //	Symbol must have a single declaration.
-		      //
-		      const Vector<OpDeclaration>& opDecls = symbol->getOpDeclarations();
-		      if (opDecls.size() == 1)
-			{
-			  //
-			  //	Declaration must be a ctor.
-			  //
-			  const OpDeclaration& opDecl = opDecls[0];
-			  if (opDecl.isConstructor())
-			    {
-			      const Vector<Sort*>& domainAndRange = opDecls[0].getDomainAndRange();
-			      //
-			      //	Declaration must put it in the candidate sort.
-			      //
-			      if (domainAndRange[0] == sort)
-				classNames.insert(name);
-			    }
-			}
-		    }
-		}
-	    }
-	}
-    }
+    addHonoraryClassNames(flatModule->getImportedModule(i), classNames);
 }
 
 void
@@ -437,6 +442,8 @@ SyntacticPreModule::processClassOps()
   //
   SymbolType classSymbolType;
   classSymbolType.setFlags(SymbolType::CTOR);
+  if (isTheory())
+    classSymbolType.setFlags(SymbolType::PCONST);
   Vector<Sort*> range(1);
   //
   //	Dummy values.

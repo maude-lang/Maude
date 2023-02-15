@@ -253,6 +253,7 @@ private:
   {
     ~StatementInfo();
     int chooseFreshVariableName(const char* base);
+    bool checkVariables() const;
 
     ObjectMap objectMap;
     VarCountMap varCountMap;
@@ -300,6 +301,7 @@ private:
   //
   //	For omods and oths.
   //
+  void addHonoraryClassNames(ImportModule* import, set<int>& classNames) const;
   void addHonoraryClassNames(set<int>& classNames) const;
   void addHonoraryAttributeSymbols();
   void processClassSorts();
@@ -309,19 +311,22 @@ private:
   void processClassOps();
   Sort* findAtttributeSetSort() const;
   Sort* findAtttributeSort() const;
-
-  void gatherObjects(PreEquation* pe, StatementInfo& si);
-  void gatherObjects(GatherMode mode, Term* term, StatementInfo& si);
-  bool checkVariables(StatementInfo& si);
+  bool isClassSort(const Sort *s) const;
+  Sort* findCorrespondingClassSort(const Symbol *s) const;
+  //
+  //	Statement analysis pass.
+  //
+  void gatherObjects(PreEquation* pe, StatementInfo& si) const;
+  void gatherObjects(GatherMode mode, Term* term, StatementInfo& si) const;
+  bool recordClassArgument(Term* classArgument, ObjectInfo& oi) const;
+  bool analyzeAttributeSetArgument(Term* attributeSetArgument, ObjectOccurrence& oo) const;
+  //
+  //	Statement transformation pass.
+  //
   bool doTransformation(StatementInfo& si);
   void transformClassArgument(ObjectOccurrence& oo, VariableSymbol* vs, int varName);
   bool transformPatternAttributes(ObjectInfo& oi, StatementInfo& si);
   bool transformSubjectAttributes(ObjectOccurrence& so, ObjectOccurrence& po);
-  
-  bool isClassSort(const Sort *s) const;
-  Sort* findCorrespondingClassSort(const Symbol *s) const;
-  bool recordClassArgument(Term* classArgument, ObjectInfo& oi) const;
-  bool analyzeAttributeSetArgument(Term* attributeSetArgument, ObjectOccurrence& oo) const;
   void garbageCollectAttributeSet(Term* attributeSet, Symbol* attributeSetSymbol) const;
 
   int startTokenCode;

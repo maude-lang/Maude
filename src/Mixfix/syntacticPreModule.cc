@@ -224,7 +224,7 @@ SyntacticPreModule::finishModule(Token endToken)
 		   QUOTE(Token::name(startTokenCode)) << " ends with "
 		   << QUOTE(endToken) << '.');
     }
-  if (!(MixfixModule::isTheory(getModuleType())))
+  if (!isTheory())
     autoImports = getOwner()->getAutoImports(); // deep copy
   if (MixfixModule::isObjectOriented(getModuleType()))
     ooIncludes = getOwner()->getOoIncludes(); // deep copy
@@ -255,10 +255,11 @@ SyntacticPreModule::addImport(Token modeToken, ModuleExpression* expr)
     mode = ImportModule::EXTENDING;
   else if (code == inc || code == including)
     mode = ImportModule::INCLUDING;
+  else if (code == gb || code == generatedBy)
+    mode = ImportModule::GENERATED_BY;
   else
     {
       Assert(code == us || code == usingToken, "unknown importation mode");
-
       IssueWarning(lineNumber <<
 		   ": importation mode " << QUOTE("using") <<
 		   " not supported - treating it like " <<

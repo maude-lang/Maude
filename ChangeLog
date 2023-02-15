@@ -1,3 +1,25 @@
+2023-02-14  Steven Eker  <eker@pup>
+
+	* README.md: added Maude 3.2.2 changes
+
+	* tests/ObjectOriented/parameterization.maude: added
+
+	* tests/Misc/parameterizedConstant.maude: added
+
+2023-02-08  Steven Eker  <eker@pup>
+
+	* tests/Misc/pconst4.maude: added
+
+2023-02-07  Steven Eker  <eker@pup>
+
+	* tests/Misc/pconst3.maude: added
+
+	* tests/Misc/pconst2.maude: added
+
+	* tests/Misc/pconst.maude: added
+
+===================================Maude140===========================================
+
 2023-02-02  Steven Eker  <eker@pup>
 
 	* tests/ResolvedBugs/theoryViewWrongWarningFebruary2023.maude: created

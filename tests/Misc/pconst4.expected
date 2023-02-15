@@ -1,0 +1,65 @@
+fmod TEST{W :: T3} is
+  sorts W$Baz Quux{TV}{W} Fizz{V{TV}{W}} .
+  op W$e : -> W$Baz [pconst] .
+  op f : W$Baz -> Quux{TV}{W} .
+  op g : W$Baz -> Fizz{V{TV}{W}} .
+  eq f(W$e) = f(W$e) .
+  eq g(W$e) = g(W$e) .
+endfm
+fmod TEST{W :: T3} is
+  sorts W$Baz Quux{TV}{W} Fizz{V{TV}{W}} .
+  op e : -> W$Baz .
+  op f : W$Baz -> Quux{TV}{W} .
+  op g : W$Baz -> Fizz{V{TV}{W}} .
+  eq f(e) = f(e) .
+  eq g(e) = g(e) .
+endfm
+fmod TEST{W :: T3} is
+  sorts W$Baz Quux{TV}{W} Fizz{V{TV}{W}} .
+  op W$e : -> W$Baz [pconst] .
+  op f : W$Baz -> Quux{TV}{W} .
+  op g : W$Baz -> Fizz{V{TV}{W}} .
+  eq f(W$e) = f(W$e) .
+  eq g(W$e) = g(W$e) .
+endfm
+fmod TEST{W :: T3} is
+  sorts W$Baz Quux{TV}{W} Fizz{V{TV}{W}} .
+  op e : -> W$Baz .
+  op f : W$Baz -> Quux{TV}{W} .
+  op g : W$Baz -> Fizz{V{TV}{W}} .
+  eq f(e) = f(e) .
+  eq g(e) = g(e) .
+endfm
+fmod TEST{W :: T3} is
+  sorts W$Baz Quux{TV}{W} Fizz{V{TV}{W}} .
+  op W$e : -> W$Baz [pconst] .
+  op f : W$Baz -> Quux{TV}{W} .
+  op g : W$Baz -> Fizz{V{TV}{W}} .
+  eq f(W$e) = f(W$e) .
+  eq g(W$e) = g(W$e) .
+endfm
+fmod TEST{W :: T3} is
+  sorts W$Baz Quux{TV}{W} Fizz{V{TV}{W}} .
+  op e : -> W$Baz .
+  op f : W$Baz -> Quux{TV}{W} .
+  op g : W$Baz -> Fizz{V{TV}{W}} .
+  eq f(e) = f(e) .
+  eq g(e) = g(e) .
+endfm
+fmod TEST{W :: T3} is
+  sorts W$Baz Quux{TV}{W} Fizz{V{TV}{W}} .
+  op W$e : -> W$Baz [pconst] .
+  op f : W$Baz -> Quux{TV}{W} .
+  op g : W$Baz -> Fizz{V{TV}{W}} .
+  eq f(W$e) = f(W$e) .
+  eq g(W$e) = g(W$e) .
+endfm
+fmod TEST{W :: T3} is
+  sorts W$Baz Quux{TV}{W} Fizz{V{TV}{W}} .
+  op e : -> W$Baz .
+  op f : W$Baz -> Quux{TV}{W} .
+  op g : W$Baz -> Fizz{V{TV}{W}} .
+  eq f(e) = f(e) .
+  eq g(e) = g(e) .
+endfm
+Bye.

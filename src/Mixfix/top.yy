@@ -148,7 +148,7 @@ int yylex(YYSTYPE* lvalp);
 %token KW_NUMBER KW_RAT KW_COLOR KW_IMPLIED_STEP
 %token <yyInt64> SIMPLE_NUMBER
 %token KW_PWD KW_CD KW_PUSHD KW_POPD KW_LS KW_LL KW_LOAD KW_SLOAD KW_QUIT
-%token KW_EOF KW_TEST KW_SMT_SEARCH KW_VU_NARROW KW_FVU_NARROW KW_FOLD KW_DESUGARED
+%token KW_EOF KW_TEST KW_SMT_SEARCH KW_VU_NARROW KW_FVU_NARROW KW_FOLD KW_DESUGARED KW_PROCESSED
 
 /*
  *	Start keywords: signal end of mixfix statement if following '.'.
@@ -175,7 +175,7 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Attribute keywords need to be recognized when parsing attributes.
  */
-%token <yyToken> KW_ASSOC KW_COMM KW_ID KW_IDEM KW_ITER
+%token <yyToken> KW_ASSOC KW_COMM KW_ID KW_IDEM KW_ITER KW_PCONST
 %token <yyToken> KW_LEFT KW_RIGHT KW_PREC KW_GATHER KW_METADATA KW_STRAT KW_ASTRAT KW_POLY
 %token <yyToken> KW_MEMO KW_FROZEN KW_CTOR KW_LATEX KW_SPECIAL KW_CONFIG KW_OBJ KW_MSG
 %token <yyToken> KW_DITTO KW_FORMAT

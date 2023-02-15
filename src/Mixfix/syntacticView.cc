@@ -290,7 +290,7 @@ SyntacticView::handleTermAndExprMappings()
 void
 SyntacticView::showView(ostream& s)
 {
-  s << "view " << static_cast<NamedEntity*>(this);
+  s << "view " << this;
   int nrParameters = getNrParameters();
   if (nrParameters > 0)
     {
@@ -307,7 +307,7 @@ SyntacticView::showView(ostream& s)
     }
   s << " from " << getFrom() << " to " << getTo() << " is\n";
   printRenaming(s, "  ", " .\n  ");
-  if (getNrSortMappings() > 0 || getNrOpMappings() > 0 || getNrClassMappings() > 0)
+  if (getNrSortMappings() + getNrOpMappings() + getNrClassMappings() > 0)
     s << " .\n";
   if (!varDecls.empty())
     {
@@ -331,8 +331,48 @@ SyntacticView::showView(ostream& s)
 	    }
 	}
     }
+  //
+  //	We print op->term and  msg->term mappings as unparsed bubbles.
+  //
+  for (const auto& i : opTermList)
+    s << (i.msg ? "  msg " : "  op ") << i.fromBubble << " to " << i.toBubble << " .\n";
+  //
+  //	We print strat->expr mappings as unparsed bubbles.
+  //
+  for (const auto& i : stratExprList)
+    s << "  strat " << i.fromBubble << " to " << i.toBubble << " .\n";
+  s << "endv\n";
+}
+
+void
+SyntacticView::showProcessedView(ostream& s)
+{
+  s << "view " << this;
+  int nrParameters = getNrParameters();
+  if (nrParameters > 0)
+    {
+      s << '{';
+      for (int i = 0;;)
+	{
+	  s << Token::name(getParameterName(i)) << " :: " << getParameterTheory(i);
+	  ++i;
+	  if (i == nrParameters)
+	    break;
+	  s << ", ";
+	}
+      s << '}';
+    }
   ImportModule* fromTheory = getFromTheory();
   ImportModule* toModule = getToModule();
+  s << " from " << fromTheory << " to " << Token::removeBoundParameterBrackets(toModule->id()) << " is\n";
+  printRenaming(s, "  ", " .\n  ", true);
+  if (getNrSortMappings() + getNrOpMappings() > 0)
+    s << " .\n";
+  //
+  //	Print from aliases.
+  //
+  for (auto& p : fromTheoryVariableAliases)
+    s << "  var " << Token::name(p.first) << " : " << p.second << " .\n";
   //
   //	We need to swap in our own aliases, even if they're empty
   //	if only to get rid of the modules' own aliases.
@@ -343,20 +383,17 @@ SyntacticView::showView(ostream& s)
   toModule->swapVariableAliasMap(toModuleVariableAliases, savedToModuleParser);
 
   for (const auto& i : getOpTermMap())
-    {
-      Term* fromTerm = i.second.first;
-      s << ((messages.find(fromTerm) == messages.end()) ? "  op " : "  msg ") <<
-	fromTerm << " to term " << i.second.second << " .\n";
-    }
+     s << "  op " << i.second.first << " to term " << i.second.second << " .\n";
 
   for (const auto& j : getStratExprMap())
     s << "  strat " << j.second.call << " to expr " << j.second.value << " .\n";
+
   s << "endv\n";
   //
   //	Restore original variable aliases. Check that we didn't generate parsers.
   //
   fromTheory->swapVariableAliasMap(fromTheoryVariableAliases, savedFromTheoryParser);
-  Assert(savedFromTheoryParser == 0, "unexpected new from theory parser");
+  Assert(savedFromTheoryParser == 0, "unexpected new from-theory parser");
   toModule->swapVariableAliasMap(toModuleVariableAliases, savedToModuleParser);
-  Assert(savedToModuleParser == 0, "unexpected new to module parser");
+  Assert(savedToModuleParser == 0, "unexpected new to module-parser");
 }

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -105,9 +105,9 @@ ModuleDatabase::setOoInclude(Token name, bool polarity)
 void
 ModuleDatabase::showNamedModules(ostream& s) const
 {
-  FOR_EACH_CONST(i, ModuleMap, moduleMap)
+  for (const auto& p : moduleMap)
     {
-      PreModule* m = i->second;
+      PreModule* m = p.second;
       s << MixfixModule::moduleTypeString(m->getModuleType()) << ' ' << m << '\n';
     }
 }

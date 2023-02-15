@@ -1,3 +1,25 @@
+2023-02-14  Steven Eker  <eker@pup>
+
+	* metaUpView.cc (MetaLevel::upOpMappings): skip over attr mappings
+
+2023-02-09  Steven Eker  <eker@pup>
+
+	* metaLevelSignature.cc: added pconstSymbol
+
+	* metaUpModule.cc (MetaLevel::upAttributeSet): handle PCONST
+
+	* metaDownOps.cc (MetaLevel::downAttr): handle PCONST
+
+	* metaUpModule.cc (MetaLevel::upImports): handle GENERATED_BY
+
+	* metaLevelSignature.cc: added generatedBySymbol
+
+	* metaDownSignature.cc (MetaLevel::downImport2): handle GENERATED_BY
+
+	* metaDown.cc (MetaLevel::downImport): handle GENERATED_BY
+
+===================================Maude140===========================================
+
 2023-01-31  Steven Eker  <eker@pup>
 
 	* metaDown.cc (MetaLevel::downRule): call checkRule()

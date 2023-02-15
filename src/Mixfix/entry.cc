@@ -636,21 +636,6 @@ MixfixModule::addPolymorph(Token prefixName,
     }
   validateAttributes(prefixName, domainAndRange, symbolType);
   int nrArgs = domainAndRange.size() - 1;
-  if (symbolType.hasFlag(SymbolType::ITER))
-    {
-      if (nrArgs != 1)
-	{
-	  IssueWarning(LineNumber(prefixName.lineNumber()) <<
-		       ": declaration for polymorphic operator " << QUOTE(prefixName) <<
-		       " has iter attribute but " << nrArgs << " arguments.");
-	}
-      else if (!(domainAndRange[0] == 0 && domainAndRange[0] == 0))
-	{
-	  IssueWarning(LineNumber(prefixName.lineNumber()) <<
-		       ": declaration for polymorphic operator " << QUOTE(prefixName) <<
-		       " doesn't have both domain and range as polymorphic.");
-	}
-    }
   int nrPolymorphs = polymorphs.length();
   polymorphs.expandBy(1);
   Polymorph& p = polymorphs[nrPolymorphs];
@@ -689,11 +674,11 @@ MixfixModule::addPolymorph(Token prefixName,
     }
   else
     {
-      if (domainAndRange.length() - 1 != nrUnderscores)
+      if (nrArgs != nrUnderscores)
 	{
 	  IssueWarning(LineNumber(prefixName.lineNumber()) <<
 		       ": number of underscores does not match (" << nrUnderscores <<
-		       ") number of arguments (" << domainAndRange.length() - 1 <<
+		       ") number of arguments (" << nrArgs <<
 		       ") for operator " <<
 		       QUOTE(prefixName) << '.');
 	  p.symbolInfo.mixfixSyntax.contractTo(0);
@@ -722,11 +707,9 @@ MixfixModule::addPolymorph(Token prefixName,
     }
   p.symbolInfo.polymorphIndex = nrPolymorphs;  // our own index
   p.symbolInfo.symbolType = symbolType;
-  //cout << "symbolType for "<< prefixName << " is " << symbolType << endl;
   p.symbolInfo.next = NONE;
   {
     p.symbolInfo.iflags = ADHOC_OVERLOADED | DOMAIN_OVERLOADED;
-    int nrArgs = domainAndRange.length() - 1;
     for (int i = 0; i < nrArgs; i++)
       {
 	if (domainAndRange[i] == 0)

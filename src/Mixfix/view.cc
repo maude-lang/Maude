@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -63,6 +63,7 @@
 //	our stuff
 #include "instantiateViewWithFreeParameters.cc"
 #include "instantiateViewWithBoundParameters.cc"
+#include "ooView.cc"
 
 //
 //	Version for original view.
@@ -300,6 +301,7 @@ View::regretToInform(Entity* doomedEntity)
   //	Something we depended on changed so self destruct all calculated stuff.
   //
   clearOpTermMap();
+  purgeGeneratedMappings(); // breaks stuff - not sure why
   if (fromTheory != 0)
     {
       fromTheory->removeUser(this);
@@ -358,13 +360,10 @@ View::checkSorts()
   //	fromTheory, there exists under our mapping sorts (A', B') that are in 
   //	the same kind in toModule, and further more if A <= B then A' <= B'.
   //
-  const Vector<ConnectedComponent*> kinds = fromTheory->getConnectedComponents();
-  //
   //	We examine the sort structure of the from theory one connected component at a time.
   //
-  FOR_EACH_CONST(i, Vector<ConnectedComponent*>, kinds)
+  for (ConnectedComponent* kind : fromTheory->getConnectedComponents())
     {
-      ConnectedComponent* kind = (*i);
       //
       //	When an strategy view is instantiated to a functional or system
       //	module, the auxiliary sort type must not be defined
@@ -793,7 +792,15 @@ View::evaluate()
   switch (status)
     {
     case INITIAL:
-      break;
+      {
+	//
+	//	Evaluating a view with OO mapping can add sort and op mappings to the
+	//	base renaming. We need to keep track of what was original in case we
+	//	need to purge these to re-evaluate.
+	//
+	recordUserMappings();
+	break;
+      }
     case PROCESSING:
       {
 	IssueWarning(*this << ": recursive use of view " << QUOTE(this) << " is not allowed.");
@@ -906,7 +913,9 @@ View::evaluate()
 
   status = GOOD;  // until proven otherwise
 
-  if (!checkSorts() ||
+  if (!handleClassMappings() ||
+      !handleAttrMappings() ||
+      !checkSorts() ||
       !handleTermAndExprMappings() ||
       !checkOps() ||
       !checkPolymorphicOps() ||

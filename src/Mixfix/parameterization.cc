@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,43 +51,59 @@ ImportModule::makeParameterCopy(int moduleName, int parameterName, ModuleCache* 
 	canonical->addSortMapping(sortName, Token::makeParameterInstanceName(parameterName, sortName));
       }
   }
+  //
+  //	Now we look for parameter constants; that is constants that were declared in a theory
+  //	with the pconst attribute. We want to do this before considering imports in case
+  //	import would add duplicated, which is detected by addSortConstantAndLabelMappings().
+  //
   {
-    //
-    //	Technically this is wrong since labels contains labels from our imports
-    //	which if from a theory will get added in a later step and if from a module
-    //	shouldn't be added at all.
-    //
-    //	However addSortAndLabelMappings() will silently ignore dups and renaming
-    //	labels from modules is harmess since parameter renamings never get applied to
-    //	to modules. There is a certain inelegance and potential inefficiency in carrying
-    //	superfluous label mappings around but they will be (very) rare in practice and
-    //	doing the right thing would cost a second "local" label set in each ImportModule.
-    //
-    FOR_EACH_CONST(i, set<int>, labels)
-      canonical->addLabelMapping(*i, Token::makeParameterInstanceName(parameterName, *i));
-  }
-  {
-    //
-    //	We make a parameter copy of imported theories and directly import imported modules.
-    //
-    FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
+    const Vector<Symbol*>& symbols = getSymbols();
+    for (int i = nrImportedSymbols; i < nrUserSymbols; ++i)
       {
-	ImportModule* import = *i;
-	if (import->isTheory())
+	Symbol* s = symbols[i];
+	SymbolType st = getSymbolType(s);
+	if (st.hasFlag(SymbolType::PCONST))
 	  {
-	    ImportModule* importCopy = moduleCache->makeParameterCopy(parameterName, *i);
-	    if (importCopy == 0)
-	      {
-		copy->markAsBad();
-		return copy;  // give up
-	      }
-	    copy->addImport(importCopy, INCLUDING, lineNumber);
-	    canonical->addSortAndLabelMappings(importCopy->canonicalRenaming);
+	    Assert(s->arity() == 0, "pconst non-constant");
+	    int symbolName = s->id();
+	    canonical->addOpMapping(symbolName);
+	    canonical->addType(s->rangeComponent());
+	    canonical->addOpTarget(Token::makeParameterInstanceName(parameterName, symbolName));
 	  }
-	else
-	  copy->addImport(*i, INCLUDING, lineNumber);  // HACK need to fix including
       }
   }
+  //
+  //	Technically this is wrong since labels contains labels from our imports
+  //	which if from a theory will get added in a later step and if from a module
+  //	shouldn't be added at all.
+  //
+  //	However addSortConstantAndLabelMappings() will silently ignore dups and renaming
+  //	labels from modules is harmess since parameter renamings never get applied to
+  //	to modules. There is a certain inelegance and potential inefficiency in carrying
+  //	superfluous label mappings around but they will be (very) rare in practice and
+  //	doing the right thing would cost a second "local" label set in each ImportModule.
+  //
+  for (int label : labels)
+    canonical->addLabelMapping(label, Token::makeParameterInstanceName(parameterName, label));
+  //
+  //	We make a parameter copy of imported theories and directly import imported modules.
+  //
+  for (ImportModule* import : importedModules)
+    {
+      if (import->isTheory())
+	{
+	  ImportModule* importCopy = moduleCache->makeParameterCopy(parameterName, import);
+	  if (importCopy == 0)
+	    {
+	      copy->markAsBad();
+	      return copy;  // give up
+	    }
+	  copy->addImport(importCopy, INCLUDING, lineNumber);
+	  canonical->addSortConstantAndLabelMappings(importCopy->canonicalRenaming);
+	}
+      else
+	copy->addImport(import, INCLUDING, lineNumber);  // HACK need to fix including
+    }
   finishCopy(copy, canonical);
   DebugExit("done making " << QUOTE(Token::name(moduleName)) <<
 	    " with parameter " << QUOTE(Token::name(parameterName)));
@@ -175,6 +191,10 @@ ImportModule::addSortMappingsFromModuleView(Renaming* underConstruction, const V
       //	The module-view argument maps Foo |-> Bar .
       //
       int newToName = view->renameSort(oldFromName);  // Bar
+      //
+      //	We add a mapping from parameter theory to instantiation by module view
+      //	  X$Foo |-> Bar
+      //
       underConstruction->addSortMapping(oldToName, newToName);
     }
 }
@@ -202,6 +222,71 @@ ImportModule::addSortRenamingsForParameterChange(Renaming* underConstruction, in
     }
 }
 
+void
+ImportModule::addConstantRenamingsForParameterChange(Renaming* underConstruction,
+						     int newParameterName,
+						     const ImportModule* parameterCopyUser) const
+{
+  Assert(origin == PARAMETER, "called on " << this << " which isn't a parameter copy of a theory");
+  //
+  //	We're a parameter copy X :: T of a theory T.
+  //	We have to deal with a change of parameter to Y due to our
+  //	parameter X being instantiated by a parameter Y from an enclosing entity with X != Y
+  //
+  //	We only expect to see op mappings in our cannonical renaming if they are mapping pconst constants.
+  //	We treat them like sort mappings.
+  //
+  int nrOpMappings = canonicalRenaming->getNrOpMappings();
+  for (int i = 0; i < nrOpMappings; ++i)
+    {
+      //
+      //	We have a pconst constant that generated a op mapping
+      //	  c : -> [S] to X$c
+      //	In the new parameter copy, X is going to be replaced by Y.
+      //	We need to add an op mapping to take us from the parametrized module we're importing
+      //	which as a constant X$c to the importer with parameter Y which must have a constant Y$c
+      //	generated from the same base theory. This looks like
+      //	  X$c: -> [T] to Y$c
+      //	where T is the sort S from the base theory was was mapping to in the parameter copy;
+      //	T could be S if S came from a module or X$S if X cam from a theory.
+      //
+      int oldFromName = canonicalRenaming->getOpFrom(i);  // c
+      int oldToName = canonicalRenaming->getOpTo(i);      // X$c
+      int newToName = Token::makeParameterInstanceName(newParameterName, oldFromName);  // Y$c
+      //
+      //	Next we need to figure out T so we can make a specific op mapping.
+      //
+      Assert(canonicalRenaming->getNrTypes(i) == 1, "unexpected mapping of a non-constant oldFromName = " << Token::name(oldFromName) <<
+	     " oldToName = " << Token::name(oldToName));
+      const set<int>& typeSorts = canonicalRenaming->getTypeSorts(i, 0);
+      Assert(!typeSorts.empty(), "no type sorts");
+      //
+      //	Pick any sort and follow its mapping to find the kind in the parameter theory.
+      //	This is a sort in the base theory.
+      //
+      int firstSortName = *(typeSorts.begin());
+      DebugInfo("We saw a mapping " << Token::name(oldFromName) << " : " << Token::name(firstSortName) << " to " <<
+		Token::name(oldToName));
+      //
+      //	See what that sort mapped to in the parameter copy (us).
+      //
+      int newSortName = canonicalRenaming->renameSort(firstSortName);
+      DebugInfo("newSortName = " << Token::name(newSortName));
+      //
+      //	Now we find the sort with that name in the parameterCopyUser.
+      //
+      Sort* newSort = parameterCopyUser->findSort(newSortName);
+      Assert(newSort, "missing sort " << Token::name(newSortName) << " in " << parameterCopyUser);
+      //
+      //	Add the mapping
+      //	  X$c : -> [Y] to c'
+      //
+      underConstruction->addOpMapping(oldToName);
+      underConstruction->addType(newSort->component());
+      underConstruction->addOpTarget(newToName);
+    }
+}
+
 ConnectedComponent*
 ImportModule::translateComponent(const ConnectedComponent* component,
 				 const ImportModule* parameterCopyUser) const
@@ -209,7 +294,7 @@ ImportModule::translateComponent(const ConnectedComponent* component,
   Assert(origin == PARAMETER, "called on " << this << " which isn't a parameter copy of a theory");
   //
   //	We're a parameter copy X :: T of a theory T.
-  //	We translate a connected component appearing in T to its equivalent in us.
+  //	We translate a connected component appearing in T to its equivalent in parameterCopyUser.
   //
   Sort* firstUserSort = component->sort(Sort::FIRST_USER_SORT);
   int firstUserSortName = firstUserSort->id();
@@ -228,7 +313,20 @@ ImportModule::addFromPartOfRenaming(Renaming* underConstruction,
   //	Add the from-part of a mapping from s to underConstruction, mapping
   //	the arity and coarity into us.
   //
-  underConstruction->addOpMapping(s->id());
+  int fromName;
+  if (baseModule->getSymbolType(s).hasFlag(SymbolType::PCONST))
+    {
+      //
+      //	We need to map from X$c rather than c
+      int renamingIndex = canonicalRenaming->renameOp(s);
+      Assert(renamingIndex != NONE, "couldn't find renaming form theory to parameter copy for pconst " << s);
+      fromName = canonicalRenaming->getOpTo(renamingIndex);
+    }
+  else
+    fromName = s->id();
+
+  DebugInfo("from name is " << Token::name(fromName));
+  underConstruction->addOpMapping(fromName);
   int nrArgs = s->arity();
   for (int i = 0; i < nrArgs; ++i)
     underConstruction->addType(translateComponent(s->domainComponent(i), parameterCopyUser));
@@ -238,11 +336,16 @@ ImportModule::addFromPartOfRenaming(Renaming* underConstruction,
 void
 ImportModule::addOpMappingsFromView(Renaming* underConstruction,
 				    const View* view,
-				    const ImportModule* parameterCopyUser) const
+				    const ImportModule* parameterCopyUser,
+				    const ImportModule* targetTheoryParameterCopy) const
 {
   Assert(origin == PARAMETER, "called on " << this << " which isn't a parameter copy of a theory");
   Assert(view->getFromTheory() == baseModule, "theory clash: view " << view << " maps from " <<
 	 view->getFromTheory() << " but " << this << " has base theory " << baseModule);
+  //
+  //	The renaming underConstruction will be used to translate operators from
+  //	parameterCopyUser to an instantiation of it by arguments where the argument
+  //	instantiating the parameter copy is view.
   //
   //	We're a parameter copy X :: T of a theory T.
   //	We have to deal with a view V that maps T to T'.
@@ -257,6 +360,10 @@ ImportModule::addOpMappingsFromView(Renaming* underConstruction,
     //	to underConstruction, where for each sort s in T, s' is its
     //	translation in X :: T, i.e. in us.
     //
+    //	Since we now allow pconst, we also need to deal with the case that f is a pconst constant
+    //	that was mapped by from from c in T to X$c in X :: T by canonicalRenaming and may need to be
+    //	mapped back to c or new name given by the mapping of c by view.
+    //
     const Vector<Symbol*>& symbols = baseModule->getSymbols();
     int nrUserSymbols = baseModule->getNrUserSymbols();
     for (int i = 0; i < nrUserSymbols; ++i)
@@ -266,7 +373,6 @@ ImportModule::addOpMappingsFromView(Renaming* underConstruction,
 	Assert(baseModule->getSymbolType(s).getBasicType() != SymbolType::SORT_TEST, "didn't expect sort test");
 	if (baseModule->moduleDeclared(s))
 	  continue;  // don't map operators with a module declaration
-
 	//
 	//	Check for op->term mapping in the view.
 	//
@@ -282,18 +388,78 @@ ImportModule::addOpMappingsFromView(Renaming* underConstruction,
 	    underConstruction->addOpTargetTerm(fromTerm, toTerm);  // renaming "borrows" toTerm
 	  }
 	//
-	//	Check for op->op mapping in the view's base Renaming.
 	//	Note that op->term mappings _are not_ stored in a view's base Renaming.
 	//	They only appear in canonicalRenamings used for instantiation.
 	//
-	int index = view->renameOp(s);
-	if (index != NONE)
+	//	See how the parameter copy and the view rename this operator.
+	//
+	int baseName = s->id();
+	int copyRenamingIndex = canonicalRenaming->renameOp(s);
+	//
+	//	Only pconst constants should ever be mapped by canonicalRenaming
+	//
+	Assert(copyRenamingIndex == NONE ||
+	       baseModule->getSymbolType(s).hasFlag(SymbolType::PCONST), "copy renaming of " << s << " to " <<
+	       Token::name(canonicalRenaming->getOpTo(copyRenamingIndex)) << "for non-pconst");
+	int fromName = (copyRenamingIndex == NONE) ? baseName : canonicalRenaming->getOpTo(copyRenamingIndex);
+	int viewRenamingIndex = view->renameOp(s);
+	int toName = (viewRenamingIndex == NONE) ? baseName : view->getOpTo(viewRenamingIndex);
+	if (targetTheoryParameterCopy)
 	  {
 	    //
-	    //	We matched an op->op mapping.
+	    //	view is a theory-view and the parameter copy of its target theory might further
+	    //	map toName to X$toName
 	    //
-	    addFromPartOfRenaming(underConstruction, s, parameterCopyUser);
-	    underConstruction->addOpTarget(view->getOpTo(index));
+	    if (s->arity() == 0)
+	      {
+		//
+		//	First we need to find the range component translated into the target view.
+		//
+		ImportModule* viewToTheory = view->getToModule();
+		Assert(viewToTheory == targetTheoryParameterCopy->baseModule,
+		       "target theory mismatch " << viewToTheory << " vs " <<  targetTheoryParameterCopy->baseModule);
+
+		Sort* fromTheoryRangeSort = s->getRangeSort();  // any will do
+		int fromTheoryRangeSortName = fromTheoryRangeSort->id();
+		int toTheoryRangeSortName = view->renameSort(fromTheoryRangeSortName);
+		Sort* toTheoryRangeSort = viewToTheory->findSort(toTheoryRangeSortName);
+		Assert(toTheoryRangeSort != 0, "couldn't find sort " << Token::name(toTheoryRangeSortName) << " in " <<
+		       viewToTheory << " to map " << fromTheoryRangeSort << " to under " << view);
+		ConnectedComponent* toTheoryRangeComponent = toTheoryRangeSort->component();
+		//
+		//	Now we find the constant symbol in viewToTheory.
+		//
+		static Vector<ConnectedComponent*> dummy;
+		Symbol* symbolInToTheory = viewToTheory->findSymbol(toName, dummy, toTheoryRangeComponent);
+		Assert(symbolInToTheory != 0, "couldn't find " << Token::name(toName) << " with range " <<
+		       toTheoryRangeSort << " in " << viewToTheory << " to map " << s << " to.");
+		//
+		//	Now we can ask targetTheoryParameterCopy what it mapped our constant to.
+		//
+		int index = targetTheoryParameterCopy->canonicalRenaming->renameOp(symbolInToTheory);
+		if (index != NONE)
+		  toName = targetTheoryParameterCopy->canonicalRenaming->getOpTo(index);
+		DebugInfo("constant " << s << " was mapped to " << symbolInToTheory << " by view " <<
+			  view << " and then to " << Token::name(toName) << " by parameter copy");
+	      }
+	  }
+	if (toName != fromName)
+	  {
+	    //
+	    //	Need to add specific renaming.
+	    //
+	    DebugInfo("adding a mapping for " << s << " from " << Token::name(fromName) <<
+		      " to " << Token::name(toName));
+	    underConstruction->addOpMapping(fromName);
+	    //
+	    //	Deal with the domain and range specificity.
+	    //
+	    int nrArgs = s->arity();
+	    for (int i = 0; i < nrArgs; ++i)
+	      underConstruction->addType(translateComponent(s->domainComponent(i), parameterCopyUser));
+	    underConstruction->addType(translateComponent(s->rangeComponent(), parameterCopyUser));
+
+	    underConstruction->addOpTarget(toName);
 	  }
       }
   }
@@ -388,14 +554,11 @@ ImportModule::makeSummation(int moduleName, const Vector<ImportModule*>& modules
   //
   //	Combine bound parameters.
   //
-
-  //
   //	Handle imports and their parameters.
   //
   LineNumber lineNumber(FileTable::AUTOMATIC);
-  FOR_EACH_CONST(i, Vector<ImportModule*>, modules)
+  for (ImportModule* import : modules)
     {
-      ImportModule* import = *i;
       Assert(!(import->hasFreeParameters()), "free parameters in summand " << import);
 
       int nrParameters = import->getNrParameters();

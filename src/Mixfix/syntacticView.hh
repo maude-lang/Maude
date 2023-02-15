@@ -47,7 +47,8 @@ public:
   //	Show view command only makes sense for object level views.
   //
   void showView(ostream& s);
-  
+  void showProcessedView(ostream& s);
+
 private:
 
   struct VarDecl

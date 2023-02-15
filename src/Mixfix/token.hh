@@ -63,7 +63,6 @@ public:
   void tokenize(const char* tokenString, int lineNumber);
   void tokenize(int code, int lineNumber);
   static int makeParameterInstanceName(int parameterCode, int originalCode);
-  //static bool splitParameterInstanceName(int code, int& parameterName, int& baseName);
   void fixUp(const char* tokenString, int& lineNumber);
   void dropChar(const Token& original);
 
@@ -121,6 +120,7 @@ public:
   static bool isFlagged(int code);
   static int unflaggedCode(int code);
   static int fixUp(const char* tokenString);
+  static Rope removeBoundParameterBrackets(int code);
 
 private:
   enum SpecialValues

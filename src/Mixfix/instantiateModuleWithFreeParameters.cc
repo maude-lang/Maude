@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,9 +54,9 @@ ImportModule::makeInstantiation(int moduleName,
       //	to a system module, or a non-strategy module to a strategy
       //	module.
       //
-      FOR_EACH_CONST(i, Vector<Argument*>, arguments)
+      for (Argument* a : arguments)
 	{
-	  View* v = dynamic_cast<View*>(*i);
+	  View* v = dynamic_cast<View*>(a);
 	  if (v != 0)
 	    {
 	      ModuleType paramType = v->getToModule()->getModuleType();
@@ -128,6 +128,7 @@ ImportModule::makeInstantiation(int moduleName,
       return copy;
     }
   handleParameterizedSorts(canonical, parameterMap, extraParameterSet);
+  handleParameterizedConstants(canonical, parameterMap, extraParameterSet);
   handleRegularImports(copy, arguments, moduleCache);
   if (copy->isBad())
     {
@@ -201,10 +202,10 @@ ImportModule::handleInstantiationByTheoryView(ImportModule* copy,
 	      //
 	      Token parameterToken;
 	      parameterToken.tokenize(parameterName, FileTable::AUTOMATIC); 
-	      ImportModule* parameterTheory = moduleCache->makeParameterCopy(parameterName, toModule);
-	      if (parameterTheory == 0)
+	      ImportModule* targetTheoryParameterCopy = moduleCache->makeParameterCopy(parameterName, toModule);
+	      if (targetTheoryParameterCopy == 0)
 		return false;
-	      copy->addParameter(parameterToken, parameterTheory);
+	      copy->addParameter(parameterToken, targetTheoryParameterCopy);
 	      argumentView->addUser(copy);
 	      //
 	      //	If parameter X :: T was instantiated by V from T to T' we need to map
@@ -225,7 +226,7 @@ ImportModule::handleInstantiationByTheoryView(ImportModule* copy,
 	      //
 	      const ImportModule* parameterCopyOfTheory = parameterTheories[i];
 	      parameterCopyOfTheory->addSortMappingsFromTheoryView(canonical, parameterName, argumentView);
-	      parameterCopyOfTheory->addOpMappingsFromView(canonical, argumentView, this);
+	      parameterCopyOfTheory->addOpMappingsFromView(canonical, argumentView, this, targetTheoryParameterCopy);
 	      parameterCopyOfTheory->addStratMappingsFromView(canonical, argumentView, this);
 	    }
 	}
@@ -293,10 +294,16 @@ ImportModule::handleInstantiationByParameter(ImportModule* copy,
 	      //
 	      parameterMap[oldParameterName] = parameterName;
 	      //
-	      //	For each Foo -> X$Foo we mapped in the parameter copy of the parameter theory,
+	      //	For each sort Foo -> X$Foo we mapped in the parameter copy of the parameter theory,
 	      //	X$Foo |-> Y$Foo
 	      //
 	      parameterTheories[i]->addSortRenamingsForParameterChange(canonical, parameterName);
+	      //
+	      //	For each pconst constant c : -> [S] |-> X$c we mapped in the parameter
+	      //	copy of the theory, we add a mapping c : -> [T] |-> Y$c
+	      //	where T is whatever S mapped to in the parameter copy.
+	      //
+	      parameterTheories[i]->addConstantRenamingsForParameterChange(canonical, parameterName, this);
 	    }
 	  //
 	  //	Need to propagate parameter conflicts from ourselves into copy.
@@ -332,21 +339,32 @@ ImportModule::handleInstantiationByModuleView(ImportModule* copy,
   //	Finally we handle parameters instantiated by views to modules.
   //
   LineNumber lineNumber(FileTable::AUTOMATIC);
-  int nrParameters = parameterNames.size();
-  for (int i = 0; i < nrParameters; ++i)
+  Index nrParameters = getNrParameters();
+  for (Index i = 0; i < nrParameters; ++i)
     {
+      //
+      //	Do we have a view (as opposed to a bound parameter)?
+      //
       if (View* argumentView = dynamic_cast<View*>(arguments[i]))
 	{
+	  //
+	  //	Is it a module view?
+	  //
 	  ImportModule* toModule = argumentView->getToModule();
 	  if (!(toModule->isTheory()))
 	    {
 	      if (!handleBoundParameters(copy, argumentView, moduleCache))
 		return false;
+	      //
+	      //	The copy imports the view to-module, and the copy is registered as a
+	      //	user of the view.
+	      //
 	      copy->addImport(argumentView->getToModule(), PROTECTING, lineNumber);
 	      argumentView->addUser(copy);
 	      //
-	      //	For each Foo -> X$Foo we mapped in the parameter copy of the parameter theory,
-	      //	we need to have a mapping X$Foo -> Bar where Bar is the target of Foo in our view.
+	      //	For each sort and pconst constant Foo -> X$Foo we mapped in the parameter copy
+	      //	of the parameter theory, we need to have a mapping X$Foo -> Bar where Bar is the
+	      //	target of Foo in our view.
 	      //
 	      const ImportModule* parameterCopyOfTheory = parameterTheories[i];
 	      parameterCopyOfTheory->addSortMappingsFromModuleView(canonical, argumentView);
@@ -373,9 +391,9 @@ ImportModule::handleInstantiationByModuleView(ImportModule* copy,
 	      //	it has the possibility of leaving them stranded in a nonfinal instantiation
 	      //	should both recieve theory-views in a nonfinal instantiation.
 	      //
-	      FOR_EACH_CONST(j, NatSet, positionsInstantiatedParameter)
+	      for (int j : positionsInstantiatedParameter)
 		{
-		  int bareParameterName = safeCast(Parameter*, arguments[*j])->id();
+		  int bareParameterName = safeCast(Parameter*, arguments[j])->id();
 		  copy->addConflictsWithBoundParameters(argumentView, bareParameterName);
 		}
 	    }
@@ -461,6 +479,42 @@ ImportModule::handleParameterizedSorts(Renaming* canonical,
 	  DebugAdvisory("handleParameterizedSorts() mapping sort " << Token::name(sortId) <<
 			" to " << Token::name(newSortId));
 	  canonical->addSortMapping(sortId, newSortId);
+	}
+    }
+}
+
+void
+ImportModule::handleParameterizedConstants(Renaming* canonical,
+					   const ParameterMap& parameterMap,
+					   const ParameterSet& extraParameterSet) const
+{
+  //
+  //	Check for parameterized constants declared inside us.
+  //	We also need to map constants declared in parameterized modules that
+  //	we import otherwise our use of those constants will fail.
+  //	For the moment we consider all user constants for mapping.
+  //
+  const Vector<Symbol*>& symbols = getSymbols();
+  int nrUserSymbols = getNrUserSymbols();
+  for (int i = 0; i < nrUserSymbols; ++i)
+    {
+      Symbol* s = symbols[i];
+      if (s->arity() == 0)
+	{
+	  //
+	  //	We cheat and pretend the constant is a sort.
+	  //
+	  int constantId = s->id();
+	  int newConstantId = instantiateSortName(constantId, parameterMap, extraParameterSet);
+	  if (newConstantId != constantId)
+	    {
+	      //
+	      //	Need to add an specific op mapping.
+	      //
+	      canonical->addOpMapping(constantId);
+	      canonical->addType(s->rangeComponent());
+	      canonical->addOpTarget(newConstantId);
+	    }
 	}
     }
 }

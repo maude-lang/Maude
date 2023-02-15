@@ -34,6 +34,17 @@ operator<<(ostream& s, const NamedEntity* e)
 }
 
 ostream&
+operator<<(ostream& s, const Symbol* symbol)
+{
+  if (symbol == 0)
+    return s << "(null)";
+  int code = symbol->id();
+  if (symbol->arity() == 0)
+    return s << Token::sortName(code);  // hack to handle parameterized constant names
+  return s << Token::name(code);
+}
+
+ostream&
 operator<<(ostream& s, const Sort* sort)
 {
   if (sort == 0)

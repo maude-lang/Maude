@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -128,8 +128,19 @@ ImportModule::getObjectName() const
 const char*
 ImportModule::importModeString(ImportMode mode)
 {
-  static const char* const modeStrings[] = { "protecting", "extending", "including" };
-  return modeStrings[mode];
+  switch (mode)
+    {
+    case INCLUDING:
+      return "including";
+    case GENERATED_BY:
+      return "generated-by";
+    case EXTENDING:
+      return "extending";
+    case PROTECTING:
+      return "protecting";
+    }
+  CantHappen("bad importation mode" << mode);
+  return 0;
 }
 
 void

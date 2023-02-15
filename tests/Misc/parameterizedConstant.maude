@@ -1,0 +1,93 @@
+set show timing off .
+set show advisories off .
+
+fmod STACK{X :: TRIV} is
+  sorts NeStack{X} Stack{X} .
+  subsort X$Elt < NeStack{X} < Stack{X} .
+  op emptyStack{X} : -> Stack{X} .
+  op _|_ : Stack{X} Stack{X} -> Stack{X} [assoc id: emptyStack{X}] .
+  op _|_ : NeStack{X} Stack{X} -> NeStack{X} [ditto] .
+  op _|_ : Stack{X} NeStack{X} -> NeStack{X} [ditto] .
+  op push : X$Elt Stack{X} -> NeStack{X} .
+  op top : NeStack{X} -> X$Elt .
+  op pop : NeStack{X} -> Stack{X} .
+
+var S : Stack{X} .
+var E : X$Elt .
+  eq push(E, S) = E | S .
+  eq top(E | S) = E .
+  eq pop(E | S) = S .
+endfm
+
+red push(E, emptyStack{X}) .
+red push(E, push(E, emptyStack{X})) .
+red top(push(E, emptyStack{X})) .
+red pop(push(E, emptyStack{X})) .
+
+
+fmod QID-TEST is
+  inc STACK{Qid} .
+endfm
+
+show all .
+
+red push('a, emptyStack{Qid}) .
+red push('a, push('b, emptyStack{Qid})) .
+red top(push('c, emptyStack{Qid})) .
+red pop(push('c, emptyStack{Qid})) .
+
+
+fmod NAT-TEST is
+  inc (STACK * (op _|_ to _!_, op emptyStack{X} to null{X})){Nat} .
+endfm
+
+show all .
+
+red push(1, null{Nat}) .
+red push(1, push(2, null{Nat})) .
+red top(push(3, null{Nat})) .
+red pop(push(3, null{Nat})) .
+
+
+fmod NAT-TEST2 is
+  inc (STACK * (sort NeStack{X} to NonEmptyStack{X}, op _|_ to _!_, op emptyStack{X} to null{X})){Nat} .
+endfm
+
+show all .
+
+red push(1, null{Nat}) .
+red push(1, push(2, null{Nat})) .
+red top(push(3, null{Nat})) .
+red pop(push(3, null{Nat})) .
+
+
+fmod VIEW-TEST{X :: TOTAL-ORDER} is
+  inc STACK{TOTAL-PREORDER}{TOTAL-ORDER}{X} .
+endfm
+
+show all .
+
+fmod VIEW-TEST2 is
+  inc VIEW-TEST{Float<=} .
+endfm
+
+show all .
+
+red push(1.0, emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}) .
+red push(1.0, push(2.0, emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=})) .
+red top(push(3.0, emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=})) .
+red pop(push(3.0, emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=})) .
+
+
+view Stack{X :: TRIV} from DEFAULT to STACK{X} is
+  sort Elt to Stack{X} .
+  op 0 to emptyStack{X} .
+endv
+
+fmod ARRAY-TEST is
+  inc ARRAY{Nat, Stack{Float}} .
+endfm
+
+show all .
+
+red empty[42] .

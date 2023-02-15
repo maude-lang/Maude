@@ -1,0 +1,109 @@
+fmod TEST{X :: T} is
+  sorts X$Foo Baz{X} .
+  op X$c : -> X$Foo [pconst] .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  op h : Baz{X} -> Baz{X} .
+  eq f(X$c) = X$c .
+  eq h(e) = h(e) .
+endfm
+fmod TEST{X :: T} is
+  sorts X$Foo Baz{X} .
+  op X$c : -> X$Foo [pconst] .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  op h : X$Foo -> X$Foo .
+  eq f(X$c) = X$c .
+  eq h(X$c) = h(X$c) .
+endfm
+fmod TEST{X :: T} is
+  sorts X$Foo Baz{X} .
+  op X$c : -> X$Foo [pconst] .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  op h : Baz{X} -> Baz{X} .
+  eq f(X$c) = X$c .
+  eq h(e) = h(e) .
+endfm
+fmod TEST{X :: T} is
+  sorts X$Foo Baz{X} .
+  op X$c : -> X$Foo [pconst] .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  op h : X$Foo -> X$Foo .
+  eq f(X$c) = X$c .
+  eq h(X$c) = h(X$c) .
+endfm
+fmod TEST{X :: T} is
+  sorts X$Foo Baz{X} .
+  op c : -> X$Foo .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  op h : Baz{X} -> Baz{X} .
+  eq f(c) = c .
+  eq h(e) = h(e) .
+endfm
+fmod TEST{X :: T} is
+  sorts X$Foo Baz{X} .
+  op c : -> X$Foo .
+  op e : -> Baz{X} .
+  op f : X$Foo -> X$Foo .
+  op h : X$Foo -> X$Foo .
+  eq f(c) = c .
+  eq h(c) = h(c) .
+endfm
+fmod TEST{W :: T} is
+  sorts W$Foo Baz{W} .
+  op W$c : -> W$Foo [pconst] .
+  op e : -> Baz{W} .
+  op f : W$Foo -> W$Foo .
+  op h : Baz{W} -> Baz{W} .
+  eq f(W$c) = W$c .
+  eq h(e) = h(e) .
+endfm
+fmod TEST{W :: T} is
+  sorts W$Foo Baz{W} .
+  op W$c : -> W$Foo [pconst] .
+  op e : -> Baz{W} .
+  op f : W$Foo -> W$Foo .
+  op h : W$Foo -> W$Foo .
+  eq f(W$c) = W$c .
+  eq h(W$c) = h(W$c) .
+endfm
+fmod TEST{W :: T} is
+  sorts W$Foo Baz{W} .
+  op W$c : -> W$Foo [pconst] .
+  op e : -> Baz{W} .
+  op f : W$Foo -> W$Foo .
+  op h : Baz{W} -> Baz{W} .
+  eq f(W$c) = W$c .
+  eq h(e) = h(e) .
+endfm
+fmod TEST{W :: T} is
+  sorts W$Foo Baz{W} .
+  op W$c : -> W$Foo [pconst] .
+  op e : -> Baz{W} .
+  op f : W$Foo -> W$Foo .
+  op h : W$Foo -> W$Foo .
+  eq f(W$c) = W$c .
+  eq h(W$c) = h(W$c) .
+endfm
+fmod TEST{W :: T} is
+  sorts W$Foo Baz{W} .
+  op c : -> W$Foo .
+  op e : -> Baz{W} .
+  op f : W$Foo -> W$Foo .
+  op h : Baz{W} -> Baz{W} .
+  eq f(c) = c .
+  eq h(e) = h(e) .
+endfm
+fmod TEST{W :: T} is
+  sorts W$Foo Baz{W} .
+  op c : -> W$Foo .
+  op e : -> Baz{W} .
+  op f : W$Foo -> W$Foo .
+  op h : W$Foo -> W$Foo .
+  eq f(c) = c .
+  eq h(c) = h(c) .
+endfm
+Bye.

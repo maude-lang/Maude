@@ -83,7 +83,6 @@ public:
   int getNrOpMappings() const;
   int getOpFrom(int index) const;
   int getOpTo(int index) const;
-  bool isMsgMapping(int index) const;
   Term* getFromTerm(int index) const;
   Term* getOpTargetTerm(int index) const;
   int getNrTypes(int index) const;
@@ -100,6 +99,8 @@ public:
   const Vector<int>& getStratVarIndices(int index) const;
   const set<int>& getStratTypeSorts(int index, int typeNr) const;
   int getNrClassMappings() const;
+  Token getFromClass(int index) const;
+  Token getToClass(int index) const;
 
   void discardStratMappings();
 
@@ -112,7 +113,7 @@ public:
   Renaming* makeCanonicalVersion(ImportModule* module) const;
   Rope makeCanonicalName() const;
 
-  void addSortAndLabelMappings(const Renaming* original);
+  void addSortConstantAndLabelMappings(const Renaming* original);
   void addOpMappingPartialCopy(const Renaming* original, int index);
   void addStratMappingPartialCopy(const Renaming* original, int index);
 
@@ -123,7 +124,26 @@ public:
   int renamePolymorph(int oldId) const;
   int renameStrat(RewriteStrategy* oldStrategy) const;
   int renameStrat(int label, const Vector<int>& sortNames) const;
-  void printRenaming(ostream& s, const char* sep, const char* sep2) const;
+  void printRenaming(ostream& s, const char* sep, const char* sep2, bool showProcessed = false) const;
+
+  bool isAttrMapping(int index) const;  // so we can skip them in upView
+
+protected:
+  //
+  //	This returns true even if its is the identity mapping.
+  //	This is needed for processing OO mappings in views.
+  //
+  bool hasSortMapping(int oldId) const;
+  //
+  //	Needed for procssing OO mappings in views.
+  //
+  bool isMsgMapping(int index) const;
+  static bool typeMatch(const set<int>& type, const ConnectedComponent* component);
+  //
+  //	Ugly hack to add and purge generated sort/op mappings for OO mappings in views.
+  //
+  void recordUserMappings();
+  void purgeGeneratedMappings();
 
 private:
   //
@@ -189,7 +209,6 @@ private:
   static bool equal(const Vector<int>& left, const Vector<int>& right);
   static bool isIdentityOpMapping(const ImportModule* module, const OpMapping& om, const Symbol* symbol);
   static bool isIdentityOpMapping(const ImportModule* module, const OpMapping& om, int index);
-  static bool typeMatch(const set<int>& type, const ConnectedComponent* component);
   static bool typeMatch(const Vector<set<int> >& types, Symbol* oldSymbol);
   static bool typeMatch(const Vector<set<int> >& types, RewriteStrategy* oldStrat);
   static bool typeMatch(const Vector<set<int> >& types, const Vector<int>& sortNames);
@@ -209,6 +228,17 @@ private:
   Vector<StratMap::const_iterator> stratMapIndex;
   StratMap::iterator lastStratMapping;
   ClassMap classMap;
+  //
+  //	This is an ugly hack - we want to add sort and op mappings when we processs
+  //	class and attr mappings in derived View but we want to restore the user's
+  //	original renaming if the View gets reevaluated. The alternative is to keep
+  //	the generated sort and op mappings in the View, but then they need to be
+  //	made visible to module instantiation code that needs to deals with desugared
+  //	mappings and the metalevel which also deals with desugared mapppings, which
+  //	is probably equally ugly.
+  //
+  Index nrUserSortMappings = NONE;
+  Index nrUserOpMappings = NONE;
   bool lastSeenWasStrategy;	// Used to discriminate where to addType
 };
 
@@ -216,12 +246,6 @@ inline int
 Renaming::getNrSortMappings() const
 {
   return sortMapIndex.length();
-}
-
-inline int
-Renaming::getNrClassMappings() const
-{
-  return classMap.size();
 }
 
 inline int
@@ -234,6 +258,24 @@ inline int
 Renaming::getSortTo(int index) const
 {
   return sortMapIndex[index]->second;
+}
+
+inline int
+Renaming::getNrClassMappings() const
+{
+  return classMap.size();
+}
+
+inline Token
+Renaming::getFromClass(int index) const
+{
+  return classMap[index].fromClass;
+}
+
+inline Token
+Renaming::getToClass(int index) const
+{
+  return classMap[index].toClass;
 }
 
 inline int
@@ -276,6 +318,12 @@ inline bool
 Renaming::isMsgMapping(int index) const
 {
   return opMapIndex[index]->second.mappingType == MappingType::MSG;
+}
+
+inline bool
+Renaming::isAttrMapping(int index) const
+{
+  return opMapIndex[index]->second.mappingType == MappingType::ATTR;
 }
 
 inline Term*
@@ -385,6 +433,19 @@ inline void
 Renaming::markAsMsg()
 {
   lastOpMapping->second.mappingType = MappingType::MSG;
+}
+
+inline bool
+Renaming::hasSortMapping(int oldId) const
+{
+  return sortMap.find(oldId) != sortMap.end();
+}
+
+inline void
+Renaming::recordUserMappings()
+{
+  nrUserSortMappings = sortMapIndex.size();
+  nrUserOpMappings = opMapIndex.size();
 }
 
 ostream& operator<<(ostream& s, const Renaming* renaming);

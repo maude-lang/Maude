@@ -1,4 +1,17 @@
-Overview of Changes in alpha139
+Overview of Changes in alpha140 (2023-02-14)
+============================================
+* fixed bug where no warning was given for duplicate iter attribute
+* pconst attribute for constants
+* parameterized constants
+* generated-by importation mode
+* show processed view command
+* classes can be parameterized
+* object-oriented theories
+* object-oriented mappings in views
+* fixed bug where []s around bound parameter were shown in imported
+module name with show desugared
+
+Overview of Changes in alpha139 (2023-02-02)
 ============================================
 * syntactic sugar for empty attribute set in object constructor
 * changed reporting of syntax errors in sort and subset declarations

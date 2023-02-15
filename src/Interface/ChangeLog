@@ -1,3 +1,9 @@
+2023-02-08  Steven Eker  <eker@pup>
+
+	* symbol.hh: added decl for operator<<()
+
+===================================Maude140=========================================
+
 2023-02-02  Steven Eker  <eker@pup>
 
 	* binarySymbol.cc (BinarySymbol::rightIdentitySortCheck): removed stray

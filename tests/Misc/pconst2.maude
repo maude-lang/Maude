@@ -1,0 +1,347 @@
+***
+***	Test use of pconst with theory-views
+***
+
+*** don't pull in BOOL so we have simple modules to look at
+set include BOOL off .
+
+*** pconst -> pconst
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(X$a) = X$a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op b : -> Bar [pconst] .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+  op a to b .
+endv
+
+fmod TEST{X :: T2} is
+  inc BAR{TV}{X} .
+endfm
+
+show all .
+
+
+*** pconst -> non-pconst
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(X$a) = X$a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op b : -> Bar .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+  op a to b .
+endv
+
+fmod TEST{X :: T2} is
+  inc BAR{TV}{X} .
+endfm
+
+show all .
+
+
+*** non-pconst -> pconst
+
+fth T is
+  sort Foo .
+  op a : -> Foo .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(a) = a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op b : -> Bar [pconst] .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+  op a to b .
+endv
+
+fmod TEST{X :: T2} is
+  inc BAR{TV}{X} .
+endfm
+
+show all .
+
+
+*** pconst -> pconst, change parameter
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(X$a) = X$a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op b : -> Bar [pconst] .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+  op a to b .
+endv
+
+fmod TEST{Y :: T2} is
+  inc BAR{TV}{Y} .
+endfm
+
+show all .
+
+
+*** pconst -> non-pconst, change parameter
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(X$a) = X$a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op b : -> Bar .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+  op a to b .
+endv
+
+fmod TEST{Y :: T2} is
+  inc BAR{TV}{Y} .
+endfm
+
+show all .
+
+
+*** non-pconst -> pconst, change parameter
+
+fth T is
+  sort Foo .
+  op a : -> Foo .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(a) = a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op b : -> Bar [pconst] .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+  op a to b .
+endv
+
+fmod TEST{Y :: T2} is
+  inc BAR{TV}{Y} .
+endfm
+
+show all .
+
+
+*** pconst -> pconst, implicit mapping
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(X$a) = X$a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op a : -> Bar [pconst] .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+endv
+
+fmod TEST{X :: T2} is
+  inc BAR{TV}{X} .
+endfm
+
+show all .
+
+
+*** pconst -> non-pconst, implicit mapping
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(X$a) = X$a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op a : -> Bar .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+endv
+
+fmod TEST{X :: T2} is
+  inc BAR{TV}{X} .
+endfm
+
+show all .
+
+
+*** non-pconst -> pconst, implicit mapping
+
+fth T is
+  sort Foo .
+  op a : -> Foo .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(a) = a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op a : -> Bar [pconst] .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+endv
+
+fmod TEST{X :: T2} is
+  inc BAR{TV}{X} .
+endfm
+
+show all .
+
+
+*** pconst -> pconst, implicit mapping, change parameter
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(X$a) = X$a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op a : -> Bar [pconst] .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+endv
+
+fmod TEST{Y :: T2} is
+  inc BAR{TV}{Y} .
+endfm
+
+show all .
+
+
+*** pconst -> non-pconst, implicit mapping, change parameter
+
+fth T is
+  sort Foo .
+  op a : -> Foo [pconst] .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(X$a) = X$a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op a : -> Bar .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+endv
+
+fmod TEST{Y :: T2} is
+  inc BAR{TV}{Y} .
+endfm
+
+show all .
+
+
+*** non-pconst -> pconst, implicit mapping, change parameter
+
+fth T is
+  sort Foo .
+  op a : -> Foo .
+endfth
+
+fmod BAR{X :: T} is
+  op f : X$Foo -> X$Foo .
+  eq f(a) = a .
+endfm
+
+fth T2 is
+  sort Bar .
+  op a : -> Bar [pconst] .
+endfth
+
+view TV from T to T2 is
+  sort Foo to Bar .
+endv
+
+fmod TEST{Y :: T2} is
+  inc BAR{TV}{Y} .
+endfm
+
+show all .

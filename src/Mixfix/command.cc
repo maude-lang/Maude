@@ -124,10 +124,11 @@ SyntacticPreModule::showModule(ostream& s)
     {
       OpDecl& opDecl = opDecls[i];
       int defIndex = opDecl.defIndex;
+      OpDef& opDef = opDefs[defIndex];
+      SymbolType st = opDef.symbolType;
       bool newFollow = (i + 1 < nrOpDecls) && (opDecls[i + 1].defIndex == defIndex);
       if (!follow)
 	{
-	  SymbolType st = opDefs[defIndex].symbolType;
 	  if (st.getBasicType() == SymbolType::VARIABLE)
 	    s << "  var";
 	  else if (st.hasFlag(SymbolType::MSG_STATEMENT))
@@ -136,7 +137,10 @@ SyntacticPreModule::showModule(ostream& s)
 	    s << "  op";
 	  s << (newFollow ? "s " : " ");
 	}
-      s << opDecls[i].prefixName << ' ';
+      if (st.getBasicType() != SymbolType::VARIABLE && opDef.types.size() == 1)
+	s << Token::sortName(opDecl.prefixName.code()) << ' ';  // hack to handle parameterized constant names
+      else 
+	s << opDecl.prefixName << ' ';
       follow = newFollow;
       if (!follow)
 	{
@@ -275,6 +279,11 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
   if (st.hasFlag(SymbolType::CONFIG))
     {
       s << space << "config";
+      space = " ";
+    }
+  if (st.hasFlag(SymbolType::PCONST))
+    {
+      s << space << "pconst";
       space = " ";
     }
   if (st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))

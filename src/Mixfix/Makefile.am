@@ -132,6 +132,7 @@ EXTRA_DIST = \
 	ooSorts.cc \
 	ooProcess.cc \
 	ooTransform.cc \
+	ooView.cc \
 	process.cc \
 	fixUp.cc \
 	ops.cc \

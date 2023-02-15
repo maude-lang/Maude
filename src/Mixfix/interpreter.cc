@@ -351,6 +351,15 @@ Interpreter::showView() const
 }
 
 void
+Interpreter::showProcessedView() const
+{
+  if (currentView->evaluate())  // in case it became stale
+    currentView->showProcessedView(cout);
+  else
+    IssueWarning("view " << QUOTE(currentView) << " cannot be used due to earlier errors.");
+}
+
+void
 Interpreter::showModules(bool all) const
 {
   showNamedModules(cout);

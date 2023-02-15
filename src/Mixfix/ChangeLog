@@ -1,3 +1,331 @@
+2023-02-14  Steven Eker  <eker@pup>
+
+	* renaming.cc (Renaming::printRenaming): Token::sortName for
+	constant mappings
+
+	* visibleModule.cc (VisibleModule::showPolymorphDecl): use
+	Token::sortName for constants
+
+	* viewDatabase.cc (ViewDatabase::showNamedViews): use range-based
+	for loop
+
+	* visibleModule.cc (VisibleModule::showVars): use range-based for
+	loop
+
+	* moduleDatabase.cc (ModuleDatabase::showNamedModules): use
+	range-based for loop
+
+	* syntacticView.cc (SyntacticView::showView): don't use static_cast
+	(SyntacticView::showProcessedView): don't use static_cast
+
+	* ooSorts.cc (ImportModule::findClassIdSort): improve warning messages
+	(ImportModule::findAtttributeSort): improve warning messages
+
+	* syntacticView.cc (SyntacticView::showView): print bubbles
+	for strat->expr mappings
+
+	* token.hh (class Token): deleted commented out declaration for
+	splitParameterInstanceName()
+
+	* token.cc (Token::codeToRope): deleted commented out function
+	(Token::printTokenVector): don't put space in front of ( in
+	fancySpacing mode
+	(Token::splitParameterInstanceName): deleted commented out function
+
+	* syntacticView.cc (SyntacticView::showView): print bubbles
+	rather than terms for op->term and msg->term mappings
+
+	* visibleModule.cc (VisibleModule::showImports): use
+	removeBoundParameterBrackets()
+
+	* syntacticView.cc (SyntacticView::showProcessedView): use
+	removeBoundParameterBrackets()
+
+	* token.hh (class Token): added decl for removeBoundParameterBrackets()
+
+	* token.cc (Token::removeBoundParameterBrackets): added
+
+	* moduleCache.cc (ModuleCache::showCreatedModules): removed #if 0'd
+	out code
+
+	* renaming.hh (class Renaming): made isAttrMapping() public
+
+2023-02-13  Steven Eker  <eker@pup>
+
+	* renaming.cc (Renaming::renameOp): ignore attr mappings in concrete
+	version and Assert() they never arise in abstract version
+
+	* renaming.hh (class Renaming): updated decl for printRenaming()
+	(class Renaming): init nrUserSortMappings and nrUserOpMappings to NONE
+
+	* renaming.cc (printRenaming): take showProcesed argument and use it to
+	decide whether to print class/attr/msg mappings or generated sort/op
+	mappings
+
+	* interpreter.cc (showProcessedView): added
+
+	* interpreter.hh (class Interpreter): added decl for
+	showProcessedView()
+
+	* commands.yy (command): added show processed view
+
+	* top.yy: added KW_PROCESSED
+
+	* lexer.ll: added processed
+
+	* syntacticView.hh (class SyntacticView): added decl for
+	showProcessedView
+
+	* syntacticView.cc (SyntacticView::showProcessedView): added
+
+	* ooProcess.cc: use getParameterTheoryCopy()
+
+	* importModule.hh (ImportModule::getParameterTheoryCopy): added
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl for
+	ImportModule* version of addHonoraryClassNames()
+
+	* ooProcess.cc (SyntacticPreModule::addHonoraryClassNames): added
+	ImportModule* version
+	(SyntacticPreModule::addHonoraryClassNames): use ImportModule*
+	version; handle parameter theories as well.
+
+	* renaming.hh (class Renaming): move typeMatch() con set<int> from
+	private: to protected:
+
+	* ooView.cc (View::handleAttrMappings): implemented
+
+	* renaming.hh (Renaming::isAttrMapping): added
+	(class Renaming): made isMsgMapping() protected
+
+	* view.cc (View::evaluate): call recordUserMappings() if it is the
+	first time we evaluate this view
+
+	* view.hh (View::finishView): don't call recordUserMappings() here
+
+2023-02-10  Steven Eker  <eker@pup>
+
+	* view.cc (View::regretToInform): call purgeGeneratedMappings()
+
+	* view.hh (View::finishView): call recordUserMappings()
+
+	* renaming.hh (class Renaming): added decl for purgeGeneratedMappings()
+
+	* renaming.cc (Renaming:: purgeGeneratedMappings): added
+
+	* renaming.hh (Renaming::startAddingGeneratedMappings): added
+
+	* ooView.cc (View::handleClassMappings): use hasSortMapping()
+
+	* renaming.hh (hasSortMapping): added
+
+	* view.cc (View::evaluate): call handleClassMappings() and
+	handleAttrMappings()
+
+	* view.hh (class View): added decls for getClassSortAndSymbol(),
+	handleClassMappings(), handleAttrMappings()
+
+	* ooView.cc: created
+
+	* renaming.hh (Renaming::getFromClass): added
+	(Renaming::getToClass): added
+
+	* view.cc (View::checkSorts): use range-based for loop
+
+2023-02-09  Steven Eker  <eker@pup>
+
+	* importModule.cc (ImportModule::importModeString): use switch rather
+	than constant array for robustness
+
+	* syntacticPreModule.cc (SyntacticPreModule::addImport): added gb
+	and generatedBy
+
+	* specialTokens.cc: added gb and generatedBy
+
+	* lexer.ll (id): added gb and generated-by
+
+	* importModule.cc (ImportModule::importModeString): add generated-by
+
+	* importModule.hh (class ImportModule): added GENERATED_BY to
+	enum ImportMode
+
+2023-02-08  Steven Eker  <eker@pup>
+
+	* instantiateViewWithFreeParameters.cc (View::makeInstantiation):
+	call handleParameterizedConstants()
+
+	* prettyPrint.cc (operator<<): added Symbol* version which handles
+	parameterized constants
+
+	* command.cc (SyntacticPreModule::showModule): use sortName() for
+	symbols whose prefix name has the AUX_STRUCTURED_SORT property
+	(SyntacticPreModule::showModule): print constants using sortName()
+	to handle parameterization
+
+	* importModule.hh (class ImportModule): added decl for
+	handleParameterizedConstants()
+
+	* instantiateModuleWithFreeParameters.cc:
+	(ImportModule::handleParameterizedConstants): added
+	(ImportModule::makeInstantiation): call handleParameterizedConstants()
+
+	* renaming.cc (Renaming::addSortMapping): add \n before this
+
+	* instantiateViewWithFreeParameters.cc
+	(View::handleInstantiationByTheoryView)
+	(View::handleInstantiationByParameter)
+	(View::handleInstantiationByModuleView): added DebugEnter()/DebugExit()
+	(View::handleInstantiationByModuleView): added DebugInfo()
+	(View::handleInstantiationByModuleView): fix bug where we were checking
+	our toModule rather than the argument view's toModule to see if was a
+	theory
+	(View::handleInstantiationByTheoryView): parameterCopyOfTheory ->
+	parameterCopyOfParameterTheory
+	(View::handleInstantiationByTheoryView): pass
+	parameterCopyOfArgumentViewToTheory to addOpMappingsFromView()
+
+	* renaming.cc (Renaming::addSortMapping): more detailed Assert()
+
+2023-02-07  Steven Eker  <eker@pup>
+
+	* instantiateViewWithFreeParameters.cc
+	(View::handleInstantiationByParameter):
+	call addConstantRenamingsForParameterChange()
+	(View::handleInstantiationByParameter): pass toModule rather than
+	parameterCopyOfTheory to addConstantRenamingsForParameterChange() as the
+	user of parameterCopyOfTheory
+
+	* ooProcess.cc (SyntacticPreModule::processClassOps): use PCONST
+	flag for class symbols in a theory
+
+	* syntacticPreModule.cc (SyntacticPreModule::finishModule): use
+	PreModule::isTheory()
+
+	* preModule.cc (PreModule::addParameter): use PreModule::isTheory()
+
+	* preModule.hh (PreModule::isTheory): added
+
+	* parameterization.cc:
+	(ImportModule::addOpMappingsFromView): take targetTheoryParameterCopy
+	argument
+	(ImportModule::addOpMappingsFromView): handle the theory-view case where
+	the parameter copy of the target theory might map newName to X$newName
+
+	* importModule.hh (class ImportModule): addOpMappingsFromView() now takes
+	an argument targetTheoryParameterCopy
+
+	* instantiateModuleWithFreeParameters.cc (ImportModule::makeInstantiation):
+	use range-based for loop
+	(ImportModule::handleInstantiationByTheoryView): parameterTheory ->
+	targetTheoryParameterCopy; pass targetTheoryParameterCopy to
+	addOpMappingsFromView()
+
+	* parameterization.cc:
+	(ImportModule::addOpMappingsFromView): rewritten to look at mapped-to name
+	in parameter copy rather than PCONST
+
+2023-02-06  Steven Eker  <eker@pup>
+
+	* instantiateModuleWithFreeParameters.cc:
+	(ImportModule::handleInstantiationByParameter): call
+	addConstantRenamingsForParameterChange()
+
+	* importModule.hh (class ImportModule): deleted decl for
+	addConstantMappingsFromModuleView()
+	(class ImportModule): added decl for addConstantRenamingsForParameterChange()
+
+	* parameterization.cc:
+	(ImportModule::addConstantMappingsFromModuleView): deleted
+
+	* instantiateModuleWithFreeParameters.cc:
+	(ImportModule::handleInstantiationByModuleView): don't call
+	addConstantMappingsFromModuleView()
+
+	* parameterization.cc
+	(ImportModule::addConstantRenamingsForParameterChange): added
+	(ImportModule::translateComponent): fix wrong comment; we find a connected
+	component in parameterCopyUser
+	(ImportModule::addFromPartOfRenaming): handle pconst case
+	(ImportModule::addOpMappingsFromView): handle pconst constants after all
+
+	* instantiateModuleWithFreeParameters.cc
+	(ImportModule::handleInstantiationByModuleView): use range-based for loop
+
+	* parameterization.cc (ImportModule::addOpMappingsFromView): don't handle
+	constanst with pconst here
+
+	* instantiateModuleWithFreeParameters.cc
+	(ImportModule::handleInstantiationByModuleView): use Index and
+	getNrParameters()
+
+	* parameterization.cc (ImportModule::makeParameterCopy):
+	addSortAndLabelMappings() -> addSortConstantAndLabelMappings()
+	(ImportModule::makeParameterCopy): handle pconsts before imported
+	modules since addSortConstantAndLabelMappings() can handle dups
+
+	* renaming.hh (class Renaming): addSortAndLabelMappings() ->
+	addSortConstantAndLabelMappings()
+
+	* renaming.cc (Renaming::addSortAndLabelMappings): becomes
+	addSortConstantAndLabelMappings(); handle constant mappings generated
+	by pconst
+
+	* entry.cc (MixfixModule::addPolymorph): use nrArgs rather than
+	domainAndRange.length() - 1;
+
+	* validateAttributes.cc (MixfixModule::validateAttributes): don't allow
+	pconst for polymorphic constants
+
+	* entry.cc (MixfixModule::addPolymorph): don't test for iter because we
+	already do this in validateAttributes()
+
+2023-02-03  Steven Eker  <eker@pup>
+
+	* instantiateModuleWithFreeParameters.cc (handleInstantiationByModuleView):
+	call addConstantMappingsFromModuleView()
+
+	* importModule.hh (class ImportModule): added decl for
+	addConstantMappingsFromModuleView()
+
+	* parameterization.cc (ImportModule::makeParameterCopy): use range-base for
+	loop (2 places)
+	(ImportModule::makeSummation): use range-base for loop
+	(ImportModule::makeParameterCopy):  map pconst constants c -> X$c
+	(ImportModule::addConstantMappingsFromModuleView): added
+
+	* visibleModule.cc (VisibleModule::showPolymorphAttributes): added pconst
+
+	* command.cc (SyntacticPreModule::printAttributes): added pconst
+
+	* visibleModule.cc (VisibleModule::showAttributes): added pconst
+
+	* lexer.ll (id): added KW_PCONST
+
+	* modules.yy (attribute): added KW_PCONST
+	(attrKeyword): added KW_PCONST
+
+	* top.yy: added KW_PCONST
+
+	* symbolType.hh (class SymbolType): added PCONST to enum Flags
+
+	* syntacticPreModule.hh (class SyntacticPreModule): updated decls of
+	checkVariables() and :analyzeAttributeSetArgument() (both versions)
+
+	* ooTransform.cc (SyntacticPreModule::StatementInfo::checkVariables): moved
+	from outer class
+	(SyntacticPreModule::transformSortConstraint)
+	(SyntacticPreModule::transformEquation)
+	(SyntacticPreModule::transformRule): new checkVariables() convention
+	(SyntacticPreModule::garbageCollectAttributeSet): fixed comment
+	(SyntacticPreModule::analyzeAttributeSetArgument): fixed missing space in
+	IssueAdvisory()
+	(SyntacticPreModule::gatherObjects): made const (both versions)
+
+	* symbolType.hh (class SymbolType): added ITER to SIMPLE_ATTRIBUTES to fix a
+	bug where we were not printing a warning if the attribute was given twice
+
+===================================Maude140===========================================
+
 2023-02-02  Steven Eker  <eker@pup>
 
 	* ooTransform.cc (SyntacticPreModule::gatherObjects): give full list intialization

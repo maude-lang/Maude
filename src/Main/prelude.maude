@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version alpha139.
+***	Version alpha140.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -1805,6 +1805,7 @@ fmod META-MODULE is
   subsort Import < ImportList .
   op protecting_. : ModuleExpression -> Import [ctor] .
   op extending_. : ModuleExpression -> Import [ctor] .
+  op generated-by_. : ModuleExpression -> Import [ctor] .
   op including_. : ModuleExpression -> Import [ctor] .
   op nil : -> ImportList [ctor] .
   op __ : ImportList ImportList -> ImportList
@@ -1838,6 +1839,7 @@ fmod META-MODULE is
   op config : -> Attr [ctor] .
   op object : -> Attr [ctor] .
   op msg : -> Attr [ctor] .
+  op pconst : -> Attr [ctor] .
   op frozen : NeNatList -> Attr [ctor] .
   op poly : NeNatList -> Attr [ctor] .
   op special : NeHookList -> Attr [ctor] .
@@ -2467,6 +2469,7 @@ fmod META-LEVEL is
         op-hook protectingSymbol	(protecting_. : ModuleExpression ~> Import)
         op-hook extendingSymbol		(extending_. : ModuleExpression ~> Import)
         op-hook includingSymbol		(including_. : ModuleExpression ~> Import)
+        op-hook generatedBySymbol	(generated-by_. : ModuleExpression ~> Import)
         op-hook nilImportListSymbol	(nil : ~> ImportList)
         op-hook importListSymbol	(__ : ImportList ImportList ~> ImportList)
 
@@ -2512,6 +2515,7 @@ fmod META-LEVEL is
         op-hook configSymbol		(config : ~> Attr)
         op-hook objectSymbol		(object : ~> Attr)
         op-hook msgSymbol		(msg : ~> Attr)
+        op-hook pconstSymbol		(pconst : ~> Attr)
         op-hook specialSymbol		(special : NeHookList ~> Attr)
 
         op-hook labelSymbol		(label : Qid ~> Attr)

@@ -1,0 +1,211 @@
+Alpha 140 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug where giving the iter attribute twice does not give a warning:
+
+fmod FOO is
+  sort Foo .
+  op f : Foo -> Foo [iter iter] .
+endfm
+
+(2) A bug where show desugared printed imports with []s around bound
+parameters. This is because the the []s are part of the internal name
+used for caching the module to distinguish bound parameters from views.
+For example
+
+show desugared LIST-AND-SET .
+
+prints
+
+fmod LIST-AND-SET{X :: TRIV} is
+  protecting LIST{[X]} .
+  protecting SET{[X]} .
+  :
+
+
+New features
+=============
+
+(1) Constants may now be given an attribute pconst ("parameter constant")
+  op c : -> Foo [pconst] .
+This attribute is mostly inert, but when a constant c with this attribute
+is declared in a theory T (rather than in a module imported by T), and a
+module M has a parameter X :: T, M receives a constant X$c rather than c.
+
+The pconst attribute cannot be combined with the poly attribute. Polymorphic
+constants don't seem to be much used in practice and there doesn't seem
+to be much use for polymorphic constants with the pconst attribute, though
+I believe they could be given a consistent, if complicated, operational
+semantics.
+
+Constants with the pconst attribute cannot be used on either side
+of an op to term mapping in a view. This is not currently checked for
+and will lead to crashes.
+
+Because constant names may not contain underscores, a theory declaring
+one or more constants with the pconst attribute may not be used with
+a parameter name containing an underscore since the resulting constant
+names would be illegal.
+
+pconst is reflected by
+  op pconst : -> Attr [ctor] .
+at the metalevel.
+
+
+(2) Constants in a parameterized module M may now be parameterized just
+like sorts, and their behavior under instantiation exactly mimics
+that of sorts.
+
+fmod FOO{X :: TRIV, Y :: TRIV} is
+  sort Foo{X,Y} .
+  op c{X,Y} : -> Foo{X,Y} .
+endfm
+
+fmod BAR is
+  inc FOO{Nat,String} .
+endfm
+
+red c{Nat,String} .
+
+Polymorphic constants can be parameterized.
+
+Note that this breaks backwards compatibility because previously
+constants like c{X,Y} were perfectly legal mixfix constants that
+did not have any parameterization semantics, and indeed this is still
+the case in a module where X and Y are not parameters.
+Use of mixfix constants that look like parameterized constants seems
+rare in existing Maude code.
+
+Because constant names may not contain underscores, a parameterized
+constants cannot be declared to take parameters whose names contain
+underscores and cannot be instantiated by views or parameter names
+(recursively in the case of parameterized views) that contain underscores.
+
+(3) There is a new importation mode generated-by
+
+fmod INT-MOD5 is
+  generated-by NAT .
+...
+endfm
+
+In the same way that protecting promises "no junk, no confusion" and
+extending promises "no confusion", generated-by promises "no junk".
+Of course Maude neither checks or takes advantage of any of these
+promises. The purpose of importation modes other than including is
+to document a promise by the user about how an imported module will
+be used. This promise may be checked or exploited by tools that
+work on Maude modules. generated-by may be abbreviated to gb at
+the object level and is reflected by
+  op generated-by_. : ModuleExpression -> Import [ctor] .
+at the metalevel.
+
+(4) The the show view command which printed a mixture of unprocessed
+and processed view parts has been split into two separate commands.
+Now show view prints unparsed bubbles for op->term and strat->expr
+mappings and there is a new command
+  show processed view .
+  show processed view <view-name> .
+that is analogous to show desugared but for views. The following
+table summarizes the differences:
+
+				show view		show processed view
+----------------------------------------------------------------------------
+parameter theories:		module expressions	canonical theory names
+from theory			module expression	canonical theory name
+to module/theory		module expression	canonical module/theory name
+variable alias declarations	as declared		from internal alias map
+op->term/msg->term mappings	bubbles			fully parsed terms, msg becomes op
+strategy mappings  		bubbles			fully parsed strategies
+class mappings			yes			class sort/class op mappings
+attr mappings			yes			attribute op mappings
+msg mappings			yes			equivalent op mappings
+
+(5) There is now support for parameterization in the object-oriented
+syntactic sugar.
+
+(A) Classes can be parameterized
+
+For example
+
+omod CONTAINER{X :: TRIV} is
+  pr LIST{X} .
+  class Container{X} | guts : List{X} .
+...
+endom
+
+Here Container{X} is desugared to
+  sort Container{X} .
+  op Container{X} : -> Container{X} [ctor] .
+where the class constant is a parameterized constant.
+
+(B) Object-oriented theories
+
+An object-oriented theory (oth) is enclosed in the oth ... endoth pair.
+An oth may contain the same object-oriented syntax as an omod and
+desugaring is the same except:
+(i) Like other theories, oths do no automatically include BOOL, thought
+they do automatically include CONFIGURATION.
+(ii) An oth desugars to a system theory.
+(iii) The class constants generated for class declarations in an oth
+get the pconst attribute to ensure their name follows that of their
+class sort when the generated system theory is used as a parameter theory.
+
+A system module or omod may be parameterized by system theories
+generated from oths.
+
+oth CONTAINER is
+  class Container .
+endoth
+
+omod TRANSFER{G :: CONTAINER, R :: CONTAINER} is
+...
+endom
+
+(C) Object-oriented views
+
+Views may now contain object-oriented mappings.
+(i) class mappings
+A class mapping looks like
+  class C to D .
+For a class C in module being mapped
+a sort mapping
+  sort C to D .
+and an operator mapping
+  op C : -> [C] to D .
+Maude checks that C looks like a class in the from theory and
+that D looks like a class in the to module/theory.
+
+(ii) attr mappings
+A generic attribute mapping looks like
+  attr A to B .
+For each attribute operator A`:_ in the from theory
+with domain kind [K], this generates a specific op mapping
+  op A`:_ : [K] -> Attribute to B`:_ .
+A specific attribute mapping looks like
+  attr A : T to B .
+If an attribute operator A`:_ with domain kind [K] such that T is [K]
+or a sort in [K], exists in the from theory, an specific op mapping
+  op A`:_ : [K] -> Attribute to B`:_ .
+is generated.
+
+(iii) msg mappings
+These have the syntax:
+  msg ⟨identifier⟩ to ⟨identifier⟩ .
+  msg ⟨identifier⟩ : ⟨type-list⟩ -> <type> to ⟨identifier⟩ .
+  msg <term-of-depth-1> to term <term> .
+They are converted into op mappings during desugaring.
+In each case Maude checks that both the operator being mapped
+from and the operator being mapped to (or the top operator
+in the case of a term) have the msg attribute.
+
+
+Minor changes
+==============
+
+(1) When printing bubble of tokens in commands such as show mod, a space
+is no longer printed before (. The idea is that a term such as f(X)
+if it exists as an unparsed bubble of tokens will no longer print as
+f (X)

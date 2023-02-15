@@ -360,6 +360,12 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			  if (interpreter.setCurrentView(lexerBubble))
 			    interpreter.showView();
 			}
+		|	KW_SHOW KW_PROCESSED KW_VIEW	{ lexBubble(END_COMMAND, 0); }
+			endBubble
+			{
+			  if (interpreter.setCurrentView(lexerBubble))
+			    interpreter.showProcessedView();
+			}
 		|	KW_SHOW KW_MODULES '.'
 			{
 			  interpreter.showModules(true);

@@ -1,0 +1,1154 @@
+==========================================
+reduce in STACK : push(E, emptyStack{X}) .
+rewrites: 1
+result X$Elt: E
+==========================================
+reduce in STACK : push(E, push(E, emptyStack{X})) .
+rewrites: 2
+result NeStack{X}: E | E
+==========================================
+reduce in STACK : top(push(E, emptyStack{X})) .
+rewrites: 2
+result X$Elt: E
+==========================================
+reduce in STACK : pop(push(E, emptyStack{X})) .
+rewrites: 2
+result Stack{X}: emptyStack{X}
+fmod QID-TEST is
+  sorts Bool Zero NzNat Nat String Char FindResult Qid NeStack{Qid} Stack{Qid}
+    .
+  subsorts Zero NzNat < Nat .
+  subsort Char < String .
+  subsort Nat < FindResult .
+  subsort Qid < NeStack{Qid} .
+  subsort NeStack{Qid} < Stack{Qid} .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op 0 : -> Zero [ctor] .
+  op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op sd : Nat Nat -> Nat [comm special (
+    id-hook CUI_NumberOpSymbol (sd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _quo_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _rem_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _^_ : Nat Nat -> Nat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _^_ : NzNat Nat -> NzNat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op modExp : [FindResult] [FindResult] [FindResult] -> [FindResult] [special (
+    id-hook NumberOpSymbol (modExp)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op lcm : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op lcm : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op min : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op min : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op max : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op max : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _xor_ : Nat Nat -> Nat [assoc comm prec 55 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _&_ : Nat Nat -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _|_ : NzNat Nat -> NzNat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _|_ : Nat Nat -> Nat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _>>_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _<<_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _<_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzNat Nat -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op <Strings> : -> Char [special (
+    id-hook StringSymbol)] .
+  op <Strings> : -> String [special (
+    id-hook StringSymbol)] .
+  op notFound : -> FindResult [ctor] .
+  op ascii : Char -> Nat [special (
+    id-hook StringOpSymbol (ascii)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op char : [FindResult] -> [String] [special (
+    id-hook StringOpSymbol (char)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _+_ : String String -> String [prec 33 gather (E e) special (
+    id-hook StringOpSymbol (+)
+    op-hook stringSymbol (<Strings> : ~> Char))] .
+  op length : String -> Nat [special (
+    id-hook StringOpSymbol (length)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op substr : String Nat Nat -> String [special (
+    id-hook StringOpSymbol (substr)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op find : String String Nat -> FindResult [special (
+    id-hook StringOpSymbol (find)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook notFoundTerm (notFound))] .
+  op rfind : String String Nat -> FindResult [special (
+    id-hook StringOpSymbol (rfind)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook notFoundTerm (notFound))] .
+  op _<_ : String String -> Bool [prec 37 gather (E E) special (
+    id-hook StringOpSymbol (<)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : String String -> Bool [prec 37 gather (E E) special (
+    id-hook StringOpSymbol (<=)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : String String -> Bool [prec 37 gather (E E) special (
+    id-hook StringOpSymbol (>)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : String String -> Bool [prec 37 gather (E E) special (
+    id-hook StringOpSymbol (>=)
+    op-hook stringSymbol (<Strings> : ~> Char)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op upperCase : String -> String [special (
+    id-hook StringOpSymbol (upperCase)
+    op-hook stringSymbol (<Strings> : ~> Char))] .
+  op lowerCase : String -> String [special (
+    id-hook StringOpSymbol (lowerCase)
+    op-hook stringSymbol (<Strings> : ~> Char))] .
+  op <Qids> : -> Qid [special (
+    id-hook QuotedIdentifierSymbol)] .
+  op string : Qid -> String [special (
+    id-hook QuotedIdentifierOpSymbol (string)
+    op-hook quotedIdentifierSymbol (<Qids> : ~> Qid)
+    op-hook stringSymbol (<Strings> : ~> Char))] .
+  op qid : [String] -> [Stack{Qid}] [special (
+    id-hook QuotedIdentifierOpSymbol (qid)
+    op-hook quotedIdentifierSymbol (<Qids> : ~> Qid)
+    op-hook stringSymbol (<Strings> : ~> Char))] .
+  op emptyStack{Qid} : -> Stack{Qid} .
+  op _|_ : Stack{Qid} Stack{Qid} -> Stack{Qid} [assoc id: emptyStack{Qid} prec
+    41 gather (e E)] .
+  op _|_ : NeStack{Qid} Stack{Qid} -> NeStack{Qid} [assoc id: emptyStack{Qid}
+    prec 41 gather (e E)] .
+  op _|_ : Stack{Qid} NeStack{Qid} -> NeStack{Qid} [assoc id: emptyStack{Qid}
+    prec 41 gather (e E)] .
+  op push : Qid Stack{Qid} -> NeStack{Qid} .
+  op top : NeStack{Qid} -> Qid .
+  op pop : NeStack{Qid} -> Stack{Qid} .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq push(E:Qid, S:Stack{Qid}) = E:Qid | S:Stack{Qid} .
+  eq top(E:Qid | S:Stack{Qid}) = E:Qid .
+  eq pop(E:Qid | S:Stack{Qid}) = S:Stack{Qid} .
+endfm
+==========================================
+reduce in QID-TEST : push('a, emptyStack{Qid}) .
+rewrites: 1
+result Qid: 'a
+==========================================
+reduce in QID-TEST : push('a, push('b, emptyStack{Qid})) .
+rewrites: 2
+result NeStack{Qid}: 'a | 'b
+==========================================
+reduce in QID-TEST : top(push('c, emptyStack{Qid})) .
+rewrites: 2
+result Qid: 'c
+==========================================
+reduce in QID-TEST : pop(push('c, emptyStack{Qid})) .
+rewrites: 2
+result Stack{Qid}: emptyStack{Qid}
+fmod NAT-TEST is
+  sorts Bool Zero NzNat Nat NeStack{Nat} Stack{Nat} .
+  subsorts Zero NzNat < Nat .
+  subsort Nat < NeStack{Nat} .
+  subsort NeStack{Nat} < Stack{Nat} .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op 0 : -> Zero [ctor] .
+  op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op sd : Nat Nat -> Nat [comm special (
+    id-hook CUI_NumberOpSymbol (sd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _quo_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _rem_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _^_ : Nat Nat -> Nat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _^_ : NzNat Nat -> NzNat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op modExp : [Stack{Nat}] [Stack{Nat}] [Stack{Nat}] -> [Stack{Nat}] [special (
+    id-hook NumberOpSymbol (modExp)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op lcm : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op lcm : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op min : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op min : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op max : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op max : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _xor_ : Nat Nat -> Nat [assoc comm prec 55 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _&_ : Nat Nat -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _|_ : NzNat Nat -> NzNat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _|_ : Nat Nat -> Nat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _>>_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _<<_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _<_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzNat Nat -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op null{Nat} : -> Stack{Nat} .
+  op _!_ : Stack{Nat} Stack{Nat} -> Stack{Nat} [assoc id: null{Nat} prec 41
+    gather (e E)] .
+  op _!_ : NeStack{Nat} Stack{Nat} -> NeStack{Nat} [assoc id: null{Nat} prec 41
+    gather (e E)] .
+  op _!_ : Stack{Nat} NeStack{Nat} -> NeStack{Nat} [assoc id: null{Nat} prec 41
+    gather (e E)] .
+  op push : Nat Stack{Nat} -> NeStack{Nat} .
+  op top : NeStack{Nat} -> Nat .
+  op pop : NeStack{Nat} -> Stack{Nat} .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq push(E:Nat, S:Stack{Nat}) = E:Nat ! S:Stack{Nat} .
+  eq top(E:Nat ! S:Stack{Nat}) = E:Nat .
+  eq pop(E:Nat ! S:Stack{Nat}) = S:Stack{Nat} .
+endfm
+==========================================
+reduce in NAT-TEST : push(1, null{Nat}) .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in NAT-TEST : push(1, push(2, null{Nat})) .
+rewrites: 2
+result NeStack{Nat}: 1 ! 2
+==========================================
+reduce in NAT-TEST : top(push(3, null{Nat})) .
+rewrites: 2
+result NzNat: 3
+==========================================
+reduce in NAT-TEST : pop(push(3, null{Nat})) .
+rewrites: 2
+result Stack{Nat}: null{Nat}
+fmod NAT-TEST2 is
+  sorts Bool Zero NzNat Nat NonEmptyStack{Nat} Stack{Nat} .
+  subsorts Zero NzNat < Nat .
+  subsort Nat < NonEmptyStack{Nat} .
+  subsort NonEmptyStack{Nat} < Stack{Nat} .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op 0 : -> Zero [ctor] .
+  op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op sd : Nat Nat -> Nat [comm special (
+    id-hook CUI_NumberOpSymbol (sd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _quo_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _rem_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _^_ : Nat Nat -> Nat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _^_ : NzNat Nat -> NzNat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op modExp : [Stack{Nat}] [Stack{Nat}] [Stack{Nat}] -> [Stack{Nat}] [special (
+    id-hook NumberOpSymbol (modExp)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op lcm : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op lcm : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op min : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op min : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op max : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op max : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _xor_ : Nat Nat -> Nat [assoc comm prec 55 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _&_ : Nat Nat -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _|_ : NzNat Nat -> NzNat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _|_ : Nat Nat -> Nat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _>>_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _<<_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _<_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzNat Nat -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op null{Nat} : -> Stack{Nat} .
+  op _!_ : Stack{Nat} Stack{Nat} -> Stack{Nat} [assoc id: null{Nat} prec 41
+    gather (e E)] .
+  op _!_ : NonEmptyStack{Nat} Stack{Nat} -> NonEmptyStack{Nat} [assoc id: null{
+    Nat} prec 41 gather (e E)] .
+  op _!_ : Stack{Nat} NonEmptyStack{Nat} -> NonEmptyStack{Nat} [assoc id: null{
+    Nat} prec 41 gather (e E)] .
+  op push : Nat Stack{Nat} -> NonEmptyStack{Nat} .
+  op top : NonEmptyStack{Nat} -> Nat .
+  op pop : NonEmptyStack{Nat} -> Stack{Nat} .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq push(E:Nat, S:Stack{Nat}) = E:Nat ! S:Stack{Nat} .
+  eq top(E:Nat ! S:Stack{Nat}) = E:Nat .
+  eq pop(E:Nat ! S:Stack{Nat}) = S:Stack{Nat} .
+endfm
+==========================================
+reduce in NAT-TEST2 : push(1, null{Nat}) .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in NAT-TEST2 : push(1, push(2, null{Nat})) .
+rewrites: 2
+result NonEmptyStack{Nat}: 1 ! 2
+==========================================
+reduce in NAT-TEST2 : top(push(3, null{Nat})) .
+rewrites: 2
+result NzNat: 3
+==========================================
+reduce in NAT-TEST2 : pop(push(3, null{Nat})) .
+rewrites: 2
+result Stack{Nat}: null{Nat}
+fmod VIEW-TEST{X :: TOTAL-ORDER} is
+  sorts Bool X$Elt NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} .
+  subsort X$Elt < NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} .
+  subsort NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} < Stack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op _<=_ : X$Elt X$Elt -> Bool [prec 41 gather (E E)] .
+  op emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} : -> Stack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} .
+  op _|_ : Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X} Stack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} -> Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X} [assoc id:
+    emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} prec 41 gather (e E)] .
+  op _|_ : NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} Stack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} -> NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} [assoc id:
+    emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} prec 41 gather (e E)] .
+  op _|_ : Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X} NeStack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} -> NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} [assoc id:
+    emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} prec 41 gather (e E)] .
+  op push : X$Elt Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X} -> NeStack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} .
+  op top : NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} -> X$Elt .
+  op pop : NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{X} -> Stack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq X:X$Elt <= X:X$Elt = true [nonexec label X$reflexive] .
+  ceq X:X$Elt <= Z:X$Elt = true if X:X$Elt <= Y:X$Elt = true /\ Y:X$Elt <=
+    Z:X$Elt = true [nonexec label X$transitive] .
+  eq X:X$Elt <= Y:X$Elt or Y:X$Elt <= X:X$Elt = true [nonexec label X$total] .
+  ceq X:X$Elt = Y:X$Elt if X:X$Elt <= Y:X$Elt = true /\ Y:X$Elt <= X:X$Elt =
+    true [nonexec label X$antisymmetric] .
+  eq push(E:X$Elt, S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X}) = E:X$Elt |
+    S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X} .
+  eq top(E:X$Elt | S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X}) = E:X$Elt .
+  eq pop(E:X$Elt | S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X}) = S:Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} .
+endfm
+fmod VIEW-TEST2 is
+  sorts Bool FiniteFloat Float NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}
+    Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} .
+  subsort FiniteFloat < Float .
+  subsort Float < NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} .
+  subsort NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} < Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op <Floats> : -> FiniteFloat [special (
+    id-hook FloatSymbol)] .
+  op <Floats> : -> Float [special (
+    id-hook FloatSymbol)] .
+  op -_ : Float -> Float [prec 15 gather (E) special (
+    id-hook FloatOpSymbol (-)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op -_ : FiniteFloat -> FiniteFloat [prec 15 gather (E) special (
+    id-hook FloatOpSymbol (-)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _+_ : Float Float -> Float [prec 33 gather (E e) special (
+    id-hook FloatOpSymbol (+)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _-_ : Float Float -> Float [prec 33 gather (E e) special (
+    id-hook FloatOpSymbol (-)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _*_ : Float Float -> Float [prec 31 gather (E e) special (
+    id-hook FloatOpSymbol (*)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _/_ : [Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] [Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] -> [Stack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{Float<=}] [prec 31 gather (E e) special (
+    id-hook FloatOpSymbol (/)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _rem_ : [Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] [Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] -> [Stack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{Float<=}] [prec 31 gather (E e) special (
+    id-hook FloatOpSymbol (rem)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _^_ : [Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] [Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] -> [Stack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{Float<=}] [prec 29 gather (E e) special (
+    id-hook FloatOpSymbol (^)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op abs : Float -> Float [special (
+    id-hook FloatOpSymbol (abs)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op abs : FiniteFloat -> FiniteFloat [special (
+    id-hook FloatOpSymbol (abs)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op floor : Float -> Float [special (
+    id-hook FloatOpSymbol (floor)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op ceiling : Float -> Float [special (
+    id-hook FloatOpSymbol (ceiling)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op min : Float Float -> Float [special (
+    id-hook FloatOpSymbol (min)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op max : Float Float -> Float [special (
+    id-hook FloatOpSymbol (max)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op sqrt : [Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] -> [Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] [special (
+    id-hook FloatOpSymbol (sqrt)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op exp : Float -> Float [special (
+    id-hook FloatOpSymbol (exp)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op log : [Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] -> [Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] [special (
+    id-hook FloatOpSymbol (log)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op sin : Float -> Float [special (
+    id-hook FloatOpSymbol (sin)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op cos : Float -> Float [special (
+    id-hook FloatOpSymbol (cos)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op tan : Float -> Float [special (
+    id-hook FloatOpSymbol (tan)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op asin : [Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] -> [Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] [special (
+    id-hook FloatOpSymbol (asin)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op acos : [Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] -> [Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}] [special (
+    id-hook FloatOpSymbol (acos)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op atan : Float -> Float [special (
+    id-hook FloatOpSymbol (atan)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op atan : Float Float -> Float [special (
+    id-hook FloatOpSymbol (atan)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _<_ : Float Float -> Bool [prec 51 gather (E E) special (
+    id-hook FloatOpSymbol (<)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Float Float -> Bool [prec 51 gather (E E) special (
+    id-hook FloatOpSymbol (<=)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Float Float -> Bool [prec 51 gather (E E) special (
+    id-hook FloatOpSymbol (>)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Float Float -> Bool [prec 51 gather (E E) special (
+    id-hook FloatOpSymbol (>=)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op pi : -> FiniteFloat .
+  op _=`[_`]_ : Float FiniteFloat Float -> Bool [prec 51 gather (E & E) format
+    (d d d d d s d)] .
+  op emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} : -> Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} .
+  op _|_ : Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} Stack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{Float<=} -> Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} [assoc
+    id: emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} prec 41 gather (e E)]
+    .
+  op _|_ : NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} Stack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{Float<=} -> NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} [
+    assoc id: emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} prec 41 gather (
+    e E)] .
+  op _|_ : Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} NeStack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{Float<=} -> NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} [
+    assoc id: emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} prec 41 gather (
+    e E)] .
+  op push : Float Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} -> NeStack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} .
+  op top : NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} -> Float .
+  op pop : NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} -> Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq pi = 3.1415926535897931 .
+  eq X:Float =[Z:FiniteFloat] Y:Float = abs(X:Float - Y:Float) < Z:FiniteFloat
+    .
+  eq push(E:Float, S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}) = E:Float |
+    S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} .
+  eq top(E:Float | S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}) = E:Float .
+  eq pop(E:Float | S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}) = S:Stack{
+    TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} .
+endfm
+==========================================
+reduce in VIEW-TEST2 : push(1.0, emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{
+    Float<=}) .
+rewrites: 1
+result FiniteFloat: 1.0
+==========================================
+reduce in VIEW-TEST2 : push(1.0, push(2.0, emptyStack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{Float<=})) .
+rewrites: 2
+result NeStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}: 1.0 | 2.0
+==========================================
+reduce in VIEW-TEST2 : top(push(3.0, emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{
+    Float<=})) .
+rewrites: 2
+result FiniteFloat: 3.0
+==========================================
+reduce in VIEW-TEST2 : pop(push(3.0, emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{
+    Float<=})) .
+rewrites: 2
+result Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=}: emptyStack{TOTAL-PREORDER}{
+    TOTAL-ORDER}{Float<=}
+fmod ARRAY-TEST is
+  sorts Bool Zero NzNat Nat FiniteFloat Float NeStack{Float} Stack{Float}
+    Entry{Nat,Stack{Float}} Array{Nat,Stack{Float}} .
+  subsorts Zero NzNat < Nat .
+  subsort FiniteFloat < Float .
+  subsort Float < NeStack{Float} .
+  subsort NeStack{Float} < Stack{Float} .
+  subsort Entry{Nat,Stack{Float}} < Array{Nat,Stack{Float}} .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op 0 : -> Zero [ctor] .
+  op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op sd : Nat Nat -> Nat [comm special (
+    id-hook CUI_NumberOpSymbol (sd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _quo_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _rem_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _^_ : Nat Nat -> Nat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _^_ : NzNat Nat -> NzNat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op modExp : [Nat] [Nat] [Nat] -> [Nat] [special (
+    id-hook NumberOpSymbol (modExp)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op lcm : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op lcm : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op min : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op min : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op max : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op max : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _xor_ : Nat Nat -> Nat [assoc comm prec 55 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _&_ : Nat Nat -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _|_ : NzNat Nat -> NzNat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _|_ : Nat Nat -> Nat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _>>_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _<<_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _<_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzNat Nat -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op <Floats> : -> FiniteFloat [special (
+    id-hook FloatSymbol)] .
+  op <Floats> : -> Float [special (
+    id-hook FloatSymbol)] .
+  op -_ : Float -> Float [prec 15 gather (E) special (
+    id-hook FloatOpSymbol (-)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op -_ : FiniteFloat -> FiniteFloat [prec 15 gather (E) special (
+    id-hook FloatOpSymbol (-)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _+_ : Float Float -> Float [prec 33 gather (E e) special (
+    id-hook FloatOpSymbol (+)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _-_ : Float Float -> Float [prec 33 gather (E e) special (
+    id-hook FloatOpSymbol (-)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _*_ : Float Float -> Float [prec 31 gather (E e) special (
+    id-hook FloatOpSymbol (*)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _/_ : [Stack{Float}] [Stack{Float}] -> [Stack{Float}] [prec 31 gather (E
+    e) special (
+    id-hook FloatOpSymbol (/)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _rem_ : [Stack{Float}] [Stack{Float}] -> [Stack{Float}] [prec 31 gather (E
+    e) special (
+    id-hook FloatOpSymbol (rem)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _^_ : [Stack{Float}] [Stack{Float}] -> [Stack{Float}] [prec 29 gather (E
+    e) special (
+    id-hook FloatOpSymbol (^)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op abs : Float -> Float [special (
+    id-hook FloatOpSymbol (abs)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op abs : FiniteFloat -> FiniteFloat [special (
+    id-hook FloatOpSymbol (abs)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op floor : Float -> Float [special (
+    id-hook FloatOpSymbol (floor)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op ceiling : Float -> Float [special (
+    id-hook FloatOpSymbol (ceiling)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op min : Float Float -> Float [special (
+    id-hook FloatOpSymbol (min)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op max : Float Float -> Float [special (
+    id-hook FloatOpSymbol (max)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op sqrt : [Stack{Float}] -> [Stack{Float}] [special (
+    id-hook FloatOpSymbol (sqrt)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op exp : Float -> Float [special (
+    id-hook FloatOpSymbol (exp)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op log : [Stack{Float}] -> [Stack{Float}] [special (
+    id-hook FloatOpSymbol (log)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op sin : Float -> Float [special (
+    id-hook FloatOpSymbol (sin)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op cos : Float -> Float [special (
+    id-hook FloatOpSymbol (cos)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op tan : Float -> Float [special (
+    id-hook FloatOpSymbol (tan)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op asin : [Stack{Float}] -> [Stack{Float}] [special (
+    id-hook FloatOpSymbol (asin)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op acos : [Stack{Float}] -> [Stack{Float}] [special (
+    id-hook FloatOpSymbol (acos)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op atan : Float -> Float [special (
+    id-hook FloatOpSymbol (atan)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op atan : Float Float -> Float [special (
+    id-hook FloatOpSymbol (atan)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat))] .
+  op _<_ : Float Float -> Bool [prec 51 gather (E E) special (
+    id-hook FloatOpSymbol (<)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Float Float -> Bool [prec 51 gather (E E) special (
+    id-hook FloatOpSymbol (<=)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Float Float -> Bool [prec 51 gather (E E) special (
+    id-hook FloatOpSymbol (>)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Float Float -> Bool [prec 51 gather (E E) special (
+    id-hook FloatOpSymbol (>=)
+    op-hook floatSymbol (<Floats> : ~> FiniteFloat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op pi : -> FiniteFloat .
+  op _=`[_`]_ : Float FiniteFloat Float -> Bool [prec 51 gather (E & E) format
+    (d d d d d s d)] .
+  op emptyStack{Float} : -> Stack{Float} .
+  op _|_ : Stack{Float} Stack{Float} -> Stack{Float} [assoc id: emptyStack{
+    Float} prec 41 gather (e E)] .
+  op _|_ : NeStack{Float} Stack{Float} -> NeStack{Float} [assoc id: emptyStack{
+    Float} prec 41 gather (e E)] .
+  op _|_ : Stack{Float} NeStack{Float} -> NeStack{Float} [assoc id: emptyStack{
+    Float} prec 41 gather (e E)] .
+  op push : Float Stack{Float} -> NeStack{Float} .
+  op top : NeStack{Float} -> Float .
+  op pop : NeStack{Float} -> Stack{Float} .
+  op _|->_ : Nat Stack{Float} -> Entry{Nat,Stack{Float}} [ctor prec 41 gather (
+    E E)] .
+  op empty : -> Array{Nat,Stack{Float}} [ctor] .
+  op _;_ : Array{Nat,Stack{Float}} Array{Nat,Stack{Float}} -> Array{Nat,Stack{
+    Float}} [ctor assoc comm id: empty prec 71 gather (e E) format (d r os d)]
+    .
+  op insert : Nat Stack{Float} Array{Nat,Stack{Float}} -> Array{Nat,Stack{
+    Float}} .
+  op _`[_`] : Array{Nat,Stack{Float}} Nat -> Stack{Float} [prec 23 gather (E
+    &)] .
+  op $hasMapping : Array{Nat,Stack{Float}} Nat -> Bool .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq pi = 3.1415926535897931 .
+  eq X:Float =[Z:FiniteFloat] Y:Float = abs(X:Float - Y:Float) < Z:FiniteFloat
+    .
+  eq push(E:Float, S:Stack{Float}) = E:Float | S:Stack{Float} .
+  eq top(E:Float | S:Stack{Float}) = E:Float .
+  eq pop(E:Float | S:Stack{Float}) = S:Stack{Float} .
+  eq insert(D:Nat, R:Stack{Float}, A:Array{Nat,Stack{Float}} ; D:Nat |->
+    R':Stack{Float}) = if $hasMapping(A:Array{Nat,Stack{Float}}, D:Nat) then
+    insert(D:Nat, R:Stack{Float}, A:Array{Nat,Stack{Float}}) else if R:Stack{
+    Float} == emptyStack{Float} then A:Array{Nat,Stack{Float}} else A:Array{
+    Nat,Stack{Float}} ; D:Nat |-> R:Stack{Float} fi fi .
+  eq insert(D:Nat, R:Stack{Float}, A:Array{Nat,Stack{Float}}) = if R:Stack{
+    Float} == emptyStack{Float} then A:Array{Nat,Stack{Float}} else A:Array{
+    Nat,Stack{Float}} ; D:Nat |-> R:Stack{Float} fi [owise] .
+  eq (A:Array{Nat,Stack{Float}} ; D:Nat |-> R:Stack{Float})[D:Nat] = if
+    $hasMapping(A:Array{Nat,Stack{Float}}, D:Nat) then emptyStack{Float} else
+    R:Stack{Float} fi .
+  eq A:Array{Nat,Stack{Float}}[D:Nat] = emptyStack{Float} [owise] .
+  eq $hasMapping(A:Array{Nat,Stack{Float}} ; D:Nat |-> R:Stack{Float}, D:Nat) =
+    true .
+  eq $hasMapping(A:Array{Nat,Stack{Float}}, D:Nat) = false [owise] .
+endfm
+==========================================
+reduce in ARRAY-TEST : empty[42] .
+rewrites: 1
+result Stack{Float}: emptyStack{Float}
+Bye.
