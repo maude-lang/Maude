@@ -133,6 +133,7 @@ EXTRA_DIST = \
 	ooProcess.cc \
 	ooTransform.cc \
 	ooView.cc \
+	ooRenaming.cc \
 	process.cc \
 	fixUp.cc \
 	ops.cc \

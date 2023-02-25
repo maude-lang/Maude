@@ -25,7 +25,7 @@
 static void
 yyerror(UserLevelRewritingContext::ParseResult* /*parseResult*/, const char *s)
 {
-  if (!(UserLevelRewritingContext::interrupted()))
+  if (!suppressParserErrorMessage)
     IssueWarning(LineNumber(lineNumber) << ": " << s);
 }
 
@@ -43,6 +43,7 @@ cleanUpModuleExpression()
 void
 cleanUpParser()
 {
+  suppressParserErrorMessage = false;
   interpreter.makeClean(lineNumber);
 }
 

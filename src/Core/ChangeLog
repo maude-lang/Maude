@@ -1,3 +1,15 @@
+2023-02-20  Steven Eker  <eker@pup>
+
+	* symbolMap.hh (class SymbolMap): added pure virtual member function
+	preserveVariableIndices()
+
+2023-02-16  Steven Eker  <eker@pup>
+
+	* memoTable.hh: updated comment to explain why we need to derive from
+	ModuleItem
+
+===================================Maude141===========================================
+
 2023-01-31  Steven Eker  <eker@pup>
 
 	* module.hh (class Module): added decls for checkSortConstraint(),
@@ -2434,7 +2446,7 @@
 
 	* preEquation.cc (checkCondition): use
 	MemoryCell::okToCollectGarbage()
-	
+
 ===================================Maude80b===========================================
 
 2003-05-23  Steven Eker  <eker@goo.csl.sri.com>
@@ -2470,7 +2482,7 @@
 2003-05-13  Steven Eker  <eker@goo.csl.sri.com>
 
 	* rewritingContext.hh (copyProblemBindings): deleted
-	
+
 ===================================Maude80a===========================================
 
 2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
@@ -2480,7 +2492,7 @@
 2003-04-14  Steven Eker  <eker@goo.csl.sri.com>
 
 	* sortTable.hh (class SortTable): made traverse() public
-	
+
 ===================================Maude80===========================================
 
 2003-03-27  Steven Eker  <eker@goo.csl.sri.com>
@@ -4545,7 +4557,7 @@
 
 	* module.hh (class Module): use NO_COPYING() macro
 	(class Module): added decl for closeFixUps();
-	
+
 ===================================Engine56==================================================
 
 2000-02-15  Steven Eker  <eker@goo.csl.sri.com>
@@ -4578,7 +4590,7 @@
 2000-01-31  Steven Eker  <eker@goo.csl.sri.com>
 
 	* sortTable.cc (generateSortDiagram): use struct Flags
-	
+
 ===================================Engine55==================================================
 
 2000-01-27  Steven Eker  <eker@goo.csl.sri.com>
@@ -4647,7 +4659,7 @@
 	(class MemoTable): added memo data member
 	(isMemoized): added
 	(MemoTable): take memoFlag arg
-	
+
 ===================================Engine53==================================================
 
 1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
@@ -4761,7 +4773,7 @@
 	for constraintToExactSort()
 	(constrainToSmallerSort): commented out as temporary measure
 	(constrainToExactSort): added
-	
+
 ===================================Engine52=================================================
 
 1999-08-05  Steven Eker  <eker@goo.csl.sri.com>

@@ -1,0 +1,279 @@
+set show timing off .
+set verbose on .
+
+*** supplied by Francisco Duran
+
+----
+---- The *senku* is a solitaire game in which, starting from a board in which all 
+---- the positions on the board except one are occupied with pieces, pieces are 
+---- eliminated until only one piece is left. To do this, the pieces jump over each 
+---- other. When a piece jumps over another, it "eats" the one it jumps over, being 
+---- retired from the board. Therefore, the only valid move is to jump over an 
+---- adjacent tile to an empty position on the other side of it *in a straight line*, 
+---- removing the tile you jumped over. If we reach a configuration in which we have 
+---- two or more tiles left that cannot eat each other, we will have lost.
+----
+---- You can find more information about the game in its Wikipedia entry 
+---- (https://es.wikipedia.org/wiki/Senku). We can solve the game for different board.
+----
+
+---- a 4x4 board uses positions (1, 1) ... (4, 4)
+omod PEG-GAME is
+  pr NAT .
+
+  ---- Position in a Senku board
+  class Pos | x : Nat, y : Nat, busy : Bool .
+  op o : Nat Nat -> Oid .
+
+  var  O O1 O2 O3 : Oid .
+  var  Conf : Configuration .
+  vars N M : Nat .
+
+  ---- counts the number of pegs in a board (configuration)
+  op count : Configuration -> Nat .
+  eq count(< O : Pos | busy : true > Conf) = s count(Conf) .
+  eq count(Conf) = 0 [owise] .
+
+  ---- creates a rectangular board of given dimensions (NxM)
+  ops board boardAux : Nat Nat -> Configuration .
+  eq board(0, M) = none .
+  eq board(s N, M) = boardAux(s N, M) board(N, M) .
+  eq boardAux(N, s M) = < o(N, s M) : Pos | x : N, y : s M, busy : true > boardAux(N, M) .
+  eq boardAux(N, 0) = none .
+
+  ---- removes a peg from a board
+  op remove : Configuration Nat Nat -> [Configuration] . ---- removes that peg in the board
+  eq remove(< O : Pos | x : N, y : M, busy : true > Conf, N, M) 
+    = < O : Pos | x : N, y : M, busy : false > Conf . 
+
+  ---- removes a position from a board
+  op cancel : Configuration Nat Nat -> [Configuration] . ---- cancels that position in the board
+  eq cancel(< O : Pos | x : N, y : M, busy : true > Conf, N, M) = Conf . 
+
+  ---- 4x4
+  ops 4x4-1 4x4-2 4x4-3 : -> Configuration .
+  eq 4x4-1 = remove(board(4, 4), 4, 4) .
+  eq 4x4-2 = remove(board(4, 4), 3, 4) .
+  eq 4x4-3 = remove(board(4, 4), 3, 3) .
+  ---- 5x5
+  op 5x5 : -> Configuration .
+  eq 5x5 = remove(board(5, 5), 3, 3) .
+  ---- French (European) style 37 holes
+  ---- # # o o o # #
+  ---- # o o o o o # 
+  ---- o o o o o o o 
+  ---- o o o x o o o 
+  ---- o o o o o o o 
+  ---- # o o o o o # 
+  ---- # # o o o # #
+  op french : -> Configuration .
+  eq french 
+    = remove(remove(remove(remove(
+        remove(remove(
+          remove(remove(
+            remove(remove(remove(remove(
+              board(7, 7), 
+              1, 1), 1, 2), 1, 6), 1, 7), 
+              2, 1), 2, 7), 
+              6, 1), 6, 7),
+              7, 1), 7, 2), 7, 6), 7, 7) .
+
+  ---- English style (standard) 33 holes
+  ---- # # o o o # #
+  ---- # # o o o # # 
+  ---- o o o o o o o 
+  ---- o o o x o o o 
+  ---- o o o o o o o
+  ---- # # o o o # #
+  ---- # # o o o # #
+  op english : -> Configuration .
+  eq english 
+    = remove(remove(remove(remove(
+        remove(remove(remove(remove(
+          remove(remove(remove(remove(
+            remove(remove(remove(remove(
+              board(7, 7), 
+              1, 1), 1, 2), 1, 6), 1, 7), 
+              2, 1), 2, 2), 2, 6), 2, 7),
+              6, 1), 6, 2), 6, 6), 6, 7),
+              7, 1), 7, 2), 7, 6), 7, 7) .
+  
+  rl [right] : 
+     < O1 : Pos | x : N, y : M, busy : true > 
+     < O2 : Pos | x : N, y : s M, busy : true > 
+     < O3 : Pos | x : N, y : s s M, busy : false > 
+  => < O1 : Pos | x : N, y : M, busy : false > 
+     < O2 : Pos | x : N, y : s M, busy : false > 
+     < O3 : Pos | x : N, y : s s M, busy : true > .
+  rl [left] :  
+     < O1 : Pos | x : N, y : M, busy : false > 
+     < O2 : Pos | x : N, y : s M, busy : true > 
+     < O3 : Pos | x : N, y : s s M, busy : true > 
+  => < O1 : Pos | x : N, y : M, busy : true > 
+     < O2 : Pos | x : N, y : s M, busy : false > 
+     < O3 : Pos | x : N, y : s s M, busy : false > .
+  rl [down] :  
+     < O1 : Pos | x : N, y : M, busy : true > 
+     < O2 : Pos | x : s N, y : M, busy : true > 
+     < O3 : Pos | x : s s N, y : M, busy : false > 
+  => < O1 : Pos | x : N, y : M, busy : false > 
+     < O2 : Pos | x : s N, y : M, busy : false > 
+     < O3 : Pos | x : s s N, y : M, busy : true > . 
+  rl [up] :    
+     < O1 : Pos | x : N, y : M, busy : false > 
+     < O2 : Pos | x : s N, y : M, busy : true > 
+     < O3 : Pos | x : s s N, y : M, busy : true > 
+  => < O1 : Pos | x : N, y : M, busy : true > 
+     < O2 : Pos | x : s N, y : M, busy : false > 
+     < O3 : Pos | x : s s N, y : M, busy : false > . 
+endom
+
+---- In a triangular game, there can be additional moves.
+---- In a triangule like
+----     o
+----    o o
+----   o o o
+----  o o o o
+---- o o o o o 
+---- there can be moves on the lines
+----     o
+----    o \
+----   \ o \
+----  o \ o \
+---- o o \ o o 
+---- and 
+----     o
+----    / o
+----   / o /
+----  / o / o
+---- o o / o o,
+---- but they can also be moved horizontally
+----     o
+----    o o
+----   - - -
+----  o o o o
+---- - - - o o.
+---- If we rotate (to the left) these boards we get
+---- o - - - o
+---- o o o o
+---- - - - 
+---- o o 
+---- o,
+---- o o | o o
+---- | o | o
+---- | o | 
+---- | o 
+---- o, and
+---- o o / o o 
+---- o / o /
+---- / o /
+---- o /
+---- o
+---- This means that, if we assume the rotated boards, we can represent triangular boards on regular ones, using their same moves plus the new ones
+
+omod TRIANGULAR-PEG-GAME is
+  inc PEG-GAME .
+  class TPos .
+  subclass TPos < Pos .
+
+  var  O O1 O2 O3 : Oid .
+  var  Conf : Configuration .
+  vars N M : Nat .
+
+  rl [leftdown] : 
+     < O1 : TPos | x : N, y : s s M, busy : true > 
+     < O2 : TPos | x : s N, y : s M, busy : true > 
+     < O3 : TPos | x : s s N, y : M, busy : false > 
+  => < O1 : TPos | x : N, y : s s M, busy : false > 
+     < O2 : TPos | x : s N, y : s M, busy : false > 
+     < O3 : TPos | x : s s N, y : M, busy : true > .
+  rl [rightup] : 
+     < O1 : TPos | x : N, y : s s M, busy : false > 
+     < O2 : TPos | x : s N, y : s M, busy : true > 
+     < O3 : TPos | x : s s N, y : M, busy : true > 
+  => < O1 : TPos | x : N, y : s s M, busy : true > 
+     < O2 : TPos | x : s N, y : s M, busy : false > 
+     < O3 : TPos | x : s s N, y : M, busy : false > .
+
+  ---- triang4
+  ---- x o o o 
+  ---- o o o # 
+  ---- o o # # 
+  ---- o # # #
+  op triang4-1 : -> Configuration .
+  eq triang4-1 
+    = < o(1, 1) : TPos | x : 1, y : 1, busy : false > < o(1, 2) : TPos | x : 1, y : 2, busy : true > 
+          < o(1, 3) : TPos | x : 1, y : 3, busy : true > < o(1, 4) : TPos | x : 1, y : 4, busy : true >
+      < o(2, 1) : TPos | x : 2, y : 1, busy : true > < o(2, 2) : TPos | x : 2, y : 2, busy : true > 
+          < o(2, 3) : TPos | x : 2, y : 3, busy : true > 
+      < o(3, 1) : TPos | x : 3, y : 1, busy : true > < o(3, 2) : TPos | x : 3, y : 2, busy : true > 
+      < o(4, 1) : TPos | x : 4, y : 1, busy : true > .
+  ---- triang5
+  ops triang5-1 triang5-2 triang5-3 triang5-4 : -> Configuration .
+  ---- x o o o o, 
+  ---- o o o o #, 
+  ---- o o o # #, 
+  ---- o o # # #, 
+  ---- o # # # # .
+  eq triang5-1 
+    = < o(1, 1) : TPos | x : 1, y : 1, busy : false > < o(1, 2) : TPos | x : 1, y : 2, busy : true > 
+          < o(1, 3) : TPos | x : 1, y : 3, busy : true > < o(1, 4) : TPos | x : 1, y : 4, busy : true > < o(1, 5) : TPos | x : 1, y : 5, busy : true >
+      < o(2, 1) : TPos | x : 2, y : 1, busy : true > < o(2, 2) : TPos | x : 2, y : 2, busy : true > 
+          < o(2, 3) : TPos | x : 2, y : 3, busy : true > < o(2, 4) : TPos | x : 2, y : 4, busy : true > 
+      < o(3, 1) : TPos | x : 3, y : 1, busy : true > < o(3, 2) : TPos | x : 3, y : 2, busy : true > < o(3, 3) : TPos | x : 3, y : 3, busy : true > 
+      < o(4, 1) : TPos | x : 4, y : 1, busy : true > < o(4, 2) : TPos | x : 4, y : 2, busy : true > 
+      < o(5, 1) : TPos | x : 5, y : 1, busy : true > .
+  ---- o o o o o, 
+  ---- x o o o #, 
+  ---- o o o # #, 
+  ---- o o # # #, 
+  ---- o # # # # .
+  eq triang5-2
+    = < o(1, 1) : TPos | x : 1, y : 1, busy : true > < o(1, 2) : TPos | x : 1, y : 2, busy : true > 
+          < o(1, 3) : TPos | x : 1, y : 3, busy : true > < o(1, 4) : TPos | x : 1, y : 4, busy : true > < o(1, 5) : TPos | x : 1, y : 5, busy : true >
+      < o(2, 1) : TPos | x : 2, y : 1, busy : false > < o(2, 2) : TPos | x : 2, y : 2, busy : true > 
+          < o(2, 3) : TPos | x : 2, y : 3, busy : true > < o(2, 4) : TPos | x : 2, y : 4, busy : true > 
+      < o(3, 1) : TPos | x : 3, y : 1, busy : true > < o(3, 2) : TPos | x : 3, y : 2, busy : true > < o(3, 3) : TPos | x : 3, y : 3, busy : true > 
+      < o(4, 1) : TPos | x : 4, y : 1, busy : true > < o(4, 2) : TPos | x : 4, y : 2, busy : true > 
+      < o(5, 1) : TPos | x : 5, y : 1, busy : true > .
+  ---- o o o o o, 
+  ---- o o o o #, 
+  ---- x o o # #, 
+  ---- o o # # #, 
+  ---- o # # # # .
+  eq triang5-3
+    = < o(1, 1) : TPos | x : 1, y : 1, busy : true > < o(1, 2) : TPos | x : 1, y : 2, busy : true > 
+          < o(1, 3) : TPos | x : 1, y : 3, busy : true > < o(1, 4) : TPos | x : 1, y : 4, busy : true > < o(1, 5) : TPos | x : 1, y : 5, busy : true >
+      < o(2, 1) : TPos | x : 2, y : 1, busy : true > < o(2, 2) : TPos | x : 2, y : 2, busy : true > 
+          < o(2, 3) : TPos | x : 2, y : 3, busy : true > < o(2, 4) : TPos | x : 2, y : 4, busy : true > 
+      < o(3, 1) : TPos | x : 3, y : 1, busy : false > < o(3, 2) : TPos | x : 3, y : 2, busy : true > < o(3, 3) : TPos | x : 3, y : 3, busy : true > 
+      < o(4, 1) : TPos | x : 4, y : 1, busy : true > < o(4, 2) : TPos | x : 4, y : 2, busy : true > 
+      < o(5, 1) : TPos | x : 5, y : 1, busy : true > .
+  ---- o o o o o, 
+  ---- o x o o #, 
+  ---- o o o # #, 
+  ---- o o # # #, 
+  ---- o # # # # .
+  eq triang5-4
+    = < o(1, 1) : TPos | x : 1, y : 1, busy : false > < o(1, 2) : TPos | x : 1, y : 2, busy : true > 
+          < o(1, 3) : TPos | x : 1, y : 3, busy : true > < o(1, 4) : TPos | x : 1, y : 4, busy : true > < o(1, 5) : TPos | x : 1, y : 5, busy : true >
+      < o(2, 1) : TPos | x : 2, y : 1, busy : true > < o(2, 2) : TPos | x : 2, y : 2, busy : false > 
+          < o(2, 3) : TPos | x : 2, y : 3, busy : true > < o(2, 4) : TPos | x : 2, y : 4, busy : true > 
+      < o(3, 1) : TPos | x : 3, y : 1, busy : true > < o(3, 2) : TPos | x : 3, y : 2, busy : true > < o(3, 3) : TPos | x : 3, y : 3, busy : true > 
+      < o(4, 1) : TPos | x : 4, y : 1, busy : true > < o(4, 2) : TPos | x : 4, y : 2, busy : true > 
+      < o(5, 1) : TPos | x : 5, y : 1, busy : true > .
+
+  vars I I' J J' : Nat .
+  op noAislada : Configuration -> Bool .
+  ceq noAislada(
+       < o(I, J) : Pos | x : I, y : J, busy : true > 
+       < o(I', J') : Pos | x : I', y : J', busy : true >
+       Conf)
+    = true 
+    if I == I' + 1 or I' == I + 1 or J == J' + 1 or J' == J + 1 .
+  eq noAislada(Conf) = false [owise] .
+endom
+
+search 4x4-2 =>! Conf such that count(Conf) = 1 .
+srewrite 4x4-2 using one((match S:Configuration s.t. noAislada(S:Configuration) ; all) * ; match S:Configuration s.t. count(S:Configuration) == 1) .
+dsrewrite [10] 4x4-2 using (match S:Configuration s.t. noAislada(S:Configuration) ; all) * .

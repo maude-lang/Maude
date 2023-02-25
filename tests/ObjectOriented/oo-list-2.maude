@@ -1,0 +1,341 @@
+set show timing off .
+set show advisories off .
+set verbose on .
+
+*** supplied by Francisco Duran
+
+fmod MAYBE{X :: TRIV} is 
+  sort Maybe{X} .
+  subsort X$Elt < Maybe{X} .
+  op null : -> Maybe{X} .
+endfm
+
+oth WRAPPER is
+  sort Elt .
+  class Wrapper | contents : Elt .
+  msg to_from_get : Oid Oid -> Msg .
+  msg to_from_answer(_) : Oid Oid Elt -> Msg .
+  vars O1 O2 : Oid .
+  var  X : Elt .
+  rl < O1 : Wrapper | contents : X > 
+     (to O1 from O2 get)
+  => < O1 : Wrapper | contents : X > 
+     (to O2 from O1 answer(X)) .
+endoth
+
+view Oid from TRIV to CONFIGURATION is 
+  sort Elt to Oid .
+endv
+
+omod LIST{X :: WRAPPER} is
+  including MAYBE{Oid} .
+  protecting INT .
+
+  class List{X} | first : Maybe{Oid}, last : Maybe{Oid}, size : Nat .
+  class Node{X} | next : Maybe{Oid}, previous : Maybe{Oid}, value : Oid .
+  class Counter | index : Nat .
+
+  op o : Oid Nat -> Oid .
+
+  msg _add_at_ : Oid Oid Nat -> Msg .
+  msg _get at_from_ : Oid Nat Oid -> Msg .
+
+  msg _add'_at_ : Oid Oid Nat -> Msg .
+  msg _in_get at_ : Oid Oid Nat -> Msg .
+  msg _in_get at_from_ : Oid Oid Nat Oid -> Msg .
+  msg to_from_elt at pos_is_ : Oid Oid Nat X$Elt -> Msg .
+  op add-blocked : Object -> Object .
+  op get-blocked : Object Nat Oid -> Object .
+
+  vars O O' O'' O''' F L : Oid .
+  vars N S P : Nat .
+  var  X : X$Elt .
+
+  rl [add] : *** adds on an empty stack
+    < O : List{X} | size : 0 >
+    (O add O' at 0)
+    < O'' : Counter | index : N > 
+    =>  < O : List{X} | first : o(O, N), last : o(O, N), size : 1 >
+        < o(O, N) : Node{X} | next : null, previous : null, value : O' > 
+        < O'' : Counter | index : s N > .
+
+  rl [add] : *** adds at the begining of the list
+    < O : List{X} | first : F, size : S >
+    < F : Node{X} | previous : null > 
+    (O add O' at 0)
+    < O'' : Counter | index : N > 
+    =>  < O : List{X} | first : o(O, N), size : s S >
+        < F : Node{X} | previous : o(O, N) > 
+        < o(O, N) : Node{X} | next : F, previous : null, value : O' > 
+        < O'' : Counter | index : s N > .
+    
+  rl [add] : *** adds at the end of the list
+    < O : List{X} | last : L, size : S >
+    < L : Node{X} | next : null > 
+    (O add O' at S)
+    < O'' : Counter | index : N > 
+    =>  < O : List{X} | last : o(O, N), size : s S >
+        < L : Node{X} | next : o(O, N) > 
+        < o(O, N) : Node{X} | next : null, previous : L, value : O' > 
+        < O'' : Counter | index : s N > .
+
+  crl [add] : *** adds at intermediate position of the list
+    < O : List{X} | first : F, size : S >
+    (O add O' at s P)
+    =>  add-blocked(< O : List{X} | >)
+        (F add' O' at P)
+    if s P < S .
+
+  rl [add] :  *** recursively look for the place to add the element
+    < O : Node{X} | next : O' > 
+    < O' : Node{X} | previous : O > 
+    (O add' O'' at P)
+    < O''' : Counter | index : N > 
+    add-blocked(< L : List{X} | size : S >)
+    =>  if P == 0 then 
+          < O : Node{X} | next : o(O, N) > 
+          < O' : Node{X} | previous : o(O, N) > 
+          < o(O, N) : Node{X} | previous : O, next : O', value : O'' > 
+          < O''' : Counter | index : s N >
+          < L : List{X} | size : s S >
+        else 
+          < O : Node{X} | > 
+          < O' : Node{X} | > 
+          (O' add' O'' at P - 1)
+          < O''' : Counter | index : N > 
+          add-blocked(< L : List{X} | size : S >)
+        fi .
+
+  crl [get] : 
+      < O : List{X} | first : F, size : S >
+      (O get at P from O')
+      => get-blocked(< O : List{X} | >, P, O')
+         (F in O get at P) 
+      if s P < S .
+  crl [get] : 
+      < O : List{X} | last : L, size : s S >
+      < L : Node{X} | value : O' >
+      (O get at P from O'')
+      =>  get-blocked(< O : List{X} | >, P, O'')
+          < L : Node{X} | >
+          (to O' from O get) 
+      if S = P .
+
+  rl [get] : 
+      < O : Node{X} | next : O', value : O'' >
+      (O in O''' get at P) 
+      => < O : Node{X} | >
+         if P == 0 then
+           (to O'' from O''' get)   
+         else 
+           (O' in O''' get at P - 1)
+         fi .
+  rl [get] : 
+      get-blocked(< O : List{X} | >, P, O')
+      (to O from O'' answer(X))
+      => < O : List{X} | >
+         (to O' from O elt at pos P is X) .
+
+  op create-list : Oid -> Object .
+  op l : -> Oid .
+  eq create-list(O) = < O : List{X} | first : null, last : null, size : 0 > .
+endom
+
+omod NAT-WRAPPER is
+  pr NAT .
+  class NatWrapper | value : Nat .
+  op w : Nat -> Oid .
+  msg to_get from_ : Oid Oid -> Msg .
+  msg to_answer_from_ : Oid Nat Oid -> Msg .
+  vars O1 O2 : Oid .
+  var  N : Nat .
+  rl < O1 : NatWrapper | value : N > 
+     (to O1 get from O2)
+  => < O1 : NatWrapper | > 
+     (to O2 answer N from O1) .
+endom
+
+view NatW from WRAPPER to NAT-WRAPPER is
+  sort Elt to Nat .
+  class Wrapper to NatWrapper .
+  attr contents to value .
+  vars O O' : Oid .
+  var  X : Elt .
+  msg to O from O' get to term to O get from O' .
+  msg to O from O' answer(X) to term to O answer X from O' .
+endv
+
+omod NAT-LIST is 
+  including LIST{NatW} .
+  ops c l : -> Oid .
+endom 
+
+----- set trace on .
+
+rew < c : Counter | index : 0 >
+    create-list(l) 
+    < w(0) : NatWrapper | value : 0 >
+    < w(1) : NatWrapper | value : 1 >
+    < w(2) : NatWrapper | value : 2 >
+    < w(3) : NatWrapper | value : 3 >
+    < w(4) : NatWrapper | value : 4 >
+    (l add w(0) at 0)
+    (l add w(1) at 1)
+    (l add w(2) at 2)
+    (l add w(3) at 3)
+    (l add w(4) at 4)
+    (l get at 3 from l)
+    .
+
+fth TAOSET is
+  protecting BOOL .
+  sort Elt .
+  op _<_ : Elt Elt -> Bool .
+  vars X Y Z : Elt .
+  ceq X < Z = true if X < Y /\ Y < Z [nonexec label transitive] .
+  ceq X = Y if X < Y /\ Y < X [nonexec label antisymmetric] .
+endfth
+
+oth TAOSET-WRAPPER is
+  including TAOSET .
+  class Wrapper | contents : Elt .
+  msg to_from_get : Oid Oid -> Msg .
+  msg to_from_answer(_) : Oid Oid Elt -> Msg .
+  vars O1 O2 : Oid .
+  var  X : Elt .
+  rl < O1 : Wrapper | contents : X > 
+     (to O1 from O2 get)
+  => < O1 : Wrapper | contents : X > 
+     (to O2 from O1 answer(X)) .
+endoth
+
+view TAOSET-WRAPPER from WRAPPER to TAOSET-WRAPPER is 
+  sort Elt to Elt .
+  class Wrapper to Wrapper .
+endv
+
+omod SORTED-LIST{X :: TAOSET-WRAPPER} is
+  including LIST{TAOSET-WRAPPER}{X} .
+
+  class SortedList{X} | first : Maybe{Oid}, last : Maybe{Oid}, size : Nat .
+  subclass SortedList{X} < List{TAOSET-WRAPPER}{X} .
+
+  msg _add_ : Oid Oid -> Msg .
+  msg _add'_ : Oid Oid -> Msg .
+
+  vars F L O O' O'' O''' O4 : Oid .
+  vars V V' V'' : X$Elt .
+  vars N S : Nat .
+
+  rl [add] : *** adds on an empty stack
+    < O : SortedList{X} | size : 0 >
+    (O add O')
+    =>  < O : SortedList{X} | >
+        (O add O' at 0) .
+
+  crl [add] : *** adds at the begining of the list
+    < O : SortedList{X} | first : F, size : S >
+    < F : Node{TAOSET-WRAPPER}{X} | previous : null, value : O' > 
+    < O' : X$Wrapper | contents : V >
+    < O'' : X$Wrapper | contents : V' >
+    (O add O'')
+    < O''' : Counter | index : N > 
+    =>  < O : SortedList{X} | first : o(O, N), size : s S >
+        < F : Node{TAOSET-WRAPPER}{X} | previous : o(O, N) > 
+        < O' : X$Wrapper | >
+        < O'' : X$Wrapper | >
+        < o(O, N) : Node{TAOSET-WRAPPER}{X} | next : F, previous : null, value : O'' > 
+        < O''' : Counter | index : s N > 
+    if V' < V .
+    
+  crl [add] : *** adds at the end of the list
+    < O : SortedList{X} | last : L, size : S >
+    < L : Node{TAOSET-WRAPPER}{X} | next : null, value : O' > 
+    < O' : X$Wrapper | contents : V >
+    < O'' : X$Wrapper | contents : V' >
+    (O add O'')
+    < O''' : Counter | index : N > 
+    =>  < O : SortedList{X} | last : o(O, N), size : s S >
+        < L : Node{TAOSET-WRAPPER}{X} | next : o(O, N) > 
+        < O' : X$Wrapper | >
+        < O'' : X$Wrapper | >
+        < o(O, N) : Node{TAOSET-WRAPPER}{X} | next : null, previous : L, value : O'' > 
+        < O''' : Counter | index : s N > 
+    if V < V' .
+
+  crl [add] : *** adds at intermediate position of the list
+    < O : SortedList{X} | first : F, last : L >
+    < F : Node{TAOSET-WRAPPER}{X} | previous : null, value : O' > 
+    < O' : X$Wrapper | contents : V >
+    < L : Node{TAOSET-WRAPPER}{X} | next : null, value : O'' > 
+    < O'' : X$Wrapper | contents : V' >
+    < O''' : X$Wrapper | contents : V'' >
+    (O add O''')
+    =>  add-blocked(< O : SortedList{X} | >)
+        < F : Node{TAOSET-WRAPPER}{X} | > 
+        < O' : X$Wrapper | >
+        < L : Node{TAOSET-WRAPPER}{X} | > 
+        < O'' : X$Wrapper | >
+        < O''' : X$Wrapper | >
+        (F add' O''')
+    if V < V'' /\ V'' < V' .
+
+  rl [add] :  *** recursively look for the place to add the element
+    add-blocked(< L : SortedList{X} | size : S >)
+    < O : Node{TAOSET-WRAPPER}{X} | next : O', value : O'' > 
+    < O' : Node{TAOSET-WRAPPER}{X} | previous : O > 
+    < O'' : X$Wrapper | contents : V >
+    (O add' O''')
+    < O''' : X$Wrapper | contents : V' >
+    < O4 : Counter | index : N > 
+    =>  if V' < V then 
+          < L : SortedList{X} | size : s S >
+          < O : Node{TAOSET-WRAPPER}{X} | next : o(O, N) > 
+          < O' : Node{TAOSET-WRAPPER}{X} | previous : o(O, N) > 
+          < O'' : X$Wrapper | contents : V >
+          < o(O, N) : Node{TAOSET-WRAPPER}{X} | previous : O, next : O', value : O''' > 
+          < O''' : X$Wrapper | contents : V' >
+          < O4 : Counter | index : s N >
+        else 
+          add-blocked(< L : SortedList{X} | size : S >)
+          < O : Node{TAOSET-WRAPPER}{X} | > 
+          < O' : Node{TAOSET-WRAPPER}{X} | > 
+          < O'' : X$Wrapper | >
+          < O''' : X$Wrapper | >
+          (O' add' O''')
+          < O4 : Counter | > 
+        fi .
+
+  op create-sorted-list : Oid -> Object .
+  eq create-sorted-list(O) = < O : SortedList{X} | first : null, last : null, size : 0 > .
+endom
+
+view NatSW from TAOSET-WRAPPER to NAT-WRAPPER is
+  sort Elt to Nat .
+  class Wrapper to NatWrapper .
+  attr contents to value .
+  vars O O' : Oid .
+  var  X : Elt .
+  msg to O from O' get to term to O get from O' .
+  msg to O from O' answer(X) to term to O answer X from O' .
+endv
+
+omod SORTED-NAT-LIST is 
+  including SORTED-LIST{NatSW} .
+  ops c l : -> Oid .
+endom 
+
+rew < c : Counter | index : 0 >
+    create-sorted-list(l) 
+    < w(0) : NatWrapper | value : 0 >
+    < w(1) : NatWrapper | value : 1 >
+    < w(2) : NatWrapper | value : 2 >
+    < w(3) : NatWrapper | value : 3 >
+    < w(4) : NatWrapper | value : 4 >
+    (l add w(0))
+    (l add w(1))
+    (l add w(2))
+    (l add w(3))
+    (l add w(4))
+    (l get at 3 from l)
+    .

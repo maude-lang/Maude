@@ -97,7 +97,7 @@ ModuleDatabase::setOoInclude(Token name, bool polarity)
 {
   int code = name.code();
   if (polarity)
-    defaultOoIncludes.insert(code);
+    defaultOoIncludes[code] = ImportModule::ImportMode::INCLUDING;
   else
     defaultOoIncludes.erase(code);
 }

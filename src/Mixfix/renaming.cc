@@ -46,6 +46,18 @@
 #include "importModule.hh"
 #include "renaming.hh"
 
+//	our stuff
+#include "ooRenaming.cc"
+
+Renaming::~Renaming() 
+{
+  for (const auto& i : opMap)
+    {
+      if (i.second.gcToTerm)
+	i.second.toTerm->deepSelfDestruct();
+    }
+}
+
 void
 Renaming::setType(set<int>& type, const ConnectedComponent* component)
 {
@@ -231,153 +243,6 @@ Renaming::makeCanonicalName() const
 }
 
 void
-Renaming::convertClassMappings(ImportModule* module, Renaming* canonical) const
-{
-  //
-  //	Check and convert class mappings.
-  //
-  Sort* classIdSort = 0;
-  bool lookedForClassIdSort = false;
-  for (auto& m : classMap)
-    {
-      DebugAdvisory("looking for class sort " << m.fromClass << " in module to be renamed " << module);
-      int className = m.fromClass.code();
-      int toClassName = m.toClass.code();
-      if (className == toClassName)
-	continue;  // skip identity mapping
-
-      if (Sort* classSort = module->findSort(className))
-	{
-	  if (module->parameterDeclared(classSort))
-	    {
-	      IssueAdvisory("Ignoring a class mapping for " << QUOTE(classSort) <<
-			    "because the class sort comes from a parameter.");
-	      continue;
-	    }
-	  //
-	  //	Check if there is a Cid sort in the module being renamed and if the classSort is below it.
-	  //
-	  if (!lookedForClassIdSort)
-	    {
-	      //
-	      //	Only want to try this one time.
-	      //
-	      classIdSort = module->findClassIdSort();
-	      lookedForClassIdSort = true;
-	    }
-	  if (classIdSort != 0)
-	    {
-	      //
-	      //	Because we have a Cid we can check that the class sort is below it.
-	      //
-	      if (classIdSort->component() != classSort->component() || !leq(classSort, classIdSort))
-		{
-		  IssueAdvisory("Class mapping for " << QUOTE(classSort) <<
-				" maps a sort that is not a subsort of " << QUOTE(classIdSort) << ".");
-		}
-	    }
-	  //
-	  //	Now check for the class constant.
-	  //
-	  int classSortId = classSort->id();
-	  const static Vector<ConnectedComponent*> emptyDomain;
-	  if (Symbol* classSymbol = module->findSymbol(classSortId, emptyDomain, classSort->component()))
-	    {
-	      if (module->parameterDeclared(classSymbol))
-		{
-		  IssueAdvisory("Ignoring a class mapping for " << QUOTE(classSort) <<
-				" because the class constant comes from a parameter.");
-		  continue;
-		}
-	      //
-	      //	There's a valid class constant so we need to make a mapping for it.
-	      //
-	      OpMap::iterator classSymbolMapping =
-		canonical->opMap.insert(OpMap::value_type(classSortId, OpMapping()));
-	      //
-	      //	Make mapping specific to range kind.
-	      //
-	      OpMapping& om = classSymbolMapping->second;
-	      om.name = toClassName;
-	      om.types.resize(1);
-	      setType(om.types[0], classSymbol->rangeComponent());
-	      om.index = canonical->opMapIndex.size();
-	      canonical->opMapIndex.append(classSymbolMapping);
-	    }
-	  else
-	    {
-	      IssueAdvisory("Missing class constant for renamed class " << QUOTE(classSort) << ".");
-	    }
-	  //
-	  //	Add class sort mapping.
-	  //
-	  pair<IdMap::iterator, bool> p = canonical->sortMap.insert({className, toClassName});
-	  Assert(p.second, "dup sort mapping");
-	  canonical->sortMapIndex.append(p.first);
-	}
-    }
-}
-
-void
-Renaming::convertAttrMappings(const ImportModule* module, Renaming* canonical) const
-{
-  Sort* attributeSort = 0;
-  for (auto& i : opMap)
-    {
-      if (i.second.mappingType != MappingType::ATTR)
-	continue;
-      if (i.first == i.second.name)
-	continue;  // skip identity mapping
-
-      if (attributeSort == 0)
-	{
-	  //
-	  //	This is our first attribute mapping so we didn't find the Attribute sort yet.
-	  //
-	  attributeSort = module->findAtttributeSort();
-	  if (attributeSort == 0)
-	    {
-	      //
-	      //	There's no way interpret attr mappings without an Attribute sort.
-	      //
-	      IssueAdvisory("Ignoring attr mappings.");
-	      return;
-	    }
-	}
-      const Vector<IdSet>& types = i.second.types;
-
-      string fromNameString(Token::name(i.first));
-      fromNameString += attributeSuffix;
-      int fromName = Token::encode(fromNameString.c_str());
-      
-      string toNameString(Token::name(i.second.name));
-      toNameString += attributeSuffix;
-      int toName = Token::encode(toNameString.c_str());
-      //
-      //	We look at all the unary operators in module that have the right name and
-      //	range component, excluding polymorphs.
-      //
-      const ConnectedComponent* attributeComponent = attributeSort->component();
-      for (Symbol* s = module->findFirstUnarySymbol(fromName, attributeComponent); s != 0;
-	   s = module->findNextUnarySymbol(s, attributeComponent))
-	{
-	  const ConnectedComponent* domainComponent = s->domainComponent(0);
-	  if (types.empty() || typeMatch(types[0], domainComponent))
-	    {
-	      OpMap::iterator attrMapping = canonical->opMap.insert({fromName, OpMapping()});
-	      OpMapping& am = attrMapping->second;
-	      am.name = toName;
-	      am.types.resize(2);
-	      setType(am.types[0], domainComponent);
-	      setType(am.types[1], attributeComponent);
-	      am.index = canonical->opMapIndex.size();
-	      canonical->opMapIndex.append(attrMapping);
-	    }
-	}
-    }
-}
-
-void
 Renaming::pruneSortMappings(ImportModule* module, Renaming* canonical) const
 {
   //
@@ -515,8 +380,6 @@ Renaming::canonicalizeOpMappings(ImportModule* module, Renaming* canonical) cons
 	const OpMap::const_iterator e = opMap.upper_bound(id);
 	for (OpMap::const_iterator j = opMap.lower_bound(id); j != e; ++j)
 	  {
-	    if (j->second.mappingType == MappingType::ATTR)
-	      continue;
 	    if (isIdentityOpMapping(module, j->second, symbol))
 	      continue;
 
@@ -586,7 +449,7 @@ Renaming::canonicalizeOpMappings(ImportModule* module, Renaming* canonical) cons
 	const OpMap::const_iterator e = opMap.upper_bound(id);
 	for (OpMap::const_iterator j = opMap.lower_bound(id); j != e; ++j)
 	  {
-	    if (j->second.mappingType != MappingType::ATTR && j->second.types.empty())
+	    if (j->second.types.empty())
 	      {
 		if (!isIdentityOpMapping(module, j->second, i))
 		  {
@@ -617,7 +480,7 @@ Renaming::canonicalizeOpMappings(ImportModule* module, Renaming* canonical) cons
       const OpMap::const_iterator e = opMap.upper_bound(id);
       for (OpMap::const_iterator j = opMap.lower_bound(id); j != e; ++j)
 	{
-	  if (j->second.mappingType != MappingType::ATTR && j->second.types.empty())
+	  if (j->second.types.empty())
 	    {
 	      if (genericsToAvoid.find(id) != genericsToAvoid.end())
 		{
@@ -819,8 +682,6 @@ Renaming::renameOp(Symbol* oldSymbol) const
   const OpMap::const_iterator e = opMap.end();
   for (OpMap::const_iterator i = opMap.find(oldId); i != e && i->first == oldId; ++i)
     {
-      if (i->second.mappingType == MappingType::ATTR)
-	continue;   // attr mappings must be ignored - only arises in view
       const Vector<set<int> >& types = i->second.types;
       if (types.empty() || typeMatch(types, oldSymbol))
 	{
@@ -869,7 +730,6 @@ Renaming::renameOp(int id, const Vector<int>& sortNames) const
       //
       //	Abstract version only runs on canonicalized renamings.
       //
-      Assert(i->second.mappingType != MappingType::ATTR, "attr mapping should not exist in canonicalized renaming");
       const Vector<set<int> >& types = i->second.types;
       if (types.empty() || typeMatch(types, sortNames))
 	{
@@ -974,7 +834,7 @@ Renaming::addSortConstantAndLabelMappings(const Renaming* original)
       Assert(m.second.types.size() == 1, "bad types.size() = " << m.second.types.size());
       Assert(m.second.mappingType == MappingType::OP, "bad mappingTyp");
       Assert(m.second.fromTerm == 0, "shouldn't have fromTerm");
-      Assert(m.second.term == 0, "shouldn't have term");
+      Assert(m.second.toTerm == 0, "shouldn't have term");
       Assert(m.second.prec == MixfixModule::MIN_PREC - 1, "shouldn't change prec");
       Assert(m.second.gather.empty(), "shouldn't change gather");
       Assert(m.second.format.empty(), "shouldn't change format");
@@ -1097,20 +957,6 @@ Renaming::addOpMapping(int code)
 }
 
 void
-Renaming::addAttrMapping(const Token& token)
-{
-  lastOpMapping = opMap.insert(OpMap::value_type(token.code(), OpMapping()));
-  lastOpMapping->second.mappingType = MappingType::ATTR;
-  lastOpMapping->second.index = opMapIndex.size();
-  //
-  //	We insert safe dummy values in case addAttrTarget() never gets called (because of a syntax error).
-  //
-  lastOpMapping->second.name = token.code();  // map op to itself
-  opMapIndex.append(lastOpMapping);
-  lastSeenWasStrategy = false;
-}
-
-void
 Renaming::addStratMapping(Token from)
 {
   addStratMapping(from.code());
@@ -1178,18 +1024,13 @@ Renaming::addOpTarget(int code)
 }
 
 void
-Renaming::addOpTargetTerm(Term* fromTerm, Term* targetTerm)
+Renaming::addOpTargetTerm(Term* fromTerm, Term* targetTerm, bool gcTargetTerm)
 {
   
   lastOpMapping->second.name = NONE;
+  lastOpMapping->second.gcToTerm = gcTargetTerm;
   lastOpMapping->second.fromTerm = fromTerm;
-  lastOpMapping->second.term = targetTerm;
-}
-
-void
-Renaming::addAttrTarget(const Token& token)
-{
-  lastOpMapping->second.name = token.code();
+  lastOpMapping->second.toTerm = targetTerm;
 }
 
 void
@@ -1340,6 +1181,17 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2, bool show
 	    Token::sortName(c.toClass.code());
 	  sep = sep2;
 	}
+      for (const auto& a : attrMap)
+	{
+	  s << sep << "attr " << a.fromAttr;
+	  if (!(a.type.empty()))
+	    {
+	      s << " : ";
+	      printRenamingType(s, a.type);
+	    }
+	  s << " to " << a.toAttr;
+	  sep = sep2;
+	}	      
     }
   //
   //	If we are printing the processed renaming, include generated sort mappings.
@@ -1359,21 +1211,6 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2, bool show
   for (Index i = 0; i < nrOpMappings; ++i)
     {
       auto om = opMapIndex[i];
-      if (om->second.mappingType == MappingType::ATTR)
-	{
-	  if (!showProcessed)
-	    {
-	      s << sep << "attr " << Token::name(om->first);
-	      if (!om->second.types.empty())
-		{
-		  s << " : ";
-		  printRenamingType(s, om->second.types[0]);
-		}
-	      s << " to " << Token::name(om->second.name);
-	      sep = sep2;
-	    }
-	  continue;
-	}
       s << sep << ((!showProcessed && om->second.mappingType == MappingType::MSG) ? "msg " : "op ");
       if (om->second.types.size() == 1)
 	s << Token::sortName(om->first);
@@ -1398,7 +1235,7 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2, bool show
       //	during debugging. We print them using illegal syntax (they should be term->term) because
       //	there isn't enough information retained to use legal syntax.
       //
-      if (Term* t = om->second.term)
+      if (Term* t = om->second.toTerm)
 	{
 	  s << " to term " << t << " .";
 	  continue;

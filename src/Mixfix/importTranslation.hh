@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,23 +26,24 @@
 #ifndef _importTranslation_hh_
 #define _importTranslation_hh_
 #include <list>
+#include <unordered_map>
 #include "strategyLanguage.hh"
 #include "symbolMap.hh"
-#include "pointerMap.hh"
 
 class ImportTranslation : public SymbolMap
 {
   NO_COPYING(ImportTranslation);
 
 public:
-  ImportTranslation(ImportModule* target, Renaming* renaming = 0);
+  ImportTranslation(ImportModule* target, Renaming* renaming = 0, bool preserveVariableIndicesFlag = false);
   void push(Renaming* renaming, ImportModule* target);
   //
   //	These three functions are required by our base class.
   //
-  Symbol* translate(Symbol* symbol);  // returns 0 to indicate op->term mapping in play
-  Term* translateTerm(const Term* term);  // handles op->term mappings on a whole term basis
-  Symbol* findTargetVersionOfSymbol(Symbol* symbol);
+  Symbol* translate(Symbol* symbol) override;  // returns 0 to indicate op->term mapping in play
+  Term* translateTerm(const Term* term) override;  // handles op->term mappings on a whole term basis
+  Symbol* findTargetVersionOfSymbol(Symbol* symbol) override;
+  bool preserveVariableIndices() override;
   //
   //	Other public functions that we provide.
   //
@@ -60,6 +61,8 @@ private:
   //
   typedef list<Renaming*> RenamingList;
   typedef list<ImportModule*> ModuleList;
+  typedef unordered_map<Symbol*, Symbol*> SymbolPointerMap;
+  typedef unordered_map<RewriteStrategy*, RewriteStrategy*> StrategyMap;
 
   static ConnectedComponent* translate(Renaming* renaming,
 				       ImportModule* target,
@@ -75,6 +78,7 @@ private:
 			ImportTranslation*& prefix,
 			ImportTranslation*& suffix);
 
+  
   RenamingList renamings;
   //
   //	Usually we only need the last target module because that's the one
@@ -87,7 +91,15 @@ private:
   //	Because translating symbols is the most frequent operation and also
   //	fairly expensive, we cache translations here.
   //
-  PointerMap directMap;
+  SymbolPointerMap symbolMap;
+  StrategyMap strategyMap;
+  //
+  //	When we copy a statement it is important that variable indices are reset
+  //	to UNDEFINED so the statement compiles correctly. However if we're copying
+  //	the right-hand side of an op to term mapping, we need to preserve the indices
+  //	we obtained when analyzing the view.
+  //
+  const bool preserveVariableIndicesFlag = false;
 };
 
 inline

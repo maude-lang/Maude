@@ -1,3 +1,8 @@
+2023-02-17  Steven Eker  <eker@pup>
+
+	* metaUpView.cc (MetaLevel::upOpMappings): don't call isAttrMapping()
+	now that attr mappings have been moved to a separate data structure
+
 2023-02-14  Steven Eker  <eker@pup>
 
 	* metaUpView.cc (MetaLevel::upOpMappings): skip over attr mappings

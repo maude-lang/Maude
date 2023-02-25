@@ -81,7 +81,7 @@ void
 SyntacticPreModule::addHonoraryClassNames(set<int>& classNames) const
 {
   //
-  //	An honorary class name is a sort Foo from an imported module
+  //	An honorary class name is the name of a sort Foo from an imported module
   //	that looks as if it could have been produced from a class.
   //
   //	This information is needed for subclass processing, before operators
@@ -119,11 +119,9 @@ SyntacticPreModule::addHonoraryAttributeSymbols()
 	  if (s->arity() == 1)
 	    {
 	      //
-	      //	Name must end in :_
+	      //	Name must end in in attributeSuffix
 	      //
-	      const char* name = Token::name(s->id());
-	      int len = strlen(name);
-	      if (len > 2 && name[len - 2] == ':' && name[len - 1] == '_')
+	      if (hasAttributeSuffix(s))
 		{
 		  //
 		  //	We allow subsort overloading of attributes so there could be many
@@ -146,6 +144,7 @@ SyntacticPreModule::addHonoraryAttributeSymbols()
 		  //
 		  //	Treat it as an attribute symbol.
 		  //
+		  DebugInfo("module " << flatModule << " adding honorary attribute symbol " << s);
 		  attributeSymbols.insert(s);
 		}
 	    }
@@ -156,7 +155,7 @@ SyntacticPreModule::addHonoraryAttributeSymbols()
 }
 
 Sort*
-SyntacticPreModule::findClassIdSortName() const
+SyntacticPreModule::findClassIdSort() const
 {
   //
   //	We need to identify the sort that plays the role of Cid.
@@ -164,45 +163,24 @@ SyntacticPreModule::findClassIdSortName() const
   //	ObjectConstructorSymbol op-hook.
   //	However, we need to do this identification before we close the sort set so
   //	we will not have imported operators or processed our operator declarations yet
-  //	so we need to example the modules we will import and our operator declarations.
+  //	and thus we can not use flatModule->findClassIdSort(). Instead
+  //	we need to examine the modules we will import and our operator declarations.
   //	We ignore polymorphic operators.
   //
-  set<int> candidates;
+  set<Sort*> candidates;
   //
   //	First we go through the modules we are going to import.
   //
   int nrImports = flatModule->getNrImports();
   for (int i = 0; i < nrImports; ++i)
     {
-      const ImportModule* import = flatModule->getImportedModule(i);
-      const NatSet& objectSymbols = import->getObjectSymbols();
-      if (!objectSymbols.empty())
+      set<Sort*> candidatesFromImport;
+      flatModule->getImportedModule(i)->insertClassIdSortCandidates(candidatesFromImport);
+      for (Sort* importedSort : candidatesFromImport)
 	{
-	  //
-	  //	If the module has object symbols we examine them.
-	  //
-	  const Vector<Symbol*>& symbols = import->getSymbols();
-	  for (int j : objectSymbols)
-	    {
-	      Symbol* s = symbols[j];
-	      SymbolType st = import->getSymbolType(s);
-	      if (st.getBasicType() == SymbolType::OBJECT_CONSTRUCTOR_SYMBOL)
-		{
-		  //
-		  //	An object symbol with the ObjectConstructorSymbol hook, so every second argument sort
-		  //	in a declaration is a potential class id sort name.
-		  //
-		  for (const OpDeclaration& d : s->getOpDeclarations())
-		    {
-		      if (d.isConstructor())
-			{
-			  const Sort* sort = d.getDomainAndRange()[1];
-			  if (sort->index() != Sort::KIND)
-			    candidates.insert(sort->id());
-			}
-		    }
-		}
-	    }
+	  Sort* localSort = flatModule->findSort(importedSort->id());
+	  Assert(localSort != 0, "couldn't find " << importedSort << " in " << this);
+	  candidates.insert(localSort);
 	}
     }
   //
@@ -217,115 +195,27 @@ SyntacticPreModule::findClassIdSortName() const
 	  opDef.polyArgs.empty() &&				// not polymorphic
 	  opDef.types.size() == 4 &&				// 3 arguments
 	  !opDef.types[1].kind)					// 2nd argument is not a kind
-	candidates.insert(opDef.types[1].tokens[0].code());	// only sort of second argument type
-    }
-  //
-  //	We succeed if there is a unique candidate.
-  //
-  if (candidates.size() == 1)
-    {
-      int classIdSortName = *(candidates.begin());
-      //
-      //	We expect that all regular sorts have been imported so we
-      //	just do a regular lookup.
-      //
-      Sort* classIdSort = flatModule->findSort(classIdSortName);
-      Assert(classIdSort != 0, "classSort doesn't exist");
-      return classIdSort;
-    }
-  if (candidates.empty())
-    IssueWarning("Unable to find a class id sort.");
-  else
-    {
-      ComplexWarning("Unable to find a unique class id sort. Candidates are:");
-      for (int i : candidates)
-	cerr << ' ' << QUOTE(Token::name(i));
-      cerr << endl;
-    }
-  return 0;
-}
-
-Sort*
-SyntacticPreModule::findAtttributeSetSort() const
-{
-  //
-  //	We need to identify the sort that play the rope of AttributeSet.
-  //	We do this by looking at operators with the object attribute and the
-  //	ObjectConstructorSymbol op-hook.
-  //	At this point, the sort set is closed and all the operators other than
-  //	the ones we will create of attributes and late symbols have been inserted.
-  //
-  set<Sort*> candidates;
-  //
-  //	Go through our flat module.
-  //
-  const Vector<Symbol*>& symbols = flatModule->getSymbols();
-  const NatSet& objectSymbols = flatModule->getObjectSymbols();
-  for (int i : objectSymbols)
-    {
-      Symbol* s = symbols[i];
-      SymbolType st = flatModule->getSymbolType(s);
-      if (st.getBasicType() == SymbolType::OBJECT_CONSTRUCTOR_SYMBOL)
 	{
-	  for (const OpDeclaration& d : s->getOpDeclarations())
-	    {
-	      if (d.isConstructor())
-		{
-		  Sort* sort = d.getDomainAndRange()[2];
-		  if (sort->index() != Sort::KIND)
-		    candidates.insert(sort);
-		}
-	    }
+	  //
+	  //	We expect that all regular sorts have been imported so we
+	  //	just do a regular lookup.
+	  //
+	  int name = opDef.types[1].tokens[0].code();  // only sort of second argument type
+	  Sort* sort = flatModule->findSort(name);
+	  Assert(sort != 0, "sort doesn't exist");
+	  candidates.insert(sort);
 	}
     }
   //
   //	We succeed if there is a unique candidate.
   //
-  if (candidates.size() == 1)
-    return *(candidates.begin());
-  if (candidates.empty())
-    IssueWarning("Unable to find an attribute set sort.");
-  else
-    {
-      ComplexWarning("Unable to find a unique attribute sort. Candidates are:");
-      for (Sort* s : candidates)
-	cerr << ' ' << QUOTE(s);
-      cerr << endl;
-    }
-  return 0;
-}
-
-Sort*
-SyntacticPreModule::findAtttributeSort() const
-{
-  set<int> candidates;
-  const ConnectedComponent* component = attributeSetSort->component();
-  NatSet indices = attributeSetSort->getLeqSorts();
-  indices.subtract(attributeSetSort->index());
-  while (!indices.empty())
-    {
-      int candidateIndex = indices.min();
-      candidates.insert(candidateIndex);
-      indices.subtract(component->getLeqSorts(candidateIndex));
-    }
-  if (candidates.size() == 1)
-    return component->sort(*(candidates.begin()));
-  if (candidates.empty())
-    IssueWarning("Unable to find an attribute sort.");
-  else
-    {
-      ComplexWarning("Unable to find a unique attribute set sort. Candidates are:");
-      for (int i : candidates)
-	cerr << ' ' << QUOTE(component->sort(i));
-      cerr << endl;
-    }
-  return 0;
+  return flatModule->uniqueClassIdSortCandidate(candidates);
 }
 
 void
 SyntacticPreModule::processClassSorts()
 {
-  classIdSort = findClassIdSortName();
+  classIdSort = findClassIdSort();
   if (classIdSort == 0)
     {
       flatModule->markAsBad();
@@ -334,7 +224,6 @@ SyntacticPreModule::processClassSorts()
   //
   //	Try to add a subsort for each class.
   //
-  //set<int> classNames;
   for (ClassDecl& c : classDecls)
     {
       if (c.name.containsUnderscore())
@@ -348,6 +237,7 @@ SyntacticPreModule::processClassSorts()
 	    {
 	      c.classSort = flatModule->addSort(code);
 	      c.classSort->setLineNumber(c.name.lineNumber());
+	      localClasses.insert({code, SymbolSet()});
 	    }
 	  else
 	    {
@@ -393,6 +283,105 @@ SyntacticPreModule::processClassSorts()
 }
 
 void
+SyntacticPreModule::checkAttributes()
+{
+  const ConnectedComponent* classComponent = classIdSort->component();
+  int nrSorts = classComponent->nrSorts();
+  for (int i = 1; i < nrSorts; ++i)
+    {
+      Sort* sort = classComponent->sort(i);
+      int name = sort->id();
+      auto localClass = localClasses.find(name);
+      if (localClass != localClasses.end())
+	{
+	  //
+	  //	We have a local class.
+	  //
+	  const NatSet& leqSorts = sort->getLeqSorts();
+	  for (int j : leqSorts)
+	    {
+	      if (j == i)
+		continue;  // don't count ourselves
+	      Sort* leqSort = classComponent->sort(j);
+	      int leqSortName = leqSort->id();
+	      auto subclass = localClasses.find(leqSortName);
+	      if (subclass != localClasses.end())
+		{
+		  //
+		  //	We have a local subclass.
+		  //
+		  for (Symbol* s : localClass->second)
+		    {
+		      if (subclass->second.find(s) != subclass->second.end())
+			{
+			  IssueAdvisory(*leqSort << ": class " << QUOTE(leqSort) << " declares an attribute "
+					<< QUOTE(ATTRIBUTE(s)) << " that it inherits from class " << QUOTE(sort) << ".");
+			}
+		    }
+		}
+	    }
+	}
+    }
+}
+
+void
+SyntacticPreModule::purgeImpureClasses()
+{
+
+  //
+  //	Impurity percholates down from sorts that are not Cid or above it.
+  //	Between pure classes, attributes percholate down.
+  //	At the end of this processing we will just be left with pure classes, each with
+  //	a complete set of attribute symbols.
+  //
+  const ConnectedComponent* classComponent = classIdSort->component();
+  int nrSorts = classComponent->nrSorts();
+  for (int i = 1; i < nrSorts; ++i)
+    {
+      if (leq(classIdSort, i))
+	{
+	  //
+	  //	Sort is Cid or above Cid so ignore it.
+	  //
+	  continue;
+	}
+      Sort* sort = classComponent->sort(i);
+      const NatSet& leqSorts = sort->getLeqSorts();
+      int name = sort->id();
+
+      auto localClass = localClasses.find(name);
+      if (localClass != localClasses.end())
+	{
+	  //
+	  //	It's a pure class (and can't be purged since we've already examined
+	  //	all lower index sorts) so distribute its attributes to its subclasses
+	  //	which could still be purged if they inherit from an impure class.
+	  //
+	  //Verbose("Class " << sort << " is pure with " << localClass->second.size() << " attributes.");
+	  for (int j : leqSorts)
+	    {
+	      Sort* leqSort = classComponent->sort(j);
+	      int leqSortName = leqSort->id();
+	      auto subclass = localClasses.find(leqSortName);
+	      if (subclass != localClasses.end())
+		subclass->second.insert(localClass->second.begin(), localClass->second.end());
+	    }
+	}
+      else
+	{
+	  //
+	  //	We have an impure class or a stray sort; it purges everything below it.
+	  //
+	  for (int j : leqSorts)
+	    {
+	      Sort* leqSort = classComponent->sort(j);
+	      localClasses.erase(leqSort->id());
+	    }
+	}
+    }
+}
+
+void
 SyntacticPreModule::checkAttributeTypes()
 {
   for (ClassDecl& c : classDecls)
@@ -415,13 +404,7 @@ SyntacticPreModule::computeAttributeTypes()
 void
 SyntacticPreModule::processClassOps()
 {
-  attributeSetSort = findAtttributeSetSort();
-  if (attributeSetSort == 0)
-    {
-      flatModule->markAsBad();
-      return;
-    }
-  attributeSort = findAtttributeSort();
+  attributeSort = flatModule->findAtttributeSort();
   if (attributeSort == 0)
     {
       flatModule->markAsBad();
@@ -456,16 +439,17 @@ SyntacticPreModule::processClassOps()
       if (!c.name.containsUnderscore())
 	{
 	  range[0] = c.classSort;
-	  c.classSymbol = flatModule->addOpDeclaration(c.name,
-						       range,
-						       classSymbolType,
-						       dummyVec,
-						       dummySet,
-						       DEFAULT,
-						       dummyVec,
-						       dummyVec,
-						       NONE,
-						       dummyBool);
+	  (void) flatModule->addOpDeclaration(c.name,
+					      range,
+					      classSymbolType,
+					      dummyVec,
+					      dummySet,
+					      DEFAULT,
+					      dummyVec,
+					      dummyVec,
+					      NONE,
+					      dummyBool);
+
 	  for (AttributePair& ap : c.attributes)
 	    {
 	      if (ap.attributeName.containsUnderscore())
@@ -491,6 +475,7 @@ SyntacticPreModule::processClassOps()
 								      NONE,
 								      dummyBool);
 		  attributeSymbols.insert(attrSymbol);
+		  localClasses[c.name.code()].insert(attrSymbol);
 		}
 	    }
 	}

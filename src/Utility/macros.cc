@@ -34,6 +34,7 @@
 
 bool globalAdvisoryFlag = true;
 bool globalVerboseFlag = false;
+bool globalDebugFlag = false;
 //
 //	We use this to dump return values that the compiler
 //	thinks should not be discarded and would otherwise warn about.

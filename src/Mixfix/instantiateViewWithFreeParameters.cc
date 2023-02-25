@@ -266,7 +266,7 @@ View::handleInstantiationByTheoryView(View* copy,
 	      //	Get the parameter copy of the theory-view's target. The target module for copy which is instantiated
 	      //	by the theory-view and which we haven't at this point will also need this and  will get if from the cache.
 	      //
-	      const ImportModule* parameterCopyOfArgumentViewToTheory = owner->makeParameterCopy(parameterName, viewToTheory);
+	      ImportModule* parameterCopyOfArgumentViewToTheory = owner->makeParameterCopy(parameterName, viewToTheory);
 	      //
 	      //	We rely on the parameter copies to do the heavy lifting of
 	      //	adding sort and operator renamings to our canonicalRenaming.
@@ -590,10 +590,12 @@ View::handleOpMappings(View* copy, const Renaming* canonicalRenaming) const
 void
 View::handleAwkwardCase(View* copy, Symbol* symbol, Term* fromTerm, Term* toTerm) const
 {
+  DebugEnter("view = " << copy << "  symbol = " << symbol << "  fromTerm = " << fromTerm <<
+	     "  toTerm = " << toTerm);
   //
   //	We have symbol from our fromTheory which is explicitly or implicity
   //	mapped to a symbol' from one of our parameter theories. Now this parameter
-  //	theory has been instantiated by a view that maps symbol' to a term toTerm.
+  //	has been instantiated by a view that maps symbol' to a term toTerm.
   //	In order to handle this we need to synthesize an op->term mapping that
   //	takes symbol to toTerm and add it to copy.
   //	We do this an a very inefficient manner since this is a rare edge case.
@@ -623,7 +625,7 @@ View::handleAwkwardCase(View* copy, Symbol* symbol, Term* fromTerm, Term* toTerm
   //	Finally we insert it into the view instantiation.
   //
   copy->insertOpToTermMapping(newFromTerm, toTermCopy);
-  DebugNew("inserted " << newFromTerm << " to term " << toTermCopy << " into " <<
+  DebugExit("inserted " << newFromTerm << " to term " << toTermCopy << " into " <<
 	   copy << " during the instantiation of " << this);
 }
 

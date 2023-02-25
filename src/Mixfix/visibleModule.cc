@@ -91,7 +91,7 @@ VisibleModule::showKinds(ostream& s) const
   for (int i = 0; i < nrKinds; i++)
     {
       const ConnectedComponent* c = kinds[i];
-      s << c->sort(0);
+      s << c->sort(Sort::KIND);
       if (c->errorFree())
 	s << " (error free)";
       s<< ":\n";

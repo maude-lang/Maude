@@ -74,7 +74,8 @@ TESTS = \
 	legacyMetaVariantUnify \
 	legacyMetaGetVariant \
 	metaIntStrategy \
-	checkUnifiers
+	checkUnifiers \
+	meta-oo-list-2
 
 MAUDE_FILES = \
 	metaProcPrelude.maude \
@@ -152,7 +153,8 @@ MAUDE_FILES = \
 	legacyMetaVariantUnify.maude \
 	legacyMetaGetVariant.maude \
 	metaIntStrategy.maude \
-	checkUnifiers.maude
+	checkUnifiers.maude \
+	meta-oo-list-2.maude
 
 RESULT_FILES = \
 	metaProcPrelude.expected \
@@ -232,6 +234,7 @@ RESULT_FILES = \
 	legacyMetaVariantUnify.expected \
 	legacyMetaGetVariant.expected \
 	metaIntStrategy.expected \
-	checkUnifiers.expected
+	checkUnifiers.expected \
+	meta-oo-list-2.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

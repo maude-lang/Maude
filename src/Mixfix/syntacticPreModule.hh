@@ -107,6 +107,8 @@ public:
   static void printGather(ostream& s, const Vector<int>& gather);
   static void printFormat(ostream& s, const Vector<int>& format);
   static bool checkFormatString(const char* string);
+  static string stripAttributeSuffix(Symbol* attributeSymbol);
+  static bool hasAttributeSuffix(Symbol* symbol);
 
 private:
   //
@@ -193,7 +195,7 @@ private:
     //	Filled out during processing.
     //
     Sort* classSort;
-    Symbol* classSymbol; // do we need to store this?
+    //Symbol* classSymbol; // do we need to store this?
   };
   //
   //	For omod statement transformation.
@@ -206,7 +208,7 @@ private:
      CONDITION_SUBJECT,
     };
 
-  typedef map<Symbol*, Term*> AttributeMap;
+  typedef map<Symbol*, Term*, Symbol::LessThan> AttributeMap;
 
   struct ObjectOccurrence
   {
@@ -222,7 +224,7 @@ private:
     //
     //	The first occurrence in the lhs of the statement.
     //	A second occurrence will disqualify the statement
-    //	Having no occurrence will disqualify the statement.
+    //	Having no occurrence will disqualify the object but not the statement.
     //
     ObjectOccurrence patternOccurrence;
     //
@@ -248,6 +250,8 @@ private:
   typedef map<Term*, ObjectInfo, Term::LessThan> ObjectMap;
   typedef map<pair<int,int>,int> VarCountMap;
   typedef set<int> IdSet;
+  typedef set<Symbol*> SymbolSet;
+  typedef map<int, SymbolSet> ClassAttrMap;
 
   struct StatementInfo
   {
@@ -306,11 +310,13 @@ private:
   void addHonoraryAttributeSymbols();
   void processClassSorts();
   Sort* findClassIdSortName() const;
+  Sort* findClassIdSort() const;
   void checkAttributeTypes();
+  void purgeImpureClasses();
   void computeAttributeTypes();
   void processClassOps();
-  Sort* findAtttributeSetSort() const;
-  Sort* findAtttributeSort() const;
+  void checkAttributes();
+
   bool isClassSort(const Sort *s) const;
   Sort* findCorrespondingClassSort(const Symbol *s) const;
   //
@@ -319,7 +325,7 @@ private:
   void gatherObjects(PreEquation* pe, StatementInfo& si) const;
   void gatherObjects(GatherMode mode, Term* term, StatementInfo& si) const;
   bool recordClassArgument(Term* classArgument, ObjectInfo& oi) const;
-  bool analyzeAttributeSetArgument(Term* attributeSetArgument, ObjectOccurrence& oo) const;
+  bool analyzeAttributeSetArgument(Term* attributeSetArgument, Sort* classSort, ObjectOccurrence& oo) const;
   //
   //	Statement transformation pass.
   //
@@ -346,16 +352,23 @@ private:
   set<int> potentialLabels;
   set<int> potentialRuleLabels;
   ModuleDatabase::ImportMap autoImports;
-  ModuleDatabase::ImportSet ooIncludes;
   VisibleModule* flatModule;
   //
   //	Sorts determined for object oriented modules and theories.
   //
   Sort* classIdSort = 0;
-  Sort* attributeSetSort = 0;
   Sort* attributeSort = 0;
   set<int> classNames;
-  set<Symbol*> attributeSymbols;
+  SymbolSet attributeSymbols;
+  //
+  //	For classes defined in this PreModule we keep track of attribute symbols, both
+  //	declared and inherited.
+  //	A local class is pure if it does not inherit (directly or indirectly) from an
+  //	imported class and it is not below a stray sort.
+  //	We consider the set of attribute symbols to be exact for pure classes and a
+  //	lower bound for impure classes.
+  //
+  ClassAttrMap localClasses;
 };
 
 inline bool
@@ -401,5 +414,11 @@ SyntacticPreModule::isClassSort(const Sort *s) const
   //
   return classNames.find(s->id()) != classNames.end();
 }
+
+//
+//	Ugly hack to pretty print attributes. Note that it cannot be wrapped in parentheses.
+//
+#define ATTRIBUTE(symbol) \
+  stripAttributeSuffix(symbol) << " : " << ((symbol)->domainComponent(0)->sort(Sort::KIND))
 
 #endif

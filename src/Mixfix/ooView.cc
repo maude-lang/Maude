@@ -145,11 +145,9 @@ View::handleAttrMappings()
 
   Sort* fromAttributeSort = 0;
   Sort* toAttributeSort = 0;
-  int nrOpMappings = getNrOpMappings();
-  for (int i = 0; i < nrOpMappings; ++i)
+  int nrAttrMappings = getNrAttrMappings();
+  for (int i = 0; i < nrAttrMappings; ++i)
     {
-      if (!isAttrMapping(i))
-	continue;
       if (fromAttributeSort == 0)
 	{
 	  //
@@ -178,27 +176,28 @@ View::handleAttrMappings()
 	      return false;
 	    }
 	}
-      bool used = false;
- 
-      int fromBaseName = getOpFrom(i);
-      string fromNameString(Token::name(fromBaseName));
+      
+      Token fromBaseName = getFromAttr(i);
+      string fromNameString(fromBaseName.name());
       fromNameString += attributeSuffix;
       int fromName = Token::encode(fromNameString.c_str());
       
-      int toBaseName = getOpTo(i);
-      string toNameString(Token::name(toBaseName));
+      Token toBaseName = getToAttr(i);
+      string toNameString(toBaseName.name());
       toNameString += attributeSuffix;
       int toName = Token::encode(toNameString.c_str());
       //
       //	We look at all the unary operators in fromTheory that have the right name and
       //	range component, excluding polymorphs.
       //
+      bool used = false;
       const ConnectedComponent* attributeComponent = fromAttributeSort->component();
       for (Symbol* s = fromTheory->findFirstUnarySymbol(fromName, attributeComponent); s != 0;
 	   s = fromTheory->findNextUnarySymbol(s, attributeComponent))
 	{
 	  const ConnectedComponent* domainComponent = s->domainComponent(0);
-	  if (getNrTypes(i) == 0 || Renaming::typeMatch(getTypeSorts(i, 0), domainComponent))
+	  const set<int>& attrTypeSorts = getAttrTypeSorts(i);
+	  if (attrTypeSorts.empty() || Renaming::typeMatch(attrTypeSorts, domainComponent))
 	    {
 	      //
 	      //	Symbol matches attr renaming. We add a specific op mapping.
@@ -210,8 +209,8 @@ View::handleAttrMappings()
 	      used = true;
 	    }
 	}
-      AdvisoryCheck(used, *this << ": attr mapping from " << QUOTE(Token::name(fromBaseName)) << " to " <<
-		    QUOTE(Token::name(toBaseName)) << " does not match any attribute operator in " <<
+      AdvisoryCheck(used, LineNumber(fromBaseName.lineNumber()) << ": attr mapping from " << QUOTE(fromBaseName) << " to " <<
+		    QUOTE(toBaseName) << " does not match any attribute operator in " <<
 		    QUOTE(fromTheory) << ".");
     }
   return true;

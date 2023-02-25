@@ -54,11 +54,3 @@ fmod TERM-ORDER{X :: TRIV} is
     else $lt(T, U)
     fi .
 endfm
-
-
-
-load term-order
-
-fmod FOO is pr TERM-ORDER{Qid} . endfm
-
-red in TERM-ORDER{Qid} : lt('aba, 'abc) .

@@ -1,3 +1,357 @@
+2023-02-24  Steven Eker  <eker@pup>
+
+	* renaming.hh (class Renaming): added override annotations for
+	addParameter2(), addVarDecl(), addType()
+
+	* lexerAux.cc (bubbleEofError): give both line number of EOF and
+	line number of first token in the bubble
+
+	* top.yy (top): don't recognize empty sentence anymore; it only
+	arises with ^C and yyterminate() will force parser to exit
+
+	* ooSorts.cc (ImportModule::uniqueClassIdSortCandidate): use
+	ContinueWarning()
+	(ImportModule::findAtttributeSort): use ContinueWarning()
+
+	* modules.yy (viewDeclaration): handle END_OF_INPUT and
+	CHANGE_FILE error inside a view
+
+	* top.yy (item): clear suppressParserErrorMessage if CHANGE_FILE
+	was benign
+
+	* bottom.yy (yyerror): only check suppressParserErrorMessage
+	now that it subsumes UserLevelRewritingContext::interrupted()
+
+	* lexer.ll (id): HARD_EOF -> END_OF_INPUT
+
+	* modules.yy (declaration): HARD_EOF -> END_OF_INPUT
+
+	* top.yy (top): recognize error followed by HARD_EOF or
+	CHANGE_FILE
+	HARD_EOF -> END_OF_INPUT
+
+	* modules.yy (declaration): recognise error followed by
+	CHANGE_FILE; call fileTable.endModule() in the two YYABORT cases
+	to keep lineNumber to module mapping straight
+
+	* interact.cc (UserLevelRewritingContext::commandLoop): bump
+	lineNumber on interrupt or error if interactiveFlag is set
+
+	* interpreter.cc (Interpreter::makeClean): take line number from
+	currentview and print currentView name in message
+
+	* interact.cc (UserLevelRewritingContext::commandLoop): don't
+	print \n after parseError or ctrlC_Flag
+
+2023-02-24  Steven Eker  <eker@mu.csl.sri.com>
+
+	* top.yy (top): treat HARD_EOF as a quit directive; tread
+	CHANGE_FILE as a no-op
+
+	* lexer.ll (id): use CHANGE_FILE token
+
+	* top.yy: added CHANGE_FILE token
+
+2023-02-23  Steven Eker  <eker@mu.csl.sri.com>
+
+	* bottom.yy (yyerror): honor suppressParserErrorMessage
+	(cleanUpParser): clear suppressParserErrorMessage
+
+	* top.yy: added global variable suppressParserErrorMessage
+
+	* lexerAux.cc (bubbleEofError): set suppressParserErrorMessage
+	to true
+
+	* lexer.ll: added extern for suppressParserErrorMessage
+
+	* lexerAux.cc (bubbleEofError): added
+
+	* lexer.ll (id): call bubbleEorError() if we see an actual EOF
+	inside a bubble and then yyterminate()
+
+	* interpreter.cc (makeClean): use currentModule for the
+	line number
+	(addSelected): deleted commented out code
+
+	* modules.yy (declaration): recognize error followed by HARD_EOF
+
+	* interact.cc (commandLoop): yyparse() returns int, not bool
+
+	* top.yy (item): allow HARD_EOF as a top item
+
+	* lexer.ll (id): return HARD_EOF when an actual end-of-file is
+	seen
+
+	* top.yy: added token HARD_EOF
+
+	* syntacticPreModule.cc (finishModule): insert OO includes
+	into autImports
+
+	* syntacticPreModule.hh (SyntacticPreModule): deleted data
+	member ooIncludes
+
+	* process.cc (processImports): don't use ooIncludes
+
+	* moduleDatabase.cc (setOoInclude): use ImportMap rather than
+	ImportSet
+
+	* moduleDatabase.hh (ModuleDatabase): use ImportMap rather than
+	ImportSet for OO includes
+
+2023-02-22  Steven Eker  <eker@mu.csl.sri.com>
+
+	* syntaxContainer.hh (SyntaxContainer): put
+	attributeSuffixLength = 3 since I'm sure sure that strlen()
+	is constexpr
+
+	* ooProcess.cc (addHonoraryAttributeSymbols): use
+	hasAttributeSuffix(); added DebugInfo()
+
+	* syntacticPreModule.cc (stripAttributeSuffix): added Assert
+
+	* syntaxContainer.hh (SyntaxContainer): added constexpr
+	attributeSuffixLength
+
+	* syntacticPreModule.hh (SyntacticPreModule): added decl for
+	hasAttributeSuffix()
+
+	* syntacticPreModule.cc (hasAttributeSuffix): added
+
+	* ooProcess.cc (processClassSorts): use findClassIdSort()
+	instead of findClassIdSortName()
+	(findClassIdSortName): deleted
+
+	* syntacticPreModule.hh (SyntacticPreModule): added decl for
+	findClassIdSort()
+
+	* importModule.hh (ImportModule): added decls for
+	insertClassIdSortCandidates() and uniqueClassIdSortCandidate()
+
+	* ooProcess.cc (findClassIdSort): added
+
+	* ooSorts.cc (insertClassIdSortCandidates): added
+	(uniqueClassIdSortCandidate): added
+	(findClassIdSort): reimplemented using
+	insertClassIdSortCandidates() and uniqueClassIdSortCandidate()
+
+2023-02-21  Steven Eker  <eker@mu.csl.sri.com>
+
+	* syntacticPreModule.cc (stripAttributeSuffix): added
+
+	* syntacticPreModule.hh (SyntacticPreModule): added decl for
+	stripAttributeSuffix()
+
+	* ooProcess.cc (checkAttributes): use ATTRIBUTE()
+
+	* ooTransform.cc (analyzeAttributeSetArgument): use ATTRIBUTE()
+
+	* syntacticPreModule.hh (SyntacticPreModule): updated decl for
+	analyzeAttributeSetArgument()
+	(ATTRIBUTE): added
+
+	* ooTransform.cc (analyzeAttributeSetArgument): take classSort
+	argument and check attributes of a pure class
+	(gatherObjects): pass classSort (or null) to
+	analyzeAttributeSetArgument() (2 places)
+
+	* process.cc (process): call purgeImpureClasses() after
+	checkAttributes()
+
+	* syntacticPreModule.hh (SyntacticPreModule): added decl for
+	checkAttributes()
+
+	* process.cc (process): call  checkAttributes(); don't call
+	purgeImpureClasses()
+
+	* ooProcess.cc (processClassSorts): pureClasses -> localClasses
+	(processClassOps): keep track of the attribute symbols we add
+	for each class
+	(checkAttributes): added
+
+	* syntacticPreModule.hh (SyntacticPreModule): added decl for
+	purgeImpureClasses(); pureClasses -> localClasses
+
+	* process.cc (process): call purgeImpureClasses()
+
+	* ooProcess.cc (purgeImpureClasses): added
+
+	* syntacticPreModule.hh (SyntacticPreModule): deleted data member
+	classSymbol from struct ClassDecl
+
+	* ooProcess.cc (processClassSorts): record unproblematic local
+	classes in pureClasses
+	(processClassOps): don't record classSymbol
+
+	* process.cc (process): clear pureClasses
+
+	* syntacticPreModule.hh (SyntacticPreModule): added typedef
+	SymbolSet; use for data member attributeSymbols; added typedef
+	ClassAttrMap; use IdSet for data member classNames; added data member
+	pureClasses
+
+	* process.cc (process): deleted commented out attributeSetSort = 0
+
+	* ooProcess.cc (processClassSorts): delete commented out
+	set<int> classNames
+
+2023-02-21  Steven Eker  <eker@pup>
+
+	* instantiateViewWithFreeParameters.cc (View::handleAwkwardCase):
+	added DebugEnter(); changed DebugNew() to DebugExit()
+
+	* visibleModule.cc (VisibleModule::showKinds): use Sort::KIND rather
+	than 0
+
+	* mixfixModule.cc (MixfixModule::instantiateSortTest): use Sort::KIND
+	rather than 0
+
+	* instantiateViewWithFreeParameters.cc (View::handleAwkwardCase): fix
+	comment
+
+	* syntaxContainer.hh (class SyntaxContainer): added decl for
+	default virtual destructor
+
+	* renaming.hh (class Renaming): update decl for ~Renaming()
+
+	* renaming.cc (~Renaming): added
+
+	* parameterization.cc (ImportModule::addOpMappingsFromView): pass
+	gcTargetTerm arg to addOpTargetTerm()
+
+	* renaming.hh (class Renaming): updated decl for addOpTargetTerm()
+
+	* renaming.cc (Renaming::printRenaming): term -> toTerm
+	(Renaming::addSortConstantAndLabelMappings): term -> toTerm
+	(Renaming::addOpTargetTerm): term -> toTerm
+	(Renaming::addOpTargetTerm): take and store gcTargetTerm arg
+
+	* renaming.hh (class Renaming): added member gcToTerm to struct
+	struct OpMapping
+	(Renaming::getOpTargetTerm): term -> toTerm
+
+2023-02-20  Steven Eker  <eker@pup>
+
+	* instantiateViewWithFreeParameters.cc
+	(View::handleInstantiationByTheoryView):
+	parameterCopyOfArgumentViewToTheory no longer const
+
+	* importModule.hh (class ImportModule): updated decl for
+	addOpMappingsFromView() - targetTheoryParameterCopy cannot be const
+	because translating into it may instantiate sort test symbols for example
+
+	* parameterization.cc (ImportModule::addOpMappingsFromView): don't look
+	for other mappings for an op, once we've seen an op->term mapping for
+	it in the view
+	(ImportModule::addOpMappingsFromView): make a deepCopy() of toTerm if
+	we're handling a theory-view
+
+	* importTranslation.cc (ImportTranslation::ImportTranslation): handle
+	preserveVariableIndicesFlag argument
+	(ImportTranslation::preserveVariableIndices): added
+	(ImportTranslation::findTargetVersionOfSymbol): added DebugAdvisory()
+	for variable case since we don't expect it to be used.
+
+	* importTranslation.hh (class ImportTranslation): added member function
+	preserveVariableIndices(), data member preserveVariableIndicesFlag,
+	ctor argument preserveVariableIndicesFlag
+
+	* importTranslation.cc (ImportTranslation::findTargetVersionOfSymbol):
+	use safeCastNonNull<>(), Assert() that we translated the sort for
+	sort test
+	(ImportTranslation::findTargetVersionOfSymbol): use safeCastNonNull<>(),
+	Assert() that we translated the sort for variable; added DebugInfo()s
+	(ImportTranslation::findTargetVersionOfSymbol): added more Assert()s
+	(ImportTranslation::findTargetVersionOfSymbol): use safeCastNonNull<>()
+	to recover the fromModule
+
+2023-02-17  Steven Eker  <eker@pup>
+
+	* syntacticPreModule.hh (class SyntacticPreModule): deleted decls for
+	findAtttributeSetSort(), findAtttributeSort()
+	(class SyntacticPreModule): deleted attributeSetSort data member
+
+	* ooProcess.cc (SyntacticPreModule::findAtttributeSetSort): deleted
+	(SyntacticPreModule::findAtttributeSort): deleted
+	(SyntacticPreModule::processClassOps): use
+	ImportModule::findAtttributeSort(); don't call findAtttributeSetSort()
+
+	* process.cc (SyntacticPreModule::process): comment out clearing of
+	attributeSetSort
+
+	* ooTransform.cc (SyntacticPreModule::transformPatternAttributes): get
+	attributeSetSort from attributeSetSymbol
+
+	* ooRenaming.cc (Renaming::convertAttrMappings): use getLineNr() in
+	IssueAdvisory()
+	(Renaming::convertClassMappings): use getLineNr() in 4 IssueAdvisory()s
+
+	* token.hh (Token::getLineNr): added
+
+	* token.cc (Token::removeBoundParameterBrackets): fix bug where we were
+	falling into '{' case and removing brackets from renamings
+
+	* renaming.hh (class Renaming): deleted ATTR from enum class MappingType
+
+	* renaming.cc (Renaming::printRenaming): don't check for MappingType::ATTR
+	(Renaming::canonicalizeOpMappings): don't check for MappingType::ATTR (3
+	places)
+	(Renaming::renameOp): don't check for MappingType::ATTR
+	(Renaming::renameOp): deleted Assert() for MappingType::ATTR
+
+	* renaming.hh (Renaming::isAttrMapping): deleted
+
+	* ooView.cc (View::handleAttrMappings): rewritten to use AttrMap
+
+	* ooRenaming.cc (Renaming::convertAttrMappings): rewritten to use AttrMap
+	(Renaming::addClassMapping): moved here
+
+	* modules.yy (fromAttrSpec): use typeName1 and addAttrType()
+
+	* renaming.cc (Renaming::printRenaming): handle attr mappings separately
+
+	* ooRenaming.cc (Renaming::convertClassMappings): moved here
+	(Renaming::convertAttrMappings): moved here
+	(Renaming::addAttrType): added
+	(Renaming::addAttrMapping): moved here; rewritten
+	(Renaming::addAttrTarget): moved here; rewritten
+
+	* renaming.hh (class Renaming): added struct AttrMapping, typedef
+	AttrMap, data member attrMap
+	(Renaming::getNrAttrMappings): added
+	(Renaming::getFromAttr): added
+	(Renaming::getAttrTypeSorts): added
+	(Renaming::getToAttr): added
+
+2023-02-16  Steven Eker  <eker@pup>
+
+	* importTranslation.cc (ImportTranslation::translate): RewriteStrategy*
+	version, use strategyMap
+	(ImportTranslation::translate): use range-based for loop
+	(ImportTranslation::translateLabel): use range-based for loop
+	(ImportTranslation::translateRegularSymbol): deleted commented out
+	and unreachable code
+
+	* importTranslation.hh (class ImportTranslation): added typedef
+	StrategyMap and data member strategyMap; deleted data member directMap
+
+	* importTranslation.cc (ImportTranslation::translate): Symbol* version,
+	use symbolMap
+
+	* importTranslation.hh (class ImportTranslation): added typedef
+	SymbolPointerMap and data member symbolMap
+
+	* syntacticPreModule.hh (class SyntacticPreModule): use Symbol::LessThan
+	for typedef AttributeMap, so the user visible ordering doesn't depend
+	on the vagaries of the memory allocator
+	(class SyntacticPreModule): update comment on struct ObjectOccurrence
+
+2023-02-15  Steven Eker  <eker@pup>
+
+	* lexer.ll (<END_STATEMENT_MODE>): fix bug where we omitted endoth
+	and an end of mixfix statement symbol
+
+===================================Maude141===========================================
+
 2023-02-14  Steven Eker  <eker@pup>
 
 	* renaming.cc (Renaming::printRenaming): Token::sortName for

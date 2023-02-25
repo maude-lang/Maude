@@ -30,6 +30,7 @@
 class SyntaxContainer
 {
 public:
+  virtual ~SyntaxContainer() = default;
   //
   //	Subclasses SyntacticPreModule and SyntacticView recieve parameters and
   //	variable declarations.
@@ -47,6 +48,8 @@ protected:
   //	Suffix for forming class attribute ops.
   //
   static constexpr const char* attributeSuffix = "`:_";
+  //static constexpr const Index attributeSuffixLength = strlen(attributeSuffix);
+  static constexpr const Index attributeSuffixLength = 3;
 
   struct Type
   {

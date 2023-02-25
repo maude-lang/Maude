@@ -24,18 +24,14 @@
 //	Code for supporting object-oriented syntactic sugar.
 //
 
-Sort*
-ImportModule::findClassIdSort() const
+void
+ImportModule::insertClassIdSortCandidates(set<Sort*>& candidates) const
 {
   //
-  //	We need to identify the sort that play the rope of Cid.
-  //
-  //	We do this by looking at operators with the object attribute and the
-  //	ObjectConstructorSymbol op-hook.
-  //
-  set<Sort*> candidates;
-  //
-  //	Go through our object symbols.
+  //	Identify sorts that might play the role of Cid.
+  //	We do this by looking at object symbols (usually <_:_|>) that
+  //	have the object attribute and the OBJECT_CONSTRUCTOR_SYMBOL
+  //	symbol type and then looking at ctor declarations.
   //
   const Vector<Symbol*>& symbols = getSymbols();
   const NatSet& objectSymbols = getObjectSymbols();
@@ -45,6 +41,11 @@ ImportModule::findClassIdSort() const
       SymbolType st = getSymbolType(s);
       if (st.getBasicType() == SymbolType::OBJECT_CONSTRUCTOR_SYMBOL)
 	{
+	  //
+	  //	An object symbol with the ObjectConstructorSymbol hook, which implies
+	  //	3 arguments unless we have a bad hook, so every second argument sort
+	  //	in a declaration is a potential class id sort.
+	  //
 	  for (const OpDeclaration& d : s->getOpDeclarations())
 	    {
 	      if (d.isConstructor())
@@ -56,9 +57,11 @@ ImportModule::findClassIdSort() const
 	    }
 	}
     }
-  //
-  //	We succeed if there is a unique candidate.
-  //
+}
+
+Sort*
+ImportModule::uniqueClassIdSortCandidate(const set<Sort*>& candidates) const
+{
   if (candidates.size() == 1)
     return *(candidates.begin());
   if (candidates.empty())
@@ -68,10 +71,22 @@ ImportModule::findClassIdSort() const
       ComplexWarning(*this  << ": unable to find a unique class id sort (usually " << QUOTE("Cid") <<
 		     ") in " << QUOTE(this) << ". Candidates are:");
       for (Sort* s : candidates)
-	cerr << ' ' << QUOTE(s);
-      cerr << endl;
+	ContinueWarning(' ' << QUOTE(s));
+      ContinueWarning(endl);
     }
   return 0;
+}
+
+Sort*
+ImportModule::findClassIdSort() const
+{
+  //
+  //	We need to identify the sort that play the rope of Cid.
+  //
+  //
+  set<Sort*> candidates;
+  insertClassIdSortCandidates(candidates);
+  return uniqueClassIdSortCandidate(candidates);
 }
 
 Sort*
@@ -150,8 +165,8 @@ ImportModule::findAtttributeSort() const
       ComplexWarning(*this  << ": unable to find a unique attribute sort (usually " << QUOTE("Attribute") <<
 		     ") in " << QUOTE(this) << " . Candidates are:");
       for (Sort* s : attributeCandidates)
-	cerr << ' ' << QUOTE(s);
-      cerr << endl;
+	ContinueWarning(' ' << QUOTE(s));
+      ContinueWarning(endl);
     }
   return 0;
 }

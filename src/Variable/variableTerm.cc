@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,7 +74,14 @@ Term*
 VariableTerm::deepCopy2(SymbolMap* translator) const
 {
   VariableSymbol* vs = safeCastNonNull<VariableSymbol*>((translator == 0 ? symbol() : translator->translate(symbol())));
-  return new VariableTerm(vs, id());
+  VariableTerm* vt = new VariableTerm(vs, id());
+  //
+  //	Usually we need the index to be UNDEFINED so that statement analysis works; but if the term is part
+  //	of an op to term mapping we may need the index preserved.
+  //
+  if (translator != 0 && translator->preserveVariableIndices())
+    vt->index = index;
+  return vt;
 }
 
 Term*

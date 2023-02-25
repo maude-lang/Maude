@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -272,13 +272,13 @@ Interpreter::makeClean(int lineNumber)
 {
   if (currentModule != 0 && !(currentModule->isComplete()))
     {
-      IssueAdvisory(LineNumber(lineNumber) << ": discarding incomplete module.");
+      IssueAdvisory(*currentModule << ": discarding incomplete module " << QUOTE(currentModule) << ".");
       delete currentModule;
       currentModule = 0;
     }
   else if (currentView != 0 && !(currentView->isComplete()))
     {
-      IssueAdvisory(LineNumber(lineNumber) << ": discarding incomplete view.");
+      IssueAdvisory(*currentView << ": discarding incomplete view " << QUOTE(currentView) << ".");
       delete currentView;
       currentView = 0;
     }
@@ -288,9 +288,7 @@ void
 Interpreter::addSelected(const Vector<Token>& opName)
 {
   selected.insert(Token::bubbleToPrefixNameCode(opName));
-  //  opName.contractTo(0);
 }
-
 
 void
 Interpreter::updateSet(set<int>& target, bool add)

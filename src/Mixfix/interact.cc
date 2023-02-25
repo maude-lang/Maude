@@ -372,11 +372,12 @@ UserLevelRewritingContext::commandLoop()
       cout.flush();
       parseResult = NORMAL;
       ioManager.startCommand();
-      bool parseError = yyparse(&parseResult);
+      int parseError = yyparse(&parseResult);
       //cout << "parser result is: " << parseError << endl;
       if (parseError || ctrlC_Flag)
 	{
-	  cout << '\n';  // terminate any partially typed in line
+	  if (interactiveFlag)
+	    ++lineNumber;  // assume ^C or ^D and treat it as starting a new line
 	  setTraceStatus(interpreter.getFlag(Interpreter::EXCEPTION_FLAGS));
 	  cleanUpParser();
 	  cleanUpLexer();

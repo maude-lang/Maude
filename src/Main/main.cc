@@ -145,6 +145,8 @@ main(int argc, char* argv[])
 	      alwaysAdviseFlag = true;
 	      globalAdvisoryFlag = true;
 	    }
+	  else if (strcmp(arg, "-debug") == 0)
+	    globalDebugFlag = true;
 	  else if (strcmp(arg, "-no-wrap") == 0)
 	    lineWrapping = false;
 	  else if (strcmp(arg, "-batch") == 0)
@@ -301,6 +303,7 @@ printHelp(const char* name)
     "  -allow-dir\t\tAllow operations on directories\n" <<
     "  -trust\t\tAllow all potentially risky capabilities\n" <<
     "  -assoc-unif-depth=<float>\tSet depth bound multiplier for associative unification\n"
+    "  -debug\t\tPrint copious messages about internal state (debug build only)\n"
     "\n" <<
     "Send bug reports to: " << PACKAGE_BUGREPORT << endl;
   exit(0);

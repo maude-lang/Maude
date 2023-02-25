@@ -1,0 +1,220 @@
+set show timing off .
+set show advisories off .
+set verbose on .
+
+*** supplied by Francisco Duran
+
+fmod MAYBE{X :: TRIV} is 
+  sort Maybe{X} .
+  subsort X$Elt < Maybe{X} .
+  op null : -> Maybe{X} .
+endfm
+
+oth WRAPPER is
+  sort Elt .
+  class Wrapper | contents : Elt .
+  msg to_from_get : Oid Oid -> Msg .
+  msg to_from_answer(_) : Oid Oid Elt -> Msg .
+  vars O1 O2 : Oid .
+  var  X : Elt .
+
+  rl < O1 : Wrapper | contents : X > 
+     (to O1 from O2 get)
+  => < O1 : Wrapper | contents : X > 
+     (to O2 from O1 answer(X)) . 
+endoth
+
+view Oid from TRIV to CONFIGURATION is 
+  sort Elt to Oid .
+endv
+
+omod OO-LIST{X :: WRAPPER} is
+  protecting INT .
+  including MAYBE{Oid} .
+  including COUNTER .
+
+  class List{X} | first : Maybe{Oid}, last : Maybe{Oid}, size : Nat .
+  class Node{X} | next : Maybe{Oid}, previous : Maybe{Oid}, value : Oid .
+
+  op o : Oid Nat -> Oid .
+
+  msg _add_at_ : Oid Oid Nat -> Msg .
+  msg _get at_from_ : Oid Nat Oid -> Msg .
+
+  msg _add'_at_ : Oid Oid Nat -> Msg .
+  msg _in_get at_ : Oid Oid Nat -> Msg .
+  msg _in_get at_from_ : Oid Oid Nat Oid -> Msg .
+  msg to_from_elt at pos_is_ : Oid Oid Nat X$Elt -> Msg .
+  op add-blocked : Object -> Object .
+  op get-blocked : Object Nat Oid -> Object .
+
+  vars O O' O'' O''' F L : Oid .
+  vars N S P : Nat .
+  var  X : X$Elt .
+
+  rl [add] : *** adds on an empty stack
+    < O : List{X} | first : null >
+    O add O' at 0
+    => aux1(
+        < O : List{X} | first : null >,
+        O add O' at 0,
+        counter) .
+  op aux1 : Configuration Msg Nat -> Configuration .
+  eq aux1(< O : List{X} | first : null >,
+          O add O' at 0, 
+          N)
+    = < O : List{X} | first : o(O, N), last : o(O, N), size : 1 >
+      < o(O, N) : Node{X} | next : null, previous : null, value : O' > .
+
+  rl [add] : *** adds at the begining of the list
+      < O : List{X} | first : F, size : S >
+      < F : Node{X} | previous : null > 
+      O add O' at 0
+      => aux2(
+          < O : List{X} | first : F, size : S >
+          < F : Node{X} | previous : null >, 
+          O add O' at 0,
+          counter) .
+  op aux2 : Configuration Msg Nat -> Configuration .
+  eq aux2(< O : List{X} | first : F, size : S >
+          < F : Node{X} | previous : null >, 
+          O add O' at 0, 
+          N)
+    = < O : List{X} | first : o(O, N), size : s S >
+      < F : Node{X} | previous : o(O, N) > 
+      < o(O, N) : Node{X} | next : F, previous : null, value : O' > .
+
+  rl [add] : *** adds at the end of the list
+      < O : List{X} | last : L, size : S >
+      < L : Node{X} | next : null > 
+      O add O' at S
+      => aux3(
+          < O : List{X} | last : L, size : S >
+          < L : Node{X} | next : null >, 
+          O add O' at S,
+          counter) .
+  op aux3 : Configuration Msg Nat -> Configuration .
+  eq aux3(
+      < O : List{X} | last : L, size : S >
+      < L : Node{X} | next : null >, 
+      O add O' at S,
+      N)
+    = < O : List{X} | last : o(O, N), size : s S >
+      < L : Node{X} | next : o(O, N) > 
+      < o(O, N) : Node{X} | next : null, previous : L, value : O' > .
+
+  crl [add] : *** adds at intermediate position of the list
+      < O : List{X} | first : F, size : S >
+      O add O' at s P
+      => add-blocked(< O : List{X} | >)
+         F add' O' at P
+      if s P < S .
+
+  rl [add] :  *** recursively look for the place to add the element
+      < O : Node{X} | next : O' > 
+      < O' : Node{X} | previous : O > 
+      (O add' O'' at P)
+      add-blocked(< L : List{X} | size : S >)
+      => aux4(
+          < O : Node{X} | next : O' > 
+          < O' : Node{X} | previous : O >, 
+          (O add' O'' at P)
+          add-blocked(< L : List{X} | size : S >), 
+          counter) .
+  op aux4 : Configuration Msg Nat -> Configuration .
+  eq aux4(
+      < O : Node{X} | next : O' > 
+      < O' : Node{X} | previous : O >, 
+      (O add' O'' at P)
+      add-blocked(< L : List{X} | size : S >), 
+      N)
+    = if P == 0 then 
+        < O : Node{X} | next : o(O, N) > 
+        < O' : Node{X} | previous : o(O, N) > 
+        < o(O, N) : Node{X} | previous : O, next : O', value : O'' > 
+        < L : List{X} | size : s S >
+      else 
+        < O : Node{X} | > 
+        < O' : Node{X} | > 
+        (O' add' O'' at P - 1)
+        add-blocked(< L : List{X} | size : S >)
+      fi .
+
+  crl [get] : 
+      < O : List{X} | first : F, size : S >
+      O get at P from O'
+      => get-blocked(< O : List{X} | >, P, O')
+         F in O get at P 
+      if s P < S .
+
+  crl [get] : 
+      < O : List{X} | last : L, size : s S >
+      < L : Node{X} | value : O' >
+      (O get at P from O'')
+      =>  get-blocked(< O : List{X} | >, P, O'')
+          < L : Node{X} | >
+          (to O' from O get) 
+      if S = P .
+
+  rl [get] : 
+      < O : Node{X} | next : O', value : O'' >
+      O in O''' get at P 
+      => < O : Node{X} | >
+         if P == 0 then
+           to O'' from O''' get   
+         else 
+           O' in O''' get at P - 1
+         fi .
+  rl [get] : 
+      get-blocked(< O : List{X} | >, P, O')
+      to O from O'' answer(X)
+      => < O : List{X} | >
+         to O' from O elt at pos P is X .
+
+  op create-list : Oid -> Object .
+  op l : -> Oid .
+  eq create-list(O) = < O : List{X} | first : null, last : null, size : 0 > .
+endom
+
+omod NAT-WRAPPER is
+  pr NAT .
+  class NatWrapper | value : Nat .
+  op w : Nat -> Oid .
+  msg to_get from_ : Oid Oid -> Msg .
+  msg to_answer_from_ : Oid Nat Oid -> Msg .
+  vars O1 O2 : Oid .
+  var  N : Nat .
+  rl < O1 : NatWrapper | value : N > 
+     (to O1 get from O2)
+  => < O1 : NatWrapper | > 
+     (to O2 answer N from O1) .
+endom
+
+view NatW from WRAPPER to NAT-WRAPPER is
+  sort Elt to Nat .
+  class Wrapper to NatWrapper .
+  attr contents to value .
+  vars O O' : Oid .
+  var  X : Elt .
+  msg to O from O' get to term to O get from O' .
+  msg to O from O' answer(X) to term to O answer X from O' .
+endv
+
+omod NAT-LIST is 
+  including OO-LIST{NatW} .
+  op l : -> Oid .
+endom 
+
+rew create-list(l) 
+    < w(0) : NatWrapper | value : 0 >
+    < w(1) : NatWrapper | value : 1 >
+    < w(2) : NatWrapper | value : 2 >
+    < w(3) : NatWrapper | value : 3 >
+    < w(4) : NatWrapper | value : 4 >
+    (l add w(0) at 0)
+    (l add w(1) at 1)
+    (l add w(2) at 2)
+    (l add w(3) at 3)
+    (l add w(4) at 4)
+    (l get at 3 from l)
+    .

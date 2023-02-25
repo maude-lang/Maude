@@ -511,7 +511,8 @@ TESTS = \
 	legacyMetaVariantUnify \
 	legacyMetaGetVariant \
 	metaIntStrategy \
-	checkUnifiers
+	checkUnifiers \
+	meta-oo-list-2
 
 MAUDE_FILES = \
 	metaProcPrelude.maude \
@@ -589,7 +590,8 @@ MAUDE_FILES = \
 	legacyMetaVariantUnify.maude \
 	legacyMetaGetVariant.maude \
 	metaIntStrategy.maude \
-	checkUnifiers.maude
+	checkUnifiers.maude \
+	meta-oo-list-2.maude
 
 RESULT_FILES = \
 	metaProcPrelude.expected \
@@ -669,7 +671,8 @@ RESULT_FILES = \
 	legacyMetaVariantUnify.expected \
 	legacyMetaGetVariant.expected \
 	metaIntStrategy.expected \
-	checkUnifiers.expected
+	checkUnifiers.expected \
+	meta-oo-list-2.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -1381,6 +1384,13 @@ metaIntStrategy.log: metaIntStrategy
 checkUnifiers.log: checkUnifiers
 	@p='checkUnifiers'; \
 	b='checkUnifiers'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+meta-oo-list-2.log: meta-oo-list-2
+	@p='meta-oo-list-2'; \
+	b='meta-oo-list-2'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

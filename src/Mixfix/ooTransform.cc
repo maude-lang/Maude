@@ -242,7 +242,7 @@ SyntacticPreModule::gatherObjects(GatherMode mode, Term* term, StatementInfo& si
 		      //
 		      i.next();
 		      Assert(i.valid(), "bad third arg");
-		      if (!analyzeAttributeSetArgument(i.argument(), p.first->second.patternOccurrence))
+		      if (!analyzeAttributeSetArgument(i.argument(), p.first->second.classSort, p.first->second.patternOccurrence))
 			si.ignore = true;
 		    }
 		  else
@@ -306,7 +306,7 @@ SyntacticPreModule::gatherObjects(GatherMode mode, Term* term, StatementInfo& si
 		      //
 		      i.next();
 		      Assert(i.valid(), "bad third arg");
-		      if (!analyzeAttributeSetArgument(i.argument(), oi->second.subjectOccurrences.back()))
+		      if (!analyzeAttributeSetArgument(i.argument(), oi->second.classSort, oi->second.subjectOccurrences.back()))
 			si.ignore = true;
 		    }
 		}
@@ -364,7 +364,9 @@ SyntacticPreModule::recordClassArgument(Term* classArgument, ObjectInfo& oi) con
 }
 
 bool
-SyntacticPreModule::analyzeAttributeSetArgument(Term* attributeSetArgument, ObjectOccurrence& oo) const
+SyntacticPreModule::analyzeAttributeSetArgument(Term* attributeSetArgument,
+						Sort* classSort,
+						ObjectOccurrence& oo) const
 {
   ObjectConstructorSymbol* os = safeCastNonNull<ObjectConstructorSymbol*>(oo.objectTerm->symbol());
   ACU_Symbol* attributeSetSymbol = os->getAttributeSetSymbol();
@@ -373,13 +375,37 @@ SyntacticPreModule::analyzeAttributeSetArgument(Term* attributeSetArgument, Obje
     {
       for (ArgumentIterator i(*attributeSetArgument); i.valid(); i.next())
 	{
-	  if (!analyzeAttributeSetArgument(i.argument(), oo))
+	  if (!analyzeAttributeSetArgument(i.argument(), classSort, oo))
 	    return false;
 	}
       return true;
     }
   if (attributeSymbols.find(asas) != attributeSymbols.end())
     {
+      if (classSort != 0)
+	{
+	  //
+	  //	Valid class.
+	  //
+	  auto pureClass = localClasses.find(classSort->id());
+	  if (pureClass != localClasses.end())
+	    {
+	      //
+	      //	Dealing with a pure class for which we know all the declared and inherited attributes.
+	      //
+	      if (pureClass->second.find(asas) == pureClass->second.end())
+		{
+		  //
+		  //	Attribute isn't one that was declared or inherited.
+		  //	It doesn't affect our completion algorithm, and we only do this check for pure
+		  //	classes anyway so we don't treat it as an error.
+		  //
+		  IssueAdvisory(*attributeSetArgument << ": object occurrence " << QUOTE(oo.objectTerm) <<
+				" contains an attribute " << QUOTE(ATTRIBUTE(asas)) <<
+				" that was neither declared for nor inherited by class " << QUOTE(classSort) << ".");
+		}			
+	    }
+	}
       auto p = oo.attributeTerms.insert({asas, attributeSetArgument});
       if (!p.second)
 	{
@@ -559,6 +585,7 @@ SyntacticPreModule::transformPatternAttributes(ObjectInfo& oi, StatementInfo& si
   ObjectOccurrence& po = oi.patternOccurrence;
   ObjectConstructorSymbol* os = safeCastNonNull<ObjectConstructorSymbol*>(po.objectTerm->symbol());
   ACU_Symbol* attributeSetSymbol = os->getAttributeSetSymbol();
+  Sort* attributeSetSort = attributeSetSymbol->getRangeSort();  // FIXME: might have multiple declarations
 
   if (po.variableTerm == 0)
     {

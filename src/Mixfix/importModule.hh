@@ -152,13 +152,15 @@ public:
   void addOpMappingsFromView(Renaming* underConstruction,
 			     const View* view,
 			     const ImportModule* parameterCopyUser,
-			     const ImportModule* targetTheoryParameterCopy = 0) const;
+			     ImportModule* targetTheoryParameterCopy = 0) const;
   void addStratMappingsFromView(Renaming* underConstruction,
 				const View* view,
 				const ImportModule* parameterCopyUser) const;
   //
   //	To support object-oriented syntactic sugar.
   //
+  void insertClassIdSortCandidates(set<Sort*>& candidates) const;
+  Sort* uniqueClassIdSortCandidate(const set<Sort*>& candidates) const;
   Sort* findClassIdSort() const;
   Sort* findAtttributeSort() const;
 

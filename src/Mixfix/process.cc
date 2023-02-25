@@ -98,6 +98,8 @@ be patched up and thus it cannot be used or imported.");
     {
       computeAttributeTypes();
       processClassOps();
+      checkAttributes();
+      purgeImpureClasses();
     }
 
   flatModule->closeSignature();
@@ -142,10 +144,10 @@ be patched up and thus it cannot be used or imported.");
       //	Clear object-oriented processing data in case we need to re-examine this PreModule.
       //
       classIdSort = 0;
-      attributeSetSort = 0;
       attributeSort = 0;
       classNames.clear();
       attributeSymbols.clear();
+      localClasses.clear();
     }
 #ifdef QUANTIFY_PROCESSING
   quantify_stop_recording_data();
@@ -484,23 +486,5 @@ SyntacticPreModule::processImports()
 	  flatModule->markAsBad();
 	}
     }
-  //
-  //	Default includes for object-oriented modules and theories.
-  //
-  for (const int i : ooIncludes)
-    {
-      if (ImportModule* fm = getOwner()->getModuleOrIssueWarning(i, *this))
-	flatModule->addImport(fm, ImportModule::INCLUDING, *this);
-      else
-	{
-	  //
-	  //	Mark the module as bad to avoid cascading warnings and potential
-	  //	internal errors. But press ahead with imports since they should
-	  //	be independent and we might find other errors.
-	  //
-	  flatModule->markAsBad();
-	}
-    }
-
   processExplicitImports(flatModule);
 }

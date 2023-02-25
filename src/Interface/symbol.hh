@@ -29,7 +29,6 @@
 
 #include "namedEntity.hh"
 #include "lineNumber.hh"
-#include "moduleItem.hh"
 #include "sort.hh"
 #include "connectedComponent.hh"
 #include "sortTable.hh"
@@ -54,6 +53,17 @@ class Symbol
   static const Vector<DagNode*> noArgs;
 
 public:
+  //
+  //	Comparison object on Symbol* for use with associative containers.
+  //	We use this in preference to a raw pointer comparison so the ordering does not depend
+  //	on the vagaries of the memory allocator, which can mess up test suite .out files.
+  //	Only safe for Symbols from the same module.
+  //
+  struct LessThan
+  {
+    bool operator()(Symbol* const& s1, Symbol* const& s2) const;
+  };
+
   Symbol(int id, int arity, bool memoFlag = false);
   virtual ~Symbol();
 
@@ -203,6 +213,12 @@ private:
   int uniqueSortIndex;  // > 0 for symbols that only produce an unique sort; -1 for fast case; 0 for slow case
   int matchIndex;  // for fast matching in new engine
 };
+
+inline bool
+Symbol::LessThan::operator()(Symbol* const& s1, Symbol* const& s2) const
+{
+  return s1->getIndexWithinModule() < s2->getIndexWithinModule();
+}
 
 inline unsigned int
 Symbol::getHashValue() const

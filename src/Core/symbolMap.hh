@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,6 +46,12 @@ public:
   //	the target module (into which translations are being made).
   //
   virtual Symbol* findTargetVersionOfSymbol(Symbol* symbol) = 0;
+  //
+  //	This carries a flag say if variable indices should be preserved during a deepCopy()
+  //	Usually no, since statement compilation relies on the variable indices being
+  //	UNDEFINED. But for certain module operations we do want them preserved.
+  //
+  virtual bool preserveVariableIndices() = 0;
 };
 
 #endif

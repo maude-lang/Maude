@@ -47,6 +47,8 @@ void lexContinueBubble(const Token& next, int termination, int minLen, int pCoun
 void lexSave(const Token& first);
 void lexContinueSave(const Token& next);
 
+void bubbleEofError();
+
 enum TERMINATION_TOKENS
   {
     BAR_COLON = 0x1,

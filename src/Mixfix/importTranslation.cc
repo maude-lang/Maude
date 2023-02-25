@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,9 +56,16 @@
 //	strategy class definitions
 #include "callStrategy.hh"
 
-ImportTranslation::ImportTranslation(ImportModule* target, Renaming* renaming)
+ImportTranslation::ImportTranslation(ImportModule* target, Renaming* renaming, bool preserveVariableIndicesFlag)
+  : preserveVariableIndicesFlag(preserveVariableIndicesFlag)
 {
   push(renaming, target);
+}
+
+bool
+ImportTranslation::preserveVariableIndices()
+{
+  return preserveVariableIndicesFlag;
 }
 
 Sort*
@@ -68,9 +75,9 @@ ImportTranslation::translate(const Sort* sort)
     return translate(sort->component())->sort(Sort::KIND);
 
   int id = sort->id();
-  FOR_EACH_CONST(i, RenamingList, renamings)
+  for (Renaming* r : renamings)
     {
-      if (Renaming* r = *i)
+      if (r != 0)
 	id = r->renameSort(id);
     }
   Sort* s = targets.back()->findSort(id);
@@ -84,9 +91,9 @@ ImportTranslation::translateLabel(int id)
 {
   if (id != NONE)
     {
-      FOR_EACH_CONST(i, RenamingList, renamings)
+      for (Renaming* r : renamings)
 	{
-	  if (Renaming* r = *i)
+	  if (r != 0)
 	    id = r->renameLabel(id);
 	}
     }
@@ -96,10 +103,11 @@ ImportTranslation::translateLabel(int id)
 Symbol*
 ImportTranslation::translate(Symbol* symbol)
 {
-  Symbol* s = static_cast<Symbol*>(directMap.getMap(symbol));
-  if (s != 0)
-    return s;
+  auto i = symbolMap.find(symbol);
+  if (i != symbolMap.end())
+    return i->second;
 
+  Symbol* s = 0;
   switch (safeCast(MixfixModule*, symbol->getModule())->
 	  getSymbolType(symbol).getBasicType())
     {
@@ -124,27 +132,26 @@ ImportTranslation::translate(Symbol* symbol)
       }
     }
   if (s != 0)
-    directMap.setMap(symbol, s);
+    symbolMap.insert({symbol, s});
   return s;
 }
 
 RewriteStrategy*
 ImportTranslation::translate(RewriteStrategy* strat)
 {
-  RewriteStrategy* s = static_cast<RewriteStrategy*>(directMap.getMap(strat));
+  auto i = strategyMap.find(strat);
 
   // If we have already translated it
-  if (s)
-    return s;
+  if (i != strategyMap.end())
+    return i->second;
 
   RenamingList::const_iterator dummyIterator;
   int dummyIndex;
-
-  s = translateStrategy(strat, dummyIterator, dummyIndex);
+  RewriteStrategy* s = translateStrategy(strat, dummyIterator, dummyIndex);
 
   // Saves the translated strategy for other runs
-  if (s)
-    directMap.setMap(strat, s);
+  if (s != 0)
+    strategyMap.insert({strat, s});
 
   return s;
 }
@@ -345,7 +352,6 @@ ImportTranslation::translateRegularSymbol(Symbol* symbol,
 					  RenamingList::const_iterator& opToTerm,
 					  int& opToTermIndex) const
 {
-  //cerr << "translating " << symbol << endl;
   int nrArgs = symbol->arity();
   int id = symbol->id();
   Vector<int> sortNames(nrArgs + 1);
@@ -353,16 +359,11 @@ ImportTranslation::translateRegularSymbol(Symbol* symbol,
     sortNames[i] = symbol->domainComponent(i)->sort(1)->id();
   sortNames[nrArgs] = symbol->rangeComponent()->sort(1)->id();
 
-
-  //cerr << "pushing through " << renamings.size() << " renamings " <<
-  //  " from " << symbol->getModule() << " to " << targets.back() << endl;
-  
   FOR_EACH_CONST(i, RenamingList, renamings)
     {
       Renaming* r =  *i;
       if (r != 0)
 	{
-	  //cerr << "applying renaming " << r << endl;
 	  //
 	  //	Translate name.
 	  //
@@ -375,10 +376,8 @@ ImportTranslation::translateRegularSymbol(Symbol* symbol,
 		  opToTerm = i;
 		  opToTermIndex = index;
 		  return 0;  // must be an op->term mapping
-		  cerr << "return ing an op->term mapping" << endl;
 		}
 	    }
-	  //cerr << "new id = " << Token::name(id) << endl;
 	  //
 	  //	Translate domain and range sorts.
 	  //
@@ -407,26 +406,53 @@ Symbol*
 ImportTranslation::findTargetVersionOfSymbol(Symbol* symbol)
 {
   ImportModule *target = targets.back();
-  switch (safeCast(MixfixModule*, symbol->getModule())->
-	  getSymbolType(symbol).getBasicType())
+  MixfixModule *fromModule = safeCastNonNull<MixfixModule*>(symbol->getModule());
+  switch (fromModule->getSymbolType(symbol).getBasicType())
     {
     case SymbolType::VARIABLE:
       {
-	Sort* sort = target->findSort(safeCast(VariableSymbol*, symbol)->getSort()->id());
-	return target->instantiateVariable(sort);
+	//
+	//	The point of findTargetVersionOfSymbol() is to translate the symbols from the toTerm of
+	//	an op to term mapping into the last module. But variables are intended to be instantiated
+	//	rather than translated so we should never be asked for a translation.
+	//
+	DebugAdvisory("unexpected request for target version of a variable symbol " << symbol << " in " << target);
+	//
+	//	But to maintain the generality of the code in case we find other uses for it, we do
+	//	the translation anyway.
+	//
+	VariableSymbol* v = safeCastNonNull<VariableSymbol*>(symbol);
+	Sort* vs = v->getSort();
+	DebugInfo("mapping variable symbol " << v << " of sort " << vs << " in " << vs->getModule());
+	Sort* targetSort = target->findSort(vs->id());
+	Assert(targetSort != 0, "couldn't find " << vs << " in " << target);
+	DebugInfo("mapped to sort " << targetSort << " in " << target);
+	return target->instantiateVariable(targetSort);
       }
     case SymbolType::SORT_TEST:
       {
-	SortTestSymbol* t = safeCast(SortTestSymbol*, symbol);
-	return target->instantiateSortTest(target->findSort(t->sort()->id()), t->eager());
+	SortTestSymbol* t = safeCastNonNull<SortTestSymbol*>(symbol);
+	Sort* targetSort = target->findSort(t->sort()->id());
+	Assert(targetSort != 0, "couldn't find " << t->sort() << " in " << target);
+	return target->instantiateSortTest(targetSort, t->eager());
       }
     }
   int nrArgs = symbol->arity();
   Vector<ConnectedComponent*> domainComponents(nrArgs);
   for (int i = 0; i < nrArgs; ++i)
-    domainComponents[i] = target->findSort(symbol->domainComponent(i)->sort(1)->id())->component();
-  ConnectedComponent* rangeComponent = target->findSort(symbol->rangeComponent()->sort(1)->id())->component();
-  return target->findSymbol(symbol->id(), domainComponents, rangeComponent);
+    {
+      Sort* ds = symbol->domainComponent(i)->sort(1);
+      Sort* targetSort = target->findSort(ds->id());
+      Assert(targetSort != 0, "couldn't find sort " << ds << " in " << target);
+      domainComponents[i] = targetSort->component();
+    }
+  Sort* rs = symbol->rangeComponent()->sort(1);
+  Sort* targetSort = target->findSort(rs->id());
+  Assert(targetSort != 0, "couldn't find sort  " << rs << " in " << target);
+  ConnectedComponent* rangeComponent = targetSort->component();
+  Symbol* targetSymbol = target->findSymbol(symbol->id(), domainComponents, rangeComponent);
+  Assert(targetSymbol != 0, "couldn't find symbol " << symbol << " in " << target);
+  return targetSymbol;
 }
 
 ConnectedComponent*

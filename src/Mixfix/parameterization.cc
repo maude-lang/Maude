@@ -318,6 +318,7 @@ ImportModule::addFromPartOfRenaming(Renaming* underConstruction,
     {
       //
       //	We need to map from X$c rather than c
+      //
       int renamingIndex = canonicalRenaming->renameOp(s);
       Assert(renamingIndex != NONE, "couldn't find renaming form theory to parameter copy for pconst " << s);
       fromName = canonicalRenaming->getOpTo(renamingIndex);
@@ -337,7 +338,7 @@ void
 ImportModule::addOpMappingsFromView(Renaming* underConstruction,
 				    const View* view,
 				    const ImportModule* parameterCopyUser,
-				    const ImportModule* targetTheoryParameterCopy) const
+				    ImportModule* targetTheoryParameterCopy) const
 {
   Assert(origin == PARAMETER, "called on " << this << " which isn't a parameter copy of a theory");
   Assert(view->getFromTheory() == baseModule, "theory clash: view " << view << " maps from " <<
@@ -385,7 +386,36 @@ ImportModule::addOpMappingsFromView(Renaming* underConstruction,
 	    //	underConstruction "borrows" toTerm and fromTerm.
 	    //
 	    addFromPartOfRenaming(underConstruction, s, parameterCopyUser);
-	    underConstruction->addOpTargetTerm(fromTerm, toTerm);  // renaming "borrows" toTerm
+	    if (targetTheoryParameterCopy)
+	      {
+		//
+		//	Out view maps to a theory so the instantiation we're going to build
+		//	will import a parameter copy of the target theory and thus the
+		//	names of the sorts and (pconst) symbols referred to in our toTerm
+		//	may have different names in the instantiations signature.
+		//	We need a suitably mapped copy of toTerm, but we need to retain
+		//	the indices in the variables that are used for instantiating toTerm.
+		//
+		ImportTranslation toTheoryToParameterCopy(targetTheoryParameterCopy,
+							  targetTheoryParameterCopy->canonicalRenaming,
+							  true);
+		toTerm = toTerm->deepCopy(&toTheoryToParameterCopy);  // FIXME: need to garbage collect toTerm
+		underConstruction->addOpTargetTerm(fromTerm, toTerm, true);
+	      }
+	    else
+	      {
+		//
+		//	Our view maps to a module so the instantiation we're going to build
+		//	will import that module, and the sorts and symbols referred to in our toTerm
+		//	can just be looked up in the instantiation's signature. So underConstruction
+		//	can just "borrow" toTerm
+		//
+		underConstruction->addOpTargetTerm(fromTerm, toTerm, false);
+	      }
+	    //
+	    //	Assume this is the only possible renaming of s
+	    //
+	    continue;
 	  }
 	//
 	//	Note that op->term mappings _are not_ stored in a view's base Renaming.

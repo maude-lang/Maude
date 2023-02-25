@@ -1,3 +1,15 @@
+Overview of Changes in alpha141
+============================================
+* fixed bug in parsing of oths
+* fixed statement transformation depending on memory allocator issue
+* -debug flag for debug build
+* fixed bad printing of renamings in module names
+* fixed op to term mapping in theory-view crash
+* support pconst in op to term mappings
+* sanity checks for class attributes
+* fixed bug where auto OO includes were ignored by upModule()
+* modules/views/commands cannot span files
+
 Overview of Changes in alpha140 (2023-02-14)
 ============================================
 * fixed bug where no warning was given for duplicate iter attribute

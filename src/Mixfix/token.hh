@@ -28,6 +28,7 @@
 #include <gmpxx.h>
 #include "rope.hh"
 #include "stringTable.hh"
+#include "lineNumber.hh"
 
 class Token
 {
@@ -70,6 +71,7 @@ public:
   const char* name() const;
   int code() const;
   int lineNumber() const;
+  LineNumber getLineNr() const;
   int specialProperty() const;
   int auxProperty() const;
   bool getInt(int& value) const;
@@ -253,6 +255,12 @@ inline int
 Token::lineNumber() const
 {
   return lineNr;
+}
+
+inline LineNumber
+Token::getLineNr() const
+{
+  return LineNumber(lineNr);
 }
 
 inline const char*

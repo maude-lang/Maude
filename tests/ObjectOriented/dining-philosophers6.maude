@@ -1,0 +1,331 @@
+set show timing off .
+set show advisories off .
+set verbose on .
+
+---- 5 DINING PHILOSOPHERS
+***(
+    Real-Time Maude 2.4 interpreter extension of Full Maude 2.4.
+
+    Real-Time Maude built by Peter Olveczky on top of
+    Full Maude built by Francisco Duran.
+
+    Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+)***
+
+fmod TIME is
+   sorts Time NzTime .
+   subsort NzTime < Time .
+
+   op zero : -> Time .
+   op _plus_ : Time Time -> Time [assoc comm prec 33 gather (E e)] .
+   op _monus_ : Time Time -> Time [prec 33 gather (E e)] .
+   op _le_ : Time Time -> Bool [prec 37] .
+   op _lt_ : Time Time -> Bool [prec 37] .
+   op _ge_ : Time Time -> Bool [prec 37] .
+   op _gt_ : Time Time -> Bool [prec 37] .
+
+   eq zero plus R:Time = R:Time .
+   eq R:Time le R':Time = (R:Time lt R':Time) or (R:Time == R':Time) .
+   eq R:Time ge R':Time = R':Time le R:Time .
+   eq R:Time gt R':Time = R':Time lt R:Time .
+endfm
+
+view Time from TRIV to TIME is
+  sort Elt to Time .
+endv
+
+*** Module TIME-INF:
+fmod TIME-INF is
+  including TIME .
+  sort TimeInf .
+  subsort Time < TimeInf .
+
+  op INF : -> TimeInf .
+  op _plus_ : TimeInf TimeInf -> TimeInf [ditto] .
+  op _monus_ : TimeInf Time -> TimeInf [ditto] .
+  op _le_ : TimeInf TimeInf -> Bool [prec 37] .
+  op _lt_ : TimeInf TimeInf -> Bool [prec 37] .
+  op _ge_ : TimeInf TimeInf -> Bool [prec 37] .
+  op _gt_ : TimeInf TimeInf -> Bool [prec 37] .
+
+  var TI TI' : TimeInf .
+  var R : Time .
+
+  eq INF plus TI = INF .
+  eq INF monus R = INF .
+  eq TI le INF = true .
+  eq INF le R = false .
+  eq INF lt TI = false .
+  eq R lt INF = true .
+  eq TI gt TI' = TI' lt TI .
+  eq TI ge TI' = TI' le TI .
+endfm
+
+*** Now for linear time ...
+
+fmod LTIME is
+  including TIME .
+
+  ops minimum maximum : Time Time -> Time [assoc comm] .
+
+  vars R R' : Time .
+  ceq maximum(R, R') = R if R' le R .
+  ceq minimum(R, R') = R' if R' le R .
+endfm
+
+
+
+*** Linear time with infinity value:
+
+fmod LTIME-INF is
+  including LTIME .
+  including TIME-INF .
+
+  ops minimum maximum : TimeInf TimeInf -> TimeInf [ditto] .
+
+  eq maximum(INF, TI:TimeInf) = INF .
+  eq minimum(INF, TI:TimeInf) = TI:TimeInf .
+endfm
+
+
+
+*** Discrete time domain, the natural numbers ...
+
+fmod NAT-TIME-DOMAIN is
+  inc LTIME .
+  protecting NAT .
+
+  subsort Nat < Time .
+  subsort NzNat < NzTime .
+
+  vars N N' : Nat .
+
+  eq zero = 0 .
+  eq N plus N' = N + N' .
+  eq N monus N' = if N > N' then sd(N, N') else 0 fi .
+  eq N lt N' = N < N' .
+endfm
+
+
+
+fmod NAT-TIME-DOMAIN-WITH-INF is
+  protecting NAT-TIME-DOMAIN .
+  including LTIME-INF .
+
+  --- should for simplicity extend <, >=, etc to infinity:
+
+  op _<_ : TimeInf TimeInf -> Bool [ditto] .
+  op _<=_ : TimeInf TimeInf -> Bool [ditto] .
+  op _>_ : TimeInf TimeInf -> Bool [ditto] .
+  op _>=_ : TimeInf TimeInf -> Bool [ditto] .
+
+  op _+_ : TimeInf TimeInf -> TimeInf [ditto] .
+
+  var N : Nat .  var TI : TimeInf .
+
+  eq INF < TI = false .
+  eq N < INF = true .
+  eq TI <= INF = true .
+  eq INF <= N = false .
+  eq INF >= TI = true .
+  eq N >= INF = false .
+  eq TI > INF = false .
+  eq INF > N = true .
+
+  eq INF + TI = INF .
+
+  --- NEW: must also extend the built-in 'min' and'max' to TimeInf:
+  ops min max : TimeInf TimeInf -> TimeInf [ditto] .
+  eq max(INF, TI:TimeInf) = INF .
+  eq min(INF, TI:TimeInf) = TI:TimeInf .
+endfm
+
+
+--- changed!
+*** --------------------------
+fmod POSITIVE-RAT is
+  protecting RAT .
+
+  sort NNegRat .                 --- non-negative rationals!
+  subsorts Zero PosRat Nat < NNegRat < Rat .
+endfm
+
+
+
+fmod POSRAT-TIME-DOMAIN is
+  inc LTIME .
+  protecting POSITIVE-RAT .
+
+  subsort NNegRat < Time .
+  subsort PosRat < NzTime .
+
+  vars R R' : NNegRat .
+
+  eq zero = 0 .
+  eq R plus R' = R + R' .
+  eq R monus R' = if R > R' then R - R' else 0 fi .
+  eq R lt R' = R < R' .
+endfm
+
+
+
+fmod POSRAT-TIME-DOMAIN-WITH-INF is
+  protecting POSRAT-TIME-DOMAIN .
+  including LTIME-INF .
+
+  --- again, we should extend the comparison operators to infinity:
+  op _<_ : TimeInf TimeInf -> Bool [ditto] .
+  op _<=_ : TimeInf TimeInf -> Bool [ditto] .
+  op _>_ : TimeInf TimeInf -> Bool [ditto] .
+  op _>=_ : TimeInf TimeInf -> Bool [ditto] .
+
+  op _+_ : TimeInf TimeInf -> TimeInf [ditto] .
+  op _+_ : NNegRat NNegRat -> NNegRat [ditto] .
+
+  var R : NNegRat .  var TI : TimeInf .
+
+  eq INF < TI = false .
+  eq R < INF = true .
+  eq TI <= INF = true .
+  eq INF <= R = false .
+  eq INF >= TI = true .
+  eq R >= INF = false .
+  eq TI > INF = false .
+  eq INF > R = true .
+
+  eq INF + TI = INF .
+
+  --- NEW: must also extend the built-in 'min' and'max' to TimeInf:
+  ops min max : TimeInf TimeInf -> TimeInf [ditto] .
+  eq max(INF, TI:TimeInf) = INF .
+  eq min(INF, TI:TimeInf) = TI:TimeInf .
+
+  --- Some additional declarations for preregularity:
+  ops min max : NNegRat NNegRat -> NNegRat [ditto] .
+  ops min max : Zero Zero -> Zero [ditto] .
+  op min : Zero NzNat -> Zero [ditto] .
+  op max : Zero NzNat -> NzNat [ditto] .
+  op max : Rat TimeInf -> TimeInf [ditto] .
+  op max : Rat NNegRat -> NNegRat [ditto] .
+endfm
+
+omod DINING-PHILOSOPHERS is
+    protecting POSRAT-TIME-DOMAIN-WITH-INF .
+    including CONFIGURATION .
+
+    sort Status .
+    ops thinking hungry eating : -> Status .
+
+    ops EATING-TIME THINKING-TIME : -> Time .
+    eq EATING-TIME = 3 .
+    eq THINKING-TIME = 12 .
+
+    sort System .
+    op {_,_} : Configuration Time -> System .
+
+    class Philosopher | status : Status, chopsticks : Nat, timer : Time .
+    ----sort Philosopher .
+    ----subsort Philosopher < Cid .
+    ----op Philosopher : -> Philosopher [ctor] .
+    ----op status :_ : Status -> Attribute [ctor gather (&)] .
+    ----op chopsticks :_ : Nat -> Attribute [ctor gather (&)] .
+    ----op timer :_ : Time -> Attribute [ctor gather (&)] .
+
+    class Chopstick .
+    ---- sort Chopstick .
+    ---- subsort Chopstick < Cid .
+    ---- op Chopstick : -> Chopstick .
+
+    ops p c : Nat -> Oid .
+
+    vars I J N M K : Nat .
+    vars Atts Atts1 Atts2 : AttributeSet .
+    vars T T' : Time .
+    var Conf : Configuration .
+    
+    rl [get-hungry] :
+         < p(I) : Philosopher | status : thinking, timer : 0 > 
+      => < p(I) : Philosopher | status : hungry > .
+    crl [grab-stick] :
+         < p(I) : Philosopher | status : hungry, chopsticks : N >
+         < c(J) : Chopstick | >
+      => < p(I) : Philosopher | chopsticks : s N >
+      if I == J or (s I == J or (I == 4 and J == 0)) .
+    rl [eat] :
+         < p(I) : Philosopher | status : hungry, chopsticks : 2 >
+      => < p(I) : Philosopher | status : eating, timer : EATING-TIME > .
+    rl [stop-eating] :
+         < p(I) : P:Philosopher | status : eating, chopsticks : 0, timer : 0, Atts1 >
+      => < p(I) : P:Philosopher | status : thinking, chopsticks : 0, timer : THINKING-TIME, Atts1 >
+         < c(I) : Chopstick | none >
+         < c(if I == 4 then 0 else s I fi) : Chopstick | none > 
+         [dnt] .
+
+    op mte : Configuration -> Time .
+    eq mte(< p(I) : Philosopher | timer : T, Atts1 > Conf) 
+      = minimum(T, mte(Conf)) .
+    eq mte(Conf) = 0 [owise] .
+
+    op delta : Configuration Time -> Configuration .
+    eq delta(< p(I) : Philosopher | timer : T > Conf, T') 
+      = < p(I) : Philosopher | timer : T - T' > delta(Conf, T') .
+
+    crl [tick] : { Conf, T } => { delta(Conf, T'), T + T' }
+      if T' := mte(Conf) 
+      /\ T' > 0 
+      /\ T < 1000 .
+ 
+    op initState : -> System .
+    op initState : Nat -> Configuration .
+    eq initState = { initState(5), 0 } .
+    eq initState(s N) 
+      = < p(N) : Philosopher | status : thinking, chopsticks : 0, timer : 0 >
+        < c(N) : Chopstick | none > 
+        initState(N) .
+    eq initState(0) = none .
+endom
+
+red initState .
+search [1] initState =>! S:System .
+
+load model-checker.maude
+
+omod DINING-PHILOSOPHERS-PREDS is
+    protecting DINING-PHILOSOPHERS .
+    including SATISFACTION .
+    subsort System < State .
+   
+    op phil-status : Oid Status -> Prop .
+    op phil-sticks : Oid Nat -> Prop .
+    
+    vars P N : Nat .
+    var  Conf : Configuration .
+    var  St : Status .
+    var  Atts : AttributeSet .
+    var  T : Time . 
+   
+    eq { < p(P) : Philosopher | status : St > Conf, T } |= phil-status(p(P), St) = true .
+    eq { < p(P) : Philosopher | chopsticks : N > Conf, T } |= phil-sticks(p(P), N) = true .
+  endom
+
+  omod DINING-PHILOSOPHERS-5-CHECK is
+    protecting DINING-PHILOSOPHERS-PREDS .
+    including MODEL-CHECKER .
+    including LTL-SIMPLIFIER .
+  endom
+
+red modelCheck(initState, [] ~ (phil-sticks(p(0), 1) /\ phil-sticks(p(1), 1) /\ phil-sticks(p(2), 1) /\ phil-sticks(p(3), 1) /\ phil-sticks(p(4), 1))) .

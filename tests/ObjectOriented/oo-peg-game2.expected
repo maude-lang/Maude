@@ -1,0 +1,309 @@
+Considering object completion on:
+  eq count(< O : Pos | busy : true > Conf) = s count(Conf) .
+Transformed equation:
+  eq count(< O : V:Pos | busy : true, Atts:AttributeSet > Conf) = s count(Conf)
+    .
+
+Considering object completion on:
+  eq remove(< O : Pos | x : N, y : M, busy : true > Conf, N, M) = < O : Pos | x
+    : N, y : M, busy : false > Conf .
+Transformed equation:
+  eq remove(< O : V:Pos | x : N, y : M, busy : true, Atts:AttributeSet > Conf,
+    N, M) = < O : V:Pos | x : N, y : M, busy : false, Atts:AttributeSet > Conf
+    .
+
+Considering object completion on:
+  eq cancel(< O : Pos | x : N, y : M, busy : true > Conf, N, M) = Conf .
+Transformed equation:
+  eq cancel(< O : V:Pos | x : N, y : M, busy : true, Atts:AttributeSet > Conf,
+    N, M) = Conf .
+
+Considering object completion on:
+  rl < O1 : Pos | x : N, y : M, busy : true > < O2 : Pos | x : N, y : s M, busy
+    : true > < O3 : Pos | x : N, y : s s M, busy : false > => < O1 : Pos | x :
+    N, y : M, busy : false > < O2 : Pos | x : N, y : s M, busy : false > < O3 :
+    Pos | x : N, y : s s M, busy : true > [label right] .
+Transformed rule:
+  rl < O1 : V:Pos | x : N, y : M, busy : true, Atts:AttributeSet > < O2 :
+    V2:Pos | x : N, y : s M, busy : true, Atts2:AttributeSet > < O3 : V3:Pos |
+    x : N, y : s s M, busy : false, Atts3:AttributeSet > => < O1 : V:Pos | x :
+    N, y : M, busy : false, Atts:AttributeSet > < O2 : V2:Pos | x : N, y : s M,
+    busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : N, y : s s M, busy :
+    true, Atts3:AttributeSet > [label right] .
+
+Considering object completion on:
+  rl < O1 : Pos | x : N, y : M, busy : false > < O2 : Pos | x : N, y : s M,
+    busy : true > < O3 : Pos | x : N, y : s s M, busy : true > => < O1 : Pos |
+    x : N, y : M, busy : true > < O2 : Pos | x : N, y : s M, busy : false > <
+    O3 : Pos | x : N, y : s s M, busy : false > [label left] .
+Transformed rule:
+  rl < O1 : V:Pos | x : N, y : M, busy : false, Atts:AttributeSet > < O2 :
+    V2:Pos | x : N, y : s M, busy : true, Atts2:AttributeSet > < O3 : V3:Pos |
+    x : N, y : s s M, busy : true, Atts3:AttributeSet > => < O1 : V:Pos | x :
+    N, y : M, busy : true, Atts:AttributeSet > < O2 : V2:Pos | x : N, y : s M,
+    busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : N, y : s s M, busy :
+    false, Atts3:AttributeSet > [label left] .
+
+Considering object completion on:
+  rl < O1 : Pos | x : N, y : M, busy : true > < O2 : Pos | x : s N, y : M, busy
+    : true > < O3 : Pos | x : s s N, y : M, busy : false > => < O1 : Pos | x :
+    N, y : M, busy : false > < O2 : Pos | x : s N, y : M, busy : false > < O3 :
+    Pos | x : s s N, y : M, busy : true > [label down] .
+Transformed rule:
+  rl < O1 : V:Pos | x : N, y : M, busy : true, Atts:AttributeSet > < O2 :
+    V2:Pos | x : s N, y : M, busy : true, Atts2:AttributeSet > < O3 : V3:Pos |
+    x : s s N, y : M, busy : false, Atts3:AttributeSet > => < O1 : V:Pos | x :
+    N, y : M, busy : false, Atts:AttributeSet > < O2 : V2:Pos | x : s N, y : M,
+    busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : s s N, y : M, busy :
+    true, Atts3:AttributeSet > [label down] .
+
+Considering object completion on:
+  rl < O1 : Pos | x : N, y : M, busy : false > < O2 : Pos | x : s N, y : M,
+    busy : true > < O3 : Pos | x : s s N, y : M, busy : true > => < O1 : Pos |
+    x : N, y : M, busy : true > < O2 : Pos | x : s N, y : M, busy : false > <
+    O3 : Pos | x : s s N, y : M, busy : false > [label up] .
+Transformed rule:
+  rl < O1 : V:Pos | x : N, y : M, busy : false, Atts:AttributeSet > < O2 :
+    V2:Pos | x : s N, y : M, busy : true, Atts2:AttributeSet > < O3 : V3:Pos |
+    x : s s N, y : M, busy : true, Atts3:AttributeSet > => < O1 : V:Pos | x :
+    N, y : M, busy : true, Atts:AttributeSet > < O2 : V2:Pos | x : s N, y : M,
+    busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : s s N, y : M, busy :
+    false, Atts3:AttributeSet > [label up] .
+
+Considering object completion on:
+  rl < O1 : TPos | x : N, y : s s M, busy : true > < O2 : TPos | x : s N, y : s
+    M, busy : true > < O3 : TPos | x : s s N, y : M, busy : false > => < O1 :
+    TPos | x : N, y : s s M, busy : false > < O2 : TPos | x : s N, y : s M,
+    busy : false > < O3 : TPos | x : s s N, y : M, busy : true > [label
+    leftdown] .
+Transformed rule:
+  rl < O1 : V:TPos | x : N, y : s s M, busy : true, Atts:AttributeSet > < O2 :
+    V2:TPos | x : s N, y : s M, busy : true, Atts2:AttributeSet > < O3 :
+    V3:TPos | x : s s N, y : M, busy : false, Atts3:AttributeSet > => < O1 :
+    V:TPos | x : N, y : s s M, busy : false, Atts:AttributeSet > < O2 : V2:TPos
+    | x : s N, y : s M, busy : false, Atts2:AttributeSet > < O3 : V3:TPos | x :
+    s s N, y : M, busy : true, Atts3:AttributeSet > [label leftdown] .
+
+Considering object completion on:
+  rl < O1 : TPos | x : N, y : s s M, busy : false > < O2 : TPos | x : s N, y :
+    s M, busy : true > < O3 : TPos | x : s s N, y : M, busy : true > => < O1 :
+    TPos | x : N, y : s s M, busy : true > < O2 : TPos | x : s N, y : s M, busy
+    : false > < O3 : TPos | x : s s N, y : M, busy : false > [label rightup] .
+Transformed rule:
+  rl < O1 : V:TPos | x : N, y : s s M, busy : false, Atts:AttributeSet > < O2 :
+    V2:TPos | x : s N, y : s M, busy : true, Atts2:AttributeSet > < O3 :
+    V3:TPos | x : s s N, y : M, busy : true, Atts3:AttributeSet > => < O1 :
+    V:TPos | x : N, y : s s M, busy : true, Atts:AttributeSet > < O2 : V2:TPos
+    | x : s N, y : s M, busy : false, Atts2:AttributeSet > < O3 : V3:TPos | x :
+    s s N, y : M, busy : false, Atts3:AttributeSet > [label rightup] .
+
+Considering object completion on:
+  ceq noAislada(< o(I, J) : Pos | x : I, y : J, busy : true > < o(I', J') : Pos
+    | x : I', y : J', busy : true > Conf) = true if I == I' + 1 or I' == I + 1
+    or J == J' + 1 or J' == J + 1 = true .
+Transformed equation:
+  ceq noAislada(< o(I, J) : V:Pos | x : I, y : J, busy : true,
+    Atts:AttributeSet > < o(I', J') : V2:Pos | x : I', y : J', busy : true,
+    Atts2:AttributeSet > Conf) = true if I == I' + 1 or I' == I + 1 or J == J'
+    + 1 or J' == J + 1 = true .
+
+op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
+op __ left-identity collapse from Configuration to Object is unequal.
+==========================================
+search in TRIANGULAR-PEG-GAME : 4x4-2 =>! Conf such that count(Conf) = 1 .
+
+Solution 1 (state 1869)
+states: 1871  rewrites: 6546
+Conf --> < o(1, 1) : Pos | x : 1, y : 1, busy : false > < o(1, 2) : Pos | x :
+    1, y : 2, busy : false > < o(1, 3) : Pos | x : 1, y : 3, busy : false > <
+    o(1, 4) : Pos | x : 1, y : 4, busy : false > < o(2, 1) : Pos | x : 2, y :
+    1, busy : false > < o(2, 2) : Pos | x : 2, y : 2, busy : false > < o(2, 3)
+    : Pos | x : 2, y : 3, busy : false > < o(2, 4) : Pos | x : 2, y : 4, busy :
+    true > < o(3, 1) : Pos | x : 3, y : 1, busy : false > < o(3, 2) : Pos | x :
+    3, y : 2, busy : false > < o(3, 3) : Pos | x : 3, y : 3, busy : false > <
+    o(3, 4) : Pos | x : 3, y : 4, busy : false > < o(4, 1) : Pos | x : 4, y :
+    1, busy : false > < o(4, 2) : Pos | x : 4, y : 2, busy : false > < o(4, 3)
+    : Pos | x : 4, y : 3, busy : false > < o(4, 4) : Pos | x : 4, y : 4, busy :
+    false >
+
+Solution 2 (state 1870)
+states: 1871  rewrites: 6548
+Conf --> < o(1, 1) : Pos | x : 1, y : 1, busy : false > < o(1, 2) : Pos | x :
+    1, y : 2, busy : false > < o(1, 3) : Pos | x : 1, y : 3, busy : false > <
+    o(1, 4) : Pos | x : 1, y : 4, busy : false > < o(2, 1) : Pos | x : 2, y :
+    1, busy : true > < o(2, 2) : Pos | x : 2, y : 2, busy : false > < o(2, 3) :
+    Pos | x : 2, y : 3, busy : false > < o(2, 4) : Pos | x : 2, y : 4, busy :
+    false > < o(3, 1) : Pos | x : 3, y : 1, busy : false > < o(3, 2) : Pos | x
+    : 3, y : 2, busy : false > < o(3, 3) : Pos | x : 3, y : 3, busy : false > <
+    o(3, 4) : Pos | x : 3, y : 4, busy : false > < o(4, 1) : Pos | x : 4, y :
+    1, busy : false > < o(4, 2) : Pos | x : 4, y : 2, busy : false > < o(4, 3)
+    : Pos | x : 4, y : 3, busy : false > < o(4, 4) : Pos | x : 4, y : 4, busy :
+    false >
+
+No more solutions.
+states: 1871  rewrites: 6548
+==========================================
+srewrite in TRIANGULAR-PEG-GAME : 4x4-2 using one((match S:Configuration such
+    that noAislada(S:Configuration) = true ; all)* ; match S:Configuration such
+    that count(S:Configuration) == 1 = true) .
+
+Solution 1
+rewrites: 78150
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : false > < o(1, 2)
+    : Pos | x : 1, y : 2, busy : false > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    false > < o(1, 4) : Pos | x : 1, y : 4, busy : false > < o(2, 1) : Pos | x
+    : 2, y : 1, busy : false > < o(2, 2) : Pos | x : 2, y : 2, busy : false > <
+    o(2, 3) : Pos | x : 2, y : 3, busy : false > < o(2, 4) : Pos | x : 2, y :
+    4, busy : true > < o(3, 1) : Pos | x : 3, y : 1, busy : false > < o(3, 2) :
+    Pos | x : 3, y : 2, busy : false > < o(3, 3) : Pos | x : 3, y : 3, busy :
+    false > < o(3, 4) : Pos | x : 3, y : 4, busy : false > < o(4, 1) : Pos | x
+    : 4, y : 1, busy : false > < o(4, 2) : Pos | x : 4, y : 2, busy : false > <
+    o(4, 3) : Pos | x : 4, y : 3, busy : false > < o(4, 4) : Pos | x : 4, y :
+    4, busy : false >
+
+No more solutions.
+rewrites: 78150
+==========================================
+dsrewrite [10] in TRIANGULAR-PEG-GAME : 4x4-2 using (match S:Configuration such
+    that noAislada(S:Configuration) = true ; all)* .
+
+Solution 1
+rewrites: 27
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : true > < o(1, 2) :
+    Pos | x : 1, y : 2, busy : true > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    true > < o(1, 4) : Pos | x : 1, y : 4, busy : true > < o(2, 1) : Pos | x :
+    2, y : 1, busy : true > < o(2, 2) : Pos | x : 2, y : 2, busy : true > < o(
+    2, 3) : Pos | x : 2, y : 3, busy : true > < o(2, 4) : Pos | x : 2, y : 4,
+    busy : true > < o(3, 1) : Pos | x : 3, y : 1, busy : true > < o(3, 2) : Pos
+    | x : 3, y : 2, busy : true > < o(3, 3) : Pos | x : 3, y : 3, busy : true >
+    < o(3, 4) : Pos | x : 3, y : 4, busy : false > < o(4, 1) : Pos | x : 4, y :
+    1, busy : true > < o(4, 2) : Pos | x : 4, y : 2, busy : true > < o(4, 3) :
+    Pos | x : 4, y : 3, busy : true > < o(4, 4) : Pos | x : 4, y : 4, busy :
+    true >
+
+Solution 2
+rewrites: 49
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : true > < o(1, 2) :
+    Pos | x : 1, y : 2, busy : true > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    true > < o(1, 4) : Pos | x : 1, y : 4, busy : true > < o(2, 1) : Pos | x :
+    2, y : 1, busy : true > < o(2, 2) : Pos | x : 2, y : 2, busy : true > < o(
+    2, 3) : Pos | x : 2, y : 3, busy : true > < o(2, 4) : Pos | x : 2, y : 4,
+    busy : true > < o(3, 1) : Pos | x : 3, y : 1, busy : true > < o(3, 2) : Pos
+    | x : 3, y : 2, busy : false > < o(3, 3) : Pos | x : 3, y : 3, busy : false
+    > < o(3, 4) : Pos | x : 3, y : 4, busy : true > < o(4, 1) : Pos | x : 4, y
+    : 1, busy : true > < o(4, 2) : Pos | x : 4, y : 2, busy : true > < o(4, 3)
+    : Pos | x : 4, y : 3, busy : true > < o(4, 4) : Pos | x : 4, y : 4, busy :
+    true >
+
+Solution 3
+rewrites: 71
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : true > < o(1, 2) :
+    Pos | x : 1, y : 2, busy : false > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    true > < o(1, 4) : Pos | x : 1, y : 4, busy : true > < o(2, 1) : Pos | x :
+    2, y : 1, busy : true > < o(2, 2) : Pos | x : 2, y : 2, busy : false > < o(
+    2, 3) : Pos | x : 2, y : 3, busy : true > < o(2, 4) : Pos | x : 2, y : 4,
+    busy : true > < o(3, 1) : Pos | x : 3, y : 1, busy : true > < o(3, 2) : Pos
+    | x : 3, y : 2, busy : true > < o(3, 3) : Pos | x : 3, y : 3, busy : false
+    > < o(3, 4) : Pos | x : 3, y : 4, busy : true > < o(4, 1) : Pos | x : 4, y
+    : 1, busy : true > < o(4, 2) : Pos | x : 4, y : 2, busy : true > < o(4, 3)
+    : Pos | x : 4, y : 3, busy : true > < o(4, 4) : Pos | x : 4, y : 4, busy :
+    true >
+
+Solution 4
+rewrites: 133
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : true > < o(1, 2) :
+    Pos | x : 1, y : 2, busy : false > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    true > < o(1, 4) : Pos | x : 1, y : 4, busy : true > < o(2, 1) : Pos | x :
+    2, y : 1, busy : true > < o(2, 2) : Pos | x : 2, y : 2, busy : false > < o(
+    2, 3) : Pos | x : 2, y : 3, busy : true > < o(2, 4) : Pos | x : 2, y : 4,
+    busy : true > < o(3, 1) : Pos | x : 3, y : 1, busy : false > < o(3, 2) :
+    Pos | x : 3, y : 2, busy : false > < o(3, 3) : Pos | x : 3, y : 3, busy :
+    true > < o(3, 4) : Pos | x : 3, y : 4, busy : true > < o(4, 1) : Pos | x :
+    4, y : 1, busy : true > < o(4, 2) : Pos | x : 4, y : 2, busy : true > < o(
+    4, 3) : Pos | x : 4, y : 3, busy : true > < o(4, 4) : Pos | x : 4, y : 4,
+    busy : true >
+
+Solution 5
+rewrites: 195
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : true > < o(1, 2) :
+    Pos | x : 1, y : 2, busy : true > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    false > < o(1, 4) : Pos | x : 1, y : 4, busy : false > < o(2, 1) : Pos | x
+    : 2, y : 1, busy : true > < o(2, 2) : Pos | x : 2, y : 2, busy : false > <
+    o(2, 3) : Pos | x : 2, y : 3, busy : true > < o(2, 4) : Pos | x : 2, y : 4,
+    busy : true > < o(3, 1) : Pos | x : 3, y : 1, busy : false > < o(3, 2) :
+    Pos | x : 3, y : 2, busy : false > < o(3, 3) : Pos | x : 3, y : 3, busy :
+    true > < o(3, 4) : Pos | x : 3, y : 4, busy : true > < o(4, 1) : Pos | x :
+    4, y : 1, busy : true > < o(4, 2) : Pos | x : 4, y : 2, busy : true > < o(
+    4, 3) : Pos | x : 4, y : 3, busy : true > < o(4, 4) : Pos | x : 4, y : 4,
+    busy : true >
+
+Solution 6
+rewrites: 217
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : false > < o(1, 2)
+    : Pos | x : 1, y : 2, busy : false > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    true > < o(1, 4) : Pos | x : 1, y : 4, busy : false > < o(2, 1) : Pos | x :
+    2, y : 1, busy : true > < o(2, 2) : Pos | x : 2, y : 2, busy : false > < o(
+    2, 3) : Pos | x : 2, y : 3, busy : true > < o(2, 4) : Pos | x : 2, y : 4,
+    busy : true > < o(3, 1) : Pos | x : 3, y : 1, busy : false > < o(3, 2) :
+    Pos | x : 3, y : 2, busy : false > < o(3, 3) : Pos | x : 3, y : 3, busy :
+    true > < o(3, 4) : Pos | x : 3, y : 4, busy : true > < o(4, 1) : Pos | x :
+    4, y : 1, busy : true > < o(4, 2) : Pos | x : 4, y : 2, busy : true > < o(
+    4, 3) : Pos | x : 4, y : 3, busy : true > < o(4, 4) : Pos | x : 4, y : 4,
+    busy : true >
+
+Solution 7
+rewrites: 239
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : false > < o(1, 2)
+    : Pos | x : 1, y : 2, busy : false > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    true > < o(1, 4) : Pos | x : 1, y : 4, busy : false > < o(2, 1) : Pos | x :
+    2, y : 1, busy : true > < o(2, 2) : Pos | x : 2, y : 2, busy : true > < o(
+    2, 3) : Pos | x : 2, y : 3, busy : false > < o(2, 4) : Pos | x : 2, y : 4,
+    busy : false > < o(3, 1) : Pos | x : 3, y : 1, busy : false > < o(3, 2) :
+    Pos | x : 3, y : 2, busy : false > < o(3, 3) : Pos | x : 3, y : 3, busy :
+    true > < o(3, 4) : Pos | x : 3, y : 4, busy : true > < o(4, 1) : Pos | x :
+    4, y : 1, busy : true > < o(4, 2) : Pos | x : 4, y : 2, busy : true > < o(
+    4, 3) : Pos | x : 4, y : 3, busy : true > < o(4, 4) : Pos | x : 4, y : 4,
+    busy : true >
+
+Solution 8
+rewrites: 261
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : false > < o(1, 2)
+    : Pos | x : 1, y : 2, busy : false > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    true > < o(1, 4) : Pos | x : 1, y : 4, busy : false > < o(2, 1) : Pos | x :
+    2, y : 1, busy : false > < o(2, 2) : Pos | x : 2, y : 2, busy : false > <
+    o(2, 3) : Pos | x : 2, y : 3, busy : true > < o(2, 4) : Pos | x : 2, y : 4,
+    busy : false > < o(3, 1) : Pos | x : 3, y : 1, busy : false > < o(3, 2) :
+    Pos | x : 3, y : 2, busy : false > < o(3, 3) : Pos | x : 3, y : 3, busy :
+    true > < o(3, 4) : Pos | x : 3, y : 4, busy : true > < o(4, 1) : Pos | x :
+    4, y : 1, busy : true > < o(4, 2) : Pos | x : 4, y : 2, busy : true > < o(
+    4, 3) : Pos | x : 4, y : 3, busy : true > < o(4, 4) : Pos | x : 4, y : 4,
+    busy : true >
+
+Solution 9
+rewrites: 283
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : false > < o(1, 2)
+    : Pos | x : 1, y : 2, busy : false > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    true > < o(1, 4) : Pos | x : 1, y : 4, busy : false > < o(2, 1) : Pos | x :
+    2, y : 1, busy : false > < o(2, 2) : Pos | x : 2, y : 2, busy : false > <
+    o(2, 3) : Pos | x : 2, y : 3, busy : true > < o(2, 4) : Pos | x : 2, y : 4,
+    busy : false > < o(3, 1) : Pos | x : 3, y : 1, busy : false > < o(3, 2) :
+    Pos | x : 3, y : 2, busy : true > < o(3, 3) : Pos | x : 3, y : 3, busy :
+    false > < o(3, 4) : Pos | x : 3, y : 4, busy : false > < o(4, 1) : Pos | x
+    : 4, y : 1, busy : true > < o(4, 2) : Pos | x : 4, y : 2, busy : true > <
+    o(4, 3) : Pos | x : 4, y : 3, busy : true > < o(4, 4) : Pos | x : 4, y : 4,
+    busy : true >
+
+Solution 10
+rewrites: 305
+result Configuration: < o(1, 1) : Pos | x : 1, y : 1, busy : false > < o(1, 2)
+    : Pos | x : 1, y : 2, busy : false > < o(1, 3) : Pos | x : 1, y : 3, busy :
+    false > < o(1, 4) : Pos | x : 1, y : 4, busy : false > < o(2, 1) : Pos | x
+    : 2, y : 1, busy : false > < o(2, 2) : Pos | x : 2, y : 2, busy : false > <
+    o(2, 3) : Pos | x : 2, y : 3, busy : false > < o(2, 4) : Pos | x : 2, y :
+    4, busy : false > < o(3, 1) : Pos | x : 3, y : 1, busy : false > < o(3, 2)
+    : Pos | x : 3, y : 2, busy : true > < o(3, 3) : Pos | x : 3, y : 3, busy :
+    true > < o(3, 4) : Pos | x : 3, y : 4, busy : false > < o(4, 1) : Pos | x :
+    4, y : 1, busy : true > < o(4, 2) : Pos | x : 4, y : 2, busy : true > < o(
+    4, 3) : Pos | x : 4, y : 3, busy : true > < o(4, 4) : Pos | x : 4, y : 4,
+    busy : true >
+Bye.

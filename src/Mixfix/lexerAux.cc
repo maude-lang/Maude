@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -351,4 +351,27 @@ eatComment(bool firstNonWhite)
       if (passThrough)
 	cout << static_cast<char>(c);
     }
+}
+
+void
+bubbleEofError()
+{
+  int nrTokens = lexerBubble.size();
+  if (nrTokens > 0)
+    {
+      //
+      //	Adjust current line number for end-of-line.
+      //
+      IssueWarning(LineNumber(lineNumber - 1) <<
+		   ": unexpected end-of-file while reading:\n  " << lexerBubble);
+      ContinueWarning("which started on " << LineNumber(lexerBubble[0].lineNumber()) << ".\n");
+    }
+  else
+    {
+      //
+      //	Adjust current line number for end-of-line.
+      //
+      IssueWarning(LineNumber(lineNumber - 1) << ": unexpected end-of-file.");
+    }
+  suppressParserErrorMessage = true;
 }

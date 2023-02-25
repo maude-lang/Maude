@@ -1,3 +1,22 @@
+2023-02-24  Steven Eker  <eker@pup>
+
+	* macros.hh (ContinueWarning): added
+
+2023-02-17  Steven Eker  <eker@pup>
+
+	* macros.cc: defined globalDebugFlag
+
+	* macros.hh: added decl for globalDebugFlag; replaced
+	globalAdvisoryFlag with globalDebugFlag in all Debug macros
+
+2023-02-16  Steven Eker  <eker@pup>
+
+	* macros.hh (NO_COPYING): use delete for copy ctor and copy assignment
+	operator; remove obsolete comment about branch free conditional
+	assignments - these were deleted long ago
+
+===================================Maude141===================================
+
 2023-01-17  Steven Eker  <eker@pup>
 
 	* macros.hh: don't use if in IssueAdvisory() to avoid dangling else
@@ -2729,7 +2748,7 @@
 	* checkedConstIterator.hh: added many typenames to placate g++3.2
 
 	* checkedIterator.hh: added many typenames to placate g++3.2
-	
+
 ===================================Maude77==================================================
 
 2002-11-14  Steven Eker  <eker@goo.csl.sri.com>
@@ -2757,7 +2776,7 @@
 2002-11-01  Steven Eker  <eker@goo.csl.sri.com>
 
 	* vector.hh: added many typename's to placate g++3.2
-	
+
 ===================================Maude76==================================================
 
 2002-08-02  Steven Eker  <eker@goo.csl.sri.com>
@@ -2772,7 +2791,7 @@
 
 	* natSet.hh (operator*): added assert to check that we are not at
 	the end of the set
-	
+
 ===================================Maude74==================================================
 
 2002-06-11  Steven Eker  <eker@goo.csl.sri.com>
@@ -2782,7 +2801,7 @@
 2002-06-07  Steven Eker  <eker@goo.csl.sri.com>
 
 	* macros.hh (SpecialConstants): added BITS_PER_UINT
-	
+
 ===================================Maude73==================================================
 
 2002-05-09  Steven Eker  <eker@goo.csl.sri.com>
@@ -2804,7 +2823,7 @@
 2002-04-24  Steven Eker  <eker@goo.csl.sri.com>
 
 	* bigNum.hh (class BigNum): made makeString() const
-	
+
 ===================================Maude72==================================================
 
 2002-04-23  Steven Eker  <eker@goo.csl.sri.com>
@@ -2818,7 +2837,7 @@
 2002-04-01  Steven Eker  <eker@goo.csl.sri.com>
 
 	* vector.hh (clear): added
-	
+
 ===================================Maude71a==================================================
 
 2002-03-22  Steven Eker  <eker@goo.csl.sri.com>
@@ -2843,7 +2862,7 @@
 	* macros.cc: deleted explicit template instantiations
 
 	* diophantineSystem.cc: deleted explicit template instantiations
-	
+
 ===================================Maude71==================================================
 
 2002-03-08  Steven Eker  <eker@goo.csl.sri.com>
@@ -3001,7 +3020,7 @@
 	* tty.cc: created
 
 	* tty.hh: created
-	
+
 ===================================Maude70==================================================
 
 2002-01-24  Steven Eker  <eker@goo.csl.sri.com>
@@ -3568,20 +3587,20 @@
 	* macros.cc (doubleToString): fixed bug where we didn't allocate
 	space in buffer[] for trailing '\0' causing ABRs and ABWs under
 	purify (and potential memory corruption)
-	
+
 ===================================Engine67==================================================
 
 2001-04-03  Steven Eker  <eker@goo.csl.sri.com>
 
 	* bigNum.hh (class BigNum): fixed long standing bug - all 3
 	compare()s now correctly return int rather than bool
-	
+
 ===================================Engine66==================================================
 
 2000-06-23  Steven Eker  <eker@goo.csl.sri.com>
 
 	* macros.hh (safeCast): added
-	
+
 ===================================Engine58==================================================
 
 2000-06-20  Steven Eker  <eker@goo.csl.sri.com>
@@ -3651,7 +3670,7 @@
 2000-03-16  Steven Eker  <eker@goo.csl.sri.com>
 
 	* macros.hh (ErrorCheck): commented out
-	
+
 ===================================Engine56==================================================
 
 2000-02-22  Steven Eker  <eker@goo.csl.sri.com>
@@ -3666,7 +3685,7 @@
 
 	* vector.hh (sort): commented out function deleted
 	(operator): updated Asserts
-	
+
 ===================================Engine55==================================================
 
 1999-12-15  Steven Eker  <eker@goo.csl.sri.com>
@@ -3677,7 +3696,7 @@
 
 	* unionFind.hh (class UnionFind): made vector mutable and made
 	findRep() and elementCount() decls const
-	
+
 ===================================Engine54==================================================
 
 1999-12-01  Steven Eker  <eker@goo.csl.sri.com>
@@ -3753,7 +3772,7 @@
 
 	* macros.hh: use iostream and fstream rather than iostream.h and
 	fstream.h
-	
+
 ===================================Engine51==================================================
 
 1999-06-01  Steven Eker  <eker@goo.csl.sri.com>
@@ -3893,7 +3912,7 @@ Thu Oct  8 11:38:47 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* pointerSet.cc (hash): use reinterprete_cast
 
 	* vector.hh (Vector): (both ctors) cast new to void
-	
+
 ==============================Engine38==========================================
 
 Thu Sep 10 13:46:08 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3933,7 +3952,7 @@ Tue Jun  9 11:53:15 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* natSet.hh (class NatSet): renamed from IntSet.hh; IntSet ->
 	NatSet
-	
+
 ==============================Engine38==========================================
 
 Fri Jan 16 18:14:31 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3945,7 +3964,7 @@ Fri Jan  9 14:57:50 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* macros.hh (operator<<): added version for Bool
 	deleted --- C++ typedefs don't create new types so we can't have
 	overloaded i/o operators for Bool
-	
+
 ==============================Engine34==========================================
 
 Mon Nov 10 16:02:38 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3976,7 +3995,7 @@ Fri Oct  3 16:12:55 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* pointerSet.hh (class PointerSet): heavily redesigned for greater
 	generality and performance. It can now serve as a base class and
 	eliminates the need for class DataSet
-	
+
 ==============================Engine29==========================================
 
 Tue Sep 30 15:54:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3988,7 +4007,7 @@ Tue Sep 30 15:54:23 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* dataSet.cc (hash): created
 
 	* dataSet.hh (class DataSet): created
-	
+
 ==============================Engine28==========================================
 
 Wed Aug 20 16:45:50 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -4167,7 +4186,7 @@ Sat Jun 15 14:45:57 1996  Steven Eker  <eker@ponder.csl.sri.com>
 
 Fri Jun 14 16:33:18 1996  Steven Eker  <eker@ponder.csl.sri.com>
 
-	* macros.hh: added forward declarations for utility classes 
+	* macros.hh: added forward declarations for utility classes
 
 Thu Jun 13 10:57:07 1996  Steven Eker  <eker@ponder.csl.sri.com>
 

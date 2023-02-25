@@ -1,3 +1,7 @@
+2023-02-20  Steven Eker  <eker@pup>
+
+	* variableTerm.cc (VariableTerm::deepCopy2): honor preserveVariableIndices()
+
 2020-12-11  Steven Eker  <eker2@eker10>
 
 	* variableDagNode.cc (VariableDagNode::instantiate2): take

@@ -2,5 +2,6 @@ fmod FOO is
   protecting NAT + QID .
 endfm
 Warning: <standard input>, line 14 (fmod FOO): syntax error
-
+Warning: <standard input>, line 17: unexpected end-of-input while parsing
+    module FOO.
 Bye.

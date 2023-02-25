@@ -87,6 +87,7 @@ Vector<Token> strategyCall;
 Renaming* currentRenaming = 0;
 SyntaxContainer* currentSyntaxContainer = 0;
 SyntaxContainer* oldSyntaxContainer = 0;
+bool suppressParserErrorMessage = false;
 
 Int64 number;
 Int64 number2;
@@ -199,6 +200,14 @@ int yylex(YYSTYPE* lvalp);
 %token FORCE_LOOKAHEAD
 
 /*
+ *	These tokens are returned by the lexer when an actual end-of-file is handled.
+ *	CHANGE_FILE means we resumed reading the previous file.
+ *	It is used to prevent parsing modules/commands across file boundries.
+ *	END_OF_INPUT  means there are no more characters to read.
+ */
+%token CHANGE_FILE END_OF_INPUT
+
+/*
  *	Nonterminals that return tokens.
  */
 %type <yyToken> identifier inert startKeyword startKeyword2 midKeyword attrKeyword attrKeyword2
@@ -255,9 +264,28 @@ int yylex(YYSTYPE* lvalp);
 %%
 
 top		:	item { YYACCEPT; }
-		|
+		|	END_OF_INPUT
 			{
 			  PARSE_RESULT = UserLevelRewritingContext::QUIT;
+			  YYACCEPT;
+			}
+		|	error END_OF_INPUT
+			{
+			  //
+			  //	This is the back stop if we see a END_OF_INPUT when we're part way
+			  //	through the item, and justifies suppressing the yyerror() message.
+			  //
+			  IssueWarning(LineNumber(lineNumber) << ": unexpected end-of-input.");
+			  YYABORT;
+			}
+		|	error CHANGE_FILE
+			{
+			  //
+			  //	This is the back stop if we see a CHANGE_FILE when we're part way
+			  //	through an item, and justifies suppressing the yyerror() message.
+			  //
+			  IssueWarning(LineNumber(lineNumber) << ": unexpected end-of-file.");
+			  YYABORT;
 			}
 		;
 
@@ -265,6 +293,13 @@ item		:	module
 		|	view
 		|	directive
 		|	command
+		|	CHANGE_FILE
+			{
+			  //
+			  //	Benign change of file; reenable yyerror() message.
+			  //
+			  suppressParserErrorMessage = false;
+			}
 		;
 
 /*

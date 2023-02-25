@@ -1,3 +1,17 @@
+2023-02-16  Steven Eker  <eker@pup>
+
+	* tests/ObjectOriented/oo-list-2.maude: updated with new version from Paco
+
+	* tests/ObjectOriented/oo-list-3.maude: added
+
+	* tests/ObjectOriented/oo-list-2.maude: added
+
+	* tests/ObjectOriented/dining-philosophers6.maude: added
+
+	* tests/ObjectOriented/dining-philosophers5.maude: added
+
+===================================Maude141===========================================
+
 2023-02-14  Steven Eker  <eker@pup>
 
 	* README.md: added Maude 3.2.2 changes

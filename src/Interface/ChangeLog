@@ -1,3 +1,12 @@
+2023-02-16  Steven Eker  <eker@pup>
+
+	* term.hh (class Term): added comment to explain limitations of LessThan
+
+	* symbol.hh (class Symbol): added struct LessThan
+	(Symbol::LessThan::operator()): added
+
+===================================Maude141=========================================
+
 2023-02-08  Steven Eker  <eker@pup>
 
 	* symbol.hh: added decl for operator<<()
@@ -19,7 +28,7 @@
 
 2023-01-19  Steven Eker  <eker@pup>
 
-	* term.hh (Term::LessThan::operator): added
+	* term.hh (Term::LessThan::operator()): added
 	(class Term): added struct LessThan
 
 ===================================Maude139=========================================

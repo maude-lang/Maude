@@ -95,6 +95,7 @@ string fileName;
 //int terminationCondition;
 int minLength;
 extern Vector<Token> lexerBubble;
+extern bool suppressParserErrorMessage;
 %}
 
 stringContent	([^[:cntrl:]"\\]|("\\"[^[:cntrl:]])|(\\\n)|\t)
@@ -480,6 +481,14 @@ assoc|associative|comm|commutative|id:|identity:|idem|idempotent|iter|iterated|l
 					    STORE_FIX_UP
 					}
 {maudeId}				STORE_FIX_UP
+<<EOF>>					{
+					  //
+					  //	An EOF in the middle of a bubble is always an error that drops us
+					  //	out of the parser and does a full clean up.
+					  //
+					  bubbleEofError();
+					  yyterminate();
+					}
 }
 
  /*
@@ -488,7 +497,7 @@ assoc|associative|comm|commutative|id:|identity:|idem|idempotent|iter|iterated|l
   *	on to the input stream to be re-lexed in a new mode.
   */
 <END_STATEMENT_MODE>{
-pr|protecting|ex|extending|us|using|inc|including|sort|sorts|subsort|subsorts|op|ops|var|vars|mb|cmb|eq|cq|ceq|rl|crl|sd|csd|strat|strats|end(th|fth|sth|m|fm|sm|om|o|v|sv)|jbo|msg|msgs|class|subclass|subclasses		{
+pr|protecting|ex|extending|us|using|inc|including|sort|sorts|subsort|subsorts|op|ops|var|vars|mb|cmb|eq|cq|ceq|rl|crl|sd|csd|strat|strats|end(th|oth|fth|sth|m|fm|sm|om|o|v|sv)|jbo|msg|msgs|class|subclass|subclasses		{
 					  yyless(0);  // BUG - need to deal with white space and comments after the .
 					  yy_pop_state();
 					  RETURN_SAVED(savedReturn)
@@ -619,9 +628,15 @@ pr|protecting|ex|extending|us|using|inc|including|sort|sorts|subsort|subsorts|op
 }
 
 <<EOF>>					{
-					  if (UserLevelRewritingContext::interrupted() ||
-					      !handleEof())
-					    yyterminate();
+					  //
+					  //	An EOF could be a benign change of file, an error in the middle
+					  //	of a command/module/view or a ^C interrupt or a ^D quit.
+					  //	In all cases we want to avoid any yyerror() message.
+					  //
+					  suppressParserErrorMessage = true;
+					  if (UserLevelRewritingContext::interrupted())
+					    yyterminate();  // return an end-of-file condition to the parser
+					  return handleEof() ? CHANGE_FILE : END_OF_INPUT;
 					}
 
 [ \t\r]*				;

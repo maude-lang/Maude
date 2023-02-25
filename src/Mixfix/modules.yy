@@ -185,7 +185,10 @@ fromSpec	:	':'			{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping
 		|				{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
 		;
 
-fromAttrSpec	:	':' typeName
+fromAttrSpec	:	':' typeName1
+			{
+			  currentRenaming->addAttrType($2 ? tokenSequence : singleton);
+			}
 		|	
 		;
 
@@ -278,6 +281,22 @@ viewDeclaration	:	KW_SORT sortName KW_TO sortDot
 			}
 			endMsgMap
 		|	error '.'
+		|	error END_OF_INPUT
+			{
+			  fileTable.endModule(lineNumber);
+			  IssueWarning(LineNumber(lineNumber) <<
+			  ": unexpected end-of-input while parsing view " << QUOTE(CV) << ".");
+			  YYABORT;  // rely on the caller to clear up view database and lexer
+			}
+		|	error CHANGE_FILE
+			{
+			  fileTable.endModule(lineNumber);
+			  IssueWarning(LineNumber(lineNumber) <<
+			  ": unexpected end-of-file while parsing view " << QUOTE(CV) << ".");
+			  YYABORT;  // rely on the caller to clear up view database and lexer
+			}
+		;
+
 		;
 
 sortDot		:	sortName expectedDot		{ $$ = $1; }
@@ -608,7 +627,7 @@ declaration	:	KW_IMPORT moduleExprDot
 
 		|	KW_SUBCLASS		{ clear(); }
 			subsortList dot		{ CM->addSubclassDecl(tokenSequence); }
-
+		
 		|	error '.'
 		        {
 			  //
@@ -617,6 +636,20 @@ declaration	:	KW_IMPORT moduleExprDot
 			  //
 			  cleanUpModuleExpression();
 			  CM->makeDeclsConsistent();
+			}
+		|	error END_OF_INPUT
+			{
+			  fileTable.endModule(lineNumber);
+			  IssueWarning(LineNumber(lineNumber) <<
+			  ": unexpected end-of-input while parsing module " << QUOTE(CM) << ".");
+			  YYABORT;  // rely on the caller to clear up module database and lexer
+			}
+		|	error CHANGE_FILE
+			{
+			  fileTable.endModule(lineNumber);
+			  IssueWarning(LineNumber(lineNumber) <<
+			  ": unexpected end-of-file while parsing module " << QUOTE(CM) << ".");
+			  YYABORT;  // rely on the caller to clear up module database and lexer
 			}
 		;
 

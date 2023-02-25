@@ -1,0 +1,90 @@
+==========================================
+erewrite in META-OO : <> < me : User | pending: predef, level: 0 >
+    createInterpreter(interpreterManager, me, none) .
+rewrites: 82
+result Configuration: <> < me : User | pending: nil, level: 0 > rewroteTerm(me,
+    interpreter(0), 35, '__['<_:_|_>['l.Oid,
+    'SortedList`{NatSW`}.SortedList`{NatSW`},'_`,_['first`:_['o['l.Oid,
+    '0.Zero]],'last`:_['o['l.Oid,'s_^4['0.Zero]]],'size`:_['s_^5['0.Zero]]]],
+    '<_:_|_>['c.Oid,'Counter.Counter,'index`:_['s_^5['0.Zero]]],'<_:_|_>['w[
+    '0.Zero],'NatWrapper.NatWrapper,'value`:_['0.Zero]],'<_:_|_>['w['s_[
+    '0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_['0.Zero]]],'<_:_|_>['w[
+    's_^2['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_^2['0.Zero]]],'<_:_|_>[
+    'w['s_^3['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_^3['0.Zero]]],
+    '<_:_|_>['w['s_^4['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_^4[
+    '0.Zero]]],'<_:_|_>['o['l.Oid,'0.Zero],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
+    'next`:_['o['l.Oid,'s_['0.Zero]]],'previous`:_['null.Maybe`{Oid`}],
+    'value`:_['w['0.Zero]]]],'<_:_|_>['o['l.Oid,'s_['0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
+    'next`:_['o['l.Oid,'s_^2['0.Zero]]],'previous`:_['o['l.Oid,'0.Zero]],
+    'value`:_['w['s_['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^2['0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
+    'next`:_['o['l.Oid,'s_^3['0.Zero]]],'previous`:_['o['l.Oid,'s_['0.Zero]]],
+    'value`:_['w['s_^2['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^3['0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
+    'next`:_['o['l.Oid,'s_^4['0.Zero]]],'previous`:_['o['l.Oid,'s_^2[
+    '0.Zero]]],'value`:_['w['s_^3['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^4[
+    '0.Zero]],'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},
+    '_`,_['next`:_['null.Maybe`{Oid`}],'previous`:_['o['l.Oid,'s_^3['0.Zero]]],
+    'value`:_['w['s_^4['0.Zero]]]]],'to_from_elt`at`pos_is_['l.Oid,'l.Oid,
+    's_^3['0.Zero],'s_^3['0.Zero]]], 'Configuration)
+Advisory: deleting interpreter(0)
+==========================================
+rewrite in SORTED-NAT-LIST : (create-sorted-list(l) ((((((((((l add w(4)) l get
+    at 3 from l) l add w(3)) l add w(2)) l add w(1)) l add w(0)) < w(4) :
+    NatWrapper | value : 4 >) < w(3) : NatWrapper | value : 3 >) < w(2) :
+    NatWrapper | value : 2 >) < w(1) : NatWrapper | value : 1 >) < w(0) :
+    NatWrapper | value : 0 >) < c : Counter | index : 0 > .
+rewrites: 40
+result Configuration: < l : SortedList{NatSW} | first : o(l, 0), last : o(l,
+    4), size : 5 > < c : Counter | index : 5 > < w(0) : NatWrapper | value : 0
+    > < w(1) : NatWrapper | value : 1 > < w(2) : NatWrapper | value : 2 > < w(
+    3) : NatWrapper | value : 3 > < w(4) : NatWrapper | value : 4 > < o(l, 0) :
+    Node{TAOSET-WRAPPER}{NatSW} | next : o(l, 1), previous : null, value : w(0)
+    > < o(l, 1) : Node{TAOSET-WRAPPER}{NatSW} | next : o(l, 2), previous : o(l,
+    0), value : w(1) > < o(l, 2) : Node{TAOSET-WRAPPER}{NatSW} | next : o(l,
+    3), previous : o(l, 1), value : w(2) > < o(l, 3) : Node{TAOSET-WRAPPER}{
+    NatSW} | next : o(l, 4), previous : o(l, 2), value : w(3) > < o(l, 4) :
+    Node{TAOSET-WRAPPER}{NatSW} | next : null, previous : o(l, 3), value : w(4)
+    > to l from l elt at pos 3 is 3
+==========================================
+reduce in META-OO : (((((((((((< o(l, 4) : Node{TAOSET-WRAPPER}{NatSW} | next :
+    null, previous : o(l, 3), value : w(4) > to l from l elt at pos 3 is 3) <
+    o(l, 3) : Node{TAOSET-WRAPPER}{NatSW} | next : o(l, 4), previous : o(l, 2),
+    value : w(3) >) < o(l, 2) : Node{TAOSET-WRAPPER}{NatSW} | next : o(l, 3),
+    previous : o(l, 1), value : w(2) >) < o(l, 1) : Node{TAOSET-WRAPPER}{NatSW}
+    | next : o(l, 2), previous : o(l, 0), value : w(1) >) < o(l, 0) : Node{
+    TAOSET-WRAPPER}{NatSW} | next : o(l, 1), previous : null, value : w(0) >) <
+    w(4) : NatWrapper | value : 4 >) < w(3) : NatWrapper | value : 3 >) < w(2)
+    : NatWrapper | value : 2 >) < w(1) : NatWrapper | value : 1 >) < w(0) :
+    NatWrapper | value : 0 >) < c : Counter | index : 5 >) < l : SortedList{
+    NatSW} | first : o(l, 0), last : o(l, 4), size : 5 > == downTerm('__[
+    '<_:_|_>['l.Oid,'SortedList`{NatSW`}.SortedList`{NatSW`},'_`,_['first`:_[
+    'o['l.Oid,'0.Zero]],'last`:_['o['l.Oid,'s_^4['0.Zero]]],'size`:_['s_^5[
+    '0.Zero]]]],'<_:_|_>['c.Oid,'Counter.Counter,'index`:_['s_^5['0.Zero]]],
+    '<_:_|_>['w['0.Zero],'NatWrapper.NatWrapper,'value`:_['0.Zero]],'<_:_|_>[
+    'w['s_['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_['0.Zero]]],'<_:_|_>[
+    'w['s_^2['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_^2['0.Zero]]],
+    '<_:_|_>['w['s_^3['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_^3[
+    '0.Zero]]],'<_:_|_>['w['s_^4['0.Zero]],'NatWrapper.NatWrapper,'value`:_[
+    's_^4['0.Zero]]],'<_:_|_>['o['l.Oid,'0.Zero],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
+    'next`:_['o['l.Oid,'s_['0.Zero]]],'previous`:_['null.Maybe`{Oid`}],
+    'value`:_['w['0.Zero]]]],'<_:_|_>['o['l.Oid,'s_['0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
+    'next`:_['o['l.Oid,'s_^2['0.Zero]]],'previous`:_['o['l.Oid,'0.Zero]],
+    'value`:_['w['s_['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^2['0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
+    'next`:_['o['l.Oid,'s_^3['0.Zero]]],'previous`:_['o['l.Oid,'s_['0.Zero]]],
+    'value`:_['w['s_^2['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^3['0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
+    'next`:_['o['l.Oid,'s_^4['0.Zero]]],'previous`:_['o['l.Oid,'s_^2[
+    '0.Zero]]],'value`:_['w['s_^3['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^4[
+    '0.Zero]],'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},
+    '_`,_['next`:_['null.Maybe`{Oid`}],'previous`:_['o['l.Oid,'s_^3['0.Zero]]],
+    'value`:_['w['s_^4['0.Zero]]]]],'to_from_elt`at`pos_is_['l.Oid,'l.Oid,
+    's_^3['0.Zero],'s_^3['0.Zero]]], C:Configuration) .
+rewrites: 2
+result Bool: true
+Bye.

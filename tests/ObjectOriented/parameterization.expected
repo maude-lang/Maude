@@ -132,8 +132,8 @@ mod BAG{X :: TRIV} is
 endm
 view Bag{Y :: TRIV} from CONTAINER to BAG{Y} is
   class Container to Bag{Y} .
-  sort Elt to Y$Elt .
   attr guts to contents .
+  sort Elt to Y$Elt .
   vars R S : Oid .
   var D : Elt .
   msg insert(R, S, D) to term replace(R, D) .

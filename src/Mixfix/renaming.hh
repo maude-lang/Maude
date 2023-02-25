@@ -27,6 +27,7 @@
 #define _renaming_hh_
 #include <set>
 #include <map>
+#include <vector>
 #include "syntaxContainer.hh"
 #include "rope.hh"
 #include "symbolType.hh"
@@ -39,15 +40,15 @@ class RewriteStrategy;
 class Renaming : public SyntaxContainer
 {
 public:
-  virtual ~Renaming() {}
+  ~Renaming() override;
 
   void addSortMapping(Token from, Token to);
   void addLabelMapping(Token from, Token to);
   void addOpMapping(const Vector<Token>& tokens);
   void addStratMapping(Token from);
-  void addParameter2(Token name, ModuleExpression* theory);
-  void addVarDecl(Token varName);
-  void addType(bool kind, const Vector<Token>& tokens);
+  void addParameter2(Token name, ModuleExpression* theory) override;
+  void addVarDecl(Token varName) override;
+  void addType(bool kind, const Vector<Token>& tokens) override;
   void addOpTarget(const Vector<Token>& tokens);
   void addStratTarget(Token to);
   void setPrec(Token precTok);
@@ -57,6 +58,7 @@ public:
 
   void addClassMapping(const Token& fromClass, const Token& toClass);
   void addAttrMapping(const Token& token);
+  void addAttrType(const Vector<Token>& tokens);
   void addAttrTarget(const Token& token);
   void markAsMsg();
   //
@@ -70,7 +72,7 @@ public:
   void addStratMappingVarIndices(const Vector<int>& indexMap);
   void addType(const ConnectedComponent* component);
   void addOpTarget(int code);
-  void addOpTargetTerm(Term* fromTerm, Term* targetTerm);
+  void addOpTargetTerm(Term* fromTerm, Term* targetTerm, bool gcTargetTerm);
   void addStratTarget(int code);
   void addStratTargetExpr(CallStrategy* fromCall, StrategyExpression* term);
 
@@ -90,6 +92,7 @@ public:
   const Vector<int>& getGather(int index) const;
   const Vector<int>& getFormat(int index) const;
   const set<int>& getTypeSorts(int index, int typeNr) const;
+
   int getNrStratMappings() const;
   int getStratFrom(int index) const;
   int getStratTo(int index) const;
@@ -98,11 +101,15 @@ public:
   StrategyExpression* getStratTargetExpr(int index) const;
   const Vector<int>& getStratVarIndices(int index) const;
   const set<int>& getStratTypeSorts(int index, int typeNr) const;
+  void discardStratMappings();
+
   int getNrClassMappings() const;
   Token getFromClass(int index) const;
   Token getToClass(int index) const;
-
-  void discardStratMappings();
+  int getNrAttrMappings() const;
+  Token getFromAttr(int index) const;
+  const set<int>& getAttrTypeSorts(int index) const;
+  Token getToAttr(int index) const;
 
   void convertClassMappings(ImportModule* module, Renaming* canonical) const;
   void convertAttrMappings(const ImportModule* module, Renaming* canonical) const;
@@ -125,8 +132,6 @@ public:
   int renameStrat(RewriteStrategy* oldStrategy) const;
   int renameStrat(int label, const Vector<int>& sortNames) const;
   void printRenaming(ostream& s, const char* sep, const char* sep2, bool showProcessed = false) const;
-
-  bool isAttrMapping(int index) const;  // so we can skip them in upView
 
 protected:
   //
@@ -158,8 +163,7 @@ private:
   enum class MappingType : char
     {
      OP,	// normal op to op or op to term mapping
-     MSG,	// msg mapping
-     ATTR	// attr mapping - no range type
+     MSG	// msg mapping
     };
 
   struct OpMapping
@@ -173,15 +177,16 @@ private:
     //	as the view the term came from becomes stale, so dangling pointers
     //	are never dereferenced.
     //
+    bool gcToTerm = false;	// whether we are responsible for garbage collected toTerm
     Term* fromTerm = 0;		// not used for renaming but useful for view instantiation and debugging
-    Term* term = 0;		// for op->term mappings
+    Term* toTerm = 0;		// for op->term mappings
     //
     //	Can change syntactic attributes only.
     //
-    int prec = MixfixModule::MIN_PREC - 1;	// < MixfixModule::MIN_PREC if not set
     Vector<int> gather;		// empty if not set
     Vector<int> format;		// empty if not set
     string latexMacro;		// empty if not set
+    int prec = MixfixModule::MIN_PREC - 1;	// < MixfixModule::MIN_PREC if not set
     int index;
   };
 
@@ -200,11 +205,19 @@ private:
     Token fromClass;
     Token toClass;
   };
-  
+
+  struct AttrMapping
+  {
+    Token fromAttr;
+    IdSet type;
+    Token toAttr;
+  };
+
   typedef map<int, int> IdMap;
   typedef multimap<int, OpMapping> OpMap;
   typedef multimap<int, StratMapping> StratMap;
   typedef Vector<ClassMapping> ClassMap;
+  typedef vector<AttrMapping> AttrMap;  // std::vector for move semantics and back()
 
   static bool equal(const Vector<int>& left, const Vector<int>& right);
   static bool isIdentityOpMapping(const ImportModule* module, const OpMapping& om, const Symbol* symbol);
@@ -228,6 +241,7 @@ private:
   Vector<StratMap::const_iterator> stratMapIndex;
   StratMap::iterator lastStratMapping;
   ClassMap classMap;
+  AttrMap attrMap;
   //
   //	This is an ugly hack - we want to add sort and op mappings when we processs
   //	class and attr mappings in derived View but we want to restore the user's
@@ -279,6 +293,30 @@ Renaming::getToClass(int index) const
 }
 
 inline int
+Renaming::getNrAttrMappings() const
+{
+  return attrMap.size();
+}
+
+inline Token
+Renaming::getFromAttr(int index) const
+{
+  return attrMap[index].fromAttr;
+}
+
+inline const set<int>&
+Renaming::getAttrTypeSorts(int index) const
+{
+  return attrMap[index].type;
+}
+
+inline Token
+Renaming::getToAttr(int index) const
+{
+  return attrMap[index].toAttr;
+}
+
+inline int
 Renaming::getNrLabelMappings() const
 {
   return labelMapIndex.length();
@@ -320,16 +358,10 @@ Renaming::isMsgMapping(int index) const
   return opMapIndex[index]->second.mappingType == MappingType::MSG;
 }
 
-inline bool
-Renaming::isAttrMapping(int index) const
-{
-  return opMapIndex[index]->second.mappingType == MappingType::ATTR;
-}
-
 inline Term*
 Renaming::getOpTargetTerm(int index) const
 {
-  return opMapIndex[index]->second.term;
+  return opMapIndex[index]->second.toTerm;
 }
 
 inline Term*
@@ -421,12 +453,6 @@ Renaming::discardStratMappings()
 {
   stratMapIndex.clear();
   stratMap.clear();
-}
-
-inline void
-Renaming::addClassMapping(const Token& fromClass, const Token& toClass)
-{
-  classMap.append({fromClass, toClass});
 }
 
 inline void

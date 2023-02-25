@@ -227,7 +227,14 @@ SyntacticPreModule::finishModule(Token endToken)
   if (!isTheory())
     autoImports = getOwner()->getAutoImports(); // deep copy
   if (MixfixModule::isObjectOriented(getModuleType()))
-    ooIncludes = getOwner()->getOoIncludes(); // deep copy
+    {
+      //
+      //	So we have fully defined behavior even if the same module is imported by
+      //	both autoImports and ooIncludes.
+      //
+      for (const auto& i : getOwner()->getOoIncludes())
+	autoImports.insert(i);
+    }
   isCompleteFlag = true;
   getOwner()->insertModule(id(), this);
   process();
@@ -405,4 +412,25 @@ SyntacticPreModule::addSubclassDecl(const Vector<Token>& subclassDecl)
       IssueWarning(LineNumber(subclassDecl[0].lineNumber()) <<
 		   ": subclass declaration only allowed in object-oriented modules and theories.");
     }
+}
+
+string
+SyntacticPreModule::stripAttributeSuffix(Symbol* attributeSymbol)
+{
+  Assert(hasAttributeSuffix(attributeSymbol), "bad suffix for " << attributeSymbol);
+  string fullName(Token::name(attributeSymbol->id()));
+  return fullName.substr(0, fullName.length() - strlen(attributeSuffix));
+}
+
+bool
+SyntacticPreModule::hasAttributeSuffix(Symbol* symbol)
+{
+  string fullName(Token::name(symbol->id()));
+  Index length = fullName.length();
+  if (length > attributeSuffixLength)
+    {
+      if (fullName.substr(length - attributeSuffixLength,  attributeSuffixLength) ==  attributeSuffix)
+	return true;
+    }
+  return false;
 }

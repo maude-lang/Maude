@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/meta-oo-list-2.maude -no-banner \
+  > meta-oo-list-2.out 2>&1
+
+diff $srcdir/meta-oo-list-2.expected meta-oo-list-2.out > /dev/null 2>&1

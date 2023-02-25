@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/dining-philosophers5.maude -no-banner -no-advise \
+  > dining-philosophers5.out 2>&1
+
+diff $srcdir/dining-philosophers5.expected dining-philosophers5.out > /dev/null 2>&1

@@ -1,0 +1,154 @@
+Alpha 141 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug in the parsing of oths where the keyword endoth was not recognized
+as ending a mixfix bubble, so that mixfix statements could not appear at the
+end of an oth. Reported by Paco and illustrated by:
+
+oth TEST is
+  eq <> = <> .
+endoth
+
+(2) A subtle issue where the order in which attributes were processing while
+transforming statements depended on pointer values. The result is that the
+transformation, while not incorrect, could vary across platforms and builds,
+breaking the test suite.
+
+(3) A bug in the code to remove []s from bound parameters in canonical
+module names that was added in alpha140 where []s from kinds in specific
+op mappings were being removed. For example:
+
+mod FOO is
+  sorts Foo Bar .
+  op f : Foo -> Bar .
+endm
+
+mod BAR is
+  inc FOO * (op f : Foo -> Bar to g) .
+endm
+
+show desugared .
+
+(4) A subtle and longstanding bug in the module system where an op to term
+mapping in a theory-view does not translate properly because the sort Bar
+has become a parameter sort Y$Bar in the target, leading to a crash.
+Illustrated by:
+
+fth T is
+  sort Foo .
+  op f : Foo -> Foo .
+endfth
+
+fth T2 is
+  sort Bar .
+  op g : Bar -> Bar .
+endfth
+
+view V from T to T2 is
+  sort Foo to Bar .
+var X : Foo .
+  op f(X) to term g(X) .
+endv
+
+fmod M{X :: T} is
+  var X : X$Foo .
+  eq f(X) = f(X) .
+endfm
+
+fmod M2{Y :: T2} is
+  inc M{V}{Y} .
+endfm
+
+show all .
+
+(5) Some stray lines at the end of term-order.maude that seem to have
+been added in 3.2.2 have been removed. Spotted by Julia Sapiña
+Sanchis <jsapina@upv.es>
+
+(6) A bug where automatic object-oriented includes were not showing up
+in the unflattened result of upModule(). Illustrated by:
+
+oth FOO is
+endoth
+
+red in META-LEVEL : upModule('FOO, false) .
+
+
+New features
+=============
+
+(1) Constants with the pconst attribute can now be used on either side of
+op to term mappings in views. Using a pconst constant on the rhs of op
+to term mapping in a module-view has no special behavior because pconst
+constants have no special properties in modules. In a theory-view pconst
+constants will be appropriately renamed on either side of an op to term
+mapping though this doesn't seem especially useful. The real win with
+pconst constants with op to term mappings is in the following idiom to
+parameterize a module by term(s).
+
+fth NAT-ARG is
+  inc NAT .
+  op arg : -> Nat [pconst] .
+endfth
+
+fmod GAME-OF-LIFE{X :: NAT-ARG, Y :: NAT-ARG} is
+...
+endfm
+
+Note that if arg did not have the pconst attribute, the two parameters
+would collapse to a single constant arg, but here we have X$arg and Y$arg
+
+Now with op to terms mapping supporting pconst constants we can write:
+
+view 42 from NAT-ARG to NAT is
+  op arg to term 42 .
+endv
+
+fmod TEST is
+  inc GAME-OF-LIFE{42, 42} .
+endfm
+
+
+(2) There is now some sanity checking for attributes:
+
+Maude will issue an advisory if a class is declared to have an attribute
+when it also obtains the same attribute by inheritance.
+
+A class is considered "pure" if it does not depend on a class from an
+imported module. For a pure class, Maude knows all the attributes that
+it can take and will issue an advisory if an object occurrence that is
+eligible for completion contains an attribute that its class does not have,
+though this is purely advisory and does not affect completion.
+
+For example:
+
+omod FOO is
+  class C | a : Bool, b : Bool .
+  class D | a : Bool, c : Bool .
+  subclass D < C .
+var O : Oid .
+  eq < O : C | > = < O : C | a : true, c : false > .
+endom
+
+Advisory: <standard input>, line 3 (omod FOO): class D declares an attribute a : [Bool] that it inherits from class C.
+Advisory: <standard input>, line 6 (omod FOO): object occurrence < O : C | a : true, c : false > contains an attribute c :
+    [Bool] that was neither declared for nor inherited by class C.
+
+(3) There is now better handling of an end-of-file arising in a command,
+module or view. These may no longer be split between files so this is now
+always reported as an error rather than hanging. Also if the parser was
+in the middle of a bubble of tokens when the end-of-file was seen (common
+in a runaway statement) the line number of the first token in the bubble
+is given.
+
+
+Minor changes
+==============
+
+(1) There is a command line flag -debug that switches on messages about
+internal state in the debug build. Previously this was controlled by the
+advisories flag which meant advisories had to be turned off in the test suite,
+which in turn prevented regression tests for issues involving advisories.

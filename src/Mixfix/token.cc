@@ -936,6 +936,7 @@ Token::removeBoundParameterBrackets(int code)
 	      {
 		if (braceCount > 0)
 		  continue;  // skip bracket
+		break;
 	      }
 	    case '{':
 	      {

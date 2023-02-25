@@ -793,7 +793,7 @@ MixfixModule::instantiateSortTest(Sort* sort, bool eager)
       int prefixCode = Token::encode(opName.c_str());
       symbol = new SortTestSymbol(prefixCode, sort, trueSymbol, falseSymbol, eager);
       static Vector<Sort*> domainAndRange(2);
-      domainAndRange[0] = sort->component()->sort(0);
+      domainAndRange[0] = sort->component()->sort(Sort::KIND);
       domainAndRange[1] = boolSort;
       symbol->addOpDeclaration(domainAndRange, false);  // sort tests are never constructors
       int nrSymbols = symbolInfo.length();

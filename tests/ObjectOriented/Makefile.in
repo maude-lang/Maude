@@ -439,19 +439,34 @@ TESTS = \
 	account \
 	rrobin \
 	rent-a-car-store \
-	parameterization
+	parameterization \
+	oo-list-2 \
+	dining-philosophers5 \
+	dining-philosophers6 \
+	oo-list-3 \
+	oo-peg-game2
 
 MAUDE_FILES = \
 	account.maude \
 	rrobin.maude \
 	rent-a-car-store.maude \
-	parameterization.maude
+	parameterization.maude \
+	oo-list-2.maude \
+	dining-philosophers5.maude \
+	dining-philosophers6.maude \
+	oo-list-3.maude \
+	oo-peg-game2.maude
 
 RESULT_FILES = \
 	account.expected \
 	rrobin.expected \
 	rent-a-car-store.expected \
-	parameterization.expected
+	parameterization.expected \
+	oo-list-2.expected \
+	dining-philosophers5.expected \
+	dining-philosophers6.expected \
+	oo-list-3.expected \
+	oo-peg-game2.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -659,6 +674,41 @@ rent-a-car-store.log: rent-a-car-store
 parameterization.log: parameterization
 	@p='parameterization'; \
 	b='parameterization'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+oo-list-2.log: oo-list-2
+	@p='oo-list-2'; \
+	b='oo-list-2'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+dining-philosophers5.log: dining-philosophers5
+	@p='dining-philosophers5'; \
+	b='dining-philosophers5'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+dining-philosophers6.log: dining-philosophers6
+	@p='dining-philosophers6'; \
+	b='dining-philosophers6'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+oo-list-3.log: oo-list-3
+	@p='oo-list-3'; \
+	b='oo-list-3'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+oo-peg-game2.log: oo-peg-game2
+	@p='oo-peg-game2'; \
+	b='oo-peg-game2'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
