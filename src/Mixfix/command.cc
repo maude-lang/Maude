@@ -137,8 +137,20 @@ SyntacticPreModule::showModule(ostream& s)
 	    s << "  op";
 	  s << (newFollow ? "s " : " ");
 	}
-      if (st.getBasicType() != SymbolType::VARIABLE && opDef.types.size() == 1)
-	s << Token::sortName(opDecl.prefixName.code()) << ' ';  // hack to handle parameterized constant names
+      if (st.getBasicType() != SymbolType::VARIABLE &&
+	  opDef.types.size() == 1 &&
+	  Token::auxProperty(opDecl.prefixName.code()) & Token::AUX_STRUCTURED_SORT)
+	{
+	  //
+	  //	Looks like a parameterized constant so use parameterized sort printing code.
+	  //
+	  if (follow || newFollow)
+	    s << '(';
+	  s << Token::sortName(opDecl.prefixName.code());
+	  if (follow || newFollow)
+	    s << ')';
+	  s << ' ';
+	}
       else 
 	s << opDecl.prefixName << ' ';
       follow = newFollow;
@@ -369,15 +381,15 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
     {
       s << space << "special (";
       space = " ";
-      FOR_EACH_CONST(i, Vector<Hook>, opDef.special)
+      for (const Hook& h : opDef.special)
 	{
 	  static const char* hookTypes[] = {
 	    "id-hook", "op-hook", "term-hook"
 	  };
-	  s << "\n    " << hookTypes[i->type] << ' ' <<
-	    Token::name(i->name);
-	  if (!(i->details.empty()))
-	    s << " (" << i->details << ')';
+	  s << "\n    " << hookTypes[h.type] << ' ' <<
+	    Token::name(h.name);
+	  if (!(h.details.empty()))
+	    s << " (" << h.details << ')';
 	}
       s << ')';
     }

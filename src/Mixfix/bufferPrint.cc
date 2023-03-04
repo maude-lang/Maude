@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -453,8 +453,8 @@ MixfixModule::printSort(Vector<int>& buffer, const Sort* sort, int printFlags)
     {
       Vector<int> parts;
       Token::splitParameterizedSort(name, parts);
-      FOR_EACH_CONST(i, Vector<int>, parts)
-	buffer.append(*i);
+      for (int i : parts)
+	buffer.append(i);
     }
   else
     buffer.append(name);
@@ -470,8 +470,8 @@ MixfixModule::printDotSort(Vector<int>& buffer, const Sort* sort, int printFlags
       Vector<int> parts;
       Token::splitParameterizedSort(name, parts);
       parts[0] = Token::dotNameCode(parts[0]);
-      FOR_EACH_CONST(i, Vector<int>, parts)
-	buffer.append(*i);
+      for (int i : parts)
+	buffer.append(i);
     }
   else
     buffer.append(Token::dotNameCode(name));
@@ -488,8 +488,8 @@ MixfixModule::printVarSort(Vector<int>& buffer, string& fullName, const Sort* so
       Token::splitParameterizedSort(name, parts);
       fullName += Token::name(parts[0]);
       parts[0] = Token::encode(fullName.c_str());
-      FOR_EACH_CONST(i, Vector<int>, parts)
-	buffer.append(*i);
+      for (int i : parts)
+	buffer.append(i);
     }
   else
     {

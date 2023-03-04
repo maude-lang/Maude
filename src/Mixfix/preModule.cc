@@ -83,14 +83,10 @@ PreModule::PreModule(int moduleName, Interpreter* owner)
 
 PreModule::~PreModule()
 {
-  {
-    FOR_EACH_CONST(i, Vector<Import>, imports)
-      i->expr->deepSelfDestruct();
-  }
-  {
-    FOR_EACH_CONST(i, Vector<Parameter>, parameters)
-      i->theory->deepSelfDestruct();
-  }
+  for (Import& i : imports)
+    i.expr->deepSelfDestruct();
+  for (Parameter& p : parameters)
+    p.theory->deepSelfDestruct();
 }
 
 void
@@ -124,15 +120,15 @@ PreModule::addImport(LineNumber lineNumber, ImportModule::ImportMode mode, Modul
 void
 PreModule::processParameters(ImportModule* flatModule)
 {
-  FOR_EACH_CONST(i, Vector<Parameter>, parameters)
+  for (Parameter& p : parameters)
     {
-      if (ImportModule* fm = owner->makeModule(i->theory))
+      if (ImportModule* fm = owner->makeModule(p.theory))
 	{
 	  if (MixfixModule::canHaveAsParameter(getModuleType(), fm->getModuleType()))
 	    {
-	      ImportModule* parameterCopy = owner->makeParameterCopy(i->name.code(), fm);
+	      ImportModule* parameterCopy = owner->makeParameterCopy(p.name.code(), fm);
 	      if (parameterCopy != 0)
-		flatModule->addParameter(i->name, parameterCopy);
+		flatModule->addParameter(p.name, parameterCopy);
 	      else
 		{
 		  flatModule->markAsBad();
@@ -141,7 +137,7 @@ PreModule::processParameters(ImportModule* flatModule)
 	    }
 	  else
 	    {
-	      IssueWarning(LineNumber(i->name.lineNumber()) <<
+	      IssueWarning(LineNumber(p.name.lineNumber()) <<
 			   ": parameterization of " << 
 			   QUOTE(MixfixModule::moduleTypeString(getModuleType())) <<
 			   " " << this << " by " <<
@@ -156,13 +152,13 @@ PreModule::processParameters(ImportModule* flatModule)
 void
 PreModule::processExplicitImports(ImportModule* flatModule)
 {
-  FOR_EACH_CONST(i, Vector<Import>, imports)
+  for (Import& i : imports)
     {
-      if (ImportModule* fm = owner->makeModule(i->expr, flatModule))
+      if (ImportModule* fm = owner->makeModule(i.expr, flatModule))
 	{
 	  if (fm->hasFreeParameters())
 	    {
-	      IssueWarning(i->lineNumber << ": cannot import module " << fm <<
+	      IssueWarning(i.lineNumber << ": cannot import module " << fm <<
 			   " because it has free parameters.");
 	      //
 	      //	Mark the module as bad to avoid cascading warnings and potential
@@ -172,7 +168,7 @@ PreModule::processExplicitImports(ImportModule* flatModule)
 	      flatModule->markAsBad();
 	    }
 	  else
-	    flatModule->addImport(fm, i->mode, i->lineNumber);
+	    flatModule->addImport(fm, i.mode, i.lineNumber);
 	}
       else
 	{

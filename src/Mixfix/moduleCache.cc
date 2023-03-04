@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -58,9 +58,10 @@ ModuleCache::~ModuleCache()
 void
 ModuleCache::regretToInform(Entity* doomedEntity)
 {
-  ImportModule* doomedModule = static_cast<ImportModule*>(doomedEntity);
+  ImportModule* doomedModule = safeCastNonNull<ImportModule*>(doomedEntity);
   ModuleMap::iterator pos = moduleMap.find(doomedModule->id());
-  Assert(pos != moduleMap.end(), "could find self-destructing module " << doomedModule);
+  Assert(pos != moduleMap.end(), "couldn't find self-destructing module " << doomedModule);
+  Assert(pos->second == doomedEntity, "found the wrong self-destructing module " << doomedModule);
   DebugAdvisory("removing module " << doomedModule << " from cache");
   moduleMap.erase(pos);
 }
@@ -299,30 +300,36 @@ ModuleCache::makeSummation(const Vector<ImportModule*>& modules)
   return sum;
 }
 
-void
+int
 ModuleCache::destructUnusedModules()
 {
   //
-  //	This O(n^2) solution to finding unused cached modules is slow but
-  //	simple. If the number of cached modules grows beyond a few hundred
-  //	a more complex O(n) solution based on keeping a linked list of
-  //	candidates would be appropriate. We would need a call back from
-  //	ImportModule to tell us when a module is down to 1 user (us!).
+  //	We return the number of unused modules destructed.
   //
- restart:
-  {
-    FOR_EACH_CONST(i, ModuleMap, moduleMap)
-      {
-	int nrUsers = i->second->getNrUsers();
-	Assert(nrUsers >= 1, "no users");  // we are a user
-	if (nrUsers == 1)
-	  {
-	    DebugAdvisory("module " << i->second << " has no other users");
-	    i->second->deepSelfDestruct();  // invalidates i
-	    goto restart;
-	  }
-      }
-  }
+  int nrDestructed = 0;
+  for (auto i(moduleMap.begin()); i != moduleMap.end(); )
+    {
+      //
+      //	Need to move our iterator before possible invalidation.
+      //
+      auto current(i);
+      ++i;
+
+      int nrUsers = current->second->getNrUsers();
+      DebugAdvisory("examining " << current->second << " nrUsers = " << nrUsers);
+      Assert(nrUsers >= 1, "no users");  // we are a user!
+      if (nrUsers == 1)
+	{
+	  DebugAdvisory("module " << current->second << " has no users other than the cache - destructing it");
+	  //
+	  //	This will invalidate current, but since the module has no other users, it should not remove
+	  //	any other modules from the map and i should still be valid.
+	  //
+	  current->second->deepSelfDestruct();
+	  ++nrDestructed;
+	}
+    }
+  return nrDestructed;
 }
 
 void

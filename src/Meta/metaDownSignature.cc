@@ -112,9 +112,9 @@ MetaLevel::downSignature(DagNode* metaModule, Interpreter* owner)
       //	Pulling down module expressions may have resulted in
       //	the creation of cached modules that no longer have
       //	dependents now that we failed to build the metamodule.
-      //	Thus we now need to tidy the module cache.
+      //	Thus we now need to tidy the module and view caches.
       //	
-      owner->destructUnusedModules();
+      owner->cleanCaches();
     }
   return 0;
 }

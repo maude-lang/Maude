@@ -58,7 +58,7 @@ ViewCache::~ViewCache()
 void
 ViewCache::regretToInform(Entity* doomedEntity)
 {
-  View* doomedView = safeCast(View*, doomedEntity);
+  View* doomedView = safeCastNonNull<View*>(doomedEntity);
   ViewMap::iterator pos = viewMap.find(doomedView->id());
   Assert(pos != viewMap.end(), "could find self-destructing view " << doomedView);
   DebugAdvisory("removing view " << doomedView << " from cache");
@@ -160,30 +160,36 @@ ViewCache::makeViewInstantiation(View* view, const Vector<Argument*>& arguments)
   return copy;
 }
 
-void
+int
 ViewCache::destructUnusedViews()
 {
   //
-  //	This O(n^2) solution to finding unused cached views is slow but
-  //	simple. If the number of cached modules grows beyond a few hundred
-  //	a more complex O(n) solution based on keeping a linked list of
-  //	candidates would be appropriate. We would need a call back from
-  //	ImportModule to tell us when a module is down to 1 user (us!).
+  //	We return the number of views destructed.
   //
- restart:
-  {
-    FOR_EACH_CONST(i, ViewMap, viewMap)
-      {
-	int nrUsers = i->second->getNrUsers();
-	Assert(nrUsers >= 1, "no users");  // we are a user
-	if (nrUsers == 1)
-	  {
-	    DebugAdvisory("view " << i->second << " has no other users");
-	    delete i->second;  // invalidates i
-	    goto restart;
-	  }
-      }
-  }
+  int nrDestructed = 0;
+  for (auto i(viewMap.begin()); i != viewMap.end(); )
+    {
+      //
+      //	Need to move our iterator before possible invalidation.
+      //
+      auto current(i);
+      ++i;
+
+      int nrUsers = current->second->getNrUsers();
+      DebugAdvisory("examining " << current->second << " nrUsers = " << nrUsers);
+      Assert(nrUsers >= 1, "no users");  // we are a user!
+      if (nrUsers == 1)
+	{
+	  DebugAdvisory("module " << current->second << " has no users other than the cache - destructing it");
+	  //
+	  //	This will invalidate current, but since the view has no other users, it should not remove
+	  //	any other views from the map and i should still be valid.
+	  //
+	  delete current->second;
+	  ++nrDestructed;
+	}
+    }
+  return nrDestructed;
 }
 
 void

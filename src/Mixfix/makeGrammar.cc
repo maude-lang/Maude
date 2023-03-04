@@ -88,9 +88,9 @@ MixfixModule::makeGrammar(bool complexFlag)
 void
 MixfixModule::makeParameterizedSortProductions()
 {
-  FOR_EACH_CONST(i, SortMap, sortNames)
+  for (const auto& i : sortNames)
     {
-      int name= i->first;
+      int name= i.first;
       if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT)
 	{
 	  //
@@ -1293,9 +1293,8 @@ MixfixModule::makeLabelProductions()
 #endif
 
   static Vector<int> rhs(1);
-  FOR_EACH_CONST(i, set<int>, potentialLabels)
+  for (int label : potentialLabels)
     {
-      int label = *i;
       rhs[0] = label;
       parser->insertProduction(LABEL, rhs, 0, emptyGather, MixfixParser::MAKE_LABEL, label);
     }
@@ -1455,24 +1454,21 @@ MixfixModule::makeSpecialProductions()
     rhs[0] = t;
     parser->insertProduction(ENDS_IN_COLON_NT, rhs, 0, emptyGather);
   }
-  {
-    FOR_EACH_CONST(i, IntMap, iterSymbols)
-      {
-	//
-	//	For each iter symbol f we create a special terminal
-	//	[ f ] which represents f^n for any positive interger n.
-	//
-	int iterSymbolNameCode = i->first;
-	string str("[ ");
-	str += Token::name(iterSymbolNameCode);
-	str += " ]";
-	//cout << "added terminal " << t << endl;
-	int t = Token::encode(str.c_str());
-	parser->insertIterSymbolTerminal(iterSymbolNameCode, t);
-	rhs[0] = t;
-	parser->insertProduction(i->second, rhs, 0, emptyGather);
-      }
-  }
+  for (const auto& i : iterSymbols)
+    {
+      //
+      //	For each iter symbol f we create a special terminal
+      //	[ f ] which represents f^n for any positive interger n.
+      //
+      int iterSymbolNameCode = i.first;
+      string str("[ ");
+      str += Token::name(iterSymbolNameCode);
+      str += " ]";
+      int t = Token::encode(str.c_str());
+      parser->insertIterSymbolTerminal(iterSymbolNameCode, t);
+      rhs[0] = t;
+      parser->insertProduction(i.second, rhs, 0, emptyGather);
+    }
 }
 
 void

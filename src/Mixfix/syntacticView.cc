@@ -118,10 +118,13 @@ SyntacticView::handleVarDecls()
   Sort* fromSort = 0;
   Sort* toSort = 0;
   TypeList::const_iterator j = varDefs.begin();
-  FOR_EACH_CONST(i, VarDeclList, varDecls)
+  for (const VarDecl& vd : varDecls)
     {
       if (fromSort == 0)
 	{
+	  //
+	  //	Get fromSort and toSort from current definition.
+	  //
 	  int code = j->tokens[0].code();
 	  fromSort = fromTheory->findSort(code);
 	  if (fromSort == 0)
@@ -158,16 +161,19 @@ SyntacticView::handleVarDecls()
 	      fromSort = fromSort->component()->sort(Sort::KIND);
 	      toSort = toSort->component()->sort(Sort::KIND);
 	    }
+	  //
+	  //	Move to next definition.
+	  //
 	  ++j;
 	}
       //
       //	We can add variable aliases to a module at any point before
       //	we first do parsing in the module.
       //
-      fromTheoryVariableAliases.insert(MixfixModule::AliasMap::value_type(i->varName.code(), fromSort));
-      toModuleVariableAliases.insert(MixfixModule::AliasMap::value_type(i->varName.code(), toSort));
-      if (i->lastWithCurrentDef)
-	fromSort = 0;
+      fromTheoryVariableAliases.insert(MixfixModule::AliasMap::value_type(vd.varName.code(), fromSort));
+      toModuleVariableAliases.insert(MixfixModule::AliasMap::value_type(vd.varName.code(), toSort));
+      if (vd.lastWithCurrentDef)
+	fromSort = 0;  // next variable will use next definition
     }
   return true;
 }

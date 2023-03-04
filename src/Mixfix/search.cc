@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -133,8 +133,8 @@ Interpreter::search(const Vector<Token>& bubble,
     {
       initial->deepSelfDestruct();
       target->deepSelfDestruct();
-      FOR_EACH_CONST(i, Vector<ConditionFragment*>, condition)
-	delete *i;
+      for (ConditionFragment* cf : condition)
+	delete cf;
       return;
     }
   Pattern* pattern = (searchKind == VU_NARROW ||
@@ -357,7 +357,7 @@ Interpreter::searchCont(Int64 limit, bool debug)
 }
 
 void
-Interpreter::showSearchPath(int stateNr)
+Interpreter::showSearchPath(int stateNr, bool showRule)
 {
   RewriteSequenceSearch* savedRewriteSequenceSearch = dynamic_cast<RewriteSequenceSearch*>(savedState);
   if (savedRewriteSequenceSearch == 0)
@@ -380,7 +380,12 @@ Interpreter::showSearchPath(int stateNr)
     {
       int sn = steps[i];
       if (sn != 0)
-	cout << "===[ " << savedRewriteSequenceSearch->getStateRule(sn) << " ]===>\n";
+	{
+	  if (showRule)
+	    cout << "===[ " << savedRewriteSequenceSearch->getStateRule(sn) << " ]===>\n";
+	  else
+	    cout << "--->\n";
+	}
       DagNode* d = savedRewriteSequenceSearch->getStateDag(sn);
       cout << "state " << sn << ", " << d->getSort() << ": " << d << '\n';
     }

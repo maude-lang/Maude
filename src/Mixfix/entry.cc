@@ -139,10 +139,10 @@ MixfixModule::checkIterated(Symbol* symbol, const Vector<Sort*>& domainAndRange)
       //
       //	At least one symbol aliasing the iterated forms of symbol.
       //
-      FOR_EACH_CONST(j, NumberToSymbolMap, i->second)
+      for (const auto& j : i->second)
 	{
+	  Symbol* pSymbol = j.second;
 	  int overloadType = ADHOC_OVERLOADED;
-	  Symbol* pSymbol = j->second;
 	  const Vector<Sort*>& pDomainAndRange = pSymbol->getOpDeclarations()[0].getDomainAndRange();
 
 	  bool sameRange = (domainAndRange[1]->component() == pDomainAndRange[1]->component());

@@ -121,6 +121,22 @@ Interpreter::~Interpreter()
 }
 
 void
+Interpreter::cleanCaches()
+{
+  //
+  //	We can have constructed modules that are users of constructed modules
+  //	and/or view instantiations.
+  //	We can also have view instantiations that are user of constructed
+  //	modules and/or view instantiations.
+  //	So we iterate the purge up to fixed point.
+  //	This is expensive for long dependency chains but in practice long
+  //	dependency chains rare.
+  //
+  while (destructUnusedModules() + destructUnusedViews() > 0)
+    ;
+}
+
+void
 Interpreter::setFlag(Flags flag, bool polarity)
 {
   if (polarity)
@@ -296,10 +312,7 @@ Interpreter::updateSet(set<int>& target, bool add)
   if (add)
     target.insert(selected.begin(), selected.end());
   else
-    {
-      FOR_EACH_CONST(i, set<int>, selected)
-	target.erase(*i);
-    }
+    target.erase(selected.begin(), selected.end());
   selected.clear();
 }
 
@@ -619,6 +632,10 @@ Interpreter::handleArgument(const ViewExpression* expr,
 ImportModule*
 Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosingObject)
 {
+  //
+  //	All successfully contructed modules end up in the ModuleCache so we need no worry
+  //	about garbage collecting submodules if we fail part way through a construction.
+  //
   switch (expr->getType())
     {
     case ModuleExpression::MODULE:
@@ -646,11 +663,10 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
       }
     case ModuleExpression::SUMMATION:
       {
-	const list<ModuleExpression*>& modules = expr->getModules();
 	Vector<ImportModule*> fms;
-	FOR_EACH_CONST(i, list<ModuleExpression*>, modules)
+	for (ModuleExpression* m : expr->getModules())
 	  {
-	    if (ImportModule* fm = makeModule(*i, enclosingObject))
+	    if (ImportModule* fm = makeModule(m, enclosingObject))
 	      {
 		if (fm->hasFreeParameters())
 		  {

@@ -36,14 +36,22 @@ moduleExprDot	:	tokenBarDot expectedDot
 		|	instantExpr expectedDot
 		|	moduleExpr '+' moduleExprDot
 			{
-			  $$ = new ModuleExpression($1, $3);
+			  if ($3)
+			    $$ = new ModuleExpression($1, $3);
+			  else
+			    {
+			      IssueWarning(LineNumber($2.lineNumber()) <<
+			                   ": missing module expression after " << QUOTE($2) << ".");
+			      $$ = $1;
+			    }
 			}
-		|	ENDS_IN_DOT
+		|	tokenDot
 			{
-			  Token t;
-			  t.dropChar($1);
-			  missingSpace(t);
-			  $$ = new ModuleExpression(t);
+			  $$ = new ModuleExpression($1);
+			}
+		|	'.'
+			{
+			  $$ = 0;
 			}
 		;
 
@@ -148,9 +156,9 @@ mapping		:	KW_SORT sortName KW_TO sortName
 		|	KW_OP			{ lexBubble(BAR_COLON | BAR_TO, 1); }
 			fromSpec KW_TO		{ lexBubble(BAR_COMMA | BAR_LEFT_BRACKET | BAR_RIGHT_PAREN, 1); }
 			toAttributes		{}
-		|	KW_STRAT identifier	{ currentRenaming->addStratMapping($2); }
+		|	KW_STRAT stratName	{ currentRenaming->addStratMapping($2); }
 			fromStratSpec
-			KW_TO identifier 	{ currentRenaming->addStratTarget($6); }
+			KW_TO stratName 	{ currentRenaming->addStratTarget($6); }
 		|	KW_CLASS sortName KW_TO sortName
 			{
 			  currentRenaming->addClassMapping($2, $4);
@@ -181,7 +189,7 @@ mapping		:	KW_SORT sortName KW_TO sortName
  *	The ':' alternative forces lookahead which allows the lexer to grab the bubble.
  */
 fromSpec	:	':'			{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
-			typeList arrow typeName {}
+			domainAndRange {}
 		|				{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
 		;
 
@@ -218,7 +226,7 @@ toAttribute	:	KW_PREC IDENTIFIER	{ currentRenaming->setPrec($2); }
 		;
 
 /*
- *	View(s.
+ *	Views.
  */
 view		:	KW_VIEW			{ lexerIdMode(); }
 			token
@@ -235,8 +243,10 @@ view		:	KW_VIEW			{ lexerIdMode(); }
 			  CV->addTo($9);
 			  lexerInitialMode();
 			  fileTable.endModule(lineNumber);
-			  interpreter.insertView(($3).code(), CV);
+			  bool displacedView = interpreter.insertView(($3).code(), CV);
 			  CV->finishView();
+			  if (displacedView)
+			    interpreter.cleanCaches();
 			}
 		;
 
@@ -297,15 +307,16 @@ viewDeclaration	:	KW_SORT sortName KW_TO sortDot
 			}
 		;
 
+sortDot		:	sortName expectedDot		{ $$ = $1; }
+		|	tokenDot
 		;
 
-sortDot		:	sortName expectedDot		{ $$ = $1; }
-		|	ENDS_IN_DOT
+domainAndRange	:	typeName typeList arrow typeName
+		|	arrow typeName
+		|	typeName
 			{
-			  Token t;
-			  t.dropChar($1);
-			  missingSpace(t);
-			  $$ = t;
+			  IssueWarning(LineNumber(lineNumber) <<
+				       ": missing " << QUOTE("->") << " in constant mapping.");
 			}
 		;
 
@@ -317,7 +328,7 @@ viewEndOpMap	:	':'
 			  Token::peelParens(lexerBubble);  // remove any enclosing parens from op name
 			  CV->addOpMapping(lexerBubble);
 			}
-			typeList arrow typeName KW_TO
+			domainAndRange KW_TO
 			{
 			  lexBubble(END_STATEMENT, 1);
 			}
@@ -409,15 +420,15 @@ endMsgMap	:	':'
 			}
 		;
 
-strategyCall	:	identifier
+strategyCall	:	stratName
 			{
 			  strategyCall.resize(1);
 			  strategyCall[0] = $1;
 			}
-		|	identifier '('			{ lexBubble(BAR_RIGHT_PAREN, 1); }
+		|	stratName '('			{ lexBubble(BAR_RIGHT_PAREN, 1); }
 			')'
 			{
-			  // Adds the identifier and parentheses to the lexer bubble
+			  // Adds the stratName and parentheses to the lexer bubble
 			  int bubbleSize = lexerBubble.length();
 			  strategyCall.resize(bubbleSize + 3);
 			  strategyCall[0] = $1;
@@ -427,11 +438,11 @@ strategyCall	:	identifier
 			  strategyCall[bubbleSize + 2] = $4;
 			}
 
-viewStratMap	:	identifier
+viewStratMap	:	stratName
 			{
 			  CV->addStratMapping($1);
 			}
-			stratSignature KW_TO identifier '.'
+			stratSignature KW_TO stratName '.'
 			{
 			  CV->addStratTarget($5);
 			}
@@ -463,18 +474,12 @@ viewStratMap	:	identifier
 			}
 		;
 
-endBubble	:	'.' {}
-		|	ENDS_IN_DOT
-			{
-			  Token t;
-			  t.dropChar($1);
-			  missingSpace(t);
-			  lexerBubble.append(t);
-			}
+endBubble	:	'.'		{}
+		|	tokenDot	{ lexerBubble.append($1); }
 		;
 
-parenBubble	:	'(' 			{ lexBubble(BAR_RIGHT_PAREN, 1); }
-			')'			{}
+parenBubble	:	'(' 		{ lexBubble(BAR_RIGHT_PAREN, 1); }
+			')'		{}
 		;
 
 /*
@@ -495,14 +500,8 @@ module		:	KW_MOD		{ lexerIdMode(); }
 			}
 		;
 
-dot		:	'.' {}
-		|	ENDS_IN_DOT
-			{
-			  Token t;
-			  t.dropChar($1);
-			  missingSpace(t);
-			  store(t);
-			}
+dot		:	'.'		{}
+		|	tokenDot	{ store($1); }
 		;
 
 parameters	:	'{' parameterList '}' {}
@@ -547,14 +546,20 @@ decList		:	decList declaration
 
 declaration	:	KW_IMPORT moduleExprDot
 			{
-			  CM->addImport($1, $2);
+			  if ($2)
+			    CM->addImport($1, $2);
+			  else
+			    {
+			      IssueWarning(LineNumber($1.lineNumber()) <<
+			                   ": missing module expression after " << QUOTE($1) << ".");
+			    }
 			}
 
 		|	KW_SORT			{ clear(); }
-			sortNameList dot	{ CM->addSortDecl(tokenSequence); }
+			endSortNameList		{ CM->addSortDecl(tokenSequence); }
 
 		|	KW_SUBSORT		{ clear(); }
-			subsortList dot		{ CM->addSubsortDecl(tokenSequence); }
+			endSubsortList		{ CM->addSubsortDecl(tokenSequence); }
 
 		|	KW_OP			{ lexBubble(BAR_COLON, 1); }
 			':'			{ Token::peelParens(lexerBubble); CM->addOpDecl(lexerBubble); }
@@ -617,16 +622,10 @@ declaration	:	KW_IMPORT moduleExprDot
 			  CM->endMsg();
 			}
 
-		|	KW_CLASS sortName
-			{
-			  CM->addClassDecl($2);
-			}
-			classDef '.'
-			{
-			}
+		|	KW_CLASS classDecl
 
 		|	KW_SUBCLASS		{ clear(); }
-			subsortList dot		{ CM->addSubclassDecl(tokenSequence); }
+			endSubsortList		{ CM->addSubclassDecl(tokenSequence); }
 		
 		|	error '.'
 		        {
@@ -653,19 +652,42 @@ declaration	:	KW_IMPORT moduleExprDot
 			}
 		;
 
-classDef	:	{}
-		|	'|' cPairList {}
+classDecl	:	sortName
+			{
+			  CM->addClassDecl($1);
+			}
+			classDef
+			{
+			}
+		|	tokenDot
+			{
+			  CM->addClassDecl($1);
+			}
 		;
 
-cPairList	:	cPair
-		|	cPairList ',' cPair
+classDef	:	expectedDot
+		|	'|' cPairList finalPair {}
 		;
 
-cPair		:	tokenBarDot ':' typeName1
+finalPair	:	attributeName ':' typeName1Dot
 			{
 			  CM->addAttributePair($1, $3, $3 ? tokenSequence : singleton);
 			}
-		|	tokenBarDot typeName1
+		|	attributeName typeName1Dot
+			{
+			  CM->addAttributePairNoColon($1, $2, $2 ? tokenSequence : singleton);
+			}
+		;
+
+cPairList	:	cPairList cPair ','
+		|
+		;
+
+cPair		:	attributeName ':' typeName1
+			{
+			  CM->addAttributePair($1, $3, $3 ? tokenSequence : singleton);
+			}
+		|	attributeName typeName1
 			{
 			  CM->addAttributePairNoColon($1, $2, $2 ? tokenSequence : singleton);
 			}
@@ -698,7 +720,7 @@ stratIdList	: 	stratIdList stratId
 		|	stratId
 		;
 
-stratId		:	identifier	{ CM->addStratDecl($1); }
+stratId		:	stratName	{ CM->addStratDecl($1); }
 		;
 
 stratSignature	:	'@'
@@ -765,11 +787,30 @@ typeName1	:	sortName
 			  singleton[0] = $1;
 			  $$ = false;
 			}
-		|	'['			{ clear(); }
-			sortNames ']'
+		|	kind
 			{
 			  $$ = true;
 			}
+		;
+		
+typeName1Dot	:	sortName expectedDot
+			{
+			  singleton[0] = $1;
+			  $$ = false;
+			}
+		|	tokenDot
+			{
+			  singleton[0] = $1;
+			  $$ = false;
+			}
+		|	kind expectedDot
+			{
+			  $$ = true;
+			}
+		;
+
+kind		:	'['			{ clear(); }
+			sortNames ']'
 		;
 
 typeName	:	sortName
@@ -924,18 +965,26 @@ expectedDot	:	'.' {}
 		;
 
 /*
- *	Sort and subsort lists.
+ *	Sort lists.
  */
 sortNameList	:	sortNameList sortName	{ store($2); }
 		|	sortName     		{ store($1); }
 		;
 
-
-subsortList	:	subsortList '<'		{ store($2); }
-			sortNameList
-		|	sortNameList '<'	{ store($2); }
-			sortNameList
+		
+endSortNameList :	tokenDot		{ store($1); }
+	    	|	sortNameList dot
 		;
+
+/*
+ *	Subsort lists.
+ */
+subsortList	:	subsortList sortNameList '<'	{ store($3); }
+		|	sortNameList '<'		{ store($2); }
+	    	;
+
+endSubsortList	:	subsortList endSortNameList
+	       	;
 
 /*
  *	Sort names
@@ -961,57 +1010,107 @@ sortNameFrags	:	sortNameFrags ','	{ fragStore($2); }
 			sortNameFrag		{}
 		|	sortNameFrag		{}
 		;
+		
+tokenDot	:	ENDS_IN_DOT
+			{
+			  Token t;
+			  t.dropChar($1);
+			  missingSpace(t);
+			  $$ = t;
+			}
 
 /*
- *	Token types.
+ *	Sets of tokens returned in <ID_MODE>.
  */
-token		:	identifier | startKeyword | midKeyword | attrKeyword | '.'
-		;
-
-tokenBarDot	:	inert | ',' | KW_TO
-		|	startKeyword | midKeyword | attrKeyword
-		;
-
-tokenBarColon	:	identifier | startKeyword | attrKeyword | '.'
-		|	'<' | KW_ARROW | KW_PARTIAL | '=' | KW_ARROW2 | KW_IF
-		;
-
-sortToken	:	IDENTIFIER | startKeyword | attrKeyword2
-		|	'=' | '|' | '+' | '*'
-		|	KW_ARROW2 | KW_IF | KW_IS | KW_LABEL | KW_TO | KW_FROM
-		;
-
-endsInDot	:	'.' | ENDS_IN_DOT
-		;
 
 /*
- *	Keywords (in id mode).
+ *	Single token sort names are the most restricted general class of token.
+ *	We exclude
+ *	  '(' ')'
+ *	for all token types to avoid parentheses balancing issues
+ *	  ':' KW_ARROW KW_PARTIAL
+ *	to avoid ambiguity in operator declarations
+ *	  ':' '@'
+ *	to avoid ambiguity in strategy declarations
+ *	  '<'
+ *	to avoid ambiguity in subsort declarations
+ *	  ':' KW_COLON2 KW_ASSIGN KW_ID
+ *	because colons are not allowed in sort names (full variable name confusion)
+ *	  '.' ENDS_IN_DOT
+ *	because periods are not allowed sort names (metalevel constant confusion)
+ *	  '[' ',' ']'
+ *	to avoid ambiguity in kinds
+ *	  '{' ',' '}'
+ *	to avoid ambiguity in parameterized sort names
  */
-inert		:	IDENTIFIER | '{' | '}' | '+' | '*' | '|' | KW_COLON2 | KW_LABEL
-		|	KW_FROM | KW_IS
-		;
+sortToken	:	IDENTIFIER
+ 
+ 		|	KW_IMPORT | KW_SORT | KW_SUBSORT | KW_OP | KW_OPS | KW_VAR
+		|	KW_STRAT | KW_DSTRAT
+		|	KW_CLASS | KW_SUBCLASS | KW_ATTR | KW_MSG | KW_MSGS
+		|	KW_MB | KW_CMB | KW_EQ | KW_CEQ | KW_RL | KW_CRL
+		|	KW_SD | KW_CSD
+		|	KW_ENDM | KW_ENDV
 
-identifier	:	inert | ENDS_IN_DOT | ',' | KW_TO
-		;
+		|	KW_IF | KW_IS | KW_FROM | KW_TO | KW_LABEL
 
-startKeyword	:	KW_MSG | startKeyword2	// TODO if we add KW_STRATS here  => 71 conflicts red-red appear (there seem to be no need)
-		;
-
-startKeyword2	:	KW_IMPORT | KW_SORT | KW_SUBSORT | KW_OP | KW_OPS | KW_VAR | KW_DSTRAT
-		|	KW_MSGS | KW_CLASS | KW_SUBCLASS
-		|	KW_MB | KW_CMB | KW_EQ | KW_CEQ | KW_RL | KW_CRL | KW_ENDM | KW_ENDV
-		|	KW_SD | KW_CSD | KW_ATTR
-		;
-
-midKeyword	:	'<' | ':' | KW_ARROW | KW_PARTIAL | '=' | KW_ARROW2 | KW_IF
-		;
-
-attrKeyword	:	'[' | ']' | attrKeyword2
-		;
-
-attrKeyword2	:	KW_ASSOC | KW_COMM | KW_ID | KW_IDEM | KW_ITER | KW_LEFT | KW_RIGHT
-		|	KW_PREC | KW_GATHER | KW_STRAT | KW_POLY | KW_MEMO | KW_CTOR
+		|	KW_ASSOC | KW_COMM | KW_IDEM | KW_ITER | KW_LEFT | KW_RIGHT
+		|	KW_PREC | KW_GATHER | KW_ASTRAT | KW_POLY | KW_MEMO | KW_CTOR
 		|	KW_LATEX | KW_SPECIAL | KW_FROZEN | KW_METADATA
 		|	KW_CONFIG | KW_OBJ | KW_DITTO | KW_FORMAT
 		|	KW_ID_HOOK | KW_OP_HOOK | KW_TERM_HOOK | KW_PCONST
+		
+		|	'=' | '|' | '+' | '*' |	KW_ARROW2
+		;
+
+/*
+ *	An unrestricted token adds back these excluded tokens except  '(' ')'
+ */
+token		:	sortToken | ENDS_IN_DOT | KW_ID 
+		|	':' | '@' | '<' | ',' | '.' | '[' | ']' | '{' | '}'
+		|	KW_ARROW | KW_PARTIAL | KW_COLON2 | KW_ASSIGN
+		;
+
+/*
+ *	A strategy name excludes
+ *	  ':' '@'
+ *	to avoid ambiguity in strategy declarations
+ */
+stratName	:	sortToken | ENDS_IN_DOT | KW_ID 
+		|	'<' | ',' | '.' | '[' | ']' | '{' | '}'
+		|	KW_ARROW | KW_PARTIAL | KW_COLON2 | KW_ASSIGN
+		;
+
+/*
+ *	An attribute name excludes
+ *	  ',' '[' ']' '{' '}'
+ *	to avoid the formation of illegal operator names
+ */
+attributeName	:	sortToken | ENDS_IN_DOT | KW_ID 
+		|	':' | '@' | '<' | '.'
+		|	KW_ARROW | KW_PARTIAL | KW_COLON2 | KW_ASSIGN
+		;
+
+/*
+ *	A tokenBarColon (used for variable names and single token operator names) excludes
+ *	  ':'
+ *	to avoid ambiguity in variable declarations and ops declarations.
+ */
+tokenBarColon	:	sortToken | ENDS_IN_DOT | KW_ID 
+		|	'@' | '<' | ',' | '.' | '[' | ']' | '{' | '}'
+		|	KW_ARROW | KW_PARTIAL | KW_COLON2 | KW_ASSIGN
+		;
+
+/*
+ *	For parsing modules expressions we split off
+ *	  '.' ENDS_IN_DOT
+ *	into a separate class so that M. can be overparsed as M . rather than M. .
+ *	and a bare . without a terminating dot is not overparsed as module name.
+ */
+tokenBarDot	:	sortToken | KW_ID 
+		|	':' | '@' | '<' | ',' | '[' | ']' | '{' | '}'
+		|	KW_ARROW | KW_PARTIAL | KW_COLON2 | KW_ASSIGN
+		;
+
+endsInDot	:	'.' | ENDS_IN_DOT
 		;

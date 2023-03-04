@@ -288,14 +288,14 @@ MetaLevel::downModule(DagNode* metaModule)
 				  m->checkFreshVariableNames();
 				  cache.insert(metaModule, m);
 				  //
-				  //	We may have displace a module from the
-				  //	metamodule cache generating garbage in
-				  //	the expression. Also there may be an
-				  //	accumulation of garbage anyway from meta-meta
-				  //	processing so we should tidy the (expression)
-				  //	module cache regularly.
+				  //	We may have displaced a module from the metamodule cache.
+				  //	The displaced module may have had parameter and imports
+				  //	constructed for it which could now be orphans. Now that
+				  //	any parameters and imports of this new module have been
+				  //	processed, the module system is quiescent and we can
+				  //	purge any orphans.
 				  //
-				  owner->destructUnusedModules();
+				  owner->cleanCaches();
 				  return m;
 				}
 			    }
@@ -315,12 +315,11 @@ MetaLevel::downModule(DagNode* metaModule)
       //
       m->deepSelfDestruct();
       //
-      //	Pulling down module expressions may have resulted in
-      //	the creation of cached modules that no longer have
-      //	dependents now that we failed to build the metamodule.
-      //	Thus we now need to tidy the module cache.
+      //	Processing module expressions for parameters and imports may have resulted in the
+      //	construction of modules and views that are now orphaned because we failed to build
+      //	the metamodule. We purge these now.
       //	
-      owner->destructUnusedModules();
+      owner->cleanCaches();
     }
   return 0;
 }

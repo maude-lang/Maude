@@ -55,8 +55,8 @@ ViewExpression::deepSelfDestruct()
   if (isInstantiation())
     {
       view->deepSelfDestruct();
-      FOR_EACH_CONST(i, Vector<ViewExpression*>, arguments)
-	(*i)->deepSelfDestruct();
+      for (ViewExpression* v : arguments)
+	v->deepSelfDestruct();
     }
   delete this;
 }

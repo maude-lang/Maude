@@ -26,6 +26,7 @@
 #ifndef _token_hh_
 #define _token_hh_
 #include <gmpxx.h>
+#include <vector>
 #include "rope.hh"
 #include "stringTable.hh"
 #include "lineNumber.hh"
@@ -130,8 +131,6 @@ private:
       FLAG_BIT = 0x40000000	// we set this bit to create flagged codes
     };
 
-  static void bufferExpandTo(int size);
-  static void reallocateBuffer(int length);
   static void checkForSpecialProperty(const char* tokenString);
   static int computeAuxProperty(const char* tokenString);
   static const char* skipSortName(const char* tokenString, bool& parameterized);
@@ -139,8 +138,7 @@ private:
   static StringTable stringTable;
   static Vector<int> specialProperties;
   static Vector<int> auxProperties;
-  static char* buffer;
-  static int bufferLength;
+  static vector<char> buffer;
 
   int codeNr;
   int lineNr;
@@ -215,13 +213,6 @@ Token::unBackQuoteSpecials(int code)
   if (s[0] == '`' && specialChar(s[1]) && s[2] == '\0')
     return encode(s + 1);
   return code;
-}
-
-inline void
-Token::bufferExpandTo(int length)
-{
-  if (length > bufferLength)
-    reallocateBuffer(length);
 }
 
 inline void

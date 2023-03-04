@@ -40,8 +40,7 @@
 StringTable Token::stringTable;
 Vector<int> Token::specialProperties;
 Vector<int> Token::auxProperties;
-char* Token::buffer = 0;
-int Token::bufferLength = 0;
+vector<char> Token::buffer;
 
 ostream&
 operator<<(ostream& s, const Token& token)
@@ -115,18 +114,6 @@ Token::printTokenVector(ostream& s,
     }
 }
 
-void
-Token::reallocateBuffer(int length)
-{
-  length *= 2;  // to avoid piecemeal expansion
-  char* newBuffer = new char[length];
-  // FIXME Undefined behaviour when buffer is null and that happens
-  (void) memcpy(newBuffer, buffer, bufferLength);
-  delete [] buffer;
-  buffer = newBuffer;
-  bufferLength = length;
-}
-
 int
 Token::makeParameterInstanceName(int parameterCode, int originalCode)
 {
@@ -145,14 +132,14 @@ Token::fixUp(const char* tokenString, int& lineNumber)
   //	We also convert \t characters to spaces.
   //
   int nrBackslashNewlineCombos = 0;
-  int j = 0;
+  buffer.clear();
   for (int i = 0;; i++)
     {
       char c = tokenString[i];
       if (c == '\\' && tokenString[i + 1] == '\n')
 	{
 	  //
-	  //	Fix up \ newline case.
+	  //	Skip over \ newline pair.
 	  //
 	  ++i;
 	  ++nrBackslashNewlineCombos;
@@ -165,14 +152,12 @@ Token::fixUp(const char* tokenString, int& lineNumber)
 		   ": tab character in string literal - replacing it with space");
 	      c = ' ';
 	    }
-	  bufferExpandTo(j + 1);
-	  buffer[j] = c;
-	  ++j;
+	  buffer.push_back(c);
 	  if (c == '\0')
 	    break;
 	}
     } 
-  codeNr = encode(buffer);
+  codeNr = encode(&buffer[0]);
   lineNr = lineNumber;
   lineNumber += nrBackslashNewlineCombos;
 }
@@ -183,29 +168,25 @@ Token::fixUp(const char* tokenString)
   //
   //	Remove \ newline sequences.
   //
-  int nrBackslashNewlineCombos = 0;
-  int j = 0;
+  buffer.clear();
   for (int i = 0;; i++)
     {
       char c = tokenString[i];
       if (c == '\\' && tokenString[i + 1] == '\n')
 	{
 	  //
-	  //	Fix up \ newline case.
+	  //	Skip over \ newline pair.
 	  //
 	  ++i;
-	  ++nrBackslashNewlineCombos;
 	}
       else
 	{
-	  bufferExpandTo(j + 1);
-	  buffer[j] = c;
-	  ++j;
+	  buffer.push_back(c);
 	  if (c == '\0')
 	    break;
 	}
-    } 
-  return encode(buffer);
+    }
+  return encode(&buffer[0]);
 }
 
 void
@@ -822,7 +803,7 @@ Token::ropeToPrefixNameCode(const Rope& r)
 int
 Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble)
 {
-  int nrTokens = opBubble.length();
+  int nrTokens = opBubble.size();
   if (nrTokens == 1)
     {
       int code = opBubble[0].codeNr;
@@ -831,8 +812,8 @@ Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble)
       if (!specialChar(stringTable.name(code)[0]))
         return code;
     }
-  int pos = 0;
   bool needBQ = false;
+  buffer.clear();
   for (int i = 0; i < nrTokens; i++)
     {
       const char* name = stringTable.name(opBubble[i].codeNr);
@@ -842,21 +823,16 @@ Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble)
       else if (c == '_' || c == '`')
         needBQ = false;
       if (needBQ)
-        {
-          bufferExpandTo(pos + 1);
-          buffer[pos++] = '`';
-        }
+	buffer.push_back('`');
       while (*name != '\0')
-        {
-          c = *name++;
-          bufferExpandTo(pos + 1);
-          buffer[pos++] = c;
-        }
+	{
+	  c = *name++;
+	  buffer.push_back(c);
+	}
       needBQ = !(specialChar(c) || c == '_');
     }
-  bufferExpandTo(pos + 1);
-  buffer[pos] = '\0';
-  return encode(buffer);
+  buffer.push_back('\0');
+  return encode(&buffer[0]);
 }
 
 void

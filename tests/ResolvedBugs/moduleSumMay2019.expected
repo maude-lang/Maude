@@ -1,7 +1,9 @@
 fmod FOO is
   protecting NAT + QID .
 endfm
-Warning: <standard input>, line 14 (fmod FOO): syntax error
-Warning: <standard input>, line 17: unexpected end-of-input while parsing
-    module FOO.
+Warning: <standard input>, line 13 (fmod FOO): missing module expression after
+    +.
+fmod FOO is
+  protecting NAT + FLOAT .
+endfm
 Bye.

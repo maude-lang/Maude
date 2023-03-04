@@ -144,8 +144,8 @@ in					RETURN(KW_IN)
 
 <INITIAL>{
 th|fth|sth|oth|mod|fmod|smod|omod|obj	RETURN(KW_MOD)  // need to know which one we saw
-oo					RETURN(KW_OO)
-view					RETURN(KW_VIEW);
+view					RETURN(KW_VIEW)  // needed for line number handling
+oo					return KW_OO;
 load					return KW_LOAD;
 sload					return KW_SLOAD;
 pwd					return KW_PWD;
@@ -243,6 +243,7 @@ dump					return KW_DUMP;
 break					return KW_BREAK;
 breakdown				return KW_BREAKDOWN;
 path					return KW_PATH;
+state|states				return KW_STATE;
 label|labels				return KW_LABEL;
 profile					return KW_PROFILE;
 number					return KW_NUMBER;
@@ -433,7 +434,7 @@ if					{
 					  else
 					    STORE
 					}
-assoc|associative|comm|commutative|id:|identity:|idem|idempotent|iter|iterated|left|right|prec|precedence|gather|metadata|strat|strategy|frozen|poly|polymorphic|ctor|constructor|latex|special|config|configuration|obj|object|msg|message|ditto|format|memo	{
+assoc|associative|comm|commutative|id:|identity:|idem|idempotent|iter|iterated|left|right|prec|precedence|gather|metadata|strat|strategy|frozen|poly|polymorphic|ctor|constructor|latex|special|config|configuration|obj|object|msg|message|ditto|format|memo|pconst	{
 					  if (parenCount == 0 && (terminationSet & BAR_OP_ATTRIBUTE) && lexerBubble.length() >= minLength)
 					    {
 					      yyless(0);  // need to re-lex it to get the correct return value
@@ -497,7 +498,7 @@ assoc|associative|comm|commutative|id:|identity:|idem|idempotent|iter|iterated|l
   *	on to the input stream to be re-lexed in a new mode.
   */
 <END_STATEMENT_MODE>{
-pr|protecting|ex|extending|us|using|inc|including|sort|sorts|subsort|subsorts|op|ops|var|vars|mb|cmb|eq|cq|ceq|rl|crl|sd|csd|strat|strats|end(th|oth|fth|sth|m|fm|sm|om|o|v|sv)|jbo|msg|msgs|class|subclass|subclasses		{
+pr|protecting|ex|extending|us|using|inc|including|gb|generated-by|sort|sorts|subsort|subsorts|op|ops|var|vars|mb|cmb|eq|cq|ceq|rl|crl|sd|csd|strat|strats|end(th|oth|fth|sth|m|fm|sm|om|o|v|sv)|jbo|msg|msgs|class|subclass|subclasses		{
 					  yyless(0);  // BUG - need to deal with white space and comments after the .
 					  yy_pop_state();
 					  RETURN_SAVED(savedReturn)

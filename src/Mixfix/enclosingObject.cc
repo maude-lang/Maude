@@ -160,8 +160,8 @@ EnclosingObject::addInAllConflicts(const EnclosingObject* innerObject)
 void
 EnclosingObject::addConflictsWithBoundParameters(const EnclosingObject* innerObject, int bareParameterName)
 {
-  FOR_EACH_CONST(i, ParameterSet, innerObject->boundParameters)
-    addConflict(*i, bareParameterName);
+  for (int i : innerObject->boundParameters)
+    addConflict(i, bareParameterName);
 }
 
 bool
@@ -175,10 +175,10 @@ EnclosingObject::hasConflict(int parameterName1, int parameterName2) const
 int
 EnclosingObject::findFirstClash(const ParameterSet& chosen, int candidate) const
 {
-  FOR_EACH_CONST(i, ParameterSet, chosen)
+  for (int i : chosen)
     {
-      if (hasConflict(*i, candidate))
-	return *i;
+      if (hasConflict(i, candidate))
+	return i;
     }
   return NONE;
 }

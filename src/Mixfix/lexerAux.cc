@@ -359,12 +359,15 @@ bubbleEofError()
   int nrTokens = lexerBubble.size();
   if (nrTokens > 0)
     {
-      //
-      //	Adjust current line number for end-of-line.
-      //
-      IssueWarning(LineNumber(lineNumber - 1) <<
-		   ": unexpected end-of-file while reading:\n  " << lexerBubble);
-      ContinueWarning("which started on " << LineNumber(lexerBubble[0].lineNumber()) << ".\n");
+      if (!analyzeEofError())
+	{
+	  //
+	  //	Adjust current line number for end-of-line.
+	  //
+	  IssueWarning(LineNumber(lineNumber - 1) <<
+		       ": unexpected end-of-file while reading:\n  " << lexerBubble);
+	  ContinueWarning("which started on " << LineNumber(lexerBubble[0].lineNumber()) << ".\n");
+	}
     }
   else
     {
@@ -374,4 +377,117 @@ bubbleEofError()
       IssueWarning(LineNumber(lineNumber - 1) << ": unexpected end-of-file.");
     }
   suppressParserErrorMessage = true;
+}
+
+bool
+startOfStatement(int code)
+{
+  //
+  //	These are all the tokens that can end a bubble following "." that do not appear in SharedTokens.
+  //
+  const string name(Token::name(code));
+  return name == "sort" || name == "sorts" || name == "subsort" || name == "subsorts" ||
+    name == "op" || name == "ops" || name == "var" || name == "vars" || name == "strat" || name == "strats" ||
+    name == "class" || name == "subclass" || name == "subclasses" || name == "msg" || name == "msgs";
+}
+
+const char*
+missingToken()
+{
+  //
+  //	The terminationSet should only contain one thing mid-statement.
+  //
+  switch (terminationSet)
+    {
+    case BAR_COLON:
+      return ":";
+    case BAR_EQUALS:
+      return "=";
+    case BAR_ARROW2:
+      return "=>";
+    case BAR_ASSIGN:
+      return ":=";
+    default:
+      Assert(terminationSet == BAR_IF, "bad terminationSet " << terminationSet);
+    }
+  return "if";
+}
+
+bool
+analyzeEofError()
+{
+  const char* statementType;
+  int code = lexerBubble[0].code();
+  //
+  //	See if it is a statement we can analyze.
+  //
+  if (code == SharedTokens::mb)
+    statementType = "membership axiom";
+  else if (code == SharedTokens::mb)
+    statementType = "conditional membership axiom";
+  else if (code == SharedTokens::eq)
+    statementType = "equation";
+  else if (code == SharedTokens::ceq || code == SharedTokens::cq)
+    statementType = "conditional equation";
+  else if (code == SharedTokens::rl)
+    statementType = "rule";
+  else if (code == SharedTokens::crl)
+    statementType = "conditional rule";
+  else if (code == SharedTokens::sd)
+    statementType = "strategy definition";
+  else if (code == SharedTokens::csd)
+    statementType = "conditional strategy definition";
+  else
+    return false;
+  //
+  //	See if we can figure out where the user intended the statement to end.
+  //
+  int nrTokens = lexerBubble.size();
+  int parenCount = 0;
+  for (int i = 1; i < nrTokens; ++i)
+    {
+      int code = lexerBubble[i].code();
+      if (code == SharedTokens::dot)
+	{
+	  if (i + 1 < nrTokens && lexerBubble[i + 1].lineNumber() > lexerBubble[i].lineNumber())
+	    {
+	      //
+	      //	Dot followed by a newline looks promising.
+	      //
+	      int code = lexerBubble[i + 1].code();
+	      if (code == SharedTokens::endth || code == SharedTokens::endfth || code == SharedTokens::endsth || code == SharedTokens::endoth ||
+		  code == SharedTokens::endm || code == SharedTokens::endfm || code == SharedTokens::endsm || code == SharedTokens::endom ||
+		  code == SharedTokens::endm || code == SharedTokens::endfm ||
+		  code == SharedTokens::mb || code == SharedTokens::cmb ||
+		  code == SharedTokens::eq || code == SharedTokens::ceq || code == SharedTokens::cq ||
+		  code == SharedTokens::rl || code == SharedTokens::crl ||
+		  code == SharedTokens::sd || code == SharedTokens::csd ||
+		  code == SharedTokens::pr || code == SharedTokens::protecting ||
+		  code == SharedTokens::ex || code == SharedTokens::extending ||
+		  code == SharedTokens::gb || code == SharedTokens::generatedBy ||
+		  code == SharedTokens::inc || code == SharedTokens::including ||
+		  code == SharedTokens::us || code == SharedTokens::usingToken ||
+		  startOfStatement(code))
+		{
+		  //
+		  //	We guess that the user intended to end the statement at lexerBubble[i].
+		  //
+		  ComplexWarning(LineNumber(lexerBubble[0].lineNumber()) <<
+			       ": runaway " << statementType << ":\n  ");
+		  Token::printTokenVector(cerr, lexerBubble, 0, i, true);
+		  ContinueWarning("\nEnd of " << statementType << " not recognized because of ");
+		  if (parenCount > 0)
+		    ContinueWarning("open parenthesis.\n");
+		  else
+		    ContinueWarning("missing " << QUOTE(missingToken()) << " token.\n");
+		  return true;
+		}
+	    }
+	}
+      else if (code == SharedTokens::leftParen)
+	++parenCount;
+      else if (code == SharedTokens::rightParen && parenCount > 0)
+	--parenCount;
+    }
+  return false;
 }

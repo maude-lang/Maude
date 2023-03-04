@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -93,14 +93,14 @@ ModuleExpression::deepSelfDestruct()
     case INSTANTIATION:
       {
 	module->deepSelfDestruct();
-	FOR_EACH_CONST(i, Vector<ViewExpression*>, arguments)
-	  (*i)->deepSelfDestruct();
+	for (ViewExpression* v : arguments)
+	  v->deepSelfDestruct();
 	break;
       }
     case SUMMATION:
       {
-	FOR_EACH_CONST(i, list<ModuleExpression*>, modules)
-	  (*i)->deepSelfDestruct();
+	for (ModuleExpression* m : modules)
+	  m->deepSelfDestruct();
 	break;
       }
     case MODULE:
@@ -123,9 +123,9 @@ operator<<(ostream& s, const ModuleExpression* expr)
       {
 	const list<ModuleExpression*>& modules = expr->getModules();
 	const char* sep = "";
-	FOR_EACH_CONST(i, list<ModuleExpression*>, modules)
+	for (ModuleExpression* m :  modules)
 	  {
-	    s << sep << *i;
+	    s << sep << m;
 	    sep = " + ";
 	  }
 	break;

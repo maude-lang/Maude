@@ -1,3 +1,267 @@
+2023-03-03  Steven Eker  <eker@pup>
+
+	* modules.yy (domainAndRange): added
+	(viewEndOpMap): use domainAndRange
+	(fromSpec): use domainAndRange
+
+	* token.hh (class Token): deleted decl for reallocateBuffer()
+	(class Token): data member buffer becomes a vector<char>; data member
+	bufferLength deleted
+	(Token::bufferExpandTo): deleted
+
+	* token.cc (Token::fixUp): rewritten using vector<char> buffer (both
+	versions)
+	(Token::bubbleToPrefixNameCode): rewritten using vector<char> buffer
+	(Token::reallocateBuffer): deleted
+
+	* modules.yy (finalPair): use attributeName
+	(cPair): use attributeName
+	(attributeName): added
+	(declaration): check for null module expression
+	(moduleExprDot): handle missing module expression by returning null
+
+	* top.yy: added attributeName
+
+	* modules.yy (sortToken): refactored token types
+
+	* top.yy: deleted nonterminals identifier inert startKeyword midKeyword
+	attrKeyword; '@' takes a return value
+
+	* modules.yy (stratName): define stratName
+
+	* top.yy: added stratName nonterminal
+
+	* modules.yy: stragegy uses of identifier moved to stratName
+
+	* top.yy: KW_OO no longer declared to return a value
+
+	* lexer.ll (id): added pconst to BAR_OP_ATTRIBUTE termination
+	tokens; KW_OO no longer returns a value; added comment to explain
+	while we still need a return value for KW_VIEW
+
+2023-03-02  Steven Eker  <eker@pup>
+
+	* modules.yy (sortToken): use attrKeyword rather than attrKeyword2
+	(sortToken): add KW_COLON2 for consistency
+
+	* top.yy: deleted attrKeyword2
+
+	* modules.yy (inert): move '[' | ']' here
+	(attrKeyword2): merged with attrKeyword
+
+	* top.yy: deleted startKeyword2
+
+	* modules.yy (inert): moved ',' | KW_TO here from identifier
+	(tokenBarDot): no longer need ',' | KW_TO
+	(startKeyword2): merged into startKeyword
+
+	* interpreter.cc (Interpreter::makeModule): added comment to explain
+	why we don't leak memory on failure
+
+	* variantUnify.cc (Interpreter::variantUnify): use range-based for
+	loops
+
+	* variantMatch.cc (Interpreter::variantMatch): use range-based for
+	loops
+
+	* syntacticView.cc (SyntacticView::handleVarDecls): use
+	range-based for loop
+
+	* search.cc (Interpreter::search): use range-based for loop
+
+	* interpreter.cc (Interpreter::updateSet): use range erase()
+	(Interpreter::makeModule): use range-based for loop
+
+	* getVariants.cc (Interpreter::getVariants): use range-based for
+	loops
+
+	* instantiateViewWithFreeParameters.cc
+	(View::handleInstantiationByModuleView): use range-based for loop
+	and safeCastNonNull<>()
+	(View::handleOpToTermMappings): use range-based for loop
+	(View::handleStratToExprMappings): use range-based for loop
+
+	* moduleExpression.cc (ModuleExpression::deepSelfDestruct): use
+	range-based for loops
+	(operator<<):use range-based for loop
+
+	* instantiateModuleWithFreeParameters.cc
+	(ImportModule::handleInstantiationByParameter): use range-based for
+	loop
+	(ImportModule::handleRegularImports): use Index and range-based
+	for loop
+
+	* instantiateModuleWithBoundParameters.cc
+	(ImportModule::handleSummation): use Index and range-based for loop
+
+	* mixfixModule.cc (MixfixModule::checkFreshVariableNames): use
+	range-based for loops
+	(~MixfixModule): use range-based for loops
+	(MixfixModule::getSMT_Info): use range-based for loops
+	(MixfixModule::validForSMT_Rewriting): use Index and range-based for
+	loops
+
+	* entry.cc (MixfixModule::checkIterated): use range-based for loop
+
+2023-03-01  Steven Eker  <eker@pup>
+
+	* modules.yy (kind): added
+	(typeName1Dot): use kind
+	(typeName1):  use kind
+
+	* top.yy: added type decl for typeName1Dot
+
+	* modules.yy (moduleExprDot): use tokenDot
+	(sortDot): use tokenDot
+	(endBubble): use tokenDot
+	(dot): use tokenDot
+	(endSortNameList): use tokenDot
+	(classDecl): don't parse period here
+	(classDef): use expectedDot
+	(cPairList): rewritten to have dangling comma and allow empty list
+	(typeName1Dot): added
+	(finalPair): use typeName1Dot
+
+	* top.yy: added type decl for tokenDot
+
+	* modules.yy (endSortNameList): added
+	(declaration): use endSortNameList for sort
+	(endSubsortList): added
+	(declaration): use endSubsortList for subsort
+	(declaration): use endSubsortList for subclass
+	(subsortList): redefined to have trailing '<'
+	(tokenDot): added
+	(classDecl): added
+	(declaration): use classDecl
+
+	* command.cc (SyntacticPreModule::showModule): only use sortName()
+	for constants that have Token::AUX_STRUCTURED_SORT
+	(SyntacticPreModule::showModule): put parens around parameterized
+	constant names in ops declaration
+
+2023-02-28  Steven Eker  <eker@pup>
+
+	* makeGrammar.cc (MixfixModule::makeParameterizedSortProductions):
+	use range-based for loop
+	(MixfixModule::makeLabelProductions): use range-based for loop
+	(MixfixModule::makeSpecialProductions): use range-based for loop;
+	deleted commented out print statement
+
+	* interpreter.cc (Interpreter::cleanCaches): added comment to
+	explain the need to iterate
+
+	* modules.yy (view): call cleanCaches() if we displace a view
+
+	* syntacticPreModule.cc (SyntacticPreModule::finishModule): call
+	cleanCaches() rather than destructUnusedModules()
+	(SyntacticPreModule::finishModule): only call cleanCaches() if we
+	displaced a module.
+
+	* interpreter.hh (class Interpreter): added decl for
+	cleanCaches()
+
+	* interpreter.cc (Interpreter::cleanCaches): added
+
+	* moduleCache.cc (ModuleCache::regretToInform): use
+	safeCastNonNull<>()
+
+	* viewCache.hh (class ViewCache): updated decl for
+	destructUnusedViews()
+
+	* viewCache.cc (ViewCache::destructUnusedViews): rewritten
+	(ViewCache::regretToInform): use safeCastNonNull<>()
+
+	* moduleCache.cc (ModuleCache::destructUnusedModules): rewritten
+	to work in forwards direction after all
+
+	* viewCache.cc (ViewCache::destructUnusedViews): added
+	DebugAdvisory()
+
+	* moduleCache.hh (class ModuleCache): updated decl for
+	destructUnusedModules()
+
+	* moduleCache.cc (ModuleCache::destructUnusedModules): return
+	number of destructed modules
+
+	* moduleCache.hh (class ModuleCache): updated decl for
+	destructUnusedModules()
+
+	* moduleCache.cc (ModuleCache::destructUnusedModules):
+	reimplemented; make a since reverse pass through the cache and
+	return a true if we destructed a module
+
+2023-02-27  Steven Eker  <eker@pup>
+
+	* lexerAux.hh: added decl for missingToken()
+
+	* lexerAux.cc (bubbleEofError): call analyzeEofError()
+	(analyzeEofError): count parentheses
+	(missingToken): added
+
+	* lexerAux.hh: added decls for startOfStatement(),
+	analyzeEofError()
+
+	* sharedTokens.hh (class SharedTokens): added analyzeEofError()
+	as a friend
+
+	* lexerAux.cc (startOfStatement): added
+	(analyzeEofError): added
+
+	* lexer.ll (id): added gb and generated-by to <END_STATEMENT_MODE>
+
+	* top.yy: added KW_STATE
+
+	* lexer.ll: added KW_STATE
+
+	* commands.yy (command): new showSearchPath; added show path
+	state command
+
+	* interpreter.hh (class Interpreter): updated decl for
+	showSearchPath();
+
+	* search.cc (Interpreter::showSearchPath): take showRule
+	argument
+
+	* preModule.cc (~PreModule): use range-based for loop (2 places)
+	(PreModule::processParameters): use range-based for loop
+	(PreModule::processExplicitImports): use range-based for loop
+
+	* viewExpression.cc (ViewExpression::deepSelfDestruct): use
+	range-based for loop
+
+	* bottom.yy (deepSelfDestructViewExpressionVector): use
+	range-based for loop
+
+	* enclosingObject.cc (EnclosingObject::findFirstClash): use
+	range-based for loop
+	(EnclosingObject::addConflictsWithBoundParameters): use
+	range-based for loop
+
+	* command.cc (SyntacticPreModule::printAttributes): use
+	range-based for loop
+
+	* bufferPrint.cc (MixfixModule::printSort): use range-based for
+	loop
+	(MixfixModule::printDotSort): use range-based for loop
+	(MixfixModule::printVarSort): use range-based for loop
+
+	* auxProperty.cc (Token::joinParameterList): use range-based
+	for loop
+
+	* importModule.cc (ImportModule::importSorts): use range-based
+	for loop (2 places)
+	(ImportModule::donateSorts): use range-based for loop
+	(ImportModule::importOps): use range-based for loop (2 places)
+	(ImportModule::donateOps): use range-based for loop
+	(ImportModule::fixUpImportedOps): use range-based for loop (2
+	places)
+	(ImportModule::fixUpDonatedOps): use range-based for loop
+	(ImportModule::importStatements): use range-based for loop (2
+	places)
+	(ImportModule::donateStatements): use range-based for loop
+
+===================================Maude142===========================================
+
 2023-02-24  Steven Eker  <eker@pup>
 
 	* renaming.hh (class Renaming): added override annotations for

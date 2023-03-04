@@ -1,0 +1,320 @@
+Alpha 142 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug where the tokens generated-by and gb were not recognized as terminating
+a token bubble when following a period. Illustrated by:
+
+fmod FOO is
+  eq 5 = 1 .
+  generated-by NAT .
+endfm
+
+(2) A bug where orphaned view instantiations (i.e. nothing depended on them)
+were not being deleted from the view cache. Visible in the following example:
+
+fmod FOO is
+  inc LIST{Set{Nat}} .
+endfm
+
+show modules .
+show views .
+
+fmod FOO is
+endfm
+
+show modules .
+show views .
+
+Here the view instantiation
+  view Set{Nat}
+has be orphaned by the replacement of the first version of FOO in the module
+database but persists in the view cache. Furthermore becaue of this, the
+otherwise orphaned module instantiation
+  fmod SET{Nat}
+cannot be deleted from the module cache.
+
+(3) A related bug where a constructed module orphaned by a view replacing a
+view that depended on the module was not immediately purged from the module
+cache.
+
+view V from TRIV + TRIV * (sort Elt to Elt2) to NAT + FLOAT is
+  sort Elt to Nat .
+  sort Elt2 to Float .
+endv
+
+show modules .
+
+view V from TRIV to NAT is
+  sort Elt to Nat .
+endv
+
+show modules .
+
+Here the 2 theories and 1 module
+  fth TRIV * (sort Elt to Elt2)
+  fth TRIV + TRIV * (sort Elt to Elt2)
+  fmod NAT + FLOAT
+constructed for the first version of V are orphaned when it is replaced
+by the second version but are not immediately purged from the module cache.
+However, with this bug, the orphans will be purged after the next module
+is entered
+
+fmod FOO is endfm
+
+show modules .
+
+(4) A bug in the printing of parameterized constants. It's possible to
+declare multiple parameterized constants with an ops declaration by
+using parentheses:
+
+fmod FOO is
+  sort Bar .
+  ops (m{X}) (n{X}) (p{X,X}) : -> Bar .
+endfm
+
+But then printing out the unprocessesed module with:
+
+show mod .
+
+results in:
+
+fmod FOO is
+  sorts Bar .
+  ops m{X} n{X} p{X,X} : -> Bar .
+endfm
+
+which doesn't parse as intended. The resolution is to put parentheses
+around parameterized constants when printing an ops declaration. An
+alternative resolution would be to allow unparenthesized parameterized
+constants in an ops declaration but this is a rare use case and would change
+the meaning of existing syntax.
+
+
+New features
+=============
+
+(1) There is a new command
+
+show path states <state-number> .
+
+This works exactly like the show path command except that only
+states are shown and not rules. Requested by Carolyn.
+
+(2) In the case that a runaway mixfix statement hits an unexpected end-of-file,
+Maude will try to guess where the statement should have ended and produce a
+more detail explanation of why the end of statement wasn't recognized. This
+analysis is purely heuristic, but it should be helpful in many common cases.
+For example with these examples from Paco:
+
+fmod FOO is 
+  sort Foo .
+  op f : Foo -> Foo .
+  op f : -> Foo .
+  rl f(f = f .
+endfm
+
+Warning: "eof-1.maude", line 5 (fmod FOO): runaway rule:
+  rl f(f = f .
+End of rule not recognized because of open parenthesis.
+Advisory: "eof-1.maude", line 1 (fmod FOO): discarding incomplete module FOO.
+Advisory: closing open files.
+
+fmod FOO is 
+  sort Foo .
+  op f : Foo -> Foo .
+  op f : -> Foo .
+  ceq f(f) = f .
+  eq f(f) = f .
+endfm
+
+Warning: "eof-2.maude", line 5 (fmod FOO): runaway conditional equation:
+  ceq f(f) = f .
+End of conditional equation not recognized because of missing if token.
+Advisory: "eof-2.maude", line 1 (fmod FOO): discarding incomplete module FOO.
+Advisory: closing open files.
+
+
+Minor changes
+==============
+
+(1) Class declarations are overparsed.
+(a) Missing period after bare class name:
+
+oth FOO is
+  class Foo
+endoth
+
+(b) Missing space between bare class name and period:
+
+oth FOO is
+  class Foo.
+endoth
+
+(c) Missing period after final attribute sort:
+
+omod FOO is
+  class Foo | a : Bool
+endom
+
+omod FOO is
+  class Foo | a : Bool, b : Bool
+endom
+
+(d) Missing space between final attribute sort and period:
+
+omod FOO is
+  class Foo | a : Bool.
+endom
+
+omod FOO is
+  class Foo | a : Bool, b : Bool.
+endom
+
+(2) Existing overparsing for sorts, subsorts and subclasses now handles
+more cases.
+(a) While
+
+fmod FOO is
+  sort Foo Bar.
+endfm
+
+was already overparsed, having a single sort with a missing space
+
+fmod FOO is
+  sort Bar.
+endfm
+
+was not but now is.
+
+(b) While
+
+fmod FOO is
+  sorts Foo Bar Baz .
+  subsort Foo < Bar Baz.
+endfm
+
+was already overparsed, having a single sort with a missing space
+
+fmod FOO is
+  sorts Foo Bar .
+  subsort Foo < Bar.
+endfm
+
+was not but now is.
+
+(c) Symmterically, while
+
+omod FOO is
+  class Foo .
+  class Bar .
+  class Baz .
+  subclasses Foo < Bar Baz.
+endom
+
+was already overparsed, having a single class with a missing space
+
+omod FOO is
+  class Foo .
+  class Bar .
+  subclasses Foo < Bar.
+endom
+
+was not but now is.
+
+(3) Missing module expressions in an import are overparsed:
+
+fmod FOO is
+  generated-by .
+endfm
+
+fmod FOO is
+  pr NAT + .
+endfm
+
+fmod FOO is
+  pr NAT + FLOAT + .
+endfm
+
+(4) In addition to underscores, attribute names are now prohibited from
+containing parentheses, brackets, braces, or commas. This is to prevent to
+formation of illegal operator names.
+
+(5) Strategy names are stated in the manual as allowing any single
+token, but in fact many single tokens such as
+  special sort object
+produced syntax errors if used. Strategy names are now any single
+token (which always excludes paretheses) except for
+  : @
+which would cause ambiguity in strategy declarations.
+
+(6) The tokens
+  := strategy @
+which stopped being valid module/view/parameter/variable names and
+single token operator names when smods were introduced are once again valid:
+
+fmod strategy is
+  ops := strategy @ : Bool -> Bool .
+vars := strategy @ : Bool .
+endfm
+
+(7) Missing -> tokens in constant mappings in views and renamings are
+overparsed:
+
+view FOO from DEFAULT to NAT is
+  sort Elt to Nat .
+  op 0 : Nat to 0 .
+endv
+
+fmod FOO is
+  inc NAT * (op 0 : Nat to zero) .
+endfm
+
+
+Naming summary
+===============
+
+Because of the number of syntactic entities, each with its own
+restrictions on allowed names, here is a summary.
+
+( ) as single tokens are never valid names for anything and are not
+considered to be single tokens in the following definitions.
+
+Modules: any single token
+
+Views: any single token; avoid containing underscores for instantiating omods
+
+Parameters: any single token; avoid containing underscores for parameterizing
+classes
+
+Unparameterized sorts: any single token except
+  < -> ~> @
+and may not contain parentheses, brackets, braces, commas, periods or
+colons which excludes the special tokens
+  [ ] { } , . : :: := id: identity:
+
+General sorts: tokens constructed from the following grammar
+  <ps> ::= <unparameterized sort> | <ps> `{ <sl> `}
+  <sl> ::= <ps> | <sl> `, <ps>
+In this construction, the backquotes can be omitted and thus the sort name need
+not be a single token.
+
+Operators: if : is used as a single token, it must be parenthesized in the
+declaration; the number of underscores must match number of arguments;
+Occurrences of parentheses (backquoted or not) must balance, with no closing
+paraenthesis if the number of open parentheses at that point in the name is 0.
+	   
+Variable aliases: any single single token except
+  :
+
+Strategies: any single token except
+  : @
+
+Classes: any general sort name that does not contain underscores
+
+Attributes: any single token that does not contain parentheses, brackets,
+braces, commas or underscores
+
+Messages: same as operators

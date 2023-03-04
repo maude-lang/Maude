@@ -36,6 +36,10 @@ protected:
   static int Name;
 #include "specialTokens.cc"
 #undef MACRO
+  //
+  //	A helper function from the lexical analyzer that needs the codes for certain tokens.
+  //
+  friend bool analyzeEofError();
 };
 
 #endif

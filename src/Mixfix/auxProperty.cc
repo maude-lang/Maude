@@ -358,11 +358,11 @@ Token::joinParameterList(int header, const Vector<int>& parameters)
   //
   Rope n(name(header));
   const char* sep = "`{";
-  FOR_EACH_CONST(i, Vector<int>, parameters)
+  for (int i : parameters)
     {
       n += sep;
       sep = "`,";
-      n += name(*i);
+      n += name(i);
     }
   n += "`}";
   //

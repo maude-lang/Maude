@@ -359,10 +359,8 @@ ImportModule::importSorts()
   //
   //	We first go through our parameter theories and ask them
   //	to donate their sorts.
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, parameterTheories)
-      (*i)->donateSorts(this);
-  }
+  for (ImportModule* i : parameterTheories)
+    i->donateSorts(this);
   //
   //	We just imported the sorts from our last parameter theory
   //	so record this so we know what sorts came from parameters.
@@ -372,10 +370,8 @@ ImportModule::importSorts()
   //	We now go through our regular imports and ask them to
   //	donate their sorts.
   //
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-      (*i)->donateSorts(this);
-  }
+  for (ImportModule* i : importedModules)
+    i->donateSorts(this);
   //
   //	Keep track of which sort and subsort declarations were imported
   //	from parameter theories or regular imports.
@@ -401,8 +397,8 @@ ImportModule::donateSorts(ImportModule* importer)
   //	- importer should have identical parameterTheories because our parameter
   //	must be bound.
   //
-  FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-    (*i)->donateSorts(importer);
+  for (ImportModule* i : importedModules)
+    i->donateSorts(importer);
   //
   //	Now handle our sorts.
   //
@@ -418,10 +414,8 @@ ImportModule::importOps()
   //
   //	We first go through our parameter theories and ask them
   //	to donate their operators.
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, parameterTheories)
-      (*i)->donateOps(this);
-  }
+  for (ImportModule* i : parameterTheories)
+    i->donateOps(this);
   //
   //	We just imported the operators from our last parameter theory
   //	so record record the number of symbols and polymorphs we
@@ -433,10 +427,8 @@ ImportModule::importOps()
   //	We now go through our regular imports and ask them to
   //	donate their operators.
   //
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-      (*i)->donateOps(this);
-  }
+  for (ImportModule* i : importedModules)
+    i->donateOps(this);
   //
   //	Keep track of which operators and operator declarations were
   //	imported from parameter theories or regular imports.
@@ -463,8 +455,8 @@ ImportModule::donateOps(ImportModule* importer)
   //	- importer should have identical parameterTheories because our parameter
   //	must be bound.
   //
-  FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-    (*i)->donateOps(importer);
+  for (ImportModule* i : importedModules)
+    i->donateOps(importer);
   //
   //	Now handle our operators.
   //
@@ -480,18 +472,14 @@ ImportModule::fixUpImportedOps()
   //
   //	We first go through our parameter theories and ask them
   //	to fix up the operators they donated.
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, parameterTheories)
-      (*i)->fixUpDonatedOps(this);
-  }
+  for (ImportModule* i : parameterTheories)
+    i->fixUpDonatedOps(this);
   //
   //	We now go through our regular imports and ask them to
   //	fix up the operators they donated.
   //
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-      (*i)->fixUpDonatedOps(this);
-  }
+  for (ImportModule* i : importedModules)
+    i->fixUpDonatedOps(this);
 }
 
 void
@@ -506,8 +494,8 @@ ImportModule::fixUpDonatedOps(ImportModule* importer)
   //	- importer should have identical parameterTheories because our parameter
   //	must be bound.
   //
-  FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-    (*i)->fixUpDonatedOps(importer);
+  for (ImportModule* i : importedModules)
+    i->fixUpDonatedOps(importer);
   //
   //	Handle our operators.
   //
@@ -552,18 +540,14 @@ ImportModule::importStatements()
   //	We first go through our parameter theories and ask them
   //	to donate their statements.
   //
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, parameterTheories)
-      (*i)->donateStatements(this);
-  }
+  for (ImportModule* i : parameterTheories)
+    i->donateStatements(this);
   //
   //	We now go through our regular imports and ask them to
   //	donate their statements.
   //
-  {
-    FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-      (*i)->donateStatements(this);
-  }
+  for (ImportModule* i : importedModules)
+    i->donateStatements(this);
 }
 
 void
@@ -583,8 +567,8 @@ ImportModule::donateStatements(ImportModule* importer)
   //	- importer should have identical parameterTheories because our parameter
   //	must be bound.
   //
-  FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
-    (*i)->donateStatements(importer);
+  for (ImportModule* i : importedModules)
+    i->donateStatements(importer);
   //
   //	The map from imported module's symbols to importing module's symbols
   //	is built dynamically.

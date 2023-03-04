@@ -38,7 +38,7 @@ public:
 
   View* makeViewInstantiation(View* view, const Vector<Argument*>& arguments);
 
-  void destructUnusedViews();
+  int destructUnusedViews();
   void showCreatedViews(ostream& s) const;
 
 private:

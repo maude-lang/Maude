@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -128,8 +128,8 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Inert keywords: these are only recognized by lexer when in initial mode.
  */
-%token <yyToken> KW_MOD KW_OO KW_VIEW
-%token KW_PARSE KW_NORMALIZE KW_REDUCE KW_REWRITE
+%token <yyToken> KW_MOD KW_VIEW
+%token KW_PARSE KW_NORMALIZE KW_REDUCE KW_REWRITE KW_OO
 %token KW_LOOP KW_NARROW KW_XG_NARROW KW_MATCH KW_XMATCH KW_UNIFY KW_CHECK
 %token KW_GET KW_VARIANTS KW_VARIANT
 %token KW_EREWRITE KW_FREWRITE KW_SREWRITE KW_DSREWRITE
@@ -138,7 +138,7 @@ int yylex(YYSTYPE* lvalp);
 %token KW_TRACE KW_BODY KW_BUILTIN KW_WHOLE KW_SELECT KW_DESELECT KW_CONDITION KW_SUBSTITUTION
 %token KW_PRINT KW_GRAPH KW_MIXFIX KW_FLAT KW_ATTRIBUTE KW_NEWLINE
 %token KW_WITH KW_PARENS KW_ALIASES KW_GC KW_TIME KW_STATS KW_TIMING
-%token KW_CMD KW_BREAKDOWN KW_BREAK KW_PATH KW_CONST
+%token KW_CMD KW_BREAKDOWN KW_BREAK KW_PATH KW_STATE KW_CONST
 %token KW_MODULE KW_MODULES KW_VIEWS KW_ALL KW_SORTS KW_OPS2 KW_VARS
 %token KW_MBS KW_EQS KW_RLS KW_STRATS KW_SDS KW_SUMMARY KW_KINDS KW_ADVISE KW_VERBOSE
 %token KW_DO KW_CLEAR
@@ -163,7 +163,7 @@ int yylex(YYSTYPE* lvalp);
  */
 %token <yyToken> KW_IS KW_FROM
 %token <yyToken> KW_ARROW KW_ARROW2 KW_PARTIAL KW_IF KW_ASSIGN
-%type <yyToken> ':' '=' '(' ')' '.' '<' '[' ']' ',' '|'
+%type <yyToken> ':' '=' '(' ')' '.' '<' '[' ']' ',' '|' '@'
 
 /*
  *	Module expression keywords.
@@ -210,7 +210,7 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Nonterminals that return tokens.
  */
-%type <yyToken> identifier inert startKeyword startKeyword2 midKeyword attrKeyword attrKeyword2
+%type <yyToken> stratName attributeName
 %type <yyToken> token endsInDot badType
 %type <yyToken> tokenBarColon
 %type <yyToken> tokenBarDot
@@ -219,7 +219,7 @@ int yylex(YYSTYPE* lvalp);
 %type <yyToken> cSimpleTokenBarDot
 %type <yyToken> cTokenBarDotCommaRight cTokenBarDotCommaNumber
 %type <yyToken> cTokenBarOpenLeftIn cTokenBarDotCommaClose cOptionToken cTokenBarDotOptionToken
-%type <yyToken> sortName sortToken sortDot
+%type <yyToken> sortName sortToken sortDot tokenDot
 
 /*
  *	Nonterminals that return Interpreter::SearchKind.
@@ -228,7 +228,7 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Nonterminals that return bool.
  */
-%type <yyBool> polarity select match optDebug optIrredundant conceal exclude arrow typeName1
+%type <yyBool> polarity select match optDebug optIrredundant conceal exclude arrow typeName1 typeName1Dot
 /*
  *	Nonterminals that return int.
  */

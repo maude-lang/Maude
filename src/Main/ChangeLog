@@ -1,3 +1,9 @@
+2023-03-03  Steven Eker  <eker@pup>
+
+	* prelude.maude: update version number
+
+===================================Maude141===========================================
+
 2023-02-22  Steven Eker  <eker@mu.csl.sri.com>
 
 	* term-order.maude: deleted stray lines at the end of the file

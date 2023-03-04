@@ -236,12 +236,16 @@ SyntacticPreModule::finishModule(Token endToken)
 	autoImports.insert(i);
     }
   isCompleteFlag = true;
-  getOwner()->insertModule(id(), this);
+  bool displacedModule = getOwner()->insertModule(id(), this);
   process();
   //
-  //	House keeping.
+  //	If we displaced a module, modules and views constructed for the
+  //	displaced module could have been orphaned. The orphans could
+  //	have been picked up by the new module, but now the module system
+  //	is quiescent we can purge orphans from the module and view caches.
   //
-  getOwner()->destructUnusedModules();
+  if (displacedModule)
+    getOwner()->cleanCaches();
 }
 
 void

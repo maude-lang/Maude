@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,9 +46,9 @@ Interpreter::getVariants(const Vector<Token>& bubble, Int64 limit, bool irredund
 	{
 	  cout << " such that ";
 	  const char* sep = "";
-	  FOR_EACH_CONST(i, Vector<Term*>, constraint)
+	  for (const Term* t : constraint)
 	    {
-	      cout << sep << *i;
+	      cout << sep << t;
 	      sep = ", ";
 	    }
 	  cout << " irreducible ." << endl;
@@ -65,9 +65,8 @@ Interpreter::getVariants(const Vector<Token>& bubble, Int64 limit, bool irredund
     UserLevelRewritingContext::setDebug();
 
   Vector<DagNode*> blockerDags;
-  FOR_EACH_CONST(i, Vector<Term*>, constraint)
+  for (Term* t : constraint)
     {
-      Term* t = *i;
       t = t->normalize(true);  // we don't really need to normalize but we do need to set hash values
       blockerDags.append(t->term2Dag());
       t->deepSelfDestruct();

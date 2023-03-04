@@ -308,16 +308,16 @@ ImportModule::handleInstantiationByParameter(ImportModule* copy,
 	  //
 	  //	Need to propagate parameter conflicts from ourselves into copy.
 	  //
-	  FOR_EACH_CONST(j, NatSet, positionsInstantiatedParameter)
+	  for (int j : positionsInstantiatedParameter)
 	    {
-	      if (hasConflict(oldParameterName, parameterNames[*j]))
+	      if (hasConflict(oldParameterName, parameterNames[j]))
 		{
 		  //
 		  //	We have parameters, say X and Y, that have a conflict.
 		  //	They have been instantiated by parameters p and p2 in
 		  //	the copy, so p and p2 must be given a conflict in the copy.
 		  //
-		  Parameter* p2 = safeCast(Parameter*, arguments[*j]);
+		  Parameter* p2 = safeCast(Parameter*, arguments[j]);
 		  copy->addConflict(parameterName, p2->id());
 		}
 	    }
@@ -528,9 +528,8 @@ ImportModule::handleRegularImports(ImportModule* copy,
   //	Now handle our regular imports.
   //
   LineNumber lineNumber(FileTable::AUTOMATIC);
-  FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
+  for (ImportModule* import : importedModules)
     {
-      ImportModule* import = *i;
       DebugInfo("Instantiating " << this << " and now need to instantiate its import " <<
 		import << " which has " << import->parameterNames.size() << " parameters");
       int nrImportParameters = import->parameterNames.size();
@@ -544,7 +543,7 @@ ImportModule::handleRegularImports(ImportModule* copy,
 	  //
 	  Assert(!(import->hasFreeParameters()), "free parameter in imported module " << import);
 	  Vector<Argument*> newArgs(nrImportParameters);
-	  for (int j = 0; j < nrImportParameters; ++j)
+	  for (Index j = 0; j < nrImportParameters; ++j)
 	    {
 	      int parameterName = import->parameterNames[j];
 	      int indexInUs = findParameterIndex(parameterName);

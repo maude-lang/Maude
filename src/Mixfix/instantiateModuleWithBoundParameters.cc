@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -80,9 +80,8 @@ ImportModule::handleSummation(const Vector<Argument*>& arguments, ModuleCache* m
   //	orginal summation.
   //
   Vector<ImportModule*> instantiatedImports;
-  FOR_EACH_CONST(i, Vector<ImportModule*>, importedModules)
+  for (ImportModule* import : importedModules)
     {
-      ImportModule* import = *i;
       int nrParameters = import->parameterNames.size();
       if (nrParameters != 0)
 	{
@@ -91,7 +90,7 @@ ImportModule::handleSummation(const Vector<Argument*>& arguments, ModuleCache* m
 	  //	to match the order of arguments required by the module expression.
 	  //
 	  Vector<Argument*> newArgs(nrParameters);
-	  for (int j = 0; j < nrParameters; ++j)
+	  for (Index j = 0; j < nrParameters; ++j)
 	    {
 	      int parameterName = import->parameterNames[j];
 	      int indexInUs = findParameterIndex(parameterName);

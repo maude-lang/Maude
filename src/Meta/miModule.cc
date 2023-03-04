@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -89,7 +89,15 @@ InterpreterManagerSymbol::insertModule(FreeDagNode* message,
       
       metaLevel->downParameterDeclList2(metaParameterDeclList, pm);
       metaLevel->downImports2(f->getArgument(1), pm);
-      interpreter->insertModule(id, pm); 
+      if (interpreter->insertModule(id, pm))
+	{
+	  //
+	  //	We displaced an existing module in this interpreter which means we
+	  //	might have orphaned constructed modules, and view instantiations in
+	  //	the interpreters caches, so we do a clean up.
+	  //
+	  interpreter->cleanCaches();
+	}
 
       Vector<DagNode*> reply(2);
       DagNode* target = message->getArgument(1);
@@ -136,7 +144,16 @@ InterpreterManagerSymbol::insertView(FreeDagNode* message,
   if (View* v = metaLevel->downView(message->getArgument(2), interpreter))
     {
       // FIXME: need to sanity check v before inserting it
-      interpreter->insertView(v->id(), v);
+      if (interpreter->insertView(v->id(), v))
+	{
+	  //
+	  //	Inserting a view into the view database displaced a view which has now
+	  //	been deleted and may have caused self-destruction of view instance and
+	  //	modules that depended on it. Thus we could have some orphaned constructed
+	  //	modules and view instantiations in the caches.
+	  //
+	  interpreter->cleanCaches();
+	}
 
       Vector<DagNode*> reply(2);
       DagNode* target = message->getArgument(1);

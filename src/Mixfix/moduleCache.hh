@@ -41,7 +41,7 @@ public:
   ImportModule* makeParameterCopy(int parameterName, ImportModule* module);
   ImportModule* makeModuleInstantiation(ImportModule* module, const Vector<Argument*>& arguments);
 
-  void destructUnusedModules();
+  int destructUnusedModules();
   void showCreatedModules(ostream& s) const;
 
 private:

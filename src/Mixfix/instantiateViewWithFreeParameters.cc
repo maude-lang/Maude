@@ -452,9 +452,7 @@ View::handleInstantiationByModuleView(View* copy,
 	      //	module-view to copy directly. So we do the add-in anyway.
 	      //
 	      //	5/9/18 We no longer allow toModules not to take all our parameters so we don't
-	      //	do the copy
-	      //
-	      //copy->addInAllConflicts(argumentView);
+	      //	do copy->addInAllConflicts(argumentView).
 	      //
 	      //	Need to add any conflicts between the bound parameters in our argument
 	      //	and bare paramters in the same instantiation.
@@ -464,9 +462,9 @@ View::handleInstantiationByModuleView(View* copy,
 	      //	it has the possibility of leaving them stranded in a nonfinal instantiation
 	      //	should both recieve theory-views in a nonfinal instantiation.
 	      //
-	      FOR_EACH_CONST(j, NatSet, positionsInstantiatedParameter)
+	      for (int j : positionsInstantiatedParameter)
 		{
-		  int bareParameterName = safeCast(Parameter*, arguments[*j])->id();
+		  int bareParameterName = safeCastNonNull<Parameter*>(arguments[j])->id();
 		  copy->addConflictsWithBoundParameters(argumentView, bareParameterName);
 		}
 	    }
@@ -649,13 +647,13 @@ View::handleOpToTermMappings(View* copy, Renaming* canonicalRenaming) const
       //	that have been instantiated.
       //
       ImportTranslation toTermTranslation(copy->toModule, canonicalRenaming);
-      FOR_EACH_CONST(i, OpTermMap, opTermMap)
+      for (const auto& i : opTermMap)
 	{
-	  Term* fromTerm = i->second.first->deepCopy(&fromTermTranslation);
-	  Term* toTerm = i->second.second->deepCopy(&toTermTranslation);
+	  Term* fromTerm = i.second.first->deepCopy(&fromTermTranslation);
+	  Term* toTerm = i.second.second->deepCopy(&toTermTranslation);
 	  //
 	  //	This is a slow way to get toTerm indexed and fromTerm and toTerm inserted
-	  //	into the map - but we expect this case to be very rare so its not worth
+	  //	into the map - but we expect this case to be very rare so it's not worth
 	  //	the code to do something smarter.
 	  //
 	  copy->insertOpToTermMapping(fromTerm, toTerm);
@@ -840,10 +838,10 @@ View::handleStratToExprMappings(View* copy, Renaming* canonicalRenaming) const
       //	that have been instantiated.
       //
       ImportTranslation toExprTranslation(copy->toModule, canonicalRenaming);
-      FOR_EACH_CONST(i, StratExprMap, stratExprMap)
+      for (const auto& i : stratExprMap)
 	{
-	  CallStrategy* fromCall = static_cast<CallStrategy*>(ImportModule::deepCopyStrategyExpression(&fromCallTranslation, i->second.call));
-	  StrategyExpression* toExpr = ImportModule::deepCopyStrategyExpression(&toExprTranslation, i->second.value);
+	  CallStrategy* fromCall = static_cast<CallStrategy*>(ImportModule::deepCopyStrategyExpression(&fromCallTranslation, i.second.call));
+	  StrategyExpression* toExpr = ImportModule::deepCopyStrategyExpression(&toExprTranslation, i.second.value);
 
 	  copy->insertStratToExprMapping(fromCall, toExpr, copy->toModule);
 	  DebugNew("instantiating " << this << " to " << copy << " inserted strat->expr mapping " <<

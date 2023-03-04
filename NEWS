@@ -1,4 +1,17 @@
-Overview of Changes in alpha141
+Overview of Changes in Maude 3.3 beta (alpha142)
+================================================
+* show path states command
+* fixed bug where generated-by was not recognized as the and of the
+previous mixfix statement
+* fixed bug where orphaned view instantiations were not being purged
+* fixed bug where replacing a view did not immediately purged an
+modules that became orphaned as a result
+* heurstics for giving detailed explanations of runaway statements
+* fixed bug where parameterized constants were printed without
+parentheses in an ops declaration
+* more overparsing
+
+Overview of Changes in alpha141 (2023-02-24)
 ============================================
 * fixed bug in parsing of oths
 * fixed statement transformation depending on memory allocator issue
