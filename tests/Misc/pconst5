@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/pconst5.maude -no-banner -no-advise \
+  > pconst5.out 2>&1
+
+diff $srcdir/pconst5.expected pconst5.out > /dev/null 2>&1

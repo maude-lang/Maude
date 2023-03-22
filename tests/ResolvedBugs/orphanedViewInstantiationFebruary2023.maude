@@ -1,0 +1,16 @@
+***
+***	Test that orphaned view instantiation is garbage collected.
+***
+
+fmod FOO is
+  inc LIST{Set{Nat}} .
+endfm
+
+show modules .
+show views .
+
+fmod FOO is
+endfm
+
+show modules .
+show views .

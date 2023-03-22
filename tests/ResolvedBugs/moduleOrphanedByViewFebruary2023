@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/moduleOrphanedByViewFebruary2023.maude -no-banner -no-advise \
+  > moduleOrphanedByViewFebruary2023.out 2>&1
+
+diff $srcdir/moduleOrphanedByViewFebruary2023.expected moduleOrphanedByViewFebruary2023.out > /dev/null 2>&1

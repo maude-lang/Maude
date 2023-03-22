@@ -805,7 +805,7 @@ MetaLevel::upTypeList(const Vector<Sort*>& types,
   int nrTypes = types.size();
   if (omitLast)
     --nrTypes;
-  if (nrTypes == 0)
+  if (nrTypes <= 0)  // <= rather than == to avoid compiler warning
     return new FreeDagNode(nilQidListSymbol);
   if (nrTypes == 1)
     return upType(types[0], qidMap);

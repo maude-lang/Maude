@@ -1,0 +1,16 @@
+***
+***	Test that a module orphaned by the replacement of a view that depended on in is immediately garbage collected.
+***
+
+view V from TRIV + TRIV * (sort Elt to Elt2) to NAT + FLOAT is
+  sort Elt to Nat .
+  sort Elt2 to Float .
+endv
+
+show modules .
+
+view V from TRIV to NAT is
+  sort Elt to Nat .
+endv
+
+show modules .

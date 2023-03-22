@@ -1,0 +1,5 @@
+th TEST is
+  including CONFIGURATION .
+  eq <> = <> .
+endth
+Bye.

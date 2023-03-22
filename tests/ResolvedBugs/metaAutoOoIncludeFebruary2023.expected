@@ -1,0 +1,13 @@
+==========================================
+reduce in META-LEVEL : upModule('FOO, false) .
+rewrites: 1
+result STheory: th 'FOO is
+  including 'CONFIGURATION .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+endth
+Bye.

@@ -79,23 +79,29 @@ NarrowingSearchState2::NarrowingSearchState2(RewritingContext* context,
     variantFlags(variantFlags),
     module(context->root()->symbol()->getModule())
 {
-  //DebugAlways("variantFlags = " << variantFlags);
+  DebugInfo("variantFlags = " << variantFlags);
   ruleIndex = -1;  // not yet started
   incompleteFlag = false;
   unificationProblem = 0;
   reverseMapping = 0;
 
   DagNode* dagToNarrow = context->root();
+  DebugInfo("dagToNarrow = " << dagToNarrow);
   newContext = context;  // unless we do a renaming
   //
   //	Each variable occurring in the target dag needs an index
   //	different from any that occurs in a variable occurring in a
   //	rule lhs.
   //
+  //	This indexing scheme is used for returning variant unifiers from
+  //	VariantUnificationProblem and is independent from the indexing
+  //	scheme that VariantSearch uses during variant narrowing.
+  //
   //	Indexing the variables will convert any persistent representations into
   //	regular representations suitable for unification and instantiation.
   //
   int firstTargetSlot = module->getMinimumSubstitutionSize();
+  DebugInfo("firstTargetSlot = " << firstTargetSlot);
   dagToNarrow->indexVariables(variableInfo, firstTargetSlot);
   int nrVariablesInDagToNarrow = variableInfo.getNrVariables();
   //
@@ -128,6 +134,7 @@ NarrowingSearchState2::NarrowingSearchState2(RewritingContext* context,
       //	we're going to narrow; variables that only occur in blocker dags don't count.
       //
       int nrSlotsForDagToNarrow = firstTargetSlot + nrVariablesInDagToNarrow;
+      DebugInfo(nrSlotsForDagToNarrow  << " = " << firstTargetSlot << " + " <<  nrVariablesInDagToNarrow);
       reverseMapping = new Substitution(nrSlotsForDagToNarrow);
       reverseMapping->clear(nrSlotsForDagToNarrow);
       //
@@ -139,6 +146,7 @@ NarrowingSearchState2::NarrowingSearchState2(RewritingContext* context,
 	  Symbol* baseSymbol = variableInfo.index2Variable(i)->symbol();
 	  int name = freshVariableGenerator->getFreshVariableName(i, incomingVariableFamily);
 	  VariableDagNode* v = new VariableDagNode(baseSymbol, name, slotNr);
+	  DebugInfo("new variable " << (DagNode*) v << " in slot " << slotNr);
 	  s.bind(slotNr, v);
 	  if (i < nrVariablesInDagToNarrow)
 	    {
@@ -147,25 +155,50 @@ NarrowingSearchState2::NarrowingSearchState2(RewritingContext* context,
 	      //	even though all variables need to be renamed.
 	      //
 	      reverseMapping->bind(slotNr, variableInfo.index2Variable(i));
+	      DebugInfo("reverse mapping from slot " << slotNr << " to " << (DagNode*) variableInfo.index2Variable(i));
 	      DebugSave(j, freshVariableInfo.variable2Index(v));
 	      Assert(j == i, "indexing clash " << i << " vs " << j);
 	    }
+	  else
+	    DebugInfo("NO reverse mapping from slot " << slotNr << " to " << (DagNode*) variableInfo.index2Variable(i));
 	}
       //
       //	Make a copy of the dag we want to narrow, with variable replacements.
       //
-      DebugAdvisory("old dagToNarrow = " << dagToNarrow);
+      DebugInfo("--------------------------------------------------------old dagToNarrow = " << dagToNarrow);
       if (DagNode* renamedDagToNarrow = dagToNarrow->instantiate(s, false))  // just in case dagToNarrow was ground
 	dagToNarrow = renamedDagToNarrow;
-      DebugAdvisory("new dagToNarrow = " << dagToNarrow);
+      DebugInfo("--------------------------------------------------------new dagToNarrow = " << dagToNarrow);
       newContext = context->makeSubcontext(dagToNarrow);
-      //
-      //	Likewise renaming variables in blockerDags.
-      //
-      for (int i = 0; i < nrBlockerDags; ++i)
+      if (nrBlockerDags > 0)
 	{
-	  if (DagNode* b = blockerDags[i]->instantiate(s, false))
-	    blockerDags[i] = b;
+	  //
+	  //	If we have blockerDags, we must rename the variables in them as well, but it's
+	  //	important not to share VariableDagNodes with the target term because VariantSearch
+	  //	will overwrite the indices in the blockerDags but we need them preserved 
+	  //	in the dagToNarrow so we can generate the context where the narrowing happened using
+	  //	reverseMapping to find the users original variable names.
+	  //
+	  //	So we go through the substitution we just made and replace each VariableDagNode
+	  //	with a copy.
+	  //
+	  for (int i = 0; i < nrVariables; ++i)
+	    {
+	      int slotNr = firstTargetSlot + i;
+	      VariableDagNode* v = safeCastNonNull<VariableDagNode*>(s.value(slotNr));
+	      VariableDagNode* v2 = new VariableDagNode(v->symbol(), v->id(), NONE);
+	      s.bind(slotNr, v2);
+	    }
+	  //
+	  //
+	  //	Rename the variables in blockerDags using our copies.
+	  //
+	  for (int i = 0; i < nrBlockerDags; ++i)
+	    {
+	      if (DagNode* b = blockerDags[i]->instantiate(s, false))
+		blockerDags[i] = b;
+	      DebugInfo("blockerDag " << i << " is " << blockerDags[i]);
+	    }
 	}
     }
   //

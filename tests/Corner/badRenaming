@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/badRenaming.maude -no-banner \
+  > badRenaming.out 2>&1
+
+diff $srcdir/badRenaming.expected badRenaming.out > /dev/null 2>&1

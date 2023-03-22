@@ -61,8 +61,7 @@ NarrowingSearchState::NarrowingSearchState(RewritingContext* context,
     context(context),
     freshVariableGenerator(freshVariableGenerator),
     odd(odd),
-    label(label),
-    withExtension(maxDepth >= 0)
+    label(label)
 {
   ruleIndex = -1;
 

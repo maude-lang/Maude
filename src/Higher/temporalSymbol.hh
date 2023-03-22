@@ -61,12 +61,4 @@ private:
   Symbol* releaseSymbol;
 };
 
-inline DagNode*
-TemporalSymbol::negate(DagNode* original) const
-{
-  static Vector<DagNode*> arg(1);
-  arg[0] = original;
-  return notSymbol->makeDagNode(arg);
-}
-
 #endif

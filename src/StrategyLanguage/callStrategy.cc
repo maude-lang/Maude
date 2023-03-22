@@ -185,7 +185,6 @@ CallStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess* rem
 			 callContext,
 			 remainder->getDagIndex(),
 			 remainder->getPending(),
-			 tailCall(remainder),
 			 remainder,
 			 remainder);
 

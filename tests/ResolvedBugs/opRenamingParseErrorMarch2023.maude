@@ -1,0 +1,14 @@
+***
+***	Test that an op renaming using the sort "to" parses correctly.
+***
+
+fmod FOO is
+  sorts Foo to .
+  op f : Foo to -> Foo .
+endfm
+
+fmod BAR is
+  inc FOO * (op f : Foo to -> Foo to g) .
+endfm
+
+show desugared .

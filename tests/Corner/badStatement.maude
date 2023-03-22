@@ -1,0 +1,148 @@
+***
+***	Check what happens with bad use of objects in statements under object completion in omods.
+***
+
+set verbose on .
+
+set include BOOL off .
+
+
+*** bad use of class arguments
+
+omod FOO is
+  sort Foo .
+  class C .
+  class C2 .
+  msg m : Foo -> Msg .
+  op junk : -> Cid .
+*** OK
+  rl m(F:Foo) < O:Oid : C | > => < O:Oid : C | > .
+  rl m(F:Foo) < O:Oid : V:C | > => < O:Oid : V:C | > .
+
+*** bad
+  rl m(F:Foo) < O1:Oid : junk | > => < O1:Oid : junk | > .
+  rl m(F:Foo) < O2:Oid : C | > => < O2:Oid : junk | > .
+  rl m(F:Foo) < O3:Oid : junk | > => < O3:Oid : C | > .
+
+  rl m(F:Foo) < O4:Oid : V:C | > => < O4:Oid : junk | > .
+  rl m(F:Foo) < O5:Oid : junk | > => < O5:Oid : V:C | > .
+
+  rl m(F:Foo) < O6:Oid : C | > => < O6:Oid : V:C | > .
+  rl m(F:Foo) < O7:Oid : V:C | > => < O7:Oid : C | > .
+
+  rl m(F:Foo) < O8:Oid : C | > => < O8:Oid : C2 | > .
+  rl m(F:Foo) < O9:Oid : V:C | > => < O9:Oid : V:C2 | > .
+endom
+
+show desugared .
+
+
+*** bad double use of class variable
+
+omod BAR is
+  sort Foo .
+  class C .
+  msg m : Cid -> Msg .
+*** OK
+  rl m(F:Cid) < O:Oid : V:C | > => < O:Oid : V:C | > .
+
+*** bad
+  rl m(V:C) < O:Oid : V:C | > => < O:Oid : V:C | > .
+endom
+
+show desugared .
+
+
+*** multiple objects with the same name
+
+omod BAR is
+  sort Foo .
+  class C .
+*** OK
+  crl < O:Oid : C | > => < O:Oid : C | > if < O:Oid : C | > = < O:Oid : C | > .
+
+*** dubious but allowed
+  rl < O:Oid : C | > => < O:Oid : C | > < O:Oid : C | > .
+
+*** bad
+  rl < O:Oid : C | > < O:Oid : C | > => < O:Oid : C | > .
+endom
+
+show desugared .
+
+
+*** objects in condition fragment patterns
+
+omod BAR is
+  sort Foo .
+  class C .
+*** bad
+  crl < O:Oid : C | > => < O:Oid : C | > if < O:Oid : C | > := < O:Oid : C | > .
+  crl < O:Oid : C | > => < O:Oid : C | > if < O:Oid : C | > => < O:Oid : C | > .
+endom
+
+show desugared .
+
+
+*** bad attribute sets
+
+omod BAZ is
+  sort Foo .
+  class C | a : Foo .
+  msg m : AttributeSet -> Msg .
+  op junk : -> Attribute .
+  op k : -> Foo .
+var X : Foo .
+var B : Attribute .
+
+*** OK
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X > .
+  rl < O:Oid : C | > => < O:Oid : C | a : k > .
+  rl < O:Oid : C | a : X > => < O:Oid : C | > .
+  rl < O:Oid : C | a : X, A:AttributeSet > => < O:Oid : C | a : X, A:AttributeSet > .
+  rl < O:Oid : C | A:AttributeSet > => < O:Oid : C | a : k, A:AttributeSet > .
+  rl < O:Oid : C | a : X, A:AttributeSet > => < O:Oid : C | A:AttributeSet > .
+
+*** bad
+  rl < O:Oid : C | a : X, junk > => < O:Oid : C | a : X, junk > .
+  rl < O:Oid : C | a : X, junk > => < O:Oid : C | a : X > .
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X, junk > .
+  
+  rl < O:Oid : C | a : X, B > => < O:Oid : C | a : X, B > .
+  rl < O:Oid : C | a : X, B > => < O:Oid : C | a : X > .
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X, B > .
+
+  rl < O:Oid : C | a : X, A:AttributeSet > => < O:Oid : C | a : X > .
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X, A:AttributeSet > .
+  rl m(A:AttributeSet) < O:Oid : C | a : X, A:AttributeSet > => < O:Oid : C | a : X, A:AttributeSet > .
+
+  rl < O:Oid : C | a : X, a : X > => < O:Oid : C | a : X > .
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X, a : X > .
+  rl < O:Oid : C | a : X, a : X  > => < O:Oid : C | a : X, a : X > .
+
+  rl < O:Oid : C | a : X, A:AttributeSet, A2:AttributeSet > => < O:Oid : C | a : X, A:AttributeSet, A2:AttributeSet > .
+  rl < O:Oid : C | a : X, A:AttributeSet > => < O:Oid : C | a : X, A2:AttributeSet > .
+endom
+
+show desugared .
+
+
+*** wrong attribute
+
+omod QUUX is
+  sort Foo .
+  class C | a : Foo .
+  class D | b : Foo .
+  class E | c : Foo .
+  subclass E < C .
+var X : Foo .
+
+*** OK
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X > .
+  rl < O:Oid : E | a : X > => < O:Oid : E | a : X > .
+
+*** bad but transform after Advisory
+  rl < O:Oid : C | b : X > => < O:Oid : C | b : X > .
+endom
+
+show desugared .

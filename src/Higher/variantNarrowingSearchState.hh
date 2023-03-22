@@ -58,7 +58,7 @@ private:
   RewritingContext* const context;  // has own GC protection
   const Vector<DagNode*>& variantSubstitution;  // assumed to be protected from GC by whatever passed it to us
   const Vector<DagNode*>& blockerDags;  // assumed to be protected from GC by whatever passed it to us
-  FreshVariableGenerator* const freshVariableGenerator;
+  //FreshVariableGenerator* const freshVariableGenerator;
   const NarrowingVariableInfo& originalVariables;  // assumed to be protected from GC by whatever passed it to us; only needed for tracing
   Module* const module;
 

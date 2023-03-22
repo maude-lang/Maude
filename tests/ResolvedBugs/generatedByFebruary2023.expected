@@ -1,0 +1,6 @@
+fmod FOO is
+  including BOOL .
+  generated-by NAT .
+  eq 5 = 1 .
+endfm
+Bye.

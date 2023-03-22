@@ -1,0 +1,177 @@
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(mod 'DAM-CONTROLLER-TEST is
+  including 'BOOLEAN .
+  protecting 'REAL-INTEGER .
+  protecting 'BOOL .
+  protecting 'META-TERM .
+  sorts 'Aperture ; 'BoolT ; 'DamState ; 'Spillway ; 'SpillwayId ; 'Spillways ;
+    'State ; 'Real? ; 'Success .
+  subsort 'Real < 'Real? .
+  subsort 'Spillway < 'Spillways .
+  ((((((((((((((((((op '_=:=_ : 'Universal 'Universal -> 'BoolT [ctor poly(1
+    2)] .
+  op '_==:==_ : 'Universal 'Universal -> 'Success [ctor poly(1 2)] .)
+  op '_=>>_ : '`[Success`] 'Universal -> 'Universal [ctor strat(1 0) frozen(2)
+    poly(2 0)] .)
+  op '_>>_ : 'Boolean 'Universal -> 'Universal [ctor poly(2 0)] .)
+  op '__ : 'Spillways 'Spillways -> 'Spillways [assoc comm ctor id(
+    'empty.Spillways)] .)
+  op '_|_ : 'Universal 'BoolT -> 'Universal [ctor poly(1 0)] .)
+  op '`[_`,_`] : 'SpillwayId 'Aperture -> 'Spillway [ctor] .)
+  op '`{_;_;_;_`} : 'Spillways 'Real 'Real 'Bool -> 'State [none] .)
+  op 'aperture : 'Aperture -> 'Real? [none] .)
+  op 'close : nil -> 'Aperture [ctor] .)
+  op 'empty : nil -> 'Spillways [ctor] .)
+  op 'open1 : nil -> 'Aperture [ctor] .)
+  op 'open2 : nil -> 'Aperture [ctor] .)
+  op 'open3 : nil -> 'Aperture [ctor] .)
+  op 'outflow : 'Spillways -> 'Real? [none] .)
+  op 's1 : nil -> 'SpillwayId [ctor] .)
+  op 's2 : nil -> 'SpillwayId [ctor] .)
+  op 's3 : nil -> 'SpillwayId [ctor] .)
+  op 'tt : nil -> 'BoolT [ctor] .)
+  op 'success : nil -> 'Success [ctor] .
+  none
+  ((((((eq '_=:=_['X:Real?,'X:Real?] = 'tt.BoolT [variant] .
+  eq '_|_['X:Real?,'tt.BoolT] = 'X:Real? [variant] .)
+  eq '_=:=_['X:Real,'X:Real] = 'tt.BoolT [variant] .)
+  eq '_|_['X:Real,'tt.BoolT] = 'X:Real [variant] .)
+  eq 'aperture['close.Aperture] = '0/1.Real [variant] .)
+  eq 'aperture['open1.Aperture] = '200/1.Real [variant] .)
+  eq 'aperture['open3.Aperture] = '1200/1.Real [variant] .)
+  eq 'aperture['open2.Aperture] = '400/1.Real [variant] .
+  rl '_|_['outflow['__['SC:Spillways,'`[_`,_`]['S:SpillwayId,'O:Aperture]]],
+    '_=:=_['aperture['O:Aperture],'X:Real]] => '_+_['X:Real,'outflow[
+    'SC:Spillways]] [nonexec narrowing label('outflow-recursive)] .
+  rl '`{_;_;_;_`}['SC:Spillways,'V1:Real,'T:Real,'false.Bool] => '_>>_['_and_[
+    '_and_['_===_['V2:Real,'_-_['_+_['V1:Real,'_*_['INFLOW:Real,'DTIME:Real]],
+    '_*_['Y:Real,'DTIME:Real]]],'_>_['INFLOW:Real,'0/1.Real]],'_>_['DTIME:Real,
+    '0/1.Real]],'_=>>_['_==:==_['outflow['SC:Spillways],'Y:Real],'`{_;_;_;_`}[
+    'SC:Spillways,'V2:Real,'_+_['T:Real,'DTIME:Real],'true.Bool]]] [nonexec
+    narrowing label('volume)] .
+endm, '_=>>_['_==:==_['outflow['__['`[_`,_`]['s1.SpillwayId,'$22:Aperture],
+    '`[_`,_`]['s2.SpillwayId,'$23:Aperture],'`[_`,_`]['s3.SpillwayId,
+    '$24:Aperture]]],'$1:Real],'`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
+    '$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`][
+    's3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],
+    'false.Bool]], ('`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'$8:Aperture],
+    '`[_`,_`]['s2.SpillwayId,'$9:Aperture],'`[_`,_`]['s3.SpillwayId,
+    '$10:Aperture]],'$11:Real,'$12:Real,'false.Bool],'`{_;_;_;_`}['__[
+    '`[_`,_`]['s1.SpillwayId,'$25:Aperture],'`[_`,_`]['s2.SpillwayId,
+    '$26:Aperture],'`[_`,_`]['s3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_[
+    '$29:Real,'$30:Real],'true.Bool]), '%, none, 1) .
+rewrites: 14
+result NarrowingApplyResult: {
+  '_=>>_['_==:==_['_+_['0/1.Real,'outflow['__['`[_`,_`]['s2.SpillwayId,
+    '@1:Aperture],'`[_`,_`]['s3.SpillwayId,'@2:Aperture]]]],'@3:Real],
+    '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'@4:Aperture],'`[_`,_`][
+    's2.SpillwayId,'@5:Aperture],'`[_`,_`]['s3.SpillwayId,'@6:Aperture]],
+    '@7:Real,'_+_['@8:Real,'@9:Real],'false.Bool]],'`[State`],
+  '_=>>_['_==:==_[[],'$1:Real],'`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
+    '$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`][
+    's3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],
+    'false.Bool]],
+  'outflow-recursive,
+    '$1:Real <- '@3:Real ; 
+    '$22:Aperture <- 'close.Aperture ; 
+    '$23:Aperture <- '@1:Aperture ; 
+    '$24:Aperture <- '@2:Aperture ; 
+    '$25:Aperture <- '@4:Aperture ; 
+    '$26:Aperture <- '@5:Aperture ; 
+    '$27:Aperture <- '@6:Aperture ; 
+    '$28:Real <- '@7:Real ; 
+    '$29:Real <- '@8:Real ; 
+    '$30:Real <- '@9:Real,
+    'O:Aperture <- 'close.Aperture ; 
+    'S:SpillwayId <- 's1.SpillwayId ; 
+    'SC:Spillways <- '__['`[_`,_`]['s2.SpillwayId,'@1:Aperture],'`[_`,_`][
+    's3.SpillwayId,'@2:Aperture]] ; 
+    'X:Real <- '0/1.Real,
+  '@
+}
+==========================================
+reduce in META-LEVEL : metaNarrowingApply(mod 'DAM-CONTROLLER-TEST is
+  including 'BOOLEAN .
+  protecting 'REAL-INTEGER .
+  protecting 'BOOL .
+  protecting 'META-TERM .
+  sorts 'Aperture ; 'BoolT ; 'DamState ; 'Spillway ; 'SpillwayId ; 'Spillways ;
+    'State ; 'Real? ; 'Success .
+  subsort 'Real < 'Real? .
+  subsort 'Spillway < 'Spillways .
+  ((((((((((((((((((op '_=:=_ : 'Universal 'Universal -> 'BoolT [ctor poly(1
+    2)] .
+  op '_==:==_ : 'Universal 'Universal -> 'Success [ctor poly(1 2)] .)
+  op '_=>>_ : '`[Success`] 'Universal -> 'Universal [ctor strat(1 0) frozen(2)
+    poly(2 0)] .)
+  op '_>>_ : 'Boolean 'Universal -> 'Universal [ctor poly(2 0)] .)
+  op '__ : 'Spillways 'Spillways -> 'Spillways [assoc comm ctor id(
+    'empty.Spillways)] .)
+  op '_|_ : 'Universal 'BoolT -> 'Universal [ctor poly(1 0)] .)
+  op '`[_`,_`] : 'SpillwayId 'Aperture -> 'Spillway [ctor] .)
+  op '`{_;_;_;_`} : 'Spillways 'Real 'Real 'Bool -> 'State [none] .)
+  op 'aperture : 'Aperture -> 'Real? [none] .)
+  op 'close : nil -> 'Aperture [ctor] .)
+  op 'empty : nil -> 'Spillways [ctor] .)
+  op 'open1 : nil -> 'Aperture [ctor] .)
+  op 'open2 : nil -> 'Aperture [ctor] .)
+  op 'open3 : nil -> 'Aperture [ctor] .)
+  op 'outflow : 'Spillways -> 'Real? [none] .)
+  op 's1 : nil -> 'SpillwayId [ctor] .)
+  op 's2 : nil -> 'SpillwayId [ctor] .)
+  op 's3 : nil -> 'SpillwayId [ctor] .)
+  op 'tt : nil -> 'BoolT [ctor] .)
+  op 'success : nil -> 'Success [ctor] .
+  none
+  ((((((eq '_=:=_['X:Real?,'X:Real?] = 'tt.BoolT [variant] .
+  eq '_|_['X:Real?,'tt.BoolT] = 'X:Real? [variant] .)
+  eq '_=:=_['X:Real,'X:Real] = 'tt.BoolT [variant] .)
+  eq '_|_['X:Real,'tt.BoolT] = 'X:Real [variant] .)
+  eq 'aperture['close.Aperture] = '0/1.Real [variant] .)
+  eq 'aperture['open1.Aperture] = '200/1.Real [variant] .)
+  eq 'aperture['open3.Aperture] = '1200/1.Real [variant] .)
+  eq 'aperture['open2.Aperture] = '400/1.Real [variant] .
+  rl '_|_['outflow['__['SC:Spillways,'`[_`,_`]['S:SpillwayId,'O:Aperture]]],
+    '_=:=_['aperture['O:Aperture],'X:Real]] => '_+_['X:Real,'outflow[
+    'SC:Spillways]] [nonexec narrowing label('outflow-recursive)] .
+endm, '_=>>_['_==:==_['outflow['__['`[_`,_`]['s1.SpillwayId,'$22:Aperture],
+    '`[_`,_`]['s2.SpillwayId,'$23:Aperture],'`[_`,_`]['s3.SpillwayId,
+    '$24:Aperture]]],'$1:Real],'`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
+    '$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`][
+    's3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],
+    'false.Bool]], ('`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'$8:Aperture],
+    '`[_`,_`]['s2.SpillwayId,'$9:Aperture],'`[_`,_`]['s3.SpillwayId,
+    '$10:Aperture]],'$11:Real,'$12:Real,'false.Bool],'`{_;_;_;_`}['__[
+    '`[_`,_`]['s1.SpillwayId,'$25:Aperture],'`[_`,_`]['s2.SpillwayId,
+    '$26:Aperture],'`[_`,_`]['s3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_[
+    '$29:Real,'$30:Real],'true.Bool]), '%, none, 1) .
+rewrites: 14
+result NarrowingApplyResult: {
+  '_=>>_['_==:==_['_+_['0/1.Real,'outflow['__['`[_`,_`]['s1.SpillwayId,
+    '@1:Aperture],'`[_`,_`]['s3.SpillwayId,'@2:Aperture]]]],'@3:Real],
+    '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'@4:Aperture],'`[_`,_`][
+    's2.SpillwayId,'@5:Aperture],'`[_`,_`]['s3.SpillwayId,'@6:Aperture]],
+    '@7:Real,'_+_['@8:Real,'@9:Real],'false.Bool]],'`[State`],
+  '_=>>_['_==:==_[[],'$1:Real],'`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
+    '$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`][
+    's3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],
+    'false.Bool]],
+  'outflow-recursive,
+    '$1:Real <- '@3:Real ; 
+    '$22:Aperture <- '@1:Aperture ; 
+    '$23:Aperture <- 'close.Aperture ; 
+    '$24:Aperture <- '@2:Aperture ; 
+    '$25:Aperture <- '@4:Aperture ; 
+    '$26:Aperture <- '@5:Aperture ; 
+    '$27:Aperture <- '@6:Aperture ; 
+    '$28:Real <- '@7:Real ; 
+    '$29:Real <- '@8:Real ; 
+    '$30:Real <- '@9:Real,
+    'O:Aperture <- 'close.Aperture ; 
+    'S:SpillwayId <- 's2.SpillwayId ; 
+    'SC:Spillways <- '__['`[_`,_`]['s1.SpillwayId,'@1:Aperture],'`[_`,_`][
+    's3.SpillwayId,'@2:Aperture]] ; 
+    'X:Real <- '0/1.Real,
+  '@
+}
+Bye.

@@ -1,0 +1,276 @@
+***
+***	Check what happens with bad use of object-oriented views.
+***
+
+set include BOOL off .
+
+***
+*** Bad class mappings
+***
+
+th T is
+  sort C  .
+endth
+
+omod M is
+  class D .
+endom
+
+*** bad from theory for class mapping
+view V from T to M is
+  class C to D .
+endv
+
+
+oth T is
+  sort C  .
+endoth
+
+mod M is
+  sort D .
+endm
+
+*** bad to module for class mapping
+view V from T to M is
+  class C to D .
+endv
+
+
+oth T is
+  sort C  .
+endoth
+
+th T2 is
+  sort D .
+endth
+
+*** bad to theory for class mapping
+view V from T to T2 is
+  class C to D .
+endv
+
+
+oth T is
+  sort C  .
+endoth
+
+omod M is
+  class D .
+endom
+
+*** class mapping from sort
+view V from T to M is
+  class C to D .
+endv
+
+
+oth T is
+  class C  .
+endoth
+
+omod M is
+  sort D .
+endom
+
+*** class mapping to sort
+view V from T to M is
+  class C to D .
+endv
+
+
+***
+*** Bad attr mappings
+***
+
+th T is
+  sorts Foo Attribute .
+  op a`:_ : Foo -> Attribute .
+endth
+
+omod M is
+  sort Bar .
+  class D | b : Bar .
+endom
+
+*** bad from theory for attr mapping
+view V from T to M is
+  sort Foo to Bar .
+  attr a to b .
+endv
+
+
+oth T is
+  sorts Foo .
+  class C | a : Foo .
+endoth
+
+mod M is
+  sorts Bar Attribute .
+  op b`:_ : Bar -> Attribute .
+endm
+
+*** bad to module for attr mapping
+view V from T to M is
+  sort Foo to Bar .
+  attr a to b .
+endv
+
+
+oth T is
+  sort Foo .
+  op a`:_ : Foo -> Attribute .
+endoth
+
+omod M is
+  sort Bar .
+  class C | b : Bar .
+endom
+
+*** a`:_ looks enough like an attribute
+view V from T to M is
+  sort Foo to Bar .
+  attr a to b .
+endv
+
+omod FOO{X :: T} is
+  eq a : X:X$Foo = a : X:X$Foo .
+endom
+
+omod TEST is
+  inc FOO{V} .
+endom
+
+show mod .
+show desugared .
+show all .
+
+***
+*** Bad msg mappings
+***
+
+oth T is
+  sort Foo .
+  op m : Oid Foo -> Msg .
+endoth
+
+omod FOO{X :: T} is
+  class F .
+  rl m(O:Oid, D:X$Foo) < O:Oid : F | > => < O:Oid : F | > .
+endom
+
+omod M is
+  sort Bar Baz .
+  op translate : Baz -> Bar .
+  msg m' : Oid  Bar -> Msg .
+endom
+
+*** m does not have the message attribute
+view V from T to M is
+  sort Foo to Baz .
+var M : Oid .
+var X : Foo .
+  msg m(M, X) to term m'(M, translate(X)) .
+endv
+
+show view .
+show processed view .
+
+omod BAR is
+  inc FOO{V} .
+endom
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+
+oth T is
+  sort Foo .
+  msg m : Oid Foo -> Msg .
+endoth
+
+omod M is
+  sort Bar Baz .
+  op translate : Baz -> Bar .
+  op m' : Oid  Bar -> Msg .
+endom
+
+*** m' does not have the message attribute
+view V from T to M is
+  sort Foo to Baz .
+var M : Oid .
+var X : Foo .
+  msg m(M, X) to term m'(M, translate(X)) .
+endv
+
+show view .
+show processed view .
+
+omod BAR is
+  inc FOO{V} .
+endom
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+oth T is
+  sort Foo .
+  op m : Oid Foo -> Msg .
+endoth
+
+omod M is
+  sort Bar Baz .
+  op translate : Baz -> Bar .
+  op m' : Oid  Bar -> Msg .
+endom
+
+*** neither m nor m' have the message attribute
+view V from T to M is
+  sort Foo to Baz .
+var M : Oid .
+var X : Foo .
+  msg m(M, X) to term m'(M, translate(X)) .
+endv
+
+show view .
+show processed view .
+
+omod BAR is
+  inc FOO{V} .
+endom
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+oth T is
+  sort Foo .
+  op m : Oid Foo -> Msg .
+endoth
+
+omod M is
+  sort Bar .
+  op m' : Oid  Bar -> Msg .
+endom
+
+*** neither m nor m' have the message attribute
+view V from T to M is
+  sort Foo to Bar .
+  msg m to m' .
+endv
+
+show view .
+show processed view .
+
+omod BAR is
+  inc FOO{V} .
+endom
+
+show mod .
+show desugared .
+show all .
+show modules .

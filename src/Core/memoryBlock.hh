@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +33,18 @@
 class MemoryBlock
 {
   NO_COPYING(MemoryBlock);
+
+public:
+  //
+  //	A machine word should be able to hold any pointer, int or size
+  //	(but not necessarily an Int64).
+  //
+  union MachineWord
+  {
+    void* pointer;
+    int integer;
+    size_t size;
+  };
   
 protected:
   //
@@ -53,6 +65,11 @@ private:
     NR_EXTRA_WORDS = 5  // minimum value seems best on average
   };
 
+protected:
+  //
+  //	We never actually use this data member so if it were private we might
+  //	get a compiler warning.
+  //
   MachineWord filler[NR_EXTRA_WORDS];
 };
 

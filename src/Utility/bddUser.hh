@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ BddUser::setNrVariables(int nrVariables)
 {
   if (nrVariables > bdd_varnum())
     {
-      //cout << "Increase # variables from " << bdd_varnum() << " to " << nrVariables << endl;
+      DebugInfo("Increasing number of variables from " << bdd_varnum() << " to " << nrVariables);
       if (cachedPairing != 0)
 	{
 	  //

@@ -244,6 +244,14 @@ MixfixModule::handleVariable(ostream& s,
   bool needDisambig = !rangeKnown && overloadedVariables.count(p);  // kinds not handled
   prefix(s, needDisambig, color);
   printVariable(s, p.first, sort);
+  //
+  // HACK to understand what is happening with variable indices.
+  //
+  //s << Tty(Tty::MAGENTA) << "(index=" << safeCastNonNull<VariableDagNode*>(dagNode)->getIndex() <<
+  //", address=" << (void*) dagNode << ")" << Tty(Tty::RESET);
+  //
+  //
+  //
   suffix(s, dagNode, needDisambig, color);
 }
 

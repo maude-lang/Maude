@@ -1,0 +1,94 @@
+Alpha 143 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A parsing error caused by a local ambiguity in the surface parser
+
+fmod FOO is
+  sorts Foo to .
+  op f : Foo to -> Foo .
+endfm
+
+fmod BAR is
+  inc FOO * (op f : Foo to -> Foo to g) .
+endfm
+
+This is because the overparsing for constant mappings conflicts with using
+to as a sort. The only resolution I can find is to remove the overparsing
+for omitting -> in constant mappings. The problem is that the mapping
+  op f : Foo to g -> Bar to h
+is perfectly legal so we don't want to interpret it as a constant mapping
+  op f : -> Foo to g -> Bar to h
+where (g -> Bar to h) is a mixfix constant. The other alternative would
+be to make "to" an illegal sort name, but this breaks backwards compatibility
+for the sake of overparsing.
+
+(2) A subtle bug in narrowing with variant unification and irreducibility
+constraints. The issue arises when the term being narrowed contains variables
+other than those from the specified family. In order to avoid potential
+clashes between such variables and the variables in the narrowing rules,
+the variables in the term and irreducibility constraints are renamed to variables
+from the specified family (which are not allowed to appear in rules).
+
+This means that after a narrowing, in order to provide the context around
+the narrrowing, the variables in the context must be mapped back to the
+user's original variable names.
+
+The bug arose because in the forwards mapping, the new variable dag nodes
+were shared between the term being narrowed and the irreducibility constraints,
+and while the variant search procedure used to compute variant unifiers preserves
+variable indices in the terms being unified, it does not preserve variable indices
+in the irreducibility constraints (since they are only used during the variant
+generation process).
+
+However because variable dag nodes were shared, variable dag nodes in the
+term being narrowed could have their indices corrupted and the reverse mapping to
+generate the context for a narrowing step could produce a bad context with the
+wrong user variables being used or memory corruption.
+
+The fix is to detect this case and make a second copy of new variable dag
+nodes which is used by the irreducibility constraints rather than sharing the
+ones used to make the renaming of the variables in the term to be narrowed.
+
+Currently, narrowing with variant unification and irreducibility constraints
+is only available via the functional metalevel or meta-interpreter objects,
+and an example to illustrate this bug is quite complicated.
+
+Found by Santiago, Julia Sapina <jsapina@dsic.upv.es> and Raúl López Rueda
+<ralorueda@gmail.com>, and I have added their example to the test suite as
+/tests/ResolvedBugs/metaNarrowingApplyMarch2023.maude
+
+(3) Several related bugs where certain complex debugging information that didn't
+use the standard debugging macros (due to complexity) was printed in the debug
+build even without the -debug flag as long as advisories were on, because I hadn't
+switched them from the globalAdvisoryFlag to the globalDebugFlag when I
+added the -debug option
+
+
+Other changes
+==============
+
+(1) The show path states command now shows the rule label (if there is one)
+as part of the arrow separating states. Requested by Carolyn.
+
+(2) A change to the way arguments in free theory dag nodes are handled which
+improves performance on free theory rewriting by 2-3%.
+
+(3) The is a command
+  set generate-by <Module> <polarity> .
+for symmetry with the other 3 importation modes.
+
+Maude> set generate-by NAT on .
+Maude> fmod FOO is endfm
+Maude> show desugared FOO .
+fmod FOO is
+  including BOOL .
+  generated-by NAT .
+endfm
+
+This asymmetry in the design was noticed by Rubén.
+
+(4) The INSTALL file has been updated with step-by-step instructions for
+building on Linux and Mac.

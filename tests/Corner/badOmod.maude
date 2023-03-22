@@ -1,0 +1,114 @@
+set show timing off .
+
+***
+***	Check what happens with bad use of object-oriented features.
+***
+
+*** not an omod
+mod CLASS-IN-MOD is
+  class Foo | bar : Bool .
+endm
+
+show mod .
+show desugared .
+show all .
+
+*** good example
+omod FOO is
+  class Foo | foo : Bool .
+  class Bar | bar : Bool .
+endom
+
+show mod .
+show desugared .
+show all .
+
+*** not an omod
+mod SUBCLASS-IN-MOD is
+  pr FOO .
+  subclass Foo < Bar .
+endm
+
+show mod .
+show desugared .
+show all .
+
+*** good example
+omod SUBCLASS-IN-OMOD is
+  pr FOO .
+  subclass Foo < Bar .
+endom
+
+show mod .
+show desugared .
+show all .
+
+*** good example
+oth SUBCLASS-IN-OTH is
+  pr FOO .
+  subclass Foo < Bar .
+endoth
+
+show mod .
+show desugared .
+show all .
+
+*** underscore in class anme
+omod FOO is
+  class a_b .
+endom
+
+show mod .
+show desugared .
+show all .
+
+*** underscore in attribute name
+omod FOO is
+  class a | b_c : Bool .
+endom
+
+show mod .
+show desugared .
+show all .
+
+*** good example
+omod FOO is
+  class Foo .
+  op myObj : -> Oid .
+  op f : Object Object -> Object [id: < myObj : Foo | none >] .
+endom
+
+show mod .
+show desugared .
+show all .
+
+red < myObj : Foo | > .
+red f(< myObj : Foo | >, obj:Object) .
+
+*** empty attribute set syntax in identity
+omod BAR is
+  class Foo .
+  op myObj : -> Oid .
+  op f : Object Object -> Object [id: < myObj : Foo | >] .
+endom
+
+*** quietly ignore extra msg and ctor attributes
+omod ACCOUNT is 
+ protecting INT . 
+ msgs credit debit : Oid Int -> Msg [msg] . 
+ msg from_to_transfer_ : Oid Oid Int -> Msg [ctor] . 
+endom
+
+show mod .
+show desugared .
+show all .
+
+*** attribute at the kind level with sorts in different connected components
+omod ACCOUNT is 
+ protecting INT . 
+ class Account | bal : [Int,Bool] . 
+endom
+
+show mod .
+show desugared .
+show all .

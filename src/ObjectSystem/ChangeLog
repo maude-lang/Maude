@@ -1,3 +1,8 @@
+2023-03-10  Steven Eker  <eker@pup>
+
+	* streamManagerSymbol.cc (StreamManagerSymbol::interruptHandler):
+	added dummy if statement to keep gcc quiet
+
 2021-06-08  Steven Eker  <eker2@eker10>
 
 	* directoryOutcomes.cc

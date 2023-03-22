@@ -1,0 +1,90 @@
+***
+***	Test use of pconst with op to term mappings
+***
+
+*** don't pull in BOOL so we have simple modules to look at
+set include BOOL off .
+
+
+*** pconst to non-pconst in op to term mapping
+
+fth NAT* is
+  inc NAT .
+  op # : -> Nat [pconst] .
+endfth
+
+fmod USER{X :: NAT*} is
+  op r : -> Nat .
+  eq r = X$# .
+endfm
+
+view 5 from NAT* to NAT is
+  op # to term 5 .
+endv
+
+fmod TEST is
+  inc USER{5} .
+endfm
+
+show all .
+
+
+*** non-pconst to pconst op to term mapping
+
+fth ONE is
+  sort Foo .
+  op c : -> Foo .
+endfth
+
+fth TWO is
+  sort Bar .
+  op d : -> Bar [pconst] .
+endfth
+
+view V from ONE to TWO is
+  sort Foo to Bar .
+  op c to term d .
+endv
+
+fmod M{X :: ONE} is
+  eq c = c .
+endfm
+
+fmod TEST{Y :: TWO} is
+  inc M{V}{Y} .
+  eq X:Y$Bar = Y$d .
+endfm
+
+show all .
+
+
+*** combine a regular pconst -> pconst mapping with an op to term mapping involving a pconst constant
+
+fth ONE is
+  sort Foo .
+  op c : -> Foo [pconst] .
+  op f : Foo -> Foo .
+endfth
+
+fth TWO is
+  sort Bar .
+  op d : -> Bar [pconst] .
+  op g : Bar Bar -> Bar .
+endfth
+
+view V from ONE to TWO is
+  sort Foo to Bar .
+  op c to d .
+var X : Foo .
+  op f(X) to term g(d, X) .
+endv
+
+fmod M{X :: ONE} is
+  eq f(X$c) = f(X$c) .
+endfm
+
+fmod TEST{Y :: TWO} is
+  inc M{V}{Y} .
+endfm
+
+show all .

@@ -1,3 +1,43 @@
+2023-03-21  Steven Eker  <eker@pup>
+
+	* top.yy: added KW_GENERATE_BY
+
+	* commands.yy (importMode): added generate-by
+
+	* lexer.ll: added generate-by
+
+2023-03-20  Steven Eker  <eker@pup>
+
+	* dagNodePrint.cc (MixfixModule::handleVariable): added and commented out
+	code to print variable index and variable dag node address for debugging
+	purposes
+
+2023-03-14  Steven Eker  <eker@pup>
+
+	* banner.cc (printBanner): center name string
+
+	* search.cc (Interpreter::showSearchPath): print rule labels when showRule
+	== false
+
+2023-03-10  Steven Eker  <eker@pup>
+
+	* importTranslation.cc (ImportTranslation::translateExpr): initialize index
+	to avoid compiler warning
+	(ImportTranslation::translateTerm): initialize index to avoid compiler warning
+
+	* modules.yy (fromSpec): don't use domainAndRange to avoid reduce/reduce
+	conflict
+	(viewEndOpMap): don't use domainAndRange to avoid reduce/reduce
+	conflict
+	(domainAndRange): deleted
+
+2023-03-06  Steven Eker  <eker@pup>
+
+	* mixfixParser.cc (MixfixParser::makeTerm): fixed spelling error in
+	IssueWarning()
+
+===================================Maude143===========================================
+
 2023-03-03  Steven Eker  <eker@pup>
 
 	* modules.yy (domainAndRange): added

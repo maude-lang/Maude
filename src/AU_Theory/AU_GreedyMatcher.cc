@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ AU_LhsAutomaton::greedyMatchRigidBlock2(AU_DagNode* subject,
 	}
       else
 	{
-	  int sf;
+	  int sf = NONE;  // to avoid compiler warning
 	  int t = greedyMatchFixedLengthBlock(args, i, nextSubject, sf);
 	  if (sf > shiftFactor)
 	    shiftFactor = sf;

@@ -1,0 +1,9 @@
+***
+***	Test that endoth is recognized as the end of a mixfix statement.
+***
+
+oth TEST is
+  eq <> = <> .
+endoth
+
+show desugared .

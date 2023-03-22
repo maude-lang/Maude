@@ -254,7 +254,7 @@ ImportTranslation::translateExpr(const CallStrategy* cs)
 
   RewriteStrategy* strat = cs->getStrategy();
   RenamingList::const_iterator firstStratToExpr;
-  int index;
+  int index = NONE;  // avoid compiler warning
   (void) translateStrategy(strat, firstStratToExpr, index);
 
   const Vector<int> vars = (*firstStratToExpr)->getStratVarIndices(index);
@@ -300,7 +300,7 @@ ImportTranslation::translateTerm(const Term* term)
   //	extra arguments.
   //
   RenamingList::const_iterator firstOpToTerm;  // this will be the Renaming with the op->term mappng
-  int index;  // this will be the index of the op->term mapping withing the Renaming.
+  int index = NONE;  // this will be the index of the op->term mapping withing the Renaming; initialize to NONE to avoid compiler warning
   (void) translateRegularSymbol(symbol, firstOpToTerm, index);
   Term* toTerm = (*firstOpToTerm)->getOpTargetTerm(index);
   //

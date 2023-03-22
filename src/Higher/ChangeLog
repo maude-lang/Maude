@@ -1,3 +1,53 @@
+2023-03-20  Steven Eker  <eker@pup>
+
+	* unificationProblem.cc (UnificationProblem::UnificationProblem):
+	globalAdvisoryFlag -> globalDebugFlag
+
+	* variantUnificationProblem.cc:
+	(VariantUnificationProblem::VariantUnificationProblem): DebugAlways() ->
+	DebugInfo()
+
+	* narrowingSearchState2.cc (NarrowingSearchState2::NarrowingSearchState2):
+	DebugAlways() -> DebugInfo()
+
+	* positionState.cc (PositionState::rebuildAndInstantiateDag): converted
+	DebugAlways() macro calls to DebugInfo()
+
+	* narrowingSearchState2.cc: added code to copy each VariableDagNode in
+	the substitution from original variables to variables from
+	incomingVariableFamily so VariableDagNodes are not shared between
+	dagToNarrow (in which indices must be preserved) and blockerDags (which
+	VariantSearch will reindex, possibly many times)
+
+2023-03-13  Steven Eker  <eker@pup>
+
+	* narrowingSearchState.cc: don't initialize withExtension
+
+	* narrowingSearchState.hh (class NarrowingSearchState): deleted data member
+	withExtension
+
+2023-03-10  Steven Eker  <eker@pup>
+
+	* temporalSymbol.cc (TemporalSymbol::negate): moved here and made non-inline
+	because it has static data which seems to cause issues with purify
+
+2023-03-09  Steven Eker  <eker@pup>
+
+	* variantNarrowingSearchState.hh (class VariantNarrowingSearchState):
+	commented out data member freshVariableGenerator
+
+	* variantNarrowingSearchState.cc
+	(VariantNarrowingSearchState::VariantNarrowingSearchState): don't initialize
+	freshVariableGenerator
+
+	* narrowingSearchState3.hh (class NarrowingSearchState3): commented out data
+	member variableFamily
+
+	* narrowingSearchState2.hh (class NarrowingSearchState2): commented out data
+	member variableFamily
+
+===================================Maude143===========================================
+
 2023-01-26  Steven Eker  <eker@pup>
 
 	* assignmentConditionFragment.cc (AssignmentConditionFragment::check): added

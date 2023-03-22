@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -511,7 +511,7 @@ ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem(UnificationContext& s
 {
 #ifndef NO_ASSERT
   DebugAdvisory("building DiophantineSystem for ACU_UnificationSubproblem2 " << ((void*) this));
-  if (globalAdvisoryFlag)
+  if (globalDebugFlag)
     {
       for (int i = 0; i < subterms.length(); ++i)
 	cerr << subterms[i] << '\t';
@@ -560,7 +560,7 @@ ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem(UnificationContext& s
     {
 #ifndef NO_ASSERT
       DebugAdvisory("added basis element for ACU_UnificationSubproblem2 " << ((void*) this));
-      if (globalAdvisoryFlag)
+      if (globalDebugFlag)
 	{
 	  for (int i = 0; i < dioSol.length(); ++i)
 	    cerr << dioSol[i] << '\t';
@@ -827,7 +827,7 @@ ACU_UnificationSubproblem2::buildSolution(UnificationContext& solution,
 {
 #ifndef NO_ASSERT
   DebugAdvisory("buildSolution() using basis elements:");
-  if (globalAdvisoryFlag)
+  if (globalDebugFlag)
     {
       int selectionSize = selection.size();
       for (int j = 0; j < selectionSize; ++j)

@@ -1,0 +1,5 @@
+***
+***	Test for []s in import with bound parameter.
+***
+
+show desugared LIST-AND-SET .

@@ -1,3 +1,15 @@
+2023-03-17  Steven Eker  <eker@pup>
+
+	* dagNode.hh (DagNode::instantiate): added DebugInfo()
+
+2023-03-14  Steven Eker  <eker@pup>
+
+	* dagNode.hh (DagNode::needToCallDtor): added
+	(DagNode::operator new): use DagNode::needToCallDtor()
+	(DagNode::replaceSymbol): deleted (was commented out)
+
+===================================Maude143=========================================
+
 2023-02-16  Steven Eker  <eker@pup>
 
 	* term.hh (class Term): added comment to explain limitations of LessThan

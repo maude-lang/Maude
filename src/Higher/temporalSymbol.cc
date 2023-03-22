@@ -115,6 +115,14 @@ TemporalSymbol::getSymbolAttachments(Vector<const char*>& purposes,
   FreeSymbol::getSymbolAttachments(purposes, symbols);
 }
 
+DagNode*
+TemporalSymbol::negate(DagNode* original) const
+{
+  static Vector<DagNode*> arg(1);
+  arg[0] = original;
+  return notSymbol->makeDagNode(arg);
+}
+
 int
 TemporalSymbol::build(LogicFormula& formula, DagNodeSet& propositions, DagNode* dagNode) const
 {

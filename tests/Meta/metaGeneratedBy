@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/metaGeneratedBy.maude -no-banner -no-advise \
+  > metaGeneratedBy.out 2>&1
+
+diff $srcdir/metaGeneratedBy.expected metaGeneratedBy.out > /dev/null 2>&1

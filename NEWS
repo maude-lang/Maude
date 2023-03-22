@@ -1,5 +1,18 @@
-Overview of Changes in Maude 3.3 beta (alpha142)
-================================================
+Overview of Changes in Maude 3.3 (alpha143) (2023-03-22)
+========================================================
+* overparsing for omiting -> in constant mapping removed due
+to ambiguity
+* various gcc/clang warnings fixed
+* show path states command now shows rule labels
+* fixed a subtle bug with narrowing with variant unification in
+the presence of irreducibility constraints
+* fixed a bug where certain debugging information was printing
+in the debug build even without the -debug flag
+* added set generate-by command
+* optimization for free theory dag nodes
+
+Overview of Changes in Maude 3.3 beta (alpha142) (2023-03-03)
+=============================================================
 * show path states command
 * fixed bug where generated-by was not recognized as the and of the
 previous mixfix statement
@@ -263,10 +276,7 @@ Overview of Changes in alpha126
 * symmetric change in meta-interpreter
 
 Overview of Changes in alpha123
-===============================erew <>
-< me : User | state: 1 > 
-createProcess(processManager, me, "dc", nil, none) .
-
+===============================
 * fixed a bug in module instantiation introduced by the
   redesigned module system
 * kludged around a bug in BuDDy

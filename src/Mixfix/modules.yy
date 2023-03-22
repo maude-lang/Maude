@@ -189,7 +189,7 @@ mapping		:	KW_SORT sortName KW_TO sortName
  *	The ':' alternative forces lookahead which allows the lexer to grab the bubble.
  */
 fromSpec	:	':'			{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
-			domainAndRange {}
+			typeList arrow typeName {}
 		|				{ Token::peelParens(lexerBubble); currentRenaming->addOpMapping(lexerBubble); }
 		;
 
@@ -311,15 +311,6 @@ sortDot		:	sortName expectedDot		{ $$ = $1; }
 		|	tokenDot
 		;
 
-domainAndRange	:	typeName typeList arrow typeName
-		|	arrow typeName
-		|	typeName
-			{
-			  IssueWarning(LineNumber(lineNumber) <<
-				       ": missing " << QUOTE("->") << " in constant mapping.");
-			}
-		;
-
 viewEndOpMap	:	':'
 			{
 			  //
@@ -328,7 +319,7 @@ viewEndOpMap	:	':'
 			  Token::peelParens(lexerBubble);  // remove any enclosing parens from op name
 			  CV->addOpMapping(lexerBubble);
 			}
-			domainAndRange KW_TO
+			typeList arrow typeName KW_TO
 			{
 			  lexBubble(END_STATEMENT, 1);
 			}

@@ -476,8 +476,22 @@ TESTS = \
 	degenerateFilteredVariantUnifyDecember2022 \
 	kindNameDecember2022 \
 	upTheoryJanuary2023 \
+	spuriousAdvisoryRenamingCaptureJanuary2023 \
+	smodStrategyNameJanuary2023 \
 	moduleViewBadWarningFebruary2023 \
-	theoryViewWrongWarningFebruary2023
+	theoryViewWrongWarningFebruary2023 \
+	doubleAttributeFebruary2023 \
+	showDesugaredFebruary2023 \
+	endothFebruary2023 \
+	specificOpMappingPrintFebruary2023 \
+	theoryViewOpToTermFebruary2023 \
+	metaAutoOoIncludeFebruary2023 \
+	generatedByFebruary2023 \
+	orphanedViewInstantiationFebruary2023 \
+	moduleOrphanedByViewFebruary2023 \
+	parameterizedConstantsMarch2023 \
+	opRenamingParseErrorMarch2023 \
+	metaNarrowingApplyMarch2023
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -520,8 +534,22 @@ MAUDE_FILES = \
 	degenerateFilteredVariantUnifyDecember2022.maude \
 	kindNameDecember2022.maude \
 	upTheoryJanuary2023.maude \
+	spuriousAdvisoryRenamingCaptureJanuary2023.maude \
+	smodStrategyNameJanuary2023.maude \
 	moduleViewBadWarningFebruary2023.maude \
-	theoryViewWrongWarningFebruary2023.maude
+	theoryViewWrongWarningFebruary2023.maude \
+	doubleAttributeFebruary2023.maude \
+	showDesugaredFebruary2023.maude \
+	endothFebruary2023.maude \
+	specificOpMappingPrintFebruary2023.maude \
+	theoryViewOpToTermFebruary2023.maude \
+	metaAutoOoIncludeFebruary2023.maude \
+	generatedByFebruary2023.maude \
+	orphanedViewInstantiationFebruary2023.maude \
+	moduleOrphanedByViewFebruary2023.maude \
+	parameterizedConstantsMarch2023.maude \
+	opRenamingParseErrorMarch2023.maude \
+	metaNarrowingApplyMarch2023.maude 
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -564,8 +592,22 @@ RESULT_FILES = \
 	degenerateFilteredVariantUnifyDecember2022.expected \
 	kindNameDecember2022.expected \
 	upTheoryJanuary2023.expected \
+	spuriousAdvisoryRenamingCaptureJanuary2023.expected \
+	smodStrategyNameJanuary2023.expected \
 	moduleViewBadWarningFebruary2023.expected \
-	theoryViewWrongWarningFebruary2023.expected
+	theoryViewWrongWarningFebruary2023.expected \
+	doubleAttributeFebruary2023.expected \
+	showDesugaredFebruary2023.expected \
+	endothFebruary2023.expected \
+	specificOpMappingPrintFebruary2023.expected \
+	theoryViewOpToTermFebruary2023.expected \
+	metaAutoOoIncludeFebruary2023.expected \
+	generatedByFebruary2023.expected \
+	orphanedViewInstantiationFebruary2023.expected \
+	moduleOrphanedByViewFebruary2023.expected \
+	parameterizedConstantsMarch2023.expected \
+	opRenamingParseErrorMarch2023.expected \
+	metaNarrowingApplyMarch2023.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -1029,6 +1071,20 @@ upTheoryJanuary2023.log: upTheoryJanuary2023
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+spuriousAdvisoryRenamingCaptureJanuary2023.log: spuriousAdvisoryRenamingCaptureJanuary2023
+	@p='spuriousAdvisoryRenamingCaptureJanuary2023'; \
+	b='spuriousAdvisoryRenamingCaptureJanuary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+smodStrategyNameJanuary2023.log: smodStrategyNameJanuary2023
+	@p='smodStrategyNameJanuary2023'; \
+	b='smodStrategyNameJanuary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 moduleViewBadWarningFebruary2023.log: moduleViewBadWarningFebruary2023
 	@p='moduleViewBadWarningFebruary2023'; \
 	b='moduleViewBadWarningFebruary2023'; \
@@ -1039,6 +1095,90 @@ moduleViewBadWarningFebruary2023.log: moduleViewBadWarningFebruary2023
 theoryViewWrongWarningFebruary2023.log: theoryViewWrongWarningFebruary2023
 	@p='theoryViewWrongWarningFebruary2023'; \
 	b='theoryViewWrongWarningFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+doubleAttributeFebruary2023.log: doubleAttributeFebruary2023
+	@p='doubleAttributeFebruary2023'; \
+	b='doubleAttributeFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+showDesugaredFebruary2023.log: showDesugaredFebruary2023
+	@p='showDesugaredFebruary2023'; \
+	b='showDesugaredFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+endothFebruary2023.log: endothFebruary2023
+	@p='endothFebruary2023'; \
+	b='endothFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+specificOpMappingPrintFebruary2023.log: specificOpMappingPrintFebruary2023
+	@p='specificOpMappingPrintFebruary2023'; \
+	b='specificOpMappingPrintFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+theoryViewOpToTermFebruary2023.log: theoryViewOpToTermFebruary2023
+	@p='theoryViewOpToTermFebruary2023'; \
+	b='theoryViewOpToTermFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaAutoOoIncludeFebruary2023.log: metaAutoOoIncludeFebruary2023
+	@p='metaAutoOoIncludeFebruary2023'; \
+	b='metaAutoOoIncludeFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+generatedByFebruary2023.log: generatedByFebruary2023
+	@p='generatedByFebruary2023'; \
+	b='generatedByFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+orphanedViewInstantiationFebruary2023.log: orphanedViewInstantiationFebruary2023
+	@p='orphanedViewInstantiationFebruary2023'; \
+	b='orphanedViewInstantiationFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+moduleOrphanedByViewFebruary2023.log: moduleOrphanedByViewFebruary2023
+	@p='moduleOrphanedByViewFebruary2023'; \
+	b='moduleOrphanedByViewFebruary2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+parameterizedConstantsMarch2023.log: parameterizedConstantsMarch2023
+	@p='parameterizedConstantsMarch2023'; \
+	b='parameterizedConstantsMarch2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+opRenamingParseErrorMarch2023.log: opRenamingParseErrorMarch2023
+	@p='opRenamingParseErrorMarch2023'; \
+	b='opRenamingParseErrorMarch2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+metaNarrowingApplyMarch2023.log: metaNarrowingApplyMarch2023
+	@p='metaNarrowingApplyMarch2023'; \
+	b='metaNarrowingApplyMarch2023'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

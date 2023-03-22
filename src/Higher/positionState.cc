@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -174,6 +174,7 @@ PositionState::rebuildAndInstantiateDag(DagNode* replacement,
       //	Make eager copies of bindings we will use to avoid sharing dags that
       //	might rewrite between eager and lazy positions.
       //
+      DebugInfo("firstVariable = " << firstVariable << "  lastVariable = " << lastVariable);
       Vector<DagNode*> eagerCopies(lastVariable + 1);
       for (int j = firstVariable; j <= lastVariable; ++j)
 	eagerCopies[j] = substitution.value(j)->copyEagerUptoReduced();
@@ -184,6 +185,8 @@ PositionState::rebuildAndInstantiateDag(DagNode* replacement,
 	 {
 	   const RedexPosition& rp = positionQueue[i];
 	   const Vector<DagNode*>* bindings = rp.isEager() ? &eagerCopies : 0;
+	   DebugInfo("calling instantiateWithReplacement() on " << rp.node() <<
+		       " argIndex = " << argIndex << " newDag = " << newDag);
 	   newDag = rp.node()->instantiateWithReplacement(substitution, bindings, argIndex, newDag);
 	   argIndex = rp.argIndex();
 	   i = rp.parentIndex();

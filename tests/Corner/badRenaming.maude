@@ -1,0 +1,178 @@
+***
+***	Check what happens with bad use of object-oriented renamings.
+***
+
+set include BOOL off .
+
+
+*** good example
+omod FOO is
+  sort Quux .
+  class Foo | a : Quux .
+  msg m : Oid Oid Quux -> Msg .
+endom
+
+mod BAR is
+  inc FOO * (class Foo to Bar, attr a to b, msg m to m') .
+endm
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+
+***
+*** Bad class mappings
+***
+
+*** sort has the wrong name
+mod FOO is
+  sort Quux .
+endm
+
+mod BAR is
+  inc FOO * (class Foo to Bar) .
+endm
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+*** sort has the right name but no class constant
+mod FOO is
+  sort Foo .
+endm
+
+mod BAR is
+  inc FOO * (class Foo to Bar) .
+endm
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+*** sort and class constant have the right name but no Cid sort
+mod FOO is
+  sort Foo .
+  op Foo : -> Foo .
+endm
+
+mod BAR is
+  inc FOO * (class Foo to Bar) .
+endm
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+*** sort has the right name and Cid sort but no class constant
+omod FOO is
+  sort Foo .
+endom
+
+mod BAR is
+  inc FOO * (class Foo to Bar) .
+endm
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+*** sort and class constant have the right names, but sort is not a subsort of Cid
+omod FOO is
+  sort Foo .
+  op Foo : -> Foo .
+endom
+
+mod BAR is
+  inc FOO * (class Foo to Bar) .
+endm
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+
+***
+*** Bad attr mappings
+***
+
+*** no Attribute sort
+mod FOO is
+  sorts Foo Bar .
+  op a`:_ : Foo -> Bar .
+endm
+
+mod BAR is
+  inc FOO * (attr a to b) .
+endm
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+*** a`:_ doesn't have range in [Attribute]
+omod FOO is
+  sorts Foo Bar .
+  op a`:_ : Foo -> Bar .
+endom
+
+omod BAR is
+  inc FOO * (attr a to b) .
+endom
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+*** a`:_ looks enough like an attribute to be mappped
+omod FOO is
+  sorts Foo Bar .
+  op a`:_ : Foo -> Attribute .
+endom
+
+omod BAR is
+  inc FOO * (attr a to b) .
+endom
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+
+***
+*** Bad msg mappings
+***
+
+*** g lacks the msg attribute, for both generic and specific mappings
+omod FOO is
+ msg f : Oid -> Msg .
+ op g : Oid -> Msg .
+endom
+
+mod BAR is
+  inc FOO * (msg f to f', msg g to g') .
+endm
+
+show mod .
+show desugared .
+show all .
+show modules .
+
+mod BAZ is
+  inc FOO * (msg f : Oid -> Msg to f', msg g : Oid -> Msg to g') .
+endm
+
+show mod .
+show desugared .
+show all .
+show modules .

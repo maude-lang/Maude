@@ -1,0 +1,10 @@
+***
+***	Test that generated-by is recognized as ending the previous mixfix statement.
+***
+
+fmod FOO is
+  eq 5 = 1 .
+  generated-by NAT .
+endfm
+
+show desugared .

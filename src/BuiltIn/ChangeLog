@@ -1,3 +1,14 @@
+2023-03-13  Steven Eker  <eker@pup>
+
+	* stringDagNode.cc (StringDagNode::StringDagNode): use static_assert()
+	rather than a runtime Assert()
+
+2023-03-10  Steven Eker  <eker@pup>
+
+	* stringDagNode.cc: use MemoryBlock::MachineWord
+
+===================================Maude143===========================================
+
 2023-02-15  Steven Eker  <eker@pup>
 
 	* counterSymbol.cc (CounterSymbol::eqRewrite): clarify comment

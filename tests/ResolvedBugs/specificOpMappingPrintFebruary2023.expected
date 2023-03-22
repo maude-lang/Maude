@@ -1,0 +1,5 @@
+mod BAR is
+  including BOOL .
+  including FOO * (op f : [Foo] -> [Bar] to g) .
+endm
+Bye.

@@ -1,3 +1,11 @@
+2023-03-14  Steven Eker  <eker@pup>
+
+	* freeDagNode.hh (class FreeDagNode): union Word deleted; use
+	MemoryBlock::MachineWord in place of Word
+	(FreeDagNode::argArray): use needToCallDtor() rather than looking at
+	symbol()->arity()
+	(FreeDagNode::getArgument): use argArray()
+
 2023-01-30  Steven Eker  <eker@pup>
 
 	* freeTerm.hh (FreeTerm::replaceArgument): added

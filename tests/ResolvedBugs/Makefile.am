@@ -39,8 +39,22 @@ TESTS = \
 	degenerateFilteredVariantUnifyDecember2022 \
 	kindNameDecember2022 \
 	upTheoryJanuary2023 \
+	spuriousAdvisoryRenamingCaptureJanuary2023 \
+	smodStrategyNameJanuary2023 \
 	moduleViewBadWarningFebruary2023 \
-	theoryViewWrongWarningFebruary2023
+	theoryViewWrongWarningFebruary2023 \
+	doubleAttributeFebruary2023 \
+	showDesugaredFebruary2023 \
+	endothFebruary2023 \
+	specificOpMappingPrintFebruary2023 \
+	theoryViewOpToTermFebruary2023 \
+	metaAutoOoIncludeFebruary2023 \
+	generatedByFebruary2023 \
+	orphanedViewInstantiationFebruary2023 \
+	moduleOrphanedByViewFebruary2023 \
+	parameterizedConstantsMarch2023 \
+	opRenamingParseErrorMarch2023 \
+	metaNarrowingApplyMarch2023
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -83,8 +97,22 @@ MAUDE_FILES = \
 	degenerateFilteredVariantUnifyDecember2022.maude \
 	kindNameDecember2022.maude \
 	upTheoryJanuary2023.maude \
+	spuriousAdvisoryRenamingCaptureJanuary2023.maude \
+	smodStrategyNameJanuary2023.maude \
 	moduleViewBadWarningFebruary2023.maude \
-	theoryViewWrongWarningFebruary2023.maude
+	theoryViewWrongWarningFebruary2023.maude \
+	doubleAttributeFebruary2023.maude \
+	showDesugaredFebruary2023.maude \
+	endothFebruary2023.maude \
+	specificOpMappingPrintFebruary2023.maude \
+	theoryViewOpToTermFebruary2023.maude \
+	metaAutoOoIncludeFebruary2023.maude \
+	generatedByFebruary2023.maude \
+	orphanedViewInstantiationFebruary2023.maude \
+	moduleOrphanedByViewFebruary2023.maude \
+	parameterizedConstantsMarch2023.maude \
+	opRenamingParseErrorMarch2023.maude \
+	metaNarrowingApplyMarch2023.maude 
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -127,7 +155,21 @@ RESULT_FILES = \
 	degenerateFilteredVariantUnifyDecember2022.expected \
 	kindNameDecember2022.expected \
 	upTheoryJanuary2023.expected \
+	spuriousAdvisoryRenamingCaptureJanuary2023.expected \
+	smodStrategyNameJanuary2023.expected \
 	moduleViewBadWarningFebruary2023.expected \
-	theoryViewWrongWarningFebruary2023.expected
+	theoryViewWrongWarningFebruary2023.expected \
+	doubleAttributeFebruary2023.expected \
+	showDesugaredFebruary2023.expected \
+	endothFebruary2023.expected \
+	specificOpMappingPrintFebruary2023.expected \
+	theoryViewOpToTermFebruary2023.expected \
+	metaAutoOoIncludeFebruary2023.expected \
+	generatedByFebruary2023.expected \
+	orphanedViewInstantiationFebruary2023.expected \
+	moduleOrphanedByViewFebruary2023.expected \
+	parameterizedConstantsMarch2023.expected \
+	opRenamingParseErrorMarch2023.expected \
+	metaNarrowingApplyMarch2023.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

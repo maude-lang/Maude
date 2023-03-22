@@ -748,7 +748,7 @@ MixfixParser::makeTerm(int node)
 	    //
 	    int pos = currentOffset + parser.getFirstPosition(node);
 	    IssueWarning(LineNumber((*currentSentence)[pos].lineNumber()) <<
-			 ": empty attribute set syntax is not allowed in operator declararions.");
+			 ": empty attribute set syntax is not allowed in operator declarations.");
 	    client.markAsBad();
 	    //
 	    //	Because the sentence parsed ok, none of the code that calls makeTerm() is prepared

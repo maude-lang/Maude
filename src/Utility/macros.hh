@@ -399,16 +399,6 @@ extern bool globalDebugFlag;
 //
 extern int returnValueDump;
 
-//
-//	A machine word should be about to hold any pointer, int or size
-//	(but not necessarily an Int64).
-//
-union MachineWord
-{
-  void* pointer;
-  int integer;
-  size_t size;
-};
 
 //
 //	Macro for common const_iterator loop.

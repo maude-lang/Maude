@@ -3,7 +3,7 @@
 #
 #	Initialize autoconf stuff.
 #
-AC_INIT(Maude, 3.3beta, [maude-bugs@lists.cs.illinois.edu])
+AC_INIT(Maude, 3.3, [maude-bugs@lists.cs.illinois.edu])
 #
 #	Allow directory names that look like macros.
 #
@@ -142,7 +142,12 @@ if (test $WITH_TECLA = yes) then
 #
   AC_DEFINE([USE_TECLA], [], [use Tecla command line editing library])
   if (test -z "$TECLA_LIBS") then
-    TECLA_LIBS="-ltecla -lcurses"
+#
+#	Find out where the curses functions live.
+#
+    AC_CHECK_LIB(tinfo, tputs, TECLA_LIBS="-ltecla -ltinfo",
+      [AC_CHECK_LIB(ncurses, tputs, TECLA_LIBS="-ltecla -lncurses",
+        [AC_CHECK_LIB(curses, tputs, TECLA_LIBS="-ltecla -lncurses", TECLA_LIBS="-ltecla")])])
   fi
 else
   TECLA_LIBS=""
@@ -411,12 +416,14 @@ AC_CONFIG_FILES([Makefile
 		 src/SMT/Makefile
 		 src/Main/Makefile
 		 tests/Makefile
+		 tests/Corner/Makefile
 		 tests/BuiltIn/Makefile
 		 tests/Meta/Makefile
 		 tests/Misc/Makefile
 		 tests/ResolvedBugs/Makefile
 		 tests/StrategyLanguage/Makefile
 		 tests/ObjectOriented/Makefile
+		 doc/Makefile
 ])
 
 AC_OUTPUT

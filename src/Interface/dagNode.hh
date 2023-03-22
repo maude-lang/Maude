@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2010 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ public:
   DagNode(Symbol* symbol, int sortIndex = Sort::SORT_UNKNOWN);
   virtual ~DagNode() {}
   void setCallDtor();
+  bool needToCallDtor() const;
   //
   //    Get pointer to MemoryInfo object associated with us.
   //
@@ -95,11 +96,6 @@ public:
 		     Substitution& solution,
 		     Subproblem*& returnedSubproblem,
 		     ExtensionInfo* extensionInfo);
-  //
-  //	Currently only used as an efficiency measure in changing the sorts
-  //	of fresh variables introduced by unification.
-  //
-  //void replaceSymbol(Symbol* newSymbol);
   //
   //	These member functions must be defined for each derived class.
   //
@@ -318,6 +314,12 @@ DagNode::setCallDtor()
   getMemoryInfo()->setCallDtor();
 }
 
+inline bool
+DagNode::needToCallDtor() const
+{
+  return getMemoryInfo()->needToCallDtor();
+}
+
 inline int
 DagNode::getSortIndex() const
 {
@@ -330,21 +332,11 @@ DagNode::setSortIndex(int index)
   getMemoryInfo()->setHalfWord(index);
 }
 
-/*
-inline void
-DagNode::replaceSymbol(Symbol* newSymbol)
-{
-  topSymbol = newSymbol;
-}
-*/
-
 inline void
 DagNode::repudiateSortInfo()
 {
   setSortIndex(Sort::SORT_UNKNOWN);
 }
-
-//#include "memoryCellNew.hh"
 
 inline void*
 DagNode::operator new(size_t size)
@@ -393,7 +385,7 @@ DagNode::operator new(size_t /* size */, DagNode* old)
   //	for fast equational rewriting so that the replacement appears
   //	on all paths in the Directed Acyclic Graph.
   //
-  if (old->getMemoryInfo()->needToCallDtor())
+  if (old->needToCallDtor())
     old->~DagNode();  // explicitly call virtual destructor on replaced DagNode
   old->getMemoryInfo()->clearAllExceptMarked();
   return old;
@@ -657,6 +649,7 @@ DagNode::copyAndReduce(RewritingContext& context)
 inline DagNode*
 DagNode::instantiate(const Substitution& substitution, bool maintainInvariants)
 {
+  DebugInfo("instantiating " << this);
   return isGround() ? 0 : instantiate2(substitution, maintainInvariants);
 }
 

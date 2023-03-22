@@ -381,10 +381,17 @@ Interpreter::showSearchPath(int stateNr, bool showRule)
       int sn = steps[i];
       if (sn != 0)
 	{
+	  Rule* rule = savedRewriteSequenceSearch->getStateRule(sn);
 	  if (showRule)
-	    cout << "===[ " << savedRewriteSequenceSearch->getStateRule(sn) << " ]===>\n";
+	    cout << "===[ " << rule << " ]===>\n";
 	  else
-	    cout << "--->\n";
+	    {
+	      const Label& l = rule->getLabel();
+	      cout << "---";
+	      if (l.id() != NONE)
+		cout << ' ' << &l << ' ';
+	      cout << "--->\n";
+	    }
 	}
       DagNode* d = savedRewriteSequenceSearch->getStateDag(sn);
       cout << "state " << sn << ", " << d->getSort() << ": " << d << '\n';

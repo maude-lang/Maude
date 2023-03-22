@@ -1,3 +1,12 @@
+2023-03-10  Steven Eker  <eker@pup>
+
+	* macros.hh: union MachineWord moved to /Core/memoryBlock.hh
+
+	* bddUser.hh (BddUser::setNrVariables): replaced commented out
+	print statement with DebugInfo()
+
+===================================Maude142===================================
+
 2023-02-24  Steven Eker  <eker@pup>
 
 	* macros.hh (ContinueWarning): added

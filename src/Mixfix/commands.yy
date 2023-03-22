@@ -672,6 +672,7 @@ option		:	KW_FOLD			{ $$ = NarrowingSequenceSearch3::FOLD; }
 
 importMode	:	KW_PROTECT		{ $$ = ImportModule::PROTECTING; }
 		|	KW_EXTEND		{ $$ = ImportModule::EXTENDING; }
+		|	KW_GENERATE_BY		{ $$ = ImportModule::GENERATED_BY; }
 		|	KW_INCLUDE		{ $$ = ImportModule::INCLUDING; }
 		;
 /*

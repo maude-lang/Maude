@@ -1,3 +1,19 @@
+2023-03-14  Steven Eker  <eker@pup>
+
+	* label.hh: updated comment because labels can be put on all statements
+
+===================================Maude143===========================================
+
+2023-03-10  Steven Eker  <eker@pup>
+
+	* memoryBlock.hh (class MemoryBlock): make data member filler protected
+	rather than private to avoid compiler warnings
+	(class MemoryBlock): union MachineWord moved here from /Utility/macros.hh
+	(class MemoryBlock): make union MachineWord so classes that use MemoryCell
+	can get its size
+
+===================================Maude141===========================================
+
 2023-02-20  Steven Eker  <eker@pup>
 
 	* symbolMap.hh (class SymbolMap): added pure virtual member function

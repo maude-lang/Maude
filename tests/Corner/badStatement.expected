@@ -1,0 +1,416 @@
+Considering object completion on:
+  rl m(F:Foo) < O:Oid : C | none > => < O:Oid : C | none > .
+Transformed rule:
+  rl m(F:Foo) < O:Oid : V:C | Atts:AttributeSet > => < O:Oid : V:C |
+    Atts:AttributeSet > .
+
+Considering object completion on:
+  rl m(F:Foo) < O:Oid : V:C | none > => < O:Oid : V:C | none > .
+Transformed rule:
+  rl m(F:Foo) < O:Oid : V:C | Atts:AttributeSet > => < O:Oid : V:C |
+    Atts:AttributeSet > .
+
+Advisory: <standard input>, line 23 (omod FOO): bad class argument junk in
+    left-hand side object < O1:Oid : junk | none > disables object completion.
+Advisory: <standard input>, line 23 (omod FOO): transformation not performed
+    for:
+  rl m(F:Foo) < O1:Oid : junk | none > => < O1:Oid : junk | none > .
+Advisory: <standard input>, line 24 (omod FOO): class argument junk in object
+    instance < O2:Oid : junk | none > differing from class argument C in
+    left-hand side object instance < O2:Oid : C | none > disables object
+    completion.
+Advisory: <standard input>, line 24 (omod FOO): transformation not performed
+    for:
+  rl m(F:Foo) < O2:Oid : C | none > => < O2:Oid : junk | none > .
+Advisory: <standard input>, line 25 (omod FOO): bad class argument junk in
+    left-hand side object < O3:Oid : junk | none > disables object completion.
+Advisory: <standard input>, line 25 (omod FOO): transformation not performed
+    for:
+  rl m(F:Foo) < O3:Oid : junk | none > => < O3:Oid : C | none > .
+Advisory: <standard input>, line 27 (omod FOO): class argument junk in object
+    instance < O4:Oid : junk | none > differing from class argument V:C in
+    left-hand side object instance < O4:Oid : V:C | none > disables object
+    completion.
+Advisory: <standard input>, line 27 (omod FOO): transformation not performed
+    for:
+  rl m(F:Foo) < O4:Oid : V:C | none > => < O4:Oid : junk | none > .
+Advisory: <standard input>, line 28 (omod FOO): bad class argument junk in
+    left-hand side object < O5:Oid : junk | none > disables object completion.
+Advisory: <standard input>, line 28 (omod FOO): transformation not performed
+    for:
+  rl m(F:Foo) < O5:Oid : junk | none > => < O5:Oid : V:C | none > .
+Warning: <standard input>, line 28 (omod FOO): variable V:C is used before it
+    is bound in rule:
+rl m(F:Foo) < O5:Oid : junk | none > => < O5:Oid : V:C | none > .
+Advisory: <standard input>, line 30 (omod FOO): class argument V:C in object
+    instance < O6:Oid : V:C | none > differing from class argument C in
+    left-hand side object instance < O6:Oid : C | none > disables object
+    completion.
+Advisory: <standard input>, line 30 (omod FOO): transformation not performed
+    for:
+  rl m(F:Foo) < O6:Oid : C | none > => < O6:Oid : V:C | none > .
+Warning: <standard input>, line 30 (omod FOO): variable V:C is used before it
+    is bound in rule:
+rl m(F:Foo) < O6:Oid : C | none > => < O6:Oid : V:C | none > .
+Advisory: <standard input>, line 31 (omod FOO): class argument C in object
+    instance < O7:Oid : C | none > differing from class argument V:C in
+    left-hand side object instance < O7:Oid : V:C | none > disables object
+    completion.
+Advisory: <standard input>, line 31 (omod FOO): transformation not performed
+    for:
+  rl m(F:Foo) < O7:Oid : V:C | none > => < O7:Oid : C | none > .
+Advisory: <standard input>, line 33 (omod FOO): class argument C2 in object
+    instance < O8:Oid : C2 | none > differing from class argument C in
+    left-hand side object instance < O8:Oid : C | none > disables object
+    completion.
+Advisory: <standard input>, line 33 (omod FOO): transformation not performed
+    for:
+  rl m(F:Foo) < O8:Oid : C | none > => < O8:Oid : C2 | none > .
+Advisory: <standard input>, line 34 (omod FOO): class argument V:C2 in object
+    instance < O9:Oid : V:C2 | none > differing from class argument V:C in
+    left-hand side object instance < O9:Oid : V:C | none > disables object
+    completion.
+Advisory: <standard input>, line 34 (omod FOO): transformation not performed
+    for:
+  rl m(F:Foo) < O9:Oid : V:C | none > => < O9:Oid : V:C2 | none > .
+Warning: <standard input>, line 34 (omod FOO): variable V:C2 is used before it
+    is bound in rule:
+rl m(F:Foo) < O9:Oid : V:C | none > => < O9:Oid : V:C2 | none > .
+op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
+op __ left-identity collapse from Configuration to Object is unequal.
+mod FOO is
+  including CONFIGURATION .
+  sorts Foo C C2 .
+  subsorts C C2 < Cid .
+  op m : Foo -> Msg [ctor msg] .
+  op junk : -> Cid .
+  op C : -> C [ctor] .
+  op C2 : -> C2 [ctor] .
+  rl m(F:Foo) < O:Oid : V:C | Atts:AttributeSet > => < O:Oid : V:C |
+    Atts:AttributeSet > .
+  rl m(F:Foo) < O:Oid : V:C | Atts:AttributeSet > => < O:Oid : V:C |
+    Atts:AttributeSet > .
+  rl m(F:Foo) < O1:Oid : junk | none > => < O1:Oid : junk | none > .
+  rl m(F:Foo) < O2:Oid : C | none > => < O2:Oid : junk | none > .
+  rl m(F:Foo) < O3:Oid : junk | none > => < O3:Oid : C | none > .
+  rl m(F:Foo) < O4:Oid : V:C | none > => < O4:Oid : junk | none > .
+  rl m(F:Foo) < O5:Oid : junk | none > => < O5:Oid : V:C | none > [nonexec] .
+  rl m(F:Foo) < O6:Oid : C | none > => < O6:Oid : V:C | none > [nonexec] .
+  rl m(F:Foo) < O7:Oid : V:C | none > => < O7:Oid : C | none > .
+  rl m(F:Foo) < O8:Oid : C | none > => < O8:Oid : C2 | none > .
+  rl m(F:Foo) < O9:Oid : V:C | none > => < O9:Oid : V:C2 | none > [nonexec] .
+endm
+Considering object completion on:
+  rl m(F:Cid) < O:Oid : V:C | none > => < O:Oid : V:C | none > .
+Transformed rule:
+  rl m(F:Cid) < O:Oid : V:C | Atts:AttributeSet > => < O:Oid : V:C |
+    Atts:AttributeSet > .
+
+Advisory: <standard input>, line 50 (omod BAR): using class variable V:C from
+    object instance < O:Oid : V:C | none > for other purposes disables object
+    completion.
+Advisory: <standard input>, line 50 (omod BAR): transformation not performed
+    for:
+  rl m(V:C) < O:Oid : V:C | none > => < O:Oid : V:C | none > .
+op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
+op __ left-identity collapse from Configuration to Object is unequal.
+mod BAR is
+  including CONFIGURATION .
+  sorts Foo C .
+  subsort C < Cid .
+  op m : Cid -> Msg [ctor msg] .
+  op C : -> C [ctor] .
+  rl m(F:Cid) < O:Oid : V:C | Atts:AttributeSet > => < O:Oid : V:C |
+    Atts:AttributeSet > .
+  rl m(V:C) < O:Oid : V:C | none > => < O:Oid : V:C | none > .
+endm
+Advisory: redefining module BAR.
+Considering object completion on:
+  crl < O:Oid : C | none > => < O:Oid : C | none > if < O:Oid : C | none > = <
+    O:Oid : C | none > .
+Transformed rule:
+  crl < O:Oid : V:C | Atts:AttributeSet > => < O:Oid : V:C | Atts:AttributeSet
+    > if < O:Oid : V:C | Atts:AttributeSet > = < O:Oid : V:C |
+    Atts:AttributeSet > .
+
+Considering object completion on:
+  rl < O:Oid : C | none > => < O:Oid : C | none > < O:Oid : C | none > .
+Transformed rule:
+  rl < O:Oid : V:C | Atts:AttributeSet > => < O:Oid : V:C | Atts:AttributeSet >
+    < O:Oid : V:C | Atts:AttributeSet > .
+
+Advisory: <standard input>, line 68 (omod BAR): objects < O:Oid : C | none >
+    and < O:Oid : C | none > occurring in the left-hand side of a statement
+    have same name which disables object completion.
+Advisory: <standard input>, line 68 (omod BAR): transformation not performed
+    for:
+  rl < O:Oid : C | none > < O:Oid : C | none > => < O:Oid : C | none > .
+op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
+op __ left-identity collapse from Configuration to Object is unequal.
+mod BAR is
+  including CONFIGURATION .
+  sorts Foo C .
+  subsort C < Cid .
+  op C : -> C [ctor] .
+  crl < O:Oid : V:C | Atts:AttributeSet > => < O:Oid : V:C | Atts:AttributeSet
+    > if < O:Oid : V:C | Atts:AttributeSet > = < O:Oid : V:C |
+    Atts:AttributeSet > .
+  rl < O:Oid : V:C | Atts:AttributeSet > => < O:Oid : V:C | Atts:AttributeSet >
+    < O:Oid : V:C | Atts:AttributeSet > .
+  rl < O:Oid : C | none > < O:Oid : C | none > => < O:Oid : C | none > .
+endm
+Advisory: redefining module BAR.
+Advisory: <standard input>, line 80 (omod BAR): object < O:Oid : C | none >
+    appearing in condition fragment pattern disables object completion.
+Advisory: <standard input>, line 80 (omod BAR): transformation not performed
+    for:
+  crl < O:Oid : C | none > => < O:Oid : C | none > if < O:Oid : C | none > := <
+    O:Oid : C | none > .
+Advisory: <standard input>, line 80 (omod BAR): all the variables in the
+    left-hand side of assignment condition fragment < O:Oid : C | none > := <
+    O:Oid : C | none > are bound before the matching takes place.
+Advisory: <standard input>, line 81 (omod BAR): object < O:Oid : C | none >
+    appearing in condition fragment pattern disables object completion.
+Advisory: <standard input>, line 81 (omod BAR): transformation not performed
+    for:
+  crl < O:Oid : C | none > => < O:Oid : C | none > if < O:Oid : C | none > => <
+    O:Oid : C | none > .
+op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
+op __ left-identity collapse from Configuration to Object is unequal.
+mod BAR is
+  including CONFIGURATION .
+  sorts Foo C .
+  subsort C < Cid .
+  op C : -> C [ctor] .
+  crl < O:Oid : C | none > => < O:Oid : C | none > if < O:Oid : C | none > := <
+    O:Oid : C | none > .
+  crl < O:Oid : C | none > => < O:Oid : C | none > if < O:Oid : C | none > => <
+    O:Oid : C | none > .
+endm
+Considering object completion on:
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X > .
+Transformed rule:
+  rl < O:Oid : V:C | a : X, Atts:AttributeSet > => < O:Oid : V:C | a : X,
+    Atts:AttributeSet > .
+
+Considering object completion on:
+  rl < O:Oid : C | none > => < O:Oid : C | a : k > .
+Transformed rule:
+  rl < O:Oid : V:C | a : A:[Foo], Atts:AttributeSet > => < O:Oid : V:C | a : k,
+    Atts:AttributeSet > .
+
+Considering object completion on:
+  rl < O:Oid : C | a : X > => < O:Oid : C | none > .
+Transformed rule:
+  rl < O:Oid : V:C | a : X, Atts:AttributeSet > => < O:Oid : V:C | a : X,
+    Atts:AttributeSet > .
+
+Considering object completion on:
+  rl < O:Oid : C | a : X, A:AttributeSet > => < O:Oid : C | a : X,
+    A:AttributeSet > .
+Transformed rule:
+  rl < O:Oid : V:C | a : X, A:AttributeSet > => < O:Oid : V:C | a : X,
+    A:AttributeSet > .
+
+Considering object completion on:
+  rl < O:Oid : C | A:AttributeSet > => < O:Oid : C | a : k, A:AttributeSet > .
+Transformed rule:
+  rl < O:Oid : V:C | a : A2:[Foo], A:AttributeSet > => < O:Oid : V:C | a : k,
+    A:AttributeSet > .
+
+Considering object completion on:
+  rl < O:Oid : C | a : X, A:AttributeSet > => < O:Oid : C | A:AttributeSet > .
+Transformed rule:
+  rl < O:Oid : V:C | a : X, A:AttributeSet > => < O:Oid : V:C | a : X,
+    A:AttributeSet > .
+
+Advisory: <standard input>, line 107 (omod BAZ): unrecognized term junk in
+    attribute set disables object completion.
+Advisory: <standard input>, line 107 (omod BAZ): unrecognized term junk in
+    attribute set disables object completion.
+Advisory: <standard input>, line 107 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X, junk > => < O:Oid : C | a : X, junk > .
+Advisory: <standard input>, line 108 (omod BAZ): unrecognized term junk in
+    attribute set disables object completion.
+Advisory: <standard input>, line 108 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X, junk > => < O:Oid : C | a : X > .
+Advisory: <standard input>, line 109 (omod BAZ): unrecognized term junk in
+    attribute set disables object completion.
+Advisory: <standard input>, line 109 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X, junk > .
+Advisory: <standard input>, line 111 (omod BAZ): variable B of sort other than
+    AttributeSet in attribute set disables object completion.
+Advisory: <standard input>, line 111 (omod BAZ): variable B of sort other than
+    AttributeSet in attribute set disables object completion.
+Advisory: <standard input>, line 111 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X, B > => < O:Oid : C | a : X, B > .
+Advisory: <standard input>, line 112 (omod BAZ): variable B of sort other than
+    AttributeSet in attribute set disables object completion.
+Advisory: <standard input>, line 112 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X, B > => < O:Oid : C | a : X > .
+Advisory: <standard input>, line 113 (omod BAZ): variable B of sort other than
+    AttributeSet in attribute set disables object completion.
+Advisory: <standard input>, line 113 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X, B > .
+Warning: <standard input>, line 113 (omod BAZ): variable B is used before it is
+    bound in rule:
+rl < O:Oid : C | a : X > => < O:Oid : C | B, a : X > .
+Advisory: <standard input>, line 115 (omod BAZ): left-hand side object instance
+    < O:Oid : C | a : X, A:AttributeSet > had a variable A:AttributeSet in its
+    attribute set while object instance < O:Oid : C | a : X > does not. This
+    disables object completion.
+Advisory: <standard input>, line 115 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X, A:AttributeSet > => < O:Oid : C | a : X > .
+Advisory: <standard input>, line 116 (omod BAZ): object instance < O:Oid : C |
+    a : X, A:AttributeSet > has a variable A:AttributeSet in its attribute set,
+    which does not appear in the left-hand side occurrence of this object, <
+    O:Oid : C | a : X >. This disables object completion.
+Advisory: <standard input>, line 116 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X, A:AttributeSet > .
+Warning: <standard input>, line 116 (omod BAZ): variable A:AttributeSet is used
+    before it is bound in rule:
+rl < O:Oid : C | a : X > => < O:Oid : C | A:AttributeSet, a : X > .
+Advisory: <standard input>, line 117 (omod BAZ): using attribute set variable
+    A:AttributeSet from object instance < O:Oid : C | a : X, A:AttributeSet >
+    for other purposes disables object completion.
+Advisory: <standard input>, line 117 (omod BAZ): transformation not performed
+    for:
+  rl m(A:AttributeSet) < O:Oid : C | a : X, A:AttributeSet > => < O:Oid : C | a
+    : X, A:AttributeSet > .
+Advisory: <standard input>, line 119 (omod BAZ): duplicate attribute arguments
+    a : X and a : X disable object completion.
+Advisory: <standard input>, line 119 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X, a : X > => < O:Oid : C | a : X > .
+Advisory: <standard input>, line 120 (omod BAZ): duplicate attribute arguments
+    a : X and a : X disable object completion.
+Advisory: <standard input>, line 120 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X, a : X > .
+Advisory: <standard input>, line 121 (omod BAZ): duplicate attribute arguments
+    a : X and a : X disable object completion.
+Advisory: <standard input>, line 121 (omod BAZ): duplicate attribute arguments
+    a : X and a : X disable object completion.
+Advisory: <standard input>, line 121 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X, a : X > => < O:Oid : C | a : X, a : X > .
+Advisory: <standard input>, line 123 (omod BAZ): multiple variables
+    A:AttributeSet and A2:AttributeSet in attribute set disables object
+    completion.
+Advisory: <standard input>, line 123 (omod BAZ): multiple variables
+    A:AttributeSet and A2:AttributeSet in attribute set disables object
+    completion.
+Advisory: <standard input>, line 123 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X, A:AttributeSet, A2:AttributeSet > => < O:Oid : C | a
+    : X, A:AttributeSet, A2:AttributeSet > .
+Advisory: <standard input>, line 124 (omod BAZ): object instance < O:Oid : C |
+    a : X, A2:AttributeSet > has a variable A2:AttributeSet in its attribute
+    set, while left-hand side object instance < O:Oid : C | a : X,
+    A:AttributeSet > has a variable A:AttributeSet. This disables object
+    completion.
+Advisory: <standard input>, line 124 (omod BAZ): transformation not performed
+    for:
+  rl < O:Oid : C | a : X, A:AttributeSet > => < O:Oid : C | a : X,
+    A2:AttributeSet > .
+Warning: <standard input>, line 124 (omod BAZ): variable A2:AttributeSet is
+    used before it is bound in rule:
+rl < O:Oid : C | A:AttributeSet, a : X > => < O:Oid : C | A2:AttributeSet, a :
+    X > .
+op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
+op __ left-identity collapse from Configuration to Object is unequal.
+mod BAZ is
+  including CONFIGURATION .
+  sorts Foo C .
+  subsort C < Cid .
+  op m : AttributeSet -> Msg [ctor msg] .
+  op junk : -> Attribute .
+  op k : -> Foo .
+  op C : -> C [ctor] .
+  op a`:_ : Foo -> Attribute [ctor prec 15 gather (&)] .
+  var B : Attribute .
+  var X : Foo .
+  rl < O:Oid : V:C | Atts:AttributeSet, a : X > => < O:Oid : V:C |
+    Atts:AttributeSet, a : X > .
+  rl < O:Oid : V:C | Atts:AttributeSet, a : A:[Foo] > => < O:Oid : V:C |
+    Atts:AttributeSet, a : k > .
+  rl < O:Oid : V:C | Atts:AttributeSet, a : X > => < O:Oid : V:C |
+    Atts:AttributeSet, a : X > .
+  rl < O:Oid : V:C | A:AttributeSet, a : X > => < O:Oid : V:C | A:AttributeSet,
+    a : X > .
+  rl < O:Oid : V:C | A:AttributeSet, a : A2:[Foo] > => < O:Oid : V:C |
+    A:AttributeSet, a : k > .
+  rl < O:Oid : V:C | A:AttributeSet, a : X > => < O:Oid : V:C | A:AttributeSet,
+    a : X > .
+  rl < O:Oid : C | junk, a : X > => < O:Oid : C | junk, a : X > .
+  rl < O:Oid : C | junk, a : X > => < O:Oid : C | a : X > .
+  rl < O:Oid : C | a : X > => < O:Oid : C | junk, a : X > .
+  rl < O:Oid : C | B, a : X > => < O:Oid : C | B, a : X > .
+  rl < O:Oid : C | B, a : X > => < O:Oid : C | a : X > .
+  rl < O:Oid : C | a : X > => < O:Oid : C | B, a : X > [nonexec] .
+  rl < O:Oid : C | A:AttributeSet, a : X > => < O:Oid : C | a : X > .
+  rl < O:Oid : C | a : X > => < O:Oid : C | A:AttributeSet, a : X > [nonexec] .
+  rl m(A:AttributeSet) < O:Oid : C | A:AttributeSet, a : X > => < O:Oid : C |
+    A:AttributeSet, a : X > .
+  rl < O:Oid : C | a : X, a : X > => < O:Oid : C | a : X > .
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X, a : X > .
+  rl < O:Oid : C | a : X, a : X > => < O:Oid : C | a : X, a : X > .
+  rl < O:Oid : C | A:AttributeSet, A2:AttributeSet, a : X > => < O:Oid : C | a
+    : X, A:AttributeSet, A2:AttributeSet > .
+  rl < O:Oid : C | A:AttributeSet, a : X > => < O:Oid : C | A2:AttributeSet, a
+    : X > [nonexec] .
+endm
+Considering object completion on:
+  rl < O:Oid : C | a : X > => < O:Oid : C | a : X > .
+Transformed rule:
+  rl < O:Oid : V:C | a : X, Atts:AttributeSet > => < O:Oid : V:C | a : X,
+    Atts:AttributeSet > .
+
+Considering object completion on:
+  rl < O:Oid : E | a : X > => < O:Oid : E | a : X > .
+Transformed rule:
+  rl < O:Oid : V:E | a : X, Atts:AttributeSet > => < O:Oid : V:E | a : X,
+    Atts:AttributeSet > .
+
+Advisory: <standard input>, line 145 (omod QUUX): object occurrence < O:Oid : C
+    | b : X > contains an attribute b : [Foo] that was neither declared for nor
+    inherited by class C.
+Advisory: <standard input>, line 145 (omod QUUX): object occurrence < O:Oid : C
+    | b : X > contains an attribute b : [Foo] that was neither declared for nor
+    inherited by class C.
+Considering object completion on:
+  rl < O:Oid : C | b : X > => < O:Oid : C | b : X > .
+Transformed rule:
+  rl < O:Oid : V:C | b : X, Atts:AttributeSet > => < O:Oid : V:C | b : X,
+    Atts:AttributeSet > .
+
+op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
+op __ left-identity collapse from Configuration to Object is unequal.
+mod QUUX is
+  including CONFIGURATION .
+  sorts Foo C D E .
+  subsorts C D E < Cid .
+  subsort E < C .
+  op C : -> C [ctor] .
+  op a`:_ : Foo -> Attribute [ctor prec 15 gather (&)] .
+  op D : -> D [ctor] .
+  op b`:_ : Foo -> Attribute [ctor prec 15 gather (&)] .
+  op E : -> E [ctor] .
+  op c`:_ : Foo -> Attribute [ctor prec 15 gather (&)] .
+  var X : Foo .
+  rl < O:Oid : V:C | Atts:AttributeSet, a : X > => < O:Oid : V:C |
+    Atts:AttributeSet, a : X > .
+  rl < O:Oid : V:E | Atts:AttributeSet, a : X > => < O:Oid : V:E |
+    Atts:AttributeSet, a : X > .
+  rl < O:Oid : V:C | Atts:AttributeSet, b : X > => < O:Oid : V:C |
+    Atts:AttributeSet, b : X > .
+endm
+Bye.

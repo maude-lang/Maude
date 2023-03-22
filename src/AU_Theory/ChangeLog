@@ -1,3 +1,18 @@
+2023-03-21  Steven Eker  <eker@pup>
+
+	* AU_UnificationSubproblem2.hh (class AU_UnificationSubproblem2):
+	comment out PendingUnificationStack::Marker preSolveState
+
+2023-03-10  Steven Eker  <eker@pup>
+
+	* AU_FullMatcher.cc (AU_LhsAutomaton::fullMatchRigidBlock2):
+	initialize sf to avoid compiler warning
+
+	* AU_GreedyMatcher.cc (AU_LhsAutomaton::greedyMatchRigidBlock2):
+	initialize sf to avoid compiler warning
+
+===================================Maude143===========================================
+
 2021-09-21  Steven Eker  <eker@pup>
 
 	* AU_ExtensionInfo.cc (AU_ExtensionInfo::copy): take const arg

@@ -21,7 +21,7 @@
 */
 
 //
-//      Class for rule labels.
+//      Class for statement labels.
 //
 #ifndef _label_hh_
 #define _label_hh_

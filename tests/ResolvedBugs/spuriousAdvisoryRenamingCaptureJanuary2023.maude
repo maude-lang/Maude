@@ -1,0 +1,17 @@
+***
+***	Test for spurious advisory about mapping capturing an operator from a parameter.
+***
+
+fth T is
+  sort S .
+  op f : S -> S .
+endfth
+
+fmod M{X :: T} is
+  sort V{X} .
+  op f : V{X} -> V{X} .
+endfm
+
+fmod N{X :: T} is
+  inc M{X} * (op f : V{X} -> V{X} to g) .
+endfm

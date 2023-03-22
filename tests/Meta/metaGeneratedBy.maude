@@ -1,0 +1,29 @@
+set show timing off .
+
+***
+***	Test the generated-by importation mode at the metalevel.
+***
+
+fmod MOD3 is
+  generated-by NAT .
+  eq s s s X:Nat = X:Nat .
+endfm
+
+show mod .
+show desugared .
+
+red in META-LEVEL : upModule('MOD3, false) .
+red in META-LEVEL : metaReduce(upModule('MOD3, false), 's_^4['0.Nat]) .
+
+
+set generate-by NAT on .
+
+fmod MOD4 is
+  eq s s s s X:Nat = X:Nat .
+endfm
+
+show mod .
+show desugared .
+
+red in META-LEVEL : upModule('MOD4, false) .
+red in META-LEVEL : metaReduce(upModule('MOD4, false), 's_^10['0.Nat]) .

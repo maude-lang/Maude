@@ -1,3 +1,16 @@
+2023-03-13  Steven Eker  <eker@pup>
+
+	* callStrategy.cc (CallStrategy::decompose): don't pass tailCall
+	argument to CallProcess()
+
+	* callProcess.cc (CallProcess::CallProcess): don't take tailCall
+	argument or initialize tailCall member
+
+	* callProcess.hh (class CallProcess): deleted data member tailCall;
+	updated decl for ctor
+
+===================================Maude143===========================================
+
 2020-12-11  Steven Eker  <eker2@eker10>
 
 	* subtermTask.cc: pass maintainInvariants = true to instantiate()

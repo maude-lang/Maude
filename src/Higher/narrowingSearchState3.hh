@@ -85,7 +85,7 @@ private:
   NarrowingVariableInfo variableInfo;
   int ruleIndex;  // index of current rule being tried
   VariantUnificationProblem* unificationProblem;
-  int variableFamily;
+  //int variableFamily;
   bool incompleteFlag;
 };
 

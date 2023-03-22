@@ -113,7 +113,7 @@ private:
   PositionState *positionState;
 
   int ruleIndex;  // index of current rule being tried
-  int variableFamily;
+  //int variableFamily;
   VariantUnificationProblem* unificationProblem;
   RewritingContext* newContext;
   bool incompleteFlag;

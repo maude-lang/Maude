@@ -1,0 +1,8 @@
+***
+***	Test for warning with double iter attribute.
+***
+
+fmod FOO is
+  sort Foo .
+  op f : Foo -> Foo [iter iter] .
+endfm

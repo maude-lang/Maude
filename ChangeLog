@@ -1,3 +1,77 @@
+2023-03-22  Steven Eker  <eker@pup>
+
+	* tests/Meta/metaGeneratedBy.maude: added
+
+	* tests/ResolvedBugs/opRenamingParseErrorMarch2023.maude: added
+
+	* tests/ResolvedBugs/parameterizedConstantsMarch2023.maude: added
+
+	* tests/ResolvedBugs/moduleOrphanedByViewFebruary2023.maude: added
+
+	* tests/ResolvedBugs/orphanedViewInstantiationFebruary2023.maude: added
+
+	* tests/ResolvedBugs/generatedByFebruary2023.maude: added
+
+2023-03-21  Steven Eker  <eker@pup>
+
+	* INSTALL: no need to pass CFLAGS for Maude build
+
+	* tests/ResolvedBugs/metaAutoOoIncludeFebruary2023.maude: added
+
+	* tests/ResolvedBugs/theoryViewOpToTermFebruary2023.maude: added
+
+	* tests/ResolvedBugs/specificOpMappingPrintFebruary2023.maude: added
+
+	* tests/ResolvedBugs/endothFebruary2023.maude: created
+
+	* tests/ResolvedBugs/metaNarrowingApplyMarch2023.maude: created
+
+	* configure.ac (USE_TECLA): try -ltinfo, -lncurses, -lcurses in
+	turn because Mac does not have libtinfo, but does have libncurses
+
+2023-03-20  Steven Eker  <eker@pup>
+
+	* configure.ac: remove -lcurses in the --with-tecla case
+
+2023-03-15  Steven Eker  <eker@pup>
+
+	* INSTALL: updated
+
+	* tests/Corner/badStatement.maude: added
+
+	* tests/Misc/pconst5.maude: added
+
+2023-03-14  Steven Eker  <eker@pup>
+
+	* tests/ResolvedBugs/showDesugaredFebruary2023.maude: added
+
+	* tests/ResolvedBugs/doubleAttributeFebruary2023.maude: added
+
+2023-03-13  Steven Eker  <eker@pup>
+
+	* tests/ResolvedBugs/spuriousAdvisoryRenamingCaptureJanuary2023.maude:
+	added
+
+	* tests/ResolvedBugs/smodStrategyNameJanuary2023.maude: added
+
+	* INSTALL: updated
+
+2023-03-10  Steven Eker  <eker@pup>
+
+	* tests/Corner/badOmod.maude: turn timing off
+
+	* README.md: updated
+
+2023-03-06  Steven Eker  <eker@pup>
+
+	* tests/Corner/badView.maude: added
+
+	* tests/Corner/badOmod.maude: added
+
+	* tests/Corner/badRenaming.maude: added
+
+===================================Maude143===========================================
+
 2023-02-16  Steven Eker  <eker@pup>
 
 	* tests/ObjectOriented/oo-list-2.maude: updated with new version from Paco

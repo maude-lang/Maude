@@ -72,7 +72,7 @@ VariantUnificationProblem::VariantUnificationProblem(RewritingContext* context,
     variableInfo(variableInfo),
     freshVariableGenerator(freshVariableGenerator)
 {
-  //DebugAlways("variantFlags = " << variantFlags);
+  DebugInfo("variantFlags = " << variantFlags);
   DebugAdvisory(Tty(Tty::RED) <<
 		"VariantUnificationProblem(): lhsDag = " << preEquation->getLhsDag() <<
 		"  target = " << target << Tty(Tty::RESET));

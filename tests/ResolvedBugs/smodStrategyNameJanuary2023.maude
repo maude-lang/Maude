@@ -1,0 +1,15 @@
+***
+***	Test for bad strategy name in advisory.
+***
+
+sth T is
+  sorts Prop State .
+  strat expand : Prop @ State .
+endsth
+
+smod M{X :: T} is
+endsm
+
+smod TEST{X :: T} is
+  inc M{X} * (strat expand : Prop @ State to expand') .
+endsm

@@ -1,0 +1,1244 @@
+Warning: <standard input>, line 9 (mod CLASS-IN-MOD): class declaration only
+    allowed in object-oriented modules and theories.
+mod CLASS-IN-MOD is
+endm
+mod CLASS-IN-MOD is
+  including BOOL .
+endm
+mod CLASS-IN-MOD is
+  sort Bool .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+endm
+omod FOO is
+  class Foo | foo : Bool .
+  class Bar | bar : Bool .
+endom
+mod FOO is
+  including BOOL .
+  including CONFIGURATION .
+  sorts Foo Bar .
+  subsorts Foo Bar < Cid .
+  op Foo : -> Foo [ctor] .
+  op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op Bar : -> Bar [ctor] .
+  op bar`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+endm
+mod FOO is
+  sorts Bool Attribute AttributeSet Oid Cid Object Msg Portal Configuration Foo
+    Bar .
+  subsort Attribute < AttributeSet .
+  subsorts Foo Bar < Cid .
+  subsorts Object Msg Portal < Configuration .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op none : -> AttributeSet [ctor] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
+    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
+    special (
+    id-hook ObjectConstructorSymbol
+    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    AttributeSet))] .
+  op none : -> Configuration [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
+    none).Configuration config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor] .
+  op getClass : Object -> Cid .
+  op Foo : -> Foo [ctor] .
+  op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op Bar : -> Bar [ctor] .
+  op bar`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
+endm
+Warning: <standard input>, line 29 (mod SUBCLASS-IN-MOD): subclass declaration
+    only allowed in object-oriented modules and theories.
+mod SUBCLASS-IN-MOD is
+  protecting FOO .
+endm
+mod SUBCLASS-IN-MOD is
+  including BOOL .
+  protecting FOO .
+endm
+mod SUBCLASS-IN-MOD is
+  sorts Bool Attribute AttributeSet Oid Cid Object Msg Portal Configuration Foo
+    Bar .
+  subsort Attribute < AttributeSet .
+  subsorts Foo Bar < Cid .
+  subsorts Object Msg Portal < Configuration .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op none : -> AttributeSet [ctor] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
+    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
+    special (
+    id-hook ObjectConstructorSymbol
+    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    AttributeSet))] .
+  op none : -> Configuration [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
+    none).Configuration config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor] .
+  op getClass : Object -> Cid .
+  op Foo : -> Foo [ctor] .
+  op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op Bar : -> Bar [ctor] .
+  op bar`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
+endm
+omod SUBCLASS-IN-OMOD is
+  protecting FOO .
+  subclasses Foo < Bar .
+endom
+mod SUBCLASS-IN-OMOD is
+  including BOOL .
+  including CONFIGURATION .
+  protecting FOO .
+  subsort Foo < Bar .
+endm
+mod SUBCLASS-IN-OMOD is
+  sorts Bool Attribute AttributeSet Oid Cid Object Msg Portal Configuration Foo
+    Bar .
+  subsort Attribute < AttributeSet .
+  subsorts Foo Bar < Cid .
+  subsorts Object Msg Portal < Configuration .
+  subsort Foo < Bar .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op none : -> AttributeSet [ctor] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
+    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
+    special (
+    id-hook ObjectConstructorSymbol
+    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    AttributeSet))] .
+  op none : -> Configuration [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
+    none).Configuration config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor] .
+  op getClass : Object -> Cid .
+  op Foo : -> Foo [ctor] .
+  op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op Bar : -> Bar [ctor] .
+  op bar`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
+endm
+oth SUBCLASS-IN-OTH is
+  protecting FOO .
+  subclasses Foo < Bar .
+endoth
+th SUBCLASS-IN-OTH is
+  including CONFIGURATION .
+  protecting FOO .
+  subsort Foo < Bar .
+endth
+th SUBCLASS-IN-OTH is
+  sorts Attribute AttributeSet Oid Cid Object Msg Portal Configuration Bool Foo
+    Bar .
+  subsort Attribute < AttributeSet .
+  subsorts Foo Bar < Cid .
+  subsorts Object Msg Portal < Configuration .
+  subsort Foo < Bar .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op none : -> AttributeSet [ctor] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
+    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
+    special (
+    id-hook ObjectConstructorSymbol
+    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    AttributeSet))] .
+  op none : -> Configuration [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
+    none).Configuration config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor] .
+  op getClass : Object -> Cid .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op Foo : -> Foo [ctor] .
+  op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op Bar : -> Bar [ctor] .
+  op bar`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+endth
+Advisory: redefining module FOO.
+Warning: <standard input>, line 58 (omod FOO): underscore not allowed in class
+    name a_b.
+omod FOO is
+  class a_b .
+endom
+mod FOO is
+  including BOOL .
+  including CONFIGURATION .
+endm
+mod FOO is
+  sorts Bool Attribute AttributeSet Oid Cid Object Msg Portal Configuration .
+  subsort Attribute < AttributeSet .
+  subsorts Object Msg Portal < Configuration .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op none : -> AttributeSet [ctor] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
+    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
+    special (
+    id-hook ObjectConstructorSymbol
+    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    AttributeSet))] .
+  op none : -> Configuration [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
+    none).Configuration config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor] .
+  op getClass : Object -> Cid .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
+endm
+Advisory: redefining module FOO.
+Warning: <standard input>, line 67 (omod FOO): underscore not allowed in
+    attribute name b_c.
+omod FOO is
+  class a | b_c : Bool .
+endom
+mod FOO is
+  including BOOL .
+  including CONFIGURATION .
+  sort a .
+  subsort a < Cid .
+  op a : -> a [ctor] .
+endm
+mod FOO is
+  sorts Bool Attribute AttributeSet Oid Cid Object Msg Portal Configuration a .
+  subsort Attribute < AttributeSet .
+  subsort a < Cid .
+  subsorts Object Msg Portal < Configuration .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op none : -> AttributeSet [ctor] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
+    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
+    special (
+    id-hook ObjectConstructorSymbol
+    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    AttributeSet))] .
+  op none : -> Configuration [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
+    none).Configuration config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor] .
+  op getClass : Object -> Cid .
+  op a : -> a [ctor] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
+endm
+Advisory: redefining module FOO.
+omod FOO is
+  class Foo .
+  op myObj : -> Oid .
+  op f : Object Object -> Object [id: < myObj : Foo | none >] .
+endom
+mod FOO is
+  including BOOL .
+  including CONFIGURATION .
+  sort Foo .
+  subsort Foo < Cid .
+  op myObj : -> Oid .
+  op f : Object Object -> Object [id: < myObj : Foo | none >] .
+  op Foo : -> Foo [ctor] .
+endm
+mod FOO is
+  sorts Bool Attribute AttributeSet Oid Cid Object Msg Portal Configuration Foo
+    .
+  subsort Attribute < AttributeSet .
+  subsort Foo < Cid .
+  subsorts Object Msg Portal < Configuration .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op none : -> AttributeSet [ctor] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
+    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
+    special (
+    id-hook ObjectConstructorSymbol
+    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    AttributeSet))] .
+  op none : -> Configuration [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
+    none).Configuration config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor] .
+  op getClass : Object -> Cid .
+  op myObj : -> Oid .
+  op f : Object Object -> Object [id: < myObj : Foo | none >] .
+  op Foo : -> Foo [ctor] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
+endm
+==========================================
+reduce in FOO : < myObj : Foo | none > .
+rewrites: 0
+result Object: < myObj : Foo | none >
+==========================================
+reduce in FOO : obj:Object .
+rewrites: 0
+result Object: obj:Object
+Warning: <standard input>, line 92 (omod BAR): empty attribute set syntax is
+    not allowed in operator declarations.
+Warning: <standard input>, line 89 (omod BAR): this module contains one or more
+    errors that could not be patched up and thus it cannot be used or imported.
+omod ACCOUNT is
+  protecting INT .
+  msgs credit debit : Oid Int -> Msg .
+  msg from_to_transfer_ : Oid Oid Int -> Msg .
+endom
+mod ACCOUNT is
+  including BOOL .
+  including CONFIGURATION .
+  protecting INT .
+  op credit : Oid Int -> Msg [ctor msg] .
+  op debit : Oid Int -> Msg [ctor msg] .
+  op from_to_transfer_ : Oid Oid Int -> Msg [ctor msg prec 41 gather (& & E)] .
+endm
+mod ACCOUNT is
+  sorts Bool Attribute AttributeSet Oid Cid Object Msg Portal Configuration
+    Zero NzNat Nat NzInt Int .
+  subsort Attribute < AttributeSet .
+  subsorts Object Msg Portal < Configuration .
+  subsorts Zero NzNat NzNat < Nat .
+  subsort NzNat < NzInt .
+  subsorts NzInt Nat < Int .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op none : -> AttributeSet [ctor] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
+    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
+    special (
+    id-hook ObjectConstructorSymbol
+    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    AttributeSet))] .
+  op none : -> Configuration [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
+    none).Configuration config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor] .
+  op getClass : Object -> Cid .
+  op 0 : -> Zero [ctor] .
+  op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _+_ : Int Int -> Int [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op sd : Nat Nat -> Nat [comm special (
+    id-hook CUI_NumberOpSymbol (sd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : NzInt NzInt -> NzInt [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : Int Int -> Int [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _quo_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _quo_ : Int NzInt -> Int [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _rem_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _rem_ : Int NzInt -> Int [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : Nat Nat -> Nat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : NzNat Nat -> NzNat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : Int Nat -> Int [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : NzInt Nat -> NzInt [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op modExp : [Int] [Int] [Int] -> [Int] [special (
+    id-hook NumberOpSymbol (modExp)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : NzInt Int -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : Int Int -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : NzInt NzInt -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : Int Int -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op min : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op min : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op min : NzInt NzInt -> NzInt [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op min : Int Int -> Int [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : NzInt NzInt -> NzInt [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : Int Int -> Int [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : NzNat Int -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : Nat Int -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _xor_ : Nat Nat -> Nat [assoc comm prec 55 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _xor_ : Int Int -> Int [assoc comm prec 55 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _&_ : Nat Nat -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _&_ : Nat Int -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _&_ : Int Int -> Int [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : NzNat Nat -> NzNat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : Nat Nat -> Nat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : NzInt Int -> NzInt [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : Int Int -> Int [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _>>_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _>>_ : Int Nat -> Int [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _<<_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _<<_ : Int Nat -> Int [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _<_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzNat Nat -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzInt Int -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op -_ : NzNat -> NzInt [ctor prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op -_ : NzInt -> NzInt [prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op -_ : Int -> Int [prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _-_ : Int Int -> Int [prec 33 gather (E e) special (
+    id-hook NumberOpSymbol (-)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op abs : NzInt -> NzNat [special (
+    id-hook NumberOpSymbol (abs)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op abs : Int -> Nat [special (
+    id-hook NumberOpSymbol (abs)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op ~_ : Int -> Int [prec 15 gather (E) special (
+    id-hook NumberOpSymbol (~)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op credit : Oid Int -> Msg [ctor msg] .
+  op debit : Oid Int -> Msg [ctor msg] .
+  op from_to_transfer_ : Oid Oid Int -> Msg [ctor msg prec 41 gather (& & E)] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
+endm
+Advisory: redefining module ACCOUNT.
+Warning: <standard input>, line 109 (omod ACCOUNT): sorts Int and Bool are in
+    different components.
+omod ACCOUNT is
+  protecting INT .
+  class Account | bal : [Int,Bool] .
+endom
+mod ACCOUNT is
+  including BOOL .
+  including CONFIGURATION .
+  protecting INT .
+  sort Account .
+  subsort Account < Cid .
+  op Account : -> Account [ctor] .
+  op bal`:_ : [Int] -> Attribute [ctor prec 15 gather (&)] .
+endm
+mod ACCOUNT is
+  sorts Bool Attribute AttributeSet Oid Cid Object Msg Portal Configuration
+    Zero NzNat Nat NzInt Int Account .
+  subsort Attribute < AttributeSet .
+  subsort Account < Cid .
+  subsorts Object Msg Portal < Configuration .
+  subsorts Zero NzNat NzNat < Nat .
+  subsort NzNat < NzInt .
+  subsorts NzInt Nat < Int .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op none : -> AttributeSet [ctor] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
+    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
+    special (
+    id-hook ObjectConstructorSymbol
+    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    AttributeSet))] .
+  op none : -> Configuration [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
+    none).Configuration config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor] .
+  op getClass : Object -> Cid .
+  op 0 : -> Zero [ctor] .
+  op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _+_ : Int Int -> Int [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op sd : Nat Nat -> Nat [comm special (
+    id-hook CUI_NumberOpSymbol (sd)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : NzInt NzInt -> NzInt [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _*_ : Int Int -> Int [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _quo_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _quo_ : Int NzInt -> Int [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _rem_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _rem_ : Int NzInt -> Int [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : Nat Nat -> Nat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : NzNat Nat -> NzNat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : Int Nat -> Int [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _^_ : NzInt Nat -> NzInt [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op modExp : [Int] [Int] [Int] -> [Int] [special (
+    id-hook NumberOpSymbol (modExp)
+    op-hook succSymbol (s_ : Nat ~> NzNat))] .
+  op gcd : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : NzInt Int -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op gcd : Int Int -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : NzInt NzInt -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op lcm : Int Int -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op min : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op min : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op min : NzInt NzInt -> NzInt [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op min : Int Int -> Int [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : NzInt NzInt -> NzInt [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : Int Int -> Int [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : NzNat Int -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op max : Nat Int -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _xor_ : Nat Nat -> Nat [assoc comm prec 55 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _xor_ : Int Int -> Int [assoc comm prec 55 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (xor)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _&_ : Nat Nat -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _&_ : Nat Int -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _&_ : Int Int -> Int [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : NzNat Nat -> NzNat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : Nat Nat -> Nat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : NzInt Int -> NzInt [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _|_ : Int Int -> Int [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _>>_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _>>_ : Int Nat -> Int [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _<<_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _<<_ : Int Nat -> Int [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _<_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Int Int -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzNat Nat -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzInt Int -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op -_ : NzNat -> NzInt [ctor prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op -_ : NzInt -> NzInt [prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op -_ : Int -> Int [prec 15 gather (E) special (
+    id-hook MinusSymbol
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op _-_ : Int Int -> Int [prec 33 gather (E e) special (
+    id-hook NumberOpSymbol (-)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op abs : NzInt -> NzNat [special (
+    id-hook NumberOpSymbol (abs)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op abs : Int -> Nat [special (
+    id-hook NumberOpSymbol (abs)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op ~_ : Int -> Int [prec 15 gather (E) special (
+    id-hook NumberOpSymbol (~)
+    op-hook succSymbol (s_ : Nat ~> NzNat)
+    op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
+  op Account : -> Account [ctor] .
+  op bal`:_ : [Int] -> Attribute [ctor prec 15 gather (&)] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+  eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
+endm
+Bye.

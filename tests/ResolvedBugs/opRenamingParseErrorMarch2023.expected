@@ -1,0 +1,5 @@
+fmod BAR is
+  including BOOL .
+  including FOO * (op f : [Foo] [to] -> [Foo] to g) .
+endfm
+Bye.

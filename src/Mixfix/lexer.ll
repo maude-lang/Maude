@@ -229,6 +229,7 @@ kinds|components			return KW_KINDS;
 compile|compiler			return KW_COMPILE;
 count					return KW_COUNT;
 protect					return KW_PROTECT;
+"generate-by"				return KW_GENERATE_BY;
 extend					return KW_EXTEND;
 include					return KW_INCLUDE;
 exclude					return KW_EXCLUDE;

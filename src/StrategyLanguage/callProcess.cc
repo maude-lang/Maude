@@ -55,7 +55,6 @@ CallProcess::CallProcess(RewriteStrategy* namedStrategy,
 			 RewritingContext* callContext,
 			 int subjectDagIndex,
 			 StrategyStackManager::StackId pending,
-			 bool tailCall,
 			 StrategicExecution* taskSibling,
 			 StrategicProcess* insertionPoint)
   : StrategicProcess(taskSibling, insertionPoint),
@@ -65,8 +64,7 @@ CallProcess::CallProcess(RewriteStrategy* namedStrategy,
     subjectDagIndex(subjectDagIndex),
     pending(pending),
     defIndex(0),
-    first(true),
-    tailCall(tailCall)
+    first(true)
 {
   Assert(callContext->root() != 0, "empty call term");
   Assert(callContext->root()->getSort() != 0, "call term sort missing");

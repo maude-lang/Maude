@@ -1,0 +1,10 @@
+set show timing off .
+
+***
+***	Test that auto object-oriented includes show up in the unflattened result of upModule().
+***
+
+oth FOO is
+endoth
+
+red in META-LEVEL : upModule('FOO, false) .

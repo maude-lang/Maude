@@ -1,0 +1,30 @@
+***
+***	Test that op to term mappings work in theory-views.
+***
+
+fth T is
+  sort Foo .
+  op f : Foo -> Foo .
+endfth
+
+fth T2 is
+  sort Bar .
+  op g : Bar -> Bar .
+endfth
+
+view V from T to T2 is
+  sort Foo to Bar .
+var X : Foo .
+  op f(X) to term g(X) .
+endv
+
+fmod M{X :: T} is
+  var X : X$Foo .
+  eq f(X) = f(X) .
+endfm
+
+fmod M2{Y :: T2} is
+  inc M{V}{Y} .
+endfm
+
+show all .

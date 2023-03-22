@@ -1,0 +1,127 @@
+set show timing off .
+
+***
+***	Test for corruption of narrowing context because of shared VariableDagNodes
+***	after renaming variables.
+***
+***	Provided by Santiago Escobar, Julia Sapina and Raúl López Rueda
+***
+
+
+*** With the original version, 3.3beta returned an incorrect context in the result.
+
+load smt.maude
+
+reduce in META-LEVEL : metaNarrowingApply(mod 'DAM-CONTROLLER-TEST is
+  including 'BOOLEAN .
+  protecting 'REAL-INTEGER .
+  protecting 'BOOL .
+  protecting 'META-TERM .
+  sorts 'Aperture ; 'BoolT ; 'DamState ; 'Spillway ; 'SpillwayId ; 'Spillways ; 'State ; 'Success ; 'Real? .
+  subsort 'Spillway < 'Spillways .
+  subsort 'Real < 'Real? .
+  op 'success : nil -> 'Success [ctor] .
+  op 'tt : nil -> 'BoolT [ctor] .
+  op 's3 : nil -> 'SpillwayId [ctor] .
+  op 's2 : nil -> 'SpillwayId [ctor] .
+  op 's1 : nil -> 'SpillwayId [ctor] .
+  op 'outflow : 'Spillways -> 'Real? [none] .
+  op 'open3 : nil -> 'Aperture [ctor] .
+  op 'open2 : nil -> 'Aperture [ctor] .
+  op 'open1 : nil -> 'Aperture [ctor] .
+  op 'empty : nil -> 'Spillways [ctor] .
+  op 'close : nil -> 'Aperture [ctor] .
+  op 'aperture : 'Aperture -> 'Real? [none] .
+  op '`{_;_;_;_`} : 'Spillways 'Real 'Real 'Bool -> 'State [none] .
+  op '`[_`,_`] : 'SpillwayId 'Aperture -> 'Spillway [ctor] .
+  op '_|_ : 'Universal 'BoolT -> 'Universal [ctor poly(1 0)] .
+  op '__ : 'Spillways 'Spillways -> 'Spillways [assoc comm ctor id('empty.Spillways)] .
+  op '_>>_ : 'Boolean 'Universal -> 'Universal [ctor poly(2 0)] .
+  op '_=>>_ : '`[Success`] 'Universal -> 'Universal [ctor strat(1 0) frozen(2) poly(2 0)] .
+  op '_==:==_ : 'Universal 'Universal -> 'Success [ctor poly(1 2)] .
+  op '_=:=_ : 'Universal 'Universal -> 'BoolT [ctor poly(1 2)] .
+  none
+  eq 'aperture['open2.Aperture] = '400/1.Real [variant] .
+  eq 'aperture['open3.Aperture] = '1200/1.Real [variant] .
+  eq 'aperture['open1.Aperture] = '200/1.Real [variant] .
+  eq 'aperture['close.Aperture] = '0/1.Real [variant] .
+  eq '_|_['X:Real,'tt.BoolT] = 'X:Real [variant] .
+  eq '_=:=_['X:Real,'X:Real] = 'tt.BoolT [variant] .
+  eq '_|_['X:Real?,'tt.BoolT] = 'X:Real? [variant] .
+  eq '_=:=_['X:Real?,'X:Real?] = 'tt.BoolT [variant] .
+  *** Remove this and everything works
+  rl '`{_;_;_;_`}['SC:Spillways,'V1:Real,'T:Real,'false.Bool] => '_>>_['_and_[
+    '_and_['_===_['V2:Real,'_-_['_+_['V1:Real,'_*_['INFLOW:Real,'DTIME:Real]],
+    '_*_['Y:Real,'DTIME:Real]]],'_>_['INFLOW:Real,'0/1.Real]],'_>_['DTIME:Real,
+    '0/1.Real]],'_=>>_['_==:==_['outflow['SC:Spillways],'Y:Real],'`{_;_;_;_`}[
+    'SC:Spillways,'V2:Real,'_+_['T:Real,'DTIME:Real],'true.Bool]]] [nonexec
+    narrowing label('volume)] .
+  rl '_|_['outflow['__['SC:Spillways,'`[_`,_`]['S:SpillwayId,'O:Aperture]]],
+    '_=:=_['aperture['O:Aperture],'X:Real]] => '_+_['X:Real,'outflow[
+    'SC:Spillways]] [nonexec narrowing label('outflow-recursive)] .
+endm, 
+'_=>>_[
+  '_==:==_['outflow['__['`[_`,_`]['s1.SpillwayId,'$22:Aperture],'`[_`,_`]['s2.SpillwayId,'$23:Aperture],'`[_`,_`]['s3.SpillwayId,'$24:Aperture]]],'$1:Real],
+  '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`]['s3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],'false.Bool]
+], 
+  *** Remove these irreducibility terms and everything works
+('`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'$8:Aperture],'`[_`,_`]['s2.SpillwayId,'$9:Aperture],'`[_`,_`]['s3.SpillwayId,'$10:Aperture]],'$11:Real,'$12:Real,'false.Bool],
+ '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`]['s3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],'true.Bool])
+--- empty
+, 
+  '%, none, 1) .
+
+
+*** With the first rule removed, 3.3beta crashed on Linux.
+
+reduce in META-LEVEL : metaNarrowingApply(mod 'DAM-CONTROLLER-TEST is
+  including 'BOOLEAN .
+  protecting 'REAL-INTEGER .
+  protecting 'BOOL .
+  protecting 'META-TERM .
+  sorts 'Aperture ; 'BoolT ; 'DamState ; 'Spillway ; 'SpillwayId ; 'Spillways ; 'State ; 'Success ; 'Real? .
+  subsort 'Spillway < 'Spillways .
+  subsort 'Real < 'Real? .
+  op 'success : nil -> 'Success [ctor] .
+  op 'tt : nil -> 'BoolT [ctor] .
+  op 's3 : nil -> 'SpillwayId [ctor] .
+  op 's2 : nil -> 'SpillwayId [ctor] .
+  op 's1 : nil -> 'SpillwayId [ctor] .
+  op 'outflow : 'Spillways -> 'Real? [none] .
+  op 'open3 : nil -> 'Aperture [ctor] .
+  op 'open2 : nil -> 'Aperture [ctor] .
+  op 'open1 : nil -> 'Aperture [ctor] .
+  op 'empty : nil -> 'Spillways [ctor] .
+  op 'close : nil -> 'Aperture [ctor] .
+  op 'aperture : 'Aperture -> 'Real? [none] .
+  op '`{_;_;_;_`} : 'Spillways 'Real 'Real 'Bool -> 'State [none] .
+  op '`[_`,_`] : 'SpillwayId 'Aperture -> 'Spillway [ctor] .
+  op '_|_ : 'Universal 'BoolT -> 'Universal [ctor poly(1 0)] .
+  op '__ : 'Spillways 'Spillways -> 'Spillways [assoc comm ctor id('empty.Spillways)] .
+  op '_>>_ : 'Boolean 'Universal -> 'Universal [ctor poly(2 0)] .
+  op '_=>>_ : '`[Success`] 'Universal -> 'Universal [ctor strat(1 0) frozen(2) poly(2 0)] .
+  op '_==:==_ : 'Universal 'Universal -> 'Success [ctor poly(1 2)] .
+  op '_=:=_ : 'Universal 'Universal -> 'BoolT [ctor poly(1 2)] .
+  none
+  eq 'aperture['open2.Aperture] = '400/1.Real [variant] .
+  eq 'aperture['open3.Aperture] = '1200/1.Real [variant] .
+  eq 'aperture['open1.Aperture] = '200/1.Real [variant] .
+  eq 'aperture['close.Aperture] = '0/1.Real [variant] .
+  eq '_|_['X:Real,'tt.BoolT] = 'X:Real [variant] .
+  eq '_=:=_['X:Real,'X:Real] = 'tt.BoolT [variant] .
+  eq '_|_['X:Real?,'tt.BoolT] = 'X:Real? [variant] .
+  eq '_=:=_['X:Real?,'X:Real?] = 'tt.BoolT [variant] .
+  rl '_|_['outflow['__['SC:Spillways,'`[_`,_`]['S:SpillwayId,'O:Aperture]]],
+    '_=:=_['aperture['O:Aperture],'X:Real]] => '_+_['X:Real,'outflow[
+    'SC:Spillways]] [nonexec narrowing label('outflow-recursive)] .
+endm, 
+'_=>>_[
+  '_==:==_['outflow['__['`[_`,_`]['s1.SpillwayId,'$22:Aperture],'`[_`,_`]['s2.SpillwayId,'$23:Aperture],'`[_`,_`]['s3.SpillwayId,'$24:Aperture]]],'$1:Real],
+  '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`]['s3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],'false.Bool]
+], 
+  *** Remove these irreducibility terms and everything works
+('`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'$8:Aperture],'`[_`,_`]['s2.SpillwayId,'$9:Aperture],'`[_`,_`]['s3.SpillwayId,'$10:Aperture]],'$11:Real,'$12:Real,'false.Bool],
+ '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`]['s3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],'true.Bool])
+--- empty
+, 
+  '%, none, 1) .

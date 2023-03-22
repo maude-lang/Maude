@@ -1,0 +1,10 @@
+***
+***	Test that declaring multiple parameterized constants in one ops declaration prints correctly.
+***
+
+fmod FOO is
+  sort Bar .
+  ops (m{X}) (n{X}) (p{X,X}) : -> Bar .
+endfm
+
+show mod .

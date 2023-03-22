@@ -65,7 +65,7 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
      context(context),
      variantSubstitution(variantSubstitution),
      blockerDags(blockerDags),
-     freshVariableGenerator(freshVariableGenerator),
+     //freshVariableGenerator(freshVariableGenerator),
      originalVariables(originalVariables),
      module(context->root()->symbol()->getModule()),
      blockerSubstitution(originalVariables.getNrVariables())

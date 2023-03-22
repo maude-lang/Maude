@@ -72,7 +72,6 @@ private:
   FreshVariableGenerator* freshVariableGenerator;
   const bool odd;
   const int label;
-  const bool withExtension;
 
   NarrowingVariableInfo variableInfo;
   int ruleIndex;  // index of current rule being tried

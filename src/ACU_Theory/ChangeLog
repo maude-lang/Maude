@@ -1,3 +1,18 @@
+2023-03-20  Steven Eker  <eker@pup>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::buildAndSolveDiophantineSystem):
+	globalAdvisoryFlag -> globalDebugFlag (2 places)
+	(ACU_UnificationSubproblem2::buildSolution): globalAdvisoryFlag ->
+	globalDebugFlag
+
+2023-03-10  Steven Eker  <eker@pup>
+
+	* ACU_ExtensionInfo.cc: initialize lastNonZero to avoid a compiler
+	warning
+
+===================================Maude143===========================================
+
 2021-09-21  Steven Eker  <eker@pup>
 
 	* ACU_ExtensionInfo.cc (ACU_ExtensionInfo::copy): take const arg

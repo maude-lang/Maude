@@ -1,0 +1,27 @@
+fmod LIST-AND-SET{X :: TRIV} is
+  protecting LIST{X} .
+  protecting SET{X} .
+  op makeSet : List{X} -> Set{X} .
+  op makeSet : NeList{X} -> NeSet{X} .
+  op $makeSet : List{X} Set{X} -> Set{X} .
+  op $makeSet : NeList{X} Set{X} -> NeSet{X} .
+  op $makeSet : List{X} NeSet{X} -> NeSet{X} .
+  op filter : List{X} Set{X} -> List{X} .
+  op $filter : List{X} Set{X} List{X} -> List{X} .
+  op filterOut : List{X} Set{X} -> List{X} .
+  op $filterOut : List{X} Set{X} List{X} -> List{X} .
+  var E : X$Elt .
+  var A : List{X} .
+  var L : List{X} .
+  var S : Set{X} .
+  eq makeSet(L) = $makeSet(L, empty) .
+  eq $makeSet(nil, S) = S .
+  eq $makeSet(E L, S) = $makeSet(L, (S, E)) .
+  eq filter(L, S) = $filter(L, S, nil) .
+  eq $filter(nil, S, A) = A .
+  eq $filter(E L, S, A) = $filter(L, S, if E in S then A E else A fi) .
+  eq filterOut(L, S) = $filterOut(L, S, nil) .
+  eq $filterOut(nil, S, A) = A .
+  eq $filterOut(E L, S, A) = $filterOut(L, S, if E in S then A else A E fi) .
+endfm
+Bye.

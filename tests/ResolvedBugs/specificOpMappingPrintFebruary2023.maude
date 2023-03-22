@@ -1,0 +1,14 @@
+***
+***	Test that specific op maps print correctly.
+***
+
+mod FOO is
+  sorts Foo Bar .
+  op f : Foo -> Bar .
+endm
+
+mod BAR is
+  inc FOO * (op f : Foo -> Bar to g) .
+endm
+
+show desugared .

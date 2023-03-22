@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -86,19 +86,12 @@ public:
   DagNode* getArgument(int i) const;
 
 private:
-  union Word  // HACK - should make MemoryCell::Word visible
-  {
-    void* pointer;
-    int integer;
-    size_t size;
-  };
-
   union
-    {
-      DagNode* internal[nrWords];
-      DagNode** external;
-      Word hashCache[nrWords];
-    };
+  {
+    DagNode* internal[nrWords];				// internal storage for nrArgs <= nrWords
+    DagNode** external;					// external storage for nrArgs > nrWords
+    MemoryBlock::MachineWord hashCache[nrWords];	// so we can use the last word as a hash value if nrArgs != nrWords
+  };
 
   DagNode** argArray() const;
   DagNode* markArguments();
@@ -106,7 +99,7 @@ private:
   DagNode* copyAll2();  
   void clearCopyPointers2();
   //
-  //	Unification stuff
+  //	Unification stuff.
   //
   enum PurificationStatus
     {
@@ -220,19 +213,17 @@ FreeDagNode::FreeDagNode(Symbol* symbol, int /* dummy */, DagNode* a0, DagNode* 
 }
 #endif
 
-inline DagNode*
-FreeDagNode::getArgument(int i) const
-{
-  Assert(i >= 0, "-ve arg number");
-  int nrArgs = symbol()->arity();
-  Assert(i < nrArgs, "arg number too big");
-  return (nrArgs > nrWords) ? external[i] : internal[i];
-}
-
 inline DagNode**
 FreeDagNode::argArray() const
 {
-  return (symbol()->arity() > nrWords) ? external : const_cast<DagNode**>(&(internal[0]));
+  return needToCallDtor() ? external : const_cast<DagNode**>(&(internal[0]));
+}
+
+inline DagNode*
+FreeDagNode::getArgument(int i) const
+{
+  Assert(i >= 0 && i < symbol()->arity(), "argument index out of range: " << i);
+  return argArray()[i];
 }
 
 #endif

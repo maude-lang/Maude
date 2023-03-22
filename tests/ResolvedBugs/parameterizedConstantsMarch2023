@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/parameterizedConstantsMarch2023.maude -no-banner -no-advise \
+  > parameterizedConstantsMarch2023.out 2>&1
+
+diff $srcdir/parameterizedConstantsMarch2023.expected parameterizedConstantsMarch2023.out > /dev/null 2>&1
