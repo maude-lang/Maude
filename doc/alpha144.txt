@@ -1,0 +1,319 @@
+Alpha 144 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug where an identifier that started with " but wasn't a string could
+not be parsed as some other kind of special token.
+
+fmod FOO is
+  pr NAT .
+  op "s" : Nat -> Nat [iter] .
+  op "f"g : Nat -> Nat [iter] .
+endfm
+
+red "X":Nat .
+red "X:Y":NzNat .
+red "X:Y"Z:NzNat .
+red "X":[Nat] .
+
+red "s"^42(0) .
+red "f"g^2(0) .
+
+(2) A bug where renamings which mapped parameterized constants were not
+being correctly instantiated during the instantiation of a module with
+bound parameters which was renamed. Discovered by Paco and illustrated
+by the following example:
+
+fmod FOO{X :: TRIV} is
+  sort Foo{X} .
+  op f{X} : -> Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  pr FOO{X} * (op f{X} to g) .
+  eq g = g .
+endfm
+
+fmod TEST is
+  inc BAR{Nat} .
+endfm
+
+show all .
+
+ASSERT FAILED: ../../../src/Mixfix/importTranslation.cc:401
+no translation for g in TEST was looking for g
+Aborted (core dumped)
+
+Here the renaming in the instantiation,
+  fmod FOO{Nat} * (op f`{Nat`} to g)
+was not being created as an instantiation of (op f{X} to g).
+
+This also affected object-oriented renamings:
+
+omod FOO{X :: TRIV} is
+  class Foo{X} .
+endom
+
+omod BAR{X :: TRIV} is
+  inc FOO{X} * (class Foo{X} to Bar{X}) .
+  op className : -> Cid .
+  eq className = Bar{X} .
+endom
+
+omod TEST is
+  inc BAR{Nat} .
+endom
+
+show all .
+
+(3) A longstanding bug in the module system where operators with the
+same name but different arities could confuse the internal renamings
+generated to map from parameterized modules to their instantiations.
+Illustrated by:
+
+fth T is
+  sort Elt .
+  op f : -> Elt .
+  op f : Elt -> Elt .
+endfth
+
+fmod FOO is
+  sort Foo .
+  op g : -> Foo .
+  op h : Foo -> Foo .
+endfm
+
+view V from T to FOO is
+  sort Elt to Foo .
+  op f : -> Elt to g .
+  op f : Elt -> Elt to h .
+endv
+
+fmod BAR{X :: T} is
+  op q : -> X$Elt .
+  eq q = f(f) .
+endfm
+
+fmod BAZ is
+  inc BAR{V} .
+endfm
+
+show all .
+
+ASSERT FAILED: ../../../src/Mixfix/importTranslation.cc:401
+no translation for f in BAZ was looking for g
+Aborted (core dumped)
+
+(4) A bug where a change of parameter name was not supported for
+parameterized polymorphic constants. For example:
+
+fmod FOO{X :: TRIV} is
+  op c{X} : -> Universal [poly (0)] .
+endfm
+
+fmod BAR{Y :: TRIV} is
+  inc FOO{Y} .
+  op b : -> Bool .
+  eq b = c{Y} .
+endfm
+
+Warning: <standard input>, line 8 (fmod BAR): bad token Y.
+Warning: <standard input>, line 8 (fmod BAR): no parse for statement
+eq b = c {Y} .
+
+Here the parameterized polymorphic constant c{X} was not changed
+to c{Y} on importation.
+
+(5) A large family of bugs where an identifier X that looks like a
+parameter is captured by an actual parameter X leading to internal
+inconsistancies in module instantiation.
+
+The canonical example is:
+
+fmod FOO is
+  sort Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO .
+  op a : -> Foo{X} .
+endfm
+
+fmod BAZ{Y :: TRIV} is
+  inc BAR{Y} .
+endfm
+
+Here the X in Foo{X} is not a parameter, but looks like a parameter.
+We call such instantances pseudo-parameters. When FOO is imported
+into BAR, Foo{X} comes within the scope of an actual parameter X.
+When such a parameter is instantiated, say by a bound parameter Y,
+as in this example, Foo{X} becomes Foo{Y} for uses of Foo{X} in BAR
+but FOO is unparameterized so Foo{X} is imported uninstantiated, leading
+to a missing sort and an internal error.
+
+The same problem occurs:
+(a) For a pseudo-parameterized constant c{X}.
+(b) For other uses of the pseudo-parameterized entity such as subsort
+    declarations or statements.
+(c) For instantiation by a view.
+(d) Where the pseudo-parameter arises in an entirely benign way such as
+    Nat in Set{Nat} in the instantiation SET{Nat}.
+
+The details of the internal error vary between various combinations
+of these alternatives but the system is then unstable, even if it doesn't
+immediately crash.
+
+A related situation is where a module with a pseudo-parameter X is
+instantiated by an actual parameter X from enclosing module:
+
+fmod FOO{Y :: TRIV} is
+  sort Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO{X} .
+  sort Bar{X} .
+  subsort Foo{X} < Bar{X} .
+endfm
+
+fmod BAZ{Z :: TRIV} is
+  inc  BAR{Z} .
+endfm
+
+Something similar can happen if the actual parameter X comes from an
+enclosing view:
+
+fmod FOO{Y :: TRIV} is
+  sort Foo{X} .
+endfm
+
+view V{X :: TRIV} from TRIV to FOO{X} is
+  sort Elt to Foo{X} .
+endv
+
+fmod BAR{Z :: TRIV} is
+  inc SET{V{Z}} .
+endfm
+
+More complex captures are possible; for example by instantiating
+with a view instance that has a bound parameter X, as in:
+
+fmod M{X :: TRIV} is
+  sort S{X} .
+endfm
+
+view V{X :: TRIV} from TRIV to M{X} is
+  sort Elt to S{X} .
+endv
+
+fmod FOO{Y :: TRIV} is
+  sort Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO{V{X}} .
+  op a : -> Foo{X} .
+endfm
+
+fmod BAZ is
+  inc BAR{Nat} .
+endfm
+
+Or even:
+
+fmod M{X :: TRIV} is
+  sort S{X} .
+endfm
+
+view V{X :: TRIV} from TRIV to M{X} is
+  sort Elt to S{X} .
+endv
+
+fmod M2{X :: TRIV} is
+  sort S2{X} .
+endfm
+
+view V2{X :: TRIV} from TRIV to M2{X} is
+  sort Elt to S2{X} .
+endv
+
+fmod FOO{Y :: TRIV} is
+  sort Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO{V{V2{X}}} .
+  op a : -> Foo{X} .
+endfm
+
+fmod BAZ is
+  inc BAR{Nat} .
+endfm
+
+Pseudo-parameters cannot be outlawed since we don't syntactically
+disinguish between parameter names and view names.
+
+One solution would be track each use of each parameter to decide if it
+is pseudo or actual but this can get complicated for parameterizations
+that have a mixture of pseudo and actual parameters.
+
+Instead we track pseudo-parameters at a coarser granularity. An identifier
+X that is used like a parameter is considered to be a pseudo-parameter iff
+it is in a module that does not have a parameter X.
+
+To avoid confusion between actual parameters and pseudo-parameters the
+following constraints are enforced:
+
+A module M containing a pseudo-parameter X cannot be
+(a) imported into a M' which has an actual parameter X
+(b) instantiated by an actual parameter X from an enclosing module or view
+(c) instantiated by a view with a bound parameter X
+
+(6) A closely related bug where pseudo-paramters in constants in parameter
+theories were being instantiated. For example:
+
+fth T is
+  sort Elt .
+  op c{X} : -> Elt .
+endfth
+
+fmod FOO{X :: T} is
+  eq c{X} = c{X} .
+endfm
+
+fmod BAR{Y :: T} is
+  inc FOO{Y} .
+endfm
+
+show all .
+
+This does't happen with pseudo-parameters in sorts and the fix is to not
+instantiate such constants, since theories cannot be paraemterized,
+and Maude already has to track which sorts and operators come from parameter
+theoris (including modules that such theories import).
+
+
+Other change
+=============
+
+The release build of Maude has most self-checks compiled out for
+efficiency but a few remain. If one of these failed you would see a
+message such as:
+
+ASSERT FAILED: ../../../src/Mixfix/renameModule.cc:131
+couldn't find sort Foo{Z} renamed from Foo{X} in module BAR{[Z]}
+Aborted (core dumped)
+
+This is changed slightly; now the message is:
+
+ASSERT FAILED: ../../../src/Mixfix/renameModule.cc:131
+couldn't find sort Foo{Z} renamed from Foo{X} in module BAR{[Z]}
+
+Maude self-check failure.
+Please submit a bug report to: maude-bugs@lists.cs.illinois.edu
+Please include the platform details, Maude version, and a file
+'crash.maude' that can be loaded to reproduce the crash (it may load
+other files). Do not bother trying to simplify your example unless the
+runtime to the bug being visible is greater than 10 seconds.

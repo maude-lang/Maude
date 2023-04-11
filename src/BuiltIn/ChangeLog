@@ -1,3 +1,9 @@
+2023-03-27  Steven Eker  <eker@pup>
+
+	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): don't use preallocate ctor
+
+===================================Maude144===========================================
+
 2023-03-13  Steven Eker  <eker@pup>
 
 	* stringDagNode.cc (StringDagNode::StringDagNode): use static_assert()

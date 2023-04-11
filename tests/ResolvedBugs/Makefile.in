@@ -491,7 +491,13 @@ TESTS = \
 	moduleOrphanedByViewFebruary2023 \
 	parameterizedConstantsMarch2023 \
 	opRenamingParseErrorMarch2023 \
-	metaNarrowingApplyMarch2023
+	metaNarrowingApplyMarch2023 \
+	quotedTokenMarch2023 \
+	renamingInstantiationMarch2023 \
+	arityRenamingMarch2023 \
+	parameterizedPolymorphicConstantMarch2023 \
+	pseudoParametersMarch2023 \
+	pseudoParameterTheoryConstantMarch2023
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -549,7 +555,13 @@ MAUDE_FILES = \
 	moduleOrphanedByViewFebruary2023.maude \
 	parameterizedConstantsMarch2023.maude \
 	opRenamingParseErrorMarch2023.maude \
-	metaNarrowingApplyMarch2023.maude 
+	metaNarrowingApplyMarch2023.maude  \
+	quotedTokenMarch2023.maude \
+	renamingInstantiationMarch2023.maude \
+	arityRenamingMarch2023.maude \
+	parameterizedPolymorphicConstantMarch2023.maude \
+	pseudoParametersMarch2023.maude \
+	pseudoParameterTheoryConstantMarch2023.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -607,7 +619,13 @@ RESULT_FILES = \
 	moduleOrphanedByViewFebruary2023.expected \
 	parameterizedConstantsMarch2023.expected \
 	opRenamingParseErrorMarch2023.expected \
-	metaNarrowingApplyMarch2023.expected
+	metaNarrowingApplyMarch2023.expected \
+	quotedTokenMarch2023.expected \
+	renamingInstantiationMarch2023.expected \
+	arityRenamingMarch2023.expected \
+	parameterizedPolymorphicConstantMarch2023.expected \
+	pseudoParametersMarch2023.expected \
+	pseudoParameterTheoryConstantMarch2023.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -1179,6 +1197,48 @@ opRenamingParseErrorMarch2023.log: opRenamingParseErrorMarch2023
 metaNarrowingApplyMarch2023.log: metaNarrowingApplyMarch2023
 	@p='metaNarrowingApplyMarch2023'; \
 	b='metaNarrowingApplyMarch2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+quotedTokenMarch2023.log: quotedTokenMarch2023
+	@p='quotedTokenMarch2023'; \
+	b='quotedTokenMarch2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+renamingInstantiationMarch2023.log: renamingInstantiationMarch2023
+	@p='renamingInstantiationMarch2023'; \
+	b='renamingInstantiationMarch2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+arityRenamingMarch2023.log: arityRenamingMarch2023
+	@p='arityRenamingMarch2023'; \
+	b='arityRenamingMarch2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+parameterizedPolymorphicConstantMarch2023.log: parameterizedPolymorphicConstantMarch2023
+	@p='parameterizedPolymorphicConstantMarch2023'; \
+	b='parameterizedPolymorphicConstantMarch2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+pseudoParametersMarch2023.log: pseudoParametersMarch2023
+	@p='pseudoParametersMarch2023'; \
+	b='pseudoParametersMarch2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+pseudoParameterTheoryConstantMarch2023.log: pseudoParameterTheoryConstantMarch2023
+	@p='pseudoParameterTheoryConstantMarch2023'; \
+	b='pseudoParameterTheoryConstantMarch2023'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

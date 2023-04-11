@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,12 +50,6 @@ Parser::Parser()
   haveEmptyBubbles = false;
 }
 
-Parser::~Parser()
-{
-  for (Rule* i : rules)
-    delete i;
-}
-
 void
 Parser::insertProd(int nonTerminal,
 		   const Vector<int>& rhs,
@@ -83,13 +77,11 @@ Parser::insertProd(int nonTerminal,
   //
   //	Make new rule.
   //
-  int nrRules = rules.length();
-  rules.expandBy(1);
-  Rule* r = new Rule;
-  rules[nrRules] = r;
-  r->index = nrRules;
-  r->prec = prec;
-  r->nonTerminal = nonTerminal;
+  int newRuleIndex = rules.size();
+  rules.push_back(Rule());
+  Rule& r = rules.back();
+  r.prec = prec;
+  r.nonTerminal = nonTerminal;
 
   Assert(!(rhs.empty()), "epsilon rules not supported");
   if (rhs[0] < 0)
@@ -97,30 +89,30 @@ Parser::insertProd(int nonTerminal,
       //
       //	Nonterminal case.
       //
-      r->nextRule = firstNonTerminalRules[index];
-      firstNonTerminalRules[index] = nrRules;
+      r.nextRule = firstNonTerminalRules[index];
+      firstNonTerminalRules[index] = newRuleIndex;
     }
   else
     {
       //
       //	Terminal case.
       //
-      r->nextRule = firstTerminalRules[index];
-      firstTerminalRules[index] = nrRules;
+      r.nextRule = firstTerminalRules[index];
+      firstTerminalRules[index] = newRuleIndex;
     }
   //
   //	Copy in rhs with prec derived from gather values.
   //
-  int nrSymbols = rhs.length();
-  r->rhs.expandTo(nrSymbols);
+  int nrSymbols = rhs.size();
+  r.rhs.resize(nrSymbols);
   int gatherIndex = 0;
   for (int i = 0; i < nrSymbols; i++)
     {
-      Pair& p = r->rhs[i];
+      Pair& p = r.rhs[i];
       p.symbol = rhs[i];
       p.prec = p.symbol < 0 ? gather[gatherIndex++] : NONE;
     }
-  r->nrNonTerminals = gatherIndex;
+  r.nrNonTerminals = gatherIndex;
 }
 
 void
@@ -132,16 +124,10 @@ Parser::insertProd(int nonTerminal,
 		   const Vector<int>& excludedTerminals)
 {
   ParserLog("saw bubble added for " << nonTerminal);
-  int nrBubbles = bubbles.size();
-  bubbles.expandBy(1);
-  Bubble& b = bubbles[nrBubbles];
-  b.nonTerminal = nonTerminal;
-  b.lowerBound = lowerBound;
-  b.upperBound = upperBound;
-  b.leftParen = leftParen;
-  b.rightParen = rightParen;
-  b.excludedTerminals = excludedTerminals;  // deep copy
-  b.ruleNr = rules.size();
+  int newBubbleIndex = bubbles.size();
+  int newRuleIndex = rules.size();
+  bubbles.push_back({nonTerminal, lowerBound, upperBound, leftParen, rightParen,
+		     newRuleIndex, firstBubbles[flip(nonTerminal)], excludedTerminals});
   //
   //	<nonTerminal> ::= built-in-bubble  [prec 0 gather (1)]
   //
@@ -151,12 +137,11 @@ Parser::insertProd(int nonTerminal,
   Vector<int> rhs(1);
   rhs[0] = BUBBLE_TERMINAL;  // dummy terminal
   gather[0] = 1;
-  insertProd(b.nonTerminal, rhs, 0, gather);
+  insertProd(nonTerminal, rhs, 0, gather);
   //
   //	Add it to the bubbles for this nonterminal.
   //
-  b.nextBubble = firstBubbles[flip(nonTerminal)];
-  firstBubbles[flip(nonTerminal)] = nrBubbles;
+  firstBubbles[flip(nonTerminal)] = newBubbleIndex;
   //
   //	Flag the need to take slow paths through code.
   //
@@ -182,9 +167,9 @@ Parser::parseSentence(const Vector<int>& sentence, int root)
     }
   rootNonTerminal = root;
   int nrTokens = sentence.length();
-  continuations.contractTo(0);
+  continuations.clear();
   calls.contractTo(firstRealCall);
-  returns.contractTo(0);
+  returns.clear();
   memoItems.clear();
   firstCalls.resize(nrTokens + 1);
   firstReturns.resize(nrTokens + 1);
@@ -198,12 +183,7 @@ Parser::parseSentence(const Vector<int>& sentence, int root)
   //
   //	Start by creating call to root with unbounded precedence.
   //
-  calls.expandBy(1);
-  Call& call = calls[firstRealCall];
-  call.nonTerminal = root;
-  call.maxPrec = UNBOUNDED;
-  call.firstContinuation = NONE;
-  call.nextCall = NONE;
+  calls.push_back({root, UNBOUNDED, NONE, NONE});
   firstCalls[0] = firstRealCall;
   //
   //	Do passes.
@@ -232,7 +212,7 @@ Parser::parseSentence(const Vector<int>& sentence, int root)
     checkForEmptyBubbles(nrTokens, sentence);
  
   ambiguous = false;
-  parseTree.contractTo(0);
+  parseTree.clear();
   int t = extractNextParse() ? (ambiguous ? 2 : 1) : 0;
   ParserLog("\n parseSentence() returns " << t << "\n\n");
   return t;
@@ -279,15 +259,15 @@ Parser::dump()
 	  for (int k = call.firstContinuation; k != NONE; k = continuations[k].nextContinuation)
 	    {
 	      Continuation& cont = continuations[k];
-	      Rule* rule = rules[cont.ruleNr];
-	      cout << "\tContinutation for rule #" << cont.ruleNr << " [" << rule->nonTerminal << " -> ";
+	      Rule& rule = rules[cont.ruleNr];
+	      cout << "\tContinutation for rule #" << cont.ruleNr << " [" << rule.nonTerminal << " -> ";
 	      for (int l = 0;; l++)
 		{
 		  if (l == cont.rhsPosition)
 		    cout << " .";
-		  if (l == rule->rhs.length())
+		  if (l == rule.rhs.length())
 		    break;
-		  cout << ' ' << rule->rhs[l].symbol;
+		  cout << ' ' << rule.rhs[l].symbol;
 		}
 	      cout << " , " << cont.startTokenNr << "]\n";
 	    }
@@ -295,20 +275,20 @@ Parser::dump()
       for (int j = firstReturns[i]; j != NONE; j = returns[j].nextReturn)
 	{
 	  Return& r = returns[j];
-	  Rule* rule = rules[r.ruleNr];
-	  cout << "Return #" << j << " for rule #" << r.ruleNr << " [" << rule->nonTerminal << " -> ";
-	  for (int k = 0; k < rule->rhs.length(); k++)
-	    cout << ' ' << rule->rhs[k].symbol;
+	  Rule& rule = rules[r.ruleNr];
+	  cout << "Return #" << j << " for rule #" << r.ruleNr << " [" << rule.nonTerminal << " -> ";
+	  for (int k = 0; k < rule.rhs.length(); k++)
+	    cout << ' ' << rule.rhs[k].symbol;
 	  cout << " , " << r.startTokenNr << "]\n";
 	}
       cout << '\n';
       for (int j = firstMemoItems[i]; j != NONE; j = memoItems[j].nextMemoItem)
 	{
 	  MemoItem& m = memoItems[j];
-	  Rule* rule = rules[m.ruleNr];
-	  cout << "Memo  (" << m.nonTerminal << ", " << m.maxPrec << ") -> rule #" << m.ruleNr << " [" << rule->nonTerminal << " -> ";
-	  for (int k = 0; k < rule->rhs.length(); k++)
-	    cout << ' ' << rule->rhs[k].symbol;
+	  Rule& rule = rules[m.ruleNr];
+	  cout << "Memo  (" << m.nonTerminal << ", " << m.maxPrec << ") -> rule #" << m.ruleNr << " [" << rule.nonTerminal << " -> ";
+	  for (int k = 0; k < rule.rhs.length(); k++)
+	    cout << ' ' << rule.rhs[k].symbol;
 	   cout << " , " << m.startTokenNr << "]\n";
 	}
       cout << '\n';

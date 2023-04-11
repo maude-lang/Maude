@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,8 +28,9 @@
 #include "diophantineSystem.hh"
 
 DiophantineSystem::DiophantineSystem(int estNrRows, int estNrColumns)
-  : rows(0, estNrRows), columns(0, estNrColumns)
 {
+  rows.reserve(estNrRows);
+  columns.reserve(estNrColumns);
   columnSum = 0;
   maxColumnValue = 0;
   closed = false;

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@ SocketManagerSymbol::createdSocketReply(int fd,
 					ObjectSystemRewritingContext& context)
 {
   //activeSockets[fd].state = NOMINAL;
-  Vector<DagNode*> reply(1, 3);
+  Vector<DagNode*> reply(3);
+  reply.resize(1);
   reply[0] = succSymbol->makeNatDag(fd);
   DagNode* socketName = socketOidSymbol->makeDagNode(reply);
   context.addExternalObject(socketName, this);
@@ -59,7 +60,8 @@ SocketManagerSymbol::acceptedClientReply(const char* addr,
 					 ObjectSystemRewritingContext& context)
 {
   //activeSockets[fd].state = NOMINAL;
-  Vector<DagNode*> reply(1, 4);
+  Vector<DagNode*> reply(4);
+  reply.resize(1);
   reply[0] = succSymbol->makeNatDag(fd);
   DagNode* socketName = socketOidSymbol->makeDagNode(reply);
   context.addExternalObject(socketName, this);

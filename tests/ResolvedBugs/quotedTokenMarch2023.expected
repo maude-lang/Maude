@@ -1,0 +1,25 @@
+==========================================
+reduce in FOO : "X":Nat .
+rewrites: 0
+result Nat: "X":Nat
+==========================================
+reduce in FOO : "X:Y":NzNat .
+rewrites: 0
+result NzNat: "X:Y":NzNat
+==========================================
+reduce in FOO : "X:Y"Z:NzNat .
+rewrites: 0
+result NzNat: "X:Y"Z:NzNat
+==========================================
+reduce in FOO : "X":[Nat] .
+rewrites: 0
+result [Nat]: "X":[Nat]
+==========================================
+reduce in FOO : "s"^42(0) .
+rewrites: 0
+result Nat: "s"^42(0)
+==========================================
+reduce in FOO : "f"g^2(0) .
+rewrites: 0
+result Nat: "f"g^2(0)
+Bye.

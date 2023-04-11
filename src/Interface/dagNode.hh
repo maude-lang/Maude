@@ -33,6 +33,16 @@ class DagNode
   NO_COPYING(DagNode);
 
 public:
+  //
+  //	Comparison object on DagNode* for use with associative containers.
+  //	Only safe if the dags are fully normalized and belong the same module.
+  //
+  struct LessThan
+  {
+    bool operator()(DagNode* const& d1, DagNode* const& d2) const;
+  };
+
+  
   DagNode(Symbol* symbol, int sortIndex = Sort::SORT_UNKNOWN);
   virtual ~DagNode() {}
   void setCallDtor();
@@ -251,6 +261,12 @@ private:
     DagNode* copyPointer;
   };
 };
+
+inline bool
+DagNode::LessThan::operator()(DagNode* const& d1, DagNode* const& d2) const
+{
+  return d1->compare(d2) < 0;
+}
 
 #define SAFE_INSTANTIATE(dagNode, eagerFlag, substitution, eagerCopies) \
   if (DagNode* _t = (eagerFlag ?					\

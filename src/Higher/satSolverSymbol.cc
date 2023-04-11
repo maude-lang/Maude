@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -196,11 +196,10 @@ SatSolverSymbol::makeModel(const DagNodeSet& propositions,
 }
 
 DagNode*
-SatSolverSymbol::makeFormulaList(const DagNodeSet& propositions,
-				 const list<Bdd>& bddList) const
+SatSolverSymbol::makeFormulaList(const DagNodeSet& propositions, const list<Bdd>& bddList) const
 {
   static Vector<DagNode*> args;
-  args.contractTo(0);
+  args.clear();
   list<Bdd>::const_iterator e = bddList.end();
   for (list<Bdd>::const_iterator i = bddList.begin(); i != e; ++i)
     args.append(makeFormula(propositions, *i));
@@ -214,8 +213,7 @@ SatSolverSymbol::makeFormulaList(const DagNodeSet& propositions,
 }
 
 DagNode*
-SatSolverSymbol::makeFormula(const DagNodeSet& propositions,
-			     const Bdd& formula) const
+SatSolverSymbol::makeFormula(const DagNodeSet& propositions, const Bdd& formula) const
 {
 #ifdef TDEBUG
   BddUser::dump(cout,  formula);
@@ -223,7 +221,7 @@ SatSolverSymbol::makeFormula(const DagNodeSet& propositions,
 #endif
 
   static Vector<DagNode*> args;
-  args.contractTo(0);
+  args.clear();
 
   Bdd pi = formula.extractPrimeImplicant();
 #ifdef TDEBUG

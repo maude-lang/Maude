@@ -479,12 +479,11 @@ SyntacticPreModule::makeDeclsConsistent()
   //
   //	Strategy declarations are handled in the same way.
   //
-  int nrStratDecls = stratDecls.length();
-  if (nrStratDecls == 0)
+  if (stratDecls.empty())
     return;
-  if (stratDecls[nrStratDecls - 1].types.length() == 0)
+  if (stratDecls.back().types.length() == 0)
     {
-      stratDecls.contractTo(nrStratDecls - 1);
+      stratDecls.pop_back();
       lastSawOpDecl = false;
     }
 }

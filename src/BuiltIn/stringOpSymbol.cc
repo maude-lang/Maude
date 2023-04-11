@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -407,12 +407,10 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	      int decPt;
 	      int sign;
 	      correctEcvt(fl, nrDigits, buffer, decPt, sign);
-	      Vector<DagNode*> args(0, 3);
-	      args.append((sign < 0) ? minusSymbol->makeNegDag(sign) :
-			  succSymbol->makeNatDag(sign));
-	      args.append(new StringDagNode(stringSymbol, buffer));
-	      args.append((decPt < 0) ? minusSymbol->makeNegDag(decPt) :
-			  succSymbol->makeNatDag(decPt));
+	      Vector<DagNode*> args(3);
+	      args[0] = (sign < 0) ? minusSymbol->makeNegDag(sign) : succSymbol->makeNatDag(sign);
+	      args[1] = new StringDagNode(stringSymbol, buffer);
+	      args[2] = (decPt < 0) ? minusSymbol->makeNegDag(decPt) : succSymbol->makeNatDag(decPt);
 	      return context.builtInReplace(subject, decFloatSymbol->makeDagNode(args));
 	    }
 	}

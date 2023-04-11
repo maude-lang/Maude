@@ -1,0 +1,32 @@
+***
+***	Check for confusion between operators of different arities in renaming.
+***
+
+fth T is
+  sort Elt .
+  op f : -> Elt .
+  op f : Elt -> Elt .
+endfth
+
+fmod FOO is
+  sort Foo .
+  op g : -> Foo .
+  op h : Foo -> Foo .
+endfm
+
+view V from T to FOO is
+  sort Elt to Foo .
+  op f : -> Elt to g .
+  op f : Elt -> Elt to h .
+endv
+
+fmod BAR{X :: T} is
+  op q : -> X$Elt .
+  eq q = f(f) .
+endfm
+
+fmod BAZ is
+  inc BAR{V} .
+endfm
+
+show all .

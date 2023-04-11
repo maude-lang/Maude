@@ -1,0 +1,18 @@
+***
+***	Test for instantiation of pseudo-parameters in constants.
+***
+
+fth T is
+  sort Elt .
+  op c{X} : -> Elt .
+endfth
+
+fmod FOO{X :: T} is
+  eq c{X} = c{X} .
+endfm
+
+fmod BAR{Y :: T} is
+  inc FOO{Y} .
+endfm
+
+show all .

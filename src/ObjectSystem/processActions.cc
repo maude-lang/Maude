@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -319,7 +319,8 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
   childProcesses[pid].ioSocket = ioSockets[0];
   childProcesses[pid].errSocket = errSockets[0];
 
-  Vector<DagNode*> reply(1, 5);
+  Vector<DagNode*> reply(5);
+  reply.resize(1);
   reply[0] = succSymbol->makeNatDag(pid);
   DagNode* processName = processOidSymbol->makeDagNode(reply);
   context.addExternalObject(processName, this);

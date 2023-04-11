@@ -240,6 +240,9 @@ private:
 		    PreEquation* original,
 		    PreEquation* copy);
   
+  bool accumulatePseudoParameters(int id);
+  const EnclosingObject::ParameterSet& getPseudoParameters();
+
   ConnectedComponent* translateComponent(const ConnectedComponent* component,
 					const ImportModule* parameterCopyUser) const;
   void addFromPartOfRenaming(Renaming* underConstruction,
@@ -285,7 +288,7 @@ private:
 				       const ParameterSet& extraParameterSet);
 
   ImportModule* handleFinalInstantiation(const Vector<Argument*>& arguments, ModuleCache* moduleCache);
-  
+
   const Origin origin;
   Phase importPhase;
   //
@@ -375,6 +378,12 @@ private:
   int nrOriginalStrategyDefinitions;
 
   set<int> labels;
+  //
+  //	To track identifiers that look like parameters but which are not.
+  //	We compute this set on demand.
+  //
+  ParameterSet pseudoParameters;
+  bool pseudoParametersComputed = false;
   //
   //	Because the module may still be in use (by some interrupted computation)
   //	after it has been overwritten by a new module with the same name entered

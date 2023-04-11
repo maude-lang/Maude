@@ -1,0 +1,15 @@
+***
+***	Check that parameter changes work for polymorphic constants.
+***
+
+fmod FOO{X :: TRIV} is
+  op c{X} : -> Universal [poly (0)] .
+endfm
+
+fmod BAR{Y :: TRIV} is
+  inc FOO{Y} .
+  op b : -> Bool .
+  eq b = c{Y} .
+endfm
+
+show all .

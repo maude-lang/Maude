@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -102,13 +102,13 @@ Parser::extractFirstSubparseToTheLeft(int nodeNr, int rightPos, int rightSibling
   ParseNode& p = parseTree[nodeNr];
   int startTokenNr = p.startTokenNr;
   int ruleNr = p.ruleNr;
-  Rule* rule = rules[p.ruleNr];
+  Rule& rule = rules[p.ruleNr];
 
   int lastSibling = rightSibling;
   int tokenNr = parseTree[lastSibling].startTokenNr;
   for (int pos = rightPos; pos >= 0; --pos)
     {
-      if (rule->rhs[pos].symbol >= 0)
+      if (rule.rhs[pos].symbol >= 0)
 	{
 	  //
 	  //	Terminal symbol.
@@ -131,18 +131,11 @@ Parser::extractFirstSubparseToTheLeft(int nodeNr, int rightPos, int rightSibling
       //	Make a parse tree node for this return.
       //
       Return& r = returns[returnIndex];
-      int nodeNr = parseTree.length();
-      parseTree.expandBy(1);
-      ParseNode& p2 = parseTree[nodeNr];
-      p2.ruleNr = r.ruleNr;
-      p2.startTokenNr = r.startTokenNr;
-      p2.nextReturnToCheck = r.nextReturn;
-      p2.endTokenNr = tokenNr;
-      p2.firstSon = NONE;
+      int newNodeIndex = parseTree.size();
+      parseTree.push_back({r.ruleNr, r.startTokenNr, r.nextReturn, tokenNr, NONE, lastSibling});
       ParserLog("set nextSibling of node " << nodeNr << " to " << lastSibling);
-      p2.nextSibling = lastSibling;
-      lastSibling = nodeNr;
-      extractFirstSubparse(nodeNr);
+      lastSibling = newNodeIndex;
+      extractFirstSubparse(newNodeIndex);
       tokenNr = r.startTokenNr;
     }
   parseTree[nodeNr].firstSon = lastSibling;
@@ -159,22 +152,22 @@ Parser::extractFirstSubparse(int nodeNr)
   ParseNode& p = parseTree[nodeNr];
   int ruleNr = p.ruleNr;
   int startTokenNr = p.startTokenNr;
-  Rule* rule = rules[ruleNr];
-  if (rule->rhs[0].symbol == BUBBLE_TERMINAL)
+  Rule& rule = rules[ruleNr];
+  if (rule.rhs[0].symbol == BUBBLE_TERMINAL)
     return;  // we don't expand the single son of a bubble rule
-  int nrSons = rule->nrNonTerminals;
+  int nrSons = rule.nrNonTerminals;
   if (nrSons == 0)
     return;  // empty parse tree
 
   int tokenNr = p.endTokenNr;
-  int endPos = rule->rhs.length() - 1;
+  int endPos = rule.rhs.length() - 1;
   //
   //	Go right->left through the rhs of the rule.
   //
   int lastSibling = NONE;
   for (int pos = endPos; pos >= 0; --pos)
     {
-      if (rule->rhs[pos].symbol >= 0)
+      if (rule.rhs[pos].symbol >= 0)
 	{
 	  //
 	  //	Terminal symbol.
@@ -266,18 +259,11 @@ Parser::extractFirstSubparse(int nodeNr)
       //	Make a parse tree node for this return.
       //
       Return& r = returns[returnIndex];
-      int nodeNr = parseTree.length();
-      parseTree.expandBy(1);
-      ParseNode& p2 = parseTree[nodeNr];
-      p2.ruleNr = r.ruleNr;
-      p2.startTokenNr = r.startTokenNr;
-      p2.nextReturnToCheck = r.nextReturn;
-      p2.endTokenNr = tokenNr;
-      p2.firstSon = NONE;
-      ParserLog("set nextSibling of node " << nodeNr << " to " << lastSibling);
-      p2.nextSibling = lastSibling;
-      lastSibling = nodeNr;
-      extractFirstSubparse(nodeNr);
+      int nodeIndex = parseTree.size();
+      parseTree.push_back({r.ruleNr, r.startTokenNr, r.nextReturn, tokenNr, NONE, lastSibling});
+      ParserLog("set nextSibling of node " << nodeIndex << " to " << lastSibling);
+      lastSibling = nodeIndex;
+      extractFirstSubparse(nodeIndex);
       tokenNr = r.startTokenNr;
     }
   Assert(lastSibling != NONE, "lastSibling == NONE");
@@ -294,9 +280,9 @@ Parser::extractNextSubparse(int nodeNr)
   //	subparse exists.
   //
   ParseNode& p = parseTree[nodeNr];
-  Rule* rule = rules[p.ruleNr];
-  int nrSons = rule->nrNonTerminals;
-  if (rule->rhs[0].symbol == BUBBLE_TERMINAL)
+  Rule& rule = rules[p.ruleNr];
+  int nrSons = rule.nrNonTerminals;
+  if (rule.rhs[0].symbol == BUBBLE_TERMINAL)
     return false;  // we don't expand the single son of a bubble rule
   if (nrSons == 0)
     return false;  // current rule only has terminals
@@ -305,10 +291,10 @@ Parser::extractNextSubparse(int nodeNr)
   //
   int pos = 0;
   int son = p.firstSon;
-  int endPos = rule->rhs.length() - 1;
+  int endPos = rule.rhs.length() - 1;
   for (; son != NONE; ++pos)
     {
-      if (rule->rhs[pos].symbol >= 0)
+      if (rule.rhs[pos].symbol >= 0)
 	continue;  // terminal symbol
       //
       //	Symbol is a nonterminal so might have an alternative parse.
@@ -418,18 +404,11 @@ Parser::extractNextSubparse(int nodeNr)
       //	Make a parse tree node for this return.
       //
       Return& r = returns[returnIndex];
-      int newNodeNr = parseTree.length();
-      parseTree.expandBy(1);
-      ParseNode& p2 = parseTree[newNodeNr];
-      p2.ruleNr = r.ruleNr;
-      p2.startTokenNr = r.startTokenNr;
-      p2.nextReturnToCheck = r.nextReturn;
-      p2.endTokenNr = endTokenNr;
-      p2.firstSon = NONE;
-      ParserLog("set nextSibling of node " << newNodeNr << " to " << son);
-      p2.nextSibling = son;
-      extractFirstSubparse(newNodeNr);
-      extractFirstSubparseToTheLeft(nodeNr, pos - 1, newNodeNr);
+      int newNodeIndex = parseTree.size();
+      parseTree.push_back({r.ruleNr, r.startTokenNr, r.nextReturn, endTokenNr, NONE, son});
+      ParserLog("set nextSibling of node " << newNodeIndex << " to " << son);
+      extractFirstSubparse(newNodeIndex);
+      extractFirstSubparseToTheLeft(nodeNr, pos - 1, newNodeIndex);
       return true;
     }
   //
@@ -457,24 +436,17 @@ Parser::buildDeterministicReductionPathParseTree(int endTokenNr,
       //	End of DRP reached - build parse tree node for trigger return.
       //
       Return& r = returns[triggerReturnIndex];
-      int nodeNr = parseTree.length();
-      parseTree.expandBy(1);
-      ParseNode& p = parseTree[nodeNr];
-      p.ruleNr = r.ruleNr;
-      p.startTokenNr = r.startTokenNr;
-      p.nextReturnToCheck = NONE;
-      p.endTokenNr = endTokenNr;
-      p.firstSon = NONE;
-      p.nextSibling = NONE;  // nothing to the right of us in parent
-      extractFirstSubparse(nodeNr);
-      return nodeNr;
+      int nodeIndex = parseTree.size();
+      parseTree.push_back({r.ruleNr, r.startTokenNr, NONE, endTokenNr, NONE, NONE});  // nothing to the right of us in parent
+      extractFirstSubparse(nodeIndex);
+      return nodeIndex;
     }
   //
   //	Deal with right-recursive rule somewhere above trigger return but below top return.
   //
   const DeferredReturn& d = drp[drpIndex];
-  const Rule* rule = rules[d.ruleNr];
-  int nrSons = rule->nrNonTerminals;
+  const Rule& rule = rules[d.ruleNr];
+  int nrSons = rule.nrNonTerminals;
   //
   //	We assume we are not dealing with the trigger return, so there must at least be a rightmost nonterminal
   //	in the rule.
@@ -483,15 +455,8 @@ Parser::buildDeterministicReductionPathParseTree(int endTokenNr,
   //
   //	Make new node.
   //
-  int nodeNr = parseTree.length();
-  parseTree.expandBy(1);
-  ParseNode& p = parseTree[nodeNr];
-  p.ruleNr = d.ruleNr;
-  p.startTokenNr = d.startTokenNr;
-  p.nextReturnToCheck = NONE;
-  p.endTokenNr = endTokenNr;
-  //p.firstSon = NONE;
-  p.nextSibling = NONE;  // nothing to the right of use in parent
+  int nodeIndex = parseTree.size();
+  parseTree.push_back({d.ruleNr, d.startTokenNr, NONE, endTokenNr, NONE, NONE});  // nothing to the right of us in parent
   //
   //	Deal with right recursion.
   //
@@ -500,10 +465,10 @@ Parser::buildDeterministicReductionPathParseTree(int endTokenNr,
   //	Deal with any nonterminals to the left of right recursion.
   //
   if (nrSons > 1)
-    extractFirstSubparseToTheLeft(nodeNr, rule->rhs.size() - 2, lastSibling);
+    extractFirstSubparseToTheLeft(nodeIndex, rule.rhs.size() - 2, lastSibling);
   else
-    parseTree[nodeNr].firstSon = lastSibling;
-  return nodeNr;
+    parseTree[nodeIndex].firstSon = lastSibling;
+  return nodeIndex;
 }
 
 int
@@ -515,7 +480,7 @@ Parser::findRootReturn(int i, int nonTerminal)
   while (i != NONE)
     {
       Return& ret = returns[i];
-      if (ret.startTokenNr == 0 && rules[ret.ruleNr]->nonTerminal == nonTerminal)
+      if (ret.startTokenNr == 0 && rules[ret.ruleNr].nonTerminal == nonTerminal)
 	break;
       i = ret.nextReturn;
     }
@@ -536,15 +501,15 @@ Parser::existsCall(int parseListNr, int ruleNr, int rhsPosition, int startTokenN
       //
       if (startTokenNr != parseListNr)
 	return false;
-      int lhs = rules[ruleNr]->nonTerminal;
+      int lhs = rules[ruleNr].nonTerminal;
       for (int i = firstCalls[parseListNr]; i != NONE; i = calls[i].nextCall)
 	{
 	  if (calls[i].nonTerminal == lhs)
-	    return rules[ruleNr]->prec <= calls[i].maxPrec;
+	    return rules[ruleNr].prec <= calls[i].maxPrec;
 	}
       return false;
     }
-  int nonTerminal = rules[ruleNr]->rhs[rhsPosition].symbol;
+  int nonTerminal = rules[ruleNr].rhs[rhsPosition].symbol;
   for (int i = firstCalls[parseListNr]; i != NONE; i = calls[i].nextCall)
     {
       Call& call = calls[i];
@@ -571,13 +536,13 @@ Parser::findReturn(int i, int ruleNr, int rhsPosition, int startTokenNr)
   //	Starting with returns[i], find a return that deals with the
   //	(maybe implied) call (ruleNr, rhsPosition, startTokenNr).
   //
-  int nonTerminal = rules[ruleNr]->rhs[rhsPosition].symbol;
-  int prec = rules[ruleNr]->rhs[rhsPosition].prec;
+  int nonTerminal = rules[ruleNr].rhs[rhsPosition].symbol;
+  int prec = rules[ruleNr].rhs[rhsPosition].prec;
   while (i != NONE)
     {
       Return& ret = returns[i];
-      if (rules[ret.ruleNr]->nonTerminal == nonTerminal &&
-	  rules[ret.ruleNr]->prec <= prec &&
+      if (rules[ret.ruleNr].nonTerminal == nonTerminal &&
+	  rules[ret.ruleNr].prec <= prec &&
 	  existsCall(ret.startTokenNr, ruleNr, rhsPosition, startTokenNr))
 	break;
       i = ret.nextReturn;

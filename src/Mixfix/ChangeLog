@@ -1,3 +1,186 @@
+2023-04-07  Steven Eker  <eker@pup>
+
+	* instantiateModuleWithFreeParameters.cc
+	(ImportModule::handleInstantiationByParameter): added check for the
+	parameter clashing with one of our pseudo-parameters
+	(ImportModule::handleBoundParameters): added check for bound parameter
+	clashing with one of our pseudo-parameters
+
+	* renameModule.cc (ImportModule::localSort2): Assert() -> AlwaysAssert()
+	(ImportModule::localSort2): QUOTE() copy in AlwaysAssert()
+
+2023-04-06  Steven Eker  <eker@pup>
+
+	* importModule.cc (ImportModule::addImport): check for pseudo-parameter
+	capture
+
+	* importModule.hh (class ImportModule): added data members
+	pseudoParameters, pseudoParametersComputed; added decls for
+	accumulatePseudoParameters() and getPseudoParameters()
+
+	* pseudoParameters.cc: created
+
+2023-04-04  Steven Eker  <eker@pup>
+
+	* mixfixParser.cc (MixfixParse): pass nrTokensGuess to tokenSet
+
+	* makeGrammar.cc (MixfixModule::makeSpecialProductions): getTokenMap()
+	-> getTokenSet()
+
+	* mixfixParser.cc (MixfixParser::parseSentence): use tokenSet
+
+	* mixfixParser.hh (MixfixParser::tokenToIndex): use tokenSet
+	(MixfixParser::getNrTerminals): use tokenSet
+	(class MixfixParser): restored IntMap; use for variableTerminals,
+	iterSymbolTerminals
+
+	* mixfixParser.cc (MixfixParser::translateSpecialToken): use tokenSet
+
+	* mixfixParser.hh (class MixfixParser): TokenMap -> TokenSet, tokenMap ->
+	tokenSet
+	(MixfixParser::getTokenSet): renamed from getTokenMap(), made inline and
+	moved here
+
+2023-04-03  Steven Eker  <eker@pup>
+
+	* makeGrammar.cc (MixfixModule::makeGrammar): pass nrTokensGuess
+	to MixfixParser()
+
+	* mixfixParser.hh (class MixfixParser): updated decl for ctor
+
+	* mixfixParser.cc (MixfixParser): take nrTokensGuess and use it to
+	specify the initial number of buckets in tokenMap
+
+	* instantiateModuleWithBoundParameters.cc
+	(ImportModule::instantiateRenaming): use instantiateSortName() to
+	instantiate operator names so that we catch parameterized constants
+
+	* renaming.hh (class Renaming): updated decl for addOpMappingPartialCopy()
+
+	* renaming.cc (Renaming::addOpMappingPartialCopy): take newFromName and
+	newToName parameters
+
+2023-03-31  Steven Eker  <eker@pup>
+
+	* instantiateViewWithFreeParameters.cc (View::makeInstantiation): added
+	3 DebugInfo()s
+
+	* instantiateModuleWithFreeParameters.cc
+	(ImportModule::handleParameterizedConstant): handle polymorphic
+	parameterized constants
+	(ImportModule::handleParameterizedConstant): don't consider constants or
+	polymorphic constants from a parameter theory
+
+	* renaming.cc (Renaming::renameOp): more detailed warning when multiple
+	mappings apply
+	(Renaming::typeMatch): fix bug where we were not checking that the
+	number of types matched the number of sort names
+	(Renaming::renameOp): added DebugInfo()
+
+	* importTranslation.cc: more detailed AlwaysAssert()
+
+2023-03-30  Steven Eker  <eker@pup>
+
+	* token.hh (class Token): added decl for computeSpecialProperty()
+
+	* token.cc (Token::computeSpecialProperty): added; fix bug where something
+	that starts with " but isn't a string can't be anything else
+	(Token::checkForSpecialProperty): use computeSpecialProperty() and
+	push_back()
+
+2023-03-28  Steven Eker  <eker@pup>
+
+	* mixfixParser.hh (class MixfixParser): deleted typedef IntMap
+
+	* mixfixParser.cc (MixfixParser::translateSpecialToken): use auto for
+	result of find() on variableTerminals and iterSymbolTerminals
+
+	* mixfixParser.hh (class MixfixParser): use TokenMap for variableTerminals
+	and iterSymbolTerminals
+
+	* makeGrammar.cc (MixfixModule::makeSpecialProductions): use
+	getTokenMap()
+
+	* mixfixParser.cc (MixfixParser::insertProduction): use tokenToIndex()
+	rather than tokens.insert()
+	(MixfixParser::insertBubbleProduction): use tokenToIndex() rather than
+	tokens.insert() (3 places)
+	(MixfixParser::insertSpecialTerminal)
+	(MixfixParser::insertVariableTerminal)
+	(MixfixParser::insertIterSymbolTerminal): use tokenToIndex() rather than
+	tokens.insert()
+	(MixfixParser::translateSpecialToken): use tokenMap.size() rather than
+	tokens.cardinality()
+	(MixfixParser::parseSentence): use tokenMap.find()
+
+	* mixfixParser.hh (MixfixParser::tokenToIndex): added
+
+	* mixfixParser.cc (MixfixParser::getTokenSet): becomes getTokenMap()
+
+	* mixfixParser.hh (class MixfixParser): added typedef TokenMap
+	(class MixfixParser): replaced tokens with tokenMap
+	(MixfixParser::getNrTerminals): use tokenMap
+
+	* modules.yy: store() -> tokensStore()
+
+	* top.yy: store() -> tokensStore(); converted tokensClear(), tokensStore(),
+	fragClear(),fragStore(token) macros to inline functions
+
+	* modules.yy: clear() -> tokensClear()
+
+	* commands.yy (numbersModuleTerm4): clear() -> tokensClear()
+
+	* top.yy: clear() macro to tokensClear()
+
+	* entry.cc (MixfixModule::addPolymorph): contractTo(0) -> clear()
+	(MixfixModule::addOpDeclaration): contractTo(0) -> clear() (2 places)
+
+	* loopSymbol.cc (LoopSymbol::extractQidList): contractTo(0) -> clear()
+
+	* makeGrammar.cc (MixfixModule::makePolymorphProductions): contractTo(0) ->
+	clear()
+
+	* compiler.cc (Compiler::inputGraph): contractTo(0) -> clear()
+
+	* top.yy: contractTo(0) -> clear()
+
+	* fileTable.cc (FileTable::abortEverything): contractTo(0) -> clear() (2
+	places)
+
+	* commands.yy (command): contractTo(0) -> clear() (21 places)
+
+	* makeGrammar.cc (MixfixModule::makeStrategyLanguageProductions): use
+	clear()
+	(MixfixModule::makeSymbolProductions): use clear()
+
+	* renaming.cc (Renaming::addStratTarget): use pop_back()
+
+	* token.cc (Token::dropChar): use string::pop_back()
+
+	* ops.cc (SyntacticPreModule::makeDeclsConsistent): use empty(), back() and
+	pop_back()
+
+2023-03-27  Steven Eker  <eker@pup>
+
+	* token.cc (Token::fixUp): use buffer.data() (both versions)
+	(Token::bubbleToPrefixNameCode): use buffer.data()
+
+	* token.hh (class Token): buffer becomes Vector<char>
+
+	* token.cc: buffer becomes Vector<char>
+
+	* renaming.hh (class Renaming): use Vector<> rather than vector<> for
+	typedef AttrMap
+
+2023-03-23  Steven Eker  <eker@pup>
+
+	* entity.hh (class Entity): struct UserLt not needed because the default
+	std::less provides an implementation defined strict total order over pointers
+	(Entity::getNrUsers): remove the inefficient comment because size() is
+	guaranteed constant time from C++98 onwards
+
+===================================Maude144===========================================
+
 2023-03-21  Steven Eker  <eker@pup>
 
 	* top.yy: added KW_GENERATE_BY

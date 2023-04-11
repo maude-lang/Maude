@@ -1244,7 +1244,8 @@ MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
   if (mt == metaTermSymbol)
     {
       FreeDagNode* f = static_cast<FreeDagNode*>(metaTerm);
-      Vector<Term*> argList(0, nrPreallocatedArgs);  // pre-allocate memory for speed
+      Vector<Term*> argList;
+      argList.reserve(nrPreallocatedArgs);  // pre-allocate memory for speed
       if (downOpName(f->getArgument(0), id) && downTermList(f->getArgument(1), m, argList))
 	{
 	  int nrArgs = argList.length();

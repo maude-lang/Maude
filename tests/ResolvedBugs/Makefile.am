@@ -54,7 +54,13 @@ TESTS = \
 	moduleOrphanedByViewFebruary2023 \
 	parameterizedConstantsMarch2023 \
 	opRenamingParseErrorMarch2023 \
-	metaNarrowingApplyMarch2023
+	metaNarrowingApplyMarch2023 \
+	quotedTokenMarch2023 \
+	renamingInstantiationMarch2023 \
+	arityRenamingMarch2023 \
+	parameterizedPolymorphicConstantMarch2023 \
+	pseudoParametersMarch2023 \
+	pseudoParameterTheoryConstantMarch2023
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -112,7 +118,13 @@ MAUDE_FILES = \
 	moduleOrphanedByViewFebruary2023.maude \
 	parameterizedConstantsMarch2023.maude \
 	opRenamingParseErrorMarch2023.maude \
-	metaNarrowingApplyMarch2023.maude 
+	metaNarrowingApplyMarch2023.maude  \
+	quotedTokenMarch2023.maude \
+	renamingInstantiationMarch2023.maude \
+	arityRenamingMarch2023.maude \
+	parameterizedPolymorphicConstantMarch2023.maude \
+	pseudoParametersMarch2023.maude \
+	pseudoParameterTheoryConstantMarch2023.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -170,6 +182,12 @@ RESULT_FILES = \
 	moduleOrphanedByViewFebruary2023.expected \
 	parameterizedConstantsMarch2023.expected \
 	opRenamingParseErrorMarch2023.expected \
-	metaNarrowingApplyMarch2023.expected
+	metaNarrowingApplyMarch2023.expected \
+	quotedTokenMarch2023.expected \
+	renamingInstantiationMarch2023.expected \
+	arityRenamingMarch2023.expected \
+	parameterizedPolymorphicConstantMarch2023.expected \
+	pseudoParametersMarch2023.expected \
+	pseudoParameterTheoryConstantMarch2023.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

@@ -401,7 +401,8 @@ noinst_HEADERS = \
 	wordSystem.hh \
 	rope.hh \
 	stack.hh \
-	variableConstraint.hh
+	variableConstraint.hh \
+	slowVector.hh
 
 EXTRA_DIST = \
 	intContejeanDevie.cc \

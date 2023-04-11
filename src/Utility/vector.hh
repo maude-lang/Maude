@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 //
 #ifndef _vector_hh_
 #define _vector_hh_
+#include <type_traits>
+#include <algorithm>
 #include "preVector.hh"
 
 template<class T>
@@ -51,38 +53,467 @@ public:
 
   Vector();
   Vector(size_type length);
-  Vector(size_type length, size_type preallocate);
   Vector(const Vector& original);
+  Vector(Vector&& original);  // move ctor
   ~Vector();
-
+  Vector& operator=(const Vector& original);
+  Vector& operator=(Vector<T>&& original);  // move assignment
+  //
+  //	We don't support rbegin()/rend() - their semantics are too error prone; or cbegin()/cend()/crbegin()/crend().
+  //
   iterator begin();
   iterator end();
   const_iterator begin() const;
   const_iterator end() const;
-
+  //
+  //	We don't currently support max_size() or shrink_to_fit().
+  //
+  size_type size() const;
+  void resize(size_type length);
+  size_type capacity() const;
+  bool empty() const;			// significantly slower than isNull()
+  void reserve(size_type n);
+  //
+  //	We don't support at() since we support bounds checking as a compile time option.
+  //
   const T& operator[](size_type i) const;	// access for reading
   T& operator[](size_type i);			// access for writing
+  const T& front() const;
+  T& front();
+  const T& back() const;
+  T& back();
+  const T* data() const;
+  T* data();
+  //
+  //	We don't support assign(), insert(), erase(), emplace(), emplace_back()
+  //
+  void push_back(const T& item);
+  void push_back(T&& item);	// for item that can be moved
+  void pop_back();
+  void swap(Vector& other);
+  void clear();
+  //
+  //	Non-standard operators without a standard alternative.
+  //
   void expandTo(size_type newLength);
   void expandBy(size_type extra);
   void contractTo(size_type newLength);
-  void resize(size_type length);
-  void append(const T& item);
-  size_type size() const;
-  size_type capacity() const;
-  Vector& operator=(const Vector& original);
-  void swap(Vector& other);
-  size_t bytesAllocated() const;
   bool isNull() const;			// superfast test for capacity() == 0
-  bool empty() const;			// significantly slower than isNull()
-  void clear();
   //
-  //	Legacy stuff.
+  //	Legacy stuff; don't use in new code.
   //
   int length() const;
+  void append(const T& item);
+  void append(T&& item);	// for item that can be moved
 
 private:
+  void reallocate(size_t neededBytes, size_type oldLength);
+
   PreVector pv;
 };
+
+template<class T>
+inline
+Vector<T>::Vector()
+{
+  pv.initEmpty();
+}
+
+template<class T>
+inline
+Vector<T>::Vector(size_type length)
+{
+  if (length == 0)
+    pv.initEmpty();
+  else
+    {
+      pv.initAllocate(length * sizeof(T));
+      pv.setLength(length);
+      T* vec = static_cast<T*>(pv.getBase());
+      size_type i = 0;
+      do
+	(void) new(vec + i) T();  // call default constructor on each element
+      while (++i < length);
+    }
+}
+
+template<class T>
+inline
+Vector<T>::Vector(const Vector& original)
+{
+  size_type originalLength = original.length();
+  if (originalLength == 0)
+    pv.initEmpty();
+  else
+    {
+      size_t neededBytes = originalLength *  sizeof(T);
+      pv.initAllocate(neededBytes);
+      pv.setLength(originalLength);
+      if (std::is_trivially_copyable<T>::value)
+	std::memcpy(pv.getBase(), original.pv.getBase(), neededBytes);
+      else
+	{
+	  T* vec = static_cast<T*>(pv.getBase());
+	  const T* originalVec = static_cast<const T*>(original.pv.getBase());
+	  size_type i = 0;
+	  do
+	    new(vec + i) T(originalVec[i]);  // call copy constructor on each element
+	  while (++i != originalLength);
+	}
+    }
+}
+
+template<class T>
+inline
+Vector<T>::Vector(Vector&& original)
+{
+  //
+  //	Move ctor; sets original to null Vector.
+  //
+  pv.initSteal(original.pv);
+  original.pv.initEmpty();
+}
+
+template<class T>
+inline
+Vector<T>::~Vector()
+{
+  T* vec = static_cast<T*>(pv.getBase());
+  if (vec != nullptr)
+    {
+      size_type length = pv.getLength();
+      for (size_type i = 0; i != length; i++)
+	vec[i].~T();  // call destructor on each object in array
+      pv.freeMemory();
+    }
+}
+
+template<class T>
+inline typename Vector<T>::size_type
+Vector<T>::size() const
+{
+  return pv.getLength();
+}
+
+template<class T>
+inline typename Vector<T>::size_type
+Vector<T>::capacity() const
+{
+  return pv.getAllocatedBytes() / sizeof(T);
+}
+
+template<class T>
+inline const T*
+Vector<T>::data() const
+{
+  return static_cast<const T*>(pv.getBase());
+}
+
+template<class T>
+inline T*
+Vector<T>::data()
+{
+  return static_cast<T*>(pv.getBase());
+}
+
+template<class T>
+inline const T&
+Vector<T>::front() const
+{
+  Assert(!empty(), "empty vector");
+  return *(data());
+}
+
+template<class T>
+inline T&
+Vector<T>::front()
+{
+  Assert(!empty(), "empty vector");
+  return *(data());
+}
+
+template<class T>
+inline const T&
+Vector<T>::back() const
+{
+  Assert(!empty(), "empty vector");
+  return data()[size() - 1];
+}
+
+template<class T>
+inline T&
+Vector<T>::back()
+{
+  Assert(!empty(), "empty vector");
+  return data()[size() - 1];
+}
+
+template<class T>
+inline const T& 
+Vector<T>::operator[](size_type i) const
+{
+  Assert(i < size(), "index (" << i << ") too big, size: " << size());
+  return data()[i];
+}
+
+template<class T>
+inline T& 
+Vector<T>::operator[](size_type i)
+{
+  Assert(i < size(), "index (" << i << ") too big, size: " << size());
+  return data()[i];
+}
+
+template<class T>
+inline void
+Vector<T>::reallocate(size_t neededBytes, size_type oldLength)
+{
+  //
+  //	We don't copy the length after reallocation in the expectation that the
+  //	caller will set a new length.
+  //	
+  PreVector tmp;
+  tmp.initAllocate(neededBytes);
+  void* base = pv.getBase();
+  if (base != nullptr)
+    {
+      if (std::is_trivially_copyable<T>::value)
+	{
+	  //
+	  //	The destructor is required to be trivial (performs no action) so
+	  //	we just copy the original as bytes without destructing it.
+	  //
+	  std::memcpy(tmp.getBase(), base, oldLength * sizeof(T));
+	}
+      else
+	{
+	  T* originalVec = static_cast<T*>(base);
+	  T* vec = static_cast<T*>(tmp.getBase());
+	  for (size_type i = 0; i != oldLength; ++i)
+	    {
+	      T& objectToMove = originalVec[i];
+	      new(vec + i) T(std::move(objectToMove));  // move or copy each orginal element
+	      objectToMove.~T();  // then destroy original.
+	    }
+	}
+      pv.freeMemory();
+    }
+  pv.initSteal(tmp);
+}
+
+template<class T>
+inline void
+Vector<T>::reserve(size_type n)
+{
+  size_t neededBytes = n * sizeof(T);
+  if (pv.getAllocatedBytes() < neededBytes)
+    {
+      size_type oldLength = pv.getLength();
+      reallocate(neededBytes, oldLength);
+      pv.setLength(oldLength);
+    }
+}
+
+template<class T>
+inline void
+Vector<T>::expandTo(size_type newLength)
+{
+  size_type oldLength = pv.getLength();
+  Assert(newLength >= oldLength, "new length < old length: " << newLength << " < " << oldLength);
+  size_t neededBytes = newLength * sizeof(T);
+  if (pv.getAllocatedBytes() < neededBytes)
+    reallocate(neededBytes, oldLength);
+
+  T* vec = static_cast<T*>(pv.getBase());
+  if (vec != nullptr)
+    {
+      pv.setLength(newLength);
+      for (size_type i = oldLength; i != newLength; ++i)
+	new(vec + i) T();  // call default constructor on each new element
+    }
+}
+
+template<class T>
+inline void
+Vector<T>::expandBy(size_type extra)
+{
+  if (extra > 0)
+    expandTo(size() + extra);
+}
+
+template<class T>
+inline void
+Vector<T>::contractTo(size_type newLength)
+{
+  size_type oldLength = pv.getLength();
+  Assert(newLength <= oldLength, "new length > old length: " <<
+	 newLength << " > " << oldLength);
+  T* vec = static_cast<T*>(pv.getBase());
+  if (vec != nullptr)
+    {
+      pv.setLength(newLength);
+      for (size_type i = newLength; i != oldLength; i++)
+	vec[i].~T();  // call destructor on each "lost" element
+    }
+}
+
+template<class T>
+inline void
+Vector<T>::clear()
+{
+  contractTo(0);
+}
+
+template<class T>
+inline void
+Vector<T>::resize(size_type newLength)
+{
+  size_type t =  pv.getLength();
+  if (newLength > t)
+    expandTo(newLength);
+  else if (newLength < t)
+    contractTo(newLength);
+}
+
+template<class T>
+inline void
+Vector<T>::push_back(const T& item)
+{
+  size_type oldLength = pv.getLength();
+  size_type newLength = oldLength + 1;
+  size_t neededBytes = newLength * sizeof(T);
+  if (pv.getAllocatedBytes() < neededBytes)
+    reallocate(neededBytes, oldLength);
+  pv.setLength(newLength);
+    
+  T* vec = static_cast<T*>(pv.getBase());
+  new(vec + oldLength) T(item);  // use copy constructor to copy item into vector
+}
+
+template<class T>
+inline void
+Vector<T>::push_back(T&& item)
+{
+  size_type oldLength = pv.getLength();
+  size_type newLength = oldLength + 1;
+  size_t neededBytes = newLength * sizeof(T);
+  if (pv.getAllocatedBytes() < neededBytes)
+    reallocate(neededBytes, oldLength);
+  pv.setLength(newLength);
+    
+  T* vec = static_cast<T*>(pv.getBase());
+  new(vec + oldLength) T(std::move(item));  // use move constructor if possible
+}
+
+template<class T>
+inline void
+Vector<T>::pop_back()
+{
+  Assert(!empty(), "empty vector");
+  size_type newLength = pv.getLength() - 1;
+  data()[newLength].~T();
+  pv.setLength(newLength);
+}
+
+template<class T>
+inline Vector<T>&
+Vector<T>::operator=(const Vector<T>& original)
+{
+  //
+  //	destroy destination vector
+  //
+  void* base = pv.getBase();
+  {
+    size_type length = pv.getLength();
+    T* vec = static_cast<T*>(base);
+    for (size_type i = 0; i != length; ++i)
+      vec[i].~T();  // call destructor on each object in destination array
+  }
+  //
+  //	reallocate memory if necessary
+  //
+  size_type originalLength = original.pv.getLength();
+  size_t neededBytes = originalLength * sizeof(T);
+  if (pv.getAllocatedBytes() < neededBytes)
+    {
+      if (base != nullptr)
+	pv.freeMemory();
+      pv.initAllocate(neededBytes);
+      base = pv.getBase();
+    }
+  //
+  //	make copy of source vector
+  //
+  if (base != nullptr)
+    {
+      pv.setLength(originalLength);
+      if (originalLength != 0)
+	{
+	  //
+	  //	Need to copy objects from original.
+	  //
+	  const void* originalBase = original.pv.getBase();
+	  if (std::is_trivially_copyable<T>::value)
+	    std::memcpy(base, originalBase, neededBytes);
+	  else
+	    {
+	      T* vec = static_cast<T*>(base);
+	      const T* originalVec = static_cast<const T*>(originalBase);
+	      for (size_type i = 0; i != originalLength; ++i) 
+		new(vec + i) T(originalVec[i]);   // call copy constructor on original objects
+	    }
+	}
+    }
+  return *this;
+}
+
+template<class T>
+inline Vector<T>&
+Vector<T>::operator=(Vector<T>&& original)
+{
+  //
+  //	Move assignment.
+  //
+  //	Destroy destination vector.
+  //
+  T* vec = static_cast<T*>(pv.getBase());
+  if (vec != nullptr)
+    {
+      size_type length = pv.getLength();
+      for (size_type i = 0; i != length; ++i)
+	vec[i].~T();  // call destructor on each object in array
+      pv.freeMemory();
+    }
+  //
+  //	Move original and set original to null vector.
+  //
+  pv.initSteal(original.pv);
+  original.pv.initEmpty();
+  return *this;
+}
+
+template<class T>
+inline void
+Vector<T>::swap(Vector& other)
+{
+  PreVector t(pv);  // default copy ctor
+  pv = other.pv;
+  other.pv = t;
+}
+
+template<class T>
+inline bool
+Vector<T>::isNull() const
+{
+  return pv.getBase() == nullptr;
+}
+
+template<class T>
+inline bool
+Vector<T>::empty() const
+{
+  return pv.empty();
+}
 
 #ifdef NO_ASSERT
 //
@@ -117,325 +548,8 @@ Vector<T>::end() const
 }
 
 #else
-//
-//	Slow, with extensive runtime checking.
-//
-#include <checkedIterator.hh>
-
-template<class T>
-inline typename Vector<T>::iterator
-Vector<T>::begin()
-{
-  return iterator(this, 0);
-}
-
-template<class T>
-inline typename Vector<T>::iterator
-Vector<T>::end()
-{
-  return iterator(this, pv.getLength());
-}
-
-#include <checkedConstIterator.hh>
-
-template<class T>
-inline typename Vector<T>::const_iterator
-Vector<T>::begin() const
-{
-  return const_iterator(this, 0);
-}
-
-template<class T>
-inline typename Vector<T>::const_iterator
-Vector<T>::end() const
-{
-  return const_iterator(this, pv.getLength());
-}
-
+#include <slowVector.hh>
 #endif
-
-template<class T>
-inline typename Vector<T>::size_type
-Vector<T>::size() const
-{
-  return pv.getLength();
-}
-
-template<class T>
-inline typename Vector<T>::size_type
-Vector<T>::capacity() const
-{
-  return pv.getAllocatedBytes() / sizeof(T);
-}
-
-template<class T>
-inline size_t
-Vector<T>::bytesAllocated() const
-{
-  return pv.getAllocatedBytes();
-}
-
-template<class T>
-inline
-Vector<T>::Vector()
-{
-  pv.initEmpty();
-}
-
-template<class T>
-inline
-Vector<T>::Vector(size_type length)
-{
-  if (length == 0)
-    pv.initEmpty();
-  else
-    {
-      pv.initAllocate(length * sizeof(T));
-      pv.setLength(length);
-      T* vector = static_cast<T*>(pv.getBase());
-      size_type i = 0;
-      do
-	(void) new(vector + i) T();  // call default constructor on each element
-      while (++i < length);
-    }
-}
-
-template<class T>
-inline
-Vector<T>::Vector(size_type length, size_type preallocate)
-{
-  Assert(preallocate >= length, "preallocate < length: "
-	 << preallocate << " < " << length);
-  if (preallocate == 0)
-    pv.initEmpty();
-  else
-    {
-      pv.initAllocate(preallocate * sizeof(T));
-      pv.setLength(length);
-      T* vector = static_cast<T*>(pv.getBase());
-      for (size_type i = 0; i != length; i++)
-	(void) new(vector + i) T();  // call default constructor on each element
-    }
-}
-
-template<class T>
-inline
-Vector<T>::Vector(const Vector& original)
-{
-  size_type originalLength = original.length();
-  if (originalLength == 0)
-    pv.initEmpty();
-  else
-    {
-      pv.initAllocate(originalLength *  sizeof(T));
-      pv.setLength(originalLength);
-      T* vector = static_cast<T*>(pv.getBase());
-      const T* originalVector = static_cast<const T*>(original.pv.getBase());
-      size_type i = 0;
-      do
-	new(vector + i) T(originalVector[i]);  // call copy constructor on each element
-      while (++i < originalLength);
-    }
-}
-
-template<class T>
-inline
-Vector<T>::~Vector()
-{
-  T* vector = static_cast<T*>(pv.getBase());
-  if (vector != 0)
-    {
-      size_type length = pv.getLength();
-      for (size_type i = 0; i != length; i++)
-	vector[i].~T();  // call destructor on each object in array
-      pv.freeMemory();
-    }
-}
-
-template<class T>
-inline const T& 
-Vector<T>::operator[](size_type i) const
-{
-  Assert(i < size(), "index (" << i << ") too big, length: " << length());
-  return static_cast<const T*>(pv.getBase())[i];
-}
-
-template<class T>
-inline T& 
-Vector<T>::operator[](size_type i)
-{
-  Assert(i < size(), "index (" << i << ") too big, length: " << length());
-  return static_cast<T*>(pv.getBase())[i];
-}
-
-template<class T>
-inline void
-Vector<T>::expandTo(size_type newLength)
-{
-  size_type oldLength = pv.getLength();
-  Assert(newLength >= oldLength, "new length < old length: " <<
-	 newLength << " < " << oldLength);
-  size_t neededBytes = newLength * sizeof(T);
-  if (pv.getAllocatedBytes() < neededBytes)
-    {
-      PreVector tmp;
-      tmp.initAllocate(neededBytes);
-      T* originalVector = static_cast<T*>(pv.getBase());
-      if (originalVector != 0)
-	{
-	  T* vector = static_cast<T*>(tmp.getBase());
-	  for (size_type i = 0; i != oldLength; i++)
-	    {
-	      new(vector + i) T(originalVector[i]);  // copy each orginal element
-	      originalVector[i].~T();  // then destroy original.
-	    }
-	  pv.freeMemory();
-	}
-      pv.initSteal(tmp);
-    }
-  T* vector = static_cast<T*>(pv.getBase());
-  if (vector != 0)
-    {
-      pv.setLength(newLength);
-      for (size_type i = oldLength; i != newLength; i++)
-	new(vector + i) T();  // call default constructor on each new element
-    }
-}
-
-template<class T>
-inline void
-Vector<T>::expandBy(size_type extra)
-{
-  if (extra > 0)
-    expandTo(length() + extra);
-}
-
-template<class T>
-inline void
-Vector<T>::contractTo(size_type newLength)
-{
-  size_type oldLength = pv.getLength();
-  Assert(newLength <= oldLength, "new length > old length: " <<
-	 newLength << " > " << oldLength);
-  T* vector = static_cast<T*>(pv.getBase());
-  if (vector != 0)
-    {
-      pv.setLength(newLength);
-      for (size_type i = newLength; i != oldLength; i++)
-	vector[i].~T();  // call destructor on each "lost" element
-    }
-}
-template<class T>
-inline void
-Vector<T>::clear()
-{
-  contractTo(0);
-}
-
-template<class T>
-inline void
-Vector<T>::resize(size_type newLength)
-{
-  size_type t =  pv.getLength();
-  if (newLength > t)
-    expandTo(newLength);
-  else if (newLength < t)
-    contractTo(newLength);
-}
-
-template<class T>
-inline void
-Vector<T>::append(const T& item)
-{
-  T* vector = static_cast<T*>(pv.getBase());
-  if (vector == 0)
-    {
-      pv.initAllocate(sizeof(T));
-      pv.setLength(1);
-      new(static_cast<T*>(pv.getBase())) T(item);
-    }
-  else
-    {
-      size_type oldLength = pv.getLength();
-      size_type newLength = oldLength + 1;
-      size_t neededBytes = newLength * sizeof(T);
-      if (pv.getAllocatedBytes() < neededBytes)
-	{
-	  PreVector tmp;
-	  tmp.initAllocate(neededBytes);
-	  T* newVector = static_cast<T*>(tmp.getBase());
-	  for (size_type i = 0; i != oldLength; i++)
-	    {
-	      new(newVector + i) T(vector[i]);  // copy each orginal element
-	      vector[i].~T();  // then destroy original.
-	    }
-	  pv.freeMemory();
-	  pv.initSteal(tmp);
-	  vector = newVector;
-	}
-      pv.setLength(newLength);
-      new(vector + oldLength) T(item);  // use copy constructor to copy item into vector
-    }
-}
-
-template<class T>
-inline Vector<T>&
-Vector<T>::operator=(const Vector<T>& original)
-{
-  //
-  //	destroy destination vector
-  //
-  size_type length = pv.getLength();
-  T* vector = static_cast<T*>(pv.getBase());
-  for (size_type i = 0; i != length; i++)
-    vector[i].~T();  // call destructor on each object in destination array
-  //
-  //	reallocate memory if necessary
-  //
-  size_type originalLength = original.pv.getLength();
-  size_t neededBytes = originalLength * sizeof(T);
-  if (pv.getAllocatedBytes() < neededBytes)
-    {
-      if (vector != 0)
-	pv.freeMemory();
-      pv.initAllocate(neededBytes);
-      vector = static_cast<T*>(pv.getBase());
-    }
-  //
-  //	make copy of source vector
-  //
-  const T* originalVector = static_cast<const T*>(original.pv.getBase());
-  if (vector != 0)
-    {
-      pv.setLength(originalLength);
-      for (size_type i = 0; i != originalLength; i++) 
-	new(vector + i) T(originalVector[i]);  // call copy constructor on used elements only
-    }
-  return *this;
-}
-
-template<class T>
-inline void
-Vector<T>::swap(Vector& other)
-{
-  PreVector t(pv);  // default copy ctor
-  pv = other.pv;
-  other.pv = t;
-}
-
-template<class T>
-inline bool
-Vector<T>::isNull() const
-{
-  return pv.getBase() == 0;
-}
-
-template<class T>
-inline bool
-Vector<T>::empty() const
-{
-  return pv.empty();
-}
 
 //
 //	Legacy stuff.
@@ -445,6 +559,43 @@ inline int
 Vector<T>::length() const
 {
   return pv.getLength();
+}
+
+template<class T>
+inline void
+Vector<T>::append(const T& item)
+{
+  size_type oldLength = pv.getLength();
+  size_type newLength = oldLength + 1;
+  size_t neededBytes = newLength * sizeof(T);
+  if (pv.getAllocatedBytes() < neededBytes)
+    reallocate(neededBytes, oldLength);
+  pv.setLength(newLength);
+    
+  T* vec = static_cast<T*>(pv.getBase());
+  new(vec + oldLength) T(item);  // use copy constructor to copy item into vector
+}
+
+template<class T>
+inline void
+Vector<T>::append(T&& item)
+{
+  size_type oldLength = pv.getLength();
+  size_type newLength = oldLength + 1;
+  size_t neededBytes = newLength * sizeof(T);
+  if (pv.getAllocatedBytes() < neededBytes)
+    reallocate(neededBytes, oldLength);
+  pv.setLength(newLength);
+    
+  T* vec = static_cast<T*>(pv.getBase());
+  new(vec + oldLength) T(std::move(item));  // use move constructor if possible
+}
+
+template<class T>
+inline bool
+operator<(const Vector<T>& lhs,const Vector<T>& rhs)
+{
+  return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 #endif

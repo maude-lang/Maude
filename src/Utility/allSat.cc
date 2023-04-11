@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2007 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2007-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@
 AllSat::AllSat(Bdd formula, int firstVariable, int lastVariable)
   : formula(formula),
     firstVariable(firstVariable),
-    lastVariable(lastVariable),
-    nodeStack(0, lastVariable - firstVariable + 1),
-    dontCareSet(0, lastVariable - firstVariable + 1)
+    lastVariable(lastVariable)
 {
+  nodeStack.reserve(lastVariable - firstVariable + 1);
+  dontCareSet.reserve(lastVariable - firstVariable + 1);
   firstAssignment = true;
 }
 

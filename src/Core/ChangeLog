@@ -1,3 +1,21 @@
+2023-03-28  Steven Eker  <eker@pup>
+
+	* sortTable.cc (SortTable::buildSortDiagram): contractTo(0) -> clear()
+
+	* ctorDiagram.cc (SortTable::buildCtorDiagram): contractTo(0) -> clear()
+
+	* run.cc (RewritingContext::ruleRewrite): contractTo(0) -> clear()
+
+2023-03-27  Steven Eker  <eker@pup>
+
+	* localBinding.cc (LocalBinding::LocalBinding): use reserve() rather
+	than preallocate ctor
+
+	* sortTable.cc (SortTable::generateSortDiagram): use reserve() rather
+	than preallocate ctor (2 places)
+
+===================================Maude144===========================================
+
 2023-03-14  Steven Eker  <eker@pup>
 
 	* label.hh: updated comment because labels can be put on all statements

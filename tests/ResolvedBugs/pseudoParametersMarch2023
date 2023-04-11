@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/pseudoParametersMarch2023.maude -no-banner -no-advise \
+  > pseudoParametersMarch2023.out 2>&1
+
+diff $srcdir/pseudoParametersMarch2023.expected pseudoParametersMarch2023.out > /dev/null 2>&1

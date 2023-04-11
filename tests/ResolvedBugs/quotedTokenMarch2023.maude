@@ -1,0 +1,19 @@
+set show timing off .
+
+***
+***	Test that starting special symbol with a " works correctly.
+***
+
+fmod FOO is
+  pr NAT .
+  op "s" : Nat -> Nat [iter] .
+  op "f"g : Nat -> Nat [iter] .
+endfm
+
+red "X":Nat .
+red "X:Y":NzNat .
+red "X:Y"Z:NzNat .
+red "X":[Nat] .
+
+red "s"^42(0) .
+red "f"g^2(0) .

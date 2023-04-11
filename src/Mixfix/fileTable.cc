@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ FileTable::abortEverything(int lineNumber)
       fc.absoluteLineNumber = lineNumber;
       fc.fileNameIndex = NONE;
       fc.relativeLineNumber = fileChanges[matchingOpen].absoluteLineNumber - prevLineNumberDiff;
-      fileStack.contractTo(0);
+      fileStack.clear();
       firstSilent = NONE;
     }
   //
@@ -166,7 +166,7 @@ FileTable::abortEverything(int lineNumber)
       mc.absoluteLineNumber = lineNumber;
       mc.moduleNameIndex = NONE;
       mc.moduleTypeIndex = NONE;
-      moduleStack.contractTo(0);
+      moduleStack.clear();
     }
 }
 

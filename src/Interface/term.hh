@@ -49,7 +49,7 @@ public:
 
   //
   //	Comparison object on Term* for use with associative containers.
-  //	Only safe if the Terms are fully normalized are belong the the same module.
+  //	Only safe if the Terms are fully normalized and belong the same module.
   //
   struct LessThan
   {

@@ -51,20 +51,7 @@ public:
   void informUsers();
 
 private:
-  struct UserLt
-  {
-    bool operator()(const User* user1, const User* user2) const
-    {
-      //
-      //	Direct < comparison of unrelated pointers is undefined. But since the casting
-      //	to a large enough integer is invertable, it must be injective and so we can
-      //	get a total ordering by comparing the integers.
-      //
-      return reinterpret_cast<size_t>(user1) < reinterpret_cast<size_t>(user2);
-    }
-  };
-
-  typedef set<User*, UserLt> UserSet;
+  typedef set<User*> UserSet;
 
   UserSet users;
 };
@@ -72,7 +59,7 @@ private:
 inline int
 Entity::getNrUsers() const
 {
-  return users.size();  // inefficient
+  return users.size();
 }
 
 #ifndef NO_ASSERT

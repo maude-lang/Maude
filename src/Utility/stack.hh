@@ -51,21 +51,21 @@ template<class T>
 inline const T&
 Stack<T>::top() const
 {
-  return items[items.size() - 1];
+  return items.back();
 }
 
 template<class T>
 inline void
 Stack<T>::pop()
 {
-  items.contractTo(items.size() - 1);
+  items.pop_back();
 }
 
 template<class T>
 inline void
 Stack<T>::push(const T& item)
 {
-  items.append(item);
+  items.push_back(item);
 }
 
 #endif

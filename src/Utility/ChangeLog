@@ -1,3 +1,142 @@
+2023-04-06  Steven Eker  <eker@pup>
+
+	* macros.hh: added decl for selfCheckFailHandler(); call it
+	rather than abort() from AlwaysAssert() in NO_ASSERT case
+
+2023-04-05  Steven Eker  <eker@pup>
+
+	* vector.hh (front): fix bad non-call to data() (both versions)
+
+2023-04-04  Steven Eker  <eker@pup>
+
+	* indexedSet.hh (class IndexedSet): use Vector<> rather than
+	vector<> now that we have move semantics for reallocation
+
+	* intSet.cc (IntSet::erase): was subtract(); return 0 or 1
+	elements removed
+
+	* intSet.hh (class IntSet): subract() (single int version) ->
+	erase()
+
+	* intSet.cc (IntSet::hash, IntSet::hash2): use std::hash
+
+	* intSet.hh (IntSet::size): was cardinality()
+	(IntSet::clear): was makeEmpty()
+	(IntSet::ithElement): was index2Int()
+	(IntSet::find): was int2Index()
+	(IntSet::swap): added
+	(IntSet::operator==): use size()
+	(class IntSet): added typedef const_iterator
+	(IntSet::begin): added
+	(IntSet::end): added
+	(class IntSet): use = default for default constructor, copy
+	constructor and copy asignment operator
+	(class IntSet): added preallocate ctor
+
+2023-04-03  Steven Eker  <eker@pup>
+
+	* pigPug.hh (class PigPug): use Vector rather than vector for
+	typedef CombinedWord
+
+	* vector.hh (operator<): added
+
+	* intSet.cc: restored because unordered_map<int,int> has terrible
+	performance
+
+	* intSet.hh: ditto
+
+2023-03-29  Steven Eker  <eker@pup>
+
+	* preVector.hh (PreVector::empty): use simpler version now that
+	it produces better code; deleted comment about Sparc
+	(PreVector::freeMemory): added Assert()
+
+	* pointerMap.hh (class PointerMap): make NO_COPYING to see if
+	we accidently make copies
+
+2023-03-28  Steven Eker  <eker@pup>
+
+	* vector.hh (~Vector): use nullptr
+	(expandTo): use nullptr
+	(contractTo): use nullptr
+
+	* preVector.hh (PreVector::initEmpty): use nullptr
+	(PreVector::getAllocatedBytes): use nullptr
+	(PreVector::getLength): use nullptr
+	(PreVector::empty): use nullptr
+
+	* intSet.cc: deleted
+
+	* intSet.hh: deleted
+
+	* macros.hh: deleted forward decl for class IntSet
+
+	* natSet.hh (NatSet::clear): contractTo(0) -> clear()
+
+	* vector.hh (Vector, reallocate, operator=): use std::memcopy()
+
+	* macros.hh: use cstring rather than string.h or strings.h
+
+	* stack.hh (top): use back()
+	(pop): use pop_back()
+	(push): use push_back()
+
+	* vector.hh (front): use empty() in Assert() (both versions)
+	(back): use empty() in Assert() (both versions)
+	(pop_back): added
+
+2023-03-27  Steven Eker  <eker@pup>
+
+	* vector.hh (Vector): delete preallocate ctor
+	(push_back): added two versions
+	(front): added two versions
+	(back): added two versions
+	(expandBy): use size() rather than length()
+	(bytesAllocated): deleted
+	(data): added two versions
+	(front): use data() (both versions)
+	(back): use data() (both versions)
+	(operator[]): use size() in Assert() (both versions)
+	(operator[]): use data() (both versions)
+
+	* allSat.cc (AllSat::AllSat): use reserve() rather than preallocate
+	ctor (2 places)
+
+	* sequencePartition.cc (SequencePartition::SequencePartition): use
+	reserve() rather than preallocate ctor
+
+	* diophantineSystem.cc (DiophantineSystem::DiophantineSystem): use
+	reserve() rather than preallocate ctor (2 places)
+
+	* vector.hh (reserve): added
+	(reserve): need to set length if we reallocate
+	(reallocate): added comment about not setting length
+
+	* slowVector.hh: move slow Vector code here
+
+	* vector.hh (Vector): use vector -> vec (2 versions)
+	(reallocate): vector -> vec
+	(expandTo): vector -> vec
+	(contractTo): vector -> vec
+	(append): vector -> vec (both versions)
+	(isNull): use nullptr
+
+2023-03-24  Steven Eker  <eker@pup>
+
+	* vector.hh (Vector): added move ctor
+	(operator=): added move assignment
+	(reallocate): added
+	(expandTo): use reallocate()
+	(reallocate): use std::move()
+	(append): use reallocate()
+	(append): removed special casing for null Vector
+	(append): added move version
+	(reallocate): added std::is_trivially_copyable<> path
+	(operator=): added std::is_trivially_copyable<> path to copy version
+	(Vector): added std::is_trivially_copyable<> path to copy version
+
+===================================Maude144===================================
+
 2023-03-10  Steven Eker  <eker@pup>
 
 	* macros.hh: union MachineWord moved to /Core/memoryBlock.hh

@@ -165,7 +165,8 @@ private:
   //
   //	Cycle detection data structures
   //
-  typedef vector<int> CombinedWord;  // use STL vector in order to have comparison
+  //typedef vector<int> CombinedWord;  // use STL vector in order to have comparison
+  typedef Vector<int> CombinedWord;
   typedef map<CombinedWord, int> WordMap;
   typedef Vector<int> StateStack;
 

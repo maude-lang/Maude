@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,15 +30,16 @@ Parser::buildTerminalDecisionTrees()
   Vector<Rule*> ruleTable;
   Vector<int> starts;
   int nrNonTerminals = firstTerminalRules.length();
-  terminalDecisionTrees.expandTo(nrNonTerminals);
+  terminalDecisionTrees.resize(nrNonTerminals);
   for (int i = 0; i < nrNonTerminals; i++)
     {
       //
       //	Collect all the terminal rules that have i as the nonterminal.
+      //	We use pointers rather than indices for ruleLt.
       //
-      ruleTable.contractTo(0);
-      for (int r = firstTerminalRules[i]; r != NONE; r = rules[r]->nextRule)
-	ruleTable.append(rules[r]);
+      ruleTable.clear();
+      for (int r = firstTerminalRules[i]; r != NONE; r = rules[r].nextRule)
+	ruleTable.append(&(rules[r]));
       //
       //	Sort them by rhs start symbol, then prec, smallest first.
       //
@@ -49,7 +50,7 @@ Parser::buildTerminalDecisionTrees()
       //
       int nrRules = ruleTable.length();
       int lastSymbol = UNBOUNDED;  // bigger than any terminal symbol
-      starts.contractTo(0);
+      starts.clear();
       for (int j = 0; j < nrRules; j++)
 	{
 	  int startSymbol = ruleTable[j]->rhs[0].symbol;
@@ -82,15 +83,16 @@ Parser::buildNonTerminalDecisionTrees()
   Vector<Rule*> ruleTable;
   Vector<int> starts;
   int nrNonTerminals = firstTerminalRules.length();
-  nonTerminalDecisionTrees.expandTo(nrNonTerminals);
+  nonTerminalDecisionTrees.resize(nrNonTerminals);
   for (int i = 0; i < nrNonTerminals; i++)
     {
       //
       //	Collect all the terminal rules that have i as the nonterminal.
+      //	We use pointers rather than indices for ruleLt.
       //
-      ruleTable.contractTo(0);
-      for (int r = firstNonTerminalRules[i]; r != NONE; r = rules[r]->nextRule)
-	ruleTable.append(rules[r]);
+      ruleTable.clear();
+      for (int r = firstNonTerminalRules[i]; r != NONE; r = rules[r].nextRule)
+	ruleTable.append(&(rules[r]));
       //
       //	Sort them by rhs start symbol, then prec, smallest first.
       //
@@ -101,7 +103,7 @@ Parser::buildNonTerminalDecisionTrees()
       //
       int nrRules = ruleTable.length();
       int lastSymbol = UNBOUNDED;  // bigger than any terminal symbol
-      starts.contractTo(0);
+      starts.clear();
       for (int j = 0; j < nrRules; j++)
 	{
 	  if (ruleTable[j]->rhs[0].symbol != lastSymbol)
@@ -128,9 +130,9 @@ Parser::buildDecisionTree(Vector<Rule*>& ruleTable, Vector<int>& starts, int fir
     {
       if (ruleTable[k]->rhs[0].symbol != ruleTable[k + 1]->rhs[0].symbol)
 	break;
-      ruleTable[k]->equal = ruleTable[k + 1]->index;
+      ruleTable[k]->equal = ruleTable[k + 1] - rules.data();  // compute index in rules[] by pointer subtraction
     }
   ruleTable[k]->equal = NONE;
   ruleTable[j]->bigger = buildDecisionTree(ruleTable, starts, i + 1, last);
-  return ruleTable[j]->index;
+  return ruleTable[j] - rules.data();  // compute index in rules[] by pointer subtraction
 }

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -65,10 +65,10 @@ Parser::findReturnOrDeterministicReductionPath(int i, int ruleNr, int startToken
   //	(1) deals with the (maybe implied) call (ruleNr, rhsPosition, startTokenNr); OR
   //	(2) initiates a deterministic reduction path that ends in a return (ruleNr, startTokenNr).
   //
-  const Rule* rule = rules[ruleNr];  // the rule
-  int rhsPosition = rule->rhs.size() - 1;  // last position in the rule's rhs
-  int nonTerminal = rule->rhs[rhsPosition].symbol;  // the nonterminal in that position
-  int prec = rule->rhs[rhsPosition].prec;  // and its precedence
+  const Rule& rule = rules[ruleNr];  // the rule
+  int rhsPosition = rule.rhs.size() - 1;  // last position in the rule's rhs
+  int nonTerminal = rule.rhs[rhsPosition].symbol;  // the nonterminal in that position
+  int prec = rule.rhs[rhsPosition].prec;  // and its precedence
 
   ParserLog("  looking for a return for nonTerminal=" << nonTerminal << "  prec=" << prec);
   while (i != NONE)
@@ -76,9 +76,9 @@ Parser::findReturnOrDeterministicReductionPath(int i, int ruleNr, int startToken
       Return& ret = returns[i];
       int returnStartTokenNr = ret.startTokenNr;
       int returnRuleNr = ret.ruleNr;
-      Rule* returnRule = rules[returnRuleNr];
-      int returnNonTerminal = returnRule->nonTerminal;
-      int returnPrec = returnRule->prec;
+      Rule& returnRule = rules[returnRuleNr];
+      int returnNonTerminal = returnRule.nonTerminal;
+      int returnPrec = returnRule.prec;
       //
       //	Does the return deal with a call (ruleNr, rhsPosition, startTokenNr) ?
       //
@@ -152,9 +152,9 @@ Parser::extractOneStepOfDeterministicReductionPath(int ruleNr, int startTokenNr)
   //	Returns (nextRuleNr, nextStartTokenNr) or (NONE, NONE) if we
   //	are already at the top of the DRP.
   //
-  Rule* rule = rules[ruleNr];
-  int nonTerminal = rule->nonTerminal;
-  int prec = rule->prec;
+  Rule& rule = rules[ruleNr];
+  int nonTerminal = rule.nonTerminal;
+  int prec = rule.prec;
   //
   //	We go through the parse list startTokenNr looking for callers of the
   //	nonterminal recognized by rule ruleNr.
@@ -188,8 +188,8 @@ Parser::extractOneStepOfDeterministicReductionPath(int ruleNr, int startTokenNr)
 	      int ruleNr2 = cont.ruleNr;
 	      int pos = cont.rhsPosition;
 	      k = cont.nextContinuation;
-	      Rule* rule2 = rules[ruleNr2];
-	      if (rule2->rhs[pos].prec >= prec)
+	      Rule& rule2 = rules[ruleNr2];
+	      if (rule2.rhs[pos].prec >= prec)
 		{
 		  //
 		  //	Found a continutation.
@@ -199,7 +199,7 @@ Parser::extractOneStepOfDeterministicReductionPath(int ruleNr, int startTokenNr)
 		      ParserLog("*****> end of DRP seen because of multiple continuations");
 		      return IntPair(NONE, NONE);
 		    }
-		  int rhsRemaining = rule2->rhs.length() - (pos + 1);
+		  int rhsRemaining = rule2.rhs.length() - (pos + 1);
 		  if (rhsRemaining != 0)
 		    {
 		      ParserLog("******> end of DRP seen because of non return event");
@@ -220,19 +220,19 @@ Parser::extractOneStepOfDeterministicReductionPath(int ruleNr, int startTokenNr)
       int r = nonTerminalDecisionTrees[flip(nonTerminal2)];
       while (r != NONE)
 	{
-	  Rule* rule2 = rules[r];
-	  int t = nonTerminal - rule2->rhs[0].symbol;
+	  Rule& rule2 = rules[r];
+	  int t = nonTerminal - rule2.rhs[0].symbol;
 	  if (t == 0)
 	    break;
-	  r = (t > 0) ? rule2->bigger : rule2->smaller;
+	  r = (t > 0) ? rule2.bigger : rule2.smaller;
 	}
 
       while (r != NONE)
 	{
-	  Rule* rule2 = rules[r];
-	  if (rule2->prec > maxPrec)
+	  Rule& rule2 = rules[r];
+	  if (rule2.prec > maxPrec)
 	    break;
-	  if (rule2->rhs[0].prec >= prec)
+	  if (rule2.rhs[0].prec >= prec)
 	    {
 	      //
 	      //	Found a continutation.
@@ -242,7 +242,7 @@ Parser::extractOneStepOfDeterministicReductionPath(int ruleNr, int startTokenNr)
 		  ParserLog("*******> end of DRP seen because of multiple continuations - implied start up");
 		  return IntPair(NONE, NONE);
 		}
-	      int rhsRemaining = rule2->rhs.length() - 1;
+	      int rhsRemaining = rule2.rhs.length() - 1;
 	      if (rhsRemaining != 0)
 		{
 		  ParserLog("********> end of DRP seen because of non return event - implied start up");
@@ -255,7 +255,7 @@ Parser::extractOneStepOfDeterministicReductionPath(int ruleNr, int startTokenNr)
 	      nextRuleNr = r;
 	      nextStartTokenNr = startTokenNr;
 	    }
-	  r = rule2->equal;
+	  r = rule2.equal;
 	}
     }
   Assert(nextRuleNr != NONE, "didn't find caller for rule " << ruleNr << " at position " << startTokenNr);
@@ -273,10 +273,6 @@ Parser::extractDeterministicReductionPath(int ruleNr, int startTokenNr, Vector<D
       if (ruleNr == NONE)
 	break;
       startTokenNr = p.second;
-
-      int nrReturns = drp.size();
-      drp.expandBy(1);
-      drp[nrReturns].ruleNr = ruleNr;
-      drp[nrReturns].startTokenNr = startTokenNr;
+      drp.push_back({ruleNr, startTokenNr});
     }
 }

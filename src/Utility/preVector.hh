@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ private:
 inline void
 PreVector::initEmpty()
 {
-  ptr = 0;
+  ptr = nullptr;
 }
 
 inline void
@@ -89,41 +89,32 @@ PreVector::initSteal(PreVector& victim)
 inline void
 PreVector::freeMemory()
 {
+  Assert(ptr != nullptr, "ptr null");
   operator delete[](ptr - 1);
 }
 
 inline size_t
 PreVector::getAllocatedBytes() const
 {
-  return (ptr == 0) ? 0 : ptr[-1].allocatedBytes;
+  return (ptr == nullptr) ? 0 : ptr[-1].allocatedBytes;
 }
 
 inline size_t
 PreVector::getLength() const
 {
-  return (ptr == 0) ? 0 : ptr[-1].length;
+  return (ptr == nullptr) ? 0 : ptr[-1].length;
 }
 
 inline bool
 PreVector::empty() const
 {
-  if (ptr == 0)
-    return true;
-  return ptr[-1].length == 0;
-  //
-  //	For some reason gcc generates far better code for this when
-  //	inlined on the x86 than the simpler
-  //		return ptr == 0 || ptr[-1].length == 0
-  //	Both versions suck on the Sparc - gcc constructs the 0 or 1
-  //	result in a register and then tests it in the caller - even
-  //	with inlining.
-  //
+  return ptr == nullptr || ptr[-1].length == 0;
 }
 
 inline void
 PreVector::setLength(size_t length)
 {
-  Assert(ptr != 0, "ptr null");
+  Assert(ptr != nullptr, "ptr null");
   ptr[-1].length = length;
 }
 

@@ -178,7 +178,8 @@ EXTRA_DIST = \
 	cvc4_Bindings.cc \
 	yices2_Bindings.cc \
 	quotedIdentifierOpSignature.cc \
-	serialize.cc
+	serialize.cc \
+	pseudoParameters.cc
 
 noinst_HEADERS = \
 	renaming.hh \

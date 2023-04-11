@@ -28,6 +28,8 @@
 
 class PointerMap
 {
+  NO_COPYING(PointerMap);
+
 public:
   PointerMap(int size = 8);
 
@@ -51,4 +53,3 @@ private:
 };
 
 #endif
-

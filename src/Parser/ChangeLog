@@ -1,3 +1,100 @@
+2023-04-10  Steven Eker  <eker@pup>
+
+	* parser.hh (class Parser): union nextRule and equal in struct Rule
+
+2023-04-05  Steven Eker  <eker@pup>
+
+	* parser.hh (class Parser): deleted index data member from struct
+	Rule
+
+	* parser.cc (Parser::insertProd): don't fill out Rule::index
+
+	* compile.cc (Parser::buildDecisionTree): use pointer subtraction
+	to compute the index of a rule in rules[]
+
+	* parser.cc (~Parser): deleted
+
+	* parser.hh (class Parser): delete dtor decl
+
+2023-04-04  Steven Eker  <eker@pup>
+
+	* parser.cc (Parser::dump): use new rules semantics
+
+	* parser.hh (Parser::getNumberOfChildren): use new rules semantics
+
+	* drp.cc (Parser::findReturnOrDeterministicReductionPath): use new
+	rules semantics
+	(Parser::extractOneStepOfDeterministicReductionPath): use new rules
+	semantics
+
+	* pass2.cc (Parser::extractFirstSubparseToTheLeft): use new rules
+	semantics
+	(Parser::extractFirstSubparse): use new rules semantics
+	(Parser::extractNextSubparse): use new rules semantics
+	(Parser::buildDeterministicReductionPathParseTree): use new rules
+	semantics
+	(Parser::existsCall): use new rules semantics
+	(Parser::findReturn): use new rules semantics
+
+	* pass1.cc (Parser::chaseDeterministicReductionPath): use new rules
+	semantics
+	(Parser::scanCalls): use new rules semantics
+	(Parser::advanceRule): use new rules semantics
+	(Parser::makeCall): use new rules semantics
+
+	* compile2.cc (Parser::buildExpansionTables): use new rules semantics
+
+	* parser.cc (Parser::insertProd): use new rules semantics
+
+	* parser.hh (class Parser): store rules as a Vector<Rule> rather
+	a Vector<Rule*>
+
+2023-03-30  Steven Eker  <eker@pup>
+
+	* drp.cc (Parser::extractDeterministicReductionPath): use
+	push_back() and list construction
+
+	* compile.cc (Parser::buildTerminalDecisionTrees): expandTo() ->
+	resize()
+	(Parser::buildNonTerminalDecisionTrees): expandTo() -> resize()
+
+	* parser.hh (class Parser): deleted returnIndex field from struct
+	ParseNode
+
+	* pass2.cc (Parser::extractFirstSubparse):  use size(), push_back()
+	and list construction
+	(Parser::extractNextSubparse): use size(), push_back() and list
+	construction
+	(Parser::buildDeterministicReductionPathParseTree): use size(),
+	push_back() and list construction (2 places)
+
+2023-03-29  Steven Eker  <eker@pup>
+
+	* pass2.cc (Parser::extractFirstSubparseToTheLeft): use size(), push_back()
+	and list construction
+
+	* parser.cc (Parser::insertProd): use size() and push_back()
+	(Parser::insertProd): use size(), push_back() and list construction (bubble
+	version)
+	(Parser::parseSentence): use size(), push_back() and list construction
+
+	* pass1.cc (Parser::expandCalls): use size(), push_back() and list
+	construction
+	(Parser::makeCall): use size(), push_back() and list construction (3
+	places)
+	(Parser::makeReturn): use size(), push_back() and list construction
+	(Parser::makeMemoItem): use size(), push_back() and list construction
+
+2023-03-28  Steven Eker  <eker@pup>
+
+	* parser.cc (Parser::parseSentence): contractTo(0) ->clear() (3 places)
+
+	* compile.cc (Parser::buildTerminalDecisionTrees): contractTo(0) ->
+	clear() (2 places)
+	(Parser::buildNonTerminalDecisionTrees): contractTo(0) ->clear() (2 places)
+
+===================================Maude144===========================================
+
 2021-03-09  Steven Eker  <eker2@eker10>
 
 	* parser.cc (~Parser): use range-based for loop

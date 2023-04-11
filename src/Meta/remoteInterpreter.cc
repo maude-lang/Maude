@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -169,7 +169,8 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
   //
   //	Make reply.
   //
-  Vector<DagNode*> reply(1, 3);
+  Vector<DagNode*> reply(3);
+  reply.resize(1);
   reply[0] = metaLevel->upNat(id);
   DagNode* interpreterName = interpreterOidSymbol->makeDagNode(reply);
   context.addExternalObject(interpreterName, this);
@@ -282,7 +283,8 @@ InterpreterManagerSymbol::doChildExit(pid_t childPid)
   else if(WIFSIGNALED(wstatus))
     errorMessage = "Killed by signal.";
 
-  Vector<DagNode*> reply(1, 3);
+  Vector<DagNode*> reply(3);
+  reply.resize(1);
   reply[0] = metaLevel->upNat(i->first);
   DagNode* interpreterName = interpreterOidSymbol->makeDagNode(reply);
   reply.resize(3);

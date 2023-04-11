@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #ifndef _indexedSet_hh_
 #define _indexedSet_hh_
 #include <map>
-#include <vector>
+//#include <vector>
 
 template<class T>
 class IndexedSet
@@ -52,7 +52,7 @@ public:
 
 private:
   typedef map<T, int> EltMap;
-  typedef vector<typename EltMap::const_iterator> IndexMap;
+  typedef Vector<typename EltMap::const_iterator> IndexMap;
 
   EltMap eltMap;
   IndexMap indexMap;

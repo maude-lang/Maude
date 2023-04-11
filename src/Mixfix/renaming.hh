@@ -121,7 +121,7 @@ public:
   Rope makeCanonicalName() const;
 
   void addSortConstantAndLabelMappings(const Renaming* original);
-  void addOpMappingPartialCopy(const Renaming* original, int index);
+  void addOpMappingPartialCopy(const Renaming* original, int index, int newFromName, int newToName);
   void addStratMappingPartialCopy(const Renaming* original, int index);
 
   int renameSort(int oldId) const;
@@ -217,7 +217,7 @@ private:
   typedef multimap<int, OpMapping> OpMap;
   typedef multimap<int, StratMapping> StratMap;
   typedef Vector<ClassMapping> ClassMap;
-  typedef vector<AttrMapping> AttrMap;  // std::vector for move semantics and back()
+  typedef Vector<AttrMapping> AttrMap;  // Vector now supports move semantics and back()
 
   static bool equal(const Vector<int>& left, const Vector<int>& right);
   static bool isIdentityOpMapping(const ImportModule* module, const OpMapping& om, const Symbol* symbol);

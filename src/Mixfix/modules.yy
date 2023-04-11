@@ -217,9 +217,9 @@ toAttributeList	:	toAttributeList toAttribute
 		;
 
 toAttribute	:	KW_PREC IDENTIFIER	{ currentRenaming->setPrec($2); }
-		|	KW_GATHER '('		{ clear(); }
+		|	KW_GATHER '('		{ tokensClear(); }
 			idList ')'		{ currentRenaming->setGather(tokenSequence); }
-		|	KW_FORMAT '('		{ clear(); }
+		|	KW_FORMAT '('		{ tokensClear(); }
 			idList ')'		{ currentRenaming->setFormat(tokenSequence); }
 		|	KW_LATEX '('		{ lexerLatexMode(); }
 			LATEX_STRING ')'	{ currentRenaming->setLatexMacro($4); }
@@ -492,7 +492,7 @@ module		:	KW_MOD		{ lexerIdMode(); }
 		;
 
 dot		:	'.'		{}
-		|	tokenDot	{ store($1); }
+		|	tokenDot	{ tokensStore($1); }
 		;
 
 parameters	:	'{' parameterList '}' {}
@@ -546,10 +546,10 @@ declaration	:	KW_IMPORT moduleExprDot
 			    }
 			}
 
-		|	KW_SORT			{ clear(); }
+		|	KW_SORT			{ tokensClear(); }
 			endSortNameList		{ CM->addSortDecl(tokenSequence); }
 
-		|	KW_SUBSORT		{ clear(); }
+		|	KW_SUBSORT		{ tokensClear(); }
 			endSubsortList		{ CM->addSubsortDecl(tokenSequence); }
 
 		|	KW_OP			{ lexBubble(BAR_COLON, 1); }
@@ -596,7 +596,7 @@ declaration	:	KW_IMPORT moduleExprDot
 			KW_IF			{ lexContinueBubble($5, END_STATEMENT, 1); }
 			endBubble	    	{ CM->addStatement(lexerBubble); }
 
-		|	stratDeclKeyword	{ clear(); }
+		|	stratDeclKeyword	{ tokensClear(); }
 			stratIdList
 			stratSignature
 			stratAttributes
@@ -615,7 +615,7 @@ declaration	:	KW_IMPORT moduleExprDot
 
 		|	KW_CLASS classDecl
 
-		|	KW_SUBCLASS		{ clear(); }
+		|	KW_SUBCLASS		{ tokensClear(); }
 			endSubsortList		{ CM->addSubclassDecl(tokenSequence); }
 		
 		|	error '.'
@@ -800,7 +800,7 @@ typeName1Dot	:	sortName expectedDot
 			}
 		;
 
-kind		:	'['			{ clear(); }
+kind		:	'['			{ tokensClear(); }
 			sortNames ']'
 		;
 
@@ -809,15 +809,15 @@ typeName	:	sortName
 			  singleton[0] = $1;
 			  currentSyntaxContainer->addType(false, singleton);
 			}
-		|	'['			{ clear(); }
+		|	'['			{ tokensClear(); }
 			sortNames ']'
 			{
 			  currentSyntaxContainer->addType(true, tokenSequence);
 			}
 		;
 
-sortNames	:	sortNames ',' sortName		{ store($3); }
-		|	sortName			{ store($1); }
+sortNames	:	sortNames ',' sortName		{ tokensStore($3); }
+		|	sortName			{ tokensStore($1); }
 		;
 
 attributes	:	'[' attributeList ']'	{}
@@ -861,15 +861,15 @@ attribute	:	KW_ASSOC
 			  CM->setFlag(SymbolType::ITER);
 			}
 		|	KW_PREC IDENTIFIER	{ CM->setPrec($2); }
-		|	KW_GATHER '('		{ clear(); }
+		|	KW_GATHER '('		{ tokensClear(); }
 			idList ')'		{ CM->setGather(tokenSequence); }
-		|	KW_FORMAT '('		{ clear(); }
+		|	KW_FORMAT '('		{ tokensClear(); }
 			idList ')'		{ CM->setFormat(tokenSequence); }
-		|	KW_STRAT '('		{ clear(); }
+		|	KW_STRAT '('		{ tokensClear(); }
 			idList ')'		{ CM->setStrat(tokenSequence); }
-		|	KW_ASTRAT '('		{ clear(); }
+		|	KW_ASTRAT '('		{ tokensClear(); }
 			idList ')'		{ CM->setStrat(tokenSequence); }
-		|	KW_POLY '('		{ clear(); }
+		|	KW_POLY '('		{ tokensClear(); }
 			idList ')'		{ CM->setPoly(tokenSequence); }
 		|	KW_MEMO
 			{
@@ -881,10 +881,10 @@ attribute	:	KW_ASSOC
 			}
 		|	KW_FROZEN
 			{
-			  clear();
+			  tokensClear();
 			  CM->setFrozen(tokenSequence);
 			}
-		|	KW_FROZEN '('		{ clear(); }
+		|	KW_FROZEN '('		{ tokensClear(); }
 			idList ')'		{ CM->setFrozen(tokenSequence); }
 		|	KW_CONFIG
 			{
@@ -923,15 +923,15 @@ identity	:	FORCE_LOOKAHEAD
 		|	{}
 		;
 
-idList		:	idList IDENTIFIER	{ store($2); }
-		|	IDENTIFIER		{ store($1); }
+idList		:	idList IDENTIFIER	{ tokensStore($2); }
+		|	IDENTIFIER		{ tokensStore($1); }
 		;
 
 hookList	:	hookList hook		{}
 		|	hook	 		{}
 		;
 
-hook		:	KW_ID_HOOK token		{ clear(); CM->addHook(SyntacticPreModule::ID_HOOK, $2, tokenSequence); }
+hook		:	KW_ID_HOOK token		{ tokensClear(); CM->addHook(SyntacticPreModule::ID_HOOK, $2, tokenSequence); }
 		|	KW_ID_HOOK token parenBubble	{ CM->addHook(SyntacticPreModule::ID_HOOK, $2, lexerBubble); }
 		|	KW_OP_HOOK token parenBubble	{ CM->addHook(SyntacticPreModule::OP_HOOK, $2, lexerBubble); }
 		|	KW_TERM_HOOK token parenBubble	{ CM->addHook(SyntacticPreModule::TERM_HOOK, $2, lexerBubble); }
@@ -958,20 +958,20 @@ expectedDot	:	'.' {}
 /*
  *	Sort lists.
  */
-sortNameList	:	sortNameList sortName	{ store($2); }
-		|	sortName     		{ store($1); }
+sortNameList	:	sortNameList sortName	{ tokensStore($2); }
+		|	sortName     		{ tokensStore($1); }
 		;
 
 		
-endSortNameList :	tokenDot		{ store($1); }
+endSortNameList :	tokenDot		{ tokensStore($1); }
 	    	|	sortNameList dot
 		;
 
 /*
  *	Subsort lists.
  */
-subsortList	:	subsortList sortNameList '<'	{ store($3); }
-		|	sortNameList '<'		{ store($2); }
+subsortList	:	subsortList sortNameList '<'	{ tokensStore($3); }
+		|	sortNameList '<'		{ tokensStore($2); }
 	    	;
 
 endSubsortList	:	subsortList endSortNameList

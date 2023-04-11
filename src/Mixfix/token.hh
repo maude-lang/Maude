@@ -132,13 +132,14 @@ private:
     };
 
   static void checkForSpecialProperty(const char* tokenString);
+  static int computeSpecialProperty(const char* tokenString);
   static int computeAuxProperty(const char* tokenString);
   static const char* skipSortName(const char* tokenString, bool& parameterized);
   static bool looksLikeRational(const char* s);
   static StringTable stringTable;
   static Vector<int> specialProperties;
   static Vector<int> auxProperties;
-  static vector<char> buffer;
+  static Vector<char> buffer;
 
   int codeNr;
   int lineNr;

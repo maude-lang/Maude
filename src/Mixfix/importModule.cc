@@ -66,6 +66,7 @@
 
 //	our stuff
 #include "ooSorts.cc"
+#include "pseudoParameters.cc"
 #include "renameModule.cc"
 #include "parameterization.cc"
 #include "instantiateModuleWithFreeParameters.cc"
@@ -169,6 +170,25 @@ ImportModule::addImport(ImportModule* importedModule,
 		   QUOTE(moduleTypeString(getModuleType())) << " " <<
 		   QUOTE(this) << " not allowed.  Recovering by ignoring import.");
       return;
+    }
+  if (!parameterNames.empty())
+    {
+      const EnclosingObject::ParameterSet& pseudos = importedModule->getPseudoParameters();
+      for (int id : parameterNames)
+	{
+	  if (pseudos.find(id) != pseudos.end())
+	    {
+	      IssueWarning(lineNumber << ": importation of " <<
+			   QUOTE(moduleTypeString(t)) << " " << QUOTE(importedModule) << " by " <<
+			   QUOTE(moduleTypeString(getModuleType())) << " " << QUOTE(this) <<
+			   " not allowed because the pseudo-parameter " << QUOTE(Token::name(id)) <<
+			   " of " << QUOTE(moduleTypeString(t)) << " " << QUOTE(importedModule) <<
+			   " would be captured by an actual parameter of " <<
+			   QUOTE(moduleTypeString(getModuleType())) << " " << QUOTE(this) <<
+			   ".");
+	      return;
+	    }
+	}
     }
   importedModules.append(importedModule);
   importModes.append(mode);

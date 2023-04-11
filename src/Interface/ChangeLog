@@ -1,3 +1,11 @@
+2023-03-29  Steven Eker  <eker@pup>
+
+	* dagNode.hh (DagNode::LessThan::operator()): added
+
+	* term.hh (class Term): fix typo in comment
+
+===================================Maude144=========================================
+
 2023-03-17  Steven Eker  <eker@pup>
 
 	* dagNode.hh (DagNode::instantiate): added DebugInfo()

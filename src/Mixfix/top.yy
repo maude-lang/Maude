@@ -63,17 +63,9 @@
 #include "interpreter.hh"
 
 #include "global.hh"
-#define clear()			tokenSequence.clear();
-#define store(token)		tokenSequence.append(token)
-#define fragClear()		fragments.contractTo(0);
-#define fragStore(token)	fragments.append(token)
-//#define YYPARSE_PARAM	parseResult
-//#define PARSE_RESULT	(*((UserLevelRewritingContext::ParseResult*) parseResult))
 #define PARSE_RESULT	(*parseResult)
-
 #define CM		interpreter.getCurrentModule()
 #define CV		interpreter.getCurrentView()
-
 #include "lexerAux.hh"
 
 Vector<Token> singleton(1);
@@ -83,6 +75,30 @@ Vector<Token> fragments;
 Vector<Token> moduleExpr;
 Vector<Token> opDescription;
 Vector<Token> strategyCall;
+
+inline void
+tokensClear()
+{
+  tokenSequence.clear();
+}
+
+inline void
+tokensStore(const Token& token)
+{
+  tokenSequence.append(token);
+}
+
+inline void
+fragClear()
+{
+  fragments.clear();
+}
+
+inline void
+fragStore(const Token& token)
+{
+  fragments.append(token);
+}
 
 Renaming* currentRenaming = 0;
 SyntaxContainer* currentSyntaxContainer = 0;

@@ -388,3 +388,12 @@ correctEcvt(double d, int nrDigits, char buffer[], int& decPt, int& sign)
 	}
     }
 }
+
+void
+selfCheckFailHandler()
+{
+  std::cerr << "\nMaude self-check failure.\nPlease submit a bug report to: " << PACKAGE_BUGREPORT <<
+    "\nPlease include the platform details, Maude version, and a file\n'crash.maude' that can be loaded to reproduce the crash (it may load\n\
+other files). Do not bother trying to simplify your example unless the\nruntime to the bug being visible is greater than 10 seconds.\n" << endl;
+  exit(1);
+}

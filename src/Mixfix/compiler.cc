@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -269,7 +269,7 @@ Compiler::inputGraph(Int64& nrRewrites, Int64& cpu, Int64& real)
 	break;
       Symbol* s = symbols[index];
       int nrArgs = s->arity();
-      args.contractTo(0);
+      args.clear();
       for (int i = 0; i < nrArgs; i++)
 	{
 	  int t;

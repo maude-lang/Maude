@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2018 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,9 +38,9 @@ Parser::chaseDeterministicReductionPath(int ruleNr, int startTokenNr)
 
   for (;;)
     {
-      Rule* rule = rules[ruleNr];
-      int nonTerminal = rule->nonTerminal;
-      int prec = rule->prec;
+      Rule& rule = rules[ruleNr];
+      int nonTerminal = rule.nonTerminal;
+      int prec = rule.prec;
       //
       //	If we have a memo item that takes us to the top of the DRP,
       //	return the ruleNr and startTokenNr for the top return.
@@ -111,12 +111,12 @@ Parser::processReturn(int tokenNr, int startTokenNr, int ruleNr, const Vector<in
   //
   ParserLog("processReturn() tokenNr=" << tokenNr << " startTokenNr=" << startTokenNr <<
 	    " ruleNr=" << ruleNr);
-  Rule* rule = rules[ruleNr];
+  Rule& rule = rules[ruleNr];
   //
   //	Get the (nonterminal, prec) we recognized.
   //
-  int nonTerminal = rule->nonTerminal;
-  int prec = rule->prec;
+  int nonTerminal = rule.nonTerminal;
+  int prec = rule.prec;
   ParserLog("nonterminal=" << nonTerminal << " prec=" << prec);
   //
   //	See if we handled this (nonterminal, prec) at startToken before and
@@ -160,10 +160,10 @@ Parser::processReturn(int tokenNr, int startTokenNr, int ruleNr, const Vector<in
 	      int startTokenNr2 = cont.startTokenNr;
 	      int pos = cont.rhsPosition;
 	      k = cont.nextContinuation;
-	      Rule* rule2 = rules[ruleNr2];
-	      if (rule2->rhs[pos].prec >= prec)
+	      Rule& rule2 = rules[ruleNr2];
+	      if (rule2.rhs[pos].prec >= prec)
 		{
-		  int rhsRemaining = rule2->rhs.length() - (pos + 1);
+		  int rhsRemaining = rule2.rhs.length() - (pos + 1);
 		  if (rhsRemaining == 0)
 		    {
 		      ParserLog("right recursive return for rule=" << ruleNr2);
@@ -210,16 +210,16 @@ Parser::processReturn(int tokenNr, int startTokenNr, int ruleNr, const Vector<in
       int r = nonTerminalDecisionTrees[flip(nonTerminal2)];
       while (r != NONE)
 	{
-	  Rule* rule2 = rules[r];
-	  int t = nonTerminal - rule2->rhs[0].symbol;
+	  Rule& rule2 = rules[r];
+	  int t = nonTerminal - rule2.rhs[0].symbol;
 	  if (t == 0)
 	    break;
-	  r = (t > 0) ? rule2->bigger : rule2->smaller;
+	  r = (t > 0) ? rule2.bigger : rule2.smaller;
 	}
       while (r != NONE)
 	{
-	  Rule* rule2 = rules[r];
-	  if (rule2->prec > maxPrec)
+	  Rule& rule2 = rules[r];
+	  if (rule2.prec > maxPrec)
 	    {
 	      //
 	      //	rule2 didn't have small enough prec to satisfy call. Rules in the equals path
@@ -227,19 +227,19 @@ Parser::processReturn(int tokenNr, int startTokenNr, int ruleNr, const Vector<in
 	      //
 	      break;
 	    }
-	  if (rule2->rhs[0].prec < prec)
+	  if (rule2.rhs[0].prec < prec)
 	    {
 	      //
 	      //	rule2 required a smaller prec than our return provided.
 	      //
-	      r = rule2->equal;
+	      r = rule2.equal;
 	      continue;
 	    }
 	  ParserLog("saw implied call by rule=" << r);
 	  //
 	  //	Normal processesing.
 	  //
-	  int rhsRemaining = rule2->rhs.length() - 1;
+	  int rhsRemaining = rule2.rhs.length() - 1;
 	  if (rhsRemaining == 0)
 	    {
 	      ParserLog("implied right recursive return for rule=" << r);
@@ -269,7 +269,7 @@ Parser::processReturn(int tokenNr, int startTokenNr, int ruleNr, const Vector<in
 	      drpPossible = false;
 	      advanceRule(r, 1, startTokenNr, tokenNr, sentence);
 	    }
-	  r = rule2->equal;
+	  r = rule2.equal;
 	}
     }
   //
@@ -430,14 +430,9 @@ Parser::expandCalls(int tokenNr)
 		    //	Add a new call, and push it on the front so we don't visit it
 		    //	in the outer loop (since it's fully expanded).
 		    //
-		    int nrCalls = calls.length();
-		    calls.expandBy(1);
-		    Call& call4 = calls[nrCalls];
-		    call4.nonTerminal = nt2;
-		    call4.maxPrec = prec2;
-		    call4.firstContinuation = NONE;
-		    call4.nextCall = firstCall;
-		    firstCall = nrCalls;
+		    int newCallIndex = calls.size();
+		    calls.push_back({nt2, prec2, NONE, firstCall});
+		    firstCall = newCallIndex;
 		    ParserLog("created call for " << nt2 << " from " << nonTerminal);
 		  }
 		nextPair:
@@ -463,7 +458,7 @@ Parser::scanCalls(int tokenNr, const Vector<int>& sentence)
       int r = terminalDecisionTrees[flip(call.nonTerminal)];
       while (r != NONE)
 	{
-	  Rule* rule = rules[r];
+	  Rule* rule = &(rules[r]);
 	  int t = currentToken - rule->rhs[0].symbol;
 	  if (t == 0)
 	    {
@@ -477,7 +472,7 @@ Parser::scanCalls(int tokenNr, const Vector<int>& sentence)
 		      r = rule->equal;
 		      if (r == NONE)
 			break;
-		      rule = rules[r];
+		      rule = &(rules[r]);
 		    }
 		  while (rule->prec <= maxPrec);
 		}
@@ -495,13 +490,13 @@ Parser::advanceRule(int ruleNr,
 		    int tokenNr,
 		    const Vector<int>& sentence)
 {
-  Rule* rule = rules[ruleNr];
-  int end = rule->rhs.size();
+  Rule& rule = rules[ruleNr];
+  int end = rule.rhs.size();
   int nrTokens = sentence.size();
   Assert(tokenNr <= nrTokens, "tokenNr past last parse list");
   for (; pos < end; pos++)
     {
-      int symbol = rule->rhs[pos].symbol;
+      int symbol = rule.rhs[pos].symbol;
       if (symbol < 0)
 	{
 	  makeCall(tokenNr, ruleNr, pos, startTokenNr);
@@ -531,8 +526,8 @@ Parser::advanceRule(int ruleNr,
 void
 Parser::makeCall(int tokenNr, int ruleNr, int rhsPosition, int startTokenNr)
 {
-  int nonTerminal = rules[ruleNr]->rhs[rhsPosition].symbol;
-  int prec = rules[ruleNr]->rhs[rhsPosition].prec;
+  int nonTerminal = rules[ruleNr].rhs[rhsPosition].symbol;
+  int prec = rules[ruleNr].rhs[rhsPosition].prec;
   for (int i = firstCalls[tokenNr]; i != NONE;)
     {
       Call& call = calls[i];
@@ -549,33 +544,18 @@ Parser::makeCall(int tokenNr, int ruleNr, int rhsPosition, int startTokenNr)
 	    }
 	  if (prec > call.maxPrec)
 	    call.maxPrec = prec;
-	  int nrContinuations = continuations.length();
-	  continuations.expandBy(1);
-	  Continuation& cont = continuations[nrContinuations];
-	  cont.ruleNr = ruleNr;
-	  cont.rhsPosition = rhsPosition;
-	  cont.startTokenNr = startTokenNr;
-	  cont.nextContinuation = call.firstContinuation;
-	  call.firstContinuation = nrContinuations;
+	  int newContinuationIndex = continuations.size();
+	  continuations.push_back({ruleNr, rhsPosition, startTokenNr, call.firstContinuation});
+	  call.firstContinuation = newContinuationIndex;
 	  return;
 	}
     }
-  int nrContinuations = continuations.length();
-  continuations.expandBy(1);
-  Continuation& cont = continuations[nrContinuations];
-  cont.ruleNr = ruleNr;
-  cont.rhsPosition = rhsPosition;
-  cont.startTokenNr = startTokenNr;
-  cont.nextContinuation = NONE;
-
-  int nrCalls = calls.length();
-  calls.expandBy(1);
-  Call& call = calls[nrCalls];
-  call.nonTerminal = nonTerminal;
-  call.maxPrec = prec;
-  call.firstContinuation = nrContinuations;
-  call.nextCall = firstCalls[tokenNr];
-  firstCalls[tokenNr] = nrCalls;
+  int newContinuationIndex = continuations.size();
+  continuations.push_back({ruleNr, rhsPosition, startTokenNr, NONE});
+  
+  int newCallIndex = calls.size();
+  calls.push_back({nonTerminal, prec, newContinuationIndex, firstCalls[tokenNr]});
+  firstCalls[tokenNr] = newCallIndex;
 }
 
 bool
@@ -591,29 +571,19 @@ Parser::makeReturn(int tokenNr, int ruleNr, int startTokenNr)
       i = ret.nextReturn;
     }
   ParserLog("makeReturn() << " << tokenNr << "  " << ruleNr << "  " << startTokenNr);
-  int nrReturns = returns.length();
-  returns.expandBy(1);
-  Return& ret = returns[nrReturns];
-  ret.ruleNr = ruleNr;
-  ret.startTokenNr = startTokenNr;
-  ret.nextReturn = NONE;
+  int newReturnIndex = returns.size();
+  returns.push_back({ruleNr, startTokenNr, NONE});
   if (prev == NONE)
-    firstReturns[tokenNr] = nrReturns;
+    firstReturns[tokenNr] = newReturnIndex;
   else
-    returns[prev].nextReturn = nrReturns;
+    returns[prev].nextReturn = newReturnIndex;
   return true;
 }
 
 int
 Parser::makeMemoItem(int nonTerminal, int maxPrec, int ruleNr, int startTokenNr, int nextMemoItem)
 {
-  int nrMemoItems = memoItems.size();
-  memoItems.expandBy(1);
-  MemoItem& m = memoItems[nrMemoItems];
-  m.nonTerminal = nonTerminal;
-  m.maxPrec = maxPrec;
-  m.ruleNr = ruleNr;
-  m.startTokenNr = startTokenNr;
-  m.nextMemoItem = nextMemoItem;
-  return nrMemoItems;
+  int newMemoIndex = memoItems.size();
+  memoItems.push_back({nonTerminal, maxPrec, ruleNr, startTokenNr, nextMemoItem});
+  return newMemoIndex;
 }

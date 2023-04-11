@@ -1,3 +1,29 @@
+2023-03-28  Steven Eker  <eker@pup>
+
+	* metaModuleCache.cc (MetaModuleCache::flush): contractTo(0) -> clear()
+
+2023-03-27  Steven Eker  <eker@pup>
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::createInterpreter):  don't use preallocate ctor
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): don't use
+	preallocate ctor
+	(InterpreterManagerSymbol::doChildExit): don't use preallocate ctor
+
+	* metaUp.cc (MetaLevel::upDagNode): use reserve() rather than
+	preallocate ctor
+	(MetaLevel::upTerm): use reserve() rather than preallocate ctor
+	(MetaLevel::upContext): use reserve() rather than preallocate ctor
+	(MetaLevel::upDisjointSubstitutions): use reserve() rather than
+	preallocate ctor (2 places) (both versions)
+
+	* metaDown.cc (MetaLevel::downTerm): use reserve() rather than
+	preallocate ctor
+
+===================================Maude144===========================================
+
 2023-03-13  Steven Eker  <eker@pup>
 
 	* metaUp.cc (MetaLevel::upTypeList): changed test from nrTypes == 0 to

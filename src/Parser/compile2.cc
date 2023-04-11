@@ -124,12 +124,12 @@ Parser::buildExpansionTables()
       //
       //	Look for each nonterminal rule returning the nonterminal
       //
-      for (int r = firstNonTerminalRules[i]; r != NONE; r = rules[r]->nextRule)
+      for (int r = firstNonTerminalRules[i]; r != NONE; r = rules[r].nextRule)
 	{
-	  Rule* rule = rules[r];
-	  int prec = rule->prec;
-	  int nonterminal2 = rule->rhs[0].symbol;
-	  int prec2 = rule->rhs[0].prec;
+	  Rule& rule = rules[r];
+	  int prec = rule.prec;
+	  int nonterminal2 = rule.rhs[0].symbol;
+	  int prec2 = rule.rhs[0].prec;
 	  if (nonterminal2 == nonterminal && prec2 <= prec)
 	    continue;  // rule provides no broadening of nonterminal
 	  //

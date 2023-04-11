@@ -26,8 +26,8 @@
 #ifndef _mixfixParser_hh_
 #define _mixfixParser_hh_
 #include <map>
-#include "parser.hh"
 #include "intSet.hh"
+#include "parser.hh"
 #include "token.hh"
 
 class MixfixParser
@@ -128,10 +128,13 @@ public:
     MAKE_PRINT_LIST
   };
 
+  typedef IntSet TokenSet;
+  
   MixfixParser(MixfixModule& client,
 	       bool complexFlag,
 	       int componentNonTerminalBase,
-	       int nextNonTerminalCode);
+	       int nextNonTerminalCode,
+	       int nrTokensGuess);
   ~MixfixParser();
   //
   //	Functions to construct parser.
@@ -184,10 +187,11 @@ public:
   void makeAssignment(int node, Vector<Term*>& variables, Vector<Term*>& values);
   void makeSubstitution(int node, Vector<Term*>& variables, Vector<Term*>& values);
   int newNonTerminal();
-   //
+  //
   //	Functions to get info about the parser.
   //
-  const IntSet& getTokenSet();  // HACK
+  const TokenSet& getTokenSet();  // HACK
+  
   bool isComplex() const;
   int getComponentNonTerminalBase() const;
   int getNrProductions() const;
@@ -196,7 +200,7 @@ public:
 
 private:
   typedef map<int,int> IntMap;
-
+  
   enum Flags
   {
     NONEXEC = 1,
@@ -214,6 +218,7 @@ private:
     short data2;	// auxillary data for actions that need it
   };
 
+  int tokenToIndex(int token);
   Sort* getSort(int node);
   Term* makeTerm(int node);
   void makeAssocList(int node, Vector<Term*>& args);
@@ -247,7 +252,7 @@ private:
   int nextNonTerminal;
   Parser parser;			// CFG parser
   Vector<int> productionRhs;		// to avoid creating a new Vector for each production insertion
-  IntSet tokens;			// mapping between token codes and terminal numbers
+  TokenSet tokenSet;			// mapping between token codes and terminal numbers
   Vector<Action> actions;		// action associated with each production
   Vector<int> specialTerminals;		// special terminals for tokens with special properties
   IntMap variableTerminals;		// special terminals for on-the-fly variables
@@ -290,13 +295,27 @@ MixfixParser::getNrNonTerminals() const
 inline int
 MixfixParser::getNrTerminals() const
 {
-  return tokens.cardinality();
+  return tokenSet.size();
 }
 
 inline int
 MixfixParser::newNonTerminal()
 {
   return --nextNonTerminal;
+}
+
+
+inline int
+MixfixParser::tokenToIndex(int token)
+{
+  return tokenSet.insert(token);
+}
+
+
+inline const MixfixParser::TokenSet&
+MixfixParser::getTokenSet()  // HACK
+{
+  return tokenSet;
 }
 
 #endif

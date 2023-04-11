@@ -101,6 +101,10 @@ ImportModule::makeInstantiation(int moduleName,
       return copy;
     }
   //
+  //	Preemptively compute our pseudo-parameters so that the instantiation functions can be const.
+  //
+  (void) getPseudoParameters();
+  //
   //	We do parameters next because we want to get the set of positions that were instantiated
   //	by a parameter.
   //
@@ -260,6 +264,12 @@ ImportModule::handleInstantiationByParameter(ImportModule* copy,
 	  //	Parameter instantiated by a parameter from an enclosing module.
 	  //
 	  int parameterName = p->id();  // name can change
+	  if (pseudoParameters.find(parameterName) != pseudoParameters.end())
+	    {
+	      IssueWarning("In module instantiation " << QUOTE(copy) << ", parameter " << QUOTE(Token::name(parameterName)) <<
+			   " clashes with a pseudo-parameter of " << QUOTE(this) << ".");
+	      return false;
+	    }
 	  if (copy->findParameterIndex(parameterName) == NONE)
 	    {
 	      //
@@ -384,7 +394,7 @@ ImportModule::handleInstantiationByModuleView(ImportModule* copy,
 	      copy->addInAllConflicts(argumentView);
 	      //
 	      //	Need to add any conflicts between the bound parameters in our argument
-	      //	and bare paramters in the same instantiation.
+	      //	and bare parameters in the same instantiation.
 	      //	This is one of two places where new conflicts are generated ab initio.
 	      //	If the instantiation looks like modExp{..., viewExpr,..., X,...}
 	      //	then X will have a conflict with all bound parameters in viewExpr, since
@@ -414,6 +424,13 @@ ImportModule::handleBoundParameters(ImportModule* copy, View* argumentView, Modu
   for (int i = 0; i < nrParameters; ++i)
     {
       int parameterName = argumentView->getParameterName(i);
+      if (pseudoParameters.find(parameterName) != pseudoParameters.end())
+	{
+	  IssueWarning("In module instantiation " << QUOTE(copy) << ", argument view " << QUOTE(argumentView) <<
+		       " has a bound parameter " << QUOTE(Token::name(parameterName)) <<
+		       " that clashes with a pseudo-parameter of " << QUOTE(this) << ".");
+	  return false;
+	}
       DebugInfo("  looking at parameter " << Token::name(parameterName));
       //
       //	Because we need this parameter for our instantiation, because
@@ -492,11 +509,13 @@ ImportModule::handleParameterizedConstants(Renaming* canonical,
   //	Check for parameterized constants declared inside us.
   //	We also need to map constants declared in parameterized modules that
   //	we import otherwise our use of those constants will fail.
-  //	For the moment we consider all user constants for mapping.
   //
   const Vector<Symbol*>& symbols = getSymbols();
   int nrUserSymbols = getNrUserSymbols();
-  for (int i = 0; i < nrUserSymbols; ++i)
+  //
+  //	We consider all user constants that did not come from a parameter theory.
+  //
+  for (int i = nrSymbolsFromParameters; i < nrUserSymbols; ++i)
     {
       Symbol* s = symbols[i];
       if (s->arity() == 0)
@@ -509,12 +528,33 @@ ImportModule::handleParameterizedConstants(Renaming* canonical,
 	  if (newConstantId != constantId)
 	    {
 	      //
-	      //	Need to add an specific op mapping.
+	      //	Need to add a specific op mapping.
 	      //
 	      canonical->addOpMapping(constantId);
 	      canonical->addType(s->rangeComponent());
 	      canonical->addOpTarget(newConstantId);
 	    }
+	}
+    }
+  //
+  //	We also need to look for parameterized, polymorphic constants, declared
+  //	inside us or inside parameterized modules we import.
+  //
+  int nrPolymorphs = getNrPolymorphs();
+  //
+  //	We consider all polymorphs that did not come from a parameter theory.
+  //
+  for (int i = nrPolymorphsFromParameters; i < nrPolymorphs; ++i)
+    {
+      int constantId = getPolymorphName(i).code();
+      int newConstantId = instantiateSortName(constantId, parameterMap, extraParameterSet);
+      if (newConstantId != constantId)
+	{
+	  //
+	  //	Need to add a generic op mapping.
+	  //
+	  canonical->addOpMapping(constantId);
+	  canonical->addOpTarget(newConstantId);
 	}
     }
 }

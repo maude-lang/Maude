@@ -92,7 +92,8 @@ private:
 
   // Store of the results of rewriting the subterms according to their strategies
   // (the first coordinate selects the subpattern, the second the result)
-  std::vector<std::vector<DagNode*> > results;		// TODO Change to Vector?
+  //  std::vector<std::vector<DagNode*> > results;		// TODO Change to Vector?
+  Vector<Vector<DagNode*>> results;
 
   // Number of empty children (without solutions yet)
   // (it is the count of results[i] s.t. result[i].empty())

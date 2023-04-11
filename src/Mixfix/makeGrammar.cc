@@ -54,7 +54,11 @@ MixfixModule::makeGrammar(bool complexFlag)
   //
   int componentNonTerminalBase = complexFlag ? COMPLEX_BASE : SIMPLE_BASE;
   int nextNonTerminal = componentNonTerminalBase - NUMBER_OF_TYPES * getConnectedComponents().length() + 1;
-  parser = new MixfixParser(*this, complexFlag, componentNonTerminalBase, nextNonTerminal);
+  parser = new MixfixParser(*this,
+			    complexFlag,
+			    componentNonTerminalBase,
+			    nextNonTerminal,
+			    2 * getSymbols().size());  // very rough estimate of number of tokens
   DebugInfo("new parser = " << parser << "  complexFlag = " << complexFlag <<
 	    "  componentNonTerminalBase = " << componentNonTerminalBase <<
 	    "  nextNonTerminal = " << nextNonTerminal);
@@ -312,10 +316,10 @@ MixfixModule::makeStrategyLanguageProductions()
 	  {
 	    Vector<int> gather;
 	    //
-	    // Strategies wiht parameters are read in a prefixed form
+	    // Strategies with parameters are read in a prefixed form
 	    //
 	    rhs.append(leftParen);
-	    gather.resize(0);
+	    gather.clear();
 
 	    for (int j = 0; j < nrArgs; j++)
 	      {
@@ -1133,7 +1137,7 @@ MixfixModule::makeSymbolProductions()
 	  //	<fooTerm> ::= symbolName ( <barTerm> , <bazTerm> , ... , <quuxTerm> )
 	  //
 	  rhs.append(leftParen);
-	  gather.resize(0);
+	  gather.clear();
 	  for (int j = 0; j < nrArgs; j++)
 	    {
 	      gather.append(PREFIX_GATHER);
@@ -1311,11 +1315,9 @@ MixfixModule::makeSpecialProductions()
   //
   //	Productions for existing tokens that have special properties.
   //
-  const IntSet& tokens = parser->getTokenSet();  // HACK
-  int nrTokens = tokens.cardinality();
-  for (int i = 0; i < nrTokens; i++)
-    { 
-      int code = tokens.index2Int(i);
+  const MixfixParser::TokenSet& tokenSet = parser->getTokenSet();  // HACK
+  for (auto code : tokenSet)
+    {
       switch (Token::specialProperty(code))
 	{
 	case Token::SMALL_NAT:
@@ -1554,7 +1556,7 @@ MixfixModule::makePolymorphProductions()
       if (nrItems > 0)
 	{
 	  mixfixRhs.resize(nrItems);
-	  underscores.contractTo(0);
+	  underscores.clear();
 	  for (int j = 0; j < nrItems; j++)
 	    {
 	      int t = p.symbolInfo.mixfixSyntax[j];

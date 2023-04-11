@@ -1,3 +1,20 @@
+Overview of Changes in alpha144
+============================================
+* fixed a bug where special symbols other than strings that
+started with " were not recognized.
+* fixed a bug where renamings that mapped parameterized constants
+were not being correctly instantiated
+* fixed a bug where operator with the same name but different
+arities could confuse renamings generated to instantiate modules
+* fixed a bug where a change of parameter was not supported for
+parameterized polymorpic constants
+* fixed a large family of bugs where identifiers that looked
+like parameters but which were not ("pseudo parameters") could
+clash with actual parameters by enforcing new constraints
+* fixed a bug where a constant from a parameter theory that
+looked like a parameterized constant was being treated as such
+for various operations
+
 Overview of Changes in Maude 3.3 (alpha143) (2023-03-22)
 ========================================================
 * overparsing for omiting -> in constant mapping removed due

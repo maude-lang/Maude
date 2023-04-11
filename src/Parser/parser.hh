@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@ class Parser
 {
 public:
   Parser();
-  ~Parser();
 
   void insertProd(int nonTerminal,
 		  const Vector<int>& rhs,
@@ -88,14 +87,16 @@ private:
 
   struct Rule
   {
-    int index;
-    int nextRule;
-    int equal;
-    int smaller;
-    int bigger;
+    union
+    {
+      int nextRule;		// for lists of rules with the same rhs[0] symbol; we're done with this by the time we fill out equal
+      int equal;		// |
+    };				// |
+    int smaller;		//  } indices of rules for 3 branches of decision tree
+    int bigger;			// |
     int prec;
     int nonTerminal;
-    int nrNonTerminals;
+    int nrNonTerminals;		// number of nonterminals appear in rhs
     Vector<Pair> rhs;
   };
 
@@ -165,7 +166,6 @@ private:
 
   struct ParseNode
   {
-    int returnIndex;
     int ruleNr;
     int startTokenNr;
     int nextReturnToCheck;
@@ -242,7 +242,7 @@ private:
   Vector<int> firstTerminalRules;	// first terminal rule for each nonterminal
   Vector<int> firstNonTerminalRules;	// first nonterminal rule for each nonterminal
   Vector<int> firstBubbles;		// first bubble for each nonterminal
-  Vector<Rule*> rules;			// all the grammar rules
+  Vector<Rule> rules;			// all the grammar rules
   Vector<Vector<Expansion> > expansions;	// table of expansions for each nonterminal
   Vector<int> terminalDecisionTrees;
   Vector<int> nonTerminalDecisionTrees;
@@ -282,7 +282,7 @@ Parser::ruleLt(Rule* const& r1, Rule* const& r2)
 inline int
 Parser::getNumberOfChildren(int node)
 {
-  return rules[getProductionNumber(node)]->nrNonTerminals;
+  return rules[getProductionNumber(node)].nrNonTerminals;
 }
 
 inline int

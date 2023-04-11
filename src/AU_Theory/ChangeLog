@@ -1,3 +1,10 @@
+2023-03-27  Steven Eker  <eker@pup>
+
+	* AU_RhsAutomaton.cc (AU_RhsAutomaton::AU_RhsAutomaton): use
+	reserve() rather than preallocate ctor
+
+===================================Maude144===========================================
+
 2023-03-21  Steven Eker  <eker@pup>
 
 	* AU_UnificationSubproblem2.hh (class AU_UnificationSubproblem2):

@@ -705,6 +705,9 @@ Renaming::typeMatch(const Vector<set<int> >& types, const Vector<int>& sortNames
   //	in types.
   //
   int nrTypes = types.size();
+  int nrSortNames = sortNames.size();
+  if (nrTypes != nrSortNames)
+    return false;
   for (int i = 0; i < nrTypes; ++i)
     {
       //cerr << "looking for a match at arg " << i << " for sort " << Token::name(sortNames[i]) << endl;
@@ -737,7 +740,10 @@ Renaming::renameOp(int id, const Vector<int>& sortNames) const
 	    index = i->second.index;
 	  else
 	    {
-	      IssueWarning("multiple renamings apply to " << QUOTE(Token::name(id)));
+	      IssueWarning("multiple renamings apply to " << QUOTE(Token::name(id)) << " : " <<
+			   QUOTE(Token::name(getOpTo(index))) << " vs " <<
+			   QUOTE(Token::name(i->second.name)) << ".");
+	      DebugAlways("renaming is\n\n" << this << "\n");
 	      break;
 	    }
 	}
@@ -859,14 +865,14 @@ Renaming::addSortConstantAndLabelMappings(const Renaming* original)
 }
 
 void
-Renaming::addOpMappingPartialCopy(const Renaming* original, int index)
+Renaming::addOpMappingPartialCopy(const Renaming* original, int index, int newFromName, int newToName)
 {
   //
   //	Add a copy of a given op mapping, leaving out any type info.
   //
   OpMap::const_iterator from = original->opMapIndex[index];
-  lastOpMapping = opMap.insert(OpMap::value_type(from->first, OpMapping()));
-  lastOpMapping->second.name = from->second.name;
+  lastOpMapping = opMap.insert(OpMap::value_type(newFromName, OpMapping()));
+  lastOpMapping->second.name = newToName;
   lastOpMapping->second.prec = from->second.prec;
   lastOpMapping->second.gather = from->second.gather;
   lastOpMapping->second.format = from->second.format;
@@ -1043,7 +1049,7 @@ Renaming::addStratTarget(Token to)
   // TODO The subject type should also be checked
   Vector<Renaming::IdSet>& types = lastStratMapping->second.types;
   if (!types.empty())
-    types.resize(types.size() - 1);
+    types.pop_back();
 }
 
 void

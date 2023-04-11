@@ -1,0 +1,270 @@
+***
+***	Test for capture of pseudo-parameters by actual parameters.
+***
+
+*** FOO has a pseudo parameter X
+fmod FOO is
+  sort Foo{X} .
+endfm
+
+*** can't import it into a module with parameter X
+fmod BAR{X :: TRIV} is
+  inc FOO .
+endfm
+
+*** if we rename the sort with the pseudo-parameter it works
+fmod BAR{X :: TRIV} is
+  inc FOO * (sort Foo{X} to Foo{Y}) .
+endfm
+
+*** OK
+fmod BAR{Y :: TRIV} is
+  inc FOO .
+endfm
+
+*** but if we change the actual parameter we cannnot construct BAR{X}
+fmod BAZ{X :: TRIV} is
+  inc BAR{X} .
+endfm
+
+*** also if we rename the pseudo-parameter we cannot construct BAR{Y} * (sort Foo{X} to Foo{Y})
+fmod BAZ{Y :: TRIV} is
+  inc BAR{Y} * (sort Foo{X} to Foo{Y}) .
+endfm
+
+*** also if we change both
+fmod BAZ{Z :: TRIV} is
+  inc BAR{Z}  * (sort Foo{X} to Foo{Z}) .
+endfm
+
+
+*** example from actual release notes 1
+fmod FOO is
+  sort Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO .
+  op a : -> Foo{X} .
+endfm
+
+fmod BAZ{Y :: TRIV} is
+  inc BAR{Y} .
+endfm
+
+
+*** example from actual release notes 2
+fmod FOO{Y :: TRIV} is
+  sort Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO{X} .
+  sort Bar{X} .
+  subsort Foo{X} < Bar{X} .
+endfm
+
+fmod BAZ{Z :: TRIV} is
+  inc  BAR{Z} .
+endfm
+
+
+*** example from actual release notes 3
+fmod FOO{Y :: TRIV} is
+  sort Foo{X} .
+endfm
+
+view V{X :: TRIV} from TRIV to FOO{X} is
+  sort Elt to Foo{X} .
+endv
+
+fmod BAR{Z :: TRIV} is
+  inc SET{V{Z}} .
+endfm
+
+
+*** example from actual release notes 4
+fmod M{X :: TRIV} is
+  sort S{X} .
+endfm
+
+view V{X :: TRIV} from TRIV to M{X} is
+  sort Elt to S{X} .
+endv
+
+fmod FOO{Y :: TRIV} is
+  sort Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO{V{X}} .
+  op a : -> Foo{X} .
+endfm
+
+fmod BAZ is
+  inc BAR{Nat} .
+endfm
+
+
+*** example from actual release notes 5
+fmod M{X :: TRIV} is
+  sort S{X} .
+endfm
+
+view V{X :: TRIV} from TRIV to M{X} is
+  sort Elt to S{X} .
+endv
+
+fmod M2{X :: TRIV} is
+  sort S2{X} .
+endfm
+
+view V2{X :: TRIV} from TRIV to M2{X} is
+  sort Elt to S2{X} .
+endv
+
+fmod FOO{Y :: TRIV} is
+  sort Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO{V{V2{X}}} .
+  op a : -> Foo{X} .
+endfm
+
+fmod BAZ is
+  inc BAR{Nat} .
+endfm
+
+
+*** original example
+fmod FOO{X :: TRIV} is
+  sort Foo{X,Y} .
+endfm
+
+fmod BAR{X :: TRIV, Y :: TRIV} is
+  inc FOO{X} .
+  sort Bar{X,Y} .
+  subsort Bar{X,Y} < Foo{X,Y} .
+endfm
+
+fmod BAZ is
+  inc BAR{Nat, Nat} .
+endfm
+
+show all .
+
+
+*** follow up example where pseudo-parameter is a module-view
+fmod NAT-SET is
+  inc SET{Nat} .
+endfm
+
+fmod CONFUSE{Nat :: TRIV} is
+  inc NAT-SET .
+  op a : -> Set{Nat} .
+endfm
+
+fmod TEST is
+  inc CONFUSE{String} .
+endfm
+
+
+*** renaming example
+fmod M{X :: TRIV} is
+  inc NAT * (sort Nat to Nat{X}) .
+endfm
+
+
+*** Paco's example
+fmod NAT-SET is
+  sort S{X} .
+endfm
+
+fmod CONFUSE{X :: TRIV} is
+  inc NAT-SET .
+  op a : -> S{X} .
+endfm
+
+view V from TRIV to STRING is 
+  sort Elt to String .
+endv 
+
+fmod TEST is
+  inc CONFUSE{V} .
+endfm
+
+
+*** examples (5) from draft release notes
+fmod FOO is
+  sort Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  inc FOO .
+  sort Bar{X} .
+  subsort Bar{X} < Foo{X} .
+endfm
+
+fmod BAZ{Y :: TRIV} is
+  inc BAR{Y} .
+endfm
+
+fmod BAZ is
+  inc BAR{Nat} .
+endfm
+
+
+*** examples (6) from draft release notes
+fth T is
+  sort Elt .
+  op c{X} : -> Elt .
+endfth
+
+fmod FOO{X :: T} is
+  eq c{X} = c{X} .
+endfm
+
+fmod BAR{Y :: T} is
+  inc FOO{Y} .
+endfm
+
+show all .
+
+fmod M is
+  sort Quux .
+  op d{X} : -> Quux .
+endfm
+
+view V from T to M is
+  sort Elt to Quux .
+  op c{X} to d{X} .
+endv
+
+fmod BAR is
+  inc FOO{V} .
+endfm
+
+show all .
+
+
+*** examples (7) from draft release notes
+fmod M is
+  sort Quux .
+  op c{X} : -> Quux .
+endfm
+
+fmod FOO{X :: TRIV} is
+  inc M .
+  eq c{X} = c{X} .
+endfm
+
+fmod BAR{Y :: TRIV} is
+  inc FOO{Y} .
+endfm
+
+show all .
+
+fmod BAR is
+  inc FOO{Nat} .
+endfm

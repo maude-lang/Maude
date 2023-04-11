@@ -397,7 +397,7 @@ ImportTranslation::translateRegularSymbol(Symbol* symbol,
   //	Because we use a return value of 0 to indicate an op->term mapping we never
   //	want to return 0 due to an internal error - even in the optimized build.
   //
-  AlwaysAssert(s != 0, "no translation for " << symbol << " in " << target << " was looking for " <<
+  AlwaysAssert(s != 0, "no translation for " << symbol << " with " << nrArgs << " args in " << target << " was looking for " <<
 	       Token::name(id));
   return s;
 }

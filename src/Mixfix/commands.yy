@@ -37,7 +37,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	KW_PARSE
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			}
 			moduleAndTerm
 			{
@@ -49,7 +49,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	KW_CREDUCE
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			}
 			moduleAndTerm
 			{
@@ -61,7 +61,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	KW_SREDUCE
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			}
 			moduleAndTerm
 			{
@@ -73,7 +73,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug KW_REDUCE
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			}
 			moduleAndTerm
 			{
@@ -85,7 +85,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug KW_REWRITE
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			}
 			numberModuleTerm
@@ -97,7 +97,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug KW_EREWRITE
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			  number2 = NONE;
 			}
@@ -110,7 +110,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug KW_FREWRITE
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			  number2 = NONE;
 			}
@@ -123,7 +123,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug KW_SREWRITE
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			}
 			numberModuleTerm
@@ -135,7 +135,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug KW_DSREWRITE
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			}
 			numberModuleTerm
@@ -148,7 +148,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	KW_CHECK
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			}
 			moduleAndTerm
 			{
@@ -160,7 +160,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug search
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			  number2 = NONE;
 			}
@@ -174,7 +174,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  variantOptions = $2;
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			  number2 = NONE;			  
 			}
@@ -190,7 +190,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	match
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			}
 			numberModuleTerm
@@ -202,7 +202,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optIrredundant KW_UNIFY
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			}
 			numberModuleTerm
@@ -214,7 +214,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug KW_VARIANT KW_UNIFY
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			}
 			numberModuleTerm
@@ -226,7 +226,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug KW_FILTERED KW_VARIANT KW_UNIFY
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			}
 			numberModuleTerm
@@ -238,7 +238,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug KW_VARIANT KW_MATCH
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			}
 			numberModuleTerm
@@ -251,7 +251,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	optDebug KW_GET optIrredundant KW_VARIANTS
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  number = NONE;
 			}
 			numberModuleTerm
@@ -270,7 +270,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			  //	test is a generic command to call code with a term for development purposes.
 			  //
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			}
 			moduleAndTerm
 			{
@@ -283,7 +283,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	KW_LOOP
 			{
 			  lexerCmdMode();
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			}
 			moduleAndTerm
 			{
@@ -293,7 +293,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			}
 		|	parenBubble
 			{
-			  moduleExpr.contractTo(0);
+			  moduleExpr.clear();
 			  if (interpreter.setCurrentModule(moduleExpr))  // HACK
 			    interpreter.contLoop(lexerBubble);
 			}
@@ -830,7 +830,7 @@ numbersModuleTerm4
 			{
 			  number = Token::codeToInt64(lexerBubble[1].code());
 			  number2 = Token::codeToInt64(lexerBubble[3].code());
-			  clear();
+			  tokensClear();
 			}
 			moduleAndTerm
 		|	cTokenBarDotRight	{ lexContinueBubble($1, END_COMMAND, 0); }

@@ -128,8 +128,8 @@ ImportModule::localSort2(ImportModule* copy, Renaming* renaming, const Sort* sor
   if (renaming != 0)
     id = renaming->renameSort(id);
   Sort* ts = copy->findSort(id);
-  Assert(ts != 0, "couldn't find sort " << QUOTE(Token::sortName(id)) <<
-  	 " renamed from " << QUOTE(sort) << " in module " << copy);
+  AlwaysAssert(ts != 0, "couldn't find sort " << QUOTE(Token::sortName(id)) <<
+	       " renamed from " << QUOTE(sort) << " in module " << QUOTE(copy));
   return ts;
 }
 

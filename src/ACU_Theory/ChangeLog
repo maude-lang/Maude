@@ -1,3 +1,10 @@
+2023-03-27  Steven Eker  <eker@pup>
+
+	* ACU_RhsAutomaton.cc (ACU_RhsAutomaton::ACU_RhsAutomaton):  use
+	reserve() rather than preallocate ctor
+
+===================================Maude144===========================================
+
 2023-03-20  Steven Eker  <eker@pup>
 
 	* ACU_UnificationSubproblem2.cc

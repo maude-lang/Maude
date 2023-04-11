@@ -40,7 +40,7 @@
 StringTable Token::stringTable;
 Vector<int> Token::specialProperties;
 Vector<int> Token::auxProperties;
-vector<char> Token::buffer;
+Vector<char> Token::buffer;
 
 ostream&
 operator<<(ostream& s, const Token& token)
@@ -67,6 +67,7 @@ Token::printTokens(ostream& s,
     {
       s << sep << tokens[i];
       sep = seperator;
+      
     }
 }
 
@@ -157,7 +158,7 @@ Token::fixUp(const char* tokenString, int& lineNumber)
 	    break;
 	}
     } 
-  codeNr = encode(&buffer[0]);
+  codeNr = encode(buffer.data());
   lineNr = lineNumber;
   lineNumber += nrBackslashNewlineCombos;
 }
@@ -186,14 +187,14 @@ Token::fixUp(const char* tokenString)
 	    break;
 	}
     }
-  return encode(&buffer[0]);
+  return encode(buffer.data());
 }
 
 void
 Token::dropChar(const Token& original)
 {
   string truncated(stringTable.name(original.codeNr));
-  truncated.resize(truncated.size() - 1);
+  truncated.pop_back();
   codeNr = encode(truncated.c_str());
   lineNr = original.lineNr;
 }
@@ -312,24 +313,22 @@ Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
 void
 Token::checkForSpecialProperty(const char* tokenString)
 {
-  int tokenNr = specialProperties.length();
-  specialProperties.expandBy(1);
-  specialProperties[tokenNr] = NONE;
-  auxProperties.expandBy(1);
-  auxProperties[tokenNr] = computeAuxProperty(tokenString);
+  specialProperties.push_back(computeSpecialProperty(tokenString));
+  auxProperties.push_back(computeAuxProperty(tokenString));
+}
 
+int
+Token::computeSpecialProperty(const char* tokenString)
+{
   const char* p = tokenString;
   if (*p == 0)
-    return;  // handle null strings correctly
+    return NONE;  // handle null strings correctly
   if (*p == '\'')
-    {
-      specialProperties[tokenNr] = QUOTED_IDENTIFIER;
-      return;
-    }
+    return QUOTED_IDENTIFIER;
   if (*p == '"')
     {
       bool seenBackslash = false;
-      for (p++; *p; p++)
+      for (++p; *p; ++p)
 	{
 	  char c = *p;
 	  if (c == '\\')
@@ -339,16 +338,17 @@ Token::checkForSpecialProperty(const char* tokenString)
 	      if (c == '"' && !seenBackslash)
 		{
 		  if (*(p + 1) == '\0')
-		    specialProperties[tokenNr] = STRING;
-		  return;
+		    return STRING;
+		  break;  // can't be a STRING
 		}
 	      seenBackslash = false;
 	    }
 	}
-      return;
     }
+  size_t len = strlen(tokenString);
+  if (len > 1 && tokenString[len - 1] == ':')
+    return ENDS_IN_COLON;
   {
-    size_t len = strlen(tokenString);
     for (size_t i = len - 1; i > 0; --i)
       {
 	char c = tokenString[i];
@@ -356,39 +356,30 @@ Token::checkForSpecialProperty(const char* tokenString)
 	  {
 	    if (i == len - 1 || tokenString[i + 1] == '0')
 	      break; 
-	    specialProperties[tokenNr] = ITER_SYMBOL;
-	    return;
+	    return ITER_SYMBOL;
 	  }
 	if (!isdigit(c))
 	  break;
       }
   }
-  for (++p; *p; ++p)
-    {
-      if (*p == ':')
-        specialProperties[tokenNr] = *(p + 1) ? CONTAINS_COLON : ENDS_IN_COLON;
-    }
-  if (specialProperties[tokenNr] != NONE)
-    return;
+  {
+    for (++p; *p; ++p)  // don't count first character
+      {
+	if (*p == ':')
+	  return CONTAINS_COLON;
+      }
+  }
   if (looksLikeFloat(tokenString))
-    {
-      specialProperties[tokenNr] = FLOAT;
-      return;
-    }
-
-  mpz_class i;
-  int error = mpz_set_str(i.get_mpz_t(), tokenString, 10);
-  if (error == 0)
-    {
-      specialProperties[tokenNr] = (i == 0) ? ZERO : ((i < 0) ? SMALL_NEG : SMALL_NAT);
-      return;
-    }
-
+    return FLOAT;
+  {
+    mpz_class i;
+    int error = mpz_set_str(i.get_mpz_t(), tokenString, 10);
+    if (error == 0)
+      return (i == 0) ? ZERO : ((i < 0) ? SMALL_NEG : SMALL_NAT);
+  }
   if (looksLikeRational(tokenString))
-    {
-      specialProperties[tokenNr] = RATIONAL;
-      return;
-    }
+    return RATIONAL;
+  return NONE;
 }
 
 bool
@@ -832,7 +823,7 @@ Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble)
       needBQ = !(specialChar(c) || c == '_');
     }
   buffer.push_back('\0');
-  return encode(&buffer[0]);
+  return encode(buffer.data());
 }
 
 void

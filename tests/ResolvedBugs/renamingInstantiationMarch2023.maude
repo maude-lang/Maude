@@ -1,0 +1,36 @@
+***
+***	Test that renamings involving parameterized constants are instantiated correctly.
+***
+
+fmod FOO{X :: TRIV} is
+  sort Foo{X} .
+  op f{X} : -> Foo{X} .
+endfm
+
+fmod BAR{X :: TRIV} is
+  pr FOO{X} * (op f{X} to g) .
+  eq g = g .
+endfm
+
+fmod TEST is
+  inc BAR{Nat} .
+endfm
+
+show all .
+
+
+omod FOO{X :: TRIV} is
+  class Foo{X} .
+endom
+
+omod BAR{X :: TRIV} is
+  inc FOO{X} * (class Foo{X} to Bar{X}) .
+  op className : -> Cid .
+  eq className = Bar{X} .
+endom
+
+omod TEST is
+  inc BAR{Nat} .
+endom
+
+show all .

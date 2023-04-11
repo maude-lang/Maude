@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,29 +26,43 @@
 
 #ifndef _intSet_hh_
 #define _intSet_hh_
+#include "vector.hh"
 
 class IntSet
 {
 public:
-  IntSet();
-  IntSet(const IntSet& original);
+  typedef Vector<int>::const_iterator const_iterator;
+  //
+  //	Have the compiler make the default constructor, copy constructor and copy asignment operator.
+  //
+  IntSet() = default;
+  IntSet(const IntSet&) = default;
+  IntSet& operator=(const IntSet&) = default;
 
-  int insert(int k);  // return index of inserted int
-  void subtract(int i);
-  bool contains(int i) const;
-  int int2Index(int i) const;
-  void makeEmpty();
+  IntSet(int expectedSize);
+
+  int insert(int k);  // returns index of inserted int
+  int find(int k) const;  // returns index or NONE
+  bool contains(int k) const;
+  int erase(int i);
+  int ithElement(int i) const;
+  
+  const_iterator begin() const;
+  const_iterator end() const;
+
+  int size() const;
+  bool empty() const;
+
+  void clear();
+  void swap(IntSet& other);
+  
   void insert(const IntSet& other);
   void subtract(const IntSet& other);
   void intersect(const IntSet& other);
-  IntSet& operator=(const IntSet& original);
-  bool empty() const;
   bool contains(const IntSet& other) const;
   bool disjoint(const IntSet& other) const;
-  int cardinality() const;
   bool operator==(const IntSet& other) const;
   bool operator!=(const IntSet& other) const;
-  int index2Int(int i) const;
 
 private:
   enum Parameters
@@ -67,72 +81,78 @@ private:
 };
 
 inline
-IntSet::IntSet()
+IntSet::IntSet(int expectedSize)
 {
-}
-
-inline
-IntSet::IntSet(const IntSet& original)
-  : intTable(original.intTable),
-    hashTable(original.hashTable)
-{
-}
-
-inline bool
-IntSet::contains(int i) const
-{
-  return intTable.length() != 0 && hashTable[findEntry(i)] != UNUSED;
+  intTable.reserve(expectedSize);
+  resize(2 * expectedSize);  // no more the 50% load factor
 }
 
 inline int
-IntSet::int2Index(int i) const
+IntSet::size() const
 {
-  return (intTable.length() != 0) ? hashTable[findEntry(i)] : NONE;
-} 
-
-inline void
-IntSet::makeEmpty()
-{
-  intTable.contractTo(0);
-  hashTable.contractTo(0);
-}
-
-inline IntSet&
-IntSet::operator=(const IntSet& original)
-{
-  intTable = original.intTable;  // deep copy
-  hashTable = original.hashTable;  // deep copy
-  return *this;
+  return intTable.size();
 }
 
 inline bool
 IntSet::empty() const
 {
-  return intTable.length() == 0;
+  return intTable.empty();
+}
+
+inline IntSet::const_iterator
+IntSet::begin() const
+{
+  return intTable.begin();
+}
+
+inline IntSet::const_iterator
+IntSet::end() const
+{
+  return intTable.end();
 }
 
 inline int
-IntSet::cardinality() const
+IntSet::find(int k) const
 {
-  return intTable.length();
+  return !empty() ? hashTable[findEntry(k)] : NONE;
+} 
+
+inline bool
+IntSet::contains(int k) const
+{
+  return !empty() && hashTable[findEntry(k)] != UNUSED;
+}
+
+inline int
+IntSet::ithElement(int i) const
+{
+  return intTable[i];
+}
+
+inline void
+IntSet::clear()
+{
+  intTable.clear();
+  hashTable.clear();
+}
+
+inline void
+IntSet::swap(IntSet& other)
+{
+  intTable.swap(other.intTable);
+  hashTable.swap(other.hashTable);
 }
 
 inline bool
 IntSet::operator==(const IntSet& other) const
 {
-  return intTable.length() == other.intTable.length() && contains(other);
+  return size() == other.size() && contains(other);
 }
 
 inline bool
 IntSet::operator!=(const IntSet& other) const
 {
   return !(*this == other);
-}
-
-inline int
-IntSet::index2Int(int i) const
-{
-  return intTable[i];
 }
 
 #endif

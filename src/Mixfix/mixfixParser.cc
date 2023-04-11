@@ -105,19 +105,15 @@
 
 #define ROOT_NODE	(0)
 
-const IntSet&
-MixfixParser::getTokenSet()  // HACK
-{
-  return tokens;
-}
-
 MixfixParser::MixfixParser(MixfixModule& client,
 			   bool complexFlag,
 			   int componentNonTerminalBase,
-			   int nextNonTerminalCode)
+			   int nextNonTerminalCode,
+			   int nrTokensGuess)
   : client(client),
     complexParser(complexFlag),
     componentNonTerminalBase(componentNonTerminalBase),
+    tokenSet(nrTokensGuess),
     specialTerminals(Token::LAST_PROPERTY)
 {
   nextNonTerminal = nextNonTerminalCode;
@@ -146,7 +142,7 @@ MixfixParser::insertProduction(int lhs,
       int s = rhs[i];
       if (s < 0)
 	ntCount++;
-      productionRhs[i] = s < 0 ? s : tokens.insert(s);
+      productionRhs[i] = s < 0 ? s : tokenToIndex(s);
     }
 
 #ifndef NO_ASSERT
@@ -181,12 +177,12 @@ MixfixParser::insertBubbleProduction(int lhs,
 				     const Vector<int>& excluded,
 				     int bubbleSpecIndex)
 {
-  int left = (leftParenCode >= 0) ? tokens.insert(leftParenCode) : NONE;
-  int right = (rightParenCode >= 0) ? tokens.insert(rightParenCode) : NONE;
+  int left = (leftParenCode >= 0) ? tokenToIndex(leftParenCode) : NONE;
+  int right = (rightParenCode >= 0) ? tokenToIndex(rightParenCode) : NONE;
   int nrExcluded = excluded.length();
   Vector<int> excludedTerminals(nrExcluded);
   for (int i = 0; i < nrExcluded; i++)
-    excludedTerminals[i]= tokens.insert(excluded[i]);
+    excludedTerminals[i]= tokenToIndex(excluded[i]);
 
 #if PARSER_DEBUG
   cout << "insertProd(" << lhs <<
@@ -210,19 +206,19 @@ MixfixParser::insertBubbleProduction(int lhs,
 void
 MixfixParser::insertSpecialTerminal(int tokenProperty, int codeToUse)
 {
-  specialTerminals[tokenProperty] = tokens.insert(codeToUse);
+  specialTerminals[tokenProperty] = tokenToIndex(codeToUse);
 }
 
 void
 MixfixParser::insertVariableTerminal(int sortNameCode, int codeToUse)
 {
-  variableTerminals[sortNameCode] = tokens.insert(codeToUse);
+  variableTerminals[sortNameCode] = tokenToIndex(codeToUse);
 }
 
 void
 MixfixParser::insertIterSymbolTerminal(int iterSymbolNameCode, int codeToUse)
 {
-  iterSymbolTerminals[iterSymbolNameCode] = tokens.insert(codeToUse);
+  iterSymbolTerminals[iterSymbolNameCode] = tokenToIndex(codeToUse);
 }
 
 int
@@ -234,7 +230,7 @@ MixfixParser::translateSpecialToken(int code)
       int varName;
       int sortName;
       Token::split(code, varName, sortName);
-      IntMap::const_iterator i = variableTerminals.find(sortName);
+      auto i = variableTerminals.find(sortName);
       if (i != variableTerminals.end())
 	return i->second;
     }
@@ -243,14 +239,14 @@ MixfixParser::translateSpecialToken(int code)
       int opName;
       mpz_class dummy;
       Token::split(code, opName, dummy);
-      IntMap::const_iterator i = iterSymbolTerminals.find(opName);
+      auto i = iterSymbolTerminals.find(opName);
       if (i != iterSymbolTerminals.end())
 	return i->second;
     }
   else if (sp != NONE)
     return specialTerminals[sp];
   if (bubblesAllowed)
-    return tokens.cardinality();
+    return tokenSet.size();
   return NONE;
 }
 
@@ -269,8 +265,10 @@ MixfixParser::parseSentence(const Vector<Token>& original,
     {
       int j = begin + i;
       int code = original[j].code();
-      int terminal = tokens.int2Index(code);
-      if (terminal == NONE)
+
+      int terminal = NONE;
+      int entry = tokenSet.find(code);
+      if (entry == NONE)
 	{
 	  terminal = translateSpecialToken(code);
 	  if (terminal == NONE)
@@ -279,6 +277,8 @@ MixfixParser::parseSentence(const Vector<Token>& original,
 	      return -1;
 	    }
 	}
+      else
+	terminal = entry;
       sentence[i] = terminal;
     }
 

@@ -27,7 +27,6 @@
 //      utility stuff
 #include "macros.hh"
 #include "vector.hh"
-#include "intSet.hh"
 #include "pointerSet.hh"
 #include "pointerMap.hh"
 #include "flagSet.hh"

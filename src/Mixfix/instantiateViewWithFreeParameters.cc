@@ -108,7 +108,7 @@ View::makeInstantiation(int viewName,
   toModule->handleParameterizedConstants(canonicalRenaming, parameterMap, extraParameterSet);
   //
   //	Now we have our canonical renaming which takes use from our toModule to
-  //	the instantiation our our toModule, targetInstance.
+  //	the instantiation of our toModule, targetInstance.
   //	We now use this canonical renaming to instantiate the to-side of our
   //	sort and operator mappings.
   //
@@ -121,7 +121,7 @@ View::makeInstantiation(int viewName,
   //
   handleOpMappings(copy, canonicalRenaming);
   //
-  //	Ass a op->term mapping to copy for each op->term mapping we have.
+  //	Add a op->term mapping to copy for each op->term mapping we have.
   //
   handleOpToTermMappings(copy, canonicalRenaming);
   //
@@ -136,6 +136,9 @@ View::makeInstantiation(int viewName,
   handleStratToExprMappings(copy, canonicalRenaming);
   
   copy->status = GOOD;
+  DebugInfo("original view has renaming\n" << static_cast<Renaming*>(this));
+  DebugInfo("canonical renaming for instantiation of view " << this << " is\n" << canonicalRenaming);
+  DebugInfo("instantiated view has renaming\n" << static_cast<Renaming*>(copy));
   //
   //	The canonicalRenaming is solely used to instantiate the guts of the view;
   //	i.e. the sort->sort mappings, op->op mappings and op->term mappings.

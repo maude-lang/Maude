@@ -1,3 +1,15 @@
+2023-04-04  Steven Eker  <eker@pup>
+
+	* subtermTask.hh (class SubtermTask): use Vector<Vector<DagNode*>>
+	for results now that we have move semantics for reallocation
+
+2023-03-28  Steven Eker  <eker@pup>
+
+	* variableBindingsManager.hh (VariableBindingsManager::Entry::free):
+	contractTo(0) -> clear()
+
+===================================Maude144===========================================
+
 2023-03-13  Steven Eker  <eker@pup>
 
 	* callStrategy.cc (CallStrategy::decompose): don't pass tailCall

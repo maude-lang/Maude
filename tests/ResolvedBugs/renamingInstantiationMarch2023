@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/renamingInstantiationMarch2023.maude -no-banner -no-advise \
+  > renamingInstantiationMarch2023.out 2>&1
+
+diff $srcdir/renamingInstantiationMarch2023.expected renamingInstantiationMarch2023.out > /dev/null 2>&1

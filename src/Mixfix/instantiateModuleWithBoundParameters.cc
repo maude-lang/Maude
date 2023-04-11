@@ -226,9 +226,15 @@ ImportModule::instantiateRenaming(const Renaming* original,
   {
     Vector<Token> token(1);
     int nrOpMappings = original->getNrOpMappings();
-    for (int i = 0; i < nrOpMappings; i++)
+    for (int i = 0; i < nrOpMappings; ++i)
       {
-	instance->addOpMappingPartialCopy(original, i);
+	//
+	//	We instantiate operator names as if they were sort names, because a parameterized
+	//	constant name is a multi-token name that is never legal for a non-constant operator.
+	//
+	int fromName = instantiateSortName(original->getOpFrom(i), parameterMap, extraParameterSet);
+	int toName = instantiateSortName(original->getOpTo(i), parameterMap, extraParameterSet);
+	instance->addOpMappingPartialCopy(original, i, fromName, toName);
 	int nrTypes = original->getNrTypes(i);
 	for (int j = 0; j < nrTypes; ++j)
 	  {

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -183,7 +183,8 @@ MetaLevel::upDagNode(DagNode* dagNode,
 		//
 		//	nrArgs is only a suggestion - flattened assoc operators may have more args.
 		//
-		Vector<DagNode*> args2(0, nrArgs);  // can't be static!
+		Vector<DagNode*> args2;  // can't be static!
+		args2.reserve(nrArgs);
 		for (; a.valid(); a.next())
 		  args2.append(upDagNode(a.argument(), m, qidMap, dagNodeMap));
 		args[1] = metaArgSymbol->makeDagNode(args2);
@@ -266,7 +267,8 @@ MetaLevel::upTerm(const Term* term, MixfixModule* m, PointerMap& qidMap)
 		//
 		//	nrArgs is only a suggestion - flattened assoc operators may have more args.
 		//
-		Vector<DagNode*> args2(0, nrArgs);  // can't be static!
+		Vector<DagNode*> args2;  // can't be static!
+		args2.reserve(nrArgs);
 		for (; a.valid(); a.next())
 		  args2.append(upTerm(a.argument(), m, qidMap));
 		args[1] = metaArgSymbol->makeDagNode(args2);
@@ -329,7 +331,8 @@ MetaLevel::upContext(DagNode* dagNode,
     args[1] = upContext(a.argument(), m, hole, qidMap, dagNodeMap);
   else
     {
-      Vector<DagNode*> args2(0, nrArgs);  // can't be static!
+      Vector<DagNode*> args2;  // can't be static!
+      args2.reserve(nrArgs);
       for (; a.valid(); a.next())
 	args2.append(upContext(a.argument(), m, hole, qidMap, dagNodeMap));
       args[1] = metaArgSymbol->makeDagNode(args2);
@@ -440,8 +443,10 @@ MetaLevel::upDisjointSubstitutions(const Substitution& substitution,
 				   DagNode*& right)
 {
   int nrVariables = variableInfo.getNrRealVariables();
-  Vector<DagNode*> leftArgs(0, nrVariables);
-  Vector<DagNode*> rightArgs(0, nrVariables);
+  Vector<DagNode*> leftArgs;
+  leftArgs.reserve(nrVariables);
+  Vector<DagNode*> rightArgs;
+  rightArgs.reserve(nrVariables);
   for (int i = 0; i < nrVariables; i++)
     {
       VariableTerm* variable = safeCast(VariableTerm*, variableInfo.index2Variable(i));
@@ -871,8 +876,10 @@ MetaLevel::upDisjointSubstitutions(const Vector<DagNode*>& unifier,
 				   DagNode*& right)
 {
   int nrVariables = unifier.size();
-  Vector<DagNode*> leftArgs(0, nrVariables);
-  Vector<DagNode*> rightArgs(0, nrVariables);
+  Vector<DagNode*> leftArgs;
+  leftArgs.reserve(nrVariables);
+  Vector<DagNode*> rightArgs;
+  rightArgs.reserve(nrVariables);
   for (int i = 0; i < nrVariables; i++)
     {
       VariableDagNode* variable = variableInfo.index2Variable(i);

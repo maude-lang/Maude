@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -343,7 +343,7 @@ SortTable::buildSortDiagram()
 	    }
 	}
       currentStates.swap(nextStates);
-      nextStates.contractTo(0);
+      nextStates.clear();
       currentBase = nextBase;
     }
   if (singleNonErrorSortIndex > 0)
@@ -584,8 +584,10 @@ SortTable::computeBddVector(const SortBdds& sortBdds,
 void
 SortTable::generateSortDiagram(CompilationContext& context) const
 {
-  Vector<int> minimum(0, nrArgs);
-  Vector<int> maximum(0, nrArgs);
+  Vector<int> minimum;
+  Vector<int> maximum;
+  minimum.reserve(nrArgs);
+  maximum.reserve(nrArgs);
   {
     int min = 0;
     int max = 0;

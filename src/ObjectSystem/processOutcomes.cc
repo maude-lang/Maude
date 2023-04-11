@@ -51,7 +51,8 @@ ProcessManagerSymbol::exitedReply(pid_t processId,
   //	Make exited message.
   //
   DagNode* target = originalMessage->getArgument(1);
-  Vector<DagNode*> reply(1, 3);
+  Vector<DagNode*> reply(3);
+  reply.resize(1);
   DagNode* exitStatus;
   if (exitCode >= 0)
     {

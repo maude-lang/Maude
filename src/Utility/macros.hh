@@ -50,17 +50,13 @@
 #if HAVE_CTYPE_H
 #include <ctype.h>
 #endif
-#if HAVE_STRING_H
-#include <string.h>
-#elif HAVE_STRINGS_H
-#include <strings.h>
-#endif
 #if HAVE_UNISTD_H
 #include <unistd.h>  // needed by solaris
 #endif
 //
 //	C++ stuff.
 //
+#include <cstring>
 #include <new>
 #include <string>
 #include <iostream>
@@ -252,6 +248,9 @@ enum SpecialConstants
   #define local_inline
 #endif
 
+
+#ifndef NO_ASSERT
+
 #define \
 AlwaysAssert(condition, message) \
 if (!(condition)) \
@@ -259,7 +258,6 @@ if (!(condition)) \
 __FILE__ << ':' << __LINE__ << '\n' << message << endl), \
 abort())
 
-#ifndef NO_ASSERT
 
 #define \
 Assert(condition, message) \
@@ -326,6 +324,13 @@ if (globalDebugFlag) \
 //
 #define DebugSave(v, e) auto v = (e)
 #else
+
+#define \
+AlwaysAssert(condition, message) \
+if (!(condition)) \
+((cerr << "ASSERT FAILED: " << \
+__FILE__ << ':' << __LINE__ << '\n' << message << endl), \
+selfCheckFailHandler())
 
 #define Assert(condition, message)
 #define CantHappen(message)
@@ -465,5 +470,6 @@ bool looksLikeFloat(const char* s);
 const char* doubleToString(double d);
 double stringToDouble(const char* s, bool& error);
 void correctEcvt(double d, int nrDigits, char buffer[], int& decPt, int& sign);
+void selfCheckFailHandler();
 
 #endif

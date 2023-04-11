@@ -1,3 +1,32 @@
+2023-03-29  Steven Eker  <eker@pup>
+
+	* objectSystemRewritingContext.hh (class ObjectSystemRewritingContext):
+	use DagNode::LessThan for ObjectMap and MessageMap
+	(class ObjectSystemRewritingContext): deleted struct dagNodeLt
+
+2023-03-27  Steven Eker  <eker@pup>
+
+	* directoryOutcomes.cc (DirectoryManagerSymbol::openedDirectoryReply):
+	don't use preallocate ctor
+
+	* timeActions.cc (TimeManagerSymbol::createdTimerReply): don't
+	use preallocate ctor
+
+	* processOutcomes.cc (ProcessManagerSymbol::exitedReply): don't
+	use preallocate ctor
+
+	* processActions.cc (ProcessManagerSymbol::createProcess): don't
+	use preallocate ctor
+
+	* fileOutcomes.cc (FileManagerSymbol::openedFileReply): don't use
+	preallocate ctor
+
+	* socketOutcomes.cc (SocketManagerSymbol::createdSocketReply)
+	(SocketManagerSymbol::acceptedClientReply): don't use preallocate
+	ctor
+
+===================================Maude144===========================================
+
 2023-03-10  Steven Eker  <eker@pup>
 
 	* streamManagerSymbol.cc (StreamManagerSymbol::interruptHandler):

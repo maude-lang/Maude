@@ -28,6 +28,7 @@
 #include <map>
 #include <list>
 #include <set>
+#include "dagNode.hh"
 #include "rewritingContext.hh"
 #include "simpleRootContainer.hh"
 #include "objectSystem.hh"
@@ -69,23 +70,9 @@ protected:
   void markReachableNodes();
 
 private:
-  
-  struct dagNodeLt
-  {
-    bool operator()(const DagNode* d1, const DagNode* d2) const
-    {
-      return d1->compare(d2) < 0;
-    }
-  };
-
-  typedef map<DagNode*, ExternalObjectManagerSymbol*, dagNodeLt> ObjectMap;
-  typedef map<DagNode*, list<DagNode*>, dagNodeLt> MessageMap;
-  //
-  //	A set of pointers looks a bit dubious but implementations
-  //	that don't provide a total ordering on pointers have to specialize
-  //	std::less so that associative containers work.
-  //
-  typedef set<ExternalObjectManagerSymbol*> ManagerSet;
+  typedef std::map<DagNode*, ExternalObjectManagerSymbol*, DagNode::LessThan> ObjectMap;
+  typedef std::map<DagNode*, list<DagNode*>, DagNode::LessThan> MessageMap;
+  typedef std::set<ExternalObjectManagerSymbol*> ManagerSet;  // std::less provides an implementation defined a strict total order on pointers
 
   bool interleave();
 

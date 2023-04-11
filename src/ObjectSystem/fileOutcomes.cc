@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,7 +39,8 @@ FileManagerSymbol::openedFileReply(int fd,
 				   ObjectSystemRewritingContext& context)
 {
   
-  Vector<DagNode*> reply(1, 3);
+  Vector<DagNode*> reply(3);
+  reply.resize(1);
   reply[0] = succSymbol->makeNatDag(fd);
   DagNode* fileName = fileOidSymbol->makeDagNode(reply);
   context.addExternalObject(fileName, this);
