@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/fakeParameterConstant.maude -no-banner \
+  > fakeParameterConstant.out 2>&1
+
+diff $srcdir/fakeParameterConstant.expected fakeParameterConstant.out > /dev/null 2>&1

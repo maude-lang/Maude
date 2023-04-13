@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -77,8 +77,8 @@ private:
       Term* term;
       int multiplicity;
       short abstractionVariableIndex;	// if subterm could enter our theory we abstract it
-      Bool collapseToOurSymbol;		// first possible reason for variable abstraction
-      Bool matchOurIdentity;		// second possible reason for variable abstraction
+      bool collapseToOurSymbol;		// first possible reason for variable abstraction
+      bool matchOurIdentity;		// second possible reason for variable abstraction
     };
 
   struct CP_Sequence;

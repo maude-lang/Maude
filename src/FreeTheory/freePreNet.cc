@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ FreePreNet::FreePreNet(bool expandRemainderNodes)
 void
 FreePreNet::buildNet(FreeSymbol* symbol)
 {
-  //cout << "buildNet for " << symbol << endl;
+  DebugEnter("for " << symbol);
   topSymbol = symbol;
   nrFailParents = 0;
   nrFailVisits = 0;
@@ -91,9 +91,7 @@ FreePreNet::buildNet(FreeSymbol* symbol)
   int nrEquations = equations.length();
   if (nrEquations == 0)
     return;
-
-  //cout << "nrEquations = " << nrEquations << endl;
-
+  DebugInfo("nrEquations = " << nrEquations);
   patterns.expandTo(nrEquations);
   LiveSet liveSet;
   LiveSet potentialSubsumers;
@@ -103,9 +101,9 @@ FreePreNet::buildNet(FreeSymbol* symbol)
       Equation* e = equations[i];
       Term* p = e->getLhs();
       patterns[i].term = p;
-      FOR_EACH_CONST(j, LiveSet, potentialSubsumers)
+      for (int j : potentialSubsumers)
 	{
-	  if (patterns[*j].term->subsumes(p, false))
+	  if (patterns[j].term->subsumes(p, false))
 	    {
 	      DebugAdvisory(e << " subsumed");
 	      goto subsumedAtTop;
@@ -142,7 +140,7 @@ FreePreNet::buildNet(FreeSymbol* symbol)
   NatSet positionsTested;
   (void) makeNode(liveSet, fringe, positionsTested);
   // dump(cerr, 0);
-  //cout << "buildNet for " << symbol << " done; nodes = " << net.size() << endl;
+  DebugExit("for " << symbol << " done; nodes = " << net.size());
 }
 
 int
@@ -150,7 +148,7 @@ FreePreNet::makeNode(const LiveSet& liveSet,
 		     const NatSet& reducedFringe,
 		     const NatSet& positionsTested)
 {
-  //cerr << "liveSet has " << liveSet.size() << " patterns" << endl;
+  DebugEnter("liveSet has " << liveSet.size() << " patterns");
   //
   //	First check to see if there is already a node with the same set
   //	of live patterns and the same reduced fringe that we can share.
@@ -318,9 +316,9 @@ FreePreNet::reduceFringe(const LiveSet& liveSet, NatSet& fringe) const
       //
       //	See if at least one live pattern has a stable symbol at this position.
       //
-      FOR_EACH_CONST(j, LiveSet, liveSet)
+      for (int j : liveSet)
 	{
-	  if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[*j].term))
+	  if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[j].term))
 	    {
 	      if (Term* t = f->locateSubterm(position))
 		{
@@ -343,10 +341,9 @@ FreePreNet::findLiveSet(const LiveSet& original,
 			LiveSet& liveSet)
 {
   const Vector<int> position(positions.index2Position(positionIndex));  // deep copy - because ref become stale
-  
-  FOR_EACH_CONST(i, LiveSet, original)
+
+  for (int patternIndex : original)
     {
-      int patternIndex = *i;
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[patternIndex].term))
 	{
 	  if (Term* t = f->locateSubterm(position))
@@ -389,9 +386,8 @@ FreePreNet::partitionLiveSet(const LiveSet& original,
 {
   const Vector<int>& position = positions.index2Position(positionIndex);  // safe because we won't add new positions
   
-  FOR_EACH_CONST(i, LiveSet, original)
+  for (int patternIndex : original)
     {
-      int patternIndex = *i;
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[patternIndex].term))
 	{
 	  if (Term* t = f->locateSubterm(position))
@@ -409,9 +405,9 @@ FreePreNet::partitionLiveSet(const LiveSet& original,
 		  //	Need to consider pattern for the live set of each active
 		  //	symbol that could match our unstable subpattern.
 		  //
-		  FOR_EACH_CONST(j, Vector<Arc>, arcs)
+		  for (const Arc& j : arcs)
 		    {
-		      Symbol* symbol = j->label;
+		      Symbol* symbol = j.label;
 		      if (symbol->mightMatchPattern(t))
 			liveSets[symbol->getIndexWithinModule()].insert(patternIndex);
 		    }
@@ -424,8 +420,8 @@ FreePreNet::partitionLiveSet(const LiveSet& original,
       //	Either way we add it to all live sets.
       //
       defaultLiveSet.insert(patternIndex);
-      FOR_EACH_CONST(j, Vector<Arc>, arcs)
-	liveSets[j->label->getIndexWithinModule()].insert(patternIndex);
+      for (const Arc& j : arcs)
+	liveSets[j.label->getIndexWithinModule()].insert(patternIndex);
     }
 }
 
@@ -437,11 +433,11 @@ FreePreNet::partiallySubsumed(const LiveSet& liveSet,
   if (liveSet.empty())
     return false;
   Term* vp = patterns[victim].term;
-  FOR_EACH_CONST(i, LiveSet, liveSet)
+  for (int i : liveSet)
     {
-      Assert(*i < victim, "current liveSet contains pattern >= victim");
-      if ((patterns[*i].flags & SUBSUMER) &&
-	  subsumesWrtReducedFringe(patterns[*i].term, vp, topPositionIndex, fringe))
+      Assert(i < victim, "current liveSet contains pattern >= victim");
+      if ((patterns[i].flags & SUBSUMER) &&
+	  subsumesWrtReducedFringe(patterns[i].term, vp, topPositionIndex, fringe))
 	return true;
     }
   return false;
@@ -473,9 +469,9 @@ FreePreNet::findBestPosition(const NodeIndex& ni, NodeBody& n) const
       //	Gather the set of symbols that occur at this position
       //	in a live pattern.
       //
-      FOR_EACH_CONST(j, LiveSet, ni.liveSet)
+      for (int j : ni.liveSet)
 	{
-	  if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[*j].term))
+	  if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[j].term))
 	    {
 	      Term* t = f->locateSubterm(path);
 	      if (t != 0 && t->stable())
@@ -483,7 +479,7 @@ FreePreNet::findBestPosition(const NodeIndex& ni, NodeBody& n) const
 		  ++nrStable;
 		  symbols.insert(t->symbol());
 		}
-	      else if (nrStable == 0 && patterns[*j].flags & SUBSUMER)
+	      else if (nrStable == 0 && patterns[j].flags & SUBSUMER)
 		++nrUnstableSubsumersAbove;
 	    }
 	  ++nrLive;
@@ -677,13 +673,13 @@ FreePreNet::dumpLiveSet(ostream& s, const LiveSet& liveSet)
   else
     {
       bool first = true;
-      FOR_EACH_CONST(j, LiveSet, liveSet)
+      for (int j : liveSet)
 	{
 	  if (first)
 	    first = false;
 	  else
 	    s << ", ";
-	  s << *j;
+	  s << j;
 	}
     }
 }

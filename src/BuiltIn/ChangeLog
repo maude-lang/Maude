@@ -1,3 +1,15 @@
+2023-04-13  Steven Eker  <eker@pup>
+
+	* minusSymbol.cc (MinusSymbol::attachData): use empty()
+
+===================================Maude144===========================================
+
+2023-04-12  Steven Eker  <eker@pup>
+
+	* bindingMacros.hh (NULL_DATA): use empty()
+
+	* sortTestSymbol.cc (SortTestSymbol::makeLazyStrategy): use empty()
+
 2023-03-27  Steven Eker  <eker@pup>
 
 	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): don't use preallocate ctor

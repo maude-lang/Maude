@@ -1,3 +1,9 @@
+2023-04-12  Steven Eker  <eker@pup>
+
+	* pass2.cc (Parser::extractNextParse): use empty()
+
+	* parser.cc (Parser::parseSentence): use empty()
+
 2023-04-10  Steven Eker  <eker@pup>
 
 	* parser.hh (class Parser): union nextRule and equal in struct Rule

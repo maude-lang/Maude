@@ -336,9 +336,9 @@ private:
   void garbageCollectAttributeSet(Term* attributeSet, Symbol* attributeSetSymbol) const;
 
   int startTokenCode;
-  Bool lastSawOpDecl;
-  Bool isStrategy;
-  Bool isCompleteFlag;
+  bool lastSawOpDecl;
+  bool isStrategy;
+  bool isCompleteFlag;
   Vector<Vector<Token> > sortDecls;
   Vector<Vector<Token> > subsortDecls;
   Vector<OpDecl> opDecls;

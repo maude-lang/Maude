@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 
 struct AU_Term::CP_Sequence
 {
-  Vector<Bool> sequence;  // true = take left term, false = take right term
+  Vector<bool> sequence;  // true = take left term, false = take right term
   NatSet bound;
   int cardinality;
   int firstFlex;
@@ -354,14 +354,14 @@ AU_Term::findConstraintPropagationSequence(const NatSet& boundUniquely,
 {
   DebugAdvisory("toplevel findConstraintPropagationSequence() - array length = " << argArray.length() <<
 		"  subterm = " << this);
-  Vector<Bool> currentSequence;
+  Vector<bool> currentSequence;
   bestSequence.cardinality = -1;
   findConstraintPropagationSequence(currentSequence, boundUniquely,
 				    0, argArray.length() - 1, bestSequence);
 }
 
 void
-AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
+AU_Term::findConstraintPropagationSequence(const Vector<bool>& currentSequence,
 					   const NatSet& boundUniquely,
 					   int leftPos,
 					   int rightPos,
@@ -380,7 +380,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
       if (!leftBad && boundUniquely.contains(lt.term->occursBelow()))
 	{
 	  DebugAdvisory("lower level findConstraintPropagationSequence() - ground out left " << leftPos);
-	  Vector<Bool> newSequence(currentSequence);
+	  Vector<bool> newSequence(currentSequence);
 	  newSequence.append(true);
 	  findConstraintPropagationSequence(newSequence, boundUniquely, leftPos + 1,
 					    rightPos, bestSequence);
@@ -392,7 +392,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
       if (!rightBad && boundUniquely.contains(rt.term->occursBelow()))
 	{
 	  DebugAdvisory("lower level findConstraintPropagationSequence() - ground out right " << rightPos);
-	  Vector<Bool> newSequence(currentSequence);
+	  Vector<bool> newSequence(currentSequence);
 	  newSequence.append(false);
 	  findConstraintPropagationSequence(newSequence, boundUniquely, leftPos,
 					    rightPos - 1, bestSequence);
@@ -406,7 +406,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
       if (unitVariable(ltVar, leftPos))
 	{
 	  DebugAdvisory("lower level findConstraintPropagationSequence() - unit var left " << leftPos);
-	  Vector<Bool> newSequence(currentSequence);
+	  Vector<bool> newSequence(currentSequence);
 	  newSequence.append(true);
 	  NatSet newBound(boundUniquely);
 	  newBound.insert(ltVar->getIndex());
@@ -418,7 +418,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
       if (leftPos < rightPos && unitVariable(rtVar, rightPos))
 	{
 	  DebugAdvisory("lower level findConstraintPropagationSequence() - unit var right " << rightPos);
-	  Vector<Bool> newSequence(currentSequence);
+	  Vector<bool> newSequence(currentSequence);
 	  newSequence.append(false);
 	  NatSet newBound(boundUniquely);
 	  newBound.insert(rtVar->getIndex());
@@ -434,7 +434,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
       if (!leftBad && ltVar == 0)
 	{
 	  DebugAdvisory("lower level findConstraintPropagationSequence() - alien left " << leftPos);
-	  Vector<Bool> newSequence(currentSequence);
+	  Vector<bool> newSequence(currentSequence);
 	  newSequence.append(true);
 	  NatSet newBound(boundUniquely);
 	  lt.term->analyseConstraintPropagation(newBound);
@@ -454,7 +454,7 @@ AU_Term::findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
       if (!rightBad && rtVar == 0)  
 	{
 	  DebugAdvisory("lower level findConstraintPropagationSequence() - alien right " << rightPos);
-	  Vector<Bool> newSequence(currentSequence);
+	  Vector<bool> newSequence(currentSequence);
 	  newSequence.append(false);
 	  NatSet newBound(boundUniquely);
 	  rt.term->analyseConstraintPropagation(newBound);

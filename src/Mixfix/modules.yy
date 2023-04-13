@@ -40,8 +40,7 @@ moduleExprDot	:	tokenBarDot expectedDot
 			    $$ = new ModuleExpression($1, $3);
 			  else
 			    {
-			      IssueWarning(LineNumber($2.lineNumber()) <<
-			                   ": missing module expression after " << QUOTE($2) << ".");
+			      IssueWarning(&($2) << ": missing module expression after " << QUOTE($2) << ".");
 			      $$ = $1;
 			    }
 			}
@@ -217,12 +216,16 @@ toAttributeList	:	toAttributeList toAttribute
 		;
 
 toAttribute	:	KW_PREC IDENTIFIER	{ currentRenaming->setPrec($2); }
+		|	KW_PREC			{ IssueWarning(&($1) << ": prec attribute without value in operator mapping."); }
 		|	KW_GATHER '('		{ tokensClear(); }
 			idList ')'		{ currentRenaming->setGather(tokenSequence); }
+		|	KW_GATHER		{ IssueWarning(&($1) << ": gather attribute without pattern in operator mapping."); }
 		|	KW_FORMAT '('		{ tokensClear(); }
 			idList ')'		{ currentRenaming->setFormat(tokenSequence); }
+		|	KW_FORMAT		{ IssueWarning(&($1) << ": format attribute without specification in operator mapping."); }
 		|	KW_LATEX '('		{ lexerLatexMode(); }
 			LATEX_STRING ')'	{ currentRenaming->setLatexMacro($4); }
+		|	KW_LATEX     		{ IssueWarning(&($1) << ": latex attribute without latex code in operator mapping."); }
 		;
 
 /*
@@ -256,8 +259,7 @@ viewDecList	:	viewDecList viewDeclaration
 
 skipStrayArrow	:	KW_ARROW
 			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-				       ": skipping " << QUOTE("->") << " in variable declaration.");
+			  IssueWarning(&($1) << ": skipping " << QUOTE("->") << " in variable declaration.");
 			}
 		|	{}
 		;
@@ -458,10 +460,10 @@ viewStratMap	:	stratName
 			      CV->addStratMapping(strategyCall[0]);
 			      CV->addStratTarget(lexerBubble[0]);
 			    }
-			  else {
-			    IssueWarning(LineNumber(strategyCall[0].lineNumber()) <<
-			      ": bad syntax for strategy mapping.");
-			  }
+			  else
+			    {
+			      IssueWarning(&(strategyCall[0]) << ": bad syntax for strategy mapping.");
+			    }
 			}
 		;
 
@@ -512,9 +514,7 @@ parameter	:	token colon2 moduleExpr
 colon2		:	KW_COLON2 {}
 		|	':'
 			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-			    ": saw " << QUOTE(':') << " instead of " <<
-			    QUOTE("::") << " in parameter declaration.");
+			  IssueWarning(&($1) << ": saw " << QUOTE(':') << " instead of " << QUOTE("::") << " in parameter declaration.");
 			}
 		;
 
@@ -541,8 +541,7 @@ declaration	:	KW_IMPORT moduleExprDot
 			    CM->addImport($1, $2);
 			  else
 			    {
-			      IssueWarning(LineNumber($1.lineNumber()) <<
-			                   ": missing module expression after " << QUOTE($1) << ".");
+			      IssueWarning(&($1) << ": missing module expression after " << QUOTE($1) << ".");
 			    }
 			}
 
@@ -700,8 +699,7 @@ domainRangeAttr	:	typeName typeList dra2
 		|	rangeAttr
 		|	badType
 			{
-			  IssueWarning(LineNumber(lineNumber) <<
-				       ": missing " << QUOTE("->") << " in constant declaration.");
+			  IssueWarning(&($1) << ": missing " << QUOTE("->") << " in constant declaration.");
 			}
 		;
 
@@ -734,9 +732,7 @@ stratAttrList 	:	KW_METADATA IDENTIFIER
 
 skipStrayColon 	:	':'
 			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-				       ": skipping stray " << QUOTE(":") << " in operator declaration.");
-
+			  IssueWarning(&($1) << ": skipping stray " << QUOTE(":") << " in operator declaration.");
 			}
 		|	{}
 		;
@@ -744,13 +740,11 @@ skipStrayColon 	:	':'
 dra2		:	skipStrayColon rangeAttr
 		|	'.'
 			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-			  ": missing " << QUOTE("->") << " in operator declaration.");
+			  IssueWarning(&($1) << ": missing " << QUOTE("->") << " in operator declaration.");
 			}
 		|	badType
 			{
-			  IssueWarning(LineNumber($1.lineNumber()) <<
-			  ": missing " << QUOTE("->") << " in operator declaration.");
+			  IssueWarning(&($1) << ": missing " << QUOTE("->") << " in operator declaration.");
 			}
 		;
 
@@ -861,16 +855,22 @@ attribute	:	KW_ASSOC
 			  CM->setFlag(SymbolType::ITER);
 			}
 		|	KW_PREC IDENTIFIER	{ CM->setPrec($2); }
+		|	KW_PREC			{ IssueWarning(&($1) << ": prec attribute without value in operator declaration."); }
 		|	KW_GATHER '('		{ tokensClear(); }
 			idList ')'		{ CM->setGather(tokenSequence); }
+		|	KW_GATHER 		{ IssueWarning(&($1) << ": gather attribute without pattern in operator declaration."); }
 		|	KW_FORMAT '('		{ tokensClear(); }
 			idList ')'		{ CM->setFormat(tokenSequence); }
+		|	KW_FORMAT 		{ IssueWarning(&($1) << ": format attribute without specification in operator declaration."); }
 		|	KW_STRAT '('		{ tokensClear(); }
 			idList ')'		{ CM->setStrat(tokenSequence); }
+		|	KW_STRAT 		{ IssueWarning(&($1) << ": strat attribute without strategy in operator declaration."); }
 		|	KW_ASTRAT '('		{ tokensClear(); }
 			idList ')'		{ CM->setStrat(tokenSequence); }
+		|	KW_ASTRAT		{ IssueWarning(&($1) << ": strategy attribute without strategy in operator declaration."); }
 		|	KW_POLY '('		{ tokensClear(); }
 			idList ')'		{ CM->setPoly(tokenSequence); }
+		|	KW_POLY			{ IssueWarning(&($1) << ": poly attribute without specification in operator declaration."); }
 		|	KW_MEMO
 			{
 			  CM->setFlag(SymbolType::MEMO);
@@ -904,6 +904,7 @@ attribute	:	KW_ASSOC
 			}
 		|	KW_LATEX '('		{ lexerLatexMode(); }
 			LATEX_STRING ')'	{ CM->setLatexMacro($4); }
+		|	KW_LATEX		{ IssueWarning(&($1) << ": latex attribute without latex code in operator declaration."); }
 		|	KW_SPECIAL '(' hookList ')'	{}
 		|	KW_DITTO
 			{
@@ -943,8 +944,7 @@ hook		:	KW_ID_HOOK token		{ tokensClear(); CM->addHook(SyntacticPreModule::ID_HO
 expectedIs	:	KW_IS {}
 		|
 			{
-			  IssueWarning(LineNumber(lineNumber) << ": missing " <<
-				       QUOTE("is") << " keyword.");
+			  IssueWarning(LineNumber(lineNumber) << ": missing " << QUOTE("is") << " keyword.");
 			}
 		;
 

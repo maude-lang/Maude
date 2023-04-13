@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ UserLevelRewritingContext::stackOverflowHandler(int emergency, stackoverflow_con
   //
   static char message[] = "\nFatal error: stack overflow.\n\
 This can happen because you have an infinite computation, say a runaway\n\
-recursion, or model checking an infinite model. It can also happen because\n\
+recursion, or are model checking an infinite model. It can also happen because\n\
 the stacksize limit in your environment is set too low for the computation\n\
 you are trying to do. You can find the value of your stacksize with the\n\
 tcsh command 'limit stacksize' or the bash command 'ulimit -s'.\n\
@@ -169,7 +169,7 @@ Depending on your operating system configuration you may be able to\n\
 increase your stacksize with the tcsh command 'unlimit stacksize'\n\
 or the bash command 'ulimit -s unlimited'.\n\n";
   returnValueDump = write(STDERR_FILENO, message, sizeof(message) - 1);
-  _exit(STACK_OVERFLOW);  // don't call atexit() functions with a bad machine state
+  exit(STACK_OVERFLOW);  // calling _exit() loses the message on Macs
 }
 
 int
@@ -197,7 +197,7 @@ runtime to the bug being visible is greater than 10 seconds.\n\n";
   returnValueDump = write(STDERR_FILENO, message1, sizeof(message1) - 1);
   returnValueDump = write(STDERR_FILENO, message2, sizeof(message2) - 1);
   returnValueDump = write(STDERR_FILENO, message3, sizeof(message3) - 1);
-  _exit(INTERNAL_ERROR);  // don't call atexit() functions with a bad machine state
+  exit(INTERNAL_ERROR);  // calling _exit() loses the message on Macs
 }
 
 void

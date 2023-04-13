@@ -322,8 +322,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
   int nrArgs = symbol->arity();
 
   prefix(buffer, needDisambig);
-  if (((printFlags & Interpreter::PRINT_MIXFIX) && si.mixfixSyntax.length() != 0) ||
-	   (basicType == SymbolType::SORT_TEST))
+  if (((printFlags & Interpreter::PRINT_MIXFIX) && !si.mixfixSyntax.empty()) || (basicType == SymbolType::SORT_TEST))
     {
       //
       //	Mixfix case.

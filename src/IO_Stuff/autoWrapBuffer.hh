@@ -82,11 +82,11 @@ private:
   WaitFunction waitFunction;
 
   int cursorPosition;		// cursor position if we were to print pendingBuffer
-  Bool seenBackQuote;		// last char was a `
-  Bool seenBackSlash;		// inside a "string" and last char was an unescaped
+  bool seenBackQuote;		// last char was a `
+  bool seenBackSlash;		// inside a "string" and last char was an unescaped
   				// backslash
-  Bool inString;		// inside a "string"
-  Bool inEscape;		// inside an ESC sequence
+  bool inString;		// inside a "string"
+  bool inEscape;		// inside an ESC sequence
   string pendingBuffer;
   int pendingWidth;		// number of chars in buffer excluding \t and ESC sequences
 };

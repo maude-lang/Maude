@@ -1,0 +1,51 @@
+Warning: <standard input>, line 6 (fmod FOO): prec attribute without value in
+    operator declaration.
+Warning: <standard input>, line 10 (fmod FOO): gather attribute without pattern
+    in operator declaration.
+Warning: <standard input>, line 14 (fmod FOO): format attribute without
+    specification in operator declaration.
+Warning: <standard input>, line 18 (fmod FOO): strat attribute without strategy
+    in operator declaration.
+Warning: <standard input>, line 22 (fmod FOO): strategy attribute without
+    strategy in operator declaration.
+Warning: <standard input>, line 26 (fmod FOO): poly attribute without
+    specification in operator declaration.
+Warning: <standard input>, line 30 (fmod FOO): prec attribute without value in
+    operator declaration.
+Warning: <standard input>, line 34 (fmod FOO): gather attribute without pattern
+    in operator declaration.
+Warning: <standard input>, line 38 (fmod FOO): format attribute without
+    specification in operator declaration.
+Warning: <standard input>, line 42 (fmod FOO): strat attribute without strategy
+    in operator declaration.
+Warning: <standard input>, line 46 (fmod FOO): strategy attribute without
+    strategy in operator declaration.
+Warning: <standard input>, line 50 (fmod FOO): poly attribute without
+    specification in operator declaration.
+Warning: <standard input>, line 54 (fmod FOO): prec attribute without value in
+    operator mapping.
+Warning: <standard input>, line 58 (fmod FOO): prec attribute without value in
+    operator mapping.
+Warning: <standard input>, line 58 (fmod FOO): gather attribute without pattern
+    in operator mapping.
+Warning: <standard input>, line 62 (fmod FOO): gather attribute without pattern
+    in operator mapping.
+Warning: <standard input>, line 66 (fmod FOO): format attribute without
+    specification in operator mapping.
+Warning: <standard input>, line 70 (fmod FOO): format attribute without
+    specification in operator mapping.
+Warning: <standard input>, line 70 (fmod FOO): prec attribute without value in
+    operator mapping.
+Warning: <standard input>, line 70 (fmod FOO): gather attribute without pattern
+    in operator mapping.
+Warning: <standard input>, line 74 (fmod FOO): latex attribute without latex
+    code in operator declaration.
+Warning: <standard input>, line 78 (fmod FOO): latex attribute without latex
+    code in operator declaration.
+Warning: <standard input>, line 82 (fmod FOO): latex attribute without latex
+    code in operator mapping.
+Warning: <standard input>, line 86 (fmod FOO): latex attribute without latex
+    code in operator mapping.
+Warning: <standard input>, line 86 (fmod FOO): prec attribute without value in
+    operator mapping.
+Bye.

@@ -56,6 +56,7 @@
 //
 //	C++ stuff.
 //
+#include <cstdint> 
 #include <cstring>
 #include <new>
 #include <string>
@@ -103,7 +104,6 @@ typedef ptrdiff_t Index;
 //	
 //	Types for storage efficiency.
 //
-typedef char Bool;
 typedef signed char Byte;
 typedef unsigned char Ubyte;
 //
@@ -142,7 +142,6 @@ typedef unsigned long long int Uint64;
 //
 //	32 bit arithmetic; sometime we need guarentee of left truncation.
 //
-typedef int Int32;
 typedef unsigned int Uint32;
 
 //
@@ -453,7 +452,7 @@ ceilingDivision(int dividend, int divisor)
 }
 
 inline const char*
-pluralize(Int32 quantity)
+pluralize(int quantity)
 {
   return (quantity == 1) ? "" : "s";
 }

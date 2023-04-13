@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -149,13 +149,13 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
   remainders.expandTo(nrEquations);
   for (int i = 0; i < nrEquations; i++)
     remainders[i] = 0;
-  FOR_EACH_CONST(i, PatternSet, patternsUsed)
+  for (int i : patternsUsed)
     {
-      Equation* e = equations[*i];
+      Equation* e = equations[i];
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(e->getLhs()))
 	{
 	  FreeRemainder* r = f->compileRemainder(e, slotTranslation);
-	  remainders[*i] = r;
+	  remainders[i] = r;
 	  //
 	  //	If a remainder doesn't have fast handling, neither can the discrimination net.
 	  //
@@ -164,7 +164,7 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
 	}
       else
 	{
-	  remainders[*i] = new FreeRemainder(e);  // remainder for "foreign" equation
+	  remainders[i] = new FreeRemainder(e);  // remainder for "foreign" equation
 	  fast = false;  // a foreign equation always disables fast handling for the net
 	}
     }
@@ -179,8 +179,8 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
       Vector<FreeRemainder*>& rems = fastApplicable[i];
       rems.resize(liveSet.size() + 1);
       Vector<FreeRemainder*>::iterator r = rems.begin();
-      FOR_EACH_CONST(j, PatternSet, liveSet)
-	*r++ = remainders[*j];
+      for (int j : liveSet)
+	*r++ = remainders[j];
       *r = 0;
     }
 }
@@ -264,7 +264,7 @@ FreeNet::moreImportant(Symbol* first, Symbol* second)
 void
 FreeNet::dump(ostream& s, int indentLevel)
 {
-  if (applicable.length() == 0)
+  if (applicable.empty())
     {
       s << Indent(indentLevel) << "Empty FreeNet\n";
       return;
@@ -290,8 +290,8 @@ FreeNet::dump(ostream& s, int indentLevel)
   for (int i = 0; i < applicable.length(); i++)
     {
       s << Indent(indentLevel) << "Applicable sequence " << -1 - i << ':';
-      FOR_EACH_CONST(j, PatternSet, applicable[i])
-	s << ' ' << *j;
+      for (int j : applicable[i])
+	s << ' ' << j;
       s << '\n';
     }
 

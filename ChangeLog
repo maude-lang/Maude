@@ -1,6 +1,20 @@
+2023-04-13  Steven Eker  <eker@pup>
+
+	* tests/Corner/attributeOverparsing.maude: added latex examples
+
+2023-04-11  Steven Eker  <eker@pup>
+
+	* tests/Corner/attributeOverparsing.maude: added
+
+	* tests/Corner/fakeParameterConstant.maude: added
+
+	* tests/Corner/fakeParameterSort.maude: added
+
+===================================Maude144===========================================
+
 2023-04-10  Steven Eker  <eker@pup>
 
-	* tests/ResolvedBugs/pseudoParameterTheoryConstantMarch2023.maude: created
+	* tests/ResolvedBugs/pseudoParameterTheoryConstantMarch2023.maude: added
 
 	* tests/ResolvedBugs/pseudoParametersMarch2023.maude: added
 

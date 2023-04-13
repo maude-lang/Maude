@@ -1,0 +1,87 @@
+***
+***	Test that attributes without their required information overparse.
+***
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [prec ctor] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [gather ctor] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [format ctor] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [strat ctor] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [strategy ctor] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [poly ctor] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [prec] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [gather] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [format] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [strat] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [strategy] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [poly] .
+endfm
+
+fmod FOO is
+  inc NAT * (op _+_ to _++_ [prec]) .
+endfm
+
+fmod FOO is
+  inc NAT * (op _+_ to _++_ [prec gather]) .
+endfm
+
+fmod FOO is
+  inc NAT * (op _+_ to _++_ [gather]) .
+endfm
+
+fmod FOO is
+  inc NAT * (op _+_ to _++_ [format]) .
+endfm
+
+fmod FOO is
+  inc NAT * (op _+_ to _++_ [format prec gather]) .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [latex] .
+endfm
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [latex ctor] .
+endfm
+
+fmod FOO is
+  inc NAT * (op _+_ to _++_ [latex]) .
+endfm
+
+fmod FOO is
+  inc NAT * (op _+_ to _++_ [latex prec]) .
+endfm

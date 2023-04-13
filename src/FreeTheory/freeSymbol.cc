@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ FreeSymbol::newFreeSymbol(int id, int arity, const Vector<int>& strategy, bool m
 {
   if (arity <= 3)
     {
-      if (memoFlag || strategy.length() != 0)
+      if (memoFlag || !strategy.empty())
 	{
 	  FreeSymbol* t = new FreeSymbol(id, arity, strategy, memoFlag);
 	  if (!(t->standardStrategy()))

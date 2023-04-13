@@ -1,3 +1,29 @@
+2023-04-13  Steven Eker  <eker@pup>
+
+	* intSet.cc (IntSet::findEntry): use empty()
+
+2023-04-12  Steven Eker  <eker@pup>
+
+	* macros.hh: deleted typedef Bool - all reasonable compilers have
+	sizeof(bool) == 1 and for those that don't we don't care about
+	wasting some memory
+	(pluralize): use int rather than Int32
+	deleted typedef Int32
+
+	* digraph.hh (class Digraph): Bool -> bool
+
+	* macros.hh: include <cstdint>
+
+2023-04-11  Steven Eker  <eker@pup>
+
+	* intSet.cc (IntSet::intersect): use empty(); contractTo(0) ->
+	clear() (2 places)
+	(IntSet::insert): use empty()
+	(IntSet::subtract): use empty()
+	(IntSet::disjoint): use empty()
+
+===================================Maude145===================================
+
 2023-04-06  Steven Eker  <eker@pup>
 
 	* macros.hh: added decl for selfCheckFailHandler(); call it

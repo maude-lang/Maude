@@ -84,8 +84,8 @@ LoopSymbol::attachData(const Vector<Sort*>& opDeclaration,
 		       const Vector<const char*>& data)
 {
   if (strcmp(purpose, "LoopSymbol") == 0)
-    return data.length() == 0;
-  return  FreeSymbol::attachData(opDeclaration, purpose, data);
+    return data.empty();
+  return FreeSymbol::attachData(opDeclaration, purpose, data);
 }
 
 bool

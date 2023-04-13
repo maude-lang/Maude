@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -349,8 +349,7 @@ MixfixModule::prettyPrint(ostream& s,
   
   if (needDisambig)
     s << '(';
-  if ((interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX) && si.mixfixSyntax.length() != 0) ||
-      basicType == SymbolType::SORT_TEST)
+  if ((interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX) && !si.mixfixSyntax.empty()) || basicType == SymbolType::SORT_TEST)
     {
       //
       //	Mixfix case.

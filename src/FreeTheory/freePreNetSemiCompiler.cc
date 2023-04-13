@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -121,9 +121,9 @@ FreePreNet::setVisitedFlags(const LiveSet& liveSet,
 			    const Vector<int>& position,
 			    bool state)
 {
-  FOR_EACH_CONST(i, LiveSet, liveSet)
+  for (int i : liveSet)
     {
-      if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[*i].term))
+      if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[i].term))
 	{
 	  Term* t = f->locateSubterm(position);
 	  if (t != 0 && (f = dynamic_cast<FreeTerm*>(t)) != 0)
@@ -143,10 +143,9 @@ FreePreNet::allocateSlot(const LiveSet& liveSet,
 	 "slot/conflict data structures out of sync");
 
   // cerr << symbol << endl;
-  FOR_EACH_CONST(i, LiveSet, liveSet)
+  for (int patternIndex : liveSet)
     {
       // cerr << patterns[*i].term << endl;
-      int patternIndex = *i;
       Term* pattern = patterns[patternIndex].term;
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(pattern))
 	{

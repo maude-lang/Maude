@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -99,15 +99,15 @@ private:
 		    RewritingContext& context);
   void copyAndReduceSubterms(AU_DagNode* subject, RewritingContext& context);
 
-  const Bool leftIdFlag;
-  const Bool rightIdFlag;
-  const Bool oneSidedIdFlag;
+  const bool leftIdFlag;
+  const bool rightIdFlag;
+  const bool oneSidedIdFlag;
   //
   //	Deque represention of arguments can be used if there is no
   //	one-sided identity, no fancy strategy and there are no equations
   //	at the top.
   //
-  Bool useDequeFlag;
+  bool useDequeFlag;
 };
 
 inline bool

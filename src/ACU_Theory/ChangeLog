@@ -1,3 +1,19 @@
+2023-04-13  Steven Eker  <eker@pup>
+
+	* ACU_LhsCompiler1.cc (ACU_Term::analyseConstraintPropagation): use
+	empty() (2 places)
+
+2023-04-12  Steven Eker  <eker@pup>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): Bool -> bool
+
+	* ACU_Term.hh (class ACU_Term): Bool -> bool
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton):
+	Bool -> bool
+
+===================================Maude145===========================================
+
 2023-03-27  Steven Eker  <eker@pup>
 
 	* ACU_RhsAutomaton.cc (ACU_RhsAutomaton::ACU_RhsAutomaton):  use

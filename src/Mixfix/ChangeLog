@@ -1,3 +1,66 @@
+2023-04-13  Steven Eker  <eker@pup>
+
+	* banner.cc (printBanner): adjust indentation for 3.3.1
+
+	* modules.yy (toAttribute): overparse latex attribute without string
+	(attribute): overparse latex attribute without string
+
+	* termPrint.cc (MixfixModule::prettyPrint): use empty()
+
+	* loopMode.cc (Interpreter::contLoop): use empty()
+
+	* bufferPrint.cc (MixfixModule::prettyPrint): use empty()
+
+	* fixUp.cc (SyntacticPreModule::fixUpSymbol): use empty()
+	(SyntacticPreModule::fixUpPolymorph): use empty()
+
+	* dagNodePrint.cc (MixfixModule::prettyPrint): use empty()
+
+2023-04-12  Steven Eker  <eker@pup>
+
+	* syntacticPreModule.hh (class SyntacticPreModule): Bool -> bool
+
+	* entry.cc (MixfixModule::addOpDeclaration): use empty()
+	(MixfixModule::addPolymorph): use empty()
+
+2023-04-11  Steven Eker  <eker@pup>
+
+	* quotedIdentifierSymbol.cc (QuotedIdentifierSymbol::attachData): use
+	empty()
+
+	* loopSymbol.cc (LoopSymbol::attachData): use empty()
+
+	* ops.cc (SyntacticPreModule::makeDeclsConsistent): use empty() (2 places)
+
+	* modules.yy (attribute): overparse prec/gather/format/strat/strategy/poly
+	attributes without required information
+	(toAttribute): overparse prec/gather/format attributes without required
+	information
+	(moduleExprDot): use Token* version of operator<<()
+	(skipStrayArrow): use Token* version of operator<<()
+	(parameter): use Token* version of operator<<()
+	(declaration): use Token* version of operator<<()
+	(skipStrayColon): use Token* version of operator<<()
+	(domainRangeAttr): use Token* version of operator<<(); use $1 rather than
+	lineNumber
+	(viewStratMap): use Token* version of operator<<()
+
+	* token.hh: added decl for Token* version of operator<<()
+
+	* token.cc (operator<<): added Token* version
+
+	* interact.cc (UserLevelRewritingContext::internalErrorHandler): call
+	exit() rather than _exit() to avoid losing message on Macs
+	(UserLevelRewritingContext::stackOverflowHandler): call exit() rather
+	than _exit() to avoid losing message on Macs
+
+2023-04-10  Steven Eker  <eker@pup>
+
+	* interact.cc (UserLevelRewritingContext::stackOverflowHandler): fix
+	grammar in message
+
+===================================Maude145===========================================
+
 2023-04-07  Steven Eker  <eker@pup>
 
 	* instantiateModuleWithFreeParameters.cc

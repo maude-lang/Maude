@@ -33,7 +33,7 @@ Parser::extractNextParse()
 #endif
 
   int lastIndex = firstReturns.length() - 1;
-  if (parseTree.length() == 0)
+  if (parseTree.empty())
     {
       ParserLog("  first attempt");
       //

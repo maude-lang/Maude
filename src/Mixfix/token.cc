@@ -56,6 +56,13 @@ operator<<(ostream& s, const Vector<Token>& tokens)
   return s;
 }
 
+ostream&
+operator<<(ostream& s, const Token* token)
+{
+  s << LineNumber(token->lineNumber());
+  return s;
+}
+
 void
 Token::printTokens(ostream& s,
 		   const Vector<Token>& tokens,

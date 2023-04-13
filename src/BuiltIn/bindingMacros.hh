@@ -77,7 +77,7 @@
 #define NULL_DATA(purpose, className, data) \
   if (strcmp(purpose, #className) == 0) \
     { \
-      return data.length() == 0; \
+      return data.empty();		\
     } 
 
 #define BIND_SYMBOL(purpose, symbol, name, symbolType) \

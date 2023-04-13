@@ -462,7 +462,7 @@ SyntacticPreModule::makeDeclsConsistent()
   if (nrOpDefs != 0)
     {
       int lastDefIndex = nrOpDefs - 1;
-      if(opDefs[lastDefIndex].types.length() == 0)
+      if(opDefs[lastDefIndex].types.empty())
 	{
 	  //
 	  //	Problem: we have op decls for which op def has not been
@@ -481,7 +481,7 @@ SyntacticPreModule::makeDeclsConsistent()
   //
   if (stratDecls.empty())
     return;
-  if (stratDecls.back().types.length() == 0)
+  if (stratDecls.back().types.empty())
     {
       stratDecls.pop_back();
       lastSawOpDecl = false;

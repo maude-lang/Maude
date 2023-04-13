@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -189,7 +189,7 @@ SyntacticPreModule::fixUpSymbol(const OpDecl& opDecl)
   //
   //	Might not have an identity to parse if it is a ditto declaration.
   //
-  if (opDef.identity.length() != 0)
+  if (!opDef.identity.empty())
     {
       //
       //	The validation of attributes in the flattened module may have
@@ -263,7 +263,7 @@ SyntacticPreModule::fixUpPolymorph(const OpDecl& opDecl)
   //
   //	Might not have an identity to parse if it is a ditto declaration.
   //
-  if (opDef.identity.length() != 0)
+  if (!opDef.identity.empty())
     {
       //
       //	The validation of attributes in the flattened module may have

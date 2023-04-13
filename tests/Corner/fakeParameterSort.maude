@@ -1,0 +1,18 @@
+***
+***	Test that fake parameter sort isn't treated like one.
+***
+
+fth T is
+  sort Elt .
+endfth
+
+fmod FOO{X :: T} is
+  sort X$Foo .
+  subsort X$Foo < X$Elt .
+endfm
+
+fmod BAR{Y :: T} is
+  inc FOO{Y} .
+endfm
+
+show all .

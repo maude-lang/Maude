@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2009 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,15 +45,15 @@ FreeTerm::analyseConstraintPropagation(NatSet& boundUniquely) const
   //	that lie directly under the free skeleton and thus will receive an unique binding.
   //
   Vector<FreeOccurrence> nonGroundAliens;
-  FOR_EACH_CONST(i, Vector<FreeOccurrence>, otherSymbols)
+  for (const FreeOccurrence& i : otherSymbols)
     {
-      Term* t = i->term();
+      Term* t = i.term();
       if (VariableTerm* v = dynamic_cast<VariableTerm*>(t))
 	boundUniquely.insert(v->getIndex());
       else
 	{
 	  if (!(t->ground()))
-	    nonGroundAliens.append(*i);
+	    nonGroundAliens.append(i);
 	}
     }
   if (!(nonGroundAliens.empty()))
@@ -88,26 +88,26 @@ FreeTerm::compileRemainder(Equation* equation, const Vector<int>& slotTranslatio
   Vector<FreeOccurrence> groundAliens;      	// ground alien subterms
   Vector<FreeOccurrence> nonGroundAliens;	// non-ground alien subterms
   NatSet boundUniquely;
-  FOR_EACH_CONST(i, Vector<FreeOccurrence>, otherSymbols)
+  for (const FreeOccurrence& i : otherSymbols)
     {
-      Term* t = i->term();
+      Term* t = i.term();
       if (VariableTerm* v = dynamic_cast<VariableTerm*>(t))
 	{
 	  int index = v->getIndex();
 	  if (boundUniquely.contains(index))
-	    boundVariables.append(*i);
+	    boundVariables.append(i);
 	  else
 	    {
 	      boundUniquely.insert(index);
-	      freeVariables.append(*i);
+	      freeVariables.append(i);
 	    }
 	}
       else
 	{
 	  if (t->ground())
-	    groundAliens.append(*i);
+	    groundAliens.append(i);
 	  else
-	    nonGroundAliens.append(*i);
+	    nonGroundAliens.append(i);
 	}
     }
   CP_Sequence bestSequence;
@@ -152,26 +152,26 @@ FreeTerm::compileLhs2(bool /* matchAtTop */,
   Vector<FreeOccurrence> uncertainVariables;	// status when matched against uncertain
   Vector<FreeOccurrence> groundAliens;      	// ground alien subterms
   Vector<FreeOccurrence> nonGroundAliens;	// non-ground alien subterms
-  FOR_EACH_CONST(i, Vector<FreeOccurrence>, otherSymbols)
+  for (const FreeOccurrence& i : otherSymbols)
     {
-      Term* t = i->term();
+      Term* t = i.term();
       if (VariableTerm* v = dynamic_cast<VariableTerm*>(t))
 	{
 	  int index = v->getIndex();
 	  if (boundUniquely.contains(index))
-	    boundVariables.append(*i);
+	    boundVariables.append(i);
 	  else
 	    {
 	      boundUniquely.insert(index);
-	      uncertainVariables.append(*i);
+	      uncertainVariables.append(i);
 	    }
 	}
       else
 	{
 	  if (t->ground())
-	    groundAliens.append(*i);
+	    groundAliens.append(i);
 	  else
-	    nonGroundAliens.append(*i);
+	    nonGroundAliens.append(i);
 	}
     }
   CP_Sequence bestSequence;

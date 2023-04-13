@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ FreeTerm::~FreeTerm()
 RawArgumentIterator*
 FreeTerm::arguments()
 {
-  if (argArray.length() == 0)
+  if (argArray.empty())
     return 0;
   else
     return new FreeArgumentIterator(&argArray);
@@ -198,17 +198,16 @@ FreeTerm::compareArguments(const DagNode* other) const
 }
 
 int
-FreeTerm::partialCompareArguments(const Substitution& partialSubstitution,
-				  DagNode* other) const
+FreeTerm::partialCompareArguments(const Substitution& partialSubstitution, DagNode* other) const
 {
   Assert(symbol() == other->symbol(), "symbols differ");
-  int nrArgs = argArray.length();
+  int nrArgs = argArray.size();
   if (nrArgs != 0)
     {
       DagNode** da = safeCast(FreeDagNode*, other)->argArray();
-      FOR_EACH_CONST(i, Vector<Term*>, argArray)
+      for (Term* t : argArray)
 	{
-	  int r = (*i)->partialCompare(partialSubstitution, *da);
+	  int r = t->partialCompare(partialSubstitution, *da);
 	  if (r != EQUAL)
 	    return r;
 	  ++da;
@@ -250,9 +249,8 @@ FreeTerm::computeMatchIndices() const
   //	Make sure each stable symbol at the top of one of our arguments has
   //	a non-zero match index. This is done recursively.
   //
-  FOR_EACH_CONST(i, Vector<Term*>, argArray)
+  for (Term* t : argArray)
     {
-      Term* t = *i;
       Symbol* s = t->symbol();
       if (s->isStable() && s->getMatchIndex() == 0)
 	s->setMatchIndex(s->rangeComponent()->getNewMatchIndex());
@@ -518,9 +516,9 @@ FreeTerm::compileRhs3(FreeRhsAutomaton* automaton,
   //
   FreeSymbol* s = symbol();
   Vector<int> sources(nrArgs);
-  FOR_EACH_CONST(i, PairVec, order)
+  for (const auto& p : order)
     {
-      int argNr = i->second;
+      int argNr = p.second;
       bool argEager = eagerContext && s->eagerArgument(argNr);
       Term* t = argArray[argNr];
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(t))
@@ -549,10 +547,8 @@ FreeTerm::compileRhs3(FreeRhsAutomaton* automaton,
   //
   //	Need to flag last use of each source.
   //
-  {
-    FOR_EACH_CONST(i, Vector<int>, sources)
-      variableInfo.useIndex(*i);
-  }
+  for (int i : sources)
+    variableInfo.useIndex(i);
   //
   //	Add to free step to automaton.
   //

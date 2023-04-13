@@ -1,0 +1,19 @@
+***
+***	Test that fake parameter constant isn't treated like one.
+***
+
+fth T is
+  sort Elt .
+  op c : -> Elt [pconst] .
+endfth
+
+fmod FOO{X :: T} is
+  op X$d : -> X$Elt [pconst] .
+  eq X$c = X$d .
+endfm
+
+fmod BAR{Y :: T} is
+  inc FOO{Y} .
+endfm
+
+show all .

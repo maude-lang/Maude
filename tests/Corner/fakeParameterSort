@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/fakeParameterSort.maude -no-banner \
+  > fakeParameterSort.out 2>&1
+
+diff $srcdir/fakeParameterSort.expected fakeParameterSort.out > /dev/null 2>&1

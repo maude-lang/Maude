@@ -1,3 +1,11 @@
+2023-04-12  Steven Eker  <eker@pup>
+
+	* miSort.cc (InterpreterManagerSymbol::getMinimalSorts): use empty()
+
+	* descentFunctions.cc (MetaLevelOpSymbol::metaMinimalSorts): use empty()
+
+===================================Maude145===========================================
+
 2023-03-28  Steven Eker  <eker@pup>
 
 	* metaModuleCache.cc (MetaModuleCache::flush): contractTo(0) -> clear()

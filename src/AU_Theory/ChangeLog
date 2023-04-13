@@ -1,3 +1,21 @@
+2023-04-13  Steven Eker  <eker@pup>
+
+	* AU_Matcher.cc (AU_LhsAutomaton::match): use empty()
+
+2023-04-12  Steven Eker  <eker@pup>
+
+	* AU_LhsCompiler.cc: Bool -> bool throughout
+
+	* AU_LhsAutomaton.hh (class AU_LhsAutomaton): Bool -> bool
+
+	* AU_Term.hh (class AU_Term): Bool -> bool
+
+	* AU_Layer.hh (class AU_Layer): Bool -> bool
+
+	* AU_Symbol.hh (class AU_Symbol): Bool -> bool
+
+===================================Maude145===========================================
+
 2023-03-27  Steven Eker  <eker@pup>
 
 	* AU_RhsAutomaton.cc (AU_RhsAutomaton::AU_RhsAutomaton): use

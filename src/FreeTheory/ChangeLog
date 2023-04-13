@@ -1,3 +1,80 @@
+2023-04-13  Steven Eker  <eker@pup>
+
+	* freeSymbol.cc (FreeSymbol::newFreeSymbol): use empty()
+
+2023-04-12  Steven Eker  <eker@pup>
+
+	* freeTerm.hh (class FreeTerm): Bool -> bool
+
+	* freeTerm.cc (FreeTerm::arguments): use empty()
+
+	* freeNet.cc (FreeNet::dump): use empty()
+
+	* freeNet.hh (class FreeNet): make TestNode::symbolIndex an int;
+	make position an Index
+	(class FreeNet): TestNode::position an Index
+
+	* freeNetExec.cc (FreeNet::applyReplace2): make diff an int rather
+	long
+	(FreeNet::applyReplaceFast2): make diff an int rather than long
+	(FreeNet::applyReplaceNoOwise2): make diff an int rather than long
+
+	* freeRemainder.hh (FreeRemainder::fastMatchReplace): use range-based
+	for loop in place of FOR_EACH_CONST() (2 places)
+	(FreeRemainder::fastCheckAndBind): use range-based for loop in place
+	of FOR_EACH_CONST() (2 places)
+	(FreeRemainder::generalCheckAndBind): use range-based for loop in
+	place of FOR_EACH_CONST() (2 places)
+
+2023-04-11  Steven Eker  <eker@pup>
+
+	* freeLhsCompiler.cc (FreeTerm::analyseConstraintPropagation):
+	use range-based for loop in place of FOR_EACH_CONST()
+	(FreeTerm::compileRemainder): use range-based for loop in place of
+	FOR_EACH_CONST()
+	(FreeTerm::compileLhs2): use range-based for loop in place of
+	FOR_EACH_CONST()
+
+	* freeNet.cc (FreeNet::buildRemainders): use range-based for loop in
+	place of FOR_EACH_CONST() (2 places)
+	(FreeNet::dump): use range-based for loop in place of FOR_EACH_CONST()
+
+	* freeTerm.cc (FreeTerm::partialCompareArguments): use range-based for
+	loop in place of FOR_EACH_CONST(); use size() rather than length()
+	(FreeTerm::computeMatchIndices): use range-based for loop in place of
+	FOR_EACH_CONST()
+	(FreeTerm::compileRhs3): use range-based for loop in place of
+	FOR_EACH_CONST() (2 places)
+
+	* freePreNet.cc (FreePreNet::buildNet): replaced commented out cerr <<
+	statements with DebugEnter()/DebugInfo()/DebugExit()
+	(FreePreNet::buildNet): use range-based for loop in place of
+	FOR_EACH_CONST()
+	(FreePreNet::reduceFringe): use range-based for loop in place of
+	FOR_EACH_CONST()
+	(FreePreNet::findLiveSet): use range-based for loop in place of
+	FOR_EACH_CONST()
+	(FreePreNet::partitionLiveSet): use range-based for loop in place of
+	FOR_EACH_CONST() (3 places)
+	(FreePreNet::partiallySubsumed): use range-based for loop in place of
+	FOR_EACH_CONST()
+	(FreePreNet::findBestPosition): use range-based for loop in place of
+	FOR_EACH_CONST()
+	(FreePreNet::dumpLiveSet): use range-based for loop in place of
+	FOR_EACH_CONST()
+	(FreePreNet::makeNode): replaced commented out cerr << statement with
+	DebugEnter()
+
+	* freePreNetSemiCompiler.cc (FreePreNet::setVisitedFlags): use range-based
+	for loop in place of FOR_EACH_CONST()
+	(FreePreNet::allocateSlot): use range-based for loop in place of
+	FOR_EACH_CONST()
+
+	* freeRhsAutomaton.cc (FreeRhsAutomaton::recordInfo): use range-based for
+	loop in place of FOR_EACH_CONST()
+
+===================================Maude145===========================================
+
 2023-03-14  Steven Eker  <eker@pup>
 
 	* freeDagNode.hh (class FreeDagNode): union Word deleted; use

@@ -9,6 +9,12 @@ Rewriting logic is a logic of concurrent change that can naturally deal with sta
 Maude supports in a systematic and efficient way logical reflection. This makes Maude remarkably extensible and powerful, supports an extensible algebra of module composition operations, and allows many advanced metaprogramming and metalanguage applications. Indeed, some of the most interesting applications of Maude are metalanguage applications, in which Maude is used to create executable environments for different logics, theorem provers, languages, and models of computation.
 
 
+## Maude 3.3.1
+
+* Restrictions on pseudo-parameters
+* More overparsing
+* Many bug fixes
+
 ## Maude 3.3
 
 * Support for object-oriented syntactic sugar (omods/oths)

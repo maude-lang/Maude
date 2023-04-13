@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -118,8 +118,8 @@ private:
   struct TopVariable
   {
     short index;
-    Bool takeIdentity;		// take identity instead of piece of subject (always)
-    Bool awkward;		// take identity instead of piece of subject (special)
+    bool takeIdentity;		// take identity instead of piece of subject (always)
+    bool awkward;		// take identity instead of piece of subject (special)
     Sort* sort;
     int upperBound;
     LhsAutomaton* abstracted;	// automaton for abstracted term

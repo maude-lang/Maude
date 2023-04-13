@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ Interpreter::contLoop2(const Vector<Token>& input)
 void
 Interpreter::contLoop(const Vector<Token>& input)
 {
-  if (!contLoop2(input) && savedLoopSubject.length() != 0)
+  if (!contLoop2(input) && !savedLoopSubject.empty())
     {
       Vector<Token> savedInput(input);  // in case input gets overwritten, say in debugger
       IssueAdvisory("attempting to reinitialize loop.");

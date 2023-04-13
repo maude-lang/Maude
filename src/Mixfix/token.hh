@@ -294,5 +294,6 @@ Token::codeToRope(int code)
 
 ostream& operator<<(ostream& s, const Token& token);
 ostream& operator<<(ostream& s, const Vector<Token>& tokens);
+ostream& operator<<(ostream& s, const Token* token);
 
 #endif

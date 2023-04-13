@@ -102,6 +102,12 @@ FreeRemainder::fastHandling() const
   return fast != 0;
 }
 
+inline bool
+FreeRemainder::isOwise() const
+{
+  return equation->isOwise();
+}
+
 inline bool 
 FreeRemainder::fastMatchReplace(DagNode* subject,
 				RewritingContext& context,
@@ -112,22 +118,22 @@ FreeRemainder::fastMatchReplace(DagNode* subject,
       if (fast > 0)
 	{
 	  Vector<DagNode**>::const_iterator stackBase = stack.begin();
-	  FOR_EACH_CONST(i, Vector<FreeVariable>, freeVariables)
+	  for (const FreeVariable& i : freeVariables)
 	    {
-	      DagNode* d = stackBase[i->position][i->argIndex];
+	      DagNode* d = stackBase[i.position][i.argIndex];
 	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
-	      context.bind(i->varIndex, d);
+	      context.bind(i.varIndex, d);
 	    }
 	}
       else if (fast < 0)
 	{
 	  Vector<DagNode**>::const_iterator stackBase = stack.begin();
-	  FOR_EACH_CONST(i, Vector<FreeVariable>, freeVariables)
+	  for (const FreeVariable& i : freeVariables)
 	    {
-	      DagNode* d = stackBase[i->position][i->argIndex];
+	      DagNode* d = stackBase[i.position][i.argIndex];
 	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
-	      if (d->fastLeq(i->sort))
-		context.bind(i->varIndex, d);
+	      if (d->fastLeq(i.sort))
+		context.bind(i.varIndex, d);
 	      else
 		return false;
 	    }
@@ -144,12 +150,6 @@ slow:
 }
 
 inline bool
-FreeRemainder::isOwise() const
-{
-  return equation->isOwise();
-}
-
-inline bool
 FreeRemainder::fastCheckAndBind(DagNode** binding, Vector<DagNode**>& stack) const
 {
   //
@@ -161,12 +161,12 @@ FreeRemainder::fastCheckAndBind(DagNode** binding, Vector<DagNode**>& stack) con
       //
       //	Super-fast case: bind variables without sort check.
       //
-      FOR_EACH_CONST(i, Vector<FreeVariable>, freeVariables)
+      for (const FreeVariable& i : freeVariables)
 	{
-	  DagNode* d = stackBase[i->position][i->argIndex];
+	  DagNode* d = stackBase[i.position][i.argIndex];
 	  Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
-	  Assert(d->leq(i->sort), "super-fast case fails sort check");
-	  binding[i->varIndex] = d;
+	  Assert(d->leq(i.sort), "super-fast case fails sort check");
+	  binding[i.varIndex] = d;
 	}
     }
   else
@@ -175,12 +175,12 @@ FreeRemainder::fastCheckAndBind(DagNode** binding, Vector<DagNode**>& stack) con
       //
       //	Fast case: bind variables after fast sort check.
       //
-      FOR_EACH_CONST(i, Vector<FreeVariable>, freeVariables)
+      for (const FreeVariable& i : freeVariables)
 	{
-	  DagNode* d = stackBase[i->position][i->argIndex];
+	  DagNode* d = stackBase[i.position][i.argIndex];
 	  Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
-	  if (d->fastLeq(i->sort))
-	    binding[i->varIndex] = d;
+	  if (d->fastLeq(i.sort))
+	    binding[i.varIndex] = d;
 	  else
 	    return false;
 	}
@@ -204,12 +204,12 @@ FreeRemainder::generalCheckAndBind(DagNode** binding, Vector<DagNode**>& stack) 
       //
       //	Super-fast case: bind variables without sort check.
       //
-      FOR_EACH_CONST(i, Vector<FreeVariable>, freeVariables)
+      for (const FreeVariable& i : freeVariables)
 	{
-	  DagNode* d = stackBase[i->position][i->argIndex];
+	  DagNode* d = stackBase[i.position][i.argIndex];
 	  Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
-	  Assert(d->leq(i->sort), "super-fast case fails sort check");
-	  binding[i->varIndex] = d;
+	  Assert(d->leq(i.sort), "super-fast case fails sort check");
+	  binding[i.varIndex] = d;
 	}
     }
   else if (fast < 0)
@@ -217,12 +217,12 @@ FreeRemainder::generalCheckAndBind(DagNode** binding, Vector<DagNode**>& stack) 
       //
       //	Fast case: bind variables after fast sort check.
       //
-      FOR_EACH_CONST(i, Vector<FreeVariable>, freeVariables)
+      for (const FreeVariable& i : freeVariables)
 	{
-	  DagNode* d = stackBase[i->position][i->argIndex];
+	  DagNode* d = stackBase[i.position][i.argIndex];
 	  Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
-	  if (d->fastLeq(i->sort))
-	    binding[i->varIndex] = d;
+	  if (d->fastLeq(i.sort))
+	    binding[i.varIndex] = d;
 	  else
 	    return false;
 	}

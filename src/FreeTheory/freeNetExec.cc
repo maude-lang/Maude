@@ -48,7 +48,7 @@ FreeNet::applyReplace2(DagNode* subject, RewritingContext& context)
       for (;;)
 	{
 	  long p;
-	  long diff = symbolIndex - n->symbolIndex;
+	  int diff = symbolIndex - n->symbolIndex;
 	  if (diff != 0)
 	    {
 	      i = n->notEqual[diff < 0];
@@ -120,7 +120,7 @@ FreeNet::applyReplaceFast2(DagNode* subject, RewritingContext& context)
       for (;;)
 	{
 	  long p;
-	  long diff = symbolIndex - n->symbolIndex;
+	  int diff = symbolIndex - n->symbolIndex;
 	  if (diff != 0)
 	    {
 	      i = n->notEqual[diff < 0];
@@ -189,7 +189,7 @@ FreeNet::applyReplaceNoOwise2(DagNode* subject, RewritingContext& context)
       for (;;)
 	{
 	  long p;
-	  long diff = symbolIndex - n->symbolIndex;
+	  int diff = symbolIndex - n->symbolIndex;
 	  if (diff != 0)
 	    {
 	      i = n->notEqual[diff < 0];

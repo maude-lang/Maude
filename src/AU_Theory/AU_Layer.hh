@@ -56,8 +56,8 @@ private:
     //
     //	For solve-time use
     //
-    Bool boundByUs;
-    Bool extraId;
+    bool boundByUs;
+    bool extraId;
   };
 
   struct Node
@@ -77,10 +77,10 @@ private:
 
   const AU_DagNode* subject;
   int lastSubjectSubterm;		// index of last subterm in subject
-  Bool oneSidedId;			// true if subject has a one sided identity
-  Bool leftId;				// true if subject has left identity only
-  Bool leftExtend;			// have left extension before variable block
-  Bool rightExtend;			// have right extension after variable block
+  bool oneSidedId;			// true if subject has a one sided identity
+  bool leftId;				// true if subject has left identity only
+  bool leftExtend;			// have left extension before variable block
+  bool rightExtend;			// have right extension after variable block
   int totalLowerBound;			// sum of lowerBounds for prevVariables 
   int totalUpperBound;			// sum of upperBounds for prevVariables + extension
   AU_ExtensionInfo* extensionInfo;	// for layers with leftExtend/rightExtend only

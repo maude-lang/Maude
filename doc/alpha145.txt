@@ -1,0 +1,27 @@
+Alpha 145 release notes
+========================
+
+Bug fix
+========
+
+A bug where internal error and stack overflow messages were being
+lost on Macs. This seems to be due to stripped binaries so the Mac binary
+is no longer stripped.
+
+Other changes
+==============
+
+(1) Overparsing for prec/gather/format/strat/strategy/poly attributes
+without their needed information in operator declarations. For example:
+
+fmod FOO is
+  op _+_ : Bool Bool -> Bool [prec gather format strat strategy poly] .
+endfm
+
+
+(2) Overparsing for prec/gather/format attributes without their needed
+information in operator mappings. For example:
+
+fmod FOO is
+  inc NAT * (op _+_ to _++_ [format prec gather]) .
+endfm

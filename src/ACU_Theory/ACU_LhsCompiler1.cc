@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -77,14 +77,14 @@ ACU_Term::analyseConstraintPropagation(NatSet& boundUniquely) const
     }
   if (lastUnboundVariable != UNDEFINED)
     {
-      Assert(nonGroundAliens.size() == 0, "ACU_Term::analyseConstraintPropagation() : shouldn't have NGAs");
+      Assert(nonGroundAliens.empty(), "ACU_Term::analyseConstraintPropagation() : shouldn't have NGAs");
       //
       //	If the only thing that doesn't ground out is a variable we can
       //	bind it uniquely.
       //
       boundUniquely.insert(lastUnboundVariable);
     }
-  else if (nonGroundAliens.length() != 0)
+  else if (!nonGroundAliens.empty())
     {
       //
       //	If the only things that don't ground out are NGAs we can choose a

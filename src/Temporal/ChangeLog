@@ -1,3 +1,7 @@
+2023-04-12  Steven Eker  <eker@pup>
+
+	* logicFormula.hh (class LogicFormula): Bool -> bool
+
 2017-03-15  Steven Eker  <eker@install.csl.sri.com>
 
 	* transitionSet.cc (insert): added comments to explain subtle code
@@ -66,7 +70,7 @@
 	* buchiAutomaton2.cc: removed #pragma
 
 	* buchiAutomaton2.hh: removed #pragma
-	
+
 ===================================Maude79===========================================
 
 2002-03-01  Steven Eker  <eker@goo.csl.sri.com>

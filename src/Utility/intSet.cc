@@ -43,7 +43,7 @@ IntSet::hash2(int i)  // 2nd hash function must always return an odd value
 int
 IntSet::insert(int k)
 {
-  if (intTable.length() == 0)
+  if (intTable.empty())
     resize(STARTING_HASH_TABLE_SIZE);
   int i = findEntry(k);
   int j = hashTable[i];
@@ -99,7 +99,7 @@ void
 IntSet::subtract(const IntSet& other)
 {
   int n = intTable.length();
-  if (n == 0 || other.intTable.length() == 0)
+  if (n == 0 || other.intTable.empty())
     return;
   int j = 0;
   for (int i = 0; i < n; i++)
@@ -121,10 +121,10 @@ IntSet::intersect(const IntSet& other)
   int n = intTable.length();
   if (n == 0)
     return;
-  if (other.intTable.length() == 0)
+  if (other.intTable.empty())
     {
-      intTable.contractTo(0);
-      hashTable.contractTo(0);
+      intTable.clear();
+      hashTable.clear();
       return;
     }
   int j = 0;
@@ -140,7 +140,7 @@ IntSet::intersect(const IntSet& other)
       rehash();
     }
 }
- 
+
 bool
 IntSet::contains(const IntSet& other) const
 {
@@ -161,7 +161,7 @@ bool
 IntSet::disjoint(const IntSet& other) const
 {
   int i = other.intTable.length();
-  if (i == 0 || intTable.length() == 0)
+  if (i == 0 || intTable.empty())
     return true;
   for (i--; i >= 0; i--)
     {
@@ -174,7 +174,7 @@ IntSet::disjoint(const IntSet& other) const
 int
 IntSet::findEntry(int k) const
 {
-  Assert(hashTable.length() != 0, "zero length hash table");
+  Assert(!hashTable.empty(), "empty length hash table");
   int mask = hashTable.length() - 1;
   int i = hash(k) & mask;
   int j = hashTable[i];

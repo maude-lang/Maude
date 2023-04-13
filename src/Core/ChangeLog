@@ -1,3 +1,17 @@
+2023-04-13  Steven Eker  <eker@pup>
+
+	* preEquation.cc (PreEquation::checkCondition): use empty()
+
+2023-04-12  Steven Eker  <eker@pup>
+
+	* connectedComponent.hh (class ConnectedComponent): Bool -> bool
+
+	* strategy.hh (class Strategy): Bool -> bool
+
+	* rewriteStrategy.cc (RewriteStrategy::RewriteStrategy): use empty()
+
+===================================Maude145===========================================
+
 2023-03-28  Steven Eker  <eker@pup>
 
 	* sortTable.cc (SortTable::buildSortDiagram): contractTo(0) -> clear()

@@ -421,7 +421,7 @@ MixfixModule::addOpDeclaration(Token prefixName,
   symbolInfo.expandBy(1);
   SymbolInfo& si = symbolInfo[nrSymbols];
   int nrUnderscores = Token::extractMixfix(name, si.mixfixSyntax);
-  if (si.mixfixSyntax.length() == 0)
+  if (si.mixfixSyntax.empty())
     {
       si.prec = 0;
       WarningCheck(!(symbolType.hasFlag(SymbolType::PREC)),
@@ -646,7 +646,7 @@ MixfixModule::addPolymorph(Token prefixName,
   p.identity = 0;
   p.metadata = metadata;
   int nrUnderscores = Token::extractMixfix(prefixName.code(), p.symbolInfo.mixfixSyntax);
-  if (p.symbolInfo.mixfixSyntax.length() == 0)
+  if (p.symbolInfo.mixfixSyntax.empty())
     {
       p.symbolInfo.prec = 0;
       WarningCheck(!(symbolType.hasFlag(SymbolType::PREC)),

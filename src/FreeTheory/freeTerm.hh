@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ public:
   //	Gross hack to allow surgery on free theory terms from ouside of the theory.
   //	Only safe if there has been no processing on the term.
   //	Garbage collection of the old argument (parts of which the caller
-  //	may have reused in newArgument) is the callers responsibility.
+  //	may have reused in newArgument) is the caller's responsibility.
   //
   Term* replaceArgument(Index index, Term* newArgument);
 
@@ -129,7 +129,7 @@ private:
 
   Vector<Term*> argArray;
   short slotIndex;
-  Bool visitedFlag;
+  bool visitedFlag;
 };
 
 inline FreeSymbol*

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -79,8 +79,8 @@ private:
     Term* term;
     short abstractionVariableIndex;	// if subterm could enter our theory
     					// we abstract it
-    Bool collapseToOurSymbol;		// 1st possible reason for variable abstraction
-    Bool matchOurIdentity;		// 2nd possible reason for variable abstraction
+    bool collapseToOurSymbol;		// 1st possible reason for variable abstraction
+    bool matchOurIdentity;		// 2nd possible reason for variable abstraction
   };
 
   struct CP_Sequence;
@@ -89,7 +89,7 @@ private:
   bool unitVariable(VariableTerm* vt, int index) const;
   void findConstraintPropagationSequence(const NatSet& boundUniquely,
 					 CP_Sequence& bestSequence) const;
-  void findConstraintPropagationSequence(const Vector<Bool>& currentSequence,
+  void findConstraintPropagationSequence(const Vector<bool>& currentSequence,
 					 const NatSet& boundUniquely,
 					 int leftPos,
 					 int rightPos,

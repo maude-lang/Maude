@@ -1,3 +1,9 @@
+2023-04-12  Steven Eker  <eker@pup>
+
+	* autoWrapBuffer.hh (class AutoWrapBuffer): Bool -> bool
+
+===================================Maude145===========================================
+
 2021-04-02  Steven Eker  <eker2@eker10>
 
 	* IO_Manager.hh (IO_Manager::safeToAccessStdin)

@@ -157,7 +157,7 @@ Parser::parseSentence(const Vector<int>& sentence, int root)
 	 "bad root nonterminal " << root << " only " <<
 	 firstTerminalRules.length() << " nonterminals in grammar");
 
-  if (expansions.length() == 0)
+  if (expansions.empty())
     {
       buildExpansionTables();
       firstRealCall = calls.size();
