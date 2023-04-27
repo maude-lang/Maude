@@ -208,6 +208,9 @@ private:
 			      const TopVariable& tv,
 			      Substitution& solution,
 			      Subproblem*& returnedSubproblem);
+  int fullVariableMatch(ACU_TreeDagNode* subject,
+			Substitution& solution,
+			Subproblem*& returnedSubproblem);
   //
   //	ArgVec greedy matcher.
   //
@@ -248,6 +251,7 @@ private:
   const bool collapsePossible;
   bool treeMatchOK;
   bool collectorSeen;
+  bool stripperVariableSeen;
   MatchStrategy matchStrategy;
   int totalLowerBound;  // must have at least this total mutiplicity of subjects
   int totalUpperBound;	// can't have more than this total mutiplicity of subjects

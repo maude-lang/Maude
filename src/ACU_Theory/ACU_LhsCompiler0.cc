@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -132,24 +132,35 @@ ACU_Term::tryToMakeCollectorLhsAutomaton(bool matchAtTop,
   //	Collector variable should:
   //	(1) be unbound at match time (can't guarantee this of course); and
   //	(2) have unbounded sort
-  //	Unless stripper is a ground term and there is no extension (i.e.
+  //	Unless stripper is a ground term or a bound variable and there is no extension (i.e.
   //	there will be a unique match) we also require that variable should:
   //	(3) not occur in condition; and
   //	(4) not occur elsewhere in lhs.
   //
   if (boundUniquely.contains(ci) || symbol()->sortBound(c->getSort()) != UNBOUNDED)
     return 0;
-  bool needAllCollectorSolutions =
-    variableInfo.getConditionVariables().contains(ci) ||
-    c->occursInContext().contains(ci);
+  //
+  //	If the collector variable appears in the condition or elsewhere in the pattern  we need
+  //	to be able to compute all values it could take.
+  //
+  bool needAllCollectorSolutions = variableInfo.getConditionVariables().contains(ci) || c->occursInContext().contains(ci);
   if (matchAtTop && needAllCollectorSolutions)
-    return 0;
+    {
+      //
+      //	If we matching at the top, we can't uniquely determine the split between the extension
+      //	and the collector variable, and so we give up on a stripper-collector automaton.
+      //
+      return 0;
+    }
   //
   //	Then check stripper.
   //
   Term* t = argArray[1 - collectorCandidate].term;
   if (t->ground())
     {
+      //
+      //	Stripping a ground term gives a unique solution if there is no extension.
+      //
       return new ACU_GndLhsAutomaton(symbol(),
 				     matchAtTop,
 				     !(collapseSymbols().empty()),
@@ -164,13 +175,14 @@ ACU_Term::tryToMakeCollectorLhsAutomaton(bool matchAtTop,
       if (boundUniquely.contains(vi))
 	{
 	  //
-	  //	Bound stripper variable should:
+	  //	Bound stripper variable implies a unique solution if there is no extension; for
+	  //	fast matching we require that a bound stripper variable:
 	  //	(1) have an element sort; and
 	  //	(2) not be able to take the identity
+	  //	so it strips exactly one subterm from the pattern.
 	  //
 	  Sort* stripperSort = v->getSort();
-	  if (symbol()->sortBound(stripperSort) != 1 ||
-	      symbol()->takeIdentity(stripperSort))
+	  if (symbol()->sortBound(stripperSort) != 1 || symbol()->takeIdentity(stripperSort))
 	    return 0;
 	  return new ACU_BndVarLhsAutomaton(symbol(),
 					    matchAtTop,
@@ -181,6 +193,10 @@ ACU_Term::tryToMakeCollectorLhsAutomaton(bool matchAtTop,
 	}
       else
 	{
+	  //
+	  //	Because the stripper variable is not guaranteed to be bound, many solutions
+	  //	might be possible, with different values for the collector variable.
+	  //
 	  if (needAllCollectorSolutions)
 	    return 0;
 	  //
@@ -202,6 +218,10 @@ ACU_Term::tryToMakeCollectorLhsAutomaton(bool matchAtTop,
 					 c);
 	}
     }
+  //
+  //	A non-ground alien term might have multiple matches in the subject which would
+  //	result in alternative values for the collector variable.
+  //
   if (needAllCollectorSolutions)
     return 0;
   //

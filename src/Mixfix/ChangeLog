@@ -1,4 +1,20 @@
+2023-04-26  Steven Eker  <eker@pup>
+
+	* token.cc (Token::split): rewritten to use buffer (int& version)
+	(Token::splitKind): rewritten to use buffer
+
 2023-04-13  Steven Eker  <eker@pup>
+
+	* top.yy: deleted polarity
+
+	* commands.yy (polarityDot): added; use to replace polarity '.'
+	(polarity): deleted
+
+	* top.yy: added KW_ON_DOT KW_OFF_DOT polarityDot
+
+	* lexer.ll: added KW_ON_DOT and KW_OFF_DOT to INITIAL mode
+
+===================================Maude146===========================================
 
 	* banner.cc (printBanner): adjust indentation for 3.3.1
 

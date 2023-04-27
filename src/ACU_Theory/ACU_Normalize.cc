@@ -78,6 +78,7 @@ ACU_DagNode::insertAlien(ACU_BaseDagNode* normalForm,
 			 DagNode* alien,
 			 int aMult)
 {
+  //cerr << "i";
   if (normalForm->isTree())
     {
       ACU_Tree t = safeCast(ACU_TreeDagNode*, normalForm)->getTree();
@@ -111,6 +112,7 @@ ACU_DagNode::insertAlien(ACU_BaseDagNode* normalForm,
 	      (void) new (this) ACU_TreeDagNode(symbol(), t);
 	    }
 #else
+	  //cerr << d->argArray.length();
 	  if (symbol()->useTree() && d->argArray.length() >= CONVERT_THRESHOLD)
 	    {
 	      ACU_Tree t(d->argArray);
@@ -144,7 +146,7 @@ ACU_DagNode::normalizeAtTop()
   ACU_Symbol* s = symbol();
   Term* identity = s->getIdentity();
   int nrArgs = argArray.length();
-
+  //cerr << " " << nrArgs << (s->useTree() ? "y" : "n");
   if (nrArgs == 2)
     {
       //
@@ -155,8 +157,10 @@ ACU_DagNode::normalizeAtTop()
       DagNode* d1 = argArray[1].dagNode;
       if (d0->symbol() != s)
 	{
+	  //cerr << "a";
 	  if (d1->symbol() != s)
 	    {
+	      //cerr << "a";
 	      //
 	      //	(1) Two alien subterms.
 	      //
@@ -233,6 +237,7 @@ ACU_DagNode::normalizeAtTop()
 	    }
 	  else
 	    {
+	      //cerr << "t";
 	      //
 	      //	(2) d0 alien, d1 in theory normal form.
 	      //
@@ -255,8 +260,10 @@ ACU_DagNode::normalizeAtTop()
 	}
       else
 	{
+	  //cerr << "t";
 	  if (d1->symbol() != s)
 	    {
+	      //cerr << "a";
 	      //
 	      //	(3) d0 in theory normal form, d1 alien.
 	      //
@@ -278,6 +285,7 @@ ACU_DagNode::normalizeAtTop()
 	    }
 	  else
 	    {
+	      //cerr << "t";
 	      //
 	      //	(4) Two theory normal form subterms.
 	      //
@@ -288,44 +296,28 @@ ACU_DagNode::normalizeAtTop()
 		  if (b0->isTree())
 		    {
 		      if (b1->isTree())
-			{
-			  fastMerge(safeCast(ACU_TreeDagNode*, d0),
-				    safeCast(ACU_TreeDagNode*, d1));
-			  //
-			  //	Convert back to tree representation if
-			  //	size of merged argument lists exceeds
-			  //	a threshold.
-			  //
-			  if (symbol()->useTree() && argArray.length() >= MERGE_THRESHOLD)
-			    {
-			      ACU_Tree t(argArray);
-			      (void) new (this) ACU_TreeDagNode(symbol(), t);
-			    }
-			}
+			fastMerge(safeCast(ACU_TreeDagNode*, d0), safeCast(ACU_TreeDagNode*, d1));
 		      else
-			{
-			  fastMerge(safeCast(ACU_DagNode*, d1),
-				    safeCast(ACU_TreeDagNode*, d0));
-			}
+			fastMerge(safeCast(ACU_DagNode*, d1), safeCast(ACU_TreeDagNode*, d0));
 		    }
 		  else
 		    {
 		      if (b1->isTree())
-			{
-			  fastMerge(safeCast(ACU_DagNode*, d0),
-				    safeCast(ACU_TreeDagNode*, d1));
-			}
+			fastMerge(safeCast(ACU_DagNode*, d0), safeCast(ACU_TreeDagNode*, d1));
 		      else
-			{
-			  fastMerge(safeCast(ACU_DagNode*, d0),
-				    safeCast(ACU_DagNode*, d1));
-			}
+			fastMerge(safeCast(ACU_DagNode*, d0), safeCast(ACU_DagNode*, d1));
+		    }
+		  if (symbol()->useTree() && argArray.length() >= MERGE_THRESHOLD)
+		    {
+		      ACU_Tree t(argArray);
+		      (void) new (this) ACU_TreeDagNode(symbol(), t);
 		    }
 		}
 	      else
 		{
 		  //
-		  //	Rare sub-subcase - do slow thing.
+		  //	Rare sub-subcase where we have a theory normal form with a multiplicity
+		  //	other than 1 - do slow thing.
 		  //
 		  flattenSortAndUniquize(b0->getSize() + b1->getSize() - 2);
 		}

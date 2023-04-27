@@ -438,23 +438,23 @@ Token::looksLikeRational(const char* s)
 bool
 Token::split(int code, int& prefix, int& suffix)
 {
+  buffer.clear();
   const char* p = stringTable.name(code);
-  size_t len = strlen(p);
-  char* t = new char[len + 1];
-  strcpy(t, p);
-  for (size_t i = len - 1; i > 0; --i)
+  Index len = strlen(p);
+  for (Index i = len - 1; i > 0; --i)  // don't consider ':' or '.' in p[0]
     {
-      char c = t[i];
+      char c = p[i];
       if (c == ':' || c == '.')
 	{
-	  t[i] = '\0';
-	  prefix = encode(t);
-	  suffix = (i == len - 1) ? NONE : encode(t + i + 1);
-	  delete [] t;
+	  suffix = (i == len - 1) ? NONE : encode(p + i + 1);
+	  buffer.resize(i + 1);
+	  for (Index j = 0; j != i; ++j)
+	    buffer[j] = p[j];
+	  buffer[i] = '\0';
+	  prefix = encode(buffer.data());
 	  return true;
 	}
     }
-  delete [] t;
   return false;
 }
 
@@ -490,9 +490,8 @@ Token::splitKind(int code, Vector<int>& codes)
 {
   codes.clear();
   const char* p = stringTable.name(code);
-  size_t len = strlen(p);
-  char* t = new char[len + 1];
-  p = strcpy(t, p);
+  buffer.resize(strlen(p) + 1);
+  p = strcpy(buffer.data(), p);
   if (*p++ =='`' && *p++ == '[')
     {
       for(;;)
@@ -509,10 +508,7 @@ Token::splitKind(int code, Vector<int>& codes)
 		case ']':
 		  {
 		    if (*p == '\0')
-		      {
-			delete [] t;
-			return true;
-		      }
+		      return true;
 		  }
 		case ',':
 		  continue;
@@ -521,7 +517,6 @@ Token::splitKind(int code, Vector<int>& codes)
 	  break;
 	}
     }
-  delete [] t;
   return false;
 }
 

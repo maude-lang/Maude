@@ -49,8 +49,13 @@ protected:
 	       ACU_TreeDagNode* subject,
 	       Substitution& solution) const;
   void collapse(Substitution& solution) const;
+  bool finishTreeCollect(bool reduced, ACU_TreeDagNode* result, Substitution& solution) const;
 
 private:
+  //
+  //	This is the threshold at which we make a tree from an argvec.
+  //
+  static constexpr int COLLECT_THRESHOLD = 17;
   //
   //	The stripper variable/automaton/term in the derived class
   //	strips off one argument.

@@ -1,3 +1,22 @@
+2023-04-26  Steven Eker  <eker@pup>
+
+	* metaMatch.cc (MetaLevelOpSymbol::metaMatch): reverted; passing solutionNr
+	= 0 to recover the previously generated 0th solution is very common; added
+	comment to that effect
+
+	* metaModuleCache.cc (MetaModuleCache::find): reverted hash check because
+	it doesn't pay for itself, and added comment to this effect
+
+	* metaMatch.cc (MetaLevelOpSymbol::metaMatch): check that solutionNr > 0
+	before consulting getCachedStateObject()
+
+2023-04-25  Steven Eker  <eker@pup>
+
+	* metaModuleCache.cc (MetaModuleCache::find): check hash values before
+	equality
+
+===================================Maude146===========================================
+
 2023-04-12  Steven Eker  <eker@pup>
 
 	* miSort.cc (InterpreterManagerSymbol::getMinimalSorts): use empty()

@@ -96,7 +96,8 @@ cd Opt
 --prefix=$OPTLIB \
 --enable-cxx \
 --enable-fat \
---enable-shared=yes
+--enable-shared=yes \
+--build=x86_64-pc-linux-gnu
 
 make
 make check

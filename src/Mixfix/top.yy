@@ -150,7 +150,7 @@ int yylex(YYSTYPE* lvalp);
 %token KW_GET KW_VARIANTS KW_VARIANT
 %token KW_EREWRITE KW_FREWRITE KW_SREWRITE KW_DSREWRITE
 %token KW_CONTINUE KW_SEARCH
-%token KW_SET KW_SHOW KW_ON KW_OFF 
+%token KW_SET KW_SHOW KW_ON KW_OFF KW_ON_DOT KW_OFF_DOT
 %token KW_TRACE KW_BODY KW_BUILTIN KW_WHOLE KW_SELECT KW_DESELECT KW_CONDITION KW_SUBSTITUTION
 %token KW_PRINT KW_GRAPH KW_MIXFIX KW_FLAT KW_ATTRIBUTE KW_NEWLINE
 %token KW_WITH KW_PARENS KW_ALIASES KW_GC KW_TIME KW_STATS KW_TIMING
@@ -244,7 +244,7 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Nonterminals that return bool.
  */
-%type <yyBool> polarity select match optDebug optIrredundant conceal exclude arrow typeName1 typeName1Dot
+%type <yyBool> polarityDot select match optDebug optIrredundant conceal exclude arrow typeName1 typeName1Dot
 /*
  *	Nonterminals that return int.
  */

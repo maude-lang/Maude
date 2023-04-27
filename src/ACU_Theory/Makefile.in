@@ -129,7 +129,8 @@ am_libACU_Theory_a_OBJECTS = libACU_Theory_a-ACU_Symbol.$(OBJEXT) \
 	libACU_Theory_a-ACU_TreeDagArgumentIterator.$(OBJEXT) \
 	libACU_Theory_a-ACU_LazySubproblem.$(OBJEXT) \
 	libACU_Theory_a-ACU_UnificationSubproblem2.$(OBJEXT) \
-	libACU_Theory_a-ACU_BndVarLhsAutomaton.$(OBJEXT)
+	libACU_Theory_a-ACU_BndVarLhsAutomaton.$(OBJEXT) \
+	libACU_Theory_a-ACU_TreeVariableSubproblem.$(OBJEXT)
 libACU_Theory_a_OBJECTS = $(am_libACU_Theory_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -165,6 +166,7 @@ am__depfiles_remade =  \
 	./$(DEPDIR)/libACU_Theory_a-ACU_Term.Po \
 	./$(DEPDIR)/libACU_Theory_a-ACU_TreeDagArgumentIterator.Po \
 	./$(DEPDIR)/libACU_Theory_a-ACU_TreeDagNode.Po \
+	./$(DEPDIR)/libACU_Theory_a-ACU_TreeVariableSubproblem.Po \
 	./$(DEPDIR)/libACU_Theory_a-ACU_UnificationSubproblem2.Po \
 	./$(DEPDIR)/libACU_Theory_a-ACU_VarLhsAutomaton.Po
 am__mv = mv -f
@@ -354,7 +356,8 @@ libACU_Theory_a_SOURCES = \
 	ACU_TreeDagArgumentIterator.cc \
 	ACU_LazySubproblem.cc \
 	ACU_UnificationSubproblem2.cc \
-	ACU_BndVarLhsAutomaton.cc
+	ACU_BndVarLhsAutomaton.cc \
+	ACU_TreeVariableSubproblem.cc
 
 EXTRA_DIST = \
 	ACU_LhsCompiler0.cc \
@@ -392,7 +395,8 @@ noinst_HEADERS = \
 	ACU_TreeDagNode.hh \
 	ACU_VarLhsAutomaton.hh \
 	ACU_UnificationSubproblem2.hh \
-	ACU_BndVarLhsAutomaton.hh
+	ACU_BndVarLhsAutomaton.hh \
+	ACU_TreeVariableSubproblem.hh
 
 all: all-am
 
@@ -460,6 +464,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libACU_Theory_a-ACU_Term.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libACU_Theory_a-ACU_TreeDagArgumentIterator.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libACU_Theory_a-ACU_TreeDagNode.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libACU_Theory_a-ACU_TreeVariableSubproblem.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libACU_Theory_a-ACU_UnificationSubproblem2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libACU_Theory_a-ACU_VarLhsAutomaton.Po@am__quote@ # am--include-marker
 
@@ -763,6 +768,20 @@ libACU_Theory_a-ACU_BndVarLhsAutomaton.obj: ACU_BndVarLhsAutomaton.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libACU_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libACU_Theory_a-ACU_BndVarLhsAutomaton.obj `if test -f 'ACU_BndVarLhsAutomaton.cc'; then $(CYGPATH_W) 'ACU_BndVarLhsAutomaton.cc'; else $(CYGPATH_W) '$(srcdir)/ACU_BndVarLhsAutomaton.cc'; fi`
 
+libACU_Theory_a-ACU_TreeVariableSubproblem.o: ACU_TreeVariableSubproblem.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libACU_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libACU_Theory_a-ACU_TreeVariableSubproblem.o -MD -MP -MF $(DEPDIR)/libACU_Theory_a-ACU_TreeVariableSubproblem.Tpo -c -o libACU_Theory_a-ACU_TreeVariableSubproblem.o `test -f 'ACU_TreeVariableSubproblem.cc' || echo '$(srcdir)/'`ACU_TreeVariableSubproblem.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libACU_Theory_a-ACU_TreeVariableSubproblem.Tpo $(DEPDIR)/libACU_Theory_a-ACU_TreeVariableSubproblem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ACU_TreeVariableSubproblem.cc' object='libACU_Theory_a-ACU_TreeVariableSubproblem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libACU_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libACU_Theory_a-ACU_TreeVariableSubproblem.o `test -f 'ACU_TreeVariableSubproblem.cc' || echo '$(srcdir)/'`ACU_TreeVariableSubproblem.cc
+
+libACU_Theory_a-ACU_TreeVariableSubproblem.obj: ACU_TreeVariableSubproblem.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libACU_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libACU_Theory_a-ACU_TreeVariableSubproblem.obj -MD -MP -MF $(DEPDIR)/libACU_Theory_a-ACU_TreeVariableSubproblem.Tpo -c -o libACU_Theory_a-ACU_TreeVariableSubproblem.obj `if test -f 'ACU_TreeVariableSubproblem.cc'; then $(CYGPATH_W) 'ACU_TreeVariableSubproblem.cc'; else $(CYGPATH_W) '$(srcdir)/ACU_TreeVariableSubproblem.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libACU_Theory_a-ACU_TreeVariableSubproblem.Tpo $(DEPDIR)/libACU_Theory_a-ACU_TreeVariableSubproblem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ACU_TreeVariableSubproblem.cc' object='libACU_Theory_a-ACU_TreeVariableSubproblem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libACU_Theory_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libACU_Theory_a-ACU_TreeVariableSubproblem.obj `if test -f 'ACU_TreeVariableSubproblem.cc'; then $(CYGPATH_W) 'ACU_TreeVariableSubproblem.cc'; else $(CYGPATH_W) '$(srcdir)/ACU_TreeVariableSubproblem.cc'; fi`
+
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
 tags: tags-am
@@ -905,6 +924,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_Term.Po
 	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_TreeDagArgumentIterator.Po
 	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_TreeDagNode.Po
+	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_TreeVariableSubproblem.Po
 	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_UnificationSubproblem2.Po
 	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_VarLhsAutomaton.Po
 	-rm -f Makefile
@@ -970,6 +990,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_Term.Po
 	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_TreeDagArgumentIterator.Po
 	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_TreeDagNode.Po
+	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_TreeVariableSubproblem.Po
 	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_UnificationSubproblem2.Po
 	-rm -f ./$(DEPDIR)/libACU_Theory_a-ACU_VarLhsAutomaton.Po
 	-rm -f Makefile

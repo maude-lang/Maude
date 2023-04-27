@@ -85,14 +85,23 @@ MetaModule*
 MetaModuleCache::find(DagNode* dag)
 {
   int nrPairs = cache.length();
+  //
+  //	First check if we've downed this is exact dag.
+  //
   for (int i = 0; i < nrPairs; i++)
     {
       if (dag == cache[i].dag->getNode())
 	return moveToFront(i);
     }
+  //
+  //	Then check if we've downed an equal dag. Surprisingly this is a very common case.
+  //	It's tempting to compare on getHashValue() as a filter before the expensive equal() 
+  //	call but benchmarking shows that it saves too few calls to pay for itself.
+  //
   for (int i = 0; i < nrPairs; i++)
     {
-      if (dag->equal(cache[i].dag->getNode()))
+      DagNode* cached = cache[i].dag->getNode();
+      if (dag->equal(cached))
 	return moveToFront(i);
     }
   return 0;

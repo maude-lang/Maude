@@ -1,0 +1,27 @@
+Alpha 146 release notes
+========================
+
+
+Changes
+========
+
+(1) Commands that end in "on ." or "off ." are now overparsed for in case
+the space is missing; i.e.
+  set trace on.
+
+(2) Optimizations to AC/ACU matching/rewriting against an example provided by Paco:
+(i) When merging two argument lists under an AC/ACU function symbol, e.g. if normalizing
+f(t, t'), where t, t' are headed by f, the resulting argument list is considered for
+conversion to a red-black tree even if one or both of the original argument lists were not
+red-black trees.
+(ii) Fast paths based on uniform sort criteria for the collector part of the stripper-collector
+matching algorithm and the AC/ACU matching subproblem one variable case.
+(iii) Allow the collector part of the stripper-collector to convert sufficient large argument
+lists to a red-black tree.
+(iv) A new AC/ACU subproblem class for red-black trees when unmatched part consists of a
+stripper variable, a collector variable and all solutions required. This gives the largest
+speed up for Paco's example.
+
+(3) Optimizations for token handling.
+
+(4) Linux version is now built to run on pre-Haswell processors.

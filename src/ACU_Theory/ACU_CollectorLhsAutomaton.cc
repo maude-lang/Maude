@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -79,6 +79,47 @@ ACU_CollectorLhsAutomaton::ACU_CollectorLhsAutomaton(ACU_Symbol* symbol,
     }
 }
 
+
+bool
+ACU_CollectorLhsAutomaton::finishTreeCollect(bool reduced, ACU_TreeDagNode* result, Substitution& solution) const
+{
+  ACU_Symbol* topSymbol = result->symbol();
+  const Sort* cs = collectorSort;
+  if (cs == 0)
+    {
+      //
+      //	The collector sort is maximal (error-free kind) or
+      //	the error sort. Either way sort checks are not needed.
+      //
+      if (reduced)
+	{
+	  int index = topSymbol->getUniqueSortIndex();
+	  Assert(index != 0, "bad uniqueSortIndex");
+	  if (index < 0)
+	    index = result->getTree().computeBaseSort(topSymbol);
+	  result->setSortIndex(index);
+	  result->setReduced();
+	}
+    }
+  else
+    {
+      //
+      //	Need to check sort of the dag we are going to
+      //	bind to the collector variable.
+      //
+      int index = result->getTree().computeBaseSort(topSymbol);
+      if (!leq(index, cs))
+	return false;
+      if (reduced)
+	{
+	  result->setSortIndex(index);
+	  result->setReduced();
+	}
+    }
+  solution.bind(collectorVarIndex, result);
+  return true;
+}
+
 bool
 ACU_CollectorLhsAutomaton::collect(int stripped,
 				   ACU_DagNode* subject,
@@ -133,12 +174,29 @@ ACU_CollectorLhsAutomaton::collect(int stripped,
     *dest = *source;
   Assert(dest == d->argArray.end(), "iterators inconsistant");
   //
+  //	Check if we want to make a tree.
+  //
+  bool reduced = subject->isReduced();
+  if (topSymbol->useTree() && nrArgs >= COLLECT_THRESHOLD)
+    {
+      //
+      //	Transform our new ACU_DagNode into an ACU_TreeDagNode.
+      //
+      ACU_Tree t(d->argArray);
+      return finishTreeCollect(reduced, new (d) ACU_TreeDagNode(topSymbol, t), solution);
+    }
+  //
   //	Do any sort calculations needed.
   //
   const Sort* cs = collectorSort;
   if (cs == 0)
     {
-      if (subject->isReduced())
+      //
+      //	The collector sort is maximal (error-free kind) or the error sort.
+      //	Either way sort checks are not needed, but if the subject was reduced
+      //	its ACU subterm can also be marked as reduced after we calculate the sort.
+      //
+      if (reduced)
 	{
 	  int index = topSymbol->getUniqueSortIndex();
 	  Assert(index != 0, "bad uniqueSortIndex");
@@ -150,10 +208,27 @@ ACU_CollectorLhsAutomaton::collect(int stripped,
     }
   else
     {
-      int index = d->argVecComputeBaseSort();
+      int index;
+      const Sort* u = topSymbol->uniformSort();
+      if (u != nullptr && reduced && subject->getSortIndex() != Sort::ERROR_SORT)
+	{
+	  //
+	  //	The symbol topSymbol has a uniform sort u, so barring sort constraints, any term which
+	  //	it heads must have sort u if all the subterms have sort <= u and the error sort otherwise.
+	  //
+	  //	Because the subject was reduced, it must have had its sort computed, and in the
+	  //	absence of sort constraints, since it doesn't have the error sort, it must have sort u.
+	  //	Thus all of its subterms have sorts <= u and thus our proposed binding, d, must have sort u.
+	  //		  
+	  index = u->index();
+	  Assert(subject->getSortIndex() == index, "bad sort index " << subject->getSortIndex() <<
+		     " was expecting " << index << " for " << u);
+	}
+      else
+	index = d->argVecComputeBaseSort();
       if (!leq(index, cs))
 	return false;
-      if (subject->isReduced())
+      if (reduced)
 	{
 	  d->setSortIndex(index);
 	  d->setReduced();

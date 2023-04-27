@@ -69,6 +69,7 @@
 #include "ACU_LhsAutomaton.hh"
 #include "ACU_Subproblem.hh"
 #include "ACU_LazySubproblem.hh"
+#include "ACU_TreeVariableSubproblem.hh"
 #include "ACU_ExtensionInfo.hh"
 
 //	our stuff
@@ -93,7 +94,8 @@ ACU_LhsAutomaton::ACU_LhsAutomaton(ACU_Symbol* symbol,
   totalNonGroundAliensMultiplicity = 0;
   uniqueCollapseAutomaton = 0;
   treeMatchOK = true;
-  collectorSeen = matchAtTop;
+  collectorSeen = matchAtTop;  // consider extension as collector
+  stripperVariableSeen = false;
   nrExpectedUnboundVariables = 0;
 } 
 
@@ -130,11 +132,12 @@ ACU_LhsAutomaton::addTopVariable(const VariableTerm* variable,
 {
   Sort* s = variable->getSort();
   int bound = topSymbol->sortBound(s);
-  collectorSeen = collectorSeen ||
-    (!willBeBound && bound == UNBOUNDED && multiplicity == 1);
+  collectorSeen = collectorSeen || (!willBeBound && bound == UNBOUNDED && multiplicity == 1);  // can it serve as colletor?
   if (!willBeBound)
     ++nrExpectedUnboundVariables;
   bool takeIdentity = topSymbol->takeIdentity(s);
+  if (!willBeBound && !takeIdentity && bound == 1)
+    stripperVariableSeen = true;
   int nrTopVariables = topVariables.length();
   topVariables.expandBy(1);
   TopVariable& tv = topVariables[nrTopVariables];
@@ -251,15 +254,22 @@ ACU_LhsAutomaton::complete(MatchStrategy strategy,
       else if (strategy == FULL)
 	{
 	  //
-	  //	We now allow non-greedy tree matching if there is a single
-	  //	NGA with multiplicity 1, a single unbound variable with
-	  //	multiplicity 1 and no extension.
+	  //	We now allow full tree matching in two common special cases.
 	  //
-	  treeMatchOK = collectorSeen &&
-	    !matchAtTop &&
-	    nrExpectedUnboundVariables == 1 &&
-	    nonGroundAliens.length() == 1 &&
-	    nonGroundAliens[0].multiplicity == 1;
+	  //	We potentially have an variable stripper-collector situation if we have two unbound
+	  //	variables and one is element variable.
+	  //
+	  bool varStripper = nrExpectedUnboundVariables == 2 && stripperVariableSeen;
+	  //
+	  //	We potentially have an nga stripper-collector situation if we have one unbound variable
+	  //	and a single nga which must have multiplicity 1.
+	  bool ngaStripper = nrExpectedUnboundVariables == 1 && nonGroundAliens.length() == 1 && nonGroundAliens[0].multiplicity == 1;
+	  //
+	  //	In either situation, we need a collector variable and we cannot be at the top (since
+	  //	extension would provided multiple ways of splitting the remaining subterm arguments between
+	  //	the collector variable and extension).
+	  //
+	  treeMatchOK = collectorSeen && !matchAtTop && (varStripper || ngaStripper);
 	}
       else
 	treeMatchOK = false;

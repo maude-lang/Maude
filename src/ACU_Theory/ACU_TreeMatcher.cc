@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 //      Implementation for AC/ACU matcher that works on red-black trees.
 //
 
-local_inline int
+inline int
 ACU_LhsAutomaton::eliminateBoundVariables(Substitution& solution)
 {
   nrUnboundVariables = 0;
@@ -35,8 +35,8 @@ ACU_LhsAutomaton::eliminateBoundVariables(Substitution& solution)
       if (d != 0)
 	{
 	  if (d->symbol() == topSymbol)
-	    return UNDECIDED;
-	  if (identity == 0 || !(identity->equal(d)))
+	    return UNDECIDED;  // variable was bound to a term with our top symbol - needs a more complicated analysis
+	  if (identity == 0 || !(identity->equal(d)))  // we can ignore variables bound to our identity
 	    {
 	      ACU_SlowIter j;
 	      if (current.getSize() == 0 || !(current.find(d, j)))
@@ -79,8 +79,7 @@ ACU_LhsAutomaton::eliminateGroundedOutAliens(Substitution& solution)
       Term* t = i.term;
       Assert(t != 0, "shouldn't be running on unstable terms");
       ACU_SlowIter j;
-      if (current.getSize() != 0 &&
-	  current.findFirstPotentialMatch(t, solution, j))
+      if (current.getSize() != 0 && current.findFirstPotentialMatch(t, solution, j))
 	{
 	  LhsAutomaton* a = i.automaton;
 	  DagNode* d = j.getDagNode();
@@ -130,8 +129,7 @@ ACU_LhsAutomaton::greedyMatch(ACU_TreeDagNode* subject,
       Term* t = i->term;
       Assert(t != 0, "shouldn't be running on unstable terms");
       ACU_SlowIter j;
-      if (current.getSize() != 0 &&
-	  current.findFirstPotentialMatch(t, solution, j))
+      if (current.getSize() != 0 && current.findFirstPotentialMatch(t, solution, j))
 	{
 	  int multiplicity = i->multiplicity;
 	  LhsAutomaton* a = i->automaton;
@@ -518,6 +516,57 @@ ACU_LhsAutomaton::greedyPureMatch(ACU_TreeDagNode* subject,
 }
 
 int
+ACU_LhsAutomaton::fullVariableMatch(ACU_TreeDagNode* subject,
+				    Substitution& solution,
+				    Subproblem*& returnedSubproblem)
+{
+  //
+  //	Everything has been matched except for two variables which should have multiplicity 1,
+  //	and we need to generate all solutions.
+  //	If one variable is an element variable and the other can take unbounded multiplicity, we
+  //	create an ACU_TreeVariableSubproblem() to generate all matches efficiently using the
+  //	stripper-collector technique on the red-black tree.
+  //
+  int stripperVarIndex = NONE;
+  Sort* stripperSort = nullptr;
+  int collectorVarIndex = NONE;
+  Sort* collectorSort = nullptr;
+  for (const TopVariable& tv : topVariables)
+    {
+      if (solution.value(tv.index) == nullptr)
+	{
+	  Assert(tv.multiplicity == 1, "multiplicity = " << tv.multiplicity);
+	  if (tv.upperBound == 1)
+	    {
+	      Assert(!tv.takeIdentity, "stripper takes identity");
+	      Assert(stripperVarIndex == NONE, "double stripper");
+	      stripperVarIndex = tv.index;
+	      stripperSort = tv.sort;
+	    }
+	  else
+	    {
+	      Assert(tv.upperBound == UNBOUNDED, "upperBound = " << tv.upperBound);
+	      Assert(collectorVarIndex == NONE, "double collector");
+	      collectorVarIndex = tv.index;
+	      collectorSort = tv.sort;
+	    }
+	}
+    }
+  Assert(stripperVarIndex != NONE && collectorVarIndex != NONE, "didn't find stripper-collector variables");
+  if (stripperVarIndex != NONE && collectorVarIndex != NONE)
+    {
+      returnedSubproblem = new ACU_TreeVariableSubproblem(subject,
+							  current,
+							  stripperVarIndex,
+							  stripperSort,
+							  collectorVarIndex,
+							  collectorSort);
+      return true;
+    }
+  return UNDECIDED;
+}
+
+int
 ACU_LhsAutomaton::treeMatch(ACU_TreeDagNode* subject,
 			    Substitution& solution,
 			    Subproblem*& returnedSubproblem,
@@ -550,6 +599,12 @@ ACU_LhsAutomaton::treeMatch(ACU_TreeDagNode* subject,
     }
   if (matchStrategy == FULL)
     {
+      if (nrUnboundVariables == 2)
+	{
+	  Assert(extensionInfo == 0, "should not have extension");
+	  Assert(nonGroundAliens.empty(), "non ground alien with two unbound variables");
+	  return fullVariableMatch(subject, solution, returnedSubproblem);
+	}
       //
       //	We're here because treeMatchOK was true, which implies:
       //	  We're not matching at the top

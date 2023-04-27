@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -342,7 +342,8 @@ ACU_Subproblem::oneVariableCase(const Vector<int>& multVec, RewritingContext& so
     }
   else
     {
-      ACU_DagNode* a = new ACU_DagNode(subject->symbol(), nrSubterms, ACU_DagNode::ASSIGNMENT);
+      ACU_Symbol* s = subject->symbol();
+      ACU_DagNode* a = new ACU_DagNode(s, nrSubterms, ACU_DagNode::ASSIGNMENT);
       ArgVec<ACU_DagNode::Pair>::const_iterator source = subject->argArray.begin();
       ArgVec<ACU_DagNode::Pair>::iterator dest = a->argArray.begin();
       for (int i = 0; i <= last; ++i, ++source)
@@ -355,6 +356,36 @@ ACU_Subproblem::oneVariableCase(const Vector<int>& multVec, RewritingContext& so
 	      ++dest;
 	    }
 	}
+      if (const Sort* u = s->uniformSort())
+	{
+	  //
+	  //	The symbol s has a uniform sort u, so barring sort constraints, any term which
+	  //	it heads must have sort u if all the subterms have sort <= u and the error sort otherwise.
+	  //
+	  if (subject->isReduced() && subject->getSortIndex() != Sort::ERROR_SORT && s->sortConstraintFree())
+	    {
+	      //
+	      //	Because the subject was reduced, it must have had its sort computed, and in the
+	      //	absence of sort constraints, since it doesn't have the error sort, it must have sort u.
+	      //	Thus all of its subterms have sorts <= u and thus our proposed binding, a, must have sort u.
+	      //		  
+	      int uniSortIndex = u->index();
+	      Assert(subject->getSortIndex() == uniSortIndex, "bad sort index " << subject->getSortIndex() <<
+		     " was expecting " << uniSortIndex << " for " << u);
+	      if (leq(uniSortIndex, tv.sort))
+		{
+		  a->setSortIndex(uniSortIndex);
+		  a->setReduced();
+		  solution.bind(tv.index, a);
+		  return true;
+		}
+	      else
+		return false;
+	    }
+	}
+      //
+      //	General path.
+      //
       if (!(a->checkSort(tv.sort, solution)))
 	return false;
       if (subject->isReduced() && a->getSortIndex() != Sort::SORT_UNKNOWN)

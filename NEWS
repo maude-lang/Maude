@@ -1,3 +1,9 @@
+Overview of Changes in alpha146 (2023-04-26)
+============================================
+* overparsing for commands that end in on/off
+* optimizations for AC/ACU matching
+* optimizations for token handling
+
 Overview of Changes in Maude 3.3.1 (alpha145) (2023-04-13)
 ==========================================================
 * fixed a bug where internal error and stack overflow messages

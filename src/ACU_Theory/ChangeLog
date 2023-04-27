@@ -1,3 +1,104 @@
+2023-04-26  Steven Eker  <eker@pup>
+
+	* ACU_CollectorLhsAutomaton.cc: use COLLECT_THRESHOLD rather than magic
+	number
+
+	* ACU_CollectorLhsAutomaton.hh (class ACU_CollectorLhsAutomaton): added
+	COLLECT_THRESHOLD
+
+	* ACU_DagNode.hh (class ACU_DagNode): revert MERGE_THRESHOLD to 16
+	now that we have ACU_TreeVariableSubproblem
+
+2023-04-25  Steven Eker  <eker@pup>
+
+	* ACU_TreeVariableSubproblem.cc
+	(ACU_TreeVariableSubproblem::~ACU_TreeVariableSubproblem): restored
+
+	* ACU_TreeVariableSubproblem.hh (class ACU_TreeVariableSubproblem):
+	restored dtor decl
+
+	* ACU_TreeMatcher.cc (ACU_LhsAutomaton::fullVariableMatch): don't pass
+	solution to ACU_TreeVariableSubproblem()
+
+	* ACU_TreeVariableSubproblem.hh (class ACU_TreeVariableSubproblem):
+	deleted data members matchTime, local; bindCollector() -> collect();
+	updated decl for ctor; deleted decl for dtor
+
+	* ACU_TreeVariableSubproblem.cc
+	(ACU_TreeVariableSubproblem::ACU_TreeVariableSubproblem): don't initialize
+	matchTime; reserve() space in previous
+	(ACU_TreeVariableSubproblem::~ACU_TreeVariableSubproblem): deleted
+	(ACU_TreeVariableSubproblem::bindCollector): becomes collect()
+	(ACU_TreeVariableSubproblem::solve): rewritten
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton::addTopVariable): added comment;
+	update stripperVariableSeen
+	(ACU_LhsAutomaton::ACU_LhsAutomaton): added comment; initialize
+	stripperVariableSeen
+	(ACU_LhsAutomaton::complete): allow treeMatchOK variable stripper-collector
+	case
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decl for
+	fullVariableMatch()
+
+	* ACU_TreeMatcher.cc (ACU_LhsAutomaton::eliminateBoundVariables): added
+	comments; switched from local_inline to inline to check if outlined
+	version still included in binary
+	(ACU_LhsAutomaton::fullVariableMatch): added
+	(ACU_LhsAutomaton::treeMatch): use fullVariableMatch()
+
+2023-04-24  Steven Eker  <eker@pup>
+
+	* ACU_Theory.hh: added class ACU_LazySubproblem and class
+	ACU_TreeVariableSubproblem
+
+	* ACU_TreeVariableSubproblem.cc: created
+
+	* ACU_TreeVariableSubproblem.hh (class ACU_TreeVariableSubproblem):
+	store Vector<LocalBinding*> and get rid of struct Alternative
+
+2023-04-21  Steven Eker  <eker@pup>
+
+	* ACU_TreeVariableSubproblem.hh: created
+
+	* ACU_LhsCompiler0.cc (ACU_Term::tryToMakeCollectorLhsAutomaton):
+	code cleaning, fixed mistake in comments
+
+2023-04-20  Steven Eker  <eker@pup>
+
+	* ACU_CollectorLhsAutomaton.cc (ACU_CollectorLhsAutomaton::collect):
+	don't need to check for sortConstraintFree() in uniform sort case;
+	reorganized
+
+	* ACU_CollectorLhsAutomaton.hh (class ACU_CollectorLhsAutomaton): added
+	decl for finishTreeCollect()
+
+	* ACU_CollectorLhsAutomaton.cc
+	(ACU_CollectorLhsAutomaton::finishTreeCollect): added
+	(ACU_CollectorLhsAutomaton::collect): use finishTreeCollect()
+
+2023-04-19  Steven Eker  <eker@pup>
+
+	* ACU_Subproblem.cc (ACU_Subproblem::oneVariableCase): test for uniform
+	sort property first since this in the most likely to fail
+
+	* ACU_CollectorLhsAutomaton.cc (ACU_CollectorLhsAutomaton::collect):
+	added fast path for uniform sort structure
+
+	* ACU_Subproblem.cc (ACU_Subproblem::oneVariableCase): cleaned up
+	fast path and added explanation
+
+2023-04-18  Steven Eker  <eker@pup>
+
+	* ACU_Subproblem.cc (ACU_Subproblem::oneVariableCase): added fast
+	path
+
+	* ACU_Normalize.cc (ACU_DagNode::normalizeAtTop): rewrote two theory
+	normal forms subcase to always consider conversion to tree form
+
+	* ACU_DagNode.hh (class ACU_DagNode): set MERGE_THRESHOLD to 24 based
+	on experiments - territory above 24 is very spikey
+
 2023-04-13  Steven Eker  <eker@pup>
 
 	* ACU_LhsCompiler1.cc (ACU_Term::analyseConstraintPropagation): use
@@ -1280,7 +1381,7 @@
 	rewriteAtTopNoOwise() for first 0 in semi-eager case
 	(memoStrategy): ditto
 	(rewriteAtTopNoOwise): added
-	
+
 ===================================Maude82===========================================
 
 2003-07-31  Steven Eker  <eker@goo.csl.sri.com>
@@ -1601,7 +1702,7 @@
 
 	* ACU_Symbol.hh (computeMultSortIndex): deleted
 	(computeSortIndex): deleted
-	
+
 ===================================Maude80a===========================================
 
 2003-05-02  Steven Eker  <eker@goo.csl.sri.com>
@@ -2439,7 +2540,7 @@
 	* ACU_AlienAlienLhsAutomaton.cc: removed #pragma
 
 	* ACU_AlienAlienLhsAutomaton.hh: removed #pragma
-	
+
 ===================================Maude79===========================================
 
 2003-02-20  Steven Eker  <eker@goo.csl.sri.com>
@@ -3276,10 +3377,9 @@
 
 	* ACU_Term.hh (class ACU_Term): added declarations for
 	findAvailableTerms() and compileRhs2()
-	
+
 ===================================Engine59==================================================
 
-	
 2000-07-05  Steven Eker  <eker@goo.csl.sri.com>
 
 	* ACU_LhsCompiler0.cc (compileLhs2): call to compileLhs2() becomes
@@ -3287,7 +3387,7 @@
 
 	* ACU_LhsCompiler1.cc (compileLhs2): becomes compileLhs3()
 
-	* ACU_Term.hh (class ACU_Term): old compileLhs2() -> compileLhs3() 
+	* ACU_Term.hh (class ACU_Term): old compileLhs2() -> compileLhs3()
 
 	* ACU_LhsCompiler0.cc (compileLhs): becomes compileLhs2()
 
@@ -3317,7 +3417,7 @@
 	* ACU_CollectorLhsAutomaton.cc (ACU_CollectorLhsAutomaton):
 	index() -> getIndex()
 	(ACU_CollectorLhsAutomaton): lookupSort() -> getSort()
-	
+
 ===================================Engine58==================================================
 
 2000-03-17  Steven Eker  <eker@goo.csl.sri.com>
@@ -3358,7 +3458,7 @@
 	* ACU_GndLhsAutomaton.cc (dump): ifdef'd
 
 	* ACU_GndLhsAutomaton.hh (class ACU_GndLhsAutomaton): use
-	NO_COPYING() macro; ifdef'd dump() decl 
+	NO_COPYING() macro; ifdef'd dump() decl
 
 	* ACU_CollectorLhsAutomaton.cc (dump): ifdef'd
 
@@ -3379,14 +3479,14 @@
 	* ACU_NonLinearLhsAutomaton.cc (match): fixed nasty bug:
 	if (nrArgs == 1 || args[0].multiplicity == fastMult) should be
 	if (nrArgs == 1 && args[0].multiplicity == fastMult)
-	
+
 ===================================Engine56==================================================
 
 2000-01-31  Steven Eker  <eker@goo.csl.sri.com>
 
 	* ACU_Subproblem.cc (solveVariables): allow collection of garbage
 	in fail case to avoid build up of failed solutions
-	
+
 ===================================Engine54==================================================
 
 1999-11-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -3405,7 +3505,7 @@
 
 	* ACU_Symbol.cc (ACU_Symbol): use new AssociativeSymbol
 	conventions
-	
+
 ===================================Engine53==================================================
 
 1999-10-26  Steven Eker  <eker@goo.csl.sri.com>
@@ -3819,7 +3919,7 @@ Wed Sep  9 11:52:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* ACU_Symbol.cc (compileOpDeclarations): call
 	commutativeSortCompletion() before Symbol::compileOpDeclarations()
 	due to new implementation
-	
+
 ===================================Engine40==================================================
 
 Mon Jul 20 19:35:25 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3830,7 +3930,7 @@ Mon Jul 20 19:35:25 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	(ACU_Term): added new ctor
 
 	* ACU_Term.hh (class ACU_Term): added decl for deepCopy()
-	
+
 ===================================Engine39==================================================
 
 Wed Jun 10 11:57:08 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3855,13 +3955,13 @@ Wed Jun 10 11:57:08 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* ACU_LhsCompiler0.cc: IntSet -> NatSet
 
 	* ACU_Term.hh: IntSet -> NatSet
-	
+
 ===================================Engine38==================================================
 
 Wed Jun  3 16:29:33 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* ACU_Term.cc (normalize): use earlyGetIdentity()
-	
+
 ===================================Engine37==================================================
 
 Fri Mar  6 17:22:37 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -3890,7 +3990,7 @@ Fri Feb 20 17:27:13 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* ACU_DagNode.cc (stackArguments): only stack arguments that are
 	not flagged as unstackable
-	
+
 ===================================Engine36==================================================
 
 Sat Feb 14 14:45:02 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -4140,9 +4240,9 @@ Mon Nov 24 11:09:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* ACU_LhsCompiler0.cc (compileLhs): rewrutten
 	(tryToMakeFastAutomation2): renamed to
-	tryToMakeAlienAlienLhsAutomaton() 
+	tryToMakeAlienAlienLhsAutomaton()
 	(tryToMakeFastAutomaton): renamed to
-	tryToMakeCollectorLhsAutomaton() 
+	tryToMakeCollectorLhsAutomaton()
 	(tryToMakeCollectorLhsAutomaton): rewrittten to use new derived classes
 
 	* ACU_GndLhsAutomaton.cc: created
@@ -4193,7 +4293,7 @@ Sun Nov 23 17:27:37 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* ACU_CollectorLhsAutomaton.hh: created from
 	ACU_FastLhsAutomaton.hh
-	
+
 ===================================Engine33==================================================
 
 Fri Nov 21 14:28:50 1997  Steven Eker  <eker@lilac.csl.sri.com>

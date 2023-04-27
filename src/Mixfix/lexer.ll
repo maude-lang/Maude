@@ -182,6 +182,8 @@ set					return KW_SET;
 show					return KW_SHOW;
 on					return KW_ON;
 off					return KW_OFF;
+"on."					return KW_ON_DOT;
+"off."					return KW_OFF_DOT;
 trace					return KW_TRACE;
 advise|advisory|advisories		return KW_ADVISE;
 verbose					return KW_VERBOSE;
