@@ -1,0 +1,43 @@
+set show timing off .
+***
+***	Test that red-black ACU stripper-collector full matcher isn't run if there is an non-ground alien.
+***
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .
+
+var S : Set .
+var M : Nat .
+  op h : Set -> Set .
+  op i : Nat -> Nat .
+  ceq h(f(N, S, i(M))) = 0 if N > 0 .
+endfm
+
+red h(g(7)) .
+red h(g(8)) .
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .
+
+var S : Set .
+var M : Nat .
+  op h : Set -> Set .
+  op i : Nat -> Nat .
+  ceq h(f(N, S, i(M))) = M if N > 0 .
+endfm
+
+red h(g(8)) .

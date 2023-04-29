@@ -1,3 +1,74 @@
+2023-04-28  Steven Eker  <eker@pup>
+
+	* ACU_TreeMatcher.cc (ACU_LhsAutomaton::loneSubjectNGA_Case): need to
+	bind the collector variable before attempting a match() which might
+	also want to bind it
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added decl for
+	loneSubjectNGA_Case()
+
+	* ACU_TreeMatcher.cc (ACU_LhsAutomaton::loneSubjectVariableCase): added
+	(ACU_LhsAutomaton::treeMatch): use loneSubjectVariableCase() rather than
+	returing UNDECIDED
+	(ACU_LhsAutomaton::loneSubjectNGA_Case): added
+	(ACU_LhsAutomaton::treeMatch): use loneSubjectNGA_Case(); don't return
+	UNDECIDED once we're in FULL match case
+
+	* ACU_TreeGreedyMatcher.cc (ACU_LhsAutomaton::greedyMatch)
+	(ACU_LhsAutomaton::tryToBindVariable)
+	(ACU_LhsAutomaton::makeHighMultiplicityAssignment)
+	(ACU_LhsAutomaton::tryToBindLastVariable)
+	(ACU_LhsAutomaton::greedyPureMatch): moved here
+
+	* ACU_TreeMatcher.cc (ACU_LhsAutomaton::eliminateGroundedOutAliens):
+	code cleaning
+	(ACU_LhsAutomaton::eliminateBoundVariables): go back to local_inline
+	so we can control this if the compiler supports control of inlining
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): deleted decls for
+	fullVariableMatch() and fullNGA_Match()
+
+	* ACU_TreeMatcher.cc (ACU_LhsAutomaton::treeMatch): create
+	ACU_TreeVariableSubproblem directly; don't call fullVariableMatch()
+	(ACU_LhsAutomaton::treeMatch): create ACU_LazySubproblem directly;
+	don't call fullNGA_Match()
+	(ACU_LhsAutomaton::fullVariableMatch): deleted
+	(ACU_LhsAutomaton::fullNGA_Match): deleted
+	(ACU_LhsAutomaton::eliminateBoundVariables): code cleaning
+	(ACU_LhsAutomaton::treeMatch): need to use variable index in substitution,
+	not in automaton
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton::addTopVariable): fill out
+	collectorIndex and stripperIndex rather than collectorSeen and
+	stripperVariableSeen
+	(ACU_LhsAutomaton::complete): use collectorIndex and stripperIndex
+	rather than collectorSeen and stripperVariableSeen
+	(ACU_LhsAutomaton::dump): print collectorIndex and stripperIndex;
+	don't print collectorSeen
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added data members
+	collectorIndex and stripperIndex; deleted data members collectorSeen
+	and stripperVariableSeen
+
+2023-04-27  Steven Eker  <eker@pup>
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): updated decl for
+	fullVariableMatch(); added decl for fullNGA_Match()
+
+	* ACU_TreeMatcher.cc (ACU_LhsAutomaton::fullNGA_Match): added to hold
+	the NAG case code
+	(ACU_LhsAutomaton::treeMatch): use fullNGA_Match()
+	(ACU_LhsAutomaton::fullVariableMatch): don't return value
+	(ACU_LhsAutomaton::treeMatch): use new fullVariableMatch(); bail if
+	we are in two variable case and we only have 0 or 1 subject arguments left
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton::addTopVariable): fix bug where
+	we were not requiring stripper variable to have multiplicity 1
+	(ACU_LhsAutomaton::complete): fix bug where we were not requiring
+	nonGroundAliens.length() == 0 for varStripper to be true
+
+===================================Maude147===========================================
+
 2023-04-26  Steven Eker  <eker@pup>
 
 	* ACU_CollectorLhsAutomaton.cc: use COLLECT_THRESHOLD rather than magic
@@ -98,6 +169,8 @@
 
 	* ACU_DagNode.hh (class ACU_DagNode): set MERGE_THRESHOLD to 24 based
 	on experiments - territory above 24 is very spikey
+
+===================================Maude146===========================================
 
 2023-04-13  Steven Eker  <eker@pup>
 

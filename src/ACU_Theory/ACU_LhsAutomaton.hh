@@ -194,6 +194,15 @@ private:
   int eliminateBoundVariables(Substitution& solution);
   bool eliminateGroundAliens();
   bool eliminateGroundedOutAliens(Substitution& solution);
+  bool forcedLoneVariableCase(ACU_TreeDagNode* subject,
+			      const TopVariable& tv,
+			      Substitution& solution,
+			      Subproblem*& returnedSubproblem);
+  bool loneSubjectVariableCase(Substitution& solution);
+  bool loneSubjectNGA_Case(Substitution& solution, Subproblem*& returnedSubproblem);
+  //
+  //	Greedy tree matcher.
+  //
   int greedyMatch(ACU_TreeDagNode* subject,
 		  Substitution& solution,
 		  ACU_ExtensionInfo* extensionInfo);
@@ -204,13 +213,6 @@ private:
   bool greedyPureMatch(ACU_TreeDagNode* subject,
 		       Substitution& solution,
 		       ACU_ExtensionInfo* extensionInfo);
-  bool forcedLoneVariableCase(ACU_TreeDagNode* subject,
-			      const TopVariable& tv,
-			      Substitution& solution,
-			      Subproblem*& returnedSubproblem);
-  int fullVariableMatch(ACU_TreeDagNode* subject,
-			Substitution& solution,
-			Subproblem*& returnedSubproblem);
   //
   //	ArgVec greedy matcher.
   //
@@ -250,8 +252,8 @@ private:
   const bool matchAtTop;
   const bool collapsePossible;
   bool treeMatchOK;
-  bool collectorSeen;
-  bool stripperVariableSeen;
+  int stripperIndex;
+  int collectorIndex;
   MatchStrategy matchStrategy;
   int totalLowerBound;  // must have at least this total mutiplicity of subjects
   int totalUpperBound;	// can't have more than this total mutiplicity of subjects

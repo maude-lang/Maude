@@ -1,0 +1,23 @@
+set show timing off .
+***
+***	Test that red-black ACU stripper-collector full matcher isn't run on nonlinear patterns.
+***
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .
+
+var S : Set .
+  op h : Set -> Set .
+  ceq h(f(N, N, S)) = S if N > 0 .
+endfm
+
+red h(f(2, g(6))) .
+red h(f(2, g(7))) .
+red h(f(2, g(20))) .

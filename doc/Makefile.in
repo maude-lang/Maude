@@ -246,7 +246,8 @@ EXTRA_DIST = \
 	alpha143.txt \
 	alpha144.txt \
 	alpha145.txt \
-	alpha146.txt
+	alpha146.txt \
+	alpha147.txt
 
 all: all-am
 

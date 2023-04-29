@@ -1,0 +1,139 @@
+Alpha 147 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug in the new ACU optimized matching when a nonlinear variable
+could be used as a stripper variable by mistake producing wrong matches. For
+example:
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .
+
+var S : Set .
+  op h : Set -> Set .
+  ceq h(f(N, N, S)) = S if N > 0 .
+endfm
+
+reduce in FOO : h(f(2, g(6))) .
+rewrites: 9 in 0ms cpu (0ms real) (~ rewrites/second)
+result Set: f(0, 1, 3, 4, 5, 6)
+*** correct
+
+reduce in FOO : h(f(2, g(7))) .
+rewrites: 11 in 0ms cpu (0ms real) (~ rewrites/second)
+result Set: f(0, 2, 2, 3, 4, 5, 6, 7)
+*** wrong
+
+Here once the AC argument list gets large enough (>= 8 distinct values) it
+is converted to a red-black tree and the new code runs for the conditional
+equation, even though N has multiplicity > 1 and in fact the pattern is
+treated as h(f(N, S)) so 1 is stripped from the argument list rather than 2.
+
+(2) A bug where the new ACU optimized matching did not deal with fewer than
+two subject subterms remaining. The following examples show crashes where
+only 1 or 0 subject subterms are remaining when the new code executes.
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .
+
+var S : Set .
+  op h : Set -> Set .
+  ceq h(f(N, S)) = h(S) if N > 0 .
+  ceq h(f(0, N, S)) = 0 if N > 0 .
+endfm
+
+red h(f(g(7), 0)) .
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .
+
+var S : Set .
+  op h : Set -> Set .
+  ceq h(f(N, S)) = h(S) if N > 0 .
+  ceq h(f(0, 0, N, S)) = 0 if N > 0 .
+endfm
+
+red h(f(g(7), 0)) .
+
+(3) A bug where the new ACU optimized matching was mistakenly used when there
+was a non-ground alien present. For example:
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .
+
+var S : Set .
+var M : Nat .
+  op h : Set -> Set .
+  op i : Nat -> Nat .
+  ceq h(f(N, S, i(M))) = 0 if N > 0 .
+endfm
+
+reduce in FOO : h(g(7)) .
+rewrites: 8 in 0ms cpu (0ms real) (~ rewrites/second)
+result Set: h(f(0, 1, 2, 3, 4, 5, 6, 7))
+*** correct
+
+reduce in FOO : h(g(8)) .
+rewrites: 12 in 0ms cpu (0ms real) (~ rewrites/second)
+result Zero: 0
+*** wrong
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .
+
+var S : Set .
+var M : Nat .
+  op h : Set -> Set .
+  op i : Nat -> Nat .
+  ceq h(f(N, S, i(M))) = M if N > 0 .
+endfm
+
+red h(g(8)) .
+*** crashes
+
+
+Other changes
+==============
+
+(1) Stripper and collector variables for AC/ACU red-black matching are recorded at
+compile time to avoid searching at match time.
+
+(2) AC/ACU red-black matching handles more cases that were previously handed to the
+(slow) backstop AC/ACU matching algorithm.

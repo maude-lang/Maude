@@ -1,3 +1,13 @@
+2023-04-28  Steven Eker  <eker@pup>
+
+	* tests/ResolvedBugs/redBlackNGA_April2023.maude: added
+
+	* tests/ResolvedBugs/redBlackTooFewSubjectsApril2023.maude: added
+
+	* tests/ResolvedBugs/redBlackNonLinearApril2023.maude: added
+
+===================================Maude147===========================================
+
 2023-04-13  Steven Eker  <eker@pup>
 
 	* tests/Corner/attributeOverparsing.maude: added latex examples
@@ -10,7 +20,7 @@
 
 	* tests/Corner/fakeParameterSort.maude: added
 
-===================================Maude144===========================================
+===================================Maude145===========================================
 
 2023-04-10  Steven Eker  <eker@pup>
 

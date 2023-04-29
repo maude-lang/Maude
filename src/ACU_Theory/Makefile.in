@@ -368,6 +368,7 @@ EXTRA_DIST = \
 	ACU_GreedyMatcher.cc \
 	ACU_CollapseMatcher.cc \
 	ACU_TreeMatcher.cc \
+	ACU_TreeGreedyMatcher.cc \
 	ACU_DagOperations.cc \
 	ACU_FastMerge.cc \
 	ACU_Normalize.cc \

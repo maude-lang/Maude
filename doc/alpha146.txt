@@ -1,7 +1,6 @@
 Alpha 146 release notes
 ========================
 
-
 Changes
 ========
 

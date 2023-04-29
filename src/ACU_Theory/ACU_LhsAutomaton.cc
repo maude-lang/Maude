@@ -74,6 +74,7 @@
 
 //	our stuff
 #include "ACU_TreeMatcher.cc"
+#include "ACU_TreeGreedyMatcher.cc"
 #include "ACU_CollapseMatcher.cc"
 #include "ACU_Matcher.cc"
 #include "ACU_GreedyMatcher.cc"
@@ -94,8 +95,8 @@ ACU_LhsAutomaton::ACU_LhsAutomaton(ACU_Symbol* symbol,
   totalNonGroundAliensMultiplicity = 0;
   uniqueCollapseAutomaton = 0;
   treeMatchOK = true;
-  collectorSeen = matchAtTop;  // consider extension as collector
-  stripperVariableSeen = false;
+  stripperIndex = NONE;
+  collectorIndex = NONE;
   nrExpectedUnboundVariables = 0;
 } 
 
@@ -130,15 +131,25 @@ ACU_LhsAutomaton::addTopVariable(const VariableTerm* variable,
 				 int multiplicity,
 				 bool willBeBound)
 {
+  int nrTopVariables = topVariables.length();
   Sort* s = variable->getSort();
   int bound = topSymbol->sortBound(s);
-  collectorSeen = collectorSeen || (!willBeBound && bound == UNBOUNDED && multiplicity == 1);  // can it serve as colletor?
-  if (!willBeBound)
-    ++nrExpectedUnboundVariables;
   bool takeIdentity = topSymbol->takeIdentity(s);
-  if (!willBeBound && !takeIdentity && bound == 1)
-    stripperVariableSeen = true;
-  int nrTopVariables = topVariables.length();
+  if (!willBeBound)
+    {
+      //
+      //	We don't expect the variable to be bound at match time before doing
+      //	a match with this automaton.
+      //
+      ++nrExpectedUnboundVariables;
+      if (multiplicity == 1)
+	{
+	  if (stripperIndex == NONE && !takeIdentity && bound == 1)
+	    stripperIndex = nrTopVariables;
+	  else if (collectorIndex == NONE && bound == UNBOUNDED)
+	    collectorIndex = nrTopVariables;
+	}
+    }
   topVariables.expandBy(1);
   TopVariable& tv = topVariables[nrTopVariables];
   tv.index = variable->getIndex();
@@ -250,26 +261,27 @@ ACU_LhsAutomaton::complete(MatchStrategy strategy,
   if (treeMatchOK)
     {
       if (strategy == LONE_VARIABLE || strategy == GREEDY)
-	treeMatchOK = collectorSeen;
+	treeMatchOK = collectorIndex != NONE || matchAtTop;
       else if (strategy == FULL)
 	{
 	  //
 	  //	We now allow full tree matching in two common special cases.
 	  //
 	  //	We potentially have an variable stripper-collector situation if we have two unbound
-	  //	variables and one is element variable.
+	  //	variables and one is element variable, and no NGAs.
 	  //
-	  bool varStripper = nrExpectedUnboundVariables == 2 && stripperVariableSeen;
+	  bool varStripper = nrExpectedUnboundVariables == 2 && nonGroundAliens.length() == 0 && stripperIndex != NONE;
 	  //
-	  //	We potentially have an nga stripper-collector situation if we have one unbound variable
-	  //	and a single nga which must have multiplicity 1.
+	  //	We potentially have an NGA stripper-collector situation if we have one unbound variable
+	  //	and a single NGA which must have multiplicity 1.
+	  //
 	  bool ngaStripper = nrExpectedUnboundVariables == 1 && nonGroundAliens.length() == 1 && nonGroundAliens[0].multiplicity == 1;
 	  //
 	  //	In either situation, we need a collector variable and we cannot be at the top (since
 	  //	extension would provided multiple ways of splitting the remaining subterm arguments between
 	  //	the collector variable and extension).
 	  //
-	  treeMatchOK = collectorSeen && !matchAtTop && (varStripper || ngaStripper);
+	  treeMatchOK = collectorIndex != NONE && !matchAtTop && (varStripper || ngaStripper);
 	}
       else
 	treeMatchOK = false;
@@ -291,7 +303,8 @@ ACU_LhsAutomaton::dump(ostream& s, const VariableInfo& variableInfo, int indentL
     "\"\tmatchAtTop = " << static_cast<bool>(matchAtTop) <<
     "\tcollapsePossible = " << static_cast<bool>(collapsePossible) << '\n';
   s << Indent(indentLevel) << "treeMatchOK = " << static_cast<bool>(treeMatchOK) <<
-    "\tcollectorSeen = " << static_cast<bool>(collectorSeen) <<
+    "\tstripperIndex = " << stripperIndex <<
+    "\tcollectorIndex = " << collectorIndex <<
     "\tmatchStrategy = " << static_cast<MatchStrategy>(matchStrategy) << '\n';
   if (uniqueCollapseAutomaton != 0)
     {

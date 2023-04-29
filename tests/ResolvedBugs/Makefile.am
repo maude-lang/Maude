@@ -60,7 +60,10 @@ TESTS = \
 	arityRenamingMarch2023 \
 	parameterizedPolymorphicConstantMarch2023 \
 	pseudoParametersMarch2023 \
-	pseudoParameterTheoryConstantMarch2023
+	pseudoParameterTheoryConstantMarch2023 \
+	redBlackNonLinearApril2023 \
+	redBlackTooFewSubjectsApril2023 \
+	redBlackNGA_April2023
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -124,7 +127,10 @@ MAUDE_FILES = \
 	arityRenamingMarch2023.maude \
 	parameterizedPolymorphicConstantMarch2023.maude \
 	pseudoParametersMarch2023.maude \
-	pseudoParameterTheoryConstantMarch2023.maude
+	pseudoParameterTheoryConstantMarch2023.maude \
+	redBlackNonLinearApril2023.maude  \
+	redBlackTooFewSubjectsApril2023.maude  \
+	redBlackNGA_April2023.maude 
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -188,6 +194,9 @@ RESULT_FILES = \
 	arityRenamingMarch2023.expected \
 	parameterizedPolymorphicConstantMarch2023.expected \
 	pseudoParametersMarch2023.expected \
-	pseudoParameterTheoryConstantMarch2023.expected
+	pseudoParameterTheoryConstantMarch2023.expected \
+	redBlackNonLinearApril2023.expected \
+	redBlackTooFewSubjectsApril2023.expected \
+	redBlackNGA_April2023.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

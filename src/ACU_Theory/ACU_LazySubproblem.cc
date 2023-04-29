@@ -50,9 +50,7 @@
 
 //	ACU theory class definitions
 #include "ACU_Symbol.hh"
-//#include "ACU_DagNode.hh"
 #include "ACU_TreeDagNode.hh"
-//#include "ACU_ExtensionInfo.hh"
 #include "ACU_LazySubproblem.hh"
 
 ACU_LazySubproblem::ACU_LazySubproblem(ACU_BaseDagNode* subject,

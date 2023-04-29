@@ -1,0 +1,40 @@
+set show timing off .
+***
+***	Test red-black ACU stripper-collector full matcher when 1 or 0 subjects are left.
+***
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .
+
+var S : Set .
+  op h : Set -> Set .
+  ceq h(f(N, S)) = h(S) if N > 0 .
+  ceq h(f(0, N, S)) = 0 if N > 0 .
+endfm
+
+red h(f(g(7), 0)) .
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .
+
+var S : Set .
+  op h : Set -> Set .
+  ceq h(f(N, S)) = h(S) if N > 0 .
+  ceq h(f(0, 0, N, S)) = 0 if N > 0 .
+endfm
+
+red h(f(g(7), 0)) .

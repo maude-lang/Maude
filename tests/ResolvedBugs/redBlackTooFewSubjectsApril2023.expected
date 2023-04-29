@@ -1,0 +1,9 @@
+==========================================
+reduce in FOO : h(f(0, g(7))) .
+rewrites: 30
+result Set: h(f(0, 0))
+==========================================
+reduce in FOO : h(f(0, g(7))) .
+rewrites: 30
+result Set: h(f(0, 0))
+Bye.
