@@ -1,0 +1,86 @@
+Alpha 148 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug in the new ACU matching code where the variables were sorted
+after the indices for ths stripper and collector variables for AC/ACU
+red-black matching had been stored, during compilation, invalidating them
+and causing missed matches. It's quite a tricky bug to demonstrate
+because the variables are also sorted before compilation as part of theory
+normalization.
+
+fmod FOO is
+  pr NAT .
+  sorts Set Elt .
+  subsort Elt < Set .
+var S : Set .
+var E : Elt .
+var N : Nat .
+  op dummy : Set -> Set .
+  eq dummy(S) = S .  *** needed to influence AC ordering
+
+  op z : -> Elt .
+  op p_ : Elt -> Elt .
+  op g : Nat Set -> Set .
+  eq g(s N, E) = f(g(N, p E), E) .
+  
+  op f : Set Set -> Set [assoc comm] .
+  op h : Set -> Bool .
+  ceq h(f(S, E)) = true if E = z .
+endfm
+
+red h(g(7, z)) .  *** OK because argument list is too short to be red-black
+red h(g(8, z)) .  *** fails
+
+(2) A bug in the functional metalevel where metaSrewrite() did not
+transfer the rewrite count from the meta-operation to the top level
+context. Illustrated by this example from the test suite:
+
+red in META-LEVEL : metaSrewrite(
+mod 'INC is
+  protecting 'NAT .
+  sorts none .
+  none
+  none
+  none
+  none
+  rl 'N:Nat => 's_['N:Nat] [label('inc)] .
+endm, '0.Nat, ('inc[none]{empty}) *, breadthFirst, 8) .
+
+(3) A bug in the meta-interpreter where the rewrite count from the
+meta-computations performed on behalf of the srewriteTerm() message would
+only be transferred to the enclosing context if and when failure was seen.
+This resulting in the wrong number of rewrites being returned in
+srewroteTerm() messages other than the first, and in the noSuchResult()
+message. Also those rewrites were missing from the top level total if
+the computation did not proceed far enough that the noSuchResult() message
+was seen
+
+Other changes
+==============
+
+(1) ACU matching subproblems in the stripper-collector case when all
+solutions are required no longer caches solutions as it seems to be a net
+lose.
+
+(2) Fast handling for ACU matching subproblems in the stripper-collector
+case where the stripper and/or collector variable is already bound.
+
+(3) A smarter scheme for deciding when to allocate more dag nodes. This idea
+came from the observation that while not caching solutions in (1) saved
+time and memory for matching, it made the system slower overall because
+fewer dag nodes were needed and thus garbage collections were needed more
+frequently. 
+
+(4) If garbage collection reporting is turned on with
+  set show gc on .
+the number of the garbage collection is now shown and the other information
+is also given in megabytes.
+
+(5) There is a command line flag
+  -early-quit=N
+which causes Maude to quit abruptly after the Nth garbage collection. This
+is intended for developer use only, to assist in profiling long running
+examples.

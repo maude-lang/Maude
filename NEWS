@@ -1,4 +1,18 @@
-Overview of Changes in alpha147
+Overview of Changes in alpha148 (2023-05-05)
+============================================
+* fixed a bug in compilation of ACU patterns introduced by the
+last alpha that caused matches to be missed
+* fixed a bug in thew functional meta-level where rewrite count
+from metaSrewrite() was lost
+* more optimizations for ACU red-black matching
+* smarter scheme for deciding how many dagnodes the memory manager
+should allocate
+* fixed a bug in the rewrite count values returned by the
+meta-interpeter in response to the srewriteTerm() message
+* more information shown in garbage collection reporting
+* -early-quit=N flag for developer use
+
+Overview of Changes in alpha147 (2023-04-28)
 ============================================
 * fixed bug in new ACU matching code where stripper variable
 was not required to have multiplicity 1
@@ -6,7 +20,7 @@ was not required to have multiplicity 1
 0 or 1 subject arguments left
 * fixed bug in new ACU matching code where it could be used
 even if a non-ground alien was present
-* optimizatons for ACU red-black matching
+* optimizations for ACU red-black matching
 
 Overview of Changes in alpha146 (2023-04-26)
 ============================================

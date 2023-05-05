@@ -331,6 +331,7 @@ InterpreterManagerSymbol::srewriteTerm(FreeDagNode* message,
 	      PointerMap dagNodeMap;
 	      args[3] = metaLevel->upDagNode(result, mm, qidMap, dagNodeMap);
 	      args[4] = metaLevel->upType(result->getSort(), qidMap);
+	      context.transferCountFrom(*(state->getContext()));
 	      (void) mm->unprotect();
 	      return srewroteTermMsg->makeDagNode(args);
 	    }

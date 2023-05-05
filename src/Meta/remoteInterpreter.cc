@@ -110,7 +110,7 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
       return true;
     }
   //
-  //	For a new Maude interpreter.
+  //	Fork a new Maude interpreter.
   //
   pid_t pid = fork();
   if (pid == -1)
@@ -134,7 +134,7 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
       //
       UserLevelRewritingContext::ignoreCtrlC();  // don't respond to ctrl-C
       extern IO_Manager ioManager;  // HACK
-      ioManager.unsetAutoWrap();  // don't to wrapping on our output
+      ioManager.unsetAutoWrap();  // don't do wrapping on our output
       //globalAdvisoryFlag = false;  // limit crap that we dump on screen
       close(ioSockets[0]);
       close(errSockets[0]);  // close parent end

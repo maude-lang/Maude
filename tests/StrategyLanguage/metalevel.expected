@@ -105,12 +105,12 @@ endv
 ==========================================
 reduce in META-LEVEL : metaSrewrite(upModule('SFOO, false), 'a.Foo, 'ac[[
     empty]] | 'ab[none]{empty}, breadthFirst, 0) .
-rewrites: 2
+rewrites: 3
 result ResultPair: {'b.Foo,'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
     empty}, breadthFirst, 0) .
-rewrites: 2
+rewrites: 3
 result ResultPair: {'b.Foo,'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
@@ -120,7 +120,7 @@ result ResultPair: {'b.Foo,'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
     empty}, breadthFirst, 1) .
-rewrites: 2
+rewrites: 4
 result ResultPair: {'c.Foo,'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
@@ -130,12 +130,12 @@ result ResultPair?: (failure).ResultPair?
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
     empty}, depthFirst, 1) .
-rewrites: 2
+rewrites: 5
 result ResultPair: {'b.Foo,'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
     empty}, depthFirst, 0) .
-rewrites: 2
+rewrites: 4
 result ResultPair: {'c.Foo,'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(mod 'INC is
@@ -147,7 +147,7 @@ reduce in META-LEVEL : metaSrewrite(mod 'INC is
   none
   rl 'N:Nat => 's_['N:Nat] [label('inc)] .
 endm, '0.Nat, ('inc[none]{empty}) *, breadthFirst, 8) .
-rewrites: 1
+rewrites: 29
 result ResultPair: {'s_^8['0.Zero],'NzNat}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'bad-rule[none]{empty},

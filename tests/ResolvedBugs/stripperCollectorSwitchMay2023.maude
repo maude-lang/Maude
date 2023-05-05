@@ -1,0 +1,30 @@
+set show timing off .
+
+***
+***	Crafted example to illustrate bug if variables are sorted after the stripper and
+***	collector variables have been determined and they switch places, causing match failure.
+***
+
+fmod FOO is
+  pr NAT .
+  sorts Set Elt .
+  subsort Elt < Set .
+var S : Set .
+var E : Elt .
+var N : Nat .
+  op dummy : Set -> Set .
+  eq dummy(S) = S .
+
+  op z : -> Elt .
+  op p_ : Elt -> Elt .
+  op g : Nat Set -> Set .
+  eq g(s N, E) = f(g(N, p E), E) .
+  
+  op f : Set Set -> Set [assoc comm] .
+  op h : Set -> Bool .
+  ceq h(f(S, E)) = true if E = z .
+endfm
+
+red h(g(7, z)) .
+red h(g(8, z)) .
+red h(g(20, z)) .

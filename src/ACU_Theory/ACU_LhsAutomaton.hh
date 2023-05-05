@@ -132,8 +132,9 @@ private:
     Sort* sort;
     int upperBound;
     AssociativeSymbol::Structure structure;
-    bool takeIdentity;
     LhsAutomaton* abstracted;	// automaton for abstracted term
+    bool takeIdentity;
+    bool willBeBound;  // will be bound at match time
     //
     //	Data storage for match-time use
     //
@@ -260,7 +261,7 @@ private:
   int maxPatternMultiplicity;  // must have at least on subject with >= this multiplicity
   int totalNonGroundAliensMultiplicity;
   int nrIndependentAliens;
-  int nrExpectedUnboundVariables;  // used at semicompile time only
+  int nrExpectedUnboundVariables;  // used at semicompile time only, for red-black case only
   LhsAutomaton* uniqueCollapseAutomaton;
   Vector<TopVariable> topVariables;
   Vector<GroundAlien> groundAliens;

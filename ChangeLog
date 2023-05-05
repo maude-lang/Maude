@@ -1,3 +1,13 @@
+2023-05-05  Steven Eker  <eker@pup>
+
+	* tests/ResolvedBugs/stripperCollectorSwitchMay2023.maude: added
+
+2023-05-03  Steven Eker  <eker@pup>
+
+	* tests/Corner/ACU_TreeVariableSubproblem.maude: added
+
+==================================Maude148===========================================
+
 2023-04-28  Steven Eker  <eker@pup>
 
 	* tests/ResolvedBugs/redBlackNGA_April2023.maude: added

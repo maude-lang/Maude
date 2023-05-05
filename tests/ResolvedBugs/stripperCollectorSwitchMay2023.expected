@@ -1,0 +1,13 @@
+==========================================
+reduce in FOO : h(g(7, z)) .
+rewrites: 8
+result Bool: true
+==========================================
+reduce in FOO : h(g(8, z)) .
+rewrites: 9
+result Bool: true
+==========================================
+reduce in FOO : h(g(20, z)) .
+rewrites: 21
+result Bool: true
+Bye.

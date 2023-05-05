@@ -131,25 +131,11 @@ ACU_LhsAutomaton::addTopVariable(const VariableTerm* variable,
 				 int multiplicity,
 				 bool willBeBound)
 {
-  int nrTopVariables = topVariables.length();
   Sort* s = variable->getSort();
   int bound = topSymbol->sortBound(s);
   bool takeIdentity = topSymbol->takeIdentity(s);
-  if (!willBeBound)
-    {
-      //
-      //	We don't expect the variable to be bound at match time before doing
-      //	a match with this automaton.
-      //
-      ++nrExpectedUnboundVariables;
-      if (multiplicity == 1)
-	{
-	  if (stripperIndex == NONE && !takeIdentity && bound == 1)
-	    stripperIndex = nrTopVariables;
-	  else if (collectorIndex == NONE && bound == UNBOUNDED)
-	    collectorIndex = nrTopVariables;
-	}
-    }
+
+  int nrTopVariables = topVariables.length();
   topVariables.expandBy(1);
   TopVariable& tv = topVariables[nrTopVariables];
   tv.index = variable->getIndex();
@@ -157,8 +143,10 @@ ACU_LhsAutomaton::addTopVariable(const VariableTerm* variable,
   tv.sort = s;
   tv.upperBound = bound;
   tv.structure = topSymbol->sortStructure(s);
-  tv.takeIdentity = takeIdentity;
   tv.abstracted = 0;
+  tv.takeIdentity = takeIdentity;
+  tv.willBeBound = willBeBound;
+
   updateTotals(takeIdentity ? 0 : multiplicity,
 	       (bound == UNBOUNDED) ? UNBOUNDED : (bound * multiplicity));
 }
@@ -238,6 +226,10 @@ ACU_LhsAutomaton::complete(MatchStrategy strategy,
 			   int nrIndependent)
 {
   //
+  //	We need to sort variables before storing indices to variables.
+  //
+  sort(topVariables.begin(), topVariables.end(), topVariableLt);
+  //
   //	For red-black greedy matching to be correct we require that
   //	(1) unbound top variables are quasi-linear and don't occur in the
   //	    condition;
@@ -260,6 +252,26 @@ ACU_LhsAutomaton::complete(MatchStrategy strategy,
   //
   if (treeMatchOK)
     {
+      Index nrVariables = topVariables.size();
+      for (Index i = 0; i < nrVariables; ++i)
+	{
+	  const TopVariable& tv = topVariables[i];
+	  if (!tv.willBeBound)
+	    {
+	      //
+	      //	We don't expect the variable to be bound at match time before doing
+	      //	a match with this automaton.
+	      //
+	      ++nrExpectedUnboundVariables;
+	      if (tv.multiplicity == 1)
+		{
+		  if (stripperIndex == NONE && !tv.takeIdentity && tv.upperBound == 1)
+		    stripperIndex = i;
+		  else if (collectorIndex == NONE && tv.upperBound == UNBOUNDED)
+		    collectorIndex = i;
+		}
+	    }
+	}
       if (strategy == LONE_VARIABLE || strategy == GREEDY)
 	treeMatchOK = collectorIndex != NONE || matchAtTop;
       else if (strategy == FULL)
@@ -286,11 +298,9 @@ ACU_LhsAutomaton::complete(MatchStrategy strategy,
       else
 	treeMatchOK = false;
     }
-
   matchStrategy = strategy;
   Assert(nrIndependent <= nonGroundAliens.length(), "too many independent");
   nrIndependentAliens = nrIndependent;
-  sort(topVariables.begin(), topVariables.end(), topVariableLt);
 }
 
 #ifdef DUMP

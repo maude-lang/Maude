@@ -1,0 +1,81 @@
+==========================================
+reduce in FOO : h(g(11), g(11)) .
+rewrites: 25
+result NzNat: 11
+==========================================
+reduce in FOO : h(f(g(9), g(11)), f(g(9), g(11))) .
+rewrites: 35
+result NzNat: 11
+Advisory: redefining module FOO.
+==========================================
+reduce in FOO : h(g(11), g(11)) .
+rewrites: 14
+result Zero: 0
+==========================================
+reduce in FOO : h(f(g(9), g(11)), f(g(9), g(11))) .
+rewrites: 24
+result Zero: 0
+Advisory: redefining module FOO.
+==========================================
+reduce in FOO : h(g(11), g(11)) .
+rewrites: 13
+result NzNat: 5
+==========================================
+reduce in FOO : h(f(g(9), g(11)), f(g(9), g(11))) .
+rewrites: 23
+result NzNat: 5
+Advisory: redefining module FOO.
+==========================================
+reduce in FOO : h(g(11), g(11)) .
+rewrites: 25
+result Set: f(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+==========================================
+reduce in FOO : h(f(g(9), g(11)), f(g(9), g(11))) .
+rewrites: 35
+result Set: f(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10)
+Advisory: redefining module FOO.
+==========================================
+reduce in FOO : h(g(11), g(11)) .
+rewrites: 14
+result Set: f(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+==========================================
+reduce in FOO : h(f(g(9), g(11)), f(g(9), g(11))) .
+rewrites: 24
+result Set: f(0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 11)
+Advisory: redefining module FOO.
+==========================================
+reduce in FOO : h(g(11), g(11)) .
+rewrites: 13
+result Set: f(0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11)
+==========================================
+reduce in FOO : h(f(g(9), g(11)), f(g(9), g(11))) .
+rewrites: 23
+result Set: f(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 11)
+Advisory: redefining module FOO.
+==========================================
+reduce in FOO : h(g(11), g(11)) .
+rewrites: 25
+result Set: f(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+==========================================
+reduce in FOO : h(f(g(9), g(11)), f(g(9), g(11))) .
+rewrites: 35
+result Set: f(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10)
+Advisory: redefining module FOO.
+==========================================
+reduce in FOO : h(g(11), g(11)) .
+rewrites: 14
+result Set: f(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+==========================================
+reduce in FOO : h(f(g(9), g(11)), f(g(9), g(11))) .
+rewrites: 24
+result Set: f(0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 11)
+Advisory: redefining module FOO.
+==========================================
+reduce in FOO : h(g(11), g(11)) .
+rewrites: 13
+result Set: f(0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11)
+==========================================
+reduce in FOO : h(f(g(9), g(11)), f(g(9), g(11))) .
+rewrites: 23
+result Set: f(0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 11)
+Bye.

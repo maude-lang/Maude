@@ -1,3 +1,9 @@
+2023-05-02  Steven Eker  <eker@pup>
+
+	* ACU_SlowIter.hh (ACU_SlowIter::reset): added
+
+===================================Maude148===========================================
+
 2019-07-01  Steven Eker  <eker@mu>
 
 	* ACU_RedBlackNode.hh: rewritten using new MemoryCell definition

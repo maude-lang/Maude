@@ -5,7 +5,8 @@ TESTS = \
 	badStatement \
 	fakeParameterSort \
 	fakeParameterConstant \
-	attributeOverparsing
+	attributeOverparsing \
+	ACU_TreeVariableSubproblem
 
 MAUDE_FILES = \
 	badOmod.maude \
@@ -14,7 +15,8 @@ MAUDE_FILES = \
 	badStatement.maude \
 	fakeParameterSort.maude \
 	fakeParameterConstant.maude \
-	attributeOverparsing.maude
+	attributeOverparsing.maude \
+	ACU_TreeVariableSubproblem.maude
 
 RESULT_FILES = \
 	badOmod.expected \
@@ -23,6 +25,7 @@ RESULT_FILES = \
 	badStatement.expected \
 	fakeParameterSort.expected \
 	fakeParameterConstant.expected \
-	attributeOverparsing.expected
+	attributeOverparsing.expected \
+	ACU_TreeVariableSubproblem.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

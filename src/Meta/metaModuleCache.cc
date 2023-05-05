@@ -31,6 +31,7 @@
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "freeTheory.hh"
 #include "higher.hh"
 #include "strategyLanguage.hh"
 #include "mixfix.hh"
@@ -41,6 +42,10 @@
  
 //      core class definitions
 #include "dagRoot.hh"
+
+//      free theory class definitions
+#include "freeSymbol.hh"
+#include "freeDagNode.hh"
 
 //	front end class definitions
 #include "metaModule.hh"
@@ -80,6 +85,7 @@ MetaModuleCache::Pair::clear()
   module = 0;
   t->deepSelfDestruct();
 }
+
 
 MetaModule*
 MetaModuleCache::find(DagNode* dag)

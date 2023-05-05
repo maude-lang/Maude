@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ class ACU_SlowIter : public ACU_Stack
 public:
   ACU_SlowIter();
   ACU_SlowIter(const ACU_Tree& tree);
-  
+  void reset(const ACU_Tree& tree);  // so we can reuse an existing ACU_SlowIter
+
   bool valid() const;
   DagNode* getDagNode() const;
   int getMultiplicity() const;
@@ -53,6 +54,13 @@ ACU_SlowIter::ACU_SlowIter()
 inline
 ACU_SlowIter::ACU_SlowIter(const ACU_Tree& tree)
 {
+  stackLeftmostPath(tree.root);
+}
+
+inline void
+ACU_SlowIter::reset(const ACU_Tree& tree)
+{
+  clear();
   stackLeftmostPath(tree.root);
 }
 

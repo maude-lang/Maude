@@ -1,3 +1,29 @@
+2023-05-05  Steven Eker  <eker@pup>
+
+	* remoteInterpreter2.cc: use static constexpr rather than define for
+	EOT
+
+	* miRewrite.cc (InterpreterManagerSymbol::srewriteTerm):  fix bug where
+	rewrite count was only being transfered in failure case
+
+2023-05-04  Steven Eker  <eker@pup>
+
+	* metaSrewrite.cc (MetaLevelOpSymbol::metaSrewrite): fix bug where we
+	we not transferring rewrite count to context
+
+2023-05-02  Steven Eker  <eker@pup>
+
+	* metaModuleCache.hh (class MetaModuleCache): deleted decl for equal()
+
+2023-05-01  Steven Eker  <eker@pup>
+
+	* metaModuleCache.cc (MetaModuleCache::find): revert
+	(MetaModuleCache::equal): deleted
+
+	* metaModuleCache.hh (class MetaModuleCache): added decl for equal()
+
+	* metaModuleCache.cc (MetaModuleCache::equal): added
+
 2023-04-26  Steven Eker  <eker@pup>
 
 	* metaMatch.cc (MetaLevelOpSymbol::metaMatch): reverted; passing solutionNr

@@ -1,3 +1,14 @@
+2023-05-05  Steven Eker  <eker@pup>
+
+	* main.cc (printHelp): document -early-quit=N and make use of adjacent
+	string concatenation
+
+2023-05-03  Steven Eker  <eker@pup>
+
+	* main.cc (main): added -early-quit
+
+===================================Maude148===========================================
+
 2023-03-03  Steven Eker  <eker@pup>
 
 	* prelude.maude: update version number

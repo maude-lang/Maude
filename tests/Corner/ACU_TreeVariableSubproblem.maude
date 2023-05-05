@@ -1,0 +1,187 @@
+set show timing off .
+
+***
+***	Check corner cases for class ACU_TreeVariableSubproblem.
+***
+***	This kind of matching subproblem is generated when we have unbound stripper and collector
+***	variables, the subject is in red-black tree form, and we need to generate all solutions.
+***	Corner cases arise when the stripper and/or collector variable is bound by an earlier
+*** 	ACU_TreeVariableSubproblem and we need to deal with the bound variables correctly.
+***
+
+*** bound collector case
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N M : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .  *** make a red-black tree of arguments
+
+var S : Set .
+  op h : Set Set -> Set .
+  ceq h(f(N, S), f(M, S)) = M if N > 10 .  *** N, M are strippers, S is a collector
+endfm
+
+red h(g(11), g(11)) .
+red h(f(g(11), g(9)), f(g(11), g(9))) .  *** multiplicities > 1
+
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N M : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .  *** make a red-black tree of arguments
+
+var S : Set .
+  op h : Set Set -> Set .
+  ceq h(f(N, S), f(M, S)) = M if N < 2 .  *** N, M are strippers, S is a collector
+endfm
+
+red h(g(11), g(11)) .
+red h(f(g(11), g(9)), f(g(11), g(9))) .  *** multiplicities > 1
+
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N M : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .  *** make a red-black tree of arguments
+
+var S : Set .
+  op h : Set Set -> Set .
+  ceq h(f(N, S), f(M, S)) = M if N = 5 .  *** N, M are strippers, S is a collector
+endfm
+
+red h(g(11), g(11)) .
+red h(f(g(11), g(9)), f(g(11), g(9))) .  *** multiplicities > 1
+
+
+
+*** bound stripper case
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .  *** make a red-black tree of arguments
+
+var S T : Set .
+  op h : Set Set -> Set .
+  ceq h(f(N, S), f(N, T)) = T if N > 10 .  *** N is a strippers, S, T are collectors
+endfm
+
+red h(g(11), g(11)) .
+red h(f(g(11), g(9)), f(g(11), g(9))) .  *** multiplicities > 1
+
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .  *** make a red-black tree of arguments
+
+var S T : Set .
+  op h : Set Set -> Set .
+  ceq h(f(N, S), f(N, T)) = T if N < 2 .  *** N is a strippers, S, T are collectors
+endfm
+
+red h(g(11), g(11)) .
+red h(f(g(11), g(9)), f(g(11), g(9))) .  *** multiplicities > 1
+
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .  *** make a red-black tree of arguments
+
+var S T : Set .
+  op h : Set Set -> Set .
+  ceq h(f(N, S), f(N, T)) = T if N = 5 .  *** N is a strippers, S, T are collectors
+endfm
+
+red h(g(11), g(11)) .
+red h(f(g(11), g(9)), f(g(11), g(9))) .  *** multiplicities > 1
+
+
+*** both bound case
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .  *** make a red-black tree of arguments
+
+var S T : Set .
+  op h : Set Set -> Set .
+  ceq h(f(N, S), f(N, S)) = S if N > 10 .  *** N is a strippers, S is a collector
+endfm
+
+red h(g(11), g(11)) .
+red h(f(g(11), g(9)), f(g(11), g(9))) .  *** multiplicities > 1
+
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .  *** make a red-black tree of arguments
+
+var S : Set .
+  op h : Set Set -> Set .
+  ceq h(f(N, S), f(N, S)) = S if N < 2 .  *** N is a strippers, S is a collector
+endfm
+
+red h(g(11), g(11)) .
+red h(f(g(11), g(9)), f(g(11), g(9))) .  *** multiplicities > 1
+
+
+fmod FOO is
+  pr NAT .
+  sort  Set .
+  subsort Nat < Set .
+var N : Nat .
+  op f : Set Set -> Set [assoc comm] .
+  op g : Nat -> Set .
+  eq g(0) = 0 .
+  eq g(s N) = f(g(N), s N) .  *** make a red-black tree of arguments
+
+var S : Set .
+  op h : Set Set -> Set .
+  ceq h(f(N, S), f(N, S)) = S if N = 5 .  *** N is a strippers, S is a collector
+endfm
+
+red h(g(11), g(11)) .
+red h(f(g(11), g(9)), f(g(11), g(9))) .  *** multiplicities > 1

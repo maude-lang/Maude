@@ -45,6 +45,7 @@ MetaLevelOpSymbol::metaSrewrite(FreeDagNode* subject,
 	  while (lastSolutionNr < solutionNr)
 	    {
 	      result = state->findNextSolution();
+	      context.transferCountFrom(*(state->getContext()));
 	      if (result == 0)
 		{
 		  delete state;

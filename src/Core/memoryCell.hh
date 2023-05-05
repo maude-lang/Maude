@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ public:
   static void collectGarbage();
 
   static void setShowGC(bool polarity);
-
+  static void setEarlyQuit(int64_t count);
   //
   //	We provide functions for getting access to the MemoryInfo object
   //	corresponding the a memory block we allocated.
@@ -84,6 +84,7 @@ private:
   struct Bucket;		// bucket of variable length allocations
 
   static bool showGC;		// do we report GC stats to user
+  static int64_t earlyQuit;	// do we quit early for profiling purposes
   //
   //	Arena management variables.
   //
@@ -167,6 +168,12 @@ inline void
 MemoryCell::setShowGC(bool polarity)
 {
   showGC = polarity;
+}
+
+inline void
+MemoryCell::setEarlyQuit(int64_t count)
+{
+  earlyQuit = count;
 }
 
 inline void*

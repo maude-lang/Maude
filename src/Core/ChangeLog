@@ -1,3 +1,29 @@
+2023-05-04  Steven Eker  <eker@pup>
+
+	* memoryCell.cc: added constants SMALL_MODEL_SLOP, BIG_MODEL_SLOP,
+	LOWER_BOUND, UPPER_BOUND; deleted constant NODE_MULTIPLIER
+	(MemoryCell::collectGarbage): try dynamic scaling of slopFactor
+
+2023-05-03  Steven Eker  <eker@pup>
+
+	* memoryCell.cc: moved NODE_MULTIPLIER here
+
+	* memoryCell.hh (MemoryCell::setEarlyQuit): added
+
+	* memoryCell.cc (MemoryCell::collectGarbage): support earlyQuit
+
+	* memoryCell.hh (class MemoryCell): added static data member earlyQuit
+
+	* memoryCell.cc (MemoryCell::collectGarbage): keep track of number of
+	garbage collects
+	(MemoryCell::collectGarbage): translate numbers to MBs
+
+	* memoryCell.hh (class MemoryCell): added NODE_MULTIPLIER
+
+	* memoryCell.cc (MemoryCell::collectGarbage): use NODE_MULTIPLIER
+
+===================================Maude148===========================================
+
 2023-04-13  Steven Eker  <eker@pup>
 
 	* preEquation.cc (PreEquation::checkCondition): use empty()
@@ -2042,7 +2068,7 @@
 
 	* unificationSubproblemDisjunction.hh (class
 	UnificationSubproblemDisjunction): updated decl for
-	UnificationSubproblemDisjunction() 
+	UnificationSubproblemDisjunction()
 
 	* unificationSubproblemDisjunction.cc
 	(UnificationSubproblemDisjunction): take nrBinding arg
@@ -2820,7 +2846,7 @@
 
 	* equationTable.cc (applyReplace): DagNode::okToCollectGarbage()
 	-> MemoryCell::okToCollectGarbage()
-	
+
 ===================================Maude78===========================================
 
 2003-01-08  Steven Eker  <eker@goo.csl.sri.com>
@@ -2850,13 +2876,13 @@
 	* preEquation.cc (cleanStack): created
 	(checkCondition): call cleanStack() before returning to to an
 	abort
-	
+
 2002-11-20  Steven Eker  <eker@goo.csl.sri.com>
 
 	* checkedArgVecConstIterator.hh (operator->): made const
 	(operator*): made const
 	(class const_iterator): updated decls for operator*() and
-	operator->() 
+	operator->()
 
 	* checkedArgVecIterator.hh (class iterator): make const_iterator a
 	friend
@@ -2884,7 +2910,7 @@
 
 	* argVec.hh: major rewrite to make it look more STL like and
 	support iterators
-	
+
 ===================================Maude77==================================================
 
 2002-11-15  Steven Eker  <eker@goo.csl.sri.com>
@@ -7016,7 +7042,6 @@ Wed Dec 13 11:54:57 1995  Steven Eker  <eker@ponder.csl.sri.com>
 	(dumpSort): added
 
 	* connectedComponent.hh: added dumpSort()
-	
 
 Fri Dec  8 10:04:56 1995  Steven Eker  <eker@ponder.csl.sri.com>
 

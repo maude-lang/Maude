@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 //
 //      Implementation for base class MemoryCell
 //
+#include "cmath"
 
 //	utility stuff
 #include "macros.hh"
@@ -37,6 +38,14 @@
 #include "rootContainer.hh"
 
 #include "memoryCell.hh"
+
+//static constexpr int  NODE_MULTIPLIER = 8;	// after GC increase arenas so we have (NODE_MULTIPLIER - 1) * used-nodes
+
+static constexpr double SMALL_MODEL_SLOP = 8.0;
+static constexpr double BIG_MODEL_SLOP = 2.0;
+static constexpr int64_t LOWER_BOUND = 4 * 1024 * 1024;  // use small model if <= 4 million nodes
+static constexpr int64_t UPPER_BOUND = 32 * 1024 * 1024;  // use big model if >= 32 million nodes
+
 
 struct MemoryCell::Arena
 {
@@ -56,6 +65,8 @@ MemoryCell::Arena::firstNode()
 }
 
 bool MemoryCell::showGC = false;
+int64_t MemoryCell::earlyQuit = 0;
+
 //
 //	Arena management variables.
 //
@@ -296,6 +307,8 @@ MemoryCell::tidyArenas()
 void
 MemoryCell::collectGarbage()
 {
+  static int64_t gcCount = 0;
+
   if (firstArena == 0)
     return;
   tidyArenas();
@@ -327,23 +340,36 @@ MemoryCell::collectGarbage()
   //	Calculate if we should allocate more arenas to avoid an early gc.
   //
   int nrNodes = nrArenas * ARENA_SIZE;
+  ++gcCount;
   if (showGC)
     {
-      cout << "Arenas: " << nrArenas <<
-	"\tNodes: " << nrNodes <<
-	//	"\tIn use: " << nrNodesInUse <<
-	//	"\tCollected: " << reclaimed << 
+      cout << "Collection: " << gcCount << "\n";
+      
+      cout << "Arenas: " << nrArenas << "\tNodes: " << nrNodes <<
+	" (" << double(nrNodes * sizeof(MemoryCell))/(1024.0 * 1024.0) << " MB)" <<
 	"\tNow: " << nrNodesInUse <<
-	"\nBuckets: " << nrBuckets <<
-	"\tBytes: " << bucketStorage <<
+	" (" << double(nrNodesInUse * sizeof(MemoryCell))/(1024.0 * 1024.0) << " MB)" << "\n";
+      
+      cout << "Buckets: " << nrBuckets << "\tBytes: " << bucketStorage <<
+	" (" << double(bucketStorage) / (1024.0 * 1024.0) << " MB)" <<
 	"\tIn use: " << oldStorageInUse <<
+	" (" << double(oldStorageInUse) / (1024.0 * 1024.0) << " MB)" <<
 	"\tCollected: " << oldStorageInUse - storageInUse <<
-	"\tNow: " << storageInUse << '\n';
+	" (" << double(oldStorageInUse - storageInUse) / (1024.0 * 1024.0) << " MB)" <<
+	"\tNow: " << storageInUse <<
+	" (" << double(storageInUse) / (1024.0 * 1024.0) << " MB)" << "\n";
     }
+  if (gcCount == earlyQuit)
+    exit(0);
+  double slopFactor = BIG_MODEL_SLOP;  // if we are using lots of nodes
+  if (nrNodesInUse <= LOWER_BOUND)
+    slopFactor = SMALL_MODEL_SLOP;  // if we are using few nodes
+  else if (nrNodesInUse < UPPER_BOUND)
+    slopFactor += ((UPPER_BOUND - nrNodesInUse) * (SMALL_MODEL_SLOP - BIG_MODEL_SLOP)) / (UPPER_BOUND - LOWER_BOUND);
   //
-  //	Allocate new arenas so that we have at least 50% of nodes unused.
+  //	Allocate new arenas so that we have at least slopFactor times the actually used nodes.
   //
-  int neededArenas = ceilingDivision(2 * nrNodesInUse, ARENA_SIZE);
+  int neededArenas = ceil((slopFactor * nrNodesInUse) / ARENA_SIZE);
   while (nrArenas < neededArenas)
     (void) allocateNewArena();
   //

@@ -50,6 +50,7 @@
  
 //      core class definitions
 #include "lineNumber.hh"
+#include "memoryCell.hh"
 
 //      built class definitions
 #include "randomOpSymbol.hh"
@@ -171,6 +172,8 @@ main(int argc, char* argv[])
 	      DirectoryManagerSymbol::setAllowDir(true);
 	      ProcessManagerSymbol::setAllowProcesses(true);
 	    }
+	  else if (const char* s = isFlag(arg, "-early-quit="))
+	    MemoryCell::setEarlyQuit(strtoul(s, 0, 0));
 	  else
 	    {
 	      IssueWarning(LineNumber(FileTable::COMMAND_LINE) <<
@@ -276,35 +279,37 @@ void
 printHelp(const char* name)
 {
   cout <<
-    "Maude interpreter\n" <<
-    "Usage: " << name << " [options] [files]\n" <<
-    "Options:\n" <<
-    "  --help\t\tDisplay this information\n" <<
-    "  --version\t\tDisplay version number\n" <<
-    "  -no-prelude\t\tDo not read in the standard prelude\n" <<
-    "  -no-banner\t\tDo not output banner on startup\n" <<
-    "  -no-advise\t\tNo advisories on startup\n" <<
-    "  -always-advise\tAlways show advisories regardless\n" <<
-    "  -no-mixfix\t\tDo not use mixfix notation for output\n" <<
-    "  -no-wrap\t\tDo not use automatic line wrapping for output\n" <<
-    "  -ansi-color\t\tUse ANSI control sequences\n" <<
-    "  -no-ansi-color\tDo not use ANSI control sequences\n" <<
-    "  -tecla\t\tUse tecla command line editing\n" <<
-    "  -no-tecla\t\tDo not use tecla command line editing\n" <<
-    "  -batch\t\tRun in batch mode\n" <<
-    "  -interactive\t\tRun in interactive mode\n" <<
-    "  -print-to-stderr\tPrint attribute should use stderr rather than stdout\n" <<
-    "  -random-seed=<int>\tSet seed for random number generator\n" <<
-    "  -xml-log=<filename>\tSet file in which to produce an xml log\n" <<
-    "  -show-pid\t\tPrint process id to stderr before printing banner\n" <<
-    "  -erewrite-loop-mode\tUse external object rewriting for loop mode\n" <<
-    "  -allow-processes\tAllow running arbitrary executables\n" <<
-    "  -allow-files\t\tAllow operations on files\n" <<
-    "  -allow-dir\t\tAllow operations on directories\n" <<
-    "  -trust\t\tAllow all potentially risky capabilities\n" <<
+    "Maude interpreter\n"
+    "Usage: " << name << " [options] [files]\n"
+    "Options:\n"
+    "  --help\t\tDisplay this information\n"
+    "  --version\t\tDisplay version number\n"
+    "  -no-prelude\t\tDo not read in the standard prelude\n"
+    "  -no-banner\t\tDo not output banner on startup\n"
+    "  -no-advise\t\tNo advisories on startup\n"
+    "  -always-advise\tAlways show advisories regardless\n"
+    "  -no-mixfix\t\tDo not use mixfix notation for output\n"
+    "  -no-wrap\t\tDo not use automatic line wrapping for output\n"
+    "  -ansi-color\t\tUse ANSI control sequences\n"
+    "  -no-ansi-color\tDo not use ANSI control sequences\n"
+    "  -tecla\t\tUse tecla command line editing\n"
+    "  -no-tecla\t\tDo not use tecla command line editing\n"
+    "  -batch\t\tRun in batch mode\n"
+    "  -interactive\t\tRun in interactive mode\n"
+    "  -print-to-stderr\tPrint attribute should use stderr rather than stdout\n"
+    "  -random-seed=<int>\tSet seed for random number generator\n"
+    "  -xml-log=<filename>\tSet file in which to produce an xml log\n"
+    "  -show-pid\t\tPrint process id to stderr before printing banner\n"
+    "  -erewrite-loop-mode\tUse external object rewriting for loop mode\n"
+    "  -allow-processes\tAllow running arbitrary executables\n"
+    "  -allow-files\t\tAllow operations on files\n"
+    "  -allow-dir\t\tAllow operations on directories\n"
+    "  -trust\t\tAllow all potentially risky capabilities\n"
     "  -assoc-unif-depth=<float>\tSet depth bound multiplier for associative unification\n"
+    "Intended for developer use:\n"
     "  -debug\t\tPrint copious messages about internal state (debug build only)\n"
-    "\n" <<
+    "  -early-quit=<int>\tQuit abruptly after a given number of garbage collections\n"
+    "\n"
     "Send bug reports to: " << PACKAGE_BUGREPORT << endl;
   exit(0);
 }

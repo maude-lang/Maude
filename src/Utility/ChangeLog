@@ -1,3 +1,9 @@
+2023-05-01  Steven Eker  <eker@pup>
+
+	* macros.hh: added Profile() macro
+
+===================================Maude148===================================
+
 2023-04-13  Steven Eker  <eker@pup>
 
 	* intSet.cc (IntSet::findEntry): use empty()

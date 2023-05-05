@@ -31,6 +31,7 @@
 #ifndef _ACU_TreeVariableSubproblem_hh_
 #define _ACU_TreeVariableSubproblem_hh_
 #include "subproblem.hh"
+#include "simpleRootContainer.hh"
 #include "ACU_SlowIter.hh"
 
 class ACU_TreeVariableSubproblem : public Subproblem, private SimpleRootContainer
@@ -38,13 +39,12 @@ class ACU_TreeVariableSubproblem : public Subproblem, private SimpleRootContaine
   NO_COPYING(ACU_TreeVariableSubproblem);
 
 public:
-  ACU_TreeVariableSubproblem(ACU_BaseDagNode* subject,
+  ACU_TreeVariableSubproblem(const ACU_TreeDagNode* subject,
 			     const ACU_Tree& remaining,  // may have red-black nodes not in the subject that we must protect
 			     int stripperVarIndex,
 			     Sort* stripperSort,
 			     int collectorVarIndex,
 			     Sort* collectorSort);
-  ~ACU_TreeVariableSubproblem();
 
   bool solve(bool findFirst, RewritingContext& solution);
 
@@ -54,9 +54,11 @@ public:
 
 private:
   void markReachableNodes();
-  DagNode* collect(RewritingContext& solution);
-
-  ACU_BaseDagNode* const subject;
+  bool handleBoundCollector(RewritingContext& solution);
+  bool handleBoundStripper(RewritingContext& solution);
+  bool bindCollector(RewritingContext& solution);
+  
+  const ACU_BaseDagNode* const subject;
   ACU_Tree remaining;
   const int stripperVarIndex;
   Sort* const stripperSort;
@@ -66,8 +68,12 @@ private:
   //	Solve time variables.
   //
   ACU_SlowIter currentPath;
-  int previousIndex;
-  Vector<LocalBinding*> previous;
+  //
+  //	When ever we look for a first solution, we record whether the stripper and or collector were
+  //	already bound so we can undo any binding we create on future call.
+  //
+  bool stripperAlreadyBound;
+  bool collectorAlreadyBound;
 };
 
 #endif

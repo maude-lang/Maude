@@ -39,6 +39,7 @@ ACU_LhsAutomaton::eliminateBoundVariables(Substitution& solution)
 	      //	Variable was bound to a term with our top symbol.
 	      //	This needs more complicated handling that is unlikely to be efficient with a red-black tree.
 	      //
+	      Profile(RED, "T");
 	      return UNDECIDED;
 	    }
 	  if (identity == nullptr || !(identity->equal(d)))  // we can ignore variables bound to our identity
@@ -147,10 +148,13 @@ ACU_LhsAutomaton::treeMatch(ACU_TreeDagNode* subject,
   //
   if (extensionInfo == nullptr && nonGroundAliens.empty())
     {
+      //
+      //	No extension and only variables left.
+      //
       if (nrUnboundVariables == 0)
 	{
 	  //
-	  //	Everything in the pattern has had a forced match and no extension.
+	  //	Everything in the pattern had a unique match and no extension.
 	  //	We succeed iff there are no subject arguments left.
 	  //
 	  return current.getSize() == 0;

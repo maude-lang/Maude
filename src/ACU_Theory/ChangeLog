@@ -1,3 +1,85 @@
+2023-05-04  Steven Eker  <eker@pup>
+
+	* ACU_TreeVariableSubproblem.cc (ACU_TreeVariableSubproblem::solve): set
+	stripperAlreadyBound, collectorAlreadyBound in findFirst case; otherwise
+	use them to decide whether to clear bindings; this fixes a bug where
+	we were never setting stripperBound to false
+	(ACU_TreeVariableSubproblem::bindCollector): don't set collectorBound
+	(ACU_TreeVariableSubproblem::handleBoundCollector): don't set stripperBound
+	(ACU_TreeVariableSubproblem::handleBoundCollector): added Assert()
+
+	* ACU_TreeVariableSubproblem.hh (class ACU_TreeVariableSubproblem): switched
+	stripperBound -> stripperAlreadyBound, collectorBound ->
+	collectorAlreadyBound
+
+	* ACU_TreeVariableSubproblem.cc (ACU_TreeVariableSubproblem::solve): code
+	cleaning
+	(ACU_TreeVariableSubproblem::handleBoundCollector): fix bug where we were
+	comparing pointer rather that using DagNode::equal()
+	(ACU_TreeVariableSubproblem::handleBoundCollector): code cleaning
+	(ACU_TreeVariableSubproblem::markReachableNodes): added comment
+	(ACU_TreeVariableSubproblem::solve): fix a bug where we never set
+	collectorBound to false
+
+2023-05-02  Steven Eker  <eker@pup>
+
+	* ACU_TreeVariableSubproblem.cc
+	(ACU_TreeVariableSubproblem::handleBoundCollector): don't set oneSolution;
+	set stripperBound if we bind it
+
+	* ACU_TreeVariableSubproblem.hh (class ACU_TreeVariableSubproblem): deleted
+	data member oneSolution
+
+	* ACU_TreeVariableSubproblem.cc (ACU_TreeVariableSubproblem::solve): use
+	stripperBound and collectorBound rather than oneSolution
+
+	* ACU_TreeVariableSubproblem.hh (class ACU_TreeVariableSubproblem): added
+	data members stripperBound and collectorBound
+
+	* ACU_TreeVariableSubproblem.cc	(ACU_TreeVariableSubproblem): Assert()
+	that we have at least two arguments remaining
+	(ACU_TreeVariableSubproblem::handleBoundCollector): rewritten
+
+	* ACU_TreeVariableSubproblem.hh (class ACU_TreeVariableSubproblem):
+	deleted decl for ~ACU_TreeVariableSubproblem()
+
+	* ACU_TreeVariableSubproblem.cc: take const ACU_TreeDagNode*; don't
+	initialized currentPath, previous or previousIndex
+	(ACU_TreeVariableSubproblem::handleBoundStripper): no need to protect
+	new dagnode from GC because checkSort() does this if needed
+	(ACU_TreeVariableSubproblem::bindCollector): ditto
+	(ACU_TreeVariableSubproblem::handleBoundStripper): use bindCollector()
+	(~ACU_TreeVariableSubproblem): deleted
+
+	* ACU_TreeVariableSubproblem.hh (class ACU_TreeVariableSubproblem): added
+	decls for handleBoundCollector(), handleBoundStripper(), bindCollector();
+	deleted decl for collect(); deleted data members previousIndex and
+	previous; added data member oneSolution; updated decl for ctor
+
+	* ACU_TreeVariableSubproblem.cc (ACU_TreeVariableSubproblem::collect):
+	deleted
+	(ACU_TreeVariableSubproblem::handleBoundCollector): added
+	(ACU_TreeVariableSubproblem::handleBoundStripper): added
+	(ACU_TreeVariableSubproblem::bindCollector): added
+	(ACU_TreeVariableSubproblem::solve): reimplemented using
+	handleBoundCollector(), handleBoundStripper() and bindCollector(); don't
+	cache previous solutions; fix bug where we were not protecting newly
+	created ACU_TreeDagNode from the garbage collector during checkSort()
+
+2023-05-01  Steven Eker  <eker@pup>
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton::complete): fix bug by doing
+	stripper/collector calculations here, after variables have been sorted
+	(ACU_LhsAutomaton::addTopVariable): don't do stripper/collector
+	calculations here
+	(ACU_LhsAutomaton::addTopVariable): store willBeBound
+
+	* ACU_LhsAutomaton.hh (class ACU_LhsAutomaton): added data member
+	willBeBound to struct TopVariable; rearrange data members of
+	struct TopVariable
+
+===================================Maude148===========================================
+
 2023-04-28  Steven Eker  <eker@pup>
 
 	* ACU_TreeMatcher.cc (ACU_LhsAutomaton::loneSubjectNGA_Case): need to

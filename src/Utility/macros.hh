@@ -190,6 +190,20 @@ safeCastNonNull(P p)
   return static_cast<T>(p);
 }
 
+template <typename T, typename P>
+inline T
+downCast(P p)
+{
+#ifndef NO_ASSERT
+  if (dynamic_cast<T>(p) == 0)
+    {
+      cerr << "unexpected null or cast error: "<< __FILE__ << ':' << __LINE__ << '\n';
+      abort();
+    }
+#endif
+  return static_cast<T>(p);
+}
+
 enum SpecialConstants
 {
   NR_PTR_LOSE_BITS = 3,		// number of rhs bits to chop when hashing a pointer
@@ -391,6 +405,19 @@ IssueAdvisory(message) \
 Verbose(output) \
 if (globalVerboseFlag) \
   (cerr << Tty(Tty::CYAN) << output << Tty(Tty::RESET) << '\n')
+
+#ifdef PROFILING
+
+#define \
+Profile(color, message) \
+  (cerr << Tty(Tty::color) << message << Tty(Tty::RESET))
+
+#else
+
+#define \
+Profile(color, message)
+
+#endif
 
 extern bool globalAdvisoryFlag;
 extern bool globalVerboseFlag;
