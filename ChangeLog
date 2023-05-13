@@ -1,3 +1,9 @@
+2023-05-12  Steven Eker  <eker@pup>
+
+	* tests/ObjectOriented/prngTest.maude: added
+
+==================================Maude149===========================================
+
 2023-05-05  Steven Eker  <eker@pup>
 
 	* tests/ResolvedBugs/stripperCollectorSwitchMay2023.maude: added

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,33 +21,24 @@
 */
 
 //
-//	Class for fractional binary to decimal conversion.
+//	List of all recognized constructors by the prng subsystem.
 //
-#ifndef _binBuf_hh_
-#define _binBuf_hh_
+//	We generate various chunks of linear (branching) code to handle
+//	this hetrogeneous collection by macro expansion.
+//	The format is:
+//		MACRO(symbols name, symbols C++ class, number of args)
+//
+  MACRO(succSymbol, SuccSymbol, 1)
+  MACRO(stringSymbol, StringSymbol, 0)
+  MACRO(prngOidSymbol, FreeSymbol, 1)
 
-class BinBuf
-{
-public:
-  void init(uint64_t bits, int leadingZeros);
-  int times10();
-  int cmpHalf();
-  bool gtZero();
+  MACRO(createPrngMsg, FreeSymbol, 3)
+  MACRO(createdPrngMsg, Symbol, 3)
+  MACRO(setSeedMsg, FreeSymbol, 3)
+  MACRO(seedSetMsg, Symbol, 2)
+  MACRO(getNextMsg, FreeSymbol, 2)
+  MACRO(gotNextMsg, Symbol, 3)
+  MACRO(deletePrngMsg, FreeSymbol, 2)
+  MACRO(deletedPrngMsg, Symbol, 2)
 
-private:
-  enum Sizes
-  {
-    //
-    //	A double could have 52 + 1022 = 1074 bits following the binary point so
-    //	we need at most ceiling(1074 / 32) = 34 32-bit words to hold the fixed point
-    //	binary fraction.
-    //
-    MAX_WORDS = 34
-  };
-
-  uint32_t buf[MAX_WORDS];
-  int begin;
-  int end;
-};
-
-#endif
+  MACRO(prngErrorMsg, Symbol, 3)

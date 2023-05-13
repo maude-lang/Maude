@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ public:
   //
   Term* makeNatTerm(const mpz_class& nat);
   DagNode* makeNatDag(const mpz_class& nat);
+  DagNode* makeNatDag64(uint64_t nat);
   bool isNat(const Term* term) const;
   bool isNat(const DagNode* dagNode) const;
   const mpz_class& getNat(const Term* term) const;

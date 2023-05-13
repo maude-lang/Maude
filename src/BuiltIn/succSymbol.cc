@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -124,6 +124,24 @@ SuccSymbol::makeNatDag(const mpz_class& nat)
   Assert(zeroTerm.getTerm() != 0, "zero not defined");
   DagNode* zero = zeroTerm.getDag();
   return (nat == 0) ? zero : (new S_DagNode(this, nat, zero));
+}
+
+DagNode*
+SuccSymbol::makeNatDag64(uint64_t nat)
+{
+  DagNode* zero = zeroTerm.getDag();
+#if SIZEOF_UNSIGNED_LONG == 8
+  return (nat == 0) ? zero : (new S_DagNode(this, static_cast<unsigned long>(nat), zero));
+#else
+  //
+  //	Hack for 32-bit machines.
+  //
+  unsigned long low = nat & 0xFFFFFFFF;
+  unsigned long high = nat >> 32;
+  const mpz_class number(high);
+  number = (number << 32) + low;
+  return (nat == 0) ? zero : (new S_DagNode(this, number, zero));
+#endif
 }
 
 bool

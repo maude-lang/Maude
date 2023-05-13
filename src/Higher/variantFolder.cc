@@ -85,7 +85,6 @@ VariantFolder::insertVariant(const Vector<DagNode*>& variant,
 			     int parentIndex,
 			     int variableFamily)
 {
-  //cerr << " i" << index << "p" << parentIndex;
   //
   //	First we check if it is subsumed by one of the existing variants.
   //

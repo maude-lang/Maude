@@ -1,3 +1,7 @@
+2023-05-12  Steven Eker  <eker@pup>
+
+	* memoryCell.cc (struct MemoryCell): Int64 ->  int64_t
+
 2023-05-04  Steven Eker  <eker@pup>
 
 	* memoryCell.cc: added constants SMALL_MODEL_SLOP, BIG_MODEL_SLOP,

@@ -1,3 +1,7 @@
+Overview of Changes in alpha149 (2023-05-12)
+============================================
+* added pseudo-random number generator objects
+
 Overview of Changes in alpha148 (2023-05-05)
 ============================================
 * fixed a bug in compilation of ACU patterns introduced by the
@@ -5,7 +9,7 @@ last alpha that caused matches to be missed
 * fixed a bug in thew functional meta-level where rewrite count
 from metaSrewrite() was lost
 * more optimizations for ACU red-black matching
-* smarter scheme for deciding how many dagnodes the memory manager
+* smarter scheme for deciding how many dag nodes the memory manager
 should allocate
 * fixed a bug in the rewrite count values returned by the
 meta-interpeter in response to the srewriteTerm() message

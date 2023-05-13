@@ -444,7 +444,8 @@ TESTS = \
 	dining-philosophers5 \
 	dining-philosophers6 \
 	oo-list-3 \
-	oo-peg-game2
+	oo-peg-game2 \
+	prngTest
 
 MAUDE_FILES = \
 	account.maude \
@@ -455,7 +456,8 @@ MAUDE_FILES = \
 	dining-philosophers5.maude \
 	dining-philosophers6.maude \
 	oo-list-3.maude \
-	oo-peg-game2.maude
+	oo-peg-game2.maude \
+	prngTest.maude
 
 RESULT_FILES = \
 	account.expected \
@@ -466,7 +468,8 @@ RESULT_FILES = \
 	dining-philosophers5.expected \
 	dining-philosophers6.expected \
 	oo-list-3.expected \
-	oo-peg-game2.expected
+	oo-peg-game2.expected \
+	prngTest.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -709,6 +712,13 @@ oo-list-3.log: oo-list-3
 oo-peg-game2.log: oo-peg-game2
 	@p='oo-peg-game2'; \
 	b='oo-peg-game2'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+prngTest.log: prngTest
+	@p='prngTest'; \
+	b='prngTest'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

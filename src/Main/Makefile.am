@@ -76,7 +76,8 @@ data_DATA = \
 	metaInterpreter.maude \
 	smt.maude \
 	file.maude \
-	time.maude
+	time.maude \
+	prng.maude
 
 EXTRA_DIST = \
 	prelude.maude \
@@ -89,4 +90,5 @@ EXTRA_DIST = \
 	smt.maude \
 	file.maude \
 	process.maude \
-	time.maude
+	time.maude \
+	prng.maude

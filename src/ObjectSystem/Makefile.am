@@ -26,7 +26,8 @@ libobjectSystem_a_SOURCES = \
 	streamManagerSymbol.cc \
 	processManagerSymbol.cc \
 	timeManagerSymbol.cc \
-	directoryManagerSymbol.cc
+	directoryManagerSymbol.cc \
+	prngManagerSymbol.cc
 
 EXTRA_DIST = \
 	objectMap.cc \
@@ -51,7 +52,8 @@ EXTRA_DIST = \
 	timeActions.cc \
 	directorySignature.cc \
 	directoryActions.cc \
-	directoryOutcomes.cc
+	directoryOutcomes.cc \
+	prngActions.cc
 
 noinst_HEADERS = \
 	configSymbol.hh \
@@ -64,4 +66,5 @@ noinst_HEADERS = \
 	streamManagerSymbol.hh \
 	processManagerSymbol.hh \
 	timeManagerSymbol.hh \
-	directoryManagerSymbol.hh
+	directoryManagerSymbol.hh \
+	prngManagerSymbol.hh

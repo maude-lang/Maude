@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,17 +27,17 @@
 #include "decBuf.hh"
 
 void
-DecBuf::shiftAndAdd(int shift, Uint64 c)
+DecBuf::shiftAndAdd(int shift, uint64_t c)
 {
   for (deque<char>::iterator i = buf.begin(); i != buf.end(); ++i)
     {
-      Uint64 r = c + (static_cast<Uint64>(*i) << shift);
+      uint64_t r = c + (static_cast<uint64_t>(*i) << shift);
       c = r / 10;
       *i = r - 10 * c;
     }
   while (c > 0)
     {
-      Uint64 r = c;
+      uint64_t r = c;
       c = r / 10;
       buf.push_back(r - 10 * c);
     }

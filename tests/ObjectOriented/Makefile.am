@@ -7,7 +7,8 @@ TESTS = \
 	dining-philosophers5 \
 	dining-philosophers6 \
 	oo-list-3 \
-	oo-peg-game2
+	oo-peg-game2 \
+	prngTest
 
 MAUDE_FILES = \
 	account.maude \
@@ -18,7 +19,8 @@ MAUDE_FILES = \
 	dining-philosophers5.maude \
 	dining-philosophers6.maude \
 	oo-list-3.maude \
-	oo-peg-game2.maude
+	oo-peg-game2.maude \
+	prngTest.maude
 
 RESULT_FILES = \
 	account.expected \
@@ -29,6 +31,7 @@ RESULT_FILES = \
 	dining-philosophers5.expected \
 	dining-philosophers6.expected \
 	oo-list-3.expected \
-	oo-peg-game2.expected
+	oo-peg-game2.expected \
+	prngTest.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

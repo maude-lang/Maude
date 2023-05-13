@@ -1,0 +1,62 @@
+***(
+
+    This file is part of the Maude 2 interpreter.
+
+    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
+)
+
+***
+***	Maude pseudo-random number generator external objects
+***	Version Alpha149.
+***
+
+mod PRNG is
+  protecting STRING .
+  including CONFIGURATION .
+
+  op prng : Nat -> Oid [ctor] .
+
+  op createPrng : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op createdPrng : Oid Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op setSeed : Oid Oid Nat -> Msg [ctor msg format (b o)] .
+  op seedSet : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op getNext : Oid Oid -> Msg [ctor msg format (b o)] .
+  op gotNext : Oid Oid Nat -> Msg [ctor msg format (m o)] .
+
+  op deletePrng : Oid Oid -> Msg [ctor msg format (b o)] .
+  op deletedPrng : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op prngError : Oid Oid String -> Msg [ctor msg format (r o)] .
+  op prngManager : -> Oid
+        [special (
+           id-hook PrngManagerSymbol
+	   op-hook succSymbol			(s_ : Nat ~> NzNat)
+	   op-hook stringSymbol			(<Strings> : ~> String)
+	   op-hook prngOidSymbol		(prng : Nat ~> Oid)
+	   op-hook createPrngMsg		(createPrng : Oid Oid String ~> Msg)
+	   op-hook createdPrngMsg		(createdPrng : Oid Oid Oid ~> Msg)
+	   op-hook setSeedMsg			(setSeed : Oid Oid Nat ~> Msg)
+	   op-hook seedSetMsg			(seedSet : Oid Oid ~> Msg)
+	   op-hook getNextMsg			(getNext : Oid Oid ~> Msg)
+	   op-hook gotNextMsg			(gotNext : Oid Oid Nat ~> Msg)
+	   op-hook deletePrngMsg		(deletePrng : Oid Oid ~> Msg)
+	   op-hook deletedPrngMsg		(deletedPrng : Oid Oid ~> Msg)
+	   op-hook prngErrorMsg			(prngError : Oid Oid String ~> Msg))] .
+endm

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "binBuf.hh"
 
 void
-BinBuf::init(Uint64 bits, int leadingZeros)
+BinBuf::init(uint64_t bits, int leadingZeros)
 {
   Assert(leadingZeros <= 32 * (MAX_WORDS - 2),
 	 "too many leading zeros" << leadingZeros);
@@ -50,8 +50,8 @@ BinBuf::times10()
   int c = 0;
   for (int i = begin; i < end; i++)
     {
-      Uint64 r = (10ULL * buf[i]) + c;
-      Uint32 t = r & 0xffffffff;
+      uint64_t r = (10ULL * buf[i]) + c;
+      uint32_t t = r & 0xffffffff;
       if (i == begin && t == 0)
 	++begin;
       else

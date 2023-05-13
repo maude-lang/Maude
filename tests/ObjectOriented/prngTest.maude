@@ -1,0 +1,55 @@
+set show timing off .
+
+***
+***	Test the PRNG objects.
+***
+
+load prng
+
+*** 32-bit Mersenne Twister after seeding with 0; should agree with default 0 initialization of numbers from mod RANDOM
+omod PRNG-TEST1 is
+  inc PRNG .
+  pr LIST{Nat} .
+  class Rlist | count : Nat, numbers : List{Nat} .
+
+  op myObj : -> Oid .
+  op start : -> Configuration .
+  rl start => <> < myObj : Rlist | count : 100, numbers : nil > createPrng(prngManager, myObj, "MT32") .
+
+vars O O2 : Oid .
+vars N R : Nat .
+var L : List{Nat} .
+  rl createdPrng(myObj, O, O2) < myObj : Rlist | > =>
+     < myObj : Rlist | > setSeed(O2, myObj, 0) .
+  rl seedSet(myObj, O) < myObj : Rlist | count : s N > =>
+     < myObj : Rlist | count : s N > getNext(O, myObj) .
+  rl gotNext(myObj, O, R) < myObj : Rlist | count : s N, numbers : L > =>
+     < myObj : Rlist | count : N, numbers : (L R) > getNext(O, myObj) .
+  rl gotNext(myObj, O, R) < myObj : Rlist | count : 0, numbers : L > =>
+     < myObj : Rlist | count : 0, numbers : (L R) > deletePrng(O, myObj) .
+endom
+
+erew start .
+
+*** 64-bit Mersenne Twister with default seeding
+omod PRNG-TEST2 is
+  inc PRNG .
+  pr LIST{Nat} .
+  class Rlist | count : Nat, numbers : List{Nat} .
+
+  op myObj : -> Oid .
+  op start : -> Configuration .
+  rl start => <> < myObj : Rlist | count : 100, numbers : nil > createPrng(prngManager, myObj, "MT64") .
+
+vars O O2 : Oid .
+vars N R : Nat .
+var L : List{Nat} .
+  rl createdPrng(myObj, O, O2) < myObj : Rlist | count : s N > =>
+     < myObj : Rlist | count : N > getNext(O2, myObj) .
+  rl gotNext(myObj, O, R) < myObj : Rlist | count : s N, numbers : L > =>
+     < myObj : Rlist | count : N, numbers : (L R) > getNext(O, myObj) .
+  rl gotNext(myObj, O, R) < myObj : Rlist | count : 0, numbers : L > =>
+     < myObj : Rlist | count : 0, numbers : (L R) > deletePrng(O, myObj) .
+endom
+
+erew start .

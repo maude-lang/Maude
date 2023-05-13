@@ -107,10 +107,6 @@ typedef ptrdiff_t Index;
 typedef signed char Byte;
 typedef unsigned char Ubyte;
 //
-//	Types for speed.
-//
-typedef int FastBool;  // testing a one-byte bool return value is expensive on some architectures
-//
 //	Shorthand.
 //
 typedef unsigned int Uint;
@@ -133,16 +129,6 @@ typedef long long int Int64;
 #endif
 #define INT64_MIN		(-INT64_MAX-1)
 #define INT64_MIN_STRING	"-9223372036854775808"
-
-#if SIZEOF_UNSIGNED_LONG == 8
-typedef unsigned long Uint64;
-#else
-typedef unsigned long long int Uint64;
-#endif
-//
-//	32 bit arithmetic; sometime we need guarentee of left truncation.
-//
-typedef unsigned int Uint32;
 
 //
 //	floating point
@@ -479,19 +465,13 @@ ceilingDivision(int dividend, int divisor)
 }
 
 inline const char*
-pluralize(int quantity)
+pluralize(int_fast64_t quantity)
 {
   return (quantity == 1) ? "" : "s";
 }
 
-inline const char*
-pluralize(Int64 quantity)
-{
-  return (quantity == 1) ? "" : "s";
-}
-
-const char* int64ToString(Int64 i, int base = 10);
-Int64 stringToInt64(const char* s, bool& error, int base = 10);
+const char* int64ToString(int64_t i, int base = 10);
+int64_t stringToInt64(const char* s, bool& error, int base = 10);
 bool looksLikeFloat(const char* s);
 const char* doubleToString(double d);
 double stringToDouble(const char* s, bool& error);

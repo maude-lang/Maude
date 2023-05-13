@@ -35,6 +35,7 @@ class StreamManagerSymbol;
 class DirectoryManagerSymbol;
 class ProcessManagerSymbol;
 class TimeManagerSymbol;
+class PrngManagerSymbol;
 class SocketManagerClient;
 
 #endif

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ bool globalDebugFlag = false;
 int returnValueDump;
 
 const char*
-int64ToString(Int64 i, int base)
+int64ToString(int64_t i, int base)
 {
   Assert(base >= 2 && base <= 36, "bad base " << base);
   const int MAX_STRING_SIZE = 64 + 1;  // 64 bits + sign
@@ -50,10 +50,10 @@ int64ToString(Int64 i, int base)
   static char text[MAX_STRING_SIZE + 1];
   char* p = text + MAX_STRING_SIZE;
   bool negative = false;
-  Uint64 u = i;
+  uint64_t u = i;
   if (i < 0)
     {
-      u = static_cast<Uint64>(- (i + 1)) + 1;
+      u = static_cast<uint64_t>(- (i + 1)) + 1;
       negative = true;
     }
   do
@@ -67,7 +67,7 @@ int64ToString(Int64 i, int base)
   return p;
 }
 
-Int64
+int64_t
 stringToInt64(const char* s, bool& error, int base)
 {
   Assert(base >= 2 && base <= 36, "bad base " << base);
@@ -81,7 +81,7 @@ stringToInt64(const char* s, bool& error, int base)
     case '+':
       ++s;
     }
-  Int64 r = 0;
+  int64_t r = 0;
   for (;;)
     {
       char c = *s++;
@@ -108,7 +108,7 @@ stringToInt64(const char* s, bool& error, int base)
 	{
 	  if (negative && *s == '\0')  // check for INT64_MIN
 	    {
-	      Int64 t = -(INT64_MIN + base + v);
+	      int64_t t = -(INT64_MIN + base + v);
 	      if (t % base == 0 && t / base == r - 1)
 		return INT64_MIN;
 	    }
@@ -245,12 +245,12 @@ correctEcvt(double d, int nrDigits, char buffer[], int& decPt, int& sign)
 {
   union Bits
   {
-    Uint64 i;
+    uint64_t i;
     double d;
   };
   
-  const Uint64 bit52 = (1ULL << 52);
-  const Uint64 topBit = (1ULL << 63);
+  const uint64_t bit52 = (1ULL << 52);
+  const uint64_t topBit = (1ULL << 63);
   
   //
   //	Break IEEE-754 double into sign/exponent/mantissa.
@@ -258,7 +258,7 @@ correctEcvt(double d, int nrDigits, char buffer[], int& decPt, int& sign)
   Bits bits;
   bits.d = d;
   sign = (bits.i >> 63) ? -1 : 1;  // top bit = 1 -> -ve
-  Uint64 mantissa = bits.i & (bit52 - 1);  // 52 LSBs
+  uint64_t mantissa = bits.i & (bit52 - 1);  // 52 LSBs
   int exponent = (static_cast<int>(bits.i >> 52) & 0x7FF);  // remaining 11 bits
   if (exponent == 2047)
     {

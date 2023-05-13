@@ -120,7 +120,8 @@ am_libobjectSystem_a_OBJECTS =  \
 	libobjectSystem_a-streamManagerSymbol.$(OBJEXT) \
 	libobjectSystem_a-processManagerSymbol.$(OBJEXT) \
 	libobjectSystem_a-timeManagerSymbol.$(OBJEXT) \
-	libobjectSystem_a-directoryManagerSymbol.$(OBJEXT)
+	libobjectSystem_a-directoryManagerSymbol.$(OBJEXT) \
+	libobjectSystem_a-prngManagerSymbol.$(OBJEXT)
 libobjectSystem_a_OBJECTS = $(am_libobjectSystem_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -142,6 +143,7 @@ am__depfiles_remade = ./$(DEPDIR)/libobjectSystem_a-configSymbol.Po \
 	./$(DEPDIR)/libobjectSystem_a-externalObjectManagerSymbol.Po \
 	./$(DEPDIR)/libobjectSystem_a-fileManagerSymbol.Po \
 	./$(DEPDIR)/libobjectSystem_a-objectSystemRewritingContext.Po \
+	./$(DEPDIR)/libobjectSystem_a-prngManagerSymbol.Po \
 	./$(DEPDIR)/libobjectSystem_a-processManagerSymbol.Po \
 	./$(DEPDIR)/libobjectSystem_a-pseudoThread.Po \
 	./$(DEPDIR)/libobjectSystem_a-socketManagerSymbol.Po \
@@ -332,7 +334,8 @@ libobjectSystem_a_SOURCES = \
 	streamManagerSymbol.cc \
 	processManagerSymbol.cc \
 	timeManagerSymbol.cc \
-	directoryManagerSymbol.cc
+	directoryManagerSymbol.cc \
+	prngManagerSymbol.cc
 
 EXTRA_DIST = \
 	objectMap.cc \
@@ -357,7 +360,8 @@ EXTRA_DIST = \
 	timeActions.cc \
 	directorySignature.cc \
 	directoryActions.cc \
-	directoryOutcomes.cc
+	directoryOutcomes.cc \
+	prngActions.cc
 
 noinst_HEADERS = \
 	configSymbol.hh \
@@ -370,7 +374,8 @@ noinst_HEADERS = \
 	streamManagerSymbol.hh \
 	processManagerSymbol.hh \
 	timeManagerSymbol.hh \
-	directoryManagerSymbol.hh
+	directoryManagerSymbol.hh \
+	prngManagerSymbol.hh
 
 all: all-am
 
@@ -425,6 +430,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-externalObjectManagerSymbol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-fileManagerSymbol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-objectSystemRewritingContext.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-prngManagerSymbol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-processManagerSymbol.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-pseudoThread.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libobjectSystem_a-socketManagerSymbol.Po@am__quote@ # am--include-marker
@@ -591,6 +597,20 @@ libobjectSystem_a-directoryManagerSymbol.obj: directoryManagerSymbol.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libobjectSystem_a-directoryManagerSymbol.obj `if test -f 'directoryManagerSymbol.cc'; then $(CYGPATH_W) 'directoryManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/directoryManagerSymbol.cc'; fi`
 
+libobjectSystem_a-prngManagerSymbol.o: prngManagerSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libobjectSystem_a-prngManagerSymbol.o -MD -MP -MF $(DEPDIR)/libobjectSystem_a-prngManagerSymbol.Tpo -c -o libobjectSystem_a-prngManagerSymbol.o `test -f 'prngManagerSymbol.cc' || echo '$(srcdir)/'`prngManagerSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjectSystem_a-prngManagerSymbol.Tpo $(DEPDIR)/libobjectSystem_a-prngManagerSymbol.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='prngManagerSymbol.cc' object='libobjectSystem_a-prngManagerSymbol.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libobjectSystem_a-prngManagerSymbol.o `test -f 'prngManagerSymbol.cc' || echo '$(srcdir)/'`prngManagerSymbol.cc
+
+libobjectSystem_a-prngManagerSymbol.obj: prngManagerSymbol.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT libobjectSystem_a-prngManagerSymbol.obj -MD -MP -MF $(DEPDIR)/libobjectSystem_a-prngManagerSymbol.Tpo -c -o libobjectSystem_a-prngManagerSymbol.obj `if test -f 'prngManagerSymbol.cc'; then $(CYGPATH_W) 'prngManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/prngManagerSymbol.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libobjectSystem_a-prngManagerSymbol.Tpo $(DEPDIR)/libobjectSystem_a-prngManagerSymbol.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='prngManagerSymbol.cc' object='libobjectSystem_a-prngManagerSymbol.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libobjectSystem_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libobjectSystem_a-prngManagerSymbol.obj `if test -f 'prngManagerSymbol.cc'; then $(CYGPATH_W) 'prngManagerSymbol.cc'; else $(CYGPATH_W) '$(srcdir)/prngManagerSymbol.cc'; fi`
+
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
 tags: tags-am
@@ -720,6 +740,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-externalObjectManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-fileManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-objectSystemRewritingContext.Po
+	-rm -f ./$(DEPDIR)/libobjectSystem_a-prngManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-processManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-pseudoThread.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-socketManagerSymbol.Po
@@ -775,6 +796,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-externalObjectManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-fileManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-objectSystemRewritingContext.Po
+	-rm -f ./$(DEPDIR)/libobjectSystem_a-prngManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-processManagerSymbol.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-pseudoThread.Po
 	-rm -f ./$(DEPDIR)/libobjectSystem_a-socketManagerSymbol.Po

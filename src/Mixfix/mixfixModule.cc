@@ -136,6 +136,7 @@
 #include "directoryManagerSymbol.hh"
 #include "processManagerSymbol.hh"
 #include "timeManagerSymbol.hh"
+#include "prngManagerSymbol.hh"
 
 //	strategy language class definitions
 #include "trivialStrategy.hh"

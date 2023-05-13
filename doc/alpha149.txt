@@ -1,0 +1,102 @@
+Alpha 149 release notes
+========================
+
+New feature
+============
+
+There is now support for pseudo-random number generator objects:
+
+mod PRNG is
+  protecting STRING .
+  including CONFIGURATION .
+
+  op prng : Nat -> Oid [ctor] .
+
+  op createPrng : Oid Oid String -> Msg [ctor msg format (b o)] .
+  op createdPrng : Oid Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op setSeed : Oid Oid Nat -> Msg [ctor msg format (b o)] .
+  op seedSet : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op getNext : Oid Oid -> Msg [ctor msg format (b o)] .
+  op gotNext : Oid Oid Nat -> Msg [ctor msg format (m o)] .
+
+  op deletePrng : Oid Oid -> Msg [ctor msg format (b o)] .
+  op deletedPrng : Oid Oid -> Msg [ctor msg format (m o)] .
+
+  op prngError : Oid Oid String -> Msg [ctor msg format (r o)] .
+  op prngManager : -> Oid [special (...)] .
+endm
+
+There is an external object prngManager. New pseudo-random number
+generator objects are created by sending it a createPrng() message
+where the final argument is the name of a PRNG algorithm. Two
+algorithms are currently supported:
+
+"MT32" - 32-bit Mersenne Twister (mt19937 from C++ standard library)
+"MT64" - 64-bit Mersenne Twister (mt19937_64 from C++ standard library)
+
+Originally I was going to use the C++ standard library names, but
+when testing the code I could never remember them so I went with more
+intuitive names.
+
+After successful creation, the createdPrng() message returns
+the Oid of new prng external object which has a name prng(M)
+for some natural number M. The prng object receives the default
+seed defined in the C++ library. At any point the seed can be set
+with the setSeed()/seedSet() message pair. Note that setting
+the seed of an MT32 prng to N will cause it to generate the
+sequence of numbers that correspond to those produced by
+random(k) from the existing fmod RANDOM for k = 0, 1, 2 ...
+if Maude is started with the flag -random-seed=N, where N is taken
+as 0 if no such flag is given.
+
+Seeds should be 32-bit for MT32 prngs and 64-bit for MT64 prngs,
+however for convenience, any size seed may given and only the
+appropriate low order bits are used. Thus a MT32 prng can
+be seeded from the number of nanoseconds since the Unix Epoch
+for example.
+
+The next pseudo-random number from a prng is obtained from with
+the getNext()/gotNext() pair.
+
+A prng object can be disposed of with the deletePrng()/deletedPrng()
+message pair.
+
+In the case of a bad algorithm or seed argument, a prngError()
+message is returned instead of the expect createdPrng() or seedSet()
+message.
+
+The following example shows how to create an MT32 prng object, seed
+it from the number of nanoseconds since the Unix Epoch and get
+a list of the first 10 pseudorandom numbers. I used the new
+object-oriented syntax to simplify the rules but this is optional.
+
+load prng
+load time
+
+omod PRNG-TEST is
+  inc PRNG .
+  inc TIME .
+  pr LIST{Nat} .
+  class Rlist | prng : Oid, count : Nat, numbers : List{Nat} .
+
+  ops me dummy : -> Oid .
+  op start : -> Configuration .
+  rl start => <> < me : Rlist | prng : dummy, count : 10, numbers : nil > createPrng(prngManager, me, "MT32") .
+
+vars M O R : Oid .
+vars N S V : Nat .
+var L : List{Nat} .
+  rl createdPrng(M, O, R) < M : Rlist | > => < M : Rlist | prng : R > getTimeSinceEpoch(timeManager, M) .
+  rl gotTimeSinceEpoch(M, O, S) < M : Rlist | prng : R > => < M : Rlist | > setSeed(R, M, S) .
+  rl seedSet(M, O) < M : Rlist | count : s N > => < M : Rlist | count : N > getNext(O, M)  .
+  rl gotNext(M, O, V) < M : Rlist | count : s N, numbers : L > => < M : Rlist | count : N, numbers : (L V) > getNext(O, M) .
+  rl gotNext(M, O, V) < M : Rlist | count : 0, numbers : L >  => < M : Rlist | numbers : (L V) > deletePrng(O,  M) .
+endom
+
+erew start .
+
+Pseudo-random number generator objects were requested by Daniel
+Galan Pascual back in October 2022.
+

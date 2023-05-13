@@ -1,3 +1,33 @@
+2023-05-12  Steven Eker  <eker@pup>
+
+	* prngActions.cc (PrngManagerSymbol::getNext): use makeNatDag64()
+
+2023-05-11  Steven Eker  <eker@pup>
+
+	* prngActions.cc (PrngManagerSymbol::createPrng): return after
+	calling errorReply()
+	(PrngManagerSymbol::createPrng): rename algorithms to MT32 and MT64
+	(PrngManagerSymbol::errorReply): added DebugInfo()
+	(PrngManagerSymbol::createPrng): added DebugInfo()s
+
+2023-05-10  Steven Eker  <eker@pup>
+
+	* objectSystem.hh: added class PrngManagerSymbol
+
+	* prngActions.cc: created
+
+	* prngSignature.cc: added deletePrngMsg and deletedPrngMsg
+
+	* prngManagerSymbol.cc: created
+
+2023-05-09  Steven Eker  <eker@pup>
+
+	* prngSignature.cc: created
+
+	* prngManagerSymbol.hh: created
+
+===================================Maude149===========================================
+
 2023-03-29  Steven Eker  <eker@pup>
 
 	* objectSystemRewritingContext.hh (class ObjectSystemRewritingContext):

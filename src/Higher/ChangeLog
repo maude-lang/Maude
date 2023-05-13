@@ -1,3 +1,10 @@
+2023-05-08  Steven Eker  <eker@pup>
+
+	* variantFolder.cc (VariantFolder::insertVariant): removed commented out
+	code
+
+===================================Maude149===========================================
+
 2023-04-12  Steven Eker  <eker@pup>
 
 	* searchState.cc (SearchState::initSubstitution): use empty()

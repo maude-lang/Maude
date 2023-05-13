@@ -1,3 +1,14 @@
+2023-05-12  Steven Eker  <eker@pup>
+
+	* succSymbol.cc (SuccSymbol::makeNatDag): becomes makeNatDag64() to
+	avoid overload confusion
+
+	* succSymbol.hh (class SuccSymbol): added decl for uint64_t version of
+	makeNatDag()
+	(class SuccSymbol): makeNatDag() -> makeNatDag64()
+
+	* succSymbol.cc (SuccSymbol::makeNatDag): added uint64_t version
+
 2023-04-13  Steven Eker  <eker@pup>
 
 	* minusSymbol.cc (MinusSymbol::attachData): use empty()

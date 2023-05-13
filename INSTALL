@@ -300,7 +300,7 @@ CFLAGS="-fno-stack-protector -O3 -mmacosx-version-min=10.13" \
 --prefix=$HSLIB
 
 make
-makde install
+make install
 
 
 Yices2

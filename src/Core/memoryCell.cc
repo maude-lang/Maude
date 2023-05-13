@@ -52,7 +52,7 @@ struct MemoryCell::Arena
   union
   {
     Arena* nextArena;
-    Int64 alignmentDummy;  // force 8 byte alignment for MemoryCell objects
+    int64_t alignmentDummy;  // force 8 byte alignment for MemoryCell objects
   };
   MemoryCell storage[ARENA_SIZE];
   MemoryCell* firstNode();

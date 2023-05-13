@@ -1,3 +1,51 @@
+2023-05-12  Steven Eker  <eker@pup>
+
+	* macros.hh: use int64_t for stringToInt64(() decl
+	(pluralize): use int64_t
+	(pluralize): use int32_t rather than int since int cannot be
+	overloaded with int64_t since they could be the same type
+	(pluralize): get rid of int32_t version to appease clang
+	(pluralize): use int_fast64 for 64-bit version
+
+	* natSet.hh (NatSet::contains): FastBool -> int_fast8_t
+
+	* macros.hh: deleted typedef FastBool
+
+	* natSet.cc (NatSet::arrayContains): FastBool -> int_fast8_t
+
+	* natSet.hh (class NatSet): FastBool -> int_fast8_t
+
+	* macros.hh: fix decl for int64ToString()
+
+	* variableConstraint.cc (VariableConstraint::absorb): deleted (already
+	commented out)
+
+	* variableConstraint.hh (class VariableConstraint): deleted commented
+	out decl for absorb()
+
+	* macros.hh: deleted typedef Uint32
+
+	* variableConstraint.hh (class VariableConstraint): Uint32 -> uint32_t
+
+	* binBuf.hh (class BinBuf): Uint32 -> uint32_t
+
+	* macros.hh: deleted typedef Uint64
+
+	* macros.cc (correctEcvt): Uint64 -> uint64_t
+	(int64ToString): Uint64 -> uint64_t, Int64 -> int64_t
+	(stringToInt64): Int64 -> unint64_t
+
+	* decBuf.cc (DecBuf::shiftAndAdd): Uint64 -> uint64_t
+
+	* decBuf.hh (class DecBuf): Uint64 -> uint64_t
+
+	* binBuf.hh (class BinBuf): Uint64 -> uint64_t
+
+	* binBuf.cc (BinBuf::init): Uint64 -> uint64_t
+	(BinBuf::times10): Uint64 -> uint64_t, Uint32 -> uint32_t
+
+===================================Maude149===================================
+
 2023-05-01  Steven Eker  <eker@pup>
 
 	* macros.hh: added Profile() macro

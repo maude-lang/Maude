@@ -16,4 +16,5 @@ EXTRA_DIST = \
 	alpha145.txt \
 	alpha146.txt \
 	alpha147.txt \
-	alpha148.txt
+	alpha148.txt \
+	alpha149.txt

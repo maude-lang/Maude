@@ -66,7 +66,7 @@ public:
   void subtract(const NatSet& other);
   void intersect(const NatSet& other);
   NatSet& operator=(const NatSet& original);
-  FastBool contains(value_type i) const;  // constant time
+  int_fast8_t contains(value_type i) const;  // constant time
   bool containsSmall(value_type i) const;  // only correct for small arguments
   bool contains(const NatSet& other) const;  // i.e. improper subset test
   bool disjoint(const NatSet& other) const;
@@ -102,7 +102,7 @@ private:
   static int getWordNr(value_type i);
 
   value_type arrayMin(int i) const;
-  FastBool arrayContains(value_type i) const;
+  int_fast8_t arrayContains(value_type i) const;
   //
   //	Many sets will fit in a single machine word so we store the first word separately in
   //	the hope of avoiding the allocation of a Vector.
@@ -177,7 +177,7 @@ NatSet::end() const
   return i;
 }
 
-inline FastBool
+inline int_fast8_t
 NatSet::contains(value_type i) const
 {
   Assert(i >= 0, "-ve argument");

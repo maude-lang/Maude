@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -63,7 +63,6 @@ public:
   bool operator==(const VariableConstraint& other) const;
   
   bool intersect(VariableConstraint other);
-  //void absorb(VariableConstraint& other);
 
   //
   //	New tests.
@@ -86,7 +85,7 @@ private:
       INDEX_SHIFT = 2
     };
 
-  Uint32 constraint;
+  uint32_t constraint;
 
   friend ostream& operator<<(ostream& s, VariableConstraint c);  // HACK
 };

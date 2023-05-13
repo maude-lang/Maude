@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -80,43 +80,6 @@ VariableConstraint::intersect(VariableConstraint other)
     (TAKE_EMPTY_FLAG & constraint & other.constraint);
   return true;
 }
-
-/*
-void
-VariableConstraint::absorb(VariableConstraint& other)
-{
-  //
-  //	Our constraint must be unbounded or have upperBound >= 2.
-  //	We compute new constraints that arise from x |-> xy
-  //
-  Assert(getUpperBound() != 1, "can't absorb with upperBound=1");
-  //
-  //	We always clear TAKE_EMPTY_FLAGs.
-  //
-  other.constraint &= ~TAKE_EMPTY_FLAG;
-  //
-  //	If our upperBound is unbounded then we are done.
-  //
-  int upperBound = constraint >> INDEX_SHIFT;
-  if (upperBound == 0)
-    {
-      constraint = 0;
-      return;
-    }
-  //
-  //	New upperBound is reduced by 1 and any TAKE_EMPTY_FLAG cleared.
-  //
-  --upperBound;
-  constraint = upperBound << INDEX_SHIFT;
- 
-  int otherUpperBound = other.getUpperBound();
-  //
-  //	If otherUpperBound is looser than ours we impose ours.
-  //
-  if (otherUpperBound == 0 || otherUpperBound > upperBound)
-    other.constraint = constraint;
-}
-*/
 
 ostream&
 operator<<(ostream& s, VariableConstraint c)

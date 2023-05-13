@@ -1,3 +1,18 @@
+2023-05-11  Steven Eker  <eker@pup>
+
+	* prng.maude: fixed bug where we had the wrong id-hook; fix hooks
+	for deletePrngMsg, deletedPrngMsg
+
+2023-05-10  Steven Eker  <eker@pup>
+
+	* prng.maude: added deletePrng() and deletedPrng() messages
+
+2023-05-09  Steven Eker  <eker@pup>
+
+	* prng.maude: created
+
+===================================Maude149===========================================
+
 2023-05-05  Steven Eker  <eker@pup>
 
 	* main.cc (printHelp): document -early-quit=N and make use of adjacent
