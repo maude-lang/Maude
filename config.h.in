@@ -1,148 +1,72 @@
-/* config.h.in.  Generated from configure.ac by autoheader.  */
+/* config.h.in */
+/* Variables that are apparently unused have been commented out. */
 
-/* annotate comiler output */
-#undef ANNOTATED
-
-/* build the experimental integrated compiler */
-#undef COMPILER
-
-/* enable Darwin specific fixes */
-#undef DARWIN
-
-/* include dump code */
-#undef DUMP
-
-/* have conditional move instruction */
-#undef HAVE_CMOV
-
-/* Define to 1 if you have the <ctype.h> header file. */
-#undef HAVE_CTYPE_H
-
-/* Define to 1 if you have the <ieeefp.h> header file. */
-#undef HAVE_IEEEFP_H
-
-/* Define to 1 if you have the <inttypes.h> header file. */
-#undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the `rt' library (-lrt). */
-#undef HAVE_LIBRT
-
-/* Define to 1 if you have the `socket' library (-lsocket). */
-#undef HAVE_LIBSOCKET
-
-/* Define to 1 if you have the <limits.h> header file. */
-#undef HAVE_LIMITS_H
-
-/* Define to 1 if you have the <math.h> header file. */
-#undef HAVE_MATH_H
-
-/* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
-
-/* Define to 1 if you have the <ostream> header file. */
-#undef HAVE_OSTREAM
-
-/* Define to 1 if you have the <ostream.h> header file. */
-#undef HAVE_OSTREAM_H
-
-/* use ppoll() */
-#undef HAVE_PPOLL
-
-/* Define to 1 if you have the <stddef.h> header file. */
-#undef HAVE_STDDEF_H
-
-/* Define to 1 if you have the <stdint.h> header file. */
-#undef HAVE_STDINT_H
-
-/* Define to 1 if you have the <stdio.h> header file. */
-#undef HAVE_STDIO_H
-
-/* Define to 1 if you have the <stdlib.h> header file. */
-#undef HAVE_STDLIB_H
-
-/* Define to 1 if you have the <strings.h> header file. */
-#undef HAVE_STRINGS_H
-
-/* Define to 1 if you have the <string.h> header file. */
-#undef HAVE_STRING_H
-
-/* Define to 1 if you have the <sys/stat.h> header file. */
-#undef HAVE_SYS_STAT_H
-
-/* Define to 1 if you have the <sys/termios.h> header file. */
-#undef HAVE_SYS_TERMIOS_H
-
-/* Define to 1 if you have the <sys/time.h> header file. */
-#undef HAVE_SYS_TIME_H
-
-/* Define to 1 if you have the <sys/types.h> header file. */
-#undef HAVE_SYS_TYPES_H
-
-/* Define to 1 if you have the <unistd.h> header file. */
-#undef HAVE_UNISTD_H
-
-/* inline and discard selected local functions */
-#undef LOCAL_INLINES
-
-/* support MOS oracles */
-#undef MOS
-
-/* don't do runtime checks */
-#undef NO_ASSERT
+/* Annotate compiler output */
+// #cmakedefine ANNOTATED
+/* Build the experimental integrated compiler */
+#cmakedefine COMPILER
+/* Enable Darwin specific fixes */
+#cmakedefine DARWIN
+/* Include dump code */
+#cmakedefine DUMP
+/* Have conditional move instruction */
+// #cmakedefine HAVE_CMOV
 
 /* Name of package */
-#undef PACKAGE
+#define PACKAGE "@PACKAGE@"
+/* Where bug reports for this package should be sent. */
+#define PACKAGE_BUGREPORT "@PACKAGE_BUGREPORT@"
+/* The full name. */
+#define PACKAGE_NAME "@PACKAGE_NAME@"
+/* The full name and version. */
+#define PACKAGE_STRING "@PACKAGE_STRING@"
+#define PACKAGE_TARNAME "@PACKAGE_TARNAME@"
+#define PACKAGE_URL "@PACKAGE_URL@"
+#define PACKAGE_VERSION "@PACKAGE_VERSION@"
+/* Handled by CMake */
+// #define TIME_WITH_SYS_TIME
 
-/* Define to the address where bug reports for this package should be sent. */
-#undef PACKAGE_BUGREPORT
+/* Header file checks */
+// #cmakedefine HAVE_TIME_H
+#cmakedefine HAVE_SYS_TIME_H 1
+#cmakedefine HAVE_IEEEFP_H 1
+#cmakedefine HAVE_MATH_H 1
+#cmakedefine HAVE_SYS_TERMIOS_H 1
+#cmakedefine HAVE_STDDEF_H 1
+#cmakedefine HAVE_LIMITS_H 1
+#cmakedefine HAVE_STDLIB_H 1
+#cmakedefine HAVE_STDIO_H 1
+#cmakedefine HAVE_CTYPE_H 1
+#cmakedefine HAVE_UNISTD_H 1
+#cmakedefine HAVE_OSTREAM 1
+#cmakedefine HAVE_OSTREAM_H 1
 
-/* Define to the full name of this package. */
-#undef PACKAGE_NAME
+#cmakedefine HAVE_STRINGS_H @CMAKE_HAVE_STRINGS_H@
+#cmakedefine HAVE_STRING_H @CMAKE_HAVE_STRING_H@
 
-/* Define to the full name and version of this package. */
-#undef PACKAGE_STRING
+#cmakedefine HAVE_PPOLL
 
-/* Define to the one symbol short name of this package. */
-#undef PACKAGE_TARNAME
+/* Size checks */
+#cmakedefine SIZEOF_SHORT @SIZEOF_SHORT@
+#cmakedefine SIZEOF_INT @SIZEOF_INT@
+#cmakedefine SIZEOF_LONG @SIZEOF_LONG@
+#cmakedefine SIZEOF_UNSIGNED_LONG @SIZEOF_UNSIGNED_LONG@
+#cmakedefine SIZEOF_VOID_P @SIZEOF_VOID_P@
 
-/* Define to the home page for this package. */
-#undef PACKAGE_URL
-
-/* Define to the version of this package. */
-#undef PACKAGE_VERSION
-
-/* The size of `int', as computed by sizeof. */
-#undef SIZEOF_INT
-
-/* The size of `long', as computed by sizeof. */
-#undef SIZEOF_LONG
-
-/* The size of `short', as computed by sizeof. */
-#undef SIZEOF_SHORT
-
-/* The size of `unsigned long', as computed by sizeof. */
-#undef SIZEOF_UNSIGNED_LONG
-
-/* The size of `void *', as computed by sizeof. */
-#undef SIZEOF_VOID_P
-
-/* Define to 1 if you have the ANSI C header files. */
-#undef STDC_HEADERS
-
-/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
-#undef TIME_WITH_SYS_TIME
-
-/* use CVC4 SMT solver library */
-#undef USE_CVC4
-
-/* use libsigsegv to handle segmentation faults */
-#undef USE_LIBSIGSEGV
-
-/* use Tecla command line editing library */
-#undef USE_TECLA
-
+/* Library usage options -- These are now handled by CMake. */
 /* use Yices2 SMT solver library */
-#undef USE_YICES2
+// #cmakedefine USE_YICES2 @USE_YICES2@
+/* use CVC4 SMT solver library */
+// #cmakedefine USE_CVC4 @USE_CVC4@
+/* use Tecla command line editing library */
+// #cmakedefine USE_TECLA @USE_TECLA@
+/* use libsigsegv to handle segmentation faults */
+// #cmakedefine USE_LIBSIGSEGV @USE_LIBSIGSEGV@
 
-/* Version number of package */
-#undef VERSION
+#cmakedefine LOCAL_INLINES @LOCAL_INLINES@
+#cmakedefine NO_ASSERT @NO_ASSERT@
+#cmakedefine MOS
+#cmakedefine DUMP
+
+
+

@@ -249,7 +249,7 @@ Vector<T>::back()
 }
 
 template<class T>
-inline const T& 
+inline const T&
 Vector<T>::operator[](size_type i) const
 {
   Assert(i < size(), "index (" << i << ") too big, size: " << size());
@@ -257,7 +257,7 @@ Vector<T>::operator[](size_type i) const
 }
 
 template<class T>
-inline T& 
+inline T&
 Vector<T>::operator[](size_type i)
 {
   Assert(i < size(), "index (" << i << ") too big, size: " << size());
@@ -271,7 +271,7 @@ Vector<T>::reallocate(size_t neededBytes, size_type oldLength)
   //
   //	We don't copy the length after reallocation in the expectation that the
   //	caller will set a new length.
-  //	
+  //
   PreVector tmp;
   tmp.initAllocate(neededBytes);
   void* base = pv.getBase();
@@ -385,7 +385,7 @@ Vector<T>::push_back(const T& item)
   if (pv.getAllocatedBytes() < neededBytes)
     reallocate(neededBytes, oldLength);
   pv.setLength(newLength);
-    
+
   T* vec = static_cast<T*>(pv.getBase());
   new(vec + oldLength) T(item);  // use copy constructor to copy item into vector
 }
@@ -400,7 +400,7 @@ Vector<T>::push_back(T&& item)
   if (pv.getAllocatedBytes() < neededBytes)
     reallocate(neededBytes, oldLength);
   pv.setLength(newLength);
-    
+
   T* vec = static_cast<T*>(pv.getBase());
   new(vec + oldLength) T(std::move(item));  // use move constructor if possible
 }
@@ -459,7 +459,7 @@ Vector<T>::operator=(const Vector<T>& original)
 	    {
 	      T* vec = static_cast<T*>(base);
 	      const T* originalVec = static_cast<const T*>(originalBase);
-	      for (size_type i = 0; i != originalLength; ++i) 
+	      for (size_type i = 0; i != originalLength; ++i)
 		new(vec + i) T(originalVec[i]);   // call copy constructor on original objects
 	    }
 	}
@@ -548,7 +548,7 @@ Vector<T>::end() const
 }
 
 #else
-#include <slowVector.hh>
+#include "slowVector.hh"
 #endif
 
 //
@@ -571,7 +571,7 @@ Vector<T>::append(const T& item)
   if (pv.getAllocatedBytes() < neededBytes)
     reallocate(neededBytes, oldLength);
   pv.setLength(newLength);
-    
+
   T* vec = static_cast<T*>(pv.getBase());
   new(vec + oldLength) T(item);  // use copy constructor to copy item into vector
 }
@@ -586,7 +586,7 @@ Vector<T>::append(T&& item)
   if (pv.getAllocatedBytes() < neededBytes)
     reallocate(neededBytes, oldLength);
   pv.setLength(newLength);
-    
+
   T* vec = static_cast<T*>(pv.getBase());
   new(vec + oldLength) T(std::move(item));  // use move constructor if possible
 }

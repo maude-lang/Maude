@@ -128,7 +128,7 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
   stackoverflow_install_handler(stackOverflowHandler, altStack, altStackSize);
 #else
   //
-  //	If we can't use the library we will will catch SIGSEGVs but not install
+  //	If we can't use the library we will catch SIGSEGVs but not install
   //	an alternative stack so that that stack overflows will show up as
   //	segmentation faults.
   //
@@ -564,7 +564,7 @@ UserLevelRewritingContext::handleDebug(DagNode* subject, const PreEquation* pe)
   for(;;)
     {
       switch (commandLoop())
-	{ 
+	{
 	case RESUME:
 	  {
 	    --debugLevel;

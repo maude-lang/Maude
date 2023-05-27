@@ -1,0 +1,91 @@
+
+set(higher_sources
+        rewriteSearchState.cc
+        matchSearchState.cc
+        positionState.cc
+        pattern.cc
+        searchState.cc
+        rewriteSequenceSearch.cc
+        modelCheckerSymbol.cc
+        stateTransitionGraph.cc
+        rewriteConditionFragment.cc
+        assignmentConditionFragment.cc
+        sortTestConditionFragment.cc
+        equalityConditionFragment.cc
+        assignmentConditionState.cc
+        rewriteConditionState.cc
+        temporalSymbol.cc
+        satSolverSymbol.cc
+        unificationProblem.cc
+        narrowingSearchState.cc
+        narrowingUnificationProblem.cc
+        narrowingSequenceSearch.cc
+        unifierFilter.cc
+        variantNarrowingSearchState.cc
+        variantFolder.cc
+        variantSearch.cc
+        variantUnificationProblem.cc
+        narrowingSearchState2.cc
+        narrowingFolder.cc
+        narrowingSearchState3.cc
+        narrowingSequenceSearch3.cc
+        irredundantUnificationProblem.cc
+        variantUnifierFilter.cc
+        filteredVariantUnifierSearch.cc
+        variantMatchingProblem.cc
+        )
+
+set(higher_headers
+        assignmentConditionFragment.hh
+        assignmentConditionState.hh
+        equalityConditionFragment.hh
+        higher.hh
+        matchSearchState.hh
+        modelCheckerSymbol.hh
+        pattern.hh
+        positionState.hh
+        rewriteConditionFragment.hh
+        rewriteConditionState.hh
+        rewriteSearchState.hh
+        rewriteSequenceSearch.hh
+        satSolverSymbol.hh
+        searchState.hh
+        sortTestConditionFragment.hh
+        stateTransitionGraph.hh
+        temporalSymbol.hh
+        unificationProblem.hh
+        narrowingSearchState.hh
+        narrowingUnificationProblem.hh
+        narrowingSequenceSearch.hh
+        sequenceSearch.hh
+        cacheableState.hh
+        unifierFilter.hh
+        variantNarrowingSearchState.hh
+        variantFolder.hh
+        variantSearch.hh
+        variantUnificationProblem.hh
+        narrowingSearchState2.hh
+        narrowingFolder.hh
+        narrowingSearchState3.hh
+        narrowingSequenceSearch3.hh
+        irredundantUnificationProblem.hh
+        variantUnifierFilter.hh
+        filteredVariantUnifierSearch.hh
+        variantMatchingProblem.hh
+        )
+
+add_library(higher STATIC ${higher_sources} ${higher_headers})
+
+# Set include directories for higher.a
+target_include_directories(higher PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/Utility
+        ${CMAKE_SOURCE_DIR}/src/Interface
+        ${CMAKE_SOURCE_DIR}/src/Core
+        ${CMAKE_SOURCE_DIR}/src/Variable
+        ${CMAKE_SOURCE_DIR}/src/FullCompiler
+        ${CMAKE_SOURCE_DIR}/src/Temporal
+        ${CMAKE_SOURCE_DIR}/src/FreeTheory
+        ${CMAKE_SOURCE_DIR}/src/NA_Theory
+        ${CMAKE_SOURCE_DIR}/src/BuiltIn
+        ${CMAKE_SOURCE_DIR}/src/Mixfix
+        )
