@@ -1,0 +1,78 @@
+set(strategyLanguage_sources
+        strategyExpression.cc
+        trivialStrategy.cc
+        applicationStrategy.cc
+        concatenationStrategy.cc
+        iterationStrategy.cc
+        branchStrategy.cc
+        unionStrategy.cc
+        testStrategy.cc
+        subtermStrategy.cc
+        callStrategy.cc
+        strategicExecution.cc
+        strategicTask.cc
+        branchTask.cc
+        strategicProcess.cc
+        decompositionProcess.cc
+        applicationProcess.cc
+        strategicSearch.cc
+        depthFirstStrategicSearch.cc
+        fairStrategicSearch.cc
+        matchProcess.cc
+        subtermProcess.cc
+        rewriteTask.cc
+        subtermTask.cc
+        callTask.cc
+        callProcess.cc
+        strategyStackManager.cc
+        variableBindingsManager.cc
+        oneStrategy.cc
+        oneTask.cc
+        )
+
+set(strategyLanguage_headers
+        strategyLanguage.hh
+        strategyExpression.hh
+        trivialStrategy.hh
+        applicationStrategy.hh
+        concatenationStrategy.hh
+        iterationStrategy.hh
+        branchStrategy.hh
+        unionStrategy.hh
+        testStrategy.hh
+        subtermStrategy.hh
+        callStrategy.hh
+        strategicExecution.hh
+        strategicTask.hh
+        branchTask.hh
+        strategicProcess.hh
+        decompositionProcess.hh
+        applicationProcess.hh
+        strategicSearch.hh
+        depthFirstStrategicSearch.hh
+        fairStrategicSearch.hh
+        sharedValue.hh
+        matchProcess.hh
+        subtermProcess.hh
+        rewriteTask.hh
+        subtermTask.hh
+        callTask.hh
+        callProcess.hh
+        strategyStackManager.hh
+        variableBindingsManager.hh
+        oneStrategy.hh
+        oneTask.hh
+        )
+
+add_library(strategyLanguage STATIC ${strategyLanguage_sources} ${strategyLanguage_headers})
+
+# Set include directories for libstrategyLanguage.a
+target_include_directories(strategyLanguage PRIVATE
+        ${CMAKE_SOURCE_DIR}/src/Utility
+        ${CMAKE_SOURCE_DIR}/src/Interface
+        ${CMAKE_SOURCE_DIR}/src/Variable
+        ${CMAKE_SOURCE_DIR}/src/Core
+        ${CMAKE_SOURCE_DIR}/src/Higher
+        ${CMAKE_SOURCE_DIR}/src/FullCompiler
+        ${CMAKE_SOURCE_DIR}/src/StrategyLanguage
+        )

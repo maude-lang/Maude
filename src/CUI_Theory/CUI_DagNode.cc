@@ -23,17 +23,17 @@
 //
 //      Implementation for class CUI_DagNode.
 //
- 
+
 //	utility stuff
 #include "macros.hh"
 #include "vector.hh"
- 
+
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
 #include "variable.hh"
 #include "CUI_Theory.hh"
- 
+
 //      interface class definitions
 #include "binarySymbol.hh"
 #include "dagNode.hh"
@@ -43,7 +43,7 @@
 #include "rhsAutomaton.hh"
 #include "subproblem.hh"
 #include "extensionInfo.hh"
- 
+
 //      core class definitions
 #include "substitution.hh"
 #include "pendingUnificationStack.hh"
@@ -606,7 +606,7 @@ CUI_DagNode::instantiate2(const Substitution& substitution, bool maintainInvaria
 bool
 CUI_DagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 {
-  return argArray[0]->indexVariables(indices, baseIndex) &  // always make both calls
+  return argArray[0]->indexVariables(indices, baseIndex) &&  // always make both calls
     argArray[1]->indexVariables(indices, baseIndex);
 }
 
@@ -624,7 +624,7 @@ CUI_DagNode::instantiateWithReplacement(const Substitution& substitution,
   DagNode* c = (eagerCopies != 0) && symbol()->eagerArgument(other) ?
     n->instantiateWithCopies(substitution, *eagerCopies) :
     n->instantiate(substitution, false);  // lazy case - ok to use original unifier bindings since we won't evaluate them
-  if (c != 0)  // changed under substitutition
+  if (c != 0)  // changed under substitution
     n = c;
 
   d->argArray[other] = n;
