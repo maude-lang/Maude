@@ -133,6 +133,12 @@ public:
   int renameStrat(int label, const Vector<int>& sortNames) const;
   void printRenaming(ostream& s, const char* sep, const char* sep2, bool showProcessed = false) const;
 
+  string latexRenaming(const char*
+		       sep, const char* sep2,
+		       const Module* fromModule,
+		       const Module* toModule,
+		       bool showProcessed) const;
+
 protected:
   //
   //	This returns true even if its is the identity mapping.
@@ -228,7 +234,8 @@ private:
   static void setType(set<int>& type, const ConnectedComponent* component);
   static Rope makeTypeName(const set<int>& type);
 
-  void printRenamingType(ostream& s, const set<int>& sorts) const;
+  static void printRenamingType(ostream& s, const set<int>& sorts);
+  static string latexRenamingType(const set<int>& sorts, const Module* module);
 
   IdMap sortMap;
   Vector<IdMap::const_iterator> sortMapIndex;

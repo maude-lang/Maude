@@ -364,20 +364,14 @@ MetaLevelOpSymbol::metaRewrite(FreeDagNode* subject, RewritingContext& context)
 	      t = t->normalize(false);
 	      DagNode* d = t->term2DagEagerLazyAware();
 	      t->deepSelfDestruct();
-	      //cerr << "before create\n"; RootContainer::dump(cerr);
 	      RewritingContext* objectContext =
 		  context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
-	      //cerr << "after create\n"; RootContainer::dump(cerr);
 	      m->protect();
-	      //m->saveHiddenState();
 	      m->resetRules();
 	      objectContext->ruleRewrite(limit);
-	      //cerr << "after run\n"; RootContainer::dump(cerr);
 	      context.addInCount(*objectContext);
 	      d = metaLevel->upResultPair(objectContext->root(), m);
 	      delete objectContext;
-	      //cerr << "after delete\n"; RootContainer::dump(cerr);
-	      //m->restoreHiddenState();
 	      (void) m->unprotect();
 	      return context.builtInReplace(subject, d);
 	    }
@@ -413,24 +407,17 @@ MetaLevelOpSymbol::metaFrewrite(FreeDagNode* subject, RewritingContext& context)
 	      t = t->normalize(false);
 	      DagNode* d = t->term2DagEagerLazyAware();
 	      t->deepSelfDestruct();
-	      //cerr << "before create\n"; RootContainer::dump(cerr);
 	      RewritingContext* objectContext =
 		context.makeSubcontext(d, UserLevelRewritingContext::META_EVAL);
 	      safeCast(ObjectSystemRewritingContext*, objectContext)->
 		setObjectMode(ObjectSystemRewritingContext::FAIR);
-	      //cerr << "after create\n"; RootContainer::dump(cerr);
 	      m->protect();
-	      //m->saveHiddenState();
 	      m->resetRules();
 	      objectContext->fairRewrite(limit, gas);
-	      //cerr << "after run\n"; RootContainer::dump(cerr);
 	      objectContext->root()->computeTrueSort(*objectContext);
-	      //cerr << "after sort\n"; RootContainer::dump(cerr);
 	      context.addInCount(*objectContext);
 	      d = metaLevel->upResultPair(objectContext->root(), m);
 	      delete objectContext;
-	      //cerr << "after delete\n"; RootContainer::dump(cerr);
-	      //m->restoreHiddenState();
 	      (void) m->unprotect();
 	      return context.builtInReplace(subject, d);
 	    }

@@ -34,7 +34,7 @@ public:
   void insertDigit(int d);
   int nrDigits();
   int nrTrailingZeros();
-  void shiftAndAdd(int shift, uint64_t c);
+  void shiftAndAdd(int shift, uint_fast64_t c);
   void ascii(char* s, int length);
   void round(int roundTo, bool fracGtZero, int fracCmpHalf);
 

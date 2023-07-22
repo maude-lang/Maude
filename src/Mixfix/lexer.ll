@@ -210,6 +210,7 @@ paren|parens|parentheses		return KW_PARENS;
 alias|aliases				return KW_ALIASES;
 const|constant|constants		return KW_CONST;
 gc					return KW_GC;
+resources				return KW_RESOURCES;
 time					return KW_TIME;
 stats					return KW_STATS;
 timing					return KW_TIMING;

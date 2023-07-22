@@ -38,12 +38,8 @@ using namespace std;
 #include "tty.hh"
 
 void
-printBanner(std::ostream& s)
+printBanner(std::ostream& s, const char* date, const char* time, time_t seconds)
 {
-  struct timeval t;
-  gettimeofday(&t, 0);
-  time_t secs = t.tv_sec;
- 
   s << "\t\t     \\||||||||||||||||||/\n";
   s << "\t\t   --- Welcome to " <<
     Tty(Tty::RED) << 'M' <<
@@ -53,8 +49,7 @@ printBanner(std::ostream& s)
     Tty(Tty::GREEN) << 'e' <<
     Tty(Tty::RESET) << " ---\n";
   s << "\t\t     /||||||||||||||||||\\\n";
-  s << "\t    " << PACKAGE_STRING << " built: " <<
-    __DATE__ << ' ' << __TIME__ << '\n';
+  s << "\t    " << PACKAGE_STRING << " built: " << date << ' ' << time << '\n';
   s << "\t     Copyright 1997-2023 SRI International\n";
-  s << "\t\t   " << ctime(&secs);
+  s << "\t\t   " << ctime(&seconds);
 }

@@ -86,7 +86,6 @@ MetaModuleCache::Pair::clear()
   t->deepSelfDestruct();
 }
 
-
 MetaModule*
 MetaModuleCache::find(DagNode* dag)
 {

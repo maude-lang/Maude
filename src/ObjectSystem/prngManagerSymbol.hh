@@ -75,8 +75,8 @@ private:
   typedef Vector<Prng> PrngMap;
 
   int getPrng(DagNode* prngArg) const;
-  bool getSeed32(DagNode* seedArg, uint32_t& value) const;
-  bool getSeed64(DagNode* seedArg, uint64_t& value) const;
+  bool getSeed32(DagNode* seedArg, uint_fast32_t& value) const;
+  bool getSeed64(DagNode* seedArg, uint_fast64_t& value) const;
   int findUnusedId();
 
   void createPrng(FreeDagNode* message, ObjectSystemRewritingContext& context);

@@ -56,6 +56,7 @@ const char* const Tty::ansiCode[] =
 };
 
 bool Tty::allowedFlag = true;
+bool Tty::savedFlag = false;
 
 const char*
 Tty::ctrlSequence() const

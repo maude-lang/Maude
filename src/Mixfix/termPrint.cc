@@ -89,7 +89,7 @@ MixfixModule::handleIter(ostream& s,
 	  bool needDisambig = !rangeKnown &&
 	    (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat));
 	  prefix(s, needDisambig, color);
-	  s << succSymbol->getNat(term);
+	  s << nat;
 	  suffix(s, term, needDisambig, color);
 	  return true;
 	}

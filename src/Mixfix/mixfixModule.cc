@@ -165,6 +165,7 @@
 #include "userLevelRewritingContext.hh"
 #include "freshVariableSource.hh"
 #include "objectConstructorSymbol.hh"
+#include "importModule.hh"
 
 #include "interpreter.hh"
 #include "global.hh"  // HACK shouldn't be accessing global variables
@@ -202,6 +203,9 @@ MixfixModule::nonTerminal(const Sort* sort, NonTerminalType type)
 }
 
 //	our stuff
+#include "latexCommon.cc"
+#include "latexTermPrint.cc"
+#include "latexDagNodePrint.cc"
 #include "makeGrammar.cc"
 #include "doParse.cc"
 #include "entry.cc"

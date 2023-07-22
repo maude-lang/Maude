@@ -29,17 +29,23 @@ ACU_LhsAutomaton::greedyMatch(ACU_TreeDagNode* subject,
 			      Substitution& solution,
 			      ACU_ExtensionInfo* extensionInfo)
 {
+  //
+  //	We've handled the bound variables, ground aliens and grounded out aliens in the
+  //	pattern, with whatever is left of the subject in current.
+  //	We now want to see if there is a quick way of finding a single match for the
+  //	nonground aliens in the pattern.
+  //
   local.copy(solution);  // greedy matching is speculative so make a copy
   scratch.copy(solution);  // keep a scratch copy as well
-  FOR_EACH_CONST(i, Vector<NonGroundAlien>, nonGroundAliens)
+  for (const NonGroundAlien& i : nonGroundAliens)
     {
-      Term* t = i->term;
+      Term* t = i.term;
       Assert(t != 0, "shouldn't be running on unstable terms");
       ACU_SlowIter j;
       if (current.getSize() != 0 && current.findFirstPotentialMatch(t, solution, j))
 	{
-	  int multiplicity = i->multiplicity;
-	  LhsAutomaton* a = i->automaton;
+	  int multiplicity = i.multiplicity;
+	  LhsAutomaton* a = i.automaton;
 	  DagNode* d = j.getDagNode();
 	  for (;;)
 	    {
@@ -77,11 +83,24 @@ ACU_LhsAutomaton::greedyMatch(ACU_TreeDagNode* subject,
 		}
 	    }
 	}
-      return ((i - nonGroundAliens.begin()) < nrIndependentAliens) ?
-	false : UNDECIDED;
+      {
+	//
+	//	We failed to find a match for i.term. It could be that there is a match
+	//	but we already gave it to another pattern term. No two of the first
+	//	nrIndependentAliens pattern terms can match the same subject so if we have
+	//	previously matched less than this, i.term is one of the first nrIndependentAliens
+	//	pattern terms and its potential subject cannot have been matched by an
+	//	earlier pattern term and we have true failure.
+	//
+	Index previouslyMatched = &i - nonGroundAliens.data();
+	return previouslyMatched < nrIndependentAliens ? false : UNDECIDED;
+      }
     nextNonGroundAlien:
       ;
     }
+  //
+  //	All aliens have been matched. All we have left are top variables.
+  //
   if (greedyPureMatch(subject, local, extensionInfo))
     {
       solution.copy(local);
@@ -215,6 +234,7 @@ ACU_LhsAutomaton::makeHighMultiplicityAssignment(int multiplicity,
     *dest++ = i;
   return d2;
 }
+
 local_inline bool
 ACU_LhsAutomaton::tryToBindLastVariable(ACU_TreeDagNode* subject,
 					const TopVariable& tv,

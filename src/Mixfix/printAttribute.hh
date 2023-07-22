@@ -38,6 +38,7 @@ public:
 
   void print(ostream& s, const VariableInfo& variableInfo) const;  // for show
   void print(ostream& s, const Substitution& substitution) const;  // for runtime
+  void latexPrint(ostream& s, const VariableInfo& variableInfo) const;
 
 private:
   static int findVariableIndex(const VariableInfo& variableInfo, int name, Sort* sort);

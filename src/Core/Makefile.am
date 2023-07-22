@@ -8,6 +8,7 @@ libcore_a_CPPFLAGS = \
 	-I$(top_srcdir)/src/StrategyLanguage
 
 libcore_a_SOURCES = \
+	memoryInfo.cc \
 	memoryCell.cc \
 	rhsBuilder.cc \
 	termBag.cc \

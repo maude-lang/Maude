@@ -25,7 +25,7 @@
 //
 
 bool
-MixfixModule::ambiguous(int iflags)
+MixfixModule::ambiguous(int iflags) const
 {
   //
   //	If there is an operator with the same name and domain kinds then
@@ -99,7 +99,7 @@ MixfixModule::decideIteratedAmbiguity(bool rangeKnown,
 				      Symbol* symbol,
 				      const mpz_class& number,
 				      bool& needToDisambiguate,
-				      bool& argumentRangeKnown)
+				      bool& argumentRangeKnown) const
  
 {
   needToDisambiguate = false;

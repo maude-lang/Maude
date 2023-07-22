@@ -1,3 +1,17 @@
+2023-05-19  Steven Eker  <eker@pup>
+
+	* prngManagerSymbol.hh (class PrngManagerSymbol): updated decls for
+	getSeed32(), getSeed64()
+
+	* prngActions.cc (PrngManagerSymbol::getSeed64): uint64_t ->
+	uint_fast64_t
+	(PrngManagerSymbol::getSeed32): uint32_t -> uint_fast32_t
+	(PrngManagerSymbol::setSeed): uint32_t -> uint_fast32_t,
+	uint64_t -> uint_fast64_t
+	(PrngManagerSymbol::getNext): uint64_t -> uint_fast64_t
+
+===================================Maude150===========================================
+
 2023-05-12  Steven Eker  <eker@pup>
 
 	* prngActions.cc (PrngManagerSymbol::getNext): use makeNatDag64()

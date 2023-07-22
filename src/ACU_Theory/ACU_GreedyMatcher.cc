@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,14 +33,14 @@ ACU_LhsAutomaton::greedyMatch(ACU_DagNode* subject,
   int nrArgs = args.length();
   local.copy(solution);  // greedy matching is speculative so make a copy
   scratch.copy(solution);  // keep a scratch copy as well
-  FOR_EACH_CONST(i, Vector<NonGroundAlien>, nonGroundAliens)
+  for (const NonGroundAlien& i : nonGroundAliens)
     {
-      Term* t = i->term;
+      Term* t = i.term;  // 0 if actual subpattern is not stable
       int j = (t == 0) ? 0 : subject->findFirstPotentialMatch(t, solution);
       if (j < nrArgs)
 	{
-	  int m = i->multiplicity;
-	  LhsAutomaton* a = i->automaton;
+	  int m = i.multiplicity;
+	  LhsAutomaton* a = i.automaton;
 	  DagNode* d = args[j].dagNode;
 	  do
 	    {
@@ -70,8 +70,18 @@ ACU_LhsAutomaton::greedyMatch(ACU_DagNode* subject,
 	    }
 	  while (t == 0 || t->partialCompare(solution, d) != Term::LESS);
 	}
-      return ((i - nonGroundAliens.begin()) < nrIndependentAliens) ?
-	false : UNDECIDED;
+      {
+	//
+	//	We failed to find a match for nonground alien i.  It could be that there is a match
+	//	but we already gave it to another pattern term. No two of the first
+	//	nrIndependentAliens pattern terms can match the same subject so if we have
+	//	previously matched less than this, i.term is one of the first nrIndependentAliens
+	//	pattern terms and its potential subject cannot have been matched by an
+	//	earlier pattern term and we have true failure.
+	//
+	Index previouslyMatched = &i - nonGroundAliens.data();
+	return previouslyMatched < nrIndependentAliens ? false : UNDECIDED;
+      }
     nextNonGroundAlien:
       ;
     }

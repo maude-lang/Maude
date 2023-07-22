@@ -1,6 +1,67 @@
+2023-06-05  Steven Eker  <eker@pup>
+
+	* ruleTable.hh (class RuleTable): deleted commented out declarations
+	for saveHiddenState(), restoreHiddenState(), typedef IntStack and data
+	member nextRuleStack
+
+	* ruleTable.cc (RuleTable::saveHiddenState)
+	(RuleTable::restoreHiddenState): deleted commented out code
+
+	* module.hh (class Module): deleted commented out declarations for
+	saveHiddenState(), restoreHiddenState()
+
+	* module.cc (Module::saveHiddenState)
+	(Module::restoreHiddenState): delete commented out code. We don't need to
+	save hidden state in the functional metalevel because it only accesses modules
+	it owns
+
+2023-05-19  Steven Eker  <eker@pup>
+
+	* memoryCell.hh (MemoryCell::setEarlyQuit): take int_fast64_t rather than int64_t
+
+	* memoryInfo.cc: created
+
+	* memoryInfo.hh (class MemoryInfo): added static data member nrNodesInUse; make
+	it protected and size_t
+	(MemoryInfo::setMarked): don't use extern nrNodesInUse
+
+	* memoryCell.hh (class MemoryCell): int64_t -> int_fast64_t for earlyQuit; deleted
+	commented out nrNodesInUse declaration
+
+	* memoryCell.cc: deleted commented out NODE_MULTIPLIER; deleted nrNodesInUse
+	definition; int64_t -> size_t for LOWER_BOUND, UPPER_BOUND, int64_t -> int_fast64_t
+	for MemoryCell::earlyQuit
+	(MemoryCell::collectGarbage): int64_t -> int_fast64_t for gcCount
+	(struct MemoryCell::Arena): use int_fast64_t to force alignment
+
+2023-05-18  Steven Eker  <eker@pup>
+
+	* memoryCell.cc (MemoryCell::collectGarbage): use memConvert()
+
+	* memoryCell.hh (class MemoryCell): added decl for memConvert()
+
+	* memoryCell.cc (MemoryCell::memConvert): added
+	(MemoryCell::showResources): use memConvert()
+
+2023-05-17  Steven Eker  <eker@pup>
+
+	* memoryCell.cc: added definition of showResourcesFlag
+	(MemoryCell::collectGarbage): call maybeShowResources()
+
+	* memoryCell.hh (MemoryCell::setShowResources): added
+	(MemoryCell::maybeShowResources): added
+	(class MemoryCell): added decl for showResouces(); added static data
+	member showResourcesFlag
+
+	* memoryCell.cc (MemoryCell::showResources): added
+
+===================================Maude150===========================================
+
 2023-05-12  Steven Eker  <eker@pup>
 
 	* memoryCell.cc (struct MemoryCell): Int64 ->  int64_t
+
+===================================Maude149===========================================
 
 2023-05-04  Steven Eker  <eker@pup>
 

@@ -37,6 +37,8 @@ Interpreter::eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 	  cout << d << " ." << endl;
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateErewrite(d, limit, gas);
+	  if (latexBuffer != 0)
+	    latexBuffer->generateErewrite(d, limit, gas);
 	}
       CacheableRewritingContext* context = new CacheableRewritingContext(d);
       context->setObjectMode(ObjectSystemRewritingContext::EXTERNAL);
@@ -63,6 +65,8 @@ Interpreter::eRewriteCont(Int64 limit, bool debug)
   continueFunc = 0;
   if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
     xmlBuffer->generateContinue("erewrite", fm, limit);
+  if (latexBuffer != 0 && getFlag(SHOW_COMMAND))
+    latexBuffer->generateContinue(limit);
   context->clearCount();
   beginRewriting(debug);
   Timer timer(getFlag(SHOW_TIMING));

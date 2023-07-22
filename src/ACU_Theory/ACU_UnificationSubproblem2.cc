@@ -637,7 +637,7 @@ ACU_UnificationSubproblem2::nextSelection(bool findFirst)
       //	an upper bound. When we do hit a violation, if we find that a covering is
       //	not possible without this element we backtrack.
       //
-      for (; current != basis.end(); ++current)
+      for (Basis::const_iterator e = basis.end(); current != e; ++current)
 	{
 	  if (includable(current))
 	    {
@@ -649,7 +649,7 @@ ACU_UnificationSubproblem2::nextSelection(bool findFirst)
 		      uncovered.subtract(i);
 		    }
 		}
-	      selection.append(current);
+	      selection.push_back(current);
 	    }
 	  else
 	    {
@@ -695,10 +695,10 @@ ACU_UnificationSubproblem2::nextSelectionWithIdentity(bool /* findFirst */)
     {
       const Vector<Byte>& assignment = maximalSelections->getCurrentAssignment();
       selection.clear();
-      FOR_EACH_CONST(i, Basis, basis)
+      for (Basis::const_iterator i = basis.begin(), e = basis.end(); i != e; ++i)
 	{
 	  if (assignment[i->index])
-	    selection.append(i);
+	    selection.push_back(i);
 	}
       return true;
     }

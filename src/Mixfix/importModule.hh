@@ -179,6 +179,8 @@ public:
 						   const Vector<Term*>& values,
 						   ImportTranslation* translation);
 
+  string latexModuleExpression() const;
+
 private:
   enum Phase
   {

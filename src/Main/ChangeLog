@@ -1,3 +1,90 @@
+2023-07-21  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeRenaming and \maudeSummation; deleted
+	\maudeStructuredConstant
+
+2023-07-17  Steven Eker  <eker@pup>
+
+	* maude.sty: reorganized with explanations for font choices;
+	put \small inside of \textnormal so it works in math mode
+
+2023-07-14  Steven Eker  <eker@pup>
+
+	* maude.sty: use \small \textnormal for \maudeParameter
+
+2023-06-26  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeBannerIndent; added maudeBanner
+	environment; added \maudeNormal
+
+	* main.cc (main): call outputBanner()
+	(main): pass seconds to printBanner() and outputBanner()
+	(main): pass date and time to printBanner() and outputBanner()
+	so we have agreement
+
+2023-06-23  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeStructuredConstant, \maudeDisambigDot
+
+2023-06-22  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeLessThan, \maudeComma
+	added \maudeVariableColon
+	\maudeParameter -> maudeParameterColon
+	use \textsf for \maudeView
+
+2023-06-21  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeEndStatement, \maudeLabel, use hanging
+	indent for maudeShowParagraph
+
+2023-06-20  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeLeftBracket, \maudeRightBracket
+	added \maudeHasSort, \maudeAssign
+	added \maudeLeftBrace, \maudeRightBrace, \maudeIndent
+	added \maudeView
+
+2023-06-19  Steven Eker  <eker@pup>
+
+	* maude.sty: maudeParagraph -> maudeResultParagraph; added
+	maudeShowParagraph; added \maudeEquals, \maudeRewritesTo,
+	\maudeFunction, \maudePartialFunction, \maudeConjunction
+
+2023-06-15  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeSingleQuote, \maudeBackquote, \maudeQid
+
+2023-06-13  Steven Eker  <eker@pup>
+
+	* maude.sty: use \small for maudeModule{}
+	added \maudeAllowBreak, \maudeSymbolic
+	added maudeParagraph environment
+	require comment package
+	use verbatim package instead of comment package because it defined
+	a comment environment with fewer issues
+	don't use fancyvrb after all
+	added \maudeString{}
+	added \maudeLeftParen, \maudeRightParen
+
+2023-06-12  Steven Eker  <eker@pup>
+
+	* maude.sty: added maudeNumber{}; added \maudeSpace; use fancyvrb
+	added maudeSingleChar{}
+	added maudeSort{}, maudeModule{}
+
+2023-06-08  Steven Eker  <eker@pup>
+
+	* maude.sty: require xcolor
+
+2023-06-07  Steven Eker  <eker@pup>
+
+	* maude.sty: created
+
+2023-06-06  Steven Eker  <eker@pup>
+
+	* main.cc (main): added -latex-log= command line option
+
 2023-05-11  Steven Eker  <eker@pup>
 
 	* prng.maude: fixed bug where we had the wrong id-hook; fix hooks

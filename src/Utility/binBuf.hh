@@ -29,7 +29,7 @@
 class BinBuf
 {
 public:
-  void init(uint64_t bits, int leadingZeros);
+  void init(uint_fast64_t bits, int leadingZeros);
   int times10();
   int cmpHalf();
   bool gtZero();
@@ -45,7 +45,7 @@ private:
     MAX_WORDS = 34
   };
 
-  uint32_t buf[MAX_WORDS];
+  uint_fast32_t buf[MAX_WORDS];
   int begin;
   int end;
 };

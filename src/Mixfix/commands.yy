@@ -491,6 +491,10 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  MemoryCell::setShowGC($4);
 			}
+		|	KW_SET KW_SHOW KW_RESOURCES polarityDot
+			{
+			  MemoryCell::setShowResources($4);
+			}
 		|	KW_SET KW_PRINT printOption polarityDot
 			{
 			  interpreter.setPrintFlag($3, $4);

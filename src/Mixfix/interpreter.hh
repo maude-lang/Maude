@@ -159,8 +159,12 @@ public:
   Interpreter();
   ~Interpreter();
 
+  void outputBanner(const char* date, const char* time, time_t seconds);
+
   void beginXmlLog(const char* fileName);
   void endXmlLog();
+  void beginLatexLog(const char* fileName);
+  void endLatexLog();
   MaudemlBuffer* getXmlBuffer() const;
 
   void cleanCaches();
@@ -354,6 +358,7 @@ private:
 
   ofstream* xmlLog;
   MaudemlBuffer* xmlBuffer;
+  MaudeLatexBuffer* latexBuffer;
 
   int flags;
   int printFlags;

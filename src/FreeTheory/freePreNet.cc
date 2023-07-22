@@ -306,13 +306,13 @@ FreePreNet::expandFringe(int positionIndex, Symbol* symbol, NatSet& fringe)
 void
 FreePreNet::reduceFringe(const LiveSet& liveSet, NatSet& fringe) const
 {
+  NatSet useless;
   //
   //	For each position in the fringe.
   //
-  const NatSet::const_iterator ei = fringe.end();
-  for (NatSet::const_iterator i = fringe.begin(); i != ei; ++i)
+  for (int i : fringe)
     {
-      const Vector<int>& position = positions.index2Position(*i);
+      const Vector<int>& position = positions.index2Position(i);
       //
       //	See if at least one live pattern has a stable symbol at this position.
       //
@@ -327,10 +327,11 @@ FreePreNet::reduceFringe(const LiveSet& liveSet, NatSet& fringe) const
 		}
 	    }
 	}
-      fringe.subtract(*i);  // eliminate useless pattern from fringe
+      useless.insert(i);  // useless position
     survive:
       ;
     }
+  fringe.subtract(useless);
 }
 
 void

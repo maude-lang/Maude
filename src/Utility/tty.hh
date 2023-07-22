@@ -61,12 +61,14 @@ public:
   Tty(Attribute attr);
 
   static void setEscapeSequencesAllowed(bool flag);
-
+  static void blockEscapeSequences();
+  static void unblockEscapeSequences();
   const char* ctrlSequence() const;
 
 private:
   static const char* const ansiCode[];
   static bool allowedFlag;
+  static bool savedFlag;
 
   const Attribute attr;
 };
@@ -81,6 +83,19 @@ inline void
 Tty::setEscapeSequencesAllowed(bool flag)
 {
   allowedFlag = flag;
+}
+
+inline void
+Tty::blockEscapeSequences()
+{
+  savedFlag = allowedFlag;
+  allowedFlag = false;
+}
+
+inline void
+Tty::unblockEscapeSequences()
+{
+  allowedFlag = savedFlag;
 }
 
 inline

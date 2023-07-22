@@ -91,4 +91,5 @@ EXTRA_DIST = \
 	file.maude \
 	process.maude \
 	time.maude \
-	prng.maude
+	prng.maude \
+	maude.sty

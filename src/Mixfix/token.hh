@@ -124,8 +124,17 @@ public:
   static int unflaggedCode(int code);
   static int fixUp(const char* tokenString);
   static Rope removeBoundParameterBrackets(int code);
+  static string prettyOpName(int prefixNameCode);
+
+  static string latexName(const char* name);
+  static string latexName(int code);
+  static string latexName(const string& name);
+  static string latexName(const Rope& name);
+  static string latexIdentifier(int code);
 
 private:
+
+
   enum SpecialValues
     {
       FLAG_BIT = 0x40000000	// we set this bit to create flagged codes
@@ -136,6 +145,8 @@ private:
   static int computeAuxProperty(const char* tokenString);
   static const char* skipSortName(const char* tokenString, bool& parameterized);
   static bool looksLikeRational(const char* s);
+  static bool hasNonAlphanumeric(const char* name);
+
   static StringTable stringTable;
   static Vector<int> specialProperties;
   static Vector<int> auxProperties;

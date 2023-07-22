@@ -1,3 +1,32 @@
+2023-06-02  Steven Eker  <eker@pup>
+
+	* ACU_UnificationSubproblem2.cc
+	(ACU_UnificationSubproblem2::nextSelectionWithIdentity): replaced
+	FOR_EACH_CONST with regular for loop; use push_back()
+	(ACU_UnificationSubproblem2::nextSelection): make a local copy of
+	basis.end(); use push_back()
+
+2023-06-01  Steven Eker  <eker@pup>
+
+	* ACU_NonLinearLhsAutomaton.hh (class ACU_NonLinearLhsAutomaton): updated
+	decl for fillOutExtensionInfo()
+
+	* ACU_NonLinearLhsAutomaton.cc
+	(ACU_NonLinearLhsAutomaton::fillOutExtensionInfo): take Index rather than
+	const ArgVec<ACU_DagNode::Pair>::const_iterator
+	(ACU_NonLinearLhsAutomaton::match): rewritten to use Index rather
+	that FOR_EACH_CONST
+
+	* ACU_GreedyMatcher.cc (ACU_LhsAutomaton::greedyMatch): rewritten
+	to use range-based for loop rather the FOR_EACH_CONST
+
+2023-05-19  Steven Eker  <eker@pup>
+
+	* ACU_TreeGreedyMatcher.cc (ACU_LhsAutomaton::greedyMatch): rewritten
+	to use range-based for loop rather the FOR_EACH_CONST
+
+===================================Maude150===========================================
+
 2023-05-04  Steven Eker  <eker@pup>
 
 	* ACU_TreeVariableSubproblem.cc (ACU_TreeVariableSubproblem::solve): set

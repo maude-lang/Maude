@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2004 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2004-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,16 +41,11 @@ public:
 			  Vector<const char*>& purposes,
 			  Vector<Vector<const char*> >& data);
   void resetRules();
-  //void saveHiddenState();
-  //void restoreHiddenState();
   bool eqRewrite(DagNode* subject, RewritingContext& context);
   DagNode* ruleRewrite(DagNode* subject, RewritingContext& context);
 
 private:
-  //typedef stack<mpz_class, list<mpz_class> > MpzStack;  // optimize for the empty case
-
   mpz_class currentValue;
-  // MpzStack currentValueStack;
 };
 
 #endif

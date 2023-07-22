@@ -1,3 +1,13 @@
+2023-07-13  Steven Eker  <eker@pup>
+
+	* freePreNet.cc (FreePreNet::reduceFringe): fix bug where we were
+	modifying the NatSet we were iterating over
+
+	* freeTerm.hh (class FreeTerm): changed slotIndex from short
+	to int to resolve issue with huge discrimination nets
+
+===================================Maude150===========================================
+
 2023-04-13  Steven Eker  <eker@pup>
 
 	* freeSymbol.cc (FreeSymbol::newFreeSymbol): use empty()

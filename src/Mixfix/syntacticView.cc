@@ -58,6 +58,9 @@
 #include "mixfixParser.hh"
 #include "syntacticView.hh"
 
+#include "visibleModule.hh"
+#include "latexViewPrint.cc"
+
 SyntacticView::SyntacticView(Token viewName, Interpreter* owner)
   : View(viewName, owner)
 {

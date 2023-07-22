@@ -24,6 +24,7 @@
 //      Implementation for base class MemoryCell
 //
 #include "cmath"
+#include <sys/resource.h>
 
 //	utility stuff
 #include "macros.hh"
@@ -39,20 +40,17 @@
 
 #include "memoryCell.hh"
 
-//static constexpr int  NODE_MULTIPLIER = 8;	// after GC increase arenas so we have (NODE_MULTIPLIER - 1) * used-nodes
-
 static constexpr double SMALL_MODEL_SLOP = 8.0;
 static constexpr double BIG_MODEL_SLOP = 2.0;
-static constexpr int64_t LOWER_BOUND = 4 * 1024 * 1024;  // use small model if <= 4 million nodes
-static constexpr int64_t UPPER_BOUND = 32 * 1024 * 1024;  // use big model if >= 32 million nodes
-
+static constexpr size_t LOWER_BOUND = 4 * 1024 * 1024;  // use small model if <= 4 million nodes
+static constexpr size_t UPPER_BOUND = 32 * 1024 * 1024;  // use big model if >= 32 million nodes
 
 struct MemoryCell::Arena
 {
   union
   {
     Arena* nextArena;
-    int64_t alignmentDummy;  // force 8 byte alignment for MemoryCell objects
+    int_fast64_t alignmentDummy;  // force 8 byte alignment for MemoryCell objects
   };
   MemoryCell storage[ARENA_SIZE];
   MemoryCell* firstNode();
@@ -65,13 +63,13 @@ MemoryCell::Arena::firstNode()
 }
 
 bool MemoryCell::showGC = false;
-int64_t MemoryCell::earlyQuit = 0;
+bool MemoryCell::showResourcesFlag = false;
+int_fast64_t MemoryCell::earlyQuit = 0;
 
 //
 //	Arena management variables.
 //
 int MemoryCell::nrArenas = 0;
-int nrNodesInUse = 0;  // FIX ME
 bool MemoryCell::currentArenaPastActiveArena = true;
 bool MemoryCell::needToCollectGarbage = false;
 MemoryCell::Arena* MemoryCell::firstArena = 0;
@@ -90,6 +88,27 @@ MemoryCell::Bucket* MemoryCell::unusedList = 0;
 size_t MemoryCell::bucketStorage = 0;
 size_t MemoryCell::storageInUse = 0;
 size_t MemoryCell::target = INITIAL_TARGET;
+
+pair<double, const char*>
+MemoryCell::memConvert(uint_fast64_t nrBytes)
+{
+  //
+  //	Convert bytes to a more convenient unit.
+  //
+  double value = nrBytes;
+  value /= 1024.0;
+  if (value > 1024.0)
+    {
+      value /= 1024.0;
+      if (value > 1024.0)
+	{
+	  value /= 1024.0;
+	  return {value, "GB"};
+	}
+      return {value, "MB"};
+    }
+  return {value, "KB"};
+}
 
 MemoryCell::Arena*
 MemoryCell::allocateNewArena()
@@ -307,7 +326,7 @@ MemoryCell::tidyArenas()
 void
 MemoryCell::collectGarbage()
 {
-  static int64_t gcCount = 0;
+  static int_fast64_t gcCount = 0;
 
   if (firstArena == 0)
     return;
@@ -343,21 +362,24 @@ MemoryCell::collectGarbage()
   ++gcCount;
   if (showGC)
     {
-      cout << "Collection: " << gcCount << "\n";
-      
-      cout << "Arenas: " << nrArenas << "\tNodes: " << nrNodes <<
-	" (" << double(nrNodes * sizeof(MemoryCell))/(1024.0 * 1024.0) << " MB)" <<
-	"\tNow: " << nrNodesInUse <<
-	" (" << double(nrNodesInUse * sizeof(MemoryCell))/(1024.0 * 1024.0) << " MB)" << "\n";
-      
-      cout << "Buckets: " << nrBuckets << "\tBytes: " << bucketStorage <<
-	" (" << double(bucketStorage) / (1024.0 * 1024.0) << " MB)" <<
-	"\tIn use: " << oldStorageInUse <<
-	" (" << double(oldStorageInUse) / (1024.0 * 1024.0) << " MB)" <<
-	"\tCollected: " << oldStorageInUse - storageInUse <<
-	" (" << double(oldStorageInUse - storageInUse) / (1024.0 * 1024.0) << " MB)" <<
-	"\tNow: " << storageInUse <<
-	" (" << double(storageInUse) / (1024.0 * 1024.0) << " MB)" << "\n";
+      cout << "\nGarbage collection: " << gcCount << "\n";
+      {
+	pair<double, const char*> ap = memConvert(nrNodes * sizeof(MemoryCell));
+	pair<double, const char*> np = memConvert(nrNodesInUse * sizeof(MemoryCell));
+	cout << "Arenas: " << nrArenas << "\tNodes: " << nrNodes << " (" << ap.first << " " << ap.second << ")" <<
+	  "\tNow: " << nrNodesInUse << " (" << np.first << " " << np.second << ")\n";
+      }
+      {
+	pair<double, const char*> bp = memConvert(bucketStorage);
+	pair<double, const char*> op = memConvert(oldStorageInUse);
+	pair<double, const char*> cp = memConvert(oldStorageInUse - storageInUse);
+	pair<double, const char*> up = memConvert(storageInUse);
+	cout << "Buckets: " << nrBuckets << "\tBytes: " << bucketStorage << " (" << bp.first << " " << bp.second << ")" <<
+	  "\tIn use: " << oldStorageInUse << " (" << op.first << " " << op.second << ")" <<
+	  "\tCollected: " << oldStorageInUse - storageInUse << " (" << cp.first << " " << cp.second << ")" <<
+	  "\tNow: " << storageInUse << " (" << up.first << " " << up.second << ")\n";
+      }
+      maybeShowResources();
     }
   if (gcCount == earlyQuit)
     exit(0);
@@ -386,6 +408,24 @@ MemoryCell::collectGarbage()
   cerr << "end of GC\n";
   dumpMemoryVariables(cerr);
 #endif
+}
+
+void
+MemoryCell::showResources(ostream& s)
+{
+  rusage usage;
+  if (getrusage(RUSAGE_SELF, &usage) == 0)
+    {
+      double userTime = usage.ru_utime.tv_usec / 1000000.0 + usage.ru_utime.tv_sec;
+      double sysTime = usage.ru_stime.tv_usec / 1000000.0 + usage.ru_stime.tv_sec;
+      pair<double, const char*> p = memConvert(1024 * static_cast<uint_fast64_t>(usage.ru_maxrss));
+      s << "Time: " << userTime << "s user / " <<  sysTime << "s system";
+      s << "\t\tContext switches: " << usage.ru_nvcsw << " voluntary / " << usage.ru_nivcsw << " involuntary" << endl;
+      s << "Maximum resident size: " << p.first << " " << p.second;
+      s << "\t\tPage faults: " << usage.ru_majflt << " major / " << usage.ru_minflt << " minor" << endl;
+    }
+  else
+    CantHappen("getrusage() failed: " << strerror(errno));
 }
 
 #ifdef GC_DEBUG

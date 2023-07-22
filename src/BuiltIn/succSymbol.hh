@@ -60,7 +60,7 @@ public:
   //
   Term* makeNatTerm(const mpz_class& nat);
   DagNode* makeNatDag(const mpz_class& nat);
-  DagNode* makeNatDag64(uint64_t nat);
+  DagNode* makeNatDag64(uint_fast64_t nat);
   bool isNat(const Term* term) const;
   bool isNat(const DagNode* dagNode) const;
   const mpz_class& getNat(const Term* term) const;

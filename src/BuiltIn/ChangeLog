@@ -1,3 +1,22 @@
+2023-06-05  Steven Eker  <eker@pup>
+
+	* counterSymbol.hh (class CounterSymbol): delete commented out decls
+	for saveHiddenState(), restoreHiddenState(), typedef MpzStack and
+	data member currentValueStack
+
+	* counterSymbol.cc (CounterSymbol::saveHiddenState)
+	(CounterSymbol::restoreHiddenState): deleted commented out code. We
+	don't need to save hidden state in the functional metalevel because
+	it only accesses modules it owns
+
+2023-05-19  Steven Eker  <eker@pup>
+
+	* succSymbol.hh (class SuccSymbol): updated decl for makeNatDag64
+
+	* succSymbol.cc (SuccSymbol::makeNatDag64): uint64_t -> uint_fast64_t
+
+===================================Maude150===========================================
+
 2023-05-12  Steven Eker  <eker@pup>
 
 	* succSymbol.cc (SuccSymbol::makeNatDag): becomes makeNatDag64() to
@@ -8,6 +27,8 @@
 	(class SuccSymbol): makeNatDag() -> makeNatDag64()
 
 	* succSymbol.cc (SuccSymbol::makeNatDag): added uint64_t version
+
+===================================Maude149===========================================
 
 2023-04-13  Steven Eker  <eker@pup>
 
@@ -479,7 +500,7 @@
 
 2004-10-28  Steven Eker  <eker@goo.csl.sri.com>
 
-	* matrixOpSymbol.cc (eqRewrite): quick hack to test DiophantineSystem3 
+	* matrixOpSymbol.cc (eqRewrite): quick hack to test DiophantineSystem3
 
 2004-10-14  Steven Eker  <eker@goo.csl.sri.com>
 
@@ -536,7 +557,7 @@
 
 	* floatOpSymbol.cc (safePow): fixed 0.0 ^ -1.0 = Infinity issue on
 	certain plaforms
-	
+
 ===================================Maude84d===========================================
 
 2004-06-14  Steven Eker  <eker@goo.csl.sri.com>
@@ -587,7 +608,7 @@
 	* randomOpSymbol.cc: created
 
 	* randomOpSymbol.hh: created
-	
+
 ===================================Maude84c===========================================
 
 2004-05-06  Steven Eker  <eker@goo.csl.sri.com>
@@ -600,7 +621,7 @@
 
 	* numberOpSymbol.cc (eqRewrite): added more detailed CantHappen()
 	message
-	
+
 ===================================Maude84a===========================================
 
 2003-11-10  Steven Eker  <eker@goo.csl.sri.com>
@@ -741,7 +762,7 @@
 	* stringDagNode.hh: use ropeStuff.hh
 
 	* stringTerm.hh: use ropeStuff.hh
-	
+
 ===================================Maude81===========================================
 
 2003-05-30  Steven Eker  <eker@goo.csl.sri.com>
@@ -773,7 +794,7 @@
 	eqRewrite2()
 	(eqRewrite2): use getACU_DagNode(), getArgument(),
 	getMultiplicity()
-	
+
 ===================================Maude80a===========================================
 
 2003-05-01  Steven Eker  <eker@goo.csl.sri.com>
@@ -783,7 +804,7 @@
 
 	* stringDagNode.cc (overwriteWithClone): rewritten
 	(makeClone): rewritten
-	
+
 ===================================Maude80===========================================
 
 2003-02-25  Steven Eker  <eker@goo.csl.sri.com>
@@ -880,7 +901,7 @@
 	(eqRewrite): updated Assert()s
 
 	* ACU_NumberOpSymbol.hh: removed #pragma
-	
+
 ===================================Maude79===========================================
 
 2003-01-08  Steven Eker  <eker@goo.csl.sri.com>
@@ -888,7 +909,7 @@
 	* ACU_NumberOpSymbol.cc (eqRewrite): rewritten to avoid making use
 	of ACU_DagNode; less efficient - need to revisit this once
 	red-black stuff is working
-	
+
 ===================================Maude76==================================================
 
 2002-11-25  Steven Eker  <eker@goo.csl.sri.com>
@@ -953,7 +974,7 @@
 	* branchSymbol.cc (fillInSortInfo): use new getOpDeclarations()
 	semantics
 	(computeBaseSort): use new getOpDeclarations() semantics
-	
+
 ===================================Maude75==================================================
 
 2002-07-25  Steven Eker  <eker@goo.csl.sri.com>
@@ -1089,7 +1110,7 @@
 
 	* stringOpSymbol.hh (class StringOpSymbol): added data member
 	succSymbol
-	
+
 ===================================Maude73==================================================
 
 2002-06-03  Steven Eker  <eker@goo.csl.sri.com>
@@ -1267,7 +1288,7 @@
 	* succSymbol.hh: created
 
 	* succSymbol.cc: created
-	
+
 ===================================Maude72==================================================
 
 2002-02-05  Steven Eker  <eker@goo.csl.sri.com>
@@ -1309,7 +1330,7 @@
 	* stringDagNode.hh: ifdef LIBv3 for libstdc++-v3
 
 	* stringOpSymbol.hh: ifdef LIBv3 for libstdc++-v3
-	
+
 ===================================Maude70==================================================
 
 2002-01-25  Steven Eker  <eker@goo.csl.sri.com>
@@ -1333,7 +1354,7 @@
 	problem of Rope::c_str() not working in libstdc++-v3
 
 	* stringTerm.hh: #include <rope> -> #include <ext/rope>
-	
+
 ===================================Maude69==================================================
 
 2001-03-16  Steven Eker  <eker@goo.csl.sri.com>
@@ -1358,7 +1379,7 @@
 	stackArguments()
 
 	* branchSymbol.cc (stackArguments): added
-	
+
 ===================================Engine65==================================================
 
 2001-02-16  Steven Eker  <eker@goo.csl.sri.com>
@@ -1696,13 +1717,13 @@
 	* stringTerm.cc: created
 
 	* stringTerm.hh: created
-	
+
 ===================================Maude 1.0.5 finished=======================================
 
 2000-03-14  Steven Eker  <eker@goo.csl.sri.com>
 
 	* branchSymbol.cc (computeBaseSort): code cleaning
-	
+
 ===================================Engine56==================================================
 
 2000-01-28  Steven Eker  <eker@goo.csl.sri.com>
@@ -1716,7 +1737,7 @@
 	* equalitySymbol.hh (class EqualitySymbol): added decl for generateCode()
 
 	* equalitySymbol.cc (generateCode): added
-	
+
 ===================================Engine54==================================================
 
 1999-10-29  Steven Eker  <eker@goo.csl.sri.com>
@@ -1739,7 +1760,7 @@
 
 	* machineIntegerTerm.hh (class MachineIntegerTerm): int -> Int64
 	(getValue): int -> Int64
-	
+
 ===================================Engine53==================================================
 
 1999-10-25  Steven Eker  <eker@goo.csl.sri.com>
@@ -1761,7 +1782,7 @@
 
 	* sortTestSymbol.cc (eqRewrite): call constrainToExactSort(t,
 	context);
-	
+
 ===================================Engine52==================================================
 
 1999-04-26  Steven Eker  <eker@goo.csl.sri.com>
@@ -1896,7 +1917,7 @@
 	* equalitySymbol.cc (eqRewrite): call computeTrueSort() on bith
 	args inorder to force normalization; we don't actually use the
 	sorts; this fixes a bug that we shared with OBJ3 === op
-	
+
 ===================================Engine48==================================================
 ===================================Maude 1.0.2 released=======================================
 ===================================Maude 1.0.1 released=======================================
@@ -1904,7 +1925,7 @@
 1999-02-27  Steven Eker  <eker@goo.csl.sri.com>
 
 	* branchSymbol.cc (fillInSortInfo): fixed bad Assert() test
-	
+
 ===================================VectorExperiment==========================================
 
 1999-02-04  Steven Eker  <eker@goo.csl.sri.com>
@@ -1932,7 +1953,7 @@
 
 	* branchSymbol.hh (class BranchSymbol): deleted decl for parse();
 	added decl for fillInSortInfo()
-	
+
 ===================================Engine47==================================================
 ===================================Maude 1.00 released=======================================
 
@@ -1949,7 +1970,7 @@
 	is a hack - need to find a better solution after release.
 
 	* branchSymbol.cc (BranchSymbol): use deep copy rather than loop
-	
+
 =================================Engine46==================================================
 
 Sun Dec 13 16:44:05 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2008,7 +2029,7 @@ Mon Dec  7 11:44:21 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	(getMachineIntegerSymbol): added
 	(getTrueTerm): added
 	(getFalseTerm): added
-	
+
 =================================Engine44==================================================
 
 Wed Nov 25 17:22:39 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2055,7 +2076,7 @@ Fri Nov  6 16:30:22 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* machineIntegerTerm.hh (class MachineIntegerTerm): deepCopy() ->
 	deepCopy2()
-	
+
 =================================Engine43==================================================
 
 Thu Oct 15 14:58:33 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2085,7 +2106,7 @@ Wed Oct 14 11:23:44 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	(eqRewrite): simplified using CachedDag::getDag()
 
 	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): use
-	CachedDag rather than DagRoot and Term* 
+	CachedDag rather than DagRoot and Term*
 
 	* equalitySymbol.hh (class EqualitySymbol): deleted decl for dtor
 
@@ -2105,9 +2126,9 @@ Thu Oct  8 14:35:23 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	* machineIntegerDagNode.cc (compareArguments): added const
 
 	* machineIntegerTerm.cc (compareArguments): (DagNode* version)
-	inserted const 
+	inserted const
 	(compareArguments): (Term* version) inserted const
-	
+
 =================================Engine41==================================================
 
 Fri Sep 18 17:07:45 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2204,7 +2225,7 @@ Fri Jul 17 10:16:13 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	(makeLazyStrategy): deleted
 	(class EqualitySymbol): deleted decl for makeLazyStrategy() and
 	static members eagerStrategy and lazyStrategy
-	
+
 =================================Engine39==================================================
 
 Tue Jul  7 17:41:16 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2227,7 +2248,7 @@ Wed Jun 10 18:23:46 1998  Steven Eker  <eker@lilac.csl.sri.com>
 	normalize() decl
 
 	* machineIntegerTerm.cc (normalize): clear changed flag
-	
+
 =================================Engine38==================================================
 
 Fri Feb 13 14:42:16 1998  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2239,7 +2260,7 @@ Fri Feb 13 14:42:16 1998  Steven Eker  <eker@lilac.csl.sri.com>
 Thu Feb 12 14:51:37 1998  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* equalitySymbol.cc (eqRewrite): compare() == 0 changed to equal()
-	
+
 =================================Engine35==================================================
 
 Thu Dec  4 14:30:33 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2266,7 +2287,7 @@ Wed Oct 15 16:40:07 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* equalitySymbol.cc (EqualitySymbol): remove constructor arg from
 	call to FreeSymbol()
-	
+
 =================================Engine30==================================================
 
 Wed Oct  1 16:38:08 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2281,7 +2302,7 @@ Tue Sep 30 14:30:53 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* machineIntegerTerm.cc (normalize): added in order to compute
 	distict hash value
-	
+
 =================================Engine28==================================================
 
 Fri Aug 29 16:31:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2304,7 +2325,7 @@ Thu Aug 28 11:07:50 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	arity argument;
 	(eqRewrite): rewritten to use CODE() macro, remove u- and add >>
 	and <<
-	
+
 =================================Engine27==================================================
 
 Tue Aug 12 17:19:15 1997  Steven Eker  <eker@lilac.csl.sri.com>
@@ -2341,7 +2362,7 @@ Mon Aug  4 11:10:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	context.tracePreEqRewrite() so that we don't call it in a div by
 	zero situation
 
-	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol): 
+	* machineIntegerOpSymbol.hh (class MachineIntegerOpSymbol):
 	NA_Symbol -> MachineIntegerSymbol in ctor decl
 	(class MachineIntegerOpSymbol): NA_Symbol ->
 	MachineIntegerSymbol for data member
@@ -2349,7 +2370,7 @@ Mon Aug  4 11:10:25 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* machineIntegerOpSymbol.cc (MachineIntegerOpSymbol): NA_Symbol ->
 	MachineIntegerSymbol
 
-	* machineIntegerTerm.hh (class MachineIntegerTerm): 
+	* machineIntegerTerm.hh (class MachineIntegerTerm):
 	NA_Symbol -> MachineIntegerSymbol in ctor decl
 
 	* machineIntegerTerm.cc (overwriteWithDagNode): NA_Symbol ->
@@ -2392,9 +2413,9 @@ Wed Jul 23 11:59:39 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* metaRewriteSymbol.cc (pullDown2): pass full = false to
 	normalize()
-	
+
 =================================Engine26b==================================================
-	
+
 Tue Jul 15 15:47:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* sortTestSymbol.cc (SortTestSymbol): pass inert = false
@@ -2404,9 +2425,9 @@ Tue Jul 15 15:47:24 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* metaRewriteSymbol.cc (MetaRewriteSymbol): pass inert = false
 
 	* equalitySymbol.cc (EqualitySymbol): pass inert = false
-	
+
 ================================Engine26=====================================================
-	
+
 Mon Jun 30 10:59:50 1997  Steven Eker  <eker@lilac.csl.sri.com>
 
 	* metaRewriteSymbol.cc (pullDown): if symbol pulled down is a
@@ -2476,7 +2497,7 @@ Fri Mar 28 16:08:10 1997  Steven Eker  <eker@lilac.csl.sri.com>
 	* metaRewriteSymbol.cc (pushUp2): added
 	(pullDown2): added
 	(eqRewrite): rewritten to use Rule::apply()
-	(eqRewrite): in meta-apply() case use result of apply in final reduce! 
+	(eqRewrite): in meta-apply() case use result of apply in final reduce!
 	(pullDownSubstitution): added
 	(pullDownAssignment): added
 	(pushUp2): now take Term* rather than DagNode*

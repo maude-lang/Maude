@@ -71,6 +71,7 @@
 #include "parameterization.cc"
 #include "instantiateModuleWithFreeParameters.cc"
 #include "instantiateModuleWithBoundParameters.cc"
+#include "latexImportModule.cc"
 
 ImportModule::ImportModule(int name, ModuleType moduleType)
   : MixfixModule(name, moduleType),

@@ -1,3 +1,27 @@
+2023-06-05  Steven Eker  <eker@pup>
+
+	* descentFunctions.cc (MetaLevelOpSymbol::metaRewrite): deleted commented
+	out code, in particular the code for saving and restoring hidden state
+	because the functional metalevel only ever rewrites in modules that it
+	owns and has exclusive access to
+	(MetaLevelOpSymbol::metaFrewrite): ditto
+
+2023-05-16  Steven Eker  <eker@pup>
+
+	* metaLevel.hh (MetaLevel::purge): added
+
+	* metaModuleCache.hh (MetaModuleCache::purge): added
+
+	* metaOpCache.hh (MetaOpCache::Item::clear): moved here
+
+	* metaSrewrite.cc (MetaLevelOpSymbol::metaSrewrite): call purge() before
+	inserting a new state
+
+	* metaOpCache.hh (class MetaOpCache): fix comment
+	(MetaOpCache::purge): added
+
+===================================Maude150===========================================
+
 2023-05-05  Steven Eker  <eker@pup>
 
 	* remoteInterpreter2.cc: use static constexpr rather than define for

@@ -1,3 +1,12 @@
+Overview of Changes in alpha150
+============================================
+* added set show resources command
+* intial support for LaTeX
+* fixed bug in free theory discrimination nets for huge
+number of patterns
+* fixed bug in free theory discrimination nets for large
+patterns
+
 Overview of Changes in alpha149 (2023-05-12)
 ============================================
 * added pseudo-random number generator objects

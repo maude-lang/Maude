@@ -1,0 +1,131 @@
+%
+%    This file is part of the Maude 3 interpreter.
+%
+%    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+%
+%    This program is free software; you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation; either version 2 of the License, or
+%    (at your option) any later version.
+%
+%    This program is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with this program; if not, write to the Free Software
+%    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+%
+%	Latex package for use with the -latex-log= feature.
+%	Version Alpha150.
+%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{maude}[2023/07/21 Package for Maude logs]
+\RequirePackage{amssymb,xcolor,verbatim,alltt}
+\RequirePackage[T1]{fontenc}
+%
+%	Spacing
+%
+\newcommand{\maudeIndent}{\hspace*{1em}}  % for module contents
+\newcommand{\maudeBannerIndent}{\hspace*{5em}}  % for banner
+\newcommand{\maudeInterwordSpace}{\hskip0.3em}
+%
+%	Font choices.
+%
+%	Keywords are in bold consistent with usual programming language conventions.
+%
+\newcommand{\maudeKeyword}[1]{\textbf{#1}}
+%
+%	Language punctuation is also in bold to match keywords.
+%
+\newcommand{\maudePunctuation}[1]{\textbf{#1}}
+%
+%	Maude responses are currently printed in bold to match keywords.
+%
+\newcommand{\maudeResponse}[1]{\textbf{#1}}
+%
+%	Modules (including theories) and views are typeset in the document's normal font
+%	but at reduced size since these names are often all capital.
+%
+\newcommand{\maudeModule}[1]{\textnormal{\small #1}}
+\newcommand{\maudeView}[1]{\textnormal{\small #1}}
+%
+%	Sorts can contain all kinds of symbols and so the root name of a sort uses sans serif.
+%
+\newcommand{\maudeSort}[1]{\textsf{#1}}
+%
+%	Parameters match sort names because they can appear in unstructured sort names such as X$Elt
+%
+\newcommand{\maudeParameter}[1]{\textsf{#1}}
+%
+%	Strings, quoted identifiers and labels can contain all kinds of symbols and so use typewritter.
+%
+\newcommand{\maudeString}[1]{\texttt{#1}}
+\newcommand{\maudeQid}[1]{\texttt{#1}}
+\newcommand{\maudeLabel}[1]{\texttt{#1}}
+%
+%	Numbers are just printed with the math mode default.
+%
+\newcommand{\maudeNumber}[1]{#1}
+%
+%	Normal mode is used for things like the contents of gather attributes and format attributes.
+%
+\newcommand{\maudeNormal}[1]{\textnormal{#1}}
+%
+%	Single character operator names use the math mode default, if they are alphabetical or
+%	  + - * / < > . ; : | ! ? [ ] ( ) { } & % $ # _
+%
+\newcommand{\maudeSingleChar}[1]{#1}
+%
+%	Fancy symbols can only be printed in a limited number of fonts.
+%	In particular, italic \ looks like | and italic | looks like /
+%	Also italic $ looks ugly. So we typeset operator names containing fancy
+%	symbols using sans serif.
+%
+\newcommand{\maudeSymbolic}[1]{\textsf{#1}}
+%
+%	Multi-character alpha-numeric operator names use regular italic because math italic has weird spacing.
+%
+\newcommand{\maudeIdentifier}[1]{\textit{#1}}
+%
+%	Catch all for rare output - use typewritter.
+%
+\newcommand{\maudeMisc}[1]{\texttt{#1}}
+%
+%	Character choices.
+%
+\newcommand{\maudeLeftParen}{(}
+\newcommand{\maudeRightParen}{)}
+\newcommand{\maudeLeftBracket}{[}
+\newcommand{\maudeRightBracket}{]}
+\newcommand{\maudeLeftBrace}{\{}
+\newcommand{\maudeRightBrace}{\}}
+\newcommand{\maudeSingleQuote}{\textquotesingle}
+\newcommand{\maudeBackquote}{\textasciigrave}
+\newcommand{\maudeFunction}{\rightarrow}  % for op decls
+\newcommand{\maudeRenaming}{\,*\,}  % module renaming
+\newcommand{\maudeSummation}{\,+\,}  % module summation
+\newcommand{\maudePartialFunction}{\rightsquigarrow}  % for partial op decls
+\newcommand{\maudeConjunction}{\,\wedge\,}  % for conjunctions in conditions
+\newcommand{\maudeHasSort}{\,:\,}  % for op, variable decls, mbs and sort test condition fragments
+\newcommand{\maudeVariableColon}{{\textnormal :}}  % for forming var:sort names
+\newcommand{\maudeEquals}{\,=\,}  % for eqs and equality condition fragments
+\newcommand{\maudeRewritesTo}{\,\Rightarrow\,}  % for rls and rewrite condition fragments
+\newcommand{\maudeAssign}{\,:=\,}  % for match condition fragments
+\newcommand{\maudeParameterColon}{\,::\,}  % for forming parameter :: theory pairs
+\newcommand{\maudeLessThan}{<}  % for subsorts
+\newcommand{\maudeComma}{,\linebreak[0]}  % to separate parameters and function arguments
+\newcommand{\maudeEndStatement}{\maudeInterwordSpace\maudePunctuation{.}}  % include space and try to avoid preceeding linebreak
+\newcommand{\maudeDisambigDot}{.}  % for (<term>).<sort>
+%
+%	Line breaking.
+%
+\newcommand{\maudeSpace}{\maudeInterwordSpace\linebreak[0]}  % normally a space is a preferred place for a linebreak
+\newcommand{\maudeAllowBreak}{\linebreak[0]}
+%
+%	Environments.
+%
+\newenvironment{maudeBanner}{\begin{flushleft}\begin{alltt}}{\end{alltt}\end{flushleft}}
+\newenvironment{maudeShowParagraph}{\begin{flushleft}\hangindent=2em\hangafter=1\parskip=0pt}{\end{flushleft}}
+\newenvironment{maudeResultParagraph}{\begin{flushleft}\hangindent=2em\hangafter=1\parskip=0pt}{\end{flushleft}}

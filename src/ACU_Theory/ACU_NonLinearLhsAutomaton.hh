@@ -52,9 +52,7 @@ public:
 #endif
 
 private:
-  void fillOutExtensionInfo(ACU_DagNode* subject,
-			    const ArgVec<ACU_DagNode::Pair>::const_iterator chosen,
-			    ACU_ExtensionInfo* extensionInfo);
+  void fillOutExtensionInfo(ACU_DagNode* subject, Index chosen, ACU_ExtensionInfo* extensionInfo);
 
   const int varIndex;
   const int multiplicity;

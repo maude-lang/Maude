@@ -72,6 +72,7 @@ class Parameter;
 class ParameterDatabase;
 class ObjectConstructorSymbol;
 class StatementTransformer;
+class MaudeLatexBuffer;
 
 //
 //	Support for quantifying just active computations (rather than

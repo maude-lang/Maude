@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #ifndef _metaModuleCache_hh_
 #define _metaModuleCache_hh_
 #include "importModule.hh"
+#include "metaModule.hh"
 
 class MetaModuleCache : public Entity::User
 {
@@ -38,6 +39,13 @@ public:
   MetaModule* find(DagNode* dag);
   void insert(DagNode* dag, MetaModule* module);
   void flush();
+
+  //
+  //	Attempt to purge a single state derived from class T from the
+  //	MetaOpCache of some cached MetaModule
+  //
+  template<class T>
+  bool purge();
 
 private:
   enum Sizes
@@ -61,5 +69,17 @@ private:
   static int maxSize;
   Vector<Pair> cache;
 };
+
+template<class T>
+inline bool
+MetaModuleCache::purge()
+{
+  for (Pair& p : cache)
+    {
+      if (p.module->purge<T>())
+	return true;
+    }
+  return false;
+}
 
 #endif

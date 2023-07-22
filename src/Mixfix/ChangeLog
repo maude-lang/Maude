@@ -1,3 +1,936 @@
+2023-07-21  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc (VisibleModule::latexShowModule): use
+	ImportModule:: latexModuleExpression() for parameter theories
+
+	* latexViewPrint.cc (SyntacticView::latexShowProcessedView): use
+	ImportModule:: latexModuleExpression() for fromTheory and toModule
+	(SyntacticView::latexShowProcessedView): use
+	ImportModule:: latexModuleExpression() for parameter theories
+
+	* latexRenaming.cc (Renaming::latexRenaming): handle syntactic
+	attributes
+
+	* latexImportModule.cc (ImportModule::latexModuleExpression):
+	insert parens where needed; fix bug in SUMMATION
+
+	* latexCommon.cc (MixfixModule::latexStructuredName): rewritten
+	to fix bug
+
+	* latexModulePrint.cc (VisibleModule::latexShowImports): use
+	ImportModule::latexModuleExpression()
+
+	* importModule.hh (class ImportModule): added decl for
+	latexImportModule()
+
+	* latexImportModule.cc: created
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	latexConstant()
+
+	* latexCommon.cc (MixfixModule::latexConstant): take const
+	Module*
+
+	* latexRenaming.cc (Renaming::latexRenaming): made Module*
+	arguments const
+
+	* renaming.hh (class Renaming): updated decl for latexRenaming()
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	latexSort()
+
+	* latexCommon.cc (MixfixModule::latexSort): made module arg
+	const Module*
+
+	* renaming.cc (Renaming::printRenamingType): remove const
+	qualifier
+
+	* renaming.hh (class Renaming): added decl for
+	latexRenamingType(); made printRenamingType() static
+
+	* latexRenaming.cc (Renaming::latexRenamingType): added
+	(Renaming::latexRenaming): use latexRenamingType()
+
+2023-07-20  Steven Eker  <eker2@eker9>
+
+	* latexViewPrint.cc (SyntacticView::latexShowProcessedView):
+	use getNrSortMappings() + getNrOpMappings() to decide whether
+	we need to end a line
+	(SyntacticView::latexShowProcessedView): handle variable
+	aliases
+	(SyntacticView::latexShowProcessedView): handle op->term
+	mappings
+
+2023-07-19  Steven Eker  <eker2@eker9>
+
+	* interpreter.cc (Interpreter::showProcessedView): echo
+	command
+
+	* latexViewPrint.cc
+	(SyntacticView::latexShowProcessedView): call
+	latexRenaming()
+
+	* renaming.hh (class Renaming): added decl for
+	latexRenaming()
+
+	* latexRenaming.cc: created
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexConstant()
+
+	* latexCommon.cc (MixfixModule::latexConstant): added
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	code version of latexSort()
+
+	* latexCommon.cc (MixfixModule::latexSort): added code
+	version
+
+	* latexToken.cc (Token::latexName): follow < and > with
+	empty group to prevent << and >> being transformed into
+	guillemets
+
+	* mixfixModule.hh (class MixfixModule): deleted decls for
+	hasNonAlpha(), latexName() (both versions),
+	latexIdentifier()
+
+	* latexCommon.cc (MixfixModule::latexStructuredConstant):
+	use Token::latexIdentifier()
+	(MixfixModule::latexPrettyOp): use Token::latexIdentifier()
+	(MixfixModule::latexIdentifier): deleted
+	(MixfixModule::hasNonAlpha): deleted
+	(MixfixModule::latexName): delete (both versions)
+
+	* visibleModule.hh (VisibleModule::latexPrintModuleName):
+	Token::latexName()
+	(VisibleModule::latexPrintViewName): use Token::latexName()
+
+	* latexModulePrint.cc (VisibleModule::latexShowVars): use
+	Token::latexIdentifier()
+	(VisibleModule::latexShowAttributes): use
+	Token::latexIdentifier()
+	(VisibleModule::latexShowPolymorphAttributes): use
+	Token::latexIdentifier()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleVariable):
+	use Token::latexIdentifier
+	(MixfixModule::latexPrettyPrint): use Token::latexIdentifier()
+	(MixfixModule::latexHandleIter): use Token::latexIdentifier()
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleIter):
+	use Token::latexIdentifier()
+	(MixfixModule::latexHandleVariable): use
+	Token::latexIdentifier()
+	(MixfixModule::latexPrettyPrint): use Token::latexIdentifier()
+
+	* latexCommon.cc (MixfixModule::latexStructuredName): use
+	Token::latexName()
+	(MixfixModule::latexSort): don't use Token::sortName() in
+	the non-Token::AUX_STRUCTURED_SORT becaue it doesn't do
+	anything special in this case; use Token::latexName()
+	(MixfixModule::latexPrettyOp): use Token::latexName()
+	(MixfixModule::latexPrintTokens): use Token::latexName()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateModuleName):
+	use Token::latexName()
+	(MaudeLatexBuffer::generateModifiers): use Token::latexName()
+	(MaudeLatexBuffer::generateCommand): use Token::latexName()
+
+	* latexViewPrint.cc (SyntacticView::latexShowProcessedView):
+	use Token::latexName() (3 places)
+
+	* latexTermPrint.cc (MixfixModule::latexHandleString): use
+	Token::latexName()
+	(MixfixModule::latexHandleQuotedIdentifier): use
+	Token::latexName()
+
+	* latexModulePrint.cc (VisibleModule::latexPrintAttributes):
+	use Token::latexName() (2 places)
+	(VisibleModule::latexShowImports): use Token::latexName()
+	(VisibleModule::latexShowModule): use Token::latexName() (2
+	places)
+	(VisibleModule::latexShowAttributes): use
+	Token::latexName() (6 places)
+	(VisibleModule::latexShowPolymorphAttributes): use
+	Token::latexName() (6 places)
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleString):
+	use Token::latexName()
+	(MixfixModule::latexHandleQuotedIdentifier): use
+	Token::latexName()
+
+	* token.hh (class Token): added decls for latexName() (4
+	versions), latexIdentifier(), hasNonAlphanumeric()
+
+	* latexToken.cc: created
+
+2023-07-18  Steven Eker  <eker2@eker9>
+
+	* interpreter.cc (Interpreter::showProcessedView): call
+	latexShowProcessedView()
+
+	* visibleModule.hh (class VisibleModule): made
+	latexPrintModuleName() public
+
+	* latexViewPrint.cc: created
+
+	* latexModulePrint.cc (VisibleModule::latexShowPolymorphDecl):
+	use latexPrettyOp()
+
+	* token.cc (Token::prettyOpName): don't remove backquotes
+	from ( or ) since it causes problems with op declarations
+
+	* latexModulePrint.cc (VisibleModule::latexShowDecls):
+	use latexPrettyOp()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexPrettyOp()
+
+	* token.hh (class Token): added decl for prettyOpName()
+
+	* token.cc (Token::prettyOpName): added
+
+	* latexCommon.cc (MixfixModule::latexPrettyOp): added
+
+2023-07-17  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc (VisibleModule::latexShowPolymorphDecl):
+	call latexShowPolymorphAttributes()
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	latexShowPolymorphAttributes()
+
+	* latexModulePrint.cc (VisibleModule::latexShowPolymorphAttributes):
+	added
+
+	* latexCommon.cc (MixfixModule::latexPrintTails): don't
+	use latexIdentifier() - directly generate \maudeSymbolic{}
+	(MixfixModule::latexPrintTokens): ditto
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): use
+	latexStructuredConstant()
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint): use
+	latexStructuredConstant()
+
+	* latexModulePrint.cc (VisibleModule::latexShowDecls): use
+	latexStructuredConstant()
+	(VisibleModule::latexShowPolymorphDecl): use
+	latexStructuredConstant()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexStructuredConstant()
+
+	* latexCommon.cc (MixfixModule::latexStructuredConstant): added
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	latexStructuredName(); added decl for latexSort()
+
+	* latexCommon.cc (MixfixModule::latexStructuredName): new
+	calling convention
+	(MixfixModule::latexSort): added
+	(MixfixModule::latexType): use latexSort()
+
+2023-07-14  Steven Eker  <eker@pup>
+
+	* latexCommon.cc (MixfixModule::latexType): use
+	latexStructuredName()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexStructuredName()
+
+	* latexCommon.cc (MixfixModule::latexStructuredName): added
+
+2023-06-26  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc (VisibleModule::latexShowAttributes): added
+
+	* interpreter.hh (class Interpreter): updated decl for
+	outputBanner()
+
+	* interpreter.cc (Interpreter::outputBanner): pass date
+	and time to generateBanner()
+
+	* banner.cc (printBanner): take date and time arguments
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateBanner):
+	take date and time arguments
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated
+	decl for generateBanner()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateDag):
+	take seconds argument
+
+	* interpreter.cc (Interpreter::outputBanner): pass seconds
+	to generateBanner()
+
+	* interpreter.hh (class Interpreter): updated decl for
+	outputBanner()
+
+	* banner.cc (printBanner): take seconds as an argument
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added
+	decl for generateBanner()
+
+	* interpreter.hh (class Interpreter): added decl for
+	outputBanner()
+
+	* interpreter.cc (Interpreter::outputBanner): added
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateBanner):
+	added
+
+2023-06-23  Steven Eker  <eker@pup>
+
+	* interpreter.cc (Interpreter::showSortsAndSubsorts):
+	support latex
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	latexShowSortsAndSubsorts()
+
+	* latexModulePrint.cc
+	(VisibleModule::latexShowSortsAndSubsorts): added
+
+	* latexCommon.cc (MixfixModule::latexPrintTokens): use
+	latexIdentifier()
+	(MixfixModule::latexPrintTails):  use latexIdentifier()
+
+	* mixfixModule.hh (class MixfixModule): deleted decl
+	for code version of latexName()
+
+	* latexCommon.cc (MixfixModule::latexName): deleted code
+	version
+
+	* latexDagNodePrint.cc (MixfixModule::latexSuffix): use
+	\maudeDisambigDot
+	(MixfixModule::latexHandleIter): use latexIdentifier()
+	(MixfixModule::latexHandleVariable): use latexIdentifier()
+	(MixfixModule::latexPrettyPrint): use latexIdentifier()
+
+	* latexTermPrint.cc (MixfixModule::latexSuffix): use
+	\maudeDisambigDot
+	(MixfixModule::latexHandleIter): use latexIdentifier()
+	(MixfixModule::latexHandleVariable): use latexIdentifier()
+	(MixfixModule::latexPrettyPrint): use latexIdentifier()
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint):
+	added Assert(), deleted #ifndef code; handle structured
+	constant case
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): pick
+	off structured constant case
+
+	* latexModulePrint.cc (VisibleModule::latexShowVars):
+	use latexIdentifier()
+	(VisibleModule::latexShowDecls): use latexIdentifier()
+	instead of latexName() on token codes
+	(VisibleModule::latexShowPolymorphDecl): use
+	latexIdentifier() instead of latexName() on token codes;
+	use \maudeStructuredConstant
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexIdentifier()
+
+	* latexCommon.cc (MixfixModule::latexIdentifier): added
+
+	* latexModulePrint.cc (VisibleModule::latexShowDecls): use
+	\maudeStructuredConstant
+
+2023-06-22  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc (VisibleModule::latexShowPolymorphDecl):
+	space after poly
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint): use
+	latexSuffix()
+
+	* latexCommon.cc (MixfixModule::latexType): use Rope
+	version of latexName()
+
+	* latexModulePrint.cc (VisibleModule::latexShowDecls): use
+	Token::sortName() for constants which may be parameterized
+	(VisibleModule::latexShowModule): use \maudeParameter
+	for parameter names and \maudeParameterColon for ::
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	Rope version of latexName()
+
+	* latexCommon.cc (MixfixModule::latexName): added rope
+	version
+
+	* latexModulePrint.cc
+	(VisibleModule::latexShowPolymorphDecl): added
+	(VisibleModule::latexShowPolymorphs): added
+	(VisibleModule::latexShowModule): use latexShowPolymorphs()
+
+	* visibleModule.hh (class VisibleModule): updated decls for
+	latexShowMbs(), latexShowEqs(), latexShowRls()
+
+	* latexModulePrint.cc (VisibleModule::latexShowEqs): don't
+	take endWithNewline argument
+	(VisibleModule::latexShowRls): don't take endWithNewline
+	argument
+	(VisibleModule::latexShowMbs): don't take endWithNewline
+	argument
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint):
+	use \maudeComma
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): use
+	\maudeComma
+
+	* latexModulePrint.cc (VisibleModule::latexShowModule): \n
+	after end module keyword
+	(VisibleModule::latexPrintRule): changed positions of $s
+	(VisibleModule::latexPrintEquation): changed positions of $s
+	(VisibleModule::latexPrintMembershipAxiom): changed positions
+	of $s
+
+	* latexTermPrint.cc (MixfixModule::latexHandleVariable): use
+	\maudeVariableColon
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleVariable): use
+	\maudeVariableColon
+
+	* latexCommon.cc (MixfixModule::latexType): use \maudeComma
+
+	* latexModulePrint.cc (VisibleModule::latexShowSubsorts):
+	use \maudeLessThan
+	(VisibleModule::latexShowModule): use \maudeComma
+
+	* latexCommon.cc (MixfixModule::latexType): fix comma bug
+
+2023-06-21  Steven Eker  <eker@pup>
+
+	* latexCommon.cc (MixfixModule::latexType): use
+	\maudeLeftBracket, \maudeRightBracket
+
+	* latexModulePrint.cc (VisibleModule::latexShowModule): use
+	latexShowOps()
+
+	* visibleModule.hh (class VisibleModule): added decls for
+	latexShowOps(), latexShowDecls()
+
+	* latexModulePrint.cc (VisibleModule::latexShowOps): added
+	(VisibleModule::latexShowDecls): added
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleVariable): use
+	latexName()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleVariable): use
+	latexName()
+
+	* latexModulePrint.cc (VisibleModule::latexShowModule): use
+	latexShowVars()
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	latexShowVars()
+
+	* latexModulePrint.cc (VisibleModule::latexShowVars): added
+
+	* latexModulePrint.cc (VisibleModule::latexPrintAttributes): use
+	\maudeLabel
+	(VisibleModule::latexPrintMembershipAxiom)
+	(VisibleModule::latexShowEqs, VisibleModule::latexShowRls): use
+	\par at start rather than \newline at end
+	(VisibleModule::latexShowImports)
+	(VisibleModule::latexShowSorts, VisibleModule::latexShowSubsorts):
+	use \par at start rather than \newline at end
+	(VisibleModule::latexShowModule): use \par at start rather than
+	\newline at end of header and tail
+
+	* latexCommon.cc (MixfixModule::latexType): make arg const
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	latexType()
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	latexShowSubsorts()
+
+	* latexModulePrint.cc (VisibleModule::latexShowSubsorts): added
+	(VisibleModule::latexShowModule): call latexShowSubsorts()
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	latexShowSorts()
+
+	* latexModulePrint.cc (VisibleModule::latexShowSorts)
+	(VisibleModule::latexPrintMembershipAxiom)
+	(VisibleModule::latexPrintEquation)
+	(VisibleModule::latexPrintRule)
+	(VisibleModule::latexShowImports): use \maudeEndStatement
+	(VisibleModule::latexShowModule): call latexShowSorts
+
+2023-06-20  Steven Eker  <eker@pup>
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	latexShowImports()
+
+	* latexModulePrint.cc (VisibleModule::latexShowImports): added
+
+	* interpreter.cc (Interpreter::showModule): added latex support
+
+	* visibleModule.hh (VisibleModule::latexPrintModuleName): added
+	(VisibleModule::latexPrintViewName): added
+	(class VisibleModule): added decl for latexShowModule()
+
+	* latexModulePrint.cc (VisibleModule::latexPrintConditionFragment):
+	\maudeSortTest -> \maudeHasSort
+	(VisibleModule::latexPrintMembershipAxiom): \maudeSortTest ->
+	\maudeHasSort
+	(VisibleModule::latexShowModule): added partial implementation
+
+	* interpreter.cc (Interpreter::showMbs): added latex support
+
+	* visibleModule.hh (class VisibleModule): added decls for
+	latexShowMbs(), latexPrintMembershipAxiom()
+
+	* latexModulePrint.cc (VisibleModule::latexPrintMembershipAxiom)
+	(VisibleModule::latexShowMbs): added
+
+	* interpreter.cc (Interpreter::showRls): added latex support
+
+	* visibleModule.hh (class VisibleModule): added decls for
+	latexShowRls(), latexPrintRule()
+
+	* latexModulePrint.cc (VisibleModule::latexPrintAttributes): use
+	latexPrint()
+	(VisibleModule::latexPrintRule, VisibleModule::latexShowRls):
+	added
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): added static
+	version
+
+	* printAttribute.hh (class PrintAttribute): added decl for
+	latexPrint()
+
+	* printAttribute.cc (PrintAttribute::latexPrint): added
+
+	* mixfixModule.hh (class MixfixModule): added decl for static
+	Term* latexPrettyPrint()
+
+	* latexModulePrint.cc (VisibleModule::latexPrintEquation): call
+	latexPrintAttributes()
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	latexPrintAttributes()
+
+	* latexModulePrint.cc (MixfixModule::latexPrintAttributes): added
+
+2023-06-19  Steven Eker  <eker@pup>
+
+	* visibleModule.hh (class VisibleModule): added decls for
+	latexPrintCondition() (2 versions), latexPrintConditionFragment()
+
+	* latexModulePrint.cc (VisibleModule::latexPrintEquation): call
+	latexPrintCondition()
+	(VisibleModule::latexPrintConditionFragment): added
+	(VisibleModule::latexPrintEquation): use \maudeEquals
+	(MixfixModule::latexPrintCondition): added 2 versions
+
+	* visibleModule.hh (class VisibleModule): latexShowEq() ->
+	latexPrintEquation()
+
+	* latexModulePrint.cc (VisibleModule::latexShowEq): becomes
+	latexPrintEquation
+	(VisibleModule::latexShowEqs): use latexPrintEquation()
+
+	* visibleModule.hh (class VisibleModule): updated decl for
+	latexShowEqs()
+
+	* latexModulePrint.cc (VisibleModule::latexShowEqs): take
+	endWithNewline argument
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleVariable): use
+	latexType()
+
+	* interpreter.cc (Interpreter::showEqs): show module name, generate
+	latex comment
+
+	* maudeLatexBuffer.cc (~MaudeLatexBuffer): don't use flushleft
+
+	* maudeLatexBuffer.ccM (MaudeLatexBuffer): don't use flushleft
+
+	* interpreter.cc (Interpreter::showEqs): use maudeShowParagraph
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateResult):
+	MaudeParagraph -> maudeResultParagraph
+	(MaudeLatexBuffer::generateCommand)
+	(MaudeLatexBuffer::generateContinue): maudeParagraph ->
+	maudeResultParagraph
+
+	* latexTermPrint.cc (MixfixModule::latexHandleVariable): use
+	latexType()
+
+	* mixfixModule.hh (class MixfixModule): updated decls for
+	latexHandleMinus(), latexHandleDivision(), latexHandleFloat(),
+	latexHandleString(), latexHandleQuotedIdentifier(),
+	latexHandleVariable()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleVariable):
+	\maudeIdentifer -> \maudeIdentifier
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleVariable):
+	\maudeIdentifer -> \maudeIdentifier
+
+	* visibleModule.hh (class VisibleModule): added decls for
+	latexShowEqs(), latexShowEq()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleMinus): made const
+	(MixfixModule::latexHandleDivision): made const
+	(MixfixModule::latexHandleFloat): made const
+	(MixfixModule::latexHandleString): made const
+	(MixfixModule::latexHandleQuotedIdentifier): made const
+	(MixfixModule::latexHandleVariable): made const
+
+	* sharedPrint.cc (MixfixModule::ambiguous): made const
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	ambiguous(), latexPrintPrefixName()
+	* latexCommon.cc (MixfixModule::latexPrintPrefixName): made
+	SymbolInfo& argument const
+
+	* mixfixModule.hh (class MixfixModule): made Term* version of
+	latexPrettyPrint() protected
+
+	* interpreter.cc (Interpreter::showEqs): handle latexBuffer
+
+	* maudeLatexBuffer.hh (MaudeLatexBuffer::getStream): added
+
+	* latexModulePrint.cc: created
+
+2023-06-16  Steven Eker  <eker@pup>
+
+	* mixfixModule.hh (class MixfixModule): added decl for Term*
+	version of latexPrettyPrint()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleVariable): added
+	(MixfixModule::latexHandleSMT_Number): added
+	(MixfixModule::latexPrettyPrint): added
+
+	* mixfixModule.hh (class MixfixModule): added decls for Term*
+	versions of latexHandleDivision(), latexHandleFloat(),
+	latexHandleString(), latexHandleQuotedIdentifier()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleDivision): added
+	(MixfixModule::latexHandleFloat): added
+	(MixfixModule::latexHandleString): added
+	(MixfixModule::latexHandleQuotedIdentifier): added
+
+	* mixfixModule.hh (class MixfixModule): added decl for Term* version of
+	latexHandleIter()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleIter): added
+
+	* termPrint.cc (MixfixModule::handleIter): use saved nat rather than
+	calling getNat() a second time
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleIter): use
+	safeCastNonNull<>()
+
+	* mixfixModule.hh (class MixfixModule): added decls for Term* versions
+	of latexComputeColor(), latexSuffix(), latexHandleMinus()
+
+	* latexTermPrint.cc: created
+
+	* latexCommon.cc (MixfixModule::latexPrintPrefixName): moved here
+
+	* mixfixModule.hh (class MixfixModule): made latexPrefix(),
+	latexSuffix(), latexPrintTails(), latexPrintTails(), latexComputeColor()
+	static
+
+	* latexCommon.cc: moved latexRed, latexGreen, latexBlue,
+	latexCyan, latexMagenta, latexYellow, latexResetColor definitions
+	here
+	(MixfixModule::latexPrefix): moved here
+	(MixfixModule::latexPrintTokens): moved here
+	(MixfixModule::latexPrintTails): moved here
+
+	* mixfixModule.hh (class MixfixModule): made latexFancySpace()
+	static
+
+	* latexCommon.cc (MixfixModule::latexFancySpace): moved here
+
+	* mixfixModule.hh (class MixfixModule): hasAlpha() decl ->
+	hasNonAlpha()
+
+	* latexCommon.cc (MixfixModule::latexName): moved here (both
+	versions)
+	(MixfixModule::hasAlpha): moved here and becomes hasNonAlpha()
+	(MixfixModule::latexName): use hasNonAlpha()
+	(MixfixModule::latexType): moved here
+
+	* latexDagNodePrint.cc: made latexRed, latexGreen, latexBlue,
+	latexCyan, latexMagenta, latexYellow latexResetColor local to
+	MixfixModule
+
+	* mixfixModule.hh (class MixfixModule): added static const for
+	latexRed, latexGreen, latexBlue, latexCyan, latexMagenta,
+	latexYellow, latexResetColor
+
+2023-06-15  Steven Eker  <eker@pup>
+
+	* latexDagNodePrint.cc (MixfixModule::latexName): convert '
+	to \textquotesingle because '' means something different in
+	LaTeX
+	(MixfixModule::latexHandleQuotedIdentifier): use \textquotesingle
+	for lead quote
+	(MixfixModule::latexName): use \maudeSingleQuote for '
+	(MixfixModule::latexHandleQuotedIdentifier): use \maudeQid; use
+	\maudeSingleQuote for '
+
+	* erewrite.cc (Interpreter::eRewriteCont): use
+	MaudeLatexBuffer::generateContinue()
+
+	* execute.cc (Interpreter::fRewriteCont): use
+	MaudeLatexBuffer::generateContinue()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateErewrite()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateErewrite):
+	added
+
+	* erewrite.cc (Interpreter::eRewrite): use
+	MaudeLatexBuffer::generateErewrite()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateReduce)
+	(MaudeLatexBuffer::generateRewrite)
+	(MaudeLatexBuffer::generateFrewrite): use generateCommand()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateCommand()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateRewrite): use
+	printModifiers(), generateModifiers()
+	(MaudeLatexBuffer::generateReduce): use printModifiers(),
+	generateModifiers()
+	(MaudeLatexBuffer::generateCommand): added
+
+	* execute.cc (Interpreter::fRewrite): use
+	MaudeLatexBuffer::generateFrewrite()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decls for
+	generateModifiers(), generateFrewrite()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateModifiers): added
+	(MaudeLatexBuffer::generateFrewrite): added
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	printModifiers()
+
+	* prettyPrint.cc (MixfixModule::printModifiers): added
+
+2023-06-14  Steven Eker  <eker@pup>
+
+	* execute.cc (Interpreter::rewriteCont): call generateContinue()
+	on latexBuffer
+	(Interpreter::rewrite): call generateRewrite() latexBuffer
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decls for
+	generateStats(), generateTiming(), generateContinue(),
+	generateRewrite()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateStats): added
+	(MaudeLatexBuffer::generateTiming): added
+	(MaudeLatexBuffer::generateResult): call generateStats()
+	(MaudeLatexBuffer::generateStats): support show breakdown
+	(MaudeLatexBuffer::generateContinue): added
+	(MaudeLatexBuffer::generateContinue): added
+
+2023-06-13  Steven Eker  <eker@pup>
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrintPrefixName): use
+	latexFancySpace() (2 places)
+	(MixfixModule::latexPrintTokens): use latexFancySpace() (2 places)
+	(MixfixModule::latexPrintTails): use latexFancySpace() (2 places)
+	(MixfixModule::latexType): don't use \left[ and \right] for kinds
+	use \maudeLeftParen, \maudeRightParen everywhere
+	(MixfixModule::latexName): treat < > as \maudeSingleChar{}
+	(MixfixModule::latexName): treat ; : & $ # _ as \maudeSingleChar{}
+	(MixfixModule::latexHandleIter): use latexName() to clean up latex
+	special characters
+	(MixfixModule::latexFancySpace): handle foreground colors
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexFancySpace()
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleQuotedIdentifier):
+	use \maudeString{}
+	(MixfixModule::latexHandleString): use \maudeString{}
+	(MixfixModule::latexPrettyPrint): set globalIndent = 0
+	(MixfixModule::latexFancySpace): added
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateReduce)
+	(MaudeLatexBuffer::generateResult): use maudeParagraph environment
+	(MaudeLatexBuffer::generateReduce): use comment environment
+
+	* mixfixModule.hh (class MixfixModule): added decl for hasAlpha()
+
+	* latexDagNodePrint.cc (MixfixModule::latexName): use
+	\maudeAllowBreak
+	(MixfixModule::latexSuffix): use latexType()
+	(MixfixModule::hasAlpha): added
+	(MixfixModule::latexName): use hasAlpha() and \maudeSymbolic
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateReduce): use
+	Tty::blockEscapeSequences(), Tty::unblockEscapeSequences() to avoid
+	escape sequences in latex comments
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint): fix missing
+	\right)
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateReduce): generate
+	latex comment
+	(MaudeLatexBuffer::MaudeLatexBuffer): use article; use geometry
+
+2023-06-12  Steven Eker  <eker@pup>
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateModuleName()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateModuleName): added
+	(MaudeLatexBuffer::generateReduce): use generateModuleName()
+
+	* latexDagNodePrint.cc (MixfixModule::latexName): moved
+	\maudeIdentifier{}, \maudeSingleChar{} code from const char*
+	version to int version
+	(MixfixModule::latexType): use \maudeSort{}
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateResult): use
+	\newline
+
+	* mixfixModule.hh (class MixfixModule): added decl for code
+	version of latexName()
+
+	* latexDagNodePrint.cc (MixfixModule::latexType): convert rope
+	to C string
+	(MixfixModule::latexName): added code version
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	latexName()
+
+	* latexDagNodePrint.cc (MixfixModule::latexName): take const
+	char* rather than token code
+	(MixfixModule::latexType): use Token::sortName() and new
+	latexName() convention
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): generateSort()
+	-> generateType()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSort): becomes
+	generateType(); use latexType()
+	(MaudeLatexBuffer::generateResult): use generateType()
+
+	* mixfixModule.hh (class MixfixModule): added declaration for
+	latexType()
+
+	* latexDagNodePrint.cc (MixfixModule::latexType): added
+
+	* mixfixModule.hh (class MixfixModule): made latexName() public
+	and static
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint): use
+	latexName() in prefix case
+	(MixfixModule::latexPrintTokens): use latexName()
+	(MixfixModule::latexName): handle 10 characters with special
+	meanings in latex
+
+	* mixfixModule.hh (class MixfixModule): added decl for latexName()
+
+	* latexDagNodePrint.cc (MixfixModule::latexComputeColor): handle
+	color
+	(MixfixModule::latexPrefix): handle color
+	(MixfixModule::latexSuffix): handle color
+	(MixfixModule::latexHandleIter): handle color
+	(MixfixModule::latexPrintTokens): handle color
+	(MixfixModule::latexPrintTails): handle color
+	(MixfixModule::latexPrettyPrint): handle color
+	(MixfixModule::latexPrintPrefixName): added
+	(MixfixModule::latexHandleIter): use latexPrintPrefixName()
+	(MixfixModule::latexPrettyPrint): use latexPrintPrefixName() (2
+	places)
+	(MixfixModule::latexHandleDivision): use \maudeNumber{}
+	(MixfixModule::latexHandleIter): use \maudeNumber{} (2 places)
+	(MixfixModule::latexHandleMinus): use \maudeNumber{}
+	(MixfixModule::latexHandleSMT_Number): use \maudeNumber{}
+	(MixfixModule::latexPrintTokens): use \maudeSpace
+	(MixfixModule::latexPrintTails): use \maudeSpace
+	(MixfixModule::latexName): added
+
+2023-06-09  Steven Eker  <eker@pup>
+
+	* mixfixModule.hh (class MixfixModule): added decl for static
+	latexPrettyPrint()
+	(class MixfixModule): added decls for latexComputeColor(),
+	latexPrefix(), latexSuffix(), latexHandleIter(), latexHandleMinus(),
+	latexHandleDivision(), latexHandleFloat(), latexHandleString(),
+	latexHandleQuotedIdentifier(), latexHandleVariable(),
+	latexHandleSMT_Number(), latexPrettyPrint(), latexPrintTokens(),
+	latexPrintTails()
+
+	* latexDagNodePrint.cc: created
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateSort()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSort): added
+
+2023-06-07  Steven Eker  <eker@pup>
+
+	* execute.cc (Interpreter::endRewriting): use latexBuffer
+	(Interpreter::reduce): use latexBuffer
+
+	* interpreter.cc (Interpreter::Interpreter): init latexBuffer rather
+	than latexLog
+
+	* mixfix.hh: added class MaudeLatexBuffer
+
+	* interpreter.hh (class Interpreter): replace data member latexLog
+	with latexBuffer
+
+	* interpreter.cc (Interpreter::beginLatexLog): use MaudeLatexBuffer
+	(Interpreter::endLatexLog): delete latexBuffer
+
+	* maudeLatexBuffer.cc: created
+
+	* maudeLatexBuffer.hh: created
+
+2023-06-06  Steven Eker  <eker@pup>
+
+	* interpreter.hh (class Interpreter): added data member latexLog
+
+	* interpreter.cc (Interpreter::Interpreter): init latexLog
+	(Interpreter::beginLatexLog): added
+	(Interpreter::endLatexLog): added
+
+	* interact.cc (UserLevelRewritingContext::commandLoop): call endLatexLog()
+
+	* interpreter.hh (class Interpreter): added decls for beginLatexLog(),
+	endLatexLog()
+
+2023-06-02  Steven Eker  <eker@pup>
+
+	* importTranslation.cc (ImportTranslation::translateStrategy): replaced
+	FOR_EACH_CONST with regular for loop
+	(ImportTranslation::translateRegularSymbol): ditto
+
+2023-05-17  Steven Eker  <eker@pup>
+
+	* top.yy: added token KW_RESOURCES
+
+	* commands.yy: add set show resources
+
+	* interact.cc (UserLevelRewritingContext::commandLoop): call
+	MemoryCell::maybeShowResources() on normal exit
+
+2023-05-15  Steven Eker  <eker@pup>
+
+	* interact.cc (UserLevelRewritingContext::commandLoop): use FAST_QUIT
+	to determine if we delete the interpreter or not
+
+===================================Maude150===========================================
+
 2023-05-10  Steven Eker  <eker@pup>
 
 	* specialSymbolTypes.cc: added PrngManagerSymbol

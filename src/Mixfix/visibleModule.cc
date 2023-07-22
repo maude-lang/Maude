@@ -33,6 +33,7 @@
 #include "core.hh"
 #include "variable.hh"
 #include "strategyLanguage.hh"
+#include "higher.hh"
 #include "mixfix.hh"
 
 //      interface class definitions
@@ -47,9 +48,17 @@
 #include "strategyDefinition.hh"
 #include "sortConstraint.hh"
 
+//	higher class definitions
+#include "equalityConditionFragment.hh"
+#include "sortTestConditionFragment.hh"
+#include "assignmentConditionFragment.hh"
+#include "rewriteConditionFragment.hh"
+
 //	front end class definitions
 #include "userLevelRewritingContext.hh"
 #include "visibleModule.hh"
+
+#include "latexModulePrint.cc"
 
 VisibleModule::VisibleModule(int name, ModuleType moduleType, Interpreter* owner)
   : ImportModule(name, moduleType),

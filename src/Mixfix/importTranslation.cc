@@ -169,7 +169,7 @@ ImportTranslation::translateStrategy(RewriteStrategy* strat,
   for (int i = 0; i < nrArgs; i++)
     sortNames[i] = domain[i]->id();
 
-  FOR_EACH_CONST(i, RenamingList, renamings)
+  for (RenamingList::const_iterator i = renamings.begin(), e = renamings.end(); i != e; ++i)
     {
       Renaming* r =  *i;
       if (r != 0)
@@ -359,7 +359,7 @@ ImportTranslation::translateRegularSymbol(Symbol* symbol,
     sortNames[i] = symbol->domainComponent(i)->sort(1)->id();
   sortNames[nrArgs] = symbol->rangeComponent()->sort(1)->id();
 
-  FOR_EACH_CONST(i, RenamingList, renamings)
+  for (RenamingList::const_iterator i = renamings.begin(), e = renamings.end(); i != e; ++i)
     {
       Renaming* r =  *i;
       if (r != 0)

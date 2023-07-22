@@ -127,7 +127,7 @@ SuccSymbol::makeNatDag(const mpz_class& nat)
 }
 
 DagNode*
-SuccSymbol::makeNatDag64(uint64_t nat)
+SuccSymbol::makeNatDag64(uint_fast64_t nat)
 {
   DagNode* zero = zeroTerm.getDag();
 #if SIZEOF_UNSIGNED_LONG == 8

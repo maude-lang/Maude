@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -70,33 +70,27 @@ ACU_NonLinearLhsAutomaton::ACU_NonLinearLhsAutomaton(ACU_Symbol* symbol,
     unitSort(symbol->sortBound(varSort) == 1),
     pureSort(symbol->sortStructure(varSort) == AssociativeSymbol::PURE_SORT)
 {
-  Assert(unitSort || pureSort ||
-	 symbol->sortStructure(varSort) == AssociativeSymbol::LIMIT_SORT,
-	 "bad sort");
+  Assert(unitSort || pureSort || symbol->sortStructure(varSort) == AssociativeSymbol::LIMIT_SORT, "bad sort");
   Assert(multiplicity >= 2, "bad multiplicity");
 }
 
 void
 ACU_NonLinearLhsAutomaton::
-fillOutExtensionInfo(ACU_DagNode* subject,
-		     const ArgVec<ACU_DagNode::Pair>::const_iterator chosen,
-		     ACU_ExtensionInfo* extensionInfo)
+fillOutExtensionInfo(ACU_DagNode* subject, Index chosen, ACU_ExtensionInfo* extensionInfo)
 {
-  int nrArgs = subject->argArray.length();
-  ArgVec<ACU_DagNode::Pair>::const_iterator args = subject->argArray.begin();
-
-  if (nrArgs == 1 && args->multiplicity == multiplicity)
+  ArgVec<ACU_DagNode::Pair>& args = subject->argArray;
+  Index nrArgs = args.size();
+  if (nrArgs == 1 && args[0].multiplicity == multiplicity)
     extensionInfo->setMatchedWhole(true);
   else
     {
       extensionInfo->setMatchedWhole(false);
       extensionInfo->reset();
-      for (int i = 0; i < nrArgs; i++, ++args)
+      for (Index i = 0; i < nrArgs; ++i)
 	{
-	  int m = args->multiplicity;
-	  extensionInfo->setUnmatched(i, args == chosen ? (m - multiplicity) : m);
+	  int m = args[i].multiplicity;
+	  extensionInfo->setUnmatched(i, i == chosen ? (m - multiplicity) : m);
 	}
-      Assert(args == subject->argArray.end(), "iterator inconsistent");
     }
   extensionInfo->setValidAfterMatch(true);
 }
@@ -155,7 +149,9 @@ ACU_NonLinearLhsAutomaton::match(DagNode* subject,
       //	ArgVec case.
       //
       ACU_DagNode* s = safeCast(ACU_DagNode*, subject);
-      int fastMult = multiplicity;  // register copy to avoid reloading after writes
+      ArgVec<ACU_DagNode::Pair>& args = s->argArray;
+      Index nrArgs = args.size();
+      int fastMult = multiplicity;  // local copy to avoid reloading after writes
       ACU_ExtensionInfo* e = safeCast(ACU_ExtensionInfo*, extensionInfo);
 
       if (unitSort)
@@ -163,11 +159,11 @@ ACU_NonLinearLhsAutomaton::match(DagNode* subject,
 	  //
 	  //	Can only assign one subject.
 	  //
-	  FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, s->argArray)
+	  for (Index i = 0; i < nrArgs; ++i)
 	    {
-	      if (i->multiplicity >= fastMult && i->dagNode->leq(varSort))
+	      if (args[i].multiplicity >= fastMult && args[i].dagNode->leq(varSort))
 		{
-		  solution.bind(varIndex, i->dagNode);
+		  solution.bind(varIndex, args[i].dagNode);
 		  fillOutExtensionInfo(s, i, e);
 		  return true;
 		}
@@ -179,11 +175,11 @@ ACU_NonLinearLhsAutomaton::match(DagNode* subject,
 	  //
 	  //	First find out how many subjects are assignable.
 	  //
-	  int size = 0;
-	  ArgVec<ACU_DagNode::Pair>::const_iterator last;  // gcc gives uninitialized warning
-	  FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, s->argArray)
+	  Index size = 0;
+	  Index last;
+	  for (Index i = 0; i < nrArgs; ++i)
 	    {
-	      if (i->multiplicity >= fastMult && i->dagNode->leq(varSort))
+	      if (args[i].multiplicity >= fastMult && args[i].dagNode->leq(varSort))
 		{
 		  ++size;
 		  last = i;
@@ -198,9 +194,9 @@ ACU_NonLinearLhsAutomaton::match(DagNode* subject,
 	  //
 	  //	Now make binding.
 	  //
-	  if (size == 1 && last->multiplicity < 2 * fastMult)
+	  if (size == 1 && args[last].multiplicity < 2 * fastMult)
 	    {
-	      solution.bind(varIndex, last->dagNode);
+	      solution.bind(varIndex, args[last].dagNode);
 	      fillOutExtensionInfo(s, last, e);
 	    }
 	  else
@@ -209,23 +205,23 @@ ACU_NonLinearLhsAutomaton::match(DagNode* subject,
 	      ArgVec<ACU_DagNode::Pair>::iterator j = d->argArray.begin();
 	      e->reset();
 	      bool whole = true;
-	      FOR_EACH_CONST(i, ArgVec<ACU_DagNode::Pair>, s->argArray)
+	      for (Index i = 0; i < nrArgs; ++i)
 		{
-		  int m = i->multiplicity;
-		  if (m >= fastMult && i->dagNode->leq(varSort))
+		  int m = args[i].multiplicity;
+		  if (m >= fastMult && args[i].dagNode->leq(varSort))
 		    {
 		      int rem = m % fastMult;
 		      int result = m / fastMult;
-		      j->dagNode = i->dagNode;;
+		      j->dagNode = args[i].dagNode;;
 		      j->multiplicity = result;
 		      ++j;
-		      e->setUnmatched(i - s->argArray.begin(), rem);
+		      e->setUnmatched(i, rem);
 		      if (rem != 0)
 			whole = false;
 		    }
 		  else
 		    {
-		      e->setUnmatched(i - s->argArray.begin(), m);
+		      e->setUnmatched(i, m);
 		      whole = false;
 		    }
 		}

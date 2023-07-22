@@ -1,3 +1,10 @@
+2023-06-02  Steven Eker  <eker@pup>
+
+	* AU_Normalize.cc (AU_DagNode::normalizeAtTop): replace FOR_EACH_CONST with
+	regular for loop (3 places)
+
+===================================Maude150===========================================
+
 2023-04-13  Steven Eker  <eker@pup>
 
 	* AU_Matcher.cc (AU_LhsAutomaton::match): use empty()

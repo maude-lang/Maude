@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,32 +44,30 @@ AU_DagNode::normalizeAtTop(bool dumb)
   //	First examine the argument list looking for either our top symbol
   //	or our identity.
   //
-  {
-    FOR_EACH_CONST(i, ArgVec<DagNode*>, argArray)
-      {
-	DagNode* d = *i;
-	if (d->symbol() == s)
-	  {
-	    if (safeCast(AU_BaseDagNode*, d)->isDeque())
-	      {
-		//
-		//	Since we have at least one deque we won't use
-		//	expansion and therefore don't waste time
+  for (ArgVec<DagNode*>::const_iterator i = argArray.begin(), e = argArray.end(); i != e; ++i)
+    {
+      DagNode* d = *i;
+      if (d->symbol() == s)
+	{
+	  if (safeCast(AU_BaseDagNode*, d)->isDeque())
+	    {
+	      //
+	      //	Since we have at least one deque we won't use
+	      //	expansion and therefore don't waste time
 		//	updating it.
 		//
-		int nrArgs = safeCast(AU_DequeDagNode*, d)->nrArgs();
-		if (nrArgs > maxDeque)
-		  {
-		    maxDeque = nrArgs;
-		    maxDequeIter = i;
-		  }
-	      }
-	    else
-	      expansion += safeCast(AU_DagNode*, d)->argArray.length() - 1;
-	  }
-	else if (identity != 0 && identity->equal(d) && disappear(s, i))
-	  ++nrIdentities;
-      }
+	      int nrArgs = safeCast(AU_DequeDagNode*, d)->nrArgs();
+	      if (nrArgs > maxDeque)
+		{
+		  maxDeque = nrArgs;
+		  maxDequeIter = i;
+		}
+	    }
+	  else
+	    expansion += safeCast(AU_DagNode*, d)->argArray.length() - 1;
+	}
+      else if (identity != 0 && identity->equal(d) && disappear(s, i))
+	++nrIdentities;
   }
   //
   //	Now deal efficiently with all the special cases.
@@ -138,7 +136,7 @@ AU_DagNode::normalizeAtTop(bool dumb)
 	  //	But have to remove identities.
 	  //
 	  int p = 0;
-	  FOR_EACH_CONST(i, ArgVec<DagNode*>, argArray)
+	  for (ArgVec<DagNode*>::const_iterator i = argArray.begin(), e = argArray.end(); i != e; ++i)
 	    {
 	      DagNode* d = *i;
 	      if (!(identity->equal(d) && disappear(s, i)))
@@ -193,7 +191,7 @@ AU_DagNode::normalizeAtTop(bool dumb)
       //
       ArgVec<DagNode*> buffer(nrArgs + expansion - nrIdentities);
       int p = 0;
-      FOR_EACH_CONST(i, ArgVec<DagNode*>, argArray)
+      for (ArgVec<DagNode*>::const_iterator i = argArray.begin(), e = argArray.end(); i != e; ++i)
 	{
 	  DagNode* d = *i;
 	  if (d->symbol() == s)

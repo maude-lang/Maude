@@ -75,6 +75,7 @@
 #include "freshVariableSource.hh"
 #include "viewExpression.hh"
 #include "moduleExpression.hh"
+#include "maudeLatexBuffer.hh"
 #include "interpreter.hh"
 
 //	our stuff
@@ -93,6 +94,7 @@ Interpreter::Interpreter()
 {
   xmlLog = 0;
   xmlBuffer = 0;
+  latexBuffer = 0;
 
   flags = DEFAULT_FLAGS;
   printFlags = DEFAULT_PRINT_FLAGS;
@@ -118,6 +120,13 @@ Interpreter::~Interpreter()
   clearContinueInfo();
   delete xmlBuffer;
   delete xmlLog;
+}
+
+void
+Interpreter::outputBanner(const char* date, const char* time, time_t seconds)
+{
+  if (latexBuffer)
+    latexBuffer->generateBanner(date, time, seconds);
 }
 
 void
@@ -177,6 +186,20 @@ Interpreter::endXmlLog()
   xmlBuffer = 0;
   delete xmlLog;
   xmlLog = 0;
+}
+
+void
+Interpreter::beginLatexLog(const char* fileName)
+{
+  delete latexBuffer;
+  latexBuffer = new MaudeLatexBuffer(fileName);
+}
+
+void
+Interpreter::endLatexLog()
+{
+  delete latexBuffer;
+  latexBuffer = 0;
 }
 
 bool
@@ -344,12 +367,35 @@ void
 Interpreter::showSortsAndSubsorts() const
 {
   currentModule->getFlatModule()->showSortsAndSubsorts(cout);
+  if (latexBuffer != 0)
+    {
+      ostream& s = latexBuffer->getStream();
+      s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show sorts " <<
+	currentModule->getFlatModule() << " .\n\\end{comment}\n";
+      s << "\\maudeKeyword{show} \\maudeKeyword{sorts} ";
+      latexBuffer->generateModuleName(currentModule->getFlatModule());
+      s << " \\maudePunctuation{.}\\newline\n";
+      currentModule->getFlatModule()->latexShowSortsAndSubsorts(s);
+      s << "\\end{maudeShowParagraph}\n";
+    }
 }
 
 void
 Interpreter::showModule(bool all) const
 {
   currentModule->getFlatModule()->showModule(cout, all);
+  if (latexBuffer != 0)
+    {
+      const char* modifier = all ? "all" : "desugared";
+      ostream& s = latexBuffer->getStream();
+      s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show " << modifier << " " <<
+	currentModule->getFlatModule() << " .\n\\end{comment}\n";
+      s << "\\maudeKeyword{show} \\maudeKeyword{" << modifier << "} ";
+      latexBuffer->generateModuleName(currentModule->getFlatModule());
+      s << " \\maudePunctuation{.}\\newline\n";
+      currentModule->getFlatModule()->latexShowModule(s, all);
+      s << "\\end{maudeShowParagraph}\n";
+    }
 }
 
 void
@@ -365,7 +411,19 @@ void
 Interpreter::showProcessedView() const
 {
   if (currentView->evaluate())  // in case it became stale
-    currentView->showProcessedView(cout);
+    {
+      currentView->showProcessedView(cout);
+      if (latexBuffer != 0)
+	{
+	  ostream& s = latexBuffer->getStream();
+	  s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show processed view " <<
+	    currentView << " .\n\\end{comment}\n";
+	  s << "\\maudeKeyword{show} \\maudeKeyword{processed} \\maudeKeyword{view} \\maudeView{" <<
+	    currentView << "} \\maudePunctuation{.}\\newline\n";
+	  currentView->latexShowProcessedView(s);
+	  s << "\\end{maudeShowParagraph}\n";
+	}
+    }
   else
     IssueWarning("view " << QUOTE(currentView) << " cannot be used due to earlier errors.");
 }
@@ -403,18 +461,51 @@ void
 Interpreter::showMbs(bool all) const
 {
   currentModule->getFlatModule()->showMbs(cout, false, all);
+  if (latexBuffer != 0)
+    {
+      ostream& s = latexBuffer->getStream();
+      s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show mbs " << currentModule->getFlatModule() <<
+	" .\n\\end{comment}\n";
+      s << "\\maudeKeyword{show} \\maudeKeyword{mbs} ";
+      latexBuffer->generateModuleName(currentModule->getFlatModule());
+      s << " \\maudePunctuation{.}\\newline\n";
+      currentModule->getFlatModule()->latexShowMbs(s, "", all);
+      s << "\\end{maudeShowParagraph}\n";
+    }
 }
 
 void
 Interpreter::showEqs(bool all) const
 {
   currentModule->getFlatModule()->showEqs(cout, false, all);
+  if (latexBuffer != 0)
+    {
+      ostream& s = latexBuffer->getStream();
+      s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show eqs " << currentModule->getFlatModule() <<
+	" .\n\\end{comment}\n";
+      s << "\\maudeKeyword{show} \\maudeKeyword{eqs} ";
+      latexBuffer->generateModuleName(currentModule->getFlatModule());
+      s << " \\maudePunctuation{.}\\newline\n";
+      currentModule->getFlatModule()->latexShowEqs(s, "", all);
+      s << "\\end{maudeShowParagraph}\n";
+    }
 }
 
 void
 Interpreter::showRls(bool all) const
 {
   currentModule->getFlatModule()->showRls(cout, false, all);
+  if (latexBuffer != 0)
+    {
+      ostream& s = latexBuffer->getStream();
+      s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show rls " << currentModule->getFlatModule() <<
+	" .\n\\end{comment}\n";
+      s << "\\maudeKeyword{show} \\maudeKeyword{rls} ";
+      latexBuffer->generateModuleName(currentModule->getFlatModule());
+      s << " \\maudePunctuation{.}\\newline\n";
+      currentModule->getFlatModule()->latexShowRls(s, "", all);
+      s << "\\end{maudeShowParagraph}\n";
+    }
 }
 
 void

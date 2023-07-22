@@ -128,7 +128,7 @@ private:
 		  bool eagerContext);
 
   Vector<Term*> argArray;
-  short slotIndex;
+  int slotIndex;
   bool visitedFlag;
 };
 

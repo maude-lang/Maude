@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -177,6 +177,14 @@ Interpreter::endRewriting(Timer& timer,
 				    getFlag(SHOW_TIMING),
 				    getFlag(SHOW_BREAKDOWN));
 	}
+      if (latexBuffer != 0)
+	{
+	  latexBuffer->generateResult(*context,
+				      timer,
+				      getFlag(SHOW_STATS),
+				      getFlag(SHOW_TIMING),
+				      getFlag(SHOW_BREAKDOWN));
+	}
       
       if (cf == 0)
 	{
@@ -209,6 +217,8 @@ Interpreter::reduce(const Vector<Token>& subject, bool debug)
 	  cout << "reduce in " << currentModule << " : " << d << " ." << endl;
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateReduce(d);
+	  if (latexBuffer != 0)
+	    latexBuffer->generateReduce(d);
 	}
       VisibleModule* fm = currentModule->getFlatModule();
       startUsingModule(fm);
@@ -264,6 +274,8 @@ Interpreter::rewrite(const Vector<Token>& subject, Int64 limit, bool debug)
 	  cout << "in " << currentModule << " : " << d << " ." << endl;
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateRewrite(d, limit);
+	  if (latexBuffer != 0)
+	    latexBuffer->generateRewrite(d, limit);
 	}
       
       CacheableRewritingContext* context = new CacheableRewritingContext(d);
@@ -289,6 +301,8 @@ Interpreter::rewriteCont(Int64 limit, bool debug)
   continueFunc = 0;
   if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
     xmlBuffer->generateContinue("rewrite", fm, limit);
+  if (latexBuffer != 0 && getFlag(SHOW_COMMAND))
+    latexBuffer->generateContinue(limit);
   context->clearCount();
   beginRewriting(debug);
   Timer timer(getFlag(SHOW_TIMING));
@@ -309,6 +323,8 @@ Interpreter::fRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 	  cout << d << " ." << endl;
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateFrewrite(d, limit, gas);
+	  if (latexBuffer != 0)
+	    latexBuffer->generateFrewrite(d, limit, gas);
 	}
       CacheableRewritingContext* context = new CacheableRewritingContext(d);
       context->setObjectMode(ObjectSystemRewritingContext::FAIR);
@@ -334,6 +350,8 @@ Interpreter::fRewriteCont(Int64 limit, bool debug)
   continueFunc = 0;
   if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
     xmlBuffer->generateContinue("frewrite", fm, limit);
+  if (latexBuffer != 0 && getFlag(SHOW_COMMAND))
+    latexBuffer->generateContinue(limit);
   context->clearCount();
   beginRewriting(debug);
   Timer timer(getFlag(SHOW_TIMING));

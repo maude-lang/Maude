@@ -31,7 +31,7 @@ class NatSet
 {
 public:
   typedef int value_type;
-  typedef unsigned int size_type;
+  typedef int size_type;
 
   class iterator
   {
@@ -52,7 +52,10 @@ public:
   typedef iterator const_iterator;
 
   NatSet();
-  NatSet(const NatSet& original);
+  NatSet(const NatSet&) = default;  // copy ctor
+  NatSet(NatSet&&) = default;  // move ctor
+  NatSet& operator=(const NatSet&) = default;  // copy assignment
+  NatSet& operator=(NatSet&&) = default;  // move assignment
 
   void clear();
   size_type size() const;
@@ -65,9 +68,8 @@ public:
   void subtract(value_type i);
   void subtract(const NatSet& other);
   void intersect(const NatSet& other);
-  NatSet& operator=(const NatSet& original);
   int_fast8_t contains(value_type i) const;  // constant time
-  bool containsSmall(value_type i) const;  // only correct for small arguments
+  int_fast8_t containsSmall(value_type i) const;  // only correct for small arguments
   bool contains(const NatSet& other) const;  // i.e. improper subset test
   bool disjoint(const NatSet& other) const;
   bool operator==(const NatSet& other) const;
@@ -125,13 +127,6 @@ NatSet::NatSet()
   firstWord = 0;
 }
 
-inline
-NatSet::NatSet(const NatSet& original)
-  : firstWord(original.firstWord),
-    array(original.array)
-{
-}
-
 inline void
 NatSet::clear()
 {
@@ -139,18 +134,10 @@ NatSet::clear()
   array.clear();
 }
 
-inline NatSet&
-NatSet::operator=(const NatSet& original)
-{
-  firstWord = original.firstWord;
-  array = original.array;  // deep copy
-  return *this;
-}
-
 inline bool
 NatSet::empty() const
 {
-  return firstWord == 0 && array.length() == 0;
+  return firstWord == 0 && array.empty();
 }
 
 inline NatSet::value_type
@@ -184,7 +171,7 @@ NatSet::contains(value_type i) const
   return i < BITS_PER_WORD ? ((firstWord >> i) & 1) : arrayContains(i);
 }
 
-inline bool
+inline int_fast8_t
 NatSet::containsSmall(value_type i) const
 {
   Assert(i >= 0, "-ve argument " << i);
@@ -201,7 +188,7 @@ NatSet::operator!=(const NatSet& other) const
 inline NatSet::value_type
 NatSet::max() const
 {
-  value_type len = array.length();
+  Index len = array.size();
   if (len == 0)
     return (firstWord == 0) ? -1 : topBit(firstWord);
   return (len * BITS_PER_WORD) + topBit(array[len - 1]);

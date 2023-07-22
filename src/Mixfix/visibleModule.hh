@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #ifndef _visibleModule_hh_
 #define _visibleModule_hh_
 #include "importModule.hh"
+#include "view.hh"
 
 class VisibleModule : public ImportModule
 {
@@ -49,6 +50,16 @@ public:
   void showStrats(ostream& s, bool indent, bool all) const;
   void showSds(ostream& s, bool indent, bool all) const;
 
+  void latexShowOps(ostream& s, const char* indent, bool all);
+  void latexShowPolymorphs(ostream& s, const char* indent, bool all);
+  void latexShowSortsAndSubsorts(ostream& s) const;
+  void latexShowMbs(ostream& s, const char* indent, bool all);
+  void latexShowEqs(ostream& s, const char* indent, bool all);
+  void latexShowRls(ostream& s, const char* indent, bool all);
+  void latexShowModule(ostream& s, bool all);
+
+  static void latexPrintModuleName(ostream& s, Module* module);
+
 private:
   void showImports(ostream& s) const;
   void showSorts1(ostream& s, bool indent, bool all) const;
@@ -58,6 +69,33 @@ private:
   void showDecls(ostream& s, bool indent, int index, bool all) const;
   void showAttributes(ostream& s, Symbol* symbol, int opDeclIndex) const;
 
+  void latexShowSorts(ostream& s, bool all) const;
+  void latexShowSubsorts(ostream& s, bool all) const;
+  void latexShowDecls(ostream& s, const char* indent, Index index, bool all);
+  void latexShowPolymorphDecl(ostream& s, const char* indent, Index index);
+
+  void latexShowVars(ostream& s) const;
+
+  void latexPrintConditionFragment(ostream& s, const ConditionFragment* c);
+  void latexPrintCondition(ostream& s, const Vector<ConditionFragment*>& condition);
+  void latexPrintCondition(ostream& s, const PreEquation* pe);
+  void latexPrintAttributes(ostream& s,
+			    const PreEquation* pe,
+			    int metadata,
+			    const PrintAttribute* printAttribute,
+			    bool owise = false,
+			    bool variant = false,
+			    bool narrowing = false);
+
+  void latexPrintMembershipAxiom(ostream& s, const char* indent, const SortConstraint* mb);
+  void latexPrintEquation(ostream& s, const char* indent, const Equation* eq);
+  void latexPrintRule(ostream& s, const char* indent, const Rule* rl);
+  void latexShowImports(ostream& s) const;
+  void latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex);
+  void latexShowPolymorphAttributes(ostream& s, int index);
+
+  static void latexPrintViewName(ostream& s, View* view);
+  
   Interpreter* const owner;
 };
 
@@ -65,6 +103,18 @@ inline Interpreter*
 VisibleModule::getOwner() const
 {
   return owner;
+}
+
+inline void
+VisibleModule::latexPrintModuleName(ostream& s, Module* module)
+{
+  s << "\\maudeModule{" << Token::latexName(module->id()) << "}";
+}
+
+inline void
+VisibleModule::latexPrintViewName(ostream& s, View* view)
+{
+  s << "\\maudeView{" << Token::latexName(view->id()) << "}";
 }
 
 #endif

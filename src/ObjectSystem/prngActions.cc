@@ -34,7 +34,7 @@ PrngManagerSymbol::getPrng(DagNode* prngArg) const
 }
 
 bool
-PrngManagerSymbol::getSeed32(DagNode* seedArg, uint32_t& value) const
+PrngManagerSymbol::getSeed32(DagNode* seedArg, uint_fast32_t& value) const
 {
   //
   //	We allow arbitrary large seeds but only return the low order 32-bits.
@@ -48,7 +48,7 @@ PrngManagerSymbol::getSeed32(DagNode* seedArg, uint32_t& value) const
 }
 
 bool
-PrngManagerSymbol::getSeed64(DagNode* seedArg, uint64_t& value) const
+PrngManagerSymbol::getSeed64(DagNode* seedArg, uint_fast64_t& value) const
 {
   //
   //	We allow arbitrary large seeds but only return the low order 64-bits.
@@ -136,7 +136,7 @@ PrngManagerSymbol::setSeed(FreeDagNode* message, ObjectSystemRewritingContext& c
     {
     case PrngAlgorithm::MT32:
       {
-	uint32_t value;
+	uint_fast32_t value;
 	if (getSeed32(seedArg, value))
 	  prngs[id].mt32->seed(value);
 	else
@@ -148,7 +148,7 @@ PrngManagerSymbol::setSeed(FreeDagNode* message, ObjectSystemRewritingContext& c
       }
     case PrngAlgorithm::MT64:
       {
-	uint64_t value;
+	uint_fast64_t value;
 	if (getSeed64(seedArg, value))
 	  prngs[id].mt64->seed(value);
 	else
@@ -171,7 +171,7 @@ void
 PrngManagerSymbol::getNext(FreeDagNode* message, ObjectSystemRewritingContext& context)
 {
   int id = getPrng(message->getArgument(0));
-  uint64_t value = 0;
+  uint_fast64_t value = 0;
   switch (prngs[id].algorithm)
     {
     case PrngAlgorithm::MT32:

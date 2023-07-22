@@ -27,7 +27,7 @@
 #include "binBuf.hh"
 
 void
-BinBuf::init(uint64_t bits, int leadingZeros)
+BinBuf::init(uint_fast64_t bits, int leadingZeros)
 {
   Assert(leadingZeros <= 32 * (MAX_WORDS - 2),
 	 "too many leading zeros" << leadingZeros);
@@ -50,8 +50,8 @@ BinBuf::times10()
   int c = 0;
   for (int i = begin; i < end; i++)
     {
-      uint64_t r = (10ULL * buf[i]) + c;
-      uint32_t t = r & 0xffffffff;
+      uint_fast64_t r = (10ULL * buf[i]) + c;
+      uint_fast32_t t = r & 0xffffffff;
       if (i == begin && t == 0)
 	++begin;
       else

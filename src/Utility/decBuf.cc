@@ -27,17 +27,17 @@
 #include "decBuf.hh"
 
 void
-DecBuf::shiftAndAdd(int shift, uint64_t c)
+DecBuf::shiftAndAdd(int shift, uint_fast64_t c)
 {
   for (deque<char>::iterator i = buf.begin(); i != buf.end(); ++i)
     {
-      uint64_t r = c + (static_cast<uint64_t>(*i) << shift);
+      uint_fast64_t r = c + (static_cast<uint_fast64_t>(*i) << shift);
       c = r / 10;
       *i = r - 10 * c;
     }
   while (c > 0)
     {
-      uint64_t r = c;
+      uint_fast64_t r = c;
       c = r / 10;
       buf.push_back(r - 10 * c);
     }

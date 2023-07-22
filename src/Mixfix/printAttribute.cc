@@ -32,6 +32,8 @@
 #include "interface.hh"
 #include "core.hh"
 #include "variable.hh"
+#include "strategyLanguage.hh"
+#include "mixfix.hh"
 
 //      interface class definitions
 #include "symbol.hh"
@@ -48,6 +50,7 @@
 //	mixfix class definitions
 #include "token.hh"
 #include "printAttribute.hh"
+#include "mixfixModule.hh"
 
 void
 PrintAttribute::fillOut(const PreEquation& statement,
@@ -113,5 +116,21 @@ PrintAttribute::print(ostream& s, const Substitution& substitution) const
 	s << Token::codeToRope(item);
       else
 	s << substitution.value(-1 - item);
+    }
+}
+
+void
+PrintAttribute::latexPrint(ostream& s, const VariableInfo& variableInfo) const
+{
+  s << "\\maudeKeyword{print}";
+  Index nrItems = items.size();
+  for (Index i = 0; i < nrItems; ++i)
+    {
+      s << "\\maudeSpace";
+      int item = items[i];
+      if (item >= 0)
+	s << "\\maudeString{" << Token::latexName(item) << "}";
+      else
+        MixfixModule::latexPrettyPrint(s, variableInfo.index2Variable(-1 - item));
     }
 }

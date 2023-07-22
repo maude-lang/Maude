@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ public:
   //
   //	Indeed the notion of solution number need not make sense for the
   //	user, and more than one argument from tail of the argument list
-  //	may be ignores for deciding if a cached state is of interest.
+  //	may be ignored for deciding if a cached state is of interest.
   //	
   //	Since each user starts by pulling out any corresponding state, there
   //	can only be at most one corresponding state to any descent function
@@ -69,7 +69,7 @@ public:
 			    Int64& lastSolutionNr);
   //
   //	For objects that have a RewritingContext (whose parent pointer
-  //	may be state) that live in a MetaLevelOpSymbol cache.
+  //	may be stale) that live in a MetaLevelOpSymbol cache.
   //	Here we pass a RewritingContext that becomes the new parent.
   //
   template<class T>
@@ -78,6 +78,11 @@ public:
 			    Int64 solutionNr,
 			    T*& state,
 			    Int64& lastSolutionNr);
+  //
+  //	Attempt to purge a single state derived from class T.
+  //
+  template<class T>
+  bool purge();
 
 private:
   bool sameProblem(FreeDagNode* m1, DagNode* m2, int nrArgumentsToIgnore);
@@ -94,6 +99,13 @@ private:
   const int maxSize;
   Vector<Item> cache;
 };
+
+inline void
+MetaOpCache::Item::clear()
+{
+  delete metaOp;
+  delete state;
+}
 
 template<class T>
 inline bool
@@ -141,6 +153,26 @@ MetaOpCache::getCachedStateObject(FreeDagNode* subject,
 	  return true;
 	}
       delete cachedState;
+    }
+  return false;
+}
+
+template<class T>
+inline bool
+MetaOpCache::purge()
+{
+  Index nrEntries = cache.size();
+  for (int i = 0; i < nrEntries; i++)
+    {
+      if (dynamic_cast<T*>(cache[i].state) != 0)
+	{
+	  cache[i].clear();
+	  for (i++; i < nrEntries; i++)
+	    cache[i - 1] = cache[i];
+	  --nrEntries;
+	  cache.contractTo(nrEntries);
+	  return true;
+	}
     }
   return false;
 }

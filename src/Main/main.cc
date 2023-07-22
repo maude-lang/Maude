@@ -76,9 +76,9 @@ int
 main(int argc, char* argv[])
 {
   //
-  //	Global function declatations
+  //	Global function declarations
   //
-  void printBanner(ostream& s);
+  void printBanner(ostream& s, const char* date, const char* time, time_t seconds);
   void printHelp(const char* name);
   void printVersion();
   void createRootBuffer(FILE* fp, bool forceInteractive);
@@ -104,6 +104,8 @@ main(int argc, char* argv[])
 	{
 	  if (const char* s = isFlag(arg, "-xml-log="))
 	    interpreter.beginXmlLog(s);
+	  else if (const char* s = isFlag(arg, "-latex-log="))
+	    interpreter.beginLatexLog(s);
 	  else if (const char* s = isFlag(arg, "-random-seed="))
 	    RandomOpSymbol::setGlobalSeed(strtoul(s, 0, 0));
 	  else if (const char* s = isFlag(arg, "-assoc-unif-depth="))
@@ -227,7 +229,15 @@ main(int argc, char* argv[])
   (void) cerr.tie(&cout);
 
   if (outputBanner)
-    printBanner(cout);
+    {
+      const char* date = __DATE__;
+      const char* time = __TIME__;
+      struct timeval t;
+      gettimeofday(&t, 0);
+      printBanner(cout, date, time, t.tv_sec);
+      interpreter.outputBanner(date, time, t.tv_sec);
+    }
+
   createRootBuffer(stdin, forceInteractive);
   UserLevelRewritingContext::setHandlers(handleCtrlC);
   if (useTecla)

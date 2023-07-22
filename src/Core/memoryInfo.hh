@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,22 +28,10 @@
 //
 #ifndef _memoryInfo_hh_
 #define _memoryInfo_hh_
-#include "sort.hh"
 
 class MemoryInfo
 {
   NO_COPYING(MemoryInfo);
-
-protected:
-  enum Flags
-    {
-      MARKED = 64,	// marked in most recent mark phase
-      CALL_DTOR = 128	// call DagNode::~DagNode() before reusing
-    };
-  //
-  //	A MemoryInfo object can only be created as part of MemoryCell.
-  //
-  MemoryInfo(){};
 
 public:
   //
@@ -90,6 +78,19 @@ public:
   int getByte() const;
   void setByte(int bt);
 
+protected:
+  enum Flags
+    {
+      MARKED = 64,	// marked in most recent mark phase
+      CALL_DTOR = 128	// call DagNode::~DagNode() before reusing
+    };
+  //
+  //	A MemoryInfo object can only be created as part of MemoryCell.
+  //
+  MemoryInfo(){};
+
+  static size_t nrNodesInUse;
+
 private:
   Ubyte flags;
   Byte byte;
@@ -129,7 +130,6 @@ MemoryInfo::isMarked() const
 inline void
 MemoryInfo::setMarked()
 {
-  extern int nrNodesInUse;  // FIXME
   ++nrNodesInUse;
   setFlag(MARKED);
 }

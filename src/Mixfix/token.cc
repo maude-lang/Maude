@@ -36,6 +36,7 @@
 
 //	our stuff
 #include "auxProperty.cc"
+#include "latexToken.cc"
 
 StringTable Token::stringTable;
 Vector<int> Token::specialProperties;
@@ -231,10 +232,42 @@ Token::getInt(int& value) const
   return pointer != str && *pointer == '\0';
 }
 
+string
+Token::prettyOpName(int prefixNameCode)
+{
+  int sp = specialProperties[prefixNameCode];
+  if (sp != NONE && sp != CONTAINS_COLON && sp != ENDS_IN_COLON && sp != ITER_SYMBOL)
+    return "";  // regular string literals exit here
+  //
+  //	We make a "pretty" version of a prefix name by removing backquotes, except
+  //	those in front of ( and ). The result is no longer a valid single token but
+  //	can be parsed in an op declaration.
+  //	If there were no backquotes to remove, we flag this by returning the empty string.
+  //
+  bool prettified = false;
+  string result;
+  for (const char* p = stringTable.name(prefixNameCode); *p; ++p)
+    {
+      char c = *p;
+      if (c == '`')
+	{
+	  char c = *(p + 1);
+	  if (!(c == '(' || c == ')'))
+	    {
+	      if (!(c == '[' || c == ']' || c == '{' || c == '}' || c  == ','))
+		result += ' ';
+	      prettified = true;
+	      continue;
+	    }
+	}
+      result += c;
+    }
+  return prettified ? result : "";
+}
+
 int
 Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
 {
-  
   int sp = specialProperties[prefixNameCode];
   if (sp != NONE && sp != CONTAINS_COLON && sp != ENDS_IN_COLON && sp != ITER_SYMBOL)
     return 0;  // regular string literals exit here

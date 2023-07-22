@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,8 +38,6 @@ public:
   virtual void compileRules();
   virtual DagNode* ruleRewrite(DagNode* subject, RewritingContext& context);
   virtual void resetRules();
-  //virtual void saveHiddenState();
-  //virtual void restoreHiddenState();
 
 protected:
   virtual bool acceptRule(Rule* rule) = 0;
@@ -49,11 +47,8 @@ protected:
   void resetEachRule();
 
 private:
-  //typedef stack<int, list<int> > IntStack;  // optimize for the empty case
-
   Vector<Rule*> rules;
   int nextRule;
-  //IntStack nextRuleStack;
 };
 
 inline const Vector<Rule*>&

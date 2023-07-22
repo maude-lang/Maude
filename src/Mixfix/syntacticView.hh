@@ -48,6 +48,8 @@ public:
   //
   void showView(ostream& s);
   void showProcessedView(ostream& s);
+  
+  void latexShowProcessedView(ostream& s);
 
 private:
 

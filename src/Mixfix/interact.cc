@@ -404,19 +404,16 @@ UserLevelRewritingContext::commandLoop()
 		//
 		//	This is the only normal exit() that can be taken.
 		//
+		MemoryCell::maybeShowResources();
 		cout << "Bye.\n";
-#ifndef NO_ASSERT
+		interpreter.endXmlLog();
+		interpreter.endLatexLog();
+#ifndef FAST_QUIT
 		//
-		//	Look for memory bugs.
+		//	Look for memory bugs by deleting everything. Not needed under normal
+		//	circumstances because we're about to exit.
 		//
 		delete &interpreter;
-#else
-		//
-		//	If we are not going to delete the interpreter
-		//	in the interests of a quick exit, at least clean
-		//	up any XML log we may have started.
-		//
-		interpreter.endXmlLog();
 #endif
 		exit(NORMAL_EXIT);
 	      }

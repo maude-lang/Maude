@@ -1,3 +1,43 @@
+2023-07-14  Steven Eker  <eker@pup>
+
+	* natSet.hh (NatSet::containsSmall): return int_fast8_t to avoid
+	converting a Word result into a bool
+	(class NatSet): turn size_type into an int - we're not trying to
+	duplicate an STL container so there's no need to return an unsigned
+	with all its issues
+	(NatSet::empty): use Vector::empty()
+	(NatSet::max): use Index and Vector::size()
+	(NatSet::NatSet): deleted copy ctor version
+	(class NatSet): declare copy and move ctors to be default
+	(class NatSet): declare copy and move assignment operators to be default
+	(NatSet::operator=): deleted copy assignment
+
+2023-06-13  Steven Eker  <eker@pup>
+
+	* tty.cc: added def for Tty::savedFlag
+
+	* tty.hh (Tty::blockEscapeSequences)
+	(Tty::unblockEscapeSequences): added
+	(class Tty): added static data member savedFlag
+
+2023-06-06  Steven Eker  <eker@pup>
+
+	* decBuf.cc (DecBuf::shiftAndAdd): uint64_t -> uint_fast64_t
+
+	* decBuf.hh (class DecBuf): updated decl for shiftAndAdd()
+
+	* binBuf.cc (BinBuf::init): uint64_t -> uint_fast64_t
+	(BinBuf::times10): uint64_t -> uint_fast64_t, uint32_t -> uint_fast32_t
+
+	* binBuf.hh (class BinBuf): updated decl for init()
+	(class BinBuf): uint32_t -> uint_fast32_t
+
+2023-06-02  Steven Eker  <eker@pup>
+
+	* macros.hh (FOR_EACH_CONST): deleted
+
+===================================Maude150===================================
+
 2023-05-12  Steven Eker  <eker@pup>
 
 	* macros.hh: use int64_t for stringToInt64(() decl

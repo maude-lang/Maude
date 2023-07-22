@@ -1,0 +1,148 @@
+Alpha 150 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug where a very large number of equations for a given symbol
+(100s of thousands) could force the number of slots (used to store
+traversal pointers in the discrimination net) to be larger than
+32767, the maximum representable by a short on most machines, causing
+a crash. Reported by Dwight Guth <dwight.guth@runtimeverification.com>
+
+(2) A bug where large free theory patterns could lead to the lead to
+an fringe set iterator being invalidated during fringe reduction during
+discrimination net construction. Reported by Dwight Guth
+<dwight.guth@runtimeverification.com>
+
+
+New features
+=============
+
+(1) There is now a command
+  set show resources on .
+This has the effect of showing the resouces used by the Maude process:
+(a) At every garbage collect if
+  set show gc on .
+is used.
+(b) At a normal quit.
+
+
+(2) There is a first attempt at LaTeX support. It is activated by the
+command line option:
+  ./maude -latex-log=<file>
+where <file> is the name of a .tex file where the generated LaTeX code
+will be put. With this option LaTeX code for certain echoed commands
+and Maude responses will be generated. The Maude distribution now
+comes with a LaTeX style file:
+  maude.sty
+that contains the macros and environments used by the generated LaTeX
+code.
+
+The intended use is that the resulting file can be processed with
+pdflatex to get a .pdf for initial examination. Then to include a
+chunk of generated output in a larger document, the relevant chunk
+of LaTeX code can just be copied and pasted into the document and
+  \usepackage{maude}
+can be added to the document preamble. To facilitate this,
+each chunk of LaTeX corresponding to a command and response is in
+its own enviroment and is tagged with comment giving the command
+that generated it.
+
+Currently only a handful of commands are supported. They fall into
+to groups. Those that do computation and those that just show internal
+state. The latter do not normally echo the command, however they
+do in the LaTeX log, and also print a blank line after the echoed
+command to separate it from the information printed.
+
+The computation commands are:
+
+reduce in <module> : <term> .
+rewrite [<count>] in <module> : <term> .
+frewrite [<count>,<gas>] in <module> : <term> .
+erewrite [<count>,<gas>] in <module> : <term> .
+continue .
+
+Note that continue is also echoed in the LaTeX log.
+
+The show commands are:
+
+show desugared <module> .
+show processed <view> .
+show all <module> .
+show sorts <module> .
+show mbs <module> .
+show eqs <module> .
+show rls <module> .
+
+Currently there is no support for the strategy language.
+
+In turning Maude output into LaTeX there are conflicting requirements: we
+would like the LaTeX output to look as much like regular typeset math as
+possible but on the other hand we would like a reader to be able to take
+such code and type it into Maude. This shows up in several areas:
+
+(1) Spacing. Maude requires spaces between tokens with the exceptions being
+around the 7 special symbols:
+  ( ) [ ] { } ,
+LaTeX on the other hand uses various typographic conventions, and in math
+mode has quite complex rules.
+
+(2) Special symbols. It impoves appearence to replace digraphs such as
+=> and trigraphs such as <=? with the appropriate math symbols but it may
+not be apparent to the user how to type such symbols in ASCII.
+
+(3) Fonts. It seems desirable to use different fonts for tokens depending
+on their syntactic class, for example using bold for keywords, and math
+italic or regular itatic for operator symbols. However this can make
+certain symbols hard to read; for example an italic | looks like a /
+Furthermore, tokens representing parameters or views can end up inside
+structured sorts and constants, and ideally we don't want their font
+to change when this happens. However when looking at a structured sort
+or constant like Foo{X} out of context, it's not obvious if X is a
+parameter, view, or just some perverse user syntax.
+
+Difficulties arise because many symbols allowed in Maude identifiers
+have special meanings in LaTeX and suitable substitutions must be made.
+
+Another difficult area is line breaking. Many statements such as operator
+declarations and equations can stretch over many lines and it order
+not to have an overfull hbox going off the righthand side of the page
+line breaks must be added. Since Maude cannot know the details of the
+document the LaTeX code will eventually be pasted into, line breaking
+decisions must be deferred to LaTeX software with just hints in the LaTeX
+code.
+
+In resolving these issue I've made a huge number of stylistic decision
+based on what seems possible in LaTeX and what looks right to my eye.
+It's likely this decisions will change before the next official release,
+and I'd be interested to get feedback and suggestions.
+Many of these decisions can be modified just by changing the definitions
+in maude.sty
+
+Symbol replacements:
+->      \rightarrow
+~>      \rightsquigarrow
+=>	\Rightarrow
+/\      \wedge
+
+Things that are a matter of taste:
+(1) Spacing around keywords and symbols
+(2) Replacement of ASCII symbols that are part of the language with math symbols
+(3) Font for sorts (currently sans serif)
+(4) Fonts for Qids, Strings, strings appearing in attributes (currently typewritter)
+(5) Font for single character identifiers (currently uses math mode default)
+(6) Font for multi-character identifiers not including numbers or symbols (currently itatlic)
+(7) Font for multi-character identifiers that include a number or symbols (currently sans serif)
+(8) Font for numbers (currently math modw default)
+(9) Font for keywords (currently bold)
+(10) Font for response text (currently bold)
+(11) Font for punctuation in commands and responses (currently bold)
+(12) Font for module/theory names (currentl small document default)
+(13) Indentation for term continuation
+(14) Indentation for module/theory/view contents
+(15) Font for statement labels (currently sans serif}
+(16) Font for parameters (currently sans serif to match sorts because of sorts like X$Elt)
+(17) Font for view names (currently small document default)
+
+The maude.sty file contains some further explanations.

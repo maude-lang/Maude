@@ -279,6 +279,22 @@ public:
   void bufferPrint(Vector<int>& buffer, StrategyExpression* term, int printFlags);
   static Sort* disambiguatorSort(const Term* term);
   int getSMT_NumberToken(const mpq_class& value, Sort* sort);
+  void printModifiers(ostream& s, Int64 number = NONE, Int64 number2 = NONE);
+  //
+  //	LaTeX conversion functions.
+  //
+  static string latexStructuredName(const Vector<int>& codes, const Module* m);
+  static string latexSort(int code, const Module* module);
+  static string latexSort(const Sort* sort);
+  static string latexType(const Sort* sort);
+  string latexStructuredConstant(int code) const;
+  static string latexPrettyOp(int code);
+  static string latexConstant(int code, const Module* module);
+  //
+  //	Latex pretty print functions.
+  //
+  static void latexPrettyPrint(ostream& s, DagNode* dagNode);
+  static void latexPrettyPrint(ostream& s, Term* term);
   //
   //	Misc.
   //
@@ -777,13 +793,13 @@ private:
 
   int visit(DagNode* dagNode, PointerSet& visited, Rope& accumulator);
 
-  bool ambiguous(int iflags);
+  bool ambiguous(int iflags) const;
   static bool rangeOfArgumentsKnown(int iflags, bool rangeKnown, bool rangeDisambiguated);
   void decideIteratedAmbiguity(bool rangeKnown,
 			       Symbol* symbol,
 			       const mpz_class& number,
 			       bool& needToDisambiguate,
-			       bool& argumentRangeKnown);
+			       bool& argumentRangeKnown) const;
   int checkPseudoIterated(Symbol* symbol, const Vector<Sort*>& domainAndRange);
   void checkIterated(Symbol* symbol, const Vector<Sort*>& domainAndRange);
   //
@@ -881,10 +897,74 @@ private:
 		   const ConnectedComponent* rightCaptureComponent,
 		   bool rangeKnown);
 
+  //
+  //	Common LaTeX functions.
+  //
+  static void latexPrintPrefixName(ostream& s, const char* prefixName, const SymbolInfo& si);
+  static int latexPrintTokens(ostream& s, const SymbolInfo& si, int pos, const char* color);
+  static void latexPrefix(ostream& s, bool needDisambig, const char* color);
+  static void latexPrintTails(ostream& s,
+			      const SymbolInfo& si,
+			      int pos,
+			      int nrTails,
+			      bool needAssocParen,
+			      bool checkForInterrupt,
+			      const char* color);
+  static bool latexFancySpace(ostream& s, int spaceToken);
+  //
+  //	Member functions for Term* -> LaTeX pretty printer.
+  //
+  static const char* latexComputeColor(SymbolType st);
+  static void latexSuffix(ostream& s, Term* term, bool needDisambig, const char* color);
+  bool latexHandleIter(ostream& s, Term* term, const SymbolInfo& si, bool rangeKnown, const char* color);
+  bool latexHandleMinus(ostream& s, Term* term, bool rangeKnown, const char* color) const;
+  bool latexHandleDivision(ostream& s, Term* term, bool rangeKnown, const char* color) const;
+  void latexHandleFloat(ostream& s, Term* term, bool rangeKnown, const char* color) const;
+  void latexHandleString(ostream& s, Term* term, bool rangeKnown, const char* color) const;
+  void latexHandleQuotedIdentifier(ostream& s, Term* term, bool rangeKnown, const char* color) const;
+  void latexHandleVariable(ostream& s, Term* term, bool rangeKnown, const char* color) const;
+  void latexHandleSMT_Number(ostream& s, Term* term, bool rangeKnown, const char* color);
+protected:
+  void latexPrettyPrint(ostream& s,
+			Term* term,
+			int requiredPrec,
+			int leftCapture,
+			const ConnectedComponent* leftCaptureComponent,
+			int rightCapture,
+			const ConnectedComponent* rightCaptureComponent,
+			bool rangeKnown);
+private:
+  //
+  //	Member functions for DagNode* -> LaTeX pretty printer.
+  //
+  static const char* latexComputeColor(ColoringInfo& coloringInfo, DagNode* dagNode);
+  static void latexSuffix(ostream& s, DagNode* dagNode, bool needDisambig, const char* color);
+  bool latexHandleIter(ostream& s,
+		       ColoringInfo& coloringInfo,
+		       DagNode* dagNode,
+		       SymbolInfo& si,
+		       bool rangeKnown,
+		       const char* color);
+  bool latexHandleMinus(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color);
+  bool latexHandleDivision(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color);
+  void latexHandleFloat(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color);
+  void latexHandleString(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color);
+  void latexHandleQuotedIdentifier(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color);
+  void latexHandleVariable(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color);
+  void latexHandleSMT_Number(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color);
+  void latexPrettyPrint(ostream& s,
+			ColoringInfo& coloringInfo,
+			DagNode* dagNode,
+			int requiredPrec,
+			int leftCapture,
+			const ConnectedComponent* leftCaptureComponent,
+			int rightCapture,
+			const ConnectedComponent* rightCaptureComponent,
+			bool rangeKnown);
+
   static bool prettyPrint(ostream& s,
 			  StrategyExpression* strategy,
 			  int requiredPrec);
-
   NatSet objectSymbols;
   NatSet messageSymbols;
   StatementTransformer* statementTransformer = 0;
@@ -899,6 +979,14 @@ private:
 
   SMT_Info smtInfo;
   SMT_Status smtStatus;
+
+  static const char* latexRed;
+  static const char* latexGreen;
+  static const char* latexBlue;
+  static const char* latexCyan;
+  static const char* latexMagenta;
+  static const char* latexYellow;
+  static const char* latexResetColor;
 
   friend ostream& operator<<(ostream& s, const Term* term);
   friend ostream& operator<<(ostream& s, DagNode* dagNode);

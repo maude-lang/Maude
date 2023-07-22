@@ -571,3 +571,18 @@ MixfixModule::computeGraphStatus(DagNode* dagNode,
   statusVec[index] = status;
   return status;
 }
+
+void
+MixfixModule::printModifiers(ostream& s, Int64 number, Int64 number2)
+{
+  if (number != NONE || number2 != NONE)
+    {
+      s << '[';
+      if (number != NONE)
+	s << number;
+      if (number2 != NONE)
+	s << ", " << number2;
+      s << "] ";
+    }
+  s << "in " << this << " : ";
+}

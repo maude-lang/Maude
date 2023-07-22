@@ -48,6 +48,7 @@
 
 //	our stuff
 #include "ooRenaming.cc"
+#include "latexRenaming.cc"
 
 Renaming::~Renaming() 
 {
@@ -1161,7 +1162,7 @@ Renaming::purgeGeneratedMappings()
 }
 
 void
-Renaming::printRenamingType(ostream& s, const set<int>& sorts) const
+Renaming::printRenamingType(ostream& s, const set<int>& sorts)
 {
   char sep = '[';
   for (int i : sorts)

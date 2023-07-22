@@ -78,6 +78,7 @@ libmixfix_a_SOURCES = \
 	freshVariableSource.cc \
 	variableGenerator.cc \
 	objectConstructorSymbol.cc \
+	maudeLatexBuffer.cc \
 	$(COMPILER_SRC)
 
 EXTRA_libmixfix_a_SOURCES = \
@@ -179,7 +180,15 @@ EXTRA_DIST = \
 	yices2_Bindings.cc \
 	quotedIdentifierOpSignature.cc \
 	serialize.cc \
-	pseudoParameters.cc
+	pseudoParameters.cc \
+	latexDagNodePrint.cc \
+	latexCommon.cc \
+	latexTermPrint.cc \
+	latexModulePrint.cc \
+	latexViewPrint.cc \
+	latexToken.cc \
+	latexRenaming.cc \
+	latexImportModule.cc
 
 noinst_HEADERS = \
 	renaming.hh \
@@ -230,4 +239,5 @@ noinst_HEADERS = \
 	parameter.hh \
 	parameterDatabase.hh \
 	objectConstructorSymbol.hh \
-	statementTransformer.hh
+	statementTransformer.hh \
+	maudeLatexBuffer.hh
