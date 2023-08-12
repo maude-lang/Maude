@@ -44,8 +44,7 @@ private:
   };
 
   static void startOsTimers();
-  static Int64 calculateMicroseconds(const itimerval& startTime,
-				     const itimerval& stopTime);
+  static Int64 calculateMicroseconds(const itimerval& startTime, const itimerval& stopTime);
   
   static bool osTimersStarted;
 

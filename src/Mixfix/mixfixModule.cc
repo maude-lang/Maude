@@ -165,6 +165,7 @@
 #include "userLevelRewritingContext.hh"
 #include "freshVariableSource.hh"
 #include "objectConstructorSymbol.hh"
+#include "commutativeDecomposeEqualitySymbol.hh"
 #include "importModule.hh"
 
 #include "interpreter.hh"
@@ -206,6 +207,7 @@ MixfixModule::nonTerminal(const Sort* sort, NonTerminalType type)
 #include "latexCommon.cc"
 #include "latexTermPrint.cc"
 #include "latexDagNodePrint.cc"
+//#include "latexStrategyPrint.cc"
 #include "makeGrammar.cc"
 #include "doParse.cc"
 #include "entry.cc"

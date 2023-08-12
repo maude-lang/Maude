@@ -32,6 +32,7 @@
   MACRO(SystemFalse, SymbolType::SYSTEM_FALSE)
   MACRO(BranchSymbol, SymbolType::BRANCH_SYMBOL)
   MACRO(EqualitySymbol, SymbolType::EQUALITY_SYMBOL)
+  MACRO(CommutativeDecomposeEqualitySymbol, SymbolType::COMMUTATIVE_DECOMPOSE_EQUALITY_SYMBOL)
   MACRO(FloatSymbol, SymbolType::FLOAT)
   MACRO(FloatOpSymbol, SymbolType::FLOAT_OP)
   MACRO(StringSymbol, SymbolType::STRING)

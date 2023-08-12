@@ -58,6 +58,8 @@ public:
     //
     BRANCH_SYMBOL,
     EQUALITY_SYMBOL,
+    DECOMPOSE_EQUALITY_SYMBOL,
+    COMMUTATIVE_DECOMPOSE_EQUALITY_SYMBOL,
     FLOAT_OP,
     STRING_OP,
     QUOTED_IDENTIFIER,
@@ -259,7 +261,7 @@ inline bool
 SymbolType::nonAlgebraic() const
 {
   //
-  //	These symbols with these types store nonalebraic "hidden" data.
+  //	These symbols with these types store nonalgebraic "hidden" data.
   //
   int t = getBasicType();
   return t == STRING || t == FLOAT || t == QUOTED_IDENTIFIER;

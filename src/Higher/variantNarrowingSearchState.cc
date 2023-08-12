@@ -70,7 +70,7 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
      module(context->root()->symbol()->getModule()),
      blockerSubstitution(originalVariables.getNrVariables())
 {
-  DebugEnter("variant term = " << context->root());
+  //DebugAlways("variant term = " << context->root());
   //
   //	The variant term is contained in the context.
   //	The variant substitution could be empty vector if we don't care about it.
@@ -245,20 +245,26 @@ VariantNarrowingSearchState::findNextVariant(DagNode*& newVariantTerm, Vector<Da
   int equationIndex;
   while (unifiers->getNextSurvivingUnifier(survivor, positionIndex, equationIndex))
     {
+      //DebugAlways("trying unifier");
       //
       //	Compute accumulated substitution and check for reducibility.
       //
       for (int i = 0; i < variantSubstitutionSize; ++i)
 	{
 	  DagNode* d = variantSubstitution[i]->instantiate(*survivor, false);
+	  //DebugAlways("considering entry " << i << " which is\n  " << variantSubstitution[i] << "\ninstantiated to\n  " << d);
 	  if (d == 0)
 	    d = variantSubstitution[i];  // no change
 	  d->computeTrueSort(*context);  // also handles theory normalization
 	  if (d->reducibleByVariantEquation(*context))
-	    goto nextUnifier;
+	    {
+	      //DebugAlways("killed by entry " << i << " of " << variantSubstitutionSize);
+	      goto nextUnifier;
+	    }
 	  newVariantSubstitution[i] = d;
 	  blockerSubstitution.bind(i, d);
 	}
+      //DebugAlways("survived reducibilitity check");
       //
       //	Check if this variant causes any of the blocker dags to become reducible.
       //
@@ -280,6 +286,7 @@ VariantNarrowingSearchState::findNextVariant(DagNode*& newVariantTerm, Vector<Da
 	    DebugInfo("irreducible");
 	  }
       }
+      //DebugAlways("survived blocker dags");
       if (equationIndex == NONE)
 	{
 	  //

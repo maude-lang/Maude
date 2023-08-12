@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ Interpreter::sRewrite(const Vector<Token>& subjectAndStrategy, Int64 limit, bool
 
   DagNode* subjectDag = makeDag(subject);
 
-  if (getFlag(SHOW_COMMAND))
+  bool showCommand = getFlag(SHOW_COMMAND);
+  if (showCommand)
     {
       UserLevelRewritingContext::beginCommand();
       if (debug)
@@ -58,11 +59,16 @@ Interpreter::sRewrite(const Vector<Token>& subjectAndStrategy, Int64 limit, bool
     }
   if (xmlBuffer != 0)
     xmlBuffer->generateSRewrite(subjectDag, strategy, limit, depthSearch);
-
+  if (latexBuffer != 0)
+    {
+      string command = depthSearch ? "dsrewrite" : "srewrite";
+      if (debug)
+	command = "debug " + command;
+      latexBuffer->generateCommand(showCommand, command, subjectDag, limit, depthSearch, strategy);
+    }
+  
   startUsingModule(fm);
-
   strategy->process();
-
   if (debug)
     UserLevelRewritingContext::setDebug();
 
@@ -101,12 +107,26 @@ Interpreter::doStrategicSearch(Timer& timer,
       DagNode* d = state->findNextSolution();
       if (context->traceAbort())
 	break;
+      Int64 real = 0;
+      Int64 virt = 0;
+      Int64 prof = 0;
+      bool showTiming = getFlag(SHOW_TIMING) && timer.getTimes(real, virt, prof);
       if (d == 0)
 	{
-	  cout << endl << (solutionCount > 0
-	    ? "No more solutions." : "No solution.") << endl;
+	  const char* reply = (solutionCount > 0 ? "No more solutions." : "No solution.");
+	  cout << "\n" << reply << endl;
 	  if (getFlag(SHOW_STATS))
-	    printStats(timer, *context, getFlag(SHOW_TIMING));
+	    printStats(*context, prof, real, showTiming);
+	  if (latexBuffer != 0)
+	    {
+	      latexBuffer->generateNonResult(*context,
+					     reply,
+					     prof,
+					     real,
+					     getFlag(SHOW_STATS),
+					     showTiming,
+					     getFlag(SHOW_BREAKDOWN));
+	    }
 	  break;
 	}
 
@@ -117,13 +137,26 @@ Interpreter::doStrategicSearch(Timer& timer,
       cout << "result " << d->getSort() << ": " << d << '\n';
       if (xmlBuffer != 0)
 	{
-	  xmlBuffer->generateResult(*context,
+	  xmlBuffer->generateResult(*context,  // FIXME: result not necessarily in context
 				    timer,
 				    getFlag(SHOW_STATS),
 				    getFlag(SHOW_TIMING),
 				    getFlag(SHOW_BREAKDOWN));
 	}
+      if (latexBuffer != 0)
+	{
+	  latexBuffer->generateSolutionNr(solutionCount);
+	  latexBuffer->generateResult(*context,
+				      d,
+				      prof,
+				      real,
+				      getFlag(SHOW_STATS),
+				      showTiming,
+				      getFlag(SHOW_BREAKDOWN));
+	}
     }
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
   if (i == limit)
     {
@@ -163,7 +196,8 @@ Interpreter::sRewriteCont(Int64 limit, bool debug)
     UserLevelRewritingContext::setDebug();
   if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
     xmlBuffer->generateContinue("srewrite", fm, limit);
-
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit, debug);
   Timer timer(getFlag(SHOW_TIMING));
   doStrategicSearch(timer, fm, state, savedSolutionCount, limit, false);
 }
@@ -181,7 +215,8 @@ Interpreter::dsRewriteCont(Int64 limit, bool debug)
     UserLevelRewritingContext::setDebug();
   if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
     xmlBuffer->generateContinue("dsrewrite", fm, limit);
-
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit, debug);
   Timer timer(getFlag(SHOW_TIMING));
   doStrategicSearch(timer, fm, state, savedSolutionCount, limit, true);
 }

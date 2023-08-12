@@ -50,14 +50,23 @@ public:
   void showStrats(ostream& s, bool indent, bool all) const;
   void showSds(ostream& s, bool indent, bool all) const;
 
-  void latexShowOps(ostream& s, const char* indent, bool all);
-  void latexShowPolymorphs(ostream& s, const char* indent, bool all);
+  void latexShowSummary(ostream& s);
+  void latexShowKinds(ostream& s) const;
   void latexShowSortsAndSubsorts(ostream& s) const;
-  void latexShowMbs(ostream& s, const char* indent, bool all);
-  void latexShowEqs(ostream& s, const char* indent, bool all);
-  void latexShowRls(ostream& s, const char* indent, bool all);
   void latexShowModule(ostream& s, bool all);
+  void latexShowPolymorphs(ostream& s, const char* indent, bool all);
+  void latexShowOps(ostream& s, const char* indent, bool all);
+  void latexShowVars(ostream& s, const char* indent) const;
+  void latexShowMbs(ostream& s, const char* indent, bool all) const;
+  void latexShowEqs(ostream& s, const char* indent, bool all) const;
+  void latexShowRls(ostream& s, const char* indent, bool all) const;
+  void latexShowStrats(ostream& s, const char* indent, bool all);
+  void latexShowSds(ostream& s, const char* indent, bool all);
 
+  void latexPrintRule(ostream& s, const char* indent, const Rule* rl) const;
+  bool latexPrintStrategy(ostream& s, StrategyExpression* strategy, int requiredPrec = UNBOUNDED) const;
+  
+  static void latexPrintCondition(ostream& s, const Vector<ConditionFragment*>& condition);
   static void latexPrintModuleName(ostream& s, Module* module);
 
 private:
@@ -74,12 +83,8 @@ private:
   void latexShowDecls(ostream& s, const char* indent, Index index, bool all);
   void latexShowPolymorphDecl(ostream& s, const char* indent, Index index);
 
-  void latexShowVars(ostream& s) const;
 
-  void latexPrintConditionFragment(ostream& s, const ConditionFragment* c);
-  void latexPrintCondition(ostream& s, const Vector<ConditionFragment*>& condition);
-  void latexPrintCondition(ostream& s, const PreEquation* pe);
-  void latexPrintAttributes(ostream& s,
+  static void latexPrintAttributes(ostream& s,
 			    const PreEquation* pe,
 			    int metadata,
 			    const PrintAttribute* printAttribute,
@@ -87,13 +92,17 @@ private:
 			    bool variant = false,
 			    bool narrowing = false);
 
-  void latexPrintMembershipAxiom(ostream& s, const char* indent, const SortConstraint* mb);
-  void latexPrintEquation(ostream& s, const char* indent, const Equation* eq);
-  void latexPrintRule(ostream& s, const char* indent, const Rule* rl);
+  void latexPrintMembershipAxiom(ostream& s, const char* indent, const SortConstraint* mb) const;
+  void latexPrintEquation(ostream& s, const char* indent, const Equation* eq) const;
+  void latexPrintStrategyDecl(ostream& s, const char* indent, const RewriteStrategy* rs);
+  void latexPrintStrategyDefinition(ostream& s, const char* indent, const StrategyDefinition* e);
+
   void latexShowImports(ostream& s) const;
   void latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex);
   void latexShowPolymorphAttributes(ostream& s, int index);
 
+  static void latexPrintConditionFragment(ostream& s, const ConditionFragment* c);
+  static void latexPrintCondition(ostream& s, const PreEquation* pe);
   static void latexPrintViewName(ostream& s, View* view);
   
   Interpreter* const owner;

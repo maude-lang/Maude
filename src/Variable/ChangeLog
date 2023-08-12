@@ -1,3 +1,11 @@
+2023-07-24  Steven Eker  <eker@pup>
+
+	* variableSymbol.cc (VariableSymbol::determineGround): added
+
+	* variableSymbol.hh (class VariableSymbol): added decl for determineGround()
+
+===================================Maude151===========================================
+
 2023-02-20  Steven Eker  <eker@pup>
 
 	* variableTerm.cc (VariableTerm::deepCopy2): honor preserveVariableIndices()

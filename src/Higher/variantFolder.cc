@@ -85,14 +85,17 @@ VariantFolder::insertVariant(const Vector<DagNode*>& variant,
 			     int parentIndex,
 			     int variableFamily)
 {
+  //DebugAlways("variant=" << variant.back());
   //
   //	First we check if it is subsumed by one of the existing variants.
   //
   if (isSubsumed(variant))
     {
+      //DebugAlways("new variant subsumed=" << variant.back());
       DebugAdvisory("new variant subsumed");
       return false;
     }
+  //DebugAlways("new variant added=" << variant.back());
   DebugAdvisory("new variant added");
   //
   //	Compile a set of matching automata for this variant.
@@ -128,7 +131,7 @@ VariantFolder::insertVariant(const Vector<DagNode*>& variant,
 	      //
 	      //	Our parent was subsumed so we are also subsumed.
 	      //
-	      DebugAdvisory("new variant evicted descendent of an older variant " << i->first);
+	      //DebugAlways("new variant evicted descendent of an older variant " << i->first);
 	      existingVariantsSubsumed.insert(i->first);
 	      delete potentialVictim;
 	      mostGeneralSoFar.erase(i);
@@ -138,7 +141,7 @@ VariantFolder::insertVariant(const Vector<DagNode*>& variant,
 	      //
 	      //	Direct subsumption by new variant.
 	      //
-	      DebugAdvisory("new variant evicted an older variant " << i->first);
+	      //DebugAlways("new variant evicted an older variant " << i->first);
 	      existingVariantsSubsumed.insert(i->first);
 	      delete potentialVictim;
 	      mostGeneralSoFar.erase(i);

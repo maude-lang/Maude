@@ -200,7 +200,8 @@ public:
   ModuleType getModuleType() const;
   static const char* moduleTypeString(ModuleType type);
   static const char* moduleEndString(ModuleType type);
-  SymbolType getSymbolType(Symbol* symbol) const;
+  SymbolType getSymbolType(const Symbol* symbol) const;
+  int getPolymorphIndex(const Symbol* symbol) const;
   int getPrec(const Symbol* symbol) const;
   void getGather(const Symbol* symbol, Vector<int>& gather) const;
   const Vector<int>& getFormat(const Symbol* symbol) const;
@@ -295,6 +296,7 @@ public:
   //
   static void latexPrettyPrint(ostream& s, DagNode* dagNode);
   static void latexPrettyPrint(ostream& s, Term* term);
+  static void latexPrintDagNode(ostream& s, DagNode* dagNode);
   //
   //	Misc.
   //
@@ -924,6 +926,7 @@ private:
   void latexHandleQuotedIdentifier(ostream& s, Term* term, bool rangeKnown, const char* color) const;
   void latexHandleVariable(ostream& s, Term* term, bool rangeKnown, const char* color) const;
   void latexHandleSMT_Number(ostream& s, Term* term, bool rangeKnown, const char* color);
+
 protected:
   void latexPrettyPrint(ostream& s,
 			Term* term,
@@ -933,6 +936,8 @@ protected:
 			int rightCapture,
 			const ConnectedComponent* rightCaptureComponent,
 			bool rangeKnown);
+  void latexPrintStrategyTerm(ostream& s, RewriteStrategy* rs, Term* term) const;
+
 private:
   //
   //	Member functions for DagNode* -> LaTeX pretty printer.
@@ -994,11 +999,22 @@ private:
 };
 
 inline SymbolType
-MixfixModule::getSymbolType(Symbol* symbol) const
+MixfixModule::getSymbolType(const Symbol* symbol) const
 {
   Assert(symbol->getModule() == this, "symbol " << symbol <<
 	 " belongs to " << symbol->getModule() << " and not " << this);
   return symbolInfo[symbol->getIndexWithinModule()].symbolType;
+}
+
+inline int
+MixfixModule::getPolymorphIndex(const Symbol* symbol) const
+{
+  //
+  //	If symbol is an instantiation of a polymorph, return its index or else return NONE.
+  //
+  Assert(symbol->getModule() == this, "symbol " << symbol <<
+	 " belongs to " << symbol->getModule() << " and not " << this);
+  return symbolInfo[symbol->getIndexWithinModule()].polymorphIndex;
 }
 
 inline Token

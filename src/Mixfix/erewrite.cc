@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,17 +29,21 @@ Interpreter::eRewrite(const Vector<Token>& subject, Int64 limit, Int64 gas, bool
 {
   if (DagNode* d = makeDag(subject))
     {
-      if (getFlag(SHOW_COMMAND))
+      bool showCommand = getFlag(SHOW_COMMAND);
+      if (showCommand)
 	{
 	  UserLevelRewritingContext::beginCommand();
+	  if (debug)
+	    cout << "debug ";
 	  cout << "erewrite ";
 	  printModifiers(limit, gas);
 	  cout << d << " ." << endl;
 	  if (xmlBuffer != 0)
 	    xmlBuffer->generateErewrite(d, limit, gas);
-	  if (latexBuffer != 0)
-	    latexBuffer->generateErewrite(d, limit, gas);
 	}
+      if (latexBuffer != 0)
+	latexBuffer->generateCommand(showCommand, debug ? "debug erewrite" : "erewrite", d, limit, gas);
+
       CacheableRewritingContext* context = new CacheableRewritingContext(d);
       context->setObjectMode(ObjectSystemRewritingContext::EXTERNAL);
       VisibleModule* fm = currentModule->getFlatModule();
@@ -65,8 +69,8 @@ Interpreter::eRewriteCont(Int64 limit, bool debug)
   continueFunc = 0;
   if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
     xmlBuffer->generateContinue("erewrite", fm, limit);
-  if (latexBuffer != 0 && getFlag(SHOW_COMMAND))
-    latexBuffer->generateContinue(limit);
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit, debug);
   context->clearCount();
   beginRewriting(debug);
   Timer timer(getFlag(SHOW_TIMING));

@@ -1,3 +1,11 @@
+2023-07-24  Steven Eker  <eker@pup>
+
+	* ACU_Symbol.cc (ACU_Symbol::determineGround): added
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decl for determineGround()
+
+===================================Maude151===========================================
+
 2023-06-02  Steven Eker  <eker@pup>
 
 	* ACU_UnificationSubproblem2.cc

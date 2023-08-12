@@ -316,6 +316,7 @@ printHelp(const char* name)
     "  -allow-dir\t\tAllow operations on directories\n"
     "  -trust\t\tAllow all potentially risky capabilities\n"
     "  -assoc-unif-depth=<float>\tSet depth bound multiplier for associative unification\n"
+    "  -latex-log=<filename>\tSet file in which to produce an LaTeX log\n"
     "Intended for developer use:\n"
     "  -debug\t\tPrint copious messages about internal state (debug build only)\n"
     "  -early-quit=<int>\tQuit abruptly after a given number of garbage collections\n"

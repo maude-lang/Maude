@@ -38,6 +38,7 @@ public:
   void computeBaseSort(DagNode* subject);
   void normalizeAndComputeTrueSort(DagNode* subject, RewritingContext& context);
   bool isStable() const;
+  bool determineGround(DagNode* dagNode);
   //
   //	Hash cons stuff.
   //

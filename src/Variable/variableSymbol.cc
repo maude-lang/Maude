@@ -121,6 +121,12 @@ VariableSymbol::isStable() const
   return false;
 }
 
+bool
+VariableSymbol::determineGround(DagNode* /* dagNode */)
+{
+  return false;
+}
+
 //
 //	Hash cons code.
 //

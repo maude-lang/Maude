@@ -47,6 +47,7 @@ public:
 		      bool respectFrozen,
 		      bool eagerContext);
   Term* termify(DagNode* dagNode);
+  bool determineGround(DagNode* dagNode);
   //
   //    Member function overiding default handling.
   //

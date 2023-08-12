@@ -109,6 +109,8 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new BranchSymbol(name, nrArgs);
     case SymbolType::EQUALITY_SYMBOL:
       return new EqualitySymbol(name, strategy);
+    case SymbolType::COMMUTATIVE_DECOMPOSE_EQUALITY_SYMBOL:
+      return new CommutativeDecomposeEqualitySymbol(name, strategy);
     case SymbolType::FLOAT:
       return new FloatSymbol(name);
     case SymbolType::STRING:

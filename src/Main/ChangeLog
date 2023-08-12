@@ -1,3 +1,59 @@
+2023-08-11  Steven Eker  <eker@pup>
+
+	* maude.sty: use longtable, added \maudeBigIndent
+
+2023-08-10  Steven Eker  <eker@pup>
+
+	* maude.sty: fix \maudeArcArrow
+
+2023-08-09  Steven Eker  <eker@pup>
+
+	* maude.sty: made pretty using extarrows; added
+	\maudeArcArrow
+
+2023-08-08  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudePathLeft, \maudePathRight,
+	\maudePathWithLabel, \maudePathWithoutLabel
+
+2023-08-07  Steven Eker  <eker@pup>
+
+	* prelude.maude: added op-hook disjunctionSymbol tp .=.
+
+2023-08-03  Steven Eker  <eker@pup>
+
+	* maude.sty: change spacing around search arrows; added
+	\maudeIsAssigned
+
+2023-08-02  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeOneStep, \maudeAtLeastOneStep,
+	\maudeAnySteps, \maudeToNormalForm
+
+2023-08-01  Steven Eker  <eker@pup>
+
+	* maude.sty: added \endCommand
+
+2023-07-31  Steven Eker  <eker@pup>
+
+	* maude.sty: add space to \maudeStratUnion and \maudeStratQuery
+
+2023-07-28  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeStratAssign, \maudeStratConcat,
+	\maudeStratQuery, \maudeStratColon, \maudeStratBang
+	increase space in \maudeStratAt
+	increase space in \maudeStratConcat
+	added \maudeStratUnion
+
+	* main.cc (printHelp): add -latex-log=<filename>
+
+2023-07-27  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeStratAt
+
+	* prelude.maude: added fmod INITIAL-EQUALITY-PREDICATE
+
 2023-07-21  Steven Eker  <eker@pup>
 
 	* maude.sty: added \maudeRenaming and \maudeSummation; deleted

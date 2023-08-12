@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version 3.3.
+***	Version alpha151.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -90,6 +90,17 @@ fmod EXT-BOOL is
   eq false and-then B = false .
   eq true or-else B = true .
   eq false or-else B = B .
+endfm
+
+fmod INITIAL-EQUALITY-PREDICATE is
+  protecting BOOL .
+  op _.=._ : Universal Universal -> Bool 
+        [prec 51 poly (1 2) comm
+         special (id-hook CommutativeDecomposeEqualitySymbol
+                  op-hook conjunctionSymbol (_and_ : Bool Bool ~> Bool)
+                  op-hook disjunctionSymbol (_or_ : Bool Bool ~> Bool)
+                  term-hook equalTerm (true)
+                  term-hook notEqualTerm (false))] .
 endfm
 
 ***

@@ -51,6 +51,26 @@ MixfixModule::latexPrettyPrint(ostream& s, DagNode* dagNode)
     }
 }
 
+void
+MixfixModule::latexPrintDagNode(ostream& s, DagNode* dagNode)
+{
+  MixfixModule* module = safeCastNonNull<MixfixModule*>(dagNode->symbol()->getModule());
+  if (interpreter.getPrintFlag(Interpreter::PRINT_GRAPH))
+    /*module->latexGraphPrint(s, dagNode)*/;
+  else
+    {
+      globalIndent = 0;
+      MixfixModule::ColoringInfo coloringInfo;
+      if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+	{
+	  MixfixModule::computeGraphStatus(dagNode, coloringInfo.visited, coloringInfo.statusVec);
+	  coloringInfo.reducedAbove = false;
+	  coloringInfo.reducedDirectlyAbove = false;
+	}
+      module->latexPrettyPrint(s, coloringInfo, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+    }
+}
+
 const char*
 MixfixModule::latexComputeColor(ColoringInfo& coloringInfo, DagNode* dagNode)
 {

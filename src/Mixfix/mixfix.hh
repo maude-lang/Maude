@@ -73,6 +73,7 @@ class ParameterDatabase;
 class ObjectConstructorSymbol;
 class StatementTransformer;
 class MaudeLatexBuffer;
+class CommutativeDecomposeEqualitySymbol;
 
 //
 //	Support for quantifying just active computations (rather than

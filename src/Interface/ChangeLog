@@ -1,3 +1,18 @@
+2023-07-24  Steven Eker  <eker@pup>
+
+	* symbol.hh (class Symbol): added decl for determineGround()
+
+	* dagNode.hh (DagNode::determineGround): added
+
+	* dagNode.cc (DagNode::computeSolvedForm): deleted commented out
+	code; DebugInfo() -> DebugEnter()
+	(DagNode::computeSolvedForm2): DebugAdvisory() -> DebugEnter();
+	deleted commented out code
+
+	* dagNode.hh (DagNode::indexVariables): removed commented out code
+
+===================================Maude151=========================================
+
 2023-03-29  Steven Eker  <eker@pup>
 
 	* dagNode.hh (DagNode::LessThan::operator()): added

@@ -269,6 +269,7 @@ fmod TRUTH-VALUE
 fmod BOOL-OPS
 fmod TRUTH
 fmod EXT-BOOL
+fmod INITIAL-EQUALITY-PREDICATE
 fmod NAT
 fmod INT
 fmod RAT

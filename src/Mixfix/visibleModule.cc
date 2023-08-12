@@ -34,6 +34,7 @@
 #include "variable.hh"
 #include "strategyLanguage.hh"
 #include "higher.hh"
+#include "strategyLanguage.hh"
 #include "mixfix.hh"
 
 //      interface class definitions
@@ -54,11 +55,25 @@
 #include "assignmentConditionFragment.hh"
 #include "rewriteConditionFragment.hh"
 
+//	strategy language class definitions
+#include "trivialStrategy.hh"
+#include "applicationStrategy.hh"
+#include "concatenationStrategy.hh"
+#include "unionStrategy.hh"
+#include "iterationStrategy.hh"
+#include "branchStrategy.hh"
+#include "testStrategy.hh"
+#include "subtermStrategy.hh"
+#include "callStrategy.hh"
+#include "oneStrategy.hh"
+
 //	front end class definitions
 #include "userLevelRewritingContext.hh"
 #include "visibleModule.hh"
 
+//	our stuff
 #include "latexModulePrint.cc"
+#include "latexStrategyPrint.cc"
 
 VisibleModule::VisibleModule(int name, ModuleType moduleType, Interpreter* owner)
   : ImportModule(name, moduleType),

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,25 +39,52 @@ Interpreter::doNarrowing(Timer& timer,
       bool result = state->findNextMatch();
       if (UserLevelRewritingContext::aborted())
 	break;
+      Int64 real = 0;
+      Int64 virt = 0;
+      Int64 prof = 0;
+      bool showTiming = getFlag(SHOW_TIMING) && timer.getTimes(real, virt, prof);
       if (!result)
 	{
-	  cout << ((solutionCount == 0) ? "\nNo solution.\n" : "\nNo more solutions.\n");
-	  printStats(timer, *context, getFlag(SHOW_TIMING));
+	  const char* reply = (solutionCount == 0) ? "No solution." : "No more solutions.";
+	  cout << "\n" << reply << endl;
+	  printStats(*context, prof, real, showTiming);
 	  if (state->isIncomplete())
 	    IssueWarning("Some solutions may have been missed due to incomplete unification algorithm(s).");
+	  if (latexBuffer)
+	    {
+	      latexBuffer->generateNonResult(*context,
+					     reply,
+					     prof,
+					     real,
+					     getFlag(SHOW_STATS),
+					     showTiming,
+					     getFlag(SHOW_BREAKDOWN));
+	      if (state->isIncomplete())
+		latexBuffer->generateWarning("Some solutions may have been missed due to incomplete unification algorithm(s).");
+	    }
 	  break;
 	}
 
       ++solutionCount;
       cout << "\nSolution " << solutionCount << "\n";
-      printStats(timer, *context, getFlag(SHOW_TIMING));
+      printStats(*context, prof, real, showTiming);
 
       DagNode* d = state->getStateDag();
       cout << "state: " << d << endl;
       UserLevelRewritingContext::printSubstitution(*(state->getSubstitution()), *variableInfo);
+      if (latexBuffer)
+	{
+	  latexBuffer->generateSolutionNr(solutionCount);
+	  if (getFlag(SHOW_STATS))
+	    latexBuffer->generateStats(*context, prof, real, showTiming, getFlag(SHOW_BREAKDOWN));
+	  latexBuffer->generateState(d);
+	  latexBuffer->generateSubstitution(*(state->getSubstitution()), *variableInfo);
+	}
     }
   QUANTIFY_STOP();
 
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
   if (i == limit)
     {
@@ -92,6 +119,8 @@ Interpreter::narrowingCont(Int64 limit, bool debug)
   savedState = 0;
   savedModule = 0;
   continueFunc = 0;
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit, debug);
 
   if (debug)
     UserLevelRewritingContext::setDebug();
@@ -108,6 +137,8 @@ Interpreter::vuNarrowingCont(Int64 limit, bool debug)
   savedState = 0;
   savedModule = 0;
   continueFunc = 0;
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit, debug);
 
   if (debug)
     UserLevelRewritingContext::setDebug();
@@ -115,7 +146,6 @@ Interpreter::vuNarrowingCont(Int64 limit, bool debug)
   Timer timer(getFlag(SHOW_TIMING));
   doVuNarrowing(timer, fm, state, savedSolutionCount, limit);
 }
-
 
 void
 Interpreter::doVuNarrowing(Timer& timer,
@@ -131,18 +161,35 @@ Interpreter::doVuNarrowing(Timer& timer,
       bool result = state->findNextUnifier();
       if (UserLevelRewritingContext::aborted())
 	break;
+      Int64 real = 0;
+      Int64 virt = 0;
+      Int64 prof = 0;
+      bool showTiming = getFlag(SHOW_TIMING) && timer.getTimes(real, virt, prof);
       if (!result)
 	{
-	  cout << ((solutionCount == 0) ? "\nNo solution.\n" : "\nNo more solutions.\n");
-	  printStats(timer, *context, getFlag(SHOW_TIMING));
+	  const char* reply = (solutionCount == 0) ? "No solution." : "No more solutions.";
+	  cout << "\n" << reply << endl;
+	  printStats(*context, prof, real, showTiming);
 	  if (state->isIncomplete())
 	    IssueWarning("Some solutions may have been missed due to incomplete unification algorithm(s).");
+	  if (latexBuffer)
+	    {
+	      latexBuffer->generateNonResult(*context,
+					     reply,
+					     prof,
+					     real,
+					     getFlag(SHOW_STATS),
+					     showTiming,
+					     getFlag(SHOW_BREAKDOWN));
+	      if (state->isIncomplete())
+		latexBuffer->generateWarning("Some solutions may have been missed due to incomplete unification algorithm(s).");
+	    }
 	  break;
 	}
 
       ++solutionCount;
       cout << "\nSolution " << solutionCount << "\n";
-      printStats(timer, *context, getFlag(SHOW_TIMING));
+      printStats(*context, prof, real, showTiming);
 
       DagNode* stateDag;
       int variableFamily;
@@ -154,9 +201,22 @@ Interpreter::doVuNarrowing(Timer& timer,
       UserLevelRewritingContext::printSubstitution(*accumulatedSubstitution, state->getInitialVariableInfo());
       cout << "variant unifier:" << endl;
       UserLevelRewritingContext::printSubstitution(*(state->getUnifier()), state->getUnifierVariableInfo());
+      if (latexBuffer)
+	{
+	  latexBuffer->generateSolutionNr(solutionCount);
+	  if (getFlag(SHOW_STATS))
+	    latexBuffer->generateStats(*context, prof, real, showTiming, getFlag(SHOW_BREAKDOWN));
+	  latexBuffer->generateState(stateDag);
+	  latexBuffer->generateHeading("accumulated substitution:");
+	  latexBuffer->generateSubstitution(*accumulatedSubstitution, state->getInitialVariableInfo());
+	  latexBuffer->generateHeading("variant unifier:");
+	  latexBuffer->generateSubstitution(*(state->getUnifier()), state->getUnifierVariableInfo());
+	}
      }
   QUANTIFY_STOP();
 
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
   if (i == limit)  // possible to continue
     {

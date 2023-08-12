@@ -82,6 +82,13 @@ NA_Symbol::isStable() const
   return true;
 }
 
+bool
+NA_Symbol::determineGround(DagNode* dagNode)
+{
+  dagNode->setGround();
+  return true;
+}
+
 //
 //	Hash cons code.
 //

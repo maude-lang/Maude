@@ -1,0 +1,45 @@
+set show timing off .
+set show advisories off .
+
+fmod DECOMPOSE is
+  inc INITIAL-EQUALITY-PREDICATE .
+  sorts Nat String .
+  op 0 : -> Nat .
+  ops f g : Nat Nat -> Nat [ctor] .
+  ops h i : Nat Nat -> String [ctor] .
+  op c : Nat Nat -> Nat [ctor comm] .
+  ops b : Nat Nat -> Nat [assoc comm id: 0] .
+  op s : Nat -> Nat [iter ctor] .
+  vars W X Y Z : Nat .
+  vars A B C D : Nat .
+endfm
+
+red X .=. X .
+red X .=. Y .
+
+*** free
+red f(X, Y) .=. f(Y, Z) .
+red f(X, Y) .=. f(Y, X) .
+red f(X, Y) .=. X .
+red f(f(X, Y), Z) .=. f(X, Y) .
+red f(X, Y) .=. g(W, Z) .
+red h(X, Y) .=. h(W, Z) .
+red h(X, Y) .=. h(Y, X) .
+red h(X, Y) .=. i(W, Z) .
+
+*** dissimilar collapse symbol
+red f(X, Y) .=. b(W, Z) .
+
+*** iter
+red s^100(X) .=. s^40(X) .
+red s^100(X) .=. s^40(Y) .
+red s^10(X) .=. s^10(Y) .
+
+*** commutative
+red c(X, Y) .=. c(A, B) .
+red c(X, Y) .=. c(A, X) .
+red c(c(X, Y), Z) .=. c(X, Y) .
+
+*** compound
+red c(f(X, Y), g(W, Z)) .=. c(g(A, B), f(C, D)) .
+red c(f(X, Y), g(W, Z)) .=. c(f(A, B), f(C, D)) .

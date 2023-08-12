@@ -402,8 +402,21 @@ FreeSymbol::isStable() const
   return true;
 }
 
-// experimental code for faster sort computations
+bool
+FreeSymbol::determineGround(DagNode* dagNode)
+{
+  Index nrArgs = arity();
+  DagNode** args = safeCastNonNull<FreeDagNode*>(dagNode)->argArray();
+  for (Index i = 0; i < nrArgs; ++i)
+    {
+      if (!(args[i]->determineGround()))
+	return false;  // fail early
+    }
+  dagNode->setGround();
+  return true;
+}
 
+// experimental code for faster sort computations
 void
 FreeSymbol::computeGeneralizedSort2(const SortBdds& sortBdds,
 				    const Vector<int>& realToBdd,

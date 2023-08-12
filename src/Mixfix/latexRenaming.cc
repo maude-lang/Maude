@@ -66,13 +66,11 @@ Renaming::latexRenaming(const char* sep,
 	  result += sep;
 	  result += "\\maudeKeyword{attr}\\maudeSpace";
 	  result += Token::latexIdentifier(a.fromAttr.code());
-	  /* FIXME
 	  if (!(a.type.empty()))
 	    {
-	      s << " : ";
-	      printRenamingType(s, a.type);
+	      result += "\\maudeHasSort";
+	      result += latexRenamingType(a.type, fromModule);
 	    }
-	  */
 	  result += "\\maudeSpace\\maudeKeyword{to}\\maudeSpace";
 	  result += Token::latexIdentifier(a.toAttr.code());
 	  sep = sep2;
@@ -195,24 +193,26 @@ Renaming::latexRenaming(const char* sep,
       result += "}";
       sep = sep2;
     }
-#if 0
-  // FIXME
   for (auto sm : stratMapIndex)
     {
-      s << sep << "strat " << Token::name(sm->first);
+      result += sep;
+      result += "\\maudeKeyword{strat}\\maudeSpace";
+      result += Token::latexIdentifier(sm->first);
       if (!sm->second.types.empty())
 	{
-	  s << " :";
+	  result += "\\maudeHasSort";
 	  for (const IdSet& t : sm->second.types)
 	    {
-	      s << ' ';
-	      printRenamingType(s, t);
+	      result += latexRenamingType(t, fromModule);
+	      result += "\\maudeSpace";
 	    }
 	}
+      else
+	result += "\\maudeSpace";
       Assert(sm->second.name != NONE && sm->second.expr == 0, "renamings with strat->expr mappings are not printable");
-      s << " to " << Token::name(sm->second.name);
+      result += "\\maudeKeyword{to}\\maudeSpace";
+      result += Token::latexIdentifier(sm->second.name);
       sep = sep2;
     }
-#endif
   return result;
 }

@@ -1,3 +1,11 @@
+2023-07-24  Steven Eker  <eker@pup>
+
+	* NA_Symbol.cc (NA_Symbol::determineGround): added
+
+	* NA_Symbol.hh (class NA_Symbol): added decl for determineGround()
+
+===================================Maude151===========================================
+
 2017-02-17  Steven Eker  <eker@install.csl.sri.com>
 
 	* NA_DagNode.cc (stackArguments): deleted

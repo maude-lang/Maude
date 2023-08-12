@@ -1,4 +1,12 @@
-Overview of Changes in alpha150
+Overview of Changes in alpha151 (2023-08-11)
+============================================
+* fmod INITIAL-EQUALITY-PREDICATE added to prelude
+* more LaTeX support
+* fixed bug where debug modifier wasn't being printed
+* fixed break deselect, trace deselect, trace include, print reveal bugs
+* fixed LaTeX timing bugs
+
+Overview of Changes in alpha150 (2023-07-21)
 ============================================
 * added set show resources command
 * intial support for LaTeX

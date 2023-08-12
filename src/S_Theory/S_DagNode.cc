@@ -375,4 +375,3 @@ S_DagNode::instantiateWithCopies2(const Substitution& substitution, const Vector
     }
   return 0;
 }
-

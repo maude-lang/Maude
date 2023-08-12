@@ -430,7 +430,7 @@ Module::indexRules()
 }
 
 void
-Module::insertLateSymbol(Symbol*s)
+Module::insertLateSymbol(Symbol* s)
 {
   Assert(status >= SIGNATURE_CLOSED, "bad status");
   s->setModuleInfo(this, symbols.length());

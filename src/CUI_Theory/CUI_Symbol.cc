@@ -317,6 +317,16 @@ CUI_Symbol::termify(DagNode* dagNode)
   return new CUI_Term(this, arguments);
 }
 
+bool
+CUI_Symbol::determineGround(DagNode* dagNode)
+{
+  DagNode** argArray = safeCastNonNull<CUI_DagNode*>(dagNode)->argArray;
+  if (!(argArray[0]->determineGround()) || !(argArray[1]->determineGround()))
+    return false;
+  dagNode->setGround();
+  return true;
+}
+
 //
 //	Unification code.
 //

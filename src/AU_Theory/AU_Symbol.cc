@@ -494,7 +494,7 @@ AU_Symbol::termify(DagNode* dagNode)
 {
   Vector<Term*> arguments;
 
-  if (safeCast(AU_BaseDagNode*, dagNode)->isDeque())
+  if (safeCast(const AU_BaseDagNode*, dagNode)->isDeque())
     {
       const AU_Deque& deque = safeCast(const AU_DequeDagNode*, dagNode)->getDeque();
       for (AU_DequeIter i(deque); i.valid(); i.next())
@@ -510,6 +510,31 @@ AU_Symbol::termify(DagNode* dagNode)
 	arguments.append(a->symbol()->termify(a));
     }
   return new AU_Term(this, arguments);
+}
+
+bool
+AU_Symbol::determineGround(DagNode* dagNode)
+{
+  if (safeCastNonNull<const AU_BaseDagNode*>(dagNode)->isDeque())
+    {
+      const AU_Deque& deque = safeCastNonNull<const AU_DequeDagNode*>(dagNode)->getDeque();
+      for (AU_DequeIter i(deque); i.valid(); i.next())
+	{
+	  if (!(i.getDagNode()->determineGround()))
+	    return false;
+	}
+    }
+  else
+    {
+      const ArgVec<DagNode*>& argArray = safeCastNonNull<const AU_DagNode*>(dagNode)->argArray;
+      for (DagNode* a : argArray)
+	{
+	  if (!(a->determineGround()))
+	    return false;
+	}
+    }
+  dagNode->setGround();
+  return true;
 }
 
 //

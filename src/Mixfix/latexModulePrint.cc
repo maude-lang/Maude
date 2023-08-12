@@ -29,26 +29,26 @@ VisibleModule::latexPrintConditionFragment(ostream& s, const ConditionFragment* 
 {
   if (const EqualityConditionFragment* e = dynamic_cast<const EqualityConditionFragment*>(c))
     {
-      latexPrettyPrint(s, e->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      latexPrettyPrint(s, e->getLhs());
       s << "\n\\maudeEquals\n";
-      latexPrettyPrint(s, e->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      latexPrettyPrint(s, e->getRhs());
     }
   else if (const SortTestConditionFragment* t = dynamic_cast<const SortTestConditionFragment*>(c))
     {
-      latexPrettyPrint(s, t->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      latexPrettyPrint(s, t->getLhs());
       s << "\n\\maudeHasSort\n" << latexType(t->getSort());
     }
   else if(const AssignmentConditionFragment* a = dynamic_cast<const AssignmentConditionFragment*>(c))
     {
-      latexPrettyPrint(s, a->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      latexPrettyPrint(s, a->getLhs());
       s << "\n\\maudeAssign\n";
-      latexPrettyPrint(s, a->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      latexPrettyPrint(s, a->getRhs());
     }
   else if(const RewriteConditionFragment* r = dynamic_cast<const RewriteConditionFragment*>(c))
     {
-      latexPrettyPrint(s, r->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      latexPrettyPrint(s, r->getLhs());
       s << "\n\\maudeRewritesTo\n";
-      latexPrettyPrint(s, r->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      latexPrettyPrint(s, r->getRhs());
     }
   else
     CantHappen("bad condition fragment");
@@ -129,11 +129,11 @@ VisibleModule::latexPrintAttributes(ostream& s,
 }
 
 void
-VisibleModule::latexPrintMembershipAxiom(ostream& s, const char* indent, const SortConstraint* mb)
+VisibleModule::latexPrintMembershipAxiom(ostream& s, const char* indent, const SortConstraint* mb) const
 {
-  s << "\\par" << indent <<  (mb->hasCondition() ? "\\maudeKeyword{cmb}" : "\\maudeKeyword{mb}");
-  s << "\\maudeSpace $";
-  latexPrettyPrint(s, mb->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+  s << "\\par$" << indent <<  (mb->hasCondition() ? "\\maudeKeyword{cmb}" : "\\maudeKeyword{mb}");
+  s << "\\maudeSpace";
+  latexPrettyPrint(s, mb->getLhs());
   s << "\\maudeHasSort" << latexType(mb->getSort());
   if (mb->hasCondition())
     latexPrintCondition(s, mb);
@@ -142,10 +142,10 @@ VisibleModule::latexPrintMembershipAxiom(ostream& s, const char* indent, const S
 }
 
 void
-VisibleModule::latexShowMbs(ostream& s, const char* indent, bool all)
+VisibleModule::latexShowMbs(ostream& s, const char* indent, bool all) const
 {
   const Vector<SortConstraint*>& mbs = getSortConstraints();
-  Index nrMbs = all ? mbs.length() : getNrOriginalMembershipAxioms();
+  Index nrMbs = all ? mbs.size() : getNrOriginalMembershipAxioms();
   for (Index i = 0; i < nrMbs; ++i)
     {
       if (UserLevelRewritingContext::interrupted())
@@ -155,13 +155,13 @@ VisibleModule::latexShowMbs(ostream& s, const char* indent, bool all)
 }
 
 void
-VisibleModule::latexPrintEquation(ostream& s, const char* indent, const Equation* eq)
+VisibleModule::latexPrintEquation(ostream& s, const char* indent, const Equation* eq) const
 {
-  s << "\\par" << indent <<  (eq->hasCondition() ? "\\maudeKeyword{ceq}" : "\\maudeKeyword{eq}");
-  s << "\\maudeSpace $";
-  latexPrettyPrint(s, eq->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+  s << "\\par$" << indent <<  (eq->hasCondition() ? "\\maudeKeyword{ceq}" : "\\maudeKeyword{eq}");
+  s << "\\maudeSpace";
+  latexPrettyPrint(s, eq->getLhs());
   s << "\\maudeEquals";
-  latexPrettyPrint(s, eq->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+  latexPrettyPrint(s, eq->getRhs());
   if (eq->hasCondition())
     latexPrintCondition(s, eq);
   latexPrintAttributes(s,
@@ -174,10 +174,10 @@ VisibleModule::latexPrintEquation(ostream& s, const char* indent, const Equation
 }
 
 void
-VisibleModule::latexShowEqs(ostream& s, const char* indent, bool all)
+VisibleModule::latexShowEqs(ostream& s, const char* indent, bool all) const
 {
   const Vector<Equation*>& equations = getEquations();
-  Index nrEquations = all ? equations.length() : getNrOriginalEquations();
+  Index nrEquations = all ? equations.size() : getNrOriginalEquations();
   for (Index i = 0; i < nrEquations; ++i)
     {
       if (UserLevelRewritingContext::interrupted())
@@ -187,13 +187,15 @@ VisibleModule::latexShowEqs(ostream& s, const char* indent, bool all)
 }
 
 void
-VisibleModule::latexPrintRule(ostream& s, const char* indent, const Rule* rl)
+VisibleModule::latexPrintRule(ostream& s, const char* indent, const Rule* rl) const
 {
-  s << "\\par" << indent <<  (rl->hasCondition() ? "\\maudeKeyword{crl}" : "\\maudeKeyword{rl}");
-  s << "\\maudeSpace $";
-  latexPrettyPrint(s, rl->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+  if (indent)
+    s << "\\par$" << indent;
+ s <<  (rl->hasCondition() ? "\\maudeKeyword{crl}" : "\\maudeKeyword{rl}");
+  s << "\\maudeSpace";
+  latexPrettyPrint(s, rl->getLhs());
   s << "\\maudeRewritesTo";
-  latexPrettyPrint(s, rl->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+  latexPrettyPrint(s, rl->getRhs());
   if (rl->hasCondition())
     latexPrintCondition(s, rl);
   latexPrintAttributes(s,
@@ -203,19 +205,83 @@ VisibleModule::latexPrintRule(ostream& s, const char* indent, const Rule* rl)
 		       false,
 		       false,
 		       rl->isNarrowing());
-  s << "$\\maudeEndStatement\n";
+  if (indent)
+    s << "$";
+  s << "\\maudeEndStatement\n";
 }
 
 void
-VisibleModule::latexShowRls(ostream& s, const char* indent, bool all)
+VisibleModule::latexShowRls(ostream& s, const char* indent, bool all) const
 {
   const Vector<Rule*>& rules = getRules();
-  Index nrRules = all ? rules.length() : getNrOriginalRules();
+  Index nrRules = all ? rules.size() : getNrOriginalRules();
   for (Index i = 0; i < nrRules; ++i)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
       latexPrintRule(s, indent, rules[i]);
+    }
+}
+
+void
+VisibleModule::latexPrintStrategyDecl(ostream& s, const char* indent, const RewriteStrategy* rs)
+{
+  s << "\\par$" << indent << "\\maudeKeyword{strat}\\maudeSpace" << Token::latexIdentifier(rs->id());
+  const Vector<Sort*>& domain = rs->getDomain();
+  int arity = rs->arity();
+  if (arity > 0)
+    {
+      s << "\\maudeHasSort";
+      for (Index i = 0; i < arity; ++i)
+	s << (i == 0 ? "" : "\\maudeSpace") <<  latexType(domain[i]) << ' ';
+    }
+  s << "\\maudeStratAt" << latexType(rs->getSubjectSort());
+  int metadata = getMetadata(MixfixModule::STRAT_DECL, rs);
+  if (metadata != NONE)
+    {
+      s << "\\maudeSpace\\maudeLeftBracket\\maudeKeyword{metadata}\\maudeSpace\\maudeString{" <<
+	Token::latexName(metadata) << "}\\maudeRightBracket";
+    }
+  s << "$\\maudeEndStatement\n";
+}
+
+void
+VisibleModule::latexShowStrats(ostream& s, const char* indent, bool all)
+{
+  const Vector<RewriteStrategy*>& strategies = getStrategies();
+  Index nrStrategies = strategies.size();
+  Index start = all ? 0 : getNrImportedStrategies();
+  for (Index i = start; i < nrStrategies; ++i)
+    {
+      if (UserLevelRewritingContext::interrupted())
+       return;
+      latexPrintStrategyDecl(s, indent, strategies[i]);
+    }
+}
+
+void
+VisibleModule::latexPrintStrategyDefinition(ostream& s, const char* indent, const StrategyDefinition* e)
+{
+  s << "\\par$" << indent << (e->hasCondition() ? "\\maudeKeyword{csd}" : "\\maudeKeyword{sd}") << "\\maudeSpace";
+  latexPrintStrategyTerm(s, e->getStrategy(), e->getLhs());
+  s << "\\maudeAssign";
+  latexPrintStrategy(s, e->getRhs());
+  if (e->hasCondition())
+    latexPrintCondition(s, e);
+  latexPrintAttributes(s, e, getMetadata(MetadataStore::STRAT_DEF, e), 0);
+  s << "$\\maudeEndStatement\n";
+}
+
+void
+VisibleModule::latexShowSds(ostream& s, const char* indent, bool all)
+{
+  const Vector<StrategyDefinition*>& defs = getStrategyDefinitions();
+  Index nrDefs = all ? defs.size() : getNrOriginalStrategyDefinitions();
+  for (Index i = 0; i < nrDefs; ++i)
+    {
+      if (UserLevelRewritingContext::interrupted())
+	return;
+      latexPrintStrategyDefinition(s, indent, defs[i]);
     }
 }
 
@@ -227,12 +293,8 @@ VisibleModule::latexShowImports(ostream& s) const
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      //const char* moduleName = Token::removeBoundParameterBrackets(getImportedModule(i)->id()).makeZeroTerminatedString();
-      //s << "\\par\\maudeIndent\\maudeKeyword{"<< importModeString(getImportMode(i)) << "}\\ \\maudeModule{" <<
-      //	Token::latexName(moduleName) << "}\\maudeEndStatement\n";
-      s << "\\par\\maudeIndent$\\maudeKeyword{"<< importModeString(getImportMode(i)) << "}\\maudeSpace" <<
+      s << "\\par$\\maudeIndent\\maudeKeyword{"<< importModeString(getImportMode(i)) << "}\\maudeSpace" <<
 	getImportedModule(i)->latexModuleExpression() <<"$\\maudeEndStatement\n";
-      //delete [] moduleName;
     }
 }
 
@@ -247,10 +309,10 @@ VisibleModule::latexShowSorts(ostream& s, bool all) const
   if (nrSorts > 0)
     {
       const Vector<Sort*>& sorts = getSorts();
-      s << "\\par\\maudeIndent\\maudeKeyword{sort" << pluralize(nrSorts) << "}"; 
+      s << "\\par$\\maudeIndent\\maudeKeyword{sort" << pluralize(nrSorts) << "}"; 
        for (Index i = begin; i < end; ++i)
 	 s << "\\maudeSpace" << latexType(sorts[i]);
-      s << "\\maudeEndStatement\n";
+      s << "$\\maudeEndStatement\n";
     }
 }
 
@@ -270,23 +332,23 @@ VisibleModule::latexShowSubsorts(ostream& s, bool all) const
       Index nrSubsorts = end - begin;
       if (nrSubsorts > 0)
 	{
-	  s << "\\par\\maudeIndent\\maudeKeyword{subsort" << pluralize(nrSubsorts) << "}";
+	  s << "\\par$\\maudeIndent\\maudeKeyword{subsort" << pluralize(nrSubsorts) << "}";
 	  for (Index j = begin; j < end; ++j)
 	    s << "\\maudeSpace" << latexType(subsorts[j]);
-	  s << "\\maudeSpace\\maudeLessThan\\maudeSpace" << latexType(sort) << "\\maudeEndStatement\n";
+	  s << "\\maudeSpace\\maudeLessThan\\maudeSpace" << latexType(sort) << "$\\maudeEndStatement\n";
 	}
     }
 }
 
 void
-VisibleModule::latexShowVars(ostream& s) const
+VisibleModule::latexShowVars(ostream& s, const char* indent) const
 {
   const AliasMap& variableAliases = getVariableAliases();
   for (const auto& p : variableAliases)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << "\\par\\maudeIndent\\maudeKeyword{var} $" << Token::latexIdentifier(p.first) << "\\maudeHasSort" <<
+      s << "\\par$" << indent << "\\maudeKeyword{var}\\maudeSpace" << Token::latexIdentifier(p.first) << "\\maudeHasSort" <<
 	latexType(p.second) << "$\\maudeEndStatement\n";
     }
 }
@@ -307,7 +369,7 @@ VisibleModule::latexShowDecls(ostream& s, const char* indent, Index index, bool 
       if (UserLevelRewritingContext::interrupted())
 	return;
       const Vector<Sort*>& dec = opDecls[i].getDomainAndRange();
-      s << "\\par" << indent << "\\maudeKeyword{op} $";
+      s << "\\par$" << indent << "\\maudeKeyword{op}\\maudeSpace";
       if (nrArgs == 0)
 	{
 	  if (Token::auxProperty(id) == Token::AUX_STRUCTURED_SORT)
@@ -317,10 +379,11 @@ VisibleModule::latexShowDecls(ostream& s, const char* indent, Index index, bool 
 	  s <<  "\\maudeHasSort\\maudeSpace";
 	}
       else
-	s << latexPrettyOp(id) << "\\maudeHasSort";
-
-      for (Index j = 0; j < nrArgs; ++j)
-	s << (j == 0 ? "" : "\\maudeSpace") << latexType(dec[j]);
+	{
+	  s << latexPrettyOp(id) << "\\maudeHasSort";
+	  for (Index j = 0; j < nrArgs; ++j)
+	    s << (j == 0 ? "" : "\\maudeSpace") << latexType(dec[j]);
+	}
        s << "\\maudeFunction" << latexType(dec[nrArgs]);
       latexShowAttributes(s, symbol, i);
       s << "$\\maudeEndStatement\n";
@@ -343,7 +406,7 @@ VisibleModule::latexShowOps(ostream& s, const char* indent, bool all)
 void
 VisibleModule::latexShowPolymorphDecl(ostream& s, const char* indent, Index index)
 {
-  s << "\\par" << indent << "\\maudeKeyword{op} $";
+  s << "\\par$" << indent << "\\maudeKeyword{op}\\maudeSpace";
   const Vector<Sort*>& domainAndRange = getPolymorphDomainAndRange(index);
   int nrArgs = domainAndRange.length() - 1;
   int id = getPolymorphName(index).code();
@@ -356,15 +419,16 @@ VisibleModule::latexShowPolymorphDecl(ostream& s, const char* indent, Index inde
       s <<  "\\maudeHasSort\\maudeSpace";
     }
   else
-    s << latexPrettyOp(id) << "\\maudeHasSort";
-
-  for (int i = 0; i < nrArgs; ++i)
     {
-      s << (i == 0 ? "" : "\\maudeSpace");
-      if (Sort* sort = domainAndRange[i])
-	s << latexType(sort);
-      else
-	s << "\\maudeSort{Universal}";
+      s << latexPrettyOp(id) << "\\maudeHasSort";
+      for (int i = 0; i < nrArgs; ++i)
+	{
+	  s << (i == 0 ? "" : "\\maudeSpace");
+	  if (Sort* sort = domainAndRange[i])
+	    s << latexType(sort);
+	  else
+	    s << "\\maudeSort{Universal}";
+	}
     }
   s << "\\maudeFunction";
   if (Sort* sort = domainAndRange[nrArgs])
@@ -427,12 +491,12 @@ VisibleModule::latexShowModule(ostream& s, bool all)
   latexShowSubsorts(s, all);
   latexShowPolymorphs(s, "\\maudeIndent", all);
   latexShowOps(s, "\\maudeIndent", all);
-  latexShowVars(s);
+  latexShowVars(s, "\\maudeIndent");
   latexShowMbs(s, "\\maudeIndent", all);
   latexShowEqs(s, "\\maudeIndent", all);
   latexShowRls(s, "\\maudeIndent", all);
-  //showStrats(s, true, all);
-  //showSds(s, true, all);
+  latexShowStrats(s, "\\maudeIndent", all);
+  latexShowSds(s, "\\maudeIndent", all);
   if (UserLevelRewritingContext::interrupted())
     return;
   s << "\\par\\maudeKeyword{" << moduleEndString(getModuleType()) << "}\n";
@@ -445,7 +509,8 @@ VisibleModule::latexShowSortsAndSubsorts(ostream& s) const
   Index nrUserSorts =  getNrUserSorts();
   if (nrUserSorts == 0)
     return;
-  s << "\\par\n\\begin{tabular}{@{}ll}\n";
+  s << "\\LTpre=0em\\LTpost=0em\n";
+  s << "\\par\n\\begin{longtable}[l]{@{}ll}\n";
   for (Index i = 0; i < nrUserSorts; i++)
     {
       if (UserLevelRewritingContext::interrupted())
@@ -472,7 +537,7 @@ VisibleModule::latexShowSortsAndSubsorts(ostream& s) const
       Index nrComparableSorts = nrSubsorts + nrSupersorts;
       if (nrComparableSorts > 0)
 	{
-	  s << "\\maudeKeyword{subsort" << pluralize(nrComparableSorts) << "}";
+	  s << "$\\maudeKeyword{subsort" << pluralize(nrComparableSorts) << "}";
 	  if (nrSubsorts > 0)
 	    {
 	      for (Index j = nrComponentSorts - 1; j > index ; --j)
@@ -494,11 +559,11 @@ VisibleModule::latexShowSortsAndSubsorts(ostream& s) const
 		    s << "\\maudeSpace" << latexType(sort2);
 		}
 	    }
-	  s << "\\maudeEndStatement";
+	  s << "$\\maudeEndStatement";
 	}
       s << "\\\\\n";
     }
-  s << "\\end{tabular}\n";
+  s << "\\end{longtable}\n";
 }
 
 void
@@ -555,7 +620,7 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
       s << "\\maudeKeyword{id:}\\maudeSpace";
       Term* id = safeCast(BinarySymbol*, symbol)->getIdentity();
       if (id != 0)
-	latexPrettyPrint(s, id, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+	latexPrettyPrint(s, id);
     }
   if (st.hasFlag(SymbolType::IDEM))
     {
@@ -744,7 +809,7 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
 	  {
 	    s << "\\newline\\maudeKeyword{term-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
 	      Token::latexName(purposes[i]) << "}\\maudeSpace\\maudeLeftParen";
-	    latexPrettyPrint(s, terms[i], UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+	    latexPrettyPrint(s, terms[i]);
 	    s << "\\maudeRightParen\n";
 	  }
       }
@@ -778,7 +843,7 @@ VisibleModule::latexShowPolymorphAttributes(ostream& s, int index)
       s << "\\maudeKeyword{id:}\\maudeSpace";
       Term* id = getPolymorphIdentity(index);
       if (id != 0)
-	latexPrettyPrint(s, id, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+	latexPrettyPrint(s, id);
     }
   if (st.hasFlag(SymbolType::IDEM))
       s << "\\maudeSpace\\maudeKeyword{idem}";
@@ -939,10 +1004,60 @@ VisibleModule::latexShowPolymorphAttributes(ostream& s, int index)
 	  {
 	    s << "\\newline\\maudeKeyword{term-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
 	      Token::latexName(purpose) << "}\\maudeSpace\\maudeLeftParen";
-	    latexPrettyPrint(s, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+	    latexPrettyPrint(s, term);
 	    s << "\\maudeRightParen\n";
 	  }
       }
       s << "\\maudeRightParen";
     }
+}
+
+void
+VisibleModule::latexShowKinds(ostream& s) const
+{
+  const char* sep = "";
+  s << "\\LTpre=0em\\LTpost=0em\n";
+  for (const ConnectedComponent* c : getConnectedComponents())
+    {
+      s << sep << "\\par\\begin{longtable}[l]{rl}\n\\multicolumn{2}{@{}l}{" << latexType(c->sort(Sort::KIND));
+      sep = "\\vspace{1.5ex}\n";
+      if (c->errorFree())
+	s << "\\maudeSpace\\maudeNormal{(error free)}";
+      s << "\\maudePunctuation{:}}";
+      int nrSorts = c->nrSorts();
+      for (int j = 1; j < nrSorts; ++j)
+	s << "\\\\\n\\maudeBigIndent\\maudeNumber{" << j << "} & " << latexSort(c->sort(j)) << "";
+      s << "\n\\end{longtable}\n";
+    }
+}
+
+void
+VisibleModule::latexShowSummary(ostream& s)
+{
+  int nrNonterminals;
+  int nrTerminals;
+  int nrProductions;
+  getParserStats(nrNonterminals, nrTerminals, nrProductions);
+
+  s << "\\par\\maudeResponse{Grammar:}\n" <<
+    "\\par\\maudeBigIndent\\maudeNormal{nonterminals: }\\maudeNumber{" << nrNonterminals <<
+    "}\n\\par\\maudeBigIndent\\maudeNormal{terminals: }\\maudeNumber{" << nrTerminals <<
+    "}\n\\par\\maudeBigIndent\\maudeNormal{productions: }\\maudeNumber{" << nrProductions <<
+    "}\\linebreak\n";
+
+  Index nrKinds = getConnectedComponents().size();
+
+  s << "\\par\\maudeResponse{Term rewriting system:}\n" <<
+    "\\par\\maudeBigIndent\\maudeNormal{kinds: }\\maudeNumber{" << nrKinds <<
+    "}\n\\par\\maudeBigIndent\\maudeNormal{sorts: }\\maudeNumber{" << getSorts().size() - nrKinds <<
+    "}\n\\par\\maudeBigIndent\\maudeNormal{user symbols: }\\maudeNumber{" << getNrUserSymbols() <<
+    "}\n\\par\\maudeBigIndent\\maudeNormal{total symbols: }\\maudeNumber{" << getSymbols().size() <<
+    "}\n\\par\\maudeBigIndent\\maudeNormal{polymorphic operators: }\\maudeNumber{" << getNrPolymorphs() <<
+    
+    "}\n\\par\\maudeBigIndent\\maudeNormal{membership axioms: }\\maudeNumber{" << getSortConstraints().size() <<
+    "}\n\\par\\maudeBigIndent\\maudeNormal{equations: }\\maudeNumber{" << getEquations().size() <<
+    "}\n\\par\\maudeBigIndent\\maudeNormal{rules: }\\maudeNumber{" << getRules().size() <<
+    "}\n\\par\\maudeBigIndent\\maudeNormal{strategies: }\\maudeNumber{" << getStrategies().size()  <<
+    "}\n\\par\\maudeBigIndent\\maudeNormal{strategy definitions: }\\maudeNumber{" << getStrategyDefinitions().size() <<
+    "}\n";
 }

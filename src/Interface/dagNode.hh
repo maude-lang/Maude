@@ -76,7 +76,8 @@ public:
   void setUnstackable();
   bool isUnstackable() const;
   void setGround();
-  bool isGround() const;
+  bool isGround() const;  // just checks ground flag
+  bool determineGround();  // actually detemines if we're ground and sets flag if so
   void setIrreducibleByVariantEquations();
   bool isIrreducibleByVariantEquations() const;
 
@@ -504,6 +505,17 @@ DagNode::isGround() const
   return getMemoryInfo()->getFlag(GROUND_FLAG);
 }
 
+inline bool
+DagNode::determineGround()
+{
+  //	We trust a set ground flag because
+  //	* ground flags start as clear in newly created nodes
+  //	* in-place reduction below can never introduce variables
+  //	For the same reasons we must treat clear ground flags as unknown.
+  //
+  return isGround() ? true : symbol()->determineGround(this);
+}
+
 inline void
 DagNode::setIrreducibleByVariantEquations()
 {
@@ -690,8 +702,6 @@ DagNode::indexVariables(NarrowingVariableInfo& indices, int baseIndex)
   //	us that removed ground flags below us and these need to be replaced for
   //	safe unification.
   //
-  //if (isGround())
-  //  return true;  // no variables below us to index
   bool ground = indexVariables2(indices, baseIndex);
   if (ground)
     setGround();

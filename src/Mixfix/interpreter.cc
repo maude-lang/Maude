@@ -75,8 +75,8 @@
 #include "freshVariableSource.hh"
 #include "viewExpression.hh"
 #include "moduleExpression.hh"
-#include "maudeLatexBuffer.hh"
 #include "interpreter.hh"
+#include "maudeLatexBuffer.hh"
 
 //	our stuff
 #include "execute.cc"
@@ -335,7 +335,10 @@ Interpreter::updateSet(set<int>& target, bool add)
   if (add)
     target.insert(selected.begin(), selected.end());
   else
-    target.erase(selected.begin(), selected.end());
+    {
+      for (int i : selected)
+	target.erase(i);
+    }
   selected.clear();
 }
 
@@ -367,16 +370,11 @@ void
 Interpreter::showSortsAndSubsorts() const
 {
   currentModule->getFlatModule()->showSortsAndSubsorts(cout);
-  if (latexBuffer != 0)
+  if (latexBuffer)
     {
-      ostream& s = latexBuffer->getStream();
-      s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show sorts " <<
-	currentModule->getFlatModule() << " .\n\\end{comment}\n";
-      s << "\\maudeKeyword{show} \\maudeKeyword{sorts} ";
-      latexBuffer->generateModuleName(currentModule->getFlatModule());
-      s << " \\maudePunctuation{.}\\newline\n";
-      currentModule->getFlatModule()->latexShowSortsAndSubsorts(s);
-      s << "\\end{maudeShowParagraph}\n";
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show sorts", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowSortsAndSubsorts(latexBuffer->getStream());
+      latexBuffer->cleanUp();
     }
 }
 
@@ -384,17 +382,11 @@ void
 Interpreter::showModule(bool all) const
 {
   currentModule->getFlatModule()->showModule(cout, all);
-  if (latexBuffer != 0)
+  if (latexBuffer)
     {
-      const char* modifier = all ? "all" : "desugared";
-      ostream& s = latexBuffer->getStream();
-      s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show " << modifier << " " <<
-	currentModule->getFlatModule() << " .\n\\end{comment}\n";
-      s << "\\maudeKeyword{show} \\maudeKeyword{" << modifier << "} ";
-      latexBuffer->generateModuleName(currentModule->getFlatModule());
-      s << " \\maudePunctuation{.}\\newline\n";
-      currentModule->getFlatModule()->latexShowModule(s, all);
-      s << "\\end{maudeShowParagraph}\n";
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), all ? "show all" : "show desugared", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowModule(latexBuffer->getStream(), all);
+      latexBuffer->cleanUp();
     }
 }
 
@@ -413,15 +405,11 @@ Interpreter::showProcessedView() const
   if (currentView->evaluate())  // in case it became stale
     {
       currentView->showProcessedView(cout);
-      if (latexBuffer != 0)
+      if (latexBuffer)
 	{
-	  ostream& s = latexBuffer->getStream();
-	  s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show processed view " <<
-	    currentView << " .\n\\end{comment}\n";
-	  s << "\\maudeKeyword{show} \\maudeKeyword{processed} \\maudeKeyword{view} \\maudeView{" <<
-	    currentView << "} \\maudePunctuation{.}\\newline\n";
-	  currentView->latexShowProcessedView(s);
-	  s << "\\end{maudeShowParagraph}\n";
+	  latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show processed view", currentView);
+	  currentView->latexShowProcessedView(latexBuffer->getStream());
+	  latexBuffer->cleanUp();
 	}
     }
   else
@@ -449,28 +437,36 @@ Interpreter::showOps(bool all) const
 {
   currentModule->getFlatModule()->showPolymorphs(cout, false, all);
   currentModule->getFlatModule()->showOps(cout, false, all);
+  if (latexBuffer)
+    {
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show ops", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowPolymorphs(latexBuffer->getStream(), "", all);
+      currentModule->getFlatModule()->latexShowOps(latexBuffer->getStream(), "", all);
+      latexBuffer->cleanUp();
+    }
 }
 
 void
 Interpreter::showVars() const
 {
   currentModule->getFlatModule()->showVars(cout, false);
+  if (latexBuffer)
+    {
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show vars", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowVars(latexBuffer->getStream(), "");
+      latexBuffer->cleanUp();
+    }
 }
 
 void
 Interpreter::showMbs(bool all) const
 {
   currentModule->getFlatModule()->showMbs(cout, false, all);
-  if (latexBuffer != 0)
+  if (latexBuffer)
     {
-      ostream& s = latexBuffer->getStream();
-      s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show mbs " << currentModule->getFlatModule() <<
-	" .\n\\end{comment}\n";
-      s << "\\maudeKeyword{show} \\maudeKeyword{mbs} ";
-      latexBuffer->generateModuleName(currentModule->getFlatModule());
-      s << " \\maudePunctuation{.}\\newline\n";
-      currentModule->getFlatModule()->latexShowMbs(s, "", all);
-      s << "\\end{maudeShowParagraph}\n";
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show mbs", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowMbs(latexBuffer->getStream(), "", all);
+      latexBuffer->cleanUp();
     }
 }
 
@@ -478,16 +474,11 @@ void
 Interpreter::showEqs(bool all) const
 {
   currentModule->getFlatModule()->showEqs(cout, false, all);
-  if (latexBuffer != 0)
+  if (latexBuffer)
     {
-      ostream& s = latexBuffer->getStream();
-      s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show eqs " << currentModule->getFlatModule() <<
-	" .\n\\end{comment}\n";
-      s << "\\maudeKeyword{show} \\maudeKeyword{eqs} ";
-      latexBuffer->generateModuleName(currentModule->getFlatModule());
-      s << " \\maudePunctuation{.}\\newline\n";
-      currentModule->getFlatModule()->latexShowEqs(s, "", all);
-      s << "\\end{maudeShowParagraph}\n";
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show eqs", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowEqs(latexBuffer->getStream(), "", all);
+      latexBuffer->cleanUp();
     }
 }
 
@@ -495,16 +486,11 @@ void
 Interpreter::showRls(bool all) const
 {
   currentModule->getFlatModule()->showRls(cout, false, all);
-  if (latexBuffer != 0)
+  if (latexBuffer)
     {
-      ostream& s = latexBuffer->getStream();
-      s << "\\begin{maudeShowParagraph}\n\\begin{comment}\n  show rls " << currentModule->getFlatModule() <<
-	" .\n\\end{comment}\n";
-      s << "\\maudeKeyword{show} \\maudeKeyword{rls} ";
-      latexBuffer->generateModuleName(currentModule->getFlatModule());
-      s << " \\maudePunctuation{.}\\newline\n";
-      currentModule->getFlatModule()->latexShowRls(s, "", all);
-      s << "\\end{maudeShowParagraph}\n";
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show rls", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowRls(latexBuffer->getStream(), "", all);
+      latexBuffer->cleanUp();
     }
 }
 
@@ -512,24 +498,48 @@ void
 Interpreter::showStrats(bool all) const
 {
   currentModule->getFlatModule()->showStrats(cout, false, all);
+  if (latexBuffer)
+    {
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show strats", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowStrats(latexBuffer->getStream(), "", all);
+      latexBuffer->cleanUp();
+    }
 }
 
 void
 Interpreter::showSds(bool all) const
 {
   currentModule->getFlatModule()->showSds(cout, false, all);
+  if (latexBuffer)
+    {
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show sds", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowSds(latexBuffer->getStream(), "", all);
+      latexBuffer->cleanUp();
+    }
 }
 
 void
 Interpreter::showKinds() const
 {
   currentModule->getFlatModule()->showKinds(cout);
+  if (latexBuffer)
+    {
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show kinds", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowKinds(latexBuffer->getStream());
+      latexBuffer->cleanUp();
+    }
 }
 
 void
 Interpreter::showSummary() const
 {
   currentModule->getFlatModule()->showSummary(cout);
+  if (latexBuffer)
+    {
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show summary", currentModule->getFlatModule());
+      currentModule->getFlatModule()->latexShowSummary(latexBuffer->getStream());
+      latexBuffer->cleanUp();
+    }
 }
 
 ImportModule*

@@ -157,7 +157,8 @@ Interpreter::search(const Vector<Token>& bubble,
   DagNode* subjectDag = makeDag(initial);
 
   static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!" };
-  if (getFlag(SHOW_COMMAND))
+  bool showCommand = getFlag(SHOW_COMMAND);
+  if (showCommand)
     {
       static const char* searchKindName[] =
 	{ "search", "narrow", "xg-narrow",
@@ -194,6 +195,19 @@ Interpreter::search(const Vector<Token>& bubble,
 
       if (xmlBuffer != 0)
 	xmlBuffer->generateSearch(subjectDag, pattern, searchTypeSymbol[searchType], limit, depth);  // does this work for narrowing?
+    }
+  if (latexBuffer != 0)
+    {
+      latexBuffer->generateSearch(showCommand,
+				  searchKind,
+				  subjectDag,
+				  searchType,
+				  target,
+				  condition,
+				  variantFlags,
+				  limit,
+				  depth,
+				  debug);
     }
 
   startUsingModule(fm);
@@ -284,9 +298,14 @@ Interpreter::doSearching(Timer& timer,
       bool result = state->findNextMatch();
       if (UserLevelRewritingContext::aborted())
 	break;  // HACK: Is this safe - shouldn't we destroy context?
+      Int64 real = 0;
+      Int64 virt = 0;
+      Int64 prof = 0;
+      bool showTiming = getFlag(SHOW_TIMING) && timer.getTimes(real, virt, prof);
       if (!result)
 	{
-	  cout << ((solutionCount == 0) ? "\nNo solution.\n" : "\nNo more solutions.\n");
+	  const char* reply = (solutionCount == 0) ? "No solution." : "No more solutions.";
+	  cout << "\n" << reply << endl;
 	  printSearchTiming(timer, state);
 	  if (xmlBuffer != 0)
 	    {
@@ -296,6 +315,16 @@ Interpreter::doSearching(Timer& timer,
 					      getFlag(SHOW_STATS),
 					      getFlag(SHOW_TIMING),
 					      getFlag(SHOW_BREAKDOWN));
+	    }
+	  if (latexBuffer != 0)
+	    {
+	      latexBuffer->generateSearchNonResult(state,
+						   reply,
+						   prof,
+						   real,
+						   getFlag(SHOW_STATS),
+						   showTiming,
+						   getFlag(SHOW_BREAKDOWN));
 	    }
 	  break;
 	}
@@ -313,9 +342,21 @@ Interpreter::doSearching(Timer& timer,
 					  getFlag(SHOW_TIMING),
 					  getFlag(SHOW_BREAKDOWN));
 	}
+      if (latexBuffer != 0)
+	{
+	  latexBuffer->generateSearchResult(state,
+					    solutionCount,
+					    prof,
+					    real,
+					    getFlag(SHOW_STATS),
+					    showTiming,
+					    getFlag(SHOW_BREAKDOWN));
+	  latexBuffer->generateSubstitution(*(state->getSubstitution()), *variableInfo);
+	}
     }
   QUANTIFY_STOP();
-
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
   //
   //	We always save these things even if we can't continue
@@ -347,6 +388,8 @@ Interpreter::searchCont(Int64 limit, bool debug)
   continueFunc = 0;
   if (xmlBuffer != 0 && getFlag(SHOW_COMMAND))
     xmlBuffer->generateContinue("search", fm, limit);
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit, debug);
 
   if (debug)
     UserLevelRewritingContext::setDebug();
@@ -396,6 +439,14 @@ Interpreter::showSearchPath(int stateNr, bool showRule)
       DagNode* d = savedRewriteSequenceSearch->getStateDag(sn);
       cout << "state " << sn << ", " << d->getSort() << ": " << d << '\n';
     }
+  if (latexBuffer)
+    {
+      latexBuffer->generateSearchPath(savedRewriteSequenceSearch,
+				      steps,
+				      stateNr,
+				      getFlag(SHOW_COMMAND),
+				      showRule);
+    }
   if (xmlBuffer != 0)
     xmlBuffer->generateSearchPath(savedRewriteSequenceSearch, stateNr);
 }
@@ -431,6 +482,13 @@ Interpreter::showSearchPathLabels(int stateNr)
 	  else
 	    cout << &label << '\n';
 	}
+    }
+  if (latexBuffer)
+    {
+      latexBuffer->generateSearchPathLabels(savedRewriteSequenceSearch,
+					    steps,
+					    stateNr,
+					    getFlag(SHOW_COMMAND));
     }
 }
 
@@ -468,4 +526,6 @@ Interpreter::showSearchGraph()
     }
   if (xmlBuffer != 0)
     xmlBuffer->generateSearchGraph(savedRewriteSequenceSearch);
+  if (latexBuffer)
+    latexBuffer->generateSearchGraph(savedRewriteSequenceSearch, getFlag(SHOW_COMMAND));
 }

@@ -1,13 +1,13 @@
 ==========================================
-reduce in BAR : a .
+debug reduce in BAR : a .
 ==========================================
-reduce in BAR : a .
+debug reduce in BAR : a .
 rewrites: 2
 result Bar: c
 rewrites: 2
 result Bar: c
 ==========================================
-reduce in META-LEVEL : metaReduce(['BAR], 'a.Bar) .
+debug reduce in META-LEVEL : metaReduce(['BAR], 'a.Bar) .
 *********** equation
 eq [Q:Qid] = sth Q:Qid is
   including Q:Qid .

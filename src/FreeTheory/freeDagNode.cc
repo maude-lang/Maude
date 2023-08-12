@@ -53,7 +53,6 @@
 #include "variableDagNode.hh"
 
 //	free theory class definitions
-//#include "freeNet.hh"
 #include "freeSymbol.hh"
 #include "freeDagNode.hh"
 #include "freeDagArgumentIterator.hh"

@@ -1,0 +1,112 @@
+Alpha 151 release notes
+========================
+
+Bug fixes
+==========
+
+(1) Related bugs where the debug modifier was not echoed for the commands
+  debug reduce
+  debug rewrite
+  debug frewrite
+  debug erewrite
+either normally or in LaTeX.
+
+(2) Related bugs where any of:
+  break deselect foo .
+  trace deselect foo .
+  trace include foo .
+  print reveal foo .
+cause memory corruption. Reported by Dwight Guth <dwight.guth@runtimeverification.com>
+
+(3) A bug where the real time shown in LaTeX output was off by a factor
+of 10.
+
+(4) A bug where the cpu and real times shown in LaTeX output were
+sometimes larger than those shown in the text output because the readings
+were taken later.
+
+New features
+=============
+
+(1) There is a new module in the prelude:
+
+fmod INITIAL-EQUALITY-PREDICATE is
+  protecting BOOL .
+  op _.=._ : Universal Universal -> Bool 
+        [prec 51 poly (1 2) comm
+         special (id-hook CommutativeDecomposeEqualitySymbol
+                  op-hook conjunctionSymbol (_and_ : Bool Bool ~> Bool)
+                  op-hook disjunctionSymbol (_or_ : Bool Bool ~> Bool)
+                  term-hook equalTerm (true)
+                  term-hook notEqualTerm (false))] .
+endfm
+
+We say an operarator (occurrence) f is good if it is
+(i) a constructor (on the sorts of the arguments where it occurs)
+(ii) equation free
+(iii) does not have the special attribute
+(iv) stable, i.e. it is not a variable and it cannot disappear via axioms;
+with the current axioms, this means it does not have a collapse axiom, but
+the distributivity axiom would also make both of its symbols unstable.
+
+The semantics of this polymorphic operator is that both arguments are
+eagerly evaluated and then:
+(a) If the arguments are equal it returns true;
+(b) Otherwise if both arguments are ground it returns false;
+(c) Otherwise if one term is f(t1,..., tn) for with f good and either
+free, iter or commutative and the other term is ti for some i, return false;
+(d) Otherwise if both top symbols are good and differ return false;
+(f) Otherwise if both top symbols and good and agree with the
+arguments of _.=._ being f(s1,..., sn) and f(t1,..., tn) then
+(i) if f is free then return the conjunction
+  s1 .=. t1 and ... and sn .=. tn
+(ii) if f is iter, treat it like the stack of unary free symbols it
+  notionally represents using (i)
+(iii) otherwise if f is commutative return the disjunction
+  s1 .=. t1 and s2 .=. t2 or s1 .=. t2 and s2 .=. t2
+(g) If none of these built-in semantics are applicable, user equations
+for the particular polymorphic instance are run.
+
+Note that unlike _==_, it can become inert because no built-in semantics
+or user equations are applicable. For this reason it is commutative so
+that the equation
+  eq A and A = A .
+in fmod BOOL-OPS can simplify
+  X .=.Y and Y .=. X
+to
+  X .=.Y
+for example.
+
+Also _or_ is a defined operator that will immediately rewrite to polynomial
+normal form, i.e. an expression in terms of _and_ and _xor_.
+
+(2) Improvements to the -latex-log= option
+(i) Comments in the LaTeX which mark the output of commands now look like:
+
+\begin{comment}
+%
+%  <command-with-arguments>
+%
+\end{comment}
+<latex code for command and results>
+%
+%  End of <command>
+%
+
+to enable easier location of blocks of LaTeX code to cut and paste. The
+header is wrapped in a comment environment to ensure user syntax in the
+full command does not prematurely end the comment.
+
+(ii) show command on/off option is now respected.
+
+(iii) Addditional language features are supported:
+(a) strat and sd/csd statements in smod/sth
+(b) strat mappings in renamings and views
+(c) srewrite/dsrewrite commands
+(d) search command
+(e) show path <state number>, show path states <state number>,
+    show path labels <state number>, show graph commands
+(f) narrow command
+(g) vu-narrow/fvu-narrow commands
+(h) show vars <module>, show ops <module>, show strats <module>,
+    show sds <module>, show kinds <module>, show summary <module>

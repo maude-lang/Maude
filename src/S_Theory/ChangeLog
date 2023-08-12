@@ -1,3 +1,11 @@
+2023-07-24  Steven Eker  <eker@pup>
+
+	* S_Symbol.cc (S_Symbol::determineGround): added
+
+	* S_Symbol.hh (class S_Symbol): added decl for determineGround()
+
+===================================Maude151===========================================
+
 2021-09-21  Steven Eker  <eker@pup>
 
 	* S_ExtensionInfo.cc (S_ExtensionInfo::copy): take const arg

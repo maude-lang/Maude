@@ -18,16 +18,17 @@
 %    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 %
 %	Latex package for use with the -latex-log= feature.
-%	Version Alpha150.
+%	Version Alpha151.
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{maude}[2023/07/21 Package for Maude logs]
-\RequirePackage{amssymb,xcolor,verbatim,alltt}
+\ProvidesPackage{maude}[2023/08/11 Package for Maude logs]
+\RequirePackage{amssymb,extarrows,longtable,xcolor,verbatim,alltt}
 \RequirePackage[T1]{fontenc}
 %
 %	Spacing
 %
 \newcommand{\maudeIndent}{\hspace*{1em}}  % for module contents
+\newcommand{\maudeBigIndent}{\hspace*{3em}}  % for data in show
 \newcommand{\maudeBannerIndent}{\hspace*{5em}}  % for banner
 \newcommand{\maudeInterwordSpace}{\hskip0.3em}
 %
@@ -117,7 +118,33 @@
 \newcommand{\maudeLessThan}{<}  % for subsorts
 \newcommand{\maudeComma}{,\linebreak[0]}  % to separate parameters and function arguments
 \newcommand{\maudeEndStatement}{\maudeInterwordSpace\maudePunctuation{.}}  % include space and try to avoid preceeding linebreak
+\newcommand{\maudeEndCommand}{\maudeInterwordSpace\maudePunctuation{.}}  % include space and try to avoid preceeding linebreak
 \newcommand{\maudeDisambigDot}{.}  % for (<term>).<sort>
+%
+%	Strategy language.
+%
+\newcommand{\maudeStratAt}{\maudeInterwordSpace\, @\maudeInterwordSpace\,}
+\newcommand{\maudeStratAssign}{\,\leftarrow\,}
+\newcommand{\maudeStratConcat}{\maudeInterwordSpace;\maudeInterwordSpace}
+\newcommand{\maudeStratStar}{*}
+\newcommand{\maudeStratPlus}{+}
+\newcommand{\maudeStratQuery}{\maudeInterwordSpace ?\maudeInterwordSpace}
+\newcommand{\maudeStratColon}{:}
+\newcommand{\maudeStratBang}{!}
+\newcommand{\maudeStratUnion}{\maudeInterwordSpace |\maudeInterwordSpace}
+%
+%	Search
+%
+\newcommand{\maudeOneStep}{\,\Rightarrow^1}
+\newcommand{\maudeAtLeastOneStep}{\,\Rightarrow^+}
+\newcommand{\maudeAnySteps}{\,\Rightarrow^*}
+\newcommand{\maudeToNormalForm}{\,\Rightarrow^!}
+\newcommand{\maudeIsAssigned}{\,\longrightarrow\,}
+\newcommand{\maudePathLeft}{\xlongequal{\hspace*{2em}}\hspace*{-0.48em}[\maudeInterwordSpace}
+\newcommand{\maudePathRight}{\maudeInterwordSpace]\hspace*{-0.48em}\xLongrightarrow{\hspace*{2em}}}
+\newcommand{\maudePathWithLabel}[1]{-\hspace*{-0.48em}-\hspace*{-0.48em}-\hspace*{-0.48em}-\hspace*{-0.45em}-\hspace*{0.2em}#1\hspace*{-0.05em}\xlongrightarrow{\hspace*{2em}}}
+\newcommand{\maudePathWithoutLabel}{\xlongrightarrow{\hspace*{4em}}}
+\newcommand{\maudeArcArrow}{\Longrightarrow}
 %
 %	Line breaking.
 %

@@ -36,7 +36,6 @@ operator<<(ostream& s, StrategyExpression* strategy)
   return s;
 }
 
-
 bool
 MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int requiredPrec)
 {

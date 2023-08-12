@@ -53,6 +53,7 @@ public:
 			       Vector<Bdd>& outputBdds);
 
   bool isStable() const;
+  bool determineGround(DagNode* dagNode);
   //
   //	Hash cons stuff.
   //

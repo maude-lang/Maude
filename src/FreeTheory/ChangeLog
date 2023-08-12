@@ -1,3 +1,11 @@
+2023-07-24  Steven Eker  <eker@pup>
+
+	* freeSymbol.cc (FreeSymbol::determineGround): added
+
+	* freeSymbol.hh (class FreeSymbol): added decl for determineGround()
+
+===================================Maude151===========================================
+
 2023-07-13  Steven Eker  <eker@pup>
 
 	* freePreNet.cc (FreePreNet::reduceFringe): fix bug where we were

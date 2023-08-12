@@ -446,6 +446,31 @@ ACU_Symbol::termify(DagNode* dagNode)
   return new ACU_Term(this, arguments, multiplicities);
 }
 
+bool
+ACU_Symbol::determineGround(DagNode* dagNode)
+{
+  if (safeCastNonNull<const ACU_BaseDagNode*>(dagNode)->isTree())
+    {
+      const ACU_Tree& tree = safeCastNonNull<const ACU_TreeDagNode*>(dagNode)->getTree();
+      for (ACU_FastIter i(tree); i.valid(); i.next())
+	{
+	  if (!(i.getDagNode()->determineGround()))
+	    return false;
+	}
+    }
+  else
+    {
+      const ArgVec<ACU_Pair>& argArray = safeCastNonNull<const ACU_DagNode*>(dagNode)->argArray;
+      for (const ACU_Pair& i : argArray)
+	{
+	  if (!(i.dagNode->determineGround()))
+	    return false;
+	}
+    }
+  dagNode->setGround();
+  return true;
+}
+
 //
 //	Unification code.
 //

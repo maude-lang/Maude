@@ -265,7 +265,12 @@ private:
   DagNode* makeDag(const Vector<Token>& subject);
   void startUsingModule(VisibleModule* module);
   void printModifiers(Int64 number, Int64 number2);
-  void printStats(const Timer& timer, RewritingContext& context, bool timingFlag);
+  void printStats(const Timer& timer, RewritingContext& context, bool timingFlag = false);
+  void printStats(RewritingContext& context,
+		  int64_t cpuTime,
+		  int64_t realTime,
+		  bool timingFlag,
+		  int64_t nrStates = NONE);
   void beginRewriting(bool debug);
   void endRewriting(Timer& timer,
 		    CacheableRewritingContext* context,

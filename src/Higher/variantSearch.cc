@@ -128,6 +128,7 @@ VariantSearch::VariantSearch(RewritingContext* context,
     firstVariableFamily((incomingVariableFamily == 0) ? 1 : 0),
     secondVariableFamily((incomingVariableFamily == 2 || incomingVariableFamily == NONE) ? 1 : 2)
 {
+  //DebugAlways("root=" << context->root());
   problemOkay = false;  // until we have verified it is ok
   incompleteFlag = false;
   nrVariantsFound = 0;  // we only track this in variant mode
@@ -385,6 +386,7 @@ VariantSearch::expandLayer()
 void
 VariantSearch::expandVariant(const Vector<DagNode*>& variant, int index)
 {
+  //DebugAlways("expanding " << variant.back());
   //
   //	The last member of variant is the variant term and not part of the variant substitution.
   //
@@ -417,6 +419,7 @@ VariantSearch::expandVariant(const Vector<DagNode*>& variant, int index)
   Vector<DagNode*> newVariantSubstitution;
   while (vnss.findNextVariant(variantTerm, newVariantSubstitution))
     {
+      //DebugAlways("found " << variantTerm);
       //
       //	Deep copy to protect variant substitution from GC during the folding and reduction.
       //

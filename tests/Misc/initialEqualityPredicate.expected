@@ -1,0 +1,79 @@
+==========================================
+reduce in DECOMPOSE : X .=. X .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in DECOMPOSE : X .=. Y .
+rewrites: 0
+result Bool: X .=. Y
+==========================================
+reduce in DECOMPOSE : f(X, Y) .=. f(Y, Z) .
+rewrites: 1
+result Bool: Z .=. Y and X .=. Y
+==========================================
+reduce in DECOMPOSE : f(X, Y) .=. f(Y, X) .
+rewrites: 2
+result Bool: X .=. Y
+==========================================
+reduce in DECOMPOSE : X .=. f(X, Y) .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in DECOMPOSE : f(X, Y) .=. f(f(X, Y), Z) .
+rewrites: 3
+result Bool: false
+==========================================
+reduce in DECOMPOSE : f(X, Y) .=. g(W, Z) .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in DECOMPOSE : h(X, Y) .=. h(W, Z) .
+rewrites: 1
+result Bool: Z .=. Y and X .=. W
+==========================================
+reduce in DECOMPOSE : h(X, Y) .=. h(Y, X) .
+rewrites: 2
+result Bool: X .=. Y
+==========================================
+reduce in DECOMPOSE : h(X, Y) .=. i(W, Z) .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in DECOMPOSE : f(X, Y) .=. b(Z, W) .
+rewrites: 0
+result Bool: f(X, Y) .=. b(Z, W)
+==========================================
+reduce in DECOMPOSE : s^40(X) .=. s^100(X) .
+rewrites: 2
+result Bool: false
+==========================================
+reduce in DECOMPOSE : s^40(Y) .=. s^100(X) .
+rewrites: 1
+result Bool: Y .=. s^60(X)
+==========================================
+reduce in DECOMPOSE : s^10(X) .=. s^10(Y) .
+rewrites: 1
+result Bool: X .=. Y
+==========================================
+reduce in DECOMPOSE : c(A, B) .=. c(X, Y) .
+rewrites: 2
+result Bool: A .=. X and B .=. Y xor A .=. Y and B .=. X xor A .=. X and A .=.
+    Y and B .=. X and B .=. Y
+==========================================
+reduce in DECOMPOSE : c(A, X) .=. c(X, Y) .
+rewrites: 4
+result Bool: A .=. X and X .=. Y xor A .=. X and A .=. Y and X .=. Y xor A .=.
+    Y
+==========================================
+reduce in DECOMPOSE : c(Z, c(X, Y)) .=. c(X, Y) .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in DECOMPOSE : c(f(C, D), g(A, B)) .=. c(f(X, Y), g(W, Z)) .
+rewrites: 10
+result Bool: A .=. W and B .=. Z and C .=. X and Y .=. D
+==========================================
+reduce in DECOMPOSE : c(f(A, B), f(C, D)) .=. c(f(X, Y), g(W, Z)) .
+rewrites: 11
+result Bool: false
+Bye.

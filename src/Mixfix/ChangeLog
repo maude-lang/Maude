@@ -1,3 +1,782 @@
+2023-08-11  Steven Eker  <eker@pup>
+
+	* interpreter.cc (Interpreter::showSummary): added latex
+	support
+
+	* latexModulePrint.cc
+	(VisibleModule::latexShowSortsAndSubsorts): use longtable
+	rather than tabular
+	(VisibleModule::latexShowKinds): use \maudeBigIndent
+	(VisibleModule::latexShowSummary): added
+
+	* interpreter.cc (Interpreter::showKinds): added latex
+	support
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	latexShowKinds()
+
+	* latexModulePrint.cc (VisibleModule::latexShowKinds):
+	added
+
+	* interpreter.cc (Interpreter::showStrats): added latex
+	support
+	(Interpreter::showSds): added latex support
+	(Interpreter::showOps): added latex support
+
+	* latexCommand.cc (MaudeLatexBuffer::generateCommand): set
+	needNewline
+
+2023-08-10  Steven Eker  <eker@pup>
+
+	* interpreter.cc (Interpreter::showVars): support latex
+
+	* visibleModule.hh (class VisibleModule): updated decl for
+	latexShowVars() and made it public
+
+	* latexModulePrint.cc (VisibleModule::latexShowVars): take
+	indent arg
+	(VisibleModule::latexShowModule): pass indent arg to
+	latexShowVars()
+
+	* interpreter.cc (showProcessedView): reimplemented using
+	generateShow()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl
+	for View* version of generateShow()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): don't
+	output \par at the start of command
+	(MaudeLatexBuffer::generateCommand): don't output \par at
+	the start of command
+	(MaudeLatexBuffer::generateContinue): don't output \par at
+	the start of command
+	(MaudeLatexBuffer::generateShow): added View* version
+
+	* interpreter.cc (Interpreter::showModule): reimplemented
+	using generateShow()
+	(Interpreter::showSortsAndSubsorts): reimplemented using
+	generateShow()
+	(Interpreter::showMbs): ditto
+	(Interpreter::showEqs): ditto
+	(Interpreter::showRls): ditto
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateShow()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateShow): added
+
+	* narrowing.cc (Interpreter::narrowingCont): pass showFlag arg
+	to generateContinue()
+	(Interpreter::vuNarrowingCont): ditto
+
+	* search.cc (Interpreter::searchCont): pass showFlag arg
+	to generateContinue()
+
+	* srewrite.cc (Interpreter::sRewriteCont): pass showFlag arg
+	to generateContinue()
+	(Interpreter::dsRewriteCont): ditto
+
+	* erewrite.cc (Interpreter::eRewriteCont): pass showFlag arg
+	to generateContinue()
+
+	* execute.cc (Interpreter::rewriteCont): pass showFlag arg
+	to generateContinue()
+	(Interpreter::fRewriteCont): ditto
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decl
+	for generateContinue()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateContinue): take
+	showCommand argument; set needNewline
+
+	* latexResult.cc (MaudeLatexBuffer::generateNonResult): use
+	needNewline to decide whether to output a \newline
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): don't
+	output \newline
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSolutionNr):
+	only output \newline if needNewline
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added data
+	member need newline
+
+	* maudeLatexBuffer.cc: init needNewline
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): set
+	needNewline
+
+	* latexResult.cc (MaudeLatexBuffer::generateSearchNonResult):
+	use needNewline flag to decide whether to start a newline
+	(MaudeLatexBuffer::generateSearchResult): ditto
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): print
+	\newline after command
+
+	* latexResult.cc (MaudeLatexBuffer::generateSearchResult): put
+	\newline after rather than before solution
+	(MaudeLatexBuffer::generateSearchNonResult): don't print
+	\newline
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): handle
+	showCommand flag
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decl
+	for generateSearch()
+
+	* search.cc (Interpreter::search): pass showCommand flag to
+	generateSearch()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): deleted decls
+	for generateReduce(), generateRewrite(), generateFrewrite(),
+	generateErewrite(), generateSrewrite()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateReduce)
+	(MaudeLatexBuffer::generateRewrite)
+	(MaudeLatexBuffer::generateFrewrite)
+	(MaudeLatexBuffer::generateErewrite)
+	(MaudeLatexBuffer::generateSrewrite): deleted
+
+	* srewrite.cc (Interpreter::sRewrite): use generateCommand()
+	rather than generateSrewrite()
+
+	* erewrite.cc (Interpreter::eRewrite): use generateCommand()
+	rather than generateErewrite()
+
+	* execute.cc (Interpreter::reduce): use generateCommand()
+	rather than generateReduce()
+	(Interpreter::rewrite): use generateCommand()
+	rather than generateRewrite()
+	(Interpreter::fRewrite): use generateCommand()
+	rather than generateFrewrite()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): update decl
+	for generateCommand() and made it public
+
+	* latexCommand.cc (MaudeLatexBuffer::generateCommand): take
+	showCommand argument
+
+2023-08-09  Steven Eker  <eker@pup>
+
+	* search.cc (Interpreter::showSearchGraph): use
+	generateSearchGraph()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateSearchGraph()
+
+	* latexResult.cc (MaudeLatexBuffer::generateSearchGraph): added
+
+	* search.cc (Interpreter::showSearchPathLabels): use
+	generateSearchPathLabels()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl
+	for generateSearchPathLabels()
+
+	* latexResult.cc (MaudeLatexBuffer::generateSearchPath): use
+	\maudeEndCommand
+	(MaudeLatexBuffer::generateSearchPathLabels): added
+
+2023-08-08  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc (VisibleModule::latexPrintRule): don't
+	enclose rule in $s if indent is null
+
+	* search.cc (Interpreter::showSearchPath): use
+	generateSearchPath()
+
+	* latexResult.cc (MaudeLatexBuffer::generateSearchPath): added
+
+	* visibleModule.hh (class VisibleModule): updated decls for
+	latexPrintMembershipAxiom(), latexShowMbs(), latexPrintEquation(),
+	latexPrintRule(), latexShowRls()
+
+	* latexModulePrint.cc (VisibleModule::latexPrintMembershipAxiom):
+	made const
+	(VisibleModule::latexShowMbs): made const
+	(VisibleModule::latexPrintEquation): made const
+	(VisibleModule::latexShowEqs): made const
+	(VisibleModule::latexPrintRule): made const
+	(VisibleModule::latexShowRls): made const
+
+	* visibleModule.hh (class VisibleModule): made latexPrintRule()
+	public
+	(class VisibleModule): made latexPrintAttributes() static
+
+	* latexModulePrint.cc (VisibleModule::latexPrintRule): only
+	start a new line if indent is non-null
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::eqRewrite): check that both
+	symbols are non-special before returning notEqual
+
+	* specialSymbolTypes.cc: deleted DecomposeEqualitySymbol
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): deleted
+	DecomposeEqualitySymbol
+
+	* mixfix.hh: deleted class DecomposeEqualitySymbol
+
+	* decomposeEqualitySymbol.cc: deleted
+
+	* decomposeEqualitySymbol.hh: deleted
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::hasImmediateSubterm): fix
+	bugs where we were comparing pointers rather than using equal();
+	handle iter theory
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): update decl for
+	decomose()
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::decompose): handle iter
+	theory; remove const because we need to place our own symbol
+	in the new dag node
+
+2023-08-07  Steven Eker  <eker@pup>
+
+	* decomposeEqualitySymbol.cc
+	(DecomposeEqualitySymbol::decompose): only handle commutative
+	case if disjunctionSymbol is defined
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::decompose): only handle
+	commutative case if disjunctionSymbol is defined
+
+	* decomposeEqualitySymbol.hh (class DecomposeEqualitySymbol):
+	updated decl for decompose(); made hasImmediateSubterm() const
+
+	* decomposeEqualitySymbol.cc (DecomposeEqualitySymbol::decompose):
+	handle commutative case, made const
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): updated decl for
+	decompose(); made hasImmediateSubterm() static
+
+	* commutativeDecomposeEqualitySymbol.cc: init disjunctionSymbol
+	(CommutativeDecomposeEqualitySymbol::attachSymbol): attach
+	disjunctionSymbol
+	(CommutativeDecomposeEqualitySymbol::copyAttachments): copy
+	disjunctionSymbol
+	(CommutativeDecomposeEqualitySymbol::getSymbolAttachments):
+	handle disjunctionSymbol
+	(CommutativeDecomposeEqualitySymbol::decompose): added support
+	for CUI_Symbol
+	(CommutativeDecomposeEqualitySymbol::decompose): made const
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): added decl for
+	hasImmediateSubterm(), make decompose() private
+	(class CommutativeDecomposeEqualitySymbol): added data member
+	disjunctionSymbol
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::hasImmediateSubterm): added
+	(CommutativeDecomposeEqualitySymbol::eqRewrite): use
+	hasImmediateSubterm()
+
+	* decomposeEqualitySymbol.hh (class DecomposeEqualitySymbol):
+	make decompose() private
+
+	* decomposeEqualitySymbol.cc (DecomposeEqualitySymbol): init
+	disjunctionSymbol
+	(DecomposeEqualitySymbol::attachSymbol): attach disjunctionSymbol
+	(DecomposeEqualitySymbol::copyAttachments): copy
+	disjunctionSymbol
+	(DecomposeEqualitySymbol::getSymbolAttachments): handle
+	disjunctionSymbol
+	(DecomposeEqualitySymbol::hasImmediateSubterm): added
+	(DecomposeEqualitySymbol::eqRewrite): use hasImmediateSubterm()
+
+	* decomposeEqualitySymbol.hh (class DecomposeEqualitySymbol):
+	added data member disjunctionSymbol
+
+2023-08-04  Steven Eker  <eker@pup>
+
+	* narrowing.cc (Interpreter::doVuNarrowing): call cleanUp()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	Vector<DagNode*>& version of generateSubstitution()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSubstitution):
+	added Vector<DagNode*>& version
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	NarrowingVariableInfo& version of generateSubstitution()
+
+	* narrowing.cc (Interpreter::doVuNarrowing): added latex support
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSubstitution):
+	added NarrowingVariableInfo& version
+
+	* narrowing.cc (Interpreter::doVuNarrowing): use new printStats()
+	(Interpreter::vuNarrowingCont):  call
+	MaudeLatexBuffer::generateContinue()
+
+	* maudeLatexBuffer.hh (MaudeLatexBuffer::generateHeading): added
+
+	* narrowing.cc (Interpreter::narrowingCont): call
+	MaudeLatexBuffer::generateContinue()
+
+	* search.cc (Interpreter::searchCont): call
+	MaudeLatexBuffer::generateContinue()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): delete decl for
+	generateDag()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateDag): deleted
+
+	* latexCommand.cc (MaudeLatexBuffer::generateCommand): don't
+	start pendingClose with \n
+	(MaudeLatexBuffer::generateContinue): don't start pending close
+	with \n
+
+	* latexResult.cc (MaudeLatexBuffer::generateResult): use
+	MixfixModule::latexPrintDagNode() instead of generateDag()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): moved here
+	(MaudeLatexBuffer::generateCommand): moved here
+	(MaudeLatexBuffer::generateCommand): print $ after \par; use
+	MixfixModule::latexPrintDagNode() rather than generateDag()
+	(MaudeLatexBuffer::generateContinue): moved here
+	(MaudeLatexBuffer::generateReduce): moved here
+	(MaudeLatexBuffer::generateRewrite): moved here
+	(MaudeLatexBuffer::generateFrewrite): moved here
+	(MaudeLatexBuffer::generateErewrite): moved here
+	(MaudeLatexBuffer::generateSrewrite): moved here
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): deleted decls
+	for generateTiming() and old version of generateStats()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateTiming): deleted
+	(MaudeLatexBuffer::generateStats): deleted old version
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decls
+	for generateSearchResult(), generateSearchNonResult()
+
+	* search.cc (Interpreter::doSearching): use new
+	generateSearchNonResult() convention
+	(Interpreter::doSearching): use new generateSearchResult()
+	convention
+
+	* latexResult.cc (MaudeLatexBuffer::generateStats): moved
+	new version here
+	(MaudeLatexBuffer::generateNonResult): moved here
+	(MaudeLatexBuffer::generateResult): moved here
+	(MaudeLatexBuffer::generateSearchNonResult): moved here; use new
+	generateStats()
+	(MaudeLatexBuffer::generateSearchResult): moved here; use new
+	generateStats()
+	(MaudeLatexBuffer::generateStats): output extra space after nrStates
+
+	* narrowing.cc (Interpreter::doNarrowing): use new
+	generateNonResult() convention
+	(Interpreter::doNarrowing): use new generateStats()
+	(Interpreter::doNarrowing): use new printStats() (2 places)
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decl for
+	generateNonResult()
+
+	* srewrite.cc (Interpreter::doStrategicSearch): use new
+	generateNonResult() convention
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateNonResult): take
+	cpuTime and realTime; use new generateStats()
+
+	* srewrite.cc (Interpreter::doStrategicSearch): use new printStats()
+	and new generateResult() convention
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decl for
+	generateResult()
+
+	* execute.cc (Interpreter::endRewriting): call cleanUp(); use new
+	generateResult() conventions
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateResult): redesigned
+	to take cpuTime and realTime rather than timer
+
+	* execute.cc (Interpreter::endRewriting): rewritten to use
+	new printStats()
+
+	* interpreter.hh (class Interpreter): added decl for new
+	printStats()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	new generateStats()
+
+	* execute.cc (Interpreter::printStats): added new version that
+	takes cpuTime and realTime
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateTiming): fixed
+	bug where we were dividing real by 100 rather than 1000
+	(MaudeLatexBuffer::generateStats): added new version that takes
+	cpuTime and realTime
+
+2023-08-03  Steven Eker  <eker@pup>
+
+	* narrowing.cc (Interpreter::doNarrowing): call generateStats()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): made generateStats()
+	public
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSearch): call
+	Tty::unblockEscapeSequences()
+
+	* narrowing.cc (Interpreter::doNarrowing): call cleanUp()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateState()
+
+	* narrowing.cc (Interpreter::doNarrowing): use generateNonResult(),
+	generateWarning(), generateSolutionNr(), generateState(),
+	generateSubstitution()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSolutionNr): use
+	\maudeNumber{}
+	(MaudeLatexBuffer::generateState): added
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateWarning()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateWarning): added
+
+	* search.cc (Interpreter::doSearching): call generateSubstitution()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateSubstitution()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSearch): don't
+	start pendingClose with \n
+	(MaudeLatexBuffer::generateSearchNonResult)
+	(MaudeLatexBuffer::generateSearchResult): pass nrStates to
+	generateStats()
+	(MaudeLatexBuffer::generateSearch): print \begin{maudeResultParagraph}
+	(MaudeLatexBuffer::generateSubstitution): added
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decl for
+	generateStats()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSearchNonResult):
+	added
+	(MaudeLatexBuffer::generateSearchResult): added
+	(MaudeLatexBuffer::generateSearch): \maudeKeyWord -> \maudeKeyword
+	(MaudeLatexBuffer::generateSearch): added \maudeSpace after :
+	(MaudeLatexBuffer::generateStats): handle nrStates
+
+	* search.cc (Interpreter::doSearching): use
+	generateSearchNonResult(), generateSearchResult()
+	(Interpreter::doSearching): call cleanUp()
+
+2023-08-02  Steven Eker  <eker@pup>
+
+	* search.cc (Interpreter::search): use latexBuffer->generateSearch()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateSearch()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSearch): added
+
+	* visibleModule.hh (class VisibleModule): made latexPrintCondition()
+	public
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrintDagNode): added
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexPrintDagNode()
+
+2023-08-01  Steven Eker  <eker@pup>
+
+	* interpreter.cc (Interpreter::updateSet): fixed bug where range
+	erase() was used to delete a range from a set other than *this
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): deleted decl for
+	generateModifiers()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateCommand): use
+	\maudeEndCommand
+	(MaudeLatexBuffer::generateContinue): use \maudeEndCommand
+	(MaudeLatexBuffer::generateModifiers): deleted
+
+	* latexModulePrint.cc (VisibleModule::latexPrintMembershipAxiom)
+	(VisibleModule::latexPrintEquation)
+	(VisibleModule::latexPrintRule): start math mode just after \par
+	(VisibleModule::latexPrintStrategyDecl)
+	(VisibleModule::latexPrintStrategyDefinition): start math mode just
+	after \par
+	(VisibleModule::latexShowImports): start math mode just after \par
+	(VisibleModule::latexShowSorts): typeset whole line in math mode
+	(VisibleModule::latexShowVars): start math mode just after \par
+	(VisibleModule::latexShowDecls): start math mode just after \par
+	(VisibleModule::latexShowSubsorts): typeset whole line in math mode
+	(VisibleModule::latexShowPolymorphDecl): start math mode just after
+	\par
+
+	* srewrite.cc (Interpreter::sRewriteCont): call generateContinue()
+	(Interpreter::dsRewriteCont): call generateContinue()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): made generateType(),
+	generateDag(), generateModifiers(), generateCommand() private
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateResult): use
+	cleanUp()
+	(MaudeLatexBuffer::generateNonResult): don't handle pendingClose
+
+	* srewrite.cc (Interpreter::doStrategicSearch): call cleanUp()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): made
+	generateStats(), generateTiming() private
+
+	* srewrite.cc (Interpreter::doStrategicSearch): use
+	MaudeLatexBuffer::generateNonResult()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateCommand): pass
+	command by reference
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateNonResult()
+	(class MaudeLatexBuffer): updated decl for generateCommand()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateNonResult): added
+
+	* execute.cc (Interpreter::endRewriting): pass result to
+	MaudeLatexBuffer::generateResult()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decl for
+	generateResult()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateResult): take
+	result argument
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateSrewrite()
+
+	* srewrite.cc (Interpreter::sRewrite): add latex support
+	(Interpreter::doStrategicSearch): add latex support
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decl for
+	generateCommand()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateCommand): take
+	strategy argument
+	(MaudeLatexBuffer::generateSrewrite): added
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decl for
+	generateResult()
+	(class MaudeLatexBuffer): added decl for generateSolutionNr()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateResult): take
+	finished argument
+	(MaudeLatexBuffer::generateSolutionNr): added
+
+	* execute.cc (Interpreter::endRewriting): deleted commented out
+	test of serialization code
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateContinue): put
+	comment outside of \begin{maudeResultParagraph}
+	(MaudeLatexBuffer::generateCommand): put comment outside of
+	\begin{maudeResultParagraph}
+
+	* execute.cc (Interpreter::endRewriting): use cleanUp()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateResult): output
+	pendingClose
+	(MaudeLatexBuffer::generateCommand): set pendingClose
+	(MaudeLatexBuffer::generateContinue): set pendingClose
+	(~MaudeLatexBuffer): output pendingClose
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added data member
+	pendingClose
+	(MaudeLatexBuffer::cleanUp): added
+
+2023-07-31  Steven Eker  <eker@pup>
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decls for
+	generateReduce(), generateContinue(), generateRewrite(),
+	generateFrewrite(), generateErewrite()
+
+	* erewrite.cc (Interpreter::eRewrite): echo debug modifier, both
+	in regular output and latex
+	(Interpreter::eRewriteCont): echo debug modifier in latex
+
+	* execute.cc (Interpreter::reduce, Interpreter::rewrite)
+	(Interpreter::fRewrite): echo debug modifier, both in regular
+	output and latex
+	(Interpreter::rewriteCont, Interpreter::fRewriteCont): echo debug
+	modifier in latex
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateReduce)
+	(MaudeLatexBuffer::generateRewrite)
+	(MaudeLatexBuffer::generateFrewrite)
+	(MaudeLatexBuffer::generateErewrite)
+	(MaudeLatexBuffer::generateContinue): handle debug flag
+
+	* visibleModule.hh (class VisibleModule): made latexPrintStrategy()
+	public
+
+	* latexViewPrint.cc (SyntacticView::latexShowProcessedView): handle
+	strat to expr mappings
+
+	* latexRenaming.cc (Renaming::latexRenaming): handle strat mappings;
+	handle attr mappings with sorts
+
+2023-07-28  Steven Eker  <eker@pup>
+
+	* visibleModule.hh (class VisibleModule): updated decl for
+	latexPrintStrategy()
+
+	* latexStrategyPrint.cc (VisibleModule::latexPrintStrategy): made
+	const
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	latexPrintStrategyTerm()
+
+	* latexTermPrint.cc (MixfixModule::latexPrintStrategyTerm): made
+	const
+
+	* visibleModule.hh (class VisibleModule): made latexPrintStrategy()
+	non-static
+
+	* latexStrategyPrint.cc (VisibleModule::latexPrintStrategy): finished
+	implementation
+
+	* visibleModule.hh (class VisibleModule): made
+	latexPrintConditionFragment() and latexPrintCondition() (both
+	versions) static
+
+	* latexStrategyPrint.cc (VisibleModule::latexPrintStrategy): renamed
+	from latexPrettyPrint and moved from class MixfixModule to class
+	VisibleModule
+
+	* latexTermPrint.cc (MixfixModule::latexPrintStrategyTerm): moved
+	here
+
+	* latexStrategyPrint.cc (MixfixModule::latexPrintStrategyTerm):
+	use simpler latexPrettyPrint()
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	latexPrettyPrint() (StrategyExpression* version)
+
+	* latexModulePrint.cc (VisibleModule::latexPrintEquation): use
+	simpler latexPrettyPrint() (2 places)
+	(VisibleModule::latexPrintRule): use simpler latexPrettyPrint() (2
+	places)
+	(VisibleModule::latexShowAttributes): use simpler
+	latexPrettyPrint() (2 places)
+	(VisibleModule::latexShowPolymorphAttributes): use simpler
+	latexPrettyPrint() (2 places)
+	(VisibleModule::latexPrintMembershipAxiom): use simpler
+	latexPrettyPrint()
+	(VisibleModule::latexPrintConditionFragment): use simpler
+	lexPrettyPrint() (7 places)
+
+2023-07-27  Steven Eker  <eker@pup>
+
+	* mixfixModule.hh (class MixfixModule): added decl for Strategy*
+	version of latexPrettyPrint()
+	(class MixfixModule): added decl for latexPrintStrategyTerm()
+
+	* latexStrategyPrint.cc: created
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	latexPrintStrategyDefinition()
+
+	* latexModulePrint.cc (VisibleModule::latexPrintStrategyDefinition):
+	added
+
+	* visibleModule.hh (class VisibleModule): added decl for
+	latexPrintStrategyDecl()
+
+	* latexModulePrint.cc (VisibleModule::latexShowRls)
+	(VisibleModule::latexShowEqs, VisibleModule::latexShowMbs): use
+	size()
+	(VisibleModule::latexShowDecls): code cleaning
+	(VisibleModule::latexShowPolymorphDecl): code cleaning
+	(VisibleModule::latexPrintStrategyDecl): added
+	(VisibleModule::latexShowImportscode): cleaning
+
+	* visibleModule.hh (class VisibleModule): added decls for
+	latexShowStrats(), latexShowSds()
+
+	* latexModulePrint.cc (VisibleModule::latexShowStrats): added
+	(VisibleModule::latexShowSds): added
+	(VisibleModule::latexShowModule): call latexShowStrats() and
+	latexShowSds()
+
+	* decomposeEqualitySymbol.cc
+	(DecomposeEqualitySymbol::domainSortAlwaysLeqThan): added comment
+	(DecomposeEqualitySymbol::decompose): code cleaning
+	(DecomposeEqualitySymbol::attachSymbol): code cleaning
+	(DecomposeEqualitySymbol::postInterSymbolPass): code cleaning
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::domainSortAlwaysLeqThan):
+	added comment
+	(CommutativeDecomposeEqualitySymbol::decompose): code cleaning
+
+	* decomposeEqualitySymbol.cc
+	(DecomposeEqualitySymbol::eqRewrite): only consider decomposition
+	if conjunctionSymbol is defined
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::eqRewrite): only consider
+	decomposition if conjunctionSymbol is defined
+
+2023-07-26  Steven Eker  <eker@pup>
+
+	* specialSymbolTypes.cc: added CommutativeDecomposeEqualitySymbol
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): added
+	CommutativeDecomposeEqualitySymbol
+
+	* symbolType.hh (class SymbolType): added
+	COMMUTATIVE_DECOMPOSE_EQUALITY_SYMBOL to BasicTypes
+
+	* mixfix.hh: added class CommutativeDecomposeEqualitySymbol
+
+	* commutativeDecomposeEqualitySymbol.cc: created
+
+	* commutativeDecomposeEqualitySymbol.hh: created
+
+	* decomposeEqualitySymbol.hh: fix comment
+
+2023-07-25  Steven Eker  <eker@pup>
+
+	* decomposeEqualitySymbol.cc (DecomposeEqualitySymbol::decompose):
+	use getPolymorphIndex()
+	(DecomposeEqualitySymbol::DecomposeEqualitySymbol): fix bug where
+	we were forgetting to initialized conjunctionSymbol
+
+	* mixfixModule.hh (getPolymorphIndex): added
+	(getSymbolType): made argument const
+
+	* decomposeEqualitySymbol.hh (class DecomposeEqualitySymbol):
+	added decl for decompose()
+
+	* decomposeEqualitySymbol.cc (DecomposeEqualitySymbol::decompose):
+	added
+
+	* mixfix.hh: added class DecomposeEqualitySymbol
+
+	* decomposeEqualitySymbol.cc (DecomposeEqualitySymbol::eqRewrite):
+	only support standard, eager strategy
+
+2023-07-24  Steven Eker  <eker@pup>
+
+	* decomposeEqualitySymbol.cc: added
+
+	* decomposeEqualitySymbol.hh: added
+
+	* symbolType.hh (class SymbolType): added
+	DECOMPOSE_EQUALITY_SYMBOL
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): added
+	DecomposeEqualitySymbol
+
+	* specialSymbolTypes.cc: added DecomposeEqualitySymbol
+
+===================================Maude151===========================================
+
 2023-07-21  Steven Eker  <eker@pup>
 
 	* latexModulePrint.cc (VisibleModule::latexShowModule): use

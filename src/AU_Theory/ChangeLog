@@ -1,3 +1,12 @@
+2023-07-24  Steven Eker  <eker@pup>
+
+	* AU_Symbol.cc (AU_Symbol::termify): cast to const AU_BaseDagNode*
+	(AU_Symbol::determineGround): added
+
+	* AU_Symbol.hh (class AU_Symbol): added decl for determineGround()
+
+===================================Maude151===========================================
+
 2023-06-02  Steven Eker  <eker@pup>
 
 	* AU_Normalize.cc (AU_DagNode::normalizeAtTop): replace FOR_EACH_CONST with

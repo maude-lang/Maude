@@ -80,6 +80,7 @@
 #include "rewriteConditionFragment.hh"
 #include "rewriteSequenceSearch.hh"
 #include "pattern.hh"
+#include "narrowingSequenceSearch3.hh"
 
 //	strategy language class definitions
 #include "strategyLanguage.hh"
@@ -101,12 +102,18 @@
 #include "quotedIdentifierSymbol.hh"
 #include "quotedIdentifierTerm.hh"
 #include "quotedIdentifierDagNode.hh"
-#include "mixfixModule.hh"
+#include "visibleModule.hh"
+#include "interpreter.hh"
 #include "maudeLatexBuffer.hh"
+
+//	our stuff
+#include "latexCommand.cc"
+#include "latexResult.cc"
 
 MaudeLatexBuffer::MaudeLatexBuffer(const char* fileName)
 : output(fileName)
 {
+  needNewline = false;
   output << "\\documentclass{article}\n";
   output << "\\usepackage[top=30pt,bottom=50pt,left=30pt,right=30pt]{geometry}\n";
   output << "\\usepackage{maude}\n";
@@ -115,7 +122,7 @@ MaudeLatexBuffer::MaudeLatexBuffer(const char* fileName)
 
 MaudeLatexBuffer::~MaudeLatexBuffer()
 {
-  output << "\\end{document}\n";
+  output << pendingClose << "\\end{document}\n";
 }
 
 void
@@ -132,83 +139,18 @@ MaudeLatexBuffer::generateBanner(const char* date, const char* time, time_t seco
 }
 
 void
-MaudeLatexBuffer::generateDag(DagNode* dagNode)
-{
-  MixfixModule::latexPrettyPrint(output, dagNode);
-}
-
-void
 MaudeLatexBuffer::generateModuleName(Module* module)
 {
   output << "\\maudeModule{" << Token::latexName(module->id()) << "}";
 }
 
 void
-MaudeLatexBuffer::generateModifiers(Module* module, Int64 number, Int64 number2)
+MaudeLatexBuffer::generateSolutionNr(int64_t solutionNr)
 {
-  if (number != NONE || number2 != NONE)
-    {
-      output  << "[";
-      if (number != NONE)
-	output << "\\maudeNumber{" << number << "}";
-      if (number2 != NONE)
-	output << ", \\maudeNumber{" << number2 << "}";
-      output  << "] ";
-    }
-  output << "\\maudeKeyword{in} \\maudeModule{" << Token::latexName(module->id()) <<
-    "} \\maudePunctuation{:}\n";
-}
-
-void
-MaudeLatexBuffer::generateResult(RewritingContext& context,
-				 const Timer& timer,
-				 bool showStats,
-				 bool showTiming,
-				 bool showBreakdown)
-{
-  if (showStats)
-    generateStats(context, timer, showTiming, showBreakdown);
-  output << "\\par\\maudeResponse{result}\n";
-  generateType(context.root()->getSort());
-  output << "\\maudePunctuation{:}\n";
-  generateDag(context.root());
-  output << "\n\\end{maudeResultParagraph}\n";
-}
-
-void
-MaudeLatexBuffer::generateStats(RewritingContext& context,
-				const Timer& timer,
-				bool showTiming,
-				bool showBreakdown)
-{
-  Int64 nrRewrites = context.getTotalCount();
-  output << "\\par\\maudeResponse{rewrites:} \\maudeNumber{" << nrRewrites << "}";
-  Int64 real;
-  Int64 virt;
-  Int64 prof;
-  if (showTiming && timer.getTimes(real, virt, prof))
-    generateTiming(nrRewrites, prof, real);
-  if (showBreakdown)
-    {
-      output << "\\par\\maudeResponse{mb applications:} \\maudeNumber{" << context.getMbCount() << "}\n" <<
-	"\\hspace{0.5em}\\maudeResponse{equational rewrites:} \\maudeNumber{" << context.getEqCount() << "}\n" <<
-	"\\hspace{0.5em}\\maudeResponse{rule rewrites:} \\maudeNumber{" << context.getRlCount() << "}\n" <<
-	"\\hspace{0.5em}\\maudeResponse{variant narrowing steps:} \\maudeNumber{" << context.getVariantNarrowingCount() << "}\n" <<
-	"\\hspace{0.5em}\\maudeResponse{narrowing steps:} \\maudeNumber{" << context.getNarrowingCount() << "}\n";
-    }
-}
-
-void
-MaudeLatexBuffer::generateTiming(Int64 nrRewrites, Int64 cpu, Int64 real)
-{
-  output << " \\maudeResponse{in} \\maudeNumber{" << cpu / 1000 <<
-    "} \\maudeResponse{ms cpu} \\maudePunctuation{(}\\maudeNumber{" <<
-    real / 100 << "} \\maudeResponse{ms real}\\maudePunctuation{)} \\maudePunctuation{(}\\maudeNumber{";
-  if (cpu > 0)
-    output << (1000000 * nrRewrites) / cpu;
-  else
-    output << "\\textasciitilde";
-  output << "} \\maudeResponse{rewrites/second}\\maudePunctuation{)}\n";
+  if (needNewline)
+    output << "\\newline";
+  output << "\\par\\maudeResponse{Solution }\\maudeNumber{" << solutionNr << "}\n";
+  needNewline = true;
 }
 
 void
@@ -222,64 +164,80 @@ MaudeLatexBuffer::generateType(Sort* sort)
   output << "$" << MixfixModule::latexType(sort) << "$";
 }
 
-
 void
-MaudeLatexBuffer::generateCommand(const string command, DagNode* subject, Int64 number, Int64 number2)
+MaudeLatexBuffer::generateSubstitution(const Substitution& substitution,
+				       const VariableInfo& varInfo,
+				       const NatSet& ignoredIndices)
 {
-  Module* module = subject->symbol()->getModule();
-  
-  Tty::blockEscapeSequences();
-  output << "\\begin{maudeResultParagraph}\n\\begin{comment}\n  " << command << " ";
-  safeCastNonNull<MixfixModule*>(module)->printModifiers(output, number, number2);
-  output << subject << " .\n\\end{comment}\n";
-  Tty::unblockEscapeSequences();
-
-  output << "\\par\\maudeKeyword{" << command << "} ";
-  if (number != NONE || number2 != NONE)
+  int nrVars = varInfo.getNrRealVariables();
+  bool printedVariable = false;
+  for (int i = 0; i < nrVars; ++i)
     {
-      output << "\\maudePunctuation{[}";
-      if (number != NONE)
-	output << "\\maudeNumber{" << number << "}";
-      if (number2 != NONE)
-	output << "\\maudePunctuation{,} \\maudeNumber{" << number2 << "}";
-      output << "\\maudePunctuation{]} ";
+      if (ignoredIndices.contains(i))
+	continue;
+
+      Term* v = varInfo.index2Variable(i);
+      DagNode* d = substitution.value(i);
+      Assert(v != 0, "null variable");
+
+      output << "\\par$";
+      MixfixModule::latexPrettyPrint(output, v);
+      output << "\\maudeIsAssigned";
+      if (d == 0)
+	output << "\\maudeMisc{(unbound)}\n";
+      else
+	MixfixModule::latexPrintDagNode(output, d);
+      output << "$\n";
+      printedVariable = true;
     }
-  output << "\\maudeKeyword{in} \\maudeModule{" << Token::latexName(module->id()) <<
-    "} \\maudePunctuation{:}\n";
-  generateDag(subject);
-  output << " \\maudePunctuation{.}\n";
+  if (!printedVariable)
+    output << "\\par\\maudeMisc{empty substitution}\n";
 }
 
 void
-MaudeLatexBuffer::generateReduce(DagNode* subject)
+MaudeLatexBuffer::generateSubstitution(const Substitution& substitution,
+				       const NarrowingVariableInfo& varInfo)
 {
-  generateCommand("reduce", subject);
+  int nrVariables = substitution.nrFragileBindings();
+  for (int i = 0; i < nrVariables; ++i)
+    {
+      DagNode* v = varInfo.index2Variable(i);
+      DagNode* b = substitution.value(i);
+      output << "\\par$";
+      MixfixModule::latexPrintDagNode(output, v);
+      output << "\\maudeIsAssigned";
+      MixfixModule::latexPrintDagNode(output, b);
+      output << "$\n";
+    }
 }
 
 void
-MaudeLatexBuffer::generateRewrite(DagNode* subject, Int64 limit)
+MaudeLatexBuffer::generateSubstitution(const Vector<DagNode*>& substitution,
+				       const NarrowingVariableInfo& variableInfo)
 {
-  generateCommand("rewrite", subject, limit);
+  Index nrVariables = substitution.size();
+  for (Index i = 0; i < nrVariables; ++i)
+    {
+      DagNode* v = variableInfo.index2Variable(i);
+      DagNode* b = substitution[i];
+      output << "\\par$";
+      MixfixModule::latexPrintDagNode(output, v);
+      output << "\\maudeIsAssigned";
+      MixfixModule::latexPrintDagNode(output, b);
+      output << "$\n";
+    }
 }
 
 void
-MaudeLatexBuffer::generateFrewrite(DagNode* subject, Int64 limit, Int64 gas)
+MaudeLatexBuffer::generateWarning(const char* message)
 {
-  generateCommand("frewrite", subject, limit, gas);
-
+  output << "\\par\\color{red}\\maudeResponse{Warning: }\\color{black}\\maudeMisc{" << message << "}\n";
 }
 
 void
-MaudeLatexBuffer::generateErewrite(DagNode* subject, Int64 limit, Int64 gas)
+MaudeLatexBuffer::generateState(DagNode* stateDag)
 {
-  generateCommand("erewrite", subject, limit, gas);
-}
-
-void
-MaudeLatexBuffer::generateContinue(Int64 limit)
-{
-  Tty::blockEscapeSequences();
-  output << "\\begin{maudeResultParagraph}\n\\begin{comment}\n  continue " << limit << " .\n\\end{comment}\n";
-  Tty::unblockEscapeSequences();
-  output << "\\par\\maudeKeyword{continue} \\maudeNumber{" << limit << "} \\maudePunctuation{.}\n";
+  output << "\\par$\\maudeResponse{state:}\\maudeSpace";
+  MixfixModule::latexPrintDagNode(output, stateDag);
+  output << "$\n";
 }

@@ -74,12 +74,15 @@ SyntacticView::latexShowProcessedView(ostream& s)
       MixfixModule::latexPrettyPrint(s, i.second.second);
       s << "$\\maudeEndStatement\n";
     }
-
-    /* FIXME
   for (const auto& j : getStratExprMap())
-    s << "  strat " << j.second.call << " to expr " << j.second.value << " .\n";
-    */
-
+    {
+      const VisibleModule* vm = safeCastNonNull<const VisibleModule*>(toModule);
+      s << "\\par\\maudeIndent\\maudeKeyword{strat} $";
+      vm->latexPrintStrategy(s, j.second.call);
+      s << "\\maudeSpace\\maudeKeyword{to expr}\\maudeSpace";
+      vm->latexPrintStrategy(s, j.second.value);
+      s << "$\\maudeEndStatement\n";
+    }
   s << "\\par\\maudeKeyword{endv}\n";
   //
   //	Restore original variable aliases. Check that we didn't generate parsers.

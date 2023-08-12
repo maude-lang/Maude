@@ -332,6 +332,16 @@ S_Symbol::termify(DagNode* dagNode)
   return new S_Term(this, d->getNumber(), a->symbol()->termify(a));
 }
 
+bool
+S_Symbol::determineGround(DagNode* dagNode)
+{
+  S_DagNode* d = safeCastNonNull<S_DagNode*>(dagNode);
+  if (!(d->getArgument()->determineGround()))
+    return false;
+  dagNode->setGround();
+  return true;
+}
+
 //
 //	Unification code.
 //

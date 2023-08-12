@@ -23,34 +23,6 @@
 //
 //	Term* -> ostream& LaTeX pretty printer.
 //
-#if 0
-void
-MixfixModule::latexPrettyPrint(ostream& s, Terms* term)
-{
-  if (dagNode == 0)
-    {
-      s << "\\maudeMisc{(null DagNode*)}";
-      return;
-    }
-  MixfixModule* module = static_cast<MixfixModule*>(dagNode->symbol()->getModule());
-  if (interpreter.getPrintFlag(Interpreter::PRINT_GRAPH))
-    /*module->latexGraphPrint(s, dagNode)*/;
-  else
-    {
-      globalIndent = 0;
-      s << "$";
-      MixfixModule::ColoringInfo coloringInfo;
-      if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
-	{
-	  MixfixModule::computeGraphStatus(dagNode, coloringInfo.visited, coloringInfo.statusVec);
-	  coloringInfo.reducedAbove = false;
-	  coloringInfo.reducedDirectlyAbove = false;
-	}
-      module->latexPrettyPrint(s, coloringInfo, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
-      s << "$";
-    }
-}
-#endif
 
 void
 MixfixModule::latexPrettyPrint(ostream& s, Term* term)
@@ -58,6 +30,24 @@ MixfixModule::latexPrettyPrint(ostream& s, Term* term)
   globalIndent = 0;
   MixfixModule* module = safeCastNonNull<MixfixModule*>(term->symbol()->getModule());
   module->latexPrettyPrint(s, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+}
+
+void
+MixfixModule::latexPrintStrategyTerm(ostream& s, RewriteStrategy* rs, Term* term) const
+{
+  s << Token::latexIdentifier(rs->id());
+  if (rs->arity() > 0 || ruleLabels.find(rs->id()) != ruleLabels.end())
+    {
+      s << "\\maudeLeftParen";
+      const char* sep = "";
+      for (ArgumentIterator it(*term); it.valid(); it.next())
+	{
+	  s << sep;
+	  latexPrettyPrint(s, it.argument());
+	  sep = "\\maudeComma";
+	}
+      s << "\\maudeRightParen";
+    }
 }
 
 const char*

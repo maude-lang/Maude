@@ -74,7 +74,7 @@ rewrite in FOO : a .
 rewrites: 1
 result Foo: b
 ==========================================
-rewrite in COUNTER-TEST3 : f(4) .
+debug rewrite in COUNTER-TEST3 : f(4) .
 *********** equation
 eq f(s N) = counter f(N) .
 N --> 3
@@ -124,7 +124,7 @@ result Zero: 0
 rewrites: 9
 result List: 0 1 1 2
 ==========================================
-frewrite in COUNTER-TEST3 : f(4) .
+debug frewrite in COUNTER-TEST3 : f(4) .
 *********** equation
 eq f(s N) = counter f(N) .
 N --> 3

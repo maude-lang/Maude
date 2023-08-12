@@ -160,6 +160,10 @@ public:
   //
   virtual bool isStable() const = 0;
   //
+  //	Checks if dagNode is ground; believes set ground flags and disregards clear ground flags.
+  //
+  virtual bool determineGround(DagNode* dagNode) = 0;
+  //
   //	Symbols that can resolved theory clashes (typically by collapsing) should
   //	redefined this to return true and be ready to handle alien right hand sides
   //	by restricted unification in unification problem passed to their unification

@@ -212,8 +212,7 @@ DagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
 bool
 DagNode::computeSolvedForm(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
 {
-  DebugInfo("\nlhs = " << this << " rhs = " << rhs);
-  //cout << this << " =? " << rhs << endl;
+  DebugEnter("\nlhs = " << this << "  rhs = " << rhs);
   //
   //	If we are nonground we dispatch the theory specific algorithm.
   //
@@ -235,8 +234,7 @@ DagNode::computeSolvedForm(DagNode* rhs, UnificationContext& solution, PendingUn
 bool
 DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending)
 {
-  DebugAdvisory("DagNode::computeSolvedForm2() " << this << " vs " << rhs);
-
+  DebugEnter("\nlhs= " << this << "  rhs = " << rhs);
   if (isGround())
     {
       //
@@ -262,8 +260,7 @@ DagNode::computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingU
   //	If rhs is nonground then its theory should have been given the problem.
   //	And we just handle the variable rhs case above.
   //	
-  CantHappen("unimplemted theory this = " << this << "   rhs = " << rhs);
-  //IssueWarning("Unification modulo the theory of operator " << QUOTE(this->topSymbol) << " is not currently supported.");
+  CantHappen("unimplemented theory this = " << this << "  rhs = " << rhs);
   return false;
 }
 
@@ -287,7 +284,6 @@ DagNode::computeGeneralizedSort(const SortBdds& sortBdds,
 }
 
 // experimental code
-
 void
 DagNode::computeGeneralizedSort2(const SortBdds& sortBdds,
 				 const Vector<int>& realToBdd,

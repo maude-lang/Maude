@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,8 +34,7 @@
 bool Timer::osTimersStarted = false;
 
 local_inline Int64
-Timer::calculateMicroseconds(const itimerval& startTime,
-			     const itimerval& stopTime)
+Timer::calculateMicroseconds(const itimerval& startTime, const itimerval& stopTime)
 {
   const Int64 M = 1000000;
   Int64 usec = startTime.it_value.tv_usec - stopTime.it_value.tv_usec +
@@ -48,6 +47,8 @@ Timer::calculateMicroseconds(const itimerval& startTime,
 void
 Timer::startOsTimers()
 {
+  //
+  //	We let the OS timers run continuously and just sample them.
   //
   //	It would be nice to keep track of cycles for correct handling of
   //	very long time intervals, but this seems hard without introducing
@@ -88,6 +89,9 @@ Timer::start()
     {
       if (!osTimersStarted)
 	startOsTimers();
+      //
+      //	We get new start times.
+      //
       running = true;
       getitimer(ITIMER_REAL, &realStartTime);
       getitimer(ITIMER_VIRTUAL, &virtStartTime);
@@ -102,6 +106,9 @@ Timer::stop()
 {
   if (running && valid)
     {
+      //
+      //	We accumulate the microseconds since last start().
+      //
       itimerval realStopTime;
       itimerval virtStopTime;
       itimerval profStopTime;
@@ -122,6 +129,9 @@ Timer::getTimes(Int64& real, Int64& virt, Int64& prof) const
 {
   if (valid)
     {
+      //
+      //	We return the accumulated times plus any time since last start() if we are running.
+      //
       real = realAcc;
       virt = virtAcc;
       prof = profAcc;

@@ -52,6 +52,7 @@ libmixfix_a_SOURCES = \
 	quotedIdentifierDagNode.cc \
 	quotedIdentifierTerm.cc \
 	quotedIdentifierOpSymbol.cc \
+	commutativeDecomposeEqualitySymbol.cc \
 	mixfixModule.cc \
 	token.cc \
 	global.cc \
@@ -188,7 +189,10 @@ EXTRA_DIST = \
 	latexViewPrint.cc \
 	latexToken.cc \
 	latexRenaming.cc \
-	latexImportModule.cc
+	latexImportModule.cc \
+	latexStrategyPrint.cc \
+	latexResult.cc \
+	latexCommand.cc
 
 noinst_HEADERS = \
 	renaming.hh \
@@ -223,6 +227,7 @@ noinst_HEADERS = \
 	quotedIdentifierOpSymbol.hh \
 	quotedIdentifierSymbol.hh \
 	quotedIdentifierTerm.hh \
+	commutativeDecomposeEqualitySymbol.hh \
 	symbolType.hh \
 	token.hh \
 	userLevelRewritingContext.hh \
