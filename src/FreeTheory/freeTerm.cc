@@ -314,12 +314,18 @@ FreeTerm::findActiveSlots(NatSet& slots)
   bool active = false;
   for (int i = 0; i < nrArgs; i++)
     {
-      FreeTerm* f = dynamic_cast<FreeTerm*>(argArray[i]);
-      if (f != 0 && f->visitedFlag)
+      Term *t = argArray[i];
+      if (t != 0 && t->free())
 	{
-	  f->findActiveSlots(slots);
-	  if (f->getSaveIndex() != NONE)
-	    active = true;
+	  FreeTerm* f = static_cast<FreeTerm*>(t);
+	  if (f->visitedFlag)
+	    {
+	      f->findActiveSlots(slots);
+	      if (f->getSaveIndex() != NONE)
+	        active = true;
+	    }
+          else
+            active = true;
 	}
       else
 	active = true;
