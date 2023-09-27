@@ -83,6 +83,7 @@ FreeTerm::FreeTerm(FreeSymbol* symbol, const Vector<Term*>& arguments)
     argArray[i] = arguments[i];
   slotIndex = -1;
   visitedFlag = false;
+  markFree();
 }
 
 FreeTerm::FreeTerm(const FreeTerm& original, FreeSymbol* symbol, SymbolMap* translator)
@@ -94,6 +95,7 @@ FreeTerm::FreeTerm(const FreeTerm& original, FreeSymbol* symbol, SymbolMap* tran
     argArray[i] = original.argArray[i]->deepCopy(translator);
   slotIndex = -1;
   visitedFlag = false;
+  markFree();
 }
 
 FreeTerm::~FreeTerm()

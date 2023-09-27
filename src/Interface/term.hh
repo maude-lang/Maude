@@ -64,6 +64,7 @@ public:
   Symbol* symbol() const;
   bool ground() const;
   bool stable() const;
+  bool free() const;
   const NatSet& occursBelow() const;
   const NatSet& occursInContext() const;
   const PointerSet& collapseSymbols() const;
@@ -242,6 +243,7 @@ protected:
   void addCollapseSymbols(const PointerSet& symbols);
   void setHashValue(unsigned int value);
   void setSaveIndex(int index);
+  void markFree();
   
 private:
   enum Flags
@@ -260,7 +262,11 @@ private:
     //	never to to return a matching subproblem when all the terms variables
     //	are already bound.
     //
-    HONORS_GROUND_OUT_MATCH = 4
+    HONORS_GROUND_OUT_MATCH = 4,
+    //
+    // A subterm is free if its symbol is part of the free theory.
+    //
+    FREE = 8
   };
 
   static bool commonWithOtherPatterns(Vector<Term*>& patterns, int excluded, Symbol* symbol);
@@ -308,6 +314,18 @@ inline bool
 Term::stable() const
 {
   return flags & STABLE;
+}
+
+inline bool
+Term::free() const
+{
+  return flags & FREE;
+}
+
+inline void
+Term::markFree()
+{
+  flags |= FREE;
 }
 
 inline const NatSet&
