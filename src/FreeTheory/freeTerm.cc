@@ -285,12 +285,12 @@ FreeTerm::locateSubterm2(Vector<int>& position)
   int nrSteps = position.length();
   for (int i = 0; i < nrSteps; i++)
     {
-      FreeTerm* f = dynamic_cast<FreeTerm*>(t);
-      if (f == 0)
+      if (t == 0 || !t->free())
 	{
 	  position.contractTo(i);
 	  return t;
 	}
+      FreeTerm* f = static_cast<FreeTerm*>(t);
       int p = position[i];
       if (p >= f->symbol()->arity())
 	{
