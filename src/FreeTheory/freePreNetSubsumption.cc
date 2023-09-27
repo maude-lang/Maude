@@ -43,18 +43,18 @@ FreePreNet::subsumesWrtReducedFringe(Term* subsumer,
       //	We haven't reached the fringe so we must be in part of the term that
       //	has been matched on our current arc.
       //
-      if (FreeTerm* sf = dynamic_cast<FreeTerm*>(subsumer))
+      if (subsumer != 0 && subsumer->free())
 	{
+          FreeTerm* sf = static_cast<FreeTerm*>(subsumer);
 	  //
 	  //	Current position is not at or below reduced fringe and subsumer
 	  //	subterm has a free symbol on top.
 	  //	Therefore this free symbol will have been matched in
 	  //	the subject and we may be able to do better than naive subsumption.
 	  //
-	  FreeTerm* vf = dynamic_cast<FreeTerm*>(victim);
-	  if (vf != 0)
+	  if (victim != 0 && victim->free())
 	    {
-	      Assert(sf->symbol() == vf->symbol(), "free symbol clash");
+	      Assert(sf->symbol() == victim->symbol(), "free symbol clash");
 	      //
 	      //	victim subterm has the same free symbol on top; check if
 	      //	subsumers arguments subsume victims arguments.
@@ -113,7 +113,7 @@ FreePreNet::subsumesWrtReducedFringe(Term* subsumer,
       //	We haven't reached the fringe so we must be in part of the term that
       //	has been matched on our current arc.
       //
-      if (dynamic_cast<FreeTerm*>(subsumer) != 0)
+      if (subsumer != 0 && subsumer->free())
 	{
 	  Symbol* symbol = subsumer->symbol();
 	  int nrArgs = symbol->arity();
