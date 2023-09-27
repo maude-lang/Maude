@@ -123,11 +123,16 @@ FreePreNet::setVisitedFlags(const LiveSet& liveSet,
 {
   for (int i : liveSet)
     {
-      if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[i].term))
+      Term *t = patterns[i].term;
+      if (t != 0 && t->free())
 	{
-	  Term* t = f->locateSubterm(position);
-	  if (t != 0 && (f = dynamic_cast<FreeTerm*>(t)) != 0)
-	    f->setVisitedFlag(state);
+	  FreeTerm* f = static_cast<FreeTerm*>(t);
+	  t = f->locateSubterm(position);
+	  if (t != 0 && t->free())
+	    {
+	      f = static_cast<FreeTerm*>(t);
+	      f->setVisitedFlag(state);
+	    }
 	}
     }
 }
