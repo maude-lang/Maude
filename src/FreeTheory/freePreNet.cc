@@ -221,8 +221,7 @@ FreePreNet::makeNode(const LiveSet& liveSet,
       //	prevents a quadratic blow up on certain examples with
       //	huge pattern set.
       //
-      int totalSymbols = topSymbol->getModule()->getSymbols().size();
-      Vector<LiveSet> liveSets(totalSymbols);
+      std::map<int, LiveSet> liveSets;
       LiveSet defaultLiveSet;
       partitionLiveSet(liveSet,
 		       positionIndex,
@@ -382,7 +381,7 @@ void
 FreePreNet::partitionLiveSet(const LiveSet& original,
 			     int positionIndex,
 			     const Vector<Arc>& arcs,
-			     Vector<LiveSet>& liveSets,
+			     std::map<int, LiveSet>& liveSets,
 			     LiveSet& defaultLiveSet)
 {
   const Vector<int>& position = positions.index2Position(positionIndex);  // safe because we won't add new positions

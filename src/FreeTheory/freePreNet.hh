@@ -168,7 +168,7 @@ private:
   void partitionLiveSet(const LiveSet& original,
 			int positionIndex,
 			const Vector<Arc>& arc,
-			Vector<LiveSet>& liveSets,
+			std::map<int, LiveSet>& liveSets,
 			LiveSet& defaultLiveSet);
   bool partiallySubsumed(const LiveSet& liveSet,
 			 int victim,
