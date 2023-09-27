@@ -267,9 +267,9 @@ FreeTerm::locateSubterm(const Vector<int>& position, int backup)
   int nrSteps = position.length() - backup;
   for (int i = 0; i < nrSteps; i++)
     {
-      FreeTerm* f = dynamic_cast<FreeTerm*>(t);
-      if (f == 0)
+      if (t == 0 || !t->free())
 	return 0;
+      FreeTerm* f = static_cast<FreeTerm*>(t);
       int p = position[i];
       if (p >= f->symbol()->arity())
 	return 0;
