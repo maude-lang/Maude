@@ -359,9 +359,19 @@ Interpreter::parse(const Vector<Token>& subject)
   Term* s = currentModule->getFlatModule()->parseTerm(subject);
   if (s != 0)
     {
+      bool showCommand = getFlag(SHOW_COMMAND);
+      if (latexBuffer != 0)
+	latexBuffer->generateCommand(showCommand, "parse", s);
+
       if (s->getSortIndex() == Sort::SORT_UNKNOWN)
 	s->symbol()->fillInSortInfo(s);
       cout << s->getSort() << ": " << s << '\n';
+      if (latexBuffer != 0)
+	{
+	  latexBuffer->generateResult(s);
+	  latexBuffer->cleanUp();
+	}
+
       s->deepSelfDestruct();
     }
 }
@@ -422,6 +432,15 @@ Interpreter::showModules(bool all) const
   showNamedModules(cout);
   if (all)
     showCreatedModules(cout);
+  if (latexBuffer)
+    {
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show modules");
+      ostream& s = latexBuffer->getStream();
+      latexShowNamedModules(s);
+      if (all)
+	latexShowCreatedModules(s);
+      latexBuffer->cleanUp();
+    }
 }
 
 void
@@ -430,6 +449,15 @@ Interpreter::showViews(bool all) const
   showNamedViews(cout);
   if (all)
     showCreatedViews(cout);
+  if (latexBuffer)
+    {
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show views");
+      ostream& s = latexBuffer->getStream();
+      latexShowNamedViews(s);
+      if (all)
+	latexShowCreatedViews(s);
+      latexBuffer->cleanUp();
+    }
 }
 
 void

@@ -312,7 +312,7 @@ result NarrowingApplyResult?: (failure).NarrowingApplyResult?
 ==========================================
 reduce in META-LEVEL : metaNarrowingApply(['XOR-TEST], 'f['g['_+_['W:Expr,
     'b.Elt]],'Z:Expr], '_+_['W:Expr,'b.Elt], '#, delay filter, 0) .
-rewrites: 31
+rewrites: 19
 result NarrowingApplyResult: {
   'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr],'Expr,
   'f[[],'Z:Expr],

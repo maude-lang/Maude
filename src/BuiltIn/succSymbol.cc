@@ -138,7 +138,7 @@ SuccSymbol::makeNatDag64(uint_fast64_t nat)
   //
   unsigned long low = nat & 0xFFFFFFFF;
   unsigned long high = nat >> 32;
-  const mpz_class number(high);
+  mpz_class number(high);
   number = (number << 32) + low;
   return (nat == 0) ? zero : (new S_DagNode(this, number, zero));
 #endif

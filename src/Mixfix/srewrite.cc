@@ -64,7 +64,7 @@ Interpreter::sRewrite(const Vector<Token>& subjectAndStrategy, Int64 limit, bool
       string command = depthSearch ? "dsrewrite" : "srewrite";
       if (debug)
 	command = "debug " + command;
-      latexBuffer->generateCommand(showCommand, command, subjectDag, limit, depthSearch, strategy);
+      latexBuffer->generateCommand(showCommand, command, subjectDag, limit, NONE, strategy);
     }
   
   startUsingModule(fm);
@@ -111,11 +111,12 @@ Interpreter::doStrategicSearch(Timer& timer,
       Int64 virt = 0;
       Int64 prof = 0;
       bool showTiming = getFlag(SHOW_TIMING) && timer.getTimes(real, virt, prof);
+      bool showStats = getFlag(SHOW_STATS);
       if (d == 0)
 	{
 	  const char* reply = (solutionCount > 0 ? "No more solutions." : "No solution.");
 	  cout << "\n" << reply << endl;
-	  if (getFlag(SHOW_STATS))
+	  if (showStats)
 	    printStats(*context, prof, real, showTiming);
 	  if (latexBuffer != 0)
 	    {
@@ -123,7 +124,7 @@ Interpreter::doStrategicSearch(Timer& timer,
 					     reply,
 					     prof,
 					     real,
-					     getFlag(SHOW_STATS),
+					     showStats,
 					     showTiming,
 					     getFlag(SHOW_BREAKDOWN));
 	    }
@@ -132,8 +133,8 @@ Interpreter::doStrategicSearch(Timer& timer,
 
       ++solutionCount;
       cout << "\nSolution " << solutionCount << '\n';
-      if (getFlag(SHOW_STATS))
-	printStats(timer, *context, getFlag(SHOW_TIMING));
+      if (showStats)
+	printStats(*context, prof, real, showTiming);
       cout << "result " << d->getSort() << ": " << d << '\n';
       if (xmlBuffer != 0)
 	{
@@ -150,7 +151,7 @@ Interpreter::doStrategicSearch(Timer& timer,
 				      d,
 				      prof,
 				      real,
-				      getFlag(SHOW_STATS),
+				      showStats,
 				      showTiming,
 				      getFlag(SHOW_BREAKDOWN));
 	}

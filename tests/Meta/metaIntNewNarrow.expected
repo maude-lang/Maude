@@ -481,11 +481,11 @@ result Configuration: <> < me : User | soln: 13, got: (gotOneStepNarrowing(me,
 erewrite in NARROW-TEST2 : <> < me : User | start: ('f['g['_+_['W:Expr,
     'b.Elt]],'Z:Expr]), irred: ('_+_['W:Expr,'b.Elt]) > createInterpreter(
     interpreterManager, me, none) .
-rewrites: 40
-mb applications: 0  equational rewrites: 4  rule rewrites: 3  variant narrowing
-    steps: 32  narrowing steps: 1
+rewrites: 28
+mb applications: 0  equational rewrites: 3  rule rewrites: 3  variant narrowing
+    steps: 21  narrowing steps: 1
 result Configuration: <> < me : User | soln: 2, got: gotOneStepNarrowing(me,
-    interpreter(0), 29, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
+    interpreter(0), 17, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
     'Z:Expr], 'one, 
   'W:Expr <- '_+_['a.Elt,'@1:Expr] ; 
   'Z:Expr <- '@2:Expr, 
@@ -496,16 +496,16 @@ result Configuration: <> < me : User | soln: 2, got: gotOneStepNarrowing(me,
 erewrite in NARROW-TEST2 : <> < me : User | start: ('f['g['_+_['W:Expr,
     'b.Elt]],'Z:Expr]), irred: ('_+_['X:Expr,'b.Elt]) > createInterpreter(
     interpreterManager, me, none) .
-rewrites: 112
-mb applications: 0  equational rewrites: 5  rule rewrites: 4  variant narrowing
-    steps: 101  narrowing steps: 2
+rewrites: 97
+mb applications: 0  equational rewrites: 4  rule rewrites: 4  variant narrowing
+    steps: 87  narrowing steps: 2
 result Configuration: <> < me : User | soln: 3, got: (gotOneStepNarrowing(me,
-    interpreter(0), 71, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
+    interpreter(0), 59, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
     'Z:Expr], 'one, 
   'W:Expr <- '_+_['a.Elt,'@1:Expr] ; 
   'Z:Expr <- '@2:Expr, 
   'Y:Expr <- '_+_['b.Elt,'@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 31, 'f['g['h['%1:Expr]],'%2:Expr], 'Expr, 'f['g[[]],'Z:Expr], 'one, 
+    0), 28, 'f['g['h['%1:Expr]],'%2:Expr], 'Expr, 'f['g[[]],'Z:Expr], 'one, 
   'W:Expr <- '_+_['b.Elt,'g['_+_['a.Elt,'%1:Expr]]] ; 
   'Z:Expr <- '%2:Expr, 
   'Y:Expr <- '%1:Expr, '%)), start: ('f['g['_+_['W:Expr,'b.Elt]],'Z:Expr]),
@@ -514,16 +514,16 @@ result Configuration: <> < me : User | soln: 3, got: (gotOneStepNarrowing(me,
 erewrite in NARROW-TEST2 : <> < me : User | start: ('f['g['_+_['#1:Expr,
     'b.Elt]],'#2:Expr]), irred: ('_+_['#3:Expr,'b.Elt]) > createInterpreter(
     interpreterManager, me, none) .
-rewrites: 112
-mb applications: 0  equational rewrites: 5  rule rewrites: 4  variant narrowing
-    steps: 101  narrowing steps: 2
+rewrites: 97
+mb applications: 0  equational rewrites: 4  rule rewrites: 4  variant narrowing
+    steps: 87  narrowing steps: 2
 result Configuration: <> < me : User | soln: 3, got: (gotOneStepNarrowing(me,
-    interpreter(0), 71, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
+    interpreter(0), 59, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
     '#2:Expr], 'one, 
   '#1:Expr <- '_+_['a.Elt,'@1:Expr] ; 
   '#2:Expr <- '@2:Expr, 
   'Y:Expr <- '_+_['b.Elt,'@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 31, 'f['g['h['%1:Expr]],'%2:Expr], 'Expr, 'f['g[[]],'#2:Expr], 'one, 
+    0), 28, 'f['g['h['%1:Expr]],'%2:Expr], 'Expr, 'f['g[[]],'#2:Expr], 'one, 
   '#1:Expr <- '_+_['b.Elt,'g['_+_['a.Elt,'%1:Expr]]] ; 
   '#2:Expr <- '%2:Expr, 
   'Y:Expr <- '%1:Expr, '%)), start: ('f['g['_+_['#1:Expr,'b.Elt]],'#2:Expr]),
@@ -1050,9 +1050,9 @@ mb applications: 0  equational rewrites: 0  rule rewrites: 0  variant narrowing
     steps: 140  narrowing steps: 0
 ==========================================
 filtered variant unify in NARROW : A:ElemXor * B:ElemXor =? X * Y .
-rewrites: 2439
-mb applications: 0  equational rewrites: 296  rule rewrites: 0  variant
-    narrowing steps: 2143  narrowing steps: 0
+rewrites: 1995
+mb applications: 0  equational rewrites: 215  rule rewrites: 0  variant
+    narrowing steps: 1780  narrowing steps: 0
 
 Unifier 1
 A:ElemXor --> #2:ElemXor * #4:ElemXor
@@ -1407,11 +1407,11 @@ result Configuration: <> < me : User | soln: 58, got: (gotOneStepNarrowing(me,
 erewrite in NARROW-TEST2 : <> < me : User | start: ('_*_['A:ElemXor,
     'B:ElemXor]), irred: empty > createInterpreter(interpreterManager, me,
     none) .
-rewrites: 2273
-mb applications: 0  equational rewrites: 227  rule rewrites: 3  variant
-    narrowing steps: 2042  narrowing steps: 1
+rewrites: 1837
+mb applications: 0  equational rewrites: 150  rule rewrites: 3  variant
+    narrowing steps: 1683  narrowing steps: 1
 result Configuration: <> < me : User | soln: 2, got: gotOneStepNarrowing(me,
-    interpreter(0), 2268, 'f['_*_['%1:`[ElemXor`],'%2:ElemXor,'%4:ElemXor],
+    interpreter(0), 1832, 'f['_*_['%1:`[ElemXor`],'%2:ElemXor,'%4:ElemXor],
     '_*_['%1:`[ElemXor`],'%3:ElemXor,'%5:ElemXor]], '`[ElemXor`], [], 'one, 
   'A:ElemXor <- '_*_['%2:ElemXor,'%3:ElemXor] ; 
   'B:ElemXor <- '_*_['%4:ElemXor,'%5:ElemXor], 

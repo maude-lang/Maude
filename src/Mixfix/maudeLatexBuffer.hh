@@ -44,12 +44,45 @@ public:
   //
   //	Functions to start latex for commands.
   //
+  void generateCommand(bool showCommand, const string& command, Term* subject);
   void generateCommand(bool showCommand,
 		       const string& command,
 		       DagNode* subject,
 		       Int64 number = NONE,
 		       Int64 number2 = NONE,
 		       StrategyExpression* strategy = 0);
+  
+  void generateUnify(bool showCommand,
+		     bool irredundant,
+		     Vector<Term*> lhs,
+		     Vector<Term*> rhs,
+		     int64_t limit);
+  void generateMatch(bool showCommand,
+		     bool withExtension,
+		     Term* pattern,
+		     DagNode* subject,
+		     const Vector<ConditionFragment*>& condition,
+		     int64_t limit);
+  void generateGetVariants(bool showCommand,
+			   bool irredundant,
+			   DagNode* dag,
+			   Vector<Term*> constraint,
+			   int64_t limit,
+			   bool debug);
+  void generateVariantUnify(bool showCommand,
+			    bool filtered,
+			    Vector<Term*> lhs,
+			    Vector<Term*> rhs,
+			    Vector<Term*> constraint,
+			    int64_t limit,
+			    bool debug);
+  void generateVariantMatch(bool showCommand,
+			    Vector<Term*> lhs,
+			    Vector<Term*> rhs,
+			    Vector<Term*> constraint,
+			    int64_t limit,
+			    bool debug);
+
   void generateSearch(bool showCommand,
 		      Interpreter::SearchKind searchKind,
 		      DagNode* subject,
@@ -60,9 +93,10 @@ public:
 		      int64_t limit,
 		      int64_t depth,
 		      bool debug);
-  void generateContinue(bool showCommand, Int64 limit, bool debug);
+  void generateContinue(bool showCommand, Int64 limit, bool debug = false);
   void generateShow(bool showCommand, const string& command, Module* module);
   void generateShow(bool showCommand, const string& command, View* module);
+  void generateShow(bool showCommand, const string& command);
   //
   //	Functions to print results.
   //
@@ -73,6 +107,7 @@ public:
 		     bool showTiming,
 		     bool showBreakdown,
 		     int64_t nrStates = NONE);
+  void generateResult(Term* result);
   void generateResult(RewritingContext& context,
 		      DagNode* result,
 		      int64_t cpuTime,
@@ -101,6 +136,10 @@ public:
 			    bool showStats,
 			    bool showTiming,
 			    bool showBreakdown);
+  void generateDecisionTime(int64_t cpuTime, int64_t realTime);
+  void generateNonResult(const string& message);
+  void generateResult(const string& message, int64_t solutionNr);
+  void generateMatchResult(MatchSearchState* state, int64_t matchNr);
   //
   //	Commands for interogating a search graph.
   //
@@ -125,12 +164,15 @@ public:
   void generateSubstitution(const Vector<DagNode*>& substitution,
 			    const NarrowingVariableInfo& variableInfo);
 
-
+  void generateVariant(const Vector<DagNode*>& variant, const NarrowingVariableInfo& variableInfo);
+  
   void generateWarning(const char* message);
+  void generateAdvisory(const char* message);
   void cleanUp();
 
 private:
   void generateType(Sort* sort);
+  void generateModifiers(Module* module, int64_t  number = NONE, int64_t  number2 = NONE);
 
   ofstream output;
   string pendingClose;

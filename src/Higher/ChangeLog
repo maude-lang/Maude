@@ -1,3 +1,42 @@
+2023-09-25  Steven Eker  <eker@pup>
+
+	* variantSearch.cc (VariantSearch::VariantSearch): deleted commented
+	out code which deleted the substitution part of the variant in the
+	subsumption case since we still need it for termination purposes
+	(VariantSearch::isSubsumed): deleted commented out version
+
+2023-09-22  Steven Eker  <eker@pup>
+
+	* variantSearch.cc (VariantSearch::VariantSearch): init variantCollection
+
+	* variantFolder.cc (VariantFolder::VariantFolder): handle ignoreSubsitution
+	arugment
+	(VariantFolder::subsumes): use ignoreSubsitution to determine which dags
+	to check
+
+	* variantFolder.hh (class VariantFolder): updated decl for
+	findNextVariantThatMatches()
+	(class VariantFolder): added data member ignore subsitution; updated
+	decl for ctor
+
+	* variantFolder.cc (VariantFolder::findNextVariantThatMatches): made const
+
+	* variantSearch.cc (VariantSearch::isSubsumed): reimplemented to use
+	variant matching infrastructure
+	(VariantSearch::VariantSearch): keep accumulated substitution in the
+	SUBSUMPTION_MODE case so that reducibility checks can be used to
+	terminate search
+
+2023-09-20  Steven Eker  <eker@pup>
+
+	* filteredVariantUnifierSearch.hh (class FilteredVariantUnifierSearch): update
+	comment to agree with the change that we no longer always pass the
+	IRREDUNDANT_MODE flag to the base VariantSearch
+	(class FilteredVariantUnifierSearch): added override declarations to document
+	that we are just overriding the base functionality
+
+===================================Maude152===========================================
+
 2023-05-08  Steven Eker  <eker@pup>
 
 	* variantFolder.cc (VariantFolder::insertVariant): removed commented out

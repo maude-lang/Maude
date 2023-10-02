@@ -1,3 +1,9 @@
+2023-10-02  Steven Eker  <eker@pup>
+
+	* tests/ResolvedBugs/filteredVariantUnifyJune2023.maude: added
+
+==================================Maude152===========================================
+
 2023-05-12  Steven Eker  <eker@pup>
 
 	* tests/ObjectOriented/prngTest.maude: added

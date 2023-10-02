@@ -126,35 +126,7 @@ private:
   };
 
   typedef map<NodeIndex, NodeBody> NodeMap;
-  /*
-  struct Node
-  {
-    LiveSet liveSet;	// set of indices to live patterns 
-    NatSet reducedFringe;	// set of indices to positions in reduced fringe
-    NatSet positionsTested;	// set of indices to positions tested on all paths to this node
-    Vector<Arc> sons;	// exiting arcs, empty denotes terminal node
-    union
-    {
-      int neqTarget;	// exiting arc for ? case in test node
-      int nextPattern;  // sole exiting arc in remainder node
-    };
-    union
-    {
-      int testPositionIndex;	// test position in test node
-      int patternIndex;		// pattern index in remainder node
-    };
-    Vector<Pair> slotMap;
-    //
-    //	Only used for semi-compiler.
-    //
-    int freeNetIndex;
-    //
-    //	Only used for full compiler.
-    //
-    int nrParents;
-    int nrVisits;
-  };
-  */
+
   int makeNode(const LiveSet& liveSet,
 	       const NatSet& reducedFringe,
 	       const NatSet& positionsTested);

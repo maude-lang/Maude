@@ -56,6 +56,7 @@
 //
 //	C++ stuff.
 //
+#include <typeinfo> 
 #include <cstdint> 
 #include <cstring>
 #include <new>

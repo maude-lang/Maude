@@ -265,7 +265,8 @@ private:
   DagNode* makeDag(const Vector<Token>& subject);
   void startUsingModule(VisibleModule* module);
   void printModifiers(Int64 number, Int64 number2);
-  void printStats(const Timer& timer, RewritingContext& context, bool timingFlag = false);
+  void printStats(const Timer& timer, RewritingContext& context, bool timingFlag);
+  void printStats(const Timer& timer, RewritingContext& context);
   void printStats(RewritingContext& context,
 		  int64_t cpuTime,
 		  int64_t realTime,
@@ -320,8 +321,7 @@ private:
 			    Int64 solutionCount,
 			    Int64 limit);
   void variantUnifyCont(Int64 limit, bool debug);
-  void doVariantMatching(Timer& timer,
-			 VisibleModule* module,
+  void doVariantMatching(VisibleModule* module,
 			 VariantSearch* state,
 			 Int64 solutionCount,
 			 Int64 limit);
@@ -340,7 +340,6 @@ private:
 			 Int64 limit,
 			 bool depthSearch);
   void printDecisionTime(const Timer& timer);
-  void printSearchTiming(const Timer& timer,  RewriteSequenceSearch* state);
   void doMatching(Timer& timer,
 		  VisibleModule* module,
 		  MatchSearchState* state,

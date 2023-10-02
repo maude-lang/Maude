@@ -30,16 +30,6 @@
 #include "narrowing.cc"
 #include "smtSearch.cc"
 
-void
-Interpreter::printSearchTiming(const Timer& timer,  RewriteSequenceSearch* state)
-{
-  if (getFlag(SHOW_STATS))
-    {
-      cout << "states: " << state->getNrStates() << "  ";
-      printStats(timer, *(state->getContext()), getFlag(SHOW_TIMING));
-    }
-}
-
 bool
 Interpreter::checkSearchRestrictions(SearchKind searchKind,
 				     int searchType,
@@ -302,11 +292,13 @@ Interpreter::doSearching(Timer& timer,
       Int64 virt = 0;
       Int64 prof = 0;
       bool showTiming = getFlag(SHOW_TIMING) && timer.getTimes(real, virt, prof);
+      bool showStats = getFlag(SHOW_STATS);
       if (!result)
 	{
 	  const char* reply = (solutionCount == 0) ? "No solution." : "No more solutions.";
 	  cout << "\n" << reply << endl;
-	  printSearchTiming(timer, state);
+	  if (showStats)
+	    printStats(*(state->getContext()), prof, real, showTiming, state->getNrStates());
 	  if (xmlBuffer != 0)
 	    {
 	      xmlBuffer->generateSearchResult(NONE,
@@ -322,7 +314,7 @@ Interpreter::doSearching(Timer& timer,
 						   reply,
 						   prof,
 						   real,
-						   getFlag(SHOW_STATS),
+						   showStats,
 						   showTiming,
 						   getFlag(SHOW_BREAKDOWN));
 	    }
@@ -331,7 +323,8 @@ Interpreter::doSearching(Timer& timer,
 
       ++solutionCount;
       cout << "\nSolution " << solutionCount << " (state " << state->getStateNr() << ")\n";
-      printSearchTiming(timer, state);
+      if (showStats)
+	printStats(*(state->getContext()), prof, real, showTiming, state->getNrStates());
       UserLevelRewritingContext::printSubstitution(*(state->getSubstitution()), *variableInfo);
       if (xmlBuffer != 0)
 	{
@@ -348,7 +341,7 @@ Interpreter::doSearching(Timer& timer,
 					    solutionCount,
 					    prof,
 					    real,
-					    getFlag(SHOW_STATS),
+					    showStats,
 					    showTiming,
 					    getFlag(SHOW_BREAKDOWN));
 	  latexBuffer->generateSubstitution(*(state->getSubstitution()), *variableInfo);

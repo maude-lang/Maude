@@ -204,3 +204,13 @@ ViewCache::showCreatedViews(ostream& s) const
       DebugInfo(Token::name(i.second->getCleanName()));
     }
 }
+
+void
+ViewCache::latexShowCreatedViews(ostream& s) const
+{
+  //
+  //	We display true name rather than cleanName.
+  //
+  for (const auto& i : viewMap)
+    s << "\\par$\\maudeKeyword{view}\\maudeSpace" << i.second->latexViewExpression(true) << "$\n";
+}

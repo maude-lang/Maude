@@ -179,7 +179,7 @@ public:
 						   const Vector<Term*>& values,
 						   ImportTranslation* translation);
 
-  string latexModuleExpression() const;
+  string latexModuleExpression(bool parameterBrackets = false) const;
 
 private:
   enum Phase
@@ -293,6 +293,10 @@ private:
 
   const Origin origin;
   Phase importPhase;
+  //
+  //	If we are a parameter copy of a theory, this is our parameter name.
+  //
+  int parameterCopyParameterName;
   //
   //	These are the names of our parameters and the associated parameter
   //	theory copies. If we have a parameter X of theory TRIV then

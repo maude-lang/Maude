@@ -123,11 +123,12 @@ FreePreNet::setVisitedFlags(const LiveSet& liveSet,
 {
   for (int i : liveSet)
     {
-      if (FreeTerm* f = dynamic_cast<FreeTerm*>(patterns[i].term))
+      Term* l = patterns[i].term;
+      if (typeid(*l) == typeid(FreeTerm))
 	{
-	  Term* t = f->locateSubterm(position);
-	  if (t != 0 && (f = dynamic_cast<FreeTerm*>(t)) != 0)
-	    f->setVisitedFlag(state);
+	  Term* t = static_cast<FreeTerm*>(l)->locateSubterm(position);
+	  if (t != nullptr && typeid(*t) == typeid(FreeTerm))
+	    static_cast<FreeTerm*>(t)->setVisitedFlag(state);
 	}
     }
 }
@@ -139,13 +140,10 @@ FreePreNet::allocateSlot(const LiveSet& liveSet,
 {
   int slot = slots.makeElement();
   conflicts.expandBy(1);
-  Assert(slot == conflicts.length() - 1,
-	 "slot/conflict data structures out of sync");
+  Assert(slot == conflicts.length() - 1, "slot/conflict data structures out of sync");
 
-  // cerr << symbol << endl;
   for (int patternIndex : liveSet)
     {
-      // cerr << patterns[*i].term << endl;
       Term* pattern = patterns[patternIndex].term;
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(pattern))
 	{
@@ -164,7 +162,7 @@ FreePreNet::allocateSlot(const LiveSet& liveSet,
 			 " equations belonging to " << topSymbol <<
 			 "\n original slot = " << originalSlot <<
 			 " while new slot is = " << slot << " ; this will break union-find");
-		  slots.formUnion(slot, originalSlot);   // PROBLEM: originalSlot is 2 but slot is 1
+		  slots.formUnion(slot, originalSlot);
 		}
 	    }
 	  f->findActiveSlots(conflicts[slot]);

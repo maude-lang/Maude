@@ -31,7 +31,8 @@ Interpreter::getVariants(const Vector<Token>& bubble, Int64 limit, bool irredund
     return;
 
   DagNode* d = makeDag(initial);
-  if (getFlag(SHOW_COMMAND))
+  bool showCommand = getFlag(SHOW_COMMAND);
+  if (showCommand)
     {
       UserLevelRewritingContext::beginCommand();
       if (debug)
@@ -53,6 +54,15 @@ Interpreter::getVariants(const Vector<Token>& bubble, Int64 limit, bool irredund
 	    }
 	  cout << " irreducible ." << endl;
 	}
+    }
+  if (latexBuffer != 0)
+    {
+      latexBuffer->generateGetVariants(showCommand,
+				       irredundant,
+				       d,
+				       constraint,
+				       limit,
+				       debug);
     }
 
   startUsingModule(fm);
@@ -87,7 +97,7 @@ Interpreter::getVariants(const Vector<Token>& bubble, Int64 limit, bool irredund
 	  //
 	  //	All computation is done upfront so there is only one time value.
 	  //
-	  printStats(timer, *context, getFlag(SHOW_TIMING));
+	  printStats(timer, *context);
 	}
       doGetVariants(timer, fm, vs, 0, limit);
     }
@@ -122,19 +132,30 @@ Interpreter::doGetVariants(Timer& timer,
 	break;
       
      if (!anotherVariant)
-	{ 
-	  cout << ((solutionCount == 0) ? "\nNo variants.\n" : "\nNo more variants.\n");
+	{
+	  const char* message = (solutionCount == 0) ? "No variants." : "No more variants.";
+	  cout << '\n' <<  message << '\n';
+	  if (latexBuffer)
+	    latexBuffer->generateNonResult(message);
 	  if (!irredundant)
-	    printStats(timer, *context, getFlag(SHOW_TIMING));
+	    printStats(timer, *context);
 	  if (state->isIncomplete())
-	    IssueWarning("Some variants may have been missed due to incomplete unification algorithm(s).");
+	    {
+	      const char* message = "Some variants may have been missed due to incomplete unification algorithm(s).";
+	      IssueWarning(message);
+	      if (latexBuffer)
+		latexBuffer->generateWarning(message);
+	    }
 	  break;
 	}
      
       ++solutionCount;
       cout << "\nVariant " << solutionCount << endl;
+      if (latexBuffer)
+	latexBuffer->generateResult("Variant", solutionCount);
+
       if (!irredundant)
-	printStats(timer, *context, getFlag(SHOW_TIMING));
+	printStats(timer, *context);
 
       int nrFreeVariables;  // dummy
       int variableFamily;  // dummy
@@ -148,9 +169,13 @@ Interpreter::doGetVariants(Timer& timer,
 	  DagNode* v = variableInfo.index2Variable(i);
 	  cout << v << " --> " << variant[i] << endl;
 	}
+      if (latexBuffer)
+	latexBuffer->generateVariant(variant, variableInfo);
     }
   QUANTIFY_STOP();
 
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
   if (i == limit)  
     {
@@ -185,10 +210,10 @@ Interpreter::getVariantsCont(Int64 limit, bool debug)
   savedState = 0;
   savedModule = 0;
   continueFunc = 0;
-
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit, debug);
   if (debug)
     UserLevelRewritingContext::setDebug();
-
   QUANTIFY_START();
   Timer timer(getFlag(SHOW_TIMING));
   doGetVariants(timer, fm, state, savedSolutionCount, limit);

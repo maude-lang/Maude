@@ -509,14 +509,21 @@ VisibleModule::latexShowSortsAndSubsorts(ostream& s) const
   Index nrUserSorts =  getNrUserSorts();
   if (nrUserSorts == 0)
     return;
-  s << "\\LTpre=0em\\LTpost=0em\n";
-  s << "\\par\n\\begin{longtable}[l]{@{}ll}\n";
+  //
+  //	This makes wrapped lines ugly but hanging indentation confuses the tabto package causing overstriking
+  //	so we have to disable it. Alternatives such as longtable just truncate lines.
+  //
+  s << "\\hangindent=0pt\n";
+  //
+  //	Choose some tab positions.
+  //
+  s << "\\TabPositions{8ex,16ex,24ex,32ex,40ex,48ex}\n";
   for (Index i = 0; i < nrUserSorts; i++)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
       const Sort* sort = sorts[i];
-      s << "\\maudeKeyword{sort} " << latexType(sort) << "\\maudeEndStatement & ";
+      s << "\\par\\maudeKeyword{sort} " << latexType(sort) << "\\maudeEndStatement\\ \\ \\tab";
       
       Index index = sort->index();
       const ConnectedComponent* c = sort->component();
@@ -563,7 +570,6 @@ VisibleModule::latexShowSortsAndSubsorts(ostream& s) const
 	}
       s << "\\\\\n";
     }
-  s << "\\end{longtable}\n";
 }
 
 void

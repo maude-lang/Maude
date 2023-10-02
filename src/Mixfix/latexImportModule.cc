@@ -25,7 +25,7 @@
 //
 
 string
-ImportModule::latexModuleExpression() const
+ImportModule::latexModuleExpression(bool parameterBrackets) const
 {
   switch (origin)
     {
@@ -41,13 +41,13 @@ ImportModule::latexModuleExpression() const
 	  {
 	    result += sep;
 	    sep = "\\maudeSummation";
-	    result += i->latexModuleExpression();
+	    result += i->latexModuleExpression(parameterBrackets);
 	  }
 	return result;
       }
     case RENAMING:
       {
-	string result = baseModule->latexModuleExpression();
+	string result = baseModule->latexModuleExpression(parameterBrackets);
 	if (baseModule->origin == SUMMATION)
 	  result = "\\maudeLeftParen" + result + "\\maudeRightParen";  // (M + N) * R
 	result += "\\maudeRenaming";
@@ -58,13 +58,17 @@ ImportModule::latexModuleExpression() const
     case PARAMETER:
       {
 	//
-	//	We never need to latex the name of a parameter copy of a theory like X :: T
+	//	We need to latex the name of a parameter copy of a theory like X :: T for show modules.
 	//
-	break;
+	string result = "\\maudeParameter{";
+	result += Token::latexName(parameterCopyParameterName);
+	result += "}\\maudeParameterColon";
+	result += baseModule->latexModuleExpression(parameterBrackets);
+	return result;
       }
     case INSTANTIATION:
       {
-	string result = baseModule->latexModuleExpression();
+	string result = baseModule->latexModuleExpression(parameterBrackets);
 	if (baseModule->origin == RENAMING)  // can't be SUMMATION
 	  result = "\\maudeLeftParen" + result + "\\maudeRightParen";  // (M * R){...}
 	const char* sep = "\\maudeLeftBrace";
@@ -73,16 +77,17 @@ ImportModule::latexModuleExpression() const
 	    result += sep;
 	    sep = "\\maudeComma\\maudeSpace";
 	    if (const View* v = dynamic_cast<const View*>(a))
-	      {
-		result += "\\maudeView{";
-		result += Token::latexName(v->id());
-	      }
+	      result += v->latexViewExpression(parameterBrackets);
 	    else if (const Parameter* p = dynamic_cast<const Parameter*>(a))
 	      {
+		if (parameterBrackets)
+		  result += "[";
 		result += "\\maudeParameter{";
 		result += Token::latexName(p->id());
+		result += "}";
+		if (parameterBrackets)
+		  result += "]";
 	      }
-	    result += "}";
 	  }
 	result += "\\maudeRightBrace";
 	return result;

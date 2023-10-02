@@ -35,7 +35,7 @@ result UnifierList: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
     upTerm(f1(V3 * V3 * f1(V4))), filter, 0) .
-rewrites: 40
+rewrites: 37
 result UnificationPair: {
   'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
   'V2:`[ElemXor`] <- '%2:`[ElemXor`] ; 
@@ -43,7 +43,7 @@ result UnificationPair: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
     upTerm(f1(V3 * V3 * f1(V4))), delay filter, 0) .
-rewrites: 40
+rewrites: 37
 result UnificationPair: {
   'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
   'V2:`[ElemXor`] <- '%2:`[ElemXor`] ; 
@@ -165,7 +165,7 @@ result UnifierList: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
     V2)) =? upTerm(f1(V3) * f1(V3 * V4)), filter, 0) .
-rewrites: 183
+rewrites: 95
 result UnifierList: {
   'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
   'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
@@ -182,7 +182,7 @@ result UnifierList: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
     V2)) =? upTerm(f1(V3) * f1(V3 * V4)), delay filter, 0) .
-rewrites: 183
+rewrites: 95
 result UnifierList: {
   'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
   'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]] ; 
@@ -305,7 +305,7 @@ result UnifierList: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
     V1)) =? upTerm(f1(b * V2) * f1(c * V3)), filter, 0) .
-rewrites: 159
+rewrites: 141
 result UnifierList: {
   'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]] ; 
   'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
@@ -319,7 +319,7 @@ result UnifierList: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
     V1)) =? upTerm(f1(b * V2) * f1(c * V3)), delay filter, 0) .
-rewrites: 165
+rewrites: 147
 result UnifierList: {
   'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]] ; 
   'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
@@ -367,7 +367,7 @@ result UnifierList: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
     upTerm(f1(V3 * V3 * f1(V4))), filter, 0) .
-rewrites: 40
+rewrites: 37
 result UnificationTriple: {
   'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
   'V2:`[ElemXor`] <- '%2:`[ElemXor`],
@@ -375,7 +375,7 @@ result UnificationTriple: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(V1 * V2) =?
     upTerm(f1(V3 * V3 * f1(V4))), delay filter, 0) .
-rewrites: 40
+rewrites: 37
 result UnificationTriple: {
   'V1:`[ElemXor`] <- '_*_['%2:`[ElemXor`],'f1['f1['%1:`[ElemXor`]]]] ; 
   'V2:`[ElemXor`] <- '%2:`[ElemXor`],
@@ -497,7 +497,7 @@ result UnifierList: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
     V2)) =? upTerm(f1(V3) * f1(V3 * V4)), filter, 0) .
-rewrites: 183
+rewrites: 95
 result UnifierList: {
   'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
   'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]],
@@ -514,7 +514,7 @@ result UnifierList: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(V1) * f1(
     V2)) =? upTerm(f1(V3) * f1(V3 * V4)), delay filter, 0) .
-rewrites: 183
+rewrites: 95
 result UnifierList: {
   'V1:`[ElemXor`] <- '@1:`[ElemXor`] ; 
   'V2:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@2:`[ElemXor`]],
@@ -637,7 +637,7 @@ result UnifierList: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
     V1)) =? upTerm(f1(b * V2) * f1(c * V3)), filter, 0) .
-rewrites: 159
+rewrites: 141
 result UnifierList: {
   'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]],
   'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 
@@ -651,7 +651,7 @@ result UnifierList: {
 ==========================================
 reduce in META-VARIANT-TEST : getUnifiers(['EXCLUSIVE-OR], upTerm(f1(a) * f1(
     V1)) =? upTerm(f1(b * V2) * f1(c * V3)), delay filter, 0) .
-rewrites: 165
+rewrites: 147
 result UnifierList: {
   'V1:`[ElemXor`] <- '_*_['c.Elem,'%1:`[ElemXor`]],
   'V2:`[ElemXor`] <- '_*_['a.Elem,'b.Elem] ; 

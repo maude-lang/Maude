@@ -42,6 +42,7 @@
 #include "symbol.hh"
 #include "dagNode.hh"
 #include "term.hh"
+#include "extensionInfo.hh"
 
 //      core class definitions
 #include "argumentIterator.hh"
@@ -229,9 +230,38 @@ MaudeLatexBuffer::generateSubstitution(const Vector<DagNode*>& substitution,
 }
 
 void
+MaudeLatexBuffer::generateVariant(const Vector<DagNode*>& variant, const NarrowingVariableInfo& variableInfo)
+{
+  Index nrVariables = variant.size() - 1;
+  DagNode* d = variant[nrVariables];
+  output << "\\par";
+  generateType(d->getSort());
+  output << "\\maudePunctuation{:}$\\maudeSpace\n";
+  MixfixModule::latexPrintDagNode(output, d);
+  output << "$\n";
+  for (Index i = 0; i < nrVariables; ++i)
+    {
+      DagNode* v = variableInfo.index2Variable(i);
+      DagNode* b = variant[i];
+      output << "\\par$";
+      MixfixModule::latexPrintDagNode(output, v);
+      output << "\\maudeIsAssigned";
+      MixfixModule::latexPrintDagNode(output, b);
+      output << "$\n";
+    }
+}
+
+void
 MaudeLatexBuffer::generateWarning(const char* message)
 {
-  output << "\\par\\color{red}\\maudeResponse{Warning: }\\color{black}\\maudeMisc{" << message << "}\n";
+  output << "\\par\\textcolor{red}{\\maudeResponse{Warning: }}\\maudeMisc{" << message << "}\n";
+}
+
+void
+MaudeLatexBuffer::generateAdvisory(const char* message)
+{
+  if (globalAdvisoryFlag)
+    output << "\\par\\textcolor{green}{\\maudeResponse{Advisory: }}\\maudeMisc{" << message << "}\n";
 }
 
 void

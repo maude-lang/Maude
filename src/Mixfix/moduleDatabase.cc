@@ -35,6 +35,7 @@
 #include "mixfix.hh"
 
 //	front end class definitions
+#include "token.hh"
 #include "preModule.hh"
 #include "moduleDatabase.hh"
 
@@ -109,5 +110,16 @@ ModuleDatabase::showNamedModules(ostream& s) const
     {
       PreModule* m = p.second;
       s << MixfixModule::moduleTypeString(m->getModuleType()) << ' ' << m << '\n';
+    }
+}
+
+void
+ModuleDatabase::latexShowNamedModules(ostream& s) const
+{
+  for (const auto& p : moduleMap)
+    {
+      PreModule* m = p.second;
+      s << "\\par\\maudeKeyword{" << MixfixModule::moduleTypeString(m->getModuleType()) << "}\\maudeSpace";
+      s << "\\maudeModule{" << Token::latexName(m->id()) << "}\n";
     }
 }

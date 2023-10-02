@@ -1,3 +1,14 @@
+Overview of Changes in alpha152 (2023-10-02)
+============================================
+* more LaTeX support
+* fixed bug in the LaTeX printing of view instantiations
+* fixed bug in LaTeX printing of one strategy
+* fixed bug in LaTeX printing of srew/dsrew commands
+* fixed a termination bug in filtered variant unify
+* optimizations to semi-compilation of free theory equations
+* fixed compile time error for 32-bits targets
+* updated config.guess
+
 Overview of Changes in alpha151 (2023-08-11)
 ============================================
 * fmod INITIAL-EQUALITY-PREDICATE added to prelude

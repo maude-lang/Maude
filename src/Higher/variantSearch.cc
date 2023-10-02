@@ -126,7 +126,8 @@ VariantSearch::VariantSearch(RewritingContext* context,
     freshVariableGenerator(freshVariableGenerator),
     flags(flags),
     firstVariableFamily((incomingVariableFamily == 0) ? 1 : 0),
-    secondVariableFamily((incomingVariableFamily == 2 || incomingVariableFamily == NONE) ? 1 : 2)
+    secondVariableFamily((incomingVariableFamily == 2 || incomingVariableFamily == NONE) ? 1 : 2),
+    variantCollection(flags & SUBSUMPTION_MODE)
 {
   //DebugAlways("root=" << context->root());
   problemOkay = false;  // until we have verified it is ok
@@ -268,6 +269,12 @@ VariantSearch::VariantSearch(RewritingContext* context,
 	  return;  // no point in looking for other unifiers
 	}
     }
+  //
+  //	Even though we're not interesting in the accumulated solution in the
+  //	SUBSUMPTION_MODE case, we still need it to prune the search based on
+  //	reducibility.
+  //
+  /*
   if (flags & SUBSUMPTION_MODE)
     {
       //
@@ -278,6 +285,7 @@ VariantSearch::VariantSearch(RewritingContext* context,
       //
       protectedVariant.clear();
     }
+  */
   protectedVariant.append(r);
   context->addInCount(*redContext);
   delete redContext;
@@ -352,9 +360,38 @@ bool
 VariantSearch::isSubsumed(DagNode* target) const
 {
   Assert(flags & SUBSUMPTION_MODE, "not in SUBSUMPTION_MODE");
-  Vector<DagNode*> variant(1);
-  variant[0] = target;
-  return variantCollection.isSubsumed(variant);
+  int indexOfLastUsedVariant = -1;
+  for (;;)
+    {
+      //
+      //	Find a variant that matches module an unresolved subproblem.
+      //
+      const VariableInfo* variableInfo = nullptr;
+      RewritingContext* matcher = nullptr;
+      Subproblem* subproblem = nullptr;
+      const Vector<DagNode*>* variant = variantCollection.findNextVariantThatMatches(indexOfLastUsedVariant,
+										     target,
+										     variableInfo,
+										     matcher,
+										     subproblem);
+      if (variant == nullptr)
+	{
+	  //
+	  //	No matching variants left.
+	  //	findNextVariantThatMatches() will not have left a matcher or subproblem.
+	  //
+	  return false;
+	}
+      //
+      //	Check if subproblem is nonexistent or has a solution.
+      //
+      bool subsumed = subproblem == nullptr || subproblem->solve(true, *matcher);
+      delete matcher;  // new RewritingContext was made by findNextVariantThatMatches()
+      delete subproblem;  // subproblem may have been made by findNextVariantThatMatches()
+      if (subsumed)
+	break;
+    }
+  return true;
 }
 
 void
@@ -386,7 +423,8 @@ VariantSearch::expandLayer()
 void
 VariantSearch::expandVariant(const Vector<DagNode*>& variant, int index)
 {
-  //DebugAlways("expanding " << variant.back());
+  //if (flags & SUBSUMPTION_MODE)
+  //  DebugAlways("expanding " << variant.back());
   //
   //	The last member of variant is the variant term and not part of the variant substitution.
   //

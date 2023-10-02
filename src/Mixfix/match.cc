@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,11 +30,11 @@ Interpreter::printDecisionTime(const Timer& timer)
   Int64 real;
   Int64 virt;
   Int64 prof;
-  if (getFlag(SHOW_STATS) && getFlag(SHOW_TIMING) &&
-      timer.isRunning() && timer.getTimes(real, virt, prof))
+  if (getFlag(SHOW_STATS) && getFlag(SHOW_TIMING) && timer.isRunning() && timer.getTimes(real, virt, prof))
     {
-      cout << "Decision time: " << prof / 1000 << "ms cpu (" <<
-	real / 1000 << "ms real)\n";
+      cout << "Decision time: " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)\n";
+      if (latexBuffer)
+	latexBuffer->generateDecisionTime(prof, real);
     }
 }
 
@@ -60,7 +60,8 @@ Interpreter::match(const Vector<Token>& bubble, bool withExtension, Int64 limit)
     }
   DagNode* subjectDag = makeDag(subjectTerm);
 
-  if (getFlag(SHOW_COMMAND))
+  bool showCommand = getFlag(SHOW_COMMAND);
+  if (showCommand)
     {
       UserLevelRewritingContext::beginCommand();
       if (withExtension)
@@ -76,6 +77,15 @@ Interpreter::match(const Vector<Token>& bubble, bool withExtension, Int64 limit)
 	  MixfixModule::printCondition(cout, condition);
 	}
       cout << " ." << endl;
+    }
+  if (latexBuffer != 0)
+    {
+      latexBuffer->generateMatch(showCommand,
+				 withExtension,
+				 pattern->getLhs(),
+				 subjectDag,
+				 condition,
+				 limit);
     }
 
   startUsingModule(fm);
@@ -104,10 +114,10 @@ Interpreter::match(const Vector<Token>& bubble, bool withExtension, Int64 limit)
 
 void
 Interpreter::doMatching(Timer& timer,
-		      VisibleModule* module,
-		      MatchSearchState* state,
-		      int solutionCount,
-		      int limit)
+			VisibleModule* module,
+			MatchSearchState* state,
+			int solutionCount,
+			int limit)
 {
   RewritingContext* context = state->getContext();
   VariableInfo* variableInfo = state->getPattern();
@@ -140,6 +150,8 @@ Interpreter::doMatching(Timer& timer,
 	    {
 	      printDecisionTime(timer);
 	      cout << "No match.\n";
+	      if (latexBuffer)
+		latexBuffer->generateNonResult("No match."); 
 	    }
 	  break;
 	}
@@ -158,9 +170,16 @@ Interpreter::doMatching(Timer& timer,
 	    cout << extensionInfo->buildMatchedPortion() << '\n';
 	}
       UserLevelRewritingContext::printSubstitution(*context, *variableInfo);
+      if (latexBuffer)
+	{
+	  latexBuffer->generateMatchResult(state, solutionCount);
+	  latexBuffer->generateSubstitution(*context, *variableInfo);
+	}
     }
   QUANTIFY_STOP();
 
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
   state->getContext()->clearCount();
   if (i == limit)
@@ -196,6 +215,8 @@ Interpreter::matchCont(Int64 limit, bool /* debug */)
   savedState = 0;
   savedModule = 0;
   continueFunc = 0;
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit);
 
   QUANTIFY_START();
   Timer timer(getFlag(SHOW_TIMING));

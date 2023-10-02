@@ -18,11 +18,11 @@
 %    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 %
 %	Latex package for use with the -latex-log= feature.
-%	Version Alpha151.
+%	Version Alpha152.
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{maude}[2023/08/11 Package for Maude logs]
-\RequirePackage{amssymb,extarrows,longtable,xcolor,verbatim,alltt}
+\ProvidesPackage{maude}[2023/09/19 Package for Maude logs]
+\RequirePackage{amssymb,extarrows,longtable,tabto,xcolor,verbatim,alltt}
 \RequirePackage[T1]{fontenc}
 %
 %	Spacing
@@ -120,6 +120,8 @@
 \newcommand{\maudeEndStatement}{\maudeInterwordSpace\maudePunctuation{.}}  % include space and try to avoid preceeding linebreak
 \newcommand{\maudeEndCommand}{\maudeInterwordSpace\maudePunctuation{.}}  % include space and try to avoid preceeding linebreak
 \newcommand{\maudeDisambigDot}{.}  % for (<term>).<sort>
+\newcommand{\maudeMatch}{\,\leq^?\,}
+\newcommand{\maudeUnify}{\,=^?\,}
 %
 %	Strategy language.
 %
@@ -154,5 +156,10 @@
 %	Environments.
 %
 \newenvironment{maudeBanner}{\begin{flushleft}\begin{alltt}}{\end{alltt}\end{flushleft}}
+%
+%	\hangindent=	sets the indentation of the hanging paragraph
+%	\handafter=	sets how many non-indented lines before hangindent is used
+%	\parskip=	sets how much vertical space to leave between paragraphs
+%
 \newenvironment{maudeShowParagraph}{\begin{flushleft}\hangindent=2em\hangafter=1\parskip=0pt}{\end{flushleft}}
 \newenvironment{maudeResultParagraph}{\begin{flushleft}\hangindent=2em\hangafter=1\parskip=0pt}{\end{flushleft}}

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,16 +40,15 @@ class FilteredVariantUnifierSearch : public VariantSearch
 public:
   //
   //	Only flags that can reasonably be passed are DELETE_FRESH_VARIABLE_GENERATOR
-  //	and CHECK_VARIABLE_NAMES. UNIFICATION_MODE and IRREDUNDANT_MODE are always
-  //	passed to the VariantSearch base object.
+  //	and CHECK_VARIABLE_NAMES. UNIFICATION_MODE is always passed to the VariantSearch base object.
   //
   FilteredVariantUnifierSearch(RewritingContext* context,
 			       const Vector<DagNode*>& blockerDags,
 			       FreshVariableGenerator* freshVariableGenerator,
 			       int flags = DELETE_FRESH_VARIABLE_GENERATOR | CHECK_VARIABLE_NAMES,
 			       int incomingVariableFamily = NONE);
-  bool findNextUnifier();
-  const Vector<DagNode*>& getCurrentUnifier(int& nrFreeVariables, int& variableFamily);
+  bool findNextUnifier() override;
+  const Vector<DagNode*>& getCurrentUnifier(int& nrFreeVariables, int& variableFamily) override;
   bool filteringIncomplete() const;
 
 private:

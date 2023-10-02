@@ -744,7 +744,7 @@ Renaming::renameOp(int id, const Vector<int>& sortNames) const
 	      IssueWarning("multiple renamings apply to " << QUOTE(Token::name(id)) << " : " <<
 			   QUOTE(Token::name(getOpTo(index))) << " vs " <<
 			   QUOTE(Token::name(i->second.name)) << ".");
-	      DebugAlways("renaming is\n\n" << this << "\n");
+	      DebugInfo("renaming is\n\n" << this << "\n");
 	      break;
 	    }
 	}

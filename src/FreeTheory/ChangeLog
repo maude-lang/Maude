@@ -1,3 +1,42 @@
+2023-09-29  Steven Eker  <eker@pup>
+
+	* freePreNet.cc (FreePreNet::makeNode): use Index for iterating
+	over arcs
+	(FreePreNet::partitionLiveSet): use Index for iterating over arcs
+	(FreePreNet::makeNode): index liveSets by arc index rather than
+	symbol->getIndexWithinModule()
+	(FreePreNet::partitionLiveSet): rewritten to use new liveSets
+	semantics
+	(FreePreNet::partitionLiveSet): use arcIndexLookup to get arc
+	index from Symbol
+
+	* freePreNet.hh (class FreePreNet): deleted commented out struct
+	Node
+
+2023-09-28  Steven Eker  <eker@pup>
+
+	* freePreNet.cc (FreePreNet::findLiveSet): replace dynamic_cast<>
+	with typeid() and static_cast<>
+
+	* freeTerm.cc (FreeTerm::locateSubterm): replace dynamic_cast<>
+	with typeid() and static_cast<>
+	(FreeTerm::findActiveSlots): rewritten to replace dynamic_cast<>
+	with typeid() and static_cast<>
+
+	* freePreNetSubsumption.cc (FreePreNet::subsumesWrtReducedFringe):
+	rewritten to remove 2 dynamic_cast<>s
+	(FreePreNet::subsumesWrtReducedFringe): use typeid() in place of
+	dynamic_cast<>
+
+	* freePreNetSemiCompiler.cc (FreePreNet::setVisitedFlags):
+	replace dynamic_cast<> by typeid() and static_cast<> (2 places)
+	(FreePreNet::allocateSlot): removed commented out cerr statemenst
+	and old bug location comment
+
+	* freeTerm.hh (class FreeTerm): made class FreeTerm final
+
+===================================Maude152===========================================
+
 2023-07-24  Steven Eker  <eker@pup>
 
 	* freeSymbol.cc (FreeSymbol::determineGround): added

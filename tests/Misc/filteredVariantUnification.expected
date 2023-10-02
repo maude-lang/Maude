@@ -1,6 +1,6 @@
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 =? V2 * V3 .
-rewrites: 46
+rewrites: 20
 
 Unifier 1
 V1 --> %1:[ElemXor] * %2:[ElemXor]
@@ -10,7 +10,7 @@ V3 --> %2:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 =? V2 * V3 * V4 .
-rewrites: 1266
+rewrites: 420
 
 Unifier 1
 V1 --> %1:[ElemXor] * %2:[ElemXor] * %3:[ElemXor]
@@ -21,7 +21,7 @@ V4 --> %3:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 =? f1(V2 * V3 * f1(V4)) .
-rewrites: 214
+rewrites: 92
 
 Unifier 1
 V1 --> f1(%1:[ElemXor] * %2:[ElemXor] * f1(%3:[ElemXor]))
@@ -32,7 +32,7 @@ V4 --> %3:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 =? f2(V2 * V3, f1(V2 * V4)) .
-rewrites: 2050
+rewrites: 548
 
 Unifier 1
 V1 --> f2(%1:[ElemXor] * %2:[ElemXor], f1(%1:[ElemXor] * %3:[ElemXor]))
@@ -44,7 +44,7 @@ No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 =? f3(V2 * V3, f1(V3 * V4), f2(V2,
     f1(V4))) .
-rewrites: 2918
+rewrites: 548
 
 Unifier 1
 V1 --> f3(%1:[ElemXor] * %2:[ElemXor], f1(%2:[ElemXor] * %3:[ElemXor]), f2(%1:[
@@ -56,7 +56,7 @@ V4 --> %3:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 * V2 =? V3 * V4 .
-rewrites: 1211
+rewrites: 905
 
 Unifier 1
 V1 --> %1:[ElemXor] * %3:[ElemXor]
@@ -67,7 +67,7 @@ V4 --> %3:[ElemXor] * %4:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 * V2 =? f1(V3 * V4) .
-rewrites: 326
+rewrites: 181
 
 Unifier 1
 V1 --> #3:[ElemXor] * f1(#1:[ElemXor] * #2:[ElemXor])
@@ -78,7 +78,7 @@ V4 --> #2:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 * V2 =? f1(V3 * V3 * f1(V4)) .
-rewrites: 18
+rewrites: 15
 
 Unifier 1
 V1 --> #2:[ElemXor] * f1(f1(#1:[ElemXor]))
@@ -89,7 +89,7 @@ V4 --> #1:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : f1(V1) =? f1(V2 * V3) .
-rewrites: 46
+rewrites: 20
 
 Unifier 1
 V1 --> %1:[ElemXor] * %2:[ElemXor]
@@ -100,7 +100,7 @@ No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : f1(V1) * f1(V2) =? f1(V3) * f1(V3 *
     V4) .
-rewrites: 141
+rewrites: 53
 
 Unifier 1
 V1 --> %1:[ElemXor]
@@ -123,7 +123,7 @@ V4 --> mt
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : f2(V1 * V2, V2 * V3) =? f2(V4, V5) .
-rewrites: 2054
+rewrites: 548
 
 Unifier 1
 V1 --> %1:[ElemXor]
@@ -136,7 +136,7 @@ No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : f3(V1 * V2, V3 * V4, V5 * V6) =? f3(
     V7, V8, V9) .
-rewrites: 6762
+rewrites: 2940
 
 Unifier 1
 V1 --> %1:[ElemXor]
@@ -152,7 +152,7 @@ V9 --> %5:[ElemXor] * %6:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 =? a * b * V2 .
-rewrites: 31
+rewrites: 18
 
 Unifier 1
 V1 --> a * b * %1:[ElemXor]
@@ -161,7 +161,7 @@ V2 --> %1:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 * V2 =? a * b * V3 .
-rewrites: 815
+rewrites: 370
 
 Unifier 1
 V1 --> a * b * %2:[ElemXor]
@@ -171,7 +171,7 @@ V3 --> %1:[ElemXor] * %2:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : V1 * a =? V2 * b .
-rewrites: 46
+rewrites: 34
 
 Unifier 1
 V1 --> b * %1:[ElemXor]
@@ -181,7 +181,7 @@ No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : f1(a) * f1(V1) =? f1(V2 * b) * f1(V3 *
     c) .
-rewrites: 123
+rewrites: 105
 
 Unifier 1
 V1 --> c * #1:[ElemXor]
@@ -201,7 +201,7 @@ V3 --> b * %1:[ElemXor]
 No more unifiers.
 ==========================================
 filtered variant unify in EXCLUSIVE-OR : f2(a, V1) =? f2(V2 * V3, f1(a * b)) .
-rewrites: 16
+rewrites: 13
 
 Unifier 1
 V1 --> f1(a * b)

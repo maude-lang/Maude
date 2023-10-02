@@ -265,13 +265,12 @@ FreeTerm::locateSubterm(const Vector<int>& position, int backup)
   int nrSteps = position.length() - backup;
   for (int i = 0; i < nrSteps; i++)
     {
-      FreeTerm* f = dynamic_cast<FreeTerm*>(t);
-      if (f == 0)
+      if (typeid(*t) != typeid(FreeTerm))
 	return 0;
       int p = position[i];
-      if (p >= f->symbol()->arity())
+      if (p >= t->symbol()->arity())
 	return 0;
-      t = (f->argArray)[p];
+      t = (static_cast<FreeTerm*>(t)->argArray)[p];
     }
   return t;
 }
@@ -308,19 +307,23 @@ FreeTerm::findActiveSlots(NatSet& slots)
   //	at least one subterm which has not been visited (or is alien) or
   //	which has a save index for left -> right sharing.
   //
-  int nrArgs = argArray.length();
   bool active = false;
-  for (int i = 0; i < nrArgs; i++)
+  for (Term* t : argArray)
     {
-      FreeTerm* f = dynamic_cast<FreeTerm*>(argArray[i]);
-      if (f != 0 && f->visitedFlag)
+      if (typeid(*t) == typeid(FreeTerm))
 	{
-	  f->findActiveSlots(slots);
-	  if (f->getSaveIndex() != NONE)
-	    active = true;
+	  FreeTerm* f = static_cast<FreeTerm*>(t);
+	  if (f->visitedFlag)
+	    {
+	      f->findActiveSlots(slots);
+	      if (f->getSaveIndex() == NONE)
+		continue;
+	    }
 	}
-      else
-	active = true;
+      //
+      //	We have a subterm which is not free or not visited or contains a save index.
+      //
+      active = true;
     }
   if (active)
     {

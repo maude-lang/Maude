@@ -1,3 +1,22 @@
+2023-09-15  Steven Eker  <eker@pup>
+
+	* maude.sty: add \maudeUnify
+
+2023-09-14  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeMatch
+
+2023-09-12  Steven Eker  <eker@pup>
+
+	* maude.sty: added comments to explain maudeShowParagraph
+	and maudeResultParagraph
+
+2023-09-11  Steven Eker  <eker@pup>
+
+	* maude.sty: require tabto package
+
+===================================Maude152===========================================
+
 2023-08-11  Steven Eker  <eker@pup>
 
 	* maude.sty: use longtable, added \maudeBigIndent
@@ -53,6 +72,8 @@
 	* maude.sty: added \maudeStratAt
 
 	* prelude.maude: added fmod INITIAL-EQUALITY-PREDICATE
+
+===================================Maude151===========================================
 
 2023-07-21  Steven Eker  <eker@pup>
 
@@ -140,6 +161,8 @@
 2023-06-06  Steven Eker  <eker@pup>
 
 	* main.cc (main): added -latex-log= command line option
+
+===================================Maude150===========================================
 
 2023-05-11  Steven Eker  <eker@pup>
 

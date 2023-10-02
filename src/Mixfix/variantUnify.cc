@@ -27,11 +27,11 @@ Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool filtere
   Vector<Term*> lhs;
   Vector<Term*> rhs;
   Vector<Term*> constraint;
-
   if (!(fm->parseVariantUnifyCommand(bubble, lhs, rhs, constraint)))
     return;
 
-  if (getFlag(SHOW_COMMAND))
+  bool showCommand = getFlag(SHOW_COMMAND);
+  if (showCommand)
     {
       UserLevelRewritingContext::beginCommand();
       if (debug)
@@ -58,6 +58,16 @@ Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool filtere
 	    }
 	  cout << " irreducible ." << endl;
 	}
+    }
+  if (latexBuffer != 0)
+    {
+      latexBuffer->generateVariantUnify(showCommand,
+					filtered,
+					lhs,
+					rhs,
+					constraint,
+					limit,
+					debug);
     }
 
   startUsingModule(fm);
@@ -99,7 +109,7 @@ Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool filtere
 	  //
 	  //	All computation is done up-front so there is only one time value.
 	  //
-	  printStats(timer, *context, getFlag(SHOW_TIMING));
+	  printStats(timer, *context);
 	}
       doVariantUnification(timer, fm, vs, 0, limit);
     }
@@ -146,17 +156,41 @@ Interpreter::doVariantUnification(Timer& timer,
 
       if (!moreUnifiers)
 	{
-	  cout << ((solutionCount == 0) ? "\nNo unifiers.\n" : "\nNo more unifiers.\n");
+	  const char* message = (solutionCount == 0) ? "No unifiers." : "No more unifiers.";
+	  cout << '\n' <<  message << '\n';
+	  if (latexBuffer)
+	    latexBuffer->generateNonResult(message);
 	  if (!filteredState)
-	    printStats(timer, *context, getFlag(SHOW_TIMING));
+	    printStats(timer, *context);
+	  //
+	  //	Check for incompleteness.
+	  //
 	  if (state->isIncomplete())
-	    IssueWarning("Some unifiers may have been missed due to incomplete unification algorithm(s).");
+	    {
+	      const char* message = "Some unifiers may have been missed due to incomplete unification algorithm(s).";
+	      IssueWarning(message);
+	      if (latexBuffer)
+		latexBuffer->generateWarning(message);
+	    }
+	  //
+	  //	Check for incomplete filtering.
+	  //
 	  if (filteredState)
 	    {
 	      if (filteredState->filteringIncomplete())
-		IssueWarning("Filtering was incomplete due to incomplete unification algorithm(s).");
+		{
+		  const char* message = "Filtering was incomplete due to incomplete unification algorithm(s).";
+		  IssueWarning(message);
+		  if (latexBuffer)
+		    latexBuffer->generateWarning(message);
+		}
 	      else
-		IssueAdvisory("Filtering was complete.");
+		{
+		  const char* message = "Filtering was complete.";
+		  IssueAdvisory(message);
+		  if (latexBuffer)
+		    latexBuffer->generateAdvisory(message);
+		}
 	    }
 	  break;
 	}
@@ -166,11 +200,17 @@ Interpreter::doVariantUnification(Timer& timer,
       const Vector<DagNode*>& unifier = state->getCurrentUnifier(nrFreeVariables, variableFamily);
       ++solutionCount;
       cout << "\nUnifier " << solutionCount << endl;
+      if (latexBuffer)
+	latexBuffer->generateResult("Unifier", solutionCount);
       if (!filteredState)
-	printStats(timer, *context, getFlag(SHOW_TIMING));
+	printStats(timer, *context);
       UserLevelRewritingContext::printSubstitution(unifier, variableInfo);
+      if (latexBuffer)
+	latexBuffer->generateSubstitution(unifier, variableInfo);
     }
  
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
   if (i == limit)  
     {
@@ -205,10 +245,10 @@ Interpreter::variantUnifyCont(Int64 limit, bool debug)
   savedState = 0;
   savedModule = 0;
   continueFunc = 0;
-
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit, debug);
   if (debug)
     UserLevelRewritingContext::setDebug();
-
   Timer timer(getFlag(SHOW_TIMING));
   doVariantUnification(timer, fm, state, savedSolutionCount, limit);
 }

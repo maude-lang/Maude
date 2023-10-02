@@ -46,7 +46,7 @@ class VariantFolder : private SimpleRootContainer
   NO_COPYING(VariantFolder);
 
 public:
-  VariantFolder();
+  VariantFolder(bool ignoreSubstitution);
   ~VariantFolder();
 
   bool insertVariant(const Vector<DagNode*>& variant, int index, int parentIndex, int variableFamily);
@@ -104,7 +104,7 @@ public:
 						     DagNode* subject,
 						     const VariableInfo*& variableInfo,
 						     RewritingContext*& matcher,
-						     Subproblem*& subproblem);
+						     Subproblem*& subproblem) const;
 
 private:
   struct RetainedVariant
@@ -130,6 +130,7 @@ private:
   bool subsumes(const RetainedVariant* retainedVariant,
 		const Vector<DagNode*>& variant) const;
 
+  const bool ignoreSubstitution;
   RetainedVariantMap mostGeneralSoFar;
   RetainedVariantMap::const_iterator currentVariant;
   int currentVariantIndex;

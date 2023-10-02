@@ -1,0 +1,47 @@
+==========================================
+variant unify in SUB-STACK : R:Stk =? S:Stk + T:Stk .
+
+Unifier 1
+rewrites: 4
+R:Stk --> %1:Stk + %2:Stk
+S:Stk --> %1:Stk
+T:Stk --> %2:Stk
+
+Unifier 2
+rewrites: 4
+R:Stk --> #1:Stk + #2:Stk
+S:Stk --> #2:Stk + (#1:Stk + #2:Stk) * #3:Stk
+T:Stk --> #1:Stk
+
+Unifier 3
+rewrites: 4
+R:Stk --> #1:Stk + #2:Stk
+S:Stk --> #1:Stk
+T:Stk --> #2:Stk + (#1:Stk + #2:Stk) * #3:Stk
+
+Unifier 4
+rewrites: 4
+R:Stk --> #1:Stk
+S:Stk --> #1:Stk
+T:Stk --> #1:Stk * #2:Stk
+
+Unifier 5
+rewrites: 4
+R:Stk --> #1:Stk
+S:Stk --> #1:Stk * #2:Stk
+T:Stk --> #1:Stk
+
+No more unifiers.
+rewrites: 4
+==========================================
+filtered variant unify in SUB-STACK : R:Stk =? S:Stk + T:Stk .
+rewrites: 8
+
+Unifier 1
+R:Stk --> %1:Stk + %2:Stk
+S:Stk --> %1:Stk
+T:Stk --> %2:Stk
+
+No more unifiers.
+Advisory: Filtering was complete.
+Bye.

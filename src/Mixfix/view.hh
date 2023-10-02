@@ -126,6 +126,8 @@ public:
   //
   bool isBad() const;
 
+  string latexViewExpression(bool parameterBrackets = false) const;
+
 protected:
   void regretToInform(Entity* doomedEntity);
   ConnectedComponent* mapComponent(const ConnectedComponent* component) const;

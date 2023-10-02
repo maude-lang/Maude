@@ -75,8 +75,7 @@ FilteredVariantUnifierSearch::FilteredVariantUnifierSearch(RewritingContext* con
 	{
 	  int nrFreeVariables;
 	  int variableFamily;
-	  const Vector<DagNode*>& unifier =
-	    VariantSearch::getCurrentUnifier(nrFreeVariables, variableFamily);
+	  const Vector<DagNode*>& unifier = VariantSearch::getCurrentUnifier(nrFreeVariables, variableFamily);
 	  unifiers.insertUnifier(unifier, nrFreeVariables, variableFamily);
 	}
     }
@@ -97,8 +96,7 @@ FilteredVariantUnifierSearch::findNextUnifier()
 	{
 	  int nrFreeVariables;
 	  int variableFamily;
-	  const Vector<DagNode*>& unifier =
-	    VariantSearch::getCurrentUnifier(nrFreeVariables, variableFamily);
+	  const Vector<DagNode*>& unifier = VariantSearch::getCurrentUnifier(nrFreeVariables, variableFamily);
 	  unifiers.insertUnifier(unifier, nrFreeVariables, variableFamily);
 	}
       else

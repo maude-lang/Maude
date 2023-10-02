@@ -82,6 +82,7 @@ ImportModule::ImportModule(int name, ModuleType moduleType)
   //	object level syntax or meta-syntax, both of which are considered TEXT.
   //
   importPhase = UNVISITED;
+  parameterCopyParameterName = NONE;
   nrSortsFromParameters = 0;
   nrSymbolsFromParameters = 0;
   nrPolymorphsFromParameters = 0;
@@ -101,6 +102,7 @@ ImportModule::ImportModule(int name, ModuleType moduleType, Origin origin, Entit
   //
   addUser(parent);
   importPhase = UNVISITED;
+  parameterCopyParameterName = NONE;
   nrSortsFromParameters = 0;
   nrSymbolsFromParameters = 0;
   nrPolymorphsFromParameters = 0;

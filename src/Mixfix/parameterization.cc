@@ -34,6 +34,7 @@ ImportModule::makeParameterCopy(int moduleName, int parameterName, ModuleCache* 
   DebugEnter("called on " << QUOTE(Token::name(moduleName)) <<
 	     " with parameter " << QUOTE(Token::name(parameterName)));
   ImportModule* copy = new ImportModule(moduleName, getModuleType(), PARAMETER, moduleCache);
+  copy->parameterCopyParameterName = parameterName;
   LineNumber lineNumber(FileTable::AUTOMATIC);
   //
   //	We construct a parameter renaming which will map sorts and labels from us and

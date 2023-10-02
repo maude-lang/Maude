@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,8 @@ Interpreter::unify(const Vector<Token>& bubble, Int64 limit, bool irredundant)
   if (!(fm->parseUnifyCommand(bubble, lhs, rhs)))
     return;
 
-  if (getFlag(SHOW_COMMAND))
+  bool showCommand = getFlag(SHOW_COMMAND);
+  if (showCommand)
     {
       UserLevelRewritingContext::beginCommand();
       if (irredundant)
@@ -46,6 +47,14 @@ Interpreter::unify(const Vector<Token>& bubble, Int64 limit, bool irredundant)
       for (int i = 0; i < nrPairs; ++i)
 	cout << lhs[i] << " =? " << rhs[i] << ((i == nrPairs - 1) ? " ." : " /\\ ");
       cout << endl;
+    }
+  if (latexBuffer != 0)
+    {
+      latexBuffer->generateUnify(showCommand,
+				 irredundant,
+				 lhs,
+				 rhs,
+				 limit);
     }
 
   startUsingModule(fm);
@@ -95,9 +104,16 @@ Interpreter::doUnification(Timer& timer,
 	    {
 	      printDecisionTime(timer);
 	      cout << "No unifier.\n";
+	      if (latexBuffer)
+		latexBuffer->generateNonResult("No unifier."); 
 	    }
 	  if (problem->isIncomplete())
-	    IssueWarning("Some unifiers may have been missed due to incomplete unification algorithm(s).");
+	    {
+	      const char* message = "Some unifiers may have been missed due to incomplete unification algorithm(s).";
+	      IssueWarning(message);
+	      if (latexBuffer)
+		latexBuffer->generateWarning(message);
+	    }
 	  break;
 	}
 
@@ -106,12 +122,19 @@ Interpreter::doUnification(Timer& timer,
 	printDecisionTime(timer);
       cout << "\nUnifier " << solutionCount << '\n';
       UserLevelRewritingContext::printSubstitution(problem->getSolution(), problem->getVariableInfo());
+      if (latexBuffer)
+	{
+	  latexBuffer->generateResult("Unifier", solutionCount);
+	  latexBuffer->generateSubstitution(problem->getSolution(), problem->getVariableInfo());
+	}
     }
 
 #ifdef QUANTIFY_REWRITING
   quantify_stop_recording_data();
 #endif
 
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
   if (i == limit)  // possible to continue
     {
@@ -137,6 +160,8 @@ Interpreter::unifyCont(Int64 limit, bool /* debug */)
   savedState = 0;
   savedModule = 0;
   continueFunc = 0;
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit);
 
 #ifdef QUANTIFY_REWRITING
   quantify_start_recording_data();

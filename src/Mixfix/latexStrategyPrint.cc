@@ -33,7 +33,7 @@ VisibleModule::latexPrintStrategy(ostream& s, StrategyExpression* strategy, int 
     s << "\\maudeKeyword{" << (t->getResult() ? "idle" : "fail") << "}";
   else if (OneStrategy* o = dynamic_cast<OneStrategy*>(strategy))
     {
-      s << "\\maudeKeyword{one}\\maudeLeftParen(";
+      s << "\\maudeKeyword{one}\\maudeLeftParen";
       (void) latexPrintStrategy(s, o->getStrategy());
       s << "\\maudeRightParen";
     }

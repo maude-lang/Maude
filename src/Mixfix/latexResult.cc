@@ -23,6 +23,53 @@
 //
 //      Code for printing results.
 //
+void
+MaudeLatexBuffer::generateDecisionTime(int64_t cpuTime, int64_t realTime)
+{
+  output << "\\par\\maudeResponse{Decision time:} \\maudeNumber{" << cpuTime / 1000 <<
+    "} \\maudeResponse{ms cpu} \\maudePunctuation{(}\\maudeNumber{" <<
+    realTime / 1000 << "} \\maudeResponse{ms real}\\maudePunctuation{)}";
+}
+
+void
+MaudeLatexBuffer::generateNonResult(const string& message)
+{
+  if (needNewline)
+    output << "\\newline";
+  output << "\\par\\maudeResponse{" << message << "}\n";
+  needNewline = false;
+}
+
+void
+MaudeLatexBuffer::generateResult(const string& message, int64_t solutionNr)
+{
+  if (needNewline)
+    output << "\\newline";
+  output << "\\par\\maudeResponse{" << message << "}\\maudeSpace\\maudeNumber{" << solutionNr << "}\n";
+  needNewline = true;
+}
+
+void
+MaudeLatexBuffer::generateMatchResult(MatchSearchState* state, int64_t matchNr)
+{
+  if (needNewline)
+    output << "\\newline";
+  output << "\\par\\maudeResponse{Matcher}\\maudeSpace\\maudeNumber{" << matchNr << "}\n";
+  needNewline = true;
+  ExtensionInfo* extensionInfo = state->getExtensionInfo();
+  if (extensionInfo != 0)
+    {
+      output << "\\par\\maudeResponse{Matched portion =}\\maudeSpace";
+      if (extensionInfo->matchedWhole())
+	output << "\\maudeMisc{(whole)}\n";
+      else
+	{
+	  output << "$";
+	  MixfixModule::latexPrintDagNode(output, extensionInfo->buildMatchedPortion());
+	  output << "$\n";
+	}
+    }
+}
 
 void
 MaudeLatexBuffer::generateStats(RewritingContext& context,
@@ -99,6 +146,16 @@ MaudeLatexBuffer::generateResult(RewritingContext& context,
   generateType(result->getSort());
   output << "\\maudePunctuation{:}$\\maudeSpace\n";
   MixfixModule::latexPrintDagNode(output, result);
+  output << "$\n";
+}
+
+void
+MaudeLatexBuffer::generateResult(Term* result)
+{
+  output << "\\par";
+  generateType(result->getSort());
+  output << "\\maudePunctuation{:}$\\maudeSpace\n";
+  MixfixModule::latexPrettyPrint(output, result);
   output << "$\n";
 }
 

@@ -31,7 +31,8 @@ Interpreter::variantMatch(const Vector<Token>& bubble, Int64 limit, bool debug)
   if (!(fm->parseVariantMatchCommand(bubble, lhs, rhs, constraint)))
     return;
 
-  if (getFlag(SHOW_COMMAND))
+  bool showCommand = getFlag(SHOW_COMMAND);
+  if (showCommand)
     {
       UserLevelRewritingContext::beginCommand();
       if (debug)
@@ -56,6 +57,15 @@ Interpreter::variantMatch(const Vector<Token>& bubble, Int64 limit, bool debug)
 	    }
 	  cout << " irreducible ." << endl;
 	}
+    }
+  if (latexBuffer != 0)
+    {
+      latexBuffer->generateVariantMatch(showCommand,
+					lhs,
+					rhs,
+					constraint,
+					limit,
+					debug);
     }
 
   startUsingModule(fm);
@@ -100,8 +110,8 @@ Interpreter::variantMatch(const Vector<Token>& bubble, Int64 limit, bool debug)
       //	No more rewriting or narrowing happens after variants have been
       //	generated for pattern so we do this just once.
       //
-      printStats(timer, *patternContext, getFlag(SHOW_TIMING));
-      doVariantMatching(timer, fm, vs, 0, limit);
+      printStats(timer, *patternContext);
+      doVariantMatching(fm, vs, 0, limit);
     }
   else
     {
@@ -111,8 +121,7 @@ Interpreter::variantMatch(const Vector<Token>& bubble, Int64 limit, bool debug)
 }
 
 void
-Interpreter::doVariantMatching(Timer& timer,
-			       VisibleModule* module,
+Interpreter::doVariantMatching(VisibleModule* module,
 			       VariantSearch* state,
 			       Int64 solutionCount,
 			       Int64 limit)
@@ -139,20 +148,39 @@ Interpreter::doVariantMatching(Timer& timer,
 
       if (!moreMatchers)
 	{
-	  cout << ((solutionCount == 0) ? "\nNo matchers.\n" : "\nNo more matchers.\n");
+	  const char* const message = (solutionCount == 0) ? "No matchers." : "No more matchers.";
+	  cout << '\n' <<  message << '\n';
+	  if (latexBuffer)
+	    latexBuffer->generateNonResult(message);
 	  if (problem->freshVariablesNeeded())
-	    IssueAdvisory("Non-regular variant equation(s) resulted in fresh variable(s).");
+	    {
+	      const char* message = "Non-regular variant equation(s) resulted in fresh variable(s).";
+	      IssueAdvisory(message);
+	      if (latexBuffer)
+		latexBuffer->generateAdvisory(message);
+	    }
 	  if (state->isIncomplete())
-	    IssueWarning("Some matchers may have been missed due to incomplete unification algorithm(s).");
+	    {
+	      const char* message = "Some matchers may have been missed due to incomplete unification algorithm(s).";
+	      IssueWarning(message);
+	      if (latexBuffer)
+		latexBuffer->generateWarning(message);
+	    }
 	  break;
 	}
 
       const Vector<DagNode*>& matcher = problem->getCurrentMatcher();
       ++solutionCount;
       cout << "\nMatcher " << solutionCount << endl;
+      if (latexBuffer)
+	latexBuffer->generateResult("Matcher", solutionCount);
       UserLevelRewritingContext::printSubstitution(matcher, variableInfo);
+      if (latexBuffer)
+	latexBuffer->generateSubstitution(matcher, variableInfo);
     }
  
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
   if (i == limit)  
     {
@@ -180,7 +208,7 @@ Interpreter::doVariantMatching(Timer& timer,
 }
 
 void
-Interpreter::variantMatchCont(Int64 limit, bool /* debug */)
+Interpreter::variantMatchCont(Int64 limit, bool debug)
 {
   VariantSearch* state = safeCast(VariantSearch*, savedState);
   VisibleModule* fm = savedModule;
@@ -190,9 +218,10 @@ Interpreter::variantMatchCont(Int64 limit, bool /* debug */)
   //
   //	Currently debug mode only affects rewriting and narrowing
   //	and all rewriting and narrowing should have be done before
-  //	the first solution was output, so we ignore the debug flag.
+  //	the first solution was output, so we only use the debug
+  //	flag for the latex echo.
   //
-  Timer timer(getFlag(SHOW_TIMING));
-  doVariantMatching(timer, fm, state, savedSolutionCount, limit);
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit, debug);
+  doVariantMatching(fm, state, savedSolutionCount, limit);
 }
-

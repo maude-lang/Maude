@@ -37,9 +37,9 @@
 //	front end class definitions
 #include "renaming.hh"
 #include "view.hh"
-#include "moduleCache.hh"
 #include "fileTable.hh"
 #include "parameter.hh"
+#include "moduleCache.hh"
 
 ModuleCache::ModuleCache()
 {
@@ -339,5 +339,16 @@ ModuleCache::showCreatedModules(ostream& s) const
     {
       ImportModule* m = i.second;
       s << MixfixModule::moduleTypeString(m->getModuleType()) << ' ' << m << '\n';
+    }
+}
+
+void
+ModuleCache::latexShowCreatedModules(ostream& s) const
+{
+  for (const auto& i : moduleMap)
+    {
+      ImportModule* m = i.second;
+      s << "\\par$\\maudeKeyword{" << MixfixModule::moduleTypeString(m->getModuleType()) << "}\\maudeSpace";
+      s << m->latexModuleExpression(true) << "$\n";
     }
 }

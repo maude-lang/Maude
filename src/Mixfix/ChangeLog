@@ -1,3 +1,306 @@
+2023-09-26  Steven Eker  <eker@pup>
+
+	* interpreter.cc (Interpreter::parse): support latex
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added
+	decl for Term* version of generateResult()
+
+	* latexResult.cc (MaudeLatexBuffer::generateResult):
+	added Term* version
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added
+	decl for Term* version of generateCommand()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateCommand):
+	added Term* version
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added
+	decl for generateVariant()
+
+	* getVariants.cc (Interpreter::doGetVariants): support
+	latex
+	(Interpreter::getVariantsCont): support latex
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateVariant):
+	added
+
+	* getVariants.cc (Interpreter::getVariants): use latex
+	supporting pirntStats()
+
+2023-09-25  Steven Eker  <eker@pup>
+
+	* getVariants.cc (Interpreter::doGetVariants): call
+	cleanUp()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added
+	decl for generateGetVariants()
+
+	* getVariants.cc (Interpreter::getVariants): call
+	generateGetVaraints()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateGetVariants):
+	added
+
+2023-09-22  Steven Eker  <eker@pup>
+
+	* renaming.cc (Renaming::renameOp): DebugAlways() ->
+	DebugInfo()
+
+2023-09-21  Steven Eker  <eker@pup>
+
+	* srewrite.cc (Interpreter::sRewrite): fix bug where we
+	were passing depthSearch as number2 argument to
+	generateCommand()
+
+	* latexStrategyPrint.cc (VisibleModule::latexPrintStrategy):
+	fix bug where one was printed with extra (
+
+2023-09-19  Steven Eker  <eker@pup>
+
+	* interpreter.hh (class Interpreter): updated decl for
+	doVariantMatching()
+
+	* variantMatch.cc (Interpreter::variantMatch): call
+	generateVariantMatch()
+	(Interpreter::variantMatch): use new printStats() function
+	(Interpreter::doVariantMatching): support latex
+	(Interpreter::doVariantMatching): don't take timer argument
+	(Interpreter::variantMatchCont): support latex; don't pass
+	timer argument to doVariantMatching()
+	(Interpreter::variantMatch): don't pass timer argument to
+	doVariantMatching()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl
+	for generateVariantMatch()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateVariantMatch):
+	added
+
+	* interpreter.hh (class Interpreter): deleted decl for
+	printSearchTiming()
+
+	* search.cc (Interpreter::doSearching): use printStats()
+	rather than printSearchTiming() (2 places)
+	(Interpreter::printSearchTiming): deleted
+
+	* srewrite.cc (Interpreter::doStrategicSearch): code
+	cleaning; fix bug where we were using old showStats() which
+	read the timer a second time
+
+	* latexCommand.cc (MaudeLatexBuffer::generateContinue): handle
+	debug flag
+
+	* unify.cc (Interpreter::unifyCont): support latex
+
+	* match.cc (Interpreter::matchCont): support latex
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added
+	default debug = false to decl for generateContinue()
+
+	* variantUnify.cc (Interpreter::variantUnifyCont): support
+	latex
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateAdvisory): use
+	\textcolor rather than \color
+	(MaudeLatexBuffer::generateWarning): use\textcolor rather than
+	\color
+
+	* latexResult.cc (MaudeLatexBuffer::generateNonResult):
+	check if we need a new line a clear needNewLine
+
+	* variantUnify.cc (Interpreter::variantUnify): use new
+	printStats()
+	(Interpreter::doVariantUnification): rearrange and use new
+	printStats() (2 places)
+
+	* interpreter.hh (class Interpreter): added decl for new
+	printStats(); removed default timingFlag value for old
+	decl
+
+	* execute.cc (Interpreter::printStats): added version
+	with latex support
+
+2023-09-18  Steven Eker  <eker@pup>
+
+	* variantUnify.cc (Interpreter::doVariantUnification):
+	call generateWarning() and generateAdvisory()
+
+	* unify.cc (Interpreter::doUnification): call
+	generateWarning()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl
+	for generateAdvisory()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateAdvisory):
+	added
+
+	* variantUnify.cc (Interpreter::doVariantUnification): call
+	generateResult() and generateSubstitution()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateUnify): use
+	generateModifiers()
+	(MaudeLatexBuffer::generateMatch): use generateModifiers()
+	(MaudeLatexBuffer::generateCommand): use generateModifiers()
+	(MaudeLatexBuffer::generateSearch): use generateModifiers()
+
+	* variantUnify.cc (Interpreter::doVariantUnification): call
+	cleanUp()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added
+	decl for generateVariantUnify()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateVariantUnify):
+	added
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added
+	decl for generateModifiers()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateUnify)
+	(MaudeLatexBuffer::generateMatch): call
+	Tty::unblockEscapeSequences() after printing comment
+	(MaudeLatexBuffer::generateModifiers): added
+
+2023-09-15  Steven Eker  <eker@pup>
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl
+	for generic generateResult()
+
+	* unify.cc (Interpreter::doUnification): call
+	generateResult(), generateSubstitution(),
+	generateNonResult()
+
+	* latexResult.cc (MaudeLatexBuffer::generateNonResult):
+	added generic version
+
+	* unify.cc (Interpreter::doUnification): call cleanUp()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl
+	for generateUnify()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateUnify): added
+
+	* match.cc (Interpreter::doMatching): call
+	generateMatchResult()
+	(Interpreter::doMatching): call generateSubstitution()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl
+	for generateMatchResult()
+
+	* latexResult.cc (MaudeLatexBuffer::generateDecisionTime):
+	fix missing closing paren
+	(MaudeLatexBuffer::generateMatchResult): added
+
+2023-09-14  Steven Eker  <eker@pup>
+
+	* match.cc (Interpreter::printDecisionTime): call
+	generateDecisionTime()
+	(Interpreter::doMatching): call generateNonResult()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decls
+	for generateDecisionTime(),generateNonResult() (message only
+	version)
+
+	* latexResult.cc (MaudeLatexBuffer::generateDecisionTime):
+	added
+	(MaudeLatexBuffer::generateNonResult): added message only
+	version
+
+	* match.cc (Interpreter::match): call generateMatch()
+	(Interpreter::doMatching): call cleanUp()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl
+	for generateMatch()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateMatch): added
+
+	* viewDatabase.cc (ViewDatabase::latexShowNamedViews): use
+	latexViewExpression()
+
+	* viewCache.cc (ViewCache::latexShowCreatedViews): use
+	latexViewExpression()
+
+	* latexImportModule.cc (ImportModule::latexModuleExpression):
+	use latexViewExpression()
+
+	* view.cc (View::latexViewExpression): added
+
+	* view.hh (class View): added decl for latexViewExpression()
+
+2023-09-13  Steven Eker  <eker@pup>
+
+	* interpreter.cc (Interpreter::showViews): support latex
+
+	* viewCache.cc (ViewCache::latexShowCreatedViews): added
+
+	* viewCache.hh (class ViewCache): added decl for
+	latexShowCreatedViews()
+
+	* interpreter.cc (Interpreter::showModules): call cleanUp()
+
+	* viewDatabase.cc (ViewDatabase::latexShowNamedViews): added
+
+	* viewDatabase.hh (class ViewDatabase): added decl for
+	latexShowNamedViews()
+
+	* moduleCache.cc (ModuleCache::latexShowCreatedModules): pass
+	parameterBrackets = true to latexModuleExpression()
+
+	* importModule.hh (class ImportModule): updated decl for
+	latexModuleExpression()
+
+	* latexImportModule.cc (ImportModule::latexModuleExpression):
+	handle PARAMETER case for show modules
+	(ImportModule::latexModuleExpression): handle parameterBrackets
+	argument
+
+	* importModule.cc (ImportModule::ImportModule): init
+	parameterCopyParameterName (both versions)
+
+	* parameterization.cc (ImportModule::makeParameterCopy): set
+	parameterCopyParameterName
+
+	* importModule.hh (class ImportModule): added data member
+	parameterCopyParameterName
+
+	* moduleCache.cc (ModuleCache::latexShowCreatedModules): use
+	latexModuleExpression()
+
+	* interpreter.cc (Interpreter::showModules): support latex
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	command only version of generateShow()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateShow): added command
+	only version
+
+	* moduleCache.cc (ModuleCache::latexShowCreatedModules): added
+
+	* moduleCache.hh (class ModuleCache): added decl for
+	latexShowCreatedModules()
+
+2023-09-12  Steven Eker  <eker@pup>
+
+	* moduleDatabase.cc (ModuleDatabase::latexShowNamedModules):
+	added
+
+	* moduleDatabase.hh (class ModuleDatabase): added decl for
+	latexShowNamedModules()
+
+	* latexModulePrint.cc (latexShowSortsAndSubsorts): disable
+	hangindent to avoid confusing tabto package and revert to
+	using \tab
+
+2023-09-11  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc (latexShowSortsAndSubsorts): try
+	using tabbing rather than longtable for end of line wrapping
+	(latexShowSortsAndSubsorts): tabbing does not wrap nicely;
+	try maudeShowParagraph instead
+	(latexShowSortsAndSubsorts): try \tab from the tabto package
+	(latexShowSortsAndSubsorts): use \TabPositions
+
+===================================Maude152===========================================
+
 2023-08-11  Steven Eker  <eker@pup>
 
 	* interpreter.cc (Interpreter::showSummary): added latex

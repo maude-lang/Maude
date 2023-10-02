@@ -1130,3 +1130,39 @@ View::insertStratToExprMapping(CallStrategy* fromCall,
 					       StratExprInfo(fromCall, toExpr, contextSpec)));
   return true;
 }
+
+string
+View::latexViewExpression(bool parameterBrackets) const
+{
+  if (baseView)
+    {
+      //
+      //	We're an instantiation of a view.
+      //
+      string result = baseView->latexViewExpression(parameterBrackets);
+      const char* sep = "\\maudeLeftBrace";
+      for (const Argument* a : savedArguments)
+	{
+	  result += sep;
+	  sep = "\\maudeComma\\maudeSpace";
+	  if (const View* v = dynamic_cast<const View*>(a))
+	    result += v->latexViewExpression(parameterBrackets);
+	  else if (const Parameter* p = dynamic_cast<const Parameter*>(a))
+	    {
+	      if (parameterBrackets)
+		result += "[";
+	      result += "\\maudeParameter{";
+	      result += Token::latexName(p->id());
+	      result += "}";
+	      if (parameterBrackets)
+		result += "]";
+	    }
+	}
+      result += "\\maudeRightBrace";
+      return result;
+    }
+  string result = "\\maudeView{";
+  result += Token::latexName(id());
+  result += "}";
+  return result;
+}

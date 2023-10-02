@@ -111,6 +111,7 @@ VariantUnifierFilter::insertUnifier(const Vector<DagNode*>& unifier,
 				    int nrFreeVariables,
 				    int variableFamily)
 {
+  //cerr << "inserting\n"; for (DagNode* d : unifier) cerr << d << endl;
   if (tupleSymbol == 0)
     {
       int nrAssignments = unifier.size();  // could be zero!

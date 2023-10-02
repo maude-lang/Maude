@@ -1,0 +1,31 @@
+set show timing off .
+
+***
+***	Bug reported by UberPyro on github:
+***	 https://github.com/SRI-CSL/Maude/issues/11
+***	Code used with permission.
+***
+
+fmod SUB-STACK is
+  sorts Nat Stk .
+  op 0 : -> Nat [ctor] .
+  op s : Nat -> Nat [ctor] .
+
+  subsort Nat < Stk .
+  op emp : -> Stk .
+  op mk : Nat -> Stk [ctor] .
+  op _*_ : Stk Stk -> Stk [ctor assoc id: emp] .
+  op _+_ : Stk Stk -> Stk [ctor assoc comm] .
+
+  vars X Y : [Stk] .
+  eq [sub] : (X * Y) + X = X [variant] .
+
+endfm
+
+variant unify in SUB-STACK : R:Stk =? S:Stk + T:Stk .
+*** OK
+
+filtered variant unify in SUB-STACK : R:Stk =? S:Stk + T:Stk .
+*** failed to terminate because we weren't tracking the accumulated substitution
+*** when computing variant subsumption - reducibility considerations are critical
+*** for pruning branches

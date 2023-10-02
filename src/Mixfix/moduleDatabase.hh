@@ -47,6 +47,7 @@ public:
   const ImportMap& getAutoImports() const;
   const ImportMap& getOoIncludes() const;
   void showNamedModules(ostream& s) const;
+  void latexShowNamedModules(ostream& s) const;
 
 private:
   typedef map<int, PreModule*> ModuleMap;

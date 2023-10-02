@@ -112,6 +112,38 @@ Interpreter::printTiming(Int64 nrRewrites, Int64 cpu, Int64 real)
 }
 
 void
+Interpreter::printStats(const Timer& timer, RewritingContext& context)
+{
+  bool showTiming = getFlag(SHOW_TIMING);
+  bool showBreakdown = getFlag(SHOW_BREAKDOWN);
+  Int64 nrRewrites = context.getTotalCount();
+  cout << "rewrites: " << nrRewrites;
+
+  Int64 real;
+  Int64 virt;
+  Int64 prof;
+  if (showTiming)
+    {
+      showTiming = timer.getTimes(real, virt, prof);
+      if (showTiming)
+	printTiming(nrRewrites, prof, real);
+    }
+
+  cout << '\n';
+  if (getFlag(SHOW_BREAKDOWN))
+    {
+      cout << "mb applications: " << context.getMbCount() <<
+	"  equational rewrites: " << context.getEqCount() <<
+	"  rule rewrites: " << context.getRlCount() <<
+	"  variant narrowing steps: " << context.getVariantNarrowingCount() <<
+	"  narrowing steps: " << context.getNarrowingCount() << '\n';
+    }
+
+  if (latexBuffer)
+    latexBuffer->generateStats(context, prof, real, showTiming, showBreakdown);
+}
+
+void
 Interpreter::printStats(const Timer& timer, RewritingContext& context, bool timingFlag)
 {
   Int64 nrRewrites = context.getTotalCount();
