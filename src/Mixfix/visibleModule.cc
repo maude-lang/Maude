@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2022 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -70,6 +70,8 @@
 //	front end class definitions
 #include "userLevelRewritingContext.hh"
 #include "visibleModule.hh"
+
+#include "interpreter.hh"
 
 //	our stuff
 #include "latexModulePrint.cc"
@@ -290,11 +292,29 @@ VisibleModule::showVars(ostream& s, bool indent) const
 {
   const char* ind = indent ? "  " : "";
   const AliasMap& variableAliases = getVariableAliases();
-  for (const auto& p : variableAliases)
+  if (owner->getPrintFlag(Interpreter::PRINT_COMBINE_VARS))
     {
-      if (UserLevelRewritingContext::interrupted())
-	return;
-      s << ind << "var " << Token::name(p.first) << " : " << p.second << " .\n";
+      map<int, Vector<int>> reverseMap;
+      for (const auto& p : variableAliases)
+	reverseMap[p.second->getIndexWithinModule()].push_back(p.first);
+
+      const Vector<Sort*>& sorts = getSorts();
+      for (const auto& p : reverseMap)
+	{
+	  s << ind << "var" << pluralize(p.second.size());
+	  for (int v : p.second)
+	    s << " " << Token::name(v);
+	  s << " : " << sorts[p.first] << " .\n";
+	}
+    }
+  else
+    {
+      for (const auto& p : variableAliases)
+	{
+	  if (UserLevelRewritingContext::interrupted())
+	    return;
+	  s << ind << "var " << Token::name(p.first) << " : " << p.second << " .\n";
+	}
     }
 }
 
@@ -384,8 +404,11 @@ VisibleModule::showPolymorphAttributes(ostream& s, int index) const
     s << " comm";
   if (st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
     {
-      s << (st.hasFlag(SymbolType::LEFT_ID) ? " left" : " right") <<
-	" id: " << getPolymorphIdentity(index);
+      //
+      //	A polymorphic symbol can only have a left identity or a right identity - not both.
+      //
+      s << (st.hasFlag(SymbolType::LEFT_ID) ? " left" : " right") << " id: ";
+      MixfixModule::prettyPrint(s, getPolymorphIdentity(index), true);  // assume range kind is known
     }
   if (st.hasFlag(SymbolType::IDEM))
     s << " idem";
@@ -400,6 +423,8 @@ VisibleModule::showPolymorphAttributes(ostream& s, int index) const
     s << " obj";
   if (st.hasFlag(SymbolType::MESSAGE))
     s << " msg";
+  if (st.hasFlag(SymbolType::PORTAL))
+    s << " portal";
   if (st.hasFlag(SymbolType::CONFIG))
     s << " config";
   //
@@ -487,52 +512,57 @@ VisibleModule::showPolymorphAttributes(ostream& s, int index) const
   if (st.hasSpecial())
     {
       s << " special (";
-      int purpose;
-      {
-	Vector<int> items;
-	for (int i = 0; getPolymorphDataAttachment(index, i, purpose, items); i++)
+      if (owner->getPrintFlag(Interpreter::PRINT_HOOKS))
+	{
+	  int purpose;
 	  {
-	    s << "\n    " << "id-hook " << Token::name(purpose);
-	    int nrItems = items.length();
-	    if (nrItems > 0)
+	    Vector<int> items;
+	    for (int i = 0; getPolymorphDataAttachment(index, i, purpose, items); ++i)
 	      {
-		for (int j = 0; j < nrItems; j++)
-		  s << ((j == 0) ? " (" : " ") << Token::name(items[j]);
-		s << ')';
+		s << "\n    " << "id-hook " << Token::name(purpose);
+		int nrItems = items.length();
+		if (nrItems > 0)
+		  {
+		    for (int j = 0; j < nrItems; j++)
+		      s << ((j == 0) ? " (" : " ") << Token::name(items[j]);
+		    s << ')';
+		  }
 	      }
 	  }
-      }
-      {
-	Symbol* op;
-	for (int i = 0; getPolymorphSymbolAttachment(index, i, purpose, op); i++)
 	  {
-	    s << "\n    " << "op-hook " << Token::name(purpose) << " (" <<
-	      op << " : ";
-	    const Vector<Sort*>& domainAndRange =
-	      op->getOpDeclarations()[0].getDomainAndRange();
-	    int nrSorts = domainAndRange.length() - 1;
-	    //
-	    //	We don't use operator<< for sorts in an op-hook since they
-	    //	should always be printed as single tokens.
-	    //
-	    for (int j = 0; j < nrSorts; j++)
+	    Symbol* op;
+	    for (int i = 0; getPolymorphSymbolAttachment(index, i, purpose, op); ++i)
 	      {
-		Sort* sort = domainAndRange[j];
+		s << "\n    " << "op-hook " << Token::name(purpose) << " (" <<
+		  op << " : ";
+		const Vector<Sort*>& domainAndRange =
+		  op->getOpDeclarations()[0].getDomainAndRange();
+		int nrSorts = domainAndRange.length() - 1;
+		//
+		//	We don't use operator<< for sorts in an op-hook since they
+		//	should always be printed as single tokens.
+		//
+		for (int j = 0; j < nrSorts; j++)
+		  {
+		    Sort* sort = domainAndRange[j];
+		    if (sort->index() == Sort::KIND)
+		      sort = sort->component()->sort(1);
+		    s << Token::name(sort->id()) << ' ';
+		  }
+		Sort* sort = domainAndRange[nrSorts];
 		if (sort->index() == Sort::KIND)
 		  sort = sort->component()->sort(1);
-		s << Token::name(sort->id()) << ' ';
+		s << "~> " << Token::name(sort->id()) << ')';
 	      }
-	    Sort* sort = domainAndRange[nrSorts];
-	    if (sort->index() == Sort::KIND)
-	      sort = sort->component()->sort(1);
-	    s << "~> " << Token::name(sort->id()) << ')';
 	  }
-      }
-      {
-	Term* term;
-	for (int i = 0; getPolymorphTermAttachment(index, i, purpose, term); i++)
-	  s << "\n    " << "term-hook " << Token::name(purpose) << " (" << term << ")";
-      }
+	  {
+	    Term* term;
+	    for (int i = 0; getPolymorphTermAttachment(index, i, purpose, term); ++i)
+	      s << "\n    " << "term-hook " << Token::name(purpose) << " (" << term << ")";
+	  }
+	}
+      else
+	s << "...";
       s << ')';
     }
 }
@@ -668,11 +698,6 @@ VisibleModule::showAttributes(ostream& s, Symbol* symbol, int opDeclIndex) const
       s << space << "comm";
       space = " ";
     }
-  if (st.hasFlag(SymbolType::ITER))
-    {
-      s << space << "iter";
-      space = " ";
-    }
   if (st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
     {
       s << space;
@@ -682,13 +707,18 @@ VisibleModule::showAttributes(ostream& s, Symbol* symbol, int opDeclIndex) const
       else if (!(st.hasFlag(SymbolType::RIGHT_ID | SymbolType::COMM)))
 	s << "left ";
       s << "id: ";
-      Term* id = safeCast(BinarySymbol*, symbol)->getIdentity();
+      Term* id = safeCastNonNull<BinarySymbol*>(symbol)->getIdentity();
       if (id != 0)
-	s << id;
+	MixfixModule::prettyPrint(s, id, true);  // assume range kind is known
     }
   if (st.hasFlag(SymbolType::IDEM))
     {
       s << space << "idem";
+      space = " ";
+    }
+  if (st.hasFlag(SymbolType::ITER))
+    {
+      s << space << "iter";
       space = " ";
     }
   if (st.hasFlag(SymbolType::PCONST))
@@ -699,14 +729,19 @@ VisibleModule::showAttributes(ostream& s, Symbol* symbol, int opDeclIndex) const
   //
   //	Object-oriented attributes.
   //
+  if (st.hasFlag(SymbolType::OBJECT))
+    {
+      s << space << "obj";
+      space = " ";
+    }
   if (st.hasFlag(SymbolType::MESSAGE))
     {
       s << space << "msg";
       space = " ";
     }
-  if (st.hasFlag(SymbolType::OBJECT))
+  if (st.hasFlag(SymbolType::PORTAL))
     {
-      s << space << "obj";
+      s << space << "portal";
       space = " ";
     }
   if (st.hasFlag(SymbolType::CONFIG))
@@ -803,62 +838,67 @@ VisibleModule::showAttributes(ostream& s, Symbol* symbol, int opDeclIndex) const
   if (st.hasSpecial())
     {
       s << space << "special (";
-      Vector<const char*> purposes;
-      {
-	Vector<Vector<const char*> > data;
-	getDataAttachments(symbol, decl.getDomainAndRange(), purposes, data);
-	int nrHooks = purposes.length();
-	for (int i = 0; i < nrHooks; i++)
+      if (owner->getPrintFlag(Interpreter::PRINT_HOOKS))
+	{
+	  Vector<const char*> purposes;
 	  {
-	    s << "\n    " << "id-hook " << purposes[i];
-	    const Vector<const char*>& items = data[i];
-	    int nrItems = items.length();
-	    if (nrItems > 0)
+	    Vector<Vector<const char*> > data;
+	    getDataAttachments(symbol, decl.getDomainAndRange(), purposes, data);
+	    int nrHooks = purposes.length();
+	    for (int i = 0; i < nrHooks; i++)
 	      {
-		for (int j = 0; j < nrItems; j++)
-		  s << ((j == 0) ? " (" : " ") << items[j];
-		s << ')';
+		s << "\n    " << "id-hook " << purposes[i];
+		const Vector<const char*>& items = data[i];
+		int nrItems = items.length();
+		if (nrItems > 0)
+		  {
+		    for (int j = 0; j < nrItems; j++)
+		      s << ((j == 0) ? " (" : " ") << items[j];
+		    s << ')';
+		  }
 	      }
 	  }
-      }
-      purposes.clear();
-      {
-	Vector<Symbol*> symbols;
-	getSymbolAttachments(symbol, purposes, symbols);
-	int nrHooks = purposes.length();
-	for (int i = 0; i < nrHooks; i++)
+	  purposes.clear();
 	  {
-	    Symbol* op = symbols[i];
-	    s << "\n    " << "op-hook " << purposes[i] << " (" <<
-	      op << " : ";
-	    const Vector<Sort*>& domainAndRange =
-	      op->getOpDeclarations()[0].getDomainAndRange();
-	    int nrSorts = domainAndRange.length() - 1;
-	    //
-	    //	We don't use operator<< for sorts in an op-hook since they
-	    //	should always be printed as single tokens.
-	    //
-	    for (int j = 0; j < nrSorts; j++)
+	    Vector<Symbol*> symbols;
+	    getSymbolAttachments(symbol, purposes, symbols);
+	    int nrHooks = purposes.length();
+	    for (int i = 0; i < nrHooks; i++)
 	      {
-		Sort* sort = domainAndRange[j];
+		Symbol* op = symbols[i];
+		s << "\n    " << "op-hook " << purposes[i] << " (" <<
+		  op << " : ";
+		const Vector<Sort*>& domainAndRange =
+		  op->getOpDeclarations()[0].getDomainAndRange();
+		int nrSorts = domainAndRange.length() - 1;
+		//
+		//	We don't use operator<< for sorts in an op-hook since they
+		//	should always be printed as single tokens.
+		//
+		for (int j = 0; j < nrSorts; j++)
+		  {
+		    Sort* sort = domainAndRange[j];
+		    if (sort->index() == Sort::KIND)
+		      sort = sort->component()->sort(1);
+		    s << Token::name(sort->id()) << ' ';
+		  }
+		Sort* sort = domainAndRange[nrSorts];
 		if (sort->index() == Sort::KIND)
 		  sort = sort->component()->sort(1);
-		s << Token::name(sort->id()) << ' ';
+		s << "~> " << Token::name(sort->id()) << ')';
 	      }
-	    Sort* sort = domainAndRange[nrSorts];
-	    if (sort->index() == Sort::KIND)
-	      sort = sort->component()->sort(1);
-	    s << "~> " << Token::name(sort->id()) << ')';
 	  }
-      }
-      purposes.clear();
-      {
-	Vector<Term*> terms;
-	getTermAttachments(symbol, purposes, terms);
-	int nrHooks = purposes.length();
-	for (int i = 0; i < nrHooks; i++)
-	  s << "\n    " << "term-hook " << purposes[i] << " (" << terms[i] << ")";
-      }
+	  purposes.clear();
+	  {
+	    Vector<Term*> terms;
+	    getTermAttachments(symbol, purposes, terms);
+	    int nrHooks = purposes.length();
+	    for (int i = 0; i < nrHooks; i++)
+	      s << "\n    " << "term-hook " << purposes[i] << " (" << terms[i] << ")";
+	  }
+	}
+      else
+	s << "...";
       s << ')';
     }
   s << ']';

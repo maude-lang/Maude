@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 //
 //      Implementation for class ConfigSymbol.
 //
-//#include <list>
 
 //	utility stuff
 #include "macros.hh"
@@ -82,6 +81,12 @@ void
 ConfigSymbol::addMessages(NatSet& msgSymbols)
 {
   messageSymbols.insert(msgSymbols);
+}
+
+void
+ConfigSymbol::addPortals(NatSet& portSymbols)
+{
+  portalSymbols.insert(portSymbols);
 }
 
 bool
@@ -220,13 +225,13 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
   ObjectSystemRewritingContext::Mode mode = rc->getObjectMode();
   if (mode == ObjectSystemRewritingContext::STANDARD)
     return ACU_Symbol::ruleRewrite(subject, context);
-  bool external = (mode == ObjectSystemRewritingContext::EXTERNAL);
 
   ACU_DagNode* s = safeCastNonNull<ACU_DagNode*>(subject);
   int nrArgs = s->nrArgs();
   ObjectMap objectMap;
   Remainder remainder;
-  for (int i = 0; i < nrArgs; i++)
+  bool portalSeen = false;
+  for (int i = 0; i < nrArgs; ++i)
     {
       DagNode* d = s->getArgument(i);
       int m = s->getMultiplicity(i);
@@ -262,6 +267,8 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 	    mq.messages.push_back(d);
 	  continue;
 	}
+      else if (portalSymbols.contains(symbolNr))
+	portalSeen = true;
       //
       //	Argument was not a valid object or message so it goes
       //	into the remainder.
@@ -269,10 +276,7 @@ ConfigSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
       remainder.dagNodes.append(d);
       remainder.multiplicities.append(m);
     }
-
-  //objectMap.dump(cerr);
-  //remainder.dump(cerr);
-
+  bool external = portalSeen && (mode == ObjectSystemRewritingContext::EXTERNAL);
 
   if (objectMap.empty())
     {

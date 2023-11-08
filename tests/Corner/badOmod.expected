@@ -86,17 +86,17 @@ mod FOO is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op Foo : -> Foo [ctor] .
   op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
@@ -153,17 +153,17 @@ mod SUBCLASS-IN-MOD is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op Foo : -> Foo [ctor] .
   op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
@@ -182,7 +182,7 @@ mod SUBCLASS-IN-MOD is
 endm
 omod SUBCLASS-IN-OMOD is
   protecting FOO .
-  subclasses Foo < Bar .
+  subclass Foo < Bar .
 endom
 mod SUBCLASS-IN-OMOD is
   including BOOL .
@@ -222,17 +222,17 @@ mod SUBCLASS-IN-OMOD is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op Foo : -> Foo [ctor] .
   op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
@@ -251,7 +251,7 @@ mod SUBCLASS-IN-OMOD is
 endm
 oth SUBCLASS-IN-OTH is
   protecting FOO .
-  subclasses Foo < Bar .
+  subclass Foo < Bar .
 endoth
 th SUBCLASS-IN-OTH is
   including CONFIGURATION .
@@ -281,17 +281,17 @@ th SUBCLASS-IN-OTH is
     term-hook equalTerm (false)
     term-hook notEqualTerm (true))] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op true : -> Bool [ctor special (
     id-hook SystemTrue)] .
@@ -356,17 +356,17 @@ mod FOO is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .
@@ -422,17 +422,17 @@ mod FOO is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op a : -> a [ctor] .
   eq true and A:Bool = A:Bool .
@@ -492,17 +492,17 @@ mod FOO is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op myObj : -> Oid .
   op f : Object Object -> Object [id: < myObj : Foo | none >] .
@@ -576,17 +576,17 @@ mod ACCOUNT is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op 0 : -> Zero [ctor] .
   op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (
@@ -934,17 +934,17 @@ mod ACCOUNT is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op 0 : -> Zero [ctor] .
   op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (

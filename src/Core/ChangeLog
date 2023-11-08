@@ -1,3 +1,7 @@
+2023-10-23  Steven Eker  <eker@pup>
+
+	* module.cc (Module::closeTheory): added DebugInfo
+
 2023-06-05  Steven Eker  <eker@pup>
 
 	* ruleTable.hh (class RuleTable): deleted commented out declarations

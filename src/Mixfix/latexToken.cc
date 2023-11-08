@@ -40,7 +40,7 @@ Token::latexName(const char* name)
 	{
 	case '~':
 	  {
-	    id += "\\textasciitilde ";
+	    id += "\\maudeTilde ";
 	    break;
 	  }
 	case '^':

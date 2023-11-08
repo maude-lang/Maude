@@ -268,7 +268,7 @@ Interpreter::setCurrentModule(SyntacticPreModule* module)
       if (currentModule != 0)
 	{
 	  clearContinueInfo();
-	  currentModule->loseFocus();
+	  currentModule->loseFocus(getFlag(AUTO_CLEAR_CACHES));
 	}
       currentModule = module;
     }
@@ -401,10 +401,30 @@ Interpreter::showModule(bool all) const
 }
 
 void
+Interpreter::showPreModule() const
+{
+  currentModule->showModule(cout);
+  if (latexBuffer)
+    {
+      latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show module", currentModule->getFlatModule());
+      currentModule->latexShowModule(latexBuffer->getStream());
+      latexBuffer->cleanUp();
+    }
+}
+
+void
 Interpreter::showView() const
 {
   if (currentView->evaluate())  // in case it became stale
-    currentView->showView(cout);
+    {
+      currentView->showView(cout);
+      if (latexBuffer)
+	{
+	  latexBuffer->generateShow(getFlag(SHOW_COMMAND), "show view", currentView);
+	  currentView->latexShowView(latexBuffer->getStream());
+	  latexBuffer->cleanUp();
+	}
+    }
   else
     IssueWarning("view " << QUOTE(currentView) << " cannot be used due to earlier errors.");
 }

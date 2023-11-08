@@ -41,7 +41,7 @@ VisibleModule::latexPrintStrategy(ostream& s, StrategyExpression* strategy, int 
     {
       bool top = a->getTop();
       if (top)
-	s << "\\maudeKeyword{top}\\maudeLeftParen(";
+	s << "\\maudeKeyword{top}\\maudeLeftParen";
       int label = a->getLabel();
       if (label == NONE)
 	s << "\\maudeKeyword{all}";

@@ -11,7 +11,7 @@ reduce in META-LEVEL : metaRewrite(mod 'FOO is
   rl 'b.Foo => 'a.Foo [none] .
 endm, 'a.Foo, 1) .
 rewrites: 2
-result ResultPair: {'b.Foo,'Foo}
+result ResultPair: {'b.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaRewrite(mod 'FOO is
   nil
@@ -25,7 +25,7 @@ reduce in META-LEVEL : metaRewrite(mod 'FOO is
   rl 'b.Foo => 'a.Foo [none] .
 endm, 'a.Foo, 2) .
 rewrites: 3
-result ResultPair: {'a.Foo,'Foo}
+result ResultPair: {'a.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaRewrite(mod 'FOO is
   nil
@@ -39,7 +39,7 @@ reduce in META-LEVEL : metaRewrite(mod 'FOO is
   rl 'b.Foo => 'a.Foo [none] .
 endm, 'a.Foo, 3) .
 rewrites: 4
-result ResultPair: {'b.Foo,'Foo}
+result ResultPair: {'b.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaRewrite(mod 'FOO is
   nil
@@ -54,7 +54,7 @@ reduce in META-LEVEL : metaRewrite(mod 'FOO is
   rl 'b.Foo => 'c.Foo [none] .
 endm, 'a.Foo, unbounded) .
 rewrites: 3
-result ResultPair: {'c.Foo,'Foo}
+result ResultPair: {'c.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaRewrite(mod 'FOO is
   nil
@@ -69,7 +69,7 @@ reduce in META-LEVEL : metaRewrite(mod 'FOO is
   rl 'b.Foo => 'c.Foo [none] .
 endm, 'a.Foo, 1000000000000000000000000000000000000000000000000000) .
 rewrites: 3
-result ResultPair: {'c.Foo,'Foo}
+result ResultPair: {'c.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaRewrite(mod 'FOO is
   nil

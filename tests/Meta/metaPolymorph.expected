@@ -11,9 +11,9 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   op 'tt : nil -> 'Value [none] .
   none
   none
-endfm, 'eq['"a".String,'"a".String]) .
+endfm, 'eq['"a".String, '"a".String]) .
 rewrites: 2
-result ResultPair: {'tt.Value,'Value}
+result ResultPair: {'tt.Value, 'Value}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   including 'STRING .
@@ -27,9 +27,9 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   op 'tt : nil -> 'Value [none] .
   none
   none
-endfm, 'eq['"a".String,'"b".String]) .
+endfm, 'eq['"a".String, '"b".String]) .
 rewrites: 2
-result ResultPair: {'ff.Value,'Value}
+result ResultPair: {'ff.Value, 'Value}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   including 'STRING .
@@ -43,9 +43,9 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   op 'tt : nil -> 'Value [none] .
   none
   none
-endfm, '?['tt.Value,'"a".String,'"b".String]) .
+endfm, '?['tt.Value, '"a".String, '"b".String]) .
 rewrites: 2
-result ResultPair: {'"a".Char,'Char}
+result ResultPair: {'"a".Char, 'Char}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   including 'STRING .
@@ -59,9 +59,9 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   op 'tt : nil -> 'Value [none] .
   none
   none
-endfm, '?['ff.Value,'"a".String,'"b".String]) .
+endfm, '?['ff.Value, '"a".String, '"b".String]) .
 rewrites: 2
-result ResultPair: {'"b".Char,'Char}
+result ResultPair: {'"b".Char, 'Char}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   including 'STRING .
@@ -75,7 +75,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   none
 endfm, '^['"a".String]) .
 rewrites: 2
-result ResultPair: {''"a".Char.Constant,'Constant}
+result ResultPair: {''"a".Char.Constant, 'Constant}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   including 'STRING .
@@ -87,9 +87,9 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
     op-hook('shareWith, 'metaReduce, 'Module 'Term, 'ResultPair))] .
   none
   none
-endfm, '![''"a".String.Constant,'"b".String]) .
+endfm, '![''"a".String.Constant, '"b".String]) .
 rewrites: 2
-result ResultPair: {'"a".Char,'Char}
+result ResultPair: {'"a".Char, 'Char}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'POLY-ID3 is
   including 'BOOL .
@@ -99,9 +99,9 @@ reduce in META-LEVEL : metaReduce(fmod 'POLY-ID3 is
   op 'f : 'Universal 'Foo -> 'Universal [right-id('1.Foo) poly(1 0)] .
   none
   none
-endfm, 'f['true.Bool,'1.Foo]) .
+endfm, 'f['true.Bool, '1.Foo]) .
 rewrites: 1
-result ResultPair: {'true.Bool,'Bool}
+result ResultPair: {'true.Bool, 'Bool}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'POLY-ID3 is
   including 'BOOL .
@@ -111,10 +111,10 @@ reduce in META-LEVEL : metaReduce(fmod 'POLY-ID3 is
   op 'g : 'Univeral -> 'Universal [poly(1 0)] .)
   op '1 : nil -> 'Foo [none] .
   none
-  eq 'g['f['true.Bool,'X:Foo]] = 'false.Bool [none] .
+  eq 'g['f['true.Bool, 'X:Foo]] = 'false.Bool [none] .
 endfm, 'g['true.Bool]) .
 rewrites: 2
-result ResultPair: {'false.Bool,'Bool}
+result ResultPair: {'false.Bool, 'Bool}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'POLY-ID3 is
   including 'BOOL .
@@ -125,7 +125,7 @@ reduce in META-LEVEL : metaReduce(fmod 'POLY-ID3 is
   none
 endfm, '1.Bool) .
 rewrites: 1
-result ResultPair: {'1.`[Bool`],'`[Bool`]}
+result ResultPair: {'1.`[Bool`], '`[Bool`]}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'POLY-ID3 is
   including 'BOOL .
@@ -136,5 +136,5 @@ reduce in META-LEVEL : metaReduce(fmod 'POLY-ID3 is
   none
 endfm, '1.Foo) .
 rewrites: 1
-result ResultPair: {'1.`[Foo`],'`[Foo`]}
+result ResultPair: {'1.`[Foo`], '`[Foo`]}
 Bye.

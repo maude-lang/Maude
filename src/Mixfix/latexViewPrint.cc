@@ -24,6 +24,108 @@
 //	LaTeX pretty printer for views.
 //
 
+string
+SyntacticView::latexType(const Type& type, const Module* module)
+{
+  if (type.kind)
+    {
+      string result = "\\maudeLeftBracket";
+      const char* sep = "";
+      for (auto& t : type.tokens)
+	{
+	  result += sep;
+	  result += MixfixModule::latexSort(t.code(), module);
+	  sep = "\\maudeComma";
+	}
+      return result + "\\maudeRightBracket";
+    }
+  return MixfixModule::latexSort(type.tokens[0].code(), module);
+}
+
+void
+SyntacticView::latexShowView(ostream& s)
+{
+  //
+  //	Generate header.
+  //
+  s << "\\par\\maudeKeyword{view}\\maudeSpace\\maudeView{" << Token::latexName(id()) << "}";
+  int nrParameters = getNrParameters();
+  if (nrParameters > 0)
+    {
+      s << "$\\maudeLeftBrace\\maudeParameter{" << Token::latexName(getParameterName(0)) << "}\\maudeParameterColon";
+      getParameterTheoryExpression(0)->latexPrint(s);
+      for (int i = 1; i < nrParameters; ++i)
+	{
+	  s << "\\maudeComma\\maudeSpace\\maudeParameter{" << Token::latexName(getParameterName(i)) << "}\\maudeParameterColon";
+	  getParameterTheoryExpression(i)->latexPrint(s);
+	}
+      s << "\\maudeRightBrace$";
+    }
+  s << "\\maudeSpace\\maudeKeyword{from}\\maudeSpace";
+  getFrom()->latexPrint(s);
+  s << "\\maudeSpace\\maudeKeyword{to}\\maudeSpace";
+  ImportModule* toModule = getToModule();
+  getTo()->latexPrint(s, toModule);  // the target must have the same set of parameters as the view
+  s << "\\maudeSpace\\maudeKeyword{is}\n";
+  //
+  //	Generate sort/op/class mappings.
+  //
+  ImportModule* fromTheory = getFromTheory();
+  if (getNrSortMappings() + getNrOpMappings() + getNrClassMappings() > 0)
+    {
+      string renaming = latexRenaming("\\par\\maudeIndent $",
+				      "$\\maudeEndStatement\n\\par\\maudeIndent $",
+				      fromTheory,
+				      toModule,
+				      false);
+      s << renaming << "$\\maudeEndStatement\n";
+    }
+  //
+  //	Generate variable declarations.
+  //
+  if (!varDecls.empty())
+    {
+      bool startNew = true;
+      TypeList::const_iterator j = varDefs.begin();
+      for (const VarDecl& i : varDecls)
+	{
+	  if (startNew)
+	    {
+	      s << "\\par\\maudeIndent" << (i.lastWithCurrentDef ? "\\maudeKeyword{var}$" : "\\maudeKeyword{vars}$");
+	      startNew = false;
+	    }
+	  s << "\\maudeSpace" << Token::latexIdentifier(i.varName.code());
+	  if (i.lastWithCurrentDef)
+	    {
+	      s << "\\maudeHasSort" << latexType(*j, fromTheory) << "$\\maudeEndStatement\n";
+	      ++j;
+	      startNew = true;
+	    }
+	}
+    }
+  //
+  //	We generate op->term and  msg->term mappings as unparsed bubbles.
+  //
+  for (const auto& i : opTermList)
+    {
+      s << "\\par\\maudeIndent\\maudeKeyword{" << (i.msg ? "msg" : "op") << "}\\maudeSpace" <<
+	MixfixModule::latexTokenVector(i.fromBubble, 0, i.fromBubble.size() - 1) <<
+	"\\maudeSpace\\maudeKeyword{to}\\maudeSpace\\maudeKeyword{term}\\maudeSpace" <<
+	MixfixModule::latexTokenVector(i.toBubble, 1, i.toBubble.size() - 1) << "\\maudeEndStatement\n";
+    }
+  //
+  //	We generate strat->expr mappings as unparsed bubbles.
+  //
+  for (const auto& i : stratExprList)
+    {
+      s << "\\par\\maudeIndent\\maudeKeyword{strat}\\maudeSpace" <<
+	MixfixModule::latexTokenVector(i.fromBubble, 0, i.fromBubble.size() - 1) <<
+	"\\maudeSpace\\maudeKeyword{to}\\maudeSpace\\maudeKeyword{expr}\\maudeSpace" <<
+	MixfixModule::latexTokenVector(i.toBubble, 1, i.toBubble.size() - 1) << "\\maudeEndStatement\n";
+    }
+  s << "\\par\\maudeKeyword{endv}\n";
+}
+
 void
 SyntacticView::latexShowProcessedView(ostream& s)
 {
@@ -45,16 +147,18 @@ SyntacticView::latexShowProcessedView(ostream& s)
   s << "\\maudeSpace\\maudeKeyword{from}\\maudeSpace" << fromTheory->latexModuleExpression();
   s << "\\maudeSpace\\maudeKeyword{to}\\maudeSpace" << toModule->latexModuleExpression();
   s << "\\maudeSpace\\maudeKeyword{is}\n";
-  string renaming =  latexRenaming("\\par\\maudeIndent $",
-				   "$\\maudeEndStatement\n\\par\\maudeIndent $",
-				   fromTheory,
-				   toModule,
-				   false);
   if (getNrSortMappings() + getNrOpMappings() > 0)
-    s << renaming << "$\\maudeEndStatement\n";
+    {
+      string renaming = latexRenaming("\\par\\maudeIndent $",
+				      "$\\maudeEndStatement\n\\par\\maudeIndent $",
+				      fromTheory,
+				      toModule,
+				      true);
+      s << renaming << "$\\maudeEndStatement\n";
+    }
   for (auto& p : fromTheoryVariableAliases)
     {
-      s << "\\par\\maudeIndent\\maudeKeyword{var}$" << Token::latexIdentifier(p.first) <<
+      s << "\\par\\maudeIndent\\maudeKeyword{var}$\\maudeSpace" << Token::latexIdentifier(p.first) <<
 	"\\maudeHasSort" << MixfixModule::latexType(p.second) << "$\\maudeEndStatement\n";
     }
   //
@@ -68,7 +172,7 @@ SyntacticView::latexShowProcessedView(ostream& s)
 
   for (const auto& i : getOpTermMap())
     {
-      s << "\\par\\maudeIndent\\maudeKeyword{op} $";
+      s << "\\par\\maudeIndent\\maudeKeyword{op}$\\maudeSpace";
       MixfixModule::latexPrettyPrint(s, i.second.first);
       s << "\\maudeSpace\\maudeKeyword{to}\\maudeSpace\\maudeKeyword{term}\\maudeSpace";
       MixfixModule::latexPrettyPrint(s, i.second.second);

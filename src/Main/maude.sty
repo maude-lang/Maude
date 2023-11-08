@@ -18,10 +18,10 @@
 %    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 %
 %	Latex package for use with the -latex-log= feature.
-%	Version Alpha152.
+%	Version Alpha153.
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{maude}[2023/09/19 Package for Maude logs]
+\ProvidesPackage{maude}[2023/11/06 Package for Maude logs]
 \RequirePackage{amssymb,extarrows,longtable,tabto,xcolor,verbatim,alltt}
 \RequirePackage[T1]{fontenc}
 %
@@ -31,6 +31,7 @@
 \newcommand{\maudeBigIndent}{\hspace*{3em}}  % for data in show
 \newcommand{\maudeBannerIndent}{\hspace*{5em}}  % for banner
 \newcommand{\maudeInterwordSpace}{\hskip0.3em}
+\newcommand{\maudeAllowLineBreak}{\linebreak[0]}
 %
 %	Font choices.
 %
@@ -65,6 +66,7 @@
 \newcommand{\maudeString}[1]{\texttt{#1}}
 \newcommand{\maudeQid}[1]{\texttt{#1}}
 \newcommand{\maudeLabel}[1]{\texttt{#1}}
+\newcommand{\maudePrefixLabel}[1]{[\texttt{#1}]\maudeInterwordSpace :}
 %
 %	Numbers are just printed with the math mode default.
 %
@@ -90,6 +92,15 @@
 %
 \newcommand{\maudeIdentifier}[1]{\textit{#1}}
 %
+%	An symbol with the iter attribute has a base name and a number of nested iterations.
+%
+\newcommand{\maudeIter}[2]{{#1}^{\maudeNumber{#2}}}
+%
+%	An unparsed token that could be anything.
+%
+\newcommand{\maudeRaw}[1]{\texttt{#1}}
+
+%
 %	Catch all for rare output - use typewritter.
 %
 \newcommand{\maudeMisc}[1]{\texttt{#1}}
@@ -110,18 +121,22 @@
 \newcommand{\maudePartialFunction}{\rightsquigarrow}  % for partial op decls
 \newcommand{\maudeConjunction}{\,\wedge\,}  % for conjunctions in conditions
 \newcommand{\maudeHasSort}{\,:\,}  % for op, variable decls, mbs and sort test condition fragments
-\newcommand{\maudeVariableColon}{{\textnormal :}}  % for forming var:sort names
+\newcommand{\maudeVariableColon}{\textnormal{:}}  % for forming var:sort names
 \newcommand{\maudeEquals}{\,=\,}  % for eqs and equality condition fragments
 \newcommand{\maudeRewritesTo}{\,\Rightarrow\,}  % for rls and rewrite condition fragments
 \newcommand{\maudeAssign}{\,:=\,}  % for match condition fragments
 \newcommand{\maudeParameterColon}{\,::\,}  % for forming parameter :: theory pairs
 \newcommand{\maudeLessThan}{<}  % for subsorts
-\newcommand{\maudeComma}{,\linebreak[0]}  % to separate parameters and function arguments
+\newcommand{\maudeComma}{,\maudeAllowLineBreak}  % to separate parameters and function arguments
 \newcommand{\maudeEndStatement}{\maudeInterwordSpace\maudePunctuation{.}}  % include space and try to avoid preceeding linebreak
 \newcommand{\maudeEndCommand}{\maudeInterwordSpace\maudePunctuation{.}}  % include space and try to avoid preceeding linebreak
 \newcommand{\maudeDisambigDot}{.}  % for (<term>).<sort>
 \newcommand{\maudeMatch}{\,\leq^?\,}
 \newcommand{\maudeUnify}{\,=^?\,}
+\newcommand{\maudePipe}{\mid}
+\newcommand{\maudeTilde}{\raisebox{-.65ex}{\textasciitilde}}
+\newcommand{\maudeConstantDecl}{\,:\maudeInterwordSpace\rightarrow} % needed to get the spacing right
+\newcommand{\maudeEllipsis}{\ldots}
 %
 %	Strategy language.
 %
@@ -133,7 +148,7 @@
 \newcommand{\maudeStratQuery}{\maudeInterwordSpace ?\maudeInterwordSpace}
 \newcommand{\maudeStratColon}{:}
 \newcommand{\maudeStratBang}{!}
-\newcommand{\maudeStratUnion}{\maudeInterwordSpace |\maudeInterwordSpace}
+\newcommand{\maudeStratUnion}{\mid}
 %
 %	Search
 %
@@ -163,3 +178,28 @@
 %
 \newenvironment{maudeShowParagraph}{\begin{flushleft}\hangindent=2em\hangafter=1\parskip=0pt}{\end{flushleft}}
 \newenvironment{maudeResultParagraph}{\begin{flushleft}\hangindent=2em\hangafter=1\parskip=0pt}{\end{flushleft}}
+%
+%	Use ASCII sequences in place of math symbols.
+%
+\DeclareOption{ASCII}{
+  \renewcommand{\maudeIter}[2]{#1\textasciicircum #2}
+  \renewcommand{\maudeFunction}{\maudeInterwordSpace\textnormal{-->}\maudeInterwordSpace}
+  \renewcommand{\maudePartialFunction}{\textnormal{\maudeTilde >}\maudeInterwordSpace}
+  \renewcommand{\maudeConstantDecl}{\,:\,\textnormal{-->}\maudeInterwordSpace} % needed to get the spacing right
+  \renewcommand{\maudeConjunction}{\maudeInterwordSpace/\textbackslash\maudeInterwordSpace}
+  \renewcommand{\maudeRewritesTo}{\maudeInterwordSpace\textnormal{=>}\maudeInterwordSpace}
+  \renewcommand{\maudeMatch}{\,\textnormal{<=?}\,}
+  \renewcommand{\maudeUnify}{\,\textnormal{=?}\,}
+  \renewcommand{\maudeStratAssign}{\,\textnormal{<--},}
+  \renewcommand{\maudeOneStep}{\maudeInterwordSpace\textnormal{=>1}\maudeInterwordSpace}
+  \renewcommand{\maudeAtLeastOneStep}{\maudeInterwordSpace\textnormal{=>+}\maudeInterwordSpace}
+  \renewcommand{\maudeAnySteps}{\maudeInterwordSpace\textnormal{=>*}\maudeInterwordSpace}
+  \renewcommand{\maudeToNormalForm}{\maudeInterwordSpace\textnormal{=>!}\maudeInterwordSpace}
+  \renewcommand{\maudeIsAssigned}{\maudeInterwordSpace\textnormal{--\,-->}\maudeInterwordSpace}
+  \renewcommand{\maudePathLeft}{\textnormal{===[}\maudeInterwordSpace}
+  \renewcommand{\maudePathRight}{\maudeInterwordSpace\textnormal{]===>}}
+  \renewcommand{\maudePathWithLabel}[1]{\textnormal{--\,--\,--}\maudeInterwordSpace#1\maudeInterwordSpace\textnormal{--\,--\,-->}}
+  \renewcommand{\maudePathWithoutLabel}{\textnormal{--\,--\,--\,--\,--\,-->}}
+  \renewcommand{\maudeArcArrow}{\maudeInterwordSpace\textnormal{===>}\maudeInterwordSpace}
+}
+\ProcessOptions\relax

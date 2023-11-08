@@ -207,7 +207,7 @@ smod BAR is
   eq not A:Bool = true xor A:Bool .
   eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
   eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
-  rl X:Qid => qid("h" + string(X:Qid)) [label rh] .
+  rl [rh] : X:Qid => qid("h" + string(X:Qid)) .
   strat puths : Nat @ Qid .
   sd puths(0) := idle .
   sd puths(s N:Nat) := rh ; puths(N:Nat) .

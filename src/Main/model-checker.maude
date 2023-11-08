@@ -216,7 +216,7 @@ endfm
 fmod SATISFACTION is
   protecting BOOL .
   sorts State Prop .
-  op _|=_ : State Prop -> Bool [frozen] .
+  op _|=_ : State Prop ~> Bool [frozen] .
 endfm
 
 fmod MODEL-CHECKER is

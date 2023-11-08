@@ -46,18 +46,18 @@ result StratModule: smod 'SFOO is
   op 'true : nil -> 'Bool [ctor special(
     id-hook('SystemTrue, nil))] .
   none
-  eq '_and_['A:Bool,'A:Bool] = 'A:Bool [none] .
-  eq '_and_['A:Bool,'_xor_['B:Bool,'C:Bool]] = '_xor_['_and_['A:Bool,'B:Bool],
-    '_and_['A:Bool,'C:Bool]] [none] .
-  eq '_and_['false.Bool,'A:Bool] = 'false.Bool [none] .
-  eq '_and_['true.Bool,'A:Bool] = 'A:Bool [none] .
-  eq '_implies_['A:Bool,'B:Bool] = 'not_['_xor_['A:Bool,'_and_['A:Bool,
+  eq '_and_['A:Bool, 'A:Bool] = 'A:Bool [none] .
+  eq '_and_['A:Bool, '_xor_['B:Bool, 'C:Bool]] = '_xor_['_and_['A:Bool,
+    'B:Bool], '_and_['A:Bool, 'C:Bool]] [none] .
+  eq '_and_['false.Bool, 'A:Bool] = 'false.Bool [none] .
+  eq '_and_['true.Bool, 'A:Bool] = 'A:Bool [none] .
+  eq '_implies_['A:Bool, 'B:Bool] = 'not_['_xor_['A:Bool, '_and_['A:Bool,
     'B:Bool]]] [none] .
-  eq '_or_['A:Bool,'B:Bool] = '_xor_['_and_['A:Bool,'B:Bool],'_xor_['A:Bool,
+  eq '_or_['A:Bool, 'B:Bool] = '_xor_['_and_['A:Bool, 'B:Bool], '_xor_['A:Bool,
     'B:Bool]] [none] .
-  eq '_xor_['A:Bool,'A:Bool] = 'false.Bool [none] .
-  eq '_xor_['false.Bool,'A:Bool] = 'A:Bool [none] .
-  eq 'not_['A:Bool] = '_xor_['true.Bool,'A:Bool] [none] .
+  eq '_xor_['A:Bool, 'A:Bool] = 'false.Bool [none] .
+  eq '_xor_['false.Bool, 'A:Bool] = 'A:Bool [none] .
+  eq 'not_['A:Bool] = '_xor_['true.Bool, 'A:Bool] [none] .
   rl 'a.Foo => 'b.Foo [label('ab)] .
   rl 'b.Foo => 'c.Foo [label('bc)] .
   strat 'ac : nil @ 'Foo [none] .
@@ -106,22 +106,22 @@ endv
 reduce in META-LEVEL : metaSrewrite(upModule('SFOO, false), 'a.Foo, 'ac[[
     empty]] | 'ab[none]{empty}, breadthFirst, 0) .
 rewrites: 3
-result ResultPair: {'b.Foo,'Foo}
+result ResultPair: {'b.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
     empty}, breadthFirst, 0) .
 rewrites: 3
-result ResultPair: {'b.Foo,'Foo}
+result ResultPair: {'b.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
     empty}, breadthFirst, 0) .
 rewrites: 2
-result ResultPair: {'b.Foo,'Foo}
+result ResultPair: {'b.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
     empty}, breadthFirst, 1) .
 rewrites: 4
-result ResultPair: {'c.Foo,'Foo}
+result ResultPair: {'c.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
     empty}, breadthFirst, 2) .
@@ -131,12 +131,12 @@ result ResultPair?: (failure).ResultPair?
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
     empty}, depthFirst, 1) .
 rewrites: 5
-result ResultPair: {'b.Foo,'Foo}
+result ResultPair: {'b.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'ac[[empty]] | 'ab[none]{
     empty}, depthFirst, 0) .
 rewrites: 4
-result ResultPair: {'c.Foo,'Foo}
+result ResultPair: {'c.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(mod 'INC is
   protecting 'NAT .
@@ -148,7 +148,7 @@ reduce in META-LEVEL : metaSrewrite(mod 'INC is
   rl 'N:Nat => 's_['N:Nat] [label('inc)] .
 endm, '0.Nat, ('inc[none]{empty}) *, breadthFirst, 8) .
 rewrites: 29
-result ResultPair: {'s_^8['0.Zero],'NzNat}
+result ResultPair: {'s_^8['0.Zero], 'NzNat}
 ==========================================
 reduce in META-LEVEL : metaSrewrite(['SFOO], 'a.Foo, 'bad-rule[none]{empty},
     depthFirst, 0) .
@@ -204,7 +204,7 @@ rewrites: 2
 result NeTypeList: 'ac '; 'ab
 ==========================================
 reduce in META-LEVEL : metaPrettyPrintStrategy(['NAT], 'N:Nat, match 'N:Nat
-    s.t. ('M:Nat := 's_^5['0.Zero] /\ '_>_['N:Nat,'M:Nat] = 'true.Bool),
+    s.t. ('M:Nat := 's_^5['0.Zero] /\ '_>_['N:Nat, 'M:Nat] = 'true.Bool),
     number) .
 rewrites: 2
 result NeQidList: 'match 'N 's.t. 'M:Nat ':= '5 '/\ '_>_ '`( 'N '`, 'M:Nat '`)

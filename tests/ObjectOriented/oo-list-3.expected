@@ -7,12 +7,12 @@ Transformed rule:
     X) .
 
 Considering object completion on:
-  rl < O : List{X} | first : null > O add O' at 0 => aux1(< O : List{X} | first
-    : null >, O add O' at 0, counter) [label add] .
+  rl [add] : < O : List{X} | first : null > O add O' at 0 => aux1(< O : List{X}
+    | first : null >, O add O' at 0, counter) .
 Transformed rule:
-  rl < O : V:List{X} | first : null, Atts:AttributeSet > O add O' at 0 => aux1(
-    < O : V:List{X} | first : null, Atts:AttributeSet >, O add O' at 0,
-    counter) [label add] .
+  rl [add] : < O : V:List{X} | first : null, Atts:AttributeSet > O add O' at 0
+    => aux1(< O : V:List{X} | first : null, Atts:AttributeSet >, O add O' at 0,
+    counter) .
 
 Considering object completion on:
   eq aux1(< O : List{X} | first : null >, O add O' at 0, N) = < O : List{X} |
@@ -25,15 +25,14 @@ Transformed equation:
     next : null, previous : null, value : O' > .
 
 Considering object completion on:
-  rl < O : List{X} | first : F, size : S > < F : Node{X} | previous : null > O
-    add O' at 0 => aux2(< O : List{X} | first : F, size : S > < F : Node{X} |
-    previous : null >, O add O' at 0, counter) [label add] .
+  rl [add] : < O : List{X} | first : F, size : S > < F : Node{X} | previous :
+    null > O add O' at 0 => aux2(< O : List{X} | first : F, size : S > < F :
+    Node{X} | previous : null >, O add O' at 0, counter) .
 Transformed rule:
-  rl < O : V:List{X} | first : F, size : S, Atts:AttributeSet > < F : V2:Node{
-    X} | previous : null, Atts2:AttributeSet > O add O' at 0 => aux2(< O :
-    V:List{X} | first : F, size : S, Atts:AttributeSet > < F : V2:Node{X} |
-    previous : null, Atts2:AttributeSet >, O add O' at 0, counter) [label add]
-    .
+  rl [add] : < O : V:List{X} | first : F, size : S, Atts:AttributeSet > < F :
+    V2:Node{X} | previous : null, Atts2:AttributeSet > O add O' at 0 => aux2(<
+    O : V:List{X} | first : F, size : S, Atts:AttributeSet > < F : V2:Node{X} |
+    previous : null, Atts2:AttributeSet >, O add O' at 0, counter) .
 
 Considering object completion on:
   eq aux2(< O : List{X} | first : F, size : S > < F : Node{X} | previous : null
@@ -48,14 +47,14 @@ Transformed equation:
     next : F, previous : null, value : O' > .
 
 Considering object completion on:
-  rl < O : List{X} | last : L, size : S > < L : Node{X} | next : null > O add
-    O' at S => aux3(< O : List{X} | last : L, size : S > < L : Node{X} | next :
-    null >, O add O' at S, counter) [label add] .
+  rl [add] : < O : List{X} | last : L, size : S > < L : Node{X} | next : null >
+    O add O' at S => aux3(< O : List{X} | last : L, size : S > < L : Node{X} |
+    next : null >, O add O' at S, counter) .
 Transformed rule:
-  rl < O : V2:List{X} | last : L, size : S, Atts2:AttributeSet > < L : V:Node{
-    X} | next : null, Atts:AttributeSet > O add O' at S => aux3(< O : V2:List{
-    X} | last : L, size : S, Atts2:AttributeSet > < L : V:Node{X} | next :
-    null, Atts:AttributeSet >, O add O' at S, counter) [label add] .
+  rl [add] : < O : V2:List{X} | last : L, size : S, Atts2:AttributeSet > < L :
+    V:Node{X} | next : null, Atts:AttributeSet > O add O' at S => aux3(< O :
+    V2:List{X} | last : L, size : S, Atts2:AttributeSet > < L : V:Node{X} |
+    next : null, Atts:AttributeSet >, O add O' at S, counter) .
 
 Considering object completion on:
   eq aux3(< O : List{X} | last : L, size : S > < L : Node{X} | next : null >, O
@@ -70,25 +69,25 @@ Transformed equation:
     previous : L, value : O' > .
 
 Considering object completion on:
-  crl < O : List{X} | first : F, size : S > O add O' at s P => add-blocked(< O
-    : List{X} | none >) F add' O' at P if s P < S = true [label add] .
+  crl [add] : < O : List{X} | first : F, size : S > O add O' at s P =>
+    add-blocked(< O : List{X} | none >) F add' O' at P if s P < S = true .
 Transformed rule:
-  crl < O : V:List{X} | first : F, size : S, Atts:AttributeSet > O add O' at s
-    P => add-blocked(< O : V:List{X} | first : F, size : S, Atts:AttributeSet
-    >) F add' O' at P if s P < S = true [label add] .
+  crl [add] : < O : V:List{X} | first : F, size : S, Atts:AttributeSet > O add
+    O' at s P => add-blocked(< O : V:List{X} | first : F, size : S,
+    Atts:AttributeSet >) F add' O' at P if s P < S = true .
 
 Considering object completion on:
-  rl < O : Node{X} | next : O' > < O' : Node{X} | previous : O > (O add' O'' at
-    P) add-blocked(< L : List{X} | size : S >) => aux4(< O : Node{X} | next :
-    O' > < O' : Node{X} | previous : O >, (O add' O'' at P) add-blocked(< L :
-    List{X} | size : S >), counter) [label add] .
+  rl [add] : < O : Node{X} | next : O' > < O' : Node{X} | previous : O > (O
+    add' O'' at P) add-blocked(< L : List{X} | size : S >) => aux4(< O : Node{
+    X} | next : O' > < O' : Node{X} | previous : O >, (O add' O'' at P)
+    add-blocked(< L : List{X} | size : S >), counter) .
 Transformed rule:
-  rl < O : V2:Node{X} | next : O', Atts2:AttributeSet > < O' : V3:Node{X} |
-    previous : O, Atts3:AttributeSet > (O add' O'' at P) add-blocked(< L :
+  rl [add] : < O : V2:Node{X} | next : O', Atts2:AttributeSet > < O' : V3:Node{
+    X} | previous : O, Atts3:AttributeSet > (O add' O'' at P) add-blocked(< L :
     V:List{X} | size : S, Atts:AttributeSet >) => aux4(< O : V2:Node{X} | next
     : O', Atts2:AttributeSet > < O' : V3:Node{X} | previous : O,
     Atts3:AttributeSet >, (O add' O'' at P) add-blocked(< L : V:List{X} | size
-    : S, Atts:AttributeSet >), counter) [label add] .
+    : S, Atts:AttributeSet >), counter) .
 
 Considering object completion on:
   eq aux4(< O : Node{X} | next : O' > < O' : Node{X} | previous : O >, (O add'
@@ -109,42 +108,42 @@ Transformed equation:
     : V:List{X} | size : S, Atts:AttributeSet >) fi .
 
 Considering object completion on:
-  crl < O : List{X} | first : F, size : S > O get at P from O' => get-blocked(<
-    O : List{X} | none >, P, O') F in O get at P if s P < S = true [label get]
-    .
+  crl [get] : < O : List{X} | first : F, size : S > O get at P from O' =>
+    get-blocked(< O : List{X} | none >, P, O') F in O get at P if s P < S =
+    true .
 Transformed rule:
-  crl < O : V:List{X} | first : F, size : S, Atts:AttributeSet > O get at P
-    from O' => get-blocked(< O : V:List{X} | first : F, size : S,
-    Atts:AttributeSet >, P, O') F in O get at P if s P < S = true [label get] .
+  crl [get] : < O : V:List{X} | first : F, size : S, Atts:AttributeSet > O get
+    at P from O' => get-blocked(< O : V:List{X} | first : F, size : S,
+    Atts:AttributeSet >, P, O') F in O get at P if s P < S = true .
 
 Considering object completion on:
-  crl < O : List{X} | last : L, size : s S > < L : Node{X} | value : O' > O get
-    at P from O'' => get-blocked(< O : List{X} | none >, P, O'') < L : Node{X}
-    | none > to O' from O get if S = P [label get] .
+  crl [get] : < O : List{X} | last : L, size : s S > < L : Node{X} | value : O'
+    > O get at P from O'' => get-blocked(< O : List{X} | none >, P, O'') < L :
+    Node{X} | none > to O' from O get if S = P .
 Transformed rule:
-  crl < O : V2:List{X} | last : L, size : s S, Atts2:AttributeSet > < L :
-    V:Node{X} | value : O', Atts:AttributeSet > O get at P from O'' =>
+  crl [get] : < O : V2:List{X} | last : L, size : s S, Atts2:AttributeSet > < L
+    : V:Node{X} | value : O', Atts:AttributeSet > O get at P from O'' =>
     get-blocked(< O : V2:List{X} | last : L, size : s S, Atts2:AttributeSet >,
     P, O'') < L : V:Node{X} | value : O', Atts:AttributeSet > to O' from O get
-    if S = P [label get] .
+    if S = P .
 
 Considering object completion on:
-  rl < O : Node{X} | next : O', value : O'' > O in O''' get at P => < O : Node{
-    X} | none > if P == 0 then to O'' from O''' get else O' in O''' get at P -
-    1 fi [label get] .
+  rl [get] : < O : Node{X} | next : O', value : O'' > O in O''' get at P => < O
+    : Node{X} | none > if P == 0 then to O'' from O''' get else O' in O''' get
+    at P - 1 fi .
 Transformed rule:
-  rl < O : V:Node{X} | next : O', value : O'', Atts:AttributeSet > O in O'''
-    get at P => < O : V:Node{X} | next : O', value : O'', Atts:AttributeSet >
-    if P == 0 then to O'' from O''' get else O' in O''' get at P - 1 fi [label
-    get] .
+  rl [get] : < O : V:Node{X} | next : O', value : O'', Atts:AttributeSet > O in
+    O''' get at P => < O : V:Node{X} | next : O', value : O'',
+    Atts:AttributeSet > if P == 0 then to O'' from O''' get else O' in O''' get
+    at P - 1 fi .
 
 Considering object completion on:
-  rl get-blocked(< O : List{X} | none >, P, O') to O from O'' answer(X) => < O
-    : List{X} | none > to O' from O elt at pos P is X [label get] .
+  rl [get] : get-blocked(< O : List{X} | none >, P, O') to O from O'' answer(X)
+    => < O : List{X} | none > to O' from O elt at pos P is X .
 Transformed rule:
-  rl get-blocked(< O : V:List{X} | Atts:AttributeSet >, P, O') to O from O''
-    answer(X) => < O : V:List{X} | Atts:AttributeSet > to O' from O elt at pos
-    P is X [label get] .
+  rl [get] : get-blocked(< O : V:List{X} | Atts:AttributeSet >, P, O') to O
+    from O'' answer(X) => < O : V:List{X} | Atts:AttributeSet > to O' from O
+    elt at pos P is X .
 
 Considering object completion on:
   rl < O1 : NatWrapper | value : N > to O1 get from O2 => < O1 : NatWrapper |

@@ -1,27 +1,26 @@
 Considering object completion on:
-  rl credit(A, M) < A : Account | bal : N > => < A : Account | bal : (N + M) >
-    [label credit] .
+  rl [credit] : credit(A, M) < A : Account | bal : N > => < A : Account | bal :
+    (N + M) > .
 Transformed rule:
-  rl credit(A, M) < A : V:Account | bal : N, Atts:AttributeSet > => < A :
-    V:Account | bal : (N + M), Atts:AttributeSet > [label credit] .
+  rl [credit] : credit(A, M) < A : V:Account | bal : N, Atts:AttributeSet > =>
+    < A : V:Account | bal : (N + M), Atts:AttributeSet > .
 
 Considering object completion on:
-  crl debit(A, M) < A : Account | bal : N > => < A : Account | bal : (N - M) >
-    if N >= M = true [label debit] .
+  crl [debit] : debit(A, M) < A : Account | bal : N > => < A : Account | bal :
+    (N - M) > if N >= M = true .
 Transformed rule:
-  crl debit(A, M) < A : V:Account | bal : N, Atts:AttributeSet > => < A :
-    V:Account | bal : (N - M), Atts:AttributeSet > if N >= M = true [label
-    debit] .
+  crl [debit] : debit(A, M) < A : V:Account | bal : N, Atts:AttributeSet > => <
+    A : V:Account | bal : (N - M), Atts:AttributeSet > if N >= M = true .
 
 Considering object completion on:
-  crl (from A to B transfer M) < A : Account | bal : N > < B : Account | bal :
-    N' > => < A : Account | bal : (N - M) > < B : Account | bal : (N' + M) > if
-    N >= M = true [label transfer] .
+  crl [transfer] : (from A to B transfer M) < A : Account | bal : N > < B :
+    Account | bal : N' > => < A : Account | bal : (N - M) > < B : Account | bal
+    : (N' + M) > if N >= M = true .
 Transformed rule:
-  crl (from A to B transfer M) < A : V:Account | bal : N, Atts:AttributeSet > <
-    B : V2:Account | bal : N', Atts2:AttributeSet > => < A : V:Account | bal :
-    (N - M), Atts:AttributeSet > < B : V2:Account | bal : (N' + M),
-    Atts2:AttributeSet > if N >= M = true [label transfer] .
+  crl [transfer] : (from A to B transfer M) < A : V:Account | bal : N,
+    Atts:AttributeSet > < B : V2:Account | bal : N', Atts2:AttributeSet > => <
+    A : V:Account | bal : (N - M), Atts:AttributeSet > < B : V2:Account | bal :
+    (N' + M), Atts2:AttributeSet > if N >= M = true .
 
 op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
 op __ left-identity collapse from Configuration to Object is unequal.

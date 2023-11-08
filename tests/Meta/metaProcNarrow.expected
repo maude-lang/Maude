@@ -1,294 +1,302 @@
 ==========================================
-erewrite in NARROW-TEST : <> < me : User | start: ('g['f['#22:Foo,'#21:Foo,
+erewrite in NARROW-TEST : <> < me : User | start: ('g['f['#22:Foo, '#21:Foo,
     '#23:Foo]]), irred: empty > createInterpreter(interpreterManager, me,
     newProcess) .
 rewrites: 139
 mb applications: 0  equational rewrites: 92  rule rewrites: 47  variant
     narrowing steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 46, got: (gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo,'@6:Foo]],
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo,
+    '@6:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@4:Foo, '@4:Foo, '@5:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@5:Foo, '@6:Foo, '@6:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo, '@6:Foo], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo,
+    '@4:Foo, '@5:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@4:Foo, '@4:Foo, '@5:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@5:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo,
+    '@4:Foo, '@5:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@4:Foo, '@4:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@5:Foo, '@5:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo,
+    '@4:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@3:Foo, '@4:Foo, '@4:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- '@1:Foo, 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo]],
     'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@4:Foo,'@4:Foo,'@5:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- 'f['@3:Foo,'@5:Foo,'@6:Foo,'@6:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo,'@6:Foo], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,
-    '@4:Foo,'@5:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@4:Foo,'@4:Foo,'@5:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- 'f['@3:Foo,'@5:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,
-    '@4:Foo,'@5:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@4:Foo,'@4:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- 'f['@3:Foo,'@5:Foo,'@5:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,
+  '#21:Foo <- 'f['@2:Foo, '@4:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@4:Foo, '@5:Foo, '@5:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo,
     '@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@3:Foo,'@4:Foo,'@4:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- '@1:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo]], 'Foo, [
+  '#21:Foo <- 'f['@2:Foo, '@4:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo]], 'Foo, [
     ], ', 
-  '#21:Foo <- 'f['@2:Foo,'@4:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- 'f['@3:Foo,'@4:Foo,'@5:Foo,'@5:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,
-    '@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@4:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- 'f['@3:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- 'f['@3:Foo,'@4:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@4:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@3:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@3:Foo] ; 
   '#23:Foo <- '@2:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo]], 'Foo, [
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo]],
+    'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@3:Foo, '@3:Foo, '@4:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@4:Foo, '@5:Foo, '@5:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo,
+    '@4:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@1:Foo, '@3:Foo, '@4:Foo, '@4:Foo] ; 
+  '#22:Foo <- 'f['@2:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- '@1:Foo, 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo]], 'Foo, [
     ], ', 
-  '#21:Foo <- 'f['@2:Foo,'@3:Foo,'@3:Foo,'@4:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@4:Foo,'@5:Foo,'@5:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,
-    '@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@3:Foo,'@4:Foo,'@4:Foo] ; 
-  '#22:Foo <- 'f['@2:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- '@1:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@3:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@4:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@3:Foo,'@4:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@2:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- '@1:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@3:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo]], 'Foo, [
+  '#21:Foo <- 'f['@2:Foo, '@3:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@4:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo]], 'Foo, [
     ], ', 
-  '#21:Foo <- 'f['@3:Foo,'@3:Foo,'@4:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@4:Foo,'@5:Foo,'@5:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,
+  '#21:Foo <- 'f['@2:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@4:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@1:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@2:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- '@1:Foo, 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- '@1:Foo ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo]],
+    'Foo, [], ', 
+  '#21:Foo <- 'f['@3:Foo, '@3:Foo, '@4:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@4:Foo, '@5:Foo, '@5:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo,
     '@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@3:Foo,'@3:Foo,'@4:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@3:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@4:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@3:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo] ; 
+  '#21:Foo <- 'f['@3:Foo, '@3:Foo, '@4:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo]], 'Foo, [
+    ], ', 
+  '#21:Foo <- 'f['@3:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@4:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@3:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo, '@2:Foo] ; 
   '#23:Foo <- '@1:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo]], 'Foo, [], ', 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo]], 'Foo, [], ',
+    
   '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@2:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- 'f['@1:Foo,'@3:Foo,'@4:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
+  '#22:Foo <- 'f['@2:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- 'f['@1:Foo, '@3:Foo, '@4:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@2:Foo,'@2:Foo,'@3:Foo] ; 
-  '#23:Foo <- 'f['@1:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@2:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo] ; 
-  '#23:Foo <- 'f['@3:Foo,'@4:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@3:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@2:Foo,'@2:Foo] ; 
+  '#22:Foo <- 'f['@2:Foo, '@2:Foo, '@3:Foo] ; 
+  '#23:Foo <- 'f['@1:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo]], 'Foo, [], ',
+    
+  '#21:Foo <- 'f['@2:Foo, '@2:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@4:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@1:Foo, '@3:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@2:Foo, '@2:Foo] ; 
   '#23:Foo <- '@1:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@2:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo] ; 
-  '#23:Foo <- 'f['@3:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@2:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@2:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@1:Foo,'@3:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo]], 'Foo, [], ', 
+  '#22:Foo <- 'f['@2:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@1:Foo, '@3:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@2:Foo,'@2:Foo] ; 
+  '#22:Foo <- 'f['@2:Foo, '@2:Foo] ; 
   '#23:Foo <- '@1:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@3:Foo,'@3:Foo,'@4:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@4:Foo,'@5:Foo,'@5:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo,'@5:Foo], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,
+  'X:Foo <- 'f['@1:Foo, '@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
+    1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@1:Foo, '@3:Foo, '@3:Foo, '@4:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@4:Foo, '@5:Foo, '@5:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo, '@5:Foo], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo,
     '@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@3:Foo,'@3:Foo,'@4:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@3:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@4:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@3:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo] ; 
+  '#21:Foo <- 'f['@1:Foo, '@3:Foo, '@3:Foo, '@4:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo]], 'Foo, [
+    ], ', 
+  '#21:Foo <- 'f['@1:Foo, '@3:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@4:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@3:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo] ; 
   '#23:Foo <- '@1:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@3:Foo,'@4:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@3:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo]], 'Foo, [], ',
+    
+  '#21:Foo <- 'f['@1:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@3:Foo, '@4:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@1:Foo, '@3:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@3:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo]], 'Foo, [], ', 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@3:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo] ; 
   '#23:Foo <- '@2:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@3:Foo] ; 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
+    1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@1:Foo, '@2:Foo, '@2:Foo, '@3:Foo] ; 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@3:Foo,'@4:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@3:Foo] ; 
-  '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- '@2:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo] ; 
-  '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@3:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@2:Foo] ; 
-  '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@2:Foo,'@3:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@1:Foo,'@2:Foo] ; 
+  '#23:Foo <- 'f['@3:Foo, '@4:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@3:Foo] ; 
   '#22:Foo <- '@1:Foo ; 
   '#23:Foo <- '@2:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'h['f['@1:Foo,'@2:Foo]], 'Foo, [], ', 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@1:Foo, '@2:Foo, '@2:Foo] ; 
+  '#22:Foo <- '@1:Foo ; 
+  '#23:Foo <- 'f['@3:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@1:Foo, '@2:Foo] ; 
+  '#22:Foo <- '@1:Foo ; 
+  '#23:Foo <- 'f['@2:Foo, '@3:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@1:Foo, '@2:Foo] ; 
+  '#22:Foo <- '@1:Foo ; 
+  '#23:Foo <- '@2:Foo, 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
+    1, 'h['f['@1:Foo, '@2:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@1:Foo ; 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@2:Foo,'@2:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@2:Foo,'@3:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@2:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
+    1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@2:Foo, '@3:Foo] ; 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@1:Foo,'@3:Foo,'@4:Foo,'@4:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@4:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@2:Foo,'@3:Foo] ; 
+  '#23:Foo <- 'f['@1:Foo, '@3:Foo, '@4:Foo, '@4:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@4:Foo], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@2:Foo, '@3:Foo] ; 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@1:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@2:Foo] ; 
+  '#23:Foo <- 'f['@1:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@2:Foo] ; 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@1:Foo,'@3:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@2:Foo] ; 
+  '#23:Foo <- 'f['@1:Foo, '@3:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@2:Foo] ; 
   '#22:Foo <- '@1:Foo ; 
   '#23:Foo <- '@1:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
+    1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@2:Foo ; 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo]], 'Foo, [], ', 
+  '#23:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@2:Foo ; 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@1:Foo,'@2:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo], '@)), start: ('g['f['#22:Foo,'#21:Foo,
+  '#23:Foo <- 'f['@1:Foo, '@2:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo], '@)), start: ('g['f['#22:Foo, '#21:Foo,
     '#23:Foo]]), irred: empty > noSuchResult(me, interpreter(0), 0, true)
 ==========================================
-erewrite in NARROW-TEST : <> < me : User | start: ('g['f['#22:Foo,'#21:Foo,
+erewrite in NARROW-TEST : <> < me : User | start: ('g['f['#22:Foo, '#21:Foo,
     '#23:Foo]]), irred: empty > createInterpreter(interpreterManager, me,
     newProcess) .
 rewrites: 25
 mb applications: 0  equational rewrites: 16  rule rewrites: 9  variant
     narrowing steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 8, got: (gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@3:Foo,'@1:Foo,'@2:Foo]], 'Foo, [], ', 
+    interpreter(0), 1, 'h['f['@3:Foo, '@1:Foo, '@2:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@3:Foo,'@1:Foo,'@2:Foo,'@3:Foo] ; 
+  '#22:Foo <- 'f['@3:Foo, '@1:Foo, '@2:Foo, '@3:Foo] ; 
   '#23:Foo <- '@2:Foo, 
-  'X:Foo <- 'f['@3:Foo,'@1:Foo,'@2:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@3:Foo,'@2:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@3:Foo,'@2:Foo,'@1:Foo,'@3:Foo] ; 
+  'X:Foo <- 'f['@3:Foo, '@1:Foo, '@2:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@3:Foo, '@2:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@3:Foo, '@2:Foo, '@1:Foo, '@3:Foo] ; 
   '#22:Foo <- '@1:Foo ; 
   '#23:Foo <- '@2:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@3:Foo,'@2:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@3:Foo,'@1:Foo] ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo]], 'Foo, [], ', 
-  '#21:Foo <- 'f['@2:Foo,'@1:Foo] ; 
+  'X:Foo <- 'f['@1:Foo, '@3:Foo, '@2:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@3:Foo, '@1:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo]], 'Foo, [], ', 
+  '#21:Foo <- 'f['@2:Foo, '@1:Foo] ; 
   '#22:Foo <- '@1:Foo ; 
   '#23:Foo <- '@2:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'h['f['@1:Foo,'@2:Foo,'@3:Foo]], 'Foo, [], ', 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
+    1, 'h['f['@1:Foo, '@2:Foo, '@3:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@2:Foo ; 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@3:Foo,'@1:Foo,'@2:Foo,'@3:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@3:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo]], 'Foo, [], ', 
+  '#23:Foo <- 'f['@3:Foo, '@1:Foo, '@2:Foo, '@3:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@3:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@2:Foo ; 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@1:Foo,'@2:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'h['f['@1:Foo,'@2:Foo]], 'Foo, [], ', 
+  '#23:Foo <- 'f['@1:Foo, '@2:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo], '@) ; gotOneStepNarrowing(me, interpreter(0),
+    1, 'h['f['@1:Foo, '@2:Foo]], 'Foo, [], ', 
   '#21:Foo <- '@1:Foo ; 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo] ; 
   '#23:Foo <- '@2:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo], '@)), start: ('g['f['#22:Foo,'#21:Foo,
+  'X:Foo <- 'f['@1:Foo, '@2:Foo], '@)), start: ('g['f['#22:Foo, '#21:Foo,
     '#23:Foo]]), irred: empty > noSuchResult(me, interpreter(0), 0, true)
 ==========================================
-erewrite in NARROW-TEST : <> < me : User | start: ('g['f['#22:Foo,'#22:Foo,
+erewrite in NARROW-TEST : <> < me : User | start: ('g['f['#22:Foo, '#22:Foo,
     '#23:Foo]]), irred: empty > createInterpreter(interpreterManager, me,
     newProcess) .
 Warning: Unification modulo the theory of operator f has encountered an
@@ -297,17 +305,17 @@ rewrites: 10
 mb applications: 0  equational rewrites: 6  rule rewrites: 4  variant narrowing
     steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 3, got: (gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@1:Foo,'@2:Foo]], 'Foo, [], ', 
+    interpreter(0), 1, 'h['f['@1:Foo, '@1:Foo, '@2:Foo]], 'Foo, [], ', 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@2:Foo,'@1:Foo,'@1:Foo,'@2:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@1:Foo,'@2:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@1:Foo]], 'Foo, [], ', 
+  '#23:Foo <- 'f['@2:Foo, '@1:Foo, '@1:Foo, '@2:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@1:Foo, '@2:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@1:Foo]], 'Foo, [], ', 
   '#22:Foo <- '@1:Foo ; 
-  '#23:Foo <- 'f['@1:Foo,'@1:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@1:Foo], '@)), start: ('g['f['#22:Foo,'#22:Foo,
+  '#23:Foo <- 'f['@1:Foo, '@1:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@1:Foo], '@)), start: ('g['f['#22:Foo, '#22:Foo,
     '#23:Foo]]), irred: empty > noSuchResult(me, interpreter(0), 0, false)
 ==========================================
-erewrite in NARROW-TEST : <> < me : User | start: ('g['f['#22:Foo,'#23:Foo,
+erewrite in NARROW-TEST : <> < me : User | start: ('g['f['#22:Foo, '#23:Foo,
     '#23:Foo]]), irred: empty > createInterpreter(interpreterManager, me,
     newProcess) .
 Warning: Unification modulo the theory of operator f has encountered an
@@ -316,218 +324,221 @@ rewrites: 16
 mb applications: 0  equational rewrites: 10  rule rewrites: 6  variant
     narrowing steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 5, got: (gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo]], 'Foo, [
-    ], ', 
-  '#22:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo] ; 
-  '#23:Foo <- 'f['@2:Foo,'@1:Foo,'@2:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@2:Foo,'@2:Foo,'@1:Foo,'@2:Foo], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo,'@1:Foo,'@1:Foo]],
+    interpreter(0), 1, 'h['f['@1:Foo, '@2:Foo, '@2:Foo, '@1:Foo, '@2:Foo]],
     'Foo, [], ', 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo] ; 
-  '#23:Foo <- 'f['@1:Foo,'@1:Foo], 
-  'X:Foo <- 'f['@1:Foo,'@1:Foo,'@1:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@2:Foo,'@1:Foo,'@1:Foo]], 'Foo, [], ', 
-  '#22:Foo <- 'f['@2:Foo,'@1:Foo,'@1:Foo,'@2:Foo] ; 
+  '#22:Foo <- 'f['@1:Foo, '@2:Foo, '@2:Foo, '@1:Foo] ; 
+  '#23:Foo <- 'f['@2:Foo, '@1:Foo, '@2:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@2:Foo, '@2:Foo, '@1:Foo, '@2:Foo], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'h['f['@1:Foo, '@1:Foo,
+    '@1:Foo]], 'Foo, [], ', 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo] ; 
+  '#23:Foo <- 'f['@1:Foo, '@1:Foo], 
+  'X:Foo <- 'f['@1:Foo, '@1:Foo, '@1:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@2:Foo, '@1:Foo, '@1:Foo]], 'Foo, [], ', 
+  '#22:Foo <- 'f['@2:Foo, '@1:Foo, '@1:Foo, '@2:Foo] ; 
   '#23:Foo <- '@1:Foo, 
-  'X:Foo <- 'f['@2:Foo,'@1:Foo,'@1:Foo], '@) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'h['f['@1:Foo,'@1:Foo]], 'Foo, [], ', 
-  '#22:Foo <- 'f['@1:Foo,'@1:Foo] ; 
+  'X:Foo <- 'f['@2:Foo, '@1:Foo, '@1:Foo], '@) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'h['f['@1:Foo, '@1:Foo]], 'Foo, [], ', 
+  '#22:Foo <- 'f['@1:Foo, '@1:Foo] ; 
   '#23:Foo <- '@1:Foo, 
-  'X:Foo <- 'f['@1:Foo,'@1:Foo], '@)), start: ('g['f['#22:Foo,'#23:Foo,
+  'X:Foo <- 'f['@1:Foo, '@1:Foo], '@)), start: ('g['f['#22:Foo, '#23:Foo,
     '#23:Foo]]), irred: empty > noSuchResult(me, interpreter(0), 0, false)
 ==========================================
-erewrite in NARROW-TEST : <> < me : User | start: ('f['g['_+_['W:Expr,'b.Elt]],
-    'Z:Expr]), irred: ('_+_['W:Expr,'b.Elt]) > createInterpreter(
+erewrite in NARROW-TEST : <> < me : User | start: ('f['g['_+_['W:Expr,
+    'b.Elt]], 'Z:Expr]), irred: ('_+_['W:Expr, 'b.Elt]) > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 13
 mb applications: 0  equational rewrites: 8  rule rewrites: 5  variant narrowing
     steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 4, got: (gotOneStepNarrowing(me,
-    interpreter(0), 7, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
+    interpreter(0), 7, 'f['h['_+_['b.Elt, '@1:Expr]], '@2:Expr], 'Expr, 'f[[],
     'Z:Expr], 'one, 
-  'W:Expr <- '_+_['a.Elt,'@1:Expr] ; 
+  'W:Expr <- '_+_['a.Elt, '@1:Expr] ; 
   'Z:Expr <- '@2:Expr, 
-  'Y:Expr <- '_+_['b.Elt,'@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 1, 'f['h['b.Elt],'@1:Expr], 'Expr, 'f[[],'Z:Expr], 'one, 
+  'Y:Expr <- '_+_['b.Elt, '@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
+    0), 1, 'f['h['b.Elt], '@1:Expr], 'Expr, 'f[[], 'Z:Expr], 'one, 
   'W:Expr <- 'a.Elt ; 
   'Z:Expr <- '@1:Expr, 
   'Y:Expr <- 'b.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['h[
-    '_+_['a.Elt,'b.Elt,'%1:Expr]],'%2:Expr], 'Expr, 'f[[],'Z:Expr], 'one, 
+    '_+_['a.Elt, 'b.Elt, '%1:Expr]], '%2:Expr], 'Expr, 'f[[], 'Z:Expr], 'one, 
   'W:Expr <- '%1:Expr ; 
   'Z:Expr <- '%2:Expr, 
-  'Y:Expr <- '_+_['a.Elt,'b.Elt,'%1:Expr], '%)), start: ('f['g['_+_['W:Expr,
-    'b.Elt]],'Z:Expr]), irred: ('_+_['W:Expr,'b.Elt]) > noSuchResult(me,
+  'Y:Expr <- '_+_['a.Elt, 'b.Elt, '%1:Expr], '%)), start: ('f['g['_+_['W:Expr,
+    'b.Elt]], 'Z:Expr]), irred: ('_+_['W:Expr, 'b.Elt]) > noSuchResult(me,
     interpreter(0), 6, true)
 ==========================================
-erewrite in NARROW-TEST : <> < me : User | start: ('f['g['_+_['W:Expr,'b.Elt]],
-    'Z:Expr]), irred: ('_+_['X:Expr,'b.Elt]) > createInterpreter(
+erewrite in NARROW-TEST : <> < me : User | start: ('f['g['_+_['W:Expr,
+    'b.Elt]], 'Z:Expr]), irred: ('_+_['X:Expr, 'b.Elt]) > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 40
 mb applications: 0  equational rewrites: 26  rule rewrites: 14  variant
     narrowing steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 13, got: (gotOneStepNarrowing(me,
-    interpreter(0), 31, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
+    interpreter(0), 31, 'f['h['_+_['b.Elt, '@1:Expr]], '@2:Expr], 'Expr, 'f[[],
     'Z:Expr], 'one, 
-  'W:Expr <- '_+_['a.Elt,'@1:Expr] ; 
+  'W:Expr <- '_+_['a.Elt, '@1:Expr] ; 
   'Z:Expr <- '@2:Expr, 
-  'Y:Expr <- '_+_['b.Elt,'@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 1, 'f['h['b.Elt],'@1:Expr], 'Expr, 'f[[],'Z:Expr], 'one, 
+  'Y:Expr <- '_+_['b.Elt, '@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
+    0), 1, 'f['h['b.Elt], '@1:Expr], 'Expr, 'f[[], 'Z:Expr], 'one, 
   'W:Expr <- 'a.Elt ; 
   'Z:Expr <- '@1:Expr, 
   'Y:Expr <- 'b.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 19, 'f['h[
-    '_+_['a.Elt,'b.Elt,'%1:Expr]],'%2:Expr], 'Expr, 'f[[],'Z:Expr], 'one, 
+    '_+_['a.Elt, 'b.Elt, '%1:Expr]], '%2:Expr], 'Expr, 'f[[], 'Z:Expr], 'one, 
   'W:Expr <- '%1:Expr ; 
   'Z:Expr <- '%2:Expr, 
-  'Y:Expr <- '_+_['a.Elt,'b.Elt,'%1:Expr], '%) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'f['h['%1:Expr],'%2:Expr], 'Expr, 'f[[],'Z:Expr], 'one, 
-  'W:Expr <- '_+_['a.Elt,'b.Elt,'%1:Expr] ; 
+  'Y:Expr <- '_+_['a.Elt, 'b.Elt, '%1:Expr], '%) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'f['h['%1:Expr], '%2:Expr], 'Expr, 'f[[], 'Z:Expr],
+    'one, 
+  'W:Expr <- '_+_['a.Elt, 'b.Elt, '%1:Expr] ; 
   'Z:Expr <- '%2:Expr, 
   'Y:Expr <- '%1:Expr, '%) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['h[
-    '0.Elt],'@1:Expr], 'Expr, 'f[[],'Z:Expr], 'one, 
-  'W:Expr <- '_+_['a.Elt,'b.Elt] ; 
+    '0.Elt], '@1:Expr], 'Expr, 'f[[], 'Z:Expr], 'one, 
+  'W:Expr <- '_+_['a.Elt, 'b.Elt] ; 
   'Z:Expr <- '@1:Expr, 
   'Y:Expr <- '0.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['h[
-    'a.Elt],'@1:Expr], 'Expr, 'f[[],'Z:Expr], 'one, 
+    'a.Elt], '@1:Expr], 'Expr, 'f[[], 'Z:Expr], 'one, 
   'W:Expr <- 'b.Elt ; 
   'Z:Expr <- '@1:Expr, 
   'Y:Expr <- 'a.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['h[
-    '_+_['a.Elt,'b.Elt]],'@1:Expr], 'Expr, 'f[[],'Z:Expr], 'one, 
+    '_+_['a.Elt, 'b.Elt]], '@1:Expr], 'Expr, 'f[[], 'Z:Expr], 'one, 
   'W:Expr <- '0.Elt ; 
   'Z:Expr <- '@1:Expr, 
-  'Y:Expr <- '_+_['a.Elt,'b.Elt], '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['h['_+_['a.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],'Z:Expr], 'one, 
-  'W:Expr <- '_+_['b.Elt,'@1:Expr] ; 
+  'Y:Expr <- '_+_['a.Elt, 'b.Elt], '@) ; gotOneStepNarrowing(me, interpreter(
+    0), 1, 'f['h['_+_['a.Elt, '@1:Expr]], '@2:Expr], 'Expr, 'f[[], 'Z:Expr],
+    'one, 
+  'W:Expr <- '_+_['b.Elt, '@1:Expr] ; 
   'Z:Expr <- '@2:Expr, 
-  'Y:Expr <- '_+_['a.Elt,'@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 25, 'f['g['h['%1:Expr]],'%2:Expr], 'Expr, 'f['g[[]],'Z:Expr], 'one, 
-  'W:Expr <- '_+_['b.Elt,'g['_+_['a.Elt,'%1:Expr]]] ; 
+  'Y:Expr <- '_+_['a.Elt, '@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
+    0), 25, 'f['g['h['%1:Expr]], '%2:Expr], 'Expr, 'f['g[[]], 'Z:Expr], 'one, 
+  'W:Expr <- '_+_['b.Elt, 'g['_+_['a.Elt, '%1:Expr]]] ; 
   'Z:Expr <- '%2:Expr, 
   'Y:Expr <- '%1:Expr, '%) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['g[
-    'h['0.Elt]],'@1:Expr], 'Expr, 'f['g[[]],'Z:Expr], 'one, 
-  'W:Expr <- '_+_['b.Elt,'g['a.Elt]] ; 
+    'h['0.Elt]], '@1:Expr], 'Expr, 'f['g[[]], 'Z:Expr], 'one, 
+  'W:Expr <- '_+_['b.Elt, 'g['a.Elt]] ; 
   'Z:Expr <- '@1:Expr, 
   'Y:Expr <- '0.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['g['h[
-    'a.Elt]],'@1:Expr], 'Expr, 'f['g[[]],'Z:Expr], 'one, 
-  'W:Expr <- '_+_['b.Elt,'g['0.Elt]] ; 
+    'a.Elt]], '@1:Expr], 'Expr, 'f['g[[]], 'Z:Expr], 'one, 
+  'W:Expr <- '_+_['b.Elt, 'g['0.Elt]] ; 
   'Z:Expr <- '@1:Expr, 
   'Y:Expr <- 'a.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['g['h[
-    '_+_['a.Elt,'@1:Expr]]],'@2:Expr], 'Expr, 'f['g[[]],'Z:Expr], 'one, 
-  'W:Expr <- '_+_['b.Elt,'g['@1:Expr]] ; 
+    '_+_['a.Elt, '@1:Expr]]], '@2:Expr], 'Expr, 'f['g[[]], 'Z:Expr], 'one, 
+  'W:Expr <- '_+_['b.Elt, 'g['@1:Expr]] ; 
   'Z:Expr <- '@2:Expr, 
-  'Y:Expr <- '_+_['a.Elt,'@1:Expr], '@)), start: ('f['g['_+_['W:Expr,'b.Elt]],
-    'Z:Expr]), irred: ('_+_['X:Expr,'b.Elt]) > noSuchResult(me, interpreter(0),
-    3, true)
+  'Y:Expr <- '_+_['a.Elt, '@1:Expr], '@)), start: ('f['g['_+_['W:Expr,
+    'b.Elt]], 'Z:Expr]), irred: ('_+_['X:Expr, 'b.Elt]) > noSuchResult(me,
+    interpreter(0), 3, true)
 ==========================================
 erewrite in NARROW-TEST : <> < me : User | start: ('f['g['_+_['#1:Expr,
-    'b.Elt]],'#2:Expr]), irred: ('_+_['#3:Expr,'b.Elt]) > createInterpreter(
+    'b.Elt]], '#2:Expr]), irred: ('_+_['#3:Expr, 'b.Elt]) > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 40
 mb applications: 0  equational rewrites: 26  rule rewrites: 14  variant
     narrowing steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 13, got: (gotOneStepNarrowing(me,
-    interpreter(0), 31, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
+    interpreter(0), 31, 'f['h['_+_['b.Elt, '@1:Expr]], '@2:Expr], 'Expr, 'f[[],
     '#2:Expr], 'one, 
-  '#1:Expr <- '_+_['a.Elt,'@1:Expr] ; 
+  '#1:Expr <- '_+_['a.Elt, '@1:Expr] ; 
   '#2:Expr <- '@2:Expr, 
-  'Y:Expr <- '_+_['b.Elt,'@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 1, 'f['h['b.Elt],'@1:Expr], 'Expr, 'f[[],'#2:Expr], 'one, 
+  'Y:Expr <- '_+_['b.Elt, '@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
+    0), 1, 'f['h['b.Elt], '@1:Expr], 'Expr, 'f[[], '#2:Expr], 'one, 
   '#1:Expr <- 'a.Elt ; 
   '#2:Expr <- '@1:Expr, 
   'Y:Expr <- 'b.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 19, 'f['h[
-    '_+_['a.Elt,'b.Elt,'%1:Expr]],'%2:Expr], 'Expr, 'f[[],'#2:Expr], 'one, 
+    '_+_['a.Elt, 'b.Elt, '%1:Expr]], '%2:Expr], 'Expr, 'f[[], '#2:Expr], 'one, 
   '#1:Expr <- '%1:Expr ; 
   '#2:Expr <- '%2:Expr, 
-  'Y:Expr <- '_+_['a.Elt,'b.Elt,'%1:Expr], '%) ; gotOneStepNarrowing(me,
-    interpreter(0), 1, 'f['h['%1:Expr],'%2:Expr], 'Expr, 'f[[],'#2:Expr], 'one,
-    
-  '#1:Expr <- '_+_['a.Elt,'b.Elt,'%1:Expr] ; 
+  'Y:Expr <- '_+_['a.Elt, 'b.Elt, '%1:Expr], '%) ; gotOneStepNarrowing(me,
+    interpreter(0), 1, 'f['h['%1:Expr], '%2:Expr], 'Expr, 'f[[], '#2:Expr],
+    'one, 
+  '#1:Expr <- '_+_['a.Elt, 'b.Elt, '%1:Expr] ; 
   '#2:Expr <- '%2:Expr, 
   'Y:Expr <- '%1:Expr, '%) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['h[
-    '0.Elt],'@1:Expr], 'Expr, 'f[[],'#2:Expr], 'one, 
-  '#1:Expr <- '_+_['a.Elt,'b.Elt] ; 
+    '0.Elt], '@1:Expr], 'Expr, 'f[[], '#2:Expr], 'one, 
+  '#1:Expr <- '_+_['a.Elt, 'b.Elt] ; 
   '#2:Expr <- '@1:Expr, 
   'Y:Expr <- '0.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['h[
-    'a.Elt],'@1:Expr], 'Expr, 'f[[],'#2:Expr], 'one, 
+    'a.Elt], '@1:Expr], 'Expr, 'f[[], '#2:Expr], 'one, 
   '#1:Expr <- 'b.Elt ; 
   '#2:Expr <- '@1:Expr, 
   'Y:Expr <- 'a.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['h[
-    '_+_['a.Elt,'b.Elt]],'@1:Expr], 'Expr, 'f[[],'#2:Expr], 'one, 
+    '_+_['a.Elt, 'b.Elt]], '@1:Expr], 'Expr, 'f[[], '#2:Expr], 'one, 
   '#1:Expr <- '0.Elt ; 
   '#2:Expr <- '@1:Expr, 
-  'Y:Expr <- '_+_['a.Elt,'b.Elt], '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['h['_+_['a.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],'#2:Expr], 'one, 
-  '#1:Expr <- '_+_['b.Elt,'@1:Expr] ; 
+  'Y:Expr <- '_+_['a.Elt, 'b.Elt], '@) ; gotOneStepNarrowing(me, interpreter(
+    0), 1, 'f['h['_+_['a.Elt, '@1:Expr]], '@2:Expr], 'Expr, 'f[[], '#2:Expr],
+    'one, 
+  '#1:Expr <- '_+_['b.Elt, '@1:Expr] ; 
   '#2:Expr <- '@2:Expr, 
-  'Y:Expr <- '_+_['a.Elt,'@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 25, 'f['g['h['%1:Expr]],'%2:Expr], 'Expr, 'f['g[[]],'#2:Expr], 'one, 
-  '#1:Expr <- '_+_['b.Elt,'g['_+_['a.Elt,'%1:Expr]]] ; 
+  'Y:Expr <- '_+_['a.Elt, '@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
+    0), 25, 'f['g['h['%1:Expr]], '%2:Expr], 'Expr, 'f['g[[]], '#2:Expr], 'one, 
+  '#1:Expr <- '_+_['b.Elt, 'g['_+_['a.Elt, '%1:Expr]]] ; 
   '#2:Expr <- '%2:Expr, 
   'Y:Expr <- '%1:Expr, '%) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['g[
-    'h['0.Elt]],'@1:Expr], 'Expr, 'f['g[[]],'#2:Expr], 'one, 
-  '#1:Expr <- '_+_['b.Elt,'g['a.Elt]] ; 
+    'h['0.Elt]], '@1:Expr], 'Expr, 'f['g[[]], '#2:Expr], 'one, 
+  '#1:Expr <- '_+_['b.Elt, 'g['a.Elt]] ; 
   '#2:Expr <- '@1:Expr, 
   'Y:Expr <- '0.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['g['h[
-    'a.Elt]],'@1:Expr], 'Expr, 'f['g[[]],'#2:Expr], 'one, 
-  '#1:Expr <- '_+_['b.Elt,'g['0.Elt]] ; 
+    'a.Elt]], '@1:Expr], 'Expr, 'f['g[[]], '#2:Expr], 'one, 
+  '#1:Expr <- '_+_['b.Elt, 'g['0.Elt]] ; 
   '#2:Expr <- '@1:Expr, 
   'Y:Expr <- 'a.Elt, '@) ; gotOneStepNarrowing(me, interpreter(0), 1, 'f['g['h[
-    '_+_['a.Elt,'@1:Expr]]],'@2:Expr], 'Expr, 'f['g[[]],'#2:Expr], 'one, 
-  '#1:Expr <- '_+_['b.Elt,'g['@1:Expr]] ; 
+    '_+_['a.Elt, '@1:Expr]]], '@2:Expr], 'Expr, 'f['g[[]], '#2:Expr], 'one, 
+  '#1:Expr <- '_+_['b.Elt, 'g['@1:Expr]] ; 
   '#2:Expr <- '@2:Expr, 
-  'Y:Expr <- '_+_['a.Elt,'@1:Expr], '@)), start: ('f['g['_+_['#1:Expr,'b.Elt]],
-    '#2:Expr]), irred: ('_+_['#3:Expr,'b.Elt]) > noSuchResult(me, interpreter(
-    0), 3, true)
+  'Y:Expr <- '_+_['a.Elt, '@1:Expr], '@)), start: ('f['g['_+_['#1:Expr,
+    'b.Elt]], '#2:Expr]), irred: ('_+_['#3:Expr, 'b.Elt]) > noSuchResult(me,
+    interpreter(0), 3, true)
 ==========================================
 erewrite in NARROW-TEST2 : <> < me : User | start: ('f['g['_+_['W:Expr,
-    'b.Elt]],'Z:Expr]), irred: ('_+_['W:Expr,'b.Elt]) > createInterpreter(
+    'b.Elt]], 'Z:Expr]), irred: ('_+_['W:Expr, 'b.Elt]) > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 5
 mb applications: 0  equational rewrites: 2  rule rewrites: 3  variant narrowing
     steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 2, got: gotOneStepNarrowing(me,
-    interpreter(0), 17, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
+    interpreter(0), 17, 'f['h['_+_['b.Elt, '@1:Expr]], '@2:Expr], 'Expr, 'f[[],
     'Z:Expr], 'one, 
-  'W:Expr <- '_+_['a.Elt,'@1:Expr] ; 
+  'W:Expr <- '_+_['a.Elt, '@1:Expr] ; 
   'Z:Expr <- '@2:Expr, 
-  'Y:Expr <- '_+_['b.Elt,'@1:Expr], '@), start: ('f['g['_+_['W:Expr,'b.Elt]],
-    'Z:Expr]), irred: ('_+_['W:Expr,'b.Elt]) > noSuchResult(me, interpreter(0),
-    6, true)
+  'Y:Expr <- '_+_['b.Elt, '@1:Expr], '@), start: ('f['g['_+_['W:Expr, 'b.Elt]],
+    'Z:Expr]), irred: ('_+_['W:Expr, 'b.Elt]) > noSuchResult(me, interpreter(
+    0), 6, true)
 ==========================================
 erewrite in NARROW-TEST2 : <> < me : User | start: ('f['g['_+_['W:Expr,
-    'b.Elt]],'Z:Expr]), irred: ('_+_['X:Expr,'b.Elt]) > createInterpreter(
+    'b.Elt]], 'Z:Expr]), irred: ('_+_['X:Expr, 'b.Elt]) > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 7
 mb applications: 0  equational rewrites: 3  rule rewrites: 4  variant narrowing
     steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 3, got: (gotOneStepNarrowing(me,
-    interpreter(0), 59, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
+    interpreter(0), 59, 'f['h['_+_['b.Elt, '@1:Expr]], '@2:Expr], 'Expr, 'f[[],
     'Z:Expr], 'one, 
-  'W:Expr <- '_+_['a.Elt,'@1:Expr] ; 
+  'W:Expr <- '_+_['a.Elt, '@1:Expr] ; 
   'Z:Expr <- '@2:Expr, 
-  'Y:Expr <- '_+_['b.Elt,'@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 28, 'f['g['h['%1:Expr]],'%2:Expr], 'Expr, 'f['g[[]],'Z:Expr], 'one, 
-  'W:Expr <- '_+_['b.Elt,'g['_+_['a.Elt,'%1:Expr]]] ; 
+  'Y:Expr <- '_+_['b.Elt, '@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
+    0), 28, 'f['g['h['%1:Expr]], '%2:Expr], 'Expr, 'f['g[[]], 'Z:Expr], 'one, 
+  'W:Expr <- '_+_['b.Elt, 'g['_+_['a.Elt, '%1:Expr]]] ; 
   'Z:Expr <- '%2:Expr, 
-  'Y:Expr <- '%1:Expr, '%)), start: ('f['g['_+_['W:Expr,'b.Elt]],'Z:Expr]),
-    irred: ('_+_['X:Expr,'b.Elt]) > noSuchResult(me, interpreter(0), 3, true)
+  'Y:Expr <- '%1:Expr, '%)), start: ('f['g['_+_['W:Expr, 'b.Elt]], 'Z:Expr]),
+    irred: ('_+_['X:Expr, 'b.Elt]) > noSuchResult(me, interpreter(0), 3, true)
 ==========================================
 erewrite in NARROW-TEST2 : <> < me : User | start: ('f['g['_+_['#1:Expr,
-    'b.Elt]],'#2:Expr]), irred: ('_+_['#3:Expr,'b.Elt]) > createInterpreter(
+    'b.Elt]], '#2:Expr]), irred: ('_+_['#3:Expr, 'b.Elt]) > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 7
 mb applications: 0  equational rewrites: 3  rule rewrites: 4  variant narrowing
     steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 3, got: (gotOneStepNarrowing(me,
-    interpreter(0), 59, 'f['h['_+_['b.Elt,'@1:Expr]],'@2:Expr], 'Expr, 'f[[],
+    interpreter(0), 59, 'f['h['_+_['b.Elt, '@1:Expr]], '@2:Expr], 'Expr, 'f[[],
     '#2:Expr], 'one, 
-  '#1:Expr <- '_+_['a.Elt,'@1:Expr] ; 
+  '#1:Expr <- '_+_['a.Elt, '@1:Expr] ; 
   '#2:Expr <- '@2:Expr, 
-  'Y:Expr <- '_+_['b.Elt,'@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 28, 'f['g['h['%1:Expr]],'%2:Expr], 'Expr, 'f['g[[]],'#2:Expr], 'one, 
-  '#1:Expr <- '_+_['b.Elt,'g['_+_['a.Elt,'%1:Expr]]] ; 
+  'Y:Expr <- '_+_['b.Elt, '@1:Expr], '@) ; gotOneStepNarrowing(me, interpreter(
+    0), 28, 'f['g['h['%1:Expr]], '%2:Expr], 'Expr, 'f['g[[]], '#2:Expr], 'one, 
+  '#1:Expr <- '_+_['b.Elt, 'g['_+_['a.Elt, '%1:Expr]]] ; 
   '#2:Expr <- '%2:Expr, 
-  'Y:Expr <- '%1:Expr, '%)), start: ('f['g['_+_['#1:Expr,'b.Elt]],'#2:Expr]),
-    irred: ('_+_['#3:Expr,'b.Elt]) > noSuchResult(me, interpreter(0), 3, true)
+  'Y:Expr <- '%1:Expr, '%)), start: ('f['g['_+_['#1:Expr, 'b.Elt]], '#2:Expr]),
+    irred: ('_+_['#3:Expr, 'b.Elt]) > noSuchResult(me, interpreter(0), 3, true)
 ==========================================
 variant unify in NARROW : A:ElemXor * B:ElemXor =? X * Y .
 
@@ -1069,340 +1080,341 @@ rewrites: 175
 mb applications: 0  equational rewrites: 116  rule rewrites: 59  variant
     narrowing steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 58, got: (gotOneStepNarrowing(me,
-    interpreter(0), 13, 'f['_*_['@1:ElemXor,'@3:ElemXor],'_*_['@2:ElemXor,
+    interpreter(0), 13, 'f['_*_['@1:ElemXor, '@3:ElemXor], '_*_['@2:ElemXor,
     '@4:ElemXor]], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@2:ElemXor] ; 
-  'B:ElemXor <- '_*_['@3:ElemXor,'@4:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@1:ElemXor,'@3:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@2:ElemXor,'@4:ElemXor], '@) ; gotOneStepNarrowing(
-    me, interpreter(0), 1, 'f['_*_['@2:ElemXor,'@3:ElemXor],'@1:ElemXor],
+  'A:ElemXor <- '_*_['@1:ElemXor, '@2:ElemXor] ; 
+  'B:ElemXor <- '_*_['@3:ElemXor, '@4:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@1:ElemXor, '@3:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@2:ElemXor, '@4:ElemXor], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'f['_*_['@2:ElemXor, '@3:ElemXor], '@1:ElemXor],
     'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@3:ElemXor] ; 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@3:ElemXor] ; 
   'B:ElemXor <- '@2:ElemXor, 
-  'X:`[ElemXor`] <- '_*_['@2:ElemXor,'@3:ElemXor] ; 
+  'X:`[ElemXor`] <- '_*_['@2:ElemXor, '@3:ElemXor] ; 
   'Y:`[ElemXor`] <- '@1:ElemXor, '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['@1:ElemXor,'_*_['@2:ElemXor,'@3:ElemXor]], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@3:ElemXor] ; 
+    1, 'f['@1:ElemXor, '_*_['@2:ElemXor, '@3:ElemXor]], 'ElemXor, [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@3:ElemXor] ; 
   'B:ElemXor <- '@2:ElemXor, 
   'X:`[ElemXor`] <- '@1:ElemXor ; 
-  'Y:`[ElemXor`] <- '_*_['@2:ElemXor,'@3:ElemXor], '@) ; gotOneStepNarrowing(
-    me, interpreter(0), 1, 'f['_*_['@2:ElemXor,'@3:ElemXor],'@1:ElemXor],
+  'Y:`[ElemXor`] <- '_*_['@2:ElemXor, '@3:ElemXor], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'f['_*_['@2:ElemXor, '@3:ElemXor], '@1:ElemXor],
     'ElemXor, [], 'one, 
   'A:ElemXor <- '@2:ElemXor ; 
-  'B:ElemXor <- '_*_['@1:ElemXor,'@3:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@2:ElemXor,'@3:ElemXor] ; 
+  'B:ElemXor <- '_*_['@1:ElemXor, '@3:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@2:ElemXor, '@3:ElemXor] ; 
   'Y:`[ElemXor`] <- '@1:ElemXor, '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['@1:ElemXor,'@2:ElemXor], 'ElemXor, [], 'one, 
+    1, 'f['@1:ElemXor, '@2:ElemXor], 'ElemXor, [], 'one, 
   'A:ElemXor <- '@1:ElemXor ; 
   'B:ElemXor <- '@2:ElemXor, 
   'X:`[ElemXor`] <- '@1:ElemXor ; 
   'Y:`[ElemXor`] <- '@2:ElemXor, '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['@1:ElemXor,'_*_['@2:ElemXor,'@3:ElemXor]], 'ElemXor, [], 'one, 
+    1, 'f['@1:ElemXor, '_*_['@2:ElemXor, '@3:ElemXor]], 'ElemXor, [], 'one, 
   'A:ElemXor <- '@2:ElemXor ; 
-  'B:ElemXor <- '_*_['@1:ElemXor,'@3:ElemXor], 
+  'B:ElemXor <- '_*_['@1:ElemXor, '@3:ElemXor], 
   'X:`[ElemXor`] <- '@1:ElemXor ; 
-  'Y:`[ElemXor`] <- '_*_['@2:ElemXor,'@3:ElemXor], '@) ; gotOneStepNarrowing(
-    me, interpreter(0), 1, 'f['@2:ElemXor,'@1:ElemXor], 'ElemXor, [], 'one, 
+  'Y:`[ElemXor`] <- '_*_['@2:ElemXor, '@3:ElemXor], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'f['@2:ElemXor, '@1:ElemXor], 'ElemXor, [], 'one, 
   'A:ElemXor <- '@1:ElemXor ; 
   'B:ElemXor <- '@2:ElemXor, 
   'X:`[ElemXor`] <- '@2:ElemXor ; 
   'Y:`[ElemXor`] <- '@1:ElemXor, '@) ; gotOneStepNarrowing(me, interpreter(0),
-    81, 'f['mt.ElemXor,'_*_['%1:ElemXor,'%2:ElemXor]], 'ElemXor, [], 'one, 
+    81, 'f['mt.ElemXor, '_*_['%1:ElemXor, '%2:ElemXor]], 'ElemXor, [], 'one, 
   'A:ElemXor <- '%1:ElemXor ; 
   'B:ElemXor <- '%2:ElemXor, 
   'X:`[ElemXor`] <- 'mt.ElemXor ; 
-  'Y:`[ElemXor`] <- '_*_['%1:ElemXor,'%2:ElemXor], '%) ; gotOneStepNarrowing(
-    me, interpreter(0), 1, 'f['_*_['%1:ElemXor,'%2:ElemXor],'mt.ElemXor],
+  'Y:`[ElemXor`] <- '_*_['%1:ElemXor, '%2:ElemXor], '%) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'f['_*_['%1:ElemXor, '%2:ElemXor], 'mt.ElemXor],
     'ElemXor, [], 'one, 
   'A:ElemXor <- '%1:ElemXor ; 
   'B:ElemXor <- '%2:ElemXor, 
-  'X:`[ElemXor`] <- '_*_['%1:ElemXor,'%2:ElemXor] ; 
+  'X:`[ElemXor`] <- '_*_['%1:ElemXor, '%2:ElemXor] ; 
   'Y:`[ElemXor`] <- 'mt.ElemXor, '%) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['_*_['%1:`[ElemXor`],'%2:ElemXor,'%4:ElemXor],'_*_['%1:`[ElemXor`],
-    '%3:ElemXor,'%5:ElemXor]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '_*_['%2:ElemXor,'%3:ElemXor] ; 
-  'B:ElemXor <- '_*_['%4:ElemXor,'%5:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:ElemXor,'%4:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%3:ElemXor,'%5:ElemXor], '%) ;
+    1, 'f['_*_['%1:`[ElemXor`], '%2:ElemXor, '%4:ElemXor], '_*_[
+    '%1:`[ElemXor`], '%3:ElemXor, '%5:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['%2:ElemXor, '%3:ElemXor] ; 
+  'B:ElemXor <- '_*_['%4:ElemXor, '%5:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['%1:`[ElemXor`], '%2:ElemXor, '%4:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['%1:`[ElemXor`], '%3:ElemXor, '%5:ElemXor], '%) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
-    '%2:ElemXor,'%4:ElemXor],'_*_['%3:`[ElemXor`],'%1:ElemXor]], '`[ElemXor`],
-    [], 'one, 
-  'A:ElemXor <- '_*_['%1:ElemXor,'%4:ElemXor] ; 
-  'B:ElemXor <- '%2:ElemXor, 
-  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%2:ElemXor,'%4:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%1:ElemXor], '%) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
-    '%1:ElemXor],'_*_['%3:`[ElemXor`],'%2:ElemXor,'%4:ElemXor]], '`[ElemXor`],
-    [], 'one, 
-  'A:ElemXor <- '_*_['%1:ElemXor,'%4:ElemXor] ; 
-  'B:ElemXor <- '%2:ElemXor, 
-  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%2:ElemXor,'%4:ElemXor], '%) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
-    '%2:ElemXor,'%4:ElemXor],'_*_['%3:`[ElemXor`],'%1:ElemXor]], '`[ElemXor`],
-    [], 'one, 
-  'A:ElemXor <- '%2:ElemXor ; 
-  'B:ElemXor <- '_*_['%1:ElemXor,'%4:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%2:ElemXor,'%4:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%1:ElemXor], '%) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
-    '%1:ElemXor],'_*_['%3:`[ElemXor`],'%2:ElemXor]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '%1:ElemXor ; 
-  'B:ElemXor <- '%2:ElemXor, 
-  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%2:ElemXor], '%) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
-    '%1:ElemXor],'_*_['%3:`[ElemXor`],'%2:ElemXor,'%4:ElemXor]], '`[ElemXor`],
-    [], 'one, 
-  'A:ElemXor <- '%2:ElemXor ; 
-  'B:ElemXor <- '_*_['%1:ElemXor,'%4:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%2:ElemXor,'%4:ElemXor], '%) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
-    '%2:ElemXor],'_*_['%3:`[ElemXor`],'%1:ElemXor]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '%1:ElemXor ; 
-  'B:ElemXor <- '%2:ElemXor, 
-  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%2:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%1:ElemXor], '%) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
-    '%1:ElemXor,'%2:ElemXor],'%3:`[ElemXor`]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '%1:ElemXor ; 
-  'B:ElemXor <- '%2:ElemXor, 
-  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%1:ElemXor,'%2:ElemXor] ; 
-  'Y:`[ElemXor`] <- '%3:`[ElemXor`], '%) ; gotOneStepNarrowing(me, interpreter(
-    0), 1, 'f['%3:`[ElemXor`],'_*_['%3:`[ElemXor`],'%1:ElemXor,'%2:ElemXor]],
+    '%2:ElemXor, '%4:ElemXor], '_*_['%3:`[ElemXor`], '%1:ElemXor]],
     '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['%1:ElemXor, '%4:ElemXor] ; 
+  'B:ElemXor <- '%2:ElemXor, 
+  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%2:ElemXor, '%4:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%1:ElemXor], '%) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
+    '%1:ElemXor], '_*_['%3:`[ElemXor`], '%2:ElemXor, '%4:ElemXor]],
+    '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['%1:ElemXor, '%4:ElemXor] ; 
+  'B:ElemXor <- '%2:ElemXor, 
+  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%2:ElemXor, '%4:ElemXor], '%) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
+    '%2:ElemXor, '%4:ElemXor], '_*_['%3:`[ElemXor`], '%1:ElemXor]],
+    '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '%2:ElemXor ; 
+  'B:ElemXor <- '_*_['%1:ElemXor, '%4:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%2:ElemXor, '%4:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%1:ElemXor], '%) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
+    '%1:ElemXor], '_*_['%3:`[ElemXor`], '%2:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '%1:ElemXor ; 
+  'B:ElemXor <- '%2:ElemXor, 
+  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%2:ElemXor], '%) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
+    '%1:ElemXor], '_*_['%3:`[ElemXor`], '%2:ElemXor, '%4:ElemXor]],
+    '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '%2:ElemXor ; 
+  'B:ElemXor <- '_*_['%1:ElemXor, '%4:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%2:ElemXor, '%4:ElemXor], '%) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
+    '%2:ElemXor], '_*_['%3:`[ElemXor`], '%1:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '%1:ElemXor ; 
+  'B:ElemXor <- '%2:ElemXor, 
+  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%2:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%1:ElemXor], '%) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['%3:`[ElemXor`],
+    '%1:ElemXor, '%2:ElemXor], '%3:`[ElemXor`]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '%1:ElemXor ; 
+  'B:ElemXor <- '%2:ElemXor, 
+  'X:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%1:ElemXor, '%2:ElemXor] ; 
+  'Y:`[ElemXor`] <- '%3:`[ElemXor`], '%) ; gotOneStepNarrowing(me, interpreter(
+    0), 1, 'f['%3:`[ElemXor`], '_*_['%3:`[ElemXor`], '%1:ElemXor,
+    '%2:ElemXor]], '`[ElemXor`], [], 'one, 
   'A:ElemXor <- '%1:ElemXor ; 
   'B:ElemXor <- '%2:ElemXor, 
   'X:`[ElemXor`] <- '%3:`[ElemXor`] ; 
-  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`],'%1:ElemXor,'%2:ElemXor], '%) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['%1:ElemXor,'%2:ElemXor],
+  'Y:`[ElemXor`] <- '_*_['%3:`[ElemXor`], '%1:ElemXor, '%2:ElemXor], '%) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['%1:ElemXor, '%2:ElemXor],
     'ElemXor, [], 'one, 
   'A:ElemXor <- 'mt.ElemXor ; 
-  'B:ElemXor <- '_*_['%1:ElemXor,'%2:ElemXor], 
+  'B:ElemXor <- '_*_['%1:ElemXor, '%2:ElemXor], 
   'X:`[ElemXor`] <- '%1:ElemXor ; 
   'Y:`[ElemXor`] <- '%2:ElemXor, '%) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['%1:ElemXor,'%2:ElemXor], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['%1:ElemXor,'%2:ElemXor] ; 
+    1, 'f['%1:ElemXor, '%2:ElemXor], 'ElemXor, [], 'one, 
+  'A:ElemXor <- '_*_['%1:ElemXor, '%2:ElemXor] ; 
   'B:ElemXor <- 'mt.ElemXor, 
   'X:`[ElemXor`] <- '%1:ElemXor ; 
   'Y:`[ElemXor`] <- '%2:ElemXor, '%) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['_*_['%2:ElemXor,'%4:ElemXor],'_*_['%3:ElemXor,'%5:ElemXor]],
+    1, 'f['_*_['%2:ElemXor, '%4:ElemXor], '_*_['%3:ElemXor, '%5:ElemXor]],
     'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['%1:ElemXor,'%2:ElemXor,'%3:ElemXor] ; 
-  'B:ElemXor <- '_*_['%1:ElemXor,'%4:ElemXor,'%5:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['%2:ElemXor,'%4:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['%3:ElemXor,'%5:ElemXor], '%) ; gotOneStepNarrowing(
-    me, interpreter(0), 1, 'f['_*_['%2:ElemXor,'%4:ElemXor],'%1:ElemXor],
+  'A:ElemXor <- '_*_['%1:ElemXor, '%2:ElemXor, '%3:ElemXor] ; 
+  'B:ElemXor <- '_*_['%1:ElemXor, '%4:ElemXor, '%5:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['%2:ElemXor, '%4:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['%3:ElemXor, '%5:ElemXor], '%) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'f['_*_['%2:ElemXor, '%4:ElemXor], '%1:ElemXor],
     'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['%1:ElemXor,'%3:ElemXor,'%4:ElemXor] ; 
-  'B:ElemXor <- '_*_['%2:ElemXor,'%3:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['%2:ElemXor,'%4:ElemXor] ; 
+  'A:ElemXor <- '_*_['%1:ElemXor, '%3:ElemXor, '%4:ElemXor] ; 
+  'B:ElemXor <- '_*_['%2:ElemXor, '%3:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['%2:ElemXor, '%4:ElemXor] ; 
   'Y:`[ElemXor`] <- '%1:ElemXor, '%) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['%1:ElemXor,'_*_['%2:ElemXor,'%4:ElemXor]], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['%1:ElemXor,'%3:ElemXor,'%4:ElemXor] ; 
-  'B:ElemXor <- '_*_['%2:ElemXor,'%3:ElemXor], 
+    1, 'f['%1:ElemXor, '_*_['%2:ElemXor, '%4:ElemXor]], 'ElemXor, [], 'one, 
+  'A:ElemXor <- '_*_['%1:ElemXor, '%3:ElemXor, '%4:ElemXor] ; 
+  'B:ElemXor <- '_*_['%2:ElemXor, '%3:ElemXor], 
   'X:`[ElemXor`] <- '%1:ElemXor ; 
-  'Y:`[ElemXor`] <- '_*_['%2:ElemXor,'%4:ElemXor], '%) ; gotOneStepNarrowing(
-    me, interpreter(0), 1, 'f['_*_['%2:ElemXor,'%4:ElemXor],'%1:ElemXor],
+  'Y:`[ElemXor`] <- '_*_['%2:ElemXor, '%4:ElemXor], '%) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'f['_*_['%2:ElemXor, '%4:ElemXor], '%1:ElemXor],
     'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['%2:ElemXor,'%3:ElemXor] ; 
-  'B:ElemXor <- '_*_['%1:ElemXor,'%3:ElemXor,'%4:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['%2:ElemXor,'%4:ElemXor] ; 
+  'A:ElemXor <- '_*_['%2:ElemXor, '%3:ElemXor] ; 
+  'B:ElemXor <- '_*_['%1:ElemXor, '%3:ElemXor, '%4:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['%2:ElemXor, '%4:ElemXor] ; 
   'Y:`[ElemXor`] <- '%1:ElemXor, '%) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['%1:ElemXor,'%2:ElemXor], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['%1:ElemXor,'%3:ElemXor] ; 
-  'B:ElemXor <- '_*_['%2:ElemXor,'%3:ElemXor], 
+    1, 'f['%1:ElemXor, '%2:ElemXor], 'ElemXor, [], 'one, 
+  'A:ElemXor <- '_*_['%1:ElemXor, '%3:ElemXor] ; 
+  'B:ElemXor <- '_*_['%2:ElemXor, '%3:ElemXor], 
   'X:`[ElemXor`] <- '%1:ElemXor ; 
   'Y:`[ElemXor`] <- '%2:ElemXor, '%) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['%1:ElemXor,'_*_['%2:ElemXor,'%4:ElemXor]], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['%2:ElemXor,'%3:ElemXor] ; 
-  'B:ElemXor <- '_*_['%1:ElemXor,'%3:ElemXor,'%4:ElemXor], 
+    1, 'f['%1:ElemXor, '_*_['%2:ElemXor, '%4:ElemXor]], 'ElemXor, [], 'one, 
+  'A:ElemXor <- '_*_['%2:ElemXor, '%3:ElemXor] ; 
+  'B:ElemXor <- '_*_['%1:ElemXor, '%3:ElemXor, '%4:ElemXor], 
   'X:`[ElemXor`] <- '%1:ElemXor ; 
-  'Y:`[ElemXor`] <- '_*_['%2:ElemXor,'%4:ElemXor], '%) ; gotOneStepNarrowing(
-    me, interpreter(0), 1, 'f['%2:ElemXor,'%1:ElemXor], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['%1:ElemXor,'%3:ElemXor] ; 
-  'B:ElemXor <- '_*_['%2:ElemXor,'%3:ElemXor], 
+  'Y:`[ElemXor`] <- '_*_['%2:ElemXor, '%4:ElemXor], '%) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'f['%2:ElemXor, '%1:ElemXor], 'ElemXor, [], 'one, 
+  'A:ElemXor <- '_*_['%1:ElemXor, '%3:ElemXor] ; 
+  'B:ElemXor <- '_*_['%2:ElemXor, '%3:ElemXor], 
   'X:`[ElemXor`] <- '%2:ElemXor ; 
   'Y:`[ElemXor`] <- '%1:ElemXor, '%) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['%1:ElemXor,'%2:ElemXor], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['%1:ElemXor,'%2:ElemXor,'%3:ElemXor] ; 
+    1, 'f['%1:ElemXor, '%2:ElemXor], 'ElemXor, [], 'one, 
+  'A:ElemXor <- '_*_['%1:ElemXor, '%2:ElemXor, '%3:ElemXor] ; 
   'B:ElemXor <- '%3:ElemXor, 
   'X:`[ElemXor`] <- '%1:ElemXor ; 
   'Y:`[ElemXor`] <- '%2:ElemXor, '%) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['%1:ElemXor,'%2:ElemXor], 'ElemXor, [], 'one, 
+    1, 'f['%1:ElemXor, '%2:ElemXor], 'ElemXor, [], 'one, 
   'A:ElemXor <- '%3:ElemXor ; 
-  'B:ElemXor <- '_*_['%1:ElemXor,'%2:ElemXor,'%3:ElemXor], 
+  'B:ElemXor <- '_*_['%1:ElemXor, '%2:ElemXor, '%3:ElemXor], 
   'X:`[ElemXor`] <- '%1:ElemXor ; 
   'Y:`[ElemXor`] <- '%2:ElemXor, '%) ; gotOneStepNarrowing(me, interpreter(0),
-    49, 'f['@1:`[ElemXor`],'@1:`[ElemXor`]], '`[ElemXor`], [], 'one, 
+    49, 'f['@1:`[ElemXor`], '@1:`[ElemXor`]], '`[ElemXor`], [], 'one, 
   'A:ElemXor <- '@2:ElemXor ; 
   'B:ElemXor <- '@2:ElemXor, 
   'X:`[ElemXor`] <- '@1:`[ElemXor`] ; 
   'Y:`[ElemXor`] <- '@1:`[ElemXor`], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 1, 'f['mt.ElemXor,'_*_['@1:ElemXor,'@2:ElemXor]], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@3:ElemXor] ; 
-  'B:ElemXor <- '_*_['@2:ElemXor,'@3:ElemXor], 
+    0), 1, 'f['mt.ElemXor, '_*_['@1:ElemXor, '@2:ElemXor]], 'ElemXor, [], 'one,
+    
+  'A:ElemXor <- '_*_['@1:ElemXor, '@3:ElemXor] ; 
+  'B:ElemXor <- '_*_['@2:ElemXor, '@3:ElemXor], 
   'X:`[ElemXor`] <- 'mt.ElemXor ; 
-  'Y:`[ElemXor`] <- '_*_['@1:ElemXor,'@2:ElemXor], '@) ; gotOneStepNarrowing(
-    me, interpreter(0), 1, 'f['mt.ElemXor,'@1:ElemXor], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@2:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@1:ElemXor, '@2:ElemXor], '@) ; gotOneStepNarrowing(
+    me, interpreter(0), 1, 'f['mt.ElemXor, '@1:ElemXor], 'ElemXor, [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@2:ElemXor] ; 
   'B:ElemXor <- '@2:ElemXor, 
   'X:`[ElemXor`] <- 'mt.ElemXor ; 
   'Y:`[ElemXor`] <- '@1:ElemXor, '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['mt.ElemXor,'@1:ElemXor], 'ElemXor, [], 'one, 
+    1, 'f['mt.ElemXor, '@1:ElemXor], 'ElemXor, [], 'one, 
   'A:ElemXor <- '@2:ElemXor ; 
-  'B:ElemXor <- '_*_['@1:ElemXor,'@2:ElemXor], 
+  'B:ElemXor <- '_*_['@1:ElemXor, '@2:ElemXor], 
   'X:`[ElemXor`] <- 'mt.ElemXor ; 
   'Y:`[ElemXor`] <- '@1:ElemXor, '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['_*_['@1:ElemXor,'@2:ElemXor],'mt.ElemXor], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@3:ElemXor] ; 
-  'B:ElemXor <- '_*_['@2:ElemXor,'@3:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@1:ElemXor,'@2:ElemXor] ; 
+    1, 'f['_*_['@1:ElemXor, '@2:ElemXor], 'mt.ElemXor], 'ElemXor, [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@3:ElemXor] ; 
+  'B:ElemXor <- '_*_['@2:ElemXor, '@3:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@1:ElemXor, '@2:ElemXor] ; 
   'Y:`[ElemXor`] <- 'mt.ElemXor, '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['@1:ElemXor,'mt.ElemXor], 'ElemXor, [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@2:ElemXor] ; 
+    1, 'f['@1:ElemXor, 'mt.ElemXor], 'ElemXor, [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@2:ElemXor] ; 
   'B:ElemXor <- '@2:ElemXor, 
   'X:`[ElemXor`] <- '@1:ElemXor ; 
   'Y:`[ElemXor`] <- 'mt.ElemXor, '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['@1:ElemXor,'mt.ElemXor], 'ElemXor, [], 'one, 
+    1, 'f['@1:ElemXor, 'mt.ElemXor], 'ElemXor, [], 'one, 
   'A:ElemXor <- '@2:ElemXor ; 
-  'B:ElemXor <- '_*_['@1:ElemXor,'@2:ElemXor], 
+  'B:ElemXor <- '_*_['@1:ElemXor, '@2:ElemXor], 
   'X:`[ElemXor`] <- '@1:ElemXor ; 
   'Y:`[ElemXor`] <- 'mt.ElemXor, '@) ; gotOneStepNarrowing(me, interpreter(0),
-    1, 'f['_*_['@3:`[ElemXor`],'@1:ElemXor],'_*_['@3:`[ElemXor`],'@2:ElemXor]],
-    '`[ElemXor`], [], 'one, 
+    1, 'f['_*_['@3:`[ElemXor`], '@1:ElemXor], '_*_['@3:`[ElemXor`],
+    '@2:ElemXor]], '`[ElemXor`], [], 'one, 
   'A:ElemXor <- 'mt.ElemXor ; 
-  'B:ElemXor <- '_*_['@1:ElemXor,'@2:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@2:ElemXor], '@) ;
+  'B:ElemXor <- '_*_['@1:ElemXor, '@2:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@2:ElemXor], '@) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@3:`[ElemXor`],
-    '@1:ElemXor],'_*_['@3:`[ElemXor`],'@2:ElemXor]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@2:ElemXor] ; 
+    '@1:ElemXor], '_*_['@3:`[ElemXor`], '@2:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@2:ElemXor] ; 
   'B:ElemXor <- 'mt.ElemXor, 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@2:ElemXor], '@) ;
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@2:ElemXor], '@) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@1:`[ElemXor`],
-    '@3:ElemXor,'@5:ElemXor],'_*_['@1:`[ElemXor`],'@4:ElemXor,'@6:ElemXor]],
+    '@3:ElemXor, '@5:ElemXor], '_*_['@1:`[ElemXor`], '@4:ElemXor,
+    '@6:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@2:ElemXor, '@3:ElemXor, '@4:ElemXor] ; 
+  'B:ElemXor <- '_*_['@2:ElemXor, '@5:ElemXor, '@6:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@1:`[ElemXor`], '@3:ElemXor, '@5:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@1:`[ElemXor`], '@4:ElemXor, '@6:ElemXor], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@3:`[ElemXor`],
+    '@2:ElemXor, '@5:ElemXor], '_*_['@3:`[ElemXor`], '@1:ElemXor]],
     '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '_*_['@2:ElemXor,'@3:ElemXor,'@4:ElemXor] ; 
-  'B:ElemXor <- '_*_['@2:ElemXor,'@5:ElemXor,'@6:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@3:ElemXor,'@5:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@1:`[ElemXor`],'@4:ElemXor,'@6:ElemXor], '@) ;
+  'A:ElemXor <- '_*_['@1:ElemXor, '@4:ElemXor, '@5:ElemXor] ; 
+  'B:ElemXor <- '_*_['@2:ElemXor, '@4:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@2:ElemXor, '@5:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor], '@) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@3:`[ElemXor`],
-    '@2:ElemXor,'@5:ElemXor],'_*_['@3:`[ElemXor`],'@1:ElemXor]], '`[ElemXor`],
-    [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@4:ElemXor,'@5:ElemXor] ; 
-  'B:ElemXor <- '_*_['@2:ElemXor,'@4:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@2:ElemXor,'@5:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor], '@) ;
+    '@1:ElemXor], '_*_['@3:`[ElemXor`], '@2:ElemXor, '@5:ElemXor]],
+    '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@4:ElemXor, '@5:ElemXor] ; 
+  'B:ElemXor <- '_*_['@2:ElemXor, '@4:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@2:ElemXor, '@5:ElemXor], '@) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@3:`[ElemXor`],
-    '@1:ElemXor],'_*_['@3:`[ElemXor`],'@2:ElemXor,'@5:ElemXor]], '`[ElemXor`],
-    [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@4:ElemXor,'@5:ElemXor] ; 
-  'B:ElemXor <- '_*_['@2:ElemXor,'@4:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@2:ElemXor,'@5:ElemXor], '@) ;
+    '@2:ElemXor, '@5:ElemXor], '_*_['@3:`[ElemXor`], '@1:ElemXor]],
+    '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@2:ElemXor, '@4:ElemXor] ; 
+  'B:ElemXor <- '_*_['@1:ElemXor, '@4:ElemXor, '@5:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@2:ElemXor, '@5:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor], '@) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@3:`[ElemXor`],
-    '@2:ElemXor,'@5:ElemXor],'_*_['@3:`[ElemXor`],'@1:ElemXor]], '`[ElemXor`],
-    [], 'one, 
-  'A:ElemXor <- '_*_['@2:ElemXor,'@4:ElemXor] ; 
-  'B:ElemXor <- '_*_['@1:ElemXor,'@4:ElemXor,'@5:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@2:ElemXor,'@5:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor], '@) ;
+    '@1:ElemXor], '_*_['@3:`[ElemXor`], '@2:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@4:ElemXor] ; 
+  'B:ElemXor <- '_*_['@2:ElemXor, '@4:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@2:ElemXor], '@) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@3:`[ElemXor`],
-    '@1:ElemXor],'_*_['@3:`[ElemXor`],'@2:ElemXor]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@4:ElemXor] ; 
-  'B:ElemXor <- '_*_['@2:ElemXor,'@4:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@2:ElemXor], '@) ;
+    '@1:ElemXor], '_*_['@3:`[ElemXor`], '@2:ElemXor, '@5:ElemXor]],
+    '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@2:ElemXor, '@4:ElemXor] ; 
+  'B:ElemXor <- '_*_['@1:ElemXor, '@4:ElemXor, '@5:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@2:ElemXor, '@5:ElemXor], '@) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@3:`[ElemXor`],
-    '@1:ElemXor],'_*_['@3:`[ElemXor`],'@2:ElemXor,'@5:ElemXor]], '`[ElemXor`],
-    [], 'one, 
-  'A:ElemXor <- '_*_['@2:ElemXor,'@4:ElemXor] ; 
-  'B:ElemXor <- '_*_['@1:ElemXor,'@4:ElemXor,'@5:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@2:ElemXor,'@5:ElemXor], '@) ;
+    '@2:ElemXor], '_*_['@3:`[ElemXor`], '@1:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@4:ElemXor] ; 
+  'B:ElemXor <- '_*_['@2:ElemXor, '@4:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@2:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor], '@) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@3:`[ElemXor`],
-    '@2:ElemXor],'_*_['@3:`[ElemXor`],'@1:ElemXor]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@4:ElemXor] ; 
-  'B:ElemXor <- '_*_['@2:ElemXor,'@4:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@2:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@3:`[ElemXor`],
-    '@1:ElemXor],'_*_['@3:`[ElemXor`],'@2:ElemXor]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@2:ElemXor,'@4:ElemXor] ; 
+    '@1:ElemXor], '_*_['@3:`[ElemXor`], '@2:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@2:ElemXor, '@4:ElemXor] ; 
   'B:ElemXor <- '@4:ElemXor, 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@2:ElemXor], '@) ;
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@2:ElemXor], '@) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@3:`[ElemXor`],
-    '@1:ElemXor],'_*_['@3:`[ElemXor`],'@2:ElemXor]], '`[ElemXor`], [], 'one, 
+    '@1:ElemXor], '_*_['@3:`[ElemXor`], '@2:ElemXor]], '`[ElemXor`], [], 'one, 
   'A:ElemXor <- '@4:ElemXor ; 
-  'B:ElemXor <- '_*_['@1:ElemXor,'@2:ElemXor,'@4:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@2:ElemXor], '@) ;
+  'B:ElemXor <- '_*_['@1:ElemXor, '@2:ElemXor, '@4:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@2:ElemXor], '@) ;
     gotOneStepNarrowing(me, interpreter(0), 1, 'f['_*_['@2:`[ElemXor`],
-    '@1:ElemXor],'@2:`[ElemXor`]], '`[ElemXor`], [], 'one, 
+    '@1:ElemXor], '@2:`[ElemXor`]], '`[ElemXor`], [], 'one, 
   'A:ElemXor <- 'mt.ElemXor ; 
   'B:ElemXor <- '@1:ElemXor, 
-  'X:`[ElemXor`] <- '_*_['@2:`[ElemXor`],'@1:ElemXor] ; 
+  'X:`[ElemXor`] <- '_*_['@2:`[ElemXor`], '@1:ElemXor] ; 
   'Y:`[ElemXor`] <- '@2:`[ElemXor`], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 1, 'f['_*_['@2:`[ElemXor`],'@1:ElemXor],'@2:`[ElemXor`]], '`[ElemXor`],
-    [], 'one, 
-  'A:ElemXor <- '@1:ElemXor ; 
-  'B:ElemXor <- 'mt.ElemXor, 
-  'X:`[ElemXor`] <- '_*_['@2:`[ElemXor`],'@1:ElemXor] ; 
-  'Y:`[ElemXor`] <- '@2:`[ElemXor`], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 1, 'f['_*_['@3:`[ElemXor`],'@1:ElemXor,'@2:ElemXor],'@3:`[ElemXor`]],
+    0), 1, 'f['_*_['@2:`[ElemXor`], '@1:ElemXor], '@2:`[ElemXor`]],
     '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@4:ElemXor] ; 
-  'B:ElemXor <- '_*_['@2:ElemXor,'@4:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor,'@2:ElemXor] ; 
+  'A:ElemXor <- '@1:ElemXor ; 
+  'B:ElemXor <- 'mt.ElemXor, 
+  'X:`[ElemXor`] <- '_*_['@2:`[ElemXor`], '@1:ElemXor] ; 
+  'Y:`[ElemXor`] <- '@2:`[ElemXor`], '@) ; gotOneStepNarrowing(me, interpreter(
+    0), 1, 'f['_*_['@3:`[ElemXor`], '@1:ElemXor, '@2:ElemXor],
+    '@3:`[ElemXor`]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@4:ElemXor] ; 
+  'B:ElemXor <- '_*_['@2:ElemXor, '@4:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor, '@2:ElemXor] ; 
   'Y:`[ElemXor`] <- '@3:`[ElemXor`], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 1, 'f['_*_['@2:`[ElemXor`],'@1:ElemXor],'@2:`[ElemXor`]], '`[ElemXor`],
-    [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@3:ElemXor] ; 
+    0), 1, 'f['_*_['@2:`[ElemXor`], '@1:ElemXor], '@2:`[ElemXor`]],
+    '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@3:ElemXor] ; 
   'B:ElemXor <- '@3:ElemXor, 
-  'X:`[ElemXor`] <- '_*_['@2:`[ElemXor`],'@1:ElemXor] ; 
+  'X:`[ElemXor`] <- '_*_['@2:`[ElemXor`], '@1:ElemXor] ; 
   'Y:`[ElemXor`] <- '@2:`[ElemXor`], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 1, 'f['_*_['@2:`[ElemXor`],'@1:ElemXor],'@2:`[ElemXor`]], '`[ElemXor`],
-    [], 'one, 
+    0), 1, 'f['_*_['@2:`[ElemXor`], '@1:ElemXor], '@2:`[ElemXor`]],
+    '`[ElemXor`], [], 'one, 
   'A:ElemXor <- '@3:ElemXor ; 
-  'B:ElemXor <- '_*_['@1:ElemXor,'@3:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['@2:`[ElemXor`],'@1:ElemXor] ; 
+  'B:ElemXor <- '_*_['@1:ElemXor, '@3:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['@2:`[ElemXor`], '@1:ElemXor] ; 
   'Y:`[ElemXor`] <- '@2:`[ElemXor`], '@) ; gotOneStepNarrowing(me, interpreter(
-    0), 1, 'f['@2:`[ElemXor`],'_*_['@2:`[ElemXor`],'@1:ElemXor]], '`[ElemXor`],
-    [], 'one, 
+    0), 1, 'f['@2:`[ElemXor`], '_*_['@2:`[ElemXor`], '@1:ElemXor]],
+    '`[ElemXor`], [], 'one, 
   'A:ElemXor <- 'mt.ElemXor ; 
   'B:ElemXor <- '@1:ElemXor, 
   'X:`[ElemXor`] <- '@2:`[ElemXor`] ; 
-  'Y:`[ElemXor`] <- '_*_['@2:`[ElemXor`],'@1:ElemXor], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['@2:`[ElemXor`],'_*_[
-    '@2:`[ElemXor`],'@1:ElemXor]], '`[ElemXor`], [], 'one, 
+  'Y:`[ElemXor`] <- '_*_['@2:`[ElemXor`], '@1:ElemXor], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['@2:`[ElemXor`], '_*_[
+    '@2:`[ElemXor`], '@1:ElemXor]], '`[ElemXor`], [], 'one, 
   'A:ElemXor <- '@1:ElemXor ; 
   'B:ElemXor <- 'mt.ElemXor, 
   'X:`[ElemXor`] <- '@2:`[ElemXor`] ; 
-  'Y:`[ElemXor`] <- '_*_['@2:`[ElemXor`],'@1:ElemXor], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['@3:`[ElemXor`],'_*_[
-    '@3:`[ElemXor`],'@1:ElemXor,'@2:ElemXor]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@4:ElemXor] ; 
-  'B:ElemXor <- '_*_['@2:ElemXor,'@4:ElemXor], 
+  'Y:`[ElemXor`] <- '_*_['@2:`[ElemXor`], '@1:ElemXor], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['@3:`[ElemXor`], '_*_[
+    '@3:`[ElemXor`], '@1:ElemXor, '@2:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@4:ElemXor] ; 
+  'B:ElemXor <- '_*_['@2:ElemXor, '@4:ElemXor], 
   'X:`[ElemXor`] <- '@3:`[ElemXor`] ; 
-  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`],'@1:ElemXor,'@2:ElemXor], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['@2:`[ElemXor`],'_*_[
-    '@2:`[ElemXor`],'@1:ElemXor]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '_*_['@1:ElemXor,'@3:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['@3:`[ElemXor`], '@1:ElemXor, '@2:ElemXor], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['@2:`[ElemXor`], '_*_[
+    '@2:`[ElemXor`], '@1:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['@1:ElemXor, '@3:ElemXor] ; 
   'B:ElemXor <- '@3:ElemXor, 
   'X:`[ElemXor`] <- '@2:`[ElemXor`] ; 
-  'Y:`[ElemXor`] <- '_*_['@2:`[ElemXor`],'@1:ElemXor], '@) ;
-    gotOneStepNarrowing(me, interpreter(0), 1, 'f['@2:`[ElemXor`],'_*_[
-    '@2:`[ElemXor`],'@1:ElemXor]], '`[ElemXor`], [], 'one, 
+  'Y:`[ElemXor`] <- '_*_['@2:`[ElemXor`], '@1:ElemXor], '@) ;
+    gotOneStepNarrowing(me, interpreter(0), 1, 'f['@2:`[ElemXor`], '_*_[
+    '@2:`[ElemXor`], '@1:ElemXor]], '`[ElemXor`], [], 'one, 
   'A:ElemXor <- '@3:ElemXor ; 
-  'B:ElemXor <- '_*_['@1:ElemXor,'@3:ElemXor], 
+  'B:ElemXor <- '_*_['@1:ElemXor, '@3:ElemXor], 
   'X:`[ElemXor`] <- '@2:`[ElemXor`] ; 
-  'Y:`[ElemXor`] <- '_*_['@2:`[ElemXor`],'@1:ElemXor], '@)), start: ('_*_[
-    'A:ElemXor,'B:ElemXor]), irred: empty > noSuchResult(me, interpreter(0), 0,
-    true)
+  'Y:`[ElemXor`] <- '_*_['@2:`[ElemXor`], '@1:ElemXor], '@)), start: ('_*_[
+    'A:ElemXor, 'B:ElemXor]), irred: empty > noSuchResult(me, interpreter(0),
+    0, true)
 ==========================================
 erewrite in NARROW-TEST2 : <> < me : User | start: ('_*_['A:ElemXor,
     'B:ElemXor]), irred: empty > createInterpreter(interpreterManager, me,
@@ -1411,12 +1423,12 @@ rewrites: 5
 mb applications: 0  equational rewrites: 2  rule rewrites: 3  variant narrowing
     steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | soln: 2, got: gotOneStepNarrowing(me,
-    interpreter(0), 1832, 'f['_*_['%1:`[ElemXor`],'%2:ElemXor,'%4:ElemXor],
-    '_*_['%1:`[ElemXor`],'%3:ElemXor,'%5:ElemXor]], '`[ElemXor`], [], 'one, 
-  'A:ElemXor <- '_*_['%2:ElemXor,'%3:ElemXor] ; 
-  'B:ElemXor <- '_*_['%4:ElemXor,'%5:ElemXor], 
-  'X:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%2:ElemXor,'%4:ElemXor] ; 
-  'Y:`[ElemXor`] <- '_*_['%1:`[ElemXor`],'%3:ElemXor,'%5:ElemXor], '%), start:
-    ('_*_['A:ElemXor,'B:ElemXor]), irred: empty > noSuchResult(me, interpreter(
-    0), 0, true)
+    interpreter(0), 1832, 'f['_*_['%1:`[ElemXor`], '%2:ElemXor, '%4:ElemXor],
+    '_*_['%1:`[ElemXor`], '%3:ElemXor, '%5:ElemXor]], '`[ElemXor`], [], 'one, 
+  'A:ElemXor <- '_*_['%2:ElemXor, '%3:ElemXor] ; 
+  'B:ElemXor <- '_*_['%4:ElemXor, '%5:ElemXor], 
+  'X:`[ElemXor`] <- '_*_['%1:`[ElemXor`], '%2:ElemXor, '%4:ElemXor] ; 
+  'Y:`[ElemXor`] <- '_*_['%1:`[ElemXor`], '%3:ElemXor, '%5:ElemXor], '%),
+    start: ('_*_['A:ElemXor, 'B:ElemXor]), irred: empty > noSuchResult(me,
+    interpreter(0), 0, true)
 Bye.

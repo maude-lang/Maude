@@ -19,83 +19,84 @@ Transformed equation:
     N, M) = Conf .
 
 Considering object completion on:
-  rl < O1 : Pos | x : N, y : M, busy : true > < O2 : Pos | x : N, y : s M, busy
-    : true > < O3 : Pos | x : N, y : s s M, busy : false > => < O1 : Pos | x :
-    N, y : M, busy : false > < O2 : Pos | x : N, y : s M, busy : false > < O3 :
-    Pos | x : N, y : s s M, busy : true > [label right] .
+  rl [right] : < O1 : Pos | x : N, y : M, busy : true > < O2 : Pos | x : N, y :
+    s M, busy : true > < O3 : Pos | x : N, y : s s M, busy : false > => < O1 :
+    Pos | x : N, y : M, busy : false > < O2 : Pos | x : N, y : s M, busy :
+    false > < O3 : Pos | x : N, y : s s M, busy : true > .
 Transformed rule:
-  rl < O1 : V:Pos | x : N, y : M, busy : true, Atts:AttributeSet > < O2 :
-    V2:Pos | x : N, y : s M, busy : true, Atts2:AttributeSet > < O3 : V3:Pos |
-    x : N, y : s s M, busy : false, Atts3:AttributeSet > => < O1 : V:Pos | x :
-    N, y : M, busy : false, Atts:AttributeSet > < O2 : V2:Pos | x : N, y : s M,
-    busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : N, y : s s M, busy :
-    true, Atts3:AttributeSet > [label right] .
+  rl [right] : < O1 : V:Pos | x : N, y : M, busy : true, Atts:AttributeSet > <
+    O2 : V2:Pos | x : N, y : s M, busy : true, Atts2:AttributeSet > < O3 :
+    V3:Pos | x : N, y : s s M, busy : false, Atts3:AttributeSet > => < O1 :
+    V:Pos | x : N, y : M, busy : false, Atts:AttributeSet > < O2 : V2:Pos | x :
+    N, y : s M, busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : N, y : s
+    s M, busy : true, Atts3:AttributeSet > .
 
 Considering object completion on:
-  rl < O1 : Pos | x : N, y : M, busy : false > < O2 : Pos | x : N, y : s M,
-    busy : true > < O3 : Pos | x : N, y : s s M, busy : true > => < O1 : Pos |
-    x : N, y : M, busy : true > < O2 : Pos | x : N, y : s M, busy : false > <
-    O3 : Pos | x : N, y : s s M, busy : false > [label left] .
+  rl [left] : < O1 : Pos | x : N, y : M, busy : false > < O2 : Pos | x : N, y :
+    s M, busy : true > < O3 : Pos | x : N, y : s s M, busy : true > => < O1 :
+    Pos | x : N, y : M, busy : true > < O2 : Pos | x : N, y : s M, busy : false
+    > < O3 : Pos | x : N, y : s s M, busy : false > .
 Transformed rule:
-  rl < O1 : V:Pos | x : N, y : M, busy : false, Atts:AttributeSet > < O2 :
-    V2:Pos | x : N, y : s M, busy : true, Atts2:AttributeSet > < O3 : V3:Pos |
-    x : N, y : s s M, busy : true, Atts3:AttributeSet > => < O1 : V:Pos | x :
-    N, y : M, busy : true, Atts:AttributeSet > < O2 : V2:Pos | x : N, y : s M,
-    busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : N, y : s s M, busy :
-    false, Atts3:AttributeSet > [label left] .
+  rl [left] : < O1 : V:Pos | x : N, y : M, busy : false, Atts:AttributeSet > <
+    O2 : V2:Pos | x : N, y : s M, busy : true, Atts2:AttributeSet > < O3 :
+    V3:Pos | x : N, y : s s M, busy : true, Atts3:AttributeSet > => < O1 :
+    V:Pos | x : N, y : M, busy : true, Atts:AttributeSet > < O2 : V2:Pos | x :
+    N, y : s M, busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : N, y : s
+    s M, busy : false, Atts3:AttributeSet > .
 
 Considering object completion on:
-  rl < O1 : Pos | x : N, y : M, busy : true > < O2 : Pos | x : s N, y : M, busy
-    : true > < O3 : Pos | x : s s N, y : M, busy : false > => < O1 : Pos | x :
-    N, y : M, busy : false > < O2 : Pos | x : s N, y : M, busy : false > < O3 :
-    Pos | x : s s N, y : M, busy : true > [label down] .
+  rl [down] : < O1 : Pos | x : N, y : M, busy : true > < O2 : Pos | x : s N, y
+    : M, busy : true > < O3 : Pos | x : s s N, y : M, busy : false > => < O1 :
+    Pos | x : N, y : M, busy : false > < O2 : Pos | x : s N, y : M, busy :
+    false > < O3 : Pos | x : s s N, y : M, busy : true > .
 Transformed rule:
-  rl < O1 : V:Pos | x : N, y : M, busy : true, Atts:AttributeSet > < O2 :
-    V2:Pos | x : s N, y : M, busy : true, Atts2:AttributeSet > < O3 : V3:Pos |
-    x : s s N, y : M, busy : false, Atts3:AttributeSet > => < O1 : V:Pos | x :
-    N, y : M, busy : false, Atts:AttributeSet > < O2 : V2:Pos | x : s N, y : M,
-    busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : s s N, y : M, busy :
-    true, Atts3:AttributeSet > [label down] .
+  rl [down] : < O1 : V:Pos | x : N, y : M, busy : true, Atts:AttributeSet > <
+    O2 : V2:Pos | x : s N, y : M, busy : true, Atts2:AttributeSet > < O3 :
+    V3:Pos | x : s s N, y : M, busy : false, Atts3:AttributeSet > => < O1 :
+    V:Pos | x : N, y : M, busy : false, Atts:AttributeSet > < O2 : V2:Pos | x :
+    s N, y : M, busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : s s N, y
+    : M, busy : true, Atts3:AttributeSet > .
 
 Considering object completion on:
-  rl < O1 : Pos | x : N, y : M, busy : false > < O2 : Pos | x : s N, y : M,
-    busy : true > < O3 : Pos | x : s s N, y : M, busy : true > => < O1 : Pos |
-    x : N, y : M, busy : true > < O2 : Pos | x : s N, y : M, busy : false > <
-    O3 : Pos | x : s s N, y : M, busy : false > [label up] .
+  rl [up] : < O1 : Pos | x : N, y : M, busy : false > < O2 : Pos | x : s N, y :
+    M, busy : true > < O3 : Pos | x : s s N, y : M, busy : true > => < O1 : Pos
+    | x : N, y : M, busy : true > < O2 : Pos | x : s N, y : M, busy : false > <
+    O3 : Pos | x : s s N, y : M, busy : false > .
 Transformed rule:
-  rl < O1 : V:Pos | x : N, y : M, busy : false, Atts:AttributeSet > < O2 :
-    V2:Pos | x : s N, y : M, busy : true, Atts2:AttributeSet > < O3 : V3:Pos |
-    x : s s N, y : M, busy : true, Atts3:AttributeSet > => < O1 : V:Pos | x :
+  rl [up] : < O1 : V:Pos | x : N, y : M, busy : false, Atts:AttributeSet > < O2
+    : V2:Pos | x : s N, y : M, busy : true, Atts2:AttributeSet > < O3 : V3:Pos
+    | x : s s N, y : M, busy : true, Atts3:AttributeSet > => < O1 : V:Pos | x :
     N, y : M, busy : true, Atts:AttributeSet > < O2 : V2:Pos | x : s N, y : M,
     busy : false, Atts2:AttributeSet > < O3 : V3:Pos | x : s s N, y : M, busy :
-    false, Atts3:AttributeSet > [label up] .
+    false, Atts3:AttributeSet > .
 
 Considering object completion on:
-  rl < O1 : TPos | x : N, y : s s M, busy : true > < O2 : TPos | x : s N, y : s
-    M, busy : true > < O3 : TPos | x : s s N, y : M, busy : false > => < O1 :
-    TPos | x : N, y : s s M, busy : false > < O2 : TPos | x : s N, y : s M,
-    busy : false > < O3 : TPos | x : s s N, y : M, busy : true > [label
-    leftdown] .
+  rl [leftdown] : < O1 : TPos | x : N, y : s s M, busy : true > < O2 : TPos | x
+    : s N, y : s M, busy : true > < O3 : TPos | x : s s N, y : M, busy : false
+    > => < O1 : TPos | x : N, y : s s M, busy : false > < O2 : TPos | x : s N,
+    y : s M, busy : false > < O3 : TPos | x : s s N, y : M, busy : true > .
 Transformed rule:
-  rl < O1 : V:TPos | x : N, y : s s M, busy : true, Atts:AttributeSet > < O2 :
-    V2:TPos | x : s N, y : s M, busy : true, Atts2:AttributeSet > < O3 :
-    V3:TPos | x : s s N, y : M, busy : false, Atts3:AttributeSet > => < O1 :
-    V:TPos | x : N, y : s s M, busy : false, Atts:AttributeSet > < O2 : V2:TPos
-    | x : s N, y : s M, busy : false, Atts2:AttributeSet > < O3 : V3:TPos | x :
-    s s N, y : M, busy : true, Atts3:AttributeSet > [label leftdown] .
+  rl [leftdown] : < O1 : V:TPos | x : N, y : s s M, busy : true,
+    Atts:AttributeSet > < O2 : V2:TPos | x : s N, y : s M, busy : true,
+    Atts2:AttributeSet > < O3 : V3:TPos | x : s s N, y : M, busy : false,
+    Atts3:AttributeSet > => < O1 : V:TPos | x : N, y : s s M, busy : false,
+    Atts:AttributeSet > < O2 : V2:TPos | x : s N, y : s M, busy : false,
+    Atts2:AttributeSet > < O3 : V3:TPos | x : s s N, y : M, busy : true,
+    Atts3:AttributeSet > .
 
 Considering object completion on:
-  rl < O1 : TPos | x : N, y : s s M, busy : false > < O2 : TPos | x : s N, y :
-    s M, busy : true > < O3 : TPos | x : s s N, y : M, busy : true > => < O1 :
-    TPos | x : N, y : s s M, busy : true > < O2 : TPos | x : s N, y : s M, busy
-    : false > < O3 : TPos | x : s s N, y : M, busy : false > [label rightup] .
+  rl [rightup] : < O1 : TPos | x : N, y : s s M, busy : false > < O2 : TPos | x
+    : s N, y : s M, busy : true > < O3 : TPos | x : s s N, y : M, busy : true >
+    => < O1 : TPos | x : N, y : s s M, busy : true > < O2 : TPos | x : s N, y :
+    s M, busy : false > < O3 : TPos | x : s s N, y : M, busy : false > .
 Transformed rule:
-  rl < O1 : V:TPos | x : N, y : s s M, busy : false, Atts:AttributeSet > < O2 :
-    V2:TPos | x : s N, y : s M, busy : true, Atts2:AttributeSet > < O3 :
-    V3:TPos | x : s s N, y : M, busy : true, Atts3:AttributeSet > => < O1 :
-    V:TPos | x : N, y : s s M, busy : true, Atts:AttributeSet > < O2 : V2:TPos
-    | x : s N, y : s M, busy : false, Atts2:AttributeSet > < O3 : V3:TPos | x :
-    s s N, y : M, busy : false, Atts3:AttributeSet > [label rightup] .
+  rl [rightup] : < O1 : V:TPos | x : N, y : s s M, busy : false,
+    Atts:AttributeSet > < O2 : V2:TPos | x : s N, y : s M, busy : true,
+    Atts2:AttributeSet > < O3 : V3:TPos | x : s s N, y : M, busy : true,
+    Atts3:AttributeSet > => < O1 : V:TPos | x : N, y : s s M, busy : true,
+    Atts:AttributeSet > < O2 : V2:TPos | x : s N, y : s M, busy : false,
+    Atts2:AttributeSet > < O3 : V3:TPos | x : s s N, y : M, busy : false,
+    Atts3:AttributeSet > .
 
 Considering object completion on:
   ceq noAislada(< o(I, J) : Pos | x : I, y : J, busy : true > < o(I', J') : Pos

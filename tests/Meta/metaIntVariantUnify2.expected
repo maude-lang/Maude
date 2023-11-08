@@ -1,77 +1,77 @@
 ==========================================
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: none, problem:('_+_[
-    'X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) > createInterpreter(
+    'X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], empty) > createInterpreter(
     interpreterManager, me, none) .
 rewrites: 43
 result Configuration: <> < me : User | options: none, soln: 9, result(
     gotVariantUnifier(me, interpreter(0), 6, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR] ; 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@),gotVariantUnifier(me, interpreter(0),
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@), gotVariantUnifier(me, interpreter(0),
     0, 
   'X:XOR <- 'c2.Elem ; 
-  'Y:XOR <- 'c1.Elem, '@),gotVariantUnifier(me, interpreter(0), 18, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR] ; 
-  'Y:XOR <- '%1:XOR, '%),gotVariantUnifier(me, interpreter(0), 0, 
+  'Y:XOR <- 'c1.Elem, '@), gotVariantUnifier(me, interpreter(0), 18, 
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR] ; 
+  'Y:XOR <- '%1:XOR, '%), gotVariantUnifier(me, interpreter(0), 0, 
   'X:XOR <- '%1:XOR ; 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR], '%),gotVariantUnifier(me,
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR], '%), gotVariantUnifier(me,
     interpreter(0), 0, 
   'X:XOR <- '0.XOR ; 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem], '@),gotVariantUnifier(me, interpreter(0),
-    0, 
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem], '@), gotVariantUnifier(me, interpreter(
+    0), 0, 
   'X:XOR <- 'c1.Elem ; 
-  'Y:XOR <- 'c2.Elem, '@),gotVariantUnifier(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem] ; 
-  'Y:XOR <- '0.XOR, '@),gotVariantUnifier(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'@1:XOR] ; 
-  'Y:XOR <- '_+_['c2.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+  'Y:XOR <- 'c2.Elem, '@), gotVariantUnifier(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem] ; 
+  'Y:XOR <- '0.XOR, '@), gotVariantUnifier(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, '@1:XOR] ; 
+  'Y:XOR <- '_+_['c2.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], empty) > noSuchResult(me, interpreter(0), 0, true)
 ==========================================
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: delay, problem:(
-    '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) > createInterpreter(
-    interpreterManager, me, none) .
+    '_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], empty) >
+    createInterpreter(interpreterManager, me, none) .
 rewrites: 43
 result Configuration: <> < me : User | options: delay, soln: 9, result(
     gotVariantUnifier(me, interpreter(0), 24, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR] ; 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@),gotVariantUnifier(me, interpreter(0),
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@), gotVariantUnifier(me, interpreter(0),
     0, 
   'X:XOR <- 'c2.Elem ; 
-  'Y:XOR <- 'c1.Elem, '@),gotVariantUnifier(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR] ; 
-  'Y:XOR <- '%1:XOR, '%),gotVariantUnifier(me, interpreter(0), 0, 
+  'Y:XOR <- 'c1.Elem, '@), gotVariantUnifier(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR] ; 
+  'Y:XOR <- '%1:XOR, '%), gotVariantUnifier(me, interpreter(0), 0, 
   'X:XOR <- '%1:XOR ; 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR], '%),gotVariantUnifier(me,
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR], '%), gotVariantUnifier(me,
     interpreter(0), 0, 
   'X:XOR <- '0.XOR ; 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem], '@),gotVariantUnifier(me, interpreter(0),
-    0, 
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem], '@), gotVariantUnifier(me, interpreter(
+    0), 0, 
   'X:XOR <- 'c1.Elem ; 
-  'Y:XOR <- 'c2.Elem, '@),gotVariantUnifier(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem] ; 
-  'Y:XOR <- '0.XOR, '@),gotVariantUnifier(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'@1:XOR] ; 
-  'Y:XOR <- '_+_['c2.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+  'Y:XOR <- 'c2.Elem, '@), gotVariantUnifier(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem] ; 
+  'Y:XOR <- '0.XOR, '@), gotVariantUnifier(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, '@1:XOR] ; 
+  'Y:XOR <- '_+_['c2.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], empty) > noSuchResult(me, interpreter(0), 0, true)
 ==========================================
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: filter, problem:(
-    '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) > createInterpreter(
-    interpreterManager, me, none) .
+    '_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], empty) >
+    createInterpreter(interpreterManager, me, none) .
 rewrites: 39
 result Configuration: <> < me : User | options: filter, soln: 2, result(
     gotVariantUnifier(me, interpreter(0), 16, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR] ; 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 18, true)
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], empty) > noSuchResult(me, interpreter(0), 18, true)
 ==========================================
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: (delay filter),
-    problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) >
+    problem:('_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], empty) >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 39
 result Configuration: <> < me : User | options: (delay filter), soln: 2,
     result(gotVariantUnifier(me, interpreter(0), 34, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR] ; 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], empty) > noSuchResult(me, interpreter(0), 0, true)
 ==========================================
 filtered variant unify in XOR : X + c1 =? Y + c2 .
 rewrites: 34
@@ -83,57 +83,57 @@ Y --> c1 + %1:XOR
 No more unifiers.
 ==========================================
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: none, problem:('_+_[
-    'X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) >
+    'X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 12
 result Configuration: <> < me : User | options: none, soln: 4, result(
     gotVariantUnifier(me, interpreter(0), 3, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR] ; 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@),gotVariantUnifier(me, interpreter(0),
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@), gotVariantUnifier(me, interpreter(0),
     0, 
   'X:XOR <- 'c2.Elem ; 
-  'Y:XOR <- 'c1.Elem, '@),gotVariantUnifier(me, interpreter(0), 0, 
+  'Y:XOR <- 'c1.Elem, '@), gotVariantUnifier(me, interpreter(0), 0, 
   'X:XOR <- '%1:XOR ; 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR], '%)), problem:('_+_['X:XOR,
-    'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) > noSuchResult(
-    me, interpreter(0), 0, true)
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR], '%)), problem:('_+_['X:XOR,
+    'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) >
+    noSuchResult(me, interpreter(0), 0, true)
 ==========================================
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: delay, problem:(
-    '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) >
+    '_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 12
 result Configuration: <> < me : User | options: delay, soln: 4, result(
     gotVariantUnifier(me, interpreter(0), 3, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR] ; 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@),gotVariantUnifier(me, interpreter(0),
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@), gotVariantUnifier(me, interpreter(0),
     0, 
   'X:XOR <- 'c2.Elem ; 
-  'Y:XOR <- 'c1.Elem, '@),gotVariantUnifier(me, interpreter(0), 0, 
+  'Y:XOR <- 'c1.Elem, '@), gotVariantUnifier(me, interpreter(0), 0, 
   'X:XOR <- '%1:XOR ; 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR], '%)), problem:('_+_['X:XOR,
-    'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) > noSuchResult(
-    me, interpreter(0), 0, true)
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR], '%)), problem:('_+_['X:XOR,
+    'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) >
+    noSuchResult(me, interpreter(0), 0, true)
 ==========================================
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: filter, problem:(
-    '_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) >
+    '_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 18
 result Configuration: <> < me : User | options: filter, soln: 2, result(
     gotVariantUnifier(me, interpreter(0), 13, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR] ; 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) > noSuchResult(me,
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) > noSuchResult(me,
     interpreter(0), 0, true)
 ==========================================
 erewrite in VARIANT-UNIFY-TEST : <> < me : User | options: (delay filter),
-    problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,
+    problem:('_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR,
     'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
 rewrites: 18
 result Configuration: <> < me : User | options: (delay filter), soln: 2,
     result(gotVariantUnifier(me, interpreter(0), 13, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR] ; 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) > noSuchResult(me,
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) > noSuchResult(me,
     interpreter(0), 0, true)
 ==========================================
 filtered variant unify in XOR : X + c1 =? Y + c2 such that X + c1 irreducible .
@@ -146,130 +146,130 @@ Y --> c1 + %1:XOR
 No more unifiers.
 ==========================================
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: none,
-    problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) >
+    problem:('_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], empty) >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 43
 result Configuration: <> < me : User | options: none, soln: 9, result(
     gotDisjointVariantUnifier(me, interpreter(0), 6, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR], 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@),gotDisjointVariantUnifier(me,
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR], 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@), gotDisjointVariantUnifier(me,
     interpreter(0), 0, 
   'X:XOR <- 'c2.Elem, 
-  'Y:XOR <- 'c1.Elem, '@),gotDisjointVariantUnifier(me, interpreter(0), 18, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR], 
-  'Y:XOR <- '%1:XOR, '%),gotDisjointVariantUnifier(me, interpreter(0), 0, 
+  'Y:XOR <- 'c1.Elem, '@), gotDisjointVariantUnifier(me, interpreter(0), 18, 
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR], 
+  'Y:XOR <- '%1:XOR, '%), gotDisjointVariantUnifier(me, interpreter(0), 0, 
   'X:XOR <- '%1:XOR, 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR], '%),gotDisjointVariantUnifier(me,
-    interpreter(0), 0, 
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR], '%), gotDisjointVariantUnifier(
+    me, interpreter(0), 0, 
   'X:XOR <- '0.XOR, 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem], '@),gotDisjointVariantUnifier(me,
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem], '@), gotDisjointVariantUnifier(me,
     interpreter(0), 0, 
   'X:XOR <- 'c1.Elem, 
-  'Y:XOR <- 'c2.Elem, '@),gotDisjointVariantUnifier(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem], 
-  'Y:XOR <- '0.XOR, '@),gotDisjointVariantUnifier(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'@1:XOR], 
-  'Y:XOR <- '_+_['c2.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+  'Y:XOR <- 'c2.Elem, '@), gotDisjointVariantUnifier(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem], 
+  'Y:XOR <- '0.XOR, '@), gotDisjointVariantUnifier(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, '@1:XOR], 
+  'Y:XOR <- '_+_['c2.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], empty) > noSuchResult(me, interpreter(0), 0, true)
 ==========================================
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: delay,
-    problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) >
+    problem:('_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], empty) >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 43
 result Configuration: <> < me : User | options: delay, soln: 9, result(
     gotDisjointVariantUnifier(me, interpreter(0), 24, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR], 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@),gotDisjointVariantUnifier(me,
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR], 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@), gotDisjointVariantUnifier(me,
     interpreter(0), 0, 
   'X:XOR <- 'c2.Elem, 
-  'Y:XOR <- 'c1.Elem, '@),gotDisjointVariantUnifier(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR], 
-  'Y:XOR <- '%1:XOR, '%),gotDisjointVariantUnifier(me, interpreter(0), 0, 
+  'Y:XOR <- 'c1.Elem, '@), gotDisjointVariantUnifier(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR], 
+  'Y:XOR <- '%1:XOR, '%), gotDisjointVariantUnifier(me, interpreter(0), 0, 
   'X:XOR <- '%1:XOR, 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR], '%),gotDisjointVariantUnifier(me,
-    interpreter(0), 0, 
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR], '%), gotDisjointVariantUnifier(
+    me, interpreter(0), 0, 
   'X:XOR <- '0.XOR, 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem], '@),gotDisjointVariantUnifier(me,
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem], '@), gotDisjointVariantUnifier(me,
     interpreter(0), 0, 
   'X:XOR <- 'c1.Elem, 
-  'Y:XOR <- 'c2.Elem, '@),gotDisjointVariantUnifier(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem], 
-  'Y:XOR <- '0.XOR, '@),gotDisjointVariantUnifier(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'@1:XOR], 
-  'Y:XOR <- '_+_['c2.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+  'Y:XOR <- 'c2.Elem, '@), gotDisjointVariantUnifier(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem], 
+  'Y:XOR <- '0.XOR, '@), gotDisjointVariantUnifier(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, '@1:XOR], 
+  'Y:XOR <- '_+_['c2.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], empty) > noSuchResult(me, interpreter(0), 0, true)
 ==========================================
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: filter,
-    problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) >
+    problem:('_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], empty) >
     createInterpreter(interpreterManager, me, none) .
 rewrites: 39
 result Configuration: <> < me : User | options: filter, soln: 2, result(
     gotDisjointVariantUnifier(me, interpreter(0), 16, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR], 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 18, true)
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR], 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], empty) > noSuchResult(me, interpreter(0), 18, true)
 ==========================================
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: (delay
-    filter), problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],empty) >
-    createInterpreter(interpreterManager, me, none) .
+    filter), problem:('_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], empty)
+    > createInterpreter(interpreterManager, me, none) .
 rewrites: 39
 result Configuration: <> < me : User | options: (delay filter), soln: 2,
     result(gotDisjointVariantUnifier(me, interpreter(0), 34, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR], 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR], 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], empty) > noSuchResult(me, interpreter(0), 0, true)
 ==========================================
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: none,
-    problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,
+    problem:('_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR,
     'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
 rewrites: 12
 result Configuration: <> < me : User | options: none, soln: 4, result(
     gotDisjointVariantUnifier(me, interpreter(0), 3, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR], 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@),gotDisjointVariantUnifier(me,
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR], 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@), gotDisjointVariantUnifier(me,
     interpreter(0), 0, 
   'X:XOR <- 'c2.Elem, 
-  'Y:XOR <- 'c1.Elem, '@),gotDisjointVariantUnifier(me, interpreter(0), 0, 
+  'Y:XOR <- 'c1.Elem, '@), gotDisjointVariantUnifier(me, interpreter(0), 0, 
   'X:XOR <- '%1:XOR, 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR], '%)), problem:('_+_['X:XOR,
-    'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) > noSuchResult(
-    me, interpreter(0), 0, true)
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR], '%)), problem:('_+_['X:XOR,
+    'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) >
+    noSuchResult(me, interpreter(0), 0, true)
 ==========================================
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: delay,
-    problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,
+    problem:('_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR,
     'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
 rewrites: 12
 result Configuration: <> < me : User | options: delay, soln: 4, result(
     gotDisjointVariantUnifier(me, interpreter(0), 3, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR], 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@),gotDisjointVariantUnifier(me,
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR], 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@), gotDisjointVariantUnifier(me,
     interpreter(0), 0, 
   'X:XOR <- 'c2.Elem, 
-  'Y:XOR <- 'c1.Elem, '@),gotDisjointVariantUnifier(me, interpreter(0), 0, 
+  'Y:XOR <- 'c1.Elem, '@), gotDisjointVariantUnifier(me, interpreter(0), 0, 
   'X:XOR <- '%1:XOR, 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem,'%1:XOR], '%)), problem:('_+_['X:XOR,
-    'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) > noSuchResult(
-    me, interpreter(0), 0, true)
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem, '%1:XOR], '%)), problem:('_+_['X:XOR,
+    'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) >
+    noSuchResult(me, interpreter(0), 0, true)
 ==========================================
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: filter,
-    problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,
+    problem:('_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR,
     'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
 rewrites: 18
 result Configuration: <> < me : User | options: filter, soln: 2, result(
     gotDisjointVariantUnifier(me, interpreter(0), 13, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR], 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) > noSuchResult(me,
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR], 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) > noSuchResult(me,
     interpreter(0), 0, true)
 ==========================================
 erewrite in DISJOINT-VARIANT-UNIFY-TEST : <> < me : User | options: (delay
-    filter), problem:('_+_['X:XOR,'c1.Elem] =? '_+_['Y:XOR,'c2.Elem],'_+_[
-    'X:XOR,'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
+    filter), problem:('_+_['X:XOR, 'c1.Elem] =? '_+_['Y:XOR, 'c2.Elem], '_+_[
+    'X:XOR, 'c1.Elem]) > createInterpreter(interpreterManager, me, none) .
 rewrites: 18
 result Configuration: <> < me : User | options: (delay filter), soln: 2,
     result(gotDisjointVariantUnifier(me, interpreter(0), 13, 
-  'X:XOR <- '_+_['c2.Elem,'@1:XOR], 
-  'Y:XOR <- '_+_['c1.Elem,'@1:XOR], '@)), problem:('_+_['X:XOR,'c1.Elem] =?
-    '_+_['Y:XOR,'c2.Elem],'_+_['X:XOR,'c1.Elem]) > noSuchResult(me,
+  'X:XOR <- '_+_['c2.Elem, '@1:XOR], 
+  'Y:XOR <- '_+_['c1.Elem, '@1:XOR], '@)), problem:('_+_['X:XOR, 'c1.Elem] =?
+    '_+_['Y:XOR, 'c2.Elem], '_+_['X:XOR, 'c1.Elem]) > noSuchResult(me,
     interpreter(0), 0, true)
 Bye.

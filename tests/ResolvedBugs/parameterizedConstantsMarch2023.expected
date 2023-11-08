@@ -1,5 +1,5 @@
 fmod FOO is
-  sorts Bar .
+  sort Bar .
   ops (m{X}) (n{X}) (p{X,X}) : -> Bar .
 endfm
 Bye.

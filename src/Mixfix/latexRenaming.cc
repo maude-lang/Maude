@@ -104,7 +104,7 @@ Renaming::latexRenaming(const char* sep,
       if (om->second.types.size() == 1)
 	result += MixfixModule::latexConstant(om->first, fromModule);  // could be parameterized
       else
-	result += Token::latexIdentifier(om->first);
+	result += MixfixModule::latexPrettyOp(om->first);
      if (!om->second.types.empty())
 	{
 	  result += "\\maudeHasSort";
@@ -122,7 +122,7 @@ Renaming::latexRenaming(const char* sep,
      if (om->second.types.size() == 1)
        result += MixfixModule::latexConstant(om->second.name, toModule);
      else
-       result +=Token::latexIdentifier(om->second.name);
+       result += MixfixModule::latexPrettyOp(om->second.name);
      //
      //	If we have any attributes in target, print them inside []s.
      //

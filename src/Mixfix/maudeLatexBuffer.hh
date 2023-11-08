@@ -39,7 +39,7 @@ public:
 
   void generateBanner(const char* date, const char* time, time_t seconds);
   void generateHeading(const char* message);
-  void generateModuleName(Module* module);
+  void generateModuleName(NamedEntity* module);
   void generateState(DagNode* stateDag);
   //
   //	Functions to start latex for commands.
@@ -94,7 +94,7 @@ public:
 		      int64_t depth,
 		      bool debug);
   void generateContinue(bool showCommand, Int64 limit, bool debug = false);
-  void generateShow(bool showCommand, const string& command, Module* module);
+  void generateShow(bool showCommand, const string& command, NamedEntity* module);
   void generateShow(bool showCommand, const string& command, View* module);
   void generateShow(bool showCommand, const string& command);
   //

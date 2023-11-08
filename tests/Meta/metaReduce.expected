@@ -8,7 +8,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   none
 endfm, 'a.Foo) .
 rewrites: 1
-result ResultPair: {'a.Foo,'Foo}
+result ResultPair: {'a.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   nil
@@ -21,7 +21,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   eq 'a.Foo = 'b.Foo [none] .
 endfm, 'f['a.Foo]) .
 rewrites: 1
-result ResultPair: {'f['a.Foo],'Foo}
+result ResultPair: {'f['a.Foo], 'Foo}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   nil
@@ -34,7 +34,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   eq 'a.Foo = 'b.Foo [none] .
 endfm, 'f['a.Foo]) .
 rewrites: 2
-result ResultPair: {'f['b.Foo],'Foo}
+result ResultPair: {'f['b.Foo], 'Foo}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   protecting 'STRING .
@@ -45,7 +45,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   none
 endfm, '"a".String) .
 rewrites: 1
-result ResultPair: {'"a".Char,'Char}
+result ResultPair: {'"a".Char, 'Char}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   protecting 'STRING .
@@ -56,7 +56,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   none
 endfm, '"this is a string".String) .
 rewrites: 1
-result ResultPair: {'"this is a string".String,'String}
+result ResultPair: {'"this is a string".String, 'String}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   protecting 'STRING .
@@ -67,7 +67,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   none
 endfm, '"this is\na string".String) .
 rewrites: 1
-result ResultPair: {'"this is\na string".String,'String}
+result ResultPair: {'"this is\na string".String, 'String}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   protecting 'STRING .
@@ -78,7 +78,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   none
 endfm, '"\n".String) .
 rewrites: 1
-result ResultPair: {'"\n".Char,'Char}
+result ResultPair: {'"\n".Char, 'Char}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   protecting 'FLOAT .
@@ -89,7 +89,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   none
 endfm, 'pi.Float) .
 rewrites: 2
-result ResultPair: {'3.1415926535897931.FiniteFloat,'FiniteFloat}
+result ResultPair: {'3.1415926535897931.FiniteFloat, 'FiniteFloat}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   protecting 'INT .
@@ -98,7 +98,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   none
   none
-endfm, '_+_['s_['0.Int],'s_^12['0.Int]]) .
+endfm, '_+_['s_['0.Int], 's_^12['0.Int]]) .
 rewrites: 2
-result ResultPair: {'s_^13['0.Zero],'NzNat}
+result ResultPair: {'s_^13['0.Zero], 'NzNat}
 Bye.

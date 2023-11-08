@@ -192,5 +192,5 @@ states: 1  rewrites: 5
 reduce in META-LEVEL : metaRewrite(['COUNTER-TEST4], '__['counter.Nat,
     'counter.Nat], 2) .
 rewrites: 4
-result ResultPair: {'__['0.Zero,'s_['0.Zero]],'List}
+result ResultPair: {'__['0.Zero, 's_['0.Zero]], 'List}
 Bye.

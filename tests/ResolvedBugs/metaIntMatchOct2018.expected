@@ -1,5 +1,6 @@
 ==========================================
-reduce in META-LEVEL : metaMatch(['MATCH], 'Z:Foo, 'f['a.Foo,'c.Foo], nil, 0) .
+reduce in META-LEVEL : metaMatch(['MATCH], 'Z:Foo, 'f['a.Foo, 'c.Foo], nil, 0)
+    .
 *********** equation
 eq [Q:Qid] = sth Q:Qid is
   including Q:Qid .
@@ -66,17 +67,17 @@ metaMatch(sth 'MATCH is
   none
   none
   none
-endsth, 'Z:Foo, 'f['a.Foo,'c.Foo], nil, 0)
+endsth, 'Z:Foo, 'f['a.Foo, 'c.Foo], nil, 0)
 --->
 
-  'Z:Foo <- 'f['a.Foo,'c.Foo]
+  'Z:Foo <- 'f['a.Foo, 'c.Foo]
 rewrites: 5
 mb applications: 1  equational rewrites: 4  rule rewrites: 0  variant narrowing
     steps: 0  narrowing steps: 0
 result Assignment: 
-  'Z:Foo <- 'f['a.Foo,'c.Foo]
+  'Z:Foo <- 'f['a.Foo, 'c.Foo]
 ==========================================
-reduce in META-LEVEL : metaXmatch(['MATCH], 'Z:Foo, 'f['a.Foo,'c.Foo], nil, 0,
+reduce in META-LEVEL : metaXmatch(['MATCH], 'Z:Foo, 'f['a.Foo, 'c.Foo], nil, 0,
     unbounded, 0) .
 *********** equation
 eq [Q:Qid] = sth Q:Qid is
@@ -144,15 +145,15 @@ metaXmatch(sth 'MATCH is
   none
   none
   none
-endsth, 'Z:Foo, 'f['a.Foo,'c.Foo], nil, 0, unbounded, 0)
+endsth, 'Z:Foo, 'f['a.Foo, 'c.Foo], nil, 0, unbounded, 0)
 --->
 {
-  'Z:Foo <- 'f['a.Foo,'c.Foo],[]}
+  'Z:Foo <- 'f['a.Foo, 'c.Foo], []}
 rewrites: 5
 mb applications: 1  equational rewrites: 4  rule rewrites: 0  variant narrowing
     steps: 0  narrowing steps: 0
 result MatchPair: {
-  'Z:Foo <- 'f['a.Foo,'c.Foo],[]}
+  'Z:Foo <- 'f['a.Foo, 'c.Foo], []}
 ==========================================
 erewrite in MATCH-TEST : <> < me : User | soln: 0 > createInterpreter(
     interpreterManager, me, none) .
@@ -206,27 +207,27 @@ fmod 'MATCH is
   op 'c : nil -> 'Foo [none] .
   op 'd : nil -> 'Foo [none] .
   op 'e : nil -> 'Foo [none] .
-  cmb 'f['X:Bar,'Y:Bar] : 'Foo if 'h['X:Bar] = 'g['Y:Bar] [none] .
+  cmb 'f['X:Bar, 'Y:Bar] : 'Foo if 'h['X:Bar] = 'g['Y:Bar] [none] .
   eq 'h['a.Foo] = 'b.Foo [none] .
   eq 'g['c.Foo] = 'b.Foo [none] .
   eq 'h['c.Foo] = 'd.Foo [none] .
   eq 'g['a.Foo] = 'd.Foo [none] .
-  eq '_and_['true.Bool,'A:Bool] = 'A:Bool [none] .
-  eq '_and_['false.Bool,'A:Bool] = 'false.Bool [none] .
-  eq '_and_['A:Bool,'A:Bool] = 'A:Bool [none] .
-  eq '_xor_['false.Bool,'A:Bool] = 'A:Bool [none] .
-  eq '_xor_['A:Bool,'A:Bool] = 'false.Bool [none] .
-  eq '_and_['A:Bool,'_xor_['B:Bool,'C:Bool]] = '_xor_['_and_['A:Bool,'B:Bool],
-    '_and_['A:Bool,'C:Bool]] [none] .
-  eq 'not_['A:Bool] = '_xor_['true.Bool,'A:Bool] [none] .
-  eq '_or_['A:Bool,'B:Bool] = '_xor_['_and_['A:Bool,'B:Bool],'_xor_['A:Bool,
+  eq '_and_['true.Bool, 'A:Bool] = 'A:Bool [none] .
+  eq '_and_['false.Bool, 'A:Bool] = 'false.Bool [none] .
+  eq '_and_['A:Bool, 'A:Bool] = 'A:Bool [none] .
+  eq '_xor_['false.Bool, 'A:Bool] = 'A:Bool [none] .
+  eq '_xor_['A:Bool, 'A:Bool] = 'false.Bool [none] .
+  eq '_and_['A:Bool, '_xor_['B:Bool, 'C:Bool]] = '_xor_['_and_['A:Bool,
+    'B:Bool], '_and_['A:Bool, 'C:Bool]] [none] .
+  eq 'not_['A:Bool] = '_xor_['true.Bool, 'A:Bool] [none] .
+  eq '_or_['A:Bool, 'B:Bool] = '_xor_['_and_['A:Bool, 'B:Bool], '_xor_['A:Bool,
     'B:Bool]] [none] .
-  eq '_implies_['A:Bool,'B:Bool] = 'not_['_xor_['A:Bool,'_and_['A:Bool,
+  eq '_implies_['A:Bool, 'B:Bool] = 'not_['_xor_['A:Bool, '_and_['A:Bool,
     'B:Bool]]] [none] .
 endfm
 *********** rule
 rl insertedModule(X, Y) < X : User | AS, soln: N > => < X : User | AS >
-    getMatch(Y, X, 'MATCH, 'Z:Foo, 'f['a.Foo,'c.Foo], nil, N) .
+    getMatch(Y, X, 'MATCH, 'Z:Foo, 'f['a.Foo, 'c.Foo], nil, N) .
 X --> me
 Y --> interpreter(0)
 AS --> (none).AttributeSet
@@ -267,7 +268,7 @@ rewrites: 6
 mb applications: 1  equational rewrites: 3  rule rewrites: 2  variant narrowing
     steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | none > gotMatch(me, interpreter(0), 3, 
-  'Z:Foo <- 'f['a.Foo,'c.Foo])
+  'Z:Foo <- 'f['a.Foo, 'c.Foo])
 ==========================================
 erewrite in XMATCH-TEST : <> < me : User | soln: 0 > createInterpreter(
     interpreterManager, me, none) .
@@ -321,27 +322,27 @@ fmod 'MATCH is
   op 'c : nil -> 'Foo [none] .
   op 'd : nil -> 'Foo [none] .
   op 'e : nil -> 'Foo [none] .
-  cmb 'f['X:Bar,'Y:Bar] : 'Foo if 'h['X:Bar] = 'g['Y:Bar] [none] .
+  cmb 'f['X:Bar, 'Y:Bar] : 'Foo if 'h['X:Bar] = 'g['Y:Bar] [none] .
   eq 'h['a.Foo] = 'b.Foo [none] .
   eq 'g['c.Foo] = 'b.Foo [none] .
   eq 'h['c.Foo] = 'd.Foo [none] .
   eq 'g['a.Foo] = 'd.Foo [none] .
-  eq '_and_['true.Bool,'A:Bool] = 'A:Bool [none] .
-  eq '_and_['false.Bool,'A:Bool] = 'false.Bool [none] .
-  eq '_and_['A:Bool,'A:Bool] = 'A:Bool [none] .
-  eq '_xor_['false.Bool,'A:Bool] = 'A:Bool [none] .
-  eq '_xor_['A:Bool,'A:Bool] = 'false.Bool [none] .
-  eq '_and_['A:Bool,'_xor_['B:Bool,'C:Bool]] = '_xor_['_and_['A:Bool,'B:Bool],
-    '_and_['A:Bool,'C:Bool]] [none] .
-  eq 'not_['A:Bool] = '_xor_['true.Bool,'A:Bool] [none] .
-  eq '_or_['A:Bool,'B:Bool] = '_xor_['_and_['A:Bool,'B:Bool],'_xor_['A:Bool,
+  eq '_and_['true.Bool, 'A:Bool] = 'A:Bool [none] .
+  eq '_and_['false.Bool, 'A:Bool] = 'false.Bool [none] .
+  eq '_and_['A:Bool, 'A:Bool] = 'A:Bool [none] .
+  eq '_xor_['false.Bool, 'A:Bool] = 'A:Bool [none] .
+  eq '_xor_['A:Bool, 'A:Bool] = 'false.Bool [none] .
+  eq '_and_['A:Bool, '_xor_['B:Bool, 'C:Bool]] = '_xor_['_and_['A:Bool,
+    'B:Bool], '_and_['A:Bool, 'C:Bool]] [none] .
+  eq 'not_['A:Bool] = '_xor_['true.Bool, 'A:Bool] [none] .
+  eq '_or_['A:Bool, 'B:Bool] = '_xor_['_and_['A:Bool, 'B:Bool], '_xor_['A:Bool,
     'B:Bool]] [none] .
-  eq '_implies_['A:Bool,'B:Bool] = 'not_['_xor_['A:Bool,'_and_['A:Bool,
+  eq '_implies_['A:Bool, 'B:Bool] = 'not_['_xor_['A:Bool, '_and_['A:Bool,
     'B:Bool]]] [none] .
 endfm
 *********** rule
 rl insertedModule(X, Y) < X : User | AS, soln: N > => < X : User | AS >
-    getXmatch(Y, X, 'MATCH, 'Z:Foo, 'f['a.Foo,'c.Foo], nil, 0, unbounded, N) .
+    getXmatch(Y, X, 'MATCH, 'Z:Foo, 'f['a.Foo, 'c.Foo], nil, 0, unbounded, N) .
 X --> me
 Y --> interpreter(0)
 AS --> (none).AttributeSet
@@ -382,5 +383,5 @@ rewrites: 6
 mb applications: 1  equational rewrites: 3  rule rewrites: 2  variant narrowing
     steps: 0  narrowing steps: 0
 result Configuration: <> < me : User | none > gotXmatch(me, interpreter(0), 3, 
-  'Z:Foo <- 'f['a.Foo,'c.Foo], [])
+  'Z:Foo <- 'f['a.Foo, 'c.Foo], [])
 Bye.

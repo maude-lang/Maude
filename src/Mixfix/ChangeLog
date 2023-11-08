@@ -1,3 +1,563 @@
+2023-11-07  Steven Eker  <eker@pup>
+
+	* latexCommon.cc (MixfixModule::latexPrintTokens): use
+	\maudeAllowLineBreak before ) ] } if no whitespace is
+	output
+	(MixfixModule::latexPrintTails): similar scheme to above
+
+2023-11-06  Steven Eker  <eker@pup>
+
+	* latexCommon.cc (MixfixModule::latexPrintTokens): ouput
+	\maudeAllowLineBreak after ( [ { , if they weren't followed
+	by a space
+	(MixfixModule::latexPrintTails): symmetric change for
+	multi-token tails
+	(MixfixModule::latexPrintTokens): fix bug where we were
+	tests comma rather than token == comma
+	(MixfixModule::latexPrintTails): fix symmetric bug;
+	allowBreak now carries over between tails
+	(MixfixModule::latexPrintTails): allowBreak after ) ] }
+	This change from the text case is avoid a huge number
+	of tails consisting only of these characters causing an
+	overfull \hbox
+
+2023-11-03  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc (VisibleModule::latexShowVars):
+	implement PRINT_COMBINE_VARS
+
+	* commands.yy (printOption): added syntax for
+	set print combine vars on/off .
+
+	* top.yy: added KW_COMBINE
+
+	* lexer.ll: added KW_COMBINE
+
+	* visibleModule.cc (VisibleModule::showVars):
+	implement PRINT_COMBINE_VARS
+
+	* interpreter.hh (class Interpreter): added
+	PRINT_COMBINE_VARS to enum PrintFlags
+
+2023-11-02  Steven Eker  <eker@pup>
+
+	* symbolType.hh (class SymbolType): add portal to
+	SIMPLE_ATTRIBUTES
+
+	* latexModulePrint.cc
+	(VisibleModule::latexShowAttributes): handle portal
+	attribute
+	(VisibleModule::latexShowPolymorphAttributes):
+	handle portal attribute
+
+	* visibleModule.cc
+	(VisibleModule::showPolymorphAttributes): handle
+	portal attribute
+	(VisibleModule::showAttributes): handle portal
+	attribute
+
+	* latexPreModulePrint.cc
+	(SyntacticPreModule::latexAttributes): handle portal
+	attribute
+
+	* command.cc (SyntacticPreModule::printAttributes):
+	handle portal attribute
+
+2023-11-01  Steven Eker  <eker@pup>
+
+	* mixfixModule.cc (MixfixModule::closeSignature): call
+	addPortals()
+	(MixfixModule::closeSignature): added DebugInfo()
+
+	* entry.cc (MixfixModule::addOpDeclaration): add
+	portalSymbols
+	(MixfixModule::addOpDeclaration): check for illegal
+	object & portal and msg & portal attribute combinations
+
+	* mixfixModule.hh (class MixfixModule): added data
+	member portalSymbols
+
+	* symbolType.hh (class SymbolType): added PORTAL
+	to enum Flags and renumbered later flags
+
+	* modules.yy (attribute): added portal attribute
+
+	* top.yy: added added KW_PORTAL
+
+	* lexer.ll (id): added KW_PORTAL
+
+2023-10-31  Steven Eker  <eker@pup>
+
+	* latexPreModulePrint.cc
+	(SyntacticPreModule::latexAttributes): move ctor to after
+	poly; move id: and idem to after comm; move msg to after
+	obj; move pconst to after iter
+
+	* latexModulePrint.cc
+	(VisibleModule::latexShowAttributes): move iter to
+	after idem; move msg to after obj
+	(VisibleModule::latexShowPolymorphAttributes): move
+	iter to after idem; move msg to after obj
+
+	* command.cc (SyntacticPreModule::printAttributes):
+	move ctor to after poly; move id: and idem to after
+	comm; move msg to after obj; move pconst to after
+	iter
+
+	* visibleModule.cc (VisibleModule::showAttributes):
+	move iter to after idem; move msg to after obj
+
+2023-10-30  Steven Eker  <eker@pup>
+
+	* prettyPrint.cc (MixfixModule::printTokens)
+	(MixfixModule::printTails): don't put space after comma
+	if an explicit format statement is in play
+
+	* latexCommon.cc (MixfixModule::latexPrintTails)
+	(MixfixModule::latexPrintTokens): put space after comma
+	(MixfixModule::latexPrintTokens, MixfixModule::latexPrintTails):
+	but not if we have an explicit format statement
+
+	* prettyPrint.cc (MixfixModule::printTokens): put
+	space after comma
+	(MixfixModule::printTails): put space after comma
+
+2023-10-27  Steven Eker  <eker@pup>
+
+	* latexViewPrint.cc
+	(SyntacticView::latexShowProcessedView): pass
+	showProcessed = true to latexRenaming()
+
+	* moduleExpression.cc (ModuleExpression::latexPrint):
+	fix missing \maudeRightParen after renaming
+
+	* latexViewPrint.cc (SyntacticView::latexShowView):
+	make expr a \maudeKeyword in strat->expr mappings
+
+	* latexStrategyPrint.cc
+	(VisibleModule::latexPrintStrategy): fix stray ( after
+	top
+
+	* viewExpression.cc (ViewExpression::latexPrint): make
+	a recursive call in the instantiation case rather than
+	accessing uninitialized name
+
+2023-10-26  Steven Eker  <eker@pup>
+
+	* latexViewPrint.cc
+	(SyntacticView::latexShowProcessedView): fix space after
+	var
+	(SyntacticView::latexShowView): fix spacing in op->term
+	and op->msg mappings
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexTokenVector()
+
+	* latexCommon.cc (MixfixModule::latexTokenVector): added
+
+	* syntacticView.hh (class SyntacticView): added decl for
+	latexType()
+
+	* latexViewPrint.cc (SyntacticView::latexShowView):
+	handle view contents
+
+	* latexViewPrint.cc
+	(SyntacticView::latexShowProcessedView): only call
+	latexRenaming() if there are sort mappings or op mappings
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): fix
+	bug where filter and delay keywords were printed with
+	\maudeKeyWord
+
+2023-10-25  Steven Eker  <eker@pup>
+
+	* syntacticView.hh (class SyntacticView): added decl for
+	latexShowView()
+
+	* latexViewPrint.cc (SyntacticView::latexShowView): added
+	stub
+
+	* interpreter.cc (Interpreter::showView): added latex
+	support
+
+	* syntacticPreModule.hh (class SyntacticPreModule): made
+	OpDef version of printAttributes() non-static const
+
+	* command.cc (SyntacticPreModule::printAttributes):
+	support PRINT_HOOKS flag
+
+	* latexPreModulePrint.cc
+	(SyntacticPreModule::latexAttributes): support PRINT_HOOKS
+	flag
+	(SyntacticPreModule::latexAttributes): use \maudeSpace
+	after special
+
+2023-10-24  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc (VisibleModule::latexShowAttributes):
+	support PRINT_HOOKS flag
+	(VisibleModule::latexShowPolymorphAttributes): ditto
+
+	* visibleModule.cc (VisibleModule::showAttributes): support
+	PRINT_HOOKS flag
+	(VisibleModule::showPolymorphAttributes): ditto
+
+	* latexModulePrint.cc (VisibleModule::latexPrintAttributes):
+	use use owner rather than global interpreter; made const
+
+	* visibleModule.hh (class VisibleModule): made
+	latexPrintAttributes() non-static and const
+
+	* latexModulePrint.cc
+	(VisibleModule::latexPrintMembershipAxiom): use owner rather
+	than global interpreter
+	(VisibleModule::latexPrintEquation): ditto
+	(VisibleModule::latexPrintRule): ditto
+
+	* interpreter.hh (class Interpreter): make PRINT_HOOKS the
+	default
+
+	* commands.yy (printOption): added print hooks
+
+	* top.yy: added KW_HOOKS
+
+	* lexer.ll: added KW_HOOKS
+
+	* interpreter.hh (class Interpreter): added PRINT_HOOKS to
+	enum PrintFlags
+
+2023-10-23  Steven Eker  <eker@pup>
+
+	* interpreter.cc (Interpreter::setCurrentModule): pass
+	clearCaches flag to loseFocus()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): updated
+	decl for loseFocus()
+
+	* command.cc (SyntacticPreModule::loseFocus): take clearCaches
+	flag
+
+	* interpreter.hh (class Interpreter): make AUTO_CLEAR_CACHES
+	true the default
+
+	* lexer.ll: added KW_CACHES
+
+	* top.yy: added token KW_CACHES
+
+	* commands.yy: added set clear module caches on/off
+
+	* interpreter.hh (class Interpreter): added AUTO_CLEAR_CACHES
+	to enum Flags
+
+	* commands.yy: added kw_module; use it for show module
+
+2023-10-17  Steven Eker  <eker@pup>
+
+	* moduleExpression.cc (ImportModule::latexModuleExpression):
+	handle RENAMING case
+
+	* latexImportModule.cc (ImportModule::latexModuleExpression):
+	don't include a \maudeSpace in the seperator
+
+	* moduleExpression.cc (ModuleExpression::latexPrint): need a
+	recursive call for module instantiation
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule):
+	pass flatModule to ModuleExpression::latexPrint()
+
+	* moduleExpression.hh (class ModuleExpression): updated decl
+	for latexPrint()
+
+	* moduleExpression.cc (ModuleExpression::latexPrint): take
+	and pass enclosingModule argument
+
+	* viewExpression.hh (class ViewExpression): updated decl
+	for latexPrint()
+
+	* viewExpression.cc (ViewExpression::latexPrint): implemented;
+	take Module* parameter
+
+2023-10-16  Steven Eker  <eker@pup>
+
+	* viewExpression.hh (class ViewExpression): added decl for
+	latexPrint()
+
+	* viewExpression.cc (ViewExpression::latexPrint): added stub
+
+	* moduleExpression.cc (ModuleExpression::latexPrint):
+	handle the INSTANTIATION case
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexOpDef):
+	use \maudeConstantDecl
+
+	* latexModulePrint.cc (VisibleModule::latexShowDecls): use
+	latexConstant()
+	(VisibleModule::latexShowPolymorphDecl): use latexConstant()
+	(VisibleModule::latexShowPolymorphAttributes): use
+	latexConstant(), latexPrettyOp(id) for op-hook ops
+	(VisibleModule::latexShowAttributes): use latexConstant(),
+	latexPrettyOp(id) for op-hook ops
+	(VisibleModule::latexShowDecls)
+	(VisibleModule::latexShowPolymorphDecl): don't output extra
+	\maudeSpace in : -> case
+	(VisibleModule::latexShowPolymorphDecl): use
+	\maudeConstantDecl
+	(VisibleModule::latexShowDecls): use \maudeConstantDecl
+
+	* latexCommon.cc (MixfixModule::latexConstant): call
+	latexStructuredConstant()
+	(MixfixModule::latexConstant): call latexPrettyOp()
+
+	* latexRenaming.cc (Renaming::latexRenaming): use
+	MixfixModule::latexPrettyOp() for from and to operator
+	names
+
+2023-10-13  Steven Eker  <eker@pup>
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added
+	decl for latexStratDecl()
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexStratDecl):
+	added
+	(SyntacticPreModule::latexShowModule): use latexStratDecl
+
+	* latexModulePrint.cc
+	(VisibleModule::latexShowPolymorphAttributes): use
+	latexPrintFormat()
+	(VisibleModule::latexShowPolymorphAttributes): use
+	latexPrintGather(()
+	(VisibleModule::latexShowAttributes): use latexPrintFormat()
+	(VisibleModule::latexShowAttributes): use latexPrintGather()
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule):
+	don't put \maudeSpace before \maudeHasSort
+	(SyntacticPreModule::latexOpDef): don't put \maudeSpace after
+	\maudeHasSort
+
+	* latexToken.cc (Token::latexName): use \maudeTilde
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexAttributes):
+	use latexPrintFormat()
+	(SyntacticPreModule::latexAttributes): handle special
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexPrintFormat()
+
+	* latexCommon.cc (SyntacticPreModule::latexPrintFormat): added
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexAttributes):
+	use latexPrintGather()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexPrintGather()
+
+	* latexCommon.cc (MixfixModule::latexPrintGather): added
+
+2023-10-12  Steven Eker  <eker@pup>
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule):
+	partial support for ops/msgs/vars
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added
+	decl for latexAttributes()
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexAttributes):
+	added
+
+	* latexModulePrint.cc
+	(VisibleModule::latexShowPolymorphAttributes): fix bug where
+	ctor wasn't being correctly printed
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added
+	decl for latexOpDef()
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexOpDef):
+	added
+
+	* command.cc (SyntacticPreModule::showModule): parens around
+	& expression to make meaning clearer
+
+2023-10-11  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc
+	(VisibleModule::latexShowPolymorphAttributes): treat identity
+	range kind as known
+	(VisibleModule::latexShowAttributes): treat identity range
+	kind as known
+
+	* visibleModule.cc (VisibleModule::showPolymorphAttributes):
+	treat identity range kind as known
+	(VisibleModule::showAttributes): treat identity range kind as
+	known
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexTokenVector):
+	fix bug where we were checking for rightBracket and rightBrace
+	rather than leftBracket and leftBrace
+
+	* command.cc (SyntacticPreModule::showModule): use subclass
+	or subclasses depending on the number of subclass relations
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule):
+	use range-based for loop for class attributes
+	(SyntacticPreModule::latexType): handle kinds
+	(SyntacticPreModule::latexShowModule): handle subclasses
+
+2023-10-10  Steven Eker  <eker@pup>
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule):
+	handle subsorts and class declarations
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added
+	decl for latexType()
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexType): added
+
+	* command.cc (SyntacticPreModule::showModule): use pluralize()
+	for subsorts; use range-base for loop for sorts, subsorts
+
+	* syntacticPreModule.hh (class SyntacticPreModule): deleted
+	decl for latexStatementTokenVector()
+
+	* latexPreModulePrint.cc
+	(SyntacticPreModule::latexStatementTokenVector): deleted
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added
+	decl for latexTokenVector()
+
+	* latexPreModulePrint.cc (Token::latexTokenVector): added
+	(SyntacticPreModule::latexShowModule): use latexTokenVector()
+
+2023-10-09  Steven Eker  <eker@pup>
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule):
+	first attempt at imports, sort declarations, statements
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added
+	decl for latexStatementTokenVector()
+
+	* latexPreModulePrint.cc
+	(SyntacticPreModule::latexStatementTokenVector): added
+
+	* command.cc (SyntacticPreModule::showModule): use pluralize()
+	for sorts
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added decl
+	for latexSortTokenVector()
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexSortTokenVector):
+	added
+
+	* moduleExpression.cc (ModuleExpression::latexPrint):
+	added summation case
+
+2023-10-06  Steven Eker  <eker@pup>
+
+	* moduleExpression.hh (class ModuleExpression): added decl
+	for latexPrint()
+
+	* moduleExpression.cc (ModuleExpression::latexPrint): added
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added
+	decl for latexShowModule()
+
+	* latexPreModulePrint.cc: created
+
+	* interpreter.cc (Interpreter::showPreModule): call
+	SyntacticPreModule::latexShowModule()
+
+	* visibleModule.hh (VisibleModule::latexPrintModuleName):
+	deleted
+
+	* latexModulePrint.cc (VisibleModule::latexShowModule): don't
+	call latexPrintModuleName()
+
+	* syntacticPreModule.hh (class SyntacticPreModule): remove
+	default argument for showModule()
+
+	* commands.yy (command): use interpreter.showPreModule()
+	for show module
+
+	* interpreter.hh (class Interpreter): added decl for
+	showPreModule()
+
+	* interpreter.cc (Interpreter::showPreModule): added
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decls
+	for generateModuleName() and generateShow()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateModuleName):
+	take NamedEntity* rather than Module* so it works for
+	PreModules
+
+	* latexCommand.cc (MaudeLatexBuffer::generateShow): take
+	NamedEntity* rather than Module* so it works for PreModules
+
+	* commands.yy: added comments to explain why print
+	attribute and print attribute new line are not
+	handled by printOption
+
+2023-10-05  Steven Eker  <eker@pup>
+
+	* commands.yy (printOption): added label attribute
+
+	* latexModulePrint.cc (VisibleModule::latexPrintMembershipAxiom):
+	handle prefix labels
+	(VisibleModule::latexPrintEquation): ditto
+	(VisibleModule::latexPrintRule): ditto
+
+	* prettyPrint.cc (MixfixModule::printAttributes): handle
+	PRINT_LABEL_ATTRIBUTE
+	(operator<<): SortConstraint* version: support prefix
+	labels
+	(operator<<): Equation* version: ditto
+	(operator<<): Rule* version: ditto
+
+	* interpreter.hh (class Interpreter): added
+	PRINT_LABEL_ATTRIBUTE to PrintFlags
+
+2023-10-04  Steven Eker  <eker@pup>
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleIter):
+	use \maudeIter command
+
+	* latexTermPrint.cc (MixfixModule::latexHandleIter): use
+	\maudeIter command
+
+	* prettyPrint.cc (operator<<): ConditionFragment* version -
+	be smart about sort disambiguation
+	(operator<<): SortConstraint* version doesn't need sort
+	disambiguation for term part
+	(operator<<): Equation* version use
+	MixfixModule::prettyPrint() for the rhs
+	(operator<<): Rule* version ditto
+
+	* mixfixModule.hh (class MixfixModule): Term* version of
+	operator<<() is no longer a friend
+
+	* prettyPrint.cc (operator<<): reimplement Term* version
+	using 3 arg Term* prettyPrint()
+
+	* mixfixModule.hh (class MixfixModule): added decl for 3 arg
+	Term* prettyPrint()
+
+	* prettyPrint.cc (MixfixModule::prettyPrint): added
+
+	* latexModulePrint.cc (VisibleModule::latexPrintEquation):
+	pass rangeKnown = true to latexPrettyPrint() for rhs
+	(VisibleModule::latexPrintRule): symmetric change
+	(VisibleModule::latexPrintMembershipAxiom): pass rangeKnown
+	= true to latexPrettyPrint() for lhs
+	(VisibleModule::latexPrintConditionFragment): pass rangeKnown
+	= true to latexPrettyPrint() (4 places)
+
+	* mixfixModule.hh (class MixfixModule): updated
+	decl for Term* version of latexPrettyPrint()
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint):
+	take and pass rangeKnown flag
+
+===================================Maude153===========================================
+
 2023-09-26  Steven Eker  <eker@pup>
 
 	* interpreter.cc (Interpreter::parse): support latex
@@ -10206,8 +10766,8 @@
 	* mixfixModule.hh (SharedTokens): update decl for printAttributes()
 
 	* prettyPrint.cc (printAttributes): handle printAttribute
-	(operator<<): pass extra argument to printAttributes()
-	(SortConstraint*, Equation*, Rule* versions)
+	(operator<<): pass extra argument to printAttributes() (SortConstraint*,
+	Equation*, Rule* versions)
 	(printAttributes): rewritten; no longer static
 	(operator<<): use new printAttributes() convention
 

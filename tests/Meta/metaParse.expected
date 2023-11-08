@@ -8,7 +8,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, '1.0 '+ '1.0, anyType) .
 rewrites: 2
-result ResultPair: {'_+_['1.0.FiniteFloat,'1.0.FiniteFloat],'Float}
+result ResultPair: {'_+_['1.0.FiniteFloat, '1.0.FiniteFloat], 'Float}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   including 'RAT .
@@ -19,7 +19,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, '3, anyType) .
 rewrites: 2
-result ResultPair: {'s_^3['0.Zero],'NzNat}
+result ResultPair: {'s_^3['0.Zero], 'NzNat}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   including 'RAT .
@@ -30,7 +30,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, '-3, anyType) .
 rewrites: 2
-result ResultPair: {'-_['s_^3['0.Zero]],'NzInt}
+result ResultPair: {'-_['s_^3['0.Zero]], 'NzInt}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   including 'RAT .
@@ -41,7 +41,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, '-2/3, anyType) .
 rewrites: 2
-result ResultPair: {'_/_['-_['s_^2['0.Zero]],'s_^3['0.Zero]],'NzRat}
+result ResultPair: {'_/_['-_['s_^2['0.Zero]], 's_^3['0.Zero]], 'NzRat}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   including 'RAT .
@@ -52,7 +52,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, 's_^2 '`( '0 '`), anyType) .
 rewrites: 2
-result ResultPair: {'s_^2['0.Zero],'NzNat}
+result ResultPair: {'s_^2['0.Zero], 'NzNat}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   including 'RAT .
@@ -63,7 +63,8 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, '-256789/387654, anyType) .
 rewrites: 2
-result ResultPair: {'_/_['-_['s_^256789['0.Zero]],'s_^387654['0.Zero]],'NzRat}
+result ResultPair: {'_/_['-_['s_^256789['0.Zero]], 's_^387654['0.Zero]],
+    'NzRat}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   including 'BOOL .
@@ -74,7 +75,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, 's^1234 '`( 'true '`), anyType) .
 rewrites: 2
-result ResultPair: {'s^1234['true.Bool],'Bool}
+result ResultPair: {'s^1234['true.Bool], 'Bool}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   protecting 'FLOAT .
@@ -85,7 +86,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, 'X:Float, 'X '+ '1.0, anyType) .
 rewrites: 1
-result ResultPair: {'_+_['X:Float,'1.0.FiniteFloat],'Float}
+result ResultPair: {'_+_['X:Float, '1.0.FiniteFloat], 'Float}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   protecting 'FLOAT .
@@ -96,7 +97,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, 'X:Float ; 'Y:Float, 'X '+ '1.0, anyType) .
 rewrites: 1
-result ResultPair: {'_+_['X:Float,'1.0.FiniteFloat],'Float}
+result ResultPair: {'_+_['X:Float, '1.0.FiniteFloat], 'Float}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   protecting 'FLOAT .
@@ -107,7 +108,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, 'X:Float ; 'Y:Float, 'X '+ 'Y, anyType) .
 rewrites: 1
-result ResultPair: {'_+_['X:Float,'Y:Float],'Float}
+result ResultPair: {'_+_['X:Float, 'Y:Float], 'Float}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   protecting 'FLOAT .

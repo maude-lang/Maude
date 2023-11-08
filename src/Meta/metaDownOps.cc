@@ -402,6 +402,12 @@ MetaLevel::downAttr(DagNode* metaAttr, AttributeInfo& ai)
 	return false;
       ai.symbolType.setFlags(SymbolType::MESSAGE);
     }
+  else if (ma == portalSymbol)
+    {
+      if (ai.symbolType.hasFlag(SymbolType::PORTAL))
+	return false;
+      ai.symbolType.setFlags(SymbolType::PORTAL);
+    }
   else if (ma == frozenSymbol)
     {
       if (ai.symbolType.hasFlag(SymbolType::FROZEN))

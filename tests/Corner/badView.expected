@@ -55,17 +55,17 @@ mod TEST is
   subsort C < Cid .
   subsorts Object Msg Portal < Configuration .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op C : -> C [ctor] .
   op b`:_ : Bar -> Attribute [ctor prec 15 gather (&)] .
@@ -104,17 +104,17 @@ mod BAR is
   subsort F < Cid .
   subsorts Object Msg Portal < Configuration .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op translate : Baz -> Bar .
   op m' : Oid Bar -> Msg [ctor msg] .
@@ -314,17 +314,17 @@ mod BAR is
   subsort F < Cid .
   subsorts Object Msg Portal < Configuration .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op translate : Baz -> Bar .
   op m' : Oid Bar -> Msg .
@@ -526,17 +526,17 @@ mod BAR is
   subsort F < Cid .
   subsorts Object Msg Portal < Configuration .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op translate : Baz -> Bar .
   op m' : Oid Bar -> Msg .
@@ -733,17 +733,17 @@ mod BAR is
   subsort F < Cid .
   subsorts Object Msg Portal < Configuration .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: (
-    none).AttributeSet prec 41 gather (e E) format (d d s d)] .
+  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+    prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
     op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
-  op __ : Configuration Configuration -> Configuration [ctor assoc comm id: (
-    none).Configuration config prec 41 gather (e E)] .
-  op <> : -> Portal [ctor] .
+  op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
+    none config prec 41 gather (e E)] .
+  op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op m' : Oid Bar -> Msg .
   op F : -> F [ctor] .

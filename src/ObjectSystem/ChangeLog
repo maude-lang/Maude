@@ -1,3 +1,21 @@
+2023-11-02  Steven Eker  <eker@pup>
+
+	* configSymbol.cc (ConfigSymbol::ruleRewrite): enforce
+	portals for external rewriting
+
+2023-11-01  Steven Eker  <eker@pup>
+
+	* configSymbol.cc (ConfigSymbol::addPortals): fix bug where we
+	were using the same name for the data member and argument
+
+2023-10-26  Steven Eker  <eker@pup>
+
+	* configSymbol.cc (ConfigSymbol::addPortals): added
+	(ConfigSymbol::ruleRewrite): check for portal symbols
+
+	* configSymbol.hh (class ConfigSymbol): added decl for
+	addPortals(); added data member portalSymbols
+
 2023-05-19  Steven Eker  <eker@pup>
 
 	* prngManagerSymbol.hh (class PrngManagerSymbol): updated decls for

@@ -183,7 +183,7 @@ check in TEST-RI : -2 < I and -2 * I > -1 and I =/== -1 and I - I =/== I .
 Result from sat solver is: unsat
 ==========================================
 reduce in META-LEVEL : metaCheck(['REAL-INTEGER], '_=_['_+_['1.Integer,
-    '1.Integer],'2.Integer]) .
+    '1.Integer], '2.Integer]) .
 rewrites: 1
 result [Bool]: metaCheck(sth 'REAL-INTEGER is
   including 'REAL-INTEGER .
@@ -195,10 +195,10 @@ result [Bool]: metaCheck(sth 'REAL-INTEGER is
   none
   none
   none
-endsth, '_=_['_+_['1.Integer,'1.Integer],'2.Integer])
+endsth, '_=_['_+_['1.Integer, '1.Integer], '2.Integer])
 ==========================================
 reduce in META-LEVEL : metaCheck(['REAL-INTEGER], '_=_['_+_['1.Integer,
-    '1.Integer],'3.Integer]) .
+    '1.Integer], '3.Integer]) .
 rewrites: 1
 result [Bool]: metaCheck(sth 'REAL-INTEGER is
   including 'REAL-INTEGER .
@@ -210,7 +210,7 @@ result [Bool]: metaCheck(sth 'REAL-INTEGER is
   none
   none
   none
-endsth, '_=_['_+_['1.Integer,'1.Integer],'3.Integer])
+endsth, '_=_['_+_['1.Integer, '1.Integer], '3.Integer])
 ==========================================
 reduce in META-CHECK : metaCheck(['META-CHECK], upTerm((I > J ? I : J) < I)) .
 rewrites: 3
@@ -260,15 +260,15 @@ rewrites: 1
 reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '*,
     1, 1, 0) .
 rewrites: 4
-result SmtResult: {'f['-2.Integer,'X:Foo],
-  'Z:State <- 'f['-2.Integer,'X:Foo],'true.Boolean,(1).NzNat}
+result SmtResult: {'f['-2.Integer, 'X:Foo], 
+  'Z:State <- 'f['-2.Integer, 'X:Foo], 'true.Boolean, (1).NzNat}
 ==========================================
 reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '*,
     1, 1, 1) .
 rewrites: 4
-result SmtResult: {'g['_+_['-2.Integer,'1.Integer],'#2-Y:Foo],
-  'Z:State <- 'g['_+_['-2.Integer,'1.Integer],'#2-Y:Foo],'_<_['-2.Integer,
-    '0.Integer],(2).NzNat}
+result SmtResult: {'g['_+_['-2.Integer, '1.Integer], '#2-Y:Foo], 
+  'Z:State <- 'g['_+_['-2.Integer, '1.Integer], '#2-Y:Foo], '_<_['-2.Integer,
+    '0.Integer], (2).NzNat}
 ==========================================
 reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '*,
     1, 1, 2) .
@@ -278,9 +278,9 @@ result SmtResult?: (failure).SmtResult?
 reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '+,
     200, 1, 0) .
 rewrites: 4
-result SmtResult: {'g['_+_['-2.Integer,'1.Integer],'#201-Y:Foo],
-  'Z:State <- 'g['_+_['-2.Integer,'1.Integer],'#201-Y:Foo],'_<_['-2.Integer,
-    '0.Integer],(201).NzNat}
+result SmtResult: {'g['_+_['-2.Integer, '1.Integer], '#201-Y:Foo], 
+  'Z:State <- 'g['_+_['-2.Integer, '1.Integer], '#201-Y:Foo], '_<_['-2.Integer,
+    '0.Integer], (201).NzNat}
 ==========================================
 reduce in TEST : metaSmtSearch(['MULTI], upTerm(f(-2, X)), 'Z:State, nil, '+,
     200, 1, 1) .
@@ -819,28 +819,28 @@ where J === K and (J >= 10 and J <= 12) and (J + 1 >= 10 and J + 1 <= 12) and (
 reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
     'J:Integer = 'K:Integer, '*, 42, 2, 0) .
 rewrites: 5
-result SmtResult: {'f['J:Integer],(none).Substitution,'_and_['_===_['J:Integer,
-    'K:Integer],'_===_['K:Integer,'J:Integer]],(42).NzNat}
+result SmtResult: {'f['J:Integer], (none).Substitution, '_and_['_===_[
+    'J:Integer, 'K:Integer], '_===_['K:Integer, 'J:Integer]], (42).NzNat}
 ==========================================
 reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
     'J:Integer = 'K:Integer, '*, 42, 2, 1) .
 rewrites: 5
-result SmtResult: {'f['_-_['_+_['J:Integer,'1.Integer],'1.Integer]],(
-    none).Substitution,'_and_['_and_['_and_['_===_['J:Integer,'K:Integer],
-    '_and_['_>=_['J:Integer,'10.Integer],'_<=_['J:Integer,'12.Integer]]],
-    '_and_['_>=_['_+_['J:Integer,'1.Integer],'10.Integer],'_<=_['_+_[
-    'J:Integer,'1.Integer],'12.Integer]]],'_===_['K:Integer,'_-_['_+_[
-    'J:Integer,'1.Integer],'1.Integer]]],(42).NzNat}
+result SmtResult: {'f['_-_['_+_['J:Integer, '1.Integer], '1.Integer]], (
+    none).Substitution, '_and_['_and_['_and_['_===_['J:Integer, 'K:Integer],
+    '_and_['_>=_['J:Integer, '10.Integer], '_<=_['J:Integer, '12.Integer]]],
+    '_and_['_>=_['_+_['J:Integer, '1.Integer], '10.Integer], '_<=_['_+_[
+    'J:Integer, '1.Integer], '12.Integer]]], '_===_['K:Integer, '_-_['_+_[
+    'J:Integer, '1.Integer], '1.Integer]]], (42).NzNat}
 ==========================================
 reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
     'J:Integer = 'K:Integer, '*, 42, 2, 2) .
 rewrites: 5
-result SmtResult: {'f['_+_['_-_['J:Integer,'1.Integer],'1.Integer]],(
-    none).Substitution,'_and_['_and_['_and_['_===_['J:Integer,'K:Integer],
-    '_and_['_>=_['J:Integer,'10.Integer],'_<=_['J:Integer,'12.Integer]]],
-    '_and_['_>=_['_-_['J:Integer,'1.Integer],'10.Integer],'_<=_['_-_[
-    'J:Integer,'1.Integer],'12.Integer]]],'_===_['K:Integer,'_+_['_-_[
-    'J:Integer,'1.Integer],'1.Integer]]],(42).NzNat}
+result SmtResult: {'f['_+_['_-_['J:Integer, '1.Integer], '1.Integer]], (
+    none).Substitution, '_and_['_and_['_and_['_===_['J:Integer, 'K:Integer],
+    '_and_['_>=_['J:Integer, '10.Integer], '_<=_['J:Integer, '12.Integer]]],
+    '_and_['_>=_['_-_['J:Integer, '1.Integer], '10.Integer], '_<=_['_-_[
+    'J:Integer, '1.Integer], '12.Integer]]], '_===_['K:Integer, '_+_['_-_[
+    'J:Integer, '1.Integer], '1.Integer]]], (42).NzNat}
 ==========================================
 reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
     'J:Integer = 'K:Integer, '*, 42, 2, 3) .
@@ -850,17 +850,18 @@ result SmtResult?: (failure).SmtResult?
 reduce in TEST2 : metaSmtSearch(['ITEST], upTerm(f(J)), upTerm(f(K)),
     'J:Integer = 'K:Integer, '*, 42, unbounded, 3) .
 rewrites: 8
-result SmtResult: {'f['_-_['_-_['_+_['_+_['J:Integer,'1.Integer],'1.Integer],
-    '1.Integer],'1.Integer]],(none).Substitution,'_and_['_and_['_and_['_and_[
-    '_and_['_===_['J:Integer,'K:Integer],'_and_['_>=_['J:Integer,'10.Integer],
-    '_<=_['J:Integer,'12.Integer]]],'_and_['_>=_['_+_['J:Integer,'1.Integer],
-    '10.Integer],'_<=_['_+_['J:Integer,'1.Integer],'12.Integer]]],'_and_['_>=_[
-    '_+_['_+_['J:Integer,'1.Integer],'1.Integer],'10.Integer],'_<=_['_+_['_+_[
-    'J:Integer,'1.Integer],'1.Integer],'12.Integer]]],'_and_['_>=_['_-_['_+_[
-    '_+_['J:Integer,'1.Integer],'1.Integer],'1.Integer],'10.Integer],'_<=_[
-    '_-_['_+_['_+_['J:Integer,'1.Integer],'1.Integer],'1.Integer],
-    '12.Integer]]],'_===_['K:Integer,'_-_['_-_['_+_['_+_['J:Integer,
-    '1.Integer],'1.Integer],'1.Integer],'1.Integer]]],(42).NzNat}
+result SmtResult: {'f['_-_['_-_['_+_['_+_['J:Integer, '1.Integer], '1.Integer],
+    '1.Integer], '1.Integer]], (none).Substitution, '_and_['_and_['_and_[
+    '_and_['_and_['_===_['J:Integer, 'K:Integer], '_and_['_>=_['J:Integer,
+    '10.Integer], '_<=_['J:Integer, '12.Integer]]], '_and_['_>=_['_+_[
+    'J:Integer, '1.Integer], '10.Integer], '_<=_['_+_['J:Integer, '1.Integer],
+    '12.Integer]]], '_and_['_>=_['_+_['_+_['J:Integer, '1.Integer],
+    '1.Integer], '10.Integer], '_<=_['_+_['_+_['J:Integer, '1.Integer],
+    '1.Integer], '12.Integer]]], '_and_['_>=_['_-_['_+_['_+_['J:Integer,
+    '1.Integer], '1.Integer], '1.Integer], '10.Integer], '_<=_['_-_['_+_['_+_[
+    'J:Integer, '1.Integer], '1.Integer], '1.Integer], '12.Integer]]], '_===_[
+    'K:Integer, '_-_['_-_['_+_['_+_['J:Integer, '1.Integer], '1.Integer],
+    '1.Integer], '1.Integer]]], (42).NzNat}
 Warning: <standard input>, line 282 (mod COLLAPSE-AXIOM): operator bad has a
     collapse axiom.
 Warning: <standard input>, line 280 (mod COLLAPSE-AXIOM): module COLLAPSE-AXIOM

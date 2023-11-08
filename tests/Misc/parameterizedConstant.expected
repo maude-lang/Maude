@@ -650,12 +650,12 @@ fmod VIEW-TEST{X :: TOTAL-ORDER} is
   eq not A:Bool = true xor A:Bool .
   eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
   eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
-  eq X:X$Elt <= X:X$Elt = true [nonexec label X$reflexive] .
-  ceq X:X$Elt <= Z:X$Elt = true if X:X$Elt <= Y:X$Elt = true /\ Y:X$Elt <=
-    Z:X$Elt = true [nonexec label X$transitive] .
-  eq X:X$Elt <= Y:X$Elt or Y:X$Elt <= X:X$Elt = true [nonexec label X$total] .
-  ceq X:X$Elt = Y:X$Elt if X:X$Elt <= Y:X$Elt = true /\ Y:X$Elt <= X:X$Elt =
-    true [nonexec label X$antisymmetric] .
+  eq [X$reflexive] : X:X$Elt <= X:X$Elt = true [nonexec] .
+  ceq [X$transitive] : X:X$Elt <= Z:X$Elt = true if X:X$Elt <= Y:X$Elt = true
+    /\ Y:X$Elt <= Z:X$Elt = true [nonexec] .
+  eq [X$total] : X:X$Elt <= Y:X$Elt or Y:X$Elt <= X:X$Elt = true [nonexec] .
+  ceq [X$antisymmetric] : X:X$Elt = Y:X$Elt if X:X$Elt <= Y:X$Elt = true /\
+    Y:X$Elt <= X:X$Elt = true [nonexec] .
   eq push(E:X$Elt, S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X}) = E:X$Elt |
     S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X} .
   eq top(E:X$Elt | S:Stack{TOTAL-PREORDER}{TOTAL-ORDER}{X}) = E:X$Elt .

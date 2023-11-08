@@ -31,24 +31,24 @@ VisibleModule::latexPrintConditionFragment(ostream& s, const ConditionFragment* 
     {
       latexPrettyPrint(s, e->getLhs());
       s << "\n\\maudeEquals\n";
-      latexPrettyPrint(s, e->getRhs());
+      latexPrettyPrint(s, e->getRhs(), true);  // assume lhs established the kind
     }
   else if (const SortTestConditionFragment* t = dynamic_cast<const SortTestConditionFragment*>(c))
     {
-      latexPrettyPrint(s, t->getLhs());
+      latexPrettyPrint(s, t->getLhs(), true);  // assume sort will establish the kind
       s << "\n\\maudeHasSort\n" << latexType(t->getSort());
     }
   else if(const AssignmentConditionFragment* a = dynamic_cast<const AssignmentConditionFragment*>(c))
     {
       latexPrettyPrint(s, a->getLhs());
       s << "\n\\maudeAssign\n";
-      latexPrettyPrint(s, a->getRhs());
+      latexPrettyPrint(s, a->getRhs(), true);  // assume lhs established the kind
     }
   else if(const RewriteConditionFragment* r = dynamic_cast<const RewriteConditionFragment*>(c))
     {
       latexPrettyPrint(s, r->getLhs());
       s << "\n\\maudeRewritesTo\n";
-      latexPrettyPrint(s, r->getRhs());
+      latexPrettyPrint(s, r->getRhs(), true);  // assume lhs established the kind
     }
   else
     CantHappen("bad condition fragment");
@@ -81,9 +81,12 @@ VisibleModule::latexPrintAttributes(ostream& s,
 				    const PrintAttribute* printAttribute,
 				    bool owise,
 				    bool variant,
-				    bool narrowing)
+				    bool narrowing) const
 {
-  int label = pe->getLabel().id();
+  //
+  //	For statement attributes.
+  //
+  int label = owner->getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE) ? pe->getLabel().id() : NONE;
   bool nonexec = pe->isNonexec();
   if (!nonexec && !owise && !variant && !narrowing && label == NONE && metadata == NONE && printAttribute == 0)
     return;
@@ -133,7 +136,10 @@ VisibleModule::latexPrintMembershipAxiom(ostream& s, const char* indent, const S
 {
   s << "\\par$" << indent <<  (mb->hasCondition() ? "\\maudeKeyword{cmb}" : "\\maudeKeyword{mb}");
   s << "\\maudeSpace";
-  latexPrettyPrint(s, mb->getLhs());
+  int label = owner->getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE) ? NONE : mb->getLabel().id();
+  if (label != NONE)
+    s << "\\maudePrefixLabel{" << Token::latexName(label) << "}\\maudeSpace";
+  latexPrettyPrint(s, mb->getLhs(), true);  // we assume the sort will provide the lhs kind
   s << "\\maudeHasSort" << latexType(mb->getSort());
   if (mb->hasCondition())
     latexPrintCondition(s, mb);
@@ -159,9 +165,12 @@ VisibleModule::latexPrintEquation(ostream& s, const char* indent, const Equation
 {
   s << "\\par$" << indent <<  (eq->hasCondition() ? "\\maudeKeyword{ceq}" : "\\maudeKeyword{eq}");
   s << "\\maudeSpace";
+  int label = owner->getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE) ? NONE : eq->getLabel().id();
+  if (label != NONE)
+    s << "\\maudePrefixLabel{" << Token::latexName(label) << "}\\maudeSpace";
   latexPrettyPrint(s, eq->getLhs());
   s << "\\maudeEquals";
-  latexPrettyPrint(s, eq->getRhs());
+  latexPrettyPrint(s, eq->getRhs(), true);  // we assume lhs is disambiguated and provides the rhs kind
   if (eq->hasCondition())
     latexPrintCondition(s, eq);
   latexPrintAttributes(s,
@@ -191,11 +200,14 @@ VisibleModule::latexPrintRule(ostream& s, const char* indent, const Rule* rl) co
 {
   if (indent)
     s << "\\par$" << indent;
- s <<  (rl->hasCondition() ? "\\maudeKeyword{crl}" : "\\maudeKeyword{rl}");
+  s <<  (rl->hasCondition() ? "\\maudeKeyword{crl}" : "\\maudeKeyword{rl}");
   s << "\\maudeSpace";
+  int label = owner->getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE) ? NONE : rl->getLabel().id();
+  if (label != NONE)
+    s << "\\maudePrefixLabel{" << Token::latexName(label) << "}\\maudeSpace";
   latexPrettyPrint(s, rl->getLhs());
   s << "\\maudeRewritesTo";
-  latexPrettyPrint(s, rl->getRhs());
+  latexPrettyPrint(s, rl->getRhs(), true);  // we assume lhs is disambiguated and provides the rhs kind
   if (rl->hasCondition())
     latexPrintCondition(s, rl);
   latexPrintAttributes(s,
@@ -344,12 +356,30 @@ void
 VisibleModule::latexShowVars(ostream& s, const char* indent) const
 {
   const AliasMap& variableAliases = getVariableAliases();
-  for (const auto& p : variableAliases)
+  if (owner->getPrintFlag(Interpreter::PRINT_COMBINE_VARS))
     {
-      if (UserLevelRewritingContext::interrupted())
-	return;
-      s << "\\par$" << indent << "\\maudeKeyword{var}\\maudeSpace" << Token::latexIdentifier(p.first) << "\\maudeHasSort" <<
-	latexType(p.second) << "$\\maudeEndStatement\n";
+      map<int, Vector<int>> reverseMap;
+      for (const auto& p : variableAliases)
+	reverseMap[p.second->getIndexWithinModule()].push_back(p.first);
+
+      const Vector<Sort*>& sorts = getSorts();
+      for (const auto& p : reverseMap)
+	{
+	  s << "\\par$" << indent << "\\maudeKeyword{var" << pluralize(p.second.size()) << "}";
+	  for (int v : p.second)
+	    s << "\\maudeSpace" << Token::latexIdentifier(v);
+	  s << "\\maudeHasSort" << latexType(sorts[p.first]) << "$\\maudeEndStatement\n";
+	}
+    }
+  else
+    {
+      for (const auto& p : variableAliases)
+	{
+	  if (UserLevelRewritingContext::interrupted())
+	    return;
+	  s << "\\par$" << indent << "\\maudeKeyword{var}\\maudeSpace" << Token::latexIdentifier(p.first) << "\\maudeHasSort" <<
+	    latexType(p.second) << "$\\maudeEndStatement\n";
+	}
     }
 }
 
@@ -371,20 +401,15 @@ VisibleModule::latexShowDecls(ostream& s, const char* indent, Index index, bool 
       const Vector<Sort*>& dec = opDecls[i].getDomainAndRange();
       s << "\\par$" << indent << "\\maudeKeyword{op}\\maudeSpace";
       if (nrArgs == 0)
-	{
-	  if (Token::auxProperty(id) == Token::AUX_STRUCTURED_SORT)
-	    s << latexStructuredConstant(id);
-	  else
-	    s << latexPrettyOp(id);		   
-	  s <<  "\\maudeHasSort\\maudeSpace";
-	}
+	s << latexConstant(id, this) << "\\maudeConstantDecl";
       else
 	{
 	  s << latexPrettyOp(id) << "\\maudeHasSort";
 	  for (Index j = 0; j < nrArgs; ++j)
 	    s << (j == 0 ? "" : "\\maudeSpace") << latexType(dec[j]);
+	  s << "\\maudeFunction";
 	}
-       s << "\\maudeFunction" << latexType(dec[nrArgs]);
+       s << latexType(dec[nrArgs]);
       latexShowAttributes(s, symbol, i);
       s << "$\\maudeEndStatement\n";
     }
@@ -411,13 +436,7 @@ VisibleModule::latexShowPolymorphDecl(ostream& s, const char* indent, Index inde
   int nrArgs = domainAndRange.length() - 1;
   int id = getPolymorphName(index).code();
   if (nrArgs == 0)
-    {
-      if (Token::auxProperty(id) == Token::AUX_STRUCTURED_SORT)
-	s << latexStructuredConstant(id);
-     else
-       s << latexPrettyOp(id);
-      s <<  "\\maudeHasSort\\maudeSpace";
-    }
+    s << latexConstant(id, this) << "\\maudeConstantDecl";
   else
     {
       s << latexPrettyOp(id) << "\\maudeHasSort";
@@ -429,8 +448,8 @@ VisibleModule::latexShowPolymorphDecl(ostream& s, const char* indent, Index inde
 	  else
 	    s << "\\maudeSort{Universal}";
 	}
+      s << "\\maudeFunction";
     }
-  s << "\\maudeFunction";
   if (Sort* sort = domainAndRange[nrArgs])
     s << latexType(sort);
   else
@@ -469,8 +488,8 @@ VisibleModule::latexShowPolymorphs(ostream& s, const char* indent, bool all)
 void
 VisibleModule::latexShowModule(ostream& s, bool all)
 {
-  s << "\\par\\maudeKeyword{" << moduleTypeString(getModuleType()) << "}\\maudeSpace";
-  latexPrintModuleName(s, this);
+  s << "\\par\\maudeKeyword{" << moduleTypeString(getModuleType()) << "}\\maudeSpace" <<
+   "\\maudeModule{" << Token::latexName(id()) << "}";
   int nrParameters = getNrParameters();
   if (nrParameters > 0)
     {
@@ -610,11 +629,6 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
       s << space << "\\maudeKeyword{comm}";
       space = "\\maudeSpace";
     }
-  if (st.hasFlag(SymbolType::ITER))
-    {
-      s << space << "\\maudeKeyword{iter}";
-      space = "\\maudeSpace";
-    }
   if (st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
     {
       s << space;
@@ -626,11 +640,16 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
       s << "\\maudeKeyword{id:}\\maudeSpace";
       Term* id = safeCast(BinarySymbol*, symbol)->getIdentity();
       if (id != 0)
-	latexPrettyPrint(s, id);
+	latexPrettyPrint(s, id, true);  // we assume range kind is known
     }
   if (st.hasFlag(SymbolType::IDEM))
     {
       s << space << "\\maudeKeyword{idem}";
+      space = "\\maudeSpace";
+    }
+  if (st.hasFlag(SymbolType::ITER))
+    {
+      s << space << "\\maudeKeyword{iter}";
       space = "\\maudeSpace";
     }
   if (st.hasFlag(SymbolType::PCONST))
@@ -641,14 +660,19 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
   //
   //	Object-oriented attributes.
   //
+  if (st.hasFlag(SymbolType::OBJECT))
+    {
+      s << space << "\\maudeKeyword{obj}";
+      space = "\\maudeSpace";
+    }
   if (st.hasFlag(SymbolType::MESSAGE))
     {
       s << space << "\\maudeKeyword{msg}";
       space = "\\maudeSpace";
     }
-  if (st.hasFlag(SymbolType::OBJECT))
+  if (st.hasFlag(SymbolType::PORTAL))
     {
-      s << space << "\\maudeKeyword{obj}";
+      s << space << "\\maudeKeyword{portal}";
       space = "\\maudeSpace";
     }
   if (st.hasFlag(SymbolType::CONFIG))
@@ -702,40 +726,14 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
       space = "\\maudeSpace";
       if (gatherLength > 0)
 	{
-	  s << "\\maudeSpace\\maudeKeyword{gather}\\maudeSpace\\maudeLeftParen";
-	  for (int i = 0; i < gatherLength; i++)
-	    {
-	      if (i != 0)
-		s << "\\maudeSpace";
-	      switch (gather[i])
-		{
-		case GATHER_e:
-		  s << "\\maudeNormal{e}";
-		  break;
-		case GATHER_E:
-		  s << "\\maudeNormal{E}";
-		  break;
-		case GATHER_AMP:
-		  s << "\\maudeNormal{\\&}";
-		  break;
-		}
-	    }
-	  s << "\\maudeRightParen";
+	  s << space;
+	  latexPrintGather(s, gather);
 	}
     }
   if (st.hasFlag(SymbolType::FORMAT))
     {
-      s << space << "\\maudeKeyword{format}\\maudeSpace\\maudeLeftParen";
-      space = "\\maudeSpace";
-      const Vector<int>& format = getFormat(symbol);
-      int formatLength = format.length();
-      for (int i = 0; i < formatLength; ++i)
-	{
-	  if (i != 0)
-	    s << "\\maudeSpace";
-	  s << "\\maudeNormal{" << Token::name(format[i]) << "}";
-	}
-      s << "\\maudeRightParen";
+      s << space;
+      latexPrintFormat(s, getFormat(symbol));
     }
   if (metadata != NONE)
     {
@@ -745,80 +743,83 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
   if (st.hasSpecial())
     {
       s << space << "\\maudeKeyword{special}\\maudeSpace\\maudeLeftParen";
-      Vector<const char*> purposes;
-      {
-	//
-	//	id-hooks
-	//
-	Vector<Vector<const char*> > data;
-	getDataAttachments(symbol, decl.getDomainAndRange(), purposes, data);
-	Index nrHooks = purposes.size();
-	for (Index i = 0; i < nrHooks; ++i)
+      if (owner->getPrintFlag(Interpreter::PRINT_HOOKS))
+	{
+	  Vector<const char*> purposes;
 	  {
-	    s << "\\newline\\maudeKeyword{id-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
-	      Token::latexName(purposes[i]) << "}";
-	    const Vector<const char*>& items = data[i];
-	    Index nrItems = items.size();
-	    if (nrItems > 0)
+	    //
+	    //	id-hooks
+	//
+	    Vector<Vector<const char*> > data;
+	    getDataAttachments(symbol, decl.getDomainAndRange(), purposes, data);
+	    Index nrHooks = purposes.size();
+	    for (Index i = 0; i < nrHooks; ++i)
 	      {
-		for (Index j = 0; j < nrItems; ++j)
-		  s << ((j == 0) ? "\\maudeSpace\\maudeLeftParen" : "\\maudeSpace") <<
-		    "\\maudeSymbolic{" << Token::latexName(items[j]) << "}";
-		s << "\\maudeRightParen";
+		s << "\\newline\\maudeKeyword{id-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
+		  Token::latexName(purposes[i]) << "}";
+		const Vector<const char*>& items = data[i];
+		Index nrItems = items.size();
+		if (nrItems > 0)
+		  {
+		    for (Index j = 0; j < nrItems; ++j)
+		      s << ((j == 0) ? "\\maudeSpace\\maudeLeftParen" : "\\maudeSpace") <<
+			"\\maudeSymbolic{" << Token::latexName(items[j]) << "}";
+		    s << "\\maudeRightParen";
+		  }
+		s << "\n";
 	      }
-	    s << "\n";
 	  }
-      }
-      purposes.clear();
-      {
-	//
-	//	op-hooks
-	//
-	Vector<Symbol*> symbols;
-	getSymbolAttachments(symbol, purposes, symbols);
-	Index nrHooks = purposes.size();
-	for (Index i = 0; i < nrHooks; ++i)
+	  purposes.clear();
 	  {
-	    Symbol* op = symbols[i];
-	    s << "\\newline\\maudeKeyword{op-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
-	      Token::latexName(purposes[i]) << "}\\maudeSpace\\maudeLeftParen" <<
-	      Token::latexIdentifier(op->id()) << "\\maudeSpace\\maudeHasSort\\maudeSpace";
-	    const Vector<Sort*>& domainAndRange = op->getOpDeclarations()[0].getDomainAndRange();
-	    Index nrSorts = domainAndRange.size() - 1;
 	    //
-	    //	We don't use fancy printing for sorts in an op-hook since they
-	    //	should always be printed as single tokens.
+	    //	op-hooks
 	    //
-	    for (Index j = 0; j < nrSorts; ++j)
+	    Vector<Symbol*> symbols;
+	    getSymbolAttachments(symbol, purposes, symbols);
+	    Index nrHooks = purposes.size();
+	    for (Index i = 0; i < nrHooks; ++i)
 	      {
-		Sort* sort = domainAndRange[j];
+		Symbol* op = symbols[i];
+		int id = op->id();
+		const Vector<Sort*>& domainAndRange = op->getOpDeclarations()[0].getDomainAndRange();
+		Index nrSorts = domainAndRange.size() - 1;
+		s << "\\newline\\maudeKeyword{op-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
+		  Token::latexName(purposes[i]) << "}\\maudeSpace\\maudeLeftParen" <<
+		  (nrSorts == 0 ? latexConstant(id, this) :  latexPrettyOp(id)) <<
+		  "\\maudeSpace\\maudeHasSort\\maudeSpace";
+		for (Index j = 0; j < nrSorts; ++j)
+		  {
+		    Sort* sort = domainAndRange[j];
+		    if (sort->index() == Sort::KIND)
+		      sort = sort->component()->sort(1);
+		    s << "\\maudeSort{" << Token::latexName(sort->id()) << "}\\maudeSpace";
+		  }
+		Sort* sort = domainAndRange[nrSorts];
 		if (sort->index() == Sort::KIND)
 		  sort = sort->component()->sort(1);
-		s << "\\maudeSort{" << Token::latexName(sort->id()) << "}\\maudeSpace";
+		s << "\\maudePartialFunction\\maudeSpace\\maudeSort{" << Token::name(sort->id()) <<
+		  "}\\maudeRightParen\n";
 	      }
-	    Sort* sort = domainAndRange[nrSorts];
-	    if (sort->index() == Sort::KIND)
-	      sort = sort->component()->sort(1);
-	    s << "\\maudePartialFunction\\maudeSpace\\maudeSort{" << Token::name(sort->id()) <<
-	      "}\\maudeRightParen\n";
 	  }
-      }
-      purposes.clear();
-      {
-	//
-	//	term hooks
-	//
-	Vector<Term*> terms;
-	getTermAttachments(symbol, purposes, terms);
-	Index nrHooks = purposes.size();
-	for (Index i = 0; i < nrHooks; ++i)
+	  purposes.clear();
 	  {
-	    s << "\\newline\\maudeKeyword{term-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
-	      Token::latexName(purposes[i]) << "}\\maudeSpace\\maudeLeftParen";
-	    latexPrettyPrint(s, terms[i]);
-	    s << "\\maudeRightParen\n";
+	    //
+	    //	term hooks
+	    //
+	    Vector<Term*> terms;
+	    getTermAttachments(symbol, purposes, terms);
+	    Index nrHooks = purposes.size();
+	    for (Index i = 0; i < nrHooks; ++i)
+	      {
+		s << "\\newline\\maudeKeyword{term-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
+		  Token::latexName(purposes[i]) << "}\\maudeSpace\\maudeLeftParen";
+		latexPrettyPrint(s, terms[i]);
+		s << "\\maudeRightParen\n";
+	      }
 	  }
-      }
+	}
+      else
+	s << "\\maudeEllipsis";
       s << "\\maudeRightParen";
     }
   s << "\\maudeRightBracket";
@@ -829,16 +830,14 @@ VisibleModule::latexShowPolymorphAttributes(ostream& s, int index)
 {
   SymbolType st = getPolymorphType(index);
   if (st.hasFlag(SymbolType::CTOR))
-    s << " ctor";
+    s << "\\maudeSpace\\maudeKeyword{ctor}";
   //
   //	Theory attributes.
   //
   if (st.hasFlag(SymbolType::ASSOC))
-      s << "\\maudeSpace\\maudeKeyword{assoc}";
+    s << "\\maudeSpace\\maudeKeyword{assoc}";
   if (st.hasFlag(SymbolType::COMM))
-      s << "\\maudeSpace\\maudeKeyword{comm}";
-  if (st.hasFlag(SymbolType::ITER))
-      s << "\\maudeSpace\\maudeKeyword{iter}";
+    s << "\\maudeSpace\\maudeKeyword{comm}";
   if (st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
     {
       s << "\\maudeSpace";
@@ -849,21 +848,25 @@ VisibleModule::latexShowPolymorphAttributes(ostream& s, int index)
       s << "\\maudeKeyword{id:}\\maudeSpace";
       Term* id = getPolymorphIdentity(index);
       if (id != 0)
-	latexPrettyPrint(s, id);
+	latexPrettyPrint(s, id, true);  // we assume range kind is known
     }
   if (st.hasFlag(SymbolType::IDEM))
-      s << "\\maudeSpace\\maudeKeyword{idem}";
+    s << "\\maudeSpace\\maudeKeyword{idem}";
+  if (st.hasFlag(SymbolType::ITER))
+    s << "\\maudeSpace\\maudeKeyword{iter}";
   if (st.hasFlag(SymbolType::PCONST))
-      s << "\\maudeSpace\\maudeKeyword{pconst}";
+    s << "\\maudeSpace\\maudeKeyword{pconst}";
   //
   //	Object-oriented attributes.
   //
-  if (st.hasFlag(SymbolType::MESSAGE))
-      s << "\\maudeSpace\\maudeKeyword{msg}";
   if (st.hasFlag(SymbolType::OBJECT))
-      s << "\\maudeSpace\\maudeKeyword{obj}";
+    s << "\\maudeSpace\\maudeKeyword{obj}";
+  if (st.hasFlag(SymbolType::MESSAGE))
+    s << "\\maudeSpace\\maudeKeyword{msg}";
+  if (st.hasFlag(SymbolType::PORTAL))
+    s << "\\maudeSpace\\maudeKeyword{portal}";
   if (st.hasFlag(SymbolType::CONFIG))
-      s << "\\maudeSpace\\maudeKeyword{config}";
+    s << "\\maudeSpace\\maudeKeyword{config}";
   //
   //	Semantic attributes.
   //
@@ -907,39 +910,14 @@ VisibleModule::latexShowPolymorphAttributes(ostream& s, int index)
       s << "\\maudeSpace\\maudeKeyword{prec}\\maudeSpace\\maudeNumber{" << getPolymorphPrec(index) << "}";
       if (gatherLength > 0)
 	{
-	  s << "\\maudeSpace\\maudeKeyword{gather}\\maudeSpace\\maudeLeftParen";
-	  for (int i = 0; i < gatherLength; i++)
-	    {
-	      if (i != 0)
-		s << "\\maudeSpace";
-	      switch (gather[i])
-		{
-		case GATHER_e:
-		  s << "\\maudeNormal{e}";
-		  break;
-		case GATHER_E:
-		  s << "\\maudeNormal{E}";
-		  break;
-		case GATHER_AMP:
-		  s << "\\maudeNormal{\\&}";
-		  break;
-		}
-	    }
-	  s << "\\maudeRightParen";
+	  s << "\\maudeSpace";
+	  latexPrintGather(s, gather);
 	}
     }
   if (st.hasFlag(SymbolType::FORMAT))
     {
-      s << "\\maudeSpace\\maudeKeyword{format}\\maudeSpace\\maudeLeftParen";
-      const Vector<int>& format = getPolymorphFormat(index);
-      Index formatLength = format.size();
-      for (Index i = 0; i < formatLength; ++i)
-	{
-	  if (i != 0)
-	    s << "\\maudeSpace";
-	  s << "\\maudeNormal{" << Token::name(format[i]) << "}";
-	}
-      s << "\\maudeRightParen";
+      s << "\\maudeSpace";
+      latexPrintFormat(s, getPolymorphFormat(index));
     }
   int metadata = getPolymorphMetadata(index);
   if (metadata != NONE)
@@ -948,72 +926,75 @@ VisibleModule::latexShowPolymorphAttributes(ostream& s, int index)
   if (st.hasSpecial())
     {
       s << "\\maudeSpace\\maudeKeyword{special}\\maudeSpace\\maudeLeftParen";
-      int purpose;
-      {
-	//
-	//	id-hooks
-	//
-	Vector<int> items;
-	for (int i = 0; getPolymorphDataAttachment(index, i, purpose, items); ++i)
+      if (owner->getPrintFlag(Interpreter::PRINT_HOOKS))
+	{
+	  int purpose;
 	  {
-	    s << "\\newline\\maudeKeyword{id-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
-	      Token::latexName(purpose) << "}";
-	    Index nrItems = items.size();
-	    if (nrItems > 0)
+	    //
+	    //	id-hooks
+	    //
+	    Vector<int> items;
+	    for (int i = 0; getPolymorphDataAttachment(index, i, purpose, items); ++i)
 	      {
-		for (Index j = 0; j < nrItems; ++j)
+		s << "\\newline\\maudeKeyword{id-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
+		  Token::latexName(purpose) << "}";
+		Index nrItems = items.size();
+		if (nrItems > 0)
 		  {
-		    s << ((j == 0) ? "\\maudeSpace\\maudeLeftParen" : "\\maudeSpace") << "\\maudeSymbolic{"
-		      << Token::latexName(items[j]) << "}";
+		    for (Index j = 0; j < nrItems; ++j)
+		      {
+			s << ((j == 0) ? "\\maudeSpace\\maudeLeftParen" : "\\maudeSpace") << "\\maudeSymbolic{"
+			  << Token::latexName(items[j]) << "}";
+		      }
+		    s << "\\maudeRightParen";
 		  }
-		s << "\\maudeRightParen";
+		s << "\n";
 	      }
-	    s << "\n";
 	  }
-      }
-      {
-	//
-	//	op-hooks
-	//
-	Symbol* op;
-	for (int i = 0; getPolymorphSymbolAttachment(index, i, purpose, op); ++i)
 	  {
-	    s << "\\newline\\maudeKeyword{op-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
-	      Token::latexName(purpose) << "}\\maudeSpace\\maudeLeftParen" <<
-	      Token::latexIdentifier(op->id()) << "\\maudeSpace\\maudeHasSort\\maudeSpace";
-	    const Vector<Sort*>& domainAndRange = op->getOpDeclarations()[0].getDomainAndRange();
-	    int nrSorts = domainAndRange.length() - 1;
 	    //
-	    //	We don't use fancy printing for sorts in an op-hook since they
-	    //	should always be printed as single tokens.
+	    //	op-hooks
 	    //
-	    for (Index j = 0; j < nrSorts; ++j)
+	    Symbol* op;
+	    for (int i = 0; getPolymorphSymbolAttachment(index, i, purpose, op); ++i)
 	      {
-		Sort* sort = domainAndRange[j];
+		int id = op->id();
+		const Vector<Sort*>& domainAndRange = op->getOpDeclarations()[0].getDomainAndRange();
+		int nrSorts = domainAndRange.length() - 1;
+		s << "\\newline\\maudeKeyword{op-hook}\\maudeSpace\\maudeSymbolic{" <<
+		  Token::latexName(purpose) << "}\\maudeSpace\\maudeLeftParen" <<
+		  (nrSorts == 0 ? latexConstant(id, this) :  latexPrettyOp(id)) <<
+		  "\\maudeSpace\\maudeHasSort\\maudeSpace";
+		for (Index j = 0; j < nrSorts; ++j)
+		  {
+		    Sort* sort = domainAndRange[j];
+		    if (sort->index() == Sort::KIND)
+		      sort = sort->component()->sort(1);
+		    s << "\\maudeSort{" << Token::latexName(sort->id()) << "}\\maudeSpace";
+		  }
+		Sort* sort = domainAndRange[nrSorts];
 		if (sort->index() == Sort::KIND)
 		  sort = sort->component()->sort(1);
-		s << "\\maudeSort{" << Token::latexName(sort->id()) << "}\\maudeSpace";
+		s << "\\maudePartialFunction\\maudeSpace\\maudeSort{" << Token::name(sort->id()) <<
+		  "}\\maudeRightParen\n";
 	      }
-	    Sort* sort = domainAndRange[nrSorts];
-	    if (sort->index() == Sort::KIND)
-	      sort = sort->component()->sort(1);
-	    s << "\\maudePartialFunction\\maudeSpace\\maudeSort{" << Token::name(sort->id()) <<
-	      "}\\maudeRightParen\n";
 	  }
-      }
-      {
-	//
-	//	term-hooks
-	//
-	Term* term;
-	for (int i = 0; getPolymorphTermAttachment(index, i, purpose, term); i++)
 	  {
-	    s << "\\newline\\maudeKeyword{term-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
-	      Token::latexName(purpose) << "}\\maudeSpace\\maudeLeftParen";
-	    latexPrettyPrint(s, term);
-	    s << "\\maudeRightParen\n";
+	    //
+	    //	term-hooks
+	    //
+	    Term* term;
+	    for (int i = 0; getPolymorphTermAttachment(index, i, purpose, term); i++)
+	      {
+		s << "\\newline\\maudeKeyword{term-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
+		  Token::latexName(purpose) << "}\\maudeSpace\\maudeLeftParen";
+		latexPrettyPrint(s, term);
+		s << "\\maudeRightParen\n";
+	      }
 	  }
-      }
+	}
+      else
+	s << "\\maudeEllipsis";
       s << "\\maudeRightParen";
     }
 }

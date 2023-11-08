@@ -67,7 +67,7 @@ erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 1 > createInterpreter(
 rewrites: 3
 result Configuration: <> < me : User | none > gotSearchResultAndPath(me,
     interpreter(0), 1, 'b.State, 'State, 
-  'X:State <- 'b.State, {'a.State,'State,rl 'a.State => 'b.State [label(
+  'X:State <- 'b.State, {'a.State, 'State, rl 'a.State => 'b.State [label(
     'a-move1)] .})
 ==========================================
 erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 2 > createInterpreter(
@@ -75,7 +75,7 @@ erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 2 > createInterpreter(
 rewrites: 3
 result Configuration: <> < me : User | none > gotSearchResultAndPath(me,
     interpreter(0), 2, 'c.State, 'State, 
-  'X:State <- 'c.State, {'a.State,'State,rl 'a.State => 'c.State [label(
+  'X:State <- 'c.State, {'a.State, 'State, rl 'a.State => 'c.State [label(
     'a-move2)] .})
 ==========================================
 erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 3 > createInterpreter(
@@ -83,18 +83,18 @@ erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 3 > createInterpreter(
 rewrites: 3
 result Configuration: <> < me : User | none > gotSearchResultAndPath(me,
     interpreter(0), 3, 'd.State, 'State, 
-  'X:State <- 'd.State, {'a.State,'State,rl 'a.State => 'b.State [label(
+  'X:State <- 'd.State, {'a.State, 'State, rl 'a.State => 'b.State [label(
     'a-move1)] .}
-{'b.State,'State,rl 'b.State => 'd.State [label('b-move)] .})
+{'b.State, 'State, rl 'b.State => 'd.State [label('b-move)] .})
 ==========================================
 erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 4 > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 3
 result Configuration: <> < me : User | none > gotSearchResultAndPath(me,
     interpreter(0), 4, 'e.State, 'State, 
-  'X:State <- 'e.State, {'a.State,'State,rl 'a.State => 'c.State [label(
+  'X:State <- 'e.State, {'a.State, 'State, rl 'a.State => 'c.State [label(
     'a-move2)] .}
-{'c.State,'State,rl 'c.State => 'e.State [label('c-move)] .})
+{'c.State, 'State, rl 'c.State => 'e.State [label('c-move)] .})
 ==========================================
 erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 5 > createInterpreter(
     interpreterManager, me, newProcess) .
@@ -109,18 +109,18 @@ result Configuration: <> < me : User | soln: 6, got: gotSearchResultAndPath(me,
     interpreter(0), 0, 'a.State, 'State, 
   'X:State <- 'a.State, nil), got: gotSearchResultAndPath(me, interpreter(0),
     1, 'b.State, 'State, 
-  'X:State <- 'b.State, {'a.State,'State,rl 'a.State => 'b.State [label(
+  'X:State <- 'b.State, {'a.State, 'State, rl 'a.State => 'b.State [label(
     'a-move1)] .}), got: gotSearchResultAndPath(me, interpreter(0), 1,
     'c.State, 'State, 
-  'X:State <- 'c.State, {'a.State,'State,rl 'a.State => 'c.State [label(
+  'X:State <- 'c.State, {'a.State, 'State, rl 'a.State => 'c.State [label(
     'a-move2)] .}), got: gotSearchResultAndPath(me, interpreter(0), 1,
     'd.State, 'State, 
-  'X:State <- 'd.State, {'a.State,'State,rl 'a.State => 'b.State [label(
+  'X:State <- 'd.State, {'a.State, 'State, rl 'a.State => 'b.State [label(
     'a-move1)] .}
-{'b.State,'State,rl 'b.State => 'd.State [label('b-move)] .}), got:
+{'b.State, 'State, rl 'b.State => 'd.State [label('b-move)] .}), got:
     gotSearchResultAndPath(me, interpreter(0), 1, 'e.State, 'State, 
-  'X:State <- 'e.State, {'a.State,'State,rl 'a.State => 'c.State [label(
+  'X:State <- 'e.State, {'a.State, 'State, rl 'a.State => 'c.State [label(
     'a-move2)] .}
-{'c.State,'State,rl 'c.State => 'e.State [label('c-move)] .}) > noSuchResult(
+{'c.State, 'State, rl 'c.State => 'e.State [label('c-move)] .}) > noSuchResult(
     me, interpreter(0), 0)
 Bye.

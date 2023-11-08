@@ -1,3 +1,22 @@
+Overview of Changes in alpha153
+============================================
+* smarter sort disambiguation for printing statements and
+operator identities
+* set print label attribute on/off .
+* refinements to show module output
+* ASCII option for maude.sty LaTeX package
+* fixed various bugs in LaTeX output
+* LaTeX support for more commands
+* set clear module caches on/off .
+* set print hooks on/off .
+* space printed after comma by default in mixfix syntax
+* portal attribute and enforcement of portal requirement
+* uniform order for operator attributes
+* _|=_ in model checker is now partial
+* set print combine vars on/off .
+* new line breaking rules for LaTeX output
+* backquotes removed in LaTeX output for op-hooks
+
 Overview of Changes in alpha152 (2023-10-02)
 ============================================
 * more LaTeX support
@@ -87,7 +106,7 @@ for various operations
 
 Overview of Changes in Maude 3.3 (alpha143) (2023-03-22)
 ========================================================
-* overparsing for omiting -> in constant mapping removed due
+* overparsing for omitting -> in constant mapping removed due
 to ambiguity
 * various gcc/clang warnings fixed
 * show path states command now shows rule labels

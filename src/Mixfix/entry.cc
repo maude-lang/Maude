@@ -576,6 +576,11 @@ MixfixModule::addOpDeclaration(Token prefixName,
 		   ": operator " <<
 		   BEGIN_QUOTE << symbol << END_QUOTE <<
 		   " is not allowed to have both object and msg attributes.");
+      WarningCheck(!(symbolType.hasFlag(SymbolType::PORTAL)),
+		   LineNumber(prefixName.lineNumber()) <<
+		   ": operator " <<
+		   BEGIN_QUOTE << symbol << END_QUOTE <<
+		   " is not allowed to have both object and portal attributes.");
 
       if (nrArgs == 0)
 	{
@@ -587,21 +592,26 @@ MixfixModule::addOpDeclaration(Token prefixName,
       else
 	objectSymbols.insert(symbol->getIndexWithinModule());
     }
-  else
+  else if (symbolType.hasFlag(SymbolType::MESSAGE))
     {
-      if (symbolType.hasFlag(SymbolType::MESSAGE))
+      WarningCheck(!(symbolType.hasFlag(SymbolType::PORTAL)),
+		   LineNumber(prefixName.lineNumber()) <<
+		   ": operator " <<
+		   BEGIN_QUOTE << symbol << END_QUOTE <<
+		   " is not allowed to have both msg and portal attributes.");
+
+      if (nrArgs == 0)
 	{
-	  if (nrArgs == 0)
-	    {
-	      IssueWarning(LineNumber(prefixName.lineNumber()) <<
-			   ": msg attribute for operator " <<
-			   BEGIN_QUOTE << symbol << END_QUOTE <<
-			   " which lacks arguments.");
-	    }
-	  else
-	    messageSymbols.insert(symbol->getIndexWithinModule());
+	  IssueWarning(LineNumber(prefixName.lineNumber()) <<
+		       ": msg attribute for operator " <<
+		       BEGIN_QUOTE << symbol << END_QUOTE <<
+		       " which lacks arguments.");
 	}
+      else
+	messageSymbols.insert(symbol->getIndexWithinModule());
     }
+  else if (symbolType.hasFlag(SymbolType::PORTAL))
+    portalSymbols.insert(symbol->getIndexWithinModule());
   return symbol;
 }
 

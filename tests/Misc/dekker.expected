@@ -5,97 +5,98 @@ result Bool: true
 ==========================================
 reduce in CHECK : modelCheck(initial, []<> exec(1) -> []<> enterCrit(1)) .
 rewrites: 100
-result ModelCheckResult: counterexample({{[1,repeat 'c1 := 0 ; while 'c2 = 0 do
-    if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ;
-    crit ; 'turn := 2 ; 'c1 := 1 ; rem forever] | [2,repeat 'c2 := 0 ; while
+result ModelCheckResult: counterexample({{[1, repeat 'c1 := 0 ; while 'c2 = 0
+    do if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od
+    ; crit ; 'turn := 2 ; 'c1 := 1 ; rem forever] | [2, repeat 'c2 := 0 ; while
     'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 :=
-    0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever],['c1,1] ['c2,1] [
-    'turn,1],0},unlabeled} {{[1,'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then
+    0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever], ['c1, 1] ['c2, 1] [
+    'turn, 1], 0}, unlabeled} {{[1, 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2
+    then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn
+    := 2 ; 'c1 := 1 ; rem ; repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2
+    then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn
+    := 2 ; 'c1 := 1 ; rem forever] | [2, repeat 'c2 := 0 ; while 'c1 = 0 do if
+    'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od ;
+    crit ; 'turn := 1 ; 'c2 := 1 ; rem forever], ['c1, 1] ['c2, 1] ['turn, 1],
+    1}, unlabeled} {{[1, while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while
+    'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem
+    ; repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while
+    'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem
+    forever] | [2, repeat 'c2 := 0 ; while 'c1 = 0 do if 'turn = 1 then 'c2 :=
+    1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2
+    := 1 ; rem forever], ['c1, 0] ['c2, 1] ['turn, 1], 1}, unlabeled} {{[1,
+    while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ;
+    'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem ; repeat 'c1 := 0 ;
+    while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ;
+    'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem forever] | [2, 'c2 := 0
+    ; while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od
+    ; 'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ;
+    while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ;
+    'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever], ['c1, 0] [
+    'c2, 1] ['turn, 1], 2}, unlabeled} {{[1, while 'c2 = 0 do if 'turn = 2 then
     'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2
     ; 'c1 := 1 ; rem ; repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1
     := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ;
-    'c1 := 1 ; rem forever] | [2,repeat 'c2 := 0 ; while 'c1 = 0 do if 'turn =
-    1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ;
-    'turn := 1 ; 'c2 := 1 ; rem forever],['c1,1] ['c2,1] ['turn,1],1},
-    unlabeled} {{[1,while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while 'turn =
-    2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem ; repeat
-    'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do
-    skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem forever] | [
-    2,repeat 'c2 := 0 ; while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while
-    'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem
-    forever],['c1,0] ['c2,1] ['turn,1],1},unlabeled} {{[1,while 'c2 = 0 do if
-    'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ;
-    crit ; 'turn := 2 ; 'c1 := 1 ; rem ; repeat 'c1 := 0 ; while 'c2 = 0 do if
-    'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ;
-    crit ; 'turn := 2 ; 'c1 := 1 ; rem forever] | [2,'c2 := 0 ; while 'c1 = 0
-    do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od
-    ; crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ; while 'c1 = 0 do
-    if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od ;
-    crit ; 'turn := 1 ; 'c2 := 1 ; rem forever],['c1,0] ['c2,1] ['turn,1],2},
-    unlabeled} {{[1,while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while 'turn =
-    2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem ; repeat
-    'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do
-    skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem forever] | [
-    2,while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od
-    ; 'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ;
-    while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ;
-    'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever],['c1,0] ['c2,
-    0] ['turn,1],2},unlabeled} {{[1,if 'turn = 2 then 'c1 := 1 ; while 'turn =
-    2 do skip od ; 'c1 := 0 fi ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ;
+    'c1 := 1 ; rem forever] | [2, while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ;
+    while 'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1
+    ; rem ; repeat 'c2 := 0 ; while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ;
+    while 'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1
+    ; rem forever], ['c1, 0] ['c2, 0] ['turn, 1], 2}, unlabeled} {{[1, if 'turn
+    = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi ; while 'c2 =
+    0 do if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi
+    od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem ; repeat 'c1 := 0 ; while 'c2 = 0
+    do if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od
+    ; crit ; 'turn := 2 ; 'c1 := 1 ; rem forever] | [2, while 'c1 = 0 do if
+    'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od ;
+    crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ; while 'c1 = 0 do if
+    'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od ;
+    crit ; 'turn := 1 ; 'c2 := 1 ; rem forever], ['c1, 0] ['c2, 0] ['turn, 1],
+    1}, unlabeled} {{[1, while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while
+    'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem
+    ; repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while
+    'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem
+    forever] | [2, while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn =
+    1 do skip od ; 'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat
+    'c2 := 0 ; while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do
+    skip od ; 'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever], [
+    'c1, 0] ['c2, 0] ['turn, 1], 1}, unlabeled} {{[1, while 'c2 = 0 do if 'turn
+    = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ;
+    'turn := 2 ; 'c1 := 1 ; rem ; repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn =
+    2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ;
+    'turn := 2 ; 'c1 := 1 ; rem forever] | [2, if 'turn = 1 then 'c2 := 1 ;
+    while 'turn = 1 do skip od ; 'c2 := 0 fi ; while 'c1 = 0 do if 'turn = 1
+    then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ; 'turn
+    := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ; while 'c1 = 0 do if 'turn = 1
+    then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ; 'turn
+    := 1 ; 'c2 := 1 ; rem forever], ['c1, 0] ['c2, 0] ['turn, 1], 2},
+    unlabeled} {{[1, while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while 'turn
+    = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem ;
+    repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while 'turn
+    = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem
+    forever] | [2, 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 ; while 'c1
+    = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0
+    fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ; while 'c1 =
+    0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi
+    od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever], ['c1, 0] ['c2, 0] ['turn,
+    1], 2}, unlabeled}, {{[1, if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do
+    skip od ; 'c1 := 0 fi ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while
+    'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem
+    ; repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while
+    'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem
+    forever] | [2, 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 ; while 'c1
+    = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0
+    fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ; while 'c1 =
+    0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi
+    od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever], ['c1, 0] ['c2, 0] ['turn,
+    1], 1}, unlabeled} {{[1, while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ;
     while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1
     ; rem ; repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ;
     while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1
-    ; rem forever] | [2,while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while
-    'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem
-    ; repeat 'c2 := 0 ; while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while
-    'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem
-    forever],['c1,0] ['c2,0] ['turn,1],1},unlabeled} {{[1,while 'c2 = 0 do if
-    'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ;
-    crit ; 'turn := 2 ; 'c1 := 1 ; rem ; repeat 'c1 := 0 ; while 'c2 = 0 do if
-    'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ;
-    crit ; 'turn := 2 ; 'c1 := 1 ; rem forever] | [2,while 'c1 = 0 do if 'turn
-    = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ;
-    'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ; while 'c1 = 0 do if 'turn =
-    1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi od ; crit ;
-    'turn := 1 ; 'c2 := 1 ; rem forever],['c1,0] ['c2,0] ['turn,1],1},
-    unlabeled} {{[1,while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while 'turn =
-    2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem ; repeat
-    'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do
-    skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1 ; rem forever] | [
-    2,if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 fi ;
+    ; rem forever] | [2, 'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 ;
     while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ;
     'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ;
     while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ;
-    'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever],['c1,0] ['c2,
-    0] ['turn,1],2},unlabeled} {{[1,while 'c2 = 0 do if 'turn = 2 then 'c1 := 1
-    ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 :=
-    1 ; rem ; repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ;
-    while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1
-    ; rem forever] | [2,'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 ;
-    while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ;
-    'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ;
-    while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ;
-    'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever],['c1,0] ['c2,
-    0] ['turn,1],2},unlabeled}, {{[1,if 'turn = 2 then 'c1 := 1 ; while 'turn =
-    2 do skip od ; 'c1 := 0 fi ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ;
-    while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1
-    ; rem ; repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ;
-    while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1
-    ; rem forever] | [2,'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 ;
-    while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ;
-    'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ;
-    while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ;
-    'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever],['c1,0] ['c2,
-    0] ['turn,1],1},unlabeled} {{[1,while 'c2 = 0 do if 'turn = 2 then 'c1 := 1
-    ; while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 :=
-    1 ; rem ; repeat 'c1 := 0 ; while 'c2 = 0 do if 'turn = 2 then 'c1 := 1 ;
-    while 'turn = 2 do skip od ; 'c1 := 0 fi od ; crit ; 'turn := 2 ; 'c1 := 1
-    ; rem forever] | [2,'c2 := 1 ; while 'turn = 1 do skip od ; 'c2 := 0 ;
-    while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ;
-    'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem ; repeat 'c2 := 0 ;
-    while 'c1 = 0 do if 'turn = 1 then 'c2 := 1 ; while 'turn = 1 do skip od ;
-    'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever],['c1,0] ['c2,
-    0] ['turn,1],1},unlabeled})
+    'c2 := 0 fi od ; crit ; 'turn := 1 ; 'c2 := 1 ; rem forever], ['c1, 0] [
+    'c2, 0] ['turn, 1], 1}, unlabeled})
 ==========================================
 reduce in CHECK : modelCheck(initial, []<> exec(1) /\ []<> exec(2) -> []<>
     enterCrit(1) /\ []<> enterCrit(2)) .

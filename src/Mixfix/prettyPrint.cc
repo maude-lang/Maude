@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -71,17 +71,22 @@ operator<<(ostream& s, const ConnectedComponent* component)
   return s << component->sort(Sort::KIND);
 }
 
+void
+MixfixModule::prettyPrint(ostream& s, const Term* term, bool rangeKnown)
+{
+  globalIndent = 0;
+  safeCastNonNull<MixfixModule*>(term->symbol()->getModule())->prettyPrint(s, const_cast<Term*>(term), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
+  if (attributeUsed)
+    {
+      attributeUsed = false;
+      s << Tty(Tty::RESET);
+    }
+}
+
 ostream&
 operator<<(ostream& s, const Term* term)
 {
-  MixfixModule::globalIndent = 0;
-  static_cast<MixfixModule*>(term->symbol()->getModule())->
-    prettyPrint(s, const_cast<Term*>(term), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);  // HACK
-  if (MixfixModule::attributeUsed)
-    {
-      MixfixModule::attributeUsed = false;
-      s << Tty(Tty::RESET);
-    }
+  MixfixModule::prettyPrint(s, term);
   return s;
 }
 
@@ -108,8 +113,7 @@ operator<<(ostream& s, DagNode* dagNode)
 	  coloringInfo.reducedAbove = false;
 	  coloringInfo.reducedDirectlyAbove = false;
 	}
-      module->prettyPrint(s, coloringInfo, dagNode,
-			  UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      module->prettyPrint(s, coloringInfo, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
     }
   if (MixfixModule::attributeUsed)
     {
@@ -123,7 +127,7 @@ void
 MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemType)
 {
   const Label& l = pe->getLabel();
-  int id = l.id();
+  int id = interpreter.getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE) ? l.id() : NONE;
   const Equation* eq = dynamic_cast<const Equation*>(pe);
   const Rule* rl = dynamic_cast<const Rule*>(pe);
   bool owise = eq != 0 && eq->isOwise();
@@ -181,7 +185,14 @@ operator<<(ostream& s, const SortConstraint* sc)
   if (sc->hasCondition())
     s << 'c';
   s << "mb ";
-  s << sc->getLhs() << " : " << sc->getSort();
+  if (!interpreter.getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE))
+    {
+      const Label& l = sc->getLabel();
+      if (l.id() != NONE)
+	s << "[" << &l << "] : ";
+    }
+  MixfixModule::prettyPrint(s, sc->getLhs(), true);
+  s << " : " << sc->getSort();
   if (sc->hasCondition())
     MixfixModule::printCondition(s, sc);
   MixfixModule* m = safeCast(MixfixModule*, sc->getModule());
@@ -196,7 +207,14 @@ operator<<(ostream& s, const Equation* e)
   if (e->hasCondition())
     s << 'c';
   s << "eq ";
-  s << e->getLhs() << " = " << e->getRhs();
+  if (!interpreter.getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE))
+    {
+      const Label& l = e->getLabel();
+      if (l.id() != NONE)
+	s << "[" << &l << "] : ";
+    }
+  s << e->getLhs() << " = ";
+  MixfixModule::prettyPrint(s, e->getRhs(), true);
   if (e->hasCondition())
     MixfixModule::printCondition(s, e);
   MixfixModule* m = safeCast(MixfixModule*, e->getModule());
@@ -211,7 +229,14 @@ operator<<(ostream& s, const Rule* r)
   if (r->hasCondition())
     s << 'c';
   s << "rl ";
-  s << r->getLhs() << " => " << r->getRhs();
+  if (!interpreter.getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE))
+    {
+      const Label& l = r->getLabel();
+      if (l.id() != NONE)
+	s << "[" << &l << "] : ";
+    }
+  s << r->getLhs() << " => ";
+  MixfixModule::prettyPrint(s, r->getRhs(), true);
   if (r->hasCondition())
     MixfixModule::printCondition(s, r);
   MixfixModule* m = safeCast(MixfixModule*, r->getModule());
@@ -223,18 +248,26 @@ operator<<(ostream& s, const Rule* r)
 ostream&
 operator<<(ostream& s, const ConditionFragment* c)
 {
-  if (const EqualityConditionFragment* e =
-      dynamic_cast<const EqualityConditionFragment*>(c))
-    s << e->getLhs() << " = " << e->getRhs();
-  else if (const SortTestConditionFragment* t =
-	   dynamic_cast<const SortTestConditionFragment*>(c))
-    s << t->getLhs() << " : " << t->getSort();
-  else if(const AssignmentConditionFragment* a =
-	  dynamic_cast<const AssignmentConditionFragment*>(c))
-    s << a->getLhs() << " := " << a->getRhs();
-  else if(const RewriteConditionFragment* r =
-	  dynamic_cast<const RewriteConditionFragment*>(c))
-    s << r->getLhs() << " => " << r->getRhs();
+  if (const EqualityConditionFragment* e = dynamic_cast<const EqualityConditionFragment*>(c))
+    {
+      s << e->getLhs() << " = ";
+      MixfixModule::prettyPrint(s, e->getRhs(), true);
+    }
+  else if (const SortTestConditionFragment* t = dynamic_cast<const SortTestConditionFragment*>(c))
+    {
+      MixfixModule::prettyPrint(s, t->getLhs(), true);
+      s <<  " : " << t->getSort();
+    }
+  else if(const AssignmentConditionFragment* a = dynamic_cast<const AssignmentConditionFragment*>(c))
+    {
+      s << a->getLhs() << " := ";
+      MixfixModule::prettyPrint(s, a->getRhs(), true);
+    }
+  else if(const RewriteConditionFragment* r = dynamic_cast<const RewriteConditionFragment*>(c))
+    {
+      s << r->getLhs() << " => ";
+      MixfixModule::prettyPrint(s, r->getRhs(), true);
+    }
   else
     CantHappen("bad condition fragment");
   return s;
@@ -377,10 +410,10 @@ MixfixModule::printTokens(ostream& s,
 	break;
       bool special = (token == leftParen || token == rightParen ||
 		      token == leftBracket || token == rightBracket ||
-		      token == leftBrace || token == rightBrace || token == comma);
-      if (!((hasFormat && fancySpace(s, si.format[pos - 1])) || special || noSpace))
+		      token == leftBrace || token == rightBrace);
+      if (!((hasFormat && fancySpace(s, si.format[pos - 1])) || special || noSpace || token == comma))
 	s << ' ';
-      noSpace = special;
+      noSpace = special || (hasFormat && token == comma);
       if (color != 0)
 	s << color;
       s << Token::name(token);
@@ -413,10 +446,10 @@ MixfixModule::printTails(ostream& s,
 	  int token = si.mixfixSyntax[j];
 	  bool special = (token == leftParen || token == rightParen ||
 			  token == leftBracket || token == rightBracket ||
-			  token == leftBrace || token == rightBrace || token == comma);
-	  if (!((hasFormat && fancySpace(s, si.format[j])) || special || noSpace))
+			  token == leftBrace || token == rightBrace);
+	  if (!((hasFormat && fancySpace(s, si.format[j])) || special || noSpace || token == comma))
 	    s << ' ';
-	  noSpace = special;
+	  noSpace = special || (hasFormat && token == comma);
 	  if (color != 0)
 	    s << color;
 	  s << Token::name(token);

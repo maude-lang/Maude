@@ -7,115 +7,111 @@ Transformed rule:
     X) .
 
 Considering object completion on:
-  rl < O : List{X} | size : 0 > (O add O' at 0) < O'' : Counter | index : N >
-    => < O : List{X} | first : o(O, N), last : o(O, N), size : 1 > < o(O, N) :
-    Node{X} | next : null, previous : null, value : O' > < O'' : Counter |
-    index : s N > [label add] .
+  rl [add] : < O : List{X} | size : 0 > (O add O' at 0) < O'' : Counter | index
+    : N > => < O : List{X} | first : o(O, N), last : o(O, N), size : 1 > < o(O,
+    N) : Node{X} | next : null, previous : null, value : O' > < O'' : Counter |
+    index : s N > .
 Transformed rule:
-  rl < O : V:List{X} | first : A:[Maybe{Oid}], last : A2:[Maybe{Oid}], size :
-    0, Atts:AttributeSet > (O add O' at 0) < O'' : V2:Counter | index : N,
-    Atts2:AttributeSet > => < O : V:List{X} | first : o(O, N), last : o(O, N),
-    size : 1, Atts:AttributeSet > < o(O, N) : Node{X} | next : null, previous :
-    null, value : O' > < O'' : V2:Counter | index : s N, Atts2:AttributeSet > [
-    label add] .
+  rl [add] : < O : V:List{X} | first : A:[Maybe{Oid}], last : A2:[Maybe{Oid}],
+    size : 0, Atts:AttributeSet > (O add O' at 0) < O'' : V2:Counter | index :
+    N, Atts2:AttributeSet > => < O : V:List{X} | first : o(O, N), last : o(O,
+    N), size : 1, Atts:AttributeSet > < o(O, N) : Node{X} | next : null,
+    previous : null, value : O' > < O'' : V2:Counter | index : s N,
+    Atts2:AttributeSet > .
 
 Considering object completion on:
-  rl < O : List{X} | first : F, size : S > < F : Node{X} | previous : null > (O
-    add O' at 0) < O'' : Counter | index : N > => < O : List{X} | first : o(O,
-    N), size : s S > < F : Node{X} | previous : o(O, N) > < o(O, N) : Node{X} |
-    next : F, previous : null, value : O' > < O'' : Counter | index : s N > [
-    label add] .
+  rl [add] : < O : List{X} | first : F, size : S > < F : Node{X} | previous :
+    null > (O add O' at 0) < O'' : Counter | index : N > => < O : List{X} |
+    first : o(O, N), size : s S > < F : Node{X} | previous : o(O, N) > < o(O,
+    N) : Node{X} | next : F, previous : null, value : O' > < O'' : Counter |
+    index : s N > .
 Transformed rule:
-  rl < O : V:List{X} | first : F, size : S, Atts:AttributeSet > < F : V2:Node{
-    X} | previous : null, Atts2:AttributeSet > (O add O' at 0) < O'' :
+  rl [add] : < O : V:List{X} | first : F, size : S, Atts:AttributeSet > < F :
+    V2:Node{X} | previous : null, Atts2:AttributeSet > (O add O' at 0) < O'' :
     V3:Counter | index : N, Atts3:AttributeSet > => < O : V:List{X} | first :
     o(O, N), size : s S, Atts:AttributeSet > < F : V2:Node{X} | previous : o(O,
     N), Atts2:AttributeSet > < o(O, N) : Node{X} | next : F, previous : null,
-    value : O' > < O'' : V3:Counter | index : s N, Atts3:AttributeSet > [label
-    add] .
+    value : O' > < O'' : V3:Counter | index : s N, Atts3:AttributeSet > .
 
 Considering object completion on:
-  rl < O : List{X} | last : L, size : S > < L : Node{X} | next : null > (O add
-    O' at S) < O'' : Counter | index : N > => < O : List{X} | last : o(O, N),
-    size : s S > < L : Node{X} | next : o(O, N) > < o(O, N) : Node{X} | next :
-    null, previous : L, value : O' > < O'' : Counter | index : s N > [label
-    add] .
+  rl [add] : < O : List{X} | last : L, size : S > < L : Node{X} | next : null >
+    (O add O' at S) < O'' : Counter | index : N > => < O : List{X} | last : o(
+    O, N), size : s S > < L : Node{X} | next : o(O, N) > < o(O, N) : Node{X} |
+    next : null, previous : L, value : O' > < O'' : Counter | index : s N > .
 Transformed rule:
-  rl < O : V2:List{X} | last : L, size : S, Atts2:AttributeSet > < L : V:Node{
-    X} | next : null, Atts:AttributeSet > (O add O' at S) < O'' : V3:Counter |
-    index : N, Atts3:AttributeSet > => < O : V2:List{X} | last : o(O, N), size
-    : s S, Atts2:AttributeSet > < L : V:Node{X} | next : o(O, N),
+  rl [add] : < O : V2:List{X} | last : L, size : S, Atts2:AttributeSet > < L :
+    V:Node{X} | next : null, Atts:AttributeSet > (O add O' at S) < O'' :
+    V3:Counter | index : N, Atts3:AttributeSet > => < O : V2:List{X} | last :
+    o(O, N), size : s S, Atts2:AttributeSet > < L : V:Node{X} | next : o(O, N),
     Atts:AttributeSet > < o(O, N) : Node{X} | next : null, previous : L, value
-    : O' > < O'' : V3:Counter | index : s N, Atts3:AttributeSet > [label add] .
+    : O' > < O'' : V3:Counter | index : s N, Atts3:AttributeSet > .
 
 Considering object completion on:
-  crl < O : List{X} | first : F, size : S > O add O' at s P => add-blocked(< O
-    : List{X} | none >) F add' O' at P if s P < S = true [label add] .
+  crl [add] : < O : List{X} | first : F, size : S > O add O' at s P =>
+    add-blocked(< O : List{X} | none >) F add' O' at P if s P < S = true .
 Transformed rule:
-  crl < O : V:List{X} | first : F, size : S, Atts:AttributeSet > O add O' at s
-    P => add-blocked(< O : V:List{X} | first : F, size : S, Atts:AttributeSet
-    >) F add' O' at P if s P < S = true [label add] .
+  crl [add] : < O : V:List{X} | first : F, size : S, Atts:AttributeSet > O add
+    O' at s P => add-blocked(< O : V:List{X} | first : F, size : S,
+    Atts:AttributeSet >) F add' O' at P if s P < S = true .
 
 Considering object completion on:
-  rl < O : Node{X} | next : O' > < O' : Node{X} | previous : O > (O add' O'' at
-    P) < O''' : Counter | index : N > add-blocked(< L : List{X} | size : S >)
-    => if P == 0 then < O : Node{X} | next : o(O, N) > < O' : Node{X} |
-    previous : o(O, N) > < o(O, N) : Node{X} | previous : O, next : O', value :
-    O'' > < O''' : Counter | index : s N > < L : List{X} | size : s S > else <
-    O : Node{X} | none > < O' : Node{X} | none > (O' add' O'' at P - 1) < O'''
-    : Counter | index : N > add-blocked(< L : List{X} | size : S >) fi [label
-    add] .
+  rl [add] : < O : Node{X} | next : O' > < O' : Node{X} | previous : O > (O
+    add' O'' at P) < O''' : Counter | index : N > add-blocked(< L : List{X} |
+    size : S >) => if P == 0 then < O : Node{X} | next : o(O, N) > < O' : Node{
+    X} | previous : o(O, N) > < o(O, N) : Node{X} | previous : O, next : O',
+    value : O'' > < O''' : Counter | index : s N > < L : List{X} | size : s S >
+    else < O : Node{X} | none > < O' : Node{X} | none > (O' add' O'' at P - 1)
+    < O''' : Counter | index : N > add-blocked(< L : List{X} | size : S >) fi .
 Transformed rule:
-  rl < O : V2:Node{X} | next : O', Atts2:AttributeSet > < O' : V3:Node{X} |
-    previous : O, Atts3:AttributeSet > (O add' O'' at P) < O''' : V4:Counter |
-    index : N, Atts4:AttributeSet > add-blocked(< L : V:List{X} | size : S,
-    Atts:AttributeSet >) => if P == 0 then < O : V2:Node{X} | next : o(O, N),
-    Atts2:AttributeSet > < O' : V3:Node{X} | previous : o(O, N),
+  rl [add] : < O : V2:Node{X} | next : O', Atts2:AttributeSet > < O' : V3:Node{
+    X} | previous : O, Atts3:AttributeSet > (O add' O'' at P) < O''' :
+    V4:Counter | index : N, Atts4:AttributeSet > add-blocked(< L : V:List{X} |
+    size : S, Atts:AttributeSet >) => if P == 0 then < O : V2:Node{X} | next :
+    o(O, N), Atts2:AttributeSet > < O' : V3:Node{X} | previous : o(O, N),
     Atts3:AttributeSet > < o(O, N) : Node{X} | previous : O, next : O', value :
     O'' > < O''' : V4:Counter | index : s N, Atts4:AttributeSet > < L : V:List{
     X} | size : s S, Atts:AttributeSet > else < O : V2:Node{X} | next : O',
     Atts2:AttributeSet > < O' : V3:Node{X} | previous : O, Atts3:AttributeSet >
     (O' add' O'' at P - 1) < O''' : V4:Counter | index : N, Atts4:AttributeSet
-    > add-blocked(< L : V:List{X} | size : S, Atts:AttributeSet >) fi [label
-    add] .
+    > add-blocked(< L : V:List{X} | size : S, Atts:AttributeSet >) fi .
 
 Considering object completion on:
-  crl < O : List{X} | first : F, size : S > O get at P from O' => get-blocked(<
-    O : List{X} | none >, P, O') F in O get at P if s P < S = true [label get]
-    .
+  crl [get] : < O : List{X} | first : F, size : S > O get at P from O' =>
+    get-blocked(< O : List{X} | none >, P, O') F in O get at P if s P < S =
+    true .
 Transformed rule:
-  crl < O : V:List{X} | first : F, size : S, Atts:AttributeSet > O get at P
-    from O' => get-blocked(< O : V:List{X} | first : F, size : S,
-    Atts:AttributeSet >, P, O') F in O get at P if s P < S = true [label get] .
+  crl [get] : < O : V:List{X} | first : F, size : S, Atts:AttributeSet > O get
+    at P from O' => get-blocked(< O : V:List{X} | first : F, size : S,
+    Atts:AttributeSet >, P, O') F in O get at P if s P < S = true .
 
 Considering object completion on:
-  crl < O : List{X} | last : L, size : s S > < L : Node{X} | value : O' > O get
-    at P from O'' => get-blocked(< O : List{X} | none >, P, O'') < L : Node{X}
-    | none > to O' from O get if S = P [label get] .
+  crl [get] : < O : List{X} | last : L, size : s S > < L : Node{X} | value : O'
+    > O get at P from O'' => get-blocked(< O : List{X} | none >, P, O'') < L :
+    Node{X} | none > to O' from O get if S = P .
 Transformed rule:
-  crl < O : V2:List{X} | last : L, size : s S, Atts2:AttributeSet > < L :
-    V:Node{X} | value : O', Atts:AttributeSet > O get at P from O'' =>
+  crl [get] : < O : V2:List{X} | last : L, size : s S, Atts2:AttributeSet > < L
+    : V:Node{X} | value : O', Atts:AttributeSet > O get at P from O'' =>
     get-blocked(< O : V2:List{X} | last : L, size : s S, Atts2:AttributeSet >,
     P, O'') < L : V:Node{X} | value : O', Atts:AttributeSet > to O' from O get
-    if S = P [label get] .
+    if S = P .
 
 Considering object completion on:
-  rl < O : Node{X} | next : O', value : O'' > O in O''' get at P => < O : Node{
-    X} | none > if P == 0 then to O'' from O''' get else O' in O''' get at P -
-    1 fi [label get] .
+  rl [get] : < O : Node{X} | next : O', value : O'' > O in O''' get at P => < O
+    : Node{X} | none > if P == 0 then to O'' from O''' get else O' in O''' get
+    at P - 1 fi .
 Transformed rule:
-  rl < O : V:Node{X} | next : O', value : O'', Atts:AttributeSet > O in O'''
-    get at P => < O : V:Node{X} | next : O', value : O'', Atts:AttributeSet >
-    if P == 0 then to O'' from O''' get else O' in O''' get at P - 1 fi [label
-    get] .
+  rl [get] : < O : V:Node{X} | next : O', value : O'', Atts:AttributeSet > O in
+    O''' get at P => < O : V:Node{X} | next : O', value : O'',
+    Atts:AttributeSet > if P == 0 then to O'' from O''' get else O' in O''' get
+    at P - 1 fi .
 
 Considering object completion on:
-  rl get-blocked(< O : List{X} | none >, P, O') to O from O'' answer(X) => < O
-    : List{X} | none > to O' from O elt at pos P is X [label get] .
+  rl [get] : get-blocked(< O : List{X} | none >, P, O') to O from O'' answer(X)
+    => < O : List{X} | none > to O' from O elt at pos P is X .
 Transformed rule:
-  rl get-blocked(< O : V:List{X} | Atts:AttributeSet >, P, O') to O from O''
-    answer(X) => < O : V:List{X} | Atts:AttributeSet > to O' from O elt at pos
-    P is X [label get] .
+  rl [get] : get-blocked(< O : V:List{X} | Atts:AttributeSet >, P, O') to O
+    from O'' answer(X) => < O : V:List{X} | Atts:AttributeSet > to O' from O
+    elt at pos P is X .
 
 Considering object completion on:
   rl < O1 : NatWrapper | value : N > to O1 get from O2 => < O1 : NatWrapper |
@@ -153,24 +149,24 @@ Transformed rule:
     X) .
 
 Considering object completion on:
-  rl < O : SortedList{X} | size : 0 > O add O' => < O : SortedList{X} | none >
-    O add O' at 0 [label add] .
+  rl [add] : < O : SortedList{X} | size : 0 > O add O' => < O : SortedList{X} |
+    none > O add O' at 0 .
 Transformed rule:
-  rl < O : V:SortedList{X} | size : 0, Atts:AttributeSet > O add O' => < O :
-    V:SortedList{X} | size : 0, Atts:AttributeSet > O add O' at 0 [label add] .
+  rl [add] : < O : V:SortedList{X} | size : 0, Atts:AttributeSet > O add O' =>
+    < O : V:SortedList{X} | size : 0, Atts:AttributeSet > O add O' at 0 .
 
 Considering object completion on:
-  crl < O : SortedList{X} | first : F, size : S > < F : Node{TAOSET-WRAPPER}{X}
-    | previous : null, value : O' > < O' : X$Wrapper | contents : V > < O'' :
-    X$Wrapper | contents : V' > (O add O'') < O''' : Counter | index : N > => <
-    O : SortedList{X} | first : o(O, N), size : s S > < F : Node{
-    TAOSET-WRAPPER}{X} | previous : o(O, N) > < O' : X$Wrapper | none > < O'' :
-    X$Wrapper | none > < o(O, N) : Node{TAOSET-WRAPPER}{X} | next : F, previous
-    : null, value : O'' > < O''' : Counter | index : s N > if V' < V = true [
-    label add] .
+  crl [add] : < O : SortedList{X} | first : F, size : S > < F : Node{
+    TAOSET-WRAPPER}{X} | previous : null, value : O' > < O' : X$Wrapper |
+    contents : V > < O'' : X$Wrapper | contents : V' > (O add O'') < O''' :
+    Counter | index : N > => < O : SortedList{X} | first : o(O, N), size : s S
+    > < F : Node{TAOSET-WRAPPER}{X} | previous : o(O, N) > < O' : X$Wrapper |
+    none > < O'' : X$Wrapper | none > < o(O, N) : Node{TAOSET-WRAPPER}{X} |
+    next : F, previous : null, value : O'' > < O''' : Counter | index : s N >
+    if V' < V = true .
 Transformed rule:
-  crl < O : V2:SortedList{X} | first : F, size : S, Atts:AttributeSet > < F :
-    V3:Node{TAOSET-WRAPPER}{X} | previous : null, value : O',
+  crl [add] : < O : V2:SortedList{X} | first : F, size : S, Atts:AttributeSet >
+    < F : V3:Node{TAOSET-WRAPPER}{X} | previous : null, value : O',
     Atts2:AttributeSet > < O' : V4:X$Wrapper | contents : V, Atts3:AttributeSet
     > < O'' : V5:X$Wrapper | contents : V', Atts4:AttributeSet > (O add O'') <
     O''' : V6:Counter | index : N, Atts5:AttributeSet > => < O : V2:SortedList{
@@ -179,42 +175,42 @@ Transformed rule:
     O' : V4:X$Wrapper | contents : V, Atts3:AttributeSet > < O'' : V5:X$Wrapper
     | contents : V', Atts4:AttributeSet > < o(O, N) : Node{TAOSET-WRAPPER}{X} |
     next : F, previous : null, value : O'' > < O''' : V6:Counter | index : s N,
-    Atts5:AttributeSet > if V' < V = true [label add] .
+    Atts5:AttributeSet > if V' < V = true .
 
 Considering object completion on:
-  crl < O : SortedList{X} | last : L, size : S > < L : Node{TAOSET-WRAPPER}{X}
-    | next : null, value : O' > < O' : X$Wrapper | contents : V > < O'' :
-    X$Wrapper | contents : V' > (O add O'') < O''' : Counter | index : N > => <
-    O : SortedList{X} | last : o(O, N), size : s S > < L : Node{
-    TAOSET-WRAPPER}{X} | next : o(O, N) > < O' : X$Wrapper | none > < O'' :
-    X$Wrapper | none > < o(O, N) : Node{TAOSET-WRAPPER}{X} | next : null,
+  crl [add] : < O : SortedList{X} | last : L, size : S > < L : Node{
+    TAOSET-WRAPPER}{X} | next : null, value : O' > < O' : X$Wrapper | contents
+    : V > < O'' : X$Wrapper | contents : V' > (O add O'') < O''' : Counter |
+    index : N > => < O : SortedList{X} | last : o(O, N), size : s S > < L :
+    Node{TAOSET-WRAPPER}{X} | next : o(O, N) > < O' : X$Wrapper | none > < O''
+    : X$Wrapper | none > < o(O, N) : Node{TAOSET-WRAPPER}{X} | next : null,
     previous : L, value : O'' > < O''' : Counter | index : s N > if V < V' =
-    true [label add] .
+    true .
 Transformed rule:
-  crl < O : V3:SortedList{X} | last : L, size : S, Atts2:AttributeSet > < L :
-    V2:Node{TAOSET-WRAPPER}{X} | next : null, value : O', Atts:AttributeSet > <
-    O' : V4:X$Wrapper | contents : V, Atts3:AttributeSet > < O'' : V5:X$Wrapper
-    | contents : V', Atts4:AttributeSet > (O add O'') < O''' : V6:Counter |
-    index : N, Atts5:AttributeSet > => < O : V3:SortedList{X} | last : o(O, N),
-    size : s S, Atts2:AttributeSet > < L : V2:Node{TAOSET-WRAPPER}{X} | value :
-    O', next : o(O, N), Atts:AttributeSet > < O' : V4:X$Wrapper | contents : V,
-    Atts3:AttributeSet > < O'' : V5:X$Wrapper | contents : V',
-    Atts4:AttributeSet > < o(O, N) : Node{TAOSET-WRAPPER}{X} | next : null,
-    previous : L, value : O'' > < O''' : V6:Counter | index : s N,
-    Atts5:AttributeSet > if V < V' = true [label add] .
+  crl [add] : < O : V3:SortedList{X} | last : L, size : S, Atts2:AttributeSet >
+    < L : V2:Node{TAOSET-WRAPPER}{X} | next : null, value : O',
+    Atts:AttributeSet > < O' : V4:X$Wrapper | contents : V, Atts3:AttributeSet
+    > < O'' : V5:X$Wrapper | contents : V', Atts4:AttributeSet > (O add O'') <
+    O''' : V6:Counter | index : N, Atts5:AttributeSet > => < O : V3:SortedList{
+    X} | last : o(O, N), size : s S, Atts2:AttributeSet > < L : V2:Node{
+    TAOSET-WRAPPER}{X} | value : O', next : o(O, N), Atts:AttributeSet > < O' :
+    V4:X$Wrapper | contents : V, Atts3:AttributeSet > < O'' : V5:X$Wrapper |
+    contents : V', Atts4:AttributeSet > < o(O, N) : Node{TAOSET-WRAPPER}{X} |
+    next : null, previous : L, value : O'' > < O''' : V6:Counter | index : s N,
+    Atts5:AttributeSet > if V < V' = true .
 
 Considering object completion on:
-  crl < O : SortedList{X} | first : F, last : L > < F : Node{TAOSET-WRAPPER}{X}
-    | previous : null, value : O' > < O' : X$Wrapper | contents : V > < L :
-    Node{TAOSET-WRAPPER}{X} | next : null, value : O'' > < O'' : X$Wrapper |
-    contents : V' > < O''' : X$Wrapper | contents : V'' > O add O''' =>
-    add-blocked(< O : SortedList{X} | none >) < F : Node{TAOSET-WRAPPER}{X} |
-    none > < O' : X$Wrapper | none > < L : Node{TAOSET-WRAPPER}{X} | none > <
-    O'' : X$Wrapper | none > < O''' : X$Wrapper | none > F add' O''' if V < V''
-    = true /\ V'' < V' = true [label add] .
+  crl [add] : < O : SortedList{X} | first : F, last : L > < F : Node{
+    TAOSET-WRAPPER}{X} | previous : null, value : O' > < O' : X$Wrapper |
+    contents : V > < L : Node{TAOSET-WRAPPER}{X} | next : null, value : O'' > <
+    O'' : X$Wrapper | contents : V' > < O''' : X$Wrapper | contents : V'' > O
+    add O''' => add-blocked(< O : SortedList{X} | none >) < F : Node{
+    TAOSET-WRAPPER}{X} | none > < O' : X$Wrapper | none > < L : Node{
+    TAOSET-WRAPPER}{X} | none > < O'' : X$Wrapper | none > < O''' : X$Wrapper |
+    none > F add' O''' if V < V'' = true /\ V'' < V' = true .
 Transformed rule:
-  crl < O : V3:SortedList{X} | first : F, last : L, Atts2:AttributeSet > < F :
-    V4:Node{TAOSET-WRAPPER}{X} | previous : null, value : O',
+  crl [add] : < O : V3:SortedList{X} | first : F, last : L, Atts2:AttributeSet
+    > < F : V4:Node{TAOSET-WRAPPER}{X} | previous : null, value : O',
     Atts3:AttributeSet > < O' : V5:X$Wrapper | contents : V, Atts4:AttributeSet
     > < L : V2:Node{TAOSET-WRAPPER}{X} | next : null, value : O'',
     Atts:AttributeSet > < O'' : V6:X$Wrapper | contents : V',
@@ -225,41 +221,41 @@ Transformed rule:
     contents : V, Atts4:AttributeSet > < L : V2:Node{TAOSET-WRAPPER}{X} | next
     : null, value : O'', Atts:AttributeSet > < O'' : V6:X$Wrapper | contents :
     V', Atts5:AttributeSet > < O''' : V7:X$Wrapper | contents : V'',
-    Atts6:AttributeSet > F add' O''' if V < V'' = true /\ V'' < V' = true [
-    label add] .
+    Atts6:AttributeSet > F add' O''' if V < V'' = true /\ V'' < V' = true .
 
 Considering object completion on:
-  rl add-blocked(< L : SortedList{X} | size : S >) < O : Node{TAOSET-WRAPPER}{
-    X} | next : O', value : O'' > < O' : Node{TAOSET-WRAPPER}{X} | previous : O
-    > < O'' : X$Wrapper | contents : V > (O add' O''') < O''' : X$Wrapper |
-    contents : V' > < O4 : Counter | index : N > => if V' < V then < L :
-    SortedList{X} | size : s S > < O : Node{TAOSET-WRAPPER}{X} | next : o(O, N)
-    > < O' : Node{TAOSET-WRAPPER}{X} | previous : o(O, N) > < O'' : X$Wrapper |
-    contents : V > < o(O, N) : Node{TAOSET-WRAPPER}{X} | previous : O, next :
-    O', value : O''' > < O''' : X$Wrapper | contents : V' > < O4 : Counter |
-    index : s N > else add-blocked(< L : SortedList{X} | size : S >) < O :
-    Node{TAOSET-WRAPPER}{X} | none > < O' : Node{TAOSET-WRAPPER}{X} | none > <
-    O'' : X$Wrapper | none > < O''' : X$Wrapper | none > (O' add' O''') < O4 :
-    Counter | none > fi [label add] .
+  rl [add] : add-blocked(< L : SortedList{X} | size : S >) < O : Node{
+    TAOSET-WRAPPER}{X} | next : O', value : O'' > < O' : Node{TAOSET-WRAPPER}{
+    X} | previous : O > < O'' : X$Wrapper | contents : V > (O add' O''') < O'''
+    : X$Wrapper | contents : V' > < O4 : Counter | index : N > => if V' < V
+    then < L : SortedList{X} | size : s S > < O : Node{TAOSET-WRAPPER}{X} |
+    next : o(O, N) > < O' : Node{TAOSET-WRAPPER}{X} | previous : o(O, N) > <
+    O'' : X$Wrapper | contents : V > < o(O, N) : Node{TAOSET-WRAPPER}{X} |
+    previous : O, next : O', value : O''' > < O''' : X$Wrapper | contents : V'
+    > < O4 : Counter | index : s N > else add-blocked(< L : SortedList{X} |
+    size : S >) < O : Node{TAOSET-WRAPPER}{X} | none > < O' : Node{
+    TAOSET-WRAPPER}{X} | none > < O'' : X$Wrapper | none > < O''' : X$Wrapper |
+    none > (O' add' O''') < O4 : Counter | none > fi .
 Transformed rule:
-  rl add-blocked(< L : V2:SortedList{X} | size : S, Atts:AttributeSet >) < O :
-    V3:Node{TAOSET-WRAPPER}{X} | next : O', value : O'', Atts2:AttributeSet > <
-    O' : V4:Node{TAOSET-WRAPPER}{X} | previous : O, Atts3:AttributeSet > < O''
-    : V5:X$Wrapper | contents : V, Atts4:AttributeSet > (O add' O''') < O''' :
-    V6:X$Wrapper | contents : V', Atts5:AttributeSet > < O4 : V7:Counter |
-    index : N, Atts6:AttributeSet > => if V' < V then < L : V2:SortedList{X} |
-    size : s S, Atts:AttributeSet > < O : V3:Node{TAOSET-WRAPPER}{X} | value :
-    O'', next : o(O, N), Atts2:AttributeSet > < O' : V4:Node{TAOSET-WRAPPER}{X}
-    | previous : o(O, N), Atts3:AttributeSet > < O'' : V5:X$Wrapper | contents
-    : V, Atts4:AttributeSet > < o(O, N) : Node{TAOSET-WRAPPER}{X} | previous :
-    O, next : O', value : O''' > < O''' : V6:X$Wrapper | contents : V',
+  rl [add] : add-blocked(< L : V2:SortedList{X} | size : S, Atts:AttributeSet
+    >) < O : V3:Node{TAOSET-WRAPPER}{X} | next : O', value : O'',
+    Atts2:AttributeSet > < O' : V4:Node{TAOSET-WRAPPER}{X} | previous : O,
+    Atts3:AttributeSet > < O'' : V5:X$Wrapper | contents : V,
+    Atts4:AttributeSet > (O add' O''') < O''' : V6:X$Wrapper | contents : V',
+    Atts5:AttributeSet > < O4 : V7:Counter | index : N, Atts6:AttributeSet > =>
+    if V' < V then < L : V2:SortedList{X} | size : s S, Atts:AttributeSet > < O
+    : V3:Node{TAOSET-WRAPPER}{X} | value : O'', next : o(O, N),
+    Atts2:AttributeSet > < O' : V4:Node{TAOSET-WRAPPER}{X} | previous : o(O,
+    N), Atts3:AttributeSet > < O'' : V5:X$Wrapper | contents : V,
+    Atts4:AttributeSet > < o(O, N) : Node{TAOSET-WRAPPER}{X} | previous : O,
+    next : O', value : O''' > < O''' : V6:X$Wrapper | contents : V',
     Atts5:AttributeSet > < O4 : V7:Counter | index : s N, Atts6:AttributeSet >
     else add-blocked(< L : V2:SortedList{X} | size : S, Atts:AttributeSet >) <
     O : V3:Node{TAOSET-WRAPPER}{X} | next : O', value : O'', Atts2:AttributeSet
     > < O' : V4:Node{TAOSET-WRAPPER}{X} | previous : O, Atts3:AttributeSet > <
     O'' : V5:X$Wrapper | contents : V, Atts4:AttributeSet > < O''' :
     V6:X$Wrapper | contents : V', Atts5:AttributeSet > (O' add' O''') < O4 :
-    V7:Counter | index : N, Atts6:AttributeSet > fi [label add] .
+    V7:Counter | index : N, Atts6:AttributeSet > fi .
 
 op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
 op __ left-identity collapse from Configuration to Object is unequal.

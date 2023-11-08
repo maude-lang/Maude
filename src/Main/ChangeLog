@@ -1,3 +1,67 @@
+2023-11-06  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeAllowLineBreak and use it for \maudeComma
+
+2023-11-02  Steven Eker  <eker@pup>
+
+	* model-checker.maude: make _|=_ partial in order to protect
+	BOOL
+
+	* prelude.maude: added portal constant to fmod META-MODULE; added
+	op-hook portalSymbol to fmod META-LEVEL
+
+2023-11-01  Steven Eker  <eker@pup>
+
+	* prelude.maude: add portal attribute to <> in mod CONFIGURATION
+
+2023-10-30  Steven Eker  <eker@pup>
+
+	* prelude.maude: remove format attribute from AttributeSet _,_
+	changed format statements for NarrowingApplyResult,
+	NarrowingSearchResult, NarrowingSearchPathResult, NarrowingStep
+	to put explict space after commas
+
+2023-10-24  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeEllipsis
+
+2023-10-17  Steven Eker  <eker@pup>
+
+	* maude.sty: use \textnormal{:} for \maudeVariableColon;
+	use \mid for \maudeStratUnion
+	added ASCII versions for \maudeOneStep, \maudeAtLeastOneStep,
+	\maudeAnySteps, \maudeToNormalForm, \maudeIsAssigned
+	added ASCII versions for \maudePathWithLabel, \maudePathWithoutLabel
+	added ASCII versions for \maudePathLeft, \maudePathRight,
+	\maudeArcArrow
+
+2023-10-16  Steven Eker  <eker@pup>
+
+	* maude.sty: add space before --> for \maudeFunction in ASCII mode;
+	added \maudeConstantDecl
+
+2023-10-13  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeTilde
+
+2023-10-11  Steven Eker  <eker@pup>
+
+	* maude.sty: added ASCII option
+
+2023-10-10  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeRaw, \maudePipe
+
+2023-10-05  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudePrefixLabel
+
+2023-10-04  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeIter
+
+===================================Maude153===========================================
+
 2023-09-15  Steven Eker  <eker@pup>
 
 	* maude.sty: add \maudeUnify

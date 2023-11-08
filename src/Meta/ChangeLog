@@ -1,3 +1,11 @@
+2023-11-02  Steven Eker  <eker@pup>
+
+	* metaDownOps.cc (MetaLevel::downAttr): down portal attributes
+
+	* metaUpModule.cc (MetaLevel::upAttributeSet): up portal attributes
+
+	* metaLevelSignature.cc: added portalSymbol
+
 2023-06-05  Steven Eker  <eker@pup>
 
 	* descentFunctions.cc (MetaLevelOpSymbol::metaRewrite): deleted commented

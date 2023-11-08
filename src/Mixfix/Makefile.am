@@ -192,7 +192,8 @@ EXTRA_DIST = \
 	latexImportModule.cc \
 	latexStrategyPrint.cc \
 	latexResult.cc \
-	latexCommand.cc
+	latexCommand.cc \
+	latexPreModulePrint.cc
 
 noinst_HEADERS = \
 	renaming.hh \

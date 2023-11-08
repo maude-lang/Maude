@@ -30,39 +30,39 @@ mb applications: 0  equational rewrites: 13  rule rewrites: 14  variant
 result Configuration: <> < me : User | soln: 13, got: appliedRule(me,
     interpreter(0), 1, 'g['g['a.Foo]], 'Foo, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'f['b.Foo,'c.Foo], 'g['g[[]]]), got: appliedRule(me, interpreter(
+  'Y:Foo <- 'f['b.Foo, 'c.Foo], 'g['g[[]]]), got: appliedRule(me, interpreter(
     0), 1, 'g['g['b.Foo]], 'Foo, 
   'X:Foo <- 'b.Foo ; 
-  'Y:Foo <- 'f['a.Foo,'c.Foo], 'g['g[[]]]), got: appliedRule(me, interpreter(
+  'Y:Foo <- 'f['a.Foo, 'c.Foo], 'g['g[[]]]), got: appliedRule(me, interpreter(
     0), 1, 'g['g['c.Foo]], 'Foo, 
   'X:Foo <- 'c.Foo ; 
-  'Y:Foo <- 'f['a.Foo,'b.Foo], 'g['g[[]]]), got: appliedRule(me, interpreter(
-    0), 1, 'g['g['f['a.Foo,'b.Foo]]], 'Foo, 
+  'Y:Foo <- 'f['a.Foo, 'b.Foo], 'g['g[[]]]), got: appliedRule(me, interpreter(
+    0), 1, 'g['g['f['a.Foo, 'b.Foo]]], 'Foo, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'c.Foo, 'g['g['f['b.Foo,[]]]]), got: appliedRule(me, interpreter(
-    0), 1, 'g['g['f['a.Foo,'b.Foo]]], 'Foo, 
+  'Y:Foo <- 'c.Foo, 'g['g['f['b.Foo, []]]]), got: appliedRule(me, interpreter(
+    0), 1, 'g['g['f['a.Foo, 'b.Foo]]], 'Foo, 
   'X:Foo <- 'b.Foo ; 
-  'Y:Foo <- 'c.Foo, 'g['g['f['a.Foo,[]]]]), got: appliedRule(me, interpreter(
-    0), 1, 'g['g['f['a.Foo,'b.Foo]]], 'Foo, 
-  'X:Foo <- 'f['a.Foo,'b.Foo] ; 
+  'Y:Foo <- 'c.Foo, 'g['g['f['a.Foo, []]]]), got: appliedRule(me, interpreter(
+    0), 1, 'g['g['f['a.Foo, 'b.Foo]]], 'Foo, 
+  'X:Foo <- 'f['a.Foo, 'b.Foo] ; 
   'Y:Foo <- 'c.Foo, 'g['g[[]]]), got: appliedRule(me, interpreter(0), 1, 'g['g[
-    'f['a.Foo,'c.Foo]]], 'Foo, 
+    'f['a.Foo, 'c.Foo]]], 'Foo, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'b.Foo, 'g['g['f['c.Foo,[]]]]), got: appliedRule(me, interpreter(
-    0), 1, 'g['g['f['a.Foo,'c.Foo]]], 'Foo, 
+  'Y:Foo <- 'b.Foo, 'g['g['f['c.Foo, []]]]), got: appliedRule(me, interpreter(
+    0), 1, 'g['g['f['a.Foo, 'c.Foo]]], 'Foo, 
   'X:Foo <- 'c.Foo ; 
-  'Y:Foo <- 'b.Foo, 'g['g['f['a.Foo,[]]]]), got: appliedRule(me, interpreter(
-    0), 1, 'g['g['f['a.Foo,'c.Foo]]], 'Foo, 
-  'X:Foo <- 'f['a.Foo,'c.Foo] ; 
+  'Y:Foo <- 'b.Foo, 'g['g['f['a.Foo, []]]]), got: appliedRule(me, interpreter(
+    0), 1, 'g['g['f['a.Foo, 'c.Foo]]], 'Foo, 
+  'X:Foo <- 'f['a.Foo, 'c.Foo] ; 
   'Y:Foo <- 'b.Foo, 'g['g[[]]]), got: appliedRule(me, interpreter(0), 1, 'g['g[
-    'f['b.Foo,'c.Foo]]], 'Foo, 
+    'f['b.Foo, 'c.Foo]]], 'Foo, 
   'X:Foo <- 'b.Foo ; 
-  'Y:Foo <- 'a.Foo, 'g['g['f['c.Foo,[]]]]), got: appliedRule(me, interpreter(
-    0), 1, 'g['g['f['b.Foo,'c.Foo]]], 'Foo, 
+  'Y:Foo <- 'a.Foo, 'g['g['f['c.Foo, []]]]), got: appliedRule(me, interpreter(
+    0), 1, 'g['g['f['b.Foo, 'c.Foo]]], 'Foo, 
   'X:Foo <- 'c.Foo ; 
-  'Y:Foo <- 'a.Foo, 'g['g['f['b.Foo,[]]]]), got: appliedRule(me, interpreter(
-    0), 1, 'g['g['f['b.Foo,'c.Foo]]], 'Foo, 
-  'X:Foo <- 'f['b.Foo,'c.Foo] ; 
+  'Y:Foo <- 'a.Foo, 'g['g['f['b.Foo, []]]]), got: appliedRule(me, interpreter(
+    0), 1, 'g['g['f['b.Foo, 'c.Foo]]], 'Foo, 
+  'X:Foo <- 'f['b.Foo, 'c.Foo] ; 
   'Y:Foo <- 'a.Foo, 'g['g[[]]]), subst: none > noSuchResult(me, interpreter(0),
     0)
 ==========================================
@@ -74,12 +74,12 @@ mb applications: 0  equational rewrites: 4  rule rewrites: 5  variant narrowing
 result Configuration: <> < me : User | soln: 4, got: appliedRule(me,
     interpreter(0), 1, 'g['g['a.Foo]], 'Foo, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'f['b.Foo,'c.Foo], 'g['g[[]]]), got: appliedRule(me, interpreter(
-    0), 1, 'g['g['f['a.Foo,'b.Foo]]], 'Foo, 
+  'Y:Foo <- 'f['b.Foo, 'c.Foo], 'g['g[[]]]), got: appliedRule(me, interpreter(
+    0), 1, 'g['g['f['a.Foo, 'b.Foo]]], 'Foo, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'c.Foo, 'g['g['f['b.Foo,[]]]]), got: appliedRule(me, interpreter(
-    0), 1, 'g['g['f['a.Foo,'c.Foo]]], 'Foo, 
+  'Y:Foo <- 'c.Foo, 'g['g['f['b.Foo, []]]]), got: appliedRule(me, interpreter(
+    0), 1, 'g['g['f['a.Foo, 'c.Foo]]], 'Foo, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'b.Foo, 'g['g['f['c.Foo,[]]]]), subst: (
+  'Y:Foo <- 'b.Foo, 'g['g['f['c.Foo, []]]]), subst: (
   'X:Foo <- 'a.Foo) > noSuchResult(me, interpreter(0), 0)
 Bye.

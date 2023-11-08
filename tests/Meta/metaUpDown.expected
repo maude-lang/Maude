@@ -1,7 +1,7 @@
 ==========================================
 reduce in META-LEVEL : metaReduce(['BOOL], 'true.Bool) .
 rewrites: 2
-result ResultPair: {'true.Bool,'Bool}
+result ResultPair: {'true.Bool, 'Bool}
 ==========================================
 reduce in META-LEVEL : upTerm(1) .
 rewrites: 1
@@ -9,26 +9,26 @@ result GroundTerm: 's_['0.Zero]
 ==========================================
 reduce in META-LEVEL : upTerm(X:Nat + 21) .
 rewrites: 1
-result Term: '_+_['X:Nat,'s_^21['0.Zero]]
+result Term: '_+_['X:Nat, 's_^21['0.Zero]]
 ==========================================
 reduce in META-LEVEL : downTerm('s_['0.Zero], 0) .
 rewrites: 1
 result NzNat: 1
 ==========================================
-reduce in META-LEVEL : downTerm('_+_['X:Nat,'s_^21['0.Zero]], 0) .
+reduce in META-LEVEL : downTerm('_+_['X:Nat, 's_^21['0.Zero]], 0) .
 rewrites: 1
 result NzNat: X:Nat + 21
 ==========================================
 reduce in META-LEVEL : upTerm(upTerm(X:Nat + 21)) .
 rewrites: 2
-result GroundTerm: '_`[_`][''_+_.Sort,'_`,_[''X:Nat.Variable,'_`[_`][
-    ''s_^21.Sort,''0.Zero.Constant]]]
+result GroundTerm: '_`[_`][''_+_.Sort, '_`,_[''X:Nat.Variable, '_`[_`][
+    ''s_^21.Sort, ''0.Zero.Constant]]]
 ==========================================
 reduce in META-LEVEL : upTerm(upTerm(upTerm(X:Nat + 21))) .
 rewrites: 3
-result GroundTerm: '_`[_`][''_`[_`].Qid,'_`,_['''_+_.Sort.Constant,'_`[_`][
-    ''_`,_.Qid,'_`,_['''X:Nat.Variable.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
-    '''s_^21.Sort.Constant,'''0.Zero.Constant.Constant]]]]]]
+result GroundTerm: '_`[_`][''_`[_`].Qid, '_`,_['''_+_.Sort.Constant, '_`[_`][
+    ''_`,_.Qid, '_`,_['''X:Nat.Variable.Constant, '_`[_`][''_`[_`].Qid, '_`,_[
+    '''s_^21.Sort.Constant, '''0.Zero.Constant.Constant]]]]]]
 ==========================================
 reduce in META-LEVEL : downTerm(upTerm(X:Nat + 21), 0) .
 rewrites: 2
@@ -45,38 +45,38 @@ reduce in META-LEVEL : downTerm(downTerm(downTerm(upTerm(upTerm(upTerm(X:Nat +
 (built-in equation for symbol upTerm)
 upTerm(X:Nat + 21)
 --->
-'_+_['X:Nat,'s_^21['0.Zero]]
+'_+_['X:Nat, 's_^21['0.Zero]]
 *********** equation
 (built-in equation for symbol upTerm)
-upTerm('_+_['X:Nat,'s_^21['0.Zero]])
+upTerm('_+_['X:Nat, 's_^21['0.Zero]])
 --->
-'_`[_`][''_+_.Sort,'_`,_[''X:Nat.Variable,'_`[_`][''s_^21.Sort,
+'_`[_`][''_+_.Sort, '_`,_[''X:Nat.Variable, '_`[_`][''s_^21.Sort,
     ''0.Zero.Constant]]]
 *********** equation
 (built-in equation for symbol upTerm)
-upTerm('_`[_`][''_+_.Sort,'_`,_[''X:Nat.Variable,'_`[_`][''s_^21.Sort,
+upTerm('_`[_`][''_+_.Sort, '_`,_[''X:Nat.Variable, '_`[_`][''s_^21.Sort,
     ''0.Zero.Constant]]])
 --->
-'_`[_`][''_`[_`].Qid,'_`,_['''_+_.Sort.Constant,'_`[_`][''_`,_.Qid,'_`,_[
-    '''X:Nat.Variable.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
-    '''s_^21.Sort.Constant,'''0.Zero.Constant.Constant]]]]]]
+'_`[_`][''_`[_`].Qid, '_`,_['''_+_.Sort.Constant, '_`[_`][''_`,_.Qid, '_`,_[
+    '''X:Nat.Variable.Constant, '_`[_`][''_`[_`].Qid, '_`,_[
+    '''s_^21.Sort.Constant, '''0.Zero.Constant.Constant]]]]]]
 *********** equation
 (built-in equation for symbol downTerm)
-downTerm('_`[_`][''_`[_`].Qid,'_`,_['''_+_.Sort.Constant,'_`[_`][''_`,_.Qid,
-    '_`,_['''X:Nat.Variable.Constant,'_`[_`][''_`[_`].Qid,'_`,_[
-    '''s_^21.Sort.Constant,'''0.Zero.Constant.Constant]]]]]], X:Term)
+downTerm('_`[_`][''_`[_`].Qid, '_`,_['''_+_.Sort.Constant, '_`[_`][''_`,_.Qid,
+    '_`,_['''X:Nat.Variable.Constant, '_`[_`][''_`[_`].Qid, '_`,_[
+    '''s_^21.Sort.Constant, '''0.Zero.Constant.Constant]]]]]], X:Term)
 --->
-'_`[_`][''_+_.Sort,'_`,_[''X:Nat.Variable,'_`[_`][''s_^21.Sort,
+'_`[_`][''_+_.Sort, '_`,_[''X:Nat.Variable, '_`[_`][''s_^21.Sort,
     ''0.Zero.Constant]]]
 *********** equation
 (built-in equation for symbol downTerm)
-downTerm('_`[_`][''_+_.Sort,'_`,_[''X:Nat.Variable,'_`[_`][''s_^21.Sort,
+downTerm('_`[_`][''_+_.Sort, '_`,_[''X:Nat.Variable, '_`[_`][''s_^21.Sort,
     ''0.Zero.Constant]]], X:Term)
 --->
-'_+_['X:Nat,'s_^21['0.Zero]]
+'_+_['X:Nat, 's_^21['0.Zero]]
 *********** equation
 (built-in equation for symbol downTerm)
-downTerm('_+_['X:Nat,'s_^21['0.Zero]], 0)
+downTerm('_+_['X:Nat, 's_^21['0.Zero]], 0)
 --->
 X:Nat + 21
 rewrites: 6
@@ -84,23 +84,23 @@ result NzNat: X:Nat + 21
 ==========================================
 reduce in UP-DOWN-TEST : upTerm(f(a, f(b, c))) .
 rewrites: 2
-result GroundTerm: 'f['a.Foo,'f['b.Foo,'d.Foo]]
+result GroundTerm: 'f['a.Foo, 'f['b.Foo, 'd.Foo]]
 ==========================================
 reduce in UP-DOWN-TEST : upTerm(upTerm(f(a, f(b, c)))) .
 rewrites: 3
-result GroundTerm: '_`[_`][''f.Sort,'_`,_[''a.Foo.Constant,'_`[_`][''f.Sort,
-    '_`,_[''b.Foo.Constant,''d.Foo.Constant]]]]
+result GroundTerm: '_`[_`][''f.Sort, '_`,_[''a.Foo.Constant, '_`[_`][''f.Sort,
+    '_`,_[''b.Foo.Constant, ''d.Foo.Constant]]]]
 ==========================================
 reduce in UP-DOWN-TEST : downTerm(upTerm(upTerm(f(a, f(b, c)))), X:Term) .
 rewrites: 4
-result GroundTerm: 'f['a.Foo,'f['b.Foo,'d.Foo]]
+result GroundTerm: 'f['a.Foo, 'f['b.Foo, 'd.Foo]]
 ==========================================
 reduce in UP-DOWN-TEST : downTerm(downTerm(upTerm(upTerm(f(a, f(b, c)))),
     X:Term), a) .
 rewrites: 5
 result Foo: f(a, f(b, d))
 ==========================================
-reduce in UP-DOWN-TEST : downTerm('f['a.Foo,'f['b.Foo,'c.Foo]], a) .
+reduce in UP-DOWN-TEST : downTerm('f['a.Foo, 'f['b.Foo, 'c.Foo]], a) .
 rewrites: 2
 result Foo: f(a, f(b, d))
 Bye.

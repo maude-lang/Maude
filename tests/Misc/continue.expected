@@ -771,7 +771,7 @@ Solution 1
 rewrites: 3
 result Foo: g(a, d)
 *********** rule
-crl f(X, Y) => g(Z, X) if h(X) => i(Z) [label 1] .
+crl [1] : f(X, Y) => g(Z, X) if h(X) => i(Z) .
 X --> b
 Y --> a
 Z --> e

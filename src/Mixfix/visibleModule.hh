@@ -67,7 +67,6 @@ public:
   bool latexPrintStrategy(ostream& s, StrategyExpression* strategy, int requiredPrec = UNBOUNDED) const;
   
   static void latexPrintCondition(ostream& s, const Vector<ConditionFragment*>& condition);
-  static void latexPrintModuleName(ostream& s, Module* module);
 
 private:
   void showImports(ostream& s) const;
@@ -84,13 +83,13 @@ private:
   void latexShowPolymorphDecl(ostream& s, const char* indent, Index index);
 
 
-  static void latexPrintAttributes(ostream& s,
+  void latexPrintAttributes(ostream& s,
 			    const PreEquation* pe,
 			    int metadata,
 			    const PrintAttribute* printAttribute,
 			    bool owise = false,
 			    bool variant = false,
-			    bool narrowing = false);
+			    bool narrowing = false) const;
 
   void latexPrintMembershipAxiom(ostream& s, const char* indent, const SortConstraint* mb) const;
   void latexPrintEquation(ostream& s, const char* indent, const Equation* eq) const;
@@ -112,12 +111,6 @@ inline Interpreter*
 VisibleModule::getOwner() const
 {
   return owner;
-}
-
-inline void
-VisibleModule::latexPrintModuleName(ostream& s, Module* module)
-{
-  s << "\\maudeModule{" << Token::latexName(module->id()) << "}";
 }
 
 inline void

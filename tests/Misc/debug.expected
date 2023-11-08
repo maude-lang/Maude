@@ -35,5 +35,5 @@ sth 'BAR is
   none
 endsth
 rewrites: 4
-result ResultPair: {'c.Bar,'Bar}
+result ResultPair: {'c.Bar, 'Bar}
 Bye.

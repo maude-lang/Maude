@@ -3,7 +3,7 @@ reduce in META-TEST : metaVariantMatch(['XOR], upTerm(cst1 + X:XOR) <=? upTerm(
     cst2 + Y:XOR), empty, '#, none, 0) .
 rewrites: 7
 result Assignment: 
-  'X:XOR <- '_+_['cst1.Elem,'cst2.Elem,'Y:XOR]
+  'X:XOR <- '_+_['cst1.Elem, 'cst2.Elem, 'Y:XOR]
 ==========================================
 reduce in META-TEST : metaVariantMatch(['XOR], upTerm(cst1 + X:XOR) <=? upTerm(
     cst2 + Y:XOR), empty, '#, none, 1) .
@@ -29,34 +29,34 @@ reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=?
 rewrites: 4
 result Substitution: 
   'X:XOR <- '0.XOR ; 
-  'Y:XOR <- '_+_['cst1.Elem,'cst2.Elem]
+  'Y:XOR <- '_+_['cst1.Elem, 'cst2.Elem]
 ==========================================
 reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=?
     upTerm(cst1 + cst2), empty, '#, none, 3) .
 rewrites: 4
 result Substitution: 
-  'X:XOR <- '_+_['cst1.Elem,'cst2.Elem] ; 
+  'X:XOR <- '_+_['cst1.Elem, 'cst2.Elem] ; 
   'Y:XOR <- '0.XOR
 ==========================================
 reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=?
     upTerm(cst1 + cst2), empty, '#, none, 4) .
 rewrites: 4
 result Substitution: 
-  'X:XOR <- '_+_['cst1.Elem,'#1:XOR] ; 
-  'Y:XOR <- '_+_['cst2.Elem,'#1:XOR]
+  'X:XOR <- '_+_['cst1.Elem, '#1:XOR] ; 
+  'Y:XOR <- '_+_['cst2.Elem, '#1:XOR]
 ==========================================
 reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=?
     upTerm(cst1 + cst2), empty, '#, none, 5) .
 rewrites: 4
 result Substitution: 
-  'X:XOR <- '_+_['cst2.Elem,'#1:XOR] ; 
-  'Y:XOR <- '_+_['cst1.Elem,'#1:XOR]
+  'X:XOR <- '_+_['cst2.Elem, '#1:XOR] ; 
+  'Y:XOR <- '_+_['cst1.Elem, '#1:XOR]
 ==========================================
 reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=?
     upTerm(cst1 + cst2), empty, '#, none, 6) .
 rewrites: 4
 result Substitution: 
-  'X:XOR <- '_+_['cst1.Elem,'cst2.Elem,'#1:XOR] ; 
+  'X:XOR <- '_+_['cst1.Elem, 'cst2.Elem, '#1:XOR] ; 
   'Y:XOR <- '#1:XOR
 ==========================================
 reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=?
@@ -64,7 +64,7 @@ reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=?
 rewrites: 4
 result Substitution: 
   'X:XOR <- '#1:XOR ; 
-  'Y:XOR <- '_+_['cst1.Elem,'cst2.Elem,'#1:XOR]
+  'Y:XOR <- '_+_['cst1.Elem, 'cst2.Elem, '#1:XOR]
 ==========================================
 reduce in META-TEST : metaVariantMatch(['XOR], upTerm(X:XOR + Y:XOR) <=?
     upTerm(cst1 + cst2), empty, '#, none, 8) .

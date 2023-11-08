@@ -1,35 +1,35 @@
 ==========================================
-reduce in META-LEVEL : metaMatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
-    'b.Nat,'c.Nat]], '_*_['Y:Nat,'Z:Nat] := 'X:Nat, 0) .
+reduce in META-LEVEL : metaMatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat, '_+_[
+    'b.Nat, 'c.Nat]], '_*_['Y:Nat, 'Z:Nat] := 'X:Nat, 0) .
 rewrites: 2
 result Substitution: 
-  'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]] ; 
-  'Y:Nat <- '_+_['b.Nat,'c.Nat] ; 
+  'X:Nat <- '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]] ; 
+  'Y:Nat <- '_+_['b.Nat, 'c.Nat] ; 
   'Z:Nat <- 'a.Nat
 ==========================================
-reduce in META-LEVEL : metaMatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
-    'b.Nat,'c.Nat]], '_*_['Y:Nat,'Z:Nat] := 'X:Nat, 1) .
+reduce in META-LEVEL : metaMatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat, '_+_[
+    'b.Nat, 'c.Nat]], '_*_['Y:Nat, 'Z:Nat] := 'X:Nat, 1) .
 rewrites: 2
 result Substitution: 
-  'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]] ; 
+  'X:Nat <- '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]] ; 
   'Y:Nat <- 'a.Nat ; 
-  'Z:Nat <- '_+_['b.Nat,'c.Nat]
+  'Z:Nat <- '_+_['b.Nat, 'c.Nat]
 ==========================================
-reduce in META-LEVEL : metaMatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
-    'b.Nat,'c.Nat]], '_*_['Y:Nat,'Z:Nat] := 'X:Nat, 2) .
+reduce in META-LEVEL : metaMatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat, '_+_[
+    'b.Nat, 'c.Nat]], '_*_['Y:Nat, 'Z:Nat] := 'X:Nat, 2) .
 rewrites: 2
 result Substitution?: (noMatch).Substitution?
 ==========================================
-reduce in META-LEVEL : metaMatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
-    'b.Nat,'c.Nat]], '_*_['Y:Nat,'Z:Nat] := 'X:Nat /\ 'Y:Nat = 'a.Nat, 0) .
+reduce in META-LEVEL : metaMatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat, '_+_[
+    'b.Nat, 'c.Nat]], '_*_['Y:Nat, 'Z:Nat] := 'X:Nat /\ 'Y:Nat = 'a.Nat, 0) .
 rewrites: 2
 result Substitution: 
-  'X:Nat <- '_*_['a.Nat,'_+_['b.Nat,'c.Nat]] ; 
+  'X:Nat <- '_*_['a.Nat, '_+_['b.Nat, 'c.Nat]] ; 
   'Y:Nat <- 'a.Nat ; 
-  'Z:Nat <- '_+_['b.Nat,'c.Nat]
+  'Z:Nat <- '_+_['b.Nat, 'c.Nat]
 ==========================================
-reduce in META-LEVEL : metaMatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat,'_+_[
-    'b.Nat,'c.Nat]], '_*_['Y:Nat,'Z:Nat] := 'X:Nat /\ 'Y:Nat = 'a.Nat, 1) .
+reduce in META-LEVEL : metaMatch(['SEARCH-TEST], 'X:Nat, '_*_['a.Nat, '_+_[
+    'b.Nat, 'c.Nat]], '_*_['Y:Nat, 'Z:Nat] := 'X:Nat /\ 'Y:Nat = 'a.Nat, 1) .
 rewrites: 2
 result Substitution?: (noMatch).Substitution?
 ==========================================
@@ -42,7 +42,7 @@ reduce in META-LEVEL : metaMatch(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   none
   none
-endfm, 'f['Y:Foo,'Y:Foo], 'f['b.Foo,'b.Foo], nil, 0) .
+endfm, 'f['Y:Foo, 'Y:Foo], 'f['b.Foo, 'b.Foo], nil, 0) .
 rewrites: 1
 result Assignment: 
   'Y:Foo <- 'b.Foo
@@ -56,7 +56,7 @@ reduce in META-LEVEL : metaMatch(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   none
   none
-endfm, 'f['Y:Foo,'Y:Foo], 'f['b.Foo,'b.Foo], nil, 1) .
+endfm, 'f['Y:Foo, 'Y:Foo], 'f['b.Foo, 'b.Foo], nil, 1) .
 rewrites: 1
 result Substitution?: (noMatch).Substitution?
 ==========================================
@@ -69,7 +69,7 @@ reduce in META-LEVEL : metaMatch(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   none
   none
-endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo], nil, 0) .
+endfm, 'f['X:Foo, 'Y:Foo], 'f['a.Foo, 'b.Foo], nil, 0) .
 rewrites: 1
 result Substitution: 
   'X:Foo <- 'a.Foo ; 
@@ -84,7 +84,7 @@ reduce in META-LEVEL : metaMatch(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   none
   none
-endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo], nil, 1) .
+endfm, 'f['X:Foo, 'Y:Foo], 'f['a.Foo, 'b.Foo], nil, 1) .
 rewrites: 1
 result Substitution: 
   'X:Foo <- 'b.Foo ; 
@@ -99,7 +99,7 @@ reduce in META-LEVEL : metaMatch(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   none
   none
-endfm, 'f['X:Foo,'Y:Foo], 'f['a.Foo,'b.Foo], nil, 2) .
+endfm, 'f['X:Foo, 'Y:Foo], 'f['a.Foo, 'b.Foo], nil, 2) .
 rewrites: 1
 result Substitution?: (noMatch).Substitution?
 ==========================================
@@ -114,13 +114,13 @@ reduce in META-LEVEL : metaMatch(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   none
   none
-endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
-    nil, 0) .
+endfm, 'g['f['X:Foo, 'Y:Foo], 'Z:Foo], 'g['f['a.Foo, 'b.Foo], 'f['c.Foo,
+    'c.Foo]], nil, 0) .
 rewrites: 1
 result Substitution: 
   'X:Foo <- 'a.Foo ; 
   'Y:Foo <- 'b.Foo ; 
-  'Z:Foo <- 'f['c.Foo,'c.Foo]
+  'Z:Foo <- 'f['c.Foo, 'c.Foo]
 ==========================================
 reduce in META-LEVEL : metaMatch(fmod 'FOO is
   protecting 'BOOL .
@@ -133,13 +133,13 @@ reduce in META-LEVEL : metaMatch(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   none
   none
-endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
-    nil, 2) .
+endfm, 'g['f['X:Foo, 'Y:Foo], 'Z:Foo], 'g['f['a.Foo, 'b.Foo], 'f['c.Foo,
+    'c.Foo]], nil, 2) .
 rewrites: 1
 result Substitution: 
   'X:Foo <- 'c.Foo ; 
   'Y:Foo <- 'c.Foo ; 
-  'Z:Foo <- 'f['a.Foo,'b.Foo]
+  'Z:Foo <- 'f['a.Foo, 'b.Foo]
 ==========================================
 reduce in META-LEVEL : metaMatch(fmod 'FOO is
   protecting 'BOOL .
@@ -152,11 +152,11 @@ reduce in META-LEVEL : metaMatch(fmod 'FOO is
   op 'a : nil -> 'Foo [none] .
   none
   none
-endfm, 'g['f['X:Foo,'Y:Foo],'Z:Foo], 'g['f['a.Foo,'b.Foo],'f['c.Foo,'c.Foo]],
-    nil, 1) .
+endfm, 'g['f['X:Foo, 'Y:Foo], 'Z:Foo], 'g['f['a.Foo, 'b.Foo], 'f['c.Foo,
+    'c.Foo]], nil, 1) .
 rewrites: 1
 result Substitution: 
   'X:Foo <- 'b.Foo ; 
   'Y:Foo <- 'a.Foo ; 
-  'Z:Foo <- 'f['c.Foo,'c.Foo]
+  'Z:Foo <- 'f['c.Foo, 'c.Foo]
 Bye.

@@ -59,7 +59,7 @@ public:
   SyntacticPreModule(Token startToken, Token moduleName, Interpreter* owner);
   ~SyntacticPreModule();
 
-  void loseFocus();
+  void loseFocus(bool clearCaches);
   void finishModule(Token endToken);
   bool isComplete();
 
@@ -100,7 +100,7 @@ public:
   const ModuleDatabase::ImportMap* getAutoImports() const override;
 
   void dump();
-  void showModule(ostream& s = cout);
+  void showModule(ostream& s);
   //
   //	Utility functions - maybe they should go elsewhere?
   //
@@ -109,6 +109,8 @@ public:
   static bool checkFormatString(const char* string);
   static string stripAttributeSuffix(Symbol* attributeSymbol);
   static bool hasAttributeSuffix(Symbol* symbol);
+
+  void latexShowModule(ostream& s);
 
 private:
   //
@@ -267,7 +269,7 @@ private:
 
   void process();
 
-  static void printAttributes(ostream& s, const OpDef& opDef);
+  void printAttributes(ostream& s, const OpDef& opDef) const;
   static void printAttributes(ostream& s, const StratDecl& stratDecl);
   static void printSortTokenVector(ostream& s, const Vector<Token>& sorts);
 
@@ -334,6 +336,15 @@ private:
   bool transformPatternAttributes(ObjectInfo& oi, StatementInfo& si);
   bool transformSubjectAttributes(ObjectOccurrence& so, ObjectOccurrence& po);
   void garbageCollectAttributeSet(Term* attributeSet, Symbol* attributeSetSymbol) const;
+  //
+  //	LaTeX support.
+  //
+  void latexSortTokenVector(ostream& s, const Vector<Token>& sorts);
+  void latexTokenVector(ostream& s, const Vector<Token>& tokens, Index first, Index last);
+  void latexType(ostream& s, const Type& type);
+  void latexOpDef(ostream&s, const OpDef& opDef);
+  void latexAttributes(ostream& s, const OpDef& opDef);
+  void latexStratDecl(ostream& s, const StratDecl& stratDecl);
 
   int startTokenCode;
   bool lastSawOpDecl;

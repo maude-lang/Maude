@@ -140,7 +140,7 @@ MaudeLatexBuffer::generateBanner(const char* date, const char* time, time_t seco
 }
 
 void
-MaudeLatexBuffer::generateModuleName(Module* module)
+MaudeLatexBuffer::generateModuleName(NamedEntity* module)
 {
   output << "\\maudeModule{" << Token::latexName(module->id()) << "}";
 }

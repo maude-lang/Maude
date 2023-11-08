@@ -40,8 +40,8 @@ fmod BAR is
 endfm
 fmod THREE is
   including TWO * (sort Foo to Foo', sort Baz to Baz', sort Quux to Quux') .
-  sorts Jaz .
-  subsorts Jaz < Baz' .
+  sort Jaz .
+  subsort Jaz < Baz' .
 endfm
 fmod THREE is
   sorts Bool Baz' Bar Quux' Jaz .

@@ -1,83 +1,83 @@
 ==========================================
-reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat,'Y:Nat] =? '_+_[
-    'X:Nat,'Y:Nat], 0, 0) .
+reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat, 'Y:Nat] =? '_+_[
+    'X:Nat, 'Y:Nat], 0, 0) .
 rewrites: 2
 result UnificationTriple: {
-  'X:Nat <- '_+_['#1:Nat,'#3:Nat] ; 
-  'Y:Nat <- '_+_['#2:Nat,'#4:Nat],
-  'X:Nat <- '_+_['#1:Nat,'#2:Nat] ; 
-  'Y:Nat <- '_+_['#3:Nat,'#4:Nat],4}
+  'X:Nat <- '_+_['#1:Nat, '#3:Nat] ; 
+  'Y:Nat <- '_+_['#2:Nat, '#4:Nat], 
+  'X:Nat <- '_+_['#1:Nat, '#2:Nat] ; 
+  'Y:Nat <- '_+_['#3:Nat, '#4:Nat], 4}
 ==========================================
-reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat,'Y:Nat] =? '_+_[
-    'X:Nat,'Y:Nat], 0, 1) .
+reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat, 'Y:Nat] =? '_+_[
+    'X:Nat, 'Y:Nat], 0, 1) .
 rewrites: 2
 result UnificationTriple: {
-  'X:Nat <- '_+_['#2:Nat,'#3:Nat] ; 
-  'Y:Nat <- '#1:Nat,
-  'X:Nat <- '_+_['#1:Nat,'#3:Nat] ; 
-  'Y:Nat <- '#2:Nat,3}
+  'X:Nat <- '_+_['#2:Nat, '#3:Nat] ; 
+  'Y:Nat <- '#1:Nat, 
+  'X:Nat <- '_+_['#1:Nat, '#3:Nat] ; 
+  'Y:Nat <- '#2:Nat, 3}
 ==========================================
-reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat,'Y:Nat] =? '_+_[
-    'X:Nat,'Y:Nat], 0, 2) .
+reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat, 'Y:Nat] =? '_+_[
+    'X:Nat, 'Y:Nat], 0, 2) .
 rewrites: 2
 result UnificationTriple: {
   'X:Nat <- '#1:Nat ; 
-  'Y:Nat <- '_+_['#2:Nat,'#3:Nat],
-  'X:Nat <- '_+_['#1:Nat,'#3:Nat] ; 
-  'Y:Nat <- '#2:Nat,3}
+  'Y:Nat <- '_+_['#2:Nat, '#3:Nat], 
+  'X:Nat <- '_+_['#1:Nat, '#3:Nat] ; 
+  'Y:Nat <- '#2:Nat, 3}
 ==========================================
-reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat,'Y:Nat] =? '_+_[
-    'X:Nat,'Y:Nat], 0, 3) .
+reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat, 'Y:Nat] =? '_+_[
+    'X:Nat, 'Y:Nat], 0, 3) .
 rewrites: 2
 result UnificationTriple: {
-  'X:Nat <- '_+_['#2:Nat,'#3:Nat] ; 
-  'Y:Nat <- '#1:Nat,
+  'X:Nat <- '_+_['#2:Nat, '#3:Nat] ; 
+  'Y:Nat <- '#1:Nat, 
   'X:Nat <- '#2:Nat ; 
-  'Y:Nat <- '_+_['#1:Nat,'#3:Nat],3}
+  'Y:Nat <- '_+_['#1:Nat, '#3:Nat], 3}
 ==========================================
-reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat,'Y:Nat] =? '_+_[
-    'X:Nat,'Y:Nat], 0, 4) .
+reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat, 'Y:Nat] =? '_+_[
+    'X:Nat, 'Y:Nat], 0, 4) .
 rewrites: 2
 result UnificationTriple: {
   'X:Nat <- '#1:Nat ; 
-  'Y:Nat <- '#2:Nat,
+  'Y:Nat <- '#2:Nat, 
   'X:Nat <- '#1:Nat ; 
-  'Y:Nat <- '#2:Nat,2}
+  'Y:Nat <- '#2:Nat, 2}
 ==========================================
-reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat,'Y:Nat] =? '_+_[
-    'X:Nat,'Y:Nat], 0, 5) .
+reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat, 'Y:Nat] =? '_+_[
+    'X:Nat, 'Y:Nat], 0, 5) .
 rewrites: 2
 result UnificationTriple: {
   'X:Nat <- '#1:Nat ; 
-  'Y:Nat <- '_+_['#2:Nat,'#3:Nat],
+  'Y:Nat <- '_+_['#2:Nat, '#3:Nat], 
   'X:Nat <- '#2:Nat ; 
-  'Y:Nat <- '_+_['#1:Nat,'#3:Nat],3}
+  'Y:Nat <- '_+_['#1:Nat, '#3:Nat], 3}
 ==========================================
-reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat,'Y:Nat] =? '_+_[
-    'X:Nat,'Y:Nat], 0, 6) .
+reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat, 'Y:Nat] =? '_+_[
+    'X:Nat, 'Y:Nat], 0, 6) .
 rewrites: 2
 result UnificationTriple: {
   'X:Nat <- '#2:Nat ; 
-  'Y:Nat <- '#1:Nat,
+  'Y:Nat <- '#1:Nat, 
   'X:Nat <- '#1:Nat ; 
-  'Y:Nat <- '#2:Nat,2}
+  'Y:Nat <- '#2:Nat, 2}
 ==========================================
-reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat,'Y:Nat] =? '_+_[
-    'X:Nat,'Y:Nat], 0, 7) .
+reduce in META-LEVEL : metaDisjointUnify(['NAT], '_+_['X:Nat, 'Y:Nat] =? '_+_[
+    'X:Nat, 'Y:Nat], 0, 7) .
 rewrites: 2
 result UnificationTriple?: (noUnifier).UnificationTriple?
 ==========================================
-reduce in META-LEVEL : metaUnify(['NAT], '_+_['X:Nat,'Y:Nat] =? '_+_['A:Nat,
+reduce in META-LEVEL : metaUnify(['NAT], '_+_['X:Nat, 'Y:Nat] =? '_+_['A:Nat,
     'B:Nat], 100000000000000000000, 0) .
 rewrites: 2
 result UnificationPair: {
-  'A:Nat <- '_+_['#100000000000000000001:Nat,'#100000000000000000002:Nat] ; 
-  'B:Nat <- '_+_['#100000000000000000003:Nat,'#100000000000000000004:Nat] ; 
-  'X:Nat <- '_+_['#100000000000000000001:Nat,'#100000000000000000003:Nat] ; 
-  'Y:Nat <- '_+_['#100000000000000000002:Nat,'#100000000000000000004:Nat],
+  'A:Nat <- '_+_['#100000000000000000001:Nat, '#100000000000000000002:Nat] ; 
+  'B:Nat <- '_+_['#100000000000000000003:Nat, '#100000000000000000004:Nat] ; 
+  'X:Nat <- '_+_['#100000000000000000001:Nat, '#100000000000000000003:Nat] ; 
+  'Y:Nat <- '_+_['#100000000000000000002:Nat, '#100000000000000000004:Nat],
     100000000000000000004}
 ==========================================
-reduce in META-LEVEL : metaUnify(['NAT], '_+_['X:Nat,'Y:Nat] =? '_+_['#1:Nat,
+reduce in META-LEVEL : metaUnify(['NAT], '_+_['X:Nat, 'Y:Nat] =? '_+_['#1:Nat,
     'Y:Nat], 0, 0) .
 Warning: unsafe variable name #1:Nat in unification problem.
 rewrites: 1
@@ -92,32 +92,32 @@ result [UnificationPair?,MatchOrUnificationPair,MatchPair?]: metaUnify(sth 'NAT
   none
   none
   none
-endsth, '_+_['X:Nat,'Y:Nat] =? '_+_['#1:Nat,'Y:Nat], 0, 0)
+endsth, '_+_['X:Nat, 'Y:Nat] =? '_+_['#1:Nat, 'Y:Nat], 0, 0)
 ==========================================
 reduce in META-LEVEL : metaDisjointUnify(['BAZ], 'f['X:Foo] =? 'f['Y:Foo] /\
     'f['X:Foo] =? 'f['Z:Foo], 0, 0) .
 rewrites: 2
 result UnificationTriple: {
-  'X:Foo <- '#1:Foo,
+  'X:Foo <- '#1:Foo, 
   'Y:Foo <- '#1:Foo ; 
-  'Z:Foo <- '#1:Foo,1}
+  'Z:Foo <- '#1:Foo, 1}
 ==========================================
 reduce in META-LEVEL : metaDisjointUnify(['BAZ], 'f['Y:Foo] =? 'f['X:Foo] /\
     'f['Z:Foo] =? 'f['X:Foo], 0, 0) .
 rewrites: 2
 result UnificationTriple: {
   'Y:Foo <- '#1:Foo ; 
-  'Z:Foo <- '#1:Foo,
-  'X:Foo <- '#1:Foo,1}
+  'Z:Foo <- '#1:Foo, 
+  'X:Foo <- '#1:Foo, 1}
 ==========================================
 reduce in META-LEVEL : metaDisjointUnify(['BAZ], 'f['X:Foo] =? 'f['Y:Foo] /\
     'f['Y:Foo] =? 'f['X:Foo], 0, 0) .
 rewrites: 2
 result UnificationTriple: {
   'X:Foo <- '#1:Foo ; 
-  'Y:Foo <- '#2:Foo,
+  'Y:Foo <- '#2:Foo, 
   'X:Foo <- '#2:Foo ; 
-  'Y:Foo <- '#1:Foo,2}
+  'Y:Foo <- '#1:Foo, 2}
 ==========================================
 reduce in META-LEVEL : metaDisjointUnify(['BAZ], 'f['X:Foo] =? 'f['a.Foo] /\
     'f['X:Foo] =? 'f['b.Foo], 0, 0) .

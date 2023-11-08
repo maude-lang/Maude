@@ -6,7 +6,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
   none
-endfm, '_+_['1.0.FiniteFloat,'1.0.FiniteFloat]) .
+endfm, '_+_['1.0.FiniteFloat, '1.0.FiniteFloat]) .
 rewrites: 2
 result NeQidList: '1.0 '+ '1.0
 ==========================================
@@ -74,7 +74,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
   none
-endfm, '_/_['-_['s_['0.Zero]],'s_['0.Zero]]) .
+endfm, '_/_['-_['s_['0.Zero]], 's_['0.Zero]]) .
 rewrites: 2
 result Sort: '-1/1
 ==========================================
@@ -96,7 +96,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
   none
-endfm, '_/_['-_['s_^6789['0.Zero]],'s_^12345['0.Zero]]) .
+endfm, '_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]]) .
 rewrites: 2
 result Sort: '-6789/12345
 ==========================================
@@ -107,7 +107,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
   none
-endfm, '_/_['-_['s_^6789['0.Zero]],'s_^12345['0.Zero]], mixfix) .
+endfm, '_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]], mixfix) .
 rewrites: 2
 result NeTypeList: '- 's_^6789 '`( '0 '`) '/ 's_^12345 '`( '0 '`)
 ==========================================
@@ -118,7 +118,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
   none
-endfm, '_/_['-_['s_^6789['0.Zero]],'s_^12345['0.Zero]], mixfix number) .
+endfm, '_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]], mixfix number) .
 rewrites: 2
 result NeTypeList: '-6789 '/ '12345
 ==========================================
@@ -129,7 +129,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
   none
-endfm, '_/_['-_['s_^6789['0.Zero]],'s_^12345['0.Zero]], mixfix rat) .
+endfm, '_/_['-_['s_^6789['0.Zero]], 's_^12345['0.Zero]], mixfix rat) .
 rewrites: 2
 result Sort: '-6789/12345
 ==========================================
@@ -151,7 +151,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
   none
-endfm, 'X:Float ; 'Y:Float, '_/_['X:Float,'Y:Float], mixfix) .
+endfm, 'X:Float ; 'Y:Float, '_/_['X:Float, 'Y:Float], mixfix) .
 rewrites: 1
 result NeTypeList: 'X '/ 'Y
 Bye.

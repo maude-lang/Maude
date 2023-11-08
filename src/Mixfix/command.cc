@@ -25,12 +25,13 @@
 //
 
 void
-SyntacticPreModule::loseFocus()
+SyntacticPreModule::loseFocus(bool clearCaches)
 {
   if (flatModule != 0)
     {
       flatModule->clearMemo();
-      flatModule->reset();
+      if (clearCaches)
+	flatModule->reset();
       flatModule->economize();
     }
 }
@@ -75,23 +76,21 @@ SyntacticPreModule::showModule(ostream& s)
 	' ' << getImport(i) << " .\n";
     }
 
-  int nrSortDecls = sortDecls.length();
-  for (int i = 0; i < nrSortDecls; i++)
+  for (const Vector<Token>& sorts : sortDecls)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << "  sorts ";
-      printSortTokenVector(s, sortDecls[i]);
+      s << "  sort" << pluralize(sorts.size()) << " ";
+      printSortTokenVector(s, sorts);
       s << " .\n";
     }
 
-  int nrSubsortDecls = subsortDecls.length();
-  for (int i = 0; i < nrSubsortDecls; i++)
+  for (const Vector<Token>& subsorts : subsortDecls)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << "  subsorts ";
-      printSortTokenVector(s, subsortDecls[i]);
+      s << "  subsort" << pluralize(subsorts.size() - 2) << " ";
+      printSortTokenVector(s, subsorts);
       s << " .\n";
     }
 
@@ -109,11 +108,11 @@ SyntacticPreModule::showModule(ostream& s)
       s << " .\n";
     }
 
-  for (auto& sc : subclassDecls)
+  for (const auto& sc : subclassDecls)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << "  subclasses ";
+      s << ((sc.size() <= 3) ? "  subclass " : "  subclasses ");
       printSortTokenVector(s, sc);
       s << " .\n";
     }
@@ -139,7 +138,7 @@ SyntacticPreModule::showModule(ostream& s)
 	}
       if (st.getBasicType() != SymbolType::VARIABLE &&
 	  opDef.types.size() == 1 &&
-	  Token::auxProperty(opDecl.prefixName.code()) & Token::AUX_STRUCTURED_SORT)
+	  (Token::auxProperty(opDecl.prefixName.code()) & Token::AUX_STRUCTURED_SORT))
 	{
 	  //
 	  //	Looks like a parameterized constant so use parameterized sort printing code.
@@ -225,7 +224,7 @@ SyntacticPreModule::printStratDecl(ostream& s, const StratDecl& decl)
 }
 
 void
-SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
+SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef) const
 {
   SymbolType st = opDef.symbolType;  // copy
   if (st.hasFlag(SymbolType::MSG_STATEMENT))
@@ -260,6 +259,11 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
 	}
       s << ')';
     }
+  if (st.hasFlag(SymbolType::CTOR))
+    {
+      s << space << "ctor";
+      space = " ";
+    }
   //
   //	Theory attributes.
   //
@@ -271,31 +275,6 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
   if (st.hasFlag(SymbolType::COMM))
     {
       s << space << "comm";
-      space = " ";
-    }
-  if (st.hasFlag(SymbolType::ITER))
-    {
-      s << space << "iter";
-      space = " ";
-    }
-  if (st.hasFlag(SymbolType::MESSAGE))
-    {
-      s << space << "msg";
-      space = " ";
-    }
-  if (st.hasFlag(SymbolType::OBJECT))
-    {
-      s << space << "obj";
-      space = " ";
-    }
-  if (st.hasFlag(SymbolType::CONFIG))
-    {
-      s << space << "config";
-      space = " ";
-    }
-  if (st.hasFlag(SymbolType::PCONST))
-    {
-      s << space << "pconst";
       space = " ";
     }
   if (st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
@@ -311,6 +290,36 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
   if (st.hasFlag(SymbolType::IDEM))
     {
       s << space << "idem";
+      space = " ";
+    }
+  if (st.hasFlag(SymbolType::ITER))
+    {
+      s << space << "iter";
+      space = " ";
+    }
+  if (st.hasFlag(SymbolType::PCONST))
+    {
+      s << space << "pconst";
+      space = " ";
+    }
+  if (st.hasFlag(SymbolType::OBJECT))
+    {
+      s << space << "obj";
+      space = " ";
+    }
+  if (st.hasFlag(SymbolType::MESSAGE))
+    {
+      s << space << "msg";
+      space = " ";
+    }
+  if (st.hasFlag(SymbolType::PORTAL))
+    {
+      s << space << "portal";
+      space = " ";
+    }
+  if (st.hasFlag(SymbolType::CONFIG))
+    {
+      s << space << "config";
       space = " ";
     }
   //
@@ -347,11 +356,6 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
 	  s << ')';
 	}
     }
-  if (st.hasFlag(SymbolType::CTOR))
-    {
-      s << space << "ctor";
-      space = " ";
-    }
   //
   //	Syntactic attributes.
   //
@@ -381,16 +385,19 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef)
     {
       s << space << "special (";
       space = " ";
-      for (const Hook& h : opDef.special)
+      if (getOwner()->getPrintFlag(Interpreter::PRINT_HOOKS))
 	{
-	  static const char* hookTypes[] = {
-	    "id-hook", "op-hook", "term-hook"
-	  };
-	  s << "\n    " << hookTypes[h.type] << ' ' <<
-	    Token::name(h.name);
-	  if (!(h.details.empty()))
-	    s << " (" << h.details << ')';
+	  for (const Hook& h : opDef.special)
+	    {
+	      static const char* hookTypes[] = {"id-hook", "op-hook", "term-hook"};
+	      s << "\n    " << hookTypes[h.type] << ' ' <<
+		Token::name(h.name);
+	      if (!(h.details.empty()))
+		s << " (" << h.details << ')';
+	    }
 	}
+      else
+	s << "...";
       s << ')';
     }
   //

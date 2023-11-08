@@ -1,27 +1,27 @@
 Considering object completion on:
-  rl < I : Philosopher | status : thinking, timer : 0 > => < I : Philosopher |
-    status : hungry > [label get-hungry] .
+  rl [get-hungry] : < I : Philosopher | status : thinking, timer : 0 > => < I :
+    Philosopher | status : hungry > .
 Transformed rule:
-  rl < I : V:Philosopher | status : thinking, timer : 0, Atts > => < I :
-    V:Philosopher | timer : 0, status : hungry, Atts > [label get-hungry] .
+  rl [get-hungry] : < I : V:Philosopher | status : thinking, timer : 0, Atts >
+    => < I : V:Philosopher | timer : 0, status : hungry, Atts > .
 
 Considering object completion on:
-  crl < I : Philosopher | status : hungry, chopsticks : N > < J : Chopstick |
-    none > => < I : Philosopher | chopsticks : s N > if I == J or s I == J or I
-    == 4 and J == 0 = true [label grab-stick] .
+  crl [grab-stick] : < I : Philosopher | status : hungry, chopsticks : N > < J
+    : Chopstick | none > => < I : Philosopher | chopsticks : s N > if I == J or
+    s I == J or I == 4 and J == 0 = true .
 Transformed rule:
-  crl < I : V:Philosopher | status : hungry, chopsticks : N, Atts > < J :
-    V2:Chopstick | Atts2 > => < I : V:Philosopher | status : hungry, chopsticks
-    : s N, Atts > if I == J or s I == J or I == 4 and J == 0 = true [label
-    grab-stick] .
+  crl [grab-stick] : < I : V:Philosopher | status : hungry, chopsticks : N,
+    Atts > < J : V2:Chopstick | Atts2 > => < I : V:Philosopher | status :
+    hungry, chopsticks : s N, Atts > if I == J or s I == J or I == 4 and J == 0
+    = true .
 
 Considering object completion on:
-  rl < I : Philosopher | status : hungry, chopsticks : 2 > => < I : Philosopher
-    | status : eating, timer : EATING-TIME > [label eat] .
+  rl [eat] : < I : Philosopher | status : hungry, chopsticks : 2 > => < I :
+    Philosopher | status : eating, timer : EATING-TIME > .
 Transformed rule:
-  rl < I : V:Philosopher | status : hungry, chopsticks : 2, timer : A:[Rat,
-    TimeInf,Oid], Atts > => < I : V:Philosopher | chopsticks : 2, status :
-    eating, timer : EATING-TIME, Atts > [label eat] .
+  rl [eat] : < I : V:Philosopher | status : hungry, chopsticks : 2, timer : A:[
+    Rat,TimeInf,Oid], Atts > => < I : V:Philosopher | chopsticks : 2, status :
+    eating, timer : EATING-TIME, Atts > .
 
 Considering object completion on:
   eq mte(< I : Philosopher | timer : T, Atts1 > Conf) = minimum(T, mte(Conf)) .
@@ -47,7 +47,7 @@ result System: {< 0 : Philosopher | status : thinking, chopsticks : 0, timer :
     status : thinking, chopsticks : 0, timer : 0 > < 2 : Chopstick | none > < 3
     : Philosopher | status : thinking, chopsticks : 0, timer : 0 > < 3 :
     Chopstick | none > < 4 : Philosopher | status : thinking, chopsticks : 0,
-    timer : 0 > < 4 : Chopstick | none >,0}
+    timer : 0 > < 4 : Chopstick | none >, 0}
 ==========================================
 search [1] in DINING-PHILOSOPHERS : initState =>! S:System .
 
@@ -57,19 +57,19 @@ S:System --> {< 0 : Philosopher | status : hungry, chopsticks : 1, timer : 0 >
     < 1 : Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 2 :
     Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 3 :
     Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 4 :
-    Philosopher | status : hungry, chopsticks : 1, timer : 0 >,0}
+    Philosopher | status : hungry, chopsticks : 1, timer : 0 >, 0}
 Considering object completion on:
-  eq {< P : Philosopher | status : St > Conf,T} |= phil-status(P, St) = true .
+  eq {< P : Philosopher | status : St > Conf, T} |= phil-status(P, St) = true .
 Transformed equation:
-  eq {< P : V:Philosopher | status : St, Atts > Conf,T} |= phil-status(P, St) =
-    true .
+  eq {< P : V:Philosopher | status : St, Atts > Conf, T} |= phil-status(P, St)
+    = true .
 
 Considering object completion on:
-  eq {< P : Philosopher | chopsticks : N > Conf,T} |= phil-sticks(P, N) = true
+  eq {< P : Philosopher | chopsticks : N > Conf, T} |= phil-sticks(P, N) = true
     .
 Transformed equation:
-  eq {< P : V:Philosopher | chopsticks : N, Atts > Conf,T} |= phil-sticks(P, N)
-    = true .
+  eq {< P : V:Philosopher | chopsticks : N, Atts > Conf, T} |= phil-sticks(P,
+    N) = true .
 
 op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
 op __ left-identity collapse from Configuration to Object is unequal.
@@ -88,62 +88,63 @@ result ModelCheckResult: counterexample({{< 0 : Philosopher | status :
     Chopstick | none > < 2 : Philosopher | status : thinking, chopsticks : 0,
     timer : 0 > < 2 : Chopstick | none > < 3 : Philosopher | status : thinking,
     chopsticks : 0, timer : 0 > < 3 : Chopstick | none > < 4 : Philosopher |
-    status : thinking, chopsticks : 0, timer : 0 > < 4 : Chopstick | none >,0},
-    'get-hungry} {{< 0 : Philosopher | status : hungry, chopsticks : 0, timer :
-    0 > < 0 : Chopstick | none > < 1 : Philosopher | status : thinking,
+    status : thinking, chopsticks : 0, timer : 0 > < 4 : Chopstick | none >,
+    0}, 'get-hungry} {{< 0 : Philosopher | status : hungry, chopsticks : 0,
+    timer : 0 > < 0 : Chopstick | none > < 1 : Philosopher | status : thinking,
     chopsticks : 0, timer : 0 > < 1 : Chopstick | none > < 2 : Philosopher |
     status : thinking, chopsticks : 0, timer : 0 > < 2 : Chopstick | none > < 3
     : Philosopher | status : thinking, chopsticks : 0, timer : 0 > < 3 :
     Chopstick | none > < 4 : Philosopher | status : thinking, chopsticks : 0,
-    timer : 0 > < 4 : Chopstick | none >,0},'grab-stick} {{< 0 : Philosopher |
-    status : hungry, chopsticks : 1, timer : 0 > < 1 : Philosopher | status :
+    timer : 0 > < 4 : Chopstick | none >, 0}, 'grab-stick} {{< 0 : Philosopher
+    | status : hungry, chopsticks : 1, timer : 0 > < 1 : Philosopher | status :
     thinking, chopsticks : 0, timer : 0 > < 1 : Chopstick | none > < 2 :
     Philosopher | status : thinking, chopsticks : 0, timer : 0 > < 2 :
     Chopstick | none > < 3 : Philosopher | status : thinking, chopsticks : 0,
     timer : 0 > < 3 : Chopstick | none > < 4 : Philosopher | status : thinking,
-    chopsticks : 0, timer : 0 > < 4 : Chopstick | none >,0},'get-hungry} {{< 0
-    : Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 1 :
+    chopsticks : 0, timer : 0 > < 4 : Chopstick | none >, 0}, 'get-hungry} {{<
+    0 : Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 1 :
     Philosopher | status : hungry, chopsticks : 0, timer : 0 > < 1 : Chopstick
     | none > < 2 : Philosopher | status : thinking, chopsticks : 0, timer : 0 >
     < 2 : Chopstick | none > < 3 : Philosopher | status : thinking, chopsticks
     : 0, timer : 0 > < 3 : Chopstick | none > < 4 : Philosopher | status :
-    thinking, chopsticks : 0, timer : 0 > < 4 : Chopstick | none >,0},
+    thinking, chopsticks : 0, timer : 0 > < 4 : Chopstick | none >, 0},
     'grab-stick} {{< 0 : Philosopher | status : hungry, chopsticks : 1, timer :
     0 > < 1 : Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 2 :
     Philosopher | status : thinking, chopsticks : 0, timer : 0 > < 2 :
     Chopstick | none > < 3 : Philosopher | status : thinking, chopsticks : 0,
     timer : 0 > < 3 : Chopstick | none > < 4 : Philosopher | status : thinking,
-    chopsticks : 0, timer : 0 > < 4 : Chopstick | none >,0},'get-hungry} {{< 0
-    : Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 1 :
+    chopsticks : 0, timer : 0 > < 4 : Chopstick | none >, 0}, 'get-hungry} {{<
+    0 : Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 1 :
     Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 2 :
     Philosopher | status : hungry, chopsticks : 0, timer : 0 > < 2 : Chopstick
     | none > < 3 : Philosopher | status : thinking, chopsticks : 0, timer : 0 >
     < 3 : Chopstick | none > < 4 : Philosopher | status : thinking, chopsticks
-    : 0, timer : 0 > < 4 : Chopstick | none >,0},'grab-stick} {{< 0 :
+    : 0, timer : 0 > < 4 : Chopstick | none >, 0}, 'grab-stick} {{< 0 :
     Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 1 :
     Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 2 :
     Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 3 :
     Philosopher | status : thinking, chopsticks : 0, timer : 0 > < 3 :
     Chopstick | none > < 4 : Philosopher | status : thinking, chopsticks : 0,
-    timer : 0 > < 4 : Chopstick | none >,0},'get-hungry} {{< 0 : Philosopher |
-    status : hungry, chopsticks : 1, timer : 0 > < 1 : Philosopher | status :
+    timer : 0 > < 4 : Chopstick | none >, 0}, 'get-hungry} {{< 0 : Philosopher
+    | status : hungry, chopsticks : 1, timer : 0 > < 1 : Philosopher | status :
     hungry, chopsticks : 1, timer : 0 > < 2 : Philosopher | status : hungry,
     chopsticks : 1, timer : 0 > < 3 : Philosopher | status : hungry, chopsticks
     : 0, timer : 0 > < 3 : Chopstick | none > < 4 : Philosopher | status :
-    thinking, chopsticks : 0, timer : 0 > < 4 : Chopstick | none >,0},
+    thinking, chopsticks : 0, timer : 0 > < 4 : Chopstick | none >, 0},
     'grab-stick} {{< 0 : Philosopher | status : hungry, chopsticks : 1, timer :
     0 > < 1 : Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 2 :
     Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 3 :
     Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 4 :
     Philosopher | status : thinking, chopsticks : 0, timer : 0 > < 4 :
-    Chopstick | none >,0},'get-hungry} {{< 0 : Philosopher | status : hungry,
+    Chopstick | none >, 0}, 'get-hungry} {{< 0 : Philosopher | status : hungry,
     chopsticks : 1, timer : 0 > < 1 : Philosopher | status : hungry, chopsticks
     : 1, timer : 0 > < 2 : Philosopher | status : hungry, chopsticks : 1, timer
     : 0 > < 3 : Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 4
     : Philosopher | status : hungry, chopsticks : 0, timer : 0 > < 4 :
-    Chopstick | none >,0},'grab-stick}, {{< 0 : Philosopher | status : hungry,
-    chopsticks : 1, timer : 0 > < 1 : Philosopher | status : hungry, chopsticks
-    : 1, timer : 0 > < 2 : Philosopher | status : hungry, chopsticks : 1, timer
-    : 0 > < 3 : Philosopher | status : hungry, chopsticks : 1, timer : 0 > < 4
-    : Philosopher | status : hungry, chopsticks : 1, timer : 0 >,0},deadlock})
+    Chopstick | none >, 0}, 'grab-stick}, {{< 0 : Philosopher | status :
+    hungry, chopsticks : 1, timer : 0 > < 1 : Philosopher | status : hungry,
+    chopsticks : 1, timer : 0 > < 2 : Philosopher | status : hungry, chopsticks
+    : 1, timer : 0 > < 3 : Philosopher | status : hungry, chopsticks : 1, timer
+    : 0 > < 4 : Philosopher | status : hungry, chopsticks : 1, timer : 0 >, 0},
+    deadlock})
 Bye.

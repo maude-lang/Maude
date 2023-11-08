@@ -18,7 +18,7 @@ result FModule: fmod 'COND is
   op 'g : 'Foo 'Foo -> 'Foo [none] .
   op 'h : 'Foo -> 'Foo [none] .
   none
-  ceq 'f['X:Foo,'Y:Foo] = 'g['X:Foo,'Z:Foo] if 'Z:Foo := 'h['Y:Foo] [print(
+  ceq 'f['X:Foo, 'Y:Foo] = 'g['X:Foo, 'Z:Foo] if 'Z:Foo := 'h['Y:Foo] [print(
     '"X = " 'X:Foo '", Z = " 'Z:Foo)] .
 endfm
 ==========================================
@@ -35,12 +35,12 @@ reduce in META-LEVEL : metaReduce(fmod 'COND is
   op 'b : nil -> 'Foo [none] .)
   op 'a : nil -> 'Foo [none] .
   none
-  ceq 'f['X:Foo,'Y:Foo] = 'g['X:Foo,'Z:Foo] if 'Z:Foo := 'h['Y:Foo] [print(
+  ceq 'f['X:Foo, 'Y:Foo] = 'g['X:Foo, 'Z:Foo] if 'Z:Foo := 'h['Y:Foo] [print(
     '"X = " 'X:Foo '", Z = " 'Z:Foo)] .
-endfm, 'f['a.Foo,'b.Foo]) .
+endfm, 'f['a.Foo, 'b.Foo]) .
 X = a, Z = h(b)
 rewrites: 2
-result ResultPair: {'g['a.Foo,'h['b.Foo]],'Foo}
+result ResultPair: {'g['a.Foo, 'h['b.Foo]], 'Foo}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'COND is
   including 'BOOL .
@@ -55,10 +55,10 @@ reduce in META-LEVEL : metaReduce(fmod 'COND is
   op 'b : nil -> 'Foo [none] .)
   op 'a : nil -> 'Foo [none] .
   none
-  ceq 'f['X:Foo,'Y:Foo] = 'g['X:Foo,'Z:Foo] if 'Z:Foo := 'h['Y:Foo] [print(
+  ceq 'f['X:Foo, 'Y:Foo] = 'g['X:Foo, 'Z:Foo] if 'Z:Foo := 'h['Y:Foo] [print(
     nil)] .
-endfm, 'f['a.Foo,'b.Foo]) .
+endfm, 'f['a.Foo, 'b.Foo]) .
 
 rewrites: 2
-result ResultPair: {'g['a.Foo,'h['b.Foo]],'Foo}
+result ResultPair: {'g['a.Foo, 'h['b.Foo]], 'Foo}
 Bye.

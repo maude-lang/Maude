@@ -32,46 +32,46 @@ reduce in META-LEVEL : metaNarrowingApply(mod 'DAM-CONTROLLER-TEST is
   op 'tt : nil -> 'BoolT [ctor] .)
   op 'success : nil -> 'Success [ctor] .
   none
-  ((((((eq '_=:=_['X:Real?,'X:Real?] = 'tt.BoolT [variant] .
-  eq '_|_['X:Real?,'tt.BoolT] = 'X:Real? [variant] .)
-  eq '_=:=_['X:Real,'X:Real] = 'tt.BoolT [variant] .)
-  eq '_|_['X:Real,'tt.BoolT] = 'X:Real [variant] .)
+  ((((((eq '_=:=_['X:Real?, 'X:Real?] = 'tt.BoolT [variant] .
+  eq '_|_['X:Real?, 'tt.BoolT] = 'X:Real? [variant] .)
+  eq '_=:=_['X:Real, 'X:Real] = 'tt.BoolT [variant] .)
+  eq '_|_['X:Real, 'tt.BoolT] = 'X:Real [variant] .)
   eq 'aperture['close.Aperture] = '0/1.Real [variant] .)
   eq 'aperture['open1.Aperture] = '200/1.Real [variant] .)
   eq 'aperture['open3.Aperture] = '1200/1.Real [variant] .)
   eq 'aperture['open2.Aperture] = '400/1.Real [variant] .
-  rl '_|_['outflow['__['SC:Spillways,'`[_`,_`]['S:SpillwayId,'O:Aperture]]],
-    '_=:=_['aperture['O:Aperture],'X:Real]] => '_+_['X:Real,'outflow[
+  rl '_|_['outflow['__['SC:Spillways, '`[_`,_`]['S:SpillwayId, 'O:Aperture]]],
+    '_=:=_['aperture['O:Aperture], 'X:Real]] => '_+_['X:Real, 'outflow[
     'SC:Spillways]] [nonexec narrowing label('outflow-recursive)] .
-  rl '`{_;_;_;_`}['SC:Spillways,'V1:Real,'T:Real,'false.Bool] => '_>>_['_and_[
-    '_and_['_===_['V2:Real,'_-_['_+_['V1:Real,'_*_['INFLOW:Real,'DTIME:Real]],
-    '_*_['Y:Real,'DTIME:Real]]],'_>_['INFLOW:Real,'0/1.Real]],'_>_['DTIME:Real,
-    '0/1.Real]],'_=>>_['_==:==_['outflow['SC:Spillways],'Y:Real],'`{_;_;_;_`}[
-    'SC:Spillways,'V2:Real,'_+_['T:Real,'DTIME:Real],'true.Bool]]] [nonexec
-    narrowing label('volume)] .
-endm, '_=>>_['_==:==_['outflow['__['`[_`,_`]['s1.SpillwayId,'$22:Aperture],
-    '`[_`,_`]['s2.SpillwayId,'$23:Aperture],'`[_`,_`]['s3.SpillwayId,
-    '$24:Aperture]]],'$1:Real],'`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
-    '$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`][
-    's3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],
-    'false.Bool]], ('`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'$8:Aperture],
-    '`[_`,_`]['s2.SpillwayId,'$9:Aperture],'`[_`,_`]['s3.SpillwayId,
-    '$10:Aperture]],'$11:Real,'$12:Real,'false.Bool],'`{_;_;_;_`}['__[
-    '`[_`,_`]['s1.SpillwayId,'$25:Aperture],'`[_`,_`]['s2.SpillwayId,
-    '$26:Aperture],'`[_`,_`]['s3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_[
-    '$29:Real,'$30:Real],'true.Bool]), '%, none, 1) .
+  rl '`{_;_;_;_`}['SC:Spillways, 'V1:Real, 'T:Real, 'false.Bool] => '_>>_[
+    '_and_['_and_['_===_['V2:Real, '_-_['_+_['V1:Real, '_*_['INFLOW:Real,
+    'DTIME:Real]], '_*_['Y:Real, 'DTIME:Real]]], '_>_['INFLOW:Real,
+    '0/1.Real]], '_>_['DTIME:Real, '0/1.Real]], '_=>>_['_==:==_['outflow[
+    'SC:Spillways], 'Y:Real], '`{_;_;_;_`}['SC:Spillways, 'V2:Real, '_+_[
+    'T:Real, 'DTIME:Real], 'true.Bool]]] [nonexec narrowing label('volume)] .
+endm, '_=>>_['_==:==_['outflow['__['`[_`,_`]['s1.SpillwayId, '$22:Aperture],
+    '`[_`,_`]['s2.SpillwayId, '$23:Aperture], '`[_`,_`]['s3.SpillwayId,
+    '$24:Aperture]]], '$1:Real], '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
+    '$25:Aperture], '`[_`,_`]['s2.SpillwayId, '$26:Aperture], '`[_`,_`][
+    's3.SpillwayId, '$27:Aperture]], '$28:Real, '_+_['$29:Real, '$30:Real],
+    'false.Bool]], ('`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId, '$8:Aperture],
+    '`[_`,_`]['s2.SpillwayId, '$9:Aperture], '`[_`,_`]['s3.SpillwayId,
+    '$10:Aperture]], '$11:Real, '$12:Real, 'false.Bool], '`{_;_;_;_`}['__[
+    '`[_`,_`]['s1.SpillwayId, '$25:Aperture], '`[_`,_`]['s2.SpillwayId,
+    '$26:Aperture], '`[_`,_`]['s3.SpillwayId, '$27:Aperture]], '$28:Real, '_+_[
+    '$29:Real, '$30:Real], 'true.Bool]), '%, none, 1) .
 rewrites: 14
 result NarrowingApplyResult: {
-  '_=>>_['_==:==_['_+_['0/1.Real,'outflow['__['`[_`,_`]['s2.SpillwayId,
-    '@1:Aperture],'`[_`,_`]['s3.SpillwayId,'@2:Aperture]]]],'@3:Real],
-    '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'@4:Aperture],'`[_`,_`][
-    's2.SpillwayId,'@5:Aperture],'`[_`,_`]['s3.SpillwayId,'@6:Aperture]],
-    '@7:Real,'_+_['@8:Real,'@9:Real],'false.Bool]],'`[State`],
-  '_=>>_['_==:==_[[],'$1:Real],'`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
-    '$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`][
-    's3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],
+  '_=>>_['_==:==_['_+_['0/1.Real, 'outflow['__['`[_`,_`]['s2.SpillwayId,
+    '@1:Aperture], '`[_`,_`]['s3.SpillwayId, '@2:Aperture]]]], '@3:Real],
+    '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId, '@4:Aperture], '`[_`,_`][
+    's2.SpillwayId, '@5:Aperture], '`[_`,_`]['s3.SpillwayId, '@6:Aperture]],
+    '@7:Real, '_+_['@8:Real, '@9:Real], 'false.Bool]], '`[State`],
+  '_=>>_['_==:==_[[], '$1:Real], '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
+    '$25:Aperture], '`[_`,_`]['s2.SpillwayId, '$26:Aperture], '`[_`,_`][
+    's3.SpillwayId, '$27:Aperture]], '$28:Real, '_+_['$29:Real, '$30:Real],
     'false.Bool]],
-  'outflow-recursive,
+  'outflow-recursive, 
     '$1:Real <- '@3:Real ; 
     '$22:Aperture <- 'close.Aperture ; 
     '$23:Aperture <- '@1:Aperture ; 
@@ -81,11 +81,11 @@ result NarrowingApplyResult: {
     '$27:Aperture <- '@6:Aperture ; 
     '$28:Real <- '@7:Real ; 
     '$29:Real <- '@8:Real ; 
-    '$30:Real <- '@9:Real,
+    '$30:Real <- '@9:Real, 
     'O:Aperture <- 'close.Aperture ; 
     'S:SpillwayId <- 's1.SpillwayId ; 
-    'SC:Spillways <- '__['`[_`,_`]['s2.SpillwayId,'@1:Aperture],'`[_`,_`][
-    's3.SpillwayId,'@2:Aperture]] ; 
+    'SC:Spillways <- '__['`[_`,_`]['s2.SpillwayId, '@1:Aperture], '`[_`,_`][
+    's3.SpillwayId, '@2:Aperture]] ; 
     'X:Real <- '0/1.Real,
   '@
 }
@@ -123,40 +123,40 @@ reduce in META-LEVEL : metaNarrowingApply(mod 'DAM-CONTROLLER-TEST is
   op 'tt : nil -> 'BoolT [ctor] .)
   op 'success : nil -> 'Success [ctor] .
   none
-  ((((((eq '_=:=_['X:Real?,'X:Real?] = 'tt.BoolT [variant] .
-  eq '_|_['X:Real?,'tt.BoolT] = 'X:Real? [variant] .)
-  eq '_=:=_['X:Real,'X:Real] = 'tt.BoolT [variant] .)
-  eq '_|_['X:Real,'tt.BoolT] = 'X:Real [variant] .)
+  ((((((eq '_=:=_['X:Real?, 'X:Real?] = 'tt.BoolT [variant] .
+  eq '_|_['X:Real?, 'tt.BoolT] = 'X:Real? [variant] .)
+  eq '_=:=_['X:Real, 'X:Real] = 'tt.BoolT [variant] .)
+  eq '_|_['X:Real, 'tt.BoolT] = 'X:Real [variant] .)
   eq 'aperture['close.Aperture] = '0/1.Real [variant] .)
   eq 'aperture['open1.Aperture] = '200/1.Real [variant] .)
   eq 'aperture['open3.Aperture] = '1200/1.Real [variant] .)
   eq 'aperture['open2.Aperture] = '400/1.Real [variant] .
-  rl '_|_['outflow['__['SC:Spillways,'`[_`,_`]['S:SpillwayId,'O:Aperture]]],
-    '_=:=_['aperture['O:Aperture],'X:Real]] => '_+_['X:Real,'outflow[
+  rl '_|_['outflow['__['SC:Spillways, '`[_`,_`]['S:SpillwayId, 'O:Aperture]]],
+    '_=:=_['aperture['O:Aperture], 'X:Real]] => '_+_['X:Real, 'outflow[
     'SC:Spillways]] [nonexec narrowing label('outflow-recursive)] .
-endm, '_=>>_['_==:==_['outflow['__['`[_`,_`]['s1.SpillwayId,'$22:Aperture],
-    '`[_`,_`]['s2.SpillwayId,'$23:Aperture],'`[_`,_`]['s3.SpillwayId,
-    '$24:Aperture]]],'$1:Real],'`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
-    '$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`][
-    's3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],
-    'false.Bool]], ('`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'$8:Aperture],
-    '`[_`,_`]['s2.SpillwayId,'$9:Aperture],'`[_`,_`]['s3.SpillwayId,
-    '$10:Aperture]],'$11:Real,'$12:Real,'false.Bool],'`{_;_;_;_`}['__[
-    '`[_`,_`]['s1.SpillwayId,'$25:Aperture],'`[_`,_`]['s2.SpillwayId,
-    '$26:Aperture],'`[_`,_`]['s3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_[
-    '$29:Real,'$30:Real],'true.Bool]), '%, none, 1) .
+endm, '_=>>_['_==:==_['outflow['__['`[_`,_`]['s1.SpillwayId, '$22:Aperture],
+    '`[_`,_`]['s2.SpillwayId, '$23:Aperture], '`[_`,_`]['s3.SpillwayId,
+    '$24:Aperture]]], '$1:Real], '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
+    '$25:Aperture], '`[_`,_`]['s2.SpillwayId, '$26:Aperture], '`[_`,_`][
+    's3.SpillwayId, '$27:Aperture]], '$28:Real, '_+_['$29:Real, '$30:Real],
+    'false.Bool]], ('`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId, '$8:Aperture],
+    '`[_`,_`]['s2.SpillwayId, '$9:Aperture], '`[_`,_`]['s3.SpillwayId,
+    '$10:Aperture]], '$11:Real, '$12:Real, 'false.Bool], '`{_;_;_;_`}['__[
+    '`[_`,_`]['s1.SpillwayId, '$25:Aperture], '`[_`,_`]['s2.SpillwayId,
+    '$26:Aperture], '`[_`,_`]['s3.SpillwayId, '$27:Aperture]], '$28:Real, '_+_[
+    '$29:Real, '$30:Real], 'true.Bool]), '%, none, 1) .
 rewrites: 14
 result NarrowingApplyResult: {
-  '_=>>_['_==:==_['_+_['0/1.Real,'outflow['__['`[_`,_`]['s1.SpillwayId,
-    '@1:Aperture],'`[_`,_`]['s3.SpillwayId,'@2:Aperture]]]],'@3:Real],
-    '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,'@4:Aperture],'`[_`,_`][
-    's2.SpillwayId,'@5:Aperture],'`[_`,_`]['s3.SpillwayId,'@6:Aperture]],
-    '@7:Real,'_+_['@8:Real,'@9:Real],'false.Bool]],'`[State`],
-  '_=>>_['_==:==_[[],'$1:Real],'`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
-    '$25:Aperture],'`[_`,_`]['s2.SpillwayId,'$26:Aperture],'`[_`,_`][
-    's3.SpillwayId,'$27:Aperture]],'$28:Real,'_+_['$29:Real,'$30:Real],
+  '_=>>_['_==:==_['_+_['0/1.Real, 'outflow['__['`[_`,_`]['s1.SpillwayId,
+    '@1:Aperture], '`[_`,_`]['s3.SpillwayId, '@2:Aperture]]]], '@3:Real],
+    '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId, '@4:Aperture], '`[_`,_`][
+    's2.SpillwayId, '@5:Aperture], '`[_`,_`]['s3.SpillwayId, '@6:Aperture]],
+    '@7:Real, '_+_['@8:Real, '@9:Real], 'false.Bool]], '`[State`],
+  '_=>>_['_==:==_[[], '$1:Real], '`{_;_;_;_`}['__['`[_`,_`]['s1.SpillwayId,
+    '$25:Aperture], '`[_`,_`]['s2.SpillwayId, '$26:Aperture], '`[_`,_`][
+    's3.SpillwayId, '$27:Aperture]], '$28:Real, '_+_['$29:Real, '$30:Real],
     'false.Bool]],
-  'outflow-recursive,
+  'outflow-recursive, 
     '$1:Real <- '@3:Real ; 
     '$22:Aperture <- '@1:Aperture ; 
     '$23:Aperture <- 'close.Aperture ; 
@@ -166,11 +166,11 @@ result NarrowingApplyResult: {
     '$27:Aperture <- '@6:Aperture ; 
     '$28:Real <- '@7:Real ; 
     '$29:Real <- '@8:Real ; 
-    '$30:Real <- '@9:Real,
+    '$30:Real <- '@9:Real, 
     'O:Aperture <- 'close.Aperture ; 
     'S:SpillwayId <- 's2.SpillwayId ; 
-    'SC:Spillways <- '__['`[_`,_`]['s1.SpillwayId,'@1:Aperture],'`[_`,_`][
-    's3.SpillwayId,'@2:Aperture]] ; 
+    'SC:Spillways <- '__['`[_`,_`]['s1.SpillwayId, '@1:Aperture], '`[_`,_`][
+    's3.SpillwayId, '@2:Aperture]] ; 
     'X:Real <- '0/1.Real,
   '@
 }

@@ -25,11 +25,11 @@
 //
 
 void
-MixfixModule::latexPrettyPrint(ostream& s, Term* term)
+MixfixModule::latexPrettyPrint(ostream& s, Term* term, bool rangeKnown)
 {
   globalIndent = 0;
   MixfixModule* module = safeCastNonNull<MixfixModule*>(term->symbol()->getModule());
-  module->latexPrettyPrint(s, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+  module->latexPrettyPrint(s, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
 }
 
 void
@@ -120,9 +120,8 @@ MixfixModule::latexHandleIter(ostream& s, Term* term, const SymbolInfo& si, bool
   decideIteratedAmbiguity(rangeKnown, term->symbol(), number, needToDisambiguate, argumentRangeKnown);
   if (needToDisambiguate)
     s << "\\maudeLeftParen";
-
-  string prefixName = Token::latexIdentifier(term->symbol()->id()) +
-    "^{\\maudeNumber{" + number.get_str() + "}}";
+  
+  string prefixName = "\\maudeIter{" + Token::latexIdentifier(term->symbol()->id()) + "}{" + number.get_str() + "}";
   if (color != 0)
     s << color << prefixName << latexResetColor;
   else

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -114,6 +114,10 @@ public:
     PRINT_ATTRIBUTE_RL = 0x8000000,
     */
     //
+    //	Cache flags.
+    //
+    AUTO_CLEAR_CACHES = 0x10000000,
+    //
     //	Counter flags.
     //
     AUTO_CLEAR_RULES = 0x40000000,
@@ -129,7 +133,7 @@ public:
     DEFAULT_FLAGS = SHOW_COMMAND | SHOW_STATS | SHOW_TIMING | SHOW_LOOP_TIMING |
     COMPILE_COUNT |
     TRACE_CONDITION | TRACE_SUBSTITUTION | TRACE_MB | TRACE_EQ | TRACE_RL | TRACE_SD | TRACE_REWRITE | TRACE_BODY | TRACE_BUILTIN |
-    AUTO_CLEAR_PROFILE | AUTO_CLEAR_RULES | PRINT_ATTRIBUTE_NEWLINE
+    AUTO_CLEAR_PROFILE | AUTO_CLEAR_CACHES | AUTO_CLEAR_RULES | PRINT_ATTRIBUTE_NEWLINE
   };
 
   enum PrintFlags
@@ -144,6 +148,7 @@ public:
     PRINT_WITH_PARENS = 0x10,	// maximal parens
     PRINT_COLOR = 0x20,		// dag node coloring based on ctor/reduced status
     PRINT_DISAMBIG_CONST = 0x40,	// (c).s for every constant c
+    PRINT_LABEL_ATTRIBUTE = 0x80,	// use [label foo] after statement rather than [foo] : before statement
     //
     //	Prettyprinter flags for particular symbol types.
     //
@@ -151,9 +156,10 @@ public:
     PRINT_FLAT = 0x200,		// for assoc symbols
     PRINT_NUMBER = 0x400,	// for nats & ints
     PRINT_RAT = 0x800,		// for rats
+    PRINT_HOOKS = 0x1000,	// for built-ins
+    PRINT_COMBINE_VARS = 0x2000,	// for variables
 
-    DEFAULT_PRINT_FLAGS = PRINT_FORMAT | PRINT_MIXFIX | PRINT_WITH_ALIASES |
-    PRINT_FLAT | PRINT_NUMBER | PRINT_RAT
+    DEFAULT_PRINT_FLAGS = PRINT_FORMAT | PRINT_MIXFIX | PRINT_WITH_ALIASES | PRINT_FLAT | PRINT_NUMBER | PRINT_RAT | PRINT_HOOKS
   };
 
   Interpreter();
@@ -235,6 +241,7 @@ public:
   void showSummary() const;
   void showSortsAndSubsorts() const;
   void showModule(bool all = true) const;
+  void showPreModule() const;
   void showModules(bool all) const;
   void showView() const;
   void showProcessedView() const;

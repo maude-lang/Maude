@@ -11,7 +11,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, '`[ 'unseen '`], anyType) .
 rewrites: 2
-result ResultPair: {'`[_`]['token[''unseen.Qid]],'Foo}
+result ResultPair: {'`[_`]['token[''unseen.Qid]], 'Foo}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   including 'QID-LIST .
@@ -27,7 +27,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, '`[ '`], anyType) .
 rewrites: 2
-result ResultPair: {'`[_`]['token['nil.QidList]],'`[Foo`]}
+result ResultPair: {'`[_`]['token['nil.QidList]], '`[Foo`]}
 ==========================================
 reduce in META-LEVEL : metaParse(fmod 'FOO is
   including 'QID-LIST .
@@ -44,7 +44,7 @@ reduce in META-LEVEL : metaParse(fmod 'FOO is
   none
 endfm, '`[ 'a 'b 'c '`], anyType) .
 rewrites: 2
-result ResultPair: {'`[_`]['tokens['__[''a.Qid,''b.Qid,''c.Qid]]],'`[Foo`]}
+result ResultPair: {'`[_`]['tokens['__[''a.Qid, ''b.Qid, ''c.Qid]]], '`[Foo`]}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   nil
@@ -77,7 +77,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   none
 endfm, '_::`Foo['a.Foo]) .
 rewrites: 2
-result ResultPair: {'true.Bool,'Bool}
+result ResultPair: {'true.Bool, 'Bool}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   nil
@@ -88,9 +88,9 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   op 'id : nil -> 'Foo [none] .
   none
   none
-endfm, '+['a.Foo,'id.Foo]) .
+endfm, '+['a.Foo, 'id.Foo]) .
 rewrites: 1
-result ResultPair: {'a.Foo,'Foo}
+result ResultPair: {'a.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   nil
@@ -101,9 +101,9 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   op 'id : nil -> 'Foo [none] .
   none
   none
-endfm, '+['a.Foo,'id.Foo]) .
+endfm, '+['a.Foo, 'id.Foo]) .
 rewrites: 1
-result ResultPair: {'+['a.Foo,'id.Foo],'Foo}
+result ResultPair: {'+['a.Foo, 'id.Foo], 'Foo}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   nil
@@ -114,9 +114,9 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   op '+ : 'Foo 'Foo -> 'Foo [right-id('id.Foo)] .
   none
   none
-endfm, '+['a.Foo,'id.Foo]) .
+endfm, '+['a.Foo, 'id.Foo]) .
 rewrites: 1
-result ResultPair: {'a.Foo,'Foo}
+result ResultPair: {'a.Foo, 'Foo}
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   nil
@@ -132,7 +132,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
     term-hook('falseTerm, 'false.Bool))] .
   none
   none
-endfm, 'itef['true.Bool,'a.Foo,'b.Foo]) .
+endfm, 'itef['true.Bool, 'a.Foo, 'b.Foo]) .
 rewrites: 0
 result [ResultPair?]: metaReduce(fmod 'FOO is
   nil
@@ -148,7 +148,7 @@ result [ResultPair?]: metaReduce(fmod 'FOO is
   op 'true : nil -> 'Bool [none] .
   none
   none
-endfm, 'itef['true.Bool,'a.Foo,'b.Foo])
+endfm, 'itef['true.Bool, 'a.Foo, 'b.Foo])
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   nil
@@ -164,7 +164,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
     term-hook('falseTerm, 'false.Bool))] .
   none
   none
-endfm, 'itef['false.Bool,'a.Foo,'b.Foo]) .
+endfm, 'itef['false.Bool, 'a.Foo, 'b.Foo]) .
 rewrites: 0
 result [ResultPair?]: metaReduce(fmod 'FOO is
   nil
@@ -180,7 +180,7 @@ result [ResultPair?]: metaReduce(fmod 'FOO is
   op 'true : nil -> 'Bool [none] .
   none
   none
-endfm, 'itef['false.Bool,'a.Foo,'b.Foo])
+endfm, 'itef['false.Bool, 'a.Foo, 'b.Foo])
 ==========================================
 reduce in META-LEVEL : metaReduce(fmod 'FOO is
   nil
@@ -196,7 +196,7 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
     term-hook('notEqualTerm, '0.Bit))] .
   none
   none
-endfm, '=['a.Foo,'b.Foo]) .
+endfm, '=['a.Foo, 'b.Foo]) .
 rewrites: 0
 result [ResultPair?]: metaReduce(fmod 'FOO is
   nil
@@ -212,5 +212,5 @@ result [ResultPair?]: metaReduce(fmod 'FOO is
   op 'b : nil -> 'Foo [none] .
   none
   none
-endfm, '=['a.Foo,'b.Foo])
+endfm, '=['a.Foo, 'b.Foo])
 Bye.

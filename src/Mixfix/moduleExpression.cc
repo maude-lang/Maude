@@ -166,3 +166,63 @@ operator<<(ostream& s, const ModuleExpression* expr)
     }
   return s;
 }
+
+void
+ModuleExpression::latexPrint(ostream& s, const Module* enclosingModule) const
+{
+  switch (type)
+    {
+    case MODULE:
+      {
+	s << "\\maudeModule{" << Token::latexName(moduleName.code()) << "}";
+	break;
+      }
+    case SUMMATION:
+      {
+	const char* sep = "";
+	for (ModuleExpression* m :  modules)
+	  {
+	    s << sep;
+	    m->latexPrint(s);
+	    sep = "\\maudeSummation";
+	  }
+	break;
+      }
+    case RENAMING:
+      {
+	bool parensNeeded =  (module->getType() == ModuleExpression::SUMMATION);
+	if (parensNeeded)
+	  s << "\\maudeLeftParen";
+	module->latexPrint(s, enclosingModule);
+	if (parensNeeded)
+	  s << "\\maudeRightParen";
+	s << "\\maudeRenaming" << renaming->latexRenaming("\\maudeLeftParen", "\\maudeComma", nullptr, enclosingModule, true) <<
+	  "\\maudeRightParen";
+	break;
+      }
+    case INSTANTIATION:
+      {
+	bool parensNeeded = (module->getType() == ModuleExpression::SUMMATION || module->getType() == ModuleExpression::RENAMING);
+	if (parensNeeded)
+	  s << "\\maudeLeftParen";
+	module->latexPrint(s, enclosingModule);
+	if (parensNeeded)
+	    s << "\\maudeRightParen";
+	s << "\\maudeLeftBrace";
+	const char* sep = "";
+	for (const ViewExpression* ve : arguments)
+	  {
+	    s << sep;
+	    sep = "\\maudeComma";
+	    ve->latexPrint(s, enclosingModule);
+	  }
+	s << "\\maudeRightBrace";
+	break;
+      }
+    default:
+      //
+      //	We don't expect to encounter parameter copies.
+      //
+      CantHappen("not implemented");
+    }
+}

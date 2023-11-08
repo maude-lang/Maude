@@ -4,37 +4,40 @@ erewrite in RUN : <> < me : User | option: breadthFirst, output: empty, input:
     interpreterManager, me, none) .
 rewrites: 110
 result Configuration: <> < me : User | option: breadthFirst, output: ('__[
-    'M.RomanSymbol,'D.RomanSymbol,'C.RomanSymbol,'X.RomanSymbol,'V.RomanSymbol,
-    'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol]), solcount: 1,
-    input: '__['M.RomanSymbol,'C.RomanSymbol,'M.RomanSymbol,'X.RomanSymbol,
-    'C.RomanSymbol,'I.RomanSymbol,'X.RomanSymbol] @ 'additive-normal-form[[
-    empty]] > noSuchResult(me, interpreter(0), 0)
+    'M.RomanSymbol, 'D.RomanSymbol, 'C.RomanSymbol, 'X.RomanSymbol,
+    'V.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol,
+    'I.RomanSymbol]), solcount: 1, input: '__['M.RomanSymbol, 'C.RomanSymbol,
+    'M.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol, 'I.RomanSymbol,
+    'X.RomanSymbol] @ 'additive-normal-form[[empty]] > noSuchResult(me,
+    interpreter(0), 0)
 ==========================================
 erewrite in RUN : <> < me : User | option: depthFirst, output: empty, input:
     n1999 @ 'additive-normal-form[[empty]] > createInterpreter(
     interpreterManager, me, none) .
 rewrites: 110
 result Configuration: <> < me : User | option: depthFirst, output: ('__[
-    'M.RomanSymbol,'D.RomanSymbol,'C.RomanSymbol,'X.RomanSymbol,'V.RomanSymbol,
-    'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol]), solcount: 1,
-    input: '__['M.RomanSymbol,'C.RomanSymbol,'M.RomanSymbol,'X.RomanSymbol,
-    'C.RomanSymbol,'I.RomanSymbol,'X.RomanSymbol] @ 'additive-normal-form[[
-    empty]] > noSuchResult(me, interpreter(0), 11)
+    'M.RomanSymbol, 'D.RomanSymbol, 'C.RomanSymbol, 'X.RomanSymbol,
+    'V.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol,
+    'I.RomanSymbol]), solcount: 1, input: '__['M.RomanSymbol, 'C.RomanSymbol,
+    'M.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol, 'I.RomanSymbol,
+    'X.RomanSymbol] @ 'additive-normal-form[[empty]] > noSuchResult(me,
+    interpreter(0), 11)
 ==========================================
 erewrite in RUN : <> < me : User | option: depthFirst, output: empty, input:
     n1999 @ 'add[none]{empty} > createInterpreter(interpreterManager, me, none)
     .
 rewrites: 10
 result Configuration: <> < me : User | option: depthFirst, output: ('__[
-    'M.RomanSymbol,'D.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,
-    'X.RomanSymbol,'X.RomanSymbol,'C.RomanSymbol,'I.RomanSymbol,
-    'X.RomanSymbol],'__['M.RomanSymbol,'C.RomanSymbol,'M.RomanSymbol,
-    'X.RomanSymbol,'C.RomanSymbol,'V.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol,
-    'I.RomanSymbol,'I.RomanSymbol],'__['M.RomanSymbol,'C.RomanSymbol,
-    'M.RomanSymbol,'L.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,
-    'X.RomanSymbol,'I.RomanSymbol,'X.RomanSymbol]), solcount: 3, input: '__[
-    'M.RomanSymbol,'C.RomanSymbol,'M.RomanSymbol,'X.RomanSymbol,'C.RomanSymbol,
-    'I.RomanSymbol,'X.RomanSymbol] @ 'add[none]{empty} > noSuchResult(me,
+    'M.RomanSymbol, 'D.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol,
+    'I.RomanSymbol, 'X.RomanSymbol], '__['M.RomanSymbol, 'C.RomanSymbol,
+    'M.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol, 'V.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol], '__[
+    'M.RomanSymbol, 'C.RomanSymbol, 'M.RomanSymbol, 'L.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'I.RomanSymbol, 'X.RomanSymbol]), solcount: 3, input: '__['M.RomanSymbol,
+    'C.RomanSymbol, 'M.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol,
+    'I.RomanSymbol, 'X.RomanSymbol] @ 'add[none]{empty} > noSuchResult(me,
     interpreter(0), 0)
 ==========================================
 erewrite in RUN : <> < me : User | option: depthFirst, output: empty, input:
@@ -42,21 +45,22 @@ erewrite in RUN : <> < me : User | option: depthFirst, output: empty, input:
     interpreterManager, me, none) .
 rewrites: 74
 result Configuration: <> < me : User | option: depthFirst, output: ('__[
-    'M.RomanSymbol,'M.RomanSymbol,'C.RomanSymbol,'X.RomanSymbol,'C.RomanSymbol,
-    'V.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol,
-    'I.RomanSymbol],'__['M.RomanSymbol,'M.RomanSymbol,'C.RomanSymbol,
-    'L.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,
-    'I.RomanSymbol,'X.RomanSymbol],'__['M.RomanSymbol,'D.RomanSymbol,
-    'X.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,'C.RomanSymbol,
-    'X.RomanSymbol,'I.RomanSymbol,'X.RomanSymbol],'__['M.RomanSymbol,
-    'C.RomanSymbol,'M.RomanSymbol,'C.RomanSymbol,'X.RomanSymbol,'V.RomanSymbol,
-    'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol,'I.RomanSymbol],'__[
-    'M.RomanSymbol,'D.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,
-    'X.RomanSymbol,'X.RomanSymbol,'C.RomanSymbol,'X.RomanSymbol,
-    'I.RomanSymbol],'__['M.RomanSymbol,'C.RomanSymbol,'M.RomanSymbol,
-    'L.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,'X.RomanSymbol,
-    'X.RomanSymbol,'I.RomanSymbol]), solcount: 6, input: '__['M.RomanSymbol,
-    'C.RomanSymbol,'M.RomanSymbol,'X.RomanSymbol,'C.RomanSymbol,'I.RomanSymbol,
-    'X.RomanSymbol] @ 'sort[none]{empty} ; 'add[none]{empty} > noSuchResult(me,
-    interpreter(0), 0)
+    'M.RomanSymbol, 'M.RomanSymbol, 'C.RomanSymbol, 'X.RomanSymbol,
+    'C.RomanSymbol, 'V.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol], '__['M.RomanSymbol, 'M.RomanSymbol,
+    'C.RomanSymbol, 'L.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'I.RomanSymbol, 'X.RomanSymbol], '__[
+    'M.RomanSymbol, 'D.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol, 'X.RomanSymbol,
+    'I.RomanSymbol, 'X.RomanSymbol], '__['M.RomanSymbol, 'C.RomanSymbol,
+    'M.RomanSymbol, 'C.RomanSymbol, 'X.RomanSymbol, 'V.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol], '__[
+    'M.RomanSymbol, 'D.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol,
+    'X.RomanSymbol, 'I.RomanSymbol], '__['M.RomanSymbol, 'C.RomanSymbol,
+    'M.RomanSymbol, 'L.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol, 'I.RomanSymbol]), solcount:
+    6, input: '__['M.RomanSymbol, 'C.RomanSymbol, 'M.RomanSymbol,
+    'X.RomanSymbol, 'C.RomanSymbol, 'I.RomanSymbol, 'X.RomanSymbol] @ 'sort[
+    none]{empty} ; 'add[none]{empty} > noSuchResult(me, interpreter(0), 0)
 Bye.

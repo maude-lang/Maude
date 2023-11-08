@@ -22,7 +22,7 @@ endfm
 ==========================================
 reduce in META-LEVEL : metaReduce(upModule('MOD3, false), 's_^4['0.Nat]) .
 rewrites: 3
-result ResultPair: {'s_['0.Zero],'NzNat}
+result ResultPair: {'s_['0.Zero], 'NzNat}
 fmod MOD4 is
   eq s s s s X:Nat = X:Nat .
 endfm
@@ -46,5 +46,5 @@ endfm
 ==========================================
 reduce in META-LEVEL : metaReduce(upModule('MOD4, false), 's_^10['0.Nat]) .
 rewrites: 4
-result ResultPair: {'s_^2['0.Zero],'NzNat}
+result ResultPair: {'s_^2['0.Zero], 'NzNat}
 Bye.

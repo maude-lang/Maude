@@ -3,7 +3,7 @@ erewrite in TEST : <> < me : User | state: 0 > createInterpreter(
     interpreterManager, me, none) .
 rewrites: 7
 result Configuration: <> < me : User | state: 3 > reducedTerm(me, interpreter(
-    0), 1, 'fmod_is_sorts_.____endfm[''FOO.Sort,'nil.ImportList,
-    ''MetaLevelFoo.Sort,'none.SubsortDeclSet,'none.OpDeclSet,'none.MembAxSet,
-    'none.EquationSet], 'FModule)
+    0), 1, 'fmod_is_sorts_.____endfm[''FOO.Sort, 'nil.ImportList,
+    ''MetaLevelFoo.Sort, 'none.SubsortDeclSet, 'none.OpDeclSet,
+    'none.MembAxSet, 'none.EquationSet], 'FModule)
 Bye.

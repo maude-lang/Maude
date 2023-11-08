@@ -188,22 +188,23 @@ rewrites: 5
 result Configuration: <> < me : User | none > gotMaximalAritySet(me,
     interpreter(0), 'Nat 'PosRat ; 'PosRat 'Nat ; 'PosRat 'PosRat)
 ==========================================
-erewrite in SORT-TEST9 : <> < me : User | term: ('_+_['X:Nat,'_+_['Y:Rat,
+erewrite in SORT-TEST9 : <> < me : User | term: ('_+_['X:Nat, '_+_['Y:Rat,
     'X:Nat]]) > createInterpreter(interpreterManager, me, newProcess) .
 rewrites: 5
 result Configuration: <> < me : User | none > normalizedTerm(me, interpreter(
-    0), '_+_['X:Nat,'X:Nat,'Y:Rat], 'Rat)
+    0), '_+_['X:Nat, 'X:Nat, 'Y:Rat], 'Rat)
 ==========================================
-erewrite in SORT-TEST9 : <> < me : User | term: ('_+_['_+_['X:Nat,'Y:Rat],'_+_[
-    'Y:Rat,'X:Nat]]) > createInterpreter(interpreterManager, me, newProcess) .
-rewrites: 5
-result Configuration: <> < me : User | none > normalizedTerm(me, interpreter(
-    0), '_+_['X:Nat,'X:Nat,'Y:Rat,'Y:Rat], 'Rat)
-==========================================
-erewrite in SORT-TEST9 : <> < me : User | term: ('_+_['_+_['X:NzNat,'Y:PosRat],
-    '_+_['Y:PosRat,'X:NzNat]]) > createInterpreter(interpreterManager, me,
+erewrite in SORT-TEST9 : <> < me : User | term: ('_+_['_+_['X:Nat, 'Y:Rat],
+    '_+_['Y:Rat, 'X:Nat]]) > createInterpreter(interpreterManager, me,
     newProcess) .
 rewrites: 5
 result Configuration: <> < me : User | none > normalizedTerm(me, interpreter(
-    0), '_+_['X:NzNat,'X:NzNat,'Y:PosRat,'Y:PosRat], 'PosRat)
+    0), '_+_['X:Nat, 'X:Nat, 'Y:Rat, 'Y:Rat], 'Rat)
+==========================================
+erewrite in SORT-TEST9 : <> < me : User | term: ('_+_['_+_['X:NzNat,
+    'Y:PosRat], '_+_['Y:PosRat, 'X:NzNat]]) > createInterpreter(
+    interpreterManager, me, newProcess) .
+rewrites: 5
+result Configuration: <> < me : User | none > normalizedTerm(me, interpreter(
+    0), '_+_['X:NzNat, 'X:NzNat, 'Y:PosRat, 'Y:PosRat], 'PosRat)
 Bye.

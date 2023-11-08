@@ -240,6 +240,7 @@ Module::closeFixUps()
 void
 Module::closeTheory()
 {
+  DebugInfo("semi-compiling " << this);
   //
   //	This is where most of the work for analyzing and (semi-)compiling
   //	a module is done.

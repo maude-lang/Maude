@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 #include "token.hh"
 #include "renaming.hh"
 #include "viewExpression.hh"
+#include "importModule.hh"
 
 ViewExpression::ViewExpression(Token name)
  : name(name)
@@ -82,4 +83,35 @@ operator<<(ostream& s, const ViewExpression* expr)
   else
     s << expr->getName();
   return s;
+}
+
+void
+ViewExpression::latexPrint(ostream& s, const Module* enclosingModule) const
+{
+  if (isInstantiation())
+    {
+      view->latexPrint(s,  enclosingModule);
+      s << "\\maudeLeftBrace";
+      const char* sep = "";
+      for (const ViewExpression* ve : arguments)
+	{
+	  s << sep;
+	  sep = "\\maudeComma";
+	  ve->latexPrint(s, enclosingModule);
+	}
+      s << "\\maudeRightBrace";
+    }
+  else
+    {
+      //
+      //	If we don't have an enclosing module, a name cannot be a parameter.
+      //
+      int code = name.code();
+      if (enclosingModule == nullptr || (safeCastNonNull<const ImportModule*>(enclosingModule)->findParameterIndex(code) == NONE))
+	s << "\\maudeView{";
+      else
+	s << "\\maudeParameter{";
+      s << Token::latexName(code);
+      s << "}";
+    }
 }

@@ -98,6 +98,7 @@
 #include "fixUp.cc"
 #include "ops.cc"
 #include "command.cc"
+#include "latexPreModulePrint.cc"
 
 SyntacticPreModule::SyntacticPreModule(Token startToken, Token moduleName, Interpreter* owner)
   : PreModule(moduleName.code(), owner),

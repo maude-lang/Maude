@@ -1,5 +1,5 @@
 fmod FOO is
-  sorts Foo .
+  sort Foo .
   ops a b : -> Foo [metadata "bla bla"] .
   eq a = b [metadata "hmm"] .
 endfm
@@ -27,7 +27,7 @@ Warning: <standard input>, line 20 (fmod FOO2): bad token hmm.
 Warning: <standard input>, line 20 (fmod FOO2): no parse for statement
 eq a = b [metadata hmm] .
 fmod FOO2 is
-  sorts Foo .
+  sort Foo .
   ops a b : -> Foo .
   eq a = b [metadata hmm] .
 endfm
@@ -67,7 +67,7 @@ result FModule: fmod 'FOO3 is
   eq 'a.Foo = 'b.Foo [metadata("hmm")] .
 endfm
 fmod FOO4 is
-  sorts Foo .
+  sort Foo .
   op f : ??? -> Foo [poly (1) metadata "bla bla"] .
 endfm
 fmod FOO4 is
@@ -111,10 +111,10 @@ reduce in META-LEVEL : metaReduce(fmod 'FOO is
   eq 'a.Foo = 'b.Foo [metadata("hmm")] .
 endfm, 'a.Foo) .
 rewrites: 2
-result ResultPair: {'b.Foo,'Foo}
+result ResultPair: {'b.Foo, 'Foo}
 fmod BAR is
   sorts Foo Bar .
-  subsorts Foo < Bar .
+  subsort Foo < Bar .
   op f : Foo -> Foo [metadata "fooy"] .
   op f : Bar -> Bar [metadata "fubar"] .
 endfm

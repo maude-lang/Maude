@@ -207,7 +207,6 @@ MixfixModule::nonTerminal(const Sort* sort, NonTerminalType type)
 #include "latexCommon.cc"
 #include "latexTermPrint.cc"
 #include "latexDagNodePrint.cc"
-//#include "latexStrategyPrint.cc"
 #include "makeGrammar.cc"
 #include "doParse.cc"
 #include "entry.cc"
@@ -378,6 +377,8 @@ MixfixModule::closeSignature()
 	{
 	  cs->addObjects(objectSymbols);
 	  cs->addMessages(messageSymbols);
+	  cs->addPortals(portalSymbols);
+	  DebugInfo("added " << portalSymbols.size() << " portals");
 	}
     }
 }

@@ -7,7 +7,7 @@ result Configuration: <> < me : User | state: 3 > reducedTerm(me, interpreter(
 ==========================================
 reduce in TEST : metaReduce(bar, 'a.Foo) .
 rewrites: 3
-result ResultPair: {'b.Foo,'Foo}
+result ResultPair: {'b.Foo, 'Foo}
 ==========================================
 erewrite in TEST : <> < me : User | state: 0 > createInterpreter(
     interpreterManager, me, none) .

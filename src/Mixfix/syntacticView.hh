@@ -49,6 +49,7 @@ public:
   void showView(ostream& s);
   void showProcessedView(ostream& s);
   
+  void latexShowView(ostream& s);
   void latexShowProcessedView(ostream& s);
 
 private:
@@ -86,6 +87,8 @@ private:
   //	Internal function.
   //
   bool handleVarDecls();
+  static string latexType(const Type& type, const Module* module);
+
 
   VarDeclList varDecls;		// list of variable aliases declared
   TypeList varDefs;		// list of sorts used in variable declarations

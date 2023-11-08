@@ -1,12 +1,12 @@
 ==========================================
 erewrite in VARIANT-MATCH-TEST : <> < me : User | problem:('_+_['X:XOR,
-    'c1.Elem] <=? '_+_['Y:XOR,'c2.Elem],empty) > createInterpreter(
+    'c1.Elem] <=? '_+_['Y:XOR, 'c2.Elem], empty) > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 5
 result Configuration: <> < me : User | soln: 2, result(gotVariantMatcher(me,
     interpreter(0), 3, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem,'Y:XOR])), problem:('_+_['X:XOR,'c1.Elem]
-    <=? '_+_['Y:XOR,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 0,
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem, 'Y:XOR])), problem:('_+_['X:XOR, 'c1.Elem]
+    <=? '_+_['Y:XOR, 'c2.Elem], empty) > noSuchResult(me, interpreter(0), 0,
     true)
 ==========================================
 variant match in XOR : X + c1 <=? Y + c2 .
@@ -17,29 +17,31 @@ X --> c1 + c2 + Y
 
 No more matchers.
 ==========================================
-erewrite in VARIANT-MATCH-TEST : <> < me : User | problem:('_+_['X:XOR,'Y:XOR]
-    <=? '_+_['c1.Elem,'c2.Elem],empty) > createInterpreter(interpreterManager,
-    me, newProcess) .
+erewrite in VARIANT-MATCH-TEST : <> < me : User | problem:('_+_['X:XOR, 'Y:XOR]
+    <=? '_+_['c1.Elem, 'c2.Elem], empty) > createInterpreter(
+    interpreterManager, me, newProcess) .
 rewrites: 19
 result Configuration: <> < me : User | soln: 9, result(gotVariantMatcher(me,
     interpreter(0), 10, 
   'X:XOR <- 'c1.Elem ; 
-  'Y:XOR <- 'c2.Elem),gotVariantMatcher(me, interpreter(0), 0, 
+  'Y:XOR <- 'c2.Elem), gotVariantMatcher(me, interpreter(0), 0, 
   'X:XOR <- 'c2.Elem ; 
-  'Y:XOR <- 'c1.Elem),gotVariantMatcher(me, interpreter(0), 0, 
+  'Y:XOR <- 'c1.Elem), gotVariantMatcher(me, interpreter(0), 0, 
   'X:XOR <- '0.XOR ; 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem]),gotVariantMatcher(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem] ; 
-  'Y:XOR <- '0.XOR),gotVariantMatcher(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'#1:XOR] ; 
-  'Y:XOR <- '_+_['c2.Elem,'#1:XOR]),gotVariantMatcher(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c2.Elem,'#1:XOR] ; 
-  'Y:XOR <- '_+_['c1.Elem,'#1:XOR]),gotVariantMatcher(me, interpreter(0), 0, 
-  'X:XOR <- '_+_['c1.Elem,'c2.Elem,'#1:XOR] ; 
-  'Y:XOR <- '#1:XOR),gotVariantMatcher(me, interpreter(0), 0, 
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem]), gotVariantMatcher(me, interpreter(0), 0,
+    
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem] ; 
+  'Y:XOR <- '0.XOR), gotVariantMatcher(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, '#1:XOR] ; 
+  'Y:XOR <- '_+_['c2.Elem, '#1:XOR]), gotVariantMatcher(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c2.Elem, '#1:XOR] ; 
+  'Y:XOR <- '_+_['c1.Elem, '#1:XOR]), gotVariantMatcher(me, interpreter(0), 0, 
+  'X:XOR <- '_+_['c1.Elem, 'c2.Elem, '#1:XOR] ; 
+  'Y:XOR <- '#1:XOR), gotVariantMatcher(me, interpreter(0), 0, 
   'X:XOR <- '#1:XOR ; 
-  'Y:XOR <- '_+_['c1.Elem,'c2.Elem,'#1:XOR])), problem:('_+_['X:XOR,'Y:XOR] <=?
-    '_+_['c1.Elem,'c2.Elem],empty) > noSuchResult(me, interpreter(0), 0, true)
+  'Y:XOR <- '_+_['c1.Elem, 'c2.Elem, '#1:XOR])), problem:('_+_['X:XOR, 'Y:XOR]
+    <=? '_+_['c1.Elem, 'c2.Elem], empty) > noSuchResult(me, interpreter(0), 0,
+    true)
 ==========================================
 variant match in XOR : X + Y <=? c1 + c2 .
 rewrites: 10

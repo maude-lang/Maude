@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version alpha151.
+***	Version alpha153.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -1850,6 +1850,7 @@ fmod META-MODULE is
   op config : -> Attr [ctor] .
   op object : -> Attr [ctor] .
   op msg : -> Attr [ctor] .
+  op portal : -> Attr [ctor] .
   op pconst : -> Attr [ctor] .
   op frozen : NeNatList -> Attr [ctor] .
   op poly : NeNatList -> Attr [ctor] .
@@ -2215,14 +2216,14 @@ fmod META-LEVEL is
   op {_,_,_,_} : Term Substitution Term Nat -> SmtResult [ctor] .
 
   op {_,_,_,_,_,_,_} : Term Type Context Qid Substitution Substitution Qid -> NarrowingApplyResult
-       [ctor format (d n++i d d d ni d ni d d d d d ni n--i d)] .
+       [ctor format (d n++i d s d ni d ni d s d s d ni n--i d)] .
   op {_,_,_,_,_,_} : Term Type Substitution Qid Substitution Qid -> NarrowingSearchResult
-       [ctor format (d n++i d d d d d ni d d d ni n--i d)] .
+       [ctor format (d n++i d s d s d ni d s d ni n--i d)] .
   op {_,_,_,_,_,_} : Term Type Substitution NarrowingTrace Substitution Qid -> NarrowingSearchPathResult
-       [ctor format (d n++i d d d d d d d d d ni n--i d)] .
+       [ctor format (d n++i d s d s d s d s d ni n--i d)] .
 
   op {_,_,_,_,_,_,_} : Context Qid Substitution Qid Term Type Substitution -> NarrowingStep
-       [ctor format (ni n++i d ni d d d ni d ni d d d d n--i d)] .
+       [ctor format (ni n++i d ni d s d ni d ni d s d s n--i d)] .
 
   op nil : -> NarrowingTrace [ctor] .
   op __ : NarrowingTrace NarrowingTrace -> NarrowingTrace [ctor assoc id: nil] .
@@ -2526,6 +2527,7 @@ fmod META-LEVEL is
         op-hook configSymbol		(config : ~> Attr)
         op-hook objectSymbol		(object : ~> Attr)
         op-hook msgSymbol		(msg : ~> Attr)
+        op-hook portalSymbol		(portal : ~> Attr)
         op-hook pconstSymbol		(pconst : ~> Attr)
         op-hook specialSymbol		(special : NeHookList ~> Attr)
 
@@ -3113,7 +3115,7 @@ mod CONFIGURATION is
   sorts Attribute AttributeSet .
   subsort Attribute < AttributeSet .
   op none : -> AttributeSet  [ctor] .
-  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none format (d d s d)] .
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none] .
 
   sorts Oid Cid Object Msg Portal Configuration .
   subsort Object Msg Portal < Configuration .
@@ -3123,7 +3125,7 @@ mod CONFIGURATION is
 						 op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~> AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor config assoc comm id: none] .
-  op <> : -> Portal [ctor] .
+  op <> : -> Portal [ctor portal] .
 
   op getClass : Object -> Cid .
   eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid . 

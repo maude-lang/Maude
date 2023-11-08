@@ -26,7 +26,7 @@ fmod BAR{Y :: TRIV} is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op b : -> Bool .
-  eq b = (c{Y}).Bool .
+  eq b = c{Y} .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .
   eq A:Bool and A:Bool = A:Bool .

@@ -407,11 +407,11 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
 	  const char* sep = "";
 	  if (variantFlags & VariantSearch::IRREDUNDANT_MODE)
 	    {
-	      output << "\\maudeKeyWord{delay}";
+	      output << "\\maudeKeyword{delay}";
 	      sep = "\\maudePunctuation{,}\\maudeSpace";
 	    }
 	  if (variantFlags & VariantUnificationProblem::FILTER_VARIANT_UNIFIERS)
-	    output << sep << "\\maudeKeyWord{filter}";
+	    output << sep << "\\maudeKeyword{filter}";
 	  output << "\\maudeRightBrace";
 	}
       generateModifiers(module, limit, depth);
@@ -513,7 +513,7 @@ MaudeLatexBuffer::generateContinue(bool showCommand, Int64 limit, bool debug)
 }
 
 void
-MaudeLatexBuffer::generateShow(bool showCommand, const string& command, Module* module)
+MaudeLatexBuffer::generateShow(bool showCommand, const string& command, NamedEntity* module)
 {
   output << "\\begin{comment}\n%\n%  " << command << " " << module << " .\n%\n\\end{comment}\n\\begin{maudeShowParagraph}";
   if (showCommand)

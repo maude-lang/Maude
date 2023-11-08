@@ -4,13 +4,13 @@ erewrite in MATCH-TEST : <> < me : User | soln: 0 > createInterpreter(
 rewrites: 3
 result Configuration: <> < me : User | none > gotMatch(me, interpreter(0), 0, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'f['b.Foo,'a.Foo])
+  'Y:Foo <- 'f['b.Foo, 'a.Foo])
 ==========================================
 erewrite in MATCH-TEST : <> < me : User | soln: 1 > createInterpreter(
     interpreterManager, me, none) .
 rewrites: 3
 result Configuration: <> < me : User | none > gotMatch(me, interpreter(0), 0, 
-  'X:Foo <- 'f['a.Foo,'b.Foo] ; 
+  'X:Foo <- 'f['a.Foo, 'b.Foo] ; 
   'Y:Foo <- 'a.Foo)
 ==========================================
 erewrite in MATCH-TEST : <> < me : User | soln: 2 > createInterpreter(
@@ -25,8 +25,8 @@ rewrites: 7
 result Configuration: <> < me : User | soln: 3, got: gotMatch(me, interpreter(
     0), 0, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'f['b.Foo,'a.Foo]), got: gotMatch(me, interpreter(0), 0, 
-  'X:Foo <- 'f['a.Foo,'b.Foo] ; 
+  'Y:Foo <- 'f['b.Foo, 'a.Foo]), got: gotMatch(me, interpreter(0), 0, 
+  'X:Foo <- 'f['a.Foo, 'b.Foo] ; 
   'Y:Foo <- 'a.Foo) > noSuchResult(me, interpreter(0), 0)
 ==========================================
 erewrite in XMATCH-TEST : <> < me : User | soln: 0 > createInterpreter(
@@ -34,20 +34,20 @@ erewrite in XMATCH-TEST : <> < me : User | soln: 0 > createInterpreter(
 rewrites: 3
 result Configuration: <> < me : User | none > gotXmatch(me, interpreter(0), 0, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'b.Foo, 'g['f[[],'a.Foo]])
+  'Y:Foo <- 'b.Foo, 'g['f[[], 'a.Foo]])
 ==========================================
 erewrite in XMATCH-TEST : <> < me : User | soln: 1 > createInterpreter(
     interpreterManager, me, none) .
 rewrites: 3
 result Configuration: <> < me : User | none > gotXmatch(me, interpreter(0), 0, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'f['b.Foo,'a.Foo], 'g[[]])
+  'Y:Foo <- 'f['b.Foo, 'a.Foo], 'g[[]])
 ==========================================
 erewrite in XMATCH-TEST : <> < me : User | soln: 2 > createInterpreter(
     interpreterManager, me, none) .
 rewrites: 3
 result Configuration: <> < me : User | none > gotXmatch(me, interpreter(0), 0, 
-  'X:Foo <- 'f['a.Foo,'b.Foo] ; 
+  'X:Foo <- 'f['a.Foo, 'b.Foo] ; 
   'Y:Foo <- 'a.Foo, 'g[[]])
 ==========================================
 erewrite in XMATCH-TEST : <> < me : User | soln: 3 > createInterpreter(
@@ -55,7 +55,7 @@ erewrite in XMATCH-TEST : <> < me : User | soln: 3 > createInterpreter(
 rewrites: 3
 result Configuration: <> < me : User | none > gotXmatch(me, interpreter(0), 0, 
   'X:Foo <- 'b.Foo ; 
-  'Y:Foo <- 'a.Foo, 'g['f['a.Foo,[]]])
+  'Y:Foo <- 'a.Foo, 'g['f['a.Foo, []]])
 ==========================================
 erewrite in XMATCH-TEST : <> < me : User | soln: 4 > createInterpreter(
     interpreterManager, me, none) .
@@ -69,11 +69,11 @@ rewrites: 11
 result Configuration: <> < me : User | soln: 5, got: gotXmatch(me, interpreter(
     0), 0, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'b.Foo, 'g['f[[],'a.Foo]]), got: gotXmatch(me, interpreter(0), 0, 
+  'Y:Foo <- 'b.Foo, 'g['f[[], 'a.Foo]]), got: gotXmatch(me, interpreter(0), 0, 
   'X:Foo <- 'a.Foo ; 
-  'Y:Foo <- 'f['b.Foo,'a.Foo], 'g[[]]), got: gotXmatch(me, interpreter(0), 0, 
+  'Y:Foo <- 'f['b.Foo, 'a.Foo], 'g[[]]), got: gotXmatch(me, interpreter(0), 0, 
   'X:Foo <- 'b.Foo ; 
-  'Y:Foo <- 'a.Foo, 'g['f['a.Foo,[]]]), got: gotXmatch(me, interpreter(0), 0, 
-  'X:Foo <- 'f['a.Foo,'b.Foo] ; 
+  'Y:Foo <- 'a.Foo, 'g['f['a.Foo, []]]), got: gotXmatch(me, interpreter(0), 0, 
+  'X:Foo <- 'f['a.Foo, 'b.Foo] ; 
   'Y:Foo <- 'a.Foo, 'g[[]]) > noSuchResult(me, interpreter(0), 0)
 Bye.

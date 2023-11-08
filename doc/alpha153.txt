@@ -1,0 +1,255 @@
+Alpha 153 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug where the ctor attribute was not being printed correctly for
+polymorphic operators in LaTeX output. Illustrated by:
+
+fmod FOO is
+  sort Foo .
+  op f : Foo Universal -> Foo [poly (2) ctor] .
+endfm
+
+show desugared .
+
+(2) A bug where the LaTeX for the filter and delay keywords was printed
+using \maudeKeyWord rather than \maudeKeyword. Reported by Rubén.
+
+(3) A bug where show processed view did not put a space after the keyword
+var (or vars) in the LaTeX output.
+
+(4) A bug where the LaTeX output for the strategy top had an extra open
+parenthesis.
+
+(5) A bug where the LaTeX output for show processed view was showing class and
+attribute mappings rather than the sort and op mappings they are transformed
+into.
+
+New features
+=============
+
+(1) There is a new command
+  set print label attribute on/off .
+which controls whether statement labels are printed as statement attributes:
+  eq a = b [label aMap] .
+or as old style prefixes:
+  eq [aMap] : a = b .
+When statement attributes were introduced in 2008, statement labels became
+just another statement attribute and we switched from the second form to the
+first form for printing, with both forms are accepted by the parser. However the
+second form seems more popular in practice so it is now used for printing
+labels in parsed statements by default. The new set command controls both for
+terminal and LaTeX renderings for commands such as show rules, show all, show
+desugared etc.
+
+In unparsed statements, both forms are just part of the bubble of unparsed
+tokens and show module just displays the bubble of tokens.
+
+(2) The maude.sty package now has a option, ASCII:
+
+\usepackage[ASCII]{maude}
+
+The effect is to use combinations of ASCII symbols in place of math symbols
+so that LaTeX output corresponds character for character with terminal output.
+
+(3) There is now LaTeX support for
+  show mod <module name> .
+or equivalently
+  show module <module name> .
+Note that as this shows the unparsed module, hooks, identity terms,
+membership axioms, equations, rules, and strategy definitions are just
+bubbles of tokens which are printed using the \maudeRaw{} command which uses
+the typewritter font.
+Also parameterized sorts and constants in renamings in module expressions
+are just printed using the naive \maudeSort{} rather than as a structured
+name with \maudeParameter{} and \maudeView{} since they haven't been evaluated
+to determined what is a parameter and what is a view name.
+
+(4) This is a new command
+  set clear module caches on/off .
+that controls whether things suchs a meta-module and meta-op caches
+are cleared when a module loses focus (i.e. goes from being the current
+module to not being the current module). The default is on for backward
+compatibility. Requested by Dwight Guth <dwight.guth@runtimeverification.com>.
+
+(5) This is a new command
+  set print hooks on/off .
+that controls the printing of the special attribute. The default is on
+but if off is chosen, the hooks are omitted and replaced by an ellipsis;
+for example:
+
+  op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (...)] .
+
+This is supported for show module, show desugared, show all and show ops
+in both text and LaTeX.
+
+(6) There is now LaTeX support for
+  show view <view name> .
+Note that as this shows the view module, terms on either side of op to
+term mappings and strategy expressions on either side of strat to expr
+mappings are just bubbles of tokens which are printed using the \maudeRaw{}
+command which uses the typewritter font.
+
+(7) There is a new command
+  set print combine vars on/off .
+which controls whether each variable alias is printed on its own line
+or whether variable aliases with the same sort are combined in a
+single declaration. This flag is supported for show desugares/all vars
+The default is off for backward compatibility.
+
+Other changes
+==============
+
+(1) The pretty printing of statements is slightly more sophisticated
+about where it inserts sort disambiguation. Consider:
+
+mod FOO is
+  sorts Foo Bar .
+  ops a b 0 : -> Foo .
+  op 0 : -> Bar .
+  cmb 0 : Bar if 0 : Foo .
+  ceq a = 0 if b = 0 .
+  crl b => 0 if a => 0 /\ b := 0 .
+endm
+
+show desugared .
+
+Here, previously, each occurrence of 0 required disambiguation. Now
+the right hand sides of =, => and := are assumed to have a known
+kind based on the left hand side, while the left hand side of : is
+assumed to have a known kind base on the sort in the rhs so none of
+the occurrences of 0 recieve sort disambiguation.
+
+(2) A similar change to the printing of operator identities since
+the range kind will always be defined by the operator.
+
+(3) The output of show module has been cleaned up:
+(a) It now prints "sort" rather than "sorts" if there is only one sort on
+the line.
+(b) It now prints "subsort" rather than "subsorts" if there is only one
+subsort relation being declared on the line.
+(c) It now prints "subclass" rather than "subclasses" if there is only
+one subclass relation being declared on the line.
+
+(4) The tilde character ~ which in LaTeX normally appears at the top of
+the character box is centered in the -latex-log= output.
+
+(5) Changes to how complex operator names are displayed for show desugared.
+Previously backquotes were only removed in the LaTeX version of operator
+declarations. They are now removed in:
+(a) LaTeX version of operator renamings.
+(b) LaTeX version of op hooks
+
+(6) The default formatting for mixfix syntax now puts a space after
+a comma token for both text and LaTeX output but only if no explicit
+format statement is in play. The operator 
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none format (d d s d)] .
+in mod CONFIGURATION now has its format attribute removed as it
+is superfluous. The old behavior of not putting a space after comma
+is the default if a format statement is in play so can be obtained using
+d in the position after the comma; but of course this can always be
+overrided by using s or some other spacing format command:
+
+fmod FOO is
+  sort Foo .
+  op [_,_] : Foo Foo -> Foo [format (d d d d d d)] .
+  ops a b c d e : -> Foo .
+endfm
+
+red [a, [[b, c], d]] .
+
+fmod FOO is
+  sort Foo .
+  op [_,_] : Foo Foo -> Foo [format (d d d s d d)] .
+  ops a b c d e : -> Foo .
+endfm
+
+red [a, [[b, c], d]] .
+
+The format attributes in the prelude have been updated to reflect this,
+with d replaced by s where necessary.
+
+(7) Previously portals were represented by an inert constant
+  op <> : -> Portal [ctor] .
+The requirement that a configuration communicating with external
+objects contain a portal was merely to avoid the degenerate case of
+a lone object waiting for a reply from an external object, which
+would not be received because object-message rewriting and external
+object interaction is special behavior that is attached to the
+configuration contructor
+  op __ : Configuration Configuration -> Configuration [ctor config assoc comm id: none] .
+With a portal present, this operator will always appear at the top
+of a configuration that communicates with external objects.
+Other than this corner case, the requirement for a portal was not
+enforced.
+
+Now we take portals seriously, and only configurations having a portal
+are allow to exchange messages with external objects. This means that
+an message from an external object will only be delivered to a
+configuration that contains an object with the target Oid and a portal.
+Configurations are ephemeral - they can be split and merged by arbitrary
+rewriting and they do not have an identifier so this rule is needed
+to determined where a message from an external object should be delivered.
+
+The change to enforcing the portal requirement allows the use of objects
+in different configurations that have the same Oid and as long as only
+one such configuration has a portal, messages from external objects
+will not be misdelivered. This requirement arises with nested
+configurations where the outer configuration manages communication
+between external objects and objects in the inner configurarion and
+objects in both configurations share Oids. In this case only the outer
+configuration would have a portal and would be able to communicate
+directly with external objects.
+
+The change also means that portals can no longer be arbitrary inert
+constants - the system has to know that a given constant is a portal.
+Thus the portal in CONFIGURATION is declared
+  op <> : -> Portal [ctor portal] .
+using a new attribute portal. Of course this new attribute is also
+reflected at the metalevel by a new constant
+  op portal : -> Attr [ctor] .
+
+(8) Previously there was some variation in order in which operator
+attributes were printed; polymorphic operators vs non-polymorphic
+operators, show desugared vs show module, and text vs LaTeX. We now use
+a uniform order:
+
+poly
+ctor
+assoc, comm, id: (may be prefixed by left or right), idem, iter
+pconst
+obj, msg, portal, config
+strat, memo, frozen
+prec, gather, format
+metadata
+special
+ditto
+
+A further wrinkle is that when printing message declarations, the
+ctor and msg attributes are implied by the message declaration and
+so are not printed.
+
+(9) In the model checker, the satisfaction relation is now declared to
+be partial:
+  op _|=_ : State Prop ~> Bool [frozen] .
+The rationale is that the user is only required to ensure it reduces
+to true in the positive case and it can return any old junk in the
+negative case. Declaring it to be partial means it returns a result
+in the kind [Bool] rather than sort Bool, thus protected BOOL (as it
+is declared in fmod SATISFACTION). This change is purely semantic and
+has no operational effect. Requested by Jose.
+
+(10) The LaTeX output now allows line breaks after the single character tokens
+  ( [ { ,
+and before the single character tokens
+  ) ] }
+in mixfix syntax. This greatly reduces the overfull \hbox issue and
+approximates the line breaking rules used by the line wrapper in the text case.
+
+(11) In LaTeX output only for show all/desugared/ops, backquotes are not shown
+in op-hooks (they haven't been shown in op declarations for a while). I'm
+considering making this the convention for text output in the future, for
+both op-hooks and op declarations but there are some subtle cases for reparsing
+output.

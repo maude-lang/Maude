@@ -330,17 +330,11 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 /*
  *	Commands to show interpreter state.
  */
-		|	KW_SHOW KW_MOD		{ lexBubble(END_COMMAND, 0); }
+		|	KW_SHOW kw_module	{ lexBubble(END_COMMAND, 0); }
 			endBubble
 			{
 			  if (interpreter.setCurrentModule(lexerBubble))
-			    CM->showModule();
-			}
-		|	KW_SHOW KW_MODULE	{ lexBubble(END_COMMAND, 0); }
-			endBubble
-			{
-			  if (interpreter.setCurrentModule(lexerBubble))
-			    CM->showModule();
+			    interpreter.showPreModule();
 			}
 		|	KW_SHOW KW_ALL		{ lexBubble(END_COMMAND, 0); }
 			endBubble
@@ -501,10 +495,12 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			}
 		|	KW_SET KW_PRINT KW_ATTRIBUTE polarityDot
 			{
+			  // a general flag, not a print flag, to activate print attribute
 			  interpreter.setFlag(Interpreter::PRINT_ATTRIBUTE, $4);
 			}
 		|	KW_SET KW_PRINT KW_ATTRIBUTE KW_NEWLINE polarityDot
 			{
+			  // a general flag, not a print flag, to print a newline after print attribute message
 			  interpreter.setFlag(Interpreter::PRINT_ATTRIBUTE_NEWLINE, $5);
 			}
 		|	KW_SET KW_TRACE traceOption polarityDot
@@ -551,6 +547,10 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  interpreter.setFlag(Interpreter::AUTO_CLEAR_PROFILE, $4);
 			}
+		|	KW_SET KW_CLEAR kw_module KW_CACHES polarityDot
+			{
+			  interpreter.setFlag(Interpreter::AUTO_CLEAR_CACHES, $5);
+			}
 /*
  *	Debugger mode commands
  */
@@ -591,6 +591,12 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 		|	error			{ lexerInitialMode(); }
 			'.'
 		;
+/*
+ *	Allow mod as an abbreviation for module (can't do this is lexer because of mod ... endm for system modules).
+ */
+kw_module	:	KW_MODULE
+		|	KW_MOD
+		;
 
 /*
  *	Options
@@ -606,6 +612,9 @@ printOption	:	KW_MIXFIX		{ $$ = Interpreter::PRINT_MIXFIX; }
 		|	KW_COLOR		{ $$ = Interpreter::PRINT_COLOR; }
 		|	KW_FORMAT		{ $$ = Interpreter::PRINT_FORMAT; }
 		|	KW_CONST KW_WITH KW_SORTS	{ $$ = Interpreter::PRINT_DISAMBIG_CONST; }
+		|	KW_LABEL KW_ATTRIBUTE	{ $$ = Interpreter::PRINT_LABEL_ATTRIBUTE; }
+		|	KW_HOOKS 		{ $$ = Interpreter::PRINT_HOOKS; }
+		|	KW_COMBINE KW_VARS	{ $$ = Interpreter::PRINT_COMBINE_VARS; }
 		;
 
 traceOption	:				{ $$ = Interpreter::TRACE; }

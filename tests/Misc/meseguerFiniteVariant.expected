@@ -320,11 +320,11 @@ I --> s(%1:Nat)
 No more variants.
 rewrites: 1
 ==========================================
-get variants in INT-OFFSET-MSET : Q,Q' .
+get variants in INT-OFFSET-MSET : Q, Q' .
 
 Variant 1
 rewrites: 0
-MSet: #1:MSet,#2:MSet
+MSet: #1:MSet, #2:MSet
 Q --> #1:MSet
 Q' --> #2:MSet
 
@@ -361,7 +361,7 @@ Variant 3
 rewrites: 2
 Pred: tt
 x --> %2:Int
-Q --> %2:Int,%1:NeMSet
+Q --> %2:Int, %1:NeMSet
 
 No more variants.
 rewrites: 2
@@ -376,21 +376,21 @@ Q --> #1:MSet
 Variant 2
 rewrites: 2
 Pred: tt
-Q --> %1:NeMSet,%1:NeMSet
+Q --> %1:NeMSet, %1:NeMSet
 
 Variant 3
 rewrites: 2
 Pred: tt
-Q --> %1:NeMSet,%1:NeMSet,%2:NeMSet
+Q --> %1:NeMSet, %1:NeMSet, %2:NeMSet
 
 No more variants.
 rewrites: 2
 ==========================================
-get variants in INT-OFFSET-SET : V,U .
+get variants in INT-OFFSET-SET : V, U .
 
 Variant 1
 rewrites: 0
-Set: #1:Set,#2:Set
+Set: #1:Set, #2:Set
 V --> #1:Set
 U --> #2:Set
 
@@ -402,21 +402,21 @@ U --> %1:NeSet
 
 Variant 3
 rewrites: 6
-NeSet: %1:NeSet,%2:NeSet,%3:NeSet
-V --> %1:NeSet,%2:NeSet
-U --> %1:NeSet,%3:NeSet
+NeSet: %1:NeSet, %2:NeSet, %3:NeSet
+V --> %1:NeSet, %2:NeSet
+U --> %1:NeSet, %3:NeSet
 
 Variant 4
 rewrites: 6
-NeSet: %1:NeSet,%2:NeSet
-V --> %1:NeSet,%2:NeSet
+NeSet: %1:NeSet, %2:NeSet
+V --> %1:NeSet, %2:NeSet
 U --> %1:NeSet
 
 Variant 5
 rewrites: 6
-NeSet: %1:NeSet,%2:NeSet
+NeSet: %1:NeSet, %2:NeSet
 V --> %1:NeSet
-U --> %1:NeSet,%2:NeSet
+U --> %1:NeSet, %2:NeSet
 
 Variant 6
 rewrites: 6
@@ -457,16 +457,16 @@ Variant 4
 rewrites: 3
 Pred: tt
 U --> %2:Set
-V --> %1:Set,%2:Set
+V --> %1:Set, %2:Set
 
 No more variants.
 rewrites: 3
 ==========================================
-variant unify in INT-OFFSET-SET : x,y,S =? y,S .
+variant unify in INT-OFFSET-SET : x, y, S =? y, S .
 
 Unifier 1
 rewrites: 11
-S --> #1:NeSet,#2:Int
+S --> #1:NeSet, #2:Int
 x --> #2:Int
 y --> #3:Int
 
@@ -494,119 +494,121 @@ M' --> %1:NeMSet
 
 Unifier 2
 rewrites: 32
-M --> #1:NeMSet,#1:NeMSet
+M --> #1:NeMSet, #1:NeMSet
 M' --> #1:NeMSet
 
 Unifier 3
 rewrites: 32
-M --> #1:NeMSet,#1:NeMSet,#2:NeMSet
-M' --> #1:NeMSet,#2:NeMSet
+M --> #1:NeMSet, #1:NeMSet, #2:NeMSet
+M' --> #1:NeMSet, #2:NeMSet
 
 Unifier 4
 rewrites: 32
 M --> #1:NeMSet
-M' --> #1:NeMSet,#1:NeMSet
+M' --> #1:NeMSet, #1:NeMSet
 
 Unifier 5
 rewrites: 32
-M --> #1:NeMSet,#2:NeMSet
-M' --> #1:NeMSet,#1:NeMSet,#2:NeMSet
+M --> #1:NeMSet, #2:NeMSet
+M' --> #1:NeMSet, #1:NeMSet, #2:NeMSet
 
 Unifier 6
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet
+M --> %1:NeMSet, %1:NeMSet, %1:NeMSet, %1:NeMSet
 M' --> %1:NeMSet
 
 Unifier 7
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%2:NeMSet
+M --> %1:NeMSet, %1:NeMSet, %1:NeMSet, %1:NeMSet, %2:NeMSet, %2:NeMSet
+M' --> %1:NeMSet, %2:NeMSet
 
 Unifier 8
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%1:NeMSet
+M --> %1:NeMSet, %1:NeMSet, %1:NeMSet
 M' --> %1:NeMSet
 
 Unifier 9
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%3:NeMSet,%3:NeMSet
-M' --> %1:NeMSet,%2:NeMSet,%3:NeMSet
+M --> %1:NeMSet, %1:NeMSet, %1:NeMSet, %1:NeMSet, %2:NeMSet, %3:NeMSet,
+    %3:NeMSet
+M' --> %1:NeMSet, %2:NeMSet, %3:NeMSet
 
 Unifier 10
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%2:NeMSet
+M --> %1:NeMSet, %1:NeMSet, %1:NeMSet, %1:NeMSet, %2:NeMSet
+M' --> %1:NeMSet, %2:NeMSet
 
 Unifier 11
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet,%3:NeMSet
-M' --> %1:NeMSet,%2:NeMSet,%3:NeMSet
+M --> %1:NeMSet, %1:NeMSet, %1:NeMSet, %2:NeMSet, %2:NeMSet, %3:NeMSet
+M' --> %1:NeMSet, %2:NeMSet, %3:NeMSet
 
 Unifier 12
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%2:NeMSet
+M --> %1:NeMSet, %1:NeMSet, %2:NeMSet, %2:NeMSet, %2:NeMSet
+M' --> %1:NeMSet, %2:NeMSet
 
 Unifier 13
 rewrites: 248
-M --> %1:NeMSet,%2:NeMSet,%2:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%2:NeMSet
+M --> %1:NeMSet, %2:NeMSet, %2:NeMSet, %2:NeMSet
+M' --> %1:NeMSet, %2:NeMSet
 
 Unifier 14
 rewrites: 248
-M --> %1:NeMSet,%1:NeMSet,%2:NeMSet,%3:NeMSet
-M' --> %1:NeMSet,%2:NeMSet,%2:NeMSet,%3:NeMSet
+M --> %1:NeMSet, %1:NeMSet, %2:NeMSet, %3:NeMSet
+M' --> %1:NeMSet, %2:NeMSet, %2:NeMSet, %3:NeMSet
 
 Unifier 15
 rewrites: 248
-M --> %1:NeMSet,%2:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%2:NeMSet
+M --> %1:NeMSet, %2:NeMSet, %2:NeMSet
+M' --> %1:NeMSet, %1:NeMSet, %2:NeMSet
 
 Unifier 16
 rewrites: 248
 M --> %1:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet
+M' --> %1:NeMSet, %1:NeMSet, %1:NeMSet, %1:NeMSet
 
 Unifier 17
 rewrites: 248
-M --> %1:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet
+M --> %1:NeMSet, %2:NeMSet
+M' --> %1:NeMSet, %1:NeMSet, %1:NeMSet, %1:NeMSet, %2:NeMSet, %2:NeMSet
 
 Unifier 18
 rewrites: 248
 M --> %1:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet
+M' --> %1:NeMSet, %1:NeMSet, %1:NeMSet
 
 Unifier 19
 rewrites: 248
-M --> %1:NeMSet,%2:NeMSet,%3:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%3:NeMSet,%3:NeMSet
+M --> %1:NeMSet, %2:NeMSet, %3:NeMSet
+M' --> %1:NeMSet, %1:NeMSet, %1:NeMSet, %1:NeMSet, %2:NeMSet, %3:NeMSet,
+    %3:NeMSet
 
 Unifier 20
 rewrites: 248
-M --> %1:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet
+M --> %1:NeMSet, %2:NeMSet
+M' --> %1:NeMSet, %1:NeMSet, %1:NeMSet, %1:NeMSet, %2:NeMSet
 
 Unifier 21
 rewrites: 248
-M --> %1:NeMSet,%2:NeMSet,%3:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet,%3:NeMSet
+M --> %1:NeMSet, %2:NeMSet, %3:NeMSet
+M' --> %1:NeMSet, %1:NeMSet, %1:NeMSet, %2:NeMSet, %2:NeMSet, %3:NeMSet
 
 Unifier 22
 rewrites: 248
-M --> %1:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%1:NeMSet,%2:NeMSet,%2:NeMSet,%2:NeMSet
+M --> %1:NeMSet, %2:NeMSet
+M' --> %1:NeMSet, %1:NeMSet, %2:NeMSet, %2:NeMSet, %2:NeMSet
 
 Unifier 23
 rewrites: 248
-M --> %1:NeMSet,%2:NeMSet
-M' --> %1:NeMSet,%2:NeMSet,%2:NeMSet,%2:NeMSet
+M --> %1:NeMSet, %2:NeMSet
+M' --> %1:NeMSet, %2:NeMSet, %2:NeMSet, %2:NeMSet
 ==========================================
-get variants in HF-SETS-CONJ : M,M' .
+get variants in HF-SETS-CONJ : M, M' .
 
 Variant 1
 rewrites: 0
-Magma: #1:Magma,#2:Magma
+Magma: #1:Magma, #2:Magma
 M --> #1:Magma
 M' --> #2:Magma
 
@@ -618,21 +620,21 @@ M' --> %1:Magma
 
 Variant 3
 rewrites: 4
-Magma: %1:Magma,%2:Magma,%3:Magma
-M --> %1:Magma,%2:Magma
-M' --> %1:Magma,%3:Magma
+Magma: %1:Magma, %2:Magma, %3:Magma
+M --> %1:Magma, %2:Magma
+M' --> %1:Magma, %3:Magma
 
 Variant 4
 rewrites: 4
-Magma: %1:Magma,%2:Magma
-M --> %1:Magma,%2:Magma
+Magma: %1:Magma, %2:Magma
+M --> %1:Magma, %2:Magma
 M' --> %2:Magma
 
 Variant 5
 rewrites: 4
-Magma: %1:Magma,%2:Magma
+Magma: %1:Magma, %2:Magma
 M --> %2:Magma
-M' --> %1:Magma,%2:Magma
+M' --> %1:Magma, %2:Magma
 
 No more variants.
 rewrites: 8
@@ -661,7 +663,7 @@ Variant 4
 rewrites: 3
 Pred: tt
 S --> {%1:Magma}
-S' --> {%1:Magma,%2:Magma}
+S' --> {%1:Magma, %2:Magma}
 
 No more variants.
 rewrites: 3
@@ -688,7 +690,7 @@ S' --> %1:Set
 
 Variant 4
 rewrites: 3
-Set: {%1:Magma,%2:Magma}
+Set: {%1:Magma, %2:Magma}
 S --> {%1:Magma}
 S' --> {%2:Magma}
 
@@ -700,21 +702,21 @@ S' --> {#1:Magma}
 
 Variant 6
 rewrites: 7
-Set: {#1:Magma,#2:Magma,#3:Magma}
-S --> {#1:Magma,#2:Magma}
-S' --> {#1:Magma,#3:Magma}
+Set: {#1:Magma, #2:Magma, #3:Magma}
+S --> {#1:Magma, #2:Magma}
+S' --> {#1:Magma, #3:Magma}
 
 Variant 7
 rewrites: 7
-Set: {#1:Magma,#2:Magma}
-S --> {#1:Magma,#2:Magma}
+Set: {#1:Magma, #2:Magma}
+S --> {#1:Magma, #2:Magma}
 S' --> {#2:Magma}
 
 Variant 8
 rewrites: 7
-Set: {#1:Magma,#2:Magma}
+Set: {#1:Magma, #2:Magma}
 S --> {#2:Magma}
-S' --> {#1:Magma,#2:Magma}
+S' --> {#1:Magma, #2:Magma}
 
 No more variants.
 rewrites: 11

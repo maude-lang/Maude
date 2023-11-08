@@ -898,6 +898,10 @@ attribute	:	KW_ASSOC
 			{
 			  CM->setFlag(SymbolType::MESSAGE);
 			}
+		|	KW_PORTAL
+			{
+			  CM->setFlag(SymbolType::PORTAL);
+			}
 		|	KW_METADATA IDENTIFIER
 			{
 			  CM->setMetadata($2);

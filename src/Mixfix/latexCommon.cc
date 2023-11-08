@@ -136,14 +136,9 @@ MixfixModule::latexConstant(int code, const Module* module)
 	  //
 	  return "\\maudeSymbolic{" + Token::latexName(Token::sortName(code)) +  "}";
 	}
-      Vector<int> codes;
-      Token::splitParameterizedSort(code, codes);
-      return Token::latexIdentifier(codes[0]) + latexStructuredName(codes, module);
+      return safeCastNonNull<const MixfixModule*>(module)->latexStructuredConstant(code);
     }
-  string pretty = Token::prettyOpName(code);
-  if (pretty.empty())
-    return Token::latexIdentifier(code);
-  return "\\maudeSymbolic{" + Token::latexName(pretty)  + "}";
+  return latexPrettyOp(code);
 }
 
 string
@@ -304,19 +299,55 @@ MixfixModule::latexPrintPrefixName(ostream& s, const char* prefixName, const Sym
 int
 MixfixModule::latexPrintTokens(ostream& s, const SymbolInfo& si, int pos, const char* color)
 {
+  //
+  //	We start with a space if we are following an argument and don't start with a special
+  //	character and we end with a space if we don't end with a special character.
+  //
   bool noSpace = (pos == 0);
+  bool previousOpenOrComma = false;
   bool hasFormat = interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
   for (;;)
     {
       int token = si.mixfixSyntax[pos++];
       if (token == underscore)
 	break;
-      bool special = (token == leftParen || token == rightParen ||
-		      token == leftBracket || token == rightBracket ||
-		      token == leftBrace || token == rightBrace || token == comma);
-      if (!((hasFormat && latexFancySpace(s, si.format[pos - 1])) || special || noSpace))
-       	s << "\\maudeSpace";
-      noSpace = special;
+      bool open = token == leftParen || token == leftBracket || token == leftBrace;
+      bool close = token == rightParen || token == rightBracket || token == rightBrace;
+      bool isComma = token == comma;
+      if (!(hasFormat && latexFancySpace(s, si.format[pos - 1])))
+	{
+	  //
+	  //	format didn't produce a space; do we need one?
+	  //
+	  if (open || close || isComma || noSpace)
+	    {
+	      //
+	      //	We don't want to output a space before one of our 7 special characters,
+	      //	for example:
+	      //	  f(   m[   s{   a)   v]   a}   a,
+	      //	or after a special character except comma (unless format is in play).
+	      //
+	      //	But we want to allow a line break
+	      //	  if we're about to print ) ] {
+	      //	  or the previous token was ( [ { ,
+	      //	in order to reduce the likelihood of an overfull \hbox
+	      //
+	      if (close || previousOpenOrComma)
+		s << "\\maudeAllowLineBreak";
+	    }
+	  else
+	    s << "\\maudeSpace";
+	}
+      //
+      //	If we don't generate a space after ( [ { , we want to allow a linebreak.
+      //
+      previousOpenOrComma = open || isComma;
+      //
+      //	We don't follow with a space if the token is an open or close; or if the token is comma
+      //	and format is being used (to allow the user to explicitly get rid of spaces after commas).
+      //	For example:  (a   [b   {c   d)   e]   a}
+      //
+      noSpace = open || close || (hasFormat && isComma);
       if (color != 0)
       	s << color;
       //
@@ -326,36 +357,80 @@ MixfixModule::latexPrintTokens(ostream& s, const SymbolInfo& si, int pos, const 
       if (color != 0)
       s << latexResetColor;
     }
-  if (!((hasFormat && latexFancySpace(s, si.format[pos - 1])) || noSpace))  // FIXME
-    s << "\\maudeSpace";
+  if (!(hasFormat && latexFancySpace(s, si.format[pos - 1])))
+    {
+      //
+      //	format didn't produce a space; do we need one?
+      //
+      if (noSpace)
+	{
+	  //
+	  //	We don't output a space in this cases but we want to allow a linebreak,
+	  //	if the previous token was ( [ { , to reduce to likelihood of overfull lines.
+	  //
+	  if (previousOpenOrComma)
+	    s << "\\maudeAllowLineBreak";
+	}
+      else
+	s << "\\maudeSpace";
+    }
   return pos;
 }
 
 void
 MixfixModule::latexPrintTails(ostream& s,
-			 const SymbolInfo& si,
-			 int pos,
-			 int nrTails,
-			 bool needAssocParen,
-			 bool checkForInterrupt,
-			 const char* color)
+			      const SymbolInfo& si,
+			      int pos,
+			      int nrTails,
+			      bool needAssocParen,
+			      bool checkForInterrupt,
+			      const char* color)
 {
+  //
+  //	We output nrTails copies of the user syntax from  pos to si.mixfixSyntax.size() - 1
+  //	Usually nrTails will be 1 unless we are unflattening a flattened associative operator.
+  //
+  bool previousOpenOrComma = false;
   bool hasFormat = interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
-  int mixfixLength = si.mixfixSyntax.length();
+  Index mixfixLength = si.mixfixSyntax.size();
   for (int i = 0;;)
     {
       if (checkForInterrupt && UserLevelRewritingContext::interrupted())
 	return;
-      bool noSpace = (pos == 0);
-      for (int j = pos; j < mixfixLength; j++)
+      bool noSpace = (pos == 0);  // in case we are printing a constant
+      for (Index j = pos; j < mixfixLength; ++j)
 	{
 	  int token = si.mixfixSyntax[j];
-	  bool special = (token == leftParen || token == rightParen ||
-			  token == leftBracket || token == rightBracket ||
-			  token == leftBrace || token == rightBrace || token == comma);
-	  if (!((hasFormat && latexFancySpace(s, si.format[j])) || special || noSpace))  // FIXME
-	    s << "\\maudeSpace";
-	  noSpace = special;
+	  bool open = token == leftParen || token == leftBracket || token == leftBrace;
+	  bool close = token == rightParen || token == rightBracket || token == rightBrace;
+	  bool isComma = token == comma;
+	  if (!(hasFormat && latexFancySpace(s, si.format[pos - 1])))
+	    {
+	      //
+	      //	format didn't produce a space; do we need one?
+	      //
+	      if (open || close || isComma || noSpace)
+		{
+		  //
+		  //	We don't output a space in these cases but we want to allow a linebreak,
+		  //	if we're about to print ( ] } or the previous token was ( [ { , to reduce
+		  //	the likelihood of an overful \hbox
+		  //
+		  if (close || previousOpenOrComma)
+		    s << "\\maudeAllowLineBreak";
+		}
+	      else
+		s << "\\maudeSpace";
+	    }
+	  //
+	  //	If we don't generate a space after ( [ { , we want to allow a linebreak.
+	  //
+	  previousOpenOrComma = open || isComma;
+	  //
+	  //	We don't follow with a space if the token is an open or close; or if the token is a comma
+	  //	and  format is being used (to allow the user to explicitly get rid of spaces after commas).
+	  //
+	  noSpace = open || close || (hasFormat && isComma);
 	  if (color != 0)
 	    s << color;
 	  //
@@ -366,10 +441,70 @@ MixfixModule::latexPrintTails(ostream& s,
 	    s << latexResetColor;
 	}
       if (hasFormat)
-      	(void) latexFancySpace(s, si.format[mixfixLength]);
+	{
+	  //
+	  //	If we generate whitespace after the token, we don't want to allow a line break before
+	  //	the next tail so we reset previousOpenOrComma
+	  //
+	  if (latexFancySpace(s, si.format[mixfixLength]))
+	    previousOpenOrComma = false;
+	}
       if (++i == nrTails)
 	break;
       if (needAssocParen)
-	  s << "\\maudeRightParen";
+	s << "\\maudeRightParen";
     }
+}
+
+void
+MixfixModule::latexPrintGather(ostream& s, const Vector<int>& gather)
+{
+  static const char* gatherSymbols[] = {"\\maudeNormal{e}", "\\maudeNormal{E}", "\\maudeNormal{\\&}"};
+  s << "\\maudeKeyword{gather}\\maudeSpace\\maudeLeftParen";
+  const char* sep = "";
+  for (int i : gather)
+    {
+      s << sep << gatherSymbols[i - GATHER_e];
+      sep = "\\maudeSpace";
+    }
+  s << "\\maudeRightParen";
+}
+
+void
+MixfixModule::latexPrintFormat(ostream& s, const Vector<int>& format)
+{
+  s << "\\maudeKeyword{format}\\maudeSpace\\maudeLeftParen";
+  const char* sep = "";
+  for (int i : format)
+    {
+      s << sep << "\\maudeNormal{" << Token::name(i) << "}";
+      sep = "\\maudeSpace";
+    }
+  s << "\\maudeRightParen";
+}
+
+string
+MixfixModule::latexTokenVector(const Vector<Token>& tokens, Index first, Index last)
+{
+  string bubble;
+  bool needSpace = false;
+  for (Index i = first; i <= last; ++i)
+    {
+      bool nextNeedSpace = true;
+      int code = tokens[i].code();
+      if (code == rightParen || code == rightBracket || code == rightBrace || code == comma)
+	needSpace = false;
+      else if (code == leftParen)
+	{
+	  needSpace = false;
+	  nextNeedSpace = false;
+	}
+      else if (code == leftBracket || code == leftBrace)
+	nextNeedSpace = false;
+      if (needSpace)
+	bubble += "\\maudeSpace";
+      bubble += "\\maudeRaw{" + Token::latexName(tokens[i].code()) +  "}";
+      needSpace = nextNeedSpace;
+    }
+  return bubble;
 }

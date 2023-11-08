@@ -1,16 +1,16 @@
 Considering object completion on:
-  rl go([N]) < [N] : Proc | mode : wait > => < [N] : Proc | mode : critical > [
-    label enter] .
+  rl [enter] : go([N]) < [N] : Proc | mode : wait > => < [N] : Proc | mode :
+    critical > .
 Transformed rule:
-  rl go([N]) < [N] : V:Proc | mode : wait, Atts:AttributeSet > => < [N] :
-    V:Proc | mode : critical, Atts:AttributeSet > [label enter] .
+  rl [enter] : go([N]) < [N] : V:Proc | mode : wait, Atts:AttributeSet > => < [
+    N] : V:Proc | mode : critical, Atts:AttributeSet > .
 
 Considering object completion on:
-  rl < [N] : Proc | mode : critical > => < [N] : Proc | mode : wait > go([s N])
-    [label exit] .
+  rl [exit] : < [N] : Proc | mode : critical > => < [N] : Proc | mode : wait >
+    go([s N]) .
 Transformed rule:
-  rl < [N] : V:Proc | mode : critical, Atts:AttributeSet > => < [N] : V:Proc |
-    mode : wait, Atts:AttributeSet > go([s N]) [label exit] .
+  rl [exit] : < [N] : V:Proc | mode : critical, Atts:AttributeSet > => < [N] :
+    V:Proc | mode : wait, Atts:AttributeSet > go([s N]) .
 
 Considering object completion on:
   eq (< X : Proc | mode : critical > C) |= inCrit(X) = true .
@@ -49,37 +49,38 @@ ModelCheckerSymbol: Examined 10 system states.
 rewrites: 67
 result ModelCheckResult: counterexample({go([0]) < [0] : Proc | mode : wait > <
     [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode
-    : wait > < [4] : Proc | mode : wait >,'enter} {< [0] : Proc | mode :
+    : wait > < [4] : Proc | mode : wait >, 'enter} {< [0] : Proc | mode :
     critical > < [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3]
-    : Proc | mode : wait > < [4] : Proc | mode : wait >,'exit} {go([1]) < [0] :
-    Proc | mode : wait > < [1] : Proc | mode : wait > < [2] : Proc | mode :
-    wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait >,'enter} {<
-    [0] : Proc | mode : wait > < [1] : Proc | mode : critical > < [2] : Proc |
-    mode : wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait >,
+    : Proc | mode : wait > < [4] : Proc | mode : wait >, 'exit} {go([1]) < [0]
+    : Proc | mode : wait > < [1] : Proc | mode : wait > < [2] : Proc | mode :
+    wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait >, 'enter} {
+    < [0] : Proc | mode : wait > < [1] : Proc | mode : critical > < [2] : Proc
+    | mode : wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait >,
     'exit} {go([2]) < [0] : Proc | mode : wait > < [1] : Proc | mode : wait > <
     [2] : Proc | mode : wait > < [3] : Proc | mode : wait > < [4] : Proc | mode
-    : wait >,'enter} {< [0] : Proc | mode : wait > < [1] : Proc | mode : wait >
-    < [2] : Proc | mode : critical > < [3] : Proc | mode : wait > < [4] : Proc
-    | mode : wait >,'exit}, {go([3]) < [0] : Proc | mode : wait > < [1] : Proc
-    | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode : wait > <
-    [4] : Proc | mode : wait >,'enter} {< [0] : Proc | mode : wait > < [1] :
+    : wait >, 'enter} {< [0] : Proc | mode : wait > < [1] : Proc | mode : wait
+    > < [2] : Proc | mode : critical > < [3] : Proc | mode : wait > < [4] :
+    Proc | mode : wait >, 'exit}, {go([3]) < [0] : Proc | mode : wait > < [1] :
     Proc | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode :
-    critical > < [4] : Proc | mode : wait >,'exit} {go([4]) < [0] : Proc | mode
-    : wait > < [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3] :
-    Proc | mode : wait > < [4] : Proc | mode : wait >,'enter} {< [0] : Proc |
-    mode : wait > < [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [
-    3] : Proc | mode : wait > < [4] : Proc | mode : critical >,'exit} {go([0])
+    wait > < [4] : Proc | mode : wait >, 'enter} {< [0] : Proc | mode : wait >
+    < [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc |
+    mode : critical > < [4] : Proc | mode : wait >, 'exit} {go([4]) < [0] :
+    Proc | mode : wait > < [1] : Proc | mode : wait > < [2] : Proc | mode :
+    wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait >, 'enter} {
     < [0] : Proc | mode : wait > < [1] : Proc | mode : wait > < [2] : Proc |
-    mode : wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait >,
-    'enter} {< [0] : Proc | mode : critical > < [1] : Proc | mode : wait > < [
-    2] : Proc | mode : wait > < [3] : Proc | mode : wait > < [4] : Proc | mode
-    : wait >,'exit} {go([1]) < [0] : Proc | mode : wait > < [1] : Proc | mode :
-    wait > < [2] : Proc | mode : wait > < [3] : Proc | mode : wait > < [4] :
-    Proc | mode : wait >,'enter} {< [0] : Proc | mode : wait > < [1] : Proc |
-    mode : critical > < [2] : Proc | mode : wait > < [3] : Proc | mode : wait >
-    < [4] : Proc | mode : wait >,'exit} {go([2]) < [0] : Proc | mode : wait > <
-    [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode
-    : wait > < [4] : Proc | mode : wait >,'enter} {< [0] : Proc | mode : wait >
-    < [1] : Proc | mode : wait > < [2] : Proc | mode : critical > < [3] : Proc
-    | mode : wait > < [4] : Proc | mode : wait >,'exit})
+    mode : wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : critical
+    >, 'exit} {go([0]) < [0] : Proc | mode : wait > < [1] : Proc | mode : wait
+    > < [2] : Proc | mode : wait > < [3] : Proc | mode : wait > < [4] : Proc |
+    mode : wait >, 'enter} {< [0] : Proc | mode : critical > < [1] : Proc |
+    mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode : wait > < [
+    4] : Proc | mode : wait >, 'exit} {go([1]) < [0] : Proc | mode : wait > < [
+    1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode
+    : wait > < [4] : Proc | mode : wait >, 'enter} {< [0] : Proc | mode : wait
+    > < [1] : Proc | mode : critical > < [2] : Proc | mode : wait > < [3] :
+    Proc | mode : wait > < [4] : Proc | mode : wait >, 'exit} {go([2]) < [0] :
+    Proc | mode : wait > < [1] : Proc | mode : wait > < [2] : Proc | mode :
+    wait > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait >, 'enter} {
+    < [0] : Proc | mode : wait > < [1] : Proc | mode : wait > < [2] : Proc |
+    mode : critical > < [3] : Proc | mode : wait > < [4] : Proc | mode : wait
+    >, 'exit})
 Bye.

@@ -41,7 +41,7 @@ reduce in META1 : V .
 rewrites: 2
 result View: view 'V from 'T to 'FOO is
   sort 'Elt to 'Foo .
-  op 'f['X:Elt] to term 'h['X:Foo,'c.Foo] .
+  op 'f['X:Elt] to term 'h['X:Foo, 'c.Foo] .
   none
 endv
 ==========================================
@@ -60,23 +60,23 @@ erewrite in META2 : <> < me : User | state: 1 > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 16
 result Configuration: <> < me : User | state: 7 > reducedTerm(me, interpreter(
-    0), 1, 'h['h['X:Foo,'c.Foo],'c.Foo], 'Foo)
+    0), 1, 'h['h['X:Foo, 'c.Foo], 'c.Foo], 'Foo)
 ==========================================
 erewrite in META3 : <> < me : User | state: 1 > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 19
 result Configuration: <> < me : User | state: 9 > reducedTerm(me, interpreter(
-    0), 1, 'h['h['h['X:Foo,'c.Foo],'c.Foo],'c.Foo], 'Foo)
+    0), 1, 'h['h['h['X:Foo, 'c.Foo], 'c.Foo], 'c.Foo], 'Foo)
 ==========================================
 erewrite in META4 : <> < me : User | state: 1 > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 19
 result Configuration: <> < me : User | state: 9 > reducedTerm(me, interpreter(
-    0), 1, 'h['c.Foo,'h['c.Foo,'X:Foo]], 'Foo)
+    0), 1, 'h['c.Foo, 'h['c.Foo, 'X:Foo]], 'Foo)
 ==========================================
 erewrite in META5 : <> < me : User | state: 1 > createInterpreter(
     interpreterManager, me, newProcess) .
 rewrites: 21
 result Configuration: <> < me : User | state: 10 > reducedTerm(me, interpreter(
-    0), 1, 'k['k['X:Foo,'d.Foo],'d.Foo], 'Foo)
+    0), 1, 'k['k['X:Foo, 'd.Foo], 'd.Foo], 'Foo)
 Bye.

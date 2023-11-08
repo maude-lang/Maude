@@ -75,7 +75,7 @@ ImportModule::latexModuleExpression(bool parameterBrackets) const
 	for (const Argument* a : savedArguments)
 	  {
 	    result += sep;
-	    sep = "\\maudeComma\\maudeSpace";
+	    sep = "\\maudeComma";
 	    if (const View* v = dynamic_cast<const View*>(a))
 	      result += v->latexViewExpression(parameterBrackets);
 	    else if (const Parameter* p = dynamic_cast<const Parameter*>(a))

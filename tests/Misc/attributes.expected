@@ -34,13 +34,13 @@ mod ATTRIBUTES is
   op h : Foo -> Bar [metadata "unary op"] .
   var X : Foo .
   var Y : Bar .
-  mb g(g(X)) : Foo [label downSort metadata "down sort" print
-    "sort became Foo"] .
+  mb [downSort] : g(g(X)) : Foo [metadata "down sort" print "sort became Foo"]
+    .
   cmb Y : Foo if f(Y, a) = f(a, Y) [nonexec] .
   eq a = b [metadata "definition"] .
   eq f(X, X) = g(X) [print "X = " X] .
-  eq f(g(X), X) = c [label collapse metadata "collapse" print "X = " X] .
-  eq g(X) = f(X, X) [nonexec label rev metadata "rev"] .
+  eq [collapse] : f(g(X), X) = c [metadata "collapse" print "X = " X] .
+  eq [rev] : g(X) = f(X, X) [nonexec metadata "rev"] .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .
   eq A:Bool and A:Bool = A:Bool .
@@ -50,8 +50,8 @@ mod ATTRIBUTES is
   eq not A:Bool = true xor A:Bool .
   eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
   eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
-  rl f(X, X) => f(g(X), g(X)) [nonexec label expand] .
-  rl h(h(X)) => f(c, X) [label tick metadata "step" print "step X = " X] .
+  rl [expand] : f(X, X) => f(g(X), g(X)) [nonexec] .
+  rl [tick] : h(h(X)) => f(c, X) [metadata "step" print "step X = " X] .
 endm
 ==========================================
 reduce in ATTRIBUTES : f(c, c) .

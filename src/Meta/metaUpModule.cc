@@ -802,6 +802,8 @@ MetaLevel::upAttributeSet(SymbolType st, Vector<DagNode*>& args)
     args.append(objectSymbol->makeDagNode());
   if (st.hasFlag(SymbolType::MESSAGE))
     args.append(msgSymbol->makeDagNode());
+  if (st.hasFlag(SymbolType::PORTAL))
+    args.append(portalSymbol->makeDagNode());
   if (st.hasFlag(SymbolType::MEMO))
     args.append(memoSymbol->makeDagNode());
   if (st.hasFlag(SymbolType::PCONST))

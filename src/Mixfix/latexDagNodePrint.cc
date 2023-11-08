@@ -160,8 +160,7 @@ MixfixModule::latexHandleIter(ostream& s,
   if (needToDisambiguate)
     s << "\\maudeLeftParen";
 
-  string prefixName = Token::latexIdentifier(dagNode->symbol()->id()) +
-    "^{\\maudeNumber{" + number.get_str() + "}}";
+  string prefixName = "\\maudeIter{" + Token::latexIdentifier(dagNode->symbol()->id()) + "}{" + number.get_str() + "}";
   if (color != 0)
     s << color << prefixName << latexResetColor;
   else

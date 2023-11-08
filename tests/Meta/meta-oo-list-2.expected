@@ -4,31 +4,33 @@ erewrite in META-OO : <> < me : User | pending: predef, level: 0 >
 rewrites: 82
 result Configuration: <> < me : User | pending: nil, level: 0 > rewroteTerm(me,
     interpreter(0), 35, '__['<_:_|_>['l.Oid,
-    'SortedList`{NatSW`}.SortedList`{NatSW`},'_`,_['first`:_['o['l.Oid,
-    '0.Zero]],'last`:_['o['l.Oid,'s_^4['0.Zero]]],'size`:_['s_^5['0.Zero]]]],
-    '<_:_|_>['c.Oid,'Counter.Counter,'index`:_['s_^5['0.Zero]]],'<_:_|_>['w[
-    '0.Zero],'NatWrapper.NatWrapper,'value`:_['0.Zero]],'<_:_|_>['w['s_[
-    '0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_['0.Zero]]],'<_:_|_>['w[
-    's_^2['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_^2['0.Zero]]],'<_:_|_>[
-    'w['s_^3['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_^3['0.Zero]]],
-    '<_:_|_>['w['s_^4['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_^4[
-    '0.Zero]]],'<_:_|_>['o['l.Oid,'0.Zero],
-    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
-    'next`:_['o['l.Oid,'s_['0.Zero]]],'previous`:_['null.Maybe`{Oid`}],
-    'value`:_['w['0.Zero]]]],'<_:_|_>['o['l.Oid,'s_['0.Zero]],
-    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
-    'next`:_['o['l.Oid,'s_^2['0.Zero]]],'previous`:_['o['l.Oid,'0.Zero]],
-    'value`:_['w['s_['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^2['0.Zero]],
-    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
-    'next`:_['o['l.Oid,'s_^3['0.Zero]]],'previous`:_['o['l.Oid,'s_['0.Zero]]],
-    'value`:_['w['s_^2['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^3['0.Zero]],
-    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
-    'next`:_['o['l.Oid,'s_^4['0.Zero]]],'previous`:_['o['l.Oid,'s_^2[
-    '0.Zero]]],'value`:_['w['s_^3['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^4[
-    '0.Zero]],'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},
-    '_`,_['next`:_['null.Maybe`{Oid`}],'previous`:_['o['l.Oid,'s_^3['0.Zero]]],
-    'value`:_['w['s_^4['0.Zero]]]]],'to_from_elt`at`pos_is_['l.Oid,'l.Oid,
-    's_^3['0.Zero],'s_^3['0.Zero]]], 'Configuration)
+    'SortedList`{NatSW`}.SortedList`{NatSW`}, '_`,_['first`:_['o['l.Oid,
+    '0.Zero]], 'last`:_['o['l.Oid, 's_^4['0.Zero]]], 'size`:_['s_^5[
+    '0.Zero]]]], '<_:_|_>['c.Oid, 'Counter.Counter, 'index`:_['s_^5['0.Zero]]],
+    '<_:_|_>['w['0.Zero], 'NatWrapper.NatWrapper, 'value`:_['0.Zero]],
+    '<_:_|_>['w['s_['0.Zero]], 'NatWrapper.NatWrapper, 'value`:_['s_[
+    '0.Zero]]], '<_:_|_>['w['s_^2['0.Zero]], 'NatWrapper.NatWrapper, 'value`:_[
+    's_^2['0.Zero]]], '<_:_|_>['w['s_^3['0.Zero]], 'NatWrapper.NatWrapper,
+    'value`:_['s_^3['0.Zero]]], '<_:_|_>['w['s_^4['0.Zero]],
+    'NatWrapper.NatWrapper, 'value`:_['s_^4['0.Zero]]], '<_:_|_>['o['l.Oid,
+    '0.Zero], 'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},
+    '_`,_['next`:_['o['l.Oid, 's_['0.Zero]]], 'previous`:_['null.Maybe`{Oid`}],
+    'value`:_['w['0.Zero]]]], '<_:_|_>['o['l.Oid, 's_['0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`}, '_`,_[
+    'next`:_['o['l.Oid, 's_^2['0.Zero]]], 'previous`:_['o['l.Oid, '0.Zero]],
+    'value`:_['w['s_['0.Zero]]]]], '<_:_|_>['o['l.Oid, 's_^2['0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`}, '_`,_[
+    'next`:_['o['l.Oid, 's_^3['0.Zero]]], 'previous`:_['o['l.Oid, 's_[
+    '0.Zero]]], 'value`:_['w['s_^2['0.Zero]]]]], '<_:_|_>['o['l.Oid, 's_^3[
+    '0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`}, '_`,_[
+    'next`:_['o['l.Oid, 's_^4['0.Zero]]], 'previous`:_['o['l.Oid, 's_^2[
+    '0.Zero]]], 'value`:_['w['s_^3['0.Zero]]]]], '<_:_|_>['o['l.Oid, 's_^4[
+    '0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`}, '_`,_[
+    'next`:_['null.Maybe`{Oid`}], 'previous`:_['o['l.Oid, 's_^3['0.Zero]]],
+    'value`:_['w['s_^4['0.Zero]]]]], 'to_from_elt`at`pos_is_['l.Oid, 'l.Oid,
+    's_^3['0.Zero], 's_^3['0.Zero]]], 'Configuration)
 Advisory: deleting interpreter(0)
 ==========================================
 rewrite in SORTED-NAT-LIST : (create-sorted-list(l) ((((((((((l add w(4)) l get
@@ -60,31 +62,33 @@ reduce in META-OO : (((((((((((< o(l, 4) : Node{TAOSET-WRAPPER}{NatSW} | next :
     : NatWrapper | value : 2 >) < w(1) : NatWrapper | value : 1 >) < w(0) :
     NatWrapper | value : 0 >) < c : Counter | index : 5 >) < l : SortedList{
     NatSW} | first : o(l, 0), last : o(l, 4), size : 5 > == downTerm('__[
-    '<_:_|_>['l.Oid,'SortedList`{NatSW`}.SortedList`{NatSW`},'_`,_['first`:_[
-    'o['l.Oid,'0.Zero]],'last`:_['o['l.Oid,'s_^4['0.Zero]]],'size`:_['s_^5[
-    '0.Zero]]]],'<_:_|_>['c.Oid,'Counter.Counter,'index`:_['s_^5['0.Zero]]],
-    '<_:_|_>['w['0.Zero],'NatWrapper.NatWrapper,'value`:_['0.Zero]],'<_:_|_>[
-    'w['s_['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_['0.Zero]]],'<_:_|_>[
-    'w['s_^2['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_^2['0.Zero]]],
-    '<_:_|_>['w['s_^3['0.Zero]],'NatWrapper.NatWrapper,'value`:_['s_^3[
-    '0.Zero]]],'<_:_|_>['w['s_^4['0.Zero]],'NatWrapper.NatWrapper,'value`:_[
-    's_^4['0.Zero]]],'<_:_|_>['o['l.Oid,'0.Zero],
-    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
-    'next`:_['o['l.Oid,'s_['0.Zero]]],'previous`:_['null.Maybe`{Oid`}],
-    'value`:_['w['0.Zero]]]],'<_:_|_>['o['l.Oid,'s_['0.Zero]],
-    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
-    'next`:_['o['l.Oid,'s_^2['0.Zero]]],'previous`:_['o['l.Oid,'0.Zero]],
-    'value`:_['w['s_['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^2['0.Zero]],
-    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
-    'next`:_['o['l.Oid,'s_^3['0.Zero]]],'previous`:_['o['l.Oid,'s_['0.Zero]]],
-    'value`:_['w['s_^2['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^3['0.Zero]],
-    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},'_`,_[
-    'next`:_['o['l.Oid,'s_^4['0.Zero]]],'previous`:_['o['l.Oid,'s_^2[
-    '0.Zero]]],'value`:_['w['s_^3['0.Zero]]]]],'<_:_|_>['o['l.Oid,'s_^4[
-    '0.Zero]],'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},
-    '_`,_['next`:_['null.Maybe`{Oid`}],'previous`:_['o['l.Oid,'s_^3['0.Zero]]],
-    'value`:_['w['s_^4['0.Zero]]]]],'to_from_elt`at`pos_is_['l.Oid,'l.Oid,
-    's_^3['0.Zero],'s_^3['0.Zero]]], C:Configuration) .
+    '<_:_|_>['l.Oid, 'SortedList`{NatSW`}.SortedList`{NatSW`}, '_`,_['first`:_[
+    'o['l.Oid, '0.Zero]], 'last`:_['o['l.Oid, 's_^4['0.Zero]]], 'size`:_['s_^5[
+    '0.Zero]]]], '<_:_|_>['c.Oid, 'Counter.Counter, 'index`:_['s_^5['0.Zero]]],
+    '<_:_|_>['w['0.Zero], 'NatWrapper.NatWrapper, 'value`:_['0.Zero]],
+    '<_:_|_>['w['s_['0.Zero]], 'NatWrapper.NatWrapper, 'value`:_['s_[
+    '0.Zero]]], '<_:_|_>['w['s_^2['0.Zero]], 'NatWrapper.NatWrapper, 'value`:_[
+    's_^2['0.Zero]]], '<_:_|_>['w['s_^3['0.Zero]], 'NatWrapper.NatWrapper,
+    'value`:_['s_^3['0.Zero]]], '<_:_|_>['w['s_^4['0.Zero]],
+    'NatWrapper.NatWrapper, 'value`:_['s_^4['0.Zero]]], '<_:_|_>['o['l.Oid,
+    '0.Zero], 'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`},
+    '_`,_['next`:_['o['l.Oid, 's_['0.Zero]]], 'previous`:_['null.Maybe`{Oid`}],
+    'value`:_['w['0.Zero]]]], '<_:_|_>['o['l.Oid, 's_['0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`}, '_`,_[
+    'next`:_['o['l.Oid, 's_^2['0.Zero]]], 'previous`:_['o['l.Oid, '0.Zero]],
+    'value`:_['w['s_['0.Zero]]]]], '<_:_|_>['o['l.Oid, 's_^2['0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`}, '_`,_[
+    'next`:_['o['l.Oid, 's_^3['0.Zero]]], 'previous`:_['o['l.Oid, 's_[
+    '0.Zero]]], 'value`:_['w['s_^2['0.Zero]]]]], '<_:_|_>['o['l.Oid, 's_^3[
+    '0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`}, '_`,_[
+    'next`:_['o['l.Oid, 's_^4['0.Zero]]], 'previous`:_['o['l.Oid, 's_^2[
+    '0.Zero]]], 'value`:_['w['s_^3['0.Zero]]]]], '<_:_|_>['o['l.Oid, 's_^4[
+    '0.Zero]],
+    'Node`{TAOSET-WRAPPER`}`{NatSW`}.Node`{TAOSET-WRAPPER`}`{NatSW`}, '_`,_[
+    'next`:_['null.Maybe`{Oid`}], 'previous`:_['o['l.Oid, 's_^3['0.Zero]]],
+    'value`:_['w['s_^4['0.Zero]]]]], 'to_from_elt`at`pos_is_['l.Oid, 'l.Oid,
+    's_^3['0.Zero], 's_^3['0.Zero]]], C:Configuration) .
 rewrites: 2
 result Bool: true
 Bye.

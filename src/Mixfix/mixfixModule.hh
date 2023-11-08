@@ -281,6 +281,7 @@ public:
   static Sort* disambiguatorSort(const Term* term);
   int getSMT_NumberToken(const mpq_class& value, Sort* sort);
   void printModifiers(ostream& s, Int64 number = NONE, Int64 number2 = NONE);
+  static void prettyPrint(ostream& s, const Term* term, bool rangeKnown = false);
   //
   //	LaTeX conversion functions.
   //
@@ -291,12 +292,16 @@ public:
   string latexStructuredConstant(int code) const;
   static string latexPrettyOp(int code);
   static string latexConstant(int code, const Module* module);
+  static string latexTokenVector(const Vector<Token>& tokens, Index first, Index last);
+
   //
   //	Latex pretty print functions.
   //
   static void latexPrettyPrint(ostream& s, DagNode* dagNode);
-  static void latexPrettyPrint(ostream& s, Term* term);
+  static void latexPrettyPrint(ostream& s, Term* term, bool rangeKnown = false);
   static void latexPrintDagNode(ostream& s, DagNode* dagNode);
+  static void latexPrintGather(ostream& s, const Vector<int>& gather);
+  static void latexPrintFormat(ostream& s, const Vector<int>& format);
   //
   //	Misc.
   //
@@ -972,6 +977,7 @@ private:
 			  int requiredPrec);
   NatSet objectSymbols;
   NatSet messageSymbols;
+  NatSet portalSymbols;
   StatementTransformer* statementTransformer = 0;
 
   //
@@ -993,7 +999,6 @@ private:
   static const char* latexYellow;
   static const char* latexResetColor;
 
-  friend ostream& operator<<(ostream& s, const Term* term);
   friend ostream& operator<<(ostream& s, DagNode* dagNode);
   friend ostream& operator<<(ostream& s, StrategyExpression* strategy);
 };
