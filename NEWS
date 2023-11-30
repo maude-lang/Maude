@@ -1,4 +1,21 @@
-Overview of Changes in alpha153
+Overview of Changes in alpha154
+============================================
+* conventions for printing spaces around unparsed tokens made
+uniform
+* fixed bug where set print const with sorts on . did not work
+for built-in constants in terms
+* new with-sorts PrintOption constant
+* added metaPrintToString() descent function
+* added printToString() message
+* metaPrettyPrint() descent function supports concealed
+argument lists via an extra argument
+* printTerm() message supports concealed argument lists via an
+extra argument
+* concealed argument lists support for printing terms in modules
+* fixed bug where color for terms in modules produces bad LaTeX
+* fixed bug in LaTeX for disambiguation of iter operators
+
+Overview of Changes in alpha153 (2023-11-07)
 ============================================
 * smarter sort disambiguation for printing statements and
 operator identities

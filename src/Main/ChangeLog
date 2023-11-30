@@ -1,3 +1,27 @@
+2023-11-22  Steven Eker  <eker@pup>
+
+	* metaInterpreter.maude: added printTermToString, printedTermToString
+	messages
+	printTerm message now takes a conseal symbols argument; added backward
+	compatibility symbol
+
+	* prelude.maude:  metaPrettyPrint() now takes a final QidSet argument for
+	conceal symbols; added backward compatibility definition
+
+2023-11-21  Steven Eker  <eker@pup>
+
+	* prelude.maude: added constant with-sorts of sort PrintOption
+	in META-LEVEL
+	added descent function
+	metaPrintToString : Module VariableSet Term PrintOptionSet Qid ~> String
+
+2023-11-16  Steven Eker  <eker@pup>
+
+	* main.cc (main): Interpreter::PRINT_MIXFIX ->
+	PrintSettings::PRINT_MIXFIX
+
+===================================Maude154===========================================
+
 2023-11-06  Steven Eker  <eker@pup>
 
 	* maude.sty: added \maudeAllowLineBreak and use it for \maudeComma

@@ -605,7 +605,8 @@ noinst_HEADERS = \
 	parameterDatabase.hh \
 	objectConstructorSymbol.hh \
 	statementTransformer.hh \
-	maudeLatexBuffer.hh
+	maudeLatexBuffer.hh \
+	printSettings.hh
 
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am

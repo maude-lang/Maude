@@ -25,17 +25,17 @@
 //
 
 void
-MixfixModule::bufferPrint(Vector<int>& buffer, Term* term, int printFlags)
+MixfixModule::bufferPrint(Vector<int>& buffer, Term* term, const PrintSettings& printSettings)
 {
   globalIndent = 0;  // HACK
-  prettyPrint(buffer, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+  prettyPrint(buffer, printSettings, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
 }
 
 void
-MixfixModule::bufferPrint(Vector<int>& buffer, StrategyExpression* expr, int printFlags)
+MixfixModule::bufferPrint(Vector<int>& buffer, StrategyExpression* expr, const PrintSettings& printSettings)
 {
   globalIndent = 0;  // HACK
-  prettyPrint(buffer, expr, UNBOUNDED, printFlags);
+  prettyPrint(buffer, printSettings, expr, UNBOUNDED);
 }
 
 void
@@ -46,7 +46,7 @@ MixfixModule::prefix(Vector<int>& buffer, bool needDisambig)
 }
 
 void
-MixfixModule::suffix(Vector<int>& buffer, Term* term, bool needDisambig, int printFlags)
+MixfixModule::suffix(Vector<int>& buffer, Term* term, bool needDisambig, const PrintSettings& printSettings)
 {
   if (needDisambig)
     {
@@ -58,12 +58,143 @@ MixfixModule::suffix(Vector<int>& buffer, Term* term, bool needDisambig, int pri
       //
       //	sortIndex will never be the index of a kind.
       //
-      printDotSort(buffer, symbol->rangeComponent()->sort(sortIndex), printFlags);
+      printDotSort(buffer, symbol->rangeComponent()->sort(sortIndex), printSettings);
     }
 }
 
+bool
+MixfixModule::handleIter(Vector<int>& buffer, Term* term, SymbolInfo& si, bool rangeKnown, const PrintSettings& printSettings)
+{
+  if (!(si.symbolType.hasFlag(SymbolType::ITER)))
+    return false;
+  if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL &&
+      printSettings.getPrintFlag(PrintSettings::PRINT_NUMBER))
+    {
+      SuccSymbol* succSymbol = safeCast(SuccSymbol*, term->symbol());
+      if (succSymbol->isNat(term))
+	{
+	  const mpz_class& nat = succSymbol->getNat(term);
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat)));
+	  prefix(buffer, needDisambig);
+	  char* name = mpz_get_str(0, 10, nat.get_mpz_t());
+	  buffer.append(Token::encode(name));
+	  free(name);
+	  suffix(buffer, term, needDisambig, printSettings);
+	  return true;
+	}
+    }
+  S_Term* st = safeCast(S_Term*, term);
+  const mpz_class& number = st->getNumber();
+  if (number == 1)
+    return false;  // do default thing
+
+  bool needToDisambiguate;
+  bool argumentRangeKnown;
+  decideIteratedAmbiguity(rangeKnown, term->symbol(), number, needToDisambiguate, argumentRangeKnown);
+  prefix(buffer, needToDisambiguate);
+
+  string prefixName;
+  makeIterName(prefixName, term->symbol()->id(), number);
+  printPrefixName(buffer, Token::encode(prefixName.c_str()), si, printSettings);
+  buffer.append(leftParen);
+  prettyPrint(buffer, printSettings, st->getArgument(), PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argumentRangeKnown);
+  buffer.append(rightParen);
+  suffix(buffer, term, needToDisambiguate, printSettings);
+  return true;
+}
+
+bool
+MixfixModule::handleMinus(Vector<int>& buffer, Term* term, bool rangeKnown, const PrintSettings& printSettings)
+{
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_NUMBER))
+    {
+      const MinusSymbol* minusSymbol = safeCast(MinusSymbol*, term->symbol());
+      if (minusSymbol->isNeg(term))
+	{
+	  mpz_class neg;
+	  (void) minusSymbol->getNeg(term, neg);
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg)));
+	  prefix(buffer, needDisambig);
+
+	  char* name = mpz_get_str(0, 10, neg.get_mpz_t());
+	  buffer.append(Token::encode(name));
+	  free(name);
+
+	  suffix(buffer, term, needDisambig, printSettings);
+	  return true;
+	}
+    }
+  return false;
+}
+  
+bool
+MixfixModule::handleDivision(Vector<int>& buffer, Term* term, bool rangeKnown, const PrintSettings& printSettings)
+{
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_RAT))
+    {
+      const DivisionSymbol* divisionSymbol = safeCast(DivisionSymbol*, term->symbol());
+      if (divisionSymbol->isRat(term))
+	{
+	  pair<mpz_class, mpz_class> rat;
+	  rat.second = divisionSymbol->getRat(term, rat.first);
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
+	  prefix(buffer, needDisambig);
+
+	  char* nn = mpz_get_str(0, 10, rat.first.get_mpz_t());
+	  string prefixName(nn);
+	  free(nn);
+	  prefixName += '/';
+	  char* dn = mpz_get_str(0, 10, rat.second.get_mpz_t());
+	  prefixName += dn;
+	  free(dn);
+	  buffer.append(Token::encode(prefixName.c_str()));
+
+	  suffix(buffer, term, needDisambig, printSettings);
+	  return true;
+	}
+    }
+  return false;
+}
+
 void
-MixfixModule::handleVariable(Vector<int>& buffer, Term* term, int printFlags)
+MixfixModule::handleFloat(Vector<int>& buffer, Term* term, bool rangeKnown, const PrintSettings& printSettings)
+{
+  double mfValue = safeCast(FloatTerm*, term)->getValue();
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (floatSymbols.size() > 1 || overloadedFloats.count(mfValue)));
+  prefix(buffer, needDisambig);
+  buffer.append(Token::doubleToCode(mfValue));
+  suffix(buffer, term, needDisambig, printSettings);
+}
+
+void
+MixfixModule::handleString(Vector<int>& buffer, Term* term, bool rangeKnown, const PrintSettings& printSettings)
+{
+  string strValue;
+  Token::ropeToString(safeCast(StringTerm*, term)->getValue(), strValue);
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue)));
+  prefix(buffer, needDisambig);
+  buffer.append(Token::encode(strValue.c_str()));
+  suffix(buffer, term, needDisambig, printSettings);
+}
+
+void
+MixfixModule::handleQuotedIdentifier(Vector<int>& buffer, Term* term, bool rangeKnown, const PrintSettings& printSettings)
+{
+  int qidCode = safeCast(QuotedIdentifierTerm*, term)->getIdIndex();
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode)));
+  prefix(buffer, needDisambig);
+  buffer.append(Token::quoteNameCode(qidCode));
+  suffix(buffer, term, needDisambig, printSettings);
+}
+
+void
+MixfixModule::handleVariable(Vector<int>& buffer, Term* term, const PrintSettings& printSettings)
 {
   VariableTerm* v = safeCast(VariableTerm*, term);
   int id = v->id();
@@ -86,139 +217,14 @@ MixfixModule::handleVariable(Vector<int>& buffer, Term* term, int printFlags)
   if (sort->index() == Sort::KIND)
     {
       buffer.append(Token::encode(fullName.c_str()));
-      printKind(buffer, sort, printFlags);
+      printKind(buffer, sort, printSettings);
     }
   else
-    printVarSort(buffer, fullName, sort, printFlags);
-}
-
-bool
-MixfixModule::handleIter(Vector<int>& buffer, Term* term, SymbolInfo& si, bool rangeKnown, int printFlags)
-{
-  if (!(si.symbolType.hasFlag(SymbolType::ITER)))
-    return false;
-  if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL &&
-      (printFlags & Interpreter::PRINT_NUMBER))
-    {
-      SuccSymbol* succSymbol = safeCast(SuccSymbol*, term->symbol());
-      if (succSymbol->isNat(term))
-	{
-	  const mpz_class& nat = succSymbol->getNat(term);
-	  bool needDisambig = !rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat));
-	  prefix(buffer, needDisambig);
-	  char* name = mpz_get_str(0, 10, nat.get_mpz_t());
-	  buffer.append(Token::encode(name));
-	  free(name);
-	  suffix(buffer, term, needDisambig, printFlags);
-	  return true;
-	}
-    }
-  S_Term* st = safeCast(S_Term*, term);
-  const mpz_class& number = st->getNumber();
-  if (number == 1)
-    return false;  // do default thing
-
-  bool needToDisambiguate;
-  bool argumentRangeKnown;
-  decideIteratedAmbiguity(rangeKnown, term->symbol(), number, needToDisambiguate, argumentRangeKnown);
-  prefix(buffer, needToDisambiguate);
-
-  string prefixName;
-  makeIterName(prefixName, term->symbol()->id(), number);
-  printPrefixName(buffer, Token::encode(prefixName.c_str()), si, printFlags);
-  buffer.append(leftParen);
-  prettyPrint(buffer, st->getArgument(), PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argumentRangeKnown, printFlags);
-  buffer.append(rightParen);
-  suffix(buffer, term, needToDisambiguate, printFlags);
-  return true;
-}
-
-bool
-MixfixModule::handleMinus(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
-{
-  if (printFlags & Interpreter::PRINT_NUMBER)
-    {
-      const MinusSymbol* minusSymbol = safeCast(MinusSymbol*, term->symbol());
-      if (minusSymbol->isNeg(term))
-	{
-	  mpz_class neg;
-	  (void) minusSymbol->getNeg(term, neg);
-	  bool needDisambig = !rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg));
-	  prefix(buffer, needDisambig);
-
-	  char* name = mpz_get_str(0, 10, neg.get_mpz_t());
-	  buffer.append(Token::encode(name));
-	  free(name);
-
-	  suffix(buffer, term, needDisambig, printFlags);
-	  return true;
-	}
-    }
-  return false;
-}
-
-bool
-MixfixModule::handleDivision(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
-{
-  if (printFlags & Interpreter::PRINT_RAT)
-    {
-      const DivisionSymbol* divisionSymbol = safeCast(DivisionSymbol*, term->symbol());
-      if (divisionSymbol->isRat(term))
-	{
-	  pair<mpz_class, mpz_class> rat;
-	  rat.second = divisionSymbol->getRat(term, rat.first);
-	  bool needDisambig = !rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
-	  prefix(buffer, needDisambig);
-
-	  char* nn = mpz_get_str(0, 10, rat.first.get_mpz_t());
-	  string prefixName(nn);
-	  free(nn);
-	  prefixName += '/';
-	  char* dn = mpz_get_str(0, 10, rat.second.get_mpz_t());
-	  prefixName += dn;
-	  free(dn);
-	  buffer.append(Token::encode(prefixName.c_str()));
-
-	  suffix(buffer, term, needDisambig, printFlags);
-	  return true;
-	}
-    }
-  return false;
+    printVarSort(buffer, fullName, sort, printSettings);
 }
 
 void
-MixfixModule::handleFloat(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
-{
-  double mfValue = safeCast(FloatTerm*, term)->getValue();
-  bool needDisambig = !rangeKnown && (floatSymbols.size() > 1 || overloadedFloats.count(mfValue));
-  prefix(buffer, needDisambig);
-  buffer.append(Token::doubleToCode(mfValue));
-  suffix(buffer, term, needDisambig, printFlags);
-}
-
-void
-MixfixModule::handleString(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
-{
-  string strValue;
-  Token::ropeToString(safeCast(StringTerm*, term)->getValue(), strValue);
-  bool needDisambig = !rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue));
-  prefix(buffer, needDisambig);
-  buffer.append(Token::encode(strValue.c_str()));
-  suffix(buffer, term, needDisambig, printFlags);
-}
-
-void
-MixfixModule::handleQuotedIdentifier(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
-{
-  int qidCode = safeCast(QuotedIdentifierTerm*, term)->getIdIndex();
-  bool needDisambig = !rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode));
-  prefix(buffer, needDisambig);
-  buffer.append(Token::quoteNameCode(qidCode));
-  suffix(buffer, term, needDisambig, printFlags);
-}
-
-void
-MixfixModule::handleSMT_NumberSymbol(Vector<int>& buffer, Term* term, bool rangeKnown, int printFlags)
+MixfixModule::handleSMT_NumberSymbol(Vector<int>& buffer, Term* term, bool rangeKnown, const PrintSettings& printSettings)
 {
   //
   //	Get value.
@@ -239,30 +245,31 @@ MixfixModule::handleSMT_NumberSymbol(Vector<int>& buffer, Term* term, bool range
   if (t == SMT_Info::INTEGER)
     {
       const mpz_class& integer = value.get_num();
-      needDisambig = !rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer));
+      needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	(!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer)));
     }
   else
     {
       Assert(t == SMT_Info::REAL, "SMT number sort expected");
       pair<mpz_class, mpz_class> rat(value.get_num(), value.get_den());
-      needDisambig = !rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
+      needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	(!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
     }
-
   prefix(buffer, needDisambig);
   buffer.append(getSMT_NumberToken(value, sort));
-  suffix(buffer, term, needDisambig, printFlags);
+  suffix(buffer, term, needDisambig, printSettings);
 }
 
 void
 MixfixModule::prettyPrint(Vector<int>& buffer,
+			  const PrintSettings& printSettings,
 			  Term* term,
 			  int requiredPrec,
 			  int leftCapture,
 			  const ConnectedComponent* leftCaptureComponent,
 			  int rightCapture,
 			  const ConnectedComponent* rightCaptureComponent,
-			  bool rangeKnown,
-			  int printFlags)
+			  bool rangeKnown)
 {
   Symbol* symbol = term->symbol();
   int index = symbol->getIndexWithinModule();
@@ -270,46 +277,46 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
   //
   //	Check for special i/o representation.
   //
-  if (handleIter(buffer, term, si, rangeKnown, printFlags))
+  if (handleIter(buffer, term, si, rangeKnown, printSettings))
     return;
   int basicType = si.symbolType.getBasicType();
   switch (basicType)
     {
     case SymbolType::MINUS_SYMBOL:
       {
-	if (handleMinus(buffer, term, rangeKnown, printFlags))
+	if (handleMinus(buffer, term, rangeKnown, printSettings))
 	  return;
 	break;
       }
     case SymbolType::DIVISION_SYMBOL:
       {
-	if (handleDivision(buffer, term, rangeKnown, printFlags))
+	if (handleDivision(buffer, term, rangeKnown, printSettings))
 	  return;
 	break;
       }
     case SymbolType::FLOAT:
       {
-	handleFloat(buffer, term, rangeKnown, printFlags);
+	handleFloat(buffer, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::STRING:
       {
-	handleString(buffer, term, rangeKnown, printFlags);
+	handleString(buffer, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::QUOTED_IDENTIFIER:
       {
-	handleQuotedIdentifier(buffer, term, rangeKnown, printFlags);
+	handleQuotedIdentifier(buffer, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::VARIABLE:
       {
-	handleVariable(buffer, term, printFlags);
+	handleVariable(buffer, term, printSettings);
 	return;
       }
     case SymbolType::SMT_NUMBER_SYMBOL:
       {
-	handleSMT_NumberSymbol(buffer, term, rangeKnown, printFlags);
+	handleSMT_NumberSymbol(buffer, term, rangeKnown, printSettings);
 	return;
       }
     default:
@@ -318,16 +325,24 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 
   int iflags = si.iflags;
   bool needDisambig = !rangeKnown && ambiguous(iflags);
-  bool argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
+  bool argRangeKnown = false;
   int nrArgs = symbol->arity();
+  if (nrArgs == 0)
+    {
+      if (printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST))
+	needDisambig = true;
+    }
+  else
+    argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
 
   prefix(buffer, needDisambig);
-  if (((printFlags & Interpreter::PRINT_MIXFIX) && !si.mixfixSyntax.empty()) || (basicType == SymbolType::SORT_TEST))
+  bool printConceal = printSettings.concealedSymbol(symbol->id());
+  if ((printSettings.getPrintFlag(PrintSettings::PRINT_MIXFIX) && !si.mixfixSyntax.empty() && !printConceal) || (basicType == SymbolType::SORT_TEST))
     {
       //
       //	Mixfix case.
       //
-      bool printWithParens = printFlags & Interpreter::PRINT_WITH_PARENS;
+      bool printWithParens = printSettings.getPrintFlag(PrintSettings::PRINT_WITH_PARENS);
       bool needParen = !needDisambig &&
 	(printWithParens || requiredPrec < si.prec ||
 	 ((iflags & LEFT_BARE) && leftCapture <= si.gather[0] &&
@@ -349,14 +364,14 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	  Term* t = a.argument();
 	  a.next();
 	  moreArgs = a.valid();
-	  pos = printTokens(buffer, si, pos, printFlags);
+	  pos = printTokens(buffer, si, pos, printSettings);
 	  if (arg == nrArgs - 1 && moreArgs)
 	    {
 	      ++nrTails;
 	      arg = 0;
 	      if (needAssocParen)
 		buffer.append(leftParen);
-	      pos = printTokens(buffer, si, 0, printFlags);
+	      pos = printTokens(buffer, si, 0, printSettings);
 	    }
 	  int lc = UNBOUNDED;
 	  const ConnectedComponent* lcc = 0;
@@ -382,9 +397,9 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 		  rcc = rightCaptureComponent;
 		}
 	    }
-	  prettyPrint(buffer, t, si.gather[arg], lc, lcc, rc, rcc, argRangeKnown, printFlags);
+	  prettyPrint(buffer, printSettings, t, si.gather[arg], lc, lcc, rc, rcc, argRangeKnown);
 	}
-      printTails(buffer, si, pos, nrTails, needAssocParen, printFlags);
+      printTails(buffer, si, pos, nrTails, needAssocParen, printSettings);
       if (needParen)
 	buffer.append(rightParen);
     }
@@ -394,61 +409,67 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
       //	Prefix case.
       //
       int id = symbol->id();
-      printPrefixName(buffer, id, si, printFlags);
+      printPrefixName(buffer, id, si, printSettings);
       ArgumentIterator a(*term);
       if (a.valid())
 	{
-	  int nrTails = 1;
-	  buffer.append(leftParen);
-	  for (int arg = 0;; arg++)
+	  if (printConceal)
 	    {
-	      Term* t = a.argument();
-	      a.next();
-	      int moreArgs = a.valid();
-	      if (arg >= nrArgs - 1 &&
-		  !(printFlags & Interpreter::PRINT_FLAT) &&
-		  moreArgs)
-		{
-		  ++nrTails;
-		  printPrefixName(buffer, id, si, printFlags);
-		  buffer.append(leftParen);
-		}
-	      prettyPrint(buffer, t, PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argRangeKnown, printFlags);
-	      if (!moreArgs)
-		break;
-	      buffer.append(comma);
+	      buffer.append(leftParen);
+	      buffer.append(ellipsis);
+	      buffer.append(rightParen);
 	    }
-	  while (nrTails-- > 0)
-	    buffer.append(rightParen);
+	  else
+	    {
+	      int nrTails = 1;
+	      buffer.append(leftParen);
+	      for (int arg = 0;; arg++)
+		{
+		  Term* t = a.argument();
+		  a.next();
+		  int moreArgs = a.valid();
+		  if (arg >= nrArgs - 1 && !printSettings.getPrintFlag(PrintSettings::PRINT_FLAT) && moreArgs)
+		    {
+		      ++nrTails;
+		      printPrefixName(buffer, id, si, printSettings);
+		      buffer.append(leftParen);
+		    }
+		  prettyPrint(buffer, printSettings, t, PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argRangeKnown);
+		  if (!moreArgs)
+		    break;
+		  buffer.append(comma);
+		}
+	      while (nrTails-- > 0)
+		buffer.append(rightParen);
+	    }
 	}
     }
-  suffix(buffer, term, needDisambig, printFlags);
+  suffix(buffer, term, needDisambig, printSettings);
 }
 
 void
-MixfixModule::printKind(Vector<int>& buffer, const Sort* kind, int printFlags)
+MixfixModule::printKind(Vector<int>& buffer, const Sort* kind, const PrintSettings& printSettings)
 {
   Assert(kind != 0, "null kind");
   ConnectedComponent* c = kind->component();
   Assert(c != 0, "null conponent");
 
   buffer.append(leftBracket);
-  printSort(buffer, c->sort(1), printFlags);
+  printSort(buffer, c->sort(1), printSettings);
   int nrMax = c->nrMaximalSorts();
   for (int i = 2; i <= nrMax; i++)
     {
       buffer.append(comma);
-      printSort(buffer, c->sort(i), printFlags);
+      printSort(buffer, c->sort(i), printSettings);
     }
   buffer.append(rightBracket);
 }
 
 void
-MixfixModule::printSort(Vector<int>& buffer, const Sort* sort, int printFlags)
+MixfixModule::printSort(Vector<int>& buffer, const Sort* sort, const PrintSettings& printSettings)
 {
   int name = sort->id();
-  if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT &&
-      interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX))
+  if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT && printSettings.getPrintFlag(PrintSettings::PRINT_MIXFIX))
     {
       Vector<int> parts;
       Token::splitParameterizedSort(name, parts);
@@ -460,11 +481,10 @@ MixfixModule::printSort(Vector<int>& buffer, const Sort* sort, int printFlags)
 }
 
 void
-MixfixModule::printDotSort(Vector<int>& buffer, const Sort* sort, int printFlags)
+MixfixModule::printDotSort(Vector<int>& buffer, const Sort* sort, const PrintSettings& printSettings)
 {
   int name = sort->id();
-  if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT &&
-      interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX))
+  if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT && printSettings.getPrintFlag(PrintSettings::PRINT_MIXFIX))
     {
       Vector<int> parts;
       Token::splitParameterizedSort(name, parts);
@@ -477,11 +497,10 @@ MixfixModule::printDotSort(Vector<int>& buffer, const Sort* sort, int printFlags
 }
 
 void
-MixfixModule::printVarSort(Vector<int>& buffer, string& fullName, const Sort* sort, int printFlags)
+MixfixModule::printVarSort(Vector<int>& buffer, string& fullName, const Sort* sort, const PrintSettings& printSettings)
 {
   int name = sort->id();
-  if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT &&
-      interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX))
+  if (Token::auxProperty(name) == Token::AUX_STRUCTURED_SORT && printSettings.getPrintFlag(PrintSettings::PRINT_MIXFIX))
     {
       Vector<int> parts;
       Token::splitParameterizedSort(name, parts);
@@ -498,9 +517,9 @@ MixfixModule::printVarSort(Vector<int>& buffer, string& fullName, const Sort* so
 }
 
 int
-MixfixModule::printTokens(Vector<int>& buffer, const SymbolInfo& si, int pos, int printFlags)
+MixfixModule::printTokens(Vector<int>& buffer, const SymbolInfo& si, int pos, const PrintSettings& printSettings)
 {
-  bool hasFormat = (printFlags & Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
+  bool hasFormat = printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && (si.format.length() > 0);
   for (;;)
     {
       int token = si.mixfixSyntax[pos++];
@@ -521,9 +540,9 @@ MixfixModule::printTails(Vector<int>& buffer,
 			 int pos,
 			 int nrTails,
 			 bool needAssocParen,
-			 int printFlags)
+			 const PrintSettings& printSettings)
 {
-  bool hasFormat = (printFlags & Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
+  bool hasFormat = printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && (si.format.length() > 0);
   int mixfixLength = si.mixfixSyntax.length();
   for (int i = 0;;)
     {
@@ -543,9 +562,9 @@ MixfixModule::printTails(Vector<int>& buffer,
 }
 
 void
-MixfixModule::printPrefixName(Vector<int>& buffer, int prefixName, SymbolInfo& si, int printFlags)
+MixfixModule::printPrefixName(Vector<int>& buffer, int prefixName, SymbolInfo& si, const PrintSettings& printSettings)
 {
-  if ((printFlags & Interpreter::PRINT_FORMAT) && (si.format.length() == 2))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && si.format.length() == 2)
     {
       handleFormat(buffer, si.format[0]);
       buffer.append(prefixName);
@@ -591,7 +610,7 @@ MixfixModule::handleFormat(Vector<int>& buffer, int spaceToken)
 	case 't':
 	case 's':
 	  {
-	    static char strg[3] = "\\!";  // HACK
+	    static char strg[3] = "\\!";  // We replace the ! with *cmd
 	    strg[1] = *cmd;
 	    buffer.append(Token::encode(strg));
 	    break;
@@ -602,9 +621,9 @@ MixfixModule::handleFormat(Vector<int>& buffer, int spaceToken)
 
 void
 MixfixModule::prettyPrint(Vector<int>& buffer,
+			  const PrintSettings& printSettings,
 			  StrategyExpression* expr,
-			  int requiredPrec,
-			  int printFlags)
+			  int requiredPrec)
 {
   bool needParen = false;
 
@@ -614,7 +633,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
     {
       buffer.append(one);
       buffer.append(leftParen);
-      prettyPrint(buffer, o->getStrategy(), UNBOUNDED, printFlags);
+      prettyPrint(buffer, printSettings, o->getStrategy(), UNBOUNDED);
       buffer.append(rightParen);
     }
   else if (ApplicationStrategy* a = dynamic_cast<ApplicationStrategy*>(expr))
@@ -639,9 +658,9 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	      int nrAssignements = variables.size();
 	      for (int i = 0;;)
 		{
-		  prettyPrint(buffer, variables[i], UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+		  prettyPrint(buffer, printSettings, variables[i], UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
 		  buffer.append(assignment);
-		  prettyPrint(buffer, values[i].getTerm(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+		  prettyPrint(buffer, printSettings, values[i].getTerm(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
 		  if (++i == nrAssignements)
 		    break;
 		  buffer.append(comma);
@@ -655,7 +674,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	      int nrStrategies = strategies.size();
 	      for (int i = 0;;)
 		{
-		  prettyPrint(buffer, strategies[i], UNBOUNDED, printFlags);
+		  prettyPrint(buffer, printSettings, strategies[i], UNBOUNDED);
 		  if (++i == nrStrategies)
 		    break;
 		  buffer.append(comma);
@@ -675,7 +694,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
       int nrStrategies = strategies.size();
       for (int i = 0;;)
 	{
-	  prettyPrint(buffer, strategies[i], STRAT_SEQ_PREC, printFlags);
+	  prettyPrint(buffer, printSettings, strategies[i], STRAT_SEQ_PREC);
 	  if (++i == nrStrategies)
 	    break;
 	  buffer.append(semicolon);
@@ -690,7 +709,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
       int nrStrategies = strategies.size();
       for (int i = 0;;)
 	{
-	  prettyPrint(buffer, strategies[i], STRAT_UNION_PREC, printFlags);
+	  prettyPrint(buffer, printSettings, strategies[i], STRAT_UNION_PREC);
 	  if (++i == nrStrategies)
 	    break;
 	  buffer.append(pipe);
@@ -698,7 +717,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
     }
   else if (IterationStrategy* i = dynamic_cast<IterationStrategy*>(expr))
     {
-      prettyPrint(buffer, i->getStrategy(), 0, printFlags);
+      prettyPrint(buffer, printSettings, i->getStrategy(), 0);
       buffer.append(i->getZeroAllowed() ? star : plus);
     }
   else if (BranchStrategy* b = dynamic_cast<BranchStrategy*>(expr))
@@ -712,7 +731,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 		    b->getFailureStrategy() == 0, "unknown branch strategy");
 	    buffer.append(notToken);
 	    buffer.append(leftParen);
-	    prettyPrint(buffer, b->getInitialStrategy(), UNBOUNDED, printFlags);
+	    prettyPrint(buffer, printSettings, b->getInitialStrategy(), UNBOUNDED);
 	    buffer.append(rightParen);
 	    break;
 	  }
@@ -723,7 +742,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 		   b->getFailureStrategy() == 0, "unknown branch strategy");
 	    buffer.append(test);
 	    buffer.append(leftParen);
-	    prettyPrint(buffer, b->getInitialStrategy(), UNBOUNDED, printFlags);
+	    prettyPrint(buffer, printSettings, b->getInitialStrategy(), UNBOUNDED);
 	    buffer.append(rightParen);
 	    break;
 	  }
@@ -735,7 +754,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 		       b->getFailureStrategy() == 0, "unknown branch strategy");
 		buffer.append(tryToken);
 		buffer.append(leftParen);
-		prettyPrint(buffer, b->getInitialStrategy(), UNBOUNDED, printFlags);
+		prettyPrint(buffer, printSettings, b->getInitialStrategy(), UNBOUNDED);
 		buffer.append(rightParen);
 	      }
 	    else
@@ -745,9 +764,9 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 		needParen = requiredPrec < STRAT_ORELSE_PREC;
 		if (needParen)
 		  buffer.append(leftParen);
-		prettyPrint(buffer, b->getInitialStrategy(), STRAT_ORELSE_PREC, printFlags);
+		prettyPrint(buffer, printSettings, b->getInitialStrategy(), STRAT_ORELSE_PREC);
 		buffer.append(orelse);
-		prettyPrint(buffer, b->getFailureStrategy(), STRAT_ORELSE_PREC, printFlags);
+		prettyPrint(buffer, printSettings, b->getFailureStrategy(), STRAT_ORELSE_PREC);
 	      }
 	    break;
 	  }
@@ -757,11 +776,11 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	    needParen = requiredPrec < STRAT_BRANCH_PREC;
 	    if (needParen)
 	      buffer.append(leftParen);
-	    prettyPrint(buffer, b->getInitialStrategy(), STRAT_BRANCH_PREC, printFlags);
+	    prettyPrint(buffer, printSettings, b->getInitialStrategy(), STRAT_BRANCH_PREC);
 	    buffer.append(query);
-	    prettyPrint(buffer, b->getSuccessStrategy(), STRAT_BRANCH_PREC, printFlags);
+	    prettyPrint(buffer, printSettings, b->getSuccessStrategy(), STRAT_BRANCH_PREC);
 	    buffer.append(colon);
-	    prettyPrint(buffer, b->getFailureStrategy(), STRAT_BRANCH_PREC, printFlags);
+	    prettyPrint(buffer, printSettings, b->getFailureStrategy(), STRAT_BRANCH_PREC);
 	    break;
 	  }
 	case BranchStrategy::ITERATE:
@@ -769,7 +788,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	    Assert(b->getFailureAction() == BranchStrategy::IDLE &&
 		   b->getSuccessStrategy() == 0 &&
 		   b->getFailureStrategy() == 0, "unknown branch strategy");
-	    prettyPrint(buffer, b->getInitialStrategy(), 0, printFlags);
+	    prettyPrint(buffer, printSettings, b->getInitialStrategy(), 0);
 	    buffer.append(bang);
 	    break;
 	  }
@@ -788,12 +807,12 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	  case  0: buffer.append(xmatch); break;
 	  default: buffer.append(amatch);
 	}
-      prettyPrint(buffer, t->getPatternTerm(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      prettyPrint(buffer, printSettings, t->getPatternTerm(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
       const Vector<ConditionFragment*>& condition = t->getCondition();
       if (!condition.empty())
 	{
 	  buffer.append(suchThat);
-	  prettyPrint(buffer, condition, printFlags);
+	  prettyPrint(buffer, condition, printSettings);
 	}
     }
   else if (SubtermStrategy* s = dynamic_cast<SubtermStrategy*>(expr))
@@ -807,12 +826,12 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	  case  0: buffer.append(xmatchrew); break;
 	  default: buffer.append(amatchrew);
 	}
-      prettyPrint(buffer, s->getPatternTerm(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      prettyPrint(buffer, printSettings, s->getPatternTerm(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
       const Vector<ConditionFragment*>& condition = s->getCondition();
       if (!condition.empty())
 	{
 	  buffer.append(suchThat);
-	  prettyPrint(buffer, condition, printFlags);
+	  prettyPrint(buffer, condition, printSettings);
 	}
       const Vector<Term*>& subterms = s->getSubterms();
       const Vector<StrategyExpression*>& strategies = s->getStrategies();
@@ -822,9 +841,9 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
       for (size_t i = 0; i < nrSubterms; ++i)
 	{
 	  buffer.append(i == 0 ? by : comma);
-	  prettyPrint(buffer, subterms[i], UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+	  prettyPrint(buffer, printSettings, subterms[i], UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
 	  buffer.append(usingToken);
-	  prettyPrint(buffer, strategies[i], STRAT_USING_PREC - 1, printFlags);
+	  prettyPrint(buffer, printSettings, strategies[i], STRAT_USING_PREC - 1);
 	}
     }
   else if (CallStrategy* c = dynamic_cast<CallStrategy*>(expr))
@@ -845,7 +864,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 		first = false;
 	      else
 		buffer.append(comma);
-	      prettyPrint(buffer, it.argument(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+	      prettyPrint(buffer, printSettings, it.argument(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
 	    }
 	  buffer.append(rightParen);
 	}
@@ -857,12 +876,12 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 void
 MixfixModule::prettyPrint(Vector<int>& buffer,
 			  const Vector<ConditionFragment*>& condition,
-			  int printFlags)
+			  const PrintSettings& printSettings)
 {
   int nrFragments = condition.length();
   for (int i = 0; i < nrFragments;)
     {
-      prettyPrint(buffer, condition[i], printFlags);
+      prettyPrint(buffer, condition[i], printSettings);
       if (++i < nrFragments)
 	buffer.append(wedge);
     }
@@ -871,35 +890,31 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 void
 MixfixModule::prettyPrint(Vector<int>& buffer,
 			  const ConditionFragment* c,
-			  int printFlags)
+			  const PrintSettings& printSettings)
 {
-  if (const EqualityConditionFragment* e =
-      dynamic_cast<const EqualityConditionFragment*>(c))
+  if (const EqualityConditionFragment* e = dynamic_cast<const EqualityConditionFragment*>(c))
     {
-      prettyPrint(buffer, e->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      prettyPrint(buffer, printSettings, e->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
       buffer.append(equals);
-      prettyPrint(buffer, e->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      prettyPrint(buffer, printSettings, e->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
     }
-  else if (const SortTestConditionFragment* t =
-	   dynamic_cast<const SortTestConditionFragment*>(c))
+  else if (const SortTestConditionFragment* t = dynamic_cast<const SortTestConditionFragment*>(c))
     {
-      prettyPrint(buffer, t->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      prettyPrint(buffer, printSettings, t->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
       buffer.append(colon);
-      printSort(buffer, t->getSort(), printFlags);
+      printSort(buffer, t->getSort(), printSettings);
     }
-  else if (const AssignmentConditionFragment* a =
-	   dynamic_cast<const AssignmentConditionFragment*>(c))
+  else if (const AssignmentConditionFragment* a = dynamic_cast<const AssignmentConditionFragment*>(c))
    {
-      prettyPrint(buffer, a->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      prettyPrint(buffer, printSettings, a->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
       buffer.append(assign);
-      prettyPrint(buffer, a->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      prettyPrint(buffer, printSettings, a->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
     }
-  else if (const RewriteConditionFragment* r =
-	   dynamic_cast<const RewriteConditionFragment*>(c))
+  else if (const RewriteConditionFragment* r = dynamic_cast<const RewriteConditionFragment*>(c))
     {
-      prettyPrint(buffer, r->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      prettyPrint(buffer, printSettings, r->getLhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
       buffer.append(arrow);
-      prettyPrint(buffer, r->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false, printFlags);
+      prettyPrint(buffer, printSettings, r->getRhs(), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
     }
   else
     CantHappen("bad condition fragment");

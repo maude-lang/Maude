@@ -1,3 +1,88 @@
+2023-11-29  Steven Eker  <eker@pup>
+
+	* descentFunctions.cc (MetaLevelOpSymbol::metaPrintToString):
+	set PrintSettings::PRINT_WITH_ALIASES if we have a non-empty
+	aliasMap
+
+2023-11-22  Steven Eker  <eker@pup>
+
+	* interpreterSignature.cc: printTermMsg now takes 7
+	arguments
+
+	* miSyntax.cc (InterpreterManagerSymbol::printTerm): handle
+	conceal symbols
+
+	* interpreterManagerSymbol.hh
+	(class InterpreterManagerSymbol): added decl for
+	printTermToString()
+
+	* remoteInterpreter2.cc
+	(InterpreterManagerSymbol::handleMessage): added
+	printTermToStringMsg
+
+	* miSyntax.cc (InterpreterManagerSymbol::printTermToString):
+	added
+
+	* interpreterSignature.cc: added printTermToStringMsg,
+	printedTermToStringMsg
+
+	* descentSignature.cc: metaPrettyPrint operator now takes
+	5 arguments
+
+	* descentFunctions.cc (MetaLevelOpSymbol::metaPrettyPrint):
+	support conceal symbols
+
+	* metaLevel.hh (class MetaLevel): added decl for
+	downConcealedSet()
+
+	* metaDown.cc (MetaLevel::downConcealedSet): added
+
+	* descentFunctions.cc (MetaLevelOpSymbol::metaPrintToString):
+	handle concealSymbols
+
+2023-11-21  Steven Eker  <eker@pup>
+
+	* metaLevel.hh (MetaLevel::upString): use new Rope ctor
+
+	* descentSignature.cc: added metaPrintToString
+
+	* descentFunctions.cc (MetaLevelOpSymbol::metaPrintToString):
+	added
+
+	* metaLevel.hh (MetaLevel::upString): added
+
+	* metaLevelSignature.cc: added withSortsSymbol
+
+	* metaDown.cc (MetaLevel::downPrintOption): handle
+	withSortsSymbol
+
+2023-11-20  Steven Eker  <eker@pup>
+
+	* metaLevel.hh (class MetaLevel): update decl for
+	downPrintOption()
+
+	* metaDown.cc (MetaLevel::downPrintOptionSet): take and pass
+	PrintSettings
+
+	* miSyntax.cc (InterpreterManagerSymbol::printTerm): use
+	PrintSettings
+
+	* descentFunctions.cc (MetaLevelOpSymbol::metaPrettyPrintStrategy):
+	use PrintSettings
+	(MetaLevelOpSymbol::metaPrettyPrint): use PrintSettings
+
+	* metaLevel.hh (class MetaLevel): updated decl for
+	downPrintOptionSet()
+
+	* metaDown.cc (MetaLevel::downPrintOption): use PrintSettings
+
+2023-11-16  Steven Eker  <eker@pup>
+
+	* metaDown.cc (MetaLevel::downPrintOption): Interpreter:: ->
+	PrintSettings::
+
+===================================Maude154===========================================
+
 2023-11-02  Steven Eker  <eker@pup>
 
 	* metaDownOps.cc (MetaLevel::downAttr): down portal attributes

@@ -61,7 +61,7 @@ or equivalently
 Note that as this shows the unparsed module, hooks, identity terms,
 membership axioms, equations, rules, and strategy definitions are just
 bubbles of tokens which are printed using the \maudeRaw{} command which uses
-the typewritter font.
+the typewriter font.
 Also parameterized sorts and constants in renamings in module expressions
 are just printed using the naive \maudeSort{} rather than as a structured
 name with \maudeParameter{} and \maudeView{} since they haven't been evaluated
@@ -90,13 +90,13 @@ in both text and LaTeX.
 Note that as this shows the view module, terms on either side of op to
 term mappings and strategy expressions on either side of strat to expr
 mappings are just bubbles of tokens which are printed using the \maudeRaw{}
-command which uses the typewritter font.
+command which uses the typewriter font.
 
 (7) There is a new command
   set print combine vars on/off .
 which controls whether each variable alias is printed on its own line
 or whether variable aliases with the same sort are combined in a
-single declaration. This flag is supported for show desugares/all vars
+single declaration. This flag is supported for show desugared/all vars
 The default is off for backward compatibility.
 
 Other changes
@@ -120,7 +120,7 @@ Here, previously, each occurrence of 0 required disambiguation. Now
 the right hand sides of =, => and := are assumed to have a known
 kind based on the left hand side, while the left hand side of : is
 assumed to have a known kind base on the sort in the rhs so none of
-the occurrences of 0 recieve sort disambiguation.
+the occurrences of 0 receive sort disambiguation.
 
 (2) A similar change to the printing of operator identities since
 the range kind will always be defined by the operator.
@@ -178,7 +178,7 @@ objects contain a portal was merely to avoid the degenerate case of
 a lone object waiting for a reply from an external object, which
 would not be received because object-message rewriting and external
 object interaction is special behavior that is attached to the
-configuration contructor
+configuration constructor
   op __ : Configuration Configuration -> Configuration [ctor config assoc comm id: none] .
 With a portal present, this operator will always appear at the top
 of a configuration that communicates with external objects.
@@ -198,7 +198,7 @@ in different configurations that have the same Oid and as long as only
 one such configuration has a portal, messages from external objects
 will not be misdelivered. This requirement arises with nested
 configurations where the outer configuration manages communication
-between external objects and objects in the inner configurarion and
+between external objects and objects in the inner configuration and
 objects in both configurations share Oids. In this case only the outer
 configuration would have a portal and would be able to communicate
 directly with external objects.
@@ -247,9 +247,3 @@ and before the single character tokens
   ) ] }
 in mixfix syntax. This greatly reduces the overfull \hbox issue and
 approximates the line breaking rules used by the line wrapper in the text case.
-
-(11) In LaTeX output only for show all/desugared/ops, backquotes are not shown
-in op-hooks (they haven't been shown in op declarations for a while). I'm
-considering making this the convention for text output in the future, for
-both op-hooks and op declarations but there are some subtle cases for reparsing
-output.

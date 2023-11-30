@@ -160,14 +160,14 @@ MixfixModule::latexPrettyOp(int code)
 }
 
 bool
-MixfixModule::latexFancySpace(ostream& s, int spaceToken)
+MixfixModule::latexFancySpace(ostream& s, int spaceToken, const PrintSettings& printSettings)
 {
   //
   //	Handle user specified formating between tokens. Return true if we emit
   //	something that can be treated like a space between tokens.
   //
   bool space = false;
-  for (const char* cmd = Token::name(spaceToken); *cmd; cmd++)
+  for (const char* cmd = Token::name(spaceToken); *cmd; ++cmd)
     {
       char c = *cmd;
       switch (c)
@@ -213,7 +213,7 @@ MixfixModule::latexFancySpace(ostream& s, int spaceToken)
 	  }
 	default:
 	  {
-	    if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+	    if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
 	      break;
 	    switch (c)
 	      {
@@ -284,20 +284,20 @@ MixfixModule::latexPrefix(ostream& s, bool needDisambig, const char* color)
 }
 
 void
-MixfixModule::latexPrintPrefixName(ostream& s, const char* prefixName, const SymbolInfo& si)
+MixfixModule::latexPrintPrefixName(ostream& s, const char* prefixName, const SymbolInfo& si, const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() == 2))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && (si.format.length() == 2))
     {
-      latexFancySpace(s, si.format[0]);
+      latexFancySpace(s, si.format[0], printSettings);
       s << prefixName;
-      latexFancySpace(s, si.format[1]);
+      latexFancySpace(s, si.format[1], printSettings);
     }
   else
     s << prefixName;
 }
 
 int
-MixfixModule::latexPrintTokens(ostream& s, const SymbolInfo& si, int pos, const char* color)
+MixfixModule::latexPrintTokens(ostream& s, const SymbolInfo& si, int pos, const char* color, const PrintSettings& printSettings)
 {
   //
   //	We start with a space if we are following an argument and don't start with a special
@@ -305,7 +305,7 @@ MixfixModule::latexPrintTokens(ostream& s, const SymbolInfo& si, int pos, const 
   //
   bool noSpace = (pos == 0);
   bool previousOpenOrComma = false;
-  bool hasFormat = interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
+  bool hasFormat = printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && (si.format.length() > 0);
   for (;;)
     {
       int token = si.mixfixSyntax[pos++];
@@ -314,7 +314,7 @@ MixfixModule::latexPrintTokens(ostream& s, const SymbolInfo& si, int pos, const 
       bool open = token == leftParen || token == leftBracket || token == leftBrace;
       bool close = token == rightParen || token == rightBracket || token == rightBrace;
       bool isComma = token == comma;
-      if (!(hasFormat && latexFancySpace(s, si.format[pos - 1])))
+      if (!(hasFormat && latexFancySpace(s, si.format[pos - 1], printSettings)))
 	{
 	  //
 	  //	format didn't produce a space; do we need one?
@@ -357,7 +357,7 @@ MixfixModule::latexPrintTokens(ostream& s, const SymbolInfo& si, int pos, const 
       if (color != 0)
       s << latexResetColor;
     }
-  if (!(hasFormat && latexFancySpace(s, si.format[pos - 1])))
+  if (!(hasFormat && latexFancySpace(s, si.format[pos - 1], printSettings)))
     {
       //
       //	format didn't produce a space; do we need one?
@@ -384,14 +384,15 @@ MixfixModule::latexPrintTails(ostream& s,
 			      int nrTails,
 			      bool needAssocParen,
 			      bool checkForInterrupt,
-			      const char* color)
+			      const char* color,
+			      const PrintSettings& printSettings)
 {
   //
   //	We output nrTails copies of the user syntax from  pos to si.mixfixSyntax.size() - 1
   //	Usually nrTails will be 1 unless we are unflattening a flattened associative operator.
   //
   bool previousOpenOrComma = false;
-  bool hasFormat = interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
+  bool hasFormat = printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && (si.format.length() > 0);
   Index mixfixLength = si.mixfixSyntax.size();
   for (int i = 0;;)
     {
@@ -404,7 +405,7 @@ MixfixModule::latexPrintTails(ostream& s,
 	  bool open = token == leftParen || token == leftBracket || token == leftBrace;
 	  bool close = token == rightParen || token == rightBracket || token == rightBrace;
 	  bool isComma = token == comma;
-	  if (!(hasFormat && latexFancySpace(s, si.format[pos - 1])))
+	  if (!(hasFormat && latexFancySpace(s, si.format[pos - 1], printSettings)))
 	    {
 	      //
 	      //	format didn't produce a space; do we need one?
@@ -446,7 +447,7 @@ MixfixModule::latexPrintTails(ostream& s,
 	  //	If we generate whitespace after the token, we don't want to allow a line break before
 	  //	the next tail so we reset previousOpenOrComma
 	  //
-	  if (latexFancySpace(s, si.format[mixfixLength]))
+	  if (latexFancySpace(s, si.format[mixfixLength], printSettings))
 	    previousOpenOrComma = false;
 	}
       if (++i == nrTails)

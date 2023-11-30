@@ -25,22 +25,26 @@
 //
 
 const char*
-MixfixModule::computeColor(SymbolType st)
+MixfixModule::computeColor(SymbolType st, const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+  //
+  //	For terms, automatically generated color (as opposed to format generated color) is based
+  //	on the axioms of each operator symbol.
+  //	  AC   : red
+  //	  ACU  : magenta
+  //	  A    : green
+  //	  AU   : cyan
+  //	  C/CU : blue
+  //	  U    : yellow
+  //
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
     {
       if (st.hasFlag(SymbolType::ASSOC))
 	{
 	  if (st.hasFlag(SymbolType::COMM))
-	    {
-	      return Tty(st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID) ?
-			 Tty::MAGENTA : Tty::RED).ctrlSequence();
-	    }
+	    return Tty(st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID) ? Tty::MAGENTA : Tty::RED).ctrlSequence();
 	  else
-	    {
-	      return Tty(st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID) ?
-			 Tty::CYAN : Tty::GREEN).ctrlSequence();
-	    }
+	    return Tty(st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID) ? Tty::CYAN : Tty::GREEN).ctrlSequence();
 	}
       if (st.hasFlag(SymbolType::COMM))
 	return Tty(Tty::BLUE).ctrlSequence();
@@ -51,23 +55,10 @@ MixfixModule::computeColor(SymbolType st)
 }
 
 void
-MixfixModule::suffix(ostream& s,
-		     Term* term,
-		     bool needDisambig,
-		     const char* /* color */)
+MixfixModule::suffix(ostream& s, Term* term, bool needDisambig)
 {
   if (needDisambig)
     s << ")." << disambiguatorSort(term);
-}
-
-Sort*
-MixfixModule::disambiguatorSort(const Term* term)
-{
-  Symbol* symbol = term->symbol();
-  int sortIndex = term->getSortIndex();
-  if (sortIndex <= Sort::ERROR_SORT)
-    sortIndex = chooseDisambiguator(symbol);
-  return symbol->rangeComponent()->sort(sortIndex);
 }
 
 bool
@@ -75,22 +66,22 @@ MixfixModule::handleIter(ostream& s,
 			 Term* term,
 			 SymbolInfo& si,
 			 bool rangeKnown,
-			 const char* color)
+			 const PrintSettings& printSettings)
 {
   if (!(si.symbolType.hasFlag(SymbolType::ITER)))
     return false;
   if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL &&
-      interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
+      printSettings.getPrintFlag(PrintSettings::PRINT_NUMBER))
     {
       SuccSymbol* succSymbol = safeCast(SuccSymbol*, term->symbol());
       if (succSymbol->isNat(term))
 	{
 	  const mpz_class& nat = succSymbol->getNat(term);
-	  bool needDisambig = !rangeKnown &&
-	    (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat));
-	  prefix(s, needDisambig, color);
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat)));
+	  prefix(s, needDisambig);
 	  s << nat;
-	  suffix(s, term, needDisambig, color);
+	  suffix(s, term, needDisambig);
 	  return true;
 	}
     }
@@ -107,15 +98,12 @@ MixfixModule::handleIter(ostream& s,
 
   string prefixName;
   makeIterName(prefixName, term->symbol()->id(), number);
-  if (color != 0)
-    s << color << prefixName << Tty(Tty::RESET);
-  else
-    printPrefixName(s, prefixName.c_str(), si);
+  printPrefixName(s, prefixName.c_str(), si, printSettings);
   s << '(';
-  prettyPrint(s, st->getArgument(),
+  prettyPrint(s, printSettings, st->getArgument(),
 	      PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argumentRangeKnown);
   s << ')';
-  suffix(s, term, needToDisambiguate, color);
+  suffix(s, term, needToDisambiguate);
   return true;
 }
 
@@ -123,20 +111,20 @@ bool
 MixfixModule::handleMinus(ostream& s,
 			  Term* term,
 			  bool rangeKnown,
-			  const char* color)
+			  const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_NUMBER))
     {
       const MinusSymbol* minusSymbol = safeCast(MinusSymbol*, term->symbol());
       if (minusSymbol->isNeg(term))
 	{
 	  mpz_class neg;
 	  (void) minusSymbol->getNeg(term, neg);
-	  bool needDisambig = !rangeKnown &&
-	    (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg));
-	  prefix(s, needDisambig, color);
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg)));
+	  prefix(s, needDisambig);
 	  s << neg;
-	  suffix(s, term, needDisambig, color);
+	  suffix(s, term, needDisambig);
 	  return true;
 	}
     }
@@ -147,20 +135,20 @@ bool
 MixfixModule::handleDivision(ostream& s,
 			     Term* term,
 			     bool rangeKnown,
-			     const char* color)
+			     const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_RAT))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_RAT))
     {
       const DivisionSymbol* divisionSymbol = safeCast(DivisionSymbol*, term->symbol());
       if (divisionSymbol->isRat(term))
 	{
 	  pair<mpz_class, mpz_class> rat;
 	  rat.second = divisionSymbol->getRat(term, rat.first);
-	  bool needDisambig = !rangeKnown &&
-	    (kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
-	  prefix(s, needDisambig, color);
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
+	  prefix(s, needDisambig);
 	  s << rat.first << '/' << rat.second;
-	  suffix(s, term, needDisambig, color);
+	  suffix(s, term, needDisambig);
 	  return true;
 	}
     }
@@ -171,66 +159,65 @@ void
 MixfixModule::handleFloat(ostream& s,
 			  Term* term,
 			  bool rangeKnown,
-			  const char* color)
+			  const PrintSettings& printSettings)
 {
   double mfValue = safeCast(FloatTerm*, term)->getValue();
-  bool needDisambig = !rangeKnown &&
-    (floatSymbols.size() > 1 || overloadedFloats.count(mfValue));
-  prefix(s, needDisambig, color);
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (floatSymbols.size() > 1 || overloadedFloats.count(mfValue)));
+  prefix(s, needDisambig);
   s << doubleToString(mfValue);
-  suffix(s, term, needDisambig, color);
+  suffix(s, term, needDisambig);
 }
 
 void
 MixfixModule::handleString(ostream& s,
 			   Term* term,
 			   bool rangeKnown,
-			   const char* color)
+			   const PrintSettings& printSettings)
 {
   string strValue;
   Token::ropeToString(safeCast(StringTerm*, term)->getValue(), strValue);
-  bool needDisambig = !rangeKnown &&
-    (stringSymbols.size() > 1 || overloadedStrings.count(strValue));
-  prefix(s, needDisambig, color);
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue)));
+  prefix(s, needDisambig);
   s << strValue;
-  suffix(s, term, needDisambig, color);
+  suffix(s, term, needDisambig);
 }
 
 void
 MixfixModule::handleQuotedIdentifier(ostream& s,
 				     Term* term,
 				     bool rangeKnown,
-				     const char* color)
+				     const PrintSettings& printSettings)
 {
   int qidCode = safeCast(QuotedIdentifierTerm*, term)->getIdIndex();
-  bool needDisambig = !rangeKnown &&
-    (quotedIdentifierSymbols.size() > 1 ||
-     overloadedQuotedIdentifiers.count(qidCode));
-  prefix(s, needDisambig, color);
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode)));
+  prefix(s, needDisambig);
   s << '\'' << Token::name(qidCode);
-  suffix(s, term, needDisambig, color);
+  suffix(s, term, needDisambig);
 }
 
 void
 MixfixModule::handleVariable(ostream& s,
 			     Term* term,
 			     bool rangeKnown,
-			     const char* color)
+			     const PrintSettings& printSettings)
 {
   VariableTerm* v = safeCast(VariableTerm*, term);
   Sort* sort = safeCast(VariableSymbol*, term->symbol())->getSort();
   pair<int, int> p(v->id(), sort->id());
   bool needDisambig = !rangeKnown && overloadedVariables.count(p);  // kinds not handled
-  prefix(s, needDisambig, color);
-  printVariable(s, p.first, sort);
-  suffix(s, term, needDisambig, color);
+  prefix(s, needDisambig);
+  printVariable(s, p.first, sort, printSettings);
+  suffix(s, term, needDisambig);
 }
 
 void
 MixfixModule::handleSMT_Number(ostream& s,
 			       Term* term,
 			       bool rangeKnown,
-			       const char* color)
+			       const PrintSettings& printSettings)
 {
   //
   //	Get value.
@@ -250,26 +237,27 @@ MixfixModule::handleSMT_Number(ostream& s,
   if (t == SMT_Info::INTEGER)
     {
       const mpz_class& integer = value.get_num();
-      bool needDisambig = !rangeKnown &&
-	(kindsWithSucc.size() > 1 || overloadedIntegers.count(integer));
-      prefix(s, needDisambig, color);
+      bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	(!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer)));
+      prefix(s, needDisambig);
       s << integer;
-      suffix(s, term, needDisambig, color);
+      suffix(s, term, needDisambig);
     }
   else
     {
       Assert(t == SMT_Info::REAL, "SMT number sort expected");
       pair<mpz_class, mpz_class> rat(value.get_num(), value.get_den());
-      bool needDisambig = !rangeKnown &&
-	(kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
-      prefix(s, needDisambig, color);
+      bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	(!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
+      prefix(s, needDisambig);
       s << rat.first << '/' << rat.second;
-      suffix(s, term, needDisambig, color);
+      suffix(s, term, needDisambig);
     }
 }
 
 void
 MixfixModule::prettyPrint(ostream& s,
+			  const PrintSettings& printSettings,
 			  Term* term,
 			  int requiredPrec,
 			  int leftCapture,
@@ -283,50 +271,49 @@ MixfixModule::prettyPrint(ostream& s,
 
   Symbol* symbol = term->symbol();
   SymbolInfo& si = symbolInfo[symbol->getIndexWithinModule()];
-  const char* color = computeColor(si.symbolType);
   //
   //	Check for special i/o representation.
   //
-  if (handleIter(s, term, si, rangeKnown, color))
+  if (handleIter(s, term, si, rangeKnown, printSettings))
     return;
   int basicType = si.symbolType.getBasicType();
   switch (basicType)
     {
     case SymbolType::MINUS_SYMBOL:
       {
-	if (handleMinus(s, term, rangeKnown, color))
+	if (handleMinus(s, term, rangeKnown, printSettings))
 	  return;
 	break;
       }
     case SymbolType::DIVISION_SYMBOL:
       {
-	if (handleDivision(s, term, rangeKnown, color))
+	if (handleDivision(s, term, rangeKnown, printSettings))
 	  return;
 	break;
       }
     case SymbolType::FLOAT:
       {
-	handleFloat(s, term, rangeKnown, color);
+	handleFloat(s, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::STRING:
       {
-	handleString(s, term, rangeKnown, color);
+	handleString(s, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::QUOTED_IDENTIFIER:
       {
-	handleQuotedIdentifier(s, term, rangeKnown, color);
+	handleQuotedIdentifier(s, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::VARIABLE:
       {
-	handleVariable(s, term, rangeKnown, color);
+	handleVariable(s, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::SMT_NUMBER_SYMBOL:
       {
-	handleSMT_Number(s, term, rangeKnown, color);
+	handleSMT_Number(s, term, rangeKnown, printSettings);
 	return;
       }
     default:
@@ -335,26 +322,27 @@ MixfixModule::prettyPrint(ostream& s,
   //
   //	Default case where no special i/o representation applies.
   //
+  const char* color = computeColor(si.symbolType, printSettings);
   int iflags = si.iflags;
   bool needDisambig = !rangeKnown && ambiguous(iflags);
   bool argRangeKnown = false;
   int nrArgs = symbol->arity();
   if (nrArgs == 0)
     {
-      if (interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST))
+      if (printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST))
 	needDisambig = true;
     }
   else
     argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
-  
-  if (needDisambig)
-    s << '(';
-  if ((interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX) && !si.mixfixSyntax.empty()) || basicType == SymbolType::SORT_TEST)
+
+  prefix(s, needDisambig);
+  bool printConceal = printSettings.concealedSymbol(symbol->id());
+  if ((printSettings.getPrintFlag(PrintSettings::PRINT_MIXFIX) && !si.mixfixSyntax.empty() && !printConceal) || basicType == SymbolType::SORT_TEST)
     {
       //
       //	Mixfix case.
       //
-      bool printWithParens = interpreter.getPrintFlag(Interpreter::PRINT_WITH_PARENS);
+      bool printWithParens = printSettings.getPrintFlag(PrintSettings::PRINT_WITH_PARENS);
       bool needParen = !needDisambig &&
 	(printWithParens || requiredPrec < si.prec ||
 	 ((iflags & LEFT_BARE) && leftCapture <= si.gather[0] &&
@@ -376,14 +364,14 @@ MixfixModule::prettyPrint(ostream& s,
 	  Term* t = a.argument();
 	  a.next();
 	  moreArgs = a.valid();
-	  pos = printTokens(s, si, pos, color);
+	  pos = printTokens(s, si, pos, color, printSettings);
 	  if (arg == nrArgs - 1 && moreArgs)
 	    {
 	      ++nrTails;
 	      arg = 0;
 	      if (needAssocParen)
 		s << '(';
-	      pos = printTokens(s, si, 0, color);
+	      pos = printTokens(s, si, 0, color, printSettings);
 	    }
 	  int lc = UNBOUNDED;
 	  const ConnectedComponent* lcc = 0;
@@ -409,11 +397,11 @@ MixfixModule::prettyPrint(ostream& s,
 		  rcc = rightCaptureComponent;
 		}
 	    }
-	  prettyPrint(s, t, si.gather[arg], lc, lcc, rc, rcc, argRangeKnown);
+	  prettyPrint(s, printSettings, t, si.gather[arg], lc, lcc, rc, rcc, argRangeKnown);
 	  if (UserLevelRewritingContext::interrupted())
 	    return;
 	}
-      printTails(s, si, pos, nrTails, needAssocParen, true, color);
+      printTails(s, si, pos, nrTails, needAssocParen, true, color, printSettings);
       if (UserLevelRewritingContext::interrupted())
 	return;
       if (needParen)
@@ -428,41 +416,46 @@ MixfixModule::prettyPrint(ostream& s,
       if (color != 0)
 	s << color << prefixName << Tty(Tty::RESET);
       else
-	printPrefixName(s, prefixName, si);
+	printPrefixName(s, prefixName, si, printSettings);
       ArgumentIterator a(*term);
       if (a.valid())
 	{
-	  int nrTails = 1;
-	  s << '(';
-	  for (int arg = 0;; arg++)
+	  if (printConceal)
+	    s << "(...)";
+	  else
 	    {
-	      Term* t = a.argument();
-	      a.next();
-	      int moreArgs = a.valid();
-	      if (arg >= nrArgs - 1 &&
-		  !(interpreter.getPrintFlag(Interpreter::PRINT_FLAT)) &&
-		  moreArgs)
+	      int nrTails = 1;
+	      s << '(';
+	      for (int arg = 0;; arg++)
 		{
-		  ++nrTails;
-		  printPrefixName(s, prefixName, si);
-		  s << '(';
+		  Term* t = a.argument();
+		  a.next();
+		  int moreArgs = a.valid();
+		  if (arg >= nrArgs - 1 &&
+		      !(printSettings.getPrintFlag(PrintSettings::PRINT_FLAT)) &&
+		      moreArgs)
+		    {
+		      ++nrTails;
+		      printPrefixName(s, prefixName, si, printSettings);
+		      s << '(';
+		    }
+		  prettyPrint(s, printSettings, t,
+			      PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0,
+			      argRangeKnown);
+		  if (UserLevelRewritingContext::interrupted())
+		    return;
+		  if (!moreArgs)
+		    break;
+		  s << ", ";
 		}
-	      prettyPrint(s, t,
-			  PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0,
-			  argRangeKnown);
-	      if (UserLevelRewritingContext::interrupted())
-		return;
-	      if (!moreArgs)
-		break;
-	      s << ", ";
-	    }
-	  while (nrTails-- > 0)
-	    {
-	      if (UserLevelRewritingContext::interrupted())
-		return;
-	      s << ')';
+	      while (nrTails-- > 0)
+		{
+		  if (UserLevelRewritingContext::interrupted())
+		    return;
+		  s << ')';
+		}
 	    }
 	}
     }
-  suffix(s, term, needDisambig, color);
+  suffix(s, term, needDisambig);
 }

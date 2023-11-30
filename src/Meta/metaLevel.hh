@@ -25,12 +25,14 @@
 //
 #ifndef _metaLevel_hh_
 #define _metaLevel_hh_
+#include "rope.hh"
 #include "cachedDag.hh"
 #include "metaModuleCache.hh"
 #include "succSymbol.hh"
 #include "sequenceSearch.hh"
 #include "variantSearch.hh"
 #include "variantUnificationProblem.hh"
+#include "stringDagNode.hh"
 
 class MetaLevel
 {
@@ -73,6 +75,7 @@ public:
 				 RewritingContext& context);
 
   DagNode* upNat(const mpz_class& nat);
+  DagNode* upString(const string& str);
   DagNode* upNoParent() const;
   DagNode* upResultPair(DagNode* dagNode, MixfixModule* m);
   DagNode* upResultPair(Term* term, MixfixModule* m);
@@ -271,7 +274,7 @@ public:
   bool downSaturate(DagNode* metaBound, int& bound) const;
   bool downBound64(DagNode* metaBound, Int64& bound) const;
   bool downSaturate64(DagNode* metaBound, Int64& bound) const;
-  bool downPrintOptionSet(DagNode* metaPrintOptionSet, int& printFlags) const;
+  bool downPrintOptionSet(DagNode* metaPrintOptionSet, PrintSettings& printSettings) const;
   bool downVariantOptionSet(DagNode* metaVariantOptionSet, int& variantFlags) const;
   bool downSrewriteOption(DagNode* metaSrewriteOption, bool& depthFirst) const;
   bool downBool(DagNode* metaBool, bool& value);
@@ -328,6 +331,7 @@ public:
   bool downType2(int id, MixfixModule* m, Sort*& type) const;
   bool downQidList(DagNode* metaQidList, Vector<int>& ids);
   bool downQidSet(DagNode* metaQidSet, Vector<int>& ids);
+  bool downConcealedSet(DagNode* metaQidSet, PrintSettings& printSettings);
   bool downTypeList(DagNode* metaTypeList, MixfixModule* m, Vector<Sort*>& typeList);
   bool downTypeSet(DagNode* metaTypeSet, MixfixModule* m, Vector<Sort*>& typeSet);
   bool downComponent(DagNode* metaComponent,
@@ -577,7 +581,7 @@ private:
 		      Symbol* topSymbol,
 		      int& bubbleSpecIndex);
 
-  bool downPrintOption(DagNode* metaPrintOption, int& printFlags) const;
+  bool downPrintOption(DagNode* metaPrintOption, PrintSettings& printSettings) const;
   bool downVariantOption(DagNode* metaVariantOption, int& variantFlags) const;
   bool downVariableDecl(DagNode* metaVariableDecl, MixfixModule::AliasMap& aliasMap, MixfixModule* m) const;
 
@@ -778,6 +782,12 @@ MetaLevel::downFoldType(DagNode* arg, bool& foldType)
       return true;
     }
   return false;
+}
+
+inline DagNode*
+MetaLevel::upString(const string& str)
+{
+  return new StringDagNode(stringSymbol, Rope(str));
 }
 
 #endif

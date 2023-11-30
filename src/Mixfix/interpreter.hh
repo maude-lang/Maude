@@ -34,6 +34,7 @@
 #include "viewCache.hh"
 //#include "syntacticView.hh"
 #include "parameterDatabase.hh"
+#include "printSettings.hh"
 #include "SMT.hh"
 
 class Interpreter
@@ -45,7 +46,8 @@ class Interpreter
 #endif
     public ViewDatabase,
     public ViewCache,
-    public ParameterDatabase
+    public ParameterDatabase,
+    public PrintSettings
 {
   NO_COPYING(Interpreter);
 
@@ -136,32 +138,6 @@ public:
     AUTO_CLEAR_PROFILE | AUTO_CLEAR_CACHES | AUTO_CLEAR_RULES | PRINT_ATTRIBUTE_NEWLINE
   };
 
-  enum PrintFlags
-  {
-    //
-    //	General prettyprinter flags.
-    //
-    PRINT_GRAPH = 0x1,		// print as a set of DAG nodes
-    PRINT_CONCEAL = 0x2,	// respect concealed argument lists
-    PRINT_FORMAT = 0x4,		// respect format attribute
-    PRINT_MIXFIX = 0x8,		// mixfix notation
-    PRINT_WITH_PARENS = 0x10,	// maximal parens
-    PRINT_COLOR = 0x20,		// dag node coloring based on ctor/reduced status
-    PRINT_DISAMBIG_CONST = 0x40,	// (c).s for every constant c
-    PRINT_LABEL_ATTRIBUTE = 0x80,	// use [label foo] after statement rather than [foo] : before statement
-    //
-    //	Prettyprinter flags for particular symbol types.
-    //
-    PRINT_WITH_ALIASES = 0x100,	// for variables
-    PRINT_FLAT = 0x200,		// for assoc symbols
-    PRINT_NUMBER = 0x400,	// for nats & ints
-    PRINT_RAT = 0x800,		// for rats
-    PRINT_HOOKS = 0x1000,	// for built-ins
-    PRINT_COMBINE_VARS = 0x2000,	// for variables
-
-    DEFAULT_PRINT_FLAGS = PRINT_FORMAT | PRINT_MIXFIX | PRINT_WITH_ALIASES | PRINT_FLAT | PRINT_NUMBER | PRINT_RAT | PRINT_HOOKS
-  };
-
   Interpreter();
   ~Interpreter();
 
@@ -176,9 +152,6 @@ public:
   void cleanCaches();
   void setFlag(Flags flag, bool polarity);
   bool getFlag(Flags flag) const;
-  void setPrintFlag(PrintFlags flag, bool polarity);
-  bool getPrintFlag(PrintFlags flag) const;
-  int getPrintFlags() const;
 
   SyntacticPreModule* getCurrentModule() const;
   bool setCurrentModule(const Vector<Token>& moduleExpr, int start = 0);
@@ -234,7 +207,6 @@ public:
   bool traceId(int id);
   bool breakId(int id);
   bool excludedModule(int id);
-  bool concealedSymbol(Symbol* symbol);
 
   void showProfile() const;
   void showKinds() const;
@@ -372,7 +344,7 @@ private:
   MaudeLatexBuffer* latexBuffer;
 
   int flags;
-  int printFlags;
+  //int printFlags;
   SyntacticPreModule* currentModule;
   SyntacticView* currentView;
   //
@@ -388,7 +360,6 @@ private:
   set<int> traceIds;		// names of symbols/labels selected for tracing
   set<int> breakIds;		// names of symbols/labels selected as break points
   set<int> excludedModules;	// names of modules to be excluded from tracing
-  set<int> concealedSymbols;	// names of symbols to have their arguments concealed during printing
 };
 
 inline void
@@ -407,12 +378,6 @@ inline void
 Interpreter::traceExclude(bool add)
 {
   updateSet(excludedModules, add);
-}
-
-inline void
-Interpreter::printConceal(bool add)
-{
-  updateSet(concealedSymbols, add);
 }
 
 inline bool
@@ -443,18 +408,6 @@ inline bool
 Interpreter::getFlag(Flags flag) const
 {
   return flags & flag;
-}
-
-inline bool
-Interpreter::getPrintFlag(PrintFlags flag) const
-{
-  return printFlags & flag;
-}
-
-inline int
-Interpreter::getPrintFlags() const
-{
-  return printFlags;
 }
 
 inline SyntacticPreModule*

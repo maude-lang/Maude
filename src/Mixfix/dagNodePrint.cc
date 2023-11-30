@@ -25,9 +25,9 @@
 //
 
 const char*
-MixfixModule::computeColor(ColoringInfo& coloringInfo, DagNode* dagNode)
+MixfixModule::computeColor(ColoringInfo& coloringInfo, DagNode* dagNode, const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
     {
       if (dagNode->isReduced())
 	{
@@ -75,7 +75,8 @@ MixfixModule::handleIter(ostream& s,
 			 DagNode* dagNode,
 			 SymbolInfo& si,
 			 bool rangeKnown,
-			 const char* color)
+			 const char* color,
+			 const PrintSettings& printSettings)
 {
   //
   //	Check if dagNode is headed by a iter symbol and if so handle
@@ -89,7 +90,7 @@ MixfixModule::handleIter(ostream& s,
   //	number printing turned on.
   //
   if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL &&
-      interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
+      printSettings.getPrintFlag(PrintSettings::PRINT_NUMBER))
     {
       //
       //	If dagNode corresponds to a number we want to
@@ -99,7 +100,7 @@ MixfixModule::handleIter(ostream& s,
       if (succSymbol->isNat(dagNode))
 	{
 	  const mpz_class& nat = succSymbol->getNat(dagNode);
-	  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat)));
 	  prefix(s, needDisambig, color);
 	  s << nat;
@@ -126,15 +127,15 @@ MixfixModule::handleIter(ostream& s,
   if (color != 0)
     s << color << prefixName << Tty(Tty::RESET);
   else
-    printPrefixName(s, prefixName.c_str(), si);
+    printPrefixName(s, prefixName.c_str(), si, printSettings);
   s << '(';
-  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
     {
       coloringInfo.reducedDirectlyAbove = dagNode->isReduced();
       coloringInfo.reducedAbove = coloringInfo.reducedAbove ||
 	coloringInfo.reducedDirectlyAbove;
     }
-  prettyPrint(s, coloringInfo, sd->getArgument(),
+  prettyPrint(s, coloringInfo, printSettings, sd->getArgument(),
 	      PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argumentRangeKnown);
   s << ')';
   suffix(s, dagNode, needToDisambiguate, color);
@@ -145,16 +146,17 @@ bool
 MixfixModule::handleMinus(ostream& s,
 			  DagNode* dagNode,
 			  bool rangeKnown,
-			  const char* color)
+			  const char* color,
+			  const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_NUMBER))
     {
       const MinusSymbol* minusSymbol = safeCast(MinusSymbol*, dagNode->symbol());
       if (minusSymbol->isNeg(dagNode))
 	{
 	  mpz_class neg;
 	  (void) minusSymbol->getNeg(dagNode, neg);
-	  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg)));
 	  prefix(s, needDisambig, color);
 	  s << neg;
@@ -169,16 +171,17 @@ bool
 MixfixModule::handleDivision(ostream& s,
 			     DagNode* dagNode,
 			     bool rangeKnown,
-			     const char* color)
+			     const char* color,
+			     const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_RAT))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_RAT))
     {
       const DivisionSymbol* divisionSymbol = safeCast(DivisionSymbol*, dagNode->symbol());
       if (divisionSymbol->isRat(dagNode))
 	{
 	  pair<mpz_class, mpz_class> rat;
 	  rat.second = divisionSymbol->getRat(dagNode, rat.first);
-	  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
 	  prefix(s, needDisambig, color);
 	  s << rat.first << '/' << rat.second;
@@ -193,10 +196,11 @@ void
 MixfixModule::handleFloat(ostream& s,
 			  DagNode* dagNode,
 			  bool rangeKnown,
-			  const char* color)
+			  const char* color,
+			  const PrintSettings& printSettings)
 {
   double mfValue = safeCast(FloatDagNode*, dagNode)->getValue();
-  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (floatSymbols.size() > 1 || overloadedFloats.count(mfValue)));
   prefix(s, needDisambig, color);
   s << doubleToString(mfValue);
@@ -207,11 +211,12 @@ void
 MixfixModule::handleString(ostream& s,
 			   DagNode* dagNode,
 			   bool rangeKnown,
-			   const char* color)
+			   const char* color,
+			   const PrintSettings& printSettings)
 {
   string strValue;
   Token::ropeToString(safeCast(StringDagNode*, dagNode)->getValue(), strValue);
-  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue)));
   prefix(s, needDisambig, color);
   s << strValue;
@@ -222,10 +227,11 @@ void
 MixfixModule::handleQuotedIdentifier(ostream& s,
 				     DagNode* dagNode,
 				     bool rangeKnown,
-				     const char* color)
+				     const char* color,
+				     const PrintSettings& printSettings)
 {
   int qidCode = safeCast(QuotedIdentifierDagNode*, dagNode)->getIdIndex();
-  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode)));
   prefix(s, needDisambig, color);
   s << '\'' << Token::name(qidCode);
@@ -236,22 +242,15 @@ void
 MixfixModule::handleVariable(ostream& s,
 			     DagNode* dagNode,
 			     bool rangeKnown,
-			     const char* color)
+			     const char* color,
+			     const PrintSettings& printSettings)
 {
   VariableDagNode* v = safeCast(VariableDagNode*, dagNode);
   Sort* sort = safeCast(VariableSymbol*, dagNode->symbol())->getSort();
   pair<int, int> p(v->id(), sort->id());
   bool needDisambig = !rangeKnown && overloadedVariables.count(p);  // kinds not handled
   prefix(s, needDisambig, color);
-  printVariable(s, p.first, sort);
-  //
-  // HACK to understand what is happening with variable indices.
-  //
-  //s << Tty(Tty::MAGENTA) << "(index=" << safeCastNonNull<VariableDagNode*>(dagNode)->getIndex() <<
-  //", address=" << (void*) dagNode << ")" << Tty(Tty::RESET);
-  //
-  //
-  //
+  printVariable(s, p.first, sort, printSettings);
   suffix(s, dagNode, needDisambig, color);
 }
 
@@ -259,7 +258,8 @@ void
 MixfixModule::handleSMT_Number(ostream& s,
 			       DagNode* dagNode,
 			       bool rangeKnown,
-			       const char* color)
+			       const char* color,
+			       const PrintSettings& printSettings)
 {
   //
   //	Get value.
@@ -279,7 +279,7 @@ MixfixModule::handleSMT_Number(ostream& s,
   if (t == SMT_Info::INTEGER)
     {
       const mpz_class& integer = value.get_num();
-      bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+      bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	(!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer)));
       prefix(s, needDisambig, color);
       s << integer;
@@ -289,7 +289,7 @@ MixfixModule::handleSMT_Number(ostream& s,
     {
       Assert(t == SMT_Info::REAL, "SMT number sort expected");
       pair<mpz_class, mpz_class> rat(value.get_num(), value.get_den());
-      bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+      bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	(!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
       prefix(s, needDisambig, color);
       s << rat.first << '/' << rat.second;
@@ -300,6 +300,7 @@ MixfixModule::handleSMT_Number(ostream& s,
 void
 MixfixModule::prettyPrint(ostream& s,
 			  ColoringInfo& coloringInfo,
+			  const PrintSettings& printSettings,
 			  DagNode* dagNode,
 			  int requiredPrec,
 			  int leftCapture,
@@ -319,52 +320,52 @@ MixfixModule::prettyPrint(ostream& s,
     }
 #endif
 
-  const char* color = computeColor(coloringInfo, dagNode);
+  const char* color = computeColor(coloringInfo, dagNode, printSettings);
   Symbol* symbol = dagNode->symbol();
   SymbolInfo& si = symbolInfo[symbol->getIndexWithinModule()];
   //
   //	Check for special i/o representation.
   //
-  if (handleIter(s, coloringInfo, dagNode, si, rangeKnown, color))
+  if (handleIter(s, coloringInfo, dagNode, si, rangeKnown, color, printSettings))
     return;
   int basicType = si.symbolType.getBasicType();
   switch (basicType)
     {
     case SymbolType::MINUS_SYMBOL:
       {
-	if (handleMinus(s, dagNode, rangeKnown, color))
+	if (handleMinus(s, dagNode, rangeKnown, color, printSettings))
 	  return;
 	break;
       }
     case SymbolType::DIVISION_SYMBOL:
       {
-	if (handleDivision(s, dagNode, rangeKnown, color))
+	if (handleDivision(s, dagNode, rangeKnown, color, printSettings))
 	  return;
 	break;
       }
     case SymbolType::FLOAT:
       {
-	handleFloat(s, dagNode, rangeKnown, color);
+	handleFloat(s, dagNode, rangeKnown, color, printSettings);
 	return;
       }
     case SymbolType::STRING:
       {
-	handleString(s, dagNode, rangeKnown, color);
+	handleString(s, dagNode, rangeKnown, color, printSettings);
 	return;
       }
     case SymbolType::QUOTED_IDENTIFIER:
       {
-	handleQuotedIdentifier(s, dagNode, rangeKnown, color);
+	handleQuotedIdentifier(s, dagNode, rangeKnown, color, printSettings);
 	return;
       }
     case SymbolType::VARIABLE:
       {
-	handleVariable(s, dagNode, rangeKnown, color);
+	handleVariable(s, dagNode, rangeKnown, color, printSettings);
 	return;
       }
     case SymbolType::SMT_NUMBER_SYMBOL:
       {
-	handleSMT_Number(s, dagNode, rangeKnown, color);
+	handleSMT_Number(s, dagNode, rangeKnown, color, printSettings);
 	return;
       }
     default:
@@ -379,13 +380,13 @@ MixfixModule::prettyPrint(ostream& s,
   int nrArgs = symbol->arity();
   if (nrArgs == 0)
     {
-      if (interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST))
+      if (printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST))
 	needDisambig = true;
     }
   else
     argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
 
-  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
     {
       coloringInfo.reducedDirectlyAbove = dagNode->isReduced();
       coloringInfo.reducedAbove = coloringInfo.reducedAbove ||
@@ -393,14 +394,14 @@ MixfixModule::prettyPrint(ostream& s,
     }
   if (needDisambig)
     s << '(';
-  bool printConceal = interpreter.concealedSymbol(symbol);
-  if ((interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX) && !si.mixfixSyntax.empty() && !printConceal) ||
+  bool printConceal = printSettings.concealedSymbol(symbol->id());
+  if ((printSettings.getPrintFlag(PrintSettings::PRINT_MIXFIX) && !si.mixfixSyntax.empty() && !printConceal) ||
       (basicType == SymbolType::SORT_TEST))
     {
       //
       //	Mixfix case.
       //
-      bool printWithParens = interpreter.getPrintFlag(Interpreter::PRINT_WITH_PARENS);
+      bool printWithParens = printSettings.getPrintFlag(PrintSettings::PRINT_WITH_PARENS);
       bool needParen = !needDisambig &&
 	(printWithParens || requiredPrec < si.prec ||
 	 ((iflags & LEFT_BARE) && leftCapture <= si.gather[0] &&
@@ -422,14 +423,14 @@ MixfixModule::prettyPrint(ostream& s,
 	  DagNode* d = a.argument();
 	  a.next();
 	  moreArgs = a.valid();
-	  pos = printTokens(s, si, pos, color);
+	  pos = printTokens(s, si, pos, color, printSettings);
 	  if (arg == nrArgs - 1 && moreArgs)
 	    {
 	      ++nrTails;
 	      arg = 0;
 	      if (needAssocParen)
 		s << '(';
-	      pos = printTokens(s, si, 0, color);
+	      pos = printTokens(s, si, 0, color, printSettings);
 	    }
 	  int lc = UNBOUNDED;
 	  const ConnectedComponent* lcc = 0;
@@ -455,13 +456,13 @@ MixfixModule::prettyPrint(ostream& s,
 		  rcc = rightCaptureComponent;
 		}
 	    }
-	  prettyPrint(s, coloringInfo, d,
+	  prettyPrint(s, coloringInfo, printSettings, d,
 		      si.gather[arg], lc, lcc, rc, rcc,
 		      argRangeKnown);
 	  if (UserLevelRewritingContext::interrupted())
 	    return;
 	}
-      printTails(s, si, pos, nrTails, needAssocParen, true, color);
+      printTails(s, si, pos, nrTails, needAssocParen, true, color, printSettings);
       if (UserLevelRewritingContext::interrupted())
 	return;
       if (needParen)
@@ -476,7 +477,7 @@ MixfixModule::prettyPrint(ostream& s,
       if (color != 0)
 	s << color << prefixName << Tty(Tty::RESET);
       else
-	printPrefixName(s, prefixName, si);
+	printPrefixName(s, prefixName, si, printSettings);
       DagArgumentIterator a(*dagNode);
       if (a.valid())
 	{
@@ -492,17 +493,17 @@ MixfixModule::prettyPrint(ostream& s,
 		  a.next();
 		  int moreArgs = a.valid();
 		  if (arg >= nrArgs - 1 &&
-		      !(interpreter.getPrintFlag(Interpreter::PRINT_FLAT)) &&
+		      !(printSettings.getPrintFlag(PrintSettings::PRINT_FLAT)) &&
 		      moreArgs)
 		    {
 		      ++nrTails;
 		      if (color != 0)
 			s << color << prefixName << Tty(Tty::RESET);
 		      else
-			printPrefixName(s, prefixName, si);
+			printPrefixName(s, prefixName, si, printSettings);
 		      s << '(';
 		    }
-		  prettyPrint(s, coloringInfo, d,
+		  prettyPrint(s, coloringInfo, printSettings, d,
 			      PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0,
 			      argRangeKnown);
 		  if (UserLevelRewritingContext::interrupted())

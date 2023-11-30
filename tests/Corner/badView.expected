@@ -82,7 +82,7 @@ view V from T to M is
   sort Foo to Baz .
   var M : Oid .
   var X : Foo .
-  msg m(M, X) to term m'(M, translate(X)) .
+  msg m (M, X) to term m' (M, translate (X)) .
 endv
 view V from T to M is
   sort Foo to Baz .
@@ -290,7 +290,7 @@ view V from T to M is
   sort Foo to Baz .
   var M : Oid .
   var X : Foo .
-  msg m(M, X) to term m'(M, translate(X)) .
+  msg m (M, X) to term m' (M, translate (X)) .
 endv
 view V from T to M is
   sort Foo to Baz .
@@ -502,7 +502,7 @@ view V from T to M is
   sort Foo to Baz .
   var M : Oid .
   var X : Foo .
-  msg m(M, X) to term m'(M, translate(X)) .
+  msg m (M, X) to term m' (M, translate (X)) .
 endv
 view V from T to M is
   sort Foo to Baz .

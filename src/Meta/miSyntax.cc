@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 */
 
 //
-//	MetaInterpreters: printTerm() and parseTerm() messages.
+//	MetaInterpreters: printTerm(), printTermToString and parseTerm() messages.
 //
 
 DagNode*
@@ -30,47 +30,108 @@ InterpreterManagerSymbol::printTerm(FreeDagNode* message,
 				    Interpreter* interpreter)
 {
   //
-  //	  op printTerm : Oid Oid Qid VariableSet Term PrintOptionSet -> Msg .
-  //	                  0   1   2      3        4         5
+  //	  op printTerm : Oid Oid Qid VariableSet Term PrintOptionSet QidSet -> Msg .
+  //	                  0   1   2      3        4         5          6
   //
   DagNode* errorMessage;
   if (MetaModule* mm = getMetaModule(message, 2, interpreter, errorMessage))
     {
-      int printFlags;
-      if (metaLevel->downPrintOptionSet(message->getArgument(5), printFlags))
+      PrintSettings printSettings;
+      if (metaLevel->downPrintOptionSet(message->getArgument(5), printSettings))
 	{
-	  MixfixModule::AliasMap aliasMap;
-	  if (metaLevel->downVariableDeclSet(message->getArgument(3), aliasMap, mm))
+	  if (metaLevel->downConcealedSet(message->getArgument(6), printSettings))
 	    {
-	      if (Term* t = metaLevel->downTerm(message->getArgument(4), mm))
+	      MixfixModule::AliasMap aliasMap;
+	      if (metaLevel->downVariableDeclSet(message->getArgument(3), aliasMap, mm))
 		{
-		  //
-		  //	Swap in our alias map and a null parser.
-		  //
-		  MixfixParser* parser = 0;
-		  mm->swapVariableAliasMap(aliasMap, parser);
-		  //
-		  //	Do the pretty print.
-		  //
-		  Vector<int> buffer;
-		  mm->bufferPrint(buffer, t, printFlags);
-		  t->deepSelfDestruct();
-		  //
-		  //	Restore original alias map and parser.
-		  //
-		  mm->swapVariableAliasMap(aliasMap, parser);
-		  //
-		  //	Assemble the reply.
-		  //
-		  Vector<DagNode*> reply(3);
-		  reply[0] = message->getArgument(1);
-		  reply[1] = message->getArgument(0);
-		  reply[2] = metaLevel->upQidList(buffer);
-		  return printedTermMsg->makeDagNode(reply);
+		  if (Term* t = metaLevel->downTerm(message->getArgument(4), mm))
+		    {
+		      //
+		      //	Swap in our alias map and a null parser.
+		      //
+		      MixfixParser* parser = 0;
+		      mm->swapVariableAliasMap(aliasMap, parser);
+		      //
+		      //	Do the pretty print.
+		      //
+		      Vector<int> buffer;
+		      mm->bufferPrint(buffer, t, printSettings);
+		      t->deepSelfDestruct();
+		      //
+		      //	Restore original alias map and parser.
+		      //
+		      mm->swapVariableAliasMap(aliasMap, parser);
+		      //
+		      //	Assemble the reply.
+		      //
+		      Vector<DagNode*> reply(3);
+		      reply[0] = message->getArgument(1);
+		      reply[1] = message->getArgument(0);
+		      reply[2] = metaLevel->upQidList(buffer);
+		      return printedTermMsg->makeDagNode(reply);
+		    }
+		  return makeErrorReply("Bad term.", message);
 		}
-	      return makeErrorReply("Bad term.", message);
+	      return makeErrorReply("Bad variable declarations.", message);
 	    }
-	  return makeErrorReply("Bad variable declarations.", message);
+	  return makeErrorReply("Bad concealed set.", message);
+	}
+      return makeErrorReply("Bad option.", message);
+    }
+  return errorMessage;
+}
+
+DagNode*
+InterpreterManagerSymbol::printTermToString(FreeDagNode* message,
+					    ObjectSystemRewritingContext& context,
+					    Interpreter* interpreter)
+{
+  //
+  //	  op printTerm : Oid Oid Qid VariableSet Term PrintOptionSet QidSet -> Msg .
+  //	                  0   1   2      3        4         5          6
+  //
+  DagNode* errorMessage;
+  if (MetaModule* mm = getMetaModule(message, 2, interpreter, errorMessage))
+    {
+      PrintSettings printSettings;
+      if (metaLevel->downPrintOptionSet(message->getArgument(5), printSettings))
+	{
+	  if (metaLevel->downConcealedSet(message->getArgument(6), printSettings))
+	    {
+	      MixfixModule::AliasMap aliasMap;
+	      if (metaLevel->downVariableDeclSet(message->getArgument(3), aliasMap, mm))
+		{
+		  if (Term* t = metaLevel->downTerm(message->getArgument(4), mm))
+		    {
+		      //
+		      //	Swap in our alias map and a null parser.
+		      //
+		      MixfixParser* parser = 0;
+		      mm->swapVariableAliasMap(aliasMap, parser);
+		      //
+		      //	Do the pretty print.
+		      //
+		      stringstream buffer;
+		      mm->prettyPrint(buffer, printSettings, t, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+		      t->deepSelfDestruct();
+		      //
+		      //	Restore original alias map and parser.
+		      //
+		      mm->swapVariableAliasMap(aliasMap, parser);
+		      //
+		      //	Assemble the reply.
+		      //
+		      Vector<DagNode*> reply(3);
+		      reply[0] = message->getArgument(1);
+		      reply[1] = message->getArgument(0);
+		      reply[2] = metaLevel->upString(buffer.str());
+		      return printedTermToStringMsg->makeDagNode(reply);
+		    }
+		  return makeErrorReply("Bad term.", message);
+		}
+	      return makeErrorReply("Bad variable declarations.", message);
+	    }
+	  return makeErrorReply("Bad concealed set.", message);
 	}
       return makeErrorReply("Bad option.", message);
     }

@@ -74,13 +74,11 @@ operator<<(ostream& s, const ConnectedComponent* component)
 void
 MixfixModule::prettyPrint(ostream& s, const Term* term, bool rangeKnown)
 {
-  globalIndent = 0;
-  safeCastNonNull<MixfixModule*>(term->symbol()->getModule())->prettyPrint(s, const_cast<Term*>(term), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
-  if (attributeUsed)
-    {
-      attributeUsed = false;
-      s << Tty(Tty::RESET);
-    }
+  clearIndent();
+  MixfixModule* parentModule = safeCastNonNull<MixfixModule*>(term->symbol()->getModule());
+  const PrintSettings& printSettings = interpreter;  // HACK
+  parentModule->prettyPrint(s, printSettings, const_cast<Term*>(term), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
+  clearColor(s);
 }
 
 ostream&
@@ -90,36 +88,37 @@ operator<<(ostream& s, const Term* term)
   return s;
 }
 
-ostream&
-operator<<(ostream& s, DagNode* dagNode)
+void
+MixfixModule::prettyPrint(ostream& s, DagNode* dagNode, bool rangeKnown)
 {
   if (dagNode == 0)
     {
       s << "(null DagNode*)";
-      return s;
+      return;
     }
-  MixfixModule::globalIndent = 0;
-  MixfixModule* module = static_cast<MixfixModule*>(dagNode->symbol()->getModule());
-  if (interpreter.getPrintFlag(Interpreter::PRINT_GRAPH))
-    module->graphPrint(s, dagNode);
+  MixfixModule::clearIndent();
+  MixfixModule* module = safeCastNonNull<MixfixModule*>(dagNode->symbol()->getModule());
+  const PrintSettings& printSettings = interpreter;  // HACK
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_GRAPH))
+    module->graphPrint(s, dagNode, printSettings);
   else
     {
       MixfixModule::ColoringInfo coloringInfo;
-      if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+      if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
 	{
-	  MixfixModule::computeGraphStatus(dagNode,
-					   coloringInfo.visited,
-					   coloringInfo.statusVec);
+	  MixfixModule::computeGraphStatus(dagNode, coloringInfo.visited, coloringInfo.statusVec);
 	  coloringInfo.reducedAbove = false;
 	  coloringInfo.reducedDirectlyAbove = false;
 	}
-      module->prettyPrint(s, coloringInfo, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      module->prettyPrint(s, coloringInfo, printSettings, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
     }
-  if (MixfixModule::attributeUsed)
-    {
-      MixfixModule::attributeUsed = false;
-      s << Tty(Tty::RESET);
-    }
+  MixfixModule::clearColor(s);
+}
+
+ostream&
+operator<<(ostream& s, DagNode* dagNode)
+{
+  MixfixModule::prettyPrint(s, dagNode);
   return s;
 }
 
@@ -127,7 +126,7 @@ void
 MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemType)
 {
   const Label& l = pe->getLabel();
-  int id = interpreter.getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE) ? l.id() : NONE;
+  int id = interpreter.getPrintFlag(PrintSettings::PRINT_LABEL_ATTRIBUTE) ? l.id() : NONE;
   const Equation* eq = dynamic_cast<const Equation*>(pe);
   const Rule* rl = dynamic_cast<const Rule*>(pe);
   bool owise = eq != 0 && eq->isOwise();
@@ -179,13 +178,14 @@ MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemTy
   s << ']';
 }
 
+
 ostream&
 operator<<(ostream& s, const SortConstraint* sc)
 {
   if (sc->hasCondition())
     s << 'c';
   s << "mb ";
-  if (!interpreter.getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE))
+  if (!interpreter.getPrintFlag(PrintSettings::PRINT_LABEL_ATTRIBUTE))
     {
       const Label& l = sc->getLabel();
       if (l.id() != NONE)
@@ -207,7 +207,7 @@ operator<<(ostream& s, const Equation* e)
   if (e->hasCondition())
     s << 'c';
   s << "eq ";
-  if (!interpreter.getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE))
+  if (!interpreter.getPrintFlag(PrintSettings::PRINT_LABEL_ATTRIBUTE))
     {
       const Label& l = e->getLabel();
       if (l.id() != NONE)
@@ -229,7 +229,7 @@ operator<<(ostream& s, const Rule* r)
   if (r->hasCondition())
     s << 'c';
   s << "rl ";
-  if (!interpreter.getPrintFlag(Interpreter::PRINT_LABEL_ATTRIBUTE))
+  if (!interpreter.getPrintFlag(PrintSettings::PRINT_LABEL_ATTRIBUTE))
     {
       const Label& l = r->getLabel();
       if (l.id() != NONE)
@@ -360,7 +360,7 @@ MixfixModule::printCondition(ostream& s, const PreEquation* pe)
 }
 
 void
-MixfixModule::printVariable(ostream& s, int name, Sort* sort) const
+MixfixModule::printVariable(ostream& s, int name, Sort* sort, const PrintSettings& printSettings) const
 {
   if (Token::isFlagged(name))
     {
@@ -373,7 +373,7 @@ MixfixModule::printVariable(ostream& s, int name, Sort* sort) const
       name = Token::unflaggedCode(name);
     }
   s << Token::name(name);
-  if (interpreter.getPrintFlag(Interpreter::PRINT_WITH_ALIASES))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_WITH_ALIASES))
     {
       AliasMap::const_iterator i = variableAliases.find(name);
       if (i != variableAliases.end() && (*i).second == sort)
@@ -383,13 +383,13 @@ MixfixModule::printVariable(ostream& s, int name, Sort* sort) const
 }
 
 void
-MixfixModule::printPrefixName(ostream& s, const char* prefixName, SymbolInfo& si)
+MixfixModule::printPrefixName(ostream& s, const char* prefixName, SymbolInfo& si, const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() == 2))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && (si.format.length() == 2))
     {
-      fancySpace(s, si.format[0]);
+      fancySpace(s, si.format[0], printSettings);
       s << prefixName;
-      fancySpace(s, si.format[1]);
+      fancySpace(s, si.format[1], printSettings);
     }
   else
     s << prefixName;
@@ -399,10 +399,11 @@ int
 MixfixModule::printTokens(ostream& s,
 			  const SymbolInfo& si,
 			  int pos,
-			  const char* color)
+			  const char* color,
+			  const PrintSettings& printSettings)
 {
   bool noSpace = (pos == 0);
-  bool hasFormat = interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
+  bool hasFormat = printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && (si.format.length() > 0);
   for (;;)
     {
       int token = si.mixfixSyntax[pos++];
@@ -411,7 +412,7 @@ MixfixModule::printTokens(ostream& s,
       bool special = (token == leftParen || token == rightParen ||
 		      token == leftBracket || token == rightBracket ||
 		      token == leftBrace || token == rightBrace);
-      if (!((hasFormat && fancySpace(s, si.format[pos - 1])) || special || noSpace || token == comma))
+      if (!((hasFormat && fancySpace(s, si.format[pos - 1], printSettings)) || special || noSpace || token == comma))
 	s << ' ';
       noSpace = special || (hasFormat && token == comma);
       if (color != 0)
@@ -420,7 +421,7 @@ MixfixModule::printTokens(ostream& s,
       if (color != 0)
 	s << Tty(Tty::RESET);
     }
-  if (!((hasFormat && fancySpace(s, si.format[pos - 1])) || noSpace))
+  if (!((hasFormat && fancySpace(s, si.format[pos - 1], printSettings)) || noSpace))
     s << ' ';
   return pos;
 }
@@ -432,9 +433,10 @@ MixfixModule::printTails(ostream& s,
 			 int nrTails,
 			 bool needAssocParen,
 			 bool checkForInterrupt,
-			 const char* color)
+			 const char* color,
+			 const PrintSettings& printSettings)
 {
-  bool hasFormat = interpreter.getPrintFlag(Interpreter::PRINT_FORMAT) && (si.format.length() > 0);
+  bool hasFormat = printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && (si.format.length() > 0);
   int mixfixLength = si.mixfixSyntax.length();
   for (int i = 0;;)
     {
@@ -447,7 +449,7 @@ MixfixModule::printTails(ostream& s,
 	  bool special = (token == leftParen || token == rightParen ||
 			  token == leftBracket || token == rightBracket ||
 			  token == leftBrace || token == rightBrace);
-	  if (!((hasFormat && fancySpace(s, si.format[j])) || special || noSpace || token == comma))
+	  if (!((hasFormat && fancySpace(s, si.format[j], printSettings)) || special || noSpace || token == comma))
 	    s << ' ';
 	  noSpace = special || (hasFormat && token == comma);
 	  if (color != 0)
@@ -457,7 +459,7 @@ MixfixModule::printTails(ostream& s,
 	    s << Tty(Tty::RESET);
 	}
       if (hasFormat)
-	(void) fancySpace(s, si.format[mixfixLength]);
+	(void) fancySpace(s, si.format[mixfixLength], printSettings);
       if (++i == nrTails)
 	break;
       if (needAssocParen)
@@ -466,7 +468,7 @@ MixfixModule::printTails(ostream& s,
 }
 
 bool
-MixfixModule::fancySpace(ostream& s, int spaceToken)
+MixfixModule::fancySpace(ostream& s, int spaceToken, const PrintSettings& printSettings)
 {
   bool space = false;
   for (const char* cmd = Token::name(spaceToken); *cmd; cmd++)
@@ -515,7 +517,7 @@ MixfixModule::fancySpace(ostream& s, int spaceToken)
 	  }
 	default:
 	  {
-	    if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+	    if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
 	      break;
 	    switch (c)
 	      {

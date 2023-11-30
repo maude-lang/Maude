@@ -48,12 +48,7 @@ SyntacticPreModule::latexTokenVector(ostream& s, const Vector<Token>& tokens, In
       int code = tokens[i].code();
       if (code == rightParen || code == rightBracket || code == rightBrace || code == comma)
 	needSpace = false;
-      else if (code == leftParen)
-	{
-	  needSpace = false;
-	  nextNeedSpace = false;
-	}
-      else if (code == leftBracket || code == leftBrace)
+      else if (code == leftParen || code == leftBracket || code == leftBrace)
 	nextNeedSpace = false;
       if (needSpace)
 	s << "\\maudeSpace";

@@ -903,13 +903,19 @@ op 'metaParseStrategy : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermLis
 op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
 op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
 op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[PrintOptionSet`]
-    -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
+    -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
+op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[PrintOptionSet`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
     id-hook('MetaLevelOpSymbol, 'metaPrettyPrint) 
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
 op 'metaPrettyPrintStrategy : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
     '`[StrategyList`,Strategy?`] '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
     id-hook('MetaLevelOpSymbol, 'metaPrettyPrintStrategy) 
+    op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
+    .
+op 'metaPrintToString : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
+    '`[PrintOptionSet`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[String`] [special(
+    id-hook('MetaLevelOpSymbol, 'metaPrintToString) 
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
 op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ResultPair?`] [special(
@@ -1180,6 +1186,7 @@ op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidS
     
     op-hook('mixfixSymbol, 'mixfix, nil, 'PrintOption) 
     op-hook('withParensSymbol, 'with-parens, nil, 'PrintOption) 
+    op-hook('withSortsSymbol, 'with-sorts, nil, 'PrintOption) 
     op-hook('flatSymbol, 'flat, nil, 'PrintOption) 
     op-hook('formatPrintOptionSymbol, 'format, nil, 'PrintOption) 
     op-hook('numberSymbol, 'number, nil, 'PrintOption) 
@@ -1526,6 +1533,7 @@ op 'wellFormed : '`[Module`] '`[Substitution?`] -> '`[Bool`] [special(
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
 op 'with-parens : nil -> 'PrintOption [ctor] .
+op 'with-sorts : nil -> 'PrintOption [ctor] .
 op 'xmatch_s.t._ : 'Term 'EqCondition -> 'Strategy [ctor prec(21)] .
 op 'xmatchrew_s.t._by_ : 'Term 'EqCondition 'UsingPairSet -> 'Strategy [ctor] .
 op '|_| : 'NeQidSet -> 'NzNat [none] .
@@ -1808,13 +1816,19 @@ op 'metaParseStrategy : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermLis
 op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
 op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
 op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[PrintOptionSet`]
-    -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
+    -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
+op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[PrintOptionSet`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
     id-hook('MetaLevelOpSymbol, 'metaPrettyPrint) 
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
 op 'metaPrettyPrintStrategy : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
     '`[StrategyList`,Strategy?`] '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
     id-hook('MetaLevelOpSymbol, 'metaPrettyPrintStrategy) 
+    op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
+    .
+op 'metaPrintToString : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
+    '`[PrintOptionSet`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[String`] [special(
+    id-hook('MetaLevelOpSymbol, 'metaPrintToString) 
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
 op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ResultPair?`] [special(
@@ -2085,6 +2099,7 @@ op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidS
     
     op-hook('mixfixSymbol, 'mixfix, nil, 'PrintOption) 
     op-hook('withParensSymbol, 'with-parens, nil, 'PrintOption) 
+    op-hook('withSortsSymbol, 'with-sorts, nil, 'PrintOption) 
     op-hook('flatSymbol, 'flat, nil, 'PrintOption) 
     op-hook('formatPrintOptionSymbol, 'format, nil, 'PrintOption) 
     op-hook('numberSymbol, 'number, nil, 'PrintOption) 
@@ -2287,6 +2302,7 @@ op 'wellFormed : '`[Module`] '`[Substitution?`] -> '`[Bool`] [special(
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
 op 'with-parens : nil -> 'PrintOption [ctor] .
+op 'with-sorts : nil -> 'PrintOption [ctor] .
 ==========================================
 reduce in META-LEVEL : upOpDecls('IDENTICAL, true) .
 rewrites: 0
@@ -3123,13 +3139,20 @@ result FModule: fmod 'META-LEVEL is
   op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
   op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
   op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
-    '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
+    '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
+  op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
+    '`[PrintOptionSet`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
     id-hook('MetaLevelOpSymbol, 'metaPrettyPrint) 
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
   op 'metaPrettyPrintStrategy : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
     '`[StrategyList`,Strategy?`] '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
     id-hook('MetaLevelOpSymbol, 'metaPrettyPrintStrategy) 
+    op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
+    .
+  op 'metaPrintToString : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
+    '`[PrintOptionSet`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[String`] [special(
+    id-hook('MetaLevelOpSymbol, 'metaPrintToString) 
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
   op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ResultPair?`] [special(
@@ -3400,6 +3423,7 @@ result FModule: fmod 'META-LEVEL is
     
     op-hook('mixfixSymbol, 'mixfix, nil, 'PrintOption) 
     op-hook('withParensSymbol, 'with-parens, nil, 'PrintOption) 
+    op-hook('withSortsSymbol, 'with-sorts, nil, 'PrintOption) 
     op-hook('flatSymbol, 'flat, nil, 'PrintOption) 
     op-hook('formatPrintOptionSymbol, 'format, nil, 'PrintOption) 
     op-hook('numberSymbol, 'number, nil, 'PrintOption) 
@@ -3745,6 +3769,7 @@ result FModule: fmod 'META-LEVEL is
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
   op 'with-parens : nil -> 'PrintOption [ctor] .
+  op 'with-sorts : nil -> 'PrintOption [ctor] .
   op 'xmatch_s.t._ : 'Term 'EqCondition -> 'Strategy [ctor prec(21)] .
   op 'xmatchrew_s.t._by_ : 'Term 'EqCondition 'UsingPairSet -> 'Strategy [ctor]
     .
@@ -4201,11 +4226,14 @@ result FModule: fmod 'META-LEVEL is
     'none.EmptyQidSet, 'Q:QidList, 'T:Type?] [none] .
   eq 'metaPrettyPrint['M:Module, 'T:Term] = 'metaPrettyPrint['M:Module,
     'none.EmptyQidSet, 'T:Term, '__['mixfix.PrintOption, '__['flat.PrintOption,
-    '__['format.PrintOption, '__['number.PrintOption, 'rat.PrintOption]]]]] [
-    none] .
+    '__['format.PrintOption, '__['number.PrintOption, 'rat.PrintOption]]]],
+    'none.EmptyQidSet] [none] .
   eq 'metaPrettyPrint['M:Module, 'T:Term, 'P:PrintOptionSet] =
-    'metaPrettyPrint['M:Module, 'none.EmptyQidSet, 'T:Term, 'P:PrintOptionSet]
-    [none] .
+    'metaPrettyPrint['M:Module, 'none.EmptyQidSet, 'T:Term, 'P:PrintOptionSet,
+    'none.EmptyQidSet] [none] .
+  eq 'metaPrettyPrint['M:Module, 'VS:VariableSet, 'T:Term, 'P:PrintOptionSet] =
+    'metaPrettyPrint['M:Module, 'VS:VariableSet, 'T:Term, 'P:PrintOptionSet,
+    'none.EmptyQidSet] [none] .
   eq 'metaVariantDisjointUnify['M:Module, 'U:UnificationProblem, 'TL:TermList,
     'Q:Qid, 'N:Nat] = 'metaVariantDisjointUnify['M:Module,
     'U:UnificationProblem, 'TL:TermList, 'Q:Qid, 'none.VariantOptionSet,
@@ -4551,13 +4579,20 @@ result FModule: fmod 'META-LEVEL is
   op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
   op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
   op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
-    '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
+    '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
+  op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
+    '`[PrintOptionSet`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
     id-hook('MetaLevelOpSymbol, 'metaPrettyPrint) 
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
   op 'metaPrettyPrintStrategy : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
     '`[StrategyList`,Strategy?`] '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
     id-hook('MetaLevelOpSymbol, 'metaPrettyPrintStrategy) 
+    op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
+    .
+  op 'metaPrintToString : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
+    '`[PrintOptionSet`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[String`] [special(
+    id-hook('MetaLevelOpSymbol, 'metaPrintToString) 
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
   op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ResultPair?`] [special(
@@ -4828,6 +4863,7 @@ result FModule: fmod 'META-LEVEL is
     
     op-hook('mixfixSymbol, 'mixfix, nil, 'PrintOption) 
     op-hook('withParensSymbol, 'with-parens, nil, 'PrintOption) 
+    op-hook('withSortsSymbol, 'with-sorts, nil, 'PrintOption) 
     op-hook('flatSymbol, 'flat, nil, 'PrintOption) 
     op-hook('formatPrintOptionSymbol, 'format, nil, 'PrintOption) 
     op-hook('numberSymbol, 'number, nil, 'PrintOption) 
@@ -5029,6 +5065,7 @@ result FModule: fmod 'META-LEVEL is
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
   op 'with-parens : nil -> 'PrintOption [ctor] .
+  op 'with-sorts : nil -> 'PrintOption [ctor] .
   none
   eq '$applySubstitution['Q:Qid, 'S:Substitution] = 'Q:Qid [owise] .
   eq '$applySubstitution['V:Variable, '_;_['S:Substitution, '_<-_['V:Variable,
@@ -5155,11 +5192,14 @@ result FModule: fmod 'META-LEVEL is
     'none.EmptyQidSet, 'Q:QidList, 'T:Type?] [none] .
   eq 'metaPrettyPrint['M:Module, 'T:Term] = 'metaPrettyPrint['M:Module,
     'none.EmptyQidSet, 'T:Term, '__['mixfix.PrintOption, '__['flat.PrintOption,
-    '__['format.PrintOption, '__['number.PrintOption, 'rat.PrintOption]]]]] [
-    none] .
+    '__['format.PrintOption, '__['number.PrintOption, 'rat.PrintOption]]]],
+    'none.EmptyQidSet] [none] .
   eq 'metaPrettyPrint['M:Module, 'T:Term, 'P:PrintOptionSet] =
-    'metaPrettyPrint['M:Module, 'none.EmptyQidSet, 'T:Term, 'P:PrintOptionSet]
-    [none] .
+    'metaPrettyPrint['M:Module, 'none.EmptyQidSet, 'T:Term, 'P:PrintOptionSet,
+    'none.EmptyQidSet] [none] .
+  eq 'metaPrettyPrint['M:Module, 'VS:VariableSet, 'T:Term, 'P:PrintOptionSet] =
+    'metaPrettyPrint['M:Module, 'VS:VariableSet, 'T:Term, 'P:PrintOptionSet,
+    'none.EmptyQidSet] [none] .
   eq 'metaVariantDisjointUnify['M:Module, 'U:UnificationProblem, 'TL:TermList,
     'Q:Qid, 'N:Nat] = 'metaVariantDisjointUnify['M:Module,
     'U:UnificationProblem, 'TL:TermList, 'Q:Qid, 'none.VariantOptionSet,
@@ -6364,13 +6404,20 @@ result FModule: fmod 'META-LEVEL is
   op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
   op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
   op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
-    '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
+    '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [none] .
+  op 'metaPrettyPrint : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
+    '`[PrintOptionSet`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
     id-hook('MetaLevelOpSymbol, 'metaPrettyPrint) 
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
   op 'metaPrettyPrintStrategy : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
     '`[StrategyList`,Strategy?`] '`[PrintOptionSet`] -> '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] [special(
     id-hook('MetaLevelOpSymbol, 'metaPrettyPrintStrategy) 
+    op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
+    .
+  op 'metaPrintToString : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`]
+    '`[PrintOptionSet`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[String`] [special(
+    id-hook('MetaLevelOpSymbol, 'metaPrintToString) 
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
   op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] -> '`[ResultPair?`] [special(
@@ -6641,6 +6688,7 @@ result FModule: fmod 'META-LEVEL is
     
     op-hook('mixfixSymbol, 'mixfix, nil, 'PrintOption) 
     op-hook('withParensSymbol, 'with-parens, nil, 'PrintOption) 
+    op-hook('withSortsSymbol, 'with-sorts, nil, 'PrintOption) 
     op-hook('flatSymbol, 'flat, nil, 'PrintOption) 
     op-hook('formatPrintOptionSymbol, 'format, nil, 'PrintOption) 
     op-hook('numberSymbol, 'number, nil, 'PrintOption) 
@@ -6986,6 +7034,7 @@ result FModule: fmod 'META-LEVEL is
     op-hook('shareWith, 'metaReduce, 'Module 'ModuleExpression, 'ResultPair?))]
     .
   op 'with-parens : nil -> 'PrintOption [ctor] .
+  op 'with-sorts : nil -> 'PrintOption [ctor] .
   op 'xmatch_s.t._ : 'Term 'EqCondition -> 'Strategy [ctor prec(21)] .
   op 'xmatchrew_s.t._by_ : 'Term 'EqCondition 'UsingPairSet -> 'Strategy [ctor]
     .
@@ -7442,11 +7491,14 @@ result FModule: fmod 'META-LEVEL is
     'none.EmptyQidSet, 'Q:QidList, 'T:Type?] [none] .
   eq 'metaPrettyPrint['M:Module, 'T:Term] = 'metaPrettyPrint['M:Module,
     'none.EmptyQidSet, 'T:Term, '__['mixfix.PrintOption, '__['flat.PrintOption,
-    '__['format.PrintOption, '__['number.PrintOption, 'rat.PrintOption]]]]] [
-    none] .
+    '__['format.PrintOption, '__['number.PrintOption, 'rat.PrintOption]]]],
+    'none.EmptyQidSet] [none] .
   eq 'metaPrettyPrint['M:Module, 'T:Term, 'P:PrintOptionSet] =
-    'metaPrettyPrint['M:Module, 'none.EmptyQidSet, 'T:Term, 'P:PrintOptionSet]
-    [none] .
+    'metaPrettyPrint['M:Module, 'none.EmptyQidSet, 'T:Term, 'P:PrintOptionSet,
+    'none.EmptyQidSet] [none] .
+  eq 'metaPrettyPrint['M:Module, 'VS:VariableSet, 'T:Term, 'P:PrintOptionSet] =
+    'metaPrettyPrint['M:Module, 'VS:VariableSet, 'T:Term, 'P:PrintOptionSet,
+    'none.EmptyQidSet] [none] .
   eq 'metaVariantDisjointUnify['M:Module, 'U:UnificationProblem, 'TL:TermList,
     'Q:Qid, 'N:Nat] = 'metaVariantDisjointUnify['M:Module,
     'U:UnificationProblem, 'TL:TermList, 'Q:Qid, 'none.VariantOptionSet,
@@ -8686,20 +8738,24 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''metaPrettyPrint.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'none.AttrSet], 'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[
     ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'none.AttrSet], 'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[
     ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind,
-    ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[
-    ''MetaLevelOpSymbol.Sort, ''metaPrettyPrint.Sort], 'op-hook[
-    ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
-    ''ModuleExpression.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''metaPrettyPrintStrategy.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind,
-    ''`[StrategyList`,Strategy?`].Kind, ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'none.AttrSet],
+    'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[PrintOptionSet`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaPrettyPrint.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
+    ''Module.Sort, ''ModuleExpression.Sort], ''ResultPair?.Sort]]]],
+    'op_:_->_`[_`].[''metaPrettyPrintStrategy.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[StrategyList`,Strategy?`].Kind, ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaPrettyPrintStrategy.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''ModuleExpression.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaReduce.Sort, '__[
-    ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[ResultPair?`].Kind, 'special[
-    '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaReduce.Sort], 'op-hook[
-    ''qidSymbol.Sort, ''<Qids>.Sort, 'nil.TypeList, ''Qid.Sort], 'op-hook[
-    ''metaTermSymbol.Sort, ''_`[_`].Qid, '__[''Qid.Sort,
-    ''NeGroundTermList.Sort], ''GroundTerm.Sort], 'op-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaPrintToString.Sort, '__[
+    ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind,
+    ''`[PrintOptionSet`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[String`].Kind,
+    'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaPrintToString.Sort],
+    'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
+    ''ModuleExpression.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
+    ''metaReduce.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind],
+    ''`[ResultPair?`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaReduce.Sort], 'op-hook[''qidSymbol.Sort, ''<Qids>.Sort,
+    'nil.TypeList, ''Qid.Sort], 'op-hook[''metaTermSymbol.Sort, ''_`[_`].Qid,
+    '__[''Qid.Sort, ''NeGroundTermList.Sort], ''GroundTerm.Sort], 'op-hook[
     ''metaArgSymbol.Sort, ''_`,_.Qid, '__[''NeGroundTermList.Sort,
     ''GroundTermList.Sort], ''NeGroundTermList.Sort], 'op-hook[
     ''emptyTermListSymbol.Sort, ''empty.Sort, 'nil.TypeList,
@@ -9016,8 +9072,9 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''Strategy.Sort], ''Strategy?.Sort], 'op-hook[''mixfixSymbol.Sort,
     ''mixfix.Sort, 'nil.TypeList, ''PrintOption.Sort], 'op-hook[
     ''withParensSymbol.Sort, ''with-parens.Sort, 'nil.TypeList,
-    ''PrintOption.Sort], 'op-hook[''flatSymbol.Sort, ''flat.Sort,
-    'nil.TypeList, ''PrintOption.Sort], 'op-hook[
+    ''PrintOption.Sort], 'op-hook[''withSortsSymbol.Sort, ''with-sorts.Sort,
+    'nil.TypeList, ''PrintOption.Sort], 'op-hook[''flatSymbol.Sort,
+    ''flat.Sort, 'nil.TypeList, ''PrintOption.Sort], 'op-hook[
     ''formatPrintOptionSymbol.Sort, ''format.Sort, 'nil.TypeList,
     ''PrintOption.Sort], 'op-hook[''numberSymbol.Sort, ''number.Sort,
     'nil.TypeList, ''PrintOption.Sort], 'op-hook[''ratSymbol.Sort, ''rat.Sort,
@@ -9426,7 +9483,8 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''ModuleExpression.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
     ''with-parens.Sort, 'nil.TypeList, ''PrintOption.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''xmatch_s.t._.Constant, '__[''Term.Sort,
+    'op_:_->_`[_`].[''with-sorts.Sort, 'nil.TypeList, ''PrintOption.Sort,
+    'ctor.Attr], 'op_:_->_`[_`].[''xmatch_s.t._.Constant, '__[''Term.Sort,
     ''EqCondition.Sort], ''Strategy.Sort, '__['ctor.Attr, 'prec['s_^21[
     '0.Zero]]]], 'op_:_->_`[_`].[''xmatchrew_s.t._by_.Constant, '__[
     ''Term.Sort, ''EqCondition.Sort, ''UsingPairSet.Sort], ''Strategy.Sort,
@@ -10261,19 +10319,24 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     '_`[_`][''__.Sort, '_`,_[''mixfix.PrintOption.Constant, '_`[_`][''__.Sort,
     '_`,_[''flat.PrintOption.Constant, '_`[_`][''__.Sort, '_`,_[
     ''format.PrintOption.Constant, '_`[_`][''__.Sort, '_`,_[
-    ''number.PrintOption.Constant, ''rat.PrintOption.Constant]]]]]]]]]],
-    'none.AttrSet], 'eq_=_`[_`].['_`[_`][''metaPrettyPrint.Sort, '_`,_[
-    ''M:Module.Variable, ''T:Term.Variable, ''P:PrintOptionSet.Variable]],
-    '_`[_`][''metaPrettyPrint.Sort, '_`,_[''M:Module.Variable,
-    ''none.EmptyQidSet.Constant, ''T:Term.Variable,
-    ''P:PrintOptionSet.Variable]], 'none.AttrSet], 'eq_=_`[_`].['_`[_`][
+    ''number.PrintOption.Constant, ''rat.PrintOption.Constant]]]]]]]],
+    ''none.EmptyQidSet.Constant]], 'none.AttrSet], 'eq_=_`[_`].['_`[_`][
+    ''metaPrettyPrint.Sort, '_`,_[''M:Module.Variable, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable]], '_`[_`][''metaPrettyPrint.Sort, '_`,_[
+    ''M:Module.Variable, ''none.EmptyQidSet.Constant, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable, ''none.EmptyQidSet.Constant]], 'none.AttrSet],
+    'eq_=_`[_`].['_`[_`][''metaPrettyPrint.Sort, '_`,_[''M:Module.Variable,
+    ''VS:VariableSet.Variable, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable]], '_`[_`][''metaPrettyPrint.Sort, '_`,_[
+    ''M:Module.Variable, ''VS:VariableSet.Variable, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable, ''none.EmptyQidSet.Constant]], 'none.AttrSet],
+    'eq_=_`[_`].['_`[_`][''metaVariantDisjointUnify.Sort, '_`,_[
+    ''M:Module.Variable, ''U:UnificationProblem.Variable,
+    ''TL:TermList.Variable, ''Q:Qid.Variable, ''N:Nat.Variable]], '_`[_`][
     ''metaVariantDisjointUnify.Sort, '_`,_[''M:Module.Variable,
     ''U:UnificationProblem.Variable, ''TL:TermList.Variable, ''Q:Qid.Variable,
-    ''N:Nat.Variable]], '_`[_`][''metaVariantDisjointUnify.Sort, '_`,_[
-    ''M:Module.Variable, ''U:UnificationProblem.Variable,
-    ''TL:TermList.Variable, ''Q:Qid.Variable, ''none.VariantOptionSet.Constant,
-    ''N:Nat.Variable]], 'none.AttrSet], 'eq_=_`[_`].['_`[_`][
-    ''metaVariantUnify.Sort, '_`,_[''M:Module.Variable,
+    ''none.VariantOptionSet.Constant, ''N:Nat.Variable]], 'none.AttrSet],
+    'eq_=_`[_`].['_`[_`][''metaVariantUnify.Sort, '_`,_[''M:Module.Variable,
     ''U:UnificationProblem.Variable, ''TL:TermList.Variable, ''Q:Qid.Variable,
     ''N:Nat.Variable]], '_`[_`][''metaVariantUnify.Sort, '_`,_[
     ''M:Module.Variable, ''U:UnificationProblem.Variable,
@@ -11305,20 +11368,24 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''metaPrettyPrint.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'none.AttrSet], 'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[
     ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'none.AttrSet], 'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[
     ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind,
-    ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[
-    ''MetaLevelOpSymbol.Sort, ''metaPrettyPrint.Sort], 'op-hook[
-    ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
-    ''ModuleExpression.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''metaPrettyPrintStrategy.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind,
-    ''`[StrategyList`,Strategy?`].Kind, ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'none.AttrSet],
+    'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[PrintOptionSet`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaPrettyPrint.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
+    ''Module.Sort, ''ModuleExpression.Sort], ''ResultPair?.Sort]]]],
+    'op_:_->_`[_`].[''metaPrettyPrintStrategy.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[StrategyList`,Strategy?`].Kind, ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaPrettyPrintStrategy.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''ModuleExpression.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaReduce.Sort, '__[
-    ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[ResultPair?`].Kind, 'special[
-    '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaReduce.Sort], 'op-hook[
-    ''qidSymbol.Sort, ''<Qids>.Sort, 'nil.TypeList, ''Qid.Sort], 'op-hook[
-    ''metaTermSymbol.Sort, ''_`[_`].Qid, '__[''Qid.Sort,
-    ''NeGroundTermList.Sort], ''GroundTerm.Sort], 'op-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaPrintToString.Sort, '__[
+    ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind,
+    ''`[PrintOptionSet`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[String`].Kind,
+    'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaPrintToString.Sort],
+    'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
+    ''ModuleExpression.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
+    ''metaReduce.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind],
+    ''`[ResultPair?`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaReduce.Sort], 'op-hook[''qidSymbol.Sort, ''<Qids>.Sort,
+    'nil.TypeList, ''Qid.Sort], 'op-hook[''metaTermSymbol.Sort, ''_`[_`].Qid,
+    '__[''Qid.Sort, ''NeGroundTermList.Sort], ''GroundTerm.Sort], 'op-hook[
     ''metaArgSymbol.Sort, ''_`,_.Qid, '__[''NeGroundTermList.Sort,
     ''GroundTermList.Sort], ''NeGroundTermList.Sort], 'op-hook[
     ''emptyTermListSymbol.Sort, ''empty.Sort, 'nil.TypeList,
@@ -11635,8 +11702,9 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''Strategy.Sort], ''Strategy?.Sort], 'op-hook[''mixfixSymbol.Sort,
     ''mixfix.Sort, 'nil.TypeList, ''PrintOption.Sort], 'op-hook[
     ''withParensSymbol.Sort, ''with-parens.Sort, 'nil.TypeList,
-    ''PrintOption.Sort], 'op-hook[''flatSymbol.Sort, ''flat.Sort,
-    'nil.TypeList, ''PrintOption.Sort], 'op-hook[
+    ''PrintOption.Sort], 'op-hook[''withSortsSymbol.Sort, ''with-sorts.Sort,
+    'nil.TypeList, ''PrintOption.Sort], 'op-hook[''flatSymbol.Sort,
+    ''flat.Sort, 'nil.TypeList, ''PrintOption.Sort], 'op-hook[
     ''formatPrintOptionSymbol.Sort, ''format.Sort, 'nil.TypeList,
     ''PrintOption.Sort], 'op-hook[''numberSymbol.Sort, ''number.Sort,
     'nil.TypeList, ''PrintOption.Sort], 'op-hook[''ratSymbol.Sort, ''rat.Sort,
@@ -12045,7 +12113,8 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''ModuleExpression.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
     ''with-parens.Sort, 'nil.TypeList, ''PrintOption.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''xmatch_s.t._.Constant, '__[''Term.Sort,
+    'op_:_->_`[_`].[''with-sorts.Sort, 'nil.TypeList, ''PrintOption.Sort,
+    'ctor.Attr], 'op_:_->_`[_`].[''xmatch_s.t._.Constant, '__[''Term.Sort,
     ''EqCondition.Sort], ''Strategy.Sort, '__['ctor.Attr, 'prec['s_^21[
     '0.Zero]]]], 'op_:_->_`[_`].[''xmatchrew_s.t._by_.Constant, '__[
     ''Term.Sort, ''EqCondition.Sort, ''UsingPairSet.Sort], ''Strategy.Sort,
@@ -12880,19 +12949,24 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     '_`[_`][''__.Sort, '_`,_[''mixfix.PrintOption.Constant, '_`[_`][''__.Sort,
     '_`,_[''flat.PrintOption.Constant, '_`[_`][''__.Sort, '_`,_[
     ''format.PrintOption.Constant, '_`[_`][''__.Sort, '_`,_[
-    ''number.PrintOption.Constant, ''rat.PrintOption.Constant]]]]]]]]]],
-    'none.AttrSet], 'eq_=_`[_`].['_`[_`][''metaPrettyPrint.Sort, '_`,_[
-    ''M:Module.Variable, ''T:Term.Variable, ''P:PrintOptionSet.Variable]],
-    '_`[_`][''metaPrettyPrint.Sort, '_`,_[''M:Module.Variable,
-    ''none.EmptyQidSet.Constant, ''T:Term.Variable,
-    ''P:PrintOptionSet.Variable]], 'none.AttrSet], 'eq_=_`[_`].['_`[_`][
+    ''number.PrintOption.Constant, ''rat.PrintOption.Constant]]]]]]]],
+    ''none.EmptyQidSet.Constant]], 'none.AttrSet], 'eq_=_`[_`].['_`[_`][
+    ''metaPrettyPrint.Sort, '_`,_[''M:Module.Variable, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable]], '_`[_`][''metaPrettyPrint.Sort, '_`,_[
+    ''M:Module.Variable, ''none.EmptyQidSet.Constant, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable, ''none.EmptyQidSet.Constant]], 'none.AttrSet],
+    'eq_=_`[_`].['_`[_`][''metaPrettyPrint.Sort, '_`,_[''M:Module.Variable,
+    ''VS:VariableSet.Variable, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable]], '_`[_`][''metaPrettyPrint.Sort, '_`,_[
+    ''M:Module.Variable, ''VS:VariableSet.Variable, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable, ''none.EmptyQidSet.Constant]], 'none.AttrSet],
+    'eq_=_`[_`].['_`[_`][''metaVariantDisjointUnify.Sort, '_`,_[
+    ''M:Module.Variable, ''U:UnificationProblem.Variable,
+    ''TL:TermList.Variable, ''Q:Qid.Variable, ''N:Nat.Variable]], '_`[_`][
     ''metaVariantDisjointUnify.Sort, '_`,_[''M:Module.Variable,
     ''U:UnificationProblem.Variable, ''TL:TermList.Variable, ''Q:Qid.Variable,
-    ''N:Nat.Variable]], '_`[_`][''metaVariantDisjointUnify.Sort, '_`,_[
-    ''M:Module.Variable, ''U:UnificationProblem.Variable,
-    ''TL:TermList.Variable, ''Q:Qid.Variable, ''none.VariantOptionSet.Constant,
-    ''N:Nat.Variable]], 'none.AttrSet], 'eq_=_`[_`].['_`[_`][
-    ''metaVariantUnify.Sort, '_`,_[''M:Module.Variable,
+    ''none.VariantOptionSet.Constant, ''N:Nat.Variable]], 'none.AttrSet],
+    'eq_=_`[_`].['_`[_`][''metaVariantUnify.Sort, '_`,_[''M:Module.Variable,
     ''U:UnificationProblem.Variable, ''TL:TermList.Variable, ''Q:Qid.Variable,
     ''N:Nat.Variable]], '_`[_`][''metaVariantUnify.Sort, '_`,_[
     ''M:Module.Variable, ''U:UnificationProblem.Variable,
@@ -13924,20 +13998,24 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''metaPrettyPrint.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'none.AttrSet], 'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[
     ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'none.AttrSet], 'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[
     ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind,
-    ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[
-    ''MetaLevelOpSymbol.Sort, ''metaPrettyPrint.Sort], 'op-hook[
-    ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
-    ''ModuleExpression.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''metaPrettyPrintStrategy.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind,
-    ''`[StrategyList`,Strategy?`].Kind, ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'none.AttrSet],
+    'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[PrintOptionSet`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaPrettyPrint.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
+    ''Module.Sort, ''ModuleExpression.Sort], ''ResultPair?.Sort]]]],
+    'op_:_->_`[_`].[''metaPrettyPrintStrategy.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[StrategyList`,Strategy?`].Kind, ''`[PrintOptionSet`].Kind], ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaPrettyPrintStrategy.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''ModuleExpression.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaReduce.Sort, '__[
-    ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[ResultPair?`].Kind, 'special[
-    '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaReduce.Sort], 'op-hook[
-    ''qidSymbol.Sort, ''<Qids>.Sort, 'nil.TypeList, ''Qid.Sort], 'op-hook[
-    ''metaTermSymbol.Sort, ''_`[_`].Qid, '__[''Qid.Sort,
-    ''NeGroundTermList.Sort], ''GroundTerm.Sort], 'op-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaPrintToString.Sort, '__[
+    ''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind,
+    ''`[PrintOptionSet`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[String`].Kind,
+    'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaPrintToString.Sort],
+    'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
+    ''ModuleExpression.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
+    ''metaReduce.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind],
+    ''`[ResultPair?`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaReduce.Sort], 'op-hook[''qidSymbol.Sort, ''<Qids>.Sort,
+    'nil.TypeList, ''Qid.Sort], 'op-hook[''metaTermSymbol.Sort, ''_`[_`].Qid,
+    '__[''Qid.Sort, ''NeGroundTermList.Sort], ''GroundTerm.Sort], 'op-hook[
     ''metaArgSymbol.Sort, ''_`,_.Qid, '__[''NeGroundTermList.Sort,
     ''GroundTermList.Sort], ''NeGroundTermList.Sort], 'op-hook[
     ''emptyTermListSymbol.Sort, ''empty.Sort, 'nil.TypeList,
@@ -14254,8 +14332,9 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''Strategy.Sort], ''Strategy?.Sort], 'op-hook[''mixfixSymbol.Sort,
     ''mixfix.Sort, 'nil.TypeList, ''PrintOption.Sort], 'op-hook[
     ''withParensSymbol.Sort, ''with-parens.Sort, 'nil.TypeList,
-    ''PrintOption.Sort], 'op-hook[''flatSymbol.Sort, ''flat.Sort,
-    'nil.TypeList, ''PrintOption.Sort], 'op-hook[
+    ''PrintOption.Sort], 'op-hook[''withSortsSymbol.Sort, ''with-sorts.Sort,
+    'nil.TypeList, ''PrintOption.Sort], 'op-hook[''flatSymbol.Sort,
+    ''flat.Sort, 'nil.TypeList, ''PrintOption.Sort], 'op-hook[
     ''formatPrintOptionSymbol.Sort, ''format.Sort, 'nil.TypeList,
     ''PrintOption.Sort], 'op-hook[''numberSymbol.Sort, ''number.Sort,
     'nil.TypeList, ''PrintOption.Sort], 'op-hook[''ratSymbol.Sort, ''rat.Sort,
@@ -14664,7 +14743,8 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''ModuleExpression.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
     ''with-parens.Sort, 'nil.TypeList, ''PrintOption.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''xmatch_s.t._.Constant, '__[''Term.Sort,
+    'op_:_->_`[_`].[''with-sorts.Sort, 'nil.TypeList, ''PrintOption.Sort,
+    'ctor.Attr], 'op_:_->_`[_`].[''xmatch_s.t._.Constant, '__[''Term.Sort,
     ''EqCondition.Sort], ''Strategy.Sort, '__['ctor.Attr, 'prec['s_^21[
     '0.Zero]]]], 'op_:_->_`[_`].[''xmatchrew_s.t._by_.Constant, '__[
     ''Term.Sort, ''EqCondition.Sort, ''UsingPairSet.Sort], ''Strategy.Sort,
@@ -15499,19 +15579,24 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     '_`[_`][''__.Sort, '_`,_[''mixfix.PrintOption.Constant, '_`[_`][''__.Sort,
     '_`,_[''flat.PrintOption.Constant, '_`[_`][''__.Sort, '_`,_[
     ''format.PrintOption.Constant, '_`[_`][''__.Sort, '_`,_[
-    ''number.PrintOption.Constant, ''rat.PrintOption.Constant]]]]]]]]]],
-    'none.AttrSet], 'eq_=_`[_`].['_`[_`][''metaPrettyPrint.Sort, '_`,_[
-    ''M:Module.Variable, ''T:Term.Variable, ''P:PrintOptionSet.Variable]],
-    '_`[_`][''metaPrettyPrint.Sort, '_`,_[''M:Module.Variable,
-    ''none.EmptyQidSet.Constant, ''T:Term.Variable,
-    ''P:PrintOptionSet.Variable]], 'none.AttrSet], 'eq_=_`[_`].['_`[_`][
+    ''number.PrintOption.Constant, ''rat.PrintOption.Constant]]]]]]]],
+    ''none.EmptyQidSet.Constant]], 'none.AttrSet], 'eq_=_`[_`].['_`[_`][
+    ''metaPrettyPrint.Sort, '_`,_[''M:Module.Variable, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable]], '_`[_`][''metaPrettyPrint.Sort, '_`,_[
+    ''M:Module.Variable, ''none.EmptyQidSet.Constant, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable, ''none.EmptyQidSet.Constant]], 'none.AttrSet],
+    'eq_=_`[_`].['_`[_`][''metaPrettyPrint.Sort, '_`,_[''M:Module.Variable,
+    ''VS:VariableSet.Variable, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable]], '_`[_`][''metaPrettyPrint.Sort, '_`,_[
+    ''M:Module.Variable, ''VS:VariableSet.Variable, ''T:Term.Variable,
+    ''P:PrintOptionSet.Variable, ''none.EmptyQidSet.Constant]], 'none.AttrSet],
+    'eq_=_`[_`].['_`[_`][''metaVariantDisjointUnify.Sort, '_`,_[
+    ''M:Module.Variable, ''U:UnificationProblem.Variable,
+    ''TL:TermList.Variable, ''Q:Qid.Variable, ''N:Nat.Variable]], '_`[_`][
     ''metaVariantDisjointUnify.Sort, '_`,_[''M:Module.Variable,
     ''U:UnificationProblem.Variable, ''TL:TermList.Variable, ''Q:Qid.Variable,
-    ''N:Nat.Variable]], '_`[_`][''metaVariantDisjointUnify.Sort, '_`,_[
-    ''M:Module.Variable, ''U:UnificationProblem.Variable,
-    ''TL:TermList.Variable, ''Q:Qid.Variable, ''none.VariantOptionSet.Constant,
-    ''N:Nat.Variable]], 'none.AttrSet], 'eq_=_`[_`].['_`[_`][
-    ''metaVariantUnify.Sort, '_`,_[''M:Module.Variable,
+    ''none.VariantOptionSet.Constant, ''N:Nat.Variable]], 'none.AttrSet],
+    'eq_=_`[_`].['_`[_`][''metaVariantUnify.Sort, '_`,_[''M:Module.Variable,
     ''U:UnificationProblem.Variable, ''TL:TermList.Variable, ''Q:Qid.Variable,
     ''N:Nat.Variable]], '_`[_`][''metaVariantUnify.Sort, '_`,_[
     ''M:Module.Variable, ''U:UnificationProblem.Variable,

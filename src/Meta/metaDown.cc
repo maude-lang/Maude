@@ -477,6 +477,33 @@ MetaLevel::downQidSet(DagNode* metaQidSet, Vector<int>& ids)
 }
 
 bool
+MetaLevel::downConcealedSet(DagNode* metaQidSet, PrintSettings& printSettings)
+{
+  //
+  //	Also sets PRINT_CONCEAL flag if set is non-emty.
+  //
+  Symbol* mq =  metaQidSet->symbol();
+  int id;
+  if (mq == qidSetSymbol)
+    {
+      for (DagArgumentIterator i(metaQidSet); i.valid(); i.next())
+	{
+	  if (!downQid(i.argument(), id))
+	    return false;
+	  printSettings.insertConcealed(id);
+	}
+    }
+  else if (mq == emptyQidSetSymbol)
+    return true;
+  else if (downQid(metaQidSet, id))
+    printSettings.insertConcealed(id);
+  else
+    return false;
+  printSettings.setPrintFlag(PrintSettings::PRINT_CONCEAL);
+  return true;
+}
+
+bool
 MetaLevel::downTypeList(DagNode* metaTypeList, MixfixModule* m, Vector<Sort*>& typeList)
 {
   typeList.clear();
@@ -1490,39 +1517,40 @@ MetaLevel::downAssignment(DagNode* metaAssignment,
 }
 
 bool
-MetaLevel::downPrintOptionSet(DagNode* metaPrintOptionSet, int& printFlags) const
+MetaLevel::downPrintOptionSet(DagNode* metaPrintOptionSet, PrintSettings& printSettings) const
 {
-  printFlags = 0;
   Symbol* mp = metaPrintOptionSet->symbol();
   if (mp == printOptionSetSymbol)
     {
       for (DagArgumentIterator i(metaPrintOptionSet); i.valid(); i.next())
 	{
-	  if (!downPrintOption(i.argument(), printFlags))
+	  if (!downPrintOption(i.argument(), printSettings))
 	    return false;
 	}
     }
   else if (mp != emptyPrintOptionSetSymbol)
-    return downPrintOption(metaPrintOptionSet, printFlags);
+    return downPrintOption(metaPrintOptionSet, printSettings);
   return true;
 }
 
 bool
-MetaLevel::downPrintOption(DagNode* metaPrintOption, int& printFlags) const
+MetaLevel::downPrintOption(DagNode* metaPrintOption, PrintSettings& printSettings) const
 {
   Symbol* mp = metaPrintOption->symbol();
   if (mp == mixfixSymbol)
-    printFlags |= Interpreter::PRINT_MIXFIX;
+    printSettings.setPrintFlag(PrintSettings::PRINT_MIXFIX);
   else if (mp == withParensSymbol)
-    printFlags |= Interpreter::PRINT_WITH_PARENS;
+    printSettings.setPrintFlag(PrintSettings::PRINT_WITH_PARENS);
+  else if (mp == withSortsSymbol)
+    printSettings.setPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST);
   else if (mp == flatSymbol)
-    printFlags |= Interpreter::PRINT_FLAT;
+    printSettings.setPrintFlag(PrintSettings::PRINT_FLAT);
   else if (mp == formatPrintOptionSymbol)
-    printFlags |= Interpreter::PRINT_FORMAT;
+    printSettings.setPrintFlag(PrintSettings::PRINT_FORMAT);
   else if (mp == numberSymbol)
-    printFlags |= Interpreter::PRINT_NUMBER;
+    printSettings.setPrintFlag(PrintSettings::PRINT_NUMBER);
   else if (mp == ratSymbol)
-    printFlags |= Interpreter::PRINT_RAT;
+    printSettings.setPrintFlag(PrintSettings::PRINT_RAT);
   else
     return false;
   return true;

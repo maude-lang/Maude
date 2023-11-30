@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,8 +42,10 @@
   MACRO(insertedViewMsg, FreeSymbol, 2)
   MACRO(showViewMsg, FreeSymbol, 3)
   MACRO(showingViewMsg, FreeSymbol, 3)
-  MACRO(printTermMsg, FreeSymbol, 6)
+  MACRO(printTermMsg, FreeSymbol, 7)
   MACRO(printedTermMsg, FreeSymbol, 3)
+  MACRO(printTermToStringMsg, FreeSymbol, 7)
+  MACRO(printedTermToStringMsg, FreeSymbol, 3)
   MACRO(parseTermMsg, FreeSymbol, 6)
   MACRO(parsedTermMsg, FreeSymbol, 3)
   MACRO(getLesserSortsMsg, FreeSymbol, 4)

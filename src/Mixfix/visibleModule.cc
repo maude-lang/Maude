@@ -70,7 +70,6 @@
 //	front end class definitions
 #include "userLevelRewritingContext.hh"
 #include "visibleModule.hh"
-
 #include "interpreter.hh"
 
 //	our stuff

@@ -342,6 +342,7 @@
      //
      MACRO(mixfixSymbol, Symbol, 0, 0)
      MACRO(withParensSymbol, Symbol, 0, 0)
+     MACRO(withSortsSymbol, Symbol, 0, 0)
      MACRO(flatSymbol, Symbol, 0, 0)
      MACRO(formatPrintOptionSymbol, Symbol, 0, 0)
      MACRO(numberSymbol, Symbol, 0, 0)

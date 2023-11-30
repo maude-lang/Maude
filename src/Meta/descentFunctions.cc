@@ -524,37 +524,82 @@ MetaLevelOpSymbol::metaParse(FreeDagNode* subject, RewritingContext& context)
 bool
 MetaLevelOpSymbol::metaPrettyPrint(FreeDagNode* subject, RewritingContext& context)
 {
-  int printFlags;
-  if (metaLevel->downPrintOptionSet(subject->getArgument(3), printFlags))
+  PrintSettings printSettings;
+  if (metaLevel->downPrintOptionSet(subject->getArgument(3), printSettings))
     {
-      if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
+      if (metaLevel->downConcealedSet(subject->getArgument(4), printSettings))
 	{
-	  MixfixModule::AliasMap aliasMap;
-	  if (metaLevel->downVariableDeclSet(subject->getArgument(1), aliasMap, m))
+	  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
 	    {
-	      if (Term* t = metaLevel->downTerm(subject->getArgument(2), m))
+	      MixfixModule::AliasMap aliasMap;
+	      if (metaLevel->downVariableDeclSet(subject->getArgument(1), aliasMap, m))
 		{
-		  //
-		  //	Swap in our alias map and a null parser.
-		  //
-		  MixfixParser* parser = 0;
-		  m->swapVariableAliasMap(aliasMap, parser);
-		  //
-		  //	Do the pretty print.
-		  //
-		  Vector<int> buffer;
-		  m->bufferPrint(buffer, t, printFlags);
-		  //
-		  //	Restore original alias map and parser.
-		  //
-		  m->swapVariableAliasMap(aliasMap, parser);
-		  
-		  t->deepSelfDestruct();
-		  return context.builtInReplace(subject, metaLevel->upQidList(buffer));
+		  if (Term* t = metaLevel->downTerm(subject->getArgument(2), m))
+		    {
+		      //
+		      //	Swap in our alias map and a null parser.
+		      //
+		      MixfixParser* parser = 0;
+		      m->swapVariableAliasMap(aliasMap, parser);
+		      //
+		      //	Do the pretty print.
+		      //
+		      Vector<int> buffer;
+		      m->bufferPrint(buffer, t, printSettings);
+		      //
+		      //	Restore original alias map and parser.
+		      //
+		      m->swapVariableAliasMap(aliasMap, parser);
+		      
+		      t->deepSelfDestruct();
+		      return context.builtInReplace(subject, metaLevel->upQidList(buffer));
+		    }
 		}
 	    }
 	}
     }
+  return false;
+}
+
+bool
+MetaLevelOpSymbol::metaPrintToString(FreeDagNode* subject, RewritingContext& context)
+{
+  PrintSettings printSettings;
+  if (metaLevel->downPrintOptionSet(subject->getArgument(3), printSettings))
+    {
+      if (metaLevel->downConcealedSet(subject->getArgument(4), printSettings))
+	{
+	  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
+	    {
+	      MixfixModule::AliasMap aliasMap;
+	      if (metaLevel->downVariableDeclSet(subject->getArgument(1), aliasMap, m))
+		{
+		  if (Term* t = metaLevel->downTerm(subject->getArgument(2), m))
+		    {
+		      //
+		      //	Swap in our alias map and a null parser.
+		      //
+		      MixfixParser* parser = 0;
+		      m->swapVariableAliasMap(aliasMap, parser);
+		      if (!aliasMap.empty())
+		      	printSettings.setPrintFlag(PrintSettings::PRINT_WITH_ALIASES);
+		      //
+		      //	Do the pretty print.
+		      //
+		      stringstream buffer;
+		      m->prettyPrint(buffer, printSettings, t, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+		      //
+		      //	Restore original alias map and parser.
+		      //
+		      m->swapVariableAliasMap(aliasMap, parser);
+		      
+		      t->deepSelfDestruct();
+		      return context.builtInReplace(subject, metaLevel->upString(buffer.str()));
+		    }
+		}
+	    }
+	}
+   } 
   return false;
 }
 
@@ -687,8 +732,8 @@ MetaLevelOpSymbol::metaParseStrategy(FreeDagNode* subject, RewritingContext& con
 bool
 MetaLevelOpSymbol::metaPrettyPrintStrategy(FreeDagNode* subject, RewritingContext& context)
 {
-  int printFlags;
-  if (metaLevel->downPrintOptionSet(subject->getArgument(3), printFlags))
+  PrintSettings printSettings;
+  if (metaLevel->downPrintOptionSet(subject->getArgument(3), printSettings))
     {
       if (MixfixModule* m = metaLevel->downModule(subject->getArgument(0)))
 	{
@@ -706,7 +751,7 @@ MetaLevelOpSymbol::metaPrettyPrintStrategy(FreeDagNode* subject, RewritingContex
 		  //	Do the pretty print.
 		  //
 		  Vector<int> buffer;
-		  m->bufferPrint(buffer, e, printFlags);
+		  m->bufferPrint(buffer, e, printSettings);
 		  //
 		  //	Restore original alias map and parser.
 		  //

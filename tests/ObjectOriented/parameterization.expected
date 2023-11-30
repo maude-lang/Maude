@@ -136,7 +136,7 @@ view Bag{Y :: TRIV} from CONTAINER to BAG{Y} is
   sort Elt to Y$Elt .
   vars R S : Oid .
   var D : Elt .
-  msg insert(R, S, D) to term replace(R, D) .
+  msg insert (R, S, D) to term replace (R, D) .
 endv
 view Bag{Y :: TRIV} from CONTAINER to BAG{Y} is
   sort Elt to Y$Elt .

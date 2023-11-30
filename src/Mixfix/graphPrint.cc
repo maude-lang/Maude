@@ -25,7 +25,7 @@
 //
 
 void
-MixfixModule::graphPrint(ostream& s, DagNode* dagNode)
+MixfixModule::graphPrint(ostream& s, DagNode* dagNode, const PrintSettings& printSettings)
 {
   PointerSet visited;
   Vector<mpz_class> counts;
@@ -48,7 +48,7 @@ MixfixModule::graphPrint(ostream& s, DagNode* dagNode)
 	case SymbolType::VARIABLE:
 	  {
 	    VariableDagNode* v = safeCast(VariableDagNode*, dagNode);
-	    printVariable(s, v->id(), safeCast(VariableSymbol*, symbol)->getSort());
+	    printVariable(s, v->id(), safeCast(VariableSymbol*, symbol)->getSort(), printSettings);
 	    break;
 	  }
 	case SymbolType::FLOAT:

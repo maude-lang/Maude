@@ -159,3 +159,13 @@ MixfixModule::decideIteratedAmbiguity(bool rangeKnown,
   if ((overloadType & RANGE_OVERLOADED) || (!rangeKnown && !needToDisambiguate))
     argumentRangeKnown = false;
 }
+
+Sort*
+MixfixModule::disambiguatorSort(const Term* term)
+{
+  Symbol* symbol = term->symbol();
+  int sortIndex = term->getSortIndex();
+  if (sortIndex <= Sort::ERROR_SORT)
+    sortIndex = chooseDisambiguator(symbol);
+  return symbol->rangeComponent()->sort(sortIndex);
+}

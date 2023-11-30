@@ -91,13 +91,13 @@
 #include "srewrite.cc"
 
 Interpreter::Interpreter()
+: PrintSettings(DEFAULT_PRINT_FLAGS)
 {
   xmlLog = 0;
   xmlBuffer = 0;
   latexBuffer = 0;
 
   flags = DEFAULT_FLAGS;
-  printFlags = DEFAULT_PRINT_FLAGS;
   currentModule = 0;
   currentView = 0;
 
@@ -153,15 +153,6 @@ Interpreter::setFlag(Flags flag, bool polarity)
   else
     flags &= ~flag;
   RewritingContext::setTraceStatus(flags & EXCEPTION_FLAGS);
-}
-
-void
-Interpreter::setPrintFlag(PrintFlags flag, bool polarity)
-{
-  if (polarity)
-    printFlags |= flag;
-  else
-    printFlags &= ~flag;
 }
 
 void
@@ -342,10 +333,20 @@ Interpreter::updateSet(set<int>& target, bool add)
   selected.clear();
 }
 
-bool
-Interpreter::concealedSymbol(Symbol* symbol)
+void
+Interpreter::printConceal(bool add)
 {
-  return getPrintFlag(PRINT_CONCEAL) && concealedSymbols.find(symbol->id()) != concealedSymbols.end();
+  if (add)
+    {
+      for (int i : selected)
+	insertConcealed(i);
+    }
+  else
+    {
+      for (int i : selected)
+	eraseConcealed(i);
+    }
+  selected.clear();
 }
 
 void

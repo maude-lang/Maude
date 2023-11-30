@@ -1,0 +1,115 @@
+Alpha 154 release notes
+========================
+
+Bug fixes
+==========
+
+(1) The command
+  set print const with sorts on .
+introduced alpha 126 released 11/22/2019 was implemented for all
+kinds of constants when printing dag nodes but only regular constants
+and not built-in constants when printing terms. This shows up in the
+following example:
+
+fmod FOO is inc NAT .
+  eq 0 = 0 .
+  eq 1 = 1 .
+endfm
+
+set print const with sorts on .
+
+show desugared .
+
+Here 0 is a regular constant but 1 is a special constant that is really
+s 0. This omission is now fixed.
+
+(2) A bug where colors generated for operators with various attributes
+generated bad LaTeX when printed as in terms:
+
+fmod FOO is
+  sort Foo .
+  op foo : Foo Foo -> Foo [assoc comm] .
+  op bar : Foo Foo -> Foo [assoc] .
+  ops a b c : -> Foo .
+  eq foo(a, b) = bar(c, c) .
+endfm
+
+set print color on .
+
+show desugared FOO .
+
+Here the terminal color sequence was being used rather than the LaTeX one.
+
+(3) A very obscure bug where sort disambiguation of iter symbols used
+the wrong font for the sort. Triggered by this rather dubious example:
+
+fmod FOO is
+  sort Foo .
+  op s : Foo -> Foo [iter] .
+  op 0 : -> Foo .
+  sort Bar .
+  op s^2 : Foo -> Bar .
+  eq s(s(0)) = 0 .
+endfm
+
+show desugared .
+
+New features
+=============
+
+(1) There is a new constant
+  op with-sorts : -> PrintOption [ctor] .
+in META-LEVEL that is the metalevel equivalent of
+  set print const with sorts on .
+i.e. each constant in the printed term will have sort disambiguation.
+
+(2) There is a new descent function
+   op metaPrintToString : Module VariableSet Term PrintOptionSet QidSet ~> String [special (...)] .
+that works like metaPrettyPrint() except that it prints to a string.
+Here the final argument is a set of operator names whose arguments
+should be concealed. There is no PrintOption constant for the print
+concealed flag - it is implicitly assumed to be true if the QidSet is
+non-empty.
+
+(3) The meta-interpreter has a new pair of messages
+  op printTermToString : Oid Oid Qid VariableSet Term PrintOptionSet QidSet -> Msg [ctor msg format (b o)] .
+  op printedTermToString : Oid Oid String -> Msg [ctor msg format (m o)] .
+that provide similar functionality for meta-interpreter objects.
+
+Other changes
+==============
+
+(1) The printTokens() function in fmod LEXICAL now prints space in front
+of ( [ { unless the previous token was ( [ {
+
+(2) Printing of raw tokens for unparsed statements and identities with
+show module now print space in front of ( unless the previous token was
+( [ {. This was already done for [ {. This change is for both text and
+LaTeX output.
+
+(3) The descent function metaPrettyPrint() now takes an extra QidSet
+argument to indicate which operators should have the arguments concealed.
+
+  op metaPrettyPrint : Module VariableSet Term PrintOptionSet Qid ~> QidList [special (...)] .
+
+For backward compatibility there is also:
+
+  op metaPrettyPrint : Module VariableSet Term PrintOptionSet ~> QidList .
+  eq metaPrettyPrint(M:Module, VS:VariableSet, T:Term, P:PrintOptionSet) =
+     metaPrettyPrint(M:Module, VS:VariableSet, T:Term, P:PrintOptionSet, none) .
+
+(4) The meta-interpreter message printTerm() now takes an extra QidSet
+argument to indicate which operators should have the arguments concealed.
+
+  op printTerm : Oid Oid Qid VariableSet Term PrintOptionSet QidSet -> Msg [ctor msg format (b o)] .
+
+For backward compatibility there is also:
+
+  op printTerm : Oid Oid Qid VariableSet Term PrintOptionSet -> Msg [ctor msg format (b o)] .
+  eq printTerm(T:Oid, M:Oid, Q:Qid, VS:VariableSet, T:Term, P:PrintOptionSet) =
+     printTerm(T:Oid, M:Oid, Q:Qid, VS:VariableSet, T:Term, P:PrintOptionSet, none) .
+
+(5) Printing of terms (as opposed to dags) such as in modules, now supports
+  set print conceal on .
+for both text and LaTeX output. Previously this only worked for dags.
+

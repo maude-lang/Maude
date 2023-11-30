@@ -229,6 +229,8 @@ InterpreterManagerSymbol::handleMessage(FreeDagNode* message,
   //
   else if (s == printTermMsg)
     return printTerm(message, context, interpreter);
+  else if (s == printTermToStringMsg)
+    return printTermToString(message, context, interpreter);
   else if (s == parseTermMsg)
     return parseTerm(message, context, interpreter);
   //

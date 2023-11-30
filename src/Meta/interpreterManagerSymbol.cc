@@ -25,6 +25,7 @@
 //
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sstream>
 
 //      utility stuff
 #include "macros.hh"

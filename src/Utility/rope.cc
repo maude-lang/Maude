@@ -85,6 +85,19 @@ Rope::Rope(const char* cString, size_type n)
   ptr = makeTree(cString, n, nrLeaves);
 }
 
+Rope::Rope(const string& str)
+{
+  size_type n = str.size();
+  if (n == 0)
+    {
+      ptr = 0;
+      return;
+    }
+
+  size_type nrLeaves = (n + (TEXT_SIZE - 1)) / TEXT_SIZE;
+  ptr = makeTree(str.c_str(), n, nrLeaves);
+}
+
 Rope::~Rope()
 {
   decCount(ptr);

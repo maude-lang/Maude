@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version alpha153.
+***	Version alpha154.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -2166,7 +2166,7 @@ fmod META-LEVEL is
 *** options for metaPrettyPrint()
   sorts PrintOption PrintOptionSet .
   subsort PrintOption < PrintOptionSet .
-  ops mixfix with-parens flat format number rat : -> PrintOption [ctor] .
+  ops mixfix with-parens with-sorts flat format number rat : -> PrintOption [ctor] .
   op none : -> PrintOptionSet [ctor] .
   op __ : PrintOptionSet PrintOptionSet -> PrintOptionSet [ctor assoc comm id: none] .
 
@@ -2684,6 +2684,7 @@ fmod META-LEVEL is
 
         op-hook mixfixSymbol		(mixfix : ~> PrintOption)
         op-hook withParensSymbol	(with-parens : ~> PrintOption)
+        op-hook withSortsSymbol		(with-sorts : ~> PrintOption)
         op-hook flatSymbol		(flat : ~> PrintOption)
         op-hook formatPrintOptionSymbol	(format : ~> PrintOption)
         op-hook numberSymbol		(number : ~> PrintOption)
@@ -2874,9 +2875,14 @@ fmod META-LEVEL is
            id-hook MetaLevelOpSymbol	(metaParse)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
-  op metaPrettyPrint : Module VariableSet Term PrintOptionSet ~> QidList
+  op metaPrettyPrint : Module VariableSet Term PrintOptionSet Qid ~> QidList
         [special (
            id-hook MetaLevelOpSymbol	(metaPrettyPrint)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaPrintToString : Module VariableSet Term PrintOptionSet Qid ~> String
+        [special (
+           id-hook MetaLevelOpSymbol	(metaPrintToString)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
   op metaCheck : Module Term ~> Bool 
@@ -3009,13 +3015,17 @@ fmod META-LEVEL is
   eq metaParse(M:Module, Q:QidList, T:Type?) =
      metaParse(M:Module, none, Q:QidList, T:Type?) .
 
+  op metaPrettyPrint : Module VariableSet Term PrintOptionSet ~> QidList .
+  eq metaPrettyPrint(M:Module, VS:VariableSet, T:Term, P:PrintOptionSet) =
+     metaPrettyPrint(M:Module, VS:VariableSet, T:Term, P:PrintOptionSet, none) .
+     
   op metaPrettyPrint : Module Term PrintOptionSet ~> QidList .
   eq metaPrettyPrint(M:Module, T:Term, P:PrintOptionSet) =
-     metaPrettyPrint(M:Module, none, T:Term, P:PrintOptionSet) .
+     metaPrettyPrint(M:Module, none, T:Term, P:PrintOptionSet, none) .
 
   op metaPrettyPrint : Module Term ~> QidList .
   eq metaPrettyPrint(M:Module, T:Term) =
-     metaPrettyPrint(M:Module, none, T:Term, mixfix flat format number rat) .
+     metaPrettyPrint(M:Module, none, T:Term, mixfix flat format number rat, none) .
 
   op metaVariantUnify : Module UnificationProblem TermList Qid Nat ~> UnificationPair? .
   eq metaVariantUnify(M:Module, U:UnificationProblem, TL:TermList, Q:Qid, N:Nat) =

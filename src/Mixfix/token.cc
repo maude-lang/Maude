@@ -98,12 +98,7 @@ Token::printTokenVector(ostream& s,
 	    {
 	      if (c == ')' || c == ']' || c == '}' || c == ',')
 		needSpace = false;
-	      else if (c == '(')
-		{
-		  needSpace = false;
-		  nextNeedSpace = false;
-		}
-	      else if (c == '[' || c == '{')
+	      else if (c == '(' || c == '[' || c == '{')
 		nextNeedSpace = false;
 	    }
 	  if (needSpace)

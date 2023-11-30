@@ -601,20 +601,20 @@ kw_module	:	KW_MODULE
 /*
  *	Options
  */
-printOption	:	KW_MIXFIX		{ $$ = Interpreter::PRINT_MIXFIX; }
-		|	KW_FLAT			{ $$ = Interpreter::PRINT_FLAT; }
-		|	KW_WITH KW_ALIASES	{ $$ = Interpreter::PRINT_WITH_ALIASES; }
-		|	KW_WITH KW_PARENS	{ $$ = Interpreter::PRINT_WITH_PARENS; }
-		|	KW_GRAPH		{ $$ = Interpreter::PRINT_GRAPH; }
-		|	KW_CONCEAL		{ $$ = Interpreter::PRINT_CONCEAL; }
-		|	KW_NUMBER		{ $$ = Interpreter::PRINT_NUMBER; }
-		|	KW_RAT			{ $$ = Interpreter::PRINT_RAT; }
-		|	KW_COLOR		{ $$ = Interpreter::PRINT_COLOR; }
-		|	KW_FORMAT		{ $$ = Interpreter::PRINT_FORMAT; }
-		|	KW_CONST KW_WITH KW_SORTS	{ $$ = Interpreter::PRINT_DISAMBIG_CONST; }
-		|	KW_LABEL KW_ATTRIBUTE	{ $$ = Interpreter::PRINT_LABEL_ATTRIBUTE; }
-		|	KW_HOOKS 		{ $$ = Interpreter::PRINT_HOOKS; }
-		|	KW_COMBINE KW_VARS	{ $$ = Interpreter::PRINT_COMBINE_VARS; }
+printOption	:	KW_MIXFIX		{ $$ = PrintSettings::PRINT_MIXFIX; }
+		|	KW_FLAT			{ $$ = PrintSettings::PRINT_FLAT; }
+		|	KW_WITH KW_ALIASES	{ $$ = PrintSettings::PRINT_WITH_ALIASES; }
+		|	KW_WITH KW_PARENS	{ $$ = PrintSettings::PRINT_WITH_PARENS; }
+		|	KW_GRAPH		{ $$ = PrintSettings::PRINT_GRAPH; }
+		|	KW_CONCEAL		{ $$ = PrintSettings::PRINT_CONCEAL; }
+		|	KW_NUMBER		{ $$ = PrintSettings::PRINT_NUMBER; }
+		|	KW_RAT			{ $$ = PrintSettings::PRINT_RAT; }
+		|	KW_COLOR		{ $$ = PrintSettings::PRINT_COLOR; }
+		|	KW_FORMAT		{ $$ = PrintSettings::PRINT_FORMAT; }
+		|	KW_CONST KW_WITH KW_SORTS	{ $$ = PrintSettings::PRINT_DISAMBIG_CONST; }
+		|	KW_LABEL KW_ATTRIBUTE	{ $$ = PrintSettings::PRINT_LABEL_ATTRIBUTE; }
+		|	KW_HOOKS 		{ $$ = PrintSettings::PRINT_HOOKS; }
+		|	KW_COMBINE KW_VARS	{ $$ = PrintSettings::PRINT_COMBINE_VARS; }
 		;
 
 traceOption	:				{ $$ = Interpreter::TRACE; }

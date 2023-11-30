@@ -239,6 +239,9 @@ private:
   DagNode* printTerm(FreeDagNode* message,
 		     ObjectSystemRewritingContext& context,
 		     Interpreter* interpreter);
+  DagNode* printTermToString(FreeDagNode* message,
+			     ObjectSystemRewritingContext& context,
+			     Interpreter* interpreter);
   DagNode* parseTerm(FreeDagNode* message,
 		     ObjectSystemRewritingContext& context,
 		     Interpreter* interpreter);

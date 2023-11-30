@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2009-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2009-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 ***
 ***	Maude meta-interpreters.
-***	Version 3.2.
+***	Version alpha154
 ***
 
 mod META-INTERPRETER is
@@ -54,8 +54,11 @@ mod META-INTERPRETER is
   op showView : Oid Oid Qid -> Msg [ctor msg format (b o)] .
   op showingView : Oid Oid View -> Msg [ctor msg format (m o)] .
 
-  op printTerm : Oid Oid Qid VariableSet Term PrintOptionSet -> Msg [ctor msg format (b o)] .
+  op printTerm : Oid Oid Qid VariableSet Term PrintOptionSet QidSet -> Msg [ctor msg format (b o)] .
   op printedTerm : Oid Oid QidList -> Msg [ctor msg format (m o)] .
+
+  op printTermToString : Oid Oid Qid VariableSet Term PrintOptionSet QidSet -> Msg [ctor msg format (b o)] .
+  op printedTermToString : Oid Oid String -> Msg [ctor msg format (m o)] .
 
   op parseTerm : Oid Oid Qid VariableSet QidList Type? -> Msg [ctor msg format (b o)] .
   op parsedTerm : Oid Oid ResultPair? -> Msg [ctor msg format (m o)] .
@@ -185,8 +188,10 @@ mod META-INTERPRETER is
            op-hook showViewMsg			(showView : Oid Oid Qid ~> Msg)
            op-hook showingViewMsg		(showingView : Oid Oid View ~> Msg)
 
-  	   op-hook printTermMsg			(printTerm : Oid Oid Qid VariableSet Term PrintOptionSet ~> Msg)
+  	   op-hook printTermMsg			(printTerm : Oid Oid Qid VariableSet Term PrintOptionSet QidSet ~> Msg)
   	   op-hook printedTermMsg		(printedTerm : Oid Oid QidList ~> Msg)
+  	   op-hook printTermToStringMsg		(printTermToString : Oid Oid Qid VariableSet Term PrintOptionSet QidSet ~> Msg)
+  	   op-hook printedTermToStringMsg	(printedTermToString : Oid Oid String ~> Msg)
 	   op-hook parseTermMsg			(parseTerm : Oid Oid Qid VariableSet QidList Type? ~> Msg)
 	   op-hook parsedTermMsg		(parsedTerm : Oid Oid ResultPair? ~> Msg)
 
@@ -278,8 +283,11 @@ mod META-INTERPRETER is
 ***	For backward compatibility only.
 ***	These operators are deprecated - do not use in new code.
 ***
-  op getVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid
-                         Nat -> Msg [ctor msg format (b o)] .
+  op printTerm : Oid Oid Qid VariableSet Term PrintOptionSet -> Msg [ctor msg format (b o)] .
+  eq printTerm(T:Oid, M:Oid, Q:Qid, VS:VariableSet, T:Term, P:PrintOptionSet) =
+     printTerm(T:Oid, M:Oid, Q:Qid, VS:VariableSet, T:Term, P:PrintOptionSet, none) .
+
+  op getVariantUnifier : Oid Oid Qid UnificationProblem TermList Qid Nat -> Msg [ctor msg format (b o)] .
   eq getVariantUnifier(T:Oid, M:Oid, Q:Qid, U:UnificationProblem, TL:TermList, F:Qid, N:Nat) =
      getVariantUnifier(T:Oid, M:Oid, Q:Qid, U:UnificationProblem, TL:TermList, F:Qid, none, N:Nat) .
 

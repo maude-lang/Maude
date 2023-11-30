@@ -27,9 +27,10 @@
 void
 MixfixModule::latexPrettyPrint(ostream& s, Term* term, bool rangeKnown)
 {
-  globalIndent = 0;
+  clearIndent();
+  const PrintSettings& printSettings = interpreter;  // HACK
   MixfixModule* module = safeCastNonNull<MixfixModule*>(term->symbol()->getModule());
-  module->latexPrettyPrint(s, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
+  module->latexPrettyPrint(s, printSettings, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
 }
 
 void
@@ -51,16 +52,26 @@ MixfixModule::latexPrintStrategyTerm(ostream& s, RewriteStrategy* rs, Term* term
 }
 
 const char*
-MixfixModule::latexComputeColor(SymbolType st)
+MixfixModule::latexComputeColor(SymbolType st, const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+  //
+  //	For terms, automatically generated color (as opposed to format generated color) is based
+  //	on the axioms of each operator symbol.
+  //	  AC   : red
+  //	  ACU  : magenta
+  //	  A    : green
+  //	  AU   : cyan
+  //	  C/CU : blue
+  //	  U    : yellow
+  //
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
     {
       if (st.hasFlag(SymbolType::ASSOC))
 	{
 	  if (st.hasFlag(SymbolType::COMM))
 	    return st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID) ? latexMagenta : latexRed;
 	  else
-	    return st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID) ? latexCyan :latexGreen;
+	    return st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID) ? latexCyan : latexGreen;
 	}
       if (st.hasFlag(SymbolType::COMM))
 	return latexBlue;
@@ -71,14 +82,18 @@ MixfixModule::latexComputeColor(SymbolType st)
 }
 
 void
-MixfixModule::latexSuffix(ostream& s, Term* term, bool needDisambig, const char* /* color */)
+MixfixModule::latexSuffix(ostream& s, Term* term, bool needDisambig)
 {
   if (needDisambig)
     s << "\\maudeRightParen\\maudeDisambigDot" << latexType(disambiguatorSort(term));
 }
 
 bool
-MixfixModule::latexHandleIter(ostream& s, Term* term, const SymbolInfo& si, bool rangeKnown, const char* color)
+MixfixModule::latexHandleIter(ostream& s,
+			      Term* term,
+			      const SymbolInfo& si,
+			      bool rangeKnown,
+			      const PrintSettings& printSettings)
 {
   //
   //	Check if term is headed by a iter symbol and if so handle
@@ -90,8 +105,7 @@ MixfixModule::latexHandleIter(ostream& s, Term* term, const SymbolInfo& si, bool
   //
   //	Check if the top symbol is also a succ symbol and we have number printing turned on.
   //
-  if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL &&
-      interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
+  if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL && printSettings.getPrintFlag(PrintSettings::PRINT_NUMBER))
     {
       //
       //	If term  corresponds to a number we want to print it as decimal number.
@@ -100,10 +114,11 @@ MixfixModule::latexHandleIter(ostream& s, Term* term, const SymbolInfo& si, bool
       if (succSymbol->isNat(term))
 	{
 	  const mpz_class& nat = succSymbol->getNat(term);
-	  bool needDisambig = !rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat));
-	  latexPrefix(s, needDisambig, color);
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat)));
+	  latexPrefix(s, needDisambig);
 	  s << "\\maudeNumber{" << nat << "}";
-	  latexSuffix(s, term, needDisambig, color);
+	  latexSuffix(s, term, needDisambig);
 	  return true;
 	}
     }
@@ -118,35 +133,36 @@ MixfixModule::latexHandleIter(ostream& s, Term* term, const SymbolInfo& si, bool
   bool needToDisambiguate;
   bool argumentRangeKnown;
   decideIteratedAmbiguity(rangeKnown, term->symbol(), number, needToDisambiguate, argumentRangeKnown);
-  if (needToDisambiguate)
-    s << "\\maudeLeftParen";
+  latexPrefix(s, needToDisambiguate);
   
   string prefixName = "\\maudeIter{" + Token::latexIdentifier(term->symbol()->id()) + "}{" + number.get_str() + "}";
-  if (color != 0)
-    s << color << prefixName << latexResetColor;
-  else
-    latexPrintPrefixName(s, prefixName.c_str(), si);
+  latexPrintPrefixName(s, prefixName.c_str(), si, printSettings);
   s << "\\maudeLeftParen";
-  latexPrettyPrint(s, st->getArgument(), PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argumentRangeKnown);
+  latexPrettyPrint(s, printSettings, st->getArgument(), PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argumentRangeKnown);
   s << "\\maudeRightParen";
-  suffix(s, term, needToDisambiguate, color);
+
+  latexSuffix(s, term, needToDisambiguate);
   return true;
 }
 
 bool
-MixfixModule::latexHandleMinus(ostream& s, Term* term, bool rangeKnown, const char* color) const
+MixfixModule::latexHandleMinus(ostream& s,
+			       Term* term,
+			       bool rangeKnown,
+			       const PrintSettings& printSettings) const
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_NUMBER))
     {
       const MinusSymbol* minusSymbol = safeCast(MinusSymbol*, term->symbol());
       if (minusSymbol->isNeg(term))
 	{
 	  mpz_class neg;
 	  (void) minusSymbol->getNeg(term, neg);
-	  bool needDisambig = !rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg));
-	  latexPrefix(s, needDisambig, color);
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg)));
+	  latexPrefix(s, needDisambig);
 	  s << "\\maudeNumber{" << neg << "}";
-	  latexSuffix(s, term, needDisambig, color);
+	  latexSuffix(s, term, needDisambig);
 	  return true;
 	}
     }
@@ -154,19 +170,23 @@ MixfixModule::latexHandleMinus(ostream& s, Term* term, bool rangeKnown, const ch
 }
 
 bool
-MixfixModule::latexHandleDivision(ostream& s, Term* term, bool rangeKnown, const char* color) const
+MixfixModule::latexHandleDivision(ostream& s,
+				  Term* term,
+				  bool rangeKnown,
+				  const PrintSettings& printSettings) const
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_RAT))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_RAT))
     {
       const DivisionSymbol* divisionSymbol = safeCast(DivisionSymbol*, term->symbol());
       if (divisionSymbol->isRat(term))
 	{
 	  pair<mpz_class, mpz_class> rat;
 	  rat.second = divisionSymbol->getRat(term, rat.first);
-	  bool needDisambig = !rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
-	  latexPrefix(s, needDisambig, color);
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	    (!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
+	  latexPrefix(s, needDisambig);
 	  s << "\\maudeNumber{" << rat.first << "}/\\maudeNumber{"  << rat.second << "}";
-	  latexSuffix(s, term, needDisambig, color);
+	  latexSuffix(s, term, needDisambig);
 	  return true;
 	}
     }
@@ -174,61 +194,79 @@ MixfixModule::latexHandleDivision(ostream& s, Term* term, bool rangeKnown, const
 }
 
 void
-MixfixModule::latexHandleFloat(ostream& s, Term* term, bool rangeKnown, const char* color) const
+MixfixModule::latexHandleFloat(ostream& s,
+			       Term* term,
+			       bool rangeKnown,
+			       const PrintSettings& printSettings) const
 {
   double mfValue = safeCastNonNull<FloatTerm*>(term)->getValue();
-  bool needDisambig = !rangeKnown && (floatSymbols.size() > 1 || overloadedFloats.count(mfValue));
-  latexPrefix(s, needDisambig, color);
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (floatSymbols.size() > 1 || overloadedFloats.count(mfValue)));
+  latexPrefix(s, needDisambig);
   s << "\\maudeNumber{" << doubleToString(mfValue) << "}";
-  latexSuffix(s, term, needDisambig, color);
+  latexSuffix(s, term, needDisambig);
 }
 
 void
-MixfixModule::latexHandleString(ostream& s, Term* term, bool rangeKnown, const char* color) const
+MixfixModule::latexHandleString(ostream& s,
+				Term* term,
+				bool rangeKnown,
+				const PrintSettings& printSettings) const
 {
   string strValue;
   Token::ropeToString(safeCastNonNull<StringTerm*>(term)->getValue(), strValue);
-  bool needDisambig = !rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue));
-  latexPrefix(s, needDisambig, color);
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue)));
+  latexPrefix(s, needDisambig);
   s << "\\maudeString{" << Token::latexName(strValue) << "}";
-  latexSuffix(s, term, needDisambig, color);
+  latexSuffix(s, term, needDisambig);
 }
 
 void
-MixfixModule::latexHandleQuotedIdentifier(ostream& s, Term* term, bool rangeKnown, const char* color) const
+MixfixModule::latexHandleQuotedIdentifier(ostream& s,
+					  Term* term,
+					  bool rangeKnown,
+					  const PrintSettings& printSettings) const
 {
   int qidCode = safeCastNonNull<QuotedIdentifierTerm*>(term)->getIdIndex();
-  bool needDisambig = !rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode));
-  latexPrefix(s, needDisambig, color);
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+    (!rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode)));
+  latexPrefix(s, needDisambig);
   s << "\\maudeQid{" << "\\maudeSingleQuote " << Token::latexName(qidCode) << "}";
-  latexSuffix(s, term, needDisambig, color);
+  latexSuffix(s, term, needDisambig);
 }
 
 void
-MixfixModule::latexHandleVariable(ostream& s, Term* term, bool rangeKnown, const char* color) const
+MixfixModule::latexHandleVariable(ostream& s,
+				  Term* term,
+				  bool rangeKnown,
+				  const PrintSettings& printSettings) const
 {
   VariableTerm* v = safeCastNonNull<VariableTerm*>(term);
   Sort* sort = safeCastNonNull<VariableSymbol*>(term->symbol())->getSort();
   pair<int, int> p(v->id(), sort->id());
   bool needDisambig = !rangeKnown && overloadedVariables.count(p);  // kinds not handled
-  latexPrefix(s, needDisambig, color);
+  latexPrefix(s, needDisambig);
   s << Token::latexIdentifier(v->id());
   
-  if (interpreter.getPrintFlag(Interpreter::PRINT_WITH_ALIASES))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_WITH_ALIASES))
     {
       AliasMap::const_iterator i = variableAliases.find(v->id());
       if (i != variableAliases.end() && (*i).second == sort)
 	{
-	  latexSuffix(s, term, needDisambig, color);
+	  latexSuffix(s, term, needDisambig);
 	  return;
 	}
     }
   s << "\\maudeVariableColon" << latexType(sort);
-  latexSuffix(s, term, needDisambig, color);
+  latexSuffix(s, term, needDisambig);
 }
 
 void
-MixfixModule::latexHandleSMT_Number(ostream& s, Term* term, bool rangeKnown, const char* color)
+MixfixModule::latexHandleSMT_Number(ostream& s,
+				    Term* term,
+				    bool rangeKnown,
+				    const PrintSettings& printSettings)
 {
   //
   //	Get value.
@@ -248,24 +286,27 @@ MixfixModule::latexHandleSMT_Number(ostream& s, Term* term, bool rangeKnown, con
   if (t == SMT_Info::INTEGER)
     {
       const mpz_class& integer = value.get_num();
-      bool needDisambig = !rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer));
-      latexPrefix(s, needDisambig, color);
+      bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	(!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer)));
+      latexPrefix(s, needDisambig);
       s << "\\maudeNumber{" << integer << "}";
-      latexSuffix(s, term, needDisambig, color);
+      latexSuffix(s, term, needDisambig);
     }
   else
     {
       Assert(t == SMT_Info::REAL, "SMT number sort expected");
       pair<mpz_class, mpz_class> rat(value.get_num(), value.get_den());
-      bool needDisambig = !rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat));
-      latexPrefix(s, needDisambig, color);
+      bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
+	(!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
+      latexPrefix(s, needDisambig);
       s << "\\maudeNumber{" << rat.first << "}/\\maudeNumber{" << rat.second << "}";
-      latexSuffix(s, term, needDisambig, color);
+      latexSuffix(s, term, needDisambig);
     }
 }
 
 void
 MixfixModule::latexPrettyPrint(ostream& s,
+			       const PrintSettings& printSettings,
 			       Term* term,
 			       int requiredPrec,
 			       int leftCapture,
@@ -279,50 +320,49 @@ MixfixModule::latexPrettyPrint(ostream& s,
 
   Symbol* symbol = term->symbol();
   const SymbolInfo& si = symbolInfo[symbol->getIndexWithinModule()];
-  const char* color = computeColor(si.symbolType);
   //
   //	Check for special i/o representation.
   //
-  if (latexHandleIter(s, term, si, rangeKnown, color))
+  if (latexHandleIter(s, term, si, rangeKnown, printSettings))
     return;
   int basicType = si.symbolType.getBasicType();
   switch (basicType)
     {
     case SymbolType::MINUS_SYMBOL:
       {
-	if (latexHandleMinus(s, term, rangeKnown, color))
+	if (latexHandleMinus(s, term, rangeKnown, printSettings))
 	  return;
 	break;
       }
     case SymbolType::DIVISION_SYMBOL:
       {
-	if (latexHandleDivision(s, term, rangeKnown, color))
+	if (latexHandleDivision(s, term, rangeKnown, printSettings))
 	  return;
 	break;
       }
     case SymbolType::FLOAT:
       {
-	latexHandleFloat(s, term, rangeKnown, color);
+	latexHandleFloat(s, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::STRING:
       {
-	latexHandleString(s, term, rangeKnown, color);
+	latexHandleString(s, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::QUOTED_IDENTIFIER:
       {
-	latexHandleQuotedIdentifier(s, term, rangeKnown, color);
+	latexHandleQuotedIdentifier(s, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::VARIABLE:
       {
-	latexHandleVariable(s, term, rangeKnown, color);
+	latexHandleVariable(s, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::SMT_NUMBER_SYMBOL:
       {
-	latexHandleSMT_Number(s, term, rangeKnown, color);
+	latexHandleSMT_Number(s, term, rangeKnown, printSettings);
 	return;
       }
     default:
@@ -331,29 +371,30 @@ MixfixModule::latexPrettyPrint(ostream& s,
   //
   //	Default case where no special i/o representation applies.
   //
+  const char* color = latexComputeColor(si.symbolType, printSettings);
   int iflags = si.iflags;
   bool needDisambig = !rangeKnown && ambiguous(iflags);
   bool argRangeKnown = false;
   int nrArgs = symbol->arity();
   if (nrArgs == 0)
     {
-      if (interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST))
+      if (printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST))
 	needDisambig = true;
     }
   else
     argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
 
- if (needDisambig)
-    s << "\\maudeLeftParen";
-
+ latexPrefix(s, needDisambig);
+ bool printConceal = printSettings.concealedSymbol(symbol->id());
  if (nrArgs == 0 && Token::auxProperty(symbol->id()) == Token::AUX_STRUCTURED_SORT)
    s << latexStructuredConstant(symbol->id());
- else if ((interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX) && !si.mixfixSyntax.empty()) || basicType == SymbolType::SORT_TEST)
+ else if ((printSettings.getPrintFlag(PrintSettings::PRINT_MIXFIX) && !si.mixfixSyntax.empty() && !printConceal) ||
+	  basicType == SymbolType::SORT_TEST)
    {
      //
      //	Mixfix case.
      //
-     bool printWithParens = interpreter.getPrintFlag(Interpreter::PRINT_WITH_PARENS);
+     bool printWithParens = printSettings.getPrintFlag(PrintSettings::PRINT_WITH_PARENS);
      bool needParen = !needDisambig &&
        (printWithParens || requiredPrec < si.prec ||
 	((iflags & LEFT_BARE) && leftCapture <= si.gather[0] &&
@@ -370,19 +411,19 @@ MixfixModule::latexPrettyPrint(ostream& s,
      int pos = 0;
      ArgumentIterator a(*term);
      int moreArgs = a.valid();
-     for (int arg = 0; moreArgs; arg++)
+     for (int arg = 0; moreArgs; ++arg)
        {
 	 Term* t = a.argument();
 	 a.next();
 	 moreArgs = a.valid();
-	 pos = latexPrintTokens(s, si, pos, color);
+	 pos = latexPrintTokens(s, si, pos, color, printSettings);
 	 if (arg == nrArgs - 1 && moreArgs)
 	   {
 	     ++nrTails;
 	     arg = 0;
 	     if (needAssocParen)
 	       s << "\\maudeLeftParen";
-	     pos = latexPrintTokens(s, si, 0, color);
+	     pos = latexPrintTokens(s, si, 0, color, printSettings);
 	   }
 	 int lc = UNBOUNDED;
 	 const ConnectedComponent* lcc = 0;
@@ -408,11 +449,11 @@ MixfixModule::latexPrettyPrint(ostream& s,
 		 rcc = rightCaptureComponent;
 	       }
 	   }
-	 latexPrettyPrint(s, t, si.gather[arg], lc, lcc, rc, rcc, argRangeKnown);
+	 latexPrettyPrint(s, printSettings, t, si.gather[arg], lc, lcc, rc, rcc, argRangeKnown);
 	 if (UserLevelRewritingContext::interrupted())
 	   return;
        }
-     latexPrintTails(s, si, pos, nrTails, needAssocParen, true, color);
+     latexPrintTails(s, si, pos, nrTails, needAssocParen, true, color, printSettings);
      if (needParen)
        s << "\\maudeRightParen";
    }
@@ -425,40 +466,45 @@ MixfixModule::latexPrettyPrint(ostream& s,
      if (color != 0)
        s << color << prefixName << latexResetColor;
      else
-       latexPrintPrefixName(s, prefixName.c_str(), si);
+       latexPrintPrefixName(s, prefixName.c_str(), si, printSettings);
      ArgumentIterator a(*term);
      if (a.valid())
        {
-	 int nrTails = 1;
-	 s << "\\maudeLeftParen";
-	 for (int arg = 0;; arg++)
+	 if (printConceal)
+	   s << "\\maudeLeftParen\\maudeEllipsis\\maudeRightParen";
+	 else
 	   {
-	     Term* t = a.argument();
-	     a.next();
-	     int moreArgs = a.valid();
-	     if (arg >= nrArgs - 1 &&
-		 !(interpreter.getPrintFlag(Interpreter::PRINT_FLAT)) &&
-		 moreArgs)
+	     int nrTails = 1;
+	     s << "\\maudeLeftParen";
+	     for (int arg = 0;; arg++)
 	       {
-		 ++nrTails;
-		 if (color != 0)
-		   s << color << prefixName << latexResetColor;
-		 else
-		   latexPrintPrefixName(s, prefixName.c_str(), si);
-		 s << "\\maudeLeftParen";
+		 Term* t = a.argument();
+		 a.next();
+		 int moreArgs = a.valid();
+		 if (arg >= nrArgs - 1 &&
+		     !(printSettings.getPrintFlag(PrintSettings::PRINT_FLAT)) &&
+		     moreArgs)
+		   {
+		     ++nrTails;
+		     if (color != 0)
+		       s << color << prefixName << latexResetColor;
+		     else
+		       latexPrintPrefixName(s, prefixName.c_str(), si, printSettings);
+		     s << "\\maudeLeftParen";
+		   }
+		 latexPrettyPrint(s, printSettings, t, PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argRangeKnown);
+		 if (!moreArgs)
+		   break;
+		 s << "\\maudeComma";
 	       }
-	     latexPrettyPrint(s, t, PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argRangeKnown);
-	     if (!moreArgs)
-	       break;
-	     s << "\\maudeComma";
-	   }
-	 while (nrTails-- > 0)
-	   {
-	     if (UserLevelRewritingContext::interrupted())
-	       return;
-	     s << "\\maudeRightParen";
+	     while (nrTails-- > 0)
+	       {
+		 if (UserLevelRewritingContext::interrupted())
+		   return;
+		 s << "\\maudeRightParen";
+	       }
 	   }
        }
    }
- latexSuffix(s, term, needDisambig, color);
+ latexSuffix(s, term, needDisambig);
 }

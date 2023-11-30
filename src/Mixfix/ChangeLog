@@ -1,3 +1,487 @@
+2023-11-29  Steven Eker  <eker@pup>
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	graphPrint()
+
+	* prettyPrint.cc (MixfixModule::prettyPrint): pass printSettings
+	to graphPrint()
+
+	* graphPrint.cc (MixfixModule::graphPrint): take and pass
+	printSettings
+
+	* mixfixModule.hh (class MixfixModule): updated decls for
+	printVariable(), Term* and DagNode* to ostream& versions
+	of handleVariable()
+
+	* dagNodePrint.cc (MixfixModule::handleVariable): take
+	printSettings and pass to printVariable()
+	(MixfixModule::prettyPrint): pass printSettings to
+	handleVariable()
+
+	* termPrint.cc (MixfixModule::handleVariable): take printSettings
+	and pass to printVariable()
+	(MixfixModule::prettyPrint): pass printSettings to
+	handleVariable()
+
+	* prettyPrint.cc (MixfixModule::printPrefixName): use
+	printSettings rather than interpreter
+	(MixfixModule::printVariable): take and use printSettings
+
+	* mixfixModule.hh (class MixfixModule): updated decls for
+	handleIter(), handleMinus(), handleDivision(), handleFloat(),
+	handleString(),handleQuotedIdentifier(), handleVariable(),
+	handleSMT_Number()
+
+	* termPrint.cc (MixfixModule::prettyPrint): use prefix()
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): fix bug
+	where we left (...) in code when in inserted latex version
+
+	* termPrint.cc (MixfixModule::handleIter): don't take, use or pass
+	color
+	(MixfixModule::handleMinus): don't take or pass color
+	(MixfixModule::handleDivision): ditto
+	(MixfixModule::handleFloat): ditto
+	(MixfixModule::handleString): ditto
+	(MixfixModule::handleQuotedIdentifier): ditto
+	(MixfixModule::handleVariable): ditto
+	(MixfixModule::handleSMT_Number): ditto
+	(MixfixModule::prettyPrint): don't pass color to handleIter(),
+	handleMinus(), handleDivision(), handleFloat(), handleString(),
+	handleQuotedIdentifier(), handleVariable(), handleSMT_Number()
+
+	* mixfixModule.hh (class MixfixModule): updated decl for Term* to
+	ostream& suffix()
+	(class MixfixModule): color = nullptr default argument for ostream&
+	prefix()
+
+	* termPrint.cc (MixfixModule::suffix): get rid of color argument
+
+2023-11-28  Steven Eker  <eker@pup>
+
+	* sharedPrint.cc (MixfixModule::disambiguatorSort): moved here
+
+	* termPrint.cc (MixfixModule::computeColor): code cleaning
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): use
+	latexPrefix()
+
+	* mixfixModule.hh (class MixfixModule): updated decls for the
+	Term* versions of latexSuffix(), latexHandleIter(),
+	latexHandleMinus(), latexHandleDivision(), latexHandleFloat(),
+	latexHandleString(), latexHandleQuotedIdentifier(),
+	latexHandleVariable(),latexHandleSMT_Number()
+
+	* latexTermPrint.cc (MixfixModule::latexSuffix): don't take color
+	argument
+	(MixfixModule::latexHandleIter): don't take, use or pass color
+	argument
+	(MixfixModule::latexHandleIter): use latexPrefix; fix bug where
+	we were using suffix rather than latexSuffix
+	(MixfixModule::latexHandleMinus): don't take or pass color
+	(MixfixModule::latexHandleDivision): ditto
+	(MixfixModule::latexHandleFloat): ditto
+	(MixfixModule::latexHandleString): ditto
+	(MixfixModule::latexHandleQuotedIdentifier): ditto
+	(MixfixModule::latexHandleVariable): ditto
+	(MixfixModule::latexHandleSMT_Number): ditto
+	(MixfixModule::latexPrettyPrint): don't pass color
+
+	* mixfixModule.hh (class MixfixModule): latexPrefix() now has
+	default color argument
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint): get
+	rid of unneccessary Mixfix:: qualification
+	(MixfixModule::latexPrintDagNode): ditto
+
+	* mixfixModule.hh (class MixfixModule): updated decls for
+	latexPrintPrefixName(), latexPrintTokens(), latexPrintTails(),
+	latexFancySpace()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleIter):
+	pass printSettings to latexPrintPrefixName()
+	(MixfixModule::latexPrettyPrint): pass printSettings to
+	latexPrintPrefixName(), latexPrintTokens(), latexPrintTails()
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleIter):
+	pass printSettings to latexPrintPrefixName()
+	(MixfixModule::latexPrettyPrint): pass printSettings to
+	latexPrintPrefixName(), latexPrintTokens(), latexPrintTails()
+
+	* latexCommon.cc (MixfixModule::latexFancySpace): take
+	and use printSettings
+	(MixfixModule::latexPrintPrefixName): take, use and pass
+	printSettings
+	(MixfixModule::latexPrintTokens): ditto
+	(MixfixModule::latexPrintTails): ditto
+	Intepreter:: -> PrintSettings::
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	Terms* version of latexHandleVariable()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleVariable):
+	take and use printSettings
+	(MixfixModule::latexPrettyPrint): pass printSettings to
+	latexHandleVariable()
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	DagNode* version of latexHandleVariable()
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleVariable):
+	take and use printSettings
+	(MixfixModule::latexPrettyPrint): pass printSettings to
+	latexHandleVariable()
+
+	* mixfixModule.hh (class MixfixModule): updated decls for
+	DagNode* versions of latexComputeColor(), latexHandleIter(),
+	latexHandleMinus(), latexHandleDivision(), latexHandleFloat(),
+	latexHandleString(), latexHandleQuotedIdentifier(),
+	latexHandleSMT_Number(), latexPrettyPrint()
+
+	* latexDagNodePrint.cc: Intepreter:: -> PrintSettings::
+	(MixfixModule::latexComputeColor): take and use printSettings
+	(MixfixModule::latexHandleIter): take, use and pass
+	printSettings
+	(MixfixModule::latexHandleMinus): take and use printSettings
+	(MixfixModule::latexHandleDivision): ditto
+	(MixfixModule::latexHandleFloat): ditto
+	(MixfixModule::latexHandleString): ditto
+	(MixfixModule::latexHandleQuotedIdentifier): ditto
+	(MixfixModule::latexHandleSMT_Number): ditto
+	(MixfixModule::latexPrettyPrint): take, use and
+	pass printSettings
+	(MixfixModule::latexPrettyPrint)
+	(MixfixModule::latexPrintDagNode): use clearIndent()
+	(MixfixModule::latexPrettyPrint)
+	(MixfixModule::latexPrintDagNode): pass printSettings
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): pass
+	printSettings to main latexPrettyPrint() call
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	Term* versions of latexHandleIter(), latexHandleMinus(),
+	latexHandleDivision(), latexHandleFloat(), latexHandleString(),
+	latexHandleQuotedIdentifier(), latexHandleSMT_Number(),
+	latexPrettyPrint()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleIter): take and
+	use printSettings; pass printSettings to latexPrettyPrint()
+	(MixfixModule::latexHandleMinus): take and use printSettings
+	(MixfixModule::latexHandleFloat): ditto
+	(MixfixModule::latexHandleString): ditto
+	(MixfixModule::latexHandleQuotedIdentifier): ditto
+	(MixfixModule::latexHandleSMT_Number): ditto
+	(MixfixModule::latexPrettyPrint): take and pass printSettings
+
+	* mixfixModule.hh (class MixfixModule): updated decl for stream
+	version of printPrefixName()
+	(class MixfixModule): updated decl for fancySpace()
+
+	* termPrint.cc (MixfixModule::prettyPrint): pass printSettings
+	to printPrefixName()
+	(MixfixModule::handleIter): ditto
+
+	* dagNodePrint.cc (MixfixModule::handleIter): pass printSettings
+	to printPrefixName()
+	(MixfixModule::prettyPrint): ditto
+
+	* prettyPrint.cc (MixfixModule::printPrefixName): take and pass
+	printSettings
+
+	* mixfixModule.hh (class MixfixModule): updated decls for
+	stream versions of printTokens() and printTails()
+
+	* dagNodePrint.cc (MixfixModule::prettyPrint): pass printSettings
+	to printTails() and printTokens()
+
+	* termPrint.cc (MixfixModule::prettyPrint): pass printSettings
+	to printTails() and printTokens()
+
+	* prettyPrint.cc (MixfixModule::fancySpace): take and use
+	printSettings
+	(MixfixModule::printTails): take, use and pass printSettings
+	(MixfixModule::printTokens): ditto
+
+2023-11-27  Steven Eker  <eker@pup>
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	latexComputeColor()
+
+	* latexTermPrint.cc (MixfixModule::latexComputeColor): take
+	printSettings arg
+	(MixfixModule::latexPrettyPrint): use latexComputeColor rather
+	than computeColor()
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint):
+	use \maudeEllipsis
+
+	* latexTermPrint.cc: Interpreter:: -> PrintSettings::
+	(MixfixModule::latexPrettyPrint): handle print conceal
+
+	* termPrint.cc (MixfixModule::suffix): formatting
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): use
+	clearIndent()
+
+	* mixfixModule.hh (class MixfixModule): unfriend DagNode*
+	operator<<
+	(class MixfixModule): made StrategyExpression* prettyPrint()
+	public
+	(class MixfixModule): unfriend StrategyExpression* operator<<
+
+	* prettyPrint.cc: (operator<<): (DagNode* version), use
+	new MixfixModule::prettyPrint()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	3 argument DagNode* prettyPrint()
+
+	* prettyPrint.cc (MixfixModule::prettyPrint): use
+	clearIndent(), clearColor()
+	(operator<<): (DagNode* version), use	clearIndent(),
+	clearColor()
+	(MixfixModule::prettyPrint): added 3 argument DagNode*
+	version
+
+	* mixfixModule.hh (MixfixModule::clearIndent): added
+	(MixfixModule::clearColor): added
+
+2023-11-22  Steven Eker  <eker@pup>
+
+	* bufferPrint.cc (MixfixModule::prettyPrint): support print
+	conceal
+
+	* specialTokens.cc: added ellipsis
+
+	* termPrint.cc (MixfixModule::prettyPrint): support print conceal
+
+2023-11-21  Steven Eker  <eker@pup>
+
+	* mixfixModule.hh (class MixfixModule): make main Term* prettyPrint
+	public
+
+2023-11-20  Steven Eker  <eker@pup>
+
+	* printSettings.hh (class PrintSettings): pass polarity = true
+	by default for setPrintFlag()
+
+	* mixfixModule.hh (class MixfixModule): updated decls
+	for both versions of bufferPrint()
+
+	* bufferPrint.cc (MixfixModule::bufferPrint): (StrategyExpression*
+	version): pass printSettings
+	(MixfixModule::bufferPrint): take printSettings (both versions)
+
+	* mixfixModule.hh (class MixfixModule): updated decls
+	for all 3 functions used to print strategies to buffer
+
+	* bufferPrint.cc (MixfixModule::prettyPrint): (StrategyExpression*
+	version): take and pass printSettings
+	(MixfixModule::prettyPrint): (Vector<ConditionFragment*> version):
+	take and pass printSettings
+	(MixfixModule::prettyPrint): (ConditionFragment* version):
+	take and pass printSettings
+
+	* mixfixModule.hh (class MixfixModule): updated decls for
+	buffer versions of printTokens(), printTails(), printPrefixName()
+
+	* bufferPrint.cc (MixfixModule::bufferPrint): pass printSettings
+	to prettyPrint()
+
+	* mixfixModule.hh (class MixfixModule): updated decls for
+	buffer versions of suffix(), prettyPrint(), handleVariable(),
+	handleIter(), handleMinus(), handleDivision(), handleFloat(),
+	handleString(), handleQuotedIdentifier(), handleSMT_NumberSymbol(),
+	printKind(), printSort(), printDotSort(), printVarSort(),
+	printTokens(), printTails(), printPrefixName()
+
+	* bufferPrint.cc (MixfixModule::handleIter): take
+	printSettings rather than printFlags
+	(MixfixModule::suffix): ditto
+	(MixfixModule::handleIter): ditto
+	(MixfixModule::handleMinus): ditto
+	(MixfixModule::handleDivision): ditto
+	(MixfixModule::handleFloat): ditto
+	(MixfixModule::handleString): ditto
+	(MixfixModule::handleQuotedIdentifier): ditto
+	(MixfixModule::handleVariable): ditto
+	(MixfixModule::handleSMT_NumberSymbol): ditto
+	(MixfixModule::prettyPrint): take, use and pass printSettings
+	(MixfixModule::printKind): take and pass printSettings
+	(MixfixModule::printSort): take printSettings
+	(MixfixModule::printDotSort): ditto
+	(MixfixModule::printVarSort): ditto
+	(MixfixModule::printTokens): ditto
+	(MixfixModule::printTails): ditto
+	(MixfixModule::printPrefixName): ditto
+
+	* termPrint.cc (MixfixModule::handleIter): pass
+	printSettings to prettyPrint()
+
+	* prettyPrint.cc (MixfixModule::prettyPrint): pass
+	printSettings to Term* -> ostream prettyPrint()
+
+	* termPrint.cc (MixfixModule::prettyPrint): take
+	printSettings argument and pass it in recursive calls
+
+	* mixfixModule.hh (class MixfixModule): updated decl
+	for Term* -> ostream prettyPrint()
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): pass
+	printSettings argument to computeColor()
+
+	* termPrint.cc (MixfixModule::prettyPrint): pass printSettings
+	argument to computeColor(), handleIter(), handleMinus(),
+	handleDivision(), handleFloat(), handleString(),
+	handleQuotedIdentifier(), handleSMT_Number()
+
+	* mixfixModule.hh (class MixfixModule): updated decls for Term*
+	versions of computeColor(), handleIter(), handleMinus(),
+	handleDivision(), handleFloat(), handleString(),
+	handleQuotedIdentifier(), handleSMT_Number()
+
+	* termPrint.cc (MixfixModule::computeColor): take and
+	use printSettings argument
+	Interpreter:: -> PrintSettings:: everywhere
+	(MixfixModule::handleIter): take and use printSettings
+	argument
+	(MixfixModule::handleMinus): ditto
+	(MixfixModule::handleDivision): ditto
+	(MixfixModule::handleFloat): ditto
+	(MixfixModule::handleString): ditto
+	(MixfixModule::handleQuotedIdentifier): ditto
+	(MixfixModule::handleSMT_Number): ditto
+
+2023-11-17  Steven Eker  <eker@pup>
+
+	* bufferPrint.cc: Interpreter:: -> PrintSettings::
+	(MixfixModule::handleIter): handle
+	PrintSettings::PRINT_DISAMBIG_CONST
+	(MixfixModule::handleMinus): ditto
+	(MixfixModule::handleDivision): ditto
+	(MixfixModule::handleFloat): ditto
+	(MixfixModule::handleString): ditto
+	(MixfixModule::handleQuotedIdentifier): ditto
+	(MixfixModule::handleSMT_NumberSymbol): ditto
+	(MixfixModule::prettyPrint): made needDisambig, argRangeKnown
+	calculations symmetric with ostream& case
+
+2023-11-16  Steven Eker  <eker@pup>
+
+	* latexTermPrint.cc (MixfixModule::latexHandleIter):
+	handle PrintSettings::PRINT_DISAMBIG_CONST
+	(MixfixModule::latexHandleMinus): ditto
+	(MixfixModule::latexHandleDivision): ditto
+	(MixfixModule::latexHandleFloat): ditto
+	(MixfixModule::latexHandleString): ditto
+	(MixfixModule::latexHandleQuotedIdentifier): ditto
+	(MixfixModule::latexHandleSMT_Number): ditto
+
+	* termPrint.cc (MixfixModule::handleIter): handle
+	PrintSettings::PRINT_DISAMBIG_CONST
+	(MixfixModule::handleMinus): handle
+	PrintSettings::PRINT_DISAMBIG_CONST
+	(MixfixModule::handleDivision): handle
+	PrintSettings::PRINT_DISAMBIG_CONST
+	(MixfixModule::handleFloat): ditto
+	(MixfixModule::handleString): ditto
+	(MixfixModule::handleQuotedIdentifier): ditto
+	(MixfixModule::handleSMT_Number): ditto
+
+2023-11-15  Steven Eker  <eker@pup>
+
+	* dagNodePrint.cc (MixfixModule::prettyPrint): use
+	printSettings.concealSymbol()
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint): use
+	new printConceal() convention
+
+	* interpreter.hh (class Interpreter): deleted decl for
+	concealedSymbol()
+
+	* dagNodePrint.cc (MixfixModule::prettyPrint): use new
+	printConceal() convention
+
+	* printSettings.hh (class PrintSettings): added data member
+	concealedSymbols
+
+	* interpreter.hh (class Interpreter): deleted data member
+	concealedSymbols
+
+	* interpreter.cc (Interpreter::concealedSymbol): deleted
+	(Interpreter::printConceal): moved here and use insertConcealed(),
+	eraseConcealed()
+
+	* printSettings.hh (PrintSettings::insertConcealed)
+	(PrintSettings::eraseConcealed, PrintSettings::concealedSymbol):
+	added
+
+	* prettyPrint.cc: Interpreter:: -> PrintSettings::
+	(operator<<): pass printSettings to prettyPrint (DagNode*
+	version); use safeCastNonNull()
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	prettyPrint() (DagNode* version)
+
+	* dagNodePrint.cc (MixfixModule::handleIter): pass
+	printSettings to prettyPrint()
+	(MixfixModule::prettyPrint): take printSettings argument
+
+	* mixfixModule.hh (class MixfixModule): update decls for
+	handleFloat(), handleString(), handleQuotedIdentifier(),
+	handleIter(), handleMinus(), handleDivision(),
+	handleSMT_Number()
+
+	* dagNodePrint.cc (MixfixModule::handleIter): take
+	printSettings argument
+	(MixfixModule::handleMinus): take printSettings argument
+	(MixfixModule::handleDivision): take printSettings argument
+	(MixfixModule::handleFloat): take printSettings argument
+	(MixfixModule::handleQuotedIdentifier): take printSettings
+	argument
+	(MixfixModule::handleString): take printSettings argument
+	(MixfixModule::handleSMT_Number): take printSettings argument
+	(MixfixModule::prettyPrint): pass printSettings to
+	computeColor(), handleIter(), handleMinus(), handleDivision(),
+	handleFloat(), handleString(), handleQuotedIdentifier(),
+	handleSMT_Number(); use printSettings
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	computeColor() (DagNode* version)
+
+	* dagNodePrint.cc: Interpreter:: -> PrintSettings::
+	(MixfixModule::handleVariable): remove hack
+	(MixfixModule::computeColor): take printSettings argument
+
+	* commands.yy (kw_module): Interpreter:: -> PrintSettings::
+
+	* interpreter.cc (Interpreter::Interpreter): initialize
+	PrintSettings base rather than printFlags member
+	(Interpreter::setPrintFlag): deleted
+
+	* mixfix.hh: added class PrintSettings
+
+	* interpreter.hh (class Interpreter): derive from
+	PrintSettings; delete enum PrintFlags
+	(Interpreter::getPrintFlag): deleted
+
+	* printSettings.hh (class PrintSettings): created
+
+	* interpreter.hh (Interpreter::getPrintFlags): deleted
+
+2023-11-14  Steven Eker  <eker@pup>
+
+	* latexPreModulePrint.cc
+	(SyntacticPreModule::latexTokenVector): symmetric change
+
+	* token.cc (Token::printTokenVector): treat ( like [ { and
+	put space in front of it if needSpace
+
+	* quotedIdentifierOpSymbol.cc
+	(QuotedIdentifierOpSymbol::printQid): put space before ( [ {
+	if needSpace true
+
+===================================Maude154===========================================
+
 2023-11-07  Steven Eker  <eker@pup>
 
 	* latexCommon.cc (MixfixModule::latexPrintTokens): use

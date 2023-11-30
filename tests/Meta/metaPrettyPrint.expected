@@ -141,7 +141,7 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
 endfm, 'X:Float ; 'Y:Float, 'X:Float, mixfix) .
-rewrites: 1
+rewrites: 2
 result Sort: 'X
 ==========================================
 reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
@@ -152,6 +152,6 @@ reduce in META-LEVEL : metaPrettyPrint(fmod 'FOO is
   none
   none
 endfm, 'X:Float ; 'Y:Float, '_/_['X:Float, 'Y:Float], mixfix) .
-rewrites: 1
+rewrites: 2
 result NeTypeList: 'X '/ 'Y
 Bye.

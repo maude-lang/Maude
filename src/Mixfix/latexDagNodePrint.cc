@@ -32,21 +32,22 @@ MixfixModule::latexPrettyPrint(ostream& s, DagNode* dagNode)
       s << "\\maudeMisc{(null DagNode*)}";
       return;
     }
+  const PrintSettings& printSettings = interpreter;  // HACK
   MixfixModule* module = static_cast<MixfixModule*>(dagNode->symbol()->getModule());
-  if (interpreter.getPrintFlag(Interpreter::PRINT_GRAPH))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_GRAPH))
     /*module->latexGraphPrint(s, dagNode)*/;
   else
     {
-      globalIndent = 0;
+      clearIndent();
       s << "$";
-      MixfixModule::ColoringInfo coloringInfo;
-      if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+      ColoringInfo coloringInfo;
+      if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
 	{
-	  MixfixModule::computeGraphStatus(dagNode, coloringInfo.visited, coloringInfo.statusVec);
+	  computeGraphStatus(dagNode, coloringInfo.visited, coloringInfo.statusVec);
 	  coloringInfo.reducedAbove = false;
 	  coloringInfo.reducedDirectlyAbove = false;
 	}
-      module->latexPrettyPrint(s, coloringInfo, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      module->latexPrettyPrint(s, printSettings, coloringInfo, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
       s << "$";
     }
 }
@@ -54,27 +55,32 @@ MixfixModule::latexPrettyPrint(ostream& s, DagNode* dagNode)
 void
 MixfixModule::latexPrintDagNode(ostream& s, DagNode* dagNode)
 {
+  const PrintSettings& printSettings = interpreter;  // HACK
   MixfixModule* module = safeCastNonNull<MixfixModule*>(dagNode->symbol()->getModule());
-  if (interpreter.getPrintFlag(Interpreter::PRINT_GRAPH))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_GRAPH))
     /*module->latexGraphPrint(s, dagNode)*/;
   else
     {
-      globalIndent = 0;
-      MixfixModule::ColoringInfo coloringInfo;
-      if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+      clearIndent();
+      ColoringInfo coloringInfo;
+      if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
 	{
-	  MixfixModule::computeGraphStatus(dagNode, coloringInfo.visited, coloringInfo.statusVec);
+	  computeGraphStatus(dagNode, coloringInfo.visited, coloringInfo.statusVec);
 	  coloringInfo.reducedAbove = false;
 	  coloringInfo.reducedDirectlyAbove = false;
 	}
-      module->latexPrettyPrint(s, coloringInfo, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      module->latexPrettyPrint(s, printSettings, coloringInfo, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
     }
 }
 
 const char*
-MixfixModule::latexComputeColor(ColoringInfo& coloringInfo, DagNode* dagNode)
+MixfixModule::latexComputeColor(ColoringInfo& coloringInfo, DagNode* dagNode, const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+  //
+  //	For dags, automatically generated color (as opposed to format generated color) is based
+  //	on ctor-ness and reduced-ness of each dag node.
+  //
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
     {
       if (dagNode->isReduced())
 	{
@@ -114,7 +120,8 @@ MixfixModule::latexHandleIter(ostream& s,
 			      DagNode* dagNode,
 			      SymbolInfo& si,
 			      bool rangeKnown,
-			      const char* color)
+			      const char* color,
+			      const PrintSettings& printSettings)
 {
   //
   //	Check if dagNode is headed by a iter symbol and if so handle
@@ -128,7 +135,7 @@ MixfixModule::latexHandleIter(ostream& s,
   //	number printing turned on.
   //
   if (si.symbolType.getBasicType() == SymbolType::SUCC_SYMBOL &&
-      interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
+      printSettings.getPrintFlag(PrintSettings::PRINT_NUMBER))
     {
       //
       //	If dagNode corresponds to a number we want to
@@ -138,7 +145,7 @@ MixfixModule::latexHandleIter(ostream& s,
       if (succSymbol->isNat(dagNode))
 	{
 	  const mpz_class& nat = succSymbol->getNat(dagNode);
-	  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat)));
 	  latexPrefix(s, needDisambig, color);
 	  s << "\\maudeNumber{" << nat << "}";
@@ -164,31 +171,35 @@ MixfixModule::latexHandleIter(ostream& s,
   if (color != 0)
     s << color << prefixName << latexResetColor;
   else
-    latexPrintPrefixName(s, prefixName.c_str(), si);
-  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+    latexPrintPrefixName(s, prefixName.c_str(), si, printSettings);
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
     {
       coloringInfo.reducedDirectlyAbove = dagNode->isReduced();
       coloringInfo.reducedAbove = coloringInfo.reducedAbove ||
 	coloringInfo.reducedDirectlyAbove;
     }
   s << "\\maudeLeftParen";
-  latexPrettyPrint(s, coloringInfo, sd->getArgument(), PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argumentRangeKnown);
+  latexPrettyPrint(s, printSettings, coloringInfo, sd->getArgument(), PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0, argumentRangeKnown);
   s << "\\maudeRightParen";
   suffix(s, dagNode, needToDisambiguate, color);
   return true;
 }
 
 bool
-MixfixModule::latexHandleMinus(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color)
+MixfixModule::latexHandleMinus(ostream& s,
+			       DagNode* dagNode,
+			       bool rangeKnown,
+			       const char* color,
+			       const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_NUMBER))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_NUMBER))
     {
       const MinusSymbol* minusSymbol = safeCast(MinusSymbol*, dagNode->symbol());
       if (minusSymbol->isNeg(dagNode))
 	{
 	  mpz_class neg;
 	  (void) minusSymbol->getNeg(dagNode, neg);
-	  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg)));
 	  latexPrefix(s, needDisambig, color);
 	  s << "\\maudeNumber{" << neg << "}";
@@ -200,16 +211,20 @@ MixfixModule::latexHandleMinus(ostream& s, DagNode* dagNode, bool rangeKnown, co
 }
 
 bool
-MixfixModule::latexHandleDivision(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color)
+MixfixModule::latexHandleDivision(ostream& s,
+				  DagNode* dagNode,
+				  bool rangeKnown,
+				  const char* color,
+				  const PrintSettings& printSettings)
 {
-  if (interpreter.getPrintFlag(Interpreter::PRINT_RAT))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_RAT))
     {
       const DivisionSymbol* divisionSymbol = safeCast(DivisionSymbol*, dagNode->symbol());
       if (divisionSymbol->isRat(dagNode))
 	{
 	  pair<mpz_class, mpz_class> rat;
 	  rat.second = divisionSymbol->getRat(dagNode, rat.first);
-	  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
 	  latexPrefix(s, needDisambig, color);
 	  s << "\\maudeNumber{" << rat.first << "}/\\maudeNumber{"  << rat.second << "}";
@@ -221,10 +236,14 @@ MixfixModule::latexHandleDivision(ostream& s, DagNode* dagNode, bool rangeKnown,
 }
 
 void
-MixfixModule::latexHandleFloat(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color)
+MixfixModule::latexHandleFloat(ostream& s,
+			       DagNode* dagNode,
+			       bool rangeKnown,
+			       const char* color,
+			       const PrintSettings& printSettings)
 {
   double mfValue = safeCast(FloatDagNode*, dagNode)->getValue();
-  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (floatSymbols.size() > 1 || overloadedFloats.count(mfValue)));
   latexPrefix(s, needDisambig, color);
   s << "\\maudeNumber{" << doubleToString(mfValue) << "}";
@@ -232,11 +251,15 @@ MixfixModule::latexHandleFloat(ostream& s, DagNode* dagNode, bool rangeKnown, co
 }
 
 void
-MixfixModule::latexHandleString(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color)
+MixfixModule::latexHandleString(ostream& s,
+				DagNode* dagNode,
+				bool rangeKnown,
+				const char* color,
+				const PrintSettings& printSettings)
 {
   string strValue;
   Token::ropeToString(safeCast(StringDagNode*, dagNode)->getValue(), strValue);
-  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue)));
   latexPrefix(s, needDisambig, color);
   s << "\\maudeString{" << Token::latexName(strValue) << "}";
@@ -244,10 +267,14 @@ MixfixModule::latexHandleString(ostream& s, DagNode* dagNode, bool rangeKnown, c
 }
 
 void
-MixfixModule::latexHandleQuotedIdentifier(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color)
+MixfixModule::latexHandleQuotedIdentifier(ostream& s,
+					  DagNode* dagNode,
+					  bool rangeKnown,
+					  const char* color,
+					  const PrintSettings& printSettings)
 {
   int qidCode = safeCast(QuotedIdentifierDagNode*, dagNode)->getIdIndex();
-  bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode)));
   latexPrefix(s, needDisambig, color);
   s << "\\maudeQid{" << "\\maudeSingleQuote " << Token::latexName(qidCode) << "}";
@@ -255,7 +282,11 @@ MixfixModule::latexHandleQuotedIdentifier(ostream& s, DagNode* dagNode, bool ran
 }
 
 void
-MixfixModule::latexHandleVariable(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color)
+MixfixModule::latexHandleVariable(ostream& s,
+				  DagNode* dagNode,
+				  bool rangeKnown,
+				  const char* color,
+				  const PrintSettings& printSettings)
 {
   VariableDagNode* v = safeCast(VariableDagNode*, dagNode);
   Sort* sort = safeCast(VariableSymbol*, dagNode->symbol())->getSort();
@@ -264,7 +295,7 @@ MixfixModule::latexHandleVariable(ostream& s, DagNode* dagNode, bool rangeKnown,
   latexPrefix(s, needDisambig, color);
   s << Token::latexIdentifier(v->id());
 
-  if (interpreter.getPrintFlag(Interpreter::PRINT_WITH_ALIASES))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_WITH_ALIASES))
     {
       AliasMap::const_iterator i = variableAliases.find(v->id());
       if (i != variableAliases.end() && (*i).second == sort)
@@ -278,7 +309,11 @@ MixfixModule::latexHandleVariable(ostream& s, DagNode* dagNode, bool rangeKnown,
 }
 
 void
-MixfixModule::latexHandleSMT_Number(ostream& s, DagNode* dagNode, bool rangeKnown, const char* color)
+MixfixModule::latexHandleSMT_Number(ostream& s,
+				    DagNode* dagNode,
+				    bool rangeKnown,
+				    const char* color,
+				    const PrintSettings& printSettings)
 {
   //
   //	Get value.
@@ -298,7 +333,7 @@ MixfixModule::latexHandleSMT_Number(ostream& s, DagNode* dagNode, bool rangeKnow
   if (t == SMT_Info::INTEGER)
     {
       const mpz_class& integer = value.get_num();
-      bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+      bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	(!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer)));
       latexPrefix(s, needDisambig, color);
       s << "\\maudeNumber{" << integer << "}";
@@ -308,7 +343,7 @@ MixfixModule::latexHandleSMT_Number(ostream& s, DagNode* dagNode, bool rangeKnow
     {
       Assert(t == SMT_Info::REAL, "SMT number sort expected");
       pair<mpz_class, mpz_class> rat(value.get_num(), value.get_den());
-      bool needDisambig = interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST) ||
+      bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	(!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
       latexPrefix(s, needDisambig, color);
       s << "\\maudeNumber{" << rat.first << "}/\\maudeNumber{" << rat.second << "}";
@@ -318,6 +353,7 @@ MixfixModule::latexHandleSMT_Number(ostream& s, DagNode* dagNode, bool rangeKnow
 
 void
 MixfixModule::latexPrettyPrint(ostream& s,
+			       const PrintSettings& printSettings,
 			       ColoringInfo& coloringInfo,
 			       DagNode* dagNode,
 			       int requiredPrec,
@@ -327,56 +363,56 @@ MixfixModule::latexPrettyPrint(ostream& s,
 			       const ConnectedComponent* rightCaptureComponent,
 			       bool rangeKnown)
 {
+  Assert(dagNode != 0, "null pointer");
   if (UserLevelRewritingContext::interrupted())
     return;
-  Assert(dagNode != 0, "null pointer");
 
-  const char* color = latexComputeColor(coloringInfo, dagNode);
   Symbol* symbol = dagNode->symbol();
   SymbolInfo& si = symbolInfo[symbol->getIndexWithinModule()];
+  const char* color = latexComputeColor(coloringInfo, dagNode, printSettings);
   //
   //	Check for special i/o representation.
   //
-  if (latexHandleIter(s, coloringInfo, dagNode, si, rangeKnown, color))
+  if (latexHandleIter(s, coloringInfo, dagNode, si, rangeKnown, color, printSettings))
     return;
   int basicType = si.symbolType.getBasicType();
   switch (basicType)
     {
     case SymbolType::MINUS_SYMBOL:
       {
-	if (latexHandleMinus(s, dagNode, rangeKnown, color))
+	if (latexHandleMinus(s, dagNode, rangeKnown, color, printSettings))
 	  return;
 	break;
       }
     case SymbolType::DIVISION_SYMBOL:
       {
-	if (latexHandleDivision(s, dagNode, rangeKnown, color))
+	if (latexHandleDivision(s, dagNode, rangeKnown, color, printSettings))
 	  return;
 	break;
       }
     case SymbolType::FLOAT:
       {
-	latexHandleFloat(s, dagNode, rangeKnown, color);
+	latexHandleFloat(s, dagNode, rangeKnown, color, printSettings);
 	return;
       }
     case SymbolType::STRING:
       {
-	latexHandleString(s, dagNode, rangeKnown, color);
+	latexHandleString(s, dagNode, rangeKnown, color, printSettings);
 	return;
       }
     case SymbolType::QUOTED_IDENTIFIER:
       {
-	latexHandleQuotedIdentifier(s, dagNode, rangeKnown, color);
+	latexHandleQuotedIdentifier(s, dagNode, rangeKnown, color, printSettings);
 	return;
       }
     case SymbolType::VARIABLE:
       {
-	latexHandleVariable(s, dagNode, rangeKnown, color);
+	latexHandleVariable(s, dagNode, rangeKnown, color, printSettings);
 	return;
       }
     case SymbolType::SMT_NUMBER_SYMBOL:
       {
-	latexHandleSMT_Number(s, dagNode, rangeKnown, color);
+	latexHandleSMT_Number(s, dagNode, rangeKnown, color, printSettings);
 	return;
       }
     default:
@@ -391,30 +427,31 @@ MixfixModule::latexPrettyPrint(ostream& s,
   int nrArgs = symbol->arity();
   if (nrArgs == 0)
     {
-      if (interpreter.getPrintFlag(Interpreter::PRINT_DISAMBIG_CONST))
+      if (printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST))
 	needDisambig = true;
     }
   else
     argRangeKnown = rangeOfArgumentsKnown(iflags, rangeKnown, needDisambig);
 
-  if (interpreter.getPrintFlag(Interpreter::PRINT_COLOR))
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
     {
       coloringInfo.reducedDirectlyAbove = dagNode->isReduced();
       coloringInfo.reducedAbove = coloringInfo.reducedAbove ||
 	coloringInfo.reducedDirectlyAbove;
     }
+
   if (needDisambig)
     s << "\\maudeLeftParen";
-  bool printConceal = interpreter.concealedSymbol(symbol);
+  bool printConceal = printSettings.concealedSymbol(symbol->id());
   if (nrArgs == 0 && Token::auxProperty(symbol->id()) == Token::AUX_STRUCTURED_SORT)
     s << latexStructuredConstant(symbol->id());
-  else if ((interpreter.getPrintFlag(Interpreter::PRINT_MIXFIX) && !si.mixfixSyntax.empty() && !printConceal) ||
+  else if ((printSettings.getPrintFlag(PrintSettings::PRINT_MIXFIX) && !si.mixfixSyntax.empty() && !printConceal) ||
 	   (basicType == SymbolType::SORT_TEST))
     {
       //
       //	Mixfix case.
       //
-      bool printWithParens = interpreter.getPrintFlag(Interpreter::PRINT_WITH_PARENS);
+      bool printWithParens = printSettings.getPrintFlag(PrintSettings::PRINT_WITH_PARENS);
       bool needParen = !needDisambig &&
 	(printWithParens || requiredPrec < si.prec ||
 	 ((iflags & LEFT_BARE) && leftCapture <= si.gather[0] &&
@@ -431,19 +468,19 @@ MixfixModule::latexPrettyPrint(ostream& s,
       int pos = 0;
       DagArgumentIterator a(*dagNode);
       int moreArgs = a.valid();
-      for (int arg = 0; moreArgs; arg++)
+      for (int arg = 0; moreArgs; ++arg)
 	{
 	  DagNode* d = a.argument();
 	  a.next();
 	  moreArgs = a.valid();
-	  pos = latexPrintTokens(s, si, pos, color);
+	  pos = latexPrintTokens(s, si, pos, color, printSettings);
 	  if (arg == nrArgs - 1 && moreArgs)
 	    {
 	      ++nrTails;
 	      arg = 0;
 	      if (needAssocParen)
 		s << "\\maudeLeftParen";
-	      pos = latexPrintTokens(s, si, 0, color);
+	      pos = latexPrintTokens(s, si, 0, color, printSettings);
 	    }
 	  int lc = UNBOUNDED;
 	  const ConnectedComponent* lcc = 0;
@@ -469,13 +506,11 @@ MixfixModule::latexPrettyPrint(ostream& s,
 		  rcc = rightCaptureComponent;
 		}
 	    }
-	  latexPrettyPrint(s, coloringInfo, d,
-			   si.gather[arg], lc, lcc, rc, rcc,
-			   argRangeKnown);
+	  latexPrettyPrint(s, printSettings, coloringInfo, d, si.gather[arg], lc, lcc, rc, rcc, argRangeKnown);
 	  if (UserLevelRewritingContext::interrupted())
 	    return;
 	}
-      latexPrintTails(s, si, pos, nrTails, needAssocParen, true, color);
+      latexPrintTails(s, si, pos, nrTails, needAssocParen, true, color, printSettings);
       if (needParen)
 	s << "\\maudeRightParen";
     }
@@ -488,12 +523,12 @@ MixfixModule::latexPrettyPrint(ostream& s,
       if (color != 0)
       	s << color << prefixName << latexResetColor;
       else
-      	latexPrintPrefixName(s, prefixName.c_str(), si);
+      	latexPrintPrefixName(s, prefixName.c_str(), si, printSettings);
       DagArgumentIterator a(*dagNode);
       if (a.valid())
 	{
 	  if (printConceal)
-	    s << "\\maudeLeftParen\\ldots\\maudeRightParen";
+	    s << "\\maudeLeftParen\\maudeEllipsis\\maudeRightParen";
 	  else
 	    {
 	      int nrTails = 1;
@@ -504,17 +539,17 @@ MixfixModule::latexPrettyPrint(ostream& s,
 		  a.next();
 		  int moreArgs = a.valid();
 		  if (arg >= nrArgs - 1 &&
-		      !(interpreter.getPrintFlag(Interpreter::PRINT_FLAT)) &&
+		      !(printSettings.getPrintFlag(PrintSettings::PRINT_FLAT)) &&
 		      moreArgs)
 		    {
 		      ++nrTails;
 		      if (color != 0)
 		      	s << color << prefixName << latexResetColor;
 		      else
-			latexPrintPrefixName(s, prefixName.c_str(), si);
+			latexPrintPrefixName(s, prefixName.c_str(), si, printSettings);
 		      s << "\\maudeLeftParen";
 		    }
-		  latexPrettyPrint(s, coloringInfo, d,
+		  latexPrettyPrint(s, printSettings, coloringInfo, d,
 				   PREFIX_GATHER, UNBOUNDED, 0, UNBOUNDED, 0,
 				   argRangeKnown);
 		  if (!moreArgs)

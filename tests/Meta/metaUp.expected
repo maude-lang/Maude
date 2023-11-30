@@ -536,10 +536,14 @@ eq 'metaParse['M:Module, 'Q:QidList, 'T:Type?] = 'metaParse['M:Module,
     'none.EmptyQidSet, 'Q:QidList, 'T:Type?] [none] .
 eq 'metaPrettyPrint['M:Module, 'T:Term] = 'metaPrettyPrint['M:Module,
     'none.EmptyQidSet, 'T:Term, '__['mixfix.PrintOption, '__['flat.PrintOption,
-    '__['format.PrintOption, '__['number.PrintOption, 'rat.PrintOption]]]]] [
-    none] .
+    '__['format.PrintOption, '__['number.PrintOption, 'rat.PrintOption]]]],
+    'none.EmptyQidSet] [none] .
 eq 'metaPrettyPrint['M:Module, 'T:Term, 'P:PrintOptionSet] = 'metaPrettyPrint[
-    'M:Module, 'none.EmptyQidSet, 'T:Term, 'P:PrintOptionSet] [none] .
+    'M:Module, 'none.EmptyQidSet, 'T:Term, 'P:PrintOptionSet,
+    'none.EmptyQidSet] [none] .
+eq 'metaPrettyPrint['M:Module, 'VS:VariableSet, 'T:Term, 'P:PrintOptionSet] =
+    'metaPrettyPrint['M:Module, 'VS:VariableSet, 'T:Term, 'P:PrintOptionSet,
+    'none.EmptyQidSet] [none] .
 eq 'metaVariantDisjointUnify['M:Module, 'U:UnificationProblem, 'TL:TermList,
     'Q:Qid, 'N:Nat] = 'metaVariantDisjointUnify['M:Module,
     'U:UnificationProblem, 'TL:TermList, 'Q:Qid, 'none.VariantOptionSet,

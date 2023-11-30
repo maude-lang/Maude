@@ -23,6 +23,7 @@
 //
 //      Implementation for class MetaLevelOpSymbol.
 //
+#include <sstream>
  
 //      utility stuff
 #include "macros.hh"

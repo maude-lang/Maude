@@ -56,6 +56,7 @@ public:
   Rope(char c);
   Rope(const char* cString);
   Rope(const char* cString, size_type n);
+  Rope(const string& str);
 
   ~Rope();
 

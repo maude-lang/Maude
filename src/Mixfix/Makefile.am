@@ -246,4 +246,5 @@ noinst_HEADERS = \
 	parameterDatabase.hh \
 	objectConstructorSymbol.hh \
 	statementTransformer.hh \
-	maudeLatexBuffer.hh
+	maudeLatexBuffer.hh \
+	printSettings.hh

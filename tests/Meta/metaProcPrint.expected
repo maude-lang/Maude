@@ -1,43 +1,43 @@
 ==========================================
 erewrite in PRINT-TEST : <> < me : User | term: upTerm(1/2), flags: mixfix >
     createInterpreter(interpreterManager, me, newProcess) .
-rewrites: 6
+rewrites: 7
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     's '0 '/ 's_^2 '`( '0 '`))
 ==========================================
 erewrite in PRINT-TEST : <> < me : User | term: upTerm(1/2), flags: number >
     createInterpreter(interpreterManager, me, newProcess) .
-rewrites: 6
+rewrites: 7
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     '_/_ '`( '1 '`, '2 '`))
 ==========================================
 erewrite in PRINT-TEST : <> < me : User | term: upTerm(1/2), flags: rat >
     createInterpreter(interpreterManager, me, newProcess) .
-rewrites: 6
+rewrites: 7
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     '1/2)
 ==========================================
 erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2), flags: rat
     > createInterpreter(interpreterManager, me, newProcess) .
-rewrites: 6
+rewrites: 7
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     '_+_ '`( 'X '`, '1/2 '`))
 ==========================================
 erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2), flags: (
     mixfix rat) > createInterpreter(interpreterManager, me, newProcess) .
-rewrites: 6
+rewrites: 7
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     'X '+ '1/2)
 ==========================================
 erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2), flags: (
     mixfix number) > createInterpreter(interpreterManager, me, newProcess) .
-rewrites: 6
+rewrites: 7
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     'X '+ '1 '/ '2)
 ==========================================
 erewrite in PRINT-TEST : <> < me : User | term: upTerm(X:Rat + 1/2), flags:
     mixfix > createInterpreter(interpreterManager, me, newProcess) .
-rewrites: 6
+rewrites: 7
 result Configuration: <> < me : User | none > printedTerm(me, interpreter(0),
     'X '+ 's '0 '/ 's_^2 '`( '0 '`))
 Bye.

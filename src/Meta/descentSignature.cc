@@ -56,7 +56,7 @@
   MACRO(metaLeastSort, 2)
   MACRO(metaCompleteName, 2)
   MACRO(metaParse, 4)
-  MACRO(metaPrettyPrint, 4)
+  MACRO(metaPrettyPrint, 5)
   MACRO(metaWellFormedModule, 1)
   MACRO(metaWellFormedTerm, 2)
   MACRO(metaGetKind, 2)
@@ -86,6 +86,7 @@
   MACRO(metaSrewrite, 5)
   MACRO(metaParseStrategy, 3)
   MACRO(metaPrettyPrintStrategy, 4)
+  MACRO(metaPrintToString, 5)
 //
 //	Legacy descent functions.
 //

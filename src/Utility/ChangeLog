@@ -1,3 +1,11 @@
+2023-11-21  Steven Eker  <eker@pup>
+
+	* rope.hh (class Rope): added decl for ctor from std::string
+
+	* rope.cc (Rope::Rope): added ctor from std::string
+
+===================================Maude154===================================
+
 2023-09-28  Steven Eker  <eker@pup>
 
 	* macros.hh: #include <typeinfo> 

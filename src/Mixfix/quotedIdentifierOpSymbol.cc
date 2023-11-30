@@ -339,14 +339,26 @@ QuotedIdentifierOpSymbol::printQid(DagNode* qid, bool& ansiActive, bool& needSpa
       {
 	char c = s[1];
 	if (Token::specialChar(c) && s[2] == '\0')
-	{
-	  //
-	  //	( ) [ ] { } , case
-	  //
-	  output += (s + 1);
-	  needSpace = (c != '(') && (c != '[') && (c != '{');
-	  return true;
-	}
+	  {
+	    //
+	    //	( ) [ ] { } , case
+	    //
+	    if (c == '(' || c == '[' || c != '{')
+	      {
+		if (needSpace)
+		  output += " ";
+		needSpace = false;
+	      }
+	    else
+	      {
+		//
+		//	No space before ) ] } , but space after unless following token doesn't need one.
+		//
+		needSpace = true;
+	      }
+	    output += (s + 1);
+	    return true;
+	  }
 	break;
       }
     case '\\':
