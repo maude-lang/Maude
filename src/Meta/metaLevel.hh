@@ -760,6 +760,8 @@ MetaLevel::downSearchType(DagNode* arg, SequenceSearch::SearchType& searchType)
 	searchType = SequenceSearch::ANY_STEPS;
       else if (qid == Token::encode("!"))
 	searchType = SequenceSearch::NORMAL_FORM;
+      else if (qid == Token::encode("#"))
+	searchType = SequenceSearch::CRITICAL_PAIR;
       else
 	return false;
       return true;

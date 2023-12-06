@@ -58,6 +58,7 @@ private:
   bool needToTryInitialState;
   bool reachingInitialStateOK;
   bool normalFormNeeded;
+  bool criticalPairNeeded;
   MatchSearchState* matchState;
   int stateNr;
 };

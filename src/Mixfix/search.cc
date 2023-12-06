@@ -45,6 +45,14 @@ Interpreter::checkSearchRestrictions(SearchKind searchKind,
     case FVU_NARROW:
      {
 	//
+	//	Narrowing does not support =># mode.
+	//
+	if (searchType == SequenceSearch::CRITICAL_PAIR)
+	  {
+	     IssueWarning(*target << ": =># mode is not supported for narrowing.");
+	     return false;
+	  }
+	//
 	//	Narrowing does not support conditions.
 	//
 	if (!condition.empty())
@@ -57,11 +65,12 @@ Interpreter::checkSearchRestrictions(SearchKind searchKind,
     case SMT_SEARCH:
       {
 	//
-	//	SMT search does not support =>! mode since states are symbolic.
+	//	SMT search does not support =>! or =># modes since states are symbolic.
 	//
-	if (searchType == SequenceSearch::NORMAL_FORM)
+	if (searchType == SequenceSearch::NORMAL_FORM ||
+            searchType == SequenceSearch::CRITICAL_PAIR)
 	  {
-	     IssueWarning(*target << ": =>! mode is not supported for searching modulo SMT.");
+	     IssueWarning(*target << ": =>! and =># modes are not supported for searching modulo SMT.");
 	     return false;
 	  }
 	//
@@ -146,7 +155,7 @@ Interpreter::search(const Vector<Token>& bubble,
 
   DagNode* subjectDag = makeDag(initial);
 
-  static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!" };
+  static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!", "=>#" };
   bool showCommand = getFlag(SHOW_COMMAND);
   if (showCommand)
     {

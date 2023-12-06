@@ -45,6 +45,7 @@
   MACRO(arrowPlus, "=>+")
   MACRO(arrowStar, "=>*")
   MACRO(arrowBang, "=>!")
+  MACRO(arrowAt, "=>#")
   MACRO(suchThat, "s.t.")
   MACRO(such, "such")
   MACRO(that, "that")

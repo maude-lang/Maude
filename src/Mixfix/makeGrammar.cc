@@ -149,6 +149,9 @@ MixfixModule::makeComplexProductions()
   rhs[0] = arrowBang;
   parser->insertProduction(SEARCH_CONNECTIVE, rhs, 0, emptyGather,
 			   MixfixParser::NOP, RewriteSequenceSearch::NORMAL_FORM);
+  rhs[0] = arrowAt;
+  parser->insertProduction(SEARCH_CONNECTIVE, rhs, 0, emptyGather,
+			   MixfixParser::NOP, RewriteSequenceSearch::CRITICAL_PAIR);
 
   rhs[0] = MATCH_PAIR;
   parser->insertProduction(MATCH_COMMAND, rhs, 0, gatherAny);

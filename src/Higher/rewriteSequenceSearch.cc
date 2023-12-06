@@ -58,6 +58,7 @@ RewriteSequenceSearch::RewriteSequenceSearch(RewritingContext* initial,
   needToTryInitialState = (searchType == ANY_STEPS);
   reachingInitialStateOK = (searchType == AT_LEAST_ONE_STEP || searchType == ONE_STEP);
   normalFormNeeded = (searchType == NORMAL_FORM);
+  criticalPairNeeded = (searchType == CRITICAL_PAIR);
   nextArc = NONE;
 }
 
@@ -119,7 +120,7 @@ RewriteSequenceSearch::findNextInterestingState()
       if (explore == firstDeeperNodeNr)
 	{
 	  ++exploreDepth;
-	  if (normalFormNeeded)
+	  if (normalFormNeeded || criticalPairNeeded)
 	    {
 	      if (maxDepth > 0 && exploreDepth > maxDepth)
 		break;
@@ -144,7 +145,7 @@ RewriteSequenceSearch::findNextInterestingState()
 	      if (exploreDepth == maxDepth)
 		break;  // no point looking for further arcs
 	    }
-	  else
+	  else if (!criticalPairNeeded)
 	    {
 	      if (nextStateNr == nrStates)  // new state reached
 		return nextStateNr;
@@ -166,6 +167,18 @@ RewriteSequenceSearch::findNextInterestingState()
 	  nextArc = NONE;
 	  return explore;
 	}
+      if (criticalPairNeeded && nextArc >= 2)
+	{
+          int nextState = getNextState(explore, 0);
+          for (int arc = 1; arc < nextArc; arc++)
+            {
+              if (nextState != getNextState(explore, arc))
+                {
+	          nextArc = NONE;
+                  return explore;
+                }
+            }
+        }
     }
 
   return NONE;

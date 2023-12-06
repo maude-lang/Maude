@@ -35,7 +35,8 @@ public:
     ONE_STEP,
     AT_LEAST_ONE_STEP,
     ANY_STEPS,
-    NORMAL_FORM
+    NORMAL_FORM,
+    CRITICAL_PAIR
   };
 };
 

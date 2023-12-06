@@ -36,6 +36,8 @@ MetaLevelOpSymbol::downSearchType(DagNode* arg, SequenceSearch::SearchType& sear
 	searchType = SequenceSearch::ANY_STEPS;
       else if (qid == Token::encode("!"))
 	searchType = SequenceSearch::NORMAL_FORM;
+      else if (qid == Token::encode("#"))
+	searchType = SequenceSearch::CRITICAL_PAIR;
       else
 	return false;
       return true;
@@ -186,6 +188,7 @@ MetaLevelOpSymbol::makeSMT_RewriteSequenceSearch(MetaModule* m,
   if (metaLevel->isNat(metaVarNumber) &&
       downSearchType(subject->getArgument(4), searchType) &&
       searchType != SequenceSearch::NORMAL_FORM &&
+      searchType != SequenceSearch::CRITICAL_PAIR &&
       metaLevel->downBound(subject->getArgument(6), maxDepth))
     {
       Term* startTerm;
