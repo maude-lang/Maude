@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version alpha154.
+***	Version alpha155.
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -1846,6 +1846,7 @@ fmod META-MODULE is
   op prec : Nat -> Attr [ctor] .
   op gather : QidList -> Attr [ctor] .
   op format : QidList -> Attr [ctor] .
+  op latex : String -> Attr [ctor] .
   op ctor : -> Attr [ctor] .
   op config : -> Attr [ctor] .
   op object : -> Attr [ctor] .
@@ -2521,6 +2522,7 @@ fmod META-LEVEL is
         op-hook precSymbol		(prec : Nat ~> Attr)
         op-hook gatherSymbol		(gather : QidList ~> Attr)
         op-hook formatSymbol		(format : QidList ~> Attr)
+        op-hook latexSymbol		(latex : String ~> Attr)
         op-hook ctorSymbol		(ctor : ~> Attr)
         op-hook frozenSymbol		(frozen : NeNatList ~> Attr)
         op-hook polySymbol		(poly : NeNatList ~> Attr)

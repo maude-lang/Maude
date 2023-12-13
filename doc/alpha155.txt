@@ -1,0 +1,144 @@
+Alpha 155 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug where we were using the wrong format control sequence for the last
+token of the mixfix syntax for an operator in the LaTeX output. Here the
+final d was shown in magenta rather than yellow in the LaTeX output.
+
+fmod FOO is
+  sort Foo .
+  op a_b c_d : Foo Foo -> Foo [format (r g b c m y o)] .
+  ops e 1 : -> Foo .
+  eq a e b c e d = a 1 b c 1 d .
+endfm
+
+red a e b c e d .
+
+show desugared .
+
+(2) A bug where there was no space between the format and metadata attributes
+in LaTeX output, illustrated by
+
+fmod FOO is
+  sort Foo .
+  op a : -> Foo [format (r o) metadata "my const"] .
+endfm
+
+show desugared .
+
+(3) A bug where color automatically generated from reduced status (dags) produced
+bad LaTeX.
+
+fmod FOO is
+  sort Foo .
+  op sum : Foo Foo Foo -> Foo .
+  ops a b c : -> Foo .
+endfm
+
+set print color on .
+
+red sum(a, b, c) .
+
+(4) A bug where the format attribute wasn't supported for structured constants in
+LaTeX output; illustrated by:
+
+mod FOO{X :: TRIV} is
+  sort Foo .
+  op foo{X} : -> Foo [format (r g b y o)] .
+  op bar{X} : -> Foo [format (n n++i ni n--i n)] .
+  rl foo{X} => bar{X} .
+endm
+
+show desugared .
+red foo{X} .
+rew foo{X} .
+
+(5) A bug where the indent (i) and space (s) format commands were ignored at the
+start of a line in LaTeX output. For example:
+
+red in META-LEVEL : upModule('NAT, false) .
+
+New feature
+============
+
+The latex attribute which has existed in Maude's syntax since 3/1/00 is finally
+supported. The syntax is:
+  latex ( <latex code> )
+for example:
+  op integral : Expr Expr Expr Var -> Expr [latex (\int_{#1}^{#2}{#3}\,d{#4})] .
+
+Note that the latex code is enclosed by parentheses rather than quotes. This is
+a deliberate decision, to avoid the need to use the string backslash escape convention
+to write backslash since this is very common in latex code. Thus you write \sum rather
+than \\sum
+
+A consequence of this is that the parentheses outside of braces in the latex code must
+balance. However parentheses and braces appearing directly after any of
+  \ \left \right \big \Big \bigg \Bigg \bigl \Bigl \biggl \Bigg \bigr \Bigr \biggr \Biggr
+are considered part of a command and don't count for deciding where the LaTeX code ends.
+If you need to have a closing ) that would look like the end of the LaTeX code you
+can always enclose the code in braces; for example:
+  op p : Real Real -> Pair [latex ({)#1,#2(})] .
+
+Argument positions are indicated using the #n notation borrowed from the LaTeX \newcommand
+command. Arguments can be omitted, duplicated and appear out-of-order, and unlike the
+\newcommand, do not stop at #9. However Maude will complain if you specify #n for an
+operator with fewer than n arguments.
+
+The LaTeX code is used for printing terms (e.g. in statements) and dags (e.g. in results)
+but not bare operators themselves (e.g. in declarations and renaming for the operator).
+It is always used in inline math mode, and it should not attempt to typeset its arguments
+in any other mode, but mode switching for tokens, for example \mbox{such that}, is ok.
+
+There is no scaling of parentheses, brackets or braces surrounding large LaTeX
+constructs because Maude has no idea how tall such constructs are and the automatic
+scaling commands such as \left( and \right) do not allow line breaking between them,
+which is typically required for large terms.
+
+When printing terms and dags, the LaTeX code for operators is blindly passed through
+into the LaTeX log. Furthermore no (...).sort disambiguations or parentheses for grouping 
+are added outside or inside of an operator with a latex attribute since it is assumed that
+the user's LaTeX representation fully disambiguates any ambiguities that arise in the text
+version. Associative operators with a latex attribute, appearing on top of a flattened
+argument list are printed as if the argument list was nested in right associative form.
+
+When you rename an operator with a latex attribute, the attribute is assumed to refer
+to the old name and is discarded:
+
+fmod FOO is
+  sort Real .
+  op _+_ : Real Real -> Real [assoc comm latex (#1 \oplus #2)] .
+  ops 0 1 2 3 4 : -> Real .
+endfm
+
+red 0 + 1 + 2 + 3 + 4 .
+
+fmod BAR is
+  inc FOO * (op _+_ to _*_) .
+endfm
+
+red 0 * 1 * 2 * 3 * 4 .
+
+However a new latex attribute can be specified in the renaming:
+
+fmod BAZ is
+  inc FOO * (op _+_ to _*_ [latex (#1 \otimes #2)]) .
+endfm
+
+red 0 * 1 * 2 * 3 * 4 .
+
+There isn't much use for the latex attribute at the metalevel, but to allow modules
+containing latex attributes to be correctly lifted to the metalevel the latex attribute
+is represented by:
+  op latex : String -> Attr [ctor] .
+Here the meta version of LaTeX code is just the code stored in a string and the usual
+string escape sequences are used to display the string.
+
+Other change
+=============
+
+The CVC4 bindings now work with the latest version of CVC4. Change suggested by
+Dwight Guth <dwight.guth@runtimeverification.com>.

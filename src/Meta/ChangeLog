@@ -1,3 +1,40 @@
+2023-12-12  Steven Eker  <eker@pup>
+
+	* metaDownRenamings.cc (MetaLevel::downRenamingAttribute):
+	handle latexSymbol
+
+	* metaDownOps.cc (MetaLevel::downAttr): adde support for latex;
+	use Token::ropeToCode() for metadata
+	(MetaLevel::downOpDecl): pass ai.latex to addPolymorph() and
+	m->addOpDeclaration()
+
+	* metaLevel.hh (class MetaLevel): added latex field to
+	struct AttributeInfo; added explicit intializers to struct
+	AttributeInfo and StatementAttributeInfo deleted ctor decls
+	(MetaLevel::AttributeInfo::AttributeInfo): deleted
+	(MetaLevel::StatementAttributeInfo::StatementAttributeInfo):
+	deleted
+
+	* metaUpModule.cc (MetaLevel::upRenamingAttributeSet):
+	handle latex attribute
+
+2023-12-11  Steven Eker  <eker@pup>
+
+	* metaUpModule.cc (MetaLevel::upOpDecl): support latex
+	attribute
+	(MetaLevel::upPolymorphDecl): handle latex attribute
+
+2023-12-05  Steven Eker  <eker@pup>
+
+	* metaDownOps.cc (MetaLevel::downOpDecl): pass latexMacro
+	= NONE to addPolymorph() and addOpDeclaration()
+
+2023-11-30  Steven Eker  <eker@pup>
+
+	* metaLevelSignature.cc: added latexSymbol
+
+===================================Maude155===========================================
+
 2023-11-29  Steven Eker  <eker@pup>
 
 	* descentFunctions.cc (MetaLevelOpSymbol::metaPrintToString):

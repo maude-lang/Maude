@@ -391,6 +391,12 @@ SyntacticPreModule::latexAttributes(ostream& s, const OpDef& opDef)
       space = "\\maudeSpace";
       MixfixModule::latexPrintFormat(s, opDef.format);
     }
+  if (st.hasFlag(SymbolType::LATEX))
+    {
+      s << space;
+      space = "\\maudeSpace";
+      MixfixModule::latexPrintLatexMacro(s, opDef.latexMacro);
+    }
   if (opDef.metadata != NONE)
     {
       s << space << "\\maudeKeyword{metadata}\\maudeSpace\\maudeString{" << Token::name(opDef.metadata) << "}";

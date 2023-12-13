@@ -448,6 +448,7 @@ SyntacticPreModule::processClassOps()
 					      dummyVec,
 					      dummyVec,
 					      NONE,
+					      NONE,
 					      dummyBool);
 
 	  for (AttributePair& ap : c.attributes)
@@ -465,15 +466,16 @@ SyntacticPreModule::processClassOps()
 		  Token opName;
 		  opName.tokenize(name.c_str(), ap.attributeName.lineNumber());
 		  Symbol* attrSymbol = flatModule->addOpDeclaration(opName,
-								      domainAndRange,
-								      attributeSymbolType,
-								      dummyVec,
-								      dummySet,
-								      DEFAULT,
-								      attributeGather,
-								      dummyVec,
-								      NONE,
-								      dummyBool);
+								    domainAndRange,
+								    attributeSymbolType,
+								    dummyVec,
+								    dummySet,
+								    DEFAULT,
+								    attributeGather,
+								    dummyVec,
+								    NONE,
+								    NONE,
+								    dummyBool);
 		  attributeSymbols.insert(attrSymbol);
 		  localClasses[c.name.code()].insert(attrSymbol);
 		}

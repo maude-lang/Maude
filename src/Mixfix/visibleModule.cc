@@ -503,7 +503,8 @@ VisibleModule::showPolymorphAttributes(ostream& s, int index) const
 	}
       s << ')';
     }
-
+  if (st.hasFlag(SymbolType::LATEX))
+    s << " latex (" << Token::name(getPolymorphLatexMacro(index)) << ")";
   int metadata = getPolymorphMetadata(index);
   if (metadata != NONE)
     s << " metadata " << Token::name(metadata);
@@ -828,6 +829,11 @@ VisibleModule::showAttributes(ostream& s, Symbol* symbol, int opDeclIndex) const
 	  s << Token::name(format[i]);
 	}
       s << ')';
+    }
+  if (st.hasFlag(SymbolType::LATEX))
+    {
+      s << space << "latex (" << Token::name(getLatexMacro(symbol)) << ")";
+      space = " ";
     }
   if (metadata != NONE)
     {

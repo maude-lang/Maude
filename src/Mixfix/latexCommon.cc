@@ -23,13 +23,13 @@
 //
 //	Common functionality for LaTeX pretty printing.
 //
-const char* MixfixModule::latexRed = "{\\color{red}";
-const char* MixfixModule::latexGreen = "{\\color{green}";
-const char* MixfixModule::latexBlue = "{\\color{blue}";
-const char* MixfixModule::latexCyan = "{\\color{cyan}";
-const char* MixfixModule::latexMagenta = "{\\color{magenta}";
-const char* MixfixModule::latexYellow = "{\\color{yellow}";
-const char* MixfixModule::latexResetColor = "}";
+const char* MixfixModule::latexRed = "\\color{red}";
+const char* MixfixModule::latexGreen = "\\color{green}";
+const char* MixfixModule::latexBlue = "\\color{blue}";
+const char* MixfixModule::latexCyan = "\\color{cyan}";
+const char* MixfixModule::latexMagenta = "\\color{magenta}";
+const char* MixfixModule::latexYellow = "\\color{yellow}";
+const char* MixfixModule::latexResetColor = "\\color{black}";
 
 string
 MixfixModule::latexStructuredName(const Vector<int>& codes, const Module* m)
@@ -159,6 +159,50 @@ MixfixModule::latexPrettyOp(int code)
   return "\\maudeSymbolic{" + Token::latexName(pretty)  + "}";
 }
 
+void
+MixfixModule::latexPrintStructuredConstant(ostream& s, Symbol* symbol, const char* color, const PrintSettings& printSettings) const
+{
+  cerr << "symbol = " << symbol << "  color = " << color << endl;
+  const SymbolInfo& si = symbolInfo[symbol->getIndexWithinModule()];
+  if (printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && (si.format.length() > 0))
+    {
+      //
+      //	We want to do the special fonts for a structured constant but we also want
+      //	to support the format commands.
+      //
+      int nrTokens = si.mixfixSyntax.size();
+      for (int i = 0;; ++i)
+	{
+	  (void) latexFancySpace(s, si.format[i], printSettings);
+	  if (i == nrTokens)
+	    break;
+	  if (color != nullptr)
+	    s << color;
+	  int token = si.mixfixSyntax[i];
+	  if (token == leftBrace)
+	    s <<  "\\maudeLeftBrace";
+	  else if (token == rightBrace)
+	    s <<  "\\maudeRightBrace";
+	  else if (token == comma)
+	    s <<  "\\maudeComma";
+	  else
+	    {
+	      if (i == 0)
+		s << Token::latexIdentifier(token);
+	      else
+		{
+		  s << ((safeCastNonNull<const ImportModule*>(this)->findParameterIndex(token) == NONE) ? "\\maudeView{" : "\\maudeParameter{");
+		  s << Token::latexName(token) << "}";
+		}
+	    }
+	  if (color != nullptr)
+	    s << latexResetColor;
+	}
+    }
+  else
+    s << latexStructuredConstant(symbol->id());
+}
+
 bool
 MixfixModule::latexFancySpace(ostream& s, int spaceToken, const PrintSettings& printSettings)
 {
@@ -191,13 +235,13 @@ MixfixModule::latexFancySpace(ostream& s, int spaceToken, const PrintSettings& p
 	  }
 	case 't':
 	  {
-	    s << "\\;";  // no good way to do a tab without a tabbing environment - do a thick space
+	    s << "\\maudeIdent";  // no good way to do a tab without a tabbing environment - do a thick space
 	    space = true;
 	    break;
 	  }
 	case 's':
 	  {
-	    s << "\\:";  // math mode medium space
+	    s << "\\maudeHardSpace";  // so it works at the start of a line
 	    space = true;
 	    break;
 	  }
@@ -206,7 +250,7 @@ MixfixModule::latexFancySpace(ostream& s, int spaceToken, const PrintSettings& p
 	    if (globalIndent > 0)
 	      {
 		for (int i = 0; i < globalIndent; i++)
-		  s << "\\:";
+		  s << "\\maudeHardSpace";
 		space = true;
 	      }
 	    break;
@@ -388,7 +432,7 @@ MixfixModule::latexPrintTails(ostream& s,
 			      const PrintSettings& printSettings)
 {
   //
-  //	We output nrTails copies of the user syntax from  pos to si.mixfixSyntax.size() - 1
+  //	We output nrTails copies of the user syntax from pos to si.mixfixSyntax.size() - 1
   //	Usually nrTails will be 1 unless we are unflattening a flattened associative operator.
   //
   bool previousOpenOrComma = false;
@@ -405,7 +449,7 @@ MixfixModule::latexPrintTails(ostream& s,
 	  bool open = token == leftParen || token == leftBracket || token == leftBrace;
 	  bool close = token == rightParen || token == rightBracket || token == rightBrace;
 	  bool isComma = token == comma;
-	  if (!(hasFormat && latexFancySpace(s, si.format[pos - 1], printSettings)))
+	  if (!(hasFormat && latexFancySpace(s, si.format[j], printSettings)))
 	    {
 	      //
 	      //	format didn't produce a space; do we need one?
@@ -483,6 +527,13 @@ MixfixModule::latexPrintFormat(ostream& s, const Vector<int>& format)
     }
   s << "\\maudeRightParen";
 }
+
+void
+MixfixModule::latexPrintLatexMacro(ostream& s, int latexMacro)
+{
+  s << "\\maudeKeyword{latex}\\maudeSpace\\maudeLeftParen\\maudeSymbolic{" << Token::latexName(latexMacro) << "}\\maudeRightParen";
+}
+
 
 string
 MixfixModule::latexTokenVector(const Vector<Token>& tokens, Index first, Index last)

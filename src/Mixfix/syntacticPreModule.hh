@@ -143,20 +143,18 @@ private:
 
   struct OpDef
   {
-    OpDef();
-
     Vector<Type> types;
     Vector<Token> identity;
     Vector<Hook> special;
     Vector<int> strategy;
     NatSet frozen;
     NatSet polyArgs;
-    int prec;
+    int latexMacro = NONE;
+    int prec = DEFAULT;
     Vector<int> gather;
     Vector<int> format;
-    int metadata;
+    int metadata = NONE;
     SymbolType symbolType;
-    string latexMacro;
     //
     //	Filled out from types after connected components are determined.
     //
@@ -197,7 +195,6 @@ private:
     //	Filled out during processing.
     //
     Sort* classSort;
-    //Symbol* classSymbol; // do we need to store this?
   };
   //
   //	For omod statement transformation.

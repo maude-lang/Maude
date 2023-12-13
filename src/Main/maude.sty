@@ -18,10 +18,10 @@
 %    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 %
 %	Latex package for use with the -latex-log= feature.
-%	Version Alpha153.
+%	Version alpha155.
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{maude}[2023/11/06 Package for Maude logs]
+\ProvidesPackage{maude}[2023/12/12 Package for Maude logs]
 \RequirePackage{amssymb,extarrows,longtable,tabto,xcolor,verbatim,alltt}
 \RequirePackage[T1]{fontenc}
 %
@@ -30,7 +30,8 @@
 \newcommand{\maudeIndent}{\hspace*{1em}}  % for module contents
 \newcommand{\maudeBigIndent}{\hspace*{3em}}  % for data in show
 \newcommand{\maudeBannerIndent}{\hspace*{5em}}  % for banner
-\newcommand{\maudeInterwordSpace}{\hskip0.3em}
+\newcommand{\maudeInterwordSpace}{\hspace{0.3em}}
+\newcommand{\maudeHardSpace}{\hspace*{0.5em}} % doesn't disappear at the start of a new line
 \newcommand{\maudeAllowLineBreak}{\linebreak[0]}
 %
 %	Font choices.

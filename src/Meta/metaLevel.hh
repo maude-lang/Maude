@@ -413,27 +413,24 @@ private:
 
   struct AttributeInfo
   {
-    AttributeInfo();
-    
     SymbolType symbolType;
     Vector<int> strategy;
     NatSet frozen;
     NatSet polyArgs;
-    int prec;
+    int prec = DEFAULT;
     Vector<int> gather;
     Vector<int> format;
-    int metadata;
-    DagNode* identity;
-    DagNode* fixUpInfo;
+    int latex = NONE;
+    int metadata = NONE;
+    DagNode* identity = nullptr;
+    DagNode* fixUpInfo = nullptr;
   };
 
   struct StatementAttributeInfo
   {
-    StatementAttributeInfo();
-
     FlagSet flags;
-    int label;
-    int metadata;
+    int label = NONE;
+    int metadata = NONE;
     Vector<int> printNames;
     Vector<Sort*> printSorts;
   };
@@ -674,22 +671,6 @@ inline bool
 MetaLevel::purge()
 {
   return cache.purge<T>();
-}
-
-inline
-MetaLevel::AttributeInfo::AttributeInfo()
-{
-  prec = DEFAULT;
-  metadata = NONE;
-  identity = 0;
-  fixUpInfo = 0;
-}
-
-inline
-MetaLevel::StatementAttributeInfo::StatementAttributeInfo()
-{
-  label = NONE;
-  metadata = NONE;
 }
 
 inline DagNode*

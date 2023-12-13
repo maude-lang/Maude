@@ -341,7 +341,7 @@ SyntacticPreModule::processOps()
       OpDef& opDef = opDefs[opDecl.defIndex];
       //
       //	Must clear MSG_STATEMENT attribute before passing it to flatModule otherwise we
-      //	could have operators that should polymorphic overload but fail because one
+      //	could have operators that should subsort polymorphic overload but fail because one
       //	was declared by a message statement while the other was declared with a message
       //	attribute.
       //
@@ -357,6 +357,7 @@ SyntacticPreModule::processOps()
 							   opDef.prec,
 							   opDef.gather,
 							   opDef.format,
+							   opDef.latexMacro,
 							   opDef.metadata);
 	  opDecl.originator = true;  // HACK
 	}
@@ -376,6 +377,7 @@ SyntacticPreModule::processOps()
 						       opDef.prec,
 						       opDef.gather,
 						       opDef.format,
+						       opDef.latexMacro,
 						       opDef.metadata,
 						       opDecl.originator);
 	  if (flatModule->parameterDeclared(opDecl.symbol))

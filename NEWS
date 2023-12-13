@@ -1,4 +1,16 @@
-Overview of Changes in alpha154
+Overview of Changes in alpha155 (2023-12-12)
+============================================
+* fixed bug in latex output for format attribute
+* fixed missing space in latex output between format and
+metadata attributes
+* fixed bad latex for dags with print color on
+* latex attribute supported
+* fixed bug where latex for structured constants didn't
+support the format attribute
+* fixed bug where format s and i commands didn't work at the
+start of a latex line
+
+Overview of Changes in alpha154 (2023-11-30)
 ============================================
 * conventions for printing spaces around unparsed tokens made
 uniform
@@ -12,7 +24,7 @@ argument lists via an extra argument
 * printTerm() message supports concealed argument lists via an
 extra argument
 * concealed argument lists support for printing terms in modules
-* fixed bug where color for terms in modules produces bad LaTeX
+* fixed bug where color for terms in modules produced bad LaTeX
 * fixed bug in LaTeX for disambiguation of iter operators
 
 Overview of Changes in alpha153 (2023-11-07)

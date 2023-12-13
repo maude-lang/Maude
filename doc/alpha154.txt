@@ -112,4 +112,3 @@ For backward compatibility there is also:
 (5) Printing of terms (as opposed to dags) such as in modules, now supports
   set print conceal on .
 for both text and LaTeX output. Previously this only worked for dags.
-

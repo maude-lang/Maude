@@ -733,7 +733,14 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
   if (st.hasFlag(SymbolType::FORMAT))
     {
       s << space;
+      space = "\\maudeSpace";
       latexPrintFormat(s, getFormat(symbol));
+    }
+  if (st.hasFlag(SymbolType::LATEX))
+    {
+      s << space;
+      space = "\\maudeSpace";
+      MixfixModule::latexPrintLatexMacro(s, getLatexMacro(symbol));
     }
   if (metadata != NONE)
     {
@@ -918,6 +925,11 @@ VisibleModule::latexShowPolymorphAttributes(ostream& s, int index)
     {
       s << "\\maudeSpace";
       latexPrintFormat(s, getPolymorphFormat(index));
+    }
+  if (st.hasFlag(SymbolType::LATEX))
+    {
+      s << "\\maudeSpace";
+      latexPrintLatexMacro(s, getPolymorphLatexMacro(index));
     }
   int metadata = getPolymorphMetadata(index);
   if (metadata != NONE)

@@ -62,7 +62,7 @@ VariableGenerator::VariableGenerator(const SMT_Info& smtInfo)
   smtEngine = new SmtEngine(exprManager);
   //cout << "created engine " << smtEngine << endl;
 
-  smtEngine->setOption("rewrite-divk", SExpr(true));
+  //smtEngine->setOption("rewrite-divk", SExpr(true)); // option deleted in latest version of CVC4
   smtEngine->push();  // make a new context so we have a clean context to pop() back to
   pushCount = 0;
 }

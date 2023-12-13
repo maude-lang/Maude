@@ -281,12 +281,6 @@ SyntacticPreModule::addImport(Token modeToken, ModuleExpression* expr)
   PreModule::addImport(lineNumber, mode, expr);
 }
 
-SyntacticPreModule::OpDef::OpDef()
-{
-  prec = DEFAULT;
-  metadata = NONE;
-}
-
 void
 SyntacticPreModule::addStatement(const Vector<Token>& statement)
 {

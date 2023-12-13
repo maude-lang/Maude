@@ -386,8 +386,19 @@ MixfixModule::latexPrettyPrint(ostream& s,
 
  latexPrefix(s, needDisambig);
  bool printConceal = printSettings.concealedSymbol(symbol->id());
+ if (si.symbolType.hasFlag(SymbolType::LATEX) && !printConceal)
+   {
+     //
+     //	We don't put parentheses or sort disambiguation around user's latex code.
+     //	Nor do we support automatic color based on symbol properties because this would affect subterms.
+     //	It's completely the user's responsibility.
+     //
+     ArgumentIterator a(*term);
+     latexAttributePrint(s, printSettings, symbol, a);
+       return;
+   }
  if (nrArgs == 0 && Token::auxProperty(symbol->id()) == Token::AUX_STRUCTURED_SORT)
-   s << latexStructuredConstant(symbol->id());
+   latexPrintStructuredConstant(s, symbol, color, printSettings);
  else if ((printSettings.getPrintFlag(PrintSettings::PRINT_MIXFIX) && !si.mixfixSyntax.empty() && !printConceal) ||
 	  basicType == SymbolType::SORT_TEST)
    {
@@ -507,4 +518,75 @@ MixfixModule::latexPrettyPrint(ostream& s,
        }
    }
  latexSuffix(s, term, needDisambig);
+}
+
+void
+MixfixModule::latexAttributePrint(ostream& s,
+				  const PrintSettings& printSettings,
+				  Symbol* symbol,
+				  ArgumentIterator& a)
+{
+  const SymbolInfo& si = symbolInfo[symbol->getIndexWithinModule()];
+  if (si.symbolType.hasFlag(SymbolType::ASSOC))
+    {
+      //
+      //	We need to convert flattened form in to right associative form on-the-fly.
+      //
+      Term* firstArg = a.argument();
+      a.next();
+      if (a.valid())
+        {
+	  //
+	  //	Traverse latex macro.
+	  //    Call latexPrettyPrint(s, printSettings, firstArg) for occurrences of #1
+	  //	Recursive call latexAttributePrint(s, printSettings, s, a) for occurrences of #2
+	  //
+	  for (int i : si.latexMacroUnpacked)
+	    {
+	      if (i >= 0)
+		s << static_cast<char>(i);
+	      else
+		{
+		  if (i == -1)
+		    {
+		      //
+		      //	First argument.
+		      //
+		      latexPrettyPrint(s, printSettings, firstArg, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, true);  // optimistic
+		    }
+		  else
+		    {
+		      //
+		      //	Second argument; make a recursive call to deal with the rest of the arguments.
+		      //
+		      Assert(i == -2, "bad argument number");
+		      latexAttributePrint(s, printSettings, symbol, a);
+		    }
+		}
+	    }
+	}
+      else
+	{
+	  //
+	  //	Final argument, symbol not present.
+	  //
+	  latexPrettyPrint(s, printSettings, firstArg, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, true);  // optimistic
+	  
+	}
+    }
+  else
+    {
+      Vector<Term*> args;
+      for (; a.valid(); a.next())
+	args.push_back(a.argument());
+      for (int i : si.latexMacroUnpacked)
+	{
+	  if (i >= 0)
+	    s << static_cast<char>(i);
+	  else
+	    {
+	      latexPrettyPrint(s, printSettings, args[-1 - i], UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, true);  // optimistic
+	    }
+	}
+    }
 }

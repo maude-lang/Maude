@@ -126,7 +126,10 @@ Renaming::latexRenaming(const char* sep,
      //
      //	If we have any attributes in target, print them inside []s.
      //
-     if (om->second.prec >= MixfixModule::MIN_PREC || !om->second.gather.empty() || !om->second.format.empty())
+     if (om->second.prec >= MixfixModule::MIN_PREC ||
+	 !om->second.gather.empty() ||
+	 !om->second.format.empty() ||
+	 om->second.latexMacro != NONE)
        {
 	 sep = "\\maudeSpace\\maudeLeftBracket";
 	 if (om->second.prec >= MixfixModule::MIN_PREC)
@@ -178,7 +181,16 @@ Renaming::latexRenaming(const char* sep,
 		 result += "}";
 	       }
 	     result += "\\maudeRightParen";
+	     sep = "\\maudeSpace";
 	   }
+	 if (om->second.latexMacro != NONE)
+	    {
+	      result += sep;
+	      result += "\\maudeKeyword{latex}\\maudeSpace\\maudeLeftParen\\maudeSymbolic{";
+	      result += Token::latexName(om->second.latexMacro);
+	      result += "}\\maudeRightParen";
+	      sep = "\\maudeSpace";
+	    }
 	 result += "\\maudeRightBracket";
        }
      sep = sep2;

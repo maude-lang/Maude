@@ -123,6 +123,7 @@ MetaLevel::downOpDecl(DagNode* metaOpDecl, MetaModule* m)
 						   ai.prec,
 						   ai.gather,
 						   ai.format,
+						   ai.latex,
 						   ai.metadata);
 	      m->addComplexSymbol(POLYMORPH, polymorphIndex, ai.identity, ai.fixUpInfo, domainAndRange);
 	    }
@@ -147,6 +148,7 @@ MetaLevel::downOpDecl(DagNode* metaOpDecl, MetaModule* m)
 						       ai.prec,
 						       ai.gather,
 						       ai.format,
+						       ai.latex,
 						       ai.metadata,
 						       originator);
 		  if (m->parameterDeclared(symbol))
@@ -446,6 +448,15 @@ MetaLevel::downAttr(DagNode* metaAttr, AttributeInfo& ai)
 	  ai.polyArgs.insert(argPos);
 	}
     }
+  else if (ma == latexSymbol)
+    {
+      if (ai.latex != NONE)
+	return false;
+      DagNode* latexStr = safeCast(FreeDagNode*, metaAttr)->getArgument(0);
+      if (latexStr->symbol() != stringSymbol)
+	return false;
+      ai.latex = Token::ropeToCode(safeCastNonNull<StringDagNode*>(latexStr)->getValue());
+    }
   else if (ma == metadataSymbol)
     {
       if (ai.metadata != NONE)
@@ -453,9 +464,7 @@ MetaLevel::downAttr(DagNode* metaAttr, AttributeInfo& ai)
       DagNode* metaStr = safeCast(FreeDagNode*, metaAttr)->getArgument(0);
       if (metaStr->symbol() != stringSymbol)
 	return false;
-      string str;
-      Token::ropeToString(safeCast(StringDagNode*, metaStr)->getValue(), str);
-      ai.metadata = Token::encode(str.c_str());
+      ai.metadata = Token::ropeToCode(safeCastNonNull<StringDagNode*>(metaStr)->getValue());
     }
   else if (ma == specialSymbol)
     {

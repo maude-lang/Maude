@@ -440,11 +440,27 @@ MixfixModule::latexPrettyPrint(ostream& s,
 	coloringInfo.reducedDirectlyAbove;
     }
 
-  if (needDisambig)
-    s << "\\maudeLeftParen";
   bool printConceal = printSettings.concealedSymbol(symbol->id());
+  if (si.symbolType.hasFlag(SymbolType::LATEX) && !printConceal)
+    {
+      //
+      //	We don't put parentheses or sort disambiguation around user's latex code.
+      //
+      if (color != 0)
+	s << color;
+      DagArgumentIterator a(*dagNode);
+      latexAttributePrint(s, printSettings, coloringInfo, symbol, a);
+      if (color != 0)
+	s << latexResetColor;
+      return;
+    }
+  //
+  //	We handle disambiguation, but not color with latexPrefix()/latexSuffix().
+  //
+  latexPrefix(s, needDisambig);
   if (nrArgs == 0 && Token::auxProperty(symbol->id()) == Token::AUX_STRUCTURED_SORT)
-    s << latexStructuredConstant(symbol->id());
+    latexPrintStructuredConstant(s, symbol, color, printSettings);
+    //s << latexStructuredConstant(symbol->id());  // FIXME: need to handle color and format
   else if ((printSettings.getPrintFlag(PrintSettings::PRINT_MIXFIX) && !si.mixfixSyntax.empty() && !printConceal) ||
 	   (basicType == SymbolType::SORT_TEST))
     {
@@ -521,9 +537,10 @@ MixfixModule::latexPrettyPrint(ostream& s,
       //
       string prefixName = Token::latexIdentifier(symbol->id());
       if (color != 0)
-      	s << color << prefixName << latexResetColor;
-      else
-      	latexPrintPrefixName(s, prefixName.c_str(), si, printSettings);
+      	s << color;
+      latexPrintPrefixName(s, prefixName.c_str(), si, printSettings);
+      if (color != 0)
+	s << latexResetColor;
       DagArgumentIterator a(*dagNode);
       if (a.valid())
 	{
@@ -565,5 +582,80 @@ MixfixModule::latexPrettyPrint(ostream& s,
 	    }
 	}
     }
-  latexSuffix(s, dagNode, needDisambig, color);
+  latexSuffix(s, dagNode, needDisambig);
+}
+
+void
+MixfixModule::latexAttributePrint(ostream& s,
+				  const PrintSettings& printSettings,
+				  ColoringInfo& coloringInfo,
+				  Symbol* symbol,
+				  DagArgumentIterator& a)
+{
+  const SymbolInfo& si = symbolInfo[symbol->getIndexWithinModule()];
+  if (si.symbolType.hasFlag(SymbolType::ASSOC))
+    {
+      //
+      //	We need to convert flattened form in to right associative form on-the-fly.
+      //
+      DagNode* firstArg = a.argument();
+      a.next();
+      if (a.valid())
+        {
+	  //
+	  //	Traverse latex macro.
+	  //    Call latexPrettyPrint(s, printSettings, firstArg) for occurrences of #1
+	  //	Recursive call latexAttributePrint(s, printSettings, s, a) for occurrences of #2
+	  //
+	  for (int i : si.latexMacroUnpacked)
+	    {
+	      if (i >= 0)
+		s << static_cast<char>(i);
+	      else
+		{
+		  if (i == -1)
+		    {
+		      //
+		      //	First argument.
+		      //
+		      latexPrettyPrint(s, printSettings, coloringInfo, firstArg,
+				       UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, true);  // optimistic
+		    }
+		  else
+		    {
+		      //
+		      //	Second argument; make a recursive call to deal with the rest of the arguments.
+		      //
+		      Assert(i == -2, "bad argument number");
+		      latexAttributePrint(s, printSettings, coloringInfo, symbol, a);
+		    }
+		}
+	    }
+	}
+      else
+	{
+	  //
+	  //	Final argument, symbol not present.
+	  //
+	  latexPrettyPrint(s, printSettings, coloringInfo, firstArg,
+			   UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, true);  // optimistic
+	  
+	}
+    }
+  else
+    {
+      Vector<DagNode*> args;
+      for (; a.valid(); a.next())
+	args.push_back(a.argument());
+      for (int i : si.latexMacroUnpacked)
+	{
+	  if (i >= 0)
+	    s << static_cast<char>(i);
+	  else
+	    {
+	      latexPrettyPrint(s, printSettings, coloringInfo, args[-1 - i],
+			       UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, true);  // optimistic
+	    }
+	}
+    }
 }

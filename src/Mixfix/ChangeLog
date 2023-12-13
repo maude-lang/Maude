@@ -1,3 +1,175 @@
+2023-12-12  Steven Eker  <eker@pup>
+
+	* lexer.ll: support big bracket commands in LATEX_MODE
+
+	* latexCommon.cc (MixfixModule::latexFancySpace): replace
+	\: with \maudeHardSpace and \; with \maudeIndent so they
+	work at the start of a line
+
+2023-12-11  Steven Eker  <eker@pup>
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): use
+	latexPrintStructuredConstant()
+
+	* latexCommon.cc: don't use outer braces for color changes
+	to avoid messing up user's latex (such as \newline which
+	doesn't work inside braces in math mode)
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint): use
+	latexPrintStructuredConstant()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexPrintStructuredConstant()
+
+	* latexCommon.cc (latexPrintStructuredConstant): added
+
+2023-12-08  Steven Eker  <eker@pup>
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): use
+	latexAttributePrint()
+	(MixfixModule::latexPrettyPrint): don't handle automatic color
+	in the latex attribute case (don't want it affecting subterms)
+
+	* mixfixModule.hh (class MixfixModule): added decl for Term*
+	version of latexAttributePrint()
+
+	* latexTermPrint.cc (MixfixModule::latexAttributePrint): added
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint):
+	don't pass color to latexSuffix()
+	(MixfixModule::latexPrettyPrint): handle color around
+	prefix names
+	(MixfixModule::latexPrettyPrint): use latexPrefix()
+
+	* mixfixModule.hh (class MixfixModule): color = 0 default
+	for DagNode* version of latexSuffix()
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint):
+	handle color around latexAttributePrint()
+
+2023-12-07  Steven Eker  <eker@pup>
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	DagNode* version of latexAttributePrint()
+
+	* latexDagNodePrint.cc (MixfixModule::latexAttributePrint):
+	added
+
+2023-12-06  Steven Eker  <eker@pup>
+
+	* entry.cc (MixfixModule::addOpDeclaration): use
+	unpackLatexMacro()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	MixfixModule::unpackLatexMacro()
+
+	* entry.cc (MixfixModule::unpackLatexMacro): added
+
+	* latexToken.cc (Token::latexName): added warning comment
+	about the non-existence of \textasciicircum and \textbackslash
+	in math mode
+
+2023-12-05  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc
+	(VisibleModule::latexShowPolymorphAttributes): handle
+	latexMacro
+	(VisibleModule::latexShowAttributes): handle latexMacro;
+	fix bug where we were not putting space between format
+	and metadata attributes
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexPrintLatexMacro()
+
+	* latexCommon.cc (MixfixModule::latexPrintLatexMacro): added
+
+	* latexRenaming.cc (Renaming::latexRenaming): handle
+	latexMacro
+
+	* renaming.cc (Renaming::makeCanonicalName): put
+	parens rather than quotes around latexMacro
+	(Renaming::printRenaming): handle latexMacro
+
+	* renaming.hh (Renaming::getLatexMacro): added
+
+	* renameModule.cc (ImportModule::donateOps2): handle
+	latexMacro
+
+	* renaming.cc (Renaming::makeCanonicalName): use new
+	latexMacro convention
+	(Renaming::isIdentityOpMapping): use new latexMacro
+	convention (both versions)
+	(Renaming::addSortConstantAndLabelMappings): use new
+	latexMacro convention
+	(Renaming::setLatexMacro): use new latexMacro convention
+
+	* renaming.hh (class Renaming): made latexMacro into an int
+	in struct OpMapping
+
+	* mixfixModule.hh (MixfixModule::getLatexMacro): added
+	(getPolymorphLatexMacro): added
+
+	* visibleModule.cc (VisibleModule::showAttributes): handle
+	latex macro
+
+	* renameModule.cc (ImportModule::donateOps2): pass latexMacro =
+	NONE to addPolymorph() and addOpDeclaration()
+
+	* process.cc (SyntacticPreModule::processOps): pass latexMacro
+	to addPolymorph() and addOpDeclaration()
+
+	* ooProcess.cc (SyntacticPreModule::processClassOps): pass
+	latexMacro = NONE to addOpDeclaration() (2 places)
+
+	* mixfixModule.hh (class MixfixModule): updated decls for
+	addOpDeclaration() and addPolymorph()
+
+	* entry.cc (MixfixModule::addOpDeclaration): take latexMacro
+	argument
+	(MixfixModule::addPolymorph): take latexMacro argument
+
+	* mixfixModule.hh (class MixfixModule): added data member
+	latexMacroUnpacked to struct SymbolInfo
+
+2023-12-04  Steven Eker  <eker@pup>
+
+	* syntacticPreModule.hh (class SyntacticPreModule): deleted
+	commented out classSymbol field from struct ClassDecl
+
+	* syntacticPreModule.cc (SyntacticPreModule::OpDef::OpDef):
+	deleted
+
+	* syntacticPreModule.hh (class SyntacticPreModule): delete
+	explicit ctor for OpDef and init prec and meta in the struct
+	definition
+
+	* mixfixModule.hh (class MixfixModule): turn latexMacro into an
+	int and initialize it to NONE
+
+	* command.cc (SyntacticPreModule::printAttributes): use new
+	latexMacro representation
+
+	* ops.cc (SyntacticPreModule::setLatexMacro): use new
+	latexMacro representation
+
+	* syntacticPreModule.hh (class SyntacticPreModule): made
+	latexMacro and int in struct OpDef
+
+2023-12-01  Steven Eker  <eker@pup>
+
+	* latexCommon.cc (MixfixModule::latexPrintTails): fix bug where
+	where we were using the wrong format word
+
+2023-11-30  Steven Eker  <eker@pup>
+
+	* mixfixModule.hh (class MixfixModule): added latexMacro field
+	to struct SymbolInfo
+
+	* command.cc (SyntacticPreModule::printAttributes): handle
+	latex attribute
+
+===================================Maude155===========================================
+
 2023-11-29  Steven Eker  <eker@pup>
 
 	* mixfixModule.hh (class MixfixModule): updated decl for

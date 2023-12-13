@@ -745,6 +745,7 @@ op 'label : 'Qid -> 'Attr [ctor] .
 op 'label_to_ : 'Qid 'Qid -> 'Renaming [ctor] .
 op 'last : 'NeNatList -> 'Nat [none] .
 op 'last : 'NeQidList -> 'Qid [none] .
+op 'latex : 'String -> 'Attr [ctor] .
 op 'lcm : 'Nat 'Nat -> 'Nat [assoc comm special(
     id-hook('ACU_NumberOpSymbol, 'lcm) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
@@ -1029,6 +1030,7 @@ op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidS
     op-hook('precSymbol, 'prec, 'Nat, 'Attr) 
     op-hook('gatherSymbol, 'gather, 'QidList, 'Attr) 
     op-hook('formatSymbol, 'format, 'QidList, 'Attr) 
+    op-hook('latexSymbol, 'latex, 'String, 'Attr) 
     op-hook('ctorSymbol, 'ctor, nil, 'Attr) 
     op-hook('frozenSymbol, 'frozen, 'NeNatList, 'Attr) 
     op-hook('polySymbol, 'poly, 'NeNatList, 'Attr) 
@@ -1942,6 +1944,7 @@ op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidS
     op-hook('precSymbol, 'prec, 'Nat, 'Attr) 
     op-hook('gatherSymbol, 'gather, 'QidList, 'Attr) 
     op-hook('formatSymbol, 'format, 'QidList, 'Attr) 
+    op-hook('latexSymbol, 'latex, 'String, 'Attr) 
     op-hook('ctorSymbol, 'ctor, nil, 'Attr) 
     op-hook('frozenSymbol, 'frozen, 'NeNatList, 'Attr) 
     op-hook('polySymbol, 'poly, 'NeNatList, 'Attr) 
@@ -2980,6 +2983,7 @@ result FModule: fmod 'META-LEVEL is
   op 'label_to_ : 'Qid 'Qid -> 'Renaming [ctor] .
   op 'last : 'NeNatList -> 'Nat [none] .
   op 'last : 'NeQidList -> 'Qid [none] .
+  op 'latex : 'String -> 'Attr [ctor] .
   op 'lcm : 'Nat 'Nat -> 'Nat [assoc comm special(
     id-hook('ACU_NumberOpSymbol, 'lcm) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
@@ -3266,6 +3270,7 @@ result FModule: fmod 'META-LEVEL is
     op-hook('precSymbol, 'prec, 'Nat, 'Attr) 
     op-hook('gatherSymbol, 'gather, 'QidList, 'Attr) 
     op-hook('formatSymbol, 'format, 'QidList, 'Attr) 
+    op-hook('latexSymbol, 'latex, 'String, 'Attr) 
     op-hook('ctorSymbol, 'ctor, nil, 'Attr) 
     op-hook('frozenSymbol, 'frozen, 'NeNatList, 'Attr) 
     op-hook('polySymbol, 'poly, 'NeNatList, 'Attr) 
@@ -4706,6 +4711,7 @@ result FModule: fmod 'META-LEVEL is
     op-hook('precSymbol, 'prec, 'Nat, 'Attr) 
     op-hook('gatherSymbol, 'gather, 'QidList, 'Attr) 
     op-hook('formatSymbol, 'format, 'QidList, 'Attr) 
+    op-hook('latexSymbol, 'latex, 'String, 'Attr) 
     op-hook('ctorSymbol, 'ctor, nil, 'Attr) 
     op-hook('frozenSymbol, 'frozen, 'NeNatList, 'Attr) 
     op-hook('polySymbol, 'poly, 'NeNatList, 'Attr) 
@@ -6245,6 +6251,7 @@ result FModule: fmod 'META-LEVEL is
   op 'label_to_ : 'Qid 'Qid -> 'Renaming [ctor] .
   op 'last : 'NeNatList -> 'Nat [none] .
   op 'last : 'NeQidList -> 'Qid [none] .
+  op 'latex : 'String -> 'Attr [ctor] .
   op 'lcm : 'Nat 'Nat -> 'Nat [assoc comm special(
     id-hook('ACU_NumberOpSymbol, 'lcm) 
     op-hook('succSymbol, 's_, 'Nat, 'NzNat))] .
@@ -6531,6 +6538,7 @@ result FModule: fmod 'META-LEVEL is
     op-hook('precSymbol, 'prec, 'Nat, 'Attr) 
     op-hook('gatherSymbol, 'gather, 'QidList, 'Attr) 
     op-hook('formatSymbol, 'format, 'QidList, 'Attr) 
+    op-hook('latexSymbol, 'latex, 'String, 'Attr) 
     op-hook('ctorSymbol, 'ctor, nil, 'Attr) 
     op-hook('frozenSymbol, 'frozen, 'NeNatList, 'Attr) 
     op-hook('polySymbol, 'poly, 'NeNatList, 'Attr) 
@@ -8570,6 +8578,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     '__[''Qid.Sort, ''Qid.Sort], ''Renaming.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
     ''last.Sort, ''NeNatList.Sort, ''Nat.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
     ''last.Sort, ''NeQidList.Sort, ''Qid.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
+    ''latex.Sort, ''String.Sort, ''Attr.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
     ''lcm.Sort, '__[''Nat.Sort, ''Nat.Sort], ''Nat.Sort, '__['assoc.Attr,
     'comm.Attr, 'special['__['id-hook[''ACU_NumberOpSymbol.Sort, ''lcm.Sort],
     'op-hook[''succSymbol.Sort, ''s_.Sort, ''Nat.Sort, ''NzNat.Sort]]]]],
@@ -8884,6 +8893,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''precSymbol.Sort, ''prec.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
     ''gatherSymbol.Sort, ''gather.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
     ''formatSymbol.Sort, ''format.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
+    ''latexSymbol.Sort, ''latex.Sort, ''String.Sort, ''Attr.Sort], 'op-hook[
     ''ctorSymbol.Sort, ''ctor.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
     ''frozenSymbol.Sort, ''frozen.Sort, ''NeNatList.Sort, ''Attr.Sort],
     'op-hook[''polySymbol.Sort, ''poly.Sort, ''NeNatList.Sort, ''Attr.Sort],
@@ -11200,6 +11210,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     '__[''Qid.Sort, ''Qid.Sort], ''Renaming.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
     ''last.Sort, ''NeNatList.Sort, ''Nat.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
     ''last.Sort, ''NeQidList.Sort, ''Qid.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
+    ''latex.Sort, ''String.Sort, ''Attr.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
     ''lcm.Sort, '__[''Nat.Sort, ''Nat.Sort], ''Nat.Sort, '__['assoc.Attr,
     'comm.Attr, 'special['__['id-hook[''ACU_NumberOpSymbol.Sort, ''lcm.Sort],
     'op-hook[''succSymbol.Sort, ''s_.Sort, ''Nat.Sort, ''NzNat.Sort]]]]],
@@ -11514,6 +11525,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''precSymbol.Sort, ''prec.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
     ''gatherSymbol.Sort, ''gather.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
     ''formatSymbol.Sort, ''format.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
+    ''latexSymbol.Sort, ''latex.Sort, ''String.Sort, ''Attr.Sort], 'op-hook[
     ''ctorSymbol.Sort, ''ctor.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
     ''frozenSymbol.Sort, ''frozen.Sort, ''NeNatList.Sort, ''Attr.Sort],
     'op-hook[''polySymbol.Sort, ''poly.Sort, ''NeNatList.Sort, ''Attr.Sort],
@@ -13830,6 +13842,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     '__[''Qid.Sort, ''Qid.Sort], ''Renaming.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
     ''last.Sort, ''NeNatList.Sort, ''Nat.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
     ''last.Sort, ''NeQidList.Sort, ''Qid.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
+    ''latex.Sort, ''String.Sort, ''Attr.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
     ''lcm.Sort, '__[''Nat.Sort, ''Nat.Sort], ''Nat.Sort, '__['assoc.Attr,
     'comm.Attr, 'special['__['id-hook[''ACU_NumberOpSymbol.Sort, ''lcm.Sort],
     'op-hook[''succSymbol.Sort, ''s_.Sort, ''Nat.Sort, ''NzNat.Sort]]]]],
@@ -14144,6 +14157,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''precSymbol.Sort, ''prec.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
     ''gatherSymbol.Sort, ''gather.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
     ''formatSymbol.Sort, ''format.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
+    ''latexSymbol.Sort, ''latex.Sort, ''String.Sort, ''Attr.Sort], 'op-hook[
     ''ctorSymbol.Sort, ''ctor.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
     ''frozenSymbol.Sort, ''frozen.Sort, ''NeNatList.Sort, ''Attr.Sort],
     'op-hook[''polySymbol.Sort, ''poly.Sort, ''NeNatList.Sort, ''Attr.Sort],

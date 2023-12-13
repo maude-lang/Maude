@@ -1,3 +1,14 @@
+2023-12-12  Steven Eker  <eker@pup>
+
+	* maude.sty: use \hspace rather than \hskip for \maudeInterwordSpace;
+	added \maudeHardSpace
+
+2023-11-30  Steven Eker  <eker@pup>
+
+	* prelude.maude: added op latex : String -> Attr [ctor]
+
+===================================Maude155===========================================
+
 2023-11-22  Steven Eker  <eker@pup>
 
 	* metaInterpreter.maude: added printTermToString, printedTermToString
@@ -20,7 +31,6 @@
 	* main.cc (main): Interpreter::PRINT_MIXFIX ->
 	PrintSettings::PRINT_MIXFIX
 
-===================================Maude154===========================================
 
 2023-11-06  Steven Eker  <eker@pup>
 

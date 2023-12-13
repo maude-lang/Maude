@@ -376,6 +376,11 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef) const
       space = " ";
       printFormat(s, opDef.format);
     }
+  if (st.hasFlag(SymbolType::LATEX))
+    {
+      s << space << "latex (" << Token::name(opDef.latexMacro) << ")";
+      space = " ";
+    }
   if (opDef.metadata != NONE)
     {
       s << space << "metadata " << Token::name(opDef.metadata);

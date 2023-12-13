@@ -271,5 +271,16 @@ MetaLevel::downRenamingAttribute(DagNode* metaRenamingAttribute, Renaming* renam
 	  return true;
 	}
     }
+  else if (mr == latexSymbol)
+    {
+      DagNode* latexStr = safeCastNonNull<FreeDagNode*>(metaRenamingAttribute)->getArgument(0);
+      if (latexStr->symbol() == stringSymbol)
+	{
+	  string str;
+	  Token::ropeToString(safeCastNonNull<StringDagNode*>(latexStr)->getValue(), str);
+	  renaming->setLatexMacro(str);
+	  return true;
+	}
+    }
   return false;
 }

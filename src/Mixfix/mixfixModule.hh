@@ -100,6 +100,7 @@ public:
 			   int prec,
 			   const Vector<int>& gather,
 			   const Vector<int>& format,
+			   int latexMacro,
 			   int metadata,
 			   bool& firstDecl);
   void addVariableAlias(Token name, Sort* sort);
@@ -111,6 +112,7 @@ public:
 		   int prec,
 		   const Vector<int>& gather,
 		   const Vector<int>& format,
+		   int latexMacro,
 		   int metadata);
   int addStrategy(Token name,
 		  const Vector<Sort*>& domainSorts,
@@ -205,6 +207,7 @@ public:
   int getPrec(const Symbol* symbol) const;
   void getGather(const Symbol* symbol, Vector<int>& gather) const;
   const Vector<int>& getFormat(const Symbol* symbol) const;
+  int getLatexMacro(const Symbol* symbol) const;
   const AliasMap& getVariableAliases() const;
   void getParserStats(int& nrNonterminals, int& nrTerminals, int& nrProductions);
   void getDataAttachments(Symbol* symbol,
@@ -251,6 +254,7 @@ public:
   Term* getPolymorphIdentity(int index) const;
   const Vector<int>& getPolymorphStrategy(int index) const;
   const NatSet& getPolymorphFrozen(int index) const;
+  int getPolymorphLatexMacro(int index) const;
   int getPolymorphPrec(int index) const;
   void getPolymorphGather(int index, Vector<int>& gather) const;
   const Vector<int>& getPolymorphFormat(int index) const;
@@ -306,6 +310,8 @@ public:
   static void latexPrintDagNode(ostream& s, DagNode* dagNode);
   static void latexPrintGather(ostream& s, const Vector<int>& gather);
   static void latexPrintFormat(ostream& s, const Vector<int>& format);
+  static void latexPrintLatexMacro(ostream& s, int latexMacro);
+
   //
   //	Misc.
   //
@@ -504,6 +510,8 @@ private:
     Vector<int> mixfixSyntax;
     Vector<int> gather;
     Vector<int> format;
+    Vector<int> latexMacroUnpacked;
+    int latexMacro = NONE;
     short prec;
     short polymorphIndex;  // for polymorphs and polymorph instances only
     SymbolType symbolType;
@@ -566,6 +574,7 @@ private:
 
   static int domainComponentIndex(const Symbol* symbol, int argNr);
   static int mayAssoc(Symbol* symbol, int argNr);
+  static bool unpackLatexMacro(SymbolInfo& si, int arity);
 
   Symbol* newFancySymbol(Token prefixName,
 			 const Vector<Sort*>& domainAndRange,
@@ -936,6 +945,7 @@ private:
 			      const char* color,
 			      const PrintSettings& printSettings);
   static bool latexFancySpace(ostream& s, int spaceToken, const PrintSettings& printSettings);
+  void latexPrintStructuredConstant(ostream& s, Symbol* symbol, const char* color, const PrintSettings& printSettings) const;
   //
   //	Member functions for Term* -> LaTeX pretty printer.
   //
@@ -953,6 +963,10 @@ private:
   void latexHandleQuotedIdentifier(ostream& s, Term* term, bool rangeKnown, const PrintSettings& printSettings) const;
   void latexHandleVariable(ostream& s, Term* term, bool rangeKnown, const PrintSettings& printSettings) const;
   void latexHandleSMT_Number(ostream& s, Term* term, bool rangeKnown, const PrintSettings& printSettings);
+  void latexAttributePrint(ostream& s,
+			   const PrintSettings& printSettings,
+			   Symbol* symbol,
+			   ArgumentIterator& a);
 
 protected:
   void latexPrettyPrint(ostream& s,
@@ -971,7 +985,7 @@ private:
   //	Member functions for DagNode* -> LaTeX pretty printer.
   //
   static const char* latexComputeColor(ColoringInfo& coloringInfo, DagNode* dagNode, const PrintSettings& printSettings);
-  static void latexSuffix(ostream& s, DagNode* dagNode, bool needDisambig, const char* color);
+  static void latexSuffix(ostream& s, DagNode* dagNode, bool needDisambig, const char* color = nullptr);
   bool latexHandleIter(ostream& s,
 		       ColoringInfo& coloringInfo,
 		       DagNode* dagNode,
@@ -996,6 +1010,11 @@ private:
 			int rightCapture,
 			const ConnectedComponent* rightCaptureComponent,
 			bool rangeKnown);
+  void latexAttributePrint(ostream& s,
+			   const PrintSettings& printSettings,
+			   ColoringInfo& coloringInfo,
+			   Symbol* symbol,
+			   DagArgumentIterator& a);
 
   NatSet objectSymbols;
   NatSet messageSymbols;
@@ -1096,6 +1115,12 @@ MixfixModule::getPolymorphFormat(int index) const
 }
 
 inline int
+MixfixModule::getPolymorphLatexMacro(int index) const
+{
+  return polymorphs[index].symbolInfo.latexMacro;
+}
+
+inline int
 MixfixModule::getPolymorphMetadata(int index) const
 {
   return polymorphs[index].metadata;
@@ -1123,6 +1148,12 @@ inline const Vector<int>&
 MixfixModule::getFormat(const Symbol* symbol) const
 {
   return symbolInfo[symbol->getIndexWithinModule()].format;
+}
+
+inline int
+MixfixModule::getLatexMacro(const Symbol* symbol) const
+{
+  return symbolInfo[symbol->getIndexWithinModule()].latexMacro;
 }
 
 inline MixfixModule::ModuleType

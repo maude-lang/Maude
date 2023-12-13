@@ -427,7 +427,7 @@ SyntacticPreModule::setLatexMacro(const string& latexMacro)
     IssueWarning(LINE_NUMBER << ": multiple latex attributes.");
   else
     {
-      opDef.latexMacro = latexMacro;
+      opDef.latexMacro = Token::encode(latexMacro.c_str());
       opDef.symbolType.setFlags(SymbolType::LATEX);
     }
 }

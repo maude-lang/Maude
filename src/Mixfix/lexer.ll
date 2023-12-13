@@ -104,6 +104,8 @@ normal		([^[:cntrl:] ()\[\]{},`_"]|{string})
 normalSeq	({normal}("`"{normal})*)
 special		("_"|("`"[()\[\]{},]))
 maudeId		(({special}|{normalSeq})+)
+bracketPrefix	((("big"|"Big"|"bigg"|"Bigg")[lr]{0,1})|"left"|"right")
+bigBracket	(\\{bracketPrefix}[(){}])
 
 %s ID_MODE
 %s CMD_MODE
@@ -601,7 +603,7 @@ pr|protecting|ex|extending|us|using|inc|including|gb|generated-by|sort|sorts|sub
 }
 
 <LATEX_MODE>{
-(\\[{}()]{0,1})|([a-zA-Z0-9.:;,?!`'\[\]\-/*@#$%&~_^+=|<> \t]+)	accumulator += yytext;
+{bigBracket}|(\\[{}()]{0,1})|([a-zA-Z0-9.:;,?!`'\[\]\-/*@#$%&~_^+=|<> \t]+)	accumulator += yytext;
 \(					{
 					  if (braceCount == 0)
 					    ++parenCount;

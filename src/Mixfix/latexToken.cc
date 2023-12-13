@@ -32,6 +32,10 @@ Token::latexName(const char* name)
   //	Translate the 10 characters that LaTeX considers special plus ' ` because the defaults look bad.
   //	We also follow < and > with an empty group {} to prevent << and >> being transformed into guillemets.
   //
+  //	Note that \textasciicircum and \textbackslash don't exist in math mode so the latex code returned should
+  //	always be wrapped with something like \maudeSymbolic{} or \maudeIdentifier{} that switches to a font
+  //	where these characters exist.
+  //
   string id;
   for (const char* p = name; *p; ++p)
     {

@@ -357,6 +357,16 @@ MetaLevel::upRenamingAttributeSet(const Renaming* r, int index, PointerMap& qidM
 	args.append(formatSymbol->makeDagNode(args2));
       }
   }
+  {
+    int latexMacro = r->getLatexMacro(index);
+    if (latexMacro != NONE)
+      {
+	Rope r(Token::name(latexMacro));
+	Vector<DagNode*> args2(1);
+	args2[0] = new StringDagNode(stringSymbol, r);
+	args.append(latexSymbol->makeDagNode(args2));
+      }
+  }
   return upGroup(args, emptyAttrSetSymbol, attrSetSymbol);
 }
 
@@ -488,6 +498,16 @@ MetaLevel::upPolymorphDecl(ImportModule* m, int index, PointerMap& qidMap)
       {
 	polyArgs[0] = upQidList(m->getPolymorphFormat(index), qidMap);
 	attrArgs.append(formatSymbol->makeDagNode(polyArgs));
+      }
+    if (st.hasFlag(SymbolType::LATEX))
+      {
+	//
+	//	We put the raw C-string straight into a Rope.
+	//
+	Rope r(Token::name(m->getPolymorphLatexMacro(index)));
+	Vector<DagNode*> args2(1);
+	args2[0] = new StringDagNode(stringSymbol, r);
+	attrArgs.append(latexSymbol->makeDagNode(args2));
       }
     if (st.hasFlag(SymbolType::PREC))
       {
@@ -624,6 +644,16 @@ MetaLevel::upOpDecl(ImportModule* m, int symbolNr, int declNr, PointerMap& qidMa
       {
 	args3[0] = upQidList(m->getFormat(symbol), qidMap);
 	attrArgs.append(formatSymbol->makeDagNode(args3));
+      }
+    if (st.hasFlag(SymbolType::LATEX))
+      {
+	//
+	//	We put the raw C-string straight into a Rope.
+	//
+	Rope r(Token::name(m->getLatexMacro(symbol)));
+	Vector<DagNode*> args2(1);
+	args2[0] = new StringDagNode(stringSymbol, r);
+	attrArgs.append(latexSymbol->makeDagNode(args2));
       }
     if (st.hasFlag(SymbolType::PREC))
       {

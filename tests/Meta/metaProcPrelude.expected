@@ -529,6 +529,7 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     ''precSymbol.Sort, ''prec.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
     ''gatherSymbol.Sort, ''gather.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
     ''formatSymbol.Sort, ''format.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
+    ''latexSymbol.Sort, ''latex.Sort, ''String.Sort, ''Attr.Sort], 'op-hook[
     ''ctorSymbol.Sort, ''ctor.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
     ''frozenSymbol.Sort, ''frozen.Sort, ''NeNatList.Sort, ''Attr.Sort],
     'op-hook[''polySymbol.Sort, ''poly.Sort, ''NeNatList.Sort, ''Attr.Sort],

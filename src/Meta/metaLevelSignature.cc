@@ -178,6 +178,7 @@
      MACRO(precSymbol, FreeSymbol, 0, 1)
      MACRO(gatherSymbol, FreeSymbol, 0, 1)
      MACRO(formatSymbol, FreeSymbol, 0, 1)
+     MACRO(latexSymbol, FreeSymbol, 0, 1)
      MACRO(ctorSymbol, Symbol, 0, 0)
      MACRO(frozenSymbol, Symbol, 0, 1)
      MACRO(polySymbol, Symbol, 0, 1)

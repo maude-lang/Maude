@@ -91,6 +91,7 @@ public:
   int getPrec(int index) const;
   const Vector<int>& getGather(int index) const;
   const Vector<int>& getFormat(int index) const;
+  int getLatexMacro(int index) const;
   const set<int>& getTypeSorts(int index, int typeNr) const;
 
   int getNrStratMappings() const;
@@ -183,15 +184,15 @@ private:
     //	as the view the term came from becomes stale, so dangling pointers
     //	are never dereferenced.
     //
-    bool gcToTerm = false;	// whether we are responsible for garbage collected toTerm
     Term* fromTerm = 0;		// not used for renaming but useful for view instantiation and debugging
     Term* toTerm = 0;		// for op->term mappings
+    bool gcToTerm = false;	// whether we are responsible for garbage collected toTerm
     //
     //	Can change syntactic attributes only.
     //
+    int latexMacro = NONE;	
     Vector<int> gather;		// empty if not set
     Vector<int> format;		// empty if not set
-    string latexMacro;		// empty if not set
     int prec = MixfixModule::MIN_PREC - 1;	// < MixfixModule::MIN_PREC if not set
     int index;
   };
@@ -453,6 +454,12 @@ inline const Vector<int>&
 Renaming::getFormat(int index) const
 {
   return opMapIndex[index]->second.format;
+}
+
+inline int
+Renaming::getLatexMacro(int index) const
+{
+  return opMapIndex[index]->second.latexMacro;
 }
 
 inline void

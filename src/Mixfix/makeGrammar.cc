@@ -518,7 +518,6 @@ MixfixModule::makeStrategyLanguageProductions()
     parser->insertProduction(STRATEGY_EXPRESSION, rhs, STRAT_TEST_PREC, gatherAny, MixfixParser::MAKE_TEST, UNBOUNDED);
   }
   {
-
     //
     //	<using pair> = <term> using <strategy expression>
     //	<using list> = <using pair> , <using list>
