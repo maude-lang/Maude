@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,6 +30,54 @@ const char* MixfixModule::latexCyan = "\\color{cyan}";
 const char* MixfixModule::latexMagenta = "\\color{magenta}";
 const char* MixfixModule::latexYellow = "\\color{yellow}";
 const char* MixfixModule::latexResetColor = "\\color{black}";
+
+string
+MixfixModule::latexNumber(const mpz_class& number)
+{
+  //
+  //	We want to be able to break very large numbers over multiple lines but we want to
+  //	avoid breaking smaller numbers in a arbitrary way.
+  //
+  const int BIG_NUM_CUTOFF = 30;
+  string str = number.get_str();
+  string result = (str.length() >= BIG_NUM_CUTOFF) ? "\\maudeBigNumber{" : "\\maudeNumber{";
+  result += str;
+  result += "}";
+  return result;
+}
+
+string
+MixfixModule::latexString(const string& str)
+{
+  const int BIG_STRING_CUTOFF = 30;
+  string result = (str.length() >= BIG_STRING_CUTOFF) ? "\\maudeBigString{" : "\\maudeString{";
+  result += Token::latexName(str);
+  result += "}";
+  return result;
+}
+
+string
+MixfixModule::latexQid(int idCode)
+{
+  const int BIG_QID_CUTOFF = 29;
+  const char* str = Token::name(idCode);
+  string result = (strlen(str) >= BIG_QID_CUTOFF) ? "\\maudeBigQid{" : "\\maudeQid{";
+  result += "\\maudeSingleQuote ";
+  result += Token::latexName(str);
+  result += "}";
+  return result;
+}
+
+string
+MixfixModule::latexRaw(int idCode)
+{
+  const int BIG_RAW_CUTOFF = 30;
+  const char* str = Token::name(idCode);
+  string result = (strlen(str) >= BIG_RAW_CUTOFF) ? "\\maudeBigRaw{" : "\\maudeRaw{";
+  result += Token::latexName(str);
+  result += "}";
+  return result;
+}
 
 string
 MixfixModule::latexStructuredName(const Vector<int>& codes, const Module* m)
@@ -229,7 +277,7 @@ MixfixModule::latexFancySpace(ostream& s, int spaceToken, const PrintSettings& p
 	  }
 	case 'n':
 	  {
-	    s << "\\newline";
+	    s << "\\maudeNewline";
 	    space = true;
 	    break;
 	  }
@@ -258,7 +306,7 @@ MixfixModule::latexFancySpace(ostream& s, int spaceToken, const PrintSettings& p
 	default:
 	  {
 	    if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
-	      break;
+	      break;  // if we have system provided color we switch off user provided format color
 	    switch (c)
 	      {
 	      case 'r':
@@ -534,7 +582,6 @@ MixfixModule::latexPrintLatexMacro(ostream& s, int latexMacro)
   s << "\\maudeKeyword{latex}\\maudeSpace\\maudeLeftParen\\maudeSymbolic{" << Token::latexName(latexMacro) << "}\\maudeRightParen";
 }
 
-
 string
 MixfixModule::latexTokenVector(const Vector<Token>& tokens, Index first, Index last)
 {
@@ -546,17 +593,159 @@ MixfixModule::latexTokenVector(const Vector<Token>& tokens, Index first, Index l
       int code = tokens[i].code();
       if (code == rightParen || code == rightBracket || code == rightBrace || code == comma)
 	needSpace = false;
-      else if (code == leftParen)
-	{
-	  needSpace = false;
-	  nextNeedSpace = false;
-	}
-      else if (code == leftBracket || code == leftBrace)
+      else if (code == leftParen || code == leftBracket || code == leftBrace)
 	nextNeedSpace = false;
+      
+
+
+      
       if (needSpace)
 	bubble += "\\maudeSpace";
-      bubble += "\\maudeRaw{" + Token::latexName(tokens[i].code()) +  "}";
+      bubble += latexRaw(code);
       needSpace = nextNeedSpace;
     }
   return bubble;
+}
+
+void
+MixfixModule::latexPrintBubble(ostream& s, const Vector<int>& bubble)
+{
+  //
+  //	We duplicate the idiosyncratic spacing conventions and character translations
+  //	from Interpreter::printBubble() for loop mode support.
+  //
+  bool needSpace = false;
+  for (int code : bubble)
+    {
+      if (code == rightParen || code == rightBracket || code == rightBrace || code == comma ||
+	  code == leftParen || code == leftBracket || code == leftBrace)
+	{
+	  s << latexRaw(code);
+	  needSpace = false;
+	  continue;
+	}
+      const char* n = Token::name(code);
+      if (n[0] == '\\')
+	{
+	  //
+	  //	Special token starting with backslash.
+	  //
+	  if (n[2] == 0)
+	    {
+	      switch (n[1])
+		{
+		case 'n':
+		  {
+		    s << "\\maudeNewline";
+		    needSpace = false;
+		    continue;
+		  }
+		case 't':
+		  {
+		    s << "\\maudeIdent";  // no good way to do a tab without a tabbing environment - do a thick space
+		    needSpace = false;
+		    continue;
+		  }
+		case 's':
+		  {
+		    s << "\\maudeSpace";
+		    needSpace = false;
+		    continue;
+		  }
+		case '\\':
+		  {
+		    if (needSpace)
+		      s << "\\maudeSpace";
+		    s << "\\maudeRaw{\\textbackslash}";
+		    needSpace = true;
+		    continue;
+		  }
+		case 'r':
+		  {
+		    s << "\\color{red}";
+		    continue;
+		  }
+		case 'g':
+		  {
+		    s << "\\color{green}";
+		    continue;
+		  }
+		case 'b':
+		  {
+		    s << "\\color{blue}";
+		    continue;
+		  }
+		case 'c':
+		  {
+		    s << "\\color{cyan}";
+		    continue;
+		  }
+		case 'm':
+		  {
+		    s << "\\color{magenta}";
+		    continue;
+		  }
+		case 'y':
+		  {
+		    s << "\\color{yellow}";
+		    continue;
+		  }
+		case 'p':
+		case 'o':
+		  {
+		    s << "\\color{black}";
+		    continue;
+		  }
+		}
+	    }
+	  else if (n[1] == '`' &&  n[3] == 0)
+	    {
+	      //
+	      //	\`<char> is converted to <char> with non-special spacing if <char> is one of ( ) [ ] { } ,
+	      //
+	      switch (n[2])
+		{
+		case '(':
+		  {
+		    code = leftParen;
+		    break;
+		  }
+		case ')':
+		  {
+		    code = rightParen;
+		    break;
+		  }
+		case '[':
+		  {
+		    code = leftBracket;
+		    break;
+		  }
+		case ']':
+		  {
+		    code = rightBracket;
+		    break;
+		  }
+		case '{':
+		  {
+		    code = leftBrace;
+		    break;
+		  }
+		case '}':
+		  {
+		    code = rightBrace;
+		    break;
+		  }
+		case ',':
+		  {
+		    code = comma;
+		    break;
+		  }
+		}
+	    }
+	}
+      if (needSpace)
+	s << "\\maudeSpace";
+      s << latexRaw(code);
+      needSpace = true;
+    }
 }

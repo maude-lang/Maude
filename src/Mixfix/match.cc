@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ Interpreter::match(const Vector<Token>& bubble, bool withExtension, Int64 limit)
   MatchSearchState* state = 
     new MatchSearchState(context,
 			 pattern,
-			 MatchSearchState::GC_PATTERN | MatchSearchState::GC_CONTEXT,
+			 MatchSearchState::GC_PATTERN | MatchSearchState::GC_CONTEXT,  // we don't set an initial substitution to GC
 			 0,
 			 withExtension ? 0 : NONE);
 

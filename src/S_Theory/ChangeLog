@@ -1,3 +1,13 @@
+2024-01-16  Steven Eker  <eker@pup>
+
+	* S_Symbol.cc (S_Symbol::stackArguments): handle
+	respectUnstackable argument
+
+	* S_Symbol.hh (class S_Symbol): updated decl for
+	stackArguments()
+
+===================================Maude156===========================================
+
 2023-07-24  Steven Eker  <eker@pup>
 
 	* S_Symbol.cc (S_Symbol::determineGround): added

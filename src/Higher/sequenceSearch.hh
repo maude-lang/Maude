@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2007 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,10 +32,11 @@ class SequenceSearch : public CacheableState
 public:
   enum SearchType
   {
-    ONE_STEP,
-    AT_LEAST_ONE_STEP,
-    ANY_STEPS,
-    NORMAL_FORM
+   ONE_STEP,		// state reached after exactly one step
+   AT_LEAST_ONE_STEP,	// state reached after 1 or more steps
+   ANY_STEPS,		// state reached after 0 or more steps
+   NORMAL_FORM,		// state has no successor states
+   BRANCH		// state has two or more distinct successor states
   };
 };
 

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -318,6 +318,7 @@ FreeSymbol::stackArguments(DagNode* subject,
 			   Vector<RedexPosition>& stack,
 			   int parentIndex,
 			   bool respectFrozen,
+			   bool respectUnstackable,
 			   bool eagerContext)
 {
   int nrArgs = arity();
@@ -328,7 +329,7 @@ FreeSymbol::stackArguments(DagNode* subject,
       for (int i = 0; i < nrArgs; i++)
 	{
 	  DagNode* d = args[i];
-	  if (!(respectFrozen && frozen.contains(i)) && !(d->isUnstackable()))
+	  if (!(respectFrozen && frozen.contains(i)) && !(respectUnstackable && d->isUnstackable()))
 	    stack.append(RedexPosition(args[i], parentIndex, i, eagerContext & eagerArgument(i)));
 	}
     }

@@ -37,6 +37,7 @@
 #include "S_Theory.hh"
 #include "higher.hh"
 #include "mixfix.hh"
+#include "SMT.hh"
 
 //      interface class definitions
 #include "symbol.hh"
@@ -97,6 +98,10 @@
 #include "testStrategy.hh"
 #include "unionStrategy.hh"
 
+//	SMT class definitions
+#include "SMT_RewriteSequenceSearch.hh"
+//#include "SMT_Info.hh"
+
 //	front end class definitions
 #include "token.hh"
 #include "timer.hh"
@@ -134,7 +139,7 @@ MaudeLatexBuffer::generateBanner(const char* date, const char* time, time_t seco
   output << "\\maudeBannerIndent\\hspace{5em}--- Welcome to \\color{red}M\\color{cyan}a\\color{blue}u\\color{magenta}d\\color{green}e\\color{black} ---\n";
   output << "\\maudeBannerIndent\\hspace{6em}/||||||||||||||||||\\textbackslash\n";
   output << "\\maudeBannerIndent\\hspace{0.5em}" <<  PACKAGE_STRING << " built: " << date << ' ' << time << '\n';
-  output << "\\maudeBannerIndent\\hspace{1.5em}Copyright 1997-2023 SRI International\n";
+  output << "\\maudeBannerIndent\\hspace{1.5em}Copyright 1997-2024 SRI International\n";
   output << "\\maudeBannerIndent\\hspace{5em}" << ctime(&seconds);
   output << "\\end{maudeBanner}\n";
 }

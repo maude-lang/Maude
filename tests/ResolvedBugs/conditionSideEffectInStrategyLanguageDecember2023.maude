@@ -1,0 +1,18 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug found by Paco where the condition evaluation set unrewritable/unstackable flags
+***	that were respect when rewriting with ab, even though it allows rewriting with nonexec rules.
+***
+
+mod NONEXEC is
+  sorts Foo Bar .
+  ops a b : -> Foo [ctor] .
+  op <_> : Foo -> Bar [ctor] .
+  vars F G : Foo .
+  crl < F > => < G > if F => G /\ F =/= G .
+  rl [ab] : a => b [nonexec] .
+endm
+
+srew < a > using try(all) ; ab .

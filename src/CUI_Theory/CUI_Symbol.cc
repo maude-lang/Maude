@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -282,17 +282,18 @@ CUI_Symbol::stackArguments(DagNode* subject,
 			   Vector<RedexPosition>& stack,
 			   int parentIndex,
 			   bool respectFrozen,
+			   bool respectUnstackable,
 			   bool eagerContext)
 {
   DagNode** args = safeCast(CUI_DagNode*, subject)->argArray;
   const NatSet& frozen = getFrozen();
 
   DagNode* d = args[0];
-  if (!(respectFrozen && frozen.contains(0)) && !(d->isUnstackable()))
+  if (!(respectFrozen && frozen.contains(0)) && !(respectUnstackable && d->isUnstackable()))
     stack.append(RedexPosition(args[0], parentIndex, 0, eagerContext && eagerArgument(0)));
 
   d = args[1];
-  if (!(respectFrozen && frozen.contains(1)) && !(d->isUnstackable()))
+  if (!(respectFrozen && frozen.contains(1)) && !(respectUnstackable && d->isUnstackable()))
     stack.append(RedexPosition(args[1], parentIndex, 1, eagerContext && eagerArgument(1)));
 }
 

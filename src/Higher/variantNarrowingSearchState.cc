@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -161,6 +161,7 @@ VariantNarrowingSearchState::VariantNarrowingSearchState(RewritingContext* conte
 	  for (Equation* eq : equations)
 	    {
 	      if (eq->isVariant() &&  // only consider equations with the variant attribute
+		  !(eq->isNonexec()) &&  // that are executable
 		  eq->getLhs()->getComponent() == topComponent)  // and with lhs in the correct component
 		{
 		  NarrowingUnificationProblem* unificationProblem =

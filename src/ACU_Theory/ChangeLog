@@ -1,3 +1,14 @@
+2024-01-16  Steven Eker  <eker@pup>
+
+	* ACU_Symbol.cc (ACU_Symbol::stackArguments): support
+	respectUnstackable argument
+	(ACU_Symbol::stackPhysicalArguments): ditto
+
+	* ACU_Symbol.hh (class ACU_Symbol): updated decls for stackArguments()
+	and stackPhysicalArguments()
+
+===================================Maude156===========================================
+
 2023-07-24  Steven Eker  <eker@pup>
 
 	* ACU_Symbol.cc (ACU_Symbol::determineGround): added

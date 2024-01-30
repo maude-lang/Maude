@@ -735,15 +735,33 @@ MetaLevel::downSearchType(DagNode* arg, SequenceSearch::SearchType& searchType)
   int qid;
   if (downQid(arg, qid))
     {
-      if (qid == Token::encode("+"))
-	searchType = SequenceSearch::AT_LEAST_ONE_STEP;
-      else if (qid == Token::encode("*"))
-	searchType = SequenceSearch::ANY_STEPS;
-      else if (qid == Token::encode("!"))
-	searchType = SequenceSearch::NORMAL_FORM;
-      else
-	return false;
-      return true;
+      const char* str = Token::name(qid);
+      if (str[1] == '\0')
+	{
+	  switch(str[0])
+	    {
+	    case '+':
+	      {
+		searchType = SequenceSearch::AT_LEAST_ONE_STEP;
+		return true;
+	      }
+	    case '*':
+	      {
+		searchType = SequenceSearch::ANY_STEPS;
+		return true;
+	      }
+	    case '!':
+	      {
+		searchType = SequenceSearch::NORMAL_FORM;
+		return true;
+	      }
+	    case '#':
+	      {
+		searchType = SequenceSearch::BRANCH;
+		return true;
+	      }
+	    }
+	}
     }
   return false;
 }

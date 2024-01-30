@@ -407,7 +407,7 @@ VisibleModule::showPolymorphAttributes(ostream& s, int index) const
       //	A polymorphic symbol can only have a left identity or a right identity - not both.
       //
       s << (st.hasFlag(SymbolType::LEFT_ID) ? " left" : " right") << " id: ";
-      MixfixModule::prettyPrint(s, getPolymorphIdentity(index), true);  // assume range kind is known
+      MixfixModule::prettyPrint(s, getPolymorphIdentity(index), *owner, true);  // assume range kind is known
     }
   if (st.hasFlag(SymbolType::IDEM))
     s << " idem";
@@ -709,7 +709,7 @@ VisibleModule::showAttributes(ostream& s, Symbol* symbol, int opDeclIndex) const
       s << "id: ";
       Term* id = safeCastNonNull<BinarySymbol*>(symbol)->getIdentity();
       if (id != 0)
-	MixfixModule::prettyPrint(s, id, true);  // assume range kind is known
+	MixfixModule::prettyPrint(s, id, *owner, true);  // assume range kind is known
     }
   if (st.hasFlag(SymbolType::IDEM))
     {

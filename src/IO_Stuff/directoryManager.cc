@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 #include <sys/param.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <pwd.h>
 
@@ -34,6 +35,22 @@
 #include "vector.hh"
 
 #include "directoryManager.hh"
+
+bool
+DirectoryManager::checkAccess(const string& fullName, int mode)
+{
+  const char* name = fullName.c_str();
+  if (access(name, mode) == 0)
+    {
+      //
+      //	We can access it, but is it a regular file?
+      //
+      struct stat statBuffer;
+      if (stat(name, &statBuffer) == 0 && (statBuffer.st_mode & S_IFMT) == S_IFREG)
+	return true;
+    }
+  return false;
+}
 
 bool
 DirectoryManager::checkAccess(const string& directory,
@@ -46,7 +63,7 @@ DirectoryManager::checkAccess(const string& directory,
   //	try added extensions to see if the fixes the problem.
   //
   string full(directory + '/' + fileName);
-  if (access(full.c_str(), mode) == 0)
+  if (checkAccess(full, mode))
     return true;
   if (ext != 0)
     {
@@ -62,7 +79,7 @@ DirectoryManager::checkAccess(const string& directory,
       
       for (char const* const* p = ext; *p; p++)
 	{
-	  if (access((full + *p).c_str(), mode) == 0)
+	  if (checkAccess(full + *p, mode))
 	    {
 	      fileName += *p;
 	      return true;

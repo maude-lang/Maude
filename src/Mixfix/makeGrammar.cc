@@ -119,7 +119,6 @@ MixfixModule::makeParameterizedSortProductions()
 	      p.first->second = nt;
 	      Vector<int> rhs(1);
 	      rhs[0] = t;
-	      //cout << "para " << nt << " ::= " << rhs[0] << endl;
 	      parser->insertProduction(nt, rhs, 0, emptyGather);
 	      parser->insertVariableTerminal(lead, t);
 	    }
@@ -149,6 +148,10 @@ MixfixModule::makeComplexProductions()
   rhs[0] = arrowBang;
   parser->insertProduction(SEARCH_CONNECTIVE, rhs, 0, emptyGather,
 			   MixfixParser::NOP, RewriteSequenceSearch::NORMAL_FORM);
+
+  rhs[0] = arrowHash;
+  parser->insertProduction(SEARCH_CONNECTIVE, rhs, 0, emptyGather,
+			   MixfixParser::NOP, RewriteSequenceSearch::BRANCH);
 
   rhs[0] = MATCH_PAIR;
   parser->insertProduction(MATCH_COMMAND, rhs, 0, gatherAny);

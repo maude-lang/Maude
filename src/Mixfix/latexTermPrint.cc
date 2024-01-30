@@ -117,7 +117,7 @@ MixfixModule::latexHandleIter(ostream& s,
 	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat)));
 	  latexPrefix(s, needDisambig);
-	  s << "\\maudeNumber{" << nat << "}";
+	  s << latexNumber(nat);
 	  latexSuffix(s, term, needDisambig);
 	  return true;
 	}
@@ -161,7 +161,7 @@ MixfixModule::latexHandleMinus(ostream& s,
 	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg)));
 	  latexPrefix(s, needDisambig);
-	  s << "\\maudeNumber{" << neg << "}";
+	  s << latexNumber(neg);
 	  latexSuffix(s, term, needDisambig);
 	  return true;
 	}
@@ -185,7 +185,7 @@ MixfixModule::latexHandleDivision(ostream& s,
 	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
 	  latexPrefix(s, needDisambig);
-	  s << "\\maudeNumber{" << rat.first << "}/\\maudeNumber{"  << rat.second << "}";
+	  s << latexNumber(rat.first) << "/" << latexNumber(rat.second);
 	  latexSuffix(s, term, needDisambig);
 	  return true;
 	}
@@ -218,7 +218,7 @@ MixfixModule::latexHandleString(ostream& s,
   bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue)));
   latexPrefix(s, needDisambig);
-  s << "\\maudeString{" << Token::latexName(strValue) << "}";
+  s << latexString(strValue);
   latexSuffix(s, term, needDisambig);
 }
 
@@ -232,7 +232,7 @@ MixfixModule::latexHandleQuotedIdentifier(ostream& s,
   bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode)));
   latexPrefix(s, needDisambig);
-  s << "\\maudeQid{" << "\\maudeSingleQuote " << Token::latexName(qidCode) << "}";
+  s << latexQid(qidCode);
   latexSuffix(s, term, needDisambig);
 }
 
@@ -289,7 +289,7 @@ MixfixModule::latexHandleSMT_Number(ostream& s,
       bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	(!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer)));
       latexPrefix(s, needDisambig);
-      s << "\\maudeNumber{" << integer << "}";
+      s << latexNumber(integer);
       latexSuffix(s, term, needDisambig);
     }
   else
@@ -299,7 +299,7 @@ MixfixModule::latexHandleSMT_Number(ostream& s,
       bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	(!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
       latexPrefix(s, needDisambig);
-      s << "\\maudeNumber{" << rat.first << "}/\\maudeNumber{" << rat.second << "}";
+      s << latexNumber(rat.first) << "/" << latexNumber(rat.second);
       latexSuffix(s, term, needDisambig);
     }
 }

@@ -81,7 +81,9 @@ StateTransitionGraph::getNextState(int stateNr, int index)
 					       NONE,
 					       RewriteSearchState::GC_CONTEXT |
 					       RewriteSearchState::SET_UNREWRITABLE |
-					       PositionState::SET_UNSTACKABLE,
+					       RewriteSearchState::RESPECT_UNREWRITABLE |
+					       PositionState::SET_UNSTACKABLE |
+					       PositionState::RESPECT_UNSTACKABLE,
 					       0,
 					       UNBOUNDED);
     }

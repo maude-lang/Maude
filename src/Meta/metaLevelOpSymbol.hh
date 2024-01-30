@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -110,7 +110,6 @@ private:
   bool metaGetVariant2(FreeDagNode* subject, RewritingContext& context, bool irredundant);
   bool metaVariantUnify2(FreeDagNode* subject, RewritingContext& context, bool disjoint);
   bool okToBind();
-  bool downSearchType(DagNode* arg, SequenceSearch::SearchType& searchType) const;
 
   NarrowingSequenceSearch* makeNarrowingSequenceSearch(MetaModule* m,
 						       FreeDagNode* subject,

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -97,6 +97,8 @@ public:
   void generateShow(bool showCommand, const string& command, NamedEntity* module);
   void generateShow(bool showCommand, const string& command, View* module);
   void generateShow(bool showCommand, const string& command);
+  void generateLoopTokens(bool showCommand, const Vector<Token>& tokens);
+
   //
   //	Functions to print results.
   //
@@ -108,6 +110,7 @@ public:
 		     bool showBreakdown,
 		     int64_t nrStates = NONE);
   void generateResult(Term* result);
+  void generateResult(const string& message, DagNode* result);
   void generateResult(RewritingContext& context,
 		      DagNode* result,
 		      int64_t cpuTime,
@@ -117,6 +120,13 @@ public:
 		      bool showBreakdown);
   void generateNonResult(RewritingContext& context,
 			 const string& message,
+			 int64_t cpuTime,
+			 int64_t realTime,
+			 bool showStats,
+			 bool showTiming,
+			 bool showBreakdown);
+  void generateSmtResult(SMT_RewriteSequenceSearch* state,
+			 int64_t solutionNr,
 			 int64_t cpuTime,
 			 int64_t realTime,
 			 bool showStats,
@@ -140,6 +150,7 @@ public:
   void generateNonResult(const string& message);
   void generateResult(const string& message, int64_t solutionNr);
   void generateMatchResult(MatchSearchState* state, int64_t matchNr);
+  void generateBubbleResult(const Vector<int>& bubble);
   //
   //	Commands for interogating a search graph.
   //
@@ -193,7 +204,7 @@ MaudeLatexBuffer::cleanUp()
 }
 
 inline void
-MaudeLatexBuffer::generateHeading(const char*  message)
+MaudeLatexBuffer::generateHeading(const char* message)
 {
   output << "\\par\\maudeResponse{" << message << "}\n";
 }

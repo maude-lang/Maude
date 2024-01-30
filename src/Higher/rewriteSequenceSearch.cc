@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,9 +55,11 @@ RewriteSequenceSearch::RewriteSequenceSearch(RewritingContext* initial,
   explore = -1;
   exploreDepth = -1;
   firstDeeperNodeNr = 0;
+  returnedStateAlready = false;
   needToTryInitialState = (searchType == ANY_STEPS);
   reachingInitialStateOK = (searchType == AT_LEAST_ONE_STEP || searchType == ONE_STEP);
   normalFormNeeded = (searchType == NORMAL_FORM);
+  branchNeeded = (searchType == BRANCH);
   nextArc = NONE;
 }
 
@@ -75,12 +77,12 @@ RewriteSequenceSearch::findNextMatch()
 
   for(;;)
     {
-      stateNr = findNextInterestingState();
-      if (stateNr == NONE)
-	break;
-      matchState = new MatchSearchState(getContext()->makeSubcontext(getStateDag(stateNr)),
-					goal,
-					MatchSearchState::GC_CONTEXT);
+	stateNr = findNextInterestingState();
+	if (stateNr == NONE)
+	  break;
+	matchState = new MatchSearchState(getContext()->makeSubcontext(getStateDag(stateNr)),
+					  goal,
+					  MatchSearchState::GC_CONTEXT);
     tryMatch:
       bool foundMatch = matchState->findNextMatch();
       matchState->transferCountTo(*(getContext()));
@@ -111,28 +113,44 @@ RewriteSequenceSearch::findNextInterestingState()
   for(;;)
     {
       //
-      //	Get next state to explore.
+      //	Get index of next state to explore.
       //
       ++explore;
+      returnedStateAlready = false;  // needed for BRANCH search type
       if (explore == getNrStates())
-	break;
+	break;  // all states explored
+      //
+      //	Are we at the first node of the next level?
+      //
       if (explore == firstDeeperNodeNr)
 	{
 	  ++exploreDepth;
-	  if (normalFormNeeded)
+	  if (normalFormNeeded || branchNeeded)
 	    {
-	      if (maxDepth > 0 && exploreDepth > maxDepth)
+	      //
+	      //	If we're looking for a state that has a certain number of successors we need to
+	      //	search one level beyond maxDepth
+	      //
+	      if (maxDepth != NONE && exploreDepth > maxDepth)
 		break;
 	    }
 	  else
 	    {
+	      //
+	      //	Otherwise we just search to maxDepth (which will never be true if maxDepth == NONE).
+	      //
 	      if (exploreDepth == maxDepth)
 		break;
 	    }
+	  //
+	  //	Next state generated (if there is one) will be the first node of the following level.
+	  //
 	  firstDeeperNodeNr = getNrStates();
 	}
       nextArc = 0;
-      
+      //
+      //	Explore the arcs of the current state.
+      //
     exploreArcs:
       int nrStates = getNrStates();
       int nextStateNr;
@@ -142,12 +160,23 @@ RewriteSequenceSearch::findNextInterestingState()
 	  if (normalFormNeeded)
 	    {
 	      if (exploreDepth == maxDepth)
-		break;  // no point looking for further arcs
+		break;  // no point looking for further arcs from this state
+	    }
+	  else if (branchNeeded)
+	    {
+	      if (!returnedStateAlready && nextArc >= 2 && nextStateNr != getNextState(explore, 0))
+		{
+		  returnedStateAlready = true;  // so we don't return the state again if we see another distinct next state
+		  return explore;
+		}
 	    }
 	  else
 	    {
-	      if (nextStateNr == nrStates)  // new state reached
-		return nextStateNr;
+	      if (nextStateNr == nrStates)
+		return nextStateNr;  // we reached a new state so return it
+	      //
+	      //	We reached a state that we already saw.
+	      //
 	      if (nextStateNr == 0 && reachingInitialStateOK)
 		{
 		  //
@@ -163,11 +192,13 @@ RewriteSequenceSearch::findNextInterestingState()
 	return NONE;
       if (normalFormNeeded && nextArc == 0)
 	{
+	  //
+	  //	No next states so we can return the state we just explored as a normal form.
+	  //
 	  nextArc = NONE;
 	  return explore;
 	}
     }
-
   return NONE;
 }
 

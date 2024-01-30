@@ -1,3 +1,33 @@
+2024-01-29  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeTinySpace; put extra space after ,
+	in \maudeComma
+
+2024-01-09  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeToBranch; increased \maudeInterwordSpace to
+	0.4em; added \maudeBigSpace and use it for ASCII mode; adjusted space
+	in ASCII version of \maudeConstantDecl
+
+2024-01-05  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeNewline; protect against doubled dollar signs
+	in \maudeBigString, \maudeBigQid, \maudeBigRaw
+
+2023-12-19  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeBigQid, \maudeBigRaw
+
+2023-12-18  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeBigString
+
+2023-12-15  Steven Eker  <eker@pup>
+
+	* maude.sty: require seqsplit; added \maudeBigNumber
+
+===================================Maude156===========================================
+
 2023-12-12  Steven Eker  <eker@pup>
 
 	* maude.sty: use \hspace rather than \hskip for \maudeInterwordSpace;

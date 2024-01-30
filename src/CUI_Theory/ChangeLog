@@ -1,3 +1,12 @@
+2024-01-16  Steven Eker  <eker@pup>
+
+	* CUI_Symbol.cc (CUI_Symbol::stackArguments): handle
+	respectUnstackable argument
+
+	* CUI_Symbol.hh (class CUI_Symbol): updated decl for stackArguments()
+
+===================================Maude156===========================================
+
 2023-07-24  Steven Eker  <eker@pup>
 
 	* CUI_Symbol.cc (CUI_Symbol::determineGround): added

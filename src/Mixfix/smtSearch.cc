@@ -38,17 +38,36 @@ Interpreter::doSmtSearch(Timer& timer,
       bool result = state->findNextMatch();
       if (UserLevelRewritingContext::aborted())
 	break;
- 
+
+      RewritingContext* context = state->getContext();
+      Int64 real = 0;
+      Int64 virt = 0;
+      Int64 prof = 0;
+      bool showTiming = getFlag(SHOW_TIMING) && timer.getTimes(real, virt, prof);
+      bool showStats = getFlag(SHOW_STATS);
       if (!result)
 	{
-	  cout << ((solutionCount == 0) ? "\nNo solution.\n" : "\nNo more solutions.\n");
-	  printStats(timer, *(state->getContext()), getFlag(SHOW_TIMING));
+	  
+	  const char* reply = (solutionCount == 0) ? "No solution." : "No more solutions.";
+	  cout << "\n" << reply << endl;
+	  if (showStats)
+	    printStats(*context, prof, real, showTiming);
+	  if (latexBuffer != 0)
+	    {
+	      latexBuffer->generateNonResult(*context,
+					     reply,
+					     prof,
+					     real,
+					     showStats,
+					     showTiming,
+					     getFlag(SHOW_BREAKDOWN));
+	    } 
 	  break;
 	}
 
       ++solutionCount;
       cout << "\nSolution " << solutionCount << endl;
-      printStats(timer, *(state->getContext()), getFlag(SHOW_TIMING));
+      printStats(*context, prof, real, showTiming);
       int stateNr = state->getCurrentStateNumber();
       DagNode* d = state->getState(stateNr);
       cout << "state: " << d << endl;
@@ -56,9 +75,21 @@ Interpreter::doSmtSearch(Timer& timer,
 						   *state,
 						   state->getSMT_VarIndices());
       cout << "where " << state->getFinalConstraint() << endl;
+      if (latexBuffer != 0)
+	{
+	  latexBuffer->generateSmtResult(state,
+					 solutionCount,
+					 prof,
+					 real,
+					 showStats,
+					 showTiming,
+					 getFlag(SHOW_BREAKDOWN));
+	}
     }
   QUANTIFY_STOP();
 
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
   if (i == limit)
     {

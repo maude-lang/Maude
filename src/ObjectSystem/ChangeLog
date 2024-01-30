@@ -1,3 +1,13 @@
+2024-01-22  Steven Eker  <eker@pup>
+
+	* directoryActions.cc (DirectoryManagerSymbol::getDirectoryEntry):
+	use lstat() rather than stat() to handle the DT_UNKNOWN case, just
+	in case we are looking at a symbolic link. The comment said that
+	we needed to call lstat() but actually we were calling stat().
+	Comment rewritten to make the issue clear
+
+===================================Maude156===========================================
+
 2023-11-02  Steven Eker  <eker@pup>
 
 	* configSymbol.cc (ConfigSymbol::ruleRewrite): enforce

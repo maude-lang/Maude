@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,25 +24,6 @@
 //	Code for metaSearch()/metaSearchPath()/metaSmtSearch() descent functions.
 //
 
-local_inline bool
-MetaLevelOpSymbol::downSearchType(DagNode* arg, SequenceSearch::SearchType& searchType) const
-{
-  int qid;
-  if (metaLevel->downQid(arg, qid))
-    {
-      if (qid == Token::encode("+"))
-	searchType = SequenceSearch::AT_LEAST_ONE_STEP;
-      else if (qid == Token::encode("*"))
-	searchType = SequenceSearch::ANY_STEPS;
-      else if (qid == Token::encode("!"))
-	searchType = SequenceSearch::NORMAL_FORM;
-      else
-	return false;
-      return true;
-    }
-  return false;
-}
-
 RewriteSequenceSearch*
 MetaLevelOpSymbol::makeRewriteSequenceSearch(MetaModule* m,
 					     FreeDagNode* subject,
@@ -50,7 +31,7 @@ MetaLevelOpSymbol::makeRewriteSequenceSearch(MetaModule* m,
 {
   RewriteSequenceSearch::SearchType searchType;
   int maxDepth;
-  if (downSearchType(subject->getArgument(4), searchType) &&
+  if (metaLevel->downSearchType(subject->getArgument(4), searchType) &&
       metaLevel->downBound(subject->getArgument(5), maxDepth))
     {
       Term* s;
@@ -184,7 +165,7 @@ MetaLevelOpSymbol::makeSMT_RewriteSequenceSearch(MetaModule* m,
   RewriteSequenceSearch::SearchType searchType;
   int maxDepth;
   if (metaLevel->isNat(metaVarNumber) &&
-      downSearchType(subject->getArgument(4), searchType) &&
+      metaLevel->downSearchType(subject->getArgument(4), searchType) &&
       searchType != SequenceSearch::NORMAL_FORM &&
       metaLevel->downBound(subject->getArgument(6), maxDepth))
     {

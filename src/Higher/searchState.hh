@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ public:
   enum Flags
   {
     GC_CONTEXT = 2,		// delete context in our dtor
-    GC_SUBSTITUTION = 4,	// delete substitution in our dtor
+    GC_SUBSTITUTION = 4,	// delete initial substitution (if there is one) in our dtor
     IGNORE_CONDITION = 8	// ignore conditions of conditional PreEquations
   };
 

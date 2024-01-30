@@ -177,20 +177,6 @@ safeCastNonNull(P p)
   return static_cast<T>(p);
 }
 
-template <typename T, typename P>
-inline T
-downCast(P p)
-{
-#ifndef NO_ASSERT
-  if (dynamic_cast<T>(p) == 0)
-    {
-      cerr << "unexpected null or cast error: "<< __FILE__ << ':' << __LINE__ << '\n';
-      abort();
-    }
-#endif
-  return static_cast<T>(p);
-}
-
 enum SpecialConstants
 {
   NR_PTR_LOSE_BITS = 3,		// number of rhs bits to chop when hashing a pointer

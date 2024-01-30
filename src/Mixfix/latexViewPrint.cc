@@ -108,20 +108,20 @@ SyntacticView::latexShowView(ostream& s)
   //
   for (const auto& i : opTermList)
     {
-      s << "\\par\\maudeIndent\\maudeKeyword{" << (i.msg ? "msg" : "op") << "}\\maudeSpace" <<
+      s << "\\par$\\maudeIndent\\maudeKeyword{" << (i.msg ? "msg" : "op") << "}\\maudeSpace" <<
 	MixfixModule::latexTokenVector(i.fromBubble, 0, i.fromBubble.size() - 1) <<
 	"\\maudeSpace\\maudeKeyword{to}\\maudeSpace\\maudeKeyword{term}\\maudeSpace" <<
-	MixfixModule::latexTokenVector(i.toBubble, 1, i.toBubble.size() - 1) << "\\maudeEndStatement\n";
+	MixfixModule::latexTokenVector(i.toBubble, 1, i.toBubble.size() - 1) << "$\\maudeEndStatement\n";
     }
   //
   //	We generate strat->expr mappings as unparsed bubbles.
   //
   for (const auto& i : stratExprList)
     {
-      s << "\\par\\maudeIndent\\maudeKeyword{strat}\\maudeSpace" <<
+      s << "\\par$\\maudeIndent\\maudeKeyword{strat}\\maudeSpace" <<
 	MixfixModule::latexTokenVector(i.fromBubble, 0, i.fromBubble.size() - 1) <<
 	"\\maudeSpace\\maudeKeyword{to}\\maudeSpace\\maudeKeyword{expr}\\maudeSpace" <<
-	MixfixModule::latexTokenVector(i.toBubble, 1, i.toBubble.size() - 1) << "\\maudeEndStatement\n";
+	MixfixModule::latexTokenVector(i.toBubble, 1, i.toBubble.size() - 1) << "$\\maudeEndStatement\n";
     }
   s << "\\par\\maudeKeyword{endv}\n";
 }

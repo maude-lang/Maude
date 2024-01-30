@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ MetaLevelOpSymbol::makeNarrowingSequenceSearch(MetaModule* m,
 {
   RewriteSequenceSearch::SearchType searchType;
   int maxDepth;
-  if (downSearchType(subject->getArgument(3), searchType) &&
+  if (metaLevel->downSearchType(subject->getArgument(3), searchType) &&
       metaLevel->downBound(subject->getArgument(4), maxDepth))
     {
       Term* s;
@@ -110,7 +110,7 @@ MetaLevelOpSymbol::makeNarrowingSequenceSearchAlt(MetaModule* m,
   RewriteSequenceSearch::SearchType searchType;
   int maxDepth;
   bool singlePosition;
-  if (downSearchType(subject->getArgument(2), searchType) &&
+  if (metaLevel->downSearchType(subject->getArgument(2), searchType) &&
       metaLevel->downBound(subject->getArgument(3), maxDepth) &&
       metaLevel->downBool(subject->getArgument(4), singlePosition))
     {

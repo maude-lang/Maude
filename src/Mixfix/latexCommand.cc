@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -352,8 +352,8 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
   //	  <command and options> in <module> : <subject> <searchType> <target> .
   //
   static const char* searchKindName[] = { "search", "narrow", "xg-narrow", "smt-search", "vu-narrow", "fvu-narrow"};
-  static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!" };
-  static const char* searchTypeLatex[] = { "\\maudeOneStep", "\\maudeAtLeastOneStep", "\\maudeAnySteps", "\\maudeToNormalForm" };
+  static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!", "=>#" };
+  static const char* searchTypeLatex[] = { "\\maudeOneStep", "\\maudeAtLeastOneStep", "\\maudeAnySteps", "\\maudeToNormalForm", "\\maudeToBranch"};
 
   Module* module = subject->symbol()->getModule();
   //
@@ -430,6 +430,29 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
   pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of ";
   pendingClose += searchKindName[searchKind];
   pendingClose += "\n%\n";
+}
+
+void
+MaudeLatexBuffer::generateLoopTokens(bool showCommand, const Vector<Token>& tokens)
+{
+  //
+  //	Print comment.
+  //
+  output << "\\begin{comment}\n%\n%  loop tokens: (";
+  int nrTokens = tokens.size();  // might be 0 so must be signed
+  Token::printTokenVector(output, tokens, 0, nrTokens - 1, true);
+  output << ")\n%\n\\end{comment}\n";
+  //
+  //	Print latex version.
+  //
+  output << "\\begin{maudeResultParagraph}\n";
+  if (showCommand)
+    {
+      output << "$\\maudeKeyword{\\maudeLeftParen}" <<
+	MixfixModule::latexTokenVector(tokens, 0, nrTokens - 1) <<
+	"\\maudeKeyword{\\maudeRightParen}$\n";
+    }
+  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of loop execution\n%\n";
 }
 
 void

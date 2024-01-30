@@ -120,7 +120,7 @@ VisibleModule::latexPrintAttributes(ostream& s,
     }
   if (metadata != NONE)
     {
-      s << space << "\\maudeKeyword{metadata}\\maudeSpace\\maudeString{" << Token::latexName(metadata) << "}";
+      s << space << "\\maudeKeyword{metadata}\\maudeSpace" << latexString(metadata);
       space = "\\maudeSpace";
     }
   if (printAttribute != 0)
@@ -251,8 +251,8 @@ VisibleModule::latexPrintStrategyDecl(ostream& s, const char* indent, const Rewr
   int metadata = getMetadata(MixfixModule::STRAT_DECL, rs);
   if (metadata != NONE)
     {
-      s << "\\maudeSpace\\maudeLeftBracket\\maudeKeyword{metadata}\\maudeSpace\\maudeString{" <<
-	Token::latexName(metadata) << "}\\maudeRightBracket";
+      s << "\\maudeSpace\\maudeLeftBracket\\maudeKeyword{metadata}\\maudeSpace" <<
+	latexString(metadata) << "\\maudeRightBracket";
     }
   s << "$\\maudeEndStatement\n";
 }
@@ -744,7 +744,7 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
     }
   if (metadata != NONE)
     {
-      s << space << "\\maudeKeyword{metadata}\\maudeSpace\\maudeString{" << Token::latexName(metadata) << "}";
+      s << space << "\\maudeKeyword{metadata}\\maudeSpace" << latexString(metadata);
       space = "\\maudeSpace";
     }
   if (st.hasSpecial())
@@ -933,7 +933,7 @@ VisibleModule::latexShowPolymorphAttributes(ostream& s, int index)
     }
   int metadata = getPolymorphMetadata(index);
   if (metadata != NONE)
-    s << "\\maudeSpace\\maudeKeyword{metadata}\\maudeSpace\\maudeString{" << Token::latexName(metadata) << "}";
+    s << "\\maudeSpace\\maudeKeyword{metadata}\\maudeSpace" << latexString(metadata);
 
   if (st.hasSpecial())
     {

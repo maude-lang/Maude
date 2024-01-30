@@ -36,7 +36,7 @@ public:
   enum Flags
   {
     ALLOW_NONEXEC = 32,		// allow narrowing with nonexecutable rules, unbound variables being treated as fresh
-    SINGLE_POSITION = 64	// once we've found a position to narrow, don't consider other positions
+    SINGLE_POSITION = 512	// once we've found a position to narrow, don't consider other positions
   };
 
   //

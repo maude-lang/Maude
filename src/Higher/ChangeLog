@@ -1,3 +1,74 @@
+2024-01-24  Steven Eker  <eker@pup>
+
+	* narrowingSearchState.cc: OR in RESPECT_FROZEN to flags before
+	passing to PositionState() since narrowing, like rewriting, should
+	always respect frozen arguments
+
+2024-01-19  Steven Eker  <eker@pup>
+
+	* searchState.hh (class SearchState): clarify explanation of
+	GC_SUBSTITUTION
+
+	* variantNarrowingSearchState.cc
+	(VariantNarrowingSearchState::VariantNarrowingSearchState): only
+	use variant equations that have not been marked nonexec
+
+2024-01-17  Steven Eker  <eker@pup>
+
+	* positionState.cc (PositionState::PositionState): changed Assert() so
+	that if we aren't respecting frozen we can't respect unstackable, but
+	we allow setting unstackable, since the dagnode will still be unstackable
+	when respecting frozen
+
+	* stateTransitionGraph.cc (StateTransitionGraph::getNextState): pass
+	RewriteSearchState::RESPECT_UNREWRITABLE,
+	PositionState::RESPECT_UNSTACKABLE to RewriteSearchState()
+
+	* rewriteSearchState.cc (RewriteSearchState::RewriteSearchState):
+	added Assert()s that unrewritable/unstackable flag conventions
+	are obeyed
+	(RewriteSearchState::findNextRewrite): don't check isUnrewritable()
+	unless RESPECT_UNREWRITABLE flag is set
+	(RewriteSearchState::findNextRewrite): turned commented out cerr into
+	DebugInfo()
+
+	* rewriteSearchState.hh (class RewriteSearchState): added
+	RESPECT_UNREWRITEABLE flag
+
+2024-01-16  Steven Eker  <eker@pup>
+
+	* positionState.cc (PositionState::exploreNextPosition): pass
+	respectUnstackable argument to stackPhysicalArguments()
+
+	* positionState.hh (class PositionState): added REPECT_UNSTACKABLE
+	to flags
+
+	* narrowingSearchState.hh (class NarrowingSearchState): move
+	SINGLE_POSITION from 64 to 512 to avoid conflict with GC_VAR_GEN in
+	other classes
+
+2024-01-12  Steven Eker  <eker@pup>
+
+	* positionState.hh (class PositionState): changed comment on decl for
+	findNextPosition()
+
+2024-01-08  Steven Eker  <eker@pup>
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): added data member
+	returnedStateAlready
+
+	* rewriteSequenceSearch.cc (RewriteSequenceSearch::RewriteSequenceSearch):
+	init branchNeeded, returnedStateAlready
+	(RewriteSequenceSearch::findNextInterestingState): implement branchNeeded
+
+	* rewriteSequenceSearch.hh (class RewriteSequenceSearch): added data
+	member branchNeeded
+
+	* sequenceSearch.hh (class SequenceSearch): added BRANCH to enum
+	SequenceSearch
+
+===================================Maude156===========================================
+
 2023-09-25  Steven Eker  <eker@pup>
 
 	* variantSearch.cc (VariantSearch::VariantSearch): deleted commented

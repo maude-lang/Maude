@@ -1,3 +1,12 @@
+2024-01-16  Steven Eker  <eker@pup>
+
+	* AU_Symbol.cc (AU_Symbol::stackArguments): handle
+	respectUnstackable argument
+
+	* AU_Symbol.hh (class AU_Symbol): updated decl for stackArguments()
+
+===================================Maude156===========================================
+
 2023-07-24  Steven Eker  <eker@pup>
 
 	* AU_Symbol.cc (AU_Symbol::termify): cast to const AU_BaseDagNode*

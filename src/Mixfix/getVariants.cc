@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -67,7 +67,8 @@ Interpreter::getVariants(const Vector<Token>& bubble, Int64 limit, bool irredund
 
   startUsingModule(fm);
   QUANTIFY_START();
-  Timer timer(getFlag(SHOW_TIMING));
+  bool showTiming = getFlag(SHOW_TIMING);
+  Timer timer(showTiming);
 
   FreshVariableGenerator* freshVariableGenerator = new FreshVariableSource(fm);
   UserLevelRewritingContext* context = new UserLevelRewritingContext(d);
@@ -97,7 +98,7 @@ Interpreter::getVariants(const Vector<Token>& bubble, Int64 limit, bool irredund
 	  //
 	  //	All computation is done upfront so there is only one time value.
 	  //
-	  printStats(timer, *context);
+	  printStats(timer, *context, showTiming);
 	}
       doGetVariants(timer, fm, vs, 0, limit);
     }
@@ -138,7 +139,7 @@ Interpreter::doGetVariants(Timer& timer,
 	  if (latexBuffer)
 	    latexBuffer->generateNonResult(message);
 	  if (!irredundant)
-	    printStats(timer, *context);
+	    printStats(timer, *context, getFlag(SHOW_TIMING));
 	  if (state->isIncomplete())
 	    {
 	      const char* message = "Some variants may have been missed due to incomplete unification algorithm(s).";
@@ -155,7 +156,7 @@ Interpreter::doGetVariants(Timer& timer,
 	latexBuffer->generateResult("Variant", solutionCount);
 
       if (!irredundant)
-	printStats(timer, *context);
+	printStats(timer, *context, getFlag(SHOW_TIMING));
 
       int nrFreeVariables;  // dummy
       int variableFamily;  // dummy

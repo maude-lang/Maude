@@ -1,3 +1,24 @@
+2024-01-19  Steven Eker  <eker@pup>
+
+	* module.cc (Module::checkEquation): added AdvisoryCheck() for
+	equations having both the variant and nonexec attributes
+
+2024-01-16  Steven Eker  <eker@pup>
+
+	* run.cc (RewritingContext::ruleRewrite): pass all arguments to
+	stackPhysicalArguments()
+	(RewritingContext::descend): pass all arguments to stackArguments()
+
+2023-12-15  Steven Eker  <eker@pup>
+
+	* memoryCell.hh (MemoryCell::maybeShowResources): take streams
+	(class MemoryCell): updated decls for maybeShowResources(),
+	showResources()
+
+	* memoryCell.cc (MemoryCell::showResources): added latex support
+
+===================================Maude156===========================================
+
 2023-10-23  Steven Eker  <eker@pup>
 
 	* module.cc (Module::closeTheory): added DebugInfo

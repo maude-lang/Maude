@@ -1,7 +1,7 @@
 %
 %    This file is part of the Maude 3 interpreter.
 %
-%    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+%    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 %
 %    This program is free software; you can redistribute it and/or modify
 %    it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 %    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 %
 %	Latex package for use with the -latex-log= feature.
-%	Version alpha155.
+%	Version alpha156.
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{maude}[2023/12/12 Package for Maude logs]
-\RequirePackage{amssymb,extarrows,longtable,tabto,xcolor,verbatim,alltt}
+\ProvidesPackage{maude}[2024/01/29 Package for Maude logs]
+\RequirePackage{amssymb,extarrows,longtable,tabto,xcolor,verbatim,alltt,seqsplit}
 \RequirePackage[T1]{fontenc}
 %
 %	Spacing
@@ -30,9 +30,16 @@
 \newcommand{\maudeIndent}{\hspace*{1em}}  % for module contents
 \newcommand{\maudeBigIndent}{\hspace*{3em}}  % for data in show
 \newcommand{\maudeBannerIndent}{\hspace*{5em}}  % for banner
-\newcommand{\maudeInterwordSpace}{\hspace{0.3em}}
+\newcommand{\maudeInterwordSpace}{\hspace{0.4em}}
+\newcommand{\maudeTinySpace}{\hspace{0.15em}}
+\newcommand{\maudeBigSpace}{\hspace{0.6em}}
 \newcommand{\maudeHardSpace}{\hspace*{0.5em}} % doesn't disappear at the start of a new line
 \newcommand{\maudeAllowLineBreak}{\linebreak[0]}
+%
+%	To get a newline that is not indented we actually start a new paragraph, which means we
+%	need to drop out of math mode and use {} to protect from double dollar signs.
+%
+\newcommand{\maudeNewline}{\)\par\(}
 %
 %	Font choices.
 %
@@ -66,12 +73,25 @@
 %
 \newcommand{\maudeString}[1]{\texttt{#1}}
 \newcommand{\maudeQid}[1]{\texttt{#1}}
+%
+%	Getting \seqsplit to work with the typewritter font is tricky - we need to drop out of math mode to
+%	to use \texttt{} and then jump back into math mode, but account for the possibility that the
+%	we may be following or followed by a dollar sign. Thus we can't nest inside {}.
+%	Using \text{} or \mbox{} seems to disable \seqsplit{}.
+%
+\newcommand{\maudeBigString}[1]{\)\texttt{\seqsplit{#1}}\(}
+\newcommand{\maudeBigQid}[1]{\)\texttt{\seqsplit{#1}}\(}
+
 \newcommand{\maudeLabel}[1]{\texttt{#1}}
 \newcommand{\maudePrefixLabel}[1]{[\texttt{#1}]\maudeInterwordSpace :}
 %
 %	Numbers are just printed with the math mode default.
 %
 \newcommand{\maudeNumber}[1]{#1}
+%
+%	Very large numbers use seqsplit to allow them to be broken anywhere.
+%
+\newcommand{\maudeBigNumber}[1]{\seqsplit{#1}}
 %
 %	Normal mode is used for things like the contents of gather attributes and format attributes.
 %
@@ -100,7 +120,7 @@
 %	An unparsed token that could be anything.
 %
 \newcommand{\maudeRaw}[1]{\texttt{#1}}
-
+\newcommand{\maudeBigRaw}[1]{\)\texttt{\seqsplit{#1}}\(}
 %
 %	Catch all for rare output - use typewritter.
 %
@@ -128,7 +148,7 @@
 \newcommand{\maudeAssign}{\,:=\,}  % for match condition fragments
 \newcommand{\maudeParameterColon}{\,::\,}  % for forming parameter :: theory pairs
 \newcommand{\maudeLessThan}{<}  % for subsorts
-\newcommand{\maudeComma}{,\maudeAllowLineBreak}  % to separate parameters and function arguments
+\newcommand{\maudeComma}{,\maudeTinySpace\maudeAllowLineBreak}  % to separate parameters and function arguments
 \newcommand{\maudeEndStatement}{\maudeInterwordSpace\maudePunctuation{.}}  % include space and try to avoid preceeding linebreak
 \newcommand{\maudeEndCommand}{\maudeInterwordSpace\maudePunctuation{.}}  % include space and try to avoid preceeding linebreak
 \newcommand{\maudeDisambigDot}{.}  % for (<term>).<sort>
@@ -157,6 +177,7 @@
 \newcommand{\maudeAtLeastOneStep}{\,\Rightarrow^+}
 \newcommand{\maudeAnySteps}{\,\Rightarrow^*}
 \newcommand{\maudeToNormalForm}{\,\Rightarrow^!}
+\newcommand{\maudeToBranch}{\,\Rightarrow^\#}
 \newcommand{\maudeIsAssigned}{\,\longrightarrow\,}
 \newcommand{\maudePathLeft}{\xlongequal{\hspace*{2em}}\hspace*{-0.48em}[\maudeInterwordSpace}
 \newcommand{\maudePathRight}{\maudeInterwordSpace]\hspace*{-0.48em}\xLongrightarrow{\hspace*{2em}}}
@@ -184,23 +205,24 @@
 %
 \DeclareOption{ASCII}{
   \renewcommand{\maudeIter}[2]{#1\textasciicircum #2}
-  \renewcommand{\maudeFunction}{\maudeInterwordSpace\textnormal{-->}\maudeInterwordSpace}
-  \renewcommand{\maudePartialFunction}{\textnormal{\maudeTilde >}\maudeInterwordSpace}
-  \renewcommand{\maudeConstantDecl}{\,:\,\textnormal{-->}\maudeInterwordSpace} % needed to get the spacing right
-  \renewcommand{\maudeConjunction}{\maudeInterwordSpace/\textbackslash\maudeInterwordSpace}
-  \renewcommand{\maudeRewritesTo}{\maudeInterwordSpace\textnormal{=>}\maudeInterwordSpace}
+  \renewcommand{\maudeFunction}{\maudeBigSpace\textnormal{-->}\maudeBigSpace}
+  \renewcommand{\maudePartialFunction}{\textnormal{\maudeTilde >}\maudeBigSpace}
+  \renewcommand{\maudeConstantDecl}{\maudeInterwordSpace :\maudeInterwordSpace\textnormal{-->}\maudeBigSpace} % needed to get the spacing right
+  \renewcommand{\maudeConjunction}{\maudeBigSpace/\textbackslash\maudeBigSpace}
+  \renewcommand{\maudeRewritesTo}{\maudeBigSpace\textnormal{=>}\maudeBigSpace}
   \renewcommand{\maudeMatch}{\,\textnormal{<=?}\,}
   \renewcommand{\maudeUnify}{\,\textnormal{=?}\,}
   \renewcommand{\maudeStratAssign}{\,\textnormal{<--},}
-  \renewcommand{\maudeOneStep}{\maudeInterwordSpace\textnormal{=>1}\maudeInterwordSpace}
-  \renewcommand{\maudeAtLeastOneStep}{\maudeInterwordSpace\textnormal{=>+}\maudeInterwordSpace}
-  \renewcommand{\maudeAnySteps}{\maudeInterwordSpace\textnormal{=>*}\maudeInterwordSpace}
-  \renewcommand{\maudeToNormalForm}{\maudeInterwordSpace\textnormal{=>!}\maudeInterwordSpace}
-  \renewcommand{\maudeIsAssigned}{\maudeInterwordSpace\textnormal{--\,-->}\maudeInterwordSpace}
-  \renewcommand{\maudePathLeft}{\textnormal{===[}\maudeInterwordSpace}
-  \renewcommand{\maudePathRight}{\maudeInterwordSpace\textnormal{]===>}}
-  \renewcommand{\maudePathWithLabel}[1]{\textnormal{--\,--\,--}\maudeInterwordSpace#1\maudeInterwordSpace\textnormal{--\,--\,-->}}
+  \renewcommand{\maudeOneStep}{\maudeBigSpace\textnormal{=>1}\maudeBigSpace}
+  \renewcommand{\maudeAtLeastOneStep}{\maudeBigSpace\textnormal{=>+}\maudeBigSpace}
+  \renewcommand{\maudeAnySteps}{\maudeBigSpace\textnormal{=>*}\maudeBigSpace}
+  \renewcommand{\maudeToNormalForm}{\maudeBigSpace\textnormal{=>!}\maudeBigSpace}
+  \renewcommand{\maudeToBranch}{\maudeBigSpace\textnormal{=>\#}\maudeBigSpace}
+  \renewcommand{\maudeIsAssigned}{\maudeBigSpace\textnormal{--\,-->}\maudeBigSpace}
+  \renewcommand{\maudePathLeft}{\textnormal{===[}\maudeBigSpace}
+  \renewcommand{\maudePathRight}{\maudeBigSpace\textnormal{]===>}}
+  \renewcommand{\maudePathWithLabel}[1]{\textnormal{--\,--\,--}\maudeBigSpace#1\maudeBigSpace\textnormal{--\,--\,-->}}
   \renewcommand{\maudePathWithoutLabel}{\textnormal{--\,--\,--\,--\,--\,-->}}
-  \renewcommand{\maudeArcArrow}{\maudeInterwordSpace\textnormal{===>}\maudeInterwordSpace}
+  \renewcommand{\maudeArcArrow}{\maudeBigSpace\textnormal{===>}\maudeBigSpace}
 }
 \ProcessOptions\relax

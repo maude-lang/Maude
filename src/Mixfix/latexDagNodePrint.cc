@@ -35,7 +35,11 @@ MixfixModule::latexPrettyPrint(ostream& s, DagNode* dagNode)
   const PrintSettings& printSettings = interpreter;  // HACK
   MixfixModule* module = static_cast<MixfixModule*>(dagNode->symbol()->getModule());
   if (printSettings.getPrintFlag(PrintSettings::PRINT_GRAPH))
-    /*module->latexGraphPrint(s, dagNode)*/;
+    {
+      s << "$";
+      module->latexGraphPrint(s, dagNode, printSettings);
+      s << "$";
+    }
   else
     {
       clearIndent();
@@ -58,7 +62,7 @@ MixfixModule::latexPrintDagNode(ostream& s, DagNode* dagNode)
   const PrintSettings& printSettings = interpreter;  // HACK
   MixfixModule* module = safeCastNonNull<MixfixModule*>(dagNode->symbol()->getModule());
   if (printSettings.getPrintFlag(PrintSettings::PRINT_GRAPH))
-    /*module->latexGraphPrint(s, dagNode)*/;
+    module->latexGraphPrint(s, dagNode, printSettings);
   else
     {
       clearIndent();
@@ -148,7 +152,7 @@ MixfixModule::latexHandleIter(ostream& s,
 	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(nat)));
 	  latexPrefix(s, needDisambig, color);
-	  s << "\\maudeNumber{" << nat << "}";
+	  s << latexNumber(nat);
 	  latexSuffix(s, dagNode, needDisambig, color);
 	  return true;
 	}
@@ -202,7 +206,7 @@ MixfixModule::latexHandleMinus(ostream& s,
 	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithMinus.size() > 1 || overloadedIntegers.count(neg)));
 	  latexPrefix(s, needDisambig, color);
-	  s << "\\maudeNumber{" << neg << "}";
+	  s << latexNumber(neg);
 	  latexSuffix(s, dagNode, needDisambig, color);
 	  return true;
 	}
@@ -227,7 +231,7 @@ MixfixModule::latexHandleDivision(ostream& s,
 	  bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	    (!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
 	  latexPrefix(s, needDisambig, color);
-	  s << "\\maudeNumber{" << rat.first << "}/\\maudeNumber{"  << rat.second << "}";
+	  s << latexNumber(rat.first) << "/" << latexNumber(rat.second);
 	  latexSuffix(s, dagNode, needDisambig, color);
 	  return true;
 	}
@@ -262,7 +266,7 @@ MixfixModule::latexHandleString(ostream& s,
   bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue)));
   latexPrefix(s, needDisambig, color);
-  s << "\\maudeString{" << Token::latexName(strValue) << "}";
+  s << latexString(strValue);
   latexSuffix(s, dagNode, needDisambig, color);
 }
 
@@ -277,7 +281,7 @@ MixfixModule::latexHandleQuotedIdentifier(ostream& s,
   bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode)));
   latexPrefix(s, needDisambig, color);
-  s << "\\maudeQid{" << "\\maudeSingleQuote " << Token::latexName(qidCode) << "}";
+  s << latexQid(qidCode);
   latexSuffix(s, dagNode, needDisambig, color);
 }
 
@@ -336,7 +340,7 @@ MixfixModule::latexHandleSMT_Number(ostream& s,
       bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	(!rangeKnown && (kindsWithSucc.size() > 1 || overloadedIntegers.count(integer)));
       latexPrefix(s, needDisambig, color);
-      s << "\\maudeNumber{" << integer << "}";
+      s << latexNumber(integer);
       latexSuffix(s, dagNode, needDisambig, color);
     }
   else
@@ -346,7 +350,7 @@ MixfixModule::latexHandleSMT_Number(ostream& s,
       bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
 	(!rangeKnown && (kindsWithDivision.size() > 1 || overloadedRationals.count(rat)));
       latexPrefix(s, needDisambig, color);
-      s << "\\maudeNumber{" << rat.first << "}/\\maudeNumber{" << rat.second << "}";
+      s << latexNumber(rat.first) << "/" << latexNumber(rat.second);
       latexSuffix(s, dagNode, needDisambig, color);
     }
 }

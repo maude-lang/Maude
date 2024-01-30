@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -88,7 +88,8 @@ Interpreter::variantMatch(const Vector<Token>& bubble, Int64 limit, bool debug)
   //	Responsibility for deleting patternContext and freshVariableGenerator is passed
   //	to ~VariantSearch().
   //
-  Timer timer(getFlag(SHOW_TIMING));
+  bool showTiming = getFlag(SHOW_TIMING);
+  Timer timer(showTiming);
   subjectContext->reduce();
   VariantSearch* vs =
     new VariantSearch(patternContext,
@@ -110,7 +111,7 @@ Interpreter::variantMatch(const Vector<Token>& bubble, Int64 limit, bool debug)
       //	No more rewriting or narrowing happens after variants have been
       //	generated for pattern so we do this just once.
       //
-      printStats(timer, *patternContext);
+      printStats(timer, *patternContext, showTiming);
       doVariantMatching(fm, vs, 0, limit);
     }
   else

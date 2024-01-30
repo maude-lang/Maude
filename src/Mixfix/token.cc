@@ -75,7 +75,6 @@ Token::printTokens(ostream& s,
     {
       s << sep << tokens[i];
       sep = seperator;
-      
     }
 }
 

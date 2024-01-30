@@ -148,7 +148,7 @@ public:
   
   static void printCondition(ostream& s, const Vector<ConditionFragment*>& condition);
   static void printCondition(ostream& s, const PreEquation* pe);
-  void printAttributes(ostream& s, const PreEquation* pe, ItemType itemType);
+  void printAttributes(ostream& s, const PreEquation* pe, ItemType itemType, const PrintSettings& printSettings);
   void printStrategyTerm(ostream& s, RewriteStrategy* strat, Term* term);
   //
   //	Parsing functions.
@@ -285,14 +285,20 @@ public:
   static Sort* disambiguatorSort(const Term* term);
   int getSMT_NumberToken(const mpq_class& value, Sort* sort);
   void printModifiers(ostream& s, Int64 number = NONE, Int64 number2 = NONE);
-  static void prettyPrint(ostream& s, const Term* term, bool rangeKnown = false);
-  static void prettyPrint(ostream& s, DagNode* dagNode, bool rangeKnown = false);
+  static void prettyPrint(ostream& s, const Term* term, const PrintSettings& printSettings, bool rangeKnown = false);
+  static void prettyPrint(ostream& s, DagNode* dagNode, const PrintSettings& printSettings, bool rangeKnown = false);
   static bool prettyPrint(ostream& s, StrategyExpression* strategy, int requiredPrec);
   static void clearIndent();
   static void clearColor(ostream& s);
   //
   //	LaTeX conversion functions.
   //
+  static string latexNumber(const mpz_class& number);
+  static string latexString(const string& str);
+  static string latexString(int code);
+  static string latexQid(int idCode);
+  static string latexRaw(int idCode);
+
   static string latexStructuredName(const Vector<int>& codes, const Module* m);
   static string latexSort(int code, const Module* module);
   static string latexSort(const Sort* sort);
@@ -301,7 +307,6 @@ public:
   static string latexPrettyOp(int code);
   static string latexConstant(int code, const Module* module);
   static string latexTokenVector(const Vector<Token>& tokens, Index first, Index last);
-
   //
   //	Latex pretty print functions.
   //
@@ -311,7 +316,7 @@ public:
   static void latexPrintGather(ostream& s, const Vector<int>& gather);
   static void latexPrintFormat(ostream& s, const Vector<int>& format);
   static void latexPrintLatexMacro(ostream& s, int latexMacro);
-
+  static void latexPrintBubble(ostream& s, const Vector<int>& bubble);
   //
   //	Misc.
   //
@@ -1015,6 +1020,7 @@ private:
 			   ColoringInfo& coloringInfo,
 			   Symbol* symbol,
 			   DagArgumentIterator& a);
+  void latexGraphPrint(ostream& s, DagNode* dagNode, const PrintSettings& printSettings);
 
   NatSet objectSymbols;
   NatSet messageSymbols;
@@ -1310,6 +1316,12 @@ MixfixModule::clearColor(ostream& s)
       attributeUsed = false;
       s << Tty(Tty::RESET);
     }
+}
+
+inline string
+MixfixModule::latexString(int code)
+{
+  return latexString(Token::name(code));
 }
 
 #endif

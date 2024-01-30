@@ -404,10 +404,7 @@ UserLevelRewritingContext::commandLoop()
 		//
 		//	This is the only normal exit() that can be taken.
 		//
-		MemoryCell::maybeShowResources();
-		cout << "Bye.\n";
-		interpreter.endXmlLog();
-		interpreter.endLatexLog();
+		interpreter.quit();
 #ifndef FAST_QUIT
 		//
 		//	Look for memory bugs by deleting everything. Not needed under normal

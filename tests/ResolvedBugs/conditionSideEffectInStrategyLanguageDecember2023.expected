@@ -1,0 +1,10 @@
+==========================================
+srewrite in NONEXEC : < a > using try(all) ; ab .
+
+Solution 1
+rewrites: 1
+result Bar: < b >
+
+No more solutions.
+rewrites: 1
+Bye.

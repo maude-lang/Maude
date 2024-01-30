@@ -225,6 +225,7 @@ BranchSymbol::stackArguments(DagNode* subject,
 			     Vector<RedexPosition>& stack,
 			     int parentIndex,
 			     bool respectFrozen,
+			     bool respectUnstackable,
 			     bool eagerContext)
 {
   //
@@ -240,7 +241,7 @@ BranchSymbol::stackArguments(DagNode* subject,
   for (int i = 1; i <= nrTerms; i++)
     {
       d = f->getArgument(i);
-      if (!(respectFrozen && frozen.contains(i)) && !(d->isUnstackable()))
+      if (!(respectFrozen && frozen.contains(i)) && !(respectUnstackable && d->isUnstackable()))
 	stack.append(RedexPosition(d, parentIndex, i, false));
     }
 }

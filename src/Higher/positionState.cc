@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,8 +46,8 @@ PositionState::PositionState(DagNode* top, int flags, int minDepth, int maxDepth
     minDepth(minDepth),
     maxDepth(maxDepth)
 {
-  Assert(!(flags & SET_UNSTACKABLE) || (flags & RESPECT_FROZEN),
-	 "can't set unstackable if not respecting frozen");
+  Assert(!(flags & RESPECT_UNSTACKABLE) || (flags & RESPECT_FROZEN),
+	 "can't respect unstackable if not respecting frozen otherwise we might miss frozen positions");
   positionQueue.append(RedexPosition(top, UNDEFINED, UNDEFINED, true));
   depth.append(0);
   extensionInfo = 0;
@@ -78,7 +78,7 @@ PositionState::exploreNextPosition()
       //	We only consider repeated arguments once, where supported by
       //	theory.
       //
-      d->symbol()->stackPhysicalArguments(d, positionQueue, nextToExplore, flags & RESPECT_FROZEN, rp.isEager());
+      d->symbol()->stackPhysicalArguments(d, positionQueue, nextToExplore, flags & RESPECT_FROZEN, flags & RESPECT_UNSTACKABLE, rp.isEager());
       int newFinish = positionQueue.length();
       if (finish < newFinish)
 	{

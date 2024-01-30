@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/conditionSideEffectInStrategyLanguageDecember2023.maude -no-banner -no-advise \
+  > conditionSideEffectInStrategyLanguageDecember2023.out 2>&1
+
+diff $srcdir/conditionSideEffectInStrategyLanguageDecember2023.expected conditionSideEffectInStrategyLanguageDecember2023.out > /dev/null 2>&1

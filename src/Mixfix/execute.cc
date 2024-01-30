@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -112,10 +112,12 @@ Interpreter::printTiming(Int64 nrRewrites, Int64 cpu, Int64 real)
 }
 
 void
-Interpreter::printStats(const Timer& timer, RewritingContext& context)
+Interpreter::printStats(const Timer& timer, RewritingContext& context, bool showTiming)
 {
-  bool showTiming = getFlag(SHOW_TIMING);
-  bool showBreakdown = getFlag(SHOW_BREAKDOWN);
+  //
+  //	This version is for the simple case where a RewritingContext is all we need
+  //	and we can take care of calling generateStats() for the latex output.
+  //
   Int64 nrRewrites = context.getTotalCount();
   cout << "rewrites: " << nrRewrites;
 
@@ -128,9 +130,9 @@ Interpreter::printStats(const Timer& timer, RewritingContext& context)
       if (showTiming)
 	printTiming(nrRewrites, prof, real);
     }
-
   cout << '\n';
-  if (getFlag(SHOW_BREAKDOWN))
+  bool showBreakdown = getFlag(SHOW_BREAKDOWN);
+  if (showBreakdown)
     {
       cout << "mb applications: " << context.getMbCount() <<
 	"  equational rewrites: " << context.getEqCount() <<
@@ -138,30 +140,8 @@ Interpreter::printStats(const Timer& timer, RewritingContext& context)
 	"  variant narrowing steps: " << context.getVariantNarrowingCount() <<
 	"  narrowing steps: " << context.getNarrowingCount() << '\n';
     }
-
   if (latexBuffer)
     latexBuffer->generateStats(context, prof, real, showTiming, showBreakdown);
-}
-
-void
-Interpreter::printStats(const Timer& timer, RewritingContext& context, bool timingFlag)
-{
-  Int64 nrRewrites = context.getTotalCount();
-  cout << "rewrites: " << nrRewrites;
-  Int64 real;
-  Int64 virt;
-  Int64 prof;
-  if (timingFlag && timer.getTimes(real, virt, prof))
-    printTiming(nrRewrites, prof, real);
-  cout << '\n';
-  if (getFlag(SHOW_BREAKDOWN))
-    {
-      cout << "mb applications: " << context.getMbCount() <<
-	"  equational rewrites: " << context.getEqCount() <<
-	"  rule rewrites: " << context.getRlCount() <<
-	"  variant narrowing steps: " << context.getVariantNarrowingCount() <<
-	"  narrowing steps: " << context.getNarrowingCount() << '\n';
-    }
 }
 
 void
@@ -170,7 +150,12 @@ Interpreter::printStats(RewritingContext& context,
 			int64_t realTime,
 			bool timingFlag,
 			int64_t nrStates)
-{  
+{
+  //
+  //	This version is for commands with complicated state information and we
+  //	don't call generateStats() - the appropriate generateWhateverResult()
+  //	function takes care of it.
+  //	
   Int64 nrRewrites = context.getTotalCount();
   if (nrStates != NONE)
     cout << "states: " << nrStates << "  ";
@@ -554,13 +539,13 @@ Interpreter::check(const Vector<Token>& subject)
     {
       term = term->normalize(false);
       DagNode* d = term->term2Dag();
- 
-      if (getFlag(SHOW_COMMAND))
+
+      bool showCommand = getFlag(SHOW_COMMAND);
+      if (showCommand)
 	{
 	  UserLevelRewritingContext::beginCommand();
 	  cout << "check in " << currentModule << " : " << d << " ." << endl;
 	}
-
       VisibleModule* fm = currentModule->getFlatModule();
       startUsingModule(fm);
 
@@ -568,14 +553,24 @@ Interpreter::check(const Vector<Token>& subject)
       VariableGenerator vg(smtInfo);
       VariableGenerator::Result result = vg.checkDag(d);
       if (result == VariableGenerator::BAD_DAG)
-	IssueWarning (*term << ": term " << QUOTE(term) << " is not a valid SMT Boolean expression.");
+	IssueWarning(*term << ": term " << QUOTE(term) << " is not a valid SMT Boolean expression.");
       else
 	{
-	  cout << "Result from sat solver is: " <<
-	    ((result == VariableGenerator::SAT) ? "sat" :
-	     ((result == VariableGenerator::UNSAT) ? "unsat" : "undecided")) << endl;
-	}
 
+	  string message("Result from sat solver is: ");
+	  message += ((result == VariableGenerator::SAT) ? "sat" :
+		      ((result == VariableGenerator::UNSAT) ? "unsat" : "undecided"));
+	  cout << message << endl;
+	  //
+	  //	We only generate latex output if there is a valid SMT Boolean expression.
+	  //
+	  if (latexBuffer)
+	    {
+	      latexBuffer->generateCommand(showCommand, "check", d);
+	      latexBuffer->generateNonResult(message);  // use for text-only result!
+	      latexBuffer->cleanUp();
+	    }
+	}
       term->deepSelfDestruct();
       fm->unprotect();
     }

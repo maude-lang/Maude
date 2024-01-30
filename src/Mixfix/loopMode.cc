@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ Interpreter::loop(const Vector<Token>& subject)
       CacheableRewritingContext* context = new CacheableRewritingContext(d);
       if (getFlag(EREWRITE_LOOP_MODE))
 	context->setObjectMode(ObjectSystemRewritingContext::EXTERNAL);
+      if (latexBuffer)
+	latexBuffer->generateCommand(getFlag(SHOW_COMMAND), "loop", d);
       doLoop(context, fm);
     }
 }
@@ -57,6 +59,8 @@ Interpreter::contLoop2(const Vector<Token>& input)
 	  savedModule = 0;
 	  continueFunc = 0;
 	  l->injectInput(d, input);
+	  if (latexBuffer)
+	    latexBuffer->generateLoopTokens(getFlag(SHOW_COMMAND), input);
 	  doLoop(savedContext, fm);
 	  return true;
 	}
@@ -79,6 +83,8 @@ Interpreter::contLoop(const Vector<Token>& input)
     {
       Vector<Token> savedInput(input);  // in case input gets overwritten, say in debugger
       IssueAdvisory("attempting to reinitialize loop.");
+      if (latexBuffer)
+	latexBuffer->generateAdvisory("attempting to reinitialize loop.");
       if (DagNode* d = makeDag(savedLoopSubject))
 	{
 	  VisibleModule* fm = currentModule->getFlatModule();
@@ -91,6 +97,8 @@ Interpreter::contLoop(const Vector<Token>& input)
 	    return;
 	}
       IssueAdvisory("unable to reinitialize loop.");
+      if (latexBuffer)
+	latexBuffer->generateAdvisory("unable to reinitialize loop.");
     }
 }
 
@@ -134,9 +142,15 @@ Interpreter::doLoop(CacheableRewritingContext* context, VisibleModule* module)
 	  Vector<int> bubble;
 	  l->extractOutput(r, bubble);
 	  printBubble(cout, bubble);
+	  if (latexBuffer)
+	    latexBuffer->generateBubbleResult(bubble);
 	}
       else
-	cout << "non-loop result " << r->getSort() << ": " << r << '\n';
+	{
+	  cout << "non-loop result " << r->getSort() << ": " << r << '\n';
+	  if (latexBuffer)
+	    latexBuffer->generateResult("non-loop result", r);
+	}
       cout.flush();
 
       savedState = context;
@@ -145,6 +159,8 @@ Interpreter::doLoop(CacheableRewritingContext* context, VisibleModule* module)
 	&Interpreter::eRewriteCont :
 	&Interpreter::rewriteCont;
     }
+  if (latexBuffer)
+    latexBuffer->cleanUp();
   UserLevelRewritingContext::clearDebug();  // even if we didn't start in debug mode
 }
 

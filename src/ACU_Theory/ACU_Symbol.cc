@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -336,6 +336,7 @@ ACU_Symbol::stackArguments(DagNode* subject,
 			   Vector<RedexPosition>& stack,
 			   int parentIndex,
 			   bool respectFrozen,
+			   bool respectUnstackable,
 			   bool eagerContext)
 {
   if (respectFrozen && !(getFrozen().empty()))  // under AC, any frozen argument affects all
@@ -349,7 +350,7 @@ ACU_Symbol::stackArguments(DagNode* subject,
 	{
 	  DagNode* d = i.getDagNode();
 	  int m = i.getMultiplicity();
-	  if (d->isUnstackable())
+	  if (respectUnstackable && d->isUnstackable())
 	    argNr += m;
 	  else
 	    {
@@ -368,7 +369,7 @@ ACU_Symbol::stackArguments(DagNode* subject,
 	{
 	  DagNode* d = i.dagNode;
 	  int m = i.multiplicity;
-	  if (d->isUnstackable())
+	  if (respectUnstackable && d->isUnstackable())
 	    argNr += m;
 	  else
 	    {
@@ -387,6 +388,7 @@ ACU_Symbol::stackPhysicalArguments(DagNode* subject,
 				   Vector<RedexPosition>& stack,
 				   int parentIndex,
 				   bool respectFrozen,
+				   bool respectUnstackable,
 				   bool eagerContext)
 {
   if (respectFrozen && !(getFrozen().empty()))  // under AC, any frozen argument affects all
@@ -399,7 +401,7 @@ ACU_Symbol::stackPhysicalArguments(DagNode* subject,
       for (ACU_FastIter i(tree); i.valid(); i.next())
 	{
 	  DagNode* d = i.getDagNode();
-	  if (!(d->isUnstackable()))
+	  if (!(respectUnstackable && d->isUnstackable()))
 	    stack.append(RedexPosition(d, parentIndex, argNr, eager));
 	  ++argNr;
 	}
@@ -411,7 +413,7 @@ ACU_Symbol::stackPhysicalArguments(DagNode* subject,
       for (int i = 0; i < nrArgs; i++)
 	{
 	  DagNode* d = argArray[i].dagNode;
-	  if (!(d->isUnstackable()))
+	  if (!(respectUnstackable && d->isUnstackable()))
 	    stack.append(RedexPosition(d, parentIndex, i, eager));
 	}
     }

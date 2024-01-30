@@ -1,9 +1,35 @@
+2024-01-09  Steven Eker  <eker@pup>
+
+	* metaLevel.hh (MetaLevel::downSearchType): support '#
+	(MetaLevel::downSearchType): reimplemented to avoid encode()
+
+	* metaSearch.cc (MetaLevelOpSymbol::downSearchType): deleted
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): deleted
+	decl for downSearchType()
+
+	* metaNarrow.cc (MetaLevelOpSymbol::makeNarrowingSequenceSearch):
+	use MetaLevel::downSearchType()
+	(MetaLevelOpSymbol::makeNarrowingSequenceSearchAlt): use
+	MetaLevel::downSearchType()
+
+	* metaNewNarrow2.cc
+	(MetaLevelOpSymbol::makeNarrowingSequenceSearch3): use
+	MetaLevel::downSearchType()
+
+	* metaSearch.cc (MetaLevelOpSymbol::makeRewriteSequenceSearch):
+	use MetaLevel::downSearchType()
+	(MetaLevelOpSymbol::makeSMT_RewriteSequenceSearch): use
+	MetaLevel::downSearchType()
+
+===================================Maude156===========================================
+
 2023-12-12  Steven Eker  <eker@pup>
 
 	* metaDownRenamings.cc (MetaLevel::downRenamingAttribute):
 	handle latexSymbol
 
-	* metaDownOps.cc (MetaLevel::downAttr): adde support for latex;
+	* metaDownOps.cc (MetaLevel::downAttr): added support for latex;
 	use Token::ropeToCode() for metadata
 	(MetaLevel::downOpDecl): pass ai.latex to addPolymorph() and
 	m->addOpDeclaration()
@@ -5423,13 +5449,13 @@
 	upLabel(), upCondition(), upConditionFragment(),  upRls()
 
 	* metaUpModule.cc (upRls): created
-	
+
 ===================================Maude71a==================================================
 
 2002-03-22  Steven Eker  <eker@goo.csl.sri.com>
 
 	* meta.hh: created
-	
+
 ===================================Maude71==================================================
 
 2002-03-10  Steven Eker  <eker@goo.csl.sri.com>
@@ -5542,7 +5568,7 @@
 	* metaDownFixUps.cc (downOpHook): use new findSymbol()
 
 	* metaDown.cc (downTerm): use new findSymbol() (2 places)
-	
+
 ===================================Maude70==================================================
 
 2002-01-24  Steven Eker  <eker@goo.csl.sri.com>
@@ -5640,4 +5666,3 @@
 	count()
 	(metaApply): use addInCount() instead of incrementCount() and
 	count()
-

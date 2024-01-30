@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -53,6 +53,12 @@ RewriteSearchState::RewriteSearchState(RewritingContext* context,
 {
   Assert(label == NONE || !(getFlags() & SET_UNREWRITABLE),
 	  "shouldn't set unrewritable flag if only looking at rules with a given label");
+  Assert(label == NONE || !(getFlags() & SET_UNSTACKABLE),
+	 "shouldn't set unstackable flag if only looking at rules with a given label");  // benign but shouldn't happen
+  Assert(!(getFlags() & ALLOW_NONEXEC) || (!(getFlags() & RESPECT_UNREWRITABLE)),
+	 "shouldn't respect unrewritable flag if looking at rules with nonexec attribute");
+  Assert(!(getFlags() & ALLOW_NONEXEC) || (!(getFlags() & RESPECT_UNSTACKABLE)),
+	 "shouldn't respect unstackable flag if looking at rules with nonexec attribute");
   ruleIndex = -1;
 }
 
@@ -77,7 +83,7 @@ RewriteSearchState::findNextRewrite()
   do
     {
       DagNode* d = getDagNode();
-      if (!(d->isUnrewritable()))
+      if (!((getFlags() & RESPECT_UNREWRITABLE) && d->isUnrewritable()))
 	{
 	  const Vector<Rule*>& rules = d->symbol()->getRules();
 	  for (int nrRules = rules.length(); ruleIndex < nrRules; ruleIndex++)
@@ -88,7 +94,7 @@ RewriteSearchState::findNextRewrite()
 		{
 		  LhsAutomaton* a = withExtension ? rl->getExtLhsAutomaton() :
 		    rl->getNonExtLhsAutomaton();
-		  //cerr << "trying " << rl << " at " << " positionIndex " <<  getPositionIndex() << " dagNode " << getDagNode() << endl;
+		  DebugInfo("trying " << rl << " at " << " positionIndex " <<  getPositionIndex() << " dagNode " << getDagNode());
 		  if (findFirstSolution(rl, a))
 		    return true;
 		}

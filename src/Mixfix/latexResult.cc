@@ -160,6 +160,27 @@ MaudeLatexBuffer::generateResult(Term* result)
 }
 
 void
+MaudeLatexBuffer::generateResult(const string& message, DagNode* result)
+{
+  output << "\\par\\maudeResponse{" << message << "}\n";
+  generateType(result->getSort());
+  output << "\\maudePunctuation{:}$\\maudeSpace\n";
+  MixfixModule::latexPrintDagNode(output, result);
+  output << "$\n";
+}
+
+void
+MaudeLatexBuffer::generateBubbleResult(const Vector<int>& bubble)
+{
+  if (!bubble.empty())
+    {
+      output << "\\par$";
+      MixfixModule::latexPrintBubble(output, bubble);
+      output << "$\n";
+    }
+}
+
+void
 MaudeLatexBuffer::generateSearchNonResult(RewriteSequenceSearch* state,
 					  const string& message,
 					  int64_t cpuTime,
@@ -174,6 +195,32 @@ MaudeLatexBuffer::generateSearchNonResult(RewriteSequenceSearch* state,
   if (showStats)
     generateStats(*(state->getContext()), cpuTime, realTime, showTiming, showBreakdown, state->getNrStates());
   needNewline = false;
+}
+
+void
+MaudeLatexBuffer::generateSmtResult(SMT_RewriteSequenceSearch* state,
+				    int64_t solutionNr,
+				    int64_t cpuTime,
+				    int64_t realTime,
+				    bool showStats,
+				    bool showTiming,
+				    bool showBreakdown)
+{
+  generateSolutionNr(solutionNr);
+  if (showStats)
+    generateStats(*(state->getContext()), cpuTime, realTime, showTiming, showBreakdown);
+  int stateNr = state->getCurrentStateNumber();
+  DagNode* d = state->getState(stateNr);
+
+output << "\\par\\maudeResponse{state:}\n";
+MixfixModule::latexPrintDagNode(output, d);
+
+  generateSubstitution(*(state->getSubstitution()),
+		       *state,
+		       state->getSMT_VarIndices());
+
+  output << "\\par\\maudeResponse{where}\n";
+ MixfixModule::latexPrintDagNode(output, state->getFinalConstraint());
 }
 
 void

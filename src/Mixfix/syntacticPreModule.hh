@@ -337,7 +337,6 @@ private:
   //	LaTeX support.
   //
   void latexSortTokenVector(ostream& s, const Vector<Token>& sorts);
-  void latexTokenVector(ostream& s, const Vector<Token>& tokens, Index first, Index last);
   void latexType(ostream& s, const Type& type);
   void latexOpDef(ostream&s, const OpDef& opDef);
   void latexAttributes(ostream& s, const OpDef& opDef);

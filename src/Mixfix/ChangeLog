@@ -1,3 +1,312 @@
+2024-01-29  Steven Eker  <eker@pup>
+
+	* latexCommon.cc (MixfixModule::latexNumber)
+	(MixfixModule::latexString, MixfixModule::latexQid)
+	(MixfixModule::latexRaw): bumped cutoff sizes by 10
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint)
+	(MixfixModule::latexPrintDagNode): use latexGraphPrint()
+
+	* graphPrint.cc (MixfixModule::latexGraphPrint): added
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexGraphPrint()
+
+2024-01-26  Steven Eker  <eker@pup>
+
+	* prettyPrint.cc (MixfixModule::printStrategyTerm): removed
+	inline - there is no performance issue for output
+
+	* global.cc (operator<<): NamedEntity*, Symbol*, Sort*,
+	ConnectedComponent*, RewriteStrategy* versions moved here for
+	consistancy
+
+	* prettyPrint.cc (MixfixModule::prettyPrint): DagNode* version,
+	take printSettings argument
+
+	* global.cc (operator<<): moved StrategyDefintion* version
+	here; pass printSettings argument to printAttributes()
+	replaced commented out Interpreter declaration with explanation
+	of why we allocate it on the heap - to check for memory leaks
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	printAttributes()
+
+	* prettyPrint.cc (MixfixModule::printAttributes): take
+	printSettings argument
+
+	* mixfixModule.hh (class MixfixModule): updated decl for Term*
+	version of prettyPrint()
+
+	* prettyPrint.cc (MixfixModule::prettyPrint): Term* versions,
+	take printSettings argument
+
+	* global.cc (operator<<): moved SortConstraint*, Equation*,
+	Rule*, ConditionFragment* versions here;  pass printSettings
+	argument to printAttributes()
+
+	* visibleModule.cc (VisibleModule::showPolymorphAttributes):
+	pass owner to Term* version of pretty print
+	(VisibleModule::showAttributes): ditto
+
+	* global.cc (operator<<): Term* versions moved here; pass
+	printSettings argument to prettyPrint()
+	(operator<<): DagNode* versions moved here; pass printSettings
+	argument to prettyPrint()
+
+2024-01-19  Steven Eker  <eker@pup>
+
+	* match.cc (Interpreter::match): added comment to explain why we
+	don't pass the GC_SUBSTITUTION flag
+
+2024-01-09  Steven Eker  <eker@pup>
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): added support
+	for =>#
+
+	* search.cc (Interpreter::checkSearchRestrictions): don't allow
+	=># searches for narrowing and smt-search
+
+	* makeGrammar.cc (MixfixModule::makeParameterizedSortProductions):
+	deleted commented out code
+	(MixfixModule::makeComplexProductions): added syntax for =>#
+
+2024-01-08  Steven Eker  <eker@pup>
+
+	* specialTokens.cc: added arrowHash =>#
+
+2024-01-05  Steven Eker  <eker@pup>
+
+	* latexCommon.cc (MixfixModule::latexPrintBubble): make spacing and
+	character translations congruent with Interpreter::printBubble()
+	(MixfixModule::latexFancySpace): use \maudeNewline
+	(MixfixModule::latexPrintBubble): use \maudeNewline
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateBanner): update
+	copyright year
+
+	* latexResult.cc (MaudeLatexBuffer::generateBubbleResult): don't
+	generate output for empty bubble because adjacent $s cause problems
+
+2024-01-04  Steven Eker  <eker@pup>
+
+	* latexCommon.cc (MixfixModule::latexFancySpace): added comment to
+	explain why we test PRINT_COLOR flag
+
+2024-01-03  Steven Eker  <eker@pup>
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateBubbleResult()
+
+	* latexResult.cc (MaudeLatexBuffer::generateBubbleResult): added
+
+	* latexCommon.cc (MixfixModule::latexTokenVector): code cleaning
+
+	* loopMode.cc (Interpreter::doLoop): call generateBubbleResult()
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexPrintBubble()
+
+	* latexCommon.cc (MixfixModule::latexPrintBubble): added
+
+	* interpreter.hh (class Interpreter): deleted commented out
+	printFlags data member
+
+	* loopMode.cc (Interpreter::doLoop): call generateResult()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	message + DagNode* version of generateResult()
+
+	* latexResult.cc (generateResult): added message + DagNode* version
+
+	* execute.cc (Interpreter::printStats): added comments to both
+	versions to explain their existence
+
+	* loopMode.cc (Interpreter::contLoop): call generateAdvisory()
+
+	* banner.cc (printBanner): update copyright year
+
+	* loopMode.cc (Interpreter::contLoop2): call generateLoopTokens()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateLoopTokens()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateLoopTokens): added
+
+2024-01-02  Steven Eker  <eker@pup>
+
+	* variantUnify.cc (Interpreter::variantUnify): pass showTiming
+	flag to printStats()
+
+	* variantMatch.cc (Interpreter::variantMatch): pass showTiming
+	flag to printStats()
+
+	* getVariants.cc (Interpreter::getVariants): pass showTiming
+	flag to printStats()
+	(Interpreter::doGetVariants): pass showTiming flag to
+	printStats() (2 places)
+
+	* execute.cc (Interpreter::printStats): merge the 2 and 3
+	arg versions
+
+	* loopMode.cc (Interpreter::loop): support latex
+	(Interpreter::doLoop): call cleanUp()
+
+2023-12-22  Steven Eker  <eker@pup>
+
+	* smtSearch.cc (Interpreter::doSmtSearch): call
+	MaudeLatexBuffer::cleanup()
+
+	* execute.cc (Interpreter::check): added latex support
+
+2023-12-21  Steven Eker  <eker@pup>
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl
+	for generateSmtResult()
+
+	* smtSearch.cc (Interpreter::doSmtSearch): call
+	generateSmtResult()
+
+	* latexResult.cc (MaudeLatexBuffer::generateSmtResult): added
+	(MaudeLatexBuffer::generateSmtResult): added
+
+	* smtSearch.cc (Interpreter::doSmtSearch): use 4/5 argument
+	version of printStats()
+
+2023-12-20  Steven Eker  <eker@pup>
+
+	* smtSearch.cc (Interpreter::doSmtSearch): add latex support for
+	the no result case
+
+	* syntacticPreModule.hh (class SyntacticPreModule): deleted
+	decl for latexTokenVector()
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule):
+	use MixfixModule::latexTokenVector()
+	(SyntacticPreModule::latexAttributes): use
+	MixfixModule::latexTokenVector()
+	(SyntacticPreModule::latexAttributes): use
+	MixfixModule::latexTokenVector()
+	(SyntacticPreModule::latexTokenVector): deleted
+
+	* latexCommon.cc (MixfixModule::latexTokenVector): treat ( like
+	[ and {, i.e. allow a space in front of it for consistancy with
+	text version
+
+2023-12-19  Steven Eker  <eker@pup>
+
+	* latexViewPrint.cc (SyntacticView::latexShowView): print mappings
+	in math mode so that maudeBigRaw{} works
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexRaw()
+
+	* latexCommon.cc (MixfixModule::latexRaw): added
+	(MixfixModule::latexTokenVector): use latexRaw()
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexAttributes):
+	don't call Token::name()
+	(SyntacticPreModule::latexStratDecl): ditto
+
+	* latexModulePrint.cc (VisibleModule::latexPrintAttributes):
+	don't call Token::name()
+	(VisibleModule::latexPrintStrategyDecl): ditto
+	(VisibleModule::latexShowAttributes): ditto
+	(VisibleModule::latexShowPolymorphAttributes): ditto
+
+	* printAttribute.cc (PrintAttribute::latexPrint): don't
+	call Token::name() now that this is done in latexString()
+
+	* latexTermPrint.cc (MixfixModule::latexHandleString): don't
+	call Token::name() now that this is done in latexString()
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleString): don't
+	call Token::name() now that this is done in latexString()
+
+	* mixfixModule.hh (MixfixModule::latexString): added code version
+
+	* latexCommon.cc (MixfixModule::latexString): do Token::latexName()
+	here rather than caller so we have the correct number of characters
+	to make the big string decision
+
+	* latexTermPrint.cc (MixfixModule::latexHandleQuotedIdentifier):
+	use latexQid()
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleQuotedIdentifier):
+	use latexQid()
+
+	* mixfixModule.hh (class MixfixModule): added decl for latexQid()
+
+	* latexCommon.cc (MixfixModule::latexQid): added
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexAttributes):
+	use Token::latexName() rather than Token::name() for metadata
+	to fix bad latex bug
+
+2023-12-18  Steven Eker  <eker@pup>
+
+	* printAttribute.cc (PrintAttribute::latexPrint): use
+	MixfixModule::latexString() for text within print attribute
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexAttributes):
+	use MixfixModule::latexString() for metadata
+	(SyntacticPreModule::latexStratDecl): use MixfixModule::latexString()
+	for metadata
+
+	* latexModulePrint.cc (VisibleModule::latexPrintAttributes):
+	use latexString() for metadata
+	(VisibleModule::latexPrintStrategyDecl): use latexString() for
+	metadata
+	(VisibleModule::latexShowAttributes): use latexString() for
+	metadata
+	(VisibleModule::latexShowPolymorphAttributes): use latexString()
+	for metadata
+
+	* latexTermPrint.cc: use latexString()
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleString): use
+	latexString()
+
+	* latexCommon.cc (MixfixModule::latexString): added
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexString()
+
+2023-12-15  Steven Eker  <eker@pup>
+
+	* latexTermPrint.cc (MixfixModule::latexHandleIter): use
+	latexNumber()
+	(MixfixModule::latexHandleMinus): use latexNumber()
+	(MixfixModule::latexHandleDivision): use latexNumber() (2 places)
+	(MixfixModule::latexHandleSMT_Number): use latexNumber() (3
+	places)
+
+	* latexDagNodePrint.cc (MixfixModule::latexHandleIter):
+	use latexNumber()
+	(MixfixModule::latexHandleMinus): use latexNumber()
+	(MixfixModule::latexHandleDivision): use latexNumber() (2 places)
+	(MixfixModule::latexHandleSMT_Number): use latexNumber() (3
+	places)
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexNumber()
+
+	* latexCommon.cc (MixfixModule::latexNumber): added
+
+	* interpreter.cc (Interpreter::quit): pass latexStream to
+	MemoryCell::maybeShowResources()
+
+2023-12-14  Steven Eker  <eker@pup>
+
+	* interpreter.hh (class Interpreter): added decl for quit()
+
+	* interact.cc (UserLevelRewritingContext::commandLoop):
+	call Interpreter::quit()
+
+	* interpreter.cc (Interpreter::quit): added
+
+===================================Maude156===========================================
+
 2023-12-12  Steven Eker  <eker@pup>
 
 	* lexer.ll: support big bracket commands in LATEX_MODE

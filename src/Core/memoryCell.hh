@@ -65,8 +65,8 @@ public:
   //	We put this here because we want to do it potentially every garbage collect.
   //
   static void setShowResources(bool polarity);
-  static void maybeShowResources();
-  static void showResources(ostream& s);
+  static void maybeShowResources(ostream& s = cout, ostream* latexStream = nullptr);
+  static void showResources(ostream& s = cout, ostream* latexStream = nullptr);
   //
   //	We provide functions for getting access to the MemoryInfo object
   //	corresponding the a memory block we allocated.
@@ -184,10 +184,10 @@ MemoryCell::setShowResources(bool polarity)
 }
 
 inline void
-MemoryCell::maybeShowResources()
+MemoryCell::maybeShowResources(ostream& s, ostream* latexStream)
 {
   if (showResourcesFlag)
-    showResources(cout);
+    showResources(s, latexStream);
 }
 
 inline void

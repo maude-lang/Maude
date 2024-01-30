@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -88,7 +88,8 @@ Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool filtere
   //
   //	Responsibility for deleting context and freshVariableGenerator is passed to ~VariantSearch().
   //
-  Timer timer(getFlag(SHOW_TIMING));
+  bool showTiming = getFlag(SHOW_TIMING);
+  Timer timer(showTiming);
   VariantSearch* vs = filtered ?
     new FilteredVariantUnifierSearch(context,
 				     blockerDags,
@@ -109,7 +110,7 @@ Interpreter::variantUnify(const Vector<Token>& bubble, Int64 limit, bool filtere
 	  //
 	  //	All computation is done up-front so there is only one time value.
 	  //
-	  printStats(timer, *context);
+	  printStats(timer, *context, showTiming);
 	}
       doVariantUnification(timer, fm, vs, 0, limit);
     }
@@ -161,7 +162,7 @@ Interpreter::doVariantUnification(Timer& timer,
 	  if (latexBuffer)
 	    latexBuffer->generateNonResult(message);
 	  if (!filteredState)
-	    printStats(timer, *context);
+	    printStats(timer, *context, getFlag(SHOW_TIMING));
 	  //
 	  //	Check for incompleteness.
 	  //
@@ -203,7 +204,7 @@ Interpreter::doVariantUnification(Timer& timer,
       if (latexBuffer)
 	latexBuffer->generateResult("Unifier", solutionCount);
       if (!filteredState)
-	printStats(timer, *context);
+	printStats(timer, *context, getFlag(SHOW_TIMING));
       UserLevelRewritingContext::printSubstitution(unifier, variableInfo);
       if (latexBuffer)
 	latexBuffer->generateSubstitution(unifier, variableInfo);

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -65,14 +65,19 @@ ApplicationProcess::ApplicationProcess(StrategicSearch& searchObject,
 
 
   : StrategicProcess(taskSibling, insertionPoint),
-    rewriteState(new RewriteSearchState(searchObject.getContext()->makeSubcontext(
-					  searchObject.getCanonical(startIndex)
-					),
+    //
+    //	If we have no label, we use all executable rules and set and respect unrewritable and unstackable flags.
+    //	If we have a label, we use rules with that label without worrying about the condition or whether they
+    //	are nonexec and we neither set nor respect unrewritable or unstackable flags.
+    //	In both cases we respect frozen arguments.
+    //
+    rewriteState(new RewriteSearchState(searchObject.getContext()->makeSubcontext(searchObject.getCanonical(startIndex)),
 					strategy->getLabel(),
 					SearchState::GC_CONTEXT
-					| (strategy->getLabel() != UNDEFINED ?
-					    SearchState::IGNORE_CONDITION
-					    | RewriteSearchState::ALLOW_NONEXEC : 0),
+					| (strategy->getLabel() == UNDEFINED ?
+					   RewriteSearchState::SET_UNREWRITABLE | RewriteSearchState::RESPECT_UNREWRITABLE |
+					   PositionState::SET_UNSTACKABLE | PositionState::RESPECT_UNSTACKABLE | PositionState::RESPECT_FROZEN :
+					   RewriteSearchState::ALLOW_NONEXEC | SearchState::IGNORE_CONDITION | PositionState::RESPECT_FROZEN),
 					0,
 					strategy->getTop() ? NONE : UNBOUNDED)),
     pending(pending),

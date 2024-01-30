@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ RewritingContext::ruleRewrite(Int64 limit)
 		  //	Only want to try rewriting one copy of repeated arguments
 		  //	where possible.
 		  //
-		  d->symbol()->stackPhysicalArguments(d, redexStack, nextToExplore);
+		  d->symbol()->stackPhysicalArguments(d, redexStack, nextToExplore, true, true, true);
 		  ++nextToExplore;
 		  int len = redexStack.length();
 		  if (len > finish)
@@ -295,7 +295,7 @@ RewritingContext::descend()
       //	which are not either frozen or unstackable.
       //
       int first = redexStack.length();
-      d->symbol()->stackArguments(d, redexStack, currentIndex);
+      d->symbol()->stackArguments(d, redexStack, currentIndex, true, true, true);
       //
       //	If no new dag nodes were stacked we hit a quasi-leaf.
       //

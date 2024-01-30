@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2008 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ PrintAttribute::latexPrint(ostream& s, const VariableInfo& variableInfo) const
       s << "\\maudeSpace";
       int item = items[i];
       if (item >= 0)
-	s << "\\maudeString{" << Token::latexName(item) << "}";
+	s << MixfixModule::latexString(item);
       else
         MixfixModule::latexPrettyPrint(s, variableInfo.index2Variable(-1 - item));
     }

@@ -51,6 +51,7 @@ public:
 		      Vector<RedexPosition>& stack,
 		      int parentIndex,
 		      bool respectFrozen,
+		      bool respectUnstackable,
 		      bool eagerContext);
   //
   //	We need to insert some fake declarations to encode our sort

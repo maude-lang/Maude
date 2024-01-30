@@ -39,7 +39,8 @@ public:
   enum Flags
   {
     RESPECT_FROZEN = 1,
-    SET_UNSTACKABLE = 128
+    SET_UNSTACKABLE = 128,
+    RESPECT_UNSTACKABLE = 1024
   };
 
   typedef int PositionIndex;
@@ -58,7 +59,7 @@ public:
   PositionState(DagNode* top, int flags = 0, int minDepth = 0, int maxDepth = -1);
   ~PositionState();
 
-  bool findNextPosition();  // should this be protected?
+  bool findNextPosition();  // we need to call this from NarrowingSearchState2 which cannot be subclassed from us
   DagNode* getDagNode() const;
   DagNode* getDagNode(PositionIndex index) const;
   ExtensionInfo* getExtensionInfo();

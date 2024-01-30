@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -95,17 +95,19 @@ public:
   virtual void stackArguments(DagNode* subject,
 			      Vector<RedexPosition>& stack,
 			      int parentIndex,
-			      bool respectFrozen = true,
-			      bool eagerContext = true);
+			      bool respectFrozen,
+			      bool respectUnstackable,
+			      bool eagerContext);
   //
-  //	This need to be defined for theories that only store and stack
+  //	This function needs to be defined for theories that only store and stack
   //	one copy of a repeated argument to avoid redundant rewrite steps.
   //
   virtual void stackPhysicalArguments(DagNode* subject,
 				      Vector<RedexPosition>& stack,
 				      int parentIndex,
-				      bool respectFrozen = true,
-				      bool eagerContext = true);
+				      bool respectFrozen,
+				      bool respectUnstackable,
+				      bool eagerContext);
   //
   //	These functions may be redefined for each derived class.
   //

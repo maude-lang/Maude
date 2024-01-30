@@ -1,3 +1,19 @@
+2024-01-19  Steven Eker  <eker@pup>
+
+	* dagNode.cc (DagNode::reducibleByVariantEquation): don't check
+	nonexec variant equations
+
+2024-01-16  Steven Eker  <eker@pup>
+
+	* symbol.cc (Symbol::stackArguments): added respectUnstackable arg
+	(Symbol::stackPhysicalArguments): added respectUnstackable arg
+
+	* symbol.hh (class Symbol): added respectUnstackable arg to
+	decls for stackArguments() and stackPhysicalArguments(); remove
+	default arguments
+
+===================================Maude156=========================================
+
 2023-07-24  Steven Eker  <eker@pup>
 
 	* symbol.hh (class Symbol): added decl for determineGround()

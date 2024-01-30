@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,69 +27,17 @@
 int MixfixModule::globalIndent = 0;
 bool MixfixModule::attributeUsed = false;
 
-ostream&
-operator<<(ostream& s, const NamedEntity* e)
-{
-  return s << ((e == 0) ? "(null)" : Token::name(e->id()));
-}
-
-ostream&
-operator<<(ostream& s, const Symbol* symbol)
-{
-  if (symbol == 0)
-    return s << "(null)";
-  int code = symbol->id();
-  if (symbol->arity() == 0)
-    return s << Token::sortName(code);  // hack to handle parameterized constant names
-  return s << Token::name(code);
-}
-
-ostream&
-operator<<(ostream& s, const Sort* sort)
-{
-  if (sort == 0)
-    return s << "(sort not calculated)";
-  
-  ConnectedComponent* c = sort->component();
-  if (c != 0 && sort->index() == Sort::KIND)
-    {
-      s << '[' << c->sort(1);
-      int nrMax = c->nrMaximalSorts();
-      for (int i = 2; i <= nrMax; i++)
-	s << ',' << c->sort(i);
-      return s << ']';
-    }
-  return s << Token::sortName(sort->id());
-}
-
-ostream&
-operator<<(ostream& s, const ConnectedComponent* component)
-{
-  //
-  //	We identify a connect component (aka kind) with its ERROR (aka KIND) sort.
-  //
-  return s << component->sort(Sort::KIND);
-}
-
 void
-MixfixModule::prettyPrint(ostream& s, const Term* term, bool rangeKnown)
+MixfixModule::prettyPrint(ostream& s, const Term* term, const PrintSettings& printSettings, bool rangeKnown)
 {
   clearIndent();
   MixfixModule* parentModule = safeCastNonNull<MixfixModule*>(term->symbol()->getModule());
-  const PrintSettings& printSettings = interpreter;  // HACK
   parentModule->prettyPrint(s, printSettings, const_cast<Term*>(term), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
   clearColor(s);
 }
 
-ostream&
-operator<<(ostream& s, const Term* term)
-{
-  MixfixModule::prettyPrint(s, term);
-  return s;
-}
-
 void
-MixfixModule::prettyPrint(ostream& s, DagNode* dagNode, bool rangeKnown)
+MixfixModule::prettyPrint(ostream& s, DagNode* dagNode, const PrintSettings& printSettings, bool rangeKnown)
 {
   if (dagNode == 0)
     {
@@ -98,7 +46,6 @@ MixfixModule::prettyPrint(ostream& s, DagNode* dagNode, bool rangeKnown)
     }
   MixfixModule::clearIndent();
   MixfixModule* module = safeCastNonNull<MixfixModule*>(dagNode->symbol()->getModule());
-  const PrintSettings& printSettings = interpreter;  // HACK
   if (printSettings.getPrintFlag(PrintSettings::PRINT_GRAPH))
     module->graphPrint(s, dagNode, printSettings);
   else
@@ -115,18 +62,11 @@ MixfixModule::prettyPrint(ostream& s, DagNode* dagNode, bool rangeKnown)
   MixfixModule::clearColor(s);
 }
 
-ostream&
-operator<<(ostream& s, DagNode* dagNode)
-{
-  MixfixModule::prettyPrint(s, dagNode);
-  return s;
-}
-
 void
-MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemType)
+MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemType, const PrintSettings& printSettings)
 {
   const Label& l = pe->getLabel();
-  int id = interpreter.getPrintFlag(PrintSettings::PRINT_LABEL_ATTRIBUTE) ? l.id() : NONE;
+  int id = printSettings.getPrintFlag(PrintSettings::PRINT_LABEL_ATTRIBUTE) ? l.id() : NONE;
   const Equation* eq = dynamic_cast<const Equation*>(pe);
   const Rule* rl = dynamic_cast<const Rule*>(pe);
   bool owise = eq != 0 && eq->isOwise();
@@ -178,127 +118,7 @@ MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemTy
   s << ']';
 }
 
-
-ostream&
-operator<<(ostream& s, const SortConstraint* sc)
-{
-  if (sc->hasCondition())
-    s << 'c';
-  s << "mb ";
-  if (!interpreter.getPrintFlag(PrintSettings::PRINT_LABEL_ATTRIBUTE))
-    {
-      const Label& l = sc->getLabel();
-      if (l.id() != NONE)
-	s << "[" << &l << "] : ";
-    }
-  MixfixModule::prettyPrint(s, sc->getLhs(), true);
-  s << " : " << sc->getSort();
-  if (sc->hasCondition())
-    MixfixModule::printCondition(s, sc);
-  MixfixModule* m = safeCast(MixfixModule*, sc->getModule());
-  m->printAttributes(s, sc, MixfixModule::MEMB_AX);
-  s << " .";
-  return s;
-}
-
-ostream&
-operator<<(ostream& s, const Equation* e)
-{
-  if (e->hasCondition())
-    s << 'c';
-  s << "eq ";
-  if (!interpreter.getPrintFlag(PrintSettings::PRINT_LABEL_ATTRIBUTE))
-    {
-      const Label& l = e->getLabel();
-      if (l.id() != NONE)
-	s << "[" << &l << "] : ";
-    }
-  s << e->getLhs() << " = ";
-  MixfixModule::prettyPrint(s, e->getRhs(), true);
-  if (e->hasCondition())
-    MixfixModule::printCondition(s, e);
-  MixfixModule* m = safeCast(MixfixModule*, e->getModule());
-  m->printAttributes(s, e, MixfixModule::EQUATION);
-  s << " .";
-  return s;
-}
-
-ostream&
-operator<<(ostream& s, const Rule* r)
-{
-  if (r->hasCondition())
-    s << 'c';
-  s << "rl ";
-  if (!interpreter.getPrintFlag(PrintSettings::PRINT_LABEL_ATTRIBUTE))
-    {
-      const Label& l = r->getLabel();
-      if (l.id() != NONE)
-	s << "[" << &l << "] : ";
-    }
-  s << r->getLhs() << " => ";
-  MixfixModule::prettyPrint(s, r->getRhs(), true);
-  if (r->hasCondition())
-    MixfixModule::printCondition(s, r);
-  MixfixModule* m = safeCast(MixfixModule*, r->getModule());
-  m->printAttributes(s, r, MixfixModule::RULE);
-  s << " .";
-  return s;
-}
-
-ostream&
-operator<<(ostream& s, const ConditionFragment* c)
-{
-  if (const EqualityConditionFragment* e = dynamic_cast<const EqualityConditionFragment*>(c))
-    {
-      s << e->getLhs() << " = ";
-      MixfixModule::prettyPrint(s, e->getRhs(), true);
-    }
-  else if (const SortTestConditionFragment* t = dynamic_cast<const SortTestConditionFragment*>(c))
-    {
-      MixfixModule::prettyPrint(s, t->getLhs(), true);
-      s <<  " : " << t->getSort();
-    }
-  else if(const AssignmentConditionFragment* a = dynamic_cast<const AssignmentConditionFragment*>(c))
-    {
-      s << a->getLhs() << " := ";
-      MixfixModule::prettyPrint(s, a->getRhs(), true);
-    }
-  else if(const RewriteConditionFragment* r = dynamic_cast<const RewriteConditionFragment*>(c))
-    {
-      s << r->getLhs() << " => ";
-      MixfixModule::prettyPrint(s, r->getRhs(), true);
-    }
-  else
-    CantHappen("bad condition fragment");
-  return s;
-}
-
-ostream&
-operator<<(ostream& s, const RewriteStrategy* rs)
-{
-  s << "strat " << Token::name(rs->id()) << " ";
-
-  // Prints domain sorts
-  const Vector<Sort*>& domain = rs->getDomain();
-  int arity = rs->arity();
-  if (arity > 0)
-    {
-      s << ": ";
-      for (int i = 0; i < arity; i++)
-	s << domain[i] << ' ';
-    }
-
-  s << "@ " << rs->getSubjectSort();
-  // Print attributes (only metadata is allowed)
-  MixfixModule* m = safeCast(MixfixModule*, rs->getModule());
-  int metadata = m->getMetadata(MixfixModule::STRAT_DECL, rs);
-  if (metadata != NONE)
-    s << " [metadata " << Token::name(metadata) << "] ";
-  s << " .";
-  return s;
-}
-
-inline void
+void
 MixfixModule::printStrategyTerm(ostream& s, RewriteStrategy* strat, Term* term)
 {
   // The term itself is not what we want to print because it contains
@@ -320,24 +140,6 @@ MixfixModule::printStrategyTerm(ostream& s, RewriteStrategy* strat, Term* term)
 	}
       s << ")";
     }
-}
-
-ostream&
-operator<<(ostream& s, const StrategyDefinition* e)
-{
-  if (e->hasCondition())
-    s << 'c';
-  s << "sd ";
-  // Prints the LHS with the strategy label
-  MixfixModule* m = safeCast(MixfixModule*, e->getModule());
-  m->printStrategyTerm(s, e->getStrategy(), e->getLhs());
-  s << " := " << e->getRhs();
-  if (e->hasCondition())
-    MixfixModule::printCondition(s, e);
-
-  m->printAttributes(s, e, MixfixModule::STRAT_DEF);
-  s << " .";
-  return s;
 }
 
 void

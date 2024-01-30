@@ -1,3 +1,20 @@
+2024-01-22  Steven Eker  <eker@pup>
+
+	* IO_Manager.hh (class IO_Manager): increase MAX_LINE_LENGTH from
+	1024 to 100 * 1024; increase MAX_HISTORY_LENGTH from 4096 to
+	100 * 1024
+
+2024-01-19  Steven Eker  <eker@pup>
+
+	* directoryManager.hh (class DirectoryManager): added decl for
+	2 argument checkAccess()
+
+	* directoryManager.cc (DirectoryManager::checkAccess): added 2
+	argument version that checks we have a regular file
+	(DirectoryManager::checkAccess): call 2 argument checkAccess()
+
+===================================Maude156===========================================
+
 2023-04-12  Steven Eker  <eker@pup>
 
 	* autoWrapBuffer.hh (class AutoWrapBuffer): Bool -> bool

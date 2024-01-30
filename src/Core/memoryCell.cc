@@ -411,7 +411,7 @@ MemoryCell::collectGarbage()
 }
 
 void
-MemoryCell::showResources(ostream& s)
+MemoryCell::showResources(ostream& s, ostream* latexStream)
 {
   rusage usage;
   if (getrusage(RUSAGE_SELF, &usage) == 0)
@@ -419,10 +419,31 @@ MemoryCell::showResources(ostream& s)
       double userTime = usage.ru_utime.tv_usec / 1000000.0 + usage.ru_utime.tv_sec;
       double sysTime = usage.ru_stime.tv_usec / 1000000.0 + usage.ru_stime.tv_sec;
       pair<double, const char*> p = memConvert(1024 * static_cast<uint_fast64_t>(usage.ru_maxrss));
+      //
+      //	Text output.
+      //
       s << "Time: " << userTime << "s user / " <<  sysTime << "s system";
       s << "\t\tContext switches: " << usage.ru_nvcsw << " voluntary / " << usage.ru_nivcsw << " involuntary" << endl;
       s << "Maximum resident size: " << p.first << " " << p.second;
       s << "\t\tPage faults: " << usage.ru_majflt << " major / " << usage.ru_minflt << " minor" << endl;
+      //
+      //	Latex output.
+      //
+      if (latexStream)
+	{
+	  *latexStream << "\\par\\begin{tabular}{@{}ll}\n";
+
+	  *latexStream << "\\maudeResponse{Time: }\\maudeNumber{" <<  userTime <<
+	    " s}\\maudeResponse{ user / }\\maudeNumber{" <<  sysTime << " s}\\maudeResponse{ system} &\n" <<
+	    "\\maudeResponse{Context switches: }\\maudeNumber{" <<  usage.ru_nvcsw <<
+	    "}\\maudeResponse{ voluntary / }\\maudeNumber{" <<  usage.ru_nivcsw << "}\\maudeResponse{ involuntary} \\\\\n";
+
+	  *latexStream << "\\maudeResponse{Maximum resident size: }\\maudeNumber{" << p.first << " " << p.second << "} &\n" <<
+	    "\\maudeResponse{Page faults: }\\maudeNumber{" <<  usage.ru_majflt << "}\\maudeResponse{ major / }" <<
+	    "\\maudeNumber{" << usage.ru_minflt << "}\\maudeResponse{ minor}\n";
+
+	  *latexStream << "\\end{tabular}\n";
+	}
     }
   else
     CantHappen("getrusage() failed: " << strerror(errno));

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -453,6 +453,7 @@ AU_Symbol::stackArguments(DagNode* subject,
 			  Vector<RedexPosition>& stack,
 			  int parentIndex,
 			  bool respectFrozen,
+			  bool respectUnstackable,
 			  bool eagerContext)
 {
   if (respectFrozen && !(getFrozen().empty()))  // under A, any frozen argument affects all
@@ -469,7 +470,7 @@ AU_Symbol::stackArguments(DagNode* subject,
 	   i.valid(); i.next(), ++j)
 	{
 	  DagNode* d = i.getDagNode();
-	  if (!(d->isUnstackable()))
+	  if (!(respectUnstackable && d->isUnstackable()))
 	    stack.append(RedexPosition(d, parentIndex, j, eager));
 	}
     }
@@ -483,7 +484,7 @@ AU_Symbol::stackArguments(DagNode* subject,
       for (int i = 0; i < nrArgs; i++)
 	{
 	  DagNode* d = args[i];
-	  if (!(d->isUnstackable()))
+	  if (!(respectUnstackable && d->isUnstackable()))
 	    stack.append(RedexPosition(d, parentIndex, i, eager));
 	}
     }

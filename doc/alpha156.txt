@@ -1,0 +1,101 @@
+Alpha 156 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug where certain characters in metadata resulted in bad LaTeX being
+produced by show mod. For example:
+
+fmod FOO is
+  sort Foo .
+  op b : -> Foo [metadata "`'\\^'"] .
+endfm
+
+show mod .
+
+(2) A bug where rewriting in a condition has a side effect on flags in
+a dag that causes strategic rewriting with nonexec rules to fail.
+Illustrated by this example from Paco:
+
+mod NONEXEC is
+  sorts Foo Bar .
+  ops a b : -> Foo [ctor] .
+  op <_> : Foo -> Bar [ctor] .
+  vars F G : Foo .
+  crl < F > => < G > if F => G /\ F =/= G .
+  rl [ab] : a => b [nonexec] .
+endm
+
+srew < a > using try(all) ; ab .
+
+Here the try(all) strategy on < a > attempt to use
+  crl < F > => < G > if F => G /\ F =/= G .
+and in particuar tries to rewrite the subterm a using executable rules.
+When it fails, a is marked as being unrewritable as an optimization.
+Then attemption to rewrite with the label ab, rewriting fails, even
+though the nonexec rule can be used with this strategy, because a is
+marked as being unrewritable. The fix is that flags that indicate a
+subterm is unrewritable, or should not be explored (unstackable) are ignored
+if nonexec rules are in play.
+
+New features
+=============
+
+(1) The resouces information printed on exit with
+  set show resouces on .
+is now supported in LaTeX.
+
+(2) LaTeX support for more commands:
+(a) smt-search
+(b) check
+(c) loop and loop mode bubbles
+
+(3) There is a new search arrow, =>#, which searches for states having multiple
+distinct successors. For example:
+
+mod TEST is
+  sort Foo .
+  ops a b c d e f : -> Foo .
+  rl a => b .
+  rl b => c .
+  rl c => d .
+  rl c => e .
+  rl d => e .
+  rl d => f .
+endm
+
+search a =># X:Foo .
+
+This is only supported for search, and not for smt-search or any version of
+narrowing. At the metalevel, the Qid '# is used to indicate this search type.
+Feature requested by Dwight Guth <dwight.guth@runtimeverification.com>.
+
+(4) Printing dags in graph from with
+  set print graph on .
+is now supported in LaTeX.
+
+Other changes
+==============
+
+(1) Large numbers, strings of sort String as well as strings occurring in metadata and
+print attributes, Qids and unparsed tokens in show mod and show view are now allowed
+to be broken over multiple lines in LaTeX to avoid an "Overfull \hbox".
+
+(2) Various changes to LaTeX spacing.
+
+(3) Equations having both the variant and nonexec attributes now produce an advisory,
+and are ignored for variant generation.
+
+(4) Directories and other non-regular files are no longer considered for
+reading with the directives in, load and sload. This is to avoid
+  load .
+attempting to read in the current directory as if it were a Maude file.
+Change requested by Carolyn.
+
+(5) The maximum line length when using Tecla is increased from 1024 characters
+to 100 * 1024 characters. Change requested by Paco.
+
+(6) The amount of history kept by Tecla is increased from 4 KB to 100 KB.
+
+(7) The narrow command now respects frozen positions just like the vu-narrow command.

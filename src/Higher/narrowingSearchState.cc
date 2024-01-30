@@ -57,7 +57,7 @@ NarrowingSearchState::NarrowingSearchState(RewritingContext* context,
 					   int flags,
 					   int minDepth,
 					   int maxDepth)
-  : PositionState(context->root(), flags, minDepth, maxDepth),
+  : PositionState(context->root(), flags | RESPECT_FROZEN, minDepth, maxDepth),
     context(context),
     freshVariableGenerator(freshVariableGenerator),
     odd(odd),

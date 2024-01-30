@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -52,16 +52,26 @@ Interpreter::checkSearchRestrictions(SearchKind searchKind,
 	    IssueWarning(*target << ": conditions are not currently supported for narrowing.");
 	    return false;
 	  }
+	if (searchType == SequenceSearch::BRANCH)
+	  {
+	     IssueWarning(*target << ": =># mode is not currently supported for narrowing.");
+	     return false;
+	  }
 	break;
       }
     case SMT_SEARCH:
       {
 	//
-	//	SMT search does not support =>! mode since states are symbolic.
+	//	SMT search does not support =>! or =># modes since states are symbolic.
 	//
 	if (searchType == SequenceSearch::NORMAL_FORM)
 	  {
 	     IssueWarning(*target << ": =>! mode is not supported for searching modulo SMT.");
+	     return false;
+	  }
+	if (searchType == SequenceSearch::BRANCH)
+	  {
+	     IssueWarning(*target << ": =># mode is not supported for searching modulo SMT.");
 	     return false;
 	  }
 	//
@@ -146,7 +156,7 @@ Interpreter::search(const Vector<Token>& bubble,
 
   DagNode* subjectDag = makeDag(initial);
 
-  static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!" };
+  static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!", "=>#" };
   bool showCommand = getFlag(SHOW_COMMAND);
   if (showCommand)
     {

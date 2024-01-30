@@ -130,6 +130,20 @@ Interpreter::outputBanner(const char* date, const char* time, time_t seconds)
 }
 
 void
+Interpreter::quit()
+{
+  ostream* latexStream = latexBuffer ? &(latexBuffer->getStream()) : nullptr;
+  if (latexStream)
+    *latexStream << "\\begin{comment}\n%\n%  quit\n%\n\\end{comment}\n\\begin{maudeResultParagraph}\n";
+  MemoryCell::maybeShowResources(cout, latexStream);
+  cout << "Bye.\n";
+  if (latexStream)
+    *latexStream << "\\par\\maudeResponse{Bye.}\n\\end{maudeResultParagraph}\n%\n%  End of quit\n%\n";
+  endXmlLog();
+  endLatexLog();
+}
+
+void
 Interpreter::cleanCaches()
 {
   //

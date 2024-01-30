@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -142,6 +142,7 @@ public:
   ~Interpreter();
 
   void outputBanner(const char* date, const char* time, time_t seconds);
+  void quit();
 
   void beginXmlLog(const char* fileName);
   void endXmlLog();
@@ -244,8 +245,7 @@ private:
   DagNode* makeDag(const Vector<Token>& subject);
   void startUsingModule(VisibleModule* module);
   void printModifiers(Int64 number, Int64 number2);
-  void printStats(const Timer& timer, RewritingContext& context, bool timingFlag);
-  void printStats(const Timer& timer, RewritingContext& context);
+  void printStats(const Timer& timer, RewritingContext& context, bool showTiming);
   void printStats(RewritingContext& context,
 		  int64_t cpuTime,
 		  int64_t realTime,
@@ -344,7 +344,6 @@ private:
   MaudeLatexBuffer* latexBuffer;
 
   int flags;
-  //int printFlags;
   SyntacticPreModule* currentModule;
   SyntacticView* currentView;
   //

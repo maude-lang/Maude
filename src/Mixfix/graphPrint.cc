@@ -140,3 +140,110 @@ MixfixModule::graphCount(DagNode* dagNode, PointerSet& visited, Vector<mpz_class
     }
   counts[index] = count;
 }
+
+void
+MixfixModule::latexGraphPrint(ostream& s, DagNode* dagNode, const PrintSettings& printSettings)
+{
+  PointerSet visited;
+  Vector<mpz_class> counts;
+  graphCount(dagNode, visited, counts);
+  s << "\\maudeResponse{Begin\\{Graph Representation\\}}$\n\\par\\maudeMisc{[Term has " << counts[0] <<
+    " operator symbol" << (counts[0] == 1 ? "" : "s") << " while graph has " << visited.cardinality() <<
+    " node" << pluralize(visited.cardinality()) << ".]}\n";
+  int nrNodes = visited.cardinality();
+  for (int i = 0; i < nrNodes; ++i)
+    {
+      if (UserLevelRewritingContext::interrupted())
+	break;
+      s << "\\par$\\#" << i << " = ";
+      DagNode* dagNode = static_cast<DagNode*>(visited.index2Pointer(i));
+      Symbol* symbol = dagNode->symbol();
+      SymbolType type = symbolInfo[symbol->getIndexWithinModule()].symbolType;
+      switch (type.getBasicType())
+	{
+	case SymbolType::VARIABLE:
+	  {
+	    int id = safeCastNonNull<VariableDagNode*>(dagNode)->id();
+	    Sort* sort = safeCastNonNull<VariableSymbol*>(dagNode->symbol())->getSort();
+	    s << Token::latexIdentifier(id);
+	    if (printSettings.getPrintFlag(PrintSettings::PRINT_WITH_ALIASES))
+	      {
+		AliasMap::const_iterator i = variableAliases.find(id);
+		if (i != variableAliases.end() && (*i).second == sort)
+		  break;  // use alias, avoid :sort part
+	      }
+	    s << "\\maudeVariableColon" << latexType(sort);
+	    break;
+	  }
+	case SymbolType::FLOAT:
+	  {
+	    s << "\\maudeNumber{" << doubleToString(safeCastNonNull<FloatDagNode*>(dagNode)->getValue()) << "}";
+	    break;
+	  }
+	case SymbolType::STRING:
+	  {
+	    string strValue;
+	    Token::ropeToString(safeCastNonNull<StringDagNode*>(dagNode)->getValue(), strValue);
+	    s << latexString(strValue);
+	    break;
+	  }
+	case SymbolType::QUOTED_IDENTIFIER:
+	  {
+	    s << latexQid(safeCastNonNull<QuotedIdentifierDagNode*>(dagNode)->getIdIndex());
+	    break;
+	  }
+	case SymbolType::SMT_NUMBER_SYMBOL:
+	  {
+	    const mpq_class& value = safeCastNonNull<SMT_NumberDagNode*>(dagNode)->getValue();
+	    //
+	    //	Look up the index of our sort.
+	    //
+	    Sort* sort = dagNode->symbol()->getRangeSort();
+	    //
+	    //	Figure out what SMT sort we correspond to.
+	    //
+	    SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
+	    Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
+	    s << latexNumber(value.get_num());
+	    if (t == SMT_Info::REAL)
+	      s << '/' << latexNumber(value.get_den());
+	    else
+	      Assert(t == SMT_Info::INTEGER, "SMT number sort expected");
+	    break;
+	  }
+	default:
+	  {
+	    int id = symbol->id();
+	    int nrArgs = symbol->arity();
+	    if (nrArgs == 0 && Token::auxProperty(id) == Token::AUX_STRUCTURED_SORT)
+	      {
+		s << latexStructuredConstant(id);
+		continue;
+	      }
+	    else if (type.hasFlag(SymbolType::ITER))
+	      {
+		const mpz_class& number = safeCast(S_DagNode*, dagNode)->getNumber();
+		if (number > 1)
+		  s << "\\maudeIter{" << Token::latexIdentifier(dagNode->symbol()->id()) + "}{" + number.get_str() + "}";
+		else
+		  s << Token::latexIdentifier(symbol->id());
+	      }
+	    else
+	      s << Token::latexIdentifier(symbol->id());
+	    if (nrArgs > 0)
+	      {
+		const char* sep = "\\maudeLeftParen";
+		for (DagArgumentIterator a(*dagNode); a.valid(); a.next())
+		  {
+		    s << sep << "\\#" << visited.pointer2Index(a.argument());
+		    sep = "\\maudeComma";
+		  }
+		s << "\\maudeRightParen";
+	      }
+	    break;
+	  }
+	}
+      s << "$\n";
+    }
+  s << "\\par$\\maudeResponse{End\\{Graph Representation\\}}\n";
+}

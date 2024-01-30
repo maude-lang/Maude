@@ -39,25 +39,6 @@ SyntacticPreModule::latexSortTokenVector(ostream& s, const Vector<Token>& sorts)
 }
 
 void
-SyntacticPreModule::latexTokenVector(ostream& s, const Vector<Token>& tokens, Index first, Index last)
-{
-  bool needSpace = false;
-  for (Index i = first; i <= last; ++i)
-    {
-      bool nextNeedSpace = true;
-      int code = tokens[i].code();
-      if (code == rightParen || code == rightBracket || code == rightBrace || code == comma)
-	needSpace = false;
-      else if (code == leftParen || code == leftBracket || code == leftBrace)
-	nextNeedSpace = false;
-      if (needSpace)
-	s << "\\maudeSpace";
-      s << "\\maudeRaw{" << Token::latexName(tokens[i].code()) << "}";
-      needSpace = nextNeedSpace;
-    }
-}
-
-void
 SyntacticPreModule::latexType(ostream& s, const Type& type)
 {
   if (type.kind)
@@ -192,9 +173,8 @@ SyntacticPreModule::latexShowModule(ostream& s)
   
   for (const Vector<Token>& tokens : statements)
     {
-      s << "\\par$\\maudeIndent\\maudeKeyword{" << tokens[0] << "}\\maudeSpace";
-      latexTokenVector(s, tokens, 1, tokens.size() - 1);
-      s << "$\\maudeEndStatement\n";
+      s << "\\par$\\maudeIndent\\maudeKeyword{" << tokens[0] << "}\\maudeSpace" <<
+	MixfixModule::latexTokenVector(tokens, 1, tokens.size() - 1) << "$\\maudeEndStatement\n";
     }
 
   s << "\\par\\maudeKeyword{" << MixfixModule::moduleEndString(getModuleType()) << "}\n";
@@ -291,8 +271,7 @@ SyntacticPreModule::latexAttributes(ostream& s, const OpDef& opDef)
 	s << "\\maudeKeyword{right}\\maudeSpace";
       else if (!(st.hasFlag(SymbolType::RIGHT_ID)))
 	s << "\\maudeKeyword{left}\\maudeSpace";
-      s << "\\maudeKeyword{id:}\\maudeSpace";
-      latexTokenVector(s, opDef.identity, 0, opDef.identity.size() - 1);
+      s << "\\maudeKeyword{id:}\\maudeSpace" << MixfixModule::latexTokenVector(opDef.identity, 0, opDef.identity.size() - 1);
     }
   if (st.hasFlag(SymbolType::IDEM))
     {
@@ -399,7 +378,7 @@ SyntacticPreModule::latexAttributes(ostream& s, const OpDef& opDef)
     }
   if (opDef.metadata != NONE)
     {
-      s << space << "\\maudeKeyword{metadata}\\maudeSpace\\maudeString{" << Token::name(opDef.metadata) << "}";
+      s << space << "\\maudeKeyword{metadata}\\maudeSpace" << MixfixModule::latexString(opDef.metadata);
       space = "\\maudeSpace";
     }
   if (!(opDef.special.empty()))
@@ -414,9 +393,9 @@ SyntacticPreModule::latexAttributes(ostream& s, const OpDef& opDef)
 	      s << "\\newline\\maudeKeyword{" << hookTypes[h.type] << "}\\maudeSpace\\maudeSymbolic{" << Token::latexName(h.name) << "}";
 	      if (!(h.details.empty()))
 		{
-		  s << "\\maudeSpace\\maudeLeftParen";
-		  latexTokenVector(s, h.details, 0, h.details.size() - 1);
-		  s << "\\maudeRightParen";
+		  s << "\\maudeSpace\\maudeLeftParen" <<
+		    MixfixModule::latexTokenVector(h.details, 0, h.details.size() - 1) <<
+		    "\\maudeRightParen";
 		}
 	    }
 	}
@@ -453,8 +432,8 @@ SyntacticPreModule::latexStratDecl(ostream& s, const StratDecl& stratDecl)
   
   if (stratDecl.metadata != NONE)
     {
-      s << "\\maudeSpace\\maudeLeftBracket\\maudeKeyword{metadata}\\maudeSpace\\maudeString{" <<
-	Token::latexName(stratDecl.metadata) << "}\\maudeRightBracket";
+      s << "\\maudeSpace\\maudeLeftBracket\\maudeKeyword{metadata}\\maudeSpace" <<
+	MixfixModule::latexString(stratDecl.metadata) << "\\maudeRightBracket";
     }
   s << "$\\maudeEndStatement\n";
 }

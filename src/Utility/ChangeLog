@@ -1,3 +1,9 @@
+2023-12-20  Steven Eker  <eker@pup>
+
+	* macros.hh (downCast): deleted
+
+===================================Maude156===================================
+
 2023-11-21  Steven Eker  <eker@pup>
 
 	* rope.hh (class Rope): added decl for ctor from std::string

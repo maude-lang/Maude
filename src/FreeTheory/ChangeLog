@@ -1,3 +1,13 @@
+2024-01-16  Steven Eker  <eker@pup>
+
+	* freeSymbol.cc (FreeSymbol::stackArguments): handle
+	respectUnstackable arg
+
+	* freeSymbol.hh (class FreeSymbol): updated decl for
+	stackArguments()
+
+===================================Maude156===========================================
+
 2023-09-29  Steven Eker  <eker@pup>
 
 	* freePreNet.cc (FreePreNet::makeNode): use Index for iterating

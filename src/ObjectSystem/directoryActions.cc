@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2021-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -219,13 +219,15 @@ DirectoryManagerSymbol::getDirectoryEntry(FreeDagNode* message, ObjectSystemRewr
 	case DT_UNKNOWN:
 	  {
 	    //
-	    //	Need to call lstat(); we use lstat() rather than stat() in case
-	    //	we have a symbolic link.
+	    //	readdir() does not guarantee the file type will be obtained; it depends on the file system.
+	    //	Here we fall back to trying to get the answer from from an lstat() system call on the file.
+	    //	We use lstat() rather than stat() just in case the file is a symbolic link because we want
+	    //	to report that information.
 	    //
 	    Rope path(odp->path + entry->d_name);
 	    char* pathStr = path.makeZeroTerminatedString();
 	    struct stat statBuffer;
-	    int result = stat(pathStr, &statBuffer);
+	    int result = lstat(pathStr, &statBuffer);
 	    delete [] pathStr;
 	    if (result == -1)
 	      {
