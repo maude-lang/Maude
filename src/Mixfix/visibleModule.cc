@@ -196,13 +196,17 @@ VisibleModule::showSortsAndSubsorts(ostream& s) const
 void
 VisibleModule::showImports(ostream& s) const
 {
+  //
+  //	Imports are always indented.
+  //
   int nrImports = getNrImports();
   for (int i = 0; i < nrImports; i++)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << "  " << importModeString(getImportMode(i)) <<
-	' ' << Token::removeBoundParameterBrackets(getImportedModule(i)->id()) << " .\n";
+      s << "  " << importModeString(getImportMode(i)) << " ";
+      getImportedModule(i)->printModuleExpression(s, false);
+      s << " .\n";
     }
 }
 
@@ -534,7 +538,7 @@ VisibleModule::showPolymorphAttributes(ostream& s, int index) const
 	    for (int i = 0; getPolymorphSymbolAttachment(index, i, purpose, op); ++i)
 	      {
 		s << "\n    " << "op-hook " << Token::name(purpose) << " (" <<
-		  op << " : ";
+		  prettyOpName(op->id(), Token::BARE_COLON) << " : ";
 		const Vector<Sort*>& domainAndRange =
 		  op->getOpDeclarations()[0].getDomainAndRange();
 		int nrSorts = domainAndRange.length() - 1;
@@ -584,15 +588,10 @@ void
 VisibleModule::showPolymorphDecl(ostream& s, bool indent, int index) const
 {
   const char* ind = indent ? "  " : "";
-  s << ind << "op ";
+  s << ind << "op " << prettyOpName(getPolymorphName(index).code(), Token::EXPOSED_COLON) << " :";
   
   const Vector<Sort*>& domainAndRange = getPolymorphDomainAndRange(index);
   int nrArgs = domainAndRange.length() - 1;
-  if (nrArgs == 0)
-    s << Token::sortName(getPolymorphName(index).code()) << " :";
-  else
-    s << getPolymorphName(index) << " :";
-
   for (int i = 0; i < nrArgs; i++)
     {
       if (Sort* sort = domainAndRange[i])
@@ -650,7 +649,7 @@ VisibleModule::showDecls(ostream& s, bool indent, int index, bool all) const
       if (UserLevelRewritingContext::interrupted())
 	return;
       const Vector<Sort*>& dec = opDecls[i].getDomainAndRange();
-      s << ind << "op " << symbol << " :";
+      s << ind << "op " << prettyOpName(symbol->id(), Token::EXPOSED_COLON) << " :";
       for (int j = 0; j < nrArgs; j++)
 	s << ' ' << dec[j];
       s << " -> " << dec[nrArgs];
@@ -872,7 +871,7 @@ VisibleModule::showAttributes(ostream& s, Symbol* symbol, int opDeclIndex) const
 	      {
 		Symbol* op = symbols[i];
 		s << "\n    " << "op-hook " << purposes[i] << " (" <<
-		  op << " : ";
+		  prettyOpName(op->id(), Token::BARE_COLON) << " : ";
 		const Vector<Sort*>& domainAndRange =
 		  op->getOpDeclarations()[0].getDomainAndRange();
 		int nrSorts = domainAndRange.length() - 1;

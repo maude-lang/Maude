@@ -126,6 +126,7 @@ public:
   //
   bool isBad() const;
 
+  void printViewExpression(ostream& s, bool parameterBrackets) const;
   string latexViewExpression(bool parameterBrackets = false) const;
 
 protected:

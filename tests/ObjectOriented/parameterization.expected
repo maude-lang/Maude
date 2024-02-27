@@ -7,7 +7,7 @@ th CONTAINER is
   subsort Container < Cid .
   op insert : Oid Oid Elt -> Msg [ctor msg] .
   op Container : -> Container [ctor pconst] .
-  op guts`:_ : Elt -> Attribute [ctor prec 15 gather (&)] .
+  op guts :_ : Elt -> Attribute [ctor prec 15 gather (&)] .
 endth
 th CONTAINER is
   sorts Attribute AttributeSet Oid Cid Object Msg Portal Configuration Elt
@@ -16,12 +16,12 @@ th CONTAINER is
   subsort Container < Cid .
   subsorts Object Msg Portal < Configuration .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -30,7 +30,7 @@ th CONTAINER is
   op getClass : Object -> Cid .
   op insert : Oid Oid Elt -> Msg [ctor msg] .
   op Container : -> Container [ctor pconst] .
-  op guts`:_ : Elt -> Attribute [ctor prec 15 gather (&)] .
+  op guts :_ : Elt -> Attribute [ctor prec 15 gather (&)] .
   eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
 endth
 Considering object completion on:
@@ -71,7 +71,7 @@ mod BAG{X :: TRIV} is
   subsort Bag{X} < Cid .
   op replace : Oid X$Elt -> Msg [ctor msg] .
   op Bag{X} : -> Bag{X} [ctor] .
-  op contents`:_ : X$Elt -> Attribute [ctor prec 15 gather (&)] .
+  op contents :_ : X$Elt -> Attribute [ctor prec 15 gather (&)] .
 endm
 mod BAG{X :: TRIV} is
   sorts X$Elt Bool Attribute AttributeSet Oid Cid Object Msg Portal
@@ -104,12 +104,12 @@ mod BAG{X :: TRIV} is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -118,7 +118,7 @@ mod BAG{X :: TRIV} is
   op getClass : Object -> Cid .
   op replace : Oid X$Elt -> Msg [ctor msg] .
   op Bag{X} : -> Bag{X} [ctor] .
-  op contents`:_ : X$Elt -> Attribute [ctor prec 15 gather (&)] .
+  op contents :_ : X$Elt -> Attribute [ctor prec 15 gather (&)] .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .
   eq A:Bool and A:Bool = A:Bool .
@@ -142,7 +142,7 @@ view Bag{Y :: TRIV} from CONTAINER to BAG{Y} is
   sort Elt to Y$Elt .
   sort Container to Bag{Y} .
   op Container : -> [Cid,Container] to Bag{Y} .
-  op guts`:_ : [Elt] -> [Attribute,AttributeSet] to contents`:_ .
+  op guts :_ : [Elt] -> [Attribute,AttributeSet] to contents :_ .
   var R : Oid .
   var S : Oid .
   var D : Elt .
@@ -185,12 +185,12 @@ mod TEST{Y :: TRIV} is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -199,7 +199,7 @@ mod TEST{Y :: TRIV} is
   op getClass : Object -> Cid .
   op replace : Oid Y$Elt -> Msg [ctor msg] .
   op Bag{Y} : -> Bag{Y} [ctor] .
-  op contents`:_ : Y$Elt -> Attribute [ctor prec 15 gather (&)] .
+  op contents :_ : Y$Elt -> Attribute [ctor prec 15 gather (&)] .
   op 0 : -> Zero [ctor] .
   op s_ : Nat -> NzNat [ctor iter prec 15 gather (E) special (
     id-hook SuccSymbol

@@ -1,3 +1,15 @@
+2024-02-14  Steven Eker  <eker@pup>
+
+	* checkedConstIterator.hh (Vector<T>::iterator::operator>): added
+	(Vector<T>::iterator::operator<=): added
+	(Vector<T>::iterator::operator>=): added
+
+	* checkedIterator.hh (Vector<T>::iterator::operator>): added
+	(Vector<T>::iterator::operator<=): added
+	(Vector<T>::iterator::operator>=): added
+
+===================================Maude157===================================
+
 2023-12-20  Steven Eker  <eker@pup>
 
 	* macros.hh (downCast): deleted

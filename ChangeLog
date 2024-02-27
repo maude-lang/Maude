@@ -1,3 +1,27 @@
+2024-02-27  Steven Eker  <eker@pup>
+
+	* tests/Corner/operatorNames.maude: added ops/msgs examples
+
+2024-02-23  Steven Eker  <eker@pup>
+
+	* tests/Corner/operatorNames.maude: added tests for op-hooks
+
+2024-02-20  Steven Eker  <eker@pup>
+
+	* tests/Corner/operatorNames.maude: added example to illstrate op
+	in from theory of a view
+
+2024-02-19  Steven Eker  <eker@pup>
+
+	* tests/Corner/operatorNames.maude: added
+
+2024-01-30  Steven Eker  <eker@pup>
+
+	* INSTALL (GMP_LIBS): use gmp 6.3.0; it claims to support ARM under
+	MacOS so remove comment about M1 and M2 chips
+
+==================================Maude157===========================================
+
 2024-01-24  Steven Eker  <eker@pup>
 
 	* tests/ResolvedBugs/conditionSideEffectInStrategyLanguageDecember2023.maude:

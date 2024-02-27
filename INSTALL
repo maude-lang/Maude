@@ -86,7 +86,7 @@ make install
 
 GMP
 ---
-curl -LJO https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
+curl -LJO https://gmplib.org/download/gmp/gmp-6.3.0.tar.xz
 tar xvf gmp-6.2.1.tar.xz
 cd gmp-6.2.1
 mkdir Opt
@@ -211,9 +211,6 @@ autoconf because Yices2 ships with a configure.ac but no configure.
 Rather than building the dependencies from scratch, you might find some
 or all of them available under a MacOS package manager such as Homebrew
 (https://brew.sh/) or MacPorts (https://www.macports.org/).
-
-Note that MacOS on the M1 and M2 chips is not properly supported by GMP
-at as of 2023-03-09, so I don't recommend trying to build an ARM binary.
 
 Configuring the 3rd party packages
 ==================================

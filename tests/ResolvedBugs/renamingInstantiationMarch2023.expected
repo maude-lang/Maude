@@ -170,12 +170,12 @@ mod TEST is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:

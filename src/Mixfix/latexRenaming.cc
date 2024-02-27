@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,6 +46,13 @@ Renaming::latexRenaming(const char* sep,
 			const Module* toModule,
 			bool showProcessed) const
 {
+  //
+  //	Problem situations that pretty op printing needs to handle.
+  //
+  const int fromOpProblems = Token::EXPOSED_COLON | Token::EXPOSED_TO; // colons and "to" in from operators names are always a problem
+  int toOpProblems = (typeid(*this) == typeid(Renaming)) ?
+    (Token::EXPOSED_COMMA | Token::EXPOSED_LEFT_BRACKET) :  // commas and left brackets in target operator names are a problem for renamings
+    (Token::EXPOSED_TERM | Token::EXPOSED_DOT);  // "term" and dots in target operator names are a problem for views
   //
   //	If we are printing the unprocessing renaming, include class mappings.
   //
@@ -101,11 +108,12 @@ Renaming::latexRenaming(const char* sep,
       result += "\\maudeKeyword{";
       result += (!showProcessed && om->second.mappingType == MappingType::MSG) ? "msg" : "op";
       result += "}\\maudeSpace";
+      int id = om->first;
       if (om->second.types.size() == 1)
-	result += MixfixModule::latexConstant(om->first, fromModule);  // could be parameterized
+	result += MixfixModule::latexConstant(id, fromModule, fromOpProblems);  // could be parameterized
       else
-	result += MixfixModule::latexPrettyOp(om->first);
-     if (!om->second.types.empty())
+	result += MixfixModule::latexPrettyOpName(id, fromOpProblems);
+      if (!om->second.types.empty())
 	{
 	  result += "\\maudeHasSort";
 	  Index nrDomainTypes = om->second.types.size() - 1;
@@ -119,10 +127,11 @@ Renaming::latexRenaming(const char* sep,
 	  result += latexRenamingType(om->second.types[nrDomainTypes], fromModule);
 	}
       result += "\\maudeSpace\\maudeKeyword{to}\\maudeSpace";
+      int target = om->second.name;
      if (om->second.types.size() == 1)
-       result += MixfixModule::latexConstant(om->second.name, toModule);
+       result += MixfixModule::latexConstant(target, toModule, toOpProblems);
      else
-       result += MixfixModule::latexPrettyOp(om->second.name);
+       result += MixfixModule::latexPrettyOpName(target, toOpProblems);
      //
      //	If we have any attributes in target, print them inside []s.
      //

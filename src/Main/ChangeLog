@@ -1,3 +1,10 @@
+2024-02-20  Steven Eker  <eker@pup>
+
+	* maude.sty: adjust the spacing around, and hieght of * in
+	\maudeRenaming
+
+===================================Maude157===========================================
+
 2024-01-29  Steven Eker  <eker@pup>
 
 	* maude.sty: added \maudeTinySpace; put extra space after ,

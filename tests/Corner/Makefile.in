@@ -443,7 +443,8 @@ TESTS = \
 	fakeParameterSort \
 	fakeParameterConstant \
 	attributeOverparsing \
-	ACU_TreeVariableSubproblem
+	ACU_TreeVariableSubproblem \
+	operatorNames
 
 MAUDE_FILES = \
 	badOmod.maude \
@@ -453,7 +454,8 @@ MAUDE_FILES = \
 	fakeParameterSort.maude \
 	fakeParameterConstant.maude \
 	attributeOverparsing.maude \
-	ACU_TreeVariableSubproblem.maude
+	ACU_TreeVariableSubproblem.maude \
+	operatorNames.maude
 
 RESULT_FILES = \
 	badOmod.expected \
@@ -463,7 +465,8 @@ RESULT_FILES = \
 	fakeParameterSort.expected \
 	fakeParameterConstant.expected \
 	attributeOverparsing.expected \
-	ACU_TreeVariableSubproblem.expected
+	ACU_TreeVariableSubproblem.expected \
+	operatorNames.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -699,6 +702,13 @@ attributeOverparsing.log: attributeOverparsing
 ACU_TreeVariableSubproblem.log: ACU_TreeVariableSubproblem
 	@p='ACU_TreeVariableSubproblem'; \
 	b='ACU_TreeVariableSubproblem'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+operatorNames.log: operatorNames
+	@p='operatorNames'; \
+	b='operatorNames'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

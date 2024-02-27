@@ -145,9 +145,9 @@ fmod LIST{Qid}
 fmod LIST{Qid} * (sort NeList{Qid} to NeQidList, sort List{Qid} to QidList)
 fmod SET{Qid}
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet)
-fmod QID-SET * (op _`,_ to _;_ [prec 43], op empty to none)
+fmod QID-SET * (op empty to none, op _,_ to _;_ [prec 43])
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet) * (op
-    _`,_ to _;_ [prec 43], op empty to none)
+    empty to none, op _,_ to _;_ [prec 43])
 fth TRIV * (sort Elt to Elt2)
 fth TRIV + TRIV * (sort Elt to Elt2)
 fmod NAT + FLOAT
@@ -298,7 +298,7 @@ fmod LIST{Qid}
 fmod LIST{Qid} * (sort NeList{Qid} to NeQidList, sort List{Qid} to QidList)
 fmod SET{Qid}
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet)
-fmod QID-SET * (op _`,_ to _;_ [prec 43], op empty to none)
+fmod QID-SET * (op empty to none, op _,_ to _;_ [prec 43])
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet) * (op
-    _`,_ to _;_ [prec 43], op empty to none)
+    empty to none, op _,_ to _;_ [prec 43])
 Bye.

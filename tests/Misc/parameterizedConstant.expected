@@ -800,8 +800,8 @@ fmod VIEW-TEST2 is
     term-hook trueTerm (true)
     term-hook falseTerm (false))] .
   op pi : -> FiniteFloat .
-  op _=`[_`]_ : Float FiniteFloat Float -> Bool [prec 51 gather (E & E) format
-    (d d d d d s d)] .
+  op _=[_]_ : Float FiniteFloat Float -> Bool [prec 51 gather (E & E) format (d
+    d d d d s d)] .
   op emptyStack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} : -> Stack{
     TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} .
   op _|_ : Stack{TOTAL-PREORDER}{TOTAL-ORDER}{Float<=} Stack{TOTAL-PREORDER}{
@@ -1093,8 +1093,8 @@ fmod ARRAY-TEST is
     term-hook trueTerm (true)
     term-hook falseTerm (false))] .
   op pi : -> FiniteFloat .
-  op _=`[_`]_ : Float FiniteFloat Float -> Bool [prec 51 gather (E & E) format
-    (d d d d d s d)] .
+  op _=[_]_ : Float FiniteFloat Float -> Bool [prec 51 gather (E & E) format (d
+    d d d d s d)] .
   op emptyStack{Float} : -> Stack{Float} .
   op _|_ : Stack{Float} Stack{Float} -> Stack{Float} [assoc id: emptyStack{
     Float} prec 41 gather (e E)] .
@@ -1113,8 +1113,8 @@ fmod ARRAY-TEST is
     .
   op insert : Nat Stack{Float} Array{Nat,Stack{Float}} -> Array{Nat,Stack{
     Float}} .
-  op _`[_`] : Array{Nat,Stack{Float}} Nat -> Stack{Float} [prec 23 gather (E
-    &)] .
+  op _[_] : Array{Nat,Stack{Float}} Nat -> Stack{Float} [prec 23 gather (E &)]
+    .
   op $hasMapping : Array{Nat,Stack{Float}} Nat -> Bool .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .

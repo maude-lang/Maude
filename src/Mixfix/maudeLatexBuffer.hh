@@ -25,6 +25,7 @@
 //
 #ifndef _maudeLatexBuffer_hh_
 #define _maudeLatexBuffer_hh_
+#include <stack>
 #include "interpreter.hh"
 
 class MaudeLatexBuffer
@@ -186,7 +187,8 @@ private:
   void generateModifiers(Module* module, int64_t  number = NONE, int64_t  number2 = NONE);
 
   ofstream output;
-  string pendingClose;
+  //string pendingClose;
+  stack<string> pendingCloseStack;
   bool needNewline;
 };
 
@@ -199,8 +201,8 @@ MaudeLatexBuffer::getStream()
 inline void
 MaudeLatexBuffer::cleanUp()
 {
-  output << pendingClose;
-  pendingClose.clear();
+  output << pendingCloseStack.top();
+  pendingCloseStack.pop();
 }
 
 inline void

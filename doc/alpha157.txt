@@ -1,0 +1,171 @@
+Alpha 157 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug where some garbage output of the form
+  symbol = <structured constant>  color =
+was printed to stderr when generating the LaTeX for a structured
+constant, owing to some temporary debugging code being left in.
+The debugging code attempts to print a null char* and on Macs this
+causes an internal error. Discovered in an example provided by Paco.
+
+(2) A bug in a pathological case where Maude will print a view that
+it cannot then parse; illustrated by:
+
+fth T is
+  sort Elt .
+  op f : Elt -> Elt .
+endfth
+
+fmod M is
+  sort Foo .
+  op term : Foo -> Foo .
+endfm
+
+view V from T to M is
+  sort Elt to Foo .
+  op f to (term) .
+endv
+
+show view .
+show processed view .
+
+Here the parentheses around term, needed to avoid ambiguity with
+operator to term mappings, are removed in both cases, leaving the
+unparsable view:
+
+view V from T to M is
+  sort Elt to Foo .
+  op f to term .
+endv
+
+(3) A bug where the backquotes were stripped from a complex variable name
+in the LaTeX output for show mod:
+
+fmod FOO{X :: TRIV} is
+  sort Foo .
+var `[`] : Foo .
+endfm
+
+show mod .
+
+(4) A bug where a complex operator/message names were printed without backquotes
+or enclosing parentheses in ops/msgs declarations in the LaTeX output for show mod:
+
+omod FOO is
+  sorts Foo Bar .
+  ops f ([_]) : Foo -> Foo .
+  msgs m `[_`] : Bar -> Msg .
+endom
+
+show mod .
+
+(5) Many case where the complex operator/message names were printed without backquotes
+or enclosing parentheses in contexts where they would be ambiguous, in the LaTeX output
+for various commands:
+
+fmod FOO is
+  sort Foo .
+  op ({:}) : -> Foo .
+  op [to] : -> Foo .
+endfm
+
+show mod .
+show desugared .
+
+fmod BAR is
+  inc FOO * (op ({:}) to (c[]), op ([to]) to ({,})) .
+endfm
+
+show mod .
+show desugared .
+
+(6) A bug in the LaTeX code that can cause a crash on strange constant names
+that are not structured constants.
+
+./maude -latex-log=num.tex
+
+fmod FOO is
+  sort Foo .
+  op [.] : -> Foo .
+endfm
+
+show mod .
+
+(6) A bug where 
+
+fmod FOO is
+  sort Foo .
+  ops ([_]) (:) : Foo -> Foo .
+endfm
+
+show mod FOO .
+
+produced
+
+fmod FOO is
+  sort Foo .
+  ops `[_`] : : Foo -> Foo .
+endfm
+
+which doesn't parse.
+
+(7) A bug where executing a new command in the debugger could cause bad
+LaTeX output (though the LaTeX output for debugging and tracing is not
+currently supported). Reported by Paco and illustrated by:
+
+debug red true and true .
+red false and false .
+q
+
+
+Other changes
+==============
+
+(1) Operators having mixfix syntax with mismatched parentheses now generate
+a warning and the mixfix syntax is disabled. Although declaring such operators
+with separate tokens has never parsed it is possible to declaring them
+with backquote syntax:
+
+fmod FOO is
+  sort Foo .
+  op `(_`)`) : Foo -> Foo .
+  op `)_`( : Foo -> Foo .
+  op a : -> Foo .
+endfm
+
+Previously it was possible to get Maude to output mixfix syntax for
+them that would not reparse:
+
+red `(_`)`)(a) .
+red `)_`((a) .
+
+(2) Previously integer exponents and left shifts were limited to 1,000,000 to avoid
+inadvertently runing out of memory. The limit is now ULONG_MAX (9,223,372,036,854,775,807
+on 64-bit hardware, 4,294,967,295 on 32-bit hardware) which is a hard limit imposed
+by GMP, although as before, if the first argument is 0, 1 or -1 for exponentiation
+or 0 for left shift, then the answer is trivial and arbitrary second arguments can
+be handled. Change requested by Dwight Guth <dwight.guth@runtimeverification.com>
+
+(3) The printing of operators outside of terms has been revised to match the limitations
+of the surface parser and to avoid introducing backquotes where possible:
+
+(a) In op/msg declarations, parentheses will be placed around any operator containing
+the ":" token outside of parentheses. Tokens containing ":" such as "_:_" don't count.
+(b) In ops/msgs declaration, parentheses will be placed around any operator containing
+multiple tokens and the unique operator ":".
+(c) In renamings and views, parentheses will be placed around any from-operator containing
+containing the tokens ":" or "to" outside of parentheses.
+(d) In renamings, parentheses will be placed around any to-operator containing the
+tokens "," or "[" outside of parentheses.
+(e) In views, parentheses will be placed around any to-operator starting with the token
+"term" or containing the token "." outside of parentheses.
+(f) In op-hooks, operators containing the token ":", whether inside or outside of
+parentheses will be printing as single tokens, using backquotes if necessary.
+
+These conventions avoid ambiguity in the surface syntax and are used for both text
+and LaTeX output. Note that op-hooks are not intended to be written by regular users
+and have a very restricted syntax, and in particular sort names in op-hooks must always
+be a single token, using backquotes where needed for structured sort names.

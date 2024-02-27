@@ -1,3 +1,260 @@
+2024-02-26  Steven Eker  <eker@pup>
+
+	* latexCommand.cc (MaudeLatexBuffer::generateGetVariants)
+	(MaudeLatexBuffer::generateVariantMatch)
+	(MaudeLatexBuffer::generateVariantUnify)
+	(MaudeLatexBuffer::generateUnify)
+	(MaudeLatexBuffer::generateMatch)
+	(MaudeLatexBuffer::generateSearch)
+	(MaudeLatexBuffer::generateLoopTokens)
+	(MaudeLatexBuffer::generateCommand) (both versions): use
+	pendingCloseStack
+	(MaudeLatexBuffer::generateContinue)
+	(MaudeLatexBuffer::generateShow) (3 versions): use
+	pendingCloseStack
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): pendingClose
+	becomes pendingCloseStack
+	(MaudeLatexBuffer::cleanUp): use pendingCloseStack
+
+2024-02-23  Steven Eker  <eker@pup>
+
+	* latexCommand.cc (MaudeLatexBuffer::generateGetVariants):
+	code cleaning
+	(MaudeLatexBuffer::generateVariantMatch): code cleaning
+	(MaudeLatexBuffer::generateVariantUnify): code cleaning
+
+	* visibleModule.cc (VisibleModule::showAttributes): use
+	prettyOpName() for op-hooks
+	(VisibleModule::showPolymorphAttributes): ditto
+
+2024-02-22  Steven Eker  <eker@pup>
+
+	* fixUp.cc (SyntacticPreModule::findHookSymbol): don't
+	recognize colon in position 0
+
+2024-02-21  Steven Eker  <eker@pup>
+
+	* view.cc (View::printViewExpression): update comment
+
+2024-02-20  Steven Eker  <eker@pup>
+
+	* token.hh (class Token): deleted decl for
+	removeBoundParameterBrackets()
+
+	* token.cc (Token::removeBoundParameterBrackets): deleted now
+	that we use View::printViewExpression() and
+	ImportModule::printModuleExpression() to handle output in a
+	pretty way rather than trying to hack the names
+
+	* syntacticView.cc (SyntacticView::showProcessedView): use
+	printModuleExpression() on modules rather than
+	Token::removeBoundParameterBrackets() on module names for
+	fromTheory and toModule
+
+2024-02-19  Steven Eker  <eker@pup>
+
+	* moduleCache.cc (ModuleCache::showCreatedModules): use
+	printModuleExpression()
+
+	* importModule.hh (class ImportModule): deleted decl for
+	prettyModuleExpression()
+
+	* importModule.cc (ImportModule::prettyModuleExpression):
+	deleted
+
+	* view.hh (class View): deleted decl for prettyViewExpression()
+
+	* view.cc (View::prettyViewExpression): deleted
+
+	* visibleModule.cc (VisibleModule::showImports): use
+	printModuleExpression()
+
+	* importModule.hh (class ImportModule): added decl for
+	printModuleExpression()
+
+	* view.hh (class View): added decl for printViewExpression()
+
+	* view.cc (View::printViewExpression): added
+
+	* importModule.cc (ImportModule::printModuleExpression):
+	added
+
+2024-02-16  Steven Eker  <eker@pup>
+
+	* view.hh (class View): added decl for prettyViewExpression()
+
+	* importModule.cc (ImportModule::prettyModuleExpression): use
+	prettyViewExpression()
+
+	* view.cc (View::latexViewExpression): use \\maudeLeftBracket,
+	\\maudeRightBracket
+	(View::prettyViewExpression): added
+
+	* visibleModule.cc(VisibleModule::showImports): use
+	prettyModuleExpression() rather than
+	Token::removeBoundParameterBrackets()
+
+	* importModule.hh (class ImportModule): added decl for
+	prettyModuleExpression()
+
+	* importModule.cc (ImportModule::prettyModuleExpression):
+	added
+
+	* renaming.cc (Renaming::printRenaming): use
+	MixfixModule::prettyOpName() (2 places)
+
+2024-02-15  Steven Eker  <eker@pup>
+
+	* visibleModule.cc (VisibleModule::showDecls): use
+	prettyOpName()
+	(VisibleModule::showPolymorphDecl): use prettyOpName()
+
+2024-02-14  Steven Eker  <eker@pup>
+
+	* command.cc (SyntacticPreModule::showModule): don't handle
+	parameterized constants specially now that
+	MixfixModule::prettyOpName() should do the right thing
+
+	* prettyPrint.cc (MixfixModule::prettyOpName): added
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	prettyOpName()
+
+	* command.cc (SyntacticPreModule::showModule): use pretty
+	names for ops and msgs
+
+2024-02-13  Steven Eker  <eker@pup>
+
+	* token.hh (class Token): deleted decl for prettyOpName()
+
+	* token.cc (Token::prettyOpName): deleted
+
+	* mixfixModule.hh (class MixfixModule): deleted decl for
+	latexPrettyOp()
+
+	* latexCommon.cc (MixfixModule::latexPrettyOp): deleted
+
+	* latexModulePrint.cc (VisibleModule::latexShowAttributes): use
+	latexPrettyOpName(); pass Token::BARE_COLON to latexConstant()
+	(VisibleModule::latexShowPolymorphAttributes): symmetric changes
+
+	* latexCommon.cc (MixfixModule::latexPrettyOpName): check for
+	BARE_COLON as a signifier that we're printing an op-hook and
+	use the single token name in that case
+
+	* token.hh (class Token): added BARE_COLON to enum ProblemSituations
+
+	* token.cc (Token::makePrettyOpName): handle BARE_COLON
+
+	* latexRenaming.cc (Renaming::latexRenaming): cleaned up and
+	commented op problem situation code; fix bug where we were
+	comparing pointer typeid()s rather than underlying objects
+
+2024-02-12  Steven Eker  <eker@pup>
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	latexConstant()
+
+	* latexCommon.cc (MixfixModule::latexConstant): take situations
+	argument and pass it to latexPrettyOpName()
+
+	* latexRenaming.cc (Renaming::latexRenaming) : pass situations
+	argument to MixfixModule::latexConstant() and
+	MixfixModule::latexPrettyOpName() (2 places)
+
+	* latexModulePrint.cc (VisibleModule::latexShowPolymorphDecl)
+	(VisibleModule::latexShowDecls): pass Token::EXPOSED_COLON to
+	latexPrettyOpName()
+	(VisibleModule::latexShowDecls): added comment
+	(VisibleModule::latexShowDecls): use latexStructuredConstant() and
+	latexPrettyOpName() in place of latexConstant()
+	(VisibleModule::latexShowPolymorphDecl): ditto
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule):
+	pass Token::MULTIPLE_TOKENS to MixfixModule::latexPrettyOpName()
+	in the ops/msgs case
+	(SyntacticPreModule::latexShowModule): passs Token::EXPOSED_COLON
+	to MixfixModule::latexPrettyOpName()
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	latexPrettyOpName()
+
+	* latexCommon.cc (MixfixModule::latexPrettyOpName): take
+	situations arg and pass to Token::makePrettyOpName()
+
+	* token.hh (class Token): updated decl for makePrettyOpName()
+
+	* token.cc (Token::makePrettyOpName): rewritten to take
+	situations argument
+
+	* token.hh (class Token): added enum ProblematicSituations
+
+2024-02-09  Steven Eker  <eker@pup>
+
+	* latexModulePrint.cc (VisibleModule::latexShowDecls): use
+	latexPrettyOpName() rather than latexPrettyOp()
+	(VisibleModule::latexShowPolymorphDecl): ditto
+
+	* token.cc (Token::makePrettyOpName): fix bug in test for "term"
+
+2024-02-08  Steven Eker  <eker@pup>
+
+	* latexRenaming.cc (Renaming::latexRenaming): replace call
+	to MixfixModule::latexPrettyOp() with call to
+	MixfixModule::latexPrettyOpName() (2 places)
+
+	* latexCommon.cc (MixfixModule::latexConstant): use latexPrettyOpName()
+	rather than latexPrettyOp() in the non-structured case
+
+	* token.cc (Token::makePrettyOpName): check for , [ tokens in the
+	correct branch
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule): fixed
+	bug where we were using & rather == to test auxProperty()
+
+	* latexCommon.cc (MixfixModule::latexPrettyOpName): added
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	latexPrettyOpName()
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule): use
+	MixfixModule::latexPrettyOpName(); don't prettify variable names
+
+	* token.hh (class Token): updated decl for makePrettyOpName()
+
+	* token.cc (Token::makePrettyOpName): check for initial
+	"term" token and surrounding parens; always return a usable
+	name
+	(Token::makePrettyOpName): take wantedSingleToken argument
+	to catch the case where we generate a multitoken name in an
+	ops declaration
+
+2024-02-07  Steven Eker  <eker@pup>
+
+	* token.cc (Token::makePrettyOpName): added
+
+	* token.hh (class Token): added decl for  makePrettyOpName()
+
+	* token.cc (Token::computeSpecialProperty): added comments
+
+2024-02-05  Steven Eker  <eker@pup>
+
+	* entry.cc (MixfixModule::addPolymorph): check for
+	Token::PAREN_MISMATCH
+	(MixfixModule::addOpDeclaration): check for Token::PAREN_MISMATCH
+
+	* token.cc (Token::extractMixfix): detect parenthesis
+	mismatch
+
+	* token.hh (class Token): added enum ReturnValues
+
+2024-02-02  Steven Eker  <eker@pup>
+
+	* latexCommon.cc: deleted cerr accidentally left in
+
+===================================Maude157===========================================
+
 2024-01-29  Steven Eker  <eker@pup>
 
 	* latexCommon.cc (MixfixModule::latexNumber)

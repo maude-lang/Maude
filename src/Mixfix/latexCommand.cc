@@ -95,9 +95,7 @@ MaudeLatexBuffer::generateGetVariants(bool showCommand,
       output << "$\\maudeEndCommand\n";
     }
   needNewline = showCommand;
-  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of ";
-  pendingClose += command;
-  pendingClose += "\n%\n";
+  pendingCloseStack.push("\\end{maudeResultParagraph}\n%\n%  End of " + command + "\n%\n");
 }
 
 void
@@ -165,9 +163,7 @@ MaudeLatexBuffer::generateVariantMatch(bool showCommand,
       output << "$\\maudeEndCommand\n";
     }
   needNewline = showCommand;
-  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of ";
-  pendingClose += command;
-  pendingClose += "\n%\n";
+  pendingCloseStack.push("\\end{maudeResultParagraph}\n%\n%  End of " + command + "\n%\n");
 }
 
 void
@@ -238,9 +234,7 @@ MaudeLatexBuffer::generateVariantUnify(bool showCommand,
       output << "$\\maudeEndCommand\n";
     }
   needNewline = showCommand;
-  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of ";
-  pendingClose += command;
-  pendingClose += "\n%\n";
+  pendingCloseStack.push("\\end{maudeResultParagraph}\n%\n%  End of " + command + "\n%\n");
 }
 
 void
@@ -282,9 +276,7 @@ MaudeLatexBuffer::generateUnify(bool showCommand,
       output << "$\\maudeEndCommand\n";
     }
   needNewline = showCommand;
-  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of ";
-  pendingClose += command;
-  pendingClose += "\n%\n";
+  pendingCloseStack.push(string("\\end{maudeResultParagraph}\n%\n%  End of ") + command + "\n%\n");
 }
 
 void
@@ -330,9 +322,7 @@ MaudeLatexBuffer::generateMatch(bool showCommand,
       output << "$\\maudeEndCommand\n";
     }
   needNewline = showCommand;
-  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of ";
-  pendingClose += command;
-  pendingClose += "\n%\n";
+  pendingCloseStack.push(string("\\end{maudeResultParagraph}\n%\n%  End of ") + command + "\n%\n");
 }
 
 void
@@ -427,9 +417,7 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
       output << "$\\maudeEndCommand\n";
     }
   needNewline = showCommand;
-  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of ";
-  pendingClose += searchKindName[searchKind];
-  pendingClose += "\n%\n";
+  pendingCloseStack.push(string("\\end{maudeResultParagraph}\n%\n%  End of ") + searchKindName[searchKind] + "\n%\n");
 }
 
 void
@@ -452,7 +440,7 @@ MaudeLatexBuffer::generateLoopTokens(bool showCommand, const Vector<Token>& toke
 	MixfixModule::latexTokenVector(tokens, 0, nrTokens - 1) <<
 	"\\maudeKeyword{\\maudeRightParen}$\n";
     }
-  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of loop execution\n%\n";
+  pendingCloseStack.push("\\end{maudeResultParagraph}\n%\n%  End of loop execution\n%\n");
 }
 
 void
@@ -479,7 +467,7 @@ MaudeLatexBuffer::generateCommand(bool showCommand, const string& command, Term*
       output << "$\\maudeEndCommand\n";
     }
   needNewline = showCommand;  // for results that need a newline after the command
-  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of " + command + "\n%\n";
+  pendingCloseStack.push("\\end{maudeResultParagraph}\n%\n%  End of " + command + "\n%\n");
 }
 
 void
@@ -516,7 +504,7 @@ MaudeLatexBuffer::generateCommand(bool showCommand,
       output << "$\\maudeEndCommand\n";
     }
   needNewline = showCommand;  // for results that need a newline after the command
-  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of " + command + "\n%\n";
+  pendingCloseStack.push("\\end{maudeResultParagraph}\n%\n%  End of " + command + "\n%\n");
 }
 
 void
@@ -532,7 +520,7 @@ MaudeLatexBuffer::generateContinue(bool showCommand, Int64 limit, bool debug)
   //	We might be continuing a command that separates solutions by a blank line.
   //
   needNewline = showCommand;
-  pendingClose = "\\end{maudeResultParagraph}\n%\n%  End of " + command + "\n%\n";
+  pendingCloseStack.push("\\end{maudeResultParagraph}\n%\n%  End of " + command + "\n%\n");
 }
 
 void
@@ -545,7 +533,7 @@ MaudeLatexBuffer::generateShow(bool showCommand, const string& command, NamedEnt
       generateModuleName(module);
       output << "\\maudeEndCommand\\newline\n";
     }
-  pendingClose = "\\end{maudeShowParagraph}\n%\n%  End of " + command + "\n%\n";
+  pendingCloseStack.push("\\end{maudeShowParagraph}\n%\n%  End of " + command + "\n%\n");
 }
 
 void
@@ -554,7 +542,7 @@ MaudeLatexBuffer::generateShow(bool showCommand, const string& command, View* vi
   output << "\\begin{comment}\n%\n%  " << command << " " << view << " .\n%\n\\end{comment}\n\\begin{maudeShowParagraph}";
   if (showCommand)
     output << "\\maudeKeyword{" << command << "}\\maudeSpace\\maudeView{" << view << "}\\maudeEndCommand\\newline\n";
-  pendingClose = "\\end{maudeShowParagraph}\n%\n%  End of " + command + "\n%\n";
+  pendingCloseStack.push("\\end{maudeShowParagraph}\n%\n%  End of " + command + "\n%\n");
 }
 
 void
@@ -563,5 +551,5 @@ MaudeLatexBuffer::generateShow(bool showCommand, const string& command)
   output << "\\begin{comment}\n%\n%  " << command << " .\n%\n\\end{comment}\n\\begin{maudeShowParagraph}";
   if (showCommand)
     output << "\\maudeKeyword{" << command << "}\\maudeEndCommand\\newline\n";
-  pendingClose = "\\end{maudeShowParagraph}\n%\n%  End of " + command + "\n%\n";
+  pendingCloseStack.push("\\end{maudeShowParagraph}\n%\n%  End of " + command + "\n%\n");
 }

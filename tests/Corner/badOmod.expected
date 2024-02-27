@@ -51,9 +51,9 @@ mod FOO is
   sorts Foo Bar .
   subsorts Foo Bar < Cid .
   op Foo : -> Foo [ctor] .
-  op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op foo :_ : Bool -> Attribute [ctor prec 15 gather (&)] .
   op Bar : -> Bar [ctor] .
-  op bar`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op bar :_ : Bool -> Attribute [ctor prec 15 gather (&)] .
 endm
 mod FOO is
   sorts Bool Attribute AttributeSet Oid Cid Object Msg Portal Configuration Foo
@@ -86,12 +86,12 @@ mod FOO is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -99,9 +99,9 @@ mod FOO is
   op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op Foo : -> Foo [ctor] .
-  op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op foo :_ : Bool -> Attribute [ctor prec 15 gather (&)] .
   op Bar : -> Bar [ctor] .
-  op bar`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op bar :_ : Bool -> Attribute [ctor prec 15 gather (&)] .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .
   eq A:Bool and A:Bool = A:Bool .
@@ -153,12 +153,12 @@ mod SUBCLASS-IN-MOD is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -166,9 +166,9 @@ mod SUBCLASS-IN-MOD is
   op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op Foo : -> Foo [ctor] .
-  op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op foo :_ : Bool -> Attribute [ctor prec 15 gather (&)] .
   op Bar : -> Bar [ctor] .
-  op bar`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op bar :_ : Bool -> Attribute [ctor prec 15 gather (&)] .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .
   eq A:Bool and A:Bool = A:Bool .
@@ -222,12 +222,12 @@ mod SUBCLASS-IN-OMOD is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -235,9 +235,9 @@ mod SUBCLASS-IN-OMOD is
   op <> : -> Portal [ctor portal] .
   op getClass : Object -> Cid .
   op Foo : -> Foo [ctor] .
-  op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op foo :_ : Bool -> Attribute [ctor prec 15 gather (&)] .
   op Bar : -> Bar [ctor] .
-  op bar`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op bar :_ : Bool -> Attribute [ctor prec 15 gather (&)] .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .
   eq A:Bool and A:Bool = A:Bool .
@@ -281,12 +281,12 @@ th SUBCLASS-IN-OTH is
     term-hook equalTerm (false)
     term-hook notEqualTerm (true))] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -303,9 +303,9 @@ th SUBCLASS-IN-OTH is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op Foo : -> Foo [ctor] .
-  op foo`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op foo :_ : Bool -> Attribute [ctor prec 15 gather (&)] .
   op Bar : -> Bar [ctor] .
-  op bar`:_ : Bool -> Attribute [ctor prec 15 gather (&)] .
+  op bar :_ : Bool -> Attribute [ctor prec 15 gather (&)] .
   eq getClass(< O:Oid : C:Cid | A:AttributeSet >) = C:Cid .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .
@@ -356,12 +356,12 @@ mod FOO is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -422,12 +422,12 @@ mod FOO is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -492,12 +492,12 @@ mod FOO is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -576,12 +576,12 @@ mod ACCOUNT is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -898,7 +898,7 @@ mod ACCOUNT is
   sort Account .
   subsort Account < Cid .
   op Account : -> Account [ctor] .
-  op bal`:_ : [Int] -> Attribute [ctor prec 15 gather (&)] .
+  op bal :_ : [Int] -> Attribute [ctor prec 15 gather (&)] .
 endm
 mod ACCOUNT is
   sorts Bool Attribute AttributeSet Oid Cid Object Msg Portal Configuration
@@ -934,12 +934,12 @@ mod ACCOUNT is
   op not_ : Bool -> Bool [prec 53 gather (E)] .
   op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
   op none : -> AttributeSet [ctor] .
-  op _`,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
+  op _,_ : AttributeSet AttributeSet -> AttributeSet [ctor assoc comm id: none
     prec 41 gather (e E)] .
   op <_:_|_> : Oid Cid AttributeSet -> Object [ctor obj prec 0 gather (& & &)
     special (
     id-hook ObjectConstructorSymbol
-    op-hook attributeSetSymbol (_`,_ : AttributeSet AttributeSet ~>
+    op-hook attributeSetSymbol (_,_ : AttributeSet AttributeSet ~>
     AttributeSet))] .
   op none : -> Configuration [ctor] .
   op __ : Configuration Configuration -> Configuration [ctor assoc comm id:
@@ -1229,7 +1229,7 @@ mod ACCOUNT is
     op-hook succSymbol (s_ : Nat ~> NzNat)
     op-hook minusSymbol (-_ : NzNat ~> NzInt))] .
   op Account : -> Account [ctor] .
-  op bal`:_ : [Int] -> Attribute [ctor prec 15 gather (&)] .
+  op bal :_ : [Int] -> Attribute [ctor prec 15 gather (&)] .
   eq true and A:Bool = A:Bool .
   eq false and A:Bool = false .
   eq A:Bool and A:Bool = A:Bool .

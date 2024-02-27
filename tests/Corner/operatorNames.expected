@@ -1,0 +1,432 @@
+fth T is
+  sort Elt .
+  op ({_}:{_}) : Elt Elt -> Elt .
+  op {_}to{_} : Elt Elt -> Elt .
+  op two to : -> Elt .
+  op ([:]) : -> Elt .
+endfth
+fth T is
+  sort Elt .
+  op ({_}:{_}) : Elt Elt -> Elt [prec 0 gather (& &)] .
+  op {_}to{_} : Elt Elt -> Elt [prec 0 gather (& &)] .
+  op two to : -> Elt .
+  op ([:]) : -> Elt .
+endfth
+fmod M is
+  sort Elt .
+  op term{_,_} : Elt Elt -> Elt .
+  op {_}.{_} : Elt Elt -> Elt .
+  op term{} : -> Elt .
+  op }.{ : -> Elt .
+endfm
+fmod M is
+  including BOOL .
+  sort Elt .
+  op term{_,_} : Elt Elt -> Elt [prec 0 gather (& &)] .
+  op {_}.{_} : Elt Elt -> Elt [prec 0 gather (& &)] .
+  op term{} : -> Elt .
+  op }.{ : -> Elt .
+endfm
+view V from T to M is
+  op ({_}:{_}) to (term{_,_}) .
+  op ({_}to{_}) to ({_}.{_}) .
+  op (two to) to (term{}) .
+  op ([:]) to (}.{) .
+endv
+view V from T to M is
+  op ({_}:{_}) to (term{_,_}) .
+  op ({_}to{_}) to ({_}.{_}) .
+  op (two to) to (term{}) .
+  op ([:]) to (}.{) .
+endv
+fth T2 is
+  including T * (op ({_}:{_}) to (f[_,_]), op ({_}to{_}) to (_,_), op (two to)
+    to (][), op ([:]) to (]i[)) .
+endfth
+fth T2 is
+  including T * (op ({_}:{_}) to (f[_,_]), op ({_}to{_}) to (_,_), op (two to)
+    to (][), op ([:]) to (]i[)) .
+endfth
+fmod BOOL
+fmod TRUTH-VALUE
+fmod BOOL-OPS
+fmod TRUTH
+fmod EXT-BOOL
+fmod INITIAL-EQUALITY-PREDICATE
+fmod NAT
+fmod INT
+fmod RAT
+fmod M
+fmod FLOAT
+fmod STRING
+fmod CONVERSION
+fmod RANDOM
+fmod BOUND
+fmod QID
+fth TRIV
+fth STRICT-WEAK-ORDER
+fth STRICT-TOTAL-ORDER
+fth TOTAL-PREORDER
+fth TOTAL-ORDER
+fth DEFAULT
+fmod LIST
+fmod WEAKLY-SORTABLE-LIST
+fmod SORTABLE-LIST
+fmod WEAKLY-SORTABLE-LIST'
+fmod SORTABLE-LIST'
+fmod SET
+fmod LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET
+fmod SORTABLE-LIST-AND-SET'
+fmod LIST*
+fmod SET*
+fmod MAP
+fmod ARRAY
+fmod NAT-LIST
+fmod QID-LIST
+fmod QID-SET
+fmod META-TERM
+fmod META-CONDITION
+fmod META-STRATEGY
+fmod META-MODULE
+fth T
+fmod META-VIEW
+fmod META-LEVEL
+fth T2
+fmod LEXICAL
+mod COUNTER
+mod LOOP-MODE
+mod CONFIGURATION
+fth X :: TRIV
+fmod LIST{[X]}
+fth X :: STRICT-WEAK-ORDER
+fmod LIST{STRICT-WEAK-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{[X]} * (sort NeList{STRICT-WEAK-ORDER}{X} to
+    NeList{X}, sort List{STRICT-WEAK-ORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST{[X]}
+fth X :: STRICT-TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-TOTAL-ORDER}{X} to NeList{X}, sort List{STRICT-TOTAL-ORDER}{X} to
+    List{X})
+fmod LIST{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X})
+fmod SORTABLE-LIST{[X]}
+fth X :: TOTAL-PREORDER
+fmod LIST{TOTAL-PREORDER}
+fmod LIST{TOTAL-PREORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{X} to NeList{X},
+    sort List{TOTAL-PREORDER}{X} to List{X})
+fmod WEAKLY-SORTABLE-LIST'{[X]}
+fth X :: TOTAL-ORDER
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]}
+fmod WEAKLY-SORTABLE-LIST'{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
+fmod LIST{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{TOTAL-ORDER}{X} to
+    NeList{X}, sort List{TOTAL-ORDER}{X} to List{X})
+fmod SORTABLE-LIST'{[X]}
+fmod SET{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X})
+fmod LIST-AND-SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeList{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeList{STRICT-TOTAL-ORDER}{X},
+    sort List{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to List{
+    STRICT-TOTAL-ORDER}{X}) * (sort NeList{STRICT-TOTAL-ORDER}{X} to NeList{X},
+    sort List{STRICT-TOTAL-ORDER}{X} to List{X}, sort NeSet{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{STRICT-WEAK-ORDER}{
+    STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod SET{STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{[X]} * (sort NeSet{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    STRICT-WEAK-ORDER}{STRICT-TOTAL-ORDER}{X} to Set{X})
+fmod LIST-AND-SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}
+fmod SET{TOTAL-PREORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]}
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X})
+fmod LIST-AND-SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeList{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeList{TOTAL-ORDER}{X}, sort List{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to List{TOTAL-ORDER}{X}) * (sort NeList{
+    TOTAL-ORDER}{X} to NeList{X}, sort List{TOTAL-ORDER}{X} to List{X}, sort
+    NeSet{TOTAL-PREORDER}{TOTAL-ORDER}{X} to NeSet{X}, sort Set{
+    TOTAL-PREORDER}{TOTAL-ORDER}{X} to Set{X})
+fmod SET{TOTAL-PREORDER}{TOTAL-ORDER}{[X]} * (sort NeSet{TOTAL-PREORDER}{
+    TOTAL-ORDER}{X} to NeSet{X}, sort Set{TOTAL-PREORDER}{TOTAL-ORDER}{X} to
+    Set{X})
+fmod LIST*{[X]}
+fmod SET*{[X]}
+fth Y :: TRIV
+fmod MAP{[X], [Y]}
+fth Y :: DEFAULT
+fmod ARRAY{[X], [Y]}
+fmod LIST{Nat}
+fmod LIST{Nat} * (sort NeList{Nat} to NeNatList, sort List{Nat} to NatList)
+fmod LIST{Qid}
+fmod LIST{Qid} * (sort NeList{Qid} to NeQidList, sort List{Qid} to QidList)
+fmod SET{Qid}
+fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet)
+fmod QID-SET * (op empty to none, op _,_ to _;_ [prec 43])
+fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet) * (op
+    empty to none, op _,_ to _;_ [prec 43])
+fth T * (op ({_}:{_}) to (f[_,_]), op ({_}to{_}) to (_,_), op (two to) to (][),
+    op ([:]) to (]i[))
+view Bool
+view Nat
+view Int
+view Rat
+view Float
+view String
+view Qid
+view TRIV
+view STRICT-WEAK-ORDER
+view STRICT-TOTAL-ORDER
+view Nat<
+view Int<
+view Rat<
+view Float<
+view String<
+view TOTAL-PREORDER
+view TOTAL-ORDER
+view Nat<=
+view Int<=
+view Rat<=
+view Float<=
+view String<=
+view DEFAULT
+view Nat0
+view Int0
+view Rat0
+view Float0
+view String0
+view Qid0
+view List
+view WeaklySortableList
+view SortableList
+view WeaklySortableList'
+view SortableList'
+view Set
+view List*
+view Set*
+view Map
+view Array
+view V
+Advisory: redefining module T.
+Advisory: redefining view V.
+view V{X :: TRIV} from T * (op [_,_] to ({_,_})) to LIST{X} is
+  sort Elt to List{X} .
+  op {_,_} to append .
+endv
+view V{X :: TRIV} from T * (op [_,_] to ({_,_})) to LIST{X} is
+  sort Elt to List{X} .
+  op {_,_} to append .
+endv
+fmod OP-HOOK-TEST is
+  protecting BOOL .
+  sorts Zero NzNat Nat .
+  subsorts Zero NzNat < Nat .
+  op 0 : -> Zero [ctor] .
+  op (:) : Nat -> NzNat [ctor iter special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _+_ : Nat Nat -> Nat [ditto] .
+endfm
+fmod OP-HOOK-TEST is
+  including BOOL .
+  protecting BOOL .
+  sorts Zero NzNat Nat .
+  subsorts Zero NzNat < Nat .
+  op 0 : -> Zero [ctor] .
+  op (:) : Nat -> NzNat [ctor iter special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+endfm
+fmod OP-HOOK-TEST2 is
+  sorts Bool Zero NzNat Nat .
+  subsorts Zero NzNat < Nat .
+  op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec
+    0 gather (& & &) special (
+    id-hook BranchSymbol
+    term-hook 1 (true)
+    term-hook 2 (false))] .
+  op _==_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (true)
+    term-hook notEqualTerm (false))] .
+  op _=/=_ : Universal Universal -> Bool [poly (1 2) prec 51 gather (E E)
+    special (
+    id-hook EqualitySymbol
+    term-hook equalTerm (false)
+    term-hook notEqualTerm (true))] .
+  op true : -> Bool [ctor special (
+    id-hook SystemTrue)] .
+  op false : -> Bool [ctor special (
+    id-hook SystemFalse)] .
+  op _and_ : Bool Bool -> Bool [assoc comm prec 55 gather (e E)] .
+  op _or_ : Bool Bool -> Bool [assoc comm prec 59 gather (e E)] .
+  op _xor_ : Bool Bool -> Bool [assoc comm prec 57 gather (e E)] .
+  op not_ : Bool -> Bool [prec 53 gather (E)] .
+  op _implies_ : Bool Bool -> Bool [prec 61 gather (e E)] .
+  op 0 : -> Zero [ctor] .
+  op (:) : Nat -> NzNat [ctor iter special (
+    id-hook SuccSymbol
+    term-hook zeroTerm (0))] .
+  op _+_ : NzNat Nat -> NzNat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _+_ : Nat Nat -> Nat [assoc comm prec 33 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (+)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op sd : Nat Nat -> Nat [comm special (
+    id-hook CUI_NumberOpSymbol (sd)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _*_ : NzNat NzNat -> NzNat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _*_ : Nat Nat -> Nat [assoc comm prec 31 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (*)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _quo_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (quo)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _rem_ : Nat NzNat -> Nat [prec 31 gather (E e) special (
+    id-hook NumberOpSymbol (rem)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _^_ : Nat Nat -> Nat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _^_ : NzNat Nat -> NzNat [prec 29 gather (E e) special (
+    id-hook NumberOpSymbol (^)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op modExp : [Nat] [Nat] [Nat] -> [Nat] [special (
+    id-hook NumberOpSymbol (modExp)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op gcd : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op gcd : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (gcd)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op lcm : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op lcm : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (lcm)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op min : NzNat NzNat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op min : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (min)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op max : NzNat Nat -> NzNat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op max : Nat Nat -> Nat [assoc comm special (
+    id-hook ACU_NumberOpSymbol (max)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _xor_ : Nat Nat -> Nat [assoc comm prec 55 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (xor)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _&_ : Nat Nat -> Nat [assoc comm prec 53 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (&)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _|_ : NzNat Nat -> NzNat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _|_ : Nat Nat -> Nat [assoc comm prec 57 gather (e E) special (
+    id-hook ACU_NumberOpSymbol (|)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _>>_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (>>)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _<<_ : Nat Nat -> Nat [prec 35 gather (E e) special (
+    id-hook NumberOpSymbol (<<)
+    op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _<_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<)
+    op-hook succSymbol (: : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _<=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (<=)
+    op-hook succSymbol (: : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>)
+    op-hook succSymbol (: : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _>=_ : Nat Nat -> Bool [prec 37 gather (E E) special (
+    id-hook NumberOpSymbol (>=)
+    op-hook succSymbol (: : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  op _divides_ : NzNat Nat -> Bool [prec 51 gather (E E) special (
+    id-hook NumberOpSymbol (divides)
+    op-hook succSymbol (: : Nat ~> NzNat)
+    term-hook trueTerm (true)
+    term-hook falseTerm (false))] .
+  eq true and A:Bool = A:Bool .
+  eq false and A:Bool = false .
+  eq A:Bool and A:Bool = A:Bool .
+  eq false xor A:Bool = A:Bool .
+  eq A:Bool xor A:Bool = false .
+  eq A:Bool and (B:Bool xor C:Bool) = A:Bool and B:Bool xor A:Bool and C:Bool .
+  eq not A:Bool = true xor A:Bool .
+  eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
+  eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
+endfm
+omod FOO is
+  sorts Foo Bar .
+  ops f ([_]) : Foo -> Foo .
+  msgs m ([_]) : Bar -> Msg .
+endom
+Advisory: redefining module FOO.
+fmod FOO is
+  sort Foo .
+  ops ([_]) (:) : Foo -> Foo .
+endfm
+Bye.

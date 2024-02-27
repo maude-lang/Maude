@@ -374,7 +374,11 @@ SyntacticView::showProcessedView(ostream& s)
     }
   ImportModule* fromTheory = getFromTheory();
   ImportModule* toModule = getToModule();
-  s << " from " << fromTheory << " to " << Token::removeBoundParameterBrackets(toModule->id()) << " is\n";
+  s << " from ";
+  fromTheory->printModuleExpression(s, false);
+  s << " to ";
+  toModule->printModuleExpression(s, false);
+  s << " is\n";
   printRenaming(s, "  ", " .\n  ", true);
   if (getNrSortMappings() + getNrOpMappings() > 0)
     s << " .\n";

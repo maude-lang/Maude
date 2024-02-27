@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -73,7 +73,10 @@ public:
   difference_type operator-(const iterator& other) const;
   reference operator[](difference_type i) const;
   bool operator<(const iterator& other) const;
-  
+  bool operator>(const iterator& other) const;
+  bool operator<=(const iterator& other) const;
+  bool operator>=(const iterator& other) const;
+
 private:
   iterator(Vector* parent, size_type index);
   void checkValid() const;
@@ -278,6 +281,36 @@ Vector<T>::iterator::operator<(const iterator& other) const
   other.checkValid();
   Assert(parent == other.parent, "incomparable iterators");
   return ptr < other.ptr;
+}
+
+template<class T>
+inline bool
+Vector<T>::iterator::operator>(const iterator& other) const
+{
+  checkValid();
+  other.checkValid();
+  Assert(parent == other.parent, "incomparable iterators");
+  return ptr > other.ptr;
+}
+
+template<class T>
+inline bool
+Vector<T>::iterator::operator<=(const iterator& other) const
+{
+  checkValid();
+  other.checkValid();
+  Assert(parent == other.parent, "incomparable iterators");
+  return ptr <= other.ptr;
+}
+
+template<class T>
+inline bool
+Vector<T>::iterator::operator>=(const iterator& other) const
+{
+  checkValid();
+  other.checkValid();
+  Assert(parent == other.parent, "incomparable iterators");
+  return ptr >= other.ptr;
 }
 
 template<class T>

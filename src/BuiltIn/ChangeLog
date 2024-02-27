@@ -1,3 +1,15 @@
+2024-02-09  Steven Eker  <eker@pup>
+
+	* numberOpSymbol.cc (NumberOpSymbol::eqRewrite): use mpz_fits_ulong_p()
+	for << second argument, rather than EXPONENT_BOUND
+	(NumberOpSymbol::eqRewrite): use mpz_fits_ulong_p() for ^ second argument
+	(NumberOpSymbol::eqRewrite): used ulong for >> computations
+
+	* numberOpSymbol.hh (class NumberOpSymbol): deleted EXPONENT_BOUND
+	(class NumberOpSymbol): deleted commented out decls
+
+===================================Maude157===========================================
+
 2024-01-29  Steven Eker  <eker@pup>
 
 	* branchSymbol.cc (BranchSymbol::stackArguments): take and use

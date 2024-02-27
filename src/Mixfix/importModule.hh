@@ -178,7 +178,8 @@ public:
 						   const Vector<int>& varsMap,
 						   const Vector<Term*>& values,
 						   ImportTranslation* translation);
-
+  
+  void printModuleExpression(ostream& s, bool parameterBrackets) const;
   string latexModuleExpression(bool parameterBrackets = false) const;
 
 private:

@@ -290,6 +290,7 @@ public:
   static bool prettyPrint(ostream& s, StrategyExpression* strategy, int requiredPrec);
   static void clearIndent();
   static void clearColor(ostream& s);
+  static string prettyOpName(int code, int situations = Token::UNKNOWN_CONTEXT);
   //
   //	LaTeX conversion functions.
   //
@@ -304,8 +305,8 @@ public:
   static string latexSort(const Sort* sort);
   static string latexType(const Sort* sort);
   string latexStructuredConstant(int code) const;
-  static string latexPrettyOp(int code);
-  static string latexConstant(int code, const Module* module);
+  static string latexPrettyOpName(int code, int situations = Token::UNKNOWN_CONTEXT);
+  static string latexConstant(int code, const Module* module, int situations = Token::UNKNOWN_CONTEXT);
   static string latexTokenVector(const Vector<Token>& tokens, Index first, Index last);
   //
   //	Latex pretty print functions.

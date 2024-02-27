@@ -42,8 +42,8 @@ if nonexec rules are in play.
 New features
 =============
 
-(1) The resouces information printed on exit with
-  set show resouces on .
+(1) The resources information printed on exit with
+  set show resources on .
 is now supported in LaTeX.
 
 (2) LaTeX support for more commands:
@@ -71,7 +71,7 @@ This is only supported for search, and not for smt-search or any version of
 narrowing. At the metalevel, the Qid '# is used to indicate this search type.
 Feature requested by Dwight Guth <dwight.guth@runtimeverification.com>.
 
-(4) Printing dags in graph from with
+(4) Printing dags in graph form with
   set print graph on .
 is now supported in LaTeX.
 

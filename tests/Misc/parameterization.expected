@@ -697,9 +697,9 @@ fmod LIST{Qid}
 fmod LIST{Qid} * (sort NeList{Qid} to NeQidList, sort List{Qid} to QidList)
 fmod SET{Qid}
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet)
-fmod QID-SET * (op _`,_ to _;_ [prec 43], op empty to none)
+fmod QID-SET * (op empty to none, op _,_ to _;_ [prec 43])
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet) * (op
-    _`,_ to _;_ [prec 43], op empty to none)
+    empty to none, op _,_ to _;_ [prec 43])
 fth Z :: TRIV
 fmod FOO{[Z], Nat}
 fmod BAR * (op f : [Bool] -> [Bool] to g)
@@ -1406,9 +1406,9 @@ fmod LIST{Qid}
 fmod LIST{Qid} * (sort NeList{Qid} to NeQidList, sort List{Qid} to QidList)
 fmod SET{Qid}
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet)
-fmod QID-SET * (op _`,_ to _;_ [prec 43], op empty to none)
+fmod QID-SET * (op empty to none, op _,_ to _;_ [prec 43])
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet) * (op
-    _`,_ to _;_ [prec 43], op empty to none)
+    empty to none, op _,_ to _;_ [prec 43])
 fth Z :: TRIV
 fmod FOO{[Z], Nat}
 fmod FOO{Rat, Nat}
@@ -2119,9 +2119,9 @@ fmod LIST{Qid}
 fmod LIST{Qid} * (sort NeList{Qid} to NeQidList, sort List{Qid} to QidList)
 fmod SET{Qid}
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet)
-fmod QID-SET * (op _`,_ to _;_ [prec 43], op empty to none)
+fmod QID-SET * (op empty to none, op _,_ to _;_ [prec 43])
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet) * (op
-    _`,_ to _;_ [prec 43], op empty to none)
+    empty to none, op _,_ to _;_ [prec 43])
 fmod FOO{Rat, Nat}
 fmod FOO{Rat, Nat} * (sort Foo{Rat,Nat} to Bar{Nat,Rat}, op f : [Foo{Rat,Nat}]
     -> [Foo{Rat,Nat}] to g)
@@ -2425,9 +2425,9 @@ fmod LIST{Qid}
 fmod LIST{Qid} * (sort NeList{Qid} to NeQidList, sort List{Qid} to QidList)
 fmod SET{Qid}
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet)
-fmod QID-SET * (op _`,_ to _;_ [prec 43], op empty to none)
+fmod QID-SET * (op empty to none, op _,_ to _;_ [prec 43])
 fmod SET{Qid} * (sort NeSet{Qid} to NeQidSet, sort Set{Qid} to QidSet) * (op
-    _`,_ to _;_ [prec 43], op empty to none)
+    empty to none, op _,_ to _;_ [prec 43])
 fmod FOO{[X]}
 fmod BAR * (sort Foo{X} to Foo'{X}, sort Bar{X} to Bar'{X}, op f : [Foo{X}] ->
     [Foo{X}] to f', op g : [Bar{X}] -> [Foo{X}] to g')

@@ -460,7 +460,13 @@ MixfixModule::addOpDeclaration(Token prefixName,
   symbolInfo.expandBy(1);
   SymbolInfo& si = symbolInfo[nrSymbols];
   int nrUnderscores = Token::extractMixfix(name, si.mixfixSyntax);
-  if (si.mixfixSyntax.empty())
+  if (nrUnderscores == Token::PAREN_MISMATCH)
+    {
+      IssueWarning(LineNumber(prefixName.lineNumber()) << ": mismatched parentheses in operator " <<
+		   QUOTE(prefixName) << ". It will be treated as having prefix syntax only.");
+      symbolType.clearFlags(SymbolType::PREC | SymbolType::GATHER | SymbolType::FORMAT);
+    }
+  else if (si.mixfixSyntax.empty())
     {
       si.prec = 0;
       WarningCheck(!(symbolType.hasFlag(SymbolType::PREC)),
@@ -702,7 +708,13 @@ MixfixModule::addPolymorph(Token prefixName,
   p.identity = 0;
   p.metadata = metadata;
   int nrUnderscores = Token::extractMixfix(prefixName.code(), p.symbolInfo.mixfixSyntax);
-  if (p.symbolInfo.mixfixSyntax.empty())
+  if (nrUnderscores == Token::PAREN_MISMATCH)
+    {
+      IssueWarning(LineNumber(prefixName.lineNumber()) << ": mismatched parentheses in operator " <<
+		   QUOTE(prefixName) << ". It will be treated as having prefix syntax only.");
+      symbolType.clearFlags(SymbolType::PREC | SymbolType::GATHER | SymbolType::FORMAT);
+    }
+  else if (p.symbolInfo.mixfixSyntax.empty())
     {
       p.symbolInfo.prec = 0;
       WarningCheck(!(symbolType.hasFlag(SymbolType::PREC)),

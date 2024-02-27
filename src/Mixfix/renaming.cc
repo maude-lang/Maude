@@ -1181,6 +1181,13 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2, bool show
 {
   DebugEnter("this = " << (void*) this);
   //
+  //	Problem situations that pretty op printing needs to handle.
+  //
+  const int fromOpProblems = Token::EXPOSED_COLON | Token::EXPOSED_TO; // colons and "to" in from operators names are always a problem
+  int toOpProblems = (typeid(*this) == typeid(Renaming)) ?
+    (Token::EXPOSED_COMMA | Token::EXPOSED_LEFT_BRACKET) :  // commas and left brackets in target operator names are a problem for renamings
+    (Token::EXPOSED_TERM | Token::EXPOSED_DOT);  // "term" and dots in target operator names are a problem for views
+  //
   //	If we are printing the unprocessing renaming, include class mappings.
   //
   if (!showProcessed)
@@ -1221,12 +1228,8 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2, bool show
   for (Index i = 0; i < nrOpMappings; ++i)
     {
       auto om = opMapIndex[i];
-      s << sep << ((!showProcessed && om->second.mappingType == MappingType::MSG) ? "msg " : "op ");
-      if (om->second.types.size() == 1)
-	s << Token::sortName(om->first);
-      else
-	s << Token::name(om->first);
-
+      s << sep << ((!showProcessed && om->second.mappingType == MappingType::MSG) ? "msg " : "op ") <<
+	MixfixModule::prettyOpName(om->first, fromOpProblems);
       if (!om->second.types.empty())
 	{
 	  s << " :";
@@ -1251,10 +1254,7 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2, bool show
 	  continue;
 	}
 #endif
-      if (om->second.types.size() == 1)
-	s << " to " << Token::sortName(om->second.name);  // constant mapping - might be a parameterized constant
-      else
-	s << " to " << Token::name(om->second.name);
+      s << " to " << MixfixModule::prettyOpName(om->second.name, toOpProblems);
       //
       //	If we have any attributes in target, print them inside []s.
       //

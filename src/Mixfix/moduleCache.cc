@@ -338,7 +338,9 @@ ModuleCache::showCreatedModules(ostream& s) const
   for (const auto& i : moduleMap)
     {
       ImportModule* m = i.second;
-      s << MixfixModule::moduleTypeString(m->getModuleType()) << ' ' << m << '\n';
+      s << MixfixModule::moduleTypeString(m->getModuleType()) << ' ';
+      m->printModuleExpression(s, true);
+      s << '\n';
     }
 }
 

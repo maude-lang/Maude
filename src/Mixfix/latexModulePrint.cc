@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -386,6 +386,9 @@ VisibleModule::latexShowVars(ostream& s, const char* indent) const
 void
 VisibleModule::latexShowDecls(ostream& s, const char* indent, Index index, bool all)
 {
+  //
+  //	Show all the declarations for symbol indexed by index.
+  //
   Symbol* symbol = getSymbols()[index];
   int id = symbol->id();
   Index begin = all ? 0 : getNrImportedDeclarations(index);
@@ -401,10 +404,13 @@ VisibleModule::latexShowDecls(ostream& s, const char* indent, Index index, bool 
       const Vector<Sort*>& dec = opDecls[i].getDomainAndRange();
       s << "\\par$" << indent << "\\maudeKeyword{op}\\maudeSpace";
       if (nrArgs == 0)
-	s << latexConstant(id, this) << "\\maudeConstantDecl";
+	{
+	  s << ((Token::auxProperty(id) == Token::AUX_STRUCTURED_SORT) ? latexStructuredConstant(id) :
+		latexPrettyOpName(id, Token::EXPOSED_COLON)) << "\\maudeConstantDecl";
+	}
       else
 	{
-	  s << latexPrettyOp(id) << "\\maudeHasSort";
+	  s << latexPrettyOpName(id, Token::EXPOSED_COLON) << "\\maudeHasSort";
 	  for (Index j = 0; j < nrArgs; ++j)
 	    s << (j == 0 ? "" : "\\maudeSpace") << latexType(dec[j]);
 	  s << "\\maudeFunction";
@@ -436,10 +442,13 @@ VisibleModule::latexShowPolymorphDecl(ostream& s, const char* indent, Index inde
   int nrArgs = domainAndRange.length() - 1;
   int id = getPolymorphName(index).code();
   if (nrArgs == 0)
-    s << latexConstant(id, this) << "\\maudeConstantDecl";
+    {
+      s << ((Token::auxProperty(id) == Token::AUX_STRUCTURED_SORT) ? latexStructuredConstant(id) :
+	    latexPrettyOpName(id, Token::EXPOSED_COLON)) << "\\maudeConstantDecl";
+    }
   else
     {
-      s << latexPrettyOp(id) << "\\maudeHasSort";
+      s << latexPrettyOpName(id, Token::EXPOSED_COLON) << "\\maudeHasSort";
       for (int i = 0; i < nrArgs; ++i)
 	{
 	  s << (i == 0 ? "" : "\\maudeSpace");
@@ -792,7 +801,7 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
 		Index nrSorts = domainAndRange.size() - 1;
 		s << "\\newline\\maudeKeyword{op-hook}\\maudeSpace" << "\\maudeSymbolic{" <<
 		  Token::latexName(purposes[i]) << "}\\maudeSpace\\maudeLeftParen" <<
-		  (nrSorts == 0 ? latexConstant(id, this) :  latexPrettyOp(id)) <<
+		  (nrSorts == 0 ? latexConstant(id, this, Token::BARE_COLON) : latexPrettyOpName(id, Token::BARE_COLON)) <<
 		  "\\maudeSpace\\maudeHasSort\\maudeSpace";
 		for (Index j = 0; j < nrSorts; ++j)
 		  {
@@ -975,7 +984,7 @@ VisibleModule::latexShowPolymorphAttributes(ostream& s, int index)
 		int nrSorts = domainAndRange.length() - 1;
 		s << "\\newline\\maudeKeyword{op-hook}\\maudeSpace\\maudeSymbolic{" <<
 		  Token::latexName(purpose) << "}\\maudeSpace\\maudeLeftParen" <<
-		  (nrSorts == 0 ? latexConstant(id, this) :  latexPrettyOp(id)) <<
+		  (nrSorts == 0 ? latexConstant(id, this, Token::BARE_COLON) : latexPrettyOpName(id, Token::BARE_COLON)) <<
 		  "\\maudeSpace\\maudeHasSort\\maudeSpace";
 		for (Index j = 0; j < nrSorts; ++j)
 		  {

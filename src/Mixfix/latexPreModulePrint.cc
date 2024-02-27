@@ -145,19 +145,38 @@ SyntacticPreModule::latexShowModule(ostream& s)
       //	Deal with variable/message/operator name.
       //
       int id = opDecl.prefixName.code();
-      if (basicType != SymbolType::VARIABLE && opDef.types.size() == 1 && (Token::auxProperty(id) & Token::AUX_STRUCTURED_SORT))
+      if (basicType == SymbolType::VARIABLE)
 	{
 	  //
-	  //	Not a variable, no arguments, and looks like a parameterized constant or constant message.
+	  //	We don't prettify variable names - they must remain single tokens.
 	  //
-	  if (follow || newFollow)
-	    s << "\\maudeLeftParen";
-	  s << flatModule->latexStructuredConstant(id);
-	  if (follow || newFollow)
-	    s << "\\maudeRightParen";
+	  s << Token::latexIdentifier(id);
 	}
       else
-	s << MixfixModule::latexPrettyOp(id);
+	{
+	  //
+	  //	Check if we're on an ops/msgs line and need parens for multiple token op names.
+	  //
+	  bool multiDecl = follow || newFollow;
+	  if (opDef.types.size() == 1 && (Token::auxProperty(id) == Token::AUX_STRUCTURED_SORT))
+	    {
+	      //
+	      //	Not a variable, no arguments, and looks like a parameterized constant or constant message.
+	      //
+	      if (multiDecl)
+		s << "\\maudeLeftParen";
+	      s << flatModule->latexStructuredConstant(id);
+	      if (multiDecl)
+		s << "\\maudeRightParen";
+	    }
+	  else
+	    {
+	      //
+	      //	Prettify op name, pass flags to detect an exposed colon, and for ops/msgs, multiple tokens.
+	      //
+	      s << MixfixModule::latexPrettyOpName(id, multiDecl ? (Token::EXPOSED_COLON | Token::MULTIPLE_TOKENS) : Token::EXPOSED_COLON);
+	    }
+	}
       follow = newFollow;
       if (follow)
 	s << "\\maudeSpace";

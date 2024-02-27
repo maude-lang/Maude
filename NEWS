@@ -1,4 +1,16 @@
-Overview of Changes in alpha156 (2034-01-29)
+Overview of Changes in alpha157 (2024-02-27)
+============================================
+* fixed bug where debugging information was being printed to
+stderr when generating the LaTeX for a structured constant; this
+also caused a crash on Macs
+* mismatched parentheses in operators now generates a warning
+* fixed crash in LaTeX generating code for strange constant names
+* bound on exponents and left shifts increased to ULONG_MAX
+* many changes to the way operator names are printed to fix
+various pathological cases and make the output look prettier
+* various LaTeX tweaks
+
+Overview of Changes in alpha156 (2024-01-29)
 ============================================
 * LaTeX support for more commands and features
 * big numbers, strings, qids and unparsed tokens are now broken

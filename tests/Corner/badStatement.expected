@@ -335,7 +335,7 @@ mod BAZ is
   op junk : -> Attribute .
   op k : -> Foo .
   op C : -> C [ctor] .
-  op a`:_ : Foo -> Attribute [ctor prec 15 gather (&)] .
+  op a :_ : Foo -> Attribute [ctor prec 15 gather (&)] .
   var B : Attribute .
   var X : Foo .
   rl < O:Oid : V:C | Atts:AttributeSet, a : X > => < O:Oid : V:C |
@@ -400,11 +400,11 @@ mod QUUX is
   subsorts C D E < Cid .
   subsort E < C .
   op C : -> C [ctor] .
-  op a`:_ : Foo -> Attribute [ctor prec 15 gather (&)] .
+  op a :_ : Foo -> Attribute [ctor prec 15 gather (&)] .
   op D : -> D [ctor] .
-  op b`:_ : Foo -> Attribute [ctor prec 15 gather (&)] .
+  op b :_ : Foo -> Attribute [ctor prec 15 gather (&)] .
   op E : -> E [ctor] .
-  op c`:_ : Foo -> Attribute [ctor prec 15 gather (&)] .
+  op c :_ : Foo -> Attribute [ctor prec 15 gather (&)] .
   var X : Foo .
   rl < O:Oid : V:C | Atts:AttributeSet, a : X > => < O:Oid : V:C |
     Atts:AttributeSet, a : X > .

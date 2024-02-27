@@ -1150,12 +1150,12 @@ View::latexViewExpression(bool parameterBrackets) const
 	  else if (const Parameter* p = dynamic_cast<const Parameter*>(a))
 	    {
 	      if (parameterBrackets)
-		result += "[";
+		result += "\\maudeLeftBracket";
 	      result += "\\maudeParameter{";
 	      result += Token::latexName(p->id());
 	      result += "}";
 	      if (parameterBrackets)
-		result += "]";
+		result += "\\maudeRightBracket";
 	    }
 	}
       result += "\\maudeRightBrace";
@@ -1165,4 +1165,40 @@ View::latexViewExpression(bool parameterBrackets) const
   result += Token::latexName(id());
   result += "}";
   return result;
+}
+
+void
+View::printViewExpression(ostream& s, bool parameterBrackets) const
+{
+  //
+  //	We regenerate the view expression that was responsible for this view in a pretty way.
+  //	The reason for doing this, rather than just printing the real name is to control
+  //	whether parameters are surrounded by []s.
+  //
+  if (baseView)
+    {
+      //
+      //	We're an instantiation of a view.
+      //
+      baseView->printViewExpression(s, parameterBrackets);
+      const char* sep = "{";
+      for (const Argument* a : savedArguments)
+	{
+	  s << sep;
+	  sep = ", ";
+	  if (const View* v = dynamic_cast<const View*>(a))
+	    v->printViewExpression(s, parameterBrackets);
+	  else if (const Parameter* p = dynamic_cast<const Parameter*>(a))
+	    {
+	      if (parameterBrackets)
+		s <<  "[";
+	      s << Token::name(p->id());
+	      if (parameterBrackets)
+		s <<  "]";
+	    }
+	}
+      s << '}';
+    }
+  else
+    s << Token::name(id());
 }

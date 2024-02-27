@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ SyntacticPreModule::findHookSymbol(const Vector<Token>& fullName)
   int len = fullName.size();
   for (int pos = 0; pos < len; pos++)
     {
-      if (fullName[pos].code() == colon)
+      if (pos != 0 && fullName[pos].code() == colon)
 	{
 	  int prefixName = Token::bubbleToPrefixNameCode(name);
 	  Vector<ConnectedComponent*> domain;

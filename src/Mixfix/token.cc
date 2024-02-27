@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -226,37 +226,125 @@ Token::getInt(int& value) const
   return pointer != str && *pointer == '\0';
 }
 
-string
-Token::prettyOpName(int prefixNameCode)
+pair<string, bool>
+Token::makePrettyOpName(int prefixNameCode, int situations)
 {
+  //
+  //	We try to prettify a single token operator name by removing backquotes that
+  //	join special characters or indicate whitespace. This can cause ambiguities in
+  //	a number of situations and we check for these and return the problematic flag
+  //	indicating that the caller needs to wrap the result in parentheses.
+  //
+  //	Unbalanced parentheses are always an issue and blocks prettification.
+  //	Having a result that is already wrapped in parenthese is always problematic.
+  //
+  const char* original = stringTable.name(prefixNameCode);
+  DebugInfo("original = " << original);
   int sp = specialProperties[prefixNameCode];
   if (sp != NONE && sp != CONTAINS_COLON && sp != ENDS_IN_COLON && sp != ITER_SYMBOL)
-    return "";  // regular string literals exit here
+    return {original, false};  // looks like something that doen't need prettifying
+
+  bool problematic = false;
   //
-  //	We make a "pretty" version of a prefix name by removing backquotes, except
-  //	those in front of ( and ). The result is no longer a valid single token but
-  //	can be parsed in an op declaration.
-  //	If there were no backquotes to remove, we flag this by returning the empty string.
+  //	If the name starts with "term" and it is not connected to the succeeding characters, we have a parsing issue in views.
   //
-  bool prettified = false;
+  if ((situations & EXPOSED_TERM) && original[0] == 't' && original[1] == 'e' && original[2] == 'r' && original[3] == 'm')
+    {
+      char c = original[4];
+      if (c == '`' || c == '\0')
+	problematic = true;
+    }
+  //
+  //	Prettify by removing backquotes, checking if we expose problematic tokens outside of parentheses.
+  //
   string result;
-  for (const char* p = stringTable.name(prefixNameCode); *p; ++p)
+  int parenDepth = 0;
+  bool disconnected = true;
+  for (const char* p = original; *p; ++p)
     {
       char c = *p;
       if (c == '`')
 	{
 	  char c = *(p + 1);
-	  if (!(c == '(' || c == ')'))
+	  Assert(c != '\0', "can't end token with backquote");
+	  if (c == '(')
+	    ++parenDepth;
+	  else if (c == ')')
 	    {
-	      if (!(c == '[' || c == ']' || c == '{' || c == '}' || c  == ','))
-		result += ' ';
-	      prettified = true;
-	      continue;
+	      --parenDepth;
+	      if (parenDepth < 0)
+		return {original, false};  // don't prettify unbalanced parentheses - leave as an unproblematic single token
 	    }
+	  if (specialChar(c))
+	    {
+	      //
+	      //	Handle backquoted special character.
+	      //
+	      result += c;
+	      ++p;
+	      if (!problematic && parenDepth == 0)
+		{
+		  //
+		  //	Special characters are always disconnected, so
+		  //	  , [
+		  //	outside of parentheses can be problematic.
+		  //
+		  if (((situations & EXPOSED_COMMA) && c == ',') ||
+		      ((situations & EXPOSED_LEFT_BRACKET) && c == '['))
+		    problematic = true;
+		}
+	    }
+	  else
+	    result += ' ';  // white space
+	  if (!problematic && (situations & MULTIPLE_TOKENS))
+	    {
+	      //
+	      //	Check if we will have multiple tokens.
+	      //
+	      if (result.length() > 1 || *(p + 1) != '\0')
+		problematic = true;
+	    }
+	  disconnected = true;
 	}
-      result += c;
+      else
+	{
+	  result += c;
+	  if (!problematic && disconnected && parenDepth == 0)
+	    {
+	      //
+	      //	The tokens
+	      //	  . to
+	      //	appearing outside of parentheses and not connected to preceeding or succeeding
+	      //	characters can be problematic. Disconnected colons can be problematic even inside
+	      //	parentheses
+	      //
+	      if ((c == ':' && (((situations & EXPOSED_COLON) && parenDepth == 0) || (situations & BARE_COLON))) ||
+		  (c == '.' && (situations & EXPOSED_DOT) && parenDepth == 0))
+		{
+		  char c = *(p + 1);
+		  if (c == '`' || c == '\0')
+		    problematic = true;
+		}
+	      else if ((situations & EXPOSED_TO) && parenDepth == 0 && c == 't' && *(p + 1) == 'o')
+		{
+		  char c = *(p + 2);
+		  if (c == '`' || c == '\0')
+		    problematic = true;
+		}
+	    }
+	  disconnected = false;
+	}
     }
-  return prettified ? result : "";
+  if (parenDepth != 0)
+    return {original, false};  // don't prettify unbalanced parentheses - leave as an unproblematic single token
+  //
+  //	If the first and last characters of the prettified name are ( and ), they will be eliminated
+  //	during parsing which is always problematic.
+  //
+  if (!problematic && result.front() == '(' && result.back() == ')')
+    problematic = true;
+  DebugInfo("result = " << result << " problematic = " << problematic);
+  return {result, problematic};
 }
 
 int
@@ -282,6 +370,7 @@ Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
   bool stringMode = false;
   bool seenBS = false;
   string token(name, p - name);
+  int parenDepth = 0;
   for (;; p++)
     {
       char c = *p;
@@ -322,6 +411,17 @@ Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
 	  //
 	  //	Special character: terminate current token and add special character as a token.
 	  //
+	  if (c == '(')
+	    ++parenDepth;
+	  else if (c == ')')
+	    {
+	      --parenDepth;
+	      if (parenDepth < 0)
+		{
+		  mixfixSyntax.clear();
+		  return PAREN_MISMATCH;
+		}
+	    }
 	  if (!token.empty())
 	    mixfixSyntax.append(encode(token.c_str()));
 	  token = c;
@@ -341,6 +441,14 @@ Token::extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax)
       DebugAdvisory("deleting mixfixSyntax for " << name);
       mixfixSyntax.clear();
     }
+  //
+  //	If parentheses are mismatched, we ignore mixfix syntax since it won't be parsable.
+  //
+  if (parenDepth != 0)
+    {
+      mixfixSyntax.clear();
+      return PAREN_MISMATCH;
+    }
   return nrUnderscores;
 }
 
@@ -358,9 +466,12 @@ Token::computeSpecialProperty(const char* tokenString)
   if (*p == 0)
     return NONE;  // handle null strings correctly
   if (*p == '\'')
-    return QUOTED_IDENTIFIER;
+    return QUOTED_IDENTIFIER;  // anything starting with a ' is a quoted identifier
   if (*p == '"')
     {
+      //
+      //	Check for string.
+      //
       bool seenBackslash = false;
       for (++p; *p; ++p)
 	{
@@ -379,10 +490,16 @@ Token::computeSpecialProperty(const char* tokenString)
 	    }
 	}
     }
+  //
+  //	Anthing that isn't as quoted identifer and ends in : gets the ENDS_IN_COLON property.
+  //
   size_t len = strlen(tokenString);
   if (len > 1 && tokenString[len - 1] == ':')
     return ENDS_IN_COLON;
   {
+    //
+    //	Tokens that look like f^123 get the ITER_SYMBOL property.
+    //
     for (size_t i = len - 1; i > 0; --i)
       {
 	char c = tokenString[i];
@@ -397,6 +514,10 @@ Token::computeSpecialProperty(const char* tokenString)
       }
   }
   {
+    //
+    //	Anything that isn't a quoted identifer, string or iter, or ends in a colon, that contains at least one : other than
+    //	the first character get the CONTAINS_COLON property.
+    //
     for (++p; *p; ++p)  // don't count first character
       {
 	if (*p == ':')
@@ -899,54 +1020,4 @@ Token::peelParens(Vector<Token>& tokens)
   for (int i = 1; i < len - 1; ++i)
     tokens[i - 1] = tokens[i];
   tokens.resize(len - 2);
-}
-
-Rope
-Token::removeBoundParameterBrackets(int code)
-{
-  //
-  //	Because we put []s around bound parameters to distinguish them from views
-  //	in canonical module and view names for caching, we need to undo this for
-  //	printing out module imports and to-modules.
-  //	We remove []s that are inside {} with backquoted characters disregarded.
-  //
-  Rope newName;
-  bool backquoteActive = false;
-  int braceCount = 0;
-  for (const char* p = name(code); *p; ++p)
-    {
-      char c = *p;
-      if (backquoteActive)
-	backquoteActive = false;
-      else
-	{ 
-	  switch (c)
-	    {
-	    case '`':
-	      {
-		backquoteActive = true;
-		break;
-	      }
-	    case '[':
-	    case ']':
-	      {
-		if (braceCount > 0)
-		  continue;  // skip bracket
-		break;
-	      }
-	    case '{':
-	      {
-		++braceCount;
-		break;
-	      }
-	    case '}':
-	      {
-		--braceCount;
-		break;
-	      }
-	    }
-	}
-      newName += c;
-    }
-  return newName;
 }

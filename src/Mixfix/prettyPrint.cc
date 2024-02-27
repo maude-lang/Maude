@@ -423,3 +423,21 @@ MixfixModule::printModifiers(ostream& s, Int64 number, Int64 number2)
     }
   s << "in " << this << " : ";
 }
+
+string
+MixfixModule::prettyOpName(int code, int situations)
+{
+  auto pair = Token::makePrettyOpName(code, situations);  
+  //
+  //	If making the pretty name returned the problematic flag, we need to fix the problem in some way.
+  //
+  if (pair.second)
+    {
+      //
+      //	We have a problem. If we're concerned about BARE_COLON we're in an op-hook and we return the single token
+      //	ugly name. Otherwise we just put a set of parentheses around the pretty name.
+      //
+      return (situations & Token::BARE_COLON) ? Token::name(code) : ("(" + pair.first + ")");
+    }
+  return pair.first;
+}

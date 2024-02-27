@@ -18,10 +18,10 @@
 %    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 %
 %	Latex package for use with the -latex-log= feature.
-%	Version alpha156.
+%	Version alpha157.
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{maude}[2024/01/29 Package for Maude logs]
+\ProvidesPackage{maude}[2024/02/20 Package for Maude logs]
 \RequirePackage{amssymb,extarrows,longtable,tabto,xcolor,verbatim,alltt,seqsplit}
 \RequirePackage[T1]{fontenc}
 %
@@ -137,7 +137,7 @@
 \newcommand{\maudeSingleQuote}{\textquotesingle}
 \newcommand{\maudeBackquote}{\textasciigrave}
 \newcommand{\maudeFunction}{\rightarrow}  % for op decls
-\newcommand{\maudeRenaming}{\,*\,}  % module renaming
+\newcommand{\maudeRenaming}{\;\raisebox{-.5ex}{*}\;}  % module renaming
 \newcommand{\maudeSummation}{\,+\,}  % module summation
 \newcommand{\maudePartialFunction}{\rightsquigarrow}  % for partial op decls
 \newcommand{\maudeConjunction}{\,\wedge\,}  % for conjunctions in conditions

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,14 +51,6 @@ public:
   void postInterSymbolPass();
   void reset();
   bool eqRewrite(DagNode* subject, RewritingContext& context);
-  //
-  //	Functions special to NumberOpSymbol.
-  //
-  /*
-  DagNode* makeNegDag(const mpz_class& integer);
-  bool isNeg(const DagNode* dagNode) const;
-  const mpz_class& getNeg(const DagNode* dagNode, mpz_class& result) const;
-  */
 
 protected:
   SuccSymbol* getSuccSymbol() const;
@@ -66,11 +58,6 @@ protected:
   bool getNumber(DagNode* dagNode, mpz_class& value) const;
 
 private:
-  enum ImplementationConstants
-  {
-    EXPONENT_BOUND = 1000000	// max allowed exponent to limit runaway memory use
-  };
-
   int op;
   SuccSymbol* succSymbol;
   MinusSymbol* minusSymbol;

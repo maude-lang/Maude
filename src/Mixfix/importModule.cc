@@ -24,6 +24,8 @@
 //      Implementation for class ImportModule.
 //
 
+#include <sstream>
+
 //      utility stuff
 #include "macros.hh"
 #include "vector.hh"
@@ -882,6 +884,82 @@ ImportModule::resetImportPhase()
   //
   for (ImportModule* m : importedModules)
     m->resetImportPhase();
+}
+
+void
+ImportModule::printModuleExpression(ostream& s, bool parameterBrackets) const
+{
+  //
+  //	We regenerate the module expression that was responsible for this module in a pretty way.
+  //
+  switch (origin)
+    {
+    case TEXT:
+      {
+	s << Token::name(id());
+	break;
+      }
+    case SUMMATION:
+      {
+	const char* sep = "";
+	for (const ImportModule* i : importedModules)
+	  {
+	    s << sep;
+	    sep = " + ";
+	    i->printModuleExpression(s, parameterBrackets);
+	  }
+	break;
+      }
+    case RENAMING:
+      {
+	if (baseModule->origin == SUMMATION)  // (M + N) * R
+	  s << '(';
+	baseModule->printModuleExpression(s, parameterBrackets);
+	if (baseModule->origin == SUMMATION)
+	  s << ')';
+	s << " * ";
+	canonicalRenaming->printRenaming(s, "(", ", ", true);
+	s << ')';
+	break;
+      }
+    case PARAMETER:
+      {
+	//
+	//	We need to print the name of a parameter copy of a theory like X :: T for show modules.
+	//
+	s << Token::name(parameterCopyParameterName) << " :: ";
+	baseModule->printModuleExpression(s, parameterBrackets);
+	break;
+      }
+    case INSTANTIATION:
+      {
+	if (baseModule->origin == RENAMING)  // (M * R){...}, can't be SUMMATION because of unbound parameters
+	  s << '(';
+	baseModule->printModuleExpression(s, parameterBrackets);
+	if (baseModule->origin == RENAMING)
+	  s << ')';
+	const char* sep = "{";
+	for (const Argument* a : savedArguments)
+	  {
+	    s << sep;
+	    sep = ", ";
+	    if (const View* v = dynamic_cast<const View*>(a))
+	      v->printViewExpression(s, parameterBrackets);  // FIXME
+	    else if (const Parameter* p = dynamic_cast<const Parameter*>(a))
+	      {
+		if (parameterBrackets)
+		  s <<  "[";
+		s << Token::name(p->id());
+		if (parameterBrackets)
+		  s <<  "]";
+	      }
+	  }
+	s << '}';
+	break;
+      }
+    default:
+      CantHappen("bad module origin");
+    }
 }
 
 #ifndef NO_ASSERT

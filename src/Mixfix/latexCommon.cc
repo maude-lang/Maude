@@ -172,7 +172,7 @@ MixfixModule::latexType(const Sort* sort)
 }
 
 string
-MixfixModule::latexConstant(int code, const Module* module)
+MixfixModule::latexConstant(int code, const Module* module, int situations)
 {
   if (Token::auxProperty(code) == Token::AUX_STRUCTURED_SORT)
     {
@@ -186,7 +186,7 @@ MixfixModule::latexConstant(int code, const Module* module)
 	}
       return safeCastNonNull<const MixfixModule*>(module)->latexStructuredConstant(code);
     }
-  return latexPrettyOp(code);
+  return latexPrettyOpName(code, situations);
 }
 
 string
@@ -199,18 +199,27 @@ MixfixModule::latexStructuredConstant(int code) const
 }
 
 string
-MixfixModule::latexPrettyOp(int code)
+MixfixModule::latexPrettyOpName(int code, int situations)
 {
-  string pretty = Token::prettyOpName(code);
-  if (pretty.empty())
-    return Token::latexIdentifier(code);
-  return "\\maudeSymbolic{" + Token::latexName(pretty)  + "}";
+  auto pair = Token::makePrettyOpName(code, situations);
+  //
+  //	If making the pretty name returned the problematic flag, we need to fix the problem in some way.
+  //
+  if (pair.second)
+    {
+      //
+      //	We have a problem. If we're concerned about BARE_COLON we're in an op-hook and we return the single token
+      //	ugly name. Otherwise we just put a set of parentheses around the pretty name.
+      //
+      return (situations & Token::BARE_COLON) ? ("\\maudeSymbolic{" + Token::latexName(code) + "}") :
+	("\\maudeLeftParen\\maudeSymbolic{" + Token::latexName(pair.first)  + "}\\maudeRightParen");
+    }
+  return ("\\maudeSymbolic{" + Token::latexName(pair.first)  + "}");
 }
 
 void
 MixfixModule::latexPrintStructuredConstant(ostream& s, Symbol* symbol, const char* color, const PrintSettings& printSettings) const
 {
-  cerr << "symbol = " << symbol << "  color = " << color << endl;
   const SymbolInfo& si = symbolInfo[symbol->getIndexWithinModule()];
   if (printSettings.getPrintFlag(PrintSettings::PRINT_FORMAT) && (si.format.length() > 0))
     {

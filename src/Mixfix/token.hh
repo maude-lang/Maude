@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,32 +35,83 @@ class Token
 {
 public:
   //
-  //	Can't have a constructor or destructor because
-  //	we want to be in the bison stack union.
+  //	Can't have a constructor or destructor because we want to be in the bison stack union.
   //
   enum SpecialProperties
-  {
-    SMALL_NAT,
-    SMALL_NEG,
-    ZERO,
-    QUOTED_IDENTIFIER,
-    STRING,
-    FLOAT,
-    CONTAINS_COLON,
-    ENDS_IN_COLON,
-    ITER_SYMBOL,
-    RATIONAL,
-    LAST_PROPERTY
-  };
+    {
+     SMALL_NAT,
+     SMALL_NEG,
+     ZERO,
+     QUOTED_IDENTIFIER,
+     STRING,
+     FLOAT,
+     CONTAINS_COLON,
+     ENDS_IN_COLON,
+     ITER_SYMBOL,
+     RATIONAL,
+     LAST_PROPERTY
+    };
 
   enum AuxProperties
-  {
-    AUX_SORT,
-    AUX_STRUCTURED_SORT,
-    AUX_VARIABLE,
-    AUX_CONSTANT,
-    AUX_KIND
-  };
+    {
+     AUX_SORT,
+     AUX_STRUCTURED_SORT,
+     AUX_VARIABLE,
+     AUX_CONSTANT,
+     AUX_KIND
+    };
+
+  //
+  //	Certain situations cause ambiguities when prettifying the single token name of an operator.
+  //	A token is considered exposed if it appears outside of parentheses.
+  //
+  enum ProblemSituations
+    {
+     //
+     //	Producing multiple tokens is a problem for ops/msgs declarations.
+     //
+     MULTIPLE_TOKENS = 1,
+     //
+     //	If the first (and possibly only) token is "term", this causes confusion for targets in view op mappings
+     //	because it looks like an op->term mapping.
+     //
+     EXPOSED_TERM = 2,
+     //
+     //	An exposed comma in the target of a renaming op mapping, looks like the end of the mapping.
+     //
+     EXPOSED_COMMA = 4,
+     //
+     //	An exposed left bracket in the target of a renaming op mapping looks like the start of attributes.
+     //
+     EXPOSED_LEFT_BRACKET = 8,
+     //
+     //	An exposed colon can be confused with the ":" between and op name and its sort information in op
+     // declarations, and in from-names in renaming and view op mappings.
+     //
+     EXPOSED_COLON = 16,
+     //
+     //	An exposed dot can be confused with the end of statement "." in the target of a view op mapping.
+     //
+     EXPOSED_DOT = 32,
+     //
+     //	An exposed "to" token can be confused with the "to" between a from-name and a to-name in renaming
+     //	and view op mappings
+     //
+     EXPOSED_TO = 64,
+     //
+     //	A bare colon, even inside parentheses will be misparsed in an op-hook.
+     //
+     BARE_COLON = 128,
+     //
+     //	If in doubt of our context, we treat all these situations as problem.
+     //
+     UNKNOWN_CONTEXT = MULTIPLE_TOKENS | EXPOSED_TERM | EXPOSED_COMMA | EXPOSED_LEFT_BRACKET | EXPOSED_COLON | EXPOSED_DOT | EXPOSED_TO | BARE_COLON
+    };
+  
+  enum ReturnValues
+    {
+     PAREN_MISMATCH = -1
+    };
 
   void tokenize(const char* tokenString, int lineNumber);
   void tokenize(int code, int lineNumber);
@@ -123,8 +174,8 @@ public:
   static bool isFlagged(int code);
   static int unflaggedCode(int code);
   static int fixUp(const char* tokenString);
-  static Rope removeBoundParameterBrackets(int code);
-  static string prettyOpName(int prefixNameCode);
+  static pair<string, bool> makePrettyOpName(int prefixNameCode, int situations);
+
 
   static string latexName(const char* name);
   static string latexName(int code);
@@ -133,11 +184,9 @@ public:
   static string latexIdentifier(int code);
 
 private:
-
-
   enum SpecialValues
     {
-      FLAG_BIT = 0x40000000	// we set this bit to create flagged codes
+     FLAG_BIT = 0x40000000	// we set this bit to create flagged codes
     };
 
   static void checkForSpecialProperty(const char* tokenString);

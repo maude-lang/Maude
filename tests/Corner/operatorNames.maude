@@ -1,0 +1,100 @@
+***
+***	Check that strange operator names print correctly in awkward places.
+***
+
+fth T is
+  sort Elt .
+  op ({_}:{_}) : Elt Elt -> Elt .
+  op {_}to{_} : Elt Elt -> Elt .
+  op two to : -> Elt .
+  op ([:]) : -> Elt .
+endfth
+
+fmod M is
+  sort Elt .
+  op term{_,_} : Elt Elt -> Elt .
+  op {_}.{_} : Elt Elt -> Elt .
+  op term{} : -> Elt .
+  op }.{ : -> Elt .
+endfm
+
+view V from T to M is
+  op ({_}:{_}) to (term{_,_}) .
+  op ({_}to{_}) to ({_}.{_}) .
+  op (two to) to (term{}) .
+  op ([:]) to (}.{) .
+endv
+
+fth T2 is
+  inc T * (op ({_}:{_}) to (f[_,_]),
+           op ({_}to{_}) to (_,_),
+           op (two to) to (][),
+           op ([:]) to (]i[)) .
+endfth
+
+show mod T .
+show desugared T .
+show mod M .
+show desugared M .
+show view V .
+show processed view V .
+show mod T2 .
+show desugared T2 .
+
+show modules .
+show views .
+
+fth T is
+  sort Elt .
+  op [_,_] : Elt Elt -> Elt .
+endfth
+
+view V{X :: TRIV} from T * (op [_,_] to ({_,_})) to LIST{X} is
+  sort Elt to List{X} .
+  op {_,_} to append .
+endv
+
+show view V .
+show processed view V .
+
+fmod OP-HOOK-TEST is
+  protecting BOOL .
+  sorts Zero NzNat Nat .
+  subsort Zero NzNat < Nat .
+  op 0 : -> Zero [ctor] .
+
+  op : : Nat -> NzNat
+        [ctor iter
+         special (id-hook SuccSymbol
+                  term-hook zeroTerm (0))] .
+
+  op _+_ : NzNat Nat -> NzNat
+        [assoc comm prec 33
+         special (id-hook ACU_NumberOpSymbol (+)
+                  op-hook succSymbol (: : Nat ~> NzNat))] .
+  op _+_ : Nat Nat -> Nat [ditto] .
+endfm
+
+show mod .
+show desugared .
+
+fmod OP-HOOK-TEST2 is
+  inc NAT * (op s_ to :) .
+endfm
+
+show all .
+
+omod FOO is
+  sorts Foo Bar .
+  ops f ([_]) : Foo -> Foo .
+  msgs m `[_`] : Bar -> Msg .
+endom
+
+show mod .
+
+fmod FOO is
+  sort Foo .
+  ops ([_]) (:) : Foo -> Foo .
+endfm
+
+show mod .

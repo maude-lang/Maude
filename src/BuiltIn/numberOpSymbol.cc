@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -301,8 +301,12 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		  {
 		    if (a1 < 0)
 		      goto fail;
-		    if (a1 > EXPONENT_BOUND)  // handle a0 = -1, 0 or 1
+		    if (!mpz_fits_ulong_p(a1.get_mpz_t()))
 		      {
+			//
+			//	Too big to fit in an unsigned long int, which is the exponent type supported by
+			//	GMP. Therefore we can only handle the case where the first argument is -1, 0 or 1.
+			//
 			if (a0 == 0 || a0 == 1)
 			  {
 			    r = a0;
@@ -323,8 +327,13 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		  {
 		    if (a1 < 0)
 		      goto fail;
-		    if (a1 > EXPONENT_BOUND)
+		    if (!mpz_fits_ulong_p(a1.get_mpz_t()))
 		      {
+			//
+			//	Too big to fit in an unsigned long int, which is equivalent to mp_bitcnt_t so
+			//	we can't use GMP to do the computation and we therefore can only handle the case
+			//	where the first argument is zero.
+			//
 			if (a0 == 0)
 			  {
 			    r = 0;
@@ -339,7 +348,7 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		  {
 		    if (a1 < 0)
 		      goto fail;
-		    if (mpz_fits_uint_p(a1.get_mpz_t()))
+		    if (mpz_fits_ulong_p(a1.get_mpz_t()))
 		      {
 			//
 			//	Note that that the C++ binding of operator>> defines
@@ -351,22 +360,26 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		      }
 		    else
 		      {
-			mpz_fdiv_q_2exp(r.get_mpz_t(), a0.get_mpz_t(), UINT_MAX);
+			//
+			//	Shift amount doesn't fit in unsigned long int or equivalently mp_bitcnt_t
+			//	so do maximal right arithmetic shifts until we hit 0 or -1 or remaining
+			//	shift amount fits in unsigned long int.
+			//
+			mpz_fdiv_q_2exp(r.get_mpz_t(), a0.get_mpz_t(), ULONG_MAX);
 			if (r != 0 && r != -1)
 			  {
 			    //
-			    //	We get here only in extreme cases where a1
-			    //	is in the billions and a0 has billions of
-			    //	significant bits.
+			    //	We get here only in extreme cases where a1 is greater than ULONG_MAX and
+			    //	and a0 has more than ULONG_MAX significant bits.
 			    //
 			    mpz_class t(a1);
-			    t -= UINT_MAX;
-			    while (!(mpz_fits_uint_p(t.get_mpz_t())))
+			    t -= ULONG_MAX;
+			    while (!(mpz_fits_ulong_p(t.get_mpz_t())))
 			      {
-				mpz_fdiv_q_2exp(r.get_mpz_t(), r.get_mpz_t(), UINT_MAX);
+				mpz_fdiv_q_2exp(r.get_mpz_t(), r.get_mpz_t(), ULONG_MAX);
 				if (r == 0 || r == -1)
 				  goto done;
-				t -= UINT_MAX;
+				t -= ULONG_MAX;
 			      }
 			    mpz_fdiv_q_2exp(r.get_mpz_t(), r.get_mpz_t(), mpz_get_ui(t.get_mpz_t()));
 			  }
