@@ -154,8 +154,7 @@ VariableDagNode::computeSolvedForm2(DagNode* rhs,
       //	have the lowest sort if they are comparable and unequal.
       //	We do this by ensuring rv has the largest sort index.
       //
-      if (safeCast(VariableSymbol*, lv->symbol())->getSort()->index() >
-	  safeCast(VariableSymbol*, rv->symbol())->getSort()->index())
+      if (lv->symbol()->getSort()->index() > rv->symbol()->getSort()->index())
 	swap(lv, rv);
       //
       //	Need to replace one variable by the other throughout the problem. We do this

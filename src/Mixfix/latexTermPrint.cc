@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ MixfixModule::latexPrettyPrint(ostream& s, Term* term, bool rangeKnown)
   const PrintSettings& printSettings = interpreter;  // HACK
   MixfixModule* module = safeCastNonNull<MixfixModule*>(term->symbol()->getModule());
   module->latexPrettyPrint(s, printSettings, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
+  latexClearColor(s);
 }
 
 void

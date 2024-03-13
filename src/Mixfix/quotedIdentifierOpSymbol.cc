@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -292,16 +292,15 @@ QuotedIdentifierOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 DagNode*
 QuotedIdentifierOpSymbol::makeQid(int id, PointerMap& qidMap)
 {
-  void* p = const_cast<void*>(static_cast<const void*>(Token::name(id)));
-  DagNode *d = static_cast<DagNode*>(qidMap.getMap(p));
-  if (d == 0)
+  const void* p = Token::name(id);
+  DagNode* d = static_cast<DagNode*>(qidMap.getMap(p));
+  if (d == nullptr)
     {
       d = new QuotedIdentifierDagNode(quotedIdentifierSymbol, Token::backQuoteSpecials(id));
       (void) qidMap.setMap(p, d);
     }
   return d;
 }
-
 
 bool
 QuotedIdentifierOpSymbol::printQidList(DagNode* qidList, Rope& output)

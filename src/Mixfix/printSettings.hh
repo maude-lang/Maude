@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,8 +55,14 @@ public:
      PRINT_RAT = 0x800,		// for rats
      PRINT_HOOKS = 0x1000,	// for built-ins
      PRINT_COMBINE_VARS = 0x2000,	// for variables
-
-     DEFAULT_PRINT_FLAGS = PRINT_FORMAT | PRINT_MIXFIX | PRINT_WITH_ALIASES | PRINT_FLAT | PRINT_NUMBER | PRINT_RAT | PRINT_HOOKS
+     //
+     //	Default settings for Maude interpreter.
+     //
+     DEFAULT_PRINT_FLAGS = PRINT_FORMAT | PRINT_MIXFIX | PRINT_WITH_ALIASES | PRINT_FLAT | PRINT_NUMBER | PRINT_RAT | PRINT_HOOKS,
+     //
+     //	Turn off formatting where it could cause issues.
+     //
+     PLAIN_PRINT_FLAGS = PRINT_MIXFIX | PRINT_WITH_ALIASES | PRINT_FLAT | PRINT_NUMBER | PRINT_RAT | PRINT_HOOKS
   };
 
   PrintSettings(PrintFlags initialValue = PRINT_CLEARED_FLAGS);

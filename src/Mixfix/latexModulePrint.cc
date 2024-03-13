@@ -424,9 +424,8 @@ VisibleModule::latexShowDecls(ostream& s, const char* indent, Index index, bool 
 void
 VisibleModule::latexShowOps(ostream& s, const char* indent, bool all)
 {
-  Index begin = all ? 0 : getNrImportedSymbols();
   Index end = getNrUserSymbols();
-  for (Index i = begin; i < end; ++i)
+  for (Index i = 0; i < end; ++i)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;

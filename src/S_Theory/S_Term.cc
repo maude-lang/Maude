@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ S_Term::S_Term(const S_Term& original, S_Symbol* symbol, SymbolMap* translator)
 }
 
 RawArgumentIterator*
-S_Term::arguments()
+S_Term::arguments() const
 {
   return new S_ArgumentIterator(arg);
 }

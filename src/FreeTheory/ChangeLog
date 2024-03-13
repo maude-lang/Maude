@@ -1,3 +1,16 @@
+2024-03-12  Steven Eker  <eker@pup>
+
+	* freeDagNode.hh (class FreeDagNode): deleted commented out
+	ctor decls
+
+2024-03-05  Steven Eker  <eker@pup>
+
+	* freeTerm.cc (FreeTerm::arguments): made const
+
+	* freeTerm.hh (class FreeTerm): made arguments() const
+
+===================================Maude158===========================================
+
 2024-01-16  Steven Eker  <eker@pup>
 
 	* freeSymbol.cc (FreeSymbol::stackArguments): handle

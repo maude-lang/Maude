@@ -31,6 +31,8 @@ const char* MixfixModule::latexMagenta = "\\color{magenta}";
 const char* MixfixModule::latexYellow = "\\color{yellow}";
 const char* MixfixModule::latexResetColor = "\\color{black}";
 
+const char* MixfixModule::restoreColor = "";
+
 string
 MixfixModule::latexNumber(const mpz_class& number)
 {
@@ -209,12 +211,19 @@ MixfixModule::latexPrettyOpName(int code, int situations)
     {
       //
       //	We have a problem. If we're concerned about BARE_COLON we're in an op-hook and we return the single token
-      //	ugly name. Otherwise we just put a set of parentheses around the pretty name.
+      //	ugly name. Otherwise we just put a set of parentheses around the pretty name if it exists or the original
+      //	name if it doesn't. For original names we use Token::latexIdentifier() which may use a different font.
       //
-      return (situations & Token::BARE_COLON) ? ("\\maudeSymbolic{" + Token::latexName(code) + "}") :
-	("\\maudeLeftParen\\maudeSymbolic{" + Token::latexName(pair.first)  + "}\\maudeRightParen");
+      if (situations & Token::BARE_COLON)
+	return Token::latexIdentifier(code);
+      string nameToUse = pair.first.empty() ? Token::latexIdentifier(code) : ("\\maudeSymbolic{" + Token::latexName(pair.first) + "}");
+      return "\\maudeLeftParen" + nameToUse + "\\maudeRightParen";
     }
-  return ("\\maudeSymbolic{" + Token::latexName(pair.first)  + "}");
+  //
+  //	If we didn't prettify the name, use Token::latexIdentifier() on the original name; otherwise print the
+  //	the prettified name using \maudeSymbolic.
+  //
+  return pair.first.empty() ? Token::latexIdentifier(code) : ("\\maudeSymbolic{" + Token::latexName(pair.first)  + "}");
 }
 
 void
@@ -286,7 +295,7 @@ MixfixModule::latexFancySpace(ostream& s, int spaceToken, const PrintSettings& p
 	  }
 	case 'n':
 	  {
-	    s << "\\maudeNewline";
+	    s << "\\maudeNewline" << restoreColor;  // a newline will lose the current color
 	    space = true;
 	    break;
 	  }
@@ -320,38 +329,38 @@ MixfixModule::latexFancySpace(ostream& s, int spaceToken, const PrintSettings& p
 	      {
 	      case 'r':
 		{
-		  s << "\\color{red}";
+		  s << (restoreColor = latexRed);
 		  break;
 		}
 	      case 'g':
 		{
-		  s << "\\color{green}";
+		  s << (restoreColor = latexGreen);
 		  break;
 		}
 	      case 'b':
 		{
-		  s << "\\color{blue}";
+		  s << (restoreColor = latexBlue);
 		  break;
 		}
 	      case 'c':
 		{
-		  s << "\\color{cyan}";
+		  s << (restoreColor = latexCyan);
 		  break;
 		}
 	      case 'm':
 		{
-		  s << "\\color{magenta}";
+		  s << (restoreColor = latexMagenta);
 		  break;
 		}
 	      case 'y':
 		{
-		  s << "\\color{yellow}";
+		  s << (restoreColor = latexYellow);
 		  break;
 		}
 	      case 'p':
 	      case 'o':
 		{
-		  s << "\\color{black}";
+		  latexClearColor(s);
 		  break;
 		}
 	      }
@@ -362,11 +371,6 @@ MixfixModule::latexFancySpace(ostream& s, int spaceToken, const PrintSettings& p
 case m: { s << Tty(Tty::t); attributeUsed = true; break; }
 #include "ansiEscapeSequences.cc"
 #undef MACRO
-	      case 'o':
-		{
-		  s << Tty(Tty::RESET);
-		  break;
-		}
 	      }
 	    */
 	  }
@@ -671,38 +675,38 @@ MixfixModule::latexPrintBubble(ostream& s, const Vector<int>& bubble)
 		  }
 		case 'r':
 		  {
-		    s << "\\color{red}";
+		    s << latexRed;
 		    continue;
 		  }
 		case 'g':
 		  {
-		    s << "\\color{green}";
+		    s << latexGreen;
 		    continue;
 		  }
 		case 'b':
 		  {
-		    s << "\\color{blue}";
+		    s << latexBlue;
 		    continue;
 		  }
 		case 'c':
 		  {
-		    s << "\\color{cyan}";
+		    s << latexCyan;
 		    continue;
 		  }
 		case 'm':
 		  {
-		    s << "\\color{magenta}";
+		    s << latexMagenta;
 		    continue;
 		  }
 		case 'y':
 		  {
-		    s << "\\color{yellow}";
+		    s << latexYellow;
 		    continue;
 		  }
 		case 'p':
 		case 'o':
 		  {
-		    s << "\\color{black}";
+		    s << latexResetColor;
 		    continue;
 		  }
 		}

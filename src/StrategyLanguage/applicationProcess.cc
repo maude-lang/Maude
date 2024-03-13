@@ -198,7 +198,7 @@ ApplicationProcess::run(StrategicSearch& searchObject)
 
 int
 ApplicationProcess::doRewrite(StrategicSearch& searchObject,
-			      SharedValue<RewriteSearchState> rewriteState,
+			      shared_ptr<RewriteSearchState> rewriteState,
 			      PositionState::PositionIndex redexIndex,
 			      ExtensionInfo* extensionInfo,
 			      Substitution* substitution,
@@ -273,7 +273,7 @@ ApplicationProcess::doRewrite(StrategicSearch& searchObject,
 
 StrategicExecution::Survival
 ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchObject,
-						       SharedValue<RewriteSearchState> rewriteState,
+						       shared_ptr<RewriteSearchState> rewriteState,
 						       PositionState::PositionIndex redexIndex,
 						       ExtensionInfo* extensionInfo,
 						       Substitution* substitutionSoFar,

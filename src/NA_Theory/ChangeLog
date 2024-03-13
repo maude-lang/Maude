@@ -1,3 +1,11 @@
+2024-03-05  Steven Eker  <eker@pup>
+
+	* NA_Term.cc (NA_Term::arguments): made const
+
+	* NA_Term.hh (class NA_Term): makde arguments() const
+
+===================================Maude158===========================================
+
 2023-07-24  Steven Eker  <eker@pup>
 
 	* NA_Symbol.cc (NA_Symbol::determineGround): added

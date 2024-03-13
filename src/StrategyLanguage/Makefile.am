@@ -60,7 +60,6 @@ noinst_HEADERS = \
 	strategicSearch.hh \
 	depthFirstStrategicSearch.hh \
 	fairStrategicSearch.hh \
-	sharedValue.hh \
 	matchProcess.hh \
 	subtermProcess.hh \
 	rewriteTask.hh \

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,19 +33,19 @@ class PointerMap
 public:
   PointerMap(int size = 8);
 
-  void* setMap(void* from, void* to);
-  void* getMap(void* from) const;
+  void* setMap(const void* from, void* to);
+  void* getMap(const void* from) const;
 
 private:
   struct Pair
   {
-    void* from;
+    const void* from;
     void* to;
   };
 
-  static int hash(void* pointer);
-  static int hash2(void* pointer);
-  int findEntry(void* from) const;
+  static int hash(const void* pointer);
+  static int hash2(const void* pointer);
+  int findEntry(const void* from) const;
   void resize();
 
   int used;

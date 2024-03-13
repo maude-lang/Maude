@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ MixfixModule::computeColor(SymbolType st, const PrintSettings& printSettings)
 }
 
 void
-MixfixModule::suffix(ostream& s, Term* term, bool needDisambig)
+MixfixModule::suffix(ostream& s, const Term* term, bool needDisambig)
 {
   if (needDisambig)
     s << ")." << disambiguatorSort(term);
@@ -63,7 +63,7 @@ MixfixModule::suffix(ostream& s, Term* term, bool needDisambig)
 
 bool
 MixfixModule::handleIter(ostream& s,
-			 Term* term,
+			 const Term* term,
 			 SymbolInfo& si,
 			 bool rangeKnown,
 			 const PrintSettings& printSettings)
@@ -85,7 +85,7 @@ MixfixModule::handleIter(ostream& s,
 	  return true;
 	}
     }
-  S_Term* st = safeCast(S_Term*, term);
+  const S_Term* st = safeCast(const S_Term*, term);
   const mpz_class& number = st->getNumber();
   if (number == 1)
     return false;  // do default thing
@@ -109,7 +109,7 @@ MixfixModule::handleIter(ostream& s,
 
 bool
 MixfixModule::handleMinus(ostream& s,
-			  Term* term,
+			  const Term* term,
 			  bool rangeKnown,
 			  const PrintSettings& printSettings)
 {
@@ -133,7 +133,7 @@ MixfixModule::handleMinus(ostream& s,
 
 bool
 MixfixModule::handleDivision(ostream& s,
-			     Term* term,
+			     const Term* term,
 			     bool rangeKnown,
 			     const PrintSettings& printSettings)
 {
@@ -157,11 +157,11 @@ MixfixModule::handleDivision(ostream& s,
 
 void
 MixfixModule::handleFloat(ostream& s,
-			  Term* term,
+			  const Term* term,
 			  bool rangeKnown,
 			  const PrintSettings& printSettings)
 {
-  double mfValue = safeCast(FloatTerm*, term)->getValue();
+  double mfValue = safeCast(const FloatTerm*, term)->getValue();
   bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (floatSymbols.size() > 1 || overloadedFloats.count(mfValue)));
   prefix(s, needDisambig);
@@ -171,12 +171,12 @@ MixfixModule::handleFloat(ostream& s,
 
 void
 MixfixModule::handleString(ostream& s,
-			   Term* term,
+			   const Term* term,
 			   bool rangeKnown,
 			   const PrintSettings& printSettings)
 {
   string strValue;
-  Token::ropeToString(safeCast(StringTerm*, term)->getValue(), strValue);
+  Token::ropeToString(safeCast(const StringTerm*, term)->getValue(), strValue);
   bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (stringSymbols.size() > 1 || overloadedStrings.count(strValue)));
   prefix(s, needDisambig);
@@ -186,11 +186,11 @@ MixfixModule::handleString(ostream& s,
 
 void
 MixfixModule::handleQuotedIdentifier(ostream& s,
-				     Term* term,
+				     const Term* term,
 				     bool rangeKnown,
 				     const PrintSettings& printSettings)
 {
-  int qidCode = safeCast(QuotedIdentifierTerm*, term)->getIdIndex();
+  int qidCode = safeCast(const QuotedIdentifierTerm*, term)->getIdIndex();
   bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
     (!rangeKnown && (quotedIdentifierSymbols.size() > 1 || overloadedQuotedIdentifiers.count(qidCode)));
   prefix(s, needDisambig);
@@ -200,11 +200,11 @@ MixfixModule::handleQuotedIdentifier(ostream& s,
 
 void
 MixfixModule::handleVariable(ostream& s,
-			     Term* term,
+			     const Term* term,
 			     bool rangeKnown,
 			     const PrintSettings& printSettings)
 {
-  VariableTerm* v = safeCast(VariableTerm*, term);
+  const VariableTerm* v = safeCast(const VariableTerm*, term);
   Sort* sort = safeCast(VariableSymbol*, term->symbol())->getSort();
   pair<int, int> p(v->id(), sort->id());
   bool needDisambig = !rangeKnown && overloadedVariables.count(p);  // kinds not handled
@@ -215,14 +215,14 @@ MixfixModule::handleVariable(ostream& s,
 
 void
 MixfixModule::handleSMT_Number(ostream& s,
-			       Term* term,
+			       const Term* term,
 			       bool rangeKnown,
 			       const PrintSettings& printSettings)
 {
   //
   //	Get value.
   //
-  SMT_NumberTerm* n = safeCast(SMT_NumberTerm*, term);
+  const SMT_NumberTerm* n = safeCast(const SMT_NumberTerm*, term);
   const mpq_class& value = n->getValue();
   //
   //	Look up the index of our sort.
@@ -258,7 +258,7 @@ MixfixModule::handleSMT_Number(ostream& s,
 void
 MixfixModule::prettyPrint(ostream& s,
 			  const PrintSettings& printSettings,
-			  Term* term,
+			  const Term* term,
 			  int requiredPrec,
 			  int leftCapture,
 			  const ConnectedComponent* leftCaptureComponent,

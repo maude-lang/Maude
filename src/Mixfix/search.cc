@@ -189,7 +189,7 @@ Interpreter::search(const Vector<Token>& bubble,
       if (!condition.empty())
 	{
 	  cout << " such that ";
-	  MixfixModule::printCondition(cout, condition);	  
+	  MixfixModule::printCondition(cout, condition, *this);	  
 	}
       cout << " ." << endl;
 

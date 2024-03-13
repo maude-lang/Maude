@@ -236,13 +236,15 @@ Token::makePrettyOpName(int prefixNameCode, int situations)
   //	indicating that the caller needs to wrap the result in parentheses.
   //
   //	Unbalanced parentheses are always an issue and blocks prettification.
-  //	Having a result that is already wrapped in parenthese is always problematic.
+  //	Having a result that is already wrapped in parentheses is always problematic.
+  //
+  //	If we don't change the original, flag this by returning the empty string.
   //
   const char* original = stringTable.name(prefixNameCode);
   DebugInfo("original = " << original);
   int sp = specialProperties[prefixNameCode];
   if (sp != NONE && sp != CONTAINS_COLON && sp != ENDS_IN_COLON && sp != ITER_SYMBOL)
-    return {original, false};  // looks like something that doen't need prettifying
+    return {"", false};  // looks like something that doen't need prettifying and is unproblematic
 
   bool problematic = false;
   //
@@ -257,6 +259,7 @@ Token::makePrettyOpName(int prefixNameCode, int situations)
   //
   //	Prettify by removing backquotes, checking if we expose problematic tokens outside of parentheses.
   //
+  bool prettified = false;
   string result;
   int parenDepth = 0;
   bool disconnected = true;
@@ -273,7 +276,7 @@ Token::makePrettyOpName(int prefixNameCode, int situations)
 	    {
 	      --parenDepth;
 	      if (parenDepth < 0)
-		return {original, false};  // don't prettify unbalanced parentheses - leave as an unproblematic single token
+		return {"", false};  // don't prettify unbalanced parentheses; single token will not be problematic
 	    }
 	  if (specialChar(c))
 	    {
@@ -296,6 +299,11 @@ Token::makePrettyOpName(int prefixNameCode, int situations)
 	    }
 	  else
 	    result += ' ';  // white space
+	  //
+	  //	Either we removed a backquote or turned the backquote into a space.
+	  //	Both count as prettified.
+	  //
+	  prettified = true;
 	  if (!problematic && (situations & MULTIPLE_TOKENS))
 	    {
 	      //
@@ -336,7 +344,7 @@ Token::makePrettyOpName(int prefixNameCode, int situations)
 	}
     }
   if (parenDepth != 0)
-    return {original, false};  // don't prettify unbalanced parentheses - leave as an unproblematic single token
+    return {"", false};  // don't prettify unbalanced parentheses; single token will not be problematic
   //
   //	If the first and last characters of the prettified name are ( and ), they will be eliminated
   //	during parsing which is always problematic.
@@ -344,7 +352,10 @@ Token::makePrettyOpName(int prefixNameCode, int situations)
   if (!problematic && result.front() == '(' && result.back() == ')')
     problematic = true;
   DebugInfo("result = " << result << " problematic = " << problematic);
-  return {result, problematic};
+  if (prettified)
+    return {result, problematic};
+  else
+    return {"", problematic};
 }
 
 int
@@ -640,29 +651,38 @@ Token::splitKind(int code, Vector<int>& codes)
   const char* p = stringTable.name(code);
   buffer.resize(strlen(p) + 1);
   p = strcpy(buffer.data(), p);
+  //
+  //	A kind must start with `[
+  //
   if (*p++ =='`' && *p++ == '[')
     {
       for(;;)
 	{
 	  bool dummy;
-	  char *p2 = const_cast<char*>(skipSortName(p, dummy));
-	  if (p2 != 0 && *p2 == '`')
+	  const char* p2 = skipSortName(p, dummy);
+	  if (p2 != nullptr && *p2 == '`')
 	    {
-	      *p2 = 0;
-	      codes.append(encode(p));
+	      //
+	      //	Terminator is a backquoted special character. Only `, and `] are legal within a kind.
+	      //
+	      Index length = p2 - p;
+	      for (Index i = 0; i < length; ++i)
+		buffer[i] = p[i];
+	      buffer[length] = '\0';
+	      codes.append(encode(buffer.data()));
 	      p = p2 + 1;
 	      switch (*p++)
 		{
 		case ']':
-		  {
-		    if (*p == '\0')
-		      return true;
-		  }
+		  return *p == '\0';  // we're good as long as there were no surplus characters
 		case ',':
-		  continue;
+		  continue;  // look for another sort name
 		}
 	    }
-	  break;
+	  //
+	  //	Bad sort name or illegal terminator; return false.
+	  //
+	  return false;
 	}
     }
   return false;

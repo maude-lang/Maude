@@ -32,7 +32,7 @@ MixfixModule::prettyPrint(ostream& s, const Term* term, const PrintSettings& pri
 {
   clearIndent();
   MixfixModule* parentModule = safeCastNonNull<MixfixModule*>(term->symbol()->getModule());
-  parentModule->prettyPrint(s, printSettings, const_cast<Term*>(term), UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
+  parentModule->prettyPrint(s, printSettings, term, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
   clearColor(s);
 }
 
@@ -44,22 +44,22 @@ MixfixModule::prettyPrint(ostream& s, DagNode* dagNode, const PrintSettings& pri
       s << "(null DagNode*)";
       return;
     }
-  MixfixModule::clearIndent();
+  clearIndent();
   MixfixModule* module = safeCastNonNull<MixfixModule*>(dagNode->symbol()->getModule());
   if (printSettings.getPrintFlag(PrintSettings::PRINT_GRAPH))
     module->graphPrint(s, dagNode, printSettings);
   else
     {
-      MixfixModule::ColoringInfo coloringInfo;
+      ColoringInfo coloringInfo;
       if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
 	{
-	  MixfixModule::computeGraphStatus(dagNode, coloringInfo.visited, coloringInfo.statusVec);
+	  computeGraphStatus(dagNode, coloringInfo.visited, coloringInfo.statusVec);
 	  coloringInfo.reducedAbove = false;
 	  coloringInfo.reducedDirectlyAbove = false;
 	}
       module->prettyPrint(s, coloringInfo, printSettings, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, rangeKnown);
     }
-  MixfixModule::clearColor(s);
+  clearColor(s);
 }
 
 void
@@ -143,22 +143,52 @@ MixfixModule::printStrategyTerm(ostream& s, RewriteStrategy* strat, Term* term)
 }
 
 void
-MixfixModule::printCondition(ostream& s, const Vector<ConditionFragment*>& condition)
+MixfixModule::printConditionFragment(ostream& s, const ConditionFragment* cf, const PrintSettings& printSettings)
 {
-  int nrFragments = condition.length();
-  for (int i = 0; i < nrFragments; i++)
+  if (const EqualityConditionFragment* e = dynamic_cast<const EqualityConditionFragment*>(cf))
     {
-      s << condition[i];
-      if (i + 1 < nrFragments)
-	s << " /\\ ";
+      prettyPrint(s, e->getLhs(), printSettings, false);
+      s << " = ";
+      prettyPrint(s, e->getRhs(), printSettings, true);
+    }
+  else if (const SortTestConditionFragment* t = dynamic_cast<const SortTestConditionFragment*>(cf))
+    {
+      prettyPrint(s, t->getLhs(), printSettings, true);
+      s <<  " : " << t->getSort();
+    }
+  else if(const AssignmentConditionFragment* a = dynamic_cast<const AssignmentConditionFragment*>(cf))
+    {
+      prettyPrint(s, a->getLhs(), printSettings, false);
+      s << " := ";
+      prettyPrint(s, a->getRhs(), printSettings, true);
+    }
+  else if(const RewriteConditionFragment* r = dynamic_cast<const RewriteConditionFragment*>(cf))
+    {
+      prettyPrint(s, r->getLhs(), printSettings, false);
+      s << " => ";
+      prettyPrint(s, r->getRhs(), printSettings, true);
+    }
+  else
+    CantHappen("bad condition fragment");
+}
+
+void
+MixfixModule::printCondition(ostream& s, const Vector<ConditionFragment*>& condition, const PrintSettings& printSettings)
+{
+  const char* sep = "";
+  for (ConditionFragment* cf : condition)
+    {
+      s << sep;
+      sep = " /\\ ";
+      printConditionFragment(s, cf, printSettings);
     }
 }
 
 void
-MixfixModule::printCondition(ostream& s, const PreEquation* pe)
+MixfixModule::printCondition(ostream& s, const PreEquation* pe, const PrintSettings& printSettings)
 {
   s << " if ";
-  printCondition(s, pe->getCondition());
+  printCondition(s, pe->getCondition(), printSettings);
 }
 
 void
@@ -435,9 +465,16 @@ MixfixModule::prettyOpName(int code, int situations)
     {
       //
       //	We have a problem. If we're concerned about BARE_COLON we're in an op-hook and we return the single token
-      //	ugly name. Otherwise we just put a set of parentheses around the pretty name.
+      //	ugly name. Otherwise we just put a set of parentheses around the pretty name if it exists or the regular
+      //	name if it doesn't.
       //
-      return (situations & Token::BARE_COLON) ? Token::name(code) : ("(" + pair.first + ")");
+      if (situations & Token::BARE_COLON)
+	return Token::name(code);
+      string nameToUse = pair.first.empty() ? Token::name(code) : pair.first;
+      return "(" + nameToUse + ")";
     }
-  return pair.first;
+  //
+  //	If we didn't prettify the name, return the original name.
+  //
+  return pair.first.empty() ? Token::name(code) : pair.first;
 }

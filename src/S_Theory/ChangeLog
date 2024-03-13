@@ -1,3 +1,11 @@
+2024-03-05  Steven Eker  <eker@pup>
+
+	* S_Term.cc (S_Term::arguments): made const
+
+	* S_Term.hh (class S_Term): made arguments() const
+
+===================================Maude158===========================================
+
 2024-01-16  Steven Eker  <eker@pup>
 
 	* S_Symbol.cc (S_Symbol::stackArguments): handle

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,11 +43,6 @@ public:
   FreeDagNode(Symbol* symbol, DagNode* a0);
   FreeDagNode(Symbol* symbol, DagNode* a0, DagNode* a1);
   FreeDagNode(Symbol* symbol, DagNode* a0, DagNode* a1, DagNode* a2);
-  /*
-  FreeDagNode(Symbol* symbol, int dummy, DagNode* a0);
-  FreeDagNode(Symbol* symbol, int dummy, DagNode* a1, DagNode* a2);
-  FreeDagNode(Symbol* symbol, int dummy, DagNode* a0, DagNode* a1, DagNode* a2);
-  */
   ~FreeDagNode();
 
   RawDagArgumentIterator* arguments();

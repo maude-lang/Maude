@@ -143,7 +143,7 @@ red `(_`)`)(a) .
 red `)_`((a) .
 
 (2) Previously integer exponents and left shifts were limited to 1,000,000 to avoid
-inadvertently runing out of memory. The limit is now ULONG_MAX (9,223,372,036,854,775,807
+inadvertently running out of memory. The limit is now ULONG_MAX (9,223,372,036,854,775,807
 on 64-bit hardware, 4,294,967,295 on 32-bit hardware) which is a hard limit imposed
 by GMP, although as before, if the first argument is 0, 1 or -1 for exponentiation
 or 0 for left shift, then the answer is trivial and arbitrary second arguments can

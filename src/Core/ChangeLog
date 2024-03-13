@@ -1,3 +1,10 @@
+2024-03-05  Steven Eker  <eker@pup>
+
+	* argumentIterator.hh (ArgumentIterator::ArgumentIterator): take
+	const arg
+
+===================================Maude158===========================================
+
 2024-01-19  Steven Eker  <eker@pup>
 
 	* module.cc (Module::checkEquation): added AdvisoryCheck() for

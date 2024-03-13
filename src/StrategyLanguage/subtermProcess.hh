@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 //
 #ifndef _subtermProcess_hh_
 #define _subtermProcess_hh_
+#include <memory>
 #include "strategicProcess.hh"
-#include "sharedValue.hh"
 
 class SubtermProcess : public StrategicProcess
 {
@@ -43,7 +43,7 @@ public:
 
 private:
   // Will be shared with the matchrew tasks it will create
-  SharedValue<MatchSearchState> matchState;
+  shared_ptr<MatchSearchState> matchState;
   SubtermStrategy* strategy;
   StrategyStackManager::StackId pending;
 };

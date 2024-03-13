@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ ACU_Term::ACU_Term(const ACU_Term& original, ACU_Symbol* symbol, SymbolMap* tran
 }
 
 RawArgumentIterator*
-ACU_Term::arguments()
+ACU_Term::arguments() const
 {
   return new ACU_ArgumentIterator(&argArray);
 }

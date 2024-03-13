@@ -1,3 +1,30 @@
+2024-03-04  Steven Eker  <eker@pup>
+
+	* subtermProcess.hh (class SubtermProcess): SharedValue -> shared_ptr
+
+	* applicationProcess.hh (class ApplicationProcess): SharedValue ->
+	shared_ptr
+
+	* matchProcess.hh (class MatchProcess): SharedValue -> shared_ptr
+
+	* subtermTask.hh (class SubtermTask): SharedValue -> shared_ptr
+
+	* rewriteTask.hh (class RewriteTask): SharedValue -> shared_ptr
+
+	* matchProcess.cc (MatchProcess::MatchProcess): SharedValue -> shared_ptr
+
+	* applicationProcess.cc (ApplicationProcess::doRewrite)
+	(ApplicationProcess::resolveRemainingConditionFragments): SharedValue ->
+	shared_ptr
+
+	* rewriteTask.cc (RewriteTask::RewriteTask): SharedValue -> shared_ptr
+
+	* subtermTask.cc (SubtermTask::SubtermTask): SharedValue -> shared_ptr
+
+	* sharedValue.hh: deleted
+
+===================================Maude158===========================================
+
 2024-01-23  Steven Eker  <eker@pup>
 
 	* applicationProcess.cc (ApplicationProcess::ApplicationProcess): always

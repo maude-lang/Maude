@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ public:
   //
   //	These member functions must be defined for each derived class
   //
-  virtual RawArgumentIterator* arguments() = 0;
+  virtual RawArgumentIterator* arguments() const = 0;
   virtual void deepSelfDestruct() = 0;
   virtual Term* deepCopy2(SymbolMap* translator) const = 0;
   virtual Term* normalize(bool full, bool& changed) = 0;

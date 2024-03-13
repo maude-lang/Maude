@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -274,7 +274,7 @@ AU_DagNode::matchVariableWithExtension(int index,
   AU_ExtensionInfo* e = safeCast(AU_ExtensionInfo*, extensionInfo);
   AU_Subproblem* subproblem = new AU_Subproblem(this, 0, argArray.length() - 1, 1, e);
   int min = symbol()->oneSidedId() ? 1 : 2;
-  subproblem->addTopVariable(0, index, min, UNBOUNDED, const_cast<Sort*>(sort));  // HACK
+  subproblem->addTopVariable(0, index, min, UNBOUNDED, sort);
   subproblem->complete();
   returnedSubproblem = subproblem;
   extensionInfo->setValidAfterMatch(false);

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 //
 #ifndef _rewriteTask_hh_
 #define _rewriteTask_hh_
+#include <memory>
 #include "strategicTask.hh"
 
 class RewriteTask : public StrategicTask
@@ -34,7 +35,7 @@ class RewriteTask : public StrategicTask
 
 public:
   RewriteTask(StrategicSearch& searchObject,
-	      SharedValue<RewriteSearchState> rewriteState,
+	      shared_ptr<RewriteSearchState> rewriteState,
 	      PositionState::PositionIndex redexIndex,
 	      ExtensionInfo* extensionInfo,
 	      Substitution* substitutionSoFar,
@@ -54,7 +55,7 @@ public:
 
 private:
   const HashConsSet& hashConsSet;			// reference to shared hash cons set
-  SharedValue<RewriteSearchState> rewriteState;		// smart pointer to rewrite state that found our redex
+  shared_ptr<RewriteSearchState> rewriteState;		// smart pointer to rewrite state that found our redex
   const PositionState::PositionIndex redexIndex;	// index of redex withing rewrite state
   ExtensionInfo* extensionInfoCopy;			// copy of extension info from original match
   Rule* const rule;					// pointer to rule whose lhs matched

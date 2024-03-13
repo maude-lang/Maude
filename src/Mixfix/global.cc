@@ -174,7 +174,7 @@ operator<<(ostream& s, const SortConstraint* sc)
   MixfixModule::prettyPrint(s, sc->getLhs(), interpreter, true);
   s << " : " << sc->getSort();
   if (sc->hasCondition())
-    MixfixModule::printCondition(s, sc);
+    MixfixModule::printCondition(s, sc, interpreter);
   MixfixModule* m = safeCast(MixfixModule*, sc->getModule());
   m->printAttributes(s, sc, MixfixModule::MEMB_AX, interpreter);
   s << " .";
@@ -196,7 +196,7 @@ operator<<(ostream& s, const Equation* e)
   s << e->getLhs() << " = ";
   MixfixModule::prettyPrint(s, e->getRhs(), interpreter, true);
   if (e->hasCondition())
-    MixfixModule::printCondition(s, e);
+    MixfixModule::printCondition(s, e, interpreter);
   MixfixModule* m = safeCast(MixfixModule*, e->getModule());
   m->printAttributes(s, e, MixfixModule::EQUATION, interpreter);
   s << " .";
@@ -218,7 +218,7 @@ operator<<(ostream& s, const Rule* r)
   s << r->getLhs() << " => ";
   MixfixModule::prettyPrint(s, r->getRhs(), interpreter, true);
   if (r->hasCondition())
-    MixfixModule::printCondition(s, r);
+    MixfixModule::printCondition(s, r, interpreter);
   MixfixModule* m = safeCast(MixfixModule*, r->getModule());
   m->printAttributes(s, r, MixfixModule::RULE, interpreter);
   s << " .";
@@ -228,28 +228,7 @@ operator<<(ostream& s, const Rule* r)
 ostream&
 operator<<(ostream& s, const ConditionFragment* c)
 {
-  if (const EqualityConditionFragment* e = dynamic_cast<const EqualityConditionFragment*>(c))
-    {
-      s << e->getLhs() << " = ";
-      MixfixModule::prettyPrint(s, e->getRhs(), interpreter, true);
-    }
-  else if (const SortTestConditionFragment* t = dynamic_cast<const SortTestConditionFragment*>(c))
-    {
-      MixfixModule::prettyPrint(s, t->getLhs(), interpreter, true);
-      s <<  " : " << t->getSort();
-    }
-  else if(const AssignmentConditionFragment* a = dynamic_cast<const AssignmentConditionFragment*>(c))
-    {
-      s << a->getLhs() << " := ";
-      MixfixModule::prettyPrint(s, a->getRhs(), interpreter, true);
-    }
-  else if(const RewriteConditionFragment* r = dynamic_cast<const RewriteConditionFragment*>(c))
-    {
-      s << r->getLhs() << " => ";
-      MixfixModule::prettyPrint(s, r->getRhs(), interpreter, true);
-    }
-  else
-    CantHappen("bad condition fragment");
+  MixfixModule::printConditionFragment(s, c, interpreter);
   return s;
 }
 
@@ -264,7 +243,7 @@ operator<<(ostream& s, const StrategyDefinition* e)
   m->printStrategyTerm(s, e->getStrategy(), e->getLhs());
   s << " := " << e->getRhs();
   if (e->hasCondition())
-    MixfixModule::printCondition(s, e);
+    MixfixModule::printCondition(s, e, interpreter);
 
   m->printAttributes(s, e, MixfixModule::STRAT_DEF, interpreter);
   s << " .";
@@ -342,5 +321,12 @@ operator<<(ostream& s, const RewriteStrategy* rs)
   if (metadata != NONE)
     s << " [metadata " << Token::name(metadata) << "] ";
   s << " .";
+  return s;
+}
+
+ostream&
+operator<<(ostream& s, StrategyExpression* strategy)
+{
+  (void) MixfixModule::prettyPrint(s, strategy, UNBOUNDED, interpreter);
   return s;
 }

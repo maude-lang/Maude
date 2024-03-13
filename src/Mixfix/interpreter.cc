@@ -134,7 +134,7 @@ Interpreter::quit()
 {
   ostream* latexStream = latexBuffer ? &(latexBuffer->getStream()) : nullptr;
   if (latexStream)
-    *latexStream << "\\begin{comment}\n%\n%  quit\n%\n\\end{comment}\n\\begin{maudeResultParagraph}\n";
+    *latexStream << "%\n%  quit\n%\n\\begin{maudeResultParagraph}\n";
   MemoryCell::maybeShowResources(cout, latexStream);
   cout << "Bye.\n";
   if (latexStream)

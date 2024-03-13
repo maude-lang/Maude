@@ -1,3 +1,7 @@
+2024-03-11  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeShowSpace
+
 2024-02-20  Steven Eker  <eker@pup>
 
 	* maude.sty: adjust the spacing around, and hieght of * in

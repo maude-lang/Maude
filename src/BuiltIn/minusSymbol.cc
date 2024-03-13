@@ -98,8 +98,7 @@ MinusSymbol::makeNegDag(const mpz_class& integer)
 bool
 MinusSymbol::isNeg(const DagNode* dagNode) const
 {
-  Assert(static_cast<const Symbol*>(dagNode->symbol()) == this,
-	 "symbol mismatch");
+  Assert(dagNode->symbol() == this, "symbol mismatch");
   DagNode* a = safeCast(const FreeDagNode*, dagNode)->getArgument(0);
   return a->symbol() == getSuccSymbol() && getSuccSymbol()->isNat(a);
 }
@@ -107,8 +106,7 @@ MinusSymbol::isNeg(const DagNode* dagNode) const
 const mpz_class&
 MinusSymbol::getNeg(const DagNode* dagNode, mpz_class& result) const
 {
-  Assert(static_cast<const Symbol*>(dagNode->symbol()) == this,
-	 "symbol mismatch");
+  Assert(dagNode->symbol() == this, "symbol mismatch");
   result = - getSuccSymbol()->getNat(safeCast(const FreeDagNode*, dagNode)->getArgument(0));
   return result;
 }
@@ -131,20 +129,18 @@ MinusSymbol::makeIntTerm(const mpz_class& integer)
 }
 
 bool
-MinusSymbol::isNeg(/* const */ Term* term) const
+MinusSymbol::isNeg(const Term* term) const
 {
-  Assert(static_cast<const Symbol*>(term->symbol()) == this,
-	 "symbol mismatch");
+  Assert(term->symbol() == this, "symbol mismatch");
   ArgumentIterator i(*term);
   Term* t = i.argument();
   return t->symbol() == getSuccSymbol() && getSuccSymbol()->isNat(t);
 }
 
 const mpz_class&
-MinusSymbol::getNeg(/* const */ Term* term, mpz_class& result) const
+MinusSymbol::getNeg(const Term* term, mpz_class& result) const
 {
-  Assert(static_cast<const Symbol*>(term->symbol()) == this,
-	 "symbol mismatch");
+  Assert(term->symbol() == this, "symbol mismatch");
   ArgumentIterator i(*term);
   result = - getSuccSymbol()->getNat(i.argument());
   return result;
@@ -153,7 +149,7 @@ MinusSymbol::getNeg(/* const */ Term* term, mpz_class& result) const
 bool
 MinusSymbol::getSignedInt64(const DagNode* dagNode, Int64& value) const
 {
-  if (static_cast<const Symbol*>(dagNode->symbol()) == this)
+  if (dagNode->symbol() == this)
     {
       const FreeDagNode* f = safeCast(const FreeDagNode*, dagNode);
       if (getSuccSymbol()->getSignedInt64(f->getArgument(0), value))

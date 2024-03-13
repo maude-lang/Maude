@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ public:
   bool isRat(const DagNode* dagNode) const;
   const mpz_class& getRat(const DagNode* dagNode, mpz_class& numerator) const;
   Term* makeRatTerm(const mpz_class& nr, const mpz_class& dr);
-  bool isRat(/* const */ Term* term) const;
-  const mpz_class& getRat(/* const */ Term* term, mpz_class& numerator) const;
+  bool isRat(const Term* term) const;
+  const mpz_class& getRat(const Term* term, mpz_class& numerator) const;
  
   SuccSymbol* succSymbol;
   MinusSymbol* minusSymbol;

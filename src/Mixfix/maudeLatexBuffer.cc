@@ -117,7 +117,8 @@
 #include "latexResult.cc"
 
 MaudeLatexBuffer::MaudeLatexBuffer(const char* fileName)
-: output(fileName)
+: output(fileName),
+  commentSettings(PrintSettings::PLAIN_PRINT_FLAGS)  // no color, format or graph printing in comments
 {
   needNewline = false;
   output << "\\documentclass{article}\n";

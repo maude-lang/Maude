@@ -17,11 +17,11 @@
 %    along with this program; if not, write to the Free Software
 %    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 %
-%	Latex package for use with the -latex-log= feature.
-%	Version alpha157.
+%	LaTeX package for use with the -latex-log= feature.
+%	Version 3.4beta.
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{maude}[2024/02/20 Package for Maude logs]
+\ProvidesPackage{maude}[2024/03/12 Package for Maude logs]
 \RequirePackage{amssymb,extarrows,longtable,tabto,xcolor,verbatim,alltt,seqsplit}
 \RequirePackage[T1]{fontenc}
 %
@@ -35,6 +35,7 @@
 \newcommand{\maudeBigSpace}{\hspace{0.6em}}
 \newcommand{\maudeHardSpace}{\hspace*{0.5em}} % doesn't disappear at the start of a new line
 \newcommand{\maudeAllowLineBreak}{\linebreak[0]}
+\newcommand{\maudeShowSpace}{\vspace{1ex}} % space between a show command and the thing shown
 %
 %	To get a newline that is not indented we actually start a new paragraph, which means we
 %	need to drop out of math mode and use {} to protect from double dollar signs.

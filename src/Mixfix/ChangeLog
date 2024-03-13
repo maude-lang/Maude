@@ -1,3 +1,195 @@
+2024-03-12  Steven Eker  <eker@pup>
+
+	* latexCommon.cc (MixfixModule::latexFancySpace): set
+	restoreColor rather than attributeUsed
+	(MixfixModule::latexFancySpace): use restoreColor after a
+	newline
+	(MixfixModule::latexPrintBubble): use latexRed etc
+
+	* mixfixModule.hh (class MixfixModule): added static data
+	member restoreColor
+	(MixfixModule::latexClearColor): use restoreColor
+
+	* latexCommon.cc: added restoreColor static data member
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrintDagNode): call
+	latexClearColor()
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): call
+	latexClearColor()
+
+	* mixfixModule.hh (MixfixModule::latexClearColor): added
+
+	* latexCommon.cc (MixfixModule::latexFancySpace): set
+	attributeUsed and use latexClearColor(s)
+	(MixfixModule::latexFancySpace): use latexRed etc
+
+	* prettyPrint.cc (MixfixModule::prettyPrint): (dagNode version)
+	remove unnecessary MixfixModule:: qualifications
+
+2024-03-11  Steven Eker  <eker@pup>
+
+	* token.cc (Token::splitKind): reimplemented to avoid
+	const_cast<>
+
+	* latexCommand.cc (MaudeLatexBuffer::generateShow): use
+	\maudeShowSpace (all three versions)
+
+	* latexModulePrint.cc (VisibleModule::latexShowOps): symmetric
+	change
+
+	* visibleModule.cc (VisibleModule::showOps): consider all
+	ops for potential printing because we may have local declarations
+	even if an op is imported
+
+2024-03-06  Steven Eker  <eker@pup>
+
+	* prettyPrint.cc (MixfixModule::prettyPrint): (Term* version)
+	got rid of const_cast<>
+
+	* quotedIdentifierOpSymbol.cc (QuotedIdentifierOpSymbol::makeQid):
+	got rid of const_cast<>
+
+	* mixfixModule.hh (class MixfixModule): updated decls for suffix(),
+	handleIter(), handleMinus(), handleDivision(), handleFloat(),
+	handleString(), handleQuotedIdentifier(), handleVariable(),
+	handleSMT_Number(), prettyPrint() (Term* versions)
+
+	* termPrint.cc (MixfixModule::suffix, MixfixModule::handleIter)
+	(MixfixModule::handleMinus, MixfixModule::handleDivision)
+	(MixfixModule::handleFloat, MixfixModule::handleString)
+	(MixfixModule::handleQuotedIdentifier)
+	(MixfixModule::handleVariable, MixfixModule::handleSMT_Number)
+	(MixfixModule::prettyPrint): make Term* arg const
+
+2024-03-05  Steven Eker  <eker@pup>
+
+	* importTranslation.cc (ImportTranslation::translateExpr):
+	removed const_cast<>
+	(ImportTranslation::translateTerm): removed const_cast<>
+
+2024-03-04  Steven Eker  <eker@pup>
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint):
+	deleted
+
+	* mixfixModule.hh (class MixfixModule): deleted decl for 2
+	argument DagNode* version of latexPrettyPrint()
+
+2024-03-01  Steven Eker  <eker@pup>
+
+	* latexCommand.cc (MaudeLatexBuffer::generateCommand): print
+	strategy in comment if non-null
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	StrategyExpression* version of prettyPrint()
+
+	* global.cc (operator<<): (StrategyExpression* version) moved
+	here; pass interpreter
+
+	* strategyPrint.cc (MixfixModule::prettyPrint): take and pass
+	printSettings
+
+	* global.cc (operator<<): reimplmented using
+	MixfixModule::printConditionFragment()
+
+	* mixfixModule.hh (class MixfixModule): deleted decls for both
+	2 argument versions of printCondition()
+
+	* prettyPrint.cc (MixfixModule::printCondition): deleted both
+	2 argument versions
+
+	* strategyPrint.cc (MixfixModule::prettyPrint): use 3 argument
+	printCondition()
+
+	* search.cc (Interpreter::search): use 3 argument printCondition()
+
+	* global.cc (operator<<): (SortConstraint*, Equation*, Rule*,
+	StrategyDefinition* versions) use 3 argument printCondition()
+
+	* match.cc (Interpreter::match): use 3 argument printCondition()
+
+	* mixfixModule.hh (class MixfixModule): added decl for 3 argument
+	reEquation* version of printCondition()
+
+	* prettyPrint.cc (MixfixModule::printCondition): added 3 argument
+	PreEquation* version
+
+	* latexCommand.cc (MaudeLatexBuffer::generateMatch): use 3 argument
+	version of printCondition() with commentSettings
+	(MaudeLatexBuffer::generateSearch): ditto
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	printConditionFragment() and 3 argument version of printCondition()
+
+	* prettyPrint.cc (MixfixModule::printConditionFragment): added
+	(MixfixModule::printCondition): added 3 arg version
+
+2024-02-29  Steven Eker  <eker@pup>
+
+	* token.cc (Token::makePrettyOpName): return empty string
+	if not prettified to alert caller
+
+	* latexCommon.cc (MixfixModule::latexPrettyOpName): handle
+	empty string as indicating that no prettification was done by
+	Token::makePrettyOpName() and call Token::latexIdentifier() to
+	figure out the correct font to use
+
+	* prettyPrint.cc (MixfixModule::prettyOpName): handle empty
+	string as indicating that no prettification was done by
+	Token::makePrettyOpName()
+
+2024-02-28  Steven Eker  <eker@pup>
+
+	* interpreter.cc (Interpreter::quit): don't use comment
+	environment
+
+	* latexResult.cc (MaudeLatexBuffer::generateSearchPath): use
+	startComment(), endComment()
+	(MaudeLatexBuffer::generateSearchPathLabels): ditto
+	(MaudeLatexBuffer::generateSearchGraph): ditto
+
+	* latexCommand.cc (MaudeLatexBuffer::generateGetVariants): use
+	startComment(), endComment(), commentTerm(), commentDagNode();
+	don't use Tty::blockEscapeSequences(), Tty::unblockEscapeSequences()
+	(MaudeLatexBuffer::generateVariantMatch): use startComment(),
+	endComment(), commentTerm(); don't use Tty::blockEscapeSequences(),
+	Tty::unblockEscapeSequences()
+	(MaudeLatexBuffer::generateVariantUnify): ditto
+	(MaudeLatexBuffer::generateUnify): ditto
+	(MaudeLatexBuffer::generateSearch): ditto
+	(MaudeLatexBuffer::generateMatch): ditto
+	(MaudeLatexBuffer::generateLoopTokens): don't use comment environment
+	(MaudeLatexBuffer::generateCommand): (both versions) use startComment(),
+	endComment()
+	(MaudeLatexBuffer::generateContinue): use startComment(), endComment()
+	(MaudeLatexBuffer::generateShow): (3 versions) use startComment(),
+	endComment()
+
+	* maudeLatexBuffer.hh (MaudeLatexBuffer::startComment): added
+	(MaudeLatexBuffer::endComment): added
+
+	* latexCommand.cc (MaudeLatexBuffer::generateCommand): (Term*
+	version) use commentDagNode(); don't use Tty::blockEscapeSequences()
+	and Tty::unblockEscapeSequences()
+
+	* printSettings.hh (class PrintSettings): added PLAIN_PRINT_FLAGS
+	to enum PrintFlags
+
+	* maudeLatexBuffer.cc: init commentSettings()
+
+	* latexCommand.cc (MaudeLatexBuffer::generateCommand): (DagNode*
+	version) use commentDagNode(); don't use Tty::blockEscapeSequences()
+	and Tty::unblockEscapeSequences()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): deleted
+	commented out pendingClose data member
+	(class MaudeLatexBuffer): added data member commentSettings;
+	(MaudeLatexBuffer::commentTerm): added
+	(MaudeLatexBuffer::commentDagNode): added
+
+===================================Maude158===========================================
+
 2024-02-26  Steven Eker  <eker@pup>
 
 	* latexCommand.cc (MaudeLatexBuffer::generateGetVariants)

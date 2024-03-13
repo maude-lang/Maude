@@ -183,11 +183,16 @@ public:
   void cleanUp();
 
 private:
+  void commentTerm(Term* t);
+  void commentDagNode(DagNode* d);
+  void startComment();
+  void endComment();
   void generateType(Sort* sort);
   void generateModifiers(Module* module, int64_t  number = NONE, int64_t  number2 = NONE);
 
+  
   ofstream output;
-  //string pendingClose;
+  PrintSettings commentSettings;  // for terms and dagnodes printed in comments
   stack<string> pendingCloseStack;
   bool needNewline;
 };
@@ -209,6 +214,30 @@ inline void
 MaudeLatexBuffer::generateHeading(const char* message)
 {
   output << "\\par\\maudeResponse{" << message << "}\n";
+}
+
+inline void
+MaudeLatexBuffer::commentTerm(Term* t)
+{
+  MixfixModule::prettyPrint(output, t, commentSettings, false);
+}
+
+inline void
+MaudeLatexBuffer::commentDagNode(DagNode* d)
+{
+  MixfixModule::prettyPrint(output, d, commentSettings, false);
+}
+
+inline void
+MaudeLatexBuffer::startComment()
+{
+  output << "%\n%  ";
+}
+
+inline void
+MaudeLatexBuffer::endComment()
+{
+  output << " .\n%\n";
 }
 
 #endif

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,15 +29,8 @@
 //	know about these details.
 //
 
-ostream&
-operator<<(ostream& s, StrategyExpression* strategy)
-{
-  (void) MixfixModule::prettyPrint(s, strategy, UNBOUNDED);
-  return s;
-}
-
 bool
-MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int requiredPrec)
+MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int requiredPrec, const PrintSettings& printSettings)
 {
   bool needParen = false;
   bool needSpace = true;
@@ -99,7 +92,7 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
       int nrStrategies = strategies.size();
       for (int i = 0;;)
 	{
-	  (void) prettyPrint(s, strategies[i], STRAT_SEQ_PREC);
+	  (void) prettyPrint(s, strategies[i], STRAT_SEQ_PREC, printSettings);
 	  if (++i == nrStrategies)
 	    break;
 	  s << " ; ";
@@ -114,7 +107,7 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
       int nrStrategies = strategies.size();
       for (int i = 0;;)
 	{
-	  (void) prettyPrint(s, strategies[i], STRAT_UNION_PREC);
+	  (void) prettyPrint(s, strategies[i], STRAT_UNION_PREC, printSettings);
 	  if (++i == nrStrategies)
 	    break;
 	  s << " | ";
@@ -122,7 +115,7 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
     }
   else if (IterationStrategy* i = dynamic_cast<IterationStrategy*>(strategy))
     {
-      if (prettyPrint(s, i->getStrategy(), 0))
+      if (prettyPrint(s, i->getStrategy(), 0, printSettings))
 	s << ' ';
       s << (i->getZeroAllowed() ? '*' : '+');
     }
@@ -161,9 +154,9 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
 		needParen = requiredPrec < STRAT_ORELSE_PREC;
 		if (needParen)
 		  s << '(';
-		(void) prettyPrint(s, b->getInitialStrategy(), STRAT_ORELSE_PREC);
+		(void) prettyPrint(s, b->getInitialStrategy(), STRAT_ORELSE_PREC, printSettings);
 		s << " or-else ";
-		(void) prettyPrint(s, b->getFailureStrategy(), STRAT_ORELSE_PREC);
+		(void) prettyPrint(s, b->getFailureStrategy(), STRAT_ORELSE_PREC, printSettings);
 	      }
 	    break;
 	  }
@@ -173,11 +166,11 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
 	    needParen = requiredPrec < STRAT_BRANCH_PREC;
 	    if (needParen)
 	      s << '(';
-	    (void) prettyPrint(s, b->getInitialStrategy(), STRAT_BRANCH_PREC);
+	    (void) prettyPrint(s, b->getInitialStrategy(), STRAT_BRANCH_PREC, printSettings);
 	    s << " ? ";
-	    (void) prettyPrint(s, b->getSuccessStrategy(), STRAT_BRANCH_PREC);
+	    (void) prettyPrint(s, b->getSuccessStrategy(), STRAT_BRANCH_PREC, printSettings);
 	    s << " : ";
-	    (void) prettyPrint(s, b->getFailureStrategy(), STRAT_BRANCH_PREC);
+	    (void) prettyPrint(s, b->getFailureStrategy(), STRAT_BRANCH_PREC, printSettings);
 	    break;
 	  }
 	case BranchStrategy::ITERATE:
@@ -185,7 +178,7 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
 	    Assert(b->getFailureAction() == BranchStrategy::IDLE &&
 		   b->getSuccessStrategy() == 0 &&
 		   b->getFailureStrategy() == 0, "unknown branch strategy");
-	    if (prettyPrint(s, b->getInitialStrategy(), 0))
+	    if (prettyPrint(s, b->getInitialStrategy(), 0, printSettings))
 	      s << ' ';
 	    s << '!';
 	    break;
@@ -207,7 +200,7 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
       if (!condition.empty())
 	{
 	  s << " such that ";
-	  printCondition(s, condition);
+	  printCondition(s, condition, printSettings);
 	}
     }
   else if (SubtermStrategy* t = dynamic_cast<SubtermStrategy*>(strategy))
@@ -223,7 +216,7 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
       if (!condition.empty())
 	{
 	  s << " such that ";
-	  printCondition(s, condition);
+	  printCondition(s, condition, printSettings);
 	}
       const Vector<Term*>& subterms = t->getSubterms();
       const Vector<StrategyExpression*>& strategies = t->getStrategies();
@@ -232,7 +225,7 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
 	{
 	  s << ((i == 0) ? " by " : ", ");
 	  s << subterms[i] << " using ";
-	  (void) prettyPrint(s, strategies[i], STRAT_USING_PREC - 1);
+	  (void) prettyPrint(s, strategies[i], STRAT_USING_PREC - 1, printSettings);
 	}
     }
   else if (CallStrategy* t = dynamic_cast<CallStrategy*>(strategy))

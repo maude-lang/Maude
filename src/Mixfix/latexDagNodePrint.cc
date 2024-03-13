@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,38 +25,6 @@
 //
 
 void
-MixfixModule::latexPrettyPrint(ostream& s, DagNode* dagNode)
-{
-  if (dagNode == 0)
-    {
-      s << "\\maudeMisc{(null DagNode*)}";
-      return;
-    }
-  const PrintSettings& printSettings = interpreter;  // HACK
-  MixfixModule* module = static_cast<MixfixModule*>(dagNode->symbol()->getModule());
-  if (printSettings.getPrintFlag(PrintSettings::PRINT_GRAPH))
-    {
-      s << "$";
-      module->latexGraphPrint(s, dagNode, printSettings);
-      s << "$";
-    }
-  else
-    {
-      clearIndent();
-      s << "$";
-      ColoringInfo coloringInfo;
-      if (printSettings.getPrintFlag(PrintSettings::PRINT_COLOR))
-	{
-	  computeGraphStatus(dagNode, coloringInfo.visited, coloringInfo.statusVec);
-	  coloringInfo.reducedAbove = false;
-	  coloringInfo.reducedDirectlyAbove = false;
-	}
-      module->latexPrettyPrint(s, printSettings, coloringInfo, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
-      s << "$";
-    }
-}
-
-void
 MixfixModule::latexPrintDagNode(ostream& s, DagNode* dagNode)
 {
   const PrintSettings& printSettings = interpreter;  // HACK
@@ -74,6 +42,7 @@ MixfixModule::latexPrintDagNode(ostream& s, DagNode* dagNode)
 	  coloringInfo.reducedDirectlyAbove = false;
 	}
       module->latexPrettyPrint(s, printSettings, coloringInfo, dagNode, UNBOUNDED, UNBOUNDED, 0, UNBOUNDED, 0, false);
+      latexClearColor(s);
     }
 }
 

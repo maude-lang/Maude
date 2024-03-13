@@ -1,3 +1,13 @@
+2024-03-06  Steven Eker  <eker@pup>
+
+	* metaUp.cc (MetaLevel::upQid): got rid of const_cast<>
+
+2024-03-05  Steven Eker  <eker@pup>
+
+	* metaUp.cc (MetaLevel::upTerm): remove const_cast<>
+
+===================================Maude158===========================================
+
 2024-01-09  Steven Eker  <eker@pup>
 
 	* metaLevel.hh (MetaLevel::downSearchType): support '#

@@ -1,3 +1,11 @@
+2024-03-05  Steven Eker  <eker@pup>
+
+	* ACU_Term.cc (ACU_Term::arguments): made const
+
+	* ACU_Term.hh (class ACU_Term): made arguments() const
+
+===================================Maude158===========================================
+
 2024-01-16  Steven Eker  <eker@pup>
 
 	* ACU_Symbol.cc (ACU_Symbol::stackArguments): support

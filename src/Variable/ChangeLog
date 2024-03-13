@@ -1,3 +1,23 @@
+2024-03-12  Steven Eker  <eker@pup>
+
+	* variableDagNode.hh (class VariableDagNode): deleted old
+	commented out computeSolvedForm2() decl
+
+2024-03-11  Steven Eker  <eker@pup>
+
+	* variableDagNode.cc (VariableDagNode::computeSolvedForm2): avoid
+	casting now that we have a VariableDagNode specific symbol()
+
+	* variableDagNode.hh (symbol): added
+
+2024-03-05  Steven Eker  <eker@pup>
+
+	* variableTerm.hh (class VariableTerm): made arguments() const
+
+	* variableTerm.cc (VariableTerm::arguments): made const
+
+===================================Maude158===========================================
+
 2023-07-24  Steven Eker  <eker@pup>
 
 	* variableSymbol.cc (VariableSymbol::determineGround): added

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ AU_Layer::initializeLast(int last, AU_ExtensionInfo* extension)
 }
 
 void
-AU_Layer::addTopVariable(int index, int lowerBound, int upperBound, Sort* sort)
+AU_Layer::addTopVariable(int index, int lowerBound, int upperBound, const Sort* sort)
 {
   int nrVariables = prevVariables.length();
   prevVariables.expandBy(1);

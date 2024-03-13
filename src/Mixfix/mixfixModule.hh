@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -146,8 +146,10 @@ public:
   DagNode* makeUnificationProblemDag(Vector<Term*>& lhs, Vector<Term*>& rhs);
   pair<DagNode*, DagNode*> makeMatchProblemDags(Vector<Term*>& lhs, Vector<Term*>& rhs);
   
-  static void printCondition(ostream& s, const Vector<ConditionFragment*>& condition);
-  static void printCondition(ostream& s, const PreEquation* pe);
+  static void printConditionFragment(ostream& s, const ConditionFragment* cf, const PrintSettings& printSettings);
+  static void printCondition(ostream& s, const Vector<ConditionFragment*>& condition, const PrintSettings& printSettings);
+  static void printCondition(ostream& s, const PreEquation* pe, const PrintSettings& printSettings);
+  
   void printAttributes(ostream& s, const PreEquation* pe, ItemType itemType, const PrintSettings& printSettings);
   void printStrategyTerm(ostream& s, RewriteStrategy* strat, Term* term);
   //
@@ -287,7 +289,7 @@ public:
   void printModifiers(ostream& s, Int64 number = NONE, Int64 number2 = NONE);
   static void prettyPrint(ostream& s, const Term* term, const PrintSettings& printSettings, bool rangeKnown = false);
   static void prettyPrint(ostream& s, DagNode* dagNode, const PrintSettings& printSettings, bool rangeKnown = false);
-  static bool prettyPrint(ostream& s, StrategyExpression* strategy, int requiredPrec);
+  static bool prettyPrint(ostream& s, StrategyExpression* strategy, int requiredPrec, const PrintSettings& printSettings);
   static void clearIndent();
   static void clearColor(ostream& s);
   static string prettyOpName(int code, int situations = Token::UNKNOWN_CONTEXT);
@@ -311,7 +313,6 @@ public:
   //
   //	Latex pretty print functions.
   //
-  static void latexPrettyPrint(ostream& s, DagNode* dagNode);
   static void latexPrettyPrint(ostream& s, Term* term, bool rangeKnown = false);
   static void latexPrintDagNode(ostream& s, DagNode* dagNode);
   static void latexPrintGather(ostream& s, const Vector<int>& gather);
@@ -703,6 +704,7 @@ private:
   static Vector<int> gatherAny0;
   static int globalIndent;
   static bool attributeUsed;
+  static const char* restoreColor;
 
   ModuleType moduleType;
   Sort* boolSort;
@@ -891,43 +893,44 @@ private:
   //	Member functions for Term* -> ostream& pretty printer.
   //
   static const char* computeColor(SymbolType st, const PrintSettings& printSettings);
-  static void suffix(ostream& s, Term* term, bool needDisambig);
+  static void suffix(ostream& s, const Term* term, bool needDisambig);
   bool handleIter(ostream& s,
-		  Term* term,
+		  const Term* term,
 		  SymbolInfo& si,
 		  bool rangeKnown,
 		  const PrintSettings& printSettings);
-  bool handleMinus(ostream& s, Term* term,
+  bool handleMinus(ostream& s,
+		   const Term* term,
 		   bool rangeKnown,
 		   const PrintSettings& printSettings);
   bool handleDivision(ostream& s,
-		      Term* term,
+		      const Term* term,
 		      bool rangeKnown,
 		      const PrintSettings& printSettings);
   void handleFloat(ostream& s,
-		   Term* term,
+		   const Term* term,
 		   bool rangeKnown,
 		   const PrintSettings& printSettings);
   void handleString(ostream& s,
-		    Term* term,
+		    const Term* term,
 		    bool rangeKnown,
 		    const PrintSettings& printSettings);
   void handleQuotedIdentifier(ostream& s,
-			      Term* term,
+			      const Term* term,
 			      bool rangeKnown,
 			      const PrintSettings& printSettings);
   void handleVariable(ostream& s,
-		      Term* term,
+		      const Term* term,
 		      bool rangeKnown,
 		      const PrintSettings& printSettings);
   void handleSMT_Number(ostream& s,
-			Term* term,
+			const Term* term,
 			bool rangeKnown,
 			const PrintSettings& printSettings);
 public:
   void prettyPrint(ostream& s,
 		   const PrintSettings& printSettings,
-		   Term* term,
+		   const Term* term,
 		   int requiredPrec,
 		   int leftCapture,
 		   const ConnectedComponent* leftCaptureComponent,
@@ -952,6 +955,7 @@ private:
 			      const PrintSettings& printSettings);
   static bool latexFancySpace(ostream& s, int spaceToken, const PrintSettings& printSettings);
   void latexPrintStructuredConstant(ostream& s, Symbol* symbol, const char* color, const PrintSettings& printSettings) const;
+  static void latexClearColor(ostream& s);
   //
   //	Member functions for Term* -> LaTeX pretty printer.
   //
@@ -1316,6 +1320,19 @@ MixfixModule::clearColor(ostream& s)
     {
       attributeUsed = false;
       s << Tty(Tty::RESET);
+    }
+}
+
+inline void
+MixfixModule::latexClearColor(ostream& s)
+{
+  if (*restoreColor != '\0')
+    {
+      //
+      //	If we are printing in color, reset the color to black.
+      //
+      restoreColor = "";
+      s << latexResetColor;
     }
 }
 

@@ -74,7 +74,7 @@ Interpreter::match(const Vector<Token>& bubble, bool withExtension, Int64 limit)
       if (condition.length() > 0)
 	{
 	  cout << " such that ";
-	  MixfixModule::printCondition(cout, condition);
+	  MixfixModule::printCondition(cout, condition, *this);
 	}
       cout << " ." << endl;
     }

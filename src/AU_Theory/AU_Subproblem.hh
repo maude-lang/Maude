@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ public:
 		      int index,
 		      int lowerBound,
 		      int upperBound,
-		      Sort* sort);
+		      const Sort* sort);
   void addNode(int layerNr,
 	       LocalBinding* difference,
 	       Subproblem* subproblem,
@@ -65,7 +65,7 @@ AU_Subproblem::addTopVariable(int layerNr,
 			      int index,
 			      int lowerBound,
 			      int upperBound,
-			      Sort* sort)
+			      const Sort* sort)
 {
   layers[layerNr].addTopVariable(index, lowerBound, upperBound, sort);
 }

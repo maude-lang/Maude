@@ -1,3 +1,35 @@
+2024-03-06  Steven Eker  <eker@pup>
+
+	* pointerMap.cc (PointerMap::PointerMap, PointerMap::setMap):
+	code cleaning
+	(PointerMap::getMap): code cleaning
+	(PointerMap::findEntry): code cleaning
+	(PointerMap::resize): code cleaning
+
+	* pointerMap.hh (class PointerMap): updated decls for
+	setMap(), getMap(), hash(), hash2(), findEntry(); struct Pair
+	now has const void* field from
+
+	* pointerMap.cc (PointerMap::hash, PointerMap::hash2): take
+	const arg
+	(PointerMap::setMap): take const from arg
+	(PointerMap::getMap): take const from arg
+	(PointerMap::findEntry): take const from arg
+
+2024-03-04  Steven Eker  <eker@pup>
+
+	* macros.hh: deleted typedef unsigned int Uint
+
+2024-03-01  Steven Eker  <eker@pup>
+
+	* tty.cc: deleted Tty::savedFlag
+
+	* tty.hh (Tty::blockEscapeSequences): deleted
+	(Tty::unblockEscapeSequences): deleted
+	(class Tty): deleted static data member savedFlag
+
+===================================Maude158===================================
+
 2024-02-14  Steven Eker  <eker@pup>
 
 	* checkedConstIterator.hh (Vector<T>::iterator::operator>): added

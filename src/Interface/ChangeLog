@@ -1,3 +1,9 @@
+2024-03-05  Steven Eker  <eker@pup>
+
+	* term.hh (class Term): make arguments() const
+
+===================================Maude158=========================================
+
 2024-01-19  Steven Eker  <eker@pup>
 
 	* dagNode.cc (DagNode::reducibleByVariantEquation): don't check

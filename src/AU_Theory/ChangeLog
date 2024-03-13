@@ -1,3 +1,22 @@
+2024-03-05  Steven Eker  <eker@pup>
+
+	* AU_Term.cc (AU_Term::arguments): made const
+
+	* AU_Term.hh (class AU_Term): made arguments() const
+
+	* AU_DagNode.cc (AU_DagNode::matchVariableWithExtension): get
+	rid of const_cast<>
+
+	* AU_Subproblem.hh (AU_Subproblem::addTopVariable): pass sort arg
+	as const
+
+	* AU_Layer.cc (AU_Layer::addTopVariable): pass sort arg as const
+
+	* AU_Layer.hh (class AU_Layer): made sort const in struct TopVariable;
+	updated decl for addTopVariable()
+
+===================================Maude158===========================================
+
 2024-01-16  Steven Eker  <eker@pup>
 
 	* AU_Symbol.cc (AU_Symbol::stackArguments): handle

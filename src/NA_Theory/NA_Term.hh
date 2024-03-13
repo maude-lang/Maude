@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ public:
   //	int compareArguments(const Term* other) const
   //	int compareArguments(const DagNode* other) const
   //
-  RawArgumentIterator* arguments();
+  RawArgumentIterator* arguments() const;
   void deepSelfDestruct();
   void findEagerVariables(bool atTop, NatSet& eagerVariables) const;
   void analyseConstraintPropagation(NatSet& BoundUniquely) const;

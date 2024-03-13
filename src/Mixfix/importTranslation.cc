@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -269,7 +269,7 @@ ImportTranslation::translateExpr(const CallStrategy* cs)
   //
   Vector<Term*> varBindings(strat->arity());
   int j = 0;
-  for (ArgumentIterator i(*(const_cast<Term*>(cs->getTerm()))); i.valid(); i.next(), ++j)
+  for (ArgumentIterator i(*(cs->getTerm())); i.valid(); i.next(), ++j)
     varBindings[j] = i.argument();
 
   StrategyExpression* instantiated =
@@ -320,7 +320,7 @@ ImportTranslation::translateTerm(const Term* term)
   //
   Vector<Term*> varBindings(symbol->arity());
   int j = 0;
-  for (ArgumentIterator i(*(const_cast<Term*>(term))); i.valid(); i.next(), ++j)
+  for (ArgumentIterator i(*term); i.valid(); i.next(), ++j)
     varBindings[j] = i.argument();
   //
   //	Now we can instantiate the toTerm on copies of these

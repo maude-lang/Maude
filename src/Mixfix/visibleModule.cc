@@ -623,9 +623,8 @@ VisibleModule::showPolymorphDecl(ostream& s, bool indent, int index) const
 void
 VisibleModule::showOps(ostream& s, bool indent, bool all) const
 {
-  int begin = all ? 0 : getNrImportedSymbols();
   int end = getNrUserSymbols();
-  for (int i = begin; i < end; i++)
+  for (int i = 0; i < end; ++i)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;

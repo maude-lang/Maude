@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #define _variableDagNode_hh_
 #include "dagNode.hh"
 #include "namedEntity.hh"
+#include "variableSymbol.hh"
 
 class VariableDagNode : public DagNode, public NamedEntity
 {
@@ -41,21 +42,12 @@ public:
   void overwriteWithClone(DagNode* old);
   DagNode* makeClone();
   DagNode* copyWithReplacement(int argIndex, DagNode* replacement);
-  DagNode* copyWithReplacement(Vector<RedexPosition>& redexStack,
-			       int first,
-			       int last);
+  DagNode* copyWithReplacement(Vector<RedexPosition>& redexStack, int first, int last);
   //
   //	Unification member functions.
   //
   ReturnResult computeBaseSortForGroundSubterms(bool warnAboutUnimplemented);
-  /*
-  bool computeSolvedForm2(DagNode* rhs,
-			  Substitution& solution,
-			  Subproblem*& returnedSubproblem,
-			  ExtensionInfo* extensionInfo);
-  */
   bool computeSolvedForm2(DagNode* rhs, UnificationContext& solution, PendingUnificationStack& pending);
-
   void insertVariables2(NatSet& occurs);
   DagNode* instantiate2(const Substitution& substitution, bool maintainInvariants);
   //
@@ -71,6 +63,7 @@ public:
   //	Functions specific to VariableDagNode.
   //  
   int getIndex() const;
+  VariableSymbol* symbol() const;
   VariableDagNode* lastVariableInChain(Substitution& solution);
 
 private:
@@ -93,6 +86,12 @@ VariableDagNode::VariableDagNode(Symbol* symbol, int name, int index)
     NamedEntity(name),
     index(index)
 {
+}
+
+inline VariableSymbol*
+VariableDagNode::symbol() const
+{
+  return safeCastNonNull<VariableSymbol*>(DagNode::symbol());
 }
 
 inline int

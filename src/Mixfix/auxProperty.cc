@@ -37,7 +37,7 @@ Token::skipSortName(const char* tokenString, bool& parameterized)
   //
   //	A sort name can be terminated by \0, `, `] `}
   //	If a legal sort name followed by a legal terminator is seen, the
-  //	addess of the first terminator charater is returned otherwise 0 is
+  //	addess of the first terminator character is returned otherwise 0 is
   //	returned.
   //	In the first case, parameterized is true iff the sort name contained `{
   //	In the second case, parameterized is undefined.

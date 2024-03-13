@@ -162,8 +162,7 @@ DivisionSymbol::makeRatDag(const mpz_class& nr, const mpz_class& dr)
 bool
 DivisionSymbol::isRat(const DagNode* dagNode) const
 {
-  Assert(this == static_cast<const Symbol*>(dagNode->symbol()),
-	 "bad symbol");
+  Assert(this == dagNode->symbol(), "bad symbol");
   const FreeDagNode* d = safeCast(const FreeDagNode*, dagNode);
   DagNode* d0 = d->getArgument(0);
   DagNode* d1 = d->getArgument(1); 
@@ -176,9 +175,8 @@ DivisionSymbol::isRat(const DagNode* dagNode) const
 const mpz_class&
 DivisionSymbol::getRat(const DagNode* dagNode, mpz_class& numerator) const
 {
-  Assert(this == static_cast<const Symbol*>(dagNode->symbol()),
-	 "bad symbol");
-    const FreeDagNode* d = safeCast(const FreeDagNode*, dagNode);
+  Assert(this == dagNode->symbol(), "bad symbol");
+  const FreeDagNode* d = safeCast(const FreeDagNode*, dagNode);
   DagNode* d0 = d->getArgument(0);
   if (d0->symbol() == minusSymbol)
     (void) minusSymbol->getNeg(d0, numerator);
@@ -203,10 +201,9 @@ DivisionSymbol::makeRatTerm(const mpz_class& nr, const mpz_class& dr)
 }
 
 bool
-DivisionSymbol::isRat(/* const */ Term* term) const
+DivisionSymbol::isRat(const Term* term) const
 {
-  Assert(this == static_cast<const Symbol*>(term->symbol()),
-	 "bad symbol");
+  Assert(this == term->symbol(), "bad symbol");
   ArgumentIterator i(*term);
   Term* t0 = i.argument();
   i.next();
@@ -218,10 +215,9 @@ DivisionSymbol::isRat(/* const */ Term* term) const
 
 
 const mpz_class&
-DivisionSymbol::getRat(/* const */ Term* term, mpz_class& numerator) const
+DivisionSymbol::getRat(const Term* term, mpz_class& numerator) const
 {
-  Assert(this == static_cast<const Symbol*>(term->symbol()),
-	 "bad symbol");
+  Assert(this == term->symbol(), "bad symbol");
   ArgumentIterator i(*term);
   Term* t0 = i.argument();
   if (t0->symbol() == minusSymbol)

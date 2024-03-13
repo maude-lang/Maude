@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@
 DagNode*
 MetaLevel::upQid(int id, PointerMap& qidMap)
 {
-  void* p = const_cast<void*>(static_cast<const void*>(Token::name(id)));
+  const void* p = Token::name(id);
   DagNode* d = static_cast<DagNode*>(qidMap.getMap(p));
-  if (d == 0)
+  if (d == nullptr)
     {
       d = new QuotedIdentifierDagNode(qidSymbol, Token::backQuoteSpecials(id));
       (void) qidMap.setMap(p, d);
@@ -259,7 +259,7 @@ MetaLevel::upTerm(const Term* term, MixfixModule* m, PointerMap& qidMap)
 		  }
 	      }
 	    args[0] = upQid(id, qidMap);
-	    ArgumentIterator a(*(const_cast<Term*>(term)));
+	    ArgumentIterator a(*term);
 	    if (nrArgs == 1)
 	      args[1] = upTerm(a.argument(), m, qidMap);
 	    else

@@ -1,3 +1,11 @@
+2024-03-05  Steven Eker  <eker@pup>
+
+	* CUI_Term.cc (CUI_Term::arguments): made const
+
+	* CUI_Term.hh (class CUI_Term): made arguments() const
+
+===================================Maude158===========================================
+
 2024-01-16  Steven Eker  <eker@pup>
 
 	* CUI_Symbol.cc (CUI_Symbol::stackArguments): handle

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2006 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 //
 #ifndef _subtermTask_hh_
 #define _subtermTask_hh_
-
+#include <memory>
 #include <vector>
 
 //	core class definitions
@@ -36,7 +36,6 @@
 #include "matchSearchState.hh"
 
 //	strategy language definitions
-#include "sharedValue.hh"
 #include "strategyLanguage.hh"
 #include "strategicTask.hh"
 #include "variableBindingsManager.hh"
@@ -61,7 +60,7 @@ public:
   //
   SubtermTask(StrategicSearch& searchObject,
 	      SubtermStrategy* strategy,
-	      SharedValue<MatchSearchState> searchState,
+	      shared_ptr<MatchSearchState> searchState,
 	      ExtensionInfo* extensionInfo,
 	      MatchSearchState::PositionIndex searchPosition,
 	      StrategyStackManager::StackId pending,
@@ -86,7 +85,7 @@ private:
 
   // The following 3 contain the information about where the main pattern has been found
   // (and allow to replace the main pattern match with the result)
-  SharedValue<MatchSearchState> searchState;
+  shared_ptr<MatchSearchState> searchState;
   ExtensionInfo* extensionInfo;
   MatchSearchState::PositionIndex searchIndex;
 

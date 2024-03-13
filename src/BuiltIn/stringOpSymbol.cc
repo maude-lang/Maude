@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -342,9 +342,9 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		  if (succSymbol->isNat(a1) && succSymbol->isNat(a2))
 		    {
 		      const mpz_class& n1 = succSymbol->getNat(a1);
-		      Uint index = n1.fits_uint_p() ? n1.get_ui() : UINT_MAX;
+		      unsigned long index = n1.fits_uint_p() ? n1.get_ui() : ULONG_MAX;
 		      const mpz_class& n2 = succSymbol->getNat(a2);
-		      Uint length = n2.fits_uint_p() ? n2.get_ui() : UINT_MAX;
+		      unsigned long length = n2.fits_uint_p() ? n2.get_ui() : ULONG_MAX;
 		      return rewriteToString(subject, context, substring(left, index, length));
 		    }
 		  break;
@@ -360,7 +360,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		      if (succSymbol->isNat(a2))
 			{
 			  const mpz_class& n2 = succSymbol->getNat(a2);
-			  Uint index = n2.fits_uint_p() ? n2.get_ui() : UINT_MAX;
+			  unsigned long index = n2.fits_uint_p() ? n2.get_ui() : ULONG_MAX;
 			  int r;
 			  switch (op)
 			    {

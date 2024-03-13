@@ -1,3 +1,35 @@
+2024-03-06  Steven Eker  <eker@pup>
+
+	* divisionSymbol.cc (DivisionSymbol::isRat): (both versions)
+	removed unneeded cast in Assert()
+	(DivisionSymbol::getRat) (both versions) ditto
+
+	* minusSymbol.cc (MinusSymbol::isNeg): (both versions) removed
+	unneeded cast in Assert()
+	(MinusSymbol::getNeg): (both versions) ditto
+	(MinusSymbol::getSignedInt64): ditto
+
+	* divisionSymbol.hh (class DivisionSymbol): updated decls for
+	Term* versions of isRat() and getRat()
+
+	* divisionSymbol.cc (DivisionSymbol::isRat): (Term* version)
+	made arg const
+	(DivisionSymbol::getRat): (Term* version) made arg const
+
+	* minusSymbol.hh (class MinusSymbol): updated decls for Term*
+	versions of isNet() and getNeg()
+
+	* minusSymbol.cc (MinusSymbol::isNeg): (Term* version) make arg const
+	(MinusSymbol::getNeg): (Term* version) make arg const
+
+2024-03-04  Steven Eker  <eker@pup>
+
+	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): use unsigned long rather
+	than Uint to correspond with GMP return type
+	(StringOpSymbol::eqRewrite): use ULONG_MAX rather than UINT max
+
+===================================Maude158===========================================
+
 2024-02-09  Steven Eker  <eker@pup>
 
 	* numberOpSymbol.cc (NumberOpSymbol::eqRewrite): use mpz_fits_ulong_p()

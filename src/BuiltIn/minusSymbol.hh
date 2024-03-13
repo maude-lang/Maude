@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,8 +46,8 @@ public:
   const mpz_class& getNeg(const DagNode* dagNode, mpz_class& result) const;
   DagNode* makeIntDag(const mpz_class& integer);
   Term* makeIntTerm(const mpz_class& integer);
-  bool isNeg(/* const */ Term* term) const;
-  const mpz_class& getNeg(/* const */ Term* term, mpz_class& result) const;
+  bool isNeg(const Term* term) const;
+  const mpz_class& getNeg(const Term* term, mpz_class& result) const;
   bool getSignedInt64(const DagNode* dagNode, Int64& value) const;
 };
 

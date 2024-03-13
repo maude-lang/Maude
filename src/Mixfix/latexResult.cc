@@ -253,7 +253,9 @@ MaudeLatexBuffer::generateSearchPath(const RewriteSequenceSearch* graph,
   //
   //	Print comment.
   //
-  output << "\\begin{comment}\n%\n%  " << command << " " << stateNr << " .\n%\n\\end{comment}\n";
+  startComment();
+  output << command << " " << stateNr;
+  endComment();
   //
   //	Print latex version of command.
   //
@@ -304,7 +306,9 @@ MaudeLatexBuffer::generateSearchPathLabels(const RewriteSequenceSearch* graph,
   //
   //	Print comment.
   //
-  output << "\\begin{comment}\n%\n%  show path labels " << stateNr << " .\n%\n\\end{comment}\n";
+  startComment();
+  output << "show path labels " << stateNr;
+  endComment();
   //
   //	Print latex version of command.
   //
@@ -334,7 +338,12 @@ MaudeLatexBuffer::generateSearchPathLabels(const RewriteSequenceSearch* graph,
 void
 MaudeLatexBuffer::generateSearchGraph(const RewriteSequenceSearch* graph, bool showCommand)
 {
-  output << "\\begin{comment}\n%\n%  show graph .\n%\n\\end{comment}\n";
+  //
+  //	Print comment.
+  //
+  startComment();
+  output << "show graph";
+  endComment();
   //
   //	Print latex version of command.
   //
