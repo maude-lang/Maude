@@ -387,7 +387,7 @@ MixfixModule::latexPrettyPrint(ostream& s,
 
  latexPrefix(s, needDisambig);
  bool printConceal = printSettings.concealedSymbol(symbol->id());
- if (si.symbolType.hasFlag(SymbolType::LATEX) && !printConceal)
+ if (si.symbolType.hasFlag(SymbolType::LATEX) && !printConceal && printSettings.getPrintFlag(PrintSettings::PRINT_LATEX))
    {
      //
      //	We don't put parentheses or sort disambiguation around user's latex code.

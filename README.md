@@ -8,6 +8,15 @@ Rewriting logic is a logic of concurrent change that can naturally deal with sta
 
 Maude supports in a systematic and efficient way logical reflection. This makes Maude remarkably extensible and powerful, supports an extensible algebra of module composition operations, and allows many advanced metaprogramming and metalanguage applications. Indeed, some of the most interesting applications of Maude are metalanguage applications, in which Maude is used to create executable environments for different logics, theorem provers, languages, and models of computation.
 
+## Maude 3.4
+
+* Pseudo-random number generator objects
+* Initial equality operator
+* Meta-print to string operator and message pair
+* LaTeX support
+* =># search type
+* Various optimizations
+* Many bug fixes
 
 ## Maude 3.3.1
 
@@ -50,8 +59,10 @@ Maude supports in a systematic and efficient way logical reflection. This makes 
 
 ## Documentation
 
-The Maude manual for Maude 3.2.1 is available in [PDF format](http://maude.cs.illinois.edu/w/images/b/bf/Maude-3.2.1-manual.pdf) and in [HTML](http://maude.lcc.uma.es/maude321-manual-html/maude-manual.html). 
-The source code for most of the examples used in the manual, together with the examples from the Maude book, are available [here](http://maude.cs.illinois.edu/w/images/b/bf/Maude-3.1-manual-book-examples.zip).
+The Maude manual for Maude 3.4 is available in [PDF format](http://maude.cs.illinois.edu/w/images/e/e9/Maude34manual.pdf)
+and in [HTML](https://maude.lcc.uma.es/maude-manual/). 
+The source code for most of the examples used in the manual, together with the examples from the Maude book,
+are available [here](http://maude.cs.illinois.edu/w/images/e/ef/Maude-3.4-manual-book-examples.zip).
 
 Additional information on background, applications, and previous versions is available at its [official web site](http://maude.cs.uiuc.edu). 
 
@@ -61,6 +72,6 @@ Report bugs to:		maude-bugs@maude.cs.uiuc.edu
 
 ## Copyright
 
-Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
 The Maude 3 interpreter is free software. See the file COPYING for copying permission.

@@ -1,3 +1,38 @@
+2024-03-15  Steven Eker  <eker@pup>
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateBanner): tweak
+	spacing
+
+	* banner.cc (printBanner): tweak spacing
+
+	* latexCommon.cc (MixfixModule::latexPrintBubble): use
+	restoreColor and latexClearColor() to fix lost color after
+	newline bug
+	(MixfixModule::latexPrintBubble): use \maudeHardSpace for '\s
+	for symmetry with format, even though it doesn't seem necessary
+
+2024-03-14  Steven Eker  <eker@pup>
+
+	* lexer.ll: move latex from <ID_MODE> to <INITIAL,ID_MODE>
+
+	* commands.yy (printOption): added latex option
+
+	* latexDagNodePrint.cc (MixfixModule::latexPrettyPrint):
+	only use latex attribue if the PRINT_LATEX is set
+
+	* latexTermPrint.cc (MixfixModule::latexPrettyPrint): only
+	use latex attribue if the PRINT_LATEX is set
+
+	* printSettings.hh (class PrintSettings): added PRINT_LATEX
+	and added it to DEFAULT_PRINT_FLAGS
+
+2024-03-13  Steven Eker  <eker@pup>
+
+	* latexCommon.cc (MixfixModule::latexFancySpace): update
+	comment to explain why we need restoreColor
+
+===================================Maude159===========================================
+
 2024-03-12  Steven Eker  <eker@pup>
 
 	* latexCommon.cc (MixfixModule::latexFancySpace): set

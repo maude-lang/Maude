@@ -138,6 +138,7 @@ bigBracket	(\\{bracketPrefix}[(){}])
 <INITIAL,ID_MODE>{
 memo					RETURN(KW_MEMO)
 format					RETURN(KW_FORMAT)
+latex					RETURN(KW_LATEX)
 }
 
 <INITIAL,CMD_MODE>{
@@ -344,7 +345,6 @@ strats					RETURN(KW_DSTRAT)		// declaration of a strategy only
 frozen					RETURN(KW_FROZEN)
 poly|polymorphic			RETURN(KW_POLY)
 ctor|constructor			RETURN(KW_CTOR)
-latex					RETURN(KW_LATEX)
 special					RETURN(KW_SPECIAL)
 config|configuration			RETURN(KW_CONFIG)
 obj|object				RETURN(KW_OBJ)

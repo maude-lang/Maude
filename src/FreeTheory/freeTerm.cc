@@ -164,8 +164,8 @@ FreeTerm::compareArguments(const Term* other) const
 {
   Assert(symbol() == other->symbol(), "symbols differ");
   int nrArgs = argArray.length();
-  Vector<Term*>& ta = (const_cast<FreeTerm*>(static_cast<const FreeTerm*>(other)))->argArray;
-  for (int i = 0; i < nrArgs; i++)
+  const Vector<Term*>& ta = safeCastNonNull<const FreeTerm*>(other)->argArray;
+  for (int i = 0; i < nrArgs; ++i)
     {
       int r = argArray[i]->compare(ta[i]);
       if (r != 0)
@@ -352,9 +352,8 @@ FreeTerm::earlyMatchFailOnInstanceOf(const Term* other) const
   if (symbol() != other->symbol())
     return other->stable();  // terms headed by free symbols are always stable
   int nrArgs = argArray.length();
-  Vector<Term*>& argArray2 =
-    const_cast<FreeTerm*>(static_cast<const FreeTerm*>(other))->argArray;
-  for (int i = 0; i < nrArgs; i++)
+  const Vector<Term*>& argArray2 = safeCastNonNull<const FreeTerm*>(other)->argArray;
+  for (int i = 0; i < nrArgs; ++i)
     {
       if (argArray[i]->earlyMatchFailOnInstanceOf(argArray2[i]))
 	return true;

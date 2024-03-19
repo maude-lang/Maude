@@ -295,7 +295,12 @@ MixfixModule::latexFancySpace(ostream& s, int spaceToken, const PrintSettings& p
 	  }
 	case 'n':
 	  {
-	    s << "\\maudeNewline" << restoreColor;  // a newline will lose the current color
+	    //
+	    //	\maudeNewline drops out of inline math mode to start a new paragraph and then restarts
+	    //	inline math mode, forgetting about any color change, so we need to remember and restore
+	    //	the current color.
+	    //
+	    s << "\\maudeNewline" << restoreColor;
 	    space = true;
 	    break;
 	  }
@@ -649,7 +654,12 @@ MixfixModule::latexPrintBubble(ostream& s, const Vector<int>& bubble)
 		{
 		case 'n':
 		  {
-		    s << "\\maudeNewline";
+		    //
+		    //	\maudeNewline drops out of inline math mode to start a new paragraph and then restarts
+		    //	inline math mode, forgetting about any color change, so we need to remember and restore
+		    //	the current color.
+		    //
+		    s << "\\maudeNewline" << restoreColor;
 		    needSpace = false;
 		    continue;
 		  }
@@ -661,7 +671,7 @@ MixfixModule::latexPrintBubble(ostream& s, const Vector<int>& bubble)
 		  }
 		case 's':
 		  {
-		    s << "\\maudeSpace";
+		    s << "\\maudeHardSpace";  // for symmetry with format but \maudeSpace also seems to work
 		    needSpace = false;
 		    continue;
 		  }
@@ -675,38 +685,38 @@ MixfixModule::latexPrintBubble(ostream& s, const Vector<int>& bubble)
 		  }
 		case 'r':
 		  {
-		    s << latexRed;
+		    s << (restoreColor = latexRed);
 		    continue;
 		  }
 		case 'g':
 		  {
-		    s << latexGreen;
+		    s << (restoreColor = latexGreen);
 		    continue;
 		  }
 		case 'b':
 		  {
-		    s << latexBlue;
+		    s << (restoreColor = latexBlue);
 		    continue;
 		  }
 		case 'c':
 		  {
-		    s << latexCyan;
+		    s << (restoreColor = latexCyan);
 		    continue;
 		  }
 		case 'm':
 		  {
-		    s << latexMagenta;
+		    s << (restoreColor = latexMagenta);
 		    continue;
 		  }
 		case 'y':
 		  {
-		    s << latexYellow;
+		    s << (restoreColor = latexYellow);
 		    continue;
 		  }
 		case 'p':
 		case 'o':
 		  {
-		    s << latexResetColor;
+		    latexClearColor(s);
 		    continue;
 		  }
 		}
@@ -761,4 +771,8 @@ MixfixModule::latexPrintBubble(ostream& s, const Vector<int>& bubble)
       s << latexRaw(code);
       needSpace = true;
     }
+  //
+  //	For cleanliness, but mostly to reset restoreColor if needed.
+  //
+  latexClearColor(s);
 }

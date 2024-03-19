@@ -1,0 +1,25 @@
+Alpha 159 release notes
+========================
+
+Bug fix
+========
+
+A bug where generating a newline in the output of loop mode reset the color
+to black in the LaTeX output. Illustrated by:
+
+mod FOO is
+  inc LOOP-MODE .
+  op s : -> State .
+  op start : -> System .
+  rl start => [nil, s, 'foo '\r 'bar '\n 'baz] .
+endm
+
+loop start .
+
+New feature
+============
+
+There is a print option
+  set print latex on/off .
+that controls whether latex attributes are used for generating
+latex for terms. Default is on. Requested by Paco.

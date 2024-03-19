@@ -22,7 +22,7 @@
 
 ***
 ***	Maude pseudo-random number generator external objects
-***	Version 3.4beta.
+***	Version 3.4.
 ***
 
 mod PRNG is

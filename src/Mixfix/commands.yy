@@ -615,6 +615,7 @@ printOption	:	KW_MIXFIX		{ $$ = PrintSettings::PRINT_MIXFIX; }
 		|	KW_LABEL KW_ATTRIBUTE	{ $$ = PrintSettings::PRINT_LABEL_ATTRIBUTE; }
 		|	KW_HOOKS 		{ $$ = PrintSettings::PRINT_HOOKS; }
 		|	KW_COMBINE KW_VARS	{ $$ = PrintSettings::PRINT_COMBINE_VARS; }
+		|	KW_LATEX   		{ $$ = PrintSettings::PRINT_LATEX; }
 		;
 
 traceOption	:				{ $$ = Interpreter::TRACE; }

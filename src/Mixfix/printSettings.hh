@@ -55,10 +55,11 @@ public:
      PRINT_RAT = 0x800,		// for rats
      PRINT_HOOKS = 0x1000,	// for built-ins
      PRINT_COMBINE_VARS = 0x2000,	// for variables
+     PRINT_LATEX = 0x4000,	// use latex attributes for latex output
      //
      //	Default settings for Maude interpreter.
      //
-     DEFAULT_PRINT_FLAGS = PRINT_FORMAT | PRINT_MIXFIX | PRINT_WITH_ALIASES | PRINT_FLAT | PRINT_NUMBER | PRINT_RAT | PRINT_HOOKS,
+     DEFAULT_PRINT_FLAGS = PRINT_FORMAT | PRINT_MIXFIX | PRINT_WITH_ALIASES | PRINT_FLAT | PRINT_NUMBER | PRINT_RAT | PRINT_HOOKS | PRINT_LATEX,
      //
      //	Turn off formatting where it could cause issues.
      //

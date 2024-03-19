@@ -1,3 +1,11 @@
+2024-03-14  Steven Eker  <eker@pup>
+
+	* freeTerm.cc (FreeTerm::compareArguments): (Term* version)
+	remove const_cast<>; use safeCastNonNull<>
+	(FreeTerm::earlyMatchFailOnInstanceOf): ditto
+
+===================================Maude158===========================================
+
 2024-03-12  Steven Eker  <eker@pup>
 
 	* freeDagNode.hh (class FreeDagNode): deleted commented out
