@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 //
 //	The caller gives each state an index, and for each new state, holds the
 //	index of the parent state or NONE if it is the initial state of the narrowing
-//	search. A states index is required to be larger than that of its parent.
+//	search. A state's index is required to be larger than that of its parent.
 //	When an existing state is ejected by the arrival of a new state that is more
 //	general, all of its descendents are likewise ejected, just as if the search
 //	that has already taken place had been pruned.
@@ -62,6 +62,7 @@ public:
 		DagNode*& state,
 		int& variableFamily,
 		Substitution*& accumulatedSubstitution) const;
+  int getRootIndex(int index) const;
   int getDepth(int index) const;
   void getHistory(int index,
 		  DagNode*& root,
@@ -80,38 +81,53 @@ public:
 			    Substitution*& nextStateAccumulatedSubstitution,
 			    int& nextStateVariableFamily,
 			    int& nextStateDepth);
+  //
+  //	Ensures all the states from the interesting state back to the root are never deleted.
+  //
+  void lockPathToCurrentState();
+  //
+  //	Check if a state we previously entered still exists.
+  //
+  bool exists(int index);
 
 private:
   struct RetainedState
   {
-    RetainedState(DagNode* state, int parentIndex, bool fold);
+    RetainedState(DagNode* state, int parentIndex, int rootIndex, int depth, bool fold);
     ~RetainedState();
     bool subsumes(DagNode* state) const;
 
     DagNode* const state;
-    Substitution* accumulatedSubstitution;
-    const int parentIndex;
-    int variableFamily;
-    int depth;
+    const int parentIndex;	// index of parent state
+    const int rootIndex;	// index of root state
+    const int depth;		// number of narrowing steps from root
+    int variableFamily = NONE;
+    Substitution* accumulatedSubstitution = nullptr;
     //
     //	Only used for folding.
     //
     Term* stateTerm;
     LhsAutomaton* matchingAutomaton;
-    int nrMatchingVariables;  // number of variables needed for matching; includes
-    			      // any abstraction variables
+    int nrMatchingVariables;  // number of variables needed for matching; includes any abstraction variables
     //
     //	Only used for history.
     //
-    Rule* rule;  // rule used for narrowing step that created this state
-    DagNode* narrowingContext;
-    DagNode* narrowingPosition;  //  pointer into old state
-    Substitution* unifier;  // variant unifier between parent state and rule lhs
+    Rule* rule = nullptr;  // rule used for narrowing step that created this state
+    DagNode* narrowingContext = nullptr;
+    DagNode* narrowingPosition = nullptr;  //  pointer into old state
+    Substitution* unifier = nullptr;  // variant unifier between parent state and rule lhs
     NarrowingVariableInfo variableInfo;  // variable info for the parent state part of the unifier
     //
     //	Only used for history if we are not folding.
     //
-    int nrDescendants;
+    int nrDescendants = 0;
+    //
+    //	The state is locked against deletion by any of the clean up mechanisms, but if it is subsumed
+    //	we don't want to consider it for subsuming a new state or being subsumed in the future.
+    //	An unexplored state can never be locked, and thus is deleted if subsumed.
+    //
+    bool locked = false;
+    bool subsumed = false;
   };
 
   typedef map<int, RetainedState*> RetainedStateMap;
@@ -122,8 +138,8 @@ private:
 
   const bool fold;  // we do folding to prune less general states
   const bool keepHistory;  // we keep the history of how we arrived at each state
-  RetainedStateMap mostGeneralSoFar;
   int currentStateIndex;
+  RetainedStateMap mostGeneralSoFar;
 };
 
 inline void
@@ -164,6 +180,14 @@ NarrowingFolder::getDepth(int index) const
   return i->second->depth;
 }
 
+inline int
+NarrowingFolder::getRootIndex(int index) const
+{
+  RetainedStateMap::const_iterator i = mostGeneralSoFar.find(index);
+  Assert(i != mostGeneralSoFar.end(), "couldn't find state with index " << index);
+  return i->second->rootIndex;
+}
+
 inline void
 NarrowingFolder::getHistory(int index,
 			    DagNode*& root,
@@ -188,6 +212,12 @@ NarrowingFolder::getHistory(int index,
   newDag = i->second->state;
   accumulatedSubstitution = i->second->accumulatedSubstitution;
   parentIndex = i->second->parentIndex;
+}
+
+inline bool
+NarrowingFolder::exists(int index)
+{
+  return  mostGeneralSoFar.find(index)!= mostGeneralSoFar.end();
 }
 
 #endif

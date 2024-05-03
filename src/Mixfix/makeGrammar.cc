@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,15 +48,17 @@ MixfixModule::makeGrammar(bool complexFlag)
   //	  fixed one-off:
   //	    -1,..., componentNonTerminalBase + 1
   //	  per component:
-  //	    componentNonTerminalBase,..., componentNonTerminalBase - NUMBER_OF_TYPES * #components + 1
+  //	    componentNonTerminalBase,..., componentNonTerminalBase - numberOfTypes * #components + 1
   //	  on demand:
-  //	    componentNonTerminalBase - NUMBER_OF_TYPES * #components,... downwards
+  //	    componentNonTerminalBase - numberOfTypes * #components,... downwards
   //
   int componentNonTerminalBase = complexFlag ? COMPLEX_BASE : SIMPLE_BASE;
-  int nextNonTerminal = componentNonTerminalBase - NUMBER_OF_TYPES * getConnectedComponents().length() + 1;
+  int numberOfTypes = complexFlag ? COMPLEX_NUMBER_OF_TYPES : SIMPLE_NUMBER_OF_TYPES;
+  int nextNonTerminal = componentNonTerminalBase - numberOfTypes * getConnectedComponents().length() + 1;
   parser = new MixfixParser(*this,
 			    complexFlag,
 			    componentNonTerminalBase,
+			    numberOfTypes,
 			    nextNonTerminal,
 			    2 * getSymbols().size());  // very rough estimate of number of tokens
   DebugInfo("new parser = " << parser << "  complexFlag = " << complexFlag <<
@@ -135,6 +137,13 @@ MixfixModule::makeComplexProductions()
 
   static Vector<int> rhs(3);
 
+  //
+  //	<search connective> ::= =>1
+  //	<search connective> ::= =>+
+  //	<search connective> ::= =>*
+  //	<search connective> ::= =>!
+  //	<search connective> ::= =>#
+  //
   rhs.resize(1);
   rhs[0] = arrowOne;
   parser->insertProduction(SEARCH_CONNECTIVE, rhs, 0, emptyGather,
@@ -152,7 +161,9 @@ MixfixModule::makeComplexProductions()
   rhs[0] = arrowHash;
   parser->insertProduction(SEARCH_CONNECTIVE, rhs, 0, emptyGather,
 			   MixfixParser::NOP, RewriteSequenceSearch::BRANCH);
-
+  //
+  //	<match command> ::= <match pair>
+  //
   rhs[0] = MATCH_PAIR;
   parser->insertProduction(MATCH_COMMAND, rhs, 0, gatherAny);
   //
@@ -162,10 +173,19 @@ MixfixModule::makeComplexProductions()
 
   rhs[0] = UNIFY_PAIR;
   parser->insertProduction(UNIFY_COMMAND, rhs, 0, gatherAny);
+  //
+  //	<search command> ::= <search pair>
+  //
   rhs[0] = SEARCH_PAIR;
   parser->insertProduction(SEARCH_COMMAND, rhs, 0, gatherAny);
+  //
+  //	<get variants command> ::= <term>
+  //
   rhs[0] = TERM;
   parser->insertProduction(GET_VARIANTS_COMMAND, rhs, 0, gatherAny);
+  //
+  //	<varint unify command> ::= <unify command>
+  //
   rhs[0] = UNIFY_COMMAND;
   parser->insertProduction(VARIANT_UNIFY_COMMAND, rhs, 0, gatherAny);
   //
@@ -173,26 +193,30 @@ MixfixModule::makeComplexProductions()
   //
   rhs[0] = MULTI_MATCH_COMMAND;
   parser->insertProduction(VARIANT_MATCH_COMMAND, rhs, 0, gatherAny);
-
+  //
+  //	<such that> ::= s.t.
+  //	<such that> ::= such that
+  //
   rhs[0] = suchThat;
   parser->insertProduction(SUCH_THAT, rhs, 0, emptyGather);
-
   rhs.resize(2);
   rhs[0] = such;
   rhs[1] = that;
   parser->insertProduction(SUCH_THAT, rhs, 0, emptyGather);
-
+  //
+  //	<match command> ::= <match pair> <such that> <condition>
+  //
   rhs.resize(3);
   rhs[0] = MATCH_PAIR;
   rhs[1] = SUCH_THAT;
   rhs[2] = CONDITION;
-  parser->insertProduction(MATCH_COMMAND, rhs, 0, gatherAnyAnyAny,
-			   MixfixParser::CONDITIONAL_COMMAND);
-
+  parser->insertProduction(MATCH_COMMAND, rhs, 0, gatherAnyAnyAny, MixfixParser::CONDITIONAL_COMMAND);
+  //
+  //	<search command> ::= <search pair> <such that> <rule condition>
+  //
   rhs[0] = SEARCH_PAIR;
   rhs[2] = RULE_CONDITION;
-  parser->insertProduction(SEARCH_COMMAND, rhs, 0, gatherAnyAnyAny,
-			   MixfixParser::CONDITIONAL_COMMAND);
+  parser->insertProduction(SEARCH_COMMAND, rhs, 0, gatherAnyAnyAny, MixfixParser::CONDITIONAL_COMMAND);
   //
   //	<unify command> ::= <unify pair> /\ <unify command>
   //
@@ -208,13 +232,15 @@ MixfixModule::makeComplexProductions()
   rhs[2] = MULTI_MATCH_COMMAND;
   parser->insertProduction(MULTI_MATCH_COMMAND, rhs, 0, gatherAnyAny, MixfixParser::PAIR_LIST);
 
+  //
+  //	<get variants command> ::= <term> such that <term_list> irreducible
+  //
   rhs.resize(4);
   rhs[0] = TERM;
   rhs[1] = SUCH_THAT;
   rhs[2] = TERM_LIST;
   rhs[3] = irreducible;
-  parser->insertProduction(GET_VARIANTS_COMMAND, rhs, 0, gatherAnyAnyAny,
-			   MixfixParser::MAKE_TERM_LIST);
+  parser->insertProduction(GET_VARIANTS_COMMAND, rhs, 0, gatherAnyAnyAny, MixfixParser::MAKE_TERM_LIST);
   //
   //	<variant unify command> ::= <unify command> <such that> <term list> irreducible
   //
@@ -223,8 +249,7 @@ MixfixModule::makeComplexProductions()
   rhs[1] = SUCH_THAT;
   rhs[2] = TERM_LIST;
   rhs[3] = irreducible;
-  parser->insertProduction(VARIANT_UNIFY_COMMAND, rhs, 0, gatherAnyAnyAny,
-			   MixfixParser::MAKE_TERM_LIST);
+  parser->insertProduction(VARIANT_UNIFY_COMMAND, rhs, 0, gatherAnyAnyAny, MixfixParser::MAKE_TERM_LIST);
   //
   //	<variant match command> ::= <multi-match command> <such that> <term list> irreducible
   //
@@ -233,10 +258,11 @@ MixfixModule::makeComplexProductions()
   rhs[1] = SUCH_THAT;
   rhs[2] = TERM_LIST;
   rhs[3] = irreducible;
-  parser->insertProduction(VARIANT_MATCH_COMMAND, rhs, 0, gatherAnyAnyAny,
-			   MixfixParser::MAKE_TERM_LIST);
+  parser->insertProduction(VARIANT_MATCH_COMMAND, rhs, 0, gatherAnyAnyAny, MixfixParser::MAKE_TERM_LIST);
   //
   //	Hetrogeneous term lists.
+  //	<term list> ::= <term>
+  //	<term list> ::= <term> , <term list>
   //
   rhs.resize(1);
   rhs[0] = TERM;
@@ -248,6 +274,8 @@ MixfixModule::makeComplexProductions()
   parser->insertProduction(TERM_LIST, rhs, PREFIX_GATHER, gatherPrefixPrefix, MixfixParser::MAKE_TERM_LIST);
   //
   //	Substitutions.
+  //	<substitution> ::= <assignment>
+  //	<substitution> ::= <assignment> , <substitution>
   //
   rhs.resize(1);
   rhs[0] = ASSIGNMENT;
@@ -622,35 +650,26 @@ MixfixModule::makeAttributeProductions()
   parser->insertProduction(ATTRIBUTE, rhs, 0, gatherAny, MixfixParser::MAKE_LABEL_ATTRIBUTE);
   rhs[0] = metadata;
   rhs[1] = STRING_NT;
-  parser->insertProduction(ATTRIBUTE, rhs, 0, gatherAny,
-			   MixfixParser::MAKE_METADATA_ATTRIBUTE);
+  parser->insertProduction(ATTRIBUTE, rhs, 0, gatherAny, MixfixParser::MAKE_METADATA_ATTRIBUTE);
   rhs[0] = print;
   rhs[1] = PRINT_LIST;
-  parser->insertProduction(ATTRIBUTE, rhs, 0, gatherAny,
-			   MixfixParser::MAKE_PRINT_ATTRIBUTE);
+  parser->insertProduction(ATTRIBUTE, rhs, 0, gatherAny, MixfixParser::MAKE_PRINT_ATTRIBUTE);
 
   rhs.resize(1);
-  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
-			   MixfixParser::MAKE_PRINT_ATTRIBUTE);
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_PRINT_ATTRIBUTE);
 
   rhs[0] = nonexec;
-  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
-			   MixfixParser::MAKE_NONEXEC_ATTRIBUTE);
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_NONEXEC_ATTRIBUTE);
   rhs[0] = otherwise;
-  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
-			   MixfixParser::MAKE_OWISE_ATTRIBUTE);
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_OWISE_ATTRIBUTE);
   rhs[0] = owise;
-  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
-			   MixfixParser::MAKE_OWISE_ATTRIBUTE);
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_OWISE_ATTRIBUTE);
   rhs[0] = variant;
-  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
-			   MixfixParser::MAKE_VARIANT_ATTRIBUTE);
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_VARIANT_ATTRIBUTE);
   rhs[0] = narrowing;
-  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
-			   MixfixParser::MAKE_NARROWING_ATTRIBUTE);
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_NARROWING_ATTRIBUTE);
   rhs[0] = dnt;
-  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather,
-			   MixfixParser::MAKE_DNT_ATTRIBUTE);
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_DNT_ATTRIBUTE);
   //
   //	Print items.
   //
@@ -856,8 +875,8 @@ MixfixModule::makeComponentProductions()
   rhsList[1] = comma;
 
   const Vector<ConnectedComponent*>& components = getConnectedComponents();
-  int nrComponents = components.length();
-  for (int i = 0; i < nrComponents; i++)
+  Index nrComponents = components.size();
+  for (Index i = 0; i < nrComponents; ++i)
     {
       int termNt = nonTerminal(i, TERM_TYPE);
       int sortNt = nonTerminal(i, SORT_TYPE);
@@ -962,17 +981,39 @@ MixfixModule::makeComponentProductions()
       if (parser->isComplex())
 	{
 	  //
-	  //	Syntax for match and search pairs, assignments:
-	  //	<MATCH_PAIR> ::= <FooTerm> <=? <FooTerm>
-	  //	<SEARCH_PAIR> ::= <FooTerm> <SEARCH_CONNECTIVE> <FooTerm>
-	  //	<ASSIGNMENT> ::= <FooTerm> <- <FooTerm>
+	  //	Syntax for term disjunctions:
+	  //	<FooTermDisjunction> ::= <FooTerm>
+	  //	<FooTermDisjunction> ::= <FooTerm> \/ <FooTermDisjunction>
 	  //
-	  rhsPair[1] = matches;
-	  parser->insertProduction(MATCH_PAIR, rhsPair, 0, gatherAnyAny);
-	  rhsPair[1] = unifies;
-	  parser->insertProduction(UNIFY_PAIR, rhsPair, 0, gatherAnyAny);
+	  static Vector<int> rhsDisjunct(3);
+	  int termDisjunctionNt = nonTerminal(i, TERM_DISJUNCTION_TYPE);
+	  rhsOne[0] = termNt;
+	  parser->insertProduction(termDisjunctionNt, rhsOne, PREFIX_GATHER, gatherAny, MixfixParser::PASS_THRU);
+	  rhsDisjunct[0] = termNt;
+	  rhsDisjunct[1] = vee;
+	  rhsDisjunct[2] = termDisjunctionNt;
+	  parser->insertProduction(termDisjunctionNt, rhsDisjunct, PREFIX_GATHER, gatherPrefixPrefix,
+				   MixfixParser::MAKE_TERM_DISJUNCTION);
+	  //
+	  //	<SEARCH_PAIR> ::= <FooTermDisjuncion> <SEARCH_CONNECTIVE> <FooTerm>
+	  //
+	  rhsPair[0] = termDisjunctionNt;
 	  rhsPair[1] = SEARCH_CONNECTIVE;
 	  parser->insertProduction(SEARCH_PAIR, rhsPair, 0, gatherAnyAnyAny);
+	  //
+	  //	<MATCH_PAIR> ::= <FooTerm> <=? <FooTerm>
+	  //
+	  rhsPair[0] = termNt;
+	  rhsPair[1] = matches;
+	  parser->insertProduction(MATCH_PAIR, rhsPair, 0, gatherAnyAny);
+	  //
+	  //	<unification pair> ::= <FooTerm> =? <FooTerm>
+	  //
+	  rhsPair[1] = unifies;
+	  parser->insertProduction(UNIFY_PAIR, rhsPair, 0, gatherAnyAny);
+	  //
+	  //	<assignment> ::= <FooTerm> <- <FooTerm>
+	  //
 	  rhsPair[1] = assignment;
 	  Vector<int> gather(2);
 	  gather[0] = ASSIGNMENT_PREC;

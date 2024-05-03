@@ -1,3 +1,17 @@
+2024-04-10  Steven Eker  <eker@pup>
+
+	* timeActions.cc (TimeManagerSymbol::getTimeSinceEpoch): use
+	double for tv_sec on platforms where long is less than 8 bytes
+
+2024-04-08  Steven Eker  <eker@pup>
+
+	* timeActions.cc (TimeManagerSymbol::getTimeSinceEpoch): put
+	timeValue.tv_sec into an Index variable so that the mpz_class
+	constructor is defined for 32-bit targets; this will cause a
+	problem for 32-bit platforms in 2038 if they are still supported
+
+===================================Maude160===========================================
+
 2024-01-22  Steven Eker  <eker@pup>
 
 	* directoryActions.cc (DirectoryManagerSymbol::getDirectoryEntry):

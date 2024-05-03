@@ -3,20 +3,23 @@ TESTS = \
 	int \
 	rat \
 	string \
-	counters
+	counters \
+	stringOps
 
 MAUDE_FILES = \
 	nat.maude \
 	int.maude \
 	rat.maude \
 	string.maude \
-	counters.maude
+	counters.maude \
+	stringOps.maude
 
 RESULT_FILES = \
 	nat.expected \
 	int.expected \
 	rat.expected \
 	string.expected \
-	counters.expected
+	counters.expected \
+	stringOps.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

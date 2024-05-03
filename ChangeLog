@@ -1,6 +1,27 @@
+2024-04-16  Steven Eker  <eker@pup>
+
+	* tests/BuiltIn/stringOps.maude: added
+
+2024-04-08  Steven Eker  <eker@pup>
+
+	* tests/Misc/initialEqualityPredicate.maude: added more examples
+
+2024-04-01  Steven Eker  <eker@pup>
+
+	* INSTAL: remove refs to gmp-6.2.1
+
+	* tests/ResolvedBugs/stringToRatConversionMarch2024.maude: added
+
+2024-03-19  Steven Eker  <eker@pup>
+
+	* INSTALL: update GMP section on the register x18 issue
+
+==================================Maude160===========================================
+
 2024-03-19  Steven Eker  <eker@pup>
 
 	* README.md: updated web links
+
 
 2024-03-13  Steven Eker  <eker@pup>
 

@@ -1,0 +1,69 @@
+set show timing off .
+set show advisories off .
+
+select STRING-OPS .
+
+red isControl("\n") .
+red isControl("a") .
+
+red isPrintable("a") .
+red isPrintable("\n") .
+
+red isWhiteSpace("\n") .
+red isWhiteSpace("2") .
+
+red isBlank("\t") .
+red isBlank("\n") .
+
+red isGraphic("a") .
+red isGraphic(" ") .
+
+red isPunctuation(";") .
+red isPunctuation("a") .
+
+red isAlphanumeric("a") .
+red isAlphanumeric("3") .
+red isAlphanumeric("!") .
+red isAlphanumeric("\n") .
+red isAlphanumeric("word") .
+
+red isAlphabetic("a") .
+red isAlphabetic("3") .
+red isAlphabetic("!") .
+
+red isUppercase("a") .
+red isUppercase("A") .
+red isUppercase("4") .
+
+red isLowercase("a") .
+red isLowercase("A") .
+red isLowercase("4") .
+
+red isDigit("A") .
+red isDigit("4") .
+
+red isHexadecimalDigit("A") .
+red isHexadecimalDigit("4") .
+red isHexadecimalDigit("G") .
+
+red startsWith("Foo foo", "Foo") .
+red startsWith("Foo foo", "Bar") .
+red startsWith("Foo foo", "BarBarBar") .
+
+red endsWith("Foo foo", "foo") .
+red endsWith("Foo foo", "Bar") .
+red endsWith("Foo foo", "BarBarBar") .
+
+red trimStart(" \nFoo\n ") .
+red trimStart("BarFoo\n ") .
+red trimStart("\t\t \f\r  \n ") .
+
+red trimEnd(" \nFoo\n ") .
+red trimEnd(" \nFooBar") .
+red trimEnd("\t\t \f\r  \n ") .
+
+red trim(" \nFoo\n ") .
+red trim("Foo\n ") .
+red trim(" \nFoo") .
+red trim("FooBar") .
+red trim("\t\t \f\r  \n ") .

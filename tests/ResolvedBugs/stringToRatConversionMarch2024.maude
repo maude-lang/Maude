@@ -1,0 +1,14 @@
+set show timing off .
+set show advisories off .
+
+***
+***	Test for bug where certain strings did not convert.
+***
+
+select CONVERSION .
+
+red rat("-0", 10) .
+
+red rat("0/1", 10) .
+
+red rat("-0/1", 10) .

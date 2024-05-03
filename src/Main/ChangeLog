@@ -1,10 +1,26 @@
+2024-04-16  Steven Eker  <eker@pup>
+
+	* prelude.maude: beginsWith hook to startsWith; added
+	character class tests to fmod STRING-OPS
+
+2024-04-15  Steven Eker  <eker@pup>
+
+	* prelude.maude: added fmod STRING-OPS
+
+2024-04-12  Steven Eker  <eker@pup>
+
+	* maude.sty: added \maudeDisjunction
+	use \backslash rather than \textbackslash in ASCII mode
+
+===================================Maude160===========================================
+
 2024-03-11  Steven Eker  <eker@pup>
 
 	* maude.sty: added \maudeShowSpace
 
 2024-02-20  Steven Eker  <eker@pup>
 
-	* maude.sty: adjust the spacing around, and hieght of * in
+	* maude.sty: adjust the spacing around, and height of * in
 	\maudeRenaming
 
 ===================================Maude157===========================================

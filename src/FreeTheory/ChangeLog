@@ -1,3 +1,26 @@
+2024-03-20  Steven Eker  <eker@pup>
+
+	* freeSymbol.cc (FreeSymbol::eqRewrite)
+	(FreeSymbol::computeBaseSort)
+	(FreeSymbol::normalizeAndComputeTrueSort)
+	(FreeSymbol::stackArguments, FreeSymbol::termify)
+	(FreeSymbol::computeGeneralizedSort)
+	(FreeSymbol::determineGround)
+	(FreeSymbol::computeGeneralizedSort2, FreeSymbol::makeCanonical)
+	(FreeSymbol::makeCanonicalCopy): use DagNode* const*
+
+	* freeTerm.cc (FreeTerm::compareArguments)
+	(FreeTerm::partialCompareArguments): use DagNode* const*
+
+	* freeDagNode.hh (FreeDagNode::argArray): split into const and
+	non-const versions
+
+	* freeDagArgumentIterator.hh (class FreeDagArgumentIterator): use
+	pointer to constant point to DagNode
+	(FreeDagArgumentIterator::FreeDagArgumentIterator): updated
+
+===================================Maude160===========================================
+
 2024-03-14  Steven Eker  <eker@pup>
 
 	* freeTerm.cc (FreeTerm::compareArguments): (Term* version)

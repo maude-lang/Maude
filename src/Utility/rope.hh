@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -173,17 +173,17 @@ public:
   bool operator==(const const_iterator& other) const;
   bool operator!=(const const_iterator& other) const;
   const_reference operator*() const;
-  //const_pointer operator->() const;
+  const_pointer operator->() const;
   //
   //	Forward iterator stuff.
   //
   const_iterator& operator++();
-  //const_iterator operator++(int);
+  const_iterator operator++(int);
   //
   //	Bidirectional iterator stuff.
   //
   const_iterator& operator--();
-  //const_iterator operator--(int);
+  const_iterator operator--(int);
   //
   //	Random access iterator stuff.
   //
@@ -192,7 +192,7 @@ public:
   const_iterator& operator-=(difference_type delta);
   const_iterator operator-(difference_type delta) const;
   difference_type operator-(const const_iterator& other) const;
-  //const_reference operator[](difference_type i) const;
+  const_reference operator[](difference_type n) const;
   bool operator<(const const_iterator& other) const;
 
 private:
@@ -354,6 +354,41 @@ inline Rope::const_iterator
 Rope::end() const
 {
   return const_iterator(this);
+}
+
+/*
+ *	Rope::const_iterator
+ */
+
+inline
+Rope::const_iterator
+Rope::const_iterator::operator++(int)
+{
+  const_iterator dup(*this);
+  operator++();
+  return dup;
+}
+
+inline
+Rope::const_iterator
+Rope::const_iterator::operator--(int)
+{
+  const_iterator dup(*this);
+  operator--();
+  return dup;
+}
+
+inline Rope::const_iterator::const_reference
+Rope::const_iterator::operator[](difference_type n) const
+{
+  return *(operator+(n));
+}
+
+inline Rope::const_iterator::const_pointer
+Rope::const_iterator::operator->() const
+{
+  Assert(index < END_MARKER, "trying to dereference an end iterator, index = " << index);
+  return &(stackPtr->ptr->leaf[index]);
 }
 
 inline Rope::const_iterator::difference_type

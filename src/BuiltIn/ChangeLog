@@ -1,3 +1,32 @@
+2024-04-16  Steven Eker  <eker@pup>
+
+	* stringOpSymbol.cc (StringOpSymbol::attachData): use BIND_OP3()
+	(StringOpSymbol::getDataAttachments): use CODE_CASE3()
+	(StringOpSymbol::eqRewrite): use CODE3()
+	(StringOpSymbol::getDataAttachments): beginsWith -> startsWith
+	(StringOpSymbol::eqRewrite): beginsWith -> startsWith
+	(StringOpSymbol::eqRewrite): goto fail on bad string op
+	(StringOpSymbol::eqRewrite): static_cast<unsigned char> before calling
+	isspace()
+	(StringOpSymbol::getDataAttachments): added character tests
+	(StringOpSymbol::eqRewrite): added character tests
+
+2024-04-15  Steven Eker  <eker@pup>
+
+	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): added trim
+	functions and reorganized switch statement
+	(StringOpSymbol::eqRewrite): use Rope::const_iterator rather than
+	operator[] to avoid O(n log n) time to trim ropes
+	(StringOpSymbol::eqRewrite): added beginsWith, endsWith
+	(StringOpSymbol::getDataAttachments): support new functions
+
+2024-03-29  Steven Eker  <eker@pup>
+
+	* stringOpSymbol.cc (StringOpSymbol::ropeToNumber): allow things
+	like -0, 0/1, -0/2
+
+===================================Maude160===========================================
+
 2024-03-06  Steven Eker  <eker@pup>
 
 	* divisionSymbol.cc (DivisionSymbol::isRat): (both versions)

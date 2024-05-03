@@ -128,7 +128,8 @@
   MACRO(amatchrew, "amatchrew")
   MACRO(by, "by")
   MACRO(irreducible, "irreducible")
-  MACRO(ellipsis, "...");
+  MACRO(ellipsis, "...")
+  MACRO(vee, "\\/")
     //
     //	Special hook identifier tokens.
     //

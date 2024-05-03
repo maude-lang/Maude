@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,12 +50,18 @@ InterpreterManagerSymbol::makeNarrowingSequenceSearch3(ImportModule* m,
 
 	  if (fold)
 	    variantFlags |= NarrowingSequenceSearch3::FOLD;
-	  return new NarrowingSequenceSearch3(subjectContext,
-					      searchType,
-					      goal,
-					      maxDepth,
-					      new FreshVariableSource(m, 0),
-					      variantFlags);
+	  Vector<DagNode*> startStates;
+	  NarrowingSequenceSearch3* nss = new NarrowingSequenceSearch3(subjectContext,
+								       startStates,
+								       searchType,
+								       goal,
+								       maxDepth,
+								       new FreshVariableSource(m, 0),
+								       variantFlags);
+	  if (nss->problemOK())
+	    return nss;
+	  else
+	    delete nss;
 	}
     }
   return 0;
@@ -215,9 +221,10 @@ InterpreterManagerSymbol::getNarrowingSearchResult(FreeDagNode* message,
 		//
 		DagNode* stateDag;
 		int stateVariableFamily;
+		DagNode* dummy;
 		Substitution* accumulatedSubstitution;
 
-		state->getStateInfo(stateDag, stateVariableFamily, accumulatedSubstitution);
+		state->getStateInfo(stateDag, stateVariableFamily, dummy, accumulatedSubstitution);
 		args[3] = metaLevel->upDagNode(stateDag, m, qidMap, dagNodeMap);
 		args[4] = metaLevel->upType(stateDag->getSort(), qidMap);
 		args[5] = metaLevel->upSubstitution(*accumulatedSubstitution,

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,8 +29,9 @@
 #include "narrowingFolder.hh"
 #include "narrowingSearchState3.hh"
 #include "dagRoot.hh"
+#include "rewritingContext.hh"
 
-class NarrowingSequenceSearch3 : public SequenceSearch
+class NarrowingSequenceSearch3 : public SequenceSearch, private SimpleRootContainer
 {
   NO_COPYING(NarrowingSequenceSearch3);
 
@@ -40,17 +41,39 @@ public:
   //
   enum Flags
     {
-     FOLD = 0x2000,
-     KEEP_HISTORY = 0x4000,
+     //
+     //	Fold using matching.
+     //
+     FOLD = 0x10000,
+     //
+     //	Fold using variant subsumption (to be implemented).
+     //
+     VFOLD = 0x20000,
+     //
+     //	Keep the history of the current path. States can still be deleted once they are no longer on the
+     //	current path, have no live descendents, and aren't needed for folding. This is intended for the
+     //	metalevel where one cannot revisit old results without redoing the whole computation.
+     //
+     KEEP_HISTORY = 0x40000,
+     //
+     //	Keep the history of the path to every state (subsumed or otherwise) that provided a unifier with goal.
+     //	Potentially very expensive in terms of memory. This is intended for the object level where the
+     //	user can ask for the path to any state that yielded a unifier (to be implemented).
+     //
+     KEEP_PATHS = 0x80000,
+     //
+     //	This flag is just maintained as state information for users
+     //
+     INVARIANT = 0x100000,
     };
-
   //
-  //	We take responsibility for protecting goal and deleting initial and freshVariableGenerator.
+  //	We take responsibility for protecting startStates and goal and deleting initial and freshVariableGenerator.
   //
   NarrowingSequenceSearch3(RewritingContext* initial,
+			   const Vector<DagNode*>& startStates,
 			   SearchType searchType,
 			   DagNode* goal,
-			   int maxDepth,
+			   int maxDepth,  // NONE = unbounded
 			   FreshVariableGenerator* freshVariableGenerator,
 			   int variantFlags);
   ~NarrowingSequenceSearch3();
@@ -64,7 +87,10 @@ public:
   //
   //	Get information about current state.
   //
-  void getStateInfo(DagNode*& stateDag, int& variableFamily, Substitution*& accumulatedSubstitution) const;
+  void getStateInfo(DagNode*& stateDag,
+		    int& variableFamily,
+		    DagNode*& initialStateDag,
+		    Substitution*& accumulatedSubstitution) const;
   void getExtraStateInfo(int& index, int& depth) const;
   //
   //	Get information about some state in the history.
@@ -88,8 +114,22 @@ public:
 
   RewritingContext* getContext() const;
   bool isIncomplete() const;
+  int getNrInitialStates() const;
+  int getVariantFlags() const;
+  bool problemOK() const;
 
 private:
+  //
+  //	If we have multiple state states, we need one of these structs for each such state.
+  //
+  struct InitialState
+  {
+    DagNode* state;
+    NarrowingVariableInfo varInfo;
+  };
+
+  bool handleInitialState(DagNode* dagToNarrow, NarrowingVariableInfo& varInfo);
+  void markReachableNodes();
   int findNextInterestingState();
   bool findNextNormalForm();
   //
@@ -97,17 +137,23 @@ private:
   //
   RewritingContext* initial;
   DagRoot goal;
+  int nrInitialStatesToTry;
   const int maxDepth;
-  bool needToTryInitialState;
   const bool normalFormNeeded;
+  const bool termDisjunction;
   FreshVariableGenerator* freshVariableGenerator;
   const int variantFlags;
+  Vector <InitialState> initialStates;
   NarrowingFolder stateCollection;
   //
   //	Maps variables occurring in initial state which will be the
   //	from variables for the accumulated substitution.
   //
   NarrowingVariableInfo initialVariableInfo;
+  //
+  //	Used to temporarily protect the range of a substitution from the garbage collector.
+  //
+  Substitution* protectedSubstitution;
   //
   //	Pairing symbol for variant unification of state vs pattern.
   //
@@ -132,7 +178,14 @@ private:
   int variableFamilyInUnifier;
 
   bool incompleteFlag;
+  bool problemOkay;
 };
+
+inline bool
+NarrowingSequenceSearch3::problemOK() const
+{
+  return problemOkay;
+}
 
 inline const Vector<DagNode*>*
 NarrowingSequenceSearch3::getUnifier() const
@@ -149,13 +202,18 @@ NarrowingSequenceSearch3::getUnifierVariableInfo() const
 inline const NarrowingVariableInfo&
 NarrowingSequenceSearch3::getInitialVariableInfo() const
 {
-  return initialVariableInfo;
+  return termDisjunction ? initialStates[stateCollection.getRootIndex(nextInterestingState)].varInfo : initialVariableInfo;
 }
 
 inline void
-NarrowingSequenceSearch3::getStateInfo(DagNode*& stateDag, int& variableFamily, Substitution*& accumulatedSubstitution) const
+NarrowingSequenceSearch3::getStateInfo(DagNode*& stateDag,
+				       int& variableFamily,
+				       DagNode*& initialStateDag,
+				       Substitution*& accumulatedSubstitution) const
 {
   stateCollection.getState(nextInterestingState, stateDag, variableFamily, accumulatedSubstitution);
+  
+  initialStateDag = termDisjunction ? initialStates[stateCollection.getRootIndex(nextInterestingState)].state : initial->root();
 }
 
 inline void
@@ -208,6 +266,18 @@ NarrowingSequenceSearch3::isIncomplete() const
   //	Returns true if any incompleteness has been encountered so far.
   //
   return incompleteFlag;
+}
+
+inline int
+NarrowingSequenceSearch3::getNrInitialStates() const
+{
+  return termDisjunction ? initialStates.size() : 1;
+}
+
+inline int
+NarrowingSequenceSearch3::getVariantFlags() const
+{
+  return variantFlags;
 }
 
 #endif

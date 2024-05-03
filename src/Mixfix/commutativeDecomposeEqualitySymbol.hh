@@ -26,6 +26,7 @@
 //
 #ifndef _commutativeDecomposeEqualitySymbol_hh_
 #define _commutativeDecomposeEqualitySymbol_hh_
+#include <set>
 #include "CUI_Symbol.hh"
 #include "cachedDag.hh"
 
@@ -55,13 +56,40 @@ public:
   bool domainSortAlwaysLeqThan(Sort* sort, int argNr);
 
 private:
-  DagNode* decompose(MixfixModule* m, DagNode* l, DagNode* r);
+  typedef multiset<DagNode*, DagNode::LessThan> DagNodeMultiset;
+
+  static bool isEquationallyStable(Symbol* s);
   static bool hasImmediateSubterm(DagNode* bigger, DagNode* smaller);
+  static DagNodeMultiset makeMultiset(const Vector<DagNode*>& args, Index start, Index end);
+  static DagNodeMultiset makeMultisetFromArguments(DagNode* d);
+  DagNode* decompose(DagNode* l, DagNode* r);
+  DagNode* associativeDecompose(AU_Symbol* f, DagNode* l, DagNode* r);
+  DagNode* acDecompose(ACU_Symbol* f, DagNode* l, DagNode* r);
+  bool acProvablyUnequal(DagNodeMultiset& leftMultiset, DagNodeMultiset& rightMultiset);
+  bool equationallyStableOrGround(DagNodeMultiset& dagMultiset);
 
   Symbol* conjunctionSymbol;
   Symbol* disjunctionSymbol;
   CachedDag equalTerm;
   CachedDag notEqualTerm;
 };
+
+inline CommutativeDecomposeEqualitySymbol::DagNodeMultiset
+CommutativeDecomposeEqualitySymbol::makeMultiset(const Vector<DagNode*>& args, Index start, Index end)
+{
+  DagNodeMultiset ms;
+  for (Index i = start; i <= end; ++i)
+    ms.insert(args[i]);
+  return ms;
+}
+
+inline CommutativeDecomposeEqualitySymbol::DagNodeMultiset
+CommutativeDecomposeEqualitySymbol::makeMultisetFromArguments(DagNode* d)
+{
+  DagNodeMultiset ms;
+  for (DagArgumentIterator i(d); i.valid(); i.next())
+    ms.insert(i.argument());
+  return ms;
+}
 
 #endif

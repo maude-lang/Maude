@@ -1,0 +1,13 @@
+==========================================
+reduce in CONVERSION : rat("-0", 10) .
+rewrites: 1
+result Zero: 0
+==========================================
+reduce in CONVERSION : rat("0/1", 10) .
+rewrites: 1
+result Zero: 0
+==========================================
+reduce in CONVERSION : rat("-0/1", 10) .
+rewrites: 1
+result Zero: 0
+Bye.

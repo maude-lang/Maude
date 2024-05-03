@@ -76,7 +76,7 @@ StringOpSymbol::attachData(const Vector<Sort*>& opDeclaration,
 			   const char* purpose,
 			   const Vector<const char*>& data)
 {
-  BIND_OP(purpose, StringOpSymbol, op, data);
+  BIND_OP3(purpose, StringOpSymbol, op, data);
   return FreeSymbol::attachData(opDeclaration, purpose, data);
 }
 
@@ -131,25 +131,44 @@ StringOpSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
   const char*& d = data[nrDataAttachments][0];
   switch (op)
     {
-    CODE_CASE(d, 'f', 'l', "float")
-    CODE_CASE(d, 'l', 'e', "length")
-    CODE_CASE(d, 'a', 's', "ascii")
-    CODE_CASE(d, 'u', 'p', "upperCase")
-    CODE_CASE(d, 'l', 'o', "lowerCase")
+    CODE_CASE3(d, 'f', 'l', 'o', "float")
+    CODE_CASE3(d, 'l', 'e', 'n', "length")
+    CODE_CASE3(d, 'a', 's', 'c', "ascii")
+    CODE_CASE3(d, 'u', 'p', 'p', "upperCase")
+    CODE_CASE3(d, 'l', 'o', 'w', "lowerCase")
     CODE_CASE(d, '+', 0, "+")
     CODE_CASE(d, '<', 0, "<")
     CODE_CASE(d, '<', '=', "<=")
     CODE_CASE(d, '>', 0, ">")
     CODE_CASE(d, '>', '=', ">=")
-    CODE_CASE(d, 'r', 'a', "rat")
-    CODE_CASE(d, 's', 'u', "substr")
-    CODE_CASE(d, 'f', 'i', "find")
-    CODE_CASE(d, 'r', 'f', "rfind")
-    CODE_CASE(d, 's', 't', "string")
-    CODE_CASE(d, 'd', 'e', "decFloat")
-    CODE_CASE(d, 'c', 'h', "char")
+    CODE_CASE3(d, 'r', 'a', 't', "rat")
+    CODE_CASE3(d, 's', 'u', 'b', "substr")
+    CODE_CASE3(d, 'f', 'i', 'n', "find")
+    CODE_CASE3(d, 'r', 'f', 'i', "rfind")
+    CODE_CASE3(d, 's', 't', 'r', "string")
+    CODE_CASE3(d, 'd', 'e', 'c', "decFloat")
+    CODE_CASE3(d, 'c', 'h', 'a', "char")
+
+    CODE_CASE3(d, 'c', 'n', 't', "cntrl")
+    CODE_CASE3(d, 'p', 'r', 'i', "print")
+    CODE_CASE3(d, 's', 'p', 'a', "space")
+    CODE_CASE3(d, 'b', 'l', 'a', "blank")
+    CODE_CASE3(d, 'g', 'r', 'a', "graphic")
+    CODE_CASE3(d, 'p', 'u', 'n', "punct")
+    CODE_CASE3(d, 'a', 'l', 'n', "alnum")
+    CODE_CASE3(d, 'a', 'l', 'p', "alpha")
+    CODE_CASE3(d, 'i', 's', 'u', "isupper")
+    CODE_CASE3(d, 'i', 's', 'l', "islower")
+    CODE_CASE3(d, 'd', 'i', 'g', "digit")
+    CODE_CASE3(d, 'x', 'd', 'i', "xdigit")
+
+    CODE_CASE3(d, 'l', 't', 'r', "ltrim")
+    CODE_CASE3(d, 'r', 't', 'r', "rtrim")
+    CODE_CASE3(d, 't', 'r', 'i', "trim")
+    CODE_CASE3(d, 's', 't', 'a', "startsWith")
+    CODE_CASE3(d, 'e', 'n', 'd', "endsWith")
     default:
-      CantHappen("bad string op");
+      CantHappen("bad string op" << op);
     }
   FreeSymbol::getDataAttachments(opDeclaration, purposes, data);
 }
@@ -217,46 +236,171 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	{
 	case 1:
 	  {
-	    mpz_class r;
-	    switch (op)
+	    if (trueTerm.getTerm() == nullptr)
 	      {
-	      case CODE('f', 'l'):
-		{
-		  bool error;
-		  char* flStr = left.makeZeroTerminatedString();
-		  double fl = stringToDouble(flStr, error);
-		  delete [] flStr;
-
-		  if (error)
+		//
+		//	Not a predicate.
+		//
+		mpz_class r;
+		switch (op)
+		  {
+		  case CODE3('f', 'l', 'o'):  // float
+		    {
+		      bool error;
+		      char* flStr = left.makeZeroTerminatedString();
+		      double fl = stringToDouble(flStr, error);
+		      delete [] flStr;
+		      
+		      if (error)
+			goto fail;
+		      return floatSymbol->rewriteToFloat(subject, context, fl);
+		    }
+		  case CODE3('l', 'e', 'n'):  // length
+		    {
+		      return succSymbol->rewriteToNat(subject, context, left.length());
+		    }
+		  case CODE3('a', 's', 'c'):  // acsii
+		    {
+		      if (left.length() != 1)
+			goto fail;
+		      unsigned char c = left[0];
+		      return succSymbol->rewriteToNat(subject, context, c);
+		    }
+		  case CODE3('u', 'p', 'p'):  // upperCase
+		    {
+		      Rope result = upperCase(left);
+		      return rewriteToString(subject, context, result);
+		    }
+		  case CODE3('l', 'o', 'w'):  // lowerCase
+		    {
+		      Rope result = lowerCase(left);
+		      return rewriteToString(subject, context, result);
+		    }
+		  case CODE3('l', 't', 'r'):  // trimStart (left trim)
+		    {
+		      Index len = left.length();
+		      Rope::const_iterator j = left.begin();
+		      for (Index i = 0; i < len; ++i, ++j)
+			{
+			  if (!isspace(static_cast<unsigned char>(*j)))
+			    return rewriteToString(subject, context, left.substr(i, len - i));
+			}
+		      break;
+		    }
+		  case CODE3('r', 't', 'r'):  // trimEnd (right trim)
+		    {
+		      Rope::const_iterator j = left.end();
+		      for (Index i = left.length(); i > 0; --i)
+			{
+			  --j;
+			  if (!isspace(static_cast<unsigned char>(*j)))
+			    return rewriteToString(subject, context, left.substr(0, i));
+			}
+		      break;
+		    }
+		  case CODE3('t', 'r', 'i'):  // trim
+		    {
+		      Index len = left.length();
+		      Rope::const_iterator j = left.begin();
+		      for (Index i = 0; i < len; ++i, ++j)
+			{
+			  if (!isspace(static_cast<unsigned char>(*j)))
+			    {
+			      Index nrCharsWanted = len - i;
+			      for (Rope::const_iterator e = left.end() - 1;
+				   nrCharsWanted > 1 && isspace(static_cast<unsigned char>(*e));
+				   --nrCharsWanted, --e)
+				;
+			      return rewriteToString(subject, context, left.substr(i, nrCharsWanted));
+			    }
+			}
+		      break;
+		    }
+		  default:
+		    CantHappen("bad string op" << op);
 		    goto fail;
-		  return floatSymbol->rewriteToFloat(subject, context, fl);
-		}
-	      case CODE('l', 'e'):  // length
-		{
-		  r = left.length();
-		  break;
-		}
-	      case CODE('a', 's'):  // acsii
-		{
-		  if (left.length() != 1)
-		    goto fail;
-		  r = static_cast<unsigned char>(left[0]);
-		  break;
-		}
-	      case CODE('u', 'p'):  // upperCase
-		{
-		  Rope result = upperCase(left);
-		  return rewriteToString(subject, context, result);
-		}
-	      case CODE('l', 'o'):  // lowerCase
-		{
-		  Rope result = lowerCase(left);
-		  return rewriteToString(subject, context, result);
-		}
-	      default:
-		CantHappen("bad string op");
+		  }
+		return rewriteToString(subject, context, Rope());  // empty rope
 	      }
-	    return succSymbol->rewriteToNat(subject, context, r);
+	    else
+	      {
+		//
+		//	Character predicate.
+		//
+		if (left.length() != 1)
+		  goto fail;
+		unsigned char c = left[0];
+		bool r;
+		switch (op)
+		  {
+		  case CODE3('c', 'n', 't'):
+		    {
+		      r = iscntrl(c);
+		      break;
+		    }
+		  case CODE3('p', 'r', 'i'):
+		    {
+		      r = isprint(c);
+		      break;
+		    }
+		  case CODE3('s', 'p', 'a'):
+		    {
+		      r = isspace(c);
+		      break;
+		    }
+		  case CODE3('b', 'l', 'a'):
+		    {
+		      r = isblank(c);
+		      break;
+		    }
+		  case CODE3('g', 'r', 'a'):
+		    {
+		      r = isgraph(c);
+		      break;
+		    }
+		  case CODE3('p', 'u', 'n'):
+		    {
+		      r = ispunct(c);
+		      break;
+		    }
+		  case CODE3('a', 'l', 'n'):
+		    {
+		      r = isalnum(c);
+		      break;
+		    }
+		  case CODE3('a', 'l', 'p'):
+		    {
+		      r = isalpha(c);
+		      break;
+		    }
+		  case CODE3('i', 's', 'u'):  // to avoid clash with upperCase
+		    {
+		      r = isupper(c);
+		      break;
+		    }
+		  case CODE3('i', 's', 'l'):  // to avoid clash with lowerCase
+		    {
+		      r = islower(c);
+		      break;
+		    }
+		  case CODE3('d', 'i', 'g'):
+		    {
+		      r = isdigit(c);
+		      break;
+		    }
+		  case CODE3('x', 'd', 'i'):
+		    {
+		      r = isxdigit(c);
+		      break;
+		    }
+		  default:
+		    {
+		      CantHappen("bad string op" << op);
+		      goto fail;
+		    }
+		  }
+		return context.builtInReplace(subject, r ? trueTerm.getDag() : falseTerm.getDag());
+	      }
 	  }
 	case 2:
 	  {
@@ -274,26 +418,57 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		      return rewriteToString(subject, context, t);
 		    }
 		  case '<':
-		    r = left < right;
-		    break;
+		    {
+		      r = left < right;
+		      break;
+		    }
 		  case '>':
-		    r = left > right;
-		    break;
+		    {
+		      r = left > right;
+		      break;
+		    }
 		  case CODE('<', '='):
-		    r = left <= right;
-		    break;
+		    {
+		      r = left <= right;
+		      break;
+		    }
 		  case CODE('>', '='):
- 		    r = left >= right;
-		    break;
+		    {
+		      r = left >= right;
+		      break;
+		    }
+		  case CODE3('s', 't', 'a'):  // startsWith
+		  case CODE3('e', 'n', 'd'):  // endsWith
+		    {
+		      Index leftLen = left.length();
+		      Index rightLen = right.length();
+		      if (leftLen < rightLen)
+			r = false;
+		      else
+			{
+			  r = true;
+			  Rope::const_iterator leftIter = (op == CODE3('s', 't', 'a')) ? left.begin() : left.begin() + (leftLen - rightLen);
+			  Rope::const_iterator rightIter = right.begin();
+			  for (Index i = 0; i < rightLen; ++i, ++leftIter, ++rightIter)
+			    {
+			      if (*leftIter != *rightIter)
+				{
+				  r = false;
+				  break;
+				}
+			    }
+			}
+		      break;
+		    }
 		  default:
-		    CantHappen("bad string op");
-		    r = false;  // avoid compiler warning
+		    CantHappen("bad string op" << op);
+		    goto fail;
 		  }
 		Assert(trueTerm.getTerm() != 0 && falseTerm.getTerm() != 0,
 		       "null true/false for relational op");
 		return context.builtInReplace(subject, r ? trueTerm.getDag() : falseTerm.getDag());
 	      }
-	    else if (op == CODE('r', 'a'))
+	    else if (op == CODE3('r', 'a', 't'))  // rat
 	      {
 		DebugAdvisory("StringOpSymbol::eqRewrite() entered rat case for " << subject);
 		DagNode* a1 = d->getArgument(1);
@@ -334,7 +509,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	  {
 	    switch (op)
 	      {
-	      case CODE('s', 'u'):  // substr
+	      case CODE3('s', 'u', 'b'):  // substr
 		{
 		  DagNode* a1 = d->getArgument(1);
 		  DagNode* a2 = d->getArgument(2);
@@ -364,15 +539,15 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 			  int r;
 			  switch (op)
 			    {
-			    case CODE('f', 'i'):  // find
+			    case CODE3('f', 'i', 'n'):  // find
 			      r = fwdFind(left, pattern, index);
 			      break;
-			    case CODE('r', 'f'):  // rfind
+			    case CODE3('r', 'f', 'i'):  // rfind
 			      r = revFind(left, pattern, index);
 			      break;
 			    default:
-			      CantHappen("bad string op");
-			      r = 0;  // avoid compiler warning
+			      CantHappen("bad string op" << op);
+			      goto fail;
 			    }
 			  Assert(notFoundTerm.getTerm() != 0, "null notFound for find op");
 			  if (r == NONE)
@@ -388,12 +563,12 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
     }
   else if (a0->symbol() == floatSymbol)
     {
-      if (nrArgs == 1 && op == CODE('s', 't'))
+      if (nrArgs == 1 && op == CODE3('s', 't', 'r'))  // string
 	{
 	  double fl = safeCast(FloatDagNode*, a0)->getValue();
 	  return rewriteToString(subject, context, doubleToString(fl));
 	}
-      else if (nrArgs == 2 && op == CODE('d', 'e'))
+      else if (nrArgs == 2 && op == CODE3('d', 'e', 'c'))  // decFloat
 	{
 	  DagNode* a1 = d->getArgument(1);
 	  Assert(succSymbol != 0, "succSymbol undefined");
@@ -415,7 +590,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	    }
 	}
     } 
-  else if (op == CODE('s', 't') && nrArgs == 2)
+  else if (op == CODE3('s', 't', 'r') && nrArgs == 2)
     {
       DagNode* a1 = d->getArgument(1);
       Assert(succSymbol != 0, "succSymbol undefined");
@@ -470,7 +645,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
     {
       switch (op)
 	{
-	case CODE('c', 'h'):  // char
+	case CODE3('c', 'h', 'a'):  // char
 	  {
 	    DagNode* a0 = d->getArgument(0);
 	    Assert(succSymbol != 0, "succSymbol undefined");
@@ -589,8 +764,10 @@ StringOpSymbol::ropeToNumber(const Rope& subject,
       ++i;
     }
   char c = subject[i];
-  if (!isalnum(c) || (c == '0' && len > 1))
+  if (!isalnum(c))
     return false;
+  if (c == '0' && len > i + 1 && subject[i + 1] != '/')
+    return false;  // we don't allow numbers starting with 0 except for things like 0, -0, -0/2
   for (i++; i < len; i++)
     {
       char c = subject[i];

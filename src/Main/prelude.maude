@@ -22,7 +22,7 @@
 
 ***
 ***	Maude interpreter standard prelude.
-***	Version 3.4.
+***	Version alpha160
 ***
 ***	Some of the overall structure is taken from the OBJ3
 ***	interpreter standard prelude.
@@ -1568,6 +1568,91 @@ endfm
 view Array{X :: TRIV, Y :: DEFAULT} from TRIV to ARRAY{X, Y} is
   sort Elt to Array{X,Y} .
 endv
+
+fmod STRING-OPS is
+  protecting STRING .
+  op isControl : Char -> Bool
+      [special (id-hook StringOpSymbol (cntrl)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isPrintable : Char -> Bool
+      [special (id-hook StringOpSymbol (print)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isWhiteSpace : Char -> Bool
+      [special (id-hook StringOpSymbol (space)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isBlank : Char -> Bool
+      [special (id-hook StringOpSymbol (blank)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isGraphic : Char -> Bool
+      [special (id-hook StringOpSymbol (graph)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isPunctuation : Char -> Bool
+      [special (id-hook StringOpSymbol (punct)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isAlphanumeric : Char -> Bool
+      [special (id-hook StringOpSymbol (alnum)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isAlphabetic : Char -> Bool
+      [special (id-hook StringOpSymbol (alpha)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isUppercase : Char -> Bool
+      [special (id-hook StringOpSymbol (isupper)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isLowercase : Char -> Bool
+      [special (id-hook StringOpSymbol (islower)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isDigit : Char -> Bool
+      [special (id-hook StringOpSymbol (digit)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+  op isHexadecimalDigit : Char -> Bool
+      [special (id-hook StringOpSymbol (xdigit)
+                op-hook stringSymbol (<Strings> : ~> String)
+                term-hook trueTerm (true)
+                term-hook falseTerm (false))] .
+
+  op startsWith : String String -> Bool
+        [special (id-hook StringOpSymbol (startsWith)
+                  op-hook stringSymbol (<Strings> : ~> String)
+                  term-hook trueTerm (true)
+                  term-hook falseTerm (false))] .
+  op endsWith : String String -> Bool
+        [special (id-hook StringOpSymbol (endsWith)
+                  op-hook stringSymbol (<Strings> : ~> String)
+                  term-hook trueTerm (true)
+                  term-hook falseTerm (false))] .
+
+  op trimStart : String -> String 
+        [special (id-hook StringOpSymbol (ltrim)
+                  op-hook stringSymbol (<Strings> : ~> String))] .
+  op trimEnd : String -> String 
+        [special (id-hook StringOpSymbol (rtrim)
+                  op-hook stringSymbol (<Strings> : ~> String))] .
+  op trim : String -> String 
+        [special (id-hook StringOpSymbol (trim)
+                  op-hook stringSymbol (<Strings> : ~> String))] .
+endfm
 
 ***
 ***	Container instantiations on builtin data types needed by the metalevel.

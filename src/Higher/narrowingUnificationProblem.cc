@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -225,7 +225,7 @@ NarrowingUnificationProblem::variableIndexToSort(int index)
       //
       //	Original PreEquation variable.
       //
-      return safeCast(VariableSymbol*, preEquation->index2Variable(index)->symbol())->getSort();
+      return safeCastNonNull<VariableSymbol*>(preEquation->index2Variable(index)->symbol())->getSort();
     }
   if (index < substitutionSize)
     {
@@ -233,8 +233,7 @@ NarrowingUnificationProblem::variableIndexToSort(int index)
       //
       //	Original dag variable.
       //
-      return safeCast(VariableSymbol*,
-		      variableInfo.index2Variable(index - firstTargetSlot)->symbol())->getSort();
+      return safeCastNonNull<VariableSymbol*>(variableInfo.index2Variable(index - firstTargetSlot)->symbol())->getSort();
     }
   //
   //	Fresh variable introduced by unification.

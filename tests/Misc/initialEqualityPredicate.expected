@@ -61,9 +61,8 @@ result Bool: A .=. X and B .=. Y xor A .=. Y and B .=. X xor A .=. X and A .=.
     Y and B .=. X and B .=. Y
 ==========================================
 reduce in DECOMPOSE : c(A, X) .=. c(X, Y) .
-rewrites: 4
-result Bool: A .=. X and X .=. Y xor A .=. X and A .=. Y and X .=. Y xor A .=.
-    Y
+rewrites: 1
+result Bool: A .=. Y
 ==========================================
 reduce in DECOMPOSE : c(Z, c(X, Y)) .=. c(X, Y) .
 rewrites: 1
@@ -76,4 +75,36 @@ result Bool: A .=. W and B .=. Z and C .=. X and Y .=. D
 reduce in DECOMPOSE : c(f(A, B), f(C, D)) .=. c(f(X, Y), g(W, Z)) .
 rewrites: 11
 result Bool: false
+==========================================
+reduce in FOO : g(X) .=. g(Y) .
+rewrites: 1
+result Bool: X .=. Y
+==========================================
+reduce in FOO : h(X) .=. f(a, c, g(b)) .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in FOO : s(Z, g(X)) .=. s(Y, g(X)) .
+rewrites: 1
+result Bool: Z .=. Y
+==========================================
+reduce in FOO : g(A) + B + h(C) .=. g(A) + g(B) + g(C) .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in FOO : B + g(A) .=. g(A) + g(B) + g(C) .
+rewrites: 1
+result Bool: B .=. g(B) + g(C)
+==========================================
+reduce in FOO : g(A) B X h(A) Y h(C) .=. h(A) g(D) g(E) Z X h(A) .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in FOO : g(A) X Y h(A) h(C) .=. g(D) g(E) g(D) X h(A) .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in FOO : g(A) g(B) X h(A) Y h(C) .=. g(D) g(E) Z X h(A) .
+rewrites: 4
+result Bool: E .=. B and A .=. C and A .=. D and Z X .=. X h(A) Y
 Bye.

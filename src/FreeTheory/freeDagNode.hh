@@ -88,7 +88,8 @@ private:
     MemoryBlock::MachineWord hashCache[nrWords];	// so we can use the last word as a hash value if nrArgs != nrWords
   };
 
-  DagNode** argArray() const;
+  DagNode* const* argArray() const;
+  DagNode** argArray();
   DagNode* markArguments();
   DagNode* copyEagerUptoReduced2();  
   DagNode* copyAll2();  
@@ -208,10 +209,16 @@ FreeDagNode::FreeDagNode(Symbol* symbol, int /* dummy */, DagNode* a0, DagNode* 
 }
 #endif
 
-inline DagNode**
+inline DagNode* const*
 FreeDagNode::argArray() const
 {
-  return needToCallDtor() ? external : const_cast<DagNode**>(&(internal[0]));
+  return needToCallDtor() ? external : &(internal[0]);
+}
+
+inline DagNode**
+FreeDagNode::argArray()
+{
+  return needToCallDtor() ? external : &(internal[0]);
 }
 
 inline DagNode*

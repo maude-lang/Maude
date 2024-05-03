@@ -157,11 +157,16 @@ MaudeLatexBuffer::generateModuleName(NamedEntity* module)
 }
 
 void
-MaudeLatexBuffer::generateSolutionNr(int64_t solutionNr)
+MaudeLatexBuffer::generateSolutionNr(int64_t solutionNr, int stateNr)
 {
   if (needNewline)
     output << "\\newline";
-  output << "\\par\\maudeResponse{Solution }\\maudeNumber{" << solutionNr << "}\n";
+  output << "\\par\\maudeResponse{Solution}\\maudeSpace\\maudeNumber{" << solutionNr << "}\n";
+  if (stateNr != NONE)
+    {
+      output << "\\maudeSpace\\maudePunctuation{(}\\maudeResponse{state}\\maudeSpace\\maudeNumber{" <<
+	stateNr << "}\\maudePunctuation{)}\n";
+    }
   needNewline = true;
 }
 
@@ -276,9 +281,11 @@ MaudeLatexBuffer::generateAdvisory(const char* message)
 }
 
 void
-MaudeLatexBuffer::generateState(DagNode* stateDag)
+MaudeLatexBuffer::generateState(DagNode* stateDag, const char* message)
 {
-  output << "\\par$\\maudeResponse{state:}\\maudeSpace";
+  if (message == nullptr)
+    message = "state:";
+  output << "\\par$\\maudeResponse{" << message << "}\\maudeSpace";
   MixfixModule::latexPrintDagNode(output, stateDag);
   output << "$\n";
 }

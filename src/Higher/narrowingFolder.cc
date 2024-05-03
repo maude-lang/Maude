@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
       //
       for (auto& i : mostGeneralSoFar)
 	{
-	  if (i.second->subsumes(state))
+	  if (!i.second->subsumed && i.second->subsumes(state))
 	    {
 	      DebugAdvisory("new state " << index << " subsumed by " << i.first);
 	      Verbose("New state " << state << " subsumed by " << i.second->state);
@@ -108,16 +108,21 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 	    }
 	}
     }
+  //
+  //	Create a new retained state.
+  //
   DebugAdvisory("new state " << index << " added");
-  RetainedState* newState = new RetainedState(state, parentIndex, fold);
+  int rootIndex = index;
   int depth = 0;
   if (parentIndex != NONE)
     {
       RetainedStateMap::const_iterator j = mostGeneralSoFar.find(parentIndex);
       Assert(j != mostGeneralSoFar.end(), "couldn't find state with index " << parentIndex);
+      rootIndex = j->second->rootIndex;
       depth = j->second->depth + 1;
     }
-  newState->depth = depth;
+  RetainedState* newState = new RetainedState(state, parentIndex, rootIndex, depth, fold);
+
   if (fold)
     {
       //
@@ -140,11 +145,10 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 	{
 	  RetainedStateMap::iterator next = i;
 	  ++next;
-	  if (ancestors.find(i->first) == ancestors.end())  // can't mess with ancestors of new state
+	  if (!i->second->subsumed && ancestors.find(i->first) == ancestors.end())  // can't mess with ancestors of new state
 	    {
 	      RetainedState* potentialVictim = i->second;
-	      if (existingStatesSubsumed.find(potentialVictim->parentIndex) !=
-		  existingStatesSubsumed.end())
+	      if (existingStatesSubsumed.find(potentialVictim->parentIndex) != existingStatesSubsumed.end())
 		{
 		  //
 		  //	Our parent was subsumed so we are also subsumed.
@@ -154,8 +158,13 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 			  " evicted descendent of an older state " << i->second->state <<
 			  " by subsuming an ancestor.");
 		  existingStatesSubsumed.insert(i->first);
-		  delete potentialVictim;
-		  mostGeneralSoFar.erase(i);
+		  if (potentialVictim->locked)
+		    potentialVictim->subsumed = true;  // can't delete this state because we might need it for a path
+		  else
+		    {
+		      delete potentialVictim;
+		      mostGeneralSoFar.erase(i);
+		    }
 		}
 	      else if (newState->subsumes(potentialVictim->state))
 		{
@@ -163,11 +172,15 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 		  //	Direct subsumption by new state.
 		  //
 		  DebugAdvisory("new state evicted an older state " << i->first);
-		  Verbose("New state " << state << " subsumed older state " <<
-			  i->second->state);
+		  Verbose("New state " << state << " subsumed older state " << i->second->state);
 		  existingStatesSubsumed.insert(i->first);
-		  delete potentialVictim;
-		  mostGeneralSoFar.erase(i);
+		  if (potentialVictim->locked)
+		    potentialVictim->subsumed = true;  // can't delete this state because we might need it for a path
+		  else
+		    {
+		      delete potentialVictim;
+		      mostGeneralSoFar.erase(i);
+		    }
 		}
 	    }
 	  i = next;
@@ -177,7 +190,7 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
     {
       //
       //	Since we're not folding, if we are keeping history we
-      //	need to keep track of number of descendant to know when
+      //	need to keep track of number of descendants to know when
       //	a state will never appear in the history of a returned
       //	state.
       //
@@ -222,12 +235,19 @@ NarrowingFolder::getNextSurvivingState(DagNode*& nextState,
 				       int& nextStateVariableFamily,
 				       int& nextStateDepth)
 {
+  //
+  //	We're done with the current state, so we might want to delete it.
+  //
   cleanGraph();
-  RetainedStateMap::const_iterator nextStateIterator =
-    mostGeneralSoFar.upper_bound(currentStateIndex);
+  //
+  //	Find the next state if there is one.
+  //
+  RetainedStateMap::const_iterator nextStateIterator = mostGeneralSoFar.upper_bound(currentStateIndex);
   if (nextStateIterator == mostGeneralSoFar.end())
     return NONE;
-
+  Assert(!nextStateIterator->second->locked, "unvisited state should not be locked");
+  Assert(!nextStateIterator->second->subsumed, "unvisited state that is subsumed should have been deleted");
+  
   currentStateIndex = nextStateIterator->first;
   nextState = nextStateIterator->second->state;
   nextStateAccumulatedSubstitution = nextStateIterator->second->accumulatedSubstitution;
@@ -252,9 +272,10 @@ NarrowingFolder::cleanGraph()
   if (!keepHistory)
     {
       //
-      //	Since we are not keeping history, we should not need the
-      //	current state again since we are moving on to the next state.
+      //	Since we are not keeping history and not folding we have no further need of a fully
+      //	explored state.
       //
+      Assert(!stateIterator->second->locked, "shouldn't have locked states if not keeping history");
       delete stateIterator->second;
       mostGeneralSoFar.erase(stateIterator);
       return;
@@ -262,11 +283,13 @@ NarrowingFolder::cleanGraph()
   //
   //	We are keeping history and so we need to determine whether the
   //	current state and its ancestors sill appear on an active path.
+  //	We do this by walking up to the root, until we find a state with existing descendents
+  //	or which has been locked.
   //
-  while (stateIterator->second->nrDescendants == 0)
+  while (!stateIterator->second->locked && stateIterator->second->nrDescendants == 0)
     {
       //
-      //	No desendant left in graph so we will never
+      //	No descendent left in graph so we will never
       //	be asked for this state on a path and can delete it.
       //
       int parentIndex = stateIterator->second->parentIndex;
@@ -283,9 +306,30 @@ NarrowingFolder::cleanGraph()
     }
 }
 
-NarrowingFolder::RetainedState::RetainedState(DagNode* state, int parentIndex, bool fold)
+void
+NarrowingFolder::lockPathToCurrentState()
+{
+  Assert(keepHistory, "can't lock path if not keeping history");
+  //
+  //	We lock all the states on the current path back to the root state, so that they are never deleted and
+  //	are thus available for showing the complete path to this state at any point before our object is deleted.
+  //
+  RetainedStateMap::iterator stateIterator = mostGeneralSoFar.find(currentStateIndex);
+  while(!stateIterator->second->locked)
+    {
+      stateIterator->second->locked = true;
+      int parentIndex = stateIterator->second->parentIndex;
+      if (parentIndex == NONE)
+	break;
+      stateIterator = mostGeneralSoFar.find(parentIndex);
+    }
+}
+
+NarrowingFolder::RetainedState::RetainedState(DagNode* state, int parentIndex, int rootIndex, int depth, bool fold)
   : state(state),
-    parentIndex(parentIndex)
+    parentIndex(parentIndex),
+    rootIndex(rootIndex),
+    depth(depth)
 {
   if (fold)
     {
@@ -294,7 +338,7 @@ NarrowingFolder::RetainedState::RetainedState(DagNode* state, int parentIndex, b
       //
       Term* t = state->symbol()->termify(state);
       //
-      //	Even thoug t should be in normal form we need to set hash values.
+      //	Even though it should be in normal form we need to set hash values.
       //
       t = t->normalize(true);
       VariableInfo variableInfo;
@@ -319,22 +363,6 @@ NarrowingFolder::RetainedState::RetainedState(DagNode* state, int parentIndex, b
       matchingAutomaton = 0;
       nrMatchingVariables = 0;
     }
-  //
-  //	These will be filled out later.
-  //
-  variableFamily = NONE;
-  accumulatedSubstitution = 0;
-  //
-  //	These will be filled out later if we're keeping the history.
-  //
-  rule = 0;
-  unifier = 0;
-  narrowingContext = 0;
-  narrowingPosition = 0;
-  //
-  //	This may be updated if we are keeping the history and we aren't folding.
-  //
-  nrDescendants = 0;
 }
 
 NarrowingFolder::RetainedState::~RetainedState()

@@ -41,7 +41,7 @@ public:
   void generateBanner(const char* date, const char* time, time_t seconds);
   void generateHeading(const char* message);
   void generateModuleName(NamedEntity* module);
-  void generateState(DagNode* stateDag);
+  void generateState(DagNode* stateDag, const char* message = nullptr);
   //
   //	Functions to start latex for commands.
   //
@@ -86,7 +86,7 @@ public:
 
   void generateSearch(bool showCommand,
 		      Interpreter::SearchKind searchKind,
-		      DagNode* subject,
+		      const Vector<DagNode*>& subjects,
 		      int searchType,
 		      Term* target,
 		      const Vector<ConditionFragment*>& condition,
@@ -103,7 +103,7 @@ public:
   //
   //	Functions to print results.
   //
-  void generateSolutionNr(int64_t solutionNr);
+  void generateSolutionNr(int64_t solutionNr, int stateNr = NONE);
   void generateStats(RewritingContext& context,
 		     int64_t cpuTime,
 		     int64_t realTime,

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2021-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2021-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,8 +39,16 @@ TimeManagerSymbol::getTimeSinceEpoch(FreeDagNode* message, ObjectSystemRewriting
   timespec timeValue;
   DebugSave(r, clock_gettime(CLOCK_REALTIME, &timeValue));
   Assert(r == 0, "clock_gettime() failed: " << strerror(errno));
-
-  mpz_class nanoSeconds(timeValue.tv_sec);
+  //
+  //	time_t is 64-bit since Linux kernel 5.6 but GMP doesn't yet have support
+  //	for long long which is a problem on platforms where long is less than 8 bytes.
+  //
+#if SIZEOF_LONG < 8
+  double seconds = timeValue.tv_sec;
+#else
+  long seconds = timeValue.tv_sec;
+#endif
+  mpz_class nanoSeconds(seconds);
   nanoSeconds *= BILLION;
   nanoSeconds += timeValue.tv_nsec;
 

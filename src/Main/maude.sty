@@ -21,7 +21,7 @@
 %	Version 3.4.
 %
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{maude}[2024/03/12 Package for Maude logs]
+\ProvidesPackage{maude}[2024/04/12 Package for Maude logs]
 \RequirePackage{amssymb,extarrows,longtable,tabto,xcolor,verbatim,alltt,seqsplit}
 \RequirePackage[T1]{fontenc}
 %
@@ -142,6 +142,7 @@
 \newcommand{\maudeSummation}{\,+\,}  % module summation
 \newcommand{\maudePartialFunction}{\rightsquigarrow}  % for partial op decls
 \newcommand{\maudeConjunction}{\,\wedge\,}  % for conjunctions in conditions
+\newcommand{\maudeDisjunction}{\,\vee\,}  % for disjunctions in search
 \newcommand{\maudeHasSort}{\,:\,}  % for op, variable decls, mbs and sort test condition fragments
 \newcommand{\maudeVariableColon}{\textnormal{:}}  % for forming var:sort names
 \newcommand{\maudeEquals}{\,=\,}  % for eqs and equality condition fragments
@@ -209,7 +210,8 @@
   \renewcommand{\maudeFunction}{\maudeBigSpace\textnormal{-->}\maudeBigSpace}
   \renewcommand{\maudePartialFunction}{\textnormal{\maudeTilde >}\maudeBigSpace}
   \renewcommand{\maudeConstantDecl}{\maudeInterwordSpace :\maudeInterwordSpace\textnormal{-->}\maudeBigSpace} % needed to get the spacing right
-  \renewcommand{\maudeConjunction}{\maudeBigSpace/\textbackslash\maudeBigSpace}
+  \renewcommand{\maudeConjunction}{\maudeBigSpace/\backslash\maudeBigSpace}
+  \renewcommand{\maudeDisjunction}{\maudeBigSpace\backslash/\maudeBigSpace}
   \renewcommand{\maudeRewritesTo}{\maudeBigSpace\textnormal{=>}\maudeBigSpace}
   \renewcommand{\maudeMatch}{\,\textnormal{<=?}\,}
   \renewcommand{\maudeUnify}{\,\textnormal{=?}\,}

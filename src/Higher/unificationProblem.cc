@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -98,8 +98,7 @@ UnificationProblem::UnificationProblem(Vector<Term*>& lhs,
   for (int i = 0; i < nrOriginalVariables; ++i)
     {
       Term* v = variableInfo.index2Variable(i);
-      if (freshVariableGenerator->variableNameConflict(safeCast(VariableTerm*, v)->id(),
-						       incomingVariableFamily))
+      if (freshVariableGenerator->variableNameConflict(safeCastNonNull<VariableTerm*>(v)->id(), incomingVariableFamily))
 	{
 	  IssueWarning("unsafe variable name " << QUOTE(v) << " in unification problem.");
 	  return;
@@ -284,7 +283,7 @@ UnificationProblem::bindFreeVariables()
       DebugInfo("newSortIndex = " << newSortIndex << "  newSort = " << newSort);
 
       Symbol* baseVariableSymbol = freshVariableGenerator->getBaseVariableSymbol(newSort);
-      int variableName = safeCast(VariableDagNode*, variable)->id();
+      int variableName = safeCastNonNull<VariableDagNode*>(variable)->id();
       DagNode* newVariable = new VariableDagNode(baseVariableSymbol, variableName, fv);
       sortedSolution->bind(fv, newVariable);
     }
@@ -330,7 +329,7 @@ UnificationProblem::findOrderSortedUnifiers()
 	  freeVariables.insert(i);
 	  realToBdd[i] = nextBddVariable;
 	  Sort* sort = (i < nrOriginalVariables) ?
-	    safeCast(VariableSymbol*, variableInfo.index2Variable(i)->symbol())->getSort() :
+	    safeCastNonNull<VariableSymbol*>(variableInfo.index2Variable(i)->symbol())->getSort() :
 	    unsortedSolution->getFreshVariableSort(i);
 	  nextBddVariable += sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
 	  //cout << "allocated bdds" << endl;
@@ -367,7 +366,7 @@ UnificationProblem::findOrderSortedUnifiers()
   for (int i = 0; i < nrOriginalVariables; ++i)
     {
       DebugAdvisory("Considering variable " << variableInfo.index2Variable(i));
-      Sort* sort = safeCast(VariableSymbol*, variableInfo.index2Variable(i)->symbol())->getSort();
+      Sort* sort = safeCastNonNull<VariableSymbol*>(variableInfo.index2Variable(i)->symbol())->getSort();
       Bdd leqRelation;
       DagNode* d = sortedSolution->value(i);
       if (d != 0)
@@ -411,7 +410,7 @@ UnificationProblem::findOrderSortedUnifiers()
   for (int fv : freeVariables)
     {
       Sort* sort = (fv < nrOriginalVariables) ?
-	safeCast(VariableSymbol*, variableInfo.index2Variable(fv)->symbol())->getSort() :
+	safeCastNonNull<VariableSymbol*>(variableInfo.index2Variable(fv)->symbol())->getSort() :
 	unsortedSolution->getFreshVariableSort(fv);
       int nrBddVariables = sortBdds->getNrVariables(sort->component()->getIndexWithinModule());
       //

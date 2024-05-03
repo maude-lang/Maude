@@ -440,21 +440,24 @@ TESTS = \
 	int \
 	rat \
 	string \
-	counters
+	counters \
+	stringOps
 
 MAUDE_FILES = \
 	nat.maude \
 	int.maude \
 	rat.maude \
 	string.maude \
-	counters.maude
+	counters.maude \
+	stringOps.maude
 
 RESULT_FILES = \
 	nat.expected \
 	int.expected \
 	rat.expected \
 	string.expected \
-	counters.expected
+	counters.expected \
+	stringOps.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -669,6 +672,13 @@ string.log: string
 counters.log: counters
 	@p='counters'; \
 	b='counters'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+stringOps.log: stringOps
+	@p='stringOps'; \
+	b='stringOps'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

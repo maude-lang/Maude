@@ -117,6 +117,7 @@ fmod LIST*
 fmod SET*
 fmod MAP
 fmod ARRAY
+fmod STRING-OPS
 fmod NAT-LIST
 fmod QID-LIST
 fmod QID-SET

@@ -181,7 +181,7 @@ FreeTerm::compareArguments(const DagNode* other) const
   int nrArgs = other->symbol()->arity();
   if (nrArgs != 0)
     {
-      DagNode** q = static_cast<const FreeDagNode*>(other)->argArray();
+      DagNode* const* q = static_cast<const FreeDagNode*>(other)->argArray();
       Vector<Term*>::const_iterator p = argArray.begin();
       for (;;)
 	{
@@ -204,7 +204,7 @@ FreeTerm::partialCompareArguments(const Substitution& partialSubstitution, DagNo
   int nrArgs = argArray.size();
   if (nrArgs != 0)
     {
-      DagNode** da = safeCast(FreeDagNode*, other)->argArray();
+      DagNode* const* da = safeCast(FreeDagNode*, other)->argArray();
       for (Term* t : argArray)
 	{
 	  int r = t->partialCompare(partialSubstitution, *da);

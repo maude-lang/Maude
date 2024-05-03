@@ -1,0 +1,239 @@
+Alpha 160 release notes
+========================
+
+Bug fixes
+==========
+
+(1) A bug reported by Carolyn where
+  op rat : String NzNat ~> Rat [special (...)] .
+in fmod CONVERSION didn't handle strings where the first number was 0
+other than 0 itself:
+
+Maude> red rat("-0", 10) .
+reduce in CONVERSION : rat("-0", 10) .
+rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+result [Rat,FindResult]: rat("-0", 10)
+Maude> 
+> red rat("0/1", 10) .
+reduce in CONVERSION : rat("0/1", 10) .
+rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+result [Rat,FindResult]: rat("0/1", 10)
+Maude> 
+> red rat("-0/1", 10) .
+reduce in CONVERSION : rat("-0/1", 10) .
+rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+result [Rat,FindResult]: rat("-0/1", 10)
+
+(2) An issue where Maude couldn't be built on platforms where time_t
+is 64-bits and long is 32-bits due to GMP not supporting long long.
+
+(3) A subtle bug where freshly allocated variables at the start of
+a vu-narrow were not protected from the garbage collector during the
+initial reduction of the start term with those renamed variables in
+that case that they disappeared from the term being rewritten, leaving
+a potential dangling pointer in the accumulated substitution (which
+at this point is just a mapping from the original variables to the
+fresh variables). The confluence of events needed to expose this bug
+seem hard to arrange deliberately.
+
+(4) A bug where vu-narrow/fvu-narrow allowed unsafe names such as #1:Foo in
+the intial state and/or goal, at both the object level and metalevel.
+
+mod FOO is
+  sort Foo .
+endm
+
+vu-narrow #1:Foo =>* X:Foo .
+vu-narrow X:Foo =>* #1:Foo .
+
+New feature
+============
+
+There is a new fmod STRING-OPS in the prelude which adds extra built-in
+operators on characters and strings:
+
+fmod STRING-OPS is
+  protecting STRING .
+  op isControl : Char -> Bool [special (...)] .
+  op isPrintable : Char -> Bool [special (...)] .
+  op isWhiteSpace : Char -> Bool [special (...)] .
+  op isBlank : Char -> Bool [special (...)] .
+  op isGraphic : Char -> Bool [special (...)] .
+  op isPunctuation : Char -> Bool [special (...)] .
+  op isAlphanumeric : Char -> Bool [special (...)] .
+  op isAlphabetic : Char -> Bool [special (...)] .
+  op isUppercase : Char -> Bool [special (...)] .
+  op isLowercase : Char -> Bool [special (...)] .
+  op isDigit : Char -> Bool [special (...)] .
+  op isHexadecimalDigit : Char -> Bool [special (...)] .
+
+  op startsWith : String String -> Bool [special (...)] .
+  op endsWith : String String -> Bool [special (...)] .
+
+  op trimStart : String -> String [special (...)] .
+  op trimEnd : String -> String [special (...)] .
+  op trim : String -> String [special (...)] .
+endfm
+
+The is*() functions follow the C++ standard. startsWith() and endWith()
+check if the first string starts with (resp. ends with) the second
+string. The trim*() functions remove white-space characters from
+the start, end, or bothe ends of the string argument.
+The reason for placing theses function in a new fmod it that it
+is intended to extend it in future with operations that require
+lists of strings.
+
+Other changes
+==============
+
+(1) The operational semantics of the initial equality predicate now allow
+more reductions. To illustrate the changes I use this running example:
+
+fmod FOO is
+  inc INITIAL-EQUALITY-PREDICATE .
+  sort Foo .
+  ops a b c 1 : -> Foo .
+  op __ : Foo Foo -> Foo [assoc] .
+  op _+_ : Foo Foo -> Foo [assoc comm] .
+  op s : Foo Foo -> Foo [comm] .
+  op f : Foo Foo -> Foo [assoc comm id: 1] .
+  ops g h p : Foo -> Foo .
+  var A B C D E W X Y Z : Foo .
+  eq p(X) = g(h(X)) .
+endfm
+
+Internally Maude has the notion of a symbol f being stable if a term
+headed by f cannot change its top symbol under instantiation and axioms.
+In the current implementation, a symbol is stable unless it is a variable
+or has collapse axioms (idem, id:). This could change in the future since
+distributivity would make both of its function symbols unstable.
+
+A symbol f is equation-free if no equation can match a term with f on top.
+This can be an complicated analysis due to collapse but is needed to index
+equations under the symbols they might apply to and has existed in Maude
+since collapse axioms were introduced.
+
+A symbol f is said to equationally-stable if it stable and equation-free.
+
+A term t = f(...) is said to be fixed if it is ground or f is equationally
+stable.
+
+With these definitions the operation semantics of _.=._ change as follows:
+
+(a) Function symbols no longer need the the ctor attribute to participate
+in simplifications. This is because f being equationally-stable makes f
+a de facto constructor on all sorts where it is defined, regardless of
+whether is has been declared that way.
+
+red g(X) .=. g(Y) .
+reduce in FOO : g(X) .=. g(Y) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: X .=. Y
+
+(b) The comparison of a ground term with an unstable top symbol with a
+nonground term having an equationally-stable top symbol returns false.
+
+red f(a, g(b), c) .=. h(X) .
+reduce in FOO : h(X) .=. f(a, c, g(b)) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: false
+
+(c) A term is headed by an equationally-stable function symbol can never
+be equal to a proper subterm.
+
+(d) For a commutative equationally-stable function symbol s, the case
+where the same argument appears under each side and can be canceled in
+is recognized.
+
+red s(g(X), Z) .=. s(Y, g(X)) .
+reduce in FOO : s(Z, g(X)) .=. s(Y, g(X)) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: Z .=. Y
+
+(e) For an associative-commutative symbol _+_, if the top level terms are
+unequal and are both nonground, we examine subterms in the flattened argument
+lists; i.e. subterms headed by something other than _+_. Equal arguments on both
+sides can be canceled. If one side fully cancels we can return false; otherwise
+if one side onlyhas fixed subterms we can check if there are enough arguments to
+pair up with the other side or return false. Then we can check for each fixed
+subterm on the other side, there is something for it to pair with, or return
+false. Finally if we had cancelations we can return the reduced initial equality.
+
+red g(A) + g(B) + g(C) .=. g(A) + B + h(C) .
+reduce in FOO : g(A) + B + h(C) .=. g(A) + g(B) + g(C) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: false
+
+red g(A) + g(B) + g(C) .=. g(A) + B .
+reduce in FOO : B + g(A) .=. g(A) + g(B) + g(C) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: B .=. g(B) + g(C)
+
+(f) For an associative symbol __, if the top level terms are unequal, and are
+both nonground we examine subterms in the flattened argument lists; i.e.
+subterms headed by something other than __. We attempt to decompose the argument
+lists by pairing up fixed subterms at the beginning and end of the associative
+argument lists. If we have a pair of fixed subterms with different symbols on
+top we can return false. Once no more subterms can be paired off, we pretend
+the remaining argument lists are associative-commutative and try to prove they
+will always be unequal using the approach for associative-commutative argument
+lists in (e) in which case we return false, since they must also always be
+unequal modulo associativity. Finally we return the decomposed problem
+as a conjunction.
+
+red g(A) (B) X h(A) Y h(C) .=. h(A) g(D) g(E) Z X h(A) .
+reduce in FOO : g(A) B X h(A) Y h(C) .=. h(A) g(D) g(E) Z X h(A) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: false
+
+red g(A) X Y h(A) h(C) .=. g(D) g(E) g(D) X h(A) .
+reduce in FOO : g(A) X Y h(A) h(C) .=. g(D) g(E) g(D) X h(A) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: false
+
+red g(A) g(B) X h(A) Y h(C) .=. g(D) g(E) Z X h(A) .
+reduce in FOO : g(A) g(B) X h(A) Y h(C) .=. g(D) g(E) Z X h(A) .
+rewrites: 4 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: E .=. B and A .=. C and A .=. D and Z X .=. X h(A) Y
+
+(2) The vu-narrow command now supports a disjunction of initial
+states:
+  vu-narrow s1 \/ s2 \/ ... \/ sn =>* p .
+The same four search types, =>1, =>+, =>*, =>! are supported. Unlike the
+single initial state case, variables may not be shared between the
+states and the pattern. Nor may variables be shared between states.
+Essentially each initial state generates its own tree of descendents, but
+states from one tree may subsume states from another tree if the fold
+option is given; in fact one initial state may subsume another. If
+a disjunction of initial states is given, the result information includes
+the initial state from which the state that unified with the pattern was
+narrowed. For example:
+
+mod FOO is
+  sort Foo .
+  ops a a2 b b2 f g : Foo -> Foo .
+vars P Q R S T X : Foo .
+  rl a(f(X)) => a2(X) [narrowing] .
+  rl b(g(X)) => b2(X) [narrowing] .
+endm
+
+vu-narrow a(P) \/ b(Q) =>* a2(R) .
+vu-narrow in FOO : a(P) \/ b(Q) =>* a2(R) .
+
+Solution 1
+rewrites: 1 in 4ms cpu (1ms real) (250 rewrites/second)
+state: a2(@1:Foo)
+initial state: a(P)
+accumulated substitution:
+P --> f(@1:Foo)
+variant unifier:
+R --> %1:Foo
+@1:Foo --> %1:Foo
+
+No more solutions.
+
+vu-narrow a(P) \/ b(Q) =>* a2(P) .
+vu-narrow in FOO : a(P) \/ b(Q) =>* a2(P) .
+Warning: sharing a variable P between initial state a(P) and goal a2(P) is not allowed when narrowing a disjunction of initial states.
+
+Currently this is only supported at the object level.

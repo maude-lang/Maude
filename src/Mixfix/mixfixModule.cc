@@ -180,29 +180,6 @@ Vector<int> MixfixModule::gatherPrefix(1);
 Vector<int> MixfixModule::gatherPrefixPrefix(2);
 Vector<int> MixfixModule::gatherAny0(2);
 
-inline int
-MixfixModule::domainComponentIndex(const Symbol* symbol, int argNr)
-{
-  return symbol->domainComponent(argNr)->getIndexWithinModule();
-}
-
-inline int
-MixfixModule::nonTerminal(int componentIndex, NonTerminalType type)
-{
-  /*
-  DebugInfo("parser = " << parser <<
-	    "  parser->isComplex() = " << parser->isComplex() <<
-	    "  parser->getComponentNonTerminalBase() = " << parser->getComponentNonTerminalBase());
-  */
-  return parser->getComponentNonTerminalBase() - componentIndex * NUMBER_OF_TYPES - type;
-}
-
-inline int
-MixfixModule::nonTerminal(const Sort* sort, NonTerminalType type)
-{
-  return nonTerminal(sort->component()->getIndexWithinModule(), type);
-}
-
 //	our stuff
 #include "latexCommon.cc"
 #include "latexTermPrint.cc"

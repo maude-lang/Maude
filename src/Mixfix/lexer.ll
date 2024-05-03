@@ -261,6 +261,8 @@ smt-search				return KW_SMT_SEARCH;
 vu-narrow				return KW_VU_NARROW;
 fvu-narrow				return KW_FVU_NARROW;
 fold					return KW_FOLD;
+vfold					return KW_VFOLD;
+invariant				return KW_INVARIANT;
 desugared				return KW_DESUGARED;
 processed				return KW_PROCESSED;
 hook|hooks				return KW_HOOKS;

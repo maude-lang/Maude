@@ -1,3 +1,259 @@
+2024-05-02  Steven Eker  <eker@pup>
+
+	* search.cc (Interpreter::search): delete terms and condition fragments
+	if term disjunction used with anything other than vu-narrow/fvu-narrow
+	(Interpreter::search): check problemOK() in NarrowingSequenceSearch3()
+	case
+
+2024-05-01  Steven Eker  <eker@pup>
+
+	* narrowing.cc (Interpreter::doVuNarrowing): pass stateNr to
+	generateSolutionNr()
+	(Interpreter::doVuNarrowing): print out state number if we
+	have the KEEP_PATHS flag
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): pass NONE by
+	default to stateNr argument of generateSolutionNr()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateSolutionNr): handle
+	stateNr argument
+
+	* top.yy: added KW_VFOLD, KW_INVARIANT
+
+	* lexer.ll: added invariant, vfold
+
+2024-04-24  Steven Eker  <eker@pup>
+
+	* narrowing.cc (Interpreter::doVuNarrowing): latex initial state
+	if there was more than one initial state
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decl for
+	generateState()
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateState): take a
+	message argument
+
+	* narrowing.cc (Interpreter::doVuNarrowing): print out initial state
+	if there was more than one initial state
+
+2024-04-22  Steven Eker  <eker@pup>
+
+	* search.cc (Interpreter::search): pass subjectDags to
+	NarrowingSequenceSearch3()
+
+2024-04-19  Steven Eker  <eker@pup>
+
+	* commands.yy (search): fix comment
+	(command): code cleaning
+
+2024-04-12  Steven Eker  <eker@pup>
+
+	* mixfixParser.hh (class MixfixParser): TERM_DISJUNCTION ->
+	MAKE_TERM_DISJUNCTION
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): updated decl for
+	generateSearch()
+
+	* search.cc (Interpreter::search): handle the syntax of disjuctions
+	of initial terms
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): handle
+	disjuctions of subjects
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): use
+	term disjunction for the first half of search pair
+
+	* mixfixParser.cc (MixfixParser::makeTermDisjunction): added
+	(MixfixParser::makeSearchCommand): use makeTermDisjunction()
+
+2024-04-11  Steven Eker  <eker@pup>
+
+	* mixfixParser.hh (class MixfixParser): added TERM_DISJUNCTION to
+	enum SemanticActions
+
+	* specialTokens.cc: added vee
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): added syntax
+	for term disjunctions
+
+	* mixfixModule.hh (class MixfixModule): added TERM_DISJUNCTION_TYPE and
+	set COMPLEX_NUMBER_OF_TYPES = 6
+
+2024-04-10  Steven Eker  <eker@pup>
+
+	* mixfixModule.hh (MixfixModule::nonTerminal): use getNumberOfTypes()
+
+	* makeGrammar.cc (MixfixModule::makeGrammar): use SIMPLE_NUMBER_OF_TYPES,
+	COMPLEX_NUMBER_OF_TYPES
+
+	* mixfixModule.hh (class MixfixModule): split NUMBER_OF_TYPES into
+	SIMPLE_NUMBER_OF_TYPES and COMPLEX_NUMBER_OF_TYPES
+
+	* mixfixParser.hh (class MixfixParser): updated decl for ctor
+
+	* mixfixParser.cc (MixfixParser::MixfixParser): take and store
+	numberOfTypes
+
+	* mixfixParser.hh (class MixfixParser): added data member numberOfTypes
+	(MixfixParser::getNumberOfTypes): added
+
+	* mixfixModule.hh (MixfixModule::domainComponentIndex): moved here
+	(MixfixModule::nonTerminal): moved here (both versions)
+
+	* search.cc (Interpreter::search): pass initial as a
+	Vector<Term*>& rather than a Term*&
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	makeSearchCommand()
+
+	* mixfixParser.cc (MixfixParser::makeSearchCommand): initial is now a
+	Vector<Term*>& rather than a Term*&
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	parseSearchCommand()
+
+	* doParse.cc (MixfixModule::parseSearchCommand): initial is now a
+	Vector<Term*>& rather than a Term*&
+
+	* makeGrammar.cc (MixfixModule::makeComplexProductions): added missing
+	comment for get variants syntax
+
+2024-04-05  Steven Eker  <eker@pup>
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::acProvablyUnequal): return with
+	arguments correctly canceled
+	(CommutativeDecomposeEqualitySymbol::acDecompose): handle the case where
+	some arguments canceled
+
+2024-04-04  Steven Eker  <eker@pup>
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::decompose): use acDecompose()
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): added decl for acDecompose()
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::acDecompose): added
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(CommutativeDecomposeEqualitySymbol::makeMultisetFromArguments):
+	added
+	(class CommutativeDecomposeEqualitySymbol): made makeMultiset()
+	static
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::acProvablyUnequal):
+	added pairing argument
+
+2024-04-03  Steven Eker  <eker@pup>
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): added decl for
+	equationallyStableOrGround()
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::associativeDecompose): added
+	(CommutativeDecomposeEqualitySymbol::equationallyStableOrGround): added
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): added decl for
+	acProvablyUnequal()
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::associativeDecompose): use
+	makeMultiset() rather than fillSet()
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): deleted decl for
+	fillSet()
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::fillSet): deleted
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(CommutativeDecomposeEqualitySymbol::makeMultiset): added
+
+2024-04-02  Steven Eker  <eker@pup>
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): added decl for fillSet()
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::fillSet): added
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol):
+	added typedef DagNodeSet
+
+2024-03-29  Steven Eker  <eker@pup>
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): updated decl for
+	decompose()
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::decompose)
+	(CommutativeDecomposeEqualitySymbol::associativeDecompose)
+	(CommutativeDecomposeEqualitySymbol::eqRewrite): use new
+	isEquationallyStable() conventions
+	(CommutativeDecomposeEqualitySymbol::decompose): don't take
+	MixfixModule* argument
+	(CommutativeDecomposeEqualitySymbol::eqRewrite): use new decompose
+	convention
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(slass CommutativeDecomposeEqualitySymbol): updated decl for
+	isEquationallyStable(); made it static
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::decompose): use
+	associativeDecompose()
+	(CommutativeDecomposeEqualitySymbol::equationallyStable): don't
+	take MixfixModule; renamed to isEquationallyStable()
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): added decl for
+	associativeDecompose()
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::associativeDecompose):
+	split off assoc code into new function
+
+2024-03-28  Steven Eker  <eker@pup>
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::decompose): fixed
+	infinite loop bug
+
+2024-03-27  Steven Eker  <eker@pup>
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::eqRewrite): rewritten
+	using equationalStable()
+	(CommutativeDecomposeEqualitySymbol::decompose): handle
+	associative case
+
+	* commutativeDecomposeEqualitySymbol.hh
+	(class CommutativeDecomposeEqualitySymbol): added decl for
+	equationallyStable()
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::equationallyStable): added
+
+2024-03-26  Steven Eker  <eker@pup>
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::hasImmediateSubterm):
+	use DagArgumentIterator to work in the general case
+	(CommutativeDecomposeEqualitySymbol::decompose): check for
+	the existence of a conjunction symbol here
+	(CommutativeDecomposeEqualitySymbol::eqRewrite): don't check for
+	the existence of a conjunctionSymbol here
+
+===================================Maude160===========================================
+
 2024-03-15  Steven Eker  <eker@pup>
 
 	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateBanner): tweak

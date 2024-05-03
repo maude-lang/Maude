@@ -43,3 +43,35 @@ red c(c(X, Y), Z) .=. c(X, Y) .
 *** compound
 red c(f(X, Y), g(W, Z)) .=. c(g(A, B), f(C, D)) .
 red c(f(X, Y), g(W, Z)) .=. c(f(A, B), f(C, D)) .
+
+
+fmod FOO is
+  inc INITIAL-EQUALITY-PREDICATE .
+  sort Foo .
+  ops a b c 1 : -> Foo .
+  op __ : Foo Foo -> Foo [assoc] .
+  op _+_ : Foo Foo -> Foo [assoc comm] .
+  op s : Foo Foo -> Foo [comm] .
+  op f : Foo Foo -> Foo [assoc comm id: 1] .
+  ops g h p : Foo -> Foo .
+  var A B C D E W X Y Z : Foo .
+  eq p(X) = g(h(X)) .
+endfm
+
+*** ctor declaration not needed for decomposition
+red g(X) .=. g(Y) .
+
+*** ground vs equationally-stable
+red f(a, g(b), c) .=. h(X) .
+
+*** canceling under commutative
+red s(g(X), Z) .=. s(Y, g(X)) .
+
+*** AC
+red g(A) + g(B) + g(C) .=. g(A) + B + h(C) .
+red g(A) + g(B) + g(C) .=. g(A) + B .
+
+*** associative
+red g(A) (B) X h(A) Y h(C) .=. h(A) g(D) g(E) Z X h(A) .
+red g(A) X Y h(A) h(C) .=. g(D) g(E) g(D) X h(A) .
+red g(A) g(B) X h(A) Y h(C) .=. g(D) g(E) Z X h(A) .

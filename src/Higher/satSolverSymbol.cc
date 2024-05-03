@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ SatSolverSymbol::attachTerm(const char* purpose, Term* term)
 void
 SatSolverSymbol::copyAttachments(Symbol* original, SymbolMap* map)
 {
-  SatSolverSymbol* orig = safeCast(SatSolverSymbol*, original);
+  SatSolverSymbol* orig = safeCastNonNull<SatSolverSymbol*>(original);
   COPY_SYMBOL(orig, formulaListSymbol, map, Symbol*);
   COPY_SYMBOL(orig, nilFormulaListSymbol, map, Symbol*);
   COPY_SYMBOL(orig, modelSymbol, map, Symbol*);
@@ -152,7 +152,7 @@ SatSolverSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
   Assert(this == subject->symbol(), "bad symbol");
 
-  FreeDagNode* f = safeCast(FreeDagNode*, subject);
+  FreeDagNode* f = safeCastNonNull<FreeDagNode*>(subject);
   DagNode* formulaDag = f->getArgument(0);
   formulaDag->reduce(context);
 

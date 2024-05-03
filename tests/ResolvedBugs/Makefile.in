@@ -503,7 +503,8 @@ TESTS = \
 	redBlackNGA_April2023 \
 	stripperCollectorSwitchMay2023 \
 	filteredVariantUnifyJune2023 \
-	conditionSideEffectInStrategyLanguageDecember2023
+	conditionSideEffectInStrategyLanguageDecember2023 \
+	stringToRatConversionMarch2024
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -573,7 +574,8 @@ MAUDE_FILES = \
 	redBlackNGA_April2023.maude \
 	stripperCollectorSwitchMay2023.maude \
 	filteredVariantUnifyJune2023.maude \
-	conditionSideEffectInStrategyLanguageDecember2023.maude
+	conditionSideEffectInStrategyLanguageDecember2023.maude \
+	stringToRatConversionMarch2024.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -643,7 +645,8 @@ RESULT_FILES = \
 	redBlackNGA_April2023.expected \
 	stripperCollectorSwitchMay2023.expected \
 	filteredVariantUnifyJune2023.expected \
-	conditionSideEffectInStrategyLanguageDecember2023.expected
+	conditionSideEffectInStrategyLanguageDecember2023.expected \
+	stringToRatConversionMarch2024.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
 all: all-am
@@ -1299,6 +1302,13 @@ filteredVariantUnifyJune2023.log: filteredVariantUnifyJune2023
 conditionSideEffectInStrategyLanguageDecember2023.log: conditionSideEffectInStrategyLanguageDecember2023
 	@p='conditionSideEffectInStrategyLanguageDecember2023'; \
 	b='conditionSideEffectInStrategyLanguageDecember2023'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+stringToRatConversionMarch2024.log: stringToRatConversionMarch2024
+	@p='stringToRatConversionMarch2024'; \
+	b='stringToRatConversionMarch2024'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

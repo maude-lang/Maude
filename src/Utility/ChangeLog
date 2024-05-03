@@ -1,3 +1,16 @@
+2024-04-18  Steven Eker  <eker@pup>
+
+	* rope.hh (Rope::const_iterator::operator[]): added
+	(Rope::const_iterator::operator->): added
+
+2024-04-17  Steven Eker  <eker@pup>
+
+	* rope.hh (Rope::const_iterator::operator++): added post increment
+	version
+	(Rope::const_iterator::operator--): added post decrement version
+
+===================================Maude160===================================
+
 2024-03-06  Steven Eker  <eker@pup>
 
 	* pointerMap.cc (PointerMap::PointerMap, PointerMap::setMap):

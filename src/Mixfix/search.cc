@@ -121,25 +121,35 @@ Interpreter::search(const Vector<Token>& bubble,
 		    bool debug,
 		    int variantFlags)
 {
+  static const char* searchKindName[] = {"search", "narrow", "xg-narrow", "smt-search", "vu-narrow", "fvu-narrow"};
   VisibleModule* fm = currentModule->getFlatModule();
-  Term* initial;
+  Vector<Term*> initial;
   int searchType;
   Term* target;
   Vector<ConditionFragment*> condition;
   if (!(fm->parseSearchCommand(bubble, initial, searchType, target, condition)))
     return;
-
-  if (!checkSearchRestrictions(searchKind, searchType, target, condition, fm))
+  Index nrInitialTerms = initial.size();
+  if (nrInitialTerms > 1 && !(searchKind == VU_NARROW || searchKind == FVU_NARROW))
     {
-      initial->deepSelfDestruct();
+      IssueWarning(*target << ": term disjunctions are not supported for " << searchKindName[searchKind] << ".");
+      for (Term* t : initial)
+	t->deepSelfDestruct();
       target->deepSelfDestruct();
       for (ConditionFragment* cf : condition)
 	delete cf;
       return;
     }
-  Pattern* pattern = (searchKind == VU_NARROW ||
-		      searchKind == FVU_NARROW ||
-		      searchKind == SMT_SEARCH) ? 0 :
+  if (!checkSearchRestrictions(searchKind, searchType, target, condition, fm))
+    {
+      for (Term* t : initial)
+	t->deepSelfDestruct();
+      target->deepSelfDestruct();
+      for (ConditionFragment* cf : condition)
+	delete cf;
+      return;
+    }
+  Pattern* pattern = (searchKind == VU_NARROW || searchKind == FVU_NARROW || searchKind == SMT_SEARCH) ? 0 :
     new Pattern(target, false, condition);
   //
   //	Regular seach cannot have unbound variables.
@@ -149,20 +159,20 @@ Interpreter::search(const Vector<Token>& bubble,
       IssueWarning(*target << ": variable " <<
 		   QUOTE(pattern->index2Variable(pattern->getUnboundVariables().min())) <<
 		   " is used before it is bound in the condition of a search command.\n");
-      initial->deepSelfDestruct();
+      for (Term* t : initial)
+	t->deepSelfDestruct();
       delete pattern;
       return;
     }
 
-  DagNode* subjectDag = makeDag(initial);
+  Vector<DagNode*> subjectDags(nrInitialTerms);
+  for (Index i = 0; i < nrInitialTerms; ++i)
+    subjectDags[i] = makeDag(initial[i]);
 
   static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!", "=>#" };
   bool showCommand = getFlag(SHOW_COMMAND);
   if (showCommand)
     {
-      static const char* searchKindName[] =
-	{ "search", "narrow", "xg-narrow",
-	  "smt-search", "vu-narrow", "fvu-narrow"};
 
       UserLevelRewritingContext::beginCommand();
       if (debug)
@@ -185,7 +195,13 @@ Interpreter::search(const Vector<Token>& bubble,
 	  cout << "} ";
 	}
       printModifiers(limit, depth);
-      cout << subjectDag << ' ' << searchTypeSymbol[searchType] << ' ' << target;
+      const char* sep = "";
+      for (DagNode* d : subjectDags)
+	{
+	  cout << sep << d;
+	  sep = " \\/ ";
+	}
+      cout << ' ' << searchTypeSymbol[searchType] << ' ' << target;
       if (!condition.empty())
 	{
 	  cout << " such that ";
@@ -194,13 +210,13 @@ Interpreter::search(const Vector<Token>& bubble,
       cout << " ." << endl;
 
       if (xmlBuffer != 0)
-	xmlBuffer->generateSearch(subjectDag, pattern, searchTypeSymbol[searchType], limit, depth);  // does this work for narrowing?
+	xmlBuffer->generateSearch(subjectDags[0], pattern, searchTypeSymbol[searchType], limit, depth);  // does this work for narrowing?
     }
   if (latexBuffer != 0)
     {
       latexBuffer->generateSearch(showCommand,
 				  searchKind,
-				  subjectDag,
+				  subjectDags,
 				  searchType,
 				  target,
 				  condition,
@@ -218,7 +234,7 @@ Interpreter::search(const Vector<Token>& bubble,
   if (searchKind == SEARCH)
     {
       RewriteSequenceSearch* state =
-	new RewriteSequenceSearch(new UserLevelRewritingContext(subjectDag),
+	new RewriteSequenceSearch(new UserLevelRewritingContext(subjectDags[0]),
 				  static_cast<RewriteSequenceSearch::SearchType>(searchType),
 				  pattern,
 				  depth);
@@ -229,7 +245,7 @@ Interpreter::search(const Vector<Token>& bubble,
     {
       const SMT_Info& smtInfo = fm->getSMT_Info();
       VariableGenerator* vg = new VariableGenerator(smtInfo);
-      RewritingContext* initial = new UserLevelRewritingContext(subjectDag);
+      RewritingContext* initial = new UserLevelRewritingContext(subjectDags[0]);
       //
       //	SMT_RewriteSequenceSearch takes responsibility for deleting
       //	vg and initial.
@@ -258,19 +274,25 @@ Interpreter::search(const Vector<Token>& bubble,
       if (searchKind == FVU_NARROW)
 	variantFlags |= NarrowingSequenceSearch3::FOLD;
       NarrowingSequenceSearch3* state =
-	new NarrowingSequenceSearch3(new UserLevelRewritingContext(subjectDag),
+	new NarrowingSequenceSearch3(new UserLevelRewritingContext(subjectDags[0]),
+				     subjectDags,
 				     static_cast<NarrowingSequenceSearch::SearchType>(searchType),  // HACK
 				     goal,
 				     depth,
 				     new FreshVariableSource(fm),
 				     variantFlags);
+      if (!state->problemOK())
+	{
+	  delete state; // deletes initial and fresh variable source
+	  return;
+	}
       Timer timer(getFlag(SHOW_TIMING));
       doVuNarrowing(timer, fm, state, 0, limit);
     }
   else
     {
       NarrowingSequenceSearch* state =
-	new NarrowingSequenceSearch(new UserLevelRewritingContext(subjectDag),
+	new NarrowingSequenceSearch(new UserLevelRewritingContext(subjectDags[0]),
 				    static_cast<NarrowingSequenceSearch::SearchType>(searchType),  // HACK
 				    pattern,
 				    depth,

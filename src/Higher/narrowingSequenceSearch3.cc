@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,7 +51,68 @@
 #include "filteredVariantUnifierSearch.hh"
 #include "narrowingSequenceSearch3.hh"
 
+bool
+NarrowingSequenceSearch3::handleInitialState(DagNode* dagToNarrow, NarrowingVariableInfo& varInfo)
+{
+  //
+  //	Index the variables in the state dag.
+  //
+  dagToNarrow->indexVariables(varInfo, 0);
+  //
+  //	Build a renaming from these variable to fresh variables.
+  //
+  int nrVariables = varInfo.getNrVariables();
+  Substitution* renamingSubstitution = new Substitution(nrVariables);
+  for (int i = 0; i < nrVariables; ++i)
+    {
+      VariableDagNode* v = varInfo.index2Variable(i);
+      if (freshVariableGenerator->variableNameConflict(v->id(), NONE))
+	{
+	  IssueWarning("unsafe variable name " << QUOTE((DagNode*) v) << " in initial state " <<
+		       QUOTE(dagToNarrow) << ".");
+	  return false;
+	}
+      int name = freshVariableGenerator->getFreshVariableName(i, 0);  // 0 indicates a #variable
+      VariableDagNode* nv = new VariableDagNode(v->symbol(), name, i);
+      renamingSubstitution->bind(i, nv);
+    }
+  //
+  //	Protect the variable dagnodes we just made from the garbage collector in case they
+  //	disappear from the reduced term.
+  //
+  protectedSubstitution = renamingSubstitution;
+  //
+  //	Rename all the variables in the state
+  //
+  if (DagNode* renamedDagToNarrow = dagToNarrow->instantiate(*renamingSubstitution, false))
+    dagToNarrow = renamedDagToNarrow;
+  //
+  //	Reduce the state with equations. 
+  //
+  RewritingContext* reduceContext = initial->makeSubcontext(dagToNarrow);
+  reduceContext->reduce();
+  initial->transferCountFrom(*reduceContext);
+  protectedSubstitution = nullptr;
+  //
+  //	Add the renamed and reduced state to the state collection, along with the
+  //	renaming as its accumulated substitution.
+  //
+  int newStateIndex = ++counter;
+  bool survived = stateCollection.insertState(newStateIndex, reduceContext->root(), -1);
+  delete reduceContext;
+  if  (survived)
+    stateCollection.addAccumulatedSubstitution(newStateIndex, 0, renamingSubstitution);
+  else
+    delete renamingSubstitution;
+  //
+  //	If we cared about the renaming substitution, it is now protected by stateCollection.
+  //
+  protectedSubstitution = nullptr;
+  return true;
+}
+
 NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
+						   const Vector<DagNode*>& startStates,
 						   SearchType searchType,
 						   DagNode* goal,
 						   int maxDepth,
@@ -59,37 +120,68 @@ NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
 						   int variantFlags)
   : initial(initial),
     goal(goal),
+    nrInitialStatesToTry((searchType == ANY_STEPS) ? (startStates.size() ? startStates.size() : 1) : 0),
     maxDepth((searchType == ONE_STEP) ? 1 : maxDepth),
-    needToTryInitialState(searchType == ANY_STEPS),
     normalFormNeeded(searchType == NORMAL_FORM),
+    termDisjunction(startStates.size() > 1),
     freshVariableGenerator(freshVariableGenerator),
     variantFlags(variantFlags),
-    stateCollection(variantFlags & FOLD, variantFlags & KEEP_HISTORY)
+    stateCollection(variantFlags & FOLD, variantFlags & (KEEP_HISTORY | KEEP_PATHS))
 {
   incompleteFlag = false;
-  unificationProblem = 0;
-  stateBeingExpanded = 0;
+  problemOkay = false;
+  unificationProblem = nullptr;
+  stateBeingExpanded = nullptr;
   stateBeingExpandedIndex = NONE;
   stateBeingExpandedDepth = 0;
   expansionSuccessful = false;
   nextInterestingState = NONE;
-  counter = 0;
+  counter = -1;
   nrStatesExpanded = 0;
+  protectedSubstitution = nullptr;
   //
-  //	Index variables occurring in the initial term and create a fresh
-  //	#variable for each original variable and an accumulated substitution
-  //	that maps fresh original variables to fresh variables.
+  //	Index variables occurring in the startStates.
   //
-  DagNode* dagToNarrow = initial->root();
-  dagToNarrow->indexVariables(initialVariableInfo, 0);
-  int nrInitialVariables = initialVariableInfo.getNrVariables();
-  Substitution* accumulatedSubstitution = new Substitution(nrInitialVariables);
-  for (int i = 0; i < nrInitialVariables; ++i)
+  map<DagNode*, Index, DagNode::LessThan> seenVariables;
+  if (termDisjunction)
     {
-      Symbol* baseSymbol = initialVariableInfo.index2Variable(i)->symbol();
-      int name = freshVariableGenerator->getFreshVariableName(i, 0);
-      VariableDagNode* v = new VariableDagNode(baseSymbol, name, i);
-      accumulatedSubstitution->bind(i, v);
+      Index nrInitialStates = startStates.size();
+      initialStates.resize(nrInitialStates);
+      //
+      //	First protect all startStates from garbage collection putting them in initialStates.
+      //
+      for (Index i = 0; i < nrInitialStates; ++i)
+	initialStates[i].state = startStates[i];
+      //
+      //	Then do the processing on each initial state which may call reduce() and the garbage collector.
+      //
+      for (Index i = 0; i < nrInitialStates; ++i)
+	{
+	  InitialState& is = initialStates[i];
+	  if (!handleInitialState(is.state, is.varInfo))
+	    return;
+	  //
+	  //	Check for illegal variable sharing.
+	  //
+	  int nrVariables = is.varInfo.getNrVariables();
+	  for (int j = 0; j < nrVariables; ++j)
+	    {
+	      DagNode* v = is.varInfo.index2Variable(j);
+	      auto r = seenVariables.insert({v, i});
+	      if (!r.second)
+		{
+		  IssueWarning("variable " << QUOTE(v) << " appears in both initial state " <<
+			       QUOTE(initialStates[r.first->second].state) << " and initial state " <<
+			       QUOTE(initialStates[i].state) << ".");
+		  return;
+		}
+	    }
+	}
+    }
+  else
+    {
+      if (!handleInitialState(initial->root(), initialVariableInfo))
+	return;
     }
   //
   //	HACK: this is so we can use instantiate which expects ground terms
@@ -97,28 +189,34 @@ NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
   //
   //goal->computeTrueSort(*initial); 
   //
-  //	We also want to index goal variables so we can apply the accumulated
+  //	We also want to index goal variables so we can apply the renaming
   //	substitution, but we do not want to carry around the extra variables
   //	since they cannot play a role in narrowing, as they don't occur in
   //	the initial term.
   //
   goal->indexVariables(initialVariableInfo, 0);
-  //
-  //	Reduction could lose variables. But initial variables will be protected
-  //	from garbage collection by initial RewritingContext, and goal only
-  //	variables will be protected by goal.
-  //
-  if (DagNode* renamedDagToNarrow = dagToNarrow->instantiate(*accumulatedSubstitution, false))
-    dagToNarrow = renamedDagToNarrow;
-  RewritingContext* reduceContext = initial->makeSubcontext(dagToNarrow);
-  reduceContext->reduce();
-  initial->transferCountFrom(*reduceContext);
-  //
-  //	Create initial state in state collection.
-  //
-  (void) stateCollection.insertState(0, reduceContext->root(), -1);
-  stateCollection.addAccumulatedSubstitution(0, 0, accumulatedSubstitution);
-  delete reduceContext;
+  int nrVariables = initialVariableInfo.getNrVariables();
+  for (int i = 0; i < nrVariables; ++i)
+    {
+      VariableDagNode* v = initialVariableInfo.index2Variable(i);
+      DagNode* d = v;
+      if (freshVariableGenerator->variableNameConflict(v->id(), NONE))
+	{
+	  IssueWarning("unsafe variable name " << QUOTE(d) << " in goal " << goal << ".");
+	  return;
+	}
+      if (termDisjunction)
+	{
+	  auto p = seenVariables.find(d);
+	  if (p != seenVariables.end())
+	    {
+	      IssueWarning("sharing a variable " << QUOTE(d) << " between initial state " <<
+			   QUOTE(initialStates[p->second].state) << " and goal " <<
+			   QUOTE(goal) << " is not allowed when narrowing a disjunction of initial states.");
+	      return;
+	    }
+	}
+    }
   //
   //	Need to make internal symbol for variant unification with goal.
   //
@@ -130,6 +228,8 @@ NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
   domain[0] = range;
   domain[1] = range;
   unificationPairSymbol = module->createInternalTupleSymbol(domain, range);
+
+  problemOkay = true;
 }
 
 NarrowingSequenceSearch3::~NarrowingSequenceSearch3()
@@ -140,12 +240,29 @@ NarrowingSequenceSearch3::~NarrowingSequenceSearch3()
   delete initial;
 }
 
+void
+NarrowingSequenceSearch3::markReachableNodes()
+{
+  //
+  //	Protect start states in termDisjuction mode
+  //
+  //goal->mark;  // maybe use this rather than DagRoot
+  for (InitialState& i : initialStates)
+    i.state->mark();
+  if (protectedSubstitution)
+    {
+      int nrBindings = protectedSubstitution->nrFragileBindings();
+      for (int i = 0; i < nrBindings; ++i)
+	protectedSubstitution->value(i)->mark();
+    }
+}
+
 bool
 NarrowingSequenceSearch3::findNextUnifier()
 {
   for (;;)
     {
-      if (unificationProblem != 0)
+      if (unificationProblem != nullptr)
 	{
 	  bool moreUnifiers = unificationProblem->findNextUnifier();
 	  initial->transferCountFrom(*(unificationProblem->getContext()));
@@ -153,14 +270,25 @@ NarrowingSequenceSearch3::findNextUnifier()
 	    incompleteFlag = true;
 	  if (moreUnifiers)
 	    {
-	      currentUnifier = &(unificationProblem->getCurrentUnifier(nrFreeVariablesInUnifier,
-								       variableFamilyInUnifier));
+	      currentUnifier = &(unificationProblem->getCurrentUnifier(nrFreeVariablesInUnifier, variableFamilyInUnifier));
+	      if (variantFlags & KEEP_PATHS)
+		{
+		  //
+		  //	We keep the path to a state that unifies with the goal since the user
+		  //	can ask for such a path at any time. Otherwise a state will be deleted if it
+		  //	becomes subsumed (if we're folding) or after all of its next states have been
+		  //	generated.
+		  //
+		  stateCollection.lockPathToCurrentState();
+		}
 	      return true;
 	    }	  
 	  delete unificationProblem;
-	  unificationProblem = 0;
+	  unificationProblem = nullptr;
 	}
-
+      //
+      //	Get the next state and see if we can unify it with our goal.
+      //
       nextInterestingState = findNextInterestingState();
       if (nextInterestingState == NONE)
 	break;
@@ -168,34 +296,39 @@ NarrowingSequenceSearch3::findNextUnifier()
       int variableFamily;
       Substitution* accumulatedSubstitution;
       stateCollection.getState(nextInterestingState, stateDag, variableFamily, accumulatedSubstitution);
-      //
-      //	Because the goal dag might include some of the variables from the initial state
-      //	we need to instantiate it.
-      //
-      DagNode* instantiatedGoal;
-      int nrInitialVariables = accumulatedSubstitution->nrFragileBindings();
-      int totalNrVariables = initialVariableInfo.getNrVariables();
-      if (totalNrVariables > nrInitialVariables)
+
+      DagNode* goalDag = goal.getNode();  // no change under instantiation
+      if (!termDisjunction)
 	{
 	  //
-	  //	Need to make a bigger substitution with extra variables zero'd out.
+	  //	Because the goal dag might include some of the variables from the initial state
+	  //	we need to instantiate it.
 	  //
-	  Substitution bigger(totalNrVariables);
-	  for (int i = 0; i < nrInitialVariables; ++i)
-	    bigger.bind(i, accumulatedSubstitution->value(i));
-	  for (int i = nrInitialVariables; i < totalNrVariables; ++i)
-	    bigger.bind(i, 0);
-	  instantiatedGoal = goal.getNode()->instantiate(bigger, false);
-	}
-      else
-	instantiatedGoal = goal.getNode()->instantiate(*accumulatedSubstitution, false);
-      if (instantiatedGoal == 0)
-	instantiatedGoal = goal.getNode();  // no change under instantiation
+	  DagNode* instantiatedGoal;
+	  int nrInitialVariables = accumulatedSubstitution->nrFragileBindings();
+	  int totalNrVariables = initialVariableInfo.getNrVariables();
+	  if (totalNrVariables > nrInitialVariables)
+	    {
+	      //
+	      //	Need to make a bigger substitution with extra variables zero'd out.
+	      //
+	      Substitution bigger(totalNrVariables);
+	      for (int i = 0; i < nrInitialVariables; ++i)
+		bigger.bind(i, accumulatedSubstitution->value(i));
+	      for (int i = nrInitialVariables; i < totalNrVariables; ++i)
+		bigger.bind(i, nullptr);
+	      instantiatedGoal = goalDag->instantiate(bigger, false);
+	    }
+	  else
+	    instantiatedGoal = goalDag->instantiate(*accumulatedSubstitution, false);
+	  if (instantiatedGoal != nullptr)
+	    goalDag = instantiatedGoal;
+	}      
       //
       //	Need to variant unify the narrrowed dag in this state with the goal dag.
       //
       Vector<DagNode*> args(2);
-      args[0] = instantiatedGoal;
+      args[0] = goalDag;
       args[1] = stateDag;
       DagNode* pairDag = unificationPairSymbol->makeDagNode(args);
       RewritingContext* pairContext = initial->makeSubcontext(pairDag);
@@ -219,16 +352,22 @@ NarrowingSequenceSearch3::findNextUnifier()
 int
 NarrowingSequenceSearch3::findNextInterestingState()
 {
-  if (needToTryInitialState)
+  //
+  //	If we are a =>* search we need tor try surviving initial states before we start narrowing.
+  //
+  while (nrInitialStatesToTry > 0)
     {
+      --nrInitialStatesToTry;
+      int stateToTry = counter - nrInitialStatesToTry;  // want to try 0,..., counter
       //
-      //	Special case: return the initial state; only happens for =>*
+      //	We want to know if stateToTry has been subsumed; but because we have not started narrowing,
+      //	it can't be locked, and thus if it has been subsumed it will have been deleted.
       //
-      needToTryInitialState = false;  // don't do this again
-      return 0;
+      if (stateCollection.exists(stateToTry))
+	return stateToTry;
     }
 
-  if (stateBeingExpanded != 0)
+  if (stateBeingExpanded != nullptr)
     {
     tryToExpand:
       //
@@ -243,7 +382,7 @@ NarrowingSequenceSearch3::findNextInterestingState()
 	  if (!success)
 	    {
 	      delete stateBeingExpanded;
-	      stateBeingExpanded = 0;
+	      stateBeingExpanded = nullptr;
 	      if (normalFormNeeded && !expansionSuccessful)
 		{
 		  //
@@ -261,7 +400,7 @@ NarrowingSequenceSearch3::findNextInterestingState()
 	      //	in normal form.
 	      //
 	      delete stateBeingExpanded;
-	      stateBeingExpanded = 0;
+	      stateBeingExpanded = nullptr;
 	      break;
 	    }
 	  expansionSuccessful = true;  // stateBeingExpanded can't be a normal form
@@ -293,7 +432,7 @@ NarrowingSequenceSearch3::findNextInterestingState()
 	  RewritingContext* reduceContext = initial->makeSubcontext(newState);
 	  replacementContextProtector.setNode(replacementContext);  // protect replacementContext from GC during reduce()
 	  reduceContext->reduce();  // can call GC
-	  replacementContextProtector.setNode(0);  // withdraw protection
+	  replacementContextProtector.setNode(nullptr);  // withdraw protection
 	  initial->transferCountFrom(*reduceContext);
 	  //
 	  //	Does new state survive folding?

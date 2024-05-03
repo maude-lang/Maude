@@ -29,6 +29,7 @@ maude_CPPFLAGS = \
 	-I$(top_srcdir)/src/3rdParty \
 	-I$(top_srcdir)/src/FullCompiler \
 	-I$(top_srcdir)/src/StrategyLanguage \
+	-I$(top_srcdir)/src/Parser \
 	-I$(top_srcdir)/src/Mixfix
 
 maude_LDADD = \

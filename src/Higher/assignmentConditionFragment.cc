@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ AssignmentConditionFragment::solve(bool findFirst,
     }
   else
     {
-      AssignmentConditionState* cs = safeCast(AssignmentConditionState*, state.top());
+      AssignmentConditionState* cs = safeCastNonNull<AssignmentConditionState*>(state.top());
       if (cs->solve(false, solution))
 	return true;
       delete cs;

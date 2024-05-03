@@ -66,7 +66,8 @@ TESTS = \
 	redBlackNGA_April2023 \
 	stripperCollectorSwitchMay2023 \
 	filteredVariantUnifyJune2023 \
-	conditionSideEffectInStrategyLanguageDecember2023
+	conditionSideEffectInStrategyLanguageDecember2023 \
+	stringToRatConversionMarch2024
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -136,7 +137,8 @@ MAUDE_FILES = \
 	redBlackNGA_April2023.maude \
 	stripperCollectorSwitchMay2023.maude \
 	filteredVariantUnifyJune2023.maude \
-	conditionSideEffectInStrategyLanguageDecember2023.maude
+	conditionSideEffectInStrategyLanguageDecember2023.maude \
+	stringToRatConversionMarch2024.maude
 
 
 RESULT_FILES = \
@@ -207,7 +209,8 @@ RESULT_FILES = \
 	redBlackNGA_April2023.expected \
 	stripperCollectorSwitchMay2023.expected \
 	filteredVariantUnifyJune2023.expected \
-	conditionSideEffectInStrategyLanguageDecember2023.expected
+	conditionSideEffectInStrategyLanguageDecember2023.expected \
+	stringToRatConversionMarch2024.expected
 
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

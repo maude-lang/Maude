@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,19 +29,19 @@
 class FreeDagArgumentIterator : public RawDagArgumentIterator
 {
 public:
-  FreeDagArgumentIterator(DagNode** first, int nrArgs);
+  FreeDagArgumentIterator(DagNode* const* first, int nrArgs);
 
   bool valid() const;
   DagNode* argument() const;
   void next();
 
 private:
-  DagNode** position;
+  DagNode* const* position;
   int nrRemaining;
 };
 
 inline
-FreeDagArgumentIterator::FreeDagArgumentIterator(DagNode** first, int nrArgs)
+FreeDagArgumentIterator::FreeDagArgumentIterator(DagNode* const* first, int nrArgs)
 {
   position = first;
   nrRemaining = nrArgs;

@@ -1,3 +1,9 @@
+2024-04-26  Steven Eker  <eker@pup>
+
+	* narrowingVariableInfo.hh (class NarrowingVariableInfo): make copyable
+
+===================================Maude160===========================================
+
 2024-03-05  Steven Eker  <eker@pup>
 
 	* argumentIterator.hh (ArgumentIterator::ArgumentIterator): take

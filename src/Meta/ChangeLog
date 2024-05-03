@@ -1,3 +1,31 @@
+2024-05-02  Steven Eker  <eker@pup>
+
+	* miNarrowSearch.cc (InterpreterManagerSymbol::makeNarrowingSequenceSearch3):
+	removed hack, now that we don't need non-empty startStates; check problemOK()
+
+	* metaNewNarrow2.cc (MetaLevelOpSymbol::makeNarrowingSequenceSearch3):
+	removed hack, now that we don't need non-empty startStates; check problemOK()
+
+2024-04-24  Steven Eker  <eker@pup>
+
+	* metaNewNarrow2.cc (MetaLevelOpSymbol::metaNarrowingSearch): pass
+	dummy argument to getStateInfo()
+
+	* miNarrowSearch.cc (InterpreterManagerSymbol::getNarrowingSearchResult):
+	pass dummy argument to getStateInfo()
+
+2024-04-22  Steven Eker  <eker@pup>
+
+	* miNarrowSearch.cc
+	(InterpreterManagerSymbol::makeNarrowingSequenceSearch3): pass
+	startStates to arrowingSequenceSearch3()
+
+	* metaNewNarrow2.cc
+	(MetaLevelOpSymbol::makeNarrowingSequenceSearch3): pass
+	startStates to arrowingSequenceSearch3()
+
+===================================Maude160===========================================
+
 2024-03-06  Steven Eker  <eker@pup>
 
 	* metaUp.cc (MetaLevel::upQid): got rid of const_cast<>

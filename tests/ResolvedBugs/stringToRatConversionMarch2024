@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/stringToRatConversionMarch2024.maude -no-banner -no-advise \
+  > stringToRatConversionMarch2024.out 2>&1
+
+diff $srcdir/stringToRatConversionMarch2024.expected stringToRatConversionMarch2024.out > /dev/null 2>&1

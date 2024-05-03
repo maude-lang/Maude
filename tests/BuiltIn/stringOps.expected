@@ -1,0 +1,193 @@
+==========================================
+reduce in STRING-OPS : isControl("\n") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isControl("a") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isPrintable("a") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isPrintable("\n") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isWhiteSpace("\n") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isWhiteSpace("2") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isBlank("\t") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isBlank("\n") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isGraphic("a") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isGraphic(" ") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isPunctuation(";") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isPunctuation("a") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isAlphanumeric("a") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isAlphanumeric("3") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isAlphanumeric("!") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isAlphanumeric("\n") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isAlphanumeric("word") .
+rewrites: 0
+result [Bool]: isAlphanumeric("word")
+==========================================
+reduce in STRING-OPS : isAlphabetic("a") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isAlphabetic("3") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isAlphabetic("!") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isUppercase("a") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isUppercase("A") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isUppercase("4") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isLowercase("a") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isLowercase("A") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isLowercase("4") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isDigit("A") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : isDigit("4") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isHexadecimalDigit("A") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isHexadecimalDigit("4") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : isHexadecimalDigit("G") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : startsWith("Foo foo", "Foo") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : startsWith("Foo foo", "Bar") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : startsWith("Foo foo", "BarBarBar") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : endsWith("Foo foo", "foo") .
+rewrites: 1
+result Bool: true
+==========================================
+reduce in STRING-OPS : endsWith("Foo foo", "Bar") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : endsWith("Foo foo", "BarBarBar") .
+rewrites: 1
+result Bool: false
+==========================================
+reduce in STRING-OPS : trimStart(" \nFoo\n ") .
+rewrites: 1
+result String: "Foo\n "
+==========================================
+reduce in STRING-OPS : trimStart("BarFoo\n ") .
+rewrites: 1
+result String: "BarFoo\n "
+==========================================
+reduce in STRING-OPS : trimStart("\t\t \f\r  \n ") .
+rewrites: 1
+result String: ""
+==========================================
+reduce in STRING-OPS : trimEnd(" \nFoo\n ") .
+rewrites: 1
+result String: " \nFoo"
+==========================================
+reduce in STRING-OPS : trimEnd(" \nFooBar") .
+rewrites: 1
+result String: " \nFooBar"
+==========================================
+reduce in STRING-OPS : trimEnd("\t\t \f\r  \n ") .
+rewrites: 1
+result String: ""
+==========================================
+reduce in STRING-OPS : trim(" \nFoo\n ") .
+rewrites: 1
+result String: "Foo"
+==========================================
+reduce in STRING-OPS : trim("Foo\n ") .
+rewrites: 1
+result String: "Foo"
+==========================================
+reduce in STRING-OPS : trim(" \nFoo") .
+rewrites: 1
+result String: "Foo"
+==========================================
+reduce in STRING-OPS : trim("FooBar") .
+rewrites: 1
+result String: "FooBar"
+==========================================
+reduce in STRING-OPS : trim("\t\t \f\r  \n ") .
+rewrites: 1
+result String: ""
+Bye.

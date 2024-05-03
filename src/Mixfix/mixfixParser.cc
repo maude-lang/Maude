@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -108,11 +108,13 @@
 MixfixParser::MixfixParser(MixfixModule& client,
 			   bool complexFlag,
 			   int componentNonTerminalBase,
+			   int numberOfTypes,
 			   int nextNonTerminalCode,
 			   int nrTokensGuess)
   : client(client),
     complexParser(complexFlag),
     componentNonTerminalBase(componentNonTerminalBase),
+    numberOfTypes(numberOfTypes),
     tokenSet(nrTokensGuess),
     specialTerminals(Token::LAST_PROPERTY)
 {
@@ -367,7 +369,18 @@ MixfixParser::makeUnifyCommand(Vector<Term*>& lhs, Vector<Term*>& rhs)
 }
 
 void
-MixfixParser::makeSearchCommand(Term*& initial,
+MixfixParser::makeTermDisjunction(int node, Vector<Term*>& terms)
+{
+  for (;; node = parser.getChild(node, 1))
+    {
+      terms.push_back(makeTerm(parser.getChild(node, 0)));
+      if (actions[parser.getProductionNumber(node)].action != MAKE_TERM_DISJUNCTION)
+	break;
+    }
+}
+
+void
+MixfixParser::makeSearchCommand(Vector<Term*>& initial,
 				int& searchType,
 				Term*& target,
 				Vector<ConditionFragment*>& condition)
@@ -375,7 +388,11 @@ MixfixParser::makeSearchCommand(Term*& initial,
   Assert(nrParses > 0, "no parses");
   int node = ROOT_NODE;
   int searchPair = parser.getChild(node, 0);
-  initial = makeTerm(parser.getChild(searchPair, 0));
+
+  makeTermDisjunction(parser.getChild(searchPair, 0), initial);
+
+  //initial.push_back(makeTerm(parser.getChild(searchPair, 0)));  // FIXME
+  
   int arrowType = parser.getChild(searchPair, 1);
   searchType = actions[parser.getProductionNumber(arrowType)].data;
   target = makeTerm(parser.getChild(searchPair, 2));

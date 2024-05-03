@@ -340,7 +340,7 @@ MaudeLatexBuffer::generateMatch(bool showCommand,
 void
 MaudeLatexBuffer::generateSearch(bool showCommand,
 				 Interpreter::SearchKind searchKind,
-				 DagNode* subject,
+				 const Vector<DagNode*>& subjects,
 				 int searchType,
 				 Term* target,
 				 const Vector<ConditionFragment*>& condition,
@@ -351,13 +351,13 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
 {
   //
   //	These commands are for the form:
-  //	  <command and options> in <module> : <subject> <searchType> <target> .
+  //	  <command and options> in <module> : <subjects> <searchType> <target> .
   //
   static const char* searchKindName[] = { "search", "narrow", "xg-narrow", "smt-search", "vu-narrow", "fvu-narrow"};
   static const char* searchTypeSymbol[] = { "=>1", "=>+", "=>*", "=>!", "=>#" };
   static const char* searchTypeLatex[] = { "\\maudeOneStep", "\\maudeAtLeastOneStep", "\\maudeAnySteps", "\\maudeToNormalForm", "\\maudeToBranch"};
 
-  Module* module = subject->symbol()->getModule();
+  Module* module = subjects[0]->symbol()->getModule();
   //
   //	Print comment.
   //
@@ -381,7 +381,14 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
       output << "} ";
     }
   safeCastNonNull<MixfixModule*>(module)->printModifiers(output, limit, depth);
-  commentDagNode(subject);
+  {
+    const char* sep = "";
+    for (DagNode* d : subjects)
+      {
+	output << sep << d;
+	sep = " \\/ ";
+      }
+  }
   output << ' ' << searchTypeSymbol[searchType] << ' ';
   commentTerm(target);
   if (!condition.empty())
@@ -417,7 +424,15 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
 	  output << "\\maudeRightBrace";
 	}
       generateModifiers(module, limit, depth);
-      MixfixModule::latexPrintDagNode(output, subject);
+      {
+	const char* sep = "";
+	for (DagNode* d : subjects)
+	  {
+	    output << sep;
+	    MixfixModule::latexPrintDagNode(output, d);
+	    sep = "\\maudeDisjunction";
+	  }
+      }	
       output << searchTypeLatex[searchType];
       MixfixModule::latexPrettyPrint(output, target);
 

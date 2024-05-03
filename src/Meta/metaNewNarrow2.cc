@@ -50,12 +50,18 @@ MetaLevelOpSymbol::makeNarrowingSequenceSearch3(MetaModule* m,
 
 	  if (fold)
 	    variantFlags |= NarrowingSequenceSearch3::FOLD;
-	  return new NarrowingSequenceSearch3(subjectContext,
-					      searchType,
-					      goal,
-					      maxDepth,
-					      new FreshVariableSource(m, 0),
-					      variantFlags);
+	  Vector<DagNode*> startStates;
+	  NarrowingSequenceSearch3* nss = new NarrowingSequenceSearch3(subjectContext,
+								       startStates,
+								       searchType,
+								       goal,
+								       maxDepth,
+								       new FreshVariableSource(m, 0),
+								       variantFlags);
+	  if (nss->problemOK())
+	    return nss;
+	  else
+	    delete nss;
 	}
     }
   return 0;
@@ -123,8 +129,9 @@ MetaLevelOpSymbol::metaNarrowingSearch(FreeDagNode* subject, RewritingContext& c
 
 	  DagNode* stateDag;
 	  int stateVariableFamily;
+	  DagNode* dummy;
 	  Substitution* accumulatedSubstitution;
-	  state->getStateInfo(stateDag, stateVariableFamily, accumulatedSubstitution);
+	  state->getStateInfo(stateDag, stateVariableFamily, dummy, accumulatedSubstitution);
 
 	  result = metaLevel->upNarrowingSearchResult(stateDag,
 						      *accumulatedSubstitution,

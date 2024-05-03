@@ -81,7 +81,7 @@ FreeDagNode::getHashValue()
     return hashCache[nrWords - 1].size;
   size_t hashValue = symbol()->getHashValue();
   int nrArgs = symbol()->arity();
-  DagNode** p = argArray();
+  DagNode* const* p = argArray();
   for (int i = 0; i < nrArgs; i++)
     hashValue = hash(hashValue, (*p++)->getHashValue());
   if (nrArgs != nrWords)
@@ -104,8 +104,8 @@ FreeDagNode::compareArguments(const DagNode* other) const
       const FreeDagNode* qd = static_cast<const FreeDagNode*>(other);
       for (;;)
 	{
-	  DagNode** p = pd->argArray();
-	  DagNode** q = qd->argArray();
+	  DagNode* const* p = pd->argArray();
+	  DagNode* const* q = qd->argArray();
 	  
 	  for (int i = nrArgs - 1; i > 0; --i, ++p, ++q)
 	    {
@@ -142,7 +142,7 @@ FreeDagNode::markArguments()
   int nrArgs = symbol()->arity();
   if (nrArgs != 0)
     {
-      DagNode** p = argArray();
+      DagNode* const* p = argArray();
       while (--nrArgs > 0)
 	(*p++)->mark();
       return *p;
@@ -158,7 +158,7 @@ FreeDagNode::copyEagerUptoReduced2()
   int nrArgs = s->arity();
   if (nrArgs != 0)
     {
-      DagNode** p = argArray();
+      DagNode* const* p = argArray();
       DagNode** q = n->argArray();
       if (s->standardStrategy())  // everything is eager
 	{
@@ -182,7 +182,7 @@ FreeDagNode::copyAll2()
   int nrArgs = s->arity();
   if (nrArgs != 0)
     {
-      DagNode** p = argArray();
+      DagNode* const* p = argArray();
       DagNode** q = n->argArray();
       for (int i = nrArgs; i > 0; i--, p++, q++)
 	*q = (*p)->copyAll();
@@ -194,7 +194,7 @@ void
 FreeDagNode::clearCopyPointers2()
 {
   int nrArgs = symbol()->arity();
-  DagNode** p = argArray();
+  DagNode* const* p = argArray();
   for (int i = nrArgs; i > 0; i--, p++)
     (*p)->clearCopyPointers();
 }
@@ -207,7 +207,7 @@ FreeDagNode::overwriteWithClone(DagNode* old)
   int nrArgs = s->arity();
   d->copySetRewritingFlags(this);
   d->setSortIndex(getSortIndex());
-  DagNode** p = argArray();
+  DagNode* const* p = argArray();
   DagNode** q = d->argArray();
   for (int i = nrArgs; i > 0; i--, p++, q++)
     *q = *p;
@@ -221,7 +221,7 @@ FreeDagNode::makeClone()
   int nrArgs = s->arity();
   d->copySetRewritingFlags(this);
   d->setSortIndex(getSortIndex());
-  DagNode** p = argArray();
+  DagNode* const* p = argArray();
   DagNode** q = d->argArray();
   for (int i = nrArgs; i > 0; i--, p++, q++)
     *q = *p;
@@ -235,7 +235,7 @@ FreeDagNode::copyWithReplacement(int argIndex, DagNode* replacement)
   FreeDagNode* d = new FreeDagNode(s);
   int nrArgs = s->arity();
   Assert(argIndex >= 0 && argIndex < nrArgs, "bad argIndex");
-  DagNode** p = argArray();
+  DagNode* const* p = argArray();
   DagNode** q = d->argArray();
   for (int i = 0; i < nrArgs; i++, p++, q++)
     *q = (i == argIndex) ? replacement : *p;
@@ -259,7 +259,7 @@ FreeDagNode::copyWithReplacement(Vector<RedexPosition>& redexStack,
 	 "bad replacement arg index");
 
   FreeDagNode* d = new FreeDagNode(s);
-  DagNode** p = argArray();
+  DagNode* const* p = argArray();
   DagNode** q = d->argArray();
   int nextReplacementIndex = redexStack[first].argIndex();
   for (int i = 0; i < nrArgs; i++, p++, q++)
@@ -287,7 +287,7 @@ FreeDagNode::computeBaseSortForGroundSubterms(bool warnAboutUnimplemented)
   ReturnResult result = GROUND;
   Symbol* s = symbol();
   int nrArgs = s->arity();
-  DagNode** args = argArray();
+  DagNode* const* args = argArray();
   for (int i = 0; i < nrArgs; ++i)
     {
       ReturnResult r = args[i]->computeBaseSortForGroundSubterms(warnAboutUnimplemented);
@@ -313,8 +313,8 @@ FreeDagNode::computeSolvedForm2(DagNode* rhs,
     {
       int nrArgs = s->arity();
       Assert(nrArgs > 0, "we shouldn't be called on constants " << this);
-      DagNode** args = argArray();
-      DagNode** rhsArgs = safeCast(FreeDagNode*, rhs)->argArray();
+      DagNode* const* args = argArray();
+      DagNode* const* rhsArgs = safeCast(FreeDagNode*, rhs)->argArray();
       for (int i = 0; i < nrArgs; ++i)
 	{
 	  if (!(args[i]->computeSolvedForm(rhsArgs[i], solution, pending)))
@@ -363,7 +363,7 @@ FreeDagNode::purifyAndOccurCheck(DagNode* repVar,
 
   FreeSymbol* s = symbol();
   int nrArgs = s->arity();
-  DagNode** args = argArray();
+  DagNode* const* args = argArray();
   for (int i = 0; i < nrArgs; ++i)
     {
       DagNode* arg  = args[i];
@@ -482,7 +482,7 @@ FreeDagNode::insertVariables2(NatSet& occurs)
   int i = symbol()->arity();
   if (i > 0)
     {
-      for (DagNode** p = argArray(); i > 0; i--, p++)
+      for (DagNode* const* p = argArray(); i > 0; i--, p++)
 	(*p)->insertVariables(occurs);
     }
 }
@@ -495,7 +495,7 @@ FreeDagNode::instantiate2(const Substitution& substitution, bool maintainInvaria
   int nrArgs = s->arity();
 
   Assert(nrArgs > 0, "we shouldn't be called on constants: " << this);
-  DagNode** args = argArray();
+  DagNode* const* args = argArray();
   for (int i = 0; i < nrArgs; ++i)
     {
       if (DagNode* n = args[i]->instantiate(substitution, maintainInvariants))
@@ -559,7 +559,7 @@ bool
 FreeDagNode::indexVariables2(NarrowingVariableInfo& indices, int baseIndex)
 {
   int nrArgs = symbol()->arity();
-  DagNode** args = argArray();
+  DagNode* const* args = argArray();
   bool ground = true;
   for (int i = 0; i < nrArgs; ++i)
     {
@@ -579,7 +579,7 @@ FreeDagNode::instantiateWithReplacement(const Substitution& substitution,
   FreeDagNode* d = new FreeDagNode(s);
   int nrArgs = s->arity();
   Assert(argIndex >= 0 && argIndex < nrArgs, "bad argIndex");
-  DagNode** p = argArray();
+  DagNode* const* p = argArray();
   DagNode** q = d->argArray();
   for (int i = 0; i < nrArgs; i++)
     {
@@ -607,7 +607,7 @@ FreeDagNode::instantiateWithCopies2(const Substitution& substitution, const Vect
   int nrArgs = s->arity();
 
   Assert(nrArgs > 0, "we shouldn't be called on constants");
-  DagNode** args = argArray();
+  DagNode* const* args = argArray();
   for (int i = 0; i < nrArgs; ++i)
     {
       DagNode* a = args[i];

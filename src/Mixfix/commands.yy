@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -182,10 +182,7 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  lexerInitialMode();
 			  if (interpreter.setCurrentModule(moduleExpr, 1))
-			    {
-			      interpreter.search(lexerBubble, number, number2,
-			                         Interpreter::VU_NARROW, $1, variantOptions);
-			    }
+			    interpreter.search(lexerBubble, number, number2, Interpreter::VU_NARROW, $1, variantOptions);
 			}
 		|	match
 			{
@@ -658,7 +655,7 @@ conceal		:	KW_CONCEAL		{ $$ = true; }
 		|	KW_REVEAL		{ $$ = false; }
 		;
 /*
- *	Return true if we should do a narrowing search.
+ *	Return what sort of search we should do; vu-narrow is handle separately because it has two sets of options.
  */
 search		:	KW_NARROW		{ $$ = Interpreter::NARROW; }
 		|	KW_XG_NARROW		{ $$ = Interpreter::XG_NARROW; }
@@ -692,6 +689,9 @@ optionsList	:	option			{ $$ = $1; }
 		;
 
 option		:	KW_FOLD			{ $$ = NarrowingSequenceSearch3::FOLD; }
+		|	KW_VFOLD		{ $$ = NarrowingSequenceSearch3::VFOLD; }
+		|	KW_PATH			{ $$ = NarrowingSequenceSearch3::KEEP_PATHS; }
+		|	KW_INVARIANT		{ $$ = NarrowingSequenceSearch3::INVARIANT; }
 		;
 
 importMode	:	KW_PROTECT		{ $$ = ImportModule::PROTECTING; }

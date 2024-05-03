@@ -29,6 +29,7 @@
 #include <set>
 #include <map>
 #include <list>
+#include "strategyLanguage.hh"
 #include "profileModule.hh"
 #include "metadataStore.hh"
 #include "sharedTokens.hh"
@@ -40,6 +41,7 @@
 #include "SMT_Info.hh"
 #include "SMT_NumberSymbol.hh"
 #include "statementTransformer.hh"
+#include "mixfixParser.hh"
 
 class MixfixModule : public ProfileModule, public MetadataStore, protected SharedTokens
 {
@@ -173,7 +175,7 @@ public:
 			 int& firstBad);
   void parseStatement(const Vector<Token>& bubble);
   bool parseSearchCommand(const Vector<Token>& bubble,
-			  Term*& initial,
+			  Vector<Term*>& initial,
 			  int& searchType,
 			  Term*& target,
 			  Vector<ConditionFragment*>& condition);
@@ -495,12 +497,16 @@ private:
 
   enum NonTerminalType
   {
-    NUMBER_OF_TYPES = 5,
     TERM_TYPE = 0,
     SORT_TYPE = 1,
     DOT_SORT_TYPE = 2,
     ASSOC_LIST_TYPE = 3,
-    SORT_LIST_TYPE = 4
+    SORT_LIST_TYPE = 4,
+    SIMPLE_NUMBER_OF_TYPES = 5,
+    //
+    //	In a complex parser, for each kind, we need a nonterminal for t1 \/ t2 \/ ... \/ tn
+    TERM_DISJUNCTION_TYPE = 5,
+    COMPLEX_NUMBER_OF_TYPES = 6,
   };
 
   enum SMT_Status
@@ -1340,6 +1346,24 @@ inline string
 MixfixModule::latexString(int code)
 {
   return latexString(Token::name(code));
+}
+
+inline int
+MixfixModule::domainComponentIndex(const Symbol* symbol, int argNr)
+{
+  return symbol->domainComponent(argNr)->getIndexWithinModule();
+}
+
+inline int
+MixfixModule::nonTerminal(int componentIndex, NonTerminalType type)
+{
+  return parser->getComponentNonTerminalBase() - componentIndex * parser->getNumberOfTypes() - type;
+}
+
+inline int
+MixfixModule::nonTerminal(const Sort* sort, NonTerminalType type)
+{
+  return nonTerminal(sort->component()->getIndexWithinModule(), type);
 }
 
 #endif

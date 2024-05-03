@@ -156,7 +156,7 @@ FreeSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   if (standardStrategy())
     {
       int nrArgs = arity();
-      DagNode** args = static_cast<FreeDagNode*>(subject)->argArray();
+      DagNode* const* args = static_cast<FreeDagNode*>(subject)->argArray();
       for (int i = nrArgs; i > 0; i--, args++)
         (*args)->reduce(context);
       return DISC_NET.applyReplace(subject, context);
@@ -277,7 +277,7 @@ FreeSymbol::computeBaseSort(DagNode* subject)
       subject->setSortIndex(traverse(0, 0));  // HACK
       return;
     }
-  DagNode** args = static_cast<FreeDagNode*>(subject)->argArray();
+  DagNode* const* args = static_cast<FreeDagNode*>(subject)->argArray();
 
   int state = 0;
   for (int i = 0; i < nrArgs; i++)
@@ -301,7 +301,7 @@ FreeSymbol::normalizeAndComputeTrueSort(DagNode* subject, RewritingContext& cont
 {
   Assert(this == subject->symbol(), "bad symbol");
   int nrArgs = arity();
-  DagNode** args = static_cast<FreeDagNode*>(subject)->argArray();
+  DagNode* const* args = static_cast<FreeDagNode*>(subject)->argArray();
   //
   //	First make sure each of our subterms has a sort.
   //
@@ -325,7 +325,7 @@ FreeSymbol::stackArguments(DagNode* subject,
   if (nrArgs != 0)
     {
       const NatSet& frozen = getFrozen();
-      DagNode** args = static_cast<FreeDagNode*>(subject)->argArray();
+      DagNode* const* args = static_cast<FreeDagNode*>(subject)->argArray();
       for (int i = 0; i < nrArgs; i++)
 	{
 	  DagNode* d = args[i];
@@ -340,7 +340,7 @@ FreeSymbol::termify(DagNode* dagNode)
 {
   int nrArgs = arity();
   Vector<Term*> args(nrArgs);
-  DagNode** dagNodeArgs = safeCast(FreeDagNode*, dagNode)->argArray();
+  DagNode* const* dagNodeArgs = safeCast(FreeDagNode*, dagNode)->argArray();
   for (int i = 0; i < nrArgs; i++)
     {
       DagNode* d = dagNodeArgs[i];
@@ -379,7 +379,7 @@ FreeSymbol::computeGeneralizedSort(const SortBdds& sortBdds,
   DebugAdvisory("getting sort function for " << this << " " << subject);
   const Vector<Bdd>& sortFunction = sortBdds.getSortFunction(this);
 
-  DagNode** args = safeCast(FreeDagNode*, subject)->argArray();
+  DagNode* const* args = safeCast(FreeDagNode*, subject)->argArray();
   int varCounter = 0;
   bddPair* argMap = bdd_newpair();
   for (int i = 0; i < nrArgs; i++)
@@ -407,7 +407,7 @@ bool
 FreeSymbol::determineGround(DagNode* dagNode)
 {
   Index nrArgs = arity();
-  DagNode** args = safeCastNonNull<FreeDagNode*>(dagNode)->argArray();
+  DagNode* const* args = safeCastNonNull<FreeDagNode*>(dagNode)->argArray();
   for (Index i = 0; i < nrArgs; ++i)
     {
       if (!(args[i]->determineGround()))
@@ -431,7 +431,7 @@ FreeSymbol::computeGeneralizedSort2(const SortBdds& sortBdds,
   //	Gather the input BDDs for the generalized sorts of the arguments.
   //
   Vector<Bdd> inputBdds;
-  DagNode** args = safeCast(FreeDagNode*, subject)->argArray();
+  DagNode* const* args = safeCast(FreeDagNode*, subject)->argArray();
   for (int i = 0; i < nrArgs; i++)
     args[i]->computeGeneralizedSort2(sortBdds, realToBdd, inputBdds);
   //
@@ -448,7 +448,7 @@ DagNode*
 FreeSymbol::makeCanonical(DagNode* original, HashConsSet* hcs)
 {
   int nrArgs = arity();
-  DagNode** p = safeCast(FreeDagNode*, original)->argArray();
+  DagNode* const* p = safeCast(FreeDagNode*, original)->argArray();
   for (int i = 0; i < nrArgs; i++)
     {
       DagNode* d = p[i];
@@ -487,7 +487,7 @@ FreeSymbol::makeCanonicalCopy(DagNode* original, HashConsSet* hcs)
   DagNode** q = n->argArray();
 
   int nrArgs = arity();
-  DagNode** p = safeCast(FreeDagNode*, original)->argArray();
+  DagNode* const* p = safeCast(FreeDagNode*, original)->argArray();
   for (int i = 0; i < nrArgs; ++i, ++p, ++q)
     *q = hcs->getCanonical(hcs->insert(*p));
   return n;

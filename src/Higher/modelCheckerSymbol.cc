@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ ModelCheckerSymbol::attachTerm(const char* purpose, Term* term)
 void
 ModelCheckerSymbol::copyAttachments(Symbol* original, SymbolMap* map)
 {
-  ModelCheckerSymbol* orig = safeCast(ModelCheckerSymbol*, original);
+  ModelCheckerSymbol* orig = safeCastNonNull<ModelCheckerSymbol*>(original);
   COPY_SYMBOL(orig, satisfiesSymbol, map, Symbol*);
   COPY_SYMBOL(orig, qidSymbol, map, QuotedIdentifierSymbol*);
   COPY_SYMBOL(orig, unlabeledSymbol, map, Symbol*);
@@ -241,7 +241,7 @@ ModelCheckerSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   //
   //	Compute normalization of negated formula.
   //
-  FreeDagNode* d = safeCast(FreeDagNode*, subject);
+  FreeDagNode* d = safeCastNonNull<FreeDagNode*>(subject);
   RewritingContext* newContext = context.makeSubcontext(negate(d->getArgument(1)));
   newContext->reduce();
 #ifdef TDEBUG

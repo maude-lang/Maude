@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -188,25 +188,38 @@ Interpreter::doVuNarrowing(Timer& timer,
 	}
 
       ++solutionCount;
-      cout << "\nSolution " << solutionCount << "\n";
+      cout << "\nSolution " << solutionCount;
+      int stateNr = NONE;
+      if (state->getVariantFlags() & NarrowingSequenceSearch3::KEEP_PATHS)
+	{
+	  int dummy;
+	  state->getExtraStateInfo(stateNr, dummy);
+	  cout << " (state " << stateNr << ")";
+	}
+      cout << "\n";
       printStats(*context, prof, real, showTiming);
 
       DagNode* stateDag;
       int variableFamily;
+      DagNode* initialStateDag;
       Substitution* accumulatedSubstitution;
-      state->getStateInfo(stateDag, variableFamily, accumulatedSubstitution);
+      state->getStateInfo(stateDag, variableFamily, initialStateDag, accumulatedSubstitution);
 
       cout << "state: " << stateDag << endl;
+      if (state->getNrInitialStates() > 1)
+	cout << "initial state: " << initialStateDag << endl;
       cout << "accumulated substitution:" << endl;
       UserLevelRewritingContext::printSubstitution(*accumulatedSubstitution, state->getInitialVariableInfo());
       cout << "variant unifier:" << endl;
       UserLevelRewritingContext::printSubstitution(*(state->getUnifier()), state->getUnifierVariableInfo());
       if (latexBuffer)
 	{
-	  latexBuffer->generateSolutionNr(solutionCount);
+	  latexBuffer->generateSolutionNr(solutionCount, stateNr);
 	  if (getFlag(SHOW_STATS))
 	    latexBuffer->generateStats(*context, prof, real, showTiming, getFlag(SHOW_BREAKDOWN));
 	  latexBuffer->generateState(stateDag);
+	  if (state->getNrInitialStates() > 1)
+	    latexBuffer->generateState(initialStateDag, "initial state:");
 	  latexBuffer->generateHeading("accumulated substitution:");
 	  latexBuffer->generateSubstitution(*accumulatedSubstitution, state->getInitialVariableInfo());
 	  latexBuffer->generateHeading("variant unifier:");

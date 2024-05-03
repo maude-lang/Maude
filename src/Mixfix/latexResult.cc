@@ -212,15 +212,15 @@ MaudeLatexBuffer::generateSmtResult(SMT_RewriteSequenceSearch* state,
   int stateNr = state->getCurrentStateNumber();
   DagNode* d = state->getState(stateNr);
 
-output << "\\par\\maudeResponse{state:}\n";
-MixfixModule::latexPrintDagNode(output, d);
+  output << "\\par\\maudeResponse{state:}\n";
+  MixfixModule::latexPrintDagNode(output, d);
 
   generateSubstitution(*(state->getSubstitution()),
 		       *state,
 		       state->getSMT_VarIndices());
 
   output << "\\par\\maudeResponse{where}\n";
- MixfixModule::latexPrintDagNode(output, state->getFinalConstraint());
+  MixfixModule::latexPrintDagNode(output, state->getFinalConstraint());
 }
 
 void
