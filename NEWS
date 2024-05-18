@@ -1,3 +1,11 @@
+Overview of Changes in alpha161 (2023-05-17)
+============================================
+* reading from the stdin steam now supports continuation lines
+* path option for vu-narrow
+* show most general states .
+* show frontier states .
+* a state may now subsume its ancestors in vu-narrow
+
 Overview of Changes in alpha160 (2023-05-02)
 ============================================
 * initial equality operator handles more cases

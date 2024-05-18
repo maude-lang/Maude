@@ -1,0 +1,227 @@
+Alpha 161 release notes
+========================
+
+Bug fix
+========
+Missing space after {delay, filter} in latex output fixed.
+
+New features
+=============
+(1) The is a new option for vu-narrow, path. When this is given, the states
+on the path to each state yielding a solution are locked against deletion (at some
+cost in memory) and each solution includes a state number that can be used with
+  show path <state number> .
+and
+  show path states <state number> .
+that previoulsy only worked with search. For example:
+
+mod BAZ is
+  sort Foo .
+  ops f g h : Foo -> Foo .
+  ops i j k : Foo Foo -> Foo .
+
+vars X Y Z W A B C D : Foo .
+  eq j(f(X), Y) = i(f(Y), X) [variant] .
+  rl g(i(X, k(Y, Z))) => f(k(Z, X)) [narrowing] .
+  rl f(k(X, X)) => h(X) [narrowing] .
+endm
+
+{path} vu-narrow {filter,delay} g(j(A, B)) =>* C .
+
+Solution 1 (state 0)
+rewrites: 2 in 0ms cpu (0ms real) (~ rewrites/second)
+state: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+variant unifier:
+C --> g(j(@1:Foo, @2:Foo))
+#1:Foo --> @1:Foo
+#2:Foo --> @2:Foo
+
+Solution 2 (state 1)
+rewrites: 4 in 0ms cpu (0ms real) (~ rewrites/second)
+state: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+variant unifier:
+C --> f(k(@1:Foo, f(@2:Foo)))
+%2:Foo --> @1:Foo
+%3:Foo --> @2:Foo
+
+...
+
+show path 1 .
+
+state 0, Foo: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+===[ rl g(i(X, k(Y, Z))) => f(k(Z, X)) [narrowing] . ]===>
+variant unifier:
+X --> f(%3:Foo)
+Y --> %1:Foo
+Z --> %2:Foo
+#1:Foo --> f(k(%1:Foo, %2:Foo))
+#2:Foo --> %3:Foo
+state 1, Foo: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+
+show path states 1 .
+
+state 0, Foo: g(j(#1:Foo, #2:Foo))
+accumulated substitution:
+A --> #1:Foo
+B --> #2:Foo
+------>
+state 1, Foo: f(k(%2:Foo, f(%3:Foo)))
+accumulated substitution:
+A --> f(k(%1:Foo, %2:Foo))
+B --> %3:Foo
+
+Naturally path can be combined with fold:
+
+{path,fold} vu-narrow {filter,delay} g(j(A, B)) =>* C .
+
+
+(2) There is a new command that can be executed after a vu-narrow command, if
+the fold option is used.
+
+show most general states .
+
+This displays a disjunction of the most general states encoutered (so far)
+in the narrowing search.
+
+(3) There is a new command that can be executed after a vu-narrow command.
+
+show frontier states .
+
+If the vu-narow command executes to completion, this will display
+*** frontier is empty ***
+indicating that the frontier is empty. But if there is a depth bound, the disjunction
+of states at the depth bound (that have not been narrowed due to the depth bound)
+will be displayed. In the case that vu-narrow stopped early due a bound on the
+number of solutions, In the =>1, =>+, =>* cases it maybe that there is one state in
+the frontier that has been partly explored and this will be shown first, in red.
+
+There is a subtle difference in the frontier for =>1, =>+, =>* cases vs the =>! case.
+This is because a state S at maximum depth will not have been explored in the former
+cases and therefore is part of the frontier, whereas in the latter case it will
+have been checked for the existence of descendants, even though they will not
+have been generated, and in the case that S is determined not to have descendants
+it will not be part of the frontier. This illustrated by the example:
+
+mod BAZ is
+  sort Foo .
+  ops f g h : Foo -> Foo .
+  ops i j k : Foo Foo -> Foo .
+
+vars X Y Z W A B C D : Foo .
+  eq j(f(X), Y) = i(f(Y), X) [variant] .
+  rl g(i(X, k(Y, Z))) => f(k(Z, X)) [narrowing] .
+  rl f(k(X, X)) => h(X) [narrowing] .
+endm
+
+{fold} vu-narrow {filter,delay} [,3]  in BAZ : g(j(A, B)) =>* C .
+show frontier states .
+show most general states .
+
+returns a single state frontier:
+
+h(h(%1:Foo))
+
+because h(h(%1:Foo)) as at depth 3 and hence was not explored while
+
+{fold} vu-narrow {filter,delay} [,3]  in BAZ : g(j(A, B)) =>! C .
+show frontier states .
+show most general states .
+
+returns the empty frontier because h(h(%1:Foo)) was determined no to
+have descendants when it was check for being in normal form.
+
+In both cases, exploring the narrowing tree to depth 3 yields the same set
+of most general states:
+
+g(j(#1:Foo, #2:Foo)) /\
+f(k(%2:Foo, f(%3:Foo))) /\
+h(f(@1:Foo)) /\
+f(k(@2:Foo, h(@1:Foo))) /\
+h(h(%1:Foo))
+
+If folding is used, the frontier will always be a subset of the most general states.
+
+Other changes
+==============
+(1) When doing sending a getLine() message to stdin, a backslash newline combination
+is now taken to indicate the input line with be continued. The backbackslash newline is
+deleted and the continuation lines are prompted with "> ". For example:
+
+load file
+
+omod HELLO is
+  inc STD-STREAM .
+  pr NAT .
+  class MyClass | state : Nat .
+  op myObj : -> Oid .
+  op run : -> Configuration .
+
+  eq run = <> < myObj : MyClass | state : 0 > .
+  rl < myObj : MyClass | state : 0 > => < myObj : MyClass | state : 1 > getLine(stdin, myObj, "What is your name? ") .
+endom
+
+Maude> erew run .
+erewrite in HELLO : run .
+What is your name? Zaphod \
+> Beeblebrox
+rewrites: 2 in 8ms cpu (38199ms real) (250 rewrites/second)
+result Configuration: <> < myObj : MyClass | state : 1 > gotLine(myObj, stdin, "Zaphod Beeblebrox\n")
+
+Change requested by Paco.
+
+(2) With vu-narrow we used to assume that a newly generated state could not subsume
+any of own ancestors, and thus we didn't even do the check. Now we check a new state
+that hasn't been subsumed by existing most general states against all existing most
+general states to see if subsumes them. Thus a state can actually subsume (and if path is
+not used, delete) its own branch of the search tree, except for itself. This situation
+trivially arises with a narrowing rule that rewrites to a more general pattern:
+
+mod FOO is
+  sort Foo .
+  ops f g : Foo -> Foo .
+vars X Y Z : Foo .
+  rl f(g(X)) => f(X) [narrowing] .
+endm
+
+set verbose on .
+
+{fold} vu-narrow f(g(Y)) =>* Z .
+
+Solution 1
+rewrites: 0 in 4ms cpu (0ms real) (0 rewrites/second)
+state: f(g(#1:Foo))
+accumulated substitution:
+Y --> #1:Foo
+variant unifier:
+Z --> f(g(@1:Foo))
+#1:Foo --> @1:Foo
+New state f(@1:Foo) subsumed older state f(g(#1:Foo))
+
+Solution 2
+rewrites: 1 in 4ms cpu (1ms real) (250 rewrites/second)
+state: f(@1:Foo)
+accumulated substitution:
+Y --> @1:Foo
+variant unifier:
+Z --> f(%1:Foo)
+@1:Foo --> %1:Foo
+New state f(%1:Foo) subsumed by f(@1:Foo)
+Total number of states seen = 3
+Of which 2 were considered for further narrowing.
+
+No more solutions.
+rewrites: 2 in 4ms cpu (1ms real) (500 rewrites/second)
+
+I'm interested to know if this improves performance.

@@ -160,7 +160,15 @@ Interpreter::doVuNarrowing(Timer& timer,
     {
       bool result = state->findNextUnifier();
       if (UserLevelRewritingContext::aborted())
-	break;
+	{
+	  //
+	  //	Tidy up and return.
+	  //
+	  delete state;
+	  module->unprotect();
+	  UserLevelRewritingContext::clearDebug();
+	  return;
+	}
       Int64 real = 0;
       Int64 virt = 0;
       Int64 prof = 0;
@@ -231,27 +239,176 @@ Interpreter::doVuNarrowing(Timer& timer,
   if (latexBuffer)
     latexBuffer->cleanUp();
   clearContinueInfo();  // just in case debugger left info
+  //
+  //	We always save these things even if we can't continue
+  //	in order to allow inspection of the narrowing paths.
+  //
+  savedState = state;
+  savedModule = module;
   if (i == limit)  // possible to continue
     {
       //
-      //	The loop terminated because we hit user's limit so 
-      //	continuation is still possible. We save the state,
-      //	solutionCount and module, and set a continutation function.
+      //	The loop terminated because we hit user's limit so ontinuation is still possible.
+      //	We save the state solutionCount and set a continutation function.
       //
       context->clearCount();
-      savedState = state;
       savedSolutionCount = solutionCount;
-      savedModule = module;
       continueFunc = &Interpreter::vuNarrowingCont;
     }
-  else
-    {
-      //
-      //	Either user aborted or we ran out of solutions; either
-      //	way we need to tidy up.
-      //
-      delete state;
-      module->unprotect();
-    }
   UserLevelRewritingContext::clearDebug();
+}
+
+void
+Interpreter::showNarrowingSearchPath(int stateNr, bool showRule, NarrowingSequenceSearch3* savedNarrowingSequence) const
+{
+  if (stateNr < 0 || !(savedNarrowingSequence->locked(stateNr)))
+    {
+      IssueWarning("bad state number " << QUOTE(stateNr) << ".");
+      return;
+    }
+  Vector<int> steps;
+  for (int i = stateNr; i != NONE; i = savedNarrowingSequence->getStateParent(i))
+    steps.push_back(i);
+  for (Index i = steps.size() - 1; i >= 0; --i)
+    {
+      int index = steps[i];
+      DagNode* root;
+      DagNode* position;
+      Rule* rule;
+      const Substitution* unifier;
+      const NarrowingVariableInfo* unifierVariableInfo;
+      int variableFamily;
+      DagNode* newDag;
+      const Substitution* accumulatedSubstitution;
+      int parentIndex;
+      savedNarrowingSequence->getHistory(index,
+					 root,
+					 position,
+					 rule,
+					 unifier,
+					 unifierVariableInfo,
+					 variableFamily,
+					 newDag,
+					 accumulatedSubstitution,
+					 parentIndex);
+      if (parentIndex != NONE)
+	{
+	  if (showRule)
+	    {
+	      cout << "===[ " << rule << " ]===>\n";
+	      cout << "variant unifier:" << endl;
+	      UserLevelRewritingContext::printCompoundSubstitution(*unifier, *rule, *unifierVariableInfo, rule->getModule());
+	    }
+	  else
+	    {
+	      const Label& l = rule->getLabel();
+	      cout << "---";
+	      if (l.id() != NONE)
+		cout << ' ' << &l << ' ';
+	      cout << "--->\n";
+	    }
+	}
+      cout << "state " << index << ", " << newDag->getSort() << ": " << newDag << '\n';
+      cout << "accumulated substitution:" << endl;
+      UserLevelRewritingContext::printSubstitution(*accumulatedSubstitution, savedNarrowingSequence->getInitialVariableInfo());
+    }
+  if (latexBuffer)
+    {
+      latexBuffer->generateNarrowingSearchPath(savedNarrowingSequence,
+					       steps,
+					       stateNr,
+					       getFlag(SHOW_COMMAND),
+					       showRule);
+    }
+}
+
+void
+Interpreter::showFrontierStates()
+{
+  NarrowingSequenceSearch3* savedNarrowingSequence = dynamic_cast<NarrowingSequenceSearch3*>(savedState);
+  if (!savedNarrowingSequence)
+    {
+      IssueWarning("no narrowing state forest.");
+      return;
+    }
+  const char* sep = "";
+  //
+  //	In the =>1, =>+, =>* cases we may have visited a state without (fully) expanding it
+  //	when we pause due to hitting the solution bound or halt due to hitting the depth bound.
+  //	This state belongs in the frontier.
+  //
+  //	In the =>! case we may have visited states, determined they have a descendant but
+  //	not expanded them to avoid exceeding a depth bound. They also belong in the frontier.
+  //
+  bool partiallyExpanded;
+  Vector<DagNode*> visitedButUnexpanded = savedNarrowingSequence->getUnexpandedStates(partiallyExpanded);
+  for (DagNode* d : visitedButUnexpanded)
+    {
+      cout << sep;
+      if (partiallyExpanded)
+	cout << Tty(Tty::RED) << d << Tty(Tty::RESET);  // paused due to solution bound in =>1, =>+, =>* cases
+      else
+	cout << d;  // halted due to depth bound, or in =>! case
+      sep = " /\\\n";
+    }
+  //
+  //	It's possible to have unvisited states even if we don't have a visited but unexpanded state.
+  //	This happens if we pause due to solution bound before we finished unifying with initial states;
+  //	At this point we have not started narrowing and therefore have visited no states, but we will
+  //	have at least one initial state that is unvisited.
+  //
+  Vector<DagNode*> unvisitedStates = savedNarrowingSequence->getUnvisitedStates();
+  for (DagNode* d : unvisitedStates)
+    {
+      cout << sep << d;
+      sep = " /\\\n";
+    }
+  //
+  //	If we exhausted the search space before hitting a bound, this means the frontier is empty.
+  //
+  if (*sep == '\0')
+    cout << Tty(Tty::RED) << "*** frontier is empty ***" << Tty(Tty::RESET);
+  cout << endl;
+  if (latexBuffer)
+    {
+      latexBuffer->generateStateSet(getFlag(SHOW_COMMAND),
+				    "show frontier states",
+				    visitedButUnexpanded,
+				    partiallyExpanded,
+				    unvisitedStates,
+				    "\\color{red}*** frontier is empty ***\\color{black}");
+    }
+}
+
+void
+Interpreter::showMostGeneralStates()
+{
+  NarrowingSequenceSearch3* savedNarrowingSequence = dynamic_cast<NarrowingSequenceSearch3*>(savedState);
+  if (!savedNarrowingSequence)
+    {
+      IssueWarning("no narrowing state forest.");
+      return;
+    }
+  if (!(savedNarrowingSequence->getVariantFlags() & (NarrowingSequenceSearch3::FOLD | NarrowingSequenceSearch3::VFOLD)))
+    {
+      IssueWarning("most general states are only computed when folding.");
+      return;
+    }
+  Vector<DagNode*> mostGeneralStates = savedNarrowingSequence->getMostGeneralStates();
+  const char* sep = "";
+  for (DagNode* d : mostGeneralStates)
+    {
+      cout << sep << d;
+      sep = " /\\\n";
+    }
+  cout << endl;
+  if (latexBuffer)
+    {
+      latexBuffer->generateStateSet(getFlag(SHOW_COMMAND),
+				    "show most general states",
+				    Vector<DagNode*>(),
+				    false,
+				    mostGeneralStates,
+				    nullptr);
+    }
 }

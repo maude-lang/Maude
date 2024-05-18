@@ -36,6 +36,8 @@
 #define _narrowingFolder_hh_
 #include <set>
 #include <map>
+#include "term.hh"
+#include "lhsAutomaton.hh"
 #include "simpleRootContainer.hh"
 #include "narrowingVariableInfo.hh"
 
@@ -84,11 +86,22 @@ public:
   //
   //	Ensures all the states from the interesting state back to the root are never deleted.
   //
-  void lockPathToCurrentState();
+  void lockPathToState(int index);
   //
-  //	Check if a state we previously entered still exists.
+  //	If we don't explore a returned state, we can call this function to flag the last returned state,
+  //	so it stays part of the frontier unless subsumed - though if we've stopped exploring states we
+  //	don't expect a new state that could subsumed it to be entered. We can't use the locked flag
+  //	because we might not be keeping history.
   //
-  bool exists(int index);
+  void setUnexplored();
+
+  bool exists(int index) const;
+  bool locked(int index) const;
+  int getParent(int index) const;
+  Vector<DagNode*> getMostGeneralStates() const;
+  Vector<DagNode*> getUnreturnedStates() const;
+  Vector<DagNode*> getReturnedButUnexploredStates() const;
+  void dump(ostream& s);
 
 private:
   struct RetainedState
@@ -96,6 +109,7 @@ private:
     RetainedState(DagNode* state, int parentIndex, int rootIndex, int depth, bool fold);
     ~RetainedState();
     bool subsumes(DagNode* state) const;
+    void markedSubsumed();
 
     DagNode* const state;
     const int parentIndex;	// index of parent state
@@ -128,6 +142,14 @@ private:
     //
     bool locked = false;
     bool subsumed = false;
+    //
+    //	When we return a surviving state, we expect that the caller will explore it
+    //	and insert all of its next states. But the caller may instead set this flag to
+    //	record the state was not explored and remains part of the frontier.
+    //	We can still remove this state by subsumption but we can't remove it just because
+    //	it has no descendants since they might exist but weren't generated.
+    //
+    bool returnedButUnexplored = false;
   };
 
   typedef map<int, RetainedState*> RetainedStateMap;
@@ -135,6 +157,11 @@ private:
 
   void markReachableNodes();
   void cleanGraph();
+  void doSubsumption(RetainedStateMap::iterator& subsumedStateIter,
+		     StateSet& existingStatesSubsumed,
+		     int subsumersParent,
+		     const StateSet&  subsumersAncestors);
+
 
   const bool fold;  // we do folding to prune less general states
   const bool keepHistory;  // we keep the history of how we arrived at each state
@@ -215,9 +242,49 @@ NarrowingFolder::getHistory(int index,
 }
 
 inline bool
-NarrowingFolder::exists(int index)
+NarrowingFolder::exists(int index) const
 {
-  return  mostGeneralSoFar.find(index)!= mostGeneralSoFar.end();
+  return mostGeneralSoFar.find(index) != mostGeneralSoFar.end();
+}
+
+inline bool
+NarrowingFolder::locked(int index) const
+{
+  auto i =  mostGeneralSoFar.find(index);
+  return i == mostGeneralSoFar.end() ? false : i->second->locked;
+}
+
+inline int
+NarrowingFolder::getParent(int index) const
+{
+  auto i =  mostGeneralSoFar.find(index);
+  Assert(i != mostGeneralSoFar.end(), "couldn't find state with index " << index);
+  return i->second->parentIndex;
+}
+
+inline void
+NarrowingFolder::RetainedState::markedSubsumed()
+{
+  //
+  //	Normally we delete a subsumed state, but if it is locked because it is on a path
+  //	that produced a solution, we minimize it and mark it instead.
+  //
+  delete matchingAutomaton;
+  matchingAutomaton = nullptr;
+  if (stateTerm)
+    {
+      stateTerm->deepSelfDestruct();
+      stateTerm = nullptr;
+    }
+  subsumed = true;
+}
+
+inline void
+NarrowingFolder::setUnexplored()
+{
+  auto i =  mostGeneralSoFar.find(currentStateIndex);
+  Assert(i != mostGeneralSoFar.end(), "couldn't find state with index " << currentStateIndex);
+  i->second->returnedButUnexplored = true;
 }
 
 #endif

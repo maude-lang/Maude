@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -295,6 +295,131 @@ MaudeLatexBuffer::generateSearchPath(const RewriteSequenceSearch* graph,
       output << "$\n";
     }
   output <<"\\end{maudeResultParagraph}\n%\n%  End of show path\n%\n";    
+}
+
+void
+MaudeLatexBuffer::generateStateSet(bool showCommand,
+				   const char* command,
+				   const Vector<DagNode*>& firstPart,
+				   bool highlight,
+				   const Vector<DagNode*>& secondPart,
+				   const char* emptyMessage)
+{
+  //
+  //	Print comment.
+  //
+  startComment();
+  output << command;
+  endComment();
+  //
+  //	Print latex version of command.
+  //
+  output << "\\begin{maudeResultParagraph}\n";
+  if (showCommand)
+    output << "\\par\\maudeKeyword{" << command << "}\\maudeEndCommand\\newline\n";
+  //
+  //	Print state set.
+  //
+  const char* sep = "";
+  for (DagNode* d : firstPart)
+    {
+      output << sep << "\\par$";
+      if (highlight)
+	output << "\\color{red}";
+      MixfixModule::latexPrintDagNode(output, d);
+      if (highlight)
+	output << "\\color{black}";
+      sep = "\\maudeSpace\\maudeDisjunction$\n";
+    }
+  for (DagNode* d : secondPart)
+    {
+      output << sep << "\\par$";
+      MixfixModule::latexPrintDagNode(output, d);
+      sep = "\\maudeSpace\\maudeDisjunction$\n";
+    }
+  if (*sep == '\0')
+    {
+      if (emptyMessage != nullptr)
+	output << "\\par" << emptyMessage;
+    }
+  else
+    output << "$";
+  output << "\n\\end{maudeResultParagraph}\n%\n%  End of " << command << "\n%\n";   
+}
+
+void
+MaudeLatexBuffer::generateNarrowingSearchPath(const NarrowingSequenceSearch3* state,
+					      const Vector<int>& steps,
+					      int stateNr,
+					      bool showCommand,
+					      bool showRule)
+{
+  const char* command = (showRule ? "show path" : "show path state" );
+  //
+  //	Print comment.
+  //
+  startComment();
+  output << command << " " << stateNr;
+  endComment();
+  //
+  //	Print latex version of command.
+  //
+  output << "\\begin{maudeResultParagraph}\n";
+  if (showCommand)
+    output << "\\par\\maudeKeyword{" << command << "}\\maudeSpace\\maudeNumber{" << stateNr << "}\\maudeEndCommand\\newline\n";
+  //
+  //	Print latex version of path.
+  //
+  for (Index i = steps.size() - 1; i >= 0; --i)
+    {
+      int index = steps[i];
+      DagNode* root;
+      DagNode* position;
+      Rule* rule;
+      const Substitution* unifier;
+      const NarrowingVariableInfo* unifierVariableInfo;
+      int variableFamily;
+      DagNode* newDag;
+      const Substitution* accumulatedSubstitution;
+      int parentIndex;
+      state->getHistory(index,
+					 root,
+					 position,
+					 rule,
+					 unifier,
+					 unifierVariableInfo,
+					 variableFamily,
+					 newDag,
+					 accumulatedSubstitution,
+					 parentIndex);
+      if (parentIndex != NONE)
+	{
+	  if (showRule)
+	    {
+	      output << "\\par$\\maudePathLeft";
+	      safeCastNonNull<VisibleModule*>(rule->getModule())->latexPrintRule(output, nullptr, rule);
+	      output << "\\maudePathRight$\n";
+	      generateHeading("variant unifier:");
+	      generateCompoundSubstitution(*unifier, *rule, *unifierVariableInfo, rule->getModule());
+	    }
+	  else
+	    {
+	      int label = rule->getLabel().id();
+	      if (label != NONE)
+		output <<"\\par$\\maudePathWithLabel{\\maudeLabel{" << Token::latexName(label) << "}}$\n";
+	      else
+		output <<"\\par$\\maudePathWithoutLabel$\n";
+	    }
+	}
+      output << "\\par\\maudeResponse{state}\\maudeSpace\\maudeNumber{" << index << "}\\maudePunctuation{,}\\maudeSpace";
+      generateType(newDag->getSort());
+      output << "\\maudePunctuation{:}$\\maudeSpace\n";
+      MixfixModule::latexPrintDagNode(output, newDag);
+      output << "$\n";
+      generateHeading("accumulated substitution:");
+      generateSubstitution(*accumulatedSubstitution, state->getInitialVariableInfo());
+    }
+  output << "\\end{maudeResultParagraph}\n%\n%  End of show path\n%\n";    
 }
 
 void

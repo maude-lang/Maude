@@ -1,3 +1,10 @@
+2024-05-10  Steven Eker  <eker@pup>
+
+	* streamManagerSymbol.cc (StreamManagerSymbol::nonblockingGetLine):
+	allow \n to be backslashed for continuation lines
+
+===================================Maude161===========================================
+
 2024-04-10  Steven Eker  <eker@pup>
 
 	* timeActions.cc (TimeManagerSymbol::getTimeSinceEpoch): use

@@ -81,9 +81,7 @@ ProcessManagerSymbol::doChildExit(pid_t childPid)
   //
   int wstatus;
   DebugSave(exitPid, waitpid(childPid, &wstatus, 0));
-  //pid_t exitPid = waitpid(childPid, &wstatus, 0);
-  Assert(exitPid == childPid, "unexpected return value " << exitPid <<
-	 " from waidpid() for process " << childPid);
+  Assert(exitPid == childPid, "unexpected return value " << exitPid << " from waidpid() for process " << childPid);
   //
   //	Recover original waitForProcessExit message and context.
   //

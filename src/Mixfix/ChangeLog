@@ -1,3 +1,99 @@
+2024-05-17  Steven Eker  <eker@pup>
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateStateSet()
+
+	* latexResult.cc (MaudeLatexBuffer::generateStateSet): added
+
+	* narrowing.cc (Interpreter::showFrontierStates): rewritten to
+	use getUnexpandedStates()
+
+2024-05-16  Steven Eker  <eker@pup>
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): fixed
+	missing space after filter/delay
+
+	* latexResult.cc (MaudeLatexBuffer::generateNarrowingSearchPath):
+	use generateCompoundSubstitution()
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): adde decl for
+	generateCompoundSubstitution()
+
+	* maudeLatexBuffer.cc
+	(MaudeLatexBuffer::generateCompoundSubstitution): added
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for
+	generateNarrowingSearchPath()
+
+	* narrowing.cc: use generateNarrowingSearchPath()
+
+	* latexResult.cc (MaudeLatexBuffer::generateNarrowingSearchPath):
+	added
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): echo vfold,
+	path
+
+	* search.cc (Interpreter::search): echo vfold and path flags
+
+2024-05-09  Steven Eker  <eker@pup>
+
+	* narrowing.cc (Interpreter::showFrontierStates): use
+	getUnexpandedState()
+	(Interpreter::showFrontierStates): print a message for empty
+	frontier
+	(Interpreter::showFrontierStates): handle the case where we
+	have no visited but unexpanded state but still have unvisited states
+
+2024-05-08  Steven Eker  <eker@pup>
+
+	* interpreter.hh (class Interpreter): added decls for
+	showFrontierStates(), showMostGeneralStates(); made
+	showNarrowingSearchPath() private
+
+	* commands.yy (command): added syntax for show frontier states
+	and show most general states
+
+	* narrowing.cc (Interpreter::showFrontierStates)
+	(Interpreter::showMostGeneralStates): added stubs
+
+	* commands.yy (option): deleted KW_INVARIANT
+
+	* top.yy: deleted KW_INVARIANT; added KW_FRONTIER, KW_MOST,
+	KW_GENERAL
+
+	* lexer.ll: deleted KW_INVARIANT; added KW_FRONTIER, KW_MOST,
+	KW_GENERAL
+
+2024-05-07  Steven Eker  <eker@pup>
+
+	* lexer.ll: return , in INITIAL for multiple vu-narrow options
+
+2024-05-06  Steven Eker  <eker@pup>
+
+	* narrowing.cc (Interpreter::showNarrowingSearchPath): use
+	UserLevelRewritingContext::printCompoundSubstitution() to print the
+	variant unfier used for a narrowing step
+
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext): added
+	decl for printCompoundSubstitution()
+
+	* userLevelRewritingContext.cc
+	(UserLevelRewritingContext::printCompoundSubstitution): added
+
+2024-05-03  Steven Eker  <eker@pup>
+
+	* narrowing.cc (Interpreter::showNarrowingSearchPath): moved here
+
+	* execute.cc (Interpreter::clearContinueInfo): use nullptr
+
+	* narrowing.cc (Interpreter::doVuNarrowing): delete state and unprotect
+	module on abort; always save state and module for later inspection
+
+	* search.cc (Interpreter::showNarrowingSearchPath): added
+	(Interpreter::doSearching): delete state and unprotect module on abort
+
+===================================Maude161===========================================
+
 2024-05-02  Steven Eker  <eker@pup>
 
 	* search.cc (Interpreter::search): delete terms and condition fragments

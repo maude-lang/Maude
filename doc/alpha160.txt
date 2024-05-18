@@ -78,7 +78,7 @@ endfm
 The is*() functions follow the C++ standard. startsWith() and endWith()
 check if the first string starts with (resp. ends with) the second
 string. The trim*() functions remove white-space characters from
-the start, end, or bothe ends of the string argument.
+the start, end, or both ends of the string argument.
 The reason for placing theses function in a new fmod it that it
 is intended to extend it in future with operations that require
 lists of strings.
@@ -154,10 +154,10 @@ result Bool: Z .=. Y
 unequal and are both nonground, we examine subterms in the flattened argument
 lists; i.e. subterms headed by something other than _+_. Equal arguments on both
 sides can be canceled. If one side fully cancels we can return false; otherwise
-if one side onlyhas fixed subterms we can check if there are enough arguments to
+if one side only has fixed subterms we can check if there are enough arguments to
 pair up with the other side or return false. Then we can check for each fixed
 subterm on the other side, there is something for it to pair with, or return
-false. Finally if we had cancelations we can return the reduced initial equality.
+false. Finally if we had cancellations we can return the reduced initial equality.
 
 red g(A) + g(B) + g(C) .=. g(A) + B + h(C) .
 reduce in FOO : g(A) + B + h(C) .=. g(A) + g(B) + g(C) .
@@ -202,7 +202,7 @@ states:
 The same four search types, =>1, =>+, =>*, =>! are supported. Unlike the
 single initial state case, variables may not be shared between the
 states and the pattern. Nor may variables be shared between states.
-Essentially each initial state generates its own tree of descendents, but
+Essentially each initial state generates its own tree of descendants, but
 states from one tree may subsume states from another tree if the fold
 option is given; in fact one initial state may subsume another. If
 a disjunction of initial states is given, the result information includes

@@ -447,6 +447,14 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			  if (interpreter.setCurrentModule(lexerBubble))
 			    interpreter.showProfile();
 			}
+		|	KW_SHOW KW_FRONTIER KW_STATE '.'
+			{
+			  interpreter.showFrontierStates();
+			}
+		|	KW_SHOW KW_MOST KW_GENERAL KW_STATE '.'
+			{
+			  interpreter.showMostGeneralStates();
+			}
 /*
  *	Commands to set interpreter state variables.
  */
@@ -691,7 +699,6 @@ optionsList	:	option			{ $$ = $1; }
 option		:	KW_FOLD			{ $$ = NarrowingSequenceSearch3::FOLD; }
 		|	KW_VFOLD		{ $$ = NarrowingSequenceSearch3::VFOLD; }
 		|	KW_PATH			{ $$ = NarrowingSequenceSearch3::KEEP_PATHS; }
-		|	KW_INVARIANT		{ $$ = NarrowingSequenceSearch3::INVARIANT; }
 		;
 
 importMode	:	KW_PROTECT		{ $$ = ImportModule::PROTECTING; }

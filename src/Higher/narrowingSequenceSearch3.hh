@@ -61,10 +61,6 @@ public:
      //	user can ask for the path to any state that yielded a unifier (to be implemented).
      //
      KEEP_PATHS = 0x80000,
-     //
-     //	This flag is just maintained as state information for users
-     //
-     INVARIANT = 0x100000,
     };
   //
   //	We take responsibility for protecting startStates and goal and deleting initial and freshVariableGenerator.
@@ -117,6 +113,32 @@ public:
   int getNrInitialStates() const;
   int getVariantFlags() const;
   bool problemOK() const;
+  bool locked(int index) const;
+  int getStateParent(int index) const;
+  //
+  //	Most general states only make sense if we're folding and they are the set of states that
+  //	have not been subsumed.
+  //
+  Vector<DagNode*> getMostGeneralStates() const;
+  //
+  //	The set of states that have not been visited for expansion. This is the frontier, possibly
+  //	minus one state.
+  //
+  Vector<DagNode*> getUnvisitedStates() const;
+  //
+  //	In the =>1, =>+, =>* cases:
+  //	There might be a state that was visited but not (fully) expanded. This could be because it
+  //	is at max depth or because we haven't finished expanding it. The should also be part of
+  //	the frontier if it exists. If it doesn't exist, we expect the frontier to be empty, because
+  //	as soon as we exhaust the expansion of the state, we look for another state to expand.
+  // 	stateBeingExpanded can only be NONE if there are no states in the frontier.
+  //
+  //	In the =>! case:
+  //	We visit states, but might not expand them if they are max depth. In this case we can have
+  //	more than one unexpanded state, but none of them will be partially expanded since they can
+  //	only be considered for unification with the goal if they have no descendants.
+  //
+  Vector<DagNode*> getUnexpandedStates(bool& partiallyExpanded);
 
 private:
   //
@@ -136,7 +158,7 @@ private:
   //	Initial stuff.
   //
   RewritingContext* initial;
-  DagRoot goal;
+  DagNode* goal;
   int nrInitialStatesToTry;
   const int maxDepth;
   const bool normalFormNeeded;
@@ -247,6 +269,60 @@ NarrowingSequenceSearch3::getHistory(int index,
 			     parentIndex);
 }
 
+inline Vector<DagNode*>
+NarrowingSequenceSearch3::getMostGeneralStates() const
+{
+  return stateCollection.getMostGeneralStates();
+}
+
+inline Vector<DagNode*>
+NarrowingSequenceSearch3::getUnvisitedStates() const
+{
+  return stateCollection.getUnreturnedStates();
+}
+
+inline Vector<DagNode*>
+NarrowingSequenceSearch3::getUnexpandedStates(bool& partiallyExpanded)
+{
+  if (normalFormNeeded)
+    {
+      //
+      //	If we have a stateBeingExpanded, we know it has no descendants, otherwise we would have
+      //	gone on to the next state. If we don't have a stateBeingExpanded we may still have
+      //	states that had descendants but we didn't expand them out to avoid exceeding a depth bound.
+      //
+      partiallyExpanded = false;
+      return stateCollection.getReturnedButUnexploredStates();
+    }
+  //
+  //	If we don't have state being expanded for other search types then we have no visited but unexpanded states.
+  //
+  if (stateBeingExpandedIndex == NONE)
+    {
+      partiallyExpanded = false;
+      return Vector<DagNode*>();
+    }
+  //
+  //	If we made the NarrowingSearchState to expand it, it must be partly expanded.
+  //
+  partiallyExpanded = (stateBeingExpanded != nullptr);
+  //
+  //	Because we haven't asked for another surviving state, stateBeingExpandedIndex shouldn't have been
+  //	garbage collected by being considered fully expanded; furthermore the descendents of
+  //	of a state are not allowed to subsume it, so even if we have partly expanded it, it
+  //	should still exist in stateCollection.
+  //
+  Assert(stateCollection.exists(stateBeingExpandedIndex), "state " << stateBeingExpandedIndex << " doesn't exist");
+  //
+  //	Not very efficient but it is just done once to see the frontier.
+  //
+  Vector<DagNode*> singleton(1);
+  int variableFamily;
+  Substitution* accumulatedSubstitution;
+  stateCollection.getState(stateBeingExpandedIndex, singleton[0], variableFamily, accumulatedSubstitution);
+  return singleton;
+}
+
 inline int
 NarrowingSequenceSearch3::getUnifierVariableFamily() const
 {
@@ -278,6 +354,18 @@ inline int
 NarrowingSequenceSearch3::getVariantFlags() const
 {
   return variantFlags;
+}
+
+inline bool
+NarrowingSequenceSearch3::locked(int index) const
+{
+  return stateCollection.locked(index);
+}
+
+inline int
+NarrowingSequenceSearch3::getStateParent(int index) const
+{
+  return stateCollection.getParent(index);
 }
 
 #endif

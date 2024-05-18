@@ -195,6 +195,8 @@ public:
   void showSearchPath(int stateNr, bool showRule);
   void showSearchPathLabels(int stateNr);
   void showSearchGraph();
+  void showFrontierStates();
+  void showMostGeneralStates();
 
   void loop(const Vector<Token>& subject);
   void contLoop(const Vector<Token>& input);
@@ -338,6 +340,7 @@ private:
 			       Term* target,				     
 			       const Vector<ConditionFragment*>& condition,
 			       MixfixModule* module);
+  void showNarrowingSearchPath(int stateNr, bool showRule, NarrowingSequenceSearch3* savedNarrowingSequence) const;
 
   ofstream* xmlLog;
   MaudemlBuffer* xmlBuffer;

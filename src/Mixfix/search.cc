@@ -177,8 +177,19 @@ Interpreter::search(const Vector<Token>& bubble,
       UserLevelRewritingContext::beginCommand();
       if (debug)
 	cout << "debug ";
-      if (variantFlags & NarrowingSequenceSearch3::FOLD)
-	cout << "{fold} ";
+      if (variantFlags & (NarrowingSequenceSearch3::FOLD | NarrowingSequenceSearch3::VFOLD | NarrowingSequenceSearch3::KEEP_PATHS))
+	{
+	  const char* sep = ", ";
+	  if (variantFlags & NarrowingSequenceSearch3::FOLD)
+	    cout << "{fold";
+	  else if (variantFlags & NarrowingSequenceSearch3::VFOLD)
+	    cout << "{vfold";
+	  else
+	    sep = "{";
+	  if (variantFlags & NarrowingSequenceSearch3::KEEP_PATHS)
+	    cout << sep << "path";
+	  cout << "} ";
+	}
       cout << searchKindName[searchKind] << ' ';
       if (variantFlags &
 	  (VariantSearch::IRREDUNDANT_MODE | VariantUnificationProblem::FILTER_VARIANT_UNIFIERS))
@@ -319,7 +330,15 @@ Interpreter::doSearching(Timer& timer,
     {
       bool result = state->findNextMatch();
       if (UserLevelRewritingContext::aborted())
-	break;  // HACK: Is this safe - shouldn't we destroy context?
+	{
+	  //
+	  //	Tidy up and return.
+	  //
+	  delete state;
+	  module->unprotect();
+	  UserLevelRewritingContext::clearDebug();
+	  return;
+	}
       Int64 real = 0;
       Int64 virt = 0;
       Int64 prof = 0;
@@ -392,9 +411,8 @@ Interpreter::doSearching(Timer& timer,
   if (i == limit)  
     {
       //
-      //	The loop terminated because we hit user's limit so 
-      //	continuation is still possible. We save the state,
-      //	solutionCount and module, and set a continutation function.
+      //	The loop terminated because we hit user's limit so continuation is still possible.
+      //	We save the  solutionCount and set a continutation function.
       //
       state->getContext()->clearCount();
       savedSolutionCount = solutionCount;
@@ -427,6 +445,11 @@ Interpreter::searchCont(Int64 limit, bool debug)
 void
 Interpreter::showSearchPath(int stateNr, bool showRule)
 {
+  if (NarrowingSequenceSearch3* savedNarrowingSequence = dynamic_cast<NarrowingSequenceSearch3*>(savedState))
+    {
+      showNarrowingSearchPath(stateNr, showRule, savedNarrowingSequence);
+      return;
+    }
   RewriteSequenceSearch* savedRewriteSequenceSearch = dynamic_cast<RewriteSequenceSearch*>(savedState);
   if (savedRewriteSequenceSearch == 0)
     {

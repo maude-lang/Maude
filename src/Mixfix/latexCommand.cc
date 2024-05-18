@@ -364,6 +364,19 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
   startComment();
   if (debug)
     output << "debug ";
+  if (variantFlags & (NarrowingSequenceSearch3::FOLD | NarrowingSequenceSearch3::VFOLD | NarrowingSequenceSearch3::KEEP_PATHS))
+    {
+      const char* sep = ", ";
+      if (variantFlags & NarrowingSequenceSearch3::FOLD)
+	output << "{fold";
+      else if (variantFlags & NarrowingSequenceSearch3::VFOLD)
+	output << "{vfold";
+      else
+	sep = "{";
+      if (variantFlags & NarrowingSequenceSearch3::KEEP_PATHS)
+	output << sep << "path";
+      output << "} ";
+    }
   if (variantFlags & NarrowingSequenceSearch3::FOLD)
     output << "{fold} ";
   output << searchKindName[searchKind] << ' ';
@@ -406,8 +419,20 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
       output << "$";
       if (debug)
 	output << "\\maudeKeyword{debug}\\maudeSpace";
-      if (variantFlags & NarrowingSequenceSearch3::FOLD)
-	output << "\\maudeLeftBrace\\maudeKeyword{fold}\\maudeRightBrace\\maudeSpace";
+      if (variantFlags & (NarrowingSequenceSearch3::FOLD | NarrowingSequenceSearch3::VFOLD | NarrowingSequenceSearch3::KEEP_PATHS))
+	{
+	  const char* sep = "\\maudePunctuation{,}\\maudeSpace";
+	  if (variantFlags & NarrowingSequenceSearch3::FOLD)
+	    output << "\\maudeLeftBrace\\maudeKeyword{fold}";
+	  else if (variantFlags & NarrowingSequenceSearch3::VFOLD)
+	    output << "\\maudeLeftBrace\\maudeKeyword{vfold}";
+	  else
+	    sep = "\\maudeLeftBrace";
+	  if (variantFlags & NarrowingSequenceSearch3::KEEP_PATHS)
+	    output << sep << "\\maudeKeyword{path}";
+	  output << "\\maudeRightBrace\\maudeSpace";
+	}
+
       output << "\\maudeKeyword{" << searchKindName[searchKind] << "}\\maudeSpace";
 
       if (variantFlags & (VariantSearch::IRREDUNDANT_MODE | VariantUnificationProblem::FILTER_VARIANT_UNIFIERS))
@@ -421,7 +446,7 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
 	    }
 	  if (variantFlags & VariantUnificationProblem::FILTER_VARIANT_UNIFIERS)
 	    output << sep << "\\maudeKeyword{filter}";
-	  output << "\\maudeRightBrace";
+	  output << "\\maudeRightBrace\\maudeSpace";
 	}
       generateModifiers(module, limit, depth);
       {

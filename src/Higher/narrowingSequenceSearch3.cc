@@ -246,7 +246,7 @@ NarrowingSequenceSearch3::markReachableNodes()
   //
   //	Protect start states in termDisjuction mode
   //
-  //goal->mark;  // maybe use this rather than DagRoot
+  goal->mark();
   for (InitialState& i : initialStates)
     i.state->mark();
   if (protectedSubstitution)
@@ -279,7 +279,7 @@ NarrowingSequenceSearch3::findNextUnifier()
 		  //	becomes subsumed (if we're folding) or after all of its next states have been
 		  //	generated.
 		  //
-		  stateCollection.lockPathToCurrentState();
+		  stateCollection.lockPathToState(nextInterestingState);
 		}
 	      return true;
 	    }	  
@@ -297,7 +297,7 @@ NarrowingSequenceSearch3::findNextUnifier()
       Substitution* accumulatedSubstitution;
       stateCollection.getState(nextInterestingState, stateDag, variableFamily, accumulatedSubstitution);
 
-      DagNode* goalDag = goal.getNode();  // no change under instantiation
+      DagNode* goalDag = goal;  // no change under instantiation
       if (!termDisjunction)
 	{
 	  //
@@ -397,8 +397,10 @@ NarrowingSequenceSearch3::findNextInterestingState()
 	      //
 	      //	The new state will be at maxDepth + 1 so need not be considered. It's
 	      //	enough to know that the parent state has a successor and thus isn't
-	      //	in normal form.
+	      //	in normal form. But we need to set a flag in stateCollection to say that
+	      //	we didn't explore the state just returned.
 	      //
+	      stateCollection.setUnexplored();
 	      delete stateBeingExpanded;
 	      stateBeingExpanded = nullptr;
 	      break;

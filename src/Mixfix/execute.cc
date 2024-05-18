@@ -31,12 +31,12 @@ void
 Interpreter::clearContinueInfo()
 {
   delete savedState;
-  savedState = 0;
-  continueFunc = 0;
-  if (savedModule != 0)
+  savedState = nullptr;
+  continueFunc = nullptr;
+  if (savedModule != nullptr)
     {
       (void) savedModule->unprotect();
-      savedModule = 0;
+      savedModule = nullptr;
     }
 }
 

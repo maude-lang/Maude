@@ -90,6 +90,98 @@ NarrowingFolder::markReachableNodes()
     }
 }
 
+void
+NarrowingFolder::dump(ostream& s)
+{
+  for (auto& i : mostGeneralSoFar)
+    {
+      s << i.first << " : " << i.second->state <<
+	" parent=" << i.second->parentIndex <<
+	" depth=" << i.second->depth <<
+	" locked=" << i.second->locked <<
+	" subsumed=" << i.second->subsumed << endl;
+    }
+}
+
+Vector<DagNode*>
+NarrowingFolder::getReturnedButUnexploredStates() const
+{
+  //
+  //	We return all states that were marked as returnedButUnexplored and haven't been deleted or marked as subsumed.
+  //
+  Vector<DagNode*> unexploredStates;
+  for (auto p : mostGeneralSoFar)
+    {
+      if (p.second->returnedButUnexplored && !(p.second->subsumed))
+	unexploredStates.push_back(p.second->state);
+    }
+  return unexploredStates;
+}
+
+Vector<DagNode*>
+NarrowingFolder::getUnreturnedStates() const
+{
+  Vector<DagNode*> unreturnedStates;
+  //
+  //	Return all states that have neither been returned as the next state, nor subsumed.
+  //	Since they may have been considered for unification with the goal, they could be locked and subsumed.
+  //
+  for (RetainedStateMap::const_iterator i = mostGeneralSoFar.upper_bound(currentStateIndex); i != mostGeneralSoFar.end(); ++i)
+    {
+      //cerr << "unvisited state " << i->first << " : " << i->second->state << endl;
+      if (!(i->second->subsumed))
+	unreturnedStates.push_back(i->second->state);
+    }
+  return unreturnedStates;
+}
+
+Vector<DagNode*>
+NarrowingFolder::getMostGeneralStates() const
+{
+  Assert(fold, "not folding");
+  Vector<DagNode*> mostGeneralStates;
+  //
+  //	If we're folding, all states should be most general unless they've been locked and subsumed.
+  //
+  for (auto i : mostGeneralSoFar)
+    {
+      if (!(i.second->subsumed))
+	mostGeneralStates.push_back(i.second->state);
+    }
+  return mostGeneralStates;
+}
+
+void
+NarrowingFolder::doSubsumption(RetainedStateMap::iterator& subsumedStateIter,
+			       StateSet& existingStatesSubsumed,
+			       int subsumersParent,
+			       const StateSet&  subsumersAncestors)
+{
+  //
+  //	Record this state as subsumed in current subsumption analysis.
+  //
+  int victimIndex = subsumedStateIter->first;
+  RetainedState* victimState = subsumedStateIter->second;
+  existingStatesSubsumed.insert(victimIndex);
+  //
+  //	If the victim is locked, it is needed for printing the path to a success.
+  //	Otherwise if it is the subsumer's parent, its needed to compute the subsumer's accumulated subsitution.
+  //	Otherwise if we're keeping history and it is in the subsumer's ancestors, its potentially needed for a path.
+  //
+  if (victimState->locked ||
+      victimIndex == subsumersParent ||
+      (keepHistory && !(subsumersAncestors.find(victimIndex) == subsumersAncestors.end())))
+    victimState->markedSubsumed();
+  else
+    {
+      //
+      //	No reason to keep this subsumed state.
+      //
+      delete victimState;
+      mostGeneralSoFar.erase(subsumedStateIter);
+    }
+}
+
 bool
 NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 {
@@ -145,7 +237,7 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 	{
 	  RetainedStateMap::iterator next = i;
 	  ++next;
-	  if (!i->second->subsumed && ancestors.find(i->first) == ancestors.end())  // can't mess with ancestors of new state
+	  if (!i->second->subsumed)  // only look at states that haven't been subsumed
 	    {
 	      RetainedState* potentialVictim = i->second;
 	      if (existingStatesSubsumed.find(potentialVictim->parentIndex) != existingStatesSubsumed.end())
@@ -158,13 +250,7 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 			  " evicted descendent of an older state " << i->second->state <<
 			  " by subsuming an ancestor.");
 		  existingStatesSubsumed.insert(i->first);
-		  if (potentialVictim->locked)
-		    potentialVictim->subsumed = true;  // can't delete this state because we might need it for a path
-		  else
-		    {
-		      delete potentialVictim;
-		      mostGeneralSoFar.erase(i);
-		    }
+		  doSubsumption(i, existingStatesSubsumed, parentIndex, ancestors);
 		}
 	      else if (newState->subsumes(potentialVictim->state))
 		{
@@ -174,13 +260,7 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 		  DebugAdvisory("new state evicted an older state " << i->first);
 		  Verbose("New state " << state << " subsumed older state " << i->second->state);
 		  existingStatesSubsumed.insert(i->first);
-		  if (potentialVictim->locked)
-		    potentialVictim->subsumed = true;  // can't delete this state because we might need it for a path
-		  else
-		    {
-		      delete potentialVictim;
-		      mostGeneralSoFar.erase(i);
-		    }
+		  doSubsumption(i, existingStatesSubsumed, parentIndex, ancestors);
 		}
 	    }
 	  i = next;
@@ -242,18 +322,32 @@ NarrowingFolder::getNextSurvivingState(DagNode*& nextState,
   //
   //	Find the next state if there is one.
   //
-  RetainedStateMap::const_iterator nextStateIterator = mostGeneralSoFar.upper_bound(currentStateIndex);
-  if (nextStateIterator == mostGeneralSoFar.end())
-    return NONE;
-  Assert(!nextStateIterator->second->locked, "unvisited state should not be locked");
-  Assert(!nextStateIterator->second->subsumed, "unvisited state that is subsumed should have been deleted");
-  
-  currentStateIndex = nextStateIterator->first;
-  nextState = nextStateIterator->second->state;
-  nextStateAccumulatedSubstitution = nextStateIterator->second->accumulatedSubstitution;
-  nextStateVariableFamily = nextStateIterator->second->variableFamily;
-  nextStateDepth = nextStateIterator->second->depth;
-  return currentStateIndex;
+  for (;;)
+    {
+      //
+      //	Find next state.
+      //
+      RetainedStateMap::const_iterator nextStateIterator = mostGeneralSoFar.upper_bound(currentStateIndex);
+      if (nextStateIterator == mostGeneralSoFar.end())
+	break;
+      currentStateIndex = nextStateIterator->first;
+      //
+      //	The tricky thing is if it produced a solution, we may have locked it, and if so it could have
+      //	subsequently been subsumed without being deleted, in which case we must skip over it.
+      //	Because such a state must be locked, there's no point calling cleanGraph().
+      //
+      if (!nextStateIterator->second->subsumed)
+	{
+	  nextState = nextStateIterator->second->state;
+	  nextStateAccumulatedSubstitution = nextStateIterator->second->accumulatedSubstitution;
+	  nextStateVariableFamily = nextStateIterator->second->variableFamily;
+	  nextStateDepth = nextStateIterator->second->depth;
+	  //cerr << "****** returning " << currentStateIndex << endl;
+	  return currentStateIndex;
+	}
+      Assert(nextStateIterator->second->locked, "unvisited state " << nextStateIterator->first << " subsumed but not locked");
+    }
+  return NONE;
 }
 
 void
@@ -268,12 +362,20 @@ NarrowingFolder::cleanGraph()
   if (currentStateIndex == NONE)
     return;  // no current state to consider for deletion
 
-  RetainedStateMap::iterator stateIterator = mostGeneralSoFar.find(currentStateIndex);
+  auto stateIterator = mostGeneralSoFar.find(currentStateIndex);
+  if (stateIterator->second->returnedButUnexplored)
+    {
+      //
+      //	The caller set a flag to say they didn't explore the state we just returned
+      //	so it remains in the frontier and we can't delete it except by subsumption.
+      //
+      return;
+    }
   if (!keepHistory)
     {
       //
       //	Since we are not keeping history and not folding we have no further need of a fully
-      //	explored state.
+      //	explored state. We cannot lock states if we are not keeping history.
       //
       Assert(!stateIterator->second->locked, "shouldn't have locked states if not keeping history");
       delete stateIterator->second;
@@ -307,20 +409,23 @@ NarrowingFolder::cleanGraph()
 }
 
 void
-NarrowingFolder::lockPathToCurrentState()
+NarrowingFolder::lockPathToState(int index)
 {
   Assert(keepHistory, "can't lock path if not keeping history");
   //
   //	We lock all the states on the current path back to the root state, so that they are never deleted and
   //	are thus available for showing the complete path to this state at any point before our object is deleted.
   //
-  RetainedStateMap::iterator stateIterator = mostGeneralSoFar.find(currentStateIndex);
+  RetainedStateMap::iterator stateIterator = mostGeneralSoFar.find(index);
+  //cerr << "considering " << index << endl;
   while(!stateIterator->second->locked)
     {
+      //cerr << "locking" << endl;
       stateIterator->second->locked = true;
       int parentIndex = stateIterator->second->parentIndex;
       if (parentIndex == NONE)
 	break;
+      //cerr << "considering " << parentIndex << endl;
       stateIterator = mostGeneralSoFar.find(parentIndex);
     }
 }

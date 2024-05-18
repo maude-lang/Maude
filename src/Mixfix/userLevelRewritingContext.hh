@@ -137,6 +137,11 @@ public:
   static void printSubstitution(const Substitution& substitution,
 				const NarrowingVariableInfo& variableInfo);
 
+  static void printCompoundSubstitution(const Substitution& substitution,
+					const VariableInfo& variableInfo,
+					const NarrowingVariableInfo& narrowingVariableInfo,
+					Module* m);
+  
   bool interruptSeen();
   
 private:

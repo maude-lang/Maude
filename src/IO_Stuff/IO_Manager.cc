@@ -304,7 +304,7 @@ Rope
 IO_Manager::getLineFromStdin(const Rope& prompt)
 {
   //
-  //	In case we have a child process that is accessing stding.
+  //	In case we have a child process that is accessing stdin.
   //
   waitUntilSafeToAccessStdin();
   //

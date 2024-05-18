@@ -1,3 +1,108 @@
+2024-05-17  Steven Eker  <eker@pup>
+
+	* narrowingSequenceSearch3.hh (class NarrowingSequenceSearch3):
+	getUnexpandedState() becomes getUnexpandedStates()
+	(NarrowingSequenceSearch3::getUnexpandedState): becomes
+	getUnexpandedStates(); rewritten
+
+	* narrowingFolder.hh (class NarrowingFolder): added decl for
+	getReturnedButUnexploredStates()
+
+	* narrowingFolder.cc (NarrowingFolder::getReturnedButUnexploredStates):
+	added
+
+	* narrowingFolder.hh (NarrowingFolder::setUnexplored): added
+
+2024-05-16  Steven Eker  <eker@pup>
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::markReachableNodes): protect goal
+	(NarrowingSequenceSearch3::findNextUnifier): use goal directly
+
+	* narrowingSequenceSearch3.hh (class NarrowingSequenceSearch3): goal
+	becomes a DagNode* rather than a DagRoot now that we have our own
+	markReachableNodes() to protect it
+
+2024-05-15  Steven Eker  <eker@pup>
+
+	* narrowingFolder.hh (class NarrowingFolder): added decl for
+	doSubsumption()
+
+	* narrowingFolder.cc (NarrowingFolder::doSubsumption): added
+
+2024-05-09  Steven Eker  <eker@pup>
+
+	* narrowingFolder.hh (class NarrowingFolder): added decl for dump
+
+	* narrowingFolder.cc (NarrowingFolder::dump): added
+
+	* narrowingSequenceSearch3.hh (NarrowingSequenceSearch3::unexpandedState):
+	added
+
+	* narrowingFolder.hh (class NarrowingFolder): added data member
+	returnedButUnexplored to struct RetainedState
+
+2024-05-08  Steven Eker  <eker@pup>
+
+	* narrowingSequenceSearch3.hh
+	(NarrowingSequenceSearch3::getUnvisitedStates): added
+
+	* narrowingFolder.hh (class NarrowingFolder): added decl for
+	getUnreturnedStates()
+
+	* narrowingFolder.cc (NarrowingFolder::getUnreturnedStates): added
+
+	* narrowingSequenceSearch3.hh
+	(NarrowingSequenceSearch3::getMostGeneralStates): added
+
+	* narrowingFolder.hh (class NarrowingFolder): added decl for
+	getMostGeneralStates()
+
+	* narrowingFolder.cc (NarrowingFolder::getMostGeneralStates): added
+
+	* narrowingSequenceSearch3.hh (class NarrowingSequenceSearch3): deleted
+	INVARIANT from enum Flags
+
+2024-05-07  Steven Eker  <eker@pup>
+
+	* narrowingFolder.hh (NarrowingFolder::RetainedState::markedSubsumed): don't
+	assume stateTerm is non-null because we might support variant folding at
+	some point
+
+2024-05-06  Steven Eker  <eker@pup>
+
+	* narrowingFolder.cc (NarrowingFolder::insertState): use markedSubsumed()
+	for states that got subsumed but can't be deleted because they are locked
+	for show path
+
+	* narrowingFolder.hh (NarrowingFolder::RetainedState::markedSubsumed): added
+
+	* narrowingFolder.cc (NarrowingFolder::getNextSurvivingState): handled
+	subsumed states; this can arise if a state produces, a solution and has
+	its path locked by the caller, and is subsequently subsumed but can't be
+	deleted because it is locked as it may be needed for a show path
+
+2024-05-03  Steven Eker  <eker@pup>
+
+	* narrowingSequenceSearch3.cc (NarrowingSequenceSearch3::findNextUnifier):
+	use lockPathToState()
+
+	* narrowingFolder.hh (class NarrowingFolder): lockPathToCurrentState()->
+	lockPathToState()
+
+	* narrowingFolder.cc (NarrowingFolder::lockPathToCurrentState): becomes
+	lockPathToState()
+
+	* narrowingSequenceSearch3.hh (NarrowingSequenceSearch3::getStateParent):
+	added
+
+	* narrowingFolder.hh (NarrowingFolder::exists): made const
+	(NarrowingFolder::getParent): added
+
+	* narrowingSequenceSearch3.hh (NarrowingSequenceSearch3::locked): added
+
+	* narrowingFolder.hh (NarrowingFolder::locked): added
+
 2024-05-02  Steven Eker  <eker@pup>
 
 	* narrowingSequenceSearch3.cc:

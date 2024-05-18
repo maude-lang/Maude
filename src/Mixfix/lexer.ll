@@ -262,12 +262,14 @@ vu-narrow				return KW_VU_NARROW;
 fvu-narrow				return KW_FVU_NARROW;
 fold					return KW_FOLD;
 vfold					return KW_VFOLD;
-invariant				return KW_INVARIANT;
 desugared				return KW_DESUGARED;
 processed				return KW_PROCESSED;
 hook|hooks				return KW_HOOKS;
 combine					return KW_COMBINE;
-[.\[\](){}]				return *yytext;
+frontier				return KW_FRONTIER;
+most					return KW_MOST;
+general					return KW_GENERAL;
+[.,\[\](){}]				return *yytext;
 0|([1-9][0-9]*)				{
 					  bool dummy;
 					  lvalp->yyInt64 = stringToInt64(yytext, dummy, 10);

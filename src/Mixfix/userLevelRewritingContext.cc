@@ -569,3 +569,35 @@ UserLevelRewritingContext::printSubstitution(const Substitution& substitution,
   if (!printedVariable)
     cout << "empty substitution\n";
 }
+
+void
+UserLevelRewritingContext::printCompoundSubstitution(const Substitution& substitution,
+						     const VariableInfo& variableInfo,
+						     const NarrowingVariableInfo& narrowingVariableInfo,
+						     Module* m)
+{
+  //	We deal with a substitution that is broken into two parts.
+  //	The first part is bindings to variables from a PreEquation and
+  //	the variable names are given by Terms in variableInfo.
+  //	The second part is bindings to variables from a term being narrowed
+  //	and the variable names are given by DagNodes in narrowingVariableInfo.
+  //
+  int nrVariables1 = variableInfo.getNrRealVariables();
+  int nrVariables2 = narrowingVariableInfo.getNrVariables();
+  for (int i = 0; i < nrVariables1; ++i)
+    {
+      Term* v = variableInfo.index2Variable(i);
+      DagNode* b = substitution.value(i);
+      cout << v << " --> " << b << '\n';
+    }
+  //
+  //	Variables from the dag being narrowed start after the regular substitution.
+  //
+  int firstTargetSlot = m->getMinimumSubstitutionSize();
+  for (int i = 0; i < nrVariables2; ++i)
+    {
+      DagNode* v = narrowingVariableInfo.index2Variable(i);
+      DagNode* b = substitution.value(firstTargetSlot + i);
+      cout << v << " --> " << b << '\n';
+    }
+}

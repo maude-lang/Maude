@@ -466,7 +466,7 @@ StreamManagerSymbol::nonblockingGetLine(FreeDagNode* message,
       //
       close(resultReturnPipe[READ_END]);
       DagNode* promptArg = message->getArgument(2);
-      const Rope& prompt = safeCast(StringDagNode*, promptArg)->getValue();
+      Rope prompt = safeCast(StringDagNode*, promptArg)->getValue();
       if (ioManager.usingTecla())
 	{
 	  //
@@ -508,9 +508,26 @@ StreamManagerSymbol::nonblockingGetLine(FreeDagNode* message,
       //	There is no need to unblock it ourselves after Tecla
       //	returns because we're going to exit() anyway.
       //
-      //	Now we can read a line.
+      //	Now we can read a line. We treat \\\n as indicating an incomplete line.
       //
-      Rope line = ioManager.getLineFromStdin(prompt);
+      Rope line;
+      for (;;)
+	{
+	  Rope partial = ioManager.getLineFromStdin(prompt);
+	  if (partial.empty())
+	    break;  // ^D
+	  auto nrChars = partial.length();
+	  if (nrChars > 1 && partial[nrChars - 2] == '\\')
+	    {
+	      line += partial.substr(0, nrChars - 2);  // remove \\\n
+	      prompt = "> ";
+	    }
+	  else
+	    {
+	      line += partial;
+	      break;
+	    }
+	}
       //
       //	Then we need to write the line to the pipe.
       //
