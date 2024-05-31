@@ -30,6 +30,7 @@ TESTS = \
 	sreduce \
 	smtTest \
 	narrow \
+	narrow2 \
 	continue \
 	parse \
 	bubble \
@@ -74,6 +75,7 @@ MAUDE_FILES = \
 	sreduce.maude \
 	smtTest.maude \
 	narrow.maude \
+	narrow2.maude \
 	continue.maude \
 	parse.maude \
 	bubble.maude \
@@ -118,6 +120,7 @@ RESULT_FILES = \
 	sreduce.expected \
 	smtTest.expected \
 	narrow.expected \
+	narrow2.expected \
 	continue.expected \
 	parse.expected \
 	bubble.expected \

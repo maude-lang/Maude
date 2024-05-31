@@ -1,0 +1,30 @@
+Alpha 162 release notes
+========================
+
+Bug fix
+========
+A typo where /\ was used rather tha \/ for outputting disjuctions
+of states in text (but LaTeX was correct). Spotted by Jose.
+
+New feature
+============
+vu-narrow has an option vfold, which is like fold but uses variant
+subsumption rather than matching to decide if one state is more
+general than another:
+
+mod BAZ is
+  sort Foo .
+  ops f g h : Foo -> Foo .
+  ops i j k : Foo Foo -> Foo .
+
+vars X Y Z W A B C D : Foo .
+  eq j(f(X), Y) = i(f(Y), X) [variant] .
+  rl g(i(X, k(Y, Z))) => f(k(Z, X)) [narrowing] .
+  rl f(k(X, X)) => h(X) [narrowing] .
+endm
+
+{path,vfold} vu-narrow {filter,delay} in BAZ : g(j(A, B)) =>* C .
+show most general states .
+
+I'm curious what effect it has on more complex examples. On all the
+examples I have to hand, the set of most general states is the same.

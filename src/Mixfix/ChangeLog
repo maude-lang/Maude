@@ -1,3 +1,9 @@
+2024-05-20  Steven Eker  <eker@pup>
+
+	* narrowing.cc (Interpreter::showMostGeneralStates): use \/
+	rather than /\
+	(Interpreter::showFrontierStates): ditto
+
 2024-05-17  Steven Eker  <eker@pup>
 
 	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added decl for

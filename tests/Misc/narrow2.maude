@@ -1,0 +1,199 @@
+set show timing off .
+
+***
+***	Examples provided by Jose Meseguer, tested with new features.
+***
+
+mod R&W is 
+  protecting NAT .
+  sort Config .
+  op <_,_> : Nat Nat -> Config [ctor] .  --- readers/writers
+
+  vars R W : Nat .
+
+  rl < 0, 0 > => < 0, s(0) > [narrowing] .
+  rl < R, s(W) > => < R, W > [narrowing] .
+  rl < R, 0 > => < s(R), 0 > [narrowing] .
+  rl < s(R), W > => < R, W > [narrowing] .
+endm
+
+*** checking mutual exclusion invariant
+
+{fold} vu-narrow < R, 0 > \/ < 0, s(0) > =>* < s(N:Nat),s(M:Nat) > .
+
+show most general states .
+show frontier states .
+
+*** checking at most one writer invariant
+
+{fold} vu-narrow < R, 0 > \/ < 0, s(0) > =>* < N:Nat,s(s(M:Nat)) > .
+
+show most general states .
+show frontier states .
+
+*** checking mutual exclusion invariant
+
+{vfold} vu-narrow < R, 0 > \/ < 0, s(0) > =>* < s(N:Nat),s(M:Nat) > .
+
+show most general states .
+show frontier states .
+
+*** checking at most one writer invariant
+
+{vfold} vu-narrow < R, 0 > \/ < 0, s(0) > =>* < N:Nat,s(s(M:Nat)) > .
+
+show most general states .
+show frontier states .
+
+************************
+
+mod R&W-FAIR is
+  sorts NzNat Nat Conf .
+  subsorts NzNat < Nat .
+  op 0 : -> Nat [ctor] .
+  op 1 : -> NzNat [ctor] .
+  op _+_ : Nat Nat -> Nat [ctor assoc comm id: 0] .
+  op _+_ : NzNat Nat -> NzNat [ctor assoc comm id: 0] .
+  op [_]<_,_>[_|_] : Nat Nat Nat Nat Nat -> Conf .
+  op init : NzNat -> Conf .
+ 
+  vars N M M1 K K1 I J N1 N2 N3 N4 N5 N6 N7 N8 N9 N10 : Nat .  var N' N'' M' M'' Z' Z'' Q' Q'' : NzNat .
+
+  eq init(N') = [N']< 0,0 >[ 0 | N'] .
+
+  rl [w-in] : [N]< 0,0 >[ 0 | N] => [N]< 0,1 >[0 | N] [narrowing] .
+  rl [w-out] : [N]< 0,1 >[ 0 | N] => [N]< 0,0 >[N | 0] [narrowing] .
+  rl [r-in] : [K + N + M + 1]< N,0 >[M + 1 | K] => [K + N + M + 1]< N + 1,0 >[M | K] [narrowing] .
+  rl [r-out] : [K + N + M + 1]< N + 1,0 >[M | K] => [K + N + M + 1]< N,0 >[M | K + 1] [narrowing] .
+endm
+
+*** checking mutual exclusion invariant
+
+{fold} vu-narrow
+[Z']< 0,0 >[ 0 | Z'] \/
+[Z'']< 0,1 >[ 0 | Z''] \/
+[N' + K + M]< M,0 >[N' | K] \/
+[N'' + I + J]< N'',0 >[J | I] \/
+[M' + K1 + M1]< M1,0 >[K1 | M'] \/
+[1 + N1 + N2]< 1 + N1, 0 >[0 | N2] \/
+[1 + N3 + N4]< 0, 0 >[N3 | 1 + N4] \/
+[1 + N5 + N6]< N5, 0 >[0 | 1 + N6] \/
+[1 + N7]< 0, 1 >[0 | 1 + N7] \/
+[1 + N8]< 0, 0 >[1 + N8 | 0]
+=>* [M'']< Q', Q'' >[N9 | N10] .
+
+show most general states .
+show frontier states .
+
+*** checking at most one writer invariant
+
+{fold} vu-narrow
+[Z']< 0,0 >[ 0 | Z'] \/
+[Z'']< 0,1 >[ 0 | Z''] \/
+[N' + K + M]< M,0 >[N' | K] \/
+[N'' + I + J]< N'',0 >[J | I] \/
+[M' + K1 + M1]< M1,0 >[K1 | M'] \/
+[1 + N1 + N2]< 1 + N1, 0 >[0 | N2] \/
+[1 + N3 + N4]< 0, 0 >[N3 | 1 + N4] \/
+[1 + N5 + N6]< N5, 0 >[0 | 1 + N6] \/
+[1 + N7]< 0, 1 >[0 | 1 + N7] \/
+[1 + N8]< 0, 0 >[1 + N8 | 0]
+=>* [M'']< N9, Q' + 1 >[N9 | N10] .
+
+show most general states .
+show frontier states .
+
+*** checking mutual exclusion invariant
+
+{vfold} vu-narrow
+[Z']< 0,0 >[ 0 | Z'] \/
+[Z'']< 0,1 >[ 0 | Z''] \/
+[N' + K + M]< M,0 >[N' | K] \/
+[N'' + I + J]< N'',0 >[J | I] \/
+[M' + K1 + M1]< M1,0 >[K1 | M'] \/
+[1 + N1 + N2]< 1 + N1, 0 >[0 | N2] \/
+[1 + N3 + N4]< 0, 0 >[N3 | 1 + N4] \/
+[1 + N5 + N6]< N5, 0 >[0 | 1 + N6] \/
+[1 + N7]< 0, 1 >[0 | 1 + N7] \/
+[1 + N8]< 0, 0 >[1 + N8 | 0]
+=>* [M'']< Q', Q'' >[N9 | N10] .
+
+show most general states .
+show frontier states .
+
+*** checking at most one writer invariant
+
+{vfold} vu-narrow
+[Z']< 0,0 >[ 0 | Z'] \/
+[Z'']< 0,1 >[ 0 | Z''] \/
+[N' + K + M]< M,0 >[N' | K] \/
+[N'' + I + J]< N'',0 >[J | I] \/
+[M' + K1 + M1]< M1,0 >[K1 | M'] \/
+[1 + N1 + N2]< 1 + N1, 0 >[0 | N2] \/
+[1 + N3 + N4]< 0, 0 >[N3 | 1 + N4] \/
+[1 + N5 + N6]< N5, 0 >[0 | 1 + N6] \/
+[1 + N7]< 0, 1 >[0 | 1 + N7] \/
+[1 + N8]< 0, 0 >[1 + N8 | 0]
+=>* [M'']< N9, Q' + 1 >[N9 | N10] .
+
+show most general states .
+show frontier states .
+
+************************
+
+fmod NAT-LIST is 
+ sort Nat List .
+ subsort Nat < List .
+ op 0 : -> Nat .
+ op s : Nat -> Nat .
+ op nil : -> List .
+ op _;_ : List List -> List [assoc id: nil] .
+endfm
+
+mod COMM is protecting NAT-LIST .  protecting TRUTH-VALUE .
+ sorts Oid Sender Receiver Msg Conf State .
+ subsorts Sender Receiver Msg < Conf .
+ op o : Nat -> Oid .
+ ops a b : -> Oid .  *** Skolem constants used as parameters
+ op null : -> Conf .
+ op _ _ : Conf Conf -> Conf [assoc comm id: null] .
+ op < _ :Snd | buff: _ , rec: _ , cnt: _ , rack: _ > : Oid List Oid Nat Bool -> Sender .
+ op < _ :Rec | buff: _ , snd: _ , cnt: _ > : Oid List Oid Nat -> Receiver . 
+ op [_]{_} : List Conf -> State .
+ op to_from_val_cnt_ : Oid Oid Nat Nat -> Msg .
+ op to_from_ack_ : Oid Oid Nat -> Msg . 
+ 
+ vars N N' M K I J : Nat .  var L Q R Q1 R1 Q2 R2 Q3 R3 : List .
+ vars A B : Oid .  var C : Conf .  var BV : Bool .
+ 
+ rl [snd] : [Q]{C < A :Snd | buff: (N ; L), rec: B, cnt: M , rack: true >} => 
+ [Q]{C (to B from A val N cnt M) < A :Snd | buff: L, rec: B, cnt: M, rack: false >} [narrowing] .
+ rl [rec] : [Q]{C (to B from A val N cnt M) < B :Rec | buff: L, snd: A, cnt: M >}
+     => [Q]{C < B :Rec | buff: (L ; N), snd: A, cnt: s(M) > (to A from B ack M)} [narrowing] .
+ rl [rack] : [Q]{C (to A from B ack M) < A :Snd | buff: L, rec: B, cnt: M , rack: false >} => 
+ [Q]{C < A :Snd | buff: L, rec: B, cnt: s(M), rack: true >} [narrowing] .    
+endm
+
+{fold} vu-narrow
+ [Q ; R]{< a :Snd | buff: R , rec: b, cnt: M, rack: true > < b :Rec | buff: Q, snd: a, cnt: M >} \/
+ [Q1 ; N ; R1]{< a :Snd | buff: R1 , rec: b, cnt: K, rack: false > (to b from a val N cnt K)
+  < b :Rec | buff: Q1, snd: a, cnt: K >} \/
+ [Q2 ; N' ; R2]{< a :Snd | buff: R2 , rec: b, cnt: J, rack: false > (to a from b ack J)
+  < b :Rec | buff: (Q2 ; N'), snd: a, cnt: s(J) >}  
+   =>*
+  [L]{C < a :Snd | buff: R3 , rec: b, cnt: I, rack: BV > < b :Rec | buff: Q3, snd: a, cnt: s(s(I)) >} .
+
+show most general states .
+show frontier states .
+
+{vfold} vu-narrow
+ [Q ; R]{< a :Snd | buff: R , rec: b, cnt: M, rack: true > < b :Rec | buff: Q, snd: a, cnt: M >} \/
+ [Q1 ; N ; R1]{< a :Snd | buff: R1 , rec: b, cnt: K, rack: false > (to b from a val N cnt K)
+  < b :Rec | buff: Q1, snd: a, cnt: K >} \/
+ [Q2 ; N' ; R2]{< a :Snd | buff: R2 , rec: b, cnt: J, rack: false > (to a from b ack J)
+  < b :Rec | buff: (Q2 ; N'), snd: a, cnt: s(J) >}  
+   =>*
+  [L]{C < a :Snd | buff: R3 , rec: b, cnt: I, rack: BV > < b :Rec | buff: Q3, snd: a, cnt: s(s(I)) >} .
+
+show most general states .
+show frontier states .

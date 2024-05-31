@@ -46,13 +46,15 @@ class NarrowingFolder : private SimpleRootContainer
   NO_COPYING(NarrowingFolder);
 
 public:
-  NarrowingFolder(bool fold, bool keepHistory);
+  NarrowingFolder(RewritingContext* context,
+		  FreshVariableGenerator* freshVariableGenerator,
+		  bool fold,
+		  bool vfold,
+		  bool keepHistory);
   ~NarrowingFolder();
 
-  bool insertState(int index, DagNode* state, int parentIndex);
-  void addAccumulatedSubstitution(int index,
-				  int variableFamily,
-				  Substitution* accumulatedSubstitution);
+  bool insertState(int index, DagNode* state, int parentIndex, int variableFamily);
+  void addAccumulatedSubstitution(int index, Substitution* accumulatedSubstitution);
   void addHistory(int index,
 		  Rule* rule,
 		  DagNode* narrowingContext,
@@ -106,7 +108,7 @@ public:
 private:
   struct RetainedState
   {
-    RetainedState(DagNode* state, int parentIndex, int rootIndex, int depth, bool fold);
+    RetainedState(DagNode* state, int parentIndex, int rootIndex, int depth, int variableFamily, const NarrowingFolder* owner);
     ~RetainedState();
     bool subsumes(DagNode* state) const;
     void markedSubsumed();
@@ -115,14 +117,18 @@ private:
     const int parentIndex;	// index of parent state
     const int rootIndex;	// index of root state
     const int depth;		// number of narrowing steps from root
-    int variableFamily = NONE;
+    const int variableFamily;		// variable family used in the state and the range of the accumulatedSubstitution
     Substitution* accumulatedSubstitution = nullptr;
     //
-    //	Only used for folding.
+    //	Only used for regular folding.
     //
-    Term* stateTerm;
-    LhsAutomaton* matchingAutomaton;
-    int nrMatchingVariables;  // number of variables needed for matching; includes any abstraction variables
+    Term* stateTerm = nullptr;
+    LhsAutomaton* matchingAutomaton = nullptr;
+    int nrMatchingVariables = 0;  // number of variables needed for matching; includes any abstraction variables
+    //
+    //	Only used for variant subsumption folding.
+    //
+    VariantSearch* subsumptionChecker = nullptr;
     //
     //	Only used for history.
     //
@@ -164,19 +170,22 @@ private:
 
 
   const bool fold;  // we do folding to prune less general states
+  const bool vfold;  // we do variant folding (i.e. with variant subsumption) to prune less general states
   const bool keepHistory;  // we keep the history of how we arrived at each state
   int currentStateIndex;
   RetainedStateMap mostGeneralSoFar;
+  //
+  //	This information is only needed for vfold so we can do variant subsumption.
+  //
+  RewritingContext* context;
+  FreshVariableGenerator* freshVariableGenerator;
 };
 
 inline void
-NarrowingFolder::addAccumulatedSubstitution(int index,
-					    int variableFamily,
-					    Substitution* accumulatedSubstitution)
+NarrowingFolder::addAccumulatedSubstitution(int index, Substitution* accumulatedSubstitution)
 {
   RetainedStateMap::iterator i = mostGeneralSoFar.find(index);
   Assert(i != mostGeneralSoFar.end(), "couldn't find state with index " << index);
-  i->second->variableFamily = variableFamily;
   i->second->accumulatedSubstitution = accumulatedSubstitution;
 }
 

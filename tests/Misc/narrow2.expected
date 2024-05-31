@@ -1,0 +1,133 @@
+==========================================
+{fold} vu-narrow in R&W : < R, 0 > \/ < 0, 1 > =>* < s N:Nat, s M:Nat > .
+
+No solution.
+rewrites: 4
+< #1:Nat, 0 > \/
+< 0, 1 >
+*** frontier is empty ***
+==========================================
+{fold} vu-narrow in R&W : < R, 0 > \/ < 0, 1 > =>* < N:Nat, s s M:Nat > .
+
+No solution.
+rewrites: 4
+< #1:Nat, 0 > \/
+< 0, 1 >
+*** frontier is empty ***
+==========================================
+{vfold} vu-narrow in R&W : < R, 0 > \/ < 0, 1 > =>* < s N:Nat, s M:Nat > .
+
+No solution.
+rewrites: 4
+< #1:Nat, 0 > \/
+< 0, 1 >
+*** frontier is empty ***
+==========================================
+{vfold} vu-narrow in R&W : < R, 0 > \/ < 0, 1 > =>* < N:Nat, s s M:Nat > .
+
+No solution.
+rewrites: 4
+< #1:Nat, 0 > \/
+< 0, 1 >
+*** frontier is empty ***
+==========================================
+{fold} vu-narrow in R&W-FAIR : [Z']< 0, 0 >[0 | Z'] \/ [Z'']< 0, 1 >[0 | Z'']
+    \/ [N' + M + K]< M, 0 >[N' | K] \/ [N'' + I + J]< N'', 0 >[J | I] \/ [M' +
+    M1 + K1]< M1, 0 >[K1 | M'] \/ [1 + N1 + N2]< 1 + N1, 0 >[0 | N2] \/ [1 + N3
+    + N4]< 0, 0 >[N3 | 1 + N4] \/ [1 + N5 + N6]< N5, 0 >[0 | 1 + N6] \/ [1 +
+    N7]< 0, 1 >[0 | 1 + N7] \/ [1 + N8]< 0, 0 >[1 + N8 | 0] =>* [M'']< Q', Q''
+    >[N9 | N10] .
+
+No solution.
+rewrites: 8
+[#1:NzNat]< 0, 1 >[0 | #1:NzNat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #2:Nat, 0 >[#1:NzNat | #3:Nat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #1:NzNat, 0 >[#3:Nat | #2:Nat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #2:Nat, 0 >[#3:Nat | #1:NzNat]
+*** frontier is empty ***
+==========================================
+{fold} vu-narrow in R&W-FAIR : [Z']< 0, 0 >[0 | Z'] \/ [Z'']< 0, 1 >[0 | Z'']
+    \/ [N' + M + K]< M, 0 >[N' | K] \/ [N'' + I + J]< N'', 0 >[J | I] \/ [M' +
+    M1 + K1]< M1, 0 >[K1 | M'] \/ [1 + N1 + N2]< 1 + N1, 0 >[0 | N2] \/ [1 + N3
+    + N4]< 0, 0 >[N3 | 1 + N4] \/ [1 + N5 + N6]< N5, 0 >[0 | 1 + N6] \/ [1 +
+    N7]< 0, 1 >[0 | 1 + N7] \/ [1 + N8]< 0, 0 >[1 + N8 | 0] =>* [M'']< N9, Q' +
+    1 >[N9 | N10] .
+
+No solution.
+rewrites: 8
+[#1:NzNat]< 0, 1 >[0 | #1:NzNat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #2:Nat, 0 >[#1:NzNat | #3:Nat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #1:NzNat, 0 >[#3:Nat | #2:Nat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #2:Nat, 0 >[#3:Nat | #1:NzNat]
+*** frontier is empty ***
+==========================================
+{vfold} vu-narrow in R&W-FAIR : [Z']< 0, 0 >[0 | Z'] \/ [Z'']< 0, 1 >[0 | Z'']
+    \/ [N' + M + K]< M, 0 >[N' | K] \/ [N'' + I + J]< N'', 0 >[J | I] \/ [M' +
+    M1 + K1]< M1, 0 >[K1 | M'] \/ [1 + N1 + N2]< 1 + N1, 0 >[0 | N2] \/ [1 + N3
+    + N4]< 0, 0 >[N3 | 1 + N4] \/ [1 + N5 + N6]< N5, 0 >[0 | 1 + N6] \/ [1 +
+    N7]< 0, 1 >[0 | 1 + N7] \/ [1 + N8]< 0, 0 >[1 + N8 | 0] =>* [M'']< Q', Q''
+    >[N9 | N10] .
+
+No solution.
+rewrites: 8
+[#1:NzNat]< 0, 1 >[0 | #1:NzNat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #2:Nat, 0 >[#1:NzNat | #3:Nat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #1:NzNat, 0 >[#3:Nat | #2:Nat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #2:Nat, 0 >[#3:Nat | #1:NzNat]
+*** frontier is empty ***
+==========================================
+{vfold} vu-narrow in R&W-FAIR : [Z']< 0, 0 >[0 | Z'] \/ [Z'']< 0, 1 >[0 | Z'']
+    \/ [N' + M + K]< M, 0 >[N' | K] \/ [N'' + I + J]< N'', 0 >[J | I] \/ [M' +
+    M1 + K1]< M1, 0 >[K1 | M'] \/ [1 + N1 + N2]< 1 + N1, 0 >[0 | N2] \/ [1 + N3
+    + N4]< 0, 0 >[N3 | 1 + N4] \/ [1 + N5 + N6]< N5, 0 >[0 | 1 + N6] \/ [1 +
+    N7]< 0, 1 >[0 | 1 + N7] \/ [1 + N8]< 0, 0 >[1 + N8 | 0] =>* [M'']< N9, Q' +
+    1 >[N9 | N10] .
+
+No solution.
+rewrites: 8
+[#1:NzNat]< 0, 1 >[0 | #1:NzNat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #2:Nat, 0 >[#1:NzNat | #3:Nat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #1:NzNat, 0 >[#3:Nat | #2:Nat] \/
+[#1:NzNat + #2:Nat + #3:Nat]< #2:Nat, 0 >[#3:Nat | #1:NzNat]
+*** frontier is empty ***
+==========================================
+{fold} vu-narrow in COMM : [Q ; R]{< b :Rec | buff: Q, snd: a, cnt: M > < a
+    :Snd | buff: R, rec: b, cnt: M, rack: true >} \/ [Q1 ; N ; R1]{(< b :Rec |
+    buff: Q1, snd: a, cnt: K > to b from a val N cnt K) < a :Snd | buff: R1,
+    rec: b, cnt: K, rack: false >} \/ [Q2 ; N' ; R2]{((to a from b ack J) < b
+    :Rec | buff: Q2 ; N', snd: a, cnt: s(J) >) < a :Snd | buff: R2, rec: b,
+    cnt: J, rack: false >} =>* [L]{C < a :Snd | buff: R3, rec: b, cnt: I, rack:
+    BV > < b :Rec | buff: Q3, snd: a, cnt: s(s(I)) >} .
+
+No solution.
+rewrites: 3
+[#1:List ; #2:List]{< b :Rec | buff: #1:List, snd: a, cnt: #3:Nat > < a :Snd |
+    buff: #2:List, rec: b, cnt: #3:Nat, rack: true >} \/
+[#1:List ; #2:Nat ; #3:List]{< b :Rec | buff: #1:List, snd: a, cnt: #4:Nat > (
+    to b from a val #2:Nat cnt #4:Nat) < a :Snd | buff: #3:List, rec: b, cnt:
+    #4:Nat, rack: false >} \/
+[#1:List ; #2:Nat ; #3:List]{(to a from b ack #4:Nat) < b :Rec | buff: #1:List
+    ; #2:Nat, snd: a, cnt: s(#4:Nat) > < a :Snd | buff: #3:List, rec: b, cnt:
+    #4:Nat, rack: false >}
+*** frontier is empty ***
+==========================================
+{vfold} vu-narrow in COMM : [Q ; R]{< b :Rec | buff: Q, snd: a, cnt: M > < a
+    :Snd | buff: R, rec: b, cnt: M, rack: true >} \/ [Q1 ; N ; R1]{(< b :Rec |
+    buff: Q1, snd: a, cnt: K > to b from a val N cnt K) < a :Snd | buff: R1,
+    rec: b, cnt: K, rack: false >} \/ [Q2 ; N' ; R2]{((to a from b ack J) < b
+    :Rec | buff: Q2 ; N', snd: a, cnt: s(J) >) < a :Snd | buff: R2, rec: b,
+    cnt: J, rack: false >} =>* [L]{C < a :Snd | buff: R3, rec: b, cnt: I, rack:
+    BV > < b :Rec | buff: Q3, snd: a, cnt: s(s(I)) >} .
+
+No solution.
+rewrites: 3
+[#1:List ; #2:List]{< b :Rec | buff: #1:List, snd: a, cnt: #3:Nat > < a :Snd |
+    buff: #2:List, rec: b, cnt: #3:Nat, rack: true >} \/
+[#1:List ; #2:Nat ; #3:List]{< b :Rec | buff: #1:List, snd: a, cnt: #4:Nat > (
+    to b from a val #2:Nat cnt #4:Nat) < a :Snd | buff: #3:List, rec: b, cnt:
+    #4:Nat, rack: false >} \/
+[#1:List ; #2:Nat ; #3:List]{(to a from b ack #4:Nat) < b :Rec | buff: #1:List
+    ; #2:Nat, snd: a, cnt: s(#4:Nat) > < a :Snd | buff: #3:List, rec: b, cnt:
+    #4:Nat, rack: false >}
+*** frontier is empty ***
+Bye.

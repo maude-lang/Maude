@@ -349,7 +349,7 @@ Interpreter::showFrontierStates()
 	cout << Tty(Tty::RED) << d << Tty(Tty::RESET);  // paused due to solution bound in =>1, =>+, =>* cases
       else
 	cout << d;  // halted due to depth bound, or in =>! case
-      sep = " /\\\n";
+      sep = " \\/\n";
     }
   //
   //	It's possible to have unvisited states even if we don't have a visited but unexpanded state.
@@ -361,7 +361,7 @@ Interpreter::showFrontierStates()
   for (DagNode* d : unvisitedStates)
     {
       cout << sep << d;
-      sep = " /\\\n";
+      sep = " \\/\n";
     }
   //
   //	If we exhausted the search space before hitting a bound, this means the frontier is empty.
@@ -399,7 +399,7 @@ Interpreter::showMostGeneralStates()
   for (DagNode* d : mostGeneralStates)
     {
       cout << sep << d;
-      sep = " /\\\n";
+      sep = " \\/\n";
     }
   cout << endl;
   if (latexBuffer)

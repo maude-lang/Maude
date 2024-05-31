@@ -13,7 +13,7 @@ cost in memory) and each solution includes a state number that can be used with
   show path <state number> .
 and
   show path states <state number> .
-that previoulsy only worked with search. For example:
+that previously only worked with search. For example:
 
 mod BAZ is
   sort Foo .
@@ -92,7 +92,7 @@ the fold option is used.
 
 show most general states .
 
-This displays a disjunction of the most general states encoutered (so far)
+This displays a disjunction of the most general states encountered (so far)
 in the narrowing search.
 
 (3) There is a new command that can be executed after a vu-narrow command.
@@ -156,7 +156,7 @@ If folding is used, the frontier will always be a subset of the most general sta
 Other changes
 ==============
 (1) When doing sending a getLine() message to stdin, a backslash newline combination
-is now taken to indicate the input line with be continued. The backbackslash newline is
+is now taken to indicate the input line with be continued. The backslash newline is
 deleted and the continuation lines are prompted with "> ". For example:
 
 load file

@@ -467,6 +467,7 @@ TESTS = \
 	sreduce \
 	smtTest \
 	narrow \
+	narrow2 \
 	continue \
 	parse \
 	bubble \
@@ -511,6 +512,7 @@ MAUDE_FILES = \
 	sreduce.maude \
 	smtTest.maude \
 	narrow.maude \
+	narrow2.maude \
 	continue.maude \
 	parse.maude \
 	bubble.maude \
@@ -555,6 +557,7 @@ RESULT_FILES = \
 	sreduce.expected \
 	smtTest.expected \
 	narrow.expected \
+	narrow2.expected \
 	continue.expected \
 	parse.expected \
 	bubble.expected \
@@ -962,6 +965,13 @@ smtTest.log: smtTest
 narrow.log: narrow
 	@p='narrow'; \
 	b='narrow'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+narrow2.log: narrow2
+	@p='narrow2'; \
+	b='narrow2'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

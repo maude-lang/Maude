@@ -31,6 +31,7 @@
 //	forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "higher.hh"
 
 //	interface class definitions
 #include "symbol.hh"
@@ -45,11 +46,19 @@
 #include "variableInfo.hh"
 
 //	higher class definitions
+#include "variantSearch.hh"
 #include "narrowingFolder.hh"
 
-NarrowingFolder::NarrowingFolder(bool fold, bool keepHistory)
+NarrowingFolder::NarrowingFolder(RewritingContext* context,
+				 FreshVariableGenerator* freshVariableGenerator,
+				 bool fold,
+				 bool vfold,
+				 bool keepHistory)
   : fold(fold),
-    keepHistory(keepHistory)
+    vfold(vfold),
+    keepHistory(keepHistory),
+    context(context),
+    freshVariableGenerator(freshVariableGenerator)
 {
   currentStateIndex = -1;
 }
@@ -128,7 +137,7 @@ NarrowingFolder::getUnreturnedStates() const
   //
   for (RetainedStateMap::const_iterator i = mostGeneralSoFar.upper_bound(currentStateIndex); i != mostGeneralSoFar.end(); ++i)
     {
-      //cerr << "unvisited state " << i->first << " : " << i->second->state << endl;
+      DebugInfo("unvisited state " << i->first << " : " << i->second->state);
       if (!(i->second->subsumed))
 	unreturnedStates.push_back(i->second->state);
     }
@@ -138,7 +147,7 @@ NarrowingFolder::getUnreturnedStates() const
 Vector<DagNode*>
 NarrowingFolder::getMostGeneralStates() const
 {
-  Assert(fold, "not folding");
+  Assert(fold || vfold, "not folding");
   Vector<DagNode*> mostGeneralStates;
   //
   //	If we're folding, all states should be most general unless they've been locked and subsumed.
@@ -183,15 +192,19 @@ NarrowingFolder::doSubsumption(RetainedStateMap::iterator& subsumedStateIter,
 }
 
 bool
-NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
+NarrowingFolder::insertState(int index, DagNode* state, int parentIndex, int variableFamily)
 {
-  if (fold)
+  DebugEnter("index = " << index << "  state = " << state << "  parentIndex = " << parentIndex << "  variableFamily = " << variableFamily);
+  if (fold || vfold)
     {
+      DebugInfo("number of most general states = " << mostGeneralSoFar.size());
       //
       //	See if state is subsumed by an existing state.
       //
       for (auto& i : mostGeneralSoFar)
 	{
+	  DebugInfo("looking a potential subsumer " << i.second->state << Tty(Tty::RESET));
+	  DebugAdvisoryCheck(i.second->subsumed, "but potential subsumer is marked subsumed");
 	  if (!i.second->subsumed && i.second->subsumes(state))
 	    {
 	      DebugAdvisory("new state " << index << " subsumed by " << i.first);
@@ -213,9 +226,9 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
       rootIndex = j->second->rootIndex;
       depth = j->second->depth + 1;
     }
-  RetainedState* newState = new RetainedState(state, parentIndex, rootIndex, depth, fold);
+  RetainedState* newState = new RetainedState(state, parentIndex, rootIndex, depth, variableFamily, this);
 
-  if (fold)
+  if (fold || vfold)
     {
       //
       //	Compute ancestor set.
@@ -225,7 +238,12 @@ NarrowingFolder::insertState(int index, DagNode* state, int parentIndex)
 	{
 	  ancestors.insert(i);
 	  RetainedStateMap::const_iterator j = mostGeneralSoFar.find(i);
-	  Assert(j != mostGeneralSoFar.end(), "couldn't find state with index " << i);
+	  //
+	  // Grandparents need not exist if parent swallowed its tail
+	  //
+	  // Assert(j != mostGeneralSoFar.end(), "couldn't find state with index " << i);
+	  if (j == mostGeneralSoFar.end())
+	    break;
 	  i = j->second->parentIndex;
 	}
       //
@@ -342,7 +360,7 @@ NarrowingFolder::getNextSurvivingState(DagNode*& nextState,
 	  nextStateAccumulatedSubstitution = nextStateIterator->second->accumulatedSubstitution;
 	  nextStateVariableFamily = nextStateIterator->second->variableFamily;
 	  nextStateDepth = nextStateIterator->second->depth;
-	  //cerr << "****** returning " << currentStateIndex << endl;
+	  DebugInfo("****** returning " << currentStateIndex);
 	  return currentStateIndex;
 	}
       Assert(nextStateIterator->second->locked, "unvisited state " << nextStateIterator->first << " subsumed but not locked");
@@ -357,7 +375,7 @@ NarrowingFolder::cleanGraph()
   //	Clear the state graph, on the assumption that the current state has already
   //	been fully expanded.
   //
-  if (fold)
+  if (fold || vfold)
     return;  // folding takes care of state deletions
   if (currentStateIndex == NONE)
     return;  // no current state to consider for deletion
@@ -417,26 +435,32 @@ NarrowingFolder::lockPathToState(int index)
   //	are thus available for showing the complete path to this state at any point before our object is deleted.
   //
   RetainedStateMap::iterator stateIterator = mostGeneralSoFar.find(index);
-  //cerr << "considering " << index << endl;
+  DebugInfo("considering " << index);
   while(!stateIterator->second->locked)
     {
-      //cerr << "locking" << endl;
+      DebugInfo("locking");;
       stateIterator->second->locked = true;
       int parentIndex = stateIterator->second->parentIndex;
       if (parentIndex == NONE)
 	break;
-      //cerr << "considering " << parentIndex << endl;
+      DebugInfo("considering " << parentIndex);
       stateIterator = mostGeneralSoFar.find(parentIndex);
     }
 }
 
-NarrowingFolder::RetainedState::RetainedState(DagNode* state, int parentIndex, int rootIndex, int depth, bool fold)
+NarrowingFolder::RetainedState::RetainedState(DagNode* state,
+					      int parentIndex,
+					      int rootIndex,
+					      int depth,
+					      int variableFamily,
+					      const NarrowingFolder* owner)
   : state(state),
     parentIndex(parentIndex),
     rootIndex(rootIndex),
-    depth(depth)
+    depth(depth),
+    variableFamily(variableFamily)
 {
-  if (fold)
+  if (owner->fold)
     {
       //
       //	Make term version of state.
@@ -462,11 +486,20 @@ NarrowingFolder::RetainedState::RetainedState(DagNode* state, int parentIndex, i
       nrMatchingVariables = variableInfo.getNrProtectedVariables();  // may also have some
       								     // abstraction variables
     }
-  else
+  else if (owner->vfold)
     {
-      stateTerm = 0;
-      matchingAutomaton = 0;
-      nrMatchingVariables = 0;
+      DebugInfo("Making subsumption checker for " << state);
+      //
+      //	We compute variant subsumption by generating the variants of the term and
+      //	then matching potential victims.
+      //
+      //
+      const Vector<DagNode*> noBlockerDags;
+      subsumptionChecker = new VariantSearch(owner->context->makeSubcontext(state),  // VariantSearch will delete this
+					     noBlockerDags,
+					     owner->freshVariableGenerator,
+					     VariantSearch::SUBSUMPTION_MODE,
+					     variableFamily);
     }
 }
 
@@ -477,12 +510,22 @@ NarrowingFolder::RetainedState::~RetainedState()
   delete matchingAutomaton;
   if (stateTerm)
     stateTerm->deepSelfDestruct();
+  delete subsumptionChecker;
 }
 
 bool
 NarrowingFolder::RetainedState::subsumes(DagNode* state) const
 {
+  DebugEnter("trying to subsume " << state << " by " << this->state);
   MemoryCell::okToCollectGarbage();  // otherwise we have huge accumulation of junk from matching
+  if (subsumptionChecker)
+    {
+      DebugInfo("vfold case");
+      bool result = subsumptionChecker->isSubsumed(state);
+      DebugInfo("result is " << result);
+      return result;
+    }
+  DebugInfo("fold case");
   int nrSlotsToAllocate = nrMatchingVariables;
   if (nrSlotsToAllocate == 0)
     nrSlotsToAllocate = 1;  // substitutions subject to clear() must always have at least one slot
@@ -493,6 +536,7 @@ NarrowingFolder::RetainedState::subsumes(DagNode* state) const
 
   bool result = matchingAutomaton->match(state, matcher, subproblem) &&
     (subproblem == 0 || subproblem->solve(true, matcher));
+  DebugInfo("result is " << result);
   delete subproblem;
   return result;
 }

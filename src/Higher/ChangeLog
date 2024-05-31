@@ -1,3 +1,91 @@
+2024-05-30  Steven Eker  <eker@pup>
+
+	* narrowingFolder.cc (NarrowingFolder::getMostGeneralStates): fixed
+	bug where we werent' considering vfold flag
+	(NarrowingFolder::insertState): fixed symmteric bug
+	(NarrowingFolder::cleanGraph): fixed symmetric bug
+	(NarrowingFolder::getUnreturnedStates): turn cerr into DebugInfo()
+	(NarrowingFolder::insertState): turn cerr into DebugEnter()
+	(NarrowingFolder::insertState): turn cerr into DebugInfo() (2 places)
+	(NarrowingFolder::insertState): added DebugAdvisoryCheck()
+	(NarrowingFolder::getNextSurvivingState): turn cerr into DebugInfo()
+	(NarrowingFolder::lockPathToState): turn cerr into DebugInfo() (3 places)
+	(NarrowingFolder::RetainedState::RetainedState): turn cerr into
+	DebugInfo()
+	(NarrowingFolder::RetainedState::subsumes): turn cerr into DebugEnter()
+	(NarrowingFolder::RetainedState::subsumes): turn cerr into DebugInfo() (3
+	places)
+	(NarrowingFolder::RetainedState::subsumes): added DebugInfo()
+
+2024-05-21  Steven Eker  <eker@pup>
+
+	* narrowingFolder.cc (NarrowingFolder::NarrowingFolder): take and
+	store context, freshVariableGenerator
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::NarrowingSequenceSearch3): pass initial
+	and freshVariableGenerator to stateCollection
+
+	* narrowingFolder.hh (class NarrowingFolder): updated decl for
+	RetainedState ctor
+	(class NarrowingFolder): added date members context,
+	freshVariableGenerator
+	(class NarrowingFolder): updated decl for ctor
+
+	* narrowingFolder.cc (NarrowingFolder::RetainedState::subsumes): use
+	subsumptionChecker if it exists
+	(NarrowingFolder::RetainedState::RetainedState): take owner argument
+	rather than fold argument
+	(NarrowingFolder::insertState): pass this pointer to RetainedState()
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::findNextInterestingState): don't pass
+	variableFamily to addAccumulatedSubstitution()
+	(NarrowingSequenceSearch3::handleInitialState): pass variableFamily = 0
+	to insertState()
+	(NarrowingSequenceSearch3::handleInitialState): don't pass variableFamily
+	to addAccumulatedSubstitution()
+
+	* narrowingFolder.hh (NarrowingFolder::addAccumulatedSubstitution): don't
+	take or set variableFamily
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::findNextInterestingState): pass variableFamily
+	to insertState()
+
+	* narrowingFolder.hh (class NarrowingFolder): updated decl for
+	insertState(); don't do default init of variableFamily
+
+	* narrowingFolder.cc (NarrowingFolder::RetainedState::RetainedState):
+	take and set variableFamily
+	(NarrowingFolder::insertState): take and pass variableFamily
+
+2024-05-20  Steven Eker  <eker@pup>
+
+	* narrowingFolder.cc (NarrowingFolder::RetainedState::~RetainedState):
+	delete subsumptionChecker
+
+	* narrowingFolder.hh (class NarrowingFolder): added data member
+	subsumptionChecker
+
+	* narrowingFolder.cc
+	(NarrowingFolder::RetainedState::RetainedState): don't clear stateTerm,
+	matchingAutomaton and nrMatchingVariables here
+
+	* narrowingFolder.hh (class NarrowingFolder): initialize stateTerm,
+	matchingAutomaton and nrMatchingVariables of struct RetainedState
+	here
+
+	* narrowingSequenceSearch3.cc
+	(NarrowingSequenceSearch3::NarrowingSequenceSearch3): pass vfold flag
+	to stateCollection
+
+	* narrowingFolder.cc (NarrowingFolder::NarrowingFolder): handle
+	vfold argument
+
+	* narrowingFolder.hh (class NarrowingFolder): updated decl for
+	ctor; added data member vfold
+
 2024-05-17  Steven Eker  <eker@pup>
 
 	* narrowingSequenceSearch3.hh (class NarrowingSequenceSearch3):

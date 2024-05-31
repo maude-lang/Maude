@@ -98,10 +98,10 @@ NarrowingSequenceSearch3::handleInitialState(DagNode* dagToNarrow, NarrowingVari
   //	renaming as its accumulated substitution.
   //
   int newStateIndex = ++counter;
-  bool survived = stateCollection.insertState(newStateIndex, reduceContext->root(), -1);
+  bool survived = stateCollection.insertState(newStateIndex, reduceContext->root(), -1, 0);
   delete reduceContext;
   if  (survived)
-    stateCollection.addAccumulatedSubstitution(newStateIndex, 0, renamingSubstitution);
+    stateCollection.addAccumulatedSubstitution(newStateIndex, renamingSubstitution);
   else
     delete renamingSubstitution;
   //
@@ -126,7 +126,11 @@ NarrowingSequenceSearch3::NarrowingSequenceSearch3(RewritingContext* initial,
     termDisjunction(startStates.size() > 1),
     freshVariableGenerator(freshVariableGenerator),
     variantFlags(variantFlags),
-    stateCollection(variantFlags & FOLD, variantFlags & (KEEP_HISTORY | KEEP_PATHS))
+    stateCollection(initial,
+		    freshVariableGenerator,
+		    variantFlags & FOLD,
+		    variantFlags & VFOLD,
+		    variantFlags & (KEEP_HISTORY | KEEP_PATHS))
 {
   incompleteFlag = false;
   problemOkay = false;
@@ -442,13 +446,12 @@ NarrowingSequenceSearch3::findNextInterestingState()
 	  int newStateIndex = ++counter;
 	  bool survived = stateCollection.insertState(newStateIndex,
 						      reduceContext->root(),
-						      stateBeingExpandedIndex);
+						      stateBeingExpandedIndex,
+						      stateBeingExpanded->getVariableFamily());
 	  delete reduceContext;
 	  if (survived)
 	    {
-	      stateCollection.addAccumulatedSubstitution(newStateIndex,
-							 stateBeingExpanded->getVariableFamily(),
-							 stateBeingExpanded->makeAccumulatedSubstitution());
+	      stateCollection.addAccumulatedSubstitution(newStateIndex, stateBeingExpanded->makeAccumulatedSubstitution());
 	      if (stateCollection.keepingHistory())
 		{
 		  //
