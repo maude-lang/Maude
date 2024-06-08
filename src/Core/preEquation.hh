@@ -46,6 +46,9 @@ public:
   LhsAutomaton* getLhsAutomaton() const;
   bool isNonexec() const;
   void setNonexec();
+  bool isExtension() const;
+  void setExtension();
+
   //
   //	This is the most general condition checking function that allows
   //	multiple distinct successes; caller must provide trialRef variable
@@ -95,7 +98,8 @@ private:
   enum Flags
   {
     COMPILED = 2,
-    NONEXEC = 4
+    NONEXEC = 4,
+    EXTENSION = 8  // use extension for unification
   };
 
   bool solveCondition(bool findFirst,
@@ -120,6 +124,18 @@ inline void
 PreEquation::setCompiled()
 {
   setFlags(COMPILED);
+}
+
+inline bool
+PreEquation::isExtension() const
+{
+  return getFlag(EXTENSION);
+}
+
+inline void
+PreEquation::setExtension()
+{
+  setFlags(EXTENSION);
 }
 
 inline bool

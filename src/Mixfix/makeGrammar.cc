@@ -668,6 +668,8 @@ MixfixModule::makeAttributeProductions()
   parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_VARIANT_ATTRIBUTE);
   rhs[0] = narrowing;
   parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_NARROWING_ATTRIBUTE);
+  rhs[0] = extension;
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_EXTENSION_ATTRIBUTE);
   rhs[0] = dnt;
   parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_DNT_ATTRIBUTE);
   //

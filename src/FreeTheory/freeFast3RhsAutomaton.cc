@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 */
 
 //
-//	Implementation for class FreeFastRhsAutomaton.
+//	Implementation for class FreeFast3RhsAutomaton.
 //
 
 //	utility stuff
@@ -45,7 +45,7 @@
 #include "freeDagNode.hh"
 #include "freeFast3RhsAutomaton.hh"
 
-local_inline void
+inline void
 FreeFast3RhsAutomaton::fillOutArgs(const FastInstruction& instr,
 				  Substitution& matcher,
 				  FreeDagNode* d)
@@ -78,7 +78,8 @@ void
 FreeFast3RhsAutomaton::replace(DagNode* old, Substitution& matcher)
 {
   Vector<FastInstruction>::const_iterator i = fastInstructions.begin();
-  for (Vector<FastInstruction>::size_type instructionCount = nrInstructions; --instructionCount != 0; ++i)
+  for (Vector<FastInstruction>::size_type instructionCount = nrInstructions;
+       --instructionCount != 0; ++i)
     {
       FreeDagNode* d = new FREE_DAG_NODE_LOOP(i->symbol);
       fillOutArgs(*i, matcher, d);
@@ -100,7 +101,7 @@ FreeFast3RhsAutomaton::remapIndices(VariableInfo& variableInfo)
   //
   nrInstructions = instructions.size();
   fastInstructions.resize(nrInstructions);
-  for (Vector<FastInstruction>::size_type i = 0; i < nrInstructions; i++)
+  for (Vector<FastInstruction>::size_type i = 0; i < nrInstructions; ++i)
     {
       FastInstruction& f = fastInstructions[i];
       const Instruction& instr = instructions[i];

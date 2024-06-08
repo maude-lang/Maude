@@ -1,3 +1,9 @@
+2024-06-07  Steven M. Eker  <eker@eker10>
+
+	* maude.sty: updated to 3.5beta
+
+	* prelude.maude: updated to 3.5beta
+
 2024-04-16  Steven Eker  <eker@pup>
 
 	* prelude.maude: beginsWith hook to startsWith; added

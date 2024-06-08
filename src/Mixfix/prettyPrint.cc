@@ -72,6 +72,7 @@ MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemTy
   bool owise = eq != 0 && eq->isOwise();
   bool variant = eq != 0 && eq->isVariant();
   bool narrowing = rl != 0 && rl->isNarrowing();
+  bool extension = pe->isExtension();
   bool nonexec = pe->isNonexec();
   int metadata = getMetadata(itemType, pe);
   const PrintAttribute* printAttribute = getPrintAttribute(itemType, pe);
@@ -98,6 +99,11 @@ MixfixModule::printAttributes(ostream& s, const PreEquation* pe, ItemType itemTy
   if (narrowing)
     {
       s << space << "narrowing";
+      space = " ";
+    }
+  if (extension)
+    {
+      s << space << "extension";
       space = " ";
     }
   if (id != NONE)

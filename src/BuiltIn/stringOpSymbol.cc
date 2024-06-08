@@ -766,8 +766,6 @@ StringOpSymbol::ropeToNumber(const Rope& subject,
   char c = subject[i];
   if (!isalnum(c))
     return false;
-  if (c == '0' && len > i + 1 && subject[i + 1] != '/')
-    return false;  // we don't allow numbers starting with 0 except for things like 0, -0, -0/2
   for (i++; i < len; i++)
     {
       char c = subject[i];
@@ -775,14 +773,17 @@ StringOpSymbol::ropeToNumber(const Rope& subject,
 	{
 	  if (c == '/')
 	    {
-	      int j = i + 1;
-	      if (j == len || subject[j] == '0')
-		return false;
-	      for (; j < len; j++)
+	      bool nonzeroDenom = false;
+	      for (int j = i + 1; j < len; ++j)
 		{
-		  if (!isalnum(subject[j]))
+		  char c = subject[j];
+		  if (!isalnum(c))
 		    return false;
+		  if (c != '0')
+		    nonzeroDenom = true;
 		}
+	      if (!nonzeroDenom)
+		return false;
 	      //
 	      //	We have detected a fraction form.
 	      //

@@ -1,0 +1,30 @@
+Alpha 163 release notes
+========================
+
+Change
+=======
+The function rat() in fmod CONVERSION is now tolerant of
+leading zeros in natural numbers, negative numbers and
+the numerator and denominators of rational numbers:
+
+Maude> red rat("007", 10) .
+reduce in CONVERSION : rat("007", 10) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result NzNat: 7
+Maude> red rat("-007", 10) .
+reduce in CONVERSION : rat("-007", 10) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result NzInt: -7
+Maude> red rat("-007/002", 10) .
+reduce in CONVERSION : rat("-007/002", 10) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result NzRat: -7/2
+
+Zero denominators are still illegal:
+
+Maude> red rat("7/00", 10) .
+reduce in CONVERSION : rat("7/00", 10) .
+rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+result [Rat,FindResult]: rat("7/00", 10)
+
+Change requested by Julia Sapiña via Paco.

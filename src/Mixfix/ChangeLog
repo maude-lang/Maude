@@ -1,8 +1,50 @@
+2024-06-07  Steven M. Eker  <eker@eker10>
+
+	* importModule.cc (ImportModule::donateStatements2): copy
+	extension flag for rules
+	(ImportModule::donateStatements2): copy extension flag for
+	equations
+
+	* mixfixParser.cc (MixfixParser::makeStatementPart): set extension
+	flag for rules
+	(MixfixParser::makeStatementPart): set extension flag for equations
+	(MixfixParser::makeStatementPart): warn about extension flag for
+	membership axioms
+
+	* latexModulePrint.cc (VisibleModule::latexPrintAttributes):
+	handle extension argument
+	(VisibleModule::latexPrintRule): pass extension flag to
+	latexPrintAttributes()
+	(VisibleModule::latexPrintMembershipAxiom): pass extension flag to
+	latexPrintAttributes()
+	(VisibleModule::latexPrintEquation): pass extension flag to
+	latexPrintAttributes()
+
+	* visibleModule.hh (class VisibleModule): updated decl for
+	latexPrintAttributes()
+
+	* mixfixParser.hh (enum Flags): added EXTENSION
+
+	* mixfixParser.cc (MixfixParser::makeAttributePart): handle
+	MAKE_EXTENSION_ATTRIBUTE
+
+	* makeGrammar.cc (MixfixModule::makeAttributeProductions): handle
+	extension
+
+	* mixfixParser.hh (enum SemanticActions): added
+	MAKE_EXTENSION_ATTRIBUTE
+
+	* specialTokens.cc: added "extension"
+
+===================================Maude163===========================================
+
 2024-05-20  Steven Eker  <eker@pup>
 
 	* narrowing.cc (Interpreter::showMostGeneralStates): use \/
 	rather than /\
 	(Interpreter::showFrontierStates): ditto
+
+===================================Maude162===========================================
 
 2024-05-17  Steven Eker  <eker@pup>
 

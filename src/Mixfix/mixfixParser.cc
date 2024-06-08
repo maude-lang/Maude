@@ -1070,6 +1070,11 @@ MixfixParser::makeAttributePart(int node,
 	    flags.setFlags(NARROWING);
 	    break;
 	  }
+	case MAKE_EXTENSION_ATTRIBUTE:
+	  {
+	    flags.setFlags(EXTENSION);
+	    break;
+	  }
 	case MAKE_DNT_ATTRIBUTE:
 	  {
 	    if (client.isObjectOriented())
@@ -1197,6 +1202,9 @@ MixfixParser::makeStatementPart(int node,
 	WarningCheck(!(flags.getFlag(NARROWING)),
 		     LineNumber(lineNumber) <<
 		     ": narrowing attribute not allowed for membership axioms.");
+	WarningCheck(!(flags.getFlag(EXTENSION)),
+		     LineNumber(lineNumber) <<
+		     ": extension attribute not allowed for membership axioms.");
 	Term* lhs = makeTerm(parser.getChild(pairNode, 0));
 	Sort* sort = getSort(parser.getChild(pairNode, 1));
 	SortConstraint* sc = new SortConstraint(label, lhs, sort, condition);
@@ -1229,6 +1237,16 @@ MixfixParser::makeStatementPart(int node,
 	    else
 	      IssueWarning(LineNumber(lineNumber) << ": variant attribute not allowed for conditional equations.");
 	  }
+	if (flags.getFlag(EXTENSION))
+	  {
+	    if (condition.empty())
+	      eq->setExtension();
+	    else
+	      {
+		IssueWarning(LineNumber(lineNumber) <<
+			     ": extension attribute not allowed for conditional equations.");
+	      }
+	  }
 	eq->setLineNumber(lineNumber);
 	client.insertEquation(eq);
 	if (metadata != NONE)
@@ -1258,6 +1276,16 @@ MixfixParser::makeStatementPart(int node,
 	      rl->setNarrowing();
 	    else
 	      IssueWarning(LineNumber(lineNumber) << ": narrowing attribute not allowed for conditional rules.");
+	  }
+	if (flags.getFlag(EXTENSION))
+	  {
+	    if (condition.empty())
+	      rl->setExtension();
+	    else
+	      {
+		IssueWarning(LineNumber(lineNumber) <<
+			     ": extension attribute not allowed for conditional rules.");
+	      }
 	  }
 	rl->setLineNumber(lineNumber);
 	client.insertRule(rl);

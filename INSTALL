@@ -13,7 +13,10 @@ GNU bison	https://www.gnu.org/software/bison/
   
 flex		https://github.com/westes/flex
   Lexical analyzer generator
-  
+
+GNU automake https://www.gnu.org/software/automake/
+  Needed for aclocal
+
 GNU autoconf	https://www.gnu.org/software/autoconf/
   Package configuration macros - needed for Yices2 builds
 

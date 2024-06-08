@@ -81,7 +81,8 @@ VisibleModule::latexPrintAttributes(ostream& s,
 				    const PrintAttribute* printAttribute,
 				    bool owise,
 				    bool variant,
-				    bool narrowing) const
+				    bool narrowing,
+				    bool extension) const
 {
   //
   //	For statement attributes.
@@ -111,6 +112,11 @@ VisibleModule::latexPrintAttributes(ostream& s,
   if (narrowing)
     {
       s << space << "\\maudeKeyword{narrowing}";
+      space = "\\maudeSpace";
+    }
+  if (extension)
+    {
+      s << space << "\\maudeKeyword{extension}";
       space = "\\maudeSpace";
     }
   if (label != NONE)
@@ -143,7 +149,14 @@ VisibleModule::latexPrintMembershipAxiom(ostream& s, const char* indent, const S
   s << "\\maudeHasSort" << latexType(mb->getSort());
   if (mb->hasCondition())
     latexPrintCondition(s, mb);
-  latexPrintAttributes(s, mb, getMetadata(MetadataStore::MEMB_AX, mb), getPrintAttribute(MetadataStore::MEMB_AX, mb));
+  latexPrintAttributes(s,
+		       mb,
+		       getMetadata(MetadataStore::MEMB_AX, mb),
+		       getPrintAttribute(MetadataStore::MEMB_AX, mb),
+		       false,
+		       false,
+		       false,
+		       mb->isExtension());
   s << "$\\maudeEndStatement\n";
 }
 
@@ -178,7 +191,9 @@ VisibleModule::latexPrintEquation(ostream& s, const char* indent, const Equation
 		       getMetadata(MetadataStore::EQUATION, eq),
 		       getPrintAttribute(MetadataStore::EQUATION, eq),
 		       eq->isOwise(),
-		       eq->isVariant());
+		       eq->isVariant(),
+		       false,
+		       eq->isExtension());
   s << "$\\maudeEndStatement\n";
 }
 
@@ -216,7 +231,8 @@ VisibleModule::latexPrintRule(ostream& s, const char* indent, const Rule* rl) co
 		       getPrintAttribute(MetadataStore::RULE, rl),
 		       false,
 		       false,
-		       rl->isNarrowing());
+		       rl->isNarrowing(),
+		       rl->isExtension());
   if (indent)
     s << "$";
   s << "\\maudeEndStatement\n";

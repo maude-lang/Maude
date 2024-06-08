@@ -1,3 +1,7 @@
+Overview of Changes in Maude 3.5 beta (alpha163) (2023-06-07)
+=============================================================
+* rat() conversion operator is more tolerant of leading zeros
+
 Overview of Changes in alpha162 (2023-05-30)
 ============================================
 * fixed typo where sets of states were show as conjunctons rather

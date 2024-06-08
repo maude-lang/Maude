@@ -69,6 +69,7 @@
   MACRO(owise, "owise")
   MACRO(variant, "variant")
   MACRO(narrowing, "narrowing")
+  MACRO(extension, "extension")
   MACRO(dnt, "dnt")
   MACRO(print, "print")
   MACRO(lessThan, "<")

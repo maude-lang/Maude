@@ -1,3 +1,25 @@
+2024-06-05  Steven M. Eker  <eker@eker10>
+
+	* freeFast3RhsAutomaton.cc: fix comment
+	(FreeFast3RhsAutomaton::remapIndices): code cleaning
+	(FreeFast3RhsAutomaton::replace): code cleaning
+	(FreeFast3RhsAutomaton::fillOutArgs): use inline rather than
+	local_inline
+
+	* freeUnaryRhsAutomaton.cc: fix comment
+
+	* freeUnaryRhsAutomaton.hh: fix comment
+
+	* freeBinaryRhsAutomaton.cc: fix comment
+
+	* freeBinaryRhsAutomaton.hh: fix comment
+
+	* freeTernarySymbol.cc: fix comment
+
+	* freeBinarySymbol.cc: fix comment
+
+===================================Maude163===========================================
+
 2024-03-20  Steven Eker  <eker@pup>
 
 	* freeSymbol.cc (FreeSymbol::eqRewrite)

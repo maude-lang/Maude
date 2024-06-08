@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ public:
   void* operator new(size_t size);
   void* operator new(size_t size, DagNode* old);
   void* operator new(size_t size, int);
+  void operator delete(void*, size_t) {}  // avoid mismatched new/delete warning
   //
   //	These member functions should not be overridden.
   //

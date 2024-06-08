@@ -1,3 +1,9 @@
+2024-06-05  Saruman the White  <eker@eker10>
+
+	* INSTALL: added GNU automake to prerequisites
+
+==================================Maude163===========================================
+
 2024-05-30  Steven Eker  <eker@pup>
 
 	* tests/Misc/narrow2.maude: added

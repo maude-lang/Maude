@@ -805,6 +805,8 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	    copy->setNonexec();
 	  if (e->isVariant())
 	    copy->setVariant();
+	  if (e->isExtension())
+	    copy->setExtension();
 	  copy->setLineNumber(e->getLineNumber());
 	  importer->insertEquation(copy);
 	  importer->checkEquation(copy);
@@ -831,6 +833,8 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	    copy->setNonexec();
 	  if (r->isNarrowing())
 	    copy->setNarrowing();
+	  if (r->isExtension())
+	    copy->setExtension();
 	  copy->setLineNumber(r->getLineNumber());
 	  importer->insertRule(copy);
 	  importer->checkRule(copy);

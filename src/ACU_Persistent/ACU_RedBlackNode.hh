@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,6 +62,8 @@ public:
   void makeRed();  // need for conversion from array
 
   void* operator new(size_t size);
+  void operator delete(void*, size_t) {}  // avoid mismatched new/delete warning
+
   void setMarked();
   bool isMarked();
 

@@ -89,7 +89,8 @@ private:
 			    const PrintAttribute* printAttribute,
 			    bool owise = false,
 			    bool variant = false,
-			    bool narrowing = false) const;
+			    bool narrowing = false,
+			    bool extension = false) const;
 
   void latexPrintMembershipAxiom(ostream& s, const char* indent, const SortConstraint* mb) const;
   void latexPrintEquation(ostream& s, const char* indent, const Equation* eq) const;
