@@ -1,7 +1,7 @@
 2024-05-30  Steven Eker  <eker@pup>
 
 	* narrowingFolder.cc (NarrowingFolder::getMostGeneralStates): fixed
-	bug where we werent' considering vfold flag
+	bug where we weren't considering vfold flag
 	(NarrowingFolder::insertState): fixed symmteric bug
 	(NarrowingFolder::cleanGraph): fixed symmetric bug
 	(NarrowingFolder::getUnreturnedStates): turn cerr into DebugInfo()

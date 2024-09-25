@@ -8,70 +8,37 @@ Rewriting logic is a logic of concurrent change that can naturally deal with sta
 
 Maude supports in a systematic and efficient way logical reflection. This makes Maude remarkably extensible and powerful, supports an extensible algebra of module composition operations, and allows many advanced metaprogramming and metalanguage applications. Indeed, some of the most interesting applications of Maude are metalanguage applications, in which Maude is used to create executable environments for different logics, theorem provers, languages, and models of computation.
 
-## Maude 3.4
+## Get Maude
 
-* Pseudo-random number generator objects
-* Initial equality operator
-* Meta-print to string operator and message pair
-* LaTeX support
-* =># search type
-* Various optimizations
-* Many bug fixes
+The latest version of the Maude distribution can be downloaded from the [releases](https://github.com/maude-lang/Maude/releases) section of this repository. Some previous stable and development versions are also available there, together with a summary of their main changes. More detailed notes for each development release are kept in the [doc](doc) directory.
 
-## Maude 3.3.1
+Instructions on how to build Maude from source can be found in the [INSTALL](INSTALL) file.
 
-* Restrictions on pseudo-parameters
-* More overparsing
-* Many bug fixes
+## What's new in Maude 3.5
 
-## Maude 3.3
-
-* Support for object-oriented syntactic sugar (omods/oths)
-* Parameterized constants and pconst constants
-* generated-by importation mode
-* show path states command
-* show processed view command
-* Better handling of runaway statements and commands
-* More overparsing
-* Many bug fixes
-
-## Maude 3.2.2
-
-* fixed bug where multiple instantiations (say via a theory-view) was generating bad internal names for sorts
-* fixed bug where the first sort in a kind printed by show mod was including backquotes
-* show desugared is now a documented feature
-* desugar omod to mod, oth to th
-* fixed bug where filtered variant unify crashed in the degenerate case where there were no variables
-* fixed issue where SIGSTKSZ is no longer guaranteed to be a compile-time constant in glibc
-* fixed issue with fileTest failing in environments when first user file handle is something other than 3
-
-## Maude 3.2.1
-
-* use filtered variant unification for unifying with goal when filter flag is passed to vu-narrow
-
-## Maude 3.2
-
-* Support for filtered variant unification in vu-narrow command
-* Several improvements in unification modulo several axioms
-* Several improvements of the external Maude I/O objects
-* A command flag for the depth of searching for A/AU unifiers
-* Some bugs fixed.
+* Term disjunctions for vu-narrow
+* Variant folding for vu-narrow
+* Show frontier/most general states/path for vu-narrow
+* States may now subsume their ancestors in vu-narrow
+* Extra built-in operations for strings
+* Initial equality operator handles more cases
+* Reading from stdin steam supports continuation lines
 
 ## Documentation
 
-The Maude manual for Maude 3.4 is available in [PDF format](http://maude.cs.illinois.edu/w/images/e/e9/Maude34manual.pdf)
-and in [HTML](https://maude.lcc.uma.es/maude-manual/). 
+The Maude manual for Maude 3.5 is available in [PDF format](https://maude.cs.illinois.edu/manual.pdf)
+and in [HTML](https://maude.lcc.uma.es/maude-manual/).
 The source code for most of the examples used in the manual, together with the examples from the Maude book,
-are available [here](http://maude.cs.illinois.edu/w/images/e/ef/Maude-3.4-manual-book-examples.zip).
+are available [here](https://maude.cs.illinois.edu/manual-book-examples.zip).
 
-Additional information on background, applications, and previous versions is available at its [official web site](http://maude.cs.uiuc.edu). 
+Additional information on background, applications, and previous versions is available at its [official web site](https://maude.cs.illinois.edu).
 
 For help using Maude 3:	maude-help@maude.cs.uiuc.edu
 
-Report bugs to:		maude-bugs@maude.cs.uiuc.edu
+Report bugs to: maude-bugs@maude.cs.uiuc.edu
 
 ## Copyright
 
 Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
-The Maude 3 interpreter is free software. See the file COPYING for copying permission.
+The Maude 3 interpreter is free software. See the file [COPYING](COPYING) for copying permission.
