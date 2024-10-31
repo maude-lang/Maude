@@ -144,6 +144,8 @@ RewriteTask::executionSucceeded(int resultIndex, StrategicProcess* insertionPoin
 			      this,
 			      insertionPoint);
     }
+  else
+    delete matchContext;
   return SURVIVE;
 }
 

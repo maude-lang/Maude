@@ -177,7 +177,13 @@ cd $OPTLIB/lib
 mkdir Hidden
 mv *.so* Hidden
 
-Then in the root Maude directory:
+In the root Maude directory, run
+
+autoreconf -i
+
+to generate the build scripts, unless you have downloaded the source
+tarball from the release section of the repository, which already
+include them. Then,
 
 mkdir Opt
 cd Opt

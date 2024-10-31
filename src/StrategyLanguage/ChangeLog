@@ -1,3 +1,8 @@
+2024-10-28  Rubén Rubio <rubenrub@ucm.es>
+
+	* rewriteTask.cc (RewriteTask::executionSucceeded): delete match
+	context when matching fails.
+
 2024-03-04  Steven Eker  <eker@pup>
 
 	* subtermProcess.hh (class SubtermProcess): SharedValue -> shared_ptr
