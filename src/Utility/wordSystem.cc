@@ -50,7 +50,7 @@ WordSystem::findNextSolution()
 	  //	Need to put current problem aside and solve residual problem.
 	  //
 	  levelStack.push_back(std::move(current));
-	  current.reset(result.second);
+	  current = std::move(result.second);
 	}
       else
 	{

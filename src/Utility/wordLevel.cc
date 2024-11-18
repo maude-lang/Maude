@@ -82,7 +82,7 @@ WordLevel::findNextPartialSolution()
 	  //
 	  // occurs-check failure or constraint clash during simplification.
 	  //
-	  return ResultPair(FAILURE, 0);
+	  return ResultPair(FAILURE, nullptr);
 	}
       //
       //	Need to check that all assignments are legal without
@@ -106,7 +106,7 @@ WordLevel::findNextPartialSolution()
 	  //	However if we are in the INITIAL level we may be able to
 	  //	make a SELECTION level.
 	  //
-	  return levelType == INITIAL ? trySelection() : ResultPair(FAILURE, 0);
+	  return levelType == INITIAL ? trySelection() : ResultPair(FAILURE, nullptr);
 	}
       if (levelType == SELECTION && !(parent->insertCombination(partialSolution)))
 	{
@@ -115,14 +115,14 @@ WordLevel::findNextPartialSolution()
 	  //	that we have after simplification has already been tried so
 	  //	don't generate duplicate solutions.
 	  //
-	  return ResultPair(FAILURE, 0);
+	  return ResultPair(FAILURE, nullptr);
 	}
       //
       //	Need to chose an equation and create a PigPug.
       //
       int linearity = chooseEquation();
       if (chosenEquation == NONE)
-	return ResultPair(SUCCESS, 0);  // no equations left to solve
+	return ResultPair(SUCCESS, nullptr);  // no equations left to solve
       //
       //	FIXME: If strictLeftLinear == false and we have more that one
       //	equation, we might want to do a Diophantine check here, because
@@ -141,7 +141,7 @@ WordLevel::findNextPartialSolution()
       if (levelType == INITIAL)
 	return trySelection();
       else
-	return ResultPair(FAILURE, 0);
+	return ResultPair(FAILURE, nullptr);
     }
   //
   //	Get next PigPug solution; create a new WordLevel.
@@ -165,10 +165,9 @@ WordLevel::findNextPartialSolution()
 	  return r;
 	}
       else
-	return ResultPair(result.first, 0);  // failure
+	return ResultPair(result.first, nullptr);  // failure
     }
-  WordLevel* next = makeNewLevel(unifier, newConstraintMap, nextFreshVariable);
-  return ResultPair(result.first, next);
+  return ResultPair(result.first, makeNewLevel(unifier, newConstraintMap, nextFreshVariable));
 }
 
 bool
@@ -197,7 +196,7 @@ WordLevel::simplify()
   return true;
 }
 
-WordLevel*
+std::unique_ptr<WordLevel>
 WordLevel::makeNewLevel(const Subst& unifier,
 			const ConstraintMap& newConstraintMap,
 			int nextFreshVariable)
@@ -214,10 +213,10 @@ WordLevel::makeNewLevel(const Subst& unifier,
       if (!(i.lhs.empty()))
 	++equationCount;
     }
-  WordLevel* newLevel = new WordLevel(PIGPUG,
-				      nextFreshVariable,
-				      equationCount - 1,
-				      identityOptimizations);
+  std::unique_ptr<WordLevel> newLevel(new WordLevel(PIGPUG,
+						    nextFreshVariable,
+						    equationCount - 1,
+						    identityOptimizations));
   //
   //	Copy in partial substitution and unifier.
   //

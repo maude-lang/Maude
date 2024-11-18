@@ -1,3 +1,26 @@
+2024-11-17  Saruman the White  <eker@eker10>
+
+	* wordLevel-selections.cc (WordLevel::exploreSelections): use
+	unique_ptr
+
+2024-11-17  Steven Eker  <eker@eker10>
+
+	* wordLevel.hh (class WordLevel): updated decl for
+	makeNewLevel()
+
+	* wordLevel.cc (WordLevel::makeNewLevel): use unique_ptr
+
+	* wordSystem.cc (WordSystem::findNextSolution): use move
+	assignment to current
+
+	* wordLevel-selections.cc (WordLevel::trySelection): use nullptr
+	(WordLevel::exploreSelections): use nullptr
+
+	* wordLevel.hh (class WordLevel): update ResultPair
+
+	* wordLevel.cc (WordLevel::findNextPartialSolution): use nullptr
+	to initialize ResultPair
+
 2024-11-10  Steven Eker  <eker@eker10>
 
 	* wordSystem.cc (WordSystem::~WordSystem): deleted

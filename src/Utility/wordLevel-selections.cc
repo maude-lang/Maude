@@ -231,7 +231,7 @@ WordLevel::trySelection()
   nrSelections = (1 << nrIdVariables) - 1;
   DebugInfo("idVariables.size() = " << nrIdVariables <<
 	    "  nrSelections = " << nrSelections);
-  return (nrIdVariables == 0) ? ResultPair(FAILURE, 0) : exploreSelections();
+  return (nrIdVariables == 0) ? ResultPair(FAILURE, nullptr) : exploreSelections();
 }
 
 WordLevel::ResultPair
@@ -239,7 +239,7 @@ WordLevel::exploreSelections()
 {
   ++selection;
   if (selection > nrSelections)
-    return ResultPair(FAILURE, 0);
+    return ResultPair(FAILURE, nullptr);
   DebugInfo("-------- Trying selection " << selection << " --------");
   //
   //	Count the number of equations that survived simplification.
@@ -253,11 +253,13 @@ WordLevel::exploreSelections()
   //
   //	Make a selection WordLevel.
   //
-  WordLevel* newLevel = new WordLevel(SELECTION,
-				      partialSolution.size(),
-				      equationCount,
-				      identityOptimizations,
-				      this);
+  std::unique_ptr<WordLevel> newLevel(new WordLevel(SELECTION,
+						    partialSolution.size(),
+						    equationCount,
+						    identityOptimizations,
+						    // passing this pointer is ugly since
+						    // we're owned by a unique_ptr<>
+						    this));
   newLevel->constraintMap = constraintMap;  // deep copy
   {
     int index = 0;
@@ -302,7 +304,7 @@ WordLevel::exploreSelections()
   //
   //	Creating a selection level cannot introduce incompleteness itself.
   //
-  return ResultPair(SUCCESS, newLevel);
+  return ResultPair(SUCCESS, std::move(newLevel));
 }
 
 bool
