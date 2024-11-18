@@ -36,6 +36,7 @@
 //
 #include <list>
 #include <set>
+#include <memory>
 #include "natSet.hh"
 #include "pigPug.hh"
 
@@ -72,7 +73,6 @@ public:
 	    int nrEquations,
 	    bool identityOptimizations,
 	    WordLevel* parent = 0);
-  ~WordLevel();
 
   void setTheoryConstraint(int variable, int theoryIndex);
   void setUpperBound(int variable, int upperBound);
@@ -204,7 +204,7 @@ private:
   //	If there are unsolved equations we need to pick one and solve it with PigPug.
   //
   int chosenEquation;
-  PigPug* pigPug;
+  std::unique_ptr<PigPug> pigPug;
   int incompletenessFlag;  // to record the use of a transformation that does not preserve completeness
   //
   //	If we are the INITIAL level and there are variables that can take empty

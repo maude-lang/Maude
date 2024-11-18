@@ -29,13 +29,8 @@
 
 WordSystem::WordSystem(int nrVariables, int nrEquations, bool identityOptimizations)
 {
-  current = new WordLevel(WordLevel::INITIAL, nrVariables, nrEquations, identityOptimizations);
+  current.reset(new WordLevel(WordLevel::INITIAL, nrVariables, nrEquations, identityOptimizations));  // maybe use make_unique()
   incompletenessFlag = 0;
-}
-
-WordSystem::~WordSystem()
-{
-  delete current;
 }
 
 int
@@ -51,12 +46,11 @@ WordSystem::findNextSolution()
 	{
 	  if (result.second == 0)
 	    return SUCCESS | incompletenessFlag;  // current holds a complete solution
-	  
 	  //
 	  //	Need to put current problem aside and solve residual problem.
 	  //
-	  levelStack.append(current);
-	  current = result.second;
+	  levelStack.push_back(std::move(current));
+	  current.reset(result.second);
 	}
       else
 	{
@@ -66,9 +60,8 @@ WordSystem::findNextSolution()
 	  //	Need to discard unsolvable current problem and look for another solution
 	  //	to the previous residual problem.
 	  //
-	  delete current;
 	  int top = levelStack.size() - 1;
-	  current = levelStack[top];
+	  current = std::move(levelStack[top]);
 	  levelStack.resize(top);
 	}
     }

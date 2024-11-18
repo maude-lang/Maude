@@ -57,14 +57,8 @@ WordLevel::WordLevel(LevelType levelType,
   for (int i = 0; i < nrVariables; ++i)
     partialSolution[i].append(i);
   chosenEquation = NOT_YET_CHOSEN;
-  pigPug = 0;
   incompletenessFlag = 0;
   selection = 0;
-}
-
-WordLevel::~WordLevel()
-{
-  delete pigPug;
 }
 
 WordLevel::ResultPair
@@ -351,13 +345,13 @@ WordLevel::makePigPug(int linearity)
     (linearity == LINEAR) && // maybe more conservative than needed
     unsolvedEquations.size() == 1;  // maybe more conservative than needed
 
-  pigPug = new PigPug(e.lhs,
-		      e.rhs,
-		      constraintMap,
-		      nrVariables - 1,
-		      nrVariables,
-		      linearity,
-		      useEquateOptimization);
+  pigPug.reset(new PigPug(e.lhs,
+			  e.rhs,
+			  constraintMap,
+			  nrVariables - 1,
+			  nrVariables,
+			  linearity,
+			  useEquateOptimization));  // might use make_unique() in future
   //dump(cerr, 0);
 }
 

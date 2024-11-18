@@ -51,7 +51,6 @@ public:
   typedef PigPug::Subst Subst;
 
   WordSystem(int nrVariables, int nrEquations, bool identityOptimizations = false);
-  ~WordSystem();
 
   void setTheoryConstraint(int variable, int theoryIndex);
   void setUpperBound(int variable, int upperBound);
@@ -65,9 +64,9 @@ public:
   int getNrVariables() const;
 
 private:
-  typedef Vector<WordLevel*> LevelStack;
+  typedef Vector<std::unique_ptr<WordLevel>> LevelStack;
 
-  WordLevel* current;
+  std::unique_ptr<WordLevel> current;
   LevelStack levelStack;
   int incompletenessFlag;
 };

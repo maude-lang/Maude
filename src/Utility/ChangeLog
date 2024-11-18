@@ -1,3 +1,22 @@
+2024-11-10  Steven Eker  <eker@eker10>
+
+	* wordSystem.cc (WordSystem::~WordSystem): deleted
+	(WordSystem::findNextSolution): use std::move() to move
+	unique_ptr<> to and from the stack
+
+	* wordSystem.hh (class WordSystem): fix memory leak by
+	making LevelStack hold unique_ptr<>s; make current a unique_ptr<>
+	(class WordSystem): deleted decl for ~WordSystem()
+
+	* wordLevel.hh (class WordLevel): deleted decl for ~WordLevel()
+
+	* wordLevel.cc (WordLevel::WordLevel): don't need explicit
+	initialization of pigPug
+	(WordLevel::makePigPug): use reset() to assign to pigPug
+	(WordLevel::~WordLevel): deleted
+
+	* wordLevel.hh (class WordLevel): use unique_ptr for pigPug
+
 2024-04-18  Steven Eker  <eker@pup>
 
 	* rope.hh (Rope::const_iterator::operator[]): added
