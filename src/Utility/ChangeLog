@@ -1,9 +1,7 @@
-2024-11-17  Saruman the White  <eker@eker10>
+2024-11-17  Steven Eker  <eker@eker10>
 
 	* wordLevel-selections.cc (WordLevel::exploreSelections): use
 	unique_ptr
-
-2024-11-17  Steven Eker  <eker@eker10>
 
 	* wordLevel.hh (class WordLevel): updated decl for
 	makeNewLevel()
