@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -82,13 +82,13 @@ FreeNet::~FreeNet()
 }
 
 int
-FreeNet::allocateNode(int nrMatchArcs)
+FreeNet::allocateNode(int /* nrMatchArcs */)
 {
   //
-  //	We will need a real node for each exiting arc from the virtual node that is labeled with a symbol. 
+  //	We will need a single real node for virtual node. 
   //
-  int len = net.length();
-  net.resize(len + nrMatchArcs);
+  int len = net.size();
+  net.resize(len + 1);
   return len;
 }
 
@@ -101,23 +101,33 @@ FreeNet::fillOutNode(int nodeNr,
 		     const Vector<int>& slots,
 		     int neqTarget)
 {
-  int nrSymbols = symbols.length();
-  Vector<Triple> triples(nrSymbols);
-  for (int i = 0; i < nrSymbols; i++)
+  Index nrSymbols = symbols.size();
+  Assert(nrSymbols > 0, "no symbols to test");
+  Assert(symbols[0] != 0, "null symbol");
+  int lastMatchIndex = symbols[0]->rangeComponent()->getLastAllocatedMatchIndex();
+  TestNode& node = net[nodeNr];
+  node.position = position;
+  node.argIndex = argIndex;
+  node.branches.resize(lastMatchIndex + 1);
+  for (NextPair& p : node.branches)
+    {
+      //
+      //	If a symbol isn't recognized, it gets the default arc and a pointer
+      //	to its argument list isn't stored.
+      //
+      p.nodeIndex = neqTarget;
+      p.slotIndex = NONE;
+    }
+  for (int i = 0; i < nrSymbols; ++i)
     {
       Assert(symbols[i] != 0, "null symbol");
-      triples[i].symbol = symbols[i];
-      triples[i].slot = slots[i];
-      triples[i].subtree = targets[i];
+      int matchIndex = symbols[i]->getMatchIndex();
+      Assert(matchIndex != 0,
+	     "symbol " << symbols[i] << " that we're matching against has matchIndex = 0");
+      NextPair& p = node.branches[matchIndex];
+      p.nodeIndex = targets[i];
+      p.slotIndex = slots[i];
     }
-  sort(triples.begin(), triples.end(), tripleLt);
-  buildTernaryTree(nodeNr,
-		   triples,
-		   0,
-		   nrSymbols - 1,
-		   neqTarget,
-		   position,
-		   argIndex);
 }
 
 int
@@ -132,11 +142,11 @@ void
 FreeNet::translateSlots(int nrRealSlots, const Vector<int>& slotTranslation)
 {
   stack.expandTo(nrRealSlots);
-  int nrNodes = net.length();
-  for (int i = 0; i < nrNodes; i++)
+  for (TestNode& n : net)
     {
-      net[i].slot = (net[i].slot == NONE) ? NONE : slotTranslation[net[i].slot];
-      net[i].position = (net[i].position == NONE) ? NONE : slotTranslation[net[i].position];
+      n.position = (n.position == NONE) ? NONE : slotTranslation[n.position];
+      for (NextPair& p : n.branches)
+	p.slotIndex = (p.slotIndex == NONE) ? NONE : slotTranslation[p.slotIndex];
     }
 }
 
@@ -145,10 +155,9 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
 			 const PatternSet& patternsUsed,
 			 const Vector<int>& slotTranslation)
 {
-  int nrEquations = equations.length();
-  remainders.expandTo(nrEquations);
-  for (int i = 0; i < nrEquations; i++)
-    remainders[i] = 0;
+  remainders.expandTo(equations.size());
+  for (FreeRemainder*& r : remainders)
+    r = nullptr;
   for (int i : patternsUsed)
     {
       Equation* e = equations[i];
@@ -185,81 +194,6 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
     }
 }
 
-local_inline bool
-FreeNet::tripleLt(const Triple& p1, const Triple& p2)
-{
-  return p1.symbol->getIndexWithinModule() < p2.symbol->getIndexWithinModule();
-}
-
-void
-FreeNet::buildTernaryTree(int& nodeIndex,
-			  Vector<Triple>& triples,
-			  int first,
-			  int last,
-			  int defaultSubtree,
-			  int position,
-			  int argIndex)
-{
-  //
-  //	Pick a middle element as the test symbol.
-  //	If the sum of the first and last eligible indices is odd we have a choice
-  //	of middle elements and we try to break the tie in a smart way.
-  //
-  int sum = first + last;
-  int testSymbol = sum / 2;
-  if ((sum & 1) && moreImportant(triples[testSymbol + 1].symbol, triples[testSymbol].symbol))
-    ++testSymbol;
-  //
-  //	Fill out a new node.
-  //
-  int i = nodeIndex++;
-  net[i].position = position;
-  net[i].argIndex = argIndex;
-  net[i].symbolIndex = triples[testSymbol].symbol->getIndexWithinModule();
-  net[i].slot = triples[testSymbol].slot;
-  net[i].equal = triples[testSymbol].subtree;
-  //
-  //	If the are any symbols remaining to the left of the test symbol, build a subtree for them.
-  //
-  if (first < testSymbol)
-    {
-      net[i].notEqual[LESS] = nodeIndex;
-      buildTernaryTree(nodeIndex, triples, first, testSymbol - 1, defaultSubtree, NONE, NONE);
-    }
-  else
-    net[i].notEqual[LESS] = defaultSubtree;
-  //
-  //	If the are any symbols remaining to the right of the test symbol, build a subtree for them.
-  //
-  if (last > testSymbol)
-    {
-      net[i].notEqual[GREATER] = nodeIndex;
-      buildTernaryTree(nodeIndex, triples, testSymbol + 1, last, defaultSubtree, NONE, NONE);
-    }
-  else
-    net[i].notEqual[GREATER] = defaultSubtree;
-}
-
-bool
-FreeNet::moreImportant(Symbol* first, Symbol* second)
-{
-  //
-  //	Heuristic to decide which symbol is more important and thus
-  //	should have the fastest matching.
-  //	The current heuristic favors free symbols over non-free symbols and
-  //	high arity symbols over low arity symbols.
-  //
-  //	Returns true if first symbol is considered more important.
-  //
-  FreeSymbol* f = dynamic_cast<FreeSymbol*>(first);
-  FreeSymbol* s = dynamic_cast<FreeSymbol*>(second);
-  if (f != 0 && s == 0)
-    return true;
-  if (f == 0 && s != 0)
-    return false;
-  return first->arity() > second->arity();
-}
-
 #ifdef DUMP
 void
 FreeNet::dump(ostream& s, int indentLevel)
@@ -274,16 +208,16 @@ FreeNet::dump(ostream& s, int indentLevel)
 
   s << Indent(indentLevel) << "testNodes:\n";
   ++indentLevel;
-  for (int i = 0; i < net.length(); i++)
+  Index i = 0;
+  for (const TestNode& n : net)
     {
-      s << Indent(indentLevel) << "Node " << i <<
-	": position " << net[i].position <<
-	", argIndex " << net[i].argIndex <<
-	", symbolIndex " << net[i].symbolIndex <<
-	", slot " << net[i].slot <<
-	", equal " << net[i].equal <<
-	", notEqual[LESS] " << net[i].notEqual[LESS] <<
-	", notEqual[GREATER] " << net[i].notEqual[GREATER] << '\n';
+      s << Indent(indentLevel) << "Node " << i++ <<
+	": position " << n.position <<
+	", argIndex " << n.argIndex << '\n';
+      s << Indent(indentLevel + 1);
+      for (const NextPair& p : n.branches)
+	s << " (" << p.nodeIndex << ", " << p.slotIndex << ")";
+      s << '\n';
     }
 
   s << Indent(indentLevel - 1) << "applicable:\n";

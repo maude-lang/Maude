@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 */
 
 //
-//	Class for discrimination net for the free theory.
+//	Class for discrimination net for the free theory using match indices.
 //
 #ifndef _freeNet_hh_
 #define _freeNet_hh_
@@ -70,46 +70,21 @@ public:
 #endif
 
 private:
-  enum SpecialValues
+  struct NextPair
   {
-    LESS = 1,
-    GREATER = 0
+    int nodeIndex;	// index of node we branch to (-ve encodes index of applicable list)
+    int slotIndex;	// slot to store argument list pointer (-1 indicates do not store)
   };
 
-  //
-  //	This is the data structure most accessed in the critical loops.
-  //
+  typedef Vector<NextPair> Branches;
+  
   struct TestNode
   {
-    int notEqual[2];  // index of next test node to take for > and < cases (-ve encodes index of applicable list, 0 encodes failure)
-    Index position;  // stack slot to get free dagnode argument list from (-1 indicates use old argument)
-    int argIndex;   // index of argument to test
-    int symbolIndex;  // index within module of symbol we test against
-    int slot;  // index of stack slot to store free dagnode argument list in (-1 indicates do not store)
-    int equal;  // index of next test node to take for == case (-ve encode index of applicable list)
-
-#if SIZEOF_LONG == 4  // 32-bit machines
-    int pad_struct_to_32_bytes_on_32_bit_machines;
-#endif
+    int position;
+    int argIndex;
+    Branches branches;
   };
 
-  struct Triple
-  {
-    Symbol* symbol;
-    int slot;
-    int subtree;
-  };
-
-  static bool tripleLt(const Triple& p1, const Triple& p2);
-
-  void buildTernaryTree(int& nodeIndex,
-			Vector<Triple>& triples,
-			int first,
-			int last,
-			int defaultSubtree,
-			int position,
-			int argIndex);
-  bool moreImportant(Symbol* first, Symbol* second);
   bool applyReplace2(DagNode* subject, RewritingContext& context);
   bool applyReplaceFast2(DagNode* subject, RewritingContext& context);
   bool applyReplaceNoOwise2(DagNode* subject, RewritingContext& context);

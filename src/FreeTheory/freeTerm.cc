@@ -246,13 +246,14 @@ void
 FreeTerm::computeMatchIndices() const
 {
   //
-  //	Make sure each stable symbol at the top of one of our arguments has
-  //	a non-zero match index. This is done recursively.
+  //	Make sure each symbol (stable or otherwise) at the top of
+  //	one of our stable arguments has a non-zero match index.
+  //	This is done recursively.
   //
   for (Term* t : argArray)
     {
       Symbol* s = t->symbol();
-      if (s->isStable() && s->getMatchIndex() == 0)
+      if (t->stable() && s->getMatchIndex() == 0)
 	s->setMatchIndex(s->rangeComponent()->getNewMatchIndex());
       t->computeMatchIndices();
     }

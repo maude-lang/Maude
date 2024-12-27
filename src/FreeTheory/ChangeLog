@@ -1,3 +1,28 @@
+2024-12-26  Steven M. Eker  <eker@eker10>
+
+	* freeTerm.cc (FreeTerm::computeMatchIndices): need to compute a
+	match index for an unstable symbol, if it heads a stable subterm
+
+	* freeNet.hh (class FreeNet): deleted decls for tripleLt(),
+	buildTernaryTree(), moreImportant()
+
+	* freeNet.cc (FreeNet::allocateNode): allocate a single node
+	(FreeNet::fillOutNode): rewritten to make new TestNodes
+	(FreeNet::tripleLt): deleted
+	(FreeNet::buildTernaryTree): deleted
+	(FreeNet::moreImportant): deleted
+	(FreeNet::dump): dump new TestNodes
+
+	* freeNet.hh (enum SpecialValues): added NextPair, typedef
+	Branches; deleted enum SpecialValues, struct Triple; revised
+	struct TestNode
+
+	* freeNetExec.hh (FreeNet::findRemainderListIndex): rewritten
+	using new TestNode and traversing net using getMatchIndex()
+
+	* freeNetExec.cc: all 3 functions rewritten using new TestNode and
+	traversing net using getMatchIndex()
+
 2024-06-05  Steven M. Eker  <eker@eker10>
 
 	* freeFast3RhsAutomaton.cc: fix comment

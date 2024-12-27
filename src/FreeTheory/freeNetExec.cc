@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 //
 //	Code for execution of free theory discrimination net.
 //
-//	We no longer inline this because it would make for large stack frames
+//	We don't inline this because it would make for large stack frames
 //	in eqRewrite() which is highly recursive.
 //
 
@@ -35,47 +35,30 @@ FreeNet::applyReplace2(DagNode* subject, RewritingContext& context)
   //	(actually remainder pointers) which match the free symbol skeleton in the
   //	subject.
   //
-  long i;
+  Index i;
   if (!(net.isNull()))  // at least one pattern has free symbols
     {
-      DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->argArray();
-      Vector<TestNode>::const_iterator netBase = net.begin();
+      DagNode** const topArgArray = static_cast<FreeDagNode*>(subject)->argArray();
+      const Vector<TestNode>::const_iterator netBase = net.begin();
+      const Vector<DagNode**>::iterator stackBase = stack.begin();
       Vector<TestNode>::const_iterator n = netBase;
-      Vector<DagNode**>::iterator stackBase = stack.begin();
       DagNode* d = topArgArray[n->argIndex];
-      int symbolIndex = d->symbol()->getIndexWithinModule();
       stack[0] = topArgArray;
       for (;;)
 	{
-	  long p;
-	  int diff = symbolIndex - n->symbolIndex;
-	  if (diff != 0)
+	  const NextPair& action = n->branches[d->symbol()->getMatchIndex()];
+	  const Index s = action.slotIndex;
+	  if (s >= 0)
+	    stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
+	  i = action.nodeIndex;
+	  if (i <= 0)
 	    {
-	      i = n->notEqual[diff < 0];
-	      if (i <= 0)
-		{
-		  if (i == 0)
-		    return false;
-		  break;
-		}
-	      n = netBase + i;
-	      p = n->position;
-	      if (p < 0)
-		continue;
+	      if (i == 0)
+		return false;
+	      break;
 	    }
-	  else
-	    {
-	      long s = n->slot;
-	      if (s >= 0)
-		stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
-	      i = n->equal;
-	      if (i <= 0)
-		break;
-	      n = netBase + i;
-	      p = n->position;
-	    }
-	  d = stackBase[p][n->argIndex];
-	  symbolIndex = d->symbol()->getIndexWithinModule();
+	  n = netBase + i;
+	  d = stackBase[n->position][n->argIndex];
 	}
       i = ~i;
     }
@@ -104,50 +87,33 @@ bool
 FreeNet::applyReplaceFast2(DagNode* subject, RewritingContext& context)
 {
   //
-  //	Optimized version of the the above that only works for unary,
-  //	binary and ternary top symbols.
+  //	Optimized version of the the above that only works for top
+  //	symbols with at least one argument and internal storage.
   //
-  long i;
+  Index i;
   DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
   stack[0] = topArgArray;
   if (!(net.isNull()))  // at least one pattern has free symbols
     {
-      Vector<TestNode>::const_iterator netBase = net.begin();
+      const Vector<TestNode>::const_iterator netBase = net.begin();
+      const Vector<DagNode**>::iterator stackBase = stack.begin();
       Vector<TestNode>::const_iterator n = netBase;
-      Vector<DagNode**>::iterator stackBase = stack.begin();
       DagNode* d = topArgArray[n->argIndex];
-      int symbolIndex = d->symbol()->getIndexWithinModule();
       for (;;)
 	{
-	  long p;
-	  int diff = symbolIndex - n->symbolIndex;
-	  if (diff != 0)
+	  const NextPair& action = n->branches[d->symbol()->getMatchIndex()];
+	  const Index s = action.slotIndex;
+	  if (s >= 0)
+	    stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
+	  i = action.nodeIndex;
+	  if (i <= 0)
 	    {
-	      i = n->notEqual[diff < 0];
-	      if (i <= 0)
-		{
-		  if (i == 0)
-		    return false;
-		  break;
-		}
-	      n = netBase + i;
-	      p = n->position;
-	      if (p < 0)
-		continue;
+	      if (i == 0)
+		return false;
+	      break;
 	    }
-	  else
-	    {
-	      long s = n->slot;
-	      if (s >= 0)
-		stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
-	      i = n->equal;
-	      if (i <= 0)
-		break;
-	      n = netBase + i;
-	      p = n->position;
-	    }
-	  d = stackBase[p][n->argIndex];
-	  symbolIndex = d->symbol()->getIndexWithinModule();
+	  n = netBase + i;
+	  d = stackBase[n->position][n->argIndex];
 	}
       i = ~i;
     }
@@ -176,47 +142,31 @@ FreeNet::applyReplaceNoOwise2(DagNode* subject, RewritingContext& context)
   //	(actually remainder pointers) which match the free symbol skeleton in the
   //	subject.
   //
-  long i;
+  Index i;
   if (!(net.isNull()))  // at least one pattern has free symbols
     {
-      DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->argArray();
-      Vector<TestNode>::const_iterator netBase = net.begin();
+      DagNode** const topArgArray = static_cast<FreeDagNode*>(subject)->argArray();
+      const Vector<TestNode>::const_iterator netBase = net.begin();
+      const Vector<DagNode**>::iterator stackBase = stack.begin();
       Vector<TestNode>::const_iterator n = netBase;
-      Vector<DagNode**>::iterator stackBase = stack.begin();
       DagNode* d = topArgArray[n->argIndex];
-      int symbolIndex = d->symbol()->getIndexWithinModule();
       stack[0] = topArgArray;
       for (;;)
 	{
-	  long p;
-	  int diff = symbolIndex - n->symbolIndex;
-	  if (diff != 0)
+	  const NextPair& action = n->branches[d->symbol()->getMatchIndex()];
+	  const Index s = action.slotIndex;
+	  if (s >= 0)
+	    stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
+	  i = action.nodeIndex;
+	  if (i <= 0)
 	    {
-	      i = n->notEqual[diff < 0];
-	      if (i <= 0)
-		{
-		  if (i == 0)
-		    return false;
-		  break;
-		}
-	      n = netBase + i;
-	      p = n->position;
-	      if (p < 0)
-		continue;
+	      if (i == 0)
+		return false;
+	      break;
 	    }
-	  else
-	    {
-	      long s = n->slot;
-	      if (s >= 0)
-		stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
-	      i = n->equal;
-	      if (i <= 0)
-		break;
-	      n = netBase + i;
-	      p = n->position;
-	    }
-	  d = stackBase[p][n->argIndex];
-	  symbolIndex = d->symbol()->getIndexWithinModule();
+	  n = netBase + i;
+	  n = netBase + i;
+	  d = stackBase[n->position][n->argIndex];
 	}
       i = ~i;
     }
