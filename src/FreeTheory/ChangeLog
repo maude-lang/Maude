@@ -1,3 +1,21 @@
+2024-12-27  Saruman the White  <eker@eker10>
+
+	* freeNet.cc (FreeNet::fillOutNode): use new TestNode convention
+	(FreeNet::dump): use new TestNode convention
+
+	* freeNet.hh (class FreeNet): updated decl for allocateNode()
+
+	* freeNet.cc (FreeNet::allocateNode): new calculation
+
+	* freeNetExec.hh (FreeNet::findRemainderListIndex): use new
+	TestNode convention
+
+	* freeNetExec.cc: all 3 functions modified to use new TestNode
+	convention
+
+	* freeNet.hh (struct TestNode): new struct TestNode; deleted
+	struct NextPair, typedef Branches
+
 2024-12-26  Steven M. Eker  <eker@eker10>
 
 	* freeTerm.cc (FreeTerm::computeMatchIndices): need to compute a

@@ -82,13 +82,14 @@ FreeNet::~FreeNet()
 }
 
 int
-FreeNet::allocateNode(int /* nrMatchArcs */)
+FreeNet::allocateNode(const ConnectedComponent* rangeComponent)
 {
   //
-  //	We will need a single real node for virtual node. 
+  //	We will need a base node, and one for each possible matchIndex
   //
   int len = net.size();
-  net.resize(len + 1);
+  int nrMatchIndices = rangeComponent->getLastAllocatedMatchIndex() + 1;
+  net.resize(len + 1 + nrMatchIndices);
   return len;
 }
 
@@ -108,15 +109,14 @@ FreeNet::fillOutNode(int nodeNr,
   TestNode& node = net[nodeNr];
   node.position = position;
   node.argIndex = argIndex;
-  node.branches.resize(lastMatchIndex + 1);
-  for (NextPair& p : node.branches)
+  for (int i = 0; i <= lastMatchIndex; ++i)
     {
       //
       //	If a symbol isn't recognized, it gets the default arc and a pointer
       //	to its argument list isn't stored.
       //
-      p.nodeIndex = neqTarget;
-      p.slotIndex = NONE;
+      net[nodeNr + 1 + i].slotIndex = NONE;
+      net[nodeNr + 1 + i].nodeIndex = neqTarget;
     }
   for (int i = 0; i < nrSymbols; ++i)
     {
@@ -124,9 +124,9 @@ FreeNet::fillOutNode(int nodeNr,
       int matchIndex = symbols[i]->getMatchIndex();
       Assert(matchIndex != 0,
 	     "symbol " << symbols[i] << " that we're matching against has matchIndex = 0");
-      NextPair& p = node.branches[matchIndex];
-      p.nodeIndex = targets[i];
+      TestNode& p = net[nodeNr + 1 + matchIndex];
       p.slotIndex = slots[i];
+      p.nodeIndex = targets[i];
     }
 }
 
@@ -143,11 +143,7 @@ FreeNet::translateSlots(int nrRealSlots, const Vector<int>& slotTranslation)
 {
   stack.expandTo(nrRealSlots);
   for (TestNode& n : net)
-    {
-      n.position = (n.position == NONE) ? NONE : slotTranslation[n.position];
-      for (NextPair& p : n.branches)
-	p.slotIndex = (p.slotIndex == NONE) ? NONE : slotTranslation[p.slotIndex];
-    }
+    n.slotIndex = (n.slotIndex == NONE) ? NONE : slotTranslation[n.slotIndex];  // HACK
 }
 
 void
@@ -211,13 +207,9 @@ FreeNet::dump(ostream& s, int indentLevel)
   Index i = 0;
   for (const TestNode& n : net)
     {
-      s << Indent(indentLevel) << "Node " << i++ <<
-	": position " << n.position <<
-	", argIndex " << n.argIndex << '\n';
-      s << Indent(indentLevel + 1);
-      for (const NextPair& p : n.branches)
-	s << " (" << p.nodeIndex << ", " << p.slotIndex << ")";
-      s << '\n';
+       s << Indent(indentLevel) << "Node " << i++ <<
+	 ": position " << n.position <<
+	 ", argIndex " << n.argIndex << '\n';  // HACK could be internal node
     }
 
   s << Indent(indentLevel - 1) << "applicable:\n";

@@ -43,7 +43,7 @@ FreeNet::findRemainderListIndex(DagNode** argumentList)
       DagNode* d = argumentList[n->argIndex];
       for (;;)
 	{
-	  const NextPair& action = n->branches[d->symbol()->getMatchIndex()];
+	  const TestNode& action = n[1 + d->symbol()->getMatchIndex()];
 	  const Index s = action.slotIndex;
 	  if (s >= 0)
 	    stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();

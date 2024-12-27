@@ -48,10 +48,11 @@ FreePreNet::semiCompileNode(FreeNet& freeNet, int nodeNr, const SlotMap& slotMap
       //
       const Vector<int>& testPosition = positions.index2Position(n.testPositionIndex);
       setVisitedFlags(ni.liveSet, testPosition, true);
-
+      
+      const ConnectedComponent* rangeComponent = n.sons[0].label->rangeComponent();
+      n.freeNetIndex = freeNet.allocateNode(rangeComponent);
       int nrMatchArcs = n.sons.length();
-      n.freeNetIndex = freeNet.allocateNode(nrMatchArcs);
-
+ 
       Vector<Symbol*> symbols(nrMatchArcs);
       Vector<int> targets(nrMatchArcs);
       Vector<int> saveSlots(nrMatchArcs);

@@ -40,7 +40,7 @@ public:
   //
   //	Functions to construct a FreeNet.
   //
-  int allocateNode(int nrMatchArcs);
+  int allocateNode(const ConnectedComponent* rangeComponent);
   void fillOutNode(int nodeNr,
 		   int position,
 		   int argIndex,
@@ -69,20 +69,19 @@ public:
   void dump(ostream& s, int indentLevel = 0);
 #endif
 
-private:
-  struct NextPair
-  {
-    int nodeIndex;	// index of node we branch to (-ve encodes index of applicable list)
-    int slotIndex;	// slot to store argument list pointer (-1 indicates do not store)
-  };
-
-  typedef Vector<NextPair> Branches;
-  
+private:  
   struct TestNode
   {
-    int position;
-    int argIndex;
-    Branches branches;
+    union
+    {
+      int position;	// slot to use to read argument list pointer
+      int slotIndex;	// slot to use for saving argument list pointer
+    };
+    union
+    {
+      int argIndex;	// argument to test
+      int nodeIndex;	// node to branch to
+    };
   };
 
   bool applyReplace2(DagNode* subject, RewritingContext& context);
