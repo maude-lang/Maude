@@ -63,7 +63,7 @@ Symbol::Symbol(int id, int arity, bool memoFlag)
     orderInt(symbolCount++ | (arity << 24))
 {
   uniqueSortIndex = 0;
-  matchIndex = 0;
+  matchIndex = 1;  // default match index
 }
 
 Symbol::~Symbol()

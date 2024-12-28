@@ -43,22 +43,42 @@ FreeNet::findRemainderListIndex(DagNode** argumentList)
       DagNode* d = argumentList[n->argIndex];
       for (;;)
 	{
-	  const TestNode& action = n[1 + d->symbol()->getMatchIndex()];
-	  const Index s = action.slotIndex;
-	  if (s >= 0)
-	    stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
-	  i = action.nodeIndex;
-	  if (i <= 0)
-	    {
-	      //
-	      //	If i == 0 we want to return NONE. But since NONE = -1 = ~i we
-	      //	cheat, by skipping the test and letting the main return statement
-	      //	negate 0 into -1.
-	      //
-	      break;
-	    }
-	  n = netBase + i;
-	  d = stackBase[n->position][n->argIndex];
+	  {
+	    const TestNode action = n[d->symbol()->getMatchIndex()];  // load both fields
+	    const Index s = action.slotIndex;
+	    if (s >= 0)
+	      stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
+	    i = action.nodeIndex;
+	    if (i <= 0)
+	      {
+		//
+		//	If i == 0 we want to return NONE. But since NONE = -1 = ~i we
+		//	cheat, by skipping the test and letting the main return statement
+		//	negate 0 into -1.
+		//
+		break;
+	      }
+	    n = netBase + i;
+	    d = stackBase[n->slotIndex][n->argIndex];
+	  }
+	  {
+	    const TestNode action = n[d->symbol()->getMatchIndex()];  // load both fields
+	    const Index s = action.slotIndex;
+	    if (s >= 0)
+	      stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
+	    i = action.nodeIndex;
+	    if (i <= 0)
+	      {
+		//
+		//	If i == 0 we want to return NONE. But since NONE = -1 = ~i we
+		//	cheat, by skipping the test and letting the main return statement
+		//	negate 0 into -1.
+		//
+		break;
+	      }
+	    n = netBase + i;
+	    d = stackBase[n->slotIndex][n->argIndex];
+	  }
 	}
       return ~i;
     }

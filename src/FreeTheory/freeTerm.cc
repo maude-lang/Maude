@@ -253,7 +253,7 @@ FreeTerm::computeMatchIndices() const
   for (Term* t : argArray)
     {
       Symbol* s = t->symbol();
-      if (t->stable() && s->getMatchIndex() == 0)
+      if (t->stable() && s->getMatchIndex() == 1)
 	s->setMatchIndex(s->rangeComponent()->getNewMatchIndex());
       t->computeMatchIndices();
     }

@@ -1,5 +1,27 @@
 2024-12-27  Saruman the White  <eker@eker10>
 
+	* freeNetExec.hh (FreeNet::findRemainderListIndex): unwind loop to
+	match original implementation
+
+	* freeNet.cc (FreeNet::fillOutNode): new matchIndex convention
+
+	* freeTerm.cc (FreeTerm::computeMatchIndices): default matchIndex
+	is now 1
+
+	* freeNet.cc (FreeNet::allocateNode): new matchIndex convention
+
+	* freeNetExec.cc: all 3 funcions: don't add 1 to matchIndex
+
+	* freeNetExec.hh (FreeNet::findRemainderListIndex): load action
+	using a deep copy to load both fields of TestNet
+	(FreeNet::findRemainderListIndex): don't add 1 to matchIndex
+
+	* freeNetExec.cc: all 3 functions: load action using a deep copy
+	to load both fields of TestNet
+
+	* freeNet.hh (struct TestNode): eliminate position in favor of
+	slotIndex
+
 	* freeNet.cc (FreeNet::fillOutNode): use new TestNode convention
 	(FreeNet::dump): use new TestNode convention
 

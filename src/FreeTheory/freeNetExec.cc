@@ -46,7 +46,7 @@ FreeNet::applyReplace2(DagNode* subject, RewritingContext& context)
       stack[0] = topArgArray;
       for (;;)
 	{
-	  const TestNode& action = n[1 + d->symbol()->getMatchIndex()];
+	  const TestNode action = n[d->symbol()->getMatchIndex()];  // load both fields
 	  const Index s = action.slotIndex;
 	  if (s >= 0)
 	    stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
@@ -58,7 +58,7 @@ FreeNet::applyReplace2(DagNode* subject, RewritingContext& context)
 	      break;
 	    }
 	  n = netBase + i;
-	  d = stackBase[n->position][n->argIndex];
+	  d = stackBase[n->slotIndex][n->argIndex];
 	}
       i = ~i;
     }
@@ -101,7 +101,7 @@ FreeNet::applyReplaceFast2(DagNode* subject, RewritingContext& context)
       DagNode* d = topArgArray[n->argIndex];
       for (;;)
 	{
-	  const TestNode& action = n[1 + d->symbol()->getMatchIndex()];
+	  const TestNode action = n[d->symbol()->getMatchIndex()];  // load both fields
 	  const Index s = action.slotIndex;
 	  if (s >= 0)
 	    stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
@@ -113,7 +113,7 @@ FreeNet::applyReplaceFast2(DagNode* subject, RewritingContext& context)
 	      break;
 	    }
 	  n = netBase + i;
-	  d = stackBase[n->position][n->argIndex];
+	  d = stackBase[n->slotIndex][n->argIndex];
 	}
       i = ~i;
     }
@@ -153,7 +153,7 @@ FreeNet::applyReplaceNoOwise2(DagNode* subject, RewritingContext& context)
       stack[0] = topArgArray;
       for (;;)
 	{
-	  const TestNode& action = n[1 + d->symbol()->getMatchIndex()];
+	  const TestNode action = n[d->symbol()->getMatchIndex()];  // load both fields
 	  const Index s = action.slotIndex;
 	  if (s >= 0)
 	    stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
@@ -165,7 +165,7 @@ FreeNet::applyReplaceNoOwise2(DagNode* subject, RewritingContext& context)
 	      break;
 	    }
 	  n = netBase + i;
-	  d = stackBase[n->position][n->argIndex];
+	  d = stackBase[n->slotIndex][n->argIndex];
 	}
       i = ~i;
     }

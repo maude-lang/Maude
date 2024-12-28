@@ -72,11 +72,7 @@ public:
 private:  
   struct TestNode
   {
-    union
-    {
-      int position;	// slot to use to read argument list pointer
-      int slotIndex;	// slot to use for saving argument list pointer
-    };
+    int slotIndex;	// slot to use for reading/saving argument list pointer
     union
     {
       int argIndex;	// argument to test

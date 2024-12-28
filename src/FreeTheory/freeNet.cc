@@ -85,10 +85,11 @@ int
 FreeNet::allocateNode(const ConnectedComponent* rangeComponent)
 {
   //
-  //	We will need a base node, and one for each possible matchIndex
+  //	We will need a base node, and one for each possible matchIndex.
+  //	matchIndices run from 1 thru getLastAllocatedMatchIndex()
   //
   int len = net.size();
-  int nrMatchIndices = rangeComponent->getLastAllocatedMatchIndex() + 1;
+  int nrMatchIndices = rangeComponent->getLastAllocatedMatchIndex();
   net.resize(len + 1 + nrMatchIndices);
   return len;
 }
@@ -107,24 +108,25 @@ FreeNet::fillOutNode(int nodeNr,
   Assert(symbols[0] != 0, "null symbol");
   int lastMatchIndex = symbols[0]->rangeComponent()->getLastAllocatedMatchIndex();
   TestNode& node = net[nodeNr];
-  node.position = position;
+  node.slotIndex = position;
   node.argIndex = argIndex;
-  for (int i = 0; i <= lastMatchIndex; ++i)
+  for (int i = 1; i <= lastMatchIndex; ++i)
     {
       //
       //	If a symbol isn't recognized, it gets the default arc and a pointer
       //	to its argument list isn't stored.
       //
-      net[nodeNr + 1 + i].slotIndex = NONE;
-      net[nodeNr + 1 + i].nodeIndex = neqTarget;
+      net[nodeNr + i].slotIndex = NONE;
+      net[nodeNr + i].nodeIndex = neqTarget;
     }
   for (int i = 0; i < nrSymbols; ++i)
     {
       Assert(symbols[i] != 0, "null symbol");
       int matchIndex = symbols[i]->getMatchIndex();
-      Assert(matchIndex != 0,
-	     "symbol " << symbols[i] << " that we're matching against has matchIndex = 0");
-      TestNode& p = net[nodeNr + 1 + matchIndex];
+      Assert(matchIndex > 1,
+	     "symbol " << symbols[i] << " that we're matching against has matchIndex " <<
+	     matchIndex);
+      TestNode& p = net[nodeNr + matchIndex];
       p.slotIndex = slots[i];
       p.nodeIndex = targets[i];
     }
@@ -143,7 +145,7 @@ FreeNet::translateSlots(int nrRealSlots, const Vector<int>& slotTranslation)
 {
   stack.expandTo(nrRealSlots);
   for (TestNode& n : net)
-    n.slotIndex = (n.slotIndex == NONE) ? NONE : slotTranslation[n.slotIndex];  // HACK
+    n.slotIndex = (n.slotIndex == NONE) ? NONE : slotTranslation[n.slotIndex];
 }
 
 void
@@ -208,7 +210,7 @@ FreeNet::dump(ostream& s, int indentLevel)
   for (const TestNode& n : net)
     {
        s << Indent(indentLevel) << "Node " << i++ <<
-	 ": position " << n.position <<
+	 ": slotIndex " << n.slotIndex <<
 	 ", argIndex " << n.argIndex << '\n';  // HACK could be internal node
     }
 
