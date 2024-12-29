@@ -57,6 +57,7 @@
 #include "freePreNet.hh"
 #include "freeNet.hh"
 #include "freeSymbol.hh"
+#include "freeSimpleSymbol.hh"
 #include "freeNullarySymbol.hh"
 #include "freeUnarySymbol.hh"
 #include "freeBinarySymbol.hh"
@@ -85,18 +86,22 @@ FreeSymbol::newFreeSymbol(int id, int arity, const Vector<int>& strategy, bool m
 	    return t;
 	  delete t;
 	}
+      //
+      //	Low arity, standard strategy symbols get an optimized
+      //	class instance.
+      //
       if (arity == 0)
-	return new FreeNullarySymbol(id);
+	return new FreeNullarySymbol(id);  // nullary symbols cache constant dags
       else if (arity == 1)
-	return new FreeUnarySymbol(id);
+	return new FreeSimpleSymbol<1>(id);
       else if (arity == 2)
-	return new FreeBinarySymbol(id);
+	return new FreeSimpleSymbol<2>(id);
       else
-	return new FreeTernarySymbol(id);
+	return new FreeSimpleSymbol<3>(id);
     }
   return new FreeSymbol(id, arity, strategy, memoFlag);
 }
-	    
+
 FreeSymbol::FreeSymbol(int id, int arity, const Vector<int>& strategy, bool memoFlag)
   : Symbol(id, arity, memoFlag)
 {

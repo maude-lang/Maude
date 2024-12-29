@@ -127,6 +127,14 @@ private:
   friend class FreeGeneralCtorFinal;
   friend class FreeGeneralExtor;
   friend class FreeGeneralExtorFinal;
+  //
+  //	We would like to have this function template as a member but C++ only
+  //	allows template specialization (needed for compile-time recursion) at
+  //	the namespace scope so we have to have a global function template and
+  //	make it a friend.
+  //
+  template<int n>
+  friend void reduceArgs(FreeDagNode* subject, RewritingContext& context);
 
 };
 
@@ -227,5 +235,19 @@ FreeDagNode::getArgument(int i) const
   Assert(i >= 0 && i < symbol()->arity(), "argument index out of range: " << i);
   return argArray()[i];
 }
+
+//
+//	Compile-time recursive function template to reduce the first n 
+//	arguments of a free theory dagnode with internal argument storage.
+//
+template<int n>  // general case
+inline void reduceArgs(FreeDagNode* subject, RewritingContext& context)
+{
+  reduceArgs<n-1>(subject, context);
+  subject->internal[n-1]->reduce(context);
+}
+
+template<>  // basis case specialization
+inline void reduceArgs<0>(FreeDagNode* /* subject */, RewritingContext& /* context */) {}
 
 #endif
