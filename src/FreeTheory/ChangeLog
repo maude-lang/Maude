@@ -1,3 +1,13 @@
+2024-12-28  Saruman the White  <eker@eker10>
+
+	* freeSymbol.cc (FreeSymbol::newFreeSymbol): use template class
+	FreeSimpleSymbol
+
+	* freeSimpleSymbol.hh (FreeSimpleSymbol): created
+
+	* freeDagNode.hh (reduceArgs): added compile-time recursive
+	function template
+
 2024-06-05  Steven M. Eker  <eker@eker10>
 
 	* freeFast3RhsAutomaton.cc: fix comment
