@@ -28,9 +28,6 @@
 
 class FreeSymbol;
 class FreeNullarySymbol;
-class FreeUnarySymbol;
-class FreeBinarySymbol;
-class FreeTernarySymbol;
 
 class FreeTerm;
 class FreeArgumentIterator;

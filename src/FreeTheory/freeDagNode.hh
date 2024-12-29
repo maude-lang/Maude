@@ -110,9 +110,6 @@ private:
 					 FreeDagNode*& purified);
 
   friend class FreeSymbol;		// to reduce subterms prior to rewrite
-  friend class FreeUnarySymbol;		// to reduce subterms prior to rewrite
-  friend class FreeBinarySymbol;	// to reduce subterms prior to rewrite
-  friend class FreeTernarySymbol;	// to reduce subterms prior to rewrite
   friend class FreeTerm;		// for term->DAG conversion & comparison
   friend class FreeLhsAutomaton;	// for matching DAG subject
   friend class FreeNet;			// for matching DAG subject
@@ -135,7 +132,6 @@ private:
   //
   template<int n>
   friend void reduceArgs(FreeDagNode* subject, RewritingContext& context);
-
 };
 
 inline FreeSymbol*

@@ -9,10 +9,7 @@ libfreeTheory_a_CPPFLAGS = \
 
 libfreeTheory_a_SOURCES = \
 	freeSymbol.cc \
-	freeUnarySymbol.cc \
 	freeNullarySymbol.cc \
-	freeBinarySymbol.cc \
-	freeTernarySymbol.cc \
 	freeTerm.cc \
 	freeArgumentIterator.cc \
 	freeDagNode.cc \
@@ -47,9 +44,6 @@ EXTRA_DIST = \
 noinst_HEADERS = \
 	freeArgumentIterator.hh \
 	freeNullarySymbol.hh \
-	freeUnarySymbol.hh \
-	freeBinarySymbol.hh \
-	freeTernarySymbol.hh \
 	freeDagArgumentIterator.hh \
 	freeDagNode.hh \
 	freeLhsAutomaton.hh \
