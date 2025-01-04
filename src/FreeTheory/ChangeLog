@@ -1,3 +1,20 @@
+2025-01-04  Saruman the White  <eker@eker10>
+
+	* freeTerm.hh (class FreeTerm): updated decl for
+	compileRhsAliens()
+
+	* freeTerm.cc (FreeTerm::compileRhsAliens): don't take arities
+	argument
+	(FreeTerm::compileRhs2): rewritten to use
+	FreeOneInstructionRhsAutomaton
+
+	* freeOneInstructionRhsAutomaton.hh
+	(FreeOneInstructionRhsAutomaton): created from
+	FreeFastRhsAutomaton
+
+	* freeRhsAutomaton.hh (FreeRhsAutomaton::getNrInstructions): added
+	(FreeRhsAutomaton::getArity): added
+
 2025-01-03  Saruman the White  <eker@eker10>
 
 	* freeTerm.cc (FreeTerm::compileRhs2): pass arities to

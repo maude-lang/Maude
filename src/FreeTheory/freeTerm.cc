@@ -58,10 +58,10 @@
 #include "freeArgumentIterator.hh"
 #include "freeLhsAutomaton.hh"
 #include "freeRhsAutomaton.hh"
-#include "freeFast3RhsAutomaton.hh"
+#include "freeOneInstructionRhsAutomaton.hh"
 #include "freeTwoInstructionRhsAutomaton.hh"
 #include "freeFast2RhsAutomaton.hh"
-#include "freeFastRhsAutomaton.hh"
+#include "freeFast3RhsAutomaton.hh"
 #include "freeRemainder.hh"
 #include "freeTerm.hh"
 
@@ -394,16 +394,21 @@ FreeTerm::findAvailableTerms(TermBag& availableTerms, bool eagerContext, bool at
     }
 }
 
+//
+//	Recursive function template to instantial the class template.
+//
 template<int n>
-inline FreeRhsAutomaton* makeFreeFastRhsAutomaton(int arity)
+inline FreeRhsAutomaton* makeFreeOneInstructionRhsAutomaton(int arity, FreeRhsAutomaton* victim)
 {
-  return (arity == n) ? new FreeFastRhsAutomaton<n>() : makeFreeFastRhsAutomaton<n-1>(arity);
+  return (arity == n) ? new FreeOneInstructionRhsAutomaton<n>(*victim) :
+    makeFreeOneInstructionRhsAutomaton<n-1>(arity, victim);
 }
 
 template<>
-inline FreeRhsAutomaton* makeFreeFastRhsAutomaton<0>(int /* arity */)
+inline FreeRhsAutomaton* makeFreeOneInstructionRhsAutomaton<0>(int /* arity */,
+							       FreeRhsAutomaton* victim)
 {
-  return new FreeFastRhsAutomaton<0>();
+  return new FreeOneInstructionRhsAutomaton<0>(*victim);
 }
 
 //
@@ -457,11 +462,8 @@ FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
 		      TermBag& availableTerms,
 		      bool eagerContext)
 {
-  //cout << "compiling " << this << endl;
   int maxArity = 0;
-  Vector<int> arities;
-  compileRhsAliens(rhsBuilder, variableInfo, availableTerms, eagerContext, maxArity, arities);
-  //cout << "maxArity = " << maxArity << "  nrFree = " << nrFree << endl;
+  compileRhsAliens(rhsBuilder, variableInfo, availableTerms, eagerContext, maxArity);
   FreeRhsAutomaton* automaton;
   if (maxArity > 3)
     automaton = new FreeRhsAutomaton();  // general case
@@ -470,39 +472,53 @@ FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
       //
       //	We have faster rhs automata for low arity cases.
       //
-      Index nrFree = arities.size();
-      if (nrFree == 1)  // 4 cases
-	automaton = makeFreeFastRhsAutomaton<3>(maxArity);
+      if (maxArity == 3)
+	automaton = new FreeFast3RhsAutomaton();  // all dag nodes padded to 3 args
       else
-	{
-	  //
-	  //	Multiple low arity symbol cases.
-	  //
-	  if (maxArity == 3)
-	    automaton = new FreeFast3RhsAutomaton();  // all dag nodes padded to 3 args
-	  else
-	    automaton = new FreeFast2RhsAutomaton();  // all dag nodes padded to 2 args
-	}
+	automaton = new FreeFast2RhsAutomaton();  // all dag nodes padded to 2 args
     }
-
+  //
+  //	Now compile the free skeleton into the automaton.
+  //
   int index = compileRhs3(automaton, rhsBuilder, variableInfo, availableTerms, eagerContext);
-  //
-  //	After compiling we know exactly how many instructions we have.
-  //
-  if (maxArity <= 3 && automaton->getNrInstructions() == 2)
+  if (maxArity <= 3)
     {
       //
-      //	Cannibalize automaton to make a faster one.
-      //	12 cases (2nd symbol can't be nullary)
+      //	After compiling we know exactly how many instructions we have,
+      //	taking into account common subexpression sharing and left->right
+      //	sharing.
       //
-      //DebugAlways("using 2 ins optimization for free skeleton " << this);
-      Assert(automaton->getArity(1) != 0, "nullary 2nd symbol " << this);
-      FreeRhsAutomaton* newAutomaton =
-	HandleArgument1<3,3>::handleArgument1(automaton->getArity(0),
-					      automaton->getArity(1),
-					      automaton);
-      delete automaton;
-      automaton = newAutomaton;
+      Index nrInstructions = automaton->getNrInstructions();
+      if (nrInstructions == 1)
+	{
+	  //
+	  //	Cannibalize automaton to make a faster one.
+	  //	4 cases.
+	  //
+	  DebugInfo("using 1 instruction optimization for free skeleton " << this);
+	  FreeRhsAutomaton* newAutomaton =
+	    makeFreeOneInstructionRhsAutomaton<3>(automaton->getArity(0),
+						 automaton);
+	  delete automaton;
+	  automaton = newAutomaton;
+	}
+      else if (nrInstructions == 2)
+	{
+	  //
+	  //	Cannibalize automaton to make a faster one.
+	  //	12 cases (2nd symbol can't be nullary).
+	  //
+	  DebugInfo("using 2 instruction optimization for free skeleton " << this);
+	  Assert(automaton->getArity(1) != 0, "nullary 2nd symbol " << this);
+	  FreeRhsAutomaton* newAutomaton =
+	    HandleArgument1<3,3>::handleArgument1(automaton->getArity(0),
+						  automaton->getArity(1),
+						  automaton);
+	  delete automaton;
+	  automaton = newAutomaton;
+	}
+      else
+	DebugInfo("only low arity optimization for " << this);
     }
   rhsBuilder.addRhsAutomaton(automaton);
   return index;
@@ -513,24 +529,12 @@ FreeTerm::compileRhsAliens(RhsBuilder& rhsBuilder,
 			   VariableInfo& variableInfo,
 			   TermBag& availableTerms,
 			   bool eagerContext,
-			   int& maxArity,
-			   Vector<int>& arities)
+			   int& maxArity)
 {
   //
   //	Traverse the free skeleton, calling compileRhs() on all non-free subterms.
   //
-  //	Because we are postponing compiling free function symbols until the end when
-  //	we insert them into one automaton, we can't insert them into availableTerms
-  //	during this traversal, so we could miss a common subexpression E headed by a
-  //	free function symbol, if E does not appear in previously compiled sibling
-  //	branches or below one of our aliens. This is fixed up in compileRhs3(), but
-  //	it means that if arities.size() > 2, it could be an overestimate. In particular
-  //	for f(g(a), g(a)) we might only have instructions for f and g, but we wouldn't
-  //	recognise it and would miss the FreeTwoInstructionRhsAutomaton optimization
-  //	above.
-  //
   int nrArgs = argArray.length();
-  arities.push_back(nrArgs);
   if (nrArgs > maxArity)
     maxArity = nrArgs;
   FreeSymbol* s = symbol();
@@ -541,7 +545,7 @@ FreeTerm::compileRhsAliens(RhsBuilder& rhsBuilder,
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(t))
 	{
 	  if (!(availableTerms.findTerm(f, argEager)))
-	    f->compileRhsAliens(rhsBuilder, variableInfo, availableTerms, argEager, maxArity, arities);
+	    f->compileRhsAliens(rhsBuilder, variableInfo, availableTerms, argEager, maxArity);
 	}
       else
 	(void) t->compileRhs(rhsBuilder, variableInfo, availableTerms, argEager);

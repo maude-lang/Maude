@@ -62,7 +62,7 @@ noinst_HEADERS = \
 	freeGeneralCtorFinal.hh \
 	freeGeneralExtor.hh \
 	freeGeneralExtorFinal.hh \
-	freeFastRhsAutomaton.hh \
 	freeFast3RhsAutomaton.hh \
 	freeFast2RhsAutomaton.hh \
+	freeOneInstructionRhsAutomaton.hh \
 	freeTwoInstructionRhsAutomaton.hh
