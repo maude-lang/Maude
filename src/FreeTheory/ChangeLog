@@ -1,5 +1,29 @@
 2025-01-03  Saruman the White  <eker@eker10>
 
+	* freeTheory.hh: deleted forward decls for classes
+	FreeNullaryRhsAutomaton, FreeUnaryRhsAutomaton,
+	FreeBinaryRhsAutomaton, FreeTernaryRhsAutomaton
+
+	* freeDagNode.hh (class FreeDagNode): unfriend
+	FreeUnaryRhsAutomaton, FreeBinaryRhsAutomaton,
+	FreeTernaryRhsAutomaton
+
+	* freeNullaryRhsAutomaton.cc: deleted
+
+	* freeNullaryRhsAutomaton.hh: deleted
+
+	* freeUnaryRhsAutomaton.cc: deleted
+
+	* freeUnaryRhsAutomaton.hh: deleted
+
+	* freeBinaryRhsAutomaton.cc: deleted
+
+	* freeBinaryRhsAutomaton.hh: deleted
+
+	* freeTernaryRhsAutomaton.cc: deleted
+
+	* freeTernaryRhsAutomaton.hh: deleted
+
 	* freeTerm.cc (FreeTerm::compileRhs2): use FreeFastRhsAutomaton
 
 	* freeFastRhsAutomaton.hh (FreeFastRhsAutomaton): created class
