@@ -33,7 +33,8 @@ template<int n, int m>  // arity n followed by arity m >= 1
 class FreeTwoInstructionRhsAutomaton : public FreeRhsAutomaton
 {
 public:
-  FreeTwoInstructionRhsAutomaton(FreeRhsAutomaton& victim) : FreeRhsAutomaton(std::move(victim)) {}
+  FreeTwoInstructionRhsAutomaton(FreeRhsAutomaton& victim) :
+    FreeRhsAutomaton(std::move(victim)) {}
   //
   //	We hook in code to make a fast copy of two instructions.
   //

@@ -24,15 +24,17 @@
 //	Template class for right hand side automata in the free theory
 //	optimized for the case where there is a single low arity function symbol.
 //
-#ifndef _freeFastRhsAutomaton_hh_
-#define _freeFastRhsAutomaton_hh_
+#ifndef _freeOneInstructionRhsAutomaton_hh_
+#define _freeOneInstructionRhsAutomaton_hh_
 #include "freeRhsAutomaton.hh"
 #include "freeDagNode.hh"
 
 template<int n>
-class FreeFastRhsAutomaton : public FreeRhsAutomaton
+class FreeOneInstructionRhsAutomaton : public FreeRhsAutomaton
 {
 public:
+  FreeOneInstructionRhsAutomaton(FreeRhsAutomaton& victim) :
+    FreeRhsAutomaton(std::move(victim)) {}
   //
   //	We hook in code to make a fast copy of the single instruction.
   //
@@ -51,7 +53,7 @@ private:
 
 template<int n>
 DagNode*
-FreeFastRhsAutomaton<n>::construct(Substitution& matcher)
+FreeOneInstructionRhsAutomaton<n>::construct(Substitution& matcher)
 {
   FreeDagNode* d = new FREE_DAG_NODE(symbol);
   fillArgs<n>(sources, matcher, d);
@@ -61,7 +63,7 @@ FreeFastRhsAutomaton<n>::construct(Substitution& matcher)
 
 template<int n>
 void
-FreeFastRhsAutomaton<n>::replace(DagNode* old, Substitution& matcher)
+FreeOneInstructionRhsAutomaton<n>::replace(DagNode* old, Substitution& matcher)
 {
   FreeDagNode* d = new(old) FREE_DAG_NODE(symbol);
   fillArgs<n>(sources, matcher, d);
@@ -69,7 +71,7 @@ FreeFastRhsAutomaton<n>::replace(DagNode* old, Substitution& matcher)
 
 template<int n>
 void
-FreeFastRhsAutomaton<n>::remapIndices(VariableInfo& variableInfo)
+FreeOneInstructionRhsAutomaton<n>::remapIndices(VariableInfo& variableInfo)
 {
   //
   //	Standard processing.
