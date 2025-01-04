@@ -116,9 +116,6 @@ private:
   friend class FreeRhsAutomaton;	// for constructing replacement DAG
   friend class FreeFast3RhsAutomaton;	// for constructing replacement DAG
   friend class FreeFast2RhsAutomaton;	// for constructing replacement DAG
-  friend class FreeUnaryRhsAutomaton;	// for constructing replacement DAG
-  friend class FreeBinaryRhsAutomaton;	// for constructing replacement DAG
-  friend class FreeTernaryRhsAutomaton;	// for constructing replacement DAG
 
   friend class FreeGeneralCtor;
   friend class FreeGeneralCtorFinal;
