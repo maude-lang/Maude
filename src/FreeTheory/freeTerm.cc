@@ -59,6 +59,7 @@
 #include "freeLhsAutomaton.hh"
 #include "freeRhsAutomaton.hh"
 #include "freeFast3RhsAutomaton.hh"
+#include "freeTwoInstructionRhsAutomaton.hh"
 #include "freeFast2RhsAutomaton.hh"
 #include "freeFastRhsAutomaton.hh"
 #include "freeRemainder.hh"
@@ -393,6 +394,63 @@ FreeTerm::findAvailableTerms(TermBag& availableTerms, bool eagerContext, bool at
     }
 }
 
+template<int n>
+inline FreeRhsAutomaton* makeFreeFastRhsAutomaton(int arity)
+{
+  return (arity == n) ? new FreeFastRhsAutomaton<n>() : makeFreeFastRhsAutomaton<n-1>(arity);
+}
+
+template<>
+inline FreeRhsAutomaton* makeFreeFastRhsAutomaton<0>(int /* arity */)
+{
+  return new FreeFastRhsAutomaton<0>();
+}
+
+//
+//	We need partial specialization to handle the base cases of
+//	of a double recursion so we wrap the functions in struct templates.
+//
+//	The second symbol in a two instruction automata will be the top
+//	symbol for a free skeleton and thus must have at least 1 argument.
+//
+template<int n, int m>
+struct HandleArgument2
+{
+  static FreeRhsAutomaton* handleArgument2(int arity2, FreeRhsAutomaton* victim)
+  {
+    return (arity2 == m) ? new FreeTwoInstructionRhsAutomaton<n, m>(*victim) :
+      HandleArgument2<n, m-1>::handleArgument2(arity2, victim);
+  }
+};
+  
+template<int n>
+struct HandleArgument2<n, 1>  // partial specialization
+{
+  static FreeRhsAutomaton* handleArgument2(int /* arity2 */, FreeRhsAutomaton* victim)
+  {
+    return new FreeTwoInstructionRhsAutomaton<n, 1>(*victim);
+  }
+};
+
+template<int n, int m>
+struct HandleArgument1
+{
+  static FreeRhsAutomaton* handleArgument1(int arity1, int arity2, FreeRhsAutomaton* victim)
+  {
+    return (arity1 == n) ? HandleArgument2<n,m>::handleArgument2(arity2, victim) :
+      HandleArgument1<n-1,m>::handleArgument1(arity1, arity2, victim);
+  }
+};
+
+template<int m>
+struct HandleArgument1<0, m>  // partial specialization
+{
+  static FreeRhsAutomaton* handleArgument1(int /* arity1 */, int arity2, FreeRhsAutomaton* victim)
+  {
+    return HandleArgument2<0,m>::handleArgument2(arity2, victim);
+  }
+};
+
 int
 FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
 		      VariableInfo& variableInfo,
@@ -401,8 +459,8 @@ FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
 {
   //cout << "compiling " << this << endl;
   int maxArity = 0;
-  int nrFree = 1;
-  compileRhsAliens(rhsBuilder, variableInfo, availableTerms, eagerContext, maxArity, nrFree);
+  Vector<int> arities;
+  compileRhsAliens(rhsBuilder, variableInfo, availableTerms, eagerContext, maxArity, arities);
   //cout << "maxArity = " << maxArity << "  nrFree = " << nrFree << endl;
   FreeRhsAutomaton* automaton;
   if (maxArity > 3)
@@ -410,9 +468,12 @@ FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
   else
     {
       //
-      //	We have 6 faster rhs automata for low arity cases.
+      //	We have faster rhs automata for low arity cases.
       //
-      if (nrFree > 1)
+      Index nrFree = arities.size();
+      if (nrFree == 1)  // 4 cases
+	automaton = makeFreeFastRhsAutomaton<3>(maxArity);
+      else
 	{
 	  //
 	  //	Multiple low arity symbol cases.
@@ -422,29 +483,27 @@ FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
 	  else
 	    automaton = new FreeFast2RhsAutomaton();  // all dag nodes padded to 2 args
 	}
-      else
-	{
-	  //
-	  //	Single low arity symbol cases.
-	  //
-	  if (maxArity > 1)
-	    {
-	      if (maxArity == 3)
-		automaton = new FreeFastRhsAutomaton<3>();
-	      else
-		automaton = new FreeFastRhsAutomaton<2>();
-	    }
-	  else
-	    {
-	      if (maxArity == 1)
-		automaton = new FreeFastRhsAutomaton<1>();
-	      else
-		automaton = new FreeFastRhsAutomaton<0>();
-	    }
-	}
     }
 
   int index = compileRhs3(automaton, rhsBuilder, variableInfo, availableTerms, eagerContext);
+  //
+  //	After compiling we know exactly how many instructions we have.
+  //
+  if (maxArity <= 3 && automaton->getNrInstructions() == 2)
+    {
+      //
+      //	Cannibalize automaton to make a faster one.
+      //	12 cases (2nd symbol can't be nullary)
+      //
+      //DebugAlways("using 2 ins optimization for free skeleton " << this);
+      Assert(automaton->getArity(1) != 0, "nullary 2nd symbol " << this);
+      FreeRhsAutomaton* newAutomaton =
+	HandleArgument1<3,3>::handleArgument1(automaton->getArity(0),
+					      automaton->getArity(1),
+					      automaton);
+      delete automaton;
+      automaton = newAutomaton;
+    }
   rhsBuilder.addRhsAutomaton(automaton);
   return index;
 }
@@ -455,12 +514,23 @@ FreeTerm::compileRhsAliens(RhsBuilder& rhsBuilder,
 			   TermBag& availableTerms,
 			   bool eagerContext,
 			   int& maxArity,
-			   int& nrFree)
+			   Vector<int>& arities)
 {
   //
   //	Traverse the free skeleton, calling compileRhs() on all non-free subterms.
   //
+  //	Because we are postponing compiling free function symbols until the end when
+  //	we insert them into one automaton, we can't insert them into availableTerms
+  //	during this traversal, so we could miss a common subexpression E headed by a
+  //	free function symbol, if E does not appear in previously compiled sibling
+  //	branches or below one of our aliens. This is fixed up in compileRhs3(), but
+  //	it means that if arities.size() > 2, it could be an overestimate. In particular
+  //	for f(g(a), g(a)) we might only have instructions for f and g, but we wouldn't
+  //	recognise it and would miss the FreeTwoInstructionRhsAutomaton optimization
+  //	above.
+  //
   int nrArgs = argArray.length();
+  arities.push_back(nrArgs);
   if (nrArgs > maxArity)
     maxArity = nrArgs;
   FreeSymbol* s = symbol();
@@ -470,9 +540,8 @@ FreeTerm::compileRhsAliens(RhsBuilder& rhsBuilder,
       Term* t = argArray[i];
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(t))
 	{
-	  ++nrFree;
 	  if (!(availableTerms.findTerm(f, argEager)))
-	    f->compileRhsAliens(rhsBuilder, variableInfo, availableTerms, argEager, maxArity, nrFree);
+	    f->compileRhsAliens(rhsBuilder, variableInfo, availableTerms, argEager, maxArity, arities);
 	}
       else
 	(void) t->compileRhs(rhsBuilder, variableInfo, availableTerms, argEager);

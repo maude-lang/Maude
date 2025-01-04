@@ -120,7 +120,7 @@ private:
 			TermBag& availableTerms,
 			bool eagerContext,
 			int& maxArity,
-			int& nrFree);
+			Vector<int>& arities);
   int compileRhs3(FreeRhsAutomaton* automaton,
 		  RhsBuilder& rhsBuilder,
 		  VariableInfo& variableInfo,
