@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -125,13 +125,18 @@ private:
   friend class FreeGeneralExtor;
   friend class FreeGeneralExtorFinal;
   //
-  //	We would like to have this function template as a member but C++ only
+  //	We would like to have these function templates as a members but C++ only
   //	allows template specialization (needed for compile-time recursion) at
-  //	the namespace scope so we have to have a global function template and
-  //	make it a friend.
+  //	the namespace scope so we have to have global function templates and
+  //	make them friend.
   //
   template<int n>
   friend void reduceArgs(FreeDagNode* subject, RewritingContext& context);
+
+  template<int n>
+  friend void fillArgs(const int* sources,
+		       const Substitution& matcher,
+		       FreeDagNode* subject);
 };
 
 inline FreeSymbol*
@@ -244,6 +249,28 @@ inline void reduceArgs(FreeDagNode* subject, RewritingContext& context)
 }
 
 template<>  // basis case specialization
-inline void reduceArgs<0>(FreeDagNode* /* subject */, RewritingContext& /* context */) {}
+inline void reduceArgs<0>(FreeDagNode* /* subject */, RewritingContext& /* context */)
+{
+}
+
+//
+//	Compile-time recursive function template to fill out the first n 
+//	arguments of a free theory dagnode from a substitution.
+//
+template<int n>  // general case
+inline void fillArgs(const int* sources,
+		     const Substitution& matcher,
+		     FreeDagNode* subject)
+{
+  fillArgs<n-1>(sources, matcher, subject);
+  subject->internal[n-1] = matcher.value(sources[n-1]);
+}
+
+template<>  // basis case specialization
+inline void fillArgs<0>(const int* /* sources */,
+			const Substitution& /* matcher */,
+			FreeDagNode* /* subject */)
+{
+}
 
 #endif

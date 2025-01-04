@@ -64,6 +64,7 @@
 #include "freeUnaryRhsAutomaton.hh"
 #include "freeBinaryRhsAutomaton.hh"
 #include "freeTernaryRhsAutomaton.hh"
+#include "freeFastRhsAutomaton.hh"
 #include "freeRemainder.hh"
 #include "freeTerm.hh"
 
@@ -406,15 +407,6 @@ FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
   int maxArity = 0;
   int nrFree = 1;
   compileRhsAliens(rhsBuilder, variableInfo, availableTerms, eagerContext, maxArity, nrFree);
-  /*
-  FreeRhsAutomaton* automaton = (maxArity > 3) ? new FreeRhsAutomaton() :
-    ((nrFree > 1) ?
-     ((maxArity == 3) ? new FreeFast3RhsAutomaton() : new FreeFast2RhsAutomaton()) :
-     ((maxArity == 3) ? new FreeTernaryRhsAutomaton() :
-      ((maxArity == 2) ? new FreeBinaryRhsAutomaton() :
-       ((maxArity == 1) ? new FreeBinaryRhsAutomaton() : new FreeNullaryRhsAutomaton()))));
-  */
-
   //cout << "maxArity = " << maxArity << "  nrFree = " << nrFree << endl;
   FreeRhsAutomaton* automaton;
   if (maxArity > 3)
@@ -442,16 +434,16 @@ FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
 	  if (maxArity > 1)
 	    {
 	      if (maxArity == 3)
-		automaton = new FreeTernaryRhsAutomaton();
+		automaton = new FreeFastRhsAutomaton<3>();
 	      else
-		automaton = new FreeBinaryRhsAutomaton();
+		automaton = new FreeFastRhsAutomaton<2>();
 	    }
 	  else
 	    {
 	      if (maxArity == 1)
-		automaton = new FreeUnaryRhsAutomaton();
+		automaton = new FreeFastRhsAutomaton<1>();
 	      else
-		automaton = new FreeNullaryRhsAutomaton();
+		automaton = new FreeFastRhsAutomaton<0>();
 	    }
 	}
     }

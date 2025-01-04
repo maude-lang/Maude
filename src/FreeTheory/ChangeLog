@@ -1,3 +1,12 @@
+2025-01-03  Saruman the White  <eker@eker10>
+
+	* freeTerm.cc (FreeTerm::compileRhs2): use FreeFastRhsAutomaton
+
+	* freeFastRhsAutomaton.hh (FreeFastRhsAutomaton): created class
+	template
+
+	* freeDagNode.hh (fillArgs): added function template
+
 2024-12-28  Saruman the White  <eker@eker10>
 
 	* freeUnarySymbol.cc: deleted
