@@ -27,11 +27,7 @@ libfreeTheory_a_SOURCES = \
 	freeGeneralExtor.cc \
 	freeGeneralExtorFinal.cc \
 	freeFast3RhsAutomaton.cc \
-	freeFast2RhsAutomaton.cc \
-	freeNullaryRhsAutomaton.cc \
-	freeUnaryRhsAutomaton.cc \
-	freeBinaryRhsAutomaton.cc \
-	freeTernaryRhsAutomaton.cc
+	freeFast2RhsAutomaton.cc
 
 EXTRA_DIST = \
 	freeNetExec.cc \
@@ -44,6 +40,7 @@ EXTRA_DIST = \
 noinst_HEADERS = \
 	freeArgumentIterator.hh \
 	freeNullarySymbol.hh \
+	freeSimpleSymbol.hh \
 	freeDagArgumentIterator.hh \
 	freeDagNode.hh \
 	freeLhsAutomaton.hh \
@@ -65,9 +62,7 @@ noinst_HEADERS = \
 	freeGeneralCtorFinal.hh \
 	freeGeneralExtor.hh \
 	freeGeneralExtorFinal.hh \
+	freeFastRhsAutomaton.hh \
 	freeFast3RhsAutomaton.hh \
 	freeFast2RhsAutomaton.hh \
-	freeNullaryRhsAutomaton.hh \
-	freeUnaryRhsAutomaton.hh \
-	freeBinaryRhsAutomaton.hh \
-	freeTernaryRhsAutomaton.hh
+	freeTwoInstructionRhsAutomaton.hh

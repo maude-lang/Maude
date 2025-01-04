@@ -39,6 +39,9 @@ public:
 
   bool recordInfo(StackMachineRhsCompiler& compiler);
 
+  Index getNrInstructions() const;
+  int getArity(Index instructionNr) const;
+
 #ifdef DUMP
   void dump(ostream& s, const VariableInfo& variableInfo, int indentLevel);
 #endif
@@ -63,5 +66,17 @@ private:
 protected:
   Vector<Instruction> instructions;
 };
+
+inline Index
+FreeRhsAutomaton::getNrInstructions() const
+{
+  return instructions.size();
+}
+
+inline int
+FreeRhsAutomaton::getArity(Index instructionNr) const
+{
+  return instructions[instructionNr].sources.size();
+}
 
 #endif

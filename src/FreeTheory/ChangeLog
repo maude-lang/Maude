@@ -1,5 +1,12 @@
 2025-01-03  Saruman the White  <eker@eker10>
 
+	* freeTerm.cc (FreeTerm::compileRhs2): pass arities to
+	compileRhsAliens() instead of nrFree
+	(FreeTerm::compileRhsAliens): handle arities rather nrFree
+
+	* freeTwoInstructionRhsAutomaton.hh (FreeTwoInstructionAutomaton):
+	created class template
+
 	* freeTheory.hh: deleted forward decls for classes
 	FreeNullaryRhsAutomaton, FreeUnaryRhsAutomaton,
 	FreeBinaryRhsAutomaton, FreeTernaryRhsAutomaton
