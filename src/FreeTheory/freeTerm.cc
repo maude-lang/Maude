@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@
 #include "freeRhsAutomaton.hh"
 #include "freeOneInstructionRhsAutomaton.hh"
 #include "freeTwoInstructionRhsAutomaton.hh"
+#include "freeThreeInstructionRhsAutomaton.hh"
 #include "freeFast2RhsAutomaton.hh"
 #include "freeFast3RhsAutomaton.hh"
 #include "freeRemainder.hh"
@@ -418,6 +419,10 @@ inline FreeRhsAutomaton* makeFreeOneInstructionRhsAutomaton<0>(int /* arity */,
 //	The second symbol in a two instruction automata will be the top
 //	symbol for a free skeleton and thus must have at least 1 argument.
 //
+
+//
+//	Two instruction case.
+//
 template<int n, int m>
 struct HandleArgument2
 {
@@ -427,7 +432,7 @@ struct HandleArgument2
       HandleArgument2<n, m-1>::handleArgument2(arity2, victim);
   }
 };
-  
+
 template<int n>
 struct HandleArgument2<n, 1>  // partial specialization
 {
@@ -443,7 +448,7 @@ struct HandleArgument1
   static FreeRhsAutomaton* handleArgument1(int arity1, int arity2, FreeRhsAutomaton* victim)
   {
     return (arity1 == n) ? HandleArgument2<n,m>::handleArgument2(arity2, victim) :
-      HandleArgument1<n-1,m>::handleArgument1(arity1, arity2, victim);
+      HandleArgument1<n-1, m>::handleArgument1(arity1, arity2, victim);
   }
 };
 
@@ -452,7 +457,78 @@ struct HandleArgument1<0, m>  // partial specialization
 {
   static FreeRhsAutomaton* handleArgument1(int /* arity1 */, int arity2, FreeRhsAutomaton* victim)
   {
-    return HandleArgument2<0,m>::handleArgument2(arity2, victim);
+    return HandleArgument2<0, m>::handleArgument2(arity2, victim);
+  }
+};
+
+//
+//	Three instruction case.
+//
+template<int n, int m, int p>
+struct I3HandleArgument3
+{
+  static FreeRhsAutomaton* handleArgument3(int arity3, FreeRhsAutomaton* victim)
+  {
+    return (arity3 == p) ?
+      new FreeThreeInstructionRhsAutomaton<n, m, p>(*victim) :
+      I3HandleArgument3<n, m, p-1>::handleArgument3(arity3, victim);
+  }
+};
+  
+template<int n, int m>
+struct I3HandleArgument3<n, m, 1>  // partial specialization
+{
+  static FreeRhsAutomaton* handleArgument3(int /* arity3 */, FreeRhsAutomaton* victim)
+  {
+    return new FreeThreeInstructionRhsAutomaton<n, m, 1>(*victim);
+  }
+};
+
+template<int n, int m, int p>
+struct I3HandleArgument2
+{
+  static FreeRhsAutomaton* handleArgument2(int arity2, int arity3, FreeRhsAutomaton* victim)
+  {
+    return (arity2 == m) ?
+      I3HandleArgument3<n, m, p>::handleArgument3(arity3, victim) :
+      I3HandleArgument2<n, m-1, p>::handleArgument2(arity2, arity3, victim);
+  }
+};
+
+template<int n, int p>
+struct I3HandleArgument2<n, 0, p>  // partial specialization
+{
+  static FreeRhsAutomaton* handleArgument2(int /* arity2 */,
+					   int arity3,
+					   FreeRhsAutomaton* victim)
+  {
+    return I3HandleArgument3<n, 0, p>::handleArgument3(arity3, victim);
+  }
+};
+
+template<int n, int m, int p>
+struct I3HandleArgument1
+{
+  static FreeRhsAutomaton* handleArgument1(int arity1,
+					   int arity2,
+					   int arity3,
+					   FreeRhsAutomaton* victim)
+  {
+    return (arity1 == n) ?
+      I3HandleArgument2<n, m, p>::handleArgument2(arity2, arity3, victim) :
+      I3HandleArgument1<n-1, m, p>::handleArgument1(arity1, arity2, arity3, victim);
+  }
+};
+
+template<int m, int p>
+struct I3HandleArgument1<0, m, p>  // partial specialization
+{
+  static FreeRhsAutomaton* handleArgument1(int /* arity1 */,
+					   int arity2,
+					   int arity3,
+					   FreeRhsAutomaton* victim)
+  {
+    return I3HandleArgument2<0, m, p>::handleArgument2(arity2, arity3, victim);
   }
 };
 
@@ -498,7 +574,7 @@ FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
 	  DebugInfo("using 1 instruction optimization for free skeleton " << this);
 	  FreeRhsAutomaton* newAutomaton =
 	    makeFreeOneInstructionRhsAutomaton<3>(automaton->getArity(0),
-						 automaton);
+						  automaton);
 	  delete automaton;
 	  automaton = newAutomaton;
 	}
@@ -506,14 +582,30 @@ FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
 	{
 	  //
 	  //	Cannibalize automaton to make a faster one.
-	  //	12 cases (2nd symbol can't be nullary).
+	  //	4 * 3 = 12 cases (2nd symbol can't be nullary).
 	  //
 	  DebugInfo("using 2 instruction optimization for free skeleton " << this);
 	  Assert(automaton->getArity(1) != 0, "nullary 2nd symbol " << this);
 	  FreeRhsAutomaton* newAutomaton =
-	    HandleArgument1<3,3>::handleArgument1(automaton->getArity(0),
+	    HandleArgument1<3, 3>::handleArgument1(automaton->getArity(0),
 						  automaton->getArity(1),
 						  automaton);
+	  delete automaton;
+	  automaton = newAutomaton;
+	}
+      else if (nrInstructions == 3)
+	{
+	  //
+	  //	Cannibalize automaton to make a faster one.
+	  //	4 * 4 * 3 = 48 cases (3nd symbol can't be nullary).
+	  //
+	  DebugInfo("using 3 instruction optimization for free skeleton " << this);
+	  Assert(automaton->getArity(2) != 0, "nullary 3rd symbol " << this);
+	  FreeRhsAutomaton* newAutomaton =
+	    I3HandleArgument1<3, 3, 3>::handleArgument1(automaton->getArity(0),
+							automaton->getArity(1),
+							automaton->getArity(2),
+							automaton);
 	  delete automaton;
 	  automaton = newAutomaton;
 	}

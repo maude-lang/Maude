@@ -1,3 +1,11 @@
+2025-01-05  Saruman the White  <eker@eker10>
+
+	* freeThreeInstructionRhsAutomaton.hh
+	(FreeThreeInstructionRhsAutomaton<n, m, p>::remapIndices): created
+
+	* freeTerm.cc (FreeTerm::compileRhs2): use
+	FreeThreeInstructionRhsAutomaton optimization
+
 2025-01-04  Saruman the White  <eker@eker10>
 
 	* freeTerm.hh (class FreeTerm): updated decl for
