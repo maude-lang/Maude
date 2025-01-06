@@ -65,4 +65,5 @@ noinst_HEADERS = \
 	freeFast3RhsAutomaton.hh \
 	freeFast2RhsAutomaton.hh \
 	freeOneInstructionRhsAutomaton.hh \
-	freeTwoInstructionRhsAutomaton.hh
+	freeTwoInstructionRhsAutomaton.hh \
+	freeThreeInstructionRhsAutomaton.hh
