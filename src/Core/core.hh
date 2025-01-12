@@ -88,6 +88,7 @@ class HashConsSet;
 class UnificationSubproblemDisjunction;
 class CompoundCycleSubproblem;
 class MemoMap;
+class EqRewriter;
 
 class Frame;
 class StackMachine;
