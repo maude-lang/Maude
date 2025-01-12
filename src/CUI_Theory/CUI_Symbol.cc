@@ -67,6 +67,7 @@ CUI_Symbol::CUI_Symbol(int id,
     setPermuteStrategy(strategy);
   else
     setStrategy(strategy, 2, memoFlag);
+  setEqRewrite(standardStrategy() ? &eqRewriteStandardStrategy : &eqRewriteComplexStrategy);
 }
 
 void 
@@ -109,6 +110,80 @@ CUI_Symbol::makeDagNode(const Vector<DagNode*>& args)
   c->argArray[0] = args[0];
   c->argArray[1] = args[1];
   return c;
+}
+
+bool
+CUI_Symbol::eqRewriteStandardStrategy(DagNode* subject, RewritingContext& context)
+{
+  CUI_DagNode* d = static_cast<CUI_DagNode*>(subject);
+  d->argArray[0]->reduce(context);
+  d->argArray[1]->reduce(context);
+  if (d->normalizeAtTop())
+    return false;
+  CUI_Symbol* s = static_cast<CUI_Symbol*>(subject->symbol());
+  return !(s->equationFree()) && s->applyReplace(d, context);
+}
+
+bool
+CUI_Symbol::eqRewriteComplexStrategy(DagNode* subject, RewritingContext& context)
+{
+  CUI_DagNode* d = static_cast<CUI_DagNode*>(subject);
+  CUI_Symbol* s = static_cast<CUI_Symbol*>(subject->symbol());
+  if (s->isMemoized())
+    {
+      MemoTable::SourceSet from;
+      bool result = s->memoStrategy(from, subject, context);
+      s->memoEnter(from, subject);
+      //
+      //	We may need to return true in the case we collapse to a unreduced subterm.
+      //
+      return result;
+    }
+  //
+  //	Execute user supplied strategy.
+  //
+  const Vector<int>& userStrategy = s->getStrategy();
+  int stratLen = userStrategy.length();
+  bool seenZero = false;
+  for (int i = 0; i < stratLen; i++)
+    {
+      int a = userStrategy[i];
+      if(a == 0)
+	{
+	  if (!seenZero)
+	    {
+	      d->argArray[0]->computeTrueSort(context);
+	      d->argArray[0]->computeTrueSort(context);
+	      seenZero = true;
+	    }
+	  //
+	  //	If we collapse to one of our subterms which has not been
+	  //	reduced we pretend that we did a rewrite so that the
+	  //	reduction process continues.
+	  //
+	  if (d->normalizeAtTop())
+	    return !(d->isReduced());
+	  if ((i + 1 == stratLen) ? s->applyReplace(d, context) :
+	      s->applyReplaceNoOwise(d, context))
+	    return true;
+	}
+      else
+	{
+	  --a;  // real arguments start at 0 not 1
+	  if (seenZero)
+	    {
+	      d->argArray[a] = d->argArray[a]->copyReducible();
+	      //
+	      //    A previous call to applyReplace() may have
+	      //    computed a true sort for our subject which will be
+	      //    invalidated by the reduce we are about to do.
+	      //
+	      d->repudiateSortInfo();
+	    }
+	  d->argArray[a]->reduce(context);
+	}
+    }
+  return false;
 }
 
 bool

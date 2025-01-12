@@ -95,6 +95,8 @@ public:
 
 private:
   bool memoStrategy(MemoTable::SourceSet& from, DagNode* subject, RewritingContext& context);
+  static bool eqRewriteStandardStrategy(DagNode* subject, RewritingContext& context);
+  static bool eqRewriteComplexStrategy(DagNode* subject, RewritingContext& context);
 
   Axioms axioms;
 };

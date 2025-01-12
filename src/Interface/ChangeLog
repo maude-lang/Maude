@@ -1,3 +1,7 @@
+2025-01-11  Saruman the White  <eker@eker10>
+
+	* symbol.hh (class Symbol): derive from EqRewriter
+
 2024-06-07  Steven M. Eker  <eker@eker10>
 
 	* dagNode.hh (class DagNode): added dummy operator delete() to
