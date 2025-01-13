@@ -71,6 +71,30 @@
 #include "freeGeneralExtor.hh"
 #include "freeGeneralExtorFinal.hh"
 
+template<int n>
+bool
+FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
+  return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.applyReplaceFast(subject, context);
+}
+
+bool
+FreeSymbol::eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  if (symbol->standardStrategy())
+    {
+      int nrArgs = symbol->arity();
+      DagNode* const* args = static_cast<FreeDagNode*>(subject)->argArray();
+      for (int i = nrArgs; i > 0; i--, args++)
+        (*args)->reduce(context);
+      return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.applyReplace(subject, context);
+    }
+  return safeCastNonNull<FreeSymbol*>(symbol)->complexStrategy(subject, context);
+}
+
 FreeSymbol*
 FreeSymbol::newFreeSymbol(int id, int arity, const Vector<int>& strategy, bool memoFlag)
 {
@@ -103,6 +127,19 @@ FreeSymbol::FreeSymbol(int id, int arity, const Vector<int>& strategy, bool memo
   : Symbol(id, arity, memoFlag)
 {
   setStrategy(strategy, arity, memoFlag);
+  if (arity <= 3 && standardStrategy())
+    {
+      if (arity == 0)
+	setEqRewrite(&eqRewriteFast<0>);
+      else if (arity == 1)
+	setEqRewrite(&eqRewriteFast<1>);
+      else if (arity == 2)
+	setEqRewrite(&eqRewriteFast<2>);
+      else if (arity == 3)
+	setEqRewrite(&eqRewriteFast<3>);
+   }
+  else
+    setEqRewrite(&eqRewriteSlow);
 }
 
 void
@@ -132,6 +169,9 @@ FreeSymbol::compileEquations()
   FreePreNet n(false);
   n.buildNet(this);
   n.semiCompile(discriminationNet);
+  //
+  //	In future we will pick more specialized functions.
+  //
 }
 
 Term*

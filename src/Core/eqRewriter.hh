@@ -29,21 +29,21 @@
 class EqRewriter
 {
 public:
-  typedef bool (*EqRewriteFunctionPtr)(DagNode*, RewritingContext&);
+  typedef bool (*EqRewriteFunctionPtr)(Symbol*, DagNode*, RewritingContext&);
 
-  bool eqRewrite2(DagNode* subject, RewritingContext& context);
+  bool eqRewrite2(Symbol* symbol, DagNode* subject, RewritingContext& context);
   void setEqRewrite(EqRewriteFunctionPtr functionPtr);
 
 private:
-  static bool doNothing(DagNode* subject, RewritingContext& context);
+  static bool doNothing(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
   EqRewriteFunctionPtr eqRewriteFunctionPtr = &doNothing;
 };
 
 inline bool
-EqRewriter::eqRewrite2(DagNode* subject, RewritingContext& context)
+EqRewriter::eqRewrite2(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
-  return (*eqRewriteFunctionPtr)(subject, context);
+  return (*eqRewriteFunctionPtr)(symbol, subject, context);
 }
 
 inline void
@@ -53,7 +53,7 @@ EqRewriter::setEqRewrite(EqRewriteFunctionPtr functionPtr)
 }
 
 inline bool  // always called via a pointer; declared inline for header file
-EqRewriter::doNothing(DagNode* subject, RewritingContext& context)
+EqRewriter::doNothing(Symbol* /* symbol */, DagNode* /* subject */, RewritingContext& /* context */)
 {
   return false;
 }

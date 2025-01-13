@@ -113,22 +113,24 @@ CUI_Symbol::makeDagNode(const Vector<DagNode*>& args)
 }
 
 bool
-CUI_Symbol::eqRewriteStandardStrategy(DagNode* subject, RewritingContext& context)
+CUI_Symbol::eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
+  Assert(symbol == subject->symbol(), "bad symbol");
   CUI_DagNode* d = static_cast<CUI_DagNode*>(subject);
   d->argArray[0]->reduce(context);
   d->argArray[1]->reduce(context);
   if (d->normalizeAtTop())
     return false;
-  CUI_Symbol* s = static_cast<CUI_Symbol*>(subject->symbol());
+  CUI_Symbol* s = safeCastNonNull<CUI_Symbol*>(symbol);
   return !(s->equationFree()) && s->applyReplace(d, context);
 }
 
 bool
-CUI_Symbol::eqRewriteComplexStrategy(DagNode* subject, RewritingContext& context)
+CUI_Symbol::eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
+  Assert(symbol == subject->symbol(), "bad symbol");
   CUI_DagNode* d = static_cast<CUI_DagNode*>(subject);
-  CUI_Symbol* s = static_cast<CUI_Symbol*>(subject->symbol());
+  CUI_Symbol* s = safeCastNonNull<CUI_Symbol*>(symbol);
   if (s->isMemoized())
     {
       MemoTable::SourceSet from;
