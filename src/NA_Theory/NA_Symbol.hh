@@ -44,6 +44,9 @@ public:
   //
   DagNode* makeCanonical(DagNode* original, HashConsSet* /* hcs */);
   DagNode* makeCanonicalCopy(DagNode* original, HashConsSet* /* hcs */);
+
+private:
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
 };
 
 #endif

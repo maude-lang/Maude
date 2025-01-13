@@ -1,3 +1,12 @@
+2025-01-12  Saruman the White  <eker@eker10>
+
+	* CUI_Symbol.hh (class CUI_Symbol): updated decls for
+	eqRewriteStandardStrategy(), eqRewriteComplexStrategy()
+
+	* CUI_Symbol.cc (CUI_Symbol::eqRewriteStandardStrategy): take
+	Symbol* arugment
+	(CUI_Symbol::eqRewriteComplexStrategy): take Symbol* argument
+
 2025-01-11  Saruman the White  <eker@eker10>
 
 	* CUI_Symbol.cc (CUI_Symbol::CUI_Symbol): call setEqRewrite()

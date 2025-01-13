@@ -1,3 +1,10 @@
+2025-01-12  Saruman the White  <eker@eker10>
+
+	* eqRewriter.hh (class EqRewriter): EqRewriteFunctionPtr now takes
+	a Symbol* argument
+	(EqRewriter::doNothing): take Symbol* argument
+	(EqRewriter::eqRewrite2): take Symbol* argument
+
 2025-01-11  Saruman the White  <eker@eker10>
 
 	* core.hh: added class EqRewriter

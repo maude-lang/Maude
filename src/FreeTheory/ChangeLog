@@ -1,3 +1,12 @@
+2025-01-12  Saruman the White  <eker@eker10>
+
+	* freeSymbol.hh (class FreeSymbol): added decls for
+	eqRewriteFast(), eqRewriteSlow()
+
+	* freeSymbol.cc (FreeSymbol::eqRewriteSlow): added
+	(FreeSymbol::eqRewriteFast): added function template
+	(FreeSymbol::FreeSymbol): call setEqRewrite()
+
 2025-01-05  Saruman the White  <eker@eker10>
 
 	* freeThreeInstructionRhsAutomaton.hh

@@ -42,6 +42,7 @@
 NA_Symbol::NA_Symbol(int id)
   : Symbol(id, 0)
 {
+  setEqRewrite(&NA_Symbol::eqRewrite);
 }
 
 Term*
@@ -56,6 +57,13 @@ NA_Symbol::makeDagNode(const Vector<DagNode*>& /* args */)
 {
   CantHappen("makeDagNode() not useable on non-algebraic symbol " << this);
   return 0;
+}
+
+bool
+NA_Symbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  return safeCastNonNull<NA_Symbol*>(symbol)->applyReplace(subject, context);
 }
 
 bool
