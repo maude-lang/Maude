@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ ACU_Symbol::ACU_Symbol(int id,
   : AssociativeSymbol(id, strategy, memoFlag, identity)
 {
   useTreeFlag = useTree;
+  setEqRewrite(standardStrategy() ? &eqRewriteStandardStrategy : &eqRewriteComplexStrategy);
 }
 
 void 
@@ -188,6 +189,37 @@ ACU_Symbol::reduceArgumentsAndNormalize(DagNode* subject, RewritingContext& cont
       return s->normalizeAtTop();
     }
   return false;
+}
+
+bool
+ACU_Symbol::eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  if (safeCast(ACU_BaseDagNode*, subject)->isFresh())
+    {
+      ACU_DagNode* d = static_cast<ACU_DagNode*>(subject);
+      int nrArgs = d->argArray.length();
+      for (int i = 0; i < nrArgs; ++i)
+	d->argArray[i].dagNode->reduce(context);
+      //
+      //	We always need to renormalize at the top because
+      //	shared subterms may have rewritten.
+      //
+      if (d->normalizeAtTop())
+	return false;
+    }
+  ACU_Symbol* s = safeCastNonNull<ACU_Symbol*>(symbol);
+  if (s->equationFree())
+    return false;
+  return s->rewriteAtTop(subject, context);
+}
+
+bool
+ACU_Symbol::eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  ACU_Symbol* s = safeCastNonNull<ACU_Symbol*>(symbol);
+  return s->complexStrategy(subject, context);  // inline this eventually
 }
 
 bool
