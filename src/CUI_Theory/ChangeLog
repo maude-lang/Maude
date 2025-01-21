@@ -1,3 +1,7 @@
+2025-01-20  Saruman the White  <eker@eker10>
+
+	* CUI_Symbol.hh (CUI_Symbol::normalizeAndTryEquations): added
+
 2025-01-12  Saruman the White  <eker@eker10>
 
 	* CUI_Symbol.hh (class CUI_Symbol): updated decls for
