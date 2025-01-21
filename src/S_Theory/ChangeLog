@@ -1,3 +1,12 @@
+2025-01-20  Saruman the White  <eker@eker10>
+
+	* S_Symbol.hh (class S_Symbol): added decls for
+	eqRewriteStandardStrategy(), eqRewriteComplexStrategy()
+
+	* S_Symbol.cc (CUI_Symbol::eqRewriteStandardStrategy): added
+	(CUI_Symbol::eqRewriteComplexStrategy): added
+	(S_Symbol::S_Symbol): call setEqRewrite()
+
 2024-03-05  Steven Eker  <eker@pup>
 
 	* S_Term.cc (S_Term::arguments): made const

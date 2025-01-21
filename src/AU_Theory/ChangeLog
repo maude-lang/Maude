@@ -1,3 +1,12 @@
+2025-01-20  Saruman the White  <eker@eker10>
+
+	* AU_Symbol.hh (class AU_Symbol): added decls for
+	eqRewriteStandardStrategy(), eqRewriteComplexStrategy()
+
+	* AU_Symbol.cc (AU_Symbol::AU_Symbol): call setEqRewrite()
+	(AU_Symbol::eqRewriteStandardStrategy): added
+	(AU_Symbol::eqRewriteComplexStrategy): added
+
 2024-03-05  Steven Eker  <eker@pup>
 
 	* AU_Term.cc (AU_Term::arguments): made const

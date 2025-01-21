@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ AU_Symbol::AU_Symbol(int id,
   //	matching algorithm that works with extension.
   //
   useDequeFlag = !oneSidedIdFlag && standardStrategy();
+  setEqRewrite(standardStrategy() ? &eqRewriteStandardStrategy : &eqRewriteComplexStrategy);
 }
 
 void
@@ -139,6 +140,65 @@ AU_Symbol::rewriteAtTopNoOwise(AU_DagNode* subject, RewritingContext& context)
   //	
   AU_ExtensionInfo extensionInfo(subject);
   return applyReplaceNoOwise(subject, context, &extensionInfo);
+}
+
+bool
+AU_Symbol::eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  AU_Symbol* s = safeCastNonNull<AU_Symbol*>(symbol);
+  if (static_cast<AU_BaseDagNode*>(subject)->isDeque())
+    {
+      Assert(s->equationFree(), "deque with equations");
+      return false;
+    }
+  AU_DagNode* d = static_cast<AU_DagNode*>(subject);
+  if (d->isFresh())
+    {
+      //
+      //	Not safe to use iterator because reduce() can
+      //	call garbage collector which can relocate argArray.
+      //
+      int nrArgs = d->argArray.length();
+      for (int i = 0; i < nrArgs; ++i)
+	d->argArray[i]->reduce(context);
+      //
+      //	We always need to renormalize at the top because
+      //	shared subterms may have rewritten.
+      //
+      if (d->normalizeAtTop() <= AU_DagNode::DEQUED)
+	return false;  // COLLAPSED or DEQUED
+    }
+  //
+  //	Even we were created by an assignment we could
+  //	be equation-free and not reduced because our true
+  //	sort was not known because of a membership axiom.
+  //
+  if (s->equationFree())
+    return false;
+
+#ifndef NO_ASSERT
+  //
+  //	Look for Riesco 1/18/10 bug.
+  //
+  for (int i = 0; i < d->argArray.length(); i++)
+    {
+      DagNode* d2 = d->argArray[i];
+      Assert(d2->getSortIndex() != Sort::SORT_UNKNOWN,
+	     "AU_Symbol::eqRewrite(): unknown sort for AU argument " << d2 <<
+	     " at index " << i << " in subject " << subject <<
+	     " d->getNormalizationStatus() = " << d->getNormalizationStatus());
+    }
+#endif
+  return s->rewriteAtTop(d, context);
+}
+
+bool
+AU_Symbol::eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  AU_Symbol* s = safeCastNonNull<AU_Symbol*>(symbol);
+  return s->complexStrategy(safeCast(AU_DagNode*, subject), context);
 }
 
 bool
