@@ -1,3 +1,7 @@
+2025-01-20  Saruman the White  <eker@eker10>
+
+	* freeSymbol.hh (FreeSymbol::tryEquations): added
+
 2025-01-12  Saruman the White  <eker@eker10>
 
 	* freeSymbol.hh (class FreeSymbol): added decls for
