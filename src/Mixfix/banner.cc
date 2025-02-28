@@ -26,11 +26,7 @@
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
-#if HAVE_OSTREAM
 #include <ostream>
-#elif HAVE_OSTREAM_H
-#include <ostream.h>
-#endif
 
 using namespace std;
 

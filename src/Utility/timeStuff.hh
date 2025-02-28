@@ -26,16 +26,10 @@
 //
 #ifndef _timeStuff_hh_
 #define _timeStuff_hh_
-#if TIME_WITH_SYS_TIME
+#if HAVE_SYS_TIME_H
 # include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
 #endif
+#include <time.h>
 
 inline bool
 operator<(const timespec& first, const timespec& second)

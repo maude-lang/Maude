@@ -35,29 +35,19 @@
 //
 //	C stuff.
 //
-#if HAVE_STDDEF_H
-#include <stddef.h>
-#endif
-#if HAVE_LIMITS_H
-#include <limits.h>
-#endif
-#if HAVE_STDLIB_H
-#include <stdlib.h>
-#endif
-#if HAVE_STDIO_H
-#include <stdio.h>
-#endif
-#if HAVE_CTYPE_H
-#include <ctype.h>
-#endif
+#include <cstddef>
+#include <climits>
+#include <cstdlib>
+#include <cstdio>
+#include <cctype>
 #if HAVE_UNISTD_H
 #include <unistd.h>  // needed by solaris
 #endif
 //
 //	C++ stuff.
 //
-#include <typeinfo> 
-#include <cstdint> 
+#include <typeinfo>
+#include <cstdint>
 #include <cstring>
 #include <new>
 #include <string>
@@ -102,7 +92,7 @@ class Rope;
 //
 typedef ptrdiff_t Index;
 
-//	
+//
 //	Types for storage efficiency.
 //
 typedef signed char Byte;

@@ -1,3 +1,7 @@
+2025-02-28  Rubén Rubio  <rubenrub@ucm.es>
+
+	* configure.ac: autoupdate applied
+
 2024-06-05  Steven Eker  <eker@eker10>
 
 	* INSTALL: added GNU automake to prerequisites

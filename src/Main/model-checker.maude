@@ -1,6 +1,6 @@
 ***(
 
-    This file is part of the Maude 2 interpreter.
+    This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
 
@@ -22,7 +22,7 @@
 
 ***
 ***	Maude LTL satisfiability solver and model checker.
-***	Version 3.4.
+***	Version 3.5.
 ***
 
 fmod LTL is
@@ -260,3 +260,40 @@ fmod MODEL-CHECKER is
 	   term-hook trueTerm		(true)
 	 )] .
 endfm
+
+fmod LTL+ is
+  protecting LTL .
+  sort Formula+ .
+  op E_ : Formula -> Formula+ [ctor] .
+  op A_ : Formula -> Formula+ [ctor] .
+  op ~_ : Formula+ -> Formula+ .
+
+  var f : Formula .
+
+  eq ~(E f) = A (~ f) .
+  eq ~(A f) = E (~ f) .
+endfm
+
+fmod MODEL-CHECKER+ is
+  protecting MODEL-CHECKER .
+  including LTL+ .
+
+  sort ModelCheck+Result .
+  subsort ModelCheckResult < ModelCheck+Result .
+
+  op witness : TransitionList TransitionList -> ModelCheck+Result [ctor] .
+  op modelCheck+ : State Formula+ ~> ModelCheck+Result .
+  op neg : ModelCheck+Result -> ModelCheck+Result .
+
+  var f : Formula .  var st : State .
+  vars TL1 TL2 : TransitionList .
+
+  eq modelCheck+(st, (E f)) = neg(modelCheck(st, (~ f))) .
+  eq modelCheck+(st, (A f)) = modelCheck(st, f) .
+
+  eq neg(true) = false .
+  eq neg(false) = true .
+  eq neg(counterexample(TL1, TL2)) = witness(TL1, TL2) .
+  eq neg(witness(TL1, TL2)) = counterexample(TL1, TL2) .
+endfm
+
