@@ -974,6 +974,7 @@ View::indexRhsVariables(Term* term, const VarMap& varMap)
 bool
 View::insertOpToTermMapping(Term* fromTerm, Term* toTerm)
 {
+  //DebugAlways("from term = " << fromTerm << " toTerm = " << toTerm);
   //
   //	If something goes wrong we return false and caller is responsible
   //	for fromTerm and toTerm.
@@ -1009,13 +1010,14 @@ View::insertOpToTermMapping(Term* fromTerm, Term* toTerm)
       ++argNr;
     }
   //
-  //	It could be that fromTerm parses but has to many arguments because of user flattened syntax.
+  //	It could be that fromTerm parses but has too many arguments because of user flattened syntax.
   //
   Symbol* fromSymbol = fromTerm->symbol();
   if (fromSymbol->arity() != argNr)
     {
       Assert(fromSymbol->arity() < argNr, "too few args");
-      IssueWarning(*fromTerm << ": left-hand side " << QUOTE(fromTerm) << " of operator-to-term mapping has " <<
+      IssueWarning(*fromTerm << ": left-hand side " << QUOTE(fromTerm) <<
+		   " of operator-to-term mapping has " <<
 		   argNr << " arguments whereas 2 were expected.");
       return false;
     }

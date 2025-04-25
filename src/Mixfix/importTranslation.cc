@@ -56,8 +56,12 @@
 //	strategy class definitions
 #include "callStrategy.hh"
 
-ImportTranslation::ImportTranslation(ImportModule* target, Renaming* renaming, bool preserveVariableIndicesFlag)
-  : preserveVariableIndicesFlag(preserveVariableIndicesFlag)
+ImportTranslation::ImportTranslation(ImportModule* target,
+				     Renaming* renaming,
+				     bool preserveVariableIndicesFlag,
+				     bool liftVariablesToKind)
+  : preserveVariableIndicesFlag(preserveVariableIndicesFlag),
+    liftVariablesToKind(liftVariablesToKind)
 {
   push(renaming, target);
 }
@@ -114,6 +118,8 @@ ImportTranslation::translate(Symbol* symbol)
     case SymbolType::VARIABLE:
       {
 	Sort* sort = translate(safeCast(VariableSymbol*, symbol)->getSort());
+	if (liftVariablesToKind)
+	  sort = sort->component()->sort(Sort::KIND);
 	s = targets.back()->instantiateVariable(sort);
 	break;
       }
@@ -367,10 +373,17 @@ ImportTranslation::translateRegularSymbol(Symbol* symbol,
 	  //
 	  //	Translate name.
 	  //
+	  //DebugAlways("id = " << Token::name(id));
+	  //for (int i = 0; i < nrArgs; ++i)
+	  //  DebugAlways("sortName = " << Token::name(sortNames[i]));
+
 	  int index = r->renameOp(id, sortNames);
+	  //DebugAlways("index = " << index);
 	  if (index != NONE)
 	    {
 	      id = r->getOpTo(index);
+	      //DebugAlways("new id = " << id);
+
 	      if (id == NONE)
 		{
 		  opToTerm = i;
