@@ -612,15 +612,16 @@ View::handleAwkwardCase(View* copy, Symbol* symbol, Term* fromTerm, Term* toTerm
       VariableTerm* vt = safeCast(VariableTerm*, i.argument());
       int variableName = vt->id();
       const ConnectedComponent* component = symbol->domainComponent(j);
-      Sort* sort = component->sort(Sort::FIRST_USER_SORT);
+      Sort* sort = component->sort(Sort::KIND);
       VariableSymbol* variableSymbol = safeCast(VariableSymbol*, fromTheory->instantiateVariable(sort));
       arguments[j] = new VariableTerm(variableSymbol, variableName);
     }
   Term* newFromTerm = symbol->makeTerm(arguments);
   //
-  //	We next make a copy of toTerm; this will not have variable indices.
+  //	We next make a copy of toTerm; this will not have variable indices, and
+  //	will have each variable lifted to the kind level.
   //
-  ImportTranslation toTermTranslation(copy->toModule);
+  ImportTranslation toTermTranslation(copy->toModule, nullptr, false, true);
   Term* toTermCopy = toTerm->deepCopy(&toTermTranslation);
   //
   //	Finally we insert it into the view instantiation.

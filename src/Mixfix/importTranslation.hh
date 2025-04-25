@@ -35,7 +35,10 @@ class ImportTranslation : public SymbolMap
   NO_COPYING(ImportTranslation);
 
 public:
-  ImportTranslation(ImportModule* target, Renaming* renaming = 0, bool preserveVariableIndicesFlag = false);
+  ImportTranslation(ImportModule* target,
+		    Renaming* renaming = nullptr,
+		    bool preserveVariableIndicesFlag = false,
+		    bool liftVariablesToKind = false);
   void push(Renaming* renaming, ImportModule* target);
   //
   //	These three functions are required by our base class.
@@ -100,6 +103,7 @@ private:
   //	we obtained when analyzing the view.
   //
   const bool preserveVariableIndicesFlag = false;
+  const bool liftVariablesToKind = false;
 };
 
 inline

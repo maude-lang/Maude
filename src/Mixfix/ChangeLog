@@ -1,3 +1,19 @@
+2025-04-24  Saruman the White  <eker@eker10>
+
+	* instantiateViewWithFreeParameters.cc (View::handleAwkwardCase):
+	use liftVariablesToKind flag when synthesizing op->term mapping
+
+	* importTranslation.cc (ImportTranslation::ImportTranslation):
+	take liftVariablesToKind argument and set data member
+	(ImportTranslation::translate): handle liftVariablesToKind flag
+
+	* importTranslation.hh (class ImportTranslation): added
+	liftVariablesToKind data member and ctor argument
+
+2025-04-22  Saruman the White  <eker@eker10>
+
+	* view.cc (View::insertOpToTermMapping): formatting
+
 2024-06-07  Steven M. Eker  <eker@eker10>
 
 	* importModule.cc (ImportModule::donateStatements2): copy
