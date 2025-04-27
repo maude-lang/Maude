@@ -1,3 +1,31 @@
+2025-04-26  Saruman the White  <eker@eker10>
+
+	* renaming.cc (Renaming::typeMatch): converted commented out cerr
+	<< into a DebugInfo()
+
+	* importTranslation.hh (ImportTranslation::translate): use
+	Sort::FIRST_USER_SORT
+
+	* renameModule.cc (ImportModule::localSort): use
+	Sort::FIRST_USER_SORT
+
+	* view.cc (View::mapComponent): use Sort::FIRST_USER_SORT
+	(View::typeMatch): use Sort::FIRST_USER_SORT
+
+	* importTranslation.cc
+	(ImportTranslation::translateRegularSymbol): use
+	Sort::FIRST_USER_SORT
+	(ImportTranslation::findTargetVersionOfSymbol): use
+	Sort::FIRST_USER_SORT
+
+	* instantiateViewWithFreeParameters.cc
+	(View::handleInstantiationByModuleView): pass toModule rather than
+	parameterCopyOfTheory as the parameterCopyUser
+	addOpMappingsFromView() and addStratMappingsFromView() to avoid
+	missing sorts in the canonicalRenaming op->op and op->term types
+	(View::handleInstantiationByTheoryView): symmetric change, passing
+	toModule rather than parameterCopyOfParameterTheory
+
 2025-04-24  Saruman the White  <eker@eker10>
 
 	* instantiateViewWithFreeParameters.cc (View::handleAwkwardCase):

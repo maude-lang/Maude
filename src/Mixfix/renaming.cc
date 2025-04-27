@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -365,7 +365,7 @@ Renaming::canonicalizeOpMappings(ImportModule* module, Renaming* canonical) cons
   {
     //
     //	For each operator in the module that is not from a parameter
-    //	and would be remapped by an orginal mapping, we add a mapping
+    //	and would be remapped by an original mapping, we add a mapping
     //	to the canonical renaming unless the mapping is a generic one
     //	in which case we add the id to genericsToConsider. For operators
     //	from parameter theories, if the mapping is specific we emit an
@@ -711,7 +711,7 @@ Renaming::typeMatch(const Vector<set<int> >& types, const Vector<int>& sortNames
     return false;
   for (int i = 0; i < nrTypes; ++i)
     {
-      //cerr << "looking for a match at arg " << i << " for sort " << Token::name(sortNames[i]) << endl;
+      DebugInfo("looking for a match at arg " << i << " for sort " << Token::name(sortNames[i]));
       const set<int>& type = types[i];
       if (type.find(sortNames[i]) == type.end())
 	return false;
