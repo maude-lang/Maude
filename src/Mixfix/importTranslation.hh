@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ ImportTranslation::ImportTranslation()
 inline ConnectedComponent*
 ImportTranslation::translate(const ConnectedComponent* component)
 {
-  return translate(component->sort(1))->component();
+  return translate(component->sort(Sort::FIRST_USER_SORT))->component();
 }
 
 inline void

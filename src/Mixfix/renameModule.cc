@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ Sort*
 ImportModule::localSort(ImportModule* copy, Renaming* renaming, const Sort* sort)
 {
   return (sort->index() == Sort::KIND) ?
-    localSort2(copy, renaming, sort->component()->sort(1))->component()->sort(Sort::KIND) :
+    localSort2(copy, renaming, sort->component()->sort(Sort::FIRST_USER_SORT))->component()->sort(Sort::KIND) :
     localSort2(copy, renaming, sort);
 }
 

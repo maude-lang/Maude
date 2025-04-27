@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -362,28 +362,18 @@ ImportTranslation::translateRegularSymbol(Symbol* symbol,
   int id = symbol->id();
   Vector<int> sortNames(nrArgs + 1);
   for (int i = 0; i < nrArgs; ++i)
-    sortNames[i] = symbol->domainComponent(i)->sort(1)->id();
-  sortNames[nrArgs] = symbol->rangeComponent()->sort(1)->id();
+    sortNames[i] = symbol->domainComponent(i)->sort(Sort::FIRST_USER_SORT)->id();
+  sortNames[nrArgs] = symbol->rangeComponent()->sort(Sort::FIRST_USER_SORT)->id();
 
   for (RenamingList::const_iterator i = renamings.begin(), e = renamings.end(); i != e; ++i)
     {
       Renaming* r =  *i;
       if (r != 0)
 	{
-	  //
-	  //	Translate name.
-	  //
-	  //DebugAlways("id = " << Token::name(id));
-	  //for (int i = 0; i < nrArgs; ++i)
-	  //  DebugAlways("sortName = " << Token::name(sortNames[i]));
-
 	  int index = r->renameOp(id, sortNames);
-	  //DebugAlways("index = " << index);
 	  if (index != NONE)
 	    {
 	      id = r->getOpTo(index);
-	      //DebugAlways("new id = " << id);
-
 	      if (id == NONE)
 		{
 		  opToTerm = i;
@@ -454,12 +444,12 @@ ImportTranslation::findTargetVersionOfSymbol(Symbol* symbol)
   Vector<ConnectedComponent*> domainComponents(nrArgs);
   for (int i = 0; i < nrArgs; ++i)
     {
-      Sort* ds = symbol->domainComponent(i)->sort(1);
+      Sort* ds = symbol->domainComponent(i)->sort(Sort::FIRST_USER_SORT);
       Sort* targetSort = target->findSort(ds->id());
       Assert(targetSort != 0, "couldn't find sort " << ds << " in " << target);
       domainComponents[i] = targetSort->component();
     }
-  Sort* rs = symbol->rangeComponent()->sort(1);
+  Sort* rs = symbol->rangeComponent()->sort(Sort::FIRST_USER_SORT);
   Sort* targetSort = target->findSort(rs->id());
   Assert(targetSort != 0, "couldn't find sort  " << rs << " in " << target);
   ConnectedComponent* rangeComponent = targetSort->component();

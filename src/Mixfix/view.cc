@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -347,7 +347,7 @@ View::regretToInform(Entity* doomedEntity)
 ConnectedComponent*
 View::mapComponent(const ConnectedComponent* component) const
 {
-  Sort* sort = toModule->findSort(renameSort(component->sort(1)->id()));
+  Sort* sort = toModule->findSort(renameSort(component->sort(Sort::FIRST_USER_SORT)->id()));
   Assert(sort != 0, "translation for sort failed");
   return sort->component();
 }
@@ -469,7 +469,7 @@ View::typeMatch(const ConnectedComponent* c1, const ConnectedComponent* c2)
   //	sort exists in the other.
   //
   int nrSorts = c1->nrSorts();
-  int sortName = c2->sort(1)->id();
+  int sortName = c2->sort(Sort::FIRST_USER_SORT)->id();
   for (int i = 0; i < nrSorts; ++i)
     {
       if (c1->sort(i)->id() == sortName)

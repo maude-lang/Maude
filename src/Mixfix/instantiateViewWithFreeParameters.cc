@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -274,16 +274,25 @@ View::handleInstantiationByTheoryView(View* copy,
 	      //	We rely on the parameter copies to do the heavy lifting of
 	      //	adding sort and operator renamings to our canonicalRenaming.
 	      //
-	      parameterCopyOfParameterTheory->addSortMappingsFromTheoryView(canonicalRenaming, parameterName, argumentView);
+	      parameterCopyOfParameterTheory->addSortMappingsFromTheoryView(canonicalRenaming,
+									    parameterName,
+									    argumentView);
 	      //
-	      //	2/8/23 CONSIDER: shoudn't we use our toModule for passing as the parameterCopyUser argument rather than
-	      //	parameterCopyOfParameterTheory itself? Probably doesn't matter since it's only used to looking up mapped sorts.
+	      //	4/26/25 Previously we passed parameterCopyOfParameterTheory as the parameterCopyUser
+	      //	that is used to look up sorts and compute types for the renaming, but this
+	      //	introduced a subtle bug - toModule may have additional sorts in a given kind
+	      //	which means that the types in canonical renaming may be missing those sorts
+	      //	and if a missing sort is the Sort::FIRST_USER_SORT we can fail to match
+	      //	specific op->op mappings and op->terms mappings. By passing toModule we avoid
+	      //	this problem.
 	      //
 	      parameterCopyOfParameterTheory->addOpMappingsFromView(canonicalRenaming,
 								    argumentView,
-								    parameterCopyOfParameterTheory,
+								    toModule,
 								    parameterCopyOfArgumentViewToTheory);
-	      parameterCopyOfParameterTheory->addStratMappingsFromView(canonicalRenaming, argumentView, parameterCopyOfParameterTheory);
+	      parameterCopyOfParameterTheory->addStratMappingsFromView(canonicalRenaming,
+								       argumentView,
+								       toModule);
 	    }
 	}
     }
@@ -407,9 +416,17 @@ View::handleInstantiationByModuleView(View* copy,
 	      //	For each Foo -> X$Foo we mapped in the parameter copy of the parameter theory,
 	      //	we need to have a mapping X$Foo -> Bar where Bar is the target of Foo in our view.
 	      //
+	      //	4/26/25 Previously we passed parameterCopyOfTheory as the parameterCopyUser
+	      //	that is used to look up sorts and compute types for the renaming, but this
+	      //	introduced a subtle bug - toModule may have additional sorts in a given kind
+	      //	which means that the types in canonical renaming may be missing those sorts
+	      //	and if a missing sort is the Sort::FIRST_USER_SORT we can fail to match
+	      //	specific op->op mappings and op->terms mappings. By passing toModule we avoid
+	      //	this problem.
+	      //
 	      parameterCopyOfTheory->addSortMappingsFromModuleView(canonicalRenaming, argumentView);
-	      parameterCopyOfTheory->addOpMappingsFromView(canonicalRenaming, argumentView, parameterCopyOfTheory);
-	      parameterCopyOfTheory->addStratMappingsFromView(canonicalRenaming, argumentView, parameterCopyOfTheory);
+	      parameterCopyOfTheory->addOpMappingsFromView(canonicalRenaming, argumentView, toModule);
+	      parameterCopyOfTheory->addStratMappingsFromView(canonicalRenaming, argumentView, toModule);
 	      //
 	      //	Need to check if the argument view itself has bound parameters.
 	      //
