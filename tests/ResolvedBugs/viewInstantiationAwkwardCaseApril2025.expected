@@ -1,0 +1,2 @@
+eq ["raw thumb"] : s(s(N:Nat)) = N:Nat .
+Bye.

@@ -1,0 +1,57 @@
+***
+***	Test for the awkward case where a parameterized view has a regular
+***	or implied op->op mapping, here
+***	  op g to f .
+***	but it is instantiated by a view which maps the target symbol f,
+***	to a term, here
+***	  op f(N:Big) to term s(s(N:Int)) .
+***	The composition must be an op->term mapping which must be synthesized -
+***	the "awkward case". The problem is what sort(s) to give the variable(s)
+***	in the left-hand side so they match up to the right-hand side. Here
+***	there is no sort in fth B that maps to Big and hence to Int in
+***	  op g(N:???) to term s(s(N:Int)) .
+***	which leads to a warning followed by a crash when the equation is
+***	displayed. The solution is to lift all variables to the kind level in
+***	synthesized op->term mappings.
+***
+
+fmod INT is
+  sorts Nat Int .
+  subsort Nat < Int .
+  op s : Int -> Int .
+endfm
+
+fth A is
+  sorts Small Big .
+  subsort Small < Big .
+  op f : Big -> Big .
+endfth
+
+view INT-as-an-A from A to INT is
+  sort Small to Nat .
+  sort Big to Int .
+  op f(N:Big) to term s(s(N:Int)) .
+endv
+
+fth B is
+  sort Card .
+  op g : Card -> Card .
+endfth
+
+fmod BASE{X :: A} is
+endfm
+
+view BASE-as-a-B{X :: A} from B to BASE{X} is
+  sort Card to X$Small .
+  op g to f .
+endv
+
+fmod USE-B{X :: B} is
+  eq g(N:X$Card) = N:X$Card [label "raw thumb"] .
+endfm
+
+fmod TEST is
+  pr USE-B{BASE-as-a-B{INT-as-an-A}} .
+endfm
+
+show eqs .

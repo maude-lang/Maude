@@ -67,7 +67,9 @@ TESTS = \
 	stripperCollectorSwitchMay2023 \
 	filteredVariantUnifyJune2023 \
 	conditionSideEffectInStrategyLanguageDecember2023 \
-	stringToRatConversionMarch2024
+	stringToRatConversionMarch2024 \
+	viewInstantiationAwkwardCaseApril2025 \
+	viewInstantiationByModuleViewApril2025
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -138,8 +140,9 @@ MAUDE_FILES = \
 	stripperCollectorSwitchMay2023.maude \
 	filteredVariantUnifyJune2023.maude \
 	conditionSideEffectInStrategyLanguageDecember2023.maude \
-	stringToRatConversionMarch2024.maude
-
+	stringToRatConversionMarch2024.maude \
+	viewInstantiationAwkwardCaseApril2025.maude \
+	viewInstantiationByModuleViewApril2025.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -210,7 +213,8 @@ RESULT_FILES = \
 	stripperCollectorSwitchMay2023.expected \
 	filteredVariantUnifyJune2023.expected \
 	conditionSideEffectInStrategyLanguageDecember2023.expected \
-	stringToRatConversionMarch2024.expected
-
+	stringToRatConversionMarch2024.expected \
+	viewInstantiationAwkwardCaseApril2025.expected \
+	viewInstantiationByModuleViewApril2025.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude -no-prelude \
+  < $srcdir/viewInstantiationByModuleViewApril2025.maude -no-banner -no-advise \
+  > viewInstantiationByModuleViewApril2025.out 2>&1
+
+diff $srcdir/viewInstantiationByModuleViewApril2025.expected viewInstantiationByModuleViewApril2025.out > /dev/null 2>&1
