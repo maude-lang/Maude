@@ -1,0 +1,56 @@
+***
+***	Test for the instantiation of a parameterized view containing an
+***	op->term mapping by a theory-view. Here the problem is in
+***	the canonical renaming that is computed to map from the
+***	parameterized view, PV{X :: T} from B to BASE{X} to its
+***	instance, PV{TV} from B to BASE{TV}.
+***
+***	If the first user sort in a kind in BASE{X} does not appear
+***	in the parameter theory copy of T then term->op mappings and
+***	op->op mappings in this canonical renaming maybe missing this sort
+***	and may fail to match. Then instantiating the op->term mapping will
+***	cause a self-check failure.
+***
+***	The solution is to use BASE{X} to compute the sorts for the
+***	operator mappings in the canonical renaming.
+***
+
+fth T is
+  sort Small .
+  op f : Small -> Small .
+endfth
+
+fth T2 is
+  sort Little .
+  op h : Little -> Little .
+endfth
+
+view TV from T to T2 is
+  sort Small to Little .
+  op f to h .
+endv
+
+fth B is
+  sort Tiny .
+  op g : Tiny -> Tiny .
+endfth
+
+fmod USE-B{X :: B} is
+  eq g(N:X$Tiny) = N:X$Tiny [label "raw thumb"] .
+endfm
+
+fmod BASE{X :: T} is
+  sort Big .
+  subsort X$Small < Big .  *** this triggers the bug
+endfm
+
+view PV{X :: T} from B to BASE{X} is
+  sort Tiny to X$Small .
+  op g(N:Tiny) to term f(f(N:X$Small)) .
+endv
+
+fmod TEST{Y :: T2} is
+  pr USE-B{PV{TV}{Y}} .
+endfm
+
+show eqs .
