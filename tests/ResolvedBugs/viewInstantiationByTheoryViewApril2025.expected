@@ -1,0 +1,2 @@
+eq ["raw thumb"] : h(h(N:Y$Little)) = N:Y$Little .
+Bye.

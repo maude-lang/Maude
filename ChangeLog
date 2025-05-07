@@ -1,3 +1,16 @@
+2025-05-06  Saruman the White  <eker@eker10>
+
+	* tests/ResolvedBugs/viewInstantiationByTheoryViewApril2025.maude:
+	added
+
+2025-05-05  Saruman the White  <eker@eker10>
+
+	* tests/ResolvedBugs/viewInstantiationAwkwardCaseApril2025.maude:
+	added
+
+	* tests/ResolvedBugs/viewInstantiationByModuleViewApril2025.maude:
+	added
+
 2024-06-05  Steven Eker  <eker@eker10>
 
 	* INSTALL: added GNU automake to prerequisites
