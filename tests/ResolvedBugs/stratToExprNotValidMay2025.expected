@@ -1,0 +1,14 @@
+Warning: <standard input>, line 22 (view NatF1): variable J:Nat is used before
+    it is bound in condition of test strategy.
+Warning: <standard input>, line 27 (view NatF2): lhs of strategy mapping has
+    non-variable argument 0.
+Warning: <standard input>, line 32 (view NatG): using the same variable base
+    name N for two left hand side variables in an strategy mapping is not
+    allowed.
+Warning: <standard input>, line 42 (smod MAIN): unusable view NatF1.
+Warning: <standard input>, line 43 (smod MAIN): unusable view NatF2.
+Warning: <standard input>, line 44 (smod MAIN): unusable view NatG.
+Warning: <standard input>, line 41 (smod MAIN): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Bye.

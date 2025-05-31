@@ -1,3 +1,14 @@
+2025-05-30  Rubén Rubio  <rubenrub@ucm.es>
+
+	* importTranslation.cc (ImportTranslation::translateStrategy):
+	use Sort::FIRST_USER_SORT
+
+	* instantiateViewWithFreeParameters.cc (View::handleStratAwkwardCase):
+	use Sort::KIND and variable lifting at the kind level
+
+	* view.cc (View::insertStratToExprMapping):
+	removed deletes to avoid double free
+
 2025-04-26  Saruman the White  <eker@eker10>
 
 	* renaming.cc (Renaming::typeMatch): converted commented out cerr

@@ -820,15 +820,16 @@ View::handleStratAwkwardCase(View* copy,
       VariableTerm* vt = safeCast(VariableTerm*, i.argument());
       int variableName = vt->id();
       const ConnectedComponent* component = domain[j]->component();
-      Sort* sort = component->sort(Sort::FIRST_USER_SORT);
+      Sort* sort = component->sort(Sort::KIND);
       VariableSymbol* variableSymbol = safeCast(VariableSymbol*, fromTheory->instantiateVariable(sort));
       arguments[j] = new VariableTerm(variableSymbol, variableName);
     }
   CallStrategy* newFromCall = new CallStrategy(s, s->makeAuxiliaryTerm(arguments));
   //
-  //	We next make a copy of toExpr.
+  //	We next make a copy of toExpr; this will not have variable indices, and
+  //	will have each variable lifted to the kind level.
   //
-  ImportTranslation toExprTranslation(copy->toModule);
+  ImportTranslation toExprTranslation(copy->toModule, nullptr, false, true);
   StrategyExpression* toExprCopy = ImportModule::deepCopyStrategyExpression(&toExprTranslation, toExpr);
   //
   //	Finally we insert it into the view instantiation.

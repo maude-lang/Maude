@@ -173,7 +173,7 @@ ImportTranslation::translateStrategy(RewriteStrategy* strat,
   const Vector<Sort*>& domain = strat->getDomain();
   Vector<int> sortNames(nrArgs);
   for (int i = 0; i < nrArgs; i++)
-    sortNames[i] = domain[i]->id();
+    sortNames[i] = domain[i]->component()->sort(Sort::FIRST_USER_SORT)->id();
 
   for (RenamingList::const_iterator i = renamings.begin(), e = renamings.end(); i != e; ++i)
     {

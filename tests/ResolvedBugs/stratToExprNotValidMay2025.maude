@@ -1,0 +1,45 @@
+***
+***	Test for strat to expr mappings that do not satisfy the requirements:
+*** either the strategy is not well-formed (unbound variables), the are
+*** repeated variables in the left-hand side, or non-variable terms.
+***
+*** Maude should show an warning and invalidate the view, not an internal error.
+***
+
+sth F is
+	sort Elt .
+	op 0 : -> Elt .
+	strat f : Elt @ Elt .
+endsth
+
+sth G is
+	sort Elt .
+	strat g : Elt Elt @ Elt .
+endsth
+
+view NatF1 from F to NAT is
+	sort Elt to Nat .
+	strat f(N:Elt) to expr match M:Nat s.t. M:Nat = J:Nat .
+endv
+
+view NatF2 from F to NAT is
+	sort Elt to Nat .
+	strat f(0) to expr idle .
+endv
+
+view NatG from G to NAT is
+	sort Elt to Nat .
+	strat g(N:Elt, N:Elt) to expr idle .
+endv
+
+smod PARAM-F{X :: F} is
+endsm
+
+smod PARAM-G{X :: F} is
+endsm
+
+smod MAIN is
+	protecting PARAM-F{NatF1} .
+	protecting PARAM-F{NatF2} .
+	protecting PARAM-G{NatG} .
+endsm
