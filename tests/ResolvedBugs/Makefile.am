@@ -70,7 +70,8 @@ TESTS = \
 	stringToRatConversionMarch2024 \
 	viewInstantiationAwkwardCaseApril2025 \
 	viewInstantiationByModuleViewApril2025 \
-	viewInstantiationByTheoryViewApril2025
+	viewInstantiationByTheoryViewApril2025 \
+	stratToExprNotValidMay2025
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -144,7 +145,8 @@ MAUDE_FILES = \
 	stringToRatConversionMarch2024.maude \
 	viewInstantiationAwkwardCaseApril2025.maude \
 	viewInstantiationByModuleViewApril2025.maude \
-	viewInstantiationByTheoryViewApril2025.maude
+	viewInstantiationByTheoryViewApril2025.maude \
+	stratToExprNotValidMay2025.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -218,6 +220,7 @@ RESULT_FILES = \
 	stringToRatConversionMarch2024.expected \
 	viewInstantiationAwkwardCaseApril2025.expected \
 	viewInstantiationByModuleViewApril2025.expected \
-	viewInstantiationByTheoryViewApril2025.expected
+	viewInstantiationByTheoryViewApril2025.expected \
+	stratToExprNotValidMay2025.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

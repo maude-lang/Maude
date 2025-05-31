@@ -1,3 +1,8 @@
+2024-05-30  Rubén Rubio  <rubenrub@ucm.es>
+
+	* metaView.cc (MetaView::handleTermAndExprMappings):
+	delete the current expressions too
+
 2024-05-02  Steven Eker  <eker@pup>
 
 	* miNarrowSearch.cc (InterpreterManagerSymbol::makeNarrowingSequenceSearch3):

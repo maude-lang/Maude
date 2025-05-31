@@ -109,7 +109,7 @@ MetaView::handleTermAndExprMappings()
 				       toExprs[i],
 				       toModule)))
 	  {
-	    for (++i; i < nrMappings; ++i)
+	    for (; i < nrMappings; ++i)
 	      {
 		delete fromExprs[i];
 		delete toExprs[i];

@@ -1071,8 +1071,6 @@ View::insertStratToExprMapping(CallStrategy* fromCall,
 	  IssueWarning(*(i.argument()) <<
 		       ": lhs of strategy mapping has non-variable argument " <<
 		       QUOTE(i.argument()) << '.');
-	  delete fromCall;
-	  delete toExpr;
 	  for (Term* t : vars)
 	    delete t;
 	  return false;
@@ -1086,8 +1084,6 @@ View::insertStratToExprMapping(CallStrategy* fromCall,
 	  IssueWarning(*(i.argument()) <<
 		       ": using the same variable base name " << QUOTE(Token::name(base)) <<
 		       " for two left hand side variables in an strategy mapping is not allowed.");
-	  delete fromCall;
-	  delete toExpr;
 	  delete toVar;
 	  for (Term* t : vars)
 	    delete t;
@@ -1106,8 +1102,8 @@ View::insertStratToExprMapping(CallStrategy* fromCall,
   VariableInfo vinfo;
   if (!toExpr->check(vinfo, lhsVars))
     {
-      delete fromCall;
-      delete toExpr;
+      for (Term* t : vars)
+        delete t;
       return false;
     }
   int nrVars = vinfo.getNrRealVariables();
