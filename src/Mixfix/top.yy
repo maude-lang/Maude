@@ -236,7 +236,7 @@ int yylex(YYSTYPE* lvalp);
 %type <yyToken> cSimpleTokenBarDot
 %type <yyToken> cTokenBarDotCommaRight cTokenBarDotCommaNumber
 %type <yyToken> cTokenBarOpenLeftIn cTokenBarDotCommaClose cOptionToken cTokenBarDotOptionToken
-%type <yyToken> sortName sortToken sortDot tokenDot
+%type <yyToken> sortName sortToken innerToken sortDot tokenDot
 
 /*
  *	Nonterminals that return Interpreter::SearchKind.
