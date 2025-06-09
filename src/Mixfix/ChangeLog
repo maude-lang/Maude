@@ -1,3 +1,20 @@
+2025-06-06  Saruman the White  <eker@eker10>
+
+	* top.yy: added innerToken
+
+	* modules.yy (sortNameFrag): clear fragment buffer before we start
+	using it rather than after we're done with it. This fixes a bug
+	where a parsing error leaves crap in the fragment buffer
+	(innerToken): added
+	(innerFrag): use innerToken
+
+	* auxProperty.cc (Token::skipSortName): allow . and :: in sort
+	names if they are inside {} so as to permit . and :: in view names
+	used to instantiate parameterized sorts
+	(Token::computeAuxProperty): allow . and :: in sort names if they
+	are inside {} when checking fo AUX_CONSTANT and AUX_VARIABLE
+	properties
+
 2025-05-30  Rubén Rubio  <rubenrub@ucm.es>
 
 	* importTranslation.cc (ImportTranslation::translateStrategy):

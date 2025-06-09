@@ -51,9 +51,6 @@ Token::skipSortName(const char* tokenString, bool& parameterized)
 	{
 	case '\0':
 	  return (seenName && depth == 0) ? p : 0;
-	case '.':
-	case ':':
-	  return 0;
 	case '`':
 	  {
 	    switch (*(p + 1))
@@ -112,6 +109,13 @@ Token::skipSortName(const char* tokenString, bool& parameterized)
 	      }
 	    break;
 	  }
+	case '.':
+	case ':':
+	  {
+	    if (depth == 0)
+	      return 0;
+	    // fall thru
+	  }
 	default:
 	  {
 	    seenName = true;
@@ -164,23 +168,31 @@ Token::computeAuxProperty(const char* tokenString)
     //
     //	Check for constant or variable.
     //
+    int depth = 0;
     int len = strlen(tokenString);
     for (int i = len - 1; i > 0; i--)
       {
 	char c = tokenString[i];
-	if (c == '.')
+	if (c == '}')
+	  ++depth;
+	else if (c == '{')
+	  --depth;
+	else if (depth == 0)
 	  {
-	    int t = computeAuxProperty(tokenString + i + 1);
-	    if (t == AUX_SORT || t == AUX_STRUCTURED_SORT || t == AUX_KIND)
-	      return AUX_CONSTANT;
-	    break;
-	  }
-	else if (c == ':')
-	  {
-	    int t = computeAuxProperty(tokenString + i + 1);
-	    if (t == AUX_SORT || t == AUX_STRUCTURED_SORT || t == AUX_KIND)
-	      return AUX_VARIABLE;
-	    break;
+	    if (c == '.')
+	      {
+		int t = computeAuxProperty(tokenString + i + 1);
+		if (t == AUX_SORT || t == AUX_STRUCTURED_SORT || t == AUX_KIND)
+		  return AUX_CONSTANT;
+		break;
+	      }
+	    else if (c == ':')
+	      {
+		int t = computeAuxProperty(tokenString + i + 1);
+		if (t == AUX_SORT || t == AUX_STRUCTURED_SORT || t == AUX_KIND)
+		  return AUX_VARIABLE;
+		break;
+	      }
 	  }
       }
   }

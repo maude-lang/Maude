@@ -991,19 +991,23 @@ sortName	:	sortNameFrag
 			    t = fragments[0];
 			  else
 			    t.tokenize(Token::bubbleToPrefixNameCode(fragments), fragments[0].lineNumber());
-			  fragClear();
 			  $$ = t;
 			}
 		;
 
-sortNameFrag	:	sortToken		{ fragStore($1); }
+sortNameFrag	:	sortToken		{ fragClear(); fragStore($1); }
 		|	sortNameFrag '{'	{ fragStore($2); }
-			sortNameFrags '}'	{ fragStore($5); }
+			innerFrags '}'		{ fragStore($5); }
 		;
 
-sortNameFrags	:	sortNameFrags ','	{ fragStore($2); }
-			sortNameFrag		{}
-		|	sortNameFrag		{}
+innerFrag	:	innerToken		{ fragStore($1); }
+		|	innerFrag '{'		{ fragStore($2); }
+			innerFrags '}'		{ fragStore($5); }
+		;
+
+innerFrags	:	innerFrags ','		{ fragStore($2); }
+			innerFrag		{}
+		|	innerFrag		{}
 		;
 		
 tokenDot	:	ENDS_IN_DOT
@@ -1056,6 +1060,15 @@ sortToken	:	IDENTIFIER
 		|	KW_ID_HOOK | KW_OP_HOOK | KW_TERM_HOOK | KW_PCONST
 		
 		|	'=' | '|' | '+' | '*' |	KW_ARROW2
+		;
+		
+/*
+ *	An inner token adds back these excluded tokens except
+ *	'(' ')' '[' ']' '{' '}' ','
+ */
+innerToken	:	sortToken | ENDS_IN_DOT | KW_ID 
+		|	':' | '@' | '<' | '.'
+		|	KW_ARROW | KW_PARTIAL | KW_COLON2 | KW_ASSIGN
 		;
 
 /*
