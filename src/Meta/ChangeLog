@@ -1,3 +1,8 @@
+2025-06-15  Saruman the White  <eker@eker10>
+
+	* metaDownView.cc (MetaLevel::downView): check that id is a valid
+	view name
+
 2024-05-30  Rubén Rubio  <rubenrub@ucm.es>
 
 	* metaView.cc (MetaView::handleTermAndExprMappings):

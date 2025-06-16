@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2018-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2018-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,27 +34,31 @@ MetaLevel::downView(DagNode* metaView, Interpreter* owner)
       DagNode* metaParameterDeclList;
       if (downHeader(f->getArgument(0), id, metaParameterDeclList))
 	{
-	  if (ModuleExpression* fromTheory = downModuleExpression(f->getArgument(1)))
+	  if (Token::isValidViewName(id))
 	    {
-	      if (ModuleExpression* toModule = downModuleExpression(f->getArgument(2)))
+	      if (ModuleExpression* fromTheory = downModuleExpression(f->getArgument(1)))
 		{
-		  DagNode* metaOpMappings = f->getArgument(4);
-		  DagNode* metaStratMappings = f->getArgument(5);
-		  Token name;
-		  name.tokenize(id, FileTable::META_LEVEL_CREATED);
-		  MetaView* view = new MetaView(name, metaOpMappings, metaStratMappings, this, owner);
-		  if (downParameterDeclList(metaParameterDeclList, view))
+		  if (ModuleExpression* toModule = downModuleExpression(f->getArgument(2)))
 		    {
-		      view->addFrom(fromTheory);
-		      view->addTo(toModule);
-		      if (downSortMappingSet(f->getArgument(3), view) &&
-			  downOpMappingSet(metaOpMappings, view) &&
-			  downStratMappingSet(metaStratMappings, view))
-			return view;
+		      DagNode* metaOpMappings = f->getArgument(4);
+		      DagNode* metaStratMappings = f->getArgument(5);
+		      Token name;
+		      name.tokenize(id, FileTable::META_LEVEL_CREATED);
+		      MetaView* view =
+			new MetaView(name, metaOpMappings, metaStratMappings, this, owner);
+		      if (downParameterDeclList(metaParameterDeclList, view))
+			{
+			  view->addFrom(fromTheory);
+			  view->addTo(toModule);
+			  if (downSortMappingSet(f->getArgument(3), view) &&
+			      downOpMappingSet(metaOpMappings, view) &&
+			      downStratMappingSet(metaStratMappings, view))
+			    return view;
+			}
+		      delete view;
 		    }
-		  delete view;
+		  fromTheory->deepSelfDestruct();
 		}
-	      fromTheory->deepSelfDestruct();
 	    }
 	}
     }

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1040,4 +1040,15 @@ Token::peelParens(Vector<Token>& tokens)
   for (int i = 1; i < len - 1; ++i)
     tokens[i - 1] = tokens[i];
   tokens.resize(len - 2);
+}
+
+bool
+Token::isValidViewName(int code)
+{
+  for (const char* p = stringTable.name(code); *p; ++p)
+    {
+      if (specialChar(*p))
+	return false;
+    }
+  return true;
 }

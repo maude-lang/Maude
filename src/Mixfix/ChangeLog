@@ -1,3 +1,11 @@
+2025-06-15  Saruman the White  <eker@eker10>
+
+	* view.cc (View::evaluate): check for valid view name
+
+	* token.cc (Token::isValidViewName): added
+
+	* token.hh (class Token): added decl for isValidViewName()
+
 2025-06-06  Saruman the White  <eker@eker10>
 
 	* top.yy: added innerToken
