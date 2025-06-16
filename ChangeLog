@@ -2,6 +2,10 @@
 
 	* tests/ResolvedBugs/invalidStrategyExpressionJun2025.maude:
 	added
+	* tests/ResolvedBugs/viewInstantiationByModuleViewStrategyMay2025.maude:
+	added
+	* tests/ResolvedBugs/viewInstantiationByTheoryViewStrategyMay2025.maude:
+	added
 
 2025-05-30  Rubén Rubio  <rubenrub@ucm.es>
 

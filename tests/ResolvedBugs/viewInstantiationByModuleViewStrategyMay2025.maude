@@ -1,0 +1,44 @@
+***
+*** Counterpart of the viewInstantiationByModuleViewApril2025 test for
+*** strategy to strategy expression mappings.
+***
+
+sth T is
+  sort Small .
+  strat f : Small @ Small .
+endsth
+
+smod M is
+  sort Num .
+  strat s : Num @ Num .
+endsm
+
+view MV from T to M is
+  sort Small to Num .
+  strat f to s .
+endv
+
+sth B is
+  sort Tiny .
+  strat g : Tiny @ Tiny .
+endsth
+
+smod USE-B{X :: B} is
+  sd g(N:X$Tiny) := match N:X$Tiny [label "raw thumb"] .
+endsm
+
+smod BASE{X :: T} is
+  sort Big .
+  subsort X$Small < Big .  *** this triggers the bug
+endsm
+
+view PV{X :: T} from B to BASE{X} is
+  sort Tiny to X$Small .
+  strat g(N:Tiny) to expr f(N:X$Small) .
+endv
+
+smod TEST is
+  pr USE-B{PV{MV}} .
+endsm
+
+show sds .
