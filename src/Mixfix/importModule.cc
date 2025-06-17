@@ -65,6 +65,7 @@
 
 //	strategy language class definitions
 #include "strategyExpression.hh"
+#include "callStrategy.hh"
 
 //	our stuff
 #include "ooSorts.cc"
@@ -853,7 +854,40 @@ ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& impor
 	{
 	  int label = importTranslation.translateLabel(sdef->getLabel().id());
 	  RewriteStrategy* strategy = importTranslation.translate(sdef->getStrategy());
-	  Term* lhs = strategy->copyAuxiliaryTerm(sdef->getLhs(), &importTranslation);
+	  //
+	  // If strategy is null, the named strategy has been mapped by the view into
+	  // a expression. Only call expressions are allowed in the left-hand side
+	  // of a strategy definition, so we have to check it and obtain the named
+	  // strategy from the expression.
+	  //
+	  Term* lhs;
+	  if (strategy != nullptr)
+	    lhs = strategy->copyAuxiliaryTerm(sdef->getLhs(), &importTranslation);
+	  else
+	    {
+	      // We create a temporary call expression for the LHS and translate it
+	      // to check whether the result is a call and take the term from it.
+	      // This copies some terms and create temporary strategy expression that
+	      // can be avoided by implementing this in ImportTranslation.
+	      CallStrategy* oldLhs = new CallStrategy(sdef->getStrategy(), sdef->getLhs()->deepCopy());
+	      StrategyExpression* newLhs = importTranslation.translateExpr(oldLhs);
+	      if (CallStrategy* cs = dynamic_cast<CallStrategy*>(newLhs))
+		{
+		  strategy = cs->getStrategy();
+		  lhs = cs->getTerm()->deepCopy();
+		  delete oldLhs;
+	          delete newLhs;
+		}
+	       else
+		{
+		   IssueWarning(*importer << ": left-hand side of strategy definition\n  " << sdef <<
+		                "\nwould be instantiated to " << QUOTE(newLhs) << " by a strategy"
+		                " to expression mapping. The definition would be ill-formed and thus it cannot be used.");
+		  delete oldLhs;
+		  delete newLhs;
+		  continue;
+		}
+	    }
 	  StrategyExpression* rhs = deepCopyStrategyExpression(&importTranslation, sdef->getRhs());
 	  Vector<ConditionFragment*> condition;
 	  deepCopyCondition(&importTranslation, sdef->getCondition(), condition);

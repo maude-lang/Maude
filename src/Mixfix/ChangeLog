@@ -1,3 +1,8 @@
+2025-06-16  Rubén Rubio <rubenrub@ucm.es>
+
+	* importModule.cc (donateStatements2): deal with strat->expr
+	mapping on the LHS of a strategy expression
+
 2025-06-15  Saruman the White  <eker@eker10>
 
 	* view.cc (View::evaluate): check for valid view name
