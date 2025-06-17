@@ -887,7 +887,6 @@ MixfixModule::makeComponentProductions()
       int sortListNt = nonTerminal(i, SORT_LIST_TYPE);
       const ConnectedComponent* component = components[i];
       int nrSorts = component->nrSorts();
-      //variableTokenCode.expandTo(getSorts().length());
       for (int j = 1; j < nrSorts; j++)  // skip error sort
 	{
 	  const Sort* sort = component->sort(j);

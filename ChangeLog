@@ -1,3 +1,7 @@
+2025-06-16  Saruman the White  <eker@eker10>
+
+	* tests/ResolvedBugs/fragmentBufferJune2025.maude: added
+
 2025-06-16  Rubén Rubio  <rubenrub@ucm.es>
 
 	* tests/ResolvedBugs/invalidStrategyExpressionJun2025.maude:

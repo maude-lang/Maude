@@ -1,0 +1,20 @@
+***
+***	We used to clear the sort fragment buffer after we finished recognizing
+***	a sort, but in the case of an error it would be left uncleared and cause
+***	spurious errors.
+***
+
+fmod FOO is
+*** ] is not allowed in sort names and causes the parsing of the structured
+*** sort to fail with a bison syntax error.
+  sort s{]} .
+endfm
+
+fmod BAR is
+*** The tokens s { stashed in the uncleared fragment buffer ended up prepended
+*** on to Bar.
+   sort Bar .
+   op c : -> Bar .
+endfm
+
+show sorts .
