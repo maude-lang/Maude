@@ -1,0 +1,41 @@
+***
+*** Test for strategy to expression mapping that instantiate the
+*** left-hand side of a strategy definition to a expression other
+*** than a call (not valid), to a call (valid) and to a call with
+*** less variables.
+*** 
+
+sth STRIV is
+	including TRIV .
+	strat st1 @ Elt .
+	strat st2 @ Elt .
+	strat st3 : Elt @ Elt .
+endsth
+
+smod WRONG{X :: STRIV} is
+	sd st1 := idle .
+	sd st2 := fail .
+	csd st3(E:X$Elt) := idle if E:X$Elt = E:X$Elt .
+endsm
+
+smod SBOOL is
+	protecting BOOL .
+	strat sb2 @ Bool .
+	strat sb3 : Bool @ Bool .
+endsm
+
+view Match from STRIV to SBOOL is
+	sort Elt to Bool .
+	strat st1 to expr match true .  *** yields ill-formed definition
+	strat st2 to expr sb2 .  *** yields valid definition
+	var X : Elt .
+	strat st3(X) to expr sb3(true) .  *** yields unbound variables
+endv
+
+smod MAIN is
+	including WRONG{Match} .
+endsm
+
+srew true using sb2 .
+srew false using sb3(true) .
+show sds .

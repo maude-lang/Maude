@@ -1,3 +1,8 @@
+2025-06-16  Rubén Rubio  <rubenrub@ucm.es>
+
+	* tests/ResolvedBugs/invalidStrategyExpressionJun2025.maude:
+	added
+
 2025-05-30  Rubén Rubio  <rubenrub@ucm.es>
 
 	* tests/ResolvedBugs/stratToExprNotValidMay2025.maude:
