@@ -1,3 +1,10 @@
+2025-06-16  Saruman the White  <eker@eker10>
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): deleted
+	commented out code for variableTokenCode
+
+	* auxProperty.cc (Token::skipSortName): fix comment; use nullptr
+
 2025-06-16  Rubén Rubio <rubenrub@ucm.es>
 
 	* importModule.cc (donateStatements2): deal with strat->expr

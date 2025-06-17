@@ -1,0 +1,4 @@
+Warning: <standard input>, line 10 (fmod FOO): syntax error
+sort Bool .
+sort Bar .
+Bye.

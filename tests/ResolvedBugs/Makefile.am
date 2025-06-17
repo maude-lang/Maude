@@ -74,7 +74,8 @@ TESTS = \
 	stratToExprNotValidMay2025 \
 	invalidStrategyDefinitionJune2025 \
 	viewInstantiationByModuleViewStrategyMay2025 \
-	viewInstantiationByTheoryViewStrategyMay2025
+	viewInstantiationByTheoryViewStrategyMay2025 \
+	fragmentBufferJune2025
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -152,7 +153,8 @@ MAUDE_FILES = \
 	stratToExprNotValidMay2025.maude \
 	invalidStrategyDefinitionJune2025.maude \
 	viewInstantiationByModuleViewStrategyMay2025.maude \
-	viewInstantiationByTheoryViewStrategyMay2025.maude
+	viewInstantiationByTheoryViewStrategyMay2025.maude \
+	fragmentBufferJune2025.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -230,6 +232,7 @@ RESULT_FILES = \
 	stratToExprNotValidMay2025.expected \
 	invalidStrategyDefinitionJune2025.expected \
 	viewInstantiationByModuleViewStrategyMay2025.expected \
-	viewInstantiationByTheoryViewStrategyMay2025.expected
+	viewInstantiationByTheoryViewStrategyMay2025.expected \
+	fragmentBufferJune2025.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
