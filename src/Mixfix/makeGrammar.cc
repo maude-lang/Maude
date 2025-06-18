@@ -101,7 +101,13 @@ MixfixModule::makeParameterizedSortProductions()
 	{
 	  //
 	  //	Need to make a non-terminal for each lead token of a parameterized sort
-	  //	so we can parse on-the-fly variables.
+	  //	so we can parse on-the-fly variables such as X:Foo{Bar}.
+	  //
+	  //	This is to deal with say, X:Foo being a token with in the user's signature,
+	  //	while we still need to recognize Foo{...} and X:Foo{...}. We make X:Foo
+	  //	be a rhs for a new nonterminal to represent ?:Foo and add a terminal
+	  //	"Foo variable" as another rhs for ?:Foo, that will be used to map tokens
+	  //	such as Y:Foo where Y:Foo is not a token in the user's signature.
 	  //
 	  Vector<int> parts;
 	  Token::splitParameterizedSort(name, parts);
@@ -925,9 +931,7 @@ MixfixModule::makeComponentProductions()
 	  IntMap::const_iterator p = leadTokens.find(sortNameCode);
 	  if (p != leadTokens.end())
 	    {
-	      //cerr << "(" << p->first << ", " << p->second << ")" << endl;
 	      rhsOne[0] = p->second;
-	      //cerr << termNt << " ::= " << rhsOne[0] << endl;
 	      parser->insertProduction(termNt, rhsOne, 0, gatherAny,
 				       MixfixParser::MAKE_VARIABLE, sortIndex);
 	      parser->insertProduction(VARIABLE, rhsOne, 0, gatherAny,
@@ -939,7 +943,6 @@ MixfixModule::makeComponentProductions()
 	      int t = Token::encode((sortName + " variable").c_str());
 	      parser->insertVariableTerminal(sortNameCode, t);
 	      rhsOne[0] = t;
-	      //cerr << termNt << " ::= " << rhsOne[0] << endl;
 	      parser->insertProduction(termNt, rhsOne, 0, emptyGather,
 				       MixfixParser::MAKE_VARIABLE, sortIndex);
 	      parser->insertProduction(VARIABLE, rhsOne, 0, emptyGather,
