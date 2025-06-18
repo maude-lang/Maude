@@ -1,0 +1,92 @@
+Warning: <standard input>, line 10 (view B`{`}AD): B`{`}AD is not a valid view
+    name.
+Warning: <standard input>, line 15 (fmod TEST): unusable view B`{`}AD.
+Warning: <standard input>, line 14 (fmod TEST): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+sort Bool .
+sort Zero .	subsorts Zero < Nat NeSet{NAT::AS::TRIV} Set{NAT::AS::TRIV} .
+sort NzNat .	subsorts NzNat < Nat NeSet{NAT::AS::TRIV} Set{NAT::AS::TRIV} .
+sort Nat .	subsorts NzNat Zero < Nat < NeSet{NAT::AS::TRIV} Set{
+    NAT::AS::TRIV} .
+sort NeSet{NAT::AS::TRIV} .	subsorts NzNat Zero Nat < NeSet{NAT::AS::TRIV}
+    < Set{NAT::AS::TRIV} .
+sort Set{NAT::AS::TRIV} .	subsorts NzNat Zero Nat NeSet{NAT::AS::TRIV} <
+    Set{NAT::AS::TRIV} .
+==========================================
+reduce in TEST2 : X2:NeSet{NAT::AS::TRIV} == X .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: false
+==========================================
+reduce in TEST2 : Y2:NeSet{NAT::AS::TRIV} == Y .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: false
+sort Bool .
+sort Zero .	subsorts Zero < Nat NeSet{NAT.AS.TRIV} Set{NAT.AS.TRIV} .
+sort NzNat .	subsorts NzNat < Nat NeSet{NAT.AS.TRIV} Set{NAT.AS.TRIV} .
+sort Nat .	subsorts NzNat Zero < Nat < NeSet{NAT.AS.TRIV} Set{NAT.AS.TRIV}
+    .
+sort NeSet{NAT.AS.TRIV} .	subsorts NzNat Zero Nat < NeSet{NAT.AS.TRIV} <
+    Set{NAT.AS.TRIV} .
+sort Set{NAT.AS.TRIV} .	subsorts NzNat Zero Nat NeSet{NAT.AS.TRIV} < Set{
+    NAT.AS.TRIV} .
+==========================================
+reduce in TEST3 : X2:NeSet{NAT.AS.TRIV} == X .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: false
+==========================================
+reduce in TEST3 : Y2:NeSet{NAT.AS.TRIV} == Y .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result Bool: false
+Warning: <standard input>, line 52 (fmod TEST4): `[Bad`] is not a valid sort
+    name.
+Warning: <standard input>, line 52 (fmod TEST4): B`{ad is not a valid sort
+    name.
+Warning: <standard input>, line 52 (fmod TEST4): B`,a`,d`{X`} is not a valid
+    sort name.
+Warning: <standard input>, line 52 (fmod TEST4): B:a:d is not a valid sort
+    name.
+Warning: <standard input>, line 52 (fmod TEST4): B.a.d`{X`} is not a valid sort
+    name.
+Warning: <standard input>, line 51 (fmod TEST4): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 51 (fmod TEST4): module TEST4 is unusable due
+    to unpatchable errors.
+==========================================
+reduce in META-LEVEL : metaReduce(['TEST4], 'true.Bool) .
+Warning: <metalevel>: unable to use module TEST4 due to unpatchable errors.
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result [ResultPair?]: metaReduce(sth 'TEST4 is
+  including 'TEST4 .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+  none
+  none
+endsth, 'true.Bool)
+Warning: <standard input>, line 62 (fmod TEST5): `[Bad`] is not a valid sort
+    name.
+Warning: <standard input>, line 62 (fmod TEST5): undeclared sort `[Bad`].
+Warning: <standard input>, line 61 (fmod TEST5): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 67 (omod TEST6): `[Bad`] is not a valid class
+    name.
+Warning: <standard input>, line 66 (omod TEST6): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+sort X$Elt .
+sort Bool .
+sort Ok{X:Y} .
+sort Ok{X.Y} .
+sort Ok{X,Y}{X.Y} .
+sort X$Elt .
+sort Bool .
+sort Ok{X:Y} .
+sort Ok{X.Y} .
+sort Ok{X,Y}{X.Y} .
+Bye.

@@ -75,7 +75,8 @@ TESTS = \
 	invalidStrategyDefinitionJune2025 \
 	viewInstantiationByModuleViewStrategyMay2025 \
 	viewInstantiationByTheoryViewStrategyMay2025 \
-	fragmentBufferJune2025
+	fragmentBufferJune2025 \
+	viewNameApril2025
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -154,7 +155,8 @@ MAUDE_FILES = \
 	invalidStrategyDefinitionJune2025.maude \
 	viewInstantiationByModuleViewStrategyMay2025.maude \
 	viewInstantiationByTheoryViewStrategyMay2025.maude \
-	fragmentBufferJune2025.maude
+	fragmentBufferJune2025.maude \
+	viewNameApril2025.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -233,6 +235,7 @@ RESULT_FILES = \
 	invalidStrategyDefinitionJune2025.expected \
 	viewInstantiationByModuleViewStrategyMay2025.expected \
 	viewInstantiationByTheoryViewStrategyMay2025.expected \
-	fragmentBufferJune2025.expected
+	fragmentBufferJune2025.expected \
+	viewNameApril2025.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

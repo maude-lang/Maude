@@ -1,3 +1,27 @@
+2025-06-18  Saruman the White  <eker@eker10>
+
+	* ooProcess.cc (SyntacticPreModule::processClassSorts): use
+	Token::isValidSortName(); use markAsBad() so module can't be
+	imported at the metalevel
+
+	* process.cc (SyntacticPreModule::processSorts): use
+	Token::isValidSortName(); use markAsBad() so module can't be
+	imported at the metalevel
+	(SyntacticPreModule::getSort): symmetric changes
+
+	* token.hh (isValidSortName): added
+
+	* process.cc (SyntacticPreModule::getSort): check for bad sort
+	names for sorts that get added as a fix up
+	(SyntacticPreModule::process): update comments now that multiple
+	calls can markAsBad
+
+	* ooProcess.cc (SyntacticPreModule::processClassSorts): check that
+	class name is also a valid sort name
+
+	* process.cc (SyntacticPreModule::processSorts): check that new
+	sort if a valid sort name
+
 2025-06-17  Saruman the White  <eker@eker10>
 
 	* token.cc (Token::split): don't consider : . inside correctly

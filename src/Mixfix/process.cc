@@ -61,14 +61,14 @@ be patched up and thus it cannot be used or imported.");
   //	Hande sorts and subsorts.
   //
   flatModule->importSorts();  // could markAsBad()
-  processSorts();  // might add missing sorts
-  processSubsorts();  // might add missing sorts
-  checkOpTypes();  // might add missing sorts
+  processSorts();  // might add missing sorts; could markAsBad()
+  processSubsorts();  // might add missing sorts; could markAsBad()
+  checkOpTypes();  // might add missing sorts; could markAsBad()
 
   if (MixfixModule::isObjectOriented(getModuleType()))
     {
       processClassSorts();  // could markAsBad()
-      checkAttributeTypes();  // might add missing sorts
+      checkAttributeTypes();  // might add missing sorts; could markAsBad()
     }
 
   flatModule->closeSortSet();  // computes connectedComponents; could markAsBad()
@@ -165,6 +165,12 @@ SyntacticPreModule::processSorts()
 	  Sort* sort = flatModule->findSort(code);
 	  if (sort == 0)
 	    {
+	      if (!Token::isValidSortName(code))
+		{
+		  IssueWarning(LineNumber(token.lineNumber()) << ": " << QUOTE(token) <<
+			       " is not a valid sort name.");
+		  flatModule->markAsBad();  // mostly to deny meta-imports
+		}
 	      sort = flatModule->addSort(code);
 	      sort->setLineNumber(token.lineNumber());
 	    }
@@ -223,11 +229,15 @@ SyntacticPreModule::getSort(Token token)
   Sort* sort = flatModule->findSort(code);
   if (sort == 0)
     {
-      //
+      if (!Token::isValidSortName(code))
+	{
+	  IssueWarning(LineNumber(token.lineNumber()) << ": " << QUOTE(token) <<
+		       " is not a valid sort name.");
+	  flatModule->markAsBad();  // mostly to deny meta-imports
+	}
       sort = flatModule->addSort(code);
       sort->setLineNumber(FileTable::SYSTEM_CREATED);
-      IssueWarning(LineNumber(token.lineNumber()) <<
-		   ": undeclared sort " << QUOTE(sort) << '.');
+      IssueWarning(LineNumber(token.lineNumber()) << ": undeclared sort " << QUOTE(sort) << '.');
     }
   return sort;
 }

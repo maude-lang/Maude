@@ -1,3 +1,9 @@
+2025-06-18  Saruman the White  <eker@eker10>
+
+	* metaDown.cc (MetaLevel::downSort): don't allow sorts with bad
+	names
+	(MetaLevel::downSort): use Token::isValidSortName()
+
 2025-06-15  Saruman the White  <eker@eker10>
 
 	* metaDownView.cc (MetaLevel::downView): check that id is a valid
