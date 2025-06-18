@@ -1,3 +1,14 @@
+2025-06-17  Saruman the White  <eker@eker10>
+
+	* token.cc (Token::split): don't consider : . inside correctly
+	nested {}s as split point
+
+	* makeGrammar.cc (MixfixModule::makeParameterizedSortProductions):
+	added explanation of why nonterminals for lead tokens of
+	structured sorts are needed
+	(MixfixModule::makeComponentProductions): removed commented out
+	code
+
 2025-06-16  Saruman the White  <eker@eker10>
 
 	* makeGrammar.cc (MixfixModule::makeComponentProductions): deleted
