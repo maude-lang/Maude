@@ -1,0 +1,82 @@
+***
+***	We had a bug because view names were unrestricted single token
+***	identifers but they ended up inside instantiated sort names and
+***	sort names have many restrictions. This is resolved by no longer
+***	allowing ( ) [ ] { } , in view names and allowing any non-space
+***	characters except these 7 inside of balanced {}s within sort names.
+***
+
+*** This should be rejected
+view B`{`}AD from TRIV to NAT is
+  sort Elt to Nat .
+endv
+
+fmod TEST is
+  inc SET{B`{`}AD} .
+endfm
+
+*** Test : ending up inside sort name as a result of instantiation
+view NAT::AS::TRIV from TRIV to NAT is
+  sort Elt to Nat .
+endv
+
+fmod TEST2 is
+  inc SET{NAT::AS::TRIV} .
+  var X : NeSet{NAT::AS::TRIV} .
+  var Y : NeSet`{NAT::AS::TRIV`} .  *** single token version
+endfm
+
+show sorts .
+
+red X2:NeSet{NAT::AS::TRIV} == (X).NeSet{NAT::AS::TRIV} .
+red Y2:NeSet`{NAT::AS::TRIV`} == (Y).NeSet`{NAT::AS::TRIV`} .
+
+*** Test . ending up inside sort name as a result of instantiation
+view NAT.AS.TRIV from TRIV to NAT is
+  sort Elt to Nat .
+endv
+
+fmod TEST3 is
+  inc SET{NAT.AS.TRIV} .
+  var X : NeSet{NAT.AS.TRIV} .
+  var Y : NeSet`{NAT.AS.TRIV`} .  *** single token version
+endfm
+
+show sorts .
+
+red X2:NeSet{NAT.AS.TRIV} == (X).NeSet{NAT.AS.TRIV} .
+red Y2:NeSet`{NAT.AS.TRIV`} == (Y).NeSet`{NAT.AS.TRIV`} .
+
+*** Bad sort names
+fmod TEST4{X :: TRIV} is
+  sorts `[Bad`] B`{ad B`,a`,d`{X`} B:a:d B.a.d{X} .
+endfm
+
+show sorts .
+
+*** Make sure it can't be used at the metalevel
+red in META-LEVEL : metaReduce(['TEST4], 'true.Bool) .
+
+*** Bad implied sort name
+fmod TEST5 is
+  op f : `[Bad`] -> `[Bad`] .
+endfm
+
+*** Bad class name
+omod TEST6 is
+  class `[Bad`] .
+endom
+
+*** OK sort names in single token form
+fmod TEST7{X :: TRIV} is
+  sorts Ok`{X:Y`} Ok`{X.Y`} Ok`{X`,Y`}`{X.Y`} .
+endfm
+
+show sorts .
+
+*** OK sort names in pretty form
+fmod TEST8{X :: TRIV} is
+  sorts Ok{X:Y} Ok{X.Y} Ok{X,Y}{X.Y} .
+endfm
+
+show sorts .

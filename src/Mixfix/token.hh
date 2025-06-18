@@ -173,6 +173,7 @@ public:
   static int flaggedCode(int code);
   static bool isFlagged(int code);
   static bool isValidViewName(int code);
+  static bool isValidSortName(int code);
   static int unflaggedCode(int code);
   static int fixUp(const char* tokenString);
   static pair<string, bool> makePrettyOpName(int prefixNameCode, int situations);
@@ -243,6 +244,13 @@ inline int
 Token::auxProperty(int code)
 {
   return auxProperties[code];
+}
+
+inline bool
+Token::isValidSortName(int code)
+{
+  int ap = auxProperty(code);
+  return ap == AUX_SORT || ap == AUX_STRUCTURED_SORT;
 }
 
 inline bool

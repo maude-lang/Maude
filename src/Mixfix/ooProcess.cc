@@ -235,6 +235,12 @@ SyntacticPreModule::processClassSorts()
 	  c.classSort = flatModule->findSort(code);
 	  if (c.classSort == 0)
 	    {
+	      if (!Token::isValidSortName(code))
+		{
+		  IssueWarning(LineNumber(c.name.lineNumber()) << ": " << QUOTE(c.name) <<
+			       " is not a valid class name.");
+		  flatModule->markAsBad();  // mostly to deny meta-imports
+		}
 	      c.classSort = flatModule->addSort(code);
 	      c.classSort->setLineNumber(c.name.lineNumber());
 	      localClasses.insert({code, SymbolSet()});

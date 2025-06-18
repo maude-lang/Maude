@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -390,6 +390,8 @@ MetaLevel::downSort(DagNode* metaSort, MixfixModule* m)
   int id;
   if (downQid(metaSort, id))
     {
+      if (!Token::isValidSortName(id))
+	return false;  // nip the problem in the bud
       Sort* sort = m->findSort(id);
       if (sort == 0)
 	{
