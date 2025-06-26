@@ -1,0 +1,2 @@
+sd s(N:Nat) := match N:Nat .
+Bye.

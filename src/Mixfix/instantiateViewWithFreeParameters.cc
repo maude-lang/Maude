@@ -835,7 +835,6 @@ View::handleStratAwkwardCase(View* copy,
   //	Finally we insert it into the view instantiation.
   //
   copy->insertStratToExprMapping(newFromCall, toExprCopy, copy->toModule);
-  copy->addStratMappingVarIndices(varIndices);
   DebugNew("inserted " << newFromCall << " to expr " << toExprCopy << " into " <<
 	   copy << " during the instantiation of " << this);
 }

@@ -1130,8 +1130,9 @@ View::insertStratToExprMapping(CallStrategy* fromCall,
   //	For strat s(...) to expr e we insert
   //	s |-> (s(...), e) into stratExprMap.
   //
-  stratExprMap.insert(StratExprMap::value_type(fromCall->getStrategy()->id(),
-					       StratExprInfo(fromCall, toExpr, contextSpec)));
+  (void) stratExprMap.insert(StratExprMap::value_type(fromCall->getStrategy()->id(),
+	                     StratExprInfo(fromCall, toExpr, contextSpec)));
+
   return true;
 }
 

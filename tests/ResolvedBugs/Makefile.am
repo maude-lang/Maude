@@ -73,6 +73,7 @@ TESTS = \
 	viewInstantiationByTheoryViewApril2025 \
 	stratToExprNotValidMay2025 \
 	invalidStrategyDefinitionJune2025 \
+	viewInstantiationAwkwardCaseStrategyMay2025 \
 	viewInstantiationByModuleViewStrategyMay2025 \
 	viewInstantiationByTheoryViewStrategyMay2025 \
 	fragmentBufferJune2025 \
@@ -153,6 +154,7 @@ MAUDE_FILES = \
 	viewInstantiationByTheoryViewApril2025.maude \
 	stratToExprNotValidMay2025.maude \
 	invalidStrategyDefinitionJune2025.maude \
+	viewInstantiationAwkwardCaseStrategyMay2025.maude \
 	viewInstantiationByModuleViewStrategyMay2025.maude \
 	viewInstantiationByTheoryViewStrategyMay2025.maude \
 	fragmentBufferJune2025.maude \
@@ -233,6 +235,7 @@ RESULT_FILES = \
 	viewInstantiationByTheoryViewApril2025.expected \
 	stratToExprNotValidMay2025.expected \
 	invalidStrategyDefinitionJune2025.expected \
+	viewInstantiationAwkwardCaseStrategyMay2025.expected \
 	viewInstantiationByModuleViewStrategyMay2025.expected \
 	viewInstantiationByTheoryViewStrategyMay2025.expected \
 	fragmentBufferJune2025.expected \

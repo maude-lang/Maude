@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude -no-prelude \
+  < $srcdir/viewInstantiationAwkwardCaseStrategyMay2025.maude -no-banner -no-advise \
+  > viewInstantiationAwkwardCaseStrategyMay2025.out 2>&1
+
+diff $srcdir/viewInstantiationAwkwardCaseStrategyMay2025.expected viewInstantiationAwkwardCaseStrategyMay2025.out > /dev/null 2>&1
