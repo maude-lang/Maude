@@ -1,0 +1,45 @@
+***
+*** Counterpart of the viewInstantiationAwkwardCaseApril2025 test for
+*** strategy to strategy expression mappings.
+***
+
+smod INT is
+  sorts Nat Int .
+  subsort Nat < Int .
+  strat s : Int @ Int .
+endsm
+
+sth A is	
+  sorts Small Big .
+  subsort Small < Big .
+  strat f : Big @ Big .
+endsth
+
+view INT-as-an-A from A to INT is
+  sort Small to Nat .
+  sort Big to Int .
+  strat f(N:Big) to expr s(N:Int) .
+endv
+
+sth B is
+  sort Card .
+  strat g : Card @ Card .
+endsth
+
+smod BASE{X :: A} is
+endsm
+
+view BASE-as-a-B{X :: A} from B to BASE{X} is
+  sort Card to X$Small .
+  strat g to f .
+endv
+
+smod USE-B{X :: B} is
+  sd g(N:X$Card) := match N:X$Card [label "raw thumb"] .
+endsm
+
+smod TEST is
+  pr USE-B{BASE-as-a-B{INT-as-an-A}} .
+endsm
+
+show sds .

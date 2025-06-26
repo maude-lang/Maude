@@ -1,3 +1,8 @@
+2025-06-26  Rubén Rubio  <rubenrub@ucm.es>
+
+	* tests/ResolvedBugs/viewInstantiationAwkwardCaseStrategyMay2025.maude:
+	added
+
 2025-06-18  Saruman the White  <eker@eker10>
 
 	* tests/ResolvedBugs/viewNameApril2025.maude: added
