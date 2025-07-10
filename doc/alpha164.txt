@@ -4,9 +4,10 @@ Alpha 164 release notes
 Bug fixes
 ==========
 (1) Various bugs in the instantiation of operator to term and strategy to expr
-view mappings.
+view mappings, originally discovered by Ren Sun.
 
-Originally discovered by Ren Sun.
+Examples are available in the ResolvedBugs/viewInstantiation* tests of the
+source code.
 
 (2) A bug in the strategy to expr view mappings that cause an internal error
 when that mapping is not well defined, instead of only showing a warning.
@@ -23,7 +24,7 @@ It appears with the following example
   endv
 
 (3) A bug in the instantiation of strategy to expr view mappings when the
-target strategy expression is not a strategy call and is replaced in the
+target strategy expression is not a strategy call and instantiates the
 left-hand side of a strategy definition.
 
   view MatchView from STRIV to NAT is
