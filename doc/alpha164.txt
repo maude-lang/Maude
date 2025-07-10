@@ -1,0 +1,120 @@
+Alpha 164 release notes
+========================
+
+Bug fixes
+==========
+(1) Various bugs in the instantiation of operator to term and strategy to expr
+view mappings.
+
+Originally discovered by Ren Sun.
+
+(2) A bug in the strategy to expr view mappings that cause an internal error
+when that mapping is not well defined, instead of only showing a warning.
+It appears with the following example
+
+  sth STRIV is
+    including TRIV .
+    strat st @ Elt .
+  endsth
+
+  view BuggyView from STRIV to NAT is
+    sort Elt to Nat .
+    strat st to expr match N:Nat s.t. N:Nat == M:Nat . *** M is unbound
+  endv
+
+(3) A bug in the instantiation of strategy to expr view mappings when the
+target strategy expression is not a strategy call and is replaced in the
+left-hand side of a strategy definition.
+
+  view MatchView from STRIV to NAT is
+    sort Elt to Nat .
+    strat st to expr match 0 .
+  endv
+
+  smod FOO{X :: STRIV} is
+    sd st := idle .
+  endsm
+
+  smod MAIN is
+    protecting FOO{MatchView} .
+  endsm
+
+Now, the following warning is shown
+
+  Warning: "example.maude", line 15 (smod MAIN): left-hand side of strategy definition
+    sd st := idle .
+  would be instantiated to match 0 by a strategy to expression mapping.
+  The definition would be ill-formed and thus it cannot be used.
+
+(4) A parsing bug where a rest of an erroneous sort name may become part of the
+sort name in the next declaration. This can be reproduced by
+
+  fmod FOO is
+    sort s{]} .
+  endfm
+
+  fmod BAR is
+     sort Bar .  *** was s`{Bar
+     op c : -> Bar .
+  endfm
+
+(5) A bug and memory leak in the evaluation of rule applications with matching conditions.
+
+New features
+=============
+(1) There are two new modules LTL+ and MODEL-CHECKER+ in the model-checker.maude
+file, written by José Meseguer, that facilitate using the Maude LTL model
+checker to obtain witnesses of existential properties.
+
+LTL+ extends the syntax of LTL formulae with the universal and existential
+quantifiers, and with a negation function.
+
+  op E_ : Formula -> Formula+ [ctor] .
+  op A_ : Formula -> Formula+ [ctor] .
+  op ~_ : Formula+ -> Formula+ .
+
+Then, MODEL-CHECKER+ extends the MODEL-CHECKER module with a witness operator
+(dual of the counterexample operator of the standard model checker) and a
+modelCheck+ function that receives extended formulae.
+
+  op witness : TransitionList TransitionList -> ModelCheck+Result [ctor] .
+  op modelCheck+ : State Formula+ ~> ModelCheck+Result .
+  op neg : ModelCheck+Result -> ModelCheck+Result .
+
+  eq modelCheck+(st, (E f)) = neg(modelCheck(st, (~ f))) .
+  eq modelCheck+(st, (A f)) = modelCheck(st, f) .
+
+When an existential formula E f holds, a witness is obtained.
+
+  eq neg(counterexample(TL1, TL2)) = witness(TL1, TL2) .
+
+Other changes
+==============
+(1) Sort and class naming restrictions are enforced and a warning is issued
+when invalid names are encountered. For instance,
+
+  fmod FOO is
+    sort Not:Valid .
+  endfm
+
+now cause Maude to show
+
+  Warning: "example.maude", line 2 (fmod FOO): Not:Valid is not a valid sort name.
+  Warning: <standard input>, line 1 (fmod FOO): this module contains one or more
+  errors that could not be patched up and thus it cannot be used or imported.
+
+Illegal sort or class names may cause problems for module instantiations.
+
+(2) Maude now shows a warning when a view name is not valid, i.e. when it
+contains (, ), [, ], {, }, or comma. Using these characters in a view name
+may become problematic when they are included in instantiated sorts. For example,
+
+  view Bad`,Name from TRIV to NAT is
+  	  sort Elt to Nat .
+  endv
+
+will now show
+
+  Warning: "file.maude", line 1 (view Bad`,Name): Bad`,Name is not a valid view name.
+
+This and the previous change derive from the bug report #19 by @rjsun06.
