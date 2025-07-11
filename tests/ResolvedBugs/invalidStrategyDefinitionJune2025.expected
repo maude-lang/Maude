@@ -1,21 +1,21 @@
-Warning: <standard input>, line 35 (smod MAIN): left-hand side of strategy
+Warning: <standard input>, line 37 (smod MAIN): left-hand side of strategy
     definition
   sd st1 := idle .
 would be instantiated to match true by a strategy to expression mapping. The
     definition would be ill-formed and thus it cannot be used.
-Warning: <standard input>, line 18 (smod WRONG): variable E:Bool is used before
+Warning: <standard input>, line 20 (smod WRONG): variable E:Bool is used before
     it is bound in strategy definition:
 csd sb3(true) := idle if E:Bool = E:Bool .
 ==========================================
 srewrite in MAIN : true using sb2 .
 
 No solution.
-rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+rewrites: 0
 ==========================================
 srewrite in MAIN : false using sb3(true) .
 
 No solution.
-rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+rewrites: 0
 sd sb2 := fail .
 csd sb3(true) := idle if E:Bool = E:Bool .
 Bye.

@@ -1411,8 +1411,8 @@ MixfixModule::makeSpecialProductions()
 	  }
 	case Token::CONTAINS_COLON:
 	  {
-	    int varName;
-	    int sortName;
+	    int varName = NONE;
+	    int sortName = NONE;
 	    Token::split(code, varName, sortName);
 	    IntMap::const_iterator t = leadTokens.find(sortName);
 	    if (t != leadTokens.end())

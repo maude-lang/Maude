@@ -1,9 +1,11 @@
+set show timing off .
+
 ***
 *** Test for strategy to expression mapping that instantiate the
 *** left-hand side of a strategy definition to a expression other
 *** than a call (not valid), to a call (valid) and to a call with
 *** less variables.
-*** 
+***
 
 sth STRIV is
 	including TRIV .

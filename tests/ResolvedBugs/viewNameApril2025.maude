@@ -1,3 +1,5 @@
+set show timing off .
+
 ***
 ***	We had a bug because view names were unrestricted single token
 ***	identifers but they ended up inside instantiated sort names and

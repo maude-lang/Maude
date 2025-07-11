@@ -1,3 +1,8 @@
+2025-07-11  Rubén Rubio <rubenrub@ucm.es>
+
+	* makeGrammar.cc (MixfixModule::makeSpecialProductions):
+	initialize variable to avoid reading garbage
+
 2025-06-26  Rubén Rubio <rubenrub@ucm.es>
 
 	* view.cc (handleStratAwkwardCase): removed call to

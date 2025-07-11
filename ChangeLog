@@ -1,5 +1,12 @@
 ==================================Maude164===========================================
 
+2025-07-11  Rubén Rubio  <rubenrub@ucm.es>
+
+	* tests/ResolvedBugs/invalidStrategyExpressionJun2025.maude:
+	set show timing off added
+
+	* tests/ResolvedBugs/viewNameApril2025.maude: set show timing off added
+
 2025-06-26  Rubén Rubio  <rubenrub@ucm.es>
 
 	* tests/ResolvedBugs/viewInstantiationAwkwardCaseStrategyMay2025.maude:
