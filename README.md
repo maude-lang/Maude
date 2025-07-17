@@ -23,10 +23,11 @@ Instructions on how to build Maude from source can be found in the [INSTALL](INS
 * Extra built-in operations for strings
 * Initial equality operator handles more cases
 * Reading from stdin steam supports continuation lines
+* New `LTL+` and `MODEL-CHECKER+` modules for easily obtaining witnesses of LTL properties
 
 ## Documentation
 
-The Maude manual for Maude 3.5 is available in [PDF format](https://maude.cs.illinois.edu/manual.pdf)
+The Maude manual for Maude 3.5.1 is available in [PDF format](https://maude.cs.illinois.edu/manual.pdf)
 and in [HTML](https://maude.lcc.uma.es/maude-manual/).
 The source code for most of the examples used in the manual, together with the examples from the Maude book,
 are available [here](https://maude.cs.illinois.edu/manual-book-examples.zip).
@@ -39,6 +40,6 @@ Report bugs to: maude-bugs@maude.cs.uiuc.edu
 
 ## Copyright
 
-Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
 The Maude 3 interpreter is free software. See the file [COPYING](COPYING) for copying permission.

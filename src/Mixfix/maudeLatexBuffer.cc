@@ -144,8 +144,8 @@ MaudeLatexBuffer::generateBanner(const char* date, const char* time, time_t seco
   output << "\\maudeBannerIndent\\hspace{6em}\\textbackslash||||||||||||||||||/\n";
   output << "\\maudeBannerIndent\\hspace{5em}--- Welcome to \\color{red}M\\color{cyan}a\\color{blue}u\\color{magenta}d\\color{green}e\\color{black} ---\n";
   output << "\\maudeBannerIndent\\hspace{6em}/||||||||||||||||||\\textbackslash\n";
-  output << "\\maudeBannerIndent\\hspace{2em}" <<  PACKAGE_STRING << " built: " << date << ' ' << time << '\n';
-  output << "\\maudeBannerIndent\\hspace{2em}Copyright 1997-2024 SRI International\n";
+  output << "\\maudeBannerIndent\\hspace{3.5ex}" <<  PACKAGE_STRING << " built: " << date << ' ' << time << '\n';
+  output << "\\maudeBannerIndent\\hspace{2em}Copyright 1997-2025 SRI International\n";
   output << "\\maudeBannerIndent\\hspace{5em}" << ctime(&seconds);
   output << "\\end{maudeBanner}\n";
 }
