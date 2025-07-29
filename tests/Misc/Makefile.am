@@ -41,7 +41,8 @@ TESTS = \
 	pconst4 \
 	parameterizedConstant \
 	pconst5 \
-	initialEqualityPredicate
+	initialEqualityPredicate \
+	rpo
 
 MAUDE_FILES = \
 	directoryTest.maude \
@@ -86,7 +87,8 @@ MAUDE_FILES = \
 	pconst4.maude \
 	parameterizedConstant.maude \
 	pconst5.maude \
-	initialEqualityPredicate.maude
+	initialEqualityPredicate.maude \
+	rpo.maude
 
 RESULT_FILES = \
 	directoryTest.expected \
@@ -131,6 +133,7 @@ RESULT_FILES = \
 	pconst4.expected \
 	parameterizedConstant.expected \
 	pconst5.expected \
-	initialEqualityPredicate.expected
+	initialEqualityPredicate.expected \
+	rpo.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

@@ -367,6 +367,15 @@ MetaLevel::upRenamingAttributeSet(const Renaming* r, int index, PointerMap& qidM
 	args.append(latexSymbol->makeDagNode(args2));
       }
   }
+  {
+    int rpo = r->getRpo(index);
+    if (rpo != NONE)
+      {
+	Vector<DagNode*> args2(1);
+	args2[0] = succSymbol->makeNatDag(rpo);
+	args.append(rpoSymbol->makeDagNode(args2));
+      }
+  }
   return upGroup(args, emptyAttrSetSymbol, attrSetSymbol);
 }
 
@@ -522,6 +531,11 @@ MetaLevel::upPolymorphDecl(ImportModule* m, int index, PointerMap& qidMap)
       }
     if (st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
       attrArgs.append(upIdentity(m, st, m->getPolymorphIdentity(index), qidMap));
+    if (st.hasFlag(SymbolType::RPO))
+      {
+        polyArgs[0] = succSymbol->makeNatDag(m->getPolymorphRpo(index));
+        attrArgs.append(rpoSymbol->makeDagNode(polyArgs));
+      }
     int metadata = m->getPolymorphMetadata(index);
     if (metadata != NONE)
       {
@@ -668,7 +682,11 @@ MetaLevel::upOpDecl(ImportModule* m, int symbolNr, int declNr, PointerMap& qidMa
       }
     if (st.hasFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
       attrArgs.append(upIdentity(m, st, safeCast(BinarySymbol*, symbol)->getIdentity(), qidMap));
-
+    if (st.hasFlag(SymbolType::RPO))
+      {
+	args3[0] = succSymbol->makeNatDag(m->getRpo(symbol));
+	attrArgs.append(rpoSymbol->makeDagNode(args3));
+      }
     int metadata = m->getMetadata(symbol, declNr);
     if (metadata != NONE)
       {

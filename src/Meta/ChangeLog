@@ -1,3 +1,19 @@
+2025-07-29  Rubén Rubio <rubenrub@ucm.es>
+
+	* metaDownOps.cc (downOpDecl): pass rpo to addPolymorph and
+	addOpDeclaration
+	(downAttr): added rpo
+
+	* metaDownRenamings.cc (downRenamingAttribute): added rpo
+
+	* metaLevel.hh (AttributeInfo): added rpo
+
+	* metaLevelSignature.cc: added rpoSymbol
+
+	* metaUpModule.cc (upRenamingAttributeSet): added rpo
+	(upPolymorphDecl): added rpo
+	(upOpDecl): added rpo
+
 2025-06-18  Saruman the White  <eker@eker10>
 
 	* metaDown.cc (MetaLevel::downSort): don't allow sorts with bad

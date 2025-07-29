@@ -538,14 +538,15 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     'op-hook[''msgSymbol.Sort, ''msg.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''portalSymbol.Sort, ''portal.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''pconstSymbol.Sort, ''pconst.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort,
-    ''Attr.Sort], 'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort,
-    ''Attr.Sort], 'op-hook[''metadataSymbol.Sort, ''metadata.Sort,
-    ''String.Sort, ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort,
-    'nil.TypeList, ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort,
-    ''variant.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''narrowingSymbol.Sort, ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
+    'op-hook[''rpoSymbol.Sort, ''rpo.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
+    ''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort, ''Attr.Sort],
+    'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort, ''Attr.Sort],
+    'op-hook[''metadataSymbol.Sort, ''metadata.Sort, ''String.Sort,
+    ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort, ''variant.Sort,
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort,
+    ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
+    ''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''printSymbol.Sort, ''print.Sort, ''QidList.Sort, ''Attr.Sort],
     'op-hook[''emptyAttrSetSymbol.Sort, ''none.Sort, 'nil.TypeList,
     ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort, ''__.Sort, '__[

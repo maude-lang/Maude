@@ -433,6 +433,28 @@ SyntacticPreModule::setLatexMacro(const string& latexMacro)
 }
 
 void
+SyntacticPreModule::setRpo(Token rpoTok)
+{
+  int rpo;
+  if (rpoTok.getInt(rpo))
+    {
+      OpDef& opDef = opDefs[opDefs.length() - 1];
+      if (opDef.symbolType.hasFlag(SymbolType::RPO))
+	IssueWarning(LINE_NUMBER << ": multiple rpo attributes.");
+      else
+	{
+	  opDef.rpo = rpo;
+	  opDef.symbolType.setFlags(SymbolType::RPO);
+	}
+    }
+  else
+    {
+      IssueWarning(LineNumber(rpoTok.lineNumber()) <<
+		   ": bad value " << QUOTE(rpoTok) << " for rpo attribute.");
+    }
+}
+
+void
 SyntacticPreModule::addHook(HookType type, Token name, const Vector<Token>& details)
 {
   int code = name.code();

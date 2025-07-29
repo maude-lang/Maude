@@ -766,6 +766,11 @@ VisibleModule::latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex
       space = "\\maudeSpace";
       MixfixModule::latexPrintLatexMacro(s, getLatexMacro(symbol));
     }
+  if (st.hasFlag(SymbolType::RPO))
+    {
+      s << space << "\\maudeKeyword{rpo}\\maudeSpace\\maudeNumber{" << getRpo(symbol) << "}";
+      space = "\\maudeSpace";
+    }
   if (metadata != NONE)
     {
       s << space << "\\maudeKeyword{metadata}\\maudeSpace" << latexString(metadata);
@@ -955,6 +960,8 @@ VisibleModule::latexShowPolymorphAttributes(ostream& s, int index)
       s << "\\maudeSpace";
       latexPrintLatexMacro(s, getPolymorphLatexMacro(index));
     }
+  if (st.hasFlag(SymbolType::RPO))
+    s << "\\maudeSpace\\maudeKeyword{rpo}\\maudeSpace\\maudeNumber{" << getPolymorphRpo(index) << "}";
   int metadata = getPolymorphMetadata(index);
   if (metadata != NONE)
     s << "\\maudeSpace\\maudeKeyword{metadata}\\maudeSpace" << latexString(metadata);

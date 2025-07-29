@@ -1,3 +1,50 @@
+2025-07-29  Rubén Rubio <rubenrub@ucm.es>
+
+	* command.cc (printAttributes): added rpo
+
+	* entry.cc (addOpDeclaration): handle rpo
+	(addPolymorph): handle rpo
+
+	* latexModulePrint.cc (latexShowAttributes): added rpo
+	(latexShowPolymorphAttributes): added rpo
+
+	* lexer.ll: added KW_RPO
+
+	* mixfixModule.hh (class MixfixModule): added rpo arg
+	to addOpDeclaration and addPolymorph, added getRpo and
+	getPolymorphRpo methods
+
+	* modules.yy: added rpo rules
+
+	* ooProcess.cc (processClassOps): pass NONE rpo to
+	addOpDeclaration
+
+	* ops.cc (setRpo): added
+
+	* process.cc (processOps): pass rpo to addPolymorph and
+	addOpDeclaration
+
+	* renameModule.cc (donateOps2): handle rpo
+
+	* renaming.cc (makeCanonicalName): added rpo
+	(isIdentityOpMapping): consider rpo
+	(setRpo): added
+	(printRenaming): print rpo
+
+	* renaming.hh (class Renaming): declare setRpo and getRpo
+	methods, and rpo attribute
+
+	* symbolType.hh (class SymbolType): add RPO flag
+
+	* syntacticPreModule.hh (class SyntacticPreModule): added
+	setRpo
+	(struct SyntacticPreModule::OpDef): added rpo attribute
+
+	* top.yy: added KW_RPO
+
+	* visibleModule.cc (showPolymorphAttributes): added rpo
+	(showAttributes): added rpo
+
 2025-07-11  Rubén Rubio <rubenrub@ucm.es>
 
 	* makeGrammar.cc (MixfixModule::makeSpecialProductions):

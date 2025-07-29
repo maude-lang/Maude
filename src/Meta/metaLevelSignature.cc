@@ -187,6 +187,7 @@
      MACRO(msgSymbol, Symbol, 0, 0)
      MACRO(portalSymbol, Symbol, 0, 0)
      MACRO(pconstSymbol, Symbol, 0, 0)
+     MACRO(rpoSymbol, FreeSymbol, 0, 1)
      MACRO(specialSymbol, FreeSymbol, 0, 1)
 
      MACRO(labelSymbol, FreeSymbol, 0, 1)

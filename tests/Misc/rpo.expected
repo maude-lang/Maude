@@ -1,0 +1,56 @@
+fmod M1 is
+  sort Bar .
+  op a : Bar -> Bar [rpo 1] .
+  op b : Bar -> Universal [poly (0) rpo 2] .
+endfm
+op b : Bar -> Universal [poly (0) rpo 2] .
+op a : Bar -> Bar [rpo 1] .
+op b : Bar -> Universal [poly (0) rpo 2] .
+op a : Bar -> Bar [rpo 1] .
+op c : Foo -> Foo [rpo 3] .
+fmod M3 is
+  including M1 * (op a to a [rpo 4], op b to b [rpo 5]) .
+endfm
+op b : Bar -> Universal [poly (0) rpo 5] .
+op a : Bar -> Bar [rpo 4] .
+Warning: <standard input>, line 43 (fth C1): multiple rpo attributes.
+Warning: <standard input>, line 44 (fth C1): rpo attribute without value in
+    operator declaration.
+Warning: <standard input>, line 45 (fth C1): bad value bad for rpo attribute.
+fth C2 is
+  sorts Bar Foo .
+  subsort Foo < Bar .
+  op a : Bar -> Bar [rpo 1] .
+  op a : Foo -> Foo [rpo 2] .
+endfth
+==========================================
+reduce in META-LEVEL : upOpDecls('M1, false) .
+rewrites: 1
+result OpDeclSet: op 'a : 'Bar -> 'Bar [rpo(1)] .
+op 'b : 'Bar -> 'Universal [rpo(2) poly(0)] .
+==========================================
+reduce in META-LEVEL : upOpDecls('M2, true) .
+rewrites: 1
+result OpDeclSet: op 'a : 'Bar -> 'Bar [rpo(1)] .
+op 'b : 'Bar -> 'Universal [rpo(2) poly(0)] .
+op 'c : 'Foo -> 'Foo [rpo(3)] .
+==========================================
+reduce in META-LEVEL : upModule('M3, false) .
+rewrites: 1
+result FModule: fmod 'M3 is
+  including 'M1 * (
+    op 'a to 'a [rpo(4)],
+    op 'b to 'b [rpo(5)]
+  ) .
+  sorts none .
+  none
+  none
+  none
+  none
+endfm
+==========================================
+reduce in META-LEVEL : upOpDecls('M3, true) .
+rewrites: 1
+result OpDeclSet: op 'a : 'Bar -> 'Bar [rpo(4)] .
+op 'b : 'Bar -> 'Universal [rpo(5) poly(0)] .
+Bye.

@@ -190,6 +190,13 @@ Renaming::makeCanonicalName() const
 		*j += ")";
 		attr = true;
 	      }
+	    if (i.second.rpo != NONE)
+	      {
+		*j += attr ? " " : " [";
+		*j += "rpo ";
+		*j += int64ToString(i.second.rpo);
+		attr = true;
+	      }
 	    if (attr)
 	      *j += "]";
 	    ++j;
@@ -318,7 +325,8 @@ Renaming::isIdentityOpMapping(const ImportModule* module, const OpMapping& om, c
   if (om.name == symbol->id() &&
       (om.prec < MixfixModule::MIN_PREC || om.prec == module->getPrec(symbol)) &&
       (om.format.empty() || equal(om.format, module->getFormat(symbol))) &&
-      om.latexMacro == module->getLatexMacro(symbol))
+      om.latexMacro == module->getLatexMacro(symbol) &&
+      om.rpo == module->getRpo(symbol))
     {
       if (om.gather.empty())
 	return true;
@@ -342,7 +350,8 @@ Renaming::isIdentityOpMapping(const ImportModule* module, const OpMapping& om, i
   if (om.name == module->getPolymorphName(index).code() &&
       (om.prec < MixfixModule::MIN_PREC || om.prec == module->getPolymorphPrec(index)) &&
       (om.format.empty() || equal(om.format, module->getPolymorphFormat(index))) &&
-      om.latexMacro == module->getPolymorphLatexMacro(index))
+      om.latexMacro == module->getPolymorphLatexMacro(index) &&
+      om.rpo == module->getPolymorphRpo(index))
     {
       if (om.gather.empty())
 	return true;
@@ -1146,6 +1155,19 @@ Renaming::setLatexMacro(const string& latexMacro)
 }
 
 void
+Renaming::setRpo(Token rpoTok)
+{
+  int rpo;
+  if (rpoTok.getInt(rpo))
+    lastOpMapping->second.rpo = rpo;
+  else
+    {
+      IssueWarning(LineNumber(rpoTok.lineNumber()) <<
+		   ": bad value " << QUOTE(rpoTok) << " for rpo attribute.");
+    }
+}
+
+void
 Renaming::purgeGeneratedMappings()
 {
   //
@@ -1261,7 +1283,8 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2, bool show
       if (om->second.prec >= MixfixModule::MIN_PREC ||
 	  !om->second.gather.empty() ||
 	  !om->second.format.empty() ||
-	  om->second.latexMacro != NONE)
+	  om->second.latexMacro != NONE ||
+	  om->second.rpo != NONE)
 	{
 	  sep = " [";
 	  if (om->second.prec >= MixfixModule::MIN_PREC)
@@ -1285,6 +1308,12 @@ Renaming::printRenaming(ostream& s, const char* sep, const char* sep2, bool show
 	    {
 	      s << sep;
 	      s << "latex (" << Token::name(om->second.latexMacro) << ")";
+	      sep = " ";
+	    }
+	  if (om->second.rpo != NONE)
+	    {
+	      s << sep;
+	      s << "rpo " << om->second.rpo;
 	      sep = " ";
 	    }
 	  s << ']';

@@ -374,6 +374,11 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef) const
       s << space << "latex (" << Token::name(opDef.latexMacro) << ")";
       space = " ";
     }
+  if (opDef.rpo != NONE)
+    {
+      s << space << "rpo " << opDef.rpo;
+      space = " ";
+    }
   if (opDef.metadata != NONE)
     {
       s << space << "metadata " << Token::name(opDef.metadata);

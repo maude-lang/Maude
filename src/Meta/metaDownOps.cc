@@ -124,6 +124,7 @@ MetaLevel::downOpDecl(DagNode* metaOpDecl, MetaModule* m)
 						   ai.gather,
 						   ai.format,
 						   ai.latex,
+						   ai.rpo,
 						   ai.metadata);
 	      m->addComplexSymbol(POLYMORPH, polymorphIndex, ai.identity, ai.fixUpInfo, domainAndRange);
 	    }
@@ -149,6 +150,7 @@ MetaLevel::downOpDecl(DagNode* metaOpDecl, MetaModule* m)
 						       ai.gather,
 						       ai.format,
 						       ai.latex,
+						       ai.rpo,
 						       ai.metadata,
 						       originator);
 		  if (m->parameterDeclared(symbol))
@@ -456,6 +458,13 @@ MetaLevel::downAttr(DagNode* metaAttr, AttributeInfo& ai)
       if (latexStr->symbol() != stringSymbol)
 	return false;
       ai.latex = Token::ropeToCode(safeCastNonNull<StringDagNode*>(latexStr)->getValue());
+    }
+  else if (ma == rpoSymbol)
+    {
+      if (ai.rpo != NONE)
+	return false;
+      if (!(succSymbol->getSignedInt(safeCast(FreeDagNode*, metaAttr)->getArgument(0), ai.rpo)))
+	return false;
     }
   else if (ma == metadataSymbol)
     {

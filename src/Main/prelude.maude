@@ -1938,6 +1938,7 @@ fmod META-MODULE is
   op msg : -> Attr [ctor] .
   op portal : -> Attr [ctor] .
   op pconst : -> Attr [ctor] .
+  op rpo : Nat -> Attr [ctor] .
   op frozen : NeNatList -> Attr [ctor] .
   op poly : NeNatList -> Attr [ctor] .
   op special : NeHookList -> Attr [ctor] .
@@ -2616,6 +2617,7 @@ fmod META-LEVEL is
         op-hook msgSymbol		(msg : ~> Attr)
         op-hook portalSymbol		(portal : ~> Attr)
         op-hook pconstSymbol		(pconst : ~> Attr)
+        op-hook rpoSymbol		(rpo : Nat ~> Attr)
         op-hook specialSymbol		(special : NeHookList ~> Attr)
 
         op-hook labelSymbol		(label : Qid ~> Attr)

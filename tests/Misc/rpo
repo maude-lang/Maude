@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/rpo.maude -no-banner -no-advise \
+  > rpo.out 2>&1
+
+diff $srcdir/rpo.expected rpo.out > /dev/null 2>&1

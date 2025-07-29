@@ -282,5 +282,16 @@ MetaLevel::downRenamingAttribute(DagNode* metaRenamingAttribute, Renaming* renam
 	  return true;
 	}
     }
+  else if (mr == rpoSymbol)
+    {
+      int rpo;
+      if (succSymbol->getSignedInt(safeCast(FreeDagNode*, metaRenamingAttribute)->getArgument(0), rpo))
+	{
+	  Token t;
+	  t.tokenize(Token::int64ToCode(rpo), FileTable::META_LEVEL_CREATED);
+	  renaming->setRpo(t);
+	  return true;
+	}
+    }
   return false;
 }

@@ -1039,6 +1039,7 @@ op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidS
     op-hook('msgSymbol, 'msg, nil, 'Attr) 
     op-hook('portalSymbol, 'portal, nil, 'Attr) 
     op-hook('pconstSymbol, 'pconst, nil, 'Attr) 
+    op-hook('rpoSymbol, 'rpo, 'Nat, 'Attr) 
     op-hook('specialSymbol, 'special, 'NeHookList, 'Attr) 
     op-hook('labelSymbol, 'label, 'Qid, 'Attr) 
     op-hook('metadataSymbol, 'metadata, 'String, 'Attr) 
@@ -1403,6 +1404,7 @@ op 'rfind : 'String 'String 'Nat -> 'FindResult [special(
 op 'right-id : 'Term -> 'Attr [ctor] .
 op 'rl_=>_`[_`]. : 'Term 'Term 'AttrSet -> 'Rule [ctor format('d 'd 'd 'd 's 'd
     'd 's 'd)] .
+op 'rpo : 'Nat -> 'Attr [ctor] .
 op 's_ : 'Nat -> 'NzNat [iter ctor special(
     id-hook('SuccSymbol, nil) 
     term-hook('zeroTerm, '0.Zero))] .
@@ -1953,6 +1955,7 @@ op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidS
     op-hook('msgSymbol, 'msg, nil, 'Attr) 
     op-hook('portalSymbol, 'portal, nil, 'Attr) 
     op-hook('pconstSymbol, 'pconst, nil, 'Attr) 
+    op-hook('rpoSymbol, 'rpo, 'Nat, 'Attr) 
     op-hook('specialSymbol, 'special, 'NeHookList, 'Attr) 
     op-hook('labelSymbol, 'label, 'Qid, 'Attr) 
     op-hook('metadataSymbol, 'metadata, 'String, 'Attr) 
@@ -3279,6 +3282,7 @@ result FModule: fmod 'META-LEVEL is
     op-hook('msgSymbol, 'msg, nil, 'Attr) 
     op-hook('portalSymbol, 'portal, nil, 'Attr) 
     op-hook('pconstSymbol, 'pconst, nil, 'Attr) 
+    op-hook('rpoSymbol, 'rpo, 'Nat, 'Attr) 
     op-hook('specialSymbol, 'special, 'NeHookList, 'Attr) 
     op-hook('labelSymbol, 'label, 'Qid, 'Attr) 
     op-hook('metadataSymbol, 'metadata, 'String, 'Attr) 
@@ -3642,6 +3646,7 @@ result FModule: fmod 'META-LEVEL is
   op 'right-id : 'Term -> 'Attr [ctor] .
   op 'rl_=>_`[_`]. : 'Term 'Term 'AttrSet -> 'Rule [ctor format('d 'd 'd 'd 's
     'd 'd 's 'd)] .
+  op 'rpo : 'Nat -> 'Attr [ctor] .
   op 's_ : 'Nat -> 'NzNat [iter ctor special(
     id-hook('SuccSymbol, nil) 
     term-hook('zeroTerm, '0.Zero))] .
@@ -4720,6 +4725,7 @@ result FModule: fmod 'META-LEVEL is
     op-hook('msgSymbol, 'msg, nil, 'Attr) 
     op-hook('portalSymbol, 'portal, nil, 'Attr) 
     op-hook('pconstSymbol, 'pconst, nil, 'Attr) 
+    op-hook('rpoSymbol, 'rpo, 'Nat, 'Attr) 
     op-hook('specialSymbol, 'special, 'NeHookList, 'Attr) 
     op-hook('labelSymbol, 'label, 'Qid, 'Attr) 
     op-hook('metadataSymbol, 'metadata, 'String, 'Attr) 
@@ -6547,6 +6553,7 @@ result FModule: fmod 'META-LEVEL is
     op-hook('msgSymbol, 'msg, nil, 'Attr) 
     op-hook('portalSymbol, 'portal, nil, 'Attr) 
     op-hook('pconstSymbol, 'pconst, nil, 'Attr) 
+    op-hook('rpoSymbol, 'rpo, 'Nat, 'Attr) 
     op-hook('specialSymbol, 'special, 'NeHookList, 'Attr) 
     op-hook('labelSymbol, 'label, 'Qid, 'Attr) 
     op-hook('metadataSymbol, 'metadata, 'String, 'Attr) 
@@ -6910,6 +6917,7 @@ result FModule: fmod 'META-LEVEL is
   op 'right-id : 'Term -> 'Attr [ctor] .
   op 'rl_=>_`[_`]. : 'Term 'Term 'AttrSet -> 'Rule [ctor format('d 'd 'd 'd 's
     'd 'd 's 'd)] .
+  op 'rpo : 'Nat -> 'Attr [ctor] .
   op 's_ : 'Nat -> 'NzNat [iter ctor special(
     id-hook('SuccSymbol, nil) 
     term-hook('zeroTerm, '0.Zero))] .
@@ -8902,14 +8910,15 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     'op-hook[''msgSymbol.Sort, ''msg.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''portalSymbol.Sort, ''portal.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''pconstSymbol.Sort, ''pconst.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort,
-    ''Attr.Sort], 'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort,
-    ''Attr.Sort], 'op-hook[''metadataSymbol.Sort, ''metadata.Sort,
-    ''String.Sort, ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort,
-    'nil.TypeList, ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort,
-    ''variant.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''narrowingSymbol.Sort, ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
+    'op-hook[''rpoSymbol.Sort, ''rpo.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
+    ''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort, ''Attr.Sort],
+    'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort, ''Attr.Sort],
+    'op-hook[''metadataSymbol.Sort, ''metadata.Sort, ''String.Sort,
+    ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort, ''variant.Sort,
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort,
+    ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
+    ''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''printSymbol.Sort, ''print.Sort, ''QidList.Sort, ''Attr.Sort],
     'op-hook[''emptyAttrSetSymbol.Sort, ''none.Sort, 'nil.TypeList,
     ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort, ''__.Sort, '__[
@@ -9336,7 +9345,8 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     'op_:_->_`[_`].[''rl_=>_`[_`]..Qid, '__[''Term.Sort, ''Term.Sort,
     ''AttrSet.Sort], ''Rule.Sort, '__['ctor.Attr, 'format['__[''d.Sort,
     ''d.Sort, ''d.Sort, ''d.Sort, ''s.Sort, ''d.Sort, ''d.Sort, ''s.Sort,
-    ''d.Sort]]]], 'op_:_->_`[_`].[''s_.Sort, ''Nat.Sort, ''NzNat.Sort, '__[
+    ''d.Sort]]]], 'op_:_->_`[_`].[''rpo.Sort, ''Nat.Sort, ''Attr.Sort,
+    'ctor.Attr], 'op_:_->_`[_`].[''s_.Sort, ''Nat.Sort, ''NzNat.Sort, '__[
     'ctor.Attr, 'iter.Attr, 'special['__['id-hook[''SuccSymbol.Sort,
     'nil.TypeList], 'term-hook[''zeroTerm.Sort, ''0.Zero.Constant]]]]],
     'op_:_->_`[_`].[''sameKind.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[Bool`].Kind, 'special['__['id-hook[
@@ -11534,14 +11544,15 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     'op-hook[''msgSymbol.Sort, ''msg.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''portalSymbol.Sort, ''portal.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''pconstSymbol.Sort, ''pconst.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort,
-    ''Attr.Sort], 'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort,
-    ''Attr.Sort], 'op-hook[''metadataSymbol.Sort, ''metadata.Sort,
-    ''String.Sort, ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort,
-    'nil.TypeList, ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort,
-    ''variant.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''narrowingSymbol.Sort, ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
+    'op-hook[''rpoSymbol.Sort, ''rpo.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
+    ''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort, ''Attr.Sort],
+    'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort, ''Attr.Sort],
+    'op-hook[''metadataSymbol.Sort, ''metadata.Sort, ''String.Sort,
+    ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort, ''variant.Sort,
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort,
+    ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
+    ''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''printSymbol.Sort, ''print.Sort, ''QidList.Sort, ''Attr.Sort],
     'op-hook[''emptyAttrSetSymbol.Sort, ''none.Sort, 'nil.TypeList,
     ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort, ''__.Sort, '__[
@@ -11968,7 +11979,8 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     'op_:_->_`[_`].[''rl_=>_`[_`]..Qid, '__[''Term.Sort, ''Term.Sort,
     ''AttrSet.Sort], ''Rule.Sort, '__['ctor.Attr, 'format['__[''d.Sort,
     ''d.Sort, ''d.Sort, ''d.Sort, ''s.Sort, ''d.Sort, ''d.Sort, ''s.Sort,
-    ''d.Sort]]]], 'op_:_->_`[_`].[''s_.Sort, ''Nat.Sort, ''NzNat.Sort, '__[
+    ''d.Sort]]]], 'op_:_->_`[_`].[''rpo.Sort, ''Nat.Sort, ''Attr.Sort,
+    'ctor.Attr], 'op_:_->_`[_`].[''s_.Sort, ''Nat.Sort, ''NzNat.Sort, '__[
     'iter.Attr, 'ctor.Attr, 'special['__['id-hook[''SuccSymbol.Sort,
     'nil.TypeList], 'term-hook[''zeroTerm.Sort, ''0.Zero.Constant]]]]],
     'op_:_->_`[_`].[''sameKind.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[Bool`].Kind, 'special['__['id-hook[
@@ -14166,14 +14178,15 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     'op-hook[''msgSymbol.Sort, ''msg.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''portalSymbol.Sort, ''portal.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''pconstSymbol.Sort, ''pconst.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort,
-    ''Attr.Sort], 'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort,
-    ''Attr.Sort], 'op-hook[''metadataSymbol.Sort, ''metadata.Sort,
-    ''String.Sort, ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort,
-    'nil.TypeList, ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort,
-    ''variant.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''narrowingSymbol.Sort, ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
+    'op-hook[''rpoSymbol.Sort, ''rpo.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
+    ''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort, ''Attr.Sort],
+    'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort, ''Attr.Sort],
+    'op-hook[''metadataSymbol.Sort, ''metadata.Sort, ''String.Sort,
+    ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort, ''variant.Sort,
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort,
+    ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
+    ''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
     'op-hook[''printSymbol.Sort, ''print.Sort, ''QidList.Sort, ''Attr.Sort],
     'op-hook[''emptyAttrSetSymbol.Sort, ''none.Sort, 'nil.TypeList,
     ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort, ''__.Sort, '__[
@@ -14600,7 +14613,8 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     'op_:_->_`[_`].[''rl_=>_`[_`]..Qid, '__[''Term.Sort, ''Term.Sort,
     ''AttrSet.Sort], ''Rule.Sort, '__['ctor.Attr, 'format['__[''d.Sort,
     ''d.Sort, ''d.Sort, ''d.Sort, ''s.Sort, ''d.Sort, ''d.Sort, ''s.Sort,
-    ''d.Sort]]]], 'op_:_->_`[_`].[''s_.Sort, ''Nat.Sort, ''NzNat.Sort, '__[
+    ''d.Sort]]]], 'op_:_->_`[_`].[''rpo.Sort, ''Nat.Sort, ''Attr.Sort,
+    'ctor.Attr], 'op_:_->_`[_`].[''s_.Sort, ''Nat.Sort, ''NzNat.Sort, '__[
     'iter.Attr, 'ctor.Attr, 'special['__['id-hook[''SuccSymbol.Sort,
     'nil.TypeList], 'term-hook[''zeroTerm.Sort, ''0.Zero.Constant]]]]],
     'op_:_->_`[_`].[''sameKind.Sort, '__[''`[Module`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind, ''`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`].Kind], ''`[Bool`].Kind, 'special['__['id-hook[

@@ -226,6 +226,8 @@ toAttribute	:	KW_PREC IDENTIFIER	{ currentRenaming->setPrec($2); }
 		|	KW_LATEX '('		{ lexerLatexMode(); }
 			LATEX_STRING ')'	{ currentRenaming->setLatexMacro($4); }
 		|	KW_LATEX     		{ IssueWarning(&($1) << ": latex attribute without latex code in operator mapping."); }
+		|	KW_RPO IDENTIFIER	{ currentRenaming->setRpo($2); }
+		|	KW_RPO			{ IssueWarning(&($1) << ": rpo attribute without value in operator mapping."); }
 		;
 
 /*
@@ -918,6 +920,8 @@ attribute	:	KW_ASSOC
 			{
 			  CM->setFlag(SymbolType::PCONST);
 			}
+		|	KW_RPO IDENTIFIER	{ CM->setRpo($2); }
+		|	KW_RPO			{ IssueWarning(&($1) << ": rpo attribute without value in operator declaration."); }
 		;
 
 /*
@@ -1057,7 +1061,7 @@ sortToken	:	IDENTIFIER
 		|	KW_PREC | KW_GATHER | KW_ASTRAT | KW_POLY | KW_MEMO | KW_CTOR
 		|	KW_LATEX | KW_SPECIAL | KW_FROZEN | KW_METADATA
 		|	KW_CONFIG | KW_OBJ | KW_DITTO | KW_FORMAT
-		|	KW_ID_HOOK | KW_OP_HOOK | KW_TERM_HOOK | KW_PCONST
+		|	KW_ID_HOOK | KW_OP_HOOK | KW_TERM_HOOK | KW_PCONST | KW_RPO
 		
 		|	'=' | '|' | '+' | '*' |	KW_ARROW2
 		;
