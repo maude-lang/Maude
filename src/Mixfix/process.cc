@@ -199,7 +199,13 @@ SyntacticPreModule::processSubsorts()
 	      bigger.clear();
 	    }
 	  else
-	    bigger.append(getSort(token));
+	    {
+	      //
+	      //	We allow this to be the declaration of the sort
+	      //	if it hasn't been declared.
+	      //
+	      bigger.append(getSort(token, true));
+	    }
 	}
       insertSubsorts(smaller, bigger);
       smaller.clear();
@@ -218,12 +224,13 @@ SyntacticPreModule::insertSubsorts(const Vector<Sort*> smaller, Vector<Sort*> bi
 }
 
 Sort*
-SyntacticPreModule::getSort(Token token)
+SyntacticPreModule::getSort(Token token, bool allowUndeclared)
 {
   //
   //	Check that token corresponds to an actual sort.
   //	If it doesn't, we assume the user just forgot to declare it,
-  //	and add it so we can press on.
+  //	and add it so we can press on. If allowUndeclared is true we
+  //	don't print a warning.
   //
   int code = token.code();
   Sort* sort = flatModule->findSort(code);
@@ -236,8 +243,9 @@ SyntacticPreModule::getSort(Token token)
 	  flatModule->markAsBad();  // mostly to deny meta-imports
 	}
       sort = flatModule->addSort(code);
-      sort->setLineNumber(FileTable::SYSTEM_CREATED);
-      IssueWarning(LineNumber(token.lineNumber()) << ": undeclared sort " << QUOTE(sort) << '.');
+      sort->setLineNumber(token.lineNumber());
+      WarningCheck(allowUndeclared, LineNumber(token.lineNumber()) <<
+		   ": undeclared sort " << QUOTE(sort) << '.');
     }
   return sort;
 }

@@ -52,7 +52,6 @@ Warning: <standard input>, line 135 (fmod BAZ): this module contains one or
 Warning: <standard input>, line 146 (fmod BAR): importation of fmod FOO{[X]} by
     fmod BAR not allowed because the pseudo-parameter Y of fmod FOO{[X]} would
     be captured by an actual parameter of fmod BAR.
-Warning: <standard input>, line 148 (fmod BAR): undeclared sort Foo{X,Y}.
 fmod BAZ is
   sorts Bool Zero NzNat Nat Bar{Nat,Nat} Foo{Nat,Nat} .
   subsorts Zero NzNat < Nat .
@@ -207,7 +206,6 @@ Warning: <standard input>, line 186 (fmod CONFUSE): undeclared sort S{X}.
 Warning: <standard input>, line 204 (fmod BAR): importation of fmod FOO by fmod
     BAR not allowed because the pseudo-parameter X of fmod FOO would be
     captured by an actual parameter of fmod BAR.
-Warning: <standard input>, line 206 (fmod BAR): undeclared sort Foo{X}.
 fmod BAR{Y :: T} is
   sorts Y$Elt Bool .
   op if_then_else_fi : Bool Universal Universal -> Universal [poly (2 3 0) prec

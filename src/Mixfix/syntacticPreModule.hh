@@ -288,7 +288,7 @@ private:
   void processImports();
   void processSorts();
   void processSubsorts();
-  Sort* getSort(Token token);
+  Sort* getSort(Token token, bool allowUndeclared = false);
   void checkOpTypes();
   void checkType(const Type& type);
   void computeOpTypes();

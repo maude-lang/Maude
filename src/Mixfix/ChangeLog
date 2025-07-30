@@ -1,3 +1,17 @@
+2025-07-24  Saruman the White  <eker@eker10>
+
+	* process.cc (SyntacticPreModule::processSubsorts): don't require
+	sorts in subsort declarations to be declared
+
+	* syntacticPreModule.hh (class SyntacticPreModule): updated decl
+	for getSort()
+
+	* process.cc (SyntacticPreModule::getSort): use line number from
+	token rather than FileTable::SYSTEM_CREATED in the case of an
+	undeclared sort; have option to allow undeclared sorts
+
+===================================Maude164===========================================
+
 2025-07-11  Rubén Rubio <rubenrub@ucm.es>
 
 	* makeGrammar.cc (MixfixModule::makeSpecialProductions):
