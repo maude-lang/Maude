@@ -438,6 +438,7 @@ Renaming::canonicalizeOpMappings(ImportModule* module, Renaming* canonical) cons
 			n->second.gather = j->second.gather;
 			n->second.format = j->second.format;
 			n->second.latexMacro = j->second.latexMacro;
+			n->second.rpo = j->second.rpo;
 			n->second.index = canonical->opMapIndex.size();
 			canonical->opMapIndex.append(n);
 		      }
@@ -887,6 +888,7 @@ Renaming::addOpMappingPartialCopy(const Renaming* original, int index, int newFr
   lastOpMapping->second.gather = from->second.gather;
   lastOpMapping->second.format = from->second.format;
   lastOpMapping->second.latexMacro = from->second.latexMacro;
+  lastOpMapping->second.rpo = from->second.rpo;
   lastOpMapping->second.index = opMapIndex.size();
   opMapIndex.append(lastOpMapping);
   lastSeenWasStrategy = false;

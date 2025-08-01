@@ -374,7 +374,7 @@ SyntacticPreModule::printAttributes(ostream& s, const OpDef& opDef) const
       s << space << "latex (" << Token::name(opDef.latexMacro) << ")";
       space = " ";
     }
-  if (opDef.rpo != NONE)
+  if (st.hasFlag(SymbolType::RPO))
     {
       s << space << "rpo " << opDef.rpo;
       space = " ";
