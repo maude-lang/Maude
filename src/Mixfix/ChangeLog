@@ -1,3 +1,9 @@
+2025-07-31  Saruman the White  <eker@eker10>
+
+	* token.cc (Token::ropeToPrefixNameCode): hoist !isprint(c) check
+	out of branches
+	(Token::ropeToPrefixNameCode): support UTF-8 encodings
+
 2025-07-24  Saruman the White  <eker@eker10>
 
 	* process.cc (SyntacticPreModule::processSubsorts): don't require

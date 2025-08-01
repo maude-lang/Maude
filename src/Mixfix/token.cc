@@ -938,42 +938,120 @@ Token::ropeToPrefixNameCode(const Rope& r)
   bool lastCharSpecial = false;
   bool stringMode = false;
   bool seenBS = false;
+  //
+  //	For handling UTF-8 encodings.
+  //
+  int nrContinuationBytesExpected = 0;
+  int firstLegalCodePoint = 0;
+  int accumulatedCodePoint = 0;
+
   for (Rope::const_iterator i = r.begin(); i != r.end(); ++i)
     {
       char c = *i;
-      if (stringMode)
+      if (isascii(c))
 	{
+	  //
+	  //	Regular 7-bit ASCII character.
+	  //
+	  if (nrContinuationBytesExpected != 0)
+	    return NONE;  // previous UTF-8 code point not complete
 	  if(!isprint(c))
 	    return NONE;
-	  result += c;
-	  if (c == '\\')
-	    seenBS = !seenBS;
+
+	  if (stringMode)
+	    {
+	      result += c;
+	      if (c == '\\')
+		seenBS = !seenBS;
+	      else
+		{
+		  if (c == '"' && !seenBS)
+		    stringMode = false;
+		  seenBS = false;
+		}
+	    }
 	  else
 	    {
-	      if (c == '"' && !seenBS)
-		stringMode = false;
-	      seenBS = false;
+	      if (isspace(c) || c == '`')
+		{
+		  //
+		  //	Check whether we will need a backquote before
+		  //	any following character.
+		  //
+		  needBQ = !lastCharSpecial && !(result.empty());
+		}
+	      else
+		{
+		  lastCharSpecial = specialChar(c) || c == '_';
+		  if ((lastCharSpecial || needBQ) && (c != '_'))
+		    result += '`';
+		  result += c;
+		  if (c == '"')
+		    stringMode = true;
+		  needBQ = false;
+		}
 	    }
 	}
       else
 	{
-	  if (isspace(c) || c == '`')
-	    needBQ = !lastCharSpecial && !(result.empty());
-	  else if(!isprint(c))
-	    return NONE;
+	  //
+	  //	Possible UTF-8 encoding.
+	  //
+	  if (c & 0x40)
+	    {
+	      //
+	      //	Possible start byte.
+	      //
+	      if (nrContinuationBytesExpected != 0)
+		return NONE;  // previous UTF-8 code point not complete
+	      if ((c & 0x20) == 0)
+		{
+		  //
+		  //	2 byte encoding.
+		  //
+		  nrContinuationBytesExpected = 1;
+		  firstLegalCodePoint = 0x80;
+		  accumulatedCodePoint = c & 0x1f;
+		}
+	      else if ((c & 0x10) == 0)
+		{
+		  //
+		  //	3 byte encoding.
+		  //
+		  nrContinuationBytesExpected = 2;
+		  firstLegalCodePoint = 0x800;
+		  accumulatedCodePoint = c & 0x0f;
+		}
+	      else if ((c & 0x08) == 0)
+		{
+		  //
+		  //	4 byte encoding.
+		  //
+		  nrContinuationBytesExpected = 3;
+		  firstLegalCodePoint = 0x10000;
+		  accumulatedCodePoint = c & 0x07;
+		}
+	      else
+		return NONE;  // not a legal start byte
+	    }
 	  else
 	    {
-	      lastCharSpecial = specialChar(c) || c == '_';
-	      if ((lastCharSpecial || needBQ) && (c != '_'))
-		result += '`';
-	      result += c;
-	      if (c == '"')
-		stringMode = true;
-	      needBQ = false;
+	      //
+	      //	Possible continuation byte.
+	      //
+	      if (nrContinuationBytesExpected == 0)
+		return NONE;  // nothing to continue
+	      accumulatedCodePoint <<= 6;
+	      accumulatedCodePoint |= (c & 0x3f);
+	      --nrContinuationBytesExpected;
+	      if (nrContinuationBytesExpected == 0 &&
+		  accumulatedCodePoint < firstLegalCodePoint)
+		return NONE;  // reject an overlong encoding
 	    }
+	  result += c;
 	}
     }
-  return stringMode ? NONE : encode(result.c_str());
+  return (stringMode || nrContinuationBytesExpected != 0) ? NONE : encode(result.c_str());
 }
 
 int
