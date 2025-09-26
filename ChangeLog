@@ -1,3 +1,5 @@
+==================================Maude165===========================================
+
 2026-07-21  Saruman the White  <eker@eker10>
 
 	* tests/Transformer/tuple.maude: use predefined TUPLE module;
@@ -14,6 +16,13 @@
 2025-12-19  Saruman the White  <eker@eker10>
 
 	* tests/Misc/attributeConsistency.maude: added
+
+2025-09-26  Rubén Rubio  <rubenrub@ucm.es>
+
+	* configure.ac: added CVC5 and --with-smt instead of separate
+	--with-yices2, --with-cvc4, etc.
+
+	* tests/Misc/smtTest.maude: added CVC5
 
 ==================================Maude164===========================================
 

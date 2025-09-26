@@ -81,50 +81,54 @@ if (test -z "$BUDDY_LIB") then
 fi
 AC_SUBST(BUDDY_LIB)
 #
-#	Check to see if we should use Yices2 for SMT solving.
+#	Check to see if we should use SMT solvers.
 #
-AC_ARG_WITH(yices2,
-	    AS_HELP_STRING([--with-yices2],[use Yices2 SMT solver library [default=yes]]),
-			   [WITH_YICES2=$withval],
-			   [WITH_YICES2=yes])
-if (test $WITH_YICES2 = yes) then
+AC_ARG_WITH(smt,
+	    AS_HELP_STRING([--with-smt],[use an SMT solver library among yices2, cvc5, cvc4 (deprecated), and no [default=yices2]]),
+			   [WITH_SMT=$withval],
+			   [WITH_SMT=yices2])
+case $WITH_SMT in
+yices2)
 #
 #	Check if user set a particular Yices2 library to use and if
 #	not set default.
 #
   AC_DEFINE([USE_YICES2], [], [use Yices2 SMT solver library])
-  if (test -z "$YICES2_LIB") then
-    YICES2_LIB="-lyices"
+  if (test -z "$SMT_LIB") then
+    SMT_LIB="-lyices"
   fi
-  AC_SUBST(YICES2_LIB)
-else
-  YICES2_LIB=""
-fi
+  AC_SUBST(SMT_LIB)
+;;
+cvc5)
 #
-#	Check to see if we should use CVC4 for SMT solving.
+#	Check if user set a particular cvc5 library to use and if
+#	not set default.
 #
-AC_ARG_WITH(cvc4,
-	    AS_HELP_STRING([--with-cvc4],[use CVC4 SMT solver library [default=no]]),
-			   [WITH_CVC4=$withval],
-			   [WITH_CVC4=no])
-if (test $WITH_CVC4 = yes) then
+  AC_DEFINE([USE_CVC5], [], [use cvc5 SMT solver library])
+  if (test -z "$SMT_LIB") then
+    SMT_LIB="-lcvc5"
+  fi
+  AC_SUBST(CVC4_LIB)
+;;
+cvc4)
 #
 #	Check if user set a particular CVC4 library to use and if
 #	not set default.
 #
   AC_DEFINE([USE_CVC4], [], [use CVC4 SMT solver library])
-  if (test -z "$CVC4_LIB") then
-    CVC4_LIB="-lcvc4"
+  if (test -z "$SMT_LIB") then
+    SMT_LIB="-lcvc4"
   fi
-  AC_SUBST(CVC4_LIB)
+  AC_SUBST(SMT_LIB)
 
 #
 #	CVC4 needs the clock_gettime() function from the POSIX Realtime Extensions library.
 #
-  AC_CHECK_LIB(rt, clock_gettime)
-else
-  CVC4_LIB=""
-fi
+AC_CHECK_LIB(rt, clock_gettime)
+;;
+no)
+  SMT_LIB=""
+esac
 #
 #	Check to see if we should use Tecla for command line editing.
 #
