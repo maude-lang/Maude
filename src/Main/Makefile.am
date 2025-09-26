@@ -57,8 +57,7 @@ maude_LDADD = \
 	../IO_Stuff/libIO_Stuff.a \
 	$(FULL_COMPILER_LIB) \
 	../Utility/libutility.a \
-	$(CVC4_LIB) \
-	$(YICES2_LIB) \
+	$(SMT_LIB) \
 	$(GMP_LIBS) \
 	$(BUDDY_LIB) \
 	$(TECLA_LIBS) \

@@ -178,6 +178,7 @@ EXTRA_DIST = \
 	getVariants.cc \
 	smtSearch.cc \
 	cvc4_Bindings.cc \
+	cvc5_Bindings.cc \
 	yices2_Bindings.cc \
 	quotedIdentifierOpSignature.cc \
 	serialize.cc \
@@ -239,6 +240,7 @@ noinst_HEADERS = \
 	variableGenerator.hh \
 	cacheableRewritingContext.hh \
 	cvc4_Bindings.hh \
+	cvc5_Bindings.hh \
 	yices2_Bindings.hh \
 	enclosingObject.hh \
 	argument.hh \

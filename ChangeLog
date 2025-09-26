@@ -1,3 +1,10 @@
+2025-09-26  Rubén Rubio  <rubenrub@ucm.es>
+
+	* configure.ac: added CVC5 and --with-smt instead of separate
+	--with-yices2, --with-cvc4, etc.
+
+	* tests/Misc/smtTest.maude: added CVC5
+
 ==================================Maude164===========================================
 
 2025-07-11  Rubén Rubio  <rubenrub@ucm.es>

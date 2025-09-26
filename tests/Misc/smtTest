@@ -3,12 +3,16 @@
 if grep "#define USE_CVC4" ../../config.h ; # are we using CVC4?
 then
   echo "testing CVC4"
+else if grep "#define USE_CVC5" ../../config.h ; # are we using CVC5?
+then
+  echo "testing cvc5"
 else if grep "#define USE_YICES2" ../../config.h ; # are we using YICES2?
 then
   echo "testing Yices2"
 else
   echo "no SMT support compiled in"
   exit 77 # grep returned nonzero exit so skip this test
+fi
 fi
 fi
 

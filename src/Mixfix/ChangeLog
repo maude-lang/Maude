@@ -1,3 +1,13 @@
+2025-09-26  Rubén Rubio  <rubenrub@ucm.es>
+
+	* cvc5_Bindings.cc: added
+
+	* cvc5_Bindings.hh: added
+
+	* variableGenerator.cc: conditionally include cvc5_Bindings
+
+	* variableGenerator.hh: conditionally include cvc5_Bindings
+
 2025-07-31  Saruman the White  <eker@eker10>
 
 	* token.cc (Token::ropeToPrefixNameCode): hoist !isprint(c) check
