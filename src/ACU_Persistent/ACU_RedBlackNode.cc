@@ -114,7 +114,7 @@ ACU_RedBlackNode::checkRedBlackProperty()
   int height;
   if (!checkRedBlackProperty(height) || isRed())
     {
-      cerr << "Red-Black Violation\n";
+      DebugAlways("Red-Black Violation\n");
       dump(cerr, 0);
       return false;
     }
@@ -128,29 +128,38 @@ ACU_RedBlackNode::checkRedBlackProperty(int& height)
   height = 0;
   if (ACU_RedBlackNode* l = getLeft())
     {
+      if (l->isRed() && isRed())
+	{
+	  DebugAlways("left child of red not is red");
+	  ok = false;
+	}
       ok = l->checkRedBlackProperty(height);
       if (getDagNode()->compare(l->getDagNode()) <= 0)
 	{
-	  cerr << "order violation " << getDagNode() <<
-	    " <= " << l->getDagNode() << endl;
+	  DebugAlways("order violation " << getDagNode() <<
+		      " <= " << l->getDagNode());
 	  ok = false;
 	}
     }
   int rHeight = 0;
   if (ACU_RedBlackNode* r = getRight())
     {
+      if (r->isRed() && isRed())
+	{
+	  DebugAlways("right child of red not is red");
+	  ok = false;
+	}
       ok = r->checkRedBlackProperty(rHeight) && ok;
       if (getDagNode()->compare(r->getDagNode()) >= 0)
 	{
-	  cerr << "order violation " << getDagNode() <<
-	    " >= " << r->getDagNode() << endl;
+	  DebugAlways("order violation " << getDagNode() <<
+		      " >= " << r->getDagNode());
 	  ok = false;
 	}
     }
   if (height != rHeight)
     {
-      cerr << "black height violation " << height <<
-	" != " << rHeight << endl;
+      DebugAlways("black height violation " << height << " != " << rHeight);
       ok = false;
     }
   if (!isRed())

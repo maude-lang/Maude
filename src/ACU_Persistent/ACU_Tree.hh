@@ -171,7 +171,7 @@ ACU_Tree::deleteMult(ACU_Stack& path, int multiplicity)
 {
 #ifdef CHECK_TREE
   checkIntegrity();
-  ACU_RedBlackNode* dagNode = path.top();
+  DagNode* dagNode = path.top()->getDagNode();
 #endif
 
   int delta;
@@ -191,7 +191,7 @@ ACU_Tree::deleteMult2(ACU_Stack& path, int multiplicity)
   //
 #ifdef CHECK_TREE
   checkIntegrity();
-  ACU_RedBlackNode* dagNode = path.top();
+  DagNode* dagNode = path.top()->getDagNode();
 #endif
 
   path.save();
