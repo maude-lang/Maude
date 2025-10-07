@@ -28,6 +28,7 @@
 #include "symbol.hh"  // HACK
 #include "dagNode.hh"  // HACK
 #include "memoryCell.hh"
+#define CHECK_TREE  // for checking the red-black property
 
 class ACU_RedBlackNode
 {

@@ -1,3 +1,16 @@
+2025-10-06  Saruman the White  <eker@eker10>
+
+	* ACU_RedBlackNode.cc (ACU_RedBlackNode::checkRedBlackProperty):
+	use DebugAlways() (both versions)
+
+2025-09-16  Saruman the White  <eker@eker10>
+
+	* ACU_RedBlackNode.cc (ACU_RedBlackNode::checkRedBlackProperty):
+	check for red children of red nodes
+
+	* ACU_Tree.hh (ACU_Tree::deleteMult): fix bug in CHECK_TREE code
+	(ACU_Tree::deleteMult2): ditto
+
 2024-06-07  Steven M. Eker  <eker@eker10>
 
 	* ACU_RedBlackNode.hh (class ACU_RedBlackNode): added dummy
