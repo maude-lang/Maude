@@ -36,11 +36,12 @@
 #include "rope.hh"
 
 //	line editing stuff
-#ifdef USE_TECLA
+#ifdef USE_READLINE
 #if HAVE_SYS_TERMIOS_H
 #include <sys/termios.h>
 #endif
-#include "libtecla.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 #endif
 
 //	IO Stuff class definitions
@@ -51,8 +52,8 @@ pid_t IO_Manager::stdinOwner = 0;
 
 IO_Manager::IO_Manager()
 {
-  gl = 0;
-  line = 0;
+  rdline = 0;  // full line (start of the buffer)
+  line = 0;  // remaining line fragment
   usePromptsAnyway = false;
   contFlag = false;
   wrapOut = 0;
@@ -65,21 +66,33 @@ IO_Manager::IO_Manager()
   buffer = 0;
 }
 
+IO_Manager::~IO_Manager()
+{
+#ifdef USE_READLINE
+  // History can be written to a file to make it persistent
+  // write_history(".maude_history")
+
+  if (rdline != 0)
+  {
+    free(rdline);
+    rdline = 0;
+  }
+#endif
+}
+
 void
 IO_Manager::setCommandLineEditing(size_t lineLength, size_t historyLength)
 {
-#ifdef USE_TECLA
-  gl = new_GetLine(lineLength, historyLength);
-  //
-  //	Tecla's behavior on Control-C is set as follows:
-  //	GLS_UNBLOCK_SIG : ensures tecla receives a SIGINT even if we block it.
-  //	  The reason we might block it is to avoid not responding to a SIGINT
-  //	  that was delivered after we last checked the flag set in the signal
-  //	  handler and before calling tecla.
-  //	GLS_ABORT : abort partial line and return NULL (default action anyway)
-  //	EINTR : set errno to this (default setting anyway)
-  //
-  gl_trap_signal(gl, SIGINT, GLS_UNBLOCK_SIG, GLS_ABORT, EINTR);
+#ifdef USE_READLINE
+  usingReadline = true;
+
+  using_history();
+  // read_history(".maude_history");
+  stifle_history(historyLength);
+
+  // Changing the function used to read characters to getc
+  // makes readline return nullptr when Ctrl+C is entered
+  rl_getc_function = getc;
 #endif
 }
 
@@ -185,32 +198,43 @@ IO_Manager::getInput(char* buf, size_t maxSize, FILE* stream)
   //
   waitUntilSafeToAccessStdin();
 
-#ifdef USE_TECLA
-  if (usingTecla())
+#ifdef USE_READLINE
+  if (usingReadline)
     {
       if (line == 0)
 	{
-	  
-	  line = gl_get_line(gl,
-			     contFlag ? contPrompt.c_str() : prompt.c_str(),
-			     NULL,
-			     -1);
-	  GlTerminalSize ts = gl_terminal_size(gl, DEFAULT_COLUMNS, DEFAULT_LINES);
-	  if (wrapOut != 0)
-	    wrapOut->setLineWidth(ts.ncolumn);
-	  if (wrapErr != 0)
-	    wrapErr->setLineWidth(ts.ncolumn);
+	  rdline = readline(contFlag ? contPrompt.c_str() : prompt.c_str());
+
+	  // Update the word wrapping buffers size just in case
+	  // the terminal width has changed
+	  winsize ts;
+	  if (wrapOut != 0 && ioctl(STDOUT_FILENO, TIOCGWINSZ , &ts) && ts.ws_col > 0)
+	    wrapOut->setLineWidth(ts.ws_col);
+	  if (wrapErr != 0 && ioctl(STDERR_FILENO, TIOCGWINSZ , &ts) && ts.ws_col > 0)
+	    wrapErr->setLineWidth(ts.ws_col);
 	  contFlag = true;
-	  if (line == 0)
+	  if (rdline == 0)
 	    return 0;
+	  else if (*rdline)
+	    add_history(rdline);
+
+	  // Appends a newline character (readline removes it)
+	  int lineLen = strlen(rdline);
+	  rdline = (char *) realloc(rdline, lineLen + 2);
+	  rdline[lineLen] = '\n';
+	  rdline[lineLen + 1] = '\0';
+
+	  line = rdline;
 	}
-      
+
       size_t n;
       for (n = 0;; n++)
 	{
 	  char c = *line;
 	  if (c == '\0')
 	    {
+	      free(rdline);
+	      rdline = 0;
 	      line = 0;
 	      break;
 	    }
@@ -310,21 +334,31 @@ IO_Manager::getLineFromStdin(const Rope& prompt)
   //
   //	Get a line as a Rope, possibly using Tecla.
   //
-#ifdef USE_TECLA
-  if (usingTecla() && isatty(STDIN_FILENO))
+#ifdef USE_READLINE
+  if (usingReadline && isatty(STDIN_FILENO))
     {
       char* promptString = prompt.makeZeroTerminatedString();
-      line = gl_get_line(gl, promptString, NULL, -1);  //  ignore any partial line left in line
+      //  ignore any partial line left in line
+      if (rdline != 0)
+	{
+	  free(rdline);
+	  rdline = 0;
+	  line = 0;
+	}
+      rdline = readline(promptString);
       delete [] promptString;
-      if (line == 0)
+      if (rdline == 0)
 	return Rope();  // return empty rope on error or eof
-      Rope result(line);
-      line = 0;
-      return result;
+      else if (*rdline)
+	add_history(rdline);
+      Rope result(rdline);
+      free(rdline);
+      rdline = 0;
+      return result + '\n';
     }
 #endif
   //
-  //	Non-Tecla case. Either Tecla not compiled it, or disabled or
+  //	Non-readline case. Either readline not compiled it, or disabled or
   //	we are getting the line from a file or pipe.
   //	We keep reading, respecting buffered characters, until we get to \n or EOF.
   //

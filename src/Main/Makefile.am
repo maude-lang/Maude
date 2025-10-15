@@ -61,7 +61,7 @@ maude_LDADD = \
 	$(YICES2_LIB) \
 	$(GMP_LIBS) \
 	$(BUDDY_LIB) \
-	$(TECLA_LIBS) \
+	$(READLINE_LIBS) \
 	$(LIBSIGSEGV_LIB)
 
 maude_SOURCES = \

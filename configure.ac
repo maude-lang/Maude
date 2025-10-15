@@ -126,30 +126,25 @@ else
   CVC4_LIB=""
 fi
 #
-#	Check to see if we should use Tecla for command line editing.
+#	Check to see if we should use GNU readline for command line editing.
 #
 AC_ARG_WITH(tecla,
-	    AS_HELP_STRING([--with-tecla],[use Tecla command line editing library [default=yes]]),
-			   [WITH_TECLA=$withval],
-			   [WITH_TECLA=yes])
-if (test $WITH_TECLA = yes) then
+	    AS_HELP_STRING([--with-readline],[use GNU readline command line editing library [default=yes]]),
+			   [WITH_READLINE=$withval],
+			   [WITH_READLINE=yes])
+if (test $WITH_READLINE = yes) then
 #
-#	Check if user set particular Tecla libraries to use and if
+#	Check if user set particular GNU readline libraries to use and if
 #	not set defaults.
 #
-  AC_DEFINE([USE_TECLA], [], [use Tecla command line editing library])
-  if (test -z "$TECLA_LIBS") then
-#
-#	Find out where the curses functions live.
-#
-    AC_CHECK_LIB(tinfo, tputs, TECLA_LIBS="-ltecla -ltinfo",
-      [AC_CHECK_LIB(ncurses, tputs, TECLA_LIBS="-ltecla -lncurses",
-        [AC_CHECK_LIB(curses, tputs, TECLA_LIBS="-ltecla -lncurses", TECLA_LIBS="-ltecla")])])
+  AC_DEFINE([USE_READLINE], [], [use GNU readline command line editing library])
+  if (test -z "$READLINE_LIBS") then
+    READLINE_LIBS="-lreadline"
   fi
 else
-  TECLA_LIBS=""
+  READLINE_LIBS=""
 fi
-AC_SUBST(TECLA_LIBS)
+AC_SUBST(READLINE_LIBS)
 #
 #	Check to see if we should use libsigsegv to handle segmentation faults.
 #

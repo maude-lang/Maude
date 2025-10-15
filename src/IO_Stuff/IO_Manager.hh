@@ -43,6 +43,7 @@ public:
     };
 
   IO_Manager();
+  ~IO_Manager();
 
   void setAutoWrap(bool lineWrapping);
   void unsetAutoWrap();
@@ -69,7 +70,7 @@ public:
   static bool safeToAccessStdout();
   static bool safeToAccessStderr();
   //
-  //	So caller of getLineFromStdin() will know if tecla is being used
+  //	So caller of getLineFromStdin() will know if GNU readline is being used
   //	and can be relied to unblock SIGINT.
   //
   bool usingTecla();
@@ -82,8 +83,9 @@ private:
 
   ssize_t readFromStdin(char* buf, size_t maxSize);
 
-  GetLine* gl;
+  char* rdline;  // GNU readline buffer
   const char* line;
+  bool usingReadline;
   bool usePromptsAnyway;  // use prompts even if command line editing disabled
   bool contFlag;
   string prompt;
@@ -137,7 +139,7 @@ IO_Manager::setStdinOwner(pid_t owner)
 inline bool
 IO_Manager::usingTecla()
 {
-  return gl != 0;
+  return usingReadline;
 }
 
 inline void

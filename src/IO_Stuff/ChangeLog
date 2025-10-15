@@ -1,3 +1,15 @@
+2025-10-10  Rubén Rubio  <rubenrub@ucm.es>
+
+	* IO_Manager.cc (setCommandLineEditing, getInput, getLine): added
+	support for GNU Readline instead of tecla
+	(~IO_Manager): added
+	(IO_Manager::setCommandLineEditing): set up readline
+	(IO_Manager::getInput): use readline instead of tecla
+	(IO_Manager::getLineFromStdin): use readline instead of tecla
+
+	* IO_Manager.hh: added data members rdline and usingReadline
+	(~IO_Manager): added
+
 2024-01-22  Steven Eker  <eker@pup>
 
 	* IO_Manager.hh (class IO_Manager): increase MAX_LINE_LENGTH from
