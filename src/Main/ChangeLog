@@ -1,3 +1,7 @@
+2025-07-29  Rubén Rubio  <rubenrub@ucm.es>
+
+	* prelude.maude: added rpo attribute
+
 2025-02-28  Rubén Rubio  <rubenrub@ucm.es>
 
 	* model-checker.maude: modules LTL+ and MODEL-CHECKER+

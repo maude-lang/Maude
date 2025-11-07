@@ -421,6 +421,7 @@ private:
     Vector<int> gather;
     Vector<int> format;
     int latex = NONE;
+    int rpo = NONE;
     int metadata = NONE;
     DagNode* identity = nullptr;
     DagNode* fixUpInfo = nullptr;

@@ -1,0 +1,62 @@
+***
+***	Test basic use of the rpo attribute
+***
+
+set show timing off .
+
+*** don't pull in BOOL so we have simple modules to look at
+set include BOOL off .
+
+
+*** The rpo attribute appears when printing the module
+
+fmod M1 is
+  sort Bar .
+  op a : Bar -> Bar [rpo 1] .
+  op b : Bar -> Universal [poly (0) rpo 2] .
+endfm
+
+show module .
+show ops .
+
+*** The rpo attribute is copied when the module is imported
+
+fmod M2 is
+  including M1 .
+  sort Foo .
+  op c : Foo -> Foo [rpo 3] .
+endfm
+
+show ops .
+
+fmod M3 is
+  including M1 * (op a to a [rpo 4], op b to b [rpo 5]) .
+endfm
+
+show module .
+show ops .
+
+*** Conflicts are detected
+
+fth C1 is
+  sorts Bar .
+  op a : Bar -> Bar [rpo 1 rpo 2] .
+  op b : Bar -> Bar [rpo] .
+  op b : Bar -> Bar [rpo bad] .
+endfth
+
+fth C2 is
+  sorts Bar Foo .
+  subsort Foo < Bar .
+  op a : Bar -> Bar [rpo 1] .
+  op a : Foo -> Foo [rpo 2] .
+endfth
+
+show module .
+
+*** The attribute appears at the metalevel
+
+reduce in META-LEVEL : upOpDecls('M1, false) .
+reduce upOpDecls('M2, true) .
+reduce upModule('M3, false) .
+reduce upOpDecls('M3, true) .

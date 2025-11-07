@@ -81,7 +81,7 @@ Renaming::latexRenaming(const char* sep,
 	  result += "\\maudeSpace\\maudeKeyword{to}\\maudeSpace";
 	  result += Token::latexIdentifier(a.toAttr.code());
 	  sep = sep2;
-	}	      
+	}
     }
   //
   //	If we are printing the processed renaming, include generated sort mappings.
@@ -138,7 +138,8 @@ Renaming::latexRenaming(const char* sep,
      if (om->second.prec >= MixfixModule::MIN_PREC ||
 	 !om->second.gather.empty() ||
 	 !om->second.format.empty() ||
-	 om->second.latexMacro != NONE)
+	 om->second.latexMacro != NONE ||
+	 om->second.rpo != NONE)
        {
 	 sep = "\\maudeSpace\\maudeLeftBracket";
 	 if (om->second.prec >= MixfixModule::MIN_PREC)
@@ -177,7 +178,7 @@ Renaming::latexRenaming(const char* sep,
 	   }
 	 const Vector<int>& format = om->second.format;
 	 if (!format.empty())
-	   {	       
+	   {
 	     result += sep;
 	     result += "\\maudeKeyword{format}\\maudeSpace\\maudeLeftParen";
 	     Index formatLength = format.size();
@@ -198,6 +199,14 @@ Renaming::latexRenaming(const char* sep,
 	      result += "\\maudeKeyword{latex}\\maudeSpace\\maudeLeftParen\\maudeSymbolic{";
 	      result += Token::latexName(om->second.latexMacro);
 	      result += "}\\maudeRightParen";
+	      sep = "\\maudeSpace";
+	    }
+	 if (om->second.rpo != NONE)
+	    {
+	      result += sep;
+	      result += "\\maudeKeyword{rpo}\\maudeSpace\\maudeNumber{";
+	      result += to_string(om->second.rpo);
+	      result += "}";
 	      sep = "\\maudeSpace";
 	    }
 	 result += "\\maudeRightBracket";

@@ -55,6 +55,7 @@ public:
   void setGather(const Vector<Token>& gather);
   void setFormat(const Vector<Token>& format);
   void setLatexMacro(const string& latexMacro);
+  void setRpo(Token rpoTok);
 
   void addClassMapping(const Token& fromClass, const Token& toClass);
   void addAttrMapping(const Token& token);
@@ -92,6 +93,7 @@ public:
   const Vector<int>& getGather(int index) const;
   const Vector<int>& getFormat(int index) const;
   int getLatexMacro(int index) const;
+  int getRpo(int index) const;
   const set<int>& getTypeSorts(int index, int typeNr) const;
 
   int getNrStratMappings() const;
@@ -190,10 +192,11 @@ private:
     //
     //	Can change syntactic attributes only.
     //
-    int latexMacro = NONE;	
+    int latexMacro = NONE;
     Vector<int> gather;		// empty if not set
     Vector<int> format;		// empty if not set
     int prec = MixfixModule::MIN_PREC - 1;	// < MixfixModule::MIN_PREC if not set
+    int rpo = NONE;
     int index;
   };
 
@@ -460,6 +463,12 @@ inline int
 Renaming::getLatexMacro(int index) const
 {
   return opMapIndex[index]->second.latexMacro;
+}
+
+inline int
+Renaming::getRpo(int index) const
+{
+  return opMapIndex[index]->second.rpo;
 }
 
 inline void

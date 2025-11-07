@@ -223,6 +223,7 @@ MixfixModule::addOpDeclaration(Token prefixName,
 			       const Vector<int>& gather,
 			       const Vector<int>& format,
 			       int latexMacro,
+			       int rpo,
 			       int metadata,
 			       bool& firstDecl)
 {
@@ -538,6 +539,7 @@ MixfixModule::addOpDeclaration(Token prefixName,
       si.latexMacro = NONE;
       symbolType.clearFlags(SymbolType::LATEX);
     }
+  si.rpo = rpo;
   si.polymorphIndex = NONE;
   si.symbolType = symbolType;
   si.symbolType.clearFlags(SymbolType::CTOR);  // don't store ctor flag in per-symbol struct
@@ -685,6 +687,7 @@ MixfixModule::addPolymorph(Token prefixName,
 			   const Vector<int>& gather,
 			   const Vector<int>& format,
 			   int latexMacro,
+			   int rpo,
 			   int metadata)
 {
   int index = findPolymorphIndex(prefixName.code(), domainAndRange);
@@ -774,6 +777,7 @@ MixfixModule::addPolymorph(Token prefixName,
 	}
     }
   p.symbolInfo.latexMacro = latexMacro;  // HACK
+  p.symbolInfo.rpo = rpo;
   p.symbolInfo.polymorphIndex = nrPolymorphs;  // our own index
   p.symbolInfo.symbolType = symbolType;
   p.symbolInfo.next = NONE;

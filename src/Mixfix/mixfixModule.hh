@@ -103,6 +103,7 @@ public:
 			   const Vector<int>& gather,
 			   const Vector<int>& format,
 			   int latexMacro,
+			   int rpo,
 			   int metadata,
 			   bool& firstDecl);
   void addVariableAlias(Token name, Sort* sort);
@@ -115,6 +116,7 @@ public:
 		   const Vector<int>& gather,
 		   const Vector<int>& format,
 		   int latexMacro,
+		   int rpo,
 		   int metadata);
   int addStrategy(Token name,
 		  const Vector<Sort*>& domainSorts,
@@ -212,6 +214,7 @@ public:
   void getGather(const Symbol* symbol, Vector<int>& gather) const;
   const Vector<int>& getFormat(const Symbol* symbol) const;
   int getLatexMacro(const Symbol* symbol) const;
+  int getRpo(const Symbol* symbol) const;
   const AliasMap& getVariableAliases() const;
   void getParserStats(int& nrNonterminals, int& nrTerminals, int& nrProductions);
   void getDataAttachments(Symbol* symbol,
@@ -259,6 +262,7 @@ public:
   const Vector<int>& getPolymorphStrategy(int index) const;
   const NatSet& getPolymorphFrozen(int index) const;
   int getPolymorphLatexMacro(int index) const;
+  int getPolymorphRpo(int index) const;
   int getPolymorphPrec(int index) const;
   void getPolymorphGather(int index, Vector<int>& gather) const;
   const Vector<int>& getPolymorphFormat(int index) const;
@@ -525,6 +529,7 @@ private:
     Vector<int> format;
     Vector<int> latexMacroUnpacked;
     int latexMacro = NONE;
+    int rpo = NONE;
     short prec;
     short polymorphIndex;  // for polymorphs and polymorph instances only
     SymbolType symbolType;
@@ -1138,6 +1143,12 @@ MixfixModule::getPolymorphLatexMacro(int index) const
 }
 
 inline int
+MixfixModule::getPolymorphRpo(int index) const
+{
+  return polymorphs[index].symbolInfo.rpo;
+}
+
+inline int
 MixfixModule::getPolymorphMetadata(int index) const
 {
   return polymorphs[index].metadata;
@@ -1171,6 +1182,12 @@ inline int
 MixfixModule::getLatexMacro(const Symbol* symbol) const
 {
   return symbolInfo[symbol->getIndexWithinModule()].latexMacro;
+}
+
+inline int
+MixfixModule::getRpo(const Symbol* symbol) const
+{
+  return symbolInfo[symbol->getIndexWithinModule()].rpo;
 }
 
 inline MixfixModule::ModuleType

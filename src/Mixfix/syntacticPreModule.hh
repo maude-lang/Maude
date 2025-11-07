@@ -84,6 +84,7 @@ public:
   void setFrozen(const Vector<Token>& frozen);
   void setPoly(const Vector<Token>& polyArgs);
   void setLatexMacro(const string& latexMacro);
+  void setRpo(Token rpo);
   void addHook(HookType type, Token name, const Vector<Token>& details);
   void addVarDecl(Token varName) override;
   void addStatement(const Vector<Token>& statement);
@@ -150,6 +151,7 @@ private:
     NatSet frozen;
     NatSet polyArgs;
     int latexMacro = NONE;
+    int rpo = NONE;
     int prec = DEFAULT;
     Vector<int> gather;
     Vector<int> format;

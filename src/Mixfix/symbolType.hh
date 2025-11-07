@@ -131,6 +131,7 @@ public:
     PCONST = 0x80000,
     POLY = 0x100000,
     DITTO = 0x200000,
+    RPO = 0x400000,
     //
     //	Conjunctions.
     //
@@ -144,7 +145,7 @@ public:
     //  All flagged attributes except ctor, poly, ditto. They need to agree between declarations of an operator.
     //
     ATTRIBUTES = PREC | GATHER | FORMAT | LATEX | STRAT | MEMO | FROZEN |
-    CONFIG | OBJECT | MESSAGE | AXIOMS | ITER | PCONST
+    CONFIG | OBJECT | MESSAGE | AXIOMS | ITER | PCONST | RPO
   };
 
   SymbolType();

@@ -376,6 +376,7 @@ SyntacticPreModule::processOps()
 							   opDef.gather,
 							   opDef.format,
 							   opDef.latexMacro,
+							   opDef.rpo,
 							   opDef.metadata);
 	  opDecl.originator = true;  // HACK
 	}
@@ -396,6 +397,7 @@ SyntacticPreModule::processOps()
 						       opDef.gather,
 						       opDef.format,
 						       opDef.latexMacro,
+						       opDef.rpo,
 						       opDef.metadata,
 						       opDecl.originator);
 	  if (flatModule->parameterDeclared(opDecl.symbol))

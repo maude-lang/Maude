@@ -455,6 +455,7 @@ SyntacticPreModule::processClassOps()
 					      dummyVec,
 					      NONE,
 					      NONE,
+					      NONE,
 					      dummyBool);
 
 	  for (AttributePair& ap : c.attributes)
@@ -479,6 +480,7 @@ SyntacticPreModule::processClassOps()
 								    DEFAULT,
 								    attributeGather,
 								    dummyVec,
+								    NONE,
 								    NONE,
 								    NONE,
 								    dummyBool);
