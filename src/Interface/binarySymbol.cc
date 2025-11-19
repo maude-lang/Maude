@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -134,20 +134,33 @@ BinarySymbol::commutativeSortCompletion()
 	 "Commutative operator " << this <<
 	 " has its arguments in different sort components");
   Vector<Sort*> newDecl(3);
+  //
+  //	Note that the number of declarations may increase as
+  //	we process them, so we can't use iterators.
+  //
   const Vector<OpDeclaration>& opDecls = getOpDeclarations();
-  int nrOpDecls = opDecls.length();
-  for (int i = 0; i < nrOpDecls; i++)
+  Index nrOpDecls = opDecls.length();
+  for (Index i = 0; i < nrOpDecls; ++i)  // look at all original declarations
     {
       const Vector<Sort*>& iDecl = opDecls[i].getDomainAndRange();
+      if (iDecl[0] == iDecl[1])
+	continue;  // declaration is symmetric
       bool iCtor = opDecls[i].isConstructor();
-      for (int j = opDecls.length() - 1; j >= 0; j--)
+      //
+      //	Check to see if a declaration with the argument sorts
+      //	exchanged exists.
+      //
+      for (Index j = opDecls.length() - 1; j >= 0; --j)
 	{
-	  const Vector<Sort*>& jDecl = opDecls[j].getDomainAndRange();
-	  if (iDecl[0] == jDecl[1] &&
-	      iDecl[1] == jDecl[0] &&
-	      iDecl[2] == jDecl[2] &&
-	      (!iCtor || opDecls[j].isConstructor()))
-	    goto nextOpDecl;
+	  if (j != i)
+	    {
+	      const Vector<Sort*>& jDecl = opDecls[j].getDomainAndRange();
+	      if (iDecl[0] == jDecl[1] &&
+		  iDecl[1] == jDecl[0] &&
+		  iDecl[2] == jDecl[2] &&
+		  iCtor == opDecls[j].isConstructor())
+		goto nextOpDecl;
+	    }
 	}
       newDecl[0] = iDecl[1];
       newDecl[1] = iDecl[0];

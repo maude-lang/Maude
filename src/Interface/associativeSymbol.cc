@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -166,6 +166,8 @@ AssociativeSymbol::associativeSortCheck()
   int bad1 = 0;
   int bad2 = 0;
   int bad3 = 0;
+  int badLeftAssocResult = 0;
+  int badRightAssocResult = 0;
   {
     //
     //	The naive O(n^3) algorithm can be slow when the number of user sorts
@@ -202,13 +204,17 @@ AssociativeSymbol::associativeSortCheck()
 	  int step_ij = traverse(0, traverse(step_i, j));
 	  for (int k = 1; k < nrSorts; k++)
 	    {
-	      if (traverse(step_ij, k) != traverse(step_i, traverse(step_j, k)))
+	      int leftAssocResult = traverse(step_ij, k);
+	      int rightAssocResult = traverse(step_i, traverse(step_j, k));
+	      if (leftAssocResult != rightAssocResult)
 		{
 		  if (nrBadTriples == 0)
 		    {
 		      bad1 = i->second.sortIndex;
 		      bad2 = j;
 		      bad3 = k;
+		      badLeftAssocResult = leftAssocResult;
+		      badRightAssocResult = rightAssocResult;
 		    }
 		  nrBadTriples += i->second.count;
 		}
@@ -223,10 +229,20 @@ AssociativeSymbol::associativeSortCheck()
 	       " sort triples. First such triple is (" <<
 	       QUOTE(component->sort(bad1)) << ", " << 
 	       QUOTE(component->sort(bad2)) << ", " << 
-	       QUOTE(component->sort(bad3)) << ").");
+	       QUOTE(component->sort(bad3)) << "):\n  " <<
+	       //
+	       QUOTE(this) << "(" << QUOTE(this) << "(" <<
+	       "X:" << QUOTE(component->sort(bad1)) << ", " <<
+	       "X:" << QUOTE(component->sort(bad2)) << "), " <<
+	       "X:" << QUOTE(component->sort(bad3)) << ")\nhas sort " <<
+	       QUOTE(component->sort(badLeftAssocResult)) << ", while\n  " <<
+	       //
+	       QUOTE(this) << "(" << "X:" << QUOTE(component->sort(bad1)) << ", " <<
+	       QUOTE(this) << "(X:" << QUOTE(component->sort(bad2)) << ", " <<
+	       "X:" << QUOTE(component->sort(bad3)) << "))\nhas sort " <<
+	       QUOTE(component->sort(badRightAssocResult)) << "."
+	       );
 }
-
-#if 0
 
 void
 AssociativeSymbol::associativeCtorCheck()
@@ -234,58 +250,11 @@ AssociativeSymbol::associativeCtorCheck()
   if (getCtorStatus() != SortTable::IS_COMPLEX)
     return;  // trivial case - either all constructors or all non-constructors
   //
-  //	In order for all members of a congruence class to have the same ctor it is necessary and
-  //	sufficient (as long as s_f is associative) that:
+  //	In order for all members of a congruence class to have the same ctor it is
+  //	necessary and sufficient (as long as s_f is associative) that:
   //
-  //	(for all sorts x, y, z).[c_f(s_f(x, y), z) /\ c_f(x, y)) <=> c_f(x, s_f(y, z)) /\ c_f(y, z))]
-  //
-  //	where s_f is the sorting function and c_f is the constructor function.
-  //
-  const ConnectedComponent* component = rangeComponent();
-  int nrSorts = component->nrSorts();
-  for (int x = 0; x < nrSorts; ++x)
-    {
-      int sx = traverse(0, x);
-      int cx = ctorTraverse(0, x);
-      for (int y = 0; y < nrSorts; ++y)
-	{
-	  int sy = traverse(0, y);
-	  int cy = ctorTraverse(0, y);
-	  int sxy = traverse(sx, y);
-	  int cxy = ctorTraverse(cx, y);
-	  int csxy = ctorTraverse(0, sxy);
-
-	  for (int z = 0; z < nrSorts; ++z)
-	    {
-	      int syz = traverse(sy, z);
-	      int cyz = ctorTraverse(cy, z);
-	      int csxy_z = ctorTraverse(csxy, z);
-	      int cx_syz = ctorTraverse(cx, syz);
-
-	      bool ok = (csxy_z && cxy) == (cx_syz && cyz);
-	      WarningCheck(ok,
-			   "constructor declaration associative operator " << QUOTE(this) <<
-			   " don't agree on the triple (" <<
-			   QUOTE(component->sort(x)) << ", " << 
-			   QUOTE(component->sort(y)) << ", " << 
-			   QUOTE(component->sort(z)) << ").");
-	    }
-	}
-    }
-}
-
-#else
-
-void
-AssociativeSymbol::associativeCtorCheck()
-{
-  if (getCtorStatus() != SortTable::IS_COMPLEX)
-    return;  // trivial case - either all constructors or all non-constructors
-  //
-  //	In order for all members of a congruence class to have the same ctor it is necessary and
-  //	sufficient (as long as s_f is associative) that:
-  //
-  //	(for all sorts x, y, z).[c_f(s_f(x, y), z) /\ c_f(x, y)) <=> c_f(x, s_f(y, z)) /\ c_f(y, z))]
+  //	(for all sorts x, y, z).
+  //      [c_f(s_f(x, y), z) /\ c_f(x, y)) <=> c_f(x, s_f(y, z)) /\ c_f(y, z))]
   //
   //	where s_f is the sorting function and c_f is the constructor function.
   //
@@ -297,6 +266,8 @@ AssociativeSymbol::associativeCtorCheck()
   int bad1 = 0;
   int bad2 = 0;
   int bad3 = 0;
+  Index badLeftAssocStatus = 0;
+  Index badRightAssocStatus = 0;
   //
   //	We hope that the number of first steps in the sort diagram times the number
   //	of first steps in the ctor diagram is less than the number of sorts, so we
@@ -343,16 +314,17 @@ AssociativeSymbol::associativeCtorCheck()
 		int cyz = ctorTraverse(cy, z);
 		int csxy_z = ctorTraverse(csxy, z);
 		int cx_syz = ctorTraverse(cx, syz);
-
-		bool ok = (csxy_z && cxy) == (cx_syz && cyz);
-
-		if (!ok)
+		bool leftAssocCtor = csxy_z && cxy;
+		bool rightAssocCtor = cx_syz && cyz;
+		if (leftAssocCtor != rightAssocCtor)
 		  {
 		    if (nrBadTriples == 0)
 		      {
 			bad1 = i->second.sortIndex;
 			bad2 = y;
 			bad3 = z;
+			badLeftAssocStatus = cxy | (csxy_z << 1);
+			badRightAssocStatus = cyz | (cx_syz << 1);
 		      }		
 		    nrBadTriples += i->second.count;
 		  }
@@ -360,17 +332,34 @@ AssociativeSymbol::associativeCtorCheck()
 	  }
       }
   }
+
+  const char* const outcomes[] = {
+    "neither operator is a constructor",
+    "only the inner operator is a constructor",
+    "only the outer operator is a constructor",
+    "both operators are constructors"
+  };
   WarningCheck(nrBadTriples == 0,
 	       "ctor declarations for associative operator " << QUOTE(this) <<
-	       " are conflict on " << nrBadTriples <<
+	       " conflict on " << nrBadTriples <<
 	       " out of " << nrSorts * nrSorts *  nrSorts << 
 	       " sort triples. First such triple is (" <<
 	       QUOTE(component->sort(bad1)) << ", " << 
 	       QUOTE(component->sort(bad2)) << ", " << 
-	       QUOTE(component->sort(bad3)) << ").");
+	       QUOTE(component->sort(bad3)) << ").\nIn\n  " <<
+	       //
+	       QUOTE(this) << "(" << QUOTE(this) << "(" <<
+	       "X:" << QUOTE(component->sort(bad1)) << ", " <<
+	       "X:" << QUOTE(component->sort(bad2)) << "), " <<
+	       "X:" << QUOTE(component->sort(bad3)) << ")\n" <<
+	       outcomes[badLeftAssocStatus] << ", while in\n  " <<
+	       //
+	       QUOTE(this) << "(" << "X:" << QUOTE(component->sort(bad1)) << ", " <<
+	       QUOTE(this) << "(X:" << QUOTE(component->sort(bad2)) << ", " <<
+	       "X:" << QUOTE(component->sort(bad3)) << "))\n" <<
+	       outcomes[badRightAssocStatus] << "."
+	       );
 }
-
-#endif
 
 void
 AssociativeSymbol::insertGreaterOrEqualSorts(const Sort* sort, NatSet& set)
