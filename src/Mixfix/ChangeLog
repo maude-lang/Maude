@@ -1,3 +1,11 @@
+2025-12-02  Saruman the White  <eker@eker10>
+
+	* entry.cc (MixfixModule::compatible): added
+	(MixfixModule::addOpDeclaration): use compatible
+
+	* mixfixModule.hh (class MixfixModule): added decl for
+	compatible()
+
 2025-07-31  Saruman the White  <eker@eker10>
 
 	* token.cc (Token::ropeToPrefixNameCode): hoist !isprint(c) check

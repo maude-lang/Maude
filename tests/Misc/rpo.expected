@@ -17,12 +17,12 @@ Warning: <standard input>, line 43 (fth C1): multiple rpo attributes.
 Warning: <standard input>, line 44 (fth C1): rpo attribute without value in
     operator declaration.
 Warning: <standard input>, line 45 (fth C1): bad value bad for rpo attribute.
-fth C2 is
-  sorts Bar Foo .
-  subsort Foo < Bar .
-  op a : Bar -> Bar [rpo 1] .
-  op a : Foo -> Foo [rpo 2] .
-endfth
+Warning: <standard input>, line 52 (fth C2): declaration for a has different
+    attributes from declaration on <standard input>, line 51 (fth C2).
+Warning: <standard input>, line 48 (fth C2): this module contains one or more
+    errors that could not be patched up and thus it cannot be used or imported.
+Warning: <standard input>, line 48 (fth C2): module C2 is unusable due to
+    unpatchable errors.
 ==========================================
 reduce in META-LEVEL : upOpDecls('M1, false) .
 rewrites: 1
