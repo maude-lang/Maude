@@ -590,6 +590,16 @@ private:
   int nonTerminal(int componentIndex, NonTerminalType type);
   int nonTerminal(const Sort* sort, NonTerminalType type);
 
+  bool compatible(Index existingSymbolIndex,
+		  SymbolType symbolType,
+		  const Vector<int>& strategy,
+		  const NatSet& frozen,
+		  int prec,
+		  const Vector<int>& gather,
+		  const Vector<int>& format,
+		  int latexMacro,
+		  int rpo);
+
   static int domainComponentIndex(const Symbol* symbol, int argNr);
   static int mayAssoc(Symbol* symbol, int argNr);
   static bool unpackLatexMacro(SymbolInfo& si, int arity);

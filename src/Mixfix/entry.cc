@@ -213,6 +213,29 @@ MixfixModule::checkIterated(Symbol* symbol, const Vector<Sort*>& domainAndRange)
     }
 }
 
+bool
+MixfixModule::compatible(Index existingSymbolIndex,
+			 SymbolType symbolType,
+			 const Vector<int>& strategy,
+			 const NatSet& frozen,
+			 int prec,
+			 const Vector<int>& gather,
+			 const Vector<int>& format,
+			 int latexMacro,
+			 int rpo)
+{
+  if (!symbolType.compatible(symbolInfo[existingSymbolIndex].symbolType))
+    return false;
+  if (symbolType.hasFlag(SymbolType::PREC) && symbolInfo[existingSymbolIndex].prec != prec)
+    return false;
+  if (symbolType.hasFlag(SymbolType::LATEX) &&
+      symbolInfo[existingSymbolIndex].latexMacro != latexMacro)
+    return false;
+  if (symbolType.hasFlag(SymbolType::RPO) && symbolInfo[existingSymbolIndex].rpo != rpo)
+    return false;
+  return true;
+}
+
 Symbol*
 MixfixModule::addOpDeclaration(Token prefixName,
 			       const Vector<Sort*>& domainAndRange,
@@ -276,8 +299,16 @@ MixfixModule::addOpDeclaration(Token prefixName,
 		      if (nrArgs == iNrArgs)
 			{
 			  firstDecl = false;
-			  if (!(symbolType.hasFlag(SymbolType::DITTO)) &&
-			      !(getSymbolType(s).compatible(symbolType)))
+			  if (!symbolType.hasFlag(SymbolType::DITTO) &&
+			      !compatible(i,
+					  symbolType,
+					  strategy,
+					  frozen,
+					  prec,
+					  gather,
+					  format,
+					  latexMacro,
+					  rpo))
 			    {
 			      IssueWarning(LineNumber(prefixName.lineNumber()) <<
 					   ": declaration for " << QUOTE(s) <<
