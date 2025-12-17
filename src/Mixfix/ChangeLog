@@ -1,3 +1,18 @@
+2025-12-16  Saruman the White  <eker@eker10>
+
+	* entry.cc (MixfixModule::addOpDeclaration): store rawStrategy
+	(MixfixModule::compatible): check strategy
+
+	* mixfixModule.hh (struct SymbolInfo): added data member
+	rawStrategy
+
+	* entry.cc (MixfixModule::compatible): check gather
+
+2025-12-03  Saruman the White  <eker@eker10>
+
+	* entry.cc (MixfixModule::compatible): check format
+	(MixfixModule::compatible): check frozen
+
 2025-12-02  Saruman the White  <eker@eker10>
 
 	* entry.cc (MixfixModule::compatible): added
