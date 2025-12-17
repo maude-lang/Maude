@@ -598,4 +598,11 @@ operator<(const Vector<T>& lhs,const Vector<T>& rhs)
   return lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
+template<class T>
+inline bool
+operator==(const Vector<T>& lhs,const Vector<T>& rhs)
+{
+  return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
 #endif

@@ -226,10 +226,32 @@ MixfixModule::compatible(Index existingSymbolIndex,
 {
   if (!symbolType.compatible(symbolInfo[existingSymbolIndex].symbolType))
     return false;
-  if (symbolType.hasFlag(SymbolType::PREC) && symbolInfo[existingSymbolIndex].prec != prec)
+  //
+  //	The rawStrategy field exists for the sole purpose of doing this
+  //	check because the strategy inside the symbol is normalized in
+  //	theory-dependent ways.
+  //
+  if (symbolType.hasFlag(SymbolType::STRAT) &&
+      !(symbolInfo[existingSymbolIndex].rawStrategy == strategy))
+    return false;
+  if (symbolType.hasFlag(SymbolType::FROZEN) &&
+      getSymbols()[existingSymbolIndex]->getFrozen() != frozen)
+    return false;
+  if (symbolType.hasFlag(SymbolType::PREC) &&
+      symbolInfo[existingSymbolIndex].prec != prec)
     return false;
   if (symbolType.hasFlag(SymbolType::LATEX) &&
       symbolInfo[existingSymbolIndex].latexMacro != latexMacro)
+    return false;
+  //
+  //	Gathers aren't converted to precedence numbers until we call
+  //	computePrecAndGather() when we close the signature.
+  //
+  if (symbolType.hasFlag(SymbolType::GATHER) &&
+      !(symbolInfo[existingSymbolIndex].gather == gather))
+    return false;
+  if (symbolType.hasFlag(SymbolType::FORMAT) &&
+      !(symbolInfo[existingSymbolIndex].format == format))
     return false;
   if (symbolType.hasFlag(SymbolType::RPO) && symbolInfo[existingSymbolIndex].rpo != rpo)
     return false;
@@ -570,6 +592,7 @@ MixfixModule::addOpDeclaration(Token prefixName,
       si.latexMacro = NONE;
       symbolType.clearFlags(SymbolType::LATEX);
     }
+  si.rawStrategy = strategy;  // unmodified user strategy for consistency checking
   si.rpo = rpo;
   si.polymorphIndex = NONE;
   si.symbolType = symbolType;

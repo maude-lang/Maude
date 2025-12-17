@@ -509,6 +509,7 @@ private:
     SIMPLE_NUMBER_OF_TYPES = 5,
     //
     //	In a complex parser, for each kind, we need a nonterminal for t1 \/ t2 \/ ... \/ tn
+    //
     TERM_DISJUNCTION_TYPE = 5,
     COMPLEX_NUMBER_OF_TYPES = 6,
   };
@@ -522,12 +523,18 @@ private:
 
   struct SymbolInfo
   {
+    //
+    //	This function recovers the GATHER_e/GATHER_E/GATHER_AMP representation
+    //	from the precendence representation that is used for parsing and is
+    //	computed when the signature is closed.
+    //
     void revertGather(Vector<int>& gatherSymbols) const;
 
     Vector<int> mixfixSyntax;
     Vector<int> gather;
     Vector<int> format;
     Vector<int> latexMacroUnpacked;
+    Vector<int> rawStrategy;  // we keep a copy of the raw strategy for consistency checking
     int latexMacro = NONE;
     int rpo = NONE;
     short prec;
