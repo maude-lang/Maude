@@ -1,3 +1,13 @@
+2025-12-19  Saruman the White  <eker@eker10>
+
+	* fixUp.cc (SyntacticPreModule::fixUpSymbol): fix comments; if we
+	have an identity but not a BinarySymbol due to error recovery, we
+	will have clear the identity flags in symbolType
+	(SyntacticPreModule::fixUpSymbol): use safeCastNonNull<>()
+
+	* entry.cc (MixfixModule::addOpDeclaration): fix ditto warning
+	because combining it with metadata is allowed
+
 2025-12-16  Saruman the White  <eker@eker10>
 
 	* entry.cc (MixfixModule::addOpDeclaration): store rawStrategy

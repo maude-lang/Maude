@@ -1,0 +1,86 @@
+Warning: <standard input>, line 9 (fmod FOO): declaration for f has different
+    attributes from declaration on <standard input>, line 8 (fmod FOO).
+Warning: <standard input>, line 6 (fmod FOO): this module contains one or more
+    errors that could not be patched up and thus it cannot be used or imported.
+Warning: <standard input>, line 21 (fmod FOO2): declaration for f has different
+    attributes from declaration on <standard input>, line 20 (fmod FOO2).
+Warning: <standard input>, line 18 (fmod FOO2): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 33 (fmod FOO3): declaration for f has different
+    attributes from declaration on <standard input>, line 32 (fmod FOO3).
+Warning: <standard input>, line 30 (fmod FOO3): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 45 (fmod FOO4): declaration for f has different
+    attributes from declaration on <standard input>, line 44 (fmod FOO4).
+Warning: <standard input>, line 42 (fmod FOO4): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 64 (fmod FOO5): declaration for _+_ has
+    different attributes from declaration on <standard input>, line 63 (fmod
+    FOO5).
+Warning: <standard input>, line 61 (fmod FOO5): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 76 (fmod FOO6): declaration for _+_ has
+    different attributes from declaration on <standard input>, line 75 (fmod
+    FOO6).
+Warning: <standard input>, line 73 (fmod FOO6): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 88 (fmod FOO7): declaration for _+_ has
+    different attributes from declaration on <standard input>, line 87 (fmod
+    FOO7).
+Warning: <standard input>, line 85 (fmod FOO7): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 100 (fmod FOO7''): multiple format attributes.
+Warning: <standard input>, line 107 (fmod FOO8): declaration of identity 0 for
+    operator _+_ clashes with previously declared identity 1 in <standard
+    input>, line 106 (fmod FOO8).
+Warning: <standard input>, line 114 (fmod FOO8'): declaration for _+_ has
+    different attributes from declaration on <standard input>, line 113 (fmod
+    FOO8').
+Warning: <standard input>, line 110 (fmod FOO8'): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 128 (fmod FOO9): declaration of identity 0 for
+    operator _+_ clashes with previously declared identity 1 in <standard
+    input>, line 127 (fmod FOO9).
+Warning: <standard input>, line 142 (fmod FOO10): declaration of identity 0 for
+    operator _+_ clashes with previously declared identity 1 in <standard
+    input>, line 141 (fmod FOO10).
+Warning: <standard input>, line 156 (fmod FOO11): declaration for _+_ has
+    different attributes from declaration on <standard input>, line 155 (fmod
+    FOO11).
+Warning: <standard input>, line 152 (fmod FOO11): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 163 (fmod FOO12): declaration for _+_ has
+    different attributes from declaration on <standard input>, line 162 (fmod
+    FOO12).
+Warning: <standard input>, line 159 (fmod FOO12): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 171 (fmod FOO13): declaration for _+_ has
+    different attributes from declaration on <standard input>, line 170 (fmod
+    FOO13).
+Warning: <standard input>, line 167 (fmod FOO13): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 178 (fmod FOO14): multiple identity
+    declarations.
+Warning: <standard input>, line 184 (fmod FOO15): duplicate attributes.
+Warning: 3439: multiple metadata attributes.
+Warning: <standard input>, line 210 (fmod FOO17): declaration for _+_ combines
+    ditto with attributes other than ctor or metadata.
+Warning: <standard input>, line 228 (fmod FOO17'''): declaration for _+_ uses
+    ditto without a previous declaration to refer to.
+Warning: <standard input>, line 229 (fmod FOO17'''): declaration for _+_ has
+    different attributes from declaration on <standard input>, line 228 (fmod
+    FOO17''').
+Warning: <standard input>, line 226 (fmod FOO17'''): this module contains one
+    or more errors that could not be patched up and thus it cannot be used or
+    imported.
+Bye.

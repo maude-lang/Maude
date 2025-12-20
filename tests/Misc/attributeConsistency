@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/attributeConsistency.maude -no-banner -no-advise \
+  > attributeConsistency.out 2>&1
+
+diff $srcdir/attributeConsistency.expected attributeConsistency.out > /dev/null 2>&1
