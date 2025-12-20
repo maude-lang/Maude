@@ -279,7 +279,7 @@ MixfixModule::addOpDeclaration(Token prefixName,
     {
       IssueWarning(LineNumber(prefixName.lineNumber()) <<
 		   ": declaration for " << QUOTE(prefixName) <<
-		   " combines ditto with attributes other than ctor.");
+		   " combines ditto with attributes other than ctor or metadata.");
     }
 
   int nrArgs = domainAndRange.length() - 1;

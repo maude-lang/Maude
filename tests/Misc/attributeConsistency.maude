@@ -1,0 +1,230 @@
+***
+***	Test that inconsistent values for attributes for subsort overloaded
+***	operators are detected.
+***
+
+fmod FOO is
+  subsort Foo < Bar .
+  op f : Foo -> Foo [rpo 7] .
+  op f : Bar -> Bar [rpo 8] .
+endfm
+
+fmod FOO is
+  subsort Foo < Bar .
+  op f : Foo -> Foo [rpo 8] .
+  op f : Bar -> Bar [rpo 8] .
+endfm
+
+fmod FOO2 is
+  subsort Foo < Bar .
+  op f : Foo -> Foo [latex (f)] .
+  op f : Bar -> Bar [latex (ff)] .
+endfm
+
+fmod FOO2' is
+  subsort Foo < Bar .
+  op f : Foo -> Foo [latex (ff)] .
+  op f : Bar -> Bar [latex (ff)] .
+endfm
+
+fmod FOO3 is
+  subsort Foo < Bar .
+  op f : Foo Foo -> Foo [strat (2 0 1 0)] .
+  op f : Bar Bar -> Bar [strat (1 0 2 0)] .
+endfm
+
+fmod FOO3' is
+  subsort Foo < Bar .
+  op f : Foo Foo -> Foo [strat (1 0 2 0)] .
+  op f : Bar Bar -> Bar [strat (1 0 2 0)] .
+endfm
+
+fmod FOO4 is
+  subsort Foo < Bar .
+  op f : Foo Foo -> Foo [frozen (2)] .
+  op f : Bar Bar -> Bar [frozen (1)] .
+endfm
+
+fmod FOO4' is
+  subsort Foo < Bar .
+  op f : Foo Foo -> Foo [frozen (1)] .
+  op f : Bar Bar -> Bar [frozen (1)] .
+endfm
+
+*** frozen arguments are treated as a set so this isn't a bug
+fmod FOO4'' is
+  subsort Foo < Bar .
+  op f : Foo Foo -> Foo [frozen (2 1)] .
+  op f : Bar Bar -> Bar [frozen (1 2)] .
+endfm
+
+fmod FOO5 is
+  subsort Foo < Bar .
+  op _+_ : Foo Foo -> Foo [prec 2] .
+  op _+_ : Bar Bar -> Bar [prec 1] .
+endfm
+
+fmod FOO5' is
+  subsort Foo < Bar .
+  op _+_ : Foo Foo -> Foo [prec 1] .
+  op _+_ : Bar Bar -> Bar [prec 1] .
+endfm
+
+fmod FOO6 is
+  subsort Foo < Bar .
+  op _+_ : Foo Foo -> Foo [gather (e E)] .
+  op _+_ : Bar Bar -> Bar [gather (E e)] .
+endfm
+
+fmod FOO6' is
+  subsort Foo < Bar .
+  op _+_ : Foo Foo -> Foo [gather (E e)] .
+  op _+_ : Bar Bar -> Bar [gather (E e)] .
+endfm
+
+fmod FOO7 is
+  subsort Foo < Bar .
+  op _+_ : Foo Foo -> Foo [format (d n n d)] .
+  op _+_ : Bar Bar -> Bar [format (d r o d)] .
+endfm
+
+fmod FOO7' is
+  subsort Foo < Bar .
+  op _+_ : Foo Foo -> Foo [format (d r o d)] .
+  op _+_ : Bar Bar -> Bar [format (d r o d)] .
+endfm
+
+*** We don't allow duplicated attributes
+fmod FOO7'' is
+  subsort Foo < Bar .
+  op _+_ : Foo Foo -> Foo [format (d n n d) format (d r o d)] .
+endfm
+
+fmod FOO8 is
+  subsort Foo < Bar .
+  ops 0 1 : -> Bar .
+  op _+_ : Foo Foo -> Foo [id: 1] .
+  op _+_ : Bar Bar -> Bar [id: 0] .
+endfm
+
+fmod FOO8' is
+  subsort Foo < Bar .
+  ops 0 1 : -> Bar .
+  op _+_ : Foo Foo -> Foo [id: 0] .
+  op _+_ : Bar Bar -> Bar .
+endfm
+
+fmod FOO8'' is
+  subsort Foo < Bar .
+  ops 0 1 : -> Bar .
+  op _+_ : Foo Foo -> Foo [id: 0] .
+  op _+_ : Bar Bar -> Bar [id: 0] .
+endfm
+
+fmod FOO9 is
+  subsort Foo < Bar .
+  ops 0 1 : -> Bar .
+  op _+_ : Foo Foo -> Foo [left id: 1] .
+  op _+_ : Bar Bar -> Bar [left id: 0] .
+endfm
+
+fmod FOO9' is
+  subsort Foo < Bar .
+  ops 0 1 : -> Bar .
+  op _+_ : Foo Foo -> Foo [left id: 0] .
+  op _+_ : Bar Bar -> Bar [left id: 0] .
+endfm
+
+fmod FOO10 is
+  subsort Foo < Bar .
+  ops 0 1 : -> Bar .
+  op _+_ : Foo Foo -> Foo [right id: 1] .
+  op _+_ : Bar Bar -> Bar [right id: 0] .
+endfm
+
+fmod FOO10' is
+  subsort Foo < Bar .
+  ops 0 1 : -> Bar .
+  op _+_ : Foo Foo -> Foo [right id: 0] .
+  op _+_ : Bar Bar -> Bar [right id: 0] .
+endfm
+
+fmod FOO11 is
+  subsort Foo < Bar .
+  op 0 : -> Bar .
+  op _+_ : Foo Foo -> Foo [left id: 0] .
+  op _+_ : Bar Bar -> Bar [id: 0] .
+endfm
+
+fmod FOO12 is
+  subsort Foo < Bar .
+  op 0  : -> Bar .
+  op _+_ : Foo Foo -> Foo [left id: 0] .
+  op _+_ : Bar Bar -> Bar [right id: 0] .
+endfm
+
+*** we don't allow this even though the comm makes them semantically equal
+fmod FOO13 is
+  subsort Foo < Bar .
+  op 0 : -> Bar .
+  op _+_ : Foo Foo -> Foo [comm left id: 0] .
+  op _+_ : Bar Bar -> Bar [comm right id: 0] .
+endfm
+
+*** we only allow one identity declaration
+fmod FOO14 is
+  subsort Foo < Bar .
+  op 0 : -> Bar .
+  op _+_ : Bar Bar -> Bar [right id: 0 left id: 0] .
+endfm
+
+*** duplicate attributes not allowed
+fmod FOO15 is
+  subsort Foo < Bar .
+  op f : Foo -> Foo [ctor ctor] .
+  op f : Bar -> Bar .
+endfm
+
+*** but ctor can vary
+fmod FOO15' is
+  subsort Foo < Bar .
+  op f : Foo -> Foo [ctor] .
+  op f : Bar -> Bar .
+endfm
+
+fmod FOO16 is
+  subsort Foo < Bar .
+  op f : Foo -> Foo [metadata "each declaration"] .
+  op f : Bar -> Bar [metadata "can have its own metadata"].
+endfm
+
+fmod FOO16' is
+  subsort Foo < Bar .
+  op f : Foo -> Foo [metadata "but only" metadata "one"] .
+  op f : Bar -> Bar .
+endfm
+
+fmod FOO17 is
+  subsort Foo < Bar .
+  op _+_ : Foo Foo -> Foo [comm format (d r o d)] .
+  op _+_ : Bar Bar -> Bar [ditto assoc] .
+endfm
+
+fmod FOO17' is
+  subsort Foo < Bar .
+  op _+_ : Foo Foo -> Foo [comm format (d r o d)] .
+  op _+_ : Bar Bar -> Bar [ditto ctor] .
+endfm
+
+fmod FOO17'' is
+  subsort Foo < Bar .
+  op _+_ : Foo Foo -> Foo [comm format (d r o d)] .
+  op _+_ : Bar Bar -> Bar [ditto metadata "ok"] .
+endfm
+
+*** declaration that is ditto'd from must have been previously seen
+fmod FOO17''' is
+  subsort Foo < Bar .
+  op _+_ : Bar Bar -> Bar [ditto metadata "not ok"] .
+  op _+_ : Foo Foo -> Foo [comm format (d r o d)] .
+endfm

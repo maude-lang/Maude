@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -193,17 +193,13 @@ SyntacticPreModule::fixUpSymbol(const OpDecl& opDecl)
     {
       //
       //	The validation of attributes in the flattened module may have
-      //	removed the identity attributes.
+      //	removed the identity attributes, and we may not have a BinarySymbol.
       //
       Symbol* symbol = opDecl.symbol;
       SymbolType symbolType = flatModule->getSymbolType(symbol);
       if (symbolType.hasAtLeastOneFlag(SymbolType::LEFT_ID | SymbolType::RIGHT_ID))
 	{
-	  //
-	  //	Might not be a binary symbol if it got converted to
-	  //	a free symbol during error recovery.
-	  //
-	  BinarySymbol* s = safeCast(BinarySymbol*, symbol);
+	  BinarySymbol* s = safeCastNonNull<BinarySymbol*>(symbol);
 	  Sort* wanted = opDef.domainAndRange[symbolType.hasFlag(SymbolType::LEFT_ID) ? 0 : 1];
 	  Term* id = flatModule->parseTerm(opDef.identity, wanted->component());
 	  if (id == 0)
