@@ -32,7 +32,7 @@ and in [HTML](https://maude.lcc.uma.es/maude-manual/).
 The source code for most of the examples used in the manual, together with the examples from the Maude book,
 are available [here](https://maude.cs.illinois.edu/manual-book-examples.zip).
 
-Additional information on background, applications, and previous versions is available at its official web site at [github.io](https://maude-lang.github.io) or at [UIUC](https://maude.cs.illinois.edu).
+Additional information on background, applications, and previous versions is available at its [official web site](https://maude.cs.illinois.edu).
 
 For help using Maude 3:	maude-help@maude.cs.uiuc.edu
 
