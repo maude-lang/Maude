@@ -57,10 +57,8 @@
 #include "freePreNet.hh"
 #include "freeNet.hh"
 #include "freeSymbol.hh"
+#include "freeSimpleSymbol.hh"
 #include "freeNullarySymbol.hh"
-#include "freeUnarySymbol.hh"
-#include "freeBinarySymbol.hh"
-#include "freeTernarySymbol.hh"
 #include "freeDagNode.hh"
 #include "freeOccurrence.hh"
 #include "freeTerm.hh"
@@ -72,6 +70,30 @@
 #include "freeGeneralCtorFinal.hh"
 #include "freeGeneralExtor.hh"
 #include "freeGeneralExtorFinal.hh"
+
+template<int n>
+bool
+FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
+  return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.applyReplaceFast(subject, context);
+}
+
+bool
+FreeSymbol::eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  if (symbol->standardStrategy())
+    {
+      int nrArgs = symbol->arity();
+      DagNode* const* args = static_cast<FreeDagNode*>(subject)->argArray();
+      for (int i = nrArgs; i > 0; i--, args++)
+        (*args)->reduce(context);
+      return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.applyReplace(subject, context);
+    }
+  return safeCastNonNull<FreeSymbol*>(symbol)->complexStrategy(subject, context);
+}
 
 FreeSymbol*
 FreeSymbol::newFreeSymbol(int id, int arity, const Vector<int>& strategy, bool memoFlag)
@@ -85,22 +107,39 @@ FreeSymbol::newFreeSymbol(int id, int arity, const Vector<int>& strategy, bool m
 	    return t;
 	  delete t;
 	}
+      //
+      //	Low arity, standard strategy symbols get an optimized
+      //	class instance.
+      //
       if (arity == 0)
-	return new FreeNullarySymbol(id);
+	return new FreeNullarySymbol(id);  // nullary symbols cache constant dags
       else if (arity == 1)
-	return new FreeUnarySymbol(id);
+	return new FreeSimpleSymbol<1>(id);
       else if (arity == 2)
-	return new FreeBinarySymbol(id);
+	return new FreeSimpleSymbol<2>(id);
       else
-	return new FreeTernarySymbol(id);
+	return new FreeSimpleSymbol<3>(id);
     }
   return new FreeSymbol(id, arity, strategy, memoFlag);
 }
-	    
+
 FreeSymbol::FreeSymbol(int id, int arity, const Vector<int>& strategy, bool memoFlag)
   : Symbol(id, arity, memoFlag)
 {
   setStrategy(strategy, arity, memoFlag);
+  if (arity <= 3 && standardStrategy())
+    {
+      if (arity == 0)
+	setEqRewrite(&eqRewriteFast<0>);
+      else if (arity == 1)
+	setEqRewrite(&eqRewriteFast<1>);
+      else if (arity == 2)
+	setEqRewrite(&eqRewriteFast<2>);
+      else if (arity == 3)
+	setEqRewrite(&eqRewriteFast<3>);
+   }
+  else
+    setEqRewrite(&eqRewriteSlow);
 }
 
 void
@@ -130,6 +169,9 @@ FreeSymbol::compileEquations()
   FreePreNet n(false);
   n.buildNet(this);
   n.semiCompile(discriminationNet);
+  //
+  //	In future we will pick more specialized functions.
+  //
 }
 
 Term*

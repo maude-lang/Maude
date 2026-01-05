@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -58,12 +58,11 @@
 #include "freeArgumentIterator.hh"
 #include "freeLhsAutomaton.hh"
 #include "freeRhsAutomaton.hh"
-#include "freeFast3RhsAutomaton.hh"
+#include "freeOneInstructionRhsAutomaton.hh"
+#include "freeTwoInstructionRhsAutomaton.hh"
+#include "freeThreeInstructionRhsAutomaton.hh"
 #include "freeFast2RhsAutomaton.hh"
-#include "freeNullaryRhsAutomaton.hh"
-#include "freeUnaryRhsAutomaton.hh"
-#include "freeBinaryRhsAutomaton.hh"
-#include "freeTernaryRhsAutomaton.hh"
+#include "freeFast3RhsAutomaton.hh"
 #include "freeRemainder.hh"
 #include "freeTerm.hh"
 
@@ -396,67 +395,223 @@ FreeTerm::findAvailableTerms(TermBag& availableTerms, bool eagerContext, bool at
     }
 }
 
+//
+//	Recursive function template to instantial the class template.
+//
+template<int n>
+inline FreeRhsAutomaton* makeFreeOneInstructionRhsAutomaton(int arity, FreeRhsAutomaton* victim)
+{
+  return (arity == n) ? new FreeOneInstructionRhsAutomaton<n>(*victim) :
+    makeFreeOneInstructionRhsAutomaton<n-1>(arity, victim);
+}
+
+template<>
+inline FreeRhsAutomaton* makeFreeOneInstructionRhsAutomaton<0>(int /* arity */,
+							       FreeRhsAutomaton* victim)
+{
+  return new FreeOneInstructionRhsAutomaton<0>(*victim);
+}
+
+//
+//	We need partial specialization to handle the base cases of
+//	of a double recursion so we wrap the functions in struct templates.
+//
+//	The second symbol in a two instruction automata will be the top
+//	symbol for a free skeleton and thus must have at least 1 argument.
+//
+
+//
+//	Two instruction case.
+//
+template<int n, int m>
+struct HandleArgument2
+{
+  static FreeRhsAutomaton* handleArgument2(int arity2, FreeRhsAutomaton* victim)
+  {
+    return (arity2 == m) ? new FreeTwoInstructionRhsAutomaton<n, m>(*victim) :
+      HandleArgument2<n, m-1>::handleArgument2(arity2, victim);
+  }
+};
+
+template<int n>
+struct HandleArgument2<n, 1>  // partial specialization
+{
+  static FreeRhsAutomaton* handleArgument2(int /* arity2 */, FreeRhsAutomaton* victim)
+  {
+    return new FreeTwoInstructionRhsAutomaton<n, 1>(*victim);
+  }
+};
+
+template<int n, int m>
+struct HandleArgument1
+{
+  static FreeRhsAutomaton* handleArgument1(int arity1, int arity2, FreeRhsAutomaton* victim)
+  {
+    return (arity1 == n) ? HandleArgument2<n,m>::handleArgument2(arity2, victim) :
+      HandleArgument1<n-1, m>::handleArgument1(arity1, arity2, victim);
+  }
+};
+
+template<int m>
+struct HandleArgument1<0, m>  // partial specialization
+{
+  static FreeRhsAutomaton* handleArgument1(int /* arity1 */, int arity2, FreeRhsAutomaton* victim)
+  {
+    return HandleArgument2<0, m>::handleArgument2(arity2, victim);
+  }
+};
+
+//
+//	Three instruction case.
+//
+template<int n, int m, int p>
+struct I3HandleArgument3
+{
+  static FreeRhsAutomaton* handleArgument3(int arity3, FreeRhsAutomaton* victim)
+  {
+    return (arity3 == p) ?
+      new FreeThreeInstructionRhsAutomaton<n, m, p>(*victim) :
+      I3HandleArgument3<n, m, p-1>::handleArgument3(arity3, victim);
+  }
+};
+  
+template<int n, int m>
+struct I3HandleArgument3<n, m, 1>  // partial specialization
+{
+  static FreeRhsAutomaton* handleArgument3(int /* arity3 */, FreeRhsAutomaton* victim)
+  {
+    return new FreeThreeInstructionRhsAutomaton<n, m, 1>(*victim);
+  }
+};
+
+template<int n, int m, int p>
+struct I3HandleArgument2
+{
+  static FreeRhsAutomaton* handleArgument2(int arity2, int arity3, FreeRhsAutomaton* victim)
+  {
+    return (arity2 == m) ?
+      I3HandleArgument3<n, m, p>::handleArgument3(arity3, victim) :
+      I3HandleArgument2<n, m-1, p>::handleArgument2(arity2, arity3, victim);
+  }
+};
+
+template<int n, int p>
+struct I3HandleArgument2<n, 0, p>  // partial specialization
+{
+  static FreeRhsAutomaton* handleArgument2(int /* arity2 */,
+					   int arity3,
+					   FreeRhsAutomaton* victim)
+  {
+    return I3HandleArgument3<n, 0, p>::handleArgument3(arity3, victim);
+  }
+};
+
+template<int n, int m, int p>
+struct I3HandleArgument1
+{
+  static FreeRhsAutomaton* handleArgument1(int arity1,
+					   int arity2,
+					   int arity3,
+					   FreeRhsAutomaton* victim)
+  {
+    return (arity1 == n) ?
+      I3HandleArgument2<n, m, p>::handleArgument2(arity2, arity3, victim) :
+      I3HandleArgument1<n-1, m, p>::handleArgument1(arity1, arity2, arity3, victim);
+  }
+};
+
+template<int m, int p>
+struct I3HandleArgument1<0, m, p>  // partial specialization
+{
+  static FreeRhsAutomaton* handleArgument1(int /* arity1 */,
+					   int arity2,
+					   int arity3,
+					   FreeRhsAutomaton* victim)
+  {
+    return I3HandleArgument2<0, m, p>::handleArgument2(arity2, arity3, victim);
+  }
+};
+
 int
 FreeTerm::compileRhs2(RhsBuilder& rhsBuilder,
 		      VariableInfo& variableInfo,
 		      TermBag& availableTerms,
 		      bool eagerContext)
 {
-  //cout << "compiling " << this << endl;
   int maxArity = 0;
-  int nrFree = 1;
-  compileRhsAliens(rhsBuilder, variableInfo, availableTerms, eagerContext, maxArity, nrFree);
-  /*
-  FreeRhsAutomaton* automaton = (maxArity > 3) ? new FreeRhsAutomaton() :
-    ((nrFree > 1) ?
-     ((maxArity == 3) ? new FreeFast3RhsAutomaton() : new FreeFast2RhsAutomaton()) :
-     ((maxArity == 3) ? new FreeTernaryRhsAutomaton() :
-      ((maxArity == 2) ? new FreeBinaryRhsAutomaton() :
-       ((maxArity == 1) ? new FreeBinaryRhsAutomaton() : new FreeNullaryRhsAutomaton()))));
-  */
-
-  //cout << "maxArity = " << maxArity << "  nrFree = " << nrFree << endl;
+  compileRhsAliens(rhsBuilder, variableInfo, availableTerms, eagerContext, maxArity);
   FreeRhsAutomaton* automaton;
   if (maxArity > 3)
     automaton = new FreeRhsAutomaton();  // general case
   else
     {
       //
-      //	We have 6 faster rhs automata for low arity cases.
+      //	We have faster rhs automata for low arity cases.
       //
-      if (nrFree > 1)
+      if (maxArity == 3)
+	automaton = new FreeFast3RhsAutomaton();  // all dag nodes padded to 3 args
+      else
+	automaton = new FreeFast2RhsAutomaton();  // all dag nodes padded to 2 args
+    }
+  //
+  //	Now compile the free skeleton into the automaton.
+  //
+  int index = compileRhs3(automaton, rhsBuilder, variableInfo, availableTerms, eagerContext);
+  if (maxArity <= 3)
+    {
+      //
+      //	After compiling we know exactly how many instructions we have,
+      //	taking into account common subexpression sharing and left->right
+      //	sharing.
+      //
+      Index nrInstructions = automaton->getNrInstructions();
+      if (nrInstructions == 1)
 	{
 	  //
-	  //	Multiple low arity symbol cases.
+	  //	Cannibalize automaton to make a faster one.
+	  //	4 cases.
 	  //
-	  if (maxArity == 3)
-	    automaton = new FreeFast3RhsAutomaton();  // all dag nodes padded to 3 args
-	  else
-	    automaton = new FreeFast2RhsAutomaton();  // all dag nodes padded to 2 args
+	  DebugInfo("using 1 instruction optimization for free skeleton " << this);
+	  FreeRhsAutomaton* newAutomaton =
+	    makeFreeOneInstructionRhsAutomaton<3>(automaton->getArity(0),
+						  automaton);
+	  delete automaton;
+	  automaton = newAutomaton;
+	}
+      else if (nrInstructions == 2)
+	{
+	  //
+	  //	Cannibalize automaton to make a faster one.
+	  //	4 * 3 = 12 cases (2nd symbol can't be nullary).
+	  //
+	  DebugInfo("using 2 instruction optimization for free skeleton " << this);
+	  Assert(automaton->getArity(1) != 0, "nullary 2nd symbol " << this);
+	  FreeRhsAutomaton* newAutomaton =
+	    HandleArgument1<3, 3>::handleArgument1(automaton->getArity(0),
+						  automaton->getArity(1),
+						  automaton);
+	  delete automaton;
+	  automaton = newAutomaton;
+	}
+      else if (nrInstructions == 3)
+	{
+	  //
+	  //	Cannibalize automaton to make a faster one.
+	  //	4 * 4 * 3 = 48 cases (3nd symbol can't be nullary).
+	  //
+	  DebugInfo("using 3 instruction optimization for free skeleton " << this);
+	  Assert(automaton->getArity(2) != 0, "nullary 3rd symbol " << this);
+	  FreeRhsAutomaton* newAutomaton =
+	    I3HandleArgument1<3, 3, 3>::handleArgument1(automaton->getArity(0),
+							automaton->getArity(1),
+							automaton->getArity(2),
+							automaton);
+	  delete automaton;
+	  automaton = newAutomaton;
 	}
       else
-	{
-	  //
-	  //	Single low arity symbol cases.
-	  //
-	  if (maxArity > 1)
-	    {
-	      if (maxArity == 3)
-		automaton = new FreeTernaryRhsAutomaton();
-	      else
-		automaton = new FreeBinaryRhsAutomaton();
-	    }
-	  else
-	    {
-	      if (maxArity == 1)
-		automaton = new FreeUnaryRhsAutomaton();
-	      else
-		automaton = new FreeNullaryRhsAutomaton();
-	    }
-	}
+	DebugInfo("only low arity optimization for " << this);
     }
-
-  int index = compileRhs3(automaton, rhsBuilder, variableInfo, availableTerms, eagerContext);
   rhsBuilder.addRhsAutomaton(automaton);
   return index;
 }
@@ -466,8 +621,7 @@ FreeTerm::compileRhsAliens(RhsBuilder& rhsBuilder,
 			   VariableInfo& variableInfo,
 			   TermBag& availableTerms,
 			   bool eagerContext,
-			   int& maxArity,
-			   int& nrFree)
+			   int& maxArity)
 {
   //
   //	Traverse the free skeleton, calling compileRhs() on all non-free subterms.
@@ -482,9 +636,8 @@ FreeTerm::compileRhsAliens(RhsBuilder& rhsBuilder,
       Term* t = argArray[i];
       if (FreeTerm* f = dynamic_cast<FreeTerm*>(t))
 	{
-	  ++nrFree;
 	  if (!(availableTerms.findTerm(f, argEager)))
-	    f->compileRhsAliens(rhsBuilder, variableInfo, availableTerms, argEager, maxArity, nrFree);
+	    f->compileRhsAliens(rhsBuilder, variableInfo, availableTerms, argEager, maxArity);
 	}
       else
 	(void) t->compileRhs(rhsBuilder, variableInfo, availableTerms, argEager);

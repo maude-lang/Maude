@@ -28,9 +28,6 @@
 
 class FreeSymbol;
 class FreeNullarySymbol;
-class FreeUnarySymbol;
-class FreeBinarySymbol;
-class FreeTernarySymbol;
 
 class FreeTerm;
 class FreeArgumentIterator;
@@ -39,10 +36,6 @@ class FreeDagArgumentIterator;
 class FreeLhsAutomaton;
 
 class FreeRhsAutomaton;
-class FreeNullaryRhsAutomaton;
-class FreeUnaryRhsAutomaton;
-class FreeBinaryRhsAutomaton;
-class FreeTernaryRhsAutomaton;
 class FreeFast2RhsAutomaton;
 class FreeFast3RhsAutomaton;
 

@@ -9,10 +9,7 @@ libfreeTheory_a_CPPFLAGS = \
 
 libfreeTheory_a_SOURCES = \
 	freeSymbol.cc \
-	freeUnarySymbol.cc \
 	freeNullarySymbol.cc \
-	freeBinarySymbol.cc \
-	freeTernarySymbol.cc \
 	freeTerm.cc \
 	freeArgumentIterator.cc \
 	freeDagNode.cc \
@@ -30,11 +27,7 @@ libfreeTheory_a_SOURCES = \
 	freeGeneralExtor.cc \
 	freeGeneralExtorFinal.cc \
 	freeFast3RhsAutomaton.cc \
-	freeFast2RhsAutomaton.cc \
-	freeNullaryRhsAutomaton.cc \
-	freeUnaryRhsAutomaton.cc \
-	freeBinaryRhsAutomaton.cc \
-	freeTernaryRhsAutomaton.cc
+	freeFast2RhsAutomaton.cc
 
 EXTRA_DIST = \
 	freeNetExec.cc \
@@ -47,9 +40,7 @@ EXTRA_DIST = \
 noinst_HEADERS = \
 	freeArgumentIterator.hh \
 	freeNullarySymbol.hh \
-	freeUnarySymbol.hh \
-	freeBinarySymbol.hh \
-	freeTernarySymbol.hh \
+	freeSimpleSymbol.hh \
 	freeDagArgumentIterator.hh \
 	freeDagNode.hh \
 	freeLhsAutomaton.hh \
@@ -73,7 +64,6 @@ noinst_HEADERS = \
 	freeGeneralExtorFinal.hh \
 	freeFast3RhsAutomaton.hh \
 	freeFast2RhsAutomaton.hh \
-	freeNullaryRhsAutomaton.hh \
-	freeUnaryRhsAutomaton.hh \
-	freeBinaryRhsAutomaton.hh \
-	freeTernaryRhsAutomaton.hh
+	freeOneInstructionRhsAutomaton.hh \
+	freeTwoInstructionRhsAutomaton.hh \
+	freeThreeInstructionRhsAutomaton.hh

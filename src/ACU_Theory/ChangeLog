@@ -1,3 +1,13 @@
+2025-01-20  Saruman the White  <eker@eker10>
+
+	* ACU_Symbol.cc (ACU_Symbol::ACU_Symbol): call setEqRewrite()
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decls for
+	eqRewriteStandardStrategy() and eqRewriteComplexStrategy()
+
+	* ACU_Symbol.cc (ACU_Symbol::eqRewriteStandardStrategy): added
+	(ACU_Symbol::eqRewriteComplexStrategy): added
+
 2024-03-05  Steven Eker  <eker@pup>
 
 	* ACU_Term.cc (ACU_Term::arguments): made const

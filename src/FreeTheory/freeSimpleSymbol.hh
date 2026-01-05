@@ -21,37 +21,35 @@
 */
 
 //
-//	Implementation for class FreeUnarySymbol.
+//	Class for low arity, standard strategy symbols belonging to the free theory.
+//	Sole purpose of this class is to provide a optimized eqRewrite() for such
+//	symbols.
 //
-
-//	utility stuff
-#include "macros.hh"
-#include "vector.hh"
-
-//	forward declarations
-#include "interface.hh"
-#include "core.hh"
-#include "variable.hh"
-#include "freeTheory.hh"
-
-//	interface class definitions
-#include "symbol.hh"
-
-//      core class definitions
-#include "rewritingContext.hh"
-
-//	free theory class definitions
-#include "freeUnarySymbol.hh"
+#ifndef _freeSimpleSymbol_hh_
+#define _freeSimpleSymbol_hh_
+#include "freeSymbol.hh"
 #include "freeDagNode.hh"
 
-FreeUnarySymbol::FreeUnarySymbol(int id)
-  : FreeSymbol(id, 1)
+template<int n>
+class FreeSimpleSymbol : public FreeSymbol
+{
+public:
+  FreeSimpleSymbol(int id);
+  bool eqRewrite(DagNode* subject, RewritingContext& context);
+};
+
+template<int n>
+FreeSimpleSymbol<n>::FreeSimpleSymbol(int id)
+  : FreeSymbol(id, n)
 {
 }
 
+template<int n>
 bool
-FreeUnarySymbol::eqRewrite(DagNode* subject, RewritingContext& context)
+FreeSimpleSymbol<n>::eqRewrite(DagNode* subject, RewritingContext& context)
 {
-  static_cast<FreeDagNode*>(subject)->internal[0]->reduce(context);
+  reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
   return DISC_NET.applyReplaceFast(subject, context);
 }
+
+#endif

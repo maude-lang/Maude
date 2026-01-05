@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@ S_Symbol::S_Symbol(int id, const Vector<int>& strategy, bool memoFlag)
   : Symbol(id, 1, memoFlag)
 {
   setStrategy(strategy, 1, memoFlag);
+  setEqRewrite(standardStrategy() ? &eqRewriteStandardStrategy : &eqRewriteComplexStrategy);
 }
 
 void 
@@ -132,6 +133,78 @@ S_Symbol::makeDagNode(const Vector<DagNode*>& args)
   Assert(args.length() == 1, "bad number of arguments");
   Assert(args[0] != 0, "null argument");
   return new S_DagNode(this, 1, args[0]);
+}
+
+bool
+S_Symbol::eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  S_DagNode* d = static_cast<S_DagNode*>(subject);
+  S_Symbol* s = safeCastNonNull<S_Symbol*>(symbol);
+  d->arg->reduce(context);
+  d->normalizeAtTop();  // always needed because shared node may have rewritten
+  if (s->equationFree())
+    return false;
+  S_ExtensionInfo extensionInfo(d);
+  return s->applyReplace(subject, context, &extensionInfo);
+}
+
+bool
+S_Symbol::eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  S_Symbol* s = safeCastNonNull<S_Symbol*>(symbol);
+  if (s->isMemoized())
+    {
+      //
+      //	Memoized case - get the reduced form and enter
+      //	it in the memoization table.
+      //
+      MemoTable::SourceSet from;
+      s->memoStrategy(from, subject, context);
+      s->memoEnter(from, subject);
+      return false;
+    }
+  //
+  //	Complex strategy case.
+  //
+  S_DagNode* d = static_cast<S_DagNode*>(subject);
+  S_ExtensionInfo extensionInfo(d);
+  const Vector<int>& userStrategy = s->getStrategy();
+  int stratLen = userStrategy.length();
+  bool seenZero = false;
+
+  for (int i = 0; i < stratLen; i++)
+    {
+      if(userStrategy[i] == 0)
+	{
+	  if (!seenZero)
+	    {
+	      d->arg->computeTrueSort(context);
+	      seenZero = true;
+	    }
+	  d->normalizeAtTop();
+	  if ((i + 1 == stratLen) ?
+	      s->applyReplace(subject, context, &extensionInfo) :
+	      s->applyReplaceNoOwise(subject, context, &extensionInfo))
+	      return true;
+	}
+      else
+	{
+	  if (seenZero)
+	    {
+	      d->arg->copyReducible();
+	      //
+	      //	A previous call to applyReplace() may have
+	      //	computed a true sort for our subject which will be
+	      //	invalidated by the reduce we are about to do.
+	      //
+	      subject->repudiateSortInfo();
+	    }
+	  d->arg->reduce(context);
+	}
+    }
+  return false;
 }
 
 bool

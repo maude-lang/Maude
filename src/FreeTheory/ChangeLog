@@ -1,3 +1,106 @@
+2025-01-20  Saruman the White  <eker@eker10>
+
+	* freeSymbol.hh (FreeSymbol::tryEquations): added
+
+2025-01-12  Saruman the White  <eker@eker10>
+
+	* freeSymbol.hh (class FreeSymbol): added decls for
+	eqRewriteFast(), eqRewriteSlow()
+
+	* freeSymbol.cc (FreeSymbol::eqRewriteSlow): added
+	(FreeSymbol::eqRewriteFast): added function template
+	(FreeSymbol::FreeSymbol): call setEqRewrite()
+
+2025-01-05  Saruman the White  <eker@eker10>
+
+	* freeThreeInstructionRhsAutomaton.hh
+	(FreeThreeInstructionRhsAutomaton<n, m, p>::remapIndices): created
+
+	* freeTerm.cc (FreeTerm::compileRhs2): use
+	FreeThreeInstructionRhsAutomaton optimization
+
+2025-01-04  Saruman the White  <eker@eker10>
+
+	* freeTerm.hh (class FreeTerm): updated decl for
+	compileRhsAliens()
+
+	* freeTerm.cc (FreeTerm::compileRhsAliens): don't take arities
+	argument
+	(FreeTerm::compileRhs2): rewritten to use
+	FreeOneInstructionRhsAutomaton
+
+	* freeOneInstructionRhsAutomaton.hh
+	(FreeOneInstructionRhsAutomaton): created from
+	FreeFastRhsAutomaton
+
+	* freeRhsAutomaton.hh (FreeRhsAutomaton::getNrInstructions): added
+	(FreeRhsAutomaton::getArity): added
+
+2025-01-03  Saruman the White  <eker@eker10>
+
+	* freeTerm.cc (FreeTerm::compileRhs2): pass arities to
+	compileRhsAliens() instead of nrFree
+	(FreeTerm::compileRhsAliens): handle arities rather nrFree
+
+	* freeTwoInstructionRhsAutomaton.hh (FreeTwoInstructionAutomaton):
+	created class template
+
+	* freeTheory.hh: deleted forward decls for classes
+	FreeNullaryRhsAutomaton, FreeUnaryRhsAutomaton,
+	FreeBinaryRhsAutomaton, FreeTernaryRhsAutomaton
+
+	* freeDagNode.hh (class FreeDagNode): unfriend
+	FreeUnaryRhsAutomaton, FreeBinaryRhsAutomaton,
+	FreeTernaryRhsAutomaton
+
+	* freeNullaryRhsAutomaton.cc: deleted
+
+	* freeNullaryRhsAutomaton.hh: deleted
+
+	* freeUnaryRhsAutomaton.cc: deleted
+
+	* freeUnaryRhsAutomaton.hh: deleted
+
+	* freeBinaryRhsAutomaton.cc: deleted
+
+	* freeBinaryRhsAutomaton.hh: deleted
+
+	* freeTernaryRhsAutomaton.cc: deleted
+
+	* freeTernaryRhsAutomaton.hh: deleted
+
+	* freeTerm.cc (FreeTerm::compileRhs2): use FreeFastRhsAutomaton
+
+	* freeFastRhsAutomaton.hh (FreeFastRhsAutomaton): created class
+	template
+
+	* freeDagNode.hh (fillArgs): added function template
+
+2024-12-28  Saruman the White  <eker@eker10>
+
+	* freeUnarySymbol.cc: deleted
+
+	* freeUnarySymbol.hh: deleted
+
+	* freeBinarySymbol.cc: deleted
+
+	* freeBinarySymbol.hh: deleted
+
+	* freeTernarySymbol.cc: deleted
+
+	* freeTernarySymbol.hh: deleted
+
+	* freeDagNode.hh (class FreeDagNode): unfriend FreeUnarySymbol,
+	FreeBinarySymbol, FreeTernarySymbol
+
+	* freeSymbol.cc (FreeSymbol::newFreeSymbol): use template class
+	FreeSimpleSymbol
+
+	* freeSimpleSymbol.hh (FreeSimpleSymbol): created
+
+	* freeDagNode.hh (reduceArgs): added compile-time recursive
+	function template
+
 2024-06-05  Steven M. Eker  <eker@eker10>
 
 	* freeFast3RhsAutomaton.cc: fix comment

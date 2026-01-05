@@ -119,8 +119,7 @@ private:
 			VariableInfo& variableInfo,
 			TermBag& availableTerms,
 			bool eagerContext,
-			int& maxArity,
-			int& nrFree);
+			int& maxArity);
   int compileRhs3(FreeRhsAutomaton* automaton,
 		  RhsBuilder& rhsBuilder,
 		  VariableInfo& variableInfo,

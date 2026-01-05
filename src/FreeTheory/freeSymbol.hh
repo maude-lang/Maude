@@ -90,10 +90,20 @@ public:
 #ifdef DUMP
   void dump(ostream& s, int indentLevel = 0);
 #endif
+protected:
+  //
+  //	This is provided for derived classes to call from their own EqRewriter functions.
+  //
+  bool tryEquations(DagNode* subject, RewritingContext& context);
 
 private:
   bool complexStrategy(DagNode* subject, RewritingContext& context);
   void memoStrategy(MemoTable::SourceSet& from, DagNode* subject, RewritingContext& context);
+
+  template<int n>
+  static bool eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
+
+  static bool eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
 protected:
   FreeNet discriminationNet;
@@ -103,6 +113,17 @@ inline FreeNet&
 FreeSymbol::getNet()
 {
   return discriminationNet;
+}
+
+inline bool
+FreeSymbol::tryEquations(DagNode* subject, RewritingContext& context)
+{
+  //
+  //	We assume caller has already reduced the arguments, and failed to execute
+  //	some special semantics. This a backstop that tries the user's equations.
+  //
+  Assert(this == subject->symbol(), "bad symbol");
+  return discriminationNet.applyReplace(subject, context);
 }
 
 #endif
