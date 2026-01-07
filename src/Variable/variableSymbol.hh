@@ -63,6 +63,9 @@ public:
   //	VariableSymbol specific functions.
   //
   Sort* getSort();
+
+private:
+  static bool eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context);
 };
 
 inline Sort*
