@@ -48,6 +48,7 @@
 VariableSymbol::VariableSymbol(int id)
   : Symbol(id, 0)
 {
+  setEqRewrite(&eqRewriteStandardStrategy);
 }
 
 Term*
@@ -62,6 +63,18 @@ VariableSymbol::makeDagNode(const Vector<DagNode*>& args)
 {
   Assert(false, "makeDagNode() not useable on variable symbol " << this);
   return 0;
+}
+
+bool
+VariableSymbol::eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  //
+  //	Rewriting a variable is an edge case, and only one strategy makes sense.
+  //	We need a cast here because we can't call protected member function applyReplace()
+  //	on a base symbol.
+  //
+  VariableSymbol* s = safeCastNonNull<VariableSymbol*>(symbol);
+  return !(s->equationFree()) && s->applyReplace(subject, context);
 }
 
 bool

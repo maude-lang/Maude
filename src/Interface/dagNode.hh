@@ -559,6 +559,25 @@ DagNode::setTheoryByte(Byte value)
 //
 #include "symbol2.hh"
 
+#if 0
+
+// New equational rewriting scheme uses EqRewriter::eqRewrite2() but isn't finished
+inline void
+DagNode::reduce(RewritingContext& context)
+{
+  while (!isReduced())
+    {
+      if (!(topSymbol->eqRewrite2(topSymbol, this, context)))
+	{
+	  setReduced();
+	  topSymbol->fastComputeTrueSort(this, context);
+	  break;
+	}
+    }
+}
+
+#else
+
 inline void
 DagNode::reduce(RewritingContext& context)
 {
@@ -572,6 +591,8 @@ DagNode::reduce(RewritingContext& context)
 	}
     }
 }
+
+#endif
 
 inline void
 DagNode::mark()
