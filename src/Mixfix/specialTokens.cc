@@ -68,6 +68,7 @@
   MACRO(otherwise, "otherwise")
   MACRO(owise, "owise")
   MACRO(variant, "variant")
+  MACRO(xvariant, "xvariant")
   MACRO(narrowing, "narrowing")
   MACRO(extension, "extension")
   MACRO(dnt, "dnt")

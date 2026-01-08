@@ -1,3 +1,18 @@
+2026-01-07  Saruman the White  <eker@eker10>
+
+	* mixfixParser.cc (MixfixParser::makeAttributePart): handle
+	MAKE_XVARIANT_ATTRIBUTE
+
+2026-01-06  Saruman the White  <eker@eker10>
+
+	* makeGrammar.cc (MixfixModule::makeAttributeProductions): added
+	production for xvariant
+
+	* mixfixParser.hh (enum SemanticActions): added
+	MAKE_XVARIANT_ATTRIBUTE
+
+	* specialTokens.cc: added xvariant
+
 2025-12-19  Saruman the White  <eker@eker10>
 
 	* fixUp.cc (SyntacticPreModule::fixUpSymbol): fix comments; if we

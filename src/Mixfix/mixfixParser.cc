@@ -1065,6 +1065,11 @@ MixfixParser::makeAttributePart(int node,
 	    flags.setFlags(VARIANT);
 	    break;
 	  }
+	case MAKE_XVARIANT_ATTRIBUTE:
+	  {
+	    flags.setFlags(VARIANT | EXTENSION);
+	    break;
+	  }
 	case MAKE_NARROWING_ATTRIBUTE:
 	  {
 	    flags.setFlags(NARROWING);

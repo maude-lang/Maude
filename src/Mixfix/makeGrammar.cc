@@ -672,6 +672,8 @@ MixfixModule::makeAttributeProductions()
   parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_OWISE_ATTRIBUTE);
   rhs[0] = variant;
   parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_VARIANT_ATTRIBUTE);
+  rhs[0] = xvariant;
+  parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_XVARIANT_ATTRIBUTE);
   rhs[0] = narrowing;
   parser->insertProduction(ATTRIBUTE, rhs, 0, emptyGather, MixfixParser::MAKE_NARROWING_ATTRIBUTE);
   rhs[0] = extension;
