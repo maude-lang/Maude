@@ -504,6 +504,12 @@ ACU_Term::dagify2()
 }
 
 void
+ACU_Term::insertExtensionVariables(VariableInfo& variableInfo)
+{
+  extensionVariableIndex = variableInfo.makeProtectedVariable();
+}
+
+void
 ACU_Term::analyseCollapses2()
 {
   int nrArgs = argArray.length();

@@ -165,6 +165,11 @@ public:
   //
   virtual bool subsumes(const Term* other, bool sameVariableSet) const;
   //
+  //	This function inserts extension variable(s) if needed for unification.
+  //	If a theory doesn't need extession the default function is a no-op.
+  //
+  virtual void insertExtensionVariables(VariableInfo& variableInfo) {}
+  //
   //	This pair of functions does the preprocessing needed to handle collapse
   //	theories correctly. analyseCollapses2() computes the set of symbols that
   //	could be the top symbol of the term following collapses caused by bindings

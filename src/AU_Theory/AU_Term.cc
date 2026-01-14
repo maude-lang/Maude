@@ -355,6 +355,13 @@ AU_Term::dagify2()
 }
 
 void
+AU_Term::insertExtensionVariables(VariableInfo& variableInfo)
+{
+  leftExtensionVariableIndex = variableInfo.makeProtectedVariable();
+  rightExtensionVariableIndex = variableInfo.makeProtectedVariable();
+}
+
+void
 AU_Term::analyseCollapses2()
 {
   //

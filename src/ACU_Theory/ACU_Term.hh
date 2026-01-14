@@ -46,6 +46,7 @@ public:
   int compareArguments(const DagNode* other) const;
   void findEagerVariables(bool atTop, NatSet& eagerVariables) const;
   void analyseConstraintPropagation(NatSet& boundUniquely) const;
+  void insertExtensionVariables(VariableInfo& variableInfo);
   void analyseCollapses2();
   void insertAbstractionVariables(VariableInfo& variableInfo);
   LhsAutomaton* compileLhs2(bool matchAtTop,
@@ -142,7 +143,8 @@ private:
 			       Vector<int>& sequence);
 
   Vector<Pair> argArray;
-  int uniqueCollapseSubtermIndex;
+  int uniqueCollapseSubtermIndex;	// if not NONE, term can collapse only to this subterm
+  int extensionVariableIndex = NONE;	// only used for unification
 
   friend class ACU_ArgumentIterator;
 };
@@ -150,7 +152,7 @@ private:
 inline ACU_Symbol*
 ACU_Term::symbol() const
 {
-  return safeCast(ACU_Symbol*, Term::symbol());
+  return safeCastNonNull<ACU_Symbol*>(Term::symbol());
 }
 
 #endif

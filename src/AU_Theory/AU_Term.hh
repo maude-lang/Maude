@@ -46,6 +46,7 @@ public:
   int compareArguments(const DagNode* other) const;
   void findEagerVariables(bool atTop, NatSet& eagerVariables) const;
   void analyseConstraintPropagation(NatSet& boundUniquely) const;
+  void insertExtensionVariables(VariableInfo& variableInfo);
   void analyseCollapses2();
   void insertAbstractionVariables(VariableInfo& variableInfo);
   LhsAutomaton* compileLhs2(bool matchAtTop,
@@ -103,6 +104,8 @@ private:
 
   Vector<Tuple> argArray;
   int uniqueCollapseSubtermIndex;
+  short leftExtensionVariableIndex = NONE;	// only used for unification
+  short rightExtensionVariableIndex = NONE;	// and only if extension flag is given
 
   friend class AU_ArgumentIterator;
 };

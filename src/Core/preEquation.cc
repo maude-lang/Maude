@@ -89,6 +89,10 @@ void
 PreEquation::preprocess()
 {
   lhs->symbol()->fillInSortInfo(lhs);
+  //
+  //	Collapses of subterms into the parent theory are handle by abstraction
+  //	variables - inefficient but rarely occurs.
+  //
   lhs->analyseCollapses();
   int nrFragments = condition.length();
   for (int i = 0; i < nrFragments; i++)
@@ -100,6 +104,19 @@ PreEquation::compileBuild(TermBag& availableTerms, bool eagerContext)
 {
   lhs->findAvailableTerms(availableTerms, eagerContext, true);
   lhs->determineContextVariables();
+  if (getFlag(EXTENSION))
+    {
+      //
+      //	Unification against the lhs is to be done with extension.
+      //	Unlike with matching, where it is sufficient just to allow
+      //	part of the subject to be matched, with unification we actually
+      //	require extension variable(s) that can (via fresh variables) be
+      //	assigned parts of subject subterms.
+      //	These new variable(s) will appear after real variables, but before
+      //	abstraction variables and left->right subterm sharing slots.
+      //
+      lhs->insertExtensionVariables(*this);
+    }
   lhs->insertAbstractionVariables(*this);
   int nrFragments = condition.length();
   for (int i = 0; i < nrFragments; i++)

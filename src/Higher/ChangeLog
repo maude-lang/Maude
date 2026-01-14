@@ -1,3 +1,13 @@
+2026-01-13  Saruman the White  <eker@eker10>
+
+	* variantNarrowingSearchState.cc
+	(VariantNarrowingSearchState::VariantNarrowingSearchState):
+	deleted commented out initialization of freshVariableGenerator
+
+	* variantNarrowingSearchState.hh (class
+	VariantNarrowingSearchState): deleted commented out data member
+	freshVariableGenerator
+
 2024-05-30  Steven Eker  <eker@pup>
 
 	* narrowingFolder.cc (NarrowingFolder::getMostGeneralStates): fixed

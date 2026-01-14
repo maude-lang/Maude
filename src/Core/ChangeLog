@@ -1,3 +1,8 @@
+2026-01-13  Saruman the White  <eker@eker10>
+
+	* preEquation.cc (PreEquation::compileBuild): call
+	insertExtensionVariables() if EXTENSION flag is given
+
 2024-06-07  Steven M. Eker  <eker@eker10>
 
 	* preEquation.hh (enum Flags): added EXTENSION

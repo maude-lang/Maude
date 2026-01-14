@@ -1,3 +1,15 @@
+2026-01-13  Saruman the White  <eker@eker10>
+
+	* AU_Term.hh (class AU_Term): added decl for
+	insertExtensionVariables()
+
+	* AU_Term.cc (AU_Term::insertExtensionVariables): added
+
+	* AU_Term.hh (class AU_Term): added data members
+	leftExtensionVariableIndex, rightExtensionVariableIndex
+
+===================================Maude165===========================================
+
 2024-03-05  Steven Eker  <eker@pup>
 
 	* AU_Term.cc (AU_Term::arguments): made const

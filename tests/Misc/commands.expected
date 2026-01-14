@@ -405,8 +405,8 @@ var X : Int .
 var Y : Int .
 Grammar:
 	nonterminals: 43
-	terminals: 128
-	productions: 199
+	terminals: 129
+	productions: 200
 
 Term rewriting system:
 	kinds: 2
