@@ -1,3 +1,9 @@
+2026-01-15  Saruman the White  <eker@eker10>
+
+	* ACU_Term.cc (ACU_Term::dagify2): take and pass dagifyInfo
+
+	* ACU_Term.hh (class ACU_Term): updated decl for dagify2()
+
 2026-01-13  Saruman the White  <eker@eker10>
 
 	* ACU_Term.cc (ACU_Term::insertExtensionVariables): added

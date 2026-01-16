@@ -218,3 +218,21 @@ FreshVariableSource::isFreshVariableName(int id, int& index, int& family)
   index = fullIndex.get_si();
   return true;
 }
+
+int
+FreshVariableSource::getExtensionVariableName()
+{
+  return Token::encode("_ExtensionVariable");
+}
+
+int
+FreshVariableSource::getLeftExtensionVariableName()
+{
+  return Token::encode("_LeftExtensionVariable");
+}
+
+int
+FreshVariableSource::getRightExtensionVariableName()
+{
+  return Token::encode("_RightExtensionVariable");
+}

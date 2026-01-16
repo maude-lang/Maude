@@ -1,3 +1,13 @@
+2026-01-15  Saruman the White  <eker@eker10>
+
+	* freshVariableSource.hh (class FreshVariableSource): added decls
+	for getExtensionVariableName(), getLeftExtensionVariableName(),
+	getRightExtensionVariableName()
+
+	* freshVariableSource.cc (FreshVariableSource::getExtensionVariableName)
+	(FreshVariableSource::getLeftExtensionVariableName)
+	(FreshVariableSource::getRightExtensionVariableName): added
+
 2026-01-07  Saruman the White  <eker@eker10>
 
 	* mixfixParser.cc (MixfixParser::makeAttributePart): handle

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -47,6 +47,12 @@ public:
     UNKNOWN = -1
   };
 
+  struct DagifyInfo
+  {
+    Vector<DagNode*> subDags;
+    TermSet converted;
+    bool setSortInfoFlag;
+  };
   //
   //	Comparison object on Term* for use with associative containers.
   //	Only safe if the Terms are fully normalized and belong the same module.
@@ -78,7 +84,7 @@ public:
   bool leq(const Sort* sort) const;
   DagNode* term2Dag(bool setSortInfo = false);
   DagNode* term2DagEagerLazyAware(bool setSortInfo = false);
-  DagNode* dagify();
+  DagNode* dagify(DagifyInfo& dagifyInfo);
   void indexVariables(VariableInfo& indicies);
   void addContextVariables(const NatSet& externalVariables);
   void determineContextVariables();
@@ -134,7 +140,7 @@ public:
 			 VariableInfo& variableInfo,
 			 TermBag& availableTerms,
 			  bool eagerContext) = 0;
-  virtual DagNode* dagify2() = 0;
+  virtual DagNode* dagify2(DagifyInfo& dagifyInfo) = 0;
   //
   //	The following function returns true if the lhs automaton for "this"
   //	is guarenteed to return "false" on any instance of "other" when running
@@ -271,10 +277,6 @@ private:
   static bool commonWithOtherPatterns(Vector<Term*>& patterns, int excluded, Symbol* symbol);
   static bool hasGeqOrIncomparableVariable(Term* pattern, VariableSymbol* v);
 
-  static Vector<DagNode*> subDags;
-  static TermSet converted;
-  static bool setSortInfoFlag;
-
   Symbol* topSymbol;
   NatSet occursSet;
   NatSet contextSet;
@@ -401,22 +403,22 @@ Term::equal(const DagNode* other) const
 }
 
 inline DagNode*
-Term::dagify()
+Term::dagify(DagifyInfo& dagifyInfo)
 {
-  Assert(subDags.length() == converted.cardinality(),
+  Assert(dagifyInfo.subDags.length() == dagifyInfo.converted.cardinality(),
 	 "length/cardinality mismatch");
-  int e = converted.term2Index(this);
+  int e = dagifyInfo.converted.term2Index(this);
   if (e >= 0)
-    return subDags[e];
-  DagNode* d = dagify2();
-  if (setSortInfoFlag)
+    return dagifyInfo.subDags[e];
+  DagNode* d = dagify2(dagifyInfo);
+  if (dagifyInfo.setSortInfoFlag)
     {
       Assert(sortIndex != Sort::SORT_UNKNOWN, "missing sort info");
       d->setSortIndex(sortIndex);
       d->setReduced();
     }
-  converted.insert(this);
-  subDags.append(d);
+  dagifyInfo.converted.insert(this);
+  dagifyInfo.subDags.append(d);
   return d;
 }
 

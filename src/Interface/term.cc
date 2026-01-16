@@ -58,17 +58,12 @@
 #include "compilationContext.hh"
 #include "variableName.hh"
 
-Vector<DagNode*> Term::subDags;
-TermSet Term::converted;
-bool Term::setSortInfoFlag;
-
 DagNode*
 Term::term2Dag(bool setSortInfo)
 {
-  setSortInfoFlag = setSortInfo;
-  subDags.clear();
-  converted.makeEmpty();
-  return dagify();
+  DagifyInfo dagifyInfo;
+  dagifyInfo.setSortInfoFlag = setSortInfo;
+  return dagify(dagifyInfo);
 }
 
 DagNode*

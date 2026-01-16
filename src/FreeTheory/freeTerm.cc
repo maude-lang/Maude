@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -333,7 +333,7 @@ FreeTerm::findActiveSlots(NatSet& slots)
 }
 
 DagNode*
-FreeTerm::dagify2()
+FreeTerm::dagify2(DagifyInfo& dagifyInfo)
 {
   FreeDagNode* d = new FreeDagNode(symbol());
   int nrArgs = symbol()->arity();
@@ -341,7 +341,7 @@ FreeTerm::dagify2()
     {
       DagNode** p = d->argArray();
       for (int i = 0; i < nrArgs; i++, p++)
-	(*p) = argArray[i]->dagify();
+	(*p) = argArray[i]->dagify(dagifyInfo);
     }
   return d;
 }

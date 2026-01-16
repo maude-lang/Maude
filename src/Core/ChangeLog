@@ -1,7 +1,15 @@
+2026-01-15  Saruman the White  <eker@eker10>
+
+	* freshVariableGenerator.hh (class FreshVariableGenerator): added
+	decls for getExtensionVariableName(),
+	getLeftExtensionVariableName(), getRightExtensionVariableName()
+
 2026-01-13  Saruman the White  <eker@eker10>
 
 	* preEquation.cc (PreEquation::compileBuild): call
 	insertExtensionVariables() if EXTENSION flag is given
+
+===================================Maude165===========================================
 
 2024-06-07  Steven M. Eker  <eker@eker10>
 

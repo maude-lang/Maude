@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2014-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2014-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -226,7 +226,7 @@ SMT_RewriteSequenceSearch::findSMT_Variables()
       if (type != SMT_Info::NOT_SMT)
 	{
 	  smtVarIndices.insert(i);
-	  smtVarDags[i] = v->dagify2();
+	  smtVarDags[i] = v->term2Dag();
 	}
     }
   DebugAdvisory("found " << smtVarDags.size() << " SMT variables");

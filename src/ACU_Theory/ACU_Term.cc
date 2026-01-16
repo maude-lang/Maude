@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -490,14 +490,14 @@ ACU_Term::markEagerArguments(int nrVariables,
 }
 
 DagNode*
-ACU_Term::dagify2()
+ACU_Term::dagify2(DagifyInfo& dagifyInfo)
 {
   int nrArgs = argArray.length();
   ACU_DagNode* d = new ACU_DagNode(symbol(), nrArgs);
   ArgVec<ACU_DagNode::Pair>& p = d->argArray;
   for (int i = 0; i < nrArgs; i++)
     {
-      p[i].dagNode = argArray[i].term->dagify();
+      p[i].dagNode = argArray[i].term->dagify(dagifyInfo);
       p[i].multiplicity = argArray[i].multiplicity;
     }
   return d;

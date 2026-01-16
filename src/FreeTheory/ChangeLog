@@ -1,3 +1,11 @@
+2026-01-15  Saruman the White  <eker@eker10>
+
+	* freeTerm.hh (class FreeTerm): updated decl for dagify2()
+
+	* freeTerm.cc (FreeTerm::dagify2): take and pass dagifyInfo
+
+===================================Maude165===========================================
+
 2024-06-05  Steven M. Eker  <eker@eker10>
 
 	* freeFast3RhsAutomaton.cc: fix comment

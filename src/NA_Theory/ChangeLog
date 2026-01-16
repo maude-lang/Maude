@@ -1,3 +1,11 @@
+2026-01-15  Saruman the White  <eker@eker10>
+
+	* NA_Term.cc (NA_Term::dagify2): take dummy dagifyInfo argument
+
+	* NA_Term.hh (class NA_Term): updated decl for dagify2()
+
+===================================Maude165===========================================
+
 2024-03-05  Steven Eker  <eker@pup>
 
 	* NA_Term.cc (NA_Term::arguments): made const

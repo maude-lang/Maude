@@ -1,3 +1,11 @@
+2026-01-15  Saruman the White  <eker@eker10>
+
+	* S_Term.cc (S_Term::dagify2): take and pass dagifyInfo
+
+	* S_Term.hh (class S_Term): updated decl for dagify2()
+
+===================================Maude165===========================================
+
 2024-03-05  Steven Eker  <eker@pup>
 
 	* S_Term.cc (S_Term::arguments): made const

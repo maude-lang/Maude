@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public:
   void markEagerArguments(int nrVariables,
                           const NatSet& eagerVariables,
                           Vector<int>& problemVariables);
-  DagNode* dagify2();
+  DagNode* dagify2(DagifyInfo& dagifyInfo);
 
   void findAvailableTerms(TermBag& availableTerms, bool eagerContext, bool atTop);
   int compileRhs2(RhsBuilder& rhsBuilder,

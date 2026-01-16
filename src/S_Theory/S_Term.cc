@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -190,9 +190,9 @@ S_Term::markEagerArguments(int nrVariables,
 }
 
 DagNode*
-S_Term::dagify2()
+S_Term::dagify2(DagifyInfo& dagifyInfo)
 {
-  return new S_DagNode(symbol(), number, arg->dagify());
+  return new S_DagNode(symbol(), number, arg->dagify(dagifyInfo));
 }
 
 void

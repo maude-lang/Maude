@@ -39,7 +39,11 @@ public:
   bool variableNameConflict(int id, int okFamily);
   bool belongsToFamily(int id, int family);
   bool isFreshVariableName(int id, int& index, int& family);
-  
+
+  int getExtensionVariableName();
+  int getLeftExtensionVariableName();
+  int getRightExtensionVariableName();
+
   static int getBaseName(int index);
   static int getFamily(int id);
 

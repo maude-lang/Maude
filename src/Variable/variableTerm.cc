@@ -142,7 +142,7 @@ VariableTerm::markEagerArguments(int nrVariables,
 }
 
 DagNode*
-VariableTerm::dagify2()
+VariableTerm::dagify2(DagifyInfo& /*dagifyInfo*/)
 {
   return new VariableDagNode(symbol(), id(), index);
 }

@@ -47,6 +47,12 @@ public:
   //	returns the index and family that will generate it.
   //
   virtual bool isFreshVariableName(int id, int& index, int& family) = 0;
+  //
+  //	Get names for extension variables.
+  //
+  virtual int getExtensionVariableName() = 0;
+  virtual int getLeftExtensionVariableName() = 0;
+  virtual int getRightExtensionVariableName() = 0;
 };
 
 #endif
