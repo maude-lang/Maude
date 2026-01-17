@@ -43,9 +43,11 @@
 #include "symbolMap.hh"
 #include "termBag.hh"
 #include "rhsBuilder.hh"
+#include "freshVariableGenerator.hh"
 
 //	variable class definitions
 #include "variableTerm.hh"
+#include "variableDagNode.hh"
 
 //	AU persistent class definitions
 #include "AU_DequeIter.hh"
@@ -346,11 +348,35 @@ AU_Term::markEagerArguments(int nrVariables,
 DagNode*
 AU_Term::dagify2(DagifyInfo& dagifyInfo)
 {
-  int nrArgs = argArray.length();
-  AU_DagNode* d = new AU_DagNode(symbol(), nrArgs);
+  Index nrArgs = argArray.size();
+  Index start = (leftExtensionVariableIndex != NONE);
+  AU_DagNode* d = new AU_DagNode(symbol(), nrArgs + 2 * start);
   ArgVec<DagNode*>& p = d->argArray;
-  for (int i = 0; i < nrArgs; i++)    
-    p[i] = argArray[i].term->dagify(dagifyInfo);
+  for (Index i = 0; i < nrArgs; ++i)    
+    p[i + start] = argArray[i].term->dagify(dagifyInfo);
+  if (start != 0)
+    {
+      //
+      //	During compile phase, we created indices for extension variables.
+      //	This can only happen if we are at the top left-hand side of an equation
+      //	or rule that has the extension attribute, requiring that extension be
+      //	be used for unification during narrowing.
+      //	Now that we are dagifying that left-hand side, we assume that the only
+      //	reason to dagify is to perform a unification for narrowing and
+      //	we add real variables to the resulting dag.
+      //	If this assumption changes, we might want to dagify without the extension
+      //	variable if freshVariableGenerator is nullptr to have that option,
+      //	but then we need to worry the result being cached by the caller.
+      //
+      FreshVariableGenerator* freshVariableGenerator = dagifyInfo.getFreshVariableGenerator();
+      Assert(freshVariableGenerator != nullptr, "unable to generate extension variables");
+      Sort* kind = symbol()->rangeComponent()->sort(Sort::KIND);
+      Symbol* varSym = freshVariableGenerator->getBaseVariableSymbol(kind);
+      int leftName = freshVariableGenerator->getLeftExtensionVariableName();
+      int rightName = freshVariableGenerator->getRightExtensionVariableName();
+      p[0] = new VariableDagNode(varSym, leftName, leftExtensionVariableIndex);
+      p[nrArgs + 1] = new VariableDagNode(varSym, rightName, rightExtensionVariableIndex);
+    }
   return d;
 }
 

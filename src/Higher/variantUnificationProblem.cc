@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,7 +74,8 @@ VariantUnificationProblem::VariantUnificationProblem(RewritingContext* context,
 {
   DebugInfo("variantFlags = " << variantFlags);
   DebugAdvisory(Tty(Tty::RED) <<
-		"VariantUnificationProblem(): lhsDag = " << preEquation->getLhsDag() <<
+		"VariantUnificationProblem(): lhsDag = " <<
+		preEquation->getLhsDag(freshVariableGenerator) <<
 		"  target = " << target << Tty(Tty::RESET));
   //
   //	We assume that the variables in the target term have been indexed using variableInfo
@@ -88,7 +89,7 @@ VariantUnificationProblem::VariantUnificationProblem(RewritingContext* context,
   //	Create a dag correspond to < preEquation lhs, target > tuple.
   //
   Vector<DagNode*> args(2);
-  args[0] = preEquation->getLhsDag();
+  args[0] = preEquation->getLhsDag(freshVariableGenerator);
   args[1] = target;
   ConnectedComponent* range = target->symbol()->rangeComponent();
   Assert(range == args[0]->symbol()->rangeComponent(), "kind mismatch");

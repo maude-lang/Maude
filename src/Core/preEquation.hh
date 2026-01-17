@@ -69,7 +69,7 @@ public:
 		      RewritingContext& context,
 		      Subproblem* subproblem) const;
 
-  DagNode* getLhsDag();
+  DagNode* getLhsDag(FreshVariableGenerator* freshVariableGenerator);
   virtual void reset();
   virtual void print(ostream& s) const = 0;
 

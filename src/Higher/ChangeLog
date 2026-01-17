@@ -1,3 +1,15 @@
+2026-01-16  Saruman the White  <eker@eker10>
+
+	* narrowingUnificationProblem.cc
+	(NarrowingUnificationProblem::NarrowingUnificationProblem): pass
+	freshVariableGenerator to getLhsDag() so that it can make
+	extension variables (2 places)
+
+	* variantUnificationProblem.cc
+	(VariantUnificationProblem::VariantUnificationProblem): pass
+	freshVariableGenerator to getLhsDag() in order to be able to make
+	extension variables (2 places)
+
 2026-01-13  Saruman the White  <eker@eker10>
 
 	* variantNarrowingSearchState.cc

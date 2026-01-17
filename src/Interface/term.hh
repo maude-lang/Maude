@@ -49,6 +49,7 @@ public:
 
   struct DagifyInfo
   {
+    FreshVariableGenerator* getFreshVariableGenerator() {return 0;}
     Vector<DagNode*> subDags;
     TermSet converted;
     bool setSortInfoFlag;

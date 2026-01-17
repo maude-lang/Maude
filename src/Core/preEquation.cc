@@ -260,7 +260,7 @@ PreEquation::cleanStack(Stack<ConditionState*>& conditionStack)
 }
 
 DagNode*
-PreEquation::getLhsDag()
+PreEquation::getLhsDag(FreshVariableGenerator* freshVariableGenerator)
 {
   DagNode* d = lhsDag.getNode();
   if (d == 0)

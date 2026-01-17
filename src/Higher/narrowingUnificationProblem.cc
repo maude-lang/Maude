@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ NarrowingUnificationProblem::NarrowingUnificationProblem(PreEquation* preEquatio
     variableFamily(variableFamily)
 {
   DebugAdvisory(Tty(Tty::MAGENTA) << "==== NarrowingUnificationProblem ====" << Tty(Tty::RESET));
-  DebugAdvisory("preEquation->getLhsDag() = " << preEquation->getLhsDag());
+  DebugAdvisory("preEquation->getLhsDag() = " << preEquation->getLhsDag(freshVariableGenerator));
   DebugAdvisory("target = " << target);
   DebugAdvisory(Tty(Tty::MAGENTA) << "=========================================" << Tty(Tty::RESET));
   //
@@ -99,7 +99,8 @@ NarrowingUnificationProblem::NarrowingUnificationProblem(PreEquation* preEquatio
   //
   //	Solve the underlying many-sorted unification problem.
   //
-  viable = preEquation->getLhsDag()->computeSolvedForm(target, *unsortedSolution, pendingStack);
+  viable = preEquation->getLhsDag(freshVariableGenerator)->
+    computeSolvedForm(target, *unsortedSolution, pendingStack);
 }
 
 NarrowingUnificationProblem::NarrowingUnificationProblem(DagNode* lhs,

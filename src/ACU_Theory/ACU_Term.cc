@@ -53,9 +53,11 @@
 #include "symbolMap.hh"
 #include "termBag.hh"
 #include "rhsBuilder.hh"
+#include "freshVariableGenerator.hh"
 
 //	variable class definitions
 #include "variableTerm.hh"
+#include "variableDagNode.hh"
 
 //	ACU theory class definitions
 #include "ACU_Symbol.hh"
@@ -493,12 +495,35 @@ DagNode*
 ACU_Term::dagify2(DagifyInfo& dagifyInfo)
 {
   int nrArgs = argArray.length();
-  ACU_DagNode* d = new ACU_DagNode(symbol(), nrArgs);
+  ACU_DagNode* d = new ACU_DagNode(symbol(), nrArgs + (extensionVariableIndex != NONE));
   ArgVec<ACU_DagNode::Pair>& p = d->argArray;
-  for (int i = 0; i < nrArgs; i++)
+  for (int i = 0; i < nrArgs; ++i)
     {
       p[i].dagNode = argArray[i].term->dagify(dagifyInfo);
       p[i].multiplicity = argArray[i].multiplicity;
+    }
+  if (extensionVariableIndex != NONE)
+    {
+      //
+      //	During compile phase, we created an index for an extension variable.
+      //	This can only happen if we are at the top left-hand side of an equation
+      //	or rule that has the extension attribute, requiring that extension be
+      //	be used for unification during narrowing.
+      //	Now that we are dagifying that left-hand side, we assume that the only
+      //	reason to dagify is to perform a unification for narrowing and
+      //	we add a real variable to the resulting dag. By convention the extension
+      //	variable will always be the last argument, which may denormalize the dag.
+      //	If this assumption changes, we might want to dagify without the extension
+      //	variable if freshVariableGenerator is nullptr to have that option,
+      //	but then we need to worry the result being cached by the caller.
+      //
+      FreshVariableGenerator* freshVariableGenerator = dagifyInfo.getFreshVariableGenerator();
+      Assert(freshVariableGenerator != nullptr, "unable to generate extension variable");
+      Sort* kind = symbol()->rangeComponent()->sort(Sort::KIND);
+      Symbol* varSym = freshVariableGenerator->getBaseVariableSymbol(kind);
+      int name = freshVariableGenerator->getExtensionVariableName();
+      p[nrArgs].dagNode = new VariableDagNode(varSym, name, extensionVariableIndex);
+      p[nrArgs].multiplicity = 1;
     }
   return d;
 }
