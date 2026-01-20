@@ -1,3 +1,8 @@
+2026-01-20  Rubén Rubio  <rubenrub@ucm.es>
+
+	* lexer.ll (id): added rpo to BAR_OP_ATTRIBUTE termination
+	tokens
+
 2025-12-19  Saruman the White  <eker@eker10>
 
 	* fixUp.cc (SyntacticPreModule::fixUpSymbol): fix comments; if we
