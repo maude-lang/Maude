@@ -1,3 +1,14 @@
+2026-01-19  Saruman the White  <eker@eker10>
+
+	* term.hh (class Term): updated decl for term2Dag()
+	(class DagifyInfo): struct -> class
+
+	* term.cc (Term::term2Dag): take freshVariableGenerator arg and
+	call DagifyInfo ctor
+
+	* term.hh (Term::DagifyInfo::DagifyInfo): added
+	(Term::DagifyInfo::getFreshVariableGenerator): added
+
 2026-01-16  Saruman the White  <eker@eker10>
 
 	* term.hh (struct DagifyInfo): added decl for

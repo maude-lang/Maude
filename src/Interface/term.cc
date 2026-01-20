@@ -59,10 +59,9 @@
 #include "variableName.hh"
 
 DagNode*
-Term::term2Dag(bool setSortInfo)
+Term::term2Dag(bool setSortInfo, FreshVariableGenerator* freshVariableGenerator)
 {
-  DagifyInfo dagifyInfo;
-  dagifyInfo.setSortInfoFlag = setSortInfo;
+  DagifyInfo dagifyInfo(setSortInfo, freshVariableGenerator);
   return dagify(dagifyInfo);
 }
 
@@ -73,7 +72,6 @@ Term::term2DagEagerLazyAware(bool setSortInfo)
   //	This version marks eager paths first so we don't share identical
   //	subterms between eager and lazy paths.
   //
-  
   NatSet eagerVariables;
   Vector<int> problemVariables;
   markEager(0, eagerVariables, problemVariables);

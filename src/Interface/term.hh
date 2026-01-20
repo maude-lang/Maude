@@ -47,13 +47,21 @@ public:
     UNKNOWN = -1
   };
 
-  struct DagifyInfo
+  class DagifyInfo
   {
-    FreshVariableGenerator* getFreshVariableGenerator() {return 0;}
+  public:
+    DagifyInfo(bool setSortInfoFlag, FreshVariableGenerator* freshVariableGenerator);
+    FreshVariableGenerator* getFreshVariableGenerator() const;
+
+  private:
+    friend class Term;
+
     Vector<DagNode*> subDags;
     TermSet converted;
-    bool setSortInfoFlag;
+    bool const setSortInfoFlag;
+    FreshVariableGenerator* const freshVariableGenerator;
   };
+
   //
   //	Comparison object on Term* for use with associative containers.
   //	Only safe if the Terms are fully normalized and belong the same module.
@@ -83,7 +91,7 @@ public:
   bool equal(const Term* other) const;
   bool equal(const DagNode* other) const;
   bool leq(const Sort* sort) const;
-  DagNode* term2Dag(bool setSortInfo = false);
+  DagNode* term2Dag(bool setSortInfo = false, FreshVariableGenerator* freshVariableGenerator = nullptr);
   DagNode* term2DagEagerLazyAware(bool setSortInfo = false);
   DagNode* dagify(DagifyInfo& dagifyInfo);
   void indexVariables(VariableInfo& indicies);
@@ -554,6 +562,19 @@ inline void
 Term::addContextVariables(const NatSet& externalVariables)
 {
   contextSet.insert(externalVariables);
+}
+
+inline
+Term::DagifyInfo::DagifyInfo(bool setSortInfoFlag, FreshVariableGenerator* freshVariableGenerator)
+  : setSortInfoFlag(setSortInfoFlag),
+    freshVariableGenerator(freshVariableGenerator)
+{
+}
+
+inline FreshVariableGenerator*
+Term::DagifyInfo::getFreshVariableGenerator() const
+{
+  return freshVariableGenerator;
 }
 
 //

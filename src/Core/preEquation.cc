@@ -265,7 +265,7 @@ PreEquation::getLhsDag(FreshVariableGenerator* freshVariableGenerator)
   DagNode* d = lhsDag.getNode();
   if (d == 0)
     {
-      d = getLhs()->term2Dag();
+      d = getLhs()->term2Dag(false, freshVariableGenerator);
       if (d->computeBaseSortForGroundSubterms(true) == DagNode::UNIMPLEMENTED)
 	{
 	  IssueWarning(*this << ": lefthand side of " << this <<
