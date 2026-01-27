@@ -48,7 +48,7 @@ public:
   void setNonexec();
   bool isExtension() const;
   void setExtension();
-
+  bool isExtensionVariable(int index) const;
   //
   //	This is the most general condition checking function that allows
   //	multiple distinct successes; caller must provide trialRef variable
@@ -108,6 +108,7 @@ private:
 		      Stack<ConditionState*>& state) const;
 
   Label label;
+  int endOfExtensionVariables;
   Term* lhs;
   LhsAutomaton* lhsAutomaton;
   DagRoot lhsDag;  // for unification
@@ -136,6 +137,12 @@ inline void
 PreEquation::setExtension()
 {
   setFlags(EXTENSION);
+}
+
+inline bool
+PreEquation::isExtensionVariable(int index) const
+{
+  return index >= getNrRealVariables() && index < endOfExtensionVariables;
 }
 
 inline bool

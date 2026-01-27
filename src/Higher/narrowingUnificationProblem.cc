@@ -488,22 +488,24 @@ NarrowingUnificationProblem::classifyVariables()
   //	variables and which variables get sorts represented by BDD variables.
   //
   //	We are interested in two sets of variables:
-  //	  Those which must be bound to a fresh variable under our final numbering scheme.
-  //	  Those for which a sort must be calculated based on the their occurances in bindings.
+  //	* Those which must be bound to a fresh variable under our final numbering scheme.
+  //	* Those for which a sort must be calculated based on the their occurances in bindings.
   //	The former is a superset of the latter.
   //
   //	Look at original variables. We compute two sets:
-  //	freeVariables is intially the set of unbound original variables.
-  //	sortConstrainedVariables is the set of variables appearing in a binding
-  //	to an original variable.
+  //	* freeVariables is initially the set of unbound original variables, to
+  //	  which we add the sortConstrainedVariables
+  //	* sortConstrainedVariables is the set of variables appearing in a binding
+  //	  to an original variable.
   //
   freeVariables.clear();
   sortConstrainedVariables.clear();
   for (int i = 0; i < substitutionSize; ++i)
     {
-      if (i < nrPreEquationVariables || i >= firstTargetSlot)
+      if (i < nrPreEquationVariables || i >= firstTargetSlot  || preEquation->isExtensionVariable(i))
 	{
 	  DagNode* value = unsortedSolution->value(i);
+	  DebugInfo("slot << " << i << " |-> " << value);
 	  if (value == 0)
 	    freeVariables.insert(i);
 	  else

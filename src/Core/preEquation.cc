@@ -117,6 +117,7 @@ PreEquation::compileBuild(TermBag& availableTerms, bool eagerContext)
       //
       lhs->insertExtensionVariables(*this);
     }
+  endOfExtensionVariables = getNrProtectedVariables();
   lhs->insertAbstractionVariables(*this);
   int nrFragments = condition.length();
   for (int i = 0; i < nrFragments; i++)

@@ -1,3 +1,13 @@
+2026-01-25  Saruman the White  <eker@eker10>
+
+	* preEquation.hh (PreEquation::isExtensionVariable): added
+
+	* preEquation.cc (PreEquation::compileBuild): set
+	endOfExtensionVariables
+
+	* preEquation.hh (class PreEquation): added data member
+	endOfExtensionVariables
+
 2026-01-19  Saruman the White  <eker@eker10>
 
 	* preEquation.cc (PreEquation::getLhsDag): pass

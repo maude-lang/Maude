@@ -1,3 +1,8 @@
+2026-01-25  Saruman the White  <eker@eker10>
+
+	* narrowingUnificationProblem.cc
+	(NarrowingUnificationProblem::classifyVariables): fixed comment
+
 2026-01-16  Saruman the White  <eker@eker10>
 
 	* narrowingUnificationProblem.cc
