@@ -1,3 +1,8 @@
+2026-01-26  Saruman the White  <eker@eker10>
+
+	* narrowingUnificationProblem.cc
+	(NarrowingUnificationProblem::classifyVariables): added DebugInfo()
+
 2026-01-25  Saruman the White  <eker@eker10>
 
 	* narrowingUnificationProblem.cc
