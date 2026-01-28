@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -99,7 +99,11 @@ protected:
   //
   DagNode* makeDagNode(const Vector<DagNode*>& args,
 		       const Vector<int>& multiplicities);
-
+  //
+  //	Backstop for derived classes.
+  //
+  bool tryEquations(DagNode* subject, RewritingContext& context);
+  
 private:
   static bool normalize(DagNode* subject, RewritingContext& context);
   static bool copyReduceSubtermsAndNormalize(DagNode* subject, RewritingContext& context);
@@ -118,6 +122,17 @@ inline bool
 ACU_Symbol::useTree() const
 {
   return useTreeFlag;
+}
+
+inline bool
+ACU_Symbol::tryEquations(DagNode* subject, RewritingContext& context)
+{
+  //
+  //	We assume caller has already reduced the arguments, normalized and failed
+  //	to execute some special semantics. This a backstop that tries the user's equations.
+  //
+  Assert(this == subject->symbol(), "bad symbol");
+  return !equationFree() && rewriteAtTop(subject, context);
 }
 
 #endif

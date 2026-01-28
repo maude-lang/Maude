@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -108,6 +108,50 @@ CUI_NumberOpSymbol::getSymbolAttachments(Vector<const char*>& purposes,
 {
   APPEND_SYMBOL(purposes, symbols, succSymbol);
   CUI_Symbol::getSymbolAttachments(purposes, symbols);
+}
+
+void
+CUI_NumberOpSymbol::compileEquations()
+{
+  CUI_Symbol::compileEquations();
+  setEqRewrite(&CUI_NumberOpSymbol::eqRewrite);
+}
+
+bool
+CUI_NumberOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  CUI_NumberOpSymbol* s = safeCastNonNull<CUI_NumberOpSymbol*>(symbol);
+  //
+  //	Evaluate our arguments.
+  //
+  CUI_DagNode* d = safeCast(CUI_DagNode*, subject);
+  DagNode* d0 = d->getArgument(0);
+  d0->reduce(context);
+  DagNode* d1 = d->getArgument(1);
+  d1->reduce(context);
+
+  if (s->succSymbol != nullptr && s->succSymbol->isNat(d0) && s->succSymbol->isNat(d1))
+    {
+      //
+      //	Both arguments are natural numbers so we can exectute our special semmantics.
+      //
+      const mpz_class& a0 = s->succSymbol->getNat(d->getArgument(0));
+      const mpz_class& a1 = s->succSymbol->getNat(d->getArgument(1));
+      mpz_class r;
+      switch (s->op)
+	{
+	case CODE('s', 'd'):  // currently we only support symmetric difference
+	  {
+	    r = abs(a0 - a1);
+	    break;
+	  }
+	default:
+	  CantHappen("bad number op");
+	}
+      return s->succSymbol->rewriteToNat(subject, context, r);
+    }
+  return s->normalizeAndTryEquations(subject, context);
 }
 
 bool
