@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2021-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,17 +33,21 @@ class RandomOpSymbol : public NumberOpSymbol
 public:
   RandomOpSymbol(int id);
 
+  static void setGlobalSeed(mt19937::result_type value);
+
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
   void getDataAttachments(const Vector<Sort*>& opDeclaration,
 			  Vector<const char*>& purposes,
 			  Vector<Vector<const char*> >& data);
+  void compileEquations();
   bool eqRewrite(DagNode* subject, RewritingContext& context);
 
-  static void setGlobalSeed(mt19937::result_type value);
-
 private:
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
+
   static mt19937::result_type globalSeed;
 
   mpz_class currentIndex;

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,17 @@ class DivisionSymbol : public FreeSymbol
 {
 public:
   DivisionSymbol(int id);
+  //
+  //	Functions special to DivisionSymbol.
+  //
+  DagNode* makeRatDag(const mpz_class& nr, const mpz_class& dr);
+  bool isRat(const DagNode* dagNode) const;
+  const mpz_class& getRat(const DagNode* dagNode, mpz_class& numerator) const;
+  Term* makeRatTerm(const mpz_class& nr, const mpz_class& dr);
+  bool isRat(const Term* term) const;
+  const mpz_class& getRat(const Term* term, mpz_class& numerator) const;
 
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
@@ -42,18 +52,13 @@ public:
 			  Vector<Vector<const char*> >& data);
   void getSymbolAttachments(Vector<const char*>& purposes,
 			    Vector<Symbol*>& symbols);
+  void compileEquations();
 
   bool eqRewrite(DagNode* subject, RewritingContext& context);
-  //
-  //	Functions special to DivisionSymbol.
-  //
-  DagNode* makeRatDag(const mpz_class& nr, const mpz_class& dr);
-  bool isRat(const DagNode* dagNode) const;
-  const mpz_class& getRat(const DagNode* dagNode, mpz_class& numerator) const;
-  Term* makeRatTerm(const mpz_class& nr, const mpz_class& dr);
-  bool isRat(const Term* term) const;
-  const mpz_class& getRat(const Term* term, mpz_class& numerator) const;
- 
+
+private:
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
+
   SuccSymbol* succSymbol;
   MinusSymbol* minusSymbol;
 };

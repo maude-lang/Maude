@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2004 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2004-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -79,6 +79,25 @@ RandomOpSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
   NumberOpSymbol::getDataAttachments(opDeclaration, purposes, data);
 }
 
+void
+RandomOpSymbol::compileEquations()
+{
+  //
+  //	NumberOpSymbol doesn't know how to deal with this.
+  //
+  FreeSymbol::compileEquations();
+  setEqRewrite(&RandomOpSymbol::eqRewrite);
+}
+
+bool
+RandomOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  RandomOpSymbol* s = safeCastNonNull<RandomOpSymbol*>(symbol);
+  //  This is a hack; eventually we'll inline this function.
+  return s->eqRewrite(subject, context);
+}
+
 bool
 RandomOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
@@ -107,5 +126,5 @@ RandomOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   //
   //	NumberOpSymbol doesn't know how to deal with this.
   //
-  return FreeSymbol::eqRewrite(subject, context);
+  return tryEquations(subject, context);
 }

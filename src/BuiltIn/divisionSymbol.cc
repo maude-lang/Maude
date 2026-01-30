@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -103,6 +103,22 @@ DivisionSymbol::getSymbolAttachments(Vector<const char*>& purposes,
   FreeSymbol::getSymbolAttachments(purposes, symbols);
 }
 
+void
+DivisionSymbol::compileEquations()
+{
+  FreeSymbol::compileEquations();
+  setEqRewrite(&DivisionSymbol::eqRewrite);
+}
+
+bool
+DivisionSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  DivisionSymbol* s = safeCastNonNull<DivisionSymbol*>(symbol);
+  //  This is a hack; eventually we'll inline this function.
+  return s->eqRewrite(subject, context);
+}
+
 bool
 DivisionSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
@@ -137,12 +153,17 @@ DivisionSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 							    denominator / common));
 	  Assert(this == subject->symbol(), "unexpectedly changed top symbol");
 	  //
+	  //	Our newly created subterms are unreduced and don't have sorts calculated.
+	  //
+	  d->getArgument(0)->reduce(context);
+	  d->getArgument(1)->reduce(context);
+	  //
 	  //  	we don't want to revisit this node since it is already simplified
 	  //	- so fall into regular case.
 	  //
 	}
     }
-  return FreeSymbol::eqRewrite(subject, context);
+  return tryEquations(subject, context);
 }
 
 DagNode*
