@@ -166,6 +166,10 @@ EqualitySymbol::domainSortAlwaysLeqThan(Sort* /* sort */, int /* argNr */)
   return false;
 }
 
+//
+//	User equations don't make sense so we neither accept nor compile them.
+//
+
 bool
 EqualitySymbol::acceptEquation(Equation* /* equation */)
 {
@@ -175,9 +179,6 @@ EqualitySymbol::acceptEquation(Equation* /* equation */)
 void
 EqualitySymbol::compileEquations()
 {
-  //
-  //	User equations don't make sense so we don't attempt to compile them.
-  //
   setEqRewrite(&EqualitySymbol::eqRewrite);
 }
 

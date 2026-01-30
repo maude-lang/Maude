@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #define _sortTestSymbol_hh_
 #include "freeSymbol.hh"
 
-class SortTestSymbol : public FreeSymbol
+class SortTestSymbol final : public FreeSymbol
 {
 public:
   SortTestSymbol(int id,
@@ -35,18 +35,20 @@ public:
 		 FreeSymbol* leq,
 		 FreeSymbol* nleq,
 		 bool eager);
- 
-  bool eqRewrite(DagNode* subject, RewritingContext& context);
+
   bool eager() const;
   const Sort* sort() const;
+
+private:
+  static const Vector<int>& makeLazyStrategy();
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
+
+  bool eqRewrite(DagNode* subject, RewritingContext& context);
   //
   //	We don't accept or compile any equations.
   //
   bool acceptEquation(Equation* equation);
   void compileEquations();
-
-private:
-  static const Vector<int>& makeLazyStrategy();
 
   Sort* cmpSort;
   FreeSymbol* leqResult;

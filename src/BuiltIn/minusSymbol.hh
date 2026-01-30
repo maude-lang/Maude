@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,21 +23,18 @@
 //
 //      Class for symbols for the unary minus operation.
 //
+//	It's really a NumberOpSymbol with some extra functions because
+//	unary minus is used as a contructor for negative integers as well
+//	as an operator on numbers.
+//
 #ifndef _minusSymbol_hh_
 #define _minusSymbol_hh_
 #include "numberOpSymbol.hh"
 
-class MinusSymbol : public NumberOpSymbol
+class MinusSymbol final : public NumberOpSymbol
 {
 public:
   MinusSymbol(int id);
-
-  bool attachData(const Vector<Sort*>& opDeclaration,
-		  const char* purpose,
-		  const Vector<const char*>& data);
-  void getDataAttachments(const Vector<Sort*>& opDeclaration,
-			  Vector<const char*>& purposes,
-			  Vector<Vector<const char*> >& data);
   //
   //	Functions special to MinusSymbol.
   //
@@ -49,6 +46,14 @@ public:
   bool isNeg(const Term* term) const;
   const mpz_class& getNeg(const Term* term, mpz_class& result) const;
   bool getSignedInt64(const DagNode* dagNode, Int64& value) const;
+
+private:
+  bool attachData(const Vector<Sort*>& opDeclaration,
+		  const char* purpose,
+		  const Vector<const char*>& data);
+  void getDataAttachments(const Vector<Sort*>& opDeclaration,
+			  Vector<const char*>& purposes,
+			  Vector<Vector<const char*> >& data);
 };
 
 #endif
