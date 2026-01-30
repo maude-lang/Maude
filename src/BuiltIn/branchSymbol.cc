@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -151,6 +151,37 @@ BranchSymbol::getTermAttachments(Vector<const char*>& purposes,
 	}
     }
   FreeSymbol::getTermAttachments(purposes, terms);
+}
+
+void
+BranchSymbol::compileEquations()
+{
+  FreeSymbol::compileEquations();
+  setEqRewrite(&BranchSymbol::eqRewrite);
+}
+
+bool
+BranchSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  BranchSymbol* s = safeCastNonNull<BranchSymbol*>(symbol);
+  FreeDagNode* f = static_cast<FreeDagNode*>(subject);
+  DagNode* e = f->getArgument(0);
+  e->reduce(context);
+
+  Index nrTerms = s->testTerms.size();
+  for (Index i = 0; i < nrTerms; ++i)
+    {
+      if(s->testTerms[i]->equal(e))
+	return context.builtInReplace(subject, f->getArgument(i + 1));
+    }
+  //
+  //	First argument failed to match any of our test terms. We now need to reduce
+  //	all other arguments, and check for user equations.
+  //
+  for (Index i = 1; i <= nrTerms; ++i)
+    f->getArgument(i)->reduce(context);
+  return s->tryEquations(subject, context);
 }
 
 bool

@@ -1,4 +1,26 @@
+2026-01-30  Saruman the White  <eker@eker10>
+
+	* equalitySymbol.cc: move comment
+
+	* sortTestSymbol.hh (class SortTestSymbol): added decl for static
+	3 arg eqRewrite(); made many overloaded virtual functions private;
+	made final
+
+	* branchSymbol.hh (class BranchSymbol): added decls for
+	compileEquations() and static 3 arg eqRewrite(); move many
+	overloaded virtual functions from public to protected
+
+	* sortTestSymbol.cc (SortTestSymbol::compileEquations): added
+	(SortTestSymbol::eqRewrite): added static 3 arg version
+
+	* branchSymbol.cc (BranchSymbol::eqRewrite): added static 3
+	arg version
+	(BranchSymbol::compileEquations): added
+
 2026-01-29  Saruman the White  <eker@eker10>
+
+	* minusSymbol.hh (class MinusSymbol): make final; add comment
+	(class MinusSymbol): made data attachment functions private
 
 	* equalitySymbol.hh (class EqualitySymbol): made final
 
@@ -45,11 +67,11 @@
 
 2026-01-27  Saruman the White  <eker@eker10>
 
-	* ACU_NumberOpSymbol.hh (class ACU_NumberOpSymbol): added decl for
-	compileEquations() and static 3 arg eqRewrite()
+	* ACU_NumberOpSymbol.hh (class ACU_NumberOpSymbol): added decls
+	for compileEquations() and static 3 arg eqRewrite()
 
-	* CUI_NumberOpSymbol.hh (class CUI_NumberOpSymbol): added decl for
-	compileEquations() and static 3 arg eqRewrite()
+	* CUI_NumberOpSymbol.hh (class CUI_NumberOpSymbol): added decls
+	for compileEquations() and static 3 arg eqRewrite()
 
 	* CUI_NumberOpSymbol.cc (CUI_NumberOpSymbol::eqRewrite): added 3
 	arg version
