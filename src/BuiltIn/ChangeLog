@@ -1,5 +1,38 @@
 2026-01-30  Saruman the White  <eker@eker10>
 
+	* divisionSymbol.cc (DivisionSymbol::eqRewrite): reduce newly
+	created subterms now that we're using tryEquations()
+
+	* randomOpSymbol.hh (class RandomOpSymbol): added decls for static
+	3 arg eqRewrite() and compileEquations(); made some public
+	functions protected
+
+	* randomOpSymbol.cc (RandomOpSymbol::eqRewrite): call
+	tryEquations() rather than FreeSymbol::eqRewrite()
+	(RandomOpSymbol::compileEquations): added
+	(RandomOpSymbol::eqRewrite): added static 3 arg version
+
+	* counterSymbol.hh (class CounterSymbol): added decl for
+	compileEquations()
+
+	* counterSymbol.cc (CounterSymbol::compileEquations): added
+
+	* counterSymbol.hh (class CounterSymbol): made some previously
+	public functions protected
+
+	* counterSymbol.cc (CounterSymbol::eqRewrite): added comment to
+	explain its purpose
+
+	* divisionSymbol.hh (class DivisionSymbol): added decls for
+	compileEquations() and static 3 arg eqRewrite(); made some
+	previously public functions protected
+
+	* divisionSymbol.cc (DivisionSymbol::eqRewrite): added static 3
+	arg version
+	(DivisionSymbol::compileEquations): added
+	(DivisionSymbol::eqRewrite): call tryEquations() rather than
+	FreeSymbol::eqRewrite()
+
 	* equalitySymbol.cc: move comment
 
 	* sortTestSymbol.hh (class SortTestSymbol): added decl for static

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2004-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2004-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,12 +34,14 @@ class CounterSymbol : public NumberOpSymbol
 public:
   CounterSymbol(int id);
 
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
   void getDataAttachments(const Vector<Sort*>& opDeclaration,
 			  Vector<const char*>& purposes,
 			  Vector<Vector<const char*> >& data);
+  void compileEquations();
   void resetRules();
   bool eqRewrite(DagNode* subject, RewritingContext& context);
   DagNode* ruleRewrite(DagNode* subject, RewritingContext& context);
