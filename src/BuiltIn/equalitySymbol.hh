@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,11 +29,28 @@
 #include "cachedDag.hh"
 #include "fullCompiler.hh"
 
-class EqualitySymbol : public FreeSymbol
+class EqualitySymbol final : public FreeSymbol
 {
 public:
   EqualitySymbol(int id, const Vector<int>& strategy);
+  //
+  //	MVM stuff.
+  //
+  Instruction* generateFinalInstruction(const Vector<int>& argumentSlots);
+  Instruction* generateInstruction(int destination, const Vector<int>& argumentSlots, Instruction* nextInstruction);
+  void stackMachineCompile();
+  Instruction* getEqualInstructionSequence() const;
+  Instruction* getNotEqualInstructionSequence() const;
 
+#ifdef COMPILER
+  void generateCode(CompilationContext& context) const;
+#endif
+
+private:
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  //
+  //	This class is final so we can make these overload private.
+  //
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
@@ -54,20 +71,7 @@ public:
   bool acceptEquation(Equation* equation);
   void compileEquations();
   bool domainSortAlwaysLeqThan(Sort* sort, int argNr);
-  //
-  //	MVM stuff.
-  //
-  Instruction* generateFinalInstruction(const Vector<int>& argumentSlots);
-  Instruction* generateInstruction(int destination, const Vector<int>& argumentSlots, Instruction* nextInstruction);
-  void stackMachineCompile();
-  Instruction* getEqualInstructionSequence() const;
-  Instruction* getNotEqualInstructionSequence() const;
 
-#ifdef COMPILER
-  void generateCode(CompilationContext& context) const;
-#endif
-
-private:
   CachedDag equalTerm;
   CachedDag notEqualTerm;
 };

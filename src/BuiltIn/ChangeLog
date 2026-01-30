@@ -1,3 +1,48 @@
+2026-01-29  Saruman the White  <eker@eker10>
+
+	* equalitySymbol.hh (class EqualitySymbol): made final
+
+	* equalitySymbol.cc (EqualitySymbol::compileEquations): call
+	setEqRewrite()
+
+	* CUI_NumberOpSymbol.hh (class CUI_NumberOpSymbol): make many
+	overloaded virtual functions protected rather the private to allow
+	for derived classes
+
+	* ACU_NumberOpSymbol.hh (class ACU_NumberOpSymbol): make many
+	overloaded virtual functions protected rather the private to allow
+	for derived classes
+
+	* numberOpSymbol.hh (class NumberOpSymbol): made many overloaded
+	virtual functions protected since its reasonable for derived
+	classes to call them
+
+	* equalitySymbol.hh (class EqualitySymbol): added decl for static
+	3 arg eqRewrite(); made many overloaded virtual functions private
+
+	* equalitySymbol.cc (EqualitySymbol::eqRewrite): added static 3
+	arg version
+
+	* numberOpSymbol.hh (class NumberOpSymbol): made overloaded
+	virtual functions private - they should never be called except
+	though the public theory interface
+
+	* CUI_NumberOpSymbol.hh (class CUI_NumberOpSymbol): made
+	overloaded virtual functions private - they should never be called
+	except though the public theory interface
+
+	* ACU_NumberOpSymbol.hh (class ACU_NumberOpSymbol): made
+	overloaded virtual functions private - they should never be called
+	except though the public theory interface
+
+	* numberOpSymbol.hh (class NumberOpSymbol): added decls for
+	compileEquations() and static 3 arg eqRewrite()
+
+	* numberOpSymbol.cc (NumberOpSymbol::eqRewrite): use
+	tryEquations() instead of FreeSymbol::eqRewrite()
+	(NumberOpSymbol::eqRewrite): added static 3 arg version
+	(NumberOpSymbol::compileEquations): added
+
 2026-01-27  Saruman the White  <eker@eker10>
 
 	* ACU_NumberOpSymbol.hh (class ACU_NumberOpSymbol): added decl for

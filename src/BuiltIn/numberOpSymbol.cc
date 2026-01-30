@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -169,6 +169,22 @@ NumberOpSymbol::reset()
   trueTerm.reset();  // so true dag can be garbage collected
   falseTerm.reset();  // so false dag can be garbage collected
   FreeSymbol::reset();  // parents reset() tasks
+}
+
+void
+NumberOpSymbol::compileEquations()
+{
+  FreeSymbol::compileEquations();
+  setEqRewrite(&NumberOpSymbol::eqRewrite);
+}
+
+bool
+NumberOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  NumberOpSymbol* s = safeCastNonNull<NumberOpSymbol*>(symbol);
+  //  This is a hack; eventually we'll inline this function.
+  return s->eqRewrite(subject, context);
 }
 
 bool
@@ -457,7 +473,7 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	context.builtInReplace(subject, minusSymbol->makeNegDag(r));
     }
  fail:
-  return FreeSymbol::eqRewrite(subject, context);
+  return tryEquations(subject, context);
 }
 
 bool

@@ -32,6 +32,7 @@ class ACU_NumberOpSymbol : public ACU_Symbol
 public:
   ACU_NumberOpSymbol(int id);
 
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
@@ -47,6 +48,7 @@ public:
 
 private:
   static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
+
   bool eqRewrite2(DagNode* subject, RewritingContext& context);
 
   int op;

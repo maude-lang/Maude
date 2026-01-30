@@ -32,6 +32,7 @@ class CUI_NumberOpSymbol : public CUI_Symbol
 public:
   CUI_NumberOpSymbol(int id, Axioms axioms);
 
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);

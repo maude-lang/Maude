@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ class NumberOpSymbol : public FreeSymbol
 public:
   NumberOpSymbol(int id, int arity);
 
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
@@ -50,14 +51,16 @@ public:
 
   void postInterSymbolPass();
   void reset();
+  void compileEquations();
   bool eqRewrite(DagNode* subject, RewritingContext& context);
 
-protected:
   SuccSymbol* getSuccSymbol() const;
   MinusSymbol* getMinusSymbol() const;
   bool getNumber(DagNode* dagNode, mpz_class& value) const;
 
 private:
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
+
   int op;
   SuccSymbol* succSymbol;
   MinusSymbol* minusSymbol;
