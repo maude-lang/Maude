@@ -78,7 +78,7 @@ public:
   //
   //	Fast theory specific access to argument list.
   //
-  DagNode* getArgument(int i) const;
+  DagNode* getArgument(Index i) const;
 
 private:
   union
@@ -228,7 +228,7 @@ FreeDagNode::argArray()
 }
 
 inline DagNode*
-FreeDagNode::getArgument(int i) const
+FreeDagNode::getArgument(Index i) const
 {
   Assert(i >= 0 && i < symbol()->arity(), "argument index out of range: " << i);
   return argArray()[i];

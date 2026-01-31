@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ class FloatOpSymbol : public FreeSymbol
 public:
   FloatOpSymbol(int id, int arity);
 
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
@@ -46,12 +47,15 @@ public:
 			    Vector<Symbol*>& symbols);
   void getTermAttachments(Vector<const char*>& purposes,
 			  Vector<Term*>& terms);
-
   void postInterSymbolPass();
+  void compileEquations();
+
   void reset();
   bool eqRewrite(DagNode* subject, RewritingContext& context);
 
 private:
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
+
   int isOdd(double n);
   double safePow(double a1, double a2, bool& defined);
 

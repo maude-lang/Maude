@@ -1,5 +1,23 @@
 2026-01-30  Saruman the White  <eker@eker10>
 
+	* stringOpSymbol.hh (class StringOpSymbol):  added decls for
+	compileEquations() and static 3 arg eqRewrite(); make some public
+	functions protected
+
+	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): use
+	tryEquations() instead of FreeSymbol::eqRewrite()
+	(StringOpSymbol::eqRewrite): added static 3 arg version
+	(StringOpSymbol::compileEquations): added
+
+	* floatOpSymbol.hh (class FloatOpSymbol): added decls for
+	compileEquations() and static 3 arg eqRewrite(); make some public
+	functions protected
+
+	* floatOpSymbol.cc (FloatOpSymbol::compileEquations): added
+	(FloatOpSymbol::eqRewrite): added static 3 arg version
+	(FloatOpSymbol::eqRewrite): use tryEquations() instead of
+	FreeSymbol::eqRewrite()
+
 	* divisionSymbol.cc (DivisionSymbol::eqRewrite): reduce newly
 	created subterms now that we're using tryEquations()
 
