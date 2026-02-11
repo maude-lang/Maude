@@ -3,6 +3,31 @@
 	* yices2_Bindings.cc: added YICES_ prefix no STATUS constants for
 	compatibility with Yices 2.7 (and temporary compatibility code)
 
+2026-02-10  Saruman the White  <eker@eker10>
+
+	* commutativeDecomposeEqualitySymbol.hh (class
+	CommutativeDecomposeEqualitySymbol): added decls for static 3 arg
+	eqRewrite(), compileEquations(); made many overloaded member
+	functions protected
+
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::compileEquations): added
+	(CommutativeDecomposeEqualitySymbol::eqRewrite): added static 3
+	arg version
+	(CommutativeDecomposeEqualitySymbol::eqRewrite): use
+	normalizeAndTryEquations() rather than FreeSymbol::eqRewrite() as
+	a backstop
+
+	* quotedIdentifierOpSymbol.hh (class QuotedIdentifierOpSymbol):
+	added decls for static 3 arg eqRewrite(), compileEquations(); made
+	many overloaded member functions protected
+
+	* quotedIdentifierOpSymbol.cc
+	(QuotedIdentifierOpSymbol::eqRewrite): added static 3 arg version
+	(QuotedIdentifierOpSymbol::compileEquations): added
+	(QuotedIdentifierOpSymbol::eqRewrite): use tryEquations() rather
+	than FreeSymbol::eqRewrite() as a backstop
+
 2026-01-20  Rubén Rubio  <rubenrub@ucm.es>
 
 	* lexer.ll (id): added rpo to BAR_OP_ATTRIBUTE termination

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -171,6 +171,13 @@ ModelCheckerSymbol::reset()
 }
 
 void
+ModelCheckerSymbol::compileEquations()
+{
+  TemporalSymbol::compileEquations();
+  setEqRewrite(&ModelCheckerSymbol::eqRewrite);
+}
+
+void
 ModelCheckerSymbol::dump(const StateTransitionGraph& states, const list<int>& path)
 {
   cout << "begin{StateList}\n";
@@ -235,6 +242,15 @@ ModelCheckerSymbol::makeCounterexample(const StateTransitionGraph& states,
 }
 
 bool
+ModelCheckerSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  ModelCheckerSymbol* s = safeCastNonNull<ModelCheckerSymbol*>(symbol);
+  //  This is a hack; eventually we'll inline this function.
+  return s->eqRewrite(subject, context);
+}
+
+bool
 ModelCheckerSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
   Assert(this == subject->symbol(), "bad symbol");
@@ -257,7 +273,7 @@ ModelCheckerSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
     {
       IssueAdvisory("negated LTL formula " << QUOTE(newContext->root()) <<
 		    " did not reduce to a valid negative normal form.");
-      return TemporalSymbol::eqRewrite(subject, context);
+      return tryEquations(subject, context);
     }
   context.addInCount(*newContext);
 #ifdef TDEBUG

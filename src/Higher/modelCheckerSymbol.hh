@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ class ModelCheckerSymbol : public TemporalSymbol
 public:
   ModelCheckerSymbol(int id);
 
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
@@ -53,6 +54,7 @@ public:
 
   bool eqRewrite(DagNode* subject, RewritingContext& context);
   void postInterSymbolPass();
+  void compileEquations();
   void reset();
 
 private:
@@ -67,6 +69,8 @@ private:
     DagNode* trueTerm;
     StateTransitionGraph* systemStates;
   };
+
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
   void dump(const StateTransitionGraph& states, const list<int>& path);
   DagNode* makeTransition(const StateTransitionGraph& states, int stateNr, int target);

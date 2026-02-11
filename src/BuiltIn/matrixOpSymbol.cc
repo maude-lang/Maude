@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2004 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2004-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -126,6 +126,13 @@ MatrixOpSymbol::getSymbolAttachments(Vector<const char*>& purposes,
 #include "matrixOpSignature.cc"
 #undef MACRO
   NumberOpSymbol::getSymbolAttachments(purposes, symbols);
+}
+
+void
+MatrixOpSymbol::compileEquations()
+{
+  NumberOpSymbol::compileEquations();
+  setEqRewrite(&MatrixOpSymbol::eqRewrite);
 }
 
 bool
@@ -275,6 +282,15 @@ MatrixOpSymbol::upVector(const IntVec& row)
 }
 
 bool
+MatrixOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  MatrixOpSymbol* s = safeCastNonNull<MatrixOpSymbol*>(symbol);
+  //  This is a hack; eventually we'll inline this function.
+  return s->eqRewrite(subject, context);
+}
+
+bool
 MatrixOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
   FreeDagNode* d = safeCast(FreeDagNode*, subject);
@@ -362,5 +378,5 @@ MatrixOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   //
   //	NumberOpSymbol doesn't know how to deal with this.
   //
-  return FreeSymbol::eqRewrite(subject, context);
+  return FreeSymbol::eqRewrite(subject, context);tryEquations(subject, context);
 }

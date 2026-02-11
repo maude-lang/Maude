@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ class CommutativeDecomposeEqualitySymbol : public CUI_Symbol
 public:
   CommutativeDecomposeEqualitySymbol(int id, const Vector<int>& strategy);
 
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
@@ -50,6 +51,8 @@ public:
 			  Vector<Term*>& terms);
 
   void postInterSymbolPass();
+  void compileEquations();
+
   void reset();
   bool eqRewrite(DagNode* subject, RewritingContext& context);
 
@@ -57,6 +60,8 @@ public:
 
 private:
   typedef multiset<DagNode*, DagNode::LessThan> DagNodeMultiset;
+
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
   static bool isEquationallyStable(Symbol* s);
   static bool hasImmediateSubterm(DagNode* bigger, DagNode* smaller);

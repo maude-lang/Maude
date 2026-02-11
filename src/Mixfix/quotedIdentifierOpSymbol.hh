@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ class QuotedIdentifierOpSymbol : public FreeSymbol
 public:
   QuotedIdentifierOpSymbol(int id, int nrArgs);
 
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
@@ -44,10 +45,12 @@ public:
 			  Vector<Vector<const char*> >& data);
   void getSymbolAttachments(Vector<const char*>& purposes,
 			    Vector<Symbol*>& symbols);
-
+  void compileEquations();
   bool eqRewrite(DagNode* subject, RewritingContext& context);
 
 private:
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
+
   DagNode* makeQid(int id, PointerMap& qidMap);
   bool printQidList(DagNode* qidList, Rope& output);
   bool printQid(DagNode* qid, bool& ansiActive, bool& needSpace, Rope& output);
