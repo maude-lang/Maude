@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -270,6 +270,22 @@ MetaLevelOpSymbol::reset()
     metaLevel->reset();
 }
 
+void
+MetaLevelOpSymbol::compileEquations()
+{
+  FreeSymbol::compileEquations();
+  setEqRewrite(&MetaLevelOpSymbol::eqRewrite);
+}
+
+bool
+MetaLevelOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  MetaLevelOpSymbol* s = safeCastNonNull<MetaLevelOpSymbol*>(symbol);
+  //  This is a hack; eventually we'll inline this function.
+  return s->eqRewrite(subject, context);
+}
+
 bool
 MetaLevelOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
@@ -281,7 +297,7 @@ MetaLevelOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
       const int nrArgs = arity();
       for (int i = 0; i < nrArgs; ++i)
 	d->getArgument(i)->reduce(context);
-      return (this->*descentFunction)(d, context) || FreeSymbol::eqRewrite(subject, context);
+      return (this->*descentFunction)(d, context) || tryEquations(subject, context);
     }
   return complexStrategy(subject, context);
 }

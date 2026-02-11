@@ -1,3 +1,15 @@
+2026-02-10  Saruman the White  <eker@eker10>
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): added decls for
+	compileEquations() and static 3 arg eqRewrite(); made many
+	overloaded member functions protected
+
+	* metaLevelOpSymbol.cc (MetaLevelOpSymbol::compileEquations):
+	added
+	(MetaLevelOpSymbol::eqRewrite): added static 3 arg version
+	(MetaLevelOpSymbol::eqRewrite): use tryEquations() instead of
+	FreeSymbol::eqRewrite()
+
 2025-07-29  Rubén Rubio <rubenrub@ucm.es>
 
 	* metaDownOps.cc (downOpDecl): pass rpo to addPolymorph and
