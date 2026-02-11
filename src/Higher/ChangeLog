@@ -1,3 +1,24 @@
+2026-02-10  Saruman the White  <eker@eker10>
+
+	* satSolverSymbol.hh (class SatSolverSymbol): added decls for
+	compileEquations() and static 3 arg eqRewrite(); made many
+	overloaded member functions protected
+
+	* satSolverSymbol.cc (SatSolverSymbol::compileEquations): added
+	(SatSolverSymbol::eqRewrite): added static 3 arg version
+	(SatSolverSymbol::eqRewrite): use tryEquations() rather than
+	TemporalSymbol::eqRewrite()
+
+	* modelCheckerSymbol.hh (class ModelCheckerSymbol): added decls
+	for compileEquations() and static 3 arg eqRewrite(); made many
+	overloaded member functions protected
+
+	* modelCheckerSymbol.cc (ModelCheckerSymbol::compileEquations):
+	added
+	(ModelCheckerSymbol::eqRewrite): added static 3 arg version
+	(ModelCheckerSymbol::eqRewrite): use tryEquations() rather than
+	TemporalSymbol::eqRewrite()
+
 2024-05-30  Steven Eker  <eker@pup>
 
 	* narrowingFolder.cc (NarrowingFolder::getMostGeneralStates): fixed

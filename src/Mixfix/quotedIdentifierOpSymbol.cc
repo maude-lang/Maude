@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -153,6 +153,22 @@ QuotedIdentifierOpSymbol::getSymbolAttachments(Vector<const char*>& purposes,
   FreeSymbol::getSymbolAttachments(purposes, symbols);
 }
 
+void
+QuotedIdentifierOpSymbol::compileEquations()
+{
+  FreeSymbol::compileEquations();
+  setEqRewrite(&QuotedIdentifierOpSymbol::eqRewrite);
+}
+
+bool
+QuotedIdentifierOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  QuotedIdentifierOpSymbol* s = safeCastNonNull<QuotedIdentifierOpSymbol*>(symbol);
+  //  This is a hack; eventually we'll inline this function.
+  return s->eqRewrite(subject, context);
+}
+
 bool
 QuotedIdentifierOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
@@ -286,7 +302,7 @@ QuotedIdentifierOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
       }
 #endif
     }
-  return FreeSymbol::eqRewrite(subject, context);
+  return tryEquations(subject, context);
 }
 
 DagNode*

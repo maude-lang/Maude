@@ -1,3 +1,14 @@
+2026-02-10  Saruman the White  <eker@eker10>
+
+	* matrixOpSymbol.hh (class MatrixOpSymbol): added decls for
+	compileEquations() and static 3 arg eqRewrite(); made many
+	overloaded member functions protected
+
+	* matrixOpSymbol.cc (MatrixOpSymbol::compileEquations): added
+	(MatrixOpSymbol::eqRewrite): added static 3 arg version
+	(MatrixOpSymbol::eqRewrite): use tryEquations() rather than
+	FreeSymbol::eqRewrite() as a backstop
+
 2026-01-30  Saruman the White  <eker@eker10>
 
 	* stringOpSymbol.hh (class StringOpSymbol):  added decls for

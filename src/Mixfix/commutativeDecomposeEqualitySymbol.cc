@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -162,6 +162,13 @@ CommutativeDecomposeEqualitySymbol::reset()
   CUI_Symbol::reset();  // parents reset() tasks
 }
 
+void
+CommutativeDecomposeEqualitySymbol::compileEquations()
+{
+  CUI_Symbol::compileEquations();
+  setEqRewrite(&CommutativeDecomposeEqualitySymbol::eqRewrite);
+}
+
 bool
 CommutativeDecomposeEqualitySymbol::isEquationallyStable(Symbol* s)
 {
@@ -169,6 +176,18 @@ CommutativeDecomposeEqualitySymbol::isEquationallyStable(Symbol* s)
     s->equationFree() &&  // can't equationally rewrite at the top
     safeCastNonNull<MixfixModule*>(s->getModule())->getSymbolType(s).getBasicType() ==
     SymbolType::STANDARD;  // can't disappear by built-in rewriting
+}
+
+bool
+CommutativeDecomposeEqualitySymbol::eqRewrite(Symbol* symbol,
+					      DagNode* subject,
+					      RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  CommutativeDecomposeEqualitySymbol* s =
+    safeCastNonNull<CommutativeDecomposeEqualitySymbol*>(symbol);
+  //  This is a hack; eventually we'll inline this function.
+  return s->eqRewrite(subject, context);
 }
 
 bool
@@ -240,7 +259,7 @@ CommutativeDecomposeEqualitySymbol::eqRewrite(DagNode* subject, RewritingContext
   //
   //	Support user reductions.
   //
-  return CUI_Symbol::eqRewrite(subject, context);
+  return normalizeAndTryEquations(subject, context);
 }
 
 bool

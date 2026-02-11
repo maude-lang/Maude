@@ -33,6 +33,7 @@ class MatrixOpSymbol : public NumberOpSymbol
 public:
   MatrixOpSymbol(int id, int arity);
 
+protected:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,
 		  const Vector<const char*>& data);
@@ -45,6 +46,7 @@ public:
 			  Vector<Vector<const char*> >& data);
   void getSymbolAttachments(Vector<const char*>& purposes,
 			    Vector<Symbol*>& symbols);
+  void compileEquations();
 
   bool eqRewrite(DagNode* subject, RewritingContext& context);
 
@@ -59,6 +61,8 @@ private:
   typedef map<int, mpz_class> SparseVector;
   typedef map<int, SparseVector> SparseMatrix;
   typedef Vector<mpz_class> IntVec;
+
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
   bool downMatrixEntry(DagNode* dagNode, SparseMatrix& matrix, int& maxRowNr, int& maxColNr);
   bool downMatrix(DagNode* dagNode, SparseMatrix& matrix, int& maxRowNr, int& maxColNr);
