@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -559,15 +559,12 @@ DagNode::setTheoryByte(Byte value)
 //
 #include "symbol2.hh"
 
-#if 1
-
-// New equational rewriting scheme uses EqRewriter::eqRewrite2() but isn't finished
 inline void
 DagNode::reduce(RewritingContext& context)
 {
   while (!isReduced())
     {
-      if (!(topSymbol->eqRewrite2(topSymbol, this, context)))
+      if (!(topSymbol->eqRewrite(topSymbol, this, context)))
 	{
 	  setReduced();
 	  topSymbol->fastComputeTrueSort(this, context);
@@ -575,24 +572,6 @@ DagNode::reduce(RewritingContext& context)
 	}
     }
 }
-
-#else
-
-inline void
-DagNode::reduce(RewritingContext& context)
-{
-  while (!isReduced())
-    {
-      if (!(topSymbol->eqRewrite(this, context)))
-	{
-	  setReduced();
-	  topSymbol->fastComputeTrueSort(this, context);
-	  break;
-	}
-    }
-}
-
-#endif
 
 inline void
 DagNode::mark()

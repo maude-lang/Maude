@@ -1,3 +1,7 @@
+2026-02-11  Saruman the White  <eker@eker10>
+
+	* eqRewriter.hh (class EqRewriter): eqRewrite2() -> eqRewrite()
+
 2025-01-12  Saruman the White  <eker@eker10>
 
 	* eqRewriter.hh (class EqRewriter): EqRewriteFunctionPtr now takes

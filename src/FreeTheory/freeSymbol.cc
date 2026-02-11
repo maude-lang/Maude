@@ -57,7 +57,7 @@
 #include "freePreNet.hh"
 #include "freeNet.hh"
 #include "freeSymbol.hh"
-#include "freeSimpleSymbol.hh"
+//#include "freeSimpleSymbol.hh"
 #include "freeNullarySymbol.hh"
 #include "freeDagNode.hh"
 #include "freeOccurrence.hh"
@@ -98,27 +98,13 @@ FreeSymbol::eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& co
 FreeSymbol*
 FreeSymbol::newFreeSymbol(int id, int arity, const Vector<int>& strategy, bool memoFlag)
 {
-  if (arity <= 3)
+  if (arity == 0 && !memoFlag)
     {
-      if (memoFlag || !strategy.empty())
-	{
-	  FreeSymbol* t = new FreeSymbol(id, arity, strategy, memoFlag);
-	  if (!(t->standardStrategy()))
-	    return t;
-	  delete t;
-	}
       //
-      //	Low arity, standard strategy symbols get an optimized
-      //	class instance.
+      //	Strategy must be equivalent to (0).
+      //	Nullary constructors can cache constant dags.
       //
-      if (arity == 0)
-	return new FreeNullarySymbol(id);  // nullary symbols cache constant dags
-      else if (arity == 1)
-	return new FreeSimpleSymbol<1>(id);
-      else if (arity == 2)
-	return new FreeSimpleSymbol<2>(id);
-      else
-	return new FreeSimpleSymbol<3>(id);
+      return new FreeNullarySymbol(id);
     }
   return new FreeSymbol(id, arity, strategy, memoFlag);
 }

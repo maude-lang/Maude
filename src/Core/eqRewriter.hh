@@ -31,7 +31,7 @@ class EqRewriter
 public:
   typedef bool (*EqRewriteFunctionPtr)(Symbol*, DagNode*, RewritingContext&);
 
-  bool eqRewrite2(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
   void setEqRewrite(EqRewriteFunctionPtr functionPtr);
 
 private:
@@ -41,7 +41,7 @@ private:
 };
 
 inline bool
-EqRewriter::eqRewrite2(Symbol* symbol, DagNode* subject, RewritingContext& context)
+EqRewriter::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   return (*eqRewriteFunctionPtr)(symbol, subject, context);
 }

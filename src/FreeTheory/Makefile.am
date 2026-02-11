@@ -40,7 +40,6 @@ EXTRA_DIST = \
 noinst_HEADERS = \
 	freeArgumentIterator.hh \
 	freeNullarySymbol.hh \
-	freeSimpleSymbol.hh \
 	freeDagArgumentIterator.hh \
 	freeDagNode.hh \
 	freeLhsAutomaton.hh \
