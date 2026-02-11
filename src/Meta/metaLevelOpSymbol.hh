@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,8 +49,11 @@ public:
     friend class MetaLevelOpSymbol;
     friend class InterpreterManagerSymbol;
   };
-
+  
   MetaLevelOpSymbol(int id, int nrArgs, const Vector<int>& strategy);
+  MetaLevel* getMetaLevel() const;
+
+protected:
   ~MetaLevelOpSymbol();
 
   bool attachData(const Vector<Sort*>& opDeclaration,
@@ -68,14 +71,15 @@ public:
 			  Vector<Term*>& terms);
 
   void postInterSymbolPass();
+  void compileEquations();
   void reset();
   bool eqRewrite(DagNode* subject, RewritingContext& context);
-
-  MetaLevel* getMetaLevel() const;
 
 private:
   typedef bool (MetaLevelOpSymbol::*DescentFunctionPtr)
     (FreeDagNode* subject, RewritingContext& context);
+
+  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
   static RewritingContext* term2RewritingContext(Term* term, RewritingContext& context);
 

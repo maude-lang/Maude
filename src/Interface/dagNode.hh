@@ -559,7 +559,7 @@ DagNode::setTheoryByte(Byte value)
 //
 #include "symbol2.hh"
 
-#if 0
+#if 1
 
 // New equational rewriting scheme uses EqRewriter::eqRewrite2() but isn't finished
 inline void
